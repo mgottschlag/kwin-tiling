@@ -167,7 +167,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	void doReject( bool initial );
 
   private Q_SLOTS:
-	//virtual void slotPluginSelected( QAction * ) = 0;
+	virtual void slotPluginSelected( QAction * );
 	void slotTimeout();
 	void slotActivity();
 
@@ -202,9 +202,6 @@ class KGStdVerify : public KGVerify {
 	QGridLayout *grid;
 	QLabel *failedLabel;
 	int failedLabelState;
-
-  private Q_SLOTS:
-	void slotPluginSelected( QAction * );
 };
 
 class KGThemedVerify : public KGVerify {
@@ -223,9 +220,6 @@ class KGThemedVerify : public KGVerify {
 
   protected:
 	void updateStatus();
-
-  private Q_SLOTS:
-	void slotPluginSelected( QAction * );
 };
 
 class KGChTok : public FDialog, public KGVerifyHandler {

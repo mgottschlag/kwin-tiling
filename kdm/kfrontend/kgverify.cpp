@@ -183,6 +183,25 @@ KGVerify::selectPlugin( int id )
 	timeable = _autoLoginDelay && entityPresettable() && isClassic();
 }
 
+void // private slot
+KGVerify::slotPluginSelected( QAction *action )
+{
+	if (failed)
+		return;
+	int id = action->data().toInt();
+	if (id != curPlugin) {
+		greetPlugins[pluginList[curPlugin]].action->setChecked( false );
+		parent->setUpdatesEnabled( false );
+		Debug( "delete %s\n", pName.data() );
+		delete greet;
+		selectPlugin( id );
+		handler->verifyPluginChanged( id );
+		if (running)
+			start();
+		parent->setUpdatesEnabled( true );
+	}
+}
+
 void // public
 KGVerify::loadUsers( const QStringList &users )
 {
@@ -941,25 +960,6 @@ KGStdVerify::selectPlugin( int id )
 	greet->getWidget()->show();
 }
 
-void // private slot
-KGStdVerify::slotPluginSelected( QAction *action )
-{
-	if (failed)
-		return;
-	int id = action->data().toInt();
-	if (id != curPlugin) {
-		greetPlugins[pluginList[curPlugin]].action->setChecked( false );
-		parent->setUpdatesEnabled( false );
-		Debug( "delete %s\n", pName.data() );
-		delete greet;
-		selectPlugin( id );
-		handler->verifyPluginChanged( id );
-		if (running)
-			start();
-		parent->setUpdatesEnabled( true );
-	}
-}
-
 void
 KGStdVerify::updateStatus()
 {
@@ -1039,23 +1039,6 @@ KGThemedVerify::selectPlugin( int id )
 			n->setWidget( l );
 	}
 	themer->updateGeometry( true );
-}
-
-void // private slot
-KGThemedVerify::slotPluginSelected( QAction *action )
-{
-	if (failed)
-		return;
-	int id = action->data().toInt();
-	if (id != curPlugin) {
-		greetPlugins[pluginList[curPlugin]].action->setChecked( false );
-		Debug( "delete %s\n", pName.data() );
-		delete greet;
-		selectPlugin( id );
-		handler->verifyPluginChanged( id );
-		if (running)
-			start();
-	}
 }
 
 void
