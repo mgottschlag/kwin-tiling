@@ -37,20 +37,20 @@ class KStandardDirs;
  * the monitor in kcmdisplay.
  */
 class KBackgroundRenderer:
-	public QObject,
-	public KBackgroundSettings
+    public QObject,
+    public KBackgroundSettings
 {
     Q_OBJECT
 
 public:
     KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, KConfig *config=0);
     ~KBackgroundRenderer();
-    
+
     void load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig=true);
 
     void setPreview(const QSize &size);
     void setSize(const QSize &size);
-    
+
     QPixmap pixmap();
     QImage image();
     bool isActive() { return m_State & Rendering; }
@@ -76,9 +76,9 @@ private Q_SLOTS:
 private:
     enum { Error, Wait, WaitUpdate, Done };
     enum { Rendering = 1, InitCheck = 2,
-	BackgroundStarted = 4, BackgroundDone = 8,
-	WallpaperStarted = 0x10, WallpaperDone = 0x20,
-	AllDone = 0x40 };
+           BackgroundStarted = 4, BackgroundDone = 8,
+           WallpaperStarted = 0x10, WallpaperDone = 0x20,
+           AllDone = 0x40 };
 
     QString buildCommand();
     void createTempFile();
@@ -95,7 +95,7 @@ private:
     QString cacheFileName();
     bool useCacheFile() const;
     bool canTile() const;
-    
+
     bool m_isBusyCursor;
     bool m_enableBusyCursor;
     bool m_bPreview;
@@ -112,7 +112,6 @@ private:
 
     KStandardDirs *m_pDirs;
     KShellProcess *m_pProc;
-    
 };
 
 /**
@@ -127,25 +126,25 @@ class KVirtualBGRenderer : public QObject
 public:
     KVirtualBGRenderer(int desk, KConfig *config=0l);
     ~KVirtualBGRenderer();
-    
+
     KBackgroundRenderer * renderer(unsigned screen);
     unsigned numRenderers() const { return m_numRenderers; }
 
     QPixmap pixmap();
-    
+
     void setPreview(const QSize & size);
-    
+
     bool needProgramUpdate();
     void programUpdate();
-    
+
     bool needWallpaperChange();
     void changeWallpaper();
-    
+
     int hash();
     bool isActive();
     void setEnabled( bool enable );
     void desktopResized();
-    
+
     void load(int desk, bool reparseConfig=true);
     void start();
     void stop();
@@ -162,7 +161,7 @@ private slots:
 private:
     QSize renderSize(int screen); // the size the renderer should be
     void initRenderers();
-    
+
     KConfig *m_pConfig;
     float m_scaleX;
     float m_scaleY;
@@ -172,7 +171,7 @@ private:
     bool m_bCommonScreen;
     bool m_bDeleteConfig;
     QSize m_size;
-    
+
     QVector<bool> m_bFinished;
     Q3PtrVector<KBackgroundRenderer> m_renderer;
     QPixmap *m_pPixmap;
