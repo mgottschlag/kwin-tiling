@@ -40,6 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kwinmodule.h>
+#include <kglobalsettings.h>
 
 #include "utils.h"
 #include "kicker.h"
@@ -211,7 +212,7 @@ void ExtensionManager::configureMenubar(bool duringInit)
         updateMenubar();
 
         m_menubarPanel->show();
-        connect(kapp, SIGNAL(kdisplayFontChanged()), SLOT(updateMenubar()));
+        connect(KGlobalSettings::self(), SIGNAL(kdisplayFontChanged()), SLOT(updateMenubar()));
     }
     else if (m_menubarPanel)
     {
