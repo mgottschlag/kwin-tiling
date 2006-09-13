@@ -27,6 +27,9 @@
 /* Define to 1 if you have the `mkstemp' function. */
 #cmakedefine HAVE_MKSTEMP 1
 
+/* Define to 1 if you have the `pam_getenvlist' function. */
+#cmakedefine HAVE_PAM_GETENVLIST 1
+
 /* Define to 1 if you have the `seteuid' function. */
 #cmakedefine HAVE_SETEUID 1
 #if !defined(HAVE_SETEUID)

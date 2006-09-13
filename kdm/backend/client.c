@@ -1107,7 +1107,7 @@ StartClient()
 	char **argv, *fname, *str;
 #ifdef USE_PAM
 	char ** volatile pam_env;
-# ifdef _AIX
+# ifndef HAVE_PAM_GETENVLIST
 	char **saved_env;
 # endif
 	struct pam_conv pconv;
@@ -1274,7 +1274,7 @@ StartClient()
 		return 0;
 # endif
 
-# ifdef _AIX
+# ifndef HAVE_PAM_GETENVLIST
 	if (!(pam_env = initStrArr( 0 ))) {
 		resetGids();
 		return 0;
@@ -1285,7 +1285,7 @@ StartClient()
 	removeCreds = 1; /* set it first - i don't trust PAM's rollback */
 	pretc = pam_setcred( pamh, 0 );
 	ReInitErrorLog();
-# ifdef _AIX
+# ifndef HAVE_PAM_GETENVLIST
 	pam_env = environ;
 	environ = saved_env;
 # endif
@@ -1353,7 +1353,7 @@ StartClient()
 
 # ifdef USE_PAM
 		/* pass in environment variables set by libpam and modules it called */
-#  ifndef _AIX
+#  ifdef HAVE_PAM_GETENVLIST
 		pam_env = pam_getenvlist( pamh );
 		ReInitErrorLog();
 #  endif
