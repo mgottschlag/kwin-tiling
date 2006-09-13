@@ -25,12 +25,13 @@
 namespace KHotKeys
 {
 
-VoiceRecordPage::VoiceRecordPage( const QString &voiceid_P, QWidget *parent, const char *name)
+VoiceRecordPage::VoiceRecordPage( const QString &voiceid_P, QWidget *parent)
 	: KVBox(parent) , _original_voiceId(voiceid_P)
    {
 	  _message = i18n("Enter a code for the sound (e.g. the word you are saying) and record the same word twice.");
 
-    _label = new QLabel(_message, this, "label");
+    _label = new QLabel(_message, this);
+    _label->setObjectName("label");
 /*    _label->setAlignment(QLabel::AlignLeft | QLabel::WordBreak |
     QLabel::AlignVCenter);*/
 	
@@ -55,7 +56,7 @@ VoiceRecordPage::VoiceRecordPage( const QString &voiceid_P, QWidget *parent, con
     //_recorder->setMinimumHeight(150);
     //setStretchFactor(_recorder, 1);
 
-    QWidget *spacer = new QWidget(this, "spacer");
+    QWidget *spacer = new QWidget(this);
     setStretchFactor(spacer, 1);
 
 

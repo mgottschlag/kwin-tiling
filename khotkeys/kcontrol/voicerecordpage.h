@@ -34,7 +34,7 @@ class VoiceRecordPage : public KVBox
     Q_OBJECT
 
     public:
-        VoiceRecordPage(const QString &voiceip_P, QWidget *parent, const char *name);
+        VoiceRecordPage(const QString &voiceip_P, QWidget *parent);
         ~VoiceRecordPage();
 
         QString getVoiceId() const ;
