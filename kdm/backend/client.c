@@ -50,7 +50,6 @@ extern int key_setnet( struct key_netstarg *arg );
 #endif
 #ifdef HAVE_SETUSERCONTEXT
 # include <login_cap.h>
-# define USE_LOGIN_CAP 1
 #endif
 #ifdef USE_PAM
 # ifdef HAVE_PAM_PAM_APPL_H
@@ -100,6 +99,13 @@ char *curdmrc;
 char *newdmrc;
 
 static struct passwd *p;
+#ifdef HAVE_SETUSERCONTEXT
+# ifdef HAVE_LOGIN_GETCLASS
+login_cap_t *lc;
+# else
+struct login_cap *lc;
+# endif
+#endif
 #ifdef USE_PAM
 static pam_handle_t *pamh;
 #elif defined(_AIX)
@@ -409,7 +415,7 @@ AccNoPass( const char *un, struct passwd *pw )
 	return 0;
 }
 
-#if !defined(USE_PAM) && !defined(_AIX) && defined(USE_LOGIN_CAP)
+#if !defined(USE_PAM) && !defined(_AIX) && defined(HAVE_SETUSERCONTEXT)
 # define LC_RET0 do { login_close(lc); return 0; } while(0)
 #else
 # define LC_RET0 return 0
@@ -436,13 +442,6 @@ Verify( GConvFunc gconv, int rootok )
 # endif
 # if defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || defined(USESHADOW)
 	int tim, expir, warntime, quietlog;
-# endif
-# ifdef USE_LOGIN_CAP
-#  ifdef HAVE_LOGIN_GETCLASS
-	login_cap_t *lc;
-#  else
-	struct login_cap *lc;
-#  endif
 # endif
 #endif
 
@@ -743,23 +742,11 @@ Verify( GConvFunc gconv, int rootok )
 	if (msg)
 		free( (void *)msg );
 
-#else /* USE_PAM || _AIX */
+#endif /* USE_PAM || _AIX */
 
-# ifdef HAVE_GETUSERSHELL
-	for (;;) {
-		if (!(s = getusershell())) {
-			Debug( "shell not in /etc/shells\n" );
-			endusershell();
-			V_RET_FAIL( "Your login shell is not listed in /etc/shells" );
-		}
-		if (!strcmp( s, p->pw_shell )) {
-			endusershell();
-			break;
-		}
-	}
-# endif
+#ifndef _AIX
 
-# ifdef USE_LOGIN_CAP
+# ifdef HAVE_SETUSERCONTEXT
 #  ifdef HAVE_LOGIN_GETCLASS
 	lc = login_getclass( p->pw_class );
 #  else
@@ -767,106 +754,45 @@ Verify( GConvFunc gconv, int rootok )
 #  endif
 	if (!lc)
 		V_RET_FAIL( 0 );
+
+	p->pw_shell = login_getcapstr( lc, "shell", p->pw_shell, p->pw_shell );
 # endif
 
+# ifndef USE_PAM
 
-/* restrict_nologin */
-# ifndef _PATH_NOLOGIN
-#  define _PATH_NOLOGIN "/etc/nologin"
-# endif
+/* restrict_expired */
+#  if defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || defined(USESHADOW)
 
-	if ((
-# ifdef USE_LOGIN_CAP
-	     /* Do we ignore a nologin file? */
-	     !login_getcapbool( lc, "ignorenologin", 0 )) &&
-	    (!stat( (nolg = login_getcapstr( lc, "nologin", "", NULL )), &st ) ||
-# endif
-		 !stat( (nolg = _PATH_NOLOGIN), &st )))
-	{
-		PrepErrorGreet();
-		GSendInt( V_MSG_ERR );
-		if (st.st_size && (fd = open( nolg, O_RDONLY )) >= 0) {
-			if ((buf = Malloc( st.st_size + 1 ))) {
-				if (read( fd, buf, st.st_size ) == st.st_size) {
-					buf[st.st_size] = 0;
-					GSendStr( buf );
-					free( buf );
-					close( fd );
-					GSendInt( V_FAIL );
-					LC_RET0;
-				}
-				free( buf );
-			}
-			close( fd );
-		}
-		GSendStr( "Logins are not allowed at the moment.\nTry again later" );
-		GSendInt( V_FAIL );
-		LC_RET0;
-	}
-
-
-/* restrict_nohome */
-# ifdef USE_LOGIN_CAP
-	if (login_getcapbool( lc, "requirehome", 0 )) {
-		struct stat st;
-		if (!*p->pw_dir || stat( p->pw_dir, &st ) || st.st_uid != p->pw_uid) {
-			PrepErrorGreet();
-			GSendInt( V_MSG_ERR );
-			GSendStr( "Home folder not available" );
-			GSendInt( V_FAIL );
-			LC_RET0;
-		}
-	}
-# endif
-
-
-/* restrict_time */
-# ifdef USE_LOGIN_CAP
-#  ifdef HAVE_AUTH_TIMEOK
-	if (!auth_timeok( lc, time( NULL ) )) {
-		PrepErrorGreet();
-		GSendInt( V_MSG_ERR );
-		GSendStr( "You are not allowed to login at the moment" );
-		GSendInt( V_FAIL );
-		LC_RET0;
-	}
-#  endif
-# endif
-
-
-/* restrict_expired; this MUST be the last one */
-# if defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || defined(USESHADOW)
-
-#  if !defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
+#   if !defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || (!defined(HAVE_SETUSERCONTEXT) && defined(USESHADOW))
 	if (sp)
-#  endif
+#   endif
 	{
 
-#  define DEFAULT_WARN	(2L * 7L)  /* Two weeks */
+#   define DEFAULT_WARN	(2L * 7L)  /* Two weeks */
 
 		tim = time( NULL ) / 86400L;
 
-#  ifdef USE_LOGIN_CAP
+#   ifdef HAVE_SETUSERCONTEXT
 		quietlog = login_getcapbool( lc, "hushlogin", 0 );
 		warntime = login_getcaptime( lc, "warnexpire",
 		                             DEFAULT_WARN * 86400L,
 		                             DEFAULT_WARN * 86400L ) / 86400L;
-#  else
+#   else
 		quietlog = 0;
-#	ifdef USESHADOW
+#    ifdef USESHADOW
 		warntime = sp->sp_warn != -1 ? sp->sp_warn : DEFAULT_WARN;
-#	else
+#    else
 		warntime = DEFAULT_WARN;
-#	endif
-#  endif
+#    endif
+#   endif
 
-#  ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
+#   ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
 		if (p->pw_expire) {
 			expir = p->pw_expire / 86400L;
-#  else
+#   else
 		if (sp->sp_expire != -1) {
 			expir = sp->sp_expire;
-#  endif
+#   endif
 			if (tim > expir) {
 				PrepErrorGreet();
 				GSendInt( V_MSG_ERR );
@@ -887,10 +813,10 @@ Verify( GConvFunc gconv, int rootok )
 			}
 		}
 
-#  ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
+#   ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
 		if (p->pw_change) {
 			expir = p->pw_change / 86400L;
-#  else
+#   else
 		if (!sp->sp_lstchg) {
 			PrepErrorGreet();
 			GSendInt( V_MSG_ERR );
@@ -909,7 +835,7 @@ Verify( GConvFunc gconv, int rootok )
 				GSendInt( V_FAIL );
 				LC_RET0;
 			}
-#  endif
+#   endif
 			if (tim > expir) {
 				PrepErrorGreet();
 				GSendInt( V_MSG_ERR );
@@ -933,13 +859,84 @@ Verify( GConvFunc gconv, int rootok )
 
 	}
 
-# endif /* HAVE_STRUCT_PASSWD_PW_EXPIRE || USESHADOW */
+#  endif /* HAVE_STRUCT_PASSWD_PW_EXPIRE || USESHADOW */
 
-# ifdef USE_LOGIN_CAP
-	login_close( lc );
+/* restrict_nologin */
+#  ifndef _PATH_NOLOGIN
+#   define _PATH_NOLOGIN "/etc/nologin"
+#  endif
+
+	if ((
+#  ifdef HAVE_SETUSERCONTEXT
+	     /* Do we ignore a nologin file? */
+	     !login_getcapbool( lc, "ignorenologin", 0 )) &&
+	    (!stat( (nolg = login_getcapstr( lc, "nologin", "", NULL )), &st ) ||
+#  endif
+		 !stat( (nolg = _PATH_NOLOGIN), &st )))
+	{
+		PrepErrorGreet();
+		GSendInt( V_MSG_ERR );
+		if (st.st_size && (fd = open( nolg, O_RDONLY )) >= 0) {
+			if ((buf = Malloc( st.st_size + 1 ))) {
+				if (read( fd, buf, st.st_size ) == st.st_size) {
+					buf[st.st_size] = 0;
+					GSendStr( buf );
+					free( buf );
+					close( fd );
+					GSendInt( V_FAIL );
+					LC_RET0;
+				}
+				free( buf );
+			}
+			close( fd );
+		}
+		GSendStr( "Logins are not allowed at the moment.\nTry again later" );
+		GSendInt( V_FAIL );
+		LC_RET0;
+	}
+
+/* restrict_time */
+#  if defined(HAVE_SETUSERCONTEXT) && defined(HAVE_AUTH_TIMEOK)
+	if (!auth_timeok( lc, time( NULL ) )) {
+		PrepErrorGreet();
+		GSendInt( V_MSG_ERR );
+		GSendStr( "You are not allowed to login at the moment" );
+		GSendInt( V_FAIL );
+		LC_RET0;
+	}
+#  endif
+
+#  ifdef HAVE_GETUSERSHELL
+	for (;;) {
+		if (!(s = getusershell())) {
+			Debug( "shell not in /etc/shells\n" );
+			endusershell();
+			V_RET_FAIL( "Your login shell is not listed in /etc/shells" );
+		}
+		if (!strcmp( s, p->pw_shell )) {
+			endusershell();
+			break;
+		}
+	}
+#  endif
+
+# endif /* !USE_PAM */
+
+/* restrict_nohome */
+# ifdef HAVE_SETUSERCONTEXT
+	if (login_getcapbool( lc, "requirehome", 0 )) {
+		struct stat st;
+		if (!*p->pw_dir || stat( p->pw_dir, &st ) || st.st_uid != p->pw_uid) {
+			PrepErrorGreet();
+			GSendInt( V_MSG_ERR );
+			GSendStr( "Home folder not available" );
+			GSendInt( V_FAIL );
+			LC_RET0;
+		}
+	}
 # endif
 
-#endif /* USE_PAM || _AIX */
+#endif /* !_AIX */
 
 	return 1;
 
