@@ -524,7 +524,7 @@ ManageSession( struct display *d )
 {
 	int ex, cmd;
 	volatile int clientPid = 0;
-	Time_t tdiff;
+	volatile Time_t tdiff;
 
 	td = d;
 	Debug( "ManageSession %s\n", d->name );

@@ -1106,7 +1106,7 @@ StartClient()
 	char **env, *xma;
 	char **argv, *fname, *str;
 #ifdef USE_PAM
-	char **pam_env;
+	char ** volatile pam_env;
 # ifdef _AIX
 	char **saved_env;
 # endif
