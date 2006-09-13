@@ -52,8 +52,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xatom.h>
 
 /*
- * Legacy session management
- */
+* Legacy session management
+*/
 
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
 const int WM_SAVE_YOURSELF_TIMEOUT = 4000;
@@ -86,18 +86,18 @@ void KSMServer::performLegacySessionSave()
     // and determine which style (WM_COMMAND or WM_SAVE_YOURSELF)
     KWinModule module;
     if( wm_save_yourself == (Atom)XNone ) {
-	Atom atoms[ 4 ];
-	const char* const names[]
-	    = { "WM_SAVE_YOURSELF", "WM_PROTOCOLS", "WM_CLIENT_LEADER", "SM_CLIENT_ID" };
-	XInternAtoms( QX11Info::display(), const_cast< char** >( names ), 4,
-	    False, atoms );
-	wm_save_yourself = atoms[ 0 ];
-	wm_protocols = atoms[ 1 ];
-	wm_client_leader = atoms[ 2 ];
+        Atom atoms[ 4 ];
+        const char* const names[]
+            = { "WM_SAVE_YOURSELF", "WM_PROTOCOLS", "WM_CLIENT_LEADER", "SM_CLIENT_ID" };
+        XInternAtoms( QX11Info::display(), const_cast< char** >( names ), 4,
+            False, atoms );
+        wm_save_yourself = atoms[ 0 ];
+        wm_protocols = atoms[ 1 ];
+        wm_client_leader = atoms[ 2 ];
         sm_client_id = atoms[ 3 ];
     }
     for ( QList<WId>::ConstIterator it = module.windows().begin();
-	  it != module.windows().end(); ++it) {
+        it != module.windows().end(); ++it) {
         WId leader = windowWmClientLeader( *it );
         if (!legacyWindows.contains(leader) && windowSessionId( *it, leader ).isEmpty()) {
             SMType wtype = SM_WMCOMMAND;
@@ -111,8 +111,8 @@ void KSMServer::performLegacySessionSave()
                     }
                 XFree((void*) protocols);
             }
-	    SMData data;
-	    data.type = wtype;
+            SMData data;
+            data.type = wtype;
             XClassHint classHint;
             if( XGetClassHint( QX11Info::display(), leader, &classHint ) ) {
                 data.wmclass1 = classHint.res_name;
@@ -127,15 +127,15 @@ void KSMServer::performLegacySessionSave()
     XSync(QX11Info::display(), False);
     Display *newdisplay = XOpenDisplay(DisplayString(QX11Info::display()));
     if (!newdisplay) {
-	windowMapPtr = NULL;
-	XSetErrorHandler(oldHandler);
-	return;
+        windowMapPtr = NULL;
+        XSetErrorHandler(oldHandler);
+        return;
     }
     WId root = DefaultRootWindow(newdisplay);
     XGrabKeyboard(newdisplay, root, False,
-                  GrabModeAsync, GrabModeAsync, CurrentTime);
+                GrabModeAsync, GrabModeAsync, CurrentTime);
     XGrabPointer(newdisplay, root, False, Button1Mask|Button2Mask|Button3Mask,
-                 GrabModeAsync, GrabModeAsync, XNone, XNone, CurrentTime);
+                GrabModeAsync, GrabModeAsync, XNone, XNone, CurrentTime);
     // Send WM_SAVE_YOURSELF messages
     XEvent ev;
     int awaiting_replies = 0;
@@ -162,7 +162,7 @@ void KSMServer::performLegacySessionSave()
             /* Process pending event */
             XNextEvent(newdisplay, &ev);
             if ( ( ev.xany.type == UnmapNotify ) ||
-                 ( ev.xany.type == PropertyNotify && ev.xproperty.atom == XA_WM_COMMAND ) ) {
+                ( ev.xany.type == PropertyNotify && ev.xproperty.atom == XA_WM_COMMAND ) ) {
                 WindowMap::Iterator it = legacyWindows.find( ev.xany.window );
                 if ( it != legacyWindows.end() && (*it).type != SM_WMCOMMAND ) {
                     awaiting_replies -= 1;
@@ -199,13 +199,13 @@ void KSMServer::performLegacySessionSave()
             WId w = it.key();
             (*it).wmCommand = windowWmCommand(w);
             (*it).wmClientMachine = windowWmClientMachine(w);
-	}
+        }
     }
     kDebug( 1218 ) << "Done saving " << legacyWindows.count() << " legacy session apps" << endl;
 }
 
 /*!
-  Stores legacy session management data
+Stores legacy session management data
 */
 void KSMServer::storeLegacySession( KConfig* config )
 {
@@ -230,7 +230,7 @@ void KSMServer::storeLegacySession( KConfig* config )
 }
 
 /*!
-  Restores legacy session management data (i.e. restart applications)
+Restores legacy session management data (i.e. restart applications)
 */
 void KSMServer::restoreLegacySession( KConfig* config )
 {
@@ -238,27 +238,27 @@ void KSMServer::restoreLegacySession( KConfig* config )
         KConfigGroup group( config, "Legacy" + sessionGroup );
         restoreLegacySessionInternal( config );
     } else if( wm == "kwin" ) { // backwards comp. - get it from kwinrc
-	KConfigGroup group( config, sessionGroup );
-	int count =  group.readEntry( "count", 0 );
-	for ( int i = 1; i <= count; i++ ) {
-    	    QString n = QString::number(i);
-    	    if ( group.readEntry( QString("program")+n, QString() ) != wm )
+        KConfigGroup group( config, sessionGroup );
+        int count =  group.readEntry( "count", 0 );
+        for ( int i = 1; i <= count; i++ ) {
+            QString n = QString::number(i);
+            if ( group.readEntry( QString("program")+n, QString() ) != wm )
                 continue;
-    	    QStringList restartCommand =
+            QStringList restartCommand =
                 config->readEntry( QString("restartCommand")+n, QStringList() );
-	    for( QStringList::ConstIterator it = restartCommand.begin();
-		 it != restartCommand.end();
-		 ++it ) {
-		if( (*it) == "-session" ) {
-		    ++it;
-		    if( it != restartCommand.end()) {
-			KConfig cfg( "session/" + wm + '_' + (*it), true );
-			cfg.setGroup( "LegacySession" );
-			restoreLegacySessionInternal( &cfg, ' ' );
-		    }
-		}
-	    }
-	}
+            for( QStringList::ConstIterator it = restartCommand.begin();
+                it != restartCommand.end();
+                ++it ) {
+                if( (*it) == "-session" ) {
+                    ++it;
+                    if( it != restartCommand.end()) {
+                        KConfig cfg( "session/" + wm + '_' + (*it), true );
+                        cfg.setGroup( "LegacySession" );
+                        restoreLegacySessionInternal( &cfg, ' ' );
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -269,8 +269,8 @@ void KSMServer::restoreLegacySessionInternal( KConfig* config, char sep )
         QString n = QString::number(i);
         QStringList wmCommand = config->readEntry( QString("command")+n, QStringList(), sep );
         startApplication( wmCommand,
-                          config->readEntry( QString("clientMachine")+n, QString() ),
-                          config->readEntry( QString("userId")+n, QString() ));
+                        config->readEntry( QString("clientMachine")+n, QString() ),
+                        config->readEntry( QString("userId")+n, QString() ));
     }
 }
 
@@ -283,11 +283,11 @@ static QByteArray getQCStringProperty(WId w, Atom prop)
     unsigned char *data = 0;
     QByteArray result = "";
     status = XGetWindowProperty( QX11Info::display(), w, prop, 0, 10000,
-                                 false, XA_STRING, &type, &format,
-                                 &nitems, &extra, &data );
+                                false, XA_STRING, &type, &format,
+                                &nitems, &extra, &data );
     if ( status == Success) {
-	if( data )
-	    result = (char*)data;
+        if( data )
+            result = (char*)data;
         XFree(data);
     }
     return result;
@@ -303,11 +303,11 @@ static QStringList getQStringListProperty(WId w, Atom prop)
     QStringList result;
 
     status = XGetWindowProperty( QX11Info::display(), w, prop, 0, 10000,
-                                 false, XA_STRING, &type, &format,
-                                 &nitems, &extra, &data );
+                                false, XA_STRING, &type, &format,
+                                &nitems, &extra, &data );
     if ( status == Success) {
-	if (!data)
-	    return result;
+        if (!data)
+            return result;
         for (int i=0; i<(int)nitems; i++) {
             result << QLatin1String( (const char*)data + i );
             while(data[i]) i++;
@@ -367,8 +367,8 @@ WId KSMServer::windowWmClientLeader(WId w)
     unsigned char *data = 0;
     Window result = w;
     status = XGetWindowProperty( QX11Info::display(), w, wm_client_leader, 0, 10000,
-                                 false, XA_WINDOW, &type, &format,
-                                 &nitems, &extra, &data );
+                                false, XA_WINDOW, &type, &format,
+                                &nitems, &extra, &data );
     if (status  == Success ) {
         if (data && nitems > 0)
             result = *((Window*) data);
@@ -379,14 +379,14 @@ WId KSMServer::windowWmClientLeader(WId w)
 
 
 /*
-  Returns sessionId for this client,
-  taken either from its window or from the leader window.
- */
+Returns sessionId for this client,
+taken either from its window or from the leader window.
+*/
 QByteArray KSMServer::windowSessionId(WId w, WId leader)
 {
     QByteArray result = getQCStringProperty(w, sm_client_id);
     if (result.isEmpty() && leader != (WId)None && leader != w)
-	result = getQCStringProperty(leader, sm_client_id);
+        result = getQCStringProperty(leader, sm_client_id);
     return result;
 }
 #endif

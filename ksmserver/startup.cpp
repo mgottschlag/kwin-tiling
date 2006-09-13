@@ -347,7 +347,7 @@ void KSMServer::finishStartup()
     state = Idle;
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.
 }
- 
+
 bool KSMServer::checkStartupSuspend()
 {
     if( startupSuspendCount.isEmpty())
@@ -355,7 +355,7 @@ bool KSMServer::checkStartupSuspend()
     // wait for the phase to finish
     if( !startupSuspendTimeoutTimer.isActive())
     {
-	startupSuspendTimeoutTimer.setSingleShot( true );
+        startupSuspendTimeoutTimer.setSingleShot( true );
         startupSuspendTimeoutTimer.start( 10000 );
     }
     return false;

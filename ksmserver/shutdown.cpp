@@ -90,8 +90,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 void KSMServer::logout( int confirm, int sdtype, int sdmode )
 {
     shutdown( (KWorkSpace::ShutdownConfirm)confirm,
-              (KWorkSpace::ShutdownType)sdtype,
-              (KWorkSpace::ShutdownMode)sdmode );
+            (KWorkSpace::ShutdownType)sdtype,
+            (KWorkSpace::ShutdownMode)sdmode );
 }
 
 void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
@@ -122,8 +122,8 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
 
     bool logoutConfirmed =
         (confirm == KWorkSpace::ShutdownConfirmYes) ? false :
-       (confirm == KWorkSpace::ShutdownConfirmNo) ? true :
-                  !config->readEntry( "confirmLogout", true );
+    (confirm == KWorkSpace::ShutdownConfirmNo) ? true :
+                !config->readEntry( "confirmLogout", true );
     bool maysd = false;
     if (config->readEntry( "offerShutdown", true ) && DM().canShutdown())
         maysd = true;
@@ -135,7 +135,7 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
         sdtype = KWorkSpace::ShutdownTypeNone;
     } else if (sdtype == KWorkSpace::ShutdownTypeDefault)
         sdtype = (KWorkSpace::ShutdownType)
-                 config->readEntry( "shutdownType", (int)KWorkSpace::ShutdownTypeNone );
+                config->readEntry( "shutdownType", (int)KWorkSpace::ShutdownTypeNone );
     if (sdmode == KWorkSpace::ShutdownModeDefault)
         sdmode = KWorkSpace::ShutdownModeInteractive;
 
@@ -154,9 +154,9 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
 
     if ( logoutConfirmed ) {
 
-	shutdownType = sdtype;
-	shutdownMode = sdmode;
-	bootOption = bopt;
+        shutdownType = sdtype;
+        shutdownMode = sdmode;
+        bootOption = bopt;
 
         // shall we save the session on logout?
         saveSession = ( config->readEntry( "loginMode", "restorePreviousLogout" ) == "restorePreviousLogout" );
@@ -166,14 +166,14 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
 
         // Set the real desktop background to black so that exit looks
         // clean regardless of what was on "our" desktop.
-		QPalette palette;
+                QPalette palette;
         palette.setColor( kapp->desktop()->backgroundRole(), Qt::black );
         kapp->desktop()->setPalette(palette);
         state = Shutdown;
         wmPhase1WaitingCount = 0;
         saveType = saveSession?SmSaveBoth:SmSaveGlobal;
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
-	performLegacySessionSave();
+        performLegacySessionSave();
 #endif
         startProtection();
         foreach( KSMClient* c, clients ) {
@@ -195,14 +195,14 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
             if( isWM( c )) {
                 ++wmPhase1WaitingCount;
                 SmsSaveYourself( c->connection(), saveType,
-                             true, SmInteractStyleAny, false );
+                            true, SmInteractStyleAny, false );
             }
 
         }
         if( wmPhase1WaitingCount == 0 ) { // no WM, simply start them all
             foreach( KSMClient* c, clients )
                 SmsSaveYourself( c->connection(), saveType,
-                             true, SmInteractStyleAny, false );
+                            true, SmInteractStyleAny, false );
         }
         if ( clients.isEmpty() )
             completeShutdownOrCheckpoint();
@@ -379,9 +379,9 @@ void KSMServer::endProtection()
 }
 
 /*
-   Internal protection slot, invoked when clients do not react during
-  shutdown.
- */
+Internal protection slot, invoked when clients do not react during
+shutdown.
+*/
 void KSMServer::protectionTimeout()
 {
     if ( ( state != Shutdown && state != Checkpoint ) || clientInteracting )
@@ -459,7 +459,7 @@ void KSMServer::completeShutdownOrCheckpoint()
         }
         startKilling();
     } else if ( state == Checkpoint ) {
-	foreach( KSMClient* c, clients ) {
+        foreach( KSMClient* c, clients ) {
             SmsSaveComplete( c->connection());
         }
         state = Idle;
@@ -496,7 +496,7 @@ void KSMServer::performStandardKilling()
     }
 
     kDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
-       clients.count() << endl;
+    clients.count() << endl;
     completeKilling();
     QTimer::singleShot( 10000, this, SLOT( timeoutQuit() ) );
 }

@@ -156,22 +156,22 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
         int def, cur;
         if ( DM().bootOptions( rebootOptions, def, cur ) ) {
-	  targets = new QMenu( frame );
-	  if ( cur == -1 )
-	    cur = def;
+        targets = new QMenu( frame );
+        if ( cur == -1 )
+            cur = def;
 
-	  int index = 0;
-	  for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index)
-	    {
-	      if (index == cur)
-		targets->insertItem( *it + i18nc("current option in boot loader", " (current)"), index);
-	      else
-		targets->insertItem( *it, index );
-	    }
+        int index = 0;
+        for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index)
+            {
+            if (index == cur)
+                targets->insertItem( *it + i18nc("current option in boot loader", " (current)"), index);
+            else
+                targets->insertItem( *it, index );
+            }
 
-	  btnReboot->setPopup(targets);
-	  connect( targets, SIGNAL(activated(int)), SLOT(slotReboot(int)) );
-	}
+        btnReboot->setPopup(targets);
+        connect( targets, SIGNAL(activated(int)), SLOT(slotReboot(int)) );
+        }
     }
 
     buttonlay->addStretch( 1 );
@@ -241,7 +241,7 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, KWorkSpace::ShutdownType& sdty
 }
 
 KSMDelayedPushButton::KSMDelayedPushButton( const KGuiItem &item,
-					    QWidget *parent )
+                                            QWidget *parent )
   : KPushButton( item, parent), pop(0), popt(0)
 {
   connect(this, SIGNAL(pressed()), SLOT(slotPressed()));
@@ -252,31 +252,31 @@ KSMDelayedPushButton::KSMDelayedPushButton( const KGuiItem &item,
 
 void KSMDelayedPushButton::setPopup(QMenu *p)
 {
-  pop = p;
-  if ( p!=0 )
-	  setMenu(p);
+    pop = p;
+    if ( p!=0 )
+            setMenu(p);
 }
 
 void KSMDelayedPushButton::slotPressed()
 {
-  if (pop)
-    popt->start(QApplication::startDragTime());
+    if (pop)
+        popt->start(QApplication::startDragTime());
 }
 
 void KSMDelayedPushButton::slotReleased()
 {
-  popt->stop();
+    popt->stop();
 }
 
 void KSMDelayedPushButton::slotTimeout()
 {
-  QPoint bl = mapToGlobal(rect().bottomLeft());
-  QWidget *par = (QWidget*)parent();
-  QPoint br = par->mapToGlobal(par->rect().bottomRight());
-  // we must avoid painting over the dialog's limits
-  // as the feedback area isn't repainted when the popup disappears
-  bl.setX( qMin( bl.x(), br.x() - pop->sizeHint().width()));
-  pop->popup( bl );
-  popt->stop();
-  setDown(false);
+    QPoint bl = mapToGlobal(rect().bottomLeft());
+    QWidget *par = (QWidget*)parent();
+    QPoint br = par->mapToGlobal(par->rect().bottomRight());
+    // we must avoid painting over the dialog's limits
+    // as the feedback area isn't repainted when the popup disappears
+    bl.setX( qMin( bl.x(), br.x() - pop->sizeHint().width()));
+    pop->popup( bl );
+    popt->stop();
+    setDown(false);
 }

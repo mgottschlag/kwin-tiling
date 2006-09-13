@@ -149,11 +149,11 @@ private:
     // public dcop interface
 
  public Q_SLOTS: //public dcop interface
-	void logout( int, int, int );
+    void logout( int, int, int );
     QString currentSession();
-	void saveCurrentSession();
-	void saveCurrentSessionAs( QString );
-	QStringList sessionList();
+    void saveCurrentSession();
+    void saveCurrentSessionAs( QString );
+    QStringList sessionList();
  private:
     QList<KSMListener*> listener;
     QList<KSMClient*> clients;

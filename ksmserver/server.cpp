@@ -116,7 +116,7 @@ void KSMServer::startApplication( QStringList command, const QString& clientMach
     }
     if ( !clientMachine.isEmpty() && clientMachine != "localhost" ) {
         command.prepend( clientMachine );
-	command.prepend( xonCommand ); // "xon" by default
+        command.prepend( xonCommand ); // "xon" by default
     }
     int n = command.count();
     QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );

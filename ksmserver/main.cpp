@@ -68,117 +68,117 @@ bool writeTest(QByteArray path)
 
 void sanity_check( int argc, char* argv[] )
 {
-  QByteArray msg;
-  QByteArray path = getenv("HOME");
-  QByteArray readOnly = getenv("KDE_HOME_READONLY");
-  if (path.isEmpty())
-  {
-     msg = "$HOME not set!";
-  }
-  if (msg.isEmpty() && access(path.data(), W_OK))
-  {
-     if (errno == ENOENT)
-        msg = "$HOME directory (%s) does not exist.";
-     else if (readOnly.isEmpty())
-        msg = "No write access to $HOME directory (%s).";
-  }
-  if (msg.isEmpty() && access(path.data(), R_OK))
-  {
-     if (errno == ENOENT)
-        msg = "$HOME directory (%s) does not exist.";
-     else
-        msg = "No read access to $HOME directory (%s).";
-  }
-  if (msg.isEmpty() && readOnly.isEmpty() && !writeTest(path))
-  {
-     if (errno == ENOSPC)
-        msg = "$HOME directory (%s) is out of disk space.";
-     else
-        msg = QByteArray("Writing to the $HOME directory (%s) failed with\n    "
-              "the error '")+QByteArray(strerror(errno))+QByteArray("'");
-  }
-  if (msg.isEmpty())
-  {
-     path = getenv("ICEAUTHORITY");
-     if (path.isEmpty())
-     {
-        path = getenv("HOME");
-        path += "/.ICEauthority";
-     }
-
-     if (access(path.data(), W_OK) && (errno != ENOENT))
-        msg = "No write access to '%s'.";
-     else if (access(path.data(), R_OK) && (errno != ENOENT))
-        msg = "No read access to '%s'.";
-  }
-  if (msg.isEmpty())
-  {
+    QByteArray msg;
+    QByteArray path = getenv("HOME");
+    QByteArray readOnly = getenv("KDE_HOME_READONLY");
+    if (path.isEmpty())
+    {
+        msg = "$HOME not set!";
+    }
+    if (msg.isEmpty() && access(path.data(), W_OK))
+    {
+        if (errno == ENOENT)
+            msg = "$HOME directory (%s) does not exist.";
+        else if (readOnly.isEmpty())
+            msg = "No write access to $HOME directory (%s).";
+    }
+    if (msg.isEmpty() && access(path.data(), R_OK))
+    {
+        if (errno == ENOENT)
+            msg = "$HOME directory (%s) does not exist.";
+        else
+            msg = "No read access to $HOME directory (%s).";
+    }
+    if (msg.isEmpty() && readOnly.isEmpty() && !writeTest(path))
+    {
+        if (errno == ENOSPC)
+            msg = "$HOME directory (%s) is out of disk space.";
+        else
+            msg = QByteArray("Writing to the $HOME directory (%s) failed with\n    "
+                "the error '")+QByteArray(strerror(errno))+QByteArray("'");
+    }
+    if (msg.isEmpty())
+    {
+        path = getenv("ICEAUTHORITY");
+        if (path.isEmpty())
+        {
+            path = getenv("HOME");
+            path += "/.ICEauthority";
+        }
+    
+        if (access(path.data(), W_OK) && (errno != ENOENT))
+            msg = "No write access to '%s'.";
+        else if (access(path.data(), R_OK) && (errno != ENOENT))
+            msg = "No read access to '%s'.";
+    }
+    if (msg.isEmpty())
+    {
 #ifdef __GNUC__
 #warning Is something like this needed for D-BUS?
 #endif
 #if 0
-     path = DCOPClient::dcopServerFile();
-     if (access(path.data(), R_OK) && (errno == ENOENT))
-     {
+    path = DCOPClient::dcopServerFile();
+    if (access(path.data(), R_OK) && (errno == ENOENT))
+    {
         // Check iceauth
         if (DCOPClient::iceauthPath().isEmpty())
-           msg = "Could not find 'iceauth' in path.";
-     }
+            msg = "Could not find 'iceauth' in path.";
+    }
 #endif
-  }
-  if (msg.isEmpty())
-  {
-     path = getenv("KDETMP");
-     if (path.isEmpty())
+    }
+    if (msg.isEmpty())
+    {
+        path = getenv("KDETMP");
+        if (path.isEmpty())
+            path = "/tmp";
+        if (!writeTest(path))
+        {
+            if (errno == ENOSPC)
+            msg = "Temp directory (%s) is out of disk space.";
+            else
+            msg = "Writing to the temp directory (%s) failed with\n    "
+                    "the error '"+QByteArray(strerror(errno))+QByteArray("'");
+        }
+    }
+    if (msg.isEmpty() && (path != "/tmp"))
+    {
         path = "/tmp";
-     if (!writeTest(path))
-     {
-        if (errno == ENOSPC)
-           msg = "Temp directory (%s) is out of disk space.";
-        else
-           msg = "Writing to the temp directory (%s) failed with\n    "
-                 "the error '"+QByteArray(strerror(errno))+QByteArray("'");
-     }
-  }
-  if (msg.isEmpty() && (path != "/tmp"))
-  {
-     path = "/tmp";
-     if (!writeTest(path))
-     {
-        if (errno == ENOSPC)
-           msg = "Temp directory (%s) is out of disk space.";
-        else
-           msg = "Writing to the temp directory (%s) failed with\n    "
-                 "the error '"+QByteArray(strerror(errno))+QByteArray("'");
-     }
-  }
-  if (msg.isEmpty())
-  {
-     path += ".ICE-unix";
-     if (access(path.data(), W_OK) && (errno != ENOENT))
-        msg = "No write access to '%s'.";
-     else if (access(path.data(), R_OK) && (errno != ENOENT))
-        msg = "No read access to '%s'.";
-  }
-  if (!msg.isEmpty())
-  {
-    const char *msg_pre =
-             "The following installation problem was detected\n"
-             "while trying to start KDE:"
-             "\n\n    ";
-    const char *msg_post = "\n\nKDE is unable to start.\n";
-    fputs(msg_pre, stderr);
-    fprintf(stderr, msg.data(), path.data());
-    fputs(msg_post, stderr);
+        if (!writeTest(path))
+        {
+            if (errno == ENOSPC)
+            msg = "Temp directory (%s) is out of disk space.";
+            else
+            msg = "Writing to the temp directory (%s) failed with\n    "
+                    "the error '"+QByteArray(strerror(errno))+QByteArray("'");
+        }
+    }
+    if (msg.isEmpty())
+    {
+        path += ".ICE-unix";
+        if (access(path.data(), W_OK) && (errno != ENOENT))
+            msg = "No write access to '%s'.";
+        else if (access(path.data(), R_OK) && (errno != ENOENT))
+            msg = "No read access to '%s'.";
+    }
+    if (!msg.isEmpty())
+    {
+        const char *msg_pre =
+                "The following installation problem was detected\n"
+                "while trying to start KDE:"
+                "\n\n    ";
+        const char *msg_post = "\n\nKDE is unable to start.\n";
+        fputs(msg_pre, stderr);
+        fprintf(stderr, msg.data(), path.data());
+        fputs(msg_post, stderr);
 
-    QApplication a(argc, argv);
-    Q3CString qmsg(256+path.length());
-    qmsg.sprintf(msg.data(), path.data());
-    qmsg = msg_pre+qmsg+msg_post;
-    QMessageBox::critical(0, "KDE Installation Problem!",
-        QLatin1String(qmsg.data()));
-    exit(255);
-  }
+        QApplication a(argc, argv);
+        Q3CString qmsg(256+path.length());
+        qmsg.sprintf(msg.data(), path.data());
+        qmsg = msg_pre+qmsg+msg_post;
+        QMessageBox::critical(0, "KDE Installation Problem!",
+            QLatin1String(qmsg.data()));
+        exit(255);
+    }
 }
 
 extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
@@ -202,13 +202,13 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 
     if( !QDBusConnection::sessionBus().interface()->registerService( "org.kde.ksmserver", QDBusConnectionInterface::DontQueueService ) )
     {
-       qWarning("Could not register with D-BUS. Aborting.");
-       return 1;
+        qWarning("Could not register with D-BUS. Aborting.");
+        return 1;
     }
 
     QByteArray wm = args->getOption("windowmanager");
     if ( wm.isEmpty() )
-	wm = "kwin";
+        wm = "kwin";
 
     bool only_local = args->isSet("local");
 #ifndef HAVE__ICETRANSNOLISTEN
@@ -236,15 +236,15 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     QString loginMode = config->readEntry( "loginMode", "restorePreviousLogout" );
 
     if ( args->isSet("restore") && ! screenCountChanged )
-	server->restoreSession( SESSION_BY_USER );
+        server->restoreSession( SESSION_BY_USER );
     else if ( loginMode == "default" || screenCountChanged )
-	server->startDefaultSession();
+        server->startDefaultSession();
     else if ( loginMode == "restorePreviousLogout" )
-	server->restoreSession( SESSION_PREVIOUS_LOGOUT );
+        server->restoreSession( SESSION_PREVIOUS_LOGOUT );
     else if ( loginMode == "restoreSavedSession" )
-	server->restoreSession( SESSION_BY_USER );
+        server->restoreSession( SESSION_BY_USER );
     else
-	server->startDefaultSession();
+        server->startDefaultSession();
     return a.exec();
 }
 

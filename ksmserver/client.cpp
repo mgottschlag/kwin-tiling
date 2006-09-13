@@ -57,14 +57,14 @@ KSMClient::KSMClient( SmsConn conn)
 
 KSMClient::~KSMClient()
 {
-	foreach( SmProp *prop, properties )
+    foreach( SmProp *prop, properties )
         SmFreeProperty( prop );
     if (id) free((void*)id);
 }
 
 SmProp* KSMClient::property( const char* name ) const
 {
-	foreach ( SmProp *prop, properties ) {
+    foreach ( SmProp *prop, properties ) {
         if ( !qstrcmp( prop->name, name ) )
             return prop;
     }
