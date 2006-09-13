@@ -185,9 +185,9 @@ void PanelKMenu::initialize()
     if (loadSidePixmap())
     {
         // in case we've been through here before, let's disconnect
-        disconnect(kapp, SIGNAL(kdisplayPaletteChanged()),
+        disconnect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
                    this, SLOT(paletteChanged()));
-        connect(kapp, SIGNAL(kdisplayPaletteChanged()),
+        connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
                 this, SLOT(paletteChanged()));
     }
     else
