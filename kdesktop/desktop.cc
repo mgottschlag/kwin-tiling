@@ -33,6 +33,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <k3colordrag.h>
+#include <kglobalsettings.h>
 
 #include <QDir>
 #include <QEvent>
@@ -345,7 +346,7 @@ KDesktop::slotStart()
 
   m_actionCollection->readSettings();
 
-  connect(kapp, SIGNAL(appearanceChanged()), SLOT(slotConfigure()));
+  connect(KGlobalSettings::self(), SIGNAL(appearanceChanged()), SLOT(slotConfigure()));
 
   QTimer::singleShot(300, this, SLOT( slotUpAndRunning() ));
 }
