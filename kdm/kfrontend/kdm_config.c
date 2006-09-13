@@ -733,7 +733,7 @@ CvtValue( Ent *et, Value *retval, int vallen, const char *val, char **eopts )
 				}
 			}
 			retval->ptr = 0;
-			if (sscanf( buf, "%li", (long *)&retval->ptr ) != 1)
+			if (sscanf( buf, "%li", (long *)(char *)&retval->ptr ) != 1)
 				return "integer";
 			return 0;
 		case C_TYPE_STR:
