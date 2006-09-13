@@ -225,8 +225,8 @@ void CFontViewPart::install()
                                                                     m_url.fileName(),
                                                                     i18n(KFI_KIO_FONTS_USER),
                                                                     i18n(KFI_KIO_FONTS_SYS)),
-                                                              i18n("Install"), i18n(KFI_KIO_FONTS_USER),
-                                                              i18n(KFI_KIO_FONTS_SYS));
+                                                              i18n("Install"), KGuiItem(i18n(KFI_KIO_FONTS_USER)),
+                                                              KGuiItem(i18n(KFI_KIO_FONTS_SYS)));
 
     if(KMessageBox::Cancel!=resp)
     {

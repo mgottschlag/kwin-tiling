@@ -587,7 +587,7 @@ void KlipperWidget::slotQuit()
     }
 
     saveSession();
-    int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?"), i18n("Start"), i18n("Do Not Start") );
+    int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?"),KGuiItem(i18n("Start")), KGuiItem(i18n("Do Not Start")) );
 
     KConfig *config = KGlobal::config();
     config->setGroup("General");

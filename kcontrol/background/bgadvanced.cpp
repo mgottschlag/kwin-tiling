@@ -309,7 +309,7 @@ void BGAdvancedDialog::slotRemove()
 	    i18n("Are you sure you want to remove the program `%1'?",
 	     prog.name()),
 	    i18n("Remove Background Program"),
-	    i18n("&Remove")) != KMessageBox::Continue)
+	    KGuiItem(i18n("&Remove"))) != KMessageBox::Continue)
       return;
 
    prog.remove();
@@ -486,7 +486,7 @@ void KProgramEditDialog::accept()
     if ((s != m_Program) && !prog.command().isEmpty()) {
 	int ret = KMessageBox::warningContinueCancel(this,
 	    i18n("There is already a program with the name `%1'.\n"
-	    "Do you want to overwrite it?", s),QString(),i18n("Overwrite"));
+	    "Do you want to overwrite it?", s),QString(),KGuiItem(i18n("Overwrite")));
 	if (ret != KMessageBox::Continue)
 	    return;
     }

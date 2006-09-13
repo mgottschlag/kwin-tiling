@@ -296,7 +296,7 @@ bool ThemePage::installThemes( const QString &file )
 		if ( QDir( destDir ).exists( *it ) ) {
 			const QString question = i18n( "A theme named %1 already exists in your icon "
 					"theme folder. Do you want replace it with this one?", *it );
-			int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Overwrite Theme?"), i18n("Replace") );
+			int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Overwrite Theme?"), KGuiItem(i18n("Replace")) );
 			if ( answer != KMessageBox::Continue )
 				continue;
 

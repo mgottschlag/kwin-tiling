@@ -193,7 +193,7 @@ void PanelExeDialog::slotSelect(const KUrl& exec)
     if (!fi.isExecutable())
     {
         if(KMessageBox::warningYesNo(0, i18n("The selected file is not executable.\n"
-                                             "Do you want to select another file?"), i18n("Not Executable"), i18n("Select Other"), KStdGuiItem::cancel())
+                                             "Do you want to select another file?"), i18n("Not Executable"), KGuiItem(i18n("Select Other")), KStdGuiItem::cancel())
                 == KMessageBox::Yes)
         {
             ui->m_exec->button()->animateClick();

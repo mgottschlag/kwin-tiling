@@ -91,7 +91,7 @@ void CSettingsDialog::slotOk()
     if( ((!oldDoX && itsDoX->isChecked()) || (!oldDoGs && itsDoGs->isChecked())) &&
         KMessageBox::Yes==KMessageBox::questionYesNo(this, i18n("You have enabled a previously disabled option. Would you like the config "
                                                                 "files updated now? (Normally they are only updated upon installing, or "
-                                                                "removing, a font.)"), QString(), i18n("Update"),i18n("Do Not Update")))
+                                                                "removing, a font.)"), QString(), KGuiItem(i18n("Update")),KGuiItem(i18n("Do Not Update"))))
     {
         QByteArray  packedArgs;
         QDataStream stream(&packedArgs, QIODevice::WriteOnly);

@@ -554,7 +554,7 @@ void KColorScheme::slotAdd()
                    i18n("A color scheme with the name '%1' already exists.\n"
                         "Do you want to overwrite it?\n", sName),
                    i18n("Save Color Scheme"),
-                   i18n("Overwrite"));
+                   KGuiItem(i18n("Overwrite")));
                 if (result == KMessageBox::Cancel)
                     break;
             }
