@@ -78,7 +78,7 @@ static int
 getGrub( char ***opts, int *def, int *cur )
 {
 	FILE *f;
-	char *ptr;
+	char *ptr, *linp;
 	int len;
 	char line[1000];
 
@@ -91,13 +91,15 @@ getGrub( char ***opts, int *def, int *cur )
 
 	if (!(f = fopen( GRUB_MENU, "r" )))
 		return errno == ENOENT ? BO_NOMAN : BO_IO;
-	while ((len = fGets( line, sizeof(line), f )) != -1)
-		if ((ptr = match( line, &len, "default", 7 )))
+	while ((len = fGets( line, sizeof(line), f )) != -1) {
+		for (linp = line; isspace(*linp); linp++, len--);
+		if ((ptr = match( linp, &len, "default", 7 )))
 			*def = atoi( ptr );
-		else if ((ptr = match( line, &len, "title", 5 ))) {
+		else if ((ptr = match( linp, &len, "title", 5 ))) {
 			for (; isspace( ptr[len - 1] ); len--);
 			*opts = addStrArr( *opts, ptr, len );
 		}
+	}
 	fclose( f );
 
 	return BO_OK;
