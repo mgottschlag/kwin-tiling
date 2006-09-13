@@ -955,6 +955,51 @@ static const char *envvars[] = {
 };
 
 
+#if defined(USE_PAM) && defined(HAVE_INITGROUPS)
+int num_saved_gids;
+gid_t saved_gids[NGROUPS];
+
+static int
+saveGids( void )
+{
+	if ((num_saved_gids = getgroups( as(saved_gids), saved_gids )) < 0) {
+		LogError( "saving groups failed: %m\n" );
+		return 0;
+	}
+	return 1;
+}
+
+static int
+restoreGids( void )
+{
+	if (setgroups( num_saved_gids, saved_gids ) < 0) {
+		LogError( "restoring groups failed: %m\n" );
+		return 0;
+	}
+	if (setgid( p->pw_gid ) < 0) {
+		LogError( "restoring gid failed: %m\n" );
+		return 0;
+	}
+	return 1;
+}
+#endif /* USE_PAM && HAVE_INITGROUPS */
+
+static int
+resetGids( void )
+{
+#ifdef HAVE_INITGROUPS
+	if (setgroups( 0, &p->pw_gid /* anything */ ) < 0) {
+		LogError( "restoring groups failed: %m\n" );
+		return 0;
+	}
+#endif
+	if (setgid( 0 ) < 0) {
+		LogError( "restoring gid failed: %m\n" );
+		return 0;
+	}
+	return 1;
+}
+
 static int
 SetGid( const char *name, int gid )
 {
@@ -965,6 +1010,7 @@ SetGid( const char *name, int gid )
 #ifdef HAVE_INITGROUPS
 	if (initgroups( name, gid ) < 0) {
 		LogError( "initgroups for %s failed: %m\n", name );
+		setgid( 0 );
 		return 0;
 	}
 #endif	 /* QNX4 doesn't support multi-groups, no initgroups() */
@@ -984,7 +1030,12 @@ SetUid( const char *name, int uid )
 static int
 SetUser( const char *name, int uid, int gid )
 {
-	return SetGid( name, gid ) && SetUid( name, uid );
+	if (SetGid( name, gid )) {
+		if (SetUid( name, uid ))
+			return 1;
+		resetGids();
+	}
+	return 0;
 }
 
 #if defined(SECURE_RPC) || defined(K5AUTH)
@@ -1043,6 +1094,10 @@ mergeSessionArgs( int cansave )
 }
 
 static int removeAuth;
+#ifdef USE_PAM
+static int removeSession;
+static int removeCreds;
+#endif
 
 int
 StartClient()
@@ -1052,6 +1107,9 @@ StartClient()
 	char **argv, *fname, *str;
 #ifdef USE_PAM
 	char **pam_env;
+# ifdef _AIX
+	char **saved_env;
+# endif
 	struct pam_conv pconv;
 	int pretc;
 #else
@@ -1189,13 +1247,83 @@ StartClient()
 		mergeSessionArgs( TRUE );
 
 	Debug( "now starting the session\n" );
+
 #ifdef USE_PAM
+	/* the greeter is gone by now ... */
 	pconv.conv = PAM_conv_null;
 	pconv.appdata_ptr = 0;
-	pam_set_item( pamh, PAM_CONV, &pconv ); /* XXX this can fail */
-	pam_open_session( pamh, 0 ); /* XXX this can fail, too */
+	if ((pretc = pam_set_item( pamh, PAM_CONV, &pconv )) != PAM_SUCCESS) {
+		ReInitErrorLog();
+		LogError( "pam_set_item() for %s failed: %s\n",
+		          curuser, pam_strerror( pamh, pretc ) );
+		return 0;
+	}
 	ReInitErrorLog();
 #endif
+
+#ifdef USE_PAM
+
+# ifdef HAVE_SETUSERCONTEXT
+	if (setusercontext( lc, p, p->pw_uid, LOGIN_SETGROUP )) {
+		LogError( "setusercontext(groups) for %s failed: %m\n",
+		          curuser );
+		return 0;
+	}
+# else
+	if (!SetGid( curuser, curgid ))
+		return 0;
+# endif
+
+# ifdef _AIX
+	if (!(pam_env = initStrArr( 0 ))) {
+		resetGids();
+		return 0;
+	}
+	saved_env = environ;
+	environ = pam_env;
+# endif
+	removeCreds = 1; /* set it first - i don't trust PAM's rollback */
+	pretc = pam_setcred( pamh, 0 );
+	ReInitErrorLog();
+# ifdef _AIX
+	pam_env = environ;
+	environ = saved_env;
+# endif
+# ifdef HAVE_INITGROUPS
+	/* This seems to be a strange place for it, but do it:
+	   - after the initial groups are set
+	   - after pam_setcred might have set something, even in the error case
+	   - before pam_setcred(DELETE_CRED) might need it
+	 */
+	if (!saveGids())
+		return 0;
+# endif
+	if (pretc != PAM_SUCCESS) {
+		LogError( "pam_setcred() for %s failed: %s\n",
+		          curuser, pam_strerror( pamh, pretc ) );
+		resetGids();
+		return 0;
+	}
+
+	removeSession = 1; /* set it first - same as above */
+	pretc = pam_open_session( pamh, 0 );
+	ReInitErrorLog();
+	if (pretc != PAM_SUCCESS) {
+		LogError( "pam_open_session() for %s failed: %s\n",
+		          curuser, pam_strerror( pamh, pretc ) );
+		resetGids();
+		return 0;
+	}
+
+	/* we don't want sessreg and the startup/reset scripts run with user
+	   credentials. unfortunately, we can reset only the gids. */
+	resetGids();
+
+# define D_LOGIN_SETGROUPS LOGIN_SETGROUPS
+#else /* USE_PAM */
+# define D_LOGIN_SETGROUPS 0
+#endif /* USE_PAM */
+
 	removeAuth = 1;
 	chownCtrl( &td->ctrl, curuid );
 	endpwent();
@@ -1207,6 +1335,7 @@ StartClient()
 	case 0:
 
 		sessreg( td, getpid(), curuser, curuid );
+
 		if (source( systemEnviron, td->startup, td_setup )) {
 			LogError( "Cannot execute startup script %\"s\n", td->startup );
 			exit( 1 );
@@ -1216,32 +1345,15 @@ StartClient()
 			exit( 1 );
 		GSet( &mstrtalk );
 
-		/* Do system-dependent login setup here */
 		setsid();
 
 	/* Memory leaks are ok here as we exec() soon. */
 
 #if defined(USE_PAM) || !defined(_AIX)
 
-# ifndef HAVE_SETUSERCONTEXT
-		if (!SetGid( curuser, curgid ))
-			exit( 1 );
-# endif
 # ifdef USE_PAM
-#  ifdef _AIX
-		if (!(environ = initStrArr( 0 )))
-			exit( 1 );
-#  endif
-		if ((pretc = pam_setcred( pamh, 0 )) != PAM_SUCCESS) {
-			ReInitErrorLog();
-			LogError( "pam_setcred() for %s failed: %s\n",
-			          curuser, pam_strerror( pamh, pretc ) );
-			exit( 1 );
-		}
 		/* pass in environment variables set by libpam and modules it called */
-#  ifdef _AIX
-		pam_env = environ;
-#  else
+#  ifndef _AIX
 		pam_env = pam_getenvlist( pamh );
 		ReInitErrorLog();
 #  endif
@@ -1249,19 +1361,36 @@ StartClient()
 			for (; *pam_env; pam_env++)
 				userEnviron = putEnv( *pam_env, userEnviron );
 # endif
-# ifndef HAVE_SETUSERCONTEXT
-#  ifdef HAVE_SETLOGIN
+
+# ifdef HAVE_SETLOGIN
 		if (setlogin( curuser ) < 0) {
 			LogError( "setlogin for %s failed: %m\n", curuser );
 			exit( 1 );
 		}
-#  endif
+#  define D_LOGIN_SETLOGIN LOGIN_SETLOGIN
+# else
+#  define D_LOGIN_SETLOGIN 0
+# endif
+
+# if defined(USE_PAM) && defined(HAVE_INITGROUPS)
+		if (!restoreGids())
+			exit( 1 );
+# endif
+
+# ifndef HAVE_SETUSERCONTEXT
+
+#  ifdef USE_PAM
 		if (!SetUid( curuser, curuid ))
 			exit( 1 );
-# else /* HAVE_SETUSERCONTEXT */
+#  else
+		if (!SetUser( curuser, curuid, curgid ))
+			exit( 1 );
+#  endif
+
+# else /* !HAVE_SETUSERCONTEXT */
 
 		/*
-		 * Destroy environment unless user has requested its preservation.
+		 * Destroy environment.
 		 * We need to do this before setusercontext() because that may
 		 * set or reset some environment variables.
 		 */
@@ -1272,7 +1401,9 @@ StartClient()
 		 * Set the user's credentials: uid, gid, groups,
 		 * environment variables, resource limits, and umask.
 		 */
-		if (setusercontext( NULL, p, p->pw_uid, LOGIN_SETALL ) < 0) {
+		if (setusercontext( lc, p, p->pw_uid,
+		        LOGIN_SETALL & ~(D_LOGIN_SETGROUPS|D_LOGIN_SETLOGIN) ) < 0)
+		{
 			LogError( "setusercontext for %s failed: %m\n", curuser );
 			exit( 1 );
 		}
@@ -1280,8 +1411,9 @@ StartClient()
 		for (i = 0; environ[i]; i++)
 			userEnviron = putEnv( environ[i], userEnviron );
 
-# endif /* HAVE_SETUSERCONTEXT */
-#else /* _AIX */
+# endif /* !HAVE_SETUSERCONTEXT */
+
+#else /* PAM || !_AIX */
 		/*
 		 * Set the user's credentials: uid, gid, groups,
 		 * audit classes, user limits, and umask.
@@ -1465,51 +1597,76 @@ StartClient()
 void
 SessionExit( int status )
 {
+	int pid;
+#ifdef USE_PAM
+	int pretc;
+#endif
+
+	if (removeAuth) {
+		if (source( systemEnviron, td->reset, td_setup ))
+			LogError( "Cannot execute reset script %\"s\n", td->reset );
+		sessreg( td, 0, 0, 0 );
+
+		switch ((pid = Fork())) {
+		case 0:
+#if defined(USE_PAM) && defined(HAVE_INITGROUPS)
+			if (restoreGids() && SetUid( curuser, curuid ))
+#else
+			if (SetUser( curuser, curuid, curgid ))
+#endif
+
+			{
+				RemoveUserAuthorization( td );
+#ifdef K5AUTH
+				Krb5Destroy( td->name );
+#endif /* K5AUTH */
+#if !defined(USE_PAM) && !defined(_AIX)
+# ifdef KERBEROS
+				if (krbtkfile[0]) {
+					(void)dest_tkt();
+#  ifdef AFS
+					if (k_hasafs())
+						(void)k_unlog();
+#  endif
+				}
+# endif
+#endif /* !USE_PAM && !_AIX*/
+			}
+			exit( 0 );
+		case -1:
+			LogError( "Cannot clean up session: fork() failed: %m" );
+			break;
+		default:
+			Wait4( pid );
+			break;
+		}
+	}
+
+#ifdef USE_PAM
+# ifdef HAVE_INITGROUPS
+	restoreGids();
+# endif
+	if (removeSession)
+		if ((pretc = pam_close_session( pamh, 0 )) != PAM_SUCCESS)
+			LogError( "pam_close_session() failed: %s\n",
+			          pam_strerror( pamh, pretc ) );
+	if (removeCreds)
+		if ((pretc = pam_setcred( pamh, PAM_DELETE_CRED )) != PAM_SUCCESS)
+			LogError( "pam_setcred(DELETE_CRED) failed: %s\n",
+			          pam_strerror( pamh, pretc ) );
+	resetGids();
+	if (pamh) {
+		pam_end( pamh, PAM_SUCCESS );
+		ReInitErrorLog();
+	}
+#endif
+
 	/* make sure the server gets reset after the session is over */
 	if (td->serverPid >= 2) {
 		if (!td->terminateServer && td->resetSignal)
 			TerminateProcess( td->serverPid, td->resetSignal );
 	} else
 		ResetServer( td );
-	if (removeAuth) {
-#ifdef USE_PAM
-		int pretc;
-		if ((pretc = pam_setcred( pamh, PAM_DELETE_CRED )) != PAM_SUCCESS)
-			LogError( "pam_setcred(DELETE_CRED) for %s failed: %s\n",
-			          curuser, pam_strerror( pamh, pretc ) );
-		pam_close_session( pamh, 0 );
-		pam_end( pamh, PAM_SUCCESS );
-		ReInitErrorLog();
-#endif
-
-		if (source( systemEnviron, td->reset, td_setup ))
-			LogError( "Cannot execute reset script %\"s\n", td->reset );
-		sessreg( td, 0, 0, 0 );
-
-		SetUser( curuser, curuid, curgid );
-		RemoveUserAuthorization( td );
-#ifdef K5AUTH
-		Krb5Destroy( td->name );
-#endif /* K5AUTH */
-#if !defined(USE_PAM) && !defined(_AIX)
-# ifdef KERBEROS
-		if (krbtkfile[0]) {
-			(void)dest_tkt();
-#  ifdef AFS
-			if (k_hasafs())
-				(void)k_unlog();
-#  endif
-		}
-# endif
-#endif /* !USE_PAM && !_AIX*/
-#ifdef USE_PAM
-	} else {
-		if (pamh) {
-			pam_end( pamh, PAM_SUCCESS );
-			ReInitErrorLog();
-		}
-#endif
-	}
 	Debug( "display %s exiting with status %d\n", td->name, status );
 	exit( status );
 }
