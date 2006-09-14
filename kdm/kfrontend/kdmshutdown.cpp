@@ -624,7 +624,7 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 #endif
 	box->addWidget( new QLabel( QString( "<qt><center><b><nobr>"
 	                                     "%1%2"
-	                                     "</nobr></b></center><br></qt>" )
+	                                     "</nobr></b></center></qt>" )
 	                            .arg( (type == SHUT_HALT) ?
 	                                  i18n("Turn Off Computer") :
 #ifdef HAVE_VTS
