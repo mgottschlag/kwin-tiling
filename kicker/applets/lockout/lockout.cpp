@@ -39,6 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 #include <kapplication.h>
+#include <kglobalsettings.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -117,7 +118,7 @@ Lockout::Lockout( const QString& configFile, QWidget *parent )
     logoutButton->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 
 
-    connect( kapp, SIGNAL( iconChanged(int) ), SLOT( slotIconChanged() ));
+    connect( KGlobalSettings::self(), SIGNAL( iconChanged(int) ), SLOT( slotIconChanged() ));
 }
 
 Lockout::~Lockout()
