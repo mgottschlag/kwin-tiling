@@ -689,7 +689,7 @@ emitXSessG( struct display *di, struct display *d, void *ctx ATTR_UNUSED )
 #ifdef XDMCP
 	if (di->status == remoteLogin) {
 		GSendStr( "" );
-		GSendStr( d->remoteHost );
+		GSendStr( di->remoteHost );
 	} else
 #endif
 	{
