@@ -50,8 +50,8 @@
 #include <kaboutdata.h>
 #include "toplevel.moc"
 
-TopLevel::TopLevel(const char* name)
-  : KMainWindow( 0, name, Qt::WStyle_ContextHelp  )
+TopLevel::TopLevel()
+  : KMainWindow( 0, Qt::WStyle_ContextHelp  )
   , _active(0), dummyAbout(0)
 {
   setCaption(QString());

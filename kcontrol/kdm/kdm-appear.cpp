@@ -411,7 +411,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 	if(!url->isLocalFile()) {
 	    pixurl.setPath(KGlobal::dirs()->resourceDirs("data").last() +
 		     "kdm/pics/" + url->fileName());
-	    KIO::NetAccess::copy(*url, pixurl, parentWidget());
+	    KIO::NetAccess::file_copy(*url, pixurl, parentWidget());
 	    istmp = true;
 	} else {
 	    pixurl = *url;

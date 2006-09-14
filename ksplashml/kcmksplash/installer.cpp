@@ -189,7 +189,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   if ( KIO::NetAccess::exists( url, true, 0 ) )
     KIO::NetAccess::del( url, 0 );
 
-  bool rc = KIO::NetAccess::copy(srcURL, url, 0);
+  bool rc = KIO::NetAccess::file_copy(srcURL, url, 0);
   if (!rc)
   {
     kWarning() << "Failed to copy theme " << srcURL.fileName()

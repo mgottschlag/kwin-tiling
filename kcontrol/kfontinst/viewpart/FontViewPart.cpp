@@ -232,7 +232,7 @@ void CFontViewPart::install()
     {
         KUrl destUrl(getDest(m_url, KMessageBox::No==resp));
 
-        if(KIO::NetAccess::copy(m_url, destUrl, itsFrame->parentWidget()))
+        if(KIO::NetAccess::file_copy(m_url, destUrl, itsFrame->parentWidget()))
         {
             //
             // OK file copied, now look for any AFM or PFM file...
@@ -248,7 +248,7 @@ void CFontViewPart::install()
                 for(it=urls.begin(); it!=end; ++it)
                 {
                     destUrl=getDest(*it, KMessageBox::No==resp);
-                    KIO::NetAccess::copy(*it, destUrl, itsFrame->parentWidget());
+                    KIO::NetAccess::file_copy(*it, destUrl, itsFrame->parentWidget());
                 }
             }
 

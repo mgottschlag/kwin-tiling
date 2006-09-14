@@ -33,7 +33,7 @@ class KMenuEdit : public KMainWindow
     Q_OBJECT
 
 public:
-    KMenuEdit( bool controlCenter, QWidget *parent=0, const char *name=0 );
+    KMenuEdit( bool controlCenter);
     ~KMenuEdit();
 
     void selectMenu(const QString &menu) { m_tree->selectMenu(menu); }

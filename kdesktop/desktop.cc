@@ -757,7 +757,7 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
         src.setPath( tmpFile.name() );
         KUrl dest( KDIconView::desktopUrl() );
         dest.addPath( filename );
-        KIO::NetAccess::copy( src, dest, 0 );
+        KIO::NetAccess::file_copy( src, dest, 0 );
         tmpFile.unlink();
     }
     else if (result == setAsWallpaper)

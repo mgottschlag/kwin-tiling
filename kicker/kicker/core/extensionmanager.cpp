@@ -290,7 +290,7 @@ void ExtensionManager::migrateMenubar()
                     if (appletFile.indexOf("menuapplet.desktop") != -1)
                     {
                         QString menubarConfig = KStandardDirs::locate("config", extension);
-                        KIO::NetAccess::copy(menubarConfig,
+                        KIO::NetAccess::file_copy(menubarConfig,
                                              KStandardDirs::locateLocal("config",
                                              "kicker_menubarpanelrc"), 0);
                         elist.removeAll(appletId);

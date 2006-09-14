@@ -38,8 +38,8 @@
 #include "kmenuedit.h"
 #include "kmenuedit.moc"
 
-KMenuEdit::KMenuEdit (bool controlCenter, QWidget *, const char *name)
-  : KMainWindow (0, name), m_tree(0), m_basicTab(0), m_splitter(0), m_controlCenter(controlCenter)
+KMenuEdit::KMenuEdit (bool controlCenter)
+  : KMainWindow (0), m_tree(0), m_basicTab(0), m_splitter(0), m_controlCenter(controlCenter)
 {
 #if 0
     m_showHidden = config->readEntry("ShowHidden", QVariant(false)).toBool();

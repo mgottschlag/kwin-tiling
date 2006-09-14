@@ -468,7 +468,7 @@ void LayoutConfig::displayNameChanged(const QString& newDisplayName)
 
 /** will update flag with label if layout label has been edited
 */
-void LayoutConfig::updateIndicator(Q3ListViewItem* selLayout)
+void LayoutConfig::updateIndicator(Q3ListViewItem*)
 {
 }
 

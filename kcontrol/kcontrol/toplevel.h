@@ -44,7 +44,7 @@ class TopLevel : public KMainWindow
   Q_OBJECT
 
 public:
-  TopLevel( const char* name=0 );
+  TopLevel();
   ~TopLevel();
 
 protected:
