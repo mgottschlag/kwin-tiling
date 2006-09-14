@@ -49,6 +49,11 @@ from the copyright holder.
 # define USE_SYSLOG
 #endif
 
+#ifdef __linux__
+/* This needs to be run-time configurable, additionally. */
+# define HAVE_VTS
+#endif
+
 #define DEBUG_CORE     0x01
 #define DEBUG_CONFIG   0x02
 #define DEBUG_GREET    0x04

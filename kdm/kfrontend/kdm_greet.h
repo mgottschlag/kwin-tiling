@@ -26,8 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef _KDM_GREET_H_
 #define _KDM_GREET_H_
 
-#include <greet.h> /* for the ATTR_ defines */
-#include <config.ci> /* for the HAVE_VTS define */
+#include <greet.h>
 
 #ifdef __cplusplus
 extern "C" {

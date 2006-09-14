@@ -60,8 +60,7 @@
 # define DEF_AUTH_NAME	"MIT-MAGIC-COOKIE-1"
 #endif
 
-#ifdef __linux__
-# define HAVE_VTS
+#ifdef HAVE_VTS
 #elif defined(__sun__)
 # define DEF_SERVER_TTY "console"
 #elif defined(_AIX)
