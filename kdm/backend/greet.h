@@ -40,6 +40,10 @@ from the copyright holder.
 #include <config-unix.h>
 #include <config-kdm.h>
 
+#if defined(__sun) && !defined(__sun__)
+# define __sun__
+#endif
+
 #ifdef HAVE_PAM
 # define USE_PAM
 #elif defined(HAVE_GETSPNAM)

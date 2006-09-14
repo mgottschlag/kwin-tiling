@@ -22,12 +22,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
+#include <greet.h>
+
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
-
-#include <config.h>
-#include <config-unix.h>
-#include <config-kdm.h>
 
 #include <sys/types.h>
 #include <stdio.h>
@@ -51,21 +49,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #endif
 
 #include <config.ci>
-
-#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-# define ATTR_UNUSED __attribute__((unused))
-#else
-# define ATTR_UNUSED
-#endif
-
-#if defined(__sun) && !defined(__sun__)
-# define __sun__
-#endif
-
-#define as(ar) ((int)(sizeof(ar)/sizeof(ar[0])))
-
-#define __stringify(x) #x
-#define stringify(x) __stringify(x)
 
 #define RCVERSTR stringify(RCVERMAJOR) "." stringify(RCVERMINOR)
 
@@ -1118,10 +1101,6 @@ joinArgs( StrList *argv )
 	return rs;
 }
 
-# define dLocation  1
-# define dLocal     0
-# define dForeign   1
-
 static struct displayMatch {
 	const char *name;
 	int len, type;
@@ -1204,7 +1183,7 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 			se->reserve = 1;
 			word = ReadWord( &file, 1 );
 		}
-		if (((se->type & dLocation) == dLocal) != (word != 0))
+		if (((se->type & d_location) == dLocal) != (word != 0))
 			continue;
 		argp = &se->argv;
 		arglp = &se->arglv;
@@ -1243,7 +1222,7 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 			word = ReadWord( &file, 1 );
 		}
 		*argp = *arglp = 0;
-		if ((se->type & dLocation) == dLocal) {
+		if ((se->type & d_location) == dLocal) {
 			nldpys++;
 			dpymask |= 1 << atoi( se->name + 1 );
 			if (se->reserve)
@@ -1259,7 +1238,7 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 	cpvt = 0;
 	getInitTab();
 	for (se = serverList, mtty = maxTTY; se; se = se->next)
-		if ((se->type & dLocation) == dLocal) {
+		if ((se->type & d_location) == dLocal) {
 			mtty++;
 			if (se->vt != mtty) {
 				cpvt = 1;
@@ -1275,7 +1254,7 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 
 	se1 = 0, cpcmd = cpcmdl = 0;
 	for (se = serverList; se; se = se->next)
-		if ((se->type & dLocation) == dLocal) {
+		if ((se->type & d_location) == dLocal) {
 			if (!se1)
 				se1 = se;
 			else {
@@ -1289,7 +1268,7 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 		putfqval( "X-:*-Core", "ServerCmd", se1->argvs );
 		putfqval( "X-:*-Core", "ServerArgsLocal", se1->arglvs );
 		for (se = serverList; se; se = se->next)
-			if ((se->type & dLocation) == dLocal) {
+			if ((se->type & d_location) == dLocal) {
 				char sec[32];
 				sprintf( sec, "X-%s-Core", se->name );
 				if (cpcmd)
