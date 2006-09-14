@@ -1640,18 +1640,19 @@ SessionExit( int status )
 	}
 
 #ifdef USE_PAM
+	if (removeCreds) {
 # ifdef HAVE_INITGROUPS
-	restoreGids();
+		restoreGids();
 # endif
-	if (removeSession)
-		if ((pretc = pam_close_session( pamh, 0 )) != PAM_SUCCESS)
-			LogError( "pam_close_session() failed: %s\n",
-			          pam_strerror( pamh, pretc ) );
-	if (removeCreds)
+		if (removeSession)
+			if ((pretc = pam_close_session( pamh, 0 )) != PAM_SUCCESS)
+				LogError( "pam_close_session() failed: %s\n",
+				          pam_strerror( pamh, pretc ) );
 		if ((pretc = pam_setcred( pamh, PAM_DELETE_CRED )) != PAM_SUCCESS)
 			LogError( "pam_setcred(DELETE_CRED) failed: %s\n",
 			          pam_strerror( pamh, pretc ) );
-	resetGids();
+		resetGids();
+	}
 	if (pamh) {
 		pam_end( pamh, PAM_SUCCESS );
 		ReInitErrorLog();
