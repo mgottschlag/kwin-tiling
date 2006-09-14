@@ -46,19 +46,6 @@ int GetCfgInt( int id );
 char *GetCfgStr( int id );
 char **GetCfgStrArr( int id, int *len );
 
-typedef struct dpySpec {
-	struct dpySpec *next;
-	char *display, *from, *user, *session;
-#ifdef HAVE_VTS
-	int vt;
-#endif
-	int flags;
-	int count;
-} dpySpec;
-
-dpySpec *fetchSessions( int flags );
-void disposeSessions( dpySpec *sess );
-
 void freeStrArr( char **arr );
 
 void Debug( const char *fmt, ... );

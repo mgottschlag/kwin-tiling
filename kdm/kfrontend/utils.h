@@ -1,10 +1,6 @@
 /*
 
-Configuration for kdm
-
-Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
-Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
-
+Copyright (C) 2005-2006 Oswald Buddenhagen <ossi@kde.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,30 +19,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 
-#ifndef KDMCONFIG_H
-#define KDMCONFIG_H
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <greet.h>
-#include <config.ci>
-
-#ifdef __cplusplus
 
 #include <QString>
-#include <QStringList>
-#include <QFont>
 
-extern QString _stsFile;
-extern bool _isLocal;
-extern bool _authorized;
-
-CONF_GREET_CPP_DECLS
-
-void init_config_qapp();
-
-extern "C"
+typedef struct dpySpec {
+	struct dpySpec *next;
+	char *display, *from, *user, *session;
+#ifdef HAVE_VTS
+	int vt;
 #endif
-void init_config( void );
+	int flags;
+	int count;
+} dpySpec;
 
-CONF_GREET_C_DECLS
+dpySpec *fetchSessions( int flags );
+void disposeSessions( dpySpec *sess );
 
-#endif /* KDMCONFIG_H */
+void decodeSess( dpySpec *sess, QString &user, QString &loc );
+
+#endif /* UTILS_H */

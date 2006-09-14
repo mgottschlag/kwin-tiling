@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kdmshutdown.h"
 #include "kdm_greet.h"
+#include "utils.h"
 
 #include <kapplication.h>
 #include <kseparator.h>

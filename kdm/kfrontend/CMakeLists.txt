@@ -43,6 +43,8 @@ set(kdm_greet_SRCS
 	kgreeter.h
 	kgapp.cpp
 	kgapp.h
+	utils.cpp
+	utils.h
 	${kdmthemer_SRCS}
 )
 if (XDMCP)

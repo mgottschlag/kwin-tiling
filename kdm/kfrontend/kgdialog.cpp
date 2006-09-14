@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kconsole.h"
 #include "kdmshutdown.h"
 #include "kdm_greet.h"
+#include "utils.h"
 
 #include <klocale.h>
 

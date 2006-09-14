@@ -293,65 +293,6 @@ GetCfgStrArr( int id, int *len )
 	return GRecvStrArr( len );
 }
 
-static void
-disposeSession( dpySpec *sess )
-{
-	free( sess->display );
-	free( sess->from );
-	if (sess->user)
-		free( sess->user );
-	if (sess->session)
-		free( sess->session );
-}
-
-dpySpec *
-fetchSessions( int flags )
-{
-	dpySpec *sess, *sessions = 0, tsess;
-
-	GSet( 1 );
-	GSendInt( G_List );
-	GSendInt( flags );
-  next:
-	while ((tsess.display = GRecvStr())) {
-		tsess.from = GRecvStr();
-#ifdef HAVE_VTS
-		tsess.vt = GRecvInt();
-#endif
-		tsess.user = GRecvStr();
-		tsess.session = GRecvStr();
-		tsess.flags = GRecvInt();
-		if ((tsess.flags & isTTY) && *tsess.from)
-			for (sess = sessions; sess; sess = sess->next)
-				if (sess->user && !strcmp( sess->user, tsess.user ) &&
-				    !strcmp( sess->from, tsess.from ))
-				{
-					sess->count++;
-					disposeSession( &tsess );
-					goto next;
-				}
-		if (!(sess = malloc( sizeof(*sess) )))
-			LogPanic( "Out of memory\n" );
-		tsess.count = 1;
-		tsess.next = sessions;
-		*sess = tsess;
-		sessions = sess;
-	}
-	GSet( 0 );
-	return sessions;
-}
-
-void
-disposeSessions( dpySpec *sess )
-{
-	while (sess) {
-		dpySpec *nsess = sess->next;
-		disposeSession( sess );
-		free( sess );
-		sess = nsess;
-	}
-}
-
 void
 freeStrArr( char **arr )
 {
