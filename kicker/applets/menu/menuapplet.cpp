@@ -35,6 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <klocale.h>
 #include <kwin.h>
 #include <kwinmodule.h>
@@ -93,7 +94,7 @@ Applet::Applet( const QString& configFile_P, QWidget* parent_P )
     {
         //dcopclient.registerAs( "menuapplet", false );
     // toolbarAppearanceChanged(int) is sent when changing macstyle
-    connect( kapp, SIGNAL( toolbarAppearanceChanged( int )),
+    connect( KGlobalSettings::self(), SIGNAL( toolbarAppearanceChanged( int )),
         this, SLOT( readSettings()));
     claimSelection();
     readSettings();

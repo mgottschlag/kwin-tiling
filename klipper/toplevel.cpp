@@ -184,7 +184,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     showTimer = new QTime();
 
     readProperties(m_config);
-    connect(kapp, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
+    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
 
     poll = new ClipboardPoll( this );
     connect( poll, SIGNAL( clipboardChanged( bool ) ),

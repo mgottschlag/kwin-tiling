@@ -40,6 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <kglobalaccel.h>
 #include <kactioncollection.h>
 #include <kaction.h>
@@ -135,7 +136,7 @@ TaskBar::TaskBar( QWidget *parent )
 
     blocklayout = false;
 
-    connect(kapp, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
+    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
     keys = new KActionCollection( this );
     KActionCollection* actionCollection = keys;
     KAction* a = 0L;
