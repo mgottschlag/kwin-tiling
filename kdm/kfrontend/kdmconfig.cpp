@@ -25,7 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kdmconfig.h"
 #include "kdm_greet.h"
 
-#include <kapplication.h>
+#include <kglobal.h>
+#include <kconfig.h>
 #include <klocale.h>
 
 #include <stdio.h>
@@ -149,6 +150,13 @@ void init_config( void )
 void init_config_qapp( void )
 {
 	CONF_GREET_INIT_QAPP
+
+	KConfig *cfg = KGlobal::config();
+	cfg->setGroup( "General" );
+	cfg->writeEntry( "nopaletteChange", true );
+	cfg->writeEntry( "font", *_normalFont );
+	if (!_GUIStyle.isEmpty())
+		cfg->writeEntry( "widgetStyle", _GUIStyle );
 }
 
 

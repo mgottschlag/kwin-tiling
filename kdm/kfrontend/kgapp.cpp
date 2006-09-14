@@ -142,11 +142,9 @@ kg_main( const char *argv0 )
 	KInstance inst( argv[0] );
 	GreeterApp app( 1, argv );
 	init_config_qapp();
+	KGlobalSettings::self();
 
 	Display *dpy = QX11Info::display();
-
-	if (!_GUIStyle.isEmpty())
-		app.setStyle( _GUIStyle );
 
 	_colorScheme = KStandardDirs::locate( "data", "kdisplay/color-schemes/" + _colorScheme + ".kcsrc" );
 	if (!_colorScheme.isEmpty()) {
@@ -154,8 +152,6 @@ kg_main( const char *argv0 )
 		config.setGroup( "Color Scheme" );
 		app.setPalette( KGlobalSettings::createApplicationPalette( &config, 7 ) );
 	}
-
-	app.setFont( *_normalFont );
 
 	setup_modifiers( dpy, _numLockStatus );
 	SecureDisplay( dpy );
