@@ -94,7 +94,7 @@ int main( int argc, char* argv[])
     XMapWindow( dpy, win );
     int pos = 0;
     int state = 1; // cannot check dcop connection - make this state initial
-    const int delay = 10; // ms
+    const int delay = 200; // ms
     time_t final_time = time( NULL ) + 60;
     time_t test_time = time( NULL ) + 1;
     Atom kde_splash_progress = XInternAtom( dpy, "_KDE_SPLASH_PROGRESS", False );
