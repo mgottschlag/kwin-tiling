@@ -40,6 +40,9 @@ public:
 	KdmLabel( KdmItem *parent, const QDomNode &node, const char *name = 0 );
 	void setText( const QString &txt );
 
+	static QString timedUser;
+	static int timedDelay;
+
 protected:
 	// reimplemented; returns the minimum size of rendered text
 	virtual QSize sizeHint();

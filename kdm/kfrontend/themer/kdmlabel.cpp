@@ -23,7 +23,6 @@
 #include <config-kdm.h>
 
 #include "kdmlabel.h"
-#include <kgreeter.h>
 
 #include <kglobal.h>
 #include <klocale.h>
@@ -204,6 +203,9 @@ KdmLabel::lookupStock( const QString &stock )
 	return stock;
 }
 
+QString KdmLabel::timedUser = QString();
+int KdmLabel::timedDelay = -1;
+
 QString
 KdmLabel::lookupText( const QString &t )
 {
@@ -224,8 +226,8 @@ KdmLabel::lookupText( const QString &t )
 #elif defined(HAVE_SYSINFO)
 	m['o'] = (unsigned)sysinfo( SI_SRPC_DOMAIN, buf, sizeof(buf) ) > sizeof(buf) ? "localdomain" : QString::fromLocal8Bit( buf );
 #endif
-	m['d'] = QString::number( KThemedGreeter::timedDelay );
-	m['s'] = KThemedGreeter::timedUser;
+	m['d'] = QString::number( timedDelay );
+	m['s'] = timedUser;
 	// xgettext:no-c-format
 	KGlobal::locale()->setDateFormat( i18nc("date format", "%a %d %B") );
 	m['c'] = KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), false, false );

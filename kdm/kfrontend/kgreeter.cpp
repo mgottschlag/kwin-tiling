@@ -902,9 +902,6 @@ KThemedGreeter::verifyRetry()
 //	goButton->setEnabled( true );
 }
 
-QString KThemedGreeter::timedUser = QString();
-int KThemedGreeter::timedDelay = -1;
-
 void
 KThemedGreeter::updateStatus( bool fail, bool caps, int timedleft )
 {
@@ -922,14 +919,14 @@ KThemedGreeter::updateStatus( bool fail, bool caps, int timedleft )
 	}
 	if (timed_label) {
 		if (timedleft) {
-			if (timedleft != timedDelay) {
-				timedDelay = timedleft;
-				timedUser = curUser;
+			if (timedleft != KdmLabel::timedDelay) {
+				KdmLabel::timedDelay = timedleft;
+				KdmLabel::timedUser = curUser;
 				timed_label->show( true );
 				timed_label->update();
 			}
 		} else {
-			timedDelay = -1;
+			KdmLabel::timedDelay = -1;
 			timed_label->hide( true );
 		}
 	}

@@ -141,8 +141,6 @@ class KThemedGreeter : public KGreeter {
   public:
 	KThemedGreeter();
 	bool isOK() { return themer != 0; }
-	static QString timedUser;
-	static int timedDelay;
 
   public Q_SLOTS:
 	void slotThemeActivated( const QString &id );
