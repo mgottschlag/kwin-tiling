@@ -108,7 +108,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	void presetEntity( const QString &entity, int field );
 	QString getEntity() const;
 	void setUser( const QString &user );
-	/* virtual */ void selectPlugin( int id );
+	virtual void selectPlugin( int id );
 	bool entitiesLocal() const;
 	bool entitiesFielded() const;
 	bool entityPresettable() const;
