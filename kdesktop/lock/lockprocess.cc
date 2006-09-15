@@ -99,7 +99,7 @@ static Atom   gXA_SCREENSAVER_VERSION;
 // starting screensaver hacks, and password entry.f
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
-    : QWidget(0L, "saver window", Qt::WX11BypassWM),
+    : QWidget(0L, Qt::WX11BypassWM),
       mOpenGLVisual(0),
       child_saver(child),
       mParent(0),
@@ -110,6 +110,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mForbidden(false),
       mAutoLogout(false)
 {
+    setObjectName("save window");
     setupSignals();
 
     kapp->installX11EventFilter(this);

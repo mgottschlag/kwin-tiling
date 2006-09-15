@@ -31,8 +31,8 @@
 
 #include <stdio.h>
 
-ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
-   : QWidget (parent, name)
+ImportsView::ImportsView(QWidget * parent, KConfig *config )
+   : QWidget (parent)
    ,configFile(config)
    ,list(this)
 {

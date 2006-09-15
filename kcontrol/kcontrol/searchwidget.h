@@ -53,7 +53,7 @@ class SearchWidget : public QWidget
   Q_OBJECT    
   
 public:   
-  SearchWidget(QWidget *parent, const char *name=0);
+  SearchWidget(QWidget *parent);
 
   void populateKeywordList(ConfigModuleList *list);
 

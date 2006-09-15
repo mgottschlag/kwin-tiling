@@ -33,8 +33,8 @@
 #include "helpwidget.h"
 #include "helpwidget.moc"
 
-HelpWidget::HelpWidget(QWidget *parent , const char *name)
-  : QWidget(parent, name)
+HelpWidget::HelpWidget(QWidget *parent)
+  : QWidget(parent)
 {
   QVBoxLayout *l = new QVBoxLayout(this);
 

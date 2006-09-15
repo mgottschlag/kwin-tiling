@@ -42,8 +42,8 @@
 
 extern KSimpleConfig *config;
 
-KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
-    : QWidget(parent, name)
+KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
+    : QWidget(parent)
 {
     QString wtstr;
 

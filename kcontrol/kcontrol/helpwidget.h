@@ -29,7 +29,7 @@ class HelpWidget : public QWidget
   Q_OBJECT
 
 public:
-  HelpWidget(QWidget *parent, const char *name=0);
+  HelpWidget(QWidget *parent);
 
   void setText( const QString& docPath, const QString& text);
   void setBaseText();

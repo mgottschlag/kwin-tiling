@@ -33,7 +33,7 @@ class KDMSessionsWidget : public QWidget
 	Q_OBJECT
 
 public:
-	KDMSessionsWidget(QWidget *parent=0, const char *name=0);
+	KDMSessionsWidget(QWidget *parent=0);
 
 	void load();
 	void save();

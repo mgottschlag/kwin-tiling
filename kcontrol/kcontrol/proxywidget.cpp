@@ -156,9 +156,9 @@ void ProxyView::resizeEvent(QResizeEvent *e)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
+ProxyWidget::ProxyWidget(KCModule *client, QString title,
              bool run_as_root)
-  : QWidget(0, name)
+  : QWidget(0)
   , _client(client)
 {
  setWindowTitle(title);

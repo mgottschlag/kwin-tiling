@@ -63,8 +63,8 @@ QString HMSTimeWidget::mapValueToText(int value)
   return s;
 }
 
-Dtime::Dtime(QWidget * parent, const char *name)
-  : QWidget(parent, name)
+Dtime::Dtime(QWidget * parent)
+  : QWidget(parent)
 {
   // *************************************************************
   // Start Dialog
@@ -72,7 +72,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   // Time Server
 
-  privateLayoutWidget = new QWidget( this, "layout1" );
+  privateLayoutWidget = new QWidget( this );
   QHBoxLayout *layout1 = new QHBoxLayout( privateLayoutWidget );
   layout1->setObjectName( "ntplayout" );
   layout1->setSpacing( 0 );
@@ -115,7 +115,8 @@ Dtime::Dtime(QWidget * parent, const char *name)
   v2->setMargin( 0 );
   v2->setSpacing( KDialog::spacingHint() );
 
-  kclock = new Kclock( timeBox, "kclock" );
+  kclock = new Kclock( timeBox );
+  kclock->setObjectName("Kclock");
   kclock->setMinimumSize(150,150);
   v2->addWidget( kclock );
 

@@ -68,8 +68,8 @@ void KeywordListEntry::addModule(ConfigModule* module)
     _modules.append(module);
 }
 
-SearchWidget::SearchWidget(QWidget *parent , const char *name)
-  : QWidget(parent, name)
+SearchWidget::SearchWidget(QWidget *parent)
+  : QWidget(parent)
 {
   _keywords.setAutoDelete(true);
 

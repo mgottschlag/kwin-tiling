@@ -209,7 +209,7 @@ KDModule::KDModule(QWidget *parent, const QStringList &)
   connect(this, SIGNAL(delUsers(const QMap<QString,int> &)), users, SLOT(slotDelUsers(const QMap<QString,int> &)));
   connect(this, SIGNAL(clearUsers()), users, SLOT(slotClearUsers()));
 
-  convenience = new KDMConvenienceWidget(this, 0);
+  convenience = new KDMConvenienceWidget(this);
   tab->addTab(convenience, i18n("Con&venience"));
   connect(convenience, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
   connect(this, SIGNAL(addUsers(const QMap<QString,int> &)), convenience, SLOT(slotAddUsers(const QMap<QString,int> &)));

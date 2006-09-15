@@ -102,7 +102,7 @@ KickerTip* KickerTip::self()
 }
 
 KickerTip::KickerTip(QWidget * parent)
-    : QWidget(parent, "animtt", Qt::WX11BypassWM)
+    : QWidget(parent, Qt::WX11BypassWM)
 {
     d = new Private;
     d->timer.setSingleShot(true);

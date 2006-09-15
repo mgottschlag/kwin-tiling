@@ -36,8 +36,8 @@
 
 
 KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
-                                       QWidget *parent, const char*name)
-  : QWidget(parent, name),
+                                       QWidget *parent)
+  : QWidget(parent),
     m_locale(locale)
 {
   // Other

@@ -39,8 +39,8 @@
 extern KSimpleConfig *config;
 
 
-KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
-  : QWidget(parent, name)
+KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
+  : QWidget(parent)
 {
       QString wtstr;
 

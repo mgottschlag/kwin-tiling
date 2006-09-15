@@ -51,7 +51,7 @@ class Dtime : public QWidget
 {
   Q_OBJECT
  public:
-  Dtime( QWidget *parent=0, const char* name=0 );
+  Dtime( QWidget *parent=0 );
 
   void	save();
   void	load();
@@ -101,8 +101,8 @@ class Kclock : public QWidget
   Q_OBJECT
 
 public:
-  Kclock( QWidget *parent=0, const char *name=0 ) 
-    : QWidget(parent, name) {};
+  Kclock( QWidget *parent=0 ) 
+    : QWidget(parent) {};
 
   void setTime(const QTime&);
 

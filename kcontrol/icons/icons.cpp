@@ -75,7 +75,8 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
     push = addPreviewIcon(2, i18n("Disabled"), this, g_lay);
     connect(push, SIGNAL(clicked()), SLOT(slotEffectSetup2()));
 
-    m_pTab1 = new QWidget(this, "General Tab");
+    m_pTab1 = new QWidget(this);
+    m_pTab1->setObjectName("General Tab");
     top->addWidget(m_pTab1, 0, 1);
 
     QGridLayout *grid = new QGridLayout(m_pTab1);

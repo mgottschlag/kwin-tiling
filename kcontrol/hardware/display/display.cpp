@@ -57,7 +57,7 @@ KCMDisplay::KCMDisplay( QWidget *parent, const QStringList& )
 
 void KCMDisplay::addTab( const QString &name, const QString &label )
 {
-  QWidget *page = new QWidget( m_tabs, name.toLatin1() );
+  QWidget *page = new QWidget( m_tabs );
   QVBoxLayout *top = new QVBoxLayout( page );
   top->setMargin( KDialog::marginHint() );
 

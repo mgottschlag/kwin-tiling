@@ -309,19 +309,6 @@ bool GetInfo_Partitions(Q3ListView * lBox)
 
 // Some Ideas taken from garbazo from his source in info_fbsd.cpp
 
-#if SIZEOF_LONG > 4
-#define LONG_TYPE	unsigned long
-#else
-#ifdef HAVE_LONG_LONG
-#define LONG_TYPE	unsigned long long
-#else
-/* On 32-bit systems we would get an overflow in unsigned int for
-   drives bigger than 4GB. Let's use the ugly type double ! */
-#define LONG_TYPE	double
-#endif
-#endif
-
-
 
 #if ( defined(HAVE_LINUX_RAW_H) || defined(HAVE_SYS_RAW_H) ) && defined(HAVE_SYS_IOCTL_H) && defined(__GNUC__) && !defined(__STRICT_ANSI__)
 #include <sys/ioctl.h>
@@ -448,7 +435,7 @@ bool GetInfo_Partitions(Q3ListView * lbox)
 #endif
 
     struct statfs sfs;
-    LONG_TYPE total, avail;
+    quint64 total, avail;
     QString str, mountopts;
     QString MB(i18n("MB"));	/* "MB" = "Mega-Byte" */
 
@@ -500,9 +487,9 @@ bool GetInfo_Partitions(Q3ListView * lbox)
 	total = avail = 0;	/* initialize size.. */
 	found_in_List = (Mounted_Partitions.contains(FS_NAME) > 0);
 	if (found_in_List && statfs(FS_FILE, &sfs) == 0) {
-	    total = ((LONG_TYPE) sfs.f_blocks) * sfs.f_bsize;
+	    total = ((quint64) sfs.f_blocks) * sfs.f_bsize;
 	    avail = (getuid()? sfs.f_bavail : sfs.f_bfree)
-		* ((LONG_TYPE) sfs.f_bsize);
+		* ((quint64) sfs.f_bsize);
 	};
 	/*
 	   if (stat(fstab_ent->fs_file,&st)!=0)

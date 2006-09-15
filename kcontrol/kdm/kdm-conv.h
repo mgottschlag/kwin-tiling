@@ -44,7 +44,7 @@ class KDMConvenienceWidget : public QWidget
 	Q_OBJECT
 
 public:
-	KDMConvenienceWidget(QWidget *parent=0, const char *name=0);
+	KDMConvenienceWidget(QWidget *parent=0);
 
         void load();
         void save();
