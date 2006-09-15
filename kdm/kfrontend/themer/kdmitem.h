@@ -152,8 +152,8 @@ public:
 	virtual void setWidget( QWidget *widget );
 	void showWidget();
 
-	virtual void hide( bool force = false );
-	virtual void show( bool force = false );
+	void hide( bool force = false );
+	void show( bool force = false );
 
 	bool isHidden() const { return isShown != Shown; }
 	bool isExplicitlyHidden() const { return isShown == ExplicitlyHidden; }

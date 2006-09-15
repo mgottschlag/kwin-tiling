@@ -167,7 +167,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	void doReject( bool initial );
 
   private Q_SLOTS:
-	virtual void slotPluginSelected( QAction * );
+	void slotPluginSelected( QAction * );
 	void slotTimeout();
 	void slotActivity();
 
