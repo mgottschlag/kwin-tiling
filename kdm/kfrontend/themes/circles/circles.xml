@@ -132,12 +132,12 @@
     </box>
   </item>
 
-  <item type="rect">
+  <item type="rect" id="timed-label">
     <show type="timed"/>
     <normal color="#FFFFFF" alpha="0.5"/>
     <pos anchor="c" x="50%" y="25%" width="box" height="box"/>
     <box orientation="vertical" min-width="400" xpadding="10" ypadding="5" spacing="0">
-      <item type="label" id="timed-label">
+      <item type="label">
         <normal color="#000000" font="Sans 12"/>
         <pos x="50%" anchor="n"/>
 	<!-- Stock label for: User %s will login in %d seconds -->
