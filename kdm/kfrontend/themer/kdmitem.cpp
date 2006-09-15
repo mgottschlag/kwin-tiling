@@ -119,9 +119,8 @@ KdmItem::show( bool force )
 	if (isShown != InitialHidden && !force)
 		return;
 
-	QListIterator<KdmItem *> it( m_children );
-	while (it.hasNext())
-		it.next()->show();
+	foreach (KdmItem *itm, m_children)
+		itm->show();
 
 	isShown = Shown;
 
@@ -139,9 +138,8 @@ KdmItem::hide( bool force )
 		return;		// no need for further action
 	}
 
-	QListIterator<KdmItem *> it( m_children );
-	while (it.hasNext())
-		it.next()->hide();
+	foreach (KdmItem *itm, m_children)
+		itm->hide();
 
 	isShown = force ? ExplicitlyHidden : InitialHidden;
 
@@ -157,9 +155,8 @@ KdmItem::inheritFromButton( KdmItem *button )
 	if (button)
 		buttonParent = button;
 
-	QListIterator<KdmItem *> it( m_children );
-	while (it.hasNext())
-		it.next()->inheritFromButton( button );
+	foreach (KdmItem *itm, m_children)
+		itm->inheritFromButton( button );
 }
 
 KdmItem *
@@ -168,12 +165,9 @@ KdmItem::findNode( const QString &_id ) const
 	if (id == _id)
 		return const_cast<KdmItem *>( this );
 
-	QListIterator<KdmItem *> it( m_children );
-	while (it.hasNext()) {
-		KdmItem *t = it.next()->findNode( _id );
-		if (t)
+	foreach (KdmItem *itm, m_children)
+		if (KdmItem *t = itm->findNode( _id ))
 			return t;
-	}
 
 	return 0;
 }
@@ -254,9 +248,8 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 #endif
 
 	// Dispatch paint events to children
-	QListIterator<KdmItem *> it( m_children );
-	while (it.hasNext())
-		it.next()->paint( p, rect );
+	foreach (KdmItem *itm, m_children)
+		itm->paint( p, rect );
 }
 
 KdmItem *KdmItem::currentActive = 0;
@@ -292,11 +285,9 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 			state = Snormal;
 	}
 
-	if (!buttonParent) {
-		QListIterator<KdmItem *> it( m_children );
-		while (it.hasNext())
-			it.next()->mouseEvent( x, y, pressed, released );
-	}
+	if (!buttonParent)
+		foreach (KdmItem *itm, m_children)
+			itm->mouseEvent( x, y, pressed, released );
 
 	if (oldState != state)
 		statusChanged();
@@ -305,14 +296,11 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 void
 KdmItem::statusChanged()
 {
-	if (buttonParent == this) {
-		QListIterator<KdmItem *> it( m_children );
-		while (it.hasNext()) {
-			KdmItem *o = it.next();
+	if (buttonParent == this)
+		foreach (KdmItem *o, m_children) {
 			o->state = state;
 			o->statusChanged();
 		}
-	}
 }
 
 // BEGIN protected inheritable

@@ -531,12 +531,11 @@ KGVerify::handleFailVerify( QWidget *parent )
 			{
 				QStringList pgs( _pluginsLogin );
 				pgs += _pluginsShutdown;
-				QStringList::ConstIterator it;
-				for (it = pgs.begin(); it != pgs.end(); ++it)
-					if (*it == "classic" || *it == "modern") {
-						pgs = QStringList( *it );
+				foreach (QString pg, pgs)
+					if (pg == "classic" || pg == "modern") {
+						pgs = QStringList( pg );
 						goto gotit;
-					} else if (*it == "generic") {
+					} else if (pg == "generic") {
 						pgs = QStringList( "modern" );
 						goto gotit;
 					}
@@ -866,10 +865,9 @@ KGVerify::getConf( void *, const char *key, const QVariant &dflt )
 		return QVariant( _echoMode );
 	else {
 		QString fkey = QString::fromLatin1( key ) + '=';
-		for (QStringList::ConstIterator it = _pluginOptions.begin();
-		     it != _pluginOptions.end(); ++it)
-			if ((*it).startsWith( fkey ))
-				return (*it).mid( fkey.length() );
+		foreach (QString pgo, _pluginOptions)
+			if (pgo.startsWith( fkey ))
+				return pgo.mid( fkey.length() );
 		return dflt;
 	}
 }
@@ -881,12 +879,12 @@ KGVerify::init( const QStringList &plugins )
 {
 	PluginList pluginList;
 
-	for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it) {
+	foreach (QString pg, plugins) {
 		GreeterPluginHandle plugin;
 		QString path = KLibLoader::self()->findLibrary(
-			((*it)[0] == '/' ? *it : "kgreet_" + *it ).toLatin1() );
+			(pg[0] == '/' ? pg : "kgreet_" + pg ).toLatin1() );
 		if (path.isEmpty()) {
-                    LogError( "GreeterPlugin %s does not exist\n", qPrintable( *it ) );
+                    LogError( "GreeterPlugin %s does not exist\n", qPrintable( pg ) );
 			continue;
 		}
 		uint i, np = greetPlugins.count();
@@ -894,23 +892,23 @@ KGVerify::init( const QStringList &plugins )
 			if (greetPlugins[i].library->fileName() == path)
 				goto next;
 		if (!(plugin.library = KLibLoader::self()->library( path.toLatin1() ))) {
-                    LogError( "Cannot load GreeterPlugin %s (%s)\n", qPrintable( *it ), qPrintable( path ) );
+                    LogError( "Cannot load GreeterPlugin %s (%s)\n", qPrintable( pg ), qPrintable( path ) );
 			continue;
 		}
 		if (!plugin.library->hasSymbol( "kgreeterplugin_info" )) {
 			LogError( "GreeterPlugin %s (%s) is no valid greet widget plugin\n",
-			          qPrintable( *it ), qPrintable( path ) );
+			          qPrintable( pg ), qPrintable( path ) );
 			plugin.library->unload();
 			continue;
 		}
 		plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
 		if (!plugin.info->init( QString(), getConf, 0 )) {
 			LogError( "GreeterPlugin %s (%s) refuses to serve\n",
-			          qPrintable( *it ), qPrintable( path ) );
+			          qPrintable( pg ), qPrintable( path ) );
 			plugin.library->unload();
 			continue;
 		}
-		Debug( "GreeterPlugin %s (%s) loaded\n", qPrintable( *it ), plugin.info->name );
+		Debug( "GreeterPlugin %s (%s) loaded\n", qPrintable( pg ), plugin.info->name );
 		greetPlugins.append( plugin );
 	  next:
 		pluginList.append( i );

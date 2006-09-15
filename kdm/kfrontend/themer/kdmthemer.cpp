@@ -315,11 +315,7 @@ KdmThemer::showStructure( QObject *obj )
 		kDebug() << "\n\n<=======  Widget tree =================" << endl;
 	if (!wlist.isEmpty()) {
 		counter++;
-		QListIterator<QObject*> it( wlist );
-		QObject *object;
-
-		while (it.hasNext()) {
-			object = it.next();
+		foreach (QObject *object, wlist) {
 			QString node;
 			for (int i = 1; i < counter; i++)
 				node += '-';

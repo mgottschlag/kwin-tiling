@@ -338,20 +338,18 @@ KGreeter::putSession( const QString &type, const QString &name, bool hid, const 
 void
 KGreeter::insertSessions()
 {
-	for (char **dit = _sessionsDirs; *dit; ++dit) {
-		QStringList ents = QDir( *dit ).entryList();
-		for (QStringList::ConstIterator it = ents.begin(); it != ents.end(); ++it)
-			if ((*it).endsWith( ".desktop" )) {
-				KSimpleConfig dsk( QString( *dit ).append( '/' ).append( *it ) );
+	for (char **dit = _sessionsDirs; *dit; ++dit)
+		foreach (QString ent, QDir( *dit ).entryList())
+			if (ent.endsWith( ".desktop" )) {
+				KSimpleConfig dsk( QString( *dit ).append( '/' ).append( ent ) );
 				dsk.setGroup( "Desktop Entry" );
-				putSession( (*it).left( (*it).length() - 8 ),
+				putSession( ent.left( ent.length() - 8 ),
 				            dsk.readEntry( "Name" ),
 				            (dsk.readEntry( "Hidden", QVariant( false ) ).toBool() ||
 				             (dsk.hasKey( "TryExec" ) &&
 				              KStandardDirs::findExe( dsk.readEntry( "TryExec" ) ).isEmpty())),
 				            dsk.readEntry( "Exec" ).toLatin1() );
 			}
-	}
 	putSession( "default", i18n("Default"), false, "default" );
 	putSession( "custom", i18n("Custom"), false, "custom" );
 	putSession( "failsafe", i18n("Failsafe"), false, "failsafe" );
