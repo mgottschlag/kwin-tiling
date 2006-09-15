@@ -172,24 +172,23 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		}
 
 		if (pClass->tint.rgb() != 0xFFFFFFFF) {
-			qDebug("tinting");
 			// blend image(pix) with the given tint
 
 			int w = scaledImage.width();
 			int h = scaledImage.height();
-			float tint_red = float( pClass->tint.red() ) / 255;
-			float tint_green = float( pClass->tint.green() ) / 255;
-			float tint_blue = float( pClass->tint.blue() ) / 255;
-			float tint_alpha = float( pClass->tint.alpha() ) / 255;
+			int tint_red = pClass->tint.red();
+			int tint_green = pClass->tint.green();
+			int tint_blue = pClass->tint.blue();
+			int tint_alpha = pClass->tint.alpha();
 
 			for (int y = 0; y < h; ++y) {
 				QRgb *ls = (QRgb *)scaledImage.scanLine( y );
 				for (int x = 0; x < w; ++x) {
 					QRgb l = ls[x];
-					int r = int( qRed( l ) * tint_red );
-					int g = int( qGreen( l ) * tint_green );
-					int b = int( qBlue( l ) * tint_blue );
-					int a = int( qAlpha( l ) * tint_alpha );
+					int r = qRed( l ) * tint_red / 255;
+					int g = qGreen( l ) * tint_green / 255;
+					int b = qBlue( l ) * tint_blue / 255;
+					int a = qAlpha( l ) * tint_alpha / 255;
 					ls[x] = qRgba( r, g, b, a );
 				}
 			}
