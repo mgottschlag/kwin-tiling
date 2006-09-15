@@ -123,9 +123,6 @@ KdmItem::show( bool force )
 
 	isShown = Shown;
 
-	if (myWidget)
-		myWidget->show();
-
 	needUpdate();
 }
 
@@ -186,7 +183,7 @@ KdmItem::setWidget( QWidget *widget )
 
 	myWidget = widget;
 	myWidget->setGeometry( area );
-	myWidget->setHidden( isHidden() );
+	myWidget->hide(); // yes, really
 
 	connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
 }
@@ -195,6 +192,17 @@ void
 KdmItem::widgetGone()
 {
 	myWidget = 0;
+}
+
+void
+KdmItem::showWidget()
+{
+	if (isShown != Shown)
+		return;
+	if (myWidget)
+		myWidget->show();
+	foreach (KdmItem *itm, m_children)
+		itm->showWidget();
 }
 
 /* This is called as a result of KdmLayout::update, and directly on the root */

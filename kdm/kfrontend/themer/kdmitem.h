@@ -150,6 +150,7 @@ public:
 
 	KdmItem *findNode( const QString &id ) const;
 	virtual void setWidget( QWidget *widget );
+	void showWidget();
 
 	virtual void hide( bool force = false );
 	virtual void show( bool force = false );

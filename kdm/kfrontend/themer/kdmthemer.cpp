@@ -166,6 +166,7 @@ KdmThemer::widgetEvent( QEvent *e )
 
 			QPainter p( widget() );
 			rootItem->paint( &p, paintRect );
+			rootItem->showWidget();
 		}
 		break;
 	default:
