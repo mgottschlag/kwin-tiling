@@ -103,6 +103,8 @@ KdmItem::~KdmItem()
 void
 KdmItem::update()
 {
+	foreach (KdmItem *itm, m_children)
+		itm->update();
 }
 
 void

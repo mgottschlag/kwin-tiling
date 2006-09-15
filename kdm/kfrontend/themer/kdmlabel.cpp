@@ -161,6 +161,7 @@ KdmLabel::statusChanged()
 void
 KdmLabel::update()
 {
+	KdmItem::update();
 	QString text = lookupText( label.text );
 	if (text != cText) {
 		cText = text;
