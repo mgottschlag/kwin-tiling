@@ -123,7 +123,7 @@ KdmItem::show( bool force )
 
 	isShown = Shown;
 
-	needUpdate();
+	emit needPlacement();
 }
 
 void
@@ -146,7 +146,7 @@ KdmItem::hide( bool force )
 	if (myWidget)
 		myWidget->hide();
 
-	needUpdate();
+	emit needPlacement();
 }
 
 void
@@ -181,11 +181,12 @@ KdmItem::setWidget( QWidget *widget )
 {
 //	delete myWidget;	-- we *never* own the widget
 
-	myWidget = widget;
-	myWidget->setGeometry( area );
-	myWidget->hide(); // yes, really
+	if ((myWidget = widget)) {
+		myWidget->hide(); // yes, really
+		connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
+	}
 
-	connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
+	emit needPlacement();
 }
 
 void
@@ -199,8 +200,10 @@ KdmItem::showWidget()
 {
 	if (isShown != Shown)
 		return;
-	if (myWidget)
+	if (myWidget) {
+		myWidget->setGeometry( area );
 		myWidget->show();
+	}
 	foreach (KdmItem *itm, m_children)
 		itm->showWidget();
 }
@@ -215,9 +218,6 @@ KdmItem::setGeometry( const QRect &newGeometry, bool force )
 		return;
 
 	area = newGeometry;
-
-	if (myWidget)
-		myWidget->setGeometry( newGeometry );
 
 	// recurr to all boxed children
 	if (boxManager && !boxManager->isEmpty())
@@ -432,6 +432,7 @@ KdmItem::addChildItem( KdmItem *item )
 
 	// signal bounce from child to parent
 	connect( item, SIGNAL(needUpdate( int, int, int, int )), SIGNAL(needUpdate( int, int, int, int )) );
+	connect( item, SIGNAL(needPlacement()), SIGNAL(needPlacement()) );
 	connect( item, SIGNAL(activated( const QString & )), SIGNAL(activated( const QString & )) );
 }
 

@@ -75,8 +75,6 @@ public:
 	virtual // just to put the reference in the vmt
 	KdmItem *findNode( const QString & ) const;
 
-	void updateGeometry( bool force ); // force = true for external calls
-
 	// must be called by parent widget
 	void widgetEvent( QEvent *e );
 
@@ -99,6 +97,9 @@ private:
 	 */
 	KdmItem *rootItem;
 
+	bool m_geometryOutdated;
+	bool m_geometryInvalid;
+
 	// methods
 
 	/*
@@ -118,6 +119,7 @@ private:
 
 private Q_SLOTS:
 	void update( int x, int y, int w, int h );
+	void slotNeedPlacement();
 
 };
 

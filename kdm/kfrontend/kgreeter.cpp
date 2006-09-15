@@ -878,15 +878,12 @@ KThemedGreeter::pluginSetup()
 
 	if (userView && verify->entitiesLocal() && verify->entityPresettable() && userlist_rect) {
 		userlist_rect->setWidget( userView );
-		userView->show();
 	} else {
 		if (userView)
 			userView->hide();
 		if (userlist_rect)
 			userlist_rect->hide( true );
 	}
-
-	update();
 }
 
 void

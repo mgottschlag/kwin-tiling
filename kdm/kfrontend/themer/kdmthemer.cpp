@@ -55,6 +55,8 @@
 KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *parent )
 	: QObject( parent )
 	, rootItem( 0 )
+	, m_geometryOutdated( true )
+	, m_geometryInvalid( true )
 {
 	// Set the mode we're working in
 	m_currentMode = mode;
@@ -79,6 +81,8 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 	rootItem = new KdmRect( 0, QDomNode(), "kdm root" );
 	connect( rootItem, SIGNAL(needUpdate( int, int, int, int )),
 	         SLOT(update( int, int, int, int )) );
+	connect( rootItem, SIGNAL(needPlacement()),
+	         SLOT(slotNeedPlacement()) );
 
 	rootItem->setBaseDir( QFileInfo( filename ).absolutePath() );
 
@@ -113,9 +117,10 @@ KdmThemer::findNode( const QString &item ) const
 }
 
 void
-KdmThemer::updateGeometry( bool force )
+KdmThemer::slotNeedPlacement()
 {
-	rootItem->setGeometry( QRect( QPoint(), widget()->size() ), force );
+	m_geometryOutdated = m_geometryInvalid = true;
+	widget()->update();
 }
 
 void
@@ -154,10 +159,15 @@ KdmThemer::widgetEvent( QEvent *e )
 		rootItem->show();
 		break;
 	case QEvent::Resize:
-		updateGeometry( false );
-		showStructure( rootItem );
+		m_geometryOutdated = true;
+		widget()->update();
 		break;
 	case QEvent::Paint:
+		if (m_geometryOutdated) {
+			rootItem->setGeometry( QRect( QPoint(), widget()->size() ), m_geometryInvalid );
+			showStructure( rootItem );
+			m_geometryOutdated = m_geometryInvalid = false;
+		}
 		{
 			QRect paintRect = static_cast<QPaintEvent *>(e)->rect();
 			kDebug() << "paint on: " << paintRect << endl;

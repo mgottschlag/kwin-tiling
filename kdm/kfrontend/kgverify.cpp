@@ -1038,7 +1038,6 @@ KGThemedVerify::selectPlugin( int id )
 		else
 			n->setWidget( l );
 	}
-	themer->updateGeometry( true );
 }
 
 void

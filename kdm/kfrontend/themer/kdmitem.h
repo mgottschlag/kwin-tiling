@@ -161,6 +161,7 @@ public:
 
 Q_SIGNALS:
 	void needUpdate( int x, int y, int w, int h );
+	void needPlacement();
 	void activated( const QString &id );
 
 protected Q_SLOTS:
