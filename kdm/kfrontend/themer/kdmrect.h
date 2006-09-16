@@ -35,7 +35,7 @@ class KdmRect : public KdmItem {
 	Q_OBJECT
 
 public:
-	KdmRect( KdmItem *parent, const QDomNode &node, const char *name = 0 );
+	KdmRect( QObject *parent, const QDomNode &node, const char *name = 0 );
 
 protected:
 	// draw the rect

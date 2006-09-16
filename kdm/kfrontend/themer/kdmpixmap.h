@@ -36,7 +36,7 @@ class KdmPixmap : public KdmItem {
 	Q_OBJECT
 
 public:
-	KdmPixmap( KdmItem *parent, const QDomNode &node, const char *name = 0 );
+	KdmPixmap( QObject *parent, const QDomNode &node, const char *name = 0 );
 
 protected:
 	// reimplemented; returns the size of loaded pixmap

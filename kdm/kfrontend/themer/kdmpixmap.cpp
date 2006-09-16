@@ -30,7 +30,7 @@
 #include <QImage>
 #include <QSvgRenderer>
 
-KdmPixmap::KdmPixmap( KdmItem *parent, const QDomNode &node, const char *name )
+KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node, const char *name )
 	: KdmItem( parent, node, name )
 {
 	itemType = "pixmap";

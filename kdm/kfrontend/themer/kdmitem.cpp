@@ -40,7 +40,7 @@
 #include <QList>
 #endif
 
-KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
+KdmItem::KdmItem( QObject *parent, const QDomNode &node, const char *name )
 	: QObject( parent )
 	, boxManager( 0 )
 	, fixedManager( 0 )
@@ -64,10 +64,12 @@ KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
 	state = Snormal;
 
 	// The "toplevel" node (the screen) is really just like a fixed node
-	if (!parent || !parent->inherits( "KdmItem" )) {
+	KdmItem *parentItem = qobject_cast<KdmItem *>( parent );
+	if (!parentItem) {
 		setFixedLayout();
 		return;
 	}
+
 	// Read the mandatory Pos tag. Other tags such as normal, prelighted,
 	// etc.. are read under specific implementations.
 	QDomNodeList childList = node.childNodes();
@@ -89,7 +91,6 @@ KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
 	id = tnode.toElement().attribute( "id", QString::number( (ulong)this, 16 ) );
 
 	// Tell 'parent' to add 'me' to its children
-	KdmItem *parentItem = static_cast<KdmItem *>( parent );
 	parentItem->addChildItem( this );
 }
 

@@ -37,7 +37,7 @@ class KdmLabel : public KdmItem {
 	Q_OBJECT
 
 public:
-	KdmLabel( KdmItem *parent, const QDomNode &node, const char *name = 0 );
+	KdmLabel( QObject *parent, const QDomNode &node, const char *name = 0 );
 	void setText( const QString &txt );
 
 	static QString timedUser;

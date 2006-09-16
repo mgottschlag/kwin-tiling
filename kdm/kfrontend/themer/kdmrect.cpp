@@ -31,7 +31,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 
-KdmRect::KdmRect( KdmItem *parent, const QDomNode &node, const char *name )
+KdmRect::KdmRect( QObject *parent, const QDomNode &node, const char *name )
 	: KdmItem( parent, node, name )
 {
 	itemType = "rect";
@@ -73,7 +73,7 @@ KdmRect::KdmRect( KdmItem *parent, const QDomNode &node, const char *name )
 }
 
 void
-KdmRect::drawContents( QPainter *p, const QRect &r )
+KdmRect::drawContents( QPainter *p, const QRect & )
 {
 	// choose the correct rect class
 	RectStruct::RectClass *rClass = &rect.normal;

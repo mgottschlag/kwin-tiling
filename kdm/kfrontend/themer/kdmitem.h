@@ -88,7 +88,7 @@ public:
 	/**
 	 * Item constructor and destructor
 	 */
-	KdmItem( KdmItem *parent, const QDomNode &node = QDomNode(), const char *name = 0 );
+	KdmItem( QObject *parent, const QDomNode &node = QDomNode(), const char *name = 0 );
 	virtual ~KdmItem();
 
 	/**
