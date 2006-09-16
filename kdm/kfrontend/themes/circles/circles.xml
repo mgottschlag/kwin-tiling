@@ -166,12 +166,14 @@
 	<pos anchor="w" y="50%" width="box" height="box"/>
         <box orientation="vertical" xpadding="0" ypadding="0" spacing="14">
           <item type="label">
+            <buddy idref="user-entry" />
             <pos anchor="ne" x="100%"/>
             <normal color="#000000" font="Sans 12"/>
      	 	<!-- Stock label for: Username: -->
      	 	<stock type="username-label"/>
           </item>
           <item type="label">
+            <buddy idref="pw-entry" />
             <pos anchor="ne" x="100%"/>
             <normal color="#000000" font="Sans 12"/>
      	 	<!-- Stock label for: Password: -->

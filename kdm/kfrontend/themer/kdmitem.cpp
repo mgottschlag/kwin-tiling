@@ -27,6 +27,7 @@
 
 #include "kdmitem.h"
 #include "kdmlayout.h"
+#include "kdmthemer.h"
 
 #include <kglobal.h>
 #include <kdebug.h>
@@ -34,6 +35,7 @@
 #include <QWidget>
 #include <QLayout>
 #include <QImage>
+#include <QLineEdit>
 #ifdef DRAW_OUTLINE
 # include <qpainter.h>
 //Added by qt3to4:
@@ -83,6 +85,8 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 			parseAttribute( el.attribute( "height", QString() ), pos.height, pos.hType );
 			pos.anchor = el.attribute( "anchor", "nw" );
 		}
+		if (tagName == "buddy")
+			buddy = el.attribute( "idref", "" );
 	}
 
 	QDomNode tnode = node;
@@ -146,6 +150,16 @@ KdmItem::hide( bool force )
 		myWidget->hide();
 
 	emit needPlacement();
+}
+
+KdmThemer *
+KdmItem::themer()
+{
+	if (KdmThemer *thm = qobject_cast<KdmThemer *>(parent()))
+		return thm;
+	if (KdmItem *parentItem = qobject_cast<KdmItem *>( parent() ))
+		return parentItem->themer();
+	return 0;
 }
 
 KdmItem *
@@ -269,6 +283,13 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 				emit activated( id );
 			state = Sprelight;
 			currentActive = 0;
+		} else if (pressed && !buddy.isEmpty()) {
+			if (KdmItem *itm = themer()->findNode( buddy ))
+				if (itm->myWidget) {
+					itm->myWidget->setFocus();
+					if (QLineEdit *le = qobject_cast<QLineEdit *>(itm->myWidget))
+						le->selectAll();
+				}
 		} else if (pressed || currentActive == this) {
 			state = Sactive;
 			currentActive = this;

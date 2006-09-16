@@ -30,6 +30,7 @@
 class KdmItem;
 class KdmLayoutBox;
 class KdmLayoutFixed;
+class KdmThemer;
 
 class QPainter;
 
@@ -169,6 +170,8 @@ protected Q_SLOTS:
 	void widgetGone();
 
 protected:
+	KdmThemer *themer();
+
 	/**
 	 * Returns the optimal/minimal size for this item.
 	 * This should be reimplemented in items like label and pixmap.
@@ -211,6 +214,7 @@ protected:
 	// This is the placement of the item
 	QRect area;
 
+	QString buddy;
 	bool isButton;
 
 	// This struct is filled in by KdmItem base class
