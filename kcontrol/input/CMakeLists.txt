@@ -4,7 +4,7 @@ add_subdirectory( pics )
 macro_bool_to_01(LIBUSB_FOUND HAVE_LIBUSB)
 configure_file (config-kcontrol-input.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kcontrol-input.h )
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ ${KDE4_INCLUDES} )
+include_directories( ${KDE4_INCLUDES} )
 
 
 if (LIBUSB_FOUND)
@@ -16,8 +16,10 @@ endif (LIBUSB_FOUND)
 
 if(X11_Xcursor_FOUND)
 	set( libnoinst_SRCS xcursor/themepage.cpp xcursor/previewwidget.cpp )
+	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ )
 else(X11_Xcursor_FOUND)
 	set( libnoinst_SRCS core/themepage.cpp )
+	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/core/ )
 endif(X11_Xcursor_FOUND)
 
 
