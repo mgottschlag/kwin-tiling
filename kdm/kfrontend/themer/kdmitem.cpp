@@ -265,7 +265,7 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 	if (area.contains( x, y )) {
 		if (released && oldState == Sactive) {
 			if (buttonParent)
-				emit activated( id );
+				emit activated( buttonParent->id );
 			state = Sprelight;
 			currentActive = 0;
 		} else if (pressed || currentActive == this) {
