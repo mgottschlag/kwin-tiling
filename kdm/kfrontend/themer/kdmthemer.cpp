@@ -78,7 +78,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 		return;
 	}
 	// Set the root (screen) item
-	rootItem = new KdmRect( this, QDomNode(), "kdm root" );
+	rootItem = new KdmRect( this, QDomNode() );
 	connect( rootItem, SIGNAL(needUpdate( int, int, int, int )),
 	         SLOT(update( int, int, int, int )) );
 	connect( rootItem, SIGNAL(needPlacement()),

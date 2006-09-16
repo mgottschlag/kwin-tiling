@@ -31,8 +31,8 @@
 //Added by qt3to4:
 #include <QPixmap>
 
-KdmRect::KdmRect( QObject *parent, const QDomNode &node, const char *name )
-	: KdmItem( parent, node, name )
+KdmRect::KdmRect( QObject *parent, const QDomNode &node )
+	: KdmItem( parent, node )
 {
 	itemType = "rect";
 

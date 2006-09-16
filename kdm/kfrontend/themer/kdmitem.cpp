@@ -40,7 +40,7 @@
 #include <QList>
 #endif
 
-KdmItem::KdmItem( QObject *parent, const QDomNode &node, const char *name )
+KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	: QObject( parent )
 	, boxManager( 0 )
 	, fixedManager( 0 )
@@ -48,8 +48,6 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node, const char *name )
 	, myWidget( 0 )
 	, buttonParent( 0 )
 {
-	setObjectName( name );
-
 	// Set default layout for every item
 	currentManager = MNone;
 	pos.x = pos.y = 0;

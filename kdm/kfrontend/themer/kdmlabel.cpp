@@ -42,8 +42,8 @@
 # include <sys/systeminfo.h>
 #endif
 
-KdmLabel::KdmLabel( QObject *parent, const QDomNode &node, const char *name )
-	: KdmItem( parent, node, name )
+KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
+	: KdmItem( parent, node )
 {
 	itemType = "label";
 
