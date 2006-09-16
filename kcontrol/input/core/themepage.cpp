@@ -186,11 +186,11 @@ void ThemePage::fixCursorFile()
 		KUrl source;
 
 		if ( currentTheme == "LargeBlack" )
-			source.setPath( locate("data", "kcminput/cursor_large_black.pcf.gz") );
+			source.setPath( KStandardDirs::locate("data", "kcminput/cursor_large_black.pcf.gz") );
 		else if ( currentTheme == "LargeWhite" )
-			source.setPath( locate("data", "kcminput/cursor_large_white.pcf.gz") );
+			source.setPath( KStandardDirs::locate("data", "kcminput/cursor_large_white.pcf.gz") );
 		else if ( currentTheme == "SmallWhite" )
-			source.setPath( locate("data", "kcminput/cursor_small_white.pcf.gz") );
+			source.setPath( KStandardDirs::locate("data", "kcminput/cursor_small_white.pcf.gz") );
 
 		KIO::NetAccess::file_copy( source, installedFont, -1, true );
 	}
