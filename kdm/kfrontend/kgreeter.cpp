@@ -93,15 +93,18 @@ class UserListView : public QListWidget {
 			ensurePolished();
 			QStyleOptionViewItem vo( viewOptions() );
 			QAbstractListModel *md( static_cast<QAbstractListModel *>(model()) );
-			uint maxw = 0;
+			uint maxw = 0, h = 0;
 			for (int i = 0, rc = md->rowCount(); i < rc; i++) {
-				uint thisw = itemDelegate()->sizeHint( vo, md->index( i ) ).width();
+				QSize sh = itemDelegate()->sizeHint( vo, md->index( i ) );
+				uint thisw = sh.width();
 				if (thisw > maxw)
 					maxw = thisw;
+				h += sh.height();
 			}
 			cachedSizeHint.setWidth(
 				style()->pixelMetric( QStyle::PM_ScrollBarExtent ) +
 				frameWidth() * 2 + maxw );
+			cachedSizeHint.setHeight( frameWidth() * 2 + h );
 		}
 		return cachedSizeHint;
 	}
