@@ -51,7 +51,7 @@ protected:
 	virtual void drawContents( QPainter *p, const QRect &r );
 
 	// handle switching between normal / active / prelight configurations
-	virtual void statusChanged();
+	virtual void statusChanged( bool descend );
 
 	struct LabelStruct {
 		QString text;

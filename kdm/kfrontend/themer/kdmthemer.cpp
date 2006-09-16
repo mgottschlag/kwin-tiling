@@ -246,9 +246,8 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 			else if (type == "svg")
 				newItem = new KdmPixmap( parent, subnode );
 			if (newItem) {
+				newItem->setIsButton( el.attribute( "button", "false" ) == "true" );
 				generateItems( newItem, subnode );
-				if (el.attribute( "button", "false" ) == "true")
-					newItem->inheritFromButton( newItem );
 			}
 		} else if (tagName == "box") {
 			if (!willDisplay( subnode ))

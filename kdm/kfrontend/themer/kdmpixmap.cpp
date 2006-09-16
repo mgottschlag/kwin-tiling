@@ -202,9 +202,9 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 }
 
 void
-KdmPixmap::statusChanged()
+KdmPixmap::statusChanged( bool descend )
 {
-	KdmItem::statusChanged();
+	KdmItem::statusChanged( descend );
 	if (!pixmap.active.present && !pixmap.prelight.present)
 		return;
 	if ((state == Sprelight && !pixmap.prelight.present) ||

@@ -147,9 +147,9 @@ KdmLabel::drawContents( QPainter *p, const QRect &/*r*/  )
 }
 
 void
-KdmLabel::statusChanged()
+KdmLabel::statusChanged( bool descend )
 {
-	KdmItem::statusChanged();
+	KdmItem::statusChanged( descend );
 	if (!label.active.present && !label.prelight.present)
 		return;
 	if ((state == Sprelight && !label.prelight.present) ||

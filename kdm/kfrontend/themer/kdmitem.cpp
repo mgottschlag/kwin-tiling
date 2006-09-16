@@ -42,11 +42,11 @@
 
 KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	: QObject( parent )
+	, isButton( false )
 	, boxManager( 0 )
 	, fixedManager( 0 )
 	, image( 0 )
 	, myWidget( 0 )
-	, buttonParent( 0 )
 {
 	// Set default layout for every item
 	currentManager = MNone;
@@ -148,16 +148,6 @@ KdmItem::hide( bool force )
 	emit needPlacement();
 }
 
-void
-KdmItem::inheritFromButton( KdmItem *button )
-{
-	if (button)
-		buttonParent = button;
-
-	foreach (KdmItem *itm, m_children)
-		itm->inheritFromButton( button );
-}
-
 KdmItem *
 KdmItem::findNode( const QString &_id ) const
 {
@@ -251,21 +241,32 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 		itm->paint( p, rect );
 }
 
+bool
+KdmItem::childrenContain( int x, int y )
+{
+	foreach (KdmItem *itm, m_children)
+		if (!itm->isHidden()) {
+			if (itm->area.contains( x, y ))
+				return true;
+			if (itm->childrenContain( x, y ))
+				return true;
+		}
+	return false;
+}
+
 KdmItem *KdmItem::currentActive = 0;
 
 void
 KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 {
-	if (buttonParent && buttonParent != this) {
-		buttonParent->mouseEvent( x, y, pressed, released );
+	if (isHidden())
 		return;
-	}
 
 	ItemState oldState = state;
-	if (area.contains( x, y )) {
+	if (area.contains( x, y ) || (isButton && childrenContain( x, y ))) {
 		if (released && oldState == Sactive) {
-			if (buttonParent)
-				emit activated( buttonParent->id );
+			if (isButton)
+				emit activated( id );
 			state = Sprelight;
 			currentActive = 0;
 		} else if (pressed || currentActive == this) {
@@ -283,22 +284,21 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 		else
 			state = Snormal;
 	}
+	if (oldState != state)
+		statusChanged( isButton );
 
-	if (!buttonParent)
+	if (!isButton)
 		foreach (KdmItem *itm, m_children)
 			itm->mouseEvent( x, y, pressed, released );
-
-	if (oldState != state)
-		statusChanged();
 }
 
 void
-KdmItem::statusChanged()
+KdmItem::statusChanged( bool descend )
 {
-	if (buttonParent == this)
+	if (descend)
 		foreach (KdmItem *o, m_children) {
 			o->state = state;
-			o->statusChanged();
+			o->statusChanged( descend );
 		}
 }
 

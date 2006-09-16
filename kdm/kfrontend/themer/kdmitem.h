@@ -140,6 +140,7 @@ public:
 	QString type() const { return itemType; }
 	void setType( const QString &t ) { itemType = t; }
 	void setBaseDir( const QString &bd ) { basedir = bd; }
+	void setIsButton( bool on ) { isButton = on; }
 
 	QString baseDir() const
 	{
@@ -190,7 +191,7 @@ protected:
 	 * Called when item changes its 'state' variable. This must
 	 * handle item's repaint.
 	 */
-	virtual void statusChanged();
+	virtual void statusChanged( bool descend );
 
 	/**
 	 * emits needUpdate( int, int, int, int ) with the full widget area.
@@ -210,6 +211,8 @@ protected:
 	// This is the placement of the item
 	QRect area;
 
+	bool isButton;
+
 	// This struct is filled in by KdmItem base class
 	enum DataType { DTnone, DTpixel, DTnpixel, DTpercent, DTbox };
 	struct {
@@ -227,6 +230,8 @@ protected:
 	 */
 	void addChildItem( KdmItem *item );
 
+	bool childrenContain( int x, int y );
+
 	/* For internal use ONLY
 	 * Parse type and value of an attribute (pos tag), a font or a
 	 * color.
@@ -234,8 +239,6 @@ protected:
 	void parseAttribute( const QString &, int &, enum DataType & );
 	void parseFont( const QString &, QFont & );
 	void parseColor( const QString &col, const QString &a, QColor & );
-
-	void inheritFromButton( KdmItem *button );
 
 	QString itemType, id;
 	QList<KdmItem *> m_children;
@@ -254,8 +257,6 @@ protected:
 	QWidget *myWidget;
 
 	enum { InitialHidden, ExplicitlyHidden, Shown } isShown;
-
-	KdmItem *buttonParent;
 };
 
 #endif

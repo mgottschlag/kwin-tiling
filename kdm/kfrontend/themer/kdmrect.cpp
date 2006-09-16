@@ -89,9 +89,9 @@ KdmRect::drawContents( QPainter *p, const QRect & )
 }
 
 void
-KdmRect::statusChanged()
+KdmRect::statusChanged( bool descend )
 {
-	KdmItem::statusChanged();
+	KdmItem::statusChanged( descend );
 	if (!rect.active.present && !rect.prelight.present)
 		return;
 	if ((state == Sprelight && !rect.prelight.present) ||
