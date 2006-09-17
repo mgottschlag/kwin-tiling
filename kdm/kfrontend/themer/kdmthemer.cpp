@@ -172,7 +172,7 @@ KdmThemer::widgetEvent( QEvent *e )
 		}
 		{
 			QRect paintRect = static_cast<QPaintEvent *>(e)->rect();
-			kDebug() << "paint on: " << paintRect << endl;
+			//kDebug() << "paint on: " << paintRect << endl;
 
 			QPainter p( widget() );
 			rootItem->paint( &p, paintRect );
