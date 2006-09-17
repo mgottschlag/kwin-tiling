@@ -72,7 +72,7 @@ kcmrandrrc [Screen0]
 kcmrandrrc [Screen1]
 kcmrandrrc [Screen2]
 kcmrandrrc [Screen3]
-kcmfonts General fontDPI 0
+kcmfonts General forceFontDPI 0
 EOF
 kstartupconfig
 if test $? -ne 0; then
@@ -137,11 +137,11 @@ if test "$kcmrandrrc_display_applyonstartup" = "true"; then
     done
 fi
 
-if test "$kcmfonts_general_fontdpi" -eq 120; then
+if test "$kcmfonts_general_forcefontdpi" -eq 120; then
     xrdb -quiet -merge -nocpp <<EOF
 Xft.dpi: 120
 EOF
-elif test "$kcmfonts_general_fontdpi" -eq 96; then
+elif test "$kcmfonts_general_forcefontdpi" -eq 96; then
     xrdb -quiet -merge -nocpp <<EOF
 Xft.dpi: 96
 EOF

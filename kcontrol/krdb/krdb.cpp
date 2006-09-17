@@ -541,8 +541,8 @@ void runRdb( uint flags )
       contents += "Xft.rgba: " + subPixel + '\n';
     KConfig cfgfonts("kcmfonts", true);
     cfgfonts.setGroup("General");
-    if( cfgfonts.readEntry( "fontDPI", int(0) ) != 0 )
-      contents += "Xft.dpi: " + cfgfonts.readEntry( "fontDPI" ) + '\n';
+    if( cfgfonts.readEntry( "forceFontDPI", 0 ) != 0 )
+      contents += "Xft.dpi: " + cfgfonts.readEntry( "forceFontDPI" ) + '\n';
     else
     {
       KProcIO proc;

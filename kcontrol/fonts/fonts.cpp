@@ -29,6 +29,7 @@
 #include <kgenericfactory.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
+#include <kprocio.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <stdlib.h>
@@ -619,16 +620,29 @@ KFonts::KFonts(QWidget *parent, const QStringList &args)
    lay->addStretch();
 
    lay = new QHBoxLayout( layout, KDialog::spacingHint());
-   cbDpi = new QCheckBox( i18n( "Force DPI" ), this );
-   lay->addWidget( cbDpi );
-   comboDpi = new QComboBox( this );
-   comboDpi->addItem( i18n( "Normal fonts (96 DPI)" ));
-   comboDpi->addItem( i18n( "Huge fonts (120 DPI)" ));
-   comboDpi->setDisabled( true );
-   connect( cbDpi, SIGNAL( toggled( bool )), comboDpi, SLOT( setEnabled( bool )));
-   connect( cbDpi, SIGNAL( toggled( bool )), SLOT( changed()));
-   connect( comboDpi, SIGNAL( activated( int )), SLOT( changed()));
-   lay->addWidget( comboDpi );
+   cbForceDpi = new QCheckBox( i18n( "Force fonts DPI" ), this );
+   lay->addWidget( cbForceDpi );
+   comboForceDpi = new QComboBox( this );
+   comboForceDpi->addItem( i18n( "96 DPI" ));
+   comboForceDpi->addItem( i18n( "120 DPI" ));
+   comboForceDpi->setDisabled( true );
+   QString whatsthis = i18n(
+       "<p>This option forces a specific DPI value for fonts. It may be useful"
+       " when the real DPI of the hardware is not detected properly and it"
+       " is also often misused when poor quality fonts are used that do not"
+       " look well with DPI values other than 96 or 120 DPI.</p>"
+       "<p>The use of this option is generally discouraged. For selecting proper DPI"
+       " value a better option is explicitly configuring it for the whole X server if"
+       " possible (e.g. DisplaySize in xorg.conf or adding <i>-dpi value</i> to"
+       " ServerLocalArgs= in $KDEDIR/share/config/kdm/kdmrc). When fonts do not render"
+       " properly with real DPI value better fonts should be used or configuration"
+       " of font hinting should be checked.</p>" );
+   cbForceDpi->setWhatsThis(whatsthis);
+   comboForceDpi->setWhatsThis(whatsthis);
+   connect( cbForceDpi, SIGNAL( toggled( bool )), comboForceDpi, SLOT( setEnabled( bool )));
+   connect( cbForceDpi, SIGNAL( toggled( bool )), SLOT( changed()));
+   connect( comboForceDpi, SIGNAL( activated( int )), SLOT( changed()));
+   lay->addWidget( comboForceDpi );
    lay->addStretch();
 
    layout->addStretch(1);
@@ -659,7 +673,7 @@ void KFonts::defaults()
   useAA = true;
   cbAA->setChecked(useAA);
   aaSettings->defaults();
-  cbDpi->setChecked(false);
+  cbForceDpi->setChecked(false);
   emit changed(true);
 }
 
@@ -674,9 +688,9 @@ void KFonts::load()
 
   KConfig cfgfonts("kcmfonts", true);
   cfgfonts.setGroup("General");
-  int dpi = cfgfonts.readEntry( "fontDPI", int(0) );
-  cbDpi->setChecked( dpi == 96 || dpi == 120 );
-  comboDpi->setCurrentIndex( dpi == 120 ? 1 : 0 );
+  int dpi = cfgfonts.readEntry( "forceFontDPI", 0 );
+  cbForceDpi->setChecked( dpi == 96 || dpi == 120 );
+  comboForceDpi->setCurrentIndex( dpi == 120 ? 1 : 0 );
   dpi_original = dpi;
 
   emit changed(false);
@@ -692,12 +706,21 @@ void KFonts::save()
   KConfig cfgfonts("kcmfonts");
   cfgfonts.setGroup("General");
   int dpi;
-  if( !cbDpi->isChecked())
+  if( !cbForceDpi->isChecked())
       dpi = 0;
   else
-      dpi = comboDpi->currentIndex() == 0 ? 96 : 120;
-  cfgfonts.writeEntry( "fontDPI", dpi );
+      dpi = comboForceDpi->currentIndex() == 0 ? 96 : 120;
+  cfgfonts.writeEntry( "forceFontDPI", dpi );
   cfgfonts.sync();
+  // if the setting is reset in the module, remove the dpi value,
+  // otherwise don't explicitly remove it and leave any possible system-wide value
+  if( dpi == 0 && dpi_original != 0 ) {
+      KProcIO proc;
+      proc << "xrdb" << "-quiet" << "-remove" << "-nocpp";
+      proc.writeStdin( QString( "Xft.dpi" ), true );
+      proc.closeWhenDone();
+      proc.start( KProcess::Block );
+  }
 
   // KDE-1.x support
   KSimpleConfig* config = new KSimpleConfig( QDir::homePath() + "/.kderc" );
@@ -718,7 +741,7 @@ void KFonts::save()
   if(aaSettings->save( useAA ) || (useAA != useAA_original) || dpi != dpi_original) {
     KMessageBox::information(this,
       i18n(
-        "<p>Some changes such as anti-aliasing or DPI settings will only affect newly started applications.</p>"
+        "<p>Some changes such as anti-aliasing will only affect newly started applications.</p>"
       ), i18n("Font Settings Changed"), "FontSettingsChanged", false);
     useAA_original = useAA;
     dpi_original = dpi;

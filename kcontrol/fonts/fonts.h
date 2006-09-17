@@ -113,8 +113,8 @@ private:
     bool useAA, useAA_original;
     int dpi_original;
     QCheckBox *cbAA;
-    QCheckBox *cbDpi;
-    QComboBox* comboDpi;
+    QCheckBox *cbForceDpi;
+    QComboBox* comboForceDpi;
     Q3PtrList <FontUseItem> fontUseList;
     FontAASettings *aaSettings;
 };
