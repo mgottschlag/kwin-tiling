@@ -14,7 +14,7 @@ if( X11_Xrandr_FOUND )
 endif(X11_Xrandr_FOUND )
 
 if(X11_Xaccess_FOUND)
-    add_subdirectory( kxkb )
+	#add_subdirectory( kxkb )
 endif(X11_Xaccess_FOUND)    
 add_subdirectory( menus )
 add_subdirectory( bell )
