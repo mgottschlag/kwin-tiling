@@ -51,7 +51,6 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 	label.active.color.setRgb( 0xFFFFFF );
 	label.active.present = false;
 	label.prelight.present = false;
-	label.maximumWidth = -1;
 
 	const QString locale = KGlobal::locale()->language();
 
@@ -71,9 +70,7 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 		QDomElement el = child.toElement();
 		QString tagName = el.tagName();
 
-		if (tagName == "pos")
-			label.maximumWidth = el.attribute( "max-width", "-1" ).toInt();
-		else if (tagName == "normal") {
+		if (tagName == "normal") {
 			parseColor( el.attribute( "color", "#ffffff" ), QString(), label.normal.color );
 			parseFont( el.attribute( "font", "Sans 14" ), label.normal.font );
 		} else if (tagName == "active") {
@@ -123,11 +120,7 @@ KdmLabel::sizeHint()
 	else if (state == Sprelight && label.prelight.present)
 		l = &label.prelight;
 	// get the hint from font metrics
-	QSize hint = QFontMetrics( l->font ).size( Qt::AlignLeft | Qt::TextSingleLine, cText );
-	// clip the result using the max-width label(pos) parameter
-	if (label.maximumWidth > 0 && hint.width() > label.maximumWidth)
-		hint.setWidth( label.maximumWidth );
-	return hint;
+	return QFontMetrics( l->font ).size( Qt::AlignLeft | Qt::TextSingleLine, cText );
 }
 
 void

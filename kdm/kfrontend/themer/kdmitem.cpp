@@ -50,10 +50,13 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 {
 	// Set default layout for every item
 	currentManager = MNone;
-	pos.x = pos.y = 0;
-	pos.width = pos.height = 1;
-	pos.xType = pos.yType = pos.wType = pos.hType = DTnone;
-	pos.anchor = "nw";
+	geom.pos.x.type = geom.pos.y.type =
+		geom.size.x.type = geom.size.y.type = DTnone;
+	geom.minSize.x.type = geom.minSize.y.type =
+		geom.maxSize.x.type = geom.maxSize.y.type = DTpixel;
+	geom.minSize.x.val = geom.minSize.y.val = 0;
+	geom.maxSize.x.val = geom.maxSize.y.val = int(~0U >> 1);
+	geom.anchor = "nw";
 
 	isShown = InitialHidden;
 
@@ -77,11 +80,15 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 		QString tagName = el.tagName(), attr;
 
 		if (tagName == "pos") {
-			parseAttribute( el.attribute( "x", QString() ), pos.x, pos.xType );
-			parseAttribute( el.attribute( "y", QString() ), pos.y, pos.yType );
-			parseAttribute( el.attribute( "width", QString() ), pos.width, pos.wType );
-			parseAttribute( el.attribute( "height", QString() ), pos.height, pos.hType );
-			pos.anchor = el.attribute( "anchor", "nw" );
+			parseAttribute( el.attribute( "x", QString() ), geom.pos.x );
+			parseAttribute( el.attribute( "y", QString() ), geom.pos.y );
+			parseAttribute( el.attribute( "width", QString() ), geom.size.x );
+			parseAttribute( el.attribute( "height", QString() ), geom.size.y );
+			parseAttribute( el.attribute( "min-width", QString() ), geom.minSize.x );
+			parseAttribute( el.attribute( "min-height", QString() ), geom.minSize.y );
+			parseAttribute( el.attribute( "max-width", QString() ), geom.maxSize.x );
+			parseAttribute( el.attribute( "max-height", QString() ), geom.maxSize.y );
+			geom.anchor = el.attribute( "anchor", "nw" );
 		}
 		if (tagName == "buddy")
 			buddy = el.attribute( "idref", "" );
@@ -190,6 +197,8 @@ void
 KdmItem::widgetGone()
 {
 	myWidget = 0;
+
+	emit needPlacement();
 }
 
 void
@@ -209,7 +218,7 @@ KdmItem::showWidget()
 void
 KdmItem::setGeometry( const QRect &newGeometry, bool force )
 {
-	kDebug() << " KdmItem::setGeometry " << id << newGeometry << endl;
+	kDebug() << " KdmItem::setGeometry " << id << " " << newGeometry << endl;
 	// check if already 'in place'
 	if (!force && area == newGeometry)
 		return;
@@ -333,9 +342,38 @@ KdmItem::sizeHint()
 {
 	if (myWidget)
 		return myWidget->sizeHint();
-	int w = pos.wType == DTpixel ? qAbs( pos.width ) : -1,
-	    h = pos.hType == DTpixel ? qAbs( pos.height ) : -1;
-	return QSize( w, h );
+	return QSize(
+		geom.size.x.type == DTpixel ? geom.size.x.val : 0,
+		geom.size.y.type == DTpixel ? geom.size.y.val : 0 );
+}
+
+void
+KdmItem::calcSize(
+	const DataPair &sz,
+	const QRect &parentRect, const QSize &hintedSize, const QSize &boxHint,
+	int &w, int &h )
+{
+	if (sz.x.type == DTpixel)
+		w = sz.x.val;
+	else if (sz.x.type == DTnpixel)
+		w -= sz.x.val;
+	else if (sz.x.type == DTpercent)
+		w = parentRect.width() * sz.x.val / 100;
+	else if (sz.x.type == DTbox)
+		w = boxHint.width();
+	else
+		w = hintedSize.width();
+
+	if (sz.y.type == DTpixel)
+		h = sz.y.val;
+	else if (sz.y.type == DTnpixel)
+		h -= sz.y.val;
+	else if (sz.y.type == DTpercent)
+		h = parentRect.height() * sz.y.val / 100;
+	else if (sz.y.type == DTbox)
+		h = boxHint.height();
+	else
+		h = hintedSize.height();
 }
 
 QRect
@@ -349,71 +387,55 @@ KdmItem::placementHint( const QRect &parentRect )
 	    w = parentRect.width(),
 	    h = parentRect.height();
 
-	kDebug() << "KdmItem::placementHint parentRect=" << id << parentRect << " hintedSize=" << hintedSize << endl;
+	kDebug() << "KdmItem::placementHint " << id << " parentRect="<< parentRect << " hintedSize=" << hintedSize << endl;
 	// check if width or height are set to "box"
-	if (pos.wType == DTbox || pos.hType == DTbox) {
+	if (geom.size.x.type == DTbox || geom.size.y.type == DTbox ||
+	    geom.minSize.x.type == DTbox || geom.minSize.y.type == DTbox ||
+	    geom.maxSize.x.type == DTbox || geom.maxSize.y.type == DTbox)
+	{
 		if (myWidget)
 			boxHint = hintedSize;
-		else {
-			if (!boxManager)
-				return parentRect;
+		else if (boxManager)
 			boxHint = boxManager->sizeHint();
-		}
+		else
+			boxHint = parentRect.size();
 		kDebug() << " => boxHint " << boxHint << endl;
 	}
 
-	if (pos.xType == DTpixel)
-		x += pos.x;
-	else if (pos.xType == DTnpixel)
-		x = parentRect.right() - pos.x;
-	else if (pos.xType == DTpercent)
-		x += int( parentRect.width() / 100.0 * pos.x );
+	if (geom.pos.x.type == DTpixel)
+		x += geom.pos.x.val;
+	else if (geom.pos.x.type == DTnpixel)
+		x = parentRect.right() - geom.pos.x.val;
+	else if (geom.pos.x.type == DTpercent)
+		x += parentRect.width() * geom.pos.x.val / 100;
 
-	if (pos.yType == DTpixel)
-		y += pos.y;
-	else if (pos.yType == DTnpixel)
-		y = parentRect.bottom() - pos.y;
-	else if (pos.yType == DTpercent)
-		y += int( parentRect.height() / 100.0 * pos.y );
+	if (geom.pos.y.type == DTpixel)
+		y += geom.pos.y.val;
+	else if (geom.pos.y.type == DTnpixel)
+		y = parentRect.bottom() - geom.pos.y.val;
+	else if (geom.pos.y.type == DTpercent)
+		y += parentRect.height() * geom.pos.y.val / 100;
 
-	if (pos.wType == DTpixel)
-		w = pos.width;
-	else if (pos.wType == DTnpixel)
-		w -= pos.width;
-	else if (pos.wType == DTpercent)
-		w = int( parentRect.width() / 100.0 * pos.width );
-	else if (pos.wType == DTbox)
-		w = boxHint.width();
-	else if (hintedSize.width() > 0)
-		w = hintedSize.width();
-	else
-		w = 0;
-
-	if (pos.hType == DTpixel)
-		h = pos.height;
-	else if (pos.hType == DTnpixel)
-		h -= pos.height;
-	else if (pos.hType == DTpercent)
-		h = int( parentRect.height() / 100.0 * pos.height );
-	else if (pos.hType == DTbox)
-		h = boxHint.height();
-	else if (hintedSize.height() > 0)
-		h = hintedSize.height();
-	else
-		h = 0;
-
+	int miw = w, mih = h, maw = w, mah = h;
+	calcSize( geom.size, parentRect, hintedSize, boxHint, w, h );
+	calcSize( geom.minSize, parentRect, hintedSize, boxHint, miw, mih );
+	calcSize( geom.maxSize, parentRect, hintedSize, boxHint, maw, mah );
+	kDebug() << "size " << w << "x" << h << " min " << miw << "x" << mih << " max " << maw << "x" << mah << endl;
+	w = qMax( qMin( w, maw ), miw );
+	h = qMax( qMin( h, mah ), mih );
+	kDebug() << "adjusted size " << w << "x" << h << endl;
 	// defaults to center
 	int dx = -w / 2, dy = -h / 2;
 
 	// anchor the rect to an edge / corner
-	if (pos.anchor.length() > 0 && pos.anchor.length() < 3) {
-		if (pos.anchor.indexOf( 'n' ) >= 0)
+	if (geom.anchor.length() > 0 && geom.anchor.length() < 3) {
+		if (geom.anchor.indexOf( 'n' ) >= 0)
 			dy = 0;
-		if (pos.anchor.indexOf( 's' ) >= 0)
+		if (geom.anchor.indexOf( 's' ) >= 0)
 			dy = -h;
-		if (pos.anchor.indexOf( 'w' ) >= 0)
+		if (geom.anchor.indexOf( 'w' ) >= 0)
 			dx = 0;
-		if (pos.anchor.indexOf( 'e' ) >= 0)
+		if (geom.anchor.indexOf( 'e' ) >= 0)
 			dx = -w;
 	}
 	// KdmItem *p = static_cast<KdmItem*>( parent() );
@@ -450,30 +472,30 @@ KdmItem::addChildItem( KdmItem *item )
 }
 
 void
-KdmItem::parseAttribute( const QString &s, int &val, enum DataType &dType )
+KdmItem::parseAttribute( const QString &s, DataPoint &pt )
 {
 	if (s.isEmpty())
 		return;
 
 	int p;
 	if (s == "box") {	// box value
-		dType = DTbox;
-		val = 0;
+		pt.type = DTbox;
+		pt.val = 0;
 	} else if ((p = s.indexOf( '%' )) >= 0) {	// percent value
-		dType = DTpercent;
+		pt.type = DTpercent;
 		QString sCopy = s;
 		sCopy.remove( p, 1 );
 		sCopy.replace( ',', '.' );
-		val = (int)sCopy.toDouble();
+		pt.val = (int)sCopy.toDouble();
 	} else {		// int value
-		dType = DTpixel;
+		pt.type = DTpixel;
 		QString sCopy = s;
 		if (sCopy.at( 0 ) == '-') {
 			sCopy.remove( 0, 1 );
-			dType = DTnpixel;
+			pt.type = DTnpixel;
 		}
 		sCopy.replace( ',', '.' );
-		val = (int)sCopy.toDouble();
+		pt.val = (int)sCopy.toDouble();
 	}
 }
 

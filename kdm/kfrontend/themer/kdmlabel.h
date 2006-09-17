@@ -63,7 +63,6 @@ protected:
 			QFont font;
 			bool present;
 		} normal, active, prelight;
-		int maximumWidth;
 	} label;
 
 	QTimer *timer;

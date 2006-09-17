@@ -219,14 +219,22 @@ protected:
 
 	// This struct is filled in by KdmItem base class
 	enum DataType { DTnone, DTpixel, DTnpixel, DTpercent, DTbox };
+	struct DataPoint {
+		int val;
+		DataType type;
+	};
+	struct DataPair {
+		DataPoint x, y;
+	};
 	struct {
-		enum DataType xType, yType, wType, hType;
-		int x;
-		int y;
-		int width;
-		int height;
+		DataPair pos, minSize, size, maxSize;
 		QString anchor;
-	} pos;
+	} geom;
+
+	static void calcSize(
+		const DataPair &,
+		const QRect &, const QSize &, const QSize &,
+		int &, int & );
 
 	/* For internal use ONLY
 	 * Add a child item. This function is called automatically
@@ -240,7 +248,7 @@ protected:
 	 * Parse type and value of an attribute (pos tag), a font or a
 	 * color.
 	 */
-	void parseAttribute( const QString &, int &, enum DataType & );
+	void parseAttribute( const QString &, DataPoint & );
 	void parseFont( const QString &, QFont & );
 	void parseColor( const QString &col, const QString &a, QColor & );
 
