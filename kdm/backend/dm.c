@@ -193,6 +193,7 @@ main( int argc, char **argv )
 "\t\t\t0x40 - greeter post-start delay\n"
 "\t\t\t0x80 - don't use syslog\n"
 "\t\t\t0x100 - core Xauth log\n"
+"\t\t\t0x200 - debug greeter theming\n"
 "\t\t\t0x400 - valgrind config reader and greeter\n"
 "\t\t\t0x800 - strace config reader and greeter\n"
 			        , prog );

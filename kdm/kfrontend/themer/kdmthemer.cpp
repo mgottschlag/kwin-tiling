@@ -25,6 +25,7 @@
 #include "kdmrect.h"
 #include "kdmlabel.h"
 
+#include <kdm_greet.h>
 #include <kdmconfig.h>
 #include <kfdialog.h>
 
@@ -165,7 +166,8 @@ KdmThemer::widgetEvent( QEvent *e )
 	case QEvent::Paint:
 		if (m_geometryOutdated) {
 			rootItem->setGeometry( QRect( QPoint(), widget()->size() ), m_geometryInvalid );
-			showStructure( rootItem );
+			if (debugLevel & DEBUG_THEMING)
+				showStructure( rootItem );
 			m_geometryOutdated = m_geometryInvalid = false;
 		}
 		{

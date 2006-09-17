@@ -67,6 +67,7 @@ from the copyright holder.
 #define DEBUG_WGREET   0x40
 #define DEBUG_NOSYSLOG 0x80
 #define DEBUG_AUTH     0x100
+#define DEBUG_THEMING  0x200
 #define DEBUG_VALGRIND 0x400
 #define DEBUG_STRACE   0x800
 

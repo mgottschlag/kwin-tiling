@@ -48,6 +48,7 @@ char **GetCfgStrArr( int id, int *len );
 
 void freeStrArr( char **arr );
 
+extern int debugLevel;
 void Debug( const char *fmt, ... );
 void LogInfo( const char *fmt, ... );
 void LogWarn( const char *fmt, ... );

@@ -23,11 +23,11 @@
  * Generic Kdm Item
  */
 
-//#define DRAW_OUTLINE 1	// for debugging only
-
 #include "kdmitem.h"
 #include "kdmlayout.h"
 #include "kdmthemer.h"
+
+#include <kdm_greet.h>
 
 #include <kglobal.h>
 #include <kdebug.h>
@@ -36,11 +36,9 @@
 #include <QLayout>
 #include <QImage>
 #include <QLineEdit>
-#ifdef DRAW_OUTLINE
-# include <qpainter.h>
+#include <QPainter>
 //Added by qt3to4:
 #include <QList>
-#endif
 
 KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	: QObject( parent )
@@ -242,13 +240,18 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 		QRect contentsRect = area.intersect( rect );
 		contentsRect.translate( qMin( 0, -area.x() ), qMin( 0, -area.y() ) );
 		drawContents( p, contentsRect );
+		if (debugLevel & DEBUG_THEMING) {
+			// Draw bounding rect for this item
+			QPen pen( Qt::white );
+			pen.setCapStyle( Qt::FlatCap );
+			pen.setDashPattern( QVector<qreal>() << 5 << 6 );
+			p->setPen( pen );
+			p->setBackgroundMode( Qt::OpaqueMode );
+			p->setBackground( Qt::black );
+			p->drawRect( area.x() + 1, area.y() + 1, area.width() - 1, area.height() - 1 );
+			p->setBackgroundMode( Qt::TransparentMode );
+		}
 	}
-
-#ifdef DRAW_OUTLINE
-	// Draw bounding rect for this item
-	p->setPen( Qt::white );
-	p->drawRect( area );
-#endif
 
 	// Dispatch paint events to children
 	foreach (KdmItem *itm, m_children)
