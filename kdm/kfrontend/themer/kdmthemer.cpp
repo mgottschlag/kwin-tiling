@@ -78,19 +78,26 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 		FDialog::box( widget(), errorbox, i18n( "Cannot parse theme file %1" , filename) );
 		return;
 	}
+	// generate all the items defined in the theme
+	const QDomElement &theme = domTree.documentElement();
+	// Get its tag, and check it's correct ("greeter")
+	if (theme.tagName() != "greeter") {
+		FDialog::box( widget(), errorbox, i18n( "%1 does not seem to be a correct theme file" , filename) );
+		return;
+	}
+
 	// Set the root (screen) item
 	rootItem = new KdmRect( this, QDomNode() );
 	connect( rootItem, SIGNAL(needUpdate( int, int, int, int )),
 	         SLOT(update( int, int, int, int )) );
 	connect( rootItem, SIGNAL(needPlacement()),
 	         SLOT(slotNeedPlacement()) );
+	connect( rootItem, SIGNAL(activated( const QString & )),
+	         SIGNAL(activated( const QString & )) );
 
 	rootItem->setBaseDir( QFileInfo( filename ).absolutePath() );
 
-	// generate all the items defined in the theme
-	generateItems( rootItem );
-
-	connect( rootItem, SIGNAL(activated( const QString & )), SIGNAL(activated( const QString & )) );
+	generateItems( rootItem, theme );
 
 /*	*TODO*
 	// Animation timer
@@ -195,30 +202,10 @@ KdmThemer::pixmap( const QRect &r, QPixmap *px )
 void
 KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 {
-	if (!parent)
-		return;
-
-	QDomNodeList subnodeList;	//List of subnodes of this node
-
-	/*
-	 * Get the child nodes
-	 */
-	if (node.isNull()) {	// It's the first node, get its child nodes
-		QDomElement theme = domTree.documentElement();
-
-		// Get its tag, and check it's correct ("greeter")
-		if (theme.tagName() != "greeter") {
-			kDebug() << "This does not seem to be a correct theme file." << endl;
-			return;
-		}
-		// Get the list of child nodes
-		subnodeList = theme.childNodes();
-	} else
-		subnodeList = node.childNodes();
-
 	/*
 	 * Go through each of the child nodes
 	 */
+	const QDomNodeList &subnodeList = node.childNodes();
 	for (int nod = 0; nod < subnodeList.count(); nod++) {
 		QDomNode subnode = subnodeList.item( nod );
 		QDomElement el = subnode.toElement();
