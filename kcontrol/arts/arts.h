@@ -37,7 +37,6 @@
 
 #include <kcmodule.h>
 #include <knuminput.h>
-#include <kprogressbar.h>
 
 #include "generaltab.h"
 #include "hardwaretab.h"

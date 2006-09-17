@@ -43,7 +43,6 @@
 #include <k3listview.h>
 #include <kurlrequesterdlg.h>
 #include <kmessagebox.h>
-#include <kprogressbar.h>
 #include <kiconloader.h>
 #include <kprogressdialog.h>
 #include <kio/job.h>
