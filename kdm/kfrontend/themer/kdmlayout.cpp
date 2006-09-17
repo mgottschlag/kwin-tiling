@@ -98,39 +98,34 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 		foreach (KdmItem *itm, m_children) {
 			if (itm->isExplicitlyHidden())
 				continue;
+			QRect temp = childrenRect;
 			if (box.isVertical) {
-				QRect temp( childrenRect.left(), childrenRect.top(), childrenRect.width(), height );
-				itm->setGeometry( temp, force );
+				temp.setHeight( height );
 				childrenRect.setTop( childrenRect.top() + height + box.spacing );
 			} else {
-				QRect temp( childrenRect.left(), childrenRect.top(), width, childrenRect.height() );
-				kDebug() << "placement " << itm << " " << temp << " " << itm->placementHint( temp ) << endl;
-				temp = itm->placementHint( temp );
-				itm->setGeometry( temp, force );
+				temp.setWidth( width );
 				childrenRect.setLeft( childrenRect.left() + width + box.spacing );
 			}
+			itm->setGeometry( itm->placementHint( temp ), force );
 		}
 	} else {
 		foreach (KdmItem *itm, m_children) {
 			if (itm->isExplicitlyHidden())
 				continue;
-
 			QRect temp = childrenRect, itemRect;
 			if (box.isVertical) {
 				temp.setHeight( 0 );
 				itemRect = itm->placementHint( temp );
 				temp.setHeight( itemRect.height() );
-				childrenRect.setTop( childrenRect.top() + itemRect.size().height() + box.spacing );
+				childrenRect.setTop( childrenRect.top() + itemRect.height() + box.spacing );
 			} else {
 				temp.setWidth( 0 );
 				itemRect = itm->placementHint( temp );
-				kDebug() << this << " placementHint " << itm << " " << temp << " " << itemRect << endl;
 				temp.setWidth( itemRect.width() );
-				childrenRect.setLeft( childrenRect.left() + itemRect.size().width() + box.spacing );
-				kDebug() << "childrenRect after " << itm << " " << childrenRect << endl;
+				childrenRect.setLeft( childrenRect.left() + itemRect.width() + box.spacing );
 			}
 			itemRect = itm->placementHint( temp );
-			kDebug() << this << " placementHint2 " << itm << " " << temp << " " << itemRect << endl;
+			kDebug() << this << " placementHint for " << itm << " temp " << temp << " final " << itemRect << " childrenRect now " << childrenRect << endl;
 			itm->setGeometry( itemRect, force );
 		}
 	}
