@@ -23,9 +23,7 @@
 #include <QPaintEngine>
 #include <QHash>
 #include <QDateTime>
-#include <QSvgRenderer>
 #include <QPixmap>
-#include <QBuffer>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -36,7 +34,7 @@
 #include <kcursor.h>
 #include <kfilemetainfo.h>
 #include <kconfig.h>
-#include <kfilterdev.h>
+#include <ksvgrenderer.h>
 
 #include "bgdefaults.h"
 #include "bgrender.h"
@@ -363,22 +361,12 @@ wp_load:
                 svgWidth *= 6;
             }
 
-            QFile fi(file);
-            if (fi.open(QIODevice::ReadOnly)) {
-                QByteArray ar = fi.readAll();
-                if (!ar.startsWith("<?xml")) {
-                    QBuffer buf(&ar);
-                    QIODevice *flt = KFilterDev::device(&buf, QString::fromLatin1("application/x-gzip"), false);
-                    flt->open(QIODevice::ReadOnly);
-                    ar = flt->readAll();
-                    delete flt;
-                }
-                QSvgRenderer renderer(ar);
-                if (renderer.isValid()) {
-                    m_Wallpaper = QImage(svgWidth, svgHeight, QImage::Format_ARGB32_Premultiplied);
-                    QPainter p(&m_Wallpaper);
-                    renderer.render(&p);
-                }
+            KSvgRenderer renderer(file);
+            if (renderer.isValid()) {
+                m_Wallpaper = QImage(svgWidth, svgHeight, QImage::Format_ARGB32_Premultiplied);
+                m_Wallpaper.fill(0);
+                QPainter p(&m_Wallpaper);
+                renderer.render(&p);
             }
         } else {
             m_Wallpaper.load(file);

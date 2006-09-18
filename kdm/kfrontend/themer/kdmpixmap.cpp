@@ -22,13 +22,13 @@
 #include "kdmpixmap.h"
 
 #include <kimageeffect.h>
+#include <ksvgrenderer.h>
 
 #include <kdebug.h>
 
 #include <QPainter>
 #include <QPixmap>
 #include <QImage>
-#include <QSvgRenderer>
 
 KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 	: KdmItem( parent, node )
@@ -149,7 +149,7 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		if (area.size() != pClass->image.size()) { // true for isNull
 			if (!pClass->fullpath.isNull()) {
 				if (pClass->svgImage) {
-					QSvgRenderer svg( pClass->fullpath );
+					KSvgRenderer svg( pClass->fullpath );
 					if (svg.isValid()) {
 						pClass->image = QImage( area.size(), QImage::Format_ARGB32 );
 						pClass->image.fill( 0 );
