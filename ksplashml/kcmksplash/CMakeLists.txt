@@ -20,5 +20,5 @@ install(TARGETS kcm_ksplashthemes  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES ksplashthememgr.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES ksplashthememgr.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 

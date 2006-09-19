@@ -4,6 +4,9 @@ Icon=ksplash
 Exec=kcmshell ksplashthememgr
 DocPath=ksplashml/themes.html
 
+Type=Service
+ServiceTypes=KCModule
+
 X-KDE-Library=ksplashthemes
 X-KDE-FactoryName=ksplashthemes
 X-KDE-ParentApp=kcontrol
@@ -11,7 +14,6 @@ X-KDE-ParentApp=kcontrol
 Name=Splash Screen
 Name[fr]=Écran de démarrage
 Name[x-test]=xxSplash Screenxx
-Type=Application
 Comment=Manager for Splash Screen Themes
 Comment[fr]=Gestionnaire de thèmes d'écran de démarrage
 Comment[x-test]=xxManager for Splash Screen Themesxx
