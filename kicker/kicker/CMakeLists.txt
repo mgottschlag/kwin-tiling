@@ -46,7 +46,7 @@ install(TARGETS kicker-3.4-reverseLayout DESTINATION ${LIB_INSTALL_DIR}/kconf_up
 
 ########### install files ###############
 
-install( FILES kcmkicker.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcmkicker.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES panel.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )
 install( FILES kickerrc.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 install(PROGRAMS kicker-3.1-properSizeSetting.pl kicker-3.5-taskbarEnums.pl kicker-3.5-kconfigXTize.pl  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )

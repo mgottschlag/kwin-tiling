@@ -1,7 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=kcmkicker
-Type=Application
+Type=Service
+ServiceTypes=KCModule
+X-KDE-ParentApp=kcontrol
+
+
 Exec=kcmshell %i kicker_config kcmtaskbar
 Name=Configure the Panel
 Name[fr]=Configuration du tableau de bord
