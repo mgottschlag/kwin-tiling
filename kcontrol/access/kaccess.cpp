@@ -97,28 +97,6 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   : KUniqueApplication(allowStyles, GUIenabled),
   overlay(0), wm(0, KWinModule::INFO_DESKTOP),_player(Phonon::AccessibilityCategory)
 {
-  // verify the Xlib has matching XKB extension
-  int major = XkbMajorVersion;
-  int minor = XkbMinorVersion;
-  if (!XkbLibraryVersion(&major, &minor))
-    {
-      kError() << "Xlib XKB extension does not match" << endl;
-      exit(-1);
-    }
-  kDebug() << "Xlib XKB extension major=" << major << " minor=" << minor << endl;
-
-  // verify the X server has matching XKB extension
-  // if yes, the XKB extension is initialized
-  int opcode_rtrn;
-  int error_rtrn;
-  if (!XkbQueryExtension(QX11Info::display(), &opcode_rtrn, &xkb_opcode, &error_rtrn,
-			 &major, &minor))
-    {
-      kError() << "X server has not matching XKB extension" << endl;
-      exit(-1);
-    }
-  kDebug() << "X server XKB extension major=" << major << " minor=" << minor << endl;
-
   _activeWindow = wm.activeWindow();
   connect(&wm, SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
 
@@ -916,4 +894,8 @@ void KAccessApp::dialogClosed() {
    dialog = 0;
 
    requestedFeatures = features;
+}
+
+void KAccessApp::setXkbOpcode(int opcode) {
+   xkb_opcode = opcode;
 }

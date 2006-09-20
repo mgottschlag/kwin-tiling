@@ -36,6 +36,7 @@ public:
 
   int newInstance();
 
+  void setXkbOpcode(int opcode);
 
 protected:
 
