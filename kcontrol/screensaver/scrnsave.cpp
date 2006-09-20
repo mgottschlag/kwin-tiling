@@ -372,6 +372,8 @@ KScreenSaver::~KScreenSaver()
     delete mTestProc;
     delete mSetupProc;
     delete mTestWin;
+
+    qDeleteAll(mSaverList);
 }
 
 //---------------------------------------------------------------------------
