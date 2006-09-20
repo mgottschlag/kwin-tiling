@@ -5,6 +5,6 @@ Name[fr]=Installer des thèmes KDE
 Name[x-test]=xxInstall KDE Themexx
 MimeType=application/x-ktheme
 Icon=kthememgr
-Type=Application
+Type=Service
 NoDisplay=true
 Exec=kdeinstallktheme %f
