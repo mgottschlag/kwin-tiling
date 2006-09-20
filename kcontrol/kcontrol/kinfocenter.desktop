@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Exec=kinfocenter -caption "%c" %i
 Icon=hwinfo
-Type=Application
+Type=Service
 DocPath=kinfocenter/index.html
 X-KDE-StartupNotify=true
 OnlyShowIn=KDE;

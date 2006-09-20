@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Exec=kcontrol -caption "%c"
 Icon=kcontrol
-Type=Application
+Type=Service
 DocPath=kcontrol/index.html
 X-KDE-StartupNotify=true
 
