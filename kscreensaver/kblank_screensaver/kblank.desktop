@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Exec=kblankscrn.kss
 Icon=kscreensaver
-Type=Application
+Type=Service
 Actions=Setup;InWindow;Root;
 Name=Blank Screen
 Name[fr]=Écran vide
