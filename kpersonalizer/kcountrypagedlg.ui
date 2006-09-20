@@ -89,8 +89,8 @@
             </property>
             <property name="vAlign" stdset="0">
             </property>
-            <property name="wordWrap" stdset="1">
-                <bool>1</bool>
+            <property name="wordWrap">
+                <bool>true</bool>
             </property>
         </widget>
         <widget class="QLabel" row="0" column="1">
