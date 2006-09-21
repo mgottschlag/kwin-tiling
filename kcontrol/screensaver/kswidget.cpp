@@ -1,4 +1,4 @@
-#include <config.h>
+#include <config-screensaver.h>
 
 #include <kwin.h>
 #include "testwin.h"

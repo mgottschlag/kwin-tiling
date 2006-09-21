@@ -1,5 +1,5 @@
 
-
+configure_file (config-screensaver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-screensaver.h )
 
 ########### next target ###############
 
