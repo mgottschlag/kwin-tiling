@@ -46,9 +46,9 @@ int main(int argc, char *argv[])
 
 	KTipDialog *tipDialog = new KTipDialog(new KTipDatabase(KStandardDirs::locate("data", QString("kdewizard/tips"))));
 	Q_CHECK_PTR(tipDialog);
-#ifdef Q_WS_X11
-	KWin::setState(tipDialog->winId(), NET::StaysOnTop);
-#endif
+
+	tipDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+
 	tipDialog->setCaption(i18n("Useful Tips"));
 	QDBusInterface ksplash("org.kde.ksplash", "/KSplash", "org.kde.ksplash.KSplash");
 	ksplash.call("close"); // Close splash screen
