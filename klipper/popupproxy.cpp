@@ -93,9 +93,8 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
     QPixmap image( item->image() );
     if ( image.isNull() ) {
         // Squeeze text strings so that do not take up the entire screen (or more)
-        QString text( KStringHandler::cPixelSqueeze(item->text().simplified(),
-                                                    proxy_for_menu->fontMetrics(),
-                                                    m_menu_width).replace( "&", "&&" ) );
+        QString text = proxy_for_menu->fontMetrics().elidedText( item->text().simplified(), Qt::ElideMiddle, m_menu_width );
+        text.replace( "&", "&&" );
         id = proxy_for_menu->insertItem( text, -1, index );
     } else {
         const QSize max_size( m_menu_width,m_menu_height/4 );
