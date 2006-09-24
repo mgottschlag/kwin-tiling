@@ -70,12 +70,14 @@ KdmLayoutBox::KdmLayoutBox( const QDomNode &node )
 void
 KdmLayoutBox::update( QStack<QRect> &parentGeometries, bool force )
 {
-	const QRect &parentGeometry = parentGeometries.top();
+	QRect parentGeometry = parentGeometries.pop();
 	kDebug() << this << " update " << parentGeometry << endl;
 
 	// I can't layout children if the parent rectangle is not valid
-	if (!parentGeometry.isValid() || parentGeometry.isEmpty())
+	if (!parentGeometry.isValid() || parentGeometry.isEmpty()) {
+		parentGeometries.push( parentGeometry );
 		return;
+	}
 
 	// Check if box size was computed. If not compute it
 	// TODO check if this prevents updating changing items
@@ -114,8 +116,10 @@ KdmLayoutBox::update( QStack<QRect> &parentGeometries, bool force )
 			parentGeometries.push( temp );
 			itemRect = itm->placementHint( parentGeometries );
 			parentGeometries.pop();
+			parentGeometries.push( parentGeometry );
 			parentGeometries.push( itemRect );
 			itm->setGeometry( parentGeometries, force );
+			parentGeometries.pop();
 			parentGeometries.pop();
 		}
 	} else {
@@ -142,11 +146,15 @@ KdmLayoutBox::update( QStack<QRect> &parentGeometries, bool force )
 			itemRect = itm->placementHint( parentGeometries );
 			parentGeometries.pop();
 			kDebug() << this << " placementHint for " << itm << " temp " << temp << " final " << itemRect << " childrenRect now " << childrenRect << endl;
+			parentGeometries.push( parentGeometry );
 			parentGeometries.push( itemRect );
 			itm->setGeometry( parentGeometries, force );
 			parentGeometries.pop();
+			parentGeometries.pop();
 		}
 	}
+	
+	parentGeometries.push( parentGeometry );
 }
 
 //FIXME truly experimental (is so close to greeter_geometry.c)
@@ -154,6 +162,7 @@ QSize
 KdmLayoutBox::sizeHint( QStack<QRect> &parentGeometries )
 {
 	// Sum up area taken by children
+	QRect parentGeometry = parentGeometries.pop();
 	parentGeometries.push( QRect() );
 	int w = 0, h = 0;
 	foreach (KdmItem *itm, m_children) {
@@ -169,6 +178,7 @@ KdmLayoutBox::sizeHint( QStack<QRect> &parentGeometries )
 		}
 	}
 	parentGeometries.pop();
+	parentGeometries.push( parentGeometry );
 
 	// Add padding and items spacing
 	w += 2 * box.xpadding;

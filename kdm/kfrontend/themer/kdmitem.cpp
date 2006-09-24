@@ -352,7 +352,7 @@ getParentSize( const QStack<QRect> &parentGeometries, int levels )
 {
 	int off = parentGeometries.size() - 1 - levels;
 	if (off < 0) {
-		kError() << "Theme contains element references beyond the root." << endl;
+		kError() << "Theme references element below the root." << endl;
 		off = 0;
 	}
 	return parentGeometries[off];
@@ -429,7 +429,6 @@ KdmItem::placementHint( QStack<QRect> &parentGeometries )
 		y = parentRect.bottom() - geom.pos.y.val;
 	else if (geom.pos.y.type == DTpercent)
 		y += parentRect.height() * geom.pos.y.val / 100;
-	kDebug() << " => x, y before size: " << x << "x" << y << endl;
 
 	int miw = w, mih = h, maw = w, mah = h;
 	calcSize( geom.size, parentGeometries, hintedSize, boxHint, w, h );
