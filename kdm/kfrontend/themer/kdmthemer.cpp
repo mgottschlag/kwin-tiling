@@ -88,12 +88,6 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 
 	// Set the root (screen) item
 	rootItem = new KdmRect( this, QDomNode() );
-	connect( rootItem, SIGNAL(needUpdate( int, int, int, int )),
-	         SLOT(update( int, int, int, int )) );
-	connect( rootItem, SIGNAL(needPlacement()),
-	         SLOT(slotNeedPlacement()) );
-	connect( rootItem, SIGNAL(activated( const QString & )),
-	         SIGNAL(activated( const QString & )) );
 
 	basedir = QFileInfo( filename ).absolutePath();
 
@@ -236,6 +230,12 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 				newItem = new KdmPixmap( parent, subnode );
 			if (newItem) {
 				newItem->setIsButton( el.attribute( "button", "false" ) == "true" );
+				connect( newItem, SIGNAL(needUpdate( int, int, int, int )),
+						 SLOT(update( int, int, int, int )) );
+				connect( newItem, SIGNAL(needPlacement()),
+						 SLOT(slotNeedPlacement()) );
+				connect( newItem, SIGNAL(activated( const QString & )),
+						 SIGNAL(activated( const QString & )) );
 				generateItems( newItem, subnode );
 			}
 		} else if (tagName == "box") {

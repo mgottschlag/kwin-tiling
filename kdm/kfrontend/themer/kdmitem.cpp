@@ -464,11 +464,6 @@ KdmItem::addChildItem( KdmItem *item )
 		boxManager->addItem( item );
 		break;
 	}
-
-	// signal bounce from child to parent
-	connect( item, SIGNAL(needUpdate( int, int, int, int )), SIGNAL(needUpdate( int, int, int, int )) );
-	connect( item, SIGNAL(needPlacement()), SIGNAL(needPlacement()) );
-	connect( item, SIGNAL(activated( const QString & )), SIGNAL(activated( const QString & )) );
 }
 
 void
