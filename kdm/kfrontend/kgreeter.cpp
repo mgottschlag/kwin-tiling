@@ -108,6 +108,21 @@ class UserListView : public QListWidget {
 		}
 		return cachedSizeHint;
 	}
+
+	virtual void keyPressEvent( QKeyEvent *event )
+	{
+		switch (event->key()) {
+		case Qt::Key_Enter:
+		case Qt::Key_Return:
+			if (currentIndex().isValid())
+				emit activated(currentIndex());
+			event->accept();
+			break;
+		default:
+			QListWidget::keyPressEvent( event );
+			break;
+		}
+	}
 };
 
 class UserListViewItem : public QListWidgetItem {
