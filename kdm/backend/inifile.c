@@ -48,7 +48,7 @@ iniLoad( const char *fname )
 	char *data;
 	int fd, len;
 
-	if ((fd = open( fname, O_RDONLY )) < 0) {
+	if ((fd = open( fname, O_RDONLY | O_NONBLOCK )) < 0) {
 		Debug( "cannot open ini-file %\"s: %m", fname );
 		return 0;
 	}
@@ -76,7 +76,7 @@ iniSave( const char *data, const char *fname )
 {
 	int fd, cnt, len;
 
-	if ((fd = creat( fname, 0600 )) < 0) {
+	if ((fd = open( fname, O_WRONLY | O_CREAT | O_TRUNC | O_NONBLOCK, 0600 )) < 0) {
 		Debug( "cannot create ini-file %\"s: %m", fname );
 		return 0;
 	}
