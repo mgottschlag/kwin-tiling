@@ -216,22 +216,22 @@ KdmItem::showWidget()
 
 /* This is called as a result of KdmLayout::update, and directly on the root */
 void
-KdmItem::setGeometry( const QRect &newGeometry, bool force )
+KdmItem::setGeometry( QStack<QRect> &newGeometries, bool force )
 {
-	kDebug() << " KdmItem::setGeometry " << id << " " << newGeometry << endl;
+	kDebug() << " KdmItem::setGeometry " << id << " " << newGeometries.top() << endl;
 	// check if already 'in place'
-	if (!force && area == newGeometry)
+	if (!force && area == newGeometries.top())
 		return;
 
-	area = newGeometry;
+	area = newGeometries.top();
 
 	// recurr to all boxed children
 	if (boxManager && !boxManager->isEmpty())
-		boxManager->update( newGeometry, force );
+		boxManager->update( newGeometries, force );
 
 	// recurr to all fixed children
 	if (fixedManager && !fixedManager->isEmpty())
-		fixedManager->update( newGeometry, force );
+		fixedManager->update( newGeometries, force );
 
 	// TODO send *selective* repaint signal
 }
@@ -347,10 +347,22 @@ KdmItem::sizeHint()
 		geom.size.y.type == DTpixel ? geom.size.y.val : 0 );
 }
 
+static const QRect &
+getParentSize( const QStack<QRect> &parentGeometries, int levels )
+{
+	int off = parentGeometries.size() - 1 - levels;
+	if (off < 0) {
+		kError() << "Theme contains element references beyond the root." << endl;
+		off = 0;
+	}
+	return parentGeometries[off];
+}
+
 void
 KdmItem::calcSize(
 	const DataPair &sz,
-	const QRect &parentRect, const QSize &hintedSize, const QSize &boxHint,
+	const QStack<QRect> &parentGeometries,
+	const QSize &hintedSize, const QSize &boxHint,
 	int &w, int &h )
 {
 	if (sz.x.type == DTpixel)
@@ -358,7 +370,7 @@ KdmItem::calcSize(
 	else if (sz.x.type == DTnpixel)
 		w -= sz.x.val;
 	else if (sz.x.type == DTpercent)
-		w = parentRect.width() * sz.x.val / 100;
+		w = getParentSize( parentGeometries, sz.x.levels).width() * sz.x.val / 100;
 	else if (sz.x.type == DTbox)
 		w = boxHint.width();
 	else
@@ -369,7 +381,7 @@ KdmItem::calcSize(
 	else if (sz.y.type == DTnpixel)
 		h -= sz.y.val;
 	else if (sz.y.type == DTpercent)
-		h = parentRect.height() * sz.y.val / 100;
+		h = getParentSize( parentGeometries, sz.y.levels).height() * sz.y.val / 100;
 	else if (sz.y.type == DTbox)
 		h = boxHint.height();
 	else
@@ -377,17 +389,13 @@ KdmItem::calcSize(
 }
 
 QRect
-KdmItem::placementHint( const QRect &parentRect )
+KdmItem::placementHint( QStack<QRect> &parentGeometries )
 {
 	QSize hintedSize = sizeHint();
 	QSize boxHint;
 
-	int x = parentRect.left(),
-	    y = parentRect.top(),
-	    w = parentRect.width(),
-	    h = parentRect.height();
-
-	kDebug() << "KdmItem::placementHint " << id << " parentRect="<< parentRect << " hintedSize=" << hintedSize << endl;
+	kDebug() << "KdmItem::placementHint " << id << " parentRect="
+		<< parentGeometries.top() << " hintedSize=" << hintedSize << endl;
 	// check if width or height are set to "box"
 	if (geom.size.x.type == DTbox || geom.size.y.type == DTbox ||
 	    geom.minSize.x.type == DTbox || geom.minSize.y.type == DTbox ||
@@ -396,11 +404,17 @@ KdmItem::placementHint( const QRect &parentRect )
 		if (myWidget)
 			boxHint = hintedSize;
 		else if (boxManager)
-			boxHint = boxManager->sizeHint();
+			boxHint = boxManager->sizeHint( parentGeometries );
 		else
-			boxHint = parentRect.size();
+			boxHint = parentGeometries.top().size();
 		kDebug() << " => boxHint " << boxHint << endl;
 	}
+
+	const QRect &parentRect = parentGeometries.top();
+	int x = parentRect.left(),
+	    y = parentRect.top(),
+	    w = parentRect.width(),
+	    h = parentRect.height();
 
 	if (geom.pos.x.type == DTpixel)
 		x += geom.pos.x.val;
@@ -415,11 +429,12 @@ KdmItem::placementHint( const QRect &parentRect )
 		y = parentRect.bottom() - geom.pos.y.val;
 	else if (geom.pos.y.type == DTpercent)
 		y += parentRect.height() * geom.pos.y.val / 100;
+	kDebug() << " => x, y before size: " << x << "x" << y << endl;
 
 	int miw = w, mih = h, maw = w, mah = h;
-	calcSize( geom.size, parentRect, hintedSize, boxHint, w, h );
-	calcSize( geom.minSize, parentRect, hintedSize, boxHint, miw, mih );
-	calcSize( geom.maxSize, parentRect, hintedSize, boxHint, maw, mah );
+	calcSize( geom.size, parentGeometries, hintedSize, boxHint, w, h );
+	calcSize( geom.minSize, parentGeometries, hintedSize, boxHint, miw, mih );
+	calcSize( geom.maxSize, parentGeometries, hintedSize, boxHint, maw, mah );
 	kDebug() << "size " << w << "x" << h << " min " << miw << "x" << mih << " max " << maw << "x" << mah << endl;
 	w = qMax( qMin( w, maw ), miw );
 	h = qMax( qMin( h, mah ), mih );
@@ -480,6 +495,11 @@ KdmItem::parseAttribute( const QString &s, DataPoint &pt )
 		pt.type = DTpercent;
 		QString sCopy = s;
 		sCopy.remove( p, 1 );
+		pt.levels = 0;
+		while ((p = sCopy.indexOf( '^' )) >= 0) {
+			sCopy.remove( p, 1 );
+			pt.levels++;
+		}
 		sCopy.replace( ',', '.' );
 		pt.val = (int)sCopy.toDouble();
 	} else {		// int value

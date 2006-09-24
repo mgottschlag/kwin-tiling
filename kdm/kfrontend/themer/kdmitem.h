@@ -23,6 +23,7 @@
 #define KDMITEM_H
 
 #include <QObject>
+#include <QStack>
 #include <QRect>
 #include <qdom.h>
 #include <QFont>
@@ -97,7 +98,7 @@ public:
 	 * or boxed ones). Note that this will generate repaint signals
 	 * when needed. The default implementation should fit all needs.
 	 */
-	virtual void setGeometry( const QRect &newGeometry, bool force );
+	virtual void setGeometry( QStack<QRect> &newGeometries, bool force );
 
 	/**
 	 * Paint the item and its children using the given painter.
@@ -124,7 +125,7 @@ public:
 	 * @param parentGeometry the geometry of the caller item or a
 	 * null rect if the geometry of the parent is not yet defined.
 	 */
-	virtual QRect placementHint( const QRect &parentGeometry );
+	virtual QRect placementHint( QStack<QRect> &parentGeometries );
 
 	/**
 	 * Create the box layout manager; next children will be
@@ -212,7 +213,7 @@ protected:
 	// This struct is filled in by KdmItem base class
 	enum DataType { DTnone, DTpixel, DTnpixel, DTpercent, DTbox };
 	struct DataPoint {
-		int val;
+		int val, levels;
 		DataType type;
 	};
 	struct DataPair {
@@ -225,7 +226,7 @@ protected:
 
 	static void calcSize(
 		const DataPair &,
-		const QRect &, const QSize &, const QSize &,
+		const QStack<QRect> &parentGeometries, const QSize &, const QSize &,
 		int &, int & );
 
 	/* For internal use ONLY

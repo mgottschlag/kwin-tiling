@@ -29,11 +29,12 @@
 
 #include <QSize>
 #include <QList>
+#include <QStack>
+#include <QRect>
 
 class KdmItem;
 
 class QDomNode;
-class QRect;
 
 class KdmLayout {
 
@@ -48,7 +49,7 @@ public:
 
 	// Updates the layout of all items knowing that the parent
 	// has the @p parentGeometry geometry
-//	virtual void update( const QRect &parentGeometry ) = 0;
+//	virtual void update( QStack<QRect> &parentGeometries ) = 0;
 
 protected:
 	QList<KdmItem *> m_children;
@@ -61,7 +62,7 @@ public:
 
 	// Updates the layout of all boxed items knowing that the parent
 	// has the @p parentGeometry geometry
-	void update( const QRect &parentGeometry, bool force );
+	void update( QStack<QRect> &parentGeometries, bool force );
 };
 
 /**
@@ -76,11 +77,11 @@ public:
 
 	// Updates the layout of all boxed items knowing that they
 	// should fit into @p parentGeometry container
-	void update( const QRect &parentGeometry, bool force );
+	void update( QStack<QRect> &parentGeometries, bool force );
 
 	// Computes the size hint of the box, telling which is the
 	// smallest size inside which boxed items will fit
-	QSize sizeHint();
+	QSize sizeHint( QStack<QRect> &parentGeometries );
 
 private:
 	struct {

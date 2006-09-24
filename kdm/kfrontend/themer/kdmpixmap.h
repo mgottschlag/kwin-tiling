@@ -48,7 +48,7 @@ protected:
 	// handle switching between normal / active / prelight configurations
 	virtual void statusChanged( bool descend );
 
-	virtual void setGeometry( const QRect &newGeometry, bool force );
+	virtual void setGeometry( QStack<QRect> &newGeometries, bool force );
 
 	struct PixmapStruct {
 		struct PixmapClass {

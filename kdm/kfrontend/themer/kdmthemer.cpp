@@ -166,7 +166,9 @@ KdmThemer::widgetEvent( QEvent *e )
 		break;
 	case QEvent::Paint:
 		if (m_geometryOutdated) {
-			rootItem->setGeometry( QRect( QPoint(), widget()->size() ), m_geometryInvalid );
+			QStack<QRect> geometries;
+			geometries.push( QRect( QPoint(), widget()->size() ) );
+			rootItem->setGeometry( geometries, m_geometryInvalid );
 			if (debugLevel & DEBUG_THEMING)
 				showStructure( rootItem );
 			m_geometryOutdated = m_geometryInvalid = false;

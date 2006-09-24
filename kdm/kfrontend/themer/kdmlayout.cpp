@@ -35,8 +35,9 @@ KdmLayoutFixed::KdmLayoutFixed( const QDomNode &/*node*/ )
 }
 
 void
-KdmLayoutFixed::update( const QRect &parentGeometry, bool force )
+KdmLayoutFixed::update( QStack<QRect> &parentGeometries, bool force )
 {
+	const QRect &parentGeometry = parentGeometries.top();
 	kDebug() << "KdmLayoutFixed::update " << parentGeometry << endl;
 
 	// I can't layout children if the parent rectangle is not valid
@@ -45,8 +46,11 @@ KdmLayoutFixed::update( const QRect &parentGeometry, bool force )
 		return;
 	}
 	// For each child in list I ask their hinted size and set it!
-	foreach (KdmItem *itm, m_children)
-		itm->setGeometry( itm->placementHint( parentGeometry ), force );
+	foreach (KdmItem *itm, m_children) {
+		parentGeometries.push( itm->placementHint( parentGeometries ) );
+		itm->setGeometry( parentGeometries, force );
+		parentGeometries.pop();
+	}
 }
 
 KdmLayoutBox::KdmLayoutBox( const QDomNode &node )
@@ -64,8 +68,9 @@ KdmLayoutBox::KdmLayoutBox( const QDomNode &node )
 }
 
 void
-KdmLayoutBox::update( const QRect &parentGeometry, bool force )
+KdmLayoutBox::update( QStack<QRect> &parentGeometries, bool force )
 {
+	const QRect &parentGeometry = parentGeometries.top();
 	kDebug() << this << " update " << parentGeometry << endl;
 
 	// I can't layout children if the parent rectangle is not valid
@@ -98,7 +103,7 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 		foreach (KdmItem *itm, m_children) {
 			if (itm->isExplicitlyHidden())
 				continue;
-			QRect temp = childrenRect;
+			QRect temp = childrenRect, itemRect;
 			if (box.isVertical) {
 				temp.setHeight( height );
 				childrenRect.setTop( childrenRect.top() + height + box.spacing );
@@ -106,7 +111,12 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 				temp.setWidth( width );
 				childrenRect.setLeft( childrenRect.left() + width + box.spacing );
 			}
-			itm->setGeometry( itm->placementHint( temp ), force );
+			parentGeometries.push( temp );
+			itemRect = itm->placementHint( parentGeometries );
+			parentGeometries.pop();
+			parentGeometries.push( itemRect );
+			itm->setGeometry( parentGeometries, force );
+			parentGeometries.pop();
 		}
 	} else {
 		foreach (KdmItem *itm, m_children) {
@@ -115,30 +125,39 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 			QRect temp = childrenRect, itemRect;
 			if (box.isVertical) {
 				temp.setHeight( 0 );
-				itemRect = itm->placementHint( temp );
+				parentGeometries.push( temp );
+				itemRect = itm->placementHint( parentGeometries );
+				parentGeometries.pop();
 				temp.setHeight( itemRect.height() );
 				childrenRect.setTop( childrenRect.top() + itemRect.height() + box.spacing );
 			} else {
 				temp.setWidth( 0 );
-				itemRect = itm->placementHint( temp );
+				parentGeometries.push( temp );
+				itemRect = itm->placementHint( parentGeometries );
+				parentGeometries.pop();
 				temp.setWidth( itemRect.width() );
 				childrenRect.setLeft( childrenRect.left() + itemRect.width() + box.spacing );
 			}
-			itemRect = itm->placementHint( temp );
+			parentGeometries.push( temp );
+			itemRect = itm->placementHint( parentGeometries );
+			parentGeometries.pop();
 			kDebug() << this << " placementHint for " << itm << " temp " << temp << " final " << itemRect << " childrenRect now " << childrenRect << endl;
-			itm->setGeometry( itemRect, force );
+			parentGeometries.push( itemRect );
+			itm->setGeometry( parentGeometries, force );
+			parentGeometries.pop();
 		}
 	}
 }
 
 //FIXME truly experimental (is so close to greeter_geometry.c)
 QSize
-KdmLayoutBox::sizeHint()
+KdmLayoutBox::sizeHint( QStack<QRect> &parentGeometries )
 {
 	// Sum up area taken by children
+	parentGeometries.push( QRect() );
 	int w = 0, h = 0;
 	foreach (KdmItem *itm, m_children) {
-		QSize s = itm->placementHint( QRect() ).size();
+		QSize s = itm->placementHint( parentGeometries ).size();
 		if (box.isVertical) {
 			if (s.width() > w)
 				w = s.width();
@@ -149,6 +168,7 @@ KdmLayoutBox::sizeHint()
 			w += s.width();
 		}
 	}
+	parentGeometries.pop();
 
 	// Add padding and items spacing
 	w += 2 * box.xpadding;
