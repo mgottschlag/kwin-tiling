@@ -95,7 +95,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 	connect( rootItem, SIGNAL(activated( const QString & )),
 	         SIGNAL(activated( const QString & )) );
 
-	rootItem->setBaseDir( QFileInfo( filename ).absolutePath() );
+	basedir = QFileInfo( filename ).absolutePath();
 
 	generateItems( rootItem, theme );
 

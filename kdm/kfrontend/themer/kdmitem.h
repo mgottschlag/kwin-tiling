@@ -140,15 +140,7 @@ public:
 
 	QString type() const { return itemType; }
 	void setType( const QString &t ) { itemType = t; }
-	void setBaseDir( const QString &bd ) { basedir = bd; }
 	void setIsButton( bool on ) { isButton = on; }
-
-	QString baseDir() const
-	{
-		if (basedir.isEmpty() && parent())
-			return static_cast<KdmItem *>( qobject_cast <KdmItem*>( parent() ) )->baseDir();
-		return basedir;
-	}
 
 	KdmItem *findNode( const QString &id ) const;
 	virtual void setWidget( QWidget *widget );
@@ -262,9 +254,6 @@ protected:
 
 	// Compositing related variables
 	QImage *image;
-
-	// defines the directory the theme is in (may be present in the parent)
-	QString basedir;
 
 	QWidget *myWidget;
 

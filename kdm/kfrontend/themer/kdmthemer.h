@@ -62,6 +62,9 @@ public:
 	~KdmThemer();
 
 	bool isOK() { return rootItem != 0; }
+	
+	const QString &baseDir() const { return basedir; }
+
 	/*
 	 * Gives a sizeHint to the widget (parent size)
 	 */
@@ -91,6 +94,9 @@ private:
 	 * The config file being used
 	 */
 	QDomDocument domTree;
+
+	// defines the directory the theme is in
+	QString basedir;
 
 	/*
 	 * Stores the root of the theme

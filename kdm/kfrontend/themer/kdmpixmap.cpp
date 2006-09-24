@@ -20,6 +20,7 @@
  */
 
 #include "kdmpixmap.h"
+#include "kdmthemer.h"
 
 #include <kimageeffect.h>
 #include <ksvgrenderer.h>
@@ -100,7 +101,7 @@ KdmPixmap::loadPixmap( const QString &fileName, PixmapStruct::PixmapClass &pClas
 
 	pClass.fullpath = fileName;
 	if (fileName.at( 0 ) != '/')
-		pClass.fullpath = baseDir() + '/' + fileName;
+		pClass.fullpath = themer()->baseDir() + '/' + fileName;
 
 	if (fileName.endsWith( ".svg" ) || fileName.endsWith( ".svgz" )) // we delay it for svgs
 		pClass.svgImage = true;
