@@ -386,6 +386,11 @@ KdmItem::calcSize(
 		h = boxHint.height();
 	else
 		h = hintedSize.height();
+
+	if (sz.x.type == DTscale && h && hintedSize.height())
+		w = w * h / hintedSize.height();
+	else if (sz.y.type == DTscale && w && hintedSize.width())
+		h = w * h / hintedSize.width();
 }
 
 QRect
@@ -489,6 +494,9 @@ KdmItem::parseAttribute( const QString &s, DataPoint &pt )
 	int p;
 	if (s == "box") {	// box value
 		pt.type = DTbox;
+		pt.val = 0;
+	} else if (s == "scale") {
+		pt.type = DTscale;
 		pt.val = 0;
 	} else if ((p = s.indexOf( '%' )) >= 0) {	// percent value
 		pt.type = DTpercent;

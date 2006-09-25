@@ -211,7 +211,7 @@ protected:
 	bool isButton;
 
 	// This struct is filled in by KdmItem base class
-	enum DataType { DTnone, DTpixel, DTnpixel, DTpercent, DTbox };
+	enum DataType { DTnone, DTpixel, DTnpixel, DTpercent, DTbox, DTscale };
 	struct DataPoint {
 		int val, levels;
 		DataType type;
