@@ -532,11 +532,15 @@ KdmItem::parseColor( const QString &s, const QString &a, QColor &color )
 		return;
 	bool ok;
 	QString sCopy = s;
-	int hexColor = sCopy.remove( 0, 1 ).toInt( &ok, 16 );
+	uint hexColor = sCopy.remove( 0, 1 ).toUInt( &ok, 16 );
 	if (ok) {
-		color.setRgb( hexColor );
-		if (!a.isNull())
-			color.setAlpha( int(a.toFloat() * 255) );
+		if (sCopy.length() == 8)
+			color.setRgba( hexColor );
+		else {
+			color.setRgb( hexColor );
+			if (!a.isNull())
+				color.setAlpha( int(a.toFloat() * 255) );
+		}
 	}
 }
 
