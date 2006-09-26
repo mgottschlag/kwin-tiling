@@ -65,7 +65,6 @@ mkdir -m 700 -p $kdehome/share/config
 cat >$kdehome/share/config/startupconfigkeys <<EOF
 kcminputrc Mouse cursorTheme ''
 kcminputrc Mouse cursorSize ''
-kpersonalizerrc General FirstLogin true
 ksplashrc KSplash Theme Default
 kcmrandrrc Display ApplyOnStartup false
 kcmrandrrc [Screen0]
@@ -145,20 +144,6 @@ elif test "$kcmfonts_general_forcefontdpi" -eq 96; then
     xrdb -quiet -merge -nocpp <<EOF
 Xft.dpi: 96
 EOF
-fi
-
-# Launch splash that doesn't need any KDE libraries here, before
-# KDE libraries are loaded into memory (which may take some time
-# with cold caches). Makes the splash appear sooner.
-# If kpersonalizer needs to be run splash will be started only later.
-if test "$kpersonalizerrc_general_firstlogin" != "true"; then
-    case "$ksplashrc_ksplash_theme" in 
-      Simple)
-         ksplashsimple 
-         ;;
-      *)
-         ;;
-    esac
 fi
 
 # Source scripts found in <localprefix>/env/*.sh and <prefixes>/env/*.sh
@@ -295,28 +280,12 @@ fi
 # Workaround for missing export in dbus-launch's output
 export DBUS_SESSION_BUS_PID
 
-# run KPersonalizer before the session, if this is the first login
-if test "$kpersonalizerrc_general_firstlogin" = "true"; then
-    # don't start whole kdeinit (takes too long)
-    echo 'startkde: Running kpersonalizer...'  1>&2
-    kwin --lock &
-    kpersonalizer --before-session
-    # handle kpersonalizer restarts (language change)
-    while test $? -eq 1; do
-        kpersonalizer --r --before-session
-    done
-    dbus org.kde.kwin /MainApplication org.kde.KApplication.quit
-    #dcopserver_shutdown --wait
-fi
-
 # the splashscreen and progress indicator
 case "$ksplashrc_ksplash_theme" in 
   None)
      ;; # nothing
   Simple)
-     if test "$kpersonalizerrc_general_firstlogin" = "true"; then
-         ksplashsimple 
-     fi # otherwise started earlier
+     ksplashsimple 
      ;;
   *)
      ksplash --nodbus
