@@ -270,9 +270,12 @@ bool KdmThemer::willDisplay( const QDomNode &node )
 	if (!modes.isNull()) {
 		QStringList modeList = modes.split( ",", QString::SkipEmptyParts );
 
+		if (modeList.contains( "nowhere" ))
+			return false;
 		// If current mode isn't in this list, do not display item
 		if (!modeList.contains( m_currentMode ))
 			return false;
+		// mode "everywhere" is implicit
 	}
 
 	QString type = el.attribute( "type" );
