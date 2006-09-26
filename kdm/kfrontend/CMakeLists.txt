@@ -19,6 +19,8 @@ set(kdmthemer_SRCS
 	themer/kdmpixmap.h
 	themer/kdmrect.cpp
 	themer/kdmrect.h
+	themer/kdmlist.cpp
+	themer/kdmlist.h
 	themer/kdmlabel.cpp
 	themer/kdmlabel.h
 	themer/kdmlayout.cpp

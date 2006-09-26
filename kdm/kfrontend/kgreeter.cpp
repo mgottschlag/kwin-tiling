@@ -81,7 +81,6 @@ class UserListView : public QListWidget {
 		setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );
 		setUniformItemSizes( true );
 		setIconSize( QSize( 48, 48 ) );
-		setAlternatingRowColors( true );
 	}
 
 	mutable QSize cachedSizeHint;
@@ -614,8 +613,10 @@ KStdGreeter::KStdGreeter()
 	int rs = main_box->spacing();
 	main_box->setSpacing( main_box->margin() );
 
-	if (userView)
+	if (userView) {
+		userView->setAlternatingRowColors( true );
 		main_box->addWidget( userView );
+	}
 
 	QBoxLayout *inner_box = new QVBoxLayout();
 	main_box->addLayout( inner_box );

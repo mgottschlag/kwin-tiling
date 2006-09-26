@@ -23,6 +23,7 @@
 #include "kdmitem.h"
 #include "kdmpixmap.h"
 #include "kdmrect.h"
+#include "kdmlist.h"
 #include "kdmlabel.h"
 
 #include <kdm_greet.h>
@@ -222,12 +223,11 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 			else if (type == "rect")
 				newItem = new KdmRect( parent, subnode );
 			else if (type == "entry") {
+				//newItem = new KdmEntry( parent, subnode );
 				newItem = new KdmRect( parent, subnode );
 				newItem->setType( type );
-			}
-			//	newItem = new KdmEntry( parent, subnode );
-			//else if (type=="list")
-			//	newItem = new KdmList( parent, subnode );
+			} else if (type=="list")
+				newItem = new KdmList( parent, subnode );
 			else if (type == "svg")
 				newItem = new KdmPixmap( parent, subnode );
 			if (newItem) {
