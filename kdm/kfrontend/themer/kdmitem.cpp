@@ -536,7 +536,7 @@ KdmItem::parseFont( const QString &s, QFont &font )
 void
 KdmItem::parseColor( const QString &s, const QString &a, QColor &color )
 {
-	if (s.at( 0 ) != '#')
+	if (!s.length() || s.at( 0 ) != '#')
 		return;
 	bool ok;
 	QString sCopy = s;
