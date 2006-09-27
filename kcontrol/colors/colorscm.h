@@ -30,6 +30,7 @@ class KColorButton;
 class KConfig;
 class KStdDirs;
 class KColorSchemeList;
+class KColorTreeWidget;
 
 /**
  * The Desktop/Colors tab in kcontrol.
@@ -52,11 +53,10 @@ private Q_SLOTS:
     void slotAdd();
     void slotRemove();
     void slotImport();
-    void slotSelectColor(const QColor &col);
-    void slotWidgetColor(int);
     void slotColorForWidget(int, const QColor &);
     void slotPreviewScheme(int);
     void slotShadeSortColumnChanged(bool);
+    void slotColorChanged(int, const QColor &);
 
 private:
     void setColorName( const QString &name, int id );
@@ -73,13 +73,12 @@ private:
 
     QColor colorPushColor;
     QSlider *sb;
-    QComboBox *wcCombo;
+    KColorTreeWidget *mColorTreeWidget;
     QPushButton *addBt, *removeBt, *importBt;
     KListBox *sList;
     KColorSchemeList *mSchemeList;
     QString sCurrentScheme;
 
-    KColorButton *colorButton;
     WidgetCanvas *cs;
     
     QCheckBox *cbExportColors;

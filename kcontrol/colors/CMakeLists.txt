@@ -3,7 +3,7 @@
 
 ########### next target ###############
 
-set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp ${libkrd_SRCS})
+set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp kcolortreewidget.cpp ${libkrd_SRCS})
 
 kde4_automoc(${kcm_colors_PART_SRCS})
 

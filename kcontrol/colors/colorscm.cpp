@@ -19,6 +19,7 @@
 #include <QLayout>
 #include <QPainter>
 #include <QSlider>
+#include <QSplitter>
 #include <q3groupbox.h>
 #include <Q3PtrList>
 
@@ -34,9 +35,11 @@
 #include <kstandarddirs.h>
 #include <kaboutdata.h>
 #include <klistbox.h>
+#include <kvbox.h>
 #include "../krdb/krdb.h"
 
 #include "colorscm.h"
+#include "kcolortreewidget.h"
 #include <QX11Info>
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY
@@ -117,39 +120,27 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     cs = new WidgetCanvas( this );
     cs->setCursor( KCursor::handCursor() );
 
-    // LAYOUT
-
-    QGridLayout *topLayout = new QGridLayout( this );
-    topLayout->setSpacing( KDialog::spacingHint() );
-    topLayout->setRowStretch(0,0);
-    topLayout->setRowStretch(1,0);
-    topLayout->setColumnStretch(0,1);
-    topLayout->setColumnStretch(1,1);
 
     cs->setFixedHeight(160);
     cs->setMinimumWidth(440);
-
     cs->setWhatsThis( i18n("This is a preview of the color settings which"
        " will be applied if you click \"Apply\" or \"OK\". You can click on"
        " different parts of this preview image. The widget name in the"
        " \"Widget color\" box will change to reflect the part of the preview"
        " image you clicked.") );
 
-    connect( cs, SIGNAL( widgetSelected( int ) ),
-         SLOT( slotWidgetColor( int ) ) );
     connect( cs, SIGNAL( colorDropped( int, const QColor&)),
          SLOT( slotColorForWidget( int, const QColor&)));
-    topLayout->addWidget( cs, 0, 0, 1, 2 );
-
-    Q3GroupBox *group = new Q3GroupBox( i18n("Color Scheme"), this );
+    
+    QSplitter *splitter = new QSplitter(this);
+    
+    Q3GroupBox *group = new Q3GroupBox( i18n("Color Scheme"), splitter );
     group->setOrientation( Qt::Horizontal );
     group->setColumns( 1 );
-    topLayout->addWidget( group, 1, 0 );
+
 
     sList = new KListBox( group );
     mSchemeList = new KColorSchemeList();
-    readSchemeNames();
-    sList->setCurrentItem( 0 );
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
 
     sList->setWhatsThis( i18n("This is a list of predefined color schemes,"
@@ -183,22 +174,21 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
 		" current user." ));
 
 
-    QBoxLayout *stackLayout = new QVBoxLayout;
-    topLayout->addLayout(stackLayout, 1, 1);
+    
+    KVBox *vb=new KVBox(splitter);
 
-    group = new Q3GroupBox(i18n("&Widget Color"), this);
-    stackLayout->addWidget(group);
-    QBoxLayout *groupLayout = new QVBoxLayout(group);
-    groupLayout->setMargin(10);
-    groupLayout->addSpacing(10);
+        // LAYOUT
+    splitter->addWidget(group);
+    splitter->addWidget(vb);
+    QVBoxLayout *toplayout = new QVBoxLayout(this);
+    toplayout->addWidget(cs);
+    toplayout->addWidget(splitter);
+    setLayout(toplayout);
 
-    wcCombo = new QComboBox(group);
-    wcCombo->setEditable(false);
-    for(int i=0; i < CSM_LAST;i++)
-    {
-       wcCombo->addItem(QString());
-    }
-
+    mColorTreeWidget = new KColorTreeWidget(vb);
+    connect(mColorTreeWidget , SIGNAL(colorChanged(int, const QColor& )) , 
+            this , SLOT(slotColorChanged( int, const QColor& ) ));
+    
     setColorName(i18n("Inactive Title Bar") , CSM_Inactive_title_bar);
     setColorName(i18n("Inactive Title Text"), CSM_Inactive_title_text);
     setColorName(i18n("Inactive Title Blend"), CSM_Inactive_title_blend);
@@ -223,39 +213,17 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     setColorName(i18n("Followed Link"), CSM_Followed_Link);
     setColorName(i18n("Alternate Background in Lists"), CSM_Alternate_background);
 
-    wcCombo->adjustSize();
-    connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
-    groupLayout->addWidget(wcCombo);
 
-    wcCombo->setWhatsThis( i18n("Click here to select an element of"
-       " the KDE desktop whose color you want to change. You may either"
-       " choose the \"widget\" here, or click on the corresponding part"
-       " of the preview image above.") );
-
-    colorButton = new KColorButton( group );
-    connect( colorButton, SIGNAL( changed(const QColor &)),
-             SLOT(slotSelectColor(const QColor &)));
-
-    groupLayout->addWidget( colorButton );
-
-    colorButton->setWhatsThis( i18n("Click here to bring up a dialog"
-       " box where you can choose a color for the \"widget\" selected"
-       " in the above list.") );
-
-    cbShadeList = new QCheckBox(i18n("Shade sorted column in lists"), this);
-    stackLayout->addWidget(cbShadeList);
+    cbShadeList = new QCheckBox(i18n("Shade sorted column in lists"), vb);
     connect(cbShadeList, SIGNAL(toggled(bool)), this, SLOT(slotShadeSortColumnChanged(bool)));
 
     cbShadeList->setWhatsThis(
        i18n("Check this box to show the sorted column in a list with a shaded background"));
 
-    group = new Q3GroupBox(  i18n("Con&trast"), this );
-    stackLayout->addWidget(group);
-
+    group = new Q3GroupBox(  i18n("Con&trast"), vb );
+    
     QVBoxLayout *groupLayout2 = new QVBoxLayout(group);
-    groupLayout2->setMargin(10);
-    groupLayout2->addSpacing(10);
-    groupLayout = new QHBoxLayout;
+    QHBoxLayout *groupLayout = new QHBoxLayout;
     groupLayout2->addLayout(groupLayout);
 
     sb = new QSlider( Qt::Horizontal,group,"Slider" );
@@ -276,11 +244,14 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     groupLayout->addWidget( label );
 
     cbExportColors = new QCheckBox(i18n("Apply colors to &non-KDE applications"), this);
-    topLayout->addWidget( cbExportColors, 2, 0, 1, 2 );
+    toplayout->addWidget( cbExportColors );
     connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(changed()));
 
     cbExportColors->setWhatsThis( i18n("Check this box to apply the"
        " current color scheme to non-KDE applications."));
+    
+    readSchemeNames();
+    sList->setCurrentItem( 0 );
 
     load();
 
@@ -301,11 +272,6 @@ KColorScheme::~KColorScheme()
     delete mSchemeList;
 }
 
-void KColorScheme::setColorName( const QString &name, int id )
-{
-    wcCombo->setItemText(id, name);
-    cs->addToolTip( id, name );
-}
 
 void KColorScheme::load()
 {
@@ -319,7 +285,6 @@ void KColorScheme::load()
     cbShadeList->setChecked(cs->shadeSortColumn);
 
     cs->drawSampleWidgets();
-    slotWidgetColor(wcCombo->currentIndex());
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
@@ -430,7 +395,6 @@ void KColorScheme::defaults()
     cbShadeList->setChecked(cs->shadeSortColumn);
 
     cs->drawSampleWidgets();
-    slotWidgetColor(wcCombo->currentIndex());
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
@@ -678,58 +642,9 @@ QColor &KColorScheme::color(int index)
     return cs->iaTxt; // Silence compiler
 }
 
-
-void KColorScheme::slotSelectColor(const QColor &col)
-{
-    int selection;
-    selection = wcCombo->currentIndex();
-
-    // Adjust the alternate background color if the standard color changes
-    // Only if the previous alternate color was not a user-configured one
-    // of course
-    if ( selection == CSM_Standard_background &&
-         color(CSM_Alternate_background) ==
-         KGlobalSettings::calculateAlternateBackgroundColor(
-             color(CSM_Standard_background) ) )
-    {
-        color(CSM_Alternate_background) =
-            KGlobalSettings::calculateAlternateBackgroundColor( col );
-    }
-
-    color(selection) = col;
-
-    cs->drawSampleWidgets();
-
-    sCurrentScheme.clear();
-
-    emit changed(true);
-}
-
-
-void KColorScheme::slotWidgetColor(int indx)
-{
-    if (indx < 0)
-        indx = 0;
-    if (wcCombo->currentIndex() != indx)
-        wcCombo->setCurrentIndex( indx );
-
-    // Do not emit KCModule::changed()
-    colorButton->blockSignals( true );
-
-    QColor col = color(indx);
-    colorButton->setColor( col );
-    colorPushColor = col;
-
-    colorButton->blockSignals( false );
-}
-
-
 void KColorScheme::slotColorForWidget(int indx, const QColor& col)
 {
-    if (wcCombo->currentIndex() != indx)
-        wcCombo->setCurrentIndex( indx );
-
-    slotSelectColor(col);
+    mColorTreeWidget->setColor( indx , col );
 }
 
 void KColorScheme::slotShadeSortColumnChanged(bool b)
@@ -860,6 +775,12 @@ void KColorScheme::readScheme( int index )
     cs->contrast = config->readEntry( "contrast", 7 );
     if (index != 0)
       delete config;
+    
+    
+    for(int f=0; f< CSM_LAST ; f++)
+    {
+        mColorTreeWidget->setColor( f , color(f) );
+    }
 }
 
 
@@ -952,7 +873,6 @@ void KColorScheme::slotPreviewScheme(int indx)
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
-    slotWidgetColor(wcCombo->currentIndex());
     if (indx < nSysSchemes)
        removeBt->setEnabled(false);
     else
@@ -992,5 +912,35 @@ void KColorScheme::insertEntry(const QString &sFile, const QString &sName)
        sList->insertItem(sName, newIndex);
        sList->setCurrentItem(newIndex);
 }
+
+void KColorScheme::setColorName( const QString & name, int id )
+{
+    mColorTreeWidget->addRole( id , name );
+}
+
+void KColorScheme::slotColorChanged( int selection , const QColor & col)
+{
+    // Adjust the alternate background color if the standard color changes
+    // Only if the previous alternate color was not a user-configured one
+    // of course
+    if ( selection == CSM_Standard_background &&
+         color(CSM_Alternate_background) ==
+         KGlobalSettings::calculateAlternateBackgroundColor(
+             color(CSM_Standard_background) ) )
+    {
+        color(CSM_Alternate_background) =
+            KGlobalSettings::calculateAlternateBackgroundColor( col );
+    }
+
+    color(selection) = col;
+
+    cs->drawSampleWidgets();
+
+    sCurrentScheme.clear();
+
+    emit changed(true);
+}
+
+
 
 #include "colorscm.moc"
