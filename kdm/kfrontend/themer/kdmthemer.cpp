@@ -279,23 +279,30 @@ bool KdmThemer::willDisplay( const QDomNode &node )
 	}
 
 	QString type = el.attribute( "type" );
+	bool res, inv;
+	if (type[0] == '!' ) {
+		type.remove( 0, 1 );
+		inv = true;
+	} else
+		inv = false;
 	if (type == "config" || type == "suspend")
-		return false;	// not implemented (yet)
-	if (type == "timed")
-		return _autoLoginDelay != 0;
-	if (type == "chooser")
+		res = false;	// not implemented (yet)
+	else if (type == "timed")
+		res = _autoLoginDelay != 0;
+	else if (type == "chooser")
 #ifdef XDMCP
-		return _loginMode != LOGIN_LOCAL_ONLY;
+		res = _loginMode != LOGIN_LOCAL_ONLY;
 #else
-		return false;
+		res = false;
 #endif
-	if (type == "halt" || type == "reboot")
-		return _allowShutdown != SHUT_NONE;
-//	if (type == "system")
-//		return true;
-
+	else if (type == "halt" || type == "reboot")
+		res = _allowShutdown != SHUT_NONE;
+//	else if (type == "system")
+//		res = true;
+	else
+		res = true;
 	// All tests passed, item will be displayed
-	return true;
+	return res ^ inv;
 }
 
 void
