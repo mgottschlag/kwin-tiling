@@ -164,8 +164,10 @@ KdmLayoutBox::sizeHint( QStack<QRect> &parentGeometries )
 	// Sum up area taken by children
 	QRect parentGeometry = parentGeometries.pop();
 	parentGeometries.push( QRect() );
-	int w = 0, h = 0;
+	int w = 0, h = 0, ccnt = 0;
 	foreach (KdmItem *itm, m_children) {
+		if (itm->isExplicitlyHidden())
+			continue;
 		QSize s = itm->placementHint( parentGeometries ).size();
 		if (box.isVertical) {
 			if (s.width() > w)
@@ -176,6 +178,7 @@ KdmLayoutBox::sizeHint( QStack<QRect> &parentGeometries )
 				h = s.height();
 			w += s.width();
 		}
+		ccnt++;
 	}
 	parentGeometries.pop();
 	parentGeometries.push( parentGeometry );
@@ -184,9 +187,9 @@ KdmLayoutBox::sizeHint( QStack<QRect> &parentGeometries )
 	w += 2 * box.xpadding;
 	h += 2 * box.ypadding;
 	if (box.isVertical)
-		h += box.spacing * (m_children.count() - 1);
+		h += box.spacing * (ccnt - 1);
 	else
-		w += box.spacing * (m_children.count() - 1);
+		w += box.spacing * (ccnt - 1);
 
 	// Make hint at least equal to minimum size (if set)
 	return QSize( w < box.minwidth ? box.minwidth : w,
