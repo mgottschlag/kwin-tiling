@@ -118,23 +118,11 @@
 		<pos x="-20" y="-37" anchor="e"/>
 		<text>%c</text>
 	</item>
-	<item type="rect" id="caps-lock-warning">
-		<normal color="#FFFFFF" alpha="0.5"/>
-		<pos anchor="c" x="50%" y="75%" width="box" height="box"/>
-		<box orientation="vertical" min-width="400" xpadding="10" ypadding="5" spacing="0">
-			<item type="label">
-				<normal color="#000000" font="Sans 12"/>
-				<pos x="50%" anchor="n"/>
-				<!-- Stock label for: You've got capslock on! -->
-				<stock type="caps-lock-warning"/>
-			</item>
-		</box>
-	</item>
 	<item type="rect" id="timed-label">
 		<show type="timed"/>
 		<normal color="#FFFFFF" alpha="0.5"/>
-		<pos anchor="c" x="50%" y="25%" width="box" height="box"/>
-		<box orientation="vertical" min-width="400" xpadding="10" ypadding="5" spacing="0">
+		<pos anchor="c" x="50%" y="20%" width="box" height="box"/>
+		<box orientation="vertical" xpadding="50" ypadding="5" spacing="0">
 			<item type="label">
 				<normal color="#000000" font="Sans 12"/>
 				<pos x="50%" anchor="n"/>
@@ -143,62 +131,83 @@
 			</item>
 		</box>
 	</item>
-	<item type="rect">
-		<normal color="#FFFFFF" alpha="0.5"/>
-		<pos anchor="c" x="50%" y="50%" width="box" height="box"/>
-		<box orientation="vertical" min-width="340" xpadding="30" ypadding="30" spacing="10">
-			<item type="label">
-				<pos anchor="n" x="50%"/>
-				<normal color="#000000" font="Sans 14"/>
-				<!-- Stock label for: Welcome to %h -->
-				<stock type="welcome-label"/>
+	<item type="rect" id="greeter">
+		<pos anchor="c" x="50%" y="50%" width="box" height="1"/>
+		<box orientation="horizontal" xpadding="0" ypadding="0" spacing="20">
+			<item type="list" id="userlist">
+				<color labelcolor="#40c0c0c0" altlabelcolor="#40e0e0e0"/>
+				<pos anchor="w" max-height="50%^"/>
 			</item>
-			<item type="rect" id="talker">
-				<normal color="#0" alpha="0"/>
-				<pos anchor="n" x="50%" width="box" height="box"/>
-				<!-- box orientation="vertical" xpadding="0" ypadding="0" spacing="10" -->
-				<box orientation="horizontal" xpadding="0" ypadding="0" spacing="0">
-					<item type="rect">
-						<normal color="#FF8080" alpha="0.0"/>
-						<pos anchor="w" y="50%" width="box" height="box"/>
-						<box orientation="vertical" xpadding="0" ypadding="0" spacing="14">
-							<item type="label">
-								<buddy idref="user-entry"/>
-								<pos anchor="ne" x="100%"/>
-								<normal color="#000000" font="Sans 12"/>
-								<!-- Stock label for: Username: -->
-								<stock type="username-label"/>
-							</item>
-							<item type="label">
-								<buddy idref="pw-entry"/>
-								<pos anchor="ne" x="100%"/>
-								<normal color="#000000" font="Sans 12"/>
-								<!-- Stock label for: Password: -->
-								<stock type="password-label"/>
-							</item>
-						</box>
+			<item type="rect" id="verify">
+				<normal color="#FFFFFF" alpha="0.5"/>
+				<pos anchor="w" width="box" height="box"/>
+				<box orientation="vertical" min-width="340" xpadding="30" ypadding="30" spacing="10">
+					<item type="label">
+						<pos anchor="n" x="50%"/>
+						<normal color="#000000" font="Sans 14"/>
+						<!-- Stock label for: Welcome to %h -->
+						<stock type="welcome-label"/>
 					</item>
-					<item type="rect">
-						<normal color="#FF80FF" alpha="0.0"/>
-						<pos anchor="w" y="50%" width="box" height="box"/>
-						<box orientation="vertical" xpadding="0" ypadding="0" spacing="10">
-							<item type="entry" id="user-entry">
-								<pos anchor="n" x="50%" height="24" width="150"/>
+					<item type="rect" id="talker">
+						<normal color="#0" alpha="0"/>
+						<pos anchor="n" x="50%" width="box" height="box"/>
+						<!-- box orientation="vertical" xpadding="0" ypadding="0" spacing="10" -->
+						<box orientation="horizontal" xpadding="0" ypadding="0" spacing="0">
+							<item type="rect">
+								<normal color="#FF8080" alpha="0.0"/>
+								<pos anchor="w" y="50%" width="box" height="box"/>
+								<box orientation="vertical" xpadding="0" ypadding="0" spacing="14">
+									<item type="label">
+										<buddy idref="user-entry"/>
+										<pos anchor="ne" x="100%"/>
+										<normal color="#000000" font="Sans 12"/>
+										<!-- Stock label for: Username: -->
+										<stock type="username-label"/>
+									</item>
+									<item type="label">
+										<buddy idref="pw-entry"/>
+										<pos anchor="ne" x="100%"/>
+										<normal color="#000000" font="Sans 12"/>
+										<!-- Stock label for: Password: -->
+										<stock type="password-label"/>
+									</item>
+								</box>
 							</item>
-							<item type="entry" id="pw-entry">
-								<pos anchor="n" x="50%" height="24" width="150"/>
+							<item type="rect">
+								<normal color="#FF80FF" alpha="0.0"/>
+								<pos anchor="w" y="50%" width="box" height="box"/>
+								<box orientation="vertical" xpadding="0" ypadding="0" spacing="10">
+									<item type="entry" id="user-entry">
+										<pos anchor="n" x="50%" height="24" width="150"/>
+									</item>
+									<item type="entry" id="pw-entry">
+										<pos anchor="n" x="50%" height="24" width="150"/>
+									</item>
+								</box>
 							</item>
 						</box>
 					</item>
 				</box>
+				<fixed>
+					<item type="label" id="pam-error">
+						<pos anchor="n" x="50%" y="85%"/>
+						<normal color="#000000" font="Sans Bold 12"/>
+						<text/>
+					</item>
+					<item type="rect" id="caps-lock-warning">
+						<normal color="#FFFFFF" alpha="0.5"/>
+						<pos anchor="n" x="50%" y="125%" width="box" height="box"/>
+						<box orientation="vertical" xpadding="50" ypadding="5" spacing="0">
+							<item type="label">
+								<normal color="#ff0000" font="Sans 12"/>
+								<pos x="50%" anchor="n"/>
+								<!-- Stock label for: You've got capslock on! -->
+								<stock type="caps-lock-warning"/>
+							</item>
+						</box>
+					</item>
+				</fixed>
 			</item>
 		</box>
-		<fixed>
-			<item type="label" id="pam-error">
-				<pos anchor="n" x="50%" y="110%"/>
-				<normal color="#000000" font="Sans 12"/>
-				<text/>
-			</item>
-		</fixed>
 	</item>
 </greeter>
