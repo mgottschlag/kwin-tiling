@@ -189,12 +189,18 @@ LockProcess::~LockProcess()
     }
 }
 
-static int sigterm_pipe[2];
+static int signal_pipe[2];
 
 static void sigterm_handler(int)
 {
-    char tmp = 0;
-    ::write( sigterm_pipe[1], &tmp, 1);
+    char tmp = 'T';
+    ::write( signal_pipe[1], &tmp, 1);
+}
+
+static void sighup_handler(int)
+{
+    char tmp = 'H';
+    ::write( signal_pipe[1], &tmp, 1);
 }
 
 void LockProcess::timerEvent(QTimerEvent *ev)
@@ -209,13 +215,7 @@ void LockProcess::timerEvent(QTimerEvent *ev)
 
 void LockProcess::setupSignals()
 {
-    // ignore SIGHUP
     struct sigaction act;
-    act.sa_handler=SIG_IGN;
-    sigemptyset(&(act.sa_mask));
-    sigaddset(&(act.sa_mask), SIGHUP);
-    act.sa_flags = 0;
-    sigaction(SIGHUP, &act, 0L);
     // ignore SIGINT
     act.sa_handler=SIG_IGN;
     sigemptyset(&(act.sa_mask));
@@ -234,16 +234,29 @@ void LockProcess::setupSignals()
     sigaddset(&(act.sa_mask), SIGTERM);
     act.sa_flags = 0;
     sigaction(SIGTERM, &act, 0L);
+    // SIGHUP forces lock
+    act.sa_handler= sighup_handler;
+    sigemptyset(&(act.sa_mask));
+    sigaddset(&(act.sa_mask), SIGHUP);
+    act.sa_flags = 0;
+    sigaction(SIGHUP, &act, 0L);
 
-    pipe(sigterm_pipe);
-    QSocketNotifier* notif = new QSocketNotifier(sigterm_pipe[0], QSocketNotifier::Read, this);
-    connect( notif, SIGNAL(activated(int)), SLOT(sigtermPipeSignal()));
+    pipe(signal_pipe);
+    QSocketNotifier* notif = new QSocketNotifier(signal_pipe[0], QSocketNotifier::Read, this);
+    connect( notif, SIGNAL(activated(int)), SLOT(signalPipeSignal()));
 }
 
 
-void LockProcess::sigtermPipeSignal()
+void LockProcess::signalPipeSignal()
 {
-    quitSaver();
+    char tmp;
+    ::read( signal_pipe[0], &tmp, 1);
+    if( tmp == 'T' )
+        quitSaver();
+    else if( tmp == 'H' ) {
+        if( !mLocked )
+            startLock();
+    }
 }
 
 //---------------------------------------------------------------------------

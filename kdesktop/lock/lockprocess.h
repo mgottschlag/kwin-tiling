@@ -66,7 +66,7 @@ protected:
 
 private Q_SLOTS:
     void hackExited(KProcess *);
-    void sigtermPipeSignal();
+    void signalPipeSignal();
     bool startLock();
     void suspend();
     void resume();

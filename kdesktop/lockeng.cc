@@ -80,19 +80,23 @@ void SaverEngine::lock()
     if (mState == Waiting)
     {
         ok = startLockProcess( ForceLock );
-    }
 // It takes a while for kdesktop_lock to start and lock the screen.
 // Therefore delay the DBus call until it tells kdesktop that the locking is in effect.
 // This is done only for --forcelock .
-    if( ok && mState != Saving )
-    {
+        if( ok && mState != Saving )
+        {
 #ifdef __GNUC__
 #warning port dcop transactions to dbus
 #endif
 #if 0
-        DCOPClientTransaction* trans = kapp->dcopClient()->beginTransaction();
-        mLockTransactions.append( trans );
+            DCOPClientTransaction* trans = kapp->dcopClient()->beginTransaction();
+            mLockTransactions.append( trans );
 #endif
+        }
+    }
+    else
+    {
+        mLockProcess.kill( SIGHUP );
     }
 }
 
