@@ -776,11 +776,11 @@ void KColorScheme::readScheme( int index )
     if (index != 0)
       delete config;
     
-    
+    mColorTreeWidget->blockSignals(true);   //block the colorChanged signal
     for(int f=0; f< CSM_LAST ; f++)
-    {
         mColorTreeWidget->setColor( f , color(f) );
-    }
+    mColorTreeWidget->blockSignals(false);
+    
 }
 
 
