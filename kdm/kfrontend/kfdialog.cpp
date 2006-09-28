@@ -47,7 +47,7 @@ FDialog::FDialog( QWidget *parent, bool framed )
 {
 	setModal( true );
 	if (framed) {
-		winFrame = new QFrame( this, Qt::WNoAutoErase );
+		winFrame = new QFrame( this );
 		winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
 		winFrame->setLineWidth( 2 );
 	} else
