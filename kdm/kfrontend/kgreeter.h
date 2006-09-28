@@ -139,8 +139,7 @@ class KThemedGreeter : public KGreeter {
 	typedef KGreeter inherited;
 
   public:
-	KThemedGreeter();
-	bool isOK() { return themer != 0; }
+	KThemedGreeter( KdmThemer *_themer );
 
   public Q_SLOTS:
 	void slotThemeActivated( const QString &id );

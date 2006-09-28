@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifdef XDMCP
 # include "kchooser.h"
 #endif
+#include "themer/kdmthemer.h"
 
 #include <kapplication.h>
 #include <kprocess.h>
@@ -153,11 +154,21 @@ kg_main( const char *argv0 )
 		app.setPalette( KGlobalSettings::createApplicationPalette( &config, 7 ) );
 	}
 
+	KdmThemer *themer;
+	if (_useTheme && !_theme.isEmpty()) {
+		themer = new KdmThemer( _theme, "console", app.desktop()->screen() );
+		if (!themer->isOK()) {
+			delete themer;
+			themer = 0;
+		}
+	} else
+		themer = 0;
+	
 	setup_modifiers( dpy, _numLockStatus );
 	SecureDisplay( dpy );
 	KProcess *proc = 0;
 	if (!_grabServer) {
-		if (_useBackground) {
+		if (_useBackground && !themer) {
 			proc = new KProcess;
 			*proc << QByteArray( argv0, strrchr( argv0, '/' ) - argv0 + 1 ) + "krootimage";
 			*proc << _backgroundCfg;
@@ -168,6 +179,17 @@ kg_main( const char *argv0 )
 	}
 
 	GSendInt( G_Ready );
+
+	if (themer) {
+		QPixmap pm( app.desktop()->screen()->size() );
+		themer->paintBackground( &pm );
+		QPalette palette;
+		palette.setBrush( app.desktop()->backgroundRole(), QBrush( pm ) );
+		app.desktop()->setPalette( palette );
+		app.desktop()->setAutoFillBackground( true );
+		app.desktop()->show();
+		app.desktop()->repaint();
+	}
 
 	setCursor( dpy, app.desktop()->winId(), XC_left_ptr );
 
@@ -206,14 +228,9 @@ kg_main( const char *argv0 )
 			if ((cmd != G_GreetTimed && !_autoLoginAgain) ||
 			    _autoLoginUser.isEmpty())
 				_autoLoginDelay = 0;
-			if (_useTheme && !_theme.isEmpty()) {
-				KThemedGreeter *tgrt;
-				dialog = tgrt = new KThemedGreeter;
-				if (!tgrt->isOK()) {
-					delete tgrt;
-					dialog = new KStdGreeter;
-				}
-			} else
+			if (themer)
+				dialog = new KThemedGreeter( themer );
+			else
 				dialog = new KStdGreeter;
 			if (*_preloader) {
 				proc2 = new KProcess;
@@ -245,6 +262,7 @@ kg_main( const char *argv0 )
 	KGVerify::done();
 
 	delete proc;
+	delete themer;
 	UnsecureDisplay( dpy );
 	restore_modifiers();
 

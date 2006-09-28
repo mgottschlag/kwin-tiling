@@ -198,6 +198,20 @@ KdmThemer::widgetEvent( QEvent *e )
 	}
 }
 
+void
+KdmThemer::paintBackground( QPaintDevice *dev )
+{
+	if (KdmItem *bg = findNode( "background" )) {
+		QRect rect( 0, 0, dev->width(), dev->height() );
+		QStack<QRect> geometries;
+		geometries.push( rect );
+		bg->setGeometry( geometries, true );
+		QPainter p( dev );
+		bg->show();
+		bg->paint( &p, rect );
+	}
+}
+
 /*
 void
 KdmThemer::pixmap( const QRect &r, QPixmap *px )

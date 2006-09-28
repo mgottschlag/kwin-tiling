@@ -37,6 +37,7 @@ class KdmBox;
 
 class QRect;
 class QEvent;
+class QPaintDevice;
 
 /**
 * @author Unai Garro
@@ -85,6 +86,8 @@ public:
 	QWidget *widget() { return m_widget; }
 
 	void addAction( QAction *action );
+
+	void paintBackground( QPaintDevice *dev );
 
 Q_SIGNALS:
 	void activated( const QString &id );

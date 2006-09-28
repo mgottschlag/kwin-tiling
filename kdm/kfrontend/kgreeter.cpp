@@ -771,9 +771,9 @@ KStdGreeter::verifyRetry()
 }
 
 
-KThemedGreeter::KThemedGreeter()
+KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 	: KGreeter( true )
-	, themer( 0 )
+	, themer( _themer )
 //	, clock( 0 )
 {
 	// We do all painting ourselves
@@ -783,12 +783,6 @@ KThemedGreeter::KThemedGreeter()
 
 	adjustGeometry();
 
-	themer = new KdmThemer( _theme, "console", this );
-	if (!themer->isOK()) {
-		delete themer;
-		themer = 0;
-		return;
-	}
 	themer->setWidget( this );
 
 	connect( themer, SIGNAL(activated( const QString & )),
