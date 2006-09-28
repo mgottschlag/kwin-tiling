@@ -32,8 +32,6 @@ John Tapsell john.tapsell@kde.org
 </othercredit>
 
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
-<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
-
 </authorgroup>
 
 <copyright>
@@ -465,15 +463,15 @@ appreciated.</para>
 <chapter id="credits-and-licenses">
 <title>Credits and Licenses</title>
 
-<para>&ksysguard; is currently developed and maintained by Chris Schl&auml;ger
-<email>cs@kde.org</email>. &ksysguard; is a rewrite of
-<application>KTop</application>, the KDE 1.x task manager. Several other people
+<para>&ksysguard; is currently developed and maintained by &John.Tapsell;
+&John.Tapsell.mail;. &ksysguard; is a rewrite of
+<application>KTop</application>, the &kde; 1.x task manager. Several other people
 have worked on <application>KTop</application>:</para>
 
 <itemizedlist>
 <listitem><para> A. Sanda <email>alex@darkstar.ping.at</email></para></listitem>
 <listitem><para> Ralf Mueller <email>ralf@bj-ig.de</email></para></listitem>
-<listitem><para> Bernd Johannes Wuebben
+<listitem><para> &Bernd.Johannes.Wuebben;
 <email>wuebben@math.cornell.edu</email></para></listitem>
 <listitem><para> Nicolas Leclercq
 <email>nicknet@planete.net</email></para></listitem>
@@ -486,6 +484,7 @@ have worked on <application>KTop</application>:</para>
 <email>zerium@traad.lavvu.no</email></para></listitem>
 </itemizedlist>
 
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 &underFDL;
 &underGPL;
 
