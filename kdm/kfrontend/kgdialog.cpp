@@ -125,14 +125,14 @@ KGDialog::inserten( const QString &txt, const QKeySequence &shortcut, const char
 	optMenu->addAction( txt, this, member, shortcut );
 }
 
-QAction *
+void
 KGDialog::inserten( const QString &txt, const QKeySequence &shortcut, QMenu *cmnu )
 {
 	ensureMenu();
 	QAction *action = optMenu->addMenu( cmnu );
 	action->setShortcut( shortcut );
 	action->setText( txt );
-	return action;
+	addAction( action );
 }
 
 void

@@ -68,7 +68,7 @@ class KGDialog : public FDialog {
 #endif
 	void inserten( const QKeySequence &shortcut, const char *member, int data = -1 );
 	void inserten( const QString &txt, const QKeySequence &shortcut, const char *member );
-	QAction *inserten( const QString &txt, const QKeySequence &shortcut, QMenu *cmnu );
+	void inserten( const QString &txt, const QKeySequence &shortcut, QMenu *cmnu );
 
 	bool needSep;
 	QMenu *optMenu;
