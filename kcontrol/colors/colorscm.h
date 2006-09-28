@@ -59,7 +59,7 @@ private Q_SLOTS:
     void slotColorChanged(int, const QColor &);
 
 private:
-    void setColorName( const QString &name, int id );
+    void setColorName( const QString &name, int id , int id2 );
     void readScheme(int index=0);
     void readSchemeNames();
 	void insertEntry(const QString &sFile, const QString &sName);

@@ -26,7 +26,7 @@ public:
 
     ~KColorTreeWidget();
     
-    void addRole(int idx, const QString &role);
+    void addRole(int idx, int idx2, const QString &role);
     void setColor(int idx, const QColor &color);
     QColor color(int idx);
     
@@ -36,8 +36,9 @@ Q_SIGNALS:
     void colorChanged(int idx, const QColor & color);
     
 private:
-    QHash< int , KColorTreeWidgetItem* > m_items;
-    
+    //this is in order to be integrated in the KDE2 code more easily
+    QHash< int , KColorTreeWidgetItem* > m_bgItems;
+    QHash< int , KColorTreeWidgetItem* > m_fgItems;
 };
 
 #endif

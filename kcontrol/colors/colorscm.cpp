@@ -189,29 +189,23 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     connect(mColorTreeWidget , SIGNAL(colorChanged(int, const QColor& )) , 
             this , SLOT(slotColorChanged( int, const QColor& ) ));
     
-    setColorName(i18n("Inactive Title Bar") , CSM_Inactive_title_bar);
-    setColorName(i18n("Inactive Title Text"), CSM_Inactive_title_text);
-    setColorName(i18n("Inactive Title Blend"), CSM_Inactive_title_blend);
-    setColorName(i18n("Active Title Bar"), CSM_Active_title_bar);
-    setColorName(i18n("Active Title Text"), CSM_Active_title_text);
-    setColorName(i18n("Active Title Blend"), CSM_Active_title_blend);
-    setColorName(i18n("Window Background"), CSM_Background);
-    setColorName(i18n("Window Text"), CSM_Text);
-    setColorName(i18n("Selected Background"), CSM_Select_background);
-    setColorName(i18n("Selected Text"), CSM_Select_text);
-    setColorName(i18n("Standard Background"), CSM_Standard_background);
-    setColorName(i18n("Standard Text"), CSM_Standard_text);
-    setColorName(i18n("Button Background"), CSM_Button_background);
-    setColorName(i18n("Button Text"), CSM_Button_text);
-    setColorName(i18n("Active Title Button"), CSM_Active_title_button);
-    setColorName(i18n("Inactive Title Button"), CSM_Inactive_title_button);
-    setColorName(i18n("Active Window Frame"), CSM_Active_frame);
-    setColorName(i18n("Active Window Handle"), CSM_Active_handle);
-    setColorName(i18n("Inactive Window Frame"), CSM_Inactive_frame);
-    setColorName(i18n("Inactive Window Handle"), CSM_Inactive_handle);
-    setColorName(i18n("Link"), CSM_Link);
-    setColorName(i18n("Followed Link"), CSM_Followed_Link);
-    setColorName(i18n("Alternate Background in Lists"), CSM_Alternate_background);
+    setColorName(i18n("Inactive Title Bar") , CSM_Inactive_title_text , CSM_Inactive_title_bar);
+    setColorName(i18n("Inactive Title Blend"), -1 , CSM_Inactive_title_blend);
+    setColorName(i18n("Active Title Bar"), CSM_Active_title_text, CSM_Active_title_bar);
+    setColorName(i18n("Active Title Blend"), -1, CSM_Active_title_blend);
+    setColorName(i18n("Window"), CSM_Text , CSM_Background);
+    setColorName(i18n("Selected"), CSM_Select_text , CSM_Select_background);
+    setColorName(i18n("Standard"), CSM_Standard_text,  CSM_Standard_background);
+    setColorName(i18n("Button"), CSM_Button_text , CSM_Button_background);
+    setColorName(i18n("Active Title Button"), CSM_Active_title_button , -1 );
+    setColorName(i18n("Inactive Title Button"), CSM_Inactive_title_button , -1);
+    setColorName(i18n("Active Window Frame"), CSM_Active_frame , -1);
+    setColorName(i18n("Active Window Handle"), CSM_Active_handle , -1);
+    setColorName(i18n("Inactive Window Frame"), CSM_Inactive_frame , -1);
+    setColorName(i18n("Inactive Window Handle"), CSM_Inactive_handle , -1);
+    setColorName(i18n("Link"), CSM_Link , -1);
+    setColorName(i18n("Followed Link"), CSM_Followed_Link , -1 );
+    setColorName(i18n("Alternate Background in Lists"), -1 , CSM_Alternate_background);
 
 
     cbShadeList = new QCheckBox(i18n("Shade sorted column in lists"), vb);
@@ -913,9 +907,9 @@ void KColorScheme::insertEntry(const QString &sFile, const QString &sName)
        sList->setCurrentItem(newIndex);
 }
 
-void KColorScheme::setColorName( const QString & name, int id )
+void KColorScheme::setColorName( const QString & name, int id , int id2 )
 {
-    mColorTreeWidget->addRole( id , name );
+    mColorTreeWidget->addRole( id , id2, name );
 }
 
 void KColorScheme::slotColorChanged( int selection , const QColor & col)
