@@ -23,6 +23,7 @@
 #include <config-kdm.h>
 
 #include "kdmlabel.h"
+#include "kdmthemer.h"
 
 #include <kglobal.h>
 #include <klocale.h>
@@ -35,6 +36,7 @@
 #include <QTimer>
 #include <QMap>
 #include <QHash>
+#include <QAction>
 
 #include <unistd.h>
 #include <sys/utsname.h>
@@ -44,6 +46,7 @@
 
 KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 	: KdmItem( parent, node )
+	, action( 0 )
 {
 	itemType = "label";
 
@@ -100,7 +103,7 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 		timer->start( 1000 );
 		connect( timer, SIGNAL(timeout()), SLOT(update()) );
 	}
-	cText = lookupText( label.text );
+	setCText( lookupText( label.text ) );
 }
 
 void
@@ -108,6 +111,36 @@ KdmLabel::setText( const QString &txt )
 {
 	label.text = txt;
 	update();
+}
+
+void
+KdmLabel::setCText( const QString &txt )
+{
+	cText = txt;
+	delete action;
+	action = 0;
+	cAccelOff = txt.find( '_' );
+	if (cAccelOff >= 0) {
+		action = new QAction( this );
+		action->setShortcut( Qt::ALT + txt[cAccelOff + 1].unicode() );
+		connect( action, SIGNAL(triggered( bool )), SLOT(activate()) );
+		themer()->widget()->addAction( action );
+	}
+}
+
+void
+KdmLabel::activate()
+{
+	KdmItem *cp = this;
+	do {
+		if (cp->isButton) {
+			emit activated( cp->id );
+			return;
+		}
+		cp = qobject_cast<KdmItem *>(cp->parent());
+	} while (cp);
+	if (!buddy.isEmpty())
+		activateBuddy();
 }
 
 QSize
@@ -135,8 +168,22 @@ KdmLabel::drawContents( QPainter *p, const QRect &/*r*/  )
 	// draw the label
 	p->setFont( l->font );
 	p->setPen( l->color );
-	//TODO paint clipped (tested but not working..)
-	p->drawText( area, Qt::AlignLeft | Qt::TextSingleLine, cText );
+	if (cAccelOff != -1) {
+		QRect tarea( area );
+		QFontMetrics fm( l->font );
+		QString left = cText.left( cAccelOff );
+		p->drawText( area, Qt::AlignLeft | Qt::SingleLine, left );
+		tarea.rLeft() += fm.width( left );
+		QFont f( l->font );
+		f.setUnderline( true );
+		p->setFont( f );
+		QString acc( cText[cAccelOff + 1] );
+		p->drawText( tarea, Qt::AlignLeft | Qt::SingleLine, acc );
+		tarea.rLeft() += fm.width( acc );
+		p->setFont( l->font );
+		p->drawText( tarea, Qt::AlignLeft | Qt::SingleLine, cText.mid( cAccelOff + 2 ) );
+	} else
+		p->drawText( area, Qt::AlignLeft | Qt::TextSingleLine, cText );
 }
 
 void
@@ -157,7 +204,7 @@ KdmLabel::update()
 	KdmItem::update();
 	QString text = lookupText( label.text );
 	if (text != cText) {
-		cText = text;
+		setCText( text );
 		needUpdate();
 	}
 }
@@ -165,35 +212,34 @@ KdmLabel::update()
 static const struct {
 	const char *type, *text;
 } stocks[] = {
-	{ "language",          I18N_NOOP("Language") },
-	{ "session",           I18N_NOOP("Session Type") },
-	{ "system",            I18N_NOOP("Menu") },	// i18n("Actions");
-	{ "disconnect",        I18N_NOOP("Disconnect") },
-	{ "quit",              I18N_NOOP("Quit") },
-	{ "halt",              I18N_NOOP("Power off") },
-	{ "suspend",           I18N_NOOP("Suspend") },
-	{ "reboot",            I18N_NOOP("Reboot") },
-	{ "chooser",           I18N_NOOP("XDMCP Chooser") },
-	{ "config",            I18N_NOOP("Configure") },
-	{ "caps-lock-warning", I18N_NOOP("You have got caps lock on.") },
-	{ "timed-label",       I18N_NOOP("User %s will login in %d seconds") },
+	{ "language",          I18N_NOOP("_Language") },
+	{ "session",           I18N_NOOP("Session _Type") },
+	{ "system",            I18N_NOOP("_Menu") },	// i18n("Actions");
+	{ "disconnect",        I18N_NOOP("Disconn_ect") },
+	{ "quit",              I18N_NOOP("_Quit") },
+	{ "halt",              I18N_NOOP("Power o_ff") },
+	{ "suspend",           I18N_NOOP("_Suspend") },
+	{ "reboot",            I18N_NOOP("Re_boot") },
+	{ "chooser",           I18N_NOOP("XDMCP Choose_r") },
+	{ "config",            I18N_NOOP("Confi_gure") },
+	{ "caps-lock-warning", I18N_NOOP("Caps Lock is enabled") },
+	{ "timed-label",       I18N_NOOP("User %s will log in in %d seconds") },
 	{ "welcome-label",     I18N_NOOP("Welcome to %h") },	// _greetString
-	{ "username-label",    I18N_NOOP("Username:") },
-	{ "password-label",    I18N_NOOP("Password:") },
-	{ "login",             I18N_NOOP("Login") }
+	{ "username-label",    I18N_NOOP("_Username:") },
+	{ "password-label",    I18N_NOOP("_Password:") },
+	{ "login",             I18N_NOOP("_Login") }
 };
 
 QString
 KdmLabel::lookupStock( const QString &stock )
 {
-	//FIXME add key accels!
 	QString type( stock.toLower() );
 
 	for (uint i = 0; i < sizeof(stocks)/sizeof(stocks[0]); i++)
 		if (type == stocks[i].type)
 			return i18n(stocks[i].text);
 
-	kDebug() << "Invalid <stock> element. Check your theme!" << endl;
+	kDebug() << "Invalid <stock> element '" << stock << "'. Check your theme!" << endl;
 	return stock;
 }
 
@@ -204,9 +250,6 @@ QString
 KdmLabel::lookupText( const QString &t )
 {
 	QString text = t;
-
-	text.replace( '_', '&' );
-//	text.remove( '_' ); // FIXME add key accels, remove underscores for now
 
 	QHash<QChar,QString> m;
 	struct utsname uts;

@@ -28,6 +28,7 @@
 #include <QFont>
 
 class QTimer;
+class QAction;
 
 /*
  * KdmLabel. A label element
@@ -66,6 +67,7 @@ protected:
 	} label;
 
 	QTimer *timer;
+	QAction *action;
 
 public Q_SLOTS:
 	void update();
@@ -77,7 +79,13 @@ private:
 	/* Lookup variables in the text */
 	QString lookupText( const QString &t );
 
+	void setCText( const QString &txt );
+	
 	QString cText;
+	int cAccelOff;
+
+private Q_SLOTS:
+	void activate();
 };
 
 #endif

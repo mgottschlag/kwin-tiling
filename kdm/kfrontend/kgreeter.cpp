@@ -842,13 +842,10 @@ KThemedGreeter::KThemedGreeter()
 	tverify->selectPlugin( curPlugin );
 	verify = tverify;
 
-	session_button = 0;
-	if ((itm = themer->findNode( "session_button" ))) {
-		if (sessMenu->actions().count() <= 1)
-			itm->hide( true );
-		else {
-			session_button = itm;
-			inserten( Qt::ALT+Qt::Key_T, SLOT(slotSessMenu()) );
+	if ((session_button = themer->findNode( "session_button" ))) {
+		if (sessMenu->actions().count() <= 1) {
+			session_button->hide( true );
+			session_button = 0;
 		}
 	} else {
 		if (sessMenu->actions().count() > 1) {
@@ -869,10 +866,7 @@ KThemedGreeter::KThemedGreeter()
 #endif
 
 	system_button = themer->findNode( "system_button" );
-	if (optMenu) {
-		inserten( Qt::ALT + Qt::Key_M, SLOT(slotActionMenu()) );
-		addAction( optMenu->menuAction() );
-	} else
+	if (system_button && !optMenu)
 		system_button->hide( true );
 
 	pluginSetup();

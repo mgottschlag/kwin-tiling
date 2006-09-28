@@ -237,6 +237,8 @@ protected:
 
 	bool childrenContain( int x, int y );
 
+	void activateBuddy();
+
 	/* For internal use ONLY
 	 * Parse type and value of an attribute (pos tag), a font or a
 	 * color.
@@ -259,6 +261,8 @@ protected:
 	QWidget *myWidget;
 
 	enum { InitialHidden, ExplicitlyHidden, Shown } isShown;
+
+	friend class KdmLabel; // id & isButton
 };
 
 #endif

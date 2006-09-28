@@ -107,12 +107,6 @@ KdmThemer::~KdmThemer()
 	delete rootItem;
 }
 
-inline QWidget *
-KdmThemer::widget()
-{
-	return static_cast<QWidget *>(parent());
-}
-
 KdmItem *
 KdmThemer::findNode( const QString &item ) const
 {

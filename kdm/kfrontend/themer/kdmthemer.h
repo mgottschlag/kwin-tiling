@@ -23,6 +23,7 @@
 #define KDMTHEMER_H
 
 #include <QObject>
+#include <QWidget>
 #include <qdom.h>
 //Added by qt3to4:
 #include <QPixmap>
@@ -35,7 +36,6 @@ class KdmRect;
 class KdmBox;
 
 class QRect;
-class QWidget;
 class QEvent;
 
 /**
@@ -81,6 +81,8 @@ public:
 	// must be called by parent widget
 	void widgetEvent( QEvent *e );
 
+	QWidget *widget() { return qobject_cast<QWidget *>(parent()); }
+
 Q_SIGNALS:
 	void activated( const QString &id );
 
@@ -120,8 +122,6 @@ private:
 	void generateItems( KdmItem *parent = 0, const QDomNode &node = QDomNode() );
 
 	void showStructure( QObject *obj );
-
-	QWidget *widget();
 
 private Q_SLOTS:
 	void update( int x, int y, int w, int h );

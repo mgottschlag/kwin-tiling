@@ -280,6 +280,17 @@ KdmItem::childrenContain( int x, int y )
 	return false;
 }
 
+void
+KdmItem::activateBuddy()
+{
+	if (KdmItem *itm = themer()->findNode( buddy ))
+		if (itm->myWidget) {
+			itm->myWidget->setFocus();
+			if (QLineEdit *le = qobject_cast<QLineEdit *>(itm->myWidget))
+				le->selectAll();
+		}
+}
+
 KdmItem *KdmItem::currentActive = 0;
 
 void
@@ -295,14 +306,9 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 				emit activated( id );
 			state = Sprelight;
 			currentActive = 0;
-		} else if (pressed && !buddy.isEmpty()) {
-			if (KdmItem *itm = themer()->findNode( buddy ))
-				if (itm->myWidget) {
-					itm->myWidget->setFocus();
-					if (QLineEdit *le = qobject_cast<QLineEdit *>(itm->myWidget))
-						le->selectAll();
-				}
-		} else if (pressed || currentActive == this) {
+		} else if (pressed && !buddy.isEmpty())
+			activateBuddy();
+		else if (pressed || currentActive == this) {
 			state = Sactive;
 			currentActive = this;
 		} else if (!currentActive)
