@@ -124,7 +124,7 @@ KdmLabel::setCText( const QString &txt )
 		action = new QAction( this );
 		action->setShortcut( Qt::ALT + txt[cAccelOff + 1].unicode() );
 		connect( action, SIGNAL(triggered( bool )), SLOT(activate()) );
-		themer()->widget()->addAction( action );
+		themer()->addAction( action );
 	}
 }
 

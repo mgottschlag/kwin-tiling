@@ -54,8 +54,8 @@
 /*
  * KdmThemer. The main theming interface
  */
-KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *parent )
-	: QObject( parent )
+KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *w )
+	: QObject()
 	, rootItem( 0 )
 	, m_geometryOutdated( true )
 	, m_geometryInvalid( true )
@@ -72,18 +72,18 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 	}
 	QFile opmlFile( filename );
 	if (!opmlFile.open( QIODevice::ReadOnly )) {
-		FDialog::box( widget(), errorbox, i18n( "Cannot open theme file %1" , filename) );
+		FDialog::box( w, errorbox, i18n( "Cannot open theme file %1" , filename) );
 		return;
 	}
 	if (!domTree.setContent( &opmlFile )) {
-		FDialog::box( widget(), errorbox, i18n( "Cannot parse theme file %1" , filename) );
+		FDialog::box( w, errorbox, i18n( "Cannot parse theme file %1" , filename) );
 		return;
 	}
 	// generate all the items defined in the theme
 	const QDomElement &theme = domTree.documentElement();
 	// Get its tag, and check it's correct ("greeter")
 	if (theme.tagName() != "greeter") {
-		FDialog::box( widget(), errorbox, i18n( "%1 does not seem to be a correct theme file" , filename) );
+		FDialog::box( w, errorbox, i18n( "%1 does not seem to be a correct theme file" , filename) );
 		return;
 	}
 
@@ -107,6 +107,20 @@ KdmThemer::~KdmThemer()
 	delete rootItem;
 }
 
+void
+KdmThemer::setWidget( QWidget *w )
+{
+	m_widget = w;
+	foreach (QAction *action, m_actions)
+		w->addAction( action );
+}
+
+void
+KdmThemer::addAction( QAction *action )
+{
+	m_actions << action;
+}
+
 KdmItem *
 KdmThemer::findNode( const QString &item ) const
 {
@@ -117,13 +131,15 @@ void
 KdmThemer::slotNeedPlacement()
 {
 	m_geometryOutdated = m_geometryInvalid = true;
-	widget()->update();
+	if (widget())
+		widget()->update();
 }
 
 void
 KdmThemer::update( int x, int y, int w, int h )
 {
-	widget()->update( x, y, w, h );
+	if (widget())
+		widget()->update( x, y, w, h );
 }
 
 // BEGIN other functions

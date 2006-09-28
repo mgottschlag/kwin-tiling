@@ -789,6 +789,7 @@ KThemedGreeter::KThemedGreeter()
 		themer = 0;
 		return;
 	}
+	themer->setWidget( this );
 
 	connect( themer, SIGNAL(activated( const QString & )),
 	         SLOT(slotThemeActivated( const QString & )) );

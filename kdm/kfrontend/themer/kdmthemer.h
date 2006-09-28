@@ -58,7 +58,7 @@ public:
 	 * Construct and destruct the interface
 	 */
 
-	KdmThemer( const QString &path, const QString &mode, QWidget *parent );
+	KdmThemer( const QString &path, const QString &mode, QWidget *w );
 	~KdmThemer();
 
 	bool isOK() { return rootItem != 0; }
@@ -81,7 +81,10 @@ public:
 	// must be called by parent widget
 	void widgetEvent( QEvent *e );
 
-	QWidget *widget() { return qobject_cast<QWidget *>(parent()); }
+	void setWidget( QWidget *w );
+	QWidget *widget() { return m_widget; }
+
+	void addAction( QAction *action );
 
 Q_SIGNALS:
 	void activated( const QString &id );
@@ -107,6 +110,10 @@ private:
 
 	bool m_geometryOutdated;
 	bool m_geometryInvalid;
+
+	QWidget *m_widget;
+
+	QList<QAction *> m_actions;
 
 	// methods
 
