@@ -65,7 +65,6 @@
 class Task;
 class KasPopup;
 class KasTasker;
-class KPixmap;
 
 /**
  * A KasItem that represents a single Task.

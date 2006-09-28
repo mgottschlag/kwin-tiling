@@ -63,7 +63,6 @@
 #include <taskmanager.h>
 
 class KConfig;
-class KPixmap;
 class KMenu;
 class KAction;
 class KToggleAction;
