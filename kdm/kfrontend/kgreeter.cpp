@@ -865,9 +865,12 @@ KThemedGreeter::KThemedGreeter()
 	completeMenu();
 #endif
 
-	system_button = themer->findNode( "system_button" );
-	if (system_button && !optMenu)
-		system_button->hide( true );
+	if ((system_button = themer->findNode( "system_button" ))) {
+		if (optMenu)
+			addAction( optMenu->menuAction() );
+		else
+			system_button->hide( true );
+	}
 
 	pluginSetup();
 
