@@ -1,8 +1,4 @@
 
-
-include_directories( ${CMAKE_SOURCE_DIR} ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
-
-
 ########### next target ###############
 
 set(solidshell_SRCS main.cpp )
