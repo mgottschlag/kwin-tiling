@@ -98,7 +98,7 @@ public:
 	 * or boxed ones). Note that this will generate repaint signals
 	 * when needed. The default implementation should fit all needs.
 	 */
-	virtual void setGeometry( QStack<QRect> &newGeometries, bool force );
+	virtual void setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool force );
 
 	/**
 	 * Paint the item and its children using the given painter.
@@ -125,7 +125,10 @@ public:
 	 * @param parentGeometry the geometry of the caller item or a
 	 * null rect if the geometry of the parent is not yet defined.
 	 */
-	virtual QRect placementHint( QStack<QRect> &parentGeometries );
+	QRect placementHint( QStack<QSize> &sizes, const QSize &size, const QPoint &offset );
+	QRect placementHint( QStack<QSize> &sizes, const QPoint &offset );
+	void sizingHint( QStack<QSize> &parentSizes, QSize &min, QSize &opt, QSize &max );
+	QSize sizingHint( QStack<QSize> &parentSizes );
 
 	/**
 	 * Create the box layout manager; next children will be
@@ -226,8 +229,8 @@ protected:
 
 	static void calcSize(
 		const DataPair &,
-		const QStack<QRect> &parentGeometries, const QSize &, const QSize &,
-		int &, int & );
+		const QStack<QSize> &parentSizes, const QSize &, const QSize &,
+		QSize &io );
 
 	/* For internal use ONLY
 	 * Add a child item. This function is called automatically

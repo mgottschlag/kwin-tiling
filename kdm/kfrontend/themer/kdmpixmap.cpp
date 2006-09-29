@@ -84,9 +84,9 @@ KdmPixmap::sizeHint()
 }
 
 void
-KdmPixmap::setGeometry( QStack<QRect> &newGeometries, bool force )
+KdmPixmap::setGeometry( QStack<QSize> &parentSizes, QRect &newGeometry, bool force )
 {
-	KdmItem::setGeometry( newGeometries, force );
+	KdmItem::setGeometry( parentSizes, newGeometry, force );
 	pixmap.active.readyPixmap = QPixmap();
 	pixmap.prelight.readyPixmap = QPixmap();
 	pixmap.normal.readyPixmap = QPixmap();

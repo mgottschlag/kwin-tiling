@@ -62,7 +62,7 @@ public:
 
 	// Updates the layout of all boxed items knowing that the parent
 	// has the @p parentGeometry geometry
-	void update( QStack<QRect> &parentGeometries, bool force );
+	void update( QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force );
 };
 
 /**
@@ -77,11 +77,11 @@ public:
 
 	// Updates the layout of all boxed items knowing that they
 	// should fit into @p parentGeometry container
-	void update( QStack<QRect> &parentGeometries, bool force );
+	void update( QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force );
 
 	// Computes the size hint of the box, telling which is the
 	// smallest size inside which boxed items will fit
-	QSize sizeHint( QStack<QRect> &parentGeometries );
+	QSize sizeHint( QStack<QSize> &parentSizes );
 
 private:
 	struct {

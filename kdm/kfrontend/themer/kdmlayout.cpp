@@ -35,9 +35,8 @@ KdmLayoutFixed::KdmLayoutFixed( const QDomNode &/*node*/ )
 }
 
 void
-KdmLayoutFixed::update( QStack<QRect> &parentGeometries, bool force )
+KdmLayoutFixed::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force )
 {
-	const QRect &parentGeometry = parentGeometries.top();
 	kDebug() << "KdmLayoutFixed::update " << parentGeometry << endl;
 
 	// I can't layout children if the parent rectangle is not valid
@@ -46,11 +45,10 @@ KdmLayoutFixed::update( QStack<QRect> &parentGeometries, bool force )
 		return;
 	}
 	// For each child in list I ask their hinted size and set it!
-	foreach (KdmItem *itm, m_children) {
-		parentGeometries.push( itm->placementHint( parentGeometries ) );
-		itm->setGeometry( parentGeometries, force );
-		parentGeometries.pop();
-	}
+	parentSizes.push( parentGeometry.size() );
+	foreach (KdmItem *itm, m_children)
+		itm->setGeometry( parentSizes, itm->placementHint( parentSizes, parentGeometry.topLeft() ), force );
+	parentSizes.pop();
 }
 
 KdmLayoutBox::KdmLayoutBox( const QDomNode &node )
@@ -68,16 +66,13 @@ KdmLayoutBox::KdmLayoutBox( const QDomNode &node )
 }
 
 void
-KdmLayoutBox::update( QStack<QRect> &parentGeometries, bool force )
+KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force )
 {
-	QRect parentGeometry = parentGeometries.pop();
 	kDebug() << this << " update " << parentGeometry << endl;
 
 	// I can't layout children if the parent rectangle is not valid
-	if (!parentGeometry.isValid() || parentGeometry.isEmpty()) {
-		parentGeometries.push( parentGeometry );
+	if (!parentGeometry.isValid() || parentGeometry.isEmpty())
 		return;
-	}
 
 	// Check if box size was computed. If not compute it
 	// TODO check if this prevents updating changing items
@@ -105,7 +100,7 @@ KdmLayoutBox::update( QStack<QRect> &parentGeometries, bool force )
 		foreach (KdmItem *itm, m_children) {
 			if (itm->isExplicitlyHidden())
 				continue;
-			QRect temp = childrenRect, itemRect;
+			QRect temp = childrenRect;
 			if (box.isVertical) {
 				temp.setHeight( height );
 				childrenRect.setTop( childrenRect.top() + height + box.spacing );
@@ -113,62 +108,51 @@ KdmLayoutBox::update( QStack<QRect> &parentGeometries, bool force )
 				temp.setWidth( width );
 				childrenRect.setLeft( childrenRect.left() + width + box.spacing );
 			}
-			parentGeometries.push( temp );
-			itemRect = itm->placementHint( parentGeometries );
-			parentGeometries.pop();
-			parentGeometries.push( parentGeometry );
-			parentGeometries.push( itemRect );
-			itm->setGeometry( parentGeometries, force );
-			parentGeometries.pop();
-			parentGeometries.pop();
+			parentSizes.push( temp.size() );
+			QRect itemRect = itm->placementHint( parentSizes, temp.topLeft() );
+			parentSizes.pop();
+			parentSizes.push( parentGeometry.size() );
+			itm->setGeometry( parentSizes, itemRect, force );
+			parentSizes.pop();
 		}
 	} else {
 		foreach (KdmItem *itm, m_children) {
 			if (itm->isExplicitlyHidden())
 				continue;
-			QRect temp = childrenRect, itemRect;
+			parentSizes.push( QSize( 0, 0 ) );
+			QSize itemSize = itm->sizingHint( parentSizes );
+			parentSizes.pop();
+			QRect temp = childrenRect;
 			if (box.isVertical) {
-				temp.setHeight( 0 );
-				parentGeometries.push( temp );
-				itemRect = itm->placementHint( parentGeometries );
-				parentGeometries.pop();
-				temp.setHeight( itemRect.height() );
-				childrenRect.setTop( childrenRect.top() + itemRect.height() + box.spacing );
+				temp.setHeight( itemSize.height() );
+				childrenRect.setTop( childrenRect.top() + itemSize.height() + box.spacing );
 			} else {
-				temp.setWidth( 0 );
-				parentGeometries.push( temp );
-				itemRect = itm->placementHint( parentGeometries );
-				parentGeometries.pop();
-				temp.setWidth( itemRect.width() );
-				childrenRect.setLeft( childrenRect.left() + itemRect.width() + box.spacing );
+				temp.setWidth( itemSize.width() );
+				childrenRect.setLeft( childrenRect.left() + itemSize.width() + box.spacing );
 			}
-			parentGeometries.push( temp );
-			itemRect = itm->placementHint( parentGeometries );
-			parentGeometries.pop();
+			parentSizes.push( temp.size() );
+			QRect itemRect = itm->placementHint( parentSizes, temp.topLeft() );
+			parentSizes.pop();
 			kDebug() << this << " placementHint for " << itm << " temp " << temp << " final " << itemRect << " childrenRect now " << childrenRect << endl;
-			parentGeometries.push( parentGeometry );
-			parentGeometries.push( itemRect );
-			itm->setGeometry( parentGeometries, force );
-			parentGeometries.pop();
-			parentGeometries.pop();
+			parentSizes.push( parentGeometry.size() );
+			itm->setGeometry( parentSizes, itemRect, force );
+			parentSizes.pop();
 		}
 	}
-	
-	parentGeometries.push( parentGeometry );
 }
 
 //FIXME truly experimental (is so close to greeter_geometry.c)
 QSize
-KdmLayoutBox::sizeHint( QStack<QRect> &parentGeometries )
+KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 {
 	// Sum up area taken by children
-	QRect parentGeometry = parentGeometries.pop();
-	parentGeometries.push( QRect() );
+	QSize parentSize = parentSizes.pop();
+	parentSizes.push( QSize( 0, 0 ) );
 	int w = 0, h = 0, ccnt = 0;
 	foreach (KdmItem *itm, m_children) {
 		if (itm->isExplicitlyHidden())
 			continue;
-		QSize s = itm->placementHint( parentGeometries ).size();
+		QSize s = itm->sizingHint( parentSizes );
 		if (box.isVertical) {
 			if (s.width() > w)
 				w = s.width();
@@ -180,8 +164,8 @@ KdmLayoutBox::sizeHint( QStack<QRect> &parentGeometries )
 		}
 		ccnt++;
 	}
-	parentGeometries.pop();
-	parentGeometries.push( parentGeometry );
+	parentSizes.pop();
+	parentSizes.push( parentSize );
 
 	// Add padding and items spacing
 	w += 2 * box.xpadding;
