@@ -35,6 +35,10 @@ class KdmThemer;
 
 class QPainter;
 
+struct SizeHint {
+	QSize min, opt, max;
+};
+
 /** class KdmItem
  * @short Base class for every kdmthemes' element.
  *
@@ -127,8 +131,7 @@ public:
 	 */
 	QRect placementHint( QStack<QSize> &sizes, const QSize &size, const QPoint &offset );
 	QRect placementHint( QStack<QSize> &sizes, const QPoint &offset );
-	void sizingHint( QStack<QSize> &parentSizes, QSize &min, QSize &opt, QSize &max );
-	QSize sizingHint( QStack<QSize> &parentSizes );
+	void sizingHint( QStack<QSize> &parentSizes, SizeHint &hint );
 
 	/**
 	 * Create the box layout manager; next children will be

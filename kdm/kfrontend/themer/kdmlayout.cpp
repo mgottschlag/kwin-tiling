@@ -120,15 +120,16 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 			if (itm->isExplicitlyHidden())
 				continue;
 			parentSizes.push( QSize( 0, 0 ) );
-			QSize itemSize = itm->sizingHint( parentSizes );
+			SizeHint itemHint;
+			itm->sizingHint( parentSizes, itemHint );
 			parentSizes.pop();
 			QRect temp = childrenRect;
 			if (box.isVertical) {
-				temp.setHeight( itemSize.height() );
-				childrenRect.setTop( childrenRect.top() + itemSize.height() + box.spacing );
+				temp.setHeight( itemHint.opt.height() );
+				childrenRect.setTop( childrenRect.top() + itemHint.opt.height() + box.spacing );
 			} else {
-				temp.setWidth( itemSize.width() );
-				childrenRect.setLeft( childrenRect.left() + itemSize.width() + box.spacing );
+				temp.setWidth( itemHint.opt.width() );
+				childrenRect.setLeft( childrenRect.left() + itemHint.opt.width() + box.spacing );
 			}
 			parentSizes.push( temp.size() );
 			QRect itemRect = itm->placementHint( parentSizes, temp.topLeft() );
@@ -154,9 +155,10 @@ KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 	foreach (KdmItem *itm, m_children) {
 		if (itm->isExplicitlyHidden())
 			continue;
-		QSize s = itm->sizingHint( parentSizes );
-		bounds = bounds.expandedTo( s );
-		sum += s;
+		SizeHint sh;
+		itm->sizingHint( parentSizes, sh );
+		bounds = bounds.expandedTo( sh.opt );
+		sum += sh.opt;
 		ccnt++;
 	}
 	parentSizes.pop();

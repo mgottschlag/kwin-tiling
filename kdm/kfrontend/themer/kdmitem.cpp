@@ -427,27 +427,22 @@ KdmItem::calcSize(
 }
 
 void
-KdmItem::sizingHint( QStack<QSize> &parentSizes, QSize &min, QSize &opt, QSize &max )
+KdmItem::sizingHint( QStack<QSize> &parentSizes, SizeHint &hint )
 {
 	kDebug() << "KdmItem::sizingHint " << id
 		<< " parentSize=" << parentSizes.top() << endl;
 
 	QSize hintedSize, boxHint;
-	min = opt = max = parentSizes.top();
-	calcSize( geom.size, parentSizes, hintedSize, boxHint, opt );
-	calcSize( geom.minSize, parentSizes, hintedSize, boxHint, min );
-	calcSize( geom.maxSize, parentSizes, hintedSize, boxHint, max );
-	kDebug() << "size " << opt << " min " << min << " max " << max << endl;
-	
-	// Note: no clipping to parent because this broke many themes!
-}
+	hint.min = hint.opt = hint.max = parentSizes.top();
+	calcSize( geom.size, parentSizes, hintedSize, boxHint, hint.opt );
+	calcSize( geom.minSize, parentSizes, hintedSize, boxHint, hint.min );
+	calcSize( geom.maxSize, parentSizes, hintedSize, boxHint, hint.max );
+	kDebug() << "size " << hint.opt << " min " << hint.min << " max " << hint.max << endl;
 
-QSize
-KdmItem::sizingHint( QStack<QSize> &parentSizes )
-{
-	QSize min, opt, max;
-	sizingHint( parentSizes, min, opt, max );
-	return opt.boundedTo( max ).expandedTo( min );
+	hint.max = hint.max.expandedTo( hint.min ); // if this triggers, the theme is bust
+	hint.opt = hint.opt.boundedTo( hint.max ).expandedTo( hint.min );
+
+	// Note: no clipping to parent because this broke many themes!
 }
 
 QRect
@@ -500,7 +495,9 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QSize &sz, const QPoint &off
 QRect
 KdmItem::placementHint( QStack<QSize> &sizes, const QPoint &offset )
 {
-	return placementHint( sizes, sizingHint( sizes ), offset );
+	SizeHint sh;
+	sizingHint( sizes, sh );
+	return placementHint( sizes, sh.opt, offset );
 }
 
 // END protected inheritable
