@@ -94,17 +94,16 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 		foreach (KdmItem *itm, m_children)
 			if (!itm->isExplicitlyHidden())
 				ccnt++;
-		int height = (childrenRect.height() - (ccnt - 1) * box.spacing) / ccnt;
-		int width = (childrenRect.width() - (ccnt - 1) * box.spacing) / ccnt;
-
 		foreach (KdmItem *itm, m_children) {
 			if (itm->isExplicitlyHidden())
 				continue;
 			QRect temp = childrenRect;
 			if (box.isVertical) {
+				int height = (temp.height() - (ccnt - 1) * box.spacing) / ccnt;
 				temp.setHeight( height );
 				childrenRect.setTop( childrenRect.top() + height + box.spacing );
 			} else {
+				int width = (temp.width() - (ccnt - 1) * box.spacing) / ccnt;
 				temp.setWidth( width );
 				childrenRect.setLeft( childrenRect.left() + width + box.spacing );
 			}
@@ -114,6 +113,7 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 			parentSizes.push( parentGeometry.size() );
 			itm->setGeometry( parentSizes, itemRect, force );
 			parentSizes.pop();
+			ccnt--;
 		}
 	} else {
 		foreach (KdmItem *itm, m_children) {
@@ -145,37 +145,43 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 QSize
 KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 {
+	int ccnt = 0;
+	QSize bounds( 0, 0 ), sum( 0, 0 );
+
 	// Sum up area taken by children
 	QSize parentSize = parentSizes.pop();
 	parentSizes.push( QSize( 0, 0 ) );
-	int w = 0, h = 0, ccnt = 0;
 	foreach (KdmItem *itm, m_children) {
 		if (itm->isExplicitlyHidden())
 			continue;
 		QSize s = itm->sizingHint( parentSizes );
-		if (box.isVertical) {
-			if (s.width() > w)
-				w = s.width();
-			h += s.height();
-		} else {
-			if (s.height() > h)
-				h = s.height();
-			w += s.width();
-		}
+		bounds = bounds.expandedTo( s );
+		sum += s;
 		ccnt++;
 	}
 	parentSizes.pop();
 	parentSizes.push( parentSize );
 
+	if (box.homogeneous) {
+		if (box.isVertical)
+			bounds.rheight() *= ccnt;
+		else
+			bounds.rwidth() *= ccnt;
+	} else {
+		if (box.isVertical)
+			bounds.rheight() = sum.height();
+		else
+			bounds.rwidth() = sum.width();
+	}
+	
 	// Add padding and items spacing
-	w += 2 * box.xpadding;
-	h += 2 * box.ypadding;
+	int totspc = box.spacing * (ccnt - 1);
 	if (box.isVertical)
-		h += box.spacing * (ccnt - 1);
+		bounds.rheight() += totspc;
 	else
-		w += box.spacing * (ccnt - 1);
+		bounds.rwidth() += totspc;
+	bounds += QSize( 2 * box.xpadding, 2 * box.ypadding );
 
 	// Make hint at least equal to minimum size (if set)
-	return QSize( w < box.minwidth ? box.minwidth : w,
-	              h < box.minheight ? box.minheight : h );
+	return bounds.expandedTo( QSize( box.minwidth, box.minheight ) );
 }
