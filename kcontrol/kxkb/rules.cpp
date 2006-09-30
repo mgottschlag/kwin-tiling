@@ -98,6 +98,7 @@ void XkbRules::loadRules(QString file, bool layoutsOnly)
 	if( layoutsOnly == false ) {
 		m_models = rules->models;
 		m_options = rules->options;
+		m_optionGroups = rules->optionGroups;
 	}
 }
 
