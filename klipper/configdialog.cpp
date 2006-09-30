@@ -215,9 +215,7 @@ void ListView::rename( Q3ListViewItem* item, int c )
   if ( gui ) {
     if ( ! _regExpEditor )
       _regExpEditor = KServiceTypeTrader::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor", QString(), this );
-#warning "qt_cast doesn't exist anymore, but tried qobject_cast but without success"
-#if 0
-    KRegExpEditorInterface *iface = static_cast<KRegExpEditorInterface *>( _regExpEditor->qt_cast( "KRegExpEditorInterface" ) );
+    KRegExpEditorInterface *iface = qobject_cast<KRegExpEditorInterface *>(_regExpEditor);
 
     assert( iface );
     iface->setRegExp( item->text( 0 ) );
@@ -225,7 +223,6 @@ void ListView::rename( Q3ListViewItem* item, int c )
     bool ok = _regExpEditor->exec();
     if ( ok )
       item->setText( 0, iface->regExp() );
-#endif
   }
   else
     K3ListView::rename( item ,c );
