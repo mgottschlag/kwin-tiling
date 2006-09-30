@@ -59,6 +59,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *w 
 	, rootItem( 0 )
 	, m_geometryOutdated( true )
 	, m_geometryInvalid( true )
+	, m_widget( 0 )
 {
 	// Set the mode we're working in
 	m_currentMode = mode;
