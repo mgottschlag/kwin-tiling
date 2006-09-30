@@ -256,6 +256,11 @@ void LayoutConfig::initUI() {
 	for (QListIterator<QString> it(options); it.hasNext(); )
 	{
 		QString optionName = it.next();
+		if( optionName.trimmed().isEmpty() ) {
+			kWarning() << "skipping empty option name" << endl;
+  			continue;
+		}
+		
 		const XkbOption& option = m_rules->options()[optionName];
 		OptionListItem *item = m_optionGroups[ option.group->name ];
 
