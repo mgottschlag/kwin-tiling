@@ -353,6 +353,29 @@ KdmItem::sizeHint()
 		geom.size.y.type == DTpixel ? geom.size.y.val : 0 );
 }
 
+const QSize &
+KdmItem::ensureHintedSize( QSize &hintedSize )
+{
+	if (!hintedSize.isValid()) {
+		hintedSize = sizeHint();
+		kDebug() << " => hintedSize " << hintedSize << endl;
+	}
+	return hintedSize;	
+}
+
+const QSize &
+KdmItem::ensureBoxHint( QSize &boxHint, QStack<QSize> &parentSizes, QSize &hintedSize )
+{
+	if (!boxHint.isValid()) {
+		if (myWidget || !boxManager)
+			boxHint = ensureHintedSize( hintedSize );
+		else
+			boxHint = boxManager->sizeHint( parentSizes );
+		kDebug() << " => boxHint " << boxHint << endl;
+	}
+	return boxHint;	
+}
+
 static const QSize &
 getParentSize( const QStack<QSize> &parentSizes, int levels )
 {
@@ -367,8 +390,7 @@ getParentSize( const QStack<QSize> &parentSizes, int levels )
 void
 KdmItem::calcSize(
 	const DataPair &sz,
-	const QStack<QSize> &parentSizes,
-	const QSize &hintedSize, const QSize &boxHint,
+	QStack<QSize> &parentSizes, QSize &hintedSize, QSize &boxHint,
 	QSize &io )
 {
 	int w, h;
@@ -380,9 +402,9 @@ KdmItem::calcSize(
 	else if (sz.x.type == DTpercent)
 		w = getParentSize( parentSizes, sz.x.levels ).width() * sz.x.val / 100;
 	else if (sz.x.type == DTbox)
-		w = boxHint.width();
+		w = ensureBoxHint( boxHint, parentSizes, hintedSize ).width();
 	else
-		w = hintedSize.width();
+		w = ensureHintedSize( hintedSize ).width();
 
 	if (sz.y.type == DTpixel)
 		h = sz.y.val;
@@ -391,13 +413,13 @@ KdmItem::calcSize(
 	else if (sz.y.type == DTpercent)
 		h = getParentSize( parentSizes, sz.y.levels ).height() * sz.y.val / 100;
 	else if (sz.y.type == DTbox)
-		h = boxHint.height();
+		h = ensureBoxHint( boxHint, parentSizes, hintedSize ).height();
 	else
-		h = hintedSize.height();
+		h = ensureHintedSize( hintedSize ).height();
 
-	if (sz.x.type == DTscale && h && hintedSize.height())
+	if (sz.x.type == DTscale && h && ensureHintedSize( hintedSize ).height())
 		w = w * h / hintedSize.height();
-	else if (sz.y.type == DTscale && w && hintedSize.width())
+	else if (sz.y.type == DTscale && w && ensureHintedSize( hintedSize ).width())
 		h = w * h / hintedSize.width();
 
 	io.setWidth( w );
@@ -407,25 +429,10 @@ KdmItem::calcSize(
 void
 KdmItem::sizingHint( QStack<QSize> &parentSizes, QSize &min, QSize &opt, QSize &max )
 {
-	QSize hintedSize = sizeHint();
-	QSize boxHint;
+	kDebug() << "KdmItem::sizingHint " << id
+		<< " parentSize=" << parentSizes.top() << endl;
 
-	kDebug() << "KdmItem::sizingHint " << id << " parentSize="
-		<< parentSizes.top() << " hintedSize=" << hintedSize << endl;
-	// check if width or height are set to "box"
-	if (geom.size.x.type == DTbox || geom.size.y.type == DTbox ||
-	    geom.minSize.x.type == DTbox || geom.minSize.y.type == DTbox ||
-	    geom.maxSize.x.type == DTbox || geom.maxSize.y.type == DTbox)
-	{
-		if (myWidget)
-			boxHint = hintedSize;
-		else if (boxManager)
-			boxHint = boxManager->sizeHint( parentSizes );
-		else
-			boxHint = parentSizes.top();
-		kDebug() << " => boxHint " << boxHint << endl;
-	}
-
+	QSize hintedSize, boxHint;
 	min = opt = max = parentSizes.top();
 	calcSize( geom.size, parentSizes, hintedSize, boxHint, opt );
 	calcSize( geom.minSize, parentSizes, hintedSize, boxHint, min );
@@ -482,7 +489,8 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QSize &sz, const QPoint &off
 		if (geom.anchor.indexOf( 'e' ) >= 0)
 			dx = sz.width();
 	}
-	kDebug() << "KdmItem::placementHint " << id << " size=" << sz << " x=" << x << " dx=" << dx << " y=" << y << " dy=" << dy << endl;
+	kDebug() << "KdmItem::placementHint " << id << " size=" << sz
+		<< " x=" << x << " dx=" << dx<< " y=" << y << " dy=" << dy << endl;
 	y -= dy;
 	x -= dx;
 

@@ -227,10 +227,12 @@ protected:
 		QString anchor;
 	} geom;
 
-	static void calcSize(
+	const QSize &ensureHintedSize( QSize & );
+	const QSize &ensureBoxHint( QSize &, QStack<QSize> &, QSize & );
+	void calcSize(
 		const DataPair &,
-		const QStack<QSize> &parentSizes, const QSize &, const QSize &,
-		QSize &io );
+		QStack<QSize> &, QSize &, QSize &,
+		QSize & );
 
 	/* For internal use ONLY
 	 * Add a child item. This function is called automatically
