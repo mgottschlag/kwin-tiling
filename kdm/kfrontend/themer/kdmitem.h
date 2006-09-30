@@ -22,6 +22,8 @@
 #ifndef KDMITEM_H
 #define KDMITEM_H
 
+#include "parse.h"
+
 #include <QObject>
 #include <QStack>
 #include <QRect>
@@ -217,11 +219,6 @@ protected:
 	bool isButton;
 
 	// This struct is filled in by KdmItem base class
-	enum DataType { DTnone, DTpixel, DTnpixel, DTpercent, DTbox, DTscale };
-	struct DataPoint {
-		int val, levels;
-		DataType type;
-	};
 	struct DataPair {
 		DataPoint x, y;
 	};
@@ -247,14 +244,6 @@ protected:
 	bool childrenContain( int x, int y );
 
 	void activateBuddy();
-
-	/* For internal use ONLY
-	 * Parse type and value of an attribute (pos tag), a font or a
-	 * color.
-	 */
-	void parseAttribute( const QString &, DataPoint & );
-	void parseFont( const QString &, QFont & );
-	void parseColor( const QString &col, const QString &a, QColor & );
 
 	QString itemType, id;
 	QList<KdmItem *> m_children;
