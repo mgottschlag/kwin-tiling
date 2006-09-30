@@ -48,15 +48,8 @@ protected:
 		struct RectClass {
 			QColor color;
 			bool present;
-			QFont font;
 		} normal, active, prelight;
-		bool hasBorder;
 	} rect;
-
-//	virtual void setWidget( QWidget *widget );
-
-//private:
-//	void setAttribs( QWidget *widget );
 };
 
 #endif

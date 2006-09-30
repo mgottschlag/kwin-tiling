@@ -39,7 +39,6 @@ KdmRect::KdmRect( QObject *parent, const QDomNode &node )
 	// Set default values for rect (note: strings are already Null)
 	rect.active.present = false;
 	rect.prelight.present = false;
-	rect.hasBorder = false;
 
 	// A rect can have no properties (defaults to parent ones)
 	if (node.isNull())
@@ -58,17 +57,13 @@ KdmRect::KdmRect( QObject *parent, const QDomNode &node )
 
 		if (tagName == "normal") {
 			parseColor( el.attribute( "color", QString() ), el.attribute( "alpha", "1.0" ), rect.normal.color );
-			parseFont( el.attribute( "font", "Sans 14" ), rect.normal.font );
 		} else if (tagName == "active") {
 			rect.active.present = true;
 			parseColor( el.attribute( "color", QString() ), el.attribute( "alpha", "1.0" ), rect.active.color );
-			parseFont( el.attribute( "font", "Sans 14" ), rect.active.font );
 		} else if (tagName == "prelight") {
 			rect.prelight.present = true;
 			parseColor( el.attribute( "color", QString() ), el.attribute( "alpha", "1.0" ), rect.prelight.color );
-			parseFont( el.attribute( "font", "Sans 14" ), rect.prelight.font );
-		} else if (tagName == "border")
-			rect.hasBorder = true;
+		}
 	}
 }
 
@@ -99,42 +94,5 @@ KdmRect::statusChanged( bool descend )
 		return;
 	needUpdate();
 }
-
-/*
-void
-KdmRect::setAttribs( QWidget *widget )
-{
-	widget->setFont( rect.normal.font );
-}
-
-void
-KdmRect::recursiveSetAttribs( QLayoutItem *li )
-{
-	QWidget *w;
-	QLayout *l;
-
-	if ((w = li->widget()))
-		setAttribs( w );
-	else if ((l = li->layout())) {
-		QLayoutIterator it = l->iterator();
-		for (QLayoutItem *itm = it.current(); itm; itm = ++it)
-			recursiveSetAttribs( itm );
-	}
-}
-
-void
-KdmRect::setWidget( QWidget *widget )
-{
-	KdmItem::setWidget( widget );
-	setAttribs( widget );
-}
-
-void
-KdmRect::setLayoutItem( QLayoutItem *item )
-{
-	KdmItem::setLayoutItem( item );
-	recursiveSetAttribs( item );
-}
-*/
 
 #include "kdmrect.moc"
