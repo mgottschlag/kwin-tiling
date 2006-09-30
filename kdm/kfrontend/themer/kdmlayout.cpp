@@ -65,6 +65,15 @@ KdmLayoutBox::KdmLayoutBox( const QDomNode &node )
 	box.homogeneous = el.attribute( "homogeneous", "false" ) == "true";
 }
 
+struct LayoutHint {
+	int min, opt, max, set;
+	bool done;
+
+	LayoutHint() : done( false )
+	{
+	}
+};
+
 void
 KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force )
 {
@@ -116,20 +125,92 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 			ccnt--;
 		}
 	} else {
+		QVector<LayoutHint> lhs;
+		int ccnt = 0, mintot = 0, opttot = 0, esum = 0;
+		parentSizes.push( QSize( 0, 0 ) );
+		foreach (KdmItem *itm, m_children)
+			if (!itm->isExplicitlyHidden()) {
+				SizeHint sh;
+				itm->sizingHint( parentSizes, sh );
+				lhs.resize( ccnt + 1 );
+				if (box.isVertical) {
+					lhs[ccnt].min = sh.min.height();
+					lhs[ccnt].opt = sh.opt.height();
+					lhs[ccnt].max = sh.max.height();
+				} else {
+					lhs[ccnt].min = sh.min.width();
+					lhs[ccnt].opt = sh.opt.width();
+					lhs[ccnt].max = sh.max.width();
+				}
+				mintot += lhs[ccnt].min;
+				opttot += lhs[ccnt].opt;
+				if (itm->geom.expand)
+					esum += itm->geom.expand;
+				else {
+					lhs[ccnt].done = true;
+					lhs[ccnt].set = lhs[ccnt].opt;
+				}
+				ccnt++;
+			}
+		parentSizes.pop();
+		int havetot = box.isVertical ? childrenRect.size().height() : childrenRect.size().width();
+		int spacing;
+		if (havetot < opttot) {
+			// fix your theme, dude
+			if (havetot < mintot) {
+				for (int i = 0; i < ccnt; i++) {
+					lhs[i].set = lhs[i].min * havetot / mintot;
+					havetot -= lhs[i].set;
+					mintot -= lhs[i].min;
+				}
+			} else {
+				for (int i = 0; i < ccnt; i++) {
+					lhs[i].set = lhs[i].opt * havetot / opttot;
+					havetot -= lhs[i].set;
+					opttot -= lhs[i].opt;
+				}
+			}
+			spacing = 0;
+		} else {
+			spacing = box.spacing;
+			if (havetot < opttot + (ccnt - 1) * spacing)
+				spacing = (havetot - opttot) / (ccnt - 1);
+			int extra = havetot - opttot - (ccnt - 1) * spacing;
+			int tesum, wesum, textra, wextra;
+			do {
+				tesum = wesum = esum;
+				textra = wextra = extra;
+				int idx = 0;
+				foreach (KdmItem *itm, m_children) {
+					if (itm->isExplicitlyHidden())
+						continue;
+					if (!lhs[idx].done) {
+						int mex = itm->geom.expand * wextra / wesum;
+						wextra -= mex;
+						wesum -= itm->geom.expand;
+						if (lhs[idx].opt + mex > lhs[idx].max) {
+							lhs[idx].set = lhs[idx].max;
+							lhs[idx].done = true;
+							esum -= itm->geom.expand;
+							extra -= lhs[idx].opt;
+						} else
+							lhs[idx].set = lhs[idx].opt + mex;
+					}
+					idx++;
+				}
+			} while (tesum != esum);
+		}
+		int idx = 0;
 		foreach (KdmItem *itm, m_children) {
 			if (itm->isExplicitlyHidden())
 				continue;
-			parentSizes.push( QSize( 0, 0 ) );
-			SizeHint itemHint;
-			itm->sizingHint( parentSizes, itemHint );
-			parentSizes.pop();
 			QRect temp = childrenRect;
 			if (box.isVertical) {
-				temp.setHeight( itemHint.opt.height() );
-				childrenRect.setTop( childrenRect.top() + itemHint.opt.height() + box.spacing );
+				temp.setHeight( lhs[idx].set );
+				childrenRect.setTop( childrenRect.top() + lhs[idx].set + spacing );
 			} else {
-				temp.setWidth( itemHint.opt.width() );
-				childrenRect.setLeft( childrenRect.left() + itemHint.opt.width() + box.spacing );
+				temp.setWidth( lhs[idx].set );
+				childrenRect.setLeft( childrenRect.left() + lhs[idx].set + spacing );
 			}
 			parentSizes.push( temp.size() );
 			QRect itemRect = itm->placementHint( parentSizes, temp.topLeft() );
@@ -138,6 +219,7 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 			parentSizes.push( parentGeometry.size() );
 			itm->setGeometry( parentSizes, itemRect, force );
 			parentSizes.pop();
+			idx++;
 		}
 	}
 }

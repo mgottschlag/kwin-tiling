@@ -228,6 +228,7 @@ protected:
 	struct {
 		DataPair pos, minSize, size, maxSize;
 		QString anchor;
+		int expand;
 	} geom;
 
 	const QSize &ensureHintedSize( QSize & );
@@ -271,6 +272,7 @@ protected:
 	enum { InitialHidden, ExplicitlyHidden, Shown } isShown;
 
 	friend class KdmLabel; // id & isButton
+	friend class KdmLayoutBox; // geom.expand
 };
 
 #endif

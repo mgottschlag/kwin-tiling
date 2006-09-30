@@ -55,7 +55,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	geom.minSize.x.type = geom.minSize.y.type =
 		geom.maxSize.x.type = geom.maxSize.y.type = DTpixel;
 	geom.minSize.x.val = geom.minSize.y.val = 0;
-	geom.maxSize.x.val = geom.maxSize.y.val = int(~0U >> 1);
+	geom.maxSize.x.val = geom.maxSize.y.val = 1000000;
 	geom.anchor = "nw";
 
 	isShown = InitialHidden;
@@ -89,6 +89,11 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 			parseAttribute( el.attribute( "max-width", QString() ), geom.maxSize.x );
 			parseAttribute( el.attribute( "max-height", QString() ), geom.maxSize.y );
 			geom.anchor = el.attribute( "anchor", "nw" );
+			QString exp = el.attribute( "expand", "false" ).toLower();
+			bool ok;
+			geom.expand = exp.toInt( &ok );
+			if (!ok)
+				geom.expand = exp == "true";
 		}
 		if (tagName == "buddy")
 			buddy = el.attribute( "idref", "" );
