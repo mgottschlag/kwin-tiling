@@ -88,6 +88,9 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 		}
 	}
 
+	if (!label.normal.font.present)
+		parseFont( "Sans 14", label.normal.font );
+
 	// Check if this is a timer label
 	label.isTimer = label.text.indexOf( "%c" ) >= 0;
 	if (label.isTimer) {
@@ -145,7 +148,7 @@ KdmLabel::sizeHint()
 	else if (state == Sprelight && label.prelight.present)
 		l = &label.prelight;
 	// get the hint from font metrics
-	return QFontMetrics( l->font ).size( Qt::AlignLeft | Qt::TextSingleLine, cText );
+	return QFontMetrics( l->font.font ).size( Qt::AlignLeft | Qt::TextSingleLine, cText );
 }
 
 void
@@ -158,21 +161,21 @@ KdmLabel::drawContents( QPainter *p, const QRect &/*r*/  )
 	else if (state == Sprelight && label.prelight.present)
 		l = &label.prelight;
 	// draw the label
-	p->setFont( l->font );
+	p->setFont( l->font.font );
 	p->setPen( l->color );
 	if (cAccelOff != -1) {
 		QRect tarea( area );
-		QFontMetrics fm( l->font );
+		QFontMetrics fm( l->font.font );
 		QString left = cText.left( cAccelOff );
 		p->drawText( area, Qt::AlignLeft | Qt::SingleLine, left );
 		tarea.rLeft() += fm.width( left );
-		QFont f( l->font );
+		QFont f( l->font.font );
 		f.setUnderline( true );
 		p->setFont( f );
 		QString acc( cText[cAccelOff + 1] );
 		p->drawText( tarea, Qt::AlignLeft | Qt::SingleLine, acc );
 		tarea.rLeft() += fm.width( acc );
-		p->setFont( l->font );
+		p->setFont( l->font.font );
 		p->drawText( tarea, Qt::AlignLeft | Qt::SingleLine, cText.mid( cAccelOff + 2 ) );
 	} else
 		p->drawText( area, Qt::AlignLeft | Qt::TextSingleLine, cText );

@@ -59,7 +59,7 @@ protected:
 		bool isTimer;
 		struct LabelClass {
 			QColor color;
-			QFont font;
+			FontType font;
 			bool present;
 		} normal, active, prelight;
 	} label;

@@ -22,8 +22,9 @@
 #ifndef PARSE_H
 #define PARSE_H
 
+#include <QFont>
+
 class QString;
-class QFont;
 class QColor;
 
 enum DataType { DTnone, DTpixel, DTnpixel, DTpercent, DTbox, DTscale };
@@ -32,8 +33,17 @@ struct DataPoint {
 	DataType type;
 };
 
+struct FontType {
+	QFont font;
+	bool present;
+
+	FontType() : present( false )
+	{
+	}
+};
+
 void parseSize( const QString &, DataPoint & );
-void parseFont( const QString &, QFont & );
-void parseColor( const QString &col, const QString &a, QColor & );
+void parseFont( const QString &, FontType & );
+void parseColor( const QString &color, const QString &alpha, QColor & );
 
 #endif
