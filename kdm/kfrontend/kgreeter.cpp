@@ -580,8 +580,17 @@ KGreeter::verifyOk()
 void
 KGreeter::verifyFailed()
 {
+	if (userView)
+		userView->setEnabled( false );
 	if (needLoad)
 		slotLoadPrevWM();
+}
+
+void
+KGreeter::verifyRetry()
+{
+	if (userView)
+		userView->setEnabled( true );
 }
 
 void
@@ -757,8 +766,6 @@ void
 KStdGreeter::verifyFailed()
 {
 	goButton->setEnabled( false );
-	if (userView)
-		userView->setEnabled( false );
 	inherited::verifyFailed();
 }
 
@@ -766,8 +773,7 @@ void
 KStdGreeter::verifyRetry()
 {
 	goButton->setEnabled( true );
-	if (userView)
-		userView->setEnabled( true );
+	inherited::verifyRetry();
 }
 
 
@@ -900,6 +906,7 @@ KThemedGreeter::pluginSetup()
 	}
 }
 
+#if 0
 void
 KThemedGreeter::verifyFailed()
 {
@@ -911,7 +918,9 @@ void
 KThemedGreeter::verifyRetry()
 {
 //	goButton->setEnabled( true );
+	inherited::verifyRetry();
 }
+#endif
 
 void
 KThemedGreeter::updateStatus( bool fail, bool caps, int timedleft )
