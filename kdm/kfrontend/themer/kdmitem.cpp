@@ -199,6 +199,7 @@ KdmItem::setWidget( QWidget *widget )
 		setWidgetAttribs( myWidget, style );
 	}
 
+	emit needPlugging();
 	emit needPlacement();
 }
 
@@ -207,6 +208,7 @@ KdmItem::widgetGone()
 {
 	myWidget = 0;
 
+	emit needPlugging();
 	emit needPlacement();
 }
 
@@ -221,6 +223,21 @@ KdmItem::showWidget()
 	}
 	foreach (KdmItem *itm, m_children)
 		itm->showWidget();
+}
+
+void
+KdmItem::plugActions( bool plug )
+{
+	if (myWidget)
+		plug = false;
+	doPlugActions( plug );
+	foreach (KdmItem *itm, m_children)
+		itm->plugActions( plug );
+}
+
+void
+KdmItem::doPlugActions( bool )
+{
 }
 
 /* This is called as a result of KdmLayout::update, and directly on the root */

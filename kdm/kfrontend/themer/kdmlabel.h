@@ -54,6 +54,8 @@ protected:
 	// handle switching between normal / active / prelight configurations
 	virtual void statusChanged( bool descend );
 
+	virtual void doPlugActions( bool plug );
+	
 	struct LabelStruct {
 		QString text;
 		bool isTimer;

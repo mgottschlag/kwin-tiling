@@ -154,6 +154,7 @@ public:
 	KdmItem *findNode( const QString &id ) const;
 	virtual void setWidget( QWidget *widget );
 	void showWidget();
+	void plugActions( bool plug = true );
 
 	void hide( bool force = false );
 	void show( bool force = false );
@@ -165,6 +166,7 @@ public:
 Q_SIGNALS:
 	void needUpdate( int x, int y, int w, int h );
 	void needPlacement();
+	void needPlugging();
 	void activated( const QString &id );
 
 protected Q_SLOTS:
@@ -197,6 +199,8 @@ protected:
 	 */
 	virtual void statusChanged( bool descend );
 
+	virtual void doPlugActions( bool plug );
+	
 	/**
 	 * emits needUpdate( int, int, int, int ) with the full widget area.
 	 */

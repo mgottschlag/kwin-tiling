@@ -75,8 +75,6 @@ public:
 	void setWidget( QWidget *w );
 	QWidget *widget() { return m_widget; }
 
-	void addAction( QAction *action );
-
 	void paintBackground( QPaintDevice *dev );
 
 Q_SIGNALS:
@@ -101,8 +99,6 @@ private:
 
 	QWidget *m_widget;
 
-	QList<QAction *> m_actions;
-
 	// methods
 
 	/*
@@ -121,6 +117,7 @@ private:
 private Q_SLOTS:
 	void update( int x, int y, int w, int h );
 	void slotNeedPlacement();
+	void slotNeedPlugging();
 
 };
 

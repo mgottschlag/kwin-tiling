@@ -113,14 +113,7 @@ KdmThemer::setWidget( QWidget *w )
 {
 	m_widget = w;
 	setWidgetAttribs( m_widget, rootItem->style );
-	foreach (QAction *action, m_actions)
-		w->addAction( action );
-}
-
-void
-KdmThemer::addAction( QAction *action )
-{
-	m_actions << action;
+	rootItem->plugActions();
 }
 
 KdmItem *
@@ -135,6 +128,13 @@ KdmThemer::slotNeedPlacement()
 	m_geometryOutdated = m_geometryInvalid = true;
 	if (widget())
 		widget()->update();
+}
+
+void
+KdmThemer::slotNeedPlugging()
+{
+	if (widget())
+		rootItem->plugActions();
 }
 
 void
@@ -261,6 +261,8 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 						 SLOT(update( int, int, int, int )) );
 				connect( newItem, SIGNAL(needPlacement()),
 						 SLOT(slotNeedPlacement()) );
+				connect( newItem, SIGNAL(needPlugging()),
+						 SLOT(slotNeedPlugging()) );
 				connect( newItem, SIGNAL(activated( const QString & )),
 						 SIGNAL(activated( const QString & )) );
 				generateItems( newItem, subnode );

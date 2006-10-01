@@ -119,7 +119,7 @@ KdmLabel::setCText( const QString &txt )
 		action = new QAction( this );
 		action->setShortcut( Qt::ALT + txt[cAccelOff + 1].unicode() );
 		connect( action, SIGNAL(triggered( bool )), SLOT(activate()) );
-		themer()->addAction( action );
+		emit needPlugging();
 	}
 }
 
@@ -136,6 +136,18 @@ KdmLabel::activate()
 	} while (cp);
 	if (!buddy.isEmpty())
 		activateBuddy();
+}
+
+void
+KdmLabel::doPlugActions( bool plug )
+{
+	if (action) {
+		QWidget *w = themer()->widget();
+		if (plug)
+			w->addAction( action );
+		else
+			w->removeAction( action );
+	}
 }
 
 QSize
