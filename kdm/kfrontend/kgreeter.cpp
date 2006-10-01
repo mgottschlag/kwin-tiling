@@ -872,6 +872,11 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 	verify->start();
 }
 
+KThemedGreeter::~KThemedGreeter()
+{
+	themer->setWidget( 0 );
+}
+
 bool
 KThemedGreeter::event( QEvent *e )
 {

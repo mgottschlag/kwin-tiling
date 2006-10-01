@@ -111,9 +111,10 @@ KdmThemer::~KdmThemer()
 void
 KdmThemer::setWidget( QWidget *w )
 {
-	m_widget = w;
-	setWidgetAttribs( m_widget, rootItem->style );
-	rootItem->plugActions();
+	if ((m_widget = w)) {
+		setWidgetAttribs( m_widget, rootItem->style );
+		rootItem->plugActions();
+	}
 }
 
 KdmItem *

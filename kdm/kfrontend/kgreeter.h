@@ -140,6 +140,7 @@ class KThemedGreeter : public KGreeter {
 
   public:
 	KThemedGreeter( KdmThemer *_themer );
+	~KThemedGreeter();
 
   public Q_SLOTS:
 	void slotThemeActivated( const QString &id );
