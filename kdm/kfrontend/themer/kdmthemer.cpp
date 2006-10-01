@@ -183,7 +183,7 @@ KdmThemer::widgetEvent( QEvent *e )
 			QRect rect( QPoint( 0, 0 ), widget()->size() );
 			rootItem->setGeometry( ps, rect, m_geometryInvalid );
 			if (debugLevel & DEBUG_THEMING)
-				showStructure( rootItem );
+				showStructure();
 			m_geometryOutdated = m_geometryInvalid = false;
 		}
 		{
@@ -333,31 +333,10 @@ bool KdmThemer::willDisplay( const QDomNode &node )
 }
 
 void
-KdmThemer::showStructure( QObject *obj )
+KdmThemer::showStructure()
 {
-
-	QObjectList wlist = obj->children();
-	static int counter = 0;
-	if (counter == 0)
-		kDebug() << "\n\n<=======  Widget tree =================" << endl;
-	if (!wlist.isEmpty()) {
-		counter++;
-		foreach (QObject *object, wlist) {
-			QString node;
-			for (int i = 1; i < counter; i++)
-				node += '-';
-
-			if (object->inherits( "KdmItem" )) {
-				KdmItem *widget = (KdmItem *)object;
-				kDebug() << node << "|" << widget->type() << " me=" << widget->objectName() << " " << widget->area << endl;
-			}
-
-			showStructure( object );
-		}
-		counter--;
-	}
-	if (counter == 0)
-		kDebug() << "\n\n<=======  Widget tree =================\n\n" << endl;
+	kDebug() << "======= item tree =======" << endl;
+	rootItem->showStructure( QString() );
 }
 
 #include "kdmthemer.moc"

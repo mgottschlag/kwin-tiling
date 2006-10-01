@@ -162,6 +162,8 @@ public:
 	bool isExplicitlyHidden() const { return isShown == ExplicitlyHidden; }
 	QRect rect() const { return area; }
 
+	void showStructure( const QString &pfx );
+
 Q_SIGNALS:
 	void needUpdate( int x, int y, int w, int h );
 	void needPlacement();

@@ -112,7 +112,7 @@ private:
 	 */
 	void generateItems( KdmItem *parent = 0, const QDomNode &node = QDomNode() );
 
-	void showStructure( QObject *obj );
+	void showStructure();
 
 private Q_SLOTS:
 	void update( int x, int y, int w, int h );
