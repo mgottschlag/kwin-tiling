@@ -81,83 +81,92 @@ parseFont( const QString &is, FontType &ft )
 	if (is.isNull())
 		return;
 	QString rs( is.simplified() );
-	if (!(ft.present = !rs.isEmpty()))
-		return;
-	QString s( getword( rs ) );
-	bool ok;
-	if (s.endsWith( "px" )) {
-		int ps = s.left( s.length() - 2 ).toInt( &ok );
-		if (ok) {
-			ft.font.setPixelSize( ps );
+	if ((ft.present = !rs.isEmpty())) {
+		QString s( getword( rs ) );
+		bool ok;
+		if (s.endsWith( "px" )) {
+			int ps = s.left( s.length() - 2 ).toInt( &ok );
+			if (ok) {
+				ft.font.setPixelSize( ps );
+				s = getword( rs );
+			}
+		} else {
+			double ps = s.toDouble( &ok );
+			if (ok) {
+				ft.font.setPointSizeF( ps );
+				s = getword( rs );
+			}
+		}
+		forever {
+			QString ss( s.toLower() );
+			if (ss == "oblique")
+				ft.font.setStyle( QFont::StyleOblique );
+			else if (ss == "italic")
+				ft.font.setStyle( QFont::StyleItalic );
+			else if (ss == "ultra-light")
+				ft.font.setWeight( 13 );
+			else if (ss == "light")
+				ft.font.setWeight( QFont::Light );
+			else if (ss == "medium")
+				ft.font.setWeight( 50 );
+			else if (ss == "semi-bold")
+				ft.font.setWeight( QFont::DemiBold );
+			else if (ss == "bold")
+				ft.font.setWeight( QFont::Bold );
+			else if (ss == "ultra-bold")
+				ft.font.setWeight( QFont::Black );
+			else if (ss == "heavy")
+				ft.font.setWeight( 99 );
+			else if (ss == "ultra-condensed")
+				ft.font.setStretch( QFont::UltraCondensed );
+			else if (ss == "extra-condensed")
+				ft.font.setStretch( QFont::ExtraCondensed );
+			else if (ss == "condensed")
+				ft.font.setStretch( QFont::Condensed );
+			else if (ss == "semi-condensed")
+				ft.font.setStretch( QFont::SemiCondensed );
+			else if (ss == "semi-expanded")
+				ft.font.setStretch( QFont::SemiExpanded );
+			else if (ss == "expanded")
+				ft.font.setStretch( QFont::Expanded );
+			else if (ss == "extra-expanded")
+				ft.font.setStretch( QFont::ExtraExpanded );
+			else if (ss == "ultra-expanded")
+				ft.font.setStretch( QFont::UltraExpanded );
+			else if (ss == "normal" || // no-op
+					ss == "small-caps" || // this and following ignored
+					ss == "not-rotated" || ss == "south" || ss == "upside-down" ||
+					ss == "north" ||
+					ss == "rotated-left" || ss == "east" ||
+					ss == "rotated-right" || ss == "west")
+			{
+			} else
+				break;
 			s = getword( rs );
 		}
-	} else {
-		double ps = s.toDouble( &ok );
-		if (ok) {
-			ft.font.setPointSizeF( ps );
-			s = getword( rs );
+		if (!rs.isEmpty())
+			rs.append( ' ' ).append( s );
+		else
+			rs = s;
+		QStringList ffs = rs.split( QRegExp( " ?, ?" ), QString::SkipEmptyParts );
+		if (!ffs.isEmpty()) {
+			foreach (QString ff, ffs) {
+				ft.font.setFamily( ff );
+				if (ft.font.exactMatch())
+					return;
+			}
+			ft.font.setFamily( ffs.first() );
 		}
 	}
-	forever {
-		QString ss( s.toLower() );
-		if (ss == "oblique")
-			ft.font.setStyle( QFont::StyleOblique );
-		else if (ss == "italic")
-			ft.font.setStyle( QFont::StyleItalic );
-		else if (ss == "ultra-light")
-			ft.font.setWeight( 13 );
-		else if (ss == "light")
-			ft.font.setWeight( QFont::Light );
-		else if (ss == "medium")
-			ft.font.setWeight( 50 );
-		else if (ss == "semi-bold")
-			ft.font.setWeight( QFont::DemiBold );
-		else if (ss == "bold")
-			ft.font.setWeight( QFont::Bold );
-		else if (ss == "ultra-bold")
-			ft.font.setWeight( QFont::Black );
-		else if (ss == "heavy")
-			ft.font.setWeight( 99 );
-		else if (ss == "ultra-condensed")
-			ft.font.setStretch( QFont::UltraCondensed );
-		else if (ss == "extra-condensed")
-			ft.font.setStretch( QFont::ExtraCondensed );
-		else if (ss == "condensed")
-			ft.font.setStretch( QFont::Condensed );
-		else if (ss == "semi-condensed")
-			ft.font.setStretch( QFont::SemiCondensed );
-		else if (ss == "semi-expanded")
-			ft.font.setStretch( QFont::SemiExpanded );
-		else if (ss == "expanded")
-			ft.font.setStretch( QFont::Expanded );
-		else if (ss == "extra-expanded")
-			ft.font.setStretch( QFont::ExtraExpanded );
-		else if (ss == "ultra-expanded")
-			ft.font.setStretch( QFont::UltraExpanded );
-		else if (ss == "normal" || // no-op
-		         ss == "small-caps" || // this and following ignored
-		         ss == "not-rotated" || ss == "south" || ss == "upside-down" ||
-		         ss == "north" ||
-		         ss == "rotated-left" || ss == "east" ||
-		         ss == "rotated-right" || ss == "west")
-		{
-		} else
-			break;
-		s = getword( rs );
-	}
-	if (!rs.isEmpty())
-		rs.append( ' ' ).append( s );
+	// don't inherit settings from parent widgets
+	ft.font.setFamily( ft.font.family() );
+	if (ft.font.pixelSize() > 0)
+		ft.font.setPixelSize( ft.font.pixelSize() );
 	else
-		rs = s;
-	QStringList ffs = rs.split( QRegExp( " ?, ?" ), QString::SkipEmptyParts );
-	if (!ffs.isEmpty()) {
-		foreach (QString ff, ffs) {
-			ft.font.setFamily( ff );
-			if (ft.font.exactMatch())
-				return;
-		}
-		ft.font.setFamily( ffs.first() );
-	}
+		ft.font.setPointSize( ft.font.pointSize() );
+	ft.font.setStyle( ft.font.style() );
+	ft.font.setStretch( ft.font.stretch() );
+	ft.font.setWeight( ft.font.weight() );
 }
 
 void
