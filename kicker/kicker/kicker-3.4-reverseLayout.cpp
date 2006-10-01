@@ -9,7 +9,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kprocess.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 
 struct AppletInfo
 {
@@ -131,22 +131,22 @@ int main(int argc, char** argv)
     if (!childPanelConfigFiles.isEmpty())
     {
         // Create a temporary kconf_update .upd file for updating the childpanels
-       KTempFile tempFile(QString::null, ".upd");
-        QTextStream* upd = tempFile.textStream();
+        KTemporaryFile tempFile;
+        tempFile.setSuffix(".upd");
+        tempFile.open();
+        QTextStream upd ( &tempFile );
         for (it = childPanelConfigFiles.begin(); it != childPanelConfigFiles.end(); ++it)
         {
-            *upd << "Id=kde_3.4_reverseLayout" << endl;
-            *upd << "File=" << *it << endl;
-            *upd << "Script=kicker-3.4-reverseLayout" << endl;
-            *upd << endl;
+            upd << "Id=kde_3.4_reverseLayout" << endl;
+            upd << "File=" << *it << endl;
+            upd << "Script=kicker-3.4-reverseLayout" << endl;
+            upd << endl;
         }
-        tempFile.close();
+        upd.flush();
 
         // Run kconf_update on the childpanel config files.
         KProcess kconf_update;
-        kconf_update << "kconf_update" << tempFile.name();
+        kconf_update << "kconf_update" << tempFile.fileName();
         kconf_update.start(KProcess::Block);
-
-        tempFile.unlink();
     }
 }

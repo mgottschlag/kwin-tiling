@@ -49,7 +49,7 @@
 #include <kio/netaccess.h>
 #include <kprocess.h>
 #include <ksycoca.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kmessagebox.h>
 #include <kglobalaccel.h>
 #include <kauthorized.h>
@@ -750,24 +750,29 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
 
         QImage i;
         Q3ImageDrag::decode(e, i);
-        KTempFile tmpFile(QString::null, filename);
-        i.save(tmpFile.name(), "PNG");
+        KTemporaryFile tmpFile;
+        tmpFile.setSuffix(filename);
+        tmpFile.open();
+        i.save(tmpFile.fileName(), "PNG");
         // We pass 0 as parent window because passing the desktop is not a good idea
         KUrl src;
-        src.setPath( tmpFile.name() );
+        src.setPath( tmpFile.fileName() );
         KUrl dest( KDIconView::desktopUrl() );
         dest.addPath( filename );
         KIO::NetAccess::file_copy( src, dest, 0 );
-        tmpFile.unlink();
     }
     else if (result == setAsWallpaper)
     {
         QImage i;
         Q3ImageDrag::decode(e, i);
-        KTempFile tmpFile(KGlobal::dirs()->saveLocation("wallpaper"), ".png");
-        i.save(tmpFile.name(), "PNG");
-        kDebug(1204) << "KDesktop::contentsDropEvent " << tmpFile.name() << endl;
-        bgMgr->setWallpaper(tmpFile.name());
+        KTemporaryFile tmpFile;
+        tmpFile.setPrefix(KGlobal::dirs()->saveLocation("wallpaper"));
+        tmpFile.setSuffix(".png");
+        tmpFile.setAutoRemove(false);
+        tmpFile.open();
+        i.save(tmpFile.fileName(), "PNG");
+        kDebug(1204) << "KDesktop::contentsDropEvent " << tmpFile.fileName() << endl;
+        bgMgr->setWallpaper(tmpFile.fileName());
     }
 }
 
@@ -784,8 +789,12 @@ void KDesktop::slotNewWallpaper(const KUrl &url)
         QFileInfo fileInfo( fileName );
         QString ext = fileInfo.suffix();
         // Store tempfile in a place where it will still be available after a reboot
-        KTempFile tmpFile( KGlobal::dirs()->saveLocation("wallpaper"), '.' + ext );
-        KUrl localURL; localURL.setPath( tmpFile.name() );
+        KTemporaryFile tmpFile;
+        tmpFile.setPrefix(KGlobal::dirs()->saveLocation("wallpaper"));
+        tmpFile.setSuffix('.' + ext);
+        tmpFile.setAutoRemove(false);
+        tmpFile.open();
+        KUrl localURL; localURL.setPath( tmpFile.fileName() );
         // We pass 0 as parent window because passing the desktop is not a good idea
         KIO::NetAccess::file_copy( url, localURL, -1, true /*overwrite*/ );
         bgMgr->setWallpaper( localURL.path() );

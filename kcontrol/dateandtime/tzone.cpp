@@ -47,7 +47,7 @@
 #include "tzone.moc"
 
 #if defined(USE_SOLARIS)
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 #include <sys/param.h>
 #include <sys/types.h>
@@ -102,14 +102,15 @@ void Tzone::save()
 
 #if defined(USE_SOLARIS)	// MARCO
 
-        KTempFile tf( locateLocal( "tmp", "kde-tzone" ) );
-        tf.setAutoDelete( true );
-        QTextStream *ts = tf.textStream();
+        KTemporaryFile tf;
+        tf.setPrefix("kde-tzone");
+        tf.open();
+        QTextStream ts(&tf);
 
         QFile fTimezoneFile(INITFILE);
         bool updatedFile = false;
 
-        if (tf.status() == 0 && fTimezoneFile.open(QIODevice::ReadOnly))
+        if (fTimezoneFile.open(QIODevice::ReadOnly))
         {
             bool found = false;
 
@@ -120,18 +121,18 @@ void Tzone::save()
             {
                 if (line.find("TZ=") == 0)
                 {
-                    *ts << "TZ=" << selectedzone << endl;
+                    ts << "TZ=" << selectedzone << endl;
                     found = true;
                 }
                 else
                 {
-                    *ts << line << endl;
+                    ts << line << endl;
                 }
             }
 
             if (!found)
             {
-                *ts << "TZ=" << selectedzone << endl;
+                ts << "TZ=" << selectedzone << endl;
             }
 
             updatedFile = true;
@@ -140,7 +141,7 @@ void Tzone::save()
 
         if (updatedFile)
         {
-            ts->device()->reset();
+            ts.device()->reset();
             fTimezoneFile.remove();
 
             if (fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate))

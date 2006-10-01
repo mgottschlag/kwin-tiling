@@ -30,7 +30,7 @@
 #include <kstandarddirs.h>
 #include <kimageeffect.h>
 #include <kprocess.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kcursor.h>
 #include <kfilemetainfo.h>
 #include <kconfig.h>
@@ -136,8 +136,8 @@ QString KBackgroundRenderer::buildCommand()
         switch (cmd.at(pos+1).toLatin1()) {
         case 'f':
             createTempFile();
-            cmd.replace(pos, 2, KShellProcess::quote(m_Tempfile->name()));
-            pos += m_Tempfile->name().length() - 2;
+            cmd.replace(pos, 2, KShellProcess::quote(m_Tempfile->fileName()));
+            pos += m_Tempfile->fileName().length() - 2;
             break;
 
         case 'x':
@@ -738,11 +738,10 @@ void KBackgroundRenderer::slotBackgroundDone(KProcess *process)
     m_State |= BackgroundDone;
 
     if (m_pProc->normalExit() && !m_pProc->exitStatus()) {
-        m_Background.load(m_Tempfile->name());
+        m_Background.load(m_Tempfile->fileName());
         m_State |= BackgroundDone;
     }
 
-    m_Tempfile->unlink();
     delete m_Tempfile; m_Tempfile = 0;
     m_pTimer->start(0);
     setBusyCursor(false);
@@ -928,8 +927,10 @@ void KBackgroundRenderer::load(int desk, int screen, bool drawBackgroundPerScree
 
 void KBackgroundRenderer::createTempFile()
 {
-   if( !m_Tempfile )
-     m_Tempfile = new KTempFile();
+    if( !m_Tempfile ){
+     m_Tempfile = new KTemporaryFile();
+     m_Tempfile->open();
+    }
 }
 
 QString KBackgroundRenderer::cacheFileName()

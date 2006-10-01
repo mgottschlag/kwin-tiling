@@ -42,7 +42,7 @@
 #include <kstandarddirs.h>
 #include <kprocio.h>
 #include <ksavefile.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <klocale.h>
 #include <kstyle.h>
 
@@ -435,15 +435,12 @@ void runRdb( uint flags )
   KConfig kglobals("kdeglobals", true, false);
   kglobals.setGroup("KDE");
 
-  KTempFile tmpFile;
-
-  if (tmpFile.status() != 0)
+  KTemporaryFile tmpFile;
+  if (!tmpFile.open())
   {
     kDebug() << "Couldn't open temp file" << endl;
     exit(0);
   }
-
-  QFile &tmp = *(tmpFile.file());
 
   // Export colors to non-(KDE/Qt) apps (e.g. Motif, GTK+ apps)
   if (exportColors)
@@ -470,7 +467,7 @@ void runRdb( uint flags )
     addColorDef(preproc, "ACTIVE_FOREGROUND"  , KGlobalSettings::activeTitleColor());
     //---------------------------------------------------------------
 
-    tmp.write( preproc.toLatin1(), preproc.length() );
+    tmpFile.write( preproc.toLatin1(), preproc.length() );
 
     QStringList list;
 
@@ -487,7 +484,7 @@ void runRdb( uint flags )
     }
 
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
-      copyFile(tmp, KStandardDirs::locate("appdefaults", *it ), true);
+      copyFile(tmpFile, KStandardDirs::locate("appdefaults", *it ), true);
   }
 
   // Merge ~/.Xresources or fallback to ~/.Xdefaults
@@ -496,9 +493,9 @@ void runRdb( uint flags )
 
   // very primitive support for ~/.Xresources by appending it
   if ( QFile::exists( xResources ) )
-    copyFile(tmp, xResources, true);
+    copyFile(tmpFile, xResources, true);
   else
-    copyFile(tmp, homeDir + "/.Xdefaults", true);
+    copyFile(tmpFile, homeDir + "/.Xdefaults", true);
 
   // Export the Xcursor theme & size settings
   KConfig mousecfg( "kcminputrc" );
@@ -554,19 +551,17 @@ void runRdb( uint flags )
   }
 
   if (contents.length() > 0)
-    tmp.write( contents.toLatin1(), contents.length() );
+    tmpFile.write( contents.toLatin1(), contents.length() );
 
-  tmpFile.close();
+  tmpFile.flush();
 
   KProcess proc;
 #ifndef NDEBUG
-  proc << "xrdb" << "-merge" << tmpFile.name();
+  proc << "xrdb" << "-merge" << tmpFile.fileName();
 #else
-  proc << "xrdb" << "-quiet" << "-merge" << tmpFile.name();
+  proc << "xrdb" << "-quiet" << "-merge" << tmpFile.fileName();
 #endif
   proc.start( KProcess::Block, KProcess::Stdin );
-
-  tmpFile.unlink();
 
   applyGtkStyles(exportColors, 1);
   applyGtkStyles(exportColors, 2);

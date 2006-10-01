@@ -61,7 +61,7 @@
 #include <QRegExp>
 #include <kinstance.h>
 #include <kde_file.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kdesu/su.h>
 #include <kprocess.h>
 #include <kdebug.h>
@@ -975,11 +975,12 @@ void CKioFonts::get(const KUrl &url)
             realPath=srcFiles.first();
         else   // Font is made up of multiple files - so create .tar.gz of them all!
         {
-            KTempFile tmpFile;
-            KTar      tar(tmpFile.name(), "application/x-gzip");
-
-            tmpFile.setAutoDelete(false);
-            realPath=tmpFile.name();
+            KTemporaryFile tmpFile;
+            tmpFile.setAutoRemove(false);
+            tmpFile.open();
+            
+            KTar      tar(tmpFile.fileName(), "application/x-gzip");
+            realPath=tmpFile.fileName();
 
             if(tar.open(QIODevice::WriteOnly))
             {
@@ -1111,14 +1112,13 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
     //    2. Check with FreeType that the file is a font, or that it is
     //       an AFM or PFM file
     //    3. If its OK, then get the fonts "name" from
-    KTempFile tmpFile;
-    QByteArray  tmpFileC(QFile::encodeName(tmpFile.name()));
+    KTemporaryFile tmpFile;
+    tmpFile.open();
+    QByteArray  tmpFileC(QFile::encodeName(tmpFile.fileName()));
 
-    tmpFile.setAutoDelete(true);
-
-    if(putReal(tmpFile.name(), tmpFileC, destExists, mode, resume))
+    if(putReal(tmpFile.fileName(), tmpFileC, destExists, mode, resume))
     {
-        if(!checkFile(tmpFile.name()))  // error logged in checkFile
+        if(!checkFile(tmpFile.fileName()))  // error logged in checkFile
             return;
 
         if(nrs)  // Ask root to copy the font...
@@ -1157,7 +1157,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
         }
         else // Move it to our font folder...
         {
-            tmpFile.setAutoDelete(false);
+            tmpFile.setAutoRemove(false);
             if(Misc::doCmd("mv", "-f", tmpFileC, destC))
             {
                 ::chmod(destC.data(), Misc::FILE_PERMS);

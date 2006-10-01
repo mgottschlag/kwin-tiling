@@ -19,7 +19,7 @@
 class QMouseEvent;
 class  KAudioRecordStream ;
 class KArtsServer;
-class KTempFile;
+class KTemporaryFile;
 class KLibrary;
 
 namespace KHotKeys
@@ -63,7 +63,7 @@ class VoiceRecorder : public Voice_input_widget_ui
         SoundRecorder *_recorder;
         Sound _sound;
         State _state;
-        KTempFile *_tempFile;
+        KTemporaryFile *_tempFile;
         QString _voiceId;
         static arts_play_fun arts_play;
     };

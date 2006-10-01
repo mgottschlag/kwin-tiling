@@ -26,7 +26,7 @@ class QTimer;
 
 class KConfig;
 class KProcess;
-class KTempFile;
+class KTemporaryFile;
 class KShellProcess;
 class KStandardDirs;
 
@@ -103,7 +103,7 @@ private:
     bool m_Cached;
     bool m_TilingEnabled;
 
-    KTempFile* m_Tempfile;
+    KTemporaryFile* m_Tempfile;
     QSize m_Size, m_rSize;
     QRect m_WallpaperRect;
     QImage m_Image, m_Background, m_Wallpaper;

@@ -19,7 +19,7 @@
 #include <kpushbutton.h>
 #include <klineedit.h>
 #include <klocale.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <qlabel.h>
 #include <qpainter.h>
 #include <kmessagebox.h>
@@ -96,11 +96,12 @@ void VoiceRecorder::slotPlayPressed()
 	{*/
 	if(!_tempFile)
 	{
-		_tempFile=new KTempFile(QString::null,".wav");
-		_tempFile->setAutoDelete(true);
+		_tempFile=new KTemporaryFile();
+		_tempFile->setSuffix(".wav");
+		_tempFile->open();
 	}
-	_sound.save(_tempFile->name());
-        arts_play( _tempFile->name());
+	_sound.save(_tempFile->fileName());
+        arts_play( _tempFile->fileName());
 #endif
 }
 
