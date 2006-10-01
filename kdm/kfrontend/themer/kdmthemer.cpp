@@ -214,14 +214,6 @@ KdmThemer::paintBackground( QPaintDevice *dev )
 	}
 }
 
-/*
-void
-KdmThemer::pixmap( const QRect &r, QPixmap *px )
-{
-	bitBlt( px, QPoint( 0, 0 ), widget(), r );
-}
-*/
-
 void
 KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 {
