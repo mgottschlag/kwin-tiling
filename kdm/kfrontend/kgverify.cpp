@@ -74,7 +74,7 @@ void KGVerifyHandler::updateStatus( bool, bool, int )
 {
 }
 
-KGVerify::KGVerify( KGVerifyHandler *_handler, KdmThemer *_themer,
+KGVerify::KGVerify( KGVerifyHandler *_handler,
                     QWidget *_parent, QWidget *_predecessor,
                     const QString &_fixedUser,
                     const PluginList &_pluginList,
@@ -85,7 +85,6 @@ KGVerify::KGVerify( KGVerifyHandler *_handler, KdmThemer *_themer,
 	, fixedEntity( _fixedUser )
 	, pluginList( _pluginList )
 	, handler( _handler )
-	, themer( _themer )
 	, parent( _parent )
 	, predecessor( _predecessor )
 	, plugMenu( 0 )
@@ -179,7 +178,7 @@ KGVerify::selectPlugin( int id )
 		greetPlugins[pluginList[id]].action->setChecked( true );
 	pName = ("greet_" + pluginName()).toLatin1();
 	Debug( "new %s\n", pName.data() );
-	greet = greetPlugins[pluginList[id]].info->create( this, themer, parent, predecessor, fixedEntity, func, ctx );
+	greet = greetPlugins[pluginList[id]].info->create( this, parent, predecessor, fixedEntity, func, ctx );
 	timeable = _autoLoginDelay && entityPresettable() && isClassic();
 }
 
@@ -932,7 +931,7 @@ KGStdVerify::KGStdVerify( KGVerifyHandler *_handler, QWidget *_parent,
                           const PluginList &_pluginList,
                           KGreeterPlugin::Function _func,
                           KGreeterPlugin::Context _ctx )
-	: inherited( _handler, 0, _parent, _predecessor, _fixedUser,
+	: inherited( _handler, _parent, _predecessor, _fixedUser,
 	             _pluginList, _func, _ctx )
 	, failedLabelState( 0 )
 {
@@ -950,12 +949,19 @@ KGStdVerify::~KGStdVerify()
 {
 }
 
+bool
+KGStdVerify::gplugHasNode( const QString & )
+{
+	return false;
+}
+
 void // public
 KGStdVerify::selectPlugin( int id )
 {
 	inherited::selectPlugin( id );
-	grid->addWidget( greet->getWidget(), 0, 0 );
-	greet->getWidget()->show();
+	QWidget *w = greet->getWidgets().first();
+	grid->addWidget( w, 0, 0 );
+	w->show();
 }
 
 void
@@ -1012,8 +1018,9 @@ KGThemedVerify::KGThemedVerify( KGVerifyHandler *_handler,
                                 const PluginList &_pluginList,
                                 KGreeterPlugin::Function _func,
                                 KGreeterPlugin::Context _ctx )
-	: inherited( _handler, _themer, _parent, _predecessor, _fixedUser,
-	             _pluginList, _func, _ctx )
+	: inherited( _handler, _parent, _predecessor, _fixedUser,
+	             _pluginList, _func, _ctx  )
+	, themer( _themer )
 {
 	updateLockStatus();
 }
@@ -1022,20 +1029,25 @@ KGThemedVerify::~KGThemedVerify()
 {
 }
 
+bool
+KGThemedVerify::gplugHasNode( const QString &id )
+{
+	return themer->findNode( id ) != 0;
+}
+
 void // public
 KGThemedVerify::selectPlugin( int id )
 {
 	inherited::selectPlugin( id );
-	QWidget *l;
-	if ((l = greet->getWidget())) {
-		KdmItem *n;
-		if (!(n = themer->findNode( "talker" )))
+	foreach (QWidget *w, greet->getWidgets())
+		if (KdmItem *n = themer->findNode( w->objectName() ))
+			n->setWidget( w );
+		else {
 			MsgBox( errorbox,
 			        i18n( "Theme not usable with authentication method '%1'.",
 			              i18n( greetPlugins[pluginList[id]].info->name ) ) );
-		else
-			n->setWidget( l );
-	}
+			break;
+		}
 }
 
 void

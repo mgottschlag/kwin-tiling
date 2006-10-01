@@ -28,10 +28,7 @@
 #include <QMessageBox>
 #include <kdemacros.h>
 
-class KdmThemer;
-
 class QWidget;
-class QLayoutItem;
 
 class KGreeterPluginHandler {
 public:
@@ -78,6 +75,11 @@ public:
      * @param text message text
      */
     virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text ) = 0;
+    /**
+     * Determine if the named widget is welcomed.
+     * @param id the widget name
+     */
+    virtual bool gplugHasNode( const QString &id ) = 0;
 };
 
 /**
@@ -277,14 +279,16 @@ public:
      */
     virtual void clear() = 0;
 
+    typedef QList<QWidget *> WidgetList;
+
     /**
      * Obtain the QWidget to actually handle the conversation.
      */
-    QWidget *getWidget() const { return widget; }
+    const WidgetList &getWidgets() const { return widgetList; }
 
 protected:
     KGreeterPluginHandler *handler;
-    QWidget *widget;
+    WidgetList widgetList;
 };
 
 struct KDE_EXPORT kgreeterplugin_info {
@@ -391,7 +395,6 @@ struct KDE_EXPORT kgreeterplugin_info {
      * initialized with.
      */
     KGreeterPlugin *(*create)( KGreeterPluginHandler *handler,
-                               KdmThemer *themer,
                                QWidget *parent, QWidget *predecessor,
                                const QString &fixedEntity,
                                KGreeterPlugin::Function func,

@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class KLineEdit;
 class KPasswordEdit;
 class KSimpleConfig;
-class QGridLayout;
 class QLabel;
 
 class KClassicGreeter : public QObject, public KGreeterPlugin {
@@ -41,7 +40,6 @@ class KClassicGreeter : public QObject, public KGreeterPlugin {
 
   public:
 	KClassicGreeter( KGreeterPluginHandler *handler,
-	                 KdmThemer *themer,
 	                 QWidget *parent, QWidget *predecessor,
 	                 const QString &fixedEntitiy,
 	                 Function func, Context ctx );

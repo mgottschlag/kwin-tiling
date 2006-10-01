@@ -39,6 +39,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class QAction;
 
+class KdmThemer;
+
 #include <sys/time.h>
 #include <time.h>
 
@@ -98,7 +100,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	typedef QObject inherited;
 
   public:
-	KGVerify( KGVerifyHandler *handler, KdmThemer *themer,
+	KGVerify( KGVerifyHandler *handler,
 	          QWidget *parent, QWidget *predecessor,
 	          const QString &fixedEntity, const PluginList &pluginList,
 	          KGreeterPlugin::Function func, KGreeterPlugin::Context ctx );
@@ -142,7 +144,6 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	QString fixedEntity, presEnt, curUser;
 	PluginList pluginList;
 	KGVerifyHandler *handler;
-	KdmThemer *themer;
 	QWidget *parent, *predecessor;
 	KGreeterPlugin *greet;
 	QMenu *plugMenu;
@@ -202,6 +203,9 @@ class KGStdVerify : public KGVerify {
 	QGridLayout *grid;
 	QLabel *failedLabel;
 	int failedLabelState;
+
+  public: // from KGreetPluginHandler
+	virtual bool gplugHasNode( const QString &id );
 };
 
 class KGThemedVerify : public KGVerify {
@@ -220,6 +224,12 @@ class KGThemedVerify : public KGVerify {
 
   protected:
 	void updateStatus();
+
+  private:
+	KdmThemer *themer;
+
+  public: // from KGreetPluginHandler
+	virtual bool gplugHasNode( const QString &id );
 };
 
 class KGChTok : public FDialog, public KGVerifyHandler {

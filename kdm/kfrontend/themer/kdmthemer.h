@@ -66,7 +66,6 @@ public:
 	
 	const QString &baseDir() const { return basedir; }
 
-	virtual // just to put the reference in the vmt
 	KdmItem *findNode( const QString & ) const;
 
 	// must be called by parent widget

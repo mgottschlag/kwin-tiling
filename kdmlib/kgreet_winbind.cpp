@@ -67,7 +67,6 @@ splitEntity( const QString &ent, QString &dom, QString &usr )
 }
 
 KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
-                                  KdmThemer *themer,
                                   QWidget *parent, QWidget *pred,
                                   const QString &_fixedEntity,
                                   Function _func, Context _ctx ) :
@@ -79,22 +78,18 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 	pExp( -1 ),
 	running( false )
 {
-	KdmItem *user_entry = 0, *pw_entry = 0, *domain_entry = 0;
 	QGridLayout *grid = 0;
 
 	int line = 0;
-	widget = 0;
 
-	if (themer &&
-	    (!(user_entry = themer->findNode( "user-entry" )) ||
-	     !(pw_entry = themer->findNode( "pw-entry" )) ||
-	     !(domain_entry = themer->findNode( "domain-entry" ))))
-		themer = 0;
-
-	widget = 0;
-	if (!themer) {
-		parent = widget = new QWidget( parent );
-		grid = new QGridLayout( widget );
+	if (!_handler->gplugHasNode( "domain-entry" ) ||
+	    !_handler->gplugHasNode( "user-entry" ) ||
+	    !_handler->gplugHasNode( "pw-entry" ))
+	{
+		parent = new QWidget( parent );
+		parent->setObjectName( "talker" );
+		widgetList << parent;
+		grid = new QGridLayout( parent );
 		grid->setMargin( 0 );
 	}
 
@@ -125,8 +120,9 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 				pred = loginEdit;
 			}
 			if (!grid) {
-				user_entry->setWidget( loginEdit );
-				domain_entry->setWidget( domainCombo );
+				loginEdit->setObjectName( "user-entry" );
+				domainCombo->setObjectName( "domain-entry" );
+				widgetList << loginEdit << domainCombo;
 			} else {
 				domainLabel = new QLabel( i18n("&Domain:"), parent );
 				domainLabel->setBuddy( domainCombo );
@@ -161,8 +157,8 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 		connect( passwdEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
 
 		if (!grid) {
-			passwdEdit->adjustSize();
-			pw_entry->setWidget( passwdEdit );
+			passwdEdit->setObjectName( "pw-entry" );
+			widgetList << passwdEdit;
 		} else {
 			passwdLabel = new QLabel( func == Authenticate ?
 			                          i18n("&Password:") :
@@ -213,13 +209,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 KWinbindGreeter::~KWinbindGreeter()
 {
 	abort();
-	if (widget)
-		delete widget;
-	else {
-		delete loginEdit;
-		delete passwdEdit;
-		delete domainCombo;
-	}
+	qDeleteAll( widgetList );
 }
 
 void
@@ -607,13 +597,13 @@ static void done( void )
 }
 
 static KGreeterPlugin *
-create( KGreeterPluginHandler *handler, KdmThemer *themer,
+create( KGreeterPluginHandler *handler,
         QWidget *parent, QWidget *predecessor,
         const QString &fixedEntity,
         KGreeterPlugin::Function func,
         KGreeterPlugin::Context ctx )
 {
-	return new KWinbindGreeter( handler, themer, parent, predecessor, fixedEntity, func, ctx );
+	return new KWinbindGreeter( handler, parent, predecessor, fixedEntity, func, ctx );
 }
 
 KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {

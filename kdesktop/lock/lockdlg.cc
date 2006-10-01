@@ -107,7 +107,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     ok = new KPushButton( i18n("Unl&ock"), frame );
     cancel = new KPushButton( KStdGuiItem::cancel(), frame );
 
-    greet = plugin->info->create( this, 0, this, mLayoutButton, QString(),
+    greet = plugin->info->create( this, this, mLayoutButton, QString(),
               KGreeterPlugin::Authenticate, KGreeterPlugin::ExUnlock );
 
 
@@ -133,7 +133,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     frameLayout->setMargin( KDialog::marginHint() );
     frameLayout->addWidget( pixLabel, 0, 0, 3, 1, Qt::AlignTop );
     frameLayout->addWidget( greetLabel, 0, 1 );
-    frameLayout->addWidget( greet->getWidget(), 1, 1 );
+    frameLayout->addWidget( greet->getWidgets().first(), 1, 1 );
     frameLayout->addLayout( layStatus, 2, 1 );
     frameLayout->addWidget( sep, 3, 0, 1, 2 );
     frameLayout->addLayout( layButtons, 4, 0, 1, 2 );
@@ -520,6 +520,11 @@ void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
     grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );
 
     static_cast< LockProcess* >(parent())->execDialog( &dialog );
+}
+
+bool PasswordDlg::gplugHasNode( const QString & )
+{
+    return false;
 }
 
 void PasswordDlg::slotOK()

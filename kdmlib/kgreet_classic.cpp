@@ -46,7 +46,6 @@ protected:
 static int echoMode;
 
 KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
-                                  KdmThemer *themer,
                                   QWidget *parent, QWidget *pred,
                                   const QString &_fixedEntity,
                                   Function _func, Context _ctx ) :
@@ -59,19 +58,16 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 	pExp( -1 ),
 	running( false )
 {
-	KdmItem *user_entry = 0, *pw_entry = 0;
 	QGridLayout *grid = 0;
 	int line = 0;
 
-	if (themer &&
-	    (!(user_entry = themer->findNode( "user-entry" )) ||
-	     !(pw_entry = themer->findNode( "pw-entry" ))))
-		themer = 0;
-
-	widget = 0;
-	if (!themer) {
-		parent = widget = new QWidget( parent );
-		grid = new QGridLayout( widget );
+	if (!_handler->gplugHasNode( "user-entry" ) ||
+	    !_handler->gplugHasNode( "pw-entry" ))
+	{
+		parent = new QWidget( parent );
+		parent->setObjectName( "talker" );
+		widgetList << parent;
+		grid = new QGridLayout( parent );
 		grid->setMargin( 0 );
 	}
 
@@ -93,8 +89,8 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 				pred = loginEdit;
 			}
 			if (!grid) {
-				loginEdit->adjustSize();
-				user_entry->setWidget( loginEdit );
+				loginEdit->setObjectName( "user-entry" );
+				widgetList << loginEdit;
 			} else {
 				loginLabel = new QLabel( i18n("&Username:"), parent );
 				loginLabel->setBuddy( loginEdit );
@@ -119,8 +115,8 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 			pred = passwdEdit;
 		}
 		if (!grid) {
-			passwdEdit->adjustSize();
-			pw_entry->setWidget( passwdEdit );
+			passwdEdit->setObjectName( "pw-entry" );
+			widgetList << passwdEdit;
 		} else {
                         passwdLabel = new QLabel( func == Authenticate ?
 			                            i18n("&Password:") :
@@ -166,12 +162,7 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 KClassicGreeter::~KClassicGreeter()
 {
 	abort();
-	if (widget)
-		delete widget;
-	else {
-		delete loginEdit;
-		delete passwdEdit;
-	}
+	qDeleteAll( widgetList );
 }
 
 void // virtual
@@ -491,13 +482,13 @@ static void done( void )
 }
 
 static KGreeterPlugin *
-create( KGreeterPluginHandler *handler, KdmThemer *themer,
+create( KGreeterPluginHandler *handler,
         QWidget *parent, QWidget *predecessor,
         const QString &fixedEntity,
         KGreeterPlugin::Function func,
         KGreeterPlugin::Context ctx )
 {
-	return new KClassicGreeter( handler, themer, parent, predecessor, fixedEntity, func, ctx );
+	return new KClassicGreeter( handler, parent, predecessor, fixedEntity, func, ctx );
 }
 
 KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {

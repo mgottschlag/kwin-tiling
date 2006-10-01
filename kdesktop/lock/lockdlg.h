@@ -49,6 +49,7 @@ public:
     virtual void gplugStart();
     virtual void gplugActivity();
     virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text );
+    virtual bool gplugHasNode( const QString &id );
 
 protected:
     virtual void timerEvent(QTimerEvent *);
