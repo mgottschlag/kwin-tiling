@@ -62,12 +62,11 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	// Set defaults for derived item's properties
 	state = Snormal;
 
-	// The "toplevel" node (the screen) is really just like a fixed node
 	KdmItem *parentItem = qobject_cast<KdmItem *>( parent );
-	if (!parentItem) {
-		setFixedLayout();
-		return;
-	}
+	if (!parentItem)
+		style.frame = false;
+	else
+		style = parentItem->style;
 
 	// Read the mandatory Pos tag. Other tags such as normal, prelighted,
 	// etc.. are read under specific implementations.
@@ -94,12 +93,21 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 				geom.expand = exp == "true";
 		} else if (tagName == "buddy")
 			buddy = el.attribute( "idref", "" );
+		else if (tagName == "style")
+			parseStyle( el, style );
 	}
+
+	if (!style.font.present)
+		parseFont( "Sans 14", style.font );
 
 	id = node.toElement().attribute( "id", QString::number( (ulong)this, 16 ) );
 
-	// Tell 'parent' to add 'me' to its children
-	parentItem->addChildItem( this );
+	if (!parentItem)
+		// The "toplevel" node (the screen) is really just like a fixed node
+		setFixedLayout();
+	else
+		// Tell 'parent' to add 'me' to its children
+		parentItem->addChildItem( this );
 }
 
 KdmItem::~KdmItem()
@@ -188,6 +196,7 @@ KdmItem::setWidget( QWidget *widget )
 	if ((myWidget = widget)) {
 		myWidget->hide(); // yes, really
 		connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
+		setWidgetAttribs( myWidget, style );
 	}
 
 	emit needPlacement();

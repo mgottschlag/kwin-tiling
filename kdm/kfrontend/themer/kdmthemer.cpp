@@ -90,7 +90,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *w 
 	}
 
 	// Set the root (screen) item
-	rootItem = new KdmRect( this, QDomNode() );
+	rootItem = new KdmRect( this, theme );
 
 	basedir = QFileInfo( filename ).absolutePath();
 
@@ -112,6 +112,7 @@ void
 KdmThemer::setWidget( QWidget *w )
 {
 	m_widget = w;
+	setWidgetAttribs( m_widget, rootItem->style );
 	foreach (QAction *action, m_actions)
 		w->addAction( action );
 }

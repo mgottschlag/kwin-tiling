@@ -23,9 +23,11 @@
 #define PARSE_H
 
 #include <QFont>
+#include <QPalette>
 
 class QString;
 class QColor;
+class QDomElement;
 
 enum DataType { DTnone, DTpixel, DTnpixel, DTpercent, DTbox, DTscale };
 struct DataPoint {
@@ -42,8 +44,17 @@ struct FontType {
 	}
 };
 
+struct StyleType {
+	QPalette palette;
+	FontType font, editfont;
+	bool frame;
+};
+
 void parseSize( const QString &, DataPoint & );
 void parseFont( const QString &, FontType & );
 void parseColor( const QString &color, const QString &alpha, QColor & );
+void parseStyle( const QDomElement &, StyleType & );
+
+void setWidgetAttribs( QWidget *, const StyleType & );
 
 #endif

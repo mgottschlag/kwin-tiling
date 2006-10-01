@@ -230,6 +230,8 @@ protected:
 		QStack<QSize> &, QSize &, QSize &,
 		QSize & );
 
+	StyleType style;
+
 	/* For internal use ONLY
 	 * Add a child item. This function is called automatically
 	 * when constructing an @p item with this as the parent.

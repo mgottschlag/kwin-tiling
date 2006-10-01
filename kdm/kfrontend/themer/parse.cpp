@@ -24,6 +24,10 @@
 #include <QString>
 #include <QStringList>
 #include <QColor>
+#include <QDomElement>
+#include <QWidget>
+#include <QLineEdit>
+#include <QComboBox>
 
 void
 parseSize( const QString &s, DataPoint &pt )
@@ -175,3 +179,70 @@ parseColor( const QString &s, const QString &a, QColor &color )
 		}
 	}
 }
+
+
+static void
+parsePalEnt( const QDomElement &el, const QString &core, QPalette &pal, QPalette::ColorRole cr )
+{
+	QColor col;
+	parseColor( el.attribute( core + "-color", QString() ), el.attribute( core + "-alpha", "1.0" ), col );
+	if (col.isValid())
+		pal.setColor( cr, col );
+}
+
+void
+parseStyle( const QDomElement &el, StyleType &style )
+{
+	parseFont( el.attribute( "font", QString() ), style.font );
+	parseFont( el.attribute( "edit-font", QString() ), style.editfont );
+	parsePalEnt( el, "window", style.palette, QPalette::Window );
+	parsePalEnt( el, "window-text", style.palette, QPalette::WindowText );
+	parsePalEnt( el, "base", style.palette, QPalette::Base );
+	parsePalEnt( el, "alternate-base", style.palette, QPalette::AlternateBase );
+	parsePalEnt( el, "text", style.palette, QPalette::Text );
+	parsePalEnt( el, "highlight", style.palette, QPalette::Highlight );
+	parsePalEnt( el, "highlighted-text", style.palette, QPalette::HighlightedText );
+	parsePalEnt( el, "button", style.palette, QPalette::Button );
+	parsePalEnt( el, "button-text", style.palette, QPalette::ButtonText );
+	parsePalEnt( el, "bright-text", style.palette, QPalette::BrightText );
+	QString frame = el.attribute( "frame", QString() );
+	if (!frame.isNull())
+		style.frame = frame == "true";
+}
+
+static void
+setWidgetAttribs( QWidget *widget, const StyleType &style, bool frame )
+{
+	widget->setFont(
+		(style.editfont.present &&
+		 (qobject_cast<QLineEdit *>(widget) ||
+		  qobject_cast<QComboBox *>(widget) ||
+		  widget->objectName() == "edit")) ?
+			style.editfont.font : style.font.font );
+	
+	if (!frame) {
+		if (QFrame *frm = qobject_cast<QFrame *>(widget)) {
+			if ((widget->windowFlags() & Qt::WindowType_Mask) == Qt::Widget)
+				frm->setFrameStyle( QFrame::NoFrame );
+		} else if (QLineEdit *le = qobject_cast<QLineEdit *>(widget))
+			le->setFrame( false );
+		else if (QComboBox *cb = qobject_cast<QComboBox *>(widget))
+			cb->setFrame( false );
+	}
+
+	foreach (QObject *child, widget->children())
+		if (QWidget *cw = qobject_cast<QWidget *>(child))
+			setWidgetAttribs( cw, style, frame ||
+				(widget->testAttribute( Qt::WA_OpaquePaintEvent ) ||
+				 (widget->autoFillBackground() &&
+				  !widget->testAttribute( Qt::WA_NoSystemBackground ) &&
+				  widget->palette().brush( widget->backgroundRole() ).isOpaque() )));
+}
+
+void
+setWidgetAttribs( QWidget *widget, const StyleType &style )
+{
+	widget->setPalette( style.palette );
+	setWidgetAttribs( widget, style, style.frame );
+}
+
