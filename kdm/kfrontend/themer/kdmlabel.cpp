@@ -130,7 +130,7 @@ KdmLabel::activate()
 	KdmItem *cp = this;
 	do {
 		if (cp->isButton) {
-			emit activated( cp->id );
+			emit activated( cp->objectName() );
 			return;
 		}
 		cp = qobject_cast<KdmItem *>(cp->parent());

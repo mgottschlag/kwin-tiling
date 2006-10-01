@@ -119,7 +119,7 @@ KdmThemer::setWidget( QWidget *w )
 KdmItem *
 KdmThemer::findNode( const QString &item ) const
 {
-	return rootItem->findNode( item );
+	return rootItem->findChild<KdmItem *>( item );
 }
 
 void
@@ -349,7 +349,7 @@ KdmThemer::showStructure( QObject *obj )
 
 			if (object->inherits( "KdmItem" )) {
 				KdmItem *widget = (KdmItem *)object;
-				kDebug() << node << "|" << widget->type() << " me=" << widget->id << " " << widget->area << endl;
+				kDebug() << node << "|" << widget->type() << " me=" << widget->objectName() << " " << widget->area << endl;
 			}
 
 			showStructure( object );

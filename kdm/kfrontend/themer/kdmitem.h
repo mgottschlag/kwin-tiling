@@ -151,7 +151,6 @@ public:
 	void setType( const QString &t ) { itemType = t; }
 	void setIsButton( bool on ) { isButton = on; }
 
-	KdmItem *findNode( const QString &id ) const;
 	virtual void setWidget( QWidget *widget );
 	void showWidget();
 	void plugActions( bool plug = true );
@@ -246,7 +245,7 @@ protected:
 
 	void activateBuddy();
 
-	QString itemType, id;
+	QString itemType;
 	QList<KdmItem *> m_children;
 
 	// Layouting related variables
@@ -258,7 +257,7 @@ protected:
 
 	enum { InitialHidden, ExplicitlyHidden, Shown } isShown;
 
-	friend class KdmLabel; // id & isButton
+	friend class KdmLabel; // isButton
 	friend class KdmLayoutBox; // geom.expand
 };
 

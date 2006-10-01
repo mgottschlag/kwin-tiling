@@ -100,7 +100,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	if (!style.font.present)
 		parseFont( "Sans 14", style.font );
 
-	id = node.toElement().attribute( "id", QString::number( (ulong)this, 16 ) );
+	setObjectName( node.toElement().attribute( "id", QString::number( (ulong)this, 16 ) ) );
 
 	if (!parentItem)
 		// The "toplevel" node (the screen) is really just like a fixed node
@@ -175,19 +175,6 @@ KdmItem::themer()
 	return 0;
 }
 
-KdmItem *
-KdmItem::findNode( const QString &_id ) const
-{
-	if (id == _id)
-		return const_cast<KdmItem *>( this );
-
-	foreach (KdmItem *itm, m_children)
-		if (KdmItem *t = itm->findNode( _id ))
-			return t;
-
-	return 0;
-}
-
 void
 KdmItem::setWidget( QWidget *widget )
 {
@@ -244,7 +231,7 @@ KdmItem::doPlugActions( bool )
 void
 KdmItem::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool force )
 {
-	kDebug() << " KdmItem::setGeometry " << id << " " << newGeometry << endl;
+	kDebug() << " KdmItem::setGeometry " << objectName() << " " << newGeometry << endl;
 	// check if already 'in place'
 	if (!force && area == newGeometry)
 		return;
@@ -329,7 +316,7 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 	if (area.contains( x, y ) || (isButton && childrenContain( x, y ))) {
 		if (released && oldState == Sactive) {
 			if (isButton)
-				emit activated( id );
+				emit activated( objectName() );
 			state = Sprelight;
 			currentActive = 0;
 		} else if (pressed && !buddy.isEmpty())
@@ -455,7 +442,7 @@ KdmItem::calcSize(
 void
 KdmItem::sizingHint( QStack<QSize> &parentSizes, SizeHint &hint )
 {
-	kDebug() << "KdmItem::sizingHint " << id
+	kDebug() << "KdmItem::sizingHint " << objectName()
 		<< " parentSize=" << parentSizes.top() << endl;
 
 	QSize hintedSize, boxHint;
@@ -510,7 +497,7 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QSize &sz, const QPoint &off
 		if (geom.anchor.indexOf( 'e' ) >= 0)
 			dx = sz.width();
 	}
-	kDebug() << "KdmItem::placementHint " << id << " size=" << sz
+	kDebug() << "KdmItem::placementHint " << objectName() << " size=" << sz
 		<< " x=" << x << " dx=" << dx<< " y=" << y << " dy=" << dy << endl;
 	y -= dy;
 	x -= dx;
