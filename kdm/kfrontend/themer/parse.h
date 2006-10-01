@@ -52,7 +52,9 @@ struct StyleType {
 
 void parseSize( const QString &, DataPoint & );
 void parseFont( const QString &, FontType & );
+void parseFont( const QDomElement &, FontType & );
 void parseColor( const QString &color, const QString &alpha, QColor & );
+void parseColor( const QDomElement &, QColor & );
 void parseStyle( const QDomElement &, StyleType & );
 
 void setWidgetAttribs( QWidget *, const StyleType & );

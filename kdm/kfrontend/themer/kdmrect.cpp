@@ -52,13 +52,13 @@ KdmRect::KdmRect( QObject *parent, const QDomNode &node )
 		QString tagName = el.tagName();
 
 		if (tagName == "normal") {
-			parseColor( el.attribute( "color", QString() ), el.attribute( "alpha", "1.0" ), rect.normal.color );
+			parseColor( el, rect.normal.color );
 		} else if (tagName == "active") {
 			rect.active.present = true;
-			parseColor( el.attribute( "color", QString() ), el.attribute( "alpha", "1.0" ), rect.active.color );
+			parseColor( el, rect.active.color );
 		} else if (tagName == "prelight") {
 			rect.prelight.present = true;
-			parseColor( el.attribute( "color", QString() ), el.attribute( "alpha", "1.0" ), rect.prelight.color );
+			parseColor( el, rect.prelight.color );
 		}
 	}
 }

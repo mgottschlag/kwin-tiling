@@ -160,6 +160,12 @@ parseFont( const QString &is, FontType &ft )
 	}
 }
 
+void
+parseFont( const QDomElement &el, FontType &ft )
+{
+	parseFont( el.attribute( "font", QString() ), ft );
+}
+
 
 void
 parseColor( const QString &s, const QString &a, QColor &color )
@@ -180,6 +186,13 @@ parseColor( const QString &s, const QString &a, QColor &color )
 	}
 }
 
+void
+parseColor( const QDomElement &el, QColor &color )
+{
+	parseColor( el.attribute( "color", QString() ),
+	            el.attribute( "alpha", "1.0" ), color );
+}
+
 
 static void
 parsePalEnt( const QDomElement &el, const QString &core, QPalette &pal, QPalette::ColorRole cr )
@@ -193,7 +206,7 @@ parsePalEnt( const QDomElement &el, const QString &core, QPalette &pal, QPalette
 void
 parseStyle( const QDomElement &el, StyleType &style )
 {
-	parseFont( el.attribute( "font", QString() ), style.font );
+	parseFont( el, style.font );
 	parseFont( el.attribute( "edit-font", QString() ), style.editfont );
 	parsePalEnt( el, "window", style.palette, QPalette::Window );
 	parsePalEnt( el, "window-text", style.palette, QPalette::WindowText );

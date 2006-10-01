@@ -70,16 +70,16 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 		QString tagName = el.tagName();
 
 		if (tagName == "normal") {
-			parseColor( el.attribute( "color", QString() ), QString(), label.normal.color );
-			parseFont( el.attribute( "font", QString() ), label.normal.font );
+			parseColor( el, label.normal.color );
+			parseFont( el, label.normal.font );
 		} else if (tagName == "active") {
 			label.active.present = true;
-			parseColor( el.attribute( "color", QString() ), QString(), label.active.color );
-			parseFont( el.attribute( "font", QString() ), label.active.font );
+			parseColor( el, label.active.color );
+			parseFont( el, label.active.font );
 		} else if (tagName == "prelight") {
 			label.prelight.present = true;
-			parseColor( el.attribute( "color", QString() ), QString(), label.prelight.color );
-			parseFont( el.attribute( "font", QString() ), label.prelight.font );
+			parseColor( el, label.prelight.color );
+			parseFont( el, label.prelight.font );
 		} else if (tagName == "text" && el.attributes().count() == 0 && !stockUsed) {
 			label.text = el.text();
 		} else if (tagName == "text" && !stockUsed) {
