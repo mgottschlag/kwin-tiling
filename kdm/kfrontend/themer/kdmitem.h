@@ -207,11 +207,6 @@ protected:
 
 	static KdmItem *currentActive;
 
-	// This struct can be filled in by derived items
-	struct {
-		bool incrementalPaint;
-	} properties;
-
 	// This is the placement of the item
 	QRect area;
 
@@ -252,9 +247,6 @@ protected:
 	enum { MNone = 0, MFixed = 1, MBox = 2 } currentManager;
 	KdmLayoutBox *boxManager;
 	KdmLayoutFixed *fixedManager;
-
-	// Compositing related variables
-	QImage *image;
 
 	QWidget *myWidget;
 

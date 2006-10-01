@@ -41,11 +41,6 @@ KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 	pixmap.active.present = false;
 	pixmap.prelight.present = false;
 
-	// Read PIXMAP ID
-	// it rarely happens that a pixmap can be a button too!
-	QDomNode n = node;
-	QDomElement elPix = n.toElement();
-
 	// Read PIXMAP TAGS
 	QDomNodeList childList = node.childNodes();
 	for (int nod = 0; nod < childList.count(); nod++) {

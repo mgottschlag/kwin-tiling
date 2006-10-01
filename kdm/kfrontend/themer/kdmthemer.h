@@ -66,16 +66,6 @@ public:
 	
 	const QString &baseDir() const { return basedir; }
 
-	/*
-	 * Gives a sizeHint to the widget (parent size)
-	 */
-	//QSize sizeHint() const{ return parentWidget()->size(); }
-
-	/*
-	 * Takes a shot of the current widget
-	 */
-//	void pixmap( const QRect &r, QPixmap *px );
-
 	virtual // just to put the reference in the vmt
 	KdmItem *findNode( const QString & ) const;
 
@@ -97,11 +87,6 @@ private:
 	 * Our display mode (e.g. console, remote, ...)
 	 */
 	QString m_currentMode;
-
-	/*
-	 * The config file being used
-	 */
-	QDomDocument domTree;
 
 	// defines the directory the theme is in
 	QString basedir;

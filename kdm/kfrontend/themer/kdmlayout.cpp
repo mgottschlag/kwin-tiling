@@ -83,15 +83,7 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 	if (!parentGeometry.isValid() || parentGeometry.isEmpty())
 		return;
 
-	// Check if box size was computed. If not compute it
-	// TODO check if this prevents updating changing items
-//	if (!hintedSize.isValid())
-//		sizeHint();
-
-//	kDebug() << this << " hintedSize " << hintedSize << endl;
-
-	//XXX why was this asymmetric? it broke things big time.
-	QRect childrenRect = /*box.isVertical ? QRect( parentGeometry.topLeft(), hintedSize ) :*/ parentGeometry;
+	QRect childrenRect = parentGeometry;
 	// Begin cutting the parent rectangle to attach children on the right place
 	childrenRect.adjust( box.xpadding, box.ypadding, -box.xpadding, -box.ypadding );
 
@@ -224,7 +216,6 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 	}
 }
 
-//FIXME truly experimental (is so close to greeter_geometry.c)
 QSize
 KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 {

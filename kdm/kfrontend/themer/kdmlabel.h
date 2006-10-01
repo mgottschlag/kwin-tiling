@@ -57,8 +57,6 @@ protected:
 	struct LabelStruct {
 		QString text;
 		bool isTimer;
-		bool hasId;
-		QString id;
 		struct LabelClass {
 			QColor color;
 			QFont font;

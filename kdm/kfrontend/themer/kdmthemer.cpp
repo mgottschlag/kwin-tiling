@@ -76,6 +76,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *w 
 		FDialog::box( w, errorbox, i18n( "Cannot open theme file %1" , filename) );
 		return;
 	}
+	QDomDocument domTree;
 	if (!domTree.setContent( &opmlFile )) {
 		FDialog::box( w, errorbox, i18n( "Cannot parse theme file %1" , filename) );
 		return;
@@ -105,7 +106,6 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *w 
 
 KdmThemer::~KdmThemer()
 {
-	delete rootItem;
 }
 
 void

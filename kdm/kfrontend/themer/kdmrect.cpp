@@ -44,10 +44,6 @@ KdmRect::KdmRect( QObject *parent, const QDomNode &node )
 	if (node.isNull())
 		return;
 
-	// Read RECT ID
-	QDomNode n = node;
-	QDomElement elRect = n.toElement();
-
 	// Read RECT TAGS
 	QDomNodeList childList = node.childNodes();
 	for (int nod = 0; nod < childList.count(); nod++) {

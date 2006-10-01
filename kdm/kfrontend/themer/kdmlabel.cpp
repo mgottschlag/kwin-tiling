@@ -57,14 +57,6 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 
 	const QString locale = KGlobal::locale()->language();
 
-	// Read LABEL ID
-	QDomNode n = node;
-	QDomElement elLab = n.toElement();
-	// ID types: clock, pam-error, pam-message, pam-prompt,
-	//  pam-warning, timed-label
-	label.id = elLab.attribute( "id", "" );
-	label.hasId = !(label.id).isEmpty();
-
 	// Read LABEL TAGS
 	QDomNodeList childList = node.childNodes();
 	bool stockUsed = false;

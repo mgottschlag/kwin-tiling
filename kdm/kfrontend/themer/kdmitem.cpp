@@ -45,7 +45,6 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	, isButton( false )
 	, boxManager( 0 )
 	, fixedManager( 0 )
-	, image( 0 )
 	, myWidget( 0 )
 {
 	// Set default layout for every item
@@ -61,7 +60,6 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	isShown = InitialHidden;
 
 	// Set defaults for derived item's properties
-	properties.incrementalPaint = false;
 	state = Snormal;
 
 	// The "toplevel" node (the screen) is really just like a fixed node
@@ -77,7 +75,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	for (int nod = 0; nod < childList.count(); nod++) {
 		QDomNode child = childList.item( nod );
 		QDomElement el = child.toElement();
-		QString tagName = el.tagName(), attr;
+		QString tagName = el.tagName();
 
 		if (tagName == "pos") {
 			parseSize( el.attribute( "x", QString() ), geom.pos.x );
@@ -89,18 +87,16 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 			parseSize( el.attribute( "max-width", QString() ), geom.maxSize.x );
 			parseSize( el.attribute( "max-height", QString() ), geom.maxSize.y );
 			geom.anchor = el.attribute( "anchor", "nw" );
-			QString exp = el.attribute( "expand", "false" ).toLower();
+			QString exp = el.attribute( "expand", "false" );
 			bool ok;
 			geom.expand = exp.toInt( &ok );
 			if (!ok)
 				geom.expand = exp == "true";
-		}
-		if (tagName == "buddy")
+		} else if (tagName == "buddy")
 			buddy = el.attribute( "idref", "" );
 	}
 
-	QDomNode tnode = node;
-	id = tnode.toElement().attribute( "id", QString::number( (ulong)this, 16 ) );
+	id = node.toElement().attribute( "id", QString::number( (ulong)this, 16 ) );
 
 	// Tell 'parent' to add 'me' to its children
 	parentItem->addChildItem( this );
@@ -110,7 +106,6 @@ KdmItem::~KdmItem()
 {
 	delete boxManager;
 	delete fixedManager;
-	delete image;
 }
 
 void
