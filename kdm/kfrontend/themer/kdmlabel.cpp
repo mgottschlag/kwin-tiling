@@ -51,7 +51,11 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 	itemType = "label";
 
 	// Set default values for label (note: strings are already Null)
-	label.active.color.setRgb( 0xFFFFFF );
+	label.normal.font = label.active.font = label.prelight.font = style.font;
+	label.normal.color = label.active.color = label.prelight.color =
+		style.palette.isBrushSet( QPalette::Normal, QPalette::WindowText ) ?
+			style.palette.color( QPalette::Normal, QPalette::WindowText ) :
+			QColor( Qt::white );
 	label.active.present = false;
 	label.prelight.present = false;
 
@@ -66,16 +70,16 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 		QString tagName = el.tagName();
 
 		if (tagName == "normal") {
-			parseColor( el.attribute( "color", "#ffffff" ), QString(), label.normal.color );
-			parseFont( el.attribute( "font", "Sans 14" ), label.normal.font );
+			parseColor( el.attribute( "color", QString() ), QString(), label.normal.color );
+			parseFont( el.attribute( "font", QString() ), label.normal.font );
 		} else if (tagName == "active") {
 			label.active.present = true;
-			parseColor( el.attribute( "color", "#ffffff" ), QString(), label.active.color );
-			parseFont( el.attribute( "font", "Sans 14" ), label.active.font );
+			parseColor( el.attribute( "color", QString() ), QString(), label.active.color );
+			parseFont( el.attribute( "font", QString() ), label.active.font );
 		} else if (tagName == "prelight") {
 			label.prelight.present = true;
-			parseColor( el.attribute( "color", "#ffffff" ), QString(), label.prelight.color );
-			parseFont( el.attribute( "font", "Sans 14" ), label.prelight.font );
+			parseColor( el.attribute( "color", QString() ), QString(), label.prelight.color );
+			parseFont( el.attribute( "font", QString() ), label.prelight.font );
 		} else if (tagName == "text" && el.attributes().count() == 0 && !stockUsed) {
 			label.text = el.text();
 		} else if (tagName == "text" && !stockUsed) {
@@ -87,9 +91,6 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 			stockUsed = true;
 		}
 	}
-
-	if (!label.normal.font.present)
-		parseFont( "Sans 14", label.normal.font );
 
 	// Check if this is a timer label
 	label.isTimer = label.text.indexOf( "%c" ) >= 0;
