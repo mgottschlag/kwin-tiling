@@ -117,7 +117,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			if (!grid) {
 				loginEdit->setObjectName( "user-entry" );
 				domainCombo->setObjectName( "domain-entry" );
-				widgetList << loginEdit << domainCombo;
+				widgetList << domainCombo << loginEdit;
 			} else {
 				domainLabel = new QLabel( i18n("&Domain:"), parent );
 				domainLabel->setBuddy( domainCombo );
