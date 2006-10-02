@@ -40,7 +40,7 @@ class KClassicGreeter : public QObject, public KGreeterPlugin {
 
   public:
 	KClassicGreeter( KGreeterPluginHandler *handler,
-	                 QWidget *parent, QWidget *predecessor,
+	                 QWidget *parent,
 	                 const QString &fixedEntitiy,
 	                 Function func, Context ctx );
 	~KClassicGreeter();

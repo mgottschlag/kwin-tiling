@@ -166,6 +166,19 @@ KGVerify::pluginName() const
 	return name.mid( st, en - st );
 }
 
+static void
+setTabOrder( QWidget *&pred, const QObjectList &list)
+{
+	foreach (QObject *o, list)
+		if (QWidget *w = qobject_cast<QWidget *>(o)) {
+			if (w->focusPolicy() & Qt::TabFocus) {
+				QWidget::setTabOrder( pred, w );
+				pred = w;
+			} else
+				setTabOrder( pred, o->children() );
+		}
+}
+
 void // public
 KGVerify::selectPlugin( int id )
 {
@@ -178,7 +191,9 @@ KGVerify::selectPlugin( int id )
 		greetPlugins[pluginList[id]].action->setChecked( true );
 	pName = ("greet_" + pluginName()).toLatin1();
 	Debug( "new %s\n", pName.data() );
-	greet = greetPlugins[pluginList[id]].info->create( this, parent, predecessor, fixedEntity, func, ctx );
+	greet = greetPlugins[pluginList[id]].info->create( this, parent, fixedEntity, func, ctx );
+	if (QWidget *pred = predecessor)
+		setTabOrder( pred, *(const QObjectList *)&greet->getWidgets() );
 	timeable = _autoLoginDelay && entityPresettable() && isClassic();
 }
 

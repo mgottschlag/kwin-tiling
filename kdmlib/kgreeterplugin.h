@@ -395,7 +395,7 @@ struct KDE_EXPORT kgreeterplugin_info {
      * initialized with.
      */
     KGreeterPlugin *(*create)( KGreeterPluginHandler *handler,
-                               QWidget *parent, QWidget *predecessor,
+                               QWidget *parent,
                                const QString &fixedEntity,
                                KGreeterPlugin::Function func,
                                KGreeterPlugin::Context ctx );

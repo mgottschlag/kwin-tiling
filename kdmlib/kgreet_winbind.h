@@ -43,7 +43,7 @@ class KWinbindGreeter : public QObject, public KGreeterPlugin {
 
   public:
 	KWinbindGreeter( KGreeterPluginHandler *handler,
-	                 QWidget *parent, QWidget *predecessor,
+	                 QWidget *parent,
 	                 const QString &fixedEntitiy,
 	                 Function func, Context ctx );
 	~KWinbindGreeter();

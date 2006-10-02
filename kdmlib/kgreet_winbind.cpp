@@ -67,7 +67,7 @@ splitEntity( const QString &ent, QString &dom, QString &usr )
 }
 
 KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
-                                  QWidget *parent, QWidget *pred,
+                                  QWidget *parent,
                                   const QString &_fixedEntity,
                                   Function _func, Context _ctx ) :
 	QObject(),
@@ -114,11 +114,6 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			loginEdit = new KLineEdit( parent );
 			loginEdit->setContextMenuEnabled( false );
 
-			if (pred) {
-				parent->setTabOrder( pred, domainCombo );
-				parent->setTabOrder( domainCombo, loginEdit );
-				pred = loginEdit;
-			}
 			if (!grid) {
 				loginEdit->setObjectName( "user-entry" );
 				domainCombo->setObjectName( "domain-entry" );
@@ -165,10 +160,6 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			                          i18n("Current &password:"),
 			                          parent );
                         passwdLabel->setBuddy( passwdEdit );
-			if (pred) {
-				parent->setTabOrder( pred, passwdEdit );
-				pred = passwdEdit;
-			}
 			grid->addWidget( passwdLabel, line, 0 );
 			grid->addWidget( passwdEdit, line++, 1 );
 		}
@@ -190,10 +181,6 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 		passwd1Label->setBuddy( passwd1Edit );
 		passwd2Label = new QLabel( i18n("Con&firm password:"), parent );
 		passwd2Label->setBuddy( passwd2Edit );
-		if (pred) {
-			parent->setTabOrder( pred, passwd1Edit );
-			parent->setTabOrder( passwd1Edit, passwd2Edit );
-		}
 		if (grid) {
 			grid->addWidget( passwd1Label, line, 0 );
 			grid->addWidget( passwd1Edit, line++, 1 );
@@ -598,12 +585,12 @@ static void done( void )
 
 static KGreeterPlugin *
 create( KGreeterPluginHandler *handler,
-        QWidget *parent, QWidget *predecessor,
+        QWidget *parent,
         const QString &fixedEntity,
         KGreeterPlugin::Function func,
         KGreeterPlugin::Context ctx )
 {
-	return new KWinbindGreeter( handler, parent, predecessor, fixedEntity, func, ctx );
+	return new KWinbindGreeter( handler, parent, fixedEntity, func, ctx );
 }
 
 KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {

@@ -87,7 +87,6 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     frame->setLineWidth( 2 );
 
     QLabel *pixLabel = new QLabel( frame );
-    pixLabel->setObjectName( "pixlabel" );
     pixLabel->setPixmap(DesktopIcon("lock"));
 
     KUser user;
@@ -98,18 +97,17 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     mStatusLabel = new QLabel( "<b> </b>", frame );
     mStatusLabel->setAlignment( Qt::AlignCenter );
 
-    mLayoutButton = new QPushButton( frame );
-    mLayoutButton->setFlat( true );
+    greet = plugin->info->create( this, this, QString(),
+              KGreeterPlugin::Authenticate, KGreeterPlugin::ExUnlock );
 
     KSeparator *sep = new KSeparator( Qt::Horizontal, frame );
 
-    mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), frame );
     ok = new KPushButton( i18n("Unl&ock"), frame );
     cancel = new KPushButton( KStdGuiItem::cancel(), frame );
+    mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), frame );
 
-    greet = plugin->info->create( this, this, mLayoutButton, QString(),
-              KGreeterPlugin::Authenticate, KGreeterPlugin::ExUnlock );
-
+    mLayoutButton = new QPushButton( frame );
+    mLayoutButton->setFlat( true );
 
     QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this );
     unlockDialogLayout->addWidget( frame );
@@ -137,10 +135,6 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     frameLayout->addLayout( layStatus, 2, 1 );
     frameLayout->addWidget( sep, 3, 0, 1, 2 );
     frameLayout->addLayout( layButtons, 4, 0, 1, 2 );
-
-    setTabOrder( ok, cancel );
-    setTabOrder( cancel, mNewSessButton );
-    setTabOrder( mNewSessButton, mLayoutButton );
 
     connect(mLayoutButton, SIGNAL(clicked()), this, SLOT(layoutClicked()));
     connect(cancel, SIGNAL(clicked()), SLOT(reject()));

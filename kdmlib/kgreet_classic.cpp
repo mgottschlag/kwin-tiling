@@ -46,7 +46,7 @@ protected:
 static int echoMode;
 
 KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
-                                  QWidget *parent, QWidget *pred,
+                                  QWidget *parent,
                                   const QString &_fixedEntity,
                                   Function _func, Context _ctx ) :
 	QObject(),
@@ -84,10 +84,6 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 			connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotActivity()) );
-			if (pred) {
-				parent->setTabOrder( pred, loginEdit );
-				pred = loginEdit;
-			}
 			if (!grid) {
 				loginEdit->setObjectName( "user-entry" );
 				widgetList << loginEdit;
@@ -110,10 +106,6 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
 		         SLOT(slotActivity()) );
 		connect( passwdEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
-		if (pred) {
-			parent->setTabOrder( pred, passwdEdit );
-			pred = passwdEdit;
-		}
 		if (!grid) {
 			passwdEdit->setObjectName( "pw-entry" );
 			widgetList << passwdEdit;
@@ -143,10 +135,6 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 		passwd1Label->setBuddy( passwd1Edit );
 		passwd2Label = new QLabel( i18n("Con&firm password:"), parent );
 		passwd2Label->setBuddy( passwd2Edit );
-		if (pred) {
-			parent->setTabOrder( pred, passwd1Edit );
-			parent->setTabOrder( passwd1Edit, passwd2Edit );
-		}
 		if (grid) {
 			grid->addWidget( passwd1Label, line, 0 );
 			grid->addWidget( passwd1Edit, line++, 1 );
@@ -483,12 +471,12 @@ static void done( void )
 
 static KGreeterPlugin *
 create( KGreeterPluginHandler *handler,
-        QWidget *parent, QWidget *predecessor,
+        QWidget *parent,
         const QString &fixedEntity,
         KGreeterPlugin::Function func,
         KGreeterPlugin::Context ctx )
 {
-	return new KClassicGreeter( handler, parent, predecessor, fixedEntity, func, ctx );
+	return new KClassicGreeter( handler, parent, fixedEntity, func, ctx );
 }
 
 KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {
