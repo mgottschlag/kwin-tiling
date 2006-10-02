@@ -46,6 +46,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	, boxManager( 0 )
 	, fixedManager( 0 )
 	, myWidget( 0 )
+	, m_visible( true )
 {
 	// Set default layout for every item
 	currentManager = MNone;
@@ -56,8 +57,6 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	geom.minSize.x.val = geom.minSize.y.val = 0;
 	geom.maxSize.x.val = geom.maxSize.y.val = 1000000;
 	geom.anchor = "nw";
-
-	isShown = InitialHidden;
 
 	// Set defaults for derived item's properties
 	state = Snormal;
@@ -130,39 +129,12 @@ KdmItem::needUpdate()
 }
 
 void
-KdmItem::show( bool force )
+KdmItem::setVisible( bool show )
 {
-	if (isShown != InitialHidden && !force)
-		return;
-
-	forEachChild (itm)
-		itm->show();
-
-	isShown = Shown;
-
-	emit needPlacement();
-}
-
-void
-KdmItem::hide( bool force )
-{
-	if (isShown == ExplicitlyHidden)
-		return;
-
-	if (isShown == InitialHidden && force) {
-		isShown = ExplicitlyHidden;
-		return;		// no need for further action
+	if (m_visible != show) {
+		m_visible = show;
+		emit needPlacement();
 	}
-
-	forEachChild (itm)
-		itm->hide();
-
-	isShown = force ? ExplicitlyHidden : InitialHidden;
-
-	if (myWidget)
-		myWidget->hide();
-
-	emit needPlacement();
 }
 
 KdmThemer *
@@ -200,16 +172,16 @@ KdmItem::widgetGone()
 }
 
 void
-KdmItem::showWidget()
+KdmItem::showWidget( bool show )
 {
-	if (isShown != Shown)
-		return;
+	if (!m_visible)
+		show = false;
 	if (myWidget) {
 		myWidget->setGeometry( area );
-		myWidget->show();
+		myWidget->setVisible( show );
 	}
 	forEachChild (itm)
-		itm->showWidget();
+		itm->showWidget( show );
 }
 
 void
@@ -252,7 +224,7 @@ KdmItem::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool
 void
 KdmItem::paint( QPainter *p, const QRect &rect )
 {
-	if (isHidden())
+	if (!isVisible())
 		return;
 
 	if (myWidget)
@@ -308,7 +280,7 @@ KdmItem *KdmItem::currentActive = 0;
 void
 KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 {
-	if (isHidden())
+	if (!isVisible())
 		return;
 
 	ItemState oldState = state;

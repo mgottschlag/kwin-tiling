@@ -171,9 +171,6 @@ KdmThemer::widgetEvent( QEvent *e )
 			rootItem->mouseEvent( me->x(), me->y(), false, true );
 		}
 		break;
-	case QEvent::Show:
-		rootItem->show();
-		break;
 	case QEvent::Resize:
 		m_geometryOutdated = true;
 		widget()->update();
@@ -209,7 +206,6 @@ KdmThemer::paintBackground( QPaintDevice *dev )
 		QStack<QSize> ps;
 		bg->setGeometry( ps, rect, true );
 		QPainter p( dev );
-		bg->show();
 		bg->paint( &p, rect );
 	}
 }

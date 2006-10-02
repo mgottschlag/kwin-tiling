@@ -806,21 +806,21 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 
 	KdmItem *itm;
 	if ((itm = themer->findNode( "pam-message" ))) // done via msgboxes
-		itm->hide( true );
+		itm->setVisible( false );
 	if ((itm = themer->findNode( "language_button" ))) // not implemented yet
-		itm->hide( true );
+		itm->setVisible( false );
 
 #ifdef WITH_KDM_XCONSOLE
 	if (console_rect) {
 		if (consoleView)
 			console_rect->setWidget( consoleView );
 		else
-			console_rect->hide( true );
+			console_rect->setVisible( false );
 	}
 #endif
 
 	if (xauth_warning && (_authorized || !_authComplain))
-		xauth_warning->hide( true );
+		xauth_warning->setVisible( false );
 
 //	if (!_greetString.isEmpty()) {
 //	}
@@ -845,7 +845,7 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 
 	if ((session_button = themer->findNode( "session_button" ))) {
 		if (sessMenu->actions().count() <= 1) {
-			session_button->hide( true );
+			session_button->setVisible( false );
 			session_button = 0;
 		}
 	} else {
@@ -870,7 +870,7 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 		if (optMenu)
 			addAction( optMenu->menuAction() );
 		else
-			system_button->hide( true );
+			system_button->setVisible( false );
 	}
 
 	pluginSetup();
@@ -898,11 +898,12 @@ KThemedGreeter::pluginSetup()
 
 	if (userView && verify->entitiesLocal() && verify->entityPresettable() && userlist_rect) {
 		userlist_rect->setWidget( userView );
+		userlist_rect->setVisible( true );
 	} else {
 		if (userView)
 			userView->hide();
 		if (userlist_rect)
-			userlist_rect->hide( true );
+			userlist_rect->setVisible( false );
 	}
 }
 
@@ -925,29 +926,21 @@ KThemedGreeter::verifyRetry()
 void
 KThemedGreeter::updateStatus( bool fail, bool caps, int timedleft )
 {
-	if (pam_error) {
-		if (fail)
-			pam_error->show( true );
-		else
-			pam_error->hide( true );
-	}
-	if (caps_warning) {
-		if (caps)
-			caps_warning->show( true );
-		else
-			caps_warning->hide( true );
-	}
+	if (pam_error)
+		pam_error->setVisible( fail );
+	if (caps_warning)
+		caps_warning->setVisible( caps );
 	if (timed_label) {
 		if (timedleft) {
 			if (timedleft != KdmLabel::timedDelay) {
 				KdmLabel::timedDelay = timedleft;
 				KdmLabel::timedUser = curUser;
-				timed_label->show( true );
+				timed_label->setVisible( true );
 				timed_label->update();
 			}
 		} else {
 			KdmLabel::timedDelay = -1;
-			timed_label->hide( true );
+			timed_label->setVisible( false );
 		}
 	}
 }

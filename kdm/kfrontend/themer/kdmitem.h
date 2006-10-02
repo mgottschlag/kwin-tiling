@@ -152,14 +152,12 @@ public:
 	void setIsButton( bool on ) { isButton = on; }
 
 	virtual void setWidget( QWidget *widget );
-	void showWidget();
+	void showWidget( bool show = true );
 	void plugActions( bool plug = true );
 
-	void hide( bool force = false );
-	void show( bool force = false );
+	void setVisible( bool show );
+	bool isVisible() const { return m_visible; }
 
-	bool isHidden() const { return isShown != Shown; }
-	bool isExplicitlyHidden() const { return isShown == ExplicitlyHidden; }
 	QRect rect() const { return area; }
 
 	void showStructure( const QString &pfx );
@@ -250,7 +248,7 @@ protected:
 	QString itemType;
 	QList<KdmItem *> m_children;
 #define forEachChild(v) foreach (KdmItem *v, m_children)
-#define forEachVisibleChild(v) forEachChild (v) if (!v->isHidden())
+#define forEachVisibleChild(v) forEachChild (v) if (v->isVisible())
 
 	// Layouting related variables
 	enum { MNone = 0, MFixed = 1, MBox = 2 } currentManager;
@@ -259,7 +257,7 @@ protected:
 
 	QWidget *myWidget;
 
-	enum { InitialHidden, ExplicitlyHidden, Shown } isShown;
+	bool m_visible;
 
 	friend class KdmLabel; // isButton
 	friend class KdmLayoutBox; // geom.expand
