@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE greeter SYSTEM "greeter.dtd">
 <greeter>
+	<style font="Sans 12" base-color="#80ffffff"/>
 	<item type="rect" id="background">
 		<pos x="0" y="0" height="100%" width="100%"/>
 		<fixed>
@@ -162,7 +163,6 @@
 						<stock type="welcome-label"/>
 					</item>
 					<item type="rect" id="talker">
-						<normal color="#0" alpha="0"/>
 						<pos anchor="n" x="50%" width="box" height="box"/>
 						<!-- box orientation="vertical" xpadding="0" ypadding="0" spacing="10" -->
 						<box orientation="horizontal" xpadding="0" ypadding="0" spacing="0">
