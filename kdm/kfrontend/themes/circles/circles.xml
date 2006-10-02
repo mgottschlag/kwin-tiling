@@ -169,19 +169,27 @@
 							<item type="rect">
 								<normal color="#FF8080" alpha="0.0"/>
 								<pos anchor="w" y="50%" width="box" height="box"/>
-								<box orientation="vertical" xpadding="0" ypadding="0" spacing="14">
+								<box orientation="vertical" xpadding="0" ypadding="0" spacing="16">
+									<item type="label">
+										<show type="plugin-domain-entry"/>
+										<buddy idref="domain-entry"/>
+										<pos anchor="ne" x="100%"/>
+										<normal color="#000000" font="Sans 12"/>
+										<!-- Stock label for: _Domain: -->
+										<stock type="domain-label"/>
+									</item>
 									<item type="label">
 										<buddy idref="user-entry"/>
 										<pos anchor="ne" x="100%"/>
 										<normal color="#000000" font="Sans 12"/>
-										<!-- Stock label for: Username: -->
+										<!-- Stock label for: _Username: -->
 										<stock type="username-label"/>
 									</item>
 									<item type="label">
 										<buddy idref="pw-entry"/>
 										<pos anchor="ne" x="100%"/>
 										<normal color="#000000" font="Sans 12"/>
-										<!-- Stock label for: Password: -->
+										<!-- Stock label for: _Password: -->
 										<stock type="password-label"/>
 									</item>
 								</box>
@@ -190,6 +198,10 @@
 								<normal color="#FF80FF" alpha="0.0"/>
 								<pos anchor="w" y="50%" width="box" height="box"/>
 								<box orientation="vertical" xpadding="0" ypadding="0" spacing="10">
+									<item type="entry" id="domain-entry">
+										<show type="plugin-domain-entry"/>
+										<pos anchor="n" x="50%" height="24" width="150"/>
+									</item>
 									<item type="entry" id="user-entry">
 										<pos anchor="n" x="50%" height="24" width="150"/>
 									</item>
@@ -203,7 +215,7 @@
 				</box>
 				<fixed>
 					<item type="label" id="pam-error">
-						<pos anchor="n" x="50%" y="85%"/>
+						<pos anchor="s" x="50%" y="-5"/>
 						<normal color="#000000" font="Sans Bold 12"/>
 						<text/>
 					</item>

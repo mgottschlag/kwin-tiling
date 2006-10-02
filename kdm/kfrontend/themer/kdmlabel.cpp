@@ -233,6 +233,7 @@ static const struct {
 	{ "caps-lock-warning", I18N_NOOP("Caps Lock is enabled") },
 	{ "timed-label",       I18N_NOOP("User %s will log in in %d seconds") },
 	{ "welcome-label",     I18N_NOOP("Welcome to %h") },	// _greetString
+	{ "domain-label",      I18N_NOOP("_Domain:") },
 	{ "username-label",    I18N_NOOP("_Username:") },
 	{ "password-label",    I18N_NOOP("_Password:") },
 	{ "login",             I18N_NOOP("_Login") }
