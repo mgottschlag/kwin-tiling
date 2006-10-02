@@ -137,6 +137,15 @@ KdmItem::setVisible( bool show )
 	}
 }
 
+void
+KdmItem::updateVisible()
+{
+	if (!m_showType.isNull())
+		setVisible( themer()->typeVisible( m_showType ) ^ m_showTypeInvert );
+	forEachChild (itm)
+		itm->updateVisible();
+}
+
 KdmThemer *
 KdmItem::themer()
 {

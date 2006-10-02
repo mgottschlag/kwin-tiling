@@ -150,6 +150,7 @@ public:
 	QString type() const { return itemType; }
 	void setType( const QString &t ) { itemType = t; }
 	void setIsButton( bool on ) { isButton = on; }
+	void setShowType( const QString &t, bool i ) { m_showType = t; m_showTypeInvert = i; }
 
 	virtual void setWidget( QWidget *widget );
 	void showWidget( bool show = true );
@@ -157,6 +158,7 @@ public:
 
 	void setVisible( bool show );
 	bool isVisible() const { return m_visible; }
+	void updateVisible();
 
 	QRect rect() const { return area; }
 
@@ -256,6 +258,9 @@ protected:
 	KdmLayoutFixed *fixedManager;
 
 	QWidget *myWidget;
+
+	QString m_showType;
+	bool m_showTypeInvert;
 
 	bool m_visible;
 

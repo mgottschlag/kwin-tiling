@@ -94,6 +94,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode,
 	basedir = QFileInfo( filename ).absolutePath();
 
 	generateItems( rootItem, theme );
+	rootItem->updateVisible();
 
 /*	*TODO*
 	// Animation timer
@@ -222,6 +223,9 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 		QString tagName = el.tagName();
 
 		if (tagName == "item") {
+			QString showType;
+			bool showTypeInvert = false;
+
 			QDomNode showNode = subnode.namedItem( "show" );
 			if (!showNode.isNull()) {
 				QDomElement sel = showNode.toElement();
@@ -234,9 +238,8 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 				          m_currentMode ))))
 					continue;
 
-				QString showType = sel.attribute( "type" );
+				showType = sel.attribute( "type" );
 				if (!showType.isNull()) {
-					bool showTypeInvert = false;
 					if (showType[0] == '!' ) {
 						showType.remove( 0, 1 );
 						showTypeInvert = true;
@@ -265,6 +268,7 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 			else
 				continue;
 			newItem->setIsButton( el.attribute( "button", "false" ) == "true" );
+			newItem->setShowType( showType, showTypeInvert );
 			connect( newItem, SIGNAL(needUpdate( int, int, int, int )),
 			         SLOT(update( int, int, int, int )) );
 			connect( newItem, SIGNAL(needPlacement()),
@@ -289,6 +293,13 @@ KdmThemer::showStructure()
 {
 	kDebug() << "======= item tree =======" << endl;
 	rootItem->showStructure( QString() );
+}
+
+void
+KdmThemer::setTypeVisible( const QString &t, bool show )
+{
+	m_showTypes[t] = show;
+	rootItem->updateVisible();
 }
 
 #include "kdmthemer.moc"

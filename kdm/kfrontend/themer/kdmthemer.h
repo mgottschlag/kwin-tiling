@@ -76,6 +76,9 @@ public:
 	void setWidget( QWidget *w );
 	QWidget *widget() { return m_widget; }
 
+	void setTypeVisible( const QString &t, bool show );
+	bool typeVisible( const QString &t ) { return m_showTypes.value( t, false ); }
+
 	void paintBackground( QPaintDevice *dev );
 
 Q_SIGNALS:
