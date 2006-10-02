@@ -119,7 +119,7 @@ KdmItem::~KdmItem()
 void
 KdmItem::update()
 {
-	foreach (KdmItem *itm, m_children)
+	forEachChild (itm)
 		itm->update();
 }
 
@@ -135,7 +135,7 @@ KdmItem::show( bool force )
 	if (isShown != InitialHidden && !force)
 		return;
 
-	foreach (KdmItem *itm, m_children)
+	forEachChild (itm)
 		itm->show();
 
 	isShown = Shown;
@@ -154,7 +154,7 @@ KdmItem::hide( bool force )
 		return;		// no need for further action
 	}
 
-	foreach (KdmItem *itm, m_children)
+	forEachChild (itm)
 		itm->hide();
 
 	isShown = force ? ExplicitlyHidden : InitialHidden;
@@ -208,7 +208,7 @@ KdmItem::showWidget()
 		myWidget->setGeometry( area );
 		myWidget->show();
 	}
-	foreach (KdmItem *itm, m_children)
+	forEachChild (itm)
 		itm->showWidget();
 }
 
@@ -218,7 +218,7 @@ KdmItem::plugActions( bool plug )
 	if (myWidget)
 		plug = false;
 	doPlugActions( plug );
-	foreach (KdmItem *itm, m_children)
+	forEachChild (itm)
 		itm->plugActions( plug );
 }
 
@@ -276,20 +276,19 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 	}
 
 	// Dispatch paint events to children
-	foreach (KdmItem *itm, m_children)
+	forEachChild (itm)
 		itm->paint( p, rect );
 }
 
 bool
 KdmItem::childrenContain( int x, int y )
 {
-	foreach (KdmItem *itm, m_children)
-		if (!itm->isHidden()) {
-			if (itm->area.contains( x, y ))
-				return true;
-			if (itm->childrenContain( x, y ))
-				return true;
-		}
+	forEachVisibleChild (itm) {
+		if (itm->area.contains( x, y ))
+			return true;
+		if (itm->childrenContain( x, y ))
+			return true;
+	}
 	return false;
 }
 
@@ -340,7 +339,7 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 		statusChanged( isButton );
 
 	if (!isButton)
-		foreach (KdmItem *itm, m_children)
+		forEachChild (itm)
 			itm->mouseEvent( x, y, pressed, released );
 }
 
@@ -348,7 +347,7 @@ void
 KdmItem::statusChanged( bool descend )
 {
 	if (descend)
-		foreach (KdmItem *o, m_children) {
+		forEachChild (o) {
 			o->state = state;
 			o->statusChanged( descend );
 		}

@@ -249,6 +249,8 @@ protected:
 
 	QString itemType;
 	QList<KdmItem *> m_children;
+#define forEachChild(v) foreach (KdmItem *v, m_children)
+#define forEachVisibleChild(v) forEachChild (v) if (!v->isHidden())
 
 	// Layouting related variables
 	enum { MNone = 0, MFixed = 1, MBox = 2 } currentManager;

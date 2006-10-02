@@ -46,7 +46,7 @@ KdmLayoutFixed::update( QStack<QSize> &parentSizes, const QRect &parentGeometry,
 	}
 	// For each child in list I ask their hinted size and set it!
 	parentSizes.push( parentGeometry.size() );
-	foreach (KdmItem *itm, m_children)
+	forEachChild (itm)
 		itm->setGeometry( parentSizes, itm->placementHint( parentSizes, parentGeometry.topLeft() ), force );
 	parentSizes.pop();
 }
@@ -92,12 +92,9 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 	// For each child in list ...
 	if (box.homogeneous) {
 		int ccnt = 0;
-		foreach (KdmItem *itm, m_children)
-			if (!itm->isExplicitlyHidden())
-				ccnt++;
-		foreach (KdmItem *itm, m_children) {
-			if (itm->isExplicitlyHidden())
-				continue;
+		forEachVisibleChild (itm)
+			ccnt++;
+		forEachVisibleChild (itm) {
 			QRect temp = childrenRect;
 			if (box.isVertical) {
 				int height = (temp.height() - (ccnt - 1) * box.spacing) / ccnt;
@@ -120,30 +117,29 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 		QVector<LayoutHint> lhs;
 		int ccnt = 0, mintot = 0, opttot = 0, esum = 0;
 		parentSizes.push( QSize( 0, 0 ) );
-		foreach (KdmItem *itm, m_children)
-			if (!itm->isExplicitlyHidden()) {
-				SizeHint sh;
-				itm->sizingHint( parentSizes, sh );
-				lhs.resize( ccnt + 1 );
-				if (box.isVertical) {
-					lhs[ccnt].min = sh.min.height();
-					lhs[ccnt].opt = sh.opt.height();
-					lhs[ccnt].max = sh.max.height();
-				} else {
-					lhs[ccnt].min = sh.min.width();
-					lhs[ccnt].opt = sh.opt.width();
-					lhs[ccnt].max = sh.max.width();
-				}
-				mintot += lhs[ccnt].min;
-				opttot += lhs[ccnt].opt;
-				if (itm->geom.expand)
-					esum += itm->geom.expand;
-				else {
-					lhs[ccnt].done = true;
-					lhs[ccnt].set = lhs[ccnt].opt;
-				}
-				ccnt++;
+		forEachVisibleChild (itm) {
+			SizeHint sh;
+			itm->sizingHint( parentSizes, sh );
+			lhs.resize( ccnt + 1 );
+			if (box.isVertical) {
+				lhs[ccnt].min = sh.min.height();
+				lhs[ccnt].opt = sh.opt.height();
+				lhs[ccnt].max = sh.max.height();
+			} else {
+				lhs[ccnt].min = sh.min.width();
+				lhs[ccnt].opt = sh.opt.width();
+				lhs[ccnt].max = sh.max.width();
 			}
+			mintot += lhs[ccnt].min;
+			opttot += lhs[ccnt].opt;
+			if (itm->geom.expand)
+				esum += itm->geom.expand;
+			else {
+				lhs[ccnt].done = true;
+				lhs[ccnt].set = lhs[ccnt].opt;
+			}
+			ccnt++;
+		}
 		parentSizes.pop();
 		int havetot = box.isVertical ? childrenRect.size().height() : childrenRect.size().width();
 		int spacing;
@@ -173,9 +169,7 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 				tesum = wesum = esum;
 				textra = wextra = extra;
 				int idx = 0;
-				foreach (KdmItem *itm, m_children) {
-					if (itm->isExplicitlyHidden())
-						continue;
+				forEachVisibleChild (itm) {
 					if (!lhs[idx].done) {
 						int mex = itm->geom.expand * wextra / wesum;
 						wextra -= mex;
@@ -193,9 +187,7 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 			} while (tesum != esum);
 		}
 		int idx = 0;
-		foreach (KdmItem *itm, m_children) {
-			if (itm->isExplicitlyHidden())
-				continue;
+		forEachVisibleChild (itm) {
 			QRect temp = childrenRect;
 			if (box.isVertical) {
 				temp.setHeight( lhs[idx].set );
@@ -225,9 +217,7 @@ KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 	// Sum up area taken by children
 	QSize parentSize = parentSizes.pop();
 	parentSizes.push( QSize( 0, 0 ) );
-	foreach (KdmItem *itm, m_children) {
-		if (itm->isExplicitlyHidden())
-			continue;
+	forEachVisibleChild (itm) {
 		SizeHint sh;
 		itm->sizingHint( parentSizes, sh );
 		bounds = bounds.expandedTo( sh.opt );
