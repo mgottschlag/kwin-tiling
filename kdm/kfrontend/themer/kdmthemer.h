@@ -28,6 +28,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QEvent>
+#include <QMap>
 
 class KdmThemer;
 class KdmItem;
@@ -59,7 +60,8 @@ public:
 	 * Construct and destruct the interface
 	 */
 
-	KdmThemer( const QString &path, const QString &mode, QWidget *w );
+	KdmThemer( const QString &path, const QString &mode,
+	           const QMap<QString, bool> &types, QWidget *w );
 	~KdmThemer();
 
 	bool isOK() { return rootItem != 0; }
@@ -84,6 +86,7 @@ private:
 	 * Our display mode (e.g. console, remote, ...)
 	 */
 	QString m_currentMode;
+	QMap<QString, bool> m_showTypes;
 
 	// defines the directory the theme is in
 	QString basedir;

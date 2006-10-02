@@ -156,7 +156,23 @@ kg_main( const char *argv0 )
 
 	KdmThemer *themer;
 	if (_useTheme && !_theme.isEmpty()) {
-		themer = new KdmThemer( _theme, "console", app.desktop()->screen() );
+		QMap<QString, bool> showTypes;
+		// "config" not implemented
+#ifdef XDMCP
+		if (_loginMode != LOGIN_LOCAL_ONLY)
+			showTypes["chooser"] = true;
+#endif
+		showTypes["system"] = true;
+		if (_allowShutdown != SHUT_NONE) {
+			showTypes["halt"] = true;
+			showTypes["reboot"] = true;
+			// "suspend" not implemented
+		}
+		if (_autoLoginDelay)
+			showTypes["timed"] = false;
+		
+		// modes: console{,-fixed,-flexi}, remote{,-flexi}, flexi
+		themer = new KdmThemer( _theme, "console", showTypes, app.desktop()->screen() );
 		if (!themer->isOK()) {
 			delete themer;
 			themer = 0;

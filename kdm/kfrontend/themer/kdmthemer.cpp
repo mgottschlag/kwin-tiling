@@ -27,7 +27,6 @@
 #include "kdmlabel.h"
 
 #include <kdm_greet.h>
-#include <kdmconfig.h>
 #include <kfdialog.h>
 
 #include <kiconloader.h>
@@ -54,16 +53,16 @@
 /*
  * KdmThemer. The main theming interface
  */
-KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *w )
+KdmThemer::KdmThemer( const QString &_filename, const QString &mode,
+                      const QMap<QString, bool> &showTypes, QWidget *w )
 	: QObject()
+	, m_currentMode( mode )
+	, m_showTypes( showTypes )
 	, rootItem( 0 )
 	, m_geometryOutdated( true )
 	, m_geometryInvalid( true )
 	, m_widget( 0 )
 {
-	// Set the mode we're working in
-	m_currentMode = mode;
-
 	// read the XML file and create DOM tree
 	QString filename = _filename;
 	if (!::access( QFile::encodeName( filename + "/GdmGreeterTheme.desktop" ), R_OK )) {
@@ -293,22 +292,7 @@ bool KdmThemer::willDisplay( const QDomNode &node )
 		inv = true;
 	} else
 		inv = false;
-	if (type == "config" || type == "suspend")
-		res = false;	// not implemented (yet)
-	else if (type == "timed")
-		res = _autoLoginDelay != 0;
-	else if (type == "chooser")
-#ifdef XDMCP
-		res = _loginMode != LOGIN_LOCAL_ONLY;
-#else
-		res = false;
-#endif
-	else if (type == "halt" || type == "reboot")
-		res = _allowShutdown != SHUT_NONE;
-//	else if (type == "system")
-//		res = true;
-	else
-		res = true;
+	res = m_showTypes.contains( type );
 	// All tests passed, item will be displayed
 	return res ^ inv;
 }
