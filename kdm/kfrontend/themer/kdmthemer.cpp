@@ -244,7 +244,8 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 						showType.remove( 0, 1 );
 						showTypeInvert = true;
 					}
-					if (m_showTypes.contains( showType ) == showTypeInvert)
+					if (!showType.startsWith( "plugin-" ) &&
+					    m_showTypes.contains( showType ) == showTypeInvert)
 						continue;
 				}
 			}

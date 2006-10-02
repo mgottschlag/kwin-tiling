@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLabel>
 #include <QGridLayout>
 #include <QEvent>
+#include <QSet>
 
 class QAction;
 
@@ -227,6 +228,7 @@ class KGThemedVerify : public KGVerify {
 
   private:
 	KdmThemer *themer;
+	QSet<QString> showTypes;
 
   public: // from KGreetPluginHandler
 	virtual bool gplugHasNode( const QString &id );

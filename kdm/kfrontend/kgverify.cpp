@@ -1051,16 +1051,27 @@ KGThemedVerify::gplugHasNode( const QString &id )
 void // public
 KGThemedVerify::selectPlugin( int id )
 {
+	if (curPlugin != -1)
+		themer->setTypeVisible( QString( "plugin-specific-" ).append( pluginName() ), false );
 	inherited::selectPlugin( id );
+	themer->setTypeVisible( QString( "plugin-specific-" ).append( pluginName() ), true );
+	QSet<QString> oldTypes = showTypes;
+	showTypes.clear();
 	foreach (QWidget *w, greet->getWidgets())
-		if (KdmItem *n = themer->findNode( w->objectName() ))
+		if (KdmItem *n = themer->findNode( w->objectName() )) {
+			QString tn( QString( "plugin-" ).append( w->objectName() ) );
+			themer->setTypeVisible( tn, true );
+			showTypes.insert( tn );
+			oldTypes.remove( tn );
 			n->setWidget( w );
-		else {
+		} else {
 			MsgBox( errorbox,
 			        i18n( "Theme not usable with authentication method '%1'.",
 			              i18n( greetPlugins[pluginList[id]].info->name ) ) );
 			break;
 		}
+	foreach (QString t, oldTypes)
+		themer->setTypeVisible( t, false );
 }
 
 void
