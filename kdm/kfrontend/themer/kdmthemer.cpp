@@ -222,8 +222,29 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 		QString tagName = el.tagName();
 
 		if (tagName == "item") {
-			if (!willDisplay( subnode ))
-				continue;
+			QDomNode showNode = subnode.namedItem( "show" );
+			if (!showNode.isNull()) {
+				QDomElement sel = showNode.toElement();
+
+				QString modes = sel.attribute( "modes" );
+				if (!modes.isNull() &&
+				    (modes == "nowhere" ||
+				     (modes != "everywhere" &&
+				      !modes.split( ",", QString::SkipEmptyParts ).contains(
+				          m_currentMode ))))
+					continue;
+
+				QString showType = sel.attribute( "type" );
+				if (!showType.isNull()) {
+					bool showTypeInvert = false;
+					if (showType[0] == '!' ) {
+						showType.remove( 0, 1 );
+						showTypeInvert = true;
+					}
+					if (m_showTypes.contains( showType ) == showTypeInvert)
+						continue;
+				}
+			}
 
 			QString type = el.attribute( "type" );
 			KdmItem *newItem;
@@ -261,40 +282,6 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 			generateItems( parent, subnode );
 		}
 	}
-}
-
-bool KdmThemer::willDisplay( const QDomNode &node )
-{
-	QDomNode showNode = node.namedItem( "show" );
-
-	// No "show" node means this item can be displayed at all times
-	if (showNode.isNull())
-		return true;
-
-	QDomElement el = showNode.toElement();
-
-	QString modes = el.attribute( "modes" );
-	if (!modes.isNull()) {
-		QStringList modeList = modes.split( ",", QString::SkipEmptyParts );
-
-		if (modeList.contains( "nowhere" ))
-			return false;
-		// If current mode isn't in this list, do not display item
-		if (!modeList.contains( m_currentMode ))
-			return false;
-		// mode "everywhere" is implicit
-	}
-
-	QString type = el.attribute( "type" );
-	bool res, inv;
-	if (type[0] == '!' ) {
-		type.remove( 0, 1 );
-		inv = true;
-	} else
-		inv = false;
-	res = m_showTypes.contains( type );
-	// All tests passed, item will be displayed
-	return res ^ inv;
 }
 
 void

@@ -104,11 +104,6 @@ private:
 	// methods
 
 	/*
-	 * Test whether item needs to be displayed
-	 */
-	bool willDisplay( const QDomNode &node );
-
-	/*
 	 * Parses the XML file looking for the
 	 * item list and adds those to the themer
 	 */
