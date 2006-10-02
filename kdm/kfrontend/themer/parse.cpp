@@ -265,6 +265,8 @@ void
 setWidgetAttribs( QWidget *widget, const StyleType &style )
 {
 	widget->setPalette( style.palette );
+	if (style.palette.isBrushSet( QPalette::Normal, QPalette::Window ))
+		widget->setAutoFillBackground( true );
 	setWidgetAttribs( widget, style, style.frame );
 }
 
