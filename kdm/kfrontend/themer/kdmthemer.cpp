@@ -225,11 +225,9 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 		if (tagName == "item") {
 			if (!willDisplay( subnode ))
 				continue;
-			// It's a new item. Draw it
+
 			QString type = el.attribute( "type" );
-
-			KdmItem *newItem = 0;
-
+			KdmItem *newItem;
 			if (type == "label")
 				newItem = new KdmLabel( parent, subnode );
 			else if (type == "pixmap")
@@ -244,24 +242,22 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 				newItem = new KdmList( parent, subnode );
 			else if (type == "svg")
 				newItem = new KdmPixmap( parent, subnode );
-			if (newItem) {
-				newItem->setIsButton( el.attribute( "button", "false" ) == "true" );
-				connect( newItem, SIGNAL(needUpdate( int, int, int, int )),
-						 SLOT(update( int, int, int, int )) );
-				connect( newItem, SIGNAL(needPlacement()),
-						 SLOT(slotNeedPlacement()) );
-				connect( newItem, SIGNAL(needPlugging()),
-						 SLOT(slotNeedPlugging()) );
-				connect( newItem, SIGNAL(activated( const QString & )),
-						 SIGNAL(activated( const QString & )) );
-				generateItems( newItem, subnode );
-			}
+			else
+				continue;
+			newItem->setIsButton( el.attribute( "button", "false" ) == "true" );
+			connect( newItem, SIGNAL(needUpdate( int, int, int, int )),
+			         SLOT(update( int, int, int, int )) );
+			connect( newItem, SIGNAL(needPlacement()),
+			         SLOT(slotNeedPlacement()) );
+			connect( newItem, SIGNAL(needPlugging()),
+			         SLOT(slotNeedPlugging()) );
+			connect( newItem, SIGNAL(activated( const QString & )),
+			         SIGNAL(activated( const QString & )) );
+			generateItems( newItem, subnode );
 		} else if (tagName == "box") {
-			// It's a new box. Draw it
 			parent->setBoxLayout( subnode );
 			generateItems( parent, subnode );
 		} else if (tagName == "fixed") {
-			// It's a new box. Draw it
 			parent->setFixedLayout( subnode );
 			generateItems( parent, subnode );
 		}
