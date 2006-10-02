@@ -256,7 +256,7 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 			p->setPen( pen );
 			p->setBackgroundMode( Qt::OpaqueMode );
 			p->setBackground( Qt::black );
-			p->drawRect( area.x() + 1, area.y() + 1, area.width() - 1, area.height() - 1 );
+			p->drawRect( area.x(), area.y(), area.width() - 1, area.height() - 1 );
 			p->setBackgroundMode( Qt::TransparentMode );
 		}
 	}
