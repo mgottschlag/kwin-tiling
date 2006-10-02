@@ -641,8 +641,8 @@ KStdGreeter::KStdGreeter()
 			     "open windows on it or intercept your input.") );
 		complainLabel->setAlignment( Qt::AlignCenter );
 		complainLabel->setFont( *_failFont );
-		QPalette p( complainLabel->palette() /* XXX try with empty */ );
-		p.setColor( complainLabel->foregroundRole(), Qt::red );
+		QPalette p;
+		p.setColor( QPalette::WindowText, Qt::red );
 		complainLabel->setPalette( p );
 		inner_box->addWidget( complainLabel );
 	}

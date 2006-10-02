@@ -997,9 +997,8 @@ KGStdVerify::updateStatus()
 
 	if (failedLabelState != nfls) {
 		failedLabelState = nfls;
-		QPalette p( failedLabel->palette() /* XXX try with empty */ );
+		QPalette p;
 		if (nfls < 0) {
-			p.setColor( failedLabel->foregroundRole(), Qt::black );
 			failedLabel->setText( i18np( "Automatic login in 1 second ...",
 			                             "Automatic login in %n seconds ...",
 			                             timedLeft ) );
@@ -1009,11 +1008,10 @@ KGStdVerify::updateStatus()
 				failedLabel->clear();
 				break;
 			case 3:
-				p.setColor( failedLabel->foregroundRole(), Qt::red );
-				failedLabel->setText( i18n("Warning: Caps Lock on") );
+				p.setColor( QPalette::WindowText, Qt::red );
+				failedLabel->setText( i18n("Warning: Caps Lock is on") );
 				break;
 			case 2:
-				p.setColor( failedLabel->foregroundRole(), Qt::black );
 				failedLabel->setText( authTok ?
 				                         i18n("Change failed") :
 				                         fixedEntity.isEmpty() ?

@@ -59,7 +59,7 @@ KdmList::setWidget( QWidget *widget )
 	KdmItem::setWidget( widget );
 	if (QListWidget *lw = qobject_cast<QListWidget *>( widget )) {
 		if (list.labelBg.isValid()) {
-			QPalette pal = lw->palette();
+			QPalette pal;
 			pal.setColor( QPalette::Base, list.labelBg );
 			if (list.altLabelBg.isValid()) {
 				pal.setColor( QPalette::AlternateBase, list.altLabelBg );
