@@ -257,14 +257,10 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 				generateItems( newItem, subnode );
 			}
 		} else if (tagName == "box") {
-			if (!willDisplay( subnode ))
-				continue;
 			// It's a new box. Draw it
 			parent->setBoxLayout( subnode );
 			generateItems( parent, subnode );
 		} else if (tagName == "fixed") {
-			if (!willDisplay( subnode ))
-				continue;
 			// It's a new box. Draw it
 			parent->setFixedLayout( subnode );
 			generateItems( parent, subnode );
