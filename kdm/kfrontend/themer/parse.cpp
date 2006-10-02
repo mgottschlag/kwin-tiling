@@ -21,6 +21,8 @@
 
 #include "parse.h"
 
+#include <kdm_greet.h>
+
 #include <QString>
 #include <QStringList>
 #include <QColor>
@@ -28,6 +30,7 @@
 #include <QWidget>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QStack>
 
 void
 parseSize( const QString &s, DataPoint &pt )
@@ -270,3 +273,33 @@ setWidgetAttribs( QWidget *widget, const StyleType &style )
 	setWidgetAttribs( widget, style, style.frame );
 }
 
+
+#ifndef NDEBUG
+static QString prefix;
+static QStack<QString> prefixes;
+
+# define dbgs() kdbgstream( 0, 0, (debugLevel & DEBUG_THEMING) != 0 )
+
+kdbgstream
+enter( const char *fct )
+{
+	prefixes.push( prefix );
+	prefix.replace( '-', ' ' ).append( "|- " );
+	return dbgs() << prefixes.top() << fct << " ";
+}
+
+kdbgstream
+debug()
+{
+	return dbgs() << prefix;
+}
+
+kdbgstream
+leave()
+{
+	prefix[prefix.length() - 3] = '\\';
+	QString nprefix( prefix );
+	prefix = prefixes.pop();
+	return dbgs() << nprefix;
+}
+#endif

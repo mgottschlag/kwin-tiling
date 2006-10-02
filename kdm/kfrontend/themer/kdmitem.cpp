@@ -39,6 +39,7 @@
 #include <QPainter>
 //Added by qt3to4:
 #include <QList>
+#include <QDebug>
 
 KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	: QObject( parent )
@@ -212,10 +213,12 @@ KdmItem::doPlugActions( bool )
 void
 KdmItem::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool force )
 {
-	kDebug() << " KdmItem::setGeometry " << objectName() << " " << newGeometry << endl;
+	enter("Item::setGeometry") << objectName() << " " << newGeometry << endl;
 	// check if already 'in place'
-	if (!force && area == newGeometry)
+	if (!force && area == newGeometry) {
+		leave() << "unchanged" << endl;
 		return;
+	}
 
 	area = newGeometry;
 
@@ -228,6 +231,8 @@ KdmItem::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool
 		fixedManager->update( parentSizes, newGeometry, force );
 
 	// TODO send *selective* repaint signal
+
+	leave() << "done" << endl;
 }
 
 void
@@ -351,7 +356,7 @@ KdmItem::ensureHintedSize( QSize &hintedSize )
 {
 	if (!hintedSize.isValid()) {
 		hintedSize = sizeHint();
-		kDebug() << " => hintedSize " << hintedSize << endl;
+		debug() << "hintedSize " << hintedSize << endl;
 	}
 	return hintedSize;	
 }
@@ -364,7 +369,7 @@ KdmItem::ensureBoxHint( QSize &boxHint, QStack<QSize> &parentSizes, QSize &hinte
 			boxHint = ensureHintedSize( hintedSize );
 		else
 			boxHint = boxManager->sizeHint( parentSizes );
-		kDebug() << " => boxHint " << boxHint << endl;
+		debug() << "boxHint " << boxHint << endl;
 	}
 	return boxHint;	
 }
@@ -422,15 +427,17 @@ KdmItem::calcSize(
 void
 KdmItem::sizingHint( QStack<QSize> &parentSizes, SizeHint &hint )
 {
-	kDebug() << "KdmItem::sizingHint " << objectName()
-		<< " parentSize=" << parentSizes.top() << endl;
+	enter("Item::sizingHint") << objectName() << " parentSize #"
+		<< parentSizes.size() << " " << parentSizes.top() << endl;
 
 	QSize hintedSize, boxHint;
 	hint.min = hint.opt = hint.max = parentSizes.top();
 	calcSize( geom.size, parentSizes, hintedSize, boxHint, hint.opt );
 	calcSize( geom.minSize, parentSizes, hintedSize, boxHint, hint.min );
 	calcSize( geom.maxSize, parentSizes, hintedSize, boxHint, hint.max );
-	kDebug() << "size " << hint.opt << " min " << hint.min << " max " << hint.max << endl;
+
+	leave() << "size " << hint.opt
+		<< " min " << hint.min << " max " << hint.max << endl;
 
 	hint.max = hint.max.expandedTo( hint.min ); // if this triggers, the theme is bust
 	hint.opt = hint.opt.boundedTo( hint.max ).expandedTo( hint.min );
@@ -447,6 +454,9 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QSize &sz, const QPoint &off
 	    w = parentSize.width(),
 	    h = parentSize.height();
 
+	enter("Item::placementHint") << objectName() << " parentSize #" << sizes.size()
+		<< " " << parentSize << " size " << sz << " offset " << offset << endl;
+
 	if (geom.pos.x.type == DTpixel)
 		x += geom.pos.x.val;
 	else if (geom.pos.x.type == DTnpixel)
@@ -461,8 +471,6 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QSize &sz, const QPoint &off
 	else if (geom.pos.y.type == DTpercent)
 		y += h * geom.pos.y.val / 100;
 
-	kDebug() << "adjusted size " << sz << endl;
-	
 	// defaults to center
 	int dx = sz.width() / 2, dy = sz.height() / 2;
 
@@ -477,8 +485,7 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QSize &sz, const QPoint &off
 		if (geom.anchor.indexOf( 'e' ) >= 0)
 			dx = sz.width();
 	}
-	kDebug() << "KdmItem::placementHint " << objectName() << " size=" << sz
-		<< " x=" << x << " dx=" << dx<< " y=" << y << " dy=" << dy << endl;
+	leave() << "x=" << x << " dx=" << dx << " y=" << y << " dy=" << dy << endl;
 	y -= dy;
 	x -= dx;
 

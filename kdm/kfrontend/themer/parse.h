@@ -22,6 +22,8 @@
 #ifndef PARSE_H
 #define PARSE_H
 
+#include <kdebug.h>
+
 #include <QFont>
 #include <QPalette>
 
@@ -58,5 +60,15 @@ void parseColor( const QDomElement &, QColor & );
 void parseStyle( const QDomElement &, StyleType & );
 
 void setWidgetAttribs( QWidget *, const StyleType & );
+
+#ifdef NDEBUG
+kndbgstream enter( const char * ) { return kndbgstream(); }
+kndbgstream debug() { return kndbgstream(); }
+kndbgstream leave() { return kndbgstream(); }
+#else
+kdbgstream enter( const char *fct );
+kdbgstream debug();
+kdbgstream leave();
+#endif
 
 #endif

@@ -177,6 +177,7 @@ KdmThemer::widgetEvent( QEvent *e )
 		break;
 	case QEvent::Paint:
 		if (m_geometryOutdated) {
+			debug() << "==== updating geometry ====" << endl;
 			QStack<QSize> ps;
 			QRect rect( QPoint( 0, 0 ), widget()->size() );
 			rootItem->setGeometry( ps, rect, m_geometryInvalid );
@@ -202,6 +203,7 @@ void
 KdmThemer::paintBackground( QPaintDevice *dev )
 {
 	if (KdmItem *bg = findNode( "background" )) {
+		debug() << "==== setting background geometry ====" << endl;
 		QRect rect( 0, 0, dev->width(), dev->height() );
 		QStack<QSize> ps;
 		bg->setGeometry( ps, rect, true );

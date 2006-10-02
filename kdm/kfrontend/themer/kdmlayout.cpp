@@ -37,11 +37,11 @@ KdmLayoutFixed::KdmLayoutFixed( const QDomNode &/*node*/ )
 void
 KdmLayoutFixed::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force )
 {
-	kDebug() << "KdmLayoutFixed::update " << parentGeometry << endl;
+	enter("Fixed::update") << parentGeometry << " depth " << parentSizes.size() << endl;
 
 	// I can't layout children if the parent rectangle is not valid
 	if (parentGeometry.width() < 0 || parentGeometry.height() < 0) {
-		kDebug() << "invalid\n";
+		leave() << "invalid geometry" << endl;
 		return;
 	}
 	// For each child in list I ask their hinted size and set it!
@@ -49,6 +49,7 @@ KdmLayoutFixed::update( QStack<QSize> &parentSizes, const QRect &parentGeometry,
 	forEachChild (itm)
 		itm->setGeometry( parentSizes, itm->placementHint( parentSizes, parentGeometry.topLeft() ), force );
 	parentSizes.pop();
+	leave() << "done" << endl;
 }
 
 KdmLayoutBox::KdmLayoutBox( const QDomNode &node )
@@ -77,17 +78,19 @@ struct LayoutHint {
 void
 KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, bool force )
 {
-	kDebug() << this << " update " << parentGeometry << endl;
+	enter("Box::update") << parentGeometry << " depth " << parentSizes.size() << endl;
 
 	// I can't layout children if the parent rectangle is not valid
-	if (!parentGeometry.isValid() || parentGeometry.isEmpty())
+	if (!parentGeometry.isValid() || parentGeometry.isEmpty()) {
+		leave() << "invalid geometry" << endl;
 		return;
+	}
 
 	QRect childrenRect = parentGeometry;
 	// Begin cutting the parent rectangle to attach children on the right place
 	childrenRect.adjust( box.xpadding, box.ypadding, -box.xpadding, -box.ypadding );
 
-	kDebug() << this << " childrenRect " << childrenRect << endl;
+	debug() << "childrenRect " << childrenRect << endl;
 
 	// For each child in list ...
 	if (box.homogeneous) {
@@ -199,13 +202,15 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 			parentSizes.push( temp.size() );
 			QRect itemRect = itm->placementHint( parentSizes, temp.topLeft() );
 			parentSizes.pop();
-			kDebug() << this << " placementHint for " << itm << " temp " << temp << " final " << itemRect << " childrenRect now " << childrenRect << endl;
+			debug() << "placementHint for " << itm << " temp " << temp << " final "
+				<< itemRect << " childrenRect now " << childrenRect << endl;
 			parentSizes.push( parentGeometry.size() );
 			itm->setGeometry( parentSizes, itemRect, force );
 			parentSizes.pop();
 			idx++;
 		}
 	}
+	leave() << "done" << endl;
 }
 
 QSize
@@ -217,6 +222,8 @@ KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 	// Sum up area taken by children
 	QSize parentSize = parentSizes.pop();
 	parentSizes.push( QSize( 0, 0 ) );
+	enter("Box::sizeHint") << "parentSize #" << parentSizes.size() << " "
+		<< parentSize << endl;
 	forEachVisibleChild (itm) {
 		SizeHint sh;
 		itm->sizingHint( parentSizes, sh );
@@ -247,6 +254,8 @@ KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 		bounds.rwidth() += totspc;
 	bounds += QSize( 2 * box.xpadding, 2 * box.ypadding );
 
+	leave() << "bounds " << bounds << endl;
+	
 	// Make hint at least equal to minimum size (if set)
 	return bounds.expandedTo( QSize( box.minwidth, box.minheight ) );
 }
