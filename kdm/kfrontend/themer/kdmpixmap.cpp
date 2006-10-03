@@ -66,15 +66,9 @@ KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 QSize
 KdmPixmap::sizeHint()
 {
-	// choose the correct pixmap class
-	PixmapStruct::PixmapClass *pClass = &pixmap.normal;
-	if (state == Sactive && pixmap.active.present)
-		pClass = &pixmap.active;
-	if (state == Sprelight && pixmap.prelight.present)
-		pClass = &pixmap.prelight;
 	// use the pixmap size as the size hint
-	if (!pClass->image.isNull())
-		return pClass->image.size();
+	if (!pixmap.normal.image.isNull())
+		return pixmap.normal.image.size();
 	return KdmItem::sizeHint();
 }
 

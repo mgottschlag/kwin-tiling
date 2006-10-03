@@ -157,14 +157,7 @@ KdmLabel::doPlugActions( bool plug )
 QSize
 KdmLabel::sizeHint()
 {
-	// choose the correct label class
-	struct LabelStruct::LabelClass *l = &label.normal;
-	if (state == Sactive && label.active.present)
-		l = &label.active;
-	else if (state == Sprelight && label.prelight.present)
-		l = &label.prelight;
-	// get the hint from font metrics
-	return QFontMetrics( l->font.font ).size( Qt::AlignLeft | Qt::TextSingleLine, pText );
+	return QFontMetrics( label.normal.font.font ).size( 0, pText );
 }
 
 void
