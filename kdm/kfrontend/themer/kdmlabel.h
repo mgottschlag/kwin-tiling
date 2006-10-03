@@ -81,8 +81,8 @@ private:
 
 	void setCText( const QString &txt );
 	
-	QString cText;
-	int cAccelOff;
+	QString cText, pText;
+	int pAccelOff;
 
 private Q_SLOTS:
 	void activate();

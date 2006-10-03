@@ -99,6 +99,7 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 		timer->start( 1000 );
 		connect( timer, SIGNAL(timeout()), SLOT(update()) );
 	}
+	label.text.replace( '\n', ' ' );
 	setCText( lookupText( label.text ) );
 }
 
@@ -106,21 +107,23 @@ void
 KdmLabel::setText( const QString &txt )
 {
 	label.text = txt;
+	label.text.replace( '\n', ' ' );
 	update();
 }
 
 void
 KdmLabel::setCText( const QString &txt )
 {
-	cText = txt;
 	delete action;
 	action = 0;
-	cAccelOff = txt.find( '_' );
-	if (cAccelOff >= 0) {
+	pText = cText = txt;
+	pAccelOff = txt.find( '_' );
+	if (pAccelOff >= 0) {
 		action = new QAction( this );
-		action->setShortcut( Qt::ALT + txt[cAccelOff + 1].unicode() );
+		action->setShortcut( Qt::ALT + txt[pAccelOff + 1].unicode() );
 		connect( action, SIGNAL(triggered( bool )), SLOT(activate()) );
 		emit needPlugging();
+		pText.remove( pAccelOff, 1 );
 	}
 }
 
@@ -161,7 +164,7 @@ KdmLabel::sizeHint()
 	else if (state == Sprelight && label.prelight.present)
 		l = &label.prelight;
 	// get the hint from font metrics
-	return QFontMetrics( l->font.font ).size( Qt::AlignLeft | Qt::TextSingleLine, cText );
+	return QFontMetrics( l->font.font ).size( Qt::AlignLeft | Qt::TextSingleLine, pText );
 }
 
 void
@@ -176,22 +179,22 @@ KdmLabel::drawContents( QPainter *p, const QRect &/*r*/  )
 	// draw the label
 	p->setFont( l->font.font );
 	p->setPen( l->color );
-	if (cAccelOff != -1) {
+	if (pAccelOff != -1) {
 		QRect tarea( area );
 		QFontMetrics fm( l->font.font );
-		QString left = cText.left( cAccelOff );
-		p->drawText( area, Qt::AlignLeft | Qt::SingleLine, left );
+		QString left = pText.left( pAccelOff );
+		p->drawText( area, 0, left );
 		tarea.rLeft() += fm.width( left );
 		QFont f( l->font.font );
 		f.setUnderline( true );
 		p->setFont( f );
-		QString acc( cText[cAccelOff + 1] );
-		p->drawText( tarea, Qt::AlignLeft | Qt::SingleLine, acc );
+		QString acc( pText[pAccelOff] );
+		p->drawText( tarea, 0, acc );
 		tarea.rLeft() += fm.width( acc );
 		p->setFont( l->font.font );
-		p->drawText( tarea, Qt::AlignLeft | Qt::SingleLine, cText.mid( cAccelOff + 2 ) );
+		p->drawText( tarea, 0, pText.mid( pAccelOff + 1 ) );
 	} else
-		p->drawText( area, Qt::AlignLeft | Qt::TextSingleLine, cText );
+		p->drawText( area, 0, cText );
 }
 
 void
@@ -214,6 +217,7 @@ KdmLabel::update()
 	if (text != cText) {
 		setCText( text );
 		needUpdate();
+		// emit needPlacement() as well?
 	}
 }
 
