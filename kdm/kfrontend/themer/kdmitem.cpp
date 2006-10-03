@@ -187,7 +187,14 @@ KdmItem::showWidget( bool show )
 	if (!m_visible)
 		show = false;
 	if (myWidget) {
-		myWidget->setGeometry( area );
+		if (show) {
+			QSize sz( area.size().expandedTo( myWidget->minimumSize() )
+			                     .boundedTo( myWidget->maximumSize() ) );
+			QSize off( (area.size() - sz) / 2 );
+			myWidget->setGeometry(
+				area.x() + off.width(), area.y() + off.height(),
+				sz.width(), sz.height() );
+		}
 		myWidget->setVisible( show );
 	}
 	forEachChild (itm)
