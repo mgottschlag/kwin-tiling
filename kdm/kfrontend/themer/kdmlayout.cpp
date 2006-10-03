@@ -216,14 +216,14 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 QSize
 KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 {
+	enter("Box::sizeHint") << "parentSize #" << parentSizes.size() << " "
+		<< parentSizes.top() << endl;
+
 	int ccnt = 0;
 	QSize bounds( 0, 0 ), sum( 0, 0 );
 
 	// Sum up area taken by children
-	QSize parentSize = parentSizes.pop();
 	parentSizes.push( QSize( 0, 0 ) );
-	enter("Box::sizeHint") << "parentSize #" << parentSizes.size() << " "
-		<< parentSize << endl;
 	forEachVisibleChild (itm) {
 		SizeHint sh;
 		itm->sizingHint( parentSizes, sh );
@@ -232,7 +232,6 @@ KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 		ccnt++;
 	}
 	parentSizes.pop();
-	parentSizes.push( parentSize );
 
 	if (box.homogeneous) {
 		if (box.isVertical)
