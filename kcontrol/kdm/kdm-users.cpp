@@ -26,7 +26,8 @@
 #include <QToolTip>
 #include <QValidator>
 
-#include <q3groupbox.h>
+#include <QButtonGroup>
+#include <QGroupBox>
 #include <QPushButton>
 //Added by qt3to4:
 #include <QGridLayout>
@@ -91,7 +92,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
 
     QString wtstr;
 
-    minGroup = new Q3GroupBox( 2, Qt::Horizontal, i18n("System U&IDs"), this );
+    minGroup = new QGroupBox( i18n("System U&IDs"), this );
     minGroup->setWhatsThis( i18n("Users with a UID (numerical user identification) outside this range will not be listed by KDM and this setup dialog."
       " Note that users with the UID 0 (typically root) are not affected by this and must be"
       " explicitly hidden in \"Not hidden\" mode."));
@@ -111,10 +112,13 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
     lemaxuid->setValidator( valid );
     connect(lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
     connect(lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotMinMaxChanged()) );
+    QGridLayout *grid = new QGridLayout( minGroup );
+    grid->addWidget( minlab, 0, 0 );
+    grid->addWidget( leminuid, 0, 1 );
+    grid->addWidget( maxlab, 1, 0 );
+    grid->addWidget( lemaxuid, 1, 1 );
 
-    usrGroup = new Q3ButtonGroup( 5, Qt::Vertical, i18n("Users"), this );
-    connect( usrGroup, SIGNAL(clicked( int )), SLOT(slotShowOpts()) );
-    connect( usrGroup, SIGNAL(clicked( int )), SLOT(slotChanged()) );
+    usrGroup = new QGroupBox( i18n("Users"), this );
     cbshowlist = new QCheckBox( i18n("Show list"), usrGroup );
     cbshowlist->setWhatsThis( i18n("If this option is checked, KDM will show a list of users,"
       " so users can click on their name or image rather than typing in their login.") );
@@ -127,9 +131,21 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
       "If not checked, select only the checked users. "
       "If checked, select all non-system users, except the checked ones."));
     cbusrsrt = new QCheckBox( i18n("Sor&t users"), usrGroup );
-    connect( cbusrsrt, SIGNAL(toggled( bool )), SLOT(slotChanged()) );
     cbusrsrt->setWhatsThis( i18n("If this is checked, KDM will alphabetically sort the user list."
       " Otherwise users are listed in the order they appear in the password file.") );
+    QButtonGroup *buttonGroup = new QButtonGroup( usrGroup );
+    buttonGroup->setExclusive( false );
+    connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotShowOpts()) );
+    connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotChanged()) );
+    buttonGroup->addButton( cbshowlist );
+    buttonGroup->addButton( cbcomplete );
+    buttonGroup->addButton( cbinverted );
+    buttonGroup->addButton( cbusrsrt );
+    QBoxLayout *box = new QVBoxLayout( usrGroup );
+    box->addWidget( cbshowlist );
+    box->addWidget( cbcomplete );
+    box->addWidget( cbinverted );
+    box->addWidget( cbusrsrt );
 
     wstack = new QStackedWidget( this );
     s_label = new QLabel( i18n("S&elect users and groups:"), this );
@@ -153,34 +169,36 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
     connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
 	     SLOT(slotChanged()) );
 
-    faceGroup = new Q3ButtonGroup( 5, Qt::Vertical, i18n("User Image Source"), this );
-
+    faceGroup = new QGroupBox( i18n("User Image Source"), this );
     faceGroup->setWhatsThis( i18n("Here you can specify where KDM will obtain the images that represent users."
       " \"Admin\" represents the global folder; these are the pictures you can set below."
       " \"User\" means that KDM should read the user's $HOME/.face.icon file."
       " The two selections in the middle define the order of preference if both sources are available.") );
-    connect( faceGroup, SIGNAL(clicked( int )), SLOT(slotFaceOpts()) );
-    connect( faceGroup, SIGNAL(clicked( int )), SLOT(slotChanged()) );
     rbadmonly = new QRadioButton( i18n("Admin"), faceGroup );
     rbprefadm = new QRadioButton( i18n("Admin, user"), faceGroup );
     rbprefusr = new QRadioButton( i18n("User, admin"), faceGroup );
     rbusronly = new QRadioButton( i18n("User"), faceGroup );
+    buttonGroup = new QButtonGroup( faceGroup );
+    connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotFaceOpts()) );
+    connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotChanged()) );
+    buttonGroup->addButton( rbadmonly );
+    buttonGroup->addButton( rbprefadm );
+    buttonGroup->addButton( rbprefusr );
+    buttonGroup->addButton( rbusronly );
+    box = new QVBoxLayout( faceGroup );
+    box->addWidget( rbadmonly );
+    box->addWidget( rbprefadm );
+    box->addWidget( rbprefusr );
+    box->addWidget( rbusronly );
 
-    Q3GroupBox *picGroup = new Q3GroupBox( i18n("User Images"), this );
-    picGroup->setOrientation( Qt::Vertical );
-    QVBoxLayout *laygroup2 = new QVBoxLayout();
-    picGroup->layout()->addItem( laygroup2 );
-    laygroup2->setSpacing(KDialog::spacingHint());
-
-    QWidget *hlpw = new QWidget( picGroup );
-    laygroup2->addWidget( hlpw );
-    usercombo = new KComboBox( hlpw );
+    QGroupBox *picGroup = new QGroupBox( i18n("User Images"), this );
+    usercombo = new KComboBox( picGroup );
     usercombo->setWhatsThis( i18n("The user the image below belongs to.") );
     connect( usercombo, SIGNAL(activated( int )),
 	     SLOT(slotUserSelected()) );
-    QLabel *userlabel = new QLabel( i18n("User:"), hlpw );
+    QLabel *userlabel = new QLabel( i18n("User:"), picGroup );
     userlabel->setBuddy( usercombo );
-    userbutton = new QPushButton( hlpw );
+    userbutton = new QPushButton( picGroup );
     userbutton->setAcceptDrops( true );
     userbutton->installEventFilter( this ); // for drag and drop
     uint sz = style()->pixelMetric( QStyle::PM_ButtonMargin ) * 2 + 48;
@@ -190,16 +208,14 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent)
     userbutton->setToolTip( i18n("Click or drop an image here") );
     userbutton->setWhatsThis( i18n("Here you can see the image assigned to the user selected in the combo box above. Click on the image button to select from a list"
       " of images or drag and drop your own image on to the button (e.g. from Konqueror).") );
-    rstuserbutton = new QPushButton( i18n("Unset"), hlpw );
+    rstuserbutton = new QPushButton( i18n("Unset"), picGroup );
     rstuserbutton->setWhatsThis( i18n("Click this button to make KDM use the default image for the selected user.") );
     connect( rstuserbutton, SIGNAL(clicked()),
 	     SLOT(slotUnsetUserPix()) );
-    QGridLayout *hlpl = new QGridLayout( hlpw );
+    QGridLayout *hlpl = new QGridLayout( picGroup );
     hlpl->setSpacing( KDialog::spacingHint() );
-    hlpl->setMargin( 0 );
     hlpl->addWidget( userlabel, 0, 0 );
-//    hlpl->addSpacing( KDialog::spacingHint() );
-    hlpl->addWidget( usercombo, 0, 1 );
+    hlpl->addWidget( usercombo, 0, 1 ); // XXX this makes the layout too wide
     hlpl->addWidget( userbutton, 1, 0, 1, 2, Qt::AlignHCenter );
     hlpl->addWidget( rstuserbutton, 2, 0, 1, 2, Qt::AlignHCenter );
 

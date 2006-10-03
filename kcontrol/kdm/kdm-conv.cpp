@@ -25,13 +25,13 @@
 
 #include <QLayout>
 #include <QLabel>
-#include <q3groupbox.h>
+#include <QGroupBox>
 #include <q3buttongroup.h>
-
 #include <q3header.h>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QBoxLayout>
 
 #include <kdialog.h>
@@ -51,12 +51,10 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
 
     QSizePolicy vpref( QSizePolicy::Minimum, QSizePolicy::Fixed );
 
-    alGroup = new Q3GroupBox( i18n("Enable Au&to-Login"), this );
-    alGroup->setOrientation( Qt::Vertical );
+    alGroup = new QGroupBox( i18n("Enable Au&to-Login"), this );
     alGroup->setCheckable( true );
     alGroup->setSizePolicy( vpref );
-    QVBoxLayout *laygroup2 = new QVBoxLayout();
-    alGroup->layout()->addItem( laygroup2 );
+    QVBoxLayout *laygroup2 = new QVBoxLayout( alGroup );
     laygroup2->setSpacing(KDialog::spacingHint());
 
     alGroup->setWhatsThis( i18n("Turn on the auto-login feature."
@@ -64,17 +62,15 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
 	" Think twice before enabling this!") );
     connect(alGroup, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    QWidget *hlpw1 = new QWidget( alGroup );
-    userlb = new KComboBox( hlpw1 );
-    u_label = new QLabel( i18n("Use&r:"), hlpw1 );
+    userlb = new KComboBox( alGroup );
+    u_label = new QLabel( i18n("Use&r:"), alGroup );
     u_label->setBuddy( userlb );
     QHBoxLayout *hlpl1 = new QHBoxLayout();
-    alGroup->layout()->addItem(hlpl1);
+    laygroup2->addItem(hlpl1);
     hlpl1->setSpacing(KDialog::spacingHint());
     hlpl1->addWidget(u_label);
     hlpl1->addWidget(userlb);
     hlpl1->addStretch( 1 );
-    laygroup2->addWidget( hlpw1 );
     connect(userlb, SIGNAL(highlighted(int)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be logged in automatically.");
     u_label->setWhatsThis( wtstr );
@@ -86,32 +82,32 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
 	"will be locked immediately (provided it is a KDE session). This can "
 	"be used to obtain a super-fast login restricted to one user.") );
 
-    puGroup = new Q3ButtonGroup(i18n("Preselect User"), this );
-    puGroup->setOrientation( Qt::Vertical );
-    QVBoxLayout *laygroup5 = new QVBoxLayout();
-    puGroup->layout()->addItem( laygroup5 );
-    laygroup5->setSpacing(KDialog::spacingHint());
+    puGroup = new QGroupBox(i18n("Preselect User"), this );
 
     puGroup->setSizePolicy( vpref );
 
-    connect(puGroup, SIGNAL(clicked(int)), SLOT(slotPresChanged()));
-    connect(puGroup, SIGNAL(clicked(int)), SLOT(slotChanged()));
     npRadio = new QRadioButton(i18nc("preselected user", "&None"), puGroup);
-    laygroup5->addWidget( npRadio );
     ppRadio = new QRadioButton(i18n("Prev&ious"), puGroup);
     ppRadio->setWhatsThis( i18n("Preselect the user that logged in previously. "
 	"Use this if this computer is usually used several consecutive times by one user.") );
-    laygroup5->addWidget( ppRadio );
     spRadio = new QRadioButton(i18n("Specif&y"), puGroup);
     spRadio->setWhatsThis( i18n("Preselect the user specified in the combo box below. "
 	"Use this if this computer is predominantly used by a certain user.") );
+    QButtonGroup *buttonGroup = new QButtonGroup( puGroup );
+    connect( buttonGroup, SIGNAL(buttonClicked(int)), SLOT(slotPresChanged()) );
+    connect( buttonGroup, SIGNAL(buttonClicked(int)), SLOT(changed()) );
+    buttonGroup->addButton( npRadio );
+    buttonGroup->addButton( ppRadio );
+    buttonGroup->addButton( spRadio );
+    QVBoxLayout *laygroup5 = new QVBoxLayout( puGroup );
+    laygroup5->setSpacing(KDialog::spacingHint());
+    laygroup5->addWidget( npRadio );
+    laygroup5->addWidget( ppRadio );
     laygroup5->addWidget( spRadio );
 
-    QWidget *hlpw = new QWidget(puGroup);
-    laygroup5->addWidget( hlpw );
-    puserlb = new KComboBox(true, hlpw);
+    puserlb = new KComboBox(true, puGroup);
 
-    pu_label = new QLabel(i18n("Us&er:"),hlpw);
+    pu_label = new QLabel(i18n("Us&er:"), puGroup);
     pu_label->setBuddy(puserlb);
     connect(puserlb, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be preselected for login. "
@@ -119,7 +115,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
 	"user to mislead possible attackers.");
     pu_label->setWhatsThis( wtstr );
     puserlb->setWhatsThis( wtstr );
-    QBoxLayout *hlpl = new QHBoxLayout(hlpw);
+    QBoxLayout *hlpl = new QHBoxLayout();
+    laygroup5->addItem( hlpl );
     hlpl->setSpacing(KDialog::spacingHint());
     hlpl->setMargin(0);
     hlpl->addWidget(pu_label);
@@ -133,10 +130,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
 	"be changed.") );
     connect(cbjumppw, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    npGroup = new Q3GroupBox(i18n("Enable Password-&Less Logins"), this );
-    npGroup->setOrientation( Qt::Vertical );
-    QVBoxLayout *laygroup3 = new QVBoxLayout();
-    npGroup->layout()->addItem( laygroup3 );
+    npGroup = new QGroupBox(i18n("Enable Password-&Less Logins"), this );
+    QVBoxLayout *laygroup3 = new QVBoxLayout( npGroup );
     laygroup3->setSpacing(KDialog::spacingHint());
 
     npGroup->setCheckable( true );
@@ -161,10 +156,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
     connect( npuserlv, SIGNAL(clicked( Q3ListViewItem * )),
 	     SLOT(slotChanged()) );
 
-    btGroup = new Q3GroupBox( i18n("Miscellaneous"), this );
-    btGroup->setOrientation( Qt::Vertical );
-    QVBoxLayout *laygroup4 = new QVBoxLayout();
-    btGroup->layout()->addItem( laygroup4 );
+    btGroup = new QGroupBox( i18n("Miscellaneous"), this );
+    QVBoxLayout *laygroup4 = new QVBoxLayout( btGroup );
     laygroup4->setSpacing(KDialog::spacingHint());
 
     cbarlen = new QCheckBox(i18n("Automatically log in again after &X server crash"), btGroup);
@@ -198,11 +191,11 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent)
 
 void KDMConvenienceWidget::makeReadOnly()
 {
-#warning "kde4: comment it it crashed";
-    //((QWidget*)alGroup->child("qt_groupbox_checkbox"))->setEnabled(false);
-    userlb->setEnabled(false);
-    //((QWidget*)npGroup->child("qt_groupbox_checkbox"))->setEnabled(false);
-    npuserlv->setEnabled(false);
+    alGroup->setEnabled(false); // this sucks
+    //userlb->setEnabled(false);
+    //autoLockCheck->setEnabled(false);
+    npGroup->setEnabled(false); // this sucks, too
+    //npuserlv->setEnabled(false);
     cbarlen->setEnabled(false);
     npRadio->setEnabled(false);
     ppRadio->setEnabled(false);

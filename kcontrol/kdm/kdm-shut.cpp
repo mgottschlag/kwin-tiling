@@ -121,7 +121,6 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
       main->addWidget(group4);
       main->addStretch();
 
-      lgroup0->addRowSpacing(0, group0->fontMetrics().height()/2);
       lgroup0->addColSpacing(2, KDialog::spacingHint() * 2);
       lgroup0->setColumnStretch(1, 1);
       lgroup0->setColumnStretch(4, 1);
@@ -130,7 +129,6 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
       lgroup0->addWidget(sdrlabel, 1, 3);
       lgroup0->addWidget(sdrcombo, 1, 4);
 
-      lgroup1->addRowSpacing(0, group1->fontMetrics().height()/2);
       lgroup1->addColSpacing(2, KDialog::spacingHint() * 2);
       lgroup1->setColumnStretch(1, 1);
       lgroup1->setColumnStretch(4, 1);
@@ -139,7 +137,6 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent)
       lgroup1->addWidget(restart_label, 1, 3);
       lgroup1->addWidget(restart_lined, 1, 4);
 
-      lgroup4->addRowSpacing(0, group4->fontMetrics().height()/2);
       lgroup4->addWidget(bm_label, 1, 0);
       lgroup4->addWidget(bm_combo, 1, 1);
       lgroup4->setColumnStretch(2, 1);

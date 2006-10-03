@@ -23,10 +23,11 @@
 #include <sys/types.h>
 
 
-#include <q3buttongroup.h>
 #include <QLabel>
 #include <QLayout>
 #include <QRadioButton>
+#include <QButtonGroup>
+#include <QGroupBox>
 
 #include <QValidator>
 #include <qstylefactory.h>
@@ -65,13 +66,12 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent)
   vbox->setMargin(KDialog::marginHint());
   vbox->setSpacing(KDialog::spacingHint());
 
-  Q3GroupBox *group = new Q3GroupBox(i18n("Appearance"), this);
+  QGroupBox *group = new QGroupBox(i18n("Appearance"), this);
   vbox->addWidget(group);
 
   QGridLayout *grid = new QGridLayout( group);
   grid->setMargin( KDialog::marginHint() );
   grid->setSpacing( KDialog::spacingHint() );
-  grid->addRowSpacing(0, group->fontMetrics().height());
   grid->setColumnStretch(0, 1);
   grid->setColumnStretch(1, 1);
 
@@ -113,14 +113,12 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent)
   noneRadio = new QRadioButton( i18nc("logo area", "&None"), group );
   clockRadio = new QRadioButton( i18n("Show cloc&k"), group );
   logoRadio = new QRadioButton( i18n("Sho&w logo"), group );
-  Q3ButtonGroup *buttonGroup = new Q3ButtonGroup( group );
-  label->setBuddy( buttonGroup );
-  connect( buttonGroup, SIGNAL(clicked(int)), SLOT(slotAreaRadioClicked(int)) );
-  connect( buttonGroup, SIGNAL(clicked(int)), SLOT(changed()) );
-  buttonGroup->hide();
-  buttonGroup->insert(noneRadio, KdmNone);
-  buttonGroup->insert(clockRadio, KdmClock);
-  buttonGroup->insert(logoRadio, KdmLogo);
+  QButtonGroup *buttonGroup = new QButtonGroup( group );
+  connect( buttonGroup, SIGNAL(buttonClicked(int)), SLOT(slotAreaRadioClicked(int)) );
+  connect( buttonGroup, SIGNAL(buttonClicked(int)), SLOT(changed()) );
+  buttonGroup->addButton(noneRadio, KdmNone);
+  buttonGroup->addButton(clockRadio, KdmClock);
+  buttonGroup->addButton(logoRadio, KdmLogo);
   vlay->addWidget(noneRadio);
   vlay->addWidget(clockRadio);
   vlay->addWidget(logoRadio);
@@ -226,8 +224,9 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent)
 
 
   // The Language group box
-  group = new Q3GroupBox(0, Qt::Vertical, i18n("Locale"), this);
+  group = new QGroupBox(i18n("Locale"), this);
   vbox->addWidget(group);
+  QBoxLayout *gbox = new QVBoxLayout( group );
 
   langcombo = new KLanguageButton(group);
   loadLanguageList(langcombo);
@@ -235,7 +234,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent)
   label = new QLabel(i18n("Languag&e:"),group);
   label->setBuddy(langcombo);
   QGridLayout *hbox = new QGridLayout();
-  group->layout()->addItem(hbox);
+  gbox->addItem(hbox);
   hbox->setSpacing( KDialog::spacingHint() );
   hbox->setColumnStretch(1, 1);
   hbox->addWidget(label, 1, 0);

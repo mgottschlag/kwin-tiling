@@ -23,7 +23,6 @@
 #include <QWidget>
 #include <QString>
 #include <QImage>
-#include <q3buttongroup.h>
 #include <QRadioButton>
 #include <QCheckBox>
 #include <QStackedWidget>
@@ -39,6 +38,7 @@
 
 #include <pwd.h>
 
+class QGroupBox;
 
 class KDMUsersWidget : public QWidget
 {
@@ -79,17 +79,17 @@ private:
 	void userButtonDropEvent( QDropEvent *e );
 	void changeUserPix( const QString & );
 
-	Q3GroupBox	*minGroup;	// top left
+	QGroupBox	*minGroup;	// top left
 	QLineEdit	*leminuid, *lemaxuid;
 
-	Q3ButtonGroup	*usrGroup; // right below
+	QGroupBox	*usrGroup; // right below
 	QCheckBox	*cbshowlist, *cbcomplete, *cbinverted, *cbusrsrt;
 
 	QLabel		*s_label; // middle
 	QStackedWidget	*wstack;
 	K3ListView	*optoutlv, *optinlv;
 
-	Q3ButtonGroup	*faceGroup; // right
+	QGroupBox	*faceGroup; // right
 	QRadioButton	*rbadmonly, *rbprefadm, *rbprefusr, *rbusronly;
 
 	KComboBox	*usercombo; // right below

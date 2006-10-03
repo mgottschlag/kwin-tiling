@@ -24,7 +24,6 @@
 
 #include <QString>
 #include <QImage>
-#include <q3groupbox.h>
 #include <QRadioButton>
 #include <QCheckBox>
 //Added by qt3to4:
@@ -38,6 +37,7 @@
 
 #include <pwd.h>
 
+class QGroupBox;
 
 class KDMConvenienceWidget : public QWidget
 {
@@ -68,7 +68,7 @@ private Q_SLOTS:
 	void slotUpdateNoPassUser( Q3ListViewItem *item );
 
 private:
-	Q3GroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
+	QGroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
 	QCheckBox	*cbarlen, *cbjumppw, *autoLockCheck;
 	QRadioButton	*npRadio, *ppRadio, *spRadio;
 	KComboBox	*userlb, *puserlb;
