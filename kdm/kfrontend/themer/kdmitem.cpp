@@ -398,7 +398,7 @@ KdmItem::calcSize(
 	else if (sz.x.type == DTnpixel)
 		w = io.width() - sz.x.val;
 	else if (sz.x.type == DTpercent)
-		w = getParentSize( parentSizes, sz.x.levels ).width() * sz.x.val / 100;
+		w = (getParentSize( parentSizes, sz.x.levels ).width() * sz.x.val + 50) / 100;
 	else if (sz.x.type == DTbox)
 		w = ensureBoxHint( boxHint, parentSizes, hintedSize ).width();
 	else
@@ -409,7 +409,7 @@ KdmItem::calcSize(
 	else if (sz.y.type == DTnpixel)
 		h = io.height() - sz.y.val;
 	else if (sz.y.type == DTpercent)
-		h = getParentSize( parentSizes, sz.y.levels ).height() * sz.y.val / 100;
+		h = (getParentSize( parentSizes, sz.y.levels ).height() * sz.y.val + 50) / 100;
 	else if (sz.y.type == DTbox)
 		h = ensureBoxHint( boxHint, parentSizes, hintedSize ).height();
 	else
@@ -462,14 +462,14 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QSize &sz, const QPoint &off
 	else if (geom.pos.x.type == DTnpixel)
 		x += w - geom.pos.x.val;
 	else if (geom.pos.x.type == DTpercent)
-		x += w * geom.pos.x.val / 100;
+		x += (w * geom.pos.x.val + 50) / 100;
 
 	if (geom.pos.y.type == DTpixel)
 		y += geom.pos.y.val;
 	else if (geom.pos.y.type == DTnpixel)
 		y += h - geom.pos.y.val;
 	else if (geom.pos.y.type == DTpercent)
-		y += h * geom.pos.y.val / 100;
+		y += (h * geom.pos.y.val + 50) / 100;
 
 	// defaults to center
 	int dx = sz.width() / 2, dy = sz.height() / 2;
