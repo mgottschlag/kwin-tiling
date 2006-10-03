@@ -34,7 +34,7 @@ void KBackedComboBox::setCurrentId( const QString &id )
 	setCurrentIndex( 0 );
 }
 
-const QString &KBackedComboBox::currentId() const
+const QString KBackedComboBox::currentId() const
 {
     return name2id[currentText()];
 }
