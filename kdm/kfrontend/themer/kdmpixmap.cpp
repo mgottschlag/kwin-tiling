@@ -49,17 +49,43 @@ KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 		QString tagName = el.tagName();
 
 		if (tagName == "normal") {
-			loadPixmap( el.attribute( "file", "" ), pixmap.normal );
+			definePixmap( el, pixmap.normal );
 			parseColor( el.attribute( "tint", "#ffffff" ), el.attribute( "alpha", "1.0" ), pixmap.normal.tint );
 		} else if (tagName == "active") {
 			pixmap.active.present = true;
-			loadPixmap( el.attribute( "file", "" ), pixmap.active );
+			definePixmap( el, pixmap.active );
 			parseColor( el.attribute( "tint", "#ffffff" ), el.attribute( "alpha", "1.0" ), pixmap.active.tint );
 		} else if (tagName == "prelight") {
 			pixmap.prelight.present = true;
-			loadPixmap( el.attribute( "file", "" ), pixmap.prelight );
+			definePixmap( el, pixmap.prelight );
 			parseColor( el.attribute( "tint", "#ffffff" ), el.attribute( "alpha", "1.0" ), pixmap.prelight.tint );
 		}
+	}
+}
+
+void
+KdmPixmap::definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pClass )
+{
+	QString fileName = el.attribute( "file" );
+	if (fileName.isEmpty())
+		return;
+
+	pClass.fullpath = fileName;
+	if (fileName.at( 0 ) != '/')
+		pClass.fullpath = themer()->baseDir() + '/' + fileName;
+
+	pClass.svgImage = fileName.endsWith( ".svg" ) || fileName.endsWith( ".svgz" );
+}
+
+void
+KdmPixmap::loadPixmap( PixmapStruct::PixmapClass &pClass )
+{
+	if (!pClass.svgImage && !pClass.fullpath.isEmpty()) {
+		if (!pClass.image.load( pClass.fullpath )) {
+			kWarning() << "failed to load " << pClass.fullpath << endl;
+			pClass.fullpath.clear();
+		} else if (pClass.image.format() != QImage::Format_ARGB32)
+			pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
 	}
 }
 
@@ -67,6 +93,8 @@ QSize
 KdmPixmap::sizeHint()
 {
 	// use the pixmap size as the size hint
+	if (pixmap.normal.image.isNull())
+		loadPixmap( pixmap.normal );
 	if (!pixmap.normal.image.isNull())
 		return pixmap.normal.image.size();
 	return KdmItem::sizeHint();
@@ -81,28 +109,6 @@ KdmPixmap::setGeometry( QStack<QSize> &parentSizes, QRect &newGeometry, bool for
 	pixmap.normal.readyPixmap = QPixmap();
 }
 
-
-void
-KdmPixmap::loadPixmap( const QString &fileName, PixmapStruct::PixmapClass &pClass )
-{
-	if (fileName.isEmpty())
-		return;
-
-	pClass.fullpath = fileName;
-	if (fileName.at( 0 ) != '/')
-		pClass.fullpath = themer()->baseDir() + '/' + fileName;
-
-	if (fileName.endsWith( ".svg" ) || fileName.endsWith( ".svgz" )) // we delay it for svgs
-		pClass.svgImage = true;
-	else {
-		if (!pClass.image.load( pClass.fullpath )) {
-			kWarning() << "failed to load " << pClass.fullpath << endl;
-			pClass.fullpath.clear();
-		} else if (pClass.image.format() != QImage::Format_ARGB32)
-			pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
-		pClass.svgImage = false;
-	}
-}
 
 void
 KdmPixmap::drawContents( QPainter *p, const QRect &r )
@@ -150,8 +156,11 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 						kWarning() << "failed to load " << pClass->fullpath << endl;
 						pClass->fullpath.clear();
 					}
-				} else
+				} else {
+					if (pClass->image.isNull())
+						loadPixmap( *pClass );
 					scaledImage = pClass->image.scaled( area.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+				}
 			}
 		} else
 			scaledImage = pClass->image;
