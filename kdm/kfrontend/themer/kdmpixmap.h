@@ -64,7 +64,7 @@ protected:
 private:
 	// Method to load the image given by the theme
 	void definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pc );
-	void loadPixmap( PixmapStruct::PixmapClass &pc );
+	bool loadPixmap( PixmapStruct::PixmapClass &pc );
 };
 
 #endif

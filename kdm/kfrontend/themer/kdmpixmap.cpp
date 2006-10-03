@@ -77,25 +77,28 @@ KdmPixmap::definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pClas
 	pClass.svgImage = fileName.endsWith( ".svg" ) || fileName.endsWith( ".svgz" );
 }
 
-void
+bool
 KdmPixmap::loadPixmap( PixmapStruct::PixmapClass &pClass )
 {
-	if (!pClass.svgImage && !pClass.fullpath.isEmpty()) {
-		if (!pClass.image.load( pClass.fullpath )) {
-			kWarning() << "failed to load " << pClass.fullpath << endl;
-			pClass.fullpath.clear();
-		} else if (pClass.image.format() != QImage::Format_ARGB32)
-			pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
+	if (!pClass.image.isNull())
+		return true;
+	if (pClass.svgImage || pClass.fullpath.isEmpty())
+		return false;
+	if (!pClass.image.load( pClass.fullpath )) {
+		kWarning() << "failed to load " << pClass.fullpath << endl;
+		pClass.fullpath.clear();
+		return false;
 	}
+	if (pClass.image.format() != QImage::Format_ARGB32)
+		pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
+	return true;
 }
 
 QSize
 KdmPixmap::sizeHint()
 {
 	// use the pixmap size as the size hint
-	if (pixmap.normal.image.isNull())
-		loadPixmap( pixmap.normal );
-	if (!pixmap.normal.image.isNull())
+	if (loadPixmap( pixmap.normal ))
 		return pixmap.normal.image.size();
 	return KdmItem::sizeHint();
 }
@@ -156,16 +159,14 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 						kWarning() << "failed to load " << pClass->fullpath << endl;
 						pClass->fullpath.clear();
 					}
-				} else {
-					if (pClass->image.isNull())
-						loadPixmap( *pClass );
-					scaledImage = pClass->image.scaled( area.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
-				}
+				} else if (loadPixmap( *pClass ))
+					scaledImage = pClass->image.scaled( area.size(),
+						Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
 			}
 		} else
 			scaledImage = pClass->image;
 
-		if (pClass->image.isNull()) {
+		if (scaledImage.isNull()) {
 			p->fillRect( px, py, sw, sh, Qt::black );
 			return;
 		}
