@@ -84,11 +84,20 @@ KdmPixmap::loadPixmap( PixmapStruct::PixmapClass &pClass )
 		return true;
 	if (pClass.svgImage || pClass.fullpath.isEmpty())
 		return false;
+	if (area.isValid()) {
+		int dot = pClass.fullpath.lastIndexOf( '.' );
+		if (pClass.image.load( pClass.fullpath.left( dot )
+				.append( QString( "-%1x%2" )
+					.arg( area.width() ).arg( area.height() ) )
+				.append( pClass.fullpath.mid( dot ) ) ))
+			goto gotit;
+	}
 	if (!pClass.image.load( pClass.fullpath )) {
 		kWarning() << "failed to load " << pClass.fullpath << endl;
 		pClass.fullpath.clear();
 		return false;
 	}
+  gotit:
 	if (pClass.image.format() != QImage::Format_ARGB32)
 		pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
 	return true;
