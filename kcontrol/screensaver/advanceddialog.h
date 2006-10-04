@@ -12,12 +12,20 @@
 #include <QCheckBox>
 #include <QSlider>
 
-#include "advanceddialogimpl.h"
+#include "ui_advanceddialogimpl.h"
+
+class AdvancedDialogImpl : public QWidget, public Ui::AdvancedDialogImpl
+{
+public:
+  AdvancedDialogImpl( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class AdvancedDialog : public AdvancedDialogImpl
 {
 public:
-	AdvancedDialog(QWidget *parent = 0, const char *name = 0);
+	AdvancedDialog(QWidget *parent = 0);
 	~AdvancedDialog();
 	void setMode(QComboBox *box, int i);
 	int mode(QComboBox *box);
@@ -29,7 +37,7 @@ class KScreenSaverAdvancedDialog : public KDialog
 {
     Q_OBJECT
 public:
-    KScreenSaverAdvancedDialog(QWidget *parent, const char* name = 0);
+    KScreenSaverAdvancedDialog(QWidget *parent);
       
 public Q_SLOTS:
     virtual void accept();

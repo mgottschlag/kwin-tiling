@@ -10,15 +10,13 @@
 #include <config.h>
 
 #include "advanceddialog.h"
-#include "advanceddialogimpl.h"
 #include "stdlib.h"
 
 #include "advanceddialog.moc"
 
-KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const char* name)
+KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent)
  : KDialog( parent )
 {
-	setObjectName( name );
   setModal( true );
   setCaption( i18n( "Advanced Options" ) );
   setButtons( Ok | Cancel );
@@ -145,7 +143,7 @@ void KScreenSaverAdvancedDialog::slotChangeTopLeftCorner(int)
 
 /* =================================================================================================== */
 
-AdvancedDialog::AdvancedDialog(QWidget *parent, const char *name) : AdvancedDialogImpl(parent, name)
+AdvancedDialog::AdvancedDialog(QWidget *parent) : AdvancedDialogImpl(parent)
 {
 	monitorLabel->setPixmap(QPixmap(KStandardDirs::locate("data", "kcontrol/pics/monitor.png")));
 	qcbPriority->setWhatsThis( "<qt>" + i18n("Specify the priority that the screensaver will run at. A higher priority may mean that the screensaver runs faster, though may reduce the speed that other programs run at while the screensaver is active.") + "</qt>");

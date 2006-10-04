@@ -7,7 +7,7 @@ set(kcm_view1394_PART_SRCS view1394.cpp )
 
 kde4_automoc(${kcm_view1394_PART_SRCS})
 
-kde4_add_ui3_files(kcm_view1394_PART_SRCS view1394widget.ui )
+kde4_add_ui_files(kcm_view1394_PART_SRCS view1394widget.ui )
 
 kde4_add_plugin(kcm_view1394 ${kcm_view1394_PART_SRCS})
 

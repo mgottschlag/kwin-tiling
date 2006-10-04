@@ -13,7 +13,7 @@ set(kcm_screensaver_PART_SRCS
 
 kde4_automoc(${kcm_screensaver_PART_SRCS})
 
-kde4_add_ui3_files(kcm_screensaver_PART_SRCS advanceddialogimpl.ui )
+kde4_add_ui_files(kcm_screensaver_PART_SRCS advanceddialogimpl.ui )
 
 kde4_add_plugin(kcm_screensaver ${kcm_screensaver_PART_SRCS})
 

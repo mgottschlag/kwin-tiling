@@ -30,7 +30,7 @@
 //Added by qt3to4:
 #include <Q3PtrList>
 
-#include "view1394widget.h"
+#include "ui_view1394widget.h"
 
 #include <libraw1394/raw1394.h>
 class QStringList;
@@ -43,6 +43,15 @@ class OuiDb
    private:
       QMap<QString, QString> m_vendorIds;
 };
+
+class View1394Widget : public QWidget, public Ui::View1394Widget
+{
+public:
+  View1394Widget( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
 
 class View1394: public KCModule
 {
