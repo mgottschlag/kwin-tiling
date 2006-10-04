@@ -17,7 +17,6 @@
 */
 
 #include "knewthemedlg.h"
-#include "newthemewidget.h"
 
 #include <QLineEdit>
 #include <QTextEdit>
@@ -32,7 +31,7 @@ KNewThemeDlg::KNewThemeDlg( QWidget * parent, const char * name )
     setCaption( i18n("New Theme") );
     setButtons( Ok|Cancel );
 
-    m_base = new NewThemeWidget( this, "new_theme_base" );
+    m_base = new NewThemeWidget( this );
     setMainWidget( m_base );
     connect( m_base->leName, SIGNAL( textChanged ( const QString & ) ), this, SLOT( slotThemeNameChanged( const QString & ) ) );
     slotThemeNameChanged( m_base->leName->text() );

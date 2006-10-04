@@ -23,7 +23,15 @@
 
 #include <kdialog.h>
 
-class NewThemeWidget;
+#include "ui_newthemewidget.h"
+
+class NewThemeWidget : public QWidget, public Ui::NewThemeWidget
+{
+public:
+  NewThemeWidget( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 /**
  * Dialog for creating new themes, contains just
