@@ -1,4 +1,4 @@
-/* This file is part of the KDE Display Manager Configuration package
+/*
     Copyright (C) 1997 Thomas Tanghus (tanghus@earthling.net)
 
     This program is free software; you can redistribute it and/or
@@ -15,7 +15,7 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
-*/  
+*/
 
 #ifndef __KDMSESS_H__
 #define __KDMSESS_H__
@@ -32,8 +32,8 @@ class KDMSessionsWidget : public QWidget
 {
 	Q_OBJECT
 
-public:
-	KDMSessionsWidget(QWidget *parent=0);
+  public:
+	KDMSessionsWidget(  QWidget *parent = 0 );
 
 	void load();
 	void save();
@@ -42,20 +42,20 @@ public:
 
 	enum SdModes { SdAll, SdRoot, SdNone };
 
-Q_SIGNALS:
+  Q_SIGNALS:
 	void changed( bool state );
-	
-protected Q_SLOTS:
+
+  protected Q_SLOTS:
 	void changed();
 
-private:
-	void readSD (QComboBox *, QString);
-	void writeSD (QComboBox *);
+  private:
+	void readSD( QComboBox *, const QString & );
+	void writeSD( QComboBox * );
 
-	QComboBox	*sdlcombo, *sdrcombo;
-	QLabel		*sdllabel, *sdrlabel;
-	KUrlRequester	*restart_lined, *shutdown_lined;
-	KBackedComboBox	*bm_combo;
+	QComboBox *sdlcombo, *sdrcombo;
+	QLabel *sdllabel, *sdrlabel;
+	KUrlRequester *restart_lined, *shutdown_lined;
+	KBackedComboBox *bm_combo;
 };
 
 

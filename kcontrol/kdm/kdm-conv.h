@@ -1,5 +1,4 @@
-/* This file is part of the KDE Display Manager Configuration package
-
+/*
     Copyright (C) 2000 Oswald Buddenhagen <ossi@kde.org>
     Based on several other files.
 
@@ -17,7 +16,7 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
-*/  
+*/
 
 #ifndef __KDMCONV_H__
 #define __KDMCONV_H__
@@ -39,43 +38,42 @@
 
 class QGroupBox;
 
-class KDMConvenienceWidget : public QWidget
-{
+class KDMConvenienceWidget : public QWidget {
 	Q_OBJECT
 
-public:
+  public:
 	KDMConvenienceWidget(QWidget *parent=0);
 
-        void load();
-        void save();
+	void load();
+	void save();
 	void defaults();
 	void makeReadOnly();
 
-public Q_SLOTS:
+  public Q_SLOTS:
 	void slotClearUsers();
-	void slotAddUsers(const QMap<QString,int> &);
-	void slotDelUsers(const QMap<QString,int> &);
+	void slotAddUsers( const QMap<QString,int> & );
+	void slotDelUsers( const QMap<QString,int> & );
 
 
-Q_SIGNALS:
+  Q_SIGNALS:
 	void changed( bool state );
 
-private Q_SLOTS:
+  private Q_SLOTS:
 	void slotPresChanged();
 	void slotChanged();
 	void slotSetAutoUser( const QString &user );
 	void slotSetPreselUser( const QString &user );
 	void slotUpdateNoPassUser( Q3ListViewItem *item );
 
-private:
-	QGroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
-	QCheckBox	*cbarlen, *cbjumppw, *autoLockCheck;
-	QRadioButton	*npRadio, *ppRadio, *spRadio;
-	KComboBox	*userlb, *puserlb;
-	K3ListView	*npuserlv;
-	QLabel		*u_label, *pu_label, *w_label, *n_label, *pl_label;
-	QString		autoUser, preselUser;
-	QStringList	noPassUsers;
+  private:
+	QGroupBox *alGroup, *puGroup, *npGroup, *btGroup;
+	QCheckBox *cbarlen, *cbjumppw, *autoLockCheck;
+	QRadioButton *npRadio, *ppRadio, *spRadio;
+	KComboBox *userlb, *puserlb;
+	K3ListView *npuserlv;
+	QLabel *u_label, *pu_label, *w_label, *n_label, *pl_label;
+	QString autoUser, preselUser;
+	QStringList noPassUsers;
 };
 
 #endif

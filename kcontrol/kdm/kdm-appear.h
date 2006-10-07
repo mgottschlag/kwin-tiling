@@ -1,4 +1,4 @@
-/* This file is part of the KDE Display Manager Configuration package
+/*
     Copyright (C) 1997 Thomas Tanghus (tanghus@earthling.net)
 
     This program is free software; you can redistribute it and/or
@@ -42,12 +42,11 @@ class QLineEdit;
 class KLineEdit;
 
 
-class KDMAppearanceWidget : public QWidget
-{
+class KDMAppearanceWidget : public QWidget {
 	Q_OBJECT
 
-public:
-	KDMAppearanceWidget(QWidget *parent);
+  public:
+	KDMAppearanceWidget( QWidget *parent );
 
 	void load();
 	void save();
@@ -55,29 +54,29 @@ public:
 	void makeReadOnly();
 	QString quickHelp() const;
 
-	void loadColorSchemes(KBackedComboBox *combo);
-	void loadGuiStyles(KBackedComboBox *combo);
-	void loadLanguageList(KLanguageButton *combo);
+	void loadColorSchemes( KBackedComboBox *combo );
+	void loadGuiStyles( KBackedComboBox *combo );
+	void loadLanguageList( KLanguageButton *combo );
 
-	bool eventFilter(QObject *, QEvent *);
+	bool eventFilter( QObject *, QEvent * );
 
-Q_SIGNALS:
+  Q_SIGNALS:
 	void changed( bool state );
 
-protected:
-	void iconLoaderDragEnterEvent(QDragEnterEvent *event);
-	void iconLoaderDropEvent(QDropEvent *event);
-	bool setLogo(QString logo);
+  protected:
+	void iconLoaderDragEnterEvent( QDragEnterEvent *event );
+	void iconLoaderDropEvent( QDropEvent *event );
+	bool setLogo( QString logo );
 
-private Q_SLOTS:
-	void slotAreaRadioClicked(int id);
+  private Q_SLOTS:
+	void slotAreaRadioClicked( int id );
 	void slotLogoButtonClicked();
 	void changed();
 
-private:
+  private:
 	enum { KdmNone, KdmClock, KdmLogo };
-	QLabel      *logoLabel;
-	QPushButton *logobutton;
+	QLabel       *logoLabel;
+	QPushButton  *logobutton;
 	KLineEdit    *greetstr_lined;
 	QString      logopath;
 	QRadioButton *noneRadio;
@@ -85,8 +84,8 @@ private:
 	QRadioButton *logoRadio;
 	QLineEdit    *xLineEdit;
 	QLineEdit    *yLineEdit;
-	KBackedComboBox    *guicombo;
-	KBackedComboBox    *colcombo;
+	KBackedComboBox *guicombo;
+	KBackedComboBox *colcombo;
 	KLanguageButton *langcombo;
 
 };

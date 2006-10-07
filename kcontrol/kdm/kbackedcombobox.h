@@ -1,4 +1,4 @@
-/* This file is part of the KDE Display Manager Configuration package
+/*
     Copyright (C) 2004-2005 Oswald Buddenhagen <ossi@kde.org>
 
     This program is free software; you can redistribute it and/or
@@ -24,14 +24,14 @@
 
 class KBackedComboBox : public KComboBox {
 
-public:
-    KBackedComboBox( QWidget *parent ) : KComboBox( false, parent ) {}
-    void insertItem( const QString &id, const QString &name );
-    void setCurrentId( const QString &id );
-    const QString currentId() const;
+  public:
+	KBackedComboBox( QWidget *parent ) : KComboBox( false, parent ) {}
+	void insertItem( const QString &id, const QString &name );
+	void setCurrentId( const QString &id );
+	const QString currentId() const;
 
-private:
-    QMap<QString,QString> id2name, name2id;
+  private:
+	QMap<QString, QString> id2name, name2id;
 
 };
 

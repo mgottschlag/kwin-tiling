@@ -1,4 +1,4 @@
-/* This file is part of the KDE Display Manager Configuration package
+/*
     Copyright (C) 1997 Thomas Tanghus (tanghus@earthling.net)
 
     This program is free software; you can redistribute it and/or
@@ -25,30 +25,29 @@
 class KFontRequester;
 class QCheckBox;
 
-class KDMFontWidget : public QWidget
-{
+class KDMFontWidget : public QWidget {
 	Q_OBJECT
 
-public:
-	KDMFontWidget(QWidget *parent=0);
+  public:
+	KDMFontWidget( QWidget *parent = 0 );
 
-        void load();
-        void save();
+	void load();
+	void save();
 	void defaults();
 	void makeReadOnly();
 
-Q_SIGNALS:
+  Q_SIGNALS:
 	void changed( bool state );
 
-protected Q_SLOTS:
-    void configChanged();
-    void set_def();
+  protected Q_SLOTS:
+	void configChanged();
+	void set_def();
 
-private:
-	QCheckBox	*aacb;
-        KFontRequester *greetingFontChooser;
-        KFontRequester *failFontChooser;
-        KFontRequester *stdFontChooser;
+  private:
+	QCheckBox *aacb;
+	KFontRequester *greetingFontChooser;
+	KFontRequester *failFontChooser;
+	KFontRequester *stdFontChooser;
 };
 
 

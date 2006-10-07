@@ -1,4 +1,4 @@
-/* This file is part of the KDE Display Manager Configuration package
+/*
     Copyright (C) 2004-2005 Oswald Buddenhagen <ossi@kde.org>
 
     This program is free software; you can redistribute it and/or
@@ -21,20 +21,20 @@
 
 void KBackedComboBox::insertItem( const QString &id, const QString &name )
 {
-    id2name[id] = name;
-    name2id[name] = id;
-    KComboBox::addItem( name );
+	id2name[id] = name;
+	name2id[name] = id;
+	KComboBox::addItem( name );
 }
 
 void KBackedComboBox::setCurrentId( const QString &id )
 {
-    if (id2name.contains( id ))
-	setCurrentItem( id2name[id] );
-    else
-	setCurrentIndex( 0 );
+	if (id2name.contains( id ))
+		setCurrentItem( id2name[id] );
+	else
+		setCurrentIndex( 0 );
 }
 
 const QString KBackedComboBox::currentId() const
 {
-    return name2id[currentText()];
+	return name2id[currentText()];
 }

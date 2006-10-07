@@ -1,4 +1,4 @@
-/* This file is part of the KDE Display Manager Configuration package
+/*
     Copyright (C) 1997 Thomas Tanghus (tanghus@earthling.net)
 
     This program is free software; you can redistribute it and/or
@@ -15,7 +15,7 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
-*/  
+*/
 
 #ifndef __KDMUSERS_H__
 #define __KDMUSERS_H__
@@ -40,11 +40,10 @@
 
 class QGroupBox;
 
-class KDMUsersWidget : public QWidget
-{
+class KDMUsersWidget : public QWidget {
 	Q_OBJECT
 
-public:
+  public:
 	KDMUsersWidget( QWidget *parent = 0 );
 
 	void load();
@@ -54,16 +53,16 @@ public:
 
 	bool eventFilter( QObject *o, QEvent *e );
 
-public Q_SLOTS:
+  public Q_SLOTS:
 	void slotClearUsers();
 	void slotAddUsers( const QMap<QString,int> & );
 	void slotDelUsers( const QMap<QString,int> & );
 
-Q_SIGNALS:
+  Q_SIGNALS:
 	void changed( bool state );
 	void setMinMaxUID( int, int );
 
-private Q_SLOTS:
+  private Q_SLOTS:
 	void slotMinMaxChanged();
 	void slotShowOpts();
 	void slotUpdateOptIn( Q3ListViewItem *item );
@@ -74,34 +73,34 @@ private Q_SLOTS:
 	void slotUserButtonClicked();
 	void slotChanged();
 
-private:
+  private:
 	void updateOptList( Q3ListViewItem *item, QStringList &list );
 	void userButtonDropEvent( QDropEvent *e );
 	void changeUserPix( const QString & );
 
-	QGroupBox	*minGroup;	// top left
-	QLineEdit	*leminuid, *lemaxuid;
+	QGroupBox *minGroup; // top left
+	QLineEdit *leminuid, *lemaxuid;
 
-	QGroupBox	*usrGroup; // right below
-	QCheckBox	*cbshowlist, *cbcomplete, *cbinverted, *cbusrsrt;
+	QGroupBox *usrGroup; // right below
+	QCheckBox *cbshowlist, *cbcomplete, *cbinverted, *cbusrsrt;
 
-	QLabel		*s_label; // middle
-	QStackedWidget	*wstack;
-	K3ListView	*optoutlv, *optinlv;
+	QLabel *s_label; // middle
+	QStackedWidget *wstack;
+	K3ListView *optoutlv, *optinlv;
 
-	QGroupBox	*faceGroup; // right
-	QRadioButton	*rbadmonly, *rbprefadm, *rbprefusr, *rbusronly;
+	QGroupBox *faceGroup; // right
+	QRadioButton *rbadmonly, *rbprefadm, *rbprefusr, *rbusronly;
 
-	KComboBox	*usercombo; // right below
-	QPushButton	*userbutton;
-	QPushButton	*rstuserbutton;
+	KComboBox *usercombo; // right below
+	QPushButton *userbutton;
+	QPushButton *rstuserbutton;
 
-	QString		m_userPixDir;
-	QString		m_defaultText;
-	QStringList	hiddenUsers, selectedUsers;
-	QString		defminuid, defmaxuid;
+	QString m_userPixDir;
+	QString m_defaultText;
+	QStringList hiddenUsers, selectedUsers;
+	QString defminuid, defmaxuid;
 
-	bool		m_notFirst;
+	bool m_notFirst;
 };
 
 #endif

@@ -36,46 +36,41 @@ class KDMUsersWidget;
 class KDMConvenienceWidget;
 class KBackground;
 
-class KDModule : public KCModule
-{
-  Q_OBJECT
+class KDModule : public KCModule {
+	Q_OBJECT
 
-public:
+  public:
+	KDModule(QWidget *parent, const QStringList &);
+	~KDModule();
 
-  KDModule(QWidget *parent, const QStringList &);
-  ~KDModule();
+	void load();
+	void save();
+	void defaults();
 
-  void load();
-  void save();
-  void defaults();
+  public Q_SLOTS:
+  	void slotMinMaxUID( int min, int max );
 
-public Q_SLOTS:
+  Q_SIGNALS:
+	void clearUsers();
+	void addUsers( const QMap<QString,int> & );
+	void delUsers( const QMap<QString,int> & );
 
-  void slotMinMaxUID(int min, int max);
+  private:
+	QTabWidget *tab;
 
-Q_SIGNALS:
+	KDMAppearanceWidget *appearance;
+	KBackground *background;
+	KDMFontWidget *font;
+	KDMSessionsWidget *sessions;
+	KDMUsersWidget *users;
+	KDMConvenienceWidget *convenience;
 
-  void clearUsers();
-  void addUsers(const QMap<QString,int> &);
-  void delUsers(const QMap<QString,int> &);
+	QMap<QString, QPair<int,QStringList> > usermap;
+	QMap<QString,int> groupmap;
+	int minshowuid, maxshowuid;
+	bool updateOK;
 
-private:
-
-  QTabWidget		*tab;
-
-  KDMAppearanceWidget	*appearance;
-  KBackground		*background;
-  KDMFontWidget		*font;
-  KDMSessionsWidget	*sessions;
-  KDMUsersWidget	*users;
-  KDMConvenienceWidget	*convenience;
-
-  QMap<QString, QPair<int,QStringList> >	usermap;
-  QMap<QString,int>	groupmap;
-  int			minshowuid, maxshowuid;
-  bool			updateOK;
-
-  void propagateUsers();
+	void propagateUsers();
 
 };
 
