@@ -65,9 +65,9 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode,
 {
 	// read the XML file and create DOM tree
 	QString filename = _filename;
-	if (!::access( QFile::encodeName( filename + "/GdmGreeterTheme.desktop" ), R_OK )) {
-		KSimpleConfig cfg( filename + "/GdmGreeterTheme.desktop" );
-		cfg.setGroup( "GdmGreeterTheme" );
+	if (!::access( QFile::encodeName( filename + "/KdmGreeterTheme.desktop" ), R_OK )) {
+		KSimpleConfig cfg( filename + "/KdmGreeterTheme.desktop" );
+		cfg.setGroup( "KdmGreeterTheme" );
 		filename += '/' + cfg.readEntry( "Greeter" );
 	}
 	QFile opmlFile( filename );

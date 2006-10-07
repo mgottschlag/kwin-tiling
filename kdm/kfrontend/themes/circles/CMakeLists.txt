@@ -1,5 +1,5 @@
 install( FILES
-	GdmGreeterTheme.desktop
+	KdmGreeterTheme.desktop
 	circles.xml
 	background.svg
 	flower.png
