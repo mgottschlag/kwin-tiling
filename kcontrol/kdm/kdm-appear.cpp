@@ -209,19 +209,6 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent)
   label->setWhatsThis( wtstr );
   colcombo->setWhatsThis( wtstr );
 
-  echocombo = new KBackedComboBox(group);
-  echocombo->insertItem("NoEcho", i18n("No Echo"));
-  echocombo->insertItem("OneStar", i18n("One Star"));
-  echocombo->insertItem("ThreeStars", i18n("Three Stars"));
-  label = new QLabel(i18n("Echo &mode:"),group);
-  label->setBuddy(echocombo);
-  connect(echocombo, SIGNAL(activated(int)), SLOT(changed()));
-  hglay->addWidget(label, 2, 0);
-  hglay->addWidget(echocombo, 2, 1);
-  wtstr = i18n("You can choose whether and how KDM shows your password when you type it.");
-  label->setWhatsThis( wtstr );
-  echocombo->setWhatsThis( wtstr );
-
 
   // The Language group box
   group = new QGroupBox(i18n("Locale"), this);
@@ -262,7 +249,6 @@ void KDMAppearanceWidget::makeReadOnly()
     yLineEdit->setEnabled(false);
     guicombo->setEnabled(false);
     colcombo->setEnabled(false);
-    echocombo->setEnabled(false);
     langcombo->setEnabled(false);
 }
 
@@ -447,8 +433,6 @@ void KDMAppearanceWidget::save()
 
   config->writeEntry("ColorScheme", colcombo->currentId());
 
-  config->writeEntry("EchoMode", echocombo->currentId());
-
   config->writeEntry("GreeterPos", xLineEdit->text() + ',' + yLineEdit->text());
 
   config->writeEntry("Language", langcombo->current());
@@ -484,9 +468,6 @@ void KDMAppearanceWidget::load()
   // Check the Color Scheme
   colcombo->setCurrentId(config->readEntry("ColorScheme"));
 
-  // Check the echo mode
-  echocombo->setCurrentId(config->readEntry("EchoMode", "OneStar"));
-
   QStringList sl = config->readEntry( "GreeterPos", QStringList() );
   if (sl.count() != 2) {
     xLineEdit->setText( "50" );
@@ -509,7 +490,6 @@ void KDMAppearanceWidget::defaults()
   setLogo( "" );
   guicombo->setCurrentId( "" );
   colcombo->setCurrentId( "" );
-  echocombo->setCurrentItem( "OneStar" );
 
   xLineEdit->setText( "50" );
   yLineEdit->setText( "50" );

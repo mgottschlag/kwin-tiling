@@ -87,7 +87,6 @@ private:
 	QLineEdit    *yLineEdit;
 	KBackedComboBox    *guicombo;
 	KBackedComboBox    *colcombo;
-	KBackedComboBox    *echocombo;
 	KLanguageButton *langcombo;
 
 };
