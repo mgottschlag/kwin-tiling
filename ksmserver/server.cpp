@@ -73,7 +73,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <unistd.h>
 #include <kapplication.h>
 #include <kstaticdeleter.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kprocess.h>
 
 #include "server.h"
@@ -141,7 +141,8 @@ void KSMServer::executeCommand( const QStringList& command )
 }
 
 IceAuthDataEntry *authDataEntries = 0;
-static KTempFile *remAuthFile = 0;
+
+static KTemporaryFile *remTempFile;
 
 static IceListenObj *listenObjs = 0;
 int numTransports = 0;
@@ -392,14 +393,14 @@ Status SetAuthentication_local (int count, IceListenObj *listenObjs)
 Status SetAuthentication (int count, IceListenObj *listenObjs,
                           IceAuthDataEntry **authDataEntries)
 {
-    KTempFile addAuthFile;
-    addAuthFile.setAutoDelete(true);
-
-    remAuthFile = new KTempFile;
-    remAuthFile->setAutoDelete(true);
-
-    if ((addAuthFile.status() != 0) || (remAuthFile->status() != 0))
+    KTemporaryFile addTempFile;
+    KTemporaryFile *remTempFile = new KTemporaryFile;
+    
+    if (!addTempFile.open() || !remTempFile->open())
         return 0;
+
+    FILE *addAuthFile = fopen(addTempFile.fileName().toAscii(), "r+");
+    FILE *remAuthFile = fopen(remTempFile->fileName().toAscii(), "r+");
 
     if ((*authDataEntries = (IceAuthDataEntry *) malloc (
                          count * 2 * sizeof (IceAuthDataEntry))) == NULL)
@@ -424,15 +425,15 @@ Status SetAuthentication (int count, IceListenObj *listenObjs,
             IceGenerateMagicCookie (MAGIC_COOKIE_LEN);
         (*authDataEntries)[i+1].auth_data_length = MAGIC_COOKIE_LEN;
 
-        write_iceauth (addAuthFile.fstream(), remAuthFile->fstream(), &(*authDataEntries)[i]);
-        write_iceauth (addAuthFile.fstream(), remAuthFile->fstream(), &(*authDataEntries)[i+1]);
+        write_iceauth (addAuthFile, remAuthFile, &(*authDataEntries)[i]);
+        write_iceauth (addAuthFile, remAuthFile, &(*authDataEntries)[i+1]);
 
         IceSetPaAuthData (2, &(*authDataEntries)[i]);
 
         IceSetHostBasedAuthProc (listenObjs[i/2], HostBasedAuthProc);
     }
-    addAuthFile.close();
-    remAuthFile->close();
+    fclose(addAuthFile);
+    fclose(remAuthFile);
 
     QString iceAuth = KGlobal::dirs()->findExe("iceauth");
     if (iceAuth.isEmpty())
@@ -442,7 +443,7 @@ Status SetAuthentication (int count, IceListenObj *listenObjs,
     }
 
     KProcess p;
-    p << iceAuth << "source" << addAuthFile.name();
+    p << iceAuth << "source" << addTempFile.fileName();
     p.start(KProcess::Block);
 
     return (1);
@@ -472,11 +473,11 @@ void FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
     }
 
     KProcess p;
-    p << iceAuth << "source" << remAuthFile->name();
+    p << iceAuth << "source" << remTempFile->fileName();
     p.start(KProcess::Block);
 
-    delete remAuthFile;
-    remAuthFile = 0;
+    delete remTempFile;
+    remTempFile = 0;
 }
 
 static int Xio_ErrorHandler( Display * )
