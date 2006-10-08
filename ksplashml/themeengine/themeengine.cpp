@@ -91,7 +91,7 @@ void ThemeEngine::addSplashWindow( QWidget* w )
         return;
     if( d->mSplashWindows.contains( w->winId()))
         return;
-    if( ! w->windowFlags() && Qt::WX11BypassWM )
+    if( ! w->windowFlags().testFlag(Qt::WX11BypassWM) )
     { // All toplevel widgets should be probably required to be WX11BypassWM
       // for KDE4 instead of this ugly hack.
         static_cast< HackWidget* >( w )->setWindowFlags( Qt::WX11BypassWM );
