@@ -71,7 +71,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <unistd.h>
 #include <kapplication.h>
 #include <kstaticdeleter.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kprocess.h>
 #include <kwinmodule.h>
 #include <knotifyclient.h>

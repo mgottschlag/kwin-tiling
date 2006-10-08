@@ -40,7 +40,7 @@ DESCRIPTION
 #include <kprocess.h>
 #include <kwinmodule.h>
 #include <kwin.h>
-#include <ktempfile.h>
+#include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 #include <kaction.h>
 #include <kmenu.h>
