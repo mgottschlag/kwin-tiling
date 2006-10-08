@@ -319,7 +319,7 @@ QString RandRScreen::currentRotationDescription() const
 {
 	QString ret = rotationName(m_currentRotation & RotateMask);
 
-	if (m_currentRotation != m_currentRotation & RotateMask)
+	if (m_currentRotation != (m_currentRotation & RotateMask))
 		if (m_currentRotation & RR_Rotate_0)
 			ret = rotationName(m_currentRotation & (RR_Reflect_X + RR_Reflect_X), true, true);
 		else
