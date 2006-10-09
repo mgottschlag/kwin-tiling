@@ -40,11 +40,8 @@ KonsoleBookmarkHandler::KonsoleBookmarkHandler( KonsoleMenu *konsole, bool )
 
     KBookmarkManager *manager = KBookmarkManager::managerForFile( file, false);
     manager->setUpdate( true );
-    manager->setShowNSBookmarks( false );
 
     m_bookmarkMenu = new KBookmarkMenu( manager, this, m_menu, 0 );
-    connect( m_bookmarkMenu, SIGNAL( openBookmark( KBookmark, Qt::MouseButtons, Qt::KeyboardModifiers ) ),
-             this, SLOT( openBookmark( KBookmark, Qt::MouseButtons, Qt::KeyboardModifiers )) );
 }
 
 void KonsoleBookmarkHandler::openBookmark(KBookmark bm, Qt::MouseButtons, Qt::KeyboardModifiers )
