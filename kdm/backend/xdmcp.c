@@ -156,7 +156,7 @@ all_query_respond( struct sockaddr *from, int fromlen,
 	int family;
 	int length;
 
-	family = ConvertAddr( (XdmcpNetaddr)from, &length, (char **)(char *)&addr.data );
+	family = ConvertAddr( (XdmcpNetaddr)from, &length, (char **)&(addr.data) );
 	addr.length = length; /* convert int to short */
 	Debug( "all_query_respond: conntype=%d, addr=%02[*:hhx\n",
 	       family, addr.length, addr.data );
