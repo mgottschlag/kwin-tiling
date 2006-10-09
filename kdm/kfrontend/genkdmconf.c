@@ -1665,7 +1665,7 @@ mk_session( Entry *ce, Section *cs ATTR_UNUSED )
 		linkfile( ce );
 	else {
 		tmpf = locate( "mktemp" ) ?
-		           "`mktemp`" :
+		           "`mktemp /tmp/xsess-env-XXXXXX`" :
 		           locate( "tempfile" ) ?
 		               "`tempfile`" :
 		               "$HOME/.xsession-env-$DISPLAY";
