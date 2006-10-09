@@ -117,7 +117,7 @@ KdmLabel::setCText( const QString &txt )
 	delete action;
 	action = 0;
 	pText = cText = txt;
-	pAccelOff = txt.find( '_' );
+	pAccelOff = txt.indexOf( '_' );
 	if (pAccelOff >= 0) {
 		action = new QAction( this );
 		action->setShortcut( Qt::ALT + txt[pAccelOff + 1].unicode() );
