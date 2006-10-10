@@ -395,16 +395,16 @@ Status SetAuthentication (int count, IceListenObj *listenObjs,
 {
     KTemporaryFile addTempFile;
     KTemporaryFile *remTempFile = new KTemporaryFile;
-    
+
     if (!addTempFile.open() || !remTempFile->open())
         return 0;
-
-    FILE *addAuthFile = fopen(addTempFile.fileName().toAscii(), "r+");
-    FILE *remAuthFile = fopen(remTempFile->fileName().toAscii(), "r+");
 
     if ((*authDataEntries = (IceAuthDataEntry *) malloc (
                          count * 2 * sizeof (IceAuthDataEntry))) == NULL)
         return 0;
+
+    FILE *addAuthFile = fopen(addTempFile.fileName().toAscii(), "r+");
+    FILE *remAuthFile = fopen(remTempFile->fileName().toAscii(), "r+");
 
     for (int i = 0; i < numTransports * 2; i += 2) {
         (*authDataEntries)[i].network_id =
