@@ -69,7 +69,6 @@ private Q_SLOTS:
     void signalPipeSignal();
     bool startLock();
     void suspend();
-    void resume();
     void checkDPMSActive();
     void slotDeadTimePassed();
 
@@ -95,6 +94,7 @@ private:
     void stayOnTop();
     void lockXF86();
     void unlockXF86();
+    void resume( bool force );
     static QVariant getConf(void *ctx, const char *key, const QVariant &dflt);
 
     bool        mLocked;

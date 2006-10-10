@@ -680,7 +680,7 @@ bool LockProcess::startSaver()
 void LockProcess::stopSaver()
 {
     kDebug(1204) << "LockProcess: stopping saver" << endl;
-    resume();
+    resume( true );
     stopHack();
     hideSaverWindow();
     mVisibility = false;
@@ -855,12 +855,10 @@ void LockProcess::suspend()
     mSuspended = true;
 }
 
-void LockProcess::resume()
+void LockProcess::resume( bool force )
 {
-    if (!mDialogs.isEmpty())
-        return; // no resuming with dialog visible
-    if(!mVisibility)
-        return; // no need to resume, not visible
+    if( !force && (!mDialogs.isEmpty() || !mVisibility ))
+        return; // no resuming with dialog visible or when not visible
     if(mSuspended)
     {
         bitBlt( this, 0, 0, &mSavedScreen );
@@ -933,7 +931,7 @@ int LockProcess::execDialog( QDialog *dlg )
     if( mDialogs.isEmpty() ) {
         XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
                 QCursor(Qt::BlankCursor).handle(), CurrentTime);
-        resume();
+        resume( false );
     } else
         fakeFocusIn( mDialogs.first()->winId());
     return rt;
@@ -992,7 +990,7 @@ bool LockProcess::x11Event(XEvent *event)
 		else
                 {
                     mSuspendTimer.stop();
-                    resume();
+                    resume( false );
                 }
                 if (event->xvisibility.state != VisibilityUnobscured)
                     stayOnTop();
