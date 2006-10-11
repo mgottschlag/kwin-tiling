@@ -348,7 +348,7 @@ if test $? -eq 255; then
 fi
 
 # wait if there's any crashhandler shown
-while dbus | grep -q ^org.kde.drkonqi ; do
+while qdbus | grep -q ^[^w]*org.kde.drkonqi ; do
     sleep 5
 done
 
