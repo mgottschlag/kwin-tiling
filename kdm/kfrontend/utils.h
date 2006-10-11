@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <greet.h>
 
-#include <QString>
+class QString;
 
 typedef struct dpySpec {
 	struct dpySpec *next;

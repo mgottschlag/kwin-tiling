@@ -25,20 +25,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kfdialog.h"
 #include "kdmconfig.h"
 
-#include <klocale.h>
-#include <kpushbutton.h>
 #include <kguiitem.h>
-#include <kstdguiitem.h>
+#include <kpushbutton.h>
 
-#include <QLabel>
-#include <QLayout>
 #include <QApplication>
-#include <QCursor>
-//Added by qt3to4:
+#include <QDesktopWidget>
 #include <QFrame>
 #include <QGridLayout>
-#include <QResizeEvent>
-#include <QDesktopWidget>
+#include <QLabel>
 
 #include <stdio.h>
 

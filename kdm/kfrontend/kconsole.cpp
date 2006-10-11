@@ -21,6 +21,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
+#include "kconsole.h"
+#include "kdmconfig.h"
+#include "kdm_greet.h"
+
+#include <klocale.h>
+#include <kpty.h>
+
+#include <QSocketNotifier>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -46,16 +55,6 @@ extern "C" {
 #define _TERMIOS_INCLUDED
 #include <bsdtty.h>
 #endif
-
-
-#include "kconsole.h"
-#include "kdmconfig.h"
-#include "kdm_greet.h"
-
-#include <klocale.h>
-#include <kpty.h>
-
-#include <QSocketNotifier>
 
 KConsole::KConsole( QWidget *_parent )
 	: inherited( _parent )

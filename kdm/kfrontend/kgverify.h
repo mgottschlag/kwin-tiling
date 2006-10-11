@@ -29,21 +29,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kgreeterplugin.h"
 #include "kfdialog.h"
 
-#include <QLayout>
-#include <QTimer>
-#include <QByteArray>
-//Added by qt3to4:
-#include <QLabel>
 #include <QGridLayout>
-#include <QEvent>
 #include <QSet>
-
-class QAction;
-
-class KdmThemer;
+#include <QTimer>
 
 #include <sys/time.h>
 #include <time.h>
+
+class KdmThemer;
+
+class KLibrary;
+class KPushButton;
+class QMenu;
 
 // helper class, nuke when qt supports suspend()/resume()
 class QXTimer : public QObject {
@@ -80,13 +77,6 @@ class KGVerifyHandler {
 	virtual void verifySetUser( const QString &user ) = 0;
 	virtual void updateStatus( bool fail, bool caps, int left ); // for themed only
 };
-
-class QWidget;
-class QLabel;
-class QMenu;
-class QTimer;
-class KPushButton;
-class KLibrary;
 
 struct GreeterPluginHandle {
 	KLibrary *library;

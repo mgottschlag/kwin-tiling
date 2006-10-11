@@ -24,11 +24,9 @@
 
 #include "parse.h"
 
+#include <QDomNode>
 #include <QObject>
 #include <QStack>
-#include <QRect>
-#include <qdom.h>
-#include <QFont>
 
 class KdmItem;
 class KdmLayoutBox;
@@ -89,8 +87,6 @@ struct SizeHint {
 
 class KdmItem : public QObject {
 	Q_OBJECT
-
-	friend class KdmThemer;
 
 public:
 	/**
@@ -266,6 +262,7 @@ protected:
 
 	friend class KdmLabel; // isButton
 	friend class KdmLayoutBox; // geom.expand
+	friend class KdmThemer;
 };
 
 #endif

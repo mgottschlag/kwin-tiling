@@ -24,12 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kdmclock.h"
 
-#include <QDateTime>
 #include <QPainter>
+#include <QTime>
 #include <QTimer>
-#include <QShowEvent>
-#include <QPaintEvent>
-#include <QPolygon>
 
 KdmClock::KdmClock( QWidget *parent )
 	: inherited( parent )

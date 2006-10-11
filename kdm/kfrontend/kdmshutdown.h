@@ -32,19 +32,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kpushbutton.h>
 
 #include <QRadioButton>
-//Added by qt3to4:
-#include <QMouseEvent>
-#include <QLabel>
-#include <QVBoxLayout>
 
 class QGroupBox;
-class QAction;
-class QLabel;
-class KPushButton;
 class QComboBox;
 class QCheckBox;
 class QLineEdit;
-class QMenu;
+class KGuiItem;
 
 enum { Authed = QDialog::Accepted + 1, Schedule };
 

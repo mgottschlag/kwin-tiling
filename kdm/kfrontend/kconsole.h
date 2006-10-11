@@ -26,8 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <q3textedit.h>
 
-class QSocketNotifier;
 class KPty;
+class QSocketNotifier;
 
 class KConsole : public Q3TextEdit {
 	Q_OBJECT

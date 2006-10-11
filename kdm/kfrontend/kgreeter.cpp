@@ -31,44 +31,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "themer/kdmitem.h"
 #include "themer/kdmlabel.h"
 
-#include <kapplication.h>
 #include <klocale.h>
-#include <kstandarddirs.h>
 #include <kseparator.h>
 #include <ksimpleconfig.h>
+#include <kstandarddirs.h>
 #include <kstringhandler.h>
-#include <QEventLoop>
 
-#undef Unsorted // x headers suck - make qdir.h work with --enable-final
+#include <QAction>
 #include <QDir>
 #include <QFile>
-#include <QImage>
-#include <QMovie>
-#include <QMenu>
-#include <QTimer>
-#include <QStyle>
-#include <QLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QToolTip>
-#include <QEventLoop>
-#include <QSet>
-#include <QPixmap>
-#include <QEvent>
 #include <QKeyEvent>
-#include <QBoxLayout>
-#include <QHBoxLayout>
-#include <QFrame>
-#include <QVBoxLayout>
-#include <QAbstractEventDispatcher>
+#include <QLabel>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QMenu>
+#include <QMovie>
+#include <QPushButton>
+#include <QStyle>
 
-#include <pwd.h>
-#include <grp.h>
+#include <sys/types.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include <X11/Xlib.h>
 

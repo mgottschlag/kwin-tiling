@@ -28,24 +28,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kgverify.h"
 #include "kgdialog.h"
-//Added by qt3to4:
-#include <QLabel>
-#include <QKeyEvent>
-#include <QEvent>
-#include <QVector>
 
-class KdmClock;
 class UserListView;
-class KdmThemer;
+class KdmClock;
 class KdmItem;
 
 class KSimpleConfig;
-
-class QAction;
-class QLabel;
-class QPushButton;
-class QMenu;
-class QListWidget;
 class QListWidgetItem;
 
 struct SessType {

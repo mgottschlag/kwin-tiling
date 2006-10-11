@@ -23,11 +23,11 @@ Boston, MA 02110-1301, USA.
 
 #include <kcmdlineargs.h>
 #include <kinstance.h>
-#include <ksimpleconfig.h>
 #include <klocale.h>
+#include <ksimpleconfig.h>
 
-#include <QFile>
 #include <QDesktopWidget>
+#include <QFile>
 #include <QX11Info>
 
 #include <X11/Xlib.h>

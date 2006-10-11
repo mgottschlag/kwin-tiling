@@ -31,15 +31,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kdmconfig.h"
 #include "kfdialog.h"
-//Added by qt3to4:
-#include <QGridLayout>
 
-class QAction;
-class QKeySequence;
-class QMenu;
-class QGridLayout;
 class KConsole;
 class KGVerify;
+
+class QMenu;
 
 #define ex_exit    1
 #define ex_greet   2

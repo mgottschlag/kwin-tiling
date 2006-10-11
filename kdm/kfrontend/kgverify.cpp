@@ -31,34 +31,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "themer/kdmthemer.h"
 #include "themer/kdmitem.h"
 
-#include <kapplication.h>
-#include <klocale.h>
-#include <klibloader.h>
-#include <kseparator.h>
 #include <kguiitem.h>
-#include <kstdguiitem.h>
+#include <klibloader.h>
+#include <klocale.h>
 #include <kpushbutton.h>
+#include <krandom.h>
+#include <kseparator.h>
+#include <kstdguiitem.h>
 
-#include <QRegExp>
-#include <QMenu>
-#include <QLayout>
-#include <QFile>
-#include <QLabel>
-//Added by qt3to4:
-#include <QGridLayout>
+#include <QAction>
+#include <QApplication>
 #include <QEvent>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-
-#include <pwd.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QMenu>
+#include <QX11Info>
 
 #include <X11/Xlib.h> // for updateLockStatus()
 #include <fixx11h.h> // ... and make eventFilter() work again
-#include <QX11Info>
-#include <krandom.h>
 
 #define FULL_GREET_TO 40 // normal inactivity timeout
 #define TIMED_GREET_TO 20 // inactivity timeout when persisting timed login

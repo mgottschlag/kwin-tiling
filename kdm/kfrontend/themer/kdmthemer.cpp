@@ -29,24 +29,15 @@
 #include <kdm_greet.h>
 #include <kfdialog.h>
 
-#include <kiconloader.h>
-#include <kimageeffect.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
-#include <kdebug.h>
 
-#include <QFile>
-#include <QFileInfo>
-//#include <QTimer>		// animation timer - TODO
-#include <QObject>
-#include <QPainter>
-#include <QWidget>
-#include <qregion.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <QPaintEvent>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QPaintEvent>
+#include <QFile>
+#include <QFileInfo>
+#include <QPainter>
 
 #include <unistd.h>
 

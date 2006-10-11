@@ -26,9 +26,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef KGAPP_H
 #define KGAPP_H
 
-#include <qapplication.h>
-//Added by qt3to4:
-#include <QTimerEvent>
+#include <QApplication>
+
+class QTimerEvent;
 
 class GreeterApp : public QApplication {
 	Q_OBJECT

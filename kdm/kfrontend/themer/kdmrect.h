@@ -25,7 +25,6 @@
 #include "kdmitem.h"
 
 #include <QColor>
-#include <QFont>
 
 /*
  * KdmRect: A themed rectangular element

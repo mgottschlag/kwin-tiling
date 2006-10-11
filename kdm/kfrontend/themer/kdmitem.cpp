@@ -27,19 +27,10 @@
 #include "kdmlayout.h"
 #include "kdmthemer.h"
 
-#include <kdm_greet.h>
+#include <kdm_greet.h> // debug*
 
-#include <kglobal.h>
-#include <kdebug.h>
-
-#include <QWidget>
-#include <QLayout>
-#include <QImage>
 #include <QLineEdit>
 #include <QPainter>
-//Added by qt3to4:
-#include <QList>
-#include <QDebug>
 
 KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	: QObject( parent )

@@ -26,35 +26,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kdm_greet.h"
 #include "utils.h"
 
-#include <kapplication.h>
-#include <kseparator.h>
-#include <klocale.h>
-#include <kpushbutton.h>
-#include <kstdguiitem.h>
-#include <kprocio.h>
 #include <kdialog.h>
+#include <klocale.h>
+#include <kprocio.h>
+#include <kseparator.h>
 #include <kstandarddirs.h>
+#include <kstdguiitem.h>
 #include <kuser.h>
 
-#include <QComboBox>
-#include <QStyle>
-#include <QLayout>
-#include <QMenu>
+#include <QAction>
+#include <QApplication>
 #include <QCheckBox>
-#include <QLineEdit>
-#include <QLabel>
+#include <QComboBox>
 #include <QDateTime>
-#include <QPixmap>
-#include <QGroupBox>
-#include <QGridLayout>
-#include <QBoxLayout>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QFrame>
-#include <QMouseEvent>
+#include <QGroupBox>
+#include <QHeaderView>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMenu>
+#include <QStyle>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-#include <QHeaderView>
 
 #include <stdlib.h>
 

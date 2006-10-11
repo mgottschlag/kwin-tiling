@@ -22,14 +22,7 @@
 #include "kdmrect.h"
 #include "kdmthemer.h"
 
-#include <kdebug.h>
-
-#include <QImage>
 #include <QPainter>
-#include <QWidget>
-#include <QLayout>
-//Added by qt3to4:
-#include <QPixmap>
 
 KdmRect::KdmRect( QObject *parent, const QDomNode &node )
 	: KdmItem( parent, node )

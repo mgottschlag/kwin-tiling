@@ -28,15 +28,13 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmacroexpander.h>
-#include <kdebug.h>
 
-#include <QDateTime>
-#include <QPainter>
-#include <QFontMetrics>
-#include <QTimer>
-#include <QMap>
-#include <QHash>
 #include <QAction>
+#include <QDateTime>
+#include <QFontMetrics>
+#include <QHash>
+#include <QPainter>
+#include <QTimer>
 
 #include <unistd.h>
 #include <sys/utsname.h>

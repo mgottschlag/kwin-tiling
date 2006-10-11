@@ -22,13 +22,6 @@
 #include "kdmlayout.h"
 #include "kdmitem.h"
 
-#include <kdebug.h>
-
-#include <qdom.h>
-#include <QRect>
-//Added by qt3to4:
-#include <QList>
-
 KdmLayoutFixed::KdmLayoutFixed( const QDomNode &/*node*/ )
 {
 	//Parsing FIXED parameters on 'node' [NONE!]

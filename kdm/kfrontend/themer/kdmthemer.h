@@ -22,22 +22,12 @@
 #ifndef KDMTHEMER_H
 #define KDMTHEMER_H
 
-#include <QObject>
-#include <QWidget>
-#include <qdom.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <QEvent>
 #include <QMap>
+#include <QObject>
 
-class KdmThemer;
 class KdmItem;
-class KdmPixmap;
-class KdmRect;
-class KdmBox;
 
-class QRect;
-class QEvent;
+class QDomNode;
 class QPaintDevice;
 
 /**
@@ -110,7 +100,7 @@ private:
 	 * Parses the XML file looking for the
 	 * item list and adds those to the themer
 	 */
-	void generateItems( KdmItem *parent = 0, const QDomNode &node = QDomNode() );
+	void generateItems( KdmItem *parent, const QDomNode &node );
 
 	void showStructure();
 

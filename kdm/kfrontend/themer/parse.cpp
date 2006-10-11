@@ -23,14 +23,12 @@
 
 #include <kdm_greet.h>
 
-#include <QString>
-#include <QStringList>
-#include <QColor>
-#include <QDomElement>
-#include <QWidget>
-#include <QLineEdit>
 #include <QComboBox>
+#include <QDomElement>
+#include <QFrame>
+#include <QLineEdit>
 #include <QStack>
+#include <QWidget>
 
 void
 parseSize( const QString &s, DataPoint &pt )

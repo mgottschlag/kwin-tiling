@@ -32,30 +32,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #endif
 #include "themer/kdmthemer.h"
 
-#include <kapplication.h>
-#include <kprocess.h>
-#include <kglobalsettings.h>
-#include <kcmdlineargs.h>
 #include <kcrash.h>
-#include <kstandarddirs.h>
+#include <kglobalsettings.h>
+#include <kinstance.h>
+#include <kprocess.h>
 #include <ksimpleconfig.h>
+#include <kstandarddirs.h>
 
-#include <QTimer>
-#include <qdesktopwidget.h>
-#include <QCursor>
-#include <QPalette>
-//Added by qt3to4:
-#include <QTimerEvent>
-#include <QByteArray>
+#include <QDesktopWidget>
+#include <QX11Info>
 
 #include <stdlib.h> // free(), exit()
 #include <unistd.h> // alarm()
+#include <signal.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/cursorfont.h>
-#include <QX11Info>
 
 extern "C" {
 

@@ -31,12 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <klocale.h>
 
-#include <QLayout>
-#include <QPushButton>
-#include <QApplication>
+#include <QAction>
 #include <QMenu>
-
-#include <stdlib.h>
 
 KGDialog::KGDialog( bool themed ) : inherited( 0, !themed )
 {

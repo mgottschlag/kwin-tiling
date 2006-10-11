@@ -22,19 +22,13 @@
 #ifndef KDMLAYOUT_H
 #define KDMLAYOUT_H
 
-/**
- * this is a container for a lot of other stuff
- * but can be treated like a usual widget
- */
-
 #include <QSize>
-#include <QList>
 #include <QStack>
-#include <QRect>
 
 class KdmItem;
 
 class QDomNode;
+class QRect;
 
 class KdmLayout {
 

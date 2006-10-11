@@ -22,14 +22,9 @@
 #include "kdmpixmap.h"
 #include "kdmthemer.h"
 
-#include <kimageeffect.h>
 #include <ksvgrenderer.h>
 
-#include <kdebug.h>
-
 #include <QPainter>
-#include <QPixmap>
-#include <QImage>
 
 KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 	: KdmItem( parent, node )
