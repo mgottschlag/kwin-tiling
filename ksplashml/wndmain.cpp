@@ -174,8 +174,8 @@ void KSplash::initDbus()
     if(!mKsTheme->managedMode())
       upAndRunning("dbus");
     (void)new KSplashAdaptor(this);
+    QDBusConnection::sessionBus().registerService("org.kde.ksplash");
     QDBusConnection::sessionBus().registerObject(QLatin1String("/KSplash"), this);
-    QDBusConnection::sessionBus().connectToBus(QDBusConnection::SessionBus, "org.kde.ksplash");
 }
 
 void KSplash::updateState( unsigned int state )
