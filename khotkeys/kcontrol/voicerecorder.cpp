@@ -122,7 +122,7 @@ void VoiceRecorder::slotSoundRecorded(const Sound &sound)
 		QString vm=voice_handler->isNewSoundFarEnough( VoiceSignature(sound), _voiceId);
 		if(!vm.isNull())
 		{
-			KMessageBox::sorry (this, i18n("The word you recorded is too close to the existing reference '%1'. Please record another word.").arg(vm) );
+			KMessageBox::sorry (this, i18n("The word you recorded is too close to the existing reference '%1'. Please record another word.", vm) );
 			//TODO: messagebox saying there are too much noise	
 			correct=false;
 		}

@@ -79,7 +79,7 @@ void VoiceRecordPage::slotChanged()
 			voiceCodeOK=!voice_handler->doesVoiceCodeExists(_lineEdit->text());
 			if(!voiceCodeOK)
 			{
-				_label->setText(i18n("<qt>%1<br><font color='red'>The sound code already exists</font></qt>").arg(_message));
+				_label->setText(i18n("<qt>%1<br><font color='red'>The sound code already exists</font></qt>", _message));
 			}
 		}
 		if( voiceCodeOK )
@@ -87,7 +87,7 @@ void VoiceRecordPage::slotChanged()
 			voiceCodeOK=_recorder1->state()!=VoiceRecorder::sIncorrect && _recorder2->state()!=VoiceRecorder::sIncorrect;
 			if(!voiceCodeOK)
 			{
-				_label->setText(i18n("<qt>%1<br><font color='red'>One of the sound references is not correct</font></qt>").arg(_message));
+				_label->setText(i18n("<qt>%1<br><font color='red'>One of the sound references is not correct</font></qt>", _message));
 			}
 		}
 		if( voiceCodeOK )
