@@ -17,24 +17,17 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <unistd.h>
-#include <sys/types.h>
-
-
-#include <QApplication>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QLayout>
-#include <QLabel>
-#include <QPushButton>
-
-#include <kdialog.h>
-#include <ksimpleconfig.h>
-#include <kfontrequester.h>
-#include <klocale.h>
-
 #include "kdm-font.h"
 
+#include <kdialog.h>
+#include <kfontrequester.h>
+#include <klocale.h>
+#include <ksimpleconfig.h>
+
+#include <QCheckBox>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
 
 extern KSimpleConfig *config;
 

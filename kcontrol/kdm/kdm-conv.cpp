@@ -18,26 +18,23 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <unistd.h>
-#include <sys/types.h>
+#include "kdm-conv.h"
 
+#include <k3listview.h>
+#include <kcombobox.h>
+#include <kdialog.h>
+#include <klocale.h>
+#include <ksimpleconfig.h>
 
-#include <QLayout>
-#include <QLabel>
+#include <QButtonGroup>
+#include <QCheckBox>
 #include <QGroupBox>
-#include <q3buttongroup.h>
-#include <q3header.h>
-//Added by qt3to4:
+#include <QLabel>
+#include <QRadioButton>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QBoxLayout>
-
-#include <kdialog.h>
-#include <ksimpleconfig.h>
-#include <klocale.h>
-
-#include "kdm-conv.h"
+#include <q3header.h>
 
 extern KSimpleConfig *config;
 

@@ -21,24 +21,17 @@
 #define __KDMUSERS_H__
 
 #include <QWidget>
-#include <QString>
-#include <QImage>
-#include <QRadioButton>
-#include <QCheckBox>
-#include <QStackedWidget>
-//Added by qt3to4:
-#include <QEvent>
-#include <QDropEvent>
-#include <QLabel>
 
-#include <klineedit.h>
-#include <k3listview.h>
-#include <kcombobox.h>
-#include <kurl.h>
-
-#include <pwd.h>
-
+class K3ListView;
+class Q3ListViewItem;
+class KComboBox;
+class QCheckBox;
 class QGroupBox;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
+class QStackedWidget;
 
 class KDMUsersWidget : public QWidget {
 	Q_OBJECT

@@ -19,22 +19,15 @@
 
 #include <config.h>
 
-#include <unistd.h>
-#include <sys/types.h>
-
-#include <QLayout>
-//Added by qt3to4:
-#include <QVBoxLayout>
-
-#include <kdebug.h>
-#include <kdialog.h>
-#include <klocale.h>
-#include "../background/bgsettings.h"
-#include "../background/bgdialog.h"
 #include "background.h"
-#include <QCheckBox>
+
+#include "../background/bgdialog.h"
+
+#include <klocale.h>
 #include <ksimpleconfig.h>
-#include <kdialog.h>
+
+#include <QCheckBox>
+#include <QVBoxLayout>
 
 extern KSimpleConfig *config;
 
@@ -94,7 +87,6 @@ void KBackground::load()
 
 void KBackground::save()
 {
-	kDebug() << "Saving stuff..." << endl;
 	config->writeEntry( "UseBackground", m_pCBEnable->isChecked() );
 	m_background->save();
 	emit changed( false );

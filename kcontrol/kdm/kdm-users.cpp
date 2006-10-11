@@ -17,39 +17,43 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <unistd.h>
-#include <sys/types.h>
-
-#include <QStyle>
-#include <QLayout>
-#include <QLabel>
-#include <QToolTip>
-#include <QValidator>
-
-#include <QButtonGroup>
-#include <QGroupBox>
-#include <QPushButton>
-//Added by qt3to4:
-#include <QGridLayout>
-#include <QEvent>
-#include <QHBoxLayout>
-#include <QDropEvent>
-#include <QVBoxLayout>
-#include <QDragEnterEvent>
-
-#include <kfiledialog.h>
-#include <kimageio.h>
-#include <kimagefilepreview.h>
-#include <kio/netaccess.h>
-#include <klocale.h>
-#include <kstandarddirs.h>
-#include <kmessagebox.h>
-#include <k3urldrag.h>
-
 #include "kdm-users.h"
 
-#include <sys/stat.h>
+#include <k3listview.h>
+#include <k3urldrag.h>
+#include <kcombobox.h>
+#include <kfiledialog.h>
+#include <kglobal.h>
+#include <kimagefilepreview.h>
+#include <kimageio.h>
+#include <kio/netaccess.h>
+#include <klineedit.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
+#include <kstdguiitem.h>
 
+#include <QButtonGroup>
+#include <QCheckBox>
+#include <QDir>
+#include <QDragEnterEvent>
+#include <QEvent>
+#include <QFile>
+#include <QGroupBox>
+#include <QIntValidator>
+#include <QLabel>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QStackedWidget>
+#include <QStyle>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 extern KSimpleConfig *config;
 

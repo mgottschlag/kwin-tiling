@@ -9,13 +9,10 @@
 #ifndef __Bgnd_h_Included__
 #define __Bgnd_h_Included__
 
-#include <QObject>
 #include <QWidget>
 
-
-class KSimpleConfig;
 class BGDialog;
-class KGlobalBackgroundSettings;
+class KSimpleConfig;
 class QCheckBox;
 class QLabel;
 

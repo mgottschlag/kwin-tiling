@@ -21,26 +21,15 @@
 #ifndef __KDMAPPEAR_H__
 #define __KDMAPPEAR_H__
 
+#include <QWidget>
 
-#include <QDir>
-#include <QImage>
-#include <QFileInfo>
-#include <QPushButton>
-
-#include <kcolorbutton.h>
-#include <kurl.h>
-#include <kfiledialog.h>
-
-
-#include "klanguagebutton.h"
-
-class QComboBox;
 class KBackedComboBox;
-class QLabel;
-class QRadioButton;
-class QLineEdit;
+class KLanguageButton;
 class KLineEdit;
-
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
 
 class KDMAppearanceWidget : public QWidget {
 	Q_OBJECT

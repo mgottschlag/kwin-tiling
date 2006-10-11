@@ -20,16 +20,14 @@
 #ifndef __KDMSESS_H__
 #define __KDMSESS_H__
 
+#include <QWidget>
 
-#include <QString>
-
-class QComboBox;
-class QCheckBox;
-class KUrlRequester;
 class KBackedComboBox;
+class KUrlRequester;
+class QComboBox;
+class QLabel;
 
-class KDMSessionsWidget : public QWidget
-{
+class KDMSessionsWidget : public QWidget {
 	Q_OBJECT
 
   public:

@@ -24,10 +24,9 @@
 #ifndef __kdm_main_h
 #define __kdm_main_h
 
-#include <QTabWidget>
-#include <QMap>
-
 #include <kcmodule.h>
+
+#include <QMap>
 
 class KDMAppearanceWidget;
 class KDMFontWidget;
@@ -35,12 +34,13 @@ class KDMSessionsWidget;
 class KDMUsersWidget;
 class KDMConvenienceWidget;
 class KBackground;
+class QTabWidget;
 
 class KDModule : public KCModule {
 	Q_OBJECT
 
   public:
-	KDModule(QWidget *parent, const QStringList &);
+	KDModule( QWidget *parent, const QStringList & );
 	~KDModule();
 
 	void load();

@@ -21,28 +21,21 @@
 #ifndef __KDMCONV_H__
 #define __KDMCONV_H__
 
-#include <QString>
-#include <QImage>
-#include <QRadioButton>
-#include <QCheckBox>
-//Added by qt3to4:
-#include <QLabel>
+#include <QWidget>
 
-#include <klistbox.h>
-#include <kcombobox.h>
-#include <kcolorbutton.h>
-#include <k3listview.h>
-#include <kurl.h>
-
-#include <pwd.h>
-
+class K3ListView;
+class Q3ListViewItem;
+class KComboBox;
+class QCheckBox;
 class QGroupBox;
+class QLabel;
+class QRadioButton;
 
 class KDMConvenienceWidget : public QWidget {
 	Q_OBJECT
 
   public:
-	KDMConvenienceWidget(QWidget *parent=0);
+	KDMConvenienceWidget( QWidget *parent = 0 );
 
 	void load();
 	void save();

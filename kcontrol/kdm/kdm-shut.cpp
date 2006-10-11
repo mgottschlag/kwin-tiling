@@ -17,27 +17,22 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <unistd.h>
-#include <sys/types.h>
-
-
-#include <QCheckBox>
-#include <QComboBox>
-#include <QLabel>
-#include <QLayout>
-
-#include <ksimpleconfig.h>
-#include <karrowbutton.h>
-#include <klineedit.h>
-#include <klocale.h>
-#include <kdialog.h>
-#include <kurlrequester.h>
-
 #include "kdm-shut.h"
+
 #include "kbackedcombobox.h"
 
-extern KSimpleConfig *config;
+#include <kdialog.h>
+#include <klineedit.h>
+#include <klocale.h>
+#include <ksimpleconfig.h>
+#include <kurlrequester.h>
 
+#include <QGroupBox>
+#include <QLabel>
+#include <QGridLayout>
+#include <QVBoxLayout>
+
+extern KSimpleConfig *config;
 
 KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	: QWidget( parent )

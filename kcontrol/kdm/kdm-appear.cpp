@@ -17,44 +17,36 @@
   Boston, MA 02110-1301, USA.
 */
 
-
-#include <unistd.h>
-#include <sys/types.h>
-
-
-#include <QLabel>
-#include <QLayout>
-#include <QRadioButton>
-#include <QButtonGroup>
-#include <QGroupBox>
-
-#include <QValidator>
-#include <qstylefactory.h>
-#include <QStyle>
-//Added by qt3to4:
-#include <QGridLayout>
-#include <QEvent>
-#include <QHBoxLayout>
-#include <QDropEvent>
-#include <QVBoxLayout>
-#include <QDragEnterEvent>
-
-#include <klocale.h>
-#include <klineedit.h>
-#include <kimageio.h>
-#include <kcombobox.h>
-#include <kmessagebox.h>
-#include <kstandarddirs.h>
-#include <kio/netaccess.h>
-#include <kiconloader.h>
-#include <k3urldrag.h>
-#include <kimagefilepreview.h>
-
 #include "kdm-appear.h"
+
 #include "kbackedcombobox.h"
 
-extern KSimpleConfig *config;
+#include <k3urldrag.h>
+#include <kdialog.h>
+#include <kfiledialog.h>
+#include <kiconloader.h>
+#include <kimagefilepreview.h>
+#include <kimageio.h>
+#include <kio/netaccess.h>
+#include <klanguagebutton.h>
+#include <klineedit.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
 
+#include <QButtonGroup>
+#include <QDragEnterEvent>
+#include <QEvent>
+#include <QGroupBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+
+extern KSimpleConfig *config;
 
 KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 	: QWidget( parent )

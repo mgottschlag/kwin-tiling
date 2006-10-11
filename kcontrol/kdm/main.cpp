@@ -23,28 +23,29 @@
 
 #include <config.h>
 
-#include <QLayout>
-//Added by qt3to4:
-#include <QVBoxLayout>
-#include <QDropEvent>
-
-#include <kaboutdata.h>
-#include <kgenericfactory.h>
-#include <kimageio.h>
-#include <kmessagebox.h>
-#include <k3urldrag.h>
-
+#include "main.h"
+#include "background.h"
 #include "kdm-appear.h"
 #include "kdm-font.h"
 #include "kdm-users.h"
 #include "kdm-shut.h"
 #include "kdm-conv.h"
 
-#include "main.h"
-#include "background.h"
+#include <k3urldrag.h>
+#include <kaboutdata.h>
+#include <kgenericfactory.h>
+#include <kimageio.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kmimetype.h>
+#include <ksimpleconfig.h>
+
+#include <QDropEvent>
+#include <QFile>
+#include <QTabWidget>
+#include <QVBoxLayout>
 
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <locale.h>
 #include <pwd.h>
