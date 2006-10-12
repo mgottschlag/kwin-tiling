@@ -126,7 +126,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="Q3Frame" name="gbAdvanced" >
+      <widget class="QFrame" name="gbAdvanced" >
        <property name="frameShape" >
         <enum>QFrame::NoFrame</enum>
        </property>
@@ -412,7 +412,7 @@
     </layout>
    </item>
    <item row="3" column="0" colspan="2" >
-    <widget class="Q3Frame" name="separator" >
+    <widget class="QFrame" name="separator" >
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>1</hsizetype>
@@ -542,13 +542,6 @@
    <extends></extends>
    <header>kcombobox.h</header>
    <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends></extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
    <pixmap></pixmap>
   </customwidget>
  </customwidgets>
