@@ -220,9 +220,6 @@ typedef struct {
 	char *path;           /* filename of the socket */
 	int fd;               /* fd of the socket */
 	int gid;              /* owner group of the socket */
-
-	char *fpath;          /* filename of the fifo */
-	struct bsock fifo;    /* buffered fd of the fifo */
 } CtrlRec;
 
 struct display {
@@ -251,7 +248,7 @@ struct display {
 	int userSess;               /* -1=nobody, otherwise uid */
 	char *userName;
 	char *sessName;
-	CtrlRec ctrl;               /* command socket & fifo */
+	CtrlRec ctrl;               /* command socket */
 	GPipe pipe;                 /* comm master <-> slave */
 	GPipe gpipe;                /* comm master <-> greeter */
 #ifdef XDMCP

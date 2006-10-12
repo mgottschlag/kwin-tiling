@@ -1161,23 +1161,7 @@ StartClient()
 
 	env = baseEnv( curuser );
 	xma = 0;
-	if (td->ctrl.fpath && StrDup( &xma, td->ctrl.fpath )) {
-		if ((td->allowShutdown == SHUT_ALL ||
-		     (td->allowShutdown == SHUT_ROOT && !curuser)) &&
-		    StrApp( &xma, ",maysd", (char *)0 ))
-		{
-			if (td->allowNuke == SHUT_ALL ||
-			    (td->allowNuke == SHUT_ROOT && !curuser))
-				StrApp( &xma, ",mayfn", (char *)0 );
-			StrApp( &xma, td->defSdMode == SHUT_FORCENOW ? ",fn" :
-			        td->defSdMode == SHUT_TRYNOW ? ",tn" : ",sched",
-			        (char *)0 );
-		}
-		if ((td->displayType & d_location) == dLocal && AnyReserveDisplays())
-			StrApp( &xma, ",rsvd", (char *)0 );
-	} else
-		StrDup( &xma, "true" );
-	StrApp( &xma, ",method=", curtype, (char *)0 );
+	StrApp( &xma, "method=", curtype, (char *)0 );
 	if (td_setup)
 		StrApp( &xma, ",auto", (char *)0 );
 	if (xma) {

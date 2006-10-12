@@ -279,7 +279,6 @@ NewDisplay( const char *name )
 	d->pid = -1;
 	d->serverPid = -1;
 	d->ctrl.fd = -1;
-	d->ctrl.fifo.fd = -1;
 	d->pipe.rfd = -1;
 	d->pipe.wfd = -1;
 	d->gpipe.rfd = -1;

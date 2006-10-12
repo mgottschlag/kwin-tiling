@@ -78,7 +78,7 @@ nukeSock( struct cmdsock *cs )
 }
 
 
-static CtrlRec ctrl = { 0, 0, -1, 0, 0, { -1, 0, 0 } };
+static CtrlRec ctrl = { 0, 0, -1, 0 };
 
 void
 openCtrl( struct display *d )
@@ -96,7 +96,7 @@ openCtrl( struct display *d )
 			dname += 9;
 	} else
 		cr = &ctrl, dname = 0;
-	if (cr->fifo.fd < 0) {
+	if (cr->fd < 0) {
 		if (mkdir( fifoDir, 0755 )) {
 			if (errno != EEXIST) {
 				LogError( "mkdir %\"s failed; no control FiFos will be available\n",
@@ -105,32 +105,6 @@ openCtrl( struct display *d )
 			}
 		} else
 			chmod( fifoDir, 0755 ); /* override umask */
-		StrApp( &cr->fpath, fifoDir, dname ? "/xdmctl-" : "/xdmctl",
-		        dname, (char *)0 );
-		if (cr->fpath) {
-			unlink( cr->fpath );
-			if (mkfifo( cr->fpath, 0 ) < 0)
-				LogError( "Cannot create control FiFo %\"s\n", cr->fpath );
-			else {
-				cr->gid = fifoGroup;
-				if (!d)
-					chown( cr->fpath, -1, fifoGroup );
-				chmod( cr->fpath, 0620 );
-				if ((cr->fifo.fd = open( cr->fpath, O_RDWR | O_NONBLOCK )) >= 0) {
-					RegisterCloseOnFork( cr->fifo.fd );
-					RegisterInput( cr->fifo.fd );
-					goto fifok;
-				}
-				unlink( cr->fpath );
-				LogError( "Cannot open control FiFo %\"s\n", cr->fpath );
-			}
-			free( cr->fpath );
-			cr->fpath = 0;
-		}
-	}
-  fifok:
-	if (cr->fd < 0) {
-		/* fifoDir is created above already */
 		sockdir = 0;
 		StrApp( &sockdir, fifoDir, dname ? "/dmctl-" : "/dmctl",
 		        dname, (char *)0 );
@@ -199,25 +173,11 @@ closeCtrl( struct display *d )
 			nukeSock( cs );
 		}
 	}
-	if (cr->fifo.fd >= 0) {
-		UnregisterInput( cr->fifo.fd );
-		CloseNClearCloseOnFork( cr->fifo.fd );
-		cr->fifo.fd = -1;
-		unlink( cr->fpath );
-		free( cr->fpath );
-		cr->fpath = 0;
-		if (cr->fifo.buffer)
-			free( cr->fifo.buffer );
-		cr->fifo.buffer = 0;
-		cr->fifo.buflen = 0;
-	}
 }
 
 void
 chownCtrl( CtrlRec *cr, int uid )
 {
-	if (cr->fpath)
-		chown( cr->fpath, uid, -1 );
 	if (cr->path) {
 		char *ptr = strrchr( cr->path, '/' );
 		*ptr = 0;
@@ -921,19 +881,6 @@ handleCtrl( FD_TYPE *reads, struct display *d )
 	CtrlRec *cr = d ? &d->ctrl : &ctrl;
 	struct cmdsock *cs, **csp;
 
-	if (cr->fifo.fd >= 0) {
-		switch (handleChan( d, &cr->fifo, -1, reads )) {
-		case -1:
-			if (cr->fifo.buffer)
-				free( cr->fifo.buffer );
-			cr->fifo.buflen = 0;
-			break;
-		case 1:
-			return 1;
-		default:
-			break;
-		}
-	}
 	if (cr->fd >= 0 && FD_ISSET( cr->fd, reads ))
 		acceptSock( cr );
 	else {

@@ -2,6 +2,10 @@ This change log contains only changes relevant to the KDM configuration,
 startup and packaging. Bug fixes are not listed, and feature changes only
 if they affect the configuration.
 
+2006-10-12  Oswald Buddenhagen <ossi@kde.org>
+
+	* Removed control FiFos. Use the control sockets or kdmctl instead.
+
 2005-08-21  Oswald Buddenhagen <ossi@kde.org>
 
 	* Added timed login. Option AutoLoginDelay.

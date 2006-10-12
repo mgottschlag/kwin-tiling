@@ -347,7 +347,7 @@ mode and <command>grep</command> the log for <quote>class</quote>.</para>
 
 <para>The displays specified in <option>ReserveServers</option> will not be
 started when &kdm; starts up, but when it is explicitly requested via
-the command socket (or <acronym>FiFo</acronym>).
+the command socket.
 If reserve displays are specified, the &kde; menu will have a
 <guilabel>Start New Session</guilabel> item near the bottom; use that to
 activate a reserve display with a new login session. The monitor will switch
@@ -640,8 +640,7 @@ the following environment variables are passed:</para>
  <varlistentry>
   <term>XDM_MANAGED</term>
   <listitem><para>will contain a comma-separated list of parameters the
-   session might find interesting, like the location of the command
-   <acronym>FiFo</acronym> and its capabilities, and which conversation
+   session might find interesting, like which conversation
    plugin was used for the login</para>
   </listitem>
  </varlistentry>
@@ -1012,10 +1011,10 @@ User: core
 Instance: #"/tmp"
 Update: upd_fifodir
 Comment:
- Where the command FiFos should be created; make it empty to disable
+ Where the command sockets should be created; make it empty to disable
  them.
 Description:
- The directory in which the command <acronym>FiFo</acronym>s should
+ The directory in which the command sockets should
  be created; make it empty to disable them.
 # See <xref linkend="kdm-fifos"/> for the details.
 
@@ -1026,7 +1025,7 @@ User: core
 Instance: #xdmctl
 Comment: &
 Description:
- The group to which the global command <acronym>FiFo</acronym> should belong;
+ The group to which the global command socket should belong;
  can be either a name or a numerical ID.
 
 Key: DataDir
@@ -1222,7 +1221,7 @@ User: core(fifoAllowShutdown)
 Instance: #!
 Comment: &
 Description:
- Whether it is allowed to shut down the system via the global command <acronym>FiFo</acronym>.
+ Whether it is allowed to shut down the system via the global command socket.
 
 Key: AllowFifoNow
 Type: bool
@@ -1231,10 +1230,10 @@ User: core(fifoAllowNuke)
 Instance: #!
 Comment:
  Whether it is allowed to abort active sessions when shutting down the
- system via the global command FiFo.
+ system via the global command socket.
 Description:
  Whether it is allowed to abort active sessions when shutting down the
- system via the global command <acronym>FiFo</acronym>.
+ system via the global command socket.
  </para><para>
  This will have no effect unless <option>AllowFifo</option> is enabled.
 
@@ -1783,7 +1782,7 @@ Merge: kdm:-Greeter/
 Comment: &
 Description:
  Who is allowed to shut down the system. This applies both to the
- greeter and to the command <acronym>FiFo</acronym>.
+ greeter and to the command sockets.
 
 Key: AllowSdForceNow
 Type: enum
