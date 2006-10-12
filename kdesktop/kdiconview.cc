@@ -421,11 +421,13 @@ void KDIconView::createActions()
         KAction *pasteTo = KStdAction::paste( this, SLOT( slotPopupPasteTo() ), &m_actionCollection, "pasteto" );
         pasteTo->setEnabled( false ); // only enabled during popupMenu()
 
+        KStdAction::redisplay( this, SLOT(refreshIcons()), &m_actionCollection, "reload" );
+
         KAction *action = new KAction( i18n( "&Rename" ), &m_actionCollection, "rename" );
-        connect(action, SIGNAL(triggered(bool) ), SLOT( renameSelectedItem() ));
+        connect(action, SIGNAL(triggered(bool)), SLOT(renameSelectedItem()));
         action->setShortcut(Qt::Key_F2);
         action = new KAction( i18n( "&Properties" ), &m_actionCollection, "properties" );
-        connect(action, SIGNAL(triggered(bool) ), SLOT( slotProperties() ));
+        connect(action, SIGNAL(triggered(bool)), SLOT(slotProperties()));
         action->setShortcut(Qt::ALT+Qt::Key_Return);
         KAction* trash = new KAction( KIcon("edittrash"), i18n( "&Move to Trash" ), &m_actionCollection, "trash" );
         trash->setShortcut(Qt::Key_Delete);
