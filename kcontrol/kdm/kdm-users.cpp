@@ -107,14 +107,14 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	minlab->setBuddy( leminuid );
 	leminuid->setSizePolicy( sp_ign_fix );
 	leminuid->setValidator( valid );
-	connect( leminuid, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
+	connect( leminuid, SIGNAL(textChanged( const QString & )), SIGNAL(changed()) );
 	connect( leminuid, SIGNAL(textChanged( const QString & )), SLOT(slotMinMaxChanged()) );
 	QLabel *maxlab = new QLabel( i18n("Above:"), minGroup );
 	lemaxuid = new KLineEdit( minGroup );
 	maxlab->setBuddy( lemaxuid );
 	lemaxuid->setSizePolicy( sp_ign_fix );
 	lemaxuid->setValidator( valid );
-	connect( lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
+	connect( lemaxuid, SIGNAL(textChanged( const QString & )), SIGNAL(changed()) );
 	connect( lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotMinMaxChanged()) );
 	QGridLayout *grid = new QGridLayout( minGroup );
 	grid->addWidget( minlab, 0, 0 );
@@ -140,7 +140,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	QButtonGroup *buttonGroup = new QButtonGroup( usrGroup );
 	buttonGroup->setExclusive( false );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotShowOpts()) );
-	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotChanged()) );
+	connect( buttonGroup, SIGNAL(buttonClicked( int )), SIGNAL(changed()) );
 	buttonGroup->addButton( cbshowlist );
 	buttonGroup->addButton( cbcomplete );
 	buttonGroup->addButton( cbinverted );
@@ -162,7 +162,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	connect( optinlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SLOT(slotUpdateOptIn( Q3ListViewItem * )) );
 	connect( optinlv, SIGNAL(clicked( Q3ListViewItem * )),
-	         SLOT(slotChanged()) );
+	         SIGNAL(changed()) );
 	optoutlv = new K3ListView( this );
 	optoutlv->addColumn( i18n("Hidden Users") );
 	optoutlv->setResizeMode( Q3ListView::LastColumn );
@@ -171,7 +171,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SLOT(slotUpdateOptOut( Q3ListViewItem * )) );
 	connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
-	         SLOT(slotChanged()) );
+	         SIGNAL(changed()) );
 
 	faceGroup = new QGroupBox( i18n("User Image Source"), this );
 	faceGroup->setWhatsThis( i18n("Here you can specify where KDM will obtain the images that represent users."
@@ -184,7 +184,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	rbusronly = new QRadioButton( i18n("User"), faceGroup );
 	buttonGroup = new QButtonGroup( faceGroup );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotFaceOpts()) );
-	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotChanged()) );
+	connect( buttonGroup, SIGNAL(buttonClicked( int )), SIGNAL(changed()) );
 	buttonGroup->addButton( rbadmonly );
 	buttonGroup->addButton( rbprefadm );
 	buttonGroup->addButton( rbprefusr );
@@ -529,11 +529,6 @@ void KDMUsersWidget::defaults()
 void KDMUsersWidget::slotMinMaxChanged()
 {
 	emit setMinMaxUID( leminuid->text().toInt(), lemaxuid->text().toInt() );
-}
-
-void KDMUsersWidget::slotChanged()
-{
-	emit changed( true );
 }
 
 #include "kdm-users.moc"

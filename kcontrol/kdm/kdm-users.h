@@ -52,7 +52,7 @@ class KDMUsersWidget : public QWidget {
 	void slotDelUsers( const QMap<QString,int> & );
 
   Q_SIGNALS:
-	void changed( bool state );
+	void changed();
 	void setMinMaxUID( int, int );
 
   private Q_SLOTS:
@@ -64,7 +64,6 @@ class KDMUsersWidget : public QWidget {
 	void slotUnsetUserPix();
 	void slotFaceOpts();
 	void slotUserButtonClicked();
-	void slotChanged();
 
   private:
 	void updateOptList( Q3ListViewItem *item, QStringList &list );

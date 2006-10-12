@@ -49,11 +49,10 @@ class KDMConvenienceWidget : public QWidget {
 
 
   Q_SIGNALS:
-	void changed( bool state );
+	void changed();
 
   private Q_SLOTS:
 	void slotPresChanged();
-	void slotChanged();
 	void slotSetAutoUser( const QString &user );
 	void slotSetPreselUser( const QString &user );
 	void slotUpdateNoPassUser( Q3ListViewItem *item );

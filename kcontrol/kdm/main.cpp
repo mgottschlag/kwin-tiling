@@ -188,23 +188,23 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 
 	appearance = new KDMAppearanceWidget( this );
 	tab->addTab( appearance, i18n("A&ppearance") );
-	connect( appearance, SIGNAL(changed( bool )), SIGNAL(changed( bool )) );
+	connect( appearance, SIGNAL(changed()), SLOT(changed()) );
 
 	font = new KDMFontWidget( this );
 	tab->addTab( font, i18n("&Font") );
-	connect( font, SIGNAL(changed( bool )), SIGNAL(changed( bool )) );
+	connect( font, SIGNAL(changed()), SLOT(changed()) );
 
 	background = new KBackground( this );
 	tab->addTab( background, i18n("&Background") );
-	connect( background, SIGNAL(changed( bool )), SIGNAL(changed( bool )) );
+	connect( background, SIGNAL(changed()), SLOT(changed()) );
 
 	sessions = new KDMSessionsWidget( this );
 	tab->addTab( sessions, i18n("&Shutdown") );
-	connect( sessions, SIGNAL(changed( bool )), SIGNAL(changed( bool )) );
+	connect( sessions, SIGNAL(changed()), SLOT(changed()) );
 
 	users = new KDMUsersWidget( this );
 	tab->addTab( users, i18n("&Users") );
-	connect( users, SIGNAL(changed( bool )), SIGNAL(changed( bool )) );
+	connect( users, SIGNAL(changed()), SLOT(changed()) );
 	connect( users, SIGNAL(setMinMaxUID( int,int )), SLOT(slotMinMaxUID( int,int )) );
 	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )), users, SLOT(slotAddUsers( const QMap<QString,int> & )) );
 	connect( this, SIGNAL(delUsers( const QMap<QString,int> & )), users, SLOT(slotDelUsers( const QMap<QString,int> & )) );
@@ -212,7 +212,7 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 
 	convenience = new KDMConvenienceWidget( this );
 	tab->addTab( convenience, i18n("Con&venience") );
-	connect( convenience, SIGNAL(changed( bool )), SIGNAL(changed( bool )) );
+	connect( convenience, SIGNAL(changed()), SLOT(changed()) );
 	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )), convenience, SLOT(slotAddUsers( const QMap<QString,int> & )) );
 	connect( this, SIGNAL(delUsers( const QMap<QString,int> & )), convenience, SLOT(slotDelUsers( const QMap<QString,int> & )) );
 	connect( this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()) );

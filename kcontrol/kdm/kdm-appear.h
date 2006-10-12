@@ -50,7 +50,7 @@ class KDMAppearanceWidget : public QWidget {
 	bool eventFilter( QObject *, QEvent * );
 
   Q_SIGNALS:
-	void changed( bool state );
+	void changed();
 
   protected:
 	void iconLoaderDragEnterEvent( QDragEnterEvent *event );
@@ -60,7 +60,6 @@ class KDMAppearanceWidget : public QWidget {
   private Q_SLOTS:
 	void slotAreaRadioClicked( int id );
 	void slotLogoButtonClicked();
-	void changed();
 
   private:
 	enum { KdmNone, KdmClock, KdmLogo };

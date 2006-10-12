@@ -49,7 +49,7 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	sdlcombo->insertItem( SdAll, i18n("Everybody") );
 	sdlcombo->insertItem( SdRoot, i18n("Only Root") );
 	sdlcombo->insertItem( SdNone, i18n("Nobody") );
-	connect( sdlcombo, SIGNAL(activated( int )), SLOT(changed()) );
+	connect( sdlcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
 	sdrcombo = new QComboBox( group0 );
 	sdrcombo->setEditable( false );
 	sdrlabel = new QLabel( i18n ("&Remote:"), group0 );
@@ -57,7 +57,7 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	sdrcombo->insertItem( SdAll, i18n("Everybody") );
 	sdrcombo->insertItem( SdRoot, i18n("Only Root") );
 	sdrcombo->insertItem( SdNone, i18n("Nobody") );
-	connect( sdrcombo, SIGNAL(activated( int )), SLOT(changed()) );
+	connect( sdrcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
 	group0->setWhatsThis( i18n("Here you can select who is allowed to shutdown"
 	                           " the computer using KDM. You can specify different values for local (console) and remote displays. "
 	                           "Possible values are:<ul>"
@@ -72,7 +72,7 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	QLabel *shutdown_label = new QLabel( i18n("H&alt:"), group1 );
 	shutdown_label->setBuddy( shutdown_lined );
 	connect( shutdown_lined, SIGNAL(textChanged( const QString& )),
-	         SLOT(changed()) );
+	         SIGNAL(changed()) );
 	wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
 	shutdown_label->setWhatsThis( wtstr );
 	shutdown_lined->setWhatsThis( wtstr );
@@ -81,7 +81,7 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	QLabel *restart_label = new QLabel( i18n("Reb&oot:"), group1 );
 	restart_label->setBuddy( restart_lined );
 	connect( restart_lined, SIGNAL(textChanged( const QString& )),
-	         SLOT(changed()) );
+	         SIGNAL(changed()) );
 	wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
 	restart_label->setWhatsThis( wtstr );
 	restart_lined->setWhatsThis( wtstr );
@@ -97,7 +97,7 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 #endif
 	QLabel *bm_label = new QLabel( i18n("Boot manager:"), group4 );
 	bm_label->setBuddy( bm_combo );
-	connect( bm_combo, SIGNAL(activated( int )), SLOT(changed()) );
+	connect( bm_combo, SIGNAL(activated( int )), SIGNAL(changed()) );
 	wtstr = i18n("Enable boot options in the \"Shutdown...\" dialog.");
 	bm_label->setWhatsThis( wtstr );
 	bm_combo->setWhatsThis( wtstr );
@@ -207,8 +207,6 @@ void KDMSessionsWidget::load()
 	bm_combo->setCurrentId( config->readEntry( "BootManager", "None" ) );
 }
 
-
-
 void KDMSessionsWidget::defaults()
 {
 	restart_lined->setUrl( KUrl( "/sbin/reboot" ) );
@@ -218,12 +216,6 @@ void KDMSessionsWidget::defaults()
 	sdrcombo->setCurrentIndex( SdRoot );
 
 	bm_combo->setCurrentId( "None" );
-}
-
-
-void KDMSessionsWidget::changed()
-{
-	emit changed( true );
 }
 
 #include "kdm-shut.moc"

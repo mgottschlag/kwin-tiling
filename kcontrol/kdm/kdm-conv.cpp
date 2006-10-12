@@ -58,7 +58,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	alGroup->setWhatsThis( i18n("Turn on the auto-login feature."
 	                            " This applies only to KDM's graphical login."
 	                            " Think twice before enabling this!") );
-	connect( alGroup, SIGNAL(toggled( bool )), SLOT(slotChanged()) );
+	connect( alGroup, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
 	userlb = new KComboBox( alGroup );
 	u_label = new QLabel( i18n("Use&r:"), alGroup );
@@ -69,13 +69,13 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	hlpl1->addWidget( u_label );
 	hlpl1->addWidget( userlb );
 	hlpl1->addStretch( 1 );
-	connect( userlb, SIGNAL(highlighted( int )), SLOT(slotChanged()) );
+	connect( userlb, SIGNAL(highlighted( int )), SIGNAL(changed()) );
 	wtstr = i18n("Select the user to be logged in automatically.");
 	u_label->setWhatsThis( wtstr );
 	userlb->setWhatsThis( wtstr );
 	autoLockCheck = new QCheckBox( i18n("Loc&k session"), alGroup );
 	laygroup2->addWidget( autoLockCheck );
-	connect( autoLockCheck, SIGNAL(toggled( bool )), SLOT(slotChanged()) );
+	connect( autoLockCheck, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 	autoLockCheck->setWhatsThis( i18n("The automatically started session "
 	                                  "will be locked immediately (provided it is a KDE session). This can "
 	                                  "be used to obtain a super-fast login restricted to one user.") );
@@ -93,7 +93,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	                            "Use this if this computer is predominantly used by a certain user.") );
 	QButtonGroup *buttonGroup = new QButtonGroup( puGroup );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotPresChanged()) );
-	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(changed()) );
+	connect( buttonGroup, SIGNAL(buttonClicked( int )), SIGNAL(changed()) );
 	buttonGroup->addButton( npRadio );
 	buttonGroup->addButton( ppRadio );
 	buttonGroup->addButton( spRadio );
@@ -107,7 +107,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 
 	pu_label = new QLabel( i18n("Us&er:"), puGroup );
 	pu_label->setBuddy( puserlb );
-	connect( puserlb, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
+	connect( puserlb, SIGNAL(textChanged( const QString & )), SIGNAL(changed()) );
 	wtstr = i18n("Select the user to be preselected for login. "
 	             "This box is editable, so you can specify an arbitrary non-existent "
 	             "user to mislead possible attackers.");
@@ -126,7 +126,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	                             "in the password field instead of the user field after preselecting a user. "
 	                             "Use this to save one key press per login, if the preselection usually does not need to "
 	                             "be changed.") );
-	connect( cbjumppw, SIGNAL(toggled( bool )), SLOT(slotChanged()) );
+	connect( cbjumppw, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
 	npGroup = new QGroupBox( i18n("Enable Password-&Less Logins"), this );
 	QVBoxLayout *laygroup3 = new QVBoxLayout( npGroup );
@@ -139,7 +139,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	                            " password. This applies only to KDM's graphical login."
 	                            " Think twice before enabling this!") );
 
-	connect( npGroup, SIGNAL(toggled( bool )), SLOT(slotChanged()) );
+	connect( npGroup, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
 	pl_label = new QLabel( i18n("No password re&quired for:"),npGroup );
 	laygroup3->addWidget( pl_label );
@@ -152,7 +152,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	npuserlv->setWhatsThis( i18n("Check all users you want to allow a password-less login for."
 	                             " Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
 	connect( npuserlv, SIGNAL(clicked( Q3ListViewItem * )),
-	         SLOT(slotChanged()) );
+	         SIGNAL(changed()) );
 
 	btGroup = new QGroupBox( i18n("Miscellaneous"), this );
 	QVBoxLayout *laygroup4 = new QVBoxLayout( btGroup );
@@ -165,7 +165,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	                            " a screen locker than KDE's integrated one, this will make"
 	                            " circumventing a password-secured screen lock possible.") );
 	laygroup4->addWidget( cbarlen );
-	connect( cbarlen, SIGNAL(toggled( bool )), SLOT(slotChanged()) );
+	connect( cbarlen, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
 	QGridLayout *main = new QGridLayout( this );
 	main->setSpacing( 10 );
@@ -281,11 +281,6 @@ void KDMConvenienceWidget::defaults()
 	slotPresChanged();
 }
 
-
-void KDMConvenienceWidget::slotChanged()
-{
-	emit changed( true );
-}
 
 void KDMConvenienceWidget::slotSetAutoUser( const QString &user )
 {

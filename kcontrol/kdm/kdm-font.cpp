@@ -41,7 +41,7 @@ KDMFontWidget::KDMFontWidget( QWidget *parent )
 	stdFontChooser = new KFontRequester( this );
 	label->setBuddy( stdFontChooser );
 	stdFontChooser->setWhatsThis( i18n("This changes the font which is used for all the text in the login manager except for the greeting and failure messages.") );
-	connect( stdFontChooser, SIGNAL(fontSelected( const QFont& )),this,SLOT(configChanged()) );
+	connect( stdFontChooser, SIGNAL(fontSelected( const QFont& )), SIGNAL(changed()) );
 	ml->addWidget( label, 1, 0 );
 	ml->addWidget( stdFontChooser, 1, 1 );
 
@@ -49,7 +49,7 @@ KDMFontWidget::KDMFontWidget( QWidget *parent )
 	failFontChooser = new KFontRequester( this );
 	label->setBuddy( failFontChooser );
 	failFontChooser->setWhatsThis( i18n("This changes the font which is used for failure messages in the login manager.") );
-	connect( failFontChooser, SIGNAL(fontSelected( const QFont& )),this,SLOT(configChanged()) );
+	connect( failFontChooser, SIGNAL(fontSelected( const QFont& )), SIGNAL(changed()) );
 	ml->addWidget( label, 2, 0 );
 	ml->addWidget( failFontChooser, 2, 1 );
 
@@ -57,14 +57,14 @@ KDMFontWidget::KDMFontWidget( QWidget *parent )
 	greetingFontChooser = new KFontRequester( this );
 	label->setBuddy( greetingFontChooser );
 	greetingFontChooser->setWhatsThis( i18n("This changes the font which is used for the login manager's greeting.") );
-	connect( greetingFontChooser, SIGNAL(fontSelected( const QFont& )),this,SLOT(configChanged()) );
+	connect( greetingFontChooser, SIGNAL(fontSelected( const QFont& )), SIGNAL(changed()) );
 	ml->addWidget( label, 3, 0 );
 	ml->addWidget( greetingFontChooser, 3, 1 );
 
 	aacb = new QCheckBox( i18n("Use anti-aliasing for fonts"), this );
 	aacb->setWhatsThis( i18n("If you check this box and your X-Server has the Xft extension, "
 	                         "fonts will be antialiased (smoothed) in the login dialog.") );
-	connect( aacb, SIGNAL(toggled( bool )),this,SLOT(configChanged()) );
+	connect( aacb, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 	ml->addWidget( aacb, 4, 0, 1, 2 );
 	ml->setRowStretch( 5, 10 );
 }
@@ -75,11 +75,6 @@ void KDMFontWidget::makeReadOnly()
 	failFontChooser->button()->setEnabled( false );
 	greetingFontChooser->button()->setEnabled( false );
 	aacb->setEnabled( false );
-}
-
-void KDMFontWidget::configChanged()
-{
-	emit changed( true );
 }
 
 void KDMFontWidget::set_def()

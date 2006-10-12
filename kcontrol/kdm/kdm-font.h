@@ -37,10 +37,9 @@ class KDMFontWidget : public QWidget {
 	void makeReadOnly();
 
   Q_SIGNALS:
-	void changed( bool state );
+	void changed();
 
   protected Q_SLOTS:
-	void configChanged();
 	void set_def();
 
   private:

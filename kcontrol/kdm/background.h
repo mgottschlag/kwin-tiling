@@ -29,7 +29,7 @@ class KBackground : public QWidget {
 	void makeReadOnly();
 
   Q_SIGNALS:
-	void changed( bool );
+	void changed();
 
   private Q_SLOTS:
 	void slotEnableChanged();

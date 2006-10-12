@@ -46,7 +46,7 @@ KBackground::KBackground(QWidget *parent)
 	m_simpleConf = new KSimpleConfig( config->readEntry( "BackgroundCfg", KDE_CONFDIR "/kdm/backgroundrc" ) );
 	m_background = new BGDialog( this, m_simpleConf, false );
 
-	connect( m_background, SIGNAL(changed( bool )), SIGNAL(changed( bool )) );
+	connect( m_background, SIGNAL(changed( bool )), SIGNAL(changed()) );
 
 	// Top layout
 	QVBoxLayout *top = new QVBoxLayout( this );
@@ -67,7 +67,7 @@ void KBackground::slotEnableChanged()
 {
 	bool en = m_pCBEnable->isChecked();
 	m_background->setEnabled( en );
-	emit changed( true );
+	emit changed();
 }
 
 void KBackground::makeReadOnly()
@@ -81,7 +81,6 @@ void KBackground::load()
 	m_pCBEnable->setChecked( config->readEntry( "UseBackground", true ) );
 	m_background->load();
 	slotEnableChanged();
-	emit changed( false );
 }
 
 
@@ -89,7 +88,6 @@ void KBackground::save()
 {
 	config->writeEntry( "UseBackground", m_pCBEnable->isChecked() );
 	m_background->save();
-	emit changed( false );
 }
 
 
@@ -98,7 +96,6 @@ void KBackground::defaults()
 	m_pCBEnable->setChecked( true );
 	slotEnableChanged();
 	m_background->defaults();
-	emit changed( true );
 }
 
 #include "background.moc"

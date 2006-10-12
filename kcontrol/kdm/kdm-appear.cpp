@@ -74,7 +74,7 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 	label->setBuddy( greetstr_lined );
 	hlay->addWidget( label );
 	connect( greetstr_lined, SIGNAL(textChanged( const QString& )),
-	         SLOT(changed()) );
+	         SIGNAL(changed()) );
 	hlay->addWidget( greetstr_lined );
 	wtstr = i18n("This is the \"headline\" for KDM's login window. You may want to "
 	             "put some nice greeting or information about the operating system here.<p>"
@@ -107,7 +107,7 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 	QButtonGroup *buttonGroup = new QButtonGroup( group );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )),
 	         SLOT(slotAreaRadioClicked( int )) );
-	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(changed()) );
+	connect( buttonGroup, SIGNAL(buttonClicked( int )), SIGNAL(changed()) );
 	buttonGroup->addButton( noneRadio, KdmNone );
 	buttonGroup->addButton( clockRadio, KdmClock );
 	buttonGroup->addButton( logoRadio, KdmLogo );
@@ -149,14 +149,14 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 	QLabel *xLineLabel = new QLabel( i18n("&X:"), group );
 	hglay->addWidget( xLineLabel, 0, 1 );
 	xLineEdit = new QLineEdit( group );
-	connect( xLineEdit, SIGNAL(textChanged( const QString& )), SLOT(changed()) );
+	connect( xLineEdit, SIGNAL(textChanged( const QString& )), SIGNAL(changed()) );
 	hglay->addWidget( xLineEdit, 0, 2 );
 	xLineLabel->setBuddy( xLineEdit );
 	xLineEdit->setValidator( posValidator );
 	QLabel *yLineLabel = new QLabel( i18n("&Y:"), group );
 	hglay->addWidget( yLineLabel, 1, 1 );
 	yLineEdit = new QLineEdit( group );
-	connect( yLineEdit, SIGNAL(textChanged( const QString& )), SLOT(changed()) );
+	connect( yLineEdit, SIGNAL(textChanged( const QString& )), SIGNAL(changed()) );
 	hglay->addWidget( yLineEdit, 1, 2 );
 	yLineLabel->setBuddy( yLineEdit );
 	yLineEdit->setValidator( posValidator );
@@ -180,7 +180,7 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 	loadGuiStyles( guicombo );
 	label = new QLabel( i18n("GUI s&tyle:"), group );
 	label->setBuddy( guicombo );
-	connect( guicombo, SIGNAL(activated( int )), SLOT(changed()) );
+	connect( guicombo, SIGNAL(activated( int )), SIGNAL(changed()) );
 	hglay->addWidget( label, 0, 0 );
 	hglay->addWidget( guicombo, 0, 1 );
 	wtstr = i18n("You can choose a basic GUI style here that will be "
@@ -193,7 +193,7 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 	loadColorSchemes( colcombo );
 	label = new QLabel( i18n("&Color scheme:"), group );
 	label->setBuddy( colcombo );
-	connect( colcombo, SIGNAL(activated( int )), SLOT(changed()) );
+	connect( colcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
 	hglay->addWidget( label, 1, 0 );
 	hglay->addWidget( colcombo, 1, 1 );
 	wtstr = i18n("You can choose a basic Color Scheme here that will be "
@@ -209,7 +209,7 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 
 	langcombo = new KLanguageButton( group );
 	loadLanguageList( langcombo );
-	connect( langcombo, SIGNAL(activated( const QString & )), SLOT(changed()) );
+	connect( langcombo, SIGNAL(activated( const QString & )), SIGNAL(changed()) );
 	label = new QLabel( i18n("Languag&e:"), group );
 	label->setBuddy( langcombo );
 	QGridLayout *hbox = new QGridLayout();
@@ -493,12 +493,6 @@ QString KDMAppearanceWidget::quickHelp() const
 	            " of the KDM login manager, i.e. a greeting string, an icon etc.<p>"
 	            " For further refinement of KDM's appearance, see the \"Font\" and \"Background\" "
 	            " tabs.");
-}
-
-
-void KDMAppearanceWidget::changed()
-{
-	emit changed( true );
 }
 
 #include "kdm-appear.moc"

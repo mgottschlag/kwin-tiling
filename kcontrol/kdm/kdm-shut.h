@@ -41,9 +41,6 @@ class KDMSessionsWidget : public QWidget {
 	enum SdModes { SdAll, SdRoot, SdNone };
 
   Q_SIGNALS:
-	void changed( bool state );
-
-  protected Q_SLOTS:
 	void changed();
 
   private:
