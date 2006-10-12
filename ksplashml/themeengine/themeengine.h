@@ -13,7 +13,7 @@
 #define THEMEENGINE_H
 
 #include <QStringList>
-#include <q3vbox.h>
+#include <kvbox.h>
 #include <QWidget>
 //Added by qt3to4:
 #include <QMouseEvent>
@@ -28,13 +28,13 @@ class QMouseEvent;
 /**
  * @short The base for the ThemeEngine's configuration widget.
  */
-class KDE_EXPORT ThemeEngineConfig: public Q3VBox
+class KDE_EXPORT ThemeEngineConfig: public KVBox
 {
   Q_OBJECT
 public:
 
   ThemeEngineConfig( QWidget *p, KConfig *c )
-      :Q3VBox( p ), mConfig( c )
+      :KVBox( p ), mConfig( c )
   {}
 
   KConfig* config()const { return mConfig; }

@@ -17,7 +17,6 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kwin.h>
-#include <Q3VBox>
 
 #include <QEvent>
 #include <QFile>
