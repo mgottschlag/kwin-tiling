@@ -293,7 +293,7 @@ KGVerify::start()
 {
 	authTok = (func == KGreeterPlugin::ChAuthTok);
 	cont = false;
-	if (func == KGreeterPlugin::Authenticate) {
+	if (func == KGreeterPlugin::Authenticate && ctx == KGreeterPlugin::Login) {
 		if (scheduleAutoLogin( true )) {
 			if (!_autoLoginAgain)
 				_autoLoginDelay = 0, timeable = false;
