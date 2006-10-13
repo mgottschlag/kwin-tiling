@@ -8,7 +8,7 @@ set(kdesktop_lock_SRCS ${kdmlib_SRCS}
    autologout.cc 
    main.cc )
 
-kde4_add_kcfg_files(kdesktop_lock_SRCS 
+kde4_add_kcfg_files(kdesktop_lock kdesktop_lock_SRCS 
 	${CMAKE_SOURCE_DIR}/workspace/kdesktop/kdesktopsettings.kcfgc
 	${CMAKE_SOURCE_DIR}/workspace/kdesktop/klaunchsettings.kcfgc )
 

@@ -6,7 +6,7 @@ set( kdesktop_KCFG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/kdesktopsettings.kcfgc
 	${CMAKE_CURRENT_SOURCE_DIR}/klaunchsettings.kcfgc )
 
-kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
+kde4_add_kcfg_files(kdesktop kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
 include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/lib
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background

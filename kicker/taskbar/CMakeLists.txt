@@ -9,7 +9,7 @@ set(taskbar_LIB_SRCS taskcontainer.cpp taskbar.cpp )
 kde4_automoc(taskbar ${taskbar_LIB_SRCS})
 
 
-kde4_add_kcfg_files(taskbar_LIB_SRCS taskbarsettings.kcfgc )
+kde4_add_kcfg_files(taskbar taskbar_LIB_SRCS taskbarsettings.kcfgc )
 
 kde4_add_library(taskbar SHARED ${taskbar_LIB_SRCS})
 

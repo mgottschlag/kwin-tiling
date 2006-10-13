@@ -25,7 +25,7 @@ kde4_automoc(launcher_panelapplet ${launcher_panelapplet_PART_SRCS})
 kde4_add_ui3_files(launcher_panelapplet_PART_SRCS configdlgbase.ui )
 
 
-kde4_add_kcfg_files(launcher_panelapplet_PART_SRCS prefs.kcfgc )
+kde4_add_kcfg_files(launcher_panelapplet launcher_panelapplet_PART_SRCS prefs.kcfgc )
 
 kde4_add_plugin(launcher_panelapplet ${launcher_panelapplet_PART_SRCS})
 
