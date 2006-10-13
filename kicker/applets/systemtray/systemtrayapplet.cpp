@@ -210,13 +210,12 @@ void SystemTrayApplet::preferences()
     connect(m_settingsDialog, SIGNAL(finished()), this, SLOT(settingsDialogFinished()));
 
     m_iconSelector = new KActionSelector(m_settingsDialog);
-    m_iconSelector->setAvailableLabel(i18n("Visible icons:"));
-    m_iconSelector->setSelectedLabel(i18n("Hidden icons:"));
-    m_iconSelector->setShowUpDownButtons(false);
+    m_iconSelector->setAvailableLabel(i18n("Hidden icons:"));
+    m_iconSelector->setSelectedLabel(i18n("Visible icons:"));
     m_settingsDialog->setMainWidget(m_iconSelector);
 
-    QListWidget *shownListWidget = m_iconSelector->availableListWidget();
-    QListWidget *hiddenListWidget = m_iconSelector->selectedListWidget();
+    QListWidget *hiddenListWidget = m_iconSelector->availableListWidget();
+    QListWidget *shownListWidget = m_iconSelector->selectedListWidget();
 
     TrayEmbedList::const_iterator it = m_shownWins.begin();
     TrayEmbedList::const_iterator itEnd = m_shownWins.end();
@@ -263,20 +262,16 @@ void SystemTrayApplet::applySettings()
     conf->setGroup("HiddenTrayIcons");
     QString name;
 
-    // use the following snippet of code someday to implement ordering
-    // of icons
-    //
-    // m_visibleIconList.clear();
-    // QListBoxItem* item = m_iconSelector->availableListBox()->firstItem();
-    // for (; item; item = item->next())
-    // {
-    //    m_visibleIconList.append(item->text());
-    // }
-    // conf->writeEntry("Visible", m_visibleIconList);
-    // selection.clear();
+    m_sortOrderIconList.clear();
+    QList<QListWidgetItem*> list = m_iconSelector->availableListWidget()->findItems(QString("*"), Qt::MatchRegExp);
+    foreach (QListWidgetItem* item, list)
+    {
+        m_sortOrderIconList.append(item->text());
+    }
+    conf->writeEntry("SortOrder", m_sortOrderIconList);
 
     m_hiddenIconList.clear();
-    QList<QListWidgetItem*> list = m_iconSelector->selectedListWidget()->findItems(QString("*"), Qt::MatchRegExp);
+    list = m_iconSelector->availableListWidget()->findItems(QString("*"), Qt::MatchRegExp);
     foreach (QListWidgetItem* item, list)
     {
         m_hiddenIconList.append(item->text());
@@ -525,6 +520,31 @@ void SystemTrayApplet::updateVisibleWins()
             (*emb)->hide();
         }
     }
+    
+    QMap< TrayEmbed*, QString > names; // cache names
+    for( TrayEmbedList::const_iterator it = m_shownWins.begin();
+         it != m_shownWins.end();
+         ++it )
+        names[ *it ] = KWin::windowInfo((*it)->containerWinId(),NET::WMName).name();
+    TrayEmbedList newList;
+    for( QStringList::const_iterator it1 = m_sortOrderIconList.begin();
+         it1 != m_sortOrderIconList.end();
+         ++it1 ) {
+        for( TrayEmbedList::iterator it2 = m_shownWins.begin();
+             it2 != m_shownWins.end();
+             ) {
+            if( names[ *it2 ] == *it1 ) {
+                newList.append( *it2 ); // don't bail out, there may be multiple ones
+                it2 = m_shownWins.erase( it2 );
+            } else
+                ++it2;
+        }
+    }
+    for( TrayEmbedList::const_iterator it = m_shownWins.begin();
+         it != m_shownWins.end();
+         ++it )
+        newList.append( *it ); // append unsorted items
+    m_shownWins = newList;
 }
 
 void SystemTrayApplet::toggleExpanded()
