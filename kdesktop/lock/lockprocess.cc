@@ -416,7 +416,7 @@ void LockProcess::createSaverWindow()
 #ifdef HAVE_GLXCHOOSEVISUAL
     if( mOpenGLVisual )
     {
-        int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, x11Depth(), None };
+        int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_BUFFER_SIZE, x11Depth(), None };
         if( XVisualInfo* i = glXChooseVisual( x11Display(), x11Screen(), attribs ))
         {
             visual = i->visual;
