@@ -268,6 +268,9 @@ lnusertemp cache >/dev/null
 
 echo 'startkde: Starting up...'  1>&2
 
+dl=$DESKTOP_LOCKED
+unset DESKTOP_LOCKED # Don't want it in the environment
+
 need_dbus=0
 if test -z "$DBUS_SESSION_BUS_PID"; then
     need_dbus=1
@@ -280,17 +283,19 @@ fi
 # Workaround for missing export in dbus-launch's output
 export DBUS_SESSION_BUS_PID
 
-# the splashscreen and progress indicator
-case "$ksplashrc_ksplash_theme" in 
-  None)
-     ;; # nothing
-  Simple)
-     ksplashsimple 
-     ;;
-  *)
-     ksplash --nodbus
-     ;;
-esac
+if test -z "$dl"; then
+  # the splashscreen and progress indicator
+  case "$ksplashrc_ksplash_theme" in 
+    None)
+       ;; # nothing
+    Simple)
+       ksplashsimple 
+       ;;
+    *)
+       ksplash --nodbus
+       ;;
+  esac
+fi
 
 # Mark that full KDE session is running (e.g. Konqueror preloading works only
 # with full KDE running). The KDE_FULL_SESSION property can be detected by
@@ -321,8 +326,7 @@ fi
 
 # If the session should be locked from the start (locked autologin),
 # lock now and do the rest of the KDE startup underneath the locker.
-if test -n "$DESKTOP_LOCKED"; then
-  unset DESKTOP_LOCKED # Won't need it any more
+if test -n "$dl"; then
   kwrapper kdesktop_lock --forcelock &
   # Give it some time for starting up. This is somewhat unclean; some
   # notification would be better.
