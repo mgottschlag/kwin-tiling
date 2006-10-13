@@ -7,7 +7,7 @@ include_directories( ${X11_dpms_INCLUDE_PATH}   )
 
 set(kcm_energy_PART_SRCS energy.cpp )
 
-kde4_automoc(${kcm_energy_PART_SRCS})
+kde4_automoc(kcm_energy ${kcm_energy_PART_SRCS})
 
 kde4_add_plugin(kcm_energy ${kcm_energy_PART_SRCS})
 

@@ -10,7 +10,7 @@ set(kcm_joystick_PART_SRCS
    joydevice.cpp 
    caldialog.cpp )
 
-kde4_automoc(${kcm_joystick_PART_SRCS})
+kde4_automoc(kcm_joystick ${kcm_joystick_PART_SRCS})
 
 kde4_add_plugin(kcm_joystick ${kcm_joystick_PART_SRCS})
 

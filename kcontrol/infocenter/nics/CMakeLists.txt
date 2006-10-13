@@ -5,7 +5,7 @@
 
 set(kcm_nic_PART_SRCS nic.cpp )
 
-kde4_automoc(${kcm_nic_PART_SRCS})
+kde4_automoc(kcm_nic ${kcm_nic_PART_SRCS})
 
 kde4_add_plugin(kcm_nic ${kcm_nic_PART_SRCS})
 

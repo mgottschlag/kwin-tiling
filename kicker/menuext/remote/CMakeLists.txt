@@ -5,7 +5,7 @@
 
 set(kickermenu_remotemenu_PART_SRCS remotemenu.cpp )
 
-kde4_automoc(${kickermenu_remotemenu_PART_SRCS})
+kde4_automoc(kickermenu_remotemenu ${kickermenu_remotemenu_PART_SRCS})
 
 
 kde4_add_plugin(kickermenu_remotemenu ${kickermenu_remotemenu_PART_SRCS})

@@ -5,7 +5,7 @@
 
 set(kickermenu_konsole_PART_SRCS konsole_mnu.cpp konsolebookmarkhandler.cpp )
 
-kde4_automoc(${kickermenu_konsole_PART_SRCS})
+kde4_automoc(kickermenu_konsole ${kickermenu_konsole_PART_SRCS})
 
 kde4_add_plugin(kickermenu_konsole ${kickermenu_konsole_PART_SRCS})
 

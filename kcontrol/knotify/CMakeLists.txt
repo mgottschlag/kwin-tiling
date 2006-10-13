@@ -5,7 +5,7 @@ add_subdirectory( sounds )
 
 set(kcm_knotify_PART_SRCS knotify.cpp )
 
-kde4_automoc(${kcm_knotify_PART_SRCS})
+kde4_automoc(kcm_knotify ${kcm_knotify_PART_SRCS})
 
 kde4_add_ui_files(kcm_knotify_PART_SRCS playersettings.ui )
 

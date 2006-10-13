@@ -5,7 +5,7 @@
 
 set(kwebdesktop_SRCS kwebdesktop.cpp )
 
-kde4_automoc(${kwebdesktop_SRCS})
+kde4_automoc(kwebdesktop ${kwebdesktop_SRCS})
 
 kde4_add_kcfg_files(kwebdesktop_SRCS kwebdesktopsettings.kcfgc )
 

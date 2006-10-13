@@ -5,7 +5,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager ${CMAKE_SO
 
 set(minipager_panelapplet_PART_SRCS pagerapplet.cpp pagerbutton.cpp)
 
-kde4_automoc(${minipager_panelapplet_PART_SRCS})
+kde4_automoc(minipager_panelapplet ${minipager_panelapplet_PART_SRCS})
 
 kde4_add_kcfg_files(minipager_panelapplet_PART_SRCS pagersettings.kcfgc)
 

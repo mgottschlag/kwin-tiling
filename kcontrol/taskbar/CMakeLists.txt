@@ -5,7 +5,7 @@
 
 set(kcm_taskbar_PART_SRCS kcmtaskbar.cpp )
 
-kde4_automoc(${kcm_taskbar_PART_SRCS})
+kde4_automoc(kcm_taskbar ${kcm_taskbar_PART_SRCS})
 
 kde4_add_ui_files(kcm_taskbar_PART_SRCS kcmtaskbarui.ui )
 

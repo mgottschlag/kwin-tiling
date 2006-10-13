@@ -5,7 +5,7 @@
 
 set(naughty_panelapplet_PART_SRCS NaughtyProcessMonitor.cpp NaughtyConfigDialog.cpp NaughtyApplet.cpp )
 
-kde4_automoc(${naughty_panelapplet_PART_SRCS})
+kde4_automoc(naughty_panelapplet ${naughty_panelapplet_PART_SRCS})
 
 kde4_add_plugin(naughty_panelapplet ${naughty_panelapplet_PART_SRCS})
 

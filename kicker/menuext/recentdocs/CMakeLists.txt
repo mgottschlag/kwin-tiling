@@ -5,7 +5,7 @@
 
 set(kickermenu_recentdocs_PART_SRCS recentdocsmenu.cpp )
 
-kde4_automoc(${kickermenu_recentdocs_PART_SRCS})
+kde4_automoc(kickermenu_recentdocs ${kickermenu_recentdocs_PART_SRCS})
 
 kde4_add_plugin(kickermenu_recentdocs ${kickermenu_recentdocs_PART_SRCS})
 

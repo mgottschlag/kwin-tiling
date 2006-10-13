@@ -6,7 +6,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager  )
 
 set(taskbar_LIB_SRCS taskcontainer.cpp taskbar.cpp )
 
-kde4_automoc(${taskbar_LIB_SRCS})
+kde4_automoc(taskbar ${taskbar_LIB_SRCS})
 
 
 kde4_add_kcfg_files(taskbar_LIB_SRCS taskbarsettings.kcfgc )

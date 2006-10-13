@@ -5,7 +5,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/plasma/lib/ ${CMAKE_SOURCE_DI
 
 set(sidebar_panelextension_PART_SRCS sidebarextension.cpp )
 
-kde4_automoc(${sidebar_panelextension_PART_SRCS})
+kde4_automoc(sidebar_panelextension ${sidebar_panelextension_PART_SRCS})
 
 kde4_add_plugin(sidebar_panelextension ${sidebar_panelextension_PART_SRCS})
 

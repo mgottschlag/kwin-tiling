@@ -11,7 +11,7 @@ set(kmenueditcommon_STAT_SRCS basictab.cpp treeview.cpp kmenuedit.cpp khotkeys.c
 
 set(kmenuedit_KDEINIT_SRCS main.cpp ${kmenueditcommon_STAT_SRCS})
 
-kde4_automoc(${kmenuedit_KDEINIT_SRCS})
+kde4_automoc(kmenuedit ${kmenuedit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kmenuedit ${kmenuedit_KDEINIT_SRCS})
 
@@ -27,7 +27,7 @@ install(TARGETS kmenuedit DESTINATION ${BIN_INSTALL_DIR})
 
 set(kcontroledit_KDEINIT_SRCS kcontrol_main.cpp ${kmenueditcommon_STAT_SRCS})
 
-kde4_automoc(${kcontroledit_KDEINIT_SRCS})
+kde4_automoc(kcontroledit ${kcontroledit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcontroledit ${kcontroledit_KDEINIT_SRCS})
 

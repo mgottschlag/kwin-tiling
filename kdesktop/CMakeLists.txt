@@ -19,7 +19,7 @@ include_directories(
 
 set(kcheckrunning_SRCS kcheckrunning.cpp )
 
-kde4_automoc(${kcheckrunning_SRCS})
+kde4_automoc(kcheckrunning ${kcheckrunning_SRCS})
 
 kde4_add_executable(kcheckrunning ${kcheckrunning_SRCS})
 
@@ -58,7 +58,7 @@ qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Desktop.xml desktop.h KDesk
 
 qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.ScreenSaver.xml lockeng.h SaverEngine )
 
-kde4_automoc(${kdesktop_SRCS})
+kde4_automoc(kdesktop ${kdesktop_SRCS})
 
 kde4_add_ui_files(kdesktop_SRCS minicli.ui )
 

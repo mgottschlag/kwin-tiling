@@ -5,7 +5,7 @@
 
 set(taskmanager_LIB_SRCS tasklmbmenu.cpp taskrmbmenu.cpp taskmanager.cpp )
 
-kde4_automoc(${taskmanager_LIB_SRCS})
+kde4_automoc(taskmanager ${taskmanager_LIB_SRCS})
 
 kde4_add_library(taskmanager SHARED ${taskmanager_LIB_SRCS})
 

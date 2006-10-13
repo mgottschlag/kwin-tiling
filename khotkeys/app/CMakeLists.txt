@@ -5,7 +5,7 @@ include_directories(  ${CMAKE_SOURCE_DIR}/khotkeys/shared/  )
 
 set(khotkeys_KDEINIT_SRCS app.cpp ${libshared_SRCS})
 
-kde4_automoc(${khotkeys_KDEINIT_SRCS})
+kde4_automoc(khotkeys ${khotkeys_KDEINIT_SRCS})
 
 
 kde4_add_kdeinit_executable( khotkeys ${khotkeys_KDEINIT_SRCS})
@@ -24,7 +24,7 @@ install(TARGETS khotkeys DESTINATION ${BIN_INSTALL_DIR})
 
 set(kded_khotkeys_PART_SRCS kded.cpp ${libshared_SRCS})
 
-kde4_automoc(${kded_khotkeys_PART_SRCS})
+kde4_automoc(kded_khotkeys ${kded_khotkeys_PART_SRCS})
 
 
 kde4_add_plugin(kded_khotkeys ${kded_khotkeys_PART_SRCS})

@@ -21,7 +21,7 @@ set(kickermain_LIB_SRCS
    extensioninfo.cpp 
    paneldrag.cpp )
 
-kde4_automoc(${kickermain_LIB_SRCS})
+kde4_automoc(kickermain ${kickermain_LIB_SRCS})
 
 kde4_add_kcfg_files(kickermain_LIB_SRCS kickerSettings.kcfgc extensionSettings.kcfgc )
 

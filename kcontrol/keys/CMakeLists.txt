@@ -9,7 +9,7 @@ set(kcm_keys_PART_SRCS
    khotkeys.cpp 
    treeview.cpp )
 
-kde4_automoc(${kcm_keys_PART_SRCS})
+kde4_automoc(kcm_keys ${kcm_keys_PART_SRCS})
 
 kde4_add_plugin(kcm_keys ${kcm_keys_PART_SRCS})
 

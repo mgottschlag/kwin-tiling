@@ -8,7 +8,7 @@ endif(OPENGL_FOUND AND OPENGL_GLU_FOUND)
 
 set(kcm_info_PART_SRCS main.cpp memory.cpp opengl.cpp )
 
-kde4_automoc(${kcm_info_PART_SRCS})
+kde4_automoc(kcm_info ${kcm_info_PART_SRCS})
 
 kde4_add_plugin(kcm_info ${kcm_info_PART_SRCS})
 

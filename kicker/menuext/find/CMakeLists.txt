@@ -5,7 +5,7 @@
 
 set(kickermenu_find_PART_SRCS findmenu.cpp )
 
-kde4_automoc(${kickermenu_find_PART_SRCS})
+kde4_automoc(kickermenu_find ${kickermenu_find_PART_SRCS})
 
 kde4_add_plugin(kickermenu_find ${kickermenu_find_PART_SRCS})
 

@@ -5,7 +5,7 @@
 
 set(kstyle_keramik_config_PART_SRCS keramikconf.cpp )
 
-kde4_automoc(${kstyle_keramik_config_PART_SRCS})
+kde4_automoc(kstyle_keramik_config ${kstyle_keramik_config_PART_SRCS})
 
 kde4_add_plugin(kstyle_keramik_config ${kstyle_keramik_config_PART_SRCS})
 

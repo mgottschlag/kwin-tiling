@@ -7,7 +7,7 @@ configure_file (config-ksplashml.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kspl
 
 set(ksplashsimple_SRCS main.cpp )
 
-kde4_automoc(${ksplashsimple_SRCS})
+kde4_automoc(ksplashsimple ${ksplashsimple_SRCS})
 
 kde4_add_executable(ksplashsimple ${ksplashsimple_SRCS})
 

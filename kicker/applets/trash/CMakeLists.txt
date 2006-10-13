@@ -5,7 +5,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/kicker/core
 
 set(trash_panelapplet_PART_SRCS trashbutton.cpp trashapplet.cpp )
 
-kde4_automoc(${trash_panelapplet_PART_SRCS})
+kde4_automoc(trash_panelapplet ${trash_panelapplet_PART_SRCS})
 
 kde4_add_plugin(trash_panelapplet ${trash_panelapplet_PART_SRCS})
 

@@ -13,7 +13,7 @@ kde4_add_kcfg_files(kdesktop_lock_SRCS
 	${CMAKE_SOURCE_DIR}/workspace/kdesktop/klaunchsettings.kcfgc )
 
 
-kde4_automoc(${kdesktop_lock_SRCS})
+kde4_automoc(kdesktop_lock ${kdesktop_lock_SRCS})
 
 kde4_add_executable(kdesktop_lock ${kdesktop_lock_SRCS} )
 

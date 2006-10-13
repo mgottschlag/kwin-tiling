@@ -5,7 +5,7 @@
 
 set(dockbar_panelextension_PART_SRCS dockcontainer.cpp dockbarextension.cpp )
 
-kde4_automoc(${dockbar_panelextension_PART_SRCS})
+kde4_automoc(dockbar_panelextension ${dockbar_panelextension_PART_SRCS})
 
 kde4_add_plugin(dockbar_panelextension ${dockbar_panelextension_PART_SRCS})
 

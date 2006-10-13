@@ -16,7 +16,7 @@ set(ksplash_SRCS wndmain.cpp main.cpp ${themedefault_PART_SRCS} )
 
 qt4_add_dbus_adaptor( ksplash_SRCS org.kde.KSplash.xml wndmain.h KSplash )
 
-kde4_automoc(${ksplash_SRCS})
+kde4_automoc(ksplash ${ksplash_SRCS})
 
 kde4_add_executable(ksplash ${ksplash_SRCS})
 

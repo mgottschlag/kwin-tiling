@@ -12,7 +12,7 @@ set(themestandard_PART_SRCS themestandard.cpp wndicon.cpp wndstatus.cpp)
 
 set(ksplashstandard_PART_SRCS themestandardlib.cpp ${themestandard_PART_SRCS})
 
-kde4_automoc(${ksplashstandard_PART_SRCS})
+kde4_automoc(ksplashstandard ${ksplashstandard_PART_SRCS})
 
 kde4_add_plugin(ksplashstandard ${ksplashstandard_PART_SRCS})
 

@@ -5,7 +5,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/plasma/lib   )
 
 set(pdesktop_SRCS desktop.cpp main.cpp )
 
-kde4_automoc(${pdesktop_SRCS})
+kde4_automoc(pdesktop ${pdesktop_SRCS})
 
 kde4_add_executable(pdesktop ${pdesktop_SRCS})
 

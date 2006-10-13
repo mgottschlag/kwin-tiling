@@ -61,7 +61,7 @@ kde4_add_ui3_files(kcm_khotkeys_PART_SRCS
 # run moc on actions_listview.h and add the resulting stuff to the kcm_khotkeys_PART_SRCS list
 qt4_wrap_cpp(kcm_khotkeys_PART_SRCS actions_listview.h)
 
-kde4_automoc(${kcm_khotkeys_PART_SRCS})
+kde4_automoc(kcm_khotkeys ${kcm_khotkeys_PART_SRCS})
 
 kde4_add_plugin(kcm_khotkeys ${kcm_khotkeys_PART_SRCS})
 

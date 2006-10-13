@@ -7,7 +7,7 @@ project(kworkspacelib)
 
 set(kworkspace_LIB_SRCS kworkspace.cpp )
 
-kde4_automoc(${kworkspace_LIB_SRCS})
+kde4_automoc(kworkspace ${kworkspace_LIB_SRCS})
 
 kde4_add_library(kworkspace SHARED ${kworkspace_LIB_SRCS})
 

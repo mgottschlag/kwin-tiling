@@ -5,7 +5,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskbar/ ${CMAKE_SOURC
 
 set(taskbar_panelapplet_PART_SRCS taskbarapplet.cpp )
 
-kde4_automoc(${taskbar_panelapplet_PART_SRCS})
+kde4_automoc(taskbar_panelapplet ${taskbar_panelapplet_PART_SRCS})
 
 kde4_add_plugin(taskbar_panelapplet ${taskbar_panelapplet_PART_SRCS})
 

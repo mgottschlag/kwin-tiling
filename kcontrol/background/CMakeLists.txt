@@ -9,7 +9,7 @@ kde4_add_ui3_files(kcmbackgroundlib_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/bgdialog_ui
 
 set(kcm_background_PART_SRCS main.cpp ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS})
 
-kde4_automoc(${kcm_background_PART_SRCS})
+kde4_automoc(kcm_background ${kcm_background_PART_SRCS})
 
 kde4_add_plugin(kcm_background ${kcm_background_PART_SRCS})
 

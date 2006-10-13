@@ -7,7 +7,7 @@ set(randrinternal_PART_SRCS ktimerdialog.cpp randr.cpp)
 
 set(kcm_randr_PART_SRCS krandrmodule.cpp ${randrinternal_PART_SRCS})
 
-kde4_automoc(${kcm_randr_PART_SRCS})
+kde4_automoc(kcm_randr ${kcm_randr_PART_SRCS})
 
 kde4_add_plugin(kcm_randr ${kcm_randr_PART_SRCS})
 
@@ -29,7 +29,7 @@ set(krandrtray_SRCS
    krandrapp.cpp 
    krandrpassivepopup.cpp ${randrinternal_PART_SRCS})
 
-kde4_automoc(${krandrtray_SRCS})
+kde4_automoc(krandrtray ${krandrtray_SRCS})
 
 kde4_add_executable(krandrtray ${krandrtray_SRCS})
 

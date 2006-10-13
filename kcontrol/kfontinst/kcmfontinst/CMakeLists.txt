@@ -13,7 +13,7 @@ set(kcm_fontinst_PART_SRCS ${libkfontinstprint_SRCS}
    PrintDialog.cpp 
    SettingsDialog.cpp )
 
-kde4_automoc(${kcm_fontinst_PART_SRCS})
+kde4_automoc(kcm_fontinst ${kcm_fontinst_PART_SRCS})
 
 kde4_add_plugin(kcm_fontinst ${kcm_fontinst_PART_SRCS})
 

@@ -10,7 +10,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. ${KDE4_INCLUDES} )
 set(ksplashdefault_PART_SRCS main.cpp ${themedefault_PART_SRCS})
 
 
-kde4_automoc(${ksplashdefault_PART_SRCS})
+kde4_automoc(ksplashdefault ${ksplashdefault_PART_SRCS})
 
 kde4_add_plugin(ksplashdefault ${ksplashdefault_PART_SRCS})
 
