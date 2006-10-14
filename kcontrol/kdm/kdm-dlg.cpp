@@ -17,9 +17,7 @@
   Boston, MA 02110-1301, USA.
 */
 
-#include "kdm-appear.h"
-
-#include "kbackedcombobox.h"
+#include "kdm-dlg.h"
 
 #include <k3urldrag.h>
 #include <kdialog.h>
@@ -28,7 +26,6 @@
 #include <kimagefilepreview.h>
 #include <kimageio.h>
 #include <kio/netaccess.h>
-#include <klanguagebutton.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -42,25 +39,20 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QStyle>
+#include <QIntValidator>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
 extern KSimpleConfig *config;
 
-KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
+KDMDialogWidget::KDMDialogWidget( QWidget *parent )
 	: QWidget( parent )
 {
 	QString wtstr;
 
-	QVBoxLayout *vbox = new QVBoxLayout( this );
-	vbox->setMargin( KDialog::marginHint() );
-	vbox->setSpacing( KDialog::spacingHint() );
-
-	QGroupBox *group = new QGroupBox( i18n("Appearance"), this );
-	vbox->addWidget( group );
-
-	QGridLayout *grid = new QGridLayout( group );
+	QGridLayout *grid = new QGridLayout( this );
 	grid->setMargin( KDialog::marginHint() );
 	grid->setSpacing( KDialog::spacingHint() );
 	grid->setColumnStretch( 0, 1 );
@@ -68,9 +60,9 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 
 	QHBoxLayout *hlay = new QHBoxLayout();
 	hlay->setSpacing( KDialog::spacingHint() );
-	grid->addLayout( hlay, 1, 0, 1, 2 );
-	greetstr_lined = new KLineEdit(group);
-	QLabel *label = new QLabel( i18n("&Greeting:"), group );
+	grid->addLayout( hlay, 0, 0, 1, 2 );
+	greetstr_lined = new KLineEdit( this );
+	QLabel *label = new QLabel( i18n("&Greeting:"), this );
 	label->setBuddy( greetstr_lined );
 	hlay->addWidget( label );
 	connect( greetstr_lined, SIGNAL(textChanged( const QString& )),
@@ -94,17 +86,17 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 
 	QGridLayout *hglay = new QGridLayout();
 	hglay->setSpacing( KDialog::spacingHint() );
-	grid->addLayout( hglay, 2, 0, 3, 1 );
+	grid->addLayout( hglay, 1, 0, 3, 1 );
 
-	label = new QLabel( i18n("Logo area:"), group );
+	label = new QLabel( i18n("Logo area:"), this );
 	hglay->addWidget( label, 0, 0 );
 	QVBoxLayout *vlay = new QVBoxLayout();
 	vlay->setSpacing( KDialog::spacingHint() );
 	hglay->addLayout( vlay, 0, 1, 1, 2 );
-	noneRadio = new QRadioButton( i18nc("logo area", "&None"), group );
-	clockRadio = new QRadioButton( i18n("Show cloc&k"), group );
-	logoRadio = new QRadioButton( i18n("Sho&w logo"), group );
-	QButtonGroup *buttonGroup = new QButtonGroup( group );
+	noneRadio = new QRadioButton( i18nc("logo area", "&None"), this );
+	clockRadio = new QRadioButton( i18n("Show cloc&k"), this );
+	logoRadio = new QRadioButton( i18n("Sho&w logo"), this );
+	QButtonGroup *buttonGroup = new QButtonGroup( this );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )),
 	         SLOT(slotAreaRadioClicked( int )) );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SIGNAL(changed()) );
@@ -120,8 +112,8 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 	logoRadio->setWhatsThis( wtstr );
 	clockRadio->setWhatsThis( wtstr );
 
-	logoLabel = new QLabel( i18n("&Logo:"), group );
-	logobutton = new QPushButton( group );
+	logoLabel = new QLabel( i18n("&Logo:"), this );
+	logobutton = new QPushButton( this );
 	logoLabel->setBuddy( logobutton );
 	logobutton->setAutoDefault( false );
 	logobutton->setAcceptDrops( true );
@@ -141,21 +133,21 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 
 	hglay = new QGridLayout();
 	hglay->setSpacing( KDialog::spacingHint() );
-	grid->addLayout( hglay, 2, 1 );
+	grid->addLayout( hglay, 1, 1 );
 
-	label = new QLabel( i18n("Position:"), group );
+	label = new QLabel( i18n("Position:"), this );
 	hglay->addWidget( label, 0, 0, 2, 1, Qt::AlignVCenter );
-	QValidator *posValidator = new QIntValidator( 0, 100, group );
-	QLabel *xLineLabel = new QLabel( i18n("&X:"), group );
+	QValidator *posValidator = new QIntValidator( 0, 100, this );
+	QLabel *xLineLabel = new QLabel( i18n("&X:"), this );
 	hglay->addWidget( xLineLabel, 0, 1 );
-	xLineEdit = new QLineEdit( group );
+	xLineEdit = new QLineEdit( this );
 	connect( xLineEdit, SIGNAL(textChanged( const QString& )), SIGNAL(changed()) );
 	hglay->addWidget( xLineEdit, 0, 2 );
 	xLineLabel->setBuddy( xLineEdit );
 	xLineEdit->setValidator( posValidator );
-	QLabel *yLineLabel = new QLabel( i18n("&Y:"), group );
+	QLabel *yLineLabel = new QLabel( i18n("&Y:"), this );
 	hglay->addWidget( yLineLabel, 1, 1 );
-	yLineEdit = new QLineEdit( group );
+	yLineEdit = new QLineEdit( this );
 	connect( yLineEdit, SIGNAL(textChanged( const QString& )), SIGNAL(changed()) );
 	hglay->addWidget( yLineEdit, 1, 2 );
 	yLineLabel->setBuddy( yLineEdit );
@@ -172,62 +164,14 @@ KDMAppearanceWidget::KDMAppearanceWidget( QWidget *parent )
 
 	hglay = new QGridLayout();
 	hglay->setSpacing( KDialog::spacingHint() );
-	grid->addLayout( hglay, 3, 1 );
+	grid->addLayout( hglay, 2, 1 );
 	hglay->setColumnStretch( 3, 1 );
 
-	guicombo = new KBackedComboBox( group );
-	guicombo->insertItem( "", i18n("<default>") );
-	loadGuiStyles( guicombo );
-	label = new QLabel( i18n("GUI s&tyle:"), group );
-	label->setBuddy( guicombo );
-	connect( guicombo, SIGNAL(activated( int )), SIGNAL(changed()) );
-	hglay->addWidget( label, 0, 0 );
-	hglay->addWidget( guicombo, 0, 1 );
-	wtstr = i18n("You can choose a basic GUI style here that will be "
-	             "used by KDM only.");
-	label->setWhatsThis( wtstr );
-	guicombo->setWhatsThis( wtstr );
-
-	colcombo = new KBackedComboBox( group );
-	colcombo->insertItem( "", i18n("<default>") );
-	loadColorSchemes( colcombo );
-	label = new QLabel( i18n("&Color scheme:"), group );
-	label->setBuddy( colcombo );
-	connect( colcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
-	hglay->addWidget( label, 1, 0 );
-	hglay->addWidget( colcombo, 1, 1 );
-	wtstr = i18n("You can choose a basic Color Scheme here that will be "
-	             "used by KDM only.");
-	label->setWhatsThis( wtstr );
-	colcombo->setWhatsThis( wtstr );
-
-
-	// The Language group box
-	group = new QGroupBox( i18n("Locale"), this );
-	vbox->addWidget( group );
-	QBoxLayout *gbox = new QVBoxLayout( group );
-
-	langcombo = new KLanguageButton( group );
-	loadLanguageList( langcombo );
-	connect( langcombo, SIGNAL(activated( const QString & )), SIGNAL(changed()) );
-	label = new QLabel( i18n("Languag&e:"), group );
-	label->setBuddy( langcombo );
-	QGridLayout *hbox = new QGridLayout();
-	gbox->addItem( hbox );
-	hbox->setSpacing( KDialog::spacingHint() );
-	hbox->setColumnStretch( 1, 1 );
-	hbox->addWidget( label, 1, 0 );
-	hbox->addWidget( langcombo, 1, 1 );
-	wtstr = i18n("Here you can choose the language used by KDM. This setting does not affect"
-	             " a user's personal settings; that will take effect after login.");
-	label->setWhatsThis( wtstr );
-	langcombo->setWhatsThis( wtstr );
-
-	vbox->addStretch( 1 );
+	grid->setRowStretch( 4, 1 );
 
 }
 
-void KDMAppearanceWidget::makeReadOnly()
+void KDMDialogWidget::makeReadOnly()
 {
 	disconnect( logobutton, SIGNAL(clicked()),
 	            this, SLOT(slotLogoButtonClicked()) );
@@ -238,78 +182,9 @@ void KDMAppearanceWidget::makeReadOnly()
 	logoRadio->setEnabled( false );
 	xLineEdit->setEnabled( false );
 	yLineEdit->setEnabled( false );
-	guicombo->setEnabled( false );
-	colcombo->setEnabled( false );
-	langcombo->setEnabled( false );
 }
 
-void KDMAppearanceWidget::loadLanguageList( KLanguageButton *combo )
-{
-	QStringList langlist = KGlobal::dirs()->
-		findAllResources( "locale", QLatin1String("*/entry.desktop") );
-	langlist.sort();
-	for (QStringList::ConstIterator it = langlist.begin();
-	     it != langlist.end(); ++it)
-	{
-		QString fpath = (*it).left( (*it).length() - 14 );
-		int index = fpath.lastIndexOf( '/' );
-		QString nid = fpath.mid( index + 1 );
-
-		KSimpleConfig entry( *it );
-		entry.setGroup( QLatin1String("KCM Locale") );
-		QString name = entry.readEntry( QLatin1String("Name"), i18n("without name") );
-		combo->insertLanguage( nid, name, QLatin1String("l10n/"), QString() );
-	}
-}
-
-void KDMAppearanceWidget::loadColorSchemes( KBackedComboBox *combo )
-{
-	// XXX: Global + local schemes
-	QStringList list = KGlobal::dirs()->
-		findAllResources( "data", "kdisplay/color-schemes/*.kcsrc", false, true );
-	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
-	{
-		KSimpleConfig config( *it, true );
-		config.setGroup( "Color Scheme" );
-
-		QString str;
-		if (!(str = config.readEntry( "Name" )).isEmpty() ||
-			!(str = config.readEntry( "name" )).isEmpty())
-		{
-			QString str2 = (*it).mid( (*it).lastIndexOf( '/' ) + 1 ); // strip off path
-			str2.resize( str2.length() - 6 ); // strip off ".kcsrc
-				combo->insertItem( str2, str );
-		}
-	}
-}
-
-void KDMAppearanceWidget::loadGuiStyles(KBackedComboBox *combo)
-{
-	// XXX: Global + local schemes
-	QStringList list = KGlobal::dirs()->
-		findAllResources( "data", "kstyle/themes/*.themerc", false, true );
-	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
-	{
-		KSimpleConfig config( *it, true );
-
-		if (!(config.hasGroup( "KDE" ) && config.hasGroup( "Misc" )))
-			continue;
-
-		config.setGroup( "Desktop Entry" );
-		if (config.readEntry( "Hidden" , false ))
-			continue;
-
-		config.setGroup( "KDE" );
-		QString str2 = config.readEntry( "WidgetStyle" );
-		if (str2.isNull())
-			continue;
-
-		config.setGroup( "Misc" );
-		combo->insertItem( str2, config.readEntry( "Name" ) );
-	}
-}
-
-bool KDMAppearanceWidget::setLogo(QString logo)
+bool KDMDialogWidget::setLogo(QString logo)
 {
 	QString flogo = logo.isEmpty() ?
 		KStandardDirs::locate( "data", QLatin1String("kdm/pics/kdelogo.png") ) :
@@ -327,7 +202,7 @@ bool KDMAppearanceWidget::setLogo(QString logo)
 }
 
 
-void KDMAppearanceWidget::slotLogoButtonClicked()
+void KDMDialogWidget::slotLogoButtonClicked()
 {
 	KFileDialog dialog( KStandardDirs::locate( "data", QLatin1String("kdm/pics/") ),
 	                    KImageIO::pattern( KImageIO::Reading ),
@@ -343,14 +218,14 @@ void KDMAppearanceWidget::slotLogoButtonClicked()
 }
 
 
-void KDMAppearanceWidget::slotAreaRadioClicked( int id )
+void KDMDialogWidget::slotAreaRadioClicked( int id )
 {
 	logobutton->setEnabled( id == KdmLogo );
 	logoLabel->setEnabled( id == KdmLogo );
 }
 
 
-bool KDMAppearanceWidget::eventFilter( QObject *, QEvent *e )
+bool KDMDialogWidget::eventFilter( QObject *, QEvent *e )
 {
 	if (e->type() == QEvent::DragEnter) {
 		iconLoaderDragEnterEvent( (QDragEnterEvent *)e );
@@ -365,7 +240,7 @@ bool KDMAppearanceWidget::eventFilter( QObject *, QEvent *e )
 	return false;
 }
 
-void KDMAppearanceWidget::iconLoaderDragEnterEvent( QDragEnterEvent *e )
+void KDMDialogWidget::iconLoaderDragEnterEvent( QDragEnterEvent *e )
 {
 	e->setAccepted( K3URLDrag::canDecode( e ) );
 }
@@ -373,7 +248,7 @@ void KDMAppearanceWidget::iconLoaderDragEnterEvent( QDragEnterEvent *e )
 
 KUrl *decodeImgDrop( QDropEvent *e, QWidget *wdg );
 
-void KDMAppearanceWidget::iconLoaderDropEvent( QDropEvent *e )
+void KDMDialogWidget::iconLoaderDropEvent( QDropEvent *e )
 {
 	KUrl pixurl;
 	bool istmp;
@@ -407,7 +282,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent( QDropEvent *e )
 }
 
 
-void KDMAppearanceWidget::save()
+void KDMDialogWidget::save()
 {
 	config->setGroup( "X-*-Greeter" );
 
@@ -418,17 +293,11 @@ void KDMAppearanceWidget::save()
 
 	config->writeEntry( "LogoPixmap", KGlobal::iconLoader()->iconPath( logopath, K3Icon::Desktop, true ) );
 
-	config->writeEntry( "GUIStyle", guicombo->currentId() );
-
-	config->writeEntry( "ColorScheme", colcombo->currentId() );
-
 	config->writeEntry( "GreeterPos", xLineEdit->text() + ',' + yLineEdit->text() );
-
-	config->writeEntry( "Language", langcombo->current() );
 }
 
 
-void KDMAppearanceWidget::load()
+void KDMDialogWidget::load()
 {
 	config->setGroup( "X-*-Greeter" );
 
@@ -452,12 +321,6 @@ void KDMAppearanceWidget::load()
 	// See if we use alternate logo
 	setLogo( config->readEntry( "LogoPixmap" ) );
 
-	// Check the GUI type
-	guicombo->setCurrentId( config->readEntry( "GUIStyle" ) );
-
-	// Check the Color Scheme
-	colcombo->setCurrentId( config->readEntry("ColorScheme" ) );
-
 	QStringList sl = config->readEntry( "GreeterPos", QStringList() );
 	if (sl.count() != 2) {
 		xLineEdit->setText( "50" );
@@ -466,33 +329,24 @@ void KDMAppearanceWidget::load()
 		xLineEdit->setText( sl.first() );
 		yLineEdit->setText( sl.last() );
 	}
-
-	// get the language
-	langcombo->setCurrentItem( config->readEntry( "Language", "C" ) );
 }
 
 
-void KDMAppearanceWidget::defaults()
+void KDMDialogWidget::defaults()
 {
 	greetstr_lined->setText( i18n("Welcome to %s at %n") );
 	logoRadio->setChecked( true );
 	slotAreaRadioClicked( KdmLogo );
 	setLogo( "" );
-	guicombo->setCurrentId( "" );
-	colcombo->setCurrentId( "" );
 
 	xLineEdit->setText( "50" );
 	yLineEdit->setText( "50" );
-
-	langcombo->setCurrentItem( "en_US" );
 }
 
-QString KDMAppearanceWidget::quickHelp() const
+QString KDMDialogWidget::quickHelp() const
 {
-	return i18n("<h1>KDM - Appearance</h1> Here you can configure the basic appearance"
-	            " of the KDM login manager, i.e. a greeting string, an icon etc.<p>"
-	            " For further refinement of KDM's appearance, see the \"Font\" and \"Background\" "
-	            " tabs.");
+	return i18n("<h1>KDM - Dialog</h1> Here you can configure the basic appearance"
+	            " of the KDM login manager in dialog mode, i.e. a greeting string, an icon etc.");
 }
 
-#include "kdm-appear.moc"
+#include "kdm-dlg.moc"

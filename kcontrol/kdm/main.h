@@ -28,8 +28,8 @@
 
 #include <QMap>
 
-class KDMAppearanceWidget;
-class KDMFontWidget;
+class KDMGeneralWidget;
+class KDMDialogWidget;
 class KDMSessionsWidget;
 class KDMUsersWidget;
 class KDMConvenienceWidget;
@@ -58,9 +58,9 @@ class KDModule : public KCModule {
   private:
 	QTabWidget *tab;
 
-	KDMAppearanceWidget *appearance;
+	KDMGeneralWidget *general;
+	KDMDialogWidget *dialog;
 	KBackground *background;
-	KDMFontWidget *font;
 	KDMSessionsWidget *sessions;
 	KDMUsersWidget *users;
 	KDMConvenienceWidget *convenience;

@@ -8,8 +8,8 @@ kde4_add_ui3_files(kcmbackgroundlib_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/
 
 set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS} 
    background.cpp 
-   kdm-appear.cpp 
-   kdm-font.cpp 
+   kdm-gen.cpp 
+   kdm-dlg.cpp 
    kdm-shut.cpp 
    kdm-users.cpp 
    kdm-conv.cpp 

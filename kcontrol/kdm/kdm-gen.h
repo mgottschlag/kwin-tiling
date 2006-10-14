@@ -22,19 +22,25 @@
 
 #include <QWidget>
 
+class KBackedComboBox;
 class KFontRequester;
+class KLanguageButton;
 class QCheckBox;
 
-class KDMFontWidget : public QWidget {
+class KDMGeneralWidget : public QWidget {
 	Q_OBJECT
 
   public:
-	KDMFontWidget( QWidget *parent = 0 );
+	KDMGeneralWidget( QWidget *parent = 0 );
 
 	void load();
 	void save();
 	void defaults();
 	void makeReadOnly();
+
+	void loadColorSchemes( KBackedComboBox *combo );
+	void loadGuiStyles( KBackedComboBox *combo );
+	void loadLanguageList( KLanguageButton *combo );
 
   Q_SIGNALS:
 	void changed();
@@ -43,6 +49,9 @@ class KDMFontWidget : public QWidget {
 	void set_def();
 
   private:
+	KBackedComboBox *guicombo;
+	KBackedComboBox *colcombo;
+	KLanguageButton *langcombo;
 	QCheckBox *aacb;
 	KFontRequester *greetingFontChooser;
 	KFontRequester *failFontChooser;

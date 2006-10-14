@@ -23,29 +23,23 @@
 
 #include <QWidget>
 
-class KBackedComboBox;
-class KLanguageButton;
 class KLineEdit;
 class QLabel;
 class QLineEdit;
 class QPushButton;
 class QRadioButton;
 
-class KDMAppearanceWidget : public QWidget {
+class KDMDialogWidget : public QWidget {
 	Q_OBJECT
 
   public:
-	KDMAppearanceWidget( QWidget *parent );
+	KDMDialogWidget( QWidget *parent );
 
 	void load();
 	void save();
 	void defaults();
 	void makeReadOnly();
 	QString quickHelp() const;
-
-	void loadColorSchemes( KBackedComboBox *combo );
-	void loadGuiStyles( KBackedComboBox *combo );
-	void loadLanguageList( KLanguageButton *combo );
 
 	bool eventFilter( QObject *, QEvent * );
 
@@ -72,9 +66,6 @@ class KDMAppearanceWidget : public QWidget {
 	QRadioButton *logoRadio;
 	QLineEdit    *xLineEdit;
 	QLineEdit    *yLineEdit;
-	KBackedComboBox *guicombo;
-	KBackedComboBox *colcombo;
-	KLanguageButton *langcombo;
 
 };
 

@@ -25,8 +25,8 @@
 
 #include "main.h"
 #include "background.h"
-#include "kdm-appear.h"
-#include "kdm-font.h"
+#include "kdm-gen.h"
+#include "kdm-dlg.h"
 #include "kdm-users.h"
 #include "kdm-shut.h"
 #include "kdm-conv.h"
@@ -105,14 +105,14 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	                    "Control Center with superuser rights (which is absolutely the right thing to "
 	                    "do, by the way), click on the <em>Modify</em> button to acquire "
 	                    "superuser rights. You will be asked for the superuser password."
-	                    "<h2>Appearance</h2> On this tab page, you can configure how "
-	                    "the Login Manager should look, which language it should use, and which "
-	                    "GUI style it should use. The language settings made here have no influence on "
+	                    "<h2>General</h2> On this tab page, you can configure parts of "
+	                    "the Login Manager's look, and which language it should use. "
+	                    "The language settings made here have no influence on "
 	                    "the user's language settings."
-	                    "<h2>Font</h2>Here you can choose the fonts that the Login Manager should use "
-	                    "for various purposes like greetings and user names. "
-	                    "<h2>Background</h2>If you want to set a special background for the login "
-	                    "screen, this is where to do it."
+	                    "<h2>Dialog</h2>Here you can configure the look of the \"classical\" "
+	                    "dialog based mode if you have choosen to use it. "
+	                    "<h2>Background</h2>If you want to set a special background for the dialog based "
+	                    "login screen, this is where to do it."
 	                    "<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
 	                    "and whether a boot manager should be used."
 	                    "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
@@ -186,24 +186,24 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	// _don't_ add a theme configurator until the theming engine is _really_ done!!
 	// *****
 
-	appearance = new KDMAppearanceWidget( this );
-	tab->addTab( appearance, i18n("A&ppearance") );
-	connect( appearance, SIGNAL(changed()), SLOT(changed()) );
+	general = new KDMGeneralWidget( this );
+	tab->addTab( general, i18n("General (&1)") );
+	connect( general, SIGNAL(changed()), SLOT(changed()) );
 
-	font = new KDMFontWidget( this );
-	tab->addTab( font, i18n("&Font") );
-	connect( font, SIGNAL(changed()), SLOT(changed()) );
+	dialog = new KDMDialogWidget( this );
+	tab->addTab( dialog, i18n("Dialog (&2)") );
+	connect( dialog, SIGNAL(changed()), SLOT(changed()) );
 
 	background = new KBackground( this );
-	tab->addTab( background, i18n("&Background") );
+	tab->addTab( background, i18n("Background (&3)") );
 	connect( background, SIGNAL(changed()), SLOT(changed()) );
 
 	sessions = new KDMSessionsWidget( this );
-	tab->addTab( sessions, i18n("&Shutdown") );
+	tab->addTab( sessions, i18n("Shutdown (&5)") );
 	connect( sessions, SIGNAL(changed()), SLOT(changed()) );
 
 	users = new KDMUsersWidget( this );
-	tab->addTab( users, i18n("&Users") );
+	tab->addTab( users, i18n("Users (&6)") );
 	connect( users, SIGNAL(changed()), SLOT(changed()) );
 	connect( users, SIGNAL(setMinMaxUID( int,int )), SLOT(slotMinMaxUID( int,int )) );
 	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )), users, SLOT(slotAddUsers( const QMap<QString,int> & )) );
@@ -211,7 +211,7 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	connect( this, SIGNAL(clearUsers()), users, SLOT(slotClearUsers()) );
 
 	convenience = new KDMConvenienceWidget( this );
-	tab->addTab( convenience, i18n("Con&venience") );
+	tab->addTab( convenience, i18n("Convenience (&7)") );
 	connect( convenience, SIGNAL(changed()), SLOT(changed()) );
 	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )), convenience, SLOT(slotAddUsers( const QMap<QString,int> & )) );
 	connect( this, SIGNAL(delUsers( const QMap<QString,int> & )), convenience, SLOT(slotDelUsers( const QMap<QString,int> & )) );
@@ -219,8 +219,8 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 
 	load();
 	if (getuid() != 0 || !config->checkConfigFilesWritable( true )) {
-		appearance->makeReadOnly();
-		font->makeReadOnly();
+		general->makeReadOnly();
+		dialog->makeReadOnly();
 		background->makeReadOnly();
 		users->makeReadOnly();
 		sessions->makeReadOnly();
@@ -236,8 +236,8 @@ KDModule::~KDModule()
 
 void KDModule::load()
 {
-	appearance->load();
-	font->load();
+	general->load();
+	dialog->load();
 	background->load();
 	users->load();
 	sessions->load();
@@ -248,8 +248,8 @@ void KDModule::load()
 
 void KDModule::save()
 {
-	appearance->save();
-	font->save();
+	general->save();
+	dialog->save();
 	background->save();
 	users->save();
 	sessions->save();
@@ -261,8 +261,8 @@ void KDModule::save()
 void KDModule::defaults()
 {
 	if (getuid() == 0) {
-		appearance->defaults();
-		font->defaults();
+		general->defaults();
+		dialog->defaults();
 		background->defaults();
 		users->defaults();
 		sessions->defaults();
