@@ -19,6 +19,8 @@
 
 #include "kdm-dlg.h"
 
+#include "positioner.h"
+
 #include <k3urldrag.h>
 #include <kdialog.h>
 #include <kfiledialog.h>
@@ -40,7 +42,6 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QStyle>
-#include <QIntValidator>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -55,7 +56,7 @@ KDMDialogWidget::KDMDialogWidget( QWidget *parent )
 	QGridLayout *grid = new QGridLayout( this );
 	grid->setMargin( KDialog::marginHint() );
 	grid->setSpacing( KDialog::spacingHint() );
-	grid->setColumnStretch( 0, 1 );
+	//grid->setColumnStretch( 0, 1 );
 	grid->setColumnStretch( 1, 1 );
 
 	QHBoxLayout *hlay = new QHBoxLayout();
@@ -86,7 +87,7 @@ KDMDialogWidget::KDMDialogWidget( QWidget *parent )
 
 	QGridLayout *hglay = new QGridLayout();
 	hglay->setSpacing( KDialog::spacingHint() );
-	grid->addLayout( hglay, 1, 0, 3, 1 );
+	grid->addLayout( hglay, 1, 0 );
 
 	label = new QLabel( i18n("Logo area:"), this );
 	hglay->addWidget( label, 0, 0 );
@@ -119,55 +120,28 @@ KDMDialogWidget::KDMDialogWidget( QWidget *parent )
 	logobutton->setAcceptDrops( true );
 	logobutton->installEventFilter( this ); // for drag and drop
 	connect( logobutton, SIGNAL(clicked()), SLOT(slotLogoButtonClicked()) );
-	hglay->addWidget( logoLabel, 1, 0 );
+	hglay->addWidget( logoLabel, 1, 0, Qt::AlignVCenter );
 	hglay->addWidget( logobutton, 1, 1, Qt::AlignCenter );
-	hglay->addRowSpacing( 1, 110 );
+	hglay->setRowMinimumHeight( 1, 110 );
 	wtstr = i18n("Click here to choose an image that KDM will display. "
 	             "You can also drag and drop an image onto this button "
 	             "(e.g. from Konqueror).");
 	logoLabel->setWhatsThis( wtstr );
 	logobutton->setWhatsThis( wtstr );
-	hglay->addRowSpacing( 2, KDialog::spacingHint() );
-	hglay->setColumnStretch( 3, 1 );
 
 
-	hglay = new QGridLayout();
-	hglay->setSpacing( KDialog::spacingHint() );
-	grid->addLayout( hglay, 1, 1 );
+	vlay = new QVBoxLayout();
+	grid->addLayout( vlay, 1, 1, 2, 1 );
+	vlay->setParent( grid );
 
-	label = new QLabel( i18n("Position:"), this );
-	hglay->addWidget( label, 0, 0, 2, 1, Qt::AlignVCenter );
-	QValidator *posValidator = new QIntValidator( 0, 100, this );
-	QLabel *xLineLabel = new QLabel( i18n("&X:"), this );
-	hglay->addWidget( xLineLabel, 0, 1 );
-	xLineEdit = new QLineEdit( this );
-	connect( xLineEdit, SIGNAL(textChanged( const QString& )), SIGNAL(changed()) );
-	hglay->addWidget( xLineEdit, 0, 2 );
-	xLineLabel->setBuddy( xLineEdit );
-	xLineEdit->setValidator( posValidator );
-	QLabel *yLineLabel = new QLabel( i18n("&Y:"), this );
-	hglay->addWidget( yLineLabel, 1, 1 );
-	yLineEdit = new QLineEdit( this );
-	connect( yLineEdit, SIGNAL(textChanged( const QString& )), SIGNAL(changed()) );
-	hglay->addWidget( yLineEdit, 1, 2 );
-	yLineLabel->setBuddy( yLineEdit );
-	yLineEdit->setValidator( posValidator );
-	wtstr = i18n("Here you specify the relative coordinates (in percent) of the login dialog's <em>center</em>.");
-	label->setWhatsThis( wtstr );
-	xLineLabel->setWhatsThis( wtstr );
-	xLineEdit->setWhatsThis( wtstr );
-	yLineLabel->setWhatsThis( wtstr );
-	yLineEdit->setWhatsThis( wtstr );
-	hglay->setColumnStretch( 3, 1 );
-	hglay->setRowStretch( 2, 1 );
+	label = new QLabel( i18n("Dialog &position:"), this );
+	vlay->addWidget( label );
+	positioner = new Positioner( this );
+	label->setBuddy( positioner );
+	connect( positioner, SIGNAL(positionChanged()), SIGNAL(changed()) );
+	vlay->addWidget( positioner );
 
-
-	hglay = new QGridLayout();
-	hglay->setSpacing( KDialog::spacingHint() );
-	grid->addLayout( hglay, 2, 1 );
-	hglay->setColumnStretch( 3, 1 );
-
-	grid->setRowStretch( 4, 1 );
+	grid->setRowStretch( 3, 1 );
 
 }
 
@@ -180,8 +154,7 @@ void KDMDialogWidget::makeReadOnly()
 	noneRadio->setEnabled( false );
 	clockRadio->setEnabled( false );
 	logoRadio->setEnabled( false );
-	xLineEdit->setEnabled( false );
-	yLineEdit->setEnabled( false );
+	positioner->makeReadOnly();
 }
 
 bool KDMDialogWidget::setLogo(QString logo)
@@ -293,7 +266,8 @@ void KDMDialogWidget::save()
 
 	config->writeEntry( "LogoPixmap", KGlobal::iconLoader()->iconPath( logopath, K3Icon::Desktop, true ) );
 
-	config->writeEntry( "GreeterPos", xLineEdit->text() + ',' + yLineEdit->text() );
+	config->writeEntry( "GreeterPos",
+		QString("%1,%2").arg( positioner->x() ).arg( positioner->y() ) );
 }
 
 
@@ -322,13 +296,10 @@ void KDMDialogWidget::load()
 	setLogo( config->readEntry( "LogoPixmap" ) );
 
 	QStringList sl = config->readEntry( "GreeterPos", QStringList() );
-	if (sl.count() != 2) {
-		xLineEdit->setText( "50" );
-		yLineEdit->setText( "50" );
-	} else {
-		xLineEdit->setText( sl.first() );
-		yLineEdit->setText( sl.last() );
-	}
+	if (sl.count() != 2)
+		positioner->setPosition( 50, 50 );
+	else
+		positioner->setPosition( sl.first().toInt(), sl.last().toInt() );
 }
 
 
@@ -338,9 +309,7 @@ void KDMDialogWidget::defaults()
 	logoRadio->setChecked( true );
 	slotAreaRadioClicked( KdmLogo );
 	setLogo( "" );
-
-	xLineEdit->setText( "50" );
-	yLineEdit->setText( "50" );
+	positioner->setPosition( 50, 50 );
 }
 
 QString KDMDialogWidget::quickHelp() const

@@ -14,7 +14,8 @@ set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
    kdm-users.cpp 
    kdm-conv.cpp 
    main.cpp 
-   kbackedcombobox.cpp)
+   kbackedcombobox.cpp
+   positioner.cpp)
 
 kde4_automoc(kcm_kdm ${kcm_kdm_PART_SRCS})
 
@@ -33,3 +34,4 @@ install( FILES kdm.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
+install( FILES anchor.png  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol/pics )

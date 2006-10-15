@@ -24,6 +24,7 @@
 #include <QWidget>
 
 class KLineEdit;
+class Positioner;
 class QLabel;
 class QLineEdit;
 class QPushButton;
@@ -64,8 +65,7 @@ class KDMDialogWidget : public QWidget {
 	QRadioButton *noneRadio;
 	QRadioButton *clockRadio;
 	QRadioButton *logoRadio;
-	QLineEdit    *xLineEdit;
-	QLineEdit    *yLineEdit;
+	Positioner   *positioner;
 
 };
 
