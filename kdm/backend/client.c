@@ -1300,9 +1300,9 @@ StartClient()
 	   credentials. unfortunately, we can reset only the gids. */
 	resetGids();
 
-# define D_LOGIN_SETGROUPS LOGIN_SETGROUPS
+# define D_LOGIN_SETGROUP LOGIN_SETGROUP
 #else /* USE_PAM */
-# define D_LOGIN_SETGROUPS 0
+# define D_LOGIN_SETGROUP 0
 #endif /* USE_PAM */
 
 	removeAuth = 1;
@@ -1383,7 +1383,7 @@ StartClient()
 		 * environment variables, resource limits, and umask.
 		 */
 		if (setusercontext( lc, p, p->pw_uid,
-		        LOGIN_SETALL & ~(D_LOGIN_SETGROUPS|D_LOGIN_SETLOGIN) ) < 0)
+		        LOGIN_SETALL & ~(D_LOGIN_SETGROUP|D_LOGIN_SETLOGIN) ) < 0)
 		{
 			LogError( "setusercontext for %s failed: %m\n", curuser );
 			exit( 1 );
