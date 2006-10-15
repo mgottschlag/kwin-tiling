@@ -360,7 +360,6 @@ void AddAppletDialog::populateApplets()
         }
 
         layout->insertWidget(i, itemWidget);
-        itemWidget->show();
         m_appletWidgetList.append(itemWidget);
         setTabOrder(prevTabWidget, itemWidget);
         prevTabWidget = itemWidget;
@@ -369,9 +368,6 @@ void AddAppletDialog::populateApplets()
                 this, SLOT(selectApplet(AppletWidget*)));
         connect(itemWidget, SIGNAL(doubleClicked(AppletWidget*)),
                 this, SLOT(addApplet(AppletWidget*)));
-
-        // Avoid to freeze the inferface
-        qApp->processEvents();
 
         if (m_closing)
         {
