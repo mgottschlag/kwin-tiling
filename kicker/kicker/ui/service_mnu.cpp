@@ -303,22 +303,30 @@ void PanelServiceMenu::insertMenuItem(KService::Ptr & s, int nId,
                                       const QStringList *suppressGenericNames /* = 0 */,
                                       const QString & aliasname)
 {
-    QString serviceName = aliasname.isEmpty() ? s->name():aliasname;
-    // add comment
-    QString comment = s->genericName();
+    QString serviceName = (aliasname.isEmpty() ? s->name() : aliasname).simplified();
+    QString comment = s->genericName().simplified();
+
     if (!comment.isEmpty())
     {
         if (KickerSettings::menuEntryFormat() == KickerSettings::NameAndDescription)
         {
-            if (!suppressGenericNames ||
-                !suppressGenericNames->contains(s->untranslatedGenericName()))
+            if ((!suppressGenericNames ||
+                 !suppressGenericNames->contains(s->untranslatedGenericName())) &&
+                serviceName.indexOf(comment, 0, Qt::CaseInsensitive) == -1)
             {
-                serviceName = QString("%1 (%2)").arg(serviceName).arg(comment);
+                if (comment.indexOf(serviceName, 0, Qt::CaseInsensitive) == -1)
+                {
+                    serviceName = QString("%1 %2").arg(serviceName, comment);
+                }
+                else
+                {
+                    serviceName = comment;
+                }
             }
         }
         else if (KickerSettings::menuEntryFormat() == KickerSettings::DescriptionAndName)
         {
-            serviceName = QString("%1 (%2)").arg(comment).arg(serviceName);
+            serviceName = QString("%1 (%2)").arg(comment, serviceName);
         }
         else if (KickerSettings::menuEntryFormat() == KickerSettings::DescriptionOnly)
         {
