@@ -1,6 +1,8 @@
 
 project(kdesktop)
 
+configure_file(config-kdesktop.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdesktop.h)
+
 # used by kdesktop but also by lock/
 set( kdesktop_KCFG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/kdesktopsettings.kcfgc

@@ -19,7 +19,7 @@
 
 #include <X11/Xlib.h>
 #include <time.h>
-
+#include <config-kdesktop.h>
 #include "xautolock_c.h"
 
 /*

@@ -26,7 +26,6 @@
 #endif
 
 #ifdef HAVE_XSCREENSAVER
-#define HasScreenSaver
 #include <X11/extensions/scrnsaver.h>
 #endif
 

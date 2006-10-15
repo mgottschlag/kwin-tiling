@@ -9,7 +9,7 @@
 //
 
 #include <config.h>
-
+#include <config-kdesktop.h>
 #include "xautolock.h"
 #include "xautolock.moc"
 
@@ -64,7 +64,7 @@ XAutoLock::XAutoLock()
 #ifdef HAVE_XIDLE
     useXidle = XidleQueryExtension( QX11Info::display(), &dummy, &dummy );
 #endif
-#ifdef HAVE_XSCREENSAVER
+#ifdef HasScreenSaver
     if( !xautolock_useXidle )
         xautolock_useMit = XScreenSaverQueryExtension( QX11Info::display(), &dummy, &dummy );
 #endif
@@ -218,7 +218,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
 #endif
     
-#ifdef HAVE_XSCREENSAVER
+#ifdef HasScreenSaver
     static XScreenSaverInfo* mitInfo = 0;
     if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
     if (XScreenSaverQueryInfo (QX11Info::display(), QX11Info::appRootWindow(), mitInfo)) {
