@@ -1,0 +1,1 @@
+#cmakedefine HAVE_GLXCHOOSEVISUAL 1

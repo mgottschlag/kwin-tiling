@@ -2,6 +2,8 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/wo
 
 ########### next target ###############
 
+configure_file(config-kdesktop-lock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdesktop-lock.h)
+
 set(kdesktop_lock_SRCS ${kdmlib_SRCS}
    lockprocess.cc 
    lockdlg.cc 
@@ -22,6 +24,9 @@ target_link_libraries(kdesktop_lock  ${KDE4_KIO_LIBS} )
 if (HAVE_XF86MISC)
   target_link_libraries(kdesktop_lock Xxf86misc)
 endif (HAVE_XF86MISC)
+if(HAVE_GLXCHOOSEVISUAL)
+   target_link_libraries(kdesktop_lock GL) 
+endif(HAVE_GLXCHOOSEVISUAL)	
 
 install(TARGETS kdesktop_lock DESTINATION ${BIN_INSTALL_DIR})
 

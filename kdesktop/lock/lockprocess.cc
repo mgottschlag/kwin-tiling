@@ -16,7 +16,7 @@
 //some image will be corrupted).
 
 #include <config.h>
-
+#include <config-kdesktop-lock.h>
 #include "lockprocess.h"
 #include "lockdlg.h"
 #include "autologout.h"
