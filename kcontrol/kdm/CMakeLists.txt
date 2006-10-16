@@ -10,10 +10,11 @@ set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
    background.cpp 
    kdm-gen.cpp 
    kdm-dlg.cpp 
+   kdm-theme.cpp 
    kdm-shut.cpp 
    kdm-users.cpp 
    kdm-conv.cpp 
-   main.cpp 
+   main.cpp
    kbackedcombobox.cpp
    positioner.cpp)
 

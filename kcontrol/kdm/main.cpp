@@ -30,6 +30,7 @@
 #include "kdm-users.h"
 #include "kdm-shut.h"
 #include "kdm-conv.h"
+#include "kdm-theme.h"
 
 #include <k3urldrag.h>
 #include <kaboutdata.h>
@@ -42,6 +43,8 @@
 
 #include <QDropEvent>
 #include <QFile>
+#include <QLabel>
+#include <QStackedWidget>
 #include <QTabWidget>
 #include <QVBoxLayout>
 
@@ -91,11 +94,12 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	KAboutData *about =
 		new KAboutData( I18N_NOOP( "kcmkdm" ), I18N_NOOP( "KDE Login Manager Config Module" ),
 		                0, 0, KAboutData::License_GPL,
-		                I18N_NOOP( "(c) 1996 - 2005 The KDM Authors" ) );
+		                I18N_NOOP( "(c) 1996 - 2006 The KDM Authors" ) );
 
 	about->addAuthor( "Thomas Tanghus", I18N_NOOP( "Original author" ), "tanghus@earthling.net" );
 	about->addAuthor( "Steffen Hansen", 0, "hansen@kde.org" );
 	about->addAuthor( "Oswald Buddenhagen", I18N_NOOP( "Current maintainer" ), "ossi@kde.org" );
+	about->addAuthor( "Stephen Leaf", 0, "smileaf@smileaf.org" );
 
 	setQuickHelp( i18n( "<h1>Login Manager</h1> In this module you can configure the "
 	                    "various aspects of the KDE Login Manager. This includes "
@@ -113,6 +117,7 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	                    "dialog based mode if you have choosen to use it. "
 	                    "<h2>Background</h2>If you want to set a special background for the dialog based "
 	                    "login screen, this is where to do it."
+	                    "<h2>Themes</h2> Here you can specify a theme to be used by the Login Manager."
 	                    "<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
 	                    "and whether a boot manager should be used."
 	                    "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
@@ -189,14 +194,41 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	general = new KDMGeneralWidget( this );
 	tab->addTab( general, i18n("General (&1)") );
 	connect( general, SIGNAL(changed()), SLOT(changed()) );
+	connect( general, SIGNAL(useThemeChanged( bool )),
+	         SLOT(slotUseThemeChanged( bool )) );
 
-	dialog = new KDMDialogWidget( this );
-	tab->addTab( dialog, i18n("Dialog (&2)") );
+	dialog_stack = new QStackedWidget( this );
+	tab->addTab( dialog_stack, i18n("Dialog (&2)") );
+	dialog = new KDMDialogWidget( dialog_stack );
+	dialog_stack->addWidget( dialog );
 	connect( dialog, SIGNAL(changed()), SLOT(changed()) );
+	QLabel *lbl = new QLabel(
+		i18n("There is no login dialog window in themed mode."),
+		dialog_stack );
+	lbl->setAlignment( Qt::AlignCenter );
+	dialog_stack->addWidget( lbl );
 
-	background = new KBackground( this );
-	tab->addTab( background, i18n("Background (&3)") );
+	background_stack = new QStackedWidget( this );
+	tab->addTab( background_stack, i18n("Background (&3)") );
+	background = new KBackground( background_stack );
+	background_stack->addWidget( background );
 	connect( background, SIGNAL(changed()), SLOT(changed()) );
+	lbl = new QLabel(
+		i18n("The background cannot be configured separately in themed mode."),
+		background_stack );
+	lbl->setAlignment( Qt::AlignCenter );
+	background_stack->addWidget( lbl );
+
+	theme_stack = new QStackedWidget( this );
+	tab->addTab( theme_stack, i18n("Theme (&4)") );
+	lbl = new QLabel(
+		i18n("Themed mode is disabled. See \"General\" tab."),
+		theme_stack );
+	lbl->setAlignment( Qt::AlignCenter );
+	theme_stack->addWidget( lbl );
+	theme = new KDMThemeWidget( theme_stack );
+	theme_stack->addWidget( theme );
+	connect( theme, SIGNAL(changed()), SLOT(changed()) );
 
 	sessions = new KDMSessionsWidget( this );
 	tab->addTab( sessions, i18n("Shutdown (&5)") );
@@ -222,6 +254,7 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 		general->makeReadOnly();
 		dialog->makeReadOnly();
 		background->makeReadOnly();
+		theme->makeReadOnly();
 		users->makeReadOnly();
 		sessions->makeReadOnly();
 		convenience->makeReadOnly();
@@ -239,6 +272,7 @@ void KDModule::load()
 	general->load();
 	dialog->load();
 	background->load();
+	theme->load();
 	users->load();
 	sessions->load();
 	convenience->load();
@@ -251,6 +285,7 @@ void KDModule::save()
 	general->save();
 	dialog->save();
 	background->save();
+	theme->save();
 	users->save();
 	sessions->save();
 	convenience->save();
@@ -264,6 +299,7 @@ void KDModule::defaults()
 		general->defaults();
 		dialog->defaults();
 		background->defaults();
+		theme->defaults();
 		users->defaults();
 		sessions->defaults();
 		convenience->defaults();
@@ -336,6 +372,13 @@ void KDModule::slotMinMaxUID( int min, int max )
 	}
 	minshowuid = min;
 	maxshowuid = max;
+}
+
+void KDModule::slotUseThemeChanged( bool use )
+{
+	dialog_stack->setCurrentIndex( use );
+	background_stack->setCurrentIndex( use );
+	theme_stack->setCurrentIndex( use );
 }
 
 #include "main.moc"

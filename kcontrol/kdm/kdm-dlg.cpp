@@ -56,7 +56,6 @@ KDMDialogWidget::KDMDialogWidget( QWidget *parent )
 	QGridLayout *grid = new QGridLayout( this );
 	grid->setMargin( KDialog::marginHint() );
 	grid->setSpacing( KDialog::spacingHint() );
-	//grid->setColumnStretch( 0, 1 );
 	grid->setColumnStretch( 1, 1 );
 
 	QHBoxLayout *hlay = new QHBoxLayout();

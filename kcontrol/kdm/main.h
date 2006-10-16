@@ -30,10 +30,13 @@
 
 class KDMGeneralWidget;
 class KDMDialogWidget;
+class KDMThemeWidget;
 class KDMSessionsWidget;
 class KDMUsersWidget;
 class KDMConvenienceWidget;
 class KBackground;
+
+class QStackedWidget;
 class QTabWidget;
 
 class KDModule : public KCModule {
@@ -48,7 +51,8 @@ class KDModule : public KCModule {
 	void defaults();
 
   public Q_SLOTS:
-  	void slotMinMaxUID( int min, int max );
+	void slotMinMaxUID( int min, int max );
+	void slotUseThemeChanged( bool use );
 
   Q_SIGNALS:
 	void clearUsers();
@@ -61,9 +65,13 @@ class KDModule : public KCModule {
 	KDMGeneralWidget *general;
 	KDMDialogWidget *dialog;
 	KBackground *background;
+	KDMThemeWidget *theme;
 	KDMSessionsWidget *sessions;
 	KDMUsersWidget *users;
 	KDMConvenienceWidget *convenience;
+	QStackedWidget *dialog_stack;
+	QStackedWidget *background_stack;
+	QStackedWidget *theme_stack;
 
 	QMap<QString, QPair<int,QStringList> > usermap;
 	QMap<QString,int> groupmap;

@@ -53,14 +53,19 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	grid->setMargin( KDialog::marginHint() );
 	grid->setColStretch( 2, 1 );
 
+	useThemeCheck = new QCheckBox( i18n("&Use themed greeter"), box );
+	connect( useThemeCheck, SIGNAL(toggled( bool )), SLOT(slotUseThemeChanged()) );
+	useThemeCheck->setWhatsThis( i18n("Enable this if you would like to use a themed Login Manager.") );
+	grid->addWidget( useThemeCheck, 0, 0, 1, 2 );
+
 	guicombo = new KBackedComboBox( box );
 	guicombo->insertItem( "", i18n("<default>") );
 	loadGuiStyles( guicombo );
 	QLabel *label = new QLabel( i18n("GUI s&tyle:"), box );
 	label->setBuddy( guicombo );
 	connect( guicombo, SIGNAL(activated( int )), SIGNAL(changed()) );
-	grid->addWidget( label, 0, 0 );
-	grid->addWidget( guicombo, 0, 1 );
+	grid->addWidget( label, 1, 0 );
+	grid->addWidget( guicombo, 1, 1 );
 	wtstr = i18n("You can choose a basic GUI style here that will be "
 	             "used by KDM only.");
 	label->setWhatsThis( wtstr );
@@ -72,8 +77,8 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	label = new QLabel( i18n("Color sche&me:"), box );
 	label->setBuddy( colcombo );
 	connect( colcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
-	grid->addWidget( label, 1, 0 );
-	grid->addWidget( colcombo, 1, 1 );
+	grid->addWidget( label, 2, 0 );
+	grid->addWidget( colcombo, 2, 1 );
 	wtstr = i18n("You can choose a basic Color Scheme here that will be "
 	             "used by KDM only.");
 	label->setWhatsThis( wtstr );
@@ -140,6 +145,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 
 void KDMGeneralWidget::makeReadOnly()
 {
+	useThemeCheck->setEnabled( false );
 	guicombo->setEnabled( false );
 	colcombo->setEnabled( false );
 	langcombo->setEnabled( false );
@@ -226,6 +232,7 @@ void KDMGeneralWidget::save()
 {
 	config->setGroup( "X-*-Greeter" );
 
+	config->writeEntry( "UseTheme", useThemeCheck->isChecked() );
 	config->writeEntry( "GUIStyle", guicombo->currentId() );
 	config->writeEntry( "ColorScheme", colcombo->currentId() );
 	config->writeEntry( "Language", langcombo->current() );
@@ -242,6 +249,8 @@ void KDMGeneralWidget::load()
 
 	config->setGroup( "X-*-Greeter" );
 
+	useThemeCheck->setChecked( config->readEntry( "UseTheme", false ) );
+	
 	// Check the GUI type
 	guicombo->setCurrentId( config->readEntry( "GUIStyle" ) );
 
@@ -265,11 +274,21 @@ void KDMGeneralWidget::load()
 
 void KDMGeneralWidget::defaults()
 {
+	useThemeCheck->setChecked( false );
 	guicombo->setCurrentId( "" );
 	colcombo->setCurrentId( "" );
 	langcombo->setCurrentItem( "en_US" );
 	set_def();
 	aacb->setChecked( false );
+}
+
+void KDMGeneralWidget::slotUseThemeChanged()
+{
+	bool en = useThemeCheck->isChecked();
+	failFontChooser->setEnabled( !en );
+	greetingFontChooser->setEnabled( !en );
+	emit useThemeChanged( en );
+	emit changed();
 }
 
 #include "kdm-gen.moc"

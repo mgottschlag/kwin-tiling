@@ -44,11 +44,15 @@ class KDMGeneralWidget : public QWidget {
 
   Q_SIGNALS:
 	void changed();
+	void useThemeChanged( bool );
 
   protected Q_SLOTS:
-	void set_def();
+	void slotUseThemeChanged();
 
   private:
+	void set_def();
+
+	QCheckBox *useThemeCheck;
 	KBackedComboBox *guicombo;
 	KBackedComboBox *colcombo;
 	KLanguageButton *langcombo;
