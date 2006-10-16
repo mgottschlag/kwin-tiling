@@ -1,8 +1,0 @@
-AC_HAVE_GL(
-    [
-    AC_CHECK_LIB(GL,glXChooseVisual,
-        [
-        AC_DEFINE(HAVE_GLXCHOOSEVISUAL, 1, [Define if you have glXChooseVisual()])
-        ])
-    ],[]
-    )
