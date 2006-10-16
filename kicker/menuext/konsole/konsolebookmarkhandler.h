@@ -29,7 +29,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     // for importing
-    void openBookmark( KBookmark, Qt::MouseButtons, Qt::KeyboardModifiers );
+    void openBookmark( const KBookmark &, Qt::MouseButtons, Qt::KeyboardModifiers );
     void slotNewBookmark( const QString& text, const QByteArray& url,
                           const QString& additionalInfo );
     void slotNewFolder( const QString& text, bool open,

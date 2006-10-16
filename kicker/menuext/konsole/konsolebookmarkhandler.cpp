@@ -38,13 +38,13 @@ KonsoleBookmarkHandler::KonsoleBookmarkHandler( KonsoleMenu *konsole, bool )
             importOldBookmarks( oldFile, file );
     }
 
-    KBookmarkManager *manager = KBookmarkManager::managerForFile( file, false);
+    KBookmarkManager *manager = KBookmarkManager::managerForFile( file, "kfile", false);
     manager->setUpdate( true );
 
     m_bookmarkMenu = new KBookmarkMenu( manager, this, m_menu, 0 );
 }
 
-void KonsoleBookmarkHandler::openBookmark(KBookmark bm, Qt::MouseButtons, Qt::KeyboardModifiers )
+void KonsoleBookmarkHandler::openBookmark(const KBookmark & bm, Qt::MouseButtons, Qt::KeyboardModifiers )
 {
     emit openUrl( bm.url().url(), bm.text() );
 }
