@@ -21,6 +21,11 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_screensaver )
 
 target_link_libraries(kcm_screensaver  ${KDE4_KDE3SUPPORT_LIBS})
 
+if(HAVE_GLXCHOOSEVISUAL)
+   target_link_libraries(kcm_screensaver GL)
+endif(HAVE_GLXCHOOSEVISUAL)
+
+
 install(TARGETS kcm_screensaver  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 

@@ -1,3 +1,3 @@
 /* Define if you have glXChooseVisual() */
-#undef HAVE_GLXCHOOSEVISUAL
+#cmakedefine HAVE_GLXCHOOSEVISUAL 1
 
