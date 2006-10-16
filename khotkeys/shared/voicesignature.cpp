@@ -111,7 +111,7 @@ static inline double hamming(uint n, uint size)
 
 static QVector<double> fft(const Sound& sound, unsigned int start, unsigned int stop)
 {
-	if(start>=stop)
+	if(start>=stop || sound.size()==0)
 		return QVector<double>();
 	
 	//We need a sample with a size of a power of two
