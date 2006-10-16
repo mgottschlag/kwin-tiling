@@ -58,10 +58,10 @@ void KonsoleBookmarkHandler::importOldBookmarks( const QString& path,
                                                  const QString& destinationPath )
 {
     KSaveFile file( destinationPath );
-    if ( file.status() != 0 )
+    if ( !file.open() )
         return;
 
-    m_importStream = file.textStream();
+    m_importStream = new QTextStream ( &file );
     *m_importStream << "<!DOCTYPE xbel>\n<xbel>\n";
 
     KNSBookmarkImporter importer( path );
@@ -77,8 +77,10 @@ void KonsoleBookmarkHandler::importOldBookmarks( const QString& path,
     importer.parseNSBookmarks( false );
 
     *m_importStream << "</xbel>";
+    m_importStream->flush();
 
-    file.close();
+    file.finalize();
+    delete m_importStream;
     m_importStream = 0L;
 }
 

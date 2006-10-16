@@ -340,10 +340,10 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
     // pfeiffer: so that we don't overwrite the user's gtkrc.
     // it is found via the GTK_RC_FILES environment variable.
     KSaveFile saveFile( KStandardDirs::locateLocal( "config", 2==version?"gtkrc-2.0":"gtkrc" ) );
-    if ( saveFile.status() != 0 || saveFile.textStream() == 0L )
+    if ( !saveFile.open() )
         return;
 
-    QTextStream& t = *saveFile.textStream();
+    QTextStream t ( &saveFile );
     t.setCodec( QTextCodec::codecForLocale () );
 
     t << i18n(

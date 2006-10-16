@@ -415,7 +415,7 @@ void KlipperWidget::saveHistory() {
         return;
     }
     KSaveFile history_file( history_file_name );
-    if ( history_file.status() != 0  ) {
+    if ( !history_file.open() ) {
         kWarning() << failed_save_warning << endl;
         return;
     }
@@ -426,7 +426,8 @@ void KlipperWidget::saveHistory() {
         history_stream << item;
     }
     quint32 crc = crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() );
-    *history_file.dataStream() << crc << data;
+    QDataStream ds ( &history_file );
+    ds << crc << data;
 }
 
 void KlipperWidget::readProperties(KConfig *kc)
