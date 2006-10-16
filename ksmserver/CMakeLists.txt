@@ -2,6 +2,8 @@
 project(ksmserver)
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib  )
 
+configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
+
 ########### next target ###############
 
 set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS} 

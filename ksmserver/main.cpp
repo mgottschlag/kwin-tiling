@@ -5,7 +5,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 ******************************************************************/
 
 #include <config.h>
-
+#include <config-ksmserver.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
