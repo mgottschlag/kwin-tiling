@@ -259,22 +259,46 @@ void SystemTrayApplet::applySettings()
     }
 
     KConfig *conf = config();
-    conf->setGroup("HiddenTrayIcons");
-    QString name;
 
+    // Save the sort order and hidden status using the window class (WM_CLASS) rather
+    // than window name (caption) - window name is i18n-ed, so it's for example
+    // not possible to create default settings.
+    // For backwards compatibility, name is kept as it is, class is preceded by '/'.
+    QMap< QString, QString > windowNameToClass;
+    for( TrayEmbedList::ConstIterator it = m_shownWins.begin();
+         it != m_shownWins.end();
+         ++it ) {
+        KWin::WindowInfo info = KWin::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
+        windowNameToClass[ info.name() ] = '/' + info.windowClassClass();
+    }
+    for( TrayEmbedList::ConstIterator it = m_hiddenWins.begin();
+         it != m_hiddenWins.end();
+         ++it ) {
+        KWin::WindowInfo info = KWin::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
+        windowNameToClass[ info.name() ] = '/' + info.windowClassClass();
+    }
+
+    conf->setGroup("SortedTrayIcons");
     m_sortOrderIconList.clear();
     QList<QListWidgetItem*> list = m_iconSelector->availableListWidget()->findItems(QString("*"), Qt::MatchRegExp);
     foreach (QListWidgetItem* item, list)
     {
-        m_sortOrderIconList.append(item->text());
+        if( windowNameToClass.contains(item->text()))
+            m_sortOrderIconList.append(windowNameToClass[item->text()]);
+        else
+            m_sortOrderIconList.append(item->text());
     }
     conf->writeEntry("SortOrder", m_sortOrderIconList);
 
+    conf->setGroup("HiddenTrayIcons");
     m_hiddenIconList.clear();
     list = m_iconSelector->availableListWidget()->findItems(QString("*"), Qt::MatchRegExp);
     foreach (QListWidgetItem* item, list)
     {
-        m_hiddenIconList.append(item->text());
+        if( windowNameToClass.contains(item->text()))
+            m_hiddenIconList.append(windowNameToClass[item->text()]);
+        else
+            m_hiddenIconList.append(item->text());
     }
     conf->writeEntry("Hidden", m_hiddenIconList);
     conf->sync();
@@ -411,6 +435,8 @@ void SystemTrayApplet::loadSettings()
 
     conf->setGroup("HiddenTrayIcons");
     m_hiddenIconList = conf->readEntry("Hidden", QStringList() );
+    conf->setGroup("SortedTrayIcons");
+    m_sortOrderIconList = conf->readListEntry("SortOrder", QStringList());
 }
 
 void SystemTrayApplet::systemTrayWindowAdded( WId w )
@@ -499,6 +525,8 @@ bool SystemTrayApplet::isWinManaged(WId w)
 bool SystemTrayApplet::shouldHide(WId w)
 {
     return m_hiddenIconList.contains(KWin::windowInfo(w,NET::WMName).name());
+    return m_hiddenIconList.contains(KWin::windowInfo(w,NET::WMName).name())
+        || m_hiddenIconList.contains('/'+KWin::windowInfo(w,0,NET::WM2WindowClass).windowClassClass());
 }
 
 void SystemTrayApplet::updateVisibleWins()
@@ -521,11 +549,15 @@ void SystemTrayApplet::updateVisibleWins()
         }
     }
     
-    QMap< TrayEmbed*, QString > names; // cache names
+    QMap< TrayEmbed*, QString > names; // cache names and classes
+    QMap< TrayEmbed*, QString > classes;
     for( TrayEmbedList::const_iterator it = m_shownWins.begin();
          it != m_shownWins.end();
-         ++it )
-        names[ *it ] = KWin::windowInfo((*it)->containerWinId(),NET::WMName).name();
+         ++it ) {
+        KWin::WindowInfo info = KWin::windowInfo((*it)->containerWinId(),NET::WMName,NET::WM2WindowClass);
+        names[ *it ] = info.name();
+        classes[ *it ] = '/'+info.windowClassClass();
+    }
     TrayEmbedList newList;
     for( QStringList::const_iterator it1 = m_sortOrderIconList.begin();
          it1 != m_sortOrderIconList.end();
@@ -533,7 +565,7 @@ void SystemTrayApplet::updateVisibleWins()
         for( TrayEmbedList::iterator it2 = m_shownWins.begin();
              it2 != m_shownWins.end();
              ) {
-            if( names[ *it2 ] == *it1 ) {
+            if( (*it1).startsWith("/") ? classes[ *it2 ] == *it1 : names[ *it2 ] == *it1 ) {
                 newList.append( *it2 ); // don't bail out, there may be multiple ones
                 it2 = m_shownWins.erase( it2 );
             } else
