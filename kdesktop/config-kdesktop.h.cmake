@@ -1,1 +1,1 @@
-#cmakedefine HasScreenSaver 1
+#cmakedefine HAVE_SCREENSAVER 1

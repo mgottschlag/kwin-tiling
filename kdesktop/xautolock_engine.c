@@ -40,7 +40,7 @@ xautolock_queryIdleTime (Display* d)
   else
 #endif /* HasXIdle */
   {
-#ifdef HasScreenSaver
+#ifdef HAVE_SCREENSAVER
     if( xautolock_useMit )
     {
     static XScreenSaverInfo* mitInfo = 0; 
@@ -49,7 +49,7 @@ xautolock_queryIdleTime (Display* d)
     idleTime = mitInfo->idle;
     }
     else
-#endif /* HasScreenSaver */
+#endif /* HAVE_SCREENSAVER */
     {
         d = d; /* shut up */
         return; /* DIY */

@@ -64,7 +64,7 @@ XAutoLock::XAutoLock()
 #ifdef HAVE_XIDLE
     useXidle = XidleQueryExtension( QX11Info::display(), &dummy, &dummy );
 #endif
-#ifdef HasScreenSaver
+#ifdef HAVE_SCREENSAVER
     if( !xautolock_useXidle )
         xautolock_useMit = XScreenSaverQueryExtension( QX11Info::display(), &dummy, &dummy );
 #endif
@@ -218,7 +218,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
 #endif
     
-#ifdef HasScreenSaver
+#ifdef HAVE_SCREENSAVER
     static XScreenSaverInfo* mitInfo = 0;
     if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
     if (XScreenSaverQueryInfo (QX11Info::display(), QX11Info::appRootWindow(), mitInfo)) {
