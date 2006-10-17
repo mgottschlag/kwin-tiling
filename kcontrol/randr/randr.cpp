@@ -546,8 +546,8 @@ void RandRScreen::save(KConfig& config) const
 	config.writeEntry("height", currentPixelHeight());
 	config.writeEntry("refresh", refreshRateIndexToHz(currentSize(), currentRefreshRate()));
 	config.writeEntry("rotation", rotationIndexToDegree(currentRotation()));
-	config.writeEntry("reflectX", (bool)(currentRotation() & ReflectMask == ReflectX));
-	config.writeEntry("reflectY", (bool)(currentRotation() & ReflectMask == ReflectY));
+	config.writeEntry("reflectX", (bool)(currentRotation() & ReflectMask) == ReflectX);
+	config.writeEntry("reflectY", (bool)(currentRotation() & ReflectMask) == ReflectY);
 }
 
 RandRDisplay::RandRDisplay()
