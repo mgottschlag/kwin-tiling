@@ -263,19 +263,19 @@ void SystemTrayApplet::applySettings()
     // Save the sort order and hidden status using the window class (WM_CLASS) rather
     // than window name (caption) - window name is i18n-ed, so it's for example
     // not possible to create default settings.
-    // For backwards compatibility, name is kept as it is, class is preceded by '/'.
+    // For backwards compatibility, name is kept as it is, class is preceded by '!'.
     QMap< QString, QString > windowNameToClass;
     for( TrayEmbedList::ConstIterator it = m_shownWins.begin();
          it != m_shownWins.end();
          ++it ) {
         KWin::WindowInfo info = KWin::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
-        windowNameToClass[ info.name() ] = '/' + info.windowClassClass();
+        windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
     for( TrayEmbedList::ConstIterator it = m_hiddenWins.begin();
          it != m_hiddenWins.end();
          ++it ) {
         KWin::WindowInfo info = KWin::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
-        windowNameToClass[ info.name() ] = '/' + info.windowClassClass();
+        windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
 
     conf->setGroup("SortedTrayIcons");
@@ -526,7 +526,7 @@ bool SystemTrayApplet::shouldHide(WId w)
 {
     return m_hiddenIconList.contains(KWin::windowInfo(w,NET::WMName).name());
     return m_hiddenIconList.contains(KWin::windowInfo(w,NET::WMName).name())
-        || m_hiddenIconList.contains('/'+KWin::windowInfo(w,0,NET::WM2WindowClass).windowClassClass());
+        || m_hiddenIconList.contains('!'+KWin::windowInfo(w,0,NET::WM2WindowClass).windowClassClass());
 }
 
 void SystemTrayApplet::updateVisibleWins()
@@ -556,7 +556,7 @@ void SystemTrayApplet::updateVisibleWins()
          ++it ) {
         KWin::WindowInfo info = KWin::windowInfo((*it)->containerWinId(),NET::WMName,NET::WM2WindowClass);
         names[ *it ] = info.name();
-        classes[ *it ] = '/'+info.windowClassClass();
+        classes[ *it ] = '!'+info.windowClassClass();
     }
     TrayEmbedList newList;
     for( QStringList::const_iterator it1 = m_sortOrderIconList.begin();
@@ -565,7 +565,7 @@ void SystemTrayApplet::updateVisibleWins()
         for( TrayEmbedList::iterator it2 = m_shownWins.begin();
              it2 != m_shownWins.end();
              ) {
-            if( (*it1).startsWith("/") ? classes[ *it2 ] == *it1 : names[ *it2 ] == *it1 ) {
+            if( (*it1).startsWith("!") ? classes[ *it2 ] == *it1 : names[ *it2 ] == *it1 ) {
                 newList.append( *it2 ); // don't bail out, there may be multiple ones
                 it2 = m_shownWins.erase( it2 );
             } else
