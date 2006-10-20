@@ -41,6 +41,8 @@
 #include <kmessagebox.h>
 #include <kdialog.h>
 #include <kio/netaccess.h>
+#include <kprocess.h>
+#include <kstandarddirs.h>
 
 //#include "xpm/world.xpm"
 #include "tzone.h"
@@ -164,27 +166,36 @@ void Tzone::save()
 
         QString val = selectedzone;
 #else
-        QFile fTimezoneFile("/etc/timezone");
-
-        if (fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate) )
-        {
-            QTextStream t(&fTimezoneFile);
-            t << selectedzone;
-            fTimezoneFile.close();
-        }
-
         QString tz = "/usr/share/zoneinfo/" + selectedzone;
 
         kDebug() << "Set time zone " << tz << endl;
 
-	if (!QFile::remove("/etc/localtime"))
-	{
-		//After the KDE 3.2 release, need to add an error message
-	}
-	else
-		if (!KIO::NetAccess::file_copy(KUrl(tz),KUrl("/etc/localtime")))
-			KMessageBox::error( 0, i18n("Error setting new timezone."),
-                        		    i18n("Timezone Error"));
+        if( !KStandardDirs::findExe( "zic" ).isEmpty())
+        {
+            KProcess proc;
+            proc << "zic" << "-l" << selectedzone;
+            proc.start( KProcess::Block );
+        }
+        else
+        {
+            QFile fTimezoneFile("/etc/timezone");
+
+            if (fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate) )
+            {
+                QTextStream t(&fTimezoneFile);
+                t << selectedzone;
+                fTimezoneFile.close();
+            }
+
+            if (!QFile::remove("/etc/localtime"))
+            {
+                //After the KDE 3.2 release, need to add an error message
+            }
+            else
+                if (!KIO::NetAccess::file_copy(KUrl(tz),KUrl("/etc/localtime")))
+                        KMessageBox::error( 0, i18n("Error setting new timezone."),
+                                            i18n("Timezone Error"));
+        }
 
         QString val = ':' + tz;
 #endif // !USE_SOLARIS
