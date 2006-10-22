@@ -1311,7 +1311,7 @@ StartClient()
 #if !defined(USE_PAM) && defined(USESHADOW) && !defined(_AIX)
 	endspent();
 #endif
-	ClearCloseOnFork( mstrtalk.pipe->wfd );
+	ClearCloseOnFork( mstrtalk.pipe->fd.w );
 	switch (pid = Fork()) {
 	case 0:
 
@@ -1526,7 +1526,7 @@ StartClient()
 		GSendInt( curuid );
 		GSendStr( curuser );
 		GSendStr( desksess );
-		close( mstrtalk.pipe->wfd );
+		close( mstrtalk.pipe->fd.w );
 		userEnviron = setEnv( userEnviron, "DESKTOP_SESSION", desksess );
 		for (i = 0; td->sessionsDirs[i]; i++) {
 			fname = 0;
@@ -1565,11 +1565,11 @@ StartClient()
 		          failsafeArgv[0] );
 		exit( 1 );
 	case -1:
-		RegisterCloseOnFork( mstrtalk.pipe->wfd );
+		RegisterCloseOnFork( mstrtalk.pipe->fd.w );
 		LogError( "Forking session on %s failed: %m\n", td->name );
 		return 0;
 	default:
-		RegisterCloseOnFork( mstrtalk.pipe->wfd );
+		RegisterCloseOnFork( mstrtalk.pipe->fd.w );
 		Debug( "StartSession, fork succeeded %d\n", pid );
 		return pid;
 	}

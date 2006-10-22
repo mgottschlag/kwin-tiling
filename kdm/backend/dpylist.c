@@ -279,10 +279,12 @@ NewDisplay( const char *name )
 	d->pid = -1;
 	d->serverPid = -1;
 	d->ctrl.fd = -1;
-	d->pipe.rfd = -1;
-	d->pipe.wfd = -1;
-	d->gpipe.rfd = -1;
-	d->gpipe.wfd = -1;
+	d->pipe.fd.r = -1;
+	d->gpipe.fd.r = -1;
+#ifndef SINGLE_PIPE
+	d->pipe.fd.w = -1;
+	d->gpipe.fd.w = -1;
+#endif
 	d->userSess = -1;
 #ifdef XDMCP
 	d->xdmcpFd = -1;

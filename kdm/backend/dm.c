@@ -634,7 +634,7 @@ processDPipe( struct display *d )
 	GSet( &dpytalk );
 	if (!GRecvCmd( &cmd )) {
 		/* process already exited */
-		UnregisterInput( d->pipe.rfd );
+		UnregisterInput( d->pipe.fd.r );
 		return;
 	}
 	switch (cmd) {
@@ -732,7 +732,7 @@ processGPipe( struct display *d )
 	GSet( &dpytalk );
 	if (!GRecvCmd( &cmd )) {
 		/* process already exited */
-		UnregisterInput( d->gpipe.rfd );
+		UnregisterInput( d->gpipe.fd.r );
 		return;
 	}
 	switch (cmd) {
@@ -851,9 +851,9 @@ ReapChildren( void )
 		/* SUPPRESS 560 */
 		if ((d = FindDisplayByPid( pid ))) {
 			d->pid = -1;
-			UnregisterInput( d->pipe.rfd );
+			UnregisterInput( d->pipe.fd.r );
 			GClosen (&d->pipe);
-			UnregisterInput( d->gpipe.rfd );
+			UnregisterInput( d->gpipe.fd.r );
 			GClosen (&d->gpipe);
 			closeCtrl( d );
 			switch (waitVal( status )) {
@@ -1184,11 +1184,11 @@ MainLoop( void )
 			for (d = displays; d; d = d->next) {
 				if (handleCtrl( &reads, d ))
 					goto again;
-				if (d->pipe.rfd >= 0 && FD_ISSET( d->pipe.rfd, &reads )) {
+				if (d->pipe.fd.r >= 0 && FD_ISSET( d->pipe.fd.r, &reads )) {
 					processDPipe( d );
 					break;
 				}
-				if (d->gpipe.rfd >= 0 && FD_ISSET( d->gpipe.rfd, &reads )) {
+				if (d->gpipe.fd.r >= 0 && FD_ISSET( d->gpipe.fd.r, &reads )) {
 					processGPipe( d );
 					break;
 				}
@@ -1386,10 +1386,10 @@ StartDisplayP2( struct display *d )
 	default:
 		Debug( "forked session, pid %d\n", pid );
 
-		/* (void) fcntl (d->pipe.rfd, F_SETFL, O_NONBLOCK); */
-		/* (void) fcntl (d->gpipe.rfd, F_SETFL, O_NONBLOCK); */
-		RegisterInput( d->pipe.rfd );
-		RegisterInput( d->gpipe.rfd );
+		/* (void) fcntl (d->pipe.fd.r, F_SETFL, O_NONBLOCK); */
+		/* (void) fcntl (d->gpipe.fd.r, F_SETFL, O_NONBLOCK); */
+		RegisterInput( d->pipe.fd.r );
+		RegisterInput( d->gpipe.fd.r );
 
 		d->pid = pid;
 		d->hstent->lock = d->hstent->rLogin = d->hstent->goodExit =

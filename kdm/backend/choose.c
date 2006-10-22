@@ -992,13 +992,13 @@ DoChoose()
 		}
 	  noto:
 		FD_ZERO( &rfds );
-		FD_SET( grtproc.pipe.rfd, &rfds );
+		FD_SET( grtproc.pipe.fd.r, &rfds );
 		FD_SET( socketFD, &rfds );
 #if defined(IPv6) && defined(AF_INET6)
 		if (socket6FD >= 0)
 			FD_SET( socket6FD, &rfds );
 #endif
-		n = grtproc.pipe.rfd;
+		n = grtproc.pipe.fd.r;
 		if (socketFD > n)
 			n = socketFD;
 #if defined(IPv6) && defined(AF_INET6)
@@ -1006,7 +1006,7 @@ DoChoose()
 			n = socket6FD;
 #endif
 		if (select( n + 1, &rfds, 0, 0, to ) > 0) {
-			if (FD_ISSET( grtproc.pipe.rfd, &rfds ))
+			if (FD_ISSET( grtproc.pipe.fd.r, &rfds ))
 				switch (cmd = CtrlGreeterWait( FALSE )) {
 				case -1:
 					break;

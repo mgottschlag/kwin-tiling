@@ -165,7 +165,15 @@ typedef int waitType;
 #endif
 
 typedef struct GPipe {
-	int wfd, rfd;
+#if defined(__FreeBSD__) || defined(UNIXCONN)
+# define SINGLE_PIPE
+	union
+#else
+	struct
+#endif
+	{
+		int w, r;
+	} fd;
 	char *who;
 } GPipe;
 

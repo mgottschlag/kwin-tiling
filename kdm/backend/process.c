@@ -36,6 +36,9 @@ from the copyright holder.
 
 #include "dm.h"
 #include "dm_error.h"
+#if defined(SINGLE_PIPE) && !defined(__FreeBSD__)
+# include "dm_socket.h"
+#endif
 
 #include <ctype.h>
 #include <stdio.h>
@@ -303,26 +306,42 @@ GSet( GTalk *tlk )
 	curtalk = tlk;
 }
 
+#if !defined(SINGLE_PIPE) || defined(__FreeBSD__)
+# define make_pipe(h) pipe( h )
+#else
+# define make_pipe(h) socketpair( AF_UNIX, SOCK_STREAM, 0, h )
+#endif
+
 int
 GFork( GPipe *pajp, const char *pname, char *cname,
        GPipe *ogp, char *cgname )
 {
-	int opipe[2], ipipe[2], ogpipe[2], igpipe[2], pid;
+	int opipe[2], ogpipe[2], pid;
+#ifndef SINGLE_PIPE
+	int ipipe[2], igpipe[2];
+#endif
 
-	if (pipe( opipe ))
+	if (make_pipe( opipe ))
 		goto badp1;
+#ifndef SINGLE_PIPE
 	if (pipe( ipipe ))
 		goto badp2;
+#endif
 	if (ogp) {
-		if (pipe( ogpipe ))
+		if (make_pipe( ogpipe ))
+#ifdef SINGLE_PIPE
+		{
+#else
 			goto badp3;
-		if (pipe( igpipe )) {
+		if (pipe( igpipe ))
+		{
 			close( ogpipe[0] );
 			close( ogpipe[1] );
 		  badp3:
 			close( ipipe[0] );
 			close( ipipe[1] );
 		  badp2:
+#endif
 			close( opipe[0] );
 			close( opipe[1] );
 		  badp1:
@@ -333,52 +352,68 @@ GFork( GPipe *pajp, const char *pname, char *cname,
 		}
 	}
 	RegisterCloseOnFork( opipe[1] );
+#ifndef SINGLE_PIPE
 	RegisterCloseOnFork( ipipe[0] );
+#endif
 	if (ogp) {
 		RegisterCloseOnFork( ogpipe[1] );
+#ifndef SINGLE_PIPE
 		RegisterCloseOnFork( igpipe[0] );
+#endif
 	}
 	switch (pid = Fork()) {
 	case -1:
 		close( opipe[0] );
-		close( ipipe[1] );
 		CloseNClearCloseOnFork( opipe[1] );
+#ifndef SINGLE_PIPE
+		close( ipipe[1] );
 		CloseNClearCloseOnFork( ipipe[0] );
+#endif
 		if (ogp) {
 			close( ogpipe[0] );
-			close( igpipe[1] );
 			CloseNClearCloseOnFork( ogpipe[1] );
+#ifndef SINGLE_PIPE
+			close( igpipe[1] );
 			CloseNClearCloseOnFork( igpipe[0] );
+#endif
 		}
 		LogError( "Cannot start %s, fork() failed\n", cname );
 		if (cname)
 			 free( cname );
 		return -1;
 	case 0:
-		pajp->wfd = ipipe[1];
+#ifndef SINGLE_PIPE
+		pajp->fd.w = ipipe[1];
 		RegisterCloseOnFork( ipipe[1] );
-		pajp->rfd = opipe[0];
+#endif
+		pajp->fd.r = opipe[0];
 		RegisterCloseOnFork( opipe[0] );
 		pajp->who = (char *)pname;
 		if (ogp) {
-			ogp->wfd = igpipe[1];
+#ifndef SINGLE_PIPE
+			ogp->fd.w = igpipe[1];
 			RegisterCloseOnFork( igpipe[1] );
-			ogp->rfd = ogpipe[0];
+#endif
+			ogp->fd.r = ogpipe[0];
 			RegisterCloseOnFork( ogpipe[0] );
 			ogp->who = (char *)pname;
 		}
 		break;
 	default:
 		close( opipe[0] );
+		pajp->fd.w = opipe[1];
+#ifndef SINGLE_PIPE
 		close( ipipe[1] );
-		pajp->rfd = ipipe[0];
-		pajp->wfd = opipe[1];
+		pajp->fd.r = ipipe[0];
+#endif
 		pajp->who = cname;
 		if (ogp) {
 			close( ogpipe[0] );
+			ogp->fd.w = ogpipe[1];
+#ifndef SINGLE_PIPE
 			close( igpipe[1] );
-			ogp->rfd = igpipe[0];
-			ogp->wfd = ogpipe[1];
+			ogp->fd.r = igpipe[0];
+#endif
 			ogp->who = cgname;
 		}
 		break;
@@ -419,15 +454,19 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 		goto fail;
 	}
 	if (gp) {
-		ClearCloseOnFork( gp->rfd );
-		ClearCloseOnFork( gp->wfd );
+		ClearCloseOnFork( gp->fd.r );
+#ifndef SINGLE_PIPE
+		ClearCloseOnFork( gp->fd.w );
+#endif
 	}
 	proc->pid = GFork( &proc->pipe, 0, cname, 0, 0 );
 	if (proc->pid) {
 		close( pip[1] );
 		if (gp) {
-			RegisterCloseOnFork( gp->rfd );
-			RegisterCloseOnFork( gp->wfd );
+			RegisterCloseOnFork( gp->fd.r );
+#ifndef SINGLE_PIPE
+			RegisterCloseOnFork( gp->fd.w );
+#endif
 		}
 	}
 	switch (proc->pid) {
@@ -444,10 +483,10 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 		fcntl( pip[1], F_SETFD, FD_CLOEXEC );
 		if (gp)
 			sprintf( coninfo, "CONINFO=%d %d %d %d",
-			         proc->pipe.rfd, proc->pipe.wfd, gp->rfd, gp->wfd );
+			         proc->pipe.fd.r, proc->pipe.fd.w, gp->fd.r, gp->fd.w );
 		else
 			sprintf( coninfo, "CONINFO=%d %d",
-			         proc->pipe.rfd, proc->pipe.wfd );
+			         proc->pipe.fd.r, proc->pipe.fd.w );
 		env = putEnv( coninfo, env );
 		if (debugLevel & DEBUG_VALGRIND) {
 			char **nmargv = xCopyStrArr( 1, margv );
@@ -481,9 +520,12 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 static void
 iGClosen( GPipe *pajp )
 {
-	CloseNClearCloseOnFork( pajp->rfd );
-	CloseNClearCloseOnFork( pajp->wfd );
-	pajp->rfd = pajp->wfd = -1;
+	CloseNClearCloseOnFork( pajp->fd.r );
+#ifndef SINGLE_PIPE
+	CloseNClearCloseOnFork( pajp->fd.w );
+	pajp->fd.w =
+#endif
+	pajp->fd.r = -1;
 }
 
 void
@@ -531,7 +573,7 @@ GErr( void )
 static void
 GRead( void *buf, int len )
 {
-	if (Reader( curtalk->pipe->rfd, buf, len ) != len) {
+	if (Reader( curtalk->pipe->fd.r, buf, len ) != len) {
 		LogError( "Cannot read from %s\n", curtalk->pipe->who );
 		GErr();
 	}
@@ -540,7 +582,7 @@ GRead( void *buf, int len )
 static void
 GWrite( const void *buf, int len )
 {
-	if (Writer( curtalk->pipe->wfd, buf, len ) != len) {
+	if (Writer( curtalk->pipe->fd.w, buf, len ) != len) {
 		LogError( "Cannot write to %s\n", curtalk->pipe->who );
 		GErr();
 	}
@@ -572,7 +614,7 @@ int
 GRecvCmd( int *cmd )
 {
 	GDebug( "receiving command from %s ...\n", curtalk->pipe->who );
-	if (Reader( curtalk->pipe->rfd, cmd, sizeof(*cmd) ) == sizeof(*cmd)) {
+	if (Reader( curtalk->pipe->fd.r, cmd, sizeof(*cmd) ) == sizeof(*cmd)) {
 		GDebug( " -> %d\n", *cmd );
 		return 1;
 	}
