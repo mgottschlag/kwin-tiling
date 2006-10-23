@@ -3,7 +3,7 @@
 
 set(solidshell_SRCS main.cpp )
 
-kde4_automoc(solidshell ${solidshell_SRCS})
+kde4_automoc(${solidshell_SRCS})
 
 kde4_add_executable(solidshell ${solidshell_SRCS})
 
