@@ -1,5 +1,6 @@
 /*****************************************************************
 
+Copyright (c) 2006 Rafael Fernández López <ereslibre@gmail.com>
 Copyright (c) 2004-2005 Aaron J. Seigo <aseigo@kde.org>
 Copyright (c) 2004 Zack Rusin <zrusin@kde.org>
                    Sami Kyostil <skyostil@kempele.fi>
@@ -30,8 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QPixmap>
 #include <QTimer>
 #include <QWidget>
+#include <QPaintEvent>
+#include <QModelIndex>
 
 #include <utils.h>
+
+#include <kicon.h>
 
 class AppletItem;
 class QPaintEvent;
@@ -43,7 +48,7 @@ class AddAppletVisualFeedback : QWidget
     Q_OBJECT
 
     public:
-        AddAppletVisualFeedback(AppletWidget* parent,
+        AddAppletVisualFeedback(const QModelIndex* index,
                                 const QWidget* destination,
                                 Plasma::Position direction);
 

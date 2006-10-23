@@ -1,5 +1,6 @@
 /*****************************************************************
 
+Copyright (c) 2006 Rafael Fernández López <ereslibre@gmail.com>
 Copyright (c) 2005 Marc Cramdal
 Copyright (c) 2005 Aaron Seigo <aseigo@kde.org>
 
@@ -35,44 +36,43 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdialog.h>
 
 #include "appletinfo.h"
+#include "ui_appletview.h"
+#include "appletlistmodel.h"
+#include "appletitemdelegate.h"
 
 class ContainerArea;
-class AppletView;
-class AppletWidget;
 
 class AddAppletDialog : public KDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
-    public:
-        AddAppletDialog(ContainerArea* cArea, QWidget* parent, const char* name);
-        void updateInsertionPoint();
+public:
+	AddAppletDialog(ContainerArea *cArea, QWidget *parent, const char *name);
+	void updateInsertionPoint();
 
-    protected:
-        void closeEvent(QCloseEvent*);
+protected:
+	void closeEvent(QCloseEvent *);
 
-    private Q_SLOTS:
-        void populateApplets();
-        void addCurrentApplet();
-        void addApplet(AppletWidget* applet);
-        void search(const QString &s);
-        void filter(int i);
-        void selectApplet(AppletWidget* applet);
+private Q_SLOTS:
+	void populateApplets();
+	void selectApplet(const QModelIndex &applet);
+	void addCurrentApplet(const QModelIndex &selectedApplet);
+   void search(const QString &s);
+	void filter(int i);
+	void slotUser1Clicked();
 
-    private:
-        bool appletMatchesSearch(const AppletWidget* w, const QString& s);
+private:
+   bool appletMatchesSearch(const AppletInfo *i, const QString &s);
 
-        AppletView *m_mainWidget;
+	AppletListModel *m_listModel;
+	Ui::AppletView *m_mainWidgetView;
+	QWidget *m_mainWidget;
 
-        AppletInfo::List m_applets;
-
-        QList<AppletWidget*> m_appletWidgetList;
-        AppletWidget* m_selectedApplet;
-
-        ContainerArea* m_containerArea;
-        AppletInfo::AppletType m_selectedType;
-        QPoint m_insertionPoint;
-        bool m_closing;
+	QModelIndex selectedApplet;
+	AppletInfo::List m_applets;
+	ContainerArea *m_containerArea;
+	AppletInfo::AppletType m_selectedType;
+	QPoint m_insertionPoint;
 };
 
 #endif

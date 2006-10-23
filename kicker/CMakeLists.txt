@@ -53,6 +53,8 @@ set(libkicker_ui_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/removebutton_mnu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/hidebutton.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addappletvisualfeedback.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/appletlistmodel.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/appletitemdelegate.cpp
 )
 
 # Those include dirs also apply to all our subdirs

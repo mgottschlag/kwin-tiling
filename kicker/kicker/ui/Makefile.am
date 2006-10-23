@@ -5,7 +5,7 @@ INCLUDES = -I$(srcdir)/../core -I../core -I$(srcdir)/../buttons \
 
 noinst_LTLIBRARIES = libkicker_ui.la
 
-libkicker_ui_la_SOURCES = addbutton_mnu.cpp appletitem.ui appletview.ui addapplet.cpp \
+libkicker_ui_la_SOURCES = addbutton_mnu.cpp appletview.ui addapplet.cpp \
         addapplet_mnu.cpp appletop_mnu.cpp \
         browser_mnu.cpp client_mnu.cpp \
         nonKDEButtonSettings.ui exe_dlg.cpp k_mnu.cpp k_mnu.skel\

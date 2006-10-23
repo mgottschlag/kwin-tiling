@@ -1,5 +1,6 @@
 /*****************************************************************
 
+Copyright (c) 2006 Rafael Fernández López <ereslibre@gmail.com>
 Copyright (c) 2004-2005 Aaron J. Seigo <aseigo@kde.org>
 Copyright (c) 2004 Zack Rusin <zrusin@kde.org>
                    Sami Kyostil <skyostil@kempele.fi>
@@ -34,7 +35,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "utils.h"
 #include "appletinfo.h"
-#include "appletwidget.h"
 #include "kickerSettings.h"
 #include "addappletvisualfeedback.h"
 #include "addappletvisualfeedback.moc"
@@ -42,28 +42,31 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define DEFAULT_FRAMES_PER_SECOND 30
 
-AddAppletVisualFeedback::AddAppletVisualFeedback(AppletWidget* widget,
+AddAppletVisualFeedback::AddAppletVisualFeedback(const QModelIndex* index,
                                                  const QWidget* target,
                                                  Plasma::Position direction)
     : QWidget(0, Qt::X11BypassWindowManagerHint),
       m_target(target),
       m_direction(direction),
-      m_icon(*widget->itemPixmap->pixmap()),
       m_richText(0),
       m_dissolveSize(24),
       m_dissolveDelta(-1),
       m_frames(1)
 {
+    AppletInfo *appletData = static_cast<AppletInfo*>(index->internalPointer());
+
+    m_icon = KIcon(appletData->icon()).pixmap(QSize(64, 64));
+
     setObjectName("animtt");
     setFocusPolicy(Qt::NoFocus);
     setAttribute(Qt::WA_NoSystemBackground, true);
     connect(&m_moveTimer, SIGNAL(timeout()), SLOT(swoopCloser()));
 
-    QString m = "<qt><h3>" + i18n("%1 Added", widget->info().name());
+	 QString m = "<qt><h3>" + i18n("%1 Added", appletData->name());
 
-    if (widget->info().name() != widget->info().comment())
+	 if (appletData->name() != appletData->comment())
     {
-        m += "</h3><p>" + widget->info().comment() + "</p></qt>";
+		 m += "</h3><p>" + appletData->comment() + "</p></qt>";
     }
 
     m_richText = new Q3SimpleRichText(m, font());
@@ -72,8 +75,7 @@ AddAppletVisualFeedback::AddAppletVisualFeedback(AppletWidget* widget,
     displayInternal();
 
     m_destination = Plasma::popupPosition(m_direction, this, m_target);
-    QPoint startAt = widget->itemPixmap->geometry().topLeft();
-    startAt = widget->itemPixmap->mapToGlobal(startAt);
+	 QPoint startAt(0,0); // FIXME: how to get the widget icon's origin ? (ereslibre)
     move(startAt);
 
     m_frames = (m_destination - startAt).manhattanLength() / 20;

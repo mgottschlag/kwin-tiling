@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core ${CMAKE_SOURCE_DIR}/kicker/kicker/ui  ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui  )
+include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core ${CMAKE_SOURCE_DIR}/kicker/kicker/ui  ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui ${CMAKE_BINARY_DIR}/workspace/kicker/kicker  )
 
 
 ########### next target ###############
@@ -15,7 +15,7 @@ set(launcher_panelapplet_PART_SRCS  ${kdmlib_SRCS}  ${libkicker_core_SRCS} ${lib
    popularity.cpp 
    configdlg.cpp )
 
-kde4_add_ui3_files(launcher_panelapplet_PART_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletitem.ui ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletview.ui ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/nonKDEButtonSettings.ui)
+kde4_add_ui3_files(launcher_panelapplet_PART_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletview.ui ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/nonKDEButtonSettings.ui)
 
 
 

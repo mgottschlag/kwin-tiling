@@ -15,7 +15,8 @@ include_directories(
 ########### next target ###############
 
 
-kde4_add_ui3_files(libkicker_ui_SRCS ui/appletitem.ui ui/appletview.ui ui/nonKDEButtonSettings.ui)
+kde4_add_ui3_files(libkicker_ui_SRCS ui/nonKDEButtonSettings.ui)
+kde4_add_ui_files(libkicker_ui_SRCS ui/appletview.ui)
 qt4_add_dbus_interface(libkicker_ui_SRCS ../../kdesktop/org.kde.kdesktop.Desktop.xml kdesktop_interface )
 qt4_add_dbus_interface(libkicker_ui_SRCS ../../kdesktop/org.kde.kdesktop.ScreenSaver.xml kdesktop_screensaver_interface )
 
