@@ -5,7 +5,7 @@ include_directories( ${X11_Xinerama_INCLUDE_PATH}   )
 
 set(kcm_xinerama_PART_SRCS kcmxinerama.cpp )
 
-kde4_automoc(kcm_xinerama ${kcm_xinerama_PART_SRCS})
+kde4_automoc(${kcm_xinerama_PART_SRCS})
 
 kde4_add_ui3_files(kcm_xinerama_PART_SRCS xineramawidget.ui )
 

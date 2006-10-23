@@ -42,7 +42,7 @@ set(kxkb_KDEINIT_SRCS
   ${XKB_SUPPORT_SRC}
 )
 
-kde4_automoc(kxkb ${kxkb_KDEINIT_SRCS})
+kde4_automoc(${kxkb_KDEINIT_SRCS})
 
 
 kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
@@ -69,7 +69,7 @@ set(kcm_keyboard_PART_SRCS
 )
 
 
-kde4_automoc(kcm_keyboard ${kcm_keyboard_PART_SRCS})
+kde4_automoc(${kcm_keyboard_PART_SRCS})
 
 kde4_add_ui_files(kcm_keyboard_PART_SRCS kcmlayoutwidget.ui kcmmiscwidget.ui )
 

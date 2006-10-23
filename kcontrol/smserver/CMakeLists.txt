@@ -4,7 +4,7 @@
 
 set(kcm_smserver_PART_SRCS kcmsmserver.cpp smserverconfigimpl.cpp )
 
-kde4_automoc(kcm_smserver ${kcm_smserver_PART_SRCS})
+kde4_automoc(${kcm_smserver_PART_SRCS})
 
 kde4_add_ui3_files(kcm_smserver_PART_SRCS smserverconfigdlg.ui )
 

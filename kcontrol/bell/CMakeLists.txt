@@ -5,7 +5,7 @@
 
 set(kcm_bell_PART_SRCS bell.cpp )
 
-kde4_automoc(kcm_bell ${kcm_bell_PART_SRCS})
+kde4_automoc(${kcm_bell_PART_SRCS})
 
 kde4_add_plugin(kcm_bell ${kcm_bell_PART_SRCS})
 

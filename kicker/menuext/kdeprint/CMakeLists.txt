@@ -5,7 +5,7 @@
 
 set(kickermenu_kdeprint_PART_SRCS print_mnu.cpp )
 
-kde4_automoc(kickermenu_kdeprint ${kickermenu_kdeprint_PART_SRCS})
+kde4_automoc(${kickermenu_kdeprint_PART_SRCS})
 
 kde4_add_plugin(kickermenu_kdeprint ${kickermenu_kdeprint_PART_SRCS})
 

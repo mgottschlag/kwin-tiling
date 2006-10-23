@@ -5,7 +5,7 @@
 
 set(kcm_launch_PART_SRCS kcmlaunch.cpp )
 
-kde4_automoc(kcm_launch ${kcm_launch_PART_SRCS})
+kde4_automoc(${kcm_launch_PART_SRCS})
 
 kde4_add_plugin(kcm_launch ${kcm_launch_PART_SRCS})
 

@@ -8,7 +8,7 @@ set( kdesktop_KCFG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/kdesktopsettings.kcfgc
 	${CMAKE_CURRENT_SOURCE_DIR}/klaunchsettings.kcfgc )
 
-kde4_add_kcfg_files(kdesktop kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
+kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
 include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/lib
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background
@@ -21,7 +21,7 @@ include_directories(
 
 set(kcheckrunning_SRCS kcheckrunning.cpp )
 
-kde4_automoc(kcheckrunning ${kcheckrunning_SRCS})
+kde4_automoc(${kcheckrunning_SRCS})
 
 kde4_add_executable(kcheckrunning ${kcheckrunning_SRCS})
 
@@ -60,7 +60,7 @@ qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Desktop.xml desktop.h KDesk
 
 qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.ScreenSaver.xml lockeng.h SaverEngine )
 
-kde4_automoc(kdesktop ${kdesktop_SRCS})
+kde4_automoc(${kdesktop_SRCS})
 
 kde4_add_ui_files(kdesktop_SRCS minicli.ui )
 

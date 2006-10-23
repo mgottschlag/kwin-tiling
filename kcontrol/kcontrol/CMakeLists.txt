@@ -22,7 +22,7 @@ set(kcontrol_KDEINIT_SRCS
    kcrootonly.cpp 
    searchwidget.cpp )
 
-kde4_automoc(kcontrol ${kcontrol_KDEINIT_SRCS})
+kde4_automoc(${kcontrol_KDEINIT_SRCS})
 
 
 kde4_add_kdeinit_executable( kcontrol ${kcontrol_KDEINIT_SRCS})

@@ -6,7 +6,7 @@ link_directories(lib)
 
 set(kcm_keyboard_test_SRCS kcm_keyboard_test.cpp )
 
-kde4_automoc(kcm_keyboard_test ${kcm_keyboard_test_SRCS})
+kde4_automoc(${kcm_keyboard_test_SRCS})
 
 kde4_add_executable(kcm_keyboard_test ${kcm_keyboard_test_SRCS})
 

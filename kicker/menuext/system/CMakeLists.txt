@@ -5,7 +5,7 @@
 
 set(kickermenu_systemmenu_PART_SRCS systemmenu.cpp )
 
-kde4_automoc(kickermenu_systemmenu ${kickermenu_systemmenu_PART_SRCS})
+kde4_automoc(${kickermenu_systemmenu_PART_SRCS})
 
 kde4_add_plugin(kickermenu_systemmenu ${kickermenu_systemmenu_PART_SRCS})
 

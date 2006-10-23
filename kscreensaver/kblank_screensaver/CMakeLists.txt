@@ -7,7 +7,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/kscreensaver/libkscreensaver 
 
 set(kblankscrn.kss_SRCS blankscrn.cpp )
 
-kde4_automoc(kblankscrn.kss ${kblankscrn.kss_SRCS})
+kde4_automoc(${kblankscrn.kss_SRCS})
 
 kde4_add_executable(kblankscrn.kss ${kblankscrn.kss_SRCS})
 

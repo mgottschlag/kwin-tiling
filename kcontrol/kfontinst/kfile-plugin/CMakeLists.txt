@@ -5,7 +5,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/  )
 
 set(kfile_font_PART_SRCS KFileFont.cpp )
 
-kde4_automoc(kfile_font ${kfile_font_PART_SRCS})
+kde4_automoc(${kfile_font_PART_SRCS})
 
 kde4_add_plugin(kfile_font ${kfile_font_PART_SRCS})
 

@@ -17,7 +17,7 @@ set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS}
 
 qt4_add_dbus_adaptor( ksmserver_KDEINIT_SRCS org.kde.KSMServerInterface.xml server.h KSMServer )
 
-kde4_automoc(ksmserver ${ksmserver_KDEINIT_SRCS})
+kde4_automoc(${ksmserver_KDEINIT_SRCS})
 
 
 kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
@@ -34,7 +34,7 @@ install(TARGETS ksmserver DESTINATION ${BIN_INSTALL_DIR})
 if(KDE4_BUILD_TESTS)
 set(testsh_SRCS ${kdmlib_SRCS} test.cpp shutdowndlg.cpp )
 
-kde4_automoc(testsh ${testsh_SRCS})
+kde4_automoc(${testsh_SRCS})
 
 
 kde4_add_executable(testsh ${testsh_SRCS})

@@ -9,7 +9,7 @@ include_directories(
 
 set(kio_fonts_PART_SRCS KioFonts.cpp ${libkxftconfig_SRCS} )
 
-kde4_automoc(kio_fonts ${kio_fonts_PART_SRCS})
+kde4_automoc(${kio_fonts_PART_SRCS})
 
 kde4_add_plugin(kio_fonts ${kio_fonts_PART_SRCS})
 

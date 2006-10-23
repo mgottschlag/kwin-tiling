@@ -6,7 +6,7 @@ include_directories(${FONTCONFIG_INCLUDE_DIR})
 
 set(kcm_fonts_PART_SRCS fonts.cpp ${libkxftconfig_SRCS} ${libkrd_SRCS} )
 
-kde4_automoc(kcm_fonts ${kcm_fonts_PART_SRCS})
+kde4_automoc(${kcm_fonts_PART_SRCS})
 
 kde4_add_plugin(kcm_fonts ${kcm_fonts_PART_SRCS})
 

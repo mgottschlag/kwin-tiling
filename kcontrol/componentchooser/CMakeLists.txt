@@ -7,7 +7,7 @@ add_subdirectory( componentservices )
 
 set(kcm_componentchooser_PART_SRCS componentchooser.cpp kcm_componentchooser.cpp )
 
-kde4_automoc(kcm_componentchooser ${kcm_componentchooser_PART_SRCS})
+kde4_automoc(${kcm_componentchooser_PART_SRCS})
 
 kde4_add_ui3_files(kcm_componentchooser_PART_SRCS 
    componentchooser_ui.ui 

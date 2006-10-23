@@ -12,7 +12,7 @@ include_directories(
 
 set(kfontviewpart_PART_SRCS FontViewPart.cpp FontViewPartFactory.cpp FontPreview.cpp ${libkfontinstprint_SRCS})
 
-kde4_automoc(kfontviewpart ${kfontviewpart_PART_SRCS})
+kde4_automoc(${kfontviewpart_PART_SRCS})
 
 kde4_add_plugin(kfontviewpart WITH_PREFIX ${kfontviewpart_PART_SRCS})
 
@@ -27,7 +27,7 @@ install(TARGETS kfontviewpart  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 set(kfontview_SRCS FontViewerApp.cpp )
 
-kde4_automoc(kfontview ${kfontview_SRCS})
+kde4_automoc(${kfontview_SRCS})
 
 kde4_add_executable(kfontview ${kfontview_SRCS})
 

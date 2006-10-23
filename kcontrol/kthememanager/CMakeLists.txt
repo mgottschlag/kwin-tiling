@@ -5,7 +5,7 @@
 
 set(kcm_kthememanager_PART_SRCS knewthemedlg.cpp ktheme.cpp kthememanager.cpp )
 
-kde4_automoc(kcm_kthememanager ${kcm_kthememanager_PART_SRCS})
+kde4_automoc(${kcm_kthememanager_PART_SRCS})
 
 kde4_add_ui_files(kcm_kthememanager_PART_SRCS newthemewidget.ui)
 kde4_add_ui3_files(kcm_kthememanager_PART_SRCS kthemedlg.ui )

@@ -18,7 +18,7 @@ if (HAVE_X11_FONTS_FONTENC_H)
       GetPid.c 
       XConfig.cpp)
 
-   kde4_automoc(kfontinst_bin ${kfontinst_bin_SRCS})
+   kde4_automoc(${kfontinst_bin_SRCS})
 
    kde4_add_executable(kfontinst_bin ${kfontinst_bin_SRCS})
    set_target_properties(kfontinst_bin PROPERTIES OUTPUT_NAME kfontinst)

@@ -7,7 +7,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. ${KDE4_INCLUDES} )
 
 set(ksplashredmond_PART_SRCS previewredmond.cpp themeredmond.cpp ${ksplashthemes_LIB_SRCS})
 
-kde4_automoc(ksplashredmond ${ksplashredmond_PART_SRCS})
+kde4_automoc(${ksplashredmond_PART_SRCS})
 
 kde4_add_plugin(ksplashredmond ${ksplashredmond_PART_SRCS})
 

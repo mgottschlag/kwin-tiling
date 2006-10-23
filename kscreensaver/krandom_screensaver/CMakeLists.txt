@@ -7,7 +7,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/kscreensaver/libkscreensaver 
 
 set(krandom.kss_SRCS random.cpp )
 
-kde4_automoc(krandom.kss ${krandom.kss_SRCS})
+kde4_automoc(${krandom.kss_SRCS})
 
 kde4_add_executable(krandom.kss ${krandom.kss_SRCS})
 

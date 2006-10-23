@@ -10,7 +10,7 @@ include_directories( ${KDE4_INCLUDES} )
 
 set(ksplashthemes_LIB_SRCS themeengine.cpp objkstheme.cpp )
 
-kde4_automoc(ksplashthemes ${ksplashthemes_LIB_SRCS})
+kde4_automoc(${ksplashthemes_LIB_SRCS})
 
 kde4_add_library(ksplashthemes SHARED ${ksplashthemes_LIB_SRCS} ) 
 

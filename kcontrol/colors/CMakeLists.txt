@@ -5,7 +5,7 @@
 
 set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp kcolortreewidget.cpp ${libkrd_SRCS})
 
-kde4_automoc(kcm_colors ${kcm_colors_PART_SRCS})
+kde4_automoc(${kcm_colors_PART_SRCS})
 
 kde4_add_plugin(kcm_colors ${kcm_colors_PART_SRCS})
 

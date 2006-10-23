@@ -5,7 +5,7 @@
 
 set(kickermenu_prefmenu_PART_SRCS prefmenu.cpp )
 
-kde4_automoc(kickermenu_prefmenu ${kickermenu_prefmenu_PART_SRCS})
+kde4_automoc(${kickermenu_prefmenu_PART_SRCS})
 
 kde4_add_plugin(kickermenu_prefmenu ${kickermenu_prefmenu_PART_SRCS})
 

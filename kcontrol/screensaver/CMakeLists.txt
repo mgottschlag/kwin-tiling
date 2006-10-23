@@ -11,7 +11,7 @@ set(kcm_screensaver_PART_SRCS
    advanceddialog.cpp 
    kswidget.cpp )
 
-kde4_automoc(kcm_screensaver ${kcm_screensaver_PART_SRCS})
+kde4_automoc(${kcm_screensaver_PART_SRCS})
 
 kde4_add_ui_files(kcm_screensaver_PART_SRCS advanceddialogimpl.ui )
 

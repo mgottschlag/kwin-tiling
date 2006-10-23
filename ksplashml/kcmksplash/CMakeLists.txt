@@ -7,7 +7,7 @@ include_directories(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${
 
 set(kcm_ksplashthemes_PART_SRCS installer.cpp main.cpp )
 
-kde4_automoc(kcm_ksplashthemes ${kcm_ksplashthemes_PART_SRCS})
+kde4_automoc(${kcm_ksplashthemes_PART_SRCS})
 
 kde4_add_plugin(kcm_ksplashthemes ${kcm_ksplashthemes_PART_SRCS})
 

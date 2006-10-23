@@ -5,7 +5,7 @@
 
 set(kcm_usb_PART_SRCS kcmusb.cpp usbdevices.cpp usbdb.cpp )
 
-kde4_automoc(kcm_usb ${kcm_usb_PART_SRCS})
+kde4_automoc(${kcm_usb_PART_SRCS})
 
 kde4_add_plugin(kcm_usb ${kcm_usb_PART_SRCS})
 

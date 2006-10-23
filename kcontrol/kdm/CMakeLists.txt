@@ -18,7 +18,7 @@ set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
    kbackedcombobox.cpp
    positioner.cpp)
 
-kde4_automoc(kcm_kdm ${kcm_kdm_PART_SRCS})
+kde4_automoc(${kcm_kdm_PART_SRCS})
 
 kde4_add_plugin(kcm_kdm ${kcm_kdm_PART_SRCS})
 

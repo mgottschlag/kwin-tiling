@@ -5,7 +5,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/khotkeys/shared/ )
 
 set(khotkeys_update_SRCS update.cpp ${libshared_SRCS})
 
-kde4_automoc(khotkeys_update ${khotkeys_update_SRCS})
+kde4_automoc(${khotkeys_update_SRCS})
 
 kde4_add_executable( khotkeys_update ${khotkeys_update_SRCS})
 

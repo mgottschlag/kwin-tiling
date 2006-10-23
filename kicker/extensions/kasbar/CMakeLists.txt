@@ -19,7 +19,7 @@ set(kasbar_LIB_SRCS
    kasgrouper.cpp 
    kasloaditem.cpp )
 
-kde4_automoc(kasbar ${kasbar_LIB_SRCS})
+kde4_automoc(${kasbar_LIB_SRCS})
 
 kde4_add_library(kasbar SHARED ${kasbar_LIB_SRCS})
 
@@ -33,7 +33,7 @@ install(TARGETS kasbar  DESTINATION ${LIB_INSTALL_DIR} )
 
 set(kasbar_panelextension_PART_SRCS kasbarextension.cpp )
 
-kde4_automoc(kasbar_panelextension ${kasbar_panelextension_PART_SRCS})
+kde4_automoc(${kasbar_panelextension_PART_SRCS})
 
 kde4_add_plugin(kasbar_panelextension ${kasbar_panelextension_PART_SRCS})
 
@@ -48,7 +48,7 @@ install(TARGETS kasbar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 set(kasbar_SRCS kasbarapp.cpp )
 
-kde4_automoc(kasbar ${kasbar_SRCS})
+kde4_automoc(${kasbar_SRCS})
 
 kde4_add_executable(kasbar ${kasbar_SRCS})
 

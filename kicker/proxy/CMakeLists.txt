@@ -6,7 +6,7 @@
 
 set(extensiondebugger_SRCS extensiondebugger.cpp )
 
-kde4_automoc(extensiondebugger ${extensiondebugger_SRCS})
+kde4_automoc(${extensiondebugger_SRCS})
 
 kde4_add_executable(extensiondebugger ${extensiondebugger_SRCS})
 
@@ -17,7 +17,7 @@ target_link_libraries(extensiondebugger  ${KDE4_KDECORE_LIBS} kickermain )
 
 set(appletproxy_KDEINIT_SRCS appletproxy.cpp )
 
-kde4_automoc(appletproxy ${appletproxy_KDEINIT_SRCS})
+kde4_automoc(${appletproxy_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( appletproxy ${appletproxy_KDEINIT_SRCS})
 

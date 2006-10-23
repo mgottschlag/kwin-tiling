@@ -5,7 +5,7 @@
 
 set(kcm_clock_PART_SRCS dtime.cpp tzone.cpp main.cpp )
 
-kde4_automoc(kcm_clock ${kcm_clock_PART_SRCS})
+kde4_automoc(${kcm_clock_PART_SRCS})
 
 kde4_add_plugin(kcm_clock ${kcm_clock_PART_SRCS})
 

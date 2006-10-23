@@ -5,7 +5,7 @@
 
 set(lockout_panelapplet_PART_SRCS lockout.cpp )
 
-kde4_automoc(lockout_panelapplet ${lockout_panelapplet_PART_SRCS})
+kde4_automoc(${lockout_panelapplet_PART_SRCS})
 
 kde4_add_plugin(lockout_panelapplet ${lockout_panelapplet_PART_SRCS})
 
