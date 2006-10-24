@@ -271,17 +271,17 @@ echo 'startkde: Starting up...'  1>&2
 dl=$DESKTOP_LOCKED
 unset DESKTOP_LOCKED # Don't want it in the environment
 
-need_dbus=0
-if test -z "$DBUS_SESSION_BUS_PID"; then
-    need_dbus=1
-elif ! kill -0 $DBUS_SESSION_BUS_PID; then
-    need_dbus=1
+# Make sure that D-Bus is running
+if ! qdbus >/dev/null 2>/dev/null; then
+  # Remove the next two lines after D-Bus 1.0 is released.
+  # It comes with auto-starting, so running dbus-launch won't be necessary
+  eval `dbus-launch --auto-syntax --exit-with-session < /dev/null`
+  if ! qdbus >/dev/null 2>/dev/null; then
+    # Startup error
+    echo 'startkde: Could not start D-Bus. Check your installation.'  1>&2
+    xmessage -geometry 500x100 "Could not start D-Bus. Check your installation."
+  fi
 fi
-if test $need_dbus -eq 1; then
-  eval `dbus-launch --auto-syntax --exit-with-session`
-fi
-# Workaround for missing export in dbus-launch's output
-export DBUS_SESSION_BUS_PID
 
 if test -z "$dl"; then
   # the splashscreen and progress indicator
