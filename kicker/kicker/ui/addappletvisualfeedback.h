@@ -42,13 +42,15 @@ class AppletItem;
 class QPaintEvent;
 class Q3SimpleRichText;
 class QTimer;
+class QListView;
 
 class AddAppletVisualFeedback : QWidget
 {
     Q_OBJECT
 
     public:
-        AddAppletVisualFeedback(const QModelIndex* index,
+        AddAppletVisualFeedback(const QModelIndex& index,
+                                QListView* theListView,
                                 const QWidget* destination,
                                 Plasma::Position direction);
 

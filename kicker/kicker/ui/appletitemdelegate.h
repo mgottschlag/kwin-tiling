@@ -30,6 +30,7 @@ class AppletItemDelegate
 	: public QItemDelegate
 {
 	Q_OBJECT
+	Q_ENUMS(AppletRole)
 
 public:
 	/**
@@ -47,6 +48,12 @@ public:
 	  * @brief Gets the size of the item delegate.
 	  */
 	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+
+	enum AppletRole
+	{
+		SecondaryDisplayRole = 33
+	};
 };
 
 #endif

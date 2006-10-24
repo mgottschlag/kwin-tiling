@@ -29,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QPainter>
 #include <QTimer>
 #include <q3simplerichtext.h>
+#include <QListView>
 
 #include <kdialog.h>
 #include <klocale.h>
@@ -42,7 +43,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define DEFAULT_FRAMES_PER_SECOND 30
 
-AddAppletVisualFeedback::AddAppletVisualFeedback(const QModelIndex* index,
+AddAppletVisualFeedback::AddAppletVisualFeedback(const QModelIndex& index,
+                                                 QListView* theListView,
                                                  const QWidget* target,
                                                  Plasma::Position direction)
     : QWidget(0, Qt::X11BypassWindowManagerHint),
@@ -53,7 +55,7 @@ AddAppletVisualFeedback::AddAppletVisualFeedback(const QModelIndex* index,
       m_dissolveDelta(-1),
       m_frames(1)
 {
-    AppletInfo *appletData = static_cast<AppletInfo*>(index->internalPointer());
+    AppletInfo *appletData = static_cast<AppletInfo*>(index.internalPointer());
 
     m_icon = KIcon(appletData->icon()).pixmap(QSize(64, 64));
 
@@ -62,11 +64,11 @@ AddAppletVisualFeedback::AddAppletVisualFeedback(const QModelIndex* index,
     setAttribute(Qt::WA_NoSystemBackground, true);
     connect(&m_moveTimer, SIGNAL(timeout()), SLOT(swoopCloser()));
 
-	 QString m = "<qt><h3>" + i18n("%1 Added", appletData->name());
+    QString m = "<qt><h3>" + i18n("%1 Added", appletData->name());
 
-	 if (appletData->name() != appletData->comment())
+    if (appletData->name() != appletData->comment())
     {
-		 m += "</h3><p>" + appletData->comment() + "</p></qt>";
+        m += "</h3><p>" + appletData->comment() + "</p></qt>";
     }
 
     m_richText = new Q3SimpleRichText(m, font());
@@ -75,7 +77,8 @@ AddAppletVisualFeedback::AddAppletVisualFeedback(const QModelIndex* index,
     displayInternal();
 
     m_destination = Plasma::popupPosition(m_direction, this, m_target);
-	 QPoint startAt(0,0); // FIXME: how to get the widget icon's origin ? (ereslibre)
+    QPoint startAt = theListView->visualRect(index).topLeft();
+    startAt = theListView->mapToGlobal(startAt);
     move(startAt);
 
     m_frames = (m_destination - startAt).manhattanLength() / 20;

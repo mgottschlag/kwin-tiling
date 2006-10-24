@@ -18,6 +18,7 @@
   */
 
 #include "appletlistmodel.h"
+#include "appletitemdelegate.h"
 
 class AppletListModel::Private
 {
@@ -64,7 +65,7 @@ QVariant AppletListModel::data(const QModelIndex &index, int role) const
 			returnValue = KIcon(myAppletInfo->icon());
 			break;
 
-		case Qt::UserRole:
+		case AppletItemDelegate::SecondaryDisplayRole:
 			returnValue = myAppletInfo->comment();
 			break;
 	}

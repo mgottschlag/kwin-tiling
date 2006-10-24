@@ -30,7 +30,6 @@ void AppletItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 		painter->fillRect(option.rect, option.palette.highlight());
 
 	QVariant icon = index.model()->data(index, Qt::DecorationRole);
-	//icon.convert(QVariant::Icon);
 	QPixmap iconPixmap = icon.value<QIcon>().pixmap(48, 48);
 
 	QFont title(painter->font());
@@ -44,7 +43,7 @@ void AppletItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 	painter->setFont(title);
 	painter->drawText(40 + iconPixmap.width(), 30 + option.rect.top(), index.model()->data(index, Qt::DisplayRole).toString());
 	painter->setFont(previousFont);
-	painter->drawText(40 + iconPixmap.width(), 60  + option.rect.top(), index.model()->data(index, Qt::UserRole).toString());
+	painter->drawText(40 + iconPixmap.width(), 60  + option.rect.top(), index.model()->data(index, SecondaryDisplayRole).toString());
 	painter->drawPixmap(20, (option.rect.height() / 2) + option.rect.top() - (iconPixmap.height() / 2), iconPixmap);
 	painter->restore();
 

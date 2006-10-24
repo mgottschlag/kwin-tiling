@@ -192,9 +192,10 @@ void AddAppletDialog::addCurrentApplet(const QModelIndex &selectedApplet)
 			ec->unhideIfHidden(KickerSettings::mouseOversSpeed() + 2500);
 		}
 
-		new AddAppletVisualFeedback(&selectedApplet,
-											 appletContainer,
-											 m_containerArea->popupDirection());
+		new AddAppletVisualFeedback(selectedApplet,
+                                    m_mainWidgetView->appletListView,
+                                    appletContainer,
+                                    m_containerArea->popupDirection());
 	}
 
 	Kicker::self()->setInsertionPoint(prevInsertionPoint);
@@ -222,8 +223,8 @@ void AddAppletDialog::search(const QString &s)
 	{
 		appletInfo = static_cast<AppletInfo*>(m_listModel->index(i).internalPointer());
 		m_mainWidgetView->appletListView->setRowHidden(i, !appletMatchesSearch(appletInfo, s) ||
-																			(appletInfo->isUniqueApplet() &&
-																			 PluginManager::self()->hasInstance(*appletInfo)));
+													   (appletInfo->isUniqueApplet() &&
+														PluginManager::self()->hasInstance(*appletInfo)));
 	}
 
 	/**
@@ -258,8 +259,8 @@ void AddAppletDialog::filter(int i)
 	{
 		appletInfo = static_cast<AppletInfo*>(m_listModel->index(j).internalPointer());
 		m_mainWidgetView->appletListView->setRowHidden(j, !appletMatchesSearch(appletInfo, searchString) ||
-																			(appletInfo->isUniqueApplet() &&
-																			 PluginManager::self()->hasInstance(*appletInfo)));
+													   (appletInfo->isUniqueApplet() &&
+													    PluginManager::self()->hasInstance(*appletInfo)));
 	}
 
 	/**

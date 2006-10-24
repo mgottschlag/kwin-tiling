@@ -57,12 +57,12 @@ private Q_SLOTS:
 	void populateApplets();
 	void selectApplet(const QModelIndex &applet);
 	void addCurrentApplet(const QModelIndex &selectedApplet);
-   void search(const QString &s);
+	void search(const QString &s);
 	void filter(int i);
 	void slotUser1Clicked();
 
 private:
-   bool appletMatchesSearch(const AppletInfo *i, const QString &s);
+	bool appletMatchesSearch(const AppletInfo *i, const QString &s);
 
 	AppletListModel *m_listModel;
 	Ui::AppletView *m_mainWidgetView;

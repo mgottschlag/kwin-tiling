@@ -25,9 +25,7 @@
 
 #include "appletinfo.h"
 
-/**
-  * Qt::UserRole = Description
-  */
+class AppletItemDelegate;
 
 class AppletListModel
 	: public QAbstractListModel
