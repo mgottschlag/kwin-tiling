@@ -438,18 +438,18 @@ void UnregisterInput( int fd );
 void RegisterCloseOnFork( int fd );
 void ClearCloseOnFork( int fd );
 void CloseNClearCloseOnFork( int fd );
-int Fork( void );
-int Wait4( int pid );
+int Fork( volatile int *pid );
+int Wait4( volatile int *pid );
 void execute( char **argv, char **env );
 int runAndWait( char **args, char **env );
-FILE *pOpen( char **what, char m, int *pid );
-int pClose( FILE *f, int pid );
+FILE *pOpen( char **what, char m, volatile int *pid );
+int pClose( FILE *f, volatile int *pid );
 char *locate( const char *exe );
 void TerminateProcess( int pid, int sig );
 
 void GSet( GTalk *talk ); /* call before GOpen! */
 int GFork( GPipe *pajp, const char *pname, char *cname,
-           GPipe *ogp, char *cgname );
+           GPipe *ogp, char *cgname, volatile int *pid );
 void GClosen( GPipe *pajp );
 int GOpen( GProc *proc,
            char **argv, const char *what, char **env, char *cname,
@@ -481,7 +481,7 @@ char **GRecvArgv( void );
 #define GCONV_BINARY  5
 typedef char *(*GConvFunc)( int what, const char *prompt );
 int Verify( GConvFunc gconv, int rootok );
-int StartClient( void );
+int StartClient( volatile int *pid );
 void SessionExit( int status ) ATTR_NORETURN;
 int ReadDmrc( void );
 extern char **userEnviron, **systemEnviron;

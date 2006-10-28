@@ -143,7 +143,7 @@ commitGrub( void )
 	args[0] = grub;
 	if ((f = pOpen( (char **)args, 'w', &pid ))) {
 		fprintf( f, "savedefault --default=%d --once\n", sdRec.osindex );
-		pClose( f, pid );
+		pClose( f, &pid );
 	}
 }
 
@@ -194,7 +194,7 @@ getLilo( char ***opts, int *def, int *cur )
 			cdef++;
 		}
   out:
-	if (pClose( f, pid )) {
+	if (pClose( f, &pid )) {
 		if (*opts)
 			freeStrArr( *opts );
 		return BO_IO;

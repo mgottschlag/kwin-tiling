@@ -73,11 +73,10 @@ StartServerOnce( void )
 {
 	struct display *d = startingServer;
 	char **argv;
-	int pid;
 
 	Debug( "StartServerOnce for %s, try %d\n", d->name, ++d->startTries );
 	d->serverStatus = starting;
-	switch (pid = Fork()) {
+	switch (Fork( &d->serverPid )) {
 	case 0:
 		argv = PrepServerArgv( d, d->serverArgsLocal );
 		if (d->authFile) {
@@ -100,8 +99,7 @@ StartServerOnce( void )
 		StartServerFailed();
 		break;
 	default:
-		Debug( "X server forked, pid %d\n", pid );
-		d->serverPid = pid;
+		Debug( "X server forked, pid %d\n", d->serverPid );
 		serverTimeout = d->serverTimeout + now;
 		break;
 	}

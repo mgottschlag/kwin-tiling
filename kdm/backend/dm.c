@@ -280,8 +280,9 @@ main( int argc, char **argv )
 	MainLoop();
 	closeCtrl( 0 );
 	if (sdRec.how) {
+		int pid;
 		commitBootOption();
-		if (Fork() <= 0) {
+		if (Fork( &pid ) <= 0) {
 			char *cmd = sdRec.how == SHUT_HALT ? cmdHalt : cmdReboot;
 			execute( parseArgs( (char **)0, cmd ), (char **)0 );
 			LogError( "Failed to execute shutdown command %\"s\n", cmd );
@@ -551,11 +552,10 @@ static void
 StartRemoteLogin( struct display *d )
 {
 	char **argv;
-	int pid;
 
 	Debug( "StartRemoteLogin for %s\n", d->name );
 	/* HACK: omitting LoadDisplayResources( d ) here! */
-	switch (pid = Fork()) {
+	switch (Fork( &d->serverPid )) {
 	case 0:
 		argv = PrepServerArgv( d, d->serverArgsRemote );
 		if (!(argv = addStrArr( argv, "-once", 5 )) ||
@@ -573,8 +573,7 @@ StartRemoteLogin( struct display *d )
 	default:
 		break;
 	}
-	Debug( "X server forked, pid %d\n", pid );
-	d->serverPid = pid;
+	Debug( "X server forked, pid %d\n", d->serverPid );
 
 	d->status = remoteLogin;
 }
@@ -1356,15 +1355,14 @@ void
 StartDisplayP2( struct display *d )
 {
 	char *cname, *cgname;
-	int pid;
 
 	openCtrl( d );
 	Debug( "forking session\n" );
 	ASPrintf( &cname, "sub-daemon for display %s", d->name );
 	ASPrintf( &cgname, "greeter for display %s", d->name );
-	pid = GFork( &d->pipe, "master daemon", cname,
-	             &d->gpipe, cgname );
-	switch (pid) {
+	switch (GFork( &d->pipe, "master daemon", cname,
+	               &d->gpipe, cgname, &d->pid ))
+	{
 	case 0:
 		SetTitle( d->name );
 		if (debugLevel & DEBUG_WSESS)
@@ -1384,14 +1382,13 @@ StartDisplayP2( struct display *d )
 		d->status = notRunning;
 		break;
 	default:
-		Debug( "forked session, pid %d\n", pid );
+		Debug( "forked session, pid %d\n", d->pid );
 
 		/* (void) fcntl (d->pipe.fd.r, F_SETFL, O_NONBLOCK); */
 		/* (void) fcntl (d->gpipe.fd.r, F_SETFL, O_NONBLOCK); */
 		RegisterInput( d->pipe.fd.r );
 		RegisterInput( d->gpipe.fd.r );
 
-		d->pid = pid;
 		d->hstent->lock = d->hstent->rLogin = d->hstent->goodExit =
 			d->hstent->sdRec.how = 0;
 		d->lastStart = now;

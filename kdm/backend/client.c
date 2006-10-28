@@ -1097,7 +1097,7 @@ static int removeCreds;
 #endif
 
 int
-StartClient()
+StartClient( volatile int *pid )
 {
 	const char *home, *sessargs, *desksess;
 	char **env, *xma;
@@ -1120,7 +1120,7 @@ StartClient()
 	extern char **environ;
 #endif
 	char *failsafeArgv[2], *lname;
-	int i, pid, lfd;
+	int i, lfd;
 
 	if (StrCmp( dmrcuser, curuser )) {
 		if (curdmrc) { free( curdmrc ); curdmrc = 0; }
@@ -1312,7 +1312,7 @@ StartClient()
 	endspent();
 #endif
 	ClearCloseOnFork( mstrtalk.pipe->fd.w );
-	switch (pid = Fork()) {
+	switch (Fork( pid )) {
 	case 0:
 
 		sessreg( td, getpid(), curuser, curuid );
@@ -1570,8 +1570,8 @@ StartClient()
 		return 0;
 	default:
 		RegisterCloseOnFork( mstrtalk.pipe->fd.w );
-		Debug( "StartSession, fork succeeded %d\n", pid );
-		return pid;
+		Debug( "StartSession, fork succeeded %d\n", *pid );
+		return 1;
 	}
 }
 
@@ -1588,7 +1588,7 @@ SessionExit( int status )
 			LogError( "Cannot execute reset script %\"s\n", td->reset );
 		sessreg( td, 0, 0, 0 );
 
-		switch ((pid = Fork())) {
+		switch (Fork( &pid )) {
 		case 0:
 #if defined(USE_PAM) && defined(HAVE_INITGROUPS)
 			if (restoreGids() && SetUid( curuser, curuid ))
@@ -1618,7 +1618,7 @@ SessionExit( int status )
 			LogError( "Cannot clean up session: fork() failed: %m" );
 			break;
 		default:
-			Wait4( pid );
+			Wait4( &pid );
 			break;
 		}
 	}
@@ -1677,12 +1677,12 @@ ReadDmrc()
 		return GE_Error;
 	if (pipe( pfd ))
 		return GE_Error;
-	if ((pid = Fork()) < 0) {
+	switch (Fork( &pid )) {
+	case -1:
 		close( pfd[0] );
 		close( pfd[1] );
 		return GE_Error;
-	}
-	if (!pid) {
+	case 0:
 		if (!SetUser( p->pw_name, p->pw_uid, p->pw_gid ))
 			exit( 0 );
 		if (!(data = iniLoad( fname ))) {
@@ -1711,6 +1711,6 @@ ReadDmrc()
 		}
 	}
 	close( pfd[0] );
-	(void)Wait4( pid );
+	Wait4( &pid );
 	return err;
 }

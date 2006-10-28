@@ -221,7 +221,6 @@ conv_interact( int what, const char *prompt )
 	}
 }
 
-static int greeter;
 GProc grtproc;
 GTalk grttalk;
 
@@ -410,11 +409,10 @@ OpenGreeter()
 	Cursor xcursor;
 
 	GSet( &grttalk );
-	if (greeter)
+	if (grtproc.pid > 0)
 		return;
 	if (time( 0 ) < lastStart + 10) /* XXX should use some readiness indicator instead */
 		SessionExit( EX_UNMANAGE_DPY );
-	greeter = 1;
 	ASPrintf( &name, "greeter for display %s", td->name );
 	Debug( "starting %s\n", name );
 
@@ -448,9 +446,8 @@ CloseGreeter( int force )
 {
 	int ret;
 
-	if (!greeter)
+	if (grtproc.pid <= 0)
 		return EX_NORMAL;
-	greeter = 0;
 	ret = GClose (&grtproc, 0, force);
 	Debug( "greeter for %s stopped\n", td->name );
 	if (WaitCode( ret ) > EX_NORMAL && WaitCode( ret ) <= EX_MAX) {
@@ -463,7 +460,7 @@ CloseGreeter( int force )
 void
 PrepErrorGreet()
 {
-	if (!greeter) {
+	if (grtproc.pid <= 0) {
 		OpenGreeter();
 		GSendInt( G_ErrorGreet );
 		GSendStr( curuser );
@@ -523,14 +520,14 @@ void
 ManageSession( struct display *d )
 {
 	int ex, cmd;
-	volatile int clientPid = 0;
+	volatile int clientPid = -1;
 	volatile Time_t tdiff;
 
 	td = d;
 	Debug( "ManageSession %s\n", d->name );
 	if ((ex = Setjmp( abortSession ))) {
 		CloseGreeter( TRUE );
-		if (clientPid)
+		if (clientPid > 0)
 			AbortClient( clientPid );
 		SessionExit( ex );
 		/* NOTREACHED */
@@ -567,7 +564,7 @@ ManageSession( struct display *d )
 	if (AutoLogon( tdiff )) {
 		if (!StrDup( &curtype, "classic" ) || !Verify( conv_auto, FALSE ))
 			goto gcont;
-		if (greeter)
+		if (grtproc.pid > 0)
 			GSendInt( V_OK );
 	} else {
 	  regreet:
@@ -620,7 +617,7 @@ ManageSession( struct display *d )
 	if (td_setup)
 		SetupDisplay( td_setup );
 
-	if (!(clientPid = StartClient())) {
+	if (!StartClient( &clientPid )) {
 		LogError( "Client start failed\n" );
 		SessionExit( EX_NORMAL ); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
 	}
@@ -633,7 +630,7 @@ ManageSession( struct display *d )
 		if (!Setjmp( pingTime )) {
 			(void)Signal( SIGALRM, catchAlrm );
 			(void)alarm( d->pingInterval * 60 ); /* may be 0 */
-			(void)Wait4( clientPid );
+			(void)Wait4( &clientPid );
 			(void)alarm( 0 );
 			break;
 		} else {

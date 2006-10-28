@@ -118,7 +118,7 @@ CloseOnFork( void )
 }
 
 int
-Fork()
+Fork( volatile int *pidr )
 {
 	int pid;
 
@@ -140,23 +140,47 @@ Fork()
 		CloseOnFork();
 		return 0;
 	}
+	*pidr = pid;
 
 	sigprocmask( SIG_SETMASK, &oss, 0 );
 
 	return pid;
 }
 
+static void
+cldCatcher( int n ATTR_UNUSED )
+{
+}
+
 int
-Wait4( int pid )
+Wait4( volatile int *pid )
 {
 	waitType result;
+	sigset_t ss, oss;
+	struct sigaction osa;
 
-	while (waitpid( pid, &result, 0 ) < 0)
-		if (errno != EINTR) {
-			Debug( "Wait4(%d) failed: %m\n", pid );
-			return 0;
+	sigfillset( &ss );
+	sigprocmask( SIG_SETMASK, &ss, &oss );
+	sigaction( SIGCHLD, 0, &osa );
+	if (osa.sa_handler == SIG_DFL)
+		Signal( SIGCHLD, cldCatcher );
+	for (;;) {
+		switch (waitpid( *pid, &result, WNOHANG )) {
+		case 0:
+			sigsuspend( &oss );
+			break;
+		case -1:
+			Debug( "Wait4(%d) failed: %m\n", *pid );
+			result = 0;
+			/* fallthrough */
+		default:
+			*pid = 0;
+			if (osa.sa_handler == SIG_DFL)
+				Signal( SIGCHLD, SIG_DFL );
+			sigprocmask( SIG_SETMASK, &oss, 0 );
+			return waitVal( result );
 		}
-	return waitVal( result );
+	}
 }
 
 
@@ -210,7 +234,7 @@ runAndWait( char **args, char **env )
 {
 	int pid, ret;
 
-	switch (pid = Fork()) {
+	switch (Fork( &pid )) {
 	case 0:
 		execute( args, env );
 		LogError( "Can't execute %\"s: %m\n", args[0] );
@@ -219,18 +243,18 @@ runAndWait( char **args, char **env )
 		LogError( "Can't fork to execute %\"s: %m\n", args[0] );
 		return 1;
 	}
-	ret = Wait4( pid );
+	ret = Wait4( &pid );
 	return waitVal( ret );
 }
 
 FILE *
-pOpen( char **what, char m, int *pid )
+pOpen( char **what, char m, volatile int *pid )
 {
 	int dp[2];
 
 	if (pipe( dp ))
 		return 0;
-	switch ((*pid = Fork())) {
+	switch (Fork( pid )) {
 	case 0:
 		if (m == 'r')
 			dup2( dp[1], 1 );
@@ -257,7 +281,7 @@ pOpen( char **what, char m, int *pid )
 }
 
 int
-pClose( FILE *f, int pid )
+pClose( FILE *f, volatile int *pid )
 {
 	fclose( f );
 	return Wait4( pid );
@@ -314,9 +338,9 @@ GSet( GTalk *tlk )
 
 int
 GFork( GPipe *pajp, const char *pname, char *cname,
-       GPipe *ogp, char *cgname )
+       GPipe *ogp, char *cgname, volatile int *pid )
 {
-	int opipe[2], ogpipe[2], pid;
+	int opipe[2], ogpipe[2];
 #ifndef SINGLE_PIPE
 	int ipipe[2], igpipe[2];
 #endif
@@ -361,7 +385,7 @@ GFork( GPipe *pajp, const char *pname, char *cname,
 		RegisterCloseOnFork( igpipe[0] );
 #endif
 	}
-	switch (pid = Fork()) {
+	switch (Fork( pid )) {
 	case -1:
 		close( opipe[0] );
 		CloseNClearCloseOnFork( opipe[1] );
@@ -398,7 +422,7 @@ GFork( GPipe *pajp, const char *pname, char *cname,
 			RegisterCloseOnFork( ogpipe[0] );
 			ogp->who = (char *)pname;
 		}
-		break;
+		return 0;
 	default:
 		close( opipe[0] );
 		pajp->fd.w = opipe[1];
@@ -416,21 +440,21 @@ GFork( GPipe *pajp, const char *pname, char *cname,
 #endif
 			ogp->who = cgname;
 		}
-		break;
+		return *pid;
 	}
-	return pid;
 }
 
 int
 GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
        GPipe *gp )
 {
+	int pid;
 	char **margv;
 	int pip[2];
 	char coninfo[32];
 
 /* ###	GSet (proc->pipe); */
-	if (proc->pid) {
+	if (proc->pid > 0) {
 		LogError( "%s already running\n", cname );
 		if (cname)
 			free( cname );
@@ -459,8 +483,8 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 		ClearCloseOnFork( gp->fd.w );
 #endif
 	}
-	proc->pid = GFork( &proc->pipe, 0, cname, 0, 0 );
-	if (proc->pid) {
+	pid = GFork( &proc->pipe, 0, cname, 0, 0, &proc->pid );
+	if (pid) {
 		close( pip[1] );
 		if (gp) {
 			RegisterCloseOnFork( gp->fd.r );
@@ -469,7 +493,7 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 #endif
 		}
 	}
-	switch (proc->pid) {
+	switch (pid) {
 	case -1:
 	  fail1:
 		close( pip[0] );
@@ -503,7 +527,7 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 	default:
 		(void)Signal( SIGPIPE, SIG_IGN );
 		if (Reader( pip[0], coninfo, 1 )) {
-			Wait4( proc->pid );
+			Wait4( &proc->pid );
 			LogError( "Cannot execute %\"s (%s)\n", margv[0], cname );
 			GClosen (&proc->pipe);
 			goto fail1;
@@ -542,7 +566,7 @@ GClose (GProc *proc, GPipe *gp, int force)
 {
 	int ret;
 
-	if (!proc->pid) {
+	if (proc->pid <= 0) {
 		Debug( "whoops, GClose while helper not running\n" );
 		return 0;
 	}
@@ -551,8 +575,7 @@ GClose (GProc *proc, GPipe *gp, int force)
 		GClosen (gp);
 	if (force)
 		TerminateProcess( proc->pid, SIGTERM );
-	ret = Wait4( proc->pid );
-	proc->pid = 0;
+	ret = Wait4( &proc->pid );
 	if (WaitSig( ret ) ? WaitSig( ret ) != SIGTERM :
 	    (WaitCode( ret ) < EX_NORMAL || WaitCode( ret ) > EX_MAX))
 		LogError( "Abnormal termination of %s, code %d, signal %d\n",
