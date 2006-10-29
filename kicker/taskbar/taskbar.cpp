@@ -1217,20 +1217,20 @@ void TaskBar::popupDirectionChange(Plasma::Position d)
     switch (d)
     {
         case Plasma::Up:
-            icon = "1uparrow";
-            at = Qt::UpArrow;
-            break;
-        case Plasma::Down:
             icon = "1downarrow";
             at = Qt::DownArrow;
             break;
-        case Plasma::Left:
-            icon = "1leftarrow";
-            at = Qt::LeftArrow;
+        case Plasma::Down:
+            icon = "1uparrow";
+            at = Qt::UpArrow;
             break;
-        case Plasma::Right:
+        case Plasma::Left:
             icon = "1rightarrow";
             at = Qt::RightArrow;
+            break;
+        case Plasma::Right:
+            icon = "1leftarrow";
+            at = Qt::LeftArrow;
             break;
 	case Plasma::Floating:
 	    icon = "1uparrow";
