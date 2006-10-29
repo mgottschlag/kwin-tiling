@@ -220,7 +220,8 @@ void AppletContainer::showAppletMenu()
     Kicker::self()->setInsertionPoint(_handle->mapToGlobal(_handle->rect().center()));
 
     QPoint pos = Plasma::popupPosition(popupDirection(), menu, _handle);
-    int selected = static_cast<QMenuItem*>(menu->exec(pos))->id();
+    QMenuItem* item = static_cast<QMenuItem*>(menu->exec(pos));
+    int selected = item ? item->id() : -1;
     switch (selected)
     {
 	case PanelAppletOpMenu::Move:
