@@ -1561,13 +1561,13 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
         else
         {
             QStringList desktopNames = desktopMap.values();
-            details.append(i18n("On %1", desktopNames.join(", ")) + "<br>");
+            details.append("<p>" + i18n("On %1", desktopNames.join(", ")) + "</p>");
         }
     }
 
     if (demandsAttention)
     {
-        details.append(i18n("Requesting attention") + "<br>");
+        details.append("<p>" + i18n("Requesting attention") + "</p>");
     }
 
     QString name = this->name();
