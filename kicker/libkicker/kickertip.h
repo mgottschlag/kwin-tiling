@@ -105,6 +105,14 @@ protected:
     void mousePressEvent(QMouseEvent * e);
 
     /**
+     * Draws the tip background and outline.
+     * @param p       The painter to use draw the background with
+     * @param outline The outline color
+     * @param fill    The brush to use for the center fill
+     */
+    void drawBackground(QPainter *p, const QColor &outline, const QBrush &fill) const;
+
+    /**
      * Creates and installs a solid mask with rounded corners
      */
     void plainMask();

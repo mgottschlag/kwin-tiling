@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMouseEvent>
 #include <QEvent>
 #include <QPaintEvent>
-#include <QTextEdit>
+#include <QTextDocument>
 #include <QTextBlock>
 
 #include <kdialog.h>
@@ -47,12 +47,11 @@ class KickerTip::Private
 {
 public:
     Private()
-     : richText(0),
+     : document(0),
        dissolveSize(0),
        dissolveDelta(-1),
        direction(Plasma::Up),
        dirty(false),
-       toolTipsEnabled(true),
        tippingFor(0)
     {}
 
@@ -60,7 +59,7 @@ public:
     QPixmap pixmap;
     QPixmap icon;
     MaskEffect maskEffect;
-    QTextEdit* richText;
+    QTextDocument* document;
 
     int dissolveSize;
     int dissolveDelta;
@@ -69,7 +68,6 @@ public:
     QTimer timer;
     QTimer frameTimer;
     bool dirty;
-    bool toolTipsEnabled;
 
     const QWidget* tippingFor;
 };
@@ -102,7 +100,7 @@ KickerTip* KickerTip::self()
 }
 
 KickerTip::KickerTip(QWidget * parent)
-    : QWidget(parent, Qt::WX11BypassWM)
+    : QWidget(parent, Qt::X11BypassWindowManagerHint)
 {
     d = new Private;
     d->timer.setSingleShot(true);
@@ -112,6 +110,7 @@ KickerTip::KickerTip(QWidget * parent)
     resize(0, 0);
     hide();
     connect(&d->frameTimer, SIGNAL(timeout()), SLOT(internalUpdate()));
+    setAttribute(Qt::WA_OpaquePaintEvent);
 }
 
 KickerTip::~KickerTip()
@@ -154,10 +153,10 @@ void KickerTip::display()
         return;
     }
 
-    delete d->richText;
-    d->richText = new QTextEdit();
-    d->richText->setHtml("<h3>" + data.message + "</h3><p>" +
-                                     data.subtext + "</p>");
+    delete d->document;
+    d->document = new QTextDocument();
+    d->document->setHtml("<h3>" + data.message + "</h3><p>" +
+                         data.subtext + "</p>");
     d->direction = data.direction;
 
     if (KickerSettings::mouseOversShowIcon())
@@ -217,16 +216,22 @@ void KickerTip::mousePressEvent(QMouseEvent * /*e*/)
     hide();
 }
 
+void KickerTip::drawBackground(QPainter *p, const QColor &outline, const QBrush &fill) const
+{
+    const QRect r = d->pixmap.rect().adjusted(0, 0, -1, -1);
+
+    p->setBrush(fill);
+    p->setPen(QPen(outline, 1));
+    p->drawRoundRect(r, 1600 / r.width(), 1600 / r.height());
+}
+
 void KickerTip::plainMask()
 {
     QPainter maskPainter(&d->mask);
 
     d->mask.fill(Qt::color0);
+    drawBackground(&maskPainter, Qt::color1, Qt::color1);    
 
-    maskPainter.setBrush(Qt::color1);
-    maskPainter.setPen(Qt::color1);
-    maskPainter.drawRoundRect(d->mask.rect(), 1600 / d->mask.rect().width(),
-                              1600 / d->mask.rect().height());
     setMask(d->mask);
     d->frameTimer.stop();
 }
@@ -236,18 +241,14 @@ void KickerTip::dissolveMask()
     QPainter maskPainter(&d->mask);
 
     d->mask.fill(Qt::color0);
-
-    maskPainter.setBrush(Qt::color1);
-    maskPainter.setPen(Qt::color1);
-    maskPainter.drawRoundRect(d->mask.rect(), 1600 / d->mask.rect().width(),
-                              1600 / d->mask.rect().height());
+    drawBackground(&maskPainter, Qt::color1, Qt::color1);
 
     d->dissolveSize += d->dissolveDelta;
 
     if (d->dissolveSize > 0)
     {
-#warning "Fix maskPainter.setRasterOp"
-        //maskPainter.setRasterOp(Qt::EraseROP);
+        maskPainter.setBrush(Qt::color0);
+        maskPainter.setPen(Qt::NoPen);
 
         int x, y, s;
         const int size = 16;
@@ -277,16 +278,16 @@ void KickerTip::dissolveMask()
 
 void KickerTip::displayInternal()
 {
-    // we need to check for m_tippingFor here as well as m_richText
+    // we need to check for d->tippingFor here as well as d->document
     // since if one is really persistant and moves the mouse around very fast
-    // you can trigger a situation where m_tippingFor gets reset to 0 but
+    // you can trigger a situation where d->tippingFor gets reset to 0 but
     // before display() is called!
-    if (!d->tippingFor || !d->richText)
+    if (!d->tippingFor || !d->document)
     {
         return;
     }
 
-    QTextBlock block = d->richText->document()->begin();
+    QTextBlock block = d->document->begin();
     qreal y = 0, maxWidth = 0;
     while(block.isValid()) {
         QTextLayout *layout = block.layout();
@@ -353,10 +354,7 @@ void KickerTip::displayInternal()
 
     // draw background
     QPainter bufferPainter(&d->pixmap);
-    bufferPainter.setPen(Qt::black);
-    bufferPainter.setBrush(backgroundColor());
-    bufferPainter.drawRoundRect(0, 0, width - 1, height - 1,
-                                1600 / width, 1600 / height);
+    drawBackground(&bufferPainter, Qt::black, backgroundColor());
 
     // draw icon if present
     if (!d->icon.isNull())
@@ -369,7 +367,7 @@ void KickerTip::displayInternal()
 
     if (KickerSettings::mouseOversShowText())
     {
-        block = d->richText->document()->begin();
+        block = d->document->begin();
         QColor background = palette().color(QPalette::Background).dark(115);
         QColor foreground = palette().color(QPalette::Foreground);
         int shadowOffset = QApplication::isRightToLeft() ? -1 : 1;
@@ -479,6 +477,15 @@ bool KickerTip::eventFilter(QObject *object, QEvent *event)
 
     switch (event->type())
     {
+        case QEvent::ToolTip:
+            if (KickerSettings::showMouseOverEffects())
+            {
+                // Prevent Qt from showing a tooltip for the button
+                event->accept();
+                return true;
+            }
+            return false;
+
         case QEvent::Enter:
             if (!KickerSettings::showMouseOverEffects())
             {
@@ -489,10 +496,6 @@ bool KickerTip::eventFilter(QObject *object, QEvent *event)
                 !qApp->activePopupWidget() &&
                 !isTippingFor(widget))
             {
-#warning "Port QToolTip to qt4"
-				//d->toolTipsEnabled = QToolTip::isGloballyEnabled();
-                //QToolTip::setGloballyEnabled(false);
-
                 tipFor(widget);
                 d->timer.stop();
                 disconnect(&d->timer, SIGNAL(timeout()), 0, 0);
@@ -512,9 +515,6 @@ bool KickerTip::eventFilter(QObject *object, QEvent *event)
             }
             break;
         case QEvent::Leave:
-#warning "Port QToolTip to QT4"
-            //QToolTip::setGloballyEnabled(d->toolTipsEnabled);
-
             d->timer.stop();
 
             if (isTippingFor(widget) && isVisible())
