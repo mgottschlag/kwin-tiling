@@ -608,8 +608,8 @@ void TaskContainer::drawButton(QPainter *p)
         QRect tr = QStyle::visualRect(layoutDirection(), rect(),
                                       QRect(br.x() + textPos + 1, 0,
                                             width() - textPos, height()));
-        int textFlags = Qt::AlignVCenter | Qt::TextSingleLine;
-        textFlags |= reverse ? Qt::AlignRight : Qt::AlignLeft;
+        int textFlags = Qt::TextSingleLine;
+        textFlags |= QStyle::visualAlignment(layoutDirection(), Qt::AlignVCenter | Qt::AlignLeft);
         QPen textPen;
 
         // get the color for the text label
