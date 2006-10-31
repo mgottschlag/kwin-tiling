@@ -538,8 +538,6 @@ void BGDialog::loadWallpaperFilesList() {
          imageCaption = KStringHandler::capwords(imageCaption);
       }
 
-      imageCaption = KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11);
-
       // avoid name collisions
       QString rs = imageCaption;
       QString lrs = rs.toLower();
@@ -583,8 +581,6 @@ void BGDialog::loadWallpaperFilesList() {
             imageCaption.replace('_', ' ');
             imageCaption = KStringHandler::capwords(imageCaption);
          }
-
-         imageCaption = KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11);
 
          // avoid name collisions
          QString rs = imageCaption;
@@ -634,7 +630,7 @@ void BGDialog::setWallpaper(const QString &s)
          i--;
          comboWallpaper->removeItem(i);
       }
-      comboWallpaper->addItem(KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11));
+      comboWallpaper->addItem(imageCaption);
       m_wallpaper[s] = i;
       comboWallpaper->setCurrentIndex(i);
    }
