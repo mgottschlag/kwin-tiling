@@ -30,8 +30,8 @@ endif( USE_XKLAVIER STREQUAL ON )
 ########### next target ###############
 
 set(kxkb_KDEINIT_SRCS 
-  kxkbconfig.cpp
   rules.cpp
+  kxkbconfig.cpp
   extension.cpp
   x11helper.cpp
   pixmap.cpp
@@ -47,7 +47,7 @@ kde4_automoc(${kxkb_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kxkb  ${KDE4_KDECORE_LIBS} X11 Xext ${KDE4_KDEUI_LIBS} xkbfile ${XKB_SUPPORT_LIB})
+target_link_libraries(kdeinit_kxkb ${X11_X11_LIB} ${X11_Xext_LIB} ${KDE4_KDEUI_LIBS} xkbfile ${XKB_SUPPORT_LIB})
 
 install(TARGETS kdeinit_kxkb  DESTINATION ${LIB_INSTALL_DIR} )
 
@@ -78,7 +78,7 @@ kde4_add_plugin(kcm_keyboard ${kcm_keyboard_PART_SRCS})
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_keyboard )
 
 target_link_libraries(kcm_keyboard
-    ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} xkbfile 
+    ${KDE4_KIO_LIBS} xkbfile 
     ${XKB_SUPPORT_LIB} ${X11_XTest_LIB}
 )
 
