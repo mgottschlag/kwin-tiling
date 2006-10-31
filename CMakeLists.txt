@@ -38,18 +38,9 @@ add_subdirectory( klipper )
 add_subdirectory( kcheckpass )
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 	add_subdirectory( kdm )
-# XXX should have an else macro_log_feature here
+else(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+	MESSAGE(STATUS "Xau lib or Xdmcp lib was missing. kdm will not compile")
 endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 
 ########### install files ###############
 install(PROGRAMS startkde DESTINATION ${BIN_INSTALL_DIR})
-
-
-
-
-
-#original Makefile.am contents follow:
-
-### (C) 2005 Benjamin Meyer
-#
-#SUBDIRS = lib kwin kcontrol ksmserver ktip kpersonalizer ksysguard wallpapers menu kscreensaver kdesktop
