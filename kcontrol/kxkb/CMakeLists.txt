@@ -30,10 +30,10 @@ endif( USE_XKLAVIER STREQUAL ON )
 ########### next target ###############
 
 set(kxkb_KDEINIT_SRCS 
+  kxkbconfig.cpp
+  rules.cpp
   extension.cpp
   x11helper.cpp
-  rules.cpp
-  kxkbconfig.cpp
   pixmap.cpp
   layoutmap.cpp
   kxkb.cpp
@@ -58,12 +58,12 @@ install(TARGETS kxkb DESTINATION ${BIN_INSTALL_DIR})
 
 
 set(kcm_keyboard_PART_SRCS 
+  kcmlayout.cpp
+  rules.cpp
   extension.cpp
   x11helper.cpp
-  rules.cpp
   kxkbconfig.cpp
   pixmap.cpp
-  kcmlayout.cpp
   kcmmisc.cpp
   ${XKB_SUPPORT_SRC}
 )
