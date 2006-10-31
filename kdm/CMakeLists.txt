@@ -29,6 +29,6 @@ add_custom_target(config.ci DEPENDS ${confci})
 ### this is *only* for the kdm home page maintainer! ###
 ADD_CUSTOM_TARGET(hp scp README ChangeLog TODO devel-home:files/kdm)
 
-# after bulid_confci is defined
+# after build_confci is defined
 add_subdirectory(backend)
 add_subdirectory(kfrontend)
