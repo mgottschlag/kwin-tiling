@@ -178,6 +178,8 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		if (pClass->tint.rgb() != 0xFFFFFFFF) {
 			// blend image(pix) with the given tint
 
+                        // make sure this is in the right format (should be noop if it's already)
+			scaledImage = scaledImage.convertToFormat(QImage::Format_ARGB32);
 			int w = scaledImage.width();
 			int h = scaledImage.height();
 			int tint_red = pClass->tint.red();
