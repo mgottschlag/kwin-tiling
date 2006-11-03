@@ -89,7 +89,6 @@ void KFileIVIDesktop::calcRect( const QString& _text )
 void KFileIVIDesktop::paintItem( QPainter *p, const QColorGroup &cg)
 {
   QColorGroup colors = updateColors(cg);
-  paintFontUpdate(p);
 
   Q3IconView* view = iconView();
   Q_ASSERT( view );
@@ -110,8 +109,10 @@ void KFileIVIDesktop::paintItem( QPainter *p, const QColorGroup &cg)
   //
   if (m_shadow != 0L && (static_cast<KDesktopShadowSettings *> (m_shadow->shadowSettings()))->isEnabled())
     drawShadowedText(p, colors);
-  else
+  else {
+    paintFontUpdate(p);
     paintText(p, colors);
+  }
 
   p->restore();
 
@@ -181,6 +182,7 @@ void KFileIVIDesktop::drawShadowedText( QPainter *p, const QColorGroup &cg )
   unsigned long uid = settings->UID();
 
   p->setFont(iconView()->font());
+  paintFontUpdate(p);
   QColor shadow;
   QColor text;
   int spread = shadowThickness();
