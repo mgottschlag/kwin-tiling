@@ -35,7 +35,7 @@ AudioHw::~AudioHw()
 
 Solid::AudioHw::AudioDriver AudioHw::driver()
 {
-    QString capacity = m_device->property( "info.capacity" ).toString();
+    QString capacity = m_device->property( "info.category" ).toString();
 
     if ( capacity == "alsa" )
     {
