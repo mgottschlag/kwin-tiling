@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+ServiceTypes=SolidDeviceManager
+X-KDE-Library=solid_hal_discovery
+InitialPreference=100
+Name=HAL-Discovery
+Comment=Hardware discovery using freedesktop.org HAL daemon
+

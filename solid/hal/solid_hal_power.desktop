@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+ServiceTypes=SolidPowerManager
+X-KDE-Library=solid_hal_power
+InitialPreference=100
+Name=HAL-Power
+Comment=Hardware power management using freedesktop.org HAL daemon
+
