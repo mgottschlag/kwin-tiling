@@ -26,7 +26,9 @@
 #include <sys/types.h>
 
 #ifdef Q_OS_LINUX
+#undef __STRICT_ANSI__
 #include <linux/joystick.h>
+#define __STRICT_ANSI__
 #endif
 
 #ifdef Q_OS_FREEBSD
