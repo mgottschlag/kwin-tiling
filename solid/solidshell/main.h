@@ -33,7 +33,8 @@ public:
 
     static bool doIt();
 
-    bool hwList( bool details );
+    bool hwList( bool capabilities, bool system );
+    bool hwCapabilities( const QString &udi );
     bool hwProperties( const QString &udi );
     bool hwQuery( const QString &parentUdi, const QString &query );
 

@@ -24,6 +24,7 @@ using namespace std;
 
 #include <QString>
 #include <QStringList>
+#include <QMetaProperty>
 
 #include <kinstance.h>
 #include <kcmdlineargs.h>
@@ -58,49 +59,90 @@ std::ostream &operator<<( std::ostream &out, const QString &msg )
     return ( out << msg.toLocal8Bit().constData() );
 }
 
+std::ostream &operator<<( std::ostream &out, const QVariant &value )
+{
+    switch ( value.type() )
+    {
+    case QVariant::StringList:
+    {
+        out << "{";
+
+        QStringList list = value.toStringList();
+
+        QStringList::ConstIterator it = list.begin();
+        QStringList::ConstIterator end = list.end();
+
+        for ( ; it!=end; ++it )
+        {
+            out << "'" << *it << "'";
+
+            if ( it+1!=end )
+            {
+                out << ", ";
+            }
+        }
+
+        out << "}  (string list)";
+        break;
+    }
+    case QVariant::Bool:
+        out << ( value.toBool()?"true":"false" ) << "  (bool)";
+        break;
+    case QVariant::Int:
+        out << value.toString()
+            << "  (0x" << QString::number( value.toInt(), 16 ) << ")  (int)";
+        break;
+    default:
+        out << "'" << value.toString() << "'  (string)";
+        break;
+    }
+
+    return out;
+}
+
+std::ostream &operator<<( std::ostream &out, Solid::Device &device )
+{
+    QList<Solid::Capability::Type> caps;
+    caps << Solid::Capability::Processor
+         << Solid::Capability::Block
+         << Solid::Capability::Storage
+         << Solid::Capability::Cdrom
+         << Solid::Capability::Volume
+         << Solid::Capability::OpticalDisc
+         << Solid::Capability::Camera
+         << Solid::Capability::PortableMediaPlayer
+         << Solid::Capability::NetworkHw
+         << Solid::Capability::AcAdapter
+         << Solid::Capability::Battery
+         << Solid::Capability::Button
+         << Solid::Capability::Display
+         << Solid::Capability::AudioHw;
+
+    foreach ( Solid::Capability::Type cap, caps )
+    {
+        Solid::Capability *capability = device.asCapability( cap );
+
+        if ( capability )
+        {
+            const QMetaObject *meta = capability->metaObject();
+
+            for ( int i=meta->propertyOffset(); i<meta->propertyCount(); i++ )
+            {
+                QMetaProperty property = meta->property( i );
+                out << "  " << meta->className() << "." << property.name()
+                    << " = " << property.read( capability ) << endl;
+            }
+        }
+    }
+
+    return out;
+}
+
 std::ostream &operator<<( std::ostream &out, const QMap<QString,QVariant> &properties )
 {
-    foreach( QString key, properties.keys() )
+    foreach ( QString key, properties.keys() )
     {
-        out << "  " << key << " = ";
-
-        QVariant property = properties[key];
-
-        switch ( property.type() )
-        {
-        case QVariant::StringList:
-        {
-            out << "{";
-
-            QStringList list = property.toStringList();
-
-            QStringList::ConstIterator it = list.begin();
-            QStringList::ConstIterator end = list.end();
-
-            for ( ; it!=end; ++it )
-            {
-                out << "'" << *it << "'";
-
-                if ( it+1!=end )
-                {
-                    out << ", ";
-                }
-            }
-
-            out << "}  (string list)" << endl;
-            break;
-        }
-        case QVariant::Bool:
-            out << ( property.toBool()?"true":"false" ) << "  (bool)" << endl;
-            break;
-        case QVariant::Int:
-            out << property.toString()
-                << "  (0x" << QString::number( property.toInt(), 16 ) << ")  (int)" << endl;
-            break;
-        default:
-            out << "'" << property.toString() << "'  (string)" << endl;
-            break;
-        }
+        out << "  " << key << " = " << properties[key] << endl;
     }
 
     return out;
@@ -140,13 +182,16 @@ int main(int argc, char **argv)
 
       cout << endl << i18n( "Syntax:" ) << endl << endl;
 
-      cout << "  solidshell hardware list [details]" << endl;
+      cout << "  solidshell hardware list [capabilities|system]" << endl;
       cout << i18n( "             # List the hardware available in the system.\n"
-                    "             # If the details option is specified, the device properties are\n"
+                    "             # If the system option is specified, the device properties are\n"
                     "             # listed (be careful, property names are backend dependent),\n"
+                    "             # if the capabilities option is specified, the device capabilities and\n"
+                    "             # the corresponding properties are listed,\n"
                     "             # otherwise only device UDIs are listed.\n" ) << endl;
 
-      cout << "  solidshell hardware properties 'udi'" << endl;
+      cout << "  solidshell hardware capabilities 'udi'" << endl;
+      cout << "  solidshell hardware system 'udi'" << endl;
 
       cout << "  solidshell hardware query 'predicate' ['parentUdi']" << endl;
 
@@ -182,9 +227,15 @@ bool SolidShell::doIt()
         {
             checkArgumentCount( 2, 3 );
             QByteArray extra( args->count()==3 ? args->arg( 2 ) : "" );
-            return shell.hwList( extra=="details" );
+            return shell.hwList( extra=="capabilities", extra=="system" );
         }
-        else if ( command == "properties" )
+        else if ( command == "capabilities" )
+        {
+            checkArgumentCount( 3, 3 );
+            QString udi( args->arg( 2 ) );
+            return shell.hwCapabilities( udi );
+        }
+        else if ( command == "system" )
         {
             checkArgumentCount( 3, 3 );
             QString udi( args->arg( 2 ) );
@@ -247,7 +298,7 @@ bool SolidShell::doIt()
     return false;
 }
 
-bool SolidShell::hwList( bool details )
+bool SolidShell::hwList( bool capabilities, bool system )
 {
     Solid::DeviceManager &manager = Solid::DeviceManager::self();
 
@@ -257,12 +308,27 @@ bool SolidShell::hwList( bool details )
     {
         cout << "udi = '" << device.udi() << "'" << endl;
 
-        if ( details )
+        if ( capabilities )
+        {
+            cout << device << endl;
+        }
+        else if ( system )
         {
             QMap<QString,QVariant> properties = device.allProperties();
             cout << properties << endl;
         }
     }
+
+    return true;
+}
+
+bool SolidShell::hwCapabilities( const QString &udi )
+{
+    Solid::DeviceManager &manager = Solid::DeviceManager::self();
+    Solid::Device device = manager.findDevice( udi );
+
+    cout << "udi = '" << device.udi() << "'" << endl;
+    cout << device << endl;
 
     return true;
 }
