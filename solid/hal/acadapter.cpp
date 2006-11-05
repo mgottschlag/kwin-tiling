@@ -33,7 +33,7 @@ AcAdapter::~AcAdapter()
 
 bool AcAdapter::isPlugged() const
 {
-    return m_device->property( "ac_adaptor.present" ).toBool();
+    return m_device->property( "ac_adapter.present" ).toBool();
 }
 
 void AcAdapter::slotPropertyChanged( const QMap<QString,int> &changes )
