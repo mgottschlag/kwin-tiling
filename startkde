@@ -158,7 +158,7 @@ fi
 # For anything else (that doesn't set env vars, or that needs a window manager),
 # better use the Autostart folder.
 
-exepath=`kde-config --path exe | tr : '\n'`
+exepath=`kde4-config --path exe | tr : '\n'`
 
 for prefix in `echo "$exepath" | sed -n -e 's,/bin[^/]*/,/env/,p'`; do
   for file in "$prefix"*.sh; do
