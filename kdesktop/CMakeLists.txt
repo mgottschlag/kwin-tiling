@@ -19,13 +19,12 @@ include_directories(
 
 ########### next target ###############
 
-set(kcheckrunning_SRCS kcheckrunning.cpp )
+# the only reason to use kde4_add_executable() instead of 
+# the plain add_executable() call here is the RPATH handling
+# in kde4_add_executable, Alex
+kde4_add_executable(kcheckrunning kcheckrunning.cpp)
 
-kde4_automoc(${kcheckrunning_SRCS})
-
-kde4_add_executable(kcheckrunning ${kcheckrunning_SRCS})
-
-target_link_libraries(kcheckrunning  ${KDE4_KDECORE_LIBS} )
+target_link_libraries(kcheckrunning  ${X11_LIBRARIES} )
 
 install(TARGETS kcheckrunning DESTINATION ${BIN_INSTALL_DIR})
 
