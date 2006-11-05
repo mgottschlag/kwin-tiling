@@ -28,7 +28,6 @@ kde4_add_ui3_files(kcm_kicker_PART_SRCS
 
 kde4_add_plugin(kcm_kicker ${kcm_kicker_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kicker )
 
 target_link_libraries(kcm_kicker  kickermain bgnd ${KDE4_KIO_LIBS} ${KDE4_KUTILS_LIBS} )
 

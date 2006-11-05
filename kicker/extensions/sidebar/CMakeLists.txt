@@ -9,7 +9,6 @@ kde4_automoc(${sidebar_panelextension_PART_SRCS})
 
 kde4_add_plugin(sidebar_panelextension ${sidebar_panelextension_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} sidebar_panelextension )
 
 target_link_libraries(sidebar_panelextension  ${KDE4_KDECORE_LIBS} kickermain ${KDE4_KDEUI_LIBS}
     ${KDE4_KPARTS_LIBS} konq )

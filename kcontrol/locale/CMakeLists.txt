@@ -21,7 +21,6 @@ kde4_add_ui_files(kcm_locale_PART_SRCS toplevelbase.ui language.ui )
 
 kde4_add_plugin(kcm_locale ${kcm_locale_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_locale )
 
 target_link_libraries(kcm_locale  ${KDE4_KIO_LIBS} ${QT_QTGUI_LIBRARY} ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 

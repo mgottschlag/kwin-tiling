@@ -11,11 +11,14 @@ set(kcheckpass_SRCS
 	checkpass_osfc2passwd.c
 	checkpass_aix.c
 )
+
 kde4_add_executable(kcheckpass NOGUI ${kcheckpass_SRCS})
+
 if (KDE4_ENABLE_FPIE)
 	macro_add_compile_flags(kcheckpass ${KDE4_CXX_FPIE_FLAGS})
 	macro_add_link_flags(kcheckpass ${KDE4_PIE_LDFLAGS})
 endif (KDE4_ENABLE_FPIE)
+
 macro_add_compile_flags(kcheckpass -U_REENTRANT)
 target_link_libraries(kcheckpass kdefakes ${UNIXAUTH_LIBRARIES} ${SOCKET_LIBRARIES})
 install(TARGETS kcheckpass DESTINATION ${BIN_INSTALL_DIR} PERMISSIONS SETUID OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)

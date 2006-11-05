@@ -9,7 +9,6 @@ kde4_automoc(${kcm_display_PART_SRCS})
 
 kde4_add_plugin(kcm_display ${kcm_display_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_display )
 
 target_link_libraries(kcm_display  ${KDE4_KUTILS_LIBS} ${QT_QTGUI_LIBRARY} ${KDE4_KDEUI_LIBS})
 

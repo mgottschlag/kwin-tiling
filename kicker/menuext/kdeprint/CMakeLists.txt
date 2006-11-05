@@ -9,7 +9,6 @@ kde4_automoc(${kickermenu_kdeprint_PART_SRCS})
 
 kde4_add_plugin(kickermenu_kdeprint ${kickermenu_kdeprint_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_kdeprint )
 
 target_link_libraries(kickermenu_kdeprint  ${KDE4_KIO_LIBS} ${KDE4_KDEPRINT_LIBS} kickermain )
 

@@ -11,7 +11,6 @@ kde4_add_ui3_files(kcm_xinerama_PART_SRCS xineramawidget.ui )
 
 kde4_add_plugin(kcm_xinerama ${kcm_xinerama_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_xinerama )
 
 target_link_libraries(kcm_xinerama  ${KDE4_KDE3SUPPORT_LIBS} ${X11_Xinerama_LIB})
 

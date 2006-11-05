@@ -9,7 +9,6 @@ kde4_automoc(${lockout_panelapplet_PART_SRCS})
 
 kde4_add_plugin(lockout_panelapplet ${lockout_panelapplet_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} lockout_panelapplet )
 
 target_link_libraries(lockout_panelapplet  ${KDE4_KDECORE_LIBS} kickermain )
 

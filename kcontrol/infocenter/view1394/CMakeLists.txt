@@ -11,7 +11,6 @@ kde4_add_ui_files(kcm_view1394_PART_SRCS view1394widget.ui )
 
 kde4_add_plugin(kcm_view1394 ${kcm_view1394_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_view1394 )
 
 target_link_libraries(kcm_view1394  ${KDE4_KDE3SUPPORT_LIBS} ${RAW1394_LIBRARIES} )
 

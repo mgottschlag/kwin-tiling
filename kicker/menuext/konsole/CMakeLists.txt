@@ -9,7 +9,6 @@ kde4_automoc(${kickermenu_konsole_PART_SRCS})
 
 kde4_add_plugin(kickermenu_konsole ${kickermenu_konsole_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_konsole )
 
 target_link_libraries(kickermenu_konsole  ${KDE4_KDE3SUPPORT_LIBS} kworkspace kickermain  ${QT_QTXML_LIBRARY} )
 

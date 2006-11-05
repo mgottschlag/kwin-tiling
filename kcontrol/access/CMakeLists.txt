@@ -9,7 +9,6 @@ kde4_automoc(${kcm_access_PART_SRCS})
 
 kde4_add_plugin(kcm_access ${kcm_access_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_access )
 
 target_link_libraries(kcm_access  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_PHONONCORE_LIBRARY} )
 

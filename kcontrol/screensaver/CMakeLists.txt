@@ -17,7 +17,6 @@ kde4_add_ui_files(kcm_screensaver_PART_SRCS advanceddialogimpl.ui )
 
 kde4_add_plugin(kcm_screensaver ${kcm_screensaver_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_screensaver )
 
 target_link_libraries(kcm_screensaver  ${KDE4_KDE3SUPPORT_LIBS})
 

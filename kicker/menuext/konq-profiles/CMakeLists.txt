@@ -9,7 +9,6 @@ kde4_automoc(${kickermenu_konqueror_PART_SRCS})
 
 kde4_add_plugin(kickermenu_konqueror ${kickermenu_konqueror_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_konqueror )
 
 target_link_libraries(kickermenu_konqueror  ${KDE4_KIO_LIBS} kickermain )
 

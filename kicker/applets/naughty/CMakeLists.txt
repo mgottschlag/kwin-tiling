@@ -9,7 +9,6 @@ kde4_automoc(${naughty_panelapplet_PART_SRCS})
 
 kde4_add_plugin(naughty_panelapplet ${naughty_panelapplet_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} naughty_panelapplet )
 
 target_link_libraries(naughty_panelapplet  ${KDE4_KDEUI_LIBS} kickermain )
 

@@ -11,7 +11,6 @@ kde4_automoc(${kcm_randr_PART_SRCS})
 
 kde4_add_plugin(kcm_randr ${kcm_randr_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_randr )
 
 target_link_libraries(kcm_randr  ${KDE4_KDEUI_LIBS} ${X11_Xrandr_LIB} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
 

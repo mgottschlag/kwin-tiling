@@ -9,7 +9,6 @@ kde4_automoc(${dockbar_panelextension_PART_SRCS})
 
 kde4_add_plugin(dockbar_panelextension ${dockbar_panelextension_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} dockbar_panelextension )
 
 target_link_libraries(dockbar_panelextension  ${KDE4_KDECORE_LIBS} kickermain ${KDE4_KDEUI_LIBS} )
 

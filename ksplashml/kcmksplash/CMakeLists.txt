@@ -11,7 +11,6 @@ kde4_automoc(${kcm_ksplashthemes_PART_SRCS})
 
 kde4_add_plugin(kcm_ksplashthemes ${kcm_ksplashthemes_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_ksplashthemes )
 
 target_link_libraries(kcm_ksplashthemes  ${KDE4_KDE3SUPPORT_LIBS} )
 

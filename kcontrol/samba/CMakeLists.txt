@@ -14,7 +14,6 @@ kde4_automoc(${kcm_samba_PART_SRCS})
 
 kde4_add_plugin(kcm_samba ${kcm_samba_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_samba )
 
 target_link_libraries(kcm_samba  ${KDE4_KDE3SUPPORT_LIBS} )
 

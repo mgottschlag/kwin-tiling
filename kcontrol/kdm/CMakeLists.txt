@@ -22,7 +22,6 @@ kde4_automoc(${kcm_kdm_PART_SRCS})
 
 kde4_add_plugin(kcm_kdm ${kcm_kdm_PART_SRCS})
 
-kde4_install_libtool_file(${PLUGIN_INSTALL_DIR} kcm_kdm)
 
 target_link_libraries(kcm_kdm ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDEFX_LIBS} knewstuff)
 

@@ -37,7 +37,6 @@ kde4_automoc(${klipper_panelapplet_PART_SRCS})
 
 kde4_add_plugin(klipper_panelapplet ${klipper_panelapplet_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} klipper_panelapplet )
 
 target_link_libraries(klipper_panelapplet  ${KDE4_KDE3SUPPORT_LIBS} kworkspace kickermain  )
 if (X11_Xfixes_FOUND)

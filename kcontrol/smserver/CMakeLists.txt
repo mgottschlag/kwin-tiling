@@ -10,7 +10,6 @@ kde4_add_ui3_files(kcm_smserver_PART_SRCS smserverconfigdlg.ui )
 
 kde4_add_plugin(kcm_smserver ${kcm_smserver_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_smserver )
 
 target_link_libraries(kcm_smserver  ${KDE4_KDE3SUPPORT_LIBS} )
 

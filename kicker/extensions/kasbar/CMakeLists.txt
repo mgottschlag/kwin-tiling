@@ -37,7 +37,6 @@ kde4_automoc(${kasbar_panelextension_PART_SRCS})
 
 kde4_add_plugin(kasbar_panelextension ${kasbar_panelextension_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kasbar_panelextension )
 
 target_link_libraries(kasbar_panelextension  ${KDE4_KDECORE_LIBS} kasbar )
 

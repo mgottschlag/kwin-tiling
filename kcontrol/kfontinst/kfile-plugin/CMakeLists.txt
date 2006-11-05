@@ -9,7 +9,6 @@ kde4_automoc(${kfile_font_PART_SRCS})
 
 kde4_add_plugin(kfile_font ${kfile_font_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kfile_font )
 
 target_link_libraries(kfile_font  ${KDE4_KIO_LIBS} kfontinst )
 

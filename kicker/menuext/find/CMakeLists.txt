@@ -9,7 +9,6 @@ kde4_automoc(${kickermenu_find_PART_SRCS})
 
 kde4_add_plugin(kickermenu_find ${kickermenu_find_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_find )
 
 target_link_libraries(kickermenu_find  ${KDE4_KDEUI_LIBS} kickermain kworkspace )
 
