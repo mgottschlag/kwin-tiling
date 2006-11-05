@@ -129,7 +129,7 @@ std::ostream &operator<<( std::ostream &out, Solid::Device &device )
             for ( int i=meta->propertyOffset(); i<meta->propertyCount(); i++ )
             {
                 QMetaProperty property = meta->property( i );
-                out << "  " << meta->className() << "." << property.name()
+                out << "  " << QString( meta->className() ).mid( 7 ) << "." << property.name()
                     << " = " << property.read( capability ) << endl;
             }
         }
