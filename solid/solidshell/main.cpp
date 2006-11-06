@@ -196,7 +196,7 @@ int main(int argc, char **argv)
                     "             # neutral fashion,\n"
                     "             # - Otherwise only device UDIs are listed.\n" ) << endl;
 
-      cout << "  solidshell hardware info 'udi'" << endl;
+      cout << "  solidshell hardware details 'udi'" << endl;
       cout << i18n( "             # Display all the capabilities and properties of the device\n"
                     "             # corresponding to 'udi' in a platform neutral fashion.\n" ) << endl;
 
