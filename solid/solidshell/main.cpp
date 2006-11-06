@@ -100,8 +100,12 @@ std::ostream &operator<<( std::ostream &out, const QVariant &value )
     return out;
 }
 
-std::ostream &operator<<( std::ostream &out, Solid::Device &device )
+std::ostream &operator<<( std::ostream &out, const Solid::Device &device )
 {
+    out << "  parent = " << QVariant( device.parentUdi() ) << endl;
+    out << "  vendor = " << QVariant( device.vendor() ) << endl;
+    out << "  product = " << QVariant( device.product() ) << endl;
+
     QList<Solid::Capability::Type> caps;
     caps << Solid::Capability::Processor
          << Solid::Capability::Block
@@ -120,7 +124,7 @@ std::ostream &operator<<( std::ostream &out, Solid::Device &device )
 
     foreach ( Solid::Capability::Type cap, caps )
     {
-        Solid::Capability *capability = device.asCapability( cap );
+        const Solid::Capability *capability = device.asCapability( cap );
 
         if ( capability )
         {
@@ -182,27 +186,62 @@ int main(int argc, char **argv)
 
       cout << endl << i18n( "Syntax:" ) << endl << endl;
 
-      cout << "  solidshell hardware list [capabilities|system]" << endl;
+      cout << "  solidshell hardware list [details|nonportableinfo]" << endl;
       cout << i18n( "             # List the hardware available in the system.\n"
-                    "             # If the system option is specified, the device properties are\n"
-                    "             # listed (be careful, property names are backend dependent),\n"
-                    "             # if the capabilities option is specified, the device capabilities and\n"
-                    "             # the corresponding properties are listed,\n"
-                    "             # otherwise only device UDIs are listed.\n" ) << endl;
+                    "             # - If the 'nonportableinfo' option is specified, the device\n"
+                    "             # properties are listed (be careful, in this case property names\n"
+                    "             # are backend dependent),\n"
+                    "             # - If the 'details' option is specified, the device capabilities\n"
+                    "             # and the corresponding properties are listed in a platform\n"
+                    "             # neutral fashion,\n"
+                    "             # - Otherwise only device UDIs are listed.\n" ) << endl;
 
-      cout << "  solidshell hardware capabilities 'udi'" << endl;
-      cout << "  solidshell hardware system 'udi'" << endl;
+      cout << "  solidshell hardware info 'udi'" << endl;
+      cout << i18n( "             # Display all the capabilities and properties of the device\n"
+                    "             # corresponding to 'udi' in a platform neutral fashion.\n" ) << endl;
+
+      cout << "  solidshell hardware nonportableinfo 'udi'" << endl;
+      cout << i18n( "             # Display all the properties of the device corresponding to 'udi'\n"
+                    "             # (be careful, in this case property names are backend dependent).\n" ) << endl;
 
       cout << "  solidshell hardware query 'predicate' ['parentUdi']" << endl;
+      cout << i18n( "             # List the UDI of devices corresponding to 'predicate'.\n"
+                    "             # - If 'parentUdi' is specified, the search is restricted to the\n"
+                    "             # branch of the corresponding device,\n"
+                    "             # - Otherwise the search is done on all the devices.\n" ) << endl;
 
       cout << "  solidshell hardware mount 'udi'" << endl;
+      cout << i18n( "             # If applicable, mount the device corresponding to 'udi'.\n" ) << endl;
+
       cout << "  solidshell hardware unmount 'udi'" << endl;
+      cout << i18n( "             # If applicable, unmount the device corresponding to 'udi'.\n" ) << endl;
+
       cout << "  solidshell hardware eject 'udi'" << endl;
+      cout << i18n( "             # If applicable, eject the device corresponding to 'udi'.\n" ) << endl;
+
 
       cout << endl;
 
-      cout << "  solidshell power query (suspend)" << endl;
-      cout << "  solidshell suspend 'method'" << endl;
+
+      cout << "  solidshell power query (suspend|scheme|cpufreq)" << endl;
+      cout << i18n( "             # List a particular set of information regarding power management.\n"
+                    "             # - If the 'suspend' option is specified, give the list of suspend\n"
+                    "             # method supported by the system\n"
+                    "             # - If the 'scheme' option is specified, give the list of\n"
+                    "             # supported power management schemes by this system\n"
+                    "             # - If the 'cpufreq' option is specified, give the list of\n"
+                    "             # supported CPU frequency policy\n" ) << endl;
+
+      cout << "  solidshell power set (scheme|cpufreq) 'value'" << endl;
+      cout << i18n( "             # Set power management options of the system.\n"
+                    "             # - If the 'scheme' option is specified, the power management\n"
+                    "             # scheme set corresponds to 'value'\n"
+                    "             # - If the 'cpufreq' option is specified, the CPU frequency policy\n"
+                    "             # set corresponds to 'value'\n" ) << endl;
+
+      cout << "  solidshell power suspend 'method'" << endl;
+      cout << i18n( "             # Suspend the computer using the given 'method'.\n" ) << endl;
+
       return 0;
   }
 
@@ -227,15 +266,15 @@ bool SolidShell::doIt()
         {
             checkArgumentCount( 2, 3 );
             QByteArray extra( args->count()==3 ? args->arg( 2 ) : "" );
-            return shell.hwList( extra=="capabilities", extra=="system" );
+            return shell.hwList( extra=="details", extra=="nonportableinfo" );
         }
-        else if ( command == "capabilities" )
+        else if ( command == "details" )
         {
             checkArgumentCount( 3, 3 );
             QString udi( args->arg( 2 ) );
             return shell.hwCapabilities( udi );
         }
-        else if ( command == "system" )
+        else if ( command == "nonportableinfo" )
         {
             checkArgumentCount( 3, 3 );
             QString udi( args->arg( 2 ) );
@@ -292,6 +331,29 @@ bool SolidShell::doIt()
             {
                 return shell.powerQuerySuspendMethods();
             }
+            else if ( type == "scheme" )
+            {
+                return shell.powerQuerySchemes();
+            }
+            else if ( type == "cpufreq" )
+            {
+                return shell.powerQueryCpuPolicies();
+            }
+        }
+        else if ( command == "set" )
+        {
+            checkArgumentCount( 4, 4 );
+            QString type( args->arg( 2 ) );
+            QString value( args->arg( 3 ) );
+
+            if ( type == "scheme" )
+            {
+                return shell.powerChangeScheme( value );
+            }
+            else if ( type == "cpufreq" )
+            {
+                return shell.powerChangeCpuPolicy( value );
+            }
         }
     }
 
@@ -302,9 +364,9 @@ bool SolidShell::hwList( bool capabilities, bool system )
 {
     Solid::DeviceManager &manager = Solid::DeviceManager::self();
 
-    Solid::DeviceList all = manager.allDevices();
+    const Solid::DeviceList all = manager.allDevices();
 
-    foreach ( Solid::Device device, all )
+    foreach ( const Solid::Device device, all )
     {
         cout << "udi = '" << device.udi() << "'" << endl;
 
@@ -325,7 +387,7 @@ bool SolidShell::hwList( bool capabilities, bool system )
 bool SolidShell::hwCapabilities( const QString &udi )
 {
     Solid::DeviceManager &manager = Solid::DeviceManager::self();
-    Solid::Device device = manager.findDevice( udi );
+    const Solid::Device device = manager.findDevice( udi );
 
     cout << "udi = '" << device.udi() << "'" << endl;
     cout << device << endl;
@@ -336,7 +398,7 @@ bool SolidShell::hwCapabilities( const QString &udi )
 bool SolidShell::hwProperties( const QString &udi )
 {
     Solid::DeviceManager &manager = Solid::DeviceManager::self();
-    Solid::Device device = manager.findDevice( udi );
+    const Solid::Device device = manager.findDevice( udi );
 
     cout << "udi = '" << device.udi() << "'" << endl;
     QMap<QString,QVariant> properties = device.allProperties();
@@ -348,11 +410,11 @@ bool SolidShell::hwProperties( const QString &udi )
 bool SolidShell::hwQuery( const QString &parentUdi, const QString &query )
 {
     Solid::DeviceManager &manager = Solid::DeviceManager::self();
-    Solid::DeviceList devices = manager.findDevicesFromQuery( parentUdi,
-                                                              Solid::Capability::Unknown,
-                                                              query );
+    const Solid::DeviceList devices = manager.findDevicesFromQuery( parentUdi,
+                                                                    Solid::Capability::Unknown,
+                                                                    query );
 
-    foreach ( Solid::Device device, devices )
+    foreach ( const Solid::Device device, devices )
     {
         cout << "udi = '" << device.udi() << "'" << endl;
     }
@@ -480,6 +542,127 @@ bool SolidShell::powerSuspend( const QString &strMethod )
     {
         return true;
     }
+}
+
+bool SolidShell::powerQuerySchemes()
+{
+    Solid::PowerManager &manager = Solid::PowerManager::self();
+
+    QString current = manager.scheme();
+    QStringList schemes = manager.supportedSchemes();
+
+    foreach ( QString scheme, schemes )
+    {
+        cout << scheme << " (" << manager.schemeDescription( scheme ) << ")";
+
+        if ( scheme==current )
+        {
+            cout << " [*]" << endl;
+        }
+        else
+        {
+            cout << endl;
+        }
+    }
+
+    return true;
+}
+
+bool SolidShell::powerChangeScheme( const QString &schemeName )
+{
+    Solid::PowerManager &manager = Solid::PowerManager::self();
+
+    QStringList supported = manager.supportedSchemes();
+
+    if ( !supported.contains( schemeName ) )
+    {
+        cerr << i18n( "Unsupported scheme: %1" ).arg( schemeName ) << endl;
+        return false;
+    }
+
+    return manager.setScheme( schemeName );
+}
+
+bool SolidShell::powerQueryCpuPolicies()
+{
+    Solid::PowerManager &manager = Solid::PowerManager::self();
+
+    Solid::PowerManager::CpuFreqPolicy current = manager.cpuFreqPolicy();
+    Solid::PowerManager::CpuFreqPolicies policies = manager.supportedCpuFreqPolicies();
+
+    QList<Solid::PowerManager::CpuFreqPolicy> all_policies;
+    all_policies << Solid::PowerManager::OnDemand
+                 << Solid::PowerManager::Userspace
+                 << Solid::PowerManager::Powersave
+                 << Solid::PowerManager::Performance;
+
+    foreach ( Solid::PowerManager::CpuFreqPolicy policy, all_policies )
+    {
+        if ( policies & policy )
+        {
+            switch ( policy )
+            {
+            case Solid::PowerManager::OnDemand:
+                cout << "ondemand";
+                break;
+            case Solid::PowerManager::Userspace:
+                cout << "userspace";
+                break;
+            case Solid::PowerManager::Powersave:
+                cout << "powersave";
+                break;
+            case Solid::PowerManager::Performance:
+                cout << "performance";
+                break;
+            case Solid::PowerManager::UnknownCpuFreqPolicy:
+                break;
+            }
+
+            if ( policy==current )
+            {
+                cout << " [*]" << endl;
+            }
+            else
+            {
+                cout << endl;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool SolidShell::powerChangeCpuPolicy( const QString &policyName )
+{
+    Solid::PowerManager &manager = Solid::PowerManager::self();
+
+    Solid::PowerManager::CpuFreqPolicies supported = manager.supportedCpuFreqPolicies();
+
+    Solid::PowerManager::CpuFreqPolicy policy = Solid::PowerManager::UnknownCpuFreqPolicy;
+
+    if ( policyName == "ondemand" && (supported & Solid::PowerManager::OnDemand) )
+    {
+        policy = Solid::PowerManager::OnDemand;
+    }
+    else if ( policyName == "userspace" && (supported & Solid::PowerManager::Userspace) )
+    {
+        policy = Solid::PowerManager::Userspace;
+    }
+    else if ( policyName == "performance" && (supported & Solid::PowerManager::Performance) )
+    {
+        policy = Solid::PowerManager::Performance;
+    }
+    else if ( policyName == "powersave" && (supported & Solid::PowerManager::Powersave) )
+    {
+        policy = Solid::PowerManager::Powersave;
+    }
+    else
+    {
+        cerr << i18n( "Unsupported cpufreq policy: %1" ).arg( policyName ) << endl;
+        return false;
+    }
+
+    return manager.setCpuFreqPolicy( policy );
 }
 
 void SolidShell::connectJob( KJob *job )

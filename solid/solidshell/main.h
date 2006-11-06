@@ -46,13 +46,10 @@ public:
     bool powerSuspend( const QString &method );
 
     bool powerQuerySchemes();
-    bool powerCurrentScheme();
-    bool powerChangeScheme();
+    bool powerChangeScheme( const QString &schemeName );
 
     bool powerQueryCpuPolicies();
-    bool powerCurrentCpuPolicy();
-    bool powerChangeCpuPolicy();
-    bool powerSetCpuEnabled();
+    bool powerChangeCpuPolicy( const QString &policyName );
 
 private:
     void connectJob( KJob *job );
