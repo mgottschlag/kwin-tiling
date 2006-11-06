@@ -18,8 +18,12 @@
 #include "smserverconfigimpl.h"
 #include "smserverconfigimpl.moc"
 
-SMServerConfigImpl::SMServerConfigImpl(QWidget *parent, const char *name ) : SMServerConfigDlg(parent,name) {
-
+SMServerConfigImpl::SMServerConfigImpl(QWidget *parent ) : SMServerConfigDlg(parent) {
+    connect(confirmLogoutCheck,SIGNAL(toggled(bool)), SLOT(configChanged()));
+    connect(loginGroup,SIGNAL(clicked(int)), SLOT(configChanged()));
+    connect(sdGroup,SIGNAL(clicked(int)),SLOT(configChanged()));
+    connect(excludeLineedit,SIGNAL(textChanged(QString)),SLOT(configChanged()));
+    connect(offerShutdownCheck,SIGNAL(toggled(bool)),SLOT(configChanged()));
 }
 SMServerConfigImpl::~SMServerConfigImpl(){
 }

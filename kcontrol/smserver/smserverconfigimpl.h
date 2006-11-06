@@ -19,16 +19,25 @@
 #define SMSERVERCONFIGIMPL_H
 
 #include <QWidget>
-#include "smserverconfigdlg.h"
+#include "ui_smserverconfigdlg.h"
 
 /**
   *@author stulle
   */
 
+class SMServerConfigDlg : public QWidget, public Ui::SMServerConfigDlg
+{
+public:
+  SMServerConfigDlg( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
+
 class SMServerConfigImpl : public SMServerConfigDlg  {
    Q_OBJECT
 public:
-	SMServerConfigImpl(QWidget *parent=0, const char *name=0);
+	SMServerConfigImpl(QWidget *parent=0);
 	~SMServerConfigImpl();
 public Q_SLOTS: // Public slots
   /** No descriptions */
