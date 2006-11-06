@@ -253,8 +253,8 @@ bool SolidShell::doIt()
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     checkArgumentCount( 2, 0 );
 
-    QByteArray domain = args->arg( 0 );
-    QByteArray command = args->arg( 1 );
+    QString domain( args->arg( 0 ) );
+    QString command( args->arg( 1 ) );
 
     int fake_argc = 0;
     char **fake_argv = 0;
@@ -312,6 +312,10 @@ bool SolidShell::doIt()
             QString udi( args->arg( 2 ) );
             return shell.hwVolumeCall( Eject, udi );
         }
+        else
+        {
+            cerr << i18n( "Syntax Error: Unknown command '%1'" ).arg( command ) << endl;
+        }
     }
     else if ( domain == "power" )
     {
@@ -339,6 +343,10 @@ bool SolidShell::doIt()
             {
                 return shell.powerQueryCpuPolicies();
             }
+            else
+            {
+                cerr << i18n( "Syntax Error: Unknown option '%1'" ).arg( type ) << endl;
+            }
         }
         else if ( command == "set" )
         {
@@ -354,7 +362,19 @@ bool SolidShell::doIt()
             {
                 return shell.powerChangeCpuPolicy( value );
             }
+            else
+            {
+                cerr << i18n( "Syntax Error: Unknown option '%1'" ).arg( type ) << endl;
+            }
         }
+        else
+        {
+            cerr << i18n( "Syntax Error: Unknown command '%1'" ).arg( command ) << endl;
+        }
+    }
+    else
+    {
+        cerr << i18n( "Syntax Error: Unknown command group '%1'" ).arg( domain ) << endl;
     }
 
     return false;
