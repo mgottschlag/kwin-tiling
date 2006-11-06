@@ -9,12 +9,7 @@ set(kcm_componentchooser_PART_SRCS componentchooser.cpp kcm_componentchooser.cpp
 
 kde4_automoc(${kcm_componentchooser_PART_SRCS})
 
-kde4_add_ui3_files(kcm_componentchooser_PART_SRCS 
-   componentchooser_ui.ui 
-   componentconfig_ui.ui 
-   emailclientconfig_ui.ui 
-   terminalemulatorconfig_ui.ui 
-   browserconfig_ui.ui )
+kde4_add_ui_files(kcm_componentchooser_PART_SRCS browserconfig_ui.ui terminalemulatorconfig_ui.ui emailclientconfig_ui.ui componentchooser_ui.ui componentconfig_ui.ui) 
 
 kde4_add_plugin(kcm_componentchooser ${kcm_componentchooser_PART_SRCS})
 

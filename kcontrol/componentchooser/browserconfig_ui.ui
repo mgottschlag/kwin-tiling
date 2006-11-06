@@ -1,171 +1,152 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
-<class>BrowserConfig_UI</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>BrowserConfig_UI</cstring>
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>BrowserConfig_UI</class>
+  <widget class="QWidget" name="BrowserConfig_UI" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>394</width>
+        <height>324</height>
+      </rect>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>394</width>
-            <height>324</height>
-        </rect>
+    <property name="sizePolicy" >
+      <sizepolicy>
+        <hsizetype>3</hsizetype>
+        <vsizetype>3</vsizetype>
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+      </sizepolicy>
     </property>
-    <property name="sizePolicy">
-        <sizepolicy>
-            <hsizetype>3</hsizetype>
-            <vsizetype>3</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <widget class="QButtonGroup">
-            <property name="name">
-                <cstring>buttonGroup1</cstring>
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>0</number>
+      </property>
+      <item>
+        <widget class="Q3ButtonGroup" name="buttonGroup1" >
+          <property name="title" >
+            <string/>
+          </property>
+          <layout class="QVBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
             </property>
-            <property name="title">
-                <string></string>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
+            <item>
+              <widget class="QLabel" name="label" >
+                <property name="text" >
+                  <string>&lt;qt>Open &lt;b>http&lt;/b> and &lt;b>https&lt;/b> URLs&lt;/qt></string>
                 </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>label</cstring>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QRadioButton" name="radioKIO" >
+                <property name="text" >
+                  <string>in an application based on the contents of the URL</string>
+                </property>
+                <property name="checked" >
+                  <bool>true</bool>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QRadioButton" name="radioExec" >
+                <property name="text" >
+                  <string>in the following browser:</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <layout class="QHBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <spacer name="spacer4_2" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>20</width>
+                        <height>20</height>
+                      </size>
                     </property>
-                    <property name="text">
-                        <string>&lt;qt&gt;Open &lt;b&gt;http&lt;/b&gt; and &lt;b&gt;https&lt;/b&gt; URLs&lt;/qt&gt;</string>
+                    <property name="sizeType" >
+                      <enum>Fixed</enum>
                     </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>radioKIO</cstring>
+                    <property name="orientation" >
+                      <enum>Horizontal</enum>
                     </property>
-                    <property name="text">
-                        <string>in an application based on the contents of the URL</string>
+                  </spacer>
+                </item>
+                <item>
+                  <widget class="QLineEdit" name="lineExec" >
+                    <property name="enabled" >
+                      <bool>false</bool>
                     </property>
-                    <property name="checked">
-                        <bool>true</bool>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QToolButton" name="btnSelectBrowser" >
+                    <property name="enabled" >
+                      <bool>false</bool>
                     </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>radioExec</cstring>
+                    <property name="sizePolicy" >
+                      <sizepolicy>
+                        <hsizetype>1</hsizetype>
+                        <vsizetype>1</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
                     </property>
-                    <property name="text">
-                        <string>in the following browser:</string>
+                    <property name="text" >
+                      <string>...</string>
                     </property>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout3</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer4_2</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QLineEdit">
-                            <property name="name">
-                                <cstring>lineExec</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                        </widget>
-                        <widget class="QToolButton">
-                            <property name="name">
-                                <cstring>btnSelectBrowser</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>1</hsizetype>
-                                    <vsizetype>1</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>...</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-            </vbox>
+                  </widget>
+                </item>
+              </layout>
+            </item>
+          </layout>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer9</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
+      </item>
+      <item>
+        <spacer name="spacer9" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Vertical</enum>
+          </property>
         </spacer>
-    </vbox>
-</widget>
-<connections>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="3" margin="6" />
+  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <includes>
+    <include location="local" >kdialog.h</include>
+  </includes>
+  <connections>
     <connection>
-        <sender>radioExec</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>lineExec</receiver>
-        <slot>setEnabled(bool)</slot>
+      <sender>radioExec</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>lineExec</receiver>
+      <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>radioExec</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>btnSelectBrowser</receiver>
-        <slot>setEnabled(bool)</slot>
+      <sender>radioExec</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>btnSelectBrowser</receiver>
+      <slot>setEnabled(bool)</slot>
     </connection>
-    <connection>
-        <sender>btnSelectBrowser</sender>
-        <signal>clicked()</signal>
-        <receiver>BrowserConfig_UI</receiver>
-        <slot>selectBrowser()</slot>
-    </connection>
-</connections>
-<includes>
-    <include location="local" impldecl="in declaration">kdialog.h</include>
-</includes>
-<slots>
-    <slot access="protected">selectBrowser()</slot>
-</slots>
-<layoutdefaults spacing="3" margin="6"/>
-<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-</UI>
+  </connections>
+</ui>

@@ -16,11 +16,11 @@
 #ifndef _COMPONENTCHOOSER_H_
 #define _COMPONENTCHOOSER_H_
 
-#include "componentchooser_ui.h"
-#include "componentconfig_ui.h"
-#include "emailclientconfig_ui.h"
-#include "terminalemulatorconfig_ui.h"
-#include "browserconfig_ui.h"
+#include "ui_componentchooser_ui.h"
+#include "ui_componentconfig_ui.h"
+#include "ui_emailclientconfig_ui.h"
+#include "ui_terminalemulatorconfig_ui.h"
+#include "ui_browserconfig_ui.h"
 #include <q3dict.h>
 #include <QString>
 //Added by qt3to4:
@@ -44,6 +44,49 @@ public:
 	virtual void save(KConfig *cfg)=0;
 	virtual void defaults()=0;
 };
+
+class BrowserConfig_UI : public QWidget, public Ui::BrowserConfig_UI
+{
+public:
+  BrowserConfig_UI( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
+
+class TerminalEmulatorConfig_UI : public QWidget, public Ui::TerminalEmulatorConfig_UI
+{
+public:
+  TerminalEmulatorConfig_UI( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
+class EmailClientConfig_UI : public QWidget, public Ui::EmailClientConfig_UI
+{
+public:
+  EmailClientConfig_UI( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
+class ComponentConfig_UI : public QWidget, public Ui::ComponentConfig_UI
+{
+public:
+  ComponentConfig_UI( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
+
+class ComponentChooser_UI : public QWidget, public Ui::ComponentChooser_UI
+{
+public:
+  ComponentChooser_UI( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
 
 
 class CfgComponent: public ComponentConfig_UI,public CfgPlugin
@@ -132,7 +175,7 @@ class ComponentChooser : public ComponentChooser_UI
 Q_OBJECT
 
 public:
-	ComponentChooser(QWidget *parent=0, const char *name=0);
+	ComponentChooser(QWidget *parent=0);
 	virtual ~ComponentChooser();
 	void load();
 	void save();

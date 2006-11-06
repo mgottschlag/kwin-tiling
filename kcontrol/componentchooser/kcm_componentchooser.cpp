@@ -33,7 +33,7 @@ KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QStringList &):
 	KCModule(KCMComponentChooserFactory::instance(), parent) {
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	m_chooser=new ComponentChooser(this,"ComponentChooser");
+	m_chooser=new ComponentChooser(this);
 	connect(m_chooser,SIGNAL(changed(bool)),this,SIGNAL(changed(bool)));
 	setButtons( Help | Apply );
 

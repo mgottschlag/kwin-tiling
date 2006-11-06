@@ -1,230 +1,204 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
-<class>EmailClientConfig_UI</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>EmailClientConfig_UI</cstring>
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>EmailClientConfig_UI</class>
+  <widget class="QWidget" name="EmailClientConfig_UI" >
+    <property name="enabled" >
+      <bool>true</bool>
     </property>
-    <property name="enabled">
-        <bool>true</bool>
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>388</width>
+        <height>267</height>
+      </rect>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>388</width>
-            <height>267</height>
-        </rect>
+    <property name="sizePolicy" >
+      <sizepolicy>
+        <hsizetype>3</hsizetype>
+        <vsizetype>3</vsizetype>
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+      </sizepolicy>
     </property>
-    <property name="sizePolicy">
-        <sizepolicy>
-            <hsizetype>3</hsizetype>
-            <vsizetype>3</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <widget class="QButtonGroup">
-            <property name="name">
-                <cstring>ButtonGroup2</cstring>
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>0</number>
+      </property>
+      <item>
+        <widget class="Q3ButtonGroup" name="ButtonGroup2" >
+          <property name="title" >
+            <string/>
+          </property>
+          <layout class="QGridLayout" >
+            <property name="margin" >
+              <number>0</number>
             </property>
-            <property name="title">
-                <string></string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
+            <item row="2" column="1" >
+              <layout class="QHBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
                 </property>
-                <property name="margin">
-                    <number>0</number>
+                <item>
+                  <widget class="QLineEdit" name="txtEMailClient" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy" >
+                      <sizepolicy>
+                        <hsizetype>1</hsizetype>
+                        <vsizetype>0</vsizetype>
+                        <horstretch>1</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
+                    </property>
+                    <property name="minimumSize" >
+                      <size>
+                        <width>0</width>
+                        <height>0</height>
+                      </size>
+                    </property>
+                    <property name="toolTip" stdset="0" >
+                      <string>&lt;ul> &lt;li>%t: Recipient's address&lt;/li> &lt;li>%s: Subject&lt;/li> &lt;li>%c: Carbon Copy (CC)&lt;/li> &lt;li>%b: Blind Carbon Copy (BCC)&lt;/li> &lt;li>%B: Template body text&lt;/li> &lt;li>%A: Attachment &lt;/li> &lt;li>%u: Full mailto: URL &lt;/li>&lt;/ul></string>
+                    </property>
+                    <property name="whatsThis" stdset="0" >
+                      <string>Press this button to select your favorite email client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br> You can also use several placeholders which will be replaced with the actual values when the email client is called:&lt;ul> &lt;li>%t: Recipient's address&lt;/li> &lt;li>%s: Subject&lt;/li> &lt;li>%c: Carbon Copy (CC)&lt;/li> &lt;li>%b: Blind Carbon Copy (BCC)&lt;/li> &lt;li>%B: Template body text&lt;/li> &lt;li>%A: Attachment &lt;/li> &lt;/ul></string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QToolButton" name="btnSelectEmail" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                      <string>...</string>
+                    </property>
+                    <property name="whatsThis" stdset="0" >
+                      <string>Click here to browse for the mail program file.</string>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </item>
+            <item row="3" column="1" >
+              <widget class="QCheckBox" name="chkRunTerminal" >
+                <property name="enabled" >
+                  <bool>false</bool>
                 </property>
-                <widget class="QLayoutWidget" row="2" column="1">
-                    <property name="name">
-                        <cstring>Layout4</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLineEdit">
-                            <property name="name">
-                                <cstring>txtEMailClient</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>1</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>1</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>0</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>&lt;ul&gt; &lt;li&gt;%t: Recipient's address&lt;/li&gt; &lt;li&gt;%s: Subject&lt;/li&gt; &lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt; &lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt; &lt;li&gt;%B: Template body text&lt;/li&gt; &lt;li&gt;%A: Attachment &lt;/li&gt; &lt;li&gt;%u: Full mailto: URL &lt;/li&gt;&lt;/ul&gt;</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Press this button to select your favorite email client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br&gt; You can also use several placeholders which will be replaced with the actual values when the email client is called:&lt;ul&gt; &lt;li&gt;%t: Recipient's address&lt;/li&gt; &lt;li&gt;%s: Subject&lt;/li&gt; &lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt; &lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt; &lt;li&gt;%B: Template body text&lt;/li&gt; &lt;li&gt;%A: Attachment &lt;/li&gt; &lt;/ul&gt;</string>
-                            </property>
-                        </widget>
-                        <widget class="QToolButton">
-                            <property name="name">
-                                <cstring>btnSelectEmail</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>...</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Click here to browse for the mail program file.</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QCheckBox" row="3" column="1">
-                    <property name="name">
-                        <cstring>chkRunTerminal</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Run in terminal</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Activate this option if you want the selected email client to be executed in a terminal (e.g. &lt;em&gt;Konsole&lt;/em&gt;).</string>
-                    </property>
-                </widget>
-                <spacer row="4" column="1">
-                    <property name="name">
-                        <cstring>Spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>0</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>kmailCB</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Use KMail as preferred email client</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Kmail is the standard Mail program for the KDE desktop.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>otherCB</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use a different &amp;email client:</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Select this option if you want to use any other mail program.</string>
-                    </property>
-                </widget>
-                <spacer row="2" column="0">
-                    <property name="name">
-                        <cstring>Spacer16</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>30</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <spacer row="3" column="0">
-                    <property name="name">
-                        <cstring>Spacer16_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>30</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-            </grid>
+                <property name="text" >
+                  <string>&amp;Run in terminal</string>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Activate this option if you want the selected email client to be executed in a terminal (e.g. &lt;em>Konsole&lt;/em>).</string>
+                </property>
+              </widget>
+            </item>
+            <item row="4" column="1" >
+              <spacer name="Spacer2" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>0</width>
+                    <height>16</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+            <item rowspan="1" row="0" column="0" colspan="2" >
+              <widget class="QRadioButton" name="kmailCB" >
+                <property name="text" >
+                  <string>&amp;Use KMail as preferred email client</string>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Kmail is the standard Mail program for the KDE desktop.</string>
+                </property>
+              </widget>
+            </item>
+            <item rowspan="1" row="1" column="0" colspan="2" >
+              <widget class="QRadioButton" name="otherCB" >
+                <property name="text" >
+                  <string>Use a different &amp;email client:</string>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Select this option if you want to use any other mail program.</string>
+                </property>
+              </widget>
+            </item>
+            <item row="2" column="0" >
+              <spacer name="Spacer16" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>30</width>
+                    <height>16</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>Fixed</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Horizontal</enum>
+                </property>
+              </spacer>
+            </item>
+            <item row="3" column="0" >
+              <spacer name="Spacer16_2" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>30</width>
+                    <height>16</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>Fixed</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Horizontal</enum>
+                </property>
+              </spacer>
+            </item>
+          </layout>
         </widget>
-    </vbox>
-</widget>
-<connections>
-    <connection>
-        <sender>otherCB</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>chkRunTerminal</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>otherCB</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>txtEMailClient</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>otherCB</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>btnSelectEmail</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>btnSelectEmail</sender>
-        <signal>clicked()</signal>
-        <receiver>EmailClientConfig_UI</receiver>
-        <slot>selectEmailClient()</slot>
-    </connection>
-</connections>
-<tabstops>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="3" margin="6" />
+  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <tabstops>
     <tabstop>kmailCB</tabstop>
     <tabstop>otherCB</tabstop>
     <tabstop>txtEMailClient</tabstop>
     <tabstop>chkRunTerminal</tabstop>
-</tabstops>
-<includes>
-    <include location="local" impldecl="in declaration">kdialog.h</include>
-</includes>
-<slots>
-    <slot access="protected">selectEmailClient()</slot>
-</slots>
-<layoutdefaults spacing="3" margin="6"/>
-<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-</UI>
+  </tabstops>
+  <includes>
+    <include location="local" >kdialog.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>otherCB</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>chkRunTerminal</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>otherCB</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>txtEMailClient</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>otherCB</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>btnSelectEmail</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+  </connections>
+</ui>

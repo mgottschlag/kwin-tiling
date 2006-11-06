@@ -130,6 +130,7 @@ CfgEmailClient::CfgEmailClient(QWidget *parent):EmailClientConfig_UI(parent),Cfg
 	connect(kmailCB, SIGNAL(toggled(bool)), SLOT(configChanged()) );
 	connect(txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 	connect(chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
+    connect(btnSelectEmail, SIGNAL(clicked()), SLOT(selectEmailClient()) );
 }
 
 CfgEmailClient::~CfgEmailClient() {
@@ -219,6 +220,8 @@ CfgTerminalEmulator::CfgTerminalEmulator(QWidget *parent):TerminalEmulatorConfig
 	connect(terminalLE,SIGNAL(textChanged(const QString &)), this, SLOT(configChanged()));
 	connect(terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 	connect(otherCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+	connect(btnSelectTerminal,SIGNAL(clicked()),this,SLOT(selectTerminalApp()));
+
 }
 
 CfgTerminalEmulator::~CfgTerminalEmulator() {
@@ -291,6 +294,7 @@ CfgBrowser::CfgBrowser(QWidget *parent) : BrowserConfig_UI(parent),CfgPlugin(){
         connect(lineExec,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
 	connect(radioKIO,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 	connect(radioExec,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(btnSelectBrowser,SIGNAL(clicked()),this, SLOT(selectBrowser()));
 }
 
 CfgBrowser::~CfgBrowser() {
@@ -379,8 +383,8 @@ void CfgBrowser::selectBrowser()
 
 //END Terminal Emulator Configuration
 
-ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
-	ComponentChooser_UI(parent,name), configWidget(0) {
+ComponentChooser::ComponentChooser(QWidget *parent):
+	ComponentChooser_UI(parent), configWidget(0) {
 
 	static_cast<QGridLayout*>(layout())->setRowStretch(1, 1);
 	somethingChanged=false;
