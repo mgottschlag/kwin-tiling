@@ -60,7 +60,7 @@ bool Button::hasState() const
 
 bool Button::stateValue() const
 {
-    return m_device->property( "button.value" ).toBool();
+    return m_device->property( "button.state.value" ).toBool();
 }
 
 void Button::slotConditionRaised( const QString &name, const QString &/*reason*/ )
