@@ -46,7 +46,7 @@ set(kcm_input_PART_SRCS mouse.cpp main.cpp logitechmouse.cpp ${libnoinst_SRCS})
 
 kde4_automoc(${kcm_input_PART_SRCS})
 
-kde4_add_ui3_files(kcm_input_PART_SRCS kmousedlg.ui logitechmouse_base.ui )
+kde4_add_ui_files(kcm_input_PART_SRCS kmousedlg.ui logitechmouse_base.ui )
 
 kde4_add_plugin(kcm_input ${kcm_input_PART_SRCS})
 

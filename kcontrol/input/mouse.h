@@ -50,7 +50,7 @@
 #endif
 
 #include <kcmodule.h>
-#include "kmousedlg.h"
+#include "ui_kmousedlg.h"
 #include "themepage.h"
 
 #define RIGHT_HANDED 0
@@ -60,6 +60,15 @@ class QCheckBox;
 class QSlider;
 class QTabWidget;
 class QStringList;
+
+class KMouseDlg : public QWidget, public Ui::KMouseDlg
+{
+public:
+  KMouseDlg( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
 
 class MouseSettings
 {

@@ -42,7 +42,7 @@
 #include "logitechmouse.h"
 
 LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlags, QWidget* parent, const char* name )
-    : LogitechMouseBase( parent, name, 0 )
+    : LogitechMouseBase( parent )
 {
     if ( !name )
         setObjectName( "LogitechMouse" );

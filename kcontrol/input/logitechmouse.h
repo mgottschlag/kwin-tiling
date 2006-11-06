@@ -32,7 +32,7 @@
 
 #include <config.h>
 
-#include "logitechmouse_base.h"
+#include "ui_logitechmouse_base.h"
 
 #include <usb.h>
 
@@ -43,13 +43,22 @@
 #define HAS_SSR  0x08  /* mouse supports smart scroll reporting */
 #define USE_CH2  0x10  /* mouse needs to use the second channel */
 
+class LogitechMouseBase : public QDialog, public Ui::LogitechMouseBase
+{
+public:
+  LogitechMouseBase( QWidget *parent ) : QDialog( parent ) {
+    setupUi( this );
+  }
+};
+
+
 
 class LogitechMouse : public LogitechMouseBase
 {
     Q_OBJECT
 
 public:
-    LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlags, QWidget* parent = 0, const char* name = 0 );
+    LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlags, QWidget* parent = 0, const char* name=0);
     ~LogitechMouse();
     void applyChanges();
     void save(KConfig *config);
