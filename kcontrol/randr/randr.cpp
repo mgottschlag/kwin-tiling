@@ -153,7 +153,7 @@ bool RandRScreen::confirm()
 
 	// FIXME remember to put the dialog on the right screen
 
-	KTimerDialog *acceptDialog = new KTimerDialog(
+	KTimerDialog acceptDialog(
 											15000,
 											KTimerDialog::CountDown,
 											KApplication::kApplication()->mainWidget(),
@@ -163,19 +163,22 @@ bool RandRScreen::confirm()
 											KTimerDialog::Ok|KTimerDialog::Cancel,
 											KTimerDialog::Cancel);
 
-	acceptDialog->setButtonGuiItem(KDialog::Ok, KGuiItem(i18n("&Accept Configuration"), "button_ok"));
-	acceptDialog->setButtonGuiItem(KDialog::Cancel, KGuiItem(i18n("&Return to Previous Configuration"), "button_cancel"));
+	acceptDialog.setButtonGuiItem(KDialog::Ok, KGuiItem(i18n("&Accept Configuration"), "button_ok"));
+	acceptDialog.setButtonGuiItem(KDialog::Cancel, KGuiItem(i18n("&Return to Previous Configuration"), "button_cancel"));
 
-	QLabel *label = new QLabel(i18n("Your screen orientation, size and refresh rate have been changed to the requested settings. Please indicate whether you wish to keep this configuration. In 15 seconds the display will revert to your previous settings."), acceptDialog);
-        acceptDialog->setMainWidget(label);
+	QLabel *label = new QLabel(i18n("Your screen orientation, size and refresh rate have been "
+                    "changed to the requested settings. Please indicate whether you wish to keep "
+                    "this configuration. In 15 seconds the display will revert to your previous "
+                    "settings."), &acceptDialog);
+        acceptDialog.setMainWidget(label);
 
-	KDialog::centerOnScreen(acceptDialog, m_screen);
+	KDialog::centerOnScreen(&acceptDialog, m_screen);
 
-	m_shownDialog = acceptDialog;
+	m_shownDialog = &acceptDialog;
 	connect( m_shownDialog, SIGNAL( destroyed()), this, SLOT( shownDialogDestroyed()));
 	connect( kapp->desktop(), SIGNAL( resized(int)), this, SLOT( desktopResized()));
 
-    return acceptDialog->exec();
+    return acceptDialog.exec();
 }
 
 void RandRScreen::shownDialogDestroyed()
