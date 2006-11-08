@@ -187,14 +187,8 @@ AuthReturn Authenticate(const char *caller, const char *method,
     return AuthBad;
   }
 
-  /* Refresh credentials (Needed e.g. for AFS (timing out Kerberos tokens)) */
-  /* REINIT_CRED and REFRESH_CRED are not clearly defined and thus likely to
-   * fail, so we use ESTABLISH_CRED ... */     
-  pam_error = pam_setcred(pamh, PAM_ESTABLISH_CRED);
-  if (pam_error != PAM_SUCCESS) {
-    pam_end(pamh, pam_error);
-    return AuthError;
-  }
+  pam_error = pam_setcred(pamh, PAM_REFRESH_CRED);
+  /* ignore errors on refresh credentials. If this did not work we use the old once. */
 
   pam_end(pamh, PAM_SUCCESS);
   return AuthOk;
