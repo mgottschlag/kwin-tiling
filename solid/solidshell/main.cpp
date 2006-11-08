@@ -19,8 +19,6 @@
 
 #include "main.h"
 
-#include <iostream>
-using namespace std;
 
 #include <QString>
 #include <QStringList>
@@ -37,6 +35,10 @@ using namespace std;
 #include <solid/powermanager.h>
 
 #include <kjob.h>
+
+
+#include <iostream>
+using namespace std;
 
 static const char appName[] = "solidshell";
 static const char programName[] = I18N_NOOP("solidshell");
