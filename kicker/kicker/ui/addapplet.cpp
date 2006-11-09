@@ -174,14 +174,6 @@ void AddAppletDialog::addCurrentApplet(const QModelIndex &selectedApplet)
 		appletContainer = m_containerArea->addButton(applet);
 	}
 
-	if (applet.isUniqueApplet() &&
-		 PluginManager::self()->hasInstance(applet))
-	{
-		m_mainWidgetView->appletListView->setRowHidden(selectedApplet.row(), true);
-		m_mainWidgetView->appletListView->clearSelection();
-		enableButton(KDialog::User1, false);
-	}
-
 	if (appletContainer)
 	{
 		ExtensionContainer* ec =
@@ -198,6 +190,14 @@ void AddAppletDialog::addCurrentApplet(const QModelIndex &selectedApplet)
                                     m_mainWidgetView->appletListView,
                                     appletContainer,
                                     m_containerArea->popupDirection());
+	}
+
+	if (applet.isUniqueApplet() &&
+	    PluginManager::self()->hasInstance(applet))
+	{
+		m_mainWidgetView->appletListView->setRowHidden(selectedApplet.row(), true);
+		m_mainWidgetView->appletListView->clearSelection();
+		enableButton(KDialog::User1, false);
 	}
 
 	Kicker::self()->setInsertionPoint(prevInsertionPoint);
