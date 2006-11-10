@@ -53,7 +53,8 @@ AddAppletVisualFeedback::AddAppletVisualFeedback(const QModelIndex& index,
       m_richText(0),
       m_dissolveSize(24),
       m_dissolveDelta(-1),
-      m_frames(1)
+      m_frames(1),
+      m_dirty(false)
 {
     AppletInfo *appletData = static_cast<AppletInfo*>(index.internalPointer());
 
