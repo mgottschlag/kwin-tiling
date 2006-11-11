@@ -85,16 +85,8 @@ Minicli::Minicli( QWidget *parent )
   setButtons(None);
   KWin::setIcons( winId(), DesktopIcon("run"), SmallIcon("run") );
 
-  QVBoxLayout* mainLayout = new QVBoxLayout( this );
-  mainLayout->setMargin(0);
-  mainLayout->setSpacing(KDialog::spacingHint());
-
-  m_dlgWidget = new QWidget(this);
   m_dlg = new Ui::MinicliDlgUI();
-  m_dlg->setupUi(m_dlgWidget);
-
-  mainLayout->addWidget(m_dlgWidget);
-  setMainWidget(m_dlgWidget);
+  m_dlg->setupUi(mainWidget());
 
   m_dlg->lbRunIcon->setPixmap(DesktopIcon("kmenu"));
 
@@ -176,7 +168,7 @@ void Minicli::setCommand(const QString& command)
 
 QSize Minicli::sizeHint() const
 {
-  int maxWidth = qApp->desktop()->screenGeometry((QWidget*)this).width();
+  int maxWidth = qApp->desktop()->screenGeometry(this).width();
   if (maxWidth < 603)
   {
     // a sensible max for smaller screens

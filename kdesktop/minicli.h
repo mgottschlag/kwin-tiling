@@ -104,7 +104,6 @@ private:
   QTimer* m_parseTimer;
   QWidget* m_FocusWidget;
   Ui::MinicliDlgUI* m_dlg;
-  QWidget* m_dlgWidget;
   KUriFilterData* m_filterData;
 
   // Cached values
