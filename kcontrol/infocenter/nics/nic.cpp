@@ -81,6 +81,7 @@ struct MyNIC
    QString netmask;
    QString state;
    QString type;
+   QString HWaddr;
 };
 
 typedef Q3PtrList<MyNIC> NICList;
@@ -100,6 +101,7 @@ KCMNic::KCMNic(QWidget *parent, const QStringList &)
    m_list->addColumn(i18n("Network Mask"));
    m_list->addColumn(i18n("Type"));
    m_list->addColumn(i18n("State"));
+   m_list->addColumn(i18n("HWAddr"));
    m_list->setAllColumnsShowFocus(true);
    QHBoxLayout *hbox=new QHBoxLayout();
    box->addItem(hbox);
@@ -128,10 +130,25 @@ void KCMNic::update()
    NICList *nics=findNICs();
    nics->setAutoDelete(true);
    for (MyNIC* tmp=nics->first(); tmp!=0; tmp=nics->next())
-      new Q3ListViewItem(m_list,tmp->name, tmp->addr, tmp->netmask, tmp->type, tmp->state);
+      new Q3ListViewItem(m_list,tmp->name, tmp->addr, tmp->netmask, tmp->type, tmp->state, tmp->HWaddr);
    delete nics;
 }
 
+static QString HWaddr2String(const char *hwaddr )
+{
+   QString ret;
+   for (int i=0; i<6; i++, hwaddr++) 
+   {
+      int v = (*hwaddr & 0xff);
+      QString num = QString("%1").arg(v,0,16);
+      if (num.length() < 2)
+         num.prepend("0");
+      if (i>0)
+         ret.append(":");
+      ret.append(num);
+   }
+   return ret;
+}
 
 NICList* findNICs()
 {
@@ -205,6 +222,27 @@ NICList* findNICs()
          }
          else
             tmp->netmask=i18n("Unknown");
+
+
+         ifcopy=*ifr;
+#ifdef SIOCGIFHWADDR
+         result=ioctl(sockfd,SIOCGIFHWADDR,&ifcopy);
+         if (result==0)
+         {
+            char *n = &ifcopy.ifr_ifru.ifru_hwaddr.sa_data[0];
+            tmp->HWaddr = HWaddr2String(n);
+         }
+#elif defined SIOCGENADDR
+         result=ioctl(sockfd,SIOCGENADDR,&ifcopy);
+         if (result==0)
+         {
+            char *n = &ifcopy.ifr_ifru.ifru_enaddr[0];
+            tmp->HWaddr = HWaddr2String(n);
+         }
+#endif
+         else
+            tmp->HWaddr = i18n("Unknown");
+
          nl->append(tmp);
          break;
 
