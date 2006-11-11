@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QEvent>
 #include <QPaintEvent>
 #include <QTextDocument>
-#include <QTextBlock>
+#include <QAbstractTextDocumentLayout>
 
 #include <kdialog.h>
 
@@ -59,7 +59,7 @@ public:
     QPixmap pixmap;
     QPixmap icon;
     MaskEffect maskEffect;
-    QTextDocument* document;
+    QTextDocument document;
 
     int dissolveSize;
     int dissolveDelta;
@@ -153,10 +153,9 @@ void KickerTip::display()
         return;
     }
 
-    delete d->document;
-    d->document = new QTextDocument();
-    d->document->setHtml("<h3>" + data.message + "</h3><p>" +
-                         data.subtext + "</p>");
+    d->document.setHtml("<h3>" + data.message + "</h3><p>" +
+                        data.subtext + "</p>");
+    d->document.setTextWidth(400);
     d->direction = data.direction;
 
     if (KickerSettings::mouseOversShowIcon())
@@ -282,36 +281,17 @@ void KickerTip::displayInternal()
     // since if one is really persistant and moves the mouse around very fast
     // you can trigger a situation where d->tippingFor gets reset to 0 but
     // before display() is called!
-    if (!d->tippingFor || !d->document)
+    if (!d->tippingFor || d->document.isEmpty())
     {
         return;
-    }
-
-    QTextBlock block = d->document->begin();
-    qreal y = 0, maxWidth = 0;
-    while(block.isValid()) {
-        QTextLayout *layout = block.layout();
-        layout->beginLayout();
-        while(1) {
-            QTextLine line = layout->createLine();
-            if(!line.isValid()) {
-                break;
-            }
-            line.setLineWidth(400);
-            line.setPosition(QPointF(line.x(), y));
-            maxWidth = qMax(maxWidth, line.naturalTextWidth());
-            y += line.height();
-        }
-        layout->endLayout();
-        block = block.next();
     }
 
     // determine text rectangle
     QRect textRect(0, 0, 0, 0);
     if (KickerSettings::mouseOversShowText())
     {
-        textRect.setWidth(int(maxWidth));
-        textRect.setHeight(int(y));
+        textRect.setWidth(qRound(d->document.idealWidth()));
+        textRect.setHeight(qRound(d->document.size().height()));
     }
 
     textRect.translate(-textRect.left(), -textRect.top());
@@ -367,24 +347,23 @@ void KickerTip::displayInternal()
 
     if (KickerSettings::mouseOversShowText())
     {
-        block = d->document->begin();
-        QColor background = palette().color(QPalette::Background).dark(115);
-        QColor foreground = palette().color(QPalette::Foreground);
         int shadowOffset = QApplication::isRightToLeft() ? -1 : 1;
         QPointF posShadow = QPointF(5 + textX + shadowOffset, textY + 1);
         QPointF posText = QPointF(5 + textX, textY);
-        while(block.isValid()) {
-            QTextLayout *layout = block.layout();
-            // draw text shadow
-            bufferPainter.setBrush(background);
-            bufferPainter.setPen(background);
-            layout->draw(&bufferPainter, posShadow);
-            // draw text
-            bufferPainter.setBrush(foreground);
-            bufferPainter.setPen(foreground);
-            layout->draw(&bufferPainter, posText);
-            block = block.next();
-        }
+
+        QAbstractTextDocumentLayout::PaintContext ctx;
+        ctx.palette = palette();
+        ctx.palette.setColor(QPalette::Text, ctx.palette.color(QPalette::Background).dark(115));
+        bufferPainter.save();
+        bufferPainter.translate(posShadow);
+        d->document.documentLayout()->draw(&bufferPainter, ctx);
+        bufferPainter.restore();
+
+        ctx.palette = palette();
+        bufferPainter.save();
+        bufferPainter.translate(posText);
+        d->document.documentLayout()->draw(&bufferPainter, ctx);
+        bufferPainter.restore();
     }
 }
 
