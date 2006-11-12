@@ -755,6 +755,12 @@ void TaskBar::reLayout()
             }
         }
 
+        // avoid zero division later
+        if (bheight < 1)
+        {
+            bheight = 1;
+        }
+
         // layout containers
 
         // for taskbars at the bottom, we need to ensure that the bottom
