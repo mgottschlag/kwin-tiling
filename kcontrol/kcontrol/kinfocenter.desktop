@@ -13,5 +13,5 @@ GenericName=Info Center
 GenericName[fr]=Centre d'informations
 GenericName[x-test]=xxInfo Centerxx
 
-X-DCOP-ServiceType=Unique
+X-DBUS-StartupType=Unique
 Categories=Qt;KDE;System;

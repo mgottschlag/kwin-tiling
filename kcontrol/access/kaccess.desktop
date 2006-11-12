@@ -5,6 +5,6 @@ Name=KDE Accessibility Tool
 Name[fr]=Outil d'accessibilité de KDE
 Name[x-test]=xxKDE Accessibility Toolxx
 Exec=kaccess
-X-DCOP-ServiceType=None
+X-DBUS-StartupType=None
 X-KDE-ParentApp=kcontrol
 DocPath=kcontrol/kcmaccess/index.html

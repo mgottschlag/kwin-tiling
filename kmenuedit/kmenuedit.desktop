@@ -11,5 +11,5 @@ Name=Menu Editor
 Name[fr]=KMenuEdit
 Name[x-test]=xxMenu Editorxx
 
-X-DCOP-ServiceType=Unique
+X-DBUS-StartupType=Unique
 Categories=Qt;KDE;Settings;

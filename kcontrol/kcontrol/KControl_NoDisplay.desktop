@@ -10,5 +10,5 @@ Name=Control Center
 Name[fr]=Centre de configuration de KDE
 Name[x-test]=xxControl Centerxx
 
-X-DCOP-ServiceType=Unique
+X-DBUS-StartupType=Unique
 NoDisplay=true

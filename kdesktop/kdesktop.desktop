@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kdesktop
-X-DCOP-ServiceType=wait
+X-DBUS-StartupType=wait
 Name=KDE Desktop
 Name[fr]=Bureau de KDE
 Name[x-test]=xxKDE Desktopxx
