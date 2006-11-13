@@ -329,7 +329,9 @@ void Kicker::showConfig(const QString& configPath, int page)
     m_configDialog->raise();
     if (page > -1)
     {
+#ifdef __GNUC__
 #warning "kde4: port it"
+#endif	    
         //m_configDialog->showPage(page);
     }
 }

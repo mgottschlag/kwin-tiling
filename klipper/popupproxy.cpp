@@ -109,7 +109,9 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
     Q_ASSERT( id != -1 ); // Be sure that the item was inserted.
     QMenuItem* mi = proxy_for_menu->findItem( id );
     int fontheight = QFontMetrics( proxy_for_menu->fontMetrics()  ).height();
+#ifdef __GNUC__
 #warning Use old-style QStyle and QStyleOption API
+#endif    
     int itemheight = fontheight;
 #if 0
     int itemheight = proxy_for_menu->style().sizeFromContents(QStyle::CT_PopupMenuItem,

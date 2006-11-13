@@ -47,7 +47,9 @@ KSysTrayCmd::~KSysTrayCmd()
 bool KSysTrayCmd::start()
 {
   // If we have no command we must catching an existing window
+#ifdef __GNUC__
 #warning !Qstring == QString.isEmpty ???
+#endif	
   if ( command.isEmpty() ) {
       if ( win ) {
 	  setTargetWindow( win );
@@ -214,8 +216,9 @@ void KSysTrayCmd::quitClient()
     // We didn't give command, so we didn't open an application.
     // That's why  when the application is closed we aren't informed.
     // So we quit now.
-
+#ifdef __GNUC__
 #warning !Qstring == QString.isEmpty ???
+#endif    
     if ( command.isEmpty() ) {
       qApp->quit();
     }

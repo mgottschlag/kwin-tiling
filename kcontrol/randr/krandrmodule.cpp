@@ -49,7 +49,9 @@ K_EXPORT_COMPONENT_FACTORY (randr, KSSFactory("krandr") )
 extern "C"
 
 {
+#ifdef __GNUC__
 #warning Porting needed
+#endif	
 /*
 	KDE_EXPORT void init_randr()
 	{

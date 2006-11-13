@@ -126,7 +126,9 @@ private:
 
 extern bool qt_qclipboard_bailout_hack;
 #if KDE_IS_VERSION( 3, 9, 0 )
+#ifdef __GNUC__
 #warning Check status of #80072 with Qt4.
+#endif
 #endif
 
 static void ensureGlobalSyncOff(KConfig* config);
@@ -201,7 +203,9 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     // the keys need to be read from kdeglobals, not kickerrc --ellis, 22/9/02
     globalKeys->readSettings();
     //globalKeys->updateConnections();
+#ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
+#endif    
     //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )),
@@ -512,7 +516,9 @@ void KlipperWidget::slotSettingsChanged( int category )
     if ( category == (int) KGlobalSettings::SETTINGS_SHORTCUTS ) {
         globalKeys->readSettings();
         //globalKeys->updateConnections();
+#ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
+#endif	
         //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
     }
 }
@@ -560,7 +566,9 @@ void KlipperWidget::slotConfigure()
         // the keys need to be written to kdeglobals, not kickerrc --ellis, 22/9/02
         globalKeys->writeSettings(0, true);
         //globalKeys->updateConnections();
+#ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
+#endif	
 //        toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
         myURLGrabber->setActionList( dlg->actionList() );
@@ -1142,7 +1150,9 @@ Klipper::Klipper( QWidget* parent )
 // find newInstance()  (which doesn't do anything in Klipper anyway)
 int Klipper::newInstance()
 {
+#ifdef __GNUC__
 #warning replacement?
+#endif	
  //   kapp->dcopClient()->setPriorityCall(false); // Allow other dcop calls
 
     return 0;

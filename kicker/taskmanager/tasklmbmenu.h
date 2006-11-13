@@ -36,7 +36,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "taskmanager.h"
 
+#ifdef __GNUC__
 #warning "Need custom menu item support, which isn't there in Qt4!"
+#endif
 #if 0
 class TaskMenuItem : public QCustomMenuItem
 {

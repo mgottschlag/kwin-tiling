@@ -457,7 +457,9 @@ void PanelKMenu::resizeEvent(QResizeEvent * e)
 //    kDebug(1210) << geometry().width() << ", " << geometry().height() << endl;
 
     PanelServiceMenu::resizeEvent(e);
+#ifdef __GNUC__
 #warning "KDE4: Qt4 doesn't seem to provide a way of doing this, will need different impl. for side image"
+#endif    
 //    setFrameRect( QStyle::visualRect( layoutDirection(), rect(), QRect( sidePixmap.width(), 0,
 //                                      width() - sidePixmap.width(), height() ) ) );
 }

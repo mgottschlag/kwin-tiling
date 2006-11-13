@@ -148,7 +148,9 @@ void KlipperPopup::ensureClean() {
 void KlipperPopup::buildFromScratch() {
     m_filterWidget = new KLineEditBlackKey( this );
     addTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
+#ifdef __GNUC__
 #warning "KlipperPopup::buildFromScratch, insertItem does not take a QWidget as first parameter"
+#endif    
 #if 0
     m_filterWidgetId = insertItem( m_filterWidget, m_filterWidgetId, 1 );
 #endif
@@ -162,7 +164,9 @@ void KlipperPopup::buildFromScratch() {
     QString group;
     QString defaultGroup( "default" );
     for ( KAction* action = m_actions.first(); action; action = m_actions.next() ) {
+#ifdef __GNUC__
 #warning no more group() in action, this hack needs to be revised
+#endif	    
         //group = action->group();
         if ( group != lastGroup ) {
             if ( lastGroup == defaultGroup ) {
@@ -272,7 +276,9 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 #endif
         KMenu::keyPressEvent( e );
         if ( isItemActive( m_filterWidgetId ) ) {
+#ifdef __GNUC__
 #warning setActiveItem do not exist in Q3PopupMenu class
+#endif		
 #if 0
             setActiveItem( TOP_HISTORY_ITEM_INDEX );
 #endif

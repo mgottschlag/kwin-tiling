@@ -344,7 +344,9 @@ bool AppletProxy::process(const DCOPCString &fun, const QByteArray &data,
 		}
                 else { //transparency
 		    _applet->blockSignals(true);
+#ifdef __GNUC__
 #warning FixedPixmap looks weired - port me
+#endif		    
 		    //_applet->setBackgroundMode(Qt::FixedPixmap);
 		    _applet->setPaletteBackgroundPixmap(_bg);
 		    repaintApplet(_applet);

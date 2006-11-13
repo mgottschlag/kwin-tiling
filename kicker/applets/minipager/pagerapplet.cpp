@@ -313,7 +313,9 @@ void KMiniPager::updateDesktopLayout(int o, int x, int y)
     {
       return;
     }
+#ifdef __GNUC__
 #warning "kde4: port to dbus"
+#endif    
 #if 0
     if ( !(DCOPRef( "kwin", "KWinInterface" ).call( "setDesktopLayout(int, int, int) ", o, x, y) ).isValid() )
     {
@@ -780,7 +782,9 @@ void KMiniPager::slotDesktopNamesChanged()
 
 void KMiniPager::showPager()
 {
+#ifdef __GNUC__
 #warning "kde4: port dcop stuff"
+#endif	
 #if 0
     DCOPClient *dcop=kapp->dcopClient();
 
@@ -821,7 +825,9 @@ void KMiniPager::showKPager(bool toggleShow)
         default:
             pt=mapToGlobal( QPoint(x(), y()) );
     }
+#ifdef __GNUC__
 #warning "kde4: port to dbus"
+#endif    
 #if 0
     if (toggleShow)
     {
@@ -836,7 +842,9 @@ void KMiniPager::showKPager(bool toggleShow)
 
 void KMiniPager::applicationRegistered( const QByteArray  & appName )
 {
+#ifdef __GNUC__	
 #warning "kde4 port to dbus"
+#endif	
 #if 0
     if (appName == "kpager")
     {

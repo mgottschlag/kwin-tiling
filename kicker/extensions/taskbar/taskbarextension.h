@@ -36,7 +36,9 @@ class TaskBar;
 class TaskBarExtension : public KPanelExtension
 {
     Q_OBJECT
+#ifdef __GNUC__
 #warning "kde4 port dcop stuff"
+#endif	    
 /*
 k_dcop:
     int panelSize() { return sizeInPixels(); }

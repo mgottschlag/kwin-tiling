@@ -80,7 +80,9 @@ void UserRectSel::paintCurrent()
     QPainter p(QApplication::desktop());
     p.setClipping(false);
     p.setPen(QPen(Qt::gray, 3 ));
+#ifdef __GNUC__
 #warning "KDE4: ROP needs porting"
+#endif    
 //    p.setRasterOp(XorROP);
     p.drawRect(current.m_rect);
 }

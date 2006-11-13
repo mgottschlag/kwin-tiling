@@ -113,8 +113,9 @@ TaskBar::TaskBar( QWidget *parent )
             this, SLOT(desktopChanged(int)));
     connect(TaskManager::self(), SIGNAL(windowChanged(Task::TaskPtr)),
             this, SLOT(windowChanged(Task::TaskPtr)));
-
+#ifdef __GNUC__
 #warning dcop signal
+#endif    
 #if 0
     connectDCOPSignal("", "", "kdeTaskBarConfigChanged()",
                       "configChanged()", false);
@@ -344,8 +345,9 @@ void TaskBar::resizeEvent( QResizeEvent* e )
             reGroup();
         }
     }
-
+#ifdef __GNUC__
     #warning Fix this!!
+#endif    
     //Panner::resizeEvent( e );
 
     if ( !blocklayout )

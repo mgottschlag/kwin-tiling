@@ -81,7 +81,9 @@ SystemTrayApplet::SystemTrayApplet(const QString& configFile, Plasma::Type type,
 
     // kApplication notifies us of settings changes. added to support
     // disabling of frame effect on mouse hover
+#ifdef __GNUC__
 #warning "kde4: dcop port it"
+#endif    
     //kapp->dcopClient()->setNotifications(true);
     //connectDCOPSignal("kicker", "kicker", "configurationChanged()", "loadSettings()", false);
 

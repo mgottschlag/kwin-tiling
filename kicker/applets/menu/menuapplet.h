@@ -64,7 +64,9 @@ class MenuEmbed;
 class Applet : public KPanelApplet
     {
     Q_OBJECT
+#ifdef __GNUC__
 #warning "kde4 port it to dbus interface"
+#endif	    
 	//K_DCOP
     public slots:
     	/**

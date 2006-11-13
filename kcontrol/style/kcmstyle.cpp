@@ -292,7 +292,9 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	// So much stuffing around for a simple slider..
 	sliderBox = new KVBox( menuContainer );
 	sliderBox->setSpacing( KDialog::spacingHint() );
+#ifdef __GNUC__
 #warning "KDE4: fix setMargin"
+#endif	
 	//sliderBox->setMargin( 0 );
 	slOpacity = new QSlider( Qt::Horizontal, sliderBox );
 	slOpacity->setMinimum( 0 );
@@ -647,14 +649,18 @@ void KCMStyle::save()
 
 	if (m_bEffectsDirty) {
 		KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
+#ifdef __GNUC__
 #warning "kde4: port it ! Need to fix kwin"
+#endif		
 		//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray());
 	}
 
 	//update kicker to re-used tooltips kicker parameter otherwise, it overwritted
 	//by style tooltips parameters.
 	QByteArray data;
+#ifdef __GNUC__	
 #warning "kde4: who is org.kde.kicker?"
+#endif	
 	QDBusInterface kicker( "org.kde.kicker", "/kicker");
 	kicker.call("configure");
 

@@ -168,7 +168,9 @@ void Lockout::lock()
     {
         appname.sprintf("kdesktop-screen-%d", kicker_screen_number);
     }
+#ifdef __GNUC__
 #warning "kde4: port it"
+#endif    
 #if 0
     kapp->dcopClient()->send(appname.toLatin1(), "KScreensaverIface", "lock()", QByteArray());
 #endif

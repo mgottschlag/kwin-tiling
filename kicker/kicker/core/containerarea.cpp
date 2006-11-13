@@ -253,7 +253,9 @@ void ContainerArea::defaultContainerConfig()
     }
 
     // system tray applet
+#ifdef __GNUC__
 #warning "once qxembed is back and system tray works again, renable this"
+#endif    
 /*    a = manager->createAppletContainer(
         "systemtrayapplet.desktop",
         true,
@@ -1636,8 +1638,9 @@ void ContainerArea::scrollTo(BaseContainer* b)
     {
         return;
     }
-
+#ifdef __GNUC__
 #warning FIX THIS
+#endif    
     //int x, y;
     //viewportToContents(b->pos().x(), b->pos().y(), x, y);
     //ensureVisible(x, y);

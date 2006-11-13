@@ -89,8 +89,9 @@ int main( int argc, char *argv[] )
   QString title = args->getOption( "window" );
   if ( !title.isEmpty() )
       cmd.setPattern( title );
-
+#ifdef __GNUC__
 #warning !QString? did that meant title.isEmpty?
+#endif  
   if ( title.isEmpty() && wid.isEmpty() && (args->count() == 0) )
     KCmdLineArgs::usage(i18n("No command or window specified"));
 

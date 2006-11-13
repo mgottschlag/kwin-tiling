@@ -48,7 +48,9 @@ KlipperApplet::KlipperApplet(const QString& configFile, Plasma::Type t, int acti
 {
     KlipperWidget::createAboutData();
     move( 0, 0 );
+#ifdef __GNUC__
 #warning Qt4 setBackgroundMode no longer needed - please verify
+#endif    
     //setBackgroundMode(QWidget::X11ParentRelative);
     widget = new KlipperAppletWidget( this );
     setCustomMenu(widget->history()->popup());
@@ -119,7 +121,9 @@ void KlipperAppletWidget::init()
 
     // if there's klipper process running, quit it
     // call() - wait for finishing
+#ifdef __GNUC__
 #warning " kde4 need to test it"	
+#endif	
     //kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
     // register ourselves, so if klipper process is started,
     // it will quit immediately (KUniqueApplication)

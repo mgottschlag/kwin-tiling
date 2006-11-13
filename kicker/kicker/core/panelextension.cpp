@@ -111,7 +111,9 @@ void PanelExtension::populateContainerArea()
 
     if (ExtensionManager::self()->isMainPanel(topLevelWidget()))
     {
+#ifdef __GNUC__
 #warning "kde4 port it"
+#endif	    
         //setObjId("Panel");
         _containerArea->initialize(true);
     }

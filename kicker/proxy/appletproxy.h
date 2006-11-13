@@ -46,7 +46,9 @@ public:
     void loadApplet(const QString& desktopFile, const QString& configFile);
     KPanelApplet* loadApplet(const AppletInfo& info);
     void showStandalone();
+#ifdef __GNUC__
 #warning "kde4 port it"
+#endif    
 #if 0
     bool process(const DCOPCString &fun, const QByteArray &data,
 		 DCOPCString& replyType, QByteArray &replyData);
