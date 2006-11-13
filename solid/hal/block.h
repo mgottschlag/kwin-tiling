@@ -32,8 +32,8 @@ public:
     Block( HalDevice *device );
     virtual ~Block();
 
-    virtual int major() const;
-    virtual int minor() const;
+    virtual int deviceMajor() const;
+    virtual int deviceMinor() const;
     virtual QString device() const;
 };
 

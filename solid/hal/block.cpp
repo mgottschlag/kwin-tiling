@@ -32,12 +32,12 @@ Block::~Block()
 
 }
 
-int Block::major() const
+int Block::deviceMajor() const
 {
     return m_device->property( "block.major" ).toInt();
 }
 
-int Block::minor() const
+int Block::deviceMinor() const
 {
     return m_device->property( "block.minor" ).toInt();
 }
