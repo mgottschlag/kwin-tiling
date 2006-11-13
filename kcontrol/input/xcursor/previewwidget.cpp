@@ -322,7 +322,9 @@ void PreviewWidget::paintEvent( QPaintEvent * )
             XRenderPictFormat *fmt = XRenderFindVisualFormat( QX11Info::display(), (Visual*)buffer.x11Info().visual() );
             dest = XRenderCreatePicture( QX11Info::display(), buffer.handle(), fmt, 0, NULL );
 	} else
+#ifdef __GNUC__
 #warning make sure x11PictureHandle is the substitute of x11RenderHandle
+#endif		
 		dest = buffer.x11PictureHandle();
 
 	int rwidth = width() / numCursors;

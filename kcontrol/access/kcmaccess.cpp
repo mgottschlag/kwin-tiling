@@ -780,7 +780,9 @@ void KAccessConfig::save()
 
   else // don't need it -> kill it
   {
+#ifdef __GNUC__
 #warning "kde4: dbus port: need to test it"
+#endif	  
       QDBusInterface kaccess("org.kde.kaccess", "/KAccess", "org.kde.kaccess.KAccess"); 
 	  kaccess.call("quit");
       //DCOPRef kaccess( "kaccess", "qt/kaccess" );

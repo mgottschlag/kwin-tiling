@@ -30,8 +30,9 @@ void KMemoryWidget::update()
 
     // added by Brad Hughes bhughes@trolltech.com
     struct vmtotal vmem;
-    
+#ifdef __GNUC__ 
     #warning "FIXME: Memory_Info[CACHED_MEM]"
+#endif    
     Memory_Info[CACHED_MEM] = NO_MEMORY_INFO;
 
     // The sysctls don't work in a nice manner under FreeBSD v2.2.x

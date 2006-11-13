@@ -58,8 +58,9 @@ void KMemoryWidget::update() {
 	kdata = (kstat_named_t *) kstat_data_lookup( ksp, "freemem" );
 	if( kdata != NULL )
 		Memory_Info[FREE_MEM] = PAGETOK(kdata->value.ui32);
-
+#ifdef __GNUC__
 #warning "FIXME: Memory_Info[CACHED_MEM]"
+#endif	
 	Memory_Info[CACHED_MEM] = NO_MEMORY_INFO; // cached memory in ram
 	  
 	kstat_close( kctl );

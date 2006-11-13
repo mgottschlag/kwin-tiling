@@ -134,7 +134,9 @@ Dtime::Dtime(QWidget * parent)
   hour = new HMSTimeWidget( timeBox );
   hour->setWrapping(true);
   hour->setMaximum(23);
-  #warning fixme hour->setValidator(new KStrictIntValidator(0, 23, hour));
+#ifdef __GNUC__
+#warning fixme hour->setValidator(new KStrictIntValidator(0, 23, hour));
+#endif  
   v3->addWidget(hour, 0, isRTL ? 6 : 2, 2, 1);
 
   QLabel *dots1 = new QLabel(":", timeBox);
@@ -146,7 +148,9 @@ Dtime::Dtime(QWidget * parent)
   minute->setWrapping(true);
   minute->setMinimum(0);
   minute->setMaximum(59);
+#ifdef __GNUC__  
   #warning fixme minute->setValidator(new KStrictIntValidator(0, 59, minute));
+#endif  
   v3->addWidget(minute, 0, 4, 2, 1);
 
   QLabel *dots2 = new QLabel(":", timeBox);
@@ -158,7 +162,9 @@ Dtime::Dtime(QWidget * parent)
   second->setWrapping(true);
   second->setMinimum(0);
   second->setMaximum(59);
+#ifdef __GNUC__
   #warning fixme second->setValidator(new KStrictIntValidator(0, 59, second));
+#endif  
   v3->addWidget(second, 0, isRTL ? 2 : 6, 2, 1);
 
   v3->addColSpacing(7, 7);

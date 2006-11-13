@@ -68,8 +68,9 @@ ProxyWidget *ConfigModule::module()
 {
   if (_module)
     return _module;
-
+#ifdef __GNUC__
 #warning I expect KControl in its current form to disappear, if not a real port is needed
+#endif  
   // root KCMs are gone, clean up all of the related code
   bool run_as_root = false; //needsRootPrivileges() && (getuid() != 0);
 
@@ -146,12 +147,16 @@ void ConfigModule::runAsRoot()
   // kcmshell running as root
   _embedLayout = new QVBoxLayout(_module->parentWidget());
   _embedFrame = new KVBox( _module->parentWidget() );
+#ifdef __GNUC__
 #warning "KDE4 porting ";
+#endif  
   //_embedFrame->setFrameStyle( QFrame::Box | QFrame::Raised );
   QPalette pal( Qt::red );
   pal.setColor( QPalette::Background,
 		_module->parentWidget()->palette().color( QPalette::Background ) );
+#ifdef __GNUC__  
 #warning "KDE4 porting"
+#endif
   //_embedFrame->setPalette( pal );
   //_embedFrame->setLineWidth( 2 );
   //_embedFrame->setMidLineWidth( 2 );

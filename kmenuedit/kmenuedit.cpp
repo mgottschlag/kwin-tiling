@@ -124,7 +124,9 @@ void KMenuEdit::slotChangeView()
 #else
     m_showHidden = false;
 #endif
+#ifdef __GNUC__
 #warning "kde4: comment setUpdatesEnabled otherwise we can't see layout"
+#endif    
     // disabling the updates prevents unnecessary redraws
     //setUpdatesEnabled( false );
     guiFactory()->removeClient( this );

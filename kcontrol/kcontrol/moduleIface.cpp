@@ -32,7 +32,9 @@ ModuleIface::ModuleIface(QObject *parent, const char *name)
 
 ModuleIface::~ModuleIface() {
 }
+#ifdef __GNUC__
 #warning "kde4: DBUS port "
+#endif
 #if 0
 QFont ModuleIface::getFont() {
 	return _parent->font(); 

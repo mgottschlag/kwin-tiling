@@ -377,7 +377,9 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
 }
 
 #else
+#ifdef __GNUC__
 #warning "Unable to determine operating system version!  This may cause the getPid() function to fail at random!"
+#endif
 
 /* Default to reading "ps -eaf" output */
 

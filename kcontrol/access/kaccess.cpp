@@ -439,7 +439,9 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
       if (_visibleBellInvert)
         {
 	  QPixmap screen = QPixmap::grabWindow(id, 0, 0, window.size.width, window.size.height);
+#ifdef __GNUC__
 #warning is this the best way to invert a pixmap?
+#endif	  
 //	  QPixmap invert(window.size.width, window.size.height);
 	  QImage i = screen.toImage();
 	  i.invertPixels();
@@ -574,7 +576,9 @@ void KAccessApp::createDialogContents() {
 
       KVBox *topcontents = new KVBox (dialog);
       topcontents->setSpacing(KDialog::spacingHint()*2);
+#ifdef __GNUC__
 #warning "kde4 fixme"
+#endif      
 	  //topcontents->setMargin(KDialog::marginHint());
 
       QWidget *contents = new QWidget(topcontents);

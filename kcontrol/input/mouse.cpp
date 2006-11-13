@@ -726,7 +726,9 @@ void MouseSettings::load(KConfig *config)
     handed = RIGHT_HANDED;
   else if (key == "LeftHanded")
     handed = LEFT_HANDED;
+#ifdef __GNUC__
 #warning was key == NULL how was this working? is key.isNull() what the coder meant?
+#endif  
   else if (key.isNull())
     handed = h;
   reverseScrollPolarity = config->readEntry( "ReverseScrollPolarity", false);

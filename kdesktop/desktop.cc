@@ -301,7 +301,9 @@ KDesktop::backgroundInitDone()
     // avoid flicker
     if (m_bDesktopEnabled)
     {
+#ifdef __GNUC__
 #warning backgroundPixmap in Qt4 is a noop
+#endif	    
         /*
        const QPixmap *bg = QApplication::desktop()->screen()->backgroundPixmap();
        if ( bg )
