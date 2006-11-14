@@ -164,8 +164,8 @@ KParts::ReadOnlyPart* KWebDesktop::createPart( const QString& mimeType )
         htmlPart->setJScriptEnabled(false);
         htmlPart->setJavaEnabled(false);
 
-        htmlPart->view()->setHScrollBarMode( Q3ScrollView::AlwaysOff );
-        htmlPart->view()->setVScrollBarMode( Q3ScrollView::AlwaysOff );
+        htmlPart->view()->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+        htmlPart->view()->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 
         connect( htmlPart, SIGNAL( completed() ), this, SLOT( slotCompleted() ) );
         m_part = htmlPart;
