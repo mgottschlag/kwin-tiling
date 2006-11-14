@@ -33,7 +33,7 @@ struct LayoutState {
 		layoutUnit(layoutUnit_),
 		group(layoutUnit_.defaultGroup)
 	{
-// 		kdDebug() << "new LayoutState " << layoutUnit.toPair() << " group: " << group << endl;
+// 		kDebug() << "new LayoutState " << layoutUnit.toPair() << " group: " << group << endl;
 	}
 };
 

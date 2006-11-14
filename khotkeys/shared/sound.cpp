@@ -85,7 +85,7 @@ void Sound::load(const QString& filename)
 
 	data.resize(NumberOfSamples);
 
-//	kdDebug() << k_funcinfo << NumberOfSamples << " samples" << endl;
+//	kDebug() << k_funcinfo << NumberOfSamples << " samples" << endl;
 
 	max=0;
 	for(unsigned long int f=0;f<NumberOfSamples;f++)

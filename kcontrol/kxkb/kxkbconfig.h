@@ -73,7 +73,7 @@ struct LayoutUnit {
 	}
 	
 	bool operator==(const LayoutUnit& lu) const {
-// 		kdDebug() << layout << "==" << lu.layout << "&&" << variant << "==" << lu.variant << endl;
+// 		kDebug() << layout << "==" << lu.layout << "&&" << variant << "==" << lu.variant << endl;
 		return layout==lu.layout && variant==lu.variant;
 	}
 	

@@ -187,7 +187,7 @@ QString LayoutIcon::getCountryFromLayoutName(const QString& layoutName)
 			QString rightCode;
 			if( sepPos != -1 )
 				rightCode = layoutName.mid(sepPos+1);
-//			kdDebug() << "layout name breakup: " << leftCode << ":" << rightCode << endl;
+//			kDebug() << "layout name breakup: " << leftCode << ":" << rightCode << endl;
 
 			if( rightCode.length() == 2
 					&& QRegExp("[A-Z][A-Z]").exactMatch(rightCode) ) {

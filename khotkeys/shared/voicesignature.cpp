@@ -184,7 +184,7 @@ static QVector<double> fft(const Sound& sound, unsigned int start, unsigned int 
 			samples[indice1]=a+W*b;
 			samples[indice2]=a-W*b;
 
-//			kdDebug() << k_funcinfo << "PAPILLON   s_" << indice1 << " s_" << indice2 <<  "     W_" << (2<<level) << "^" << coefW << endl;
+//			kDebug() << k_funcinfo << "PAPILLON   s_" << indice1 << " s_" << indice2 <<  "     W_" << (2<<level) << "^" << coefW << endl;
 		}
 	}
 
