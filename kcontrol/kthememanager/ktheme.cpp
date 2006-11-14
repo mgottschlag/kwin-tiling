@@ -304,6 +304,22 @@ QString KTheme::createYourself( bool pack )
     QDomElement transElem = m_dom.createElement( "transparent" );
     transElem.setAttribute( "value", kickerConf.readEntry( "Transparent" , false) );
     panelElem.appendChild( transElem );
+
+    QDomElement posElem = m_dom.createElement( "position" );
+    posElem.setAttribute( "value", kickerConf.readEntry( "Position" ) );
+    panelElem.appendChild( posElem );
+
+
+    QDomElement showLeftHideButtonElem = m_dom.createElement( "showlefthidebutton" );
+    showLeftHideButtonElem.setAttribute( "value", kickerConf.readEntry( "ShowLeftHideButton",true ) );
+    panelElem.appendChild( showLeftHideButtonElem );
+
+    QDomElement showRightHideButtonElem = m_dom.createElement( "showrighthidebutton" );
+    showRightHideButtonElem.setAttribute( "value", kickerConf.readEntry( "ShowRightHideButton",true ) );
+    panelElem.appendChild( showRightHideButtonElem );
+
+
+
     m_root.appendChild( panelElem );
 
     // 10. Widget style
@@ -622,6 +638,12 @@ void KTheme::apply()
         }
         kickerConf.writeEntry( "Transparent",
                                static_cast<bool>( getProperty( panelElem, "transparent", "value" ).toUInt() ) );
+
+        kickerConf.writeEntry( "Position", static_cast<int> (getProperty( panelElem, "position", "value" ).toUInt() ));
+
+        kickerConf.writeEntry( "ShowLeftHideButton", static_cast<bool>( getProperty( panelElem, "showlefthidebutton", "value").toInt()));
+
+        kickerConf.writeEntry( "ShowRightHideButton", static_cast<bool>( getProperty( panelElem, "showrighthidebutton", "value").toInt()));
 
         kickerConf.sync();
 		QDBusInterface kicker( "org.kde.kicker", "kicker");
