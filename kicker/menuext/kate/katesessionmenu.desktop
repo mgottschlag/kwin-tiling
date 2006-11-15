@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Kate Session Menu
+Comment=Allows you to open Kate with a specified session, or create a new one
+Icon=kate
+X-KDE-Library=kickermenu_kate
+X-KDE-AuthorizeAction=shell_access
