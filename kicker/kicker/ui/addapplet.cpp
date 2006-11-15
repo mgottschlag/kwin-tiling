@@ -92,6 +92,7 @@ AddAppletDialog::AddAppletDialog(ContainerArea *cArea,
 	m_selectedType = AppletInfo::Undefined;
 
     m_mainWidgetView->appletListView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    m_mainWidgetView->appletSearch->setClearButtonShown(true);
 
 	QTimer::singleShot(0, this, SLOT(populateApplets()));
 }

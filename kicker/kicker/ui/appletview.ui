@@ -38,7 +38,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="appletSearch" >
+      <widget class="KLineEdit" name="appletSearch" >
        <property name="sizePolicy" >
         <sizepolicy>
          <hsizetype>7</hsizetype>
