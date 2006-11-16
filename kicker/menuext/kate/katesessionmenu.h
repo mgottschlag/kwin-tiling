@@ -21,7 +21,7 @@
 #ifndef _KateSessionMenu_h_
 #define _KateSessionMenu_h_
 
-#include <plasma/kpanelmenu.h>
+#include <kpanelmenu.h>
 #include <QObject>
 
 class KateSessionMenu : public KPanelMenu {
