@@ -183,6 +183,7 @@ bool SystemTrayApplet::x11Event( XEvent *e )
             if( isWinManaged( (WId)e->xclient.data.l[2] ) ) // we already manage it
                 return true;
             embedWindow( e->xclient.data.l[2], false );
+            updateVisibleWins();
             layoutTray();
             emit updateLayout();
             return true;
