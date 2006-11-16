@@ -1561,7 +1561,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
         else
         {
             QStringList desktopNames = desktopMap.values();
-            details.append("<p>" + i18n("On %1", desktopNames.join(", ")) + "</p>");
+            details.append("<p>" + i18nc("On <virtual desktop name>", "On %1", desktopNames.join(", ")) + "</p>");
         }
     }
 
