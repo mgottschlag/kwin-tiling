@@ -95,7 +95,7 @@ CKFileFontView::CKFileFontView(QWidget *parent)
     // DND
     connect(&(d->itsAutoOpenTimer), SIGNAL(timeout()), this, SLOT(slotAutoOpen()));
     setSelectionMode(KFileView::selectionMode());
-    itsResolver = new KMimeTypeResolver<CFontListViewItem, CKFileFontView>(this);
+    itsResolver = new K3MimeTypeResolver<CFontListViewItem, CKFileFontView>(this);
 }
 
 CKFileFontView::~CKFileFontView()

@@ -47,7 +47,7 @@ class QWidget;
 class QKeyEvent;
 
 #include <k3listview.h>
-#include <kmimetyperesolver.h>
+#include <k3mimetyperesolver.h>
 
 #include "kfileview.h"
 
@@ -155,7 +155,7 @@ class CKFileFontView : public K3ListView, public KFileView
     virtual void        setSorting(QDir::SortFlags s);
     void                ensureItemVisible(const KFileItem *i);
 
-    // for KMimeTypeResolver
+    // for K3MimeTypeResolver
     void                mimeTypeDeterminationFinished();
     void                determineIcon(CFontListViewItem *item);
     Q3ScrollView *       scrollWidget() const { return (Q3ScrollView*) this; }
@@ -210,7 +210,7 @@ class CKFileFontView : public K3ListView, public KFileView
     void                setSortingKey( CFontListViewItem *item, const KFileItem *i);
 
     bool                                                itsBlockSortingSignal;
-    KMimeTypeResolver<CFontListViewItem,CKFileFontView> *itsResolver;
+    K3MimeTypeResolver<CFontListViewItem,CKFileFontView> *itsResolver;
 
     private:
 
