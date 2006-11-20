@@ -3,11 +3,11 @@ include_directories( ${X11_Xinerama_INCLUDE_PATH}   )
 
 ########### next target ###############
 
-set(kcm_xinerama_PART_SRCS kcmxinerama.cpp )
+set(kcm_xinerama_PART_SRCS kcmxinerama.cpp xineramawidget.cpp )
 
 kde4_automoc(${kcm_xinerama_PART_SRCS})
 
-kde4_add_ui3_files(kcm_xinerama_PART_SRCS xineramawidget.ui )
+kde4_add_ui_files(kcm_xinerama_PART_SRCS xineramawidget.ui )
 
 kde4_add_plugin(kcm_xinerama ${kcm_xinerama_PART_SRCS})
 

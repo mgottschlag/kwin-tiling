@@ -1,3 +1,5 @@
+#include "xineramawidget.h"
+// TODO replace comment below with license
 /****************************************************************************
 ** ui.h extension file, included from the uic-generated form implementation.
 **
@@ -7,8 +9,16 @@
 ** place of a destructor.
 *****************************************************************************/
 
+XineramaWidget::XineramaWidget( QWidget* parent )
+    : QWidget( parent ), Ui_XineramaWidget()
+{
+    setupUi( this );
+
+}
+
 
 void XineramaWidget::emitConfigChanged()
 {
 emit configChanged();
 }
+#include "xineramawidget.moc"
