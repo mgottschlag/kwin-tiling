@@ -43,6 +43,7 @@
 #include <kio/netaccess.h>
 #include <kprocess.h>
 #include <kstandarddirs.h>
+#include <ksystemtimezone.h>
 
 //#include "xpm/world.xpm"
 #include "tzone.h"
