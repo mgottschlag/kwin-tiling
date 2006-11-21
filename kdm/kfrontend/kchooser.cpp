@@ -71,7 +71,7 @@ ChooserDlg::ChooserDlg()
 	vbox->addWidget( host_view );
 
 	iline = new QLineEdit( this );
-	iline->setEnabled( TRUE );
+	iline->setEnabled( true );
 	QLabel *itxt = new QLabel( i18n("Hos&t:"), this );
 	itxt->setBuddy( iline );
 	QPushButton *addButton = new QPushButton( i18n("A&dd"), this );

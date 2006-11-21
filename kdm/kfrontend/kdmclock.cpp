@@ -36,17 +36,17 @@ KdmClock::KdmClock( QWidget *parent )
 	timer->start( 1000 );
 
 #ifdef MORE
-	mDate = false;//config->readEntry( "date", FALSE );
-	mSecond = true;//config->readEntry( "second", TRUE );
-	mDigital = false;//config->readEntry( "digital", FALSE );
-	mBorder = true;//config->readEntry( "border", FALSE );
+	mDate = false;//config->readEntry( "date", false );
+	mSecond = true;//config->readEntry( "second", true );
+	mDigital = false;//config->readEntry( "digital", false );
+	mBorder = true;//config->readEntry( "border", false );
 
 	//config->setGroup( "Font" );
-	mFont.setFamily( QString::fromLatin1("Utopia")/*config->readEntry( "Family", "Utopia")*/ );
-	mFont.setPointSize( 51/*config->readEntry( "Point Size", 51)*/ );
-	mFont.setWeight( 75/*config->readEntry( "Weight", 75)*/ );
-	mFont.setItalic( TRUE/*config->readEntry( "Italic",TRUE )*/ );
-	mFont.setBold( TRUE/*config->readEntry( "Bold",TRUE )*/ );
+	mFont.setFamily( QString::fromLatin1("Utopia")/*config->readEntry( "Family", "Utopia" )*/ );
+	mFont.setPointSize( 51/*config->readEntry( "Point Size", 51 )*/ );
+	mFont.setWeight( 75/*config->readEntry( "Weight", 75 )*/ );
+	mFont.setItalic( true/*config->readEntry( "Italic", true )*/ );
+	mFont.setBold( true/*config->readEntry( "Bold", false )*/ );
 
 	if (mBorder)
 		setFrameStyle( WinPanel|Sunken );
