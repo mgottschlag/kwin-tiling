@@ -24,7 +24,21 @@ XineramaWidget::XineramaWidget( QWidget* parent )
     : QWidget( parent ), Ui_XineramaWidget()
 {
     setupUi( this );
-
+    connect(_enableXinerama, SIGNAL(toggled(bool)), _enableResistance, SLOT(setEnabled(bool)));
+    connect(_enableXinerama, SIGNAL(toggled(bool)), _enablePlacement, SLOT(setEnabled(bool)));
+    connect(_enableXinerama, SIGNAL(toggled(bool)), _enableMaximize, SLOT(setEnabled(bool)));
+    connect(_enableXinerama, SIGNAL(toggled(bool)), TextLabel2, SLOT(setEnabled(bool)));
+    connect(_enableXinerama, SIGNAL(toggled(bool)), _unmanagedDisplay, SLOT(setEnabled(bool)));
+    connect(_enableXinerama, SIGNAL(clicked()), _unmanagedDisplay, SLOT(emitConfigChanged()));
+    connect(_enableResistance,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
+    connect(_enablePlacement,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
+    connect(_enableMaximize,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
+    connect(_unmanagedDisplay,SIGNAL(activated(int)),this,SLOT(emitConfigChanged()));
+    connect(_enableXinerama, SIGNAL(toggled(bool)), TextLabel2_2, SLOT(setEnabled(bool)));
+    connect(_enableXinerama, SIGNAL(toggled(bool)), _ksplashDisplay, SLOT(setEnabled(bool)));
+    connect(_ksplashDisplay, SIGNAL(activated(int)), this, SLOT(emitConfigChanged()));
+    connect(_enableFullscreen,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
+    connect(_enableXinerama,SIGNAL(toggled(bool)), _enableFullscreen, SLOT(setEnabled(bool)));
 }
 
 
