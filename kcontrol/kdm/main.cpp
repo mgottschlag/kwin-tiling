@@ -114,7 +114,7 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	                    "The language settings made here have no influence on "
 	                    "the user's language settings."
 	                    "<h2>Dialog</h2>Here you can configure the look of the \"classical\" "
-	                    "dialog based mode if you have choosen to use it. "
+	                    "dialog based mode if you have chosen to use it. "
 	                    "<h2>Background</h2>If you want to set a special background for the dialog based "
 	                    "login screen, this is where to do it."
 	                    "<h2>Themes</h2> Here you can specify a theme to be used by the Login Manager."
