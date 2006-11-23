@@ -316,7 +316,7 @@ bool SolidShell::doIt()
         }
         else
         {
-            cerr << i18n( "Syntax Error: Unknown command '%1'" ).arg( command ) << endl;
+            cerr << i18n( "Syntax Error: Unknown command '%1'" ,command ) << endl;
         }
     }
     else if ( domain == "power" )
@@ -347,7 +347,7 @@ bool SolidShell::doIt()
             }
             else
             {
-                cerr << i18n( "Syntax Error: Unknown option '%1'" ).arg( type ) << endl;
+                cerr << i18n( "Syntax Error: Unknown option '%1'" , type ) << endl;
             }
         }
         else if ( command == "set" )
@@ -366,17 +366,17 @@ bool SolidShell::doIt()
             }
             else
             {
-                cerr << i18n( "Syntax Error: Unknown option '%1'" ).arg( type ) << endl;
+                cerr << i18n( "Syntax Error: Unknown option '%1'" , type ) << endl;
             }
         }
         else
         {
-            cerr << i18n( "Syntax Error: Unknown command '%1'" ).arg( command ) << endl;
+            cerr << i18n( "Syntax Error: Unknown command '%1'" , command ) << endl;
         }
     }
     else
     {
-        cerr << i18n( "Syntax Error: Unknown command group '%1'" ).arg( domain ) << endl;
+        cerr << i18n( "Syntax Error: Unknown command group '%1'" , domain ) << endl;
     }
 
     return false;
@@ -451,7 +451,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
 
     if ( !device.is<Solid::Volume>() )
     {
-        cerr << i18n( "Error: %1 doesn't have the capability Volume." ).arg( udi ) << endl;
+        cerr << i18n( "Error: %1 doesn't have the capability Volume." , udi ) << endl;
         return false;
     }
 
@@ -483,7 +483,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
 
     if ( m_error )
     {
-        cerr << i18n( "Error: %1" ).arg( m_errorString ) << endl;
+        cerr << i18n( "Error: %1", m_errorString ) << endl;
         return false;
     }
     else
@@ -538,7 +538,7 @@ bool SolidShell::powerSuspend( const QString &strMethod )
     }
     else
     {
-        cerr << i18n( "Unsupported suspend method: %1" ).arg( strMethod ) << endl;
+        cerr << i18n( "Unsupported suspend method: %1" , strMethod ) << endl;
         return false;
     }
 
@@ -557,7 +557,7 @@ bool SolidShell::powerSuspend( const QString &strMethod )
 
     if ( m_error )
     {
-        cerr << i18n( "Error: %1" ).arg( m_errorString ) << endl;
+        cerr << i18n( "Error: %1" , m_errorString ) << endl;
         return false;
     }
     else
@@ -598,7 +598,7 @@ bool SolidShell::powerChangeScheme( const QString &schemeName )
 
     if ( !supported.contains( schemeName ) )
     {
-        cerr << i18n( "Unsupported scheme: %1" ).arg( schemeName ) << endl;
+        cerr << i18n( "Unsupported scheme: %1" , schemeName ) << endl;
         return false;
     }
 
@@ -680,7 +680,7 @@ bool SolidShell::powerChangeCpuPolicy( const QString &policyName )
     }
     else
     {
-        cerr << i18n( "Unsupported cpufreq policy: %1" ).arg( policyName ) << endl;
+        cerr << i18n( "Unsupported cpufreq policy: %1" , policyName ) << endl;
         return false;
     }
 
@@ -699,12 +699,12 @@ void SolidShell::connectJob( KJob *job )
 
 void SolidShell::slotPercent( KJob */*job*/, unsigned long percent )
 {
-    cout << i18n( "Progress: %1%" ).arg( percent ) << endl;
+    cout << i18n( "Progress: %1%" , percent ) << endl;
 }
 
 void SolidShell::slotInfoMessage( KJob */*job*/, const QString &message )
 {
-    cout << i18n( "Info: %1" ).arg( message ) << endl;
+    cout << i18n( "Info: %1" , message ) << endl;
 }
 
 void SolidShell::slotResult( KJob *job )
