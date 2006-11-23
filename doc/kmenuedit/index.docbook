@@ -1,10 +1,8 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
 "dtd/kdex.dtd" [
-  <!ENTITY kappname "&kmenuedit;">
   <!ENTITY package "kdebase">
   <!ENTITY firefox "<application>Firefox</application>">
-  <!ENTITY internet "Internet">
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
@@ -32,10 +30,10 @@
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2000-12-14</date>
-<releaseinfo>0.00.01</releaseinfo>
+<date>2006-11-23</date>
+<releaseinfo>0.7 (&kde; 3.5.5)</releaseinfo>
 
-<abstract><para>&kmenuedit; allows editing of the &kde; Main menu. 
+<abstract><para>&kmenuedit; allows editing of the &kde; &kmenu;. 
 </para></abstract>
 
 <keywordset>
@@ -54,21 +52,20 @@
 <chapter id="introduction">
 <title>Introduction</title>
 
-<para>&kmenuedit; allows editing of &kde; Main menu.</para>
+<para>&kmenuedit; allows editing of &kde; &kmenu;.</para>
 
 <para>&kmenuedit; can be started either by &RMB; clicking the
-<guiicon>K</guiicon> Menu Button on the panel, or by choosing
-<guimenuitem>Menu Edit</guimenuitem> from the
-<guisubmenu>System</guisubmenu> submenu of the <guimenu>Main</guimenu>
-menu.</para>
+&kmenu; button on the panel and choosing
+<guimenuitem>Menu Editor</guimenuitem>, or by choosing
+<guimenuitem>Menu Editor</guimenuitem> from the
+<guisubmenu>Settings</guisubmenu> submenu of the &kmenu;.</para>
 
 <para>&kmenuedit; allows you to:</para>
 
 <itemizedlist>
-<listitem><para>View and edit current <guimenu>Main</guimenu>
-menu</para></listitem>
+<listitem><para>View and edit the current &kmenu;</para></listitem>
 <listitem><para><guimenuitem>Cut</guimenuitem>, <guimenuitem>Copy</guimenuitem>
-and <guimenuitem>paste</guimenuitem> menu items</para></listitem>
+and <guimenuitem>Paste</guimenuitem> menu items</para></listitem>
 <listitem><para>Create and delete submenus</para></listitem>
 </itemizedlist>
 
@@ -82,29 +79,29 @@ and <guimenuitem>paste</guimenuitem> menu items</para></listitem>
 </chapterinfo>
 <title>A Quick Start Guide to Adding an Entry to the &kmenu;</title>
 
-  <para>In this example, we will add &firefox; to the Internet menu. <note><para>Most applications can be added with &kappfinder;, &firefox; can usually be added that way, but was used for lack of a a better example.</para></note></para>
-  <para>To start off, we need to open &kmenuedit;, so &RMB; on the &kmenu;, click <guimenuitem>Menu Editor</guimenuitem> to start &kmenuedit;. After &kmenuedit; has started, select &internet; as shown in picture below. 
+  <para>In this example, we will add &firefox; to the <guisubmenu>Internet</guisubmenu> submenu. <note><para>Most applications can be added with &kappfinder;, &firefox; can usually be added that way, but was used for lack of a better example.</para></note></para>
+  <para>To start off, we need to open &kmenuedit;, so &RMB; on the &kmenu;, click <guimenuitem>Menu Editor</guimenuitem> to start &kmenuedit;. After &kmenuedit; has started, select <guisubmenu>Internet</guisubmenu> as shown in picture below. 
 <screenshot>
-<screeninfo>Select Internet</screeninfo>
+<screeninfo>Select <guisubmenu>Internet</guisubmenu></screeninfo>
 <mediaobject>
 <imageobject>
 <imagedata fileref="selectinternet.png" format="PNG" />
 </imageobject>
 <textobject>
-<phrase>Select Internet</phrase>
+<phrase>Select <guisubmenu>Internet</guisubmenu></phrase>
 </textobject>
 </mediaobject>
 </screenshot></para>
   <para>
-    Once you have selected &internet;, click on <menuchoice><guimenu>File</guimenu><guimenuitem>New Item...</guimenuitem></menuchoice>, opening the <guilabel>New Item</guilabel> dialog, as shown below. Type the name of the program you want to add, in this case, type <userinput>firefox</userinput>. 
+    Once you have selected <guisubmenu>Internet</guisubmenu>, click on <menuchoice><guimenu>File</guimenu><guimenuitem>New Item...</guimenuitem></menuchoice>, opening the <guilabel>New Item</guilabel> dialog, as shown below. Type the name of the program you want to add, in this case, type <userinput>firefox</userinput>. 
 <screenshot>
-<screeninfo>New Item dialog</screeninfo>
+<screeninfo><guilabel>New Item</guilabel> dialog</screeninfo>
 <mediaobject>
 <imageobject>
 <imagedata fileref="itemname.png" format="PNG" />
 </imageobject>
 <textobject>
-<phrase>The new item dialog.</phrase>
+<phrase>The <guilabel>New Item</guilabel> dialog.</phrase>
 </textobject>
 </mediaobject>
 </screenshot>
@@ -124,13 +121,13 @@ Press return, and you should see something like the picture below in the main wi
 </screenshot></para>
   
 <para>
-    Now lets fill in the <guilabel>Description:</guilabel>, in this case type <userinput>Web Browser</userinput>. <note><para>The description and name will be displayed on the &kmenu; as <quote>Web Browser (Firefox)</quote>.</para></note> We will need to fill out executable name in the <guilabel>Command:</guilabel> field, in this instance we will type <userinput><command>firefox</command></userinput>.</para>
+    Now lets fill in the <guilabel>Description:</guilabel>, in this case type <userinput>Web Browser</userinput>. <note><para>The description and name will be displayed on the &kmenu; as <quote>Web Browser (Firefox)</quote>.</para></note> We will need to fill in the executable name in the <guilabel>Command:</guilabel> field, in this instance we will type <userinput><command>firefox</command></userinput>.</para>
 <note><para>Following the command, you can have several place holders which will be replaced with actual values when the program is run:
 <simplelist>
 <member>%f - a single file name</member>
 <member>%F - a list of files; use for applications that can open several local files at once</member>
-<member>%u - a single URL</member>
-<member>%U - a list of URLs</member>
+<member>%u - a single &URL;</member>
+<member>%U - a list of &URL;s</member>
 <member>%d - the folder of a file to open</member>
 <member>%D - a list of folders</member>
 <member>%i - the icon</member>
@@ -140,13 +137,13 @@ Press return, and you should see something like the picture below in the main wi
 <informalexample><para>For example: if you want to firefox to start your web browsing at www.kde.org - instead of <command>firefox</command> you would type <command>firefox %u www.kde.org</command>.</para></informalexample></note>
 <para>We would like to have a more creative icon, so we will click the generic icon sitting beside <guilabel>Name:</guilabel>. It will bring the <guilabel>Select Icon</guilabel> dialog which will let us choose the new icon, as shown below.
 <screenshot>
-<screeninfo>Select Icon dialog</screeninfo>
+<screeninfo><guilabel>Select Icon</guilabel> dialog</screeninfo>
 <mediaobject>
 <imageobject>
 <imagedata fileref="selecticon.png" format="PNG" />
 </imageobject>
 <textobject>
-<phrase>The select icon dialog.</phrase>
+<phrase>The <guilabel>Select Icon</guilabel> dialog.</phrase>
 </textobject>
 </mediaobject>
 </screenshot></para>
@@ -164,8 +161,8 @@ Press return, and you should see something like the picture below in the main wi
 </mediaobject>
 </screenshot></para>
 
-<para>Click <menuchoice><guimenu>File</guimenu><guimenuitem>Save</guimenuitem></menuchoice>, wait for the <guilabel>Updating System</guilabel> dialog to get finished, you should find &firefox; in the &kmenu; <guisubmenu>&internet;</guisubmenu> sub menu!</para>
-  
+<para>Click <menuchoice><guimenu>File</guimenu><guimenuitem>Save</guimenuitem></menuchoice>, wait for the <guilabel>Updating System Configuration</guilabel> dialog to get finished, you should find &firefox; in the &kmenu; <guisubmenu>Internet</guisubmenu> submenu!</para>
+
 
 
 </chapter>
@@ -173,7 +170,7 @@ Press return, and you should see something like the picture below in the main wi
 <chapter id="using-kmenuedit">
 <title>Using &kmenuedit;</title>
 
-<para>The left application panel shows the Main menu structure. When
+<para>The left application panel shows the &kmenu; structure. When
 you browse items in the left panel, the right panel shows detailed
 information for the highlighted menu item.</para>
 
@@ -182,32 +179,39 @@ information for the highlighted menu item.</para>
 
 <variablelist>
 <varlistentry>
-<term><guilabel>Name</guilabel></term>
+<term><guilabel>Name:</guilabel></term>
 <listitem><para>This is the name of your program as it appears in the
-<guimenu>Main</guimenu> menu. It can be different from the real executable
+&kmenu; menu. It can be different from the real executable
 name. For instance the name of <command>mc</command> executable is
 "<application>Midnight Commander</application>".</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Comment</guilabel></term>
+<term><guilabel>Description:</guilabel></term>
+<listitem><para>The description will be displayed together with the name in the &kmenu;. This is
+entirely optional.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Comment:</guilabel></term>
 <listitem><para>Describe the program in greater detail in this field. This is
 entirely optional.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Command</guilabel></term>
+<term><guilabel>Command:</guilabel></term>
 <listitem><para>This is the name of the executable program. Make sure that you
 have permission to run the program.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Type</guilabel></term>
-<listitem><para>This field is similar to the Comment field. Describe
-the type of your program here.</para></listitem>
+<term><guilabel>Enable launch feedback</guilabel></term>
+<listitem><para>If this box is checked, this will display feedback when an application is started
+</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Work Path</guilabel></term>
-<listitem><para>Specify the work path of the program. This will be the current
-path when the program launches. It does not need to be the same as the
-executable location.</para></listitem>
+<term><guilabel>Place in system tray</guilabel></term>
+<listitem><para>When checked, the application's icon will show up in the panel system tray.
+You will then be able to hide or show the application by clicking on the system
+tray icon. Clicking on it using the &RMB; will allow also you to undock, or quit the
+application.
+</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guiicon>Icon List</guiicon></term>
@@ -216,43 +220,49 @@ this icon to display a choice of icons. Choose an icon for your
 program.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Run in Terminal</guilabel></term>
+<term><guilabel>Work path:</guilabel></term>
+<listitem><para>Specify the work path of the program. This will be the current
+path when the program launches. It does not need to be the same as the
+executable location.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Run in terminal</guilabel></term>
 <listitem><para>You must check this if your program requires terminal emulator
 in order to run. This mainly applies to <link
 linkend="gloss-console-application">console 
 applications</link>.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Terminal Options</guilabel></term>
+<term><guilabel>Terminal options:</guilabel></term>
 <listitem><para>Put all terminal options in this field.</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><guilabel>Run as different user</guilabel></term>
+<term><guilabel>Run as a different user</guilabel></term>
 <listitem><para>If you want to run this program as a different user (not you),
 check this checkbox, and provide the username in the
-<guilabel>Username</guilabel> field.</para></listitem>
+<guilabel>Username:</guilabel> field.</para></listitem>
 </varlistentry>
 </variablelist>
 
 <para>You can assign a special keyboard shortcut to launch your program.</para>
 
-<para>Click the empty button to the right of the <guilabel>Current
-key</guilabel> checkbox and press the key combination on your keyboard
-that you want to be assigned to your program.</para>
+<para>Click the <guibutton>None</guibutton> button to the right of the <guilabel>Current
+shortcut key:</guilabel> checkbox.</para>
 
-<para>A dialog box will pop up, allowing you to assign a second
+<para>A dialog box will pop up, allowing you to assign a <guilabel>Primary shortcut:</guilabel>
+by pressing the key combination on your keyboard that you want to be assigned to your program.
+It might be useful to assign a second
 keybinding to the same item by checking the
-<guilabel>Alternate</guilabel> button.  This might be useful, for
+<guilabel>Alternate shortcut:</guilabel> button, for
 example, if you often switch keyboard maps, and some shortcuts are not
 as convenient to type at all times.</para>
 
 <para>Click the <guiicon>x</guiicon> to clear the shortcut, if you
-made a mistake.  Check the <guilabel>Multi-Key</guilabel> box if you
+made a mistake.  Check the <guilabel>Multi-key mode</guilabel> box if you
 want to assign a shortcut that uses more than one key.</para>
 
-<para>By default the <guilabel>Auto-Close</guilabel> box is checked,
-and the dialog will close when you have selected a keybinding.
-Uncheck it if you want the dialog to stay open.</para>
+<para>The dialog will close when you have selected a keybinding.
+</para>
 
 </sect1> 
 
@@ -263,8 +273,10 @@ Uncheck it if you want the dialog to stay open.</para>
 
 <variablelist>
 <varlistentry id="file-new-item">
-<term><menuchoice> <guimenu>
-File</guimenu> <guimenuitem>New Item</guimenuitem>
+<term><menuchoice> 
+<shortcut><keycombo
+action="simul">&Ctrl;<keycap>N</keycap></keycombo></shortcut>
+<guimenu>File</guimenu> <guimenuitem>New Item...</guimenuitem>
 </menuchoice></term> <listitem><para><action>Adds new menu
 item.</action></para></listitem>
 </varlistentry>
@@ -272,7 +284,7 @@ item.</action></para></listitem>
 <varlistentry id="file-new-submenu">
 <term><menuchoice>
 <guimenu>File</guimenu>
-<guimenuitem>New Submenu</guimenuitem>
+<guimenuitem>New Submenu...</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Adds new submenu.</action></para></listitem>
 </varlistentry>
@@ -351,6 +363,7 @@ selected place in the <guimenu>Main</guimenu> menu. You must first use
 
 <varlistentry id="edit-delete">
 <term><menuchoice>
+<shortcut><keycap>Delete</keycap></shortcut>
 <guimenu>Edit</guimenu> <guimenuitem>Delete</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Deletes currently selected menu
@@ -360,9 +373,9 @@ item.</action></para></listitem>
 <varlistentry id="settings-hide-toolbar">
 <term><menuchoice>
 <guimenu>Settings</guimenu>
-<guimenuitem>Hide Toolbar</guimenuitem>
+<guimenuitem>Show/Hide Toolbar</guimenuitem>
 </menuchoice></term>
-<listitem><para><action>Hide the toolbar</action></para></listitem>
+<listitem><para><action>Show or hide the toolbar</action></para></listitem>
 </varlistentry>
 
 <varlistentry id="settings-configure-shortcuts">
@@ -476,8 +489,8 @@ to save documents open in these applications before you log out from
 the &kde;.</para>
 
 <para>Console applications support copying and pasting from
-KDE-compliant applications.Simply mark the text in the console
-application with your mouse, switch to the KDE-compliant application
+&kde;-compliant applications.Simply mark the text in the console
+application with your mouse, switch to the &kde;-compliant application
 and press <keycombo action="simul">&Ctrl;
 <keycap>V</keycap></keycombo> to paste the text. If you want to copy
 from &kde; application to a console application, first mark the text
