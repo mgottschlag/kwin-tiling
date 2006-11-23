@@ -215,11 +215,11 @@ void KDMThemeWidget::installNewTheme()
 	if (!KIO::NetAccess::download( themeURL, themeTmpFile, this )) {
 		QString sorryText;
 		if (themeURL.isLocalFile())
-			sorryText = i18n("Unable to find the KDM theme archive %1.");
+			sorryText = i18n("Unable to find the KDM theme archive %1.",themeURL.prettyUrl());
 		else
 			sorryText = i18n("Unable to download the KDM theme archive;\n"
-			                 "please check that address %1 is correct.");
-		KMessageBox::sorry( this, sorryText.arg( themeURL.prettyUrl() ) );
+			                 "please check that address %1 is correct.",themeURL.prettyUrl());
+		KMessageBox::sorry( this, sorryText );
 		return;
 	}
 
@@ -250,7 +250,7 @@ void KDMThemeWidget::installNewTheme()
 
 		foreach (const KArchiveDirectory *ard, foundThemes) {
 			progressDiag.setLabel(
-				i18n("<qt>Installing <strong>%1</strong> theme</qt>").arg( ard->name() ) );
+				i18n("<qt>Installing <strong>%1</strong> theme</qt>", ard->name() ) );
 
 			QString path = themeDir + ard->name();
 			ard->copyTo( path, true );
