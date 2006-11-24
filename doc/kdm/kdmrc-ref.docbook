@@ -878,7 +878,7 @@ It specifies a program which is run (as
 greeter window. This may be used to change the appearance of the screen
 around the greeter window or to put up other windows (e.g., you may want
 to run <command>xconsole</command> here).
-The conventional name for a file used here is <command>Xsetup</command>.
+The conventional name for a program used here is <command>Xsetup</command>.
 See <xref linkend="kdmrc-xsetup"/>.
 </para>
 <para>Empty by default.</para>
@@ -893,7 +893,7 @@ This string is subject to word splitting.
 It specifies a program which is run (as
 <systemitem class="username">root</systemitem>) after the user
 authentication process succeeds.
-The conventional name for a file used here is <command>Xstartup</command>.
+The conventional name for a program used here is <command>Xstartup</command>.
 See <xref linkend="kdmrc-xstartup"/>.
 </para>
 <para>Empty by default.</para>
@@ -908,7 +908,7 @@ This string is subject to word splitting.
 It specifies a program which is run (as
 <systemitem class="username">root</systemitem>) after the session
 terminates.
-The conventional name for a file used here is <command>Xreset</command>.
+The conventional name for a program used here is <command>Xreset</command>.
 See <xref linkend="kdmrc-xreset"/>.
 </para>
 <para>Empty by default.</para>
@@ -922,7 +922,7 @@ See <xref linkend="kdmrc-xreset"/>.
 This string is subject to word splitting.
 It specifies the session program to be executed (as the user owning
 the session).
-The conventional name for a file used here is <command>Xsession</command>.
+The conventional name for a program used here is <command>Xsession</command>.
 See <xref linkend="kdmrc-xsession"/>.
 </para>
 <para>The default is <quote>${<envar>x_bindir</envar>}/xterm -ls -T</quote>.</para>
@@ -1495,7 +1495,7 @@ This option controls which users will be shown in the user view
 (<option>UserCompletion</option>).
 If it is <literal>Selected</literal>, <option>SelectedUsers</option> contains
 the final list of users.
-If it is <literal>NotHidden</literal>, the initial user list are all users
+If it is <literal>NotHidden</literal>, the initial user list contains all users
 found on the system. Users contained in <option>HiddenUsers</option> are
 removed from the list, just like all users with a UID greater than specified
 in <option>MaxShowUID</option> and users with a non-zero UID less than
@@ -1671,11 +1671,13 @@ The password input fields cloak the typed in text. Specify, how to do it:
 <variablelist>
 <varlistentry>
 <term><parameter>OneStar</parameter></term>
-<listitem><para><literal>*</literal> is shown for every typed letter</para></listitem>
+<listitem><para><literal>*</literal> is shown for every typed
+character</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><parameter>ThreeStars</parameter></term>
-<listitem><para><literal>***</literal> is shown for every typed letter</para></listitem>
+<listitem><para><literal>***</literal> is shown for every typed
+character</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><parameter>NoEcho</parameter></term>

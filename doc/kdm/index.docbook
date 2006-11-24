@@ -142,7 +142,7 @@ to try &kdm;.</para>
 <para>As <systemitem class="username">root</systemitem>, type
 <userinput><command>kdm</command></userinput> at the prompt.</para>
 
-<para>You should see a login window, which is described more fully in<xref
+<para>You should see a login window, which is described more fully in <xref
 linkend="login" />.</para>
 
 <para>Typing your normal username and password in the fields provided, and
@@ -211,16 +211,12 @@ fields.</para>
 </listitem> 
 
 <listitem>
-<para>(Optionally) A <guibutton>Shutdown</guibutton> button that displays
-the <guibutton>Shutdown</guibutton> dialog box.</para>
-</listitem>
-<listitem>
 <para>A <guibutton>Menu</guibutton> button that opens an action menu
 with the following items:</para>
  
 <itemizedlist>
 <listitem>
-<para>(On local displays) a <guimenuitem>Restart X Server</guimenuitem> item
+<para>(On local displays) A <guimenuitem>Restart X Server</guimenuitem> item
 that terminates the currently running &X-Server;, starts a new one and
 displays the login dialog again. You can use this if the display content
 seems to be broken somehow.</para>
@@ -244,8 +240,8 @@ if nobody is logged in at the console for some time.</para>
 </listitem>
 
 <listitem>
-<para>(Optionally) A <guibutton>Shutdown...</guibutton> button that displays
-the shutdown dialog box.</para>
+<para>(Optionally) A <guibutton>Shutdown</guibutton> button that displays
+the <guilabel>Shutdown</guilabel> dialog box.</para>
 </listitem>
 </itemizedlist>
 
@@ -280,10 +276,10 @@ this option if you have changed your X11 configuration in some way.</para>
 <term>Console Mode</term>
 <listitem>
 <para>Stop the &X-Server; and return the system to console mode. This is
-achieved by bringing the system down to run-level 3. Typically, the system
+achieved by bringing the system down to runlevel 3. Typically, the system
 manager might need to use this option before upgrading or re-configuring X11
 software.</para> 
-</listitem>
+</listitem>a
 </varlistentry>
 </variablelist>
 
@@ -380,7 +376,7 @@ linkend="kdmconfig-convenience"><guilabel>Convenience</guilabel></link>.</para>
 the window.</para>
 
 <note><para>If you are not currently logged in as a superuser, you
-will need to click the <guibutton>Administrator Mode</guibutton>
+will need to click the <guibutton>Administrator Mode...</guibutton>
 Button. You will then be asked for a superuser password.  Entering a
 correct password will allow you to modify the settings of this
 module.</para></note>
@@ -425,7 +421,7 @@ will be displayed.</para>
 <guilabel>Position:</guilabel> options if you want it to appear
 elsewhere on the screen.  You can specify the relative position
 (percentage of the screen size) for the center of the login window,
-relative to the top left of the display, in the fields labelled
+relative to the top left of the display, in the fields labeled
 <guilabel>X:</guilabel> and <guilabel>Y:</guilabel> respectively.
 These correspond to the key
 <link linkend="option-greeterpos"><option>GreeterPos</option></link>
@@ -454,7 +450,7 @@ fonts you have installed on a per user basis.</para>
 
 <para>You can select three different font styles from the drop down box
 (<guilabel>General:</guilabel>, <guilabel>Failures:</guilabel>,
-<guilabel>Greeting</guilabel>).  When you click on the
+<guilabel>Greeting:</guilabel>).  When you click on the
 <guibutton>Choose...</guibutton> button a dialog appears from which you can
 select the new characteristics for the font style.</para>
 
@@ -473,7 +469,7 @@ fails.</para>
 </listitem>
 </itemizedlist>
 
-<para>You can also check the box labelled <guilabel>Use anti-aliasing for
+<para>You can also check the box labeled <guilabel>Use anti-aliasing for
 fonts</guilabel> if you want smoothed fonts in the login dialog.</para>
 
 </sect2>
@@ -622,7 +618,7 @@ stretched to fit all four corners.</para> </listitem>
 <title><guilabel>Shutdown</guilabel></title>
 
 <para><guilabel>Allow Shutdown</guilabel></para>
-<para>Use these drop down box to choose who is allowed to shut down:</para>
+<para>Use this drop down box to choose who is allowed to shut down:</para>
 <itemizedlist>
 <listitem>
 <para><guilabel>Nobody</guilabel>: No one can shutdown the computer using
@@ -645,7 +641,8 @@ shutdown command for the <guilabel>Local:</guilabel> and
 define the exact shutdown command.</para> <para>The
 <guilabel>Halt:</guilabel> command defaults to <!-- Are these defaults still
 correct? they disagree with what's in --> <!-- kdmrc -->
-<command>/sbin/halt</command>.  The restart command defaults to
+<command>/sbin/halt</command>.  The <guilabel>Restart:</guilabel> command
+defaults to
 <command>/sbin/reboot</command>.</para>
 
 <para>When <guilabel>Show boot options</guilabel> is enabled, &kdm;
@@ -740,7 +737,7 @@ your system without doing any authentication.  You can enable it using
 the option <guilabel>Enable Auto-login</guilabel>.</para>
 
 <para>You can choose the account to be used for automatic login from
-the list labelled <guilabel>User:</guilabel>.</para>
+the list labeled <guilabel>User:</guilabel>.</para>
 
 </sect3>
 
@@ -825,7 +822,7 @@ system currently uses graphical login (for example, using &xdm;) its
 default runlevel will match the runlevel specified for X11.</para>
 
 <para>The runlevel with graphical login (&xdm;) for some common &Linux;
-distributions are:</para>
+distributions is:</para>
 
 <itemizedlist>
 <listitem><para>5 for &RedHat; 3.x and later, and for &Mandrake;</para></listitem>
