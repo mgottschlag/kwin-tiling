@@ -95,7 +95,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   menuNew = 0;
   if (m_bDesktopEnabled && KAuthorized::authorizeKAction("editable_desktop_icons"))
   {
-     menuNew = new KNewMenu( m_actionCollection, "new_menu" );
+     menuNew = new KNewMenu( m_actionCollection, this, "new_menu" );
      connect(menuNew->menu(), SIGNAL( aboutToShow() ),
              this, SLOT( slotFileNewAboutToShow() ) );
      connect( menuNew, SIGNAL( activated() ),
