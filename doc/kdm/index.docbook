@@ -279,7 +279,7 @@ this option if you have changed your X11 configuration in some way.</para>
 achieved by bringing the system down to runlevel 3. Typically, the system
 manager might need to use this option before upgrading or re-configuring X11
 software.</para> 
-</listitem>a
+</listitem>
 </varlistentry>
 </variablelist>
 
