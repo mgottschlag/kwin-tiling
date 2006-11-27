@@ -122,7 +122,7 @@ void khotkeys_get_all_shortcuts_internal(const Action_data_group* data_P, QStrin
         if( Menuentry_shortcut_action_data* entry
             = dynamic_cast< Menuentry_shortcut_action_data* >( *it ))
             {
-               if (entry->trigger() && !entry->trigger()->shortcut().isNull())
+               if (entry->trigger() && !entry->trigger()->shortcut().isEmpty())
                     result.append(entry->trigger()->shortcut().toString());
             }
         if( Action_data_group* group = dynamic_cast< Action_data_group* >( *it ))

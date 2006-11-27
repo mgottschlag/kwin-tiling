@@ -24,12 +24,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef NOSLOTS
 # define DEF( name, key, fnSlot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key); \
+   a->setGlobalShortcut(KShortcut(key)); \
    connect(a, SIGNAL(triggered(bool)), SLOT(fnSlot))
 #else
 # define DEF( name, key, fnSlot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key);
+   a->setGlobalShortcut(KShortcut(key));
 #endif
 	DEF( I18N_NOOP( "Next Taskbar Entry" ), 0, slotActivateNextTask() );
 	DEF( I18N_NOOP( "Previous Taskbar Entry" ), 0, slotActivatePreviousTask() );

@@ -21,12 +21,12 @@
 #ifndef NOSLOTS
 # define DEF( name, key, fnSlot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key); \
+   a->setGlobalShortcut(KShortcut(key)); \
    connect(a, SIGNAL(triggered(bool)), SLOT(fnSlot))
 #else
 # define DEF( name, key, fnSlot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key);
+   a->setGlobalShortcut(KShortcut(key));
 #endif
 
 	new KAction( i18n("Clipboard"), actionCollection, "Program:klipper" );

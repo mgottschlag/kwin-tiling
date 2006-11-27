@@ -134,7 +134,7 @@ void KMenuEdit::slotChangeView()
     delete m_actionDelete;
 
     m_actionDelete = new KAction(KIcon("editdelete"), i18n("&Delete"), actionCollection(), "delete");
-    m_actionDelete->setShortcut(Qt::Key_Delete);
+    m_actionDelete->setShortcut(QKeySequence(Qt::Key_Delete));
 
     if (!m_splitter)
        setupView();

@@ -24,12 +24,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef NOSLOTS
 # define DEF( name, key, target, fnSlot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key); \
+   a->setGlobalShortcut(KShortcut(key)); \
    connect(a, SIGNAL(triggered(bool)), target, SLOT(fnSlot))
 #else
 # define DEF( name, key, target, fnSlot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key);
+   a->setGlobalShortcut(KShortcut(key));
 #endif
 
 #ifdef KICKER_ALL_BINDINGS

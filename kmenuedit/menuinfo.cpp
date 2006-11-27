@@ -389,25 +389,15 @@ KShortcut MenuEntryInfo::shortcut()
       shortcutLoaded = true;
       if( KHotKeys::present())
       {
-         shortCut = KHotKeys::getMenuEntryShortcut( service->storageId() );
+         shortCut = KShortcut(KHotKeys::getMenuEntryShortcut( service->storageId() ));
       }
    }
    return shortCut;
 }
 
-static bool isEmpty(const KShortcut &shortCut)
-{
-   for(int i = shortCut.count(); i--;)
-   {
-      if (!shortCut.seq(i).isEmpty())
-         return false;
-   }
-   return true;
-}
-
 static void freeShortcut(const KShortcut &shortCut)
 {
-   if (!isEmpty(shortCut))
+   if (!shortCut.isEmpty())
    {
       QString shortcutKey = shortCut.toString();
       if (s_newShortcuts)
@@ -422,7 +412,7 @@ static void freeShortcut(const KShortcut &shortCut)
 
 static void allocateShortcut(const KShortcut &shortCut)
 {
-   if (!isEmpty(shortCut))
+   if (!shortCut.isEmpty())
    {
       QString shortcutKey = shortCut.toString();
       if (s_freeShortcuts)
@@ -444,7 +434,7 @@ void MenuEntryInfo::setShortcut(const KShortcut &_shortcut)
    allocateShortcut(_shortcut);
 
    shortCut = _shortcut;
-   if (isEmpty(shortCut))
+   if (shortCut.isEmpty())
       shortCut = KShortcut(); // Normalize
 
    shortcutLoaded = true;

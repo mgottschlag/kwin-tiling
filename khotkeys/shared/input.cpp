@@ -140,7 +140,7 @@ void Kbd::actionTriggered(KAction* action)
     KShortcut shortcut = action->globalShortcut();
     if( !grabs.contains( shortcut ))
         return;
-    for( QMap< Kbd_receiver*, Receiver_data >::ConstIterator it = receivers.begin();
+    for( QHash< Kbd_receiver*, Receiver_data >::ConstIterator it = receivers.begin();
          it != receivers.end();
          ++it )
         if( ( *it ).shortcuts.contains( shortcut ) && ( *it ).active

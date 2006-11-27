@@ -275,7 +275,7 @@ void Shortcut_trigger_widget::set_data( const Shortcut_trigger* data_P )
 
 Shortcut_trigger* Shortcut_trigger_widget::get_data( Action_data* data_P ) const
     {
-    return !bt->shortcut().isNull()
+    return !bt->shortcut().isEmpty()
         ? new Shortcut_trigger( data_P, bt->shortcut()) : NULL;
     }
 

@@ -1,19 +1,19 @@
 #ifndef NOSLOTS
 # define DEF( name, key, fnSlot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key); \
+   a->setGlobalShortcut(KShortcut(key)); \
    connect(a, SIGNAL(triggered(bool)), SLOT(fnSlot))
 # define DEF2( name, key, receiver, slot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key); \
+   a->setGlobalShortcut(KShortcut(key)); \
    connect(a, SIGNAL(triggered(bool)), receiver, SLOT(fnSlot))
 #else
 # define DEF( name, key, fnSlot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key);
+   a->setGlobalShortcut(KShortcut(key));
 # define DEF2( name, key, receiver, slot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(key);
+   a->setGlobalShortcut(KShortcut(key));
 #endif
 
 	new KAction( i18n("Desktop"), actionCollection, "Program:kdesktop" );

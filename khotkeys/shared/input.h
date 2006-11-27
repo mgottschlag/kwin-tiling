@@ -13,7 +13,7 @@
 
 #include <QObject>
 #include <qwindowdefs.h>
-#include <QMap>
+#include <QHash>
 #include <QWidget>
 
 #include <kshortcut.h>
@@ -35,35 +35,35 @@ class Kbd_receiver
         virtual bool handle_key( const KShortcut& shortcut_P ) = 0;
     };
 
-class Kbd
-    : public QObject
-    {
+class Kbd : public QObject
+{
     Q_OBJECT
-    public:
+public:
 	Kbd( bool grabbing_enabled_P, QObject* parent_P );
-        virtual ~Kbd();
+    virtual ~Kbd();
 	void insert_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P );
-        void remove_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P );
-        void activate_receiver( Kbd_receiver* receiver_P );
-        void deactivate_receiver( Kbd_receiver* receiver_P );
-        static bool send_macro_key( const QString& key, Window window_P = InputFocus );
-    protected:
-        bool x11EventFilter( const XEvent* );                                                              
-        void grab_shortcut( const KShortcut& shortcut_P );
-        void ungrab_shortcut( const KShortcut& shortcut_P );
-    private Q_SLOTS:
-        void actionTriggered( KAction* action );
-    private:
-        struct Receiver_data
-            {
-            Receiver_data();
-            QList< KShortcut > shortcuts;
-            bool active;
-            };
-        QMap< Kbd_receiver*, Receiver_data > receivers;
-        QMap< KShortcut, int > grabs;
-        KActionCollection* kga;
-    };
+    void remove_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P );
+    void activate_receiver( Kbd_receiver* receiver_P );
+    void deactivate_receiver( Kbd_receiver* receiver_P );
+    static bool send_macro_key( const QString& key, Window window_P = InputFocus );
+protected:
+    bool x11EventFilter( const XEvent* );                                                              
+    void grab_shortcut( const KShortcut& shortcut_P );
+    void ungrab_shortcut( const KShortcut& shortcut_P );
+private Q_SLOTS:
+    void actionTriggered( KAction* action );
+private:
+    struct Receiver_data
+        {
+        Receiver_data();
+        QList< KShortcut > shortcuts;
+        bool active;
+        };
+
+    QHash< Kbd_receiver*, Receiver_data > receivers;
+    QHash< KShortcut, int > grabs;
+    KActionCollection* kga;
+};
 
 class Mouse
     {
