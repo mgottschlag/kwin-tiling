@@ -416,17 +416,43 @@ void LockProcess::createSaverWindow()
 #ifdef HAVE_GLXCHOOSEVISUAL
     if( mOpenGLVisual )
     {
-        int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_BUFFER_SIZE, x11Depth(), None };
-        if( XVisualInfo* i = glXChooseVisual( x11Display(), x11Screen(), attribs ))
+        static int attribs[][ 15 ] =
         {
-            visual = i->visual;
-            static Colormap colormap = 0;
-            if( colormap != 0 )
-                XFreeColormap( x11Display(), colormap );
-            colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
-            attrs.colormap = colormap;
-            flags |= CWColormap;
-            XFree( i );
+        #define R GLX_RED_SIZE
+        #define G GLX_GREEN_SIZE
+        #define B GLX_BLUE_SIZE
+            { GLX_RGBA, R, 8, G, 8, B, 8, GLX_DEPTH_SIZE, 8, GLX_DOUBLEBUFFER, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, R, 4, G, 4, B, 4, GLX_DEPTH_SIZE, 4, GLX_DOUBLEBUFFER, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, R, 8, G, 8, B, 8, GLX_DEPTH_SIZE, 8, GLX_DOUBLEBUFFER, None },
+            { GLX_RGBA, R, 4, G, 4, B, 4, GLX_DEPTH_SIZE, 4, GLX_DOUBLEBUFFER, None },
+            { GLX_RGBA, R, 8, G, 8, B, 8, GLX_DEPTH_SIZE, 8, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, R, 4, G, 4, B, 4, GLX_DEPTH_SIZE, 4, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, R, 8, G, 8, B, 8, GLX_DEPTH_SIZE, 8, None },
+            { GLX_RGBA, R, 4, G, 4, B, 4, GLX_DEPTH_SIZE, 4, None },
+            { GLX_RGBA, GLX_DEPTH_SIZE, 8, GLX_DOUBLEBUFFER, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, GLX_DEPTH_SIZE, 8, GLX_DOUBLEBUFFER, None },
+            { GLX_RGBA, GLX_DEPTH_SIZE, 8, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, GLX_DEPTH_SIZE, 8, None }
+        #undef R
+        #undef G
+        #undef B
+        };
+        for( unsigned int i = 0;
+             i < sizeof( attribs ) / sizeof( attribs[ 0 ] );
+             ++i )
+        {
+            if( XVisualInfo* info = glXChooseVisual( x11Display(), x11Screen(), attribs[ i ] ))
+            {
+                visual = info->visual;
+                static Colormap colormap = 0;
+                if( colormap != 0 )
+                    XFreeColormap( x11Display(), colormap );
+                colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
+                attrs.colormap = colormap;
+                flags |= CWColormap;
+                XFree( info );
+                break;
+            }
         }
     }
 #endif
