@@ -22,9 +22,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include <config.h>
 
 #include <QX11Info>
 #include <stdlib.h>
@@ -39,7 +37,7 @@ static Display* dpy;
 Display* QX11Info::display() { return dpy; }
 Qt::HANDLE QX11Info::appRootWindow(int) { return DefaultRootWindow( dpy ); }
 
-bool isEmpty( const char* str )
+static bool isEmpty( const char* str )
     {
     if( str == NULL )
         return true;
