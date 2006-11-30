@@ -4,7 +4,8 @@
 #  SAMBA_FOUND - system has SAMBA
 #  SAMBA_INCLUDE_DIR - the SAMBA include directory
 #  SAMBA_LIBRARIES - The libraries needed to use SAMBA
-#  SAMBA_HAVE_SMBC_SET_CONTEXT - true if libsmbclient has smbc_set_context()
+#  Set SAMBA_REQUIRE_SMBC_SET_CONTEXT to TRUE if you need a version of Samba
+#  which comes with smbc_set_context()
 
 # Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
 #
@@ -13,7 +14,7 @@
 
 if(SAMBA_INCLUDE_DIR AND SAMBA_LIBRARIES)
     # Already in cache, be silent
-    set(SAMBA_FIND_QUIETLY TRUE)
+    set(Samba_FIND_QUIETLY TRUE)
 endif(SAMBA_INCLUDE_DIR AND SAMBA_LIBRARIES)
 
 find_path(SAMBA_INCLUDE_DIR NAMES libsmbclient.h )
@@ -30,6 +31,11 @@ if(SAMBA_INCLUDE_DIR AND SAMBA_LIBRARIES)
    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${SAMBA_LIBRARIES})
    check_symbol_exists(smbc_set_context "libsmbclient.h" SAMBA_HAVE_SMBC_SET_CONTEXT)
    macro_pop_required_vars()
+   # fail if smbc_set_context() was required but hasn't been found
+   if (SAMBA_REQUIRE_SMBC_SET_CONTEXT AND NOT SAMBA_HAVE_SMBC_SET_CONTEXT)
+      set(SAMBA_FOUND FALSE)
+   endif (SAMBA_REQUIRE_SMBC_SET_CONTEXT AND NOT SAMBA_HAVE_SMBC_SET_CONTEXT)
+   
 else(SAMBA_INCLUDE_DIR AND SAMBA_LIBRARIES)
    set(SAMBA_FOUND FALSE)
    set(SAMBA_HAVE_SMBC_SET_CONTEXT FALSE)
