@@ -1,53 +1,44 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name    : KFI::CFontViewPart
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 03/08/2002
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2002, 2003, 2004
-////////////////////////////////////////////////////////////////////////////////
-
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+ 
 #include "FontViewPart.h"
-#include "FontPreview.h"
 #include "Misc.h"
 #include "KfiConstants.h"
-#include "KfiPrint.h"
+#include "FcEngine.h"
 #include <klocale.h>
-#include <QLayout>
+#include <QBoxLayout>
+#include <QGridLayout>
 #include <QPushButton>
-#include <qframe.h>
+#include <QFrame>
 #include <QFile>
 #include <QLabel>
 #include <QPainter>
 #include <QValidator>
 #include <QRegExp>
-#include <qsettings.h>
+#include <QSettings>
 #include <QStringList>
-//Added by qt3to4:
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
+#include <QTimer>
+#include <QApplication>
 #include <kio/netaccess.h>
-#include <kicon.h>
 #include <kinstance.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
@@ -56,82 +47,101 @@
 #include <kinputdialog.h>
 #include <kdialog.h>
 #include <kprinter.h>
-#include <string.h>
+#include <ktoolbarlabelaction.h>
+#include <kselectaction.h>
+#include <kicon.h>
+#include <kprocess.h>
+#include <kmimetype.h>
 #include <fontconfig/fontconfig.h>
 
-static KUrl getDest(const KUrl &url, bool system)
-{
-    return KUrl(KFI::Misc::root()
-                  ? QString("fonts:/") + url.fileName()
-                  : QString("fonts:/") + QString(system ? i18n(KFI_KIO_FONTS_SYS) : i18n(KFI_KIO_FONTS_USER))
-                                       + QChar('/') + url.fileName());
-}
+// Enable the following to allow printing of non-installed fonts. Doesnt seem to work :-(
+//#define KFI_PRINT_APP_FONTS
 
 namespace KFI
 {
 
-CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
+CFontViewPart::CFontViewPart(QWidget *parent)
+             : itsConfig(KGlobal::config()),
+               itsProc(NULL)
 {
-    bool kcm = false;
-    if (name) {
-        kcm = (0 == strcmp(name, "kcmfontinst"));
-    }
+    CFcEngine::instance()->readConfig(*itsConfig);
+    CFcEngine::setBgndCol(QApplication::palette().color(QPalette::Active, QPalette::Base));
+    CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
+
+    // create browser extension (for printing when embedded into browser)
+    itsExtension = new BrowserExtension(this);
 
     itsFrame=new QFrame(parent);
-
-    itsFrame->setObjectName("frame");
 
     QFrame *previewFrame=new QFrame(itsFrame);
 
     itsToolsFrame=new QFrame(itsFrame);
 
-    QVBoxLayout *layout=new QVBoxLayout(itsFrame);
-    layout->setSpacing(kcm ? 0 : KDialog::spacingHint());
-    layout->setMargin(kcm ? 0 : KDialog::marginHint());
-    QGridLayout *previewLayout=new QGridLayout(previewFrame);
-    previewLayout->setSpacing(1);
-    previewLayout->setMargin(1);
-    QHBoxLayout *toolsLayout=new QHBoxLayout(itsToolsFrame);
-    toolsLayout->setSpacing(KDialog::spacingHint());
+    itsLayout=new QBoxLayout(QBoxLayout::TopToBottom, itsFrame);
+
+    itsLayout->setMargin(KDialog::marginHint());
+    itsLayout->setSpacing(KDialog::spacingHint());
+
+    QBoxLayout *previewLayout=new QBoxLayout(QBoxLayout::LeftToRight, previewFrame),
+               *toolsLayout=new QBoxLayout(QBoxLayout::LeftToRight, itsToolsFrame);
+
+    previewLayout->setMargin(0);
+    previewLayout->setSpacing(0);
     toolsLayout->setMargin(0);
+    toolsLayout->setSpacing(KDialog::spacingHint());
 
     itsFrame->setFrameShape(QFrame::NoFrame);
     itsFrame->setFocusPolicy(Qt::ClickFocus);
     itsToolsFrame->setFrameShape(QFrame::NoFrame);
-    previewFrame->setFrameShadow(kcm ? QFrame::Sunken : QFrame::Raised);
-    previewFrame->setFrameShape(QFrame::Panel);
-    setInstance(new KInstance("kfontview"));
+    previewFrame->setFrameShape(QFrame::StyledPanel);
+    previewFrame->setFrameShadow(QFrame::Sunken);
+    setInstance(new KInstance(KFI_NAME));
 
     itsPreview=new CFontPreview(previewFrame);
-    itsPreview->setObjectName("FontViewPart::Preview");
     itsPreview->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFaceLabel=new QLabel(i18n("Face:"), itsToolsFrame);
     itsFaceSelector=new KIntNumInput(1, itsToolsFrame);
     itsInstallButton=new QPushButton(i18n("Install..."), itsToolsFrame);
-    itsInstallButton->setObjectName("button");
-    itsInstallButton->hide();
-    previewLayout->addWidget(itsPreview, 0, 0);
-    layout->addWidget(previewFrame);
-    layout->addWidget(itsToolsFrame);
+    itsInstallButton->setEnabled(false);
+    previewLayout->addWidget(itsPreview);
+    itsLayout->addWidget(previewFrame);
+    itsLayout->addWidget(itsToolsFrame);
     toolsLayout->addWidget(itsFaceLabel);
     toolsLayout->addWidget(itsFaceSelector);
     itsFaceLabel->hide();
     itsFaceSelector->hide();
-    toolsLayout->addItem(new QSpacerItem(5, 5, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum));
+    toolsLayout->addItem(new QSpacerItem(5, 5, QSizePolicy::MinimumExpanding,
+                                         QSizePolicy::Minimum));
     toolsLayout->addWidget(itsInstallButton);
-    itsToolsFrame->hide();
     connect(itsPreview, SIGNAL(status(bool)), SLOT(previewStatus(bool)));
     connect(itsInstallButton, SIGNAL(clicked()), SLOT(install()));
     connect(itsFaceSelector, SIGNAL(valueChanged(int)), itsPreview, SLOT(showFace(int)));
 
-    itsChangeTextAction = new KAction(KIcon("text"), i18n("Change Text..."), actionCollection(), "changeText");
+    itsChangeTextAction=new KAction(KIcon("text"), i18n("Change Text..."), actionCollection(),
+                                    "changeText");
     connect(itsChangeTextAction, SIGNAL(triggered(bool)), SLOT(changeText()));
-    itsChangeTextAction->setEnabled(false);
-    itsPrintAction=KStdAction::print(this, SLOT(print()), actionCollection(), "print");
-    itsPrintAction->setEnabled(false);
 
+    new KToolBarLabelAction(i18n("Display:"), actionCollection(), "displayLabel");
+    itsDisplayTypeAction=new KSelectAction(KIcon("charset"), i18n("Standard preview"),
+                                           actionCollection(), "displayType");
+    connect(itsDisplayTypeAction, SIGNAL(triggered(int)), SLOT(displayType()));
+
+    QStringList items;
+    items.append(i18n("Standard preview"));
+    items.append(i18n("All characters"));
+
+    for(int i=0; i<256;++i)
+        items.append(i18n("Characters %1 to %2", i*256, (i*256)+255));
+    itsDisplayTypeAction->setItems(items);
+    itsDisplayTypeAction->setCurrentItem(0);
     setXMLFile("kfontviewpart.rc");
     setWidget(itsFrame);
+    emit enablePrintAction(false);
+}
+
+CFontViewPart::~CFontViewPart()
+{
+    delete itsProc;
 }
 
 bool CFontViewPart::openUrl(const KUrl &url)
@@ -139,17 +149,14 @@ bool CFontViewPart::openUrl(const KUrl &url)
     if (!url.isValid() || !closeUrl())
         return false;
 
-    if(KFI_KIO_FONTS_PROTOCOL==url.protocol() || url.isLocalFile())
+    if(KFI_KIO_FONTS_PROTOCOL==url.protocol() || KIO::NetAccess::mostLocalUrl(url, itsFrame).isLocalFile())
     {
         m_url=url;
         emit started(0);
         m_file = m_url.path();
         bool ret=openFile();
         if (ret)
-        {
             emit completed();
-            emit setWindowCaption(m_url.prettyUrl());
-        }
         return ret;
     }
     else
@@ -158,134 +165,224 @@ bool CFontViewPart::openUrl(const KUrl &url)
 
 bool CFontViewPart::openFile()
 {
-    bool showFs=false,
-         isFonts=KFI_KIO_FONTS_PROTOCOL==m_url.protocol();
+    // NOTE: Cant do the real open here, as dont seem to be able to use KIO::NetAccess functions
+    // during initial start-up. Bug report 111535 indicates that calling "konqueror <font>" crashes.
+    itsInstallButton->setEnabled(false);
+    QTimer::singleShot(0, this, SLOT(timeout()));
+    return true;
+}
+
+void CFontViewPart::timeout()
+{
+    bool          isFonts=KFI_KIO_FONTS_PROTOCOL==m_url.protocol();
+    KUrl          displayUrl(m_url);
+    QString       name;
+    unsigned long styleInfo=KFI_NO_STYLE_INFO;
 
     if(isFonts)
+    {
+        KIO::UDSEntry udsEntry;
+
         FcInitReinitialize();
 
-    itsPreview->showFont(KUrl(isFonts ? m_url.url() :m_file));
+        if(KIO::NetAccess::stat(m_url, udsEntry, NULL))
+        {
+            name=udsEntry.stringValue(KIO::UDS_NAME);
+            styleInfo=CFcEngine::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
+        }
+        if(!name.isEmpty())
+            displayUrl.setFileName(name);
+    }
 
-    if(!isFonts && itsPreview->engine().getNumIndexes()>1)
+    itsInstallButton->setEnabled(!isFonts && !isInstalled());
+    emit setWindowCaption(displayUrl.prettyUrl());
+    doPreview(isFonts, name, styleInfo);
+}
+
+void CFontViewPart::doPreview(bool isFonts, const QString &name, unsigned long styleInfo, int index)
+{
+    bool showFs=false;
+
+    itsPreview->showFont(isFonts ? m_url : KUrl::fromPath(m_file), name, styleInfo, index);
+
+    if(!isFonts && CFcEngine::instance()->getNumIndexes()>1)
     {
         showFs=true;
-        itsFaceSelector->setRange(1, itsPreview->engine().getNumIndexes(), 1, false);
+        itsFaceSelector->setRange(1, CFcEngine::instance()->getNumIndexes(), 1, false);
+        itsFaceSelector->blockSignals(true);
+        itsFaceSelector->setValue(index);
+        itsFaceSelector->blockSignals(false);
     }
 
-    itsShowInstallButton=false;
     itsFaceLabel->setVisible(showFs);
     itsFaceSelector->setVisible(showFs);
-    itsToolsFrame->hide();
-
-    if(!isFonts)
-    {
-        KUrl          destUrl;
-        KIO::UDSEntry uds;
-
-        //
-        // Not from fonts:/, so try to see if font is already installed...
-        if(Misc::root())
-        {
-            destUrl=QString("fonts:/")+itsPreview->engine().getName(m_url);
-            itsShowInstallButton=KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()) ? false : true;
-        }
-        else
-        {
-            destUrl=QString("fonts:/")+i18n(KFI_KIO_FONTS_SYS)+QChar('/')+itsPreview->engine().getName(m_url);
-            if(KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
-                itsShowInstallButton=false;
-            else
-            {
-                destUrl=QString("fonts:/")+i18n(KFI_KIO_FONTS_USER)+QChar('/')+itsPreview->engine().getName(m_url);
-                itsShowInstallButton=KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()) ? false : true;
-            }
-        }
-    }
-
-    return true;
 }
 
 void CFontViewPart::previewStatus(bool st)
 {
-    itsInstallButton->setVisible(st && itsShowInstallButton);
-    itsToolsFrame->setVisible(!itsInstallButton->isHidden()||!itsFaceSelector->isHidden());
+    bool printable(false);
+
+    if(st)
+        if(KFI_KIO_FONTS_PROTOCOL==m_url.protocol())
+            printable=!Misc::isHidden(m_url);
+#ifdef KFI_PRINT_APP_FONTS
+        {
+            KMimeType::Ptr mime=KMimeType::findByUrl(KUrl::fromPath(m_file), 0, false, true);
+
+            printable=mime->is("application/x-font-ttf") ||
+                      mime->is("application/x-font-otf") ||
+                      mime->is("application/x-font-ttc");
+        }
+#endif
+
     itsChangeTextAction->setEnabled(st);
-    itsPrintAction->setEnabled(st && KFI_KIO_FONTS_PROTOCOL==m_url.protocol());
+    itsExtension->enablePrint(st && printable);
+    emit enablePrintAction(st && printable);
 }
 
 void CFontViewPart::install()
 {
-    int resp=Misc::root() ? KMessageBox::Yes
-                           : KMessageBox::questionYesNoCancel(itsFrame,
-                                                              i18n("Where do you wish to install \"%1\" (%2)?\n"
-                                                                   "\"%3\" - only accessible to you, or\n"
-                                                                   "\"%4\" - accessible to all (requires administrator "
-                                                                   "password)",
-                                                                    itsPreview->engine().getName(m_url),
-                                                                    m_url.fileName(),
-                                                                    i18n(KFI_KIO_FONTS_USER),
-                                                                    i18n(KFI_KIO_FONTS_SYS)),
-                                                              i18n("Install"), KGuiItem(i18n(KFI_KIO_FONTS_USER)),
-                                                              KGuiItem(i18n(KFI_KIO_FONTS_SYS)));
-
-    if(KMessageBox::Cancel!=resp)
+    if(!itsProc || !itsProc->isRunning())
     {
-        KUrl destUrl(getDest(m_url, KMessageBox::No==resp));
-
-        if(KIO::NetAccess::file_copy(m_url, destUrl, itsFrame->parentWidget()))
-        {
-            //
-            // OK file copied, now look for any AFM or PFM file...
-            KUrl::List urls;
-
-            Misc::getAssociatedUrls(m_url, urls);
-
-            if(urls.count())
-            {
-                KUrl::List::Iterator it,
-                                     end=urls.end();
-
-                for(it=urls.begin(); it!=end; ++it)
-                {
-                    destUrl=getDest(*it, KMessageBox::No==resp);
-                    KIO::NetAccess::file_copy(*it, destUrl, itsFrame->parentWidget());
-                }
-            }
-
-            KMessageBox::information(itsFrame, i18n("%1:%2 successfully installed.", m_url.protocol(),
-                                                    m_url.path()), i18n("Success"),
-                                     "FontViewPart_DisplayInstallationSuccess");
-            itsShowInstallButton=false;
-            itsInstallButton->setVisible(itsShowInstallButton);
-        }
+        if(!itsProc)
+            itsProc=new KProcess;
         else
-            KMessageBox::error(itsFrame, i18n("Could not install %1:%2", m_url.protocol(), m_url.path()),
-                               i18n("Error"));
+            itsProc->clearArguments();
+
+        *itsProc << KFI_APP
+                 << "-i"
+                 << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+                << m_url.prettyUrl();
+        itsProc->start(KProcess::NotifyOnExit);
+        connect(itsProc, SIGNAL(processExited(KProcess *)), SLOT(installlStatus(KProcess *)));
+        itsInstallButton->setEnabled(false);
     }
+}
+
+void CFontViewPart::installlStatus(KProcess *)
+{
+    itsInstallButton->setEnabled(!isInstalled());
 }
 
 void CFontViewPart::changeText()
 {
     bool             status;
     QRegExpValidator validator(QRegExp(".*"), 0L);
-    QString          oldStr(itsPreview->engine().getPreviewString()),
-                     newStr(KInputDialog::getText(i18n("Preview String"), i18n("Please enter new string:"),
+    QString          oldStr(CFcEngine::instance()->getPreviewString()),
+                     newStr(KInputDialog::getText(i18n("Preview String"),
+                                                  i18n("Please enter new string:"),
                                                   oldStr, &status, itsFrame, &validator));
 
     if(status && newStr!=oldStr)
     {
-        itsPreview->engine().setPreviewString(newStr);
+        CFcEngine::instance()->setPreviewString(newStr);
+        CFcEngine::instance()->writeConfig(*itsConfig);
         itsPreview->showFont();
     }
 }
 
 void CFontViewPart::print()
 {
-    QStringList items;
+    if(!itsProc || !itsProc->isRunning())
+    {
+        if(!itsProc)
+            itsProc=new KProcess;
+        else
+            itsProc->clearArguments();
 
-    items.append(itsPreview->engine().getName(m_url));
+        if(KFI_KIO_FONTS_PROTOCOL==m_url.protocol())
+        {
+            Misc::TFont info;
 
-    Print::printItems(items, 0, itsFrame->parentWidget(), itsPreview->engine());
+            CFcEngine::instance()->getInfo(m_url, 0, info);
+
+            *itsProc << KFI_APP
+                     << "-P"
+                     << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+                     << "0"
+                     << info.family.toUtf8()
+                     << QString().setNum(info.styleInfo);
+        }
+#ifdef KFI_PRINT_APP_FONTS
+        else
+            *itsProc << KFI_APP
+                     << "-P"
+                     << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+                     << "0"
+                     << m_file
+                     << QString().setNum(KFI_NO_STYLE_INFO);
+#endif
+
+        if(itsProc)
+            itsProc->start(KProcess::DontCare);
+    }
+}
+
+void CFontViewPart::displayType()
+{
+    switch(itsDisplayTypeAction->currentItem())
+    {
+        case 0:
+            itsPreview->setUnicodeStart(CFcEngine::STD_PREVIEW);
+            break;
+        case 1:
+            itsPreview->setUnicodeStart(CFcEngine::ALL_CHARS);
+            break;
+        default:
+            itsPreview->setUnicodeStart((itsDisplayTypeAction->currentItem()-2)*256);
+    }
+
+    itsPreview->showFont();
+    itsChangeTextAction->setEnabled(0==itsDisplayTypeAction->currentItem());
+}
+
+bool CFontViewPart::isInstalled()
+{
+    bool installed=false;
+
+    if(KFI_KIO_FONTS_PROTOCOL==m_url.protocol())
+        installed=true;
+    else
+    {
+        KUrl destUrl;
+
+        if(Misc::root())
+        {
+            destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+CFcEngine::instance()->getName(m_url);
+            installed=KIO::NetAccess::exists(destUrl, true, itsFrame->parentWidget());
+        }
+        else
+        {
+            destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+i18n(KFI_KIO_FONTS_SYS)+QChar('/')+
+                    CFcEngine::instance()->getName(m_url);
+            if(KIO::NetAccess::exists(destUrl, true, itsFrame->parentWidget()))
+                installed=true;
+            else
+            {
+                destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+i18n(KFI_KIO_FONTS_USER)+QChar('/')+
+                        CFcEngine::instance()->getName(m_url);
+                installed=KIO::NetAccess::exists(destUrl, true, itsFrame->parentWidget());
+            }
+        }
+    }
+
+    return installed;
+}
+
+BrowserExtension::BrowserExtension(CFontViewPart *parent)
+                : KParts::BrowserExtension(parent)
+{
+    setURLDropHandlingEnabled(true);
+}
+
+void BrowserExtension::enablePrint(bool enable)
+{
+    emit enableAction("print", enable);
+}
+
+void BrowserExtension::print()
+{
+    static_cast<CFontViewPart*>(parent())->print();
 }
 
 }

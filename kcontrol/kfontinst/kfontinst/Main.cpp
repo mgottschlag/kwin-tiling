@@ -1,284 +1,439 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-// File Name     : Main.cpp
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 20/03/2003
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003, 2004
-////////////////////////////////////////////////////////////////////////////////
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include "Misc.h"
-#include "FontEngine.h"
-#include "Fontmap.h"
-#include "XConfig.h"
+#include "FontInfo.h"
+#include "Installer.h"
+#include "FcEngine.h"
+#include "KfiPrint.h"
 #include "kxftconfig.h"
 #include <fontconfig/fontconfig.h>
 #include <QFile>
+#include <QList>
+#include <QTextStream>
+#include <ksavefile.h>
+#include <kglobal.h>
+#include <klocale.h>
+#include <kapplication.h>
+#include <kcmdlineargs.h>
+#include <kaboutdata.h>
+#include <kiconloader.h>
 #include <stdio.h>
-
-//
-// Bug#99335 Solaris 2.6 does not have getopt.h :-(
-#ifdef HAVE_GETOPT_H
-#include <getopt.h>
-#else
 #include <unistd.h>
-#endif
+#include <stdlib.h>
 #include <iostream>
 
-#define KFI_XF86CFG "XF86Config"
-#define KFI_XORGCFG "xorg.conf"
+#include <X11/Xlib.h>
+#include <fixx11h.h>
 
-static const char * getFile(const char *entry, const char **possibilities)
+#define KFI_ICON    "fonts"
+#define KFI_CAPTION I18N_NOOP("Font Installer")
+
+//
+// *Very* hacky way to get some KDE dialogs to appear to be transient
+// for 'xid'
+//
+// Create's a QWidget with size 0/0 and no border, makes this transient
+// for xid, and all other widgets can use this as their parent...
+static QWidget * createParent(int xid)
 {
-    if(KFI::Misc::fExists(entry))
-        return entry;
-    else
+    if(!xid)
+        return NULL;
+
+    QWidget *parent=new QWidget;
+
+    parent->resize(0, 0);
+    parent->setParent(NULL, Qt::FramelessWindowHint);
+    parent->show();
+
+    XWindowAttributes attr;
+    int               rx, ry;
+    Window            junkwin;
+
+    XSetTransientForHint(QX11Info::display(), parent->winId(), xid);
+    if(XGetWindowAttributes(QX11Info::display(), xid, &attr))
     {
-        int f;
+        XTranslateCoordinates(QX11Info::display(), xid, attr.root,
+                              -attr.border_width, -16,
+                              &rx, &ry, &junkwin);
 
-        for(f=0; possibilities[f]; ++f)
-            if(KFI::Misc::fExists(possibilities[f]))
-                break;
-
-        return possibilities[f];
-    }
-}
-
-static const char * constXConfigFiles[]=
-{   
-    "/etc/X11/"KFI_XORGCFG,
-    "/etc/X11/"KFI_XORGCFG"-4",
-    "/etc/"KFI_XORGCFG,
-    "/usr/X11R6/etc/X11/"KFI_XORGCFG,
-    "/usr/X11R6/etc/X11/"KFI_XORGCFG"-4",
-    "/usr/X11R6/lib/X11/"KFI_XORGCFG,
-    "/usr/X11R6/lib/X11/"KFI_XORGCFG"-4",
-
-    "/etc/X11/"KFI_XF86CFG"-4",
-    "/etc/X11/"KFI_XF86CFG,
-    "/etc/"KFI_XF86CFG"-4",
-    "/etc/"KFI_XF86CFG,
-    "/usr/X11R6/etc/X11/"KFI_XF86CFG"-4",
-    "/usr/X11R6/etc/X11/"KFI_XF86CFG,
-    "/usr/X11R6/lib/X11/"KFI_XF86CFG"-4",
-    "/usr/X11R6/lib/X11/"KFI_XF86CFG,
-
-    NULL
-};  
-
-static const char * constXfsConfigFiles[]=
-{
-    "/etc/X11/fs/config",
-    "/usr/openwin/lib/X11/fonts/fontserver.cfg",
-    NULL
-};
-
-KFI::CXConfig * getXCfg(bool root)
-{
-    if(root)
-    {
-        //
-        // Try to determine location for X and xfs config files...
-        // ...note on some systems (Solaris and HP-UX) only the xfs file will be found
-        bool          xfs=false;
-        KFI::CXConfig *xcfg=NULL;
-        QString       xConfigFile=getFile(QFile::encodeName(constXConfigFiles[0]), constXConfigFiles),
-                      xfsConfigFile=getFile(QFile::encodeName(constXfsConfigFiles[0]), constXfsConfigFiles);
-            
-        // If found xfs, but not X - then assume that xfs is being used...
-        if(!xfsConfigFile.isEmpty() && xConfigFile.isEmpty())
-            xfs=true;
-        else if(!xConfigFile.isEmpty()) // Read xConfig file to determine which one...
-        {
-            xcfg=new KFI::CXConfig(KFI::CXConfig::X11, xConfigFile);
-
-            if(!xfsConfigFile.isEmpty() && xcfg->xfsInPath())
-            {
-                delete xcfg;
-		xcfg=0;
-                xfs=true;
-            }
-        }
-
-        // OK, if still set to X11 config, but this mentions fontconfig FPE, then delete - as we're not interested
-        // anymore...
-        if(xcfg && xcfg->fcInPath()) 
-	{
-            delete xcfg;
-	    xcfg = 0;
-	}
-
-        return xfs ? new KFI::CXConfig(KFI::CXConfig::XFS, xfsConfigFile) : xcfg;
+        rx=(rx+(attr.width/2));
+        if(rx<0)
+            rx=0;
+        ry=(ry+(attr.height/2));
+        if(ry<0)
+            ry=0;
+        parent->move(rx, ry);
     }
 
-    return NULL;
+    return parent;
 }
 
 static void usage(char *app)
 {
-    std::cerr << "Usage: " << app << " [OPTIONS]... [FOLDER]..." << std::endl
+    std::cerr << "Usage: " << app << " [OPTIONS]..." << std::endl
               << std::endl
               << "  Helper application for KDE's fonts:/ ioslave." << std::endl
+              << "  (Please note this application is not intended to be useful by itself)."
+                 << std::endl
               << std::endl
-#ifdef HAVE_GETOPT_H
-              << "  -x, --configure_x        Configure FOLDER for regular x - i.e." << std::endl
-              << "                           create fonts.dir, fonts.scale and encodngs.dir" << std::endl
+              << "    -x <folder>                                     Configure folder for regular x - i.e." << std::endl
+              << "                                                    create fonts.dir and fonts.scale" << std::endl
               << std::endl
-              << "  -g, --configure_gs       Create Fontmap file. If run as root, then " << std::endl
-              << "                           no parameter is required as all fonts are " << std::endl
-              << "                           configured, and Fontmap placed in /etc/fonts" << std::endl
-              << "                           For non-root, fonts located in FOLDER are" << std::endl
-              << "                           configured, and Fontmap placed there." << std::endl
-              << std::endl
-              << "  -f, --add_to_fc_cfg      Add FOLDER to fontconfig config files." << std::endl
-              << std::endl
-              << "  -a, --add_to_x_cfg       Add FOLDER to X config files only when run as root.," << std::endl
-              << std::endl
-              << "  -r, --refresh_x          Refresh X." << std::endl
-              << std::endl
-              << "  -s, --refresh_xfs        Refresh Xfs." << std::endl
-#else
-              << "  -x                       Configure FOLDER for regular x - i.e." << std::endl
-              << "                           create fonts.dir, fonts.scale and encodngs.dir" << std::endl
-              << std::endl
-              << "  -g                       Create Fontmap file. If run as root, then " << std::endl
-              << "                           no parameter is required as all fonts are " << std::endl
-              << "                           configured, and Fontmap placed in /etc/fonts" << std::endl
-              << "                           For non-root, fonts located in FOLDER are" << std::endl
-              << "                           configured, and Fontmap placed there." << std::endl
-              << std::endl
-              << "  -f                       Add FOLDER to fontconfig config files." << std::endl
-              << std::endl
-              << "  -a                       Add FOLDER to X config files only when run as root.," << std::endl
-              << std::endl
-              << "  -r                       Refresh X." << std::endl
-              << std::endl
-              << "  -s                       Refresh Xfs." << std::endl
-#endif
+              << "    -f <folder>                                     Add folder to fontconfig config files."
+                 << std::endl
               << std::endl
               << std::endl
-              << "  (C) Craig Drummond, 2003, 2004." << std::endl
+              << "  The following options *must* be used by themselves, and not combined."
+                 << std::endl
+              << std::endl
+              << std::endl
+              << "    Font installtion:" << std::endl
+              << std::endl
+              << "      -i <x id> <font file> [<font file...>]        Install font files, if non-root will be " << std::endl
+              << "                                                    prompted for destination." << std::endl
+              << std::endl
+              << std::endl
+              << "    Disabled font handling:" << std::endl
+              << std::endl
+              << "      -h <font> [<index>] <files..>                 Disable the selected font, and hide its files."
+                 << std::endl
+              << "      -H <family> <style info> [<index>] <files..>" << std::endl
+              << std::endl
+              << "      -e <font>                                     Enable the selected font, and unhide its files."
+                 << std::endl
+              << "      -E <family> <style info>" << std::endl
+              << std::endl
+              << "      -d <font>                                     Remove font from list of disabled fonts, and"
+                 << std::endl
+              << "                                                    delete any associated files." << std::endl
+              << "      -D <family> <style info>" << std::endl
+              << std::endl
+              << std::endl
+              << "    Font Printing:" << std::endl
+              << std::endl
+              << "       -P <x id> <size> <family> <style info> [...] Print fonts" << std::endl
+              << "       -p <x id> <size> <xml file> <y/n>            Print fonts, *removes* xml file if last param==y"
+                 << std::endl
+              << std::endl
+              << std::endl
+              << "    <x id>       is a hexadecimal number, starting with 0x, that is the X window ID of " << std::endl
+              << "                 the window that any dialogs should be a child of." << std::endl
+              << "    <style info> is a 24-bit decimal number composed as: <weight><width><slant>" << std::endl
+              << std::endl
+              << std::endl
+              << "  (C) Craig Drummond, 2003-2006" << std::endl
               << std::endl;
 
     exit(-1);
 }
 
-void refresh(bool refreshX, bool refreshXfs, bool root)
+static int installFonts(int argc, char **argv)
 {
-    if(refreshX)
-        KFI::CXConfig::refreshPaths(false);
-    if(refreshXfs && root)
-        KFI::CXConfig::refreshPaths(true);
+    if(argc>3 && '0'==argv[2][0] && 'x'==argv[2][1])
+    {
+        KAboutData aboutData(KFI_NAME, KFI_CAPTION,
+                            "1.0", I18N_NOOP("fonts:/ helper" ),
+                            KAboutData::License_GPL,
+                            "(C) Craig Drummond, 2003-2006");
+
+        char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)KFI_ICON};
+
+        //KApplication::disableAutoDcopRegistration();
+        KCmdLineArgs::init(3, dummyArgv, &aboutData);
+
+        KApplication app;
+        QStringList  fonts;
+        int          embedId(strtol(argv[2], NULL, 16));
+
+        KLocale::setMainCatalog(KFI_CATALOGUE);
+        KGlobal::iconLoader()->addAppDir(KFI_NAME);
+
+        for(int i=3; i<argc; ++i)
+            fonts.append(argv[i]);
+
+        KFI::CInstaller inst(argv[0], embedId, createParent(embedId));
+
+        return KFI::CInstaller::INSTALLING==inst.install(fonts) && 0==app.exec() ? 0 : -1;
+    }
+    return -1;
+}
+
+KFI::CFontInfo::TFont getFont(char **argv, int &optind, bool style)
+{
+    if(style)
+        return KFI::CFontInfo::TFont(QString::fromUtf8(argv[optind]), atoi(argv[++optind]));
+    else
+    {
+        QString font(QString::fromUtf8(argv[optind]));
+        int     commaPos=font.find(',');
+
+        return KFI::CFontInfo::TFont(-1==commaPos ? font : font.left(commaPos),
+                                     KFI::CFcEngine::createStyleVal(font));
+    }
+}
+
+static int disableFont(int argc, char **argv, int optind, bool style)
+{
+    if((!style && argc-optind>=2) || (style && argc-optind>=3))
+    {
+        KInstance           instance(KFI_NAME);
+        KFI::CDisabledFonts inf;
+
+        if(inf.modifiable())
+        {
+            KFI::CFontInfo::TFont font(getFont(argv, optind, style));
+            int                   index=-1;
+
+            for(int i=0; i<(argc-optind)-1; ++i)
+                if(argv[optind+1+i][0]!='/')
+                    index=atoi(argv[optind+1+i]);
+                else
+                    font.files.append(KFI::CFontInfo::TFile(QString::fromUtf8(argv[optind+1+i]),
+                                                            index));
+
+            if(inf.disable(font))
+            {
+                inf.save();
+                return 0;
+            }
+        }
+    }
+    return -1;
+}
+
+static int enableFont(int argc, char **argv, int optind, bool style)
+{
+    if((!style && 1==argc-optind) || (style && 2==argc-optind))
+    {
+        KInstance             instance(KFI_NAME);
+        KFI::CDisabledFonts   inf;
+        KFI::CFontInfo::TFont font(getFont(argv, optind, style));
+
+        if(inf.modifiable() && inf.enable(font))
+        {
+            inf.save();
+            return 0;
+        }
+    }
+    return -1;
+}
+
+static int deleteDisabledFont(int argc, char **argv, int optind, bool style)
+{
+    if((!style && 1==argc-optind) || (style && 2==argc-optind))
+    {
+        KInstance                           instance(KFI_NAME);
+        KFI::CFontInfo::TFont               font(getFont(argv, optind, style));
+        KFI::CDisabledFonts                 inf;
+        KFI::CFontInfo::TFontList::Iterator it=inf.items().find(font);
+
+        if(inf.modifiable() && inf.items().end()!=it)
+        {
+            KFI::CFontInfo::TFileList::ConstIterator fIt((*it).files.begin()),
+                                                     fEnd((*it).files.end());
+
+            for(; fIt!=fEnd; ++fIt)
+                if(::unlink(QFile::encodeName((*fIt).path).data()))
+                    break;
+
+            if(fIt==fEnd)
+            {
+                inf.remove(it);
+                inf.save();
+                return 0;
+            }
+        }
+    }
+    return -1;
+}
+
+static int printFonts(int argc, char **argv, bool xml)
+{
+    if(argc>3 && '0'==argv[2][0] && 'x'==argv[2][1] &&
+       ( (!xml && argc>=6 && 0==(argc%2)) ||
+         (xml && '/'==argv[4][0] && ('y'==argv[5][0] || 'n'==argv[5][0]))) ) 
+    {
+        QList<KFI::Misc::TFont> fonts;
+        int                     size(atoi(argv[3]));
+
+        if(size>-1 && size<256)
+        {
+            if(xml)
+            {
+                KInstance                                 instance(KFI_NAME);
+                KFI::CFontGroups                          grps(argv[4], true, false);
+                KFI::CFontInfo::TGroupList::ConstIterator it(grps.items().begin()),
+                                                          end(grps.items().end());
+
+                for(; it!=end; ++it)
+                    if((*it).name==KFI_PRINT_GROUP)
+                    {
+                        KFI::CFontInfo::TFontList::ConstIterator fit((*it).fonts.begin()),
+                                                                 fend((*it).fonts.end());
+
+                        for(; fit!=fend; ++fit)
+                            fonts.append(KFI::Misc::TFont((*fit).family, (*fit).styleInfo));
+                        break;
+                    }
+
+                if('y'==argv[5][0])
+                    ::unlink(argv[4]);
+            }
+            else
+                for(int i=4; i<argc; i+=2)
+                    fonts.append(KFI::Misc::TFont(QString::fromUtf8(argv[i]),
+                                                  atoi(argv[i+1])));
+
+            if(fonts.count())
+            {
+                KAboutData aboutData(KFI_NAME, KFI_CAPTION,
+                                    "1.0", I18N_NOOP("fonts:/ helper" ),
+                                    KAboutData::License_GPL,
+                                    "(C) Craig Drummond, 2003-2006");
+
+                char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)KFI_ICON};
+
+//                KApplication::disableAutoDcopRegistration();
+                KCmdLineArgs::init(3, dummyArgv, &aboutData);
+
+                KApplication app;
+
+                KLocale::setMainCatalog(KFI_CATALOGUE);
+                KFI::Print::printItems(fonts, size, createParent(strtol(argv[2], NULL, 16)));
+
+                return 0;
+            }
+        }
+    }
+    return -1;
+}
+
+//
+// mkfontscale doesnt ingore hidden files :-(
+void removeHiddenEntries(const QString &file)
+{
+    QStringList lines;
+    QFile       f(file);
+
+    if(f.open(QIODevice::ReadOnly))
+    {
+        QTextStream stream(&f);
+        QString     line;
+
+        int lineCount=stream.readLine().toInt(); // Ignore line count...
+
+        while(!stream.atEnd())
+        {
+            line=stream.readLine();
+            if(line.length() && '.'!=line[0])
+                lines.append(line);
+        }
+        f.close();
+
+        if(lineCount!=lines.count())
+        {
+            KSaveFile out(file);
+
+            if(out.open())
+            {
+                QTextStream                stream(&out);
+                QStringList::ConstIterator it(lines.begin()),
+                                           end(lines.end());
+
+                stream << lines.count() << endl;
+                for(; it!=end; ++it)
+                    stream << (*it).toLocal8Bit() << endl;
+                out.finalize();
+            }
+        }
+    }
+}
+
+static QString removeQuotes(const QString &item)
+{
+    unsigned int len=item.length();
+
+    return (item[0]==QChar('\'') || item[0]==QChar('\"')) &&
+           (item[len-1]==QChar('\'') || item[len-1]==QChar('\"'))
+        ? item.mid(1, len-2)
+        : item;
 }
 
 int main(int argc, char *argv[])
 {
-#ifdef HAVE_GETOPT_H
-    static struct option options[]=
-    {
-        { "configure_x",   0, 0, 'x' },
-        { "configure_gs",  0, 0, 'g' },
-        { "add_to_fc_cfg", 0, 0, 'f' },
-        { "add_to_x_cfg",  0, 0, 'a' },
-        { "refresh_x",     0, 0, 'r' },
-        { "refresh_xfs",   0, 0, 's' },
-        { 0,               0, 0, 0   }
-    };
-#endif
-
     int  c=0,
          rv=0;
     bool doX=false,
-         doGs=false,
-         addToX=false,
-         addToFc=false,
-         refreshX=false,
-         refreshXfs=false,
-         root=KFI::Misc::root();
+         addToFc=false;
 
-#ifdef HAVE_GETOPT_H
-    int optIndex;
-    while(-1!=(c=getopt_long(argc, argv, "xgfars", options, &optIndex)))
-#else
-    while(-1!=(c=getopt(argc, argv, "xgfars")))
-#endif
+    while(-1!=(c=getopt(argc, argv, "ixfhedHEDPp")))
         switch(c)
         {
             case 'x':
                 doX=true;
                 break;
-            case 'g':
-                doGs=true;
-                break;
             case 'f':
                 addToFc=true;
                 break;
-            case 'a':
-                addToX=true;
-                break;
-            case 'r':
-                refreshX=true;
-                break;
-            case 's':
-                refreshXfs=true;
-                break;
+            case 'i':
+                return installFonts(argc, argv);
+            case 'h':
+                return disableFont(argc, argv, optind, false);
+            case 'H':
+                return disableFont(argc, argv, optind, true);
+            case 'e':
+                return enableFont(argc, argv, optind, false);
+            case 'E':
+                return enableFont(argc, argv, optind, true);
+            case 'd':
+                return deleteDisabledFont(argc, argv, optind, false);
+            case 'D':
+                return deleteDisabledFont(argc, argv, optind, true);
+            case 'P':
+                return printFonts(argc, argv, false);
+            case 'p':
+                return printFonts(argc, argv, true);
             case '?':
                 usage(argv[0]);
                 break;
         }
 
-    int  left=argc-optind;
-    bool folderRequired=doX || addToX || addToFc || (!root && doGs);
+    int left=argc-optind;
 
-    if (left>1 || (0==left && folderRequired) || (!doX && !doGs && !addToX && !addToFc))
+    if ((1!=left || (!doX && !addToFc)))
         usage(argv[0]);
     else
     {
-        QString folder;
+        QString item(KFI::Misc::dirSyntax(removeQuotes(argv[optind])));
 
-        if(folderRequired)
+        if(!KFI::Misc::dExists(item))
         {
-            folder=argv[optind];
-            unsigned int len=folder.length();
-
-            // Remove quotes...
-            if( (folder[0]==QChar('\'') || folder[0]==QChar('\"')) &&
-                (folder[len-1]==QChar('\'') || folder[len-1]==QChar('\"')))
-                folder=folder.mid(1, len-2);
-            folder=KFI::Misc::dirSyntax(folder);
-        }
-
-        if(folderRequired && !KFI::Misc::dExists(folder))
-        {
-            std::cerr << "ERROR: " << QFile::encodeName(folder).constData() << " does not exist!" << std::endl;
-            rv=-2;
+            std::cerr << "ERROR: " << QFile::encodeName(item).data() << " does not exist!"
+                      << std::endl;
+            rv=-1;
         }
         else
-        {
-            if(!folder.isEmpty())
+            if(!item.isEmpty())
             {
                 if(0==rv && addToFc)
                 {
@@ -289,49 +444,29 @@ int main(int argc, char *argv[])
                     bool      found=false;
 
                     while((dir=FcStrListNext(list)))
-                        if(0==KFI::Misc::dirSyntax((const char *)dir).indexOf(folder))
+                        if(0==KFI::Misc::dirSyntax((const char *)dir).indexOf(item))
                             found=true;
 
                     if(!found)
                     {
-                        KXftConfig *xft=new KXftConfig(KXftConfig::Dirs, root);
+                        KXftConfig xft(KXftConfig::Dirs, KFI::Misc::root());
 
-                        xft->addDir(folder);
-                        rv=xft->apply() ? 0 : -3;
-                        delete xft;
+                        xft.addDir(item);
+                        rv=xft.apply() ? 0 : -2;
                    }
                 }
 
-                if(0==rv && addToX && root)
+                if(0==rv && doX)
                 {
-                    KFI::CXConfig *x=NULL;
-
-                    if((x=getXCfg(true)))
-                    {
-                        x->addPath(folder);
-                        rv=x->writeConfig() ? 0 : -4;
-                        delete x;
-                    }
-                    else
-                        rv=-5;
+                    //
+                    // On systems without mkfontscale, the following will fail, so cant base
+                    // return value upon that - hence only check return value of mkfontdir
+                    KFI::Misc::doCmd("mkfontscale", QFile::encodeName(item));
+                    removeHiddenEntries(item+"fonts.scale");
+                    rv=KFI::Misc::doCmd("mkfontdir", QFile::encodeName(item)) ? 0 : -3;
+                    removeHiddenEntries(item+"fonts.dir");
                 }
             }
-
-            if(0==rv && (doX || doGs))
-            {
-                KFI::CFontEngine fe;
-
-                if(0==rv && doX)
-                    rv=KFI::CXConfig::configureDir(folder, fe) ? 0 : -5;
-
-                refresh(refreshX, refreshXfs, root);
-
-                if(0==rv && doGs)
-                    rv=KFI::Fontmap::create(root ? QString() : folder, fe) ? 0 : -6;
-            }
-            else if(0==rv)
-                refresh(refreshX, refreshXfs, root);
-        }
     }
 
     return rv;

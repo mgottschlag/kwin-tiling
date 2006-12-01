@@ -1,36 +1,18 @@
-configure_file (config-kfontinst.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kfontinst.h )
-
 include_directories(
-	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ 
-	${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/
-	 )
+    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/
+    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/
+    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/kcmfontinst/
+    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/
+    )
 
+set(kfontinst_bin_SRCS ${libkxftconfig_SRCS} ${libkfontinstupdatedialog_SRCS}
+    Main.cpp Installer.cpp KfiPrint.cpp )
 
-########### next target ###############
+kde4_automoc(${kfontinst_bin_SRCS})
 
-if (HAVE_X11_FONTS_FONTENC_H)
-   set(kfontinst_bin_SRCS ${libkxftconfig_SRCS}
-      CompressedFile.cpp 
-      Main.cpp 
-      Encodings.cpp 
-      FontEngine.cpp 
-      Fontmap.cpp 
-      GetPid.c 
-      XConfig.cpp)
+kde4_add_executable(kfontinst_bin ${kfontinst_bin_SRCS})
+set_target_properties(kfontinst_bin PROPERTIES OUTPUT_NAME kfontinst)
 
-   kde4_automoc(${kfontinst_bin_SRCS})
+target_link_libraries(kfontinst_bin  ${KDE4_KIO_LIBS} ${KDE4_KDEPRINT_LIBS} kfontinst )
 
-   kde4_add_executable(kfontinst_bin ${kfontinst_bin_SRCS})
-   set_target_properties(kfontinst_bin PROPERTIES OUTPUT_NAME kfontinst)
-
-   target_link_libraries(kfontinst_bin  ${KDE4_KIO_LIBS} kfontinst fontenc )
-
-   install(TARGETS kfontinst_bin DESTINATION ${BIN_INSTALL_DIR})
-
-endif (HAVE_X11_FONTS_FONTENC_H)
-
-
-
-########### install files ###############
-
-
+install(TARGETS kfontinst_bin DESTINATION ${BIN_INSTALL_DIR} )

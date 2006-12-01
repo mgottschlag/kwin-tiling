@@ -1,37 +1,31 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name    : KFI::CFontPreview
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 04/11/2001
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003, 2004
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include "FontPreview.h"
+#include "FcEngine.h"
 #include <kapplication.h>
 #include <klocale.h>
 #include <QPainter>
 #include <QImage>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QPaintEvent>
 #include <stdlib.h>
@@ -43,15 +37,22 @@ CFontPreview::CFontPreview(QWidget *parent)
             : QWidget(parent),
               itsCurrentFace(1),
               itsLastWidth(0),
-              itsLastHeight(0)
+              itsLastHeight(0),
+              itsUnicodeStart(-1),
+              itsStyleInfo(KFI_NO_STYLE_INFO)
 {
-    itsBgndCol = palette().color( backgroundRole() );
+    QPalette p(palette());
+    p.setColor(backgroundRole(), CFcEngine::bgndCol());
+    setPalette(p);
 }
 
-void CFontPreview::showFont(const KUrl &url)
+void CFontPreview::showFont(const KUrl &url, const QString &name, unsigned long styleInfo,
+                            int face)
 {
+    itsFontName=name;
     itsCurrentUrl=url;
-    showFace(1);
+    itsStyleInfo=styleInfo;
+    showFace(face);
 }
 
 void CFontPreview::showFace(int face)
@@ -65,13 +66,11 @@ void CFontPreview::showFont()
     itsLastWidth=width();
     itsLastHeight=height();
 
-    QPalette pal = palette();
-
     if(!itsCurrentUrl.isEmpty() &&
-       itsEngine.draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1, false))
+       CFcEngine::instance()->draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap,
+                                   itsCurrentFace-1, false, itsUnicodeStart, itsFontName,
+                                   itsStyleInfo))
     {
-        pal.setColor(backgroundRole(), Qt::white);
-        setPalette(pal);
         update();
         emit status(true);
     }
@@ -79,8 +78,6 @@ void CFontPreview::showFont()
     {
         QPixmap nullPix;
 
-        pal.setColor(backgroundRole(), itsBgndCol);
-        setPalette(pal);
         itsPixmap=nullPix;
         update();
         emit status(false);
@@ -91,12 +88,8 @@ void CFontPreview::paintEvent(QPaintEvent *)
 {
     QPainter paint(this);
 
-    if(itsPixmap.isNull())
-    {
-        paint.setPen(kapp->palette().active().text());
-        paint.drawText(rect(), Qt::AlignCenter, i18n(" No preview available"));
-    }
-    else
+    paint.fillRect(rect(), CFcEngine::bgndCol());
+    if(!itsPixmap.isNull())
     {
         static const int constStepSize=16;
 

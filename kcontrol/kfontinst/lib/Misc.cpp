@@ -1,65 +1,40 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-// Namespace     : KFI::Misc
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 01/05/2001
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003, 2004
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include "Misc.h"
 #include <QFile>
-//Added by qt3to4:
 #include <QByteArray>
 #include <kprocess.h> 
 #include <kstandarddirs.h>
 #include <kde_file.h>
 #include <kio/netaccess.h>
 #include <unistd.h>
+#include <ctype.h>
 
 namespace KFI
 {
 
 namespace Misc
 {
-
-QString linkedTo(const QString &i)
-{
-    QString d;
-
-    if(isLink(i))
-    {
-        char buffer[1000];
-        int  n=readlink(QFile::encodeName(i), buffer, 1000);
-
-        if(n!=-1)
-        {
-            buffer[n]='\0';
-            d=buffer;
-        }
-    }
-
-    return d;
-}
 
 QString dirSyntax(const QString &d)
 {
@@ -69,7 +44,7 @@ QString dirSyntax(const QString &d)
 
         ds.replace("//", "/");
 
-        int slashPos=ds.lastIndexOf('/');
+        int slashPos(ds.lastIndexOf('/'));
 
         if(slashPos!=(((int)ds.length())-1))
             ds.append('/');
@@ -88,7 +63,7 @@ QString xDirSyntax(const QString &d)
 
         ds.replace("//", "/");
 
-        int slashPos=ds.lastIndexOf('/');
+        int slashPos(ds.lastIndexOf('/'));
  
         if(slashPos==(((int)ds.length())-1))
             ds.remove(slashPos, 1);
@@ -102,7 +77,7 @@ QString getDir(const QString &f)
 {
     QString d(f);
 
-    int slashPos=d.lastIndexOf('/');
+    int slashPos(d.lastIndexOf('/'));
  
     if(slashPos!=-1)
         d.remove(slashPos+1, d.length());
@@ -126,8 +101,8 @@ bool createDir(const QString &dir)
 {
     //
     // Clear any umask before dir is created
-    mode_t oldMask=umask(0000);
-    bool   status=KStandardDirs::makeDir(dir, DIR_PERMS);
+    mode_t oldMask(umask(0000));
+    bool   status(KStandardDirs::makeDir(dir, DIR_PERMS));
     // Reset umask
     ::umask(oldMask);
     return status;
@@ -154,7 +129,7 @@ bool doCmd(const QString &cmd, const QString &p1, const QString &p2, const QStri
 QString changeExt(const QString &f, const QString &newExt)
 {
     QString newStr(f);
-    int     dotPos=newStr.lastIndexOf('.');
+    int     dotPos(newStr.lastIndexOf('.'));
 
     if(-1==dotPos)
         newStr+=QChar('.')+newExt;
@@ -183,40 +158,55 @@ void createBackup(const QString &f)
 //
 void getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget)
 {
-    const char *afm[]={"afm", "AFM", "Afm", "AFm", "AfM", "aFM", "aFm", "afM", NULL},
-               *pfm[]={"pfm", "PFM", "Pfm", "PFm", "PfM", "pFM", "pFm", "pfM", NULL};
-    bool       gotAfm=false,
-               localFile=url.isLocalFile();
-    int        e;
+    QString ext(url.path());
+    int     dotPos(ext.lastIndexOf('.'));
+    bool    check(false);
 
-    for(e=0; afm[e]; ++e)
+    if(-1==dotPos) // Hmm, no extension - check anyway...
+        check=true;
+    else           // Cool, got an extension - see if its a Type1 font...
     {
-        KUrl statUrl(url);
-        KIO::UDSEntry uds;
-
-        statUrl.setPath(changeExt(url.path(), afm[e]));
-
-        if(localFile ? fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
-        {
-            list.append(statUrl);
-            gotAfm=true;
-            break;
-        }
+        ext=ext.mid(dotPos+1);
+        check=0==ext.compare("pfa", Qt::CaseInsensitive) || 0==ext.compare("pfb", Qt::CaseInsensitive);
     }
 
-    if(afmAndPfm || !gotAfm)
-        for(e=0; pfm[e]; ++e)
+    if(check)
+    {
+        const char *afm[]={"afm", "AFM", "Afm", "AFm", "AfM", "aFM", "aFm", "afM", NULL},
+                   *pfm[]={"pfm", "PFM", "Pfm", "PFm", "PfM", "pFM", "pFm", "pfM", NULL};
+        bool       gotAfm(false),
+                   localFile(url.isLocalFile());
+        int        e;
+
+        for(e=0; afm[e]; ++e)
         {
-            KUrl          statUrl(url);
+            KUrl statUrl(url);
             KIO::UDSEntry uds;
 
-            statUrl.setPath(changeExt(url.path(), pfm[e]));
+            statUrl.setPath(changeExt(url.path(), afm[e]));
+
             if(localFile ? fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
             {
                 list.append(statUrl);
+                gotAfm=true;
                 break;
             }
         }
+
+        if(afmAndPfm || !gotAfm)
+            for(e=0; pfm[e]; ++e)
+            {
+                KUrl          statUrl(url);
+                KIO::UDSEntry uds;
+
+                statUrl.setPath(changeExt(url.path(), pfm[e]));
+                if(localFile ? fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
+                {
+                    list.append(statUrl);
+                    break;
+                }
+            }
+    }
 }
 
 time_t getTimeStamp(const QString &item)
@@ -230,11 +220,85 @@ time_t getTimeStamp(const QString &item)
 bool check(const QString &path, unsigned int fmt, bool checkW)
 { 
     KDE_struct_stat info;
-    QByteArray        pathC(QFile::encodeName(path));
+    QByteArray      pathC(QFile::encodeName(path));
 
     return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt && (!checkW || 0==::access(pathC, W_OK));
 }
 
+QString getFolder(const QString &defaultDir, const QString &root, QStringList &dirs)
+{
+    if(dirs.contains(defaultDir))
+        return defaultDir;
+    else
+    {
+        QStringList::Iterator it,
+                              end=dirs.end();
+        bool                  found=false;
+
+        for(it=dirs.begin(); it!=end && !found; ++it)
+            if(0==(*it).indexOf(root))
+                return *it;
+    }
+
+    return QString();
 }
 
+bool checkExt(const QString &fname, const QString &ext)
+{
+    QString extension('.'+ext);
+
+    return fname.length()>extension.length()
+            ? 0==fname.mid(fname.length()-extension.length()).compare(extension, Qt::CaseInsensitive)
+            : false;
 }
+
+bool isMetrics(const QString &str)
+{
+    return checkExt(str, "afm") || checkExt(str, "pfm");
+}
+
+int getIntQueryVal(const KUrl &url, const char *key, int defVal)
+{
+    QString item(url.queryItem(key));
+    int     val(defVal);
+
+    if(!item.isNull())
+        val=item.toInt();
+
+    return val;
+}
+
+bool printable(const QString &mime)
+{
+    return "application/x-font-type1"==mime || "application/x-font-ttf"==mime ||
+           "application/x-font-otf"==mime || "application/x-font-ttc"==mime ||
+           "application/x-font-ghostscript"==mime;
+}
+
+uint qHash(const KFI::Misc::TFont &key)
+{
+    //return qHash(QString(key.family+'%'+QString().setNum(key.styleInfo, 16)));
+    const QChar *p = key.family.unicode();
+    int         n = key.family.size();
+    uint        h = 0,
+                g;
+
+    h = (h << 4) + key.styleInfo;
+    if ((g = (h & 0xf0000000)) != 0)
+        h ^= g >> 23;
+    h &= ~g;
+
+    while (n--)
+    {
+        h = (h << 4) + (*p++).unicode();
+        if ((g = (h & 0xf0000000)) != 0)
+            h ^= g >> 23;
+        h &= ~g;
+    }
+    return h;
+}
+
+} // Misc::
+
+} // KFI::
+

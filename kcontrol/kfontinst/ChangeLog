@@ -1,3 +1,50 @@
+KDE3.5 -> KDE4.0
+================
+ 1. Enabling/disabling of fonts.
+ 2. Creation of "Font Groups"
+ 3. Fonts are now grouped via family name, i.e. shown as:
+       + Courier [4]
+       - Times [2]
+           Regular
+           Italic
+    ...where the number in brackets indicates the number of styles. Clicking
+    on the expand icon (+) will then show the list of styles.
+ 4. Add ability in font view part to show unicode tables.
+ 5. Remove all references to Speedo fonts - haven't been supported since
+    KDE3.3!
+ 6. Only one view - list view. However, each item now has a small preview.
+ 7. Xft is now required.
+ 8. Remove Fontmap creation.
+ 9. Creation of fonts.dir & fonts.scale will be done via mkfontscale and
+    mkfontdir.
+10. Legacy X is only configured for a folder if it already contains a fonts.dir
+    file.
+11. Font installtion is *much* faster - as config files are now updated after
+    all fonts are installed, as opposed to every 50 fonts.
+12. Folders are no longer added to X's config files - because of 10 above.
+    The only system config file that will be altered is either
+    /etc/fonts/local.conf or /etc/fonts/conf.d/00kde.conf (dependant upon
+    your fontconfig version)
+13. When installing font files, install into a sub folder named after the 1st
+    character. e.g.
+         wibble.ttf ->   ~/.fonts/w/wibble.ttf
+14. Better unique names when creating font packages.
+15. Use zip and not tar.gz for font packages.
+16. Export to GroupName.fontgroup.zip (fonts/group).
+17. Allow import of fonts/package and fonts/group.
+18. Allow fonts/package to be installed via konqueror service menu.
+19. Better TTC handling.
+20. When installing to fonts:/, as non-root, automatically install to fonts:/Personal.
+    To install to fonts:/System need to explicity copy to fonts:/System.
+21. Removal of kfontview app - only kpart is really required.
+22. Renamed kcmfontinst to just fontinst.
+23. When printing, use external kfontinst app - that way newly installed fonts can
+    also be printed.
+24. When run as non-root, the kcontrol module will have a combo box allowing the user
+    to select Personal or System fonts.
+25. Better bitmap font previews - list of sizes obtained via fontconfig.
+26. Regular fonts listed as fonts:/<family>, Regular - e.g. fonts:/Times, Regular
+
 KDE3.4 -> KDE3.5
 ================
 1. When copying a file out of fonts sub-system, copy as filename, or <fontname>.fonts.tar.gz
@@ -69,7 +116,7 @@ KDE3.1 -> KDE3.2
 3.  Removed:
         AFM creation  -- only really required (TTF wise) for SO <6.0
         StarOffice configuration (S0 6.0 / OO.o is *much* better anyway)
-4.  X font server (xfs) - if used - is refreshed by seding a SIGUSR1 instead of
+4.  X font server (xfs) - if used - is refreshed by sending a SIGUSR1 instead of
     relying on a /etc/init.d/xfs script. This is much more portable.
 5.  Simple FontView part for konqueror - this is basically a big re-sizable preview of the font.
 6.  Speed up creation of fonts.dir and fonts.scale - by reading in any existing files, and using the

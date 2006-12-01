@@ -8,4 +8,4 @@ ServiceTypes=KParts/ReadOnlyPart,Browser/View
 X-KDE-Library=libkfontviewpart
 Type=Service
 InitialPreference=1
-Icon=fonts
+Icon=kfontview

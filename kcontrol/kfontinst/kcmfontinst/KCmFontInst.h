@@ -1,62 +1,58 @@
 #ifndef __KCM_FONT_INST_H__
 #define __KCM_FONT_INST_H__
 
-////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name    : KFI::CKCmFontInst
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 26/04/2003
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003, 2004
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
+#include "GroupList.h"
 #include <QStringList>
-//Added by qt3to4:
-#include <QLabel>
-#include <QDropEvent>
+#include <QSet>
 #include <kcmodule.h>
 #include <kurl.h>
 #include <kconfig.h>
 #include <kio/job.h>
-#ifdef HAVE_XFT
-#include <kparts/part.h>
-#endif
 
-class KDirOperator;
-class KAction;
-class KToggleAction;
-class KActionMenu;
-class KFileItem;
+class KPushButton;
+class KProgressDialog;
+class KTreeWidgetSearchLineWidget;
+class KTempDir;
+class KProcess;
+class KZip;
+class KSelectAction;
 class QLabel;
 class QSplitter;
-class QDropEvent;
-class KFileItem;
+class QComboBox;
+class QGridLayout;
 
 namespace KFI
 {
+
+class CFontList;
+class CFontPreview;
+class CUpdateDialog;
+class CFontListView;
 
 class CKCmFontInst : public KCModule
 {
@@ -64,52 +60,85 @@ class CKCmFontInst : public KCModule
 
     public:
 
-    CKCmFontInst(QWidget *parent, const QStringList &list=QStringList());
+    CKCmFontInst(QWidget *parent=NULL, const QStringList &list=QStringList());
     virtual ~CKCmFontInst();
-
-    void    setMimeTypes(bool showBitmap);
 
     public Q_SLOTS:
 
-    void    filterFonts();
+    void    setMode(int m);
+    void    displayType(int p);
     QString quickHelp() const;
-    void    listView();
-    void    iconView();
-    void    setupMenu();
-    void    setupViewMenu();
-    void    fileHighlighted(const KFileItem *item);
-    void    loadingFinished();
+    void    fontSelected(const QModelIndex &index, bool en, bool dis);
+    void    groupSelected(const QModelIndex &index);
+    void    reload();
     void    addFonts();
-    void    removeFonts();
-    void    configure();
+    void    deleteFonts();
+    void    enableFonts();
+    void    disableFonts();
+    void    addGroup();
+    void    removeGroup();
+    void    enableGroup();
+    void    disableGroup();
+    void    exportGroup();
+    void    exportJobResult(KJob *job);
+    void    exported(KIO::Job *job, const KUrl &from, const KUrl &to, bool dir, bool renamed);
+    void    changeText();
     void    print();
-    void    dropped(const KFileItem *i, QDropEvent *e, const KUrl::List &urls);
-    void    infoMessage(const QString &msg);
-    void    updateInformation(int dirs, int fonts);
+    void    printGroup();
+    void    initialJobResult(KJob *job);
     void    jobResult(KJob *job);
+    void    infoMessage(KJob *job, const QString &msg);
+    void    listingCompleted();
+    void    setStatusBar();
+    void    addFonts(const QSet<KUrl> &src);
+    void    toggleFontManagement(bool on);
 
     private:
 
-    void    addFonts(const KUrl::List &src, const KUrl &dest);
+    void    print(bool all);
+    void    deleteFonts(QStringList &files, KUrl::List &urls);
+    void    toggleGroup(bool enable);
+    void    toggleFonts(bool enable, const QString &grp=QString());
+    void    toggleFonts(QStringList &files, KUrl::List &urls, bool enable, const QString &grp=QString());
+    bool    working(bool displayMsg=true);
+    KUrl    baseUrl();
+    void    selectAllGroup();
+    bool    getPasswd();
+    void    setMetaData(KIO::Job *job);
 
     private:
 
-    KDirOperator         *itsDirOp;
-    KUrl                 itsTop;
-    KToggleAction        *itsShowBitmapAct;
-    KAction              *itsSepDirsAct,
-                         *itsShowHiddenAct,
-                         *itsDeleteAct;
-    KAction              *itsListAct,
-                         *itsIconAct;
-    KActionMenu          *itsViewMenuAct;
-#ifdef HAVE_XFT
-    KParts::ReadOnlyPart *itsPreview;
-#endif
-    QSplitter            *itsSplitter;
-    KConfig              itsConfig;
-    bool                 itsEmbeddedAdmin;
-    QLabel               *itsStatusLabel;
+    QGridLayout       *itsLayout;
+    QWidget           *itsGroupWidget,
+                      *itsFontWidget;
+    QComboBox         *itsModeControl,
+                      *itsPreviewType;
+    QSplitter         *itsSplitter;
+    CFontPreview      *itsPreview;
+    KConfig           itsConfig;
+    QLabel            *itsStatusLabel;
+    CFontList         *itsFontList;
+    CFontListView     *itsFontListView;
+    CGroupList        *itsGroupList;
+    CGroupListView    *itsGroupListView;
+    KPushButton       *itsMgtMode,
+                      *itsDeleteGroupControl,
+                      *itsEnableGroupControl,
+                      *itsDisableGroupControl,
+                      *itsAddFontControl,
+                      *itsDeleteFontControl,
+                      *itsEnableFontControl,
+                      *itsDisableFontControl;
+    QString           itsLastStatusBarMsg,
+                      itsPasswd;
+    KIO::Job          *itsJob;
+    KProgressDialog   *itsProgress;
+    CUpdateDialog     *itsUpdateDialog;
+    KTempDir          *itsTempDir;
+    int               itsMode;
+    KProcess          *itsPrintProc;
+    KZip              *itsExportFile;
+    QSet<Misc::TFont> itsDeletedFonts;
 };
 
 }

@@ -1,36 +1,28 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name    : KFI::CPrintDialog
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 12/05/2005
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2005
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include "PrintDialog.h"
-#include <QLayout>
-#include <qframe.h>
+#include <QFrame>
 #include <QLabel>
-//Added by qt3to4:
 #include <QGridLayout>
 #include <klocale.h>
 
@@ -38,26 +30,23 @@ namespace KFI
 {
 
 CPrintDialog::CPrintDialog(QWidget *parent)
-            : KDialog( parent )
+            : KDialog(parent)
 {
-    setCaption( i18n("Print Font Samples") );
-    setModal( true );
-    setButtons( Ok | Cancel );
-    showButtonSeparator( false );
+    setModal(true);
+    setCaption(i18n("Print Font Samples"));
+    setButtons(Ok|Cancel);
+    showButtonSeparator(true);
 
-    QFrame *page = new QFrame( this );
-    setMainWidget( page );
+    QFrame *page = new QFrame(this);
+    setMainWidget(page);
 
     QGridLayout *layout=new QGridLayout(page);
-    layout->setSpacing(spacingHint());
     layout->setMargin(0);
+    layout->setSpacing(KDialog::spacingHint());
 
-    layout->addWidget(new QLabel(i18n("Output:"), page), 0, 0);
-    itsOutput=new QComboBox(page);
-    itsOutput->insertItem(0, i18n("All Fonts"));
-    itsOutput->insertItem(1, i18n("Selected Fonts"));
-    layout->addWidget(itsOutput, 0, 1);
-    layout->addWidget(new QLabel(i18n("Font size:"), page), 1, 0);
+    QLabel *lbl=new QLabel(i18n("Select size to print font:"), page);
+    lbl->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    layout->addWidget(lbl, 0, 0);
     itsSize=new QComboBox(page);
     itsSize->insertItem(0, i18n("Waterfall"));
     itsSize->insertItem(1, i18n("12pt"));
@@ -65,19 +54,13 @@ CPrintDialog::CPrintDialog(QWidget *parent)
     itsSize->insertItem(3, i18n("24pt"));
     itsSize->insertItem(4, i18n("36pt"));
     itsSize->insertItem(5, i18n("48pt"));
-    layout->addWidget(itsSize, 1, 1);
-    layout->addItem(new QSpacerItem(2, 2), 2, 1);
+    itsSize->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    layout->addWidget(itsSize, 0, 1);
+    layout->addItem(new QSpacerItem(2, 2), 2, 0);
 }
 
-bool CPrintDialog::exec(bool select, int size)
+bool CPrintDialog::exec(int size)
 {
-    if(!select)
-    {
-        itsOutput->setCurrentIndex(0);
-        itsOutput->setEnabled(false);
-    }
-    else
-        itsOutput->setCurrentIndex(1);
     itsSize->setCurrentIndex(size);
     return QDialog::Accepted==QDialog::exec();
 }

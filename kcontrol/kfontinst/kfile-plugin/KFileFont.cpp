@@ -1,43 +1,66 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name    : KFI::KFileFont
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 20/03/2003
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003, 2004
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include "KFileFont.h"
 #include "KfiConstants.h"
+#include "FcEngine.h"
+#include "KfiConstants.h"
+#include "Misc.h"
 #include <QFile>
 #include <QTextStream>
 #include <kgenericfactory.h>
 #include <kio/netaccess.h>
 
-static void addEntry(int face, QString &existing, const QString &add)
+static void addEntry(QString &existing, const QString &add)
 {
-    if(face>0)
+    if(existing.length())
         existing.append(", ");
     existing.append(add);
+}
+
+//
+// Check if all items in the list are the same...
+static bool same(const QStringList &list)
+{
+    if(list.count()>1)
+    {
+        QStringList::ConstIterator it(list.begin()),
+                                   end(list.end()),
+                                   first(it);
+        for(++it; it!=end; ++it)
+            if(*first!=*it)
+                return false;
+    }
+
+    return true;
+}
+
+static void combine(const QStringList &list, QString &str)
+{
+    QStringList::ConstIterator it(list.begin()),
+                               end(list.end());
+
+    for(; it!=end; ++it)
+        addEntry(str, *it);
 }
 
 static int strToWeight(const QString &str)
@@ -61,8 +84,8 @@ static int strToWeight(const QString &str)
     else if(str.contains("Light", Qt::CaseInsensitive))
         return FC_WEIGHT_LIGHT;
     else if(str.contains("Medium", Qt::CaseInsensitive) ||
-		    str.contains("Normal", Qt::CaseInsensitive) ||
-		    str.contains("Roman", Qt::CaseInsensitive))
+                    str.contains("Normal", Qt::CaseInsensitive) ||
+                    str.contains("Roman", Qt::CaseInsensitive))
         return FC_WEIGHT_MEDIUM;
     else if(str.contains("Regular", Qt::CaseInsensitive))
         return FC_WEIGHT_REGULAR;
@@ -80,31 +103,29 @@ static int strToWeight(const QString &str)
         return FC_WEIGHT_MEDIUM;
 }
 
-#ifndef KFI_FC_NO_WIDTHS
 static int strToWidth(const QString &str)
 {
     if(str.isEmpty())
-        return FC_WIDTH_NORMAL;
+        return KFI_FC_WIDTH_NORMAL;
     else if(str.contains("UltraCondensed", Qt::CaseInsensitive))
-        return FC_WIDTH_ULTRACONDENSED;
+        return KFI_FC_WIDTH_ULTRACONDENSED;
     else if(str.contains("ExtraCondensed", Qt::CaseInsensitive))
-        return FC_WIDTH_EXTRACONDENSED;
+        return KFI_FC_WIDTH_EXTRACONDENSED;
     else if(str.contains("SemiCondensed", Qt::CaseInsensitive))
-        return FC_WIDTH_SEMICONDENSED;
+        return KFI_FC_WIDTH_SEMICONDENSED;
     else if(str.contains("Condensed", Qt::CaseInsensitive))
-        return FC_WIDTH_CONDENSED;
+        return KFI_FC_WIDTH_CONDENSED;
     else if(str.contains("SemiExpanded", Qt::CaseInsensitive))
-        return FC_WIDTH_SEMIEXPANDED;
+        return KFI_FC_WIDTH_SEMIEXPANDED;
     else if(str.contains("UltraExpanded", Qt::CaseInsensitive))
-        return FC_WIDTH_ULTRAEXPANDED;
+        return KFI_FC_WIDTH_ULTRAEXPANDED;
     else if(str.contains("ExtraExpanded", Qt::CaseInsensitive))
-        return FC_WIDTH_EXTRAEXPANDED;
+        return KFI_FC_WIDTH_EXTRAEXPANDED;
     else if(str.contains("Expanded", Qt::CaseInsensitive))
-        return FC_WIDTH_EXPANDED;
+        return KFI_FC_WIDTH_EXPANDED;
     else
-        return FC_WIDTH_NORMAL;
+        return KFI_FC_WIDTH_NORMAL;
 }
-#endif
 
 struct FoundryMap
 {
@@ -115,50 +136,50 @@ struct FoundryMap
 
 static const FoundryMap map[]=   // These are (mainly) taken from type1inst
 {
-    { "Bigelow",                           "B&H",        3},
-    { "Adobe",                             "Adobe",      5},
-    { "Bitstream",                         "Bitstream",  9},
-    { "Monotype",                          "Monotype",   8},
-    { "Linotype",                          "Linotype",   8},
-    { "LINOTYPE-HELL",                     "Linotype",   0},
-    { "IBM",                               "IBM",        3},
-    { "URW",                               "URW",        3},
-    { "International Typeface Corporation", "ITC",        3},
-    { "Tiro Typeworks",                    "Tiro",       4},
-    { "XFree86",                           "XFree86",    7},
-    { "Microsoft",                         "Microsoft",  9},
-    { "Omega",                             "Omega",      5},
-    { "Font21",                            "Hwan",       4},
-    { "HanYang System",                    "Hanyang",    7},
-    { "Richard Mitchell",                  "Mitchell",   8},
-    { "Doug Miles",                        "Miles",      5},
-    { "Hank Gillette",                     "Gillette",   8},
-    { "Three Islands Press",               "3ip",        3},
-    { "MacroMind",                         "Macromind",  9},
-    { "MWSoft",                            "MWSoft",     6},
-    { "Digiteyes Multimedia",              "DigitEyes",  9},
-    { "ZSoft",                             "ZSoft",      5},
-    { "Title Wave",                        "Titlewave",  9},
-    { "Southern Software",                 "Southern",   8},
-    { "Reasonable Solutions",              "Reasonable", 10},
-    { "David Rakowski",                    "Rakowski",   8},
-    { "D. Rakowski",                       "Rakowski",   0},
-    { "S. G. Moye",                        "Moye",       4},
-    { "S.G. Moye",                         "Moye",       0},
-    { "Andrew s. Meit",                    "Meit",       4},
-    { "A.S.Meit",                          "Meit",       0},
-    { "Hershey",                           "Hershey",    7},
-    { "FontBank",                          "FontBank",   8},
-    { "A. Carr",                           "Carr",       4},
-    { "Brendel Informatik",                "Brendel",    7},
-    { "Jonathan Brecher",                  "Brecher",    7},
-    { "SoftMaker",                         "Softmaker",  9},
-    { "LETRASET",                          "Letraset",   8},
-    { "Corel Corp",                        "Corel",      5},
-    { "PUBLISHERS PARADISE",               "Paradise",   8},
-    { "Publishers Paradise",               "Paradise",   0},
-    { "Allied Corporation",                "Allied",     6},
-    { NULL,                                NULL,         0}
+    { "Bigelow",                            "B&H",         3},
+    { "Adobe",                              "Adobe",       5},
+    { "Bitstream",                          "Bitstream",   9},
+    { "Monotype",                           "Monotype",    8},
+    { "Linotype",                           "Linotype",    8},
+    { "LINOTYPE-HELL",                      "Linotype",    0},
+    { "IBM",                                "IBM",         3},
+    { "URW",                                "URW",         3},
+    { "International Typeface Corporation", "ITC",         3},
+    { "Tiro Typeworks",                     "Tiro",        4},
+    { "XFree86",                            "XFree86",     7},
+    { "Microsoft",                          "Microsoft",   9},
+    { "Omega",                              "Omega",       5},
+    { "Font21",                             "Hwan",        4},
+    { "HanYang System",                     "Hanyang",     7},
+    { "Richard Mitchell",                   "Mitchell",    8},
+    { "Doug Miles",                         "Miles",       5},
+    { "Hank Gillette",                      "Gillette",    8},
+    { "Three Islands Press",                "3ip",         3},
+    { "MacroMind",                          "Macromind",   9},
+    { "MWSoft",                             "MWSoft",      6},
+    { "Digiteyes Multimedia",               "DigitEyes",   9},
+    { "ZSoft",                              "ZSoft",       5},
+    { "Title Wave",                         "Titlewave",   9},
+    { "Southern Software",                  "Southern",    8},
+    { "Reasonable Solutions",               "Reasonable", 10},
+    { "David Rakowski",                     "Rakowski",    8},
+    { "D. Rakowski",                        "Rakowski",    0},
+    { "S. G. Moye",                         "Moye",        4},
+    { "S.G. Moye",                          "Moye",        0},
+    { "Andrew s. Meit",                     "Meit",        4},
+    { "A.S.Meit",                           "Meit",        0},
+    { "Hershey",                            "Hershey",     7},
+    { "FontBank",                           "FontBank",    8},
+    { "A. Carr",                            "Carr",        4},
+    { "Brendel Informatik",                 "Brendel",     7},
+    { "Jonathan Brecher",                   "Brecher",     7},
+    { "SoftMaker",                          "Softmaker",   9},
+    { "LETRASET",                           "Letraset",    8},
+    { "Corel Corp",                         "Corel",       5},
+    { "PUBLISHERS PARADISE",                "Paradise",    8},
+    { "Publishers Paradise",                "Paradise",    0},
+    { "Allied Corporation",                 "Allied",      6},
+    { NULL,                                 NULL,          0}
 };
 
 static const char * getFoundry(const char *notice)
@@ -173,19 +194,14 @@ static const char * getFoundry(const char *notice)
     return NULL;
 }
 
-static bool readAfm(const QString &file, QString &full, QString &family, QString &foundry, QString &weight,
-#ifndef KFI_FC_NO_WIDTHS
-                    QString &width,
-#endif
-                    QString &spacing, QString &slant)
+static bool readAfm(const QString &file, QString &full, QString &family, QString &foundry,
+                    QString &weight, QString &width, QString &spacing, QString &slant)
 {
     QFile f(file);
     bool  foundName=false,
           foundFamily=false;
     int   intSpacing=FC_PROPORTIONAL,
-#ifndef KFI_FC_NO_WIDTHS
-          intWidth=FC_WIDTH_NORMAL,
-#endif
+          intWidth=KFI_FC_WIDTH_NORMAL,
           intWeight=FC_WEIGHT_NORMAL,
           intSlant=FC_SLANT_ROMAN;
 
@@ -205,9 +221,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
                 if(0==line.indexOf("FullName "))
                 {
                     full=line.mid(9);
-#ifndef KFI_FC_NO_WIDTHS
                     intWidth=strToWidth(full);
-#endif
                     foundName=true;
                 }
                 else if(0==line.indexOf("FamilyName "))
@@ -220,7 +234,8 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
                 else if(0==line.indexOf("ItalicAngle "))
                     intSlant=0.0f==line.mid(12).toFloat() ? FC_SLANT_ROMAN : FC_SLANT_ITALIC;
                 else if(0==line.indexOf("IsFixedPitch "))
-                    intSpacing= ( line.mid(13).contains("false", Qt::CaseInsensitive) ? FC_PROPORTIONAL : FC_MONO );
+                    intSpacing= ( line.mid(13).contains("false", Qt::CaseInsensitive)
+                                ? FC_PROPORTIONAL : FC_MONO );
                 else if(0==line.indexOf("Notice "))
                     foundry=getFoundry(line.mid(7).toLatin1());
                 else if(0==line.indexOf("StartCharMetrics"))
@@ -238,16 +253,15 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
             foundFamily=true;
         }
 
-        if(foundName && FC_SLANT_ITALIC==intSlant && (-1!=full.indexOf("Oblique") || -1!=full.indexOf("Slanted")))
+        if(foundName && FC_SLANT_ITALIC==intSlant &&
+           (-1!=full.indexOf("Oblique") || -1!=full.indexOf("Slanted")))
             intSlant=FC_SLANT_OBLIQUE;
     }
 
     if(foundName && foundFamily)
     {
         weight=KFI::CFcEngine::weightStr(intWeight, false);
-#ifndef KFI_FC_NO_WIDTHS
         width=KFI::CFcEngine::widthStr(intWidth, false);
-#endif
         slant=KFI::CFcEngine::slantStr(intSlant, false);
         spacing=KFI::CFcEngine::spacingStr(intSpacing);
 
@@ -261,7 +275,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
 }
 
 typedef KGenericFactory<KFI::KFileFontPlugin> KFileFontPluginFactory;
-K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfontinst"))
+K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory(KFI_NAME))
 
 namespace KFI
 {
@@ -273,10 +287,8 @@ KFileFontPlugin::KFileFontPlugin(QObject *parent, const QStringList& args)
 
     addMimeType("application/x-font-ttf"),
     addMimeType("application/x-font-type1");
-    //addMimeType("application/x-font-speedo");
     addMimeType("application/x-font-bdf");
     addMimeType("application/x-font-pcf");
-    //addMimeType("application/x-font-snf");
     addMimeType("application/x-font-otf");
     addMimeType("application/x-font-ttc");
     addMimeType("application/x-afm");
@@ -291,40 +303,42 @@ void KFileFontPlugin::addMimeType(const char *mime)
     addItemInfo(group, "Family", i18n("Family"), QVariant::String);
     addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
     addItemInfo(group, "Weight", i18n("Weight"), QVariant::String);
-#ifndef KFI_FC_NO_WIDTHS
     addItemInfo(group, "Width", i18n("Width"), QVariant::String);
-#endif
     addItemInfo(group, "Spacing", i18n("Spacing"), QVariant::String);
     addItemInfo(group, "Slant", i18n("Slant"), QVariant::String);
 }
 
 bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 {
-    QString full,
-            lastFull,
-            family,
-            foundry,
-            weight,
-#ifndef KFI_FC_NO_WIDTHS
-            width,
-#endif
-            spacing,
-            slant,
-            fullAll,
-            familyAll,
-            foundryAll,
-            weightAll,
-#ifndef KFI_FC_NO_WIDTHS
-            widthAll,
-#endif
-            spacingAll,
-            slantAll;
-    KUrl    url(info.url());
-    QString fName;
-    bool    fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
-            fileProt   = "file"             == url.protocol(),
-            downloaded = false,
-            status     = false;
+    QString     full,
+                lastFull,
+                family,
+                foundry,
+                weight,
+                width,
+                spacing,
+                slant,
+                fullAll,
+                familyAll,
+                foundryAll,
+                weightAll,
+                widthAll,
+                spacingAll,
+                slantAll;
+    QStringList familes,
+                weights,
+                widths,
+                spacings,
+                slants;
+    KUrl        url(info.url());
+    QString     fName;
+    bool        fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
+                fileProt   = "file"                 == url.protocol(),
+                downloaded = false,
+                status     = false;
+    int         faceFrom(KFI::Misc::getIntQueryVal(url, KFI_KIO_FACE, 0)),
+                faceTo=faceFrom ? faceFrom+1 : (fontsProt ? 1 : 10); // How to get num faces from fontconfig? don't know
+                                                                     // Don't know - so just try 1st 10...
 
     what=0;
 
@@ -337,28 +351,21 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
     if(downloaded || fontsProt || fileProt)
     {
         if("application/x-afm"==info.mimeType())  // Then fontconfig can't give us the data :-(
-            status=readAfm(url.path(), fullAll, familyAll, foundryAll, weightAll,
-#ifndef KFI_FC_NO_WIDTHS
-                           widthAll,
-#endif
+            status=readAfm(url.path(), fullAll, familyAll, foundryAll, weightAll, widthAll,
                            spacingAll, slantAll);
         else
-            for(int face=0; face<10; ++face)  // How to get num faces from fontconfig? don't know - so just try 1st 10...
+            for(int face=faceFrom; face<faceTo; ++face)
             {
-                if(itsEngine.getInfo(url, face, full, family, foundry, weight,
-#ifndef KFI_FC_NO_WIDTHS
-                                     width,
-#endif
-                                     spacing, slant) &&
-                   !full.isEmpty() && full!=lastFull)
+                if(CFcEngine::instance()->getInfo(url, face, full, family, foundry, weight, width,
+                                                  spacing, slant) && !full.isEmpty() && full!=lastFull)
                 {
-                    addEntry(face, fullAll, full);
+                    addEntry(fullAll, full);
                     lastFull=full;
 
                     if(KFileMetaInfo::Fastest!=what)
                     {
-                        addEntry(face, familyAll, family);
-                        if(0==face)
+                        addEntry(familyAll, family);
+                        if(faceFrom==face)
                         {
                             foundryAll=foundry;
 
@@ -373,20 +380,20 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                                 const FoundryMap *entry;
 
                                 for(entry=map; NULL!=entry->foundry; entry++)
-                                    if(foundryAll.length()==entry->len && foundryAll.contains(entry->foundry, Qt::CaseInsensitive))
+                                    if(foundryAll.length()==entry->len &&
+                                       -1!=foundryAll.indexOf(entry->foundry, false))
                                     {
                                         foundryAll=entry->foundry;
                                         break;
                                     }
                             }
                         }
-                        addEntry(face, weightAll, weight);
-#ifndef KFI_FC_NO_WIDTHS
-                        addEntry(face, widthAll, width);
-#endif
-                        addEntry(face, spacingAll, spacing);
-                        addEntry(face, slantAll, slant);
+                        weights.append(weight);
+                        widths.append(width);
+                        spacings.append(spacing);
+                        slants.append(slant);
                     }
+
                     status=true;
                 }
                 else
@@ -400,14 +407,27 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             group=appendGroup(info, "General");
             appendItem(group, "Full", fullAll);
 
+            if(same(weights) && same(widths) && same(spacings) && same(slants))
+            {
+                weightAll=weight;
+                widthAll=width;
+                spacingAll=spacing;
+                slantAll=slant;
+            }
+            else
+            {
+                combine(weights, weightAll);
+                combine(widths, widthAll);
+                combine(spacings, spacingAll);
+                combine(slants, slantAll);
+            }
+
             if(KFileMetaInfo::Fastest!=what)
             {
                 appendItem(group, "Family", familyAll);
                 appendItem(group, "Foundry", foundryAll);
                 appendItem(group, "Weight", weightAll);
-#ifndef KFI_FC_NO_WIDTHS
                 appendItem(group, "Width", widthAll);
-#endif
                 appendItem(group, "Spacing", spacingAll);
                 appendItem(group, "Slant", slantAll);
             }

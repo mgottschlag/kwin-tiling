@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=MimeType
+Encoding=UTF-8
+MimeType=fonts/group
+Icon=font
+Patterns=*.fontgroup.zip
+Comment=Font Group
+Comment[x-test]=xxFont Groupxx
+
+[Property::X-KDE-LocalProtocol]
+Type=QString
+Value=zip

@@ -1,43 +1,36 @@
 #ifndef __FONT_PREVIEW_H__
 #define __FONT_PREVIEW_H__
 
-////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name    : KFI::CFontPreview
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 04/11/2001
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003, 2004
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include <QString>
 #include <QPixmap>
 #include <QSize>
 #include <QWidget>
 #include <QColor>
-//Added by qt3to4:
 #include <QPaintEvent>
 #include <kurl.h>
-#include "FcEngine.h"
+#include "KfiConstants.h"
 
 namespace KFI
 {
@@ -55,10 +48,11 @@ class CFontPreview : public QWidget
     QSize       sizeHint() const;
     QSize       minimumSizeHint() const;
 
-    void        showFont(const KUrl &url);
+    void        showFont(const KUrl &url, const QString &name=QString::null,
+                         unsigned long styleInfo=KFI_NO_STYLE_INFO, int face=1);
     void        showFont();
 
-    CFcEngine & engine() { return itsEngine; }
+    void        setUnicodeStart(int u) { itsUnicodeStart=u; }
 
     public Q_SLOTS:
 
@@ -70,13 +64,13 @@ class CFontPreview : public QWidget
 
     private:
 
-    CFcEngine itsEngine;
     QPixmap   itsPixmap;
     KUrl      itsCurrentUrl;
     int       itsCurrentFace,
               itsLastWidth,
-              itsLastHeight;
-    QColor    itsBgndCol;
+              itsLastHeight,
+              itsUnicodeStart,
+              itsStyleInfo;
     QString   itsFontName;
 };
 

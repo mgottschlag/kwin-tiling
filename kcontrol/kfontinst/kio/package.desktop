@@ -3,11 +3,11 @@ Type=MimeType
 Encoding=UTF-8
 MimeType=fonts/package
 Icon=font
-Patterns=*.fonts.tar.gz
+Patterns=*.fonts.zip
 Comment=Fonts Package
 Comment[fr]=Paquet de polices
 Comment[x-test]=xxFonts Packagexx
 
 [Property::X-KDE-LocalProtocol]
 Type=QString
-Value=tar
+Value=zip

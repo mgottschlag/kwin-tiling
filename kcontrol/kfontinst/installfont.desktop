@@ -7,4 +7,4 @@ Name=Install
 Name[fr]=Installer
 Name[x-test]=xxInstallxx
 Icon=fonts
-Exec=kfmclient copy %U fonts:/
+Exec=kfontinst -i 0x0 %F
