@@ -2460,7 +2460,7 @@ bool CKioFonts::updateFontList()
     if(!itsFontList || !FcConfigUptoDate(0) ||
        (abs(time(NULL)-itsLastFcCheckTime)>constMaxFcCheckTime))
     {
-        KFI_DBUG << "itsFontList:" << (int)itsFontList
+        KFI_DBUG << "itsFontList:" << (intptr_t)itsFontList
                  << " FcConfigUptoDate:" << (int)FcConfigUptoDate(0)
                  << " time diff:" << abs(time(NULL)-itsLastFcCheckTime)
                  << " max:" << constMaxFcCheckTime << endl;
