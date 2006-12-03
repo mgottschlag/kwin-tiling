@@ -29,7 +29,6 @@
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
-#include <kopenwith.h>
 #include <kcrash.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>

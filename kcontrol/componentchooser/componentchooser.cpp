@@ -30,7 +30,7 @@
 #include <kemailsettings.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kopenwith.h>
+#include <kopenwithdialog.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <kmimetypetrader.h>
@@ -165,7 +165,7 @@ void CfgEmailClient::configChanged()
 void CfgEmailClient::selectEmailClient()
 {
 	KUrl::List urlList;
-	KOpenWithDlg dlg(urlList, i18n("Select preferred email client:"), QString(), this);
+	KOpenWithDialog dlg(urlList, i18n("Select preferred email client:"), QString(), this);
 	// hide "Do not &close when command exits" here, we don't need it for a mail client
 	dlg.hideNoCloseOnExit();
 	if (dlg.exec() != QDialog::Accepted) return;
@@ -274,7 +274,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 void CfgTerminalEmulator::selectTerminalApp()
 {
 	KUrl::List urlList;
-	KOpenWithDlg dlg(urlList, i18n("Select preferred terminal application:"), QString(), this);
+	KOpenWithDialog dlg(urlList, i18n("Select preferred terminal application:"), QString(), this);
 	// hide "Run in &terminal" here, we don't need it for a Terminal Application
 	dlg.hideRunInTerminal();
 	if (dlg.exec() != QDialog::Accepted) return;
@@ -370,7 +370,7 @@ void CfgBrowser::save(KConfig *) {
 void CfgBrowser::selectBrowser()
 {
 	KUrl::List urlList;
-	KOpenWithDlg dlg(urlList, i18n("Select preferred Web browser application:"), QString(), this);
+	KOpenWithDialog dlg(urlList, i18n("Select preferred Web browser application:"), QString(), this);
 	if (dlg.exec() != QDialog::Accepted) return;
 	m_browserService = dlg.service();
 	if (m_browserService)
