@@ -244,6 +244,8 @@ void PluginManager::slotPluginDestroyed(QObject* object)
 
     LibUnloader::unload(info->library());
     delete info;
+
+    emit pluginDestroyed();
 }
 
 AppletContainer* PluginManager::createAppletContainer(

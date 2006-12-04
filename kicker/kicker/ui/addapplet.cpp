@@ -88,6 +88,7 @@ AddAppletDialog::AddAppletDialog(ContainerArea *cArea,
 	connect(m_mainWidgetView->appletListView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(selectApplet(const QModelIndex&)));
 	connect(m_mainWidgetView->appletListView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(addCurrentApplet(const QModelIndex&)));
 	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotUser1Clicked()));
+	connect(PluginManager::self(), SIGNAL(pluginDestroyed()), this, SLOT(updateAppletList()));
 
 	m_selectedType = AppletInfo::Undefined;
 
@@ -285,6 +286,11 @@ void AddAppletDialog::slotUser1Clicked()
 	{
 		addCurrentApplet(selectedApplet);
 	}
+}
+
+void AddAppletDialog::updateAppletList()
+{
+	search(m_mainWidgetView->appletSearch->text());
 }
 
 #include "addapplet.moc"

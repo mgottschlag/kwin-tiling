@@ -77,6 +77,9 @@ protected:
                                     bool sort,
                                     AppletInfo::List* list);
 
+Q_SIGNALS:
+    void pluginDestroyed();
+
 private Q_SLOTS:
     void slotPluginDestroyed(QObject* plugin);
 

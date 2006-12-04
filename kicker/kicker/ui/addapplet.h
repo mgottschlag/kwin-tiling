@@ -60,6 +60,7 @@ private Q_SLOTS:
 	void search(const QString &s);
 	void filter(int i);
 	void slotUser1Clicked();
+	void updateAppletList();
 
 private:
 	bool appletMatchesSearch(const AppletInfo *i, const QString &s);
