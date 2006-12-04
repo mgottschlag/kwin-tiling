@@ -41,7 +41,7 @@ class CalDialog : public KDialog
   private:
     void waitButton(int axis, bool press, int &lastVal);
 
-  private:
+  private slots:
     virtual void slotUser1();
 
   private:

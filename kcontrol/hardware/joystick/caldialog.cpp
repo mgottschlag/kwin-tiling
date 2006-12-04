@@ -50,6 +50,7 @@ CalDialog::CalDialog(QWidget *parent, JoyDevice *joy)
   text = new QLabel(main);
   text->setMinimumHeight(200);
   valueLbl = new QLabel(main);
+  connect(this,SIGNAL(user1Clicked()),this,SLOT(slotUser1()));
 }
 
 //--------------------------------------------------------------
