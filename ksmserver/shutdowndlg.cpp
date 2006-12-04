@@ -163,10 +163,12 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         int index = 0;
         for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index)
             {
+            QString label = (*it);
+            label=label.replace('&',"&&");
             if (index == cur)
-                targets->insertItem( *it + i18nc("current option in boot loader", " (current)"), index);
+                targets->insertItem( label + i18nc("current option in boot loader", " (current)"), index);
             else
-                targets->insertItem( *it, index );
+                targets->insertItem( label, index );
             }
 
         btnReboot->setPopup(targets);
