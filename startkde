@@ -186,29 +186,6 @@ done
 usr_odir=$HOME/.fonts/kde-override
 usr_fdir=$HOME/.fonts
 
-# Add any user-installed font directories to the X font path
-kde_fontpaths=$usr_fdir/fontpaths
-do_usr_fdir=1
-do_usr_odir=1
-if test -r "$kde_fontpaths" ; then
-    savifs=$IFS
-    IFS="
-"
-    for fpath in `grep -v '^[ 	]*#' < "$kde_fontpaths"` ; do
-        rfpath=`echo $fpath | sed "s:^~:$HOME:g"`
-        if test -s "$rfpath"/fonts.dir; then
-            xset fp+ "$rfpath"
-            if test "$rfpath" = "$usr_fdir"; then
-                do_usr_fdir=0
-            fi
-            if test "$rfpath" = "$usr_odir"; then
-                do_usr_odir=0
-            fi
-        fi
-    done
-    IFS=$savifs
-fi
-
 if test -n "$KDEDIRS"; then
   kdedirs_first=`echo "$KDEDIRS"|sed -e 's/:.*//'`
   sys_odir=$kdedirs_first/share/fonts/override
@@ -223,10 +200,9 @@ fi
 # add the user's dirs to the font path, as they might simply have been made
 # read-only by the administrator, for whatever reason.
 
-# Only do usr_fdir and usr_odir if they are *not* listed in fontpaths
 test -d "$sys_odir" && xset +fp "$sys_odir"
-test $do_usr_odir -eq 1 && test -d "$usr_odir" && (mkfontdir "$usr_odir" ; xset +fp "$usr_odir")
-test $do_usr_fdir -eq 1 && test -d "$usr_fdir" && (mkfontdir "$usr_fdir" ; xset fp+ "$usr_fdir")
+test -d "$usr_odir" && (mkfontdir "$usr_odir" ; xset +fp "$usr_odir")
+test -d "$usr_fdir" && (mkfontdir "$usr_fdir" ; xset fp+ "$usr_fdir")
 test -d "$sys_fdir" && xset fp+ "$sys_fdir"
 
 # Ask X11 to rebuild its font list.
