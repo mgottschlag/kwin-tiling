@@ -29,7 +29,7 @@ class QSplitter;
 class QTabWidget;
 
 class KToggleAction;
-class KAction;
+class QAction;
 
 class DockContainer;
 class IndexWidget;
@@ -84,7 +84,7 @@ private:
 
   KToggleAction *tree_view, *icon_view;
   KToggleAction *icon_small, *icon_medium, *icon_large, *icon_huge;
-  KAction *report_bug, *about_module;
+  QAction *report_bug, *about_module;
 
   IndexWidget  *_indextab;
   SearchWidget *_searchtab;

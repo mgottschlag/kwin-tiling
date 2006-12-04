@@ -448,7 +448,7 @@ void KDIconView::createActions()
 
 void KDIconView::slotUndoTextChanged( const QString &text )
 {
-    KAction* undo = m_actionCollection.action( "undo" );
+    QAction* undo = m_actionCollection.action( "undo" );
     undo->setText( text );
 }
 
@@ -785,7 +785,7 @@ void KDIconView::popupMenu( const QPoint &_global, const KFileItemList& _items )
     if ( _items.count() == 1 )
         m_popupURL = _items.first()->url();
 
-    KAction* pasteTo = m_actionCollection.action( "pasteto" );
+    QAction* pasteTo = m_actionCollection.action( "pasteto" );
     if (pasteTo)
         pasteTo->setEnabled( m_actionCollection.action( "paste" )->isEnabled() );
 
@@ -832,7 +832,7 @@ void KDIconView::slotEnableAction( const char * name, bool enabled )
   if ( sName == "properties" || sName == "editMimeType" )
     return;
 
-  KAction * act = m_actionCollection.action( sName.data() );
+  QAction * act = m_actionCollection.action( sName.data() );
   if (act)
     act->setEnabled( enabled );
 }
@@ -1222,7 +1222,7 @@ void KDIconView::slotClipboardDataChanged()
     QString actionText = KIO::pasteActionText();
     bool paste = !actionText.isEmpty();
     if ( paste ) {
-        KAction* pasteAction = m_actionCollection.action( "paste" );
+        QAction* pasteAction = m_actionCollection.action( "paste" );
         if ( pasteAction )
             pasteAction->setText( actionText );
     }

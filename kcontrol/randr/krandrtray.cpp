@@ -96,7 +96,7 @@ void KRandRSystemTray::prepareMenu()
 	menu->addAction( actPrefs );
 
 	menu->insertItem(SmallIcon("help"),KStdGuiItem::help().text(), m_help->menu());
-	KAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
+	QAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
 	menu->addAction( quitAction );
 }
 

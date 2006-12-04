@@ -217,7 +217,7 @@ void TreeView::setViewMode(bool showHidden)
 
     // setup rmb menu
     m_rmb = new QMenu(this);
-    KAction *action;
+    QAction *action;
 
     action = m_ac->action("edit_cut");
     if(action) {

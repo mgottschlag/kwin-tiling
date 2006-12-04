@@ -208,7 +208,7 @@ void ShortcutsModule::initGUI()
 
 void ShortcutsModule::createActionsGeneral()
 {
-	foreach (KAction* action, m_actionsGeneral->actions()) {
+	foreach (QAction* action, m_actionsGeneral->actions()) {
 		QString sConfigKey = action->objectName();
 		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
@@ -218,8 +218,9 @@ void ShortcutsModule::createActionsGeneral()
 
 		//kDebug(125) << "sConfigKey: " << sConfigKey
 		//	<< " bIsNum: " << bIsNum << endl;
-		if( bIsNum && !sConfigKey.contains( ':' ) ) {
-			action->setShortcutConfigurable( false );
+                KAction *kaction = qobject_cast<KAction*>(action);
+                if( kaction!=0 && bIsNum && !sConfigKey.contains( ':' ) ) {
+			kaction->setShortcutConfigurable( false );
 			action->QAction::setObjectName( QString() );
 		}
 	}
@@ -227,7 +228,7 @@ void ShortcutsModule::createActionsGeneral()
 
 void ShortcutsModule::createActionsSequence()
 {
-	foreach (KAction* action, m_actionsSequence->actions()) {
+	foreach (QAction* action, m_actionsSequence->actions()) {
 		QString sConfigKey = action->objectName();
 		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
@@ -237,9 +238,10 @@ void ShortcutsModule::createActionsSequence()
 
 		//kDebug(125) << "sConfigKey: " << sConfigKey
 		//	<< " bIsNum: " << bIsNum << endl;
-		if( !bIsNum && !sConfigKey.contains( ':' ) ) {
-			action->setShortcutConfigurable( false );
-			action->QAction::setObjectName( QString() );
+                KAction *kaction = qobject_cast<KAction*>(action);
+		if( kaction!=0 && !bIsNum && !sConfigKey.contains( ':' ) ) {
+			kaction->setShortcutConfigurable( false );
+			kaction->QAction::setObjectName( QString() );
 		}
 	}
 }

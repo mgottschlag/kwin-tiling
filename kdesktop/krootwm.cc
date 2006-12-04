@@ -293,7 +293,7 @@ void KRootWm::buildMenus()
     // create Arrange menu
     QMenu *pArrangeMenu = 0;
     QMenu *pLineupMenu = 0;
-    KAction *action;
+    QAction *action;
     help = new KHelpMenu(0, 0, false);
     // help->menu()->removeItem( KHelpMenu::menuAboutApp );
 
@@ -435,7 +435,7 @@ void KRootWm::buildMenus()
        pIconOperationsMenu->addAction( m_actionCollection->action( "lineupVert" ) );
        pIconOperationsMenu->addSeparator();
        pIconOperationsMenu->addAction( m_actionCollection->action( "realign" ) );
-       KAction *aLockIcons = m_actionCollection->action( "lock_icons" );
+       QAction *aLockIcons = m_actionCollection->action( "lock_icons" );
        if ( aLockIcons )
            pIconOperationsMenu->addAction( aLockIcons );
 
@@ -796,7 +796,7 @@ void KRootWm::slotLogout() {
 
 void KRootWm::slotPopulateSessions()
 {
-    KAction *action;
+    QAction *action;
     int p;
     DM dm;
 
