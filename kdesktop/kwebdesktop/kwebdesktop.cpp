@@ -82,7 +82,7 @@ void KWebDesktopRun::slotFinished( KJob * job )
     if (job->error())
     {
         kDebug() << job->errorString() << endl;
-        kapp->quit();
+        qApp->exit(1);
     }
 }
 
@@ -144,7 +144,7 @@ void KWebDesktop::slotCompleted()
     QPixmap snapshot = QPixmap::grabWidget( m_part->widget() );
     snapshot.save( QFile::decodeName(m_imageFile), "PNG" );
     // And terminate the app.
-    kapp->quit();
+    qApp->quit();
 }
 
 KParts::ReadOnlyPart* KWebDesktop::createPart( const QString& mimeType )
