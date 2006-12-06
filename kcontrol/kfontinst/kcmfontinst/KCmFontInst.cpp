@@ -1077,8 +1077,8 @@ void CKCmFontInst::setStatusBar()
     int  enabled=0,
          disabled=0,
          partial=0;
-    bool selectedEnabled,
-         selectedDisabled;
+    bool selectedEnabled=false,
+         selectedDisabled=false;
 
     if(0==itsFontList->families().count())
         itsStatusLabel->setText(i18n("No fonts"));
