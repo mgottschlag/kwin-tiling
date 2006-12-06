@@ -20,25 +20,3 @@ install(TARGETS lockout_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES lockout.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 
 
-
-
-#original Makefile.am contents follow:
-
-#INCLUDES = -I$(top_srcdir)/workspace/kicker/libkicker -I$(top_srcdir)/workspace/lib $(all_includes)
-#METASOURCES = AUTO
-#
-#kde_module_LTLIBRARIES = lockout_panelapplet.la
-#
-#lockout_panelapplet_la_SOURCES = lockout.cpp
-#lockout_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-#lockout_panelapplet_la_LIBADD = $(LIB_KSYCOCA) $(top_builddir)/workspace/kicker/libkicker/libkickermain.la
-#
-#noinst_HEADERS = lockout.h
-#
-#lnkdir = $(kde_datadir)/kicker/applets
-#lnk_DATA = lockout.desktop
-#
-#EXTRA_DIST = $(lnk_DATA)
-#
-#messages:
-#	$(XGETTEXT) *.cpp *.h -o $(podir)/lockout.pot

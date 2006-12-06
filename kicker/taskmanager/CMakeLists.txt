@@ -24,22 +24,3 @@ set_target_properties(taskmanager PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS taskmanager  DESTINATION ${LIB_INSTALL_DIR} )
 
 
-########### install files ###############
-
-
-
-
-
-#original Makefile.am contents follow:
-
-#INCLUDES = $(all_includes) -I$(srcdir)/../libkicker
-#
-#lib_LTLIBRARIES = libtaskmanager.la
-#libtaskmanager_la_SOURCES = tasklmbmenu.cpp taskrmbmenu.cpp taskmanager.cpp
-#libtaskmanager_la_METASOURCES = AUTO
-#
-#libtaskmanager_la_LDFLAGS = $(all_libraries) -version-info 1:0:0 -no-undefined
-#libtaskmanager_la_LIBADD = $(LIB_KDECORE) $(LIB_XFIXES) $(LIB_XRENDER) $(LIB_XCOMPOSITE) ../libkicker/libkickermain.la
-#
-#messages:
-#	$(XGETTEXT) *.cpp *.h -o $(podir)/libtaskmanager.pot

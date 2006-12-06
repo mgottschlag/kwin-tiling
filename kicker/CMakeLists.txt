@@ -77,16 +77,3 @@ add_subdirectory( menuext )
 add_subdirectory( proxy ) 
 add_subdirectory( data ) 
 
-
-
-
-########### install files ###############
-
-
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = libkicker taskmanager taskbar kicker extensions applets menuext proxy data
-#

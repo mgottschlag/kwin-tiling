@@ -10,7 +10,7 @@ kde4_automoc(${dockbar_panelextension_PART_SRCS})
 kde4_add_plugin(dockbar_panelextension ${dockbar_panelextension_PART_SRCS})
 
 
-target_link_libraries(dockbar_panelextension  ${KDE4_KDECORE_LIBS} kickermain ${KDE4_KDEUI_LIBS} )
+target_link_libraries(dockbar_panelextension  kickermain ${KDE4_KDEUI_LIBS} )
 
 install(TARGETS dockbar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
@@ -19,26 +19,3 @@ install(TARGETS dockbar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES dockbarextension.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/extensions )
 
-
-
-
-#original Makefile.am contents follow:
-
-#INCLUDES = -I$(top_srcdir)/workspace/kicker/libkicker $(all_includes)
-#
-#kde_module_LTLIBRARIES = dockbar_panelextension.la
-#
-#dockbar_panelextension_la_SOURCES = dockcontainer.cpp dockbarextension.cpp
-#dockbar_panelextension_la_METASOURCES = AUTO
-#dockbar_panelextension_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-#dockbar_panelextension_la_LIBADD = ../../libkicker/libkickermain.la $(LIB_KDEUI)
-#
-#noinst_HEADERS = dockcontainer.h dockbarextension.h
-#
-#lnkdir = $(kde_datadir)/kicker/extensions
-#lnk_DATA = dockbarextension.desktop
-#
-#EXTRA_DIST = $(lnk_DATA)
-#
-#messages:
-#	$(XGETTEXT) *.cpp *.h -o $(podir)/dockbarextension.pot
