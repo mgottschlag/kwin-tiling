@@ -21,6 +21,9 @@ install(TARGETS kcm_xinerama  DESTINATION ${PLUGIN_INSTALL_DIR} )
 set(test_kcm_xinerama_SRCS test_kcm_xinerama.cpp )
 add_executable(test_kcm_xinerama ${test_kcm_xinerama_SRCS})
 target_link_libraries(test_kcm_xinerama  ${QT_QTGUI_LIBRARY})
+if (CMAKE_SYSTEM_NAME MATCHES BSD)
+    target_link_libraries(test_kcm_xinerama pthread)
+endif (CMAKE_SYSTEM_NAME MATCHES BSD)
 install(TARGETS test_kcm_xinerama  DESTINATION ${LIBEXEC_INSTALL_DIR} )
 
 ########### install files ###############
