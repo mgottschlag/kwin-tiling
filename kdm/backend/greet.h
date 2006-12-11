@@ -86,6 +86,10 @@ from the copyright holder.
 # define ATTR_PRINTFLIKE(fmt,var)
 #endif
 
+#ifndef offsetof
+# define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+#endif
+
 #define as(ar) ((int)(sizeof(ar)/sizeof(ar[0])))
 
 #define __stringify(x) #x

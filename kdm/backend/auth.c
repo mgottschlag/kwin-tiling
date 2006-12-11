@@ -74,6 +74,8 @@ from the copyright holder.
 # endif
 #endif /* __GNU__ */
 
+#include <X11/Xlib.h>
+
 struct AuthProtocol {
 	unsigned short name_length;
 	const char *name;

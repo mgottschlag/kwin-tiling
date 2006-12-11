@@ -75,10 +75,6 @@ from the copyright holder.
 # define INADDR_LOOPBACK 0x7F000001U
 #endif
 
-#ifndef offsetof
-# define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
-#endif
-
 static int
 getPrngdBytes( char *buf, int len,
                unsigned short tcp_port, const char *socket_path )

@@ -297,7 +297,7 @@ ApplyResource( int id, char **src, char **dst )
 }
 
 
-#define boffset(f) XtOffsetOf(struct display, f)
+#define boffset(f) offsetof(struct display, f)
 
 /* no global variables exported currently
 struct globEnts {

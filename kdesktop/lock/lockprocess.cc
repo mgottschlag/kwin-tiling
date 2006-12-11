@@ -61,7 +61,6 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
-#include <X11/Intrinsic.h>
 
 #ifdef HAVE_DPMS
 extern "C" {

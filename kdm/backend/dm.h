@@ -45,7 +45,6 @@ from the copyright holder.
 #include <X11/Xfuncs.h>
 #include <X11/Xmd.h>
 #include <X11/Xauth.h>
-#include <X11/Intrinsic.h>
 
 #include <sys/param.h>
 #ifdef HAVE_LIMITS_H
@@ -505,6 +504,7 @@ extern time_t serverTimeout;
 void WaitForServer( struct display *d );
 void ResetServer( struct display *d );
 int PingServer( struct display *d );
+typedef struct _XDisplay Display;
 extern Display *dpy;
 
 /* in util.c */
