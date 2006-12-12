@@ -504,12 +504,7 @@ extern time_t serverTimeout;
 void WaitForServer( struct display *d );
 void ResetServer( struct display *d );
 int PingServer( struct display *d );
-#if defined(__FreeBSD__)
 extern struct _XDisplay *dpy;
-#else
-typedef struct _XDisplay Display;
-extern Display *dpy;
-#endif
 
 /* in util.c */
 void *Calloc( size_t nmemb, size_t size );
