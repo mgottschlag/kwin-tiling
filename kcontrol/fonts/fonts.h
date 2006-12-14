@@ -110,11 +110,12 @@ protected Q_SLOTS:
     void slotCfgAa();
 
 private:
-    bool useAA, useAA_original;
+    Qt::CheckState useAA, useAA_original;
     int dpi_original;
     QCheckBox *cbAA;
     QCheckBox *cbForceDpi;
     QComboBox* comboForceDpi;
+    QPushButton *aaSettingsButton;
     Q3PtrList <FontUseItem> fontUseList;
     FontAASettings *aaSettings;
 };
