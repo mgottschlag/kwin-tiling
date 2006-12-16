@@ -1002,7 +1002,7 @@ void CKCmFontInst::initialJobResult(KJob *job)
         QByteArray  packedArgs;
         QDataStream stream(&packedArgs, QIODevice::WriteOnly);
 
-        stream << KFI::SPECIAL_CONFIGURE;
+        stream << KFI::SPECIAL_CONFIGURE << baseUrl();
 
         itsJob=KIO::special(baseUrl(), packedArgs, false);
         setMetaData(itsJob);
@@ -1124,8 +1124,12 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
         itsStatusLabel->setText(i18n("Looking for any associated files..."));
 
         if(!itsProgress)
+        {
             itsProgress=new KProgressDialog(this, i18n("Scanning Files..."),
                                             i18n("Looking for additional files to install..."), true);
+            itsProgress->setAutoReset(true);
+            itsProgress->setAutoClose(true);
+        }
 
         itsProgress->setAllowCancel(false);
         itsProgress->setMinimumDuration(500);
@@ -1141,7 +1145,12 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
             itsProgress->setLabel(i18n("Looking for files associated with %1", (*it).prettyUrl()));
             itsProgress->progressBar()->setValue(itsProgress->progressBar()->value()+1);
             if(1==steps || 0==(itsProgress->progressBar()->value()%steps))
+            {
+                bool dialogVisible(itsProgress->isVisible());
                 QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+                if(dialogVisible && !itsProgress->isVisible()) // Use closed dialog! re-open!!!
+                    itsProgress->show();
+            }
 
             Misc::getAssociatedUrls(*it, associatedUrls, false, this);
             copy.insert(*it);
@@ -1151,11 +1160,8 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
 
             for(; aIt!=aEnd; ++aIt)
                 copy.insert(*aIt);
-            // For some reason override of closeEvent is not working for Qt4 :-( TODO: Fix?
-            if(itsProgress->isHidden())
-                itsProgress->show();
         }
-        itsProgress->hide();
+        itsProgress->close();
 
         KUrl::List installUrls;
 

@@ -84,6 +84,7 @@ static QWidget * createParent(int xid)
             ry=0;
         parent->move(rx, ry);
     }
+    parent->setWindowOpacity(0);
 
     return parent;
 }

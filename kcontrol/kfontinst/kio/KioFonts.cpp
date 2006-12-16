@@ -2243,15 +2243,36 @@ void CKioFonts::special(const QByteArray &a)
                 finished();
                 break;
             case SPECIAL_CONFIGURE:
+            {
+                KUrl url;
+
+                stream >> url;
+
+                if(itsRoot)
+                {
+                    if(0==itsFolders[FOLDER_SYS].modified.count())
+                    {
+                        QByteArray cmd;
+
+                        createRootRefreshCmd(cmd, itsFolders[FOLDER_SYS].modified);
+                        doRootCmd(cmd, false);
+                    }
+                }
+                else
+                {
+                    QString sect(getSect(url.path()));
+
+                    if(isSysFolder(sect) && 0==itsFolders[FOLDER_SYS].modified.count())
+                        configure(FOLDER_SYS);
+                    else if(isUserFolder(sect) && 0==itsFolders[FOLDER_USER].modified.count())
+                        configure(FOLDER_USER);
+                }
                 doModified();
                 clearFontList();
                 updateFontList();
                 finished();
                 break;
-            case SPECIAL_PING:
-                KFI_DBUG << "ping'ed" << endl;
-                finished();
-                break;
+            }
             default:
                 error(KIO::ERR_UNSUPPORTED_ACTION, QString::number(cmd));
         }
@@ -2479,7 +2500,11 @@ bool CKioFonts::updateFontList()
         itsLastFcCheckTime=time(NULL);
 
         FcPattern   *pat = FcPatternCreate();
-        FcObjectSet *os  = FcObjectSetBuild(FC_FILE, FC_FAMILY, FC_FAMILYLANG, FC_WEIGHT,
+        FcObjectSet *os  = FcObjectSetBuild(FC_FILE, FC_FAMILY,
+#ifdef KFI_USE_TRANSLATED_FAMILY_NAME
+                                            FC_FAMILYLANG,
+#endif
+                                            FC_WEIGHT,
                                             FC_SCALABLE,
 #ifndef KFI_FC_NO_WIDTHS
                                             FC_WIDTH,
