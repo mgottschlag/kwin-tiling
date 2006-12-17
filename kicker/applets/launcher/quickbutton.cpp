@@ -168,7 +168,7 @@ QuickButton::QuickButton(const QString &u, KAction* configAction,
         KShortcut(), actionCollection);
     connect(m_stickyAction, SIGNAL(toggled(bool)),
         this, SLOT(slotStickyToggled(bool)));
-    m_stickyAction->plug(_popup, 2);
+    _popup->insertAction(_popup->actions().value(1), m_stickyAction);
     m_stickyId = _popup->idAt(2);
 
     settingsChanged(KGlobalSettings::SETTINGS_MOUSE);

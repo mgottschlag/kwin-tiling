@@ -175,7 +175,7 @@ void KlipperPopup::buildFromScratch() {
             addSeparator();
         }
         lastGroup = group;
-        action->plug( this, -1 );
+        addAction(action);
     }
 
     if ( KGlobalSettings::insertTearOffHandle() ) {
