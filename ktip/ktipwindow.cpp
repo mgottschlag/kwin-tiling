@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	tipDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
 
 	tipDialog->setCaption(i18n("Useful Tips"));
-	QDBusInterface ksplash("org.kde.ksplash", "/KSplash", "org.kde.ksplash.KSplash");
+	QDBusInterface ksplash("org.kde.ksplash", "/KSplash", "org.kde.KSplash");
 	ksplash.call("close"); // Close splash screen
 	tipDialog->show();
 
