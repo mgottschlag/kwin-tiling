@@ -49,7 +49,7 @@ Kbd::Kbd( bool grabbing_enabled_P, QObject* parent_P )
     keyboard_handler = this;
     kga = new KActionCollection( this );
     kga->setEnabled( grabbing_enabled_P );
-    connect(kga, SIGNAL(actionTriggered(KAction*)), SLOT(actionTriggered(KAction*)));
+    connect(kga, SIGNAL(actionTriggered(QAction*)), SLOT(actionTriggered(QAction*)));
     }
 
 Kbd::~Kbd()
@@ -135,9 +135,9 @@ void Kbd::ungrab_shortcut( const KShortcut& shortcut_P )
         }
     }
 
-void Kbd::actionTriggered(KAction* action)
+void Kbd::actionTriggered(QAction* action)
     {
-    KShortcut shortcut = action->globalShortcut();
+    KShortcut shortcut = static_cast<KAction*>(action)->globalShortcut();
     if( !grabs.contains( shortcut ))
         return;
     for( QHash< Kbd_receiver*, Receiver_data >::ConstIterator it = receivers.begin();

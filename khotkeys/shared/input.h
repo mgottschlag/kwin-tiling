@@ -51,7 +51,7 @@ protected:
     void grab_shortcut( const KShortcut& shortcut_P );
     void ungrab_shortcut( const KShortcut& shortcut_P );
 private Q_SLOTS:
-    void actionTriggered( KAction* action );
+    void actionTriggered( QAction* action );
 private:
     struct Receiver_data
         {
