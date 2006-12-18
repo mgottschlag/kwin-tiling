@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "themer/kdmthemer.h"
 #include "themer/kdmitem.h"
 
+#include <kglobal.h>
 #include <klocale.h>
 #include <klineedit.h>
 #include <kpassworddialog.h>

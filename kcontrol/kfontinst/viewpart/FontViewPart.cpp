@@ -39,6 +39,7 @@
 #include <QTimer>
 #include <QApplication>
 #include <kio/netaccess.h>
+#include <kglobal.h>
 #include <kinstance.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
