@@ -67,7 +67,7 @@ extern "C"
         KToolInvocation::kdeinitExec( "khotkeys" );
     else
         {
-    QDBusInterface kded("org.kde.kded", "/modules/kded", "org.kde.kded.Kded");
+    QDBusInterface kded("org.kde.kded", "/modules/kded", "org.kde.kded");
 		QDBusReply<bool> reply = kded.call("loadModule",QString( "khotkeys" ) );
         if( !reply.isValid())
             {
