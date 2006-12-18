@@ -742,7 +742,7 @@ void KRootWm::slotConfigureDesktop() {
   KToolInvocation::kdeinitExec(QLatin1String("kcmshell"), args);
 }
 
-static void sendToAppropriate(const char* baseApp, const char* iface, const char* call)
+static void sendToAppropriate(const char* baseApp, const char* iface, const char* call, const char* path)
 {
     // make sure we send the message to the correct screen
     QString appname;
@@ -751,9 +751,9 @@ static void sendToAppropriate(const char* baseApp, const char* iface, const char
     else
 	appname.sprintf("%s-screen-%d", baseApp, kdesktop_screen_number);
 
-    QDBusInterface kwin( appname, "/KWin", iface );
-    if ( kwin.isValid() )
-        kwin.call( call );
+    QDBusInterface interface( appname, path, iface );
+    if ( interface.isValid() )
+        interface.call( call );
 }
 
 void KRootWm::slotToggleDesktopMenu()
@@ -761,7 +761,7 @@ void KRootWm::slotToggleDesktopMenu()
     KDesktopSettings::setShowMenubar( !(m_bShowMenuBar && menuBar) );
     KDesktopSettings::writeConfig();
 
-    sendToAppropriate("kdesktop", "org.kde.kdesktop.Desktop", "configure");
+    sendToAppropriate("kdesktop", "org.kde.kdesktop.Desktop", "configure", "/Desktop");
     // for the standalone menubar setting
 #ifdef __GNUC__
 #warning TODO port to a dbus signal
@@ -776,17 +776,17 @@ void KRootWm::slotToggleDesktopMenu()
 
 
 void KRootWm::slotUnclutterWindows() {
-    sendToAppropriate("kwin", "org.kde.KWin", "unclutterDesktop");
+    sendToAppropriate("kwin", "org.kde.KWin", "unclutterDesktop", "/KWin");
 }
 
 
 void KRootWm::slotCascadeWindows() {
-    sendToAppropriate("kwin", "org.kde.KWin", "cascadeDesktop");
+    sendToAppropriate("kwin", "org.kde.KWin", "cascadeDesktop", "/KWin");
 }
 
 
 void KRootWm::slotLock() {
-    sendToAppropriate("kdesktop", "org.kde.kdesktop.ScreenSaver", "lock");
+    sendToAppropriate("kdesktop", "org.kde.kdesktop.ScreenSaver", "lock", "/ScreenSaver" );
 }
 
 
