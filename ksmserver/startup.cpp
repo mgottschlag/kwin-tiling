@@ -292,7 +292,7 @@ void KSMServer::autoStart2()
     klauncher.call( "autoStart", (int) 2 );
     QDBusInterface kded( "org.kde.kded", "/kded", "org.kde.kded" );
     kded.call( "loadSecondPhase" );
-    QDBusInterface kdesktop( "org.kde.kdesktop", "/kdesktop", "org.kde.KDesktopIface" );
+    QDBusInterface kdesktop( "org.kde.kdesktop", "/Desktop", "org.kde.kdesktop.Desktop" );
     kdesktop.call( "runAutoStart" );
     connect( kcminitSignals, SIGNAL( phase2Done()), SLOT( kcmPhase2Done()));
     QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
