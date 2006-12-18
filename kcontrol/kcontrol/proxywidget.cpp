@@ -278,7 +278,7 @@ void ProxyWidget::helpClicked()
 	  emit helpRequest();
   else
   {
-     QDBusInterface kcontrol("org.kde.kcontrol", "/KControl", "org.kde.kcontrol.kcontrol");
+     QDBusInterface kcontrol("org.kde.kcontrol", "/moduleIface", "org.kde.kcontrol");
      kcontrol.call( "invokeHelp" );
   }
 }
