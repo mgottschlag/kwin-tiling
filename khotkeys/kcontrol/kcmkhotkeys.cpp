@@ -153,7 +153,7 @@ void Module::save()
         }
     else
         {
-        if( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "khotkeys" ))
+        if( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
             {
             kDebug( 1217 ) << "launching new khotkeys daemon" << endl;
             KToolInvocation::kdeinitExec( "khotkeys" );
