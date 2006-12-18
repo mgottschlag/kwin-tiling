@@ -29,7 +29,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <ktoggleaction.h>
 #include <kwin.h>
 #include <kxmlguifactory.h>
@@ -209,8 +209,8 @@ bool TopLevel::queryClose()
 
 void TopLevel::setupActions()
 {
-  KStdAction::quit(this, SLOT(close()), actionCollection());
-  KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()),
+  KStandardAction::quit(this, SLOT(close()), actionCollection());
+  KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()),
                           actionCollection());
 
   QActionGroup* viewModeGroup = new QActionGroup(this);

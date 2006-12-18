@@ -40,7 +40,7 @@
 #include <kapplication.h>
 #include <kiconloader.h>
 #include <kmenu.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 
 #include <konq_operations.h>
 #include <konq_popupmenu.h>
@@ -51,10 +51,10 @@ MediumButton::MediumButton(QWidget *parent, const KFileItem &fileItem)
 {
 	mActions.setAssociatedWidget(this);
 
-	KAction *a = KStdAction::paste(this, SLOT(slotPaste()),
+	KAction *a = KStandardAction::paste(this, SLOT(slotPaste()),
 	                               &mActions, "pasteto");
 	a->setShortcut(0);
-	a = KStdAction::copy(this, SLOT(slotCopy()), &mActions, "copy");
+	a = KStandardAction::copy(this, SLOT(slotCopy()), &mActions, "copy");
 	a->setShortcut(0);
 
 	resize(20, 20);

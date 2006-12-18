@@ -31,7 +31,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kstdguiitem.h>
 #include <kactioncollection.h>
 #include "krandrtray.h"
@@ -96,7 +96,7 @@ void KRandRSystemTray::prepareMenu()
 	menu->addAction( actPrefs );
 
 	menu->insertItem(SmallIcon("help"),KStdGuiItem::help().text(), m_help->menu());
-	QAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
+	QAction *quitAction = actionCollection()->action(KStandardAction::name(KStandardAction::Quit));
 	menu->addAction( quitAction );
 }
 

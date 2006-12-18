@@ -30,7 +30,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kservice.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kstdaccel.h>
 #include <kxmlguifactory.h>
 #include "treeview.h"
@@ -73,11 +73,11 @@ void KMenuEdit::setupActions()
 
     m_actionDelete = 0;
 
-    KStdAction::save(this, SLOT( slotSave() ), actionCollection());
-    KStdAction::quit(this, SLOT( close() ), actionCollection());
-    KStdAction::cut(0, 0, actionCollection());
-    KStdAction::copy(0, 0, actionCollection());
-    KStdAction::paste(0, 0, actionCollection());
+    KStandardAction::save(this, SLOT( slotSave() ), actionCollection());
+    KStandardAction::quit(this, SLOT( close() ), actionCollection());
+    KStandardAction::cut(0, 0, actionCollection());
+    KStandardAction::copy(0, 0, actionCollection());
+    KStandardAction::paste(0, 0, actionCollection());
 }
 
 void KMenuEdit::setupView()

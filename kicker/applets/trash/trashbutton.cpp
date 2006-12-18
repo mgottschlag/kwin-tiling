@@ -25,7 +25,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <krun.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 
 #include <kio/netaccess.h>
 
@@ -42,7 +42,7 @@ TrashButton::TrashButton(QWidget *parent)
 	KIO::NetAccess::stat(KUrl("trash:/"), entry, 0L);
 	mFileItem.assign(KFileItem(entry, KUrl("trash:/")));
 
-	KAction *a = KStdAction::paste(this, SLOT(slotPaste()),
+	KAction *a = KStandardAction::paste(this, SLOT(slotPaste()),
 	                               &mActions, "paste");
 	a->setShortcut(0);
 

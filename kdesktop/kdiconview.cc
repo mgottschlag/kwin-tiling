@@ -40,7 +40,7 @@
 #include <konq_settings.h>
 #include <konq_undo.h>
 #include <kprotocolinfo.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kstandarddirs.h>
 #include <kwin.h>
 #include <kdirnotify.h>
@@ -404,24 +404,24 @@ void KDIconView::createActions()
 {
     if (m_bEditableDesktopIcons)
     {
-        KAction *undo = KStdAction::undo( KonqUndoManager::self(), SLOT( undo() ), &m_actionCollection, "undo" );
+        KAction *undo = KStandardAction::undo( KonqUndoManager::self(), SLOT( undo() ), &m_actionCollection, "undo" );
         connect( KonqUndoManager::self(), SIGNAL( undoAvailable( bool ) ),
              undo, SLOT( setEnabled( bool ) ) );
         connect( KonqUndoManager::self(), SIGNAL( undoTextChanged( const QString & ) ),
                  this, SLOT( slotUndoTextChanged( const QString & ) ) );
         undo->setEnabled( KonqUndoManager::self()->undoAvailable() );
 
-        KAction* paCut = KStdAction::cut( this, SLOT( slotCut() ), &m_actionCollection, "cut" );
+        KAction* paCut = KStandardAction::cut( this, SLOT( slotCut() ), &m_actionCollection, "cut" );
         KShortcut cutShortCut = paCut->shortcut();
         cutShortCut.remove( Qt::SHIFT + Qt::Key_Delete ); // used for deleting files
         paCut->setShortcut( cutShortCut );
 
-        KStdAction::copy( this, SLOT( slotCopy() ), &m_actionCollection, "copy" );
-        KStdAction::paste( this, SLOT( slotPaste() ), &m_actionCollection, "paste" );
-        KAction *pasteTo = KStdAction::paste( this, SLOT( slotPopupPasteTo() ), &m_actionCollection, "pasteto" );
+        KStandardAction::copy( this, SLOT( slotCopy() ), &m_actionCollection, "copy" );
+        KStandardAction::paste( this, SLOT( slotPaste() ), &m_actionCollection, "paste" );
+        KAction *pasteTo = KStandardAction::paste( this, SLOT( slotPopupPasteTo() ), &m_actionCollection, "pasteto" );
         pasteTo->setEnabled( false ); // only enabled during popupMenu()
 
-        KStdAction::redisplay( this, SLOT(refreshIcons()), &m_actionCollection, "reload" );
+        KStandardAction::redisplay( this, SLOT(refreshIcons()), &m_actionCollection, "reload" );
 
         KAction *action = new KAction( i18n( "&Rename" ), &m_actionCollection, "rename" );
         connect(action, SIGNAL(triggered(bool)), SLOT(renameSelectedItem()));

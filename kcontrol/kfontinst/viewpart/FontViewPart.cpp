@@ -43,7 +43,7 @@
 #include <kinstance.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kaction.h>
 #include <kinputdialog.h>
 #include <kdialog.h>
