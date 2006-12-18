@@ -51,7 +51,7 @@ KHotKeysModule::KHotKeysModule( )
          i < 5;
          ++i )
         {
-        if( QDBusConnection::sessionBus().interface()->isServiceRegistered( "khotkeys" ))
+        if( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
             {
             // wait for it to finish
 #ifdef __GNUC__
