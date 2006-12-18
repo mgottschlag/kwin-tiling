@@ -146,7 +146,7 @@ void Settings::write_settings()
     else
         cfg.deleteGroup( "GesturesExclude" );
 	cfg.setGroup( "Voice" );
-	cfg.writeEntry("Shortcut" , voice_shortcut.toStringInternal() );
+	cfg.writeEntry("Shortcut" , voice_shortcut.toString() );
 
     }
 

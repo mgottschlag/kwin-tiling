@@ -289,7 +289,7 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
         }
     QString shortcut = "";
     // make sure the shortcut is valid
-    shortcut = (KShortcut( shortcut_P )).toStringInternal();
+    shortcut = (KShortcut( shortcut_P )).toString();
     if( !shortcut.isEmpty())
         entry->set_trigger( new Shortcut_trigger( entry, KShortcut( shortcut )));
     if( shortcut.isEmpty())

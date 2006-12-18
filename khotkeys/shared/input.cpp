@@ -112,7 +112,7 @@ void Kbd::grab_shortcut( const KShortcut& shortcut_P )
         kga->insertItem( "", name, keycode_P );
         kga->connectItem( name, this, SLOT( key_slot( int )));
 #endif
-        QString name = ' ' + shortcut_P.toStringInternal();
+        QString name = ' ' + shortcut_P.toString();
         KAction* a = new KAction(name, kga, name.toLatin1().constData());
         a->setGlobalShortcut(shortcut_P);
         }
@@ -130,7 +130,7 @@ void Kbd::ungrab_shortcut( const KShortcut& shortcut_P )
         // kga->disconnectItem( ' ' + QString::number( keycode_P ), NULL, NULL );
         kga->removeItem( ' ' + QString::number( keycode_P ));
 #endif
-        delete kga->action( ' ' + shortcut_P.toStringInternal());
+        delete kga->action( ' ' + shortcut_P.toString());
         grabs.remove( shortcut_P );
         }
     }

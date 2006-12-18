@@ -348,7 +348,7 @@ void MenuEntryInfo::save()
    {
       if( KHotKeys::present())
       {
-         KHotKeys::changeMenuEntryShortcut( service->storageId(), shortCut.toStringInternal() );
+         KHotKeys::changeMenuEntryShortcut( service->storageId(), shortCut.toString() );
       }
       shortcutDirty = false;
    }

@@ -137,7 +137,7 @@ Shortcut_trigger::~Shortcut_trigger()
 void Shortcut_trigger::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Key", _shortcut.toStringInternal());
+    cfg_P.writeEntry( "Key", _shortcut.toString());
     cfg_P.writeEntry( "Type", "SHORTCUT" ); // overwrites value set in base::cfg_write()
     }
 
