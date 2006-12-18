@@ -145,6 +145,8 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     else
 	appname = "kdesktop-screen-" + QByteArray::number( kdesktop_screen_number );
 
+    QDBusConnection::sessionBus().interface()->registerService( appname, QDBusConnectionInterface::DontQueueService );
+
     KAboutData aboutData( appname.data(), I18N_NOOP("KDesktop"),
 			  version, description, KAboutData::License_GPL,
 			  "(c) 1998-2000, The KDesktop Authors");
