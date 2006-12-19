@@ -10,11 +10,11 @@ Name=Centered
 Name[fr]=Centré
 Name[x-test]=xxCenteredxx
 Icon=background
-Exec=dbus org.kde.kdesktop  /Background setWallpaper %u 6
+Exec=qdbus org.kde.kdesktop  /Background setWallpaper %u 6
 
 [Desktop Action tileAsBackground]
 Name=Tiled
 Name[fr]=Mosaïque
 Name[x-test]=xxTiledxx
 Icon=background
-Exec=dbus org.kde.kdesktop  /Background setWallpaper %u 2
+Exec=qdbus org.kde.kdesktop  /Background setWallpaper %u 2
