@@ -213,8 +213,10 @@ KCMInit::KCMInit( KCmdLineArgs* args )
   if( startup )
   {
      runModules( 0 );
+#ifdef Q_WS_X11     
      QDBusInterface ksplash("org.kde.ksplash", "/KSplash", "org.kde.ksplash.KSplash");
      ksplash.call( "upAndRunning", "kcminit" );
+#endif     
      sendReady();
      QTimer::singleShot( 300 * 1000, qApp, SLOT( quit())); // just in case
      qApp->exec(); // wait for runPhase1() and runPhase2()
