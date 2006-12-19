@@ -75,7 +75,6 @@ public:
 
     void setAutoAlign( bool b );
 
-    void refreshIcons();
     QStringList selectedUrls();
 
     /**
@@ -152,6 +151,7 @@ public Q_SLOTS:
      */
     void lineupIcons();
     void slotPaste(); // for krootwm
+    void refreshIcons();
 protected:
     void createActions();
     void setupSortKeys();

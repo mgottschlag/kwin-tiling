@@ -6,7 +6,7 @@
 # define DEF2( name, key, receiver, slot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
    a->setGlobalShortcut(KShortcut(key)); \
-   connect(a, SIGNAL(triggered(bool)), receiver, SLOT(fnSlot))
+   connect(a, SIGNAL(triggered(bool)), receiver, slot)
 #else
 # define DEF( name, key, fnSlot ) \
    a = new KAction( i18n(name), actionCollection, name ); \
