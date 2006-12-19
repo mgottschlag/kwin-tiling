@@ -162,7 +162,7 @@ KDIconView::KDIconView( QWidget *parent, const char* name )
     OrgKdeKDirNotifyInterface *kdirnotify = new OrgKdeKDirNotifyInterface( QString(), QString(), QDBusConnection::sessionBus() );
     kdirnotify->setParent(this);
     connect(kdirnotify, SIGNAL(FilesAdded(QString)), SLOT(slotFilesAdded(QString)));
-    connect(kdirnotify, SIGNAL(FilesChanged(QStringList)), SLOT(slotFilesChanged(QStringList)));
+    //connect(kdirnotify, SIGNAL(FilesChanged(QStringList)), SLOT(slotFilesChanged(QStringList)));
     connect(kdirnotify, SIGNAL(FilesRemoved(QStringList)), SLOT(slotFilesRemoved(QStringList)));
 }
 
