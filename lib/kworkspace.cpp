@@ -66,7 +66,7 @@ bool requestShutDown(
          sdtype != ShutdownTypeDefault ||
          sdmode != ShutdownModeDefault )
     {
-        QDBusInterface ksmserver( "org.kde.ksmserver", "/Ksmserver", "org.kde.ksmserver.ksmserver" );
+        QDBusInterface ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
         QDBusReply<void> reply = ksmserver.call( "logout",  (int)confirm,  (int)sdtype,  (int)sdmode );
         return (reply.isValid());
     }
