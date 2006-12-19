@@ -771,8 +771,12 @@ void KRootWm::slotToggleDesktopMenu()
 #if 0
     kapp->dcopClient()->send( "menuapplet*", "menuapplet", "configure" );
     kapp->dcopClient()->send( "kicker", "kicker", "configureMenubar" );
-    kapp->dcopClient()->send( "kwin*", "", "reconfigure()" );
 #endif
+    // Send signal to all kwin instances
+    QDBusMessage message =
+        QDBusMessage::createSignal("/KWin", "org.kde.KWin", "reloadConfig");
+    QDBusConnection::sessionBus().send(message);
+
 }
 
 

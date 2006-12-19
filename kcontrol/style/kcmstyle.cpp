@@ -649,10 +649,10 @@ void KCMStyle::save()
 
 	if (m_bEffectsDirty) {
 		KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
-#ifdef __GNUC__
-#warning "kde4: port it ! Need to fix kwin"
-#endif		
-		//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray());
+        // Send signal to all kwin instances
+        QDBusMessage message =
+           QDBusMessage::createSignal("/KWin", "org.kde.KWin", "reloadConfig");
+        QDBusConnection::sessionBus().send(message);
 	}
 
 	//update kicker to re-used tooltips kicker parameter otherwise, it overwritted
