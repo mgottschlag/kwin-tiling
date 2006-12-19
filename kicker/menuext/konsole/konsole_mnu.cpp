@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kapplication.h>
 #include <kglobal.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <kio/global.h>
 #include <klocale.h>
@@ -137,7 +138,7 @@ void KonsoleMenu::initialize()
         {
             continue;
         }
-        insertItemSorted(this, SmallIconSet(conf.readEntry("Icon", "konsole")),
+        insertItemSorted(this, KIcon(conf.readEntry("Icon", "konsole")),
                                             text, id++);
         QFileInfo fi(*it);
         sessionList.append(fi.completeBaseName());
@@ -151,7 +152,7 @@ void KonsoleMenu::initialize()
     m_bookmarkHandlerSession = new KonsoleBookmarkHandler(this, false);
     m_bookmarksSession = m_bookmarkHandlerSession->menu();
     addSeparator();
-    insertItem(SmallIconSet("keditbookmarks"),
+    insertItem(KIcon("keditbookmarks"),
                i18n("New Session at Bookmark"), m_bookmarksSession);
     connect(m_bookmarkHandlerSession,
             SIGNAL(openUrl(const QString&, const QString&)),
@@ -187,7 +188,7 @@ void KonsoleMenu::initialize()
             {
                 ::close(fd);
                 screenList.append(QFile::decodeName(entry->d_name));
-                insertItem(SmallIconSet("konsole"),
+                insertItem(KIcon("konsole"),
                            i18nc("Screen is a program for controlling screens",
                                 "Screen at %1", entry->d_name), id);
                 id++;
@@ -236,7 +237,7 @@ void KonsoleMenu::initialize()
     connect(m_profileMenu, SIGNAL(activated(int)), SLOT(launchProfile(int)));
 
     addSeparator();
-    insertItem(SmallIconSet("reload"),
+    insertItem(KIcon("reload"),
                i18n("Reload Sessions"), this, SLOT(reinitialize()));
 }
 

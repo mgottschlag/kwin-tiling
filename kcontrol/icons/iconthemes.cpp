@@ -41,6 +41,7 @@
 #undef Unsorted
 
 #include <k3listview.h>
+#include <kbuildsycocaprogressdialog.h>
 #include <kurlrequesterdlg.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>

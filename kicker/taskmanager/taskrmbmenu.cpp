@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <assert.h>
 
-#include <kiconloader.h>
+#include <kicon.h>
 #include <klocale.h>
 
 #include "taskmanager.h"
@@ -86,7 +86,7 @@ void TaskRMBMenu::fillMenu(Task::TaskPtr t)
         }
     }
 
-    id = insertItem(SmallIconSet("move"), i18n("&Move"), t.data(), SLOT(move()));
+    id = insertItem(KIcon("move"), i18n("&Move"), t.data(), SLOT(move()));
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionMove));
 
     id = insertItem(i18n("Re&size"), t.data(), SLOT(resize()));
@@ -106,7 +106,7 @@ void TaskRMBMenu::fillMenu(Task::TaskPtr t)
 
     addSeparator();
 
-    id = insertItem(SmallIcon("fileclose"), i18n("&Close"), t.data(), SLOT(close()));
+    id = insertItem(KIcon("fileclose"), i18n("&Close"), t.data(), SLOT(close()));
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionClose));
 }
 
@@ -191,7 +191,7 @@ void TaskRMBMenu::fillMenu()
 
 	enable = false;
 
-	insertItem( SmallIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
+	insertItem( KIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
 }
 
 QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
@@ -201,17 +201,17 @@ QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
 
     menu->setCheckable(true);
 
-    id = menu->insertItem(SmallIconSet("up"),
+    id = menu->insertItem(KIcon("up"),
                           i18n("Keep &Above Others"),
                           t.data(), SLOT(toggleAlwaysOnTop()));
     menu->setItemChecked(id, t->isAlwaysOnTop());
 
-    id = menu->insertItem(SmallIconSet("down"),
+    id = menu->insertItem(KIcon("down"),
                           i18n("Keep &Below Others"),
                           t.data(), SLOT(toggleKeptBelowOthers()));
     menu->setItemChecked(id, t->isKeptBelowOthers());
 
-    id = menu->insertItem(SmallIconSet("window_fullscreen"),
+    id = menu->insertItem(KIcon("window_fullscreen"),
                           i18n("&Fullscreen"),
                           t.data(), SLOT(toggleFullScreen()));
     menu->setItemChecked(id, t->isFullScreen());

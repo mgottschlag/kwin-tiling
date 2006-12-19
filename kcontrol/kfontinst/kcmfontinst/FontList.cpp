@@ -25,6 +25,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <kmimetype.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <kde_file.h>
 #include <QFont>
@@ -1237,19 +1238,19 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
                       "<ul>"));
 
     itsStdMenu=new QMenu(this);
-    itsDeleteAct=itsStdMenu->addAction(SmallIconSet("editdelete"), i18n("Delete..."),
+    itsDeleteAct=itsStdMenu->addAction(KIcon("editdelete"), i18n("Delete..."),
                                        this, SIGNAL(del()));
-    itsPrintAct=itsStdMenu->addAction(SmallIconSet("fileprint"), i18n("Print..."),
+    itsPrintAct=itsStdMenu->addAction(KIcon("fileprint"), i18n("Print..."),
                                       this, SIGNAL(print()));
     itsStdMenu->addSeparator();
-    QAction *reloadAct=itsStdMenu->addAction(SmallIconSet("reload"), i18n("Reload"), this, SIGNAL(reload()));
+    QAction *reloadAct=itsStdMenu->addAction(KIcon("reload"), i18n("Reload"), this, SIGNAL(reload()));
 
     itsMgtMenu=new QMenu(this);
     itsMgtMenu->addAction(itsDeleteAct);
     itsMgtMenu->addSeparator();
-    itsEnableAct=itsMgtMenu->addAction(SmallIconSet("enablefont"), i18n("Enable..."),
+    itsEnableAct=itsMgtMenu->addAction(KIcon("enablefont"), i18n("Enable..."),
                                        this, SIGNAL(enable()));
-    itsDisableAct=itsMgtMenu->addAction(SmallIconSet("disablefont"), i18n("Disable..."),
+    itsDisableAct=itsMgtMenu->addAction(KIcon("disablefont"), i18n("Disable..."),
                                         this, SIGNAL(disable()));
     itsMgtMenu->addSeparator();
     itsMgtMenu->addAction(itsPrintAct);

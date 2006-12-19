@@ -708,8 +708,8 @@ void KDesktop::slotSwitchDesktops(int delta)
 void KDesktop::handleColorDropEvent(QDropEvent * e)
 {
     KMenu popup;
-    QAction* primary = popup.addAction(SmallIconSet("colors"), i18n("Set as Primary Background Color"));
-    popup.addAction(SmallIconSet("colors"), i18n("Set as Secondary Background Color"));
+    QAction* primary = popup.addAction(KIcon("colors"), i18n("Set as Primary Background Color"));
+    popup.addAction(KIcon("colors"), i18n("Set as Secondary Background Color"));
     QAction* result = popup.exec(e->pos());
 
     if (result != 0) {
@@ -726,11 +726,11 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
     QAction* saveToDesktop  = 0;
     QAction* setAsWallpaper = 0;
     if ( m_pIconView )
-       saveToDesktop = popup.addAction(SmallIconSet("filesave"), i18n("&Save to Desktop..."));
+       saveToDesktop = popup.addAction(KIcon("filesave"), i18n("&Save to Desktop..."));
     if ( ( m_pIconView && m_pIconView->maySetWallpaper() ) || m_pRootWidget )
-       setAsWallpaper = popup.addAction(SmallIconSet("background"), i18n("Set as &Wallpaper"));
+       setAsWallpaper = popup.addAction(KIcon("background"), i18n("Set as &Wallpaper"));
     popup.addSeparator();
-    popup.addAction(SmallIconSet("cancel"), i18n("&Cancel"));
+    popup.addAction(KIcon("cancel"), i18n("&Cancel"));
     QAction* result = popup.exec(e->pos());
 
     if (result == saveToDesktop)

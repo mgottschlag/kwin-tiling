@@ -202,7 +202,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
         // add an edit-possibility
         myMenu->insertItem( SmallIcon("edit"), i18n("&Edit Contents..."),
                             URL_EDIT_ITEM );
-        myMenu->insertItem( SmallIconSet("cancel"), i18n("&Cancel"), DO_NOTHING_ITEM );
+        myMenu->insertItem( KIcon("cancel"), i18n("&Cancel"), DO_NOTHING_ITEM );
 
         if ( myPopupKillTimeout > 0 )
             myPopupKillTimer->start( 1000 * myPopupKillTimeout );

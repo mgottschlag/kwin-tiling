@@ -391,13 +391,12 @@ void kthememanager::queryLNFModules()
     dlg->lvDetails->sort();*/
 
     // For now use a static list
-    KIconLoader * il = KGlobal::iconLoader();
-    dlg->btnBackground->setIcon( il->loadIconSet( "background", K3Icon::Desktop, 32 ) );
-    dlg->btnColors->setIcon( il->loadIconSet( "colorscm", K3Icon::Desktop, 32 ) );
-    dlg->btnStyle->setIcon( il->loadIconSet( "style", K3Icon::Desktop, 32 ) );
-    dlg->btnIcons->setIcon( il->loadIconSet( "icons", K3Icon::Desktop, 32 ) );
-    dlg->btnFonts->setIcon( il->loadIconSet( "fonts", K3Icon::Desktop, 32 ) );
-    dlg->btnSaver->setIcon( il->loadIconSet( "kscreensaver", K3Icon::Desktop, 32 ) );
+    dlg->btnBackground->setIcon( KIcon( "background" ) );
+    dlg->btnColors->setIcon( KIcon( "colorscm" ) );
+    dlg->btnStyle->setIcon( KIcon( "style" ) );
+    dlg->btnIcons->setIcon( KIcon( "icons" ) );
+    dlg->btnFonts->setIcon( KIcon( "fonts" ) );
+    dlg->btnSaver->setIcon( KIcon( "kscreensaver" ) );
 }
 
 void kthememanager::updatePreview( const QString & pixFile )

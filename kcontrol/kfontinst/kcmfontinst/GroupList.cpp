@@ -436,17 +436,17 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
     setRootIsDecorated(false);
     itsMenu=new QMenu(this);
 
-    itsDeleteAct=itsMenu->addAction(SmallIconSet("remove"), i18n("Remove..."),
+    itsDeleteAct=itsMenu->addAction(KIcon("remove"), i18n("Remove..."),
                                     this, SIGNAL(del()));
-    itsEnableAct=itsMenu->addAction(SmallIconSet("enablefont"), i18n("Enable..."),
+    itsEnableAct=itsMenu->addAction(KIcon("enablefont"), i18n("Enable..."),
                                     this, SIGNAL(enable()));
-    itsDisableAct=itsMenu->addAction(SmallIconSet("disablefont"), i18n("Disable..."),
+    itsDisableAct=itsMenu->addAction(KIcon("disablefont"), i18n("Disable..."),
                                      this, SIGNAL(disable()));
     itsMenu->addSeparator();
     itsRenameAct=itsMenu->addAction(i18n("Rename..."), this, SLOT(rename()));
     itsMenu->addSeparator();
     itsExportAct=itsMenu->addAction(i18n("Export..."), this, SIGNAL(exportGroup()));
-    itsPrintAct=itsMenu->addAction(SmallIconSet("fileprint"), i18n("Print..."),
+    itsPrintAct=itsMenu->addAction(KIcon("fileprint"), i18n("Print..."),
                                    this, SIGNAL(print()));
 
     setWhatsThis(i18n("<p>This list shows font groups.</p>"));

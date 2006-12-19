@@ -57,7 +57,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
         QString text = isButton ? (isMenu ? i18n("&Move %1 Menu", titleText) :
                                             i18n("&Move %1 Button", titleText)) :
                                    i18n("&Move %1", titleText);
-        insertItem(SmallIconSet("move"), text, Move);
+        insertItem(KIcon("move"), text, Move);
 
         // we look for a container area to see if we can add containers
         // this is part of the kiosk support in kicker, allowing
@@ -81,7 +81,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
             text = isButton ? (isMenu ? i18n("&Remove %1 Menu", titleText) :
                                         i18n("&Remove %1 Button", titleText)) :
                               i18n("&Remove %1", titleText);
-            insertItem(SmallIconSet("remove"), text, Remove);
+            insertItem(KIcon("remove"), text, Remove);
             needSeparator = true;
         }
     }
@@ -119,7 +119,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
             addSeparator();
         }
 
-        insertItem(SmallIconSet("help"), KStdGuiItem::help().text(), Help);
+        insertItem(KIcon("help"), KStdGuiItem::help().text(), Help);
         needSeparator = true;
     }
 
@@ -127,12 +127,12 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
     {
         if (isButton)
         {
-            insertItem(SmallIconSet("configure"),
+            insertItem(KIcon("configure"),
                        i18n("&Configure %1 Button...", titleText), Preferences);
         }
         else
         {
-            insertItem(SmallIconSet("configure"),
+            insertItem(KIcon("configure"),
                        i18n("&Configure %1...", titleText), Preferences);
         }
         needSeparator = true;
@@ -160,7 +160,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
         }
         else
         {
-            insertItem(SmallIconSet(icon), text,
+            insertItem(KIcon(icon), text,
                        const_cast<QMenu*>(appletsMenu));
         }
     }
@@ -173,7 +173,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
             needSeparator = false;
         }
 
-        insertItem(SmallIconSet("kmenuedit"), i18n("&Menu Editor"), Preferences);
+        insertItem(KIcon("kmenuedit"), i18n("&Menu Editor"), Preferences);
     }
 
     if ((actions & PanelAppletOpMenu::BookmarkEditor) &&
@@ -187,7 +187,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
 
         // NOTE: keditbookmarks is from konqueror. seeing as this is in kdebase
         //       as well this should be ok?
-        insertItem(SmallIconSet("keditbookmarks"),
+        insertItem(KIcon("keditbookmarks"),
                    i18n("&Edit Bookmarks"),
                    Preferences);
     }

@@ -25,6 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMouseEvent>
 
 #include <kglobal.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <kmimetype.h>
 #include <klocale.h>
@@ -53,7 +54,7 @@ RecentDocsMenu::~RecentDocsMenu()
 void RecentDocsMenu::initialize() {
 	if (initialized()) clear();
 
-	insertItem(SmallIconSet("history_clear"), i18n("Clear History"),
+	insertItem(KIcon("history_clear"), i18n("Clear History"),
 	           this, SLOT(slotClearHistory()));
 	addSeparator();
 
@@ -72,7 +73,7 @@ void RecentDocsMenu::initialize() {
 	     ++it)
 	{
 		KDesktopFile f(*it, true /* read only */);
-		insertItem(SmallIconSet(f.readIcon()), f.readName().replace('&', QString::fromAscii("&&") ), id++);
+		insertItem(KIcon(f.readIcon()), f.readName().replace('&', QString::fromAscii("&&") ), id++);
     }
 
     setInitialized(true);

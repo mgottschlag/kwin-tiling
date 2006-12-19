@@ -347,8 +347,8 @@ void PanelKMenu::slotPopulateSessions()
     if (KAuthorized::authorizeKAction("start_new_session") && (p = dm.numReserve()) >= 0)
     {
         if (KAuthorized::authorizeKAction("lock_screen"))
-	  sessionsMenu->insertItem(/*SmallIconSet("lockfork"),*/ i18n("Lock Current && Start New Session"), 100 );
-        sessionsMenu->insertItem(SmallIconSet("fork"), i18n("Start New Session"), 101 );
+	  sessionsMenu->insertItem(/*KIcon("lockfork"),*/ i18n("Lock Current && Start New Session"), 100 );
+        sessionsMenu->insertItem(KIcon("fork"), i18n("Start New Session"), 101 );
         if (!p) {
             sessionsMenu->setItemEnabled( 100, false );
             sessionsMenu->setItemEnabled( 101, false );

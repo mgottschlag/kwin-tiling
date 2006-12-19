@@ -68,13 +68,13 @@ void KateSessionMenu::initialize()
   int id = 0;
 
   // no session - exec 'kate'
-  insertItem( SmallIconSet("kate"), i18n("Start Kate (no arguments)"), id++ );
+  insertItem( KIcon("kate"), i18n("Start Kate (no arguments)"), id++ );
 
   // new session - prompt for a name and  exec 'kate --start NAME'
-  insertItem( SmallIconSet("new"), i18n("New Kate Session"), id++ );
+  insertItem( KIcon("new"), i18n("New Kate Session"), id++ );
 
   // new anonymous session, 'kate --start ""'
-  insertItem( SmallIconSet("new"), i18n("New Anonymous Session"), id++ );
+  insertItem( KIcon("new"), i18n("New Anonymous Session"), id++ );
 
   addSeparator();
 
@@ -95,7 +95,7 @@ void KateSessionMenu::initialize()
 
   // means for updating, to let the user manually update if he/she added new sessions.
   addSeparator();
-  insertItem( SmallIconSet("reload"), i18n("Reload Session List"), this, SLOT(reinitialize()) );
+  insertItem( KIcon("reload"), i18n("Reload Session List"), this, SLOT(reinitialize()) );
 }
 
 void KateSessionMenu::slotExec( int id )

@@ -38,7 +38,7 @@ PanelExtensionOpMenu::PanelExtensionOpMenu(const QString& extension, int actions
     setObjectName(name);
     if (!Kicker::self()->isImmutable())
     {
-        insertItem(SmallIconSet("remove"), i18n("&Remove"), Remove);
+        insertItem(KIcon("remove"), i18n("&Remove"), Remove);
     }
 
     if (actions & Plasma::ReportBug)
@@ -58,12 +58,12 @@ PanelExtensionOpMenu::PanelExtensionOpMenu(const QString& extension, int actions
 
     if (actions & Plasma::Help)
     {
-        insertItem(SmallIconSet("help"), KStdGuiItem::help().text(), Help);
+        insertItem(KIcon("help"), KStdGuiItem::help().text(), Help);
     }
 
     if (!Kicker::self()->isImmutable() && (actions & Plasma::Preferences)) {
 	addSeparator();
-	insertItem(SmallIconSet("configure"), i18n("&Configure %1...", extension), Preferences);
+	insertItem(KIcon("configure"), i18n("&Configure %1...", extension), Preferences);
     }
 
     adjustSize();

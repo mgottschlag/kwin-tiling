@@ -734,6 +734,12 @@ void TaskBar::reLayout()
         // actual button height
         int bheight = contentsRect().height() / rows;
 
+        // avoid zero division later
+        if (bheight < 1)
+        {
+            bheight = 1;
+        }
+
         // buttons per row
         int bpr = (int)ceil( (double)list.count() / rows);
 
@@ -755,12 +761,6 @@ void TaskBar::reLayout()
             {
                 bwidth = maxWidth;
             }
-        }
-
-        // avoid zero division later
-        if (bheight < 1)
-        {
-            bheight = 1;
         }
 
         // layout containers

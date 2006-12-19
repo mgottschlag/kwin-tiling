@@ -36,7 +36,6 @@ set(libkicker_buttons_SRCS
 set(libkicker_ui_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addbutton_mnu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addapplet.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addapplet_mnu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/appletop_mnu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/browser_mnu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/exe_dlg.cpp

@@ -24,7 +24,7 @@
 #include <kdirnotify.h>
 #include <kstandarddirs.h>
 #include <krun.h>
-#include <kiconloader.h>
+#include <kicon.h>
 #include <kdesktopfile.h>
 #include <kservice.h>
 
@@ -69,9 +69,9 @@ void RemoteMenu::initialize()
 {
     int id = 0;
 
-    id = insertItem(SmallIconSet("wizard"), i18n("Add Network Folder"));
+    id = insertItem(KIcon("wizard"), i18n("Add Network Folder"));
     connectItem(id, this, SLOT(startWizard()));
-    id = insertItem(SmallIconSet("kfm"), i18n("Manage Network Folders"));
+    id = insertItem(KIcon("kfm"), i18n("Manage Network Folders"));
     connectItem(id, this, SLOT(openRemoteDir()));
 
     addSeparator();
@@ -100,7 +100,7 @@ void RemoteMenu::initialize()
                 names_found.append(*name);
                 QString filename = *dirpath+*name;
                 KDesktopFile desktop(filename);
-                id = insertItem(SmallIconSet(desktop.readIcon()), desktop.readName());
+                id = insertItem(KIcon(desktop.readIcon()), desktop.readName());
                 connectItem(id, this, SLOT(slotExec(int)));
                 m_desktopMap[id] = filename;
             }

@@ -439,13 +439,13 @@ void KRootWm::buildMenus()
        if ( aLockIcons )
            pIconOperationsMenu->addAction( aLockIcons );
 
-       desktopMenu->insertItem(SmallIconSet("icons"), i18n("Icons"), pIconOperationsMenu);
+       desktopMenu->insertItem(KIcon("icons"), i18n("Icons"), pIconOperationsMenu);
     }
 
     QMenu* pWindowOperationsMenu = new QMenu;
     pWindowOperationsMenu->addAction( m_actionCollection->action("cascade") );
     pWindowOperationsMenu->addAction( m_actionCollection->action("unclutter") );
-    desktopMenu->insertItem(SmallIconSet("window_list"), i18n("Windows"), pWindowOperationsMenu);
+    desktopMenu->insertItem(KIcon("window_list"), i18n("Windows"), pWindowOperationsMenu);
 
     if (m_bDesktopEnabled)
     {
@@ -461,7 +461,7 @@ void KRootWm::buildMenus()
 
     if (sessionsMenu && KAuthorized::authorizeKAction("switch_user"))
     {
-        desktopMenu->insertItem(SmallIconSet("switchuser" ), i18n("Switch User"), sessionsMenu);
+        desktopMenu->insertItem(KIcon("switchuser" ), i18n("Switch User"), sessionsMenu);
         needSeparator = true;
     }
 

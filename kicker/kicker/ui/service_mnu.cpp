@@ -39,6 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdebug.h>
 #include <kdesktopfile.h>
 #include <kglobalsettings.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmimetype.h>
@@ -484,22 +485,22 @@ void PanelServiceMenu::mouseReleaseEvent(QMouseEvent * ev)
         case KST_KService:
             if (KAuthorized::authorizeKAction("editable_desktop_icons"))
             {
-                popupMenu_->insertItem(SmallIconSet("desktop"),
+                popupMenu_->insertItem(KIcon("desktop"),
                     i18n("Add Item to Desktop"), AddItemToDesktop);
             }
             if (KAuthorized::authorizeKAction("kicker_rmb"))
             {
-                popupMenu_->insertItem(SmallIconSet("kicker"),
+                popupMenu_->insertItem(KIcon("kicker"),
                     i18n("Add Item to Main Panel"), AddItemToPanel);
             }
             if (KAuthorized::authorizeKAction("menuedit"))
             {
-                popupMenu_->insertItem(SmallIconSet("kmenuedit"),
+                popupMenu_->insertItem(KIcon("kmenuedit"),
                     i18n("Edit Item"), EditItem);
             }
             if (KAuthorized::authorizeKAction("run_command"))
             {
-                popupMenu_->insertItem(SmallIconSet("run"),
+                popupMenu_->insertItem(KIcon("run"),
                     i18n("Put Into Run Dialog"), PutIntoRunDialog);
             }
             break;
@@ -507,17 +508,17 @@ void PanelServiceMenu::mouseReleaseEvent(QMouseEvent * ev)
         case KST_KServiceGroup:
             if (KAuthorized::authorizeKAction("editable_desktop_icons"))
             {
-                popupMenu_->insertItem(SmallIconSet("desktop"),
+                popupMenu_->insertItem(KIcon("desktop"),
                     i18n("Add Menu to Desktop"), AddMenuToDesktop);
             }
             if (KAuthorized::authorizeKAction("kicker_rmb"))
             {
-                popupMenu_->insertItem(SmallIconSet("kicker"),
+                popupMenu_->insertItem(KIcon("kicker"),
                     i18n("Add Menu to Main Panel"), AddMenuToPanel);
             }
             if (KAuthorized::authorizeKAction("menuedit"))
             {
-                popupMenu_->insertItem(SmallIconSet("kmenuedit"),
+                popupMenu_->insertItem(KIcon("kmenuedit"),
                     i18n("Edit Menu"), EditMenu);
             }
             break;
@@ -666,8 +667,7 @@ void PanelServiceMenu::mouseMoveEvent(QMouseEvent * ev)
         case KST_KServiceGroup:
         {
             KServiceGroup::Ptr g = KServiceGroup::Ptr::staticCast(e);
-            icon = KGlobal::iconLoader()
-                   ->loadIcon(g->icon(), K3Icon::Small);
+            icon = KGlobal::iconLoader()->loadIcon(g->icon(), K3Icon::Small);
             url = "programs:/" + g->relPath();
             break;
         }

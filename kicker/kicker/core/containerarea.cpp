@@ -1253,10 +1253,10 @@ void ContainerArea::dropEvent(QDropEvent *ev)
             {
                 // directory
                 QMenu* menu = new QMenu(this);
-                QAction* fileManager = menu->addAction(SmallIconSet("folder"),
+                QAction* fileManager = menu->addAction(KIcon("folder"),
                                                        i18n("Add as &File Manager URL"),
                                                        0, 0, Qt::CTRL+Qt::Key_F);
-                /* QAction* urlBrowser = */ menu->addAction(SmallIconSet("kdisknav"),
+                /* QAction* urlBrowser = */ menu->addAction(KIcon("kdisknav"),
                                                       i18n("Add as Quick&Browser"),
                                                       0, 0, Qt::CTRL+Qt::Key_B);
                 if (menu->exec(mapToGlobal(ev->pos())) == fileManager)

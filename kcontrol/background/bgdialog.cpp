@@ -125,7 +125,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    }
 
    // background image settings
-   QIcon iconSet = SmallIconSet(QLatin1String("fileopen"));
+   QIcon iconSet = KIcon(QLatin1String("fileopen"));
    QPixmap pixMap = iconSet.pixmap( QIcon::Small, QIcon::Normal );
    m_urlWallpaperButton->setIcon( iconSet );
    m_urlWallpaperButton->setFixedSize( pixMap.width()+8, pixMap.height()+8 );

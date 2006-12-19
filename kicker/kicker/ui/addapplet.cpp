@@ -40,7 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QEvent>
 #include <QCloseEvent>
 
-#include <kiconloader.h>
+#include <kicon.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
 #include <kpushbutton.h>

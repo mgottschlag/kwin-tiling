@@ -321,10 +321,10 @@ void PanelExtension::slotBuildOpMenu()
 
         if (!isMenuBar)
         {
-            m_opMenu->insertItem(SmallIconSet("lock"), i18n("&Lock Panel"),
+            m_opMenu->insertItem(KIcon("lock"), i18n("&Lock Panel"),
                                Kicker::self(), SLOT(toggleLock()));
 
-            m_opMenu->insertItem(SmallIconSet("configure"),
+            m_opMenu->insertItem(KIcon("configure"),
                                i18n("&Configure Panel..."),
                                this, SLOT(showConfig()));
             m_opMenu->addSeparator();
@@ -332,8 +332,8 @@ void PanelExtension::slotBuildOpMenu()
     }
     else if (!Kicker::self()->isKioskImmutable())
     {
-        m_opMenu->insertItem(kickerImmutable? SmallIconSet("unlock") :
-                                            SmallIconSet("lock"),
+        m_opMenu->insertItem(kickerImmutable? KIcon("unlock") :
+                                            KIcon("lock"),
                            kickerImmutable ? i18n("Un&lock Panels") :
                                              i18n("&Lock Panels"),
                            Kicker::self(), SLOT(toggleLock()));
@@ -342,7 +342,7 @@ void PanelExtension::slotBuildOpMenu()
     if (KAuthorized::authorizeKAction("action/help"))
     {
         KHelpMenu* help = new KHelpMenu( this, KGlobal::instance()->aboutData(), false);
-        m_opMenu->insertItem(SmallIconSet("help"), KStdGuiItem::help().text(), help->menu());
+        m_opMenu->insertItem(KIcon("help"), KStdGuiItem::help().text(), help->menu());
     }
     m_opMenu->adjustSize();
 }

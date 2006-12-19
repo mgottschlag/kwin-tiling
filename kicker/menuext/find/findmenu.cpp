@@ -22,7 +22,7 @@
 */
 
 #include <kapplication.h>
-#include <kiconloader.h>
+#include <kicon.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
@@ -58,7 +58,7 @@ void FindMenu::initialize()
     mConfigList.append( *it );
     QString text = config.readEntry( "Name" );
 
-    insertItem( SmallIconSet( config.readEntry( "Icon" ) ), text, id );
+    insertItem( KIcon( config.readEntry( "Icon" ) ), text, id );
     id++;
   }
 }

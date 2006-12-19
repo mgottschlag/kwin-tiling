@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QString>
 #include <QByteArray>
 
-#include <kiconloader.h>
+#include <kicon.h>
 
 // a little class meant to be used to store menu items for sorting then later
 // plugging into a popup menu
@@ -81,10 +81,10 @@ class PanelMenuItemInfo
             {
                 if (m_recvr && !m_slot_.isEmpty())
                 {
-                    return menu->insertItem(SmallIconSet(m_icon), m_name, m_recvr, m_slot_, 0, m_id);
+                    return menu->insertItem(KIcon(m_icon), m_name, m_recvr, m_slot_, 0, m_id);
                 }
 
-                return menu->insertItem(SmallIconSet(m_icon), m_name, m_id);
+                return menu->insertItem(KIcon(m_icon), m_name, m_id);
             }
             else if (m_recvr && !m_slot_.isEmpty())
             {

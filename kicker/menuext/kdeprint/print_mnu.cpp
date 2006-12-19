@@ -22,6 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include "print_mnu.h"
+#include <kicon.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kglobal.h>
@@ -67,15 +68,15 @@ void PrintMenu::initialize()
     KMManager::self();
 
     if ((KMManager::self()->printerOperationMask() & KMManager::PrinterCreation) && KMManager::self()->hasManagement())
-        insertItem(SmallIconSet("wizard"), i18n("Add Printer..."), ADD_PRINTER_ID);
-    insertItem(SmallIconSet("kdeprint_configmgr"), i18n("KDE Print Settings"), KDEPRINT_SETTINGS_ID);
+        insertItem(KIcon("wizard"), i18n("Add Printer..."), ADD_PRINTER_ID);
+    insertItem(KIcon("kdeprint_configmgr"), i18n("KDE Print Settings"), KDEPRINT_SETTINGS_ID);
     if (KMManager::self()->serverOperationMask() & KMManager::ServerConfigure)
-        insertItem(SmallIconSet("kdeprint_configsrv"), i18n("Configure Server"), CONFIG_SERVER_ID);
+        insertItem(KIcon("kdeprint_configsrv"), i18n("Configure Server"), CONFIG_SERVER_ID);
     addSeparator();
-    insertItem(SmallIconSet("kcontrol"), i18n("Print Manager"), PRINT_MANAGER_ID);
-    insertItem(SmallIconSet("konqueror"), i18n("Print Browser (Konqueror)"), PRINT_BROWSER_ID);
+    insertItem(KIcon("kcontrol"), i18n("Print Manager"), PRINT_MANAGER_ID);
+    insertItem(KIcon("konqueror"), i18n("Print Browser (Konqueror)"), PRINT_BROWSER_ID);
     addSeparator();
-    insertItem(SmallIconSet("fileprint"), i18n("Print File..."), KPRINTER_ID);
+    insertItem(KIcon("fileprint"), i18n("Print File..."), KPRINTER_ID);
 
     // printer list
     QList<KMPrinter*>    l = KMManager::self()->printerList();
@@ -96,7 +97,7 @@ void PrintMenu::initialize()
                 addSeparator();
                 separatorInserted = true;
             }
-            insertItem(SmallIconSet(itprt->pixmap()),
+            insertItem(KIcon(itprt->pixmap()),
                        itprt->printerName(), ID++);
         }
     }

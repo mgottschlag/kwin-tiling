@@ -134,10 +134,10 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
   connect( widget->chkLatin, SIGNAL(clicked()), this, SLOT(changed()));
   connect( widget->chkLatin, SIGNAL(clicked()), this, SLOT(latinChanged()));
 
-  widget->btnUp->setIconSet(SmallIconSet("1uparrow"));
+  widget->btnUp->setIconSet(KIcon("1uparrow"));
   connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(changed()));
   connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(moveUp()));
-  widget->btnDown->setIconSet(SmallIconSet("1downarrow"));
+  widget->btnDown->setIconSet(KIcon("1downarrow"));
   connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(changed()));
   connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(moveDown()));
 

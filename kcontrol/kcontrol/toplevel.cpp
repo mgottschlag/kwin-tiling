@@ -97,7 +97,7 @@ TopLevel::TopLevel()
   _indextab = new IndexWidget(_modules, 0L);
   connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
                   this, SLOT(activateModule(ConfigModule*)));
-  _tab->addTab(_indextab, SmallIconSet("kcontrol"), i18n("&Index"));
+  _tab->addTab(_indextab, KIcon("kcontrol"), i18n("&Index"));
 
   connect(_indextab, SIGNAL(categorySelected(Q3ListViewItem*)),
                   this, SLOT(categorySelected(Q3ListViewItem*)));
@@ -108,11 +108,11 @@ TopLevel::TopLevel()
   connect(_searchtab, SIGNAL(moduleSelected(ConfigModule *)),
                   this, SLOT(activateModule(ConfigModule *)));
 
-  _tab->addTab(_searchtab, SmallIconSet("find"), i18n("Sear&ch"));
+  _tab->addTab(_searchtab, KIcon("find"), i18n("Sear&ch"));
 
   // help tab
   _helptab = new HelpWidget(0L);
-  _tab->addTab(_helptab, SmallIconSet("help"), i18n("Hel&p"));
+  _tab->addTab(_helptab, KIcon("help"), i18n("Hel&p"));
 
   _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
 

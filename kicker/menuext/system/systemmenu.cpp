@@ -20,7 +20,7 @@
 #include "systemmenu.h"
 
 #include <krun.h>
-#include <kiconloader.h>
+#include <kicon.h>
 #include <QPixmap>
 
 K_EXPORT_KICKER_MENUEXT(systemmenu, SystemMenu)
@@ -42,7 +42,7 @@ SystemMenu::~SystemMenu()
 void SystemMenu::append(const QString &icon, const KUrl &url,
                         const QString &label)
 {
-    int id = insertItem(SmallIconSet(icon), label);
+    int id = insertItem(KIcon(icon), label);
     m_urlMap.insert(id, url);
 }
 
