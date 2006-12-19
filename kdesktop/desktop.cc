@@ -141,7 +141,9 @@ KDesktop::KDesktop( bool x_root_hack, bool wait_for_kded ) :
   setWindowTitle( "KDE Desktop" );
 
   (void) new DesktopAdaptor( this );
-  QDBusConnection::sessionBus().registerObject("/Desktop", this);
+  QDBusConnection dbus = QDBusConnection::sessionBus();
+  dbus.registerObject("/Desktop", this);
+  dbus.connect(QString(), "/Desktop", "org.kde.kdesktop.Desktop", "reconfigure", this, SLOT(slotConfigure()));
 
   setAcceptDrops(true); // WStyle_Customize seems to disable that
   m_pKwinmodule = new KWinModule( this );

@@ -48,5 +48,6 @@
     <method name="switchDesktops">
       <arg name="delta" type="i" direction="in"/>
     </method>
+    <signal name="reconfigure" />
   </interface>
 </node>

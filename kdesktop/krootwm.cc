@@ -751,6 +751,7 @@ static void sendToAppropriate(const char* baseApp, const char* iface, const char
     else
 	appname.sprintf("%s-screen-%d", baseApp, kdesktop_screen_number);
 
+    appname = "org.kde." + appname;
     QDBusInterface interface( appname, path, iface );
     if ( interface.isValid() )
         interface.call( call );
