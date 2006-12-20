@@ -34,6 +34,12 @@ install(TARGETS kdeinit_kcontrol  DESTINATION ${LIB_INSTALL_DIR} )
 target_link_libraries( kcontrol kdeinit_kcontrol )
 install(TARGETS kcontrol DESTINATION ${BIN_INSTALL_DIR})
 
+# write a cmake script file which creates the symlink
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/make_kinfocenter_symlink.cmake "exec_program(${CMAKE_COMMAND} ARGS -E create_symlink ${CMAKE_INSTALL_PREFIX}/bin/kcontrol ${CMAKE_INSTALL_PREFIX}/bin/kinfocenter)\n")
+# and add it as post-install script to any of the installed targets, so it will be executed during "make install"
+set_target_properties(kcontrol PROPERTIES POST_INSTALL_SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/make_kinfocenter_symlink.cmake)
+
+
 ########### install files ###############
 
 install( FILES KControl.desktop kinfocenter.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
