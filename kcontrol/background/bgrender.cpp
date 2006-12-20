@@ -7,7 +7,7 @@
  * You can Freely distribute this program under the GNU Library General
  * Public License. See the file "COPYING.LIB" for the exact licensing terms.
  */
-
+#include <fixx11h.h>
 #include <config.h>
 
 #include <time.h>
