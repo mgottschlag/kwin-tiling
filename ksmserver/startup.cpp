@@ -341,9 +341,6 @@ void KSMServer::finishStartup()
         return;
 
     upAndRunning( "session ready" );
-    // TODO
-    QDBusInterface knotify( "org.kde.knotify", "/Notify", "org.kde.KNotify" );
-    knotify.call( "sessionReady" ); // knotify startup optimization
     state = Idle;
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.
 }
