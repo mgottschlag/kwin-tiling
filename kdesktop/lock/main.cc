@@ -167,7 +167,7 @@ int main( int argc, char **argv )
 
     if( sig )
     {
-        QDBusInterface kdesktop("kdesktop", "/ScreenSaver", "org.kde.kdesktop.KScreensaver");
+        QDBusInterface kdesktop("org.kde.kdesktop", "/ScreenSaver", "org.kde.kdesktop.Screensaver");
         if ( kdesktop.isValid() )
             kdesktop.call("saverLockReady");
     }
