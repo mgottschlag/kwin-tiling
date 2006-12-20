@@ -4,8 +4,7 @@ add_subdirectory( about )
 
 
 ########### next target ###############
-
-set(kcontrol_KDEINIT_SRCS 
+set(kcontrol_SRCS
    main.cpp 
    toplevel.cpp 
    indexwidget.cpp 
@@ -22,6 +21,8 @@ set(kcontrol_KDEINIT_SRCS
    kcrootonly.cpp 
    searchwidget.cpp )
 
+set(kcontrol_KDEINIT_SRCS ${kcontrol_SRCS})
+
 kde4_automoc(${kcontrol_KDEINIT_SRCS})
 
 
@@ -34,11 +35,20 @@ install(TARGETS kdeinit_kcontrol  DESTINATION ${LIB_INSTALL_DIR} )
 target_link_libraries( kcontrol kdeinit_kcontrol )
 install(TARGETS kcontrol DESTINATION ${BIN_INSTALL_DIR})
 
-# write a cmake script file which creates the symlink
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/make_kinfocenter_symlink.cmake "exec_program(${CMAKE_COMMAND} ARGS -E create_symlink ${CMAKE_INSTALL_PREFIX}/bin/kcontrol ${CMAKE_INSTALL_PREFIX}/bin/kinfocenter)\n")
-# and add it as post-install script to any of the installed targets, so it will be executed during "make install"
-set_target_properties(kcontrol PROPERTIES POST_INSTALL_SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/make_kinfocenter_symlink.cmake)
+######################################################"
 
+set(kinfocenter_KDEINIT_SRCS ${kcontrol_SRCS})
+
+kde4_automoc(${kinfocenter_KDEINIT_SRCS})
+
+kde4_add_kdeinit_executable( kinfocenter ${kinfocenter_KDEINIT_SRCS})
+
+target_link_libraries(kdeinit_kinfocenter  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KHTML_LIBS} )
+
+install(TARGETS kdeinit_kinfocenter  DESTINATION ${LIB_INSTALL_DIR} )
+
+target_link_libraries( kinfocenter kdeinit_kinfocenter )
+install(TARGETS kinfocenter DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 
