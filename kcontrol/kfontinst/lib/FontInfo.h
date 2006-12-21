@@ -30,6 +30,7 @@
 #include <time.h>
 #include "KfiConstants.h"
 #include "Misc.h"
+#include "kfontinst_export.h"
 
 class QDomDocument;
 class QDomElement;
@@ -39,7 +40,7 @@ class QDomElement;
 namespace KFI
 {
 
-class CFontInfo
+class KFONTINST_EXPORT CFontInfo
 {
     public:
 
@@ -64,7 +65,7 @@ class CFontInfo
         void     add(const TFile &t) const { (const_cast<TFileList *>(this))->append(t); }
     };
 
-    struct TFont : public Misc::TFont
+    struct KFONTINST_EXPORT TFont : public Misc::TFont
     {
         TFont(const QString &f=QString(), unsigned long s=KFI_NO_STYLE_INFO) : Misc::TFont(f, s) { }
         TFont(const Misc::TFont &f) : Misc::TFont(f) { }
@@ -79,7 +80,7 @@ class CFontInfo
         TFileList       files;
     };
 
-    struct TFontList : public QSet<TFont>
+    struct KFONTINST_EXPORT TFontList : public QSet<TFont>
     {
         //Iterator locate(const TFont &t) { int i = indexOf(t); return (-1==i ? end() : (begin()+i)); }
         Iterator locate(const TFont &t);//       { return find(t); }
@@ -148,7 +149,7 @@ class CFontInfo
     TFontList  itsDisabledFonts;
 };
 
-class CDisabledFonts : public CFontInfo
+class KFONTINST_EXPORT CDisabledFonts : public CFontInfo
 {
     public:
 
@@ -169,7 +170,7 @@ class CDisabledFonts : public CFontInfo
     TFontList & items() { return itsDisabledFonts; }
 };
 
-class CFontGroups : public CFontInfo
+class KFONTINST_EXPORT CFontGroups : public CFontInfo
 {
     public:
 
