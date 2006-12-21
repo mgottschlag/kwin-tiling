@@ -389,7 +389,7 @@ DM::lockSwitchVT( int vt )
 {
 	if (switchVT( vt ))
         {
-            QDBusInterface kdesktop("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.KScreensaver");
+            QDBusInterface kdesktop("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.Screensaver");
             kdesktop.call( "lock" );
         }
 }
