@@ -29,6 +29,7 @@
 #include <kstandarddirs.h>
 #include <QtDBus/QtDBus>
 #include <stdlib.h> // getenv()
+#include <ksmserver_interface.h>
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
@@ -66,8 +67,8 @@ bool requestShutDown(
          sdtype != ShutdownTypeDefault ||
          sdmode != ShutdownModeDefault )
     {
-        QDBusInterface ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
-        QDBusReply<void> reply = ksmserver.call( "logout",  (int)confirm,  (int)sdtype,  (int)sdmode );
+        org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
+        QDBusReply<void> reply = ksmserver.logout((int)confirm,  (int)sdtype,  (int)sdmode);
         return (reply.isValid());
     }
 
