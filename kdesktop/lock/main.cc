@@ -28,6 +28,7 @@
 #include <kdebug.h>
 #include <kglobalsettings.h>
 #include <QtDBus/QtDBus>
+#include "kdesktop_interface.h"
 
 #include <QList>
 
@@ -167,9 +168,8 @@ int main( int argc, char **argv )
 
     if( sig )
     {
-        QDBusInterface kdesktop("org.kde.kdesktop", "/ScreenSaver", "org.kde.kdesktop.Screensaver");
-        if ( kdesktop.isValid() )
-            kdesktop.call("saverLockReady");
+        org::kde::kdesktop::ScreenSaver desktop("org.kde.kdesktop", "/ScreenSaver", QDBusConnection::sessionBus());
+        desktop.saverLockReady();
     }
 
     return app.exec();

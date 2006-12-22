@@ -15,6 +15,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kdialog.h>
+#include <ksmserver_interface.h>
 
 #include <QLayout>
 #include <QMessageBox>
@@ -109,9 +110,8 @@ void AutoLogout::slotActivity()
 void AutoLogout::logout()
 {
     QAbstractEventDispatcher::instance()->unregisterTimers(this);
-    QDBusInterface ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
-    if ( ksmserver.isValid() )
-        ksmserver.call( "logout", 0, 2, 0 );
+    org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
+    ksmserver.logout( 0, 2, 0 );
 }
 
 void AutoLogout::show()

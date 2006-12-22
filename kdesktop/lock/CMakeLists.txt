@@ -10,6 +10,13 @@ set(kdesktop_lock_SRCS ${kdmlib_SRCS}
    autologout.cc 
    main.cc )
 
+set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
+QT4_ADD_DBUS_INTERFACE( kdesktop_lock_SRCS ${ksmserver_xml} ksmserver_interface )
+set(kdesktop_xml  ${CMAKE_SOURCE_DIR}/workspace/kdesktop/org.kde.kdesktop.ScreenSaver.xml)
+QT4_ADD_DBUS_INTERFACE( kdesktop_lock_SRCS ${kdesktop_xml} kdesktop_interface )
+
+
+
 kde4_add_kcfg_files(kdesktop_lock_SRCS 
 	${CMAKE_SOURCE_DIR}/workspace/kdesktop/kdesktopsettings.kcfgc
 	${CMAKE_SOURCE_DIR}/workspace/kdesktop/klaunchsettings.kcfgc )

@@ -54,6 +54,11 @@ set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
    kfileividesktop.cpp
 )
 
+set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
+QT4_ADD_DBUS_INTERFACE( kdesktop_SRCS ${ksmserver_xml} ksmserver_interface )
+set(kwin_xml  ${CMAKE_SOURCE_DIR}/workspace/kwin/org.kde.KWin.xml)
+QT4_ADD_DBUS_INTERFACE( kdesktop_SRCS ${kwin_xml} kwin_interface )
+
 qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Background.xml bgmanager.h KBackgroundManager )
 qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Desktop.xml desktop.h KDesktop )
 

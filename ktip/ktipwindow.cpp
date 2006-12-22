@@ -28,6 +28,7 @@
 #include <kwin.h>
 #include <stdlib.h>
 #include <QtDBus/QtDBus>
+#include <ksplashml_interface.h>
 
 static const char description[] = I18N_NOOP("Useful tips");
 
@@ -50,8 +51,8 @@ int main(int argc, char *argv[])
 	tipDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
 
 	tipDialog->setCaption(i18n("Useful Tips"));
-	QDBusInterface ksplash("org.kde.ksplash", "/KSplash", "org.kde.KSplash");
-	ksplash.call("close"); // Close splash screen
+        org::kde::KSplash ksplashml("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
+        ksplashml.close();
 	tipDialog->show();
 
 	QObject::connect(qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()));

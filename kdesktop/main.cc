@@ -24,6 +24,7 @@
 #include "init.h"
 #include "krootwm.h"
 #include "kdesktopsettings.h"
+#include <ksmserver_interface.h>
 
 #include <kuniqueapplication.h>
 #include <klocale.h>
@@ -167,10 +168,8 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
         fprintf(stderr, "kdesktop is already running!\n");
         exit(0);
     }
-
-    QDBusInterface ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
-    if ( ksmserver.isValid() )
-        ksmserver.call( "suspendStartup", QString( "kdesktop" ) );
+    org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
+    ksmserver.suspendStartup(QString( "kdesktop" ));
 
     KUniqueApplication app;
     app.disableSessionManagement(); // Do SM, but don't restart.
