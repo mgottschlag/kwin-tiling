@@ -84,6 +84,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QX11Info>
 #include <QApplication>
 
+#include "kdesktop_interface.h"
+#include "ksplash_interface.h"
+
 /*!  Restores the previous session. Ensures the window manager is
   running (if specified).
  */
@@ -292,8 +295,9 @@ void KSMServer::autoStart2()
     klauncher.call( "autoStart", (int) 2 );
     QDBusInterface kded( "org.kde.kded", "/kded", "org.kde.kded" );
     kded.call( "loadSecondPhase" );
-    QDBusInterface kdesktop( "org.kde.kdesktop", "/Desktop", "org.kde.kdesktop.Desktop" );
-    kdesktop.call( "runAutoStart" );
+    org::kde::kdesktop::Desktop desktop("org.kde.kdesktop", "/Desktop", QDBusConnection::sessionBus());
+    desktop.runAutoStart();
+    
     connect( kcminitSignals, SIGNAL( phase2Done()), SLOT( kcmPhase2Done()));
     QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
     QDBusInterface kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
@@ -415,15 +419,18 @@ void KSMServer::resumeStartupInternal()
 
 void KSMServer::publishProgress( int progress, bool max  )
 {
-    QDBusInterface ksplash( "org.kde.ksplash", "/KSplash", "org.kde.KSplash" );
-    ksplash.call( max ? "setMaxProgress" : "setProgress", progress );
+    org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
+    if(max)
+	ksplash.setMaxProgress(progress);
+    else
+        ksplash.setProgress(progress);
 }
 
 
 void KSMServer::upAndRunning( const QString& msg )
 {
-    QDBusInterface ksplash( "org.kde.ksplash", "/KSplash", "org.kde.KSplash" );
-    ksplash.call( "upAndRunning", msg );
+    org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
+    ksplash.upAndRunning(msg);
     XEvent e;
     e.xclient.type = ClientMessage;
     e.xclient.message_type = XInternAtom( QX11Info::display(), "_KDE_SPLASH_PROGRESS", False );

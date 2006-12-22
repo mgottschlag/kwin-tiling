@@ -15,6 +15,13 @@ set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS}
    shutdown.cpp 
    client.cpp)
 
+set(kdesktop_xml  ${CMAKE_SOURCE_DIR}/workspace/kdesktop/org.kde.kdesktop.Desktop.xml)
+QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kdesktop_xml} kdesktop_interface )
+
+set(ksplash_xml  ${CMAKE_SOURCE_DIR}/workspace/ksplashml/org.kde.KSplash.xml)
+QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${ksplash_xml} ksplash_interface )
+
+
 qt4_add_dbus_adaptor( ksmserver_KDEINIT_SRCS org.kde.KSMServerInterface.xml server.h KSMServer )
 
 kde4_automoc(${ksmserver_KDEINIT_SRCS})
