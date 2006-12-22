@@ -5,6 +5,9 @@
     <method name="upAndRunning">
       <arg name="component" type="s" direction="in"/>
     </method>
+    <method name="setProgress">
+      <arg name="percent" type="i" direction="in"/>
+    </method>
     <method name="setMaxProgress">
       <arg name="percent" type="i" direction="in"/>
     </method>
@@ -18,5 +21,7 @@
     </method>
     <method name="startupComplete" />
     <method name="close" />
+    <method name="hide" />
+    <method name="show" />
   </interface>
 </node>
