@@ -45,7 +45,6 @@ class QBoxLayout;
 class QGridLayout;
 class QMenu;
 class QTimer;
-class QXEmbed;
 class HideButton;
 class KConfig;
 class KWinModule;

@@ -34,7 +34,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QBoxLayout>
 
 class KHBox;
-class QXEmbed;
 class QBoxLayout;
 class KConfig;
 
