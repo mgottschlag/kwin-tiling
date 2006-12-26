@@ -5,7 +5,10 @@ project(kworkspacelib)
 
 ########### next target ###############
 
-set(kworkspace_LIB_SRCS kworkspace.cpp )
+set(kworkspace_LIB_SRCS kworkspace.cpp
+                        kwindowlistmenu.cpp
+   )
+
 set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface )
 
@@ -22,4 +25,6 @@ install(TARGETS kworkspace  DESTINATION ${LIB_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kworkspace.h DESTINATION ${INCLUDE_INSTALL_DIR}/libworkspace )
+install( FILES kworkspace.h
+               kwindowlistmenu.h
+         DESTINATION ${INCLUDE_INSTALL_DIR}/libworkspace )
