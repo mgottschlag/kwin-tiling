@@ -11,6 +11,10 @@ set(kcm_screensaver_PART_SRCS
    advanceddialog.cpp 
    kswidget.cpp )
 
+set(kdesktop_screensaver_xml  ${CMAKE_SOURCE_DIR}/workspace/kdesktop/org.kde.kdesktop.ScreenSaver.xml)
+QT4_ADD_DBUS_INTERFACE( kcm_screensaver_PART_SRCS ${kdesktop_screensaver_xml} kdesktop_screensaver )
+
+
 kde4_automoc(${kcm_screensaver_PART_SRCS})
 
 kde4_add_ui_files(kcm_screensaver_PART_SRCS advanceddialogimpl.ui )

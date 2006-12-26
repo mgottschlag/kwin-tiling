@@ -57,7 +57,7 @@
 #include "scrnsave.h"
 #include <QX11Info>
 #include <QDesktopWidget>
-
+#include <kdesktop_screensaver.h>
 #include <fixx11h.h>
 
 template class QList<SaverConfig*>;
@@ -501,8 +501,8 @@ void KScreenSaver::save()
     // TODO (GJ): When you changed anything, these two lines will give a segfault
     // on exit. I don't know why yet.
 
-	QDBusInterface kscreensaver("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.Screensaver");
-	kscreensaver.call("configure");
+    org::kde::kdesktop::ScreenSaver desktop("org.kde.kdesktop", "/Screensaver", QDBusConnection::sessionBus());
+    desktop.configure();
 
     mChanged = false;
     emit changed(false);
