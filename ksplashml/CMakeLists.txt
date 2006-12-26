@@ -28,4 +28,4 @@ install(TARGETS ksplash DESTINATION ${BIN_INSTALL_DIR})
 ########### install files ###############
 
 install( FILES ksplash.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-
+install( FILES org.kde.KSplash.xml DESTINATION ${DBUS_INTERFACES_DIR} )
