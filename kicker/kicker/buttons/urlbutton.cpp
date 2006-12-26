@@ -49,7 +49,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 URLButton::URLButton( const QString& url, QWidget* parent )
   : PanelButton( parent )
   , fileItem( 0 )
-  , pDlg( 0 )
 {
     initialize( url );
 }
@@ -57,7 +56,6 @@ URLButton::URLButton( const QString& url, QWidget* parent )
 URLButton::URLButton( const KConfigGroup& config, QWidget* parent )
   : PanelButton( parent )
   , fileItem( 0 )
-  , pDlg( 0 )
 {
     initialize( config.readPathEntry("URL") );
 }
@@ -180,6 +178,7 @@ void URLButton::slotExec()
 
 void URLButton::updateURL()
 {
+    const KPropertiesDialog* pDlg = static_cast<const KPropertiesDialog *>(sender());
     if (pDlg->kurl() != fileItem->url()) {
 	fileItem->setUrl(pDlg->kurl());
 	setIcon(fileItem->iconName());
@@ -203,7 +202,7 @@ void URLButton::properties()
         return;
     }
 
-    pDlg = new KPropertiesDialog(fileItem, 0L, 0L, false, false); // will delete itself
+    KPropertiesDialog* pDlg = new KPropertiesDialog(fileItem, 0); // will delete itself
     pDlg->setFileNameReadOnly(true);
     connect(pDlg, SIGNAL(applied()), SLOT(updateURL()));
     pDlg->show();

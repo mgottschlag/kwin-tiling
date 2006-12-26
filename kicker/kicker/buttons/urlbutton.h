@@ -27,7 +27,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "panelbutton.h"
 
 class KFileItem;
-class KPropertiesDialog;
 
 /**
  * Simple URL button (files, whatever)
@@ -58,7 +57,6 @@ protected:
     void setToolTip();
 
     KFileItem *fileItem;
-    KPropertiesDialog *pDlg;
 };
 
 #endif

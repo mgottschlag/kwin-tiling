@@ -629,7 +629,7 @@ void KDIconView::wheelEvent( QWheelEvent* e )
 
 void KDIconView::slotProperties()
 {
-    (void) new KPropertiesDialog( selectedFileItems() );
+    KPropertiesDialog::showDialog( selectedFileItems(), this );
 }
 
 void KDIconView::slotContextMenuRequested(Q3IconViewItem *_item, const QPoint& _global)

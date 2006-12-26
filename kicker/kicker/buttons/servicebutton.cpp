@@ -232,11 +232,10 @@ void ServiceButton::properties()
     serviceURL.setPath(path);
 
     // the KPropertiesDialog deletes itself, so this isn't a memory leak
-    KPropertiesDialog* dialog = new KPropertiesDialog(serviceURL, 0, 0,
-                                                      false, false);
+    KPropertiesDialog* dialog = new KPropertiesDialog(serviceURL, 0);
     dialog->setFileNameReadOnly(true);
-    connect(dialog, SIGNAL(saveAs(const KUrl &, KUrl &)),
-            this, SLOT(slotSaveAs(const KUrl &, KUrl &)));
+    connect(dialog, SIGNAL(saveAs(KUrl, KUrl &)),
+            this, SLOT(slotSaveAs(KUrl, KUrl &)));
     connect(dialog, SIGNAL(propertiesClosed()),
             this, SLOT(slotUpdate()));
     dialog->show();
