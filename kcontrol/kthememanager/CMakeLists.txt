@@ -5,6 +5,9 @@
 
 set(kcm_kthememanager_PART_SRCS knewthemedlg.cpp ktheme.cpp kthememanager.cpp )
 
+set(kwin_xml  ${CMAKE_SOURCE_DIR}/workspace/kwin/org.kde.KWin.xml)
+QT4_ADD_DBUS_INTERFACE( kcm_kthememanager_PART_SRCS ${kwin_xml} kwin_interface )
+
 kde4_automoc(${kcm_kthememanager_PART_SRCS})
 
 kde4_add_ui_files(kcm_kthememanager_PART_SRCS newthemewidget.ui)

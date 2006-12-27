@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QX11Info>
 #include <QtDBus/QtDBus>
 #include <kglobalsettings.h>
+#include "kwin_interface.h"
 
 KTheme::KTheme( QWidget *parent, const QString & xmlFile )
 	: m_parent(parent)
@@ -599,9 +600,8 @@ void KTheme::apply()
         kwinConf.writeEntry( "BorderSize", getProperty( wmElem, "border", "size" ) );
 
         kwinConf.sync();
-        QDBusInterface kwin("org.kde.kwin", "/KWin", "org.kde.KWin");
-        if ( kwin.isValid() )
-            kwin.call( "reconfigure" );
+        org::kde::KWin kwin("org.kde.kwin", "/KWin", QDBusConnection::sessionBus());
+        kwin.reconfigure();	
     }
 
     // 8. Konqueror
