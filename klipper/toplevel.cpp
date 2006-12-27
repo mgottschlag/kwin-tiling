@@ -56,7 +56,7 @@
 #include <qdbusconnection.h>
 #include <kiconloader.h>
 #include <khelpmenu.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 

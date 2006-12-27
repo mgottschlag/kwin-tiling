@@ -32,7 +32,7 @@
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -316,8 +316,8 @@ void KDMUsersWidget::changeUserPix( const QString &pix )
 	if (user == m_defaultText) {
 		user = ".default";
 		if (KMessageBox::questionYesNo( this, i18n("Save image as default image?"),
-		                                QString(), KStdGuiItem::save(),
-		                                KStdGuiItem::cancel() ) != KMessageBox::Yes)
+		                                QString(), KStandardGuiItem::save(),
+		                                KStandardGuiItem::cancel() ) != KMessageBox::Yes)
 			return;
 	}
 

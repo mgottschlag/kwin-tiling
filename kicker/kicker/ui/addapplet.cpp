@@ -45,7 +45,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobalsettings.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-#include <kstdguiitem.h>
+#include <KStandardGuiItem>
 
 #include "addapplet.h"
 #include "addappletvisualfeedback.h"

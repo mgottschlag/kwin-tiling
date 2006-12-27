@@ -25,7 +25,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kpixmapeffect.h>
 #include <QPixmap>
 #include <kseparator.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 #include <kuser.h>
 
 #include <sys/types.h>
@@ -182,7 +182,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     buttonlay->addWidget( new KSeparator( frame ) );
 
     // Back to Desktop
-    KPushButton* btnBack = new KPushButton( KStdGuiItem::cancel(), frame );
+    KPushButton* btnBack = new KPushButton( KStandardGuiItem::cancel(), frame );
     buttonlay->addWidget( btnBack );
     connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 

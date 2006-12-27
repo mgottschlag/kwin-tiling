@@ -138,7 +138,7 @@ KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text
 	QLabel *label1 = new QLabel( this );
 	label1->setPixmap( QMessageBox::standardIcon( type ) );
 	QLabel *label2 = new QLabel( text, this );
-	KPushButton *button = new KPushButton( KStdGuiItem::ok(), this );
+	KPushButton *button = new KPushButton( KStandardGuiItem::ok(), this );
 	button->setDefault( true );
 	button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
 	connect( button, SIGNAL(clicked()), SLOT(accept()) );

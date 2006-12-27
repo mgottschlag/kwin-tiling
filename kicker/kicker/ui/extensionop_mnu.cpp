@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kpanelextension.h>
-#include <kstdguiitem.h>
+#include <KStandardGuiItem>
 
 #include "kicker.h"
 #include "extensionop_mnu.h"
@@ -58,7 +58,7 @@ PanelExtensionOpMenu::PanelExtensionOpMenu(const QString& extension, int actions
 
     if (actions & Plasma::Help)
     {
-        insertItem(KIcon("help"), KStdGuiItem::help().text(), Help);
+        insertItem(KIcon("help"), KStandardGuiItem::help().text(), Help);
     }
 
     if (!Kicker::self()->isImmutable() && (actions & Plasma::Preferences)) {

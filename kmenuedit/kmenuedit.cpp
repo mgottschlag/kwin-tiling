@@ -31,7 +31,7 @@
 #include <kmessagebox.h>
 #include <kservice.h>
 #include <kstandardaction.h>
-#include <kstdaccel.h>
+#include <kstandardshortcut.h>
 #include <kxmlguifactory.h>
 #include "treeview.h"
 #include "basictab.h"
@@ -65,7 +65,7 @@ void KMenuEdit::setupActions()
 {
     KAction *action = new KAction(KIcon("menu_new"), i18n("&New Submenu..."), actionCollection(), "newsubmenu");
     action = new KAction(KIcon("filenew"), i18n("New &Item..."), actionCollection(), "newitem");
-    action->setShortcut(KStdAccel::openNew());
+    action->setShortcut(KStandardShortcut::openNew());
     if (!m_controlCenter) 
     {
        KAction *action = new KAction(KIcon("menu_new_sep"), i18n("New S&eparator"), actionCollection(), "newsep");
@@ -163,7 +163,7 @@ bool KMenuEdit::queryClose()
                     i18n("You have made changes to the Control Center.\n"
                          "Do you want to save the changes or discard them?"),
                     i18n("Save Control Center Changes?"),
-                    KStdGuiItem::save(), KStdGuiItem::discard() );
+                    KStandardGuiItem::save(), KStandardGuiItem::discard() );
     }
     else
     {
@@ -171,7 +171,7 @@ bool KMenuEdit::queryClose()
                     i18n("You have made changes to the menu.\n"
                          "Do you want to save the changes or discard them?"),
                     i18n("Save Menu Changes?"),
-                    KStdGuiItem::save(), KStdGuiItem::discard() );
+                    KStandardGuiItem::save(), KStandardGuiItem::discard() );
     }
 
     switch(result)

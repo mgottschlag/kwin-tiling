@@ -32,7 +32,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kstandardaction.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 #include <kactioncollection.h>
 #include "krandrtray.h"
 #include "krandrpassivepopup.h"
@@ -95,7 +95,7 @@ void KRandRSystemTray::prepareMenu()
         connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
 	menu->addAction( actPrefs );
 
-	menu->insertItem(SmallIcon("help"),KStdGuiItem::help().text(), m_help->menu());
+	menu->insertItem(SmallIcon("help"),KStandardGuiItem::help().text(), m_help->menu());
 	QAction *quitAction = actionCollection()->action(KStandardAction::name(KStandardAction::Quit));
 	menu->addAction( quitAction );
 }

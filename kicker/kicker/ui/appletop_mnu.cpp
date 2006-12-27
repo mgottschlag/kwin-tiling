@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kpanelapplet.h>
-#include <kstdguiitem.h>
+#include <KStandardGuiItem>
 
 #include "kicker.h"
 #include "appletop_mnu.h"
@@ -119,7 +119,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
             addSeparator();
         }
 
-        insertItem(KIcon("help"), KStdGuiItem::help().text(), Help);
+        insertItem(KIcon("help"), KStandardGuiItem::help().text(), Help);
         needSeparator = true;
     }
 

@@ -122,7 +122,7 @@ void KateSessionMenu::slotExec( int id )
                           i18n("An unnamed session will not be saved automatically. "
                                "Do you want to create such a session?"),
                           i18n("Create anonymous session?"),
-                          KStdGuiItem::yes(), KStdGuiItem::cancel(),
+                          KStandardGuiItem::yes(), KStandardGuiItem::cancel(),
                           "kate_session_button_create_anonymous" ) == KMessageBox::No )
       return;
 

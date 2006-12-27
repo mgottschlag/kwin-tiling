@@ -307,7 +307,7 @@ void IconThemesConfig::removeSelectedTheme()
 
   bool deletingCurrentTheme=(selected==iconThemeItem(KIconTheme::current()));
 
-  int r=KMessageBox::warningContinueCancel(this,question,i18n("Confirmation"),KStdGuiItem::del());
+  int r=KMessageBox::warningContinueCancel(this,question,i18n("Confirmation"),KStandardGuiItem::del());
   if (r!=KMessageBox::Continue) return;
 
   KIconTheme icontheme(m_themeNames[selected->text(0)]);

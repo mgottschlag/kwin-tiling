@@ -33,7 +33,7 @@
 #include <klocale.h>
 #include <klibloader.h>
 #include <kpushbutton.h>
-#include <kstdguiitem.h>
+#include <KStandardGuiItem>
 #include <kauthorized.h>
 
 #include <qframe.h>
@@ -1145,7 +1145,7 @@ void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
     QLabel *label1 = new QLabel( winFrame );
     label1->setPixmap( QMessageBox::standardIcon( type ) );
     QLabel *label2 = new QLabel( txt, winFrame );
-    KPushButton *button = new KPushButton( KStdGuiItem::ok(), winFrame );
+    KPushButton *button = new KPushButton( KStandardGuiItem::ok(), winFrame );
     button->setDefault( true );
     button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
     connect( button, SIGNAL( clicked() ), &box, SLOT( accept() ) );

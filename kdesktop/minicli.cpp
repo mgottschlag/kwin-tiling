@@ -58,7 +58,7 @@
 #include <kiconloader.h>
 #include <kpushbutton.h>
 #include <kguiitem.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 #include <kmimetype.h>
 #include <kurifilter.h>
 #include <kcompletionbox.h>
@@ -100,7 +100,7 @@ Minicli::Minicli( QWidget *parent )
   m_dlg->pbRun->setGuiItem (KGuiItem( i18n("&Run"), "run" ));
 
   // Cancel button...
-  m_dlg->pbCancel->setGuiItem ( KStdGuiItem::cancel() );
+  m_dlg->pbCancel->setGuiItem ( KStandardGuiItem::cancel() );
 
   if (!KAuthorized::authorizeKAction("shell_access"))
     m_dlg->pbOptions->hide();

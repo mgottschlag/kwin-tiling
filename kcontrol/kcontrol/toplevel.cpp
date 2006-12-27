@@ -355,8 +355,8 @@ void TopLevel::categorySelected(Q3ListViewItem *category)
                   "Do you want to apply the changes before exiting "
                   "the Control Center or discard the changes?"),
                             i18n("Unsaved Changes"),
-                            KStdGuiItem::apply(),
-                            KStdGuiItem::discard());
+                            KStandardGuiItem::apply(),
+                            KStandardGuiItem::discard());
         if (res == KMessageBox::Yes)
           _active->module()->applyClicked();
         else if (res == KMessageBox::Cancel)

@@ -42,7 +42,7 @@
 #include <kaboutdata.h>
 #include <kgenericfactory.h>
 #include <ktoolbar.h>
-#include <kstdaccel.h>
+#include <kstandardshortcut.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kcmdlineargs.h>
@@ -801,7 +801,7 @@ void CKCmFontInst::exportGroup()
                                i18n("<p>A font group package named <b>%1</b> already exists!</p>"
                                     "<p>Do you wish to overwrite this?</p>", file),
                                i18n("Exported Group Exists"),
-                               KGuiItem(i18n("Overwrite")), KStdGuiItem::cancel()))
+                               KGuiItem(i18n("Overwrite")), KStandardGuiItem::cancel()))
                         {
                             delete itsTempDir;
                             itsTempDir=new KTempDir;
@@ -1253,14 +1253,14 @@ void CKCmFontInst::deleteFonts(QStringList &files, KUrl::List &urls)
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
                            i18n("<p>Do you really want to "
                                 "delete</p></p>\'<b>%1</b>\'?</p>", files.first()),
-                           i18n("Delete Font"), KStdGuiItem::del());
+                           i18n("Delete Font"), KStandardGuiItem::del());
             break;
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                            i18nc("translators: not called for n == 1",
                                 "Do you really want to delete these %n fonts?",
                                 files.count()),
-                           files, i18n("Delete Fonts"), KStdGuiItem::del());
+                           files, i18n("Delete Fonts"), KStandardGuiItem::del());
         }
 
         if(doIt && getPasswd())

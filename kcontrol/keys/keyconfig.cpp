@@ -92,12 +92,12 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   }
 
   if ( KeyType == "standard" ) {
-    for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++) {
-      KStdAccel::StdAccel id = (KStdAccel::StdAccel)i;
-      actions.insertAction( KStdAccel::action(id),
-                          KStdAccel::description(id),
-                          KStdAccel::defaultKey3(id),
-                          KStdAccel::defaultKey4(id) );
+    for(uint i=0; i<KStandardShortcut::NB_STD_ACCELS; i++) {
+      KStandardShortcut::StandardShortcut id = (KStandardShortcut::StandardShortcut)i;
+      actions.insertAction( KStandardShortcut::action(id),
+                          KStandardShortcut::description(id),
+                          KStandardShortcut::defaultKey3(id),
+                          KStandardShortcut::defaultKey4(id) );
     }
 
     KeyScheme = "Standard Key Scheme";

@@ -34,7 +34,7 @@
 #include <kcmodule.h>
 #include <kseparator.h>
 #include <kdialog.h>
-#include <kstdguiitem.h>
+#include <kstandardguiitem.h>
 #include <QtDBus/QtDBus>
 
 #include <QLabel>
@@ -207,10 +207,10 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title,
 
   _sep = new KSeparator(Qt::Horizontal, this);
 
-  _help =    new KPushButton( KStdGuiItem::help(), this );
-  _default = new KPushButton( KStdGuiItem::defaults(), this );
-  _apply =   new KPushButton( KStdGuiItem::apply(), this );
-  _reset =   new KPushButton( KStdGuiItem::reset(), this );
+  _help =    new KPushButton( KStandardGuiItem::help(), this );
+  _default = new KPushButton( KStandardGuiItem::defaults(), this );
+  _apply =   new KPushButton( KStandardGuiItem::apply(), this );
+  _reset =   new KPushButton( KStandardGuiItem::reset(), this );
   _root =    new KPushButton( KGuiItem(i18n( "&Administrator Mode" )), this );
 
   bool mayModify = (!run_as_root || !_client->useRootOnlyMessage()) && !KCGlobal::isInfoCenter();

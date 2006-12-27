@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kpushbutton.h>
 #include <krandom.h>
 #include <kseparator.h>
-#include <kstdguiitem.h>
+#include <KStandardGuiItem>
 
 #include <QAction>
 #include <QApplication>
@@ -1081,10 +1081,10 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
 	, verify( 0 )
 {
 	QSizePolicy fp( QSizePolicy::Fixed, QSizePolicy::Fixed );
-	okButton = new KPushButton( KStdGuiItem::ok(), this );
+	okButton = new KPushButton( KStandardGuiItem::ok(), this );
 	okButton->setSizePolicy( fp );
 	okButton->setDefault( true );
-	cancelButton = new KPushButton( KStdGuiItem::cancel(), this );
+	cancelButton = new KPushButton( KStandardGuiItem::cancel(), this );
 	cancelButton->setSizePolicy( fp );
 
 	verify = new KGStdVerify( this, this, cancelButton, user, pluginList, func, ctx );

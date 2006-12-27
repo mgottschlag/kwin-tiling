@@ -353,7 +353,7 @@ void JoyWidget::calibrateDevice()
              "do not touch the joystick anymore.</b><br><br>"
              "Click OK to start the calibration.</qt>"),
         i18n("Calibration"),
-        KStdGuiItem::ok(), KStdGuiItem::cancel()) != KMessageBox::Ok )
+        KStandardGuiItem::ok(), KStandardGuiItem::cancel()) != KMessageBox::Ok )
     return;
 
   idle->stop();  // stop the joystick event getting; this must be done inside the calibrate dialog

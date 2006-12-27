@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kprocio.h>
 #include <kseparator.h>
 #include <kstandarddirs.h>
-#include <kstdguiitem.h>
+#include <KStandardGuiItem>
 #include <kuser.h>
 
 #include <QAction>
@@ -111,7 +111,7 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 	hlay->setParent( box );
 	hlay->addStretch( 1 );
 	if (mayOk) {
-		okButton = new KPushButton( KStdGuiItem::ok(), this );
+		okButton = new KPushButton( KStandardGuiItem::ok(), this );
 		okButton->setSizePolicy( fp );
 		okButton->setDefault( true );
 		hlay->addWidget( okButton );
@@ -126,7 +126,7 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 		hlay->addStretch( 1 );
 		connect( schedButton, SIGNAL(clicked()), SLOT(slotSched()) );
 	}
-	cancelButton = new KPushButton( KStdGuiItem::cancel(), this );
+	cancelButton = new KPushButton( KStandardGuiItem::cancel(), this );
 	cancelButton->setSizePolicy( fp );
 	if (!mayOk)
 		cancelButton->setDefault( true );
@@ -537,7 +537,7 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 
 	buttonlay->addSpacing( 0 );
 
-	KPushButton *btnBack = new KPushButton( KStdGuiItem::cancel(), this );
+	KPushButton *btnBack = new KPushButton( KStandardGuiItem::cancel(), this );
 	buttonlay->addWidget( btnBack );
 	connect( btnBack, SIGNAL(clicked()), SLOT(reject()) );
 

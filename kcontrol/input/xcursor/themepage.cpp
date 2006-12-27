@@ -240,7 +240,7 @@ void ThemePage::removeClicked()
 		  listview->currentItem()->text( NameColumn ) );
 
 	// Get confirmation from the user
-	int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Confirmation" ), KStdGuiItem::del() );
+	int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Confirmation" ), KStandardGuiItem::del() );
 	if ( answer != KMessageBox::Continue )
 		return;
 
