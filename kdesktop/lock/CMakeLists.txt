@@ -15,6 +15,13 @@ QT4_ADD_DBUS_INTERFACE( kdesktop_lock_SRCS ${ksmserver_xml} ksmserver_interface 
 set(kdesktop_xml  ${CMAKE_SOURCE_DIR}/workspace/kdesktop/org.kde.kdesktop.ScreenSaver.xml)
 QT4_ADD_DBUS_INTERFACE( kdesktop_lock_SRCS ${kdesktop_xml} kdesktop_interface )
 
+set(kxkb_adaptor ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kxkb/kxkb_adaptor.h)
+set(kxkb_xml ${CMAKE_CURRENT_BINARY_DIR}/org.kde.KXKB.xml)
+ADD_CUSTOM_COMMAND(OUTPUT ${kxkb_xml}
+       COMMAND ${QT_DBUSCPP2XML_EXECUTABLE} ${kxkb_adaptor} > ${kxkb_xml}
+       DEPENDS ${kxkb_adaptor})
+QT4_ADD_DBUS_INTERFACE( kdesktop_lock_SRCS ${kxkb_xml} kxkb_interface )
+
 
 
 kde4_add_kcfg_files(kdesktop_lock_SRCS 

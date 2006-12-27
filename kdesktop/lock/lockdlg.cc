@@ -66,6 +66,8 @@
 #include <QX11Info>
 #include <kauthorized.h>
 
+#include <kxkb_interface.h>
+
 #ifndef AF_LOCAL
 # define AF_LOCAL	AF_UNIX
 #endif
@@ -152,11 +154,11 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
 
     greet->start();
 
-    QDBusInterface kxkb( "org.kde.kxkb", "/kxkb", "org.kde.KXKB" );
+    org::kde::KXKB kxkb("org.kde.kxkb", "/kxkb" , QDBusConnection::sessionBus());
     if( kxkb.isValid() ) {
-        QDBusReply<QStringList> replyLayouts = kxkb.call("getLayoutsList");
+        QDBusReply<QStringList> replyLayouts = kxkb.getLayoutsList();
         layoutsList = replyLayouts;
-        QDBusReply<QString> replyCurrentLayout = kxkb.call("getCurrentLayout");
+        QDBusReply<QString> replyCurrentLayout = kxkb.getCurrentLayout();
         QString currentLayout = replyCurrentLayout;
         if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
             currLayout = layoutsList.indexOf(currentLayout);
@@ -183,11 +185,10 @@ void PasswordDlg::layoutClicked()
 
     if( ++currLayout == layoutsList.size() )
         currLayout = 0;
-
-    QDBusInterface kxkb( "org.kde.kxkb", "/kxkb", "org.kde.KXKB" );
+    org::kde::KXKB kxkb("org.kde.kxkb", "/kxkb" , QDBusConnection::sessionBus());
     if( kxkb.isValid() ) {
         const QString currentLayout = layoutsList.at(currLayout);
-        QDBusReply<bool> setLayoutReply = kxkb.call("setLayout", currentLayout );
+        QDBusReply<bool> setLayoutReply = kxkb.setLayout(currentLayout );
         setLayoutText( setLayoutReply ? currentLayout : "err" );
     }
 }
