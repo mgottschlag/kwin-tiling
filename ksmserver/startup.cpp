@@ -86,6 +86,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "kdesktop_interface.h"
 #include "ksplash_interface.h"
+#include "klauncher_interface.h"
 
 /*!  Restores the previous session. Ensures the window manager is
   running (if specified).
@@ -170,8 +171,8 @@ void KSMServer::autoStart0()
     if( !checkStartupSuspend())
         return;
     state = AutoStart0;
-    QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
-    klauncher.call( "autoStart", (int) 0 );
+    org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
+    klauncher.autoStart((int)0);
 }
 
 void KSMServer::autoStart0Done()
@@ -216,8 +217,8 @@ void KSMServer::autoStart1()
     if( state != KcmInitPhase1 )
         return;
     state = AutoStart1;
-    QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
-    klauncher.call( "autoStart", (int) 1 );
+    org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
+    klauncher.autoStart((int)1);
 }
 
 void KSMServer::autoStart1Done()
@@ -291,8 +292,9 @@ void KSMServer::autoStart2()
     state = FinishingStartup;
     waitAutoStart2 = true;
     waitKcmInit2 = true;
-    QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
-    klauncher.call( "autoStart", (int) 2 );
+    org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
+    klauncher.autoStart((int)2);
+
     QDBusInterface kded( "org.kde.kded", "/kded", "org.kde.kded" );
     kded.call( "loadSecondPhase" );
     org::kde::kdesktop::Desktop desktop("org.kde.kdesktop", "/Desktop", QDBusConnection::sessionBus());

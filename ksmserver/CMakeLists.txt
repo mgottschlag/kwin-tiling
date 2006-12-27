@@ -21,6 +21,9 @@ QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kdesktop_xml} kdesktop_interfac
 set(ksplash_xml  ${CMAKE_SOURCE_DIR}/workspace/ksplashml/org.kde.KSplash.xml)
 QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${ksplash_xml} ksplash_interface )
 
+set(klauncher_xml  ${DBUS_INTERFACES_DIR}/org.kde.KLauncher.xml)
+QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${klauncher_xml} klauncher_interface )
+
 
 qt4_add_dbus_adaptor( ksmserver_KDEINIT_SRCS org.kde.KSMServerInterface.xml server.h KSMServer )
 
