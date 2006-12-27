@@ -5,8 +5,15 @@ project(kcminit)
 
 ########### next target ###############
 
-set(kcminit_KDEINIT_SRCS main.cpp )
+set( kcminit_SRCS)
 
+if(Q_WS_X11)
+	set(ksplash_xml  ${CMAKE_SOURCE_DIR}/workspace/ksplashml/org.kde.KSplash.xml)
+	QT4_ADD_DBUS_INTERFACE( kcminit_SRCS  ${ksplash_xml} ksplash_interface )
+endif(Q_WS_X11)
+
+
+set(kcminit_KDEINIT_SRCS main.cpp ${kcminit_SRCS})
 
 kde4_automoc(${kcminit_KDEINIT_SRCS})
 
@@ -23,8 +30,7 @@ install(TARGETS kcminit DESTINATION ${BIN_INSTALL_DIR})
 
 # TODO might be simpler to make <whatever>_startup to be a symlink to <whatever>
 
-set(kcminit_startup_KDEINIT_SRCS main.cpp )
-
+set(kcminit_startup_KDEINIT_SRCS main.cpp ${kcminit_SRCS})
 
 kde4_automoc(${kcminit_startup_KDEINIT_SRCS})
 
