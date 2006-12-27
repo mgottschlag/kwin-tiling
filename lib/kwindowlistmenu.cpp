@@ -44,6 +44,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #undef Bool
 #include "kwindowlistmenu.h"
 #include "kwindowlistmenu.moc"
+#include "kwin_interface.h"
 
 static bool compareKWinWindowInfo( KWin::WindowInfo* firstInfo, KWin::WindowInfo* secondInfo )
 {
@@ -222,12 +223,14 @@ void KWindowListMenu::selectActiveWindow()
 
 void KWindowListMenu::slotUnclutterWindows()
 {
-    QDBusInterface("org.kde.kwin", "/KWin").call("unclutterDesktop");
+    org::kde::KWin kwin("org.kde.kwin", "/KWin", QDBusConnection::sessionBus());
+    kwin.unclutterDesktop();
 }
 
 void KWindowListMenu::slotCascadeWindows()
 {
-    QDBusInterface("org.kde.kwin", "/KWin").call("cascadeDesktop");
+    org::kde::KWin kwin("org.kde.kwin", "/KWin", QDBusConnection::sessionBus());
+    kwin.cascadeDesktop();
 }
 
 #endif // Q_WS_X11

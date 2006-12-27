@@ -12,6 +12,10 @@ set(kworkspace_LIB_SRCS kworkspace.cpp
 set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface )
 
+set(kwin_xml  ${CMAKE_SOURCE_DIR}/workspace/kwin/org.kde.KWin.xml)
+QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
+
+
 
 kde4_automoc(${kworkspace_LIB_SRCS})
 
