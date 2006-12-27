@@ -87,6 +87,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "kdesktop_interface.h"
 #include "ksplash_interface.h"
 #include "klauncher_interface.h"
+#include "kcminit_interface.h"
 
 /*!  Restores the previous session. Ensures the window manager is
   running (if specified).
@@ -191,8 +192,9 @@ void KSMServer::autoStart0Done()
     connect( kcminitSignals, SIGNAL( phase1Done()), SLOT( kcmPhase1Done()));
     state = KcmInitPhase1;
     QTimer::singleShot( 10000, this, SLOT( kcmPhase1Timeout())); // protection
-    QDBusInterface kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
-    kcminit.call( "runPhase1" );
+
+    org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());
+    kcminit.runPhase1();
 }
 
 void KSMServer::kcmPhase1Done()
@@ -302,8 +304,8 @@ void KSMServer::autoStart2()
     
     connect( kcminitSignals, SIGNAL( phase2Done()), SLOT( kcmPhase2Done()));
     QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
-    QDBusInterface kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
-    kcminit.call( "runPhase2" );
+    org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());
+    kcminit.runPhase2();
     if( !defaultSession())
         restoreLegacySession( KGlobal::config());
     KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up, more or less

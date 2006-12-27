@@ -15,6 +15,14 @@ set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS}
    shutdown.cpp 
    client.cpp)
 
+set(kcminit_adaptor ${CMAKE_SOURCE_DIR}/kcminit/main.h)
+set(kcminit_xml ${CMAKE_CURRENT_BINARY_DIR}/org.kde.KCMinit.xml)
+ADD_CUSTOM_COMMAND(OUTPUT ${kcminit_xml}
+       COMMAND ${QT_DBUSCPP2XML_EXECUTABLE} ${kcminit_adaptor} > ${kcminit_xml}
+       DEPENDS ${kcminit_adaptor})
+QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kcminit_xml} kcminit_interface )
+
+
 set(kdesktop_xml  ${CMAKE_SOURCE_DIR}/workspace/kdesktop/org.kde.kdesktop.Desktop.xml)
 QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kdesktop_xml} kdesktop_interface )
 
