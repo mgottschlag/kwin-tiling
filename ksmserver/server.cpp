@@ -89,6 +89,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QX11Info>
 #include <QApplication>
 #include <krandom.h>
+#include "klauncher_interface.h"
 
 KSMServer* the_server = 0;
 
@@ -119,12 +120,12 @@ void KSMServer::startApplication( QStringList command, const QString& clientMach
         command.prepend( xonCommand ); // "xon" by default
     }
     int n = command.count();
-    QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+    org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
     QString app = command[0];
     QStringList argList;
     for ( int i=1; i < n; i++)
        argList.append( command[i]);
-    klauncher.call( "exec_blind", app, argList );
+    klauncher.exec_blind(app, argList );
 }
 
 /*! Utility function to execute a command on the local machine. Used
@@ -657,8 +658,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         fclose(f);
         setenv( "SESSION_MANAGER", session_manager, true  );
        // Pass env. var to kdeinit.
-       QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
-       klauncher.call( "setLaunchEnv", "SESSION_MANAGER", (const char*) session_manager );
+       org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
+       klauncher.setLaunchEnv( "SESSION_MANAGER", (const char*) session_manager );
     }
 
     if (only_local) {
