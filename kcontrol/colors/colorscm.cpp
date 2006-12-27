@@ -508,7 +508,7 @@ void KColorScheme::slotAdd()
             if (sName == sList->text(i))
             {
                 exists = i;
-                int result = KMessageBox::warningContinueCancel( 0,
+                int result = KMessageBox::warningContinueCancel( this,
                    i18n("A color scheme with the name '%1' already exists.\n"
                         "Do you want to overwrite it?\n", sName),
                    i18n("Save Color Scheme"),
