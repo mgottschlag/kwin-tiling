@@ -42,6 +42,7 @@
 //Added by qt3to4:
 #include <QFrame>
 #include <QGridLayout>
+#include "kwin_interface.h"
 
 typedef KGenericFactory<KCMXinerama> KCMXineramaFactory;
 K_EXPORT_COMPONENT_FACTORY(xinerama, KCMXineramaFactory("kcmxinerama"))
@@ -173,9 +174,9 @@ void KCMXinerama::save() {
 		int item = xw->_unmanagedDisplay->currentIndex();
 		config->writeEntry("Unmanaged", item == _displays ? -3 : item);
 		config->sync();
-
-		QDBusInterface kwin("org.kde.kwin", "/", "org.kde.KWin");
-		kwin.call("reconfigure");
+                
+                org::kde::KWin kwin("org.kde.kwin", "/KWin", QDBusConnection::sessionBus());
+                kwin.reconfigure();
 
 		ksplashrc->setGroup("Xinerama");
 		ksplashrc->writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentIndex() : -2 /* ignore Xinerama */);
