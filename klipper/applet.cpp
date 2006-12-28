@@ -116,6 +116,7 @@ KlipperAppletWidget::KlipperAppletWidget( QWidget* parent )
 // and request data while this instance is waiting in the DCOP call
 void KlipperAppletWidget::init()
 {
+    
     QDBusInterface klipper("org.kde.klipper", "/klipper", "org.kde.klipper.klipper");
 	klipper.call("quitProcess");
 

@@ -33,6 +33,7 @@
 #include <knuminput.h>
 
 #include "kcmlaunch.h"
+#include "kdesktop_interface.h"
 
 typedef KGenericFactory<LaunchConfig, QWidget> LaunchFactory;
 K_EXPORT_COMPONENT_FACTORY( launch, LaunchFactory("kcmlaunch") )
@@ -213,8 +214,8 @@ LaunchConfig::save()
 
   emit changed( false );
 
-  QDBusInterface kdesktop("org.kde.kdesktop", "/Desktop", "org.kde.kdesktop.Desktop");
-  kdesktop.call("configure");
+  org::kde::kdesktop::Desktop desktop("org.kde.kdesktop", "/Desktop", QDBusConnection::sessionBus());
+  desktop.configure();
   QDBusInterface kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
   kicker.call("restart");
 }
