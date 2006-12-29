@@ -1213,8 +1213,10 @@ QString CFcEngine::createName(const QString &family, int weight, int width, int 
             slantString;
     bool    comma=false;
 
+#ifndef KFI_FC_NO_WIDTHS
     if(KFI_NULL_SETTING!=width)
         widthString=widthStr(width);
+#endif
 
     if(KFI_NULL_SETTING!=slant)
         slantString=slantStr(slant);
@@ -1230,6 +1232,7 @@ QString CFcEngine::createName(const QString &family, int weight, int width, int 
         comma=true;
     }
 
+#ifndef KFI_FC_NO_WIDTHS
     if(!widthString.isEmpty())
     {
         if(!comma)
@@ -1239,6 +1242,7 @@ QString CFcEngine::createName(const QString &family, int weight, int width, int 
         }
         name+=QChar(' ')+widthString;
     }
+#endif
 
     if(!slantString.isEmpty())
     {

@@ -67,6 +67,13 @@
 // Not enabled - as it messes things up a little with fonts/group files.
 //#define KFI_KIO_ALL_URLS_HAVE_NAME
 
+//
+// Enable the following so that fonts:/ will obtain the font name from each font
+// that is about to be installed, and check to see whehter it is already installed.
+// Note, this slows down font installation - as for each font fontconfig's list will
+// be refreshed.
+#define KFI_KIO_CHECK_FONTS_WHEN_INSTALL
+
 #define KFI_DBUG kDebug() << '[' << (int)(getpid()) << "] "
 
 #define MAX_IPC_SIZE    (1024*32)
@@ -991,7 +998,7 @@ void CKioFonts::get(const KUrl &url)
 
     // Any error will be logged in getSourceFiles
     if(updateFontList() && checkUrl(url) && getSourceFiles(url, srcFiles)) 
-    {
+                {
         //
         // The thumbnail job always donwloads non-local files to /tmp/... and passes this file name to
         // the thumbnail creator. However, in the case of fonts which are split among many files, this
@@ -1620,8 +1627,14 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
     bool fromFonts=KFI_KIO_FONTS_PROTOCOL==src.protocol();
 
-    // CPD: dont update font list upon a copy from file - is too slow. Just stat on filename!
-    if((!fromFonts || updateFontList()) && checkUrl(src) && checkAllowed(src))
+    if(
+//#ifdef KFI_KIO_CHECK_FONTS_WHEN_INSTALL
+//        updateFontList()
+//#else
+        // CPD: dont update font list upon a copy from file - is too slow. Just stat on filename!
+        !fromFonts || updateFontList()
+//#endif
+        && checkUrl(src) && checkAllowed(src))
     {
         //checkUrl(u) // CPD as per comment in ::put()
 
@@ -1829,13 +1842,15 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
 
     if(src.directory()==d.directory())
     {
-        CFontInfo::TFontList::Iterator hiddenIt;
-        const CFontInfo::TFileList     *entries(getEntries(src, hiddenIt));
+        CFontInfo::TFontList::Iterator disabledIt;
+        TFontMap::Iterator             enabledIt;
+        const CFontInfo::TFileList     *entries(getEntries(src, enabledIt, disabledIt));
 
         if(!entries)
         {
+            KFI_DBUG << "No entries found, updating font list antry again..." << endl;
             updateFontList();
-            entries=getEntries(src, hiddenIt);
+            entries=getEntries(src, enabledIt, disabledIt);
         }
 
         if(entries)
@@ -1852,13 +1867,13 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                     disable=!Misc::isHidden(srcFile) && Misc::isHidden(destFile) &&
                             destEn==srcFile;
 
-            if(enable && hiddenIt!=itsFolders[folder].disabled->items().end())
+            if(enable && disabledIt!=itsFolders[folder].disabled->items().end())
             {
-                if(confirmMultiple(src, (*hiddenIt).files, folder, OP_ENABLE))
+                if(confirmMultiple(src, (*disabledIt).files, folder, OP_ENABLE))
                 {
                     CDirList                   folders;
-                    CFontInfo::TFileList::ConstIterator it((*hiddenIt).files.begin()),
-                                                        end((*hiddenIt).files.end());
+                    CFontInfo::TFileList::ConstIterator it((*disabledIt).files.begin()),
+                                                        end((*disabledIt).files.end());
                     bool                       ok=false;
 
                     for(; it!=end; ++it)
@@ -1868,13 +1883,13 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                     {
                         QByteArray cmd(KFI_APP" -E ");
 
-                        cmd+=KProcess::quote((*hiddenIt).family).toUtf8();
+                        cmd+=KProcess::quote((*disabledIt).family).toUtf8();
                         cmd+=' ';
-                        cmd+=QString().sprintf("%d", (int)((*hiddenIt).styleInfo)).toUtf8();
+                        cmd+=QString().sprintf("%d", (int)((*disabledIt).styleInfo)).toUtf8();
                         ok=doRootCmd(cmd);
                     }
                     else
-                        ok=itsFolders[folder].disabled->enable(hiddenIt);
+                        ok=itsFolders[folder].disabled->enable(disabledIt);
 
                     if(ok)
                     {
@@ -1889,81 +1904,75 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                 }
                 return;
             }
-            else if (disable && hiddenIt==itsFolders[folder].disabled->items().end())
+            else if (disable && disabledIt==itsFolders[folder].disabled->items().end())
             {
-                TFontMap::Iterator fIt(getMap(src)),
-                                   fEnd(itsFolders[folder].fontMap.end());
-
-                if(fIt!=fEnd)
+                if(confirmMultiple(src, (*enabledIt).files, folder, OP_DISABLE))
                 {
-                    if(confirmMultiple(src, (*fIt).files, folder, OP_DISABLE))
-                    {
-                        CDirList                            folders;
-                        QMap<int, QString>                  names;
-                        CFontInfo::TFileList::ConstIterator it((*fIt).files.begin()),
-                                                            end((*fIt).files.end());
-                        bool                                ok=false;
+                    CDirList                            folders;
+                    QMap<int, QString>                  names;
+                    CFontInfo::TFileList::ConstIterator it((*enabledIt).files.begin()),
+                                                        end((*enabledIt).files.end());
+                    bool                                ok=false;
 
-                        for(; it!=end; ++it)
-                            folders.add(Misc::getDir(*it));
+                    for(; it!=end; ++it)
+                        folders.add(Misc::getDir(*it));
 
-                        //
-                        // If there is only 1 file mapped to this fontname, see if this file maps
-                        // to multiple font names - as would be the case in a TTC file...
-                        if(1==(*fIt).files.count())
-                            names=getFontIndexToNameEntries(folder, (*((*fIt).files.begin())).path);
+                    //
+                    // If there is only 1 file mapped to this fontname, see if this file maps
+                    // to multiple font names - as would be the case in a TTC file...
+                    if(1==(*enabledIt).files.count())
+                        names=getFontIndexToNameEntries(folder, (*((*enabledIt).files.begin())).path);
 
-                        if(0==names.count())
-                            names[0]=fIt.key();  // Multiple files -> cant use index :-(
+                    if(0==names.count())
+                        names[0]=enabledIt.key();  // Multiple files -> cant use index :-(
 
-                        QMap<int, QString>::ConstIterator nameIt(names.begin()),
-                                                          nameEnd(names.end());
+                    QMap<int, QString>::ConstIterator nameIt(names.begin()),
+                                                      nameEnd(names.end());
 
-                        for(; nameIt!=nameEnd; ++nameIt)
-                            if(nrs)
-                            {
-                                QByteArray cmd(KFI_APP" -H ");
-
-                                cmd+=KProcess::quote(getFamily(fIt.key())).toUtf8();
-                                cmd+=' ';
-                                cmd+=QString().sprintf("%d", (int)((*fIt).styleVal)).toUtf8();
-                                cmd+=' ';
-                                cmd+=QString().sprintf("%d", nameIt.key()).toUtf8();
-
-                                for(; it!=end; ++it)
-                                {
-                                    cmd+=' ';
-                                    cmd+=QFile::encodeName(KProcess::quote(*it));
-                                }
-
-                                ok=doRootCmd(cmd);
-                            }
-                            else
-                            {
-                                QString          fontStr(*nameIt);
-                                int              commaPos=fontStr.indexOf(',');
-                                CFontInfo::TFont font(-1==commaPos
-                                                        ? fontStr
-                                                        : fontStr.left(commaPos),
-                                                    (*fIt).styleVal);
-
-                                font.files=(*fIt).files;
-                                if(1==font.files.count())
-                                    (*(font.files.begin())).face=nameIt.key();
-                                ok=itsFolders[folder].disabled->disable(font);
-                            }
-
-                        if(ok)
+                    for(; nameIt!=nameEnd; ++nameIt)
+                        if(nrs)
                         {
-                            modified(timeout, folder, clearList, folders);
-                            finished();
+                            QByteArray cmd(KFI_APP" -H ");
+
+                            cmd+=KProcess::quote(getFamily(enabledIt.key())).toUtf8();
+                            cmd+=' ';
+                            cmd+=QString().sprintf("%d", (int)((*enabledIt).styleVal)).toUtf8();
+                            cmd+=' ';
+                            cmd+=QString().sprintf("%d", nameIt.key()).toUtf8();
+
+                            for(; it!=end; ++it)
+                            {
+                                cmd+=' ';
+                                cmd+=QFile::encodeName(KProcess::quote(*it));
+                            }
+
+                            ok=doRootCmd(cmd);
                         }
                         else
-                            if(nrs)
-                                error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
-                            else
-                                error(KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
+                        {
+                            QString          fontStr(*nameIt);
+                            int              commaPos=fontStr.indexOf(',');
+                            CFontInfo::TFont font(-1==commaPos
+                                                    ? fontStr
+                                                    : fontStr.left(commaPos),
+                                                (*enabledIt).styleVal);
+
+                            font.files=(*enabledIt).files;
+                            if(1==font.files.count())
+                                (*(font.files.begin())).face=nameIt.key();
+                            ok=itsFolders[folder].disabled->disable(font);
+                        }
+
+                    if(ok)
+                    {
+                        modified(timeout, folder, clearList, folders);
+                        finished();
                     }
+                    else
+                        if(nrs)
+                            error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+                        else
+                            error(KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
                     return;
                 }
                 error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, internal error - could not find font."));
@@ -1979,6 +1988,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                                                          src.prettyUrl()));
             else
                 error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, fonts cannot be renamed."));
+
             return;
         }
         error(KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
@@ -2088,28 +2098,29 @@ void CKioFonts::del(const KUrl &url, bool)
     KFI_DBUG << "del " << url.path() << " query:" << url.query() << endl;
 
     const CFontInfo::TFileList     *entries;
-    CFontInfo::TFontList::Iterator hiddenIt;
+    CFontInfo::TFontList::Iterator disabledIt;
+    TFontMap::Iterator             enabledIt;
 
     if(checkUrl(url) && checkAllowed(url) && 
-       (( (entries=getEntries(url, hiddenIt)) && entries->count() && checkFiles(*entries))  ||
-        ( updateFontList() && (entries=getEntries(url, hiddenIt)) && entries->count() &&
+       (( (entries=getEntries(url, enabledIt, disabledIt)) && entries->count() && checkFiles(*entries))  ||
+        ( updateFontList() && (entries=getEntries(url, enabledIt, disabledIt)) && entries->count() &&
        checkFiles(*entries))) && confirmMultiple(url, entries, getFolder(url), OP_DELETE))
     {
         CFontInfo::TFileList::ConstIterator it,
-                                   end=entries->end();
-        CDirList                   modifiedDirs;
-        bool                       clearList(!hasMetaData(KFI_KIO_NO_CLEAR));
-        int                        timeout(reconfigTimeout());
+                                            end=entries->end();
+        CDirList                            modifiedDirs;
+        bool                                clearList(!hasMetaData(KFI_KIO_NO_CLEAR));
+        int                                 timeout(reconfigTimeout());
 
         if(nonRootSys(url))
         {
-            if(hiddenIt!=itsFolders[FOLDER_SYS].disabled->items().end())
+            if(disabledIt!=itsFolders[FOLDER_SYS].disabled->items().end())
             {
                 QByteArray cmd(KFI_APP" -D ");
 
-                cmd+=KProcess::quote((*hiddenIt).family).toUtf8();
+                cmd+=KProcess::quote((*disabledIt).family).toUtf8();
                 cmd+=' ';
-                cmd+=QString().sprintf("%d", (int)((*hiddenIt).styleInfo)).toUtf8();
+                cmd+=QString().sprintf("%d", (int)((*disabledIt).styleInfo)).toUtf8();
                 if(doRootCmd(cmd))
                     itsFolders[FOLDER_SYS].disabled->refresh();
                 else
@@ -2184,9 +2195,9 @@ void CKioFonts::del(const KUrl &url, bool)
                 }
             }
 
-            if(hiddenIt!=itsFolders[itsRoot ? FOLDER_SYS : FOLDER_USER].disabled->items().end())
+            if(disabledIt!=itsFolders[itsRoot ? FOLDER_SYS : FOLDER_USER].disabled->items().end())
             {
-                itsFolders[itsRoot ? FOLDER_SYS : FOLDER_USER].disabled->remove(hiddenIt);
+                itsFolders[itsRoot ? FOLDER_SYS : FOLDER_USER].disabled->remove(disabledIt);
                 itsFolders[itsRoot ? FOLDER_SYS : FOLDER_USER].disabled->refresh();
             }
             else
@@ -2610,7 +2621,8 @@ CKioFonts::TFontMap::Iterator CKioFonts::getMap(const KUrl &url)
 }
 
 const CFontInfo::TFileList * CKioFonts::getEntries(const KUrl &url,
-                                                   CFontInfo::TFontList::Iterator &hiddenIt)
+                                                   TFontMap::Iterator &enabledIt,
+                                                   CFontInfo::TFontList::Iterator &disabledIt)
 {
     KFI_DBUG << "getEntries " << url.prettyUrl() << endl;
 
@@ -2622,16 +2634,18 @@ const CFontInfo::TFileList * CKioFonts::getEntries(const KUrl &url,
                                               Misc::getIntQueryVal(url, KFI_KIO_FACE, 0))),
                                    dEnd(itsFolders[folder].disabled->items().end());
 
-    hiddenIt=dEnd;
+    enabledIt=end;
+    disabledIt=dEnd;
 
     if(it!=end && dIt==dEnd)
     {
         KFI_DBUG << "getEntries - found enabled" << endl;
+        enabledIt=it;
         return &(it.value().files);
     }
     else if (it==end && dIt!=dEnd)
     {
-        hiddenIt=dIt;
+        disabledIt=dIt;
         KFI_DBUG << "getEntries - found disabled" << endl;
         return &((*dIt).files);
     }
@@ -2646,10 +2660,13 @@ const CFontInfo::TFileList * CKioFonts::getEntries(const KUrl &url,
                                        "font. Which one do you wish to access?", url.prettyUrl()),
                                   i18n("Duplicate Font"), i18n("Enabled Font"),
                                   i18n("Disabled Font")))
+        {
+            enabledIt=it;
             return &(it.value().files);
+        }
         else
         {
-            hiddenIt=dIt;
+            disabledIt=dIt;
             return &((*dIt).files);
         }
     }
@@ -2746,9 +2763,13 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
 {
     //
     // To speed things up, check the files extension 1st...
-    if(Misc::checkExt(file, "ttf") || Misc::checkExt(file, "otf") || Misc::checkExt(file, "ttc") ||
-       Misc::checkExt(file, "pfa") || Misc::checkExt(file, "pfb") || Misc::checkExt(file, "bdf") ||
-       Misc::checkExt(file, "bdf.gz") || Misc::checkExt(file, "pcf") || Misc::checkExt(file, "pcf.gz"))
+    if(
+#ifndef KFI_KIO_CHECK_FONTS_WHEN_INSTALL
+       Misc::checkExt(file, "ttf") || Misc::checkExt(file, "otf") || Misc::checkExt(file, "ttc") ||
+       Misc::checkExt(file, "pfa") || Misc::checkExt(file, "pfb") ||
+#endif
+       Misc::checkExt(file, "bdf") || Misc::checkExt(file, "bdf.gz") ||
+       Misc::checkExt(file, "pcf") || Misc::checkExt(file, "pcf.gz"))
         return FILE_FONT;
 
     if(isAAfm(file) || isAPfm(file))
@@ -2765,13 +2786,48 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
     else
     {
         //
-        // No exension match, so try querying with FreeType...
+        // Check that file is a font via FreeType...
         int       count=0;
         FcPattern *pat=FcFreeTypeQuery((const FcChar8 *)(QFile::encodeName(file).data()), 0, NULL,
                                        &count);
 
         if(pat)
         {
+#ifdef KFI_KIO_CHECK_FONTS_WHEN_INSTALL
+            FcBool scalable;
+
+            if(FcResultMatch==FcPatternGetBool(pat, FC_SCALABLE, 0, &scalable) && scalable)
+            {
+                // check too see whether font is already installed!
+                int weight(KFI_NULL_SETTING), slant(KFI_NULL_SETTING), width(KFI_NULL_SETTING);
+
+                FcPatternGetInteger(pat, FC_WEIGHT, 0, &weight);
+                FcPatternGetInteger(pat, FC_SLANT, 0, &slant);
+#ifndef KFI_FC_NO_WIDTHS
+                FcPatternGetInteger(pat, FC_WIDTH, 0, &width);
+#endif
+
+                QString name(CFcEngine::createName(pat, weight, width, slant));
+
+
+                // TODO: CDisabledFonts need to find on family & style info? Also need a find() that does
+                // not take into account face! Perhaps use -1?
+
+                if(itsFolders[FOLDER_SYS].fontMap.contains(name) ||
+                   itsFolders[FOLDER_SYS].disabled->disabledFonts().end()!=
+                            itsFolders[FOLDER_SYS].disabled->find(name, 1) ||
+                   (!itsRoot && (itsFolders[FOLDER_USER].fontMap.contains(name) ||
+                                 itsFolders[FOLDER_USER].disabled->disabledFonts().end()!=
+                                    itsFolders[FOLDER_USER].disabled->find(name, 1))))
+                {
+                    FcPatternDestroy(pat);
+                    error(KIO::ERR_SLAVE_DEFINED, i18n("File %1 contains the font %2.\n"
+                                                       "A font with this name is already installed.\n",
+                                                       url.prettyUrl(), name));
+                    return FILE_UNKNOWN;
+                }
+            }
+#endif
             FcPatternDestroy(pat);
             return FILE_FONT;
         }
@@ -2786,8 +2842,9 @@ bool CKioFonts::getSourceFiles(const KUrl &src, CFontInfo::TFileList &files, boo
 {
     if(KFI_KIO_FONTS_PROTOCOL==src.protocol())
     {
-        CFontInfo::TFontList::Iterator hiddenIt;
-        const CFontInfo::TFileList     *entries=getEntries(src, hiddenIt);
+        CFontInfo::TFontList::Iterator disabledIt;
+        TFontMap::Iterator             enabledIt;
+        const CFontInfo::TFileList     *entries=getEntries(src, enabledIt, disabledIt);
 
         if(entries)
             getFontFiles(*entries, files, removeSymLinks);

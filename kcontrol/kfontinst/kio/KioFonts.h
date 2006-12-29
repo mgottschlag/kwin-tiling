@@ -140,7 +140,8 @@ class CKioFonts : public KIO::SlaveBase
     bool               updateFontList();
     EFolder            getFolder(const KUrl &url);
     TFontMap::Iterator getMap(const KUrl &url);
-    const CFontInfo::TFileList * getEntries(const KUrl &url, CFontInfo::TFontList::Iterator &hiddenIt);
+    const CFontInfo::TFileList * getEntries(const KUrl &url, TFontMap::Iterator &enabledIt,
+                                            CFontInfo::TFontList::Iterator &disabledIt);
     QStringList        getFontNameEntries(EFolder folder, const QString &file, bool disabledFonts);
     QMap<int, QString> getFontIndexToNameEntries(EFolder folder, const QString &file);
     QString *          getEntry(EFolder folder, const QString &file, bool full=false);
