@@ -13,7 +13,7 @@
 #include <QLayout>
 #include <q3listview.h>
 #include <QSplitter>
-#include <q3textview.h>
+#include <qtextedit.h>
 #include <QTimer>
 //Added by qt3to4:
 #include <QVBoxLayout>
@@ -63,8 +63,8 @@ USBViewer::USBViewer(QWidget *parent, const QStringList &)
   sizes.append(200);
   splitter->setSizes(sizes);
 
-  _details = new Q3TextView(splitter);
-
+  _details = new QTextEdit(splitter);
+  _details->setReadOnly(true);
   splitter->setResizeMode(_devices, QSplitter::KeepSize);
 
   QTimer *refreshTimer = new QTimer(this);

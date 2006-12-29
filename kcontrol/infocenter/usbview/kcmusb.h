@@ -18,7 +18,7 @@
 
 class Q3ListView;
 class Q3ListViewItem;
-class Q3TextView;
+class QTextEdit;
 
 
 class USBViewer : public KCModule
@@ -40,7 +40,7 @@ private:
 
   Q3IntDict<Q3ListViewItem> _items;
   Q3ListView *_devices;
-  Q3TextView *_details;
+  QTextEdit *_details;
 };
 
 
