@@ -91,7 +91,6 @@ private Q_SLOTS:
     void protectionTimeout();
     void timeoutQuit();
     void timeoutWMQuit();
-    void knotifyTimeout();
     void kcmPhase1Timeout();
     void kcmPhase2Timeout();
     void pendingShutdownTimeout();
@@ -102,8 +101,7 @@ private Q_SLOTS:
     void tryRestoreNext();
     void startupSuspendTimeout();
 
-    void notifySlot(QString,QString,QString,QString,QString,int,int,int,int);
-    void logoutSoundFinished(int,int);
+    void logoutSoundFinished();
     void autoStart0Done();
     void autoStart1Done();
     void autoStart2Done();
@@ -184,8 +182,6 @@ private:
     QTimer protectionTimer;
     QTimer restoreTimer;
     QString xonCommand;
-    int logoutSoundEvent;
-    QTimer knotifyTimeoutTimer;
     QTimer startupSuspendTimeoutTimer;
     bool waitAutoStart2;
     bool waitKcmInit2;

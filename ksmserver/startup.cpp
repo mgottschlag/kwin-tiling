@@ -74,7 +74,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <ktemporaryfile.h>
 #include <kprocess.h>
 #include <kwinmodule.h>
-#include <knotifyclient.h>
+#include <knotification.h>
 
 #include "global.h"
 #include "server.h"
@@ -308,7 +308,7 @@ void KSMServer::autoStart2()
     kcminit.runPhase2();
     if( !defaultSession())
         restoreLegacySession( KGlobal::config());
-    KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up, more or less
+    KNotification::event( "startkde" , QString() , QPixmap() , 0l , KNotification::DefaultEvent  ); // this is the time KDE is up, more or less
 }
 
 void KSMServer::autoStart2Done()

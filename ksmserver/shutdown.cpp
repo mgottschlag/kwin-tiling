@@ -74,7 +74,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <ktemporaryfile.h>
 #include <kprocess.h>
 #include <kwinmodule.h>
-#include <knotifyclient.h>
+#include <knotification.h>
 #include <dmctl.h>
 #include "server.h"
 #include "global.h"
@@ -425,39 +425,21 @@ void KSMServer::completeShutdownOrCheckpoint()
         discardSession();
 
     if ( state == Shutdown ) {
-        bool waitForKNotify = true;
 #ifdef __GNUC__
 #warning KNotify TODO
 #endif
-#if 0
+	/*  How to check if the deamon is still running.    We will not start the knotify daemon just for playing a sound before shutdown.  or do wa want that ?
+
         knotifySignals = QDBus::sessionBus().findInterface("org.kde.knotify",
             "/knotify", "org.kde.KNotify" );
         if( !knotifySignals->isValid())
             kWarning() << "knotify not running?" << endl;
-        if( !kapp->dcopClient()->connectDCOPSignal( "knotify", "",
-            "notifySignal(QString,QString,QString,QString,QString,int,int,int,int)",
-            "ksmserver", "notifySlot(QString,QString,QString,QString,QString,int,int,int,int)", false )) {
-            waitForKNotify = false;
-        }
-        if( !kapp->dcopClient()->connectDCOPSignal( "knotify", "",
-            "playingFinished(int,int)",
-            "ksmserver", "logoutSoundFinished(int,int)", false )) {
-            waitForKNotify = false;
-        }
-#else
-        waitForKNotify = false;
-#endif
-        // event() can return -1 if KNotifyClient short-circuits and avoids KNotify
-        logoutSoundEvent = KNotifyClient::event( 0, "exitkde" ); // KDE says good bye
-        if( logoutSoundEvent <= 0 )
-            waitForKNotify = false;
-        if( waitForKNotify ) {
-            state = WaitingForKNotify;
-            knotifyTimeoutTimer.setSingleShot( true );
-            knotifyTimeoutTimer.start( 20000 );
-            return;
-        }
-        startKilling();
+	*/
+
+        KNotification *n = KNotification::event( "exitkde" , QString() , QPixmap() , 0l ,  KNotification::DefaultEvent  ); // KDE says good bye
+        connect(n, SIGNAL( closed() ) , this, SLOT(logoutSoundFinished()) );
+	state = WaitingForKNotify;
+ 
     } else if ( state == Checkpoint ) {
         foreach( KSMClient* c, clients ) {
             SmsSaveComplete( c->connection());
@@ -468,8 +450,7 @@ void KSMServer::completeShutdownOrCheckpoint()
 
 void KSMServer::startKilling()
 {
-    knotifyTimeoutTimer.stop();
-    state = KillingWM;
+        state = KillingWM;
 // kill the WM first, so that it doesn't track changes that happen as a result of other
 // clients going away (e.g. if KWin is set to remember position of a window, it could
 // shift because of Kicker going away and KWin would remember wrong position)
@@ -522,35 +503,14 @@ void KSMServer::completeKilling()
     }
 }
 
-// called when KNotify performs notification for logout (not when sound is finished though)
-void KSMServer::notifySlot(QString event ,QString app,QString,QString,QString,int present,int,int,int)
+
+void KSMServer::logoutSoundFinished(  )
 {
     if( state != WaitingForKNotify )
-        return;
-    if( event != "exitkde" || app != "ksmserver" )
-        return;
-    if( present & KNotifyClient::Sound ) // logoutSoundFinished() will be called
         return;
     startKilling();
 }
 
-// This is stupid. The normal DCOP signal connected to notifySlot() above should be simply
-// emitted in KNotify only after the sound is finished playing.
-void KSMServer::logoutSoundFinished( int event, int )
-{
-    if( state != WaitingForKNotify )
-        return;
-    if( event != logoutSoundEvent )
-        return;
-    startKilling();
-}
-
-void KSMServer::knotifyTimeout()
-{
-    if( state != WaitingForKNotify )
-        return;
-    startKilling();
-}
 
 void KSMServer::timeoutWMQuit()
 {

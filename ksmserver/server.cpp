@@ -605,7 +605,6 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     clientInteracting = 0;
     xonCommand = config->readEntry( "xonCommand", "xon" );
 
-    connect( &knotifyTimeoutTimer, SIGNAL( timeout()), SLOT( knotifyTimeout()));
     connect( &startupSuspendTimeoutTimer, SIGNAL( timeout()), SLOT( startupSuspendTimeout()));
     connect( &pendingShutdown, SIGNAL( timeout()), SLOT( pendingShutdownTimeout()));
 
