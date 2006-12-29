@@ -1,99 +1,97 @@
-[!Global!]
+[Global]
 IconName=kaccess
 Comment=KDE Accessibility Tool
-Comment[fr]=Outil d'accessibilité de KDE
-Comment[x-test]=xxKDE Accessibility Toolxx
 
-[modifierkey-latched]
+[Event/modifierkey-latched]
 Name=A modifier key has become active
 Name[fr]=Une touche de modification est devenue active
 Name[x-test]=xxA modifier key has become activexx
 Comment=A modifier key (e.g., Shift or Control) has changed its state and is now active
 Comment[x-test]=xxA modifier key (e.g., Shift or Control) has changed its state and is now activexx
-default_sound=KDE_Click.wav
-default_presentation=0
+Sound=KDE_Click.wav
+
 nopresentation=236
 
-[modifierkey-unlatched]
+[Event/modifierkey-unlatched]
 Name=A modifier key has become inactive
 Name[fr]=Une touche de modification est devenue inactive
 Name[x-test]=xxA modifier key has become inactivexx
 Comment=A modifier key (e.g., Shift or Control) has changed its state and is now inactive
 Comment[x-test]=xxA modifier key (e.g., Shift or Control) has changed its state and is now inactivexx
-default_sound=KDE_Click.wav
-default_presentation=0
+Sound=KDE_Click.wav
+
 nopresentation=236
 
-[modifierkey-locked]
+[Event/modifierkey-locked]
 Name=A modifier key has been locked
 Name[fr]=Une touche de modification a été verrouillée
 Name[x-test]=xxA modifier key has been lockedxx
 Comment=A modifier key (e.g., Shift or Control) has been locked and is now active for all of the following keypresses
 Comment[x-test]=xxA modifier key (e.g., Shift or Control) has been locked and is now active for all of the following keypressesxx
-default_sound=KDE_Click.wav
-default_presentation=0
+Sound=KDE_Click.wav
+
 nopresentation=236
 
-[lockkey-locked]
+[Event/lockkey-locked]
 Name=A lock key has been activated
 Name[fr]=Une touche de verrouillage a été activée
 Name[x-test]=xxA lock key has been activatedxx
 Comment=A lock key (e.g., Caps Lock or Num Lock) has changed its state and and is now active
 Comment[x-test]=xxA lock key (e.g., Caps Lock or Num Lock) has changed its state and and is now activexx
-default_sound=KDE_Click.wav
-default_presentation=0
+Sound=KDE_Click.wav
+
 nopresentation=236
 
-[lockkey-unlocked]
+[Event/lockkey-unlocked]
 Name=A lock key has been deactivated
 Name[fr]=Une touche de verrouillage a été désactivée
 Name[x-test]=xxA lock key has been deactivatedxx
 Comment=A lock key (e.g., Caps Lock or Num Lock) has changed its state and is now inactive
 Comment[x-test]=xxA lock key (e.g., Caps Lock or Num Lock) has changed its state and is now inactivexx
-default_sound=KDE_Click.wav
-default_presentation=0
+Sound=KDE_Click.wav
+
 nopresentation=236
 
-[stickykeys]
+[Event/stickykeys]
 Name=Sticky keys has been enabled or disabled
 Name[fr]=L'automaintien des touches a été activé ou désactivé
 Name[x-test]=xxSticky keys has been enabled or disabledxx
 Comment=Sticky keys has been enabled or disabled
 Comment[fr]=L'automaintien des touches a été activé ou désactivé
 Comment[x-test]=xxSticky keys has been enabled or disabledxx
-default_sound=KDE_Click.wav
-default_presentation=16
+Sound=KDE_Click.wav
+Action=Popup
 nopresentation=236
 
-[slowkeys]
+[Event/slowkeys]
 Name=Slow keys has been enabled or disabled
 Name[fr]=Les touches lentes ont été activées ou désactivées
 Name[x-test]=xxSlow keys has been enabled or disabledxx
 Comment=Slow keys has been enabled or disabled
 Comment[fr]=Les touches lentes ont été activées ou désactivées
 Comment[x-test]=xxSlow keys has been enabled or disabledxx
-default_sound=KDE_Click.wav
-default_presentation=16
+Sound=KDE_Click.wav
+Action=Popup
 nopresentation=236
 
-[bouncekeys]
+[Event/bouncekeys]
 Name=Bounce keys has been enabled or disabled
 Name[fr]=Les touches non répétées ont été activées ou désactivées
 Name[x-test]=xxBounce keys has been enabled or disabledxx
 Comment=Bounce keys has been enabled or disabled
 Comment[fr]=Les touches non répétées ont été activées ou désactivées
 Comment[x-test]=xxBounce keys has been enabled or disabledxx
-default_sound=KDE_Click.wav
-default_presentation=16
+Sound=KDE_Click.wav
+Action=PassivePopup
 nopresentation=236
 
-[mousekeys]
+[Event/mousekeys]
 Name=Mouse keys has been enabled or disabled
 Name[fr]=Les touches gérant la souris ont été activées ou désactivées
 Name[x-test]=xxMouse keys has been enabled or disabledxx
 Comment=Mouse keys has been enabled or disabled
 Comment[fr]=Les touches gérant la souris ont été activées ou désactivées
 Comment[x-test]=xxMouse keys has been enabled or disabledxx
-default_sound=KDE_Click.wav
-default_presentation=16
+Sound=KDE_Click.wav
+Action=PassivePopup
 nopresentation=236

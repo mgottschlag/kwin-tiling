@@ -10,7 +10,7 @@ kde4_automoc(${kcm_access_PART_SRCS})
 kde4_add_plugin(kcm_access ${kcm_access_PART_SRCS})
 
 
-target_link_libraries(kcm_access  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_PHONONCORE_LIBRARY} )
+target_link_libraries(kcm_access  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_PHONONCORE_LIBRARY} ${KDE4_KNOTIFYCONFIG_LIBS}  )
 
 install(TARGETS kcm_access  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
@@ -34,7 +34,7 @@ install(TARGETS kaccess DESTINATION ${BIN_INSTALL_DIR})
 
 install( FILES kcmaccess.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES kaccess.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-install( FILES eventsrc  DESTINATION  ${DATA_INSTALL_DIR}/kaccess/ )
+install( FILES kaccess.notifyrc  DESTINATION  ${DATA_INSTALL_DIR}/kaccess/ )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
 

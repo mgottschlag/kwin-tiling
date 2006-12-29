@@ -34,7 +34,7 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kshortcut.h>
-#include <knotifydialog.h>
+#include <knotifyconfigwidget.h>
 #include <kkeyserver.h>
 
 #include <X11/Xlib.h>
@@ -629,10 +629,7 @@ KAccessConfig::~KAccessConfig()
 
 void KAccessConfig::configureKNotify()
 {
-	KAboutData about(I18N_NOOP("kaccess"),
-						  I18N_NOOP("KDE Accessibility Tool"),
-						  0);
-	KNotifyDialog::configure (this, 0, &about);
+	KNotifyConfigWidget::configure (this, "kaccess");
 }
 
 void KAccessConfig::changeFlashScreenColor()
