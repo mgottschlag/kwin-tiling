@@ -225,6 +225,7 @@ NICList* findNICs()
 
 
          ifcopy=*ifr;
+         result=-1;  // if none of the two #ifs below matches, ensure that result!=0 so that "Unknown" is returned as result
 #ifdef SIOCGIFHWADDR
          result=ioctl(sockfd,SIOCGIFHWADDR,&ifcopy);
          if (result==0)
@@ -240,8 +241,10 @@ NICList* findNICs()
             tmp->HWaddr = HWaddr2String(n);
          }
 #endif
-         else
+         if (result!=0)
+         {
             tmp->HWaddr = i18n("Unknown");
+         }
 
          nl->append(tmp);
          break;
