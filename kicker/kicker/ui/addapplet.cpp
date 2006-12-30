@@ -142,11 +142,16 @@ void AddAppletDialog::populateApplets()
 		++it;
 	}
 
-	 m_listModel = new AppletListModel(m_applets, this);
-	 m_mainWidgetView->appletListView->setModel(m_listModel);
+	m_listModel = new AppletListModel(m_applets, this);
+	m_mainWidgetView->appletListView->setModel(m_listModel);
 
-	 AppletItemDelegate *appletItemDelegate = new AppletItemDelegate(this);
-	 m_mainWidgetView->appletListView->setItemDelegate(appletItemDelegate);
+	AppletItemDelegate *appletItemDelegate = new AppletItemDelegate(this);
+	appletItemDelegate->setIconSize(48, 48);
+	appletItemDelegate->setMinimumItemWidth(200);
+	appletItemDelegate->setLeftMargin(20);
+	appletItemDelegate->setRightMargin(0);
+	appletItemDelegate->setSeparatorPixels(20);
+	m_mainWidgetView->appletListView->setItemDelegate(appletItemDelegate);
 }
 
 void AddAppletDialog::selectApplet(const QModelIndex &applet)
