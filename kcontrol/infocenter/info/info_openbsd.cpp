@@ -37,7 +37,7 @@
 
 #include <QFile>
 #include <QFontMetrics>
-#include <qstrlist.h>
+#include <Q3StrList>
 #include <QTextStream>
 
 #include <kdebug.h>
@@ -49,7 +49,7 @@ typedef struct
   const char	*title;
   } hw_info_mib_list_t;
 
-bool GetInfo_CPU(QListView *lBox)
+bool GetInfo_CPU(Q3ListView *lBox)
 {
   static hw_info_mib_list_t hw_info_mib_list[]= {
 	{ 1, HW_MODEL,		"Model" },
@@ -88,7 +88,7 @@ bool GetInfo_CPU(QListView *lBox)
 		sysctl(mib,2,&num,&len,NULL,0);
 		value.sprintf("%d", num);
 	}
-	new QListViewItem(lBox, hw_info_mib->title, value);
+	new Q3ListViewItem(lBox, hw_info_mib->title, value);
    }
 
    return true;
@@ -96,8 +96,8 @@ bool GetInfo_CPU(QListView *lBox)
 
 // this is used to find out which devices are currently
 // on system
-static bool GetDmesgInfo(QListView *lBox, const char *filter,
-	void func(QListView *, QString s, void **, bool))
+static bool GetDmesgInfo(Q3ListView *lBox, const char *filter,
+	void func(Q3ListView *, QString s, void **, bool))
 {
         QFile *dmesg = new QFile("/var/run/dmesg.boot");
 	bool usepipe=false;
@@ -119,7 +119,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 		t = new QTextStream(pipe, QIODevice::ReadOnly);
 	}
 
-	QListViewItem *olditem = NULL;
+	Q3ListViewItem *olditem = NULL;
 	while(!(s = t->readLine()).isNull()) {
 		if (!seencpu) {
 			if (s.contains("cpu"))
@@ -136,7 +136,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 				func(lBox, s, &opaque, false);
 			}
 			else {
-				olditem = new QListViewItem(lBox, olditem, s);
+				olditem = new Q3ListViewItem(lBox, olditem, s);
 			}
 			found = true;
 		}
@@ -159,22 +159,22 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 }
 
 
-void AddIRQLine(QListView *lBox, QString s, void **opaque, bool ending)
+void AddIRQLine(Q3ListView *lBox, QString s, void **opaque, bool ending)
 {
-	QStrList *strlist = (QStrList *) *opaque;
+	Q3StrList *strlist = (Q3StrList *) *opaque;
 	const char *str;
 	int pos, irqnum=0;
 	const char *p;
 	p = s.toLatin1();
 
 	if (!strlist) {
-		strlist = new QStrList();
+		strlist = new Q3StrList();
 		*opaque = (void *) strlist;
 	}
 	if (ending) {
 		str = strlist->first();
 		for(;str; str = strlist->next()) {
-			new QListViewItem(lBox, str);
+			new Q3ListViewItem(lBox, str);
 		}
 		delete strlist;
 		return;
@@ -191,7 +191,7 @@ void AddIRQLine(QListView *lBox, QString s, void **opaque, bool ending)
 	strlist->inSort(s.toLatin1());
 }
 
-bool GetInfo_IRQ (QListView *lBox)
+bool GetInfo_IRQ (Q3ListView *lBox)
 {
 	lBox->addColumn(i18n("IRQ"));
 	lBox->addColumn(i18n("Device"));
@@ -199,32 +199,32 @@ bool GetInfo_IRQ (QListView *lBox)
 	return true;
 }
 
-bool GetInfo_DMA (QListView *)
+bool GetInfo_DMA (Q3ListView *)
 {
   return false;
 }
 
-bool GetInfo_PCI (QListView *lbox)
+bool GetInfo_PCI (Q3ListView *lbox)
 {
 	if (!GetDmesgInfo(lbox, "at pci", NULL))
-		new QListViewItem(lbox, i18n("No PCI devices found."));
+		new Q3ListViewItem(lbox, i18n("No PCI devices found."));
 	return true;
 }
 
-bool GetInfo_IO_Ports (QListView *lbox)
+bool GetInfo_IO_Ports (Q3ListView *lbox)
 {
 	if (!GetDmesgInfo(lbox, "port 0x", NULL))
-		new QListViewItem(lbox, i18n("No I/O port devices found."));
+		new Q3ListViewItem(lbox, i18n("No I/O port devices found."));
 	return true;
 }
 
-bool GetInfo_Sound (QListView *lbox)
+bool GetInfo_Sound (Q3ListView *lbox)
 {
 	if (!GetDmesgInfo(lbox, "audio", NULL))
-		new QListViewItem(lbox, i18n("No audio devices found."));
+		new Q3ListViewItem(lbox, i18n("No audio devices found."));
 
 	// append information on any audio devices found
-	QListViewItem *lvitem = lbox->firstChild();
+	Q3ListViewItem *lvitem = lbox->firstChild();
 	for(; lvitem; lvitem = lvitem->nextSibling()) {
 		QString s;
 		int pos, len;
@@ -250,20 +250,20 @@ bool GetInfo_Sound (QListView *lbox)
 	return true;
 }
 
-bool GetInfo_Devices (QListView *lBox)
+bool GetInfo_Devices (Q3ListView *lBox)
 {
 	(void) GetDmesgInfo(lBox, NULL, NULL);
 	return true;
 }
 
-bool GetInfo_SCSI (QListView *lbox)
+bool GetInfo_SCSI (Q3ListView *lbox)
 {
 	if (!GetDmesgInfo(lbox, "scsibus", NULL))
-		new QListViewItem(lbox, i18n("No SCSI devices found."));
+		new Q3ListViewItem(lbox, i18n("No SCSI devices found."));
 	return true;
 }
 
-bool GetInfo_Partitions (QListView *lbox)
+bool GetInfo_Partitions (Q3ListView *lbox)
 {
 	QString s;
 	char *line, *orig_line;
@@ -282,7 +282,7 @@ bool GetInfo_Partitions (QListView *lbox)
 	lbox->addColumn(i18n("FS Type"));
 	lbox->addColumn(i18n("Mount Options"));
 
-	QListViewItem *olditem = 0;
+	Q3ListViewItem *olditem = 0;
 	while (!(s = t->readLine()).isNull()) {
 		orig_line = line = strdup(s.toLatin1());
 
@@ -296,7 +296,7 @@ bool GetInfo_Partitions (QListView *lbox)
 
 		flags = line;
 
-		olditem = new QListViewItem(lbox, olditem, device, mountpoint,
+		olditem = new Q3ListViewItem(lbox, olditem, device, mountpoint,
 					type, flags);
 
 		free(orig_line);
@@ -307,7 +307,7 @@ bool GetInfo_Partitions (QListView *lbox)
 	return true;
 }
 
-bool GetInfo_XServer_and_Video (QListView *lBox)
+bool GetInfo_XServer_and_Video (Q3ListView *lBox)
 {
 	return GetInfo_XServer_Generic( lBox );
 }
