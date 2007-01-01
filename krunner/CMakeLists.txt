@@ -23,3 +23,4 @@ install(FILES krunner.desktop  DESTINATION  ${SERVICES_INSTALL_DIR})
 
 set(krunner_BGIMAGES images/background/dialog.svg)
 install(FILES ${krunner_BGIMAGES} DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/background)
+install(FILES org.kde.krunner.Interface.xml DESTINATION ${DBUS_INTERFACES_DIR} )
