@@ -41,7 +41,7 @@ add_subdirectory( kcontrol )
 add_subdirectory( ksystraycmd )
 
 # new apps that need approval
-add_subdirectory( krunner )
+#add_subdirectory( krunner )
 
 # data
 add_subdirectory( wallpapers )
