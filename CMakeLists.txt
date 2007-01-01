@@ -19,28 +19,45 @@ set( kcmbackgroundlib_SRCS
 
 include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_CURRENT_BINARY_DIR} )
 
-add_subdirectory( lib ) 
+# libs
+add_subdirectory( lib )
 add_subdirectory( kdmlib )
-add_subdirectory( kwin ) 
-add_subdirectory( ksmserver ) 
-add_subdirectory( ktip ) 
-add_subdirectory( wallpapers ) 
-add_subdirectory( menu ) 
-add_subdirectory( kscreensaver ) 
-add_subdirectory( kdesktop ) 
-add_subdirectory( kicker)
+add_subdirectory( plasma/lib )
+
+# core apps
+add_subdirectory( kcheckpass )
+add_subdirectory( kscreensaver )
+add_subdirectory( ksmserver )
+add_subdirectory( ksplashml )
 add_subdirectory( ksysguard )
+add_subdirectory( ktip )
+add_subdirectory( klipper )
+add_subdirectory( kmenuedit )
+add_subdirectory( kwin )
+add_subdirectory( plasma )
+
+# apps we need to figure out what to do with
 add_subdirectory( kcontrol )
 add_subdirectory( ksystraycmd )
-add_subdirectory( ksplashml )
-add_subdirectory( kmenuedit )
-add_subdirectory( klipper )
-add_subdirectory( kcheckpass )
+
+# new apps that need approval
+add_subdirectory( krunner )
+
+# data
+add_subdirectory( wallpapers )
+add_subdirectory( menu )
+
+# apps on the chopping block
+add_subdirectory( kdesktop )
+add_subdirectory( kicker)
+
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 	add_subdirectory( kdm )
 else(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 	MESSAGE(STATUS "Xau lib or Xdmcp lib was missing. kdm will not compile")
 endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+
+SET(krunner_DEPENDS "plasma")
 
 ########### install files ###############
 install(PROGRAMS startkde DESTINATION ${BIN_INSTALL_DIR})
