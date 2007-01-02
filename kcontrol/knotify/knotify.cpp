@@ -204,7 +204,9 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
     dataChanged = false;
 
     connect( m_ui->cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( externalToggled( bool ) ) );
-    connect( m_ui->grpPlayers, SIGNAL( clicked( int ) ), this, SLOT( slotChanged() ) );
+    connect( m_ui->cbArts, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
+    connect( m_ui->cbExternal, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
+    connect( m_ui->cbNone, SIGNAL(clicked(bool)), this, SLOT(slotChanged()));
     connect( m_ui->volumeSlider, SIGNAL( valueChanged ( int ) ), this, SLOT( slotChanged() ) );
     connect( m_ui->reqExternal, SIGNAL( textChanged( const QString& ) ), this, SLOT( slotChanged() ) );
     m_ui->reqExternal->setMode(KFile::File|KFile::ExistingOnly|KFile::LocalOnly);
