@@ -2407,7 +2407,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
             KFI_DBUG << "ATTEMPT : " << attempts << endl;
             if(1==attempts)
                 errorMsg=i18n("Incorrect password.\n");
-            if((!openPassDlg(authInfo, errorMsg) && attempts) || ++attempts>4)
+            if((!openPasswordDialog(authInfo, errorMsg) && attempts) || ++attempts>4)
                 error=true;
         }
         if(!error && authInfo.keepPassword)

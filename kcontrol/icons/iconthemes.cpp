@@ -42,7 +42,7 @@
 
 #include <k3listview.h>
 #include <kbuildsycocaprogressdialog.h>
-#include <kurlrequesterdlg.h>
+#include <kurlrequesterdialog.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
 #include <kprogressdialog.h>
@@ -164,7 +164,7 @@ void IconThemesConfig::loadThemes()
 
 void IconThemesConfig::installNewTheme()
 {
-  KUrl themeURL = KUrlRequesterDlg::getUrl(QString(), this,
+  KUrl themeURL = KUrlRequesterDialog::getUrl(QString(), this,
                                            i18n("Drag or Type Theme URL"));
   kDebug() << themeURL.prettyUrl() << endl;
 

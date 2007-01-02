@@ -28,7 +28,7 @@
 #include <kglobalsettings.h>
 #include <kdialog.h>
 #include <kmessagebox.h>
-#include <kurlrequesterdlg.h>
+#include <kurlrequesterdialog.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <ktar.h>
@@ -204,7 +204,7 @@ void ThemePage::selectionChanged( Q3ListViewItem *item )
 void ThemePage::installClicked()
 {
 	// Get the URL for the theme we're going to install
-	KUrl url = KUrlRequesterDlg::getUrl( QString(), this, i18n( "Drag or Type Theme URL" ) );
+	KUrl url = KUrlRequesterDialog::getUrl( QString(), this, i18n( "Drag or Type Theme URL" ) );
 	if ( url.isEmpty() )
 		return;
 

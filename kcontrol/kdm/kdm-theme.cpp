@@ -196,7 +196,7 @@ void KDMThemeWidget::updateInfoView( ThemeData *theme )
 // Theme installation code inspired by kcm_icon
 void KDMThemeWidget::installNewTheme()
 {
-	KUrlRequesterDlg fileRequester( QString::null, i18n("Drag or Type Theme URL"), this );
+	KUrlRequesterDialog fileRequester( QString::null, i18n("Drag or Type Theme URL"), this );
 	fileRequester.urlRequester()->setMode( KFile::File | KFile::Directory | KFile::ExistingOnly );
 	KUrl themeURL = fileRequester.getUrl();
 	if (themeURL.isEmpty())
