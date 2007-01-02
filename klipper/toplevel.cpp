@@ -45,6 +45,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <ksavefile.h>
+#include <ksessionmanager.h>
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <kstringhandler.h>
@@ -75,8 +76,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
-#include <kclipboard.h>
-
 namespace {
     /**
      * Use this when manipulating the clipboard
@@ -104,12 +103,14 @@ namespace {
 /**
  * Helper class to save history upon session exit.
  */
-class KlipperSessionManaged : public KSessionManaged
+class KlipperSessionManager : public KSessionManager
 {
 public:
-    KlipperSessionManaged( KlipperWidget* k )
+    KlipperSessionManager( KlipperWidget* k )
         : klipper( k )
         {}
+
+    virtual ~KlipperSessionManager() {}
 
     /**
      * Save state upon session exit.
@@ -140,7 +141,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     , locklevel( 0 )
     , m_config( config )
     , m_pendingContentsCheck( false )
-    , session_managed( new KlipperSessionManaged( this ))
+    , session_managed( new KlipperSessionManager( this ))
 {
     qt_qclipboard_bailout_hack = true;
 
@@ -196,7 +197,6 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     adjustSize();
 
     globalKeys = KGlobalAccel::self();
-    KGlobalAccel* keys = globalKeys;
     KActionCollection* actionCollection = collection;
     KAction* a = 0L;
 #include "klipperbindings.cpp"
@@ -1171,8 +1171,7 @@ static void ensureGlobalSyncOff(KConfig* config) {
         kDebug() << "Shutting off global synchronization" << endl;
         config->writeEntry("SynchronizeClipboardAndSelection", false, KConfig::Normal | KConfig::Global );
         config->sync();
-        KClipboardSynchronizer::setSynchronizing( false );
-        KClipboardSynchronizer::setReverseSynchronizing( false );
+        kapp->setSynchronizeClipboard(false);
         KGlobalSettings::self()->emitChange( KGlobalSettings::ClipboardConfigChanged, 0 );
     }
 
