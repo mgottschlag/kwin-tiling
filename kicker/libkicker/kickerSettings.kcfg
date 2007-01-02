@@ -6,6 +6,7 @@
 
 <include>kapplication.h</include>
 <include>klocale.h</include>
+<include>kglobalsettings.h</include>
 <kcfgfile arg="true" />
 
 <group name="General">
