@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QPixmap>
 #include <QList>
 
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>

@@ -326,7 +326,7 @@ KonsoleMenuFactory::KonsoleMenuFactory(QObject *parent, const char *name)
 : KLibFactory(parent)
 {
     setObjectName(name);
-    KGlobal::iconLoader()->addAppDir("konsole");
+    kapp->iconLoader()->addAppDir("konsole");
     KGlobal::locale()->insertCatalog("konsolemenuapplet");
 }
 

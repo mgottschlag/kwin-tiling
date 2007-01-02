@@ -1289,7 +1289,7 @@ void ContainerArea::dropEvent(QDropEvent *ev)
                 //KMimeType::pixmapForURL(url, 0, K3Icon::Panel, 0,
                 //                        K3Icon::DefaultState, &pixmapFile);
                 QString iconName = KMimeType::iconNameForUrl(url);
-                KGlobal::iconLoader()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, &pixmapFile );
+                kapp->iconLoader()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, &pixmapFile );
                 PanelExeDialog dlg(QString::null, QString::null, url.path(),
                                    pixmapFile, QString::null, false, 0);
                 if (dlg.exec() == QDialog::Accepted)

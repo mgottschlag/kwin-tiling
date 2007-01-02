@@ -107,7 +107,7 @@ Kicker::Kicker()
     KGlobal::dirs()->addResourceType("tiles", dataPathBase + "tiles");
     KGlobal::dirs()->addResourceType("extensions", dataPathBase +  "extensions");
 
-    KGlobal::iconLoader()->addExtraDesktopThemes();
+    kapp->iconLoader()->addExtraDesktopThemes();
 
     KGlobal::locale()->insertCatalog("libkonq");
     KGlobal::locale()->insertCatalog("libdmctl");

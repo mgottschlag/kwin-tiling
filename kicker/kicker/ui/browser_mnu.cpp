@@ -200,9 +200,9 @@ void PanelBrowserMenu::initialize()
                 if ( iconPath.startsWith("./") )
                     iconPath = path + '/' + iconPath.mid(2);
 
-                icon = KGlobal::iconLoader()->loadIcon(iconPath,
-                                                       K3Icon::Small, K3Icon::SizeSmall,
-                                                       K3Icon::DefaultState, 0, true);
+                icon = kapp->iconLoader()->loadIcon(iconPath,
+                                                    K3Icon::Small, K3Icon::SizeSmall,
+                                                    K3Icon::DefaultState, 0, true);
                 if(icon.isNull())
                     icon = CICON("folder");
                 name = c.readEntry("Name", name);
@@ -249,8 +249,8 @@ void PanelBrowserMenu::initialize()
 
                 QString s = c.readEntry("Icon");
                 if(!_icons->contains(s)) {
-                    icon  = KGlobal::iconLoader()->loadIcon(s, K3Icon::Small, K3Icon::SizeSmall,
-                                                            K3Icon::DefaultState, 0, true);
+                    icon  = kapp->iconLoader()->loadIcon(s, K3Icon::Small, K3Icon::SizeSmall,
+                                                         K3Icon::DefaultState, 0, true);
 
                     if(icon.isNull()) {
                         QString type = c.readEntry("Type", "Application");

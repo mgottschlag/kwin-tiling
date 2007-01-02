@@ -28,6 +28,7 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 
+#include <kapplication.h>
 #include <kiconloader.h>
 #include <kglobal.h>
 #include <kconfig.h>
@@ -63,7 +64,7 @@ NaughtyApplet::NaughtyApplet
 )
   : KPanelApplet(configFile, t, actions, parent)
 {
-  KGlobal::iconLoader()->addAppDir("naughtyapplet");
+  kapp->iconLoader()->addAppDir("naughtyapplet");
 //  setBackgroundMode(X11ParentRelative);
   setBackgroundOrigin( AncestorOrigin );
 
