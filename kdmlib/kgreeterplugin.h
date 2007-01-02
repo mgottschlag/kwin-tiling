@@ -342,7 +342,7 @@ struct KDE_EXPORT kgreeterplugin_info {
      * @param getConf can be used to obtain configuration items from the
      *  greeter; you have to pass it the @p ctx pointer.
      *   The only predefined key (in KDM) is "EchoMode", which is an int
-     *   (in fact, KPasswordEdit::EchoModes).
+     *   (in fact, QLineEdit::EchoModes).
      *   Other keys are obtained from the PluginOptions option; see kdmrc
      *   for details.
      *   If the key is unknown, dflt is returned.

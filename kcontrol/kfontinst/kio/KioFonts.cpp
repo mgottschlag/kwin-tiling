@@ -2402,7 +2402,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
 
     if(askPasswd)
     {
-        while(!error && 0!=proc.checkInstall(authInfo.password.local8Bit()))
+        while(!error && 0!=proc.checkInstall(authInfo.password.toLocal8Bit()))
         {
             KFI_DBUG << "ATTEMPT : " << attempts << endl;
             if(1==attempts)
@@ -2414,7 +2414,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
             cacheAuthentication(authInfo);
     }
     else
-        error=proc.checkInstall(authInfo.password.local8Bit()) ? true : false;
+        error=proc.checkInstall(authInfo.password.toLocal8Bit()) ? true : false;
 
 
 /*
