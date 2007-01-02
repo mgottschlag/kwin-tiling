@@ -73,7 +73,7 @@ class KClassicGreeter : public QObject, public KGreeterPlugin {
 
 	QLabel *loginLabel, *passwdLabel, *passwd1Label, *passwd2Label;
 	KLineEdit *loginEdit;
-	KPasswordEdit *passwdEdit, *passwd1Edit, *passwd2Edit;
+	KLineEdit *passwdEdit, *passwd1Edit, *passwd2Edit;
 	KSimpleConfig *stsFile;
 	QString fixedUser, curUser;
 	Function func;

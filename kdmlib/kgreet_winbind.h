@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class KComboBox;
 class KLineEdit;
-class KPasswordEdit;
 class KSimpleConfig;
 class QGridLayout;
 class QLabel;
@@ -78,7 +77,7 @@ class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	QLabel *domainLabel, *loginLabel, *passwdLabel, *passwd1Label, *passwd2Label;
 	KComboBox *domainCombo;
 	KLineEdit *loginEdit;
-	KPasswordEdit *passwdEdit, *passwd1Edit, *passwd2Edit;
+	KLineEdit *passwdEdit, *passwd1Edit, *passwd2Edit;
 	KSimpleConfig *stsFile;
 	QString fixedDomain, fixedUser, curUser;
 	QStringList allUsers;

@@ -29,17 +29,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kglobal.h>
 #include <klocale.h>
 #include <klineedit.h>
-#include <kpassworddialog.h>
 #include <kuser.h>
 
 #include <QRegExp>
 #include <QLayout>
 #include <QLabel>
 
-class KDMPasswordEdit : public KPasswordEdit {
+class KDMPasswordEdit : public KLineEdit {
 public:
-	KDMPasswordEdit( QWidget *parent ) : KPasswordEdit( parent ) {}
-	KDMPasswordEdit( KPasswordEdit::EchoModes echoMode, QWidget *parent ) : KPasswordEdit( echoMode, parent ) {}
+	KDMPasswordEdit( QWidget *parent ) : KLineEdit( parent ) 
+	{
+		setPasswordMode(true);
+	}
+	KDMPasswordEdit( int em , QWidget *parent ) : KLineEdit( parent ) 
+	{
+		setEchoMode( (EchoMode)em );
+	}
 protected:
 	virtual void contextMenuEvent( QContextMenuEvent * ) {}
 };
@@ -102,8 +107,7 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 		if (echoMode == -1)
 			passwdEdit = new KDMPasswordEdit( parent );
 		else
-			passwdEdit = new KDMPasswordEdit( (KPasswordEdit::EchoModes)echoMode,
-			                                  parent );
+			passwdEdit = new KDMPasswordEdit( echoMode,  parent );
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
 		         SLOT(slotActivity()) );
 		connect( passwdEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
@@ -126,8 +130,8 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 	}
 	if (func != Authenticate) {
 		if (echoMode == -1) {
-			passwd1Edit = new KDMPasswordEdit( (KPasswordEdit::EchoModes)echoMode, parent );
-			passwd2Edit = new KDMPasswordEdit( (KPasswordEdit::EchoModes)echoMode, parent );
+			passwd1Edit = new KDMPasswordEdit( echoMode, parent );
+			passwd2Edit = new KDMPasswordEdit( echoMode, parent );
 		} else {
 			passwd1Edit = new KDMPasswordEdit( parent );
 			passwd2Edit = new KDMPasswordEdit( parent );
@@ -221,18 +225,18 @@ KClassicGreeter::returnData()
 		break;
 	case 1:
 		Q_ASSERT(passwdEdit);
-		handler->gplugReturnText( passwdEdit ? passwdEdit->password() : 0,
+		handler->gplugReturnText( passwdEdit->text().toLocal8Bit() ,
 		                          KGreeterPluginHandler::IsPassword |
 		                          KGreeterPluginHandler::IsSecret );
 		break;
 	case 2:
 		Q_ASSERT(passwd1Edit);
-		handler->gplugReturnText( passwd1Edit ? passwd1Edit->password() : 0,
+		handler->gplugReturnText( passwd1Edit->text().toLocal8Bit(),
 		                          KGreeterPluginHandler::IsSecret );
 		break;
 	default: // case 3:
 		Q_ASSERT(passwd2Edit);
-		handler->gplugReturnText( passwd2Edit ? passwd2Edit->password() : 0,
+		handler->gplugReturnText( passwd2Edit->text().toLocal8Bit(),
 		                          KGreeterPluginHandler::IsNewPassword |
 		                          KGreeterPluginHandler::IsSecret );
 		break;
@@ -381,11 +385,11 @@ KClassicGreeter::revive()
 	// assert( !running );
 	setActive2( true );
 	if (authTok) {
-		passwd1Edit->erase();
-		passwd2Edit->erase();
+		passwd1Edit->clear();
+		passwd2Edit->clear();
 		passwd1Edit->setFocus();
 	} else {
-		passwdEdit->erase();
+		passwdEdit->clear();
 		if (loginEdit && loginEdit->isEnabled())
 			passwdEdit->setEnabled( true );
 		else {
@@ -402,7 +406,7 @@ void // virtual
 KClassicGreeter::clear()
 {
 	// assert( !running && !passwd1Edit );
-	passwdEdit->erase();
+	passwdEdit->clear();
 	if (loginEdit) {
 		loginEdit->clear();
 		loginEdit->setFocus();
@@ -460,6 +464,7 @@ static bool init( const QString &,
                   QVariant (*getConf)( void *, const char *, const QVariant & ),
                   void *ctx )
 {
+	#warning  in KDE3 echoMode was of type KPasswordEdit::EchoModes ,  now it is the type QLineEdit::EchoMode , a conversion need to be made
 	echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
 	KGlobal::locale()->insertCatalog( "kgreet_classic" );
 	return true;
