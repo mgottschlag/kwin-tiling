@@ -66,7 +66,7 @@ SambaContainer::SambaContainer(QWidget *parent, const QStringList&)
    tabs.addTab(&imports,i18n("&Imports"));
    tabs.addTab(&logView,i18n("&Log"));
    tabs.addTab(&statisticsView,i18n("&Statistics"));
-   connect(&logView,SIGNAL(contentsChanged(QListView* , int, int)),&statisticsView,SLOT(setListInfo(QListView *, int, int)));
+   connect(&logView,SIGNAL(contentsChanged(Q3ListView* , int, int)),&statisticsView,SLOT(setListInfo(Q3ListView *, int, int)));
    setButtons(Help);
    load();
 
