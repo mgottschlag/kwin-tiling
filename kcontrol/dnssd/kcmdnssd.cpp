@@ -56,6 +56,7 @@ KCMDnssd::KCMDnssd(QWidget *parent, const QStringList&)
     layout->setMargin(0);
     layout->setSpacing(KDialog::spacingHint());
     widget = new ConfigDialog(this, "");
+    widget->secretedit->setPasswordMode(true);
     layout->addWidget(widget);
     setAboutData(new KAboutData(I18N_NOOP("kcm_kdnssd"),
 	                            I18N_NOOP("ZeroConf configuration"),0,0,KAboutData::License_GPL,
@@ -100,7 +101,6 @@ void KCMDnssd::load()
 	if (geteuid()==0) loadMdnsd();
 }
 
-// hack to work around not working isModified() for KPasswordEdit
 void KCMDnssd::wdchanged()
 {
 	widget->WANButton->setEnabled(!widget->domainedit->text().isEmpty() && !widget->hostedit->text().isEmpty());
@@ -128,7 +128,7 @@ bool KCMDnssd::saveMdnsd()
 {
 	mdnsdLines["zone"]=widget->domainedit->text();
 	mdnsdLines["hostname"]=widget->hostedit->text();
-	if (!widget->secretedit->text().isEmpty()) mdnsdLines["secret-64"]=QString(widget->secretedit->password());
+	if (!widget->secretedit->text().isEmpty()) mdnsdLines["secret-64"]=widget->secretedit->text();
 		else mdnsdLines.remove("secret-64");
 	QFile f(MDNSD_CONF);
 	bool newfile=!f.exists();

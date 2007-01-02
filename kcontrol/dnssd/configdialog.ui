@@ -213,7 +213,7 @@ process will be recursive.</string>
                                     <string>Name of this machine. Must be in fully qualified form (host.domain)</string>
                                 </property>
                             </widget>
-                            <widget class="KPasswordEdit" row="2" column="3">
+                            <widget class="KLineEdit" row="2" column="3">
                                 <property name="name">
                                     <cstring>secretedit</cstring>
                                 </property>
@@ -310,16 +310,6 @@ process will be recursive.</string>
     <slot>radioButton2_2_toggled(bool)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
-<includes>
-    <include location="global" impldecl="in declaration">kpassworddialog.h</include>
-</includes>
-<customwidgets>
-    <customwidget>
-        <class>KPasswordEdit</class>
-        <header location="global">kpassworddialog.h</header>
-        <container>0</container>
-    </customwidget>
-</customwidgets>
 <includehints>
     <includehint>keditlistbox.h</includehint>
     <includehint>klineedit.h</includehint>
