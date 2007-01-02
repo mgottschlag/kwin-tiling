@@ -27,6 +27,7 @@
 #include <Q3PtrList>
 #include <QKeyEvent>
 
+#include <KApplication>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kservicegroup.h>
@@ -42,7 +43,7 @@
 static QPixmap appIcon(const QString &iconName)
 {
      QString path;
-     QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, K3Icon::Small, 0, K3Icon::DefaultState, &path, true);
+     QPixmap normal = kapp->iconLoader()->loadIcon(iconName, K3Icon::Small, 0, K3Icon::DefaultState, &path, true);
      // make sure they are not larger than K3Icon::SizeSmall
      if (normal.width() > K3Icon::SizeSmall || normal.height() > K3Icon::SizeSmall)
      {

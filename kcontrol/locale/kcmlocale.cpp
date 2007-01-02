@@ -262,7 +262,7 @@ void KLocaleConfig::loadCountryList()
     //kDebug() << "REGION: " << (*it) << " Tag: " << tag << " Name: " << name << " Map: " << map << endl;
     QIcon icon;
     if ( !map.isNull() )
-      icon = KGlobal::iconLoader()->loadIconSet(map, K3Icon::Small);
+      icon = kapp->iconLoader()->loadIconSet(map, K3Icon::Small);
     m_comboCountry->insertSubmenu( icon, name, tag );
   }
 
@@ -289,7 +289,7 @@ void KLocaleConfig::loadCountryList()
                           QString::fromLatin1( "l10n/%1/flag.png" )
                           .arg(tag) ) );
     //kDebug() << "COUNTRY: " << (*it) << " Tag: " << tag << " Submenu: " << submenu << " Flag: " << flag << endl;
-    QIcon icon( KGlobal::iconLoader()->loadIconSet(flag, K3Icon::Small) );
+    QIcon icon( kapp->iconLoader()->loadIconSet(flag, K3Icon::Small) );
 
     m_comboCountry->insertItem( icon, name, tag, submenu );
   }

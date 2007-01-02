@@ -681,7 +681,7 @@ int PanelButton::preferredIconSize(int proposed_size) const
 {
     // (re)calculates the icon sizes and report true if they have changed.
     // Get sizes from icontheme. We assume they are sorted.
-    KIconTheme *ith = KGlobal::iconLoader()->theme();
+    KIconTheme *ith = kapp->iconLoader()->theme();
 
     if (!ith)
     {
@@ -757,7 +757,7 @@ void PanelButton::setArrowDirection(Plasma::Position dir)
 
 void PanelButton::loadIcons()
 {
-    KIconLoader * ldr = KGlobal::iconLoader();
+    KIconLoader * ldr = kapp->iconLoader();
     QString nm = d->iconName;
     K3Icon::States defaultState = isEnabled() ? K3Icon::DefaultState :
                                                K3Icon::DisabledState;

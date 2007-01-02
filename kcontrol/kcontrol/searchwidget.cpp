@@ -25,6 +25,7 @@
 #include <QVBoxLayout>
 #include <Q3PtrList>
 
+#include <KApplication>
 #include <klineedit.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -41,7 +42,7 @@ class ModuleItem : public Q3ListBoxPixmap
 public:
  ModuleItem(ConfigModule *module, Q3ListBox * listbox = 0) :
 	Q3ListBoxPixmap(listbox,
-      KGlobal::iconLoader()->loadIcon(module->icon(), K3Icon::Desktop, K3Icon::SizeSmall),
+      kapp->iconLoader()->loadIcon(module->icon(), K3Icon::Desktop, K3Icon::SizeSmall),
       module->moduleName())
   , m_module(module)
  { 

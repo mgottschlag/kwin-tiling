@@ -19,6 +19,7 @@
 */
 
 #include <kaboutapplication.h>
+#include <KApplication>
 #include <kactioncollection.h>
 #include <kbugreport.h>
 #include <kaboutdata.h>
@@ -157,8 +158,8 @@ TopLevel::TopLevel()
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
       KWin::setIcons(  winId(),
-		       KGlobal::iconLoader()->loadIcon("hwinfo", K3Icon::NoGroup, 32 ),
-		       KGlobal::iconLoader()->loadIcon("hwinfo", K3Icon::NoGroup, 16 ) );
+		       kapp->iconLoader()->loadIcon("hwinfo", K3Icon::NoGroup, 32 ),
+		       kapp->iconLoader()->loadIcon("hwinfo", K3Icon::NoGroup, 16 ) );
   }
   else
   {

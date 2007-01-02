@@ -21,6 +21,7 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 
+#include <KApplication>
 #include <klocale.h>
 
 #include "kcrootonly.h"

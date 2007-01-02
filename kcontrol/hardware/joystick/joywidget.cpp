@@ -33,6 +33,7 @@
 
 #include <QHeaderView>
 
+#include <KApplication>
 #include <klocale.h>
 #include <kdialog.h>
 #include <kmessagebox.h>
@@ -56,7 +57,7 @@ JoyWidget::JoyWidget(QWidget *parent)
     messageBox = new KHBox(mainVbox);
     messageBox->setSpacing(KDialog::spacingHint());
     QLabel *icon = new QLabel(messageBox);
-    icon->setPixmap(KGlobal::iconLoader()->loadIcon("messagebox_warning", K3Icon::NoGroup,
+    icon->setPixmap(kapp->iconLoader()->loadIcon("messagebox_warning", K3Icon::NoGroup,
                                                     K3Icon::SizeMedium, K3Icon::DefaultState, 0, true));
     icon->setFixedSize(icon->sizeHint());
     message = new QLabel(messageBox);

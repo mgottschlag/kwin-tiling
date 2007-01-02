@@ -23,6 +23,7 @@
 #include <QBoxLayout>
 #include <QVBoxLayout>
 #include <Q3ListBox>
+#include <KApplication>
 #include <kcolorbutton.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -131,7 +132,7 @@ QPushButton *KIconConfig::addPreviewIcon(int i, const QString &str, QWidget *par
 
 void KIconConfig::init()
 {
-    mpLoader = KGlobal::iconLoader();
+    mpLoader = kapp->iconLoader();
     mpConfig = KGlobal::config();
     mpEffect = new KIconEffect;
     mpTheme = mpLoader->theme();

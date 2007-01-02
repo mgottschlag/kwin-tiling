@@ -25,6 +25,7 @@
 #include <QPixmap>
 #include <QPaintEvent>
 
+#include <KApplication>
 #include <kpixmapeffect.h>
 #include <klocale.h>
 #include <kimageeffect.h>
@@ -84,7 +85,7 @@ void MenuPreview::createPixmaps()
 								 (x % 2) ?
 								((y % 2) ?  c2 : c1  ) : 	// See the grid? ;-)
 								((y % 2) ?  c1 : c2  ) );
-		KIconLoader* icl = KGlobal::iconLoader();
+		KIconLoader* icl = kapp->iconLoader();
 		QPixmap pix = icl->loadIcon("go", K3Icon::Desktop, K3Icon::SizeLarge, K3Icon::ActiveState);
 		p.drawPixmap( (width()-2-pix.width())/2, (height()-2-pix.height())/2, pix );
 	}
