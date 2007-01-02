@@ -31,7 +31,7 @@
 #include <kstandarddirs.h>
 #include <ktar.h>
 #include <kurlrequester.h>
-#include <kurlrequesterdlg.h>
+#include <kurlrequesterdialog.h>
 
 #include <QDir>
 #include <QGridLayout>
