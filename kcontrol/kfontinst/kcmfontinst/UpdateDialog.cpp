@@ -21,6 +21,7 @@
  */
 
 #include "UpdateDialog.h"
+#include <kapplication.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -58,7 +59,7 @@ CUpdateDialog::CUpdateDialog(QWidget *parent, int xid)
         QString name;
 
         name.sprintf("font_cfg_update%d", i+1);
-        itsIcons[i]=KGlobal::iconLoader()->loadIcon(name, K3Icon::NoGroup, 48);
+        itsIcons[i]=kapp->iconLoader()->loadIcon(name, K3Icon::NoGroup, 48);
     }
     itsPixmapLabel->setPixmap(itsIcons[0]);
     layout->addWidget(itsPixmapLabel);

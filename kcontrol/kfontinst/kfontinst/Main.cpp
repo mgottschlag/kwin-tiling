@@ -167,7 +167,7 @@ static int installFonts(int argc, char **argv)
         int          embedId(strtol(argv[2], NULL, 16));
 
         KLocale::setMainCatalog(KFI_CATALOGUE);
-        KGlobal::iconLoader()->addAppDir(KFI_NAME);
+        kapp->iconLoader()->addAppDir(KFI_NAME);
 
         for(int i=3; i<argc; ++i)
             fonts.append(argv[i]);
