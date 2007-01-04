@@ -55,6 +55,7 @@ QWidget* AppRunner::options()
 
 bool AppRunner::exec(const QString& command)
 {
+    return true;
 }
 
 #include "apprunner.moc"

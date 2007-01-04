@@ -47,6 +47,7 @@ QWidget* SearchRunner::options()
 
 bool SearchRunner::exec(const QString& command)
 {
+    return true;
 }
 
 #include "searchrunner.moc"
