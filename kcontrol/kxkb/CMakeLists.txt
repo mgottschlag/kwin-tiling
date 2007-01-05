@@ -8,8 +8,9 @@ MESSAGE(STATUS "option: USE_XKLAVIER  <${USE_XKLAVIER}>")
 if( USE_XKLAVIER STREQUAL ON )
   macro_optional_find_package(LibXKlavier)
   macro_optional_find_package(GLIB2)
+  macro_optional_find_package(GObject)
 
-  if(LIBXKLAVIER_FOUND AND GLIB2_FOUND)
+  if(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
 
 #MESSAGE("xklav:: ${LIBXKLAVIER_DEFINITIONS}")
 #MESSAGE("xklav:: ${LIBXKLAVIER_LIBRARIES}")
@@ -18,12 +19,12 @@ if( USE_XKLAVIER STREQUAL ON )
 	CHECK_FUNCTION_EXISTS(xkl_config_registry_set_custom_charset HAVE_SET_CUSTOM_CHARSET)
 
 	SET(XKB_SUPPORT_SRC xklavier_adaptor.cpp)
-	SET(XKB_SUPPORT_LIB ${LIBXKLAVIER_LIBRARIES} gobject-2.0)
+	SET(XKB_SUPPORT_LIB ${LIBXKLAVIER_LIBRARIES} ${GOBJECT_LIBRARIES})
 	ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 -DHAVE_SET_CUSTOM_CHARSET=${HAVE_SET_CUSTOM_CHARSET} ${LIBXKLAVIER_DEFINITIONS} ${_LibGLIB2Cflags})
 	include_directories(${GLIB2_INCLUDE_DIR})
-  else(LIBXKLAVIER_FOUND AND GLIB2_FOUND)
-	MESSAGE ("Could not find glib or libxklavier >= 2.91 - old xkbfile code will be used to get keyboard layout configuration!")
-  endif(LIBXKLAVIER_FOUND AND GLIB2_FOUND)
+  else(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
+	MESSAGE ("Could not find glib, gobject or libxklavier >= 2.91 - old xkbfile code will be used to get keyboard layout configuration!")
+  endif(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
 endif( USE_XKLAVIER STREQUAL ON )
 
 
