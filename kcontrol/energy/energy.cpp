@@ -117,9 +117,9 @@ extern "C" {
 	    DPMSInfo(dpy, &pre_configured_status, &pre_configured_enabled);
 	    /* let the user override the settings */
 	    enabled = cfg->readEntry("displayEnergySaving", bool(pre_configured_enabled));
-	    standby = cfg->readEntry("displayStandby", int(pre_configured_standby));
-	    suspend = cfg->readEntry("displaySuspend", int(pre_configured_suspend));
-	    off = cfg->readEntry("displayPowerOff", int(pre_configured_off));
+	    standby = cfg->readEntry("displayStandby", int(pre_configured_standby/60));
+	    suspend = cfg->readEntry("displaySuspend", int(pre_configured_suspend/60));
+	    off = cfg->readEntry("displayPowerOff", int(pre_configured_off/60));
 	} else {
 	/* provide our defauts */
 	    enabled = true;
