@@ -51,7 +51,7 @@
 #define KFI_HAVE_OBLIQUE         // Do we differentiate between Italic and Oblique when comparing slants?
 //#define KFI_DISPLAY_OBLIQUE      // Do we want to list "Oblique"? Or always use Italic?
 #define KFI_HAVE_MEDIUM_WEIGHT   // Do we differentiate between Medium and Regular weights when comparing weights?
-//#define KFI_DISPLAY_MEDIUM      // Do we want to list "Medium"? Or always use Regular? 
+//#define KFI_DISPLAY_MEDIUM      // Do we want to list "Medium"? Or always use Regular?
 
 #define KFI_PREVIEW_GROUP      "KFontInst Preview Settings"
 #define KFI_PREVIEW_STRING_KEY "String"
@@ -807,7 +807,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
             xrenderCol.blue=theirTextCol.blue()<<8;
             xrenderCol.alpha=0xffff;
             XftColorAllocValue(QX11Info::display(), DefaultVisual(QX11Info::display(),
-                               x11Info.screen()), 
+                               x11Info.screen()),
                                DefaultColormap(QX11Info::display(), x11Info.screen()),
                                &xrenderCol, &xftCol);
 
@@ -1194,7 +1194,7 @@ QString CFcEngine::createName(const QString &family, int styleInfo)
     int weight, width, slant;
 
     decomposeStyleVal(styleInfo, weight, width, slant);
-    return createName(family, weight, width, slant); 
+    return createName(family, weight, width, slant);
 }
 
 QString CFcEngine::createName(const QString &family, int weight, int width, int slant)
@@ -1272,7 +1272,7 @@ QString CFcEngine::weightStr(int weight, bool emptyNormal)
             return i18n(KFI_WEIGHT_MEDIUM);
 #endif
         case FC_WEIGHT_REGULAR:
-            return emptyNormal ? QString::null : i18n(KFI_WEIGHT_REGULAR);
+            return emptyNormal ? QString() : i18n(KFI_WEIGHT_REGULAR);
         case FC_WEIGHT_DEMIBOLD:
             return i18n(KFI_WEIGHT_DEMIBOLD);
         case FC_WEIGHT_BOLD:
@@ -1297,7 +1297,7 @@ QString CFcEngine::widthStr(int width, bool emptyNormal)
         case KFI_FC_WIDTH_SEMICONDENSED:
             return i18n(KFI_WIDTH_SEMICONDENSED);
         case KFI_FC_WIDTH_NORMAL:
-            return emptyNormal ? QString::null : i18n(KFI_WIDTH_NORMAL);
+            return emptyNormal ? QString() : i18n(KFI_WIDTH_NORMAL);
         case KFI_FC_WIDTH_SEMIEXPANDED:
             return i18n(KFI_WIDTH_SEMIEXPANDED);
         case KFI_FC_WIDTH_EXPANDED:
@@ -1320,7 +1320,7 @@ QString CFcEngine::slantStr(int slant, bool emptyNormal)
         case FC_SLANT_ITALIC:
             return i18n(KFI_SLANT_ITALIC);
         default:
-            return emptyNormal ? QString::null : i18n(KFI_SLANT_ROMAN);
+            return emptyNormal ? QString() : i18n(KFI_SLANT_ROMAN);
     }
 }
 
@@ -1408,7 +1408,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
     if(faceNo<0)
         faceNo=0;
 
-    itsFileName=QString::null;
+    itsFileName.clear();
     itsIndex=faceNo;
 
     reinit();
@@ -1556,7 +1556,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
             }
             else
             {
-                itsDescriptiveName=QString::null;
+                itsDescriptiveName.clear();
                 return false;
             }
 
@@ -1608,7 +1608,7 @@ bool CFcEngine::parseName(const QString &name, int faceNo, unsigned long style, 
         itsName=name.left(pos);
     }
 
-    itsFileName=QString::null;
+    itsFileName.clear();
     if(all)
     {
         FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, (void *)0);

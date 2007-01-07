@@ -649,7 +649,7 @@ static bool getFontList(const CFontInfo::TFileList &files, QMap<QString, QString
 
             for(; pIt!=pEnd; ++pIt)
             {
-                unsigned int len=QMIN((*pIt).orig.length(), beginLen);
+                unsigned int len=qMin((*pIt).orig.length(), beginLen);
                 bool         modified=false;
 
                 for(unsigned int i=0; i<len; ++i)
@@ -997,7 +997,7 @@ void CKioFonts::get(const KUrl &url)
     CFontInfo::TFileList srcFiles;
 
     // Any error will be logged in getSourceFiles
-    if(updateFontList() && checkUrl(url) && getSourceFiles(url, srcFiles)) 
+    if(updateFontList() && checkUrl(url) && getSourceFiles(url, srcFiles))
                 {
         //
         // The thumbnail job always donwloads non-local files to /tmp/... and passes this file name to
@@ -1193,7 +1193,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
         return;
     }
 
-    // updateFontList(); // CPD: dont update font list upon a put - is too slow. Just stat on
+    // updateFontList(); // CPD: don't update font list upon a put - is too slow. Just stat on
     //                   // filename!
     //checkUrl(u) // CPD: Don't need to check Url, as the call to "confirmUrl()" below will sort out
     //            // any probs!
@@ -1219,7 +1219,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
 
     if(nrs) // Need to check can get root passwd before start download...
     {
-        passwd=getRootPasswd(); 
+        passwd=getRootPasswd();
 
         if(passwd.isEmpty())
             return;
@@ -1231,7 +1231,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
     //    1. Download to a temporary file
     //    2. Check with FreeType that the file is a font, or that it is
     //       an AFM or PFM file
-    //    3. If its OK, then get the fonts "name" from 
+    //    3. If its OK, then get the fonts "name" from
     KTemporaryFile tmpFile;
     QByteArray     tmpFileC(QFile::encodeName(tmpFile.fileName()));
 
@@ -1578,7 +1578,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
         {
            KDE_struct_stat buff;
 
-           if ((-1==KDE_stat(destC.data(), &buff)) || 
+           if ((-1==KDE_stat(destC.data(), &buff)) ||
                (buff.st_size<config()->readEntry("MinimumKeepSize", DEFAULT_MINIMUM_KEEP_SIZE)))
                ::remove(destC.data());
         }
@@ -1631,7 +1631,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 //#ifdef KFI_KIO_CHECK_FONTS_WHEN_INSTALL
 //        updateFontList()
 //#else
-        // CPD: dont update font list upon a copy from file - is too slow. Just stat on filename!
+        // CPD: don't update font list upon a copy from file - is too slow. Just stat on filename!
         !fromFonts || updateFontList()
 //#endif
         && checkUrl(src) && checkAllowed(src))
@@ -2101,7 +2101,7 @@ void CKioFonts::del(const KUrl &url, bool)
     CFontInfo::TFontList::Iterator disabledIt;
     TFontMap::Iterator             enabledIt;
 
-    if(checkUrl(url) && checkAllowed(url) && 
+    if(checkUrl(url) && checkAllowed(url) &&
        (( (entries=getEntries(url, enabledIt, disabledIt)) && entries->count() && checkFiles(*entries))  ||
         ( updateFontList() && (entries=getEntries(url, enabledIt, disabledIt)) && entries->count() &&
        checkFiles(*entries))) && confirmMultiple(url, entries, getFolder(url), OP_DELETE))
@@ -2418,7 +2418,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
 
 
 /*
-New - incorrect ? 
+New - incorrect ?
     if(askPasswd)
         while(!error && 0!=proc.checkInstall(authInfo.password.toLocal8Bit()))
         {
@@ -2910,8 +2910,8 @@ bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFol
                           Misc::fExists(destFile=(*it)+modifyName(src.fileName())) ||
                           Misc::fExists(destFile=(*it)+modifyName(src.fileName(), true)) ) )
         {
-            // If copying / moveing a TTC and it is the *same* file, then dont log an error, but
-            // dont continue transaction...
+            // If copying / moveing a TTC and it is the *same* file, then don't log an error, but
+            // don't continue transaction...
             //
             // Reason being that fonts:/ lists the font names (not filenames) so for a TTC there'll
             // be multiple entries for a TTC...
@@ -2967,8 +2967,8 @@ bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, con
                NULL!=(destEntry=getEntry(destFolder, modifyName(fIt.value()))) ||  // lowercase
                NULL!=(destEntry=getEntry(destFolder, modifyName(fIt.value()), true)))  // uppercase
             {
-                // If copying / moveing a TTC and it is the *same* file, then dont log an error, but
-                // dont continue transaction...
+                // If copying / moveing a TTC and it is the *same* file, then d'ont log an error, but
+                // d'ont continue transaction...
                 //
                 // Reason being that fonts:/ lists the font names (not filenames) so for a TTC there'll
                 // be multiple entries for a TTC...
@@ -3111,7 +3111,7 @@ bool CKioFonts::checkAllowed(const KUrl &u)
            ds==QString(QChar('/')+QString::fromLatin1(KFI_KIO_FONTS_SYS)+QChar('/')))
         {
             error(KIO::ERR_SLAVE_DEFINED,
-                  i18n("Sorry, you cannot rename, move, copy, or delete either \"%1\" or \"%2\".", 
+                  i18n("Sorry, you cannot rename, move, copy, or delete either \"%1\" or \"%2\".",
                    i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS))); \
             return false;
         }

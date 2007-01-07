@@ -108,7 +108,7 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	QDir testDir( themeDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
 		KMessageBox::sorry( this, i18n("Unable to create folder %1", testDir.absolutePath() ) );
-	
+
 	foreach (QString ent,
 	         QDir( themeDir ).entryList( QDir::Dirs | QDir::NoDotAndDotDot,
 	                                     QDir::Unsorted ))
@@ -187,7 +187,7 @@ void KDMThemeWidget::updateInfoView( ThemeData *theme )
 			((theme->description.length() > 0) ?
 				i18n("<qt><strong>Description:</strong> %1</qt>",
 					theme->description) : "") );
-		preview->setPixmap( theme->path + "/" + theme->screenShot );
+		preview->setPixmap( theme->path + '/' + theme->screenShot );
 		preview->setText( theme->screenShot.isEmpty() ?
 			"Screenshot not available" : QString() );
 	}
@@ -262,7 +262,7 @@ void KDMThemeWidget::installNewTheme()
 				break;
 		}
 	}
-	
+
 	archive.close();
 
 	KIO::NetAccess::removeTempFile( themeTmpFile );

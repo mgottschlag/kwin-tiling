@@ -451,7 +451,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
 
     if ( !device.is<Solid::Volume>() )
     {
-        cerr << i18n( "Error: %1 doesn't have the capability Volume." , udi ) << endl;
+        cerr << i18n( "Error: %1 does not have the capability Volume." , udi ) << endl;
         return false;
     }
 

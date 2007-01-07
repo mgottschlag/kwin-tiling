@@ -85,7 +85,7 @@ static QString lookupLocalized(const QHash<QString, QString> &dict, const QStrin
         return it.key();
     }
 
-  return QString::null;
+  return QString();
 }
 
 static Q3ListViewItem* copyLVI(const Q3ListViewItem* src, Q3ListView* parent)
@@ -154,12 +154,12 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
   widget->listLayoutsSrc->setColumnWidth(LAYOUT_COLUMN_FLAG, 28);
   widget->listLayoutsDst->setColumnWidth(LAYOUT_COLUMN_FLAG, 28);
 
-  widget->listLayoutsDst->header()->setResizeEnabled(FALSE, LAYOUT_COLUMN_INCLUDE);
-  widget->listLayoutsDst->header()->setResizeEnabled(FALSE, LAYOUT_COLUMN_DISPLAY_NAME);
+  widget->listLayoutsDst->header()->setResizeEnabled(false, LAYOUT_COLUMN_INCLUDE);
+  widget->listLayoutsDst->header()->setResizeEnabled(false, LAYOUT_COLUMN_DISPLAY_NAME);
   widget->listLayoutsDst->setColumnWidthMode(LAYOUT_COLUMN_INCLUDE, Q3ListView::Manual);
   widget->listLayoutsDst->setColumnWidth(LAYOUT_COLUMN_INCLUDE, 0);
 //  widget->listLayoutsDst->setColumnWidth(LAYOUT_COLUMN_DISPLAY_NAME, 0);
-  
+
   widget->listLayoutsDst->setSorting(-1);
 #if 0
   widget->listLayoutsDst->setResizeMode(QListView::LastColumn);
@@ -188,12 +188,12 @@ void LayoutConfig::load()
 
 	initUI();
 }
-	
+
 void LayoutConfig::initUI() {
 	QString modelName = m_rules->models()[m_kxkbConfig.m_model];
 	if( modelName.isEmpty() )
 		modelName = DEFAULT_MODEL;
-	
+
 	widget->comboModel->setCurrentText(i18n(modelName));
 
 	QList<LayoutUnit> otherLayouts = m_kxkbConfig.m_layouts;
@@ -201,15 +201,15 @@ void LayoutConfig::initUI() {
 // to optimize we should have gone from it.end to it.begin
 	for (QListIterator<LayoutUnit> it(otherLayouts); it.hasNext();  ) {
 		LayoutUnit layoutUnit = it.next();
-		
+
 		Q3ListViewItemIterator src_it( widget->listLayoutsSrc );
-		
+
 		for ( ; src_it.current(); ++src_it) {
 			Q3ListViewItem* srcItem = src_it.current();
-			
+
 			if ( layoutUnit.layout == srcItem->text(LAYOUT_COLUMN_MAP) ) {	// check if current config knows about this layout
 				Q3ListViewItem* newItem = copyLVI(srcItem, widget->listLayoutsDst);
-				
+
 				newItem->setText(LAYOUT_COLUMN_VARIANT, layoutUnit.variant);
 				newItem->setText(LAYOUT_COLUMN_INCLUDE, layoutUnit.includeGroup);
 				newItem->setText(LAYOUT_COLUMN_DISPLAY_NAME, layoutUnit.displayName);
@@ -260,7 +260,7 @@ void LayoutConfig::initUI() {
 			kWarning() << "skipping empty option name" << endl;
   			continue;
 		}
-		
+
 		const XkbOption& option = m_rules->options()[optionName];
 		OptionListItem *item = m_optionGroups[ option.group->name ];
 
@@ -298,15 +298,15 @@ void LayoutConfig::save()
 		QString variant = item->text(LAYOUT_COLUMN_VARIANT);
 		QString includes = item->text(LAYOUT_COLUMN_INCLUDE);
 		QString displayName = item->text(LAYOUT_COLUMN_DISPLAY_NAME);
-		
+
 		LayoutUnit layoutUnit(layout, variant);
 		layoutUnit.includeGroup = includes;
 		layoutUnit.displayName = displayName;
 		layouts.append( layoutUnit );
-		
+
 		item = item->nextSibling();
-		kDebug() << "To save: layout " << layoutUnit.toPair() 
-				<< ", inc: " << layoutUnit.includeGroup 
+		kDebug() << "To save: layout " << layoutUnit.toPair()
+				<< ", inc: " << layoutUnit.includeGroup
 				<< ", disp: " << layoutUnit.displayName << endl;
 	}
 	m_kxkbConfig.m_layouts = layouts;
@@ -338,7 +338,7 @@ void LayoutConfig::save()
 	m_kxkbConfig.m_stickySwitchingDepth = widget->spinStickyDepth->value();
 
 	m_kxkbConfig.save();
-	
+
 	KToolInvocation::kdeinitExec("kxkb");
 	emit KCModule::changed( false );
 }
@@ -348,11 +348,11 @@ void LayoutConfig::updateStickyLimit()
 {
     int layoutsCnt = widget->listLayoutsDst->childCount();
 	int maxDepth = layoutsCnt - 1;
-	
+
 	if( maxDepth < 2 ) {
 		maxDepth = 2;
 	}
-	
+
 	widget->spinStickyDepth->setMaximum(maxDepth);
 /*	if( value > maxDepth )
 		setValue(maxDepth);*/
@@ -374,12 +374,12 @@ void LayoutConfig::add()
 // disabling temporary: does not work reliable in Qt :(
 //    widget->listLayoutsDst->setSelected(sel, true);
 //    layoutSelChanged(sel);
-	
+
     updateStickyLimit();
     changed();
 }
 
-void LayoutConfig::remove() 
+void LayoutConfig::remove()
 {
     Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
     Q3ListViewItem* newSel = 0;
@@ -454,15 +454,15 @@ void LayoutConfig::displayNameChanged(const QString& newDisplayName)
 	Q3ListViewItem* selLayout = widget->listLayoutsDst->selectedItem();
 	if( selLayout == NULL )
 		return;
-	
+
 	const LayoutUnit layoutUnitKey = getLayoutUnitKey( selLayout );
 	LayoutUnit& layoutUnit = *m_kxkbConfig.m_layouts.find(layoutUnitKey);
-	
+
 	QString oldName = selLayout->text(LAYOUT_COLUMN_DISPLAY_NAME);
-	 
+
 	if( oldName.isEmpty() )
 		oldName = KxkbConfig::getDefaultDisplayName( layoutUnit );
-	
+
 	if( oldName != newDisplayName ) {
 		kDebug() << "setting label for " << layoutUnit.toPair() << " : " << newDisplayName << endl;
 		selLayout->setText(LAYOUT_COLUMN_DISPLAY_NAME, newDisplayName);
@@ -515,7 +515,7 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
 	QString kbdLayout = layoutUnitKey.layout;
 
 	// TODO: need better algorithm here for determining if needs us group
-    if (  ! m_rules->isSingleGroup(kbdLayout) 
+    if (  ! m_rules->isSingleGroup(kbdLayout)
 	    		|| kbdLayout.startsWith("us") || kbdLayout.startsWith("en") ) {
         widget->chkLatin->setEnabled( false );
     }
@@ -531,11 +531,11 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
 
 	QStringList vars = m_rules->getAvailableVariants(kbdLayout);
 	kDebug() << "layout " << kbdLayout << " has " << vars.count() << " variants" << endl;
-    
+
 	if( vars.count() > 0 ) {
 		vars.prepend(DEFAULT_VARIANT_NAME);
 		widget->comboVariant->addItems(vars);
-	
+
 		QString variant = sel->text(LAYOUT_COLUMN_VARIANT);
 		if( variant != NULL && variant.isEmpty() == false ) {
 			widget->comboVariant->setCurrentText(variant);
@@ -570,7 +570,7 @@ QWidget* LayoutConfig::makeOptionsTab()
   {
 	  OptionListItem *parent;
 	  const XkbOptionGroup& optionGroup = it.next().value();
-  
+
       if( optionGroup.exclusive ) {
         parent = new OptionListItem(listView, i18n( optionGroup.description ),
           		Q3CheckListItem::RadioButtonController, optionGroup.name);
@@ -593,12 +593,12 @@ QWidget* LayoutConfig::makeOptionsTab()
   for (; it2.hasNext(); )
   {
 	  const XkbOption& option = it2.next().value();
-	  
+
 	  OptionListItem *parent = m_optionGroups[option.group->name];
 	  if( parent == NULL ) {
 		kError() << "no option group item for group: " << option.group->name
 			   << " for option " << option.name << endl;
-		exit(1); 
+		exit(1);
 	  }
 
      if( parent->type() == Q3CheckListItem::RadioButtonController )
@@ -665,7 +665,7 @@ void LayoutConfig::updateLayoutCommand()
 		layoutDisplayName = m_kxkbConfig.getDefaultDisplayName(LayoutUnit(kbdLayout, variant), single);
 	}
 	kDebug() << "disp: '" << layoutDisplayName << "'" << endl;
-	
+
     if( !variant.isEmpty() ) {
       setxkbmap += " -variant ";
       if( widget->chkLatin->isChecked() )
@@ -673,9 +673,9 @@ void LayoutConfig::updateLayoutCommand()
       setxkbmap += variant;
     }
   }
-  
+
   widget->editCmdLine->setText(setxkbmap);
-  
+
   widget->editDisplayName->setEnabled( sel != NULL );
   widget->editDisplayName->setText(layoutDisplayName);
 }
@@ -700,7 +700,7 @@ void LayoutConfig::loadRules()
 		modelsList.append(i18n(it.next().value()));
     }
     modelsList.sort();
-	
+
 	widget->comboModel->clear();
 	widget->comboModel->addItems(modelsList);
 	widget->comboModel->setCurrentIndex(0);
@@ -709,20 +709,20 @@ void LayoutConfig::loadRules()
 	widget->listLayoutsSrc->clear();
 	widget->listLayoutsDst->clear();
 	QHashIterator<QString, QString> it2(m_rules->layouts());
-	
+
 	while (it2.hasNext())
 	{
 		it2.next();
 		QString layout = it2.key();
 		QString layoutName = it2.value();
 		Q3ListViewItem *item = new Q3ListViewItem(widget->listLayoutsSrc);
-		
+
 		item->setPixmap(LAYOUT_COLUMN_FLAG, LayoutIcon::getInstance().findPixmap(layout, true));
 		item->setText(LAYOUT_COLUMN_NAME, i18n( layoutName.toLatin1().constData() ));
 		item->setText(LAYOUT_COLUMN_MAP, layout);
 	}
 	widget->listLayoutsSrc->setSorting(LAYOUT_COLUMN_NAME);	// from Qt3 QListView sorts by language
-	
+
 	//TODO: reset options and xkb options
 }
 
@@ -803,10 +803,10 @@ extern "C"
 	KDE_EXPORT void kcminit_keyboard()
 	{
 		KeyboardConfig::init_keyboard();
-		
+
 		KxkbConfig m_kxkbConfig;
 		m_kxkbConfig.load(KxkbConfig::LOAD_INIT_OPTIONS);
-	
+
 		if( m_kxkbConfig.m_useKxkb == true ) {
 			KToolInvocation::startServiceByDesktopName("kxkb");
 		}
@@ -874,9 +874,9 @@ extern "C"
  I18N_NOOP("Press Right Win-key to choose 3rd level");
  I18N_NOOP("CapsLock key behavior");
  I18N_NOOP("uses internal capitalization. Shift cancels Caps.");
- I18N_NOOP("uses internal capitalization. Shift doesn't cancel Caps.");
+ I18N_NOOP("uses internal capitalization. Shift does not cancel Caps.");
  I18N_NOOP("acts as Shift with locking. Shift cancels Caps.");
- I18N_NOOP("acts as Shift with locking. Shift doesn't cancel Caps.");
+ I18N_NOOP("acts as Shift with locking. Shift does not cancel Caps.");
  I18N_NOOP("Alt/Win key behavior");
  I18N_NOOP("Add the standard behavior to Menu key.");
  I18N_NOOP("Alt and Meta on the Alt keys (default).");
@@ -897,7 +897,7 @@ extern "C"
  I18N_NOOP( "Left Alt key changes group" );
  I18N_NOOP( "Left Ctrl key changes group" );
  I18N_NOOP( "Compose Key" );
- 
+
 //these seem to be new in XFree86 4.4.0
  I18N_NOOP("Shift with numpad keys works as in MS Windows.");
  I18N_NOOP("Special keys (Ctrl+Alt+<key>) handled in a server.");
