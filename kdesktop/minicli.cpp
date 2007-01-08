@@ -124,6 +124,7 @@ Minicli::Minicli( QWidget *parent )
   m_iScheduler = StubProcess::SchedNormal;
 
   m_dlg->leUsername->setText("root");
+  m_dlg->lePassword->setPasswordMode(true);
 
   // Main widget buttons...
   connect( m_dlg->pbRun, SIGNAL(clicked()), this, SLOT(accept()) );
@@ -321,7 +322,7 @@ void Minicli::reset()
   m_dlg->slPriority->setValue(m_iPriority);
 
   m_dlg->cbRealtime->setChecked( m_iScheduler == StubProcess::SchedRealtime );
-  m_dlg->lePassword->erase();
+  m_dlg->lePassword->clear();
 
   m_FocusWidget = 0;
   m_iconName.clear();
@@ -431,7 +432,7 @@ int Minicli::runCommand()
         proc_checkpwd.setScheduler(m_iScheduler);
       }
 
-      if (proc_checkpwd.checkInstall(m_dlg->lePassword->password()) != 0)
+      if (proc_checkpwd.checkInstall(m_dlg->lePassword->text().toLocal8Bit()) != 0)
       {
           KMessageBox::sorry(this, i18n("Incorrect password; please try again."));
         return 1;
@@ -482,7 +483,7 @@ int Minicli::runCommand()
     sigprocmask(SIG_BLOCK, &sset, 0L);
     proc.setTerminal(true);
     proc.setErase(true);
-    _exit(proc.exec(m_dlg->lePassword->password()));
+    _exit(proc.exec(m_dlg->lePassword->text().toLocal8Bit()));
     return 0;
   }
   else

@@ -89,8 +89,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
               itsPrintProc(NULL),
               itsExportFile(NULL)
 {
-    if(!Misc::root())
-        KPasswordDialog::disableCoreDumps();
     setButtons(0);
 
     CFcEngine::instance()->readConfig(itsConfig);
@@ -1441,26 +1439,20 @@ bool CKCmFontInst::getPasswd()
         // Prompt user for password, if dont already have...
         if(itsPasswd.isEmpty())
         {
-            QByteArray passwd;
             SuProcess  proc(KFI_SYS_USER);
             int        attempts(0);
 
             do
             {
-                if(QDialog::Rejected==KPasswordDialog::getPassword(this, passwd,
-                                                                   i18n("Authorisation Required"),
-                                                                   i18n("The requested action "
-                                                                        "requires administrator "
-                                                                        "privilleges.\nIf you have "
-                                                                        "these privilleges, then "
-                                                                        "please enter your password. "
-                                                                        "Otherwise enter the system "
-                                                                        "administrator's password."), NULL))
-                    return false;
+                KPasswordDialog dlg(this);
+                dlg.setCaption( i18n("Authorisation Required") );
+                dlg.setPrompt( i18n("The requested action requires administrator privilleges.\n"
+                        "If you have these privilleges, then please enter your password. Otherwise enter the system administrator's password."));
+                if(!dlg.exec()) return false;
 
-                if(0==proc.checkInstall(passwd))
+                if(0==proc.checkInstall(dlg.password().toLocal8Bit()))
                 {
-                    itsPasswd=passwd;
+                    itsPasswd=dlg.password().toLocal8Bit();
                     break;
                 }
                 if(KMessageBox::No==KMessageBox::warningYesNo(this,
