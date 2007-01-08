@@ -101,7 +101,7 @@ QString AudioHw::name()
     }
 }
 
-Solid::AudioHw::AudioHwTypes AudioHw::type()
+Solid::AudioHw::AudioHwTypes AudioHw::deviceType()
 {
     Solid::AudioHw::AudioDriver d = driver();
 
@@ -147,6 +147,11 @@ Solid::AudioHw::AudioHwTypes AudioHw::type()
     {
         return Solid::AudioHw::UnknownAudioHwType;
     }
+}
+
+Solid::AudioHw::SoundcardType AudioHw::soundcardType()
+{
+    return Solid::AudioHw::InternalSoundcard;
 }
 
 #include "audiohw.moc"

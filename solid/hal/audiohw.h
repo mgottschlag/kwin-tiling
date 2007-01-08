@@ -38,7 +38,8 @@ public:
     virtual QString driverHandler();
 
     virtual QString name();
-    virtual Solid::AudioHw::AudioHwTypes type();
+    virtual Solid::AudioHw::AudioHwTypes deviceType();
+    virtual Solid::AudioHw::SoundcardType soundcardType();
 };
 
 #endif
