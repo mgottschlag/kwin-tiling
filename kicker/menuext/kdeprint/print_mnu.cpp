@@ -49,7 +49,7 @@ PrintMenu::PrintMenu(QWidget *parent, const QStringList & /*args*/)
 {
     static bool kdeprintIconsInitialized = false;
     if ( !kdeprintIconsInitialized ) {
-        kapp->iconLoader()->addAppDir("kdeprint");
+        KIconLoader::global()->addAppDir("kdeprint");
         kdeprintIconsInitialized = true;
     }
 }

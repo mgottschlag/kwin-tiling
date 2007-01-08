@@ -667,7 +667,7 @@ void PanelServiceMenu::mouseMoveEvent(QMouseEvent * ev)
         case KST_KServiceGroup:
         {
             KServiceGroup::Ptr g = KServiceGroup::Ptr::staticCast(e);
-            icon = kapp->iconLoader()->loadIcon(g->icon(), K3Icon::Small);
+            icon = KIconLoader::global()->loadIcon(g->icon(), K3Icon::Small);
             url = "programs:/" + g->relPath();
             break;
         }

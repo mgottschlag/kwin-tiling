@@ -64,7 +64,7 @@ NaughtyApplet::NaughtyApplet
 )
   : KPanelApplet(configFile, t, actions, parent)
 {
-  kapp->iconLoader()->addAppDir("naughtyapplet");
+  KIconLoader::global()->addAppDir("naughtyapplet");
 //  setBackgroundMode(X11ParentRelative);
   setBackgroundOrigin( AncestorOrigin );
 

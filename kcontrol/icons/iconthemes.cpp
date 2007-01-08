@@ -206,7 +206,7 @@ void IconThemesConfig::installNewTheme()
 
   KIO::NetAccess::removeTempFile(themeTmpFile);
 
-  kapp->newIconLoader();
+  KIconLoader::global()->newIconLoader();
   loadThemes();
 
   Q3ListViewItem *item=iconThemeItem(KIconTheme::current());
@@ -318,7 +318,7 @@ void IconThemesConfig::removeSelectedTheme()
   unlink(QFile::encodeName(icontheme.dir()+"/index.desktop").data());
   KIO::del(KUrl( icontheme.dir() ));
 
-  kapp->newIconLoader();
+  KIconLoader::global()->newIconLoader();
 
   loadThemes();
 

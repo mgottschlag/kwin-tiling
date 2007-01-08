@@ -586,7 +586,7 @@ void KAccessApp::createDialogContents() {
       lay->setSpacing(KDialog::spacingHint());
 
       QLabel *label1 = new QLabel( contents);
-      QPixmap pixmap = KApplication::kApplication()->iconLoader()->loadIcon("messagebox_warning", K3Icon::NoGroup, K3Icon::SizeMedium, K3Icon::DefaultState, 0, true);
+      QPixmap pixmap = KIconLoader::global()->loadIcon("messagebox_warning", K3Icon::NoGroup, K3Icon::SizeMedium, K3Icon::DefaultState, 0, true);
       if (pixmap.isNull())
          pixmap = QMessageBox::standardIcon(QMessageBox::Warning);
       label1->setPixmap(pixmap);

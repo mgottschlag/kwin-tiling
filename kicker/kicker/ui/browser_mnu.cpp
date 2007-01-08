@@ -200,7 +200,7 @@ void PanelBrowserMenu::initialize()
                 if ( iconPath.startsWith("./") )
                     iconPath = path + '/' + iconPath.mid(2);
 
-                icon = kapp->iconLoader()->loadIcon(iconPath,
+                icon = KIconLoader::global()->loadIcon(iconPath,
                                                     K3Icon::Small, K3Icon::SizeSmall,
                                                     K3Icon::DefaultState, 0, true);
                 if(icon.isNull())
@@ -249,7 +249,7 @@ void PanelBrowserMenu::initialize()
 
                 QString s = c.readEntry("Icon");
                 if(!_icons->contains(s)) {
-                    icon  = kapp->iconLoader()->loadIcon(s, K3Icon::Small, K3Icon::SizeSmall,
+                    icon  = KIconLoader::global()->loadIcon(s, K3Icon::Small, K3Icon::SizeSmall,
                                                          K3Icon::DefaultState, 0, true);
 
                     if(icon.isNull()) {

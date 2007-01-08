@@ -127,7 +127,7 @@ QPixmap QuickURL::pixmap( mode_t _mode, K3Icon::Group _group,
 
    //QPixmap pxmap = KMimeType::pixmapForURL(_kurl, _mode, _group, _force_size, _state);
    QString iconName = KMimeType::iconNameForUrl(_kurl, _mode);
-   QPixmap pxmap = kapp->iconLoader()->loadIcon(iconName, _group, _force_size, _state);
+   QPixmap pxmap = KIconLoader::global()->loadIcon(iconName, _group, _force_size, _state);
    // Resize to fit button
    pxmap = pxmap.scaled(_force_size, _force_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
    return pxmap;
@@ -370,7 +370,7 @@ void QuickButton::updateTipData(KickerTip::Data &data)
 //    data.icon = KMimeType::pixmapForURL(_qurl->kurl(), 0,
 //        K3Icon::Panel, K3Icon::SizeHuge, K3Icon::DefaultState);
     QString iconName = KMimeType::iconNameForUrl(_qurl->kurl());
-    data.icon = kapp->iconLoader()->loadIcon(iconName, K3Icon::Panel, K3Icon::SizeHuge, K3Icon::DefaultState);
+    data.icon = KIconLoader::global()->loadIcon(iconName, K3Icon::Panel, K3Icon::SizeHuge, K3Icon::DefaultState);
 }
 
 void QuickButton::setPopupDirection(Plasma::Position d)

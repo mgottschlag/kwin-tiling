@@ -12,7 +12,7 @@ main(int argc, char *argv[])
    KCmdLineArgs::init(argc, argv, &about);
 
    KApplication a;
-   a.iconLoader()->addAppDir("ksmserver");
+   KIconLoader::global()->addAppDir("ksmserver");
    KSMShutdownFeedback::start();
 
    KWorkSpace::ShutdownType sdtype = KWorkSpace::ShutdownTypeNone;

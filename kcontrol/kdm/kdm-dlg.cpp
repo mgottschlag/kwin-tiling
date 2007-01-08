@@ -264,7 +264,7 @@ void KDMDialogWidget::save()
 	config->writeEntry( "LogoArea", noneRadio->isChecked() ? "None" :
 	                    logoRadio->isChecked() ? "Logo" : "Clock" );
 
-	config->writeEntry( "LogoPixmap", kapp->iconLoader()->iconPath( logopath, K3Icon::Desktop, true ) );
+	config->writeEntry( "LogoPixmap", KIconLoader::global()->iconPath( logopath, K3Icon::Desktop, true ) );
 
 	config->writeEntry( "GreeterPos",
 		QString("%1,%2").arg( positioner->x() ).arg( positioner->y() ) );

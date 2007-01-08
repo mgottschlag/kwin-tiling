@@ -104,7 +104,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
             addSeparator();
         }
 
-        QPixmap iconPix(kapp->iconLoader()->loadIcon(icon,
+        QPixmap iconPix(KIconLoader::global()->loadIcon(icon,
                                                      K3Icon::Small, 0,
                                                      K3Icon::DefaultState,
                                                      0, true));

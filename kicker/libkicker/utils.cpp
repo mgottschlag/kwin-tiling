@@ -347,20 +347,20 @@ QIcon menuIconSet(const QString& icon)
     int iconSize = KickerSettings::menuEntryHeight();
     if (iconSize > 0)
     {
-        iconset = kapp->iconLoader()->loadIconSet(icon,
+        iconset = KIconLoader::global()->loadIconSet(icon,
                                                      K3Icon::NoGroup,
                                                      iconSize);
     }
     else if (iconSize == 0)
     {
-        QPixmap normal = kapp->iconLoader()->loadIcon(icon,
+        QPixmap normal = KIconLoader::global()->loadIcon(icon,
                                                          K3Icon::Small,
                                                          0,
                                                          K3Icon::DefaultState,
                                                          0,
                                                          true);
 
-        QPixmap active = kapp->iconLoader()->loadIcon(icon,
+        QPixmap active = KIconLoader::global()->loadIcon(icon,
                                                          K3Icon::Small,
                                                          0,
                                                          K3Icon::ActiveState,

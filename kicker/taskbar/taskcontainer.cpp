@@ -1493,7 +1493,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
     {
         data.message = m_startup->text();
         data.subtext = i18n("Loading application ...");
-        data.icon = kapp->iconLoader()->loadIcon(m_startup->icon(),
+        data.icon = KIconLoader::global()->loadIcon(m_startup->icon(),
                                                     K3Icon::Small,
                                                     K3Icon::SizeMedium,
                                                     K3Icon::DefaultState,

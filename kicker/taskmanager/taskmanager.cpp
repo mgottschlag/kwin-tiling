@@ -636,7 +636,7 @@ Task::Task(WId win, QObject *parent, const char *name)
     // try to guess the icon from the classhint
     if(_pixmap.isNull())
     {
-        kapp->iconLoader()->loadIcon(className().toLower(),
+        KIconLoader::global()->loadIcon(className().toLower(),
                                                     K3Icon::Small,
                                                     K3Icon::Small,
                                                     K3Icon::DefaultState,
@@ -717,7 +717,7 @@ void Task::refreshIcon()
     // try to guess the icon from the classhint
     if(_pixmap.isNull())
     {
-        kapp->iconLoader()->loadIcon(className().toLower(),
+        KIconLoader::global()->loadIcon(className().toLower(),
                                                     K3Icon::Small,
                                                     K3Icon::Small,
                                                     K3Icon::DefaultState,
@@ -924,7 +924,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 
       // Icon of last resort
       if( pixmap.isNull() ) {
-        pixmap = kapp->iconLoader()->loadIcon( "go",
+        pixmap = KIconLoader::global()->loadIcon( "go",
                                                   K3Icon::NoGroup,
                                                   K3Icon::SizeSmall );
         isStaticIcon = true;
@@ -947,7 +947,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 
       // Icon of last resort
       if( pixmap.isNull() ) {
-        pixmap = kapp->iconLoader()->loadIcon( "go",
+        pixmap = KIconLoader::global()->loadIcon( "go",
                             K3Icon::NoGroup,
                             K3Icon::SizeMedium );
         isStaticIcon = true;
@@ -961,7 +961,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 
       // If not, try to get one from the classname
       if ( pixmap.isNull() || pixmap.width() != size || pixmap.height() != size ) {
-        pixmap = kapp->iconLoader()->loadIcon( className(),
+        pixmap = KIconLoader::global()->loadIcon( className(),
                             K3Icon::NoGroup,
                             size,
                             K3Icon::DefaultState,
@@ -978,7 +978,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 
       // Icon of last resort
       if( pixmap.isNull() ) {
-        pixmap = kapp->iconLoader()->loadIcon( "go",
+        pixmap = KIconLoader::global()->loadIcon( "go",
                                                   K3Icon::NoGroup,
                                                   size );
         isStaticIcon = true;

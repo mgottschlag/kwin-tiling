@@ -158,8 +158,8 @@ TopLevel::TopLevel()
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
       KWin::setIcons(  winId(),
-		       kapp->iconLoader()->loadIcon("hwinfo", K3Icon::NoGroup, 32 ),
-		       kapp->iconLoader()->loadIcon("hwinfo", K3Icon::NoGroup, 16 ) );
+		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 32 ),
+		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 16 ) );
   }
   else
   {

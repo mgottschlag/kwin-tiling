@@ -184,7 +184,7 @@ void StartupId::start_startupid( const QString& icon_P )
     = { Qt::black, Qt::darkGray, Qt::lightGray, Qt::white, Qt::white };
 
 
-    QPixmap icon_pixmap = kapp->iconLoader()->loadIcon( icon_P, K3Icon::Small, 0,
+    QPixmap icon_pixmap = KIconLoader::global()->loadIcon( icon_P, K3Icon::Small, 0,
         K3Icon::DefaultState, 0, true ); // return null pixmap if not found
     if( icon_pixmap.isNull())
         icon_pixmap = SmallIcon( "exec" );

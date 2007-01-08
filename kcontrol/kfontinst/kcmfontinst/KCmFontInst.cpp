@@ -95,7 +95,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     CFcEngine::setBgndCol(QApplication::palette().color(QPalette::Active, QPalette::Base));
     CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
     KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
-    kapp->iconLoader()->addAppDir(KFI_NAME);
+    KIconLoader::global()->addAppDir(KFI_NAME);
     KAboutData* about = new KAboutData("fontinst",
          I18N_NOOP("KDE Font Installer"),
          0, 0,

@@ -132,7 +132,7 @@ QPushButton *KIconConfig::addPreviewIcon(int i, const QString &str, QWidget *par
 
 void KIconConfig::init()
 {
-    mpLoader = kapp->iconLoader();
+    mpLoader = KIconLoader::global();
     mpConfig = KGlobal::config();
     mpEffect = new KIconEffect;
     mpTheme = mpLoader->theme();

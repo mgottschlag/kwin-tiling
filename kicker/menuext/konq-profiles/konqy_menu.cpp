@@ -42,7 +42,7 @@ KonquerorProfilesMenu::KonquerorProfilesMenu(QWidget *parent, const QStringList 
 {
     static bool kdeprintIconsInitialized = false;
     if ( !kdeprintIconsInitialized ) {
-        kapp->iconLoader()->addAppDir("kdeprint");
+        KIconLoader::global()->addAppDir("kdeprint");
         kdeprintIconsInitialized = true;
     }
 }
