@@ -39,7 +39,7 @@ class URLGrabber;
 class ClipboardPoll;
 class QTime;
 class History;
-class KAction;
+class QAction;
 class QMimeSource;
 class HistoryItem;
 class KlipperSessionManager;
@@ -172,9 +172,9 @@ private:
     History* m_history;
     int m_overflowCounter;
     KToggleAction *toggleURLGrabAction;
-    KAction* clearHistoryAction;
-    KAction* configureAction;
-    KAction* quitAction;
+    QAction* clearHistoryAction;
+    QAction* configureAction;
+    QAction* quitAction;
     QPixmap m_pixmap;
     bool bPopupAtMouse :1;
     bool bKeepContents :1;
@@ -216,7 +216,7 @@ class Klipper : public KlipperWidget
 
 public Q_SLOTS:
     Q_SCRIPTABLE int newInstance();
-    Q_SCRIPTABLE void quitProcess(); 
+    Q_SCRIPTABLE void quitProcess();
 
 public:
     Klipper( QWidget* parent = NULL );

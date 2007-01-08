@@ -115,7 +115,7 @@ TaskBar::TaskBar( QWidget *parent )
             this, SLOT(windowChanged(Task::TaskPtr)));
 #ifdef __GNUC__
 #warning dcop signal
-#endif    
+#endif
 #if 0
     connectDCOPSignal("", "", "kdeTaskBarConfigChanged()",
                       "configChanged()", false);
@@ -140,7 +140,7 @@ TaskBar::TaskBar( QWidget *parent )
     connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
     keys = new KActionCollection( this );
     KActionCollection* actionCollection = keys;
-    KAction* a = 0L;
+    QAction* a = 0L;
 #include "taskbarbindings.cpp"
     keys->readSettings();
 }
@@ -347,7 +347,7 @@ void TaskBar::resizeEvent( QResizeEvent* e )
     }
 #ifdef __GNUC__
     #warning Fix this!!
-#endif    
+#endif
     //Panner::resizeEvent( e );
 
     if ( !blocklayout )

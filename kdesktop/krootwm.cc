@@ -104,7 +104,8 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
 
   if (KAuthorized::authorizeKAction("bookmarks"))
   {
-     bookmarks = new KActionMenu( KIcon("bookmark"), i18n("Bookmarks"), m_actionCollection, "bookmarks" );
+     bookmarks = new KActionMenu( KIcon("bookmark"), i18n("Bookmarks"), this );
+     m_actionCollection->addAction( "bookmarks", bookmarks );
      // The KBookmarkMenu is needed to fill the Bookmarks menu in the desktop menubar.
      bookmarkMenu = new KBookmarkMenu( KonqBookmarkManager::self(), 0,
                                        bookmarks->menu(),
@@ -129,7 +130,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   {
       // Don't do that! One action in two parent collections means some invalid write
       // during the second ~KActionCollection.
-     KAction *action = m_pDesktop->actionCollection()->action( "paste" );
+     QAction *action = m_pDesktop->actionCollection()->action( "paste" );
      if (action)
         m_actionCollection->insert( action );
      action = m_pDesktop->actionCollection()->action( "undo" );
@@ -138,80 +139,106 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   }
 #endif
 
-  KAction *action;
+  QAction *action;
 
   if (KAuthorized::authorizeKAction("run_command"))
   {
-      action = new KAction(KIcon("run"), i18n("Run Command..."), m_actionCollection, "exec" );
+      action = m_actionCollection->addAction( "exec" );
+      action->setIcon( KIcon("run") );
+      action->setText( i18n("Run Command...") );
       connect(action, SIGNAL(triggered(bool)), m_pDesktop, SLOT( slotExecuteCommand() ));
   }
   if (!KGlobal::config()->isImmutable())
   {
-      action = new KAction(KIcon("configure"), i18n("Configure Desktop..."), m_actionCollection, "configdesktop" );
+      action = m_actionCollection->addAction( "configdesktop" );
+      action->setIcon( KIcon("configure") );
+      action->setText( i18n("Configure Desktop...") );
       connect(action, SIGNAL(triggered(bool)), SLOT( slotConfigureDesktop() ));
-      action = new KAction(i18n("Disable Desktop Menu"), m_actionCollection, "togglemenubar" );
+      action = m_actionCollection->addAction( "togglemenubar" );
+      action->setText( i18n("Disable Desktop Menu") );
       connect(action, SIGNAL(triggered(bool) ), SLOT( slotToggleDesktopMenu() ));
   }
 
-  action = new KAction(i18n("Unclutter Windows"), m_actionCollection, "unclutter" );
+  action = m_actionCollection->addAction( "unclutter" );
+  action->setText( i18n("Unclutter Windows") );
   connect(action, SIGNAL(triggered(bool) ), SLOT( slotUnclutterWindows() ));
-  action = new KAction(i18n("Cascade Windows"), m_actionCollection, "cascade" );
+  action = m_actionCollection->addAction( "cascade" );
+  action->setText( i18n("Cascade Windows") );
   connect(action, SIGNAL(triggered(bool) ), SLOT( slotCascadeWindows() ));
 
   // arrange menu actions
   if (m_bDesktopEnabled && KAuthorized::authorizeKAction("editable_desktop_icons"))
   {
-     action = new KAction(i18n("By Name (Case Sensitive)"), m_actionCollection, "sort_ncs");
+     action = m_actionCollection->addAction( "sort_ncs" );
+     action->setText( i18n("By Name (Case Sensitive)") );
      connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeByNameCS() ));
-     action = new KAction(i18n("By Name (Case Insensitive)"), m_actionCollection, "sort_nci");
+     action = m_actionCollection->addAction( "sort_nci" );
+     action->setText( i18n("By Name (Case Insensitive)") );
      connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeByNameCI() ));
-     action = new KAction(i18n("By Size"), m_actionCollection, "sort_size");
+     action = m_actionCollection->addAction( "sort_size" );
+     action->setText( i18n("By Size") );
      connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeBySize() ));
-     action = new KAction(i18n("By Type"), m_actionCollection, "sort_type");
+     action = m_actionCollection->addAction( "sort_type" );
+     action->setText( i18n("By Type") );
      connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeByType() ));
-     action = new KAction(i18n("By Date"), m_actionCollection, "sort_date");
+     action = m_actionCollection->addAction( "sort_date" );
+     action->setText( i18n("By Date") );
      connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeByDate() ));
 
-     KToggleAction *aSortDirsFirst = new KToggleAction( i18n("Directories First"), m_actionCollection, "sort_directoriesfirst" );
+     KToggleAction *aSortDirsFirst = new KToggleAction( i18n("Directories First"), this );
+     m_actionCollection->addAction( "sort_directoriesfirst", aSortDirsFirst );
      connect( aSortDirsFirst, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleDirFirst( bool ) ) );
-     action = new KAction(i18n("Line Up Horizontally"), m_actionCollection, "lineupHoriz" );
+     action = m_actionCollection->addAction( "lineupHoriz" );
+     action->setText( i18n("Line Up Horizontally") );
      connect(action, SIGNAL(triggered(bool) ), SLOT( slotLineupIconsHoriz() ));
-     action = new KAction(i18n("Line Up Vertically"), m_actionCollection, "lineupVert" );
+     action = m_actionCollection->addAction( "lineupVert" );
+     action->setText( i18n("Line Up Vertically") );
      connect(action, SIGNAL(triggered(bool) ), SLOT( slotLineupIconsVert() ));
-     KToggleAction *aAutoAlign = new KToggleAction(i18n("Align to Grid"), m_actionCollection, "realign" );
+     KToggleAction *aAutoAlign = new KToggleAction(i18n("Align to Grid"), this );
+     m_actionCollection->addAction( "realign", aAutoAlign );
      connect( aAutoAlign, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleAutoAlign( bool ) ) );
-     KToggleAction *aLockIcons = new KToggleAction(i18n("Lock in Place"), m_actionCollection, "lock_icons");
+     KToggleAction *aLockIcons = new KToggleAction(i18n("Lock in Place"), this);
+     m_actionCollection->addAction( "lock_icons", aLockIcons );
      connect( aLockIcons, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleLockIcons( bool ) ) );
   }
   if (m_bDesktopEnabled)
   {
-     KAction *action = new KAction(KIcon("desktop"), i18n("Refresh Desktop"), m_actionCollection, "refresh" );
+     QAction *action = m_actionCollection->addAction( "refresh" );
+     action->setIcon( KIcon("desktop") );
+     action->setText( i18n("Refresh Desktop") );
      connect(action, SIGNAL(triggered(bool)), SLOT( slotRefreshDesktop() ));
   }
   // Icons in sync with kicker
   if (KAuthorized::authorizeKAction("lock_screen"))
   {
-      KAction *action = new KAction(KIcon("lock"), i18n("Lock Session"), m_actionCollection, "lock" );
+      QAction *action = m_actionCollection->addAction( "lock" );
+      action->setIcon( KIcon("lock") );
+      action->setText( i18n("Lock Session") );
       connect(action, SIGNAL(triggered(bool)), SLOT( slotLock() ));
   }
   if (KAuthorized::authorizeKAction("logout"))
   {
-      KAction *action = new KAction(KIcon("exit"), i18n("Log Out \"%1\"...", KUser().loginName()),
-                                    m_actionCollection, "logout" );
+      QAction *action = m_actionCollection->addAction( "logout" );
+      action->setIcon( KIcon("exit") );
+      action->setText( i18n("Log Out \"%1\"...") );
       connect(action, SIGNAL(triggered(bool)), SLOT( slotLogout() ));
 
   }
 
   if (KAuthorized::authorizeKAction("start_new_session") && DM().isSwitchable())
   {
-      KAction *action = new KAction(KIcon("fork"), i18n("Start New Session"), m_actionCollection, "newsession" );
+      QAction *action = m_actionCollection->addAction( "newsession" );
+      action->setIcon( KIcon("fork") );
+      action->setText( i18n("Start New Session") );
       connect(action, SIGNAL(triggered(bool)), SLOT( slotNewSession() ));
       if (KAuthorized::authorizeKAction("lock_screen"))
       {
-          KAction *action = new KAction(KIcon("lock"), i18n("Lock Current && Start New Session"), m_actionCollection, "lockNnewsession" );
+          QAction *action = m_actionCollection->addAction( "lockNnewsession" );
+          action->setIcon( KIcon("lock") );
+          action->setText( i18n("Lock Current && Start New Session") );
           connect(action, SIGNAL(triggered(bool)), SLOT( slotLockNNewSession() ));
       }
   }

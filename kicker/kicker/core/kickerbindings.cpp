@@ -23,13 +23,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #ifndef NOSLOTS
 # define DEF( name, key, target, fnSlot ) \
-   a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(KShortcut(key)); \
+   a = actionCollection->addAction( name );                        \
+   a->setText( i18n(name) );                                       \
+   qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(key)); \
    connect(a, SIGNAL(triggered(bool)), target, SLOT(fnSlot))
 #else
 # define DEF( name, key, target, fnSlot ) \
-   a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(KShortcut(key));
+   a = actionCollection->addAction( name );               \
+   a->setText( i18n(name) );                              \
+   qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(key));
 #endif
 
 #ifdef KICKER_ALL_BINDINGS
@@ -38,7 +40,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #ifdef LAUNCH_MENU
-	new KAction(i18n("Panel"), actionCollection, "Program:kicker");
+        a = actionCollection->addAction("Program:kicker");
+        a->setText(i18n("Panel"));
 	DEF(I18N_NOOP("Popup Launch Menu" ), Qt::ALT+Qt::Key_F1,
                       MenuManager::self(), kmenuAccelActivated());
 #endif

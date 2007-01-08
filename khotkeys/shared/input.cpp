@@ -113,7 +113,8 @@ void Kbd::grab_shortcut( const KShortcut& shortcut_P )
         kga->connectItem( name, this, SLOT( key_slot( int )));
 #endif
         QString name = ' ' + shortcut_P.toString();
-        KAction* a = new KAction(name, kga, name.toLatin1().constData());
+        KAction* a = new KAction(name, this);
+        kga->addAction( name.toLatin1().constData(), a);
         a->setGlobalShortcut(shortcut_P);
         }
     }

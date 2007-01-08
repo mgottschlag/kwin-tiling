@@ -47,6 +47,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <k3urldrag.h>
 #include <kstandarddirs.h>
 #include <kworkspace.h>
+#include <kactioncollection.h>
 
 #include <math.h>
 #include <algorithm>
@@ -134,7 +135,7 @@ QPixmap QuickURL::pixmap( mode_t _mode, K3Icon::Group _group,
 }
 
 
-QuickButton::QuickButton(const QString &u, KAction* configAction,
+QuickButton::QuickButton(const QString &u, QAction* configAction,
                          KActionCollection* actionCollection,
                          QWidget *parent) :
      QAbstractButton(parent),
@@ -164,8 +165,9 @@ QuickButton::QuickButton(const QString &u, KAction* configAction,
     _popup->insertItem(SmallIcon("remove"), i18n("Remove"),
             this, SLOT(removeApp()));
 
-    m_stickyAction = new KToggleAction(i18n("Never Remove Automatically"),
-        KShortcut(), actionCollection);
+    m_stickyAction = new KToggleAction(i18n("Never Remove Automatically"), this);
+    m_stickyAction->setShortcuts( KShortcut() );
+    actionCollection->addAction( m_stickyAction->objectName(), m_stickyAction );
     connect(m_stickyAction, SIGNAL(toggled(bool)),
         this, SLOT(slotStickyToggled(bool)));
     _popup->insertAction(_popup->actions().value(1), m_stickyAction);

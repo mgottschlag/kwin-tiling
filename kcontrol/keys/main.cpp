@@ -119,9 +119,9 @@ extern "C"
 	kDebug(125) << "KeyModule::init()\n";
 
 	kDebug(125) << "KeyModule::init() - Load Included Bindings\n";
-	
+
 	KActionCollection* actionCollection = new KActionCollection(static_cast<QObject*>(0L));
-	KAction* a = 0L;
+	QAction* a = 0L;
 // this should match the included files above
 #define NOSLOTS
 #include "../../../workspace/klipper/klipperbindings.cpp"

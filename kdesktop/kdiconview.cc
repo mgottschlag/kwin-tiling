@@ -404,38 +404,46 @@ void KDIconView::createActions()
 {
     if (m_bEditableDesktopIcons)
     {
-        KAction *undo = KStandardAction::undo( KonqUndoManager::self(), SLOT( undo() ), &m_actionCollection, "undo" );
+        QAction *undo = m_actionCollection.addAction( KStandardAction::Undo, "undo",
+                                                      KonqUndoManager::self(), SLOT( undo() ) );
         connect( KonqUndoManager::self(), SIGNAL( undoAvailable( bool ) ),
-             undo, SLOT( setEnabled( bool ) ) );
+                 undo, SLOT( setEnabled( bool ) ) );
         connect( KonqUndoManager::self(), SIGNAL( undoTextChanged( const QString & ) ),
                  this, SLOT( slotUndoTextChanged( const QString & ) ) );
         undo->setEnabled( KonqUndoManager::self()->undoAvailable() );
 
-        KAction* paCut = KStandardAction::cut( this, SLOT( slotCut() ), &m_actionCollection, "cut" );
-        KShortcut cutShortCut = paCut->shortcut();
+        QAction* paCut = m_actionCollection.addAction( KStandardAction::Cut, "cut", this, SLOT( slotCut() ) );
+        KShortcut cutShortCut( paCut->shortcuts() );
         cutShortCut.remove( Qt::SHIFT + Qt::Key_Delete ); // used for deleting files
-        paCut->setShortcut( cutShortCut );
+        paCut->setShortcuts( cutShortCut );
 
-        KStandardAction::copy( this, SLOT( slotCopy() ), &m_actionCollection, "copy" );
-        KStandardAction::paste( this, SLOT( slotPaste() ), &m_actionCollection, "paste" );
-        KAction *pasteTo = KStandardAction::paste( this, SLOT( slotPopupPasteTo() ), &m_actionCollection, "pasteto" );
+        m_actionCollection.addAction( KStandardAction::Copy, "copy", this, SLOT( slotCopy() ) );
+        m_actionCollection.addAction( KStandardAction::Paste, "paste", this, SLOT( slotPaste() ) );
+        QAction *pasteTo = m_actionCollection.addAction( KStandardAction::Paste, "pasteto",
+                                                         this, SLOT( slotPopupPasteTo() ) );
         pasteTo->setEnabled( false ); // only enabled during popupMenu()
 
-        KStandardAction::redisplay( this, SLOT(refreshIcons()), &m_actionCollection, "reload" );
+        m_actionCollection.addAction( KStandardAction::Redisplay, "reload", this, SLOT(refreshIcons()) );
 
-        KAction *action = new KAction( i18n( "&Rename" ), &m_actionCollection, "rename" );
+        QAction *action = m_actionCollection.addAction( "rename" );
+        action->setText( i18n( "&Rename" ) );
         connect(action, SIGNAL(triggered(bool)), SLOT(renameSelectedItem()));
         action->setShortcut(Qt::Key_F2);
-        action = new KAction( i18n( "&Properties" ), &m_actionCollection, "properties" );
+        action = m_actionCollection.addAction( "properties" );
+        action->setText( i18n( "&Properties" ) );
         connect(action, SIGNAL(triggered(bool)), SLOT(slotProperties()));
         action->setShortcut(Qt::ALT+Qt::Key_Return);
-        KAction* trash = new KAction( KIcon("edittrash"), i18n( "&Move to Trash" ), &m_actionCollection, "trash" );
+        QAction* trash = m_actionCollection.addAction( "trash" );
+        trash->setIcon( KIcon("edittrash") );
+        trash->setText( i18n( "&Move to Trash" ) );
         trash->setShortcut(Qt::Key_Delete);
         connect(trash, SIGNAL(triggered(bool)), SLOT(slotTrash()));
 
         KConfig config("kdeglobals", true, false);
         config.setGroup( "KDE" );
-        action = new KAction(KIcon("editdelete"),  i18n( "&Delete" ), &m_actionCollection, "del" );
+        action = m_actionCollection.addAction( "del" );
+        action->setIcon( KIcon("editdelete") );
+        action->setText( i18n( "&Delete" ) );
         connect(action, SIGNAL(triggered(bool)), SLOT( slotDelete() ));
         action->setShortcut(Qt::SHIFT+Qt::Key_Delete);
 

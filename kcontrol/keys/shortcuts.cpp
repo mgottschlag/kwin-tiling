@@ -114,7 +114,7 @@ void ShortcutsModule::initGUI()
 	kDebug(125) << "A-----------" << endl;
 	KActionCollection* actionCollection = m_actionsGeneral;
 // see also KShortcutsModule::init() below !!!
-	KAction* a = 0L;
+	QAction* a = 0L;
 #define NOSLOTS
 #define KICKER_ALL_BINDINGS
 #include "../../kwin/kwinbindings.cpp"

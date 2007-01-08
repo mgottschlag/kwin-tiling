@@ -165,17 +165,24 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     // we need that collection, otherwise KToggleAction is not happy :}
     //QString defaultGroup( "default" );
     KActionCollection *collection = new KActionCollection( this );
-    toggleURLGrabAction = new KToggleAction( collection, "toggleUrlGrabAction" );
+    toggleURLGrabAction = new KToggleAction( this );
+    collection->addAction( "toggleUrlGrabAction", toggleURLGrabAction );
     toggleURLGrabAction->setEnabled( true );
     //toggleURLGrabAction->setGroup( defaultGroup );
-    clearHistoryAction = new KAction(KIcon("history_clear"),  i18n("C&lear Clipboard History"), collection, "clearHistoryAction" );
+    clearHistoryAction = collection->addAction( "clearHistoryAction" );
+    clearHistoryAction->setIcon( KIcon("history_clear") );
+    clearHistoryAction->setText( i18n("C&lear Clipboard History") );
     connect(clearHistoryAction, SIGNAL(triggered(bool) ), history(), SLOT( slotClear() ));
     connect( clearHistoryAction, SIGNAL( activated() ), SLOT( slotClearClipboard() ) );
     //clearHistoryAction->setGroup( defaultGroup );
-    configureAction = new KAction(KIcon("configure"),  i18n("&Configure Klipper..."), collection, "configureAction" );
+    configureAction = collection->addAction( "configureAction" );
+    configureAction->setIcon( KIcon("configure") );
+    configureAction->setText( i18n("&Configure Klipper...") );
     connect(configureAction, SIGNAL(triggered(bool) ), SLOT( slotConfigure() ));
     //configureAction->setGroup( defaultGroup );
-    quitAction = new KAction( KIcon("exit"), i18n("&Quit"), collection, "quitAction" );
+    quitAction = collection->addAction( "quitAction" );
+    quitAction->setIcon( KIcon("exit") );
+    quitAction->setText( i18n("&Quit") );
     connect(quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
     //quitAction->setGroup( "exit" );
     myURLGrabber = 0L;
@@ -198,14 +205,14 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
     globalKeys = KGlobalAccel::self();
     KActionCollection* actionCollection = collection;
-    KAction* a = 0L;
+    QAction* a = 0L;
 #include "klipperbindings.cpp"
     // the keys need to be read from kdeglobals, not kickerrc --ellis, 22/9/02
     globalKeys->readSettings();
     //globalKeys->updateConnections();
 #ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
-#endif    
+#endif
     //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )),
@@ -518,7 +525,7 @@ void KlipperWidget::slotSettingsChanged( int category )
         //globalKeys->updateConnections();
 #ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
-#endif	
+#endif
         //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
     }
 }
@@ -568,7 +575,7 @@ void KlipperWidget::slotConfigure()
         //globalKeys->updateConnections();
 #ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
-#endif	
+#endif
 //        toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
         myURLGrabber->setActionList( dlg->actionList() );
@@ -1152,7 +1159,7 @@ int Klipper::newInstance()
 {
 #ifdef __GNUC__
 #warning replacement?
-#endif	
+#endif
  //   kapp->dcopClient()->setPriorityCall(false); // Allow other dcop calls
 
     return 0;

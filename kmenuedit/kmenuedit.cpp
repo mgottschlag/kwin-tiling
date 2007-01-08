@@ -21,6 +21,7 @@
 #include <QSplitter>
 
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -63,21 +64,27 @@ KMenuEdit::~KMenuEdit()
 
 void KMenuEdit::setupActions()
 {
-    KAction *action = new KAction(KIcon("menu_new"), i18n("&New Submenu..."), actionCollection(), "newsubmenu");
-    action = new KAction(KIcon("filenew"), i18n("New &Item..."), actionCollection(), "newitem");
-    action->setShortcut(KStandardShortcut::openNew());
-    if (!m_controlCenter) 
+    QAction *action = actionCollection()->addAction("newsubmenu");
+    action->setIcon(KIcon("menu_new"));
+    action->setText(i18n("&New Submenu..."));
+    action = actionCollection()->addAction("newitem");
+    action->setIcon(KIcon("filenew")) ;
+    action->setText(i18n("New &Item..."));
+    action->setShortcuts(KStandardShortcut::openNew());
+    if (!m_controlCenter)
     {
-       KAction *action = new KAction(KIcon("menu_new_sep"), i18n("New S&eparator"), actionCollection(), "newsep");
+       QAction *action = actionCollection()->addAction("newsep");
+       action->setIcon(KIcon("menu_new_sep"));
+       action->setText(i18n("New S&eparator"));
     }
 
     m_actionDelete = 0;
 
-    KStandardAction::save(this, SLOT( slotSave() ), actionCollection());
-    KStandardAction::quit(this, SLOT( close() ), actionCollection());
-    KStandardAction::cut(0, 0, actionCollection());
-    KStandardAction::copy(0, 0, actionCollection());
-    KStandardAction::paste(0, 0, actionCollection());
+    actionCollection()->addAction(KStandardAction::Save, this, SLOT( slotSave() ));
+    actionCollection()->addAction(KStandardAction::Quit, this, SLOT( close() ));
+    actionCollection()->addAction(KStandardAction::Cut);
+    actionCollection()->addAction(KStandardAction::Copy);
+    actionCollection()->addAction(KStandardAction::Paste);
 }
 
 void KMenuEdit::setupView()
@@ -126,14 +133,16 @@ void KMenuEdit::slotChangeView()
 #endif
 #ifdef __GNUC__
 #warning "kde4: comment setUpdatesEnabled otherwise we can't see layout"
-#endif    
+#endif
     // disabling the updates prevents unnecessary redraws
     //setUpdatesEnabled( false );
     guiFactory()->removeClient( this );
 
     delete m_actionDelete;
 
-    m_actionDelete = new KAction(KIcon("editdelete"), i18n("&Delete"), actionCollection(), "delete");
+    m_actionDelete = actionCollection()->addAction("delete");
+    m_actionDelete->setIcon(KIcon("editdelete"));
+    m_actionDelete->setText(i18n("&Delete"));
     m_actionDelete->setShortcut(QKeySequence(Qt::Key_Delete));
 
     if (!m_splitter)

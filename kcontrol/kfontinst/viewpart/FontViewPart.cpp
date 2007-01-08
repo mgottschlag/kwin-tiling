@@ -19,7 +19,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
- 
+
 #include "FontViewPart.h"
 #include "Misc.h"
 #include "KfiConstants.h"
@@ -49,6 +49,7 @@
 #include <kdialog.h>
 #include <kprinter.h>
 #include <ktoolbarlabelaction.h>
+#include <kactioncollection.h>
 #include <kselectaction.h>
 #include <kicon.h>
 #include <kprocess.h>
@@ -118,13 +119,15 @@ CFontViewPart::CFontViewPart(QWidget *parent)
     connect(itsInstallButton, SIGNAL(clicked()), SLOT(install()));
     connect(itsFaceSelector, SIGNAL(valueChanged(int)), itsPreview, SLOT(showFace(int)));
 
-    itsChangeTextAction=new KAction(KIcon("text"), i18n("Change Text..."), actionCollection(),
-                                    "changeText");
+    itsChangeTextAction=actionCollection()->addAction("changeText");
+    itsChangeTextAction->setIcon(KIcon("text"));
+    itsChangeTextAction->setText(i18n("Change Text..."));
     connect(itsChangeTextAction, SIGNAL(triggered(bool)), SLOT(changeText()));
 
-    new KToolBarLabelAction(i18n("Display:"), actionCollection(), "displayLabel");
-    itsDisplayTypeAction=new KSelectAction(KIcon("charset"), i18n("Standard preview"),
-                                           actionCollection(), "displayType");
+    KToolBarLabelAction *toolbarLabelAction = new KToolBarLabelAction(i18n("Display:"), this);
+    actionCollection()->addAction("displayLabel", toolbarLabelAction);
+    itsDisplayTypeAction=new KSelectAction(KIcon("charset"), i18n("Standard preview"), this);
+    actionCollection()->addAction("displayType", itsDisplayTypeAction);
     connect(itsDisplayTypeAction, SIGNAL(triggered(int)), SLOT(displayType()));
 
     QStringList items;

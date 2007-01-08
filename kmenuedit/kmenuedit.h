@@ -25,7 +25,7 @@
 
 class BasicTab;
 class QSplitter;
-class KAction;
+class QAction;
 class KToggleAction;
 
 class KMenuEdit : public KMainWindow
@@ -53,7 +53,7 @@ protected:
     BasicTab           *m_basicTab;
     QSplitter          *m_splitter;
 
-    KAction *m_actionDelete;
+    QAction *m_actionDelete;
     KToggleAction *m_actionShowHidden;
     bool m_showHidden;
     bool m_controlCenter;

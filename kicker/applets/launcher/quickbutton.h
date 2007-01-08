@@ -42,7 +42,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kurl.h>
 
 class QMenu;
-class KAction;
+class QAction;
 class KActionCollection;
 class KToggleAction;
 
@@ -74,7 +74,7 @@ class QuickButton: public QAbstractButton, public KickerTip::Client {
 public:
     enum { DEFAULT_ICON_DIM = 16 };
     enum { ICON_MARGIN = 1 };
-    QuickButton(const QString &u, KAction* configAction, KActionCollection*,
+    QuickButton(const QString &u, QAction* configAction, KActionCollection*,
                 QWidget *parent=0);
     ~QuickButton();
     QString url() const;

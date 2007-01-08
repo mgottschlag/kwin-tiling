@@ -42,8 +42,8 @@ TrashButton::TrashButton(QWidget *parent)
 	KIO::NetAccess::stat(KUrl("trash:/"), entry, 0L);
 	mFileItem.assign(KFileItem(entry, KUrl("trash:/")));
 
-	KAction *a = KStandardAction::paste(this, SLOT(slotPaste()),
-	                               &mActions, "paste");
+	QAction *a = KStandardAction::paste(this, SLOT(slotPaste()), this);
+        mActions.addAction("paste", a);
 	a->setShortcut(0);
 
 	move(0, 0);

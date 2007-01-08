@@ -20,16 +20,19 @@
 
 #ifndef NOSLOTS
 # define DEF( name, key, fnSlot ) \
-   a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(KShortcut(key)); \
+   a = actionCollection->addAction( name );                        \
+   a->setText( i18n(name) );                                       \
+   qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(key)); \
    connect(a, SIGNAL(triggered(bool)), SLOT(fnSlot))
 #else
 # define DEF( name, key, fnSlot ) \
-   a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(KShortcut(key));
+   a = actionCollection->addAction( name );             \
+   a->setText( i18n(name) );                            \
+   qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(key));
 #endif
 
-	new KAction( i18n("Clipboard"), actionCollection, "Program:klipper" );
+        a = actionCollection->addAction( "Program:klipper" );
+        a->setText( i18n("Clipboard") );
 
 	DEF( I18N_NOOP("Show Klipper Popup-Menu"), Qt::ALT+Qt::CTRL+Qt::Key_V, slotPopupMenu() );
 

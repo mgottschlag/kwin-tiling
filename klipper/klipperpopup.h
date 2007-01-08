@@ -29,7 +29,7 @@
 class History;
 class KlipperWidget;
 class KHelpMenu;
-class KAction;
+class QAction;
 class PopupProxy;
 class KLineEdit;
 
@@ -44,7 +44,7 @@ class KlipperPopup : public KMenu
 public:
     KlipperPopup( History* history, QWidget* parent=0 );
     ~KlipperPopup();
-    void plugAction( KAction* action );
+    void plugAction( QAction* action );
 
     /**
      * Normally, the popupmenu is only rebuilt just before showing.
@@ -97,7 +97,7 @@ private:
     /**
      * (unowned) actions to plug into the primary popup menu
      */
-    Q3PtrList<KAction> m_actions;
+    Q3PtrList<QAction> m_actions;
 
     /**
      * Proxy helper object used to track history items

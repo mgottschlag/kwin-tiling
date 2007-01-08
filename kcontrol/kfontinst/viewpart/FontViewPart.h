@@ -33,7 +33,7 @@ class QPushButton;
 class QLabel;
 class QBoxLayout;
 class KIntNumInput;
-class KAction;
+class QAction;
 class KSelectAction;
 class KUrl;
 class KConfig;
@@ -88,7 +88,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
                      *itsToolsFrame;
     QLabel           *itsFaceLabel;
     KIntNumInput     *itsFaceSelector;
-    KAction          *itsChangeTextAction;
+    QAction          *itsChangeTextAction;
     KSelectAction    *itsDisplayTypeAction;
     int              itsFace;
     KConfig          *itsConfig;

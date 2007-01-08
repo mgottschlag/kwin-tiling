@@ -80,7 +80,7 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     // keep in sync with kcmlayout.cpp
     keys = new KActionCollection(this);
     KActionCollection* actionCollection = keys;
-    KAction* a = 0L;
+    QAction* a = 0L;
     //TODO:
 
 #include "kxkbbindings.cpp"
@@ -273,7 +273,7 @@ void KXKBApp::iconToggled()
 void KXKBApp::iconMenuTriggered(QAction* action)
 {
 	int id = action->data().toInt();
-	
+
     if( KxkbWidget::START_MENU_ID <= id
         && id < KxkbWidget::START_MENU_ID + (int)kxkbConfig.m_layouts.count() )
     {

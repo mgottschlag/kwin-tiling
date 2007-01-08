@@ -90,8 +90,9 @@ void KRandRSystemTray::prepareMenu()
 
 	menu->addSeparator();
 
-	KAction *actPrefs = new KAction( KIcon( "configure" ), i18n( "Configure Display..." ),
-                                         actionCollection(), QString());
+	QAction *actPrefs = actionCollection()->addAction( QString() );
+        actPrefs->setIcon( KIcon( "configure" ) );
+        actPrefs->setText( i18n( "Configure Display..." ) );
         connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
 	menu->addAction( actPrefs );
 

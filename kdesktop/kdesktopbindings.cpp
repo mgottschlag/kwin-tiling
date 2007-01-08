@@ -1,22 +1,27 @@
 #ifndef NOSLOTS
 # define DEF( name, key, fnSlot ) \
-   a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(KShortcut(key)); \
+   a = actionCollection->addAction( name );                        \
+   a->setText( i18n(name) );                                       \
+   qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(key)); \
    connect(a, SIGNAL(triggered(bool)), SLOT(fnSlot))
 # define DEF2( name, key, receiver, slot ) \
-   a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(KShortcut(key)); \
+   a = actionCollection->addAction( name );                        \
+   a->setText( i18n(name) );                                       \
+   qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(key)); \
    connect(a, SIGNAL(triggered(bool)), receiver, slot)
 #else
 # define DEF( name, key, fnSlot ) \
-   a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(KShortcut(key));
+   a = actionCollection->addAction( name );               \
+   a->setText( i18n(name) );                              \
+   qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(key));
 # define DEF2( name, key, receiver, slot ) \
-   a = new KAction( i18n(name), actionCollection, name ); \
-   a->setGlobalShortcut(KShortcut(key));
+   a = actionCollection->addAction( name );               \
+   a->setText( i18n(name) );                              \
+   qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(key));
 #endif
 
-	new KAction( i18n("Desktop"), actionCollection, "Program:kdesktop" );
+        a = actionCollection->addAction( "Program:kdesktop" );
+        a->setText( i18n("Desktop") );
 
 #ifndef NOSLOTS
 	if (KAuthorized::authorizeKAction("run_command"))

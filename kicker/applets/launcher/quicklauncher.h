@@ -44,7 +44,7 @@ class ConfigDlg;
 class QMenu;
 class QuickButtonGroup;
 class PopularityStatistics;
-class KAction;
+class QAction;
 class KActionCollection;
 
 typedef QuickButtonGroup ButtonGroup;
@@ -82,11 +82,11 @@ public Q_SLOTS:
     void removeAppManually(int index);
     void saveConfig();
     void about();
-    
+
 protected:
     int findApp(QString url);
     int findApp(QuickButton *button);
-    
+
     void mousePressEvent(QMouseEvent *e);
     void resizeEvent(QResizeEvent*);
     void dragEnterEvent(QDragEnterEvent *e);
@@ -97,13 +97,13 @@ protected:
     void setRefreshEnabled(bool enable);
     void setConserveSpace(bool conserve_space);
     void setDragEnabled(bool conserve_space);
-    
+
     bool conserveSpace() const { return m_manager->conserveSpace(); }
     bool isDragEnabled() const { return m_settings->dragEnabled(); }
-    
+
     void buildPopupMenu();
     void loadConfig();
-    
+
     void mergeButtons(int index);
     void clearTempButtons();
     int  dimension() const;
@@ -122,7 +122,7 @@ protected:
     QuickButton* createButton(QString url);
     virtual void paintEvent(QPaintEvent* e);
     virtual void positionChange(Plasma::Position);
-    
+
     QMenu *m_popup;
     QMenu *m_appletPopup;
     QMenu *m_removeAppsMenu;
@@ -134,7 +134,7 @@ protected:
     bool m_dragAccepted, m_refreshEnabled, m_needsSave, m_needsRefresh;
     std::map<QString, int> m_appOrdering;
     Prefs* m_settings;
-    KAction *m_configAction;
+    QAction *m_configAction;
     ConfigDlg *m_configDialog;
     PopularityStatistics* m_popularity;
     QImage m_stickyHighlightLayer;

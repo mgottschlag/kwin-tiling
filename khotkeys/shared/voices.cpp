@@ -1,7 +1,7 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 2005 Olivier Goffart  <ogoffart @ kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
@@ -51,9 +51,9 @@ Voice::Voice( bool enabled_P, QObject* parent_P )
 	_timer=0L;
 
 	kDebug(1217) << k_funcinfo << endl;
-	
+
     }
-      
+
 Voice::~Voice()
     {
     kDebug(1217) << k_funcinfo << endl;
@@ -102,7 +102,7 @@ void Voice::record_stop()
 {
 	if(!_recording)
 		return;
-	
+
 	kDebug(1217) << k_funcinfo << endl;
 	delete _timer;
 	_timer=0L;
@@ -150,7 +150,7 @@ void Voice::slot_sound_recorded(const Sound &sound_P)
 	if(trig)
 		kDebug(1217) << k_funcinfo << "**** " << trig->voicecode() << " : " << minimum << endl;
 
-	
+
 //	if(trig && ecart_relatif > REJECT_FACTOR_ECART_REL)
 //	if(trig && got_count==1)
 	bool selected=trig &&  (got_count==1 || ( minimum < 1.5*REJECT_FACTOR_DIFF   &&  trig==sec_trig  ) );
@@ -159,7 +159,7 @@ void Voice::slot_sound_recorded(const Sound &sound_P)
 	{
 		trig->handle_Voice();
 	}
-	
+
 }
 
 
@@ -167,10 +167,10 @@ void Voice::slot_sound_recorded(const Sound &sound_P)
 {
 	if( pEvent->type != XKeyPress && pEvent->type != XKeyRelease )
 		return false;
-	
+
 	KKeyNative keyNative( pEvent );
-	
-	//kdDebug(1217) << k_funcinfo << keyNative.key().toString() << endl; 
+
+	//kdDebug(1217) << k_funcinfo << keyNative.key().toString() << endl;
 
 	if(_shortcut.contains(keyNative))
 	{
@@ -199,7 +199,8 @@ void Voice::set_shortcut( const KShortcut &shortcut)
         return;
     if(!_kga)
     {
-        _kga = new KAction(0L, "khotkeys_voice");	
+        _kga = new KAction(this);
+        _kga->setObjectName("khotkeys_voice");
         connect(_kga,SIGNAL(triggered ( bool  )) , this , SLOT(slot_key_pressed()));
     }
     _kga->setGlobalShortcut(shortcut);
@@ -219,7 +220,7 @@ void Voice::slot_key_pressed()
 			_timer=new QTimer(this);
 			connect(_timer, SIGNAL(timeout()) , this, SLOT(slot_timeout()));
 		}
-		
+
 		_timer->start(1000*20,true);
 	}
 }
@@ -248,7 +249,7 @@ QString Voice::isNewSoundFarEnough(const VoiceSignature& signature, const QStrin
 	{
 		if(t->voicecode()==currentTrigger)
 			continue;
-		
+
 		for(int ech=1; ech<=2 ; ech++)
 		{
 			double diff=VoiceSignature::diff(signature, t->voicesignature(ech));

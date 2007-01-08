@@ -51,10 +51,11 @@ MediumButton::MediumButton(QWidget *parent, const KFileItem &fileItem)
 {
 	mActions.setAssociatedWidget(this);
 
-	KAction *a = KStandardAction::paste(this, SLOT(slotPaste()),
-	                               &mActions, "pasteto");
+	QAction *a = KStandardAction::paste(this, SLOT(slotPaste()), this);
+        mActions.addAction("pasteto", a);
 	a->setShortcut(0);
-	a = KStandardAction::copy(this, SLOT(slotCopy()), &mActions, "copy");
+	a = KStandardAction::copy(this, SLOT(slotCopy()), this);
+        mActions.addAction("copy", a);
 	a->setShortcut(0);
 
 	resize(20, 20);

@@ -306,7 +306,7 @@ KDesktop::backgroundInitDone()
     {
 #ifdef __GNUC__
 #warning backgroundPixmap in Qt4 is a noop
-#endif	    
+#endif
         /*
        const QPixmap *bg = QApplication::desktop()->screen()->backgroundPixmap();
        if ( bg )
@@ -344,7 +344,7 @@ KDesktop::slotStart()
   // Global keys
   KActionCollection* actionCollection = m_actionCollection = new KActionCollection( this );
   (void) new KRootWm( this );
-  KAction* a = 0L;
+  QAction* a = 0L;
 
 #include "kdesktopbindings.cpp"
 

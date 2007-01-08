@@ -116,7 +116,7 @@ Kicker::Kicker()
     // initialize our m_actionCollection
     // note that this creates the KMenu by calling MenuManager::self()
     KActionCollection* actionCollection = m_actionCollection = new KActionCollection( this );
-    KAction* a = 0L;
+    QAction* a = 0L;
 #define KICKER_ALL_BINDINGS
 #include "kickerbindings.cpp"
     m_actionCollection->readSettings();
@@ -331,7 +331,7 @@ void Kicker::showConfig(const QString& configPath, int page)
     {
 #ifdef __GNUC__
 #warning "kde4: port it"
-#endif	    
+#endif
         //m_configDialog->showPage(page);
     }
 }
