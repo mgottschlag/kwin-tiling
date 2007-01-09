@@ -20,9 +20,12 @@
 #include "audiohw.h"
 
 #include "haldevice.h"
+#include <kdebug.h>
 
 AudioHw::AudioHw( HalDevice *device )
-    : Capability( device )
+    : Capability( device ),
+    m_soundcardType( Solid::AudioHw::InternalSoundcard ),
+    m_soundcardTypeValid( false )
 {
 
 }
@@ -151,7 +154,50 @@ Solid::AudioHw::AudioHwTypes AudioHw::deviceType()
 
 Solid::AudioHw::SoundcardType AudioHw::soundcardType()
 {
-    return Solid::AudioHw::InternalSoundcard;
+    if ( m_soundcardTypeValid )
+    {
+        return m_soundcardType;
+    }
+
+    if ( ! m_device->parentUdi().isEmpty() )
+    {
+        HalDevice parentDevice( m_device->parentUdi() );
+        QString productName = parentDevice.product();
+        QString deviceName = name();
+        kDebug() << k_funcinfo << productName << ", " << deviceName << endl;
+        if ( productName.contains( "headset", Qt::CaseInsensitive ) ||
+                productName.contains( "headphone", Qt::CaseInsensitive ) ||
+                deviceName.contains( "headset", Qt::CaseInsensitive ) ||
+                deviceName.contains( "headphone", Qt::CaseInsensitive ) )
+        {
+            m_soundcardType = Solid::AudioHw::Headset;
+        }
+        else if ( productName.contains( "modem", Qt::CaseInsensitive ) ||
+                deviceName.contains( "modem", Qt::CaseInsensitive ) )
+        {
+            m_soundcardType = Solid::AudioHw::Modem;
+        }
+        else
+        {
+            QString busName = parentDevice.property( "info.bus" ).toString();
+            QString driverName = parentDevice.property( "info.linux.driver" ).toString();
+            kDebug() << k_funcinfo << busName << ", " << driverName << endl;
+            if ( busName == "ieee1394" )
+            {
+                m_soundcardType = Solid::AudioHw::FirewireSoundcard;
+            }
+            else if ( busName == "usb" || busName == "usb_device" || driverName.contains( "usb", Qt::CaseInsensitive ) )
+            {
+                m_soundcardType = Solid::AudioHw::UsbSoundcard;
+            }
+            else
+            {
+                m_soundcardType = Solid::AudioHw::InternalSoundcard;
+            }
+        }
+        m_soundcardTypeValid = true;
+    }
+    return m_soundcardType;
 }
 
 #include "audiohw.moc"

@@ -40,6 +40,10 @@ public:
     virtual QString name();
     virtual Solid::AudioHw::AudioHwTypes deviceType();
     virtual Solid::AudioHw::SoundcardType soundcardType();
+
+private:
+    Solid::AudioHw::SoundcardType m_soundcardType;
+    bool m_soundcardTypeValid;
 };
 
 #endif
