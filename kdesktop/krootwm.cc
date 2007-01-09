@@ -223,7 +223,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   {
       QAction *action = m_actionCollection->addAction( "logout" );
       action->setIcon( KIcon("exit") );
-      action->setText( i18n("Log Out \"%1\"...") );
+      action->setText( i18n("Log Out \"%1\"...", KUser().loginName()) );
       connect(action, SIGNAL(triggered(bool)), SLOT( slotLogout() ));
 
   }
