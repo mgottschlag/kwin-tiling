@@ -55,7 +55,7 @@ QString dirSyntax(const QString &d)
     return d;
 }
 
-QString xDirSyntax(const QString &d)
+QString fileSyntax(const QString &d)
 {
     if(!d.isEmpty())
     {
@@ -64,7 +64,7 @@ QString xDirSyntax(const QString &d)
         ds.replace("//", "/");
 
         int slashPos(ds.lastIndexOf('/'));
- 
+
         if(slashPos==(((int)ds.length())-1))
             ds.remove(slashPos, 1);
         return ds;
@@ -141,14 +141,6 @@ QString changeExt(const QString &f, const QString &newExt)
     return newStr;
 }
 
-void createBackup(const QString &f)
-{
-    const QString constExt(".bak");
-
-    if(!fExists(f+constExt) && fExists(f))
-        doCmd("cp", "-f", f, f+constExt);
-}
-
 //
 // Get a list of files associated with a file, e.g.:
 //
@@ -167,13 +159,14 @@ void getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidge
     else           // Cool, got an extension - see if its a Type1 font...
     {
         ext=ext.mid(dotPos+1);
-        check=0==ext.compare("pfa", Qt::CaseInsensitive) || 0==ext.compare("pfb", Qt::CaseInsensitive);
+        check=0==ext.compare("pfa", Qt::CaseInsensitive) ||
+              0==ext.compare("pfb", Qt::CaseInsensitive);
     }
 
     if(check)
     {
-        const char *afm[]={"afm", "AFM", "Afm", "AFm", "AfM", "aFM", "aFm", "afM", NULL},
-                   *pfm[]={"pfm", "PFM", "Pfm", "PFm", "PfM", "pFM", "pFm", "pfM", NULL};
+        const char *afm[]={"afm", "AFM", "Afm", NULL},
+                   *pfm[]={"pfm", "PFM", "Pfm", NULL};
         bool       gotAfm(false),
                    localFile(url.isLocalFile());
         int        e;

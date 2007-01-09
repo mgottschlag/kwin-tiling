@@ -65,7 +65,6 @@ class CKCmFontInst : public KCModule
 
     public Q_SLOTS:
 
-    void    setMode(int m);
     void    displayType(int p);
     QString quickHelp() const;
     void    fontSelected(const QModelIndex &index, bool en, bool dis);
@@ -92,23 +91,24 @@ class CKCmFontInst : public KCModule
     void    setStatusBar();
     void    addFonts(const QSet<KUrl> &src);
     void    toggleFontManagement(bool on);
+    void    selectGroup(int grp);
 
     private:
 
     void    print(bool all);
-    void    deleteFonts(QStringList &files, KUrl::List &urls);
+    void    deleteFonts(QStringList &files, KUrl::List &urls, bool hasSys, bool hasUser);
     void    toggleGroup(bool enable);
     void    toggleFonts(bool enable, const QString &grp=QString());
-    void    toggleFonts(QStringList &files, KUrl::List &urls, bool enable, const QString &grp=QString());
+    void    toggleFonts(QStringList &files, KUrl::List &urls, bool enable, const QString &grp,
+                        bool hasSys, bool hasUser);
     bool    working(bool displayMsg=true);
-    KUrl    baseUrl();
-    void    selectAllGroup();
-    bool    getPasswd();
+    KUrl    baseUrl(bool sys);
+    void    selectMainGroup();
+    bool    getPasswd(bool required);
     void    setMetaData(KIO::Job *job);
 
     private:
 
-    QGridLayout       *itsLayout;
     QWidget           *itsGroupWidget,
                       *itsFontWidget;
     QComboBox         *itsModeControl,
@@ -135,10 +135,10 @@ class CKCmFontInst : public KCModule
     KProgressDialog   *itsProgress;
     CUpdateDialog     *itsUpdateDialog;
     KTempDir          *itsTempDir;
-    int               itsMode;
     KProcess          *itsPrintProc;
     KZip              *itsExportFile;
-    QSet<Misc::TFont> itsDeletedFonts;
+    QSet<QString>     itsDeletedFonts;
+    KUrl::List        itsModifiedUrls;
 };
 
 }

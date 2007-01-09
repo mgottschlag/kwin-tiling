@@ -89,7 +89,7 @@ class CFontList : public QAbstractItemModel
     QModelIndex     parent(const QModelIndex &index) const;
     int             rowCount(const QModelIndex &parent = QModelIndex()) const;
     int             columnCount(const QModelIndex &parent = QModelIndex()) const;
-    void            setUrl(const KUrl &url);
+    void            scan();
     void            rescan();
     bool            active() const                    { return !itsDirLister->isFinished(); }
     int             row(const CFamilyItem *fam) const { return itsFamilies.indexOf((CFamilyItem *)fam); }
@@ -97,7 +97,12 @@ class CFontList : public QAbstractItemModel
     const QList<CFamilyItem *> & families() const { return itsFamilies; }
     QModelIndex     createIndex(int row, int column, void *data = 0) const
                         { return QAbstractItemModel::createIndex(row, column, data); }
-    bool            hasFont(const Misc::TFont &font);
+    bool            hasFamily(const QString &family)  { return NULL!=findFamily(family, false); }
+    void            refresh(bool allowSys, bool allowUser);
+    void            setAllowDisabled(bool on);
+    bool            allowSys() const      { return itsAllowSys; }
+    bool            allowUser() const     { return itsAllowUser; }
+    bool            allowDisabled() const { return itsAllowDisabled; }
 
     Q_SIGNALS:
 
@@ -106,6 +111,7 @@ class CFontList : public QAbstractItemModel
     private Q_SLOTS:
 
     void            listingCompleted();
+    void            listingCompleted(const KUrl &url);
     void            listingCanceled();
     void            newItems(const KFileItemList &items);
     void            clearItems();
@@ -117,12 +123,16 @@ class CFontList : public QAbstractItemModel
     void            addItem(const KFileItem *item);
     CFamilyItem *   findFamily(const QString &familyName, bool create=false);
     CFontItem *     findFont(const KFileItem *item);
+    void            touchThumbnails();
 
     private:
 
     QList<CFamilyItem *>                  itsFamilies;
     QHash<const KFileItem *, CFontItem *> itsFonts;   // Use for quick searching...
     KDirLister                            *itsDirLister;
+    bool                                  itsAllowSys,
+                                          itsAllowUser,
+                                          itsAllowDisabled;
     static int                            theirPreviewSize;
 };
 
@@ -130,17 +140,20 @@ class CFontModelItem
 {
     public:
 
-    CFontModelItem(CFontModelItem *p) : itsParent(p) { }
-    virtual ~CFontModelItem()                        { }
+    CFontModelItem(CFontModelItem *p) : itsParent(p), itsIsSystem(false) { }
+    virtual ~CFontModelItem()                                            { }
 
     CFontModelItem * parent() const                  { return itsParent; }
     bool             isFamily() const                { return NULL==itsParent; }
     bool             isFont() const                  { return NULL!=itsParent; }
+    bool             isSystem() const                { return itsIsSystem; }
+    void             setIsSystem(bool sys)           { itsIsSystem=sys; }
     virtual int      rowNumber() const = 0;
 
     protected:
 
     CFontModelItem *itsParent;
+    bool           itsIsSystem;
 };
 
 class CFamilyItem : public CFontModelItem
@@ -159,11 +172,13 @@ class CFamilyItem : public CFontModelItem
 
     bool operator==(const CFamilyItem &other) const       { return itsName==other.itsName; }
 
+    void                 touchThumbnail();
     const QString &      name() const                     { return itsName; }
     const QString &      icon() const                     { return itsIcon; }
     QList<CFontItem *> & fonts()                          { return itsFonts; }
     void                 addFont(CFontItem *font);
     void                 removeFont(CFontItem *font);
+    void                 refresh();
     bool                 updateStatus();
     bool                 updateRegularFont(CFontItem *font);
     CFontItem *          findFont(const KFileItem *i);
@@ -171,12 +186,18 @@ class CFamilyItem : public CFontModelItem
     int                  row(const CFontItem *font) const { return itsFonts.indexOf((CFontItem *)font); }
     EStatus              status() const                   { return itsStatus; }
     CFontItem *          regularFont()                    { return itsRegularFont; }
+    int                  fontCount() const                { return itsFontCount; }
+
+    private:
+
+    bool                 usable(const CFontItem *font, bool root);
 
     private:
 
     QString            itsName,
                        itsIcon;
     QList<CFontItem *> itsFonts;
+    int                itsFontCount;
     EStatus            itsStatus;
     CFontItem          *itsRegularFont;  // 'RegularFont' is font nearest to 'Regular' style, and used for previews.
     CFontList          &itsParent;
@@ -194,6 +215,7 @@ class CFontItem : public CFontModelItem
     CFontItem(CFontModelItem *p, const KFileItem *item, const QString &style=QString());
     virtual ~CFontItem() { }
 
+    void                  touchThumbnail();
     const QString &       name() const             { return itsName; }
     QString               mimetype() const         { return itsItem->mimetype(); }
     bool                  isEnabled() const        { return itsEnabled; }
@@ -208,7 +230,7 @@ class CFontItem : public CFontModelItem
     unsigned long         styleInfo() const        { return itsStyleInfo; }
     unsigned long         displayStyleInfo() const { return itsDisplayStyleInfo; }
     int                   index() const            { return itsIndex; }
-    const QString &       family()                 { return (static_cast<CFamilyItem *>(parent()))->name(); }
+    const QString &       family() const           { return (static_cast<CFamilyItem *>(parent()))->name(); }
     const QPixmap *       pixmap(bool force=false);
     void                  clearPixmap()            { itsPixmap=NULL; }
     int                   rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
@@ -236,23 +258,25 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
     CFontListSortFilterProxy(QObject *parent, QAbstractItemModel *model);
     virtual ~CFontListSortFilterProxy() { }
 
-    QVariant data(const QModelIndex &idx, int role) const;
-    bool     acceptFont(CFontItem *fnt, bool checkStyleText) const;
-    bool     acceptFamily(CFamilyItem *fam) const;
-    bool     filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
-    bool     lessThan(const QModelIndex &left, const QModelIndex &right) const;
-    void     setFilterGroup(CGroupListItem *grp);
-    void     setFilterText(const QString &text);
-    void     setMgtMode(bool on);
-    bool     mgtMode() const            { return itsMgtMode; }
+    QVariant         data(const QModelIndex &idx, int role) const;
+    bool             acceptFont(CFontItem *fnt, bool checkStyleText) const;
+    bool             acceptFamily(CFamilyItem *fam) const;
+    bool             filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+    bool             lessThan(const QModelIndex &left, const QModelIndex &right) const;
+    void             setFilterGroup(CGroupListItem *grp);
+    CGroupListItem * filterGroup()   { return itsGroup; }
+
+    void             setFilterText(const QString &text);
+    void             setMgtMode(bool on);
+    bool             mgtMode() const { return itsMgtMode; }
 
     private Q_SLOTS:
 
-    void     timeout();
+    void             timeout();
 
     Q_SIGNALS:
 
-    void     refresh();
+    void             refresh();
 
     private:
 
@@ -275,7 +299,8 @@ class CFontListView : public QTreeView
     void            writeConfig(KConfig &cfg);
     QModelIndexList selectedItems() const  { return selectedIndexes(); }
     void            getFonts(KUrl::List &urls, QStringList &files, QSet<Misc::TFont> *fonts,
-                             bool selected, bool getEnabled=true, bool getDisabled=true);
+                             bool *hasSys, bool *hasUser, bool selected, bool getEnabled=true,
+                             bool getDisabled=true);
     void            getPrintableFonts(QSet<Misc::TFont> &items, bool selected);
     void            setFilterGroup(CGroupListItem *grp);
     void            stats(int &enabled, int &disabled, int &partial);

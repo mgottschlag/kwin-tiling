@@ -65,7 +65,7 @@
 #define KFI_FONTS_PACKAGE_LEN        10
 #define KFI_FONTS_GROUP              ".fontgroup.zip"
 #define KFI_FONTS_GROUP_LEN          14
-#define KFI_FONT_INFO                "fontinfo.xml"
+#define KFI_GROUPS_FILE              "groups.xml"
 
 #define KFI_NULL_SETTING             0xFF
 

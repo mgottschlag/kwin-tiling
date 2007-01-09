@@ -65,8 +65,7 @@ namespace Misc
     inline KDE_EXPORT bool    dWritable(const QString &p)   { return check(p, S_IFDIR, true); }
     extern KDE_EXPORT QString linkedTo(const QString &i);
     extern KDE_EXPORT QString dirSyntax(const QString &d);  // Has trailing slash:  /file/path/
-    extern KDE_EXPORT QString xDirSyntax(const QString &d); // No trailing slash:   /file/path
-    inline KDE_EXPORT QString fileSyntax(const QString &f)  { return xDirSyntax(f); }
+    extern KDE_EXPORT QString fileSyntax(const QString &f);
     extern KDE_EXPORT QString getDir(const QString &f);
     extern KDE_EXPORT QString getFile(const QString &f);
     extern KDE_EXPORT bool    createDir(const QString &dir);
@@ -77,7 +76,6 @@ namespace Misc
     extern KDE_EXPORT void    getAssociatedUrls(const KUrl &url, KUrl::List &list,
                                                 bool afmAndPfm=true,
                                                 QWidget *widget=NULL);
-    extern KDE_EXPORT void    createBackup(const QString &f);
     extern KDE_EXPORT time_t  getTimeStamp(const QString &item);
     extern KDE_EXPORT QString getFolder(const QString &defaultDir, const QString &root,
                                         QStringList &dirs);

@@ -21,7 +21,7 @@
  */
 
 #include "Misc.h"
-#include "FontInfo.h"
+#include "DisabledFonts.h"
 #include "Installer.h"
 #include "FcEngine.h"
 #include "KfiPrint.h"
@@ -133,7 +133,7 @@ static void usage(char *app)
               << "    Font Printing:" << std::endl
               << std::endl
               << "       -P <x id> <size> <family> <style info> [...] Print fonts" << std::endl
-              << "       -p <x id> <size> <xml file> <y/n>            Print fonts, *removes* xml file if last param==y"
+              << "       -p <x id> <size> <list file> <y/n>           Print fonts, *removes* file if last param==y"
                  << std::endl
               << std::endl
               << std::endl
@@ -179,17 +179,17 @@ static int installFonts(int argc, char **argv)
     return -1;
 }
 
-KFI::CFontInfo::TFont getFont(char **argv, int &optind, bool style)
+KFI::CDisabledFonts::TFont getFont(char **argv, int &optind, bool style)
 {
     if(style)
-        return KFI::CFontInfo::TFont(QString::fromUtf8(argv[optind]), atoi(argv[++optind]));
+        return KFI::CDisabledFonts::TFont(QString::fromUtf8(argv[optind]), atoi(argv[++optind]));
     else
     {
         QString font(QString::fromUtf8(argv[optind]));
         int     commaPos=font.find(',');
 
-        return KFI::CFontInfo::TFont(-1==commaPos ? font : font.left(commaPos),
-                                     KFI::CFcEngine::createStyleVal(font));
+        return KFI::CDisabledFonts::TFont(-1==commaPos ? font : font.left(commaPos),
+                                          KFI::CFcEngine::createStyleVal(font));
     }
 }
 
@@ -197,20 +197,19 @@ static int disableFont(int argc, char **argv, int optind, bool style)
 {
     if((!style && argc-optind>=2) || (style && argc-optind>=3))
     {
-        KInstance           instance(KFI_NAME);
         KFI::CDisabledFonts inf;
 
         if(inf.modifiable())
         {
-            KFI::CFontInfo::TFont font(getFont(argv, optind, style));
-            int                   index=-1;
+            KFI::CDisabledFonts::TFont font(getFont(argv, optind, style));
+            int                        index=-1;
 
             for(int i=0; i<(argc-optind)-1; ++i)
                 if(argv[optind+1+i][0]!='/')
                     index=atoi(argv[optind+1+i]);
                 else
-                    font.files.append(KFI::CFontInfo::TFile(QString::fromUtf8(argv[optind+1+i]),
-                                                            index));
+                    font.files.append(KFI::CDisabledFonts::TFile(QString::fromUtf8(argv[optind+1+i]),
+                                                                 index));
 
             if(inf.disable(font))
             {
@@ -226,9 +225,8 @@ static int enableFont(int argc, char **argv, int optind, bool style)
 {
     if((!style && 1==argc-optind) || (style && 2==argc-optind))
     {
-        KInstance             instance(KFI_NAME);
-        KFI::CDisabledFonts   inf;
-        KFI::CFontInfo::TFont font(getFont(argv, optind, style));
+        KFI::CDisabledFonts        inf;
+        KFI::CDisabledFonts::TFont font(getFont(argv, optind, style));
 
         if(inf.modifiable() && inf.enable(font))
         {
@@ -243,14 +241,13 @@ static int deleteDisabledFont(int argc, char **argv, int optind, bool style)
 {
     if((!style && 1==argc-optind) || (style && 2==argc-optind))
     {
-        KInstance                           instance(KFI_NAME);
-        KFI::CFontInfo::TFont               font(getFont(argv, optind, style));
-        KFI::CDisabledFonts                 inf;
-        KFI::CFontInfo::TFontList::Iterator it=inf.items().find(font);
+        KFI::CDisabledFonts::TFont               font(getFont(argv, optind, style));
+        KFI::CDisabledFonts                      inf;
+        KFI::CDisabledFonts::TFontList::Iterator it=inf.items().find(font);
 
         if(inf.modifiable() && inf.items().end()!=it)
         {
-            KFI::CFontInfo::TFileList::ConstIterator fIt((*it).files.begin()),
+            KFI::CDisabledFonts::TFileList::ConstIterator fIt((*it).files.begin()),
                                                      fEnd((*it).files.end());
 
             for(; fIt!=fEnd; ++fIt)
@@ -268,34 +265,37 @@ static int deleteDisabledFont(int argc, char **argv, int optind, bool style)
     return -1;
 }
 
-static int printFonts(int argc, char **argv, bool xml)
+static int printFonts(int argc, char **argv, bool listFile)
 {
     if(argc>3 && '0'==argv[2][0] && 'x'==argv[2][1] &&
-       ( (!xml && argc>=6 && 0==(argc%2)) ||
-         (xml && '/'==argv[4][0] && ('y'==argv[5][0] || 'n'==argv[5][0]))) ) 
+       ( (!listFile && argc>=6 && 0==(argc%2)) ||
+         (listFile && '/'==argv[4][0] && ('y'==argv[5][0] || 'n'==argv[5][0]))) )
     {
         QList<KFI::Misc::TFont> fonts;
         int                     size(atoi(argv[3]));
 
         if(size>-1 && size<256)
         {
-            if(xml)
+            if(listFile)
             {
-                KInstance                                 instance(KFI_NAME);
-                KFI::CFontGroups                          grps(argv[4], true, false);
-                KFI::CFontInfo::TGroupList::ConstIterator it(grps.items().begin()),
-                                                          end(grps.items().end());
+                QFile f(QFile::decodeName(argv[4]));
 
-                for(; it!=end; ++it)
-                    if((*it).name==KFI_PRINT_GROUP)
+                if(f.open(QIODevice::ReadOnly))
+                {
+                    QTextStream str(&f);
+                    QString     family,
+                                style;
+
+                    for(;;)
                     {
-                        KFI::CFontInfo::TFontList::ConstIterator fit((*it).fonts.begin()),
-                                                                 fend((*it).fonts.end());
+                        family=str.readLine();
+                        style=str.readLine();
 
-                        for(; fit!=fend; ++fit)
-                            fonts.append(KFI::Misc::TFont((*fit).family, (*fit).styleInfo));
-                        break;
+                        if(!family.isEmpty() && !style.isEmpty())
+                            fonts.append(KFI::Misc::TFont(family, style.toUInt()));
                     }
+                    f.close();
+                }
 
                 if('y'==argv[5][0])
                     ::unlink(argv[4]);
@@ -308,9 +308,9 @@ static int printFonts(int argc, char **argv, bool xml)
             if(fonts.count())
             {
                 KAboutData aboutData(KFI_NAME, KFI_CAPTION,
-                                    "1.0", I18N_NOOP("fonts:/ helper" ),
-                                    KAboutData::License_GPL,
-                                    "(C) Craig Drummond, 2003-2006");
+                                     "1.0", I18N_NOOP("fonts:/ helper" ),
+                                     KAboutData::License_GPL,
+                                     "(C) Craig Drummond, 2003-2006");
 
                 char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)KFI_ICON};
 

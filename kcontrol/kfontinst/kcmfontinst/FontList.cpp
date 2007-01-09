@@ -77,7 +77,8 @@ static void decompose(const QString &name, QString &family, QString &style)
 }
 
 static void addFont(CFontItem *font, KUrl::List &urls, QStringList &files, QSet<Misc::TFont> *fonts,
-                    QSet<CFontItem *> &usedFonts, bool getEnabled, bool getDisabled)
+                    bool *hasSys, bool *hasUser, QSet<CFontItem *> &usedFonts, bool getEnabled,
+                    bool getDisabled)
 {
     if(!usedFonts.contains(font) &&
         ( (getEnabled && font->isEnabled()) ||
@@ -88,6 +89,14 @@ static void addFont(CFontItem *font, KUrl::List &urls, QStringList &files, QSet<
         usedFonts.insert(font);
         if(fonts)
             fonts->insert(Misc::TFont(font->family(), font->styleInfo()));
+        if(font->isSystem())
+        {
+            if(hasSys && !(*hasSys))
+                *hasSys=true;
+        }
+        else
+            if(hasUser && !(*hasUser))
+                *hasUser=true;
     }
 }
 
@@ -119,27 +128,33 @@ QStringList CFontList::compact(const QStringList &files)
     QStringList::ConstIterator it(files.begin()),
                                end(files.end());
     QStringList                compacted;
+    QSet<QString>              usedStyles;
 
     for(; it!=end; ++it)
     {
-        QString family,
-                style;
+        QString       family,
+                      style;
 
         decompose(*it, family, style);
 
-        if(family!=lastFamily)
+        if(!usedStyles.contains(style))
         {
-            if(entry.length())
+            if(family!=lastFamily)
             {
-                entry+=')';
-                compacted.append(entry);
+                usedStyles.clear();
+                if(entry.length())
+                {
+                    entry+=')';
+                    compacted.append(entry);
+                }
+                entry=QString(family+" (");
+                lastFamily=family;
             }
-            entry=QString(family+" (");
-            lastFamily=family;
+            if(entry.length() && '('!=entry[entry.length()-1])
+                entry+=", ";
+            entry+=style;
+            usedStyles.insert(style);
         }
-        if(entry.length() && '('!=entry[entry.length()-1])
-            entry+=", ";
-        entry+=style;
     }
 
     if(entry.length())
@@ -337,6 +352,11 @@ void CPreviewCache::empty()
 
 static CPreviewCache *theCache=NULL;
 
+inline bool isSysFolder(const QString &sect)
+{
+    return i18n(KFI_KIO_FONTS_SYS)==sect || KFI_KIO_FONTS_SYS==sect;
+}
+
 CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &style)
          : CFontModelItem(p),
            itsItem(item),
@@ -356,14 +376,20 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &st
     itsStyleInfo=CFcEngine::styleValFromStr(udsEntry.stringValue((uint)UDS_EXTRA_FC_STYLE));
     itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDS_URL)),
                                   KFI_KIO_FACE, 0);
-#ifdef KFI_SAVE_PIXMAPS
-    // Access thumbFile, if it exists, to prevent its removal from the cache
-    if(p)
-        setTimeStamp(CPreviewCache::thumbKey(family(), itsStyleInfo, CFontList::previewSize()));
-#endif
     QString mime(mimetype());
 
     itsBitmap="application/x-font-pcf"==mime || "application/x-font-bdf"==mime;
+    if(!Misc::root())
+        setIsSystem(isSysFolder(url().path().section('/', 1, 1)));
+}
+
+void CFontItem::touchThumbnail()
+{
+#ifdef KFI_SAVE_PIXMAPS
+    // Access thumbFile, if it exists, to prevent its removal from the cache
+    if(itsParent)
+        setTimeStamp(CPreviewCache::thumbKey(family(), itsStyleInfo, CFontList::previewSize()));
+#endif
 }
 
 const QPixmap * CFontItem::pixmap(bool force)
@@ -394,6 +420,12 @@ CFamilyItem::~CFamilyItem()
     itsFonts.clear();
 }
 
+void CFamilyItem::touchThumbnail()
+{
+    if(itsRegularFont)
+        itsRegularFont->touchThumbnail();
+}
+
 CFontItem * CFamilyItem::findFont(const KFileItem *i)
 {
     QList<CFontItem *>::ConstIterator fIt(itsFonts.begin()),
@@ -404,6 +436,14 @@ CFontItem * CFamilyItem::findFont(const KFileItem *i)
             return (*fIt);
 
     return NULL;
+}
+
+bool CFamilyItem::usable(const CFontItem *font, bool root)
+{
+    return (!font->isHidden() || itsParent.allowDisabled()) &&
+            ( root ||
+                (font->isSystem() && itsParent.allowSys()) ||
+                (!font->isSystem() && itsParent.allowUser()));
 }
 
 void CFamilyItem::addFont(CFontItem *font)
@@ -425,26 +465,42 @@ void CFamilyItem::removeFont(CFontItem *font)
     delete font;
 }
 
+void CFamilyItem::refresh()
+{
+    updateStatus();
+    itsRegularFont=NULL;
+    updateRegularFont(NULL);
+    touchThumbnail();
+}
+
 bool CFamilyItem::updateStatus()
 {
+    bool                              root(Misc::root());
     QString                           oldIcon(itsIcon);
     EStatus                           oldStatus(itsStatus);
     QList<CFontItem *>::ConstIterator it(itsFonts.begin()),
                                       end(itsFonts.end());
     int                               en(0), dis(0);
+    bool                              oldSys(isSystem()),
+                                      sys(false);
     QStringList                       mimeTypes;
 
+    itsFontCount=0;
     for(; it!=end; ++it)
-    {
-        QString mime((*it)->mimetype());
+        if(usable(*it, root))
+        {
+            QString mime((*it)->mimetype());
 
-        if((*it)->isEnabled())
-            en++;
-        else
-            dis++;
-        if(!mimeTypes.contains(mime))
-            mimeTypes.append(mime);
-    }
+            if((*it)->isEnabled())
+                en++;
+            else
+                dis++;
+            if(!mimeTypes.contains(mime))
+                mimeTypes.append(mime);
+            if(!sys)
+                sys=(*it)->isSystem();
+            itsFontCount++;
+        }
 
     itsStatus=en && dis
                 ? PARTIAL
@@ -456,7 +512,10 @@ bool CFamilyItem::updateStatus()
                 ? KMimeType::mimeType(mimeTypes[0])->iconName()
                 : "font";
 
-    return itsStatus!=oldStatus || itsIcon!=oldIcon;
+    if(!root)
+        setIsSystem(sys);
+
+    return itsStatus!=oldStatus || itsIcon!=oldIcon || isSystem()!=oldSys;
 }
 
 bool CFamilyItem::updateRegularFont(CFontItem *font)
@@ -464,8 +523,9 @@ bool CFamilyItem::updateRegularFont(CFontItem *font)
     static const int constRegular=(FC_WEIGHT_REGULAR<<16)+(FC_SLANT_ROMAN<<8)+KFI_FC_WIDTH_NORMAL;
 
     CFontItem *oldFont(itsRegularFont);
+    bool       root(Misc::root());
 
-    if(font)
+    if(font && usable(font, root))
     {
         if(itsRegularFont)
         {
@@ -485,24 +545,31 @@ bool CFamilyItem::updateRegularFont(CFontItem *font)
         int                               current=0x0FFFFFFF;
 
         for(; it!=end; ++it)
-        {
-            int diff=abs((*it)->displayStyleInfo()-constRegular);
-            if(diff<current)
+            if(usable(*it, root))
             {
-                itsRegularFont=(*it);
-                current=diff;
+                int diff=abs((*it)->displayStyleInfo()-constRegular);
+                if(diff<current)
+                {
+                    itsRegularFont=(*it);
+                    current=diff;
+                }
             }
-        }
     }
 
     return oldFont!=itsRegularFont;
 }
 
 CFontList::CFontList(QWidget *parent)
-         : QAbstractItemModel(parent)
+         : QAbstractItemModel(parent),
+           itsAllowSys(true),
+           itsAllowUser(true)
 {
     itsDirLister=new KDirLister;
-    connect(itsDirLister, SIGNAL(completed()), SLOT(listingCompleted()));
+    if(Misc::root())
+        connect(itsDirLister, SIGNAL(completed()), SLOT(listingCompleted()));
+    else
+        connect(itsDirLister, SIGNAL(completed(const KUrl &)), SLOT(listingCompleted(const KUrl &)));
+
     connect(itsDirLister, SIGNAL(canceled()), SLOT(listingCanceled()));
     connect(itsDirLister, SIGNAL(newItems(const KFileItemList &)),
             SLOT(newItems(const KFileItemList &)));
@@ -561,34 +628,25 @@ QMimeData * CFontList::mimeData(const QModelIndexList &indexes) const
     QByteArray                     encodedData;
     QModelIndexList::ConstIterator it(indexes.begin()),
                                    end(indexes.end());
-    QList<Misc::TFont>             fonts;
+    QSet<QString>                  families;
     QDataStream                    ds(&encodedData, QIODevice::WriteOnly);
 
     for(; it!=end; ++it)
         if((*it).isValid())
             if((static_cast<CFontModelItem *>((*it).internalPointer()))->isFont())
             {
-                CFontItem   *font=static_cast<CFontItem *>((*it).internalPointer());
-                Misc::TFont f(font->family(), font->styleInfo());
-                if(!fonts.contains(f))
-                    fonts.append(f);
+                CFontItem *font=static_cast<CFontItem *>((*it).internalPointer());
+
+                families.insert(font->family());
             }
             else
             {
                 CFamilyItem *fam=static_cast<CFamilyItem *>((*it).internalPointer());
 
-                QList<CFontItem *>::ConstIterator fIt(fam->fonts().begin()),
-                                                    fEnd(fam->fonts().end());
-
-                for(; fIt!=fEnd; ++fIt)
-                {
-                    Misc::TFont f((*fIt)->family(), (*fIt)->styleInfo());
-                    if(!fonts.contains(f))
-                        fonts.append(f);
-                }
+                families.insert(fam->name());
             }
 
-    ds << fonts;
+    ds << families;
     mimeData->setData(KFI_FONT_DRAG_MIME, encodedData);
     return mimeData;
 }
@@ -690,13 +748,13 @@ int CFontList::rowCount(const QModelIndex &parent) const
         return itsFamilies.count();
 }
 
-void CFontList::setUrl(const KUrl &url)
+void CFontList::scan()
 {
-    if(url!=itsDirLister->url())
-    {
-        clearItems();
-        itsDirLister->openUrl(url, false);
-    }
+    clearItems();
+    if(Misc::root())
+        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), true);
+    else
+        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS), true);
 }
 
 void CFontList::rescan()
@@ -705,7 +763,11 @@ void CFontList::rescan()
     // enabled/disabled the dirlister seems to send a deleteItem
     // and then refreshItems (for items that were deleted!)
     //itsDirLister->updateDirectory(itsDirLister->url());
-    itsDirLister->openUrl(itsDirLister->url(), false);
+
+    if(Misc::root())
+        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), true);
+    else
+        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS), true);
 }
 
 void CFontList::forceNewPreviews()
@@ -725,26 +787,42 @@ void CFontList::forceNewPreviews()
     theCache->empty();
 }
 
-bool CFontList::hasFont(const Misc::TFont &font)
+void CFontList::refresh(bool allowSys, bool allowUser)
 {
-    CFamilyItem *fam(findFamily(font.family, false));
+    itsAllowSys=allowSys;
+    itsAllowUser=allowUser;
+    QList<CFamilyItem *>::ConstIterator it(itsFamilies.begin()),
+                                        end(itsFamilies.end());
 
-    if(fam)
-    {
-        QList<CFontItem *>::ConstIterator it(fam->fonts().begin()),
-                                          end(fam->fonts().end());
+    for(; it!=end; ++it)
+        (*it)->refresh();
+}
 
-        for(; it!=end; ++it)
-            if((*it)->styleInfo()==font.styleInfo)
-                return true;
-    }
+void CFontList::setAllowDisabled(bool on)
+{
+    itsAllowDisabled=on;
+    QList<CFamilyItem *>::ConstIterator it(itsFamilies.begin()),
+                                        end(itsFamilies.end());
 
-    return false;
+    for(; it!=end; ++it)
+        (*it)->refresh();
 }
 
 void CFontList::listingCompleted()
 {
+    touchThumbnails();
     emit finished();
+}
+
+void CFontList::listingCompleted(const KUrl &url)
+{
+    if(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS)==url)
+        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_USER), true);
+    else
+    {
+        touchThumbnails();
+        emit finished();
+    }
 }
 
 void CFontList::listingCanceled()
@@ -915,6 +993,17 @@ CFontItem * CFontList::findFont(const KFileItem *item)
             : NULL;
 }
 
+void CFontList::touchThumbnails()
+{
+#ifdef KFI_SAVE_PIXMAPS
+    QList<CFamilyItem *>::ConstIterator it(itsFamilies.begin()),
+                                        end(itsFamilies.end());
+
+    for(; it!=end; ++it)
+        (*it)->touchThumbnail();
+#endif
+}
+
 inline bool matchString(const QString &str, const QString &pattern)
 {
     return pattern.isEmpty() || -1!=str.indexOf(pattern, 0, Qt::CaseInsensitive);
@@ -945,14 +1034,19 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
     switch(role)
     {
         case Qt::FontRole:
-            if(COL_FONT==index.column() &&
-            ( (mi->isFont() && !(static_cast<CFontItem *>(index.internalPointer()))->isEnabled()) ||
-                (mi->isFamily() &&
-                    CFamilyItem::DISABLED==(static_cast<CFamilyItem *>(index.internalPointer()))->status())))
+            if(COL_FONT==index.column())
             {
-                QFont font;
-                font.setItalic(true);
-                return font;
+                bool sys(mi->isSystem()),
+                     disabled( (mi->isFont() && !(static_cast<CFontItem *>(index.internalPointer()))->isEnabled()) ||
+                               (mi->isFamily() &&
+                                 CFamilyItem::DISABLED==(static_cast<CFamilyItem *>(index.internalPointer()))->status()));
+                if(sys||disabled)
+                {
+                    QFont font;
+                    font.setItalic(disabled);
+                    font.setBold(sys);
+                    return font;
+                }
             }
             break;
         case Qt::DisplayRole:
@@ -961,7 +1055,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                 {
                     CFamilyItem *fam=static_cast<CFamilyItem *>(index.internalPointer());
 
-                    return i18n("%1 [%2]", fam->name(), rowCount(idx));
+                    return i18n("%1 [%2]", fam->name(), fam->fontCount());
                 }
                 else
                     return (static_cast<CFontItem *>(index.internalPointer()))->style();
@@ -1012,14 +1106,9 @@ bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkStyleText) c
 
     if(itsGroup && (CGroupListItem::ALL!=itsGroup->type() || (!itsFilterText.isEmpty() && checkStyleText)))
     {
-        const KIO::UDSEntry &udsEntry(fnt->entry());
-        const QString       &name(fnt->name());
-        int                 commaPos=name.lastIndexOf(',');
-        Misc::TFont         font(-1==commaPos ? name : name.left(commaPos),
-                                 CFcEngine::styleValFromStr(udsEntry.stringValue((uint)UDS_EXTRA_FC_STYLE)));
-        bool                styleMatch(!checkStyleText || matchString(fnt->style(), itsFilterText));
+        bool styleMatch(!checkStyleText || matchString(fnt->style(), itsFilterText));
 
-        return itsGroup->hasFont(font) && styleMatch;
+        return itsGroup->hasFont(fnt) && styleMatch;
     }
 
     return true;
@@ -1111,11 +1200,11 @@ void CFontListSortFilterProxy::setFilterGroup(CGroupListItem *grp)
 {
     if(grp!=itsGroup)
     {
-        bool wasNull=!itsGroup;
+//        bool wasNull=!itsGroup;
 
         itsGroup=grp;
 
-        if(!(wasNull && itsGroup && CGroupListItem::ALL==itsGroup->type()))
+       // if(!(wasNull && itsGroup && CGroupListItem::ALL==itsGroup->type()))
             clear();
     }
 }
@@ -1269,34 +1358,43 @@ void CFontListView::writeConfig(KConfig &cfg)
 }
 
 void CFontListView::getFonts(KUrl::List &urls, QStringList &files, QSet<Misc::TFont> *fonts,
-                             bool selected, bool getEnabled, bool getDisabled)
+                             bool *hasSys, bool *hasUser, bool selected, bool getEnabled,
+                             bool getDisabled)
 {
-    QModelIndexList                selectedItems(selected ? selectedIndexes() : allIndexes());
-    QModelIndexList::ConstIterator it(selectedItems.begin()),
-                                   end(selectedItems.end());
-    QSet<CFontItem *>              usedFonts;
+    QModelIndexList   selectedItems(selected ? selectedIndexes() : allIndexes());
+    QSet<CFontItem *> usedFonts;
+    QModelIndex       index;
 
-    for(; it!=end; ++it)
-        if((*it).isValid())
+    foreach(index, selectedItems)
+        if(index.isValid())
         {
-            QModelIndex index(itsProxy->mapToSource(*it));
+            QModelIndex realIndex(itsProxy->mapToSource(index));
 
-            if(index.isValid())
-                if((static_cast<CFontModelItem *>(index.internalPointer()))->isFont())
+            if(realIndex.isValid())
+                if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
                 {
-                    CFontItem *font=static_cast<CFontItem *>(index.internalPointer());
+                    CFontItem *font=static_cast<CFontItem *>(realIndex.internalPointer());
 
-                    addFont(font, urls, files, fonts, usedFonts, getEnabled, getDisabled);
+                    addFont(font, urls, files, fonts, hasSys, hasUser, usedFonts,
+                            getEnabled, getDisabled);
                 }
                 else
                 {
-                    CFamilyItem *fam=static_cast<CFamilyItem *>(index.internalPointer());
+                    CFamilyItem *fam=static_cast<CFamilyItem *>(realIndex.internalPointer());
 
-                    QList<CFontItem *>::ConstIterator fIt(fam->fonts().begin()),
-                                                      fEnd(fam->fonts().end());
+                    for(int ch=0; ch<fam->fontCount(); ++ch)
+                    {
+                        QModelIndex child(itsProxy->mapToSource(index.child(ch, 0)));
 
-                    for(; fIt!=fEnd; ++fIt)
-                        addFont(*fIt, urls, files, fonts, usedFonts, getEnabled, getDisabled);
+                        if(child.isValid() &&
+                          (static_cast<CFontModelItem *>(child.internalPointer()))->isFont())
+                        {
+                            CFontItem *font=static_cast<CFontItem *>(child.internalPointer());
+
+                            addFont(font, urls, files, fonts, hasSys, hasUser, usedFonts,
+                                    getEnabled, getDisabled);
+                        }
+                    }
                 }
         }
 
@@ -1305,24 +1403,23 @@ void CFontListView::getFonts(KUrl::List &urls, QStringList &files, QSet<Misc::TF
 
 void CFontListView::getPrintableFonts(QSet<Misc::TFont> &items, bool selected)
 {
-    QModelIndexList                selectedItems(selected ? selectedIndexes() : allIndexes());
-    QModelIndexList::ConstIterator sIt(selectedItems.begin()),
-                                   sEnd(selectedItems.end());
+    QModelIndexList selectedItems(selected ? selectedIndexes() : allIndexes());
+    QModelIndex     index;
 
-    for (; sIt!=sEnd; ++sIt)
+    foreach(index, selectedItems)
     {
         CFontItem *font=NULL;
 
-        if((*sIt).isValid() && 0==(*sIt).column())
+        if(index.isValid() && 0==index.column())
         {
-            QModelIndex index(itsProxy->mapToSource(*sIt));
+            QModelIndex realIndex(itsProxy->mapToSource(index));
 
-            if(index.isValid())
-                if((static_cast<CFontModelItem *>(index.internalPointer()))->isFont())
-                    font=static_cast<CFontItem *>(index.internalPointer());
+            if(realIndex.isValid())
+                if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
+                    font=static_cast<CFontItem *>(realIndex.internalPointer());
                 else
                 {
-                    CFamilyItem *fam=static_cast<CFamilyItem *>(index.internalPointer());
+                    CFamilyItem *fam=static_cast<CFamilyItem *>(realIndex.internalPointer());
                     font=fam->regularFont();
                 }
         }
@@ -1334,8 +1431,36 @@ void CFontListView::getPrintableFonts(QSet<Misc::TFont> &items, bool selected)
 
 void CFontListView::setFilterGroup(CGroupListItem *grp)
 {
+    CGroupListItem *oldGrp(itsProxy->filterGroup());
+
     itsProxy->setFilterGroup(grp);
     itsAllowDrops=grp && !grp->isStandard();
+
+    if(!Misc::root())
+    {
+        bool  refreshStats(false);
+
+        if(!grp || !oldGrp)
+            refreshStats=true;
+        else
+        {
+            // Check to see whether we have changed from listing all fonts,
+            // listing just system or listing personal fonts.
+            CGroupListItem::EType aType(CGroupListItem::STANDARD==grp->type() ||
+                                        CGroupListItem::ALL==grp->type() ||
+                                        CGroupListItem::UNCLASSIFIED==grp->type()
+                                            ? CGroupListItem::STANDARD : grp->type()),
+                                  bType(CGroupListItem::STANDARD==oldGrp->type() ||
+                                        CGroupListItem::ALL==oldGrp->type() ||
+                                        CGroupListItem::UNCLASSIFIED==oldGrp->type()
+                                            ? CGroupListItem::STANDARD : oldGrp->type());
+            refreshStats=aType!=bType;
+        }
+
+        if(refreshStats)
+            itsModel->refresh(!grp || !grp->isPersonal(),
+                              !grp || !grp->isSystem());
+    }
 }
 
 void CFontListView::refreshFilter()
@@ -1382,19 +1507,18 @@ void CFontListView::stats(int &enabled, int &disabled, int &partial)
 
 void CFontListView::selectedStatus(bool &enabled, bool &disabled)
 {
-    QModelIndexList                selected(selectedItems());
-    QModelIndexList::ConstIterator it(selected.begin()),
-                                   end(selected.end());
+    QModelIndexList selected(selectedItems());
+    QModelIndex     index;
 
     enabled=disabled=false;
 
-    for(; it!=end && (!enabled || !disabled); ++it)
+    foreach(index, selected)
     {
-        QModelIndex index(itsProxy->mapToSource(*it));
+        QModelIndex realIndex(itsProxy->mapToSource(index));
 
-        if(index.isValid())
-            if((static_cast<CFontModelItem *>(index.internalPointer()))->isFamily())
-                switch((static_cast<CFamilyItem *>(index.internalPointer()))->status())
+        if(realIndex.isValid())
+            if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFamily())
+                switch((static_cast<CFamilyItem *>(realIndex.internalPointer()))->status())
                 {
                     case CFamilyItem::ENABLED:
                         enabled=true;
@@ -1408,10 +1532,12 @@ void CFontListView::selectedStatus(bool &enabled, bool &disabled)
                         break;
                 }
             else
-                if((static_cast<CFontItem *>(index.internalPointer()))->isEnabled())
+                if((static_cast<CFontItem *>(realIndex.internalPointer()))->isEnabled())
                     enabled=true;
                 else
                     disabled=true;
+        if(enabled && disabled)
+            break;
     }
 }
 
@@ -1445,6 +1571,7 @@ void CFontListView::setMgtMode(bool on)
         setDragDropMode(on ? QAbstractItemView::DragDrop : QAbstractItemView::DropOnly);
         setColumnHidden(COL_STATUS, !on);
 
+        itsModel->setAllowDisabled(on);
         itsProxy->setMgtMode(on);
     }
 }
@@ -1478,23 +1605,22 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
     //
     // Go throgh current selection, and for any 'font' items that are selected,
     // ensure 'family' item is not...
-    QModelIndexList                selectedItems(selectedIndexes()),
-                                   deselectList;
-    QModelIndexList::ConstIterator it(selectedItems.begin()),
-                                   end(selectedItems.end());
-    QSet<CFontModelItem *>         selectedFamilies;
-    bool                           en(false),
-                                   dis(false);
+    QModelIndexList        selectedItems(selectedIndexes()),
+                           deselectList;
+    QModelIndex            index;
+    QSet<CFontModelItem *> selectedFamilies;
+    bool                   en(false),
+                           dis(false);
 
-    for(; it!=end; ++it)
-        if((*it).isValid())
+    foreach(index, selectedItems)
+        if(index.isValid())
         {
-            QModelIndex index(itsProxy->mapToSource(*it));
+            QModelIndex realIndex(itsProxy->mapToSource(index));
 
-            if(index.isValid())
-                if((static_cast<CFontModelItem *>(index.internalPointer()))->isFont())
+            if(realIndex.isValid())
+                if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
                 {
-                    CFontItem *font=static_cast<CFontItem *>(index.internalPointer());
+                    CFontItem *font=static_cast<CFontItem *>(realIndex.internalPointer());
 
                     if(font->isEnabled())
                         en=true;
@@ -1511,7 +1637,7 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
                     }
                 }
                 else
-                    switch((static_cast<CFamilyItem *>(index.internalPointer()))->status())
+                    switch((static_cast<CFamilyItem *>(realIndex.internalPointer()))->status())
                     {
                         case CFamilyItem::ENABLED:
                             en=true;
@@ -1526,11 +1652,8 @@ void CFontListView::selectionChanged(const QItemSelection &selected,
         }
 
     if(deselectList.count())
-    {
-        end=deselectList.end();
-        for(it=deselectList.begin(); it!=end; ++it)
-            selectionModel()->select(*it, QItemSelectionModel::Deselect);
-    }
+        foreach(index, deselectList)
+            selectionModel()->select(index, QItemSelectionModel::Deselect);
 
     emit itemSelected(selectedItems.count()
                 ? itsProxy->mapToSource(selectedItems.last())
@@ -1655,28 +1778,26 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
     }
     else
     {
-        bool en=false,
-             dis=false;
+        bool            en(false),
+                        dis(false);
+        QModelIndexList selectedItems(selectedIndexes());
+        QModelIndex     index;
 
-        QModelIndexList                selectedItems(selectedIndexes());
-        QModelIndexList::ConstIterator it(selectedItems.begin()),
-                                       end(selectedItems.end());
-
-        for(; it!=end && (!en || !dis); ++it)
+        foreach(index, selectedItems)
         {
-            QModelIndex index(itsProxy->mapToSource(*it));
+            QModelIndex realIndex(itsProxy->mapToSource(index));
 
-            if((*it).isValid())
-                if((static_cast<CFontModelItem *>(index.internalPointer()))->isFont())
+            if(realIndex.isValid())
+                if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
                 {
-                    if((static_cast<CFontItem *>(index.internalPointer())->isEnabled()))
+                    if((static_cast<CFontItem *>(realIndex.internalPointer())->isEnabled()))
                         en=true;
                     else
                         dis=true;
 
                 }
                 else
-                    switch((static_cast<CFamilyItem *>(index.internalPointer()))->status())
+                    switch((static_cast<CFamilyItem *>(realIndex.internalPointer()))->status())
                     {
                         case CFamilyItem::ENABLED:
                             en=true;
@@ -1688,6 +1809,8 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
                             en=dis=true;
                             break;
                     }
+            if(en && dis)
+                break;
         }
 
         itsEnableAct->setEnabled(dis);

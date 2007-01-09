@@ -1,4 +1,4 @@
-set(kfontinst_LIB_SRCS Misc.cpp FcEngine.cpp FontInfo.cpp )
+set(kfontinst_LIB_SRCS Misc.cpp FcEngine.cpp DisabledFonts.cpp )
 
 kde4_automoc(${kfontinst_LIB_SRCS})
 kde4_add_library(kfontinst SHARED ${kfontinst_LIB_SRCS})

@@ -4,7 +4,7 @@ include_directories(
 	 )
 
 set(kcm_fontinst_PART_SRCS ${libkfontinstview_SRCS} ${libkfontinstupdatedialog_SRCS}
-    FontList.cpp GroupList.cpp KCmFontInst.cpp RenameJob.cpp PrintDialog.cpp )
+    FontList.cpp GroupList.cpp KCmFontInst.cpp RenameJob.cpp PrintDialog.cpp FontGroups.cpp )
 
 kde4_automoc(${kcm_fontinst_PART_SRCS})
 

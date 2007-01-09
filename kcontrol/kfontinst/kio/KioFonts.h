@@ -34,7 +34,7 @@
 #include <QSet>
 #include "Misc.h"
 #include "KfiConstants.h"
-#include "FontInfo.h"
+#include "DisabledFonts.h"
 
 namespace KFI
 {
@@ -80,8 +80,8 @@ class CKioFonts : public KIO::SlaveBase
     {
         TFontDetails() { }
 
-        CFontInfo::TFileList files;
-        unsigned long        styleVal;
+        CDisabledFonts::TFileList files;
+        unsigned long             styleVal;
     };
 
     typedef QHash<QString, TFontDetails> TFontMap;
@@ -119,7 +119,7 @@ class CKioFonts : public KIO::SlaveBase
     QString            getUserName(uid_t uid);
     QString            getGroupName(gid_t gid);
     bool               createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
-                                          const CFontInfo::TFileList &patterns,
+                                          const CDisabledFonts::TFileList &patterns,
                                           unsigned long styleVal, bool sys, bool hidden=false);
     bool               createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, const QString &path,
                                             bool sys);
@@ -140,21 +140,26 @@ class CKioFonts : public KIO::SlaveBase
     bool               updateFontList();
     EFolder            getFolder(const KUrl &url);
     TFontMap::Iterator getMap(const KUrl &url);
-    const CFontInfo::TFileList * getEntries(const KUrl &url, TFontMap::Iterator &enabledIt,
-                                            CFontInfo::TFontList::Iterator &disabledIt);
+    const CDisabledFonts::TFileList * getEntries(const KUrl &url, TFontMap::Iterator &enabledIt,
+                                                 CDisabledFonts::TFontList::Iterator &disabledIt);
     QStringList        getFontNameEntries(EFolder folder, const QString &file, bool disabledFonts);
     QMap<int, QString> getFontIndexToNameEntries(EFolder folder, const QString &file);
     QString *          getEntry(EFolder folder, const QString &file, bool full=false);
     EFileType          checkFile(const QString &file, const KUrl &url);
-    bool               getSourceFiles(const KUrl &src, CFontInfo::TFileList &files, bool removeSymLinks=true);
-    bool               checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFolder, bool overwrite);
+    bool               getSourceFiles(const KUrl &src, CDisabledFonts::TFileList &files,
+                                      bool removeSymLinks=true);
+    bool               checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFolder,
+                                     bool overwrite);
     bool               checkDestFiles(const KUrl &src, QMap<QString, QString> &map, const KUrl &dest,
                                       EFolder destFolder, bool overwrite);
-    bool               confirmMultiple(const KUrl &url, const CFontInfo::TFileList &files, EFolder folder, EOp op);
-    bool               confirmMultiple(const KUrl &url, const CFontInfo::TFileList *patterns, EFolder folder, EOp op);
+    bool               confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList &files,
+                                       EFolder folder, EOp op);
+    bool               confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList *patterns,
+                                       EFolder folder, EOp op);
     bool               checkUrl(const KUrl &u, bool rootOk=false, bool logError=true);
     bool               checkAllowed(const KUrl &u);
-    void               createAfm(const QString &file, bool nrs=false, const QString &passwd=QString::null);
+    void               createAfm(const QString &file, bool nrs=false,
+                                 const QString &passwd=QString::null);
     int                reconfigTimeout();
 
     private:

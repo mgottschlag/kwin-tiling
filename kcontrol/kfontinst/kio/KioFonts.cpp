@@ -74,7 +74,7 @@
 // be refreshed.
 #define KFI_KIO_CHECK_FONTS_WHEN_INSTALL
 
-#define KFI_DBUG kDebug() << '[' << (int)(getpid()) << "] "
+#define KFI_DBUG kDebug() << "[" << (int)(getpid()) << "] "
 
 #define MAX_IPC_SIZE    (1024*32)
 #define DEFAULT_TIMEOUT 2         // Time between last mod and writing files...
@@ -153,7 +153,8 @@ static QString removeKnownExtension(const KUrl &url)
 }
 
 #define removeMultipleExtension(A) removeKnownExtension(A)
-static void addKnownExtension(QString &url, const CFontInfo::TFileList &files, const QString &name, bool hidden)
+static void addKnownExtension(QString &url, const CDisabledFonts::TFileList &files, const QString &name,
+                              bool hidden)
 {
     if(files.count()>1)
     {
@@ -167,7 +168,8 @@ static void addKnownExtension(QString &url, const CFontInfo::TFileList &files, c
         int     pos(0);
 
         for(int i=0; constExtensions[i]; ++i)
-            if(-1!=(pos=fileName.lastIndexOf(QString::fromLatin1(constExtensions[i]), -1, Qt::CaseInsensitive)))
+            if(-1!=(pos=fileName.lastIndexOf(QString::fromLatin1(constExtensions[i]), -1,
+                                             Qt::CaseInsensitive)))
             {
                 if(hidden)
                     url+='.';
@@ -202,10 +204,10 @@ static QString modifyName(const QString &fname, bool toUpper=false)
     return rv;
 }
 
-static bool checkFiles(const CFontInfo::TFileList &files)
+static bool checkFiles(const CDisabledFonts::TFileList &files)
 {
-    CFontInfo::TFileList::ConstIterator it(files.begin()),
-                               end(files.end());
+    CDisabledFonts::TFileList::ConstIterator it(files.begin()),
+                                             end(files.end());
 
     for(; it!=end; ++it)
         if(!Misc::fExists(*it))
@@ -240,11 +242,11 @@ static int getSize(const QByteArray &file)
     return -1;
 }
 
-static int getSize(const CFontInfo::TFileList &files)
+static int getSize(const CDisabledFonts::TFileList &files)
 {
-    CFontInfo::TFileList::ConstIterator it,
-                               end=files.end();
-    int                        size=0;
+    CDisabledFonts::TFileList::ConstIterator it,
+                                             end=files.end();
+    int                                      size=0;
 
     for(it=files.begin(); it!=end; ++it)
         size+=getSize(QFile::encodeName(*it));
@@ -289,11 +291,11 @@ static QString getReal(const QString &file)
 //    1. get any associated afm or pfms
 //    2. Resolve any symlinks
 //    3. Remove duplicates (due to symlik and real being in list)
-static void getFontFiles(const CFontInfo::TFileList &entries, CFontInfo::TFileList &files,
+static void getFontFiles(const CDisabledFonts::TFileList &entries, CDisabledFonts::TFileList &files,
                          bool removeSymLinks=true)
 {
-    CFontInfo::TFileList::ConstIterator it,
-                                        end=entries.end();
+    CDisabledFonts::TFileList::ConstIterator it,
+                                             end=entries.end();
 
     for(it=entries.begin(); it!=end; ++it)
     {
@@ -315,7 +317,7 @@ static void getFontFiles(const CFontInfo::TFileList &entries, CFontInfo::TFileLi
                 file=removeSymLinks ? getReal((*uIt).path()) : (*uIt).path();
 
                 if(!files.contains(file) && Misc::fExists(file))
-                    files.append(CFontInfo::TFile(file));
+                    files.append(CDisabledFonts::TFile(file));
             }
         }
     }
@@ -601,12 +603,12 @@ static void setName(const QString &orig, QString &modified, int pos, bool hidden
 
 //
 // This function returns a set of maping of from -> to for copy/move operations
-static bool getFontList(const CFontInfo::TFileList &files, QMap<QString, QString> &map)
+static bool getFontList(const CDisabledFonts::TFileList &files, QMap<QString, QString> &map)
 {
     // First of all create a list of font files, and their paths
-    CFontInfo::TFileList::ConstIterator it=files.begin(),
-                               end=files.end();
-    KfiFontList                         list;
+    CDisabledFonts::TFileList::ConstIterator it=files.begin(),
+                                             end=files.end();
+    KfiFontList                              list;
 
     for(;it!=end; ++it)
     {
@@ -805,8 +807,8 @@ void CKioFonts::listDir(const KUrl &url)
                 }
             }
 
-            CFontInfo::TFontList::Iterator dIt(itsFolders[folder].disabled->items().begin()),
-                                           dEnd(itsFolders[folder].disabled->items().end());
+            CDisabledFonts::TFontList::Iterator dIt(itsFolders[folder].disabled->items().begin()),
+                                                dEnd(itsFolders[folder].disabled->items().end());
 
             for(; dIt!=dEnd; ++dIt)
                 if(createFontUDSEntry(entry, (*dIt).getName(), (*dIt).files,
@@ -948,13 +950,13 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KUrl &url, EFolder f
         for(; it!=end; ++it)
             for(int t=0; t<3 && !ok; ++t)
             {
-                CFontInfo::TFileList files;
-                QString     fileName=0==t
-                                     ? url.fileName()
-                                     : 1==t ? modifyName(url.fileName())  // lowercase
-                                            : modifyName(url.fileName(), true);  // uppercase
+                CDisabledFonts::TFileList files;
+                QString                   fileName=0==t
+                                              ? url.fileName()
+                                              : 1==t ? modifyName(url.fileName())  // lowercase
+                                                     : modifyName(url.fileName(), true);  // uppercase
 
-                files.append(CFontInfo::TFile((*it)+fileName));
+                files.append(CDisabledFonts::TFile((*it)+fileName));
                 entry.clear();
                 ok=createFontUDSEntry(entry, i18n("Invalid Font"), files,
                                       KFI_NO_STYLE_INFO, FOLDER_SYS==folder,
@@ -979,8 +981,8 @@ bool CKioFonts::createStatEntryReal(KIO::UDSEntry &entry, const KUrl &url, EFold
                                   FOLDER_SYS==folder);
 
     QString                        name=Misc::getFile(removeMultipleExtension(url));
-    CFontInfo::TFontList::Iterator dIt=itsFolders[folder].disabled->find(name,
-                                           Misc::getIntQueryVal(url, KFI_KIO_FACE, 0));
+    CDisabledFonts::TFontList::Iterator dIt=itsFolders[folder].disabled->find(name,
+                                            Misc::getIntQueryVal(url, KFI_KIO_FACE, 0));
 
     if(dIt!=itsFolders[folder].disabled->items().end())
         return createFontUDSEntry(entry, (*dIt).getName(), (*dIt).files, (*dIt).styleInfo,
@@ -993,8 +995,8 @@ void CKioFonts::get(const KUrl &url)
 {
     KFI_DBUG << "get " << url.path() << " query:" << url.query() << endl;
 
-    bool        thumb="1"==metaData("thumbnail");
-    CFontInfo::TFileList srcFiles;
+    bool                      thumb="1"==metaData("thumbnail");
+    CDisabledFonts::TFileList srcFiles;
 
     // Any error will be logged in getSourceFiles
     if(updateFontList() && checkUrl(url) && getSourceFiles(url, srcFiles))
@@ -1020,17 +1022,17 @@ void CKioFonts::get(const KUrl &url)
                 //
                 // OK, its a disabled font - if possible try to return the location of the font file
                 // itself.
-                QString                        name(Misc::getFile(removeMultipleExtension(url)));
-                CFontInfo::TFontList::Iterator dIt(itsFolders[folder].disabled
+                QString                             name(Misc::getFile(removeMultipleExtension(url)));
+                CDisabledFonts::TFontList::Iterator dIt(itsFolders[folder].disabled
                                                      ->find(name, Misc::getIntQueryVal(url,
                                                                   KFI_KIO_FACE, 0))),
-                                               dEnd(itsFolders[folder].disabled->items().end());
-                bool                           found=false;
+                                                    dEnd(itsFolders[folder].disabled->items().end());
+                bool                                found=false;
 
                 if(dIt!=dEnd)
                 {
-                    CFontInfo::TFileList::ConstIterator fIt((*dIt).files.begin()),
-                                                        fEnd((*dIt).files.end());
+                    CDisabledFonts::TFileList::ConstIterator fIt((*dIt).files.begin()),
+                                                             fEnd((*dIt).files.end());
 
                     for(; fIt!=fEnd; ++fIt)
                         if(isScalable((*fIt).path))
@@ -1060,7 +1062,7 @@ void CKioFonts::get(const KUrl &url)
 
                 if(1==(*it).files.count())
                 {
-                    CFontInfo::TFileList::ConstIterator fIt((*it).files.begin());
+                    CDisabledFonts::TFileList::ConstIterator fIt((*it).files.begin());
 
                     stream << KFI_PATH_KEY << (*fIt).path << endl
                            << KFI_FACE_KEY << (*fIt).face << endl;
@@ -1325,7 +1327,7 @@ QString CKioFonts::getGroupName(gid_t gid)
 }
 
 bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
-                                   const CFontInfo::TFileList &patterns,
+                                   const CDisabledFonts::TFileList &patterns,
                                    unsigned long styleVal, bool sys, bool hidden)
 {
     KFI_DBUG << "createFontUDSEntry " << name << ' ' << styleVal << ' '
@@ -1333,7 +1335,7 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
 
     //
     // First of all get list of real files - i.e. remove any duplicates due to symlinks
-    CFontInfo::TFileList unSortedFiles;
+    CDisabledFonts::TFileList unSortedFiles;
 
     getFontFiles(patterns, unSortedFiles);
 
@@ -1341,9 +1343,9 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
     // Sort list of files - placing scalable ones first. This is because, when determening the
     // mimetype, the 1st valid file will be chose. In case of mixed bitmap/scalable - prefer
     // scalable
-    CFontInfo::TFileList                files;
-    CFontInfo::TFileList::ConstIterator it,
-                                        end(unSortedFiles.end());
+    CDisabledFonts::TFileList                files;
+    CDisabledFonts::TFileList::ConstIterator it,
+                                             end(unSortedFiles.end());
 
     for(it=unSortedFiles.begin(); it!=end; ++it)
         if(isScalable(*it))
@@ -1638,8 +1640,8 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
     {
         //checkUrl(u) // CPD as per comment in ::put()
 
-        CFontInfo::TFileList srcFiles;
-        int                  timeout(reconfigTimeout());
+        CDisabledFonts::TFileList srcFiles;
+        int                       timeout(reconfigTimeout());
 
         if(getSourceFiles(src, srcFiles))  // Any error will be logged in getSourceFiles
         {
@@ -1842,9 +1844,9 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
 
     if(src.directory()==d.directory())
     {
-        CFontInfo::TFontList::Iterator disabledIt;
-        TFontMap::Iterator             enabledIt;
-        const CFontInfo::TFileList     *entries(getEntries(src, enabledIt, disabledIt));
+        CDisabledFonts::TFontList::Iterator disabledIt;
+        TFontMap::Iterator                  enabledIt;
+        const CDisabledFonts::TFileList     *entries(getEntries(src, enabledIt, disabledIt));
 
         if(!entries)
         {
@@ -1871,10 +1873,10 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
             {
                 if(confirmMultiple(src, (*disabledIt).files, folder, OP_ENABLE))
                 {
-                    CDirList                   folders;
-                    CFontInfo::TFileList::ConstIterator it((*disabledIt).files.begin()),
-                                                        end((*disabledIt).files.end());
-                    bool                       ok=false;
+                    CDirList                                 folders;
+                    CDisabledFonts::TFileList::ConstIterator it((*disabledIt).files.begin()),
+                                                             end((*disabledIt).files.end());
+                    bool                                     ok=false;
 
                     for(; it!=end; ++it)
                         folders.add(Misc::getDir(*it));
@@ -1908,11 +1910,11 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
             {
                 if(confirmMultiple(src, (*enabledIt).files, folder, OP_DISABLE))
                 {
-                    CDirList                            folders;
-                    QMap<int, QString>                  names;
-                    CFontInfo::TFileList::ConstIterator it((*enabledIt).files.begin()),
-                                                        end((*enabledIt).files.end());
-                    bool                                ok=false;
+                    CDirList                                 folders;
+                    QMap<int, QString>                       names;
+                    CDisabledFonts::TFileList::ConstIterator it((*enabledIt).files.begin()),
+                                                             end((*enabledIt).files.end());
+                    bool                                     ok=false;
 
                     for(; it!=end; ++it)
                         folders.add(Misc::getDir(*it));
@@ -1950,12 +1952,12 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                         }
                         else
                         {
-                            QString          fontStr(*nameIt);
-                            int              commaPos=fontStr.indexOf(',');
-                            CFontInfo::TFont font(-1==commaPos
-                                                    ? fontStr
-                                                    : fontStr.left(commaPos),
-                                                (*enabledIt).styleVal);
+                            QString               fontStr(*nameIt);
+                            int                   commaPos=fontStr.indexOf(',');
+                            CDisabledFonts::TFont font(-1==commaPos
+                                                        ? fontStr
+                                                        : fontStr.left(commaPos),
+                                                       (*enabledIt).styleVal);
 
                             font.files=(*enabledIt).files;
                             if(1==font.files.count())
@@ -2007,7 +2009,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
         //
         // Can't rename from/to file:/ -> therefore rename can only be from fonts:/System to
         // fonts:/Personal, or vice versa.
-        CFontInfo::TFileList srcFiles;
+        CDisabledFonts::TFileList srcFiles;
 
         if(getSourceFiles(src, srcFiles))   // Any error will be logged in getSourceFiles
         {
@@ -2097,20 +2099,20 @@ void CKioFonts::del(const KUrl &url, bool)
 {
     KFI_DBUG << "del " << url.path() << " query:" << url.query() << endl;
 
-    const CFontInfo::TFileList     *entries;
-    CFontInfo::TFontList::Iterator disabledIt;
-    TFontMap::Iterator             enabledIt;
+    const CDisabledFonts::TFileList     *entries;
+    CDisabledFonts::TFontList::Iterator disabledIt;
+    TFontMap::Iterator                  enabledIt;
 
     if(checkUrl(url) && checkAllowed(url) &&
        (( (entries=getEntries(url, enabledIt, disabledIt)) && entries->count() && checkFiles(*entries))  ||
         ( updateFontList() && (entries=getEntries(url, enabledIt, disabledIt)) && entries->count() &&
        checkFiles(*entries))) && confirmMultiple(url, entries, getFolder(url), OP_DELETE))
     {
-        CFontInfo::TFileList::ConstIterator it,
-                                            end=entries->end();
-        CDirList                            modifiedDirs;
-        bool                                clearList(!hasMetaData(KFI_KIO_NO_CLEAR));
-        int                                 timeout(reconfigTimeout());
+        CDisabledFonts::TFileList::ConstIterator it,
+                                                 end=entries->end();
+        CDirList                                 modifiedDirs;
+        bool                                     clearList(!hasMetaData(KFI_KIO_NO_CLEAR));
+        int                                      timeout(reconfigTimeout());
 
         if(nonRootSys(url))
         {
@@ -2262,19 +2264,19 @@ void CKioFonts::special(const QByteArray &a)
                 if(itsRoot)
                 {
                     if(0==itsFolders[FOLDER_SYS].modified.count())
-                    {
-                        QByteArray cmd;
-
-                        createRootRefreshCmd(cmd, itsFolders[FOLDER_SYS].modified);
-                        doRootCmd(cmd, false);
-                    }
+                        configure(FOLDER_SYS);
                 }
                 else
                 {
                     QString sect(getSect(url.path()));
 
                     if(isSysFolder(sect) && 0==itsFolders[FOLDER_SYS].modified.count())
-                        configure(FOLDER_SYS);
+                    {
+                        QByteArray cmd;
+
+                        createRootRefreshCmd(cmd, itsFolders[FOLDER_SYS].modified);
+                        doRootCmd(cmd, false);
+                    }
                     else if(isUserFolder(sect) && 0==itsFolders[FOLDER_USER].modified.count())
                         configure(FOLDER_USER);
                 }
@@ -2555,15 +2557,15 @@ bool CKioFonts::updateFontList()
 
                     if(details.files.count()) // Check for duplicates...
                     {
-                        CFontInfo::TFileList::Iterator it,
-                                              end=details.files.end();
+                        CDisabledFonts::TFileList::Iterator it,
+                                                            end=details.files.end();
 
                         for(it=details.files.begin(); use && it!=end; ++it)
                             if(fileName==*it)
                                 use=false;
                     }
                     if(use)
-                        details.files.append(CFontInfo::TFile(fileName, index));
+                        details.files.append(CDisabledFonts::TFile(fileName, index));
                 }
             }
         }
@@ -2607,8 +2609,8 @@ CKioFonts::TFontMap::Iterator CKioFonts::getMap(const KUrl &url)
 
             for(it=itsFolders[folder].fontMap.begin(); it!=end; ++it)
             {
-                CFontInfo::TFileList::Iterator sIt((*it).files.begin()),
-                                      sEnd((*it).files.end());
+                CDisabledFonts::TFileList::Iterator sIt((*it).files.begin()),
+                                                    sEnd((*it).files.end());
 
                 for(;sIt!=sEnd; ++sIt)
                     if(Misc::getFile(*sIt)==fileName && (*sIt).face==face)
@@ -2620,19 +2622,19 @@ CKioFonts::TFontMap::Iterator CKioFonts::getMap(const KUrl &url)
     return it;
 }
 
-const CFontInfo::TFileList * CKioFonts::getEntries(const KUrl &url,
-                                                   TFontMap::Iterator &enabledIt,
-                                                   CFontInfo::TFontList::Iterator &disabledIt)
+const CDisabledFonts::TFileList * CKioFonts::getEntries(const KUrl &url,
+                                                        TFontMap::Iterator &enabledIt,
+                                                        CDisabledFonts::TFontList::Iterator &disabledIt)
 {
     KFI_DBUG << "getEntries " << url.prettyUrl() << endl;
 
-    EFolder                        folder=getFolder(url);
-    TFontMap::Iterator             it(getMap(url)),
-                                   end(itsFolders[folder].fontMap.end());
-    QString                        name=Misc::getFile(removeMultipleExtension(url));
-    CFontInfo::TFontList::Iterator dIt(itsFolders[folder].disabled->find(name,
+    EFolder                             folder=getFolder(url);
+    TFontMap::Iterator                  it(getMap(url)),
+                                        end(itsFolders[folder].fontMap.end());
+    QString                             name=Misc::getFile(removeMultipleExtension(url));
+    CDisabledFonts::TFontList::Iterator dIt(itsFolders[folder].disabled->find(name,
                                               Misc::getIntQueryVal(url, KFI_KIO_FACE, 0))),
-                                   dEnd(itsFolders[folder].disabled->items().end());
+                                        dEnd(itsFolders[folder].disabled->items().end());
 
     enabledIt=end;
     disabledIt=dEnd;
@@ -2681,13 +2683,13 @@ QStringList CKioFonts::getFontNameEntries(EFolder folder, const QString &file, b
 
     if(disabledFonts)
     {
-       CFontInfo::TFontList::Iterator it(itsFolders[folder].disabled->items().begin()),
-                                      end(itsFolders[folder].disabled->items().end());
+       CDisabledFonts::TFontList::Iterator it(itsFolders[folder].disabled->items().begin()),
+                                           end(itsFolders[folder].disabled->items().end());
 
         for(; it!=end; ++it)
         {
-            CFontInfo::TFileList::ConstIterator patIt,
-                                                patEnd=(*it).files.end();
+            CDisabledFonts::TFileList::ConstIterator patIt,
+                                                     patEnd=(*it).files.end();
 
             for(patIt=(*it).files.begin(); patIt!=patEnd; ++patIt)
                 if((*patIt).path==file)
@@ -2704,8 +2706,8 @@ QStringList CKioFonts::getFontNameEntries(EFolder folder, const QString &file, b
 
         for(it=itsFolders[folder].fontMap.begin(); it!=end; ++it)
         {
-            CFontInfo::TFileList::ConstIterator patIt,
-                                                patEnd=it.value().files.end();
+            CDisabledFonts::TFileList::ConstIterator patIt,
+                                                     patEnd=it.value().files.end();
 
             for(patIt=it.value().files.begin(); patIt!=patEnd; ++patIt)
                 if((*patIt).path==file)
@@ -2726,8 +2728,8 @@ QMap<int, QString> CKioFonts::getFontIndexToNameEntries(EFolder folder, const QS
 
     for(it=itsFolders[folder].fontMap.begin(); it!=end; ++it)
     {
-        CFontInfo::TFileList::Iterator patIt,
-                                       patEnd=it.value().files.end();
+        CDisabledFonts::TFileList::Iterator patIt,
+                                            patEnd=it.value().files.end();
 
         for(patIt=it.value().files.begin(); patIt!=patEnd; ++patIt)
             if((*patIt).path==file)
@@ -2747,8 +2749,8 @@ QString * CKioFonts::getEntry(EFolder folder, const QString &file, bool full)
 
     for(it=itsFolders[folder].fontMap.begin(); it!=end; ++it)
     {
-        CFontInfo::TFileList::Iterator patIt,
-                                       patEnd=it.value().files.end();
+        CDisabledFonts::TFileList::Iterator patIt,
+                                            patEnd=it.value().files.end();
 
         for(patIt=it.value().files.begin(); patIt!=patEnd; ++patIt)
             if( (full && (*patIt).path==file) ||
@@ -2814,10 +2816,10 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
                 // not take into account face! Perhaps use -1?
 
                 if(itsFolders[FOLDER_SYS].fontMap.contains(name) ||
-                   itsFolders[FOLDER_SYS].disabled->disabledFonts().end()!=
+                   itsFolders[FOLDER_SYS].disabled->items().end()!=
                             itsFolders[FOLDER_SYS].disabled->find(name, 1) ||
                    (!itsRoot && (itsFolders[FOLDER_USER].fontMap.contains(name) ||
-                                 itsFolders[FOLDER_USER].disabled->disabledFonts().end()!=
+                                 itsFolders[FOLDER_USER].disabled->items().end()!=
                                     itsFolders[FOLDER_USER].disabled->find(name, 1))))
                 {
                     FcPatternDestroy(pat);
@@ -2838,13 +2840,13 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
     return FILE_UNKNOWN;
 }
 
-bool CKioFonts::getSourceFiles(const KUrl &src, CFontInfo::TFileList &files, bool removeSymLinks)
+bool CKioFonts::getSourceFiles(const KUrl &src, CDisabledFonts::TFileList &files, bool removeSymLinks)
 {
     if(KFI_KIO_FONTS_PROTOCOL==src.protocol())
     {
-        CFontInfo::TFontList::Iterator disabledIt;
-        TFontMap::Iterator             enabledIt;
-        const CFontInfo::TFileList     *entries=getEntries(src, enabledIt, disabledIt);
+        CDisabledFonts::TFontList::Iterator disabledIt;
+        TFontMap::Iterator                  enabledIt;
+        const CDisabledFonts::TFileList     *entries=getEntries(src, enabledIt, disabledIt);
 
         if(entries)
             getFontFiles(*entries, files, removeSymLinks);
@@ -2852,14 +2854,14 @@ bool CKioFonts::getSourceFiles(const KUrl &src, CFontInfo::TFileList &files, boo
     else
         if(src.isLocalFile())
             if(FILE_UNKNOWN!=checkFile(src.path(), src))
-                files.append(CFontInfo::TFile(src.path()));
+                files.append(CDisabledFonts::TFile(src.path()));
             else
                 return false;  // error logged in checkFile...
 
     if(files.count())
     {
-        CFontInfo::TFileList::Iterator it,
-                              end=files.end();
+        CDisabledFonts::TFileList::Iterator it,
+                                            end=files.end();
 
         for(it=files.begin(); it!=end; ++it)
         {
@@ -2986,14 +2988,15 @@ bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, con
 //
 // Gather the number and names of the font faces located in "files". If there is more than 1 face
 // (such as there would be for a TTC font), then ask the user for confirmation of the action.
-bool CKioFonts::confirmMultiple(const KUrl &url, const CFontInfo::TFileList &files, EFolder folder, EOp op)
+bool CKioFonts::confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList &files, EFolder folder,
+                                EOp op)
 {
     if(KFI_KIO_FONTS_PROTOCOL!=url.protocol())
         return true;
 
-    CFontInfo::TFileList::ConstIterator it,
-                               end=files.end();
-    QStringList                fonts;
+    CDisabledFonts::TFileList::ConstIterator it,
+                                             end=files.end();
+    QStringList                              fonts;
 
     for(it=files.begin(); it!=files.end(); ++it)
     {
@@ -3060,7 +3063,8 @@ bool CKioFonts::confirmMultiple(const KUrl &url, const CFontInfo::TFileList &fil
     return true;
 }
 
-bool CKioFonts::confirmMultiple(const KUrl &url, const CFontInfo::TFileList *patterns, EFolder folder, EOp op)
+bool CKioFonts::confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList *patterns,
+                                EFolder folder, EOp op)
 {
     if(KFI_KIO_FONTS_PROTOCOL!=url.protocol())
         return true;

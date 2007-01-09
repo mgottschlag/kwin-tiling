@@ -32,7 +32,7 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
-#include "FontInfo.h"
+#include "FontGroups.h"
 
 class QDragEnterEvent;
 class QDragLeaveEvent;
@@ -42,6 +42,7 @@ namespace KFI
 {
 
 class CGroupList;
+class CFontItem;
 
 class CGroupListItem
 {
@@ -50,6 +51,8 @@ class CGroupListItem
     enum EType
     {
         ALL,
+        PERSONAL,
+        SYSTEM,
         UNCLASSIFIED,
         STANDARD
     };
@@ -60,28 +63,30 @@ class CGroupListItem
         CGroupList *parent;
     };
 
-    CGroupListItem(CFontInfo::TGroupList::Iterator &item);
+    CGroupListItem(CFontGroups::TGroupList::Iterator &item);
     CGroupListItem(EType type, CGroupList *p);
 
     const QString &                   name() const           { return STANDARD==itsType ? (*itsItem).name : itsName; }
-    CFontInfo::TGroupList::Iterator & item()                 { return itsItem; }
+    CFontGroups::TGroupList::Iterator & item()                 { return itsItem; }
     const EType                       type() const           { return itsType; }
     bool                              isStandard() const     { return STANDARD==itsType; }
     bool                              isAll() const          { return ALL==itsType; }
     bool                              isUnclassified() const { return UNCLASSIFIED==itsType; }
+    bool                              isPersonal() const     { return PERSONAL==itsType; }
+    bool                              isSystem() const       { return SYSTEM==itsType; }
     bool                              validated() const      { return isStandard() ? itsData.validated : true; }
     void                              setValidated()         { if(isStandard()) itsData.validated=true; }
     bool                              highlighted() const    { return itsHighlighted; }
     void                              setHighlighted(bool b) { itsHighlighted=b; }
-    bool                              hasFont(const CFontInfo::TFont &fnt) const;
+    bool                              hasFont(const CFontItem *fnt) const;
 
     private:
 
-    CFontInfo::TGroupList::Iterator itsItem;
-    QString                         itsName;
-    EType                           itsType;
-    Data                            itsData;
-    bool                            itsHighlighted;
+    CFontGroups::TGroupList::Iterator itsItem;
+    QString                           itsName;
+    EType                             itsType;
+    Data                              itsData;
+    bool                              itsHighlighted;
 };
 
 class CGroupList : public QAbstractItemModel
@@ -106,19 +111,23 @@ class CGroupList : public QAbstractItemModel
     void            setSysMode(bool sys);
     void            rescan();
     void            clear();
-    QModelIndex     allIndex();
+    QModelIndex     index(CGroupListItem::EType t);
     void            createGroup(const QString &name);
     void            renameGroup(const QModelIndex &idx, const QString &name);
     bool            removeGroup(const QModelIndex &idx);
     void            merge(const CFontGroups &grp);
-    void            removeFont(const Misc::TFont &font) { itsFontGroups->removeFont(font); }
-    void            removeFontFromGroup(CFontInfo::TGroupList::Iterator &grp, const KFI::CFontInfo::TFont &font)
-                        { itsFontGroups->removeFrom(grp, font); }
+    void            removeFamily(const QString &family) { itsFontGroups->removeFamily(family); }
+    void            removeFamilyFromGroup(CFontGroups::TGroupList::Iterator &grp,
+                                        const QString &family)
+                        { itsFontGroups->removeFrom(grp, family); }
+
+    CGroupListItem * group(CGroupListItem::EType t)
+                        { return itsSpecialGroups[t]; }
 
     public Q_SLOTS:
 
-    void            addToGroup(const QModelIndex &group, const QList<Misc::TFont> &fonts);
-    void            removeFromGroup(const QModelIndex &group, const QList<Misc::TFont> &fonts);
+    void            addToGroup(const QModelIndex &group, const QSet<QString> &families);
+    void            removeFromGroup(const QModelIndex &group, const QSet<QString> &families);
 
     Q_SIGNALS:
 
@@ -134,11 +143,9 @@ class CGroupList : public QAbstractItemModel
     private:
 
     QWidget                 *itsParent;
-    bool                    itsSysMode;
     CFontGroups             *itsFontGroups;
     QList<CGroupListItem *> itsGroups;
-    CGroupListItem          *itsAllGroup,
-                            *itsUnclassifiedGroup;
+    CGroupListItem          *itsSpecialGroups[4];
     Qt::SortOrder           itsSortOrder;
 
     friend class CGroupListItem;
@@ -166,8 +173,8 @@ class CGroupListView : public QTreeView
     void                  print();
     void                  enable();
     void                  disable();
-    void                  addFonts(const QModelIndex &group, const QList<Misc::TFont> &);
-    void                  removeFonts(const QModelIndex &group, const QList<Misc::TFont> &);
+    void                  addFamilies(const QModelIndex &group, const QSet<QString> &);
+    void                  removeFamilies(const QModelIndex &group, const QSet<QString> &);
     void                  itemSelected(const QModelIndex &);
     void                  exportGroup();
     void                  unclassifiedChanged();

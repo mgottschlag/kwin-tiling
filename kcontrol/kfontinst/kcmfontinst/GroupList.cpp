@@ -21,6 +21,7 @@
  */
 
 #include "GroupList.h"
+#include "FontList.h"
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
@@ -50,18 +51,7 @@
 namespace KFI
 {
 
-static QStringList createFontNames(const QList<Misc::TFont> &fonts)
-{
-    QStringList                       rv;
-    QList<Misc::TFont>::ConstIterator it(fonts.begin()),
-                                      end(fonts.end());
-
-    for(; it!=end; ++it)
-        rv.append(CFcEngine::createName((*it).family, (*it).styleInfo));
-    return rv;
-}
-
-CGroupListItem::CGroupListItem(CFontInfo::TGroupList::Iterator &item)
+CGroupListItem::CGroupListItem(CFontGroups::TGroupList::Iterator &item)
               : itsItem(item),
                 itsType(STANDARD),
                 itsHighlighted(false)
@@ -73,16 +63,33 @@ CGroupListItem::CGroupListItem(EType type, CGroupList *p)
               : itsType(type),
                 itsHighlighted(false)
 {
-    itsName=ALL==itsType ? i18n("All Fonts") : i18n("Unclassified");
+    switch(itsType)
+    {
+        case ALL:
+            itsName=i18n("All Fonts");
+            break;
+        case PERSONAL:
+            itsName=i18n("Personal Fonts");
+            break;
+        case SYSTEM:
+            itsName=i18n("System Fonts");
+            break;
+        default:
+            itsName=i18n("Unclassified");
+    }
     itsData.parent=p;
 }
 
-bool CGroupListItem::hasFont(const CFontInfo::TFont &fnt) const
+bool CGroupListItem::hasFont(const CFontItem *fnt) const
 {
     switch(itsType)
     {
         case STANDARD:
-            return (*itsItem).fonts.contains(fnt);
+            return (*itsItem).families.contains(fnt->family());
+        case PERSONAL:
+            return !fnt->isSystem();
+        case SYSTEM:
+            return fnt->isSystem();
         case ALL:
             return true;
         case UNCLASSIFIED:
@@ -91,7 +98,7 @@ bool CGroupListItem::hasFont(const CFontInfo::TFont &fnt) const
                                                    end(itsData.parent->itsGroups.end());
 
             for(; it!=end; ++it)
-                if((*it)->isStandard() && (*(*it)->item()).fonts.contains(fnt))
+                if((*it)->isStandard() && (*(*it)->item()).families.contains(fnt->family()))
                     return false;
             return true;
         }
@@ -102,14 +109,24 @@ bool CGroupListItem::hasFont(const CFontInfo::TFont &fnt) const
 CGroupList::CGroupList(QWidget *parent)
          : QAbstractItemModel(parent),
            itsParent(parent),
-           itsSysMode(false),
            itsFontGroups(NULL),
            itsSortOrder(Qt::AscendingOrder)
 {
-    itsAllGroup=new CGroupListItem(CGroupListItem::ALL, this);
-    itsGroups.append(itsAllGroup);
-    itsUnclassifiedGroup=new CGroupListItem(CGroupListItem::UNCLASSIFIED, this);
-    itsGroups.append(itsUnclassifiedGroup);
+    itsSpecialGroups[CGroupListItem::ALL]=new CGroupListItem(CGroupListItem::ALL, this);
+    itsGroups.append(itsSpecialGroups[CGroupListItem::ALL]);
+    if(Misc::root())
+        itsSpecialGroups[CGroupListItem::PERSONAL]=
+        itsSpecialGroups[CGroupListItem::SYSTEM]=NULL;
+    else
+    {
+        itsSpecialGroups[CGroupListItem::PERSONAL]=new CGroupListItem(CGroupListItem::PERSONAL, this);
+        itsGroups.append(itsSpecialGroups[CGroupListItem::PERSONAL]);
+        itsSpecialGroups[CGroupListItem::SYSTEM]=new CGroupListItem(CGroupListItem::SYSTEM, this);
+        itsGroups.append(itsSpecialGroups[CGroupListItem::SYSTEM]);
+    }
+    itsSpecialGroups[CGroupListItem::UNCLASSIFIED]=
+                new CGroupListItem(CGroupListItem::UNCLASSIFIED, this);
+    itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
 }
 
 CGroupList::~CGroupList()
@@ -165,7 +182,8 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
                 return grp->name();
             case Qt::DecorationRole:
                 if(grp->highlighted())
-                    return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection() ? "1rightarrow" : "1leftarrow");
+                    return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection()
+                               ? "1rightarrow" : "1leftarrow");
             default:
                 break;
         }
@@ -215,14 +233,6 @@ int CGroupList::rowCount(const QModelIndex &) const
     return itsGroups.count();
 }
 
-void CGroupList::setSysMode(bool sys)
-{
-    if(!Misc::root() && itsSysMode!=sys)
-        itsSysMode=sys;
-
-    rescan();
-}
-
 void CGroupList::rescan()
 {
     clear();
@@ -234,18 +244,28 @@ void CGroupList::clear()
     beginRemoveRows(QModelIndex(), 0, itsGroups.count());
     endRemoveRows();
     itsGroups.removeFirst(); // Remove all
+    if(itsSpecialGroups[CGroupListItem::SYSTEM])
+    {
+        itsGroups.removeFirst(); // Remove personal
+        itsGroups.removeFirst(); // Remove system
+    }
     itsGroups.removeFirst(); // Remove unclassif...
     qDeleteAll(itsGroups);
     itsGroups.clear();
-    itsGroups.append(itsAllGroup);
-    itsGroups.append(itsUnclassifiedGroup);
+    itsGroups.append(itsSpecialGroups[CGroupListItem::ALL]);
+    if(itsSpecialGroups[CGroupListItem::SYSTEM])
+    {
+        itsGroups.append(itsSpecialGroups[CGroupListItem::PERSONAL]);
+        itsGroups.append(itsSpecialGroups[CGroupListItem::SYSTEM]);
+    }
+    itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
     delete itsFontGroups;
     itsFontGroups=NULL;
 }
 
-QModelIndex CGroupList::allIndex()
+QModelIndex CGroupList::index(CGroupListItem::EType t)
 {
-    return createIndex(0, 0, itsAllGroup);
+    return createIndex(0, 0, itsSpecialGroups[t]);
 }
 
 void CGroupList::createGroup(const QString &name)
@@ -261,7 +281,7 @@ void CGroupList::createGroup(const QString &name)
             return;
         }
 
-    CFontInfo::TGroupList::Iterator git=itsFontGroups->create(name);
+    CFontGroups::TGroupList::Iterator git=itsFontGroups->create(name);
 
     if(git!=itsFontGroups->items().end())
     {
@@ -315,7 +335,7 @@ bool CGroupList::removeGroup(const QModelIndex &idx)
     return false;
 }
 
-void CGroupList::removeFromGroup(const QModelIndex &group, const QList<Misc::TFont> &fonts)
+void CGroupList::removeFromGroup(const QModelIndex &group, const QSet<QString> &families)
 {
     if(group.isValid())
     {
@@ -323,8 +343,8 @@ void CGroupList::removeFromGroup(const QModelIndex &group, const QList<Misc::TFo
 
         if(grp && grp->isStandard())
         {
-            QList<Misc::TFont>::ConstIterator it(fonts.begin()),
-                                              end(fonts.end());
+            QSet<QString>::ConstIterator it(families.begin()),
+                                         end(families.end());
 
             for(; it!=end; ++it)
                 itsFontGroups->removeFrom(grp->item(), *it);
@@ -333,7 +353,7 @@ void CGroupList::removeFromGroup(const QModelIndex &group, const QList<Misc::TFo
     }
 }
 
-void CGroupList::addToGroup(const QModelIndex &group, const QList<Misc::TFont> &fonts)
+void CGroupList::addToGroup(const QModelIndex &group, const QSet<QString> &families)
 {
     if(group.isValid())
     {
@@ -342,10 +362,8 @@ void CGroupList::addToGroup(const QModelIndex &group, const QList<Misc::TFont> &
 
         if(grp && grp->isStandard())
         {
-            QStringList                       names(createFontNames(fonts)),
-                                              compact(CFontList::compact(names));
-            QList<Misc::TFont>::ConstIterator it(fonts.begin()),
-                                              end(fonts.end());
+            QSet<QString>::ConstIterator it(families.begin()),
+                                         end(families.end());
 
             for(; it!=end; ++it)
                 itsFontGroups->addTo(grp->item(), *it);
@@ -375,20 +393,12 @@ static bool groupGreaterThan(const CGroupListItem *f1, const CGroupListItem *f2)
 void CGroupList::readGroupsFile()
 {
     if(!itsFontGroups)
-    {
-        //itsFontGroups=new CFontGroups(KStandardDirs::locateLocal("data",
-        //                              Misc::root() || itsSysMode ? KFI_NAME"/systemgroups.xml"
-        //                                                         : KFI_NAME"/personalgroups.xml"),
-        //                              true, false);
-        itsFontGroups=Misc::root() || !itsSysMode
-                        ? new CFontGroups
-                        : new CFontGroups(QString(), false, false, "systemgroups");
-    }
+        itsFontGroups=new CFontGroups;
     else
         itsFontGroups->refresh();
 
-    CFontInfo::TGroupList::Iterator it(itsFontGroups->items().begin()),
-                                    end(itsFontGroups->items().end());
+    CFontGroups::TGroupList::Iterator it(itsFontGroups->items().begin()),
+                                      end(itsFontGroups->items().end());
 
     for(; it!=end; ++it)
         itsGroups.append(new CGroupListItem(it));
@@ -557,21 +567,20 @@ void CGroupListView::dropEvent(QDropEvent *event)
     {
         event->acceptProposedAction();
 
-        QList<Misc::TFont> fonts;
-        QByteArray         encodedData(event->mimeData()->data(KFI_FONT_DRAG_MIME));
-        QDataStream        ds(&encodedData, QIODevice::ReadOnly);
-        QModelIndex        from(selectedIndexes().last()),
-                           to(indexAt(event->pos()));
+        QSet<QString> families;
+        QByteArray    encodedData(event->mimeData()->data(KFI_FONT_DRAG_MIME));
+        QDataStream   ds(&encodedData, QIODevice::ReadOnly);
+        QModelIndex   from(selectedIndexes().last()),
+                      to(indexAt(event->pos()));
 
-        ds >> fonts;
-
+        ds >> families;
         // Are we removing a font from the current group?
         if(to.isValid() && from.isValid() &&
            (static_cast<CGroupListItem *>(from.internalPointer()))->isStandard() &&
            !(static_cast<CGroupListItem *>(to.internalPointer()))->isStandard())
-            emit removeFonts(from, fonts);
+            emit removeFamilies(from, families);
         else
-            emit addFonts(to, fonts);
+            emit addFamilies(to, families);
 
         if(isUnclassified())
             emit unclassifiedChanged();

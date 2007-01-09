@@ -78,14 +78,12 @@ namespace KFI
 
 CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
             : KCModule(FontInstallFactory::instance(), parent),
-              itsModeControl(NULL),
               itsPreview(NULL),
               itsConfig(KFI_UI_CFG_FILE),
               itsJob(NULL),
               itsProgress(NULL),
               itsUpdateDialog(NULL),
               itsTempDir(NULL),
-              itsMode(0),
               itsPrintProc(NULL),
               itsExportFile(NULL)
 {
@@ -112,30 +110,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsStatusLabel = new QLabel(detailsWidget);
     itsStatusLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-    itsLayout=new QGridLayout(detailsWidget);
-    itsLayout->setMargin(0);
-    itsLayout->setSpacing(KDialog::spacingHint());
-
-    QStringList items;
-    itsModeControl=new QComboBox(detailsWidget);
-
-    if(Misc::root())
-        itsModeControl->setEnabled(false);
-    else
-    {
-        // TODO: Better text below!
-        itsModeControl->setWhatsThis(i18n("<h3>Operational Category</h3><p>Fonts can be installed in two categories:</p>"
-                                     "<ol><li><i>%1</i> The fonts will be accesible only to yourself.</li>"
-                                     "<li><i>%2</i> The fonts will be available to all users.</li></ol>"
-                                     "<p>Select the appropriate entry to control the category to which this installer "
-                                     "will function.</p>", i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS)));
-        items.append(i18n("Personal Fonts"));
-    }
-    items.append(i18n("System Fonts"));
-    itsModeControl->addItems(items);
-    itsModeControl->setCurrentItem(0);
-
-    itsLayout->addWidget(itsModeControl, 0, 0);
+    QGridLayout *detailsLayout=new QGridLayout(detailsWidget);
+    detailsLayout->setMargin(0);
+    detailsLayout->setSpacing(KDialog::spacingHint());
 
     QWidget    *widget=new QWidget(detailsWidget);
     QBoxLayout *widgetLayout=new QBoxLayout(QBoxLayout::LeftToRight, widget);
@@ -161,26 +138,37 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
                                   "<li>Create font groups. This allows you to group fonts "
                                   "arbitrarily, these can then be enabled/disabled together.</li>"
                                   "</ul></p>"));
+
+    if(Misc::root())
+        itsModeControl=NULL;
+    else
+        itsModeControl=new QComboBox(detailsWidget);
+
     widgetLayout->addWidget(itsMgtMode);
+    if(itsModeControl)
+        widgetLayout->addWidget(itsModeControl);
     widgetLayout->addWidget(lineed);
 
-    itsLayout->addWidget(widget, 0, 1);
+    detailsLayout->addWidget(widget, 0, 0, 1, 2);
 
     itsGroupWidget=new QWidget(detailsWidget);
     QBoxLayout *groupLayout=new QBoxLayout(QBoxLayout::LeftToRight, itsGroupWidget);
 
     groupLayout->setMargin(0);
     groupLayout->setSpacing(KDialog::spacingHint());
-    itsLayout->addWidget(itsGroupWidget, 2, 0);
+    detailsLayout->addWidget(itsGroupWidget, 2, 0);
 
     itsGroupList=new CGroupList(detailsWidget);
     itsGroupListView=new CGroupListView(detailsWidget, itsGroupList);
 
     itsGroupListView->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-    itsLayout->addWidget(itsGroupListView, 1, 0);
+    detailsLayout->addWidget(itsGroupListView, 1, 0);
 
-    KPushButton *createGroup=new KPushButton(KGuiItem(QString(), "filenew",
+    for(int i=0; i<3; ++i)
+        itsModeControl->addItem(itsGroupList->group((CGroupListItem::EType)i)->name());
+
+    KPushButton *createGroup=new KPushButton(KGuiItem(QString(), "add",
                                         i18n("Create a new group")),
                                         itsGroupWidget);
     createGroup->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -218,12 +206,14 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     previewWidgetLayout->setSpacing(KDialog::spacingHint());
 
     KPushButton *changeTextButton=new KPushButton(KGuiItem(QString(), "text",
-                                                  i18n("Change text used for previews")), previewWidget);
+                                                  i18n("Change text used for previews")),
+                                                  previewWidget);
     changeTextButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     itsPreviewType=new QComboBox(previewWidget);
     itsPreviewType->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 
-    items.clear();
+    QStringList items;
+
     items.append(i18n("Standard preview"));
     items.append(i18n("All characters"));
 
@@ -269,14 +259,14 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
 
     fontLayout->setMargin(0);
     fontLayout->setSpacing(KDialog::spacingHint());
-    itsLayout->addWidget(itsFontWidget, 2, 1);
+    detailsLayout->addWidget(itsFontWidget, 2, 1);
 
     itsFontList=new CFontList(itsFontWidget);
     itsFontListView=new CFontListView(detailsWidget, itsFontList);
     itsFontListView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFontListView->readConfig(itsConfig);
 
-    itsLayout->addWidget(itsFontListView, 1, 1);
+    detailsLayout->addWidget(itsFontListView, 1, 1);
 
     itsAddFontControl=new KPushButton(KGuiItem(i18n("Add..."), "newfont",
                                          i18n("Install fonts")),
@@ -313,10 +303,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     QBoxLayout *layout=new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     layout->addWidget(itsSplitter);
-    itsLayout->addWidget(itsStatusLabel, 3, 0, 1, 2);
+    detailsLayout->addWidget(itsStatusLabel, 3, 0, 1, 2);
     itsEnableGroupControl->resize(QSize(itsEnableGroupControl->width(), itsAddFontControl->height()));
-    if(!Misc::root())
-        connect(itsModeControl, SIGNAL(activated(int)), SLOT(setMode(int)));
     connect(itsPreviewType, SIGNAL(activated(int)), SLOT(displayType(int)));
     connect(lineed, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
     connect(itsGroupListView, SIGNAL(del()), SLOT(removeGroup()));
@@ -326,10 +314,10 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     connect(itsGroupListView, SIGNAL(exportGroup()), SLOT(exportGroup()));
     connect(itsGroupListView, SIGNAL(itemSelected(const QModelIndex &)),
            SLOT(groupSelected(const QModelIndex &)));
-    connect(itsGroupListView, SIGNAL(addFonts(const QModelIndex &, const QList<Misc::TFont> &)),
-            itsGroupList, SLOT(addToGroup(const QModelIndex &, const QList<Misc::TFont> &)));
-    connect(itsGroupListView, SIGNAL(removeFonts(const QModelIndex &, const QList<Misc::TFont> &)),
-            itsGroupList, SLOT(removeFromGroup(const QModelIndex &, const QList<Misc::TFont> &)));
+    connect(itsGroupListView, SIGNAL(addFamilies(const QModelIndex &,  const QSet<QString> &)),
+            itsGroupList, SLOT(addToGroup(const QModelIndex &,  const QSet<QString> &)));
+    connect(itsGroupListView, SIGNAL(removeFamilies(const QModelIndex &,  const QSet<QString> &)),
+            itsGroupList, SLOT(removeFromGroup(const QModelIndex &,  const QSet<QString> &)));
     connect(itsGroupListView, SIGNAL(unclassifiedChanged()), SLOT(setStatusBar()));
     connect(itsGroupList, SIGNAL(refresh()), SLOT(setStatusBar()));
     connect(itsFontList, SIGNAL(finished()), SLOT(listingCompleted()));
@@ -356,11 +344,12 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     connect(itsDisableFontControl, SIGNAL(clicked()), SLOT(disableFonts()));
     connect(itsMgtMode, SIGNAL(toggled(bool)), SLOT(toggleFontManagement(bool)));
     connect(changeTextButton, SIGNAL(clicked()), SLOT(changeText()));
+    connect(itsModeControl, SIGNAL(activated(int)), SLOT(selectGroup(int)));
     itsMgtMode->setChecked(itsConfig.readEntry(CFG_FONT_MGT_MODE, false));
-    itsGroupList->setSysMode(Misc::root()||itsMode);
-    itsFontList->setUrl(baseUrl());
+    toggleFontManagement(itsMgtMode->isChecked());
+    itsFontList->scan();
     reload();
-    selectAllGroup();
+    selectMainGroup();
 }
 
 CKCmFontInst::~CKCmFontInst()
@@ -372,24 +361,6 @@ CKCmFontInst::~CKCmFontInst()
     delete itsTempDir;
     delete itsPrintProc;
     delete itsExportFile;
-}
-
-void CKCmFontInst::setMode(int m)
-{
-    if(itsMode!=m)
-        if(working(false))
-        {
-            if(itsModeControl)
-                itsModeControl->setCurrentItem(itsMode);
-        }
-        else
-        {
-            itsMode=m;
-            itsFontList->setUrl(baseUrl());
-            itsGroupList->setSysMode(Misc::root()||itsMode);
-            reload();
-            selectAllGroup();
-        }
 }
 
 void CKCmFontInst::displayType(int)
@@ -538,7 +509,7 @@ void CKCmFontInst::addFonts()
 
                                                 ((KArchiveFile *)entry)->copyTo(itsTempDir->name());
 
-                                                if(group && KFI_FONT_INFO==entry->name())
+                                                if(group && KFI_GROUPS_FILE==entry->name())
                                                 {
                                                     CFontGroups grp(itsTempDir->name()+entry->name(),
                                                                     true);
@@ -601,17 +572,17 @@ void CKCmFontInst::groupSelected(const QModelIndex &index)
     // Check fonts listed within group are still valid!
     if(grp && grp->isStandard() && !grp->validated())
     {
-        CFontInfo::TFontList           remList;
-        CFontInfo::TFontList::Iterator it((*(grp->item())).fonts.begin()),
-                                       end((*(grp->item())).fonts.end());
+        QSet<QString>           remList;
+        QSet<QString>::Iterator it((*(grp->item())).families.begin()),
+                                end((*(grp->item())).families.end());
 
         for(; it!=end; ++it)
-            if(!itsFontList->hasFont(*it))
+            if(!itsFontList->hasFamily(*it))
                 remList.insert(*it);
         it=remList.begin();
         end=remList.end();
         for(; it!=end; ++it)
-            itsGroupList->removeFontFromGroup(grp->item(), *it);
+            itsGroupList->removeFamilyFromGroup(grp->item(), *it);
         grp->setValidated();
     }
 }
@@ -655,25 +626,18 @@ void CKCmFontInst::print(bool all)
                 {
                     if(tmpFile.open())
                     {
-                        CFontGroups                     grps(tmpFile.fileName(), true, false);
-                        CFontInfo::TGroupList::Iterator grp(grps.create(KFI_PRINT_GROUP));
+                        QTextStream str(&tmpFile);
 
                         for(; it!=end; ++it)
-                            grps.addTo(grp, (*it).family, (*it).styleInfo);
+                            str << (*it).family << endl
+                                << (*it).styleInfo << endl;
 
-                        if(grps.save())
-                        {
-                            *itsPrintProc << "-p"
-                                          << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
-                                          << QString().setNum(constSizes[dlg.chosenSize()<6 ? dlg.chosenSize() : 2])
-                                          << tmpFile.fileName()
-                                          << "y"; // y => implies kfontinst will remove our tmp xml file
-                        }
-                        else
-                        {
-                            KMessageBox::error(this, i18n("Failed to save list of fonts to print."));
-                            startProc=false;
-                        }
+                        *itsPrintProc << "-p"
+                                    << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
+                                    << QString().setNum(constSizes[dlg.chosenSize() < 6
+                                                           ? dlg.chosenSize() : 2])
+                                    << tmpFile.fileName()
+                                    << "y"; // y => implies kfontinst will remove our tmp file
                     }
                     else
                     {
@@ -713,17 +677,28 @@ void CKCmFontInst::print(bool all)
 
 void CKCmFontInst::deleteFonts()
 {
-    QStringList files;
-    KUrl::List  urls;
+    QStringList       files;
+    KUrl::List        urls;
+    QSet<Misc::TFont> fonts;
+    bool              hasSys(false),
+                      hasUser(false);
 
     itsDeletedFonts.clear();
-    itsFontListView->getFonts(urls, files, &itsDeletedFonts, true);
+    itsFontListView->getFonts(urls, files, &fonts, &hasSys, &hasUser, true);
 
     if(urls.isEmpty())
         KMessageBox::information(this, i18n("You did not select anything to delete."),
                                        i18n("Nothing to Delete"));
     else
-        deleteFonts(files, urls);
+    {
+        QSet<Misc::TFont>::ConstIterator it(fonts.begin()),
+                                         end(fonts.end());
+
+        for(; it!=end; ++it)
+            itsDeletedFonts.insert((*it).family);
+
+        deleteFonts(files, urls, hasSys, hasUser);
+    }
 }
 
 void CKCmFontInst::enableFonts()
@@ -750,7 +725,7 @@ void CKCmFontInst::addGroup()
 void CKCmFontInst::removeGroup()
 {
     if(itsGroupList->removeGroup(itsGroupListView->currentIndex()))
-        selectAllGroup();
+        selectMainGroup();
 }
 
 void CKCmFontInst::enableGroup()
@@ -778,16 +753,11 @@ void CKCmFontInst::exportGroup()
                 QStringList files;
                 KUrl::List  urls;
 
-                itsFontListView->getFonts(urls, files, NULL, false, true, true);
+                itsFontListView->getFonts(urls, files, NULL, NULL, NULL, false, true, true);
 
                 if(urls.count())
                 {
-                    QString name(grp->isStandard() ? grp->name()
-                                                   : Misc::root()
-                                                       ? i18n("%1 (Exported)", grp->name())
-                                                       : itsMode
-                                                            ? i18n("%1 (System, Exported)", grp->name())
-                                                            : i18n("%1 (Personal, Exported)", grp->name()));
+                    QString name(grp->name());
                     KUrl    dir=KDirSelectDialog::selectDirectory(KUrl(), true, this,
                                                                   i18n("Select Export Folder For \"%1\"", name));
 
@@ -812,35 +782,34 @@ void CKCmFontInst::exportGroup()
 
                                 if(itsExportFile && itsExportFile->open(IO_WriteOnly))
                                 {
-                                    CFontGroups group(itsTempDir->name()+KFI_FONT_INFO, true, false);
+                                    CFontGroups group(itsTempDir->name()+KFI_GROUPS_FILE, true);
 
                                     if(grp->isStandard())
                                         group.add(*(grp->item()));
                                     else
                                     {
-                                        CFontInfo::TGroupList::Iterator entry=group.create(name);
+                                        CFontGroups::TGroupList::Iterator entry=group.create(name);
 
                                         if(entry!=group.items().end())
                                         {
-                                            QModelIndexList                all(itsFontListView->allFonts());
-                                            QModelIndexList::ConstIterator it(all.begin()),
-                                                                           end(all.end());
+                                            QModelIndexList all(itsFontListView->allFonts());
+                                            QModelIndex     index;
 
-                                            for(; it!=end; ++it)
-                                                if((*it).isValid())
+                                            foreach(index, all)
+                                                if(index.isValid())
                                                 {
-                                                    CFontItem *f(static_cast<CFontItem *>((*it).internalPointer()));
+                                                    CFontItem *f(static_cast<CFontItem *>(index.internalPointer()));
 
-                                                    group.addTo(entry, CFontInfo::TFont(f->family(), f->styleInfo()));
+                                                    group.addTo(entry, f->family());
                                                 }
                                         }
                                     }
 
                                     if(group.save())
                                     {
-                                        itsExportFile->addLocalFile(itsTempDir->name()+KFI_FONT_INFO,
-                                                                    KFI_FONT_INFO);
-                                        ::unlink(QFile::encodeName(itsTempDir->name()+KFI_FONT_INFO));
+                                        itsExportFile->addLocalFile(itsTempDir->name()+KFI_GROUPS_FILE,
+                                                                    KFI_GROUPS_FILE);
+                                        ::unlink(QFile::encodeName(itsTempDir->name()+KFI_GROUPS_FILE));
                                         itsJob=KIO::copy(urls, itsTempDir->name(), true);
                                         connect(itsJob, SIGNAL(result(KJob *)),
                                                 SLOT(exportJobResult(KJob *)));
@@ -997,13 +966,23 @@ void CKCmFontInst::initialJobResult(KJob *job)
     if(ok)
     {
         //
-        // Installation, deletion, enabling, disabling, completed - so now reconfgigure...
+        // Installation, deletion, enabling, disabling, completed - so now reconfigure...
         QByteArray  packedArgs;
         QDataStream stream(&packedArgs, QIODevice::WriteOnly);
 
-        stream << KFI::SPECIAL_CONFIGURE << baseUrl();
+        stream << KFI::SPECIAL_CONFIGURE;
 
-        itsJob=KIO::special(baseUrl(), packedArgs, false);
+        if(!Misc::root())
+        {
+            KUrl::List::ConstIterator it(itsModifiedUrls.begin()),
+                                      end(itsModifiedUrls.end());
+
+            for(; it!=end; ++it)
+                stream << (*it);
+            itsModifiedUrls.clear();
+        }
+
+        itsJob=KIO::special(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), packedArgs, false);
         setMetaData(itsJob);
         connect(itsJob, SIGNAL(result(KJob *)), SLOT(jobResult(KJob *)));
         connect(itsJob, SIGNAL(infoMessage(KJob *, const QString &)),
@@ -1036,10 +1015,8 @@ void CKCmFontInst::jobResult(KJob *job)
     if(ok)
         KMessageBox::information(this,
                                  i18n("<p>Please note that any open applications will need to be "
-                                      "restarted in order for any changes to be noticed.</p>"
-                                      "<p>(You will also have to restart this application in order "
-                                      "to use its print function on any newly installed fonts.)</p>"),
-                                 i18n("Success"), "NewFontsAndOpenApps");
+                                      "restarted in order for any changes to be noticed.</p>"),
+                                 i18n("Success"), "FontChangesAndOpenApps");
 }
 
 void CKCmFontInst::infoMessage(KJob *, const QString &msg)
@@ -1057,12 +1034,12 @@ void CKCmFontInst::listingCompleted()
 {
     if(itsDeletedFonts.count())
     {
-        QSet<Misc::TFont>::Iterator it(itsDeletedFonts.begin()),
-                                    end(itsDeletedFonts.end());
+        QSet<QString>::Iterator it(itsDeletedFonts.begin()),
+                                end(itsDeletedFonts.end());
 
         for(; it!=end; ++it)
-            if(!itsFontList->hasFont(*it))
-                itsGroupList->removeFont(*it);
+            if(!itsFontList->hasFamily(*it))
+                itsGroupList->removeFamily(*it);
 
         itsDeletedFonts.clear();
     }
@@ -1101,7 +1078,8 @@ void CKCmFontInst::setStatusBar()
     itsEnableGroupControl->setEnabled(disabled||partial);
     itsDisableGroupControl->setEnabled(isStd && (enabled||partial));
 
-    itsGroupListView->controlMenu(itsDeleteGroupControl->isEnabled(), itsEnableGroupControl->isEnabled(),
+    itsGroupListView->controlMenu(itsDeleteGroupControl->isEnabled(),
+                                  itsEnableGroupControl->isEnabled(),
                                   itsDisableGroupControl->isEnabled(), enabled||partial,
                                   enabled||partial||disabled);
 
@@ -1112,8 +1090,53 @@ void CKCmFontInst::setStatusBar()
 
 void CKCmFontInst::addFonts(const QSet<KUrl> &src)
 {
-    if(!working() && src.count() && getPasswd())
+    if(!working() && src.count() && !itsGroupListView->isStandard())
     {
+        KUrl dest;
+
+        if(Misc::root())
+            dest=baseUrl(true);
+        else
+        {
+            switch(itsGroupListView->getType())
+            {
+                case CGroupListItem::ALL:
+                case CGroupListItem::UNCLASSIFIED:
+                    switch(KMessageBox::questionYesNoCancel(this,
+                           i18n("Do you wish to install the font(s) for personal use "
+                                "(only usable by you), or "
+                                "system-wide (usable by all users)?"),
+                           i18n("Where to Install"), KGuiItem(i18n(KFI_KIO_FONTS_USER)),
+                                KGuiItem(i18n(KFI_KIO_FONTS_SYS))))
+                    {
+                        case KMessageBox::Yes:
+                            dest=baseUrl(false);
+                            break;
+                        case KMessageBox::No:
+                            if(getPasswd(true))
+                                dest=baseUrl(true);
+                            else
+                                return;
+                            break;
+                        default:
+                        case KMessageBox::Cancel:
+                            return;
+                    }
+                    break;
+                case CGroupListItem::PERSONAL:
+                    dest=baseUrl(false);
+                    break;
+                case CGroupListItem::SYSTEM:
+                    if(getPasswd(true))
+                        dest=baseUrl(true);
+                    else
+                        return;
+                    break;
+                default:
+                    return;
+            }
+        }
+
         QSet<KUrl>                copy;
         QSet<KUrl>::ConstIterator it,
                                   end(src.end());
@@ -1169,7 +1192,9 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
             installUrls.append(*it);
 
         itsStatusLabel->setText(i18n("Installing font(s)..."));
-        itsJob=KIO::copy(installUrls, baseUrl(), true);
+        itsJob=KIO::copy(installUrls, dest, true);
+        itsModifiedUrls.clear();
+        itsModifiedUrls.append(dest);
         setMetaData(itsJob);
         connect(itsJob, SIGNAL(result(KJob *)), SLOT(initialJobResult(KJob *)));
         connect(itsJob, SIGNAL(infoMessage(KJob *, const QString &)),
@@ -1196,12 +1221,7 @@ void CKCmFontInst::toggleFontManagement(bool on)
                     items.append(i18n("Characters %1 to %2", i*256, (i*256)+255));
                 itsPreviewType->addItems(items);
             }
-            itsLayout->removeWidget(itsGroupListView);
-            itsLayout->removeWidget(itsFontListView);
-            itsLayout->addWidget(itsGroupListView, 1, 0);
-            itsLayout->addWidget(itsGroupWidget, 2, 0);
-            itsLayout->addWidget(itsFontListView, 1, 1);
-            itsLayout->addWidget(itsFontWidget, 2, 1);
+            itsModeControl->hide();
             itsGroupListView->show();
             itsGroupWidget->show();
             itsEnableFontControl->show();
@@ -1221,14 +1241,8 @@ void CKCmFontInst::toggleFontManagement(bool on)
                     itsPreviewType->removeItem(i);
             }
 
-            selectAllGroup();
-
-            itsLayout->removeWidget(itsGroupListView);
-            itsLayout->removeWidget(itsFontListView);
-            itsLayout->removeWidget(itsGroupWidget);
-            itsLayout->removeWidget(itsFontWidget);
-            itsLayout->addWidget(itsFontListView, 1, 0, 1, 2);
-            itsLayout->addWidget(itsFontWidget, 2, 0, 1, 2);
+            selectMainGroup();
+            itsModeControl->show();
             itsGroupListView->hide();
             itsGroupWidget->hide();
             itsEnableFontControl->hide();
@@ -1238,7 +1252,31 @@ void CKCmFontInst::toggleFontManagement(bool on)
     }
 }
 
-void CKCmFontInst::deleteFonts(QStringList &files, KUrl::List &urls)
+void CKCmFontInst::selectGroup(int grp)
+{
+    CGroupListItem::EType t((CGroupListItem::EType)grp);
+    QModelIndex           current(itsGroupListView->currentIndex());
+
+    if(current.isValid())
+    {
+        CGroupListItem *grpItem=static_cast<CGroupListItem *>(current.internalPointer());
+
+        if(grpItem && t==grpItem->type())
+            return;
+        else
+            itsGroupListView->selectionModel()->select(current,
+                                                       QItemSelectionModel::Deselect);
+    }
+
+    QModelIndex idx(itsGroupList->index(t));
+
+    itsGroupListView->selectionModel()->select(idx, QItemSelectionModel::Select);
+    itsGroupListView->setCurrentIndex(idx);
+    groupSelected(idx);
+    itsModeControl->setCurrentItem(grp);
+}
+
+void CKCmFontInst::deleteFonts(QStringList &files, KUrl::List &urls, bool hasSys, bool hasUser)
 {
     if(!working() && files.count() && urls.count())
     {
@@ -1262,9 +1300,17 @@ void CKCmFontInst::deleteFonts(QStringList &files, KUrl::List &urls)
                            files, i18n("Delete Fonts"), KStandardGuiItem::del());
         }
 
-        if(doIt && getPasswd())
+        if(doIt && getPasswd(hasSys))
         {
             itsStatusLabel->setText(i18n("Deleting font(s)..."));
+            if(!Misc::root())
+            {
+                itsModifiedUrls.clear();
+                if(hasSys)
+                    itsModifiedUrls.append(baseUrl(true));
+                if(hasUser)
+                    itsModifiedUrls.append(baseUrl(false));
+            }
             itsJob=KIO::del(urls, false, true);
             setMetaData(itsJob);
             connect(itsJob, SIGNAL(result(KJob *)), SLOT(initialJobResult(KJob *)));
@@ -1295,8 +1341,11 @@ void CKCmFontInst::toggleFonts(bool enable, const QString &grp)
     {
         QStringList files;
         KUrl::List  urls;
+        bool        hasSys(false),
+                    hasUser(false);
 
-        itsFontListView->getFonts(urls, files, NULL, grp.isEmpty(), !enable, enable);
+        itsFontListView->getFonts(urls, files, NULL, &hasSys, &hasUser, grp.isEmpty(),
+                                  !enable, enable);
 
         if(urls.isEmpty())
             KMessageBox::information(this,
@@ -1304,11 +1353,12 @@ void CKCmFontInst::toggleFonts(bool enable, const QString &grp)
                                             : i18n("You did not select anything to disable."),
                                      enable ? i18n("Nothing to Enable") : i18n("Nothing to Disable"));
         else
-            toggleFonts(files, urls, enable, grp);
+            toggleFonts(files, urls, enable, grp, hasSys, hasUser);
     }
 }
 
-void CKCmFontInst::toggleFonts(QStringList &files, KUrl::List &urls, bool enable, const QString &grp)
+void CKCmFontInst::toggleFonts(QStringList &files, KUrl::List &urls, bool enable, const QString &grp,
+                               bool hasSys, bool hasUser)
 {
     bool doIt=false;
 
@@ -1358,7 +1408,7 @@ void CKCmFontInst::toggleFonts(QStringList &files, KUrl::List &urls, bool enable
                               : KGuiItem(i18n("Disable"), "disablefont", i18n("Disable fonts")));
     }
 
-    if(doIt && getPasswd())
+    if(doIt && getPasswd(hasSys))
     {
         KUrl::List::Iterator    it;
         KUrl::List              copy(urls);
@@ -1378,6 +1428,15 @@ void CKCmFontInst::toggleFonts(QStringList &files, KUrl::List &urls, bool enable
             itsStatusLabel->setText(i18n("Enabling font(s)..."));
         else
             itsStatusLabel->setText(i18n("Disabling font(s)..."));
+
+        if(!Misc::root())
+        {
+            itsModifiedUrls.clear();
+            if(hasSys)
+                itsModifiedUrls.append(baseUrl(true));
+            if(hasUser)
+                itsModifiedUrls.append(baseUrl(false));
+        }
 
         itsJob=new CRenameJob(renameList, true);
         setMetaData(itsJob);
@@ -1402,39 +1461,24 @@ bool CKCmFontInst::working(bool displayMsg)
     return false;
 }
 
-KUrl CKCmFontInst::baseUrl()
+KUrl CKCmFontInst::baseUrl(bool sys)
 {
-    if(Misc::root())
-        return KUrl(KFI_KIO_FONTS_PROTOCOL":/");
-    else if(itsMode)
-        return KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS"/");
-    else
-        return KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_USER"/");
+    return Misc::root()
+        ? KUrl(KFI_KIO_FONTS_PROTOCOL":/")
+        : sys
+            ? KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS"/")
+            : KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_USER"/");
 }
 
-void CKCmFontInst::selectAllGroup()
+void CKCmFontInst::selectMainGroup()
 {
-    QModelIndex current(itsGroupListView->currentIndex());
-
-    if(current.isValid())
-    {
-        CGroupListItem *grp=static_cast<CGroupListItem *>(current.internalPointer());
-
-        if(grp && CGroupListItem::ALL==grp->type())
-            return;
-        else
-            itsGroupListView->selectionModel()->select(current,
-                                                       QItemSelectionModel::Deselect);
-    }
-
-    itsGroupListView->selectionModel()->select(itsGroupList->allIndex(),
-                                               QItemSelectionModel::Select);
-    itsGroupListView->setCurrentIndex(itsGroupList->allIndex());
+    selectGroup(Misc::root() || itsMgtMode->isOn()
+                    ? CGroupListItem::ALL : CGroupListItem::PERSONAL);
 }
 
-bool CKCmFontInst::getPasswd()
+bool CKCmFontInst::getPasswd(bool required)
 {
-    if(!Misc::root() && itsMode)
+    if(!Misc::root() && required)
     {
         // Prompt user for password, if dont already have...
         if(itsPasswd.isEmpty())
@@ -1479,7 +1523,7 @@ void CKCmFontInst::setMetaData(KIO::Job *job)
     job->addMetaData(KFI_KIO_TIMEOUT, "0");
     job->addMetaData(KFI_KIO_NO_CLEAR, "1");
 
-    if(!Misc::root() && itsMode && !itsPasswd.isEmpty())
+    if(!Misc::root() && !itsPasswd.isEmpty())
         job->addMetaData(KFI_KIO_PASS, itsPasswd);
 }
 

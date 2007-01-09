@@ -22,7 +22,6 @@
 
 #include "Installer.h"
 #include "Misc.h"
-#include "FontInfo.h"
 #include <QFile>
 #include <QList>
 #include <kzip.h>
