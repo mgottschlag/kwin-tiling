@@ -125,13 +125,6 @@ private:
     KlipperWidget* klipper;
 };
 
-extern bool qt_qclipboard_bailout_hack;
-#if KDE_IS_VERSION( 3, 9, 0 )
-#ifdef __GNUC__
-#warning Check status of #80072 with Qt4.
-#endif
-#endif
-
 static void ensureGlobalSyncOff(KConfig* config);
 
 // config == KGlobal::config for process, otherwise applet
@@ -143,8 +136,6 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     , m_pendingContentsCheck( false )
     , session_managed( new KlipperSessionManager( this ))
 {
-    qt_qclipboard_bailout_hack = true;
-
     QDBusConnection::sessionBus().registerObject("/klipper", this, QDBusConnection::ExportScriptableSlots);
 
     // We don't use the clipboardsynchronizer anymore, and it confuses Klipper
@@ -241,7 +232,6 @@ KlipperWidget::~KlipperWidget()
     delete myURLGrabber;
     if( m_config != KGlobal::config())
         delete m_config;
-    qt_qclipboard_bailout_hack = false;
 }
 
 void KlipperWidget::adjustSize()
