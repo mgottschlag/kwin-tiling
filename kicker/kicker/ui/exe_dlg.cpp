@@ -40,6 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kurlrequester.h>
 #include <kurl.h>
 #include <kicon.h>
+#include <kvbox.h>
 
 #include <kdebug.h>
 
