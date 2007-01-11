@@ -464,7 +464,9 @@ static bool init( const QString &,
                   QVariant (*getConf)( void *, const char *, const QVariant & ),
                   void *ctx )
 {
+#ifdef __GNUC__
 	#warning  in KDE3 echoMode was of type KPasswordEdit::EchoModes ,  now it is the type QLineEdit::EchoMode , a conversion need to be made
+#endif
 	echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
 	KGlobal::locale()->insertCatalog( "kgreet_classic" );
 	return true;
