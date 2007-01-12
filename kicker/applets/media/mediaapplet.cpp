@@ -306,7 +306,7 @@ void MediaApplet::slotDeleteItem(KFileItem *fileItem)
 			break;
 		}
 	}
-
+	slotCompleted();
 	arrangeButtons();
 }
 
