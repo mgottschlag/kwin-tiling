@@ -93,6 +93,7 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 	grid->setRowStretch( 3, 20 );
 
 	setMinimumSize( sizeHint() );
+	connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
 }
 
 // read settings from config file
