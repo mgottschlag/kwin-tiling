@@ -50,7 +50,6 @@ ShowDesktop::ShowDesktop()
     // KDE is running with another WM without the feature.
     NETRootInfo i( QX11Info::display(), NET::Supported );
     m_wmSupport = i.isSupported( NET::WM2ShowingDesktop );
-    m_wmSupport = false;
     if( m_wmSupport )
     {
         connect( Kicker::self()->kwinModule(), SIGNAL( showingDesktopChanged( bool )),
