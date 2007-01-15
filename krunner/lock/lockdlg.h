@@ -11,18 +11,18 @@
 
 #include <kgreeterplugin.h>
 
-#include <qdialog.h>
-#include <qstringlist.h>
+#include <QDialog>
+#include <QStringList>
 //Added by qt3to4:
 #include <QLabel>
 #include <QTimerEvent>
-#include <Q3Frame>
+#include <QFrame>
 #include <QGridLayout>
 #include <QEvent>
 
 struct GreeterPluginHandle;
 class LockProcess;
-class Q3Frame;
+class QFrame;
 class QGridLayout;
 class QLabel;
 class KPushButton;
@@ -49,12 +49,13 @@ public:
     virtual void gplugStart();
     virtual void gplugActivity();
     virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text );
+    virtual bool gplugHasNode( const QString &id );
 
 protected:
     virtual void timerEvent(QTimerEvent *);
     virtual bool eventFilter(QObject *, QEvent *);
 
-private slots:
+private Q_SLOTS:
     void slotSwitchUser();
     void slotSessionActivated();
     void slotStartNewSession();
@@ -79,7 +80,7 @@ private:
     void cantCheck();
     GreeterPluginHandle *mPlugin;
     KGreeterPlugin *greet;
-    Q3Frame      *frame;
+    QFrame      *frame;
     QGridLayout *frameLayout;
     QLabel      *mStatusLabel;
     KPushButton *mNewSessButton, *ok, *cancel;
@@ -89,7 +90,7 @@ private:
     int         mCapsLocked;
     bool        mUnlockingFailed;
     QStringList layoutsList;
-    QStringList::iterator currLayout;
+    int         currLayout;
     int         sPid, sFd;
     Q3ListView   *lv;
 };

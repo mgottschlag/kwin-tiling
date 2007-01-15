@@ -20,13 +20,15 @@
 
 #include "lockprocess.h"
 #include "main.h"
-#include "kdesktopsettings.h"
+#include "krunnersettings.h"
 
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
+#include <QtDBus/QtDBus>
+#include "krunner_interface.h"
 
 #include <QList>
 
@@ -63,15 +65,15 @@ static KCmdLineOptions options[] =
 
 int main( int argc, char **argv )
 {
-    KLocale::setMainCatalog("kdesktop");
+    KLocale::setMainCatalog("krunner");
 
-    KCmdLineArgs::init( argc, argv, "kdesktop_lock", I18N_NOOP("KDesktop Locker"), I18N_NOOP("Session Locker for KDesktop"), "2.0" );
+    KCmdLineArgs::init( argc, argv, "krunner_lock", I18N_NOOP("KRunner Locker"), I18N_NOOP("Session Locker for KRunner"), "2.0" );
     KCmdLineArgs::addCmdLineOptions( options );
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     putenv(strdup("SESSION_MANAGER="));
 
-    KApplication::disableAutoDcopRegistration(); // not needed
+    //KApplication::disableAutoDcopRegistration();
 
     int kdesktop_screen_number = 0;
     int starting_screen = 0;
@@ -95,7 +97,7 @@ int main( int argc, char **argv )
         int pos;
         QByteArray display_name = XDisplayString(dpy);
         XCloseDisplay(dpy);
-        kdDebug() << "screen " << number_of_screens << " " << kdesktop_screen_number << " " << display_name << " " << starting_screen << endl;
+        kDebug() << "screen " << number_of_screens << " " << kdesktop_screen_number << " " << display_name << " " << starting_screen << endl;
         dpy = 0;
 
         if ((pos = display_name.lastIndexOf('.')) != -1)
@@ -125,7 +127,7 @@ int main( int argc, char **argv )
 
             env.sprintf("DISPLAY=%s.%d", display_name.data(),
                         kdesktop_screen_number);
-            kdDebug() << "env " << env << endl;
+            kDebug() << "env " << env << endl;
 
             if (putenv(strdup(env.toLatin1().data()))) {
                 fprintf(stderr,
@@ -137,12 +139,12 @@ int main( int argc, char **argv )
     }
 
     MyApp app;
-    kdDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
+    kDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
     app.disableSessionManagement();
     KGlobal::locale()->insertCatalog("libdmctl");
 
     // we need to read from the right rc file - possibly taking screen number in account
-    KDesktopSettings::instance("kdesktoprc");
+    KRunnerSettings::instance("krunnerrc");
 
     LockProcess process(child, args->isSet( "blank" ));
     if (!child)
@@ -151,14 +153,24 @@ int main( int argc, char **argv )
         process.setParent(parent_connection);
 
     bool rt;
+    bool sig = false;
     if( !child && args->isSet( "forcelock" ))
+    {
         rt = process.lock();
+        sig = true;
+    }
     else if( child || args->isSet( "dontlock" ))
         rt = process.dontLock();
     else
         rt = process.defaultSave();
     if (!rt)
         return 1;
+
+    if( sig )
+    {
+        org::kde::ScreenSaver runner("org.kde.krunner", "/ScreenSaver", QDBusConnection::sessionBus());
+        runner.saverLockReady();
+    }
 
     return app.exec();
 }

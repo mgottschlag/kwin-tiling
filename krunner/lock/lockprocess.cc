@@ -6,21 +6,20 @@
 // Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
 //
 
-//kdesktop keeps running and checks user inactivity
+//krunner keeps running and checks user inactivity
 //when it should show screensaver (and maybe lock the session),
-//it starts kdesktop_lock, who does all the locking and who
+//it starts krunner_lock, who does all the locking and who
 //actually starts the screensaver
 
-//It's done this way to prevent screen unlocking when kdesktop
-//crashes (e.g. because it's set to multiple wallpapers and
-//some image will be corrupted).
+//It's done this way to prevent screen unlocking when krunner
+//crashes
 
 #include <config.h>
-
+#include <config-krunner-lock.h>
 #include "lockprocess.h"
 #include "lockdlg.h"
 #include "autologout.h"
-#include "kdesktopsettings.h"
+#include "krunnersettings.h"
 
 #include <dmctl.h>
 
@@ -33,23 +32,21 @@
 #include <klocale.h>
 #include <klibloader.h>
 #include <kpushbutton.h>
-#include <kstdguiitem.h>
-#include <kpixmapeffect.h>
-#include <kpixmap.h>
+#include <KStandardGuiItem>
 #include <kauthorized.h>
 
 #include <qframe.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qcursor.h>
-#include <qtimer.h>
-#include <qfile.h>
-#include <qsocketnotifier.h>
+#include <QLabel>
+#include <QLayout>
+#include <QCursor>
+#include <QTimer>
+#include <QFile>
+#include <QSocketNotifier>
 #include <QDesktopWidget>
 #include <QX11Info>
 #include <QTextStream>
 
-#include <qdatetime.h>
+#include <QDateTime>
 
 #include <stdlib.h>
 #include <assert.h>
@@ -63,7 +60,6 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
-#include <X11/Intrinsic.h>
 
 #ifdef HAVE_DPMS
 extern "C" {
@@ -101,7 +97,7 @@ static Atom   gXA_SCREENSAVER_VERSION;
 // starting screensaver hacks, and password entry.f
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
-    : QWidget(0L, "saver window", Qt::WX11BypassWM),
+    : QWidget(0L, Qt::WX11BypassWM),
       mOpenGLVisual(0),
       child_saver(child),
       mParent(0),
@@ -112,6 +108,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mForbidden(false),
       mAutoLogout(false)
 {
+    setObjectName("save window");
     setupSignals();
 
     kapp->installX11EventFilter(this);
@@ -137,7 +134,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     if (servGroup)
     {
       relPath=servGroup->relPath();
-      kdDebug(1204) << "relPath=" << relPath << endl;
+      kDebug(1204) << "relPath=" << relPath << endl;
     }
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
@@ -150,11 +147,11 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     connect(&mHackProc, SIGNAL(processExited(KProcess *)),
                         SLOT(hackExited(KProcess *)));
 
+    mSuspendTimer.setSingleShot(true);
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
 
     QStringList dmopt =
-        QStringList::split(QChar(','),
-                            QLatin1String( ::getenv( "XDM_MANAGED" )));
+        QString::fromLatin1( ::getenv( "XDM_MANAGED" )).split(QChar(','), QString::SkipEmptyParts);
     for (QStringList::ConstIterator it = dmopt.begin(); it != dmopt.end(); ++it)
         if ((*it).startsWith("method="))
             mMethod = (*it).mid(7);
@@ -190,12 +187,18 @@ LockProcess::~LockProcess()
     }
 }
 
-static int sigterm_pipe[2];
+static int signal_pipe[2];
 
 static void sigterm_handler(int)
 {
-    char tmp;
-    ::write( sigterm_pipe[1], &tmp, 1);
+    char tmp = 'T';
+    ::write( signal_pipe[1], &tmp, 1);
+}
+
+static void sighup_handler(int)
+{
+    char tmp = 'H';
+    ::write( signal_pipe[1], &tmp, 1);
 }
 
 void LockProcess::timerEvent(QTimerEvent *ev)
@@ -210,13 +213,7 @@ void LockProcess::timerEvent(QTimerEvent *ev)
 
 void LockProcess::setupSignals()
 {
-    // ignore SIGHUP
     struct sigaction act;
-    act.sa_handler=SIG_IGN;
-    sigemptyset(&(act.sa_mask));
-    sigaddset(&(act.sa_mask), SIGHUP);
-    act.sa_flags = 0;
-    sigaction(SIGHUP, &act, 0L);
     // ignore SIGINT
     act.sa_handler=SIG_IGN;
     sigemptyset(&(act.sa_mask));
@@ -235,17 +232,29 @@ void LockProcess::setupSignals()
     sigaddset(&(act.sa_mask), SIGTERM);
     act.sa_flags = 0;
     sigaction(SIGTERM, &act, 0L);
+    // SIGHUP forces lock
+    act.sa_handler= sighup_handler;
+    sigemptyset(&(act.sa_mask));
+    sigaddset(&(act.sa_mask), SIGHUP);
+    act.sa_flags = 0;
+    sigaction(SIGHUP, &act, 0L);
 
-    pipe(sigterm_pipe);
-    QSocketNotifier* notif = new QSocketNotifier(sigterm_pipe[0],
-	QSocketNotifier::Read, this );
-    connect( notif, SIGNAL(activated(int)), SLOT(sigtermPipeSignal()));
+    pipe(signal_pipe);
+    QSocketNotifier* notif = new QSocketNotifier(signal_pipe[0], QSocketNotifier::Read, this);
+    connect( notif, SIGNAL(activated(int)), SLOT(signalPipeSignal()));
 }
 
 
-void LockProcess::sigtermPipeSignal()
+void LockProcess::signalPipeSignal()
 {
-    quitSaver();
+    char tmp;
+    ::read( signal_pipe[0], &tmp, 1);
+    if( tmp == 'T' )
+        quitSaver();
+    else if( tmp == 'H' ) {
+        if( !mLocked )
+            startLock();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -306,10 +315,10 @@ void LockProcess::quitSaver()
 //
 void LockProcess::configure()
 {
-    // the configuration is stored in kdesktop's config file
-    if( KDesktopSettings::lock() )
+    // the configuration is stored in krunner's config file
+    if( KRunnerSettings::lock() )
     {
-        mLockGrace = KDesktopSettings::lockGrace();
+        mLockGrace = KRunnerSettings::lockGrace();
         if (mLockGrace < 0)
             mLockGrace = 0;
         else if (mLockGrace > 300000)
@@ -318,33 +327,33 @@ void LockProcess::configure()
     else
         mLockGrace = -1;
 
-    if ( KDesktopSettings::autoLogout() )
+    if ( KRunnerSettings::autoLogout() )
     {
         mAutoLogout = true;
-        mAutoLogoutTimeout = KDesktopSettings::autoLogoutTimeout();
+        mAutoLogoutTimeout = KRunnerSettings::autoLogoutTimeout();
         mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000); // in milliseconds
     }
 
 #ifdef HAVE_DPMS
     //if the user  decided that the screensaver should run independent from
     //dpms, we shouldn't check for it, aleXXX
-    mDPMSDepend = KDesktopSettings::dpmsDependent();
+    mDPMSDepend = KRunnerSettings::dpmsDependent();
 #endif
 
-    mPriority = KDesktopSettings::priority();
+    mPriority = KRunnerSettings::priority();
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
 
-    mSaver = KDesktopSettings::saver();
+    mSaver = KRunnerSettings::saver();
     if (mSaver.isEmpty() || mUseBlankOnly)
         mSaver = "KBlankscreen.desktop";
 
     readSaver();
 
-    mPlugins = KDesktopSettings::pluginsUnlock();
+    mPlugins = KRunnerSettings::pluginsUnlock();
     if (mPlugins.isEmpty())
         mPlugins = QStringList("classic");
-    mPluginOptions = KDesktopSettings::pluginOptions();
+    mPluginOptions = KRunnerSettings::pluginOptions();
 }
 
 //---------------------------------------------------------------------------
@@ -355,7 +364,7 @@ void LockProcess::readSaver()
 {
     if (!mSaver.isEmpty())
     {
-        QString file = locate("scrsav", mSaver);
+        QString file = KStandardDirs::locate("scrsav", mSaver);
 
 	bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
 	bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");
@@ -368,12 +377,12 @@ void LockProcess::readSaver()
 		{
 			if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
 			{
-				kdDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden" << endl;
+				kDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden" << endl;
 				mForbidden = true;
 			}
 			if ((saverTypes[i] == "OpenGL") && !opengl)
 			{
-				kdDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden" << endl;
+				kDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden" << endl;
 				mForbidden = true;
 			}
 			if (saverTypes[i] == "OpenGL")
@@ -383,7 +392,7 @@ void LockProcess::readSaver()
 		}
 	}
 
-	kdDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false") << endl;
+	kDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false") << endl;
 
         if (config.hasActionGroup("Root"))
         {
@@ -405,17 +414,43 @@ void LockProcess::createSaverWindow()
 #ifdef HAVE_GLXCHOOSEVISUAL
     if( mOpenGLVisual )
     {
-        int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, x11Depth(), None };
-        if( XVisualInfo* i = glXChooseVisual( x11Display(), x11Screen(), attribs ))
+        static int attribs[][ 15 ] =
         {
-            visual = i->visual;
-            static Colormap colormap = 0;
-            if( colormap != 0 )
-                XFreeColormap( x11Display(), colormap );
-            colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
-            attrs.colormap = colormap;
-            flags |= CWColormap;
-            XFree( i );
+        #define R GLX_RED_SIZE
+        #define G GLX_GREEN_SIZE
+        #define B GLX_BLUE_SIZE
+            { GLX_RGBA, R, 8, G, 8, B, 8, GLX_DEPTH_SIZE, 8, GLX_DOUBLEBUFFER, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, R, 4, G, 4, B, 4, GLX_DEPTH_SIZE, 4, GLX_DOUBLEBUFFER, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, R, 8, G, 8, B, 8, GLX_DEPTH_SIZE, 8, GLX_DOUBLEBUFFER, None },
+            { GLX_RGBA, R, 4, G, 4, B, 4, GLX_DEPTH_SIZE, 4, GLX_DOUBLEBUFFER, None },
+            { GLX_RGBA, R, 8, G, 8, B, 8, GLX_DEPTH_SIZE, 8, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, R, 4, G, 4, B, 4, GLX_DEPTH_SIZE, 4, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, R, 8, G, 8, B, 8, GLX_DEPTH_SIZE, 8, None },
+            { GLX_RGBA, R, 4, G, 4, B, 4, GLX_DEPTH_SIZE, 4, None },
+            { GLX_RGBA, GLX_DEPTH_SIZE, 8, GLX_DOUBLEBUFFER, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, GLX_DEPTH_SIZE, 8, GLX_DOUBLEBUFFER, None },
+            { GLX_RGBA, GLX_DEPTH_SIZE, 8, GLX_STENCIL_SIZE, 1, None },
+            { GLX_RGBA, GLX_DEPTH_SIZE, 8, None }
+        #undef R
+        #undef G
+        #undef B
+        };
+        for( unsigned int i = 0;
+             i < sizeof( attribs ) / sizeof( attribs[ 0 ] );
+             ++i )
+        {
+            if( XVisualInfo* info = glXChooseVisual( x11Display(), x11Screen(), attribs[ i ] ))
+            {
+                visual = info->visual;
+                static Colormap colormap = 0;
+                if( colormap != 0 )
+                    XFreeColormap( x11Display(), colormap );
+                colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
+                attrs.colormap = colormap;
+                flags |= CWColormap;
+                XFree( info );
+                break;
+            }
         }
     }
 #endif
@@ -439,13 +474,13 @@ void LockProcess::createSaverWindow()
 
     // set NoBackground so that the saver can capture the current
     // screen state if necessary
-    setBackgroundMode(Qt::NoBackground);
+    setAttribute(Qt::WA_NoSystemBackground, true);
 
     setCursor( Qt::BlankCursor );
     setGeometry(0, 0, mRootWidth, mRootHeight);
     hide();
 
-    kdDebug(1204) << "Saver window Id: " << winId() << endl;
+    kDebug(1204) << "Saver window Id: " << winId() << endl;
 }
 
 //---------------------------------------------------------------------------
@@ -498,14 +533,16 @@ void LockProcess::saveVRoot()
       Atom actual_type;
       int actual_format;
       unsigned long nitems, bytesafter;
-      Window *newRoot = (Window *)0;
+      unsigned char *newRoot = 0;
 
       if ((XGetWindowProperty(QX11Info::display(), children[i], gXA_VROOT, 0, 1,
           False, XA_WINDOW, &actual_type, &actual_format, &nitems, &bytesafter,
-          (unsigned char **) &newRoot) == Success) && newRoot)
+          &newRoot) == Success) && newRoot)
       {
         gVRoot = children[i];
-        gVRootData = *newRoot;
+        Window *dummy = (Window*)newRoot;
+        gVRootData = *dummy;
+        XFree ((char*) newRoot);
         break;
       }
     }
@@ -637,7 +674,7 @@ bool LockProcess::startSaver()
 {
     if (!child_saver && !grabInput())
     {
-        kdWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" << endl;
+        kWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" << endl;
         return false;
     }
     mBusy = false;
@@ -645,7 +682,7 @@ bool LockProcess::startSaver()
     saveVRoot();
 
     if (mParent) {
-        QSocketNotifier *notifier = new QSocketNotifier(mParent, QSocketNotifier::Read, this, "notifier");
+        QSocketNotifier *notifier = new QSocketNotifier(mParent, QSocketNotifier::Read, this);
         connect(notifier, SIGNAL( activated (int)), SLOT( quitSaver()));
     }
     createSaverWindow();
@@ -666,8 +703,8 @@ bool LockProcess::startSaver()
 //
 void LockProcess::stopSaver()
 {
-    kdDebug(1204) << "LockProcess: stopping saver" << endl;
-    resume();
+    kDebug(1204) << "LockProcess: stopping saver" << endl;
+    resume( true );
     stopHack();
     hideSaverWindow();
     mVisibility = false;
@@ -712,32 +749,32 @@ bool LockProcess::startLock()
     for (QStringList::ConstIterator it = mPlugins.begin(); it != mPlugins.end(); ++it) {
         GreeterPluginHandle plugin;
         QString path = KLibLoader::self()->findLibrary(
-                    ((*it)[0] == '/' ? *it : "kgreet_" + *it ).latin1() );
+                    ((*it)[0] == '/' ? *it : "kgreet_" + *it ).toLatin1() );
         if (path.isEmpty()) {
-            kdWarning(1204) << "GreeterPlugin " << *it << " does not exist" << endl;
+            kWarning(1204) << "GreeterPlugin " << *it << " does not exist" << endl;
             continue;
         }
-        if (!(plugin.library = KLibLoader::self()->library( path.latin1() ))) {
-            kdWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" << endl;
+        if (!(plugin.library = KLibLoader::self()->library( path.toLatin1() ))) {
+            kWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" << endl;
             continue;
         }
         if (!plugin.library->hasSymbol( "kgreeterplugin_info" )) {
-            kdWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") is no valid greet widget plugin" << endl;
+            kWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") is no valid greet widget plugin" << endl;
             plugin.library->unload();
             continue;
         }
         plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
         if (plugin.info->method && !mMethod.isEmpty() && mMethod != plugin.info->method) {
-            kdDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") serves " << plugin.info->method << ", not " << mMethod << endl;
+            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") serves " << plugin.info->method << ", not " << mMethod << endl;
             plugin.library->unload();
             continue;
         }
         if (!plugin.info->init( mMethod, getConf, this )) {
-            kdDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve " << mMethod << endl;
+            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve " << mMethod << endl;
             plugin.library->unload();
             continue;
         }
-        kdDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded" << endl;
+        kDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded" << endl;
         greetPlugin = plugin;
 	mLocked = true;
 	DM().setLock( true );
@@ -765,7 +802,7 @@ bool LockProcess::startHack()
 
     mHackProc.clearArguments();
 
-    QTextStream ts(&mSaverExec, IO_ReadOnly);
+    QTextStream ts(&mSaverExec, QIODevice::ReadOnly);
     QString word;
     ts >> word;
     QString path = KStandardDirs::findExe(word);
@@ -774,7 +811,7 @@ bool LockProcess::startHack()
     {
         mHackProc << path;
 
-        kdDebug(1204) << "Starting hack: " << path << endl;
+        kDebug(1204) << "Starting hack: " << path << endl;
 
         while (!ts.atEnd())
         {
@@ -786,24 +823,26 @@ bool LockProcess::startHack()
             mHackProc << word;
         }
 
-	if (!mForbidden)
-	{
+	    if (!mForbidden)
+	    {
 
-		if (mHackProc.start() == true)
-		{
+		    if (mHackProc.start() == true)
+		    {
 #ifdef HAVE_SETPRIORITY
-			setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
+			    setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
  		        //bitBlt(this, 0, 0, &mOriginal);
-	                return true;
-		}
-	}
-	else
-	// we aren't allowed to start the specified screensaver either because it didn't run for some reason
-	// according to the kiosk restrictions forbid it
-	{
-		setBackgroundColor(Qt::black);
-	}
+	            return true;
+		    }
+	    }
+	    else
+	    // we aren't allowed to start the specified screensaver either because it didn't run for some reason
+	    // according to the kiosk restrictions forbid it
+	    {
+            QPalette palette;
+            palette.setColor(backgroundRole(), Qt::black);
+            setPalette(palette);
+	    }
     }
     return false;
 }
@@ -824,7 +863,9 @@ void LockProcess::hackExited(KProcess *)
 {
 	// Hack exited while we're supposed to be saving the screen.
 	// Make sure the saver window is black.
-        setBackgroundColor(Qt::black);
+    QPalette palette;
+    palette.setColor(backgroundRole(), Qt::black);
+    setPalette(palette);
 }
 
 void LockProcess::suspend()
@@ -838,12 +879,10 @@ void LockProcess::suspend()
     mSuspended = true;
 }
 
-void LockProcess::resume()
+void LockProcess::resume( bool force )
 {
-    if (!mDialogs.isEmpty())
-        return; // no resuming with dialog visible
-    if(!mVisibility)
-        return; // no need to resume, not visible
+    if( !force && (!mDialogs.isEmpty() || !mVisibility ))
+        return; // no resuming with dialog visible or when not visible
     if(mSuspended)
     {
         bitBlt( this, 0, 0, &mSavedScreen );
@@ -869,7 +908,7 @@ bool LockProcess::checkPass()
     XGetWindowAttributes(QX11Info::display(), QX11Info::appRootWindow(), &rootAttr);
     if(( rootAttr.your_event_mask & SubstructureNotifyMask ) == 0 )
     {
-        kdWarning() << "ERROR: Something removed SubstructureNotifyMask from the root window!!!" << endl;
+        kWarning() << "ERROR: Something removed SubstructureNotifyMask from the root window!!!" << endl;
         XSelectInput( QX11Info::display(), QX11Info::appRootWindow(),
             SubstructureNotifyMask | rootAttr.your_event_mask );
     }
@@ -916,7 +955,7 @@ int LockProcess::execDialog( QDialog *dlg )
     if( mDialogs.isEmpty() ) {
         XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
                 QCursor(Qt::BlankCursor).handle(), CurrentTime);
-        resume();
+        resume( false );
     } else
         fakeFocusIn( mDialogs.first()->winId());
     return rt;
@@ -932,7 +971,7 @@ void LockProcess::preparePopup()
 void LockProcess::cleanupPopup()
 {
     QWidget *dlg = (QWidget *)sender();
-    
+
     int pos = mDialogs.indexOf( dlg );
     mDialogs.remove( pos );
     fakeFocusIn( mDialogs.first()->winId() );
@@ -971,11 +1010,11 @@ bool LockProcess::x11Event(XEvent *event)
                // e.g. when switched to text console
                 mVisibility = !(event->xvisibility.state == VisibilityFullyObscured);
                 if(!mVisibility)
-                    mSuspendTimer.start(2000, true);
-                else
+                    mSuspendTimer.start(2000);
+		else
                 {
                     mSuspendTimer.stop();
-                    resume();
+                    resume( false );
                 }
                 if (event->xvisibility.state != VisibilityUnobscured)
                     stayOnTop();
@@ -1053,7 +1092,7 @@ void LockProcess::checkDPMSActive()
 #if defined(HAVE_XF86MISC) && defined(HAVE_XF86MISCSETGRABKEYSSTATE)
 // see http://cvsweb.xfree86.org/cvsweb/xc/programs/Xserver/hw/xfree86/common/xf86Events.c#rev3.113
 // This allows enabling the "Allow{Deactivate/Closedown}Grabs" options in XF86Config,
-// and kdesktop_lock will still lock the session.
+// and krunner_lock will still lock the session.
 static enum { Unknown, Yes, No } can_do_xf86_lock = Unknown;
 void LockProcess::lockXF86()
 {
@@ -1097,24 +1136,26 @@ void LockProcess::unlockXF86()
 
 void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
 {
-    QDialog box( 0, "messagebox", true, Qt::WX11BypassWM );
+    QDialog box( 0, Qt::WX11BypassWM );
+    box.setModal( true );
     QFrame *winFrame = new QFrame( &box );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
     QLabel *label1 = new QLabel( winFrame );
     label1->setPixmap( QMessageBox::standardIcon( type ) );
     QLabel *label2 = new QLabel( txt, winFrame );
-    KPushButton *button = new KPushButton( KStdGuiItem::ok(), winFrame );
+    KPushButton *button = new KPushButton( KStandardGuiItem::ok(), winFrame );
     button->setDefault( true );
     button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
     connect( button, SIGNAL( clicked() ), &box, SLOT( accept() ) );
 
     QVBoxLayout *vbox = new QVBoxLayout( &box );
     vbox->addWidget( winFrame );
-    QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
+    QGridLayout *grid = new QGridLayout( winFrame );
+    grid->setSpacing( 10 );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
-    grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );
+    grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );
 
     execDialog( &box );
 }

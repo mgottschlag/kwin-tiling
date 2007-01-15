@@ -24,6 +24,9 @@
 
 #include "interface.h"
 #include "restartingapplication.h"
+#include "saverengine.h"
+#include "krunnersettings.h"
+
 
 #include <X11/extensions/Xrender.h>
 
@@ -90,8 +93,16 @@ int main(int argc, char* argv[])
     aboutData.addAuthor("Aaron J. Seigo",
                         I18N_NOOP("Author and maintainer"),
                         "aseigo@kde.org");
+
     KCmdLineArgs::init(argc, argv, &aboutData);
     RestartingApplication app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
+
+    kDebug() << "Attempting to create KRunnerSettings::instance()";
+    KRunnerSettings::instance("krunnerrc");
+    kDebug() << "Created KRunnerSettings::instance()";
+
+    // LOCKING
+    SaverEngine saver;
 
     Interface interface;
     interface.display();

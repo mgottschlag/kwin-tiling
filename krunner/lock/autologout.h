@@ -9,9 +9,9 @@
 #ifndef __TIMEOUT_H__
 #define __TIMEOUT_H__
 
-#include <qstringlist.h>
+#include <QStringList>
 
-#include <qlayout.h>
+#include <QLayout>
 
 class LockProcess;
 class QFrame;
@@ -32,7 +32,7 @@ public:
 protected:
     virtual void timerEvent(QTimerEvent *);
 
-private slots:
+private Q_SLOTS:
     void slotActivity();
 
 private:

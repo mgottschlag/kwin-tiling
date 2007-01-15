@@ -12,14 +12,13 @@
 #include <kgreeterplugin.h>
 
 #include <kprocess.h>
-#include <kpixmap.h>
 
-#include <qwidget.h>
-#include <qtimer.h>
+#include <QWidget>
+#include <QTimer>
 #include <QStack>
 #include <QList>
-#include <qmessagebox.h>
-#include <qpixmap.h>
+#include <QMessageBox>
+#include <QPixmap>
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>
@@ -56,7 +55,7 @@ public:
     void msgBox( QMessageBox::Icon type, const QString &txt );
     int execDialog( QDialog* dlg );
     
-public slots:
+public Q_SLOTS:
     void quitSaver();
     void preparePopup();
     void cleanupPopup();
@@ -65,12 +64,11 @@ protected:
     virtual bool x11Event(XEvent *);
     virtual void timerEvent(QTimerEvent *);
 
-private slots:
+private Q_SLOTS:
     void hackExited(KProcess *);
-    void sigtermPipeSignal();
+    void signalPipeSignal();
     bool startLock();
     void suspend();
-    void resume();
     void checkDPMSActive();
     void slotDeadTimePassed();
 
@@ -96,6 +94,7 @@ private:
     void stayOnTop();
     void lockXF86();
     void unlockXF86();
+    void resume( bool force );
     static QVariant getConf(void *ctx, const char *key, const QVariant &dflt);
 
     bool        mLocked;
