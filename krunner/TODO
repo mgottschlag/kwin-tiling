@@ -1,3 +1,4 @@
-add screensaver/lock from kdesktop
+make screensaver/lock more sexy
+    use an svg based background for the lock dialog? perhaps identical to the run dialog?
 options slide drawer
 make runners pluggable
