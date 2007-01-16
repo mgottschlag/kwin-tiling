@@ -1,5 +1,6 @@
 [Settings]
 Name=Windows Scheme (Without Win Key)
+Name[el]=Μορφή Windows (Δίχως Win Πλήκτρο)
 Name[fr]=Thème Windows (sans la touche « Win »)
 Name[x-test]=xxWindows Scheme (Without Win Key)xx
 Uses Win Modifier=false

@@ -5,8 +5,10 @@
 Encoding=UTF-8
 Greeter=circles.xml
 Name=Circles
+Name[el]=Κύκλοι
 Name[x-test]=xxCirclesxx
 Description=Theme with blue circles
+Description[el]=Θέμα με μπλε κύκλους
 Description[fr]=Thème avec des cercles bleus
 Description[x-test]=xxTheme with blue circlesxx
 Author=Bond, James Bond

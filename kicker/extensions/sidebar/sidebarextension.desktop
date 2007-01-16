@@ -1,10 +1,12 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Universal Sidebar
+Name[el]=Καθολική πλευρική μπάρα
 Name[fr]=Barre latérale universelle
 Name[x-test]=xxUniversal Sidebarxx
 
 Comment=Wrapper around Konqueror's navigation panel
+Comment[el]=Ενσωματωτής στο Πλοηγό του Konqueror
 Comment[fr]=Un enveloppement autour du panneau de navigation de Konqueror
 Comment[x-test]=xxWrapper around Konqueror's navigation panelxx
 

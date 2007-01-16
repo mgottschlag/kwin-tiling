@@ -6,5 +6,6 @@ TryExec=amiwm
 Name=AmiWM
 Name[x-test]=xxAmiWMxx
 Comment=The Amiga look-alike window manager
+Comment[el]=Ο διαχειριστής παραθύρων με όψη αλά Amiga
 Comment[fr]=Le gestionnaire de fenêtres ressemblant à Amiga
 Comment[x-test]=xxThe Amiga look-alike window managerxx

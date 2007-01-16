@@ -6,5 +6,6 @@ TryExec=amaterus
 Name=AMATERUS
 Name[x-test]=xxAMATERUSxx
 Comment=A GTK+ based window manager with a window grouping feature
+Comment[el]=Ένας διαχειριστής παραθύρων βασισμένος στο GTK+ με ένα χαρακτηριστικό ομαδοποίησης παραθύρων
 Comment[fr]=Un gestionnaire de fenêtres écrit en GTK+, avec une fonctionnalité de groupement des fenêtres
 Comment[x-test]=xxA GTK+ based window manager with a window grouping featurexx

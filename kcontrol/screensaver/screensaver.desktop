@@ -12,15 +12,18 @@ X-KDE-FactoryName=screensaver
 X-KDE-ParentApp=kcontrol
 
 Name=Screen Saver
+Name[el]=Προφύλαξη οθόνης
 Name[fr]=Écran de veille
 Name[x-test]=xxScreen Saverxx
 
 Comment=Screen Saver Settings
+Comment[el]=Ρυθμίσεις προφύλαξης οθόνης
 Comment[fr]=Configuration de l'écran de veille
 Comment[x-test]=xxScreen Saver Settingsxx
 
 
 Keywords=screensavers,Priority
+Keywords[el]=προφύλαξη οθόνης,Προτεραιότητα
 Keywords[fr]=écrans de veille,priorité,économiseur
 Keywords[x-test]=xxscreensavers,Priorityxx
 

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Terminal Sessions
+Name[el]=Συνεδρίες τερματικού
 Name[fr]=Sessions de terminal
 Name[x-test]=xxTerminal Sessionsxx
 Comment=Directly start terminal emulator with a session or bookmark

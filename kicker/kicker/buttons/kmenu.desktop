@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=K Menu
+Name[el]=Μενού K
 Name[fr]=Menu K
 Name[x-test]=xxK Menuxx
 Comment=Applications and common actions
+Comment[el]=Εφαρμογές και τυπικές ενέργειες
 Comment[fr]=Applications et actions communes
 Comment[x-test]=xxApplications and common actionsxx
 Icon=kmenu

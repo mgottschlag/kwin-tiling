@@ -6,5 +6,6 @@ TryExec=cwwm
 Name=CWWM
 Name[x-test]=xxCWWMxx
 Comment=The ChezWam Window Manager, a minimalist window manager based on EvilWM
+Comment[el]=Ο ChezWam διαχειριστής παραθύρων, ένας μινιμαλιστικός διαχειριστής παραθύρων βασισμένος στον EvilWM
 Comment[fr]=Le ChezWam Window Manager, un gestionnaire de fenêtres minimaliste basé sur EvilWM
 Comment[x-test]=xxThe ChezWam Window Manager, a minimalist window manager based on EvilWMxx

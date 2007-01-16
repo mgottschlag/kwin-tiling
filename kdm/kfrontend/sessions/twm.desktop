@@ -6,4 +6,5 @@ TryExec=twm
 Name=TWM
 Name[x-test]=xxTWMxx
 Comment=The Tab Window Manager
+Comment[el]=Ο διαχειριστής παραθύρων Tab
 Comment[x-test]=xxThe Tab Window Managerxx

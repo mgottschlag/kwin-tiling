@@ -6,5 +6,6 @@ TryExec=olwm
 Name=OLWM
 Name[x-test]=xxOLWMxx
 Comment=The traditional Open Look Window Manager
+Comment[el]=Ο παραδοσιακός διαχειριστής παραθύρων Open Look
 Comment[fr]=Le gestionnaire de fenêtres traditionnel Open Look
 Comment[x-test]=xxThe traditional Open Look Window Managerxx

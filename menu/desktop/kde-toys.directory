@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Toys
+Name[el]=Παιχνιδάκια
 Name[fr]=Petits outils
 Name[x-test]=xxToysxx
 Icon=package_toys

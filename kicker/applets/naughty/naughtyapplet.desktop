@@ -2,6 +2,7 @@
 Type=Plugin
 Encoding=UTF-8
 Name=Runaway Process Catcher
+Name[el]=Runaway Έλεγχος Διεργασιών
 Name[fr]=Détecteur de processus fous
 Name[x-test]=xxRunaway Process Catcherxx
 Comment=Runaway process catcher for the KDE panel

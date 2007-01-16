@@ -12,14 +12,17 @@ X-KDE-FactoryName=kcm_locale
 X-KDE-ParentApp=kcontrol
 
 Name=Country/Region & Language
+Name[el]=Χώρα/Περιοχή & Γλώσσα
 Name[fr]=Pays & langue
 Name[x-test]=xxCountry/Region & Languagexx
 
 Comment=Language, numeric, and time settings for your particular region
+Comment[el]=Αριθμητικές, γλωσσικές και ωρολογιακές ρυθμίσεις για την περιοχή σας
 Comment[fr]=Configuration de la langue, des nombres, et du format d'heure
 Comment[x-test]=xxLanguage, numeric, and time settings for your particular regionxx
 
 Keywords=language,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week start
+Keywords[el]=γλώσσα,μετάφραση,μορφή αριθμού,συνάλλαγμα,ώρα,ημερομηνία,μορφές,εντοπιότητα,Χώρα,σύνολα χαρακτήρων,σύνολα χαρακτήρων,Σύμβολο υποδιαστολής,Διαχωριστικό χιλιάδων,σύμβολο,διαχωριστικό,πρόσημο,θετικός,αρνητικός,δεκαδικά ψηφία,εβδομάδα,αρχή εβδομάδας
 Keywords[fr]=langage,langue,traduction,nombres,formats de nombre,format de nombre,monnaie,symbole monétaire,date,heure,formats,localisation,régionalisation,pays,jeu de caractères,table de caractères,jeux de caractères,symbole décimal,virgule,séparateur des milliers,milliers,symbole,séparateur,signe,positif,négatif,nombre de décimales,semaine,début de la semaine,jours de la semaine
 Keywords[x-test]=xxlanguage,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week startxx
 

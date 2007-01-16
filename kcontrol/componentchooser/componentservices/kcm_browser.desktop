@@ -1,7 +1,9 @@
 Name=Web Browser
+Name[el]=Περιηγητής Ιστού
 Name[fr]=Navigateur web
 Name[x-test]=xxWeb Browserxx
 Comment=Here you can configure your default web browser. All KDE applications in which you can select hyperlinks should honor this setting.
+Comment[el]=Εδώ μπορείτε να ρυθμίσετε τον προκαθορισμένο περιηγητή ιστού  σας. Όλες οι εφαρμογές του KDE στις οποίες μπορείτε να επιλέξετε υπερσυνδέσεις θα πρέπει να χρησιμοποιούν αυτή τη ρύθμιση.
 Comment[fr]=Ce service vous permet de configurer votre navigateur internet par défaut. Toutes les applications KDE permettant de cliquer sur un lien hypertexte doivent accepter ce réglage.
 Comment[x-test]=xxHere you can configure your default web browser. All KDE applications in which you can select hyperlinks should honor this setting.xx
 configurationType=internal_browser

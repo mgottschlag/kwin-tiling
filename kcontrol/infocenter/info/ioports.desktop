@@ -13,14 +13,17 @@ X-KDE-FactoryName=ioports
 X-KDE-ParentApp=kinfocenter
 
 Name=IO-Ports
+Name[el]=Θύρες Ι/Ο
 Name[fr]=Ports d'entrée/sortie
 Name[x-test]=xxIO-Portsxx
 
 Comment=IO-port information
+Comment[el]=Πληροφορίες για τις θύρες εισόδου-εξόδου
 Comment[fr]=Informations sur les ports d'entrée/sortie
 Comment[x-test]=xxIO-port informationxx
 
 Keywords=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Information
+Keywords[el]=ΕΕ,Ε/Ε,Θύρες ΕΕ,Θύρες Ε/Ε,Θύρες,Εύρος ΕΕ,Εύρος Ε/Ε,Πληροφορίες συστήματος
 Keywords[fr]=io,i/o,entrées-sorties,ports,ports d'entrée-sortie,informations système,plage d'entrées-sorties
 Keywords[x-test]=xxIO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Informationxx
 

@@ -12,14 +12,17 @@ X-KDE-FactoryName=samba
 X-KDE-ParentApp=kinfocenter
 
 Name=Samba Status
+Name[el]=Κατάσταση samba
 Name[fr]=État de Samba
 Name[x-test]=xxSamba Statusxx
 
 Comment=Samba status monitor
+Comment[el]=Εποπτεία της Samba
 Comment[fr]=Indicateur d'état de Samba
 Comment[x-test]=xxSamba status monitorxx
 
 Keywords=SMB,SAMBA,Windows network,LAN,System Information
+Keywords[el]=SMB,SAMBA,Δίκτυο Windows,LAN,Πληροφορίες συστήματος
 Keywords[fr]=réseau Windows,réseau local,informations système,smb,samba,lan,windows
 Keywords[x-test]=xxSMB,SAMBA,Windows network,LAN,System Informationxx
 Categories=Qt;KDE;X-KDE-information;

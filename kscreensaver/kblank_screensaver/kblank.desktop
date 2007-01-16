@@ -5,12 +5,14 @@ Icon=kscreensaver
 Type=Service
 Actions=Setup;InWindow;Root;
 Name=Blank Screen
+Name[el]=Κενή οθόνη
 Name[fr]=Écran vide
 Name[x-test]=xxBlank Screenxx
 
 [Desktop Action Setup]
 Exec=kblankscrn.kss -setup
 Name=Setup...
+Name[el]=Ρύθμιση...
 Name[fr]=Configuration...
 Name[x-test]=xxSetup...xx
 Icon=kscreensaver
@@ -18,6 +20,7 @@ Icon=kscreensaver
 [Desktop Action InWindow]
 Exec=kblankscrn.kss -window-id %w
 Name=Display in Specified Window
+Name[el]=Προβολή στο καθορισμένο παράθυρο
 Name[fr]=Affichage dans la fenêtre spécifiée
 Name[x-test]=xxDisplay in Specified Windowxx
 NoDisplay=true
@@ -25,6 +28,7 @@ NoDisplay=true
 [Desktop Action Root]
 Exec=kblankscrn.kss -root
 Name=Display in Root Window
+Name[el]=Προβολή στο βασικό παράθυρο
 Name[fr]=Affichage dans la fenêtre racine
 Name[x-test]=xxDisplay in Root Windowxx
 NoDisplay=true

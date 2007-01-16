@@ -4,6 +4,7 @@ Encoding=UTF-8
 Name=Lock/Logout Applet
 Name[x-test]=xxLock/Logout Appletxx
 Comment=Adds buttons for locking screen and session logout
+Comment[el]=Προσθέτει κουμπιά για το κλείδωμα της οθόνης και την αποσύνδεση συνεδρίας
 Comment[fr]=Ajoute des boutons permettant de verrouiller l'écran et de déconnecter la session en cours
 Comment[x-test]=xxAdds buttons for locking screen and session logoutxx
 Icon=exit

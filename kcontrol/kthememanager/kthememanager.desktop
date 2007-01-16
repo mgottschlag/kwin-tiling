@@ -9,13 +9,16 @@ X-KDE-Library=kcm_kthememanager
 X-KDE-ParentApp=kcontrol
 
 Name=Theme Manager
+Name[el]=Διαχειριστής Θεμάτων
 Name[fr]=Gestionnaire de thèmes
 Name[x-test]=xxTheme Managerxx
 
 Comment=Manage global KDE visual themes
+Comment[el]=Διαχειριστής καθολικών οπτικών θεμάτων του KDE
 Comment[fr]=Gestionnaire de thèmes visuels globaux de KDE
 Comment[x-test]=xxManage global KDE visual themesxx
 
 Keywords=themes,look and feel
+Keywords[el]=θέματα,εμφάνιση και αίσθηση
 Keywords[fr]=thèmes,apparence et ergonomie
 Keywords[x-test]=xxthemes,look and feelxx

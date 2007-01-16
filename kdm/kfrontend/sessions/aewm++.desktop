@@ -6,5 +6,6 @@ TryExec=aewm++_xsession
 Name=AEWM++
 Name[x-test]=xxAEWM++xx
 Comment=A minimal window manager based on AEWM, enhanced by virtual desktops and partial GNOME support
+Comment[el]=Ένας μικρός διαχειριστής παραθύρων βασισμένος στον AEWM, εμπλουτισμένος με εικονικές επιφάνειες εργασίας και μερική υποστήριξη GNOME
 Comment[fr]=Un gestionnaire de fenêtres minimal basé sur AEWM, avec en plus la gestion des bureaux virtuels et partiellement de GNOME
 Comment[x-test]=xxA minimal window manager based on AEWM, enhanced by virtual desktops and partial GNOME supportxx

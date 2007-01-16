@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Find
+Name[el]=Αναζήτηση
 Name[fr]=Recherche
 Name[x-test]=xxFindxx
 Comment=Quickly start a file or web search

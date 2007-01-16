@@ -13,14 +13,17 @@ X-KDE-Init-Symbol=bell
 X-KDE-ParentApp=kcontrol
 
 Name=System Bell
+Name[el]=Μεγαφωνάκι συστήματος
 Name[fr]=Cloche du système
 Name[x-test]=xxSystem Bellxx
 
 Comment=System Bell Configuration
+Comment[el]=Ρυθμίσεις για το μεγαφωνάκι του συστήματός σας
 Comment[fr]=Configuration de la cloche du système
 Comment[x-test]=xxSystem Bell Configurationxx
 
 Keywords=Bell,Audio,Sound,Volume,Pitch,Duration
+Keywords[el]=Μεγαφωνάκι,Audio,Ήχος,Ένταση,Τονισμός,Διάρκεια
 Keywords[fr]=cloche,audio,son,volume,durée,modulation,bip
 Keywords[x-test]=xxBell,Audio,Sound,Volume,Pitch,Durationxx
 

@@ -2,9 +2,11 @@
 Encoding=UTF-8
 Type=Directory
 Name=Desktop
+Name[el]=Επιφάνεια εργασίας
 Name[fr]=Bureau
 Name[x-test]=xxDesktopxx
 Icon=desktop
 Comment=Desktop
+Comment[el]=Επιφάνεια εργασίας
 Comment[fr]=Bureau
 Comment[x-test]=xxDesktopxx

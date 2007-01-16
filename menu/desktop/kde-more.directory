@@ -3,5 +3,6 @@ Encoding=UTF-8
 Type=Directory
 Icon=package
 Name=More Applications
+Name[el]=Περισσότερες εφαρμογές
 Name[fr]=Autres applications
 Name[x-test]=xxMore Applicationsxx

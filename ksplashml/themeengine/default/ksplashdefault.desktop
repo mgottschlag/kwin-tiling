@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Comment=KSplash Plugin
+Comment[el]=Πρόσθετο KSplash
 Comment[fr]=Modules de KSplash
 Comment[x-test]=xxKSplash Pluginxx
 Name=KSplashLegacy

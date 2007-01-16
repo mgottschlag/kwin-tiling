@@ -6,5 +6,6 @@ TryExec=aewm
 Name=AEWM
 Name[x-test]=xxAEWMxx
 Comment=A minimalist window manager
+Comment[el]=Ένας μινιμαλιστικός διαχειριστής παραθύρων
 Comment[fr]=Un gestionnaire de fenêtres minimaliste
 Comment[x-test]=xxA minimalist window managerxx

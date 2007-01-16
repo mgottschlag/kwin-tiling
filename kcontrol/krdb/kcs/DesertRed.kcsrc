@@ -1,6 +1,7 @@
 # KDE Config File
 [Color Scheme]
 Name=Desert Red
+Name[el]=Κόκκινο της ερήμου
 Name[fr]=Désert rouge
 Name[x-test]=xxDesert Redxx
 background=214,205,187

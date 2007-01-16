@@ -6,5 +6,6 @@ TryExec=flwm
 Name=FLWM
 Name[x-test]=xxFLWMxx
 Comment=The Fast Light Window Manager, based primarily on WM2
+Comment[el]=Ο  Fast Light διαχειριστής παραθύρων, βασισμένος κυρίως στον WM2
 Comment[fr]=The Fast Light Window Manager, basé au départ sur WM2
 Comment[x-test]=xxThe Fast Light Window Manager, based primarily on WM2xx

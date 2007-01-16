@@ -12,13 +12,16 @@ X-KDE-Init-Symbol=keyboard
 X-KDE-ParentApp=kcontrol
 
 Name=Keyboard
+Name[el]=Πληκτρολόγιο
 Name[fr]=Clavier
 Name[x-test]=xxKeyboardxx
 
 Comment=Keyboard settings
+Comment[el]=Ρυθμίσεις Πληκτρολογίου
 Comment[fr]=Configuration du clavier
 Comment[x-test]=xxKeyboard settingsxx
 
 Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
+Keywords[el]=Πληκτρολόγιο,Επανάληψη πληκτρολογίου,Ένταση κλικ,Συσκευές εισόδου,επανάληψη,ένταση
 Keywords[fr]=clavier,répétition,clics de touches,périphériques d'entrée,volume
 Keywords[x-test]=xxKeyboard,Keyboard repeat,Click volume,Input Devices,repeat,volumexx

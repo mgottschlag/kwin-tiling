@@ -6,5 +6,6 @@ TryExec=ctwm
 Name=CTWM
 Name[x-test]=xxCTWMxx
 Comment=Claude's Tab Window Manager, TWM enhanced by virtual screens, etc.
+Comment[el]=Ο διαχειριστής παραθύρων Tab του Claude, ο TWM εμπλουτισμένος με εικονικές οθόνες, κτλ.
 Comment[fr]=Claude's Tab Window Manager, TWM avec en plus les bureaux virtuels, etc.
 Comment[x-test]=xxClaude's Tab Window Manager, TWM enhanced by virtual screens, etc.xx

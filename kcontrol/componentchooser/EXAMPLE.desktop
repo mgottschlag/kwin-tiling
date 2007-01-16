@@ -1,7 +1,9 @@
 Name=A nice name you have chosen for your interface
+Name[el]=Ένα όμορφο όνομα που έχετε επιλέξει για τη διασύνδεσή σας
 Name[fr]=Un joli nom que vous avez choisi pour votre interface
 Name[x-test]=xxA nice name you have chosen for your interfacexx
 Comment=A helpful description of the interface for the top right info box
+Comment[el]=Μια χρήσιμη περιγραφή της διασύνδεσης για το πάνω δεξιά πλαίσιο πληροφοριών
 Comment[fr]=Une description utile de l'interface pour la boîte d'informations en haut à droite
 Comment[x-test]=xxA helpful description of the interface for the top right info boxxx
 

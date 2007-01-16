@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=kdesktop
 X-DBUS-StartupType=wait
 Name=KDE Desktop
+Name[el]=Επιφάνεια εργασίας του KDE
 Name[fr]=Bureau de KDE
 Name[x-test]=xxKDE Desktopxx
 Type=Service

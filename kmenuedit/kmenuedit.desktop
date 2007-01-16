@@ -8,6 +8,7 @@ X-KDE-StartupNotify=true
 OnlyShowIn=KDE;
 
 Name=Menu Editor
+Name[el]=Επεξεργαστής μενού
 Name[fr]=KMenuEdit
 Name[x-test]=xxMenu Editorxx
 

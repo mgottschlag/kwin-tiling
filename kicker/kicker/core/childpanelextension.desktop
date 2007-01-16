@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Panel
+Name[el]=Πίνακας
 Name[fr]=Tableau de bord
 Name[x-test]=xxPanelxx
 Comment=Child panel extension.
+Comment[el]=Επέκταση θυγατρικού πίνακα.
 Comment[fr]=Extension du tableau de bord
 Comment[x-test]=xxChild panel extension.xx
 

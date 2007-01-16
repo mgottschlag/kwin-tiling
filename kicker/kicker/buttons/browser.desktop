@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Quick File Browser
+Name[el]=Γρήγορος Περιηγητής Αρχείων
 Name[fr]=Explorateur de fichiers rapide
 Name[x-test]=xxQuick File Browserxx
 Comment=A menu that lists files in a given folder
+Comment[el]=Ένα μενού που εμφανίζει τα αρχεία ενός δοσμένου φακέλου
 Comment[fr]=Un menu affichant les fichiers d'un dossier donné
 Comment[x-test]=xxA menu that lists files in a given folderxx
 Icon=kdisknav

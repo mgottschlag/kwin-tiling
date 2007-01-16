@@ -12,14 +12,17 @@ X-KDE-FactoryName=sound
 X-KDE-ParentApp=kinfocenter
 
 Name=Sound
+Name[el]=Ήχος
 Name[fr]=Son
 Name[x-test]=xxSoundxx
 
 Comment=Sound information
+Comment[el]=Πληροφορίες για τον Ήχο
 Comment[fr]=Informations sur le son
 Comment[x-test]=xxSound informationxx
 
 Keywords=Sound,Audio,Soundcard,MIDI,OSS,System Information
+Keywords[el]=Ήχος,Μουσική,Κάρτα ήχου,MIDI,OSS,Πληροφορίες συστήματος
 Keywords[fr]=son,audio,carte son,midi,OSS,informations système
 Keywords[x-test]=xxSound,Audio,Soundcard,MIDI,OSS,System Informationxx
 Categories=Qt;KDE;X-KDE-information;

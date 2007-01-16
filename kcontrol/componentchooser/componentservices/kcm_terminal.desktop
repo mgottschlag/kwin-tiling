@@ -1,7 +1,9 @@
 Name=Terminal Emulator
+Name[el]=Προσομοιωτής τερματικού
 Name[fr]=Émulateur de terminal
 Name[x-test]=xxTerminal Emulatorxx
 Comment=This service allows you to configure your default terminal emulator. All KDE applications which invoke a terminal emulator application should honor this setting.
+Comment[el]=Αυτή η υπηρεσία σας επιτρέπει να ρυθμίσετε τον προκαθορισμένο προσομοιωτή τερματικού σας. Όλες οι εφαρμογές του KDE που καλούν μια εφαρμογή προσομοιωτή τερματικού θα πρέπει να τηρούν αυτήν τη ρύθμιση.
 Comment[fr]=Ce service vous permet de configurer votre émulateur de terminal par défaut. Toutes les applications KDE qui appellent une application d'émulation de terminal doivent accepter ce réglage.
 Comment[x-test]=xxThis service allows you to configure your default terminal emulator. All KDE applications which invoke a terminal emulator application should honor this setting.xx
 configurationType=internal_terminal

@@ -2,6 +2,7 @@
 Type=Plugin
 Encoding=UTF-8
 Name=Taskbar
+Name[el]=Γραμμή εργασιών
 Name[fr]=Barre des tâches
 Name[x-test]=xxTaskbarxx
 

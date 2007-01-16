@@ -4,6 +4,7 @@ Type=Plugin
 Comment=Displays the trashbin and allows dropping files on it
 Comment[x-test]=xxDisplays the trashbin and allows dropping files on itxx
 Name=Trash
+Name[el]=Κάδος απορριμμάτων
 Name[fr]=Corbeille
 Name[x-test]=xxTrashxx
 Icon=trashcan_empty

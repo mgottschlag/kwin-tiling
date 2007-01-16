@@ -11,12 +11,15 @@ X-KDE-Factoryname=kded
 X-KDE-ParentApp=kcontrol
 
 Name=Service Manager
+Name[el]=Διαχειριστής υπηρεσιών
 Name[fr]=Gestionnaire de services
 Name[x-test]=xxService Managerxx
 Comment=System Services Configuration
+Comment[el]=Ρύθμιση των υπηρεσιών συστήματος
 Comment[fr]=Configuration des services du système
 Comment[x-test]=xxSystem Services Configurationxx
 Keywords=KDED,Daemon,Services
+Keywords[el]=KDED,Δαίμονας,Υπηρεσίες
 Keywords[fr]=KDED,Daemon,Démon,Services
 Keywords[x-test]=xxKDED,Daemon,Servicesxx
 

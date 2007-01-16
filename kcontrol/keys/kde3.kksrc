@@ -1,5 +1,6 @@
 [Settings]
 Name=KDE Default for 3 Modifier Keys
+Name[el]=Προεπιλογή KDE με 3 Πλήκτρα Αλλαγής
 Name[fr]=KDE par défaut pour 3 touches de modifications
 Name[x-test]=xxKDE Default for 3 Modifier Keysxx
 Uses Win Modifier=false

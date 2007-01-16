@@ -15,10 +15,12 @@ Name=OpenGL
 Name[x-test]=xxOpenGLxx
 
 Comment=OpenGL information
+Comment[el]=Πληροφορίες OpenGL
 Comment[fr]=Informations OpenGL
 Comment[x-test]=xxOpenGL informationxx
 
 Keywords=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display
+Keywords[el]=OpenGL,DRI,GLX,3D,Κάρτα Γραφικών,Υλικό Επιτάχυνση,Γραφικά,X,X11,Xserver,X-Server,XFree86,Οθόνη
 Keywords[fr]=OpenGL,DRI,GLX,3D,carte graphique,carte vidéo,accélération matérielle,graphismes,X,X11,serveur X,XServer,XFree86,affichage
 Keywords[x-test]=xxOpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Displayxx
 

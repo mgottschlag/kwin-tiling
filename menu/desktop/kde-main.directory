@@ -3,5 +3,6 @@ Encoding=UTF-8
 Type=Directory
 Icon=package
 Name=KDE Menu
+Name[el]=Μενού KDE
 Name[fr]=Menu de KDE
 Name[x-test]=xxKDE Menuxx

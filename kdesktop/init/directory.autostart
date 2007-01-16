@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Directory
 Name=Autostart
+Name[el]=Αυτόματη Έναρξη
 Name[fr]=Démarrage automatique
 Name[x-test]=xxAutostartxx
 

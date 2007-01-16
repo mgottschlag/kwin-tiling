@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Show Desktop
+Name[el]=Εμφάνιση επιφάνειας εργασίας
 Name[fr]=Afficher le bureau
 Name[x-test]=xxShow Desktopxx
 Comment=A button that gives quick access to the desktop when pressed
+Comment[el]=Ένα κουμπί που όταν πατηθεί δίνει γρήγορη πρόσβαση στην επιφάνεια εργασίας
 Comment[fr]=Un bouton, qui, en étant cliqué, donne un accès rapide au bureau
 Comment[x-test]=xxA button that gives quick access to the desktop when pressedxx
 Icon=desktop

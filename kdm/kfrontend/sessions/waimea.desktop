@@ -6,5 +6,6 @@ TryExec=waimea
 Name=Waimea
 Name[x-test]=xxWaimeaxx
 Comment=A highly customizable window manager based on Blackbox
+Comment[el]=Ένας ιδιαίτερα παραμετροποιήσιμος διαχειριστής παραθύρων βασισμένος στον Blackbox
 Comment[fr]=Un gestionnaire de fenêtres très configurable basé sur Blackbox
 Comment[x-test]=xxA highly customizable window manager based on Blackboxxx

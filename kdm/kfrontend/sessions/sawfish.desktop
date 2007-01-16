@@ -6,5 +6,6 @@ TryExec=sawfish
 Name=Sawfish
 Name[x-test]=xxSawfishxx
 Comment=An extensible window manager scriptable with an Emacs Lisp-like language
+Comment[el]=Ένας επεκτάσιμος διαχειριστής παραθύρων παραμετροποιήσιμος με μια γλώσσα παρόμοια με την Emacs Lisp
 Comment[fr]=Un gestionnaire de fenêtres extensible, à l'aide scripts dans un langage semblable au Lisp d'Emacs
 Comment[x-test]=xxAn extensible window manager scriptable with an Emacs Lisp-like languagexx

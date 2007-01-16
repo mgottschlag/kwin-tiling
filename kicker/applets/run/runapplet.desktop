@@ -2,6 +2,7 @@
 Type=Plugin
 Encoding=UTF-8
 Name=Run Command
+Name[el]=Εκτέλεση εντολής
 Name[fr]=Lancer une commande
 Name[x-test]=xxRun Commandxx
 Comment=A command line applet

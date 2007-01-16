@@ -8,8 +8,10 @@ X-KDE-StartupNotify=true
 OnlyShowIn=KDE;
 
 Name=KInfoCenter
+Name[el]=Κέντρο πληροφοριών
 Name[x-test]=xxKInfoCenterxx
 GenericName=Info Center
+GenericName[el]=Κέντρο πληροφοριών
 GenericName[fr]=Centre d'informations
 GenericName[x-test]=xxInfo Centerxx
 

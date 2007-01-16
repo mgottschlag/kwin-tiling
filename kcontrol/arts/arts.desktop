@@ -12,14 +12,17 @@ X-KDE-Init-Symbol=arts
 X-KDE-ParentApp=kcontrol
 
 Name=Sound System
+Name[el]=Σύστημα ήχου
 Name[fr]=Système de sons
 Name[x-test]=xxSound Systemxx
 
 Comment=Sound System Configuration
+Comment[el]=Ρύθμιση συστήματος ήχου
 Comment[fr]=Configuration du système de sons
 Comment[x-test]=xxSound System Configurationxx
 
 Keywords=aRts,Sound Server,artsd,Audio,Sound,startup,network transparency,transparency,priority,duplex,full duplex,response time,Mixer,Volume,KMix,Mix,login,MIDI,synthesizer,music
+Keywords[el]=aRts,Εξυπηρετητής ήχου,artsd,Ήχος,Ήχος,εκκίνηση,διαφάνεια δικτύου,διαφάνεια,προτεραιότητα,duplex,full duplex,χρόνος απόκρισης,Μείκτης,Ένταση,KMix,Μίξη,σύνδεση,MIDI,συνθεσάιζερ,μουσική
 Keywords[fr]=aRts,son,serveur de son,serveur sonore,bruit,artsd,audio,démarrage,transparence réseau,transparence,priorité,duplex,full duplex,temps de réponse,mixeur,volume,KMix,Mix,login,MIDI,synthétiseur,musique
 Keywords[x-test]=xxaRts,Sound Server,artsd,Audio,Sound,startup,network transparency,transparency,priority,duplex,full duplex,response time,Mixer,Volume,KMix,Mix,login,MIDI,synthesizer,musicxx
 

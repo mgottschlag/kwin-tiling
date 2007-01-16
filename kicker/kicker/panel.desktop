@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Exec=kicker
 Name=KDE Panel
+Name[el]=Πίνακας KDE
 Name[fr]=Tableau de bord de KDE
 Name[x-test]=xxKDE Panelxx
 X-DBUS-StartupType=wait

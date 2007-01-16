@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Settings-Modules
+Name[el]=Ρυθμίσεις-Αρθρώματα
 Name[fr]=Modules de configuration
 Name[x-test]=xxSettings-Modulesxx
 NoDisplay=true

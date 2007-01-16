@@ -1,6 +1,7 @@
 # KDE Config File
 [Color Scheme]
 Name=Digital CDE
+Name[el]=Ψηφιακό CDE
 Name[x-test]=xxDigital CDExx
 background=#4b7b82
 buttonBackground=#4b7b82

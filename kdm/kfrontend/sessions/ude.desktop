@@ -6,4 +6,5 @@ TryExec=ude
 Name=UDE
 Name[x-test]=xxUDExx
 Comment=The UNIX Desktop Environment
+Comment[el]=Το περιβάλλον επιφάνειας εργασίας του UNIX
 Comment[x-test]=xxThe UNIX Desktop Environmentxx

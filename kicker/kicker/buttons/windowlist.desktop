@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Window List Menu
+Name[el]=Μενού λίστας παραθύρων
 Name[fr]=Liste des fenêtres
 Name[x-test]=xxWindow List Menuxx
 Comment=A menu that lists all open windows
+Comment[el]=Ένα μενού που εμφανίζει όλα τα ανοικτά παράθυρα
 Comment[fr]=Un menu affichant l'ensemble des fenêtres ouvertes
 Comment[x-test]=xxA menu that lists all open windowsxx
 Icon=window_list

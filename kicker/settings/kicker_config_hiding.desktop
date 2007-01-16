@@ -10,11 +10,14 @@ X-KDE-FactoryName=kicker_hiding
 X-KDE-ParentApp=kicker
 
 Name=Hiding
+Name[el]=Απόκρυψη
 Name[fr]=Masquage
 Name[x-test]=xxHidingxx
 Comment=You can configure the hiding of the panel here
+Comment[el]=Εδώ μπορείτε να ρυθμίσετε την απόκρυψη του πίνακα
 Comment[fr]=Configuration du masquage du tableau de bord
 Comment[x-test]=xxYou can configure the hiding of the panel herexx
 Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming icons
+Keywords[el]=kicker,πίνακας,kpanel,γραμμή εργασιών,γραμμή έναρξης,γραμμή εκκίνησης,τοποθεσία,μέγεθος,αυτόματη απόκρυψη,απόκρυψη,κουμπιά,εφέ κίνησης,φόντο,θέματα,λανθάνουσα μνήμη μενού,λανθάνουσα μνήμη,κρυφό, K-Μενού,σελιδοδείκτες,πρόσφατα έγγραφα,γρήγορος εξερευνητής,μενού εξερευνητή,μενού,εικονίδια,tiles,εφαρμογίδια,έναρξη,τονισμός,χειριστήρια, μεγέθυνση εικονιδίων
 Keywords[fr]=kicker,tableau de bord,barre du bas,barre des tâches,barre de démarrage,barre de lancement,emplacement,taille,auto-masquage,cacher,masquer,boutons,animation,fond,arrière-plan,thème,cache de menu,cache,caché,menu K,K,signets,documents récents,document récent,navigateur rapide,navigateur,menu,icône,mosaïque,applet,démarrage,surbrillance,poignée,poignées,zoom,zoom sur les icônes
 Keywords[x-test]=xxkicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming iconsxx

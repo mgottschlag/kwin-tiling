@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Install KDE Theme
+Name[el]=Εγκατάσταση θέματος του KDE
 Name[fr]=Installer des thèmes KDE
 Name[x-test]=xxInstall KDE Themexx
 MimeType=application/x-ktheme

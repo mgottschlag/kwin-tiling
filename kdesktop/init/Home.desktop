@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Home
+Name[el]=Σπίτι
 Name[fr]=Dossier personnel
 Name[x-test]=xxHomexx
 GenericName=Personal Files
+GenericName[el]=Προσωπικά αρχεία
 GenericName[fr]=Fichiers personnels
 GenericName[x-test]=xxPersonal Filesxx
 URL=$HOME

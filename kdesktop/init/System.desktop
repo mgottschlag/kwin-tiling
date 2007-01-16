@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System
+Name[el]=Σύστημα
 Name[fr]=Système
 Name[x-test]=xxSystemxx
 GenericName=System Locations
+GenericName[el]=Τοποθεσίες συστήματος
 GenericName[fr]=Emplacements systèmes
 GenericName[x-test]=xxSystem Locationsxx
 URL=system:/

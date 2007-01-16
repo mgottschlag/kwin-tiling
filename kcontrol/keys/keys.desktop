@@ -12,14 +12,17 @@ X-KDE-Init-Symbol=keys
 X-KDE-ParentApp=kcontrol
 
 Name=Keyboard Shortcuts
+Name[el]=Συντομεύσεις πληκτρολογίου
 Name[fr]=Raccourcis clavier
 Name[x-test]=xxKeyboard Shortcutsxx
 
 Comment=Configuration of keybindings
+Comment[el]=Ρύθμιση συνδυασμών πλήκτρων
 Comment[fr]=Configuration des raccourcis clavier
 Comment[x-test]=xxConfiguration of keybindingsxx
 
 Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts
+Keywords[el]=Πλήκτρα,Καθολικοί συνδυασμοί πλήκτρων,Θέμα πλήκτρων,Συνδυασμοί πλήκτρων,συντομεύσεις,συντομεύσεις εφαρμογών
 Keywords[fr]=touches,raccourcis globaux,modèle de raccourcis,raccourcis clavier,clavier,raccourcis d'applications,applications,raccourcis communs
 Keywords[x-test]=xxKeys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcutsxx
 

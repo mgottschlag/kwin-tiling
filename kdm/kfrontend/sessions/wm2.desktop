@@ -6,5 +6,6 @@ TryExec=wm2
 Name=WM2
 Name[x-test]=xxWM2xx
 Comment=A small, non-configurable window manager
+Comment[el]=Ένας μικρός, μη παραμετροποιήσιμος διαχειριστής παραθύρων
 Comment[fr]=Un gestionnaire de fenêtres petit et non configurable
 Comment[x-test]=xxA small, non-configurable window managerxx

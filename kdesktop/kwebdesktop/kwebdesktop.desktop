@@ -1,5 +1,6 @@
 [KDE Desktop Program]
 Comment=KDE Web Desktop
+Comment[el]=Επιφάνεια εργασίας Ιστού του KDE
 Comment[fr]=Bureau web de KDE
 Comment[x-test]=xxKDE Web Desktopxx
 Executable=kwebdesktop

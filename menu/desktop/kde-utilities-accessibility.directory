@@ -2,9 +2,11 @@
 Encoding=UTF-8
 Type=Directory
 Name=Accessibility
+Name[el]=Προσιτότητα
 Name[fr]=Accessibilité
 Name[x-test]=xxAccessibilityxx
 Icon=access
 Comment=Accessibility
+Comment[el]=Προσβασιμότητα
 Comment[fr]=Accessibilité
 Comment[x-test]=xxAccessibilityxx

@@ -12,14 +12,17 @@ X-KDE-FactoryName=colors
 X-KDE-ParentApp=kcontrol
 
 Name=Colors
+Name[el]=Χρώματα
 Name[fr]=Couleurs
 Name[x-test]=xxColorsxx
 
 Comment=Color settings
+Comment[el]=Ρυθμίσεις χρωμάτων
 Comment[fr]=Configuration des couleurs
 Comment[x-test]=xxColor settingsxx
 
 Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme
+Keywords[el]=χρώματα,χρώματα,θέμα,αντίθεση,Χρώματα γραφικού συστατικού,Θέμα χρωμάτων
 Keywords[fr]=couleurs,modèles de couleurs,contraste,couleur des éléments graphiques,modèle
 Keywords[x-test]=xxcolors,colours,scheme,contrast,Widget colors,Color Schemexx
 

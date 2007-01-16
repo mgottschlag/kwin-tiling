@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Editors
+Name[el]=Επεξεργαστές
 Name[fr]=Éditeurs de texte
 Name[x-test]=xxEditorsxx
 Icon=package_editors

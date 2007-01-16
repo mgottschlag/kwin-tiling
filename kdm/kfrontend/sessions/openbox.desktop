@@ -6,5 +6,6 @@ TryExec=openbox
 Name=Openbox
 Name[x-test]=xxOpenboxxx
 Comment=A lightweight window manager based on Blackbox
+Comment[el]=Ένας ελαφρύς διαχειριστής παραθύρων βασισμένος στον Blackbox
 Comment[fr]=Un gestionnaire de fenêtres léger basé sur Blackbox
 Comment[x-test]=xxA lightweight window manager based on Blackboxxx

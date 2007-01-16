@@ -10,14 +10,17 @@ X-KDE-Library=kicker
 X-KDE-ParentApp=kcontrol
 
 Name=Panels
+Name[el]=Πίνακες
 Name[fr]=Tableau de bord
 Name[x-test]=xxPanelsxx
 
 Comment=Configure the arrangement of the panel
+Comment[el]=Ρυθμίστε τη διάταξη του πίνακα
 Comment[fr]=Configuration de la disposition du tableau de bord
 Comment[x-test]=xxConfigure the arrangement of the panelxx
 
 Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming icons
+Keywords[el]=kicker,πίνακας,kpanel,γραμμή εργασιών,γραμμή έναρξης,γραμμή εκκίνησης,τοποθεσία,μέγεθος,αυτόματη απόκρυψη,απόκρυψη,κουμπιά,εφέ κίνησης,φόντο,θέματα,λανθάνουσα μνήμη μενού,λανθάνουσα μνήμη,κρυφό, K-Μενού,σελιδοδείκτες,πρόσφατα έγγραφα,γρήγορος εξερευνητής,μενού εξερευνητή,μενού,εικονίδια,tiles,εφαρμογίδια,έναρξη,τονισμός,χειριστήρια, μεγέθυνση εικονιδίων
 Keywords[fr]=kicker,tableau de bord,barre du bas,barre des tâches,barre de démarrage,barre de lancement,emplacement,taille,auto-masquage,cacher,masquer,boutons,animation,fond,arrière-plan,thème,cache de menu,cache,caché,menu K,K,signets,documents récents,document récent,navigateur rapide,navigateur,menu,icône,mosaïque,applet,démarrage,surbrillance,poignée,poignées,zoom,zoom sur les icônes
 Keywords[x-test]=xxkicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming iconsxx
 

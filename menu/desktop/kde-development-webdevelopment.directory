@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Web Development
+Name[el]=Δικτυακή ανάπτυξη
 Name[fr]=Développement Internet
 Name[x-test]=xxWeb Developmentxx
 Icon=package_network
@@ -10,6 +11,7 @@ Icon=package_network
 Encoding=UTF-8
 Type=Directory
 Name=Web Development
+Name[el]=Δικτυακή ανάπτυξη
 Name[fr]=Développement Internet
 Name[x-test]=xxWeb Developmentxx
 Icon=package_network

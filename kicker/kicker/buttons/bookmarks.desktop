@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Bookmarks Menu
+Name[el]=Μενού σελιδοδεικτών
 Name[fr]=Menu des signets
 Name[x-test]=xxBookmarks Menuxx
 Comment=Your Konqueror bookmarks
+Comment[el]=Οι σελιδοδείκτες σας του Konqueror
 Comment[fr]=Vos signets Konqueror
 Comment[x-test]=xxYour Konqueror bookmarksxx
 Icon=bookmark

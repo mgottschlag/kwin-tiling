@@ -2,12 +2,14 @@
 Encoding=UTF-8
 Type=Directory
 Name=Screen Savers
+Name[el]=Προφύλαξη οθόνης
 Name[fr]=Écrans de veille
 Name[x-test]=xxScreen Saversxx
 Icon=kscreensaver
 X-KDE-BaseGroup=screensavers
 
 Comment=Screen saver demos
+Comment[el]=Επίδειξη προφύλαξης οθόνης
 Comment[fr]=Démonstrations d'écrans de veille
 Comment[x-test]=xxScreen saver demosxx
 NoDisplay=true

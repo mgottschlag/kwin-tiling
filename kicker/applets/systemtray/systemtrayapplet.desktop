@@ -2,10 +2,12 @@
 Type=Plugin
 Encoding=UTF-8
 Name=System Tray
+Name[el]=Πλαίσιο συστήματος
 Name[fr]=Boîte à miniatures
 Name[x-test]=xxSystem Trayxx
 
 Comment=The system tray panel applet
+Comment[el]=Εφαρμογίδιο του πίνακα για το πλαίσιο συστήματος
 Comment[fr]=L'applet de boîte à miniatures du tableau de bord
 Comment[x-test]=xxThe system tray panel appletxx
 Icon=systemtray

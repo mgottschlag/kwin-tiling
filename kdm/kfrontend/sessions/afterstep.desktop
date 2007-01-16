@@ -6,5 +6,6 @@ TryExec=afterstep
 Name=AfterStep
 Name[x-test]=xxAfterStepxx
 Comment=A window manager with the NeXTStep look and feel, based on FVWM
+Comment[el]=Ένας διαχειριστής παραθύρων με την όψη και αίσθηση του NeXTStep, βασισμένος στον FVWM
 Comment[fr]=Un gestionnaire de fenêtres similaire à NeXTStep et basé sur FVWM
 Comment[x-test]=xxA window manager with the NeXTStep look and feel, based on FVWMxx

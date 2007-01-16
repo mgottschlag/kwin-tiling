@@ -10,14 +10,17 @@ X-KDE-Library=usb
 X-KDE-ParentApp=kinfocenter
 
 Name=USB Devices
+Name[el]=Συσκευές USB
 Name[fr]=Périphériques USB
 Name[x-test]=xxUSB Devicesxx
 
 Comment=View the USB devices attached to this computer
+Comment[el]=Προβολή των συνδεδεμένων στο σύστημα συσκευών USB 
 Comment[fr]=Affiche les périphériques USB attachés à cet ordinateur
 Comment[x-test]=xxView the USB devices attached to this computerxx
 
 Keywords=USB,devices,viewer,control
+Keywords[el]=USB,συσκευές,προβολέας,έλεγχος
 Keywords[fr]=USB,périphériques,afficheur,contrôle
 Keywords[x-test]=xxUSB,devices,viewer,controlxx
 

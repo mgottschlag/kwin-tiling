@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Lost & Found
+Name[el]=Χάθηκαν & Βρέθηκαν
 Name[fr]=Objets trouvés
 Name[x-test]=xxLost & Foundxx
 Icon=help

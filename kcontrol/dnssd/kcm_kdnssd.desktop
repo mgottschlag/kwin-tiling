@@ -1,5 +1,6 @@
 [Desktop Entry]
 Comment=Configure service discovery
+Comment[el]=Ρύθμιση Εύρεσης Υπηρεσιών
 Comment[fr]=Configuration de la découverte de service
 Comment[x-test]=xxConfigure service discoveryxx
 Encoding=UTF-8
@@ -8,6 +9,7 @@ GenericName=
 Icon=blockdevice
 MimeType=
 Name=Service Discovery
+Name[el]=Εύρεση Υπηρεσιών
 Name[fr]=Découverte de service
 Name[x-test]=xxService Discoveryxx
 Path=

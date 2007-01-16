@@ -12,14 +12,17 @@ X-KDE-FactoryName=fontinst
 X-KDE-ParentApp=kcontrol
 
 Name=Font Installer
+Name[el]=Εγκαταστάτης γραμματοσειρών
 Name[fr]=Installateur de polices
 Name[x-test]=xxFont Installerxx
 
 Comment=Install & preview fonts
+Comment[el]=Εγκατάσταση & προεπισκόπηση γραμματοσειρών
 Comment[fr]=Pour installer et afficher des polices de caractères
 Comment[x-test]=xxInstall & preview fontsxx
 
 Keywords=font,fonts,installer,truetype,type1,speedo,bitmap
+Keywords[el]=γραμματοσειρά,γραμματοσειρές,εγκαταστάτης,truetype,type1,speedo,bitmap
 Keywords[fr]=police,polices,installeur,truetype,type1,speedo,bitmap
 Keywords[x-test]=xxfont,fonts,installer,truetype,type1,speedo,bitmapxx
 

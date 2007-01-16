@@ -2,9 +2,11 @@
 Encoding=UTF-8
 Type=Directory
 Name=File
+Name[el]=Αρχείο
 Name[fr]=Fichier
 Name[x-test]=xxFilexx
 Icon=kfm
 Comment=File
+Comment[el]=Αρχείο
 Comment[fr]=Fichier
 Comment[x-test]=xxFilexx

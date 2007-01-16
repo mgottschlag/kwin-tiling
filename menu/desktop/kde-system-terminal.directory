@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Terminal Applications
+Name[el]=Εφαρμογές τερματικού
 Name[fr]=Applications pour terminal
 Name[x-test]=xxTerminal Applicationsxx
 Icon=konsole

@@ -15,10 +15,12 @@ Name=PCI
 Name[x-test]=xxPCIxx
 
 Comment=PCI information
+Comment[el]=Πληροφορίες PCI
 Comment[fr]=Informations PCI
 Comment[x-test]=xxPCI informationxx
 
 Keywords=PCI,PCI-Devices,PCI-Bus,System Information
+Keywords[el]=PCI,Συσκευές PCI,Δίαυλος PCI,Πληροφορίες συστήματος
 Keywords[fr]=PCI,périphériques PCI,bus PCI,informations système,pci
 Keywords[x-test]=xxPCI,PCI-Devices,PCI-Bus,System Informationxx
 Categories=Qt;KDE;X-KDE-information;

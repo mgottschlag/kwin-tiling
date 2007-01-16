@@ -4,6 +4,7 @@ Name=KasBar
 Name[x-test]=xxKasBarxx
 
 Comment=An alternative taskbar panel applet.
+Comment[el]=Ένα εναλλακτικό εφαρμογίδιο γραμμής εργασιών για τον πίνακα.
 Comment[fr]=Une autre applet de barre des tâches
 Comment[x-test]=xxAn alternative taskbar panel applet.xx
 

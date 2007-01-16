@@ -3,6 +3,7 @@ Encoding=UTF-8
 Name=KRandRTray
 Name[x-test]=xxKRandRTrayxx
 GenericName=Screen Resize & Rotate
+GenericName[el]=Αλλαγή μεγέθους & Περιστροφή οθόνης
 GenericName[fr]=Redimensionnement et rotation de l'écran
 GenericName[x-test]=xxScreen Resize & Rotatexx
 Comment=A panel applet for resizing and reorientating X screens.

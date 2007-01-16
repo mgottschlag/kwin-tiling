@@ -6,5 +6,6 @@ TryExec=gnome-session
 Name=GNOME
 Name[x-test]=xxGNOMExx
 Comment=The GNU Network Object Model Environment. A complete, free and easy-to-use desktop environment
+Comment[el]=Το GNU Network Object Model Environment. Ένα πλήρης, ελεύθερο και εύκολο στη χρήση περιβάλλον επιφάνειας εργασίας
 Comment[fr]=The GNU Network Object Model Environment. Un environnement de bureau complet, gratuit et facile à utiliser
 Comment[x-test]=xxThe GNU Network Object Model Environment. A complete, free and easy-to-use desktop environmentxx

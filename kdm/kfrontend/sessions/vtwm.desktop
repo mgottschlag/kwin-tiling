@@ -6,5 +6,6 @@ TryExec=vtwm
 Name=VTWM
 Name[x-test]=xxVTWMxx
 Comment=The Virtual Tab Window Manager. TWM enhanced by virtual screens, etc.
+Comment[el]=Ο εικονικός Tab διαχειριστής παραθύρων. Ο TWM εμπλουτισμένος με εικονικές οθόνες, κτλ.
 Comment[fr]=The Virtual Tab Window Manager. TWM avec en plus la gestion des bureaux multiples
 Comment[x-test]=xxThe Virtual Tab Window Manager. TWM enhanced by virtual screens, etc.xx

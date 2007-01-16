@@ -4,6 +4,7 @@ Type=Link
 URL=fonts:/
 Icon=fonts
 Name=Fonts
+Name[el]=Γραμματοσειρές
 Name[fr]=Polices
 Name[x-test]=xxFontsxx
 Open=false

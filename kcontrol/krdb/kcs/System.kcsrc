@@ -17,6 +17,7 @@ inactiveTitleBtnBg=255,255,255
 inactiveTitleBtnBlend=128,128,128
 inactiveTitleBtnFg=43,45,62
 Name=System
+Name[el]=Σύστημα
 Name[fr]=Système
 Name[x-test]=xxSystemxx
 selectBackground=90,36,0

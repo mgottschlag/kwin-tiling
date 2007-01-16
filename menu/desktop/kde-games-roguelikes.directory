@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Rogue-like Games
+Name[el]=Παιχνίδια τύπου Rogue
 Name[fr]=Jeux à la Rogue
 Name[x-test]=xxRogue-like Gamesxx

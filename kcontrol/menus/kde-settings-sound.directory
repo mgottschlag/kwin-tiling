@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Sound & Multimedia
+Name[el]=Ήχος & Πολυμέσα
 Name[fr]=Son et multimédia
 Name[x-test]=xxSound & Multimediaxx
 Icon=multimedia

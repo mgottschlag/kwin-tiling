@@ -3,6 +3,7 @@ Encoding=UTF-8
 Name=KTip
 Name[x-test]=xxKTipxx
 GenericName=Useful Tips
+GenericName[el]=Χρήσιμα βοηθήματα
 GenericName[fr]=Conseils utiles
 GenericName[x-test]=xxUseful Tipsxx
 Exec=ktip

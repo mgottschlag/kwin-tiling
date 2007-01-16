@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Non-KDE Application Launcher
+Name[el]=Εκτελεστής μη-KDE εφαρμογών
 Name[fr]=Lancement des applications non KDE
 Name[x-test]=xxNon-KDE Application Launcherxx
 Comment=A launcher for programs not in the K Menu
+Comment[el]=Ένας εκτελεστής εφαρμογών που δε βρίσκονται στο Μενού K
 Comment[fr]=Lancement des programmes n'étant pas dans le menu K
 Comment[x-test]=xxA launcher for programs not in the K Menuxx
 Icon=exec

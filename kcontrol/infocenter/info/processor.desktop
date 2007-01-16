@@ -12,14 +12,17 @@ X-KDE-FactoryName=cpu
 X-KDE-ParentApp=kinfocenter
 
 Name=Processor
+Name[el]=Επεξεργαστής
 Name[fr]=Processeur
 Name[x-test]=xxProcessorxx
 
 Comment=Processor information
+Comment[el]=Πληροφορίες για τον επεξεργαστή
 Comment[fr]=Informations sur le processeur
 Comment[x-test]=xxProcessor informationxx
 
 Keywords=Processor,CPU,FPU,MHz,System Information
+Keywords[el]=Επεξεργαστής,CPU,FPU,Πληροφορίες συστήματος
 Keywords[fr]=processeur,CPU,FPU,MHz,informations système,cpu
 Keywords[x-test]=xxProcessor,CPU,FPU,MHz,System Informationxx
 Categories=Qt;KDE;X-KDE-information;

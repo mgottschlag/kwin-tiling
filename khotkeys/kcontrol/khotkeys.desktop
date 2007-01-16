@@ -9,10 +9,12 @@ X-KDE-Init-Symbol=khotkeys
 X-KDE-ParentApp=kcontrol
 
 Name=Input Actions
+Name[el]=Ενέργειες εισόδου
 Name[fr]=Actions d'entrées
 Name[x-test]=xxInput Actionsxx
 
 Comment=Configure Hotkey settings
+Comment[el]=Ρυθμίσεις HotKeys
 Comment[fr]=Configurer les réglages des raccourcis-clavier
 Comment[x-test]=xxConfigure Hotkey settingsxx
 Categories=Qt;KDE;X-KDE-settings-accessibility;

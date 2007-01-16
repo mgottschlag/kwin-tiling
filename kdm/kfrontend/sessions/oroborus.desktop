@@ -6,6 +6,7 @@ TryExec=oroborus
 Name=Oroborus
 Name[x-test]=xxOroborusxx
 Comment=A lightweight themeable window manager
+Comment[el]=Ένας ελαφρύς διαχειριστής παραθύρων με υποστήριξη θεμάτων
 Comment[fr]=Un gestionnaire de fenêtres avec gestion des thèmes
 Comment[x-test]=xxA lightweight themeable window managerxx
 # not usable as a session

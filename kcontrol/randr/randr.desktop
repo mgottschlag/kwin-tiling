@@ -7,14 +7,17 @@ X-KDE-Library=randr
 Hidden[$e]=$(if xdpyinfo|grep RANDR > /dev/null; then echo "false"; else echo "true"; fi)
 
 Name=Size & Orientation
+Name[el]=Μέγεθος & Προσανατολισμός
 Name[fr]=Taille et orientation
 Name[x-test]=xxSize & Orientationxx
 
 Comment=Resize and Rotate your display
+Comment[el]=Αλλαγή μεγέθους και Περιστροφή της οθόνης σας
 Comment[fr]=Redimensionner et Tourner votre affichage
 Comment[x-test]=xxResize and Rotate your displayxx
 
 Keywords=resize,rotate,display,color,depth,size,horizontal,vertical
+Keywords[el]=αλλαγή μεγέθους,περιστροφή,οθόνη,χρώμα,βάθος,μέγεθος,οριζόντια,κατακόρυφα
 Keywords[fr]=redimensionner,rotation,affichage,couleur,profondeur,taille, horizontal,vertical
 Keywords[x-test]=xxresize,rotate,display,color,depth,size,horizontal,verticalxx
 Encoding=UTF-8

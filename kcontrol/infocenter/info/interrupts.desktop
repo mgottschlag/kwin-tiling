@@ -13,14 +13,17 @@ X-KDE-FactoryName=irq
 X-KDE-ParentApp=kinfocenter
 
 Name=Interrupts
+Name[el]=Διακοπές
 Name[fr]=Interruptions
 Name[x-test]=xxInterruptsxx
 
 Comment=Interrupt information
+Comment[el]=Πληροφορίες για τις διακοπές
 Comment[fr]=Informations sur les interruptions
 Comment[x-test]=xxInterrupt informationxx
 
 Keywords=Interrupts,IRQ,System Information
+Keywords[el]=Διακοπές,IRQ,Πληροφορίες συστήματος
 Keywords[fr]=interruptions,IRQ,informations système,irq
 Keywords[x-test]=xxInterrupts,IRQ,System Informationxx
 

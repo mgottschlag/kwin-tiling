@@ -3,8 +3,10 @@ Hidden=true
 Type=Plugin
 Encoding=UTF-8
 Name=Menu
+Name[el]=Μενού
 Name[x-test]=xxMenuxx
 Comment=Applet embedding standalone menubars
+Comment[el]=Εφαρμογίδιο που ενσωματώνει αυτόνομες γραμμές μενού
 Comment[fr]=Une applet intégrant les barres de menu externes
 Comment[x-test]=xxApplet embedding standalone menubarsxx
 

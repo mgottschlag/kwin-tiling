@@ -6,5 +6,6 @@ TryExec=w9wm
 Name=W9WM
 Name[x-test]=xxW9WMxx
 Comment=A window manager based on 9WM, enhanced by virtual screens and keyboard bindings
+Comment[el]=Ένας διαχειριστής παραθύρων βασισμένος στον 9WM, εμπλουτισμένος με εικονικές οθόνες και συνδυασμούς πλήκτρων
 Comment[fr]=Un gestionnaire de fenêtres basé sur 9WM, avec en plus la gestion des bureaux virtuels et des raccourcis clavier
 Comment[x-test]=xxA window manager based on 9WM, enhanced by virtual screens and keyboard bindingsxx

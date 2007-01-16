@@ -6,6 +6,7 @@ activeBlend=139,0,139
 selectBackground=139,0,139
 inactiveBackground=120,120,120
 Name=Storm
+Name[el]=Καταιγίδα
 Name[fr]=Tempête
 Name[x-test]=xxStormxx
 contrast=7

@@ -2,9 +2,11 @@
 Encoding=UTF-8
 Type=Directory
 Name=X-Utilities
+Name[el]=Εργαλεία-X
 Name[fr]=Utilitaires X
 Name[x-test]=xxX-Utilitiesxx
 Icon=xapp
 Comment=X Window Utilities
+Comment[el]=Εργαλεία των X Windows
 Comment[fr]=Utilitaires X-Window
 Comment[x-test]=xxX Window Utilitiesxx

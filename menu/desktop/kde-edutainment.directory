@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Edutainment
+Name[el]=Εκπαίδευση
 Name[fr]=Éducatif
 Name[x-test]=xxEdutainmentxx
 Icon=package_edutainment

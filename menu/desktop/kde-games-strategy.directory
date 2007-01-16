@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Tactics & Strategy
+Name[el]=Τακτική & Στρατηγική
 Name[fr]=Tactique et stratégie
 Name[x-test]=xxTactics & Strategyxx
 Icon=package_games_strategy

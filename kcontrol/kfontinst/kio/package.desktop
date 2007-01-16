@@ -5,6 +5,7 @@ MimeType=fonts/package
 Icon=font
 Patterns=*.fonts.zip
 Comment=Fonts Package
+Comment[el]=Πακέτο γραμματοσειρών
 Comment[fr]=Paquet de polices
 Comment[x-test]=xxFonts Packagexx
 

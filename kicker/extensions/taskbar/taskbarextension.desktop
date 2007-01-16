@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=External Taskbar
+Name[el]=Εξωτερική γραμμή εργασιών
 Name[fr]=Barre des tâches externe
 Name[x-test]=xxExternal Taskbarxx
 Comment=External taskbar panel extension.

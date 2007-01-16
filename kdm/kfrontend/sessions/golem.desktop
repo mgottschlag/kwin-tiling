@@ -6,5 +6,6 @@ TryExec=golem
 Name=Golem
 Name[x-test]=xxGolemxx
 Comment=A lightweight window manager
+Comment[el]=Ένας ελαφρύς διαχειριστής παραθύρων
 Comment[fr]=Un gestionnaire de fenêtres très léger
 Comment[x-test]=xxA lightweight window managerxx

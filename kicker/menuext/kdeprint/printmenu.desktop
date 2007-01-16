@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Print System
+Name[el]=Σύστημα εκτύπωσης
 Name[fr]=Système d'impression
 Name[x-test]=xxPrint Systemxx
 Comment=Easy access to the print system

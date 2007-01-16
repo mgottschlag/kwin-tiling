@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Font Files
+Name[el]=Αρχεία γραμματοσειρών
 Name[fr]=Fichiers de polices
 Name[x-test]=xxFont Filesxx
 ServiceTypes=ThumbCreator

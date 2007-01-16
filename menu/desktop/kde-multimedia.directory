@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Multimedia
+Name[el]=Πολυμέσα
 Name[fr]=Multimédia
 Name[x-test]=xxMultimediaxx
 Icon=package_multimedia

@@ -1,5 +1,6 @@
 [Color Scheme]
 Name=High Contrast White Text
+Name[el]=Άσπρο κείμενο υψηλής αντίθεσης
 Name[fr]=Texte en blanc avec contraste élevé
 Name[x-test]=xxHigh Contrast White Textxx
 activeBackground=0,0,90

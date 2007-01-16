@@ -11,13 +11,16 @@ X-KDE-FactoryName=keyboard_layout
 X-KDE-ParentApp=kcontrol
 
 Name=Keyboard Layout
+Name[el]=Διάταξη πληκτρολογίου
 Name[fr]=Disposition du clavier
 Name[x-test]=xxKeyboard Layoutxx
 
 Comment=Keyboard Layout
+Comment[el]=Διάταξη πληκτρολογίου
 Comment[fr]=Disposition du clavier
 Comment[x-test]=xxKeyboard Layoutxx
 
 Keywords=Keyboard,Layout,International
+Keywords[el]=Πληκτρολόγιο,Διάταξη,Διεθνής
 Keywords[fr]=clavier,disposition du clavier,périphériques d'entrée,International
 Keywords[x-test]=xxKeyboard,Layout,Internationalxx

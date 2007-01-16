@@ -12,13 +12,16 @@ X-KDE-FactoryName=launch
 X-KDE-ParentApp=kcontrol
 
 Name=Launch Feedback
+Name[el]=Ειδοποίηση εκκίνησης
 Name[fr]=Témoin de démarrage
 Name[x-test]=xxLaunch Feedbackxx
 
 Comment=Choose application-launch feedback style
+Comment[el]=Επιλέξτε στυλ για την ειδοποίηση εκκίνησης των εφαρμογών
 Comment[fr]=Définit le style du témoin de démarrage des applications
 Comment[x-test]=xxChoose application-launch feedback stylexx
 Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,rotating,spinning,disk,startup,program,report
+Keywords[el]=εφαρμογή,έναρξη,εκκίνηση,απασχολημένο,δρομέας,ανάδραση,ποντίκι,δείκτης,περιστροφή,περιστρεφόμενος,δίσκος,έναρξη,πρόγραμμα,αναφορά
 Keywords[fr]=application,démarrage,occupé,curseur,souris,pointeur,rotation,disque,programme,rapport
 Keywords[x-test]=xxapplication,start,launch,busy,cursor,feedback,mouse,pointer,rotating,spinning,disk,startup,program,reportxx
 

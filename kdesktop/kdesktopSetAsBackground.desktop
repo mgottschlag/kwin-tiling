@@ -2,11 +2,13 @@
 ServiceTypes=image/*
 Actions=setAsBackground;tileAsBackground;
 X-KDE-Submenu=Set as Background
+X-KDE-Submenu[el]=Ορισμός ως ταπετσαρία
 X-KDE-Submenu[fr]=Définir comme arrière-plan
 X-KDE-Submenu[x-test]=xxSet as Backgroundxx
 
 [Desktop Action setAsBackground]
 Name=Centered
+Name[el]=Κεντράρισμα
 Name[fr]=Centré
 Name[x-test]=xxCenteredxx
 Icon=background
@@ -14,6 +16,7 @@ Exec=qdbus org.kde.kdesktop  /Background setWallpaper %u 6
 
 [Desktop Action tileAsBackground]
 Name=Tiled
+Name[el]=Σε παράθεση
 Name[fr]=Mosaïque
 Name[x-test]=xxTiledxx
 Icon=background

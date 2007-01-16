@@ -2,6 +2,7 @@
 Type=Plugin
 Encoding=UTF-8
 Name=Desktop Preview & Pager
+Name[el]=Προεπισκόπηση και αλλαγή επιφάνειας εργασίας
 Name[fr]=Gestionnaire et aperçu des bureaux
 Name[x-test]=xxDesktop Preview & Pagerxx
 
