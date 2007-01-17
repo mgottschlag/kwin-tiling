@@ -177,7 +177,8 @@ bool GetInfo_PCI(Q3ListView * lBox)
     if ((num = GetInfo_ReadfromPipe(lBox, "lspci -v", true)) ||
         (num = GetInfo_ReadfromPipe(lBox, "/sbin/lspci -v", true)) ||
         (num = GetInfo_ReadfromPipe(lBox, "/usr/sbin/lspci -v", true)) ||
-        (num = GetInfo_ReadfromPipe(lBox, "/usr/local/sbin/lspci -v", true)))
+        (num = GetInfo_ReadfromPipe(lBox, "/usr/local/sbin/lspci -v", true)) ||
+	(num = GetInfo_ReadfromPipe(lBox, "/usr/bin/lspci -v", true)))
 	    return num;
 
     /* if lspci failed, read the contents of /proc/pci */
