@@ -33,8 +33,8 @@
 #include "klipperpopup.h"
 
 
-PopupProxy::PopupProxy( KlipperPopup* parent, const char* name, int menu_height, int menu_width )
-    : QObject( parent, name ),
+PopupProxy::PopupProxy( KlipperPopup* parent, int menu_height, int menu_width )
+    : QObject( parent ),
       proxy_for_menu( parent ),
       spillPointer( parent->history()->youngest() ),
       m_menu_height( menu_height ),

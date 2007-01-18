@@ -36,9 +36,6 @@
 #include "history.h"
 #include "toplevel.h"
 #include "popupproxy.h"
-//Added by qt3to4:
-#include <QKeyEvent>
-#include <QEvent>
 
 namespace {
     static const int TOP_HISTORY_ITEM_INDEX = 2;
@@ -114,7 +111,7 @@ KlipperPopup::KlipperPopup( History* history, QWidget* parent )
     int menu_height = ( screen.height() ) * 3/4;
     int menu_width = ( screen.width() )  * 1/3;
 
-    m_popupProxy = new PopupProxy( this, "popup_proxy", menu_height, menu_width );
+    m_popupProxy = new PopupProxy( this, menu_height, menu_width );
 
     connect( this, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
 }

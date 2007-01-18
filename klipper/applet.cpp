@@ -47,11 +47,7 @@ KlipperApplet::KlipperApplet(const QString& configFile, Plasma::Type t, int acti
     : KPanelApplet(configFile, t, actions, parent)
 {
     KlipperWidget::createAboutData();
-    move( 0, 0 );
-#ifdef __GNUC__
-#warning Qt4 setBackgroundMode no longer needed - please verify
-#endif    
-    //setBackgroundMode(QWidget::X11ParentRelative);
+
     widget = new KlipperAppletWidget( this );
     setCustomMenu(widget->history()->popup());
     centerWidget();

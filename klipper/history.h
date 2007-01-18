@@ -33,7 +33,7 @@ class History : public QObject
 {
     Q_OBJECT
 public:
-    History( QWidget* parent, const char* name );
+    History( QWidget* parent );
     ~History();
     /**
      * Iterator for history

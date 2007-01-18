@@ -29,9 +29,7 @@
 #include <QToolTip>
 #include <qmime.h>
 #include <q3dragobject.h>
-//Added by qt3to4:
 #include <QPaintEvent>
-#include <Q3PtrList>
 #include <QMouseEvent>
 #include <QX11Info>
 
@@ -151,7 +149,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     m_pendingCheckTimer.setSingleShot( true );
     connect( &m_pendingCheckTimer, SIGNAL( timeout()), SLOT( slotCheckPending()));
 
-    m_history = new History( this, "main_history" );
+    m_history = new History( this );
 
     // we need that collection, otherwise KToggleAction is not happy :}
     //QString defaultGroup( "default" );

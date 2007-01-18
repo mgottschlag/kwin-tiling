@@ -43,7 +43,7 @@ public:
      * Inserts up to itemsPerMenu into parent from parent->youngest(),
      * and spills any remaining items into a more menu.
      */
-    PopupProxy( KlipperPopup* parent, const char* name, int menu_height, int menu_width );
+    PopupProxy( KlipperPopup* parent, int menu_height, int menu_width );
 
     KlipperPopup* parent();
 
