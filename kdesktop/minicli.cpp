@@ -52,7 +52,6 @@
 #include <kpassworddialog.h>
 #include <krun.h>
 #include <kwin.h>
-#include <kdesu/su.h>
 #include <kstandarddirs.h>
 #include <kconfig.h>
 #include <kiconloader.h>
@@ -75,7 +74,17 @@
 #include <QTextDocument>
 #include <kauthorized.h>
 
+// There's no kdesu on windows at this point
+#ifdef Q_OS_WIN
+#define HAVE_KDESU 0
+#else
+#define HAVE_KDESU 1
+#endif
+
+#if HAVE_KDESU
+#include <kdesu/su.h>
 #define KDESU_ERR strerror(errno)
+#endif
 
 Minicli::Minicli( QWidget *parent )
         :KDialog( parent ),
@@ -121,7 +130,13 @@ Minicli::Minicli( QWidget *parent )
 
   m_prevCached = false;
   m_iPriority = 50;
+#if HAVE_KDESU
   m_iScheduler = StubProcess::SchedNormal;
+  m_dlg->cbRunAsOther->setEnabled(false);
+  m_dlg->cbRealtime->setEnabled(false);
+  m_dlg->cbPriority->setEnabled(false);
+  m_dlg->slPriority->setEnabled(false);
+#endif
 
   m_dlg->leUsername->setText("root");
   m_dlg->lePassword->setPasswordMode(true);
@@ -310,18 +325,19 @@ void Minicli::reset()
   m_dlg->pbRun->setEnabled( false );
 
   m_iPriority = 50;
+#if HAVE_KDESU
   m_iScheduler = StubProcess::SchedNormal;
+  m_dlg->cbRealtime->setChecked( m_iScheduler == StubProcess::SchedRealtime );
+  m_dlg->cbRunAsOther->setChecked(false);
+#endif
 
   m_dlg->cbRunInTerminal->setChecked(false);
-  m_dlg->cbRunAsOther->setChecked(false);
 
   m_dlg->leUsername->setText("root");
 
   m_dlg->cbPriority->setChecked(false);
-
   m_dlg->slPriority->setValue(m_iPriority);
 
-  m_dlg->cbRealtime->setChecked( m_iScheduler == StubProcess::SchedRealtime );
   m_dlg->lePassword->clear();
 
   m_FocusWidget = 0;
@@ -389,6 +405,7 @@ int Minicli::runCommand()
   if (!KAuthorized::authorizeKAction("shell_access"))
     useTerminal = false;
 
+#if HAVE_KDESU
   if( needsKDEsu() )
   {
     QByteArray user;
@@ -487,6 +504,7 @@ int Minicli::runCommand()
     return 0;
   }
   else
+#endif // HAVE_KDESU
   {
     QString exec;
 
@@ -745,8 +763,10 @@ void Minicli::setIcon ()
 
 void Minicli::updateAuthLabel()
 {
-  if (m_dlg->cbPriority->isChecked() && (m_iPriority > 50) ||
-      (m_iScheduler != StubProcess::SchedNormal))
+  if (m_dlg->cbPriority->isChecked() && (m_iPriority > 50)
+#if HAVE_KDESU
+      || (m_iScheduler != StubProcess::SchedNormal))
+#endif
   {
     if (!m_prevCached && !m_dlg->leUsername->text().isEmpty())
     {
@@ -840,13 +860,18 @@ void Minicli::slotChangeScheduler(bool enable)
 
 bool Minicli::needsKDEsu()
 {
+#if HAVE_KDESU
   return ((m_dlg->cbPriority->isChecked() && ((m_iPriority > 50) ||
           (m_iScheduler != StubProcess::SchedNormal))) ||
           (m_dlg->cbRunAsOther->isChecked() && !m_dlg->leUsername->text().isEmpty()));
+#else
+  return false;
+#endif
 }
 
 void Minicli::slotRealtime(bool enabled)
 {
+#if HAVE_KDESU
   m_iScheduler = enabled ? StubProcess::SchedRealtime : StubProcess::SchedNormal;
 
   if (enabled)
@@ -864,6 +889,7 @@ void Minicli::slotRealtime(bool enabled)
   }
 
   updateAuthLabel();
+#endif
 }
 
 void Minicli::slotPriority(int priority)
