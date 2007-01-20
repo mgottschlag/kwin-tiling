@@ -4,7 +4,7 @@ project(krunner)
 
 configure_file(config-xautolock.h.cmake config-xautolock.h)
 
-set(krunner_KCFG_SRCS krunnersettings.kcfgc)
+set(krunner_KCFG_SRCS krunnersettings.kcfgc klaunchsettings.kcfgc)
 set(krunner_dbusXML org.kde.krunner.Interface.xml)
 set(screensaver_dbusXML org.kde.ScreenSaver.xml)
 set(krunner_BGIMAGES images/background/dialog.svg)
@@ -21,7 +21,8 @@ set(krunner_SRCS interface.cpp
                  xautolock.cpp
                  xautolock_diy.c
                  xautolock_engine.c
-                 saverengine.cpp)
+                 saverengine.cpp
+                 startupid.cpp)
 
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
@@ -37,5 +38,6 @@ add_subdirectory( lock )
 install(TARGETS krunner DESTINATION ${BIN_INSTALL_DIR})
 install(FILES krunner.desktop  DESTINATION  ${SERVICES_INSTALL_DIR})
 install(FILES krunnersettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
+install(FILES klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES ${krunner_BGIMAGES} DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/background)
 install(FILES ${krunner_dbusXML} ${screensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_DIR} )

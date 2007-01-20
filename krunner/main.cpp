@@ -25,7 +25,9 @@
 #include "interface.h"
 #include "restartingapplication.h"
 #include "saverengine.h"
-#include "krunnersettings.h"
+#include "startupid.h"
+#include "krunnersettings.h" // contains screen saver config
+#include "klaunchsettings.h" // contains startup config
 
 
 #include <X11/extensions/Xrender.h>
@@ -103,6 +105,21 @@ int main(int argc, char* argv[])
 
     // LOCKING
     SaverEngine saver;
+
+    // Startup stuff ported from kdesktop
+    KLaunchSettings::self()->readConfig();
+    StartupId *startup_id( NULL );
+    if( !KLaunchSettings::busyCursor() )
+    {
+        delete startup_id;
+        startup_id = NULL;
+    }
+    else
+    {
+        if( startup_id == NULL )
+            startup_id = new StartupId;
+        startup_id->configure();
+    }
 
     Interface interface;
     interface.display();
