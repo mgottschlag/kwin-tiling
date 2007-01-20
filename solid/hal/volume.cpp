@@ -51,7 +51,7 @@ QString Volume::mountPoint() const
 
 Solid::Volume::UsageType Volume::usage() const
 {
-    QString usage = m_device->property( "volume.usage" ).toString();
+    QString usage = m_device->property( "volume.fsusage" ).toString();
 
     if ( usage == "filesystem" )
     {
