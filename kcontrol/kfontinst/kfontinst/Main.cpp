@@ -21,16 +21,15 @@
  */
 
 #include "Misc.h"
-#include "DisabledFonts.h"
 #include "Installer.h"
-#include "FcEngine.h"
+#include "Viewer.h"
+#include "Fc.h"
 #include "KfiPrint.h"
 #include "kxftconfig.h"
 #include <fontconfig/fontconfig.h>
 #include <QFile>
 #include <QList>
 #include <QTextStream>
-#include <ksavefile.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kapplication.h>
@@ -93,7 +92,7 @@ static void usage(char *app)
 {
     std::cerr << "Usage: " << app << " [OPTIONS]..." << std::endl
               << std::endl
-              << "  Helper application for KDE's fonts:/ ioslave." << std::endl
+              << "  Helper application for KDE's font utilities." << std::endl
               << "  (Please note this application is not intended to be useful by itself)."
                  << std::endl
               << std::endl
@@ -114,26 +113,16 @@ static void usage(char *app)
               << "                                                    prompted for destination." << std::endl
               << std::endl
               << std::endl
-              << "    Disabled font handling:" << std::endl
-              << std::endl
-              << "      -h <font> [<index>] <files..>                 Disable the selected font, and hide its files."
-                 << std::endl
-              << "      -H <family> <style info> [<index>] <files..>" << std::endl
-              << std::endl
-              << "      -e <font>                                     Enable the selected font, and unhide its files."
-                 << std::endl
-              << "      -E <family> <style info>" << std::endl
-              << std::endl
-              << "      -d <font>                                     Remove font from list of disabled fonts, and"
-                 << std::endl
-              << "                                                    delete any associated files." << std::endl
-              << "      -D <family> <style info>" << std::endl
-              << std::endl
-              << std::endl
               << "    Font Printing:" << std::endl
               << std::endl
               << "       -P <x id> <size> <family> <style info> [...] Print fonts" << std::endl
               << "       -p <x id> <size> <list file> <y/n>           Print fonts, *removes* file if last param==y"
+                 << std::endl
+              << std::endl
+              << std::endl
+              << "    Font Viewing:" << std::endl
+              << std::endl
+              << "       -v <url>                                     View file" << std::endl
                  << std::endl
               << std::endl
               << std::endl
@@ -175,92 +164,6 @@ static int installFonts(int argc, char **argv)
         KFI::CInstaller inst(argv[0], embedId, createParent(embedId));
 
         return KFI::CInstaller::INSTALLING==inst.install(fonts) && 0==app.exec() ? 0 : -1;
-    }
-    return -1;
-}
-
-KFI::CDisabledFonts::TFont getFont(char **argv, int &optind, bool style)
-{
-    if(style)
-        return KFI::CDisabledFonts::TFont(QString::fromUtf8(argv[optind]), atoi(argv[++optind]));
-    else
-    {
-        QString font(QString::fromUtf8(argv[optind]));
-        int     commaPos=font.find(',');
-
-        return KFI::CDisabledFonts::TFont(-1==commaPos ? font : font.left(commaPos),
-                                          KFI::CFcEngine::createStyleVal(font));
-    }
-}
-
-static int disableFont(int argc, char **argv, int optind, bool style)
-{
-    if((!style && argc-optind>=2) || (style && argc-optind>=3))
-    {
-        KFI::CDisabledFonts inf;
-
-        if(inf.modifiable())
-        {
-            KFI::CDisabledFonts::TFont font(getFont(argv, optind, style));
-            int                        index=-1;
-
-            for(int i=0; i<(argc-optind)-1; ++i)
-                if(argv[optind+1+i][0]!='/')
-                    index=atoi(argv[optind+1+i]);
-                else
-                    font.files.append(KFI::CDisabledFonts::TFile(QString::fromUtf8(argv[optind+1+i]),
-                                                                 index));
-
-            if(inf.disable(font))
-            {
-                inf.save();
-                return 0;
-            }
-        }
-    }
-    return -1;
-}
-
-static int enableFont(int argc, char **argv, int optind, bool style)
-{
-    if((!style && 1==argc-optind) || (style && 2==argc-optind))
-    {
-        KFI::CDisabledFonts        inf;
-        KFI::CDisabledFonts::TFont font(getFont(argv, optind, style));
-
-        if(inf.modifiable() && inf.enable(font))
-        {
-            inf.save();
-            return 0;
-        }
-    }
-    return -1;
-}
-
-static int deleteDisabledFont(int argc, char **argv, int optind, bool style)
-{
-    if((!style && 1==argc-optind) || (style && 2==argc-optind))
-    {
-        KFI::CDisabledFonts::TFont               font(getFont(argv, optind, style));
-        KFI::CDisabledFonts                      inf;
-        KFI::CDisabledFonts::TFontList::Iterator it=inf.items().find(font);
-
-        if(inf.modifiable() && inf.items().end()!=it)
-        {
-            KFI::CDisabledFonts::TFileList::ConstIterator fIt((*it).files.begin()),
-                                                     fEnd((*it).files.end());
-
-            for(; fIt!=fEnd; ++fIt)
-                if(::unlink(QFile::encodeName((*fIt).path).data()))
-                    break;
-
-            if(fIt==fEnd)
-            {
-                inf.remove(it);
-                inf.save();
-                return 0;
-            }
-        }
     }
     return -1;
 }
@@ -329,45 +232,35 @@ static int printFonts(int argc, char **argv, bool listFile)
     return -1;
 }
 
-//
-// mkfontscale doesnt ingore hidden files :-(
-void removeHiddenEntries(const QString &file)
+static int viewFont(int argc, char **argv)
 {
-    QStringList lines;
-    QFile       f(file);
-
-    if(f.open(QIODevice::ReadOnly))
+    if(3==argc)
     {
-        QTextStream stream(&f);
-        QString     line;
+        KUrl url(QString::fromUtf8(argv[2]));
 
-        int lineCount=stream.readLine().toInt(); // Ignore line count...
-
-        while(!stream.atEnd())
+        if(url.isValid())
         {
-            line=stream.readLine();
-            if(line.length() && '.'!=line[0])
-                lines.append(line);
-        }
-        f.close();
+            KAboutData aboutData(KFI_NAME, I18N_NOOP("Font Viewer"),
+                                 "1.0", I18N_NOOP("Simple Font Viewer" ),
+                                 KAboutData::License_GPL,
+                                 "(C) Craig Drummond, 2003-2006");
 
-        if(lineCount!=lines.count())
-        {
-            KSaveFile out(file);
+            char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)"kfontview"};
 
-            if(out.open())
-            {
-                QTextStream                stream(&out);
-                QStringList::ConstIterator it(lines.begin()),
-                                           end(lines.end());
+//                KApplication::disableAutoDcopRegistration();
+            KCmdLineArgs::init(3, dummyArgv, &aboutData);
 
-                stream << lines.count() << endl;
-                for(; it!=end; ++it)
-                    stream << (*it).toLocal8Bit() << endl;
-                out.finalize();
-            }
+            KApplication app;
+
+            KLocale::setMainCatalog(KFI_CATALOGUE);
+            KFI::CViewer *viewer=new KFI::CViewer (url);
+
+            app.setMainWidget(viewer);
+            viewer->show();
+            return app.exec();
         }
     }
+    return -1;
 }
 
 static QString removeQuotes(const QString &item)
@@ -382,12 +275,12 @@ static QString removeQuotes(const QString &item)
 
 int main(int argc, char *argv[])
 {
-    int  c=0,
-         rv=0;
-    bool doX=false,
-         addToFc=false;
+    int  c(0),
+         rv(0);
+    bool doX(false),
+         addToFc(false);
 
-    while(-1!=(c=getopt(argc, argv, "ixfhedHEDPp")))
+    while(-1!=(c=getopt(argc, argv, "xfiPpv")))
         switch(c)
         {
             case 'x':
@@ -398,28 +291,18 @@ int main(int argc, char *argv[])
                 break;
             case 'i':
                 return installFonts(argc, argv);
-            case 'h':
-                return disableFont(argc, argv, optind, false);
-            case 'H':
-                return disableFont(argc, argv, optind, true);
-            case 'e':
-                return enableFont(argc, argv, optind, false);
-            case 'E':
-                return enableFont(argc, argv, optind, true);
-            case 'd':
-                return deleteDisabledFont(argc, argv, optind, false);
-            case 'D':
-                return deleteDisabledFont(argc, argv, optind, true);
             case 'P':
                 return printFonts(argc, argv, false);
             case 'p':
                 return printFonts(argc, argv, true);
+            case 'v':
+                return viewFont(argc, argv);
             case '?':
                 usage(argv[0]);
                 break;
         }
 
-    int left=argc-optind;
+    int left(argc-optind);
 
     if ((1!=left || (!doX && !addToFc)))
         usage(argv[0]);
@@ -440,33 +323,29 @@ int main(int argc, char *argv[])
                 {
                     //
                     // Only add folder to fontconfig's config if its not already there...
-                    FcStrList *list=FcConfigGetFontDirs(FcConfigGetCurrent());
+                    FcStrList *list(FcConfigGetFontDirs(FcConfigGetCurrent()));
                     FcChar8   *dir;
-                    bool      found=false;
+                    bool      found(false);
 
                     while((dir=FcStrListNext(list)))
-                        if(0==KFI::Misc::dirSyntax((const char *)dir).indexOf(item))
+                    {
+                        QString ds(KFI::Misc::dirSyntax((const char *)dir));
+
+                        if(0==ds.indexOf(item) && ds.length()<=item.length())
                             found=true;
+                    }
 
                     if(!found)
                     {
                         KXftConfig xft(KXftConfig::Dirs, KFI::Misc::root());
 
                         xft.addDir(item);
-                        rv=xft.apply() ? 0 : -2;
+                        rv=xft.apply() ? 0 : -1;
                    }
                 }
 
                 if(0==rv && doX)
-                {
-                    //
-                    // On systems without mkfontscale, the following will fail, so cant base
-                    // return value upon that - hence only check return value of mkfontdir
-                    KFI::Misc::doCmd("mkfontscale", QFile::encodeName(item));
-                    removeHiddenEntries(item+"fonts.scale");
-                    rv=KFI::Misc::doCmd("mkfontdir", QFile::encodeName(item)) ? 0 : -3;
-                    removeHiddenEntries(item+"fonts.dir");
-                }
+                    rv=KFI::Misc::configureForX11(item) ? 0 : -1;
             }
     }
 

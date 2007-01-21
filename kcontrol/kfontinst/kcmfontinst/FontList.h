@@ -36,6 +36,7 @@
 #include <QVariant>
 #include <QSortFilterProxyModel>
 #include "Misc.h"
+#include "FontLister.h"
 
 class KFileItem;
 class KFileItemList;
@@ -89,9 +90,9 @@ class CFontList : public QAbstractItemModel
     QModelIndex     parent(const QModelIndex &index) const;
     int             rowCount(const QModelIndex &parent = QModelIndex()) const;
     int             columnCount(const QModelIndex &parent = QModelIndex()) const;
-    void            scan();
-    void            rescan();
-    bool            active() const                    { return !itsDirLister->isFinished(); }
+    void            scan()                            { itsLister->scan(); }
+    void            setAutoUpdate(bool on)            { itsLister->setAutoUpdate(on); }
+    bool            active() const                    { return !itsLister->busy(); }
     int             row(const CFamilyItem *fam) const { return itsFamilies.indexOf((CFamilyItem *)fam); }
     void            forceNewPreviews();
     const QList<CFamilyItem *> & families() const { return itsFamilies; }
@@ -106,13 +107,13 @@ class CFontList : public QAbstractItemModel
 
     Q_SIGNALS:
 
+    void            status(const QString &str);
+    void            percent(int p);
     void            finished();
 
     private Q_SLOTS:
 
     void            listingCompleted();
-    void            listingCompleted(const KUrl &url);
-    void            listingCanceled();
     void            newItems(const KFileItemList &items);
     void            clearItems();
     void            deleteItem(KFileItem *item);
@@ -130,6 +131,7 @@ class CFontList : public QAbstractItemModel
     QList<CFamilyItem *>                  itsFamilies;
     QHash<const KFileItem *, CFontItem *> itsFonts;   // Use for quick searching...
     KDirLister                            *itsDirLister;
+    CFontLister                           *itsLister;
     bool                                  itsAllowSys,
                                           itsAllowUser,
                                           itsAllowDisabled;
@@ -330,6 +332,7 @@ class CFontListView : public QTreeView
     void            setSortColumn(int col);
     void            selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void            itemCollapsed(const QModelIndex &index);
+    void            view();
 
     private:
 
@@ -348,7 +351,8 @@ class CFontListView : public QTreeView
     QAction                  *itsDeleteAct,
                              *itsEnableAct,
                              *itsDisableAct,
-                             *itsPrintAct;
+                             *itsPrintAct,
+                             *itsViewAct;
     bool                     itsAllowDrops;
 };
 

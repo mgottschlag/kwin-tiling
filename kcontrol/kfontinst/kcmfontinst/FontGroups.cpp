@@ -43,8 +43,8 @@ namespace KFI
 #define FAMILY_TAG    "family"
 
 CFontGroups::CFontGroups(const QString &path, bool abs)
-         : itsTimeStamp(0),
-           itsModified(false)
+           : itsTimeStamp(0),
+             itsModified(false)
 {
     if(abs)
         itsFileName=path;
@@ -55,16 +55,26 @@ CFontGroups::CFontGroups(const QString &path, bool abs)
         if(path.isEmpty())
         {
             FcStrList   *list=FcConfigGetFontDirs(FcInitLoadConfig());
-            QStringList dirs;
             FcChar8     *dir;
+            QString     home(QDir::homePath()),
+                        defaultDir(home+"/.fonts");
 
             while((dir=FcStrListNext(list)))
-                dirs.append(Misc::dirSyntax((const char *)dir));
+            {
+                QString d((const char *)dir);
 
-            QString home(Misc::dirSyntax(QDir::homePath())),
-                    defaultDir(Misc::dirSyntax(QDir::homePath()+"/.fonts/"));
+                if(0==d.indexOf(home))
+                    if(d==defaultDir)
+                    {
+                        p=defaultDir;
+                        break;
+                    }
+                    else if(p.isEmpty())
+                        p=d;
+            }
 
-            p=Misc::getFolder(defaultDir, home, dirs);
+            if(p.isEmpty())
+                p=defaultDir;
         }
         else
             p=path;

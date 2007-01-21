@@ -23,10 +23,11 @@
 #include "Misc.h"
 #include <QFile>
 #include <QByteArray>
+#include <QTextStream>
 #include <kprocess.h> 
 #include <kstandarddirs.h>
 #include <kde_file.h>
-#include <kio/netaccess.h>
+#include <ksavefile.h>
 #include <unistd.h>
 #include <ctype.h>
 
@@ -35,6 +36,14 @@ namespace KFI
 
 namespace Misc
 {
+
+QString prettyUrl(const KUrl &url)
+{
+    QString u(url.prettyUrl());
+
+    u.replace("%20", " ");
+    return u;
+}
 
 QString dirSyntax(const QString &d)
 {
@@ -148,9 +157,9 @@ QString changeExt(const QString &f, const QString &newExt)
 //
 //    Associated: /home/a/courier.afm /home/a/courier.pfm
 //
-void getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget)
+void getAssociatedFiles(const QString &path, QStringList &files, bool afmAndPfm)
 {
-    QString ext(url.path());
+    QString ext(path);
     int     dotPos(ext.lastIndexOf('.'));
     bool    check(false);
 
@@ -167,20 +176,16 @@ void getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidge
     {
         const char *afm[]={"afm", "AFM", "Afm", NULL},
                    *pfm[]={"pfm", "PFM", "Pfm", NULL};
-        bool       gotAfm(false),
-                   localFile(url.isLocalFile());
+        bool       gotAfm(false);
         int        e;
 
         for(e=0; afm[e]; ++e)
         {
-            KUrl statUrl(url);
-            KIO::UDSEntry uds;
+            QString statFile(changeExt(path, afm[e]));
 
-            statUrl.setPath(changeExt(url.path(), afm[e]));
-
-            if(localFile ? fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
+            if(fExists(statFile))
             {
-                list.append(statUrl);
+                files.append(statFile);
                 gotAfm=true;
                 break;
             }
@@ -189,13 +194,11 @@ void getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidge
         if(afmAndPfm || !gotAfm)
             for(e=0; pfm[e]; ++e)
             {
-                KUrl          statUrl(url);
-                KIO::UDSEntry uds;
+                QString statFile(changeExt(path, pfm[e]));
 
-                statUrl.setPath(changeExt(url.path(), pfm[e]));
-                if(localFile ? fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
+                if(fExists(statFile))
                 {
-                    list.append(statUrl);
+                    files.append(statFile);
                     break;
                 }
             }
@@ -289,6 +292,59 @@ uint qHash(const KFI::Misc::TFont &key)
         h &= ~g;
     }
     return h;
+}
+
+//
+// mkfontscale doesnt ingore hidden files :-(
+static void removeHiddenEntries(const QString &file)
+{
+    QStringList lines;
+    QFile       f(file);
+
+    if(f.open(QIODevice::ReadOnly))
+    {
+        QTextStream stream(&f);
+        QString     line;
+
+        int lineCount=stream.readLine().toInt(); // Ignore line count...
+
+        while(!stream.atEnd())
+        {
+            line=stream.readLine();
+            if(line.length() && '.'!=line[0])
+                lines.append(line);
+        }
+        f.close();
+
+        if(lineCount!=lines.count())
+        {
+            KSaveFile out(file);
+
+            if(out.open())
+            {
+                QTextStream                stream(&out);
+                QStringList::ConstIterator it(lines.begin()),
+                                           end(lines.end());
+
+                stream << lines.count() << endl;
+                for(; it!=end; ++it)
+                    stream << (*it).toLocal8Bit() << endl;
+                out.finalize();
+            }
+        }
+    }
+}
+
+bool configureForX11(const QString &dir)
+{
+    //
+    // On systems without mkfontscale, the following will fail, so cant base
+    // return value upon that - hence only check return value of mkfontdir
+    doCmd("mkfontscale", QFile::encodeName(dir));
+    removeHiddenEntries(dir+"fonts.scale");
+    bool rv=doCmd("mkfontdir", QFile::encodeName(dir));
+    removeHiddenEntries(dir+"fonts.dir");
+    return rv;
 }
 
 } // Misc::

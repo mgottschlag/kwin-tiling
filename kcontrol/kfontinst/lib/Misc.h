@@ -56,6 +56,7 @@ namespace Misc
         unsigned int styleInfo;
     };
 
+    extern KDE_EXPORT QString prettyUrl(const KUrl &url);
     inline KDE_EXPORT bool    isHidden(const QString &f)    { return QChar('.')==f[0]; }
     inline KDE_EXPORT bool    isHidden(const KUrl &url)     { return isHidden(url.fileName()); }
     extern KDE_EXPORT bool    check(const QString &path, unsigned int fmt, bool checkW=false);
@@ -73,9 +74,8 @@ namespace Misc
     extern KDE_EXPORT bool    doCmd(const QString &cmd, const QString &p1=QString(),
                                     const QString &p2=QString(), const QString &p3=QString());
     inline KDE_EXPORT bool    root() { return 0==getuid(); }
-    extern KDE_EXPORT void    getAssociatedUrls(const KUrl &url, KUrl::List &list,
-                                                bool afmAndPfm=true,
-                                                QWidget *widget=NULL);
+    extern KDE_EXPORT void    getAssociatedFiles(const QString &file, QStringList &list,
+                                                 bool afmAndPfm=true);
     extern KDE_EXPORT time_t  getTimeStamp(const QString &item);
     extern KDE_EXPORT QString getFolder(const QString &defaultDir, const QString &root,
                                         QStringList &dirs);
@@ -90,6 +90,7 @@ namespace Misc
     extern KDE_EXPORT bool    printable(const QString &mime);
     inline KDE_EXPORT QString unhide(const QString &f) { return '.'==f[0] ? f.mid(1) : f; }
     extern KDE_EXPORT uint    qHash(const TFont &key);
+    extern KDE_EXPORT bool    configureForX11(const QString &dir);
 }
 
 }

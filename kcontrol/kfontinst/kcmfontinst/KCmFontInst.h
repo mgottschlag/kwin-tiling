@@ -40,7 +40,8 @@ class KTreeWidgetSearchLineWidget;
 class KTempDir;
 class KProcess;
 class KZip;
-class KSelectAction;
+class KToggleAction;
+class KActionMenu;
 class QLabel;
 class QSplitter;
 class QComboBox;
@@ -53,6 +54,7 @@ class CFontList;
 class CFontPreview;
 class CUpdateDialog;
 class CFontListView;
+class CProgressBar;
 
 class CKCmFontInst : public KCModule
 {
@@ -82,6 +84,7 @@ class CKCmFontInst : public KCModule
     void    exportJobResult(KJob *job);
     void    exported(KIO::Job *job, const KUrl &from, const KUrl &to, bool dir, bool renamed);
     void    changeText();
+    //void    duplicateFonts();
     void    print();
     void    printGroup();
     void    initialJobResult(KJob *job);
@@ -92,6 +95,7 @@ class CKCmFontInst : public KCModule
     void    addFonts(const QSet<KUrl> &src);
     void    toggleFontManagement(bool on);
     void    selectGroup(int grp);
+    void    showPreview(bool s);
 
     private:
 
@@ -109,20 +113,25 @@ class CKCmFontInst : public KCModule
 
     private:
 
-    QWidget           *itsGroupWidget,
-                      *itsFontWidget;
-    QComboBox         *itsModeControl,
-                      *itsPreviewType;
+    QWidget           *itsGroupsWidget,
+                      *itsFontsWidget,
+                      *itsPreviewWidget;
+    QComboBox         *itsModeControl;
+    //                  *itsPreviewType;
+    QAction           *itsModeAct;
     QSplitter         *itsSplitter;
     CFontPreview      *itsPreview;
     KConfig           itsConfig;
     QLabel            *itsStatusLabel;
+    CProgressBar      *itsListingProgress;
     CFontList         *itsFontList;
     CFontListView     *itsFontListView;
     CGroupList        *itsGroupList;
     CGroupListView    *itsGroupListView;
-    KPushButton       *itsMgtMode,
-                      *itsDeleteGroupControl,
+    KToggleAction     *itsMgtMode,
+                      *itsShowPreview;
+    //KActionMenu       *itsToolsMenu;
+    KPushButton       *itsDeleteGroupControl,
                       *itsEnableGroupControl,
                       *itsDisableGroupControl,
                       *itsAddFontControl,

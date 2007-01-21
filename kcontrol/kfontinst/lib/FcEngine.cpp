@@ -29,6 +29,7 @@
 #include <kconfig.h>
 #include <kglobalsettings.h>
 #include <kio/netaccess.h>
+#include <kstaticdeleter.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <math.h>
@@ -59,54 +60,14 @@
 namespace KFI
 {
 
-static CFcEngine *theInstance=NULL;
+static KStaticDeleter<CFcEngine> staticDel;
+static CFcEngine                 *theInstance=NULL;
 
 const int CFcEngine::constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0 };
 const int CFcEngine::constDefaultAlphaSize=24;
 
 QColor CFcEngine::theirBgndCol(Qt::white);
 QColor CFcEngine::theirTextCol(Qt::black);
-
-static int fcWeight(int weight)
-{
-    if(KFI_NULL_SETTING==weight)
-#ifdef KFI_HAVE_MEDIUM_WEIGHT
-        return FC_WEIGHT_MEDIUM;
-#else
-        return FC_WEIGHT_REGULAR;
-#endif
-
-    if(weight<FC_WEIGHT_EXTRALIGHT)
-        return FC_WEIGHT_THIN;
-
-    if(weight<(FC_WEIGHT_EXTRALIGHT+FC_WEIGHT_LIGHT)/2)
-        return FC_WEIGHT_EXTRALIGHT;
-
-    if(weight<(FC_WEIGHT_LIGHT+FC_WEIGHT_REGULAR)/2)
-        return FC_WEIGHT_LIGHT;
-
-#ifdef KFI_HAVE_MEDIUM_WEIGHT
-    if(weight<(FC_WEIGHT_REGULAR+FC_WEIGHT_MEDIUM)/2)
-        return FC_WEIGHT_REGULAR;
-
-    if(weight<(FC_WEIGHT_MEDIUM+FC_WEIGHT_DEMIBOLD)/2)
-        return FC_WEIGHT_MEDIUM;
-#else
-    if(weight<(FC_WEIGHT_REGULAR+FC_WEIGHT_DEMIBOLD)/2)
-        return FC_WEIGHT_REGULAR;
-#endif
-
-    if(weight<(FC_WEIGHT_DEMIBOLD+FC_WEIGHT_BOLD)/2)
-        return FC_WEIGHT_DEMIBOLD;
-
-    if(weight<(FC_WEIGHT_BOLD+FC_WEIGHT_EXTRABOLD)/2)
-        return FC_WEIGHT_BOLD;
-
-    if(weight<(FC_WEIGHT_EXTRABOLD+FC_WEIGHT_BLACK)/2)
-        return FC_WEIGHT_EXTRABOLD;
-
-    return FC_WEIGHT_BLACK;
-}
 
 static int fcToQtWeight(int weight)
 {
@@ -137,38 +98,6 @@ static int fcToQtWeight(int weight)
     }
 }
 
-static int fcWidth(int width)
-{
-    if(KFI_NULL_SETTING==width)
-        return KFI_FC_WIDTH_NORMAL;
-
-    if(width<KFI_FC_WIDTH_EXTRACONDENSED)
-        return KFI_FC_WIDTH_EXTRACONDENSED;
-
-    if(width<(KFI_FC_WIDTH_EXTRACONDENSED+KFI_FC_WIDTH_CONDENSED)/2)
-        return KFI_FC_WIDTH_EXTRACONDENSED;
-
-    if(width<(KFI_FC_WIDTH_CONDENSED+KFI_FC_WIDTH_SEMICONDENSED)/2)
-        return KFI_FC_WIDTH_CONDENSED;
-
-    if(width<(KFI_FC_WIDTH_SEMICONDENSED+KFI_FC_WIDTH_NORMAL)/2)
-        return KFI_FC_WIDTH_SEMICONDENSED;
-
-    if(width<(KFI_FC_WIDTH_NORMAL+KFI_FC_WIDTH_SEMIEXPANDED)/2)
-        return KFI_FC_WIDTH_NORMAL;
-
-    if(width<(KFI_FC_WIDTH_SEMIEXPANDED+KFI_FC_WIDTH_EXPANDED)/2)
-        return KFI_FC_WIDTH_SEMIEXPANDED;
-
-    if(width<(KFI_FC_WIDTH_EXPANDED+KFI_FC_WIDTH_EXTRAEXPANDED)/2)
-        return KFI_FC_WIDTH_EXPANDED;
-
-    if(width<(KFI_FC_WIDTH_EXTRAEXPANDED+KFI_FC_WIDTH_ULTRAEXPANDED)/2)
-        return KFI_FC_WIDTH_EXTRAEXPANDED;
-
-    return KFI_FC_WIDTH_ULTRAEXPANDED;
-}
-
 #ifndef KFI_FC_NO_WIDTHS
 static int fcToQtWidth(int weight)
 {
@@ -197,173 +126,9 @@ static int fcToQtWidth(int weight)
 }
 #endif
 
-static int fcSlant(int slant)
-{
-    if(KFI_NULL_SETTING==slant || slant<FC_SLANT_ITALIC)
-        return FC_SLANT_ROMAN;
-
-#ifdef KFI_HAVE_OBLIQUE
-    if(slant<(FC_SLANT_ITALIC+FC_SLANT_OBLIQUE)/2)
-        return FC_SLANT_ITALIC;
-
-    return FC_SLANT_OBLIQUE;
-#else
-    return FC_SLANT_ITALIC;
-#endif
-}
-
 static bool fcToQtSlant(int slant)
 {
     return FC_SLANT_ROMAN==slant ? false : true;
-}
-
-static int fcSpacing(int spacing)
-{
-    if(spacing<FC_MONO)
-        return FC_PROPORTIONAL;
-
-    if(spacing<(FC_MONO+FC_CHARCELL)/2)
-        return FC_MONO;
-
-    return FC_CHARCELL;
-}
-
-static int strToWeight(const QString &str, QString &newStr)
-{
-    if(0==str.indexOf(i18n(KFI_WEIGHT_THIN), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_THIN).length());
-        return FC_WEIGHT_THIN;
-    }
-    if(0==str.indexOf(i18n(KFI_WEIGHT_EXTRALIGHT), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_EXTRALIGHT).length());
-        return FC_WEIGHT_EXTRALIGHT;
-    }
-    //if(0==str.indexOf(i18n(KFI_WEIGHT_ULTRALIGHT), 0, Qt::CaseInsensitive))
-    //{
-    //    newStr=str.mid(i18n(KFI_WEIGHT_ULTRALIGHT).length());
-    //    return FC_WEIGHT_ULTRALIGHT;
-    //}
-    if(0==str.indexOf(i18n(KFI_WEIGHT_LIGHT), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_LIGHT).length());
-        return FC_WEIGHT_LIGHT;
-    }
-    if(0==str.indexOf(i18n(KFI_WEIGHT_REGULAR), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_REGULAR).length());
-        return FC_WEIGHT_REGULAR;
-    }
-    //if(0==str.indexOf(i18n(KFI_WEIGHT_NORMAL), 0, Qt::CaseInsensitive))
-    //{
-    //    newStr=str.mid(i18n(KFI_WEIGHT_NORMAL).length());
-    //    return FC_WEIGHT_NORMAL;
-    //}
-    if(0==str.indexOf(i18n(KFI_WEIGHT_MEDIUM), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_MEDIUM).length());
-        return FC_WEIGHT_MEDIUM;
-    }
-    if(0==str.indexOf(i18n(KFI_WEIGHT_DEMIBOLD), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_DEMIBOLD).length());
-        return FC_WEIGHT_DEMIBOLD;
-    }
-    //if(0==str.indexOf(i18n(KFI_WEIGHT_SEMIBOLD), 0, Qt::CaseInsensitive))
-    //{
-    //    newStr=str.mid(i18n(KFI_WEIGHT_SEMIBOLD).length());
-    //    return FC_WEIGHT_SEMIBOLD;
-    //}
-    if(0==str.indexOf(i18n(KFI_WEIGHT_BOLD), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_BOLD).length());
-        return FC_WEIGHT_BOLD;
-    }
-    if(0==str.indexOf(i18n(KFI_WEIGHT_EXTRABOLD), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_EXTRABOLD).length());
-        return FC_WEIGHT_EXTRABOLD;
-    }
-    //if(0==str.indexOf(i18n(KFI_WEIGHT_ULTRABOLD), 0, Qt::CaseInsensitive))
-    //{
-    //    newStr=str.mid(i18n(KFI_WEIGHT_ULTRABOLD).length());
-    //    return FC_WEIGHT_ULTRABOLD;
-    //}
-    if(0==str.indexOf(i18n(KFI_WEIGHT_BLACK), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_BLACK).length());
-        return FC_WEIGHT_BLACK;
-    }
-    if(0==str.indexOf(i18n(KFI_WEIGHT_BLACK), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WEIGHT_BLACK).length());
-        return FC_WEIGHT_BLACK;
-    }
-
-    newStr=str;
-    return FC_WEIGHT_REGULAR;
-}
-
-static int strToWidth(const QString &str, QString &newStr)
-{
-    if(0==str.indexOf(i18n(KFI_WIDTH_ULTRACONDENSED), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WIDTH_ULTRACONDENSED).length());
-        return KFI_FC_WIDTH_ULTRACONDENSED;
-    }
-    if(0==str.indexOf(i18n(KFI_WIDTH_EXTRACONDENSED), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WIDTH_EXTRACONDENSED).length());
-        return KFI_FC_WIDTH_EXTRACONDENSED;
-    }
-    if(0==str.indexOf(i18n(KFI_WIDTH_CONDENSED), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WIDTH_CONDENSED).length());
-        return KFI_FC_WIDTH_CONDENSED;
-    }
-    if(0==str.indexOf(i18n(KFI_WIDTH_SEMICONDENSED), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WIDTH_SEMICONDENSED).length());
-        return KFI_FC_WIDTH_SEMICONDENSED;
-    }
-    if(0==str.indexOf(i18n(KFI_WIDTH_NORMAL), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WIDTH_NORMAL).length());
-        return KFI_FC_WIDTH_NORMAL;
-    }
-    if(0==str.indexOf(i18n(KFI_WIDTH_SEMIEXPANDED), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WIDTH_SEMIEXPANDED).length());
-        return KFI_FC_WIDTH_SEMIEXPANDED;
-    }
-    if(0==str.indexOf(i18n(KFI_WIDTH_EXPANDED), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WIDTH_EXPANDED).length());
-        return KFI_FC_WIDTH_EXPANDED;
-    }
-    if(0==str.indexOf(i18n(KFI_WIDTH_EXTRAEXPANDED), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WIDTH_EXTRAEXPANDED).length());
-        return KFI_FC_WIDTH_EXTRAEXPANDED;
-    }
-    if(0==str.indexOf(i18n(KFI_WIDTH_ULTRAEXPANDED), 0, Qt::CaseInsensitive))
-    {
-        newStr=str.mid(i18n(KFI_WIDTH_ULTRAEXPANDED).length());
-        return KFI_FC_WIDTH_ULTRAEXPANDED;
-    }
-
-    newStr=str;
-    return KFI_FC_WIDTH_NORMAL;
-}
-
-static int strToSlant(const QString &str)
-{
-    if(-1!=str.indexOf(i18n(KFI_SLANT_ITALIC)))
-        return FC_SLANT_ITALIC;
-    if(-1!=str.indexOf(i18n(KFI_SLANT_OBLIQUE)))
-        return FC_SLANT_OBLIQUE;
-    return FC_SLANT_ROMAN;
 }
 
 static void drawText(QPainter &painter, int x, int y, int width, const QString &str)
@@ -373,44 +138,44 @@ static void drawText(QPainter &painter, int x, int y, int width, const QString &
 
     width-=x*2;
     while(s.length()>3 && painter.fontMetrics().size(0, s).width()>width)
-    {
+{
         if(!addedElipses)
-        {
+    {
             s.remove(s.length()-2, 2);
             s.append("...");
             addedElipses=true;
-        }
+    }
         else
             s.remove(s.length()-4, 1);
     }
     painter.drawText(x, y, s);
-}
+    }
 
 inline bool equal(double d1, double d2)
-{
+    {
     return (fabs(d1 - d2) < 0.0001);
-}
+    }
 
 inline bool equalWeight(int a, int b)
-{
-    return a==b || fcWeight(a)==fcWeight(b);
-}
+    {
+    return a==b || FC::weight(a)==FC::weight(b);
+    }
 
 #ifndef KFI_FC_NO_WIDTHS
 inline bool equalWidth(int a, int b)
-{
-    return a==b || fcWidth(a)==fcWidth(b);
-}
+    {
+    return a==b || FC::width(a)==FC::width(b);
+    }
 #endif
 
 inline bool equalSlant(int a, int b)
-{
-    return a==b || fcSlant(a)==fcSlant(b);
-}
+    {
+    return a==b || FC::slant(a)==FC::slant(b);
+    }
 
 static bool drawChar(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, const QString &text, int pos,
                      int &x, int &y, int w, int h, int fSize, int offset)
-{
+    {
     XGlyphInfo     extents;
     const FcChar16 *str=(FcChar16 *)(&(text.utf16()[pos]));
 
@@ -446,11 +211,11 @@ static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, con
         return true;
     }
     return false;
-}
+    }
 
 static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_UInt i,
                       int &x, int &y, int &w, int &h, int fSize, int offset, bool oneLine)
-{
+    {
     XGlyphInfo extents;
 
     XftGlyphExtents(QX11Info::display(), xftFont, &i, 1, &extents);
@@ -471,11 +236,11 @@ static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_U
         return true;
     }
     return false;
-}
+    }
 
 static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol,
                           int size, int &x, int &y, int &w, int &h, int offset, bool oneLine=false)
-{
+    {
     bool rv=false;
     if(xftFont)
     {
@@ -497,16 +262,16 @@ static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol,
             if(oneLine)
                 x=offset;
             XftUnlockFace(xftFont);
-        }
+    }
     }
 
     return rv;
 }
 
 inline int point2Pixel(int point)
-{
+    {
     return (point*QX11Info::appDpiX()+36)/72;
-}
+    }
 
 static bool hasStr(XftFont *font, QString &str)
 {
@@ -534,7 +299,8 @@ static QString usableStr(XftFont *font, QString &str)
 CFcEngine * CFcEngine::instance()
 {
     if(!theInstance)
-        theInstance=new CFcEngine;
+        staticDel.setObject(theInstance, new CFcEngine);
+
     return theInstance;
 }
 
@@ -592,25 +358,25 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
         bool ok=true;
 
         if(QChar('/')==item[0])  // Then add to fontconfig's list, so that Xft can display it...
-        {
+{
             KUrl url("file://"+item);
 
             ok=parseUrl(url, face);
             addFontFile(item);
-        }
+}
         else
-        {
+{
             parseName(item, 0, style);
             itsInstalled=true;
-        }
+}
 
         if(ok)
-        {
+{
             itsLastUrl=KUrl();
             getSizes();
 
             if(itsSizes.size())
-            {
+    {
                 //
                 // Calculate size of text...
                 int  fSize=((int)(h*0.75))-2,
@@ -631,13 +397,13 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                         pix=QPixmap(constInitialWidth, bSize+8);
                         pix.fill(theirBgndCol);
                         needResize=true;
-                    }
+    }
                     else
                         offset=(fSize-bSize)/2;
-                }
+}
 
                 if(!needResize)
-                {
+{
                     pix=QPixmap(constInitialWidth, h);
                     pix.fill(theirBgndCol);
                 }
@@ -660,7 +426,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                                                (Visual*)(x11Info.visual()), x11Info.colormap());
 
                 if(xftDraw)
-                {
+{
                     XftFont *xftFont=NULL;
                     QString text(itsPreviewString);
 
@@ -670,7 +436,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                         offset=0;
 
                     if(!itsScalable) // Then need to get nearest size...
-                    {
+    {
                         int bSize=0;
 
                         for(int s=0; s<itsSizes.size(); ++s)
@@ -689,15 +455,15 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                             pix.fill(theirBgndCol);
                             needResize=true;
                         }
-                        else
+        else
 */
                             offset=(fSize-bSize)/2;
-                    }
+    }
 
                     xftFont=getFont(fSize);
 
                     if(xftFont)
-                    {
+    {
                         if(hasStr(xftFont, text) || hasStr(xftFont, text=text.toUpper()) ||
                            hasStr(xftFont, text=text.toLower()))
                         {
@@ -719,7 +485,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                             rv=true;
                         }
                         else
-                        {
+        {
                             FT_Face face=XftLockFace(xftFont);
 
                             if(face)
@@ -736,7 +502,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                                                     &extents);
 
                                     if(x+extents.width+2>constInitialWidth)  // Only want 1 line
-                                        break;
+                break;
 
                                     XftDrawGlyphs(xftDraw, &xftCol, xftFont, x, y, &i, 1);
                                     x+=extents.width+2;
@@ -797,7 +563,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
         getSizes();
 
         if(itsSizes.size())
-        {
+{
             const QX11Info &x11Info(pix.x11Info());
             XRenderColor   xrenderCol;
             XftColor       xftCol;
@@ -815,11 +581,11 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                            (Visual*)(x11Info.visual()), x11Info.colormap());
 
             if(xftDraw)
-            {
+{
                 XftFont *xftFont=NULL;
 
                 if(thumb)
-                {
+{
                     QString text(i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
 
                     //
@@ -831,14 +597,14 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                         /*: (h-(offset*4))/3*/;  // 3 lines or more
 
                     if(!itsScalable) // Then need to get nearest size...
-                    {
+{
                         int bSize=0;
 
                         for(int s=0; s<itsSizes.size(); ++s)
                             if (itsSizes[s]<=fSize || 0==bSize)
                                 bSize=itsSizes[s];
                         fSize=bSize;
-                    }
+}
 
                     unsigned int ch;
 
@@ -846,7 +612,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                     y=fSize;
                     if(xftFont)
-                    {
+{
                         QString valid(usableStr(xftFont, text));
 
                         rv=true;
@@ -874,7 +640,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                     xftFont=getFont(itsAlphaSize);
                     if(xftFont)
-                    {
+    {
                         QString validPunc(usableStr(xftFont, punctuation));
 
                         rv=true;
@@ -898,12 +664,12 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             if(lc || uc || punc)
                                 painter.drawLine(offset, y, w-(offset+1), y);
                             y+=8;
-                        }
+    }
 
                         QString previewString(getPreviewString());
 
                         if(!drawGlyphs)
-                        {
+    {
                             if(!lc && uc)
                                 previewString=previewString.toUpper();
                             if(!uc && lc)
@@ -912,7 +678,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                         for(int s=0; s<itsSizes.size(); ++s)
                             if((xftFont=getFont(itsSizes[s])))
-                            {
+        {
                                 rv=true;
                                 if(drawGlyphs)
                                     drawAllGlyphs(xftDraw, xftFont, &xftCol, itsSizes[s], x, y, w, h, offset,
@@ -921,25 +687,25 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                     drawString(xftDraw, xftFont, &xftCol, previewString, x, y, h,
                                                offset);
                                 XftFontClose(QX11Info::display(), xftFont);
-                            }
-                    }
+        }
+    }
 
                     painter.setPen(theirBgndCol);
                     for(int l=0; l<offset; ++l)
                         painter.drawLine((w-1)-l, 0, (w-1)-l, h);
                 }
                 else if(ALL_CHARS==unicodeStart)
-                {
+    {
                     drawName(painter, x, y, w, offset);
 
                     if((xftFont=getFont(itsAlphaSize)))
-                    {
+        {
                         y-=8;
                         drawAllGlyphs(xftDraw, xftFont, &xftCol, itsAlphaSize, x, y, w, h, offset);
                         rv=true;
                         XftFontClose(QX11Info::display(), xftFont);
-                    }
-                }
+        }
+    }
                 else  // Want to draw 256 chars from font...
                 {
                     static const int constGap=4;
@@ -962,12 +728,12 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             if (itsSizes[s]<=fSize)
                                 bSize=itsSizes[s];
                         fSize=bSize;
-                    }
+}
 
                     xftFont=getFont(fSize);
 
                     if(xftFont)
-                    {
+{
                         QString str("A");
 
                         rv=true;
@@ -976,12 +742,12 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         y+=constGap;
                         int ds=16*(fSize+(2*constGap));
                         for(int i=0; i<17; ++i)
-                        {
+    {
                             painter.drawLine(x, y+(i*(fSize+(2*constGap))), x+ds-1,
                                              y+(i*(fSize+(2*constGap))));
                             painter.drawLine(x+(i*(fSize+(2*constGap))), y, x+(i*(fSize+(2*constGap))),
                                              y+ds-1);
-                        }
+}
                         y+=fSize;
                         x+=constGap;
                         for(int a=0; a<256; ++a)
@@ -991,7 +757,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             XftDrawString16(xftDraw, &xftCol, xftFont, x, y, fcStr, 1);
 
                             if(!((a+1)%16))
-                            {
+{
                                 y+=fSize+(2*constGap);
                                 x=offset+constGap;
                             }
@@ -1012,67 +778,11 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
     return rv;
 }
 
-unsigned long CFcEngine::createStyleVal(const QString &name)
-{
-    int pos;
-
-    if(-1==(pos=name.indexOf(", ")))   // No style information...
-        return createStyleVal(FC_WEIGHT_REGULAR,
-#ifdef KFI_FC_NO_WIDTHS
-                              KFI_NULL_SETTING
-#else
-                              KFI_FC_WIDTH_NORMAL
-#endif
-                              , FC_SLANT_ROMAN);
-    else
-    {
-        QString style(name.mid(pos+2));
-
-        return createStyleVal(strToWeight(style, style),
-#ifdef KFI_FC_NO_WIDTHS
-                              KFI_NULL_SETTING
-#else
-                              strToWidth(style, style)
-#endif
-                              , strToSlant(style));
-    }
-}
-
-QString CFcEngine::styleValToStr(unsigned long style)
-{
-    QString str;
-    int     weight, width, slant;
-
-    decomposeStyleVal(style, weight, width, slant);
-    str.sprintf("0X%02X%02X%02X\n", weight, width, slant);
-    return str;
-}
-
-void CFcEngine::decomposeStyleVal(int styleInfo, int &weight, int &width, int &slant)
-{
-    weight=(styleInfo&0xFF0000)>>16;
-    width=(styleInfo&0x00FF00)>>8;
-    slant=(styleInfo&0x0000FF);
-}
-
-unsigned long CFcEngine::styleValFromStr(const QString &style)
-{
-    if(style.isEmpty())
-        return KFI_NO_STYLE_INFO;
-    else
-    {
-        unsigned long val;
-
-        QTextIStream(&style)>>val;
-        return val;
-    }
-}
-
 QString CFcEngine::getDefaultPreviewString()
-{
+    {
     return i18nc("A sentence that uses all of the letters of the alphabet",
                  "The quick brown fox jumps over the lazy dog");
-}
+    }
 
 QString CFcEngine::getUppercaseLetters()
 {
@@ -1085,20 +795,9 @@ QString CFcEngine::getLowercaseLetters()
 }
 
 QString CFcEngine::getPunctuation()
-{
-    return i18nc("Numbers and characters", "0123456789.:,;(*!?'/\\\")£$€%^&-+@~#<>{}[]");
-}
-
-QString CFcEngine::getFcString(FcPattern *pat, const char *val, int index)
-{
-    QString rv;
-    FcChar8 *fcStr;
-
-    if(FcResultMatch==FcPatternGetString(pat, val, index, &fcStr))
-        rv=QString::fromUtf8((char *)fcStr);
-
-    return rv;
-}
+    {
+    return i18nc("Numbers and characters", "0123456789.:,;(*!?'/\\\")Â£$â¬%^&-+@~#<>{}[]");
+    }
 
 #ifdef KFI_USE_TRANSLATED_FAMILY_NAME
 //
@@ -1120,222 +819,27 @@ QString CFcEngine::getFcLangString(FcPattern *pat, const char *val, const char *
             break;
         else
             fontLangs.append(lang);
-    }
+}
 
     // Now go through the user's KDE locale, and try to find a font match...
     for(; it!=end; ++it)
-    {
+{
         int index=fontLangs.findIndex(*it);
 
         if(-1!=index)
-        {
+    {
             rv=getFcString(pat, val, index);
 
             if(!rv.isEmpty())
                 break;
-        }
     }
+}
 
     if(rv.isEmpty())
         rv=getFcString(pat, val, 0);
     return rv;
 }
 #endif
-
-int CFcEngine::getFcInt(FcPattern *pat, const char *val, int index, int def)
-{
-    int rv;
-
-    if (FcResultMatch==FcPatternGetInteger(pat, val, index, &rv))
-        return rv;
-    return def;
-}
-
-void CFcEngine::getDetails(FcPattern *pat, QString &name, int &styleVal, int &index)
-{
-    int weight=getFcInt(pat,  FC_WEIGHT, 0, KFI_NULL_SETTING),
-        width=
-#ifdef KFI_FC_NO_WIDTHS
-               KFI_NULL_SETTING,
-#else
-               getFcInt(pat,  FC_WIDTH, 0, KFI_NULL_SETTING),
-#endif
-        slant=getFcInt(pat,  FC_SLANT, 0, KFI_NULL_SETTING);
-
-    index=getFcInt(pat,  FC_INDEX, 0, 0);
-    name=CFcEngine::createName(pat, weight, width, slant);
-    styleVal=CFcEngine::createStyleVal(weight, width, slant);
-}
-
-QString CFcEngine::createName(FcPattern *pat)
-{
-    return createName(pat, getFcInt(pat, FC_WEIGHT, 0),
-#ifdef KFI_FC_NO_WIDTHS
-                      KFI_NULL_SETTING,
-#else
-                      getFcInt(pat, FC_WIDTH, 0),
-#endif
-                      getFcInt(pat, FC_SLANT, 0));
-}
-
-QString CFcEngine::createName(FcPattern *pat, int weight, int width, int slant)
-{
-#ifdef KFI_USE_TRANSLATED_FAMILY_NAME
-    QString family(getFcLangString(pat, FC_FAMILY, FC_FAMILYLANG));
-#else
-    QString family(getFcString(pat, FC_FAMILY, 0));
-#endif
-
-    return createName(family, weight, width, slant);
-}
-
-QString CFcEngine::createName(const QString &family, int styleInfo)
-{
-    int weight, width, slant;
-
-    decomposeStyleVal(styleInfo, weight, width, slant);
-    return createName(family, weight, width, slant);
-}
-
-QString CFcEngine::createName(const QString &family, int weight, int width, int slant)
-{
-//
-//CPD: TODO: the names *need* to match up with kfontchooser's...
-//         : Removing KFI_DISPLAY_OBLIQUE and KFI_DISPLAY_MEDIUM help this.
-//           However, I have at least one bad font:
-//               Rockwell Extra Bold. Both fontconfig, and kcmshell fonts list family
-//               as "Rockwell Extra Bold" -- good (well at least they match). *But* fontconfig
-//               is returning the weight "Extra Bold", and kcmshell fonts is using "Bold" :-(
-//
-    QString name(family),
-            weightString,
-            widthString,
-            slantString;
-    bool    comma=false;
-
-#ifndef KFI_FC_NO_WIDTHS
-    if(KFI_NULL_SETTING!=width)
-        widthString=widthStr(width);
-#endif
-
-    if(KFI_NULL_SETTING!=slant)
-        slantString=slantStr(slant);
-
-    //
-    // If weight is "Regular", we only want to display it if slant and width are empty.
-    if(KFI_NULL_SETTING!=weight)
-        weightString=weightStr(weight, !slantString.isEmpty() || !widthString.isEmpty());
-
-    if(!weightString.isEmpty())
-    {
-        name+=QString(", ")+weightString;
-        comma=true;
-    }
-
-#ifndef KFI_FC_NO_WIDTHS
-    if(!widthString.isEmpty())
-    {
-        if(!comma)
-        {
-            name+=QChar(',');
-            comma=true;
-        }
-        name+=QChar(' ')+widthString;
-    }
-#endif
-
-    if(!slantString.isEmpty())
-    {
-        if(!comma)
-        {
-            name+=QChar(',');
-            comma=true;
-        }
-        name+=QChar(' ')+slantString;
-    }
-
-    return name;
-}
-
-QString CFcEngine::weightStr(int weight, bool emptyNormal)
-{
-    switch(fcWeight(weight))
-    {
-        case FC_WEIGHT_THIN:
-            return i18n(KFI_WEIGHT_THIN);
-        case FC_WEIGHT_EXTRALIGHT:
-            return i18n(KFI_WEIGHT_EXTRALIGHT);
-        case FC_WEIGHT_LIGHT:
-            return i18n(KFI_WEIGHT_LIGHT);
-        case FC_WEIGHT_MEDIUM:
-#ifdef KFI_DISPLAY_MEDIUM
-            return i18n(KFI_WEIGHT_MEDIUM);
-#endif
-        case FC_WEIGHT_REGULAR:
-            return emptyNormal ? QString() : i18n(KFI_WEIGHT_REGULAR);
-        case FC_WEIGHT_DEMIBOLD:
-            return i18n(KFI_WEIGHT_DEMIBOLD);
-        case FC_WEIGHT_BOLD:
-            return i18n(KFI_WEIGHT_BOLD);
-        case FC_WEIGHT_EXTRABOLD:
-            return i18n(KFI_WEIGHT_EXTRABOLD);
-        default:
-            return i18n(KFI_WEIGHT_BLACK);
-    }
-}
-
-QString CFcEngine::widthStr(int width, bool emptyNormal)
-{
-    switch(fcWidth(width))
-    {
-        case KFI_FC_WIDTH_ULTRACONDENSED:
-            return i18n(KFI_WIDTH_ULTRACONDENSED);
-        case KFI_FC_WIDTH_EXTRACONDENSED:
-            return i18n(KFI_WIDTH_EXTRACONDENSED);
-        case KFI_FC_WIDTH_CONDENSED:
-            return i18n(KFI_WIDTH_CONDENSED);
-        case KFI_FC_WIDTH_SEMICONDENSED:
-            return i18n(KFI_WIDTH_SEMICONDENSED);
-        case KFI_FC_WIDTH_NORMAL:
-            return emptyNormal ? QString() : i18n(KFI_WIDTH_NORMAL);
-        case KFI_FC_WIDTH_SEMIEXPANDED:
-            return i18n(KFI_WIDTH_SEMIEXPANDED);
-        case KFI_FC_WIDTH_EXPANDED:
-            return i18n(KFI_WIDTH_EXPANDED);
-        case KFI_FC_WIDTH_EXTRAEXPANDED:
-            return i18n(KFI_WIDTH_EXTRAEXPANDED);
-        default:
-            return i18n(KFI_WIDTH_ULTRAEXPANDED);
-    }
-}
-
-QString CFcEngine::slantStr(int slant, bool emptyNormal)
-{
-    switch(fcSlant(slant))
-    {
-        case FC_SLANT_OBLIQUE:
-#ifdef KFI_DISPLAY_OBLIQUE
-            return i18n(KFI_SLANT_OBLIQUE);
-#endif
-        case FC_SLANT_ITALIC:
-            return i18n(KFI_SLANT_ITALIC);
-        default:
-            return emptyNormal ? QString() : i18n(KFI_SLANT_ROMAN);
-    }
-}
-
-QString CFcEngine::spacingStr(int spacing)
-{
-    switch(fcSpacing(spacing))
-    {
-        case FC_MONO:
-            return i18n(KFI_SPACING_MONO);
-        case FC_CHARCELL:
-            return i18n(KFI_SPACING_CHARCELL);
-        default:
-            return i18n(KFI_SPACING_PROPORTIONAL);
-    }
-}
 
 bool CFcEngine::getInfo(const KUrl &url, int faceNo, QString &full, QString &family, QString &foundry, QString &weight,
                         QString &width, QString &spacing, QString &slant)
@@ -1354,10 +858,10 @@ bool CFcEngine::getInfo(const KUrl &url, int faceNo, QString &full, QString &fam
         }
         else
             family=itsName;
-        weight=weightStr(itsWeight, false);
-        width=widthStr(itsWidth, false);
-        slant=slantStr(itsSlant, false);
-        spacing=spacingStr(itsSpacing);
+        weight=FC::weightStr(itsWeight, false);
+        width=FC::widthStr(itsWidth, false);
+        slant=FC::slantStr(itsSlant, false);
+        spacing=FC::spacingStr(itsSpacing);
         foundry=itsFoundry;
         return true;
     }
@@ -1393,7 +897,7 @@ QFont CFcEngine::getQFont(const QString &family, unsigned long style, int size)
         width,
         slant;
 
-    decomposeStyleVal(style, weight, width, slant);
+    FC::decomposeStyleVal(style, weight, width, slant);
 
     QFont font(family, size, fcToQtWeight(weight), fcToQtSlant(slant));
 
@@ -1431,7 +935,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
         {
             name=udsEntry.stringValue((uint)KIO::UDS_NAME);
             itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
-            style=styleValFromStr(udsEntry.stringValue((uint)UDS_EXTRA_FC_STYLE));
+            style=FC::styleValFromStr(udsEntry.stringValue((uint)UDS_EXTRA_FC_STYLE));
             itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDS_URL)),
                                           KFI_KIO_FACE, 0);
         }
@@ -1549,9 +1053,9 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
                 if(all)
                 {
                     FcPatternGetInteger(pat, FC_SPACING, 0, &itsSpacing);
-                    itsFoundry=getFcString(pat, FC_FOUNDRY, 0);
+                    itsFoundry=FC::getFcString(pat, FC_FOUNDRY, 0);
                 }
-                itsDescriptiveName=createName(pat, itsWeight, itsWidth, itsSlant);
+                itsDescriptiveName=FC::createName(pat, itsWeight, itsWidth, itsSlant);
                 FcPatternDestroy(pat);
             }
             else
@@ -1584,7 +1088,7 @@ bool CFcEngine::parseName(const QString &name, int faceNo, unsigned long style, 
     if(-1==(pos=name.indexOf(", ")))   // No style information...
     {
         if(KFI_NO_STYLE_INFO!=style)
-            decomposeStyleVal(style, itsWeight, itsWidth, itsSlant);
+            FC::decomposeStyleVal(style, itsWeight, itsWidth, itsSlant);
         else
         {
             itsWeight=FC_WEIGHT_REGULAR;
@@ -1596,14 +1100,14 @@ bool CFcEngine::parseName(const QString &name, int faceNo, unsigned long style, 
     else
     {
         if(KFI_NO_STYLE_INFO!=style)
-            decomposeStyleVal(style, itsWeight, itsWidth, itsSlant);
+            FC::decomposeStyleVal(style, itsWeight, itsWidth, itsSlant);
         else
         {
             QString style(name.mid(pos+2));
 
-            itsWeight=strToWeight(style, style);
-            itsWidth=strToWidth(style, style);
-            itsSlant=strToSlant(style);
+            itsWeight=FC::strToWeight(style, style);
+            itsWidth=FC::strToWidth(style, style);
+            itsSlant=FC::strToSlant(style);
         }
         itsName=name.left(pos);
     }
@@ -1629,7 +1133,7 @@ bool CFcEngine::parseName(const QString &name, int faceNo, unsigned long style, 
         if(set && set->nfont)
         {
             FcPatternGetInteger(set->fonts[0], FC_SPACING, faceNo, &itsSpacing);
-            itsFoundry=getFcString(set->fonts[0], FC_FOUNDRY, faceNo);
+            itsFoundry=FC::getFcString(set->fonts[0], FC_FOUNDRY, faceNo);
         }
     }
 

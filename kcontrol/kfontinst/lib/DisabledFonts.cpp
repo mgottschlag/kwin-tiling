@@ -21,7 +21,7 @@
  */
 
 #include "DisabledFonts.h"
-#include "FcEngine.h"
+#include "Fc.h"
 #include "Misc.h"
 #include "KfiConstants.h"
 #include <QDir>
@@ -30,9 +30,11 @@
 #include <QDomNode>
 #include <QFile>
 #include <QTextStream>
+#include <klockfile.h>
 #include <ksavefile.h>
 #include <klocale.h>
 #include <fontconfig/fontconfig.h>
+#include <stdio.h>
 
 namespace KFI
 {
@@ -47,6 +49,9 @@ namespace KFI
 #define WIDTH_ATTR    "width"
 #define SLANT_ATTR    "slant"
 #define FACE_ATTR     "face"
+
+static const int     constStaleLockTime(5);
+static const QString constLockExt(".lock");
 
 static QString changeName(const QString &f, bool enable)
 {
@@ -72,19 +77,20 @@ static bool changeFileStatus(const QString &f, bool enable)
     if(Misc::fExists(dest) && !Misc::fExists(f)) // File is already enabled/disabled
         return true;
 
-    if(Misc::doCmd("mv", "-f", f, dest))
+    if(0==::rename(QFile::encodeName(f).data(), QFile::encodeName(dest).data()))
     {
-        KUrl::List urls;
+        QStringList files;
 
-        Misc::getAssociatedUrls(KUrl(f), urls);
+        Misc::getAssociatedFiles(f, files);
 
-        if(urls.count())
+        if(files.count())
         {
-            KUrl::List::Iterator uIt,
-                                 uEnd=urls.end();
+            QStringList::Iterator fIt,
+                                  fEnd=files.end();
 
-            for(uIt=urls.begin(); uIt!=uEnd; ++uIt)
-                Misc::doCmd("mv", "-f", (*uIt).path(), changeName((*uIt).path(), enable));
+            for(fIt=files.begin(); fIt!=fEnd; ++fIt)
+                ::rename(QFile::encodeName(*fIt).data(),
+                         QFile::encodeName(changeName(*fIt, enable)).data());
         }
         return true;
     }
@@ -130,16 +136,26 @@ CDisabledFonts::CDisabledFonts(const QString &path, bool sys)
         else
         {
             FcStrList   *list=FcConfigGetFontDirs(FcInitLoadConfig());
-            QStringList dirs;
             FcChar8     *dir;
+            QString     home(QDir::homePath()),
+                        defaultDir(home+"/.fonts");
 
             while((dir=FcStrListNext(list)))
-                dirs.append(Misc::dirSyntax((const char *)dir));
+            {
+                QString d((const char *)dir);
 
-            QString home(Misc::dirSyntax(QDir::homePath())),
-                    defaultDir(Misc::dirSyntax(QDir::homePath()+"/.fonts/"));
+                if(0==d.indexOf(home))
+                    if(d==defaultDir)
+                    {
+                        p=defaultDir;
+                        break;
+                    }
+                    else if(p.isEmpty())
+                        p=d;
+            }
 
-            p=Misc::getFolder(defaultDir, home, dirs);
+            if(p.isEmpty())
+                p=defaultDir;
         }
     }
     else
@@ -160,76 +176,95 @@ bool CDisabledFonts::refresh()
     return update;
 }
 
-void CDisabledFonts::load()
+//
+// Dont always lock during a load, as we may be trying to read global file (but not as root),
+// or this load might be being called within the save() - so cant lock as is already!
+void CDisabledFonts::load(bool lock)
 {
-    time_t ts=Misc::getTimeStamp(itsFileName);
+    KLockFile lf(itsFileName+constLockExt);
 
-    if(!ts || ts!=itsTimeStamp)
+    lf.setStaleTime(constStaleLockTime);
+    lock=lock && itsModifiable;
+
+    if(!lock || KLockFile::LockOK==lf.lock(KLockFile::ForceFlag))
     {
-        itsTimeStamp=ts;
+        time_t ts=Misc::getTimeStamp(itsFileName);
 
-        QFile f(itsFileName);
-
-        if(f.open(IO_ReadOnly))
+        if(!ts || ts!=itsTimeStamp)
         {
-            itsModified=false;
+            itsTimeStamp=ts;
 
-            QDomDocument doc;
+            QFile f(itsFileName);
 
-            if(doc.setContent(&f))
-                for(QDomNode n=doc.documentElement().firstChild(); !n.isNull(); n=n.nextSibling())
-                {
-                    QDomElement e=n.toElement();
+            if(f.open(QIODevice::ReadOnly))
+            {
+                itsModified=false;
 
-                    if(FONT_TAG==e.tagName())
+                QDomDocument doc;
+
+                if(doc.setContent(&f))
+                    for(QDomNode n=doc.documentElement().firstChild(); !n.isNull(); n=n.nextSibling())
                     {
-                        TFont font;
+                        QDomElement e=n.toElement();
 
-                        if(font.load(e))
-                            itsDisabledFonts.add(font);
+                        if(FONT_TAG==e.tagName())
+                        {
+                            TFont font;
+
+                            if(font.load(e))
+                                itsDisabledFonts.add(font);
+                        }
                     }
-                }
 
-            f.close();
+                f.close();
+            }
         }
     }
 }
 
 bool CDisabledFonts::save()
 {
-    bool rv=false;
+    bool rv(true);
 
     if(itsModified)
     {
-        time_t ts=Misc::getTimeStamp(itsFileName);
+        KLockFile lf(itsFileName+constLockExt);
 
-        if(Misc::fExists(itsFileName) && ts!=itsTimeStamp)
+        lf.setStaleTime(constStaleLockTime);
+        if(KLockFile::LockOK==lf.lock(KLockFile::ForceFlag))
         {
-            // Timestamps differ, so possibly file was modified by another process...
-            merge(CDisabledFonts(*this));
-        }
+            time_t ts=Misc::getTimeStamp(itsFileName);
 
-        KSaveFile file(itsFileName);
+            if(Misc::fExists(itsFileName) && ts!=itsTimeStamp)
+            {
+                // Timestamps differ, so possibly file was modified by another process...
+                merge(CDisabledFonts(*this));
+            }
 
-        if(file.open())
-        {
-            QTextStream str(&file);
+            KSaveFile file(itsFileName);
 
-            str << "<"DISABLED_DOC">" << endl;
+            if(file.open())
+            {
+                QTextStream str(&file);
 
-            TFontList::Iterator it(itsDisabledFonts.begin()),
-                                end(itsDisabledFonts.end());
+                str << "<"DISABLED_DOC">" << endl;
 
-            for(; it!=end; ++it)
-                str << (*it);
-            str << "</"DISABLED_DOC">" << endl;
-            itsModified=false;
-            rv=file.finalize();
+                TFontList::Iterator it(itsDisabledFonts.begin()),
+                                    end(itsDisabledFonts.end());
+
+                for(; it!=end; ++it)
+                    str << (*it);
+                str << "</"DISABLED_DOC">" << endl;
+                itsModified=false;
+                file.setPermissions(QFile::ReadOwner|QFile::WriteOwner|
+                                    QFile::ReadGroup|QFile::ReadOther);
+                rv=file.finalize();
+                if(rv)
+                    itsTimeStamp=Misc::getTimeStamp(itsFileName);
+            }
         }
     }
 
-    if(rv)
-        itsTimeStamp=Misc::getTimeStamp(itsFileName);
     return rv;
 }
 
@@ -288,7 +323,7 @@ bool CDisabledFonts::TFont::load(QDomElement &elem, bool ignoreFiles)
                 slant=tmp;
         }
 
-        styleInfo=CFcEngine::createStyleVal(weight, width, slant);
+        styleInfo=FC::createStyleVal(weight, width, slant);
 
         if(!ignoreFiles)
             for(QDomNode n=elem.firstChild(); !n.isNull(); n=n.nextSibling())
@@ -313,7 +348,7 @@ bool CDisabledFonts::TFont::load(QDomElement &elem, bool ignoreFiles)
 const QString & CDisabledFonts::TFont::getName() const
 {
     if(name.isEmpty())
-        name=CFcEngine::createName(family, styleInfo);
+        name=FC::createName(family, styleInfo);
     return name;
 }
 
@@ -454,7 +489,7 @@ CDisabledFonts::CDisabledFonts(const CDisabledFonts &o)
                 itsModified(false),
                 itsModifiable(false)
 {
-    load();
+    load(false);
 }
 
 void CDisabledFonts::merge(const CDisabledFonts &other)
@@ -524,7 +559,7 @@ QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFont &f)
     KFI::CDisabledFonts::TFileList::ConstIterator        it(f.files.begin()),
                                                          end(f.files.end());
 
-    KFI::CFcEngine::decomposeStyleVal(f.styleInfo, weight, width, slant);
+    KFI::FC::decomposeStyleVal(f.styleInfo, weight, width, slant);
 
     for(; it!=end; ++it)
         if(KFI::Misc::fExists((*it).path))
@@ -537,7 +572,7 @@ QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFont &f)
                 fEnd(saveFiles.end());
 
         s << "  <"FONT_TAG" "FAMILY_ATTR"=\"" << f.family << "\" ";
-          
+
         if(KFI_NULL_SETTING!=weight)
             s << WEIGHT_ATTR"=\"" << weight << "\" ";
         if(KFI_NULL_SETTING!=width)

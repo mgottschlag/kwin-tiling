@@ -37,33 +37,10 @@
 #include <fontconfig/fontconfig.h>
 #include "KfiConstants.h"
 #include "Misc.h"
+#include "Fc.h"
 
 //Enable the following to use locale aware family name - if font supports this.
 //#define KFI_USE_TRANSLATED_FAMILY_NAME
-
-#if (FC_VERSION<20200)
-
-#define KFI_FC_NO_WIDTHS
-#define KFI_FC_LIMITED_WEIGHTS
-
-#endif
-
-#ifdef KFI_FC_LIMITED_WEIGHTS
-
-#undef FC_WEIGHT_LIGHT
-#define FC_WEIGHT_THIN              0
-#define FC_WEIGHT_EXTRALIGHT        40
-#define FC_WEIGHT_ULTRALIGHT        FC_WEIGHT_EXTRALIGHT
-#define FC_WEIGHT_LIGHT             50
-#define FC_WEIGHT_BOOK              75
-#define FC_WEIGHT_REGULAR           80
-#define FC_WEIGHT_NORMAL            FC_WEIGHT_REGULAR
-#define FC_WEIGHT_SEMIBOLD          FC_WEIGHT_DEMIBOLD
-#define FC_WEIGHT_EXTRABOLD         205
-#define FC_WEIGHT_ULTRABOLD         FC_WEIGHT_EXTRABOLD
-#define FC_WEIGHT_HEAVY             FC_WEIGHT_BLACK
-
-#endif
 
 class QPixmap;
 class KConfig;
@@ -72,30 +49,6 @@ typedef struct _XftFont  XftFont;
 
 namespace KFI
 {
-
-//
-// Ideally only want this class to contain KFI_FC_NO_WIDTHS
-#ifdef KFI_FC_NO_WIDTHS
-#define KFI_FC_WIDTH_ULTRACONDENSED     50
-#define KFI_FC_WIDTH_EXTRACONDENSED     63
-#define KFI_FC_WIDTH_CONDENSED          75
-#define KFI_FC_WIDTH_SEMICONDENSED      87
-#define KFI_FC_WIDTH_NORMAL             100
-#define KFI_FC_WIDTH_SEMIEXPANDED       113
-#define KFI_FC_WIDTH_EXPANDED           125
-#define KFI_FC_WIDTH_EXTRAEXPANDED      150
-#define KFI_FC_WIDTH_ULTRAEXPANDED      200
-#else
-#define KFI_FC_WIDTH_ULTRACONDENSED     FC_WIDTH_ULTRACONDENSED
-#define KFI_FC_WIDTH_EXTRACONDENSED     FC_WIDTH_EXTRACONDENSED
-#define KFI_FC_WIDTH_CONDENSED          FC_WIDTH_CONDENSED
-#define KFI_FC_WIDTH_SEMICONDENSED      FC_WIDTH_SEMICONDENSED
-#define KFI_FC_WIDTH_NORMAL             FC_WIDTH_NORMAL
-#define KFI_FC_WIDTH_SEMIEXPANDED       FC_WIDTH_SEMIEXPANDED
-#define KFI_FC_WIDTH_EXPANDED           FC_WIDTH_EXPANDED
-#define KFI_FC_WIDTH_EXTRAEXPANDED      FC_WIDTH_EXTRAEXPANDED
-#define KFI_FC_WIDTH_ULTRAEXPANDED      FC_WIDTH_ULTRAEXPANDED
-#endif
 
 class KDE_EXPORT CFcEngine
 {
@@ -127,14 +80,8 @@ class KDE_EXPORT CFcEngine
     const QVector<int> &  sizes() const { return itsSizes; }
     int                   alphaSize() const { return itsAlphaSize; }
 
-    unsigned long         styleVal() { return createStyleVal(itsWeight, itsWidth, itsSlant); }
+    unsigned long         styleVal() { return FC::createStyleVal(itsWeight, itsWidth, itsSlant); }
 
-    static unsigned long  createStyleVal(const QString &name);
-    static unsigned long  createStyleVal(int weight, int width, int slant)
-                            { return ((weight&0xFF)<<16)+((width&0xFF)<<8)+(slant&0xFF); }
-    static QString        styleValToStr(unsigned long style);
-    static void           decomposeStyleVal(int styleInfo, int &weight, int &width, int &slant);
-    static unsigned long  styleValFromStr(const QString &style);
     const QString &       getPreviewString()                  { return itsPreviewString; }
     static QString        getDefaultPreviewString();
     void                  setPreviewString(const QString &str)
@@ -142,20 +89,6 @@ class KDE_EXPORT CFcEngine
     static QString        getUppercaseLetters();
     static QString        getLowercaseLetters();
     static QString        getPunctuation();
-    static QString        getFcString(FcPattern *pat, const char *val, int index=0);
-#ifdef KFI_USE_TRANSLATED_FAMILY_NAME
-    static QString        getFcLangString(FcPattern *pat, const char *val, const char *valLang);
-#endif
-    static int            getFcInt(FcPattern *pat, const char *val, int index=0, int def=-1);
-    static void           getDetails(FcPattern *pat, QString &name, int &styleVal, int &index);
-    static QString        createName(FcPattern *pat);
-    static QString        createName(FcPattern *pat, int weight, int width, int slant);
-    static QString        createName(const QString &family, int styleInfo);
-    static QString        createName(const QString &family, int weight, int width, int slant);
-    static QString        weightStr(int weight, bool emptyNormal=true);
-    static QString        widthStr(int width, bool emptyNormal=true);
-    static QString        slantStr(int slant, bool emptyNormal=true);
-    static QString        spacingStr(int spacing);
 
     static void           setBgndCol(const QColor &col) { theirBgndCol=col; }
     static const QColor & bgndCol()                     { return theirBgndCol; }

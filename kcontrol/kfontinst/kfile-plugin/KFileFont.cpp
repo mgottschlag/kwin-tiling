@@ -260,10 +260,10 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
 
     if(foundName && foundFamily)
     {
-        weight=KFI::CFcEngine::weightStr(intWeight, false);
-        width=KFI::CFcEngine::widthStr(intWidth, false);
-        slant=KFI::CFcEngine::slantStr(intSlant, false);
-        spacing=KFI::CFcEngine::spacingStr(intSpacing);
+        weight=KFI::FC::weightStr(intWeight, false);
+        width=KFI::FC::widthStr(intWidth, false);
+        slant=KFI::FC::slantStr(intSlant, false);
+        spacing=KFI::FC::spacingStr(intSpacing);
 
         if(foundry.isEmpty())
             foundry=i18n(KFI_UNKNOWN_FOUNDRY);

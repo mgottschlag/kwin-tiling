@@ -1,5 +1,5 @@
-#ifndef __INSTALLER_H__
-#define __INSTALLER_H__
+#ifndef __VIEWER_H__
+#define __VIEWER_H__
 
 /*
  * KFontInst - KDE Font Installer
@@ -23,56 +23,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QObject>
-#include <kio/job.h>
-
-class QStringList;
-class QWidget;
-class KTempDir;
-class KJob;
+#include <kapplication.h>
+#include <kparts/part.h>
+#include <kparts/mainwindow.h>
 
 namespace KFI
 {
-class CUpdateDialog;
 
-class CInstaller : public QObject
+class CViewer : public KParts::MainWindow
 {
     Q_OBJECT
 
     public:
 
-    enum EReturn
-    {
-        ROOT_INSTALL,
-        USER_CANCELLED,
-        NO_FONTS,
-        INSTALLING
-    };
-
-    CInstaller(const char *a, int xid, QWidget *p)
-         : itsXid(xid), itsParent(p), itsTempDir(NULL), itsUpdateDialog(NULL), itsApp(a) { }
-    ~CInstaller();
-
-    EReturn install(const QStringList &fonts);
-    void    error();
+    CViewer(const KUrl &url);
+    virtual ~CViewer();
 
     public Q_SLOTS:
 
-    void    fontsInstalled(KJob *job);
-    void    systemConfigured(KJob *job);
+    void fileOpen();
 
     private:
 
-    void setMetaData(KIO::Job *job);
+    KParts::ReadOnlyPart *itsPreview;
 
-    private:
-
-    int           itsXid;
-    QWidget       *itsParent;
-    KTempDir      *itsTempDir;
-    CUpdateDialog *itsUpdateDialog;
-    const char    *itsApp;
-    QString       itsPasswd;
 };
 
 }

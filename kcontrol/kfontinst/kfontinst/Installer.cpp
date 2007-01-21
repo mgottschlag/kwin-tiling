@@ -27,6 +27,8 @@
 #include <kzip.h>
 #include <ktempdir.h>
 #include <kio/job.h>
+#include <kdesu/su.h>
+#include <kpassworddialog.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
@@ -40,30 +42,11 @@
 namespace KFI
 {
 
-static QString removeQuotes(const QString &item)
-{
-    unsigned int len=item.length();
-
-    return (item[0]==QChar('\'') || item[0]==QChar('\"')) &&
-           (item[len-1]==QChar('\'') || item[len-1]==QChar('\"'))
-        ? item.mid(1, len-2)
-        : item;
-}
-
-//
-// Tell the io-slave not to clear, and re-read, the list of fonts. And also, tell it to not
-// automatically recreate the config files - we want that to happen after all fonts are installed,
-// deleted, etc.
-static void setMetaData(KIO::Job *job)
-{
-    job->addMetaData(KFI_KIO_TIMEOUT, "0");
-    job->addMetaData(KFI_KIO_NO_CLEAR, "1");
-}
-
 CInstaller::EReturn CInstaller::install(const QStringList &fonts)
 {
     QStringList::ConstIterator it(fonts.begin()),
                                end(fonts.end());
+    bool                       sysInstall(false);
 
     if(!Misc::root())
     {
@@ -76,19 +59,47 @@ CInstaller::EReturn CInstaller::install(const QStringList &fonts)
         {
             case KMessageBox::No:
             {
-                KProcess proc;
+                // Set core dump size to 0 because we will have
+                // root's password in memory.
+                struct rlimit rlim;
+                rlim.rlim_cur=rlim.rlim_max=0;
+                setrlimit(RLIMIT_CORE, &rlim);
 
-                proc << "kdesu" << "-d" << "--icon" << KFI_ICON
-                     << "--caption" << KFI_CAPTION
-                     << "--noignorebutton"
-                     << itsApp
-                     << QString().sprintf("0x%x", itsXid);
+                // Prompt user for password...
+                SuProcess  proc(KFI_SYS_USER);
+                int        attempts(0);
 
-                for(; it!=end; ++it)
-                    proc << removeQuotes(*it);
+                do
+                {
+                    KPasswordDialog dlg(itsParent);
 
-                proc.start(KProcess::Block);
-                return ROOT_INSTALL;
+                    dlg.setCaption(i18n("Authorisation Required"));
+                    dlg.setPrompt(i18n("System-wide font installation requires administrator privilleges.\n"
+                                       "If you have these privilleges, then please enter your password. "
+                                       "Otherwise enter the system administrator's password."));
+                    if(!dlg.exec())
+                        break;
+
+                    if(0==proc.checkInstall(dlg.password().toLocal8Bit()))
+                    {
+                        itsPasswd=dlg.password().toLocal8Bit();
+                        break;
+                    }
+                    if(KMessageBox::No==KMessageBox::warningYesNo(itsParent,
+                                                    i18n("<p><b>Incorrect password.</b></p><p>Try again?</p>")))
+                        break;
+                    if(++attempts>4)
+                        break;
+                }
+                while(itsPasswd.isEmpty());
+
+                // TODO: If keep, then need to store password into kwallet!
+                if(!itsPasswd.isEmpty())
+                {
+                    sysInstall=true;
+                    break;
+                }
+                return USER_CANCELLED;
             }
             case KMessageBox::Cancel:
                 return USER_CANCELLED;
@@ -164,8 +175,10 @@ CInstaller::EReturn CInstaller::install(const QStringList &fonts)
             list.append(*it);
 
         KIO::Job *job=KIO::copy(list, KUrl(Misc::root()
-                                          ? KFI_KIO_FONTS_PROTOCOL":/"
-                                            : KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_USER"/"),
+                                            ? KFI_KIO_FONTS_PROTOCOL":/"
+                                            : sysInstall
+                                                ? KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS"/"
+                                                : KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_USER"/"),
                                 true);
         setMetaData(job);
         connect(job, SIGNAL(result(KJob *)), this, SLOT(fontsInstalled(KJob *)));
@@ -200,6 +213,7 @@ void CInstaller::fontsInstalled(KJob *job)
         stream << KFI::SPECIAL_CONFIGURE << 1;
 
         KIO::Job *job=KIO::special(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), packedArgs, false);
+        setMetaData(job);
         connect(job, SIGNAL(result(KJob *)), this, SLOT(systemConfigured(KJob *)));
 
         delete itsTempDir;
@@ -227,6 +241,18 @@ void CInstaller::systemConfigured(KJob *job)
     }
     else
         error();
+}
+
+//
+// Tell the io-slave not to clear, and re-read, the list of fonts. And also, tell it to not
+// automatically recreate the config files - we want that to happen after all fonts are installed,
+// deleted, etc.
+void CInstaller::setMetaData(KIO::Job *job)
+{
+    job->addMetaData(KFI_KIO_TIMEOUT, "0");
+    job->addMetaData(KFI_KIO_NO_CLEAR, "1");
+    if(!itsPasswd.isEmpty())
+        job->addMetaData(KFI_KIO_PASS, itsPasswd);
 }
 
 }

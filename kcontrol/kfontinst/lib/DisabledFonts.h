@@ -89,16 +89,14 @@ class KFONTINST_EXPORT CDisabledFonts
     ~CDisabledFonts()          { save(); }
 
     //
-    // Refresh checks the timestap of the file to determine if changes have been
+    // Refresh checks the timestamp of the file to determine if changes have been
     // made elsewhere.
     bool refresh();
-    void load();
+    void load(bool lock=true);
     bool save();
     bool modifiable() const    { return itsModifiable; }
     bool modified() const      { return itsModified; }
 
-    bool disable(const QString &family, unsigned long styleInfo)
-             { return disable(TFont(family, styleInfo)); }
     bool disable(const TFont &font);
     bool enable(const QString &family, unsigned long styleInfo)
              { return enable(TFont(family, styleInfo)); }

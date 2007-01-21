@@ -127,14 +127,13 @@ CGroupList::CGroupList(QWidget *parent)
     itsSpecialGroups[CGroupListItem::UNCLASSIFIED]=
                 new CGroupListItem(CGroupListItem::UNCLASSIFIED, this);
     itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
+    rescan();
 }
 
 CGroupList::~CGroupList()
 {
     qDeleteAll(itsGroups);
     itsGroups.clear();
-    delete itsFontGroups;
-    itsFontGroups=NULL;
 }
 
 int CGroupList::columnCount(const QModelIndex &) const
@@ -236,7 +235,16 @@ int CGroupList::rowCount(const QModelIndex &) const
 void CGroupList::rescan()
 {
     clear();
-    readGroupsFile();
+
+    itsFontGroups.refresh();
+
+    CFontGroups::TGroupList::Iterator it(itsFontGroups.items().begin()),
+                                      end(itsFontGroups.items().end());
+
+    for(; it!=end; ++it)
+        itsGroups.append(new CGroupListItem(it));
+
+    sort(0, itsSortOrder);
 }
 
 void CGroupList::clear()
@@ -259,8 +267,6 @@ void CGroupList::clear()
         itsGroups.append(itsSpecialGroups[CGroupListItem::SYSTEM]);
     }
     itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
-    delete itsFontGroups;
-    itsFontGroups=NULL;
 }
 
 QModelIndex CGroupList::index(CGroupListItem::EType t)
@@ -281,12 +287,12 @@ void CGroupList::createGroup(const QString &name)
             return;
         }
 
-    CFontGroups::TGroupList::Iterator git=itsFontGroups->create(name);
+    CFontGroups::TGroupList::Iterator git=itsFontGroups.create(name);
 
-    if(git!=itsFontGroups->items().end())
+    if(git!=itsFontGroups.items().end())
     {
         itsGroups.append(new CGroupListItem(git));
-        itsFontGroups->save();
+        itsFontGroups.save();
         sort(0, itsSortOrder);
     }
     else
@@ -301,10 +307,10 @@ void CGroupList::renameGroup(const QModelIndex &idx, const QString &name)
 
         if(grp && grp->isStandard() && grp->name()!=name)
         {
-            if(itsFontGroups->items().end()!=itsFontGroups->find(name))
+            if(itsFontGroups.items().end()!=itsFontGroups.find(name))
                 KMessageBox::error(itsParent, i18n("<qt>A group named <b>\'%1\'</b> already exists!</qt>", name));
             else
-                itsFontGroups->setName(grp->item(), name);
+                itsFontGroups.setName(grp->item(), name);
         }
     }
 }
@@ -323,10 +329,10 @@ bool CGroupList::removeGroup(const QModelIndex &idx)
                                           i18n("Remove Group"), KGuiItem(i18n("Remove"), "remove",
                                           i18n("Remove group"))))
         {
-            itsFontGroups->remove(grp->item());
+            itsFontGroups.remove(grp->item());
             itsGroups.remove(grp);
             delete grp;
-            itsFontGroups->save();
+            itsFontGroups.save();
             sort(0, itsSortOrder);
             return true;
         }
@@ -347,7 +353,7 @@ void CGroupList::removeFromGroup(const QModelIndex &group, const QSet<QString> &
                                          end(families.end());
 
             for(; it!=end; ++it)
-                itsFontGroups->removeFrom(grp->item(), *it);
+                itsFontGroups.removeFrom(grp->item(), *it);
             emit refresh();
         }
     }
@@ -366,7 +372,7 @@ void CGroupList::addToGroup(const QModelIndex &group, const QSet<QString> &famil
                                          end(families.end());
 
             for(; it!=end; ++it)
-                itsFontGroups->addTo(grp->item(), *it);
+                itsFontGroups.addTo(grp->item(), *it);
             emit refresh();
         }
     }
@@ -374,7 +380,7 @@ void CGroupList::addToGroup(const QModelIndex &group, const QSet<QString> &famil
 
 void CGroupList::merge(const CFontGroups &grp)
 {
-    itsFontGroups->merge(grp);
+    itsFontGroups.merge(grp);
     rescan();
 }
 
@@ -388,22 +394,6 @@ static bool groupGreaterThan(const CGroupListItem *f1, const CGroupListItem *f2)
 {
     return f1 && f2 && (f1->type()<f2->type() ||
                        (f1->type()==f2->type() && QString::localeAwareCompare(f1->name(), f2->name())>0));
-}
-
-void CGroupList::readGroupsFile()
-{
-    if(!itsFontGroups)
-        itsFontGroups=new CFontGroups;
-    else
-        itsFontGroups->refresh();
-
-    CFontGroups::TGroupList::Iterator it(itsFontGroups->items().begin()),
-                                      end(itsFontGroups->items().end());
-
-    for(; it!=end; ++it)
-        itsGroups.append(new CGroupListItem(it));
-
-    sort(0, itsSortOrder);
 }
 
 void CGroupList::sort(int, Qt::SortOrder order)

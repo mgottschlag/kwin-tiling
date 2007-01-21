@@ -192,14 +192,14 @@ void CFontViewPart::timeout()
         if(KIO::NetAccess::stat(m_url, udsEntry, NULL))
         {
             name=udsEntry.stringValue(KIO::UDS_NAME);
-            styleInfo=CFcEngine::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
+            styleInfo=FC::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
         }
         if(!name.isEmpty())
             displayUrl.setFileName(name);
     }
 
     itsInstallButton->setEnabled(!isFonts && !isInstalled());
-    emit setWindowCaption(displayUrl.prettyUrl());
+    emit setWindowCaption(Misc::prettyUrl(displayUrl));
     doPreview(isFonts, name, styleInfo);
 }
 

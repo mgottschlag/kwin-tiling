@@ -28,6 +28,8 @@
 #include <kicon.h>
 #include <kiconloader.h>
 #include <kde_file.h>
+#include <kmessagebox.h>
+#include <kprocess.h>
 #include <QFont>
 #include <QMap>
 #include <QFile>
@@ -370,10 +372,10 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &st
 
     updateStatus();
     itsName=udsEntry.stringValue(KIO::UDS_NAME);
-    CFcEngine::decomposeStyleVal(CFcEngine::createStyleVal(itsName), weight, width, slant);
+    FC::decomposeStyleVal(FC::createStyleVal(itsName), weight, width, slant);
     itsDisplayStyleInfo=(weight<<16)+(slant<<8)+(width);
     itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
-    itsStyleInfo=CFcEngine::styleValFromStr(udsEntry.stringValue((uint)UDS_EXTRA_FC_STYLE));
+    itsStyleInfo=FC::styleValFromStr(udsEntry.stringValue((uint)UDS_EXTRA_FC_STYLE));
     itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDS_URL)),
                                   KFI_KIO_FACE, 0);
     QString mime(mimetype());
@@ -564,20 +566,6 @@ CFontList::CFontList(QWidget *parent)
            itsAllowSys(true),
            itsAllowUser(true)
 {
-    itsDirLister=new KDirLister;
-    if(Misc::root())
-        connect(itsDirLister, SIGNAL(completed()), SLOT(listingCompleted()));
-    else
-        connect(itsDirLister, SIGNAL(completed(const KUrl &)), SLOT(listingCompleted(const KUrl &)));
-
-    connect(itsDirLister, SIGNAL(canceled()), SLOT(listingCanceled()));
-    connect(itsDirLister, SIGNAL(newItems(const KFileItemList &)),
-            SLOT(newItems(const KFileItemList &)));
-    connect(itsDirLister, SIGNAL(clear()), SLOT(clearItems()));
-    connect(itsDirLister, SIGNAL(deleteItem(KFileItem *)),
-            SLOT(deleteItem(KFileItem *)));
-    connect(itsDirLister, SIGNAL(refreshItems(const KFileItemList &)),
-            SLOT(refreshItems(const KFileItemList &)));
     if(!theCache)
         theCache=new CPreviewCache;
 
@@ -585,16 +573,24 @@ CFontList::CFontList(QWidget *parent)
     int   pixelSize((int)(((font.pointSizeF()*QX11Info::appDpiY())/72.0)+0.5));
 
     setPreviewSize(pixelSize+12);
-    itsDirLister->setMainWindow(parent);
-    itsDirLister->setShowingDotFiles(true);
+    itsLister=new CFontLister(this);
+    connect(itsLister, SIGNAL(completed()), SLOT(listingCompleted()));
+    connect(itsLister, SIGNAL(newItems(const KFileItemList &)),
+            SLOT(newItems(const KFileItemList &)));
+    connect(itsLister, SIGNAL(deleteItem(KFileItem *)),
+            SLOT(deleteItem(KFileItem *)));
+    connect(itsLister, SIGNAL(refreshItems(const KFileItemList &)),
+            SLOT(refreshItems(const KFileItemList &)));
+    connect(itsLister, SIGNAL(percent(int)), SIGNAL(percent(int)));
+    connect(itsLister, SIGNAL(message(QString)), SIGNAL(status(QString)));
 }
 
 CFontList::~CFontList()
 {
     delete theCache;
     theCache=NULL;
-    delete itsDirLister;
-    itsDirLister=NULL;
+    delete itsLister;
+    itsLister=NULL;
     qDeleteAll(itsFamilies);
     itsFamilies.clear();
     itsFonts.clear();
@@ -748,28 +744,6 @@ int CFontList::rowCount(const QModelIndex &parent) const
         return itsFamilies.count();
 }
 
-void CFontList::scan()
-{
-    clearItems();
-    if(Misc::root())
-        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), true);
-    else
-        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS), true);
-}
-
-void CFontList::rescan()
-{
-    // NOTE: For some reason if updateDirectory is used, after fonts are
-    // enabled/disabled the dirlister seems to send a deleteItem
-    // and then refreshItems (for items that were deleted!)
-    //itsDirLister->updateDirectory(itsDirLister->url());
-
-    if(Misc::root())
-        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), true);
-    else
-        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS), true);
-}
-
 void CFontList::forceNewPreviews()
 {
     QList<CFamilyItem *>::ConstIterator it(itsFamilies.begin()),
@@ -811,22 +785,6 @@ void CFontList::setAllowDisabled(bool on)
 void CFontList::listingCompleted()
 {
     touchThumbnails();
-    emit finished();
-}
-
-void CFontList::listingCompleted(const KUrl &url)
-{
-    if(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS)==url)
-        itsDirLister->openUrl(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_USER), true);
-    else
-    {
-        touchThumbnails();
-        emit finished();
-    }
-}
-
-void CFontList::listingCanceled()
-{
     emit finished();
 }
 
@@ -1011,7 +969,7 @@ inline bool matchString(const QString &str, const QString &pattern)
 
 CFontListSortFilterProxy::CFontListSortFilterProxy(QObject *parent, QAbstractItemModel *model)
                         : QSortFilterProxyModel(parent),
-                          itsMgtMode(true),
+                          itsMgtMode(false),
                           itsGroup(NULL)
 {
     setSourceModel(model);
@@ -1331,6 +1289,8 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
                                        this, SIGNAL(del()));
     itsPrintAct=itsStdMenu->addAction(KIcon("fileprint"), i18n("Print..."),
                                       this, SIGNAL(print()));
+    itsViewAct=itsStdMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer..."),
+                                      this, SLOT(view()));
     itsStdMenu->addSeparator();
     QAction *reloadAct=itsStdMenu->addAction(KIcon("reload"), i18n("Reload"), this, SIGNAL(reload()));
 
@@ -1343,6 +1303,7 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
                                         this, SIGNAL(disable()));
     itsMgtMenu->addSeparator();
     itsMgtMenu->addAction(itsPrintAct);
+    itsMgtMenu->addAction(itsViewAct);
     itsMgtMenu->addSeparator();
     itsMgtMenu->addAction(reloadAct);
 }
@@ -1681,6 +1642,53 @@ void CFontListView::itemCollapsed(const QModelIndex &idx)
     }
 }
 
+void CFontListView::view()
+{
+    // Number of fonts user has selected, before we ask if they really want to view them all...
+    static const int constMaxBeforePrompt=10;
+
+    QModelIndexList   selectedItems(selectedIndexes());
+    QModelIndex       index;
+    QSet<CFontItem *> fonts;
+
+    foreach(index, selectedItems)
+    {
+        QModelIndex realIndex(itsProxy->mapToSource(index));
+
+        if(realIndex.isValid())
+            if((static_cast<CFontModelItem *>(realIndex.internalPointer()))->isFont())
+            {
+                CFontItem *font(static_cast<CFontItem *>(realIndex.internalPointer()));
+
+                fonts.insert(font);
+            }
+            else
+            {
+                CFontItem *font((static_cast<CFamilyItem *>(realIndex.internalPointer()))->regularFont());
+
+                if(font)
+                    fonts.insert(font);
+            }
+    }
+
+    if(fonts.count() &&
+       (fonts.count()<constMaxBeforePrompt ||
+        KMessageBox::Yes==KMessageBox::questionYesNo(this, i18n("Open all %1 fonts in font viewer?", fonts.count()))))
+    {
+        QSet<CFontItem *>::ConstIterator it(fonts.begin()),
+                                         end(fonts.end());
+
+        for(; it!=end; ++it)
+        {
+            KProcess proc;
+
+printf("VIEW:%s\n", (*it)->url().prettyUrl().toLatin1().constData());
+            proc << KFI_APP << "-v" << (*it)->url().prettyUrl().toUtf8();
+            proc.start(KProcess::DontCare);
+        }
+    }
+}
+
 QModelIndexList CFontListView::allIndexes()
 {
     QModelIndexList rv;
@@ -1769,11 +1777,14 @@ void CFontListView::dropEvent(QDropEvent *event)
 
 void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
 {
-    itsDeleteAct->setEnabled(indexAt(ev->pos()).isValid());
+    bool valid(indexAt(ev->pos()).isValid());
+
+    itsDeleteAct->setEnabled(valid);
 
     if(isColumnHidden(COL_STATUS))
     {
-        itsPrintAct->setEnabled(indexAt(ev->pos()).isValid());
+        itsPrintAct->setEnabled(valid);
+        itsViewAct->setEnabled(valid);
         itsStdMenu->popup(ev->globalPos());
     }
     else
@@ -1815,7 +1826,8 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
 
         itsEnableAct->setEnabled(dis);
         itsDisableAct->setEnabled(en);
-        itsPrintAct->setEnabled(en);
+        itsPrintAct->setEnabled(en|dis);
+        itsViewAct->setEnabled(en|dis);
         itsMgtMenu->popup(ev->globalPos());
     }
 }

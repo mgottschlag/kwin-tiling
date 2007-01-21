@@ -116,10 +116,10 @@ class CGroupList : public QAbstractItemModel
     void            renameGroup(const QModelIndex &idx, const QString &name);
     bool            removeGroup(const QModelIndex &idx);
     void            merge(const CFontGroups &grp);
-    void            removeFamily(const QString &family) { itsFontGroups->removeFamily(family); }
+    void            removeFamily(const QString &family) { itsFontGroups.removeFamily(family); }
     void            removeFamilyFromGroup(CFontGroups::TGroupList::Iterator &grp,
                                         const QString &family)
-                        { itsFontGroups->removeFrom(grp, family); }
+                        { itsFontGroups.removeFrom(grp, family); }
 
     CGroupListItem * group(CGroupListItem::EType t)
                         { return itsSpecialGroups[t]; }
@@ -143,7 +143,7 @@ class CGroupList : public QAbstractItemModel
     private:
 
     QWidget                 *itsParent;
-    CFontGroups             *itsFontGroups;
+    CFontGroups             itsFontGroups;
     QList<CGroupListItem *> itsGroups;
     CGroupListItem          *itsSpecialGroups[4];
     Qt::SortOrder           itsSortOrder;

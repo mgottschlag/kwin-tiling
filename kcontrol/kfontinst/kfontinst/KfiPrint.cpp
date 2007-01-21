@@ -155,7 +155,7 @@ void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent)
 #ifdef KFI_PRINT_APP_FONTS
             if(family.isEmpty())
 #endif
-                painter.drawText(margin, y, CFcEngine::createName((*it).family, (*it).styleInfo));
+                painter.drawText(margin, y, FC::createName((*it).family, (*it).styleInfo));
 #ifdef KFI_PRINT_APP_FONTS
             else
                 painter.drawText(margin, y, family);

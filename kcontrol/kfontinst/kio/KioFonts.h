@@ -32,12 +32,19 @@
 #include <QByteArray>
 #include <QHash>
 #include <QSet>
+#include <QList>
+#include <QVariant>
 #include "Misc.h"
 #include "KfiConstants.h"
 #include "DisabledFonts.h"
+#include "Server.h"
+#include "Helper.h"
 
 namespace KFI
 {
+
+class CSuProc;
+class CSocket;
 
 class CKioFonts : public KIO::SlaveBase
 {
@@ -99,12 +106,23 @@ class CKioFonts : public KIO::SlaveBase
 
     public:
 
+    struct TCommand
+    {
+        TCommand(ECommands c) : cmd(c)                    { }
+        TCommand(ECommands c, const QVariant &v) : cmd(c) { args.append(v); }
+        ECommands       cmd;
+        QList<QVariant> args;
+    };
+
+    public:
+
     CKioFonts(const QByteArray &pool, const QByteArray &app);
     virtual ~CKioFonts();
 
     static QString     getSect(const QString &f) { return f.section('/', 1, 1); }
 
     void               listDir(const KUrl &url);
+    void               listDir(EFolder folder, KIO::UDSEntry &entry);
     void               stat(const KUrl &url);
     bool               createStatEntry(KIO::UDSEntry &entry, const KUrl &url, EFolder folder);
     bool               createStatEntryReal(KIO::UDSEntry &entry, const KUrl &url, EFolder folder);
@@ -128,12 +146,13 @@ class CKioFonts : public KIO::SlaveBase
     void               modified(int timeout, EFolder folder, bool clearList=true,
                                 const CDirList &dirs=CDirList());
     void               special(const QByteArray &a);
-    void               createRootRefreshCmd(QByteArray &cmd, const CDirList &dirs=CDirList());
     bool               configure(EFolder folder);
     void               doModified();
     QString            getRootPasswd(bool askPasswd=true);
-    bool               doRootCmd(const char *cmd, const QString &passwd);
-    bool               doRootCmd(const char *cmd, bool askPasswd=true)
+    bool               doRootCmd(QList<TCommand> &cmd, const QString &passwd);
+    bool               doRootCmd(const TCommand &cmd, bool askPasswd=true);
+    bool               doRootCmd(const TCommand &cmd, const QString &passwd);
+    bool               doRootCmd(QList<TCommand> &cmd, bool askPasswd=true)
                            { return doRootCmd(cmd, getRootPasswd(askPasswd)); }
     void               correctUrl(KUrl &url);
     void               clearFontList();
@@ -173,6 +192,9 @@ class CKioFonts : public KIO::SlaveBase
     TFolder               itsFolders[FOLDER_COUNT];
     QHash<uid_t, QString> itsUserCache;
     QHash<gid_t, QString> itsGroupCache;
+    CServer               itsServer;
+    CSocket               *itsSocket;
+    CSuProc               *itsSuProc;
 };
 
 }

@@ -8,7 +8,7 @@ set(kfontviewpart_PART_SRCS ${libkfontinstview_SRCS} FontViewPart.cpp FontViewPa
 kde4_automoc(${kfontviewpart_PART_SRCS})
 kde4_add_plugin(kfontviewpart WITH_PREFIX ${kfontviewpart_PART_SRCS})
 
-target_link_libraries(kfontviewpart  ${KDE4_KPARTS_LIBS} kfontinst )
+target_link_libraries(kfontviewpart  ${KDE4_KPARTS_LIBS} kfontinstui )
 
 install(TARGETS kfontviewpart  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES kfontviewpart.rc DESTINATION  ${DATA_INSTALL_DIR}/kfontinst )
