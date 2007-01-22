@@ -1,4 +1,3 @@
-
 add_subdirectory(devices)
 add_subdirectory(dma)
 add_subdirectory(interrupts)
@@ -16,18 +15,11 @@ add_subdirectory(scsi)
 add_subdirectory(sound)
 add_subdirectory(usb)
 add_subdirectory(xserver)
-
 ########### install files ###############
-
-
-
-
-
-#original Makefile.am contents follow:
-
 #
 #SUBDIRS = $(AUTODIRS)
 #
 #KDE_LANG= en
-#KDE_DOCS = AUTO
 #
+kde4_create_handbook(index.docbook)
+kde4_install_handbook()
