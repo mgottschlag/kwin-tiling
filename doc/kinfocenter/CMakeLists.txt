@@ -15,11 +15,5 @@ add_subdirectory(scsi)
 add_subdirectory(sound)
 add_subdirectory(usb)
 add_subdirectory(xserver)
-########### install files ###############
-#
-#SUBDIRS = $(AUTODIRS)
-#
-#KDE_LANG= en
-#
 kde4_create_handbook(index.docbook)
 kde4_install_handbook()
