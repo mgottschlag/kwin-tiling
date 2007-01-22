@@ -432,8 +432,7 @@ bool SolidShell::hwProperties( const QString &udi )
 bool SolidShell::hwQuery( const QString &parentUdi, const QString &query )
 {
     Solid::DeviceManager &manager = Solid::DeviceManager::self();
-    const Solid::DeviceList devices = manager.findDevicesFromQuery( Solid::Capability::Unknown,
-                                                                    query, parentUdi );
+    const Solid::DeviceList devices = manager.findDevicesFromQuery( query, parentUdi );
 
     foreach ( const Solid::Device device, devices )
     {
