@@ -2902,7 +2902,7 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
                                     itsFolders[FOLDER_USER].disabled->find(name, 1))))
                 {
                     FcPatternDestroy(pat);
-                    error(KIO::ERR_SLAVE_DEFINED, i18n("File %1 contains the font:\n\%2\n"
+                    error(KIO::ERR_SLAVE_DEFINED, i18n("File %1 contains the font:\n%2\n"
                                                        "A font with this name is already installed.\n",
                                                        url.prettyUrl(), name));
                     return FILE_UNKNOWN;
