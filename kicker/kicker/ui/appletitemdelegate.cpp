@@ -91,7 +91,7 @@ void AppletItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         painter->setPen(unselectedPen);
     }
 
-    QPixmap iconPixmap = d->icon(index, 48, 48);
+    QPixmap iconPixmap = d->icon(index, d->iconWidth, d->iconHeight);
 
     QFont title(painter->font());
     QFont previousFont(painter->font());
