@@ -256,7 +256,8 @@ void CFontViewPart::install()
         *itsProc << KFI_APP
                  << "-i"
                  << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-                << m_url.prettyUrl();
+                 << KInstance::caption().toUtf8()
+                 << m_url.prettyUrl();
         itsProc->start(KProcess::NotifyOnExit);
         connect(itsProc, SIGNAL(processExited(KProcess *)), SLOT(installlStatus(KProcess *)));
         itsInstallButton->setEnabled(false);
@@ -303,6 +304,7 @@ void CFontViewPart::print()
             *itsProc << KFI_APP
                      << "-P"
                      << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+                     << KInstance::caption().toUtf8()
                      << "0"
                      << info.family.toUtf8()
                      << QString().setNum(info.styleInfo);
@@ -312,6 +314,7 @@ void CFontViewPart::print()
             *itsProc << KFI_APP
                      << "-P"
                      << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+                     << KInstance::caption().toUtf8()
                      << "0"
                      << m_file
                      << QString().setNum(KFI_NO_STYLE_INFO);

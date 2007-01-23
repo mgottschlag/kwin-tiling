@@ -24,55 +24,31 @@
  */
 
 #include <QObject>
-#include <kio/job.h>
 
 class QStringList;
 class QWidget;
 class KTempDir;
-class KJob;
 
 namespace KFI
 {
-class CUpdateDialog;
-
 class CInstaller : public QObject
 {
     Q_OBJECT
 
     public:
 
-    enum EReturn
-    {
-        ROOT_INSTALL,
-        USER_CANCELLED,
-        NO_FONTS,
-        INSTALLING
-    };
-
-    CInstaller(const char *a, int xid, QWidget *p)
-         : itsXid(xid), itsParent(p), itsTempDir(NULL), itsUpdateDialog(NULL), itsApp(a) { }
+    CInstaller(QWidget *p)
+         : itsParent(p), itsTempDir(NULL) { }
     ~CInstaller();
 
-    EReturn install(const QStringList &fonts);
-    void    error();
+    int install(const QStringList &fonts);
 
     public Q_SLOTS:
 
-    void    fontsInstalled(KJob *job);
-    void    systemConfigured(KJob *job);
-
     private:
 
-    void setMetaData(KIO::Job *job);
-
-    private:
-
-    int           itsXid;
-    QWidget       *itsParent;
-    KTempDir      *itsTempDir;
-    CUpdateDialog *itsUpdateDialog;
-    const char    *itsApp;
-    QString       itsPasswd;
+    QWidget  *itsParent;
+    KTempDir *itsTempDir;
 };
 
 }

@@ -5,7 +5,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/
     )
 
-set(kfontinst_bin_SRCS ${libkxftconfig_SRCS} ${libkfontinstupdatedialog_SRCS}
+set(kfontinst_bin_SRCS ${libkxftconfig_SRCS} ${libkfontinstjobrunner_SRCS}
     Main.cpp Installer.cpp KfiPrint.cpp Viewer.cpp )
 
 kde4_automoc(${kfontinst_bin_SRCS})

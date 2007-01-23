@@ -44,6 +44,11 @@ KDE3.5 -> KDE4.0
     to select Personal or System fonts.
 25. Better bitmap font previews - list of sizes obtained via fontconfig.
 26. Regular fonts listed as fonts:/<family>, Regular - e.g. fonts:/Times, Regular
+27. Use a kio_font_helper app when accesing fonts:/System - much faster, as kdesu is
+    not required to be called for each action.
+28. Add a "Find Duplicates" tool, that looks for multiple installtions of the same font.
+    i.e. different locations, or the same location but different filename case
+    (e.g. times.ttf / times.TTF)
 
 KDE3.4 -> KDE3.5
 ================

@@ -44,8 +44,10 @@
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
-#define KFI_ICON    "fonts"
-#define KFI_CAPTION I18N_NOOP("Font Installer")
+#define KFI_ICON          "fonts"
+#define KFI_INST_CAPTION  I18N_NOOP("Font Installer")
+#define KFI_PRINT_CAPTION I18N_NOOP("Font Printer")
+#define KFI_VIEW_CAPTION  I18N_NOOP("Font Viewer")
 
 //
 // *Very* hacky way to get some KDE dialogs to appear to be transient
@@ -109,14 +111,15 @@ static void usage(char *app)
               << std::endl
               << "    Font installtion:" << std::endl
               << std::endl
-              << "      -i <x id> <font file> [<font file...>]        Install font files, if non-root will be " << std::endl
-              << "                                                    prompted for destination." << std::endl
+              << "      -i <x id> <caption> <font file> [<font file...>] Install font files, if non-root will be " << std::endl
+              << "                                                       prompted for destination." << std::endl
+              << "      -I <font file> [<font file...>]                  As above, but not xid/caption." << std::endl
               << std::endl
               << std::endl
               << "    Font Printing:" << std::endl
               << std::endl
-              << "       -P <x id> <size> <family> <style info> [...] Print fonts" << std::endl
-              << "       -p <x id> <size> <list file> <y/n>           Print fonts, *removes* file if last param==y"
+              << "       -P <x id> <caption> <size> <family> <style info> [...] Print fonts" << std::endl
+              << "       -p <x id> <caption> <size> <list file> <y/n>           Print fonts, *removes* file if last param==y"
                  << std::endl
               << std::endl
               << std::endl
@@ -137,12 +140,16 @@ static void usage(char *app)
     exit(-1);
 }
 
-static int installFonts(int argc, char **argv)
+static int installFonts(int argc, char **argv, bool plain)
 {
-    if(argc>3 && '0'==argv[2][0] && 'x'==argv[2][1])
+    if(plain
+        ? argc>1
+        : (argc>4 && '0'==argv[2][0] && 'x'==argv[2][1]))
     {
-        KAboutData aboutData(KFI_NAME, KFI_CAPTION,
-                            "1.0", I18N_NOOP("fonts:/ helper" ),
+        const char *caption(plain || argv[3][0]=='\0' ? KFI_INST_CAPTION : argv[3]);
+
+        KAboutData aboutData(KFI_NAME, caption,
+                            "1.0", KFI_INST_CAPTION,
                             KAboutData::License_GPL,
                             "(C) Craig Drummond, 2003-2006");
 
@@ -153,35 +160,35 @@ static int installFonts(int argc, char **argv)
 
         KApplication app;
         QStringList  fonts;
-        int          embedId(strtol(argv[2], NULL, 16));
+        int          embedId(plain ? 0 : strtol(argv[2], NULL, 16));
 
         KLocale::setMainCatalog(KFI_CATALOGUE);
         KIconLoader::global()->addAppDir(KFI_NAME);
 
-        for(int i=3; i<argc; ++i)
+        for(int i=plain ? 2 : 4; i<argc; ++i)
             fonts.append(argv[i]);
 
-        KFI::CInstaller inst(argv[0], embedId, createParent(embedId));
+        KFI::CInstaller inst(createParent(embedId));
 
-        return KFI::CInstaller::INSTALLING==inst.install(fonts) && 0==app.exec() ? 0 : -1;
+        return inst.install(fonts);
     }
     return -1;
 }
 
 static int printFonts(int argc, char **argv, bool listFile)
 {
-    if(argc>3 && '0'==argv[2][0] && 'x'==argv[2][1] &&
-       ( (!listFile && argc>=6 && 0==(argc%2)) ||
-         (listFile && '/'==argv[4][0] && ('y'==argv[5][0] || 'n'==argv[5][0]))) )
+    if(argc>6 && '0'==argv[2][0] && 'x'==argv[2][1] &&
+       ( (!listFile && argc>=7 && (argc%2)) ||
+         (listFile && '/'==argv[5][0] && ('y'==argv[6][0] || 'n'==argv[6][0]))) )
     {
         QList<KFI::Misc::TFont> fonts;
-        int                     size(atoi(argv[3]));
+        int                     size(atoi(argv[4]));
 
         if(size>-1 && size<256)
         {
             if(listFile)
             {
-                QFile f(QFile::decodeName(argv[4]));
+                QFile f(QFile::decodeName(argv[5]));
 
                 if(f.open(QIODevice::ReadOnly))
                 {
@@ -200,18 +207,19 @@ static int printFonts(int argc, char **argv, bool listFile)
                     f.close();
                 }
 
-                if('y'==argv[5][0])
-                    ::unlink(argv[4]);
+                if('y'==argv[6][0])
+                    ::unlink(argv[5]);
             }
             else
-                for(int i=4; i<argc; i+=2)
+                for(int i=5; i<argc; i+=2)
                     fonts.append(KFI::Misc::TFont(QString::fromUtf8(argv[i]),
                                                   atoi(argv[i+1])));
 
             if(fonts.count())
             {
-                KAboutData aboutData(KFI_NAME, KFI_CAPTION,
-                                     "1.0", I18N_NOOP("fonts:/ helper" ),
+                QByteArray caption(argv[3]);
+                KAboutData aboutData(KFI_NAME, caption.isEmpty() ? KFI_PRINT_CAPTION : caption,
+                                     "1.0", KFI_PRINT_CAPTION,
                                      KAboutData::License_GPL,
                                      "(C) Craig Drummond, 2003-2006");
 
@@ -240,8 +248,8 @@ static int viewFont(int argc, char **argv)
 
         if(url.isValid())
         {
-            KAboutData aboutData(KFI_NAME, I18N_NOOP("Font Viewer"),
-                                 "1.0", I18N_NOOP("Simple Font Viewer" ),
+            KAboutData aboutData(KFI_NAME, KFI_VIEW_CAPTION,
+                                 "1.0", KFI_VIEW_CAPTION,
                                  KAboutData::License_GPL,
                                  "(C) Craig Drummond, 2003-2006");
 
@@ -280,7 +288,7 @@ int main(int argc, char *argv[])
     bool doX(false),
          addToFc(false);
 
-    while(-1!=(c=getopt(argc, argv, "xfiPpv")))
+    while(-1!=(c=getopt(argc, argv, "xfiIPpv")))
         switch(c)
         {
             case 'x':
@@ -290,7 +298,9 @@ int main(int argc, char *argv[])
                 addToFc=true;
                 break;
             case 'i':
-                return installFonts(argc, argv);
+                return installFonts(argc, argv, false);
+            case 'I':
+                return installFonts(argc, argv, true);
             case 'P':
                 return printFonts(argc, argv, false);
             case 'p':

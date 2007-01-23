@@ -78,27 +78,21 @@ static void decompose(const QString &name, QString &family, QString &style)
     style=-1==commaPos ? KFI_WEIGHT_REGULAR : name.mid(commaPos+2);
 }
 
-static void addFont(CFontItem *font, KUrl::List &urls, QStringList &files, QSet<Misc::TFont> *fonts,
-                    bool *hasSys, bool *hasUser, QSet<CFontItem *> &usedFonts, bool getEnabled,
-                    bool getDisabled)
+static void addFont(CFontItem *font, CJobRunner::ItemList &urls, QStringList &fontNames,
+                    QSet<Misc::TFont> *fonts,  bool *hasSys, QSet<CFontItem *> &usedFonts,
+                    bool getEnabled, bool getDisabled)
 {
     if(!usedFonts.contains(font) &&
         ( (getEnabled && font->isEnabled()) ||
           (getDisabled && !font->isEnabled()) ) )
     {
-        urls.append(font->url());
-        files.append(font->name());
+        urls.append(CJobRunner::Item(font->url(), font->name()));
+        fontNames.append(font->name());
         usedFonts.insert(font);
         if(fonts)
             fonts->insert(Misc::TFont(font->family(), font->styleInfo()));
-        if(font->isSystem())
-        {
-            if(hasSys && !(*hasSys))
-                *hasSys=true;
-        }
-        else
-            if(hasUser && !(*hasUser))
-                *hasUser=true;
+        if(hasSys && !(*hasSys) && font->isSystem())
+            *hasSys=true;
     }
 }
 
@@ -1318,9 +1312,8 @@ void CFontListView::writeConfig(KConfig &cfg)
     cfg.writeEntry(COL_FONT_SIZE, columnWidth(COL_FONT));
 }
 
-void CFontListView::getFonts(KUrl::List &urls, QStringList &files, QSet<Misc::TFont> *fonts,
-                             bool *hasSys, bool *hasUser, bool selected, bool getEnabled,
-                             bool getDisabled)
+void CFontListView::getFonts(CJobRunner::ItemList &urls, QStringList &fontNames, QSet<Misc::TFont> *fonts,
+                             bool *hasSys, bool selected, bool getEnabled, bool getDisabled)
 {
     QModelIndexList   selectedItems(selected ? selectedIndexes() : allIndexes());
     QSet<CFontItem *> usedFonts;
@@ -1336,7 +1329,7 @@ void CFontListView::getFonts(KUrl::List &urls, QStringList &files, QSet<Misc::TF
                 {
                     CFontItem *font=static_cast<CFontItem *>(realIndex.internalPointer());
 
-                    addFont(font, urls, files, fonts, hasSys, hasUser, usedFonts,
+                    addFont(font, urls, fontNames, fonts, hasSys, usedFonts,
                             getEnabled, getDisabled);
                 }
                 else
@@ -1352,14 +1345,14 @@ void CFontListView::getFonts(KUrl::List &urls, QStringList &files, QSet<Misc::TF
                         {
                             CFontItem *font=static_cast<CFontItem *>(child.internalPointer());
 
-                            addFont(font, urls, files, fonts, hasSys, hasUser, usedFonts,
+                            addFont(font, urls, fontNames, fonts, hasSys, usedFonts,
                                     getEnabled, getDisabled);
                         }
                     }
                 }
         }
 
-    files=CFontList::compact(files);
+    fontNames=CFontList::compact(fontNames);
 }
 
 void CFontListView::getPrintableFonts(QSet<Misc::TFont> &items, bool selected)
@@ -1682,7 +1675,6 @@ void CFontListView::view()
         {
             KProcess proc;
 
-printf("VIEW:%s\n", (*it)->url().prettyUrl().toLatin1().constData());
             proc << KFI_APP << "-v" << (*it)->url().prettyUrl().toUtf8();
             proc.start(KProcess::DontCare);
         }

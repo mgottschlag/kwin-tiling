@@ -37,6 +37,7 @@
 #include <QSortFilterProxyModel>
 #include "Misc.h"
 #include "FontLister.h"
+#include "JobRunner.h"
 
 class KFileItem;
 class KFileItemList;
@@ -300,9 +301,8 @@ class CFontListView : public QTreeView
     void            readConfig(KConfig &cfg);
     void            writeConfig(KConfig &cfg);
     QModelIndexList selectedItems() const  { return selectedIndexes(); }
-    void            getFonts(KUrl::List &urls, QStringList &files, QSet<Misc::TFont> *fonts,
-                             bool *hasSys, bool *hasUser, bool selected, bool getEnabled=true,
-                             bool getDisabled=true);
+    void            getFonts(CJobRunner::ItemList &urls, QStringList &fontNames, QSet<Misc::TFont> *fonts,
+                             bool *hasSys, bool selected, bool getEnabled=true, bool getDisabled=true);
     void            getPrintableFonts(QSet<Misc::TFont> &items, bool selected);
     void            setFilterGroup(CGroupListItem *grp);
     void            stats(int &enabled, int &disabled, int &partial);

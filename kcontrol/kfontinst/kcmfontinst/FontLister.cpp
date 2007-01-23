@@ -143,7 +143,6 @@ void CFontLister::filesRemoved(const QStringList &files)
             {
                 KFileItem *item(*it);
                 emit deleteItem(item);
-                printf("FILE DELETED:%s\n", (*it)->url().prettyUrl().toLatin1().constData());
                 delete item;
                 itsItems.remove(it);
             }

@@ -27,6 +27,7 @@
 #include "config.h"
 #endif
 #include "GroupList.h"
+#include "JobRunner.h"
 #include <QStringList>
 #include <QSet>
 #include <kcmodule.h>
@@ -84,12 +85,9 @@ class CKCmFontInst : public KCModule
     void    exportJobResult(KJob *job);
     void    exported(KIO::Job *job, const KUrl &from, const KUrl &to, bool dir, bool renamed);
     void    changeText();
-    //void    duplicateFonts();
+    void    duplicateFonts();
     void    print();
     void    printGroup();
-    void    initialJobResult(KJob *job);
-    void    jobResult(KJob *job);
-    void    infoMessage(KJob *job, const QString &msg);
     void    listingCompleted();
     void    setStatusBar();
     void    addFonts(const QSet<KUrl> &src);
@@ -100,16 +98,15 @@ class CKCmFontInst : public KCModule
     private:
 
     void    print(bool all);
-    void    deleteFonts(QStringList &files, KUrl::List &urls, bool hasSys, bool hasUser);
+    void    deleteFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool hasSys);
     void    toggleGroup(bool enable);
     void    toggleFonts(bool enable, const QString &grp=QString());
-    void    toggleFonts(QStringList &files, KUrl::List &urls, bool enable, const QString &grp,
-                        bool hasSys, bool hasUser);
+    void    toggleFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool enable, const QString &grp,
+                        bool hasSys);
     bool    working(bool displayMsg=true);
     KUrl    baseUrl(bool sys);
     void    selectMainGroup();
-    bool    getPasswd(bool required);
-    void    setMetaData(KIO::Job *job);
+    void    doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &urls, const KUrl &dest);
 
     private:
 
@@ -130,7 +127,7 @@ class CKCmFontInst : public KCModule
     CGroupListView    *itsGroupListView;
     KToggleAction     *itsMgtMode,
                       *itsShowPreview;
-    //KActionMenu       *itsToolsMenu;
+    KActionMenu       *itsToolsMenu;
     KPushButton       *itsDeleteGroupControl,
                       *itsEnableGroupControl,
                       *itsDisableGroupControl,
@@ -138,8 +135,7 @@ class CKCmFontInst : public KCModule
                       *itsDeleteFontControl,
                       *itsEnableFontControl,
                       *itsDisableFontControl;
-    QString           itsLastStatusBarMsg,
-                      itsPasswd;
+    QString           itsLastStatusBarMsg;
     KIO::Job          *itsJob;
     KProgressDialog   *itsProgress;
     CUpdateDialog     *itsUpdateDialog;
@@ -148,6 +144,7 @@ class CKCmFontInst : public KCModule
     KZip              *itsExportFile;
     QSet<QString>     itsDeletedFonts;
     KUrl::List        itsModifiedUrls;
+    CJobRunner        *itsRunner;
 };
 
 }

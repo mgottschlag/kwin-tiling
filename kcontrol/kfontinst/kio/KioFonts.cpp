@@ -1367,7 +1367,7 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
 
     //
     // Sort list of files - placing scalable ones first. This is because, when determening the
-    // mimetype, the 1st valid file will be chose. In case of mixed bitmap/scalable - prefer
+    // mimetype, the 1st valid file will be chosen. In case of mixed bitmap/scalable - prefer
     // scalable
     CDisabledFonts::TFileList                files;
     CDisabledFonts::TFileList::ConstIterator it,
@@ -1655,14 +1655,8 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
     bool fromFonts=KFI_KIO_FONTS_PROTOCOL==src.protocol();
 
-    if(
-//#ifdef KFI_KIO_CHECK_FONTS_WHEN_INSTALL
-//        updateFontList()
-//#else
-        // CPD: dont update font list upon a copy from file - is too slow. Just stat on filename!
-        !fromFonts || updateFontList()
-//#endif
-        && checkUrl(src) && checkAllowed(src))
+    // CPD: dont update font list upon a copy from file - is too slow. Just stat on filename!
+    if(!fromFonts || updateFontList() && checkUrl(src) && checkAllowed(src))
     {
         //checkUrl(u) // CPD as per comment in ::put()
 
@@ -2745,7 +2739,7 @@ const CDisabledFonts::TFileList * CKioFonts::getEntries(const KUrl &url,
         // Oops... we have a match for both a hidden, and non-hidden font! Have to ask which one...
         // This should never really happen, as hidden fonts will start with a period.
         if(KMessageBox::Yes==messageBox(QuestionYesNo,
-                                  i18n("The selected Url (%1) matches both an enabled, and disabled"
+                                  i18n("The selected URL (%1) matches both an enabled, and disabled"
                                        "font. Which one do you wish to access?", url.prettyUrl()),
                                   i18n("Duplicate Font"), i18n("Enabled Font"),
                                   i18n("Disabled Font")))
@@ -2908,7 +2902,7 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
                                     itsFolders[FOLDER_USER].disabled->find(name, 1))))
                 {
                     FcPatternDestroy(pat);
-                    error(KIO::ERR_SLAVE_DEFINED, i18n("File %1 contains the font %2.\n"
+                    error(KIO::ERR_SLAVE_DEFINED, i18n("File %1 contains the font:\n\%2\n"
                                                        "A font with this name is already installed.\n",
                                                        url.prettyUrl(), name));
                     return FILE_UNKNOWN;

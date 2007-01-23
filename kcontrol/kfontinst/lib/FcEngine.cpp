@@ -163,19 +163,19 @@ inline bool equalWeight(int a, int b)
 
 #ifndef KFI_FC_NO_WIDTHS
 inline bool equalWidth(int a, int b)
-    {
+{
     return a==b || FC::width(a)==FC::width(b);
-    }
+}
 #endif
 
 inline bool equalSlant(int a, int b)
-    {
+{
     return a==b || FC::slant(a)==FC::slant(b);
-    }
+}
 
 static bool drawChar(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, const QString &text, int pos,
                      int &x, int &y, int w, int h, int fSize, int offset)
-    {
+{
     XGlyphInfo     extents;
     const FcChar16 *str=(FcChar16 *)(&(text.utf16()[pos]));
 
@@ -215,7 +215,7 @@ static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, con
 
 static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_UInt i,
                       int &x, int &y, int &w, int &h, int fSize, int offset, bool oneLine)
-    {
+{
     XGlyphInfo extents;
 
     XftGlyphExtents(QX11Info::display(), xftFont, &i, 1, &extents);
@@ -236,11 +236,11 @@ static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_U
         return true;
     }
     return false;
-    }
+}
 
 static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol,
                           int size, int &x, int &y, int &w, int &h, int offset, bool oneLine=false)
-    {
+{
     bool rv=false;
     if(xftFont)
     {
@@ -262,16 +262,16 @@ static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol,
             if(oneLine)
                 x=offset;
             XftUnlockFace(xftFont);
-    }
+        }
     }
 
     return rv;
 }
 
 inline int point2Pixel(int point)
-    {
+{
     return (point*QX11Info::appDpiX()+36)/72;
-    }
+}
 
 static bool hasStr(XftFont *font, QString &str)
 {
@@ -358,25 +358,25 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
         bool ok=true;
 
         if(QChar('/')==item[0])  // Then add to fontconfig's list, so that Xft can display it...
-{
+        {
             KUrl url("file://"+item);
 
             ok=parseUrl(url, face);
             addFontFile(item);
-}
+        }
         else
-{
+        {
             parseName(item, 0, style);
             itsInstalled=true;
-}
+        }
 
         if(ok)
-{
+        {
             itsLastUrl=KUrl();
             getSizes();
 
             if(itsSizes.size())
-    {
+            {
                 //
                 // Calculate size of text...
                 int  fSize=((int)(h*0.75))-2,
@@ -397,13 +397,13 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                         pix=QPixmap(constInitialWidth, bSize+8);
                         pix.fill(theirBgndCol);
                         needResize=true;
-    }
+                    }
                     else
                         offset=(fSize-bSize)/2;
-}
+                }
 
                 if(!needResize)
-{
+                {
                     pix=QPixmap(constInitialWidth, h);
                     pix.fill(theirBgndCol);
                 }
@@ -426,7 +426,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                                                (Visual*)(x11Info.visual()), x11Info.colormap());
 
                 if(xftDraw)
-{
+                {
                     XftFont *xftFont=NULL;
                     QString text(itsPreviewString);
 
@@ -436,7 +436,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                         offset=0;
 
                     if(!itsScalable) // Then need to get nearest size...
-    {
+                    {
                         int bSize=0;
 
                         for(int s=0; s<itsSizes.size(); ++s)
@@ -458,12 +458,12 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
         else
 */
                             offset=(fSize-bSize)/2;
-    }
+                    }
 
                     xftFont=getFont(fSize);
 
                     if(xftFont)
-    {
+                    {
                         if(hasStr(xftFont, text) || hasStr(xftFont, text=text.toUpper()) ||
                            hasStr(xftFont, text=text.toLower()))
                         {
@@ -485,7 +485,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                             rv=true;
                         }
                         else
-        {
+                        {
                             FT_Face face=XftLockFace(xftFont);
 
                             if(face)
@@ -502,7 +502,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
                                                     &extents);
 
                                     if(x+extents.width+2>constInitialWidth)  // Only want 1 line
-                break;
+                                        break;
 
                                     XftDrawGlyphs(xftDraw, &xftCol, xftFont, x, y, &i, 1);
                                     x+=extents.width+2;
@@ -563,7 +563,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
         getSizes();
 
         if(itsSizes.size())
-{
+        {
             const QX11Info &x11Info(pix.x11Info());
             XRenderColor   xrenderCol;
             XftColor       xftCol;
@@ -581,11 +581,11 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                            (Visual*)(x11Info.visual()), x11Info.colormap());
 
             if(xftDraw)
-{
+            {
                 XftFont *xftFont=NULL;
 
                 if(thumb)
-{
+                {
                     QString text(i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
 
                     //
@@ -597,14 +597,14 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                         /*: (h-(offset*4))/3*/;  // 3 lines or more
 
                     if(!itsScalable) // Then need to get nearest size...
-{
+                    {
                         int bSize=0;
 
                         for(int s=0; s<itsSizes.size(); ++s)
                             if (itsSizes[s]<=fSize || 0==bSize)
                                 bSize=itsSizes[s];
                         fSize=bSize;
-}
+                    }
 
                     unsigned int ch;
 
@@ -612,7 +612,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                     y=fSize;
                     if(xftFont)
-{
+                    {
                         QString valid(usableStr(xftFont, text));
 
                         rv=true;
@@ -640,7 +640,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                     xftFont=getFont(itsAlphaSize);
                     if(xftFont)
-    {
+                    {
                         QString validPunc(usableStr(xftFont, punctuation));
 
                         rv=true;
@@ -664,12 +664,12 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             if(lc || uc || punc)
                                 painter.drawLine(offset, y, w-(offset+1), y);
                             y+=8;
-    }
+                        }
 
                         QString previewString(getPreviewString());
 
                         if(!drawGlyphs)
-    {
+                        {
                             if(!lc && uc)
                                 previewString=previewString.toUpper();
                             if(!uc && lc)
@@ -678,7 +678,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                         for(int s=0; s<itsSizes.size(); ++s)
                             if((xftFont=getFont(itsSizes[s])))
-        {
+                            {
                                 rv=true;
                                 if(drawGlyphs)
                                     drawAllGlyphs(xftDraw, xftFont, &xftCol, itsSizes[s], x, y, w, h, offset,
@@ -687,25 +687,25 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                     drawString(xftDraw, xftFont, &xftCol, previewString, x, y, h,
                                                offset);
                                 XftFontClose(QX11Info::display(), xftFont);
-        }
-    }
+                            }
+                    }
 
                     painter.setPen(theirBgndCol);
                     for(int l=0; l<offset; ++l)
                         painter.drawLine((w-1)-l, 0, (w-1)-l, h);
                 }
                 else if(ALL_CHARS==unicodeStart)
-    {
+                {
                     drawName(painter, x, y, w, offset);
 
                     if((xftFont=getFont(itsAlphaSize)))
-        {
+                    {
                         y-=8;
                         drawAllGlyphs(xftDraw, xftFont, &xftCol, itsAlphaSize, x, y, w, h, offset);
                         rv=true;
                         XftFontClose(QX11Info::display(), xftFont);
-        }
-    }
+                    }
+                }
                 else  // Want to draw 256 chars from font...
                 {
                     static const int constGap=4;
@@ -728,12 +728,12 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             if (itsSizes[s]<=fSize)
                                 bSize=itsSizes[s];
                         fSize=bSize;
-}
+                    }
 
                     xftFont=getFont(fSize);
 
                     if(xftFont)
-{
+                    {
                         QString str("A");
 
                         rv=true;
@@ -742,12 +742,12 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         y+=constGap;
                         int ds=16*(fSize+(2*constGap));
                         for(int i=0; i<17; ++i)
-    {
+                        {
                             painter.drawLine(x, y+(i*(fSize+(2*constGap))), x+ds-1,
                                              y+(i*(fSize+(2*constGap))));
                             painter.drawLine(x+(i*(fSize+(2*constGap))), y, x+(i*(fSize+(2*constGap))),
                                              y+ds-1);
-}
+                        }
                         y+=fSize;
                         x+=constGap;
                         for(int a=0; a<256; ++a)
@@ -757,7 +757,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             XftDrawString16(xftDraw, &xftCol, xftFont, x, y, fcStr, 1);
 
                             if(!((a+1)%16))
-{
+                            {
                                 y+=fSize+(2*constGap);
                                 x=offset+constGap;
                             }
@@ -779,10 +779,10 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 }
 
 QString CFcEngine::getDefaultPreviewString()
-    {
+{
     return i18nc("A sentence that uses all of the letters of the alphabet",
                  "The quick brown fox jumps over the lazy dog");
-    }
+}
 
 QString CFcEngine::getUppercaseLetters()
 {
@@ -795,9 +795,9 @@ QString CFcEngine::getLowercaseLetters()
 }
 
 QString CFcEngine::getPunctuation()
-    {
+{
     return i18nc("Numbers and characters", "0123456789.:,;(*!?'/\\\")Â£$â¬%^&-+@~#<>{}[]");
-    }
+}
 
 #ifdef KFI_USE_TRANSLATED_FAMILY_NAME
 //
@@ -819,21 +819,21 @@ QString CFcEngine::getFcLangString(FcPattern *pat, const char *val, const char *
             break;
         else
             fontLangs.append(lang);
-}
+    }
 
     // Now go through the user's KDE locale, and try to find a font match...
     for(; it!=end; ++it)
-{
+    {
         int index=fontLangs.findIndex(*it);
 
         if(-1!=index)
-    {
+        {
             rv=getFcString(pat, val, index);
 
             if(!rv.isEmpty())
                 break;
+        }
     }
-}
 
     if(rv.isEmpty())
         rv=getFcString(pat, val, 0);
@@ -1264,7 +1264,6 @@ bool CFcEngine::isCorrect(XftFont *f, bool checkFamily)
                     s << "no";
             else
                 s << "ok";
-            fprintf(stderr, "  ");
         }
         else
             s << "NOT Installed...   ";
