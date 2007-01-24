@@ -918,9 +918,8 @@ void CKCmFontInst::exportGroup()
                                         connect(itsJob, SIGNAL(result(KJob *)),
                                                 SLOT(exportJobResult(KJob *)));
                                         connect(itsJob, SIGNAL(copyingDone(KIO::Job *, const KUrl &,
-                                                               const KUrl &, bool, bool)),
-                                                SLOT(exported(KIO::Job *, const KUrl &, const KUrl &,
-                                                           bool, bool)));
+                                                               const KUrl &, time_t, bool, bool)),
+                                                SLOT(exported(KIO::Job *, const KUrl &, const KUrl &)));
                                     }
                                     else
                                     {
@@ -976,8 +975,7 @@ void CKCmFontInst::exportJobResult(KJob *job)
     itsTempDir=NULL;
 }
 
-// TODO: I assmume KIO::Job below should be KJob
-void CKCmFontInst::exported(KIO::Job *, const KUrl &, const KUrl &to, bool, bool)
+void CKCmFontInst::exported(KIO::Job *, const KUrl &, const KUrl &to)
 {
     if(itsExportFile)
     {

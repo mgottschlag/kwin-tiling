@@ -83,7 +83,7 @@ class CKCmFontInst : public KCModule
     void    disableGroup();
     void    exportGroup();
     void    exportJobResult(KJob *job);
-    void    exported(KIO::Job *job, const KUrl &from, const KUrl &to, bool dir, bool renamed);
+    void    exported(KIO::Job *job, const KUrl &from, const KUrl &to);
     void    changeText();
     void    duplicateFonts();
     void    print();
