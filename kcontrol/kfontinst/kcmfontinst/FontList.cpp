@@ -128,24 +128,25 @@ QStringList CFontList::compact(const QStringList &files)
 
     for(; it!=end; ++it)
     {
-        QString       family,
-                      style;
+        QString family,
+                style;
 
         decompose(*it, family, style);
 
+        if(family!=lastFamily)
+        {
+            usedStyles.clear();
+            if(entry.length())
+            {
+                entry+=')';
+                compacted.append(entry);
+            }
+            entry=QString(family+" (");
+            lastFamily=family;
+        }
         if(!usedStyles.contains(style))
         {
-            if(family!=lastFamily)
-            {
-                usedStyles.clear();
-                if(entry.length())
-                {
-                    entry+=')';
-                    compacted.append(entry);
-                }
-                entry=QString(family+" (");
-                lastFamily=family;
-            }
+            usedStyles.clear();
             if(entry.length() && '('!=entry[entry.length()-1])
                 entry+=", ";
             entry+=style;
