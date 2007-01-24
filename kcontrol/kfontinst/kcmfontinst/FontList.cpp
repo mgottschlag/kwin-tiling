@@ -1716,8 +1716,24 @@ void CFontListView::startDrag(Qt::DropActions supportedActions)
         if (!data)
             return;
 
+        QModelIndex index(itsProxy->mapToSource(indexes.first()));
+        const char  *icon="font_bitmap";
+
+        if(index.isValid())
+        {
+            CFontItem *font=(static_cast<CFontModelItem *>(index.internalPointer()))->isFont()
+                                ? static_cast<CFontItem *>(index.internalPointer())
+                                : (static_cast<CFamilyItem *>(index.internalPointer()))->regularFont();
+
+            if(font && !font->isBitmap())
+                if("application/x-font-type1"==font->mimetype())
+                    icon="font_type1";
+                else
+                    icon="font_truetype";
+        }
+
         QPoint  hotspot;
-        QPixmap pix(DesktopIcon("font", K3Icon::SizeMedium));
+        QPixmap pix(DesktopIcon(icon, K3Icon::SizeMedium));
 
         hotspot.setX(0); // pix.width()/2);
         hotspot.setY(0); // pix.height()/2);
@@ -1798,7 +1814,6 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
                         en=true;
                     else
                         dis=true;
-
                 }
                 else
                     switch((static_cast<CFamilyItem *>(realIndex.internalPointer()))->status())

@@ -160,6 +160,8 @@ void CDuplicatesDialog::scanFinished()
 
                 QStringList::ConstIterator fit((*it).begin()),
                                            fend((*it).end());
+                int                        tt(0),
+                                           t1(0);
 
                 for(; fit!=fend; ++fit)
                 {
@@ -172,9 +174,14 @@ void CDuplicatesDialog::scanFinished()
                     if(info.isSymLink())
                         details.append(info.readLink());
                     new QTreeWidgetItem(top, details);
+                    if(Misc::checkExt(*fit, "pfa") || Misc::checkExt(*fit, "pfb"))
+                        t1++;
+                    else
+                        tt++;
                 }
                 top->setExpanded(true);
-                top->setData(COL_FILE, Qt::DecorationRole, QVariant(SmallIcon("font")));
+                top->setData(COL_FILE, Qt::DecorationRole,
+                             QVariant(SmallIcon(t1>tt ? "font_type1" : "font_truetype")));
                 top->setFont(COL_FILE, boldFont);
             }
             itsView->setSortingEnabled(true);
