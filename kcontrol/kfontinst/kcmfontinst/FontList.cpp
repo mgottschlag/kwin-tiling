@@ -1029,11 +1029,11 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                         switch(fam->status())
                         {
                             case CFamilyItem::PARTIAL:
-                                return SmallIcon("partiallyenableditem");
+                                return SmallIcon("button_ok", 0, K3Icon::DisabledState);
                             case CFamilyItem::ENABLED:
-                                return SmallIcon("enableditem");
+                                return SmallIcon("button_ok");
                             case CFamilyItem::DISABLED:
-                                return SmallIcon("disableditem");
+                                return SmallIcon("button_cancel");
                         }
                         break;
                     default:
@@ -1043,7 +1043,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
             else
                 if(COL_STATUS==index.column())
                     return SmallIcon( (static_cast<CFontItem *>(index.internalPointer()))->isEnabled()
-                                      ? "enableditem" : "disableditem", 10);
+                                      ? "button_ok" : "button_cancel", 10);
         default:
             break;
     }

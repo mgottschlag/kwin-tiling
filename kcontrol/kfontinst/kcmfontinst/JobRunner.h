@@ -39,7 +39,7 @@ class CJobRunner : public KDialog
 
     private:
 
-    static const int constNumIcons=8;
+    static const int constNumIcons=4;
 
     public:
 

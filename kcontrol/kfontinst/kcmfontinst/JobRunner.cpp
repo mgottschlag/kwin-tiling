@@ -31,6 +31,7 @@
 #include <klocale.h>
 #include <kpassworddialog.h>
 #include <kdesu/su.h>
+#include <kimageeffect.h>
 #include <QGridLayout>
 #include <QProgressBar>
 #include <QLabel>
@@ -78,14 +79,13 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
     itsPixmapLabel=new QLabel(page);
     itsStatusLabel=new QLabel(page);
     itsProgress=new QProgressBar(page);
+    itsIcons[0]=KIconLoader::global()->loadIcon("font_truetype", K3Icon::NoGroup, 48);
 
-    for(int i=0; i<constNumIcons; ++i)
-    {
-        QString name;
+    QImage img(itsIcons[0].toImage());
+    itsIcons[1]=KImageEffect::rotate(img, KImageEffect::Rotate90);
+    itsIcons[2]=KImageEffect::rotate(img, KImageEffect::Rotate180);
+    itsIcons[3]=KImageEffect::rotate(img, KImageEffect::Rotate270);
 
-        name.sprintf("font_cfg_update%d", i+1);
-        itsIcons[i]=KIconLoader::global()->loadIcon(name, K3Icon::NoGroup, 48);
-    }
     itsPixmapLabel->setPixmap(itsIcons[0]);
     layout->addWidget(itsPixmapLabel, 0, 0, 2, 1);
     layout->addWidget(itsStatusLabel, 0, 1);

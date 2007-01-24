@@ -23,7 +23,6 @@
 #include "KCmFontInst.h"
 #include "KfiConstants.h"
 #include "PrintDialog.h"
-#include "UpdateDialog.h"
 #include "FcEngine.h"
 #include "FontPreview.h"
 #include "Misc.h"
@@ -254,7 +253,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
                 //*downloadFontsAct=new KAction(KIcon("down"), i18n("Download Fonts..."), this);
 
     itsToolsMenu=new KActionMenu(KIcon("wizard"), i18n("Tools"), this);
-    itsMgtMode=new KToggleAction(KIcon("font_cfg_update1"),
+    itsMgtMode=new KToggleAction(KIcon("fonts"),
                                  i18n("Font Management mode"), this),
     itsShowPreview=new KToggleAction(KIcon("thumbnail"), i18n("Show Preview"), this);
     settingsMenu->addAction(itsMgtMode);

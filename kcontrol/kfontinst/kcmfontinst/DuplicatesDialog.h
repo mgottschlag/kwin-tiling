@@ -131,7 +131,7 @@ class CFontFileListView : public QTreeWidget
 
 class CDuplicatesDialog : public KDialog
 {
-    static const int constNumIcons=8;
+    static const int constNumIcons=4;
 
     Q_OBJECT
 
