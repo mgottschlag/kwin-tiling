@@ -178,7 +178,9 @@ bool CFontViewPart::openFile()
 
 void CFontViewPart::timeout()
 {
-    bool          isFonts=KFI_KIO_FONTS_PROTOCOL==m_url.protocol();
+    bool          isFonts=KFI_KIO_FONTS_PROTOCOL==m_url.protocol(),
+                  isDisabled(false),
+                  showFs=false;
     KUrl          displayUrl(m_url);
     QString       name;
     unsigned long styleInfo=KFI_NO_STYLE_INFO;
@@ -193,6 +195,7 @@ void CFontViewPart::timeout()
         {
             name=udsEntry.stringValue(KIO::UDS_NAME);
             styleInfo=FC::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
+            isDisabled=udsEntry.numberValue(KIO::UDS_HIDDEN, 0) ? true : false;
         }
         if(!name.isEmpty())
             displayUrl.setFileName(name);
@@ -200,21 +203,15 @@ void CFontViewPart::timeout()
 
     itsInstallButton->setEnabled(!isFonts && !isInstalled());
     emit setWindowCaption(Misc::prettyUrl(displayUrl));
-    doPreview(isFonts, name, styleInfo);
-}
 
-void CFontViewPart::doPreview(bool isFonts, const QString &name, unsigned long styleInfo, int index)
-{
-    bool showFs=false;
-
-    itsPreview->showFont(isFonts ? m_url : KUrl::fromPath(m_file), name, styleInfo, index);
+    itsPreview->showFont(isFonts ? m_url : KUrl::fromPath(m_file), isDisabled ? QString() : name, styleInfo);
 
     if(!isFonts && CFcEngine::instance()->getNumIndexes()>1)
     {
         showFs=true;
         itsFaceSelector->setRange(1, CFcEngine::instance()->getNumIndexes(), 1, false);
         itsFaceSelector->blockSignals(true);
-        itsFaceSelector->setValue(index);
+        itsFaceSelector->setValue(1);
         itsFaceSelector->blockSignals(false);
     }
 

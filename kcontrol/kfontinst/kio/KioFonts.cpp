@@ -1002,16 +1002,24 @@ bool CKioFonts::createStatEntryReal(KIO::UDSEntry &entry, const KUrl &url, EFold
     TFontMap::Iterator it=getMap(url);
 
     if(it!=itsFolders[folder].fontMap.end())
+    {
+        KFI_DBUG << "createStatEntryReal - its a normal font" << endl;
         return createFontUDSEntry(entry, it.key(), it.value().files, it.value().styleVal,
                                   FOLDER_SYS==folder);
+    }
 
-    QString                        name=Misc::getFile(removeMultipleExtension(url));
+    KFI_DBUG << "createStatEntryReal - try looking in disabled fonts" << endl;
+
+    QString                             name=Misc::getFile(removeMultipleExtension(url));
     CDisabledFonts::TFontList::Iterator dIt=itsFolders[folder].disabled->find(name,
                                             Misc::getIntQueryVal(url, KFI_KIO_FACE, 0));
 
     if(dIt!=itsFolders[folder].disabled->items().end())
+    {
+        KFI_DBUG << "createStatEntryReal - its a disabled font" << endl;
         return createFontUDSEntry(entry, (*dIt).getName(), (*dIt).files, (*dIt).styleInfo,
                                   FOLDER_SYS==folder, true);
+    }
 
     return false;
 }
@@ -1025,7 +1033,7 @@ void CKioFonts::get(const KUrl &url)
 
     // Any error will be logged in getSourceFiles
     if(updateFontList() && checkUrl(url) && getSourceFiles(url, srcFiles))
-                {
+    {
         //
         // The thumbnail job always donwloads non-local files to /tmp/... and passes this file name to
         // the thumbnail creator. However, in the case of fonts which are split among many files, this

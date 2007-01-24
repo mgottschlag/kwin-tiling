@@ -75,8 +75,6 @@ class CFontViewPart : public KParts::ReadOnlyPart
 
     private:
 
-    void doPreview(bool isFonts, const QString &name=QString::null,
-                   unsigned long styleInfo=KFI_NO_STYLE_INFO, int index=1);
     bool isInstalled();
 
     private:

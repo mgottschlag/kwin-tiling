@@ -41,7 +41,7 @@
 //#define KFI_FC_DEBUG
 
 #ifdef KFI_FC_DEBUG
-#define KFI_DBUG kDebug() << '[' << (int)(getpid()) << "] CFcEngine - "
+#define KFI_DBUG kDebug() << "[" << (int)(getpid()) << "] CFcEngine - "
 #endif
 
 //
@@ -909,6 +909,9 @@ QFont CFcEngine::getQFont(const QString &family, unsigned long style, int size)
 
 bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
 {
+#ifdef KFI_FC_DEBUG
+    KFI_DBUG << "parseUrl(" << url.prettyUrl() << ", " << faceNo << ", " << all << ")" << endl;
+#endif
     if(faceNo<0)
         faceNo=0;
 
@@ -938,8 +941,14 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
             style=FC::styleValFromStr(udsEntry.stringValue((uint)UDS_EXTRA_FC_STYLE));
             itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDS_URL)),
                                           KFI_KIO_FACE, 0);
+#ifdef KFI_FC_DEBUG
+            KFI_DBUG << "Stated fonts:/ url, name:" << name << " itsFileName:" << itsFileName
+                         << " style:" << style << " itsIndex:" << itsIndex << endl;
+#endif
         }
-
+#ifdef KFI_FC_DEBUG
+KFI_DBUG << "isHidden:" << hidden << endl;
+#endif
         if(hidden)
             name=itsFileName;
 
