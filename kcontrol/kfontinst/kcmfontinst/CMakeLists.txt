@@ -10,7 +10,7 @@ kde4_automoc(${kcm_fontinst_PART_SRCS})
 
 kde4_add_plugin(kcm_fontinst ${kcm_fontinst_PART_SRCS})
 
-target_link_libraries(kcm_fontinst ${KDE4_KIO_LIBS} kfontinstui )
+target_link_libraries(kcm_fontinst ${KDE4_KIO_LIBS} kfontinstui kfontinst )
 
 install(TARGETS kcm_fontinst  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES fontinst.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
