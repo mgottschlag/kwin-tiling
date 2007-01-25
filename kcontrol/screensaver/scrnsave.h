@@ -95,7 +95,7 @@ protected:
     QLabel      *mMonitorLabel;
     QLabel      *mActivateLbl;
     QLabel      *mLockLbl;
-    QStringList mSaverFileList;
+    KService::List mSaverServices;
     SaverList   mSaverList;
     QTimer      *mLoadTimer;
     Q3GroupBox   *mSaverGroup;

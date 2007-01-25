@@ -17,6 +17,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include <kservicetypetrader.h>
+#include <kstandarddirs.h>
 #include <q3buttongroup.h>
 #include <QCheckBox>
 #include <q3header.h>
@@ -110,18 +112,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
 
     setButtons( KCModule::Help | KCModule::Default | KCModule::Apply );
 
-    // Add KDE specific screensaver path
-    QString relPath="System/ScreenSavers/";
-    KServiceGroup::Ptr servGroup = KServiceGroup::baseGroup( "screensavers" );
-    if (servGroup)
-    {
-      relPath=servGroup->relPath();
-      kDebug() << "relPath=" << relPath << endl;
-    }
 
-    KGlobal::dirs()->addResourceType("scrsav",
-                                     KGlobal::dirs()->kde_default("apps") +
-                                     relPath);
 
     readSettings();
 
@@ -513,27 +504,25 @@ void KScreenSaver::save()
 void KScreenSaver::findSavers()
 {
     if ( !mNumLoaded ) {
-        mSaverFileList = KGlobal::dirs()->findAllResources("scrsav",
-                            "*.desktop", false, true);
+	mSaverServices = KServiceTypeTrader::self()->query( "ScreenSaver");
         new Q3ListViewItem ( mSaverListView, i18n("Loading...") );
-        if ( mSaverFileList.isEmpty() )
+        if ( mSaverServices.isEmpty() )
             mLoadTimer->stop();
         else
             mLoadTimer->start( 50 );
     }
-
-    for ( int i = 0; i < 5 &&
-            mNumLoaded < mSaverFileList.count();
-            i++, mNumLoaded++ ) {
-        QString file = mSaverFileList[mNumLoaded];
-        SaverConfig *saver = new SaverConfig;
-        if (saver->read(file)) {
-            mSaverList.append(saver);
+    for( KService::List::const_iterator it = mSaverServices.begin();
+        it != mSaverServices.end(); it++,mNumLoaded++)
+    {
+      SaverConfig *saver = new SaverConfig;
+      QString file = KStandardDirs::locate("services", (*it)->desktopEntryPath());
+      if (saver->read(file)) {
+	      mSaverList.append(saver);
         } else
             delete saver;
     }
-
-    if ( mNumLoaded == mSaverFileList.count() ) {
+    
+    if ( mNumLoaded == mSaverServices.count() ) {
         Q3ListViewItem *selectedItem = 0;
         int categoryCount = 0;
         int indx = 0;
