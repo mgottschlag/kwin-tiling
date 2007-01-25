@@ -227,17 +227,23 @@ else
     export GS_LIB
 fi
 
+lnusertemp=`kde4-config --path exe --locate lnusertemp`
+if test -z "$lnusertemp"; then
+  # Startup error
+  echo 'startkde: ERROR: Could not locate lnusertemp in '`kde4-config --path exe` 1>&2
+fi
+
 # Link "tmp" resource to directory in /tmp
 # Creates a directory /tmp/kde-$USER and links $KDEHOME/tmp-$HOSTNAME to it.
-lnusertemp tmp >/dev/null
+"$lnusertemp" tmp >/dev/null
 
 # Link "socket" resource to directory in /tmp
 # Creates a directory /tmp/ksocket-$USER and links $KDEHOME/socket-$HOSTNAME to it.
-lnusertemp socket >/dev/null
+"$lnusertemp" socket >/dev/null
 
 # Link "cache" resource to directory in /var/tmp
 # Creates a directory /var/tmp/kdecache-$USER and links $KDEHOME/cache-$HOSTNAME to it.
-lnusertemp cache >/dev/null
+"$lnusertemp" cache >/dev/null
 
 # In case of dcop sockets left by a previous session, cleanup
 #dcopserver_shutdown
@@ -261,11 +267,11 @@ fi
 
 if test -z "$dl"; then
   # the splashscreen and progress indicator
-  case "$ksplashrc_ksplash_theme" in 
+  case "$ksplashrc_ksplash_theme" in
     None)
        ;; # nothing
     Simple)
-       ksplashsimple 
+       ksplashsimple
        ;;
     *)
        ksplash --nodbus
