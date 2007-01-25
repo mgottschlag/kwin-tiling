@@ -46,7 +46,7 @@ KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent)
 
 void KScreenSaverAdvancedDialog::readSettings()
 {
-	KConfig *config = new KConfig("kdesktoprc");
+	KConfig *config = new KConfig("kscreensaverrc");
 	config->setGroup("ScreenSaver");
 
 	mPriority = config->readEntry("Priority", 19);
@@ -102,7 +102,7 @@ void KScreenSaverAdvancedDialog::accept()
 {
 	if (mChanged)
   {
-		KConfig *config = new KConfig("kdesktoprc");
+		KConfig *config = new KConfig("kscreensaverrc");
   	config->setGroup( "ScreenSaver" );
 
  		config->writeEntry("Priority", mPriority);

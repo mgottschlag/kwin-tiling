@@ -10,7 +10,7 @@
 
 
 #include "saverengine.h"
-#include "krunnersettings.h"
+#include "kscreensaversettings.h"
 #include "screensaveradaptor.h"
 
 #include <kstandarddirs.h>
@@ -212,22 +212,22 @@ void SaverEngine::configure()
         return;
 
     // create a new config obj to ensure we read the latest options
-    KRunnerSettings::self()->readConfig();
+    KScreenSaverSettings::self()->readConfig();
 
-    bool e  = KRunnerSettings::screenSaverEnabled();
-    mTimeout = KRunnerSettings::timeout();
-    mDPMS = KRunnerSettings::dpmsDependent();
+    bool e  = KScreenSaverSettings::screenSaverEnabled();
+    mTimeout = KScreenSaverSettings::timeout();
+    mDPMS = KScreenSaverSettings::dpmsDependent();
 
     mEnabled = !e;   // force the enable()
 
     int action;
-    action = KRunnerSettings::actionTopLeft();
+    action = KScreenSaverSettings::actionTopLeft();
     xautolock_corners[0] = applyManualSettings(action);
-    action = KRunnerSettings::actionTopRight();
+    action = KScreenSaverSettings::actionTopRight();
     xautolock_corners[1] = applyManualSettings(action);
-    action = KRunnerSettings::actionBottomLeft();
+    action = KScreenSaverSettings::actionBottomLeft();
     xautolock_corners[2] = applyManualSettings(action);
-    action = KRunnerSettings::actionBottomRight();
+    action = KScreenSaverSettings::actionBottomRight();
     xautolock_corners[3] = applyManualSettings(action);
 
     enable( e );

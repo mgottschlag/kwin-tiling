@@ -20,7 +20,7 @@
 
 #include "lockprocess.h"
 #include "main.h"
-#include "krunnersettings.h"
+#include "kscreensaversettings.h"
 
 #include <kcmdlineargs.h>
 #include <klocale.h>
@@ -144,7 +144,7 @@ int main( int argc, char **argv )
     KGlobal::locale()->insertCatalog("libdmctl");
 
     // we need to read from the right rc file - possibly taking screen number in account
-    KRunnerSettings::instance("krunnerrc");
+    KScreenSaverSettings::instance("kscreensaverrc");
 
     LockProcess process(child, args->isSet( "blank" ));
     if (!child)

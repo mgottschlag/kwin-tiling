@@ -26,7 +26,7 @@
 #include "restartingapplication.h"
 #include "saverengine.h"
 #include "startupid.h"
-#include "krunnersettings.h" // contains screen saver config
+#include "kscreensaversettings.h" // contains screen saver config
 #include "klaunchsettings.h" // contains startup config
 
 
@@ -99,9 +99,9 @@ int main(int argc, char* argv[])
     KCmdLineArgs::init(argc, argv, &aboutData);
     RestartingApplication app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
 
-    kDebug() << "Attempting to create KRunnerSettings::instance()";
-    KRunnerSettings::instance("krunnerrc");
-    kDebug() << "Created KRunnerSettings::instance()";
+    kDebug() << "Attempting to create KScreenSaverSettings::instance()";
+    KScreenSaverSettings::instance("kscreensaverrc");
+    kDebug() << "Created KScreenSaverSettings::instance()";
 
     // LOCKING
     SaverEngine saver;

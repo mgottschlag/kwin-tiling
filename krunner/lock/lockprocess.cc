@@ -19,7 +19,7 @@
 #include "lockprocess.h"
 #include "lockdlg.h"
 #include "autologout.h"
-#include "krunnersettings.h"
+#include "kscreensaversettings.h"
 
 #include <dmctl.h>
 
@@ -316,9 +316,9 @@ void LockProcess::quitSaver()
 void LockProcess::configure()
 {
     // the configuration is stored in krunner's config file
-    if( KRunnerSettings::lock() )
+    if( KScreenSaverSettings::lock() )
     {
-        mLockGrace = KRunnerSettings::lockGrace();
+        mLockGrace = KScreenSaverSettings::lockGrace();
         if (mLockGrace < 0)
             mLockGrace = 0;
         else if (mLockGrace > 300000)
@@ -327,33 +327,33 @@ void LockProcess::configure()
     else
         mLockGrace = -1;
 
-    if ( KRunnerSettings::autoLogout() )
+    if ( KScreenSaverSettings::autoLogout() )
     {
         mAutoLogout = true;
-        mAutoLogoutTimeout = KRunnerSettings::autoLogoutTimeout();
+        mAutoLogoutTimeout = KScreenSaverSettings::autoLogoutTimeout();
         mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000); // in milliseconds
     }
 
 #ifdef HAVE_DPMS
     //if the user  decided that the screensaver should run independent from
     //dpms, we shouldn't check for it, aleXXX
-    mDPMSDepend = KRunnerSettings::dpmsDependent();
+    mDPMSDepend = KScreenSaverSettings::dpmsDependent();
 #endif
 
-    mPriority = KRunnerSettings::priority();
+    mPriority = KScreenSaverSettings::priority();
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
 
-    mSaver = KRunnerSettings::saver();
+    mSaver = KScreenSaverSettings::saver();
     if (mSaver.isEmpty() || mUseBlankOnly)
         mSaver = "KBlankscreen.desktop";
 
     readSaver();
 
-    mPlugins = KRunnerSettings::pluginsUnlock();
+    mPlugins = KScreenSaverSettings::pluginsUnlock();
     if (mPlugins.isEmpty())
         mPlugins = QStringList("classic");
-    mPluginOptions = KRunnerSettings::pluginOptions();
+    mPluginOptions = KScreenSaverSettings::pluginOptions();
 }
 
 //---------------------------------------------------------------------------

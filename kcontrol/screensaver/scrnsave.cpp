@@ -57,7 +57,7 @@
 #include "scrnsave.h"
 #include <QX11Info>
 #include <QDesktopWidget>
-#include <kdesktop_screensaver.h>
+#include <screensaver_interface.h>
 #include <fixx11h.h>
 
 template class QList<SaverConfig*>;
@@ -414,7 +414,7 @@ void KScreenSaver::load()
 //
 void KScreenSaver::readSettings()
 {
-    KConfig *config = new KConfig( "kdesktoprc");
+    KConfig *config = new KConfig( "kscreensaverrc");
 
     mImmutable = config->groupIsImmutable("ScreenSaver");
 
@@ -484,7 +484,7 @@ void KScreenSaver::save()
     if ( !mChanged )
         return;
 
-    KConfig *config = new KConfig( "kdesktoprc");
+    KConfig *config = new KConfig( "kscreensaverrc");
     config->setGroup( "ScreenSaver" );
 
     config->writeEntry("Enabled", mEnabled);
@@ -501,7 +501,7 @@ void KScreenSaver::save()
     // TODO (GJ): When you changed anything, these two lines will give a segfault
     // on exit. I don't know why yet.
 
-    org::kde::kdesktop::ScreenSaver desktop("org.kde.kdesktop", "/Screensaver", QDBusConnection::sessionBus());
+    org::kde::ScreenSaver desktop("org.kde.krunner", "/Screensaver", QDBusConnection::sessionBus());
     desktop.configure();
 
     mChanged = false;
