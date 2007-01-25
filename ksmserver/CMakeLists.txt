@@ -60,7 +60,7 @@ kde4_automoc(${testsh_SRCS})
 
 kde4_add_executable(testsh ${testsh_SRCS})
 
-target_link_libraries(testsh ${KDE4_KDEUI_LIBS})
+target_link_libraries(testsh plasma ${KDE4_KDEUI_LIBS})
 
 endif(KDE4_BUILD_TESTS)
 
