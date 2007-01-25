@@ -26,8 +26,8 @@
 #include <QPixmap>
 #include <QThread>
 #include <QTreeWidget>
-#include <kdialog.h>
 #include "DisabledFonts.h"
+#include "ActionDialog.h"
 
 class QTimer;
 class QLabel;
@@ -129,10 +129,8 @@ class CFontFileListView : public QTreeWidget
             *itsUnMarkAct;
 };
 
-class CDuplicatesDialog : public KDialog
+class CDuplicatesDialog : public CActionDialog
 {
-    static const int constNumIcons=4;
-
     Q_OBJECT
 
     public:
@@ -146,7 +144,6 @@ class CDuplicatesDialog : public KDialog
 
     private Q_SLOTS:
 
-    void increment();
     void scanFinished();
     void slotButtonClicked(int button);
 
@@ -161,12 +158,8 @@ class CDuplicatesDialog : public KDialog
     bool              itsModifiedSys,
                       itsModifiedUser;
     CFontFileList     *itsFontFileList;
-    QLabel            *itsLabel,
-                      *itsPixmapLabel;
+    QLabel            *itsLabel;
     CFontFileListView *itsView;
-    QTimer            *itsTimer;
-    int               itsCount;
-    QPixmap           itsIcons[constNumIcons];
     CJobRunner        *itsRunner;
 };
 

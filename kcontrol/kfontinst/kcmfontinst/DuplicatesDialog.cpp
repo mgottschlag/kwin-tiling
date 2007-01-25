@@ -61,12 +61,11 @@ enum EColumns
 };
 
 CDuplicatesDialog::CDuplicatesDialog(QWidget *parent, CJobRunner *jr)
-                 : KDialog(parent),
+                 : CActionDialog(parent),
                    itsModifiedSys(false),
                    itsModifiedUser(false),
                    itsRunner(jr)
 {
-    setModal(true);
     setCaption(i18n("Duplicate Fonts"));
     setButtons(KDialog::Ok|KDialog::Cancel);
     enableButtonOk(false);
@@ -77,55 +76,29 @@ CDuplicatesDialog::CDuplicatesDialog(QWidget *parent, CJobRunner *jr)
     QGridLayout *layout=new QGridLayout(page);
     layout->setMargin(0);
     layout->setSpacing(KDialog::spacingHint());
-    itsPixmapLabel=new QLabel(page);
     itsLabel=new QLabel(page);
     itsView=new CFontFileListView(page);
     itsView->hide();
-
-    //itsView->setSortingEnabled(true);
-    itsIcons[0]=KIconLoader::global()->loadIcon("font_truetype", K3Icon::NoGroup, 48);
-
-    QImage img(itsIcons[0].toImage());
-    itsIcons[1]=KImageEffect::rotate(img, KImageEffect::Rotate90);
-    itsIcons[2]=KImageEffect::rotate(img, KImageEffect::Rotate180);
-    itsIcons[3]=KImageEffect::rotate(img, KImageEffect::Rotate270);
-
-    itsPixmapLabel->setPixmap(itsIcons[0]);
     layout->addWidget(itsPixmapLabel, 0, 0);
     layout->addWidget(itsLabel, 0, 1);
     itsLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     layout->addWidget(itsView, 1, 0, 1, 2);
-    itsTimer=new QTimer(this);
     itsFontFileList=new CFontFileList(this);
-    connect(itsTimer, SIGNAL(timeout()), SLOT(increment()));
     connect(itsFontFileList, SIGNAL(finished()), SLOT(scanFinished()));
     connect(itsView, SIGNAL(haveDeletions(bool)), SLOT(enableButtonOk(bool)));
 }
 
 int CDuplicatesDialog::exec()
 {
-    itsCount=0;
     itsModifiedSys=itsModifiedUser=false;
     itsLabel->setText(i18n("Scanning for duplicate fonts. Please wait..."));
-    itsPixmapLabel->setPixmap(itsIcons[0]);
-    itsTimer->start(1000/constNumIcons);
     itsFontFileList->start();
-    return KDialog::exec();
-}
-
-void CDuplicatesDialog::increment()
-{
-    if(++itsCount==constNumIcons)
-        itsCount=0;
-
-    itsPixmapLabel->setPixmap(itsIcons[itsCount]);
+    return CActionDialog::exec();
 }
 
 void CDuplicatesDialog::scanFinished()
 {
-    itsTimer->stop();
-    itsCount=0;
-    itsPixmapLabel->setPixmap(itsIcons[itsCount]);
+    stopAnimation();
 
     if(itsFontFileList->wasTerminated())
         reject();

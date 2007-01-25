@@ -31,12 +31,11 @@
 #include <klocale.h>
 #include <kpassworddialog.h>
 #include <kdesu/su.h>
-#include <kimageeffect.h>
 #include <QGridLayout>
 #include <QProgressBar>
 #include <QLabel>
-#include <QTimer>
 #include <QX11Info>
+#include <QTimer>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 #include <sys/resource.h>
@@ -55,7 +54,7 @@ static KUrl toggle(const KUrl &orig, bool enable)
 }
 
 CJobRunner::CJobRunner(QWidget *parent, int xid)
-           : KDialog(parent),
+           : CActionDialog(parent),
              itsIt(itsUrls.end()),
              itsEnd(itsIt),
              itsAutoSkip(false)
@@ -76,23 +75,11 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
     QGridLayout *layout=new QGridLayout(page);
     layout->setMargin(KDialog::marginHint());
     layout->setSpacing(KDialog::spacingHint());
-    itsPixmapLabel=new QLabel(page);
     itsStatusLabel=new QLabel(page);
     itsProgress=new QProgressBar(page);
-    itsIcons[0]=KIconLoader::global()->loadIcon("font_truetype", K3Icon::NoGroup, 48);
-
-    QImage img(itsIcons[0].toImage());
-    itsIcons[1]=KImageEffect::rotate(img, KImageEffect::Rotate90);
-    itsIcons[2]=KImageEffect::rotate(img, KImageEffect::Rotate180);
-    itsIcons[3]=KImageEffect::rotate(img, KImageEffect::Rotate270);
-
-    itsPixmapLabel->setPixmap(itsIcons[0]);
     layout->addWidget(itsPixmapLabel, 0, 0, 2, 1);
     layout->addWidget(itsStatusLabel, 0, 1);
     layout->addWidget(itsProgress, 1, 1);
-
-    itsTimer=new QTimer(this);
-    connect(itsTimer, SIGNAL(timeout()), SLOT(rotateIcon()));
 }
 
 CJobRunner::~CJobRunner()
@@ -166,13 +153,10 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)
     itsProgress->setRange(0, itsUrls.count()+1);
     itsProgress->show();
     itsCmd=cmd;
-    itsCount=0;
-    itsPixmapLabel->setPixmap(itsIcons[0]);
     itsStatusLabel->setText(QString());
-    itsTimer->start(1000/constNumIcons);
     itsAutoSkip=false;
     QTimer::singleShot(0, this, SLOT(doNext()));
-    return KDialog::exec();
+    return CActionDialog::exec();
 }
 
 void CJobRunner::doNext()
@@ -262,9 +246,7 @@ void CJobRunner::jobResult(KJob *job)
 
         if(!cont)
         {
-            itsTimer->stop();
-            itsCount=0;
-            itsPixmapLabel->setPixmap(itsIcons[itsCount]);
+            stopAnimation();
 
             ItemList::ConstIterator next(itsIt==itsEnd ? itsEnd : itsIt+1);
 
@@ -293,7 +275,7 @@ void CJobRunner::jobResult(KJob *job)
 
         if(cont)
         {
-            itsTimer->start(1000/constNumIcons);
+            startAnimation();
             ++itsIt;
             doNext();
         }
@@ -309,9 +291,7 @@ void CJobRunner::jobResult(KJob *job)
 
 void CJobRunner::cfgResult(KJob *job)
 {
-    itsTimer->stop();
-    itsProgress->setValue(itsProgress->value()+1);
-    itsPixmapLabel->setPixmap(itsIcons[0]);
+    stopAnimation();
 
     if(job && 0==job->error())
     {
@@ -324,14 +304,6 @@ void CJobRunner::cfgResult(KJob *job)
     }
     else
         reject();
-}
-
-void CJobRunner::rotateIcon()
-{
-    if(++itsCount==constNumIcons)
-        itsCount=0;
-
-    itsPixmapLabel->setPixmap(itsIcons[itsCount]);
 }
 
 void CJobRunner::slotButtonClicked(int)

@@ -23,8 +23,8 @@
 #ifndef __JOB_RUNNER_H__
 #define __JOB_RUNNER_H__
 
-#include <kdialog.h>
 #include <kio/job.h>
+#include "ActionDialog.h"
 
 class QLabel;
 class QProgressBar;
@@ -33,13 +33,9 @@ class KJob;
 namespace KFI
 {
 
-class CJobRunner : public KDialog
+class CJobRunner : public CActionDialog
 {
     Q_OBJECT
-
-    private:
-
-    static const int constNumIcons=4;
 
     public:
 
@@ -73,7 +69,6 @@ class CJobRunner : public KDialog
     void doNext();
     void jobResult(KJob *job);
     void cfgResult(KJob *job);
-    void rotateIcon();
     void slotButtonClicked(int button);
 
     private:
@@ -88,12 +83,8 @@ class CJobRunner : public KDialog
                             itsEnd;
     KUrl                    itsDest;
     QString                 itsPasswd;
-    QLabel                  *itsPixmapLabel,
-                            *itsStatusLabel;
+    QLabel                  *itsStatusLabel;
     QProgressBar            *itsProgress;
-    QTimer                  *itsTimer;
-    int                     itsCount;
-    QPixmap                 itsIcons[constNumIcons];
     bool                    itsAutoSkip;
 };
 
