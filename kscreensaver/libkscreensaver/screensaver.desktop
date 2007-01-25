@@ -3,4 +3,8 @@ Encoding=UTF-8
 Type=ServiceType
 X-KDE-ServiceType=ScreenSaver
 Comment=ScreenSaver
+[PropertyDef::X-KDE-Type]
+Type=QString
+[PropertyDef::X-KDE-Category]
+Type=QString
 
