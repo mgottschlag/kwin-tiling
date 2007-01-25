@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=krandom.kss
 Icon=kscreensaver
 Type=Service
+ServiceTypes=ScreenSaver
 Actions=Setup;InWindow;Root;
 Name=Random
 Name[el]=Τυχαία

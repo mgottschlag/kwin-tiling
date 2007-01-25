@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=kblankscrn.kss
 Icon=kscreensaver
 Type=Service
+ServiceTypes=ScreenSaver
 Actions=Setup;InWindow;Root;
 Name=Blank Screen
 Name[el]=Κενή οθόνη
