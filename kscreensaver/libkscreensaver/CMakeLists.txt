@@ -15,7 +15,7 @@ target_link_libraries(kscreensaver  ${KDE4_KIO_LIBS} ${X11_X11_LIB})
 
 set_target_properties(kscreensaver PROPERTIES VERSION 4.2.0 SOVERSION 4)
 install(TARGETS kscreensaver  DESTINATION ${LIB_INSTALL_DIR})
-
+install(FILES screensaver.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
 
 ########### install files ###############
 
