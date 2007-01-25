@@ -8,11 +8,17 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #define SHUTDOWNDLG_H
 
 #include <QDialog>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <kworkspace.h>
 
 class QMenu;
 class QTimer;
+class QSvgRenderer;
+
+namespace Plasma
+{
+    class Theme;
+}
 
 // The (singleton) widget that makes the desktop gray.
 class KSMShutdownFeedback : public QWidget
@@ -38,6 +44,30 @@ private:
     int m_currentY;
 };
 
+class KSMPushButton : public QPushButton
+{
+    Q_OBJECT
+
+public:
+    KSMPushButton( const QString &text, QWidget *parent = 0 );
+
+    void setPixmap( const QPixmap & );
+    void setPopupMenu( QMenu * );
+protected:
+    void paintEvent(QPaintEvent *e);
+    bool event(QEvent *e);
+protected:
+    QPixmap m_pixmap;
+    bool m_highlight;
+    QString m_text;
+private Q_SLOTS:
+    void slotPressed();
+    void slotReleased();
+    void slotTimeout();
+private:
+    QMenu *m_popupMenu;
+    QTimer *m_popupTimer;
+};
 
 // The confirmation dialog
 class KSMShutdownDlg : public QDialog
@@ -53,34 +83,23 @@ public Q_SLOTS:
     void slotReboot();
     void slotReboot(int);
 
+protected Q_SLOTS:
+    void themeChanged();
+
 protected:
     ~KSMShutdownDlg() {};
+    void paintEvent(QPaintEvent *e);
+    void resizeEvent(QResizeEvent *e);
 
 private:
     KSMShutdownDlg( QWidget* parent, bool maysd, KWorkSpace::ShutdownType sdtype );
     KWorkSpace::ShutdownType m_shutdownType;
     QString m_bootOption;
-    QMenu *targets;
     QStringList rebootOptions;
-};
-
-class KSMDelayedPushButton : public KPushButton
-{
-  Q_OBJECT
-
-public:
-
-  KSMDelayedPushButton( const KGuiItem &item, QWidget *parent );
-  void setPopup( QMenu *pop);
-
-private Q_SLOTS:
-  void slotTimeout();
-  void slotPressed();
-  void slotReleased();
-
-private:
-  QMenu *pop;
-  QTimer *popt;
+    QSvgRenderer* m_bgRenderer;
+    QPixmap m_renderedSvg;
+    Plasma::Theme* m_theme;
+    bool m_renderDirty;
 };
 
 #endif

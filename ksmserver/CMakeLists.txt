@@ -1,6 +1,6 @@
 
 project(ksmserver)
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/plasma/lib )
 
 configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
 
@@ -40,12 +40,15 @@ kde4_automoc(${ksmserver_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_ksmserver ${KDE4_KDEUI_LIBS} ${KDE4_KDEFX_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${X11_LIBRARIES})
+target_link_libraries(kdeinit_ksmserver plasma ${KDE4_KDEUI_LIBS} ${KDE4_KDEFX_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${X11_LIBRARIES})
 
 install(TARGETS kdeinit_ksmserver  DESTINATION ${LIB_INSTALL_DIR})
 
 target_link_libraries( ksmserver kdeinit_ksmserver )
 install(TARGETS ksmserver DESTINATION ${BIN_INSTALL_DIR})
+
+set(ksmserver_BGIMAGES images/background/shutdowndlg.svg)
+install(FILES ${ksmserver_BGIMAGES} DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/background)
 
 ########### next target ###############
 
