@@ -16,8 +16,12 @@ bool SaverConfig::read(const QString &file)
 #endif    
     mExec = config.readPathEntry("Exec");
     mName = config.readEntry("Name");
-    mCategory = i18nc("Screen saver category", // Must be same in Makefile.am
-                     config.readEntry("X-KDE-Category").toUtf8());
+    QString categoryName = config.readEntry("X-KDE-Category");
+    if(categoryName.isEmpty())
+	mCategory = categoryName;
+    else	    
+        mCategory = i18nc("Screen saver category", // Must be same in CMakeFiles.txt
+                     categoryName.toUtf8());
 
     if (config.hasActionGroup("Setup"))
     {
