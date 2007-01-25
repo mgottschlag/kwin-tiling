@@ -812,8 +812,8 @@ void KScreenSaver::slotTest()
         {
             mTestWin = new TestWin();
             mTestWin->setAttribute(Qt::WA_NoSystemBackground, true);
-            mTestWin->setGeometry(0, 0, kapp->desktop()->width(),
-                                    kapp->desktop()->height());
+            mTestWin->setGeometry(0, 0, qApp->desktop()->width(),
+                                    qApp->desktop()->height());
         }
 
         mTestWin->show();
