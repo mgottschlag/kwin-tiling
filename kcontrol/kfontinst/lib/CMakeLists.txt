@@ -3,7 +3,9 @@ set(kfontinstui_LIB_SRCS FcEngine.cpp )
 
 kde4_automoc(${kfontinst_LIB_SRCS} ${kfontinstui_LIB_SRCS})
 kde4_add_library(kfontinst SHARED ${kfontinst_LIB_SRCS})
-kde4_add_library(kfontinstui STATIC ${kfontinstui_LIB_SRCS})
 target_link_libraries(kfontinst  ${KDE4_KIO_LIBS} ${FREETYPE_LIBRARIES} ${FONTCONFIG_LIBRARIES} )
-set_target_properties(kfontinst PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install(TARGETS kfontinst  DESTINATION ${LIB_INSTALL_DIR} )
+set_target_properties(kfontinst PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+
+kde4_add_library(kfontinstui SHARED ${kfontinstui_LIB_SRCS})
+set_target_properties(kfontinstui PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+install(TARGETS kfontinst kfontinstui DESTINATION ${LIB_INSTALL_DIR} )
