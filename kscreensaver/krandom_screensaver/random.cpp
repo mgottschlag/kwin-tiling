@@ -31,12 +31,12 @@
 #include <kcmdlineargs.h>
 #include <kdialog.h>
 #include <kconfig.h>
-
+#include <kservice.h>
 #include "kscreensaver_vroot.h"
 #include "random.h"
 #include <QX11Info>
 #include <QFrame>
-
+#include <kservicetypetrader.h>
 #define MAX_ARGS    20
 
 void usage(char *name)
@@ -97,29 +97,28 @@ int main(int argc, char *argv[])
 	KGlobal::dirs()->addResourceType("scrsav",
 			KGlobal::dirs()->kde_default("apps") +
 			"apps/ScreenSavers/");
-	KGlobal::dirs()->addResourceType("scrsav",
-			KGlobal::dirs()->kde_default("apps") +
-			"System/ScreenSavers/");
 	QStringList tempSaverFileList = KGlobal::dirs()->findAllResources("scrsav",
 			"*.desktop", false, true);
 
+	KService::List lst = KServiceTypeTrader::self()->query( "ScreenSaver");
 	QStringList saverFileList;
 
 	KConfig type("krandom.kssrc");
 	type.setGroup("Settings");
-	bool opengl = type.readEntry("OpenGL", QVariant(false)).toBool();
-	bool manipulatescreen = type.readEntry("ManipulateScreen", QVariant(false)).toBool();
+	bool opengl = type.readEntry("OpenGL", false);
+	bool manipulatescreen = type.readEntry("ManipulateScreen", false);
         bool fortune = !KStandardDirs::findExe("fortune").isEmpty();
-
-	for (int i = 0; i < tempSaverFileList.count(); i++)
+        for( KService::List::const_iterator it = lst.begin();
+            it != lst.end(); it++)
 	{
-		kDebug() << "Looking at " << tempSaverFileList[i] << endl;
-		KDesktopFile saver(tempSaverFileList[i], true);
+		QString file = KStandardDirs::locate("services", (*it)->desktopEntryPath());
+		kDebug() << "Looking at " << file << endl;
+		KDesktopFile saver(file, true);
 		kDebug() << "read X-KDE-Type" << endl;
 		QString saverType = saver.readEntry("X-KDE-Type");
 		if (saverType.isEmpty()) // no X-KDE-Type defined so must be OK
 		{
-			saverFileList.append(tempSaverFileList[i]);
+			saverFileList.append(file);
 		}
 		else
 		{
@@ -131,7 +130,7 @@ int main(int argc, char *argv[])
 				{
 					if (manipulatescreen)
 					{
-						saverFileList.append(tempSaverFileList[i]);
+						saverFileList.append(file);
 					}
 				}
 				else
@@ -139,14 +138,14 @@ int main(int argc, char *argv[])
 				{
 					if (opengl)
 					{
-						saverFileList.append(tempSaverFileList[i]);
+						saverFileList.append(file);
 					}
 				}
 				if (*it == "Fortune")
 				{
 					if (fortune)
 					{
-						saverFileList.append(tempSaverFileList[i]);
+						saverFileList.append(file);
 					}
 				}
 
@@ -237,8 +236,8 @@ KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
 
 	KConfig config("krandom.kssrc");
 	config.setGroup("Settings");
-	openGL->setChecked(config.readEntry("OpenGL", QVariant(true)).toBool());
-	manipulateScreen->setChecked(config.readEntry("ManipulateScreen", QVariant(true)).toBool());
+	openGL->setChecked(config.readEntry("OpenGL", true));
+	manipulateScreen->setChecked(config.readEntry("ManipulateScreen", true));
 
   connect( this, SIGNAL( okClicked() ), SLOT( slotOk() ) );
 }
