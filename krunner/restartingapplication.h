@@ -21,6 +21,10 @@
 
 #include <Qt>
 #include <KUniqueApplication>
+#include <KActionCollection>
+#include <QtDBus/QtDBus>
+#include "../lib/kworkspace.h"
+#include "interfaceadaptor.h"
 
 class RestartingApplication : public KUniqueApplication
 {
@@ -30,12 +34,34 @@ class RestartingApplication : public KUniqueApplication
         RestartingApplication(Display *display,
                               Qt::HANDLE visual = 0,
                               Qt::HANDLE colormap = 0);
+	void initializeShortcuts ();
+	void logout();
+	void logout( KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype );
+	// The action collection of the active widget
+	KActionCollection *actionCollection();
 
     private slots:
         void setCrashHandler();
 
+	/** Show minicli,. the KDE command line interface */
+	void slotExecuteCommand();
+      
+	/** Show taskmanager (calls KSysGuard with --showprocesses option) */
+	void slotShowTaskManager();
+      
+	void slotShowWindowList();
+      
+	void slotSwitchUser();
+      
+	void slotLogout();
+	void slotLogoutNoCnf();
+	void slotHaltNoCnf();
+	void slotRebootNoCnf();
+
     private:
         static void crashHandler(int signal);
+        KActionCollection *m_actionCollection;
+
 };
 
 #endif

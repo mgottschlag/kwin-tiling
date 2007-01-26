@@ -99,9 +99,9 @@ int main(int argc, char* argv[])
     KCmdLineArgs::init(argc, argv, &aboutData);
     RestartingApplication app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
 
-    kDebug() << "Attempting to create KScreenSaverSettings::instance()";
+    kDebug() << "Attempting to create KScreenSaverSettings::instance()" << endl;
     KScreenSaverSettings::instance("kscreensaverrc");
-    kDebug() << "Created KScreenSaverSettings::instance()";
+    kDebug() << "Created KScreenSaverSettings::instance()" << endl;
 
     // LOCKING
     SaverEngine saver;
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
     }
 
     Interface interface;
-    interface.display();
+    interface.display(); // make this display happen when ALT-F2 pressed instead of by default...
 
     return app.exec();
 }

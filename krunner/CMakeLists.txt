@@ -22,8 +22,7 @@ set(krunner_SRCS interface.cpp
                  xautolock_diy.c
                  xautolock_engine.c
                  saverengine.cpp
-                 startupid.cpp
-                 bindings.cpp)
+                 startupid.cpp)
 
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
@@ -37,7 +36,7 @@ target_link_libraries(krunner plasma kworkspace ${KDE4_KDEUI_LIBS} ${X11_Xss_LIB
 add_subdirectory( lock )
 
 install(TARGETS krunner DESTINATION ${BIN_INSTALL_DIR})
-install(FILES krunner.desktop  DESTINATION  ${SERVICES_INSTALL_DIR})
+install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})
 install(FILES kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES ${krunner_BGIMAGES} DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/background)

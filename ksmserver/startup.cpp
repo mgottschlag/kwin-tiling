@@ -84,7 +84,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QX11Info>
 #include <QApplication>
 
-#include "kdesktop_interface.h"
+//#include "kdesktop_interface.h"
 #include "ksplash_interface.h"
 #include "klauncher_interface.h"
 #include "kcminit_interface.h"
@@ -184,7 +184,7 @@ void KSMServer::autoStart0Done()
     if( !checkStartupSuspend())
         return;
     kDebug( 1218 ) << "Autostart 0 done" << endl;
-    upAndRunning( "kdesktop" );
+    upAndRunning( "krunner" );
     upAndRunning( "kicker" );
     kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBusConnection::sessionBus(), this );
     if( !kcminitSignals->isValid())
@@ -299,8 +299,8 @@ void KSMServer::autoStart2()
 
     QDBusInterface kded( "org.kde.kded", "/kded", "org.kde.kded" );
     kded.call( "loadSecondPhase" );
-    org::kde::kdesktop::Desktop desktop("org.kde.kdesktop", "/Desktop", QDBusConnection::sessionBus());
-    desktop.runAutoStart();
+    //org::kde::kdesktop::Desktop desktop("org.kde.kdesktop", "/Desktop", QDBusConnection::sessionBus());
+    //desktop.runAutoStart();
     
     connect( kcminitSignals, SIGNAL( phase2Done()), SLOT( kcmPhase2Done()));
     QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
