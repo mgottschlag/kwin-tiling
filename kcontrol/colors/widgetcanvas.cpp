@@ -129,21 +129,21 @@ void WidgetCanvas::showEvent(QShowEvent *)
 void WidgetCanvas::resetTitlebarPixmaps(const QColor &actMed,
                                         const QColor &disMed)
 {
-    if(close_pix) delete close_pix;
-    if(maximize_pix) delete maximize_pix;
-    if(minimize_pix) delete minimize_pix;
-    if(normalize_pix) delete normalize_pix;
-    if(pinup_pix) delete pinup_pix;
-    if(pindown_pix) delete pindown_pix;
-    if(menu_pix) delete menu_pix;
+    delete close_pix;
+    delete maximize_pix;
+    delete minimize_pix;
+    delete normalize_pix;
+    delete pinup_pix;
+    delete pindown_pix;
+    delete menu_pix;
 
-    if(dis_close_pix) delete dis_close_pix;
-    if(dis_maximize_pix) delete dis_maximize_pix;
-    if(dis_minimize_pix) delete dis_minimize_pix;
-    if(dis_normalize_pix) delete dis_normalize_pix;
-    if(dis_pinup_pix) delete dis_pinup_pix;
-    if(dis_pindown_pix) delete dis_pindown_pix;
-    if(dis_menu_pix) delete dis_menu_pix;
+    delete dis_close_pix;
+    delete dis_maximize_pix;
+    delete dis_minimize_pix;
+    delete dis_normalize_pix;
+    delete dis_pinup_pix;
+    delete dis_pindown_pix;
+    delete dis_menu_pix;
 
     QPainter pact, pdis;
     QBitmap bitmap;
