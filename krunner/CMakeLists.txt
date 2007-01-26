@@ -12,6 +12,7 @@ set(krunner_BGIMAGES images/background/dialog.svg)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/plasma/lib)
 
 set(krunner_SRCS interface.cpp
+                 krunnerapp.cpp
                  runner.cpp
                  apprunner.cpp
                  restartingapplication.cpp

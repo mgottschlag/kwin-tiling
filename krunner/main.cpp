@@ -22,8 +22,8 @@
 #include <kdebug.h>
 #include <KLocale>
 
+#include "krunnerapp.h"
 #include "interface.h"
-#include "restartingapplication.h"
 #include "saverengine.h"
 #include "startupid.h"
 #include "kscreensaversettings.h" // contains screen saver config
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
                         "aseigo@kde.org");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
-    RestartingApplication app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
+    KRunnerApp app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
 
     kDebug() << "Attempting to create KScreenSaverSettings::instance()" << endl;
     KScreenSaverSettings::instance("kscreensaverrc");
@@ -122,7 +122,8 @@ int main(int argc, char* argv[])
     }
 
     Interface interface;
-    interface.display(); // make this display happen when ALT-F2 pressed instead of by default...
+
+    QObject::connect( &app, SIGNAL( showInterface() ), &interface, SLOT( display() ) );
 
     return app.exec();
 }

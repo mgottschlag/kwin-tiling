@@ -34,6 +34,7 @@
 #include "searchrunner.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
+#include <QApplication>
 
 Interface::Interface(QWidget* parent)
     : QWidget(parent, Qt::FramelessWindowHint),
@@ -42,6 +43,9 @@ Interface::Interface(QWidget* parent)
       m_renderDirty(true),
       m_currentRunner(0)
 {
+    // Make newInstance activate the window
+    qApp->setActiveWindow( this );
+
     m_theme = new Plasma::Theme(this);
     themeChanged();
     connect(m_theme, SIGNAL(changed()), this, SLOT(themeChanged()));
