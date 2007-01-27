@@ -94,6 +94,7 @@ Interface::~Interface()
 
 void Interface::display()
 {
+    kDebug() << "display() called" << endl;
     show();
     raise();
     KWin::setOnDesktop(winId(), KWin::currentDesktop());
