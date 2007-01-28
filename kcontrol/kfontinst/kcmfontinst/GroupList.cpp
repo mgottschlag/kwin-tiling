@@ -30,6 +30,7 @@
 #include <kde_file.h>
 #include <kmessagebox.h>
 #include <kinputdialog.h>
+#include <ksavefile.h>
 #include <QFont>
 #include <QDropEvent>
 #include <QDateTime>
@@ -39,6 +40,9 @@
 #include <QPainter>
 #include <QMenu>
 #include <QApplication>
+#include <QDomElement>
+#include <QTextStream>
+#include <QDir>
 #include <stdlib.h>
 #include <unistd.h>
 #include <utime.h>
@@ -51,8 +55,13 @@
 namespace KFI
 {
 
-CGroupListItem::CGroupListItem(CFontGroups::TGroupList::Iterator &item)
-              : itsItem(item),
+#define GROUPS_DOC "groups"
+#define GROUP_TAG  "group"
+#define NAME_ATTR  "name"
+#define FAMILY_TAG "family"
+
+CGroupListItem::CGroupListItem(const QString &name)
+              : itsName(name),
                 itsType(STANDARD),
                 itsHighlighted(false)
 {
@@ -85,7 +94,7 @@ bool CGroupListItem::hasFont(const CFontItem *fnt) const
     switch(itsType)
     {
         case STANDARD:
-            return (*itsItem).families.contains(fnt->family());
+            return itsFamilies.contains(fnt->family());
         case PERSONAL:
             return !fnt->isSystem();
         case SYSTEM:
@@ -98,7 +107,7 @@ bool CGroupListItem::hasFont(const CFontItem *fnt) const
                                                    end(itsData.parent->itsGroups.end());
 
             for(; it!=end; ++it)
-                if((*it)->isStandard() && (*(*it)->item()).families.contains(fnt->family()))
+                if((*it)->isStandard() && (*it)->families().contains(fnt->family()))
                     return false;
             return true;
         }
@@ -106,11 +115,51 @@ bool CGroupListItem::hasFont(const CFontItem *fnt) const
     return false;
 }
 
+bool CGroupListItem::load(QDomElement &elem)
+{
+    if(elem.hasAttribute(NAME_ATTR))
+    {
+        itsName=elem.attribute(NAME_ATTR);
+        addFamilies(elem);
+        return true;
+    }
+    return false;
+}
+
+bool CGroupListItem::addFamilies(QDomElement &elem)
+{
+    int b4(itsFamilies.count());
+
+    for(QDomNode n=elem.firstChild(); !n.isNull(); n=n.nextSibling())
+    {
+        QDomElement ent=n.toElement();
+
+        if(FAMILY_TAG==ent.tagName())
+            itsFamilies.insert(ent.text());
+    }
+    return b4!=itsFamilies.count();
+}
+
+void CGroupListItem::save(QTextStream &str)
+{
+    str << " <"GROUP_TAG" "NAME_ATTR"=\"" << itsName << "\">" << endl;
+    if(itsFamilies.count())
+    {
+        QSet<QString>::ConstIterator it(itsFamilies.begin()),
+                                     end(itsFamilies.end());
+
+        for(; it!=end; ++it)
+            str << "  <"FAMILY_TAG">" << (*it) << "</"FAMILY_TAG">" << endl;
+    }
+    str << " </"GROUP_TAG">" << endl;
+}
+
 CGroupList::CGroupList(QWidget *parent)
-         : QAbstractItemModel(parent),
-           itsParent(parent),
-           itsFontGroups(NULL),
-           itsSortOrder(Qt::AscendingOrder)
+          : QAbstractItemModel(parent),
+            itsTimeStamp(0),
+            itsModified(false),
+            itsParent(parent),
+            itsSortOrder(Qt::AscendingOrder)
 {
     itsSpecialGroups[CGroupListItem::ALL]=new CGroupListItem(CGroupListItem::ALL, this);
     itsGroups.append(itsSpecialGroups[CGroupListItem::ALL]);
@@ -127,11 +176,42 @@ CGroupList::CGroupList(QWidget *parent)
     itsSpecialGroups[CGroupListItem::UNCLASSIFIED]=
                 new CGroupListItem(CGroupListItem::UNCLASSIFIED, this);
     itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
+
+    // Locate groups.xml file - normall will be ~/.fonts/groups.xml
+    FcStrList *list=FcConfigGetFontDirs(FcInitLoadConfig());
+    FcChar8   *dir;
+    QString   path,
+              home(QDir::homePath()),
+              defaultDir(home+"/.fonts");
+
+    while((dir=FcStrListNext(list)))
+    {
+        QString fcDir((const char *)dir);
+
+        if(0==fcDir.indexOf(home))
+            if(fcDir==defaultDir)
+            {
+                path=defaultDir;
+                break;
+            }
+            else if(path.isEmpty())
+                path=fcDir;
+    }
+
+    if(path.isEmpty())
+        path=defaultDir;
+
+    if(!Misc::dExists(path))
+        Misc::createDir(path);
+
+    itsFileName=path+"/"KFI_GROUPS_FILE;
+
     rescan();
 }
 
 CGroupList::~CGroupList()
 {
+    save();
     qDeleteAll(itsGroups);
     itsGroups.clear();
 }
@@ -234,17 +314,105 @@ int CGroupList::rowCount(const QModelIndex &) const
 
 void CGroupList::rescan()
 {
-    clear();
-
-    itsFontGroups.refresh();
-
-    CFontGroups::TGroupList::Iterator it(itsFontGroups.items().begin()),
-                                      end(itsFontGroups.items().end());
-
-    for(; it!=end; ++it)
-        itsGroups.append(new CGroupListItem(it));
-
+    save();
+    load();
     sort(0, itsSortOrder);
+}
+
+void CGroupList::load()
+{
+    time_t ts=Misc::getTimeStamp(itsFileName);
+
+    if(!ts || ts!=itsTimeStamp)
+    {
+        clear();
+        itsTimeStamp=ts;
+        if(load(itsFileName))
+            itsModified=false;
+    }
+}
+
+bool CGroupList::load(const QString &file)
+{
+    QFile f(file);
+    bool  rv(false);
+
+    if(f.open(IO_ReadOnly))
+    {
+        QDomDocument doc;
+
+        if(doc.setContent(&f))
+            for(QDomNode n=doc.documentElement().firstChild(); !n.isNull(); n=n.nextSibling())
+            {
+                QDomElement e=n.toElement();
+
+                if(GROUP_TAG==e.tagName() && e.hasAttribute(NAME_ATTR))
+                {
+                    QString name(e.attribute(NAME_ATTR));
+
+                    CGroupListItem *item=find(name);
+
+                    if(!item)
+                    {
+                        item=new CGroupListItem(name);
+                        itsGroups.append(item);
+                        rv=true;
+                    }
+
+                    if(item->addFamilies(e))
+                        rv=true;
+                }
+            }
+    }
+    return rv;
+}
+
+bool CGroupList::save()
+{
+    if(itsModified && save(itsFileName, NULL))
+    {
+        itsTimeStamp=Misc::getTimeStamp(itsFileName);
+        return true;
+    }
+    return false;
+}
+
+bool CGroupList::save(const QString &fileName, CGroupListItem *grp)
+{
+    KSaveFile file(fileName);
+
+    if(file.open())
+    {
+        QTextStream str(&file);
+
+        str << "<"GROUPS_DOC">" << endl;
+
+        if(grp)
+            grp->save(str);
+        else
+        {
+            QList<CGroupListItem *>::Iterator it(itsGroups.begin()),
+                                              end(itsGroups.end());
+
+            for(; it!=end; ++it)
+                if((*it)->isStandard())
+                    (*it)->save(str);
+        }
+        str << "</"GROUPS_DOC">" << endl;
+        itsModified=false;
+        return file.finalize();
+    }
+
+    return false;
+}
+
+void CGroupList::merge(const QString &file)
+{
+    if(load(file))
+    {
+        itsModified=true;
+        sort(0, itsSortOrder);
+    }
 }
 
 void CGroupList::clear()
@@ -276,27 +444,13 @@ QModelIndex CGroupList::index(CGroupListItem::EType t)
 
 void CGroupList::createGroup(const QString &name)
 {
-    QList<CGroupListItem *>::ConstIterator it(itsGroups.begin()),
-                                           end(itsGroups.end());
-
-    for(; it!=end; ++it)
-        if((*it)->name()==name)
-        {
-            KMessageBox::error(itsParent, i18n("<qt>A group named <b>\'%1\'</b> already "
-                                               "exists!</qt>", name));
-            return;
-        }
-
-    CFontGroups::TGroupList::Iterator git=itsFontGroups.create(name);
-
-    if(git!=itsFontGroups.items().end())
+    if(!exists(name))
     {
-        itsGroups.append(new CGroupListItem(git));
-        itsFontGroups.save();
+        itsGroups.append(new CGroupListItem(name));
+        itsModified=true;
+        save();
         sort(0, itsSortOrder);
     }
-    else
-        KMessageBox::error(itsParent, i18n("<qt>Could not create <b>\'%1\'</b>.</qt>", name));
 }
 
 void CGroupList::renameGroup(const QModelIndex &idx, const QString &name)
@@ -305,12 +459,12 @@ void CGroupList::renameGroup(const QModelIndex &idx, const QString &name)
     {
         CGroupListItem *grp=static_cast<CGroupListItem *>(idx.internalPointer());
 
-        if(grp && grp->isStandard() && grp->name()!=name)
+        if(grp && grp->isStandard() && grp->name()!=name && !exists(name))
         {
-            if(itsFontGroups.items().end()!=itsFontGroups.find(name))
-                KMessageBox::error(itsParent, i18n("<qt>A group named <b>\'%1\'</b> already exists!</qt>", name));
-            else
-                itsFontGroups.setName(grp->item(), name);
+            grp->setName(name);
+            itsModified=true;
+            save();
+            sort(0, itsSortOrder);
         }
     }
 }
@@ -329,10 +483,10 @@ bool CGroupList::removeGroup(const QModelIndex &idx)
                                           i18n("Remove Group"), KGuiItem(i18n("Remove"), "remove",
                                           i18n("Remove group"))))
         {
-            itsFontGroups.remove(grp->item());
+            itsModified=true;
             itsGroups.remove(grp);
             delete grp;
-            itsFontGroups.save();
+            save();
             sort(0, itsSortOrder);
             return true;
         }
@@ -353,7 +507,8 @@ void CGroupList::removeFromGroup(const QModelIndex &group, const QSet<QString> &
                                          end(families.end());
 
             for(; it!=end; ++it)
-                itsFontGroups.removeFrom(grp->item(), *it);
+                removeFromGroup(grp, *it);
+
             emit refresh();
         }
     }
@@ -365,23 +520,39 @@ void CGroupList::addToGroup(const QModelIndex &group, const QSet<QString> &famil
     {
         CGroupListItem *grp=static_cast<CGroupListItem *>(group.internalPointer());
 
-
         if(grp && grp->isStandard())
         {
             QSet<QString>::ConstIterator it(families.begin()),
                                          end(families.end());
 
             for(; it!=end; ++it)
-                itsFontGroups.addTo(grp->item(), *it);
+                if(!grp->hasFamily(*it))
+                {
+                    grp->addFamily(*it);
+                    itsModified=true;
+                }
+
             emit refresh();
         }
     }
 }
 
-void CGroupList::merge(const CFontGroups &grp)
+void CGroupList::removeFamily(const QString &family)
 {
-    itsFontGroups.merge(grp);
-    rescan();
+    QList<CGroupListItem *>::ConstIterator it(itsGroups.begin()),
+                                           end(itsGroups.end());
+
+    for(; it!=end; ++it)
+        removeFromGroup(*it, family);
+}
+
+void CGroupList::removeFromGroup(CGroupListItem *grp, const QString &family)
+{
+    if(grp && grp->hasFamily(family))
+    {
+        grp->removeFamily(family);
+        itsModified=true;
+    }
 }
 
 static bool groupLessThan(const CGroupListItem *f1, const CGroupListItem *f2)
@@ -418,6 +589,30 @@ QStringList CGroupList::mimeTypes() const
     return types;
 }
 
+CGroupListItem * CGroupList::find(const QString &name)
+{
+    QList<CGroupListItem *>::ConstIterator it(itsGroups.begin()),
+                                           end(itsGroups.end());
+
+    for(; it!=end; ++it)
+        if((*it)->name()==name)
+            return (*it);
+
+    return NULL;
+}
+
+bool CGroupList::exists(const QString &name)
+{
+    if(NULL!=find(name))
+    {
+        KMessageBox::error(itsParent, i18n("<qt>A group named <b>\'%1\'</b> already "
+                                           "exists!</qt>", name));
+        return true;
+    }
+
+    return false;
+}
+
 CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
               : QTreeView(parent)
 {
@@ -431,7 +626,6 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
     setDragDropMode(QAbstractItemView::DropOnly);
     setDropIndicatorShown(true);
     setDragEnabled(false);
-    //header()->setClickable(false);
     header()->setSortIndicatorShown(true);
     setRootIsDecorated(false);
     itsMenu=new QMenu(this);

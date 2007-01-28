@@ -1108,7 +1108,7 @@ bool CFontListSortFilterProxy::lessThan(const QModelIndex &left, const QModelInd
     if(left.isValid() && right.isValid())
     {
         CFontModelItem *lmi=static_cast<CFontModelItem *>(left.internalPointer()),
-                    *rmi=static_cast<CFontModelItem *>(right.internalPointer());
+                       *rmi=static_cast<CFontModelItem *>(right.internalPointer());
 
         if(lmi->isFont()<rmi->isFont())
             return true;
@@ -1116,13 +1116,13 @@ bool CFontListSortFilterProxy::lessThan(const QModelIndex &left, const QModelInd
         if(lmi->isFont())
         {
             CFontItem *lfi=static_cast<CFontItem *>(left.internalPointer()),
-                    *rfi=static_cast<CFontItem *>(right.internalPointer());
+                      *rfi=static_cast<CFontItem *>(right.internalPointer());
 
             if(COL_STATUS==filterKeyColumn())
             {
                 if(lfi->isEnabled()<rfi->isEnabled() ||
-                (lfi->isEnabled()==rfi->isEnabled() &&
-                 lfi->displayStyleInfo()<rfi->displayStyleInfo()))
+                  (lfi->isEnabled()==rfi->isEnabled() &&
+                   lfi->displayStyleInfo()<rfi->displayStyleInfo()))
                     return true;
             }
             else
@@ -1137,7 +1137,7 @@ bool CFontListSortFilterProxy::lessThan(const QModelIndex &left, const QModelInd
             if(COL_STATUS==filterKeyColumn())
             {
                 if(lfi->status()<rfi->status() ||
-                (lfi->status()==rfi->status() && QString::localeAwareCompare(lfi->name(), rfi->name())<0))
+                  (lfi->status()==rfi->status() && QString::localeAwareCompare(lfi->name(), rfi->name())<0))
                     return true;
             }
             else
@@ -1393,7 +1393,7 @@ void CFontListView::setFilterGroup(CGroupListItem *grp)
 
     if(!Misc::root())
     {
-        bool  refreshStats(false);
+        bool refreshStats(false);
 
         if(!grp || !oldGrp)
             refreshStats=true;

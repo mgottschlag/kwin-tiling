@@ -32,11 +32,12 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
-#include "FontGroups.h"
 
 class QDragEnterEvent;
 class QDragLeaveEvent;
 class QDropEvent;
+class QTextStream;
+class QDomElement;
 
 namespace KFI
 {
@@ -63,30 +64,38 @@ class CGroupListItem
         CGroupList *parent;
     };
 
-    CGroupListItem(CFontGroups::TGroupList::Iterator &item);
+    CGroupListItem(const QString &name);
     CGroupListItem(EType type, CGroupList *p);
 
-    const QString &                   name() const           { return STANDARD==itsType ? (*itsItem).name : itsName; }
-    CFontGroups::TGroupList::Iterator & item()                 { return itsItem; }
-    const EType                       type() const           { return itsType; }
-    bool                              isStandard() const     { return STANDARD==itsType; }
-    bool                              isAll() const          { return ALL==itsType; }
-    bool                              isUnclassified() const { return UNCLASSIFIED==itsType; }
-    bool                              isPersonal() const     { return PERSONAL==itsType; }
-    bool                              isSystem() const       { return SYSTEM==itsType; }
-    bool                              validated() const      { return isStandard() ? itsData.validated : true; }
-    void                              setValidated()         { if(isStandard()) itsData.validated=true; }
-    bool                              highlighted() const    { return itsHighlighted; }
-    void                              setHighlighted(bool b) { itsHighlighted=b; }
-    bool                              hasFont(const CFontItem *fnt) const;
+    const QString & name() const              { return itsName; }
+    void            setName(const QString &n) { itsName=n; }
+    QSet<QString> & families()                { return itsFamilies; }
+    const EType     type() const              { return itsType; }
+    bool            isStandard() const        { return STANDARD==itsType; }
+    bool            isAll() const             { return ALL==itsType; }
+    bool            isUnclassified() const    { return UNCLASSIFIED==itsType; }
+    bool            isPersonal() const        { return PERSONAL==itsType; }
+    bool            isSystem() const          { return SYSTEM==itsType; }
+    bool            validated() const         { return isStandard() ? itsData.validated : true; }
+    void            setValidated()            { if(isStandard()) itsData.validated=true; }
+    bool            highlighted() const       { return itsHighlighted; }
+    void            setHighlighted(bool b)    { itsHighlighted=b; }
+    bool            hasFont(const CFontItem *fnt) const;
+
+    bool            load(QDomElement &elem);
+    bool            addFamilies(QDomElement &elem);
+    void            save(QTextStream &str);
+    void            addFamily(const QString &family)    { itsFamilies.insert(family); }
+    void            removeFamily(const QString &family) { itsFamilies.remove(family); }
+    bool            hasFamily(const QString &family)    { return itsFamilies.contains(family); }
 
     private:
 
-    CFontGroups::TGroupList::Iterator itsItem;
-    QString                           itsName;
-    EType                             itsType;
-    Data                              itsData;
-    bool                              itsHighlighted;
+    QSet<QString> itsFamilies;
+    QString       itsName;
+    EType         itsType;
+    Data          itsData;
+    bool          itsHighlighted;
 };
 
 class CGroupList : public QAbstractItemModel
@@ -110,16 +119,18 @@ class CGroupList : public QAbstractItemModel
     void            update(const QModelIndex &unHighlight, const QModelIndex &highlight);
     void            setSysMode(bool sys);
     void            rescan();
+    void            load();
+    bool            load(const QString &file);
+    bool            save();
+    bool            save(const QString &fileName, CGroupListItem *grp);
+    void            merge(const QString &file);
     void            clear();
     QModelIndex     index(CGroupListItem::EType t);
     void            createGroup(const QString &name);
     void            renameGroup(const QModelIndex &idx, const QString &name);
     bool            removeGroup(const QModelIndex &idx);
-    void            merge(const CFontGroups &grp);
-    void            removeFamily(const QString &family) { itsFontGroups.removeFamily(family); }
-    void            removeFamilyFromGroup(CFontGroups::TGroupList::Iterator &grp,
-                                        const QString &family)
-                        { itsFontGroups.removeFrom(grp, family); }
+    void            removeFamily(const QString &family);
+    void            removeFromGroup(CGroupListItem *grp, const QString &family);
 
     CGroupListItem * group(CGroupListItem::EType t)
                         { return itsSpecialGroups[t]; }
@@ -139,11 +150,15 @@ class CGroupList : public QAbstractItemModel
     void            sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
     Qt::DropActions supportedDropActions() const;
     QStringList     mimeTypes() const;
+    CGroupListItem * find(const QString &name);
+    bool            exists(const QString &name);
 
     private:
 
+    QString                 itsFileName;
+    time_t                  itsTimeStamp;
+    bool                    itsModified;
     QWidget                 *itsParent;
-    CFontGroups             itsFontGroups;
     QList<CGroupListItem *> itsGroups;
     CGroupListItem          *itsSpecialGroups[4];
     Qt::SortOrder           itsSortOrder;

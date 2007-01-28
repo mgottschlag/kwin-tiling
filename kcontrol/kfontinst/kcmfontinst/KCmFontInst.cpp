@@ -606,10 +606,7 @@ void CKCmFontInst::addFonts()
 
                                                 if(group && KFI_GROUPS_FILE==entry->name())
                                                 {
-                                                    CFontGroups grp(itsTempDir->name()+entry->name(),
-                                                                    true);
-
-                                                    itsGroupList->merge(grp);
+                                                    itsGroupList->merge(itsTempDir->name()+entry->name());
                                                     ::unlink(QFile::encodeName(itsTempDir->name()+
                                                                                entry->name()));
                                                 }
@@ -668,8 +665,8 @@ void CKCmFontInst::groupSelected(const QModelIndex &index)
     if(grp && grp->isStandard() && !grp->validated())
     {
         QSet<QString>           remList;
-        QSet<QString>::Iterator it((*(grp->item())).families.begin()),
-                                end((*(grp->item())).families.end());
+        QSet<QString>::Iterator it(grp->families().begin()),
+                                end(grp->families().end());
 
         for(; it!=end; ++it)
             if(!itsFontList->hasFamily(*it))
@@ -677,7 +674,7 @@ void CKCmFontInst::groupSelected(const QModelIndex &index)
         it=remList.begin();
         end=remList.end();
         for(; it!=end; ++it)
-            itsGroupList->removeFamilyFromGroup(grp->item(), *it);
+            itsGroupList->removeFromGroup(grp, *it);
         grp->setValidated();
     }
 }
@@ -844,7 +841,7 @@ void CKCmFontInst::exportGroup()
         {
             CGroupListItem *grp=static_cast<CGroupListItem *>(index.internalPointer());
 
-//             if(grp)
+            if(grp)
             {
                 CJobRunner::ItemList items;
                 QStringList          fontNames;
@@ -886,30 +883,7 @@ void CKCmFontInst::exportGroup()
 
                                 if(itsExportFile && itsExportFile->open(IO_WriteOnly))
                                 {
-                                    CFontGroups group(itsTempDir->name()+KFI_GROUPS_FILE, true);
-
-                                    if(grp->isStandard())
-                                        group.add(*(grp->item()));
-                                    else
-                                    {
-                                        CFontGroups::TGroupList::Iterator entry=group.create(name);
-
-                                        if(entry!=group.items().end())
-                                        {
-                                            QModelIndexList all(itsFontListView->allFonts());
-                                            QModelIndex     index;
-
-                                            foreach(index, all)
-                                                if(index.isValid())
-                                                {
-                                                    CFontItem *f(static_cast<CFontItem *>(index.internalPointer()));
-
-                                                    group.addTo(entry, f->family());
-                                                }
-                                        }
-                                    }
-
-                                    if(group.save())
+                                    if(itsGroupList->save(itsTempDir->name()+KFI_GROUPS_FILE, grp))
                                     {
                                         itsExportFile->addLocalFile(itsTempDir->name()+KFI_GROUPS_FILE,
                                                                     KFI_GROUPS_FILE);
