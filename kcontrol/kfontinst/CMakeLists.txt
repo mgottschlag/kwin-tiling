@@ -4,7 +4,8 @@ if (X11_XFT_FOUND)
   add_definitions(${FREETYPE_INCLUDE_DIR})
 
   set(libkfontinstview_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/FontPreview.cpp )
-  set(libkfontinstjobrunner_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/JobRunner.cpp ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/ActionDialog.cpp )
+  set(libkfontinstjobrunner_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/JobRunner.cpp
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/ActionDialog.cpp )
 
   include_directories(${FONTCONFIG_INCLUDE_DIR})
 
@@ -15,13 +16,10 @@ if (X11_XFT_FOUND)
   add_subdirectory( kio ) 
   add_subdirectory( thumbnail )
   add_subdirectory( viewpart )
+  install( FILES installfont.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqueror/servicemenus )
 
 else (X11_XFT_FOUND)
 
   message(STATUS Missing Xft - disabling font installer and font previews)
 
 endif (X11_XFT_FOUND)
-
-########### install files ###############
-
-install( FILES installfont.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqueror/servicemenus )
