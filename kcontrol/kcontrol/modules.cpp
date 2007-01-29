@@ -196,7 +196,10 @@ void ConfigModule::runAsRoot()
     {
       _rootProcess = new KProcess;
       *_rootProcess << kdesu;
-      *_rootProcess << "--nonewdcop";
+#ifdef __GNUC__
+#warning "--nonewdcop doesn't exist now"; 
+#endif     
+      //*_rootProcess << "--nonewdcop";
       // We have to disable the keep-password feature because
       // in that case the modules is started through kdesud and kdesu
       // returns before the module is running and that doesn't work.

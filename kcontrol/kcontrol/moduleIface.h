@@ -39,7 +39,7 @@ public Q_SLOTS:
 	Q_SCRIPTABLE QFont getFont();
 	Q_SCRIPTABLE QPalette getPalette();
 #endif	
-	Q_SCRIPTABLE QString getStyle();
+	Q_SCRIPTABLE QString getStyle() const;
 	Q_SCRIPTABLE void invokeHelp();
 
 signals:
