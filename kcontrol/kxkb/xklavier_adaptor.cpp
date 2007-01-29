@@ -129,8 +129,8 @@ static void processOptionGroup(XklConfigRegistry*, const XklConfigItem* configIt
 
 void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
 {
-	QString locale = KGlobal::_locale->language();
-	if( ! KGlobal::_locale->country().isEmpty() ) {
+	QString locale = KGlobal::locale()->language();
+	if( ! KGlobal::locale()->country().isEmpty() ) {
 //		locale += KGlobal::_locale->country();
 //		locale += "UTF-8";
 	}
