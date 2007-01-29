@@ -27,11 +27,12 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kglobalaccel.h>
 #include <kgenericfactory.h>
+#include <kconfiggroup.h>
 
 #include "main.h"
 #include "shortcuts.h"
@@ -56,7 +57,7 @@ o Pre-set scheme   <Remove Scheme>
 Global Shortcuts
 */
 KeyModule::KeyModule(QWidget *parent, const QStringList& args)
-    : KCModule(KeyModuleFactory::instance(), parent, args)
+    : KCModule(KeyModuleFactory::componentData(), parent, args)
 {
     setQuickHelp( i18n("<h1>Keyboard Shortcuts</h1> Using shortcuts you can configure certain actions to be"
     " triggered when you press a key or a combination of keys, e.g. Ctrl+C is normally bound to"

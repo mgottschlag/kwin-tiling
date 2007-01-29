@@ -25,7 +25,7 @@
 #include <QTextStream>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -60,7 +60,7 @@ typedef KGenericFactory<View1394> View1394Factory;
 K_EXPORT_COMPONENT_FACTORY(view1394, View1394Factory("kcmview1394"))
 
 View1394::View1394(QWidget *parent, const QStringList &)
-:KCModule(View1394Factory::instance(), parent)
+:KCModule(View1394Factory::componentData(), parent)
 ,m_insideRescanBus(false)
 {
    setQuickHelp( i18n("On the right hand side you can see some information about "

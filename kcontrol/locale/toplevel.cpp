@@ -45,10 +45,11 @@
 #include "kcmlocale.h"
 #include "toplevel.moc"
 #include "ui_toplevelbase.h"
+#include <kconfiggroup.h>
 
 KLocaleApplication::KLocaleApplication(QWidget *parent,
                                        const QStringList &args)
-  : KCModule( KLocaleFactory::instance(), parent, args)
+  : KCModule( KLocaleFactory::componentData(), parent, args)
 {
   KAboutData* aboutData = new KAboutData("kcmlocale",
         I18N_NOOP("KCMLocale"),
@@ -60,8 +61,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
         0, 0, "bieker@kde.org");
   setAboutData( aboutData );
 
-  m_nullConfig = new KConfig(QString(), false, false);
-  m_globalConfig = new KConfig(QString(), false, true);
+  m_nullConfig = KSharedConfig::openConfig(QString(), false, false);
+  m_globalConfig = KSharedConfig::openConfig(QString(), false, true);
 
   m_locale = new KLocale(QLatin1String("kcmlocale"), m_nullConfig);
 
@@ -166,8 +167,6 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
 KLocaleApplication::~KLocaleApplication()
 {
   delete m_locale;
-  delete m_globalConfig;
-  delete m_nullConfig;
 }
 
 void KLocaleApplication::load()
@@ -183,9 +182,9 @@ void KLocaleApplication::load()
 
 void KLocaleApplication::save()
 {
-  // temperary use of our locale as the global locale
-  KLocale *lsave = KGlobal::_locale;
-  KGlobal::_locale = m_locale;
+  // temporary use of our locale as the global locale
+  KLocale *lsave = KGlobal::locale();
+  KGlobal::setLocale(m_locale);
   KMessageBox::information(this, ki18n
                            ("Changed language settings apply only to "
                             "newly started applications.\nTo change the "
@@ -194,9 +193,9 @@ void KLocaleApplication::save()
                            ki18n("Applying Language Settings").toString(m_locale),
                            QLatin1String("LanguageChangesApplyOnlyToNewlyStartedPrograms"));
   // restore the old global locale
-  KGlobal::_locale = lsave;
+  KGlobal::setLocale(lsave);
 
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   KConfigGroup group(config, "Locale");
 
   // ##### this doesn't make sense

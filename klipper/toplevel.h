@@ -31,6 +31,7 @@
 #include <QPaintEvent>
 #include <QTimer>
 #include <kglobal.h>
+#include <kconfig.h>
 
 class QClipboard;
 class KToggleAction;
@@ -58,7 +59,7 @@ public Q_SLOTS:
   Q_SCRIPTABLE QString getClipboardHistoryItem(int i);
 
 public:
-    KlipperWidget( QWidget *parent, KConfig* config );
+    KlipperWidget(QWidget *parent, const KSharedConfigPtr &config);
     ~KlipperWidget();
 
     virtual void adjustSize();
@@ -130,7 +131,7 @@ protected:
     void setClipboard( const HistoryItem& item, int mode );
     bool ignoreClipboardChanges() const;
 
-    KConfig* config() const { return m_config; }
+    KSharedConfigPtr config() const { return m_config; }
     bool isApplet() const { return m_config != KGlobal::config(); }
 
 protected Q_SLOTS:
@@ -199,7 +200,7 @@ private:
     URLGrabber *myURLGrabber;
     QString m_lastURLGrabberTextSelection;
     QString m_lastURLGrabberTextClipboard;
-    KConfig* m_config;
+    KSharedConfigPtr m_config;
     QTimer m_overflowClearTimer;
     QTimer m_pendingCheckTimer;
     bool m_pendingContentsCheck;

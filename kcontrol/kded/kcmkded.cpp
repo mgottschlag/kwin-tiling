@@ -47,7 +47,7 @@ K_EXPORT_COMPONENT_FACTORY( kded, KDEDFactory( "kcmkded" ) )
 
 
 KDEDConfig::KDEDConfig(QWidget* parent, const QStringList &) :
-	KCModule( KDEDFactory::instance(), parent )
+	KCModule( KDEDFactory::componentData(), parent )
 {
 	KAboutData *about =
 		new KAboutData( I18N_NOOP( "kcmkded" ), I18N_NOOP( "KDE Service Manager" ),

@@ -10,6 +10,7 @@
 #ifndef __BGManager_h_Included__
 #define __BGManager_h_Included__
 
+#include <kconfig.h>
 #include <QString>
 #include <QVector>
 
@@ -111,7 +112,7 @@ private:
     int m_CacheLimit;
     int m_Serial, m_Hash, m_Current;
 
-    KConfig *m_pConfig;
+    KSharedConfigPtr m_pConfig;
     QWidget *m_pDesktop;
     QTimer *m_pTimer;
 

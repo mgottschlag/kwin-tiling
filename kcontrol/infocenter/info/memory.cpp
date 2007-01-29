@@ -97,7 +97,7 @@ typedef KGenericFactory<KMemoryWidget> KMemoryWidgetFactory;
 K_EXPORT_COMPONENT_FACTORY(memory, KMemoryWidgetFactory("kcminfo"))
 
 KMemoryWidget::KMemoryWidget(QWidget *parent, const QStringList &)
-:  KCModule(KMemoryWidgetFactory::instance(),parent)
+:  KCModule(KMemoryWidgetFactory::componentData(),parent)
 {
 
     KAboutData *about =

@@ -20,7 +20,7 @@
 
 #include <kaboutdata.h>
 #include <kglobal.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 
 #include "kcm_componentchooser.h"
 #include <kgenericfactory.h>
@@ -30,7 +30,7 @@ typedef KGenericFactory<KCMComponentChooser> KCMComponentChooserFactory;
 K_EXPORT_COMPONENT_FACTORY(componentchooser, KCMComponentChooserFactory("kcmcomponentchooser"))
 
 KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QStringList &):
-	KCModule(KCMComponentChooserFactory::instance(), parent) {
+	KCModule(KCMComponentChooserFactory::componentData(), parent) {
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	m_chooser=new ComponentChooser(this);

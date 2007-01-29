@@ -52,8 +52,8 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
     m_descriptionMap.clear();
 
 //    menu->clear();
-//    menu->addTitle( qApp->windowIcon(), KInstance::caption() );
-//    menu->setTitle( KGlobal::instance()->aboutData()->programName() );
+//    menu->addTitle( qApp->windowIcon(), KGlobal::caption() );
+//    menu->setTitle( KGlobal::mainComponent().aboutData()->programName() );
 
 	for(QList<QAction*>::Iterator it=m_actions.begin(); it != m_actions.end(); it++ )
 			menu->removeAction(*it);

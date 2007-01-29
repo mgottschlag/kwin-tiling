@@ -21,7 +21,6 @@
 class QCheckBox;
 class KIntNumInput;
 class KConfig;
-class KInstance;
 
 extern "C" void kcminit_energy();
 

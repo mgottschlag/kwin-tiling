@@ -21,8 +21,6 @@
 
 #include <qtest_kde.h>
 
-#include <kinstance.h>
-
 #include "halmanager.h"
 #include <solid/ifaces/device.h>
 #include <solid/ifaces/capability.h>

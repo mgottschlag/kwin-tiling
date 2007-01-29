@@ -2,7 +2,7 @@
 #include <QWidget>
 
 #include <kcmodule.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kgenericfactory.h>
 
 #include <ksystemtrayicon.h>
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
 //  KCMShellMultiDialog* dlg = new KCMShellMultiDialog(KPageDialog::Plain);
 //  dlg->addModule(KService::Ptr ...);
-//	KInstance* inst = new KInstance("kcmlayout");
+//	KComponentData inst("kcmlayout");
 //	new LayoutConfig(inst, &window);
 	init_keyboard_layout();
 

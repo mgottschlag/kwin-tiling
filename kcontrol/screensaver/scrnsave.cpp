@@ -85,7 +85,7 @@ static QString findExe(const QString &exe) {
 }
 
 KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
-    : KCModule(KSSFactory::instance(), parent)
+    : KCModule(KSSFactory::componentData(), parent)
 {
     mSetupProc = 0;
     mPreviewProc = 0;

@@ -26,6 +26,7 @@
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
 #include <QtGui/QFrame>
+#include <kconfig.h>
 #include "KfiConstants.h"
 #include "FontPreview.h"
 
@@ -89,7 +90,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     QAction          *itsChangeTextAction;
     KSelectAction    *itsDisplayTypeAction;
     int              itsFace;
-    KConfig          *itsConfig;
+    KSharedConfigPtr itsConfig;
     BrowserExtension *itsExtension;
     KProcess         *itsProc;
 };

@@ -226,7 +226,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 
     IceSetIOErrorHandler( IoErrorHandler );
 
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup( "General" );
 
     int realScreenCount = ScreenCount( QX11Info::display() );

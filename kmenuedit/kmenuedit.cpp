@@ -55,7 +55,7 @@ KMenuEdit::KMenuEdit (bool controlCenter)
 
 KMenuEdit::~KMenuEdit()
 {
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("General");
     config->writeEntry("SplitterSizes", m_splitter->sizes());
 
@@ -113,7 +113,7 @@ void KMenuEdit::setupView()
             m_tree, SLOT(findServiceShortcut(const KShortcut&, KService::Ptr &)));
 
     // restore splitter sizes
-    KConfig* config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     QList<int> sizes = config->readEntry("SplitterSizes",QList<int>());
 
     if (sizes.isEmpty())

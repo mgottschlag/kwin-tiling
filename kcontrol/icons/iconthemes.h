@@ -36,7 +36,7 @@ class IconThemesConfig : public KCModule
   Q_OBJECT
 
 public:
-  IconThemesConfig(KInstance *inst, QWidget *parent);
+  IconThemesConfig(const KComponentData &inst, QWidget *parent);
   virtual ~IconThemesConfig();
 
   void loadThemes();

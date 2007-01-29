@@ -57,7 +57,7 @@
 #include "iconthemes.h"
 #include <kglobalsettings.h>
 
-IconThemesConfig::IconThemesConfig(KInstance *inst, QWidget *parent)
+IconThemesConfig::IconThemesConfig(const KComponentData &inst, QWidget *parent)
   : KCModule(inst, parent)
 {
   QVBoxLayout *topLayout = new QVBoxLayout(this);

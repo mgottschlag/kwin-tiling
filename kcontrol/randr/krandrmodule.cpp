@@ -80,7 +80,7 @@ void KRandRModule::performApplyOnStartup()
 }
 
 KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
-    : KCModule(KSSFactory::instance(), parent)
+    : KCModule(KSSFactory::componentData(), parent)
     , m_changed(false)
 {
 	if (!isValid()) {

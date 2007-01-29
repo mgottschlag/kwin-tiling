@@ -44,6 +44,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "kicker.h"
 
 #include "urlbutton.h"
+#include <kconfiggroup.h>
 #include "urlbutton.moc"
 
 URLButton::URLButton( const QString& url, QWidget* parent )

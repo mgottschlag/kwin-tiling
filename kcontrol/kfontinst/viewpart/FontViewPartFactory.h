@@ -25,7 +25,7 @@
 
 #include <klibloader.h>
 
-class KInstance;
+class KComponentData;
 class KAboutData;
 
 namespace KFI
@@ -41,11 +41,11 @@ class CFontViewPartFactory : public KLibFactory
     virtual ~CFontViewPartFactory();
     virtual QObject *createObject(QObject *parent = 0, const char *className = "QObject", const QStringList &args = QStringList());
 
-    static KInstance * instance();
+    static const KComponentData &componentData();
 
     private:
 
-    static KInstance  *theirInstance;
+    static KComponentData *theirInstance;
     static KAboutData *theirAbout;
 };
 

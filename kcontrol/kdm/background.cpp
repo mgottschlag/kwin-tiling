@@ -43,7 +43,7 @@ KBackground::KBackground(QWidget *parent)
 		     " This is done by running some program (possibly xsetroot) in the script"
 		     " specified in the Setup= option in kdmrc (usually Xsetup).") );
 	config->setGroup( "X-*-Greeter" );
-	m_simpleConf = new KSimpleConfig( config->readEntry( "BackgroundCfg", KDE_CONFDIR "/kdm/backgroundrc" ) );
+	m_simpleConf = KSharedConfig::openConfig( config->readEntry( "BackgroundCfg", KDE_CONFDIR "/kdm/backgroundrc" ) );
 	m_background = new BGDialog( this, m_simpleConf, false );
 
 	connect( m_background, SIGNAL(changed( bool )), SIGNAL(changed()) );
@@ -60,7 +60,6 @@ KBackground::KBackground(QWidget *parent)
 
 KBackground::~KBackground()
 {
-	delete m_simpleConf;
 }
 
 void KBackground::slotEnableChanged()

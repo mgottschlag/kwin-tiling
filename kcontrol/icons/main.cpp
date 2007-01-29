@@ -39,18 +39,18 @@ K_EXPORT_COMPONENT_FACTORY( icons, IconsFactory("kcmicons") )
 /**** IconModule ****/
 
 IconModule::IconModule(QWidget *parent, const QStringList &)
-  : KCModule(IconsFactory::instance(), parent)
+  : KCModule(IconsFactory::componentData(), parent)
 {
   QVBoxLayout *layout = new QVBoxLayout(this);
   tab = new QTabWidget(this);
   layout->addWidget(tab);
 
-  tab1 = new IconThemesConfig(IconsFactory::instance(), this);
+  tab1 = new IconThemesConfig(IconsFactory::componentData(), this);
   tab1->setObjectName( "themes" );
   tab->addTab(tab1, i18n("&Theme"));
   connect(tab1, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  tab2 = new KIconConfig(IconsFactory::instance(), this);
+  tab2 = new KIconConfig(IconsFactory::componentData(), this);
   tab2->setObjectName( "effects" );
   tab->addTab(tab2, i18n("Ad&vanced"));
   connect(tab2, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));

@@ -29,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "menuinfo.h"
 
 #include "extensionbutton.h"
+#include <kconfiggroup.h>
 #include "extensionbutton.moc"
 
 ExtensionButton::ExtensionButton( const QString& desktopFile, QWidget* parent )

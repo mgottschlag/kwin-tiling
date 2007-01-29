@@ -55,7 +55,7 @@ typedef KGenericFactory<KeyboardConfig> KeyboardConfigFactory;
 K_EXPORT_COMPONENT_FACTORY(keyboard, KeyboardConfigFactory("kcmmisc"))
 
 KeyboardConfig::KeyboardConfig(QWidget *parent, const QStringList &)
-	: KCModule(KeyboardConfigFactory::instance(), parent)
+	: KCModule(KeyboardConfigFactory::componentData(), parent)
 {
   QString wtstr;
 //   QBoxLayout* lay = new QVBoxLayout(this, 0, KDialog::spacingHint());

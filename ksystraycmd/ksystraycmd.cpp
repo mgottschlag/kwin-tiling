@@ -16,6 +16,7 @@
 #include <kwinmodule.h>
 #include <kconfig.h>
 #include <ksystemtrayicon.h>
+#include <kconfiggroup.h>
 
 #include <netwm.h>
 
@@ -146,7 +147,7 @@ void KSysTrayCmd::refresh()
 
   this->setToolTip( QString() );
   if ( win ) {
-    KConfig *appCfg = KGlobal::config();
+    KSharedConfig::Ptr appCfg = KGlobal::config();
     KConfigGroup configSaver(appCfg, "System Tray");
     int iconWidth = configSaver.readEntry("systrayIconWidth", 22);
 

@@ -3,11 +3,11 @@
 #define _kcontrol_kcrootonly_
 
 #include <kcmodule.h>
-class KInstance;
+class KComponentData;
 
 class KCRootOnly: public KCModule {
 public:
-	KCRootOnly(KInstance *inst, QWidget *parent);
+	KCRootOnly(const KComponentData &inst, QWidget *parent);
 };
 
 #endif

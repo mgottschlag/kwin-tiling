@@ -115,7 +115,7 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
         return;
     }
 
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->reparseConfiguration(); // config may have changed in the KControl module
 
     config->setGroup("General" );

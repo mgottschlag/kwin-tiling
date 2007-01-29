@@ -73,7 +73,7 @@ Kicker::Kicker()
       m_canAddContainers(true)
 {
     // initialize the configuration object
-    KickerSettings::instance(instanceName() + "rc");
+    KickerSettings::instance(KGlobal::mainComponent().componentName() + "rc");
 
     if (KCrash::crashHandler() == 0 )
     {
@@ -93,8 +93,8 @@ Kicker::Kicker()
     // Make kicker immutable if configuration modules have been marked immutable
     if (isKioskImmutable() && KAuthorized::authorizeControlModules(Kicker::configModules(true)).isEmpty())
     {
-        KInstance::config()->setReadOnly(true);
-        KInstance::config()->reparseConfiguration();
+        KGlobal::config()->setReadOnly(true);
+        KGlobal::config()->reparseConfiguration();
     }
 
     disableSessionManagement();
@@ -205,7 +205,7 @@ void Kicker::configure()
 {
     static bool notFirstConfig = false;
 
-    KConfig* c = KGlobal::config();
+    KSharedConfig::Ptr c = KGlobal::config();
     c->reparseConfiguration();
     c->setGroup("General");
     m_canAddContainers = !c->entryIsImmutable("Applets2");
@@ -253,12 +253,12 @@ void Kicker::slotRestart()
 
 bool Kicker::isImmutable() const
 {
-    return KInstance::config()->isImmutable() || KickerSettings::locked();
+    return KGlobal::config()->isImmutable() || KickerSettings::locked();
 }
 
 bool Kicker::isKioskImmutable() const
 {
-    return KInstance::config()->isImmutable();
+    return KGlobal::config()->isImmutable();
 }
 
 void Kicker::addExtension(const QString &desktopFile)

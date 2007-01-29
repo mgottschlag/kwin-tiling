@@ -28,7 +28,6 @@
 #include <kapplication.h>
 #include <kcmodule.h>
 
-class KInstance;
 class Ui_KeyboardConfigWidget;
 class QStringList;
 

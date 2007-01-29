@@ -40,7 +40,7 @@ typedef KGenericFactory<SMServerConfig, QWidget > SMSFactory;
 K_EXPORT_COMPONENT_FACTORY (smserver, SMSFactory("kcmsmserver") )
 
 SMServerConfig::SMServerConfig( QWidget *parent, const QStringList & )
-  : KCModule (SMSFactory::instance(), parent)
+  : KCModule (SMSFactory::componentData(), parent)
 {
     setQuickHelp( i18n("<h1>Session Manager</h1>"
     " You can configure the session manager here."

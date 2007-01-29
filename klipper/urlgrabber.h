@@ -27,6 +27,7 @@
 #include <QStringList>
 
 #include <kprocess.h>
+#include <kconfig.h>
 
 
 class QTimer;
@@ -44,7 +45,7 @@ class URLGrabber : public QObject
   Q_OBJECT
 
 public:
-  URLGrabber( KConfig* config );
+  URLGrabber(const KSharedConfigPtr &config);
   ~URLGrabber();
 
   /**
@@ -87,7 +88,7 @@ private:
   QTimer *myPopupKillTimer;
   int myPopupKillTimeout;
   bool m_trimmed;
-  KConfig* m_config;
+  KSharedConfigPtr m_config;
 
 private Q_SLOTS:
   void slotActionMenu() { actionMenu( true ); }

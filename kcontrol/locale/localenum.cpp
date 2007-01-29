@@ -32,6 +32,7 @@
 
 #include "toplevel.h"
 #include "localenum.h"
+#include <kconfiggroup.h>
 #include "localenum.moc"
 
 KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
@@ -84,11 +85,11 @@ KLocaleConfigNumber::~KLocaleConfigNumber()
 
 void KLocaleConfigNumber::save()
 {
-  // temperary use of our locale as the global locale
-  KLocale *lsave = KGlobal::_locale;
-  KGlobal::_locale = m_locale;
+  // temporary use of our locale as the global locale
+  KLocale *lsave = KGlobal::locale();
+  KGlobal::setLocale(m_locale);
 
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   KConfigGroup group(config, "Locale");
 
   KSimpleConfig ent(KStandardDirs::locate("locale",
@@ -125,7 +126,7 @@ void KLocaleConfigNumber::save()
     group.writeEntry("NegativeSign", m_locale->negativeSign(), KConfigBase::Persistent|KConfigBase::Global);
 
   // restore the old global locale
-  KGlobal::_locale = lsave;
+  KGlobal::setLocale(lsave);
 }
 
 void KLocaleConfigNumber::slotLocaleChanged()

@@ -46,7 +46,7 @@ K_EXPORT_COMPONENT_FACTORY( ksplashthemes, KSplashThemeMgrFactory("ksplashthemes
 // -----------------------------------------------------------------------------------------
 
 KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const QStringList &args)
-  : KCModule( KSplashThemeMgrFactory::instance(), parent, args ), mInstaller(new SplashInstaller(this))
+  : KCModule( KSplashThemeMgrFactory::componentData(), parent, args ), mInstaller(new SplashInstaller(this))
 {
   init();
 

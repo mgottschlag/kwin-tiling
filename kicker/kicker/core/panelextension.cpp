@@ -341,7 +341,7 @@ void PanelExtension::slotBuildOpMenu()
 
     if (KAuthorized::authorizeKAction("action/help"))
     {
-        KHelpMenu* help = new KHelpMenu( this, KGlobal::instance()->aboutData(), false);
+        KHelpMenu* help = new KHelpMenu( this, KGlobal::mainComponent().aboutData(), false);
         m_opMenu->insertItem(KIcon("help"), KStandardGuiItem::help().text(), help->menu());
     }
     m_opMenu->adjustSize();

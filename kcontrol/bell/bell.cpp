@@ -70,7 +70,7 @@ extern "C"
 }
 
 KBellConfig::KBellConfig(QWidget *parent, const QStringList &args):
-    KCModule(KBellConfigFactory::instance(), parent, args)
+    KCModule(KBellConfigFactory::componentData(), parent, args)
 {
   QBoxLayout *layout = new QVBoxLayout(this);
   layout->setMargin(0);

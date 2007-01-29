@@ -24,7 +24,7 @@
 
 
 #include "memory.h"
-#include <kinstance.h>
+#include <kcomponentdata.h>
  
 /* we have to include the info.cpp-file, to get the DEFINES about possible properties.
    example: we need the "define INFO_CPU_AVAILABLE" */
@@ -39,7 +39,7 @@ class K##type##InfoWidget : public KInfoListWidget \
 { \
     public: \
         K##type##InfoWidget(QWidget *parent, const QStringList &) \
-            : KInfoListWidget(K##type##InfoWidgetFactory::instance(), \
+            : KInfoListWidget(K##type##InfoWidgetFactory::componentData(), \
                     name, parent, GetInfo_##type) \
         { \
         } \

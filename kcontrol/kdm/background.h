@@ -10,6 +10,7 @@
 #define __Bgnd_h_Included__
 
 #include <QWidget>
+#include <kconfig.h>
 
 class BGDialog;
 class KSimpleConfig;
@@ -40,7 +41,7 @@ class KBackground : public QWidget {
 
 	QCheckBox *m_pCBEnable;
 	QLabel *m_pMLabel;
-	KSimpleConfig *m_simpleConf;
+	KSharedConfigPtr m_simpleConf;
 	BGDialog *m_background;
 };
 

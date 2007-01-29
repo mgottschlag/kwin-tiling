@@ -41,11 +41,10 @@ K_EXPORT_COMPONENT_FACTORY( background, KBackGndFactory("kcmbackground"))
 /**** KBackground ****/
 KBackground::~KBackground( )
 {
-    delete m_pConfig;
 }
 
 KBackground::KBackground(QWidget *parent, const QStringList &args)
-    : KCModule(KBackGndFactory::instance(), parent, args)
+    : KCModule(KBackGndFactory::componentData(), parent, args)
 {
     int screen_number = 0;
     if (QX11Info::display())
@@ -55,7 +54,7 @@ KBackground::KBackground(QWidget *parent, const QStringList &args)
 	configname = "kdesktoprc";
     else
 	configname.sprintf("kdesktop-screen-%drc", screen_number);
-    m_pConfig = new KConfig(configname, false, false);
+    m_pConfig = KSharedConfig::openConfig(configname, false, false);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     m_base = new BGDialog(this, m_pConfig);

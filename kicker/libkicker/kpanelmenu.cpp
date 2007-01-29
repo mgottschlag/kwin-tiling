@@ -63,7 +63,7 @@ void KPanelMenu::init(const QString& path)
     connect(this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
 
     // setup cache timer
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("menus");
     d->clearDelay = config->readEntry("MenuCacheTime", 60000); // 1 minute
 

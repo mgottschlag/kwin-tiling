@@ -95,7 +95,7 @@ QPixmap mkColorPreview(const WidgetCanvas *cs)
 /**** KColorScheme ****/
 
 KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
-    : KCModule(KolorFactory::instance(), parent)
+    : KCModule(KolorFactory::componentData(), parent)
 {
     nSysSchemes = 2;
 
@@ -269,7 +269,7 @@ KColorScheme::~KColorScheme()
 
 void KColorScheme::load()
 {
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("KDE");
     sCurrentScheme = config->readEntry("colorScheme");
 
@@ -294,7 +294,7 @@ void KColorScheme::load()
 
 void KColorScheme::save()
 {
-    KConfig *cfg = KGlobal::config();
+    KSharedConfig::Ptr cfg = KGlobal::config();
     cfg->setGroup( "General" );
     cfg->writeEntry("background", cs->back, KConfigBase::Normal|KConfigBase::Global);
     cfg->writeEntry("selectBackground", cs->select, KConfigBase::Normal|KConfigBase::Global);
@@ -656,8 +656,6 @@ void KColorScheme::slotShadeSortColumnChanged(bool b)
  */
 void KColorScheme::readScheme( int index )
 {
-    KConfigBase* config;
-
     QColor widget(239, 239, 239);
     QColor kde34Blue(103,141,178);
     QColor inactiveBackground(157,170,186);
@@ -711,9 +709,10 @@ void KColorScheme::readScheme( int index )
       return;
     }
 
+    KConfigBase *config;
     if (index == 0) {
       // Current scheme
-      config = KGlobal::config();
+      config = KGlobal::config().data();
       config->setGroup("General");
     } else {
       // Open scheme file

@@ -169,7 +169,7 @@ void ExtensionContainer::init()
     installEventFilter(this); // for mouse event handling
 
     // if we were hidden when kicker quit, let's start out hidden as well!
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup(extensionId());
     int tmp = config->readEntry("UserHidden", int(Unhidden));
     if (tmp > Unhidden && tmp <= RightBottom)
@@ -306,7 +306,7 @@ void ExtensionContainer::readConfig()
 void ExtensionContainer::writeConfig()
 {
 //    kDebug(1210) << "ExtensionContainer::writeConfig()" << endl;
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup(extensionId());
 
     config->writePathEntry("ConfigFile", _info.configFile());
@@ -927,7 +927,7 @@ void ExtensionContainer::animatedHide(bool left)
 
     // save our hidden status so that when kicker starts up again
     // we'll come back in the same state
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup(extensionId());
     config->writeEntry("UserHidden", int(userHidden()));
 

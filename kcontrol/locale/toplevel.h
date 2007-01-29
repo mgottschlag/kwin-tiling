@@ -27,6 +27,7 @@
 
 #include <kcmodule.h>
 #include <kgenericfactory.h>
+#include <kconfig.h>
 
 class QTabWidget;
 class Q3GroupBox;
@@ -77,8 +78,8 @@ private:
   Q3GroupBox           *m_gbox;
   KLocaleSample       *m_sample;
 
-  KConfig * m_globalConfig;
-  KConfig * m_nullConfig;
+  KSharedConfigPtr m_globalConfig;
+  KSharedConfigPtr m_nullConfig;
 };
 
 typedef KGenericFactory<KLocaleApplication, QWidget > KLocaleFactory;

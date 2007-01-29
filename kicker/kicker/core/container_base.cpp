@@ -36,6 +36,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "kicker.h"
 
 #include "container_base.h"
+#include <kconfiggroup.h>
 #include "container_base.moc"
 
 
@@ -143,7 +144,7 @@ void BaseContainer::slotRemoved(KConfig* config)
 {
     if (!config)
     {
-        config = KGlobal::config();
+        config = KGlobal::config().data();
     }
 
     config->deleteGroup(appletId().toLatin1());

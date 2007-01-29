@@ -56,11 +56,11 @@ CViewer::CViewer(const KUrl &url)
             itsPreview->openUrl(url);
 
         QSize   defSize(440, 530);
-        QString oldGroup(KGlobal::instance()->config()->group());
+        QString oldGroup(KGlobal::config()->group());
 
-        KGlobal::instance()->config()->setGroup(CFG_GROUP);
-        resize(KGlobal::instance()->config()->readEntry(CFG_SIZE_KEY, defSize));
-        KGlobal::instance()->config()->setGroup(oldGroup);
+        KGlobal::config()->setGroup(CFG_GROUP);
+        resize(KGlobal::config()->readEntry(CFG_SIZE_KEY, defSize));
+        KGlobal::config()->setGroup(oldGroup);
     }
     else
         exit(0);
@@ -68,12 +68,12 @@ CViewer::CViewer(const KUrl &url)
 
 CViewer::~CViewer()
 {
-    QString oldGroup(KGlobal::instance()->config()->group());
+    QString oldGroup(KGlobal::config()->group());
 
-    KGlobal::instance()->config()->setGroup(CFG_GROUP);
-    KGlobal::instance()->config()->writeEntry(CFG_SIZE_KEY, size());
-    KGlobal::instance()->config()->setGroup(oldGroup);
-    KGlobal::instance()->config()->sync();
+    KGlobal::config()->setGroup(CFG_GROUP);
+    KGlobal::config()->writeEntry(CFG_SIZE_KEY, size());
+    KGlobal::config()->setGroup(oldGroup);
+    KGlobal::config()->sync();
 }
 
 void CViewer::fileOpen()

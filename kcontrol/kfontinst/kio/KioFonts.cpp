@@ -43,7 +43,7 @@
 #include <QDataStream>
 #include <QTextStream>
 #include <QRegExp>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kde_file.h>
 #include <ktemporaryfile.h>
 #include <kdesu/su.h>
@@ -100,7 +100,7 @@ int kdemain(int argc, char **argv)
 
     KLocale::setMainCatalog(KFI_CATALOGUE);
 
-    KInstance instance("kio_" KFI_KIO_FONTS_PROTOCOL);
+    KComponentData componentData("kio_" KFI_KIO_FONTS_PROTOCOL);
     KFI::CKioFonts slave(argv[2], argv[3]);
 
     slave.dispatchLoop();

@@ -82,7 +82,7 @@ typedef KGenericFactory<MouseConfig> MouseConfigFactory;
 K_EXPORT_COMPONENT_FACTORY(mouse, MouseConfigFactory("kcminput"))
 
 MouseConfig::MouseConfig(QWidget *parent, const QStringList &args)
-  : KCModule(MouseConfigFactory::instance(), parent, args)
+  : KCModule(MouseConfigFactory::componentData(), parent, args)
 {
 
 

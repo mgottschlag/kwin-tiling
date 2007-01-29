@@ -33,7 +33,7 @@ typedef KGenericFactory<KCMDisplay, QWidget> DisplayFactory;
 K_EXPORT_COMPONENT_FACTORY ( display, DisplayFactory( "display" ) )
 
 KCMDisplay::KCMDisplay( QWidget *parent, const QStringList& )
-    : KCModule( DisplayFactory::instance(), parent )
+    : KCModule( DisplayFactory::componentData(), parent )
     , m_changed(false)
 {
   m_tabs = new QTabWidget( this );

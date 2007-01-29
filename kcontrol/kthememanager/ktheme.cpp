@@ -128,7 +128,7 @@ QString KTheme::createYourself( bool pack )
     // 1. General stuff set by methods setBlah()
 
     // 2. Background theme
-    KConfig * globalConf = KGlobal::config();
+    KSharedConfig::Ptr globalConf = KGlobal::config();
 
     KConfig kwinConf( "kwinrc", true );
     kwinConf.setGroup( "Desktops" );
@@ -453,7 +453,7 @@ void KTheme::apply()
     QDomElement iconElem = m_dom.elementsByTagName( "icons" ).item( 0 ).toElement();
     if ( !iconElem.isNull() )
     {
-        KConfig * iconConf = KGlobal::config();
+        KSharedConfig::Ptr iconConf = KGlobal::config();
         iconConf->setGroup( "Icons" );
         iconConf->writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), KConfigBase::Persistent|KConfigBase::Global);
 
@@ -535,7 +535,7 @@ void KTheme::apply()
     if ( !colorsElem.isNull() )
     {
         QDomNodeList colorList = colorsElem.childNodes();
-        KConfig * colorConf = KGlobal::config();
+        KSharedConfig::Ptr colorConf = KGlobal::config();
 
         QString sCurrentScheme = KStandardDirs::locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");
         KSimpleConfig *colorScheme = new KSimpleConfig( sCurrentScheme );
@@ -657,7 +657,7 @@ void KTheme::apply()
 
     if ( !widgetsElem.isNull() )
     {
-        KConfig * widgetConf = KGlobal::config();
+        KSharedConfig::Ptr widgetConf = KGlobal::config();
         widgetConf->setGroup( "General" );
         widgetConf->writeEntry( "widgetStyle", widgetsElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
         widgetConf->sync();
@@ -668,7 +668,7 @@ void KTheme::apply()
     QDomElement fontsElem = m_dom.elementsByTagName( "fonts" ).item( 0 ).toElement();
     if ( !fontsElem.isNull() )
     {
-        KConfig * fontsConf = KGlobal::config();
+        KSharedConfig::Ptr fontsConf = KGlobal::config();
         KConfig * kde1xConf = new KSimpleConfig( QDir::homePath() + "/.kderc" );
         kde1xConf->setGroup( "General" );
 
@@ -740,7 +740,7 @@ QString KTheme::getProperty( QDomElement parent, const QString & tag,
 }
 
 void KTheme::createIconElems( const QString & group, const QString & object,
-                              QDomElement parent, KConfig * cfg )
+                              QDomElement parent, KSharedConfigPtr cfg )
 {
     cfg->setGroup( group );
     QStringList elemNames;
@@ -773,7 +773,7 @@ void KTheme::createIconElems( const QString & group, const QString & object,
 }
 
 void KTheme::createColorElem( const QString & name, const QString & object,
-                              QDomElement parent, KConfig * cfg )
+                              QDomElement parent, KSharedConfigPtr cfg )
 {
     QColor color = cfg->readEntry( name,QColor() );
     if ( color.isValid() )

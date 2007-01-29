@@ -11,6 +11,7 @@
 #define __Bgnd_h_Included__
 
 #include <kcmodule.h>
+#include <kconfig.h>
 
 class KConfig;
 class BGDialog;
@@ -32,7 +33,7 @@ public:
 
 private:
     BGDialog      *m_base;
-    KConfig       *m_pConfig;
+    KSharedConfigPtr m_pConfig;
 };
 
 

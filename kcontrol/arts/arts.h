@@ -51,7 +51,7 @@ class KArtsModule : public KCModule
 
 public:
 
-  KArtsModule(KInstance *inst, QWidget *parent);
+  KArtsModule(const KComponentData &inst, QWidget *parent);
   ~KArtsModule();
   void saveParams( void );
 

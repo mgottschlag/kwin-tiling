@@ -20,6 +20,7 @@
 
 #include <kcmodule.h>
 #include <kdialog.h>
+#include <kconfig.h>
 
 class QCheckBox;
 class QColor;
@@ -58,7 +59,7 @@ class KIconConfig: public KCModule
     Q_OBJECT
 
 public:
-    KIconConfig(KInstance *inst, QWidget *parent);
+    KIconConfig(const KComponentData &inst, QWidget *parent);
     ~KIconConfig();
 
     virtual void load();
@@ -100,7 +101,7 @@ private:
     KIconEffect *mpEffect;
     KIconTheme *mpTheme;
     KIconLoader *mpLoader;
-    KConfig *mpConfig;
+    KSharedConfigPtr mpConfig;
 
     typedef QLabel *QLabelPtr;
     QLabelPtr mpPreview[3];

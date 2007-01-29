@@ -434,7 +434,7 @@ QStringList KBackgroundProgram::list()
 /**** KBackgroundSettings ****/
 
 
-KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, KConfig *config)
+KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config)
     : KBackgroundPattern(),
       KBackgroundProgram()
 {
@@ -520,11 +520,9 @@ KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgrou
         else
             configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-        m_pConfig = new KConfig(configname, false, false);
-        m_bDeleteConfig = true;
+        m_pConfig = KSharedConfig::openConfig(configname, false, false);
     } else {
         m_pConfig = config;
-        m_bDeleteConfig = false;
     }
 
     if (m_Desk == -1)
@@ -536,8 +534,6 @@ KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgrou
 
 KBackgroundSettings::~KBackgroundSettings()
 {
-    if (m_bDeleteConfig)
-        delete m_pConfig;
 }
 
 void KBackgroundSettings::copyConfig(const KBackgroundSettings *settings)
@@ -1083,7 +1079,7 @@ void KBackgroundSettings::setEnabled(const bool enable)
 
 /**** KGlobalBackgroundSettings ****/
 
-KGlobalBackgroundSettings::KGlobalBackgroundSettings(KConfig *_config)
+KGlobalBackgroundSettings::KGlobalBackgroundSettings(const KSharedConfigPtr &_config)
 {
     m_pConfig = _config;
 

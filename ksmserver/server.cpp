@@ -600,7 +600,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     dialogActive = false;
     saveSession = false;
     wmPhase1WaitingCount = 0;
-    KConfig* config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("General" );
     clientInteracting = 0;
     xonCommand = config->readEntry( "xonCommand", "xon" );
@@ -812,7 +812,7 @@ QString KSMServer::currentSession()
 
 void KSMServer::discardSession()
 {
-    KConfig* config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup( sessionGroup );
     int count =  config->readEntry( "count", 0 );
 	foreach ( KSMClient *c, clients ) {
@@ -833,7 +833,7 @@ void KSMServer::discardSession()
 
 void KSMServer::storeSession()
 {
-    KConfig* config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->reparseConfiguration(); // config may have changed in the KControl module
     config->setGroup("General" );
     excludeApps = config->readEntry( "excludeApps" ).toLower().split( QRegExp( "[,:]" ), QString::SkipEmptyParts );
@@ -893,14 +893,14 @@ void KSMServer::storeSession()
     config->setGroup("General");
     config->writeEntry( "screenCount", ScreenCount(QX11Info::display()));
 
-    storeLegacySession( config );
+    storeLegacySession(config.data());
     config->sync();
 }
 
 QStringList KSMServer::sessionList()
 {
     QStringList sessions ( "default" );
-    KConfig* config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     QStringList groups = config->groupList();
     for ( QStringList::ConstIterator it = groups.begin(); it != groups.end(); it++ )
         if ( (*it).startsWith( "Session: " ) )

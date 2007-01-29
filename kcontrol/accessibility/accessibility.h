@@ -23,7 +23,7 @@
 
 #include <kdebug.h>
 #include <kcmodule.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include "accessibilityconfigwidget.h"
 
 class AccessibilityConfig : public KCModule {

@@ -135,7 +135,7 @@ static QString realDesktopPath()
  */
 static void copyDesktopLinks()
 {
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("General");
     if (!config->readEntry("CopyDesktopLinks", true))
        return;

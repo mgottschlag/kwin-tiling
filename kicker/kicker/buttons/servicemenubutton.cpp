@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "service_mnu.h"
 
 #include "servicemenubutton.h"
+#include <kconfiggroup.h>
 #include "servicemenubutton.moc"
 
 ServiceMenuButton::ServiceMenuButton( const QString& relPath, QWidget* parent )

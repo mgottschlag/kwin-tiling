@@ -232,7 +232,7 @@ QString mouseKeysShortcut (Display *display) {
 }
 
 KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
-  : KCModule(KAccessConfigFactory::instance(), parent, args)
+  : KCModule(KAccessConfigFactory::componentData(), parent, args)
 {
 
   KAboutData *about =

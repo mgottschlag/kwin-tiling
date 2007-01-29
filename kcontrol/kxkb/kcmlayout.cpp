@@ -105,7 +105,7 @@ typedef KGenericFactory<LayoutConfig> LayoutConfigFactory;
 K_EXPORT_COMPONENT_FACTORY(keyboard_layout, LayoutConfigFactory("kcmlayout"))
 
 LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
-  : KCModule(LayoutConfigFactory::instance(), parent),
+  : KCModule(LayoutConfigFactory::componentData(), parent),
     m_rules(NULL)
 {
  // QVBoxLayout *main = new QVBoxLayout(this, 0, KDialog::spacingHint());

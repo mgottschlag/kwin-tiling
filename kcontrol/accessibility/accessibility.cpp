@@ -55,7 +55,7 @@ K_EXPORT_COMPONENT_FACTORY( accessibility, AccessibilityFactory("kcmaccessibilit
 // }
 
 AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QStringList &args)
-  : KCModule( AccessibilityFactory::instance(), parent)
+  : KCModule( AccessibilityFactory::componentData(), parent)
 {
 	widget = new AccessibilityConfigWidget(parent, 0L);
    KAboutData *about =

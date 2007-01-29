@@ -156,7 +156,7 @@ void FontUseItem::readFont()
 
   bool deleteme = false;
   if (_rcfile.isEmpty())
-    config = KGlobal::config();
+    config = KGlobal::config().data();
   else
   {
     config = new KConfig(_rcfile, true);
@@ -174,7 +174,7 @@ void FontUseItem::writeFont()
   KConfigBase *config;
 
   if (_rcfile.isEmpty()) {
-    config = KGlobal::config();
+    config = KGlobal::config().data();
     config->setGroup(_rcgroup);
     config->writeEntry(_rckey, font(), KConfigBase::Normal|KConfigBase::Global);
   } else {
@@ -496,7 +496,7 @@ static QString desktopConfigName()
 }
 
 KFonts::KFonts(QWidget *parent, const QStringList &args)
-    :   KCModule(FontFactory::instance(), parent, args)
+    :   KCModule(FontFactory::componentData(), parent, args)
 {
   QStringList nameGroupKeyRc;
 

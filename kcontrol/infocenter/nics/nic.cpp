@@ -89,7 +89,7 @@ typedef Q3PtrList<MyNIC> NICList;
 NICList* findNICs();
 
 KCMNic::KCMNic(QWidget *parent, const QStringList &)
-   :KCModule(KCMNicFactory::instance(), parent)
+   :KCModule(KCMNicFactory::componentData(), parent)
 {
    QVBoxLayout *box=new QVBoxLayout(this);
    box->setMargin(0);

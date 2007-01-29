@@ -25,7 +25,7 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QLayout>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 
 //Added by qt3to4:
 #include <QPixmap>
@@ -138,7 +138,7 @@ extern "C" {
 /**** KEnergy ****/
 
 KEnergy::KEnergy(QWidget *parent, const QStringList &args)
-    : KCModule(KEnergyFactory::instance(), parent, args)
+    : KCModule(KEnergyFactory::componentData(), parent, args)
 {
     m_bChanged = false;
     m_bEnabled = false;

@@ -43,6 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "container_extension.h"
 #include "panelextension.h"
 #include "pluginmanager.h"
+#include <kconfiggroup.h>
 
 static KStaticDeleter<PluginManager> pluginManagerDeleter;
 PluginManager* PluginManager::m_self = 0;

@@ -41,6 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "kicker.h"
 
 #include "servicebutton.h"
+#include <kconfiggroup.h>
 #include "servicebutton.moc"
 
 ServiceButton::ServiceButton(const QString& desktopFile, QWidget* parent)

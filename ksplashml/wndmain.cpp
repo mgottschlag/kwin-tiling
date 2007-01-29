@@ -49,8 +49,8 @@ KSplash::KSplash()
   mSessMgrCalled = false;
   mTimeToGo = false;
 
-  KConfig * config = KGlobal::config();
-  slotReadProperties(config);
+  KSharedConfig::Ptr config = KGlobal::config();
+  slotReadProperties(config.data());
 
   prepareSplashScreen();
   prepareIconList();

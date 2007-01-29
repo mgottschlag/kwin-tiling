@@ -16,6 +16,7 @@
 #include <QPixmap>
 #include <QImage>
 #include <q3ptrvector.h>
+#include <kconfig.h>
 
 #include "bgsettings.h"
 
@@ -24,7 +25,6 @@ class QRect;
 class QString;
 class QTimer;
 
-class KConfig;
 class KProcess;
 class KTemporaryFile;
 class KShellProcess;
@@ -43,7 +43,7 @@ class KBackgroundRenderer:
     Q_OBJECT
 
 public:
-    KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, KConfig *config=0);
+    KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config = KSharedConfigPtr());
     ~KBackgroundRenderer();
 
     void load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig=true);
@@ -124,7 +124,7 @@ class KVirtualBGRenderer : public QObject
 {
     Q_OBJECT
 public:
-    KVirtualBGRenderer(int desk, KConfig *config=0l);
+    KVirtualBGRenderer(int desk, const KSharedConfigPtr &config = KSharedConfigPtr());
     ~KVirtualBGRenderer();
 
     KBackgroundRenderer * renderer(unsigned screen);
@@ -162,14 +162,13 @@ private:
     QSize renderSize(int screen); // the size the renderer should be
     void initRenderers();
 
-    KConfig *m_pConfig;
+    KSharedConfigPtr m_pConfig;
     float m_scaleX;
     float m_scaleY;
     int m_desk;
     unsigned m_numRenderers;
     bool m_bDrawBackgroundPerScreen;
     bool m_bCommonScreen;
-    bool m_bDeleteConfig;
     QSize m_size;
 
     QVector<bool> m_bFinished;

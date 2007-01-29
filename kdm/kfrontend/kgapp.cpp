@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <kcrash.h>
 #include <kglobalsettings.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kprocess.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
@@ -134,7 +134,7 @@ kg_main( const char *argv0 )
 	KCrash::setApplicationName( QLatin1String( argv[0] ) );
 	KCrash::setCrashHandler( KCrash::defaultCrashHandler );
 	XSetIOErrorHandler( xIOErr );
-	KInstance inst( argv[0] );
+	KComponentData inst( argv[0] );
 	GreeterApp app( 1, argv );
 	init_config_qapp();
 	KGlobalSettings::self();

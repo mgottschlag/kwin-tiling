@@ -99,7 +99,7 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 // read settings from config file
 void KBlankSetup::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QColor aux = Qt::black;
@@ -115,7 +115,7 @@ void KBlankSetup::slotColor( const QColor &col )
 // Ok pressed - save settings and exit
 void KBlankSetup::slotOk()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
   config->setGroup( "Settings" );
  	config->writeEntry( "Color", color );
   config->sync();
@@ -146,7 +146,7 @@ void KBlankSaver::setColor( const QColor &col )
 // read configuration settings from config file
 void KBlankSaver::readSettings()
 {
-	KConfig *config = KGlobal::config();
+	KSharedConfig::Ptr config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QColor aux = Qt::black;

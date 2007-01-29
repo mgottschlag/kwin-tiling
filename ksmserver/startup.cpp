@@ -100,7 +100,7 @@ void KSMServer::restoreSession( QString sessionName )
 
     kDebug( 1218 ) << "KSMServer::restoreSession " << sessionName << endl;
     upAndRunning( "restore session");
-    KConfig* config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
 
     sessionGroup = "Session: " + sessionName;
 
@@ -253,7 +253,7 @@ void KSMServer::tryRestoreNext()
         return;
     restoreTimer.stop();
     startupSuspendTimeoutTimer.stop();
-    KConfig* config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup( sessionGroup );
 
     while ( lastAppStarted < appsToStart ) {
@@ -307,7 +307,7 @@ void KSMServer::autoStart2()
     org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());
     kcminit.runPhase2();
     if( !defaultSession())
-        restoreLegacySession( KGlobal::config());
+        restoreLegacySession(KGlobal::config().data());
     KNotification::event( "startkde" , QString() , QPixmap() , 0l , KNotification::DefaultEvent  ); // this is the time KDE is up, more or less
 }
 

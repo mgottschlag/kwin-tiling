@@ -151,7 +151,7 @@ void init_config_qapp( void )
 {
 	CONF_GREET_INIT_QAPP
 
-	KConfig *cfg = KGlobal::config();
+	KSharedConfig::Ptr cfg = KGlobal::config();
 	cfg->setGroup( "General" );
 	cfg->writeEntry( "nopaletteChange", true );
 	cfg->writeEntry( "font", *_normalFont );

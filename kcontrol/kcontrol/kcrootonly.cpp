@@ -26,8 +26,8 @@
 
 #include "kcrootonly.h"
 
-KCRootOnly::KCRootOnly(KInstance *inst, QWidget *parent)
-  : KCModule( inst, parent )
+KCRootOnly::KCRootOnly(const KComponentData &componentData, QWidget *parent)
+  : KCModule( componentData, parent )
 {
    QVBoxLayout *layout=new QVBoxLayout(this);
    QLabel *label = new QLabel(i18n("<big>You need super user privileges to run this control module.</big><br>"

@@ -47,7 +47,7 @@ typedef KGenericFactory<KCMKNotify, QWidget> NotifyFactory;
 K_EXPORT_COMPONENT_FACTORY( knotify, NotifyFactory("kcmnotify") )
 
 		KCMKNotify::KCMKNotify(QWidget *parent, const QStringList & )
-    : KCModule(NotifyFactory::instance(), parent/*, name*/),
+    : KCModule(NotifyFactory::componentData(), parent/*, name*/),
       m_playerSettings( 0L )
 {
     setButtons( Help | Default | Apply );

@@ -26,6 +26,7 @@
 #include <QWidget>
 
 #include <kurl.h>
+#include <kconfig.h>
 
 class KStandardDirs;
 class KConfig;
@@ -159,7 +160,7 @@ private:
      * @param cfg The KConfig object to work with
      */
     void createIconElems( const QString & group, const QString & object,
-                          QDomElement parent, KConfig * cfg );
+                          QDomElement parent, KSharedConfigPtr cfg );
 
     /**
      * Creates a color DOM element @p name, with a specifier @p object,
@@ -167,7 +168,7 @@ private:
      * @param cfg The KConfig object to work with
      */
     void createColorElem( const QString & name, const QString & object,
-                          QDomElement parent, KConfig * cfg );
+                          QDomElement parent, KSharedConfigPtr cfg );
     /**
      * Creates a list of "event" elements based on:
      * @param events The list of events to work on

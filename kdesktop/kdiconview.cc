@@ -249,7 +249,7 @@ void KDIconView::initConfig( bool init )
         KDesktopSettings::self()->readConfig();
     }
 
-    KConfig * config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
 
     if ( !init ) {
       KDesktopShadowSettings *shadowSettings = static_cast<KDesktopShadowSettings *>(m_shadowEngine->shadowSettings());

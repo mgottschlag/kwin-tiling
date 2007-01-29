@@ -54,6 +54,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "pluginmanager.h"
 
 #include "container_applet.h"
+#include <kconfiggroup.h>
 #include "container_applet.moc"
 
 AppletContainer::AppletContainer(const AppletInfo& info,

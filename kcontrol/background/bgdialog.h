@@ -35,7 +35,7 @@ class BGDialog : public BGDialog_UI
 {
    Q_OBJECT
 public:
-   BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop = true);
+   BGDialog(QWidget* parent, const KSharedConfigPtr & _config, bool _multidesktop = true);
    ~BGDialog();
 
    void load();

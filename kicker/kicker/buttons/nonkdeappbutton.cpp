@@ -43,6 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // our own definition
 #include "nonkdeappbutton.h"
+#include <kconfiggroup.h>
 
 // we include the "moc" file so that the KDE build system knows to create it
 #include "nonkdeappbutton.moc"
@@ -230,7 +231,7 @@ void NonKDEAppButton::runCommand(const QString& execStr)
         // run in a terminal? ok! we find this in the config file in the
         // [misc] group (this will usually be in kdeglobal, actually, which
         // get merged into the application config automagically for us
-        KConfig *config = KGlobal::config();
+        KSharedConfig::Ptr config = KGlobal::config();
         config->setGroup("misc");
         QString termStr = config->readPathEntry("Terminal", "konsole");
 

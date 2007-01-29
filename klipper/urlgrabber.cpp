@@ -49,11 +49,12 @@
 #define DO_NOTHING_ITEM 11
 #define DISABLE_POPUP 12
 
-URLGrabber::URLGrabber( KConfig* config )
+URLGrabber::URLGrabber(const KSharedConfigPtr &config)
  : m_config( config )
 {
-    if( m_config == NULL )
+    if(!m_config) {
         m_config = KGlobal::config();
+    }
     myCurrentAction = 0L;
     myMenu = 0L;
     myPopupKillTimeout = 8;
@@ -63,7 +64,7 @@ URLGrabber::URLGrabber( KConfig* config )
     myActions->setAutoDelete( true );
     myMatches.setAutoDelete( false );
 
-    readConfiguration( m_config );
+    readConfiguration( m_config.data() );
 
     myPopupKillTimer = new QTimer( this );
     myPopupKillTimer->setSingleShot( true );

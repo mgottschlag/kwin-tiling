@@ -48,7 +48,7 @@
 /**** KBackgroundRenderer ****/
 
 
-KBackgroundRenderer::KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, KConfig *config)
+KBackgroundRenderer::KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config)
     : KBackgroundSettings(desk, screen, drawBackgroundPerScreen, config)
 {
     m_State = 0;
@@ -1006,7 +1006,7 @@ void KBackgroundRenderer::saveCacheFile()
 }
 
 //BEGIN class KVirtualBGRenderer
-KVirtualBGRenderer::KVirtualBGRenderer( int desk, KConfig *config )
+KVirtualBGRenderer::KVirtualBGRenderer(int desk, const KSharedConfigPtr &config)
 {
     m_pPixmap = 0l;
     m_desk = desk;
@@ -1025,11 +1025,9 @@ KVirtualBGRenderer::KVirtualBGRenderer( int desk, KConfig *config )
         else
             configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-        m_pConfig = new KConfig(configname, false, false);
-        m_bDeleteConfig = true;
+        m_pConfig = KSharedConfig::openConfig(configname, false, false);
     } else {
         m_pConfig = config;
-        m_bDeleteConfig = false;
     }
 
     initRenderers();
@@ -1042,9 +1040,6 @@ KVirtualBGRenderer::~KVirtualBGRenderer()
         delete m_renderer[i];
 
     delete m_pPixmap;
-
-    if (m_bDeleteConfig)
-        delete m_pConfig;
 }
 
 

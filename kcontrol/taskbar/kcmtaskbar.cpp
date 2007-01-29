@@ -117,7 +117,7 @@ QStringList TaskbarConfig::i18nGroupModeList()
 }
 
 TaskbarConfig::TaskbarConfig(QWidget *parent, const char* name, const QStringList&)
-  : KCModule(TaskBarFactory::instance(), parent, name)
+  : KCModule(TaskBarFactory::componentData(), parent, name)
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setSpacing(KDialog::spacingHint());

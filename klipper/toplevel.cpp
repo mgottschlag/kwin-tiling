@@ -58,6 +58,7 @@
 #include <kstandardguiitem.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
+#include <kconfiggroup.h>
 
 #include "configdialog.h"
 #include "toplevel.h"
@@ -123,10 +124,10 @@ private:
     KlipperWidget* klipper;
 };
 
-static void ensureGlobalSyncOff(KConfig* config);
+static void ensureGlobalSyncOff(KSharedConfigPtr config);
 
 // config == KGlobal::config for process, otherwise applet
-KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
+KlipperWidget::KlipperWidget(QWidget *parent, const KSharedConfigPtr &config)
     : QWidget( parent )
     , m_overflowCounter( 0 )
     , locklevel( 0 )
@@ -175,14 +176,14 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     connect(quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
     //quitAction->setGroup( "exit" );
     myURLGrabber = 0L;
-    KConfig *kc = m_config;
+    KConfig *kc = m_config.data();
     readConfiguration( kc );
     setURLGrabberEnabled( bURLGrabber );
 
     hideTimer = new QTime();
     showTimer = new QTime();
 
-    readProperties(m_config);
+    readProperties(m_config.data());
     connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
 
     poll = new ClipboardPoll( this );
@@ -228,8 +229,6 @@ KlipperWidget::~KlipperWidget()
     delete showTimer;
     delete hideTimer;
     delete myURLGrabber;
-    if( m_config != KGlobal::config())
-        delete m_config;
 }
 
 void KlipperWidget::adjustSize()
@@ -532,7 +531,7 @@ void KlipperWidget::slotConfigure()
     bool haveURLGrabber = bURLGrabber;
     if ( !myURLGrabber ) { // temporary, for the config-dialog
         setURLGrabberEnabled( true );
-        readConfiguration( m_config );
+        readConfiguration( m_config.data() );
     }
 
     ConfigDialog *dlg = new ConfigDialog( myURLGrabber->actionList(),
@@ -573,7 +572,7 @@ void KlipperWidget::slotConfigure()
 
         history()->max_size( dlg->maxItems() );
 
-        writeConfiguration( m_config );
+        writeConfiguration( m_config.data() );
 
     }
     setURLGrabberEnabled( haveURLGrabber );
@@ -593,7 +592,7 @@ void KlipperWidget::slotQuit()
     saveSession();
     int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?"),KGuiItem(i18n("Start")), KGuiItem(i18n("Do Not Start")) );
 
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("General");
     if ( autoStart == KMessageBox::Yes ) {
         config->writeEntry("AutoStart", true);
@@ -634,7 +633,7 @@ void KlipperWidget::setURLGrabberEnabled( bool enable )
 {
     if (enable != bURLGrabber) {
       bURLGrabber = enable;
-      KConfig *kc = m_config;
+      KConfig *kc = m_config.data();
       kc->setGroup("General");
       kc->writeEntry("URLGrabberEnabled", bURLGrabber);
       m_lastURLGrabberTextSelection = QString();
@@ -1160,7 +1159,7 @@ void Klipper::quitProcess()
     kapp->quit();
 }
 
-static void ensureGlobalSyncOff(KConfig* config) {
+static void ensureGlobalSyncOff(KSharedConfigPtr config) {
     config->setGroup("General");
     if ( config->readEntry( "SynchronizeClipboardAndSelection" , QVariant(false)).toBool() ) {
         kDebug() << "Shutting off global synchronization" << endl;

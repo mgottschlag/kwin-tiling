@@ -52,7 +52,7 @@ typedef KGenericFactory<kthememanager> kthememanagerFactory;
 K_EXPORT_COMPONENT_FACTORY(kthememanager, kthememanagerFactory("kthememanager"))
 
 kthememanager::kthememanager( QWidget *parent, const QStringList & )
-    : KCModule( kthememanagerFactory::instance(), parent ), m_theme( 0 ), m_origTheme( 0 )
+    : KCModule( kthememanagerFactory::componentData(), parent ), m_theme( 0 ), m_origTheme( 0 )
 {
 
     KAboutData *about = new KAboutData("kthememanager", I18N_NOOP("KDE Theme Manager"),

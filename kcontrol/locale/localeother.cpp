@@ -32,6 +32,7 @@
 #include <kstandarddirs.h>
 
 #include "localeother.h"
+#include <kconfiggroup.h>
 #include "localeother.moc"
 
 
@@ -78,7 +79,7 @@ KLocaleConfigOther::~KLocaleConfigOther()
 
 void KLocaleConfigOther::save()
 {
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   KConfigGroup group(config, "Locale");
 
   KSimpleConfig ent(KStandardDirs::locate("locale",

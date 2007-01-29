@@ -48,7 +48,7 @@ typedef KGenericFactory<KSmartcardConfig> KSmartcardConfigFactory;
 K_EXPORT_COMPONENT_FACTORY(smartcard, KSmartcardConfigFactory("kcmsmartcard"))
 
 KSmartcardConfig::KSmartcardConfig(QWidget *parent, const QStringList &)
-  : KCModule(KSmartcardConfig::instance(), parent)
+  : KCModule(KSmartcardConfig::componentData(), parent)
   , DCOPObject("kcmsmartcard")
 {
   QVBoxLayout *layout = new QVBoxLayout(this);

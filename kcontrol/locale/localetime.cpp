@@ -40,6 +40,7 @@
 
 #include "toplevel.h"
 #include "localetime.h"
+#include <kconfiggroup.h>
 #include "localetime.moc"
 
 class StringPair
@@ -260,10 +261,10 @@ KLocaleConfigTime::~KLocaleConfigTime()
 void KLocaleConfigTime::save()
 {
   // temperary use of our locale as the global locale
-  KLocale *lsave = KGlobal::_locale;
-  KGlobal::_locale = m_locale;
+  KLocale *lsave = KGlobal::locale();
+  KGlobal::setLocale(m_locale);
 
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   KConfigGroup group(config, "Locale");
 
   KSimpleConfig ent(KStandardDirs::locate("locale",
@@ -313,7 +314,7 @@ void KLocaleConfigTime::save()
   group.sync();
 
   // restore the old global locale
-  KGlobal::_locale = lsave;
+  KGlobal::setLocale(lsave);
 }
 
 void KLocaleConfigTime::showEvent( QShowEvent *e )

@@ -38,6 +38,7 @@
 #include <ktoolinvocation.h>
 #include <klauncher_iface.h>
 #include <QtDBus/QtDBus>
+#include <kconfiggroup.h>
 
 
 class MyListBoxItem: public Q3ListBoxText

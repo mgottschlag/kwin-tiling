@@ -40,6 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "utils.h"
 
 #include "browserbutton.h"
+#include <kconfiggroup.h>
 #include "browserbutton.moc"
 
 BrowserButton::BrowserButton( const QString& icon, const QString& startDir, QWidget* parent )

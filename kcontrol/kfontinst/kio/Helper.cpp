@@ -30,7 +30,7 @@
 #include <QDataStream>
 #include <QVariant>
 #include <kglobal.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kdebug.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,7 +42,7 @@ class CHelper : public CSocket
 {
     public:
 
-    CHelper(char *sock, int uid) : itsSock(sock), itsUid(uid), itsKInstance(KFI_NAME) { }
+    CHelper(char *sock, int uid) : itsSock(sock), itsUid(uid), itsKComponentData(KFI_NAME) { }
 
     int run();
 
@@ -64,7 +64,7 @@ class CHelper : public CSocket
 
     const char     *itsSock;
     int            itsUid;
-    KInstance      itsKInstance; // Required by KLockFile (which is used in CDisabledFonts)
+    KComponentData itsKComponentData; // Required by KLockFile (which is used in CDisabledFonts)
     CDisabledFonts itsDisabledFonts;
 };
 

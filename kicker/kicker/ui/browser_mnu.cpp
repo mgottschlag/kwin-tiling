@@ -457,7 +457,7 @@ void PanelBrowserMenu::slotExec(int id)
 
 void PanelBrowserMenu::slotOpenTerminal()
 {
-    KConfig * config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("General");
     QString term = config->readPathEntry("TerminalApplication", "konsole");
 

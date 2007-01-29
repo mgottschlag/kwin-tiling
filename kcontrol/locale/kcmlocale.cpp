@@ -302,9 +302,9 @@ void KLocaleConfig::loadCountryList()
 void KLocaleConfig::readLocale(const QString &path, QString &name,
                                const QString &sub) const
 {
-  // temperary use of our locale as the global locale
-  KLocale *lsave = KGlobal::_locale;
-  KGlobal::_locale = m_locale;
+  // temporary use of our locale as the global locale
+  KLocale *lsave = KGlobal::locale();
+  KGlobal::setLocale(m_locale);
 
   // read the name
   QString filepath = QString::fromLatin1("%1%2/entry.desktop")
@@ -316,12 +316,12 @@ void KLocaleConfig::readLocale(const QString &path, QString &name,
   name = entry.readEntry("Name");
 
   // restore the old global locale
-  KGlobal::_locale = lsave;
+  KGlobal::setLocale(lsave);
 }
 
 void KLocaleConfig::save()
 {
-  KConfigBase *config = KGlobal::config();
+  KSharedConfigPtr config = KGlobal::config();
 
   config->setGroup("Locale");
 

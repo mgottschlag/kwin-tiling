@@ -61,7 +61,7 @@ extern "C" {
 
     KDE_EXPORT KCModule *create_arts(QWidget *parent, const char* /*name*/)
 	{
-            KInstance *arts = new KInstance( "kcmarts" );
+            KComponentData arts( "kcmarts" );
             return new KArtsModule(arts, parent );
 	}
 }
@@ -142,7 +142,7 @@ void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
 	}
 }
 
-KArtsModule::KArtsModule(KInstance *inst, QWidget *parent)
+KArtsModule::KArtsModule(const KComponentData &inst, QWidget *parent)
   : KCModule(inst, parent), configChanged(false)
 {
 	setButtons(Default|Apply);

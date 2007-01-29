@@ -40,7 +40,7 @@ K_EXPORT_COMPONENT_FACTORY( launch, LaunchFactory("kcmlaunch") )
 
 
 LaunchConfig::LaunchConfig(QWidget * parent, const QStringList &)
-  : KCModule(LaunchFactory::instance(), parent)
+  : KCModule(LaunchFactory::componentData(), parent)
 {
     QVBoxLayout* Form1Layout = new QVBoxLayout( this );
     Form1Layout->setMargin( 0 );

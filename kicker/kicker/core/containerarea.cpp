@@ -75,6 +75,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "pluginmanager.h"
 
 #include "containerarea.h"
+#include <kconfiggroup.h>
 
 using namespace Qt;
 

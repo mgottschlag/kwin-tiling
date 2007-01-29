@@ -265,7 +265,7 @@ QPoint popupPosition(Plasma::Position d,
 
 void colorize(QImage& image)
 {
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("WM");
     QPalette pal = QApplication::palette();
     pal.setCurrentColorGroup( QPalette::Active );

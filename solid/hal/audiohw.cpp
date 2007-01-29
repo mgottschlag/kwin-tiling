@@ -92,10 +92,20 @@ QString AudioHw::name()
 
     if ( d == Solid::AudioHw::Alsa )
     {
+        QVariant card_id = m_device->property( "alsa.card_id" );
+        if ( card_id.isValid() )
+        {
+            return card_id.toString().trimmed() + QLatin1String( " (" ) + m_device->property( "alsa.device_id" ).toString().trimmed() + ')';
+        }
         return m_device->property( "alsa.device_id" ).toString();
     }
     else if ( d == Solid::AudioHw::OpenSoundSystem )
     {
+        QVariant card_id = m_device->property( "oss.card_id" );
+        if ( card_id.isValid() )
+        {
+            return card_id.toString().trimmed() + QLatin1String( " (" ) + m_device->property( "oss.device_id" ).toString().trimmed() + ')';
+        }
         return m_device->property( "oss.device_id" ).toString();
     }
     else

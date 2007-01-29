@@ -50,7 +50,7 @@ typedef KGenericFactory<SambaContainer, QWidget > SambaFactory;
 K_EXPORT_COMPONENT_FACTORY (samba, SambaFactory("kcmsamba") )
 
 SambaContainer::SambaContainer(QWidget *parent, const QStringList&)
-:KCModule(SambaFactory::instance(), parent)
+:KCModule(SambaFactory::componentData(), parent)
 ,config("kcmsambarc",false,true)
 ,tabs(this)
 ,status(&tabs,&config)

@@ -32,7 +32,7 @@ ObjKsTheme::ObjKsTheme( const QString& theme )
   :mActiveTheme (theme), mThemeDir("/"), mThemeConfig (0L), mThemePrefix( "Themes/" ), d(0)
 {
   // Get Xinerama config.
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   config->setGroup( "Xinerama" );
   QDesktopWidget *desktop = kapp->desktop();
   mXineramaScreen = config->readEntry("KSplashScreen", desktop->primaryScreen());
@@ -92,8 +92,8 @@ bool ObjKsTheme::loadThemeRc( const QString& activeTheme, bool force )
 bool ObjKsTheme::loadLocalConfig( const QString& activeTheme, bool force )
 {
   //kDebug() << "ObjKsTheme::loadLocalConfig" << endl;
-  KConfig *cfg = KGlobal::config();
-  return( loadKConfig( cfg, activeTheme, force ) );
+  KSharedConfig::Ptr cfg = KGlobal::config();
+  return( loadKConfig( cfg.data(), activeTheme, force ) );
 }
 
 // ObjKsConfig::loadKConfig(): Load our settings from a KConfig object.

@@ -58,6 +58,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "windowlistbutton.h"
 
 #include "container_button.h"
+#include <kconfiggroup.h>
 #include "container_button.moc"
 
 ButtonContainer::ButtonContainer(QMenu* opMenu, QWidget* parent)

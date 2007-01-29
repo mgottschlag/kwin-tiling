@@ -49,7 +49,7 @@ typedef KGenericFactory<KCMDnssd, QWidget> KCMDnssdFactory;
 K_EXPORT_COMPONENT_FACTORY( kdnssd, KCMDnssdFactory("kcmkdnssd"))
 
 KCMDnssd::KCMDnssd(QWidget *parent, const QStringList&)
-		: KCModule( KCMDnssdFactory::instance(), parent), m_wdchanged(false)
+		: KCModule( KCMDnssdFactory::componentData(), parent), m_wdchanged(false)
 {
 
     QVBoxLayout *layout = new QVBoxLayout( this );

@@ -39,6 +39,7 @@
 
 #include "toplevel.h"
 #include "localemon.h"
+#include <kconfiggroup.h>
 #include "localemon.moc"
 
 KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
@@ -141,7 +142,7 @@ KLocaleConfigMoney::~KLocaleConfigMoney()
 
 void KLocaleConfigMoney::save()
 {
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   KConfigGroup group(config, "Locale");
 
   KSimpleConfig ent(KStandardDirs::locate("locale",

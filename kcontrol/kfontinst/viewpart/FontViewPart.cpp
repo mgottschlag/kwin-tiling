@@ -40,7 +40,7 @@
 #include <QApplication>
 #include <kio/netaccess.h>
 #include <kglobal.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
 #include <kstandardaction.h>
@@ -97,7 +97,7 @@ CFontViewPart::CFontViewPart(QWidget *parent)
     itsToolsFrame->setFrameShape(QFrame::NoFrame);
     previewFrame->setFrameShape(QFrame::StyledPanel);
     previewFrame->setFrameShadow(QFrame::Sunken);
-    setInstance(new KInstance(KFI_NAME));
+    setComponentData(KComponentData(KFI_NAME));
 
     itsPreview=new CFontPreview(previewFrame);
     itsPreview->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -253,7 +253,7 @@ void CFontViewPart::install()
         *itsProc << KFI_APP
                  << "-i"
                  << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-                 << KInstance::caption().toUtf8()
+                 << KGlobal::caption().toUtf8()
                  << m_url.prettyUrl();
         itsProc->start(KProcess::NotifyOnExit);
         connect(itsProc, SIGNAL(processExited(KProcess *)), SLOT(installlStatus(KProcess *)));
@@ -301,7 +301,7 @@ void CFontViewPart::print()
             *itsProc << KFI_APP
                      << "-P"
                      << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-                     << KInstance::caption().toUtf8()
+                     << KGlobal::caption().toUtf8()
                      << "0"
                      << info.family.toUtf8()
                      << QString().setNum(info.styleInfo);
@@ -311,7 +311,7 @@ void CFontViewPart::print()
             *itsProc << KFI_APP
                      << "-P"
                      << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-                     << KInstance::caption().toUtf8()
+                     << KGlobal::caption().toUtf8()
                      << "0"
                      << m_file
                      << QString().setNum(KFI_NO_STYLE_INFO);

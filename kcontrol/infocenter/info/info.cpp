@@ -401,7 +401,7 @@ QString KInfoListWidget::quickHelp() const
 }
 
 
-KInfoListWidget::KInfoListWidget(KInstance *inst,const QString &_title, QWidget *parent,
+KInfoListWidget::KInfoListWidget(const KComponentData &inst,const QString &_title, QWidget *parent,
                                  bool _getlistbox(Q3ListView *lbox))
     : KCModule(inst,parent),
       title(_title)

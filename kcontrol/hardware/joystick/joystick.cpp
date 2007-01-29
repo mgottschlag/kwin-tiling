@@ -69,7 +69,7 @@ extern "C"
 //---------------------------------------------------------------------------------------------
 
 Joystick::Joystick(QWidget *parent, const QStringList &)
-  : KCModule(JoystickFactory::instance(), parent)
+  : KCModule(JoystickFactory::componentData(), parent)
 {
   setAboutData(new KAboutData("kcmjoystick", I18N_NOOP("KDE Joystick Control Module"), "1.0",
                                I18N_NOOP("KDE Control Center Module to test Joysticks"),

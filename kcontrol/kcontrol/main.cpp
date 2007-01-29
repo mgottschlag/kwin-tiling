@@ -58,7 +58,9 @@ KControlApp::KControlApp()
   toplevel = new TopLevel();
 
   setMainWidget(toplevel);
-  KGlobal::setActiveInstance(this);
+  // hmm? KApplication registers its KComponentData as the main and active component. Why is this
+  // needed?
+  //KGlobal::setActiveComponent(this);
 
   // KUniqueApplication does dcop regitration for us
   ModuleIface *modIface = new ModuleIface(toplevel, "moduleIface");
@@ -67,7 +69,7 @@ KControlApp::KControlApp()
   connect (modIface, SIGNAL(handbookClicked()), toplevel, SLOT(slotHandbookRequest()));
 
   QRect desk = KGlobalSettings::desktopGeometry(toplevel);
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   config->setGroup("General");
   // Initial size is:
   // never bigger than workspace as reported by desk
@@ -89,7 +91,7 @@ KControlApp::~KControlApp()
 {
   if (toplevel)
     {
-      KConfig *config = KGlobal::config();
+      KSharedConfig::Ptr config = KGlobal::config();
       config->setGroup("General");
       QDesktopWidget *desk = QApplication::desktop();
       config->writeEntry(QString::fromLatin1("InitialWidth %1").arg(desk->width()), toplevel->width());

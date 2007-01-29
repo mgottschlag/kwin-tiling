@@ -28,8 +28,8 @@
 
 //#define DEBUG
 
-KDesktopShadowSettings::KDesktopShadowSettings(KConfig *cfg) : 
-    KShadowSettings(),
+KDesktopShadowSettings::KDesktopShadowSettings(const KSharedConfigPtr &cfg)
+    : KShadowSettings(),
     m_textColor(QColor(255,255,255)),
     _UID(0L)
 {
@@ -59,12 +59,13 @@ unsigned long KDesktopShadowSettings::UID()
 /**
  * Loads a new configuration
  */
-void KDesktopShadowSettings::setConfig(KConfig *val)
+void KDesktopShadowSettings::setConfig(const KSharedConfigPtr &val)
 {
     config = val;
 
-    if (val == NULL)
-	return;
+    if (!val) {
+        return;
+    }
 
     // increment the UID so the items will rebuild their
     // pixmaps

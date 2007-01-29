@@ -22,7 +22,7 @@ Boston, MA 02110-1301, USA.
 #include "krootimage.h"
 
 #include <kcmdlineargs.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
 
@@ -47,7 +47,7 @@ static KCmdLineOptions options[] = {
 
 MyApplication::MyApplication( const char *conf, int argc, char **argv )
 	: QApplication( argc, argv )
-	, renderer( 0, new KSimpleConfig( QFile::decodeName( conf ) ) )
+	, renderer(0, KSharedConfig::openConfig(QFile::decodeName(conf)))
 {
 	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
 	connect( &renderer, SIGNAL(imageDone( int )), this, SLOT(renderDone()) );
@@ -108,7 +108,7 @@ main( int argc, char *argv[] )
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 	if (!args->count())
 		args->usage();
-	KInstance inst(KCmdLineArgs::aboutData());
+	KComponentData inst(KCmdLineArgs::aboutData());
 	MyApplication app( args->arg( 0 ), *KCmdLineArgs::qt_argc(), *KCmdLineArgs::qt_argv() );
 	args->clear();
 

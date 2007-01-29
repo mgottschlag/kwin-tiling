@@ -173,7 +173,7 @@ static void getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm,
 }
 
 CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
-            : KCModule(FontInstallFactory::instance(), parent),
+            : KCModule(FontInstallFactory::componentData(), parent),
               itsPreview(NULL),
               itsConfig(KFI_UI_CFG_FILE),
               itsJob(NULL),
@@ -726,7 +726,7 @@ void CKCmFontInst::print(bool all)
 
                         *itsPrintProc << "-p"
                                     << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
-                                    << KInstance::caption().toUtf8()
+                                    << KGlobal::caption().toUtf8()
                                     << QString().setNum(constSizes[dlg.chosenSize() < 6
                                                            ? dlg.chosenSize() : 2])
                                     << tmpFile.fileName()
@@ -742,7 +742,7 @@ void CKCmFontInst::print(bool all)
                 {
                     *itsPrintProc << "-P"
                                   << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
-                                  << KInstance::caption().toUtf8()
+                                  << KGlobal::caption().toUtf8()
                                   << QString().setNum(constSizes[dlg.chosenSize()<6 ? dlg.chosenSize() : 2]);
 
                     for(; it!=end; ++it)

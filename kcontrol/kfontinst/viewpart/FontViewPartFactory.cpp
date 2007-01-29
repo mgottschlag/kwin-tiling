@@ -24,7 +24,7 @@
 #include "FontViewPart.h"
 #include <kdebug.h>
 #include <kaboutdata.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <assert.h>
 
 extern "C"
@@ -39,7 +39,7 @@ extern "C"
 namespace KFI
 {
 
-KInstance * CFontViewPartFactory::theirInstance=NULL;
+KComponentData *CFontViewPartFactory::theirInstance=NULL;
 KAboutData * CFontViewPartFactory::theirAbout=NULL;
 
 CFontViewPartFactory::CFontViewPartFactory()
@@ -65,14 +65,14 @@ QObject * CFontViewPartFactory::createObject(QObject *parent, const char *, cons
     return new CFontViewPart((QWidget*) parent);
 }
 
-KInstance* CFontViewPartFactory::instance()
+const KComponentData &CFontViewPartFactory::componentData()
 {
     if(!theirInstance)
     {
         theirAbout = new KAboutData("fontviewpart", I18N_NOOP("CFontViewPart"), "0.1");
-        theirInstance = new KInstance(theirAbout);
+        theirInstance = new KComponentData(theirAbout);
     }
-    return theirInstance;
+    return *theirInstance;
 }
 
 }

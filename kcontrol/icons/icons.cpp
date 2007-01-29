@@ -37,7 +37,7 @@
 
 /**** KIconConfig ****/
 
-KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
+KIconConfig::KIconConfig(const KComponentData &inst, QWidget *parent)
     : KCModule(inst, parent)
 {
 

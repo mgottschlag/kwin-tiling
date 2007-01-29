@@ -25,7 +25,7 @@
 #include <QMetaProperty>
 #include <QMetaEnum>
 
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
 
@@ -185,7 +185,7 @@ int main(int argc, char **argv)
 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-  KInstance instance( appName );
+  KComponentData componentData( appName );
 
   if ( args->isSet( "commands" ) )
   {

@@ -113,7 +113,7 @@ extern "C"
 }
 
 KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
-	: KCModule( KCMStyleFactory::instance(), parent ), appliedStyle(NULL)
+	: KCModule( KCMStyleFactory::componentData(), parent ), appliedStyle(NULL)
 {
     setQuickHelp( i18n("<h1>Style</h1>"
 			"This module allows you to modify the visual appearance "

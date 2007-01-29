@@ -41,7 +41,7 @@
 KRandRSystemTray::KRandRSystemTray(QWidget* parent)
 	: KSystemTrayIcon(parent)
 	, m_popupUp(false)
-	, m_help(new KHelpMenu(parent, KGlobal::instance()->aboutData(), false, actionCollection()))
+	, m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection()))
 {
 	setIcon(KSystemTrayIcon::loadIcon("randr"));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));

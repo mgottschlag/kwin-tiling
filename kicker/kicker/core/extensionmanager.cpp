@@ -48,6 +48,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "pluginmanager.h"
 
 #include "extensionmanager.h"
+#include <kconfiggroup.h>
 
 static KStaticDeleter<ExtensionManager> extensionManagerDeleter;
 ExtensionManager* ExtensionManager::m_self = 0;
@@ -91,7 +92,7 @@ ExtensionManager::~ExtensionManager()
 void ExtensionManager::initialize()
 {
 //    kDebug(1210) << "ExtensionManager::loadContainerConfig()" << endl;
-    KConfig* config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     PluginManager* pm = PluginManager::self();
 
     // set up the "main" panel
@@ -112,7 +113,7 @@ void ExtensionManager::initialize()
         m_mainPanel = pm->createExtensionContainer(
                             "childpanelextension.desktop",
                             true,
-                            QString(kapp->aboutData()->appName()) + "rc",
+                            QString(KGlobal::mainComponent().aboutData()->appName()) + "rc",
                             "Main Panel");
     }
 
@@ -237,7 +238,7 @@ void ExtensionManager::migrateMenubar()
     // panel, meaning kickerrc itself would have to be vastly modified
     // with lots of complications. not work it IMHO.
 
-    KConfig* config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("General");
 
     if (config->readEntry("CheckedForMenubar", QVariant(false)).toBool())
@@ -313,7 +314,7 @@ void ExtensionManager::saveContainerConfig()
 {
 //    kDebug(1210) << "ExtensionManager::saveContainerConfig()" << endl;
 
-    KConfig *config = KGlobal::config();
+    KSharedConfig::Ptr config = KGlobal::config();
 
     // build the extension list
     QStringList elist;

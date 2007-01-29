@@ -48,7 +48,7 @@ typedef KGenericFactory<KCMXinerama> KCMXineramaFactory;
 K_EXPORT_COMPONENT_FACTORY(xinerama, KCMXineramaFactory("kcmxinerama"))
 
 KCMXinerama::KCMXinerama(QWidget *parent, const QStringList &)
-  : KCModule(KCMXineramaFactory::instance(), parent) {
+  : KCModule(KCMXineramaFactory::componentData(), parent) {
 
 	KAboutData *about =
 	new KAboutData(I18N_NOOP("kcmxinerama"),

@@ -24,7 +24,7 @@
 #include <kbugreport.h>
 #include <kaboutdata.h>
 #include <kconfig.h>
-#include <kinstance.h>
+#include <kcomponentdata.h>
 #include <kicon.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -60,7 +60,7 @@ TopLevel::TopLevel()
   report_bug = 0;
 
   // read settings
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   config->setGroup("Index");
   QString viewmode = config->readEntry("ViewMode", "Tree");
 
@@ -172,7 +172,7 @@ TopLevel::TopLevel()
 
 TopLevel::~TopLevel()
 {
-  KConfig *config = KGlobal::config();
+  KSharedConfig::Ptr config = KGlobal::config();
   config->setGroup("Index");
   if (KCGlobal::viewMode() == Tree)
     config->writeEntry("ViewMode", "Tree");
@@ -453,7 +453,7 @@ void TopLevel::reportBug()
     bool deleteit = false;
 
     if (!_active) // report against kcontrol
-        dummyAbout = const_cast<KAboutData*>(KGlobal::instance()->aboutData());
+        dummyAbout = const_cast<KAboutData*>(KGlobal::mainComponent().aboutData());
     else
     {
         if (_active->aboutData())

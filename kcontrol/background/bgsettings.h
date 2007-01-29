@@ -16,11 +16,11 @@
 #include <QColor>
 #include <QMap>
 #include <QVector>
+#include <kconfig.h>
 
 template <class QString, class T> class QMap;
 class KStandardDirs;
 class KSimpleConfig;
-class KConfig;
 class QString;
 class QImage;
 
@@ -157,7 +157,7 @@ public:
      * mode) will be treated as one big display, and the "screen" paramater
      * will be ignored.
      */
-    KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, KConfig *config);
+    KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config);
     ~KBackgroundSettings();
 
     void copyConfig(const KBackgroundSettings*);
@@ -283,7 +283,7 @@ private:
     int m_CurrentWallpaper;
     QString m_CurrentWallpaperName;
 
-    KConfig *m_pConfig;
+    KSharedConfigPtr m_pConfig;
     KStandardDirs *m_pDirs;
     bool m_bDeleteConfig;
     bool m_bEnabled;
@@ -306,7 +306,7 @@ public:
 class KGlobalBackgroundSettings
 {
 public:
-    KGlobalBackgroundSettings(KConfig *config);
+    KGlobalBackgroundSettings(const KSharedConfigPtr &config);
 
     QString deskName(int desk);
     //void setDeskName(int desk, QString name);
@@ -363,8 +363,7 @@ private:
     bool m_shadowEnabled;
     int m_textLines;
     int m_textWidth;
-    KConfig *m_pConfig;
-    bool m_bDeleteConfig;
+    KSharedConfigPtr m_pConfig;
     QVector<bool> m_bDrawBackgroundPerScreen; // m_bDrawBackgroundPerScreen[desk]
 };
 

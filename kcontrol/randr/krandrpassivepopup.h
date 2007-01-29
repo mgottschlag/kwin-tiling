@@ -25,6 +25,7 @@
 #include <QPixmap>
 #include <QEvent>
 #include <X11/Xlib.h>
+#include <fixx11h.h>
 
 class KRandrPassivePopup
     : public KPassivePopup

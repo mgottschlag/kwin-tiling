@@ -129,7 +129,6 @@ KBackgroundManager::~KBackgroundManager()
     for (int i=0; i<m_Renderer.size(); i++)
         delete m_Renderer[i];
 
-    //delete m_pConfig; Very bad idea, this is KGlobal::config !
     delete m_pPixmapServer;
     delete m_pTimer;
 
