@@ -406,6 +406,7 @@ CFamilyItem::CFamilyItem(CFontList &p, const QString &n)
            : CFontModelItem(NULL),
              itsName(n),
              itsStatus(ENABLED),
+             itsRealStatus(ENABLED),
              itsRegularFont(NULL),
              itsParent(p)
 {
@@ -477,7 +478,7 @@ bool CFamilyItem::updateStatus()
     EStatus                           oldStatus(itsStatus);
     QList<CFontItem *>::ConstIterator it(itsFonts.begin()),
                                       end(itsFonts.end());
-    int                               en(0), dis(0);
+    int                               en(0), dis(0), allEn(0), allDis(0);
     bool                              oldSys(isSystem()),
                                       sys(false);
     QStringList                       mimeTypes;
@@ -498,10 +499,24 @@ bool CFamilyItem::updateStatus()
                 sys=(*it)->isSystem();
             itsFontCount++;
         }
+        else
+            if((*it)->isEnabled())
+                allEn++;
+            else
+                allDis++;
+
+    allEn+=en;
+    allDis+=dis;
 
     itsStatus=en && dis
                 ? PARTIAL
                 : en
+                    ? ENABLED
+                    : DISABLED;
+
+    itsRealStatus=allEn && allDis
+                ? PARTIAL
+                : allEn
                     ? ENABLED
                     : DISABLED;
 
@@ -775,6 +790,26 @@ void CFontList::setAllowDisabled(bool on)
 
     for(; it!=end; ++it)
         (*it)->refresh();
+}
+
+void CFontList::getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial)
+{
+    QList<CFamilyItem *>::ConstIterator it(itsFamilies.begin()),
+                                        end(itsFamilies.end());
+
+    for(; it!=end; ++it)
+        switch((*it)->realStatus())
+        {
+            case CFamilyItem::ENABLED:
+                enabled.insert((*it)->name());
+                break;
+            case CFamilyItem::PARTIAL:
+                partial.insert((*it)->name());
+                break;
+            case CFamilyItem::DISABLED:
+                disabled.insert((*it)->name());
+                break;
+        }
 }
 
 void CFontList::listingCompleted()
@@ -1262,6 +1297,7 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
     setDragDropMode(QAbstractItemView::DragDrop);
     header()->setClickable(true);
     header()->setSortIndicatorShown(true);
+    setColumnHidden(COL_STATUS, true);
     connect(this, SIGNAL(collapsed(const QModelIndex &)), SLOT(itemCollapsed(const QModelIndex &)));
     connect(header(), SIGNAL(sectionClicked(int)), SLOT(setSortColumn(int)));
     connect(itsProxy, SIGNAL(refresh()), SIGNAL(refresh()));

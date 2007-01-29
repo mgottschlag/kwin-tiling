@@ -105,6 +105,7 @@ class CFontList : public QAbstractItemModel
     bool            allowSys() const      { return itsAllowSys; }
     bool            allowUser() const     { return itsAllowUser; }
     bool            allowDisabled() const { return itsAllowDisabled; }
+    void            getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial);
 
     Q_SIGNALS:
 
@@ -188,6 +189,7 @@ class CFamilyItem : public CFontModelItem
     int                  rowNumber() const                { return itsParent.row(this); }
     int                  row(const CFontItem *font) const { return itsFonts.indexOf((CFontItem *)font); }
     EStatus              status() const                   { return itsStatus; }
+    EStatus              realStatus() const               { return itsRealStatus; }
     CFontItem *          regularFont()                    { return itsRegularFont; }
     int                  fontCount() const                { return itsFontCount; }
 
@@ -201,7 +203,8 @@ class CFamilyItem : public CFontModelItem
                        itsIcon;
     QList<CFontItem *> itsFonts;
     int                itsFontCount;
-    EStatus            itsStatus;
+    EStatus            itsStatus,
+                       itsRealStatus;
     CFontItem          *itsRegularFont;  // 'RegularFont' is font nearest to 'Regular' style, and used for previews.
     CFontList          &itsParent;
 };

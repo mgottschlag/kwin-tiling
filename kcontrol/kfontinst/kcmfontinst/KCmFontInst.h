@@ -68,7 +68,6 @@ class CKCmFontInst : public KCModule
 
     public Q_SLOTS:
 
-    void    displayType(int p);
     QString quickHelp() const;
     void    fontSelected(const QModelIndex &index, bool en, bool dis);
     void    groupSelected(const QModelIndex &index);
@@ -85,15 +84,19 @@ class CKCmFontInst : public KCModule
     void    exportJobResult(KJob *job);
     void    exported(KIO::Job *job, const KUrl &from, const KUrl &to);
     void    changeText();
+    void    showPreview(bool s);
+    void    standardPreview();
+    void    allCharsPreview();
+    void    previewMenu(const QPoint &pos);
     void    duplicateFonts();
     void    print();
     void    printGroup();
     void    listingCompleted();
+    void    refreshFamilies();
     void    setStatusBar();
     void    addFonts(const QSet<KUrl> &src);
     void    toggleFontManagement(bool on);
     void    selectGroup(int grp);
-    void    showPreview(bool s);
 
     private:
 
@@ -107,6 +110,7 @@ class CKCmFontInst : public KCModule
     KUrl    baseUrl(bool sys);
     void    selectMainGroup();
     void    doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &urls, const KUrl &dest);
+    CGroupListItem::EType getCurrentGroupType();
 
     private:
 
@@ -126,8 +130,12 @@ class CKCmFontInst : public KCModule
     CGroupList        *itsGroupList;
     CGroupListView    *itsGroupListView;
     KToggleAction     *itsMgtMode,
-                      *itsShowPreview;
-    KActionMenu       *itsToolsMenu;
+                      *itsShowPreview,
+                      *itsStandardPreview,
+                      *itsAllCharsPreview;
+    KActionMenu       *itsToolsMenu,
+                      *itsPreviewMenu,
+                      *itsPreviewSettingsMenu;
     KPushButton       *itsDeleteGroupControl,
                       *itsEnableGroupControl,
                       *itsDisableGroupControl,

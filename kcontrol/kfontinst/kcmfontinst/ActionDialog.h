@@ -38,7 +38,7 @@ class CActionDialog : public KDialog
     public:
 
     CActionDialog(QWidget *parent);
-    ~CActionDialog() { }
+    ~CActionDialog();
     int  exec();
     void startAnimation();
     void stopAnimation();

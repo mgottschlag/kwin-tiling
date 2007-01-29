@@ -31,25 +31,22 @@
 #include <kmessagebox.h>
 #include <kinputdialog.h>
 #include <ksavefile.h>
+#include <kimageeffect.h>
 #include <QFont>
 #include <QDropEvent>
-#include <QDateTime>
-#include <QX11Info>
 #include <QHeaderView>
-#include <QItemDelegate>
-#include <QPainter>
 #include <QMenu>
 #include <QApplication>
 #include <QDomElement>
 #include <QTextStream>
 #include <QDir>
+#include <QPainter>
 #include <stdlib.h>
 #include <unistd.h>
 #include <utime.h>
 #include "FcEngine.h"
 #include "Misc.h"
 #include "KfiConstants.h"
-#include "FontList.h"
 #include "config.h"
 
 namespace KFI
@@ -60,17 +57,25 @@ namespace KFI
 #define NAME_ATTR  "name"
 #define FAMILY_TAG "family"
 
+enum EGroupColumns
+{
+    COL_GROUP_NAME,
+    COL_GROUP_STATUS
+};
+
 CGroupListItem::CGroupListItem(const QString &name)
               : itsName(name),
                 itsType(STANDARD),
-                itsHighlighted(false)
+                itsHighlighted(false),
+                itsStatus(CFamilyItem::ENABLED)
 {
     itsData.validated=false;
 }
 
 CGroupListItem::CGroupListItem(EType type, CGroupList *p)
               : itsType(type),
-                itsHighlighted(false)
+                itsHighlighted(false),
+                itsStatus(CFamilyItem::ENABLED)
 {
     switch(itsType)
     {
@@ -113,6 +118,31 @@ bool CGroupListItem::hasFont(const CFontItem *fnt) const
         }
     }
     return false;
+}
+
+void CGroupListItem::updateStatus(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial)
+{
+    QSet<QString> families(itsFamilies);
+
+    if(0!=families.intersect(partial).count())
+        itsStatus=CFamilyItem::PARTIAL;
+    else
+    {
+        families=itsFamilies;
+
+        bool haveEnabled(0!=families.intersect(enabled).count());
+
+        families=itsFamilies;
+
+        bool haveDisabled(0!=families.intersect(disabled).count());
+
+        if(haveEnabled && haveDisabled)
+            itsStatus=CFamilyItem::PARTIAL;
+        else if(haveEnabled && !haveDisabled)
+            itsStatus=CFamilyItem::ENABLED;
+        else
+            itsStatus=CFamilyItem::DISABLED;
+    }
 }
 
 bool CGroupListItem::load(QDomElement &elem)
@@ -218,7 +248,7 @@ CGroupList::~CGroupList()
 
 int CGroupList::columnCount(const QModelIndex &) const
 {
-    return 1;
+    return 2;
 }
 
 void CGroupList::update(const QModelIndex &unHighlight, const QModelIndex &highlight)
@@ -239,32 +269,72 @@ void CGroupList::update(const QModelIndex &unHighlight, const QModelIndex &highl
     }
 }
 
+void CGroupList::updateStatus(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial)
+{
+    QList<CGroupListItem *>::Iterator it(itsGroups.begin()),
+                                      end(itsGroups.end());
+
+    for(; it!=end; ++it)
+        if((*it)->isStandard())
+            (*it)->updateStatus(enabled, disabled, partial);
+    emit layoutChanged();
+}
+
 QVariant CGroupList::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || 0!=index.column())
+    if (!index.isValid())
         return QVariant();
 
     CGroupListItem *grp=static_cast<CGroupListItem *>(index.internalPointer());
 
     if(grp)
-        switch(role)
+        switch(index.column())
         {
-            case Qt::FontRole:
-                if(!grp->isStandard())
+            case COL_GROUP_NAME:
+                switch(role)
                 {
-                    QFont font;
-                    font.setBold(true);
-                    return font;
+                    case Qt::FontRole:
+                        if(grp->isStandard())
+                        {
+                            if(CFamilyItem::DISABLED==grp->status())
+                            {
+                                QFont font;
+                                font.setItalic(true);
+                                return font;
+                            }
+                        }
+                        else
+                        {
+                            QFont font;
+                            font.setBold(true);
+                            return font;
+                        }
+                        break;
+                    case Qt::DisplayRole:
+                        return grp->name();
+                    case Qt::DecorationRole:
+                        if(grp->highlighted())
+                            return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection()
+                                       ? "1rightarrow" : "1leftarrow");
+                    default:
+                        break;
                 }
                 break;
-            case Qt::DisplayRole:
-                return grp->name();
-            case Qt::DecorationRole:
-                if(grp->highlighted())
-                    return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection()
-                               ? "1rightarrow" : "1leftarrow");
-            default:
-                break;
+            case COL_GROUP_STATUS:
+                if(Qt::DecorationRole==role)
+                    if(grp->isStandard())
+                        if(grp->families().count())
+                            switch(grp->status())
+                            {
+                                case CFamilyItem::PARTIAL:
+                                    return SmallIcon("button_ok", 0, K3Icon::DisabledState);
+                                case CFamilyItem::ENABLED:
+                                    return SmallIcon("button_ok");
+                                case CFamilyItem::DISABLED:
+                                    return SmallIcon("button_cancel");
+                            }
+                        else
+                            return SmallIcon("button_cancel");
         }
     return QVariant();
 }
@@ -278,13 +348,21 @@ Qt::ItemFlags CGroupList::flags(const QModelIndex &index) const
 }
 
 QVariant CGroupList::headerData(int section, Qt::Orientation orientation,
-                               int role) const
+                                int role) const
 {
-    if (orientation == Qt::Horizontal && 0==section)
-        if(Qt::DisplayRole==role)
-            return i18n("Group");
-        else if(Qt::TextAlignmentRole==role)
-            return Qt::AlignLeft;
+    if (Qt::Horizontal==orientation)
+        switch(section)
+        {
+            case COL_GROUP_NAME:
+                if(Qt::DisplayRole==role)
+                    return i18n("Group");
+                else if(Qt::TextAlignmentRole==role)
+                    return Qt::AlignLeft;
+                break;
+            case COL_GROUP_STATUS:
+                if(Qt::DecorationRole==role)
+                    return SmallIcon("enablefont");
+        }
 
     return QVariant();
 }
@@ -316,7 +394,7 @@ void CGroupList::rescan()
 {
     save();
     load();
-    sort(0, itsSortOrder);
+    sort(itsSortCol, itsSortOrder);
 }
 
 void CGroupList::load()
@@ -411,7 +489,7 @@ void CGroupList::merge(const QString &file)
     if(load(file))
     {
         itsModified=true;
-        sort(0, itsSortOrder);
+        sort(itsSortCol, itsSortOrder);
     }
 }
 
@@ -449,7 +527,7 @@ void CGroupList::createGroup(const QString &name)
         itsGroups.append(new CGroupListItem(name));
         itsModified=true;
         save();
-        sort(0, itsSortOrder);
+        sort(itsSortCol, itsSortOrder);
     }
 }
 
@@ -464,7 +542,7 @@ void CGroupList::renameGroup(const QModelIndex &idx, const QString &name)
             grp->setName(name);
             itsModified=true;
             save();
-            sort(0, itsSortOrder);
+            sort(itsSortCol, itsSortOrder);
         }
     }
 }
@@ -487,7 +565,7 @@ bool CGroupList::removeGroup(const QModelIndex &idx)
             itsGroups.remove(grp);
             delete grp;
             save();
-            sort(0, itsSortOrder);
+            sort(itsSortCol, itsSortOrder);
             return true;
         }
     }
@@ -505,11 +583,14 @@ void CGroupList::removeFromGroup(const QModelIndex &group, const QSet<QString> &
         {
             QSet<QString>::ConstIterator it(families.begin()),
                                          end(families.end());
+            bool                         update(false);
 
             for(; it!=end; ++it)
-                removeFromGroup(grp, *it);
+                if(removeFromGroup(grp, *it))
+                    update=true;
 
-            emit refresh();
+            if(update)
+                emit refresh();
         }
     }
 }
@@ -524,15 +605,18 @@ void CGroupList::addToGroup(const QModelIndex &group, const QSet<QString> &famil
         {
             QSet<QString>::ConstIterator it(families.begin()),
                                          end(families.end());
+            bool                         update(false);
 
             for(; it!=end; ++it)
                 if(!grp->hasFamily(*it))
                 {
                     grp->addFamily(*it);
+                    update=true;
                     itsModified=true;
                 }
 
-            emit refresh();
+            if(update)
+                emit refresh();
         }
     }
 }
@@ -546,33 +630,53 @@ void CGroupList::removeFamily(const QString &family)
         removeFromGroup(*it, family);
 }
 
-void CGroupList::removeFromGroup(CGroupListItem *grp, const QString &family)
+bool CGroupList::removeFromGroup(CGroupListItem *grp, const QString &family)
 {
-    if(grp && grp->hasFamily(family))
+    if(grp && grp->isStandard() && grp->hasFamily(family))
     {
         grp->removeFamily(family);
         itsModified=true;
+        return true;
     }
+
+    return false;
 }
 
-static bool groupLessThan(const CGroupListItem *f1, const CGroupListItem *f2)
+static bool groupNameLessThan(const CGroupListItem *f1, const CGroupListItem *f2)
 {
     return f1 && f2 && (f1->type()<f2->type() ||
                        (f1->type()==f2->type() && QString::localeAwareCompare(f1->name(), f2->name())<0));
 }
 
-static bool groupGreaterThan(const CGroupListItem *f1, const CGroupListItem *f2)
+static bool groupNameGreaterThan(const CGroupListItem *f1, const CGroupListItem *f2)
 {
     return f1 && f2 && (f1->type()<f2->type() ||
                        (f1->type()==f2->type() && QString::localeAwareCompare(f1->name(), f2->name())>0));
 }
 
-void CGroupList::sort(int, Qt::SortOrder order)
+static bool groupStatusLessThan(const CGroupListItem *f1, const CGroupListItem *f2)
+{
+    return f1 && f2 && (f1->type()<f2->type() ||
+                       (f1->type()==f2->type() && (f1->status()<f2->status() ||
+                       (f1->status()==f2->status() && QString::localeAwareCompare(f1->name(), f2->name())<0))));
+}
+
+static bool groupStatusGreaterThan(const CGroupListItem *f1, const CGroupListItem *f2)
+{
+    return f1 && f2 && (f1->type()<f2->type() ||
+                       (f1->type()==f2->type() && (f1->status()>f2->status() ||
+                       (f1->status()==f2->status() && QString::localeAwareCompare(f1->name(), f2->name())>0))));
+}
+
+void CGroupList::sort(int column, Qt::SortOrder order)
 {
     itsSortOrder=order;
+    itsSortCol=column;
 
     qSort(itsGroups.begin(), itsGroups.end(),
-          Qt::AscendingOrder==order ? groupLessThan : groupGreaterThan);
+          COL_GROUP_NAME==column
+            ? Qt::AscendingOrder==order ? groupNameLessThan : groupNameGreaterThan
+            : Qt::AscendingOrder==order ? groupStatusLessThan : groupStatusGreaterThan);
 
     emit layoutChanged();
 }
@@ -617,8 +721,9 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
               : QTreeView(parent)
 {
     setModel(model);
-    sortByColumn(0, Qt::AscendingOrder);
-    resizeColumnToContents(0);
+    sortByColumn(COL_GROUP_NAME, Qt::AscendingOrder);
+    resizeColumnToContents(COL_GROUP_NAME);
+    setColumnWidth(COL_GROUP_STATUS, SmallIcon("folder").size().width()+8);
     setSortingEnabled(true);
     setAllColumnsShowFocus(true);
     setAlternatingRowColors(true);
@@ -644,6 +749,11 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
                                    this, SIGNAL(print()));
 
     setWhatsThis(i18n("<p>This list shows font groups.</p>"));
+
+    connect(this, SIGNAL(addFamilies(const QModelIndex &,  const QSet<QString> &)),
+            model, SLOT(addToGroup(const QModelIndex &,  const QSet<QString> &)));
+    connect(this, SIGNAL(removeFamilies(const QModelIndex &,  const QSet<QString> &)),
+            model, SLOT(removeFromGroup(const QModelIndex &,  const QSet<QString> &)));
 }
 
 CGroupListItem::EType CGroupListView::getType()
@@ -723,6 +833,9 @@ void CGroupListView::dragMoveEvent(QDragMoveEvent *event)
 
         if(index.isValid())
         {
+            if(COL_GROUP_NAME!=index.column())
+                index=((CGroupList *)model())->createIdx(index.row(), COL_GROUP_NAME, index.internalPointer());
+
             CGroupListItem *dest=static_cast<CGroupListItem *>(index.internalPointer());
 
             if(dest &&

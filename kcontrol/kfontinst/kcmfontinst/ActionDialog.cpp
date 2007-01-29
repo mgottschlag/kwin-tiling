@@ -49,13 +49,13 @@ static QMatrix rotateMatrix(int width, int height, double angle)
 }
 
 static const int constNumIcons=8;
-static QPixmap   theIcons[constNumIcons];
+static int       theUsageCount;
+static QPixmap   *theIcons[constNumIcons];
 
 CActionDialog::CActionDialog(QWidget *parent)
              : KDialog(parent)
 {
     static const int constIconSize(48);
-    static bool      initialised(false);
 
     setModal(true);
     itsPixmapLabel=new QLabel(this);
@@ -63,19 +63,28 @@ CActionDialog::CActionDialog(QWidget *parent)
     itsPixmapLabel->setMaximumSize(constIconSize, constIconSize);
     itsPixmapLabel->setAlignment(Qt::AlignCenter);
 
-    if(!initialised)
+    if(0==theUsageCount++)
     {
         QImage img(KIconLoader::global()->loadIcon("font_truetype", K3Icon::NoGroup, 32));
         double increment=360.0/constNumIcons;
 
         for(int i=0; i<constNumIcons; ++i)
-            theIcons[i]=0==i ? img : img.transformed(rotateMatrix(img.width(), img.height(), increment*i));
-        initialised=true;
+            theIcons[i]=new QPixmap(0==i ? img : img.transformed(rotateMatrix(img.width(), img.height(), increment*i)));
     }
 
-    itsPixmapLabel->setPixmap(theIcons[0]);
+    itsPixmapLabel->setPixmap(*theIcons[0]);
     itsTimer=new QTimer(this);
     connect(itsTimer, SIGNAL(timeout()), SLOT(rotateIcon()));
+}
+
+CActionDialog::~CActionDialog()
+{
+    if(0==--theUsageCount)
+        for(int i=0; i<constNumIcons; ++i)
+        {
+            delete theIcons[i];
+            theIcons[i]=NULL;
+        }
 }
 
 int CActionDialog::exec()
@@ -87,7 +96,7 @@ int CActionDialog::exec()
 void CActionDialog::startAnimation()
 {
     itsCount=0;
-    itsPixmapLabel->setPixmap(theIcons[0]);
+    itsPixmapLabel->setPixmap(*theIcons[0]);
     itsTimer->start(1000/constNumIcons);
 }
 
@@ -95,7 +104,7 @@ void CActionDialog::stopAnimation()
 {
     itsTimer->stop();
     itsCount=0;
-    itsPixmapLabel->setPixmap(theIcons[itsCount]);
+    itsPixmapLabel->setPixmap(*theIcons[itsCount]);
 }
 
 void CActionDialog::rotateIcon()
@@ -103,7 +112,7 @@ void CActionDialog::rotateIcon()
     if(++itsCount==constNumIcons)
         itsCount=0;
 
-    itsPixmapLabel->setPixmap(theIcons[itsCount]);
+    itsPixmapLabel->setPixmap(*theIcons[itsCount]);
 }
 
 }

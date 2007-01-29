@@ -32,12 +32,14 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+#include "FontList.h"
 
 class QDragEnterEvent;
 class QDragLeaveEvent;
 class QDropEvent;
 class QTextStream;
 class QDomElement;
+class QPixmap;
 
 namespace KFI
 {
@@ -67,35 +69,37 @@ class CGroupListItem
     CGroupListItem(const QString &name);
     CGroupListItem(EType type, CGroupList *p);
 
-    const QString & name() const              { return itsName; }
-    void            setName(const QString &n) { itsName=n; }
-    QSet<QString> & families()                { return itsFamilies; }
-    const EType     type() const              { return itsType; }
-    bool            isStandard() const        { return STANDARD==itsType; }
-    bool            isAll() const             { return ALL==itsType; }
-    bool            isUnclassified() const    { return UNCLASSIFIED==itsType; }
-    bool            isPersonal() const        { return PERSONAL==itsType; }
-    bool            isSystem() const          { return SYSTEM==itsType; }
-    bool            validated() const         { return isStandard() ? itsData.validated : true; }
-    void            setValidated()            { if(isStandard()) itsData.validated=true; }
-    bool            highlighted() const       { return itsHighlighted; }
-    void            setHighlighted(bool b)    { itsHighlighted=b; }
-    bool            hasFont(const CFontItem *fnt) const;
-
-    bool            load(QDomElement &elem);
-    bool            addFamilies(QDomElement &elem);
-    void            save(QTextStream &str);
-    void            addFamily(const QString &family)    { itsFamilies.insert(family); }
-    void            removeFamily(const QString &family) { itsFamilies.remove(family); }
-    bool            hasFamily(const QString &family)    { return itsFamilies.contains(family); }
+    const QString &      name() const                        { return itsName; }
+    void                 setName(const QString &n)           { itsName=n; }
+    QSet<QString> &      families()                          { return itsFamilies; }
+    const EType          type() const                        { return itsType; }
+    bool                 isStandard() const                  { return STANDARD==itsType; }
+    bool                 isAll() const                       { return ALL==itsType; }
+    bool                 isUnclassified() const              { return UNCLASSIFIED==itsType; }
+    bool                 isPersonal() const                  { return PERSONAL==itsType; }
+    bool                 isSystem() const                    { return SYSTEM==itsType; }
+    bool                 validated() const                   { return isStandard() ? itsData.validated : true; }
+    void                 setValidated()                      { if(isStandard()) itsData.validated=true; }
+    bool                 highlighted() const                 { return itsHighlighted; }
+    void                 setHighlighted(bool b)              { itsHighlighted=b; }
+    bool                 hasFont(const CFontItem *fnt) const;
+    CFamilyItem::EStatus status() const                      { return itsStatus; }
+    void                 updateStatus(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial);
+    bool                 load(QDomElement &elem);
+    bool                 addFamilies(QDomElement &elem);
+    void                 save(QTextStream &str);
+    void                 addFamily(const QString &family)    { itsFamilies.insert(family); }
+    void                 removeFamily(const QString &family) { itsFamilies.remove(family); }
+    bool                 hasFamily(const QString &family)    { return itsFamilies.contains(family); }
 
     private:
 
-    QSet<QString> itsFamilies;
-    QString       itsName;
-    EType         itsType;
-    Data          itsData;
-    bool          itsHighlighted;
+    QSet<QString>        itsFamilies;
+    QString              itsName;
+    EType                itsType;
+    Data                 itsData;
+    bool                 itsHighlighted;
+    CFamilyItem::EStatus itsStatus;
 };
 
 class CGroupList : public QAbstractItemModel
@@ -117,6 +121,7 @@ class CGroupList : public QAbstractItemModel
     int             rowCount(const QModelIndex &parent = QModelIndex()) const;
     int             columnCount(const QModelIndex &parent = QModelIndex()) const;
     void            update(const QModelIndex &unHighlight, const QModelIndex &highlight);
+    void            updateStatus(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial);
     void            setSysMode(bool sys);
     void            rescan();
     void            load();
@@ -130,7 +135,7 @@ class CGroupList : public QAbstractItemModel
     void            renameGroup(const QModelIndex &idx, const QString &name);
     bool            removeGroup(const QModelIndex &idx);
     void            removeFamily(const QString &family);
-    void            removeFromGroup(CGroupListItem *grp, const QString &family);
+    bool            removeFromGroup(CGroupListItem *grp, const QString &family);
 
     CGroupListItem * group(CGroupListItem::EType t)
                         { return itsSpecialGroups[t]; }
@@ -152,6 +157,7 @@ class CGroupList : public QAbstractItemModel
     QStringList     mimeTypes() const;
     CGroupListItem * find(const QString &name);
     bool            exists(const QString &name);
+    QModelIndex     createIdx(int r, int c, void *p) { return createIndex(r, c, p); }
 
     private:
 
@@ -162,8 +168,10 @@ class CGroupList : public QAbstractItemModel
     QList<CGroupListItem *> itsGroups;
     CGroupListItem          *itsSpecialGroups[4];
     Qt::SortOrder           itsSortOrder;
+    int                     itsSortCol;
 
     friend class CGroupListItem;
+    friend class CGroupListView;
 };
 
 class CGroupListView : public QTreeView

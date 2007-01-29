@@ -42,13 +42,10 @@
 #include <kapplication.h>
 #include <kgenericfactory.h>
 #include <ktoolbar.h>
-#include <kstandardshortcut.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
-#include <kcmdlineargs.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
-#include <kio/jobuidelegate.h>
 #include <kpushbutton.h>
 #include <kguiitem.h>
 #include <kinputdialog.h>
@@ -63,6 +60,7 @@
 #include <klineedit.h>
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
+#include <kmenu.h>
 
 #define CFG_GROUP          "Main Settings"
 #define CFG_SPLITTER_SIZES "SplitterSizes"
@@ -84,7 +82,7 @@ class CPushButton : public KPushButton
         : KPushButton(item, parent)
     {
         theirHeight=qMax(theirHeight, height());
-        setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+        setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     }
 
     QSize sizeHint() const
@@ -92,6 +90,8 @@ class CPushButton : public KPushButton
         QSize sh(KPushButton::sizeHint());
 
         sh.setHeight(theirHeight);
+        if(sh.width()<sh.height())
+            sh.setWidth(sh.height());
         return sh;
     }
 
@@ -118,59 +118,6 @@ class CProgressBar : public QProgressBar
 };
 
 int CPushButton::theirHeight=0;
-
-static void getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget)
-{
-    QString ext(url.path());
-    int     dotPos(ext.lastIndexOf('.'));
-    bool    check(false);
-
-    if(-1==dotPos) // Hmm, no extension - check anyway...
-        check=true;
-    else           // Cool, got an extension - see if its a Type1 font...
-    {
-        ext=ext.mid(dotPos+1);
-        check=0==ext.compare("pfa", Qt::CaseInsensitive) ||
-              0==ext.compare("pfb", Qt::CaseInsensitive);
-    }
-
-    if(check)
-    {
-        const char *afm[]={"afm", "AFM", "Afm", NULL},
-                   *pfm[]={"pfm", "PFM", "Pfm", NULL};
-        bool       gotAfm(false),
-                   localFile(url.isLocalFile());
-        int        e;
-
-        for(e=0; afm[e]; ++e)
-        {
-            KUrl statUrl(url);
-            KIO::UDSEntry uds;
-
-            statUrl.setPath(Misc::changeExt(url.path(), afm[e]));
-
-            if(localFile ? Misc::fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
-            {
-                list.append(statUrl);
-                gotAfm=true;
-                break;
-            }
-        }
-
-        if(afmAndPfm || !gotAfm)
-            for(e=0; pfm[e]; ++e)
-            {
-                KUrl          statUrl(url);
-                KIO::UDSEntry uds;
-                statUrl.setPath(Misc::changeExt(url.path(), pfm[e]));
-                if(localFile ? Misc::fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
-                {
-                    list.append(statUrl);
-                    break;
-                }
-            }
-    }
-}
 
 CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
             : KCModule(FontInstallFactory::componentData(), parent),
@@ -205,24 +152,18 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
 
     QStringList items;
     QBoxLayout  *mainLayout=new QBoxLayout(QBoxLayout::TopToBottom, this);
-    QWidget     *detailsWidget=new QWidget(itsSplitter);
-    QGridLayout *detailsLayout=new QGridLayout(detailsWidget);
     KToolBar    *toolbar=new KToolBar(this);
 
+    itsGroupsWidget=new QWidget(itsSplitter);
+    itsFontsWidget=new QWidget(itsSplitter);
     itsPreviewWidget=new QWidget(itsSplitter);
-
-    QBoxLayout  *previewLayout=new QBoxLayout(QBoxLayout::TopToBottom, itsPreviewWidget);
-
-    itsGroupsWidget=new QWidget(detailsWidget);
-    itsFontsWidget=new QWidget(detailsWidget);
 
     QGridLayout *groupsLayout=new QGridLayout(itsGroupsWidget),
                 *fontsLayout=new QGridLayout(itsFontsWidget);
+    QBoxLayout  *previewLayout=new QBoxLayout(QBoxLayout::TopToBottom, itsPreviewWidget);
 
     mainLayout->setMargin(0);
     mainLayout->setSpacing(KDialog::spacingHint());
-    detailsLayout->setMargin(0);
-    detailsLayout->setSpacing(KDialog::spacingHint());
     groupsLayout->setMargin(0);
     groupsLayout->setSpacing(KDialog::spacingHint());
     fontsLayout->setMargin(0);
@@ -243,24 +184,40 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
 
     itsPreview=new CFontPreview(previewFrame);
     itsPreview->setWhatsThis(i18n("This displays a preview of the selected font."));
+    itsPreview->setContextMenuPolicy(Qt::CustomContextMenu);
     previewFrameLayout->addWidget(itsPreview);
 
     // Toolbar...
-    KActionMenu *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
-    KAction     *changeTextAct=new KAction(KIcon("text"), i18n("Change Preview Text..."), this),
-                *duplicateFontsAct=new KAction(KIcon("filefind"), i18n("Scan For Duplicate Fonts..."), this);
-                //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
-                //*downloadFontsAct=new KAction(KIcon("down"), i18n("Download Fonts..."), this);
+    QActionGroup *previewAction=new QActionGroup(this);
+    KActionMenu  *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
+    KAction      *changeTextAct=new KAction(KIcon("text"), i18n("Change Preview Text..."), this),
+                 *duplicateFontsAct=new KAction(KIcon("filefind"), i18n("Scan For Duplicate Fonts..."), this);
+                 //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
+                 //*downloadFontsAct=new KAction(KIcon("down"), i18n("Download Fonts..."), this);
 
+    itsPreviewSettingsMenu=new KActionMenu(this);
+    itsPreviewMenu=new KActionMenu(i18n("Preview Type"), this);
+    itsStandardPreview=new KToggleAction(i18n("Standard Preview"), this);
+    itsAllCharsPreview=new KToggleAction(i18n("All Characters"), this);
     itsToolsMenu=new KActionMenu(KIcon("wizard"), i18n("Tools"), this);
     itsMgtMode=new KToggleAction(KIcon("fonts"),
-                                 i18n("Font Management mode"), this),
+                                 i18n("Font Management Mode"), this),
     itsShowPreview=new KToggleAction(KIcon("thumbnail"), i18n("Show Preview"), this);
     settingsMenu->addAction(itsMgtMode);
     itsMgtMode->setChecked(true);
+    itsPreviewMenu->setEnabled(false);
+    settingsMenu->addSeparator();
     settingsMenu->addAction(itsShowPreview);
+    settingsMenu->addAction(itsPreviewMenu);
     settingsMenu->addAction(changeTextAct);
     settingsMenu->setDelayed(false);
+    itsPreviewSettingsMenu->addAction(itsPreviewMenu);
+    itsPreviewSettingsMenu->addAction(changeTextAct);
+    itsStandardPreview->setChecked(true);
+    previewAction->addAction(itsStandardPreview);
+    previewAction->addAction(itsAllCharsPreview);
+    itsPreviewMenu->addAction(itsStandardPreview);
+    itsPreviewMenu->addAction(itsAllCharsPreview);
     itsToolsMenu->addAction(duplicateFontsAct);
     //itsToolsMenu->addAction(validateFontsAct);
     //itsToolsMenu->addAction(downloadFontsAct);
@@ -286,7 +243,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsGroupList=new CGroupList(itsGroupsWidget);
     itsGroupListView=new CGroupListView(itsGroupsWidget, itsGroupList);
 
-    itsGroupListView->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+    //itsGroupListView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
 
     if(itsModeControl)
         for(int i=0; i<3; ++i)
@@ -308,12 +265,13 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
                                                     i18n("Disable all enabled fonts in the current group")),
                                            itsGroupsWidget);
 
-    groupsLayout->addWidget(itsGroupListView, 0, 0, 1, 4);
+    groupsLayout->addWidget(itsGroupListView, 0, 0, 1, 5);
     groupsLayout->addWidget(createGroup, 1, 0);
     groupsLayout->addWidget(itsDeleteGroupControl, 1, 1);
     groupsLayout->addWidget(itsEnableGroupControl, 1, 2);
     groupsLayout->addWidget(itsDisableGroupControl, 1, 3);
-
+    groupsLayout->addItem(new QSpacerItem(itsDisableGroupControl->width(), KDialog::spacingHint(),
+                          QSizePolicy::Expanding, QSizePolicy::Fixed), 1, 4);
     // Details - Fonts...
     itsFontList=new CFontList(itsFontsWidget);
     itsFontListView=new CFontListView(itsFontsWidget, itsFontList);
@@ -361,32 +319,34 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     // Layout widgets...
     mainLayout->addWidget(toolbar);
     mainLayout->addWidget(itsSplitter);
-    detailsLayout->addWidget(itsGroupsWidget, 1, 0);
-    detailsLayout->addWidget(itsFontsWidget, 1, 1);
     mainLayout->addWidget(statusWidget);
     previewLayout->addWidget(previewFrame);
 
     // Set size of widgets...
-    itsSplitter->setStretchFactor(0, 100);
+    itsSplitter->setChildrenCollapsible(false);
+    itsSplitter->setStretchFactor(0, 0);
     itsSplitter->setStretchFactor(1, 1);
+    itsSplitter->setStretchFactor(2, 0);
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
     itsConfig.setGroup(CFG_GROUP);
 
     QList<int> defaultSizes;
 
+    defaultSizes+=100;
     defaultSizes+=350;
-    defaultSizes+=250;
+    defaultSizes+=150;
 
     QList<int> sizes(itsConfig.readEntry(CFG_SPLITTER_SIZES, defaultSizes));
 
-    if(2!=sizes.count())
+    if(3!=sizes.count())
         sizes=defaultSizes;
 
     itsSplitter->setSizes(sizes);
 
     // Connect signals...
-    //connect(itsPreviewType, SIGNAL(activated(int)), SLOT(displayType(int)));
+    connect(itsStandardPreview, SIGNAL(triggered(bool)), SLOT(standardPreview()));
+    connect(itsAllCharsPreview, SIGNAL(triggered(bool)), SLOT(allCharsPreview()));
     connect(lineed, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
     connect(itsGroupListView, SIGNAL(del()), SLOT(removeGroup()));
     connect(itsGroupListView, SIGNAL(print()), SLOT(printGroup()));
@@ -395,12 +355,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     connect(itsGroupListView, SIGNAL(exportGroup()), SLOT(exportGroup()));
     connect(itsGroupListView, SIGNAL(itemSelected(const QModelIndex &)),
            SLOT(groupSelected(const QModelIndex &)));
-    connect(itsGroupListView, SIGNAL(addFamilies(const QModelIndex &,  const QSet<QString> &)),
-            itsGroupList, SLOT(addToGroup(const QModelIndex &,  const QSet<QString> &)));
-    connect(itsGroupListView, SIGNAL(removeFamilies(const QModelIndex &,  const QSet<QString> &)),
-            itsGroupList, SLOT(removeFromGroup(const QModelIndex &,  const QSet<QString> &)));
     connect(itsGroupListView, SIGNAL(unclassifiedChanged()), SLOT(setStatusBar()));
-    connect(itsGroupList, SIGNAL(refresh()), SLOT(setStatusBar()));
+    connect(itsGroupList, SIGNAL(refresh()), SLOT(refreshFamilies()));
     connect(itsFontList, SIGNAL(finished()), SLOT(listingCompleted()));
     connect(itsFontList, SIGNAL(percent(int)), itsListingProgress, SLOT(setValue(int)));
     connect(itsFontList, SIGNAL(status(const QString &)), itsStatusLabel,
@@ -416,8 +372,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
            SLOT(fontSelected(const QModelIndex &, bool, bool)));
     connect(itsFontListView, SIGNAL(refresh()), SLOT(setStatusBar()));
     connect(itsGroupListView, SIGNAL(unclassifiedChanged()), itsFontListView, SLOT(refreshFilter()));
-    //connect(itsGroupListView, SIGNAL(removeFonts(const QModelIndex &, const QList<Misc::TFont> &)),
-    //        itsFontListView, SLOT(refreshFilter()));
     connect(createGroup, SIGNAL(clicked()), SLOT(addGroup()));
     connect(itsDeleteGroupControl, SIGNAL(clicked()), SLOT(removeGroup()));
     connect(itsEnableGroupControl, SIGNAL(clicked()), SLOT(enableGroup()));
@@ -429,6 +383,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     connect(itsMgtMode, SIGNAL(toggled(bool)), SLOT(toggleFontManagement(bool)));
     connect(itsShowPreview, SIGNAL(toggled(bool)), SLOT(showPreview(bool)));
     connect(changeTextAct, SIGNAL(triggered(bool)), SLOT(changeText()));
+    connect(itsPreview, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(previewMenu(const QPoint &)));
     connect(duplicateFontsAct, SIGNAL(triggered(bool)), SLOT(duplicateFonts()));
     //connect(validateFontsAct, SIGNAL(triggered(bool)), SLOT(validateFonts()));
     //connect(downloadFontsAct, SIGNAL(triggered(bool)), SLOT(downloadFonts()));
@@ -437,7 +392,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
 
     itsMgtMode->setChecked(itsConfig.readEntry(CFG_FONT_MGT_MODE, false));
     itsShowPreview->setChecked(itsConfig.readEntry(CFG_SHOW_PREVIEW, false));
-    showPreview(itsShowPreview->isChecked());
+    itsPreviewWidget->setVisible(itsShowPreview->isChecked());
     toggleFontManagement(itsMgtMode->isChecked());
     selectMainGroup();
     itsFontList->scan();
@@ -453,24 +408,6 @@ CKCmFontInst::~CKCmFontInst()
     delete itsTempDir;
     delete itsPrintProc;
     delete itsExportFile;
-}
-
-void CKCmFontInst::displayType(int)
-{
-/*
-    switch(itsPreviewType->currentItem())
-    {
-        case 0:
-            itsPreview->setUnicodeStart(CFcEngine::STD_PREVIEW);
-            break;
-        case 1:
-            itsPreview->setUnicodeStart(CFcEngine::ALL_CHARS);
-            break;
-        default:
-            itsPreview->setUnicodeStart((itsPreviewType->currentItem()-2)*256);
-    }
-*/
-    itsPreview->showFont();
 }
 
 QString CKCmFontInst::quickHelp() const
@@ -725,12 +662,12 @@ void CKCmFontInst::print(bool all)
                                 << (*it).styleInfo << endl;
 
                         *itsPrintProc << "-p"
-                                    << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
-                                    << KGlobal::caption().toUtf8()
-                                    << QString().setNum(constSizes[dlg.chosenSize() < 6
+                                      << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
+                                      << KGlobal::caption().toUtf8()
+                                      << QString().setNum(constSizes[dlg.chosenSize() < 6
                                                            ? dlg.chosenSize() : 2])
-                                    << tmpFile.fileName()
-                                    << "y"; // y => implies kfontinst will remove our tmp file
+                                      << tmpFile.fileName()
+                                      << "y"; // y => implies kfontinst will remove our tmp file
                     }
                     else
                     {
@@ -1025,6 +962,29 @@ void CKCmFontInst::changeText()
     }
 }
 
+void CKCmFontInst::showPreview(bool s)
+{
+    itsPreviewWidget->setVisible(s);
+    itsPreviewMenu->setEnabled(s);
+}
+
+void CKCmFontInst::standardPreview()
+{
+    itsPreview->setUnicodeStart(CFcEngine::STD_PREVIEW);
+    itsPreview->showFont();
+}
+
+void CKCmFontInst::allCharsPreview()
+{
+    itsPreview->setUnicodeStart(CFcEngine::ALL_CHARS);
+    itsPreview->showFont();
+}
+
+void CKCmFontInst::previewMenu(const QPoint &pos)
+{
+    itsPreviewSettingsMenu->menu()->popup(itsPreview->mapToGlobal(pos));
+}
+
 void CKCmFontInst::duplicateFonts()
 {
     CDuplicatesDialog    dlg(this, itsRunner);
@@ -1073,8 +1033,19 @@ void CKCmFontInst::listingCompleted()
         itsDeletedFonts.clear();
     }
 
+    refreshFamilies();
     itsListingProgress->hide();
     itsFontListView->selectFirstFont();
+}
+
+void CKCmFontInst::refreshFamilies()
+{
+    QSet<QString> enabledFamilies,
+                  disabledFamilies,
+                  partialFamilies;
+
+    itsFontList->getFamilyStats(enabledFamilies, disabledFamilies, partialFamilies);
+    itsGroupList->updateStatus(enabledFamilies, disabledFamilies, partialFamilies);
     setStatusBar();
 }
 
@@ -1128,7 +1099,7 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
             dest=baseUrl(true);
         else
         {
-            switch(itsGroupListView->getType())
+            switch(getCurrentGroupType())
             {
                 case CGroupListItem::ALL:
                 case CGroupListItem::UNCLASSIFIED:
@@ -1200,11 +1171,11 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
             {
                 bool dialogVisible(itsProgress->isVisible());
                 QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-                if(dialogVisible && !itsProgress->isVisible()) // Use closed dialog! re-open!!!
+                if(dialogVisible && !itsProgress->isVisible()) // User closed dialog! re-open!!!
                     itsProgress->show();
             }
 
-            getAssociatedUrls(*it, associatedUrls, false, this);
+            CJobRunner::getAssociatedUrls(*it, associatedUrls, false, this);
             copy.insert(*it);
 
             KUrl::List::Iterator aIt(associatedUrls.begin()),
@@ -1267,24 +1238,6 @@ void CKCmFontInst::selectGroup(int grp)
     groupSelected(idx);
     if(itsModeControl)
         itsModeControl->setCurrentItem(grp);
-}
-
-void CKCmFontInst::showPreview(bool s)
-{
-    itsPreviewWidget->setVisible(s);
-
-    if(s)
-    {
-        QList<int> sizes(itsSplitter->sizes());
-        int        minW(itsPreview->sizeHint().width());
-
-        if(sizes[1]<minW && sizes[0]>minW)
-        {
-            sizes[0]-=abs(minW-sizes[1]);
-            sizes[1]+=minW;
-            itsSplitter->setSizes(sizes);
-        }
-    }
 }
 
 void CKCmFontInst::deleteFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool hasSys)
@@ -1453,6 +1406,16 @@ void CKCmFontInst::doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &u
     itsFontList->setAutoUpdate(true);
     delete itsTempDir;
     itsTempDir=NULL;
+}
+
+CGroupListItem::EType CKCmFontInst::getCurrentGroupType()
+{
+    if(itsMgtMode->isOn())
+        return itsGroupListView->getType();
+    else if(itsModeControl)
+        return (CGroupListItem::EType)itsModeControl->currentItem();
+
+    return CGroupListItem::ALL;
 }
 
 }

@@ -25,6 +25,7 @@
 #include "Misc.h"
 #include <kio/jobuidelegate.h>
 #include <kio/skipdialog.h>
+#include <kio/netaccess.h>
 #include <kmessagebox.h>
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -125,6 +126,59 @@ bool CJobRunner::getAdminPasswd(QWidget *parent)
     }
 
     return true;
+}
+
+void CJobRunner::getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget)
+{
+    QString ext(url.path());
+    int     dotPos(ext.lastIndexOf('.'));
+    bool    check(false);
+
+    if(-1==dotPos) // Hmm, no extension - check anyway...
+        check=true;
+    else           // Cool, got an extension - see if its a Type1 font...
+    {
+        ext=ext.mid(dotPos+1);
+        check=0==ext.compare("pfa", Qt::CaseInsensitive) ||
+              0==ext.compare("pfb", Qt::CaseInsensitive);
+    }
+
+    if(check)
+    {
+        const char *afm[]={"afm", "AFM", "Afm", NULL},
+                   *pfm[]={"pfm", "PFM", "Pfm", NULL};
+        bool       gotAfm(false),
+                   localFile(url.isLocalFile());
+        int        e;
+
+        for(e=0; afm[e]; ++e)
+        {
+            KUrl statUrl(url);
+            KIO::UDSEntry uds;
+
+            statUrl.setPath(Misc::changeExt(url.path(), afm[e]));
+
+            if(localFile ? Misc::fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
+            {
+                list.append(statUrl);
+                gotAfm=true;
+                break;
+            }
+        }
+
+        if(afmAndPfm || !gotAfm)
+            for(e=0; pfm[e]; ++e)
+            {
+                KUrl          statUrl(url);
+                KIO::UDSEntry uds;
+                statUrl.setPath(Misc::changeExt(url.path(), pfm[e]));
+                if(localFile ? Misc::fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
+                {
+                    list.append(statUrl);
+                    break;
+                }
+            }
+    }
 }
 
 int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)

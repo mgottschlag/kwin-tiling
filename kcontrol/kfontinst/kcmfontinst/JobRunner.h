@@ -61,6 +61,7 @@ class CJobRunner : public CActionDialog
     ~CJobRunner();
 
     bool            getAdminPasswd(QWidget *parent);
+    static void     getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget);
     int             exec(ECommand cmd, const ItemList &urls, const KUrl &dest);
     const QString & adminPasswd() const { return itsPasswd; }
 
