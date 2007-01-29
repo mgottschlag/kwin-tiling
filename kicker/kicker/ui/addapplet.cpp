@@ -1,6 +1,6 @@
 /*****************************************************************
 
-Copyright (c) 2006 Rafael Fernández López <ereslibre@gmail.com>
+Copyright (c) 2007, 2006 Rafael Fernández López <ereslibre@gmail.com>
 Copyright (c) 2005 Marc Cramdal
 Copyright (c) 2005 Aaron Seigo <aseigo@kde.org>
 

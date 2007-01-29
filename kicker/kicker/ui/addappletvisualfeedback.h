@@ -1,6 +1,6 @@
 /*****************************************************************
 
-Copyright (c) 2006 Rafael Fernández López <ereslibre@gmail.com>
+Copyright (c) 2007, 2006 Rafael Fernández López <ereslibre@gmail.com>
 Copyright (c) 2004-2005 Aaron J. Seigo <aseigo@kde.org>
 Copyright (c) 2004 Zack Rusin <zrusin@kde.org>
                    Sami Kyostil <skyostil@kempele.fi>
