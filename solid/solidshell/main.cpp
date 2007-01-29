@@ -23,6 +23,7 @@
 #include <QString>
 #include <QStringList>
 #include <QMetaProperty>
+#include <QMetaEnum>
 
 #include <kinstance.h>
 #include <kcmdlineargs.h>
@@ -108,24 +109,12 @@ std::ostream &operator<<( std::ostream &out, const Solid::Device &device )
     out << "  vendor = " << QVariant( device.vendor() ) << endl;
     out << "  product = " << QVariant( device.product() ) << endl;
 
-    QList<Solid::Capability::Type> caps;
-    caps << Solid::Capability::Processor
-         << Solid::Capability::Block
-         << Solid::Capability::Storage
-         << Solid::Capability::Cdrom
-         << Solid::Capability::Volume
-         << Solid::Capability::OpticalDisc
-         << Solid::Capability::Camera
-         << Solid::Capability::PortableMediaPlayer
-         << Solid::Capability::NetworkHw
-         << Solid::Capability::AcAdapter
-         << Solid::Capability::Battery
-         << Solid::Capability::Button
-         << Solid::Capability::Display
-         << Solid::Capability::AudioHw;
+    int index = Solid::Capability::staticMetaObject.indexOfEnumerator("Type");
+    QMetaEnum typeEnum = Solid::Capability::staticMetaObject.enumerator(index);
 
-    foreach ( Solid::Capability::Type cap, caps )
+    for (int i=0; i<typeEnum.keyCount(); i++)
     {
+        Solid::Capability::Type cap = (Solid::Capability::Type)typeEnum.value(i);
         const Solid::Capability *capability = device.asCapability( cap );
 
         if ( capability )
@@ -136,7 +125,23 @@ std::ostream &operator<<( std::ostream &out, const Solid::Device &device )
             {
                 QMetaProperty property = meta->property( i );
                 out << "  " << QString( meta->className() ).mid( 7 ) << "." << property.name()
-                    << " = " << property.read( capability ) << endl;
+                    << " = ";
+
+                QVariant value = property.read( capability );
+
+                if (property.isEnumType()) {
+                    QMetaEnum metaEnum = property.enumerator();
+                    out << "'" << metaEnum.valueToKeys(value.toInt()).constData() << "'"
+                        << "  (0x" << QString::number( value.toInt(), 16 ) << ")  ";
+                    if (metaEnum.isFlag()) {
+                        out << "(flag)";
+                    } else {
+                        out << "(enum)";
+                    }
+                    out << endl;
+                } else {
+                    out << value << endl;
+                }
             }
         }
     }
