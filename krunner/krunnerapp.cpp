@@ -192,7 +192,13 @@ void KRunnerApp::logout( KWorkSpace::ShutdownConfirm confirm,
 
 int KRunnerApp::newInstance()
 {
-    emit showInterface();
+    static bool firstTime = true;
+    if (firstTime) {
+        // App startup: do nothing
+        firstTime = false;
+    } else {
+        emit showInterface();
+    }
     // Call parent class for the setNewStartupId stuff
     return KUniqueApplication::newInstance();
 }
