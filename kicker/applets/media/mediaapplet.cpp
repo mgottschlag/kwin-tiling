@@ -23,7 +23,7 @@
 #include <kconfig.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
-#include <kaboutapplication.h>
+#include <kaboutapplicationdialog.h>
 #include <kdebug.h>
 #include <kmenu.h>
 #include <kiconloader.h>
@@ -103,7 +103,7 @@ void MediaApplet::about()
 	               I18N_NOOP("Good mentor, patient and helpful. Thanks for all!"),
 	               "jowenn@kde.org");
 
-	KAboutApplication dialog(&data);
+	KAboutApplicationDialog dialog(&data);
 	dialog.exec();
 }
 

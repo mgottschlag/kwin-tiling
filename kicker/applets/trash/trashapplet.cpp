@@ -22,7 +22,7 @@
 #include <kconfig.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
-#include <kaboutapplication.h>
+#include <kaboutapplicationdialog.h>
 #include <kdebug.h>
 #include <kmenu.h>
 #include <kiconloader.h>
@@ -89,7 +89,7 @@ void TrashApplet::about()
 	               "ervin ipsquad net",
 	               "http://ervin.ipsquad.net");
 
-	KAboutApplication dialog(&data);
+	KAboutApplicationDialog dialog(&data);
 	dialog.exec();
 }
 

@@ -18,7 +18,7 @@
   MA  02110-1301, USA.
 */
 
-#include <kaboutapplication.h>
+#include <kaboutapplicationdialog.h>
 #include <KApplication>
 #include <kactioncollection.h>
 #include <kbugreport.h>
@@ -475,7 +475,7 @@ void TopLevel::reportBug()
 
 void TopLevel::aboutModule()
 {
-    KAboutApplication dlg(_active->aboutData());
+    KAboutApplicationDialog dlg(_active->aboutData());
     dlg.exec();
 }
 

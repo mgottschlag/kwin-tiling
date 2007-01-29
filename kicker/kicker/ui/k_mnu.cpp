@@ -39,7 +39,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QStyle>
 #include <QStyleOptionFrame>
 #include <kapplication.h>
-#include <kaboutkde.h>
 #include <kactioncollection.h>
 #include <kbookmarkmenu.h>
 #include <kconfig.h>

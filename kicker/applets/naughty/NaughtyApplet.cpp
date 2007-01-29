@@ -32,7 +32,7 @@
 #include <kiconloader.h>
 #include <kglobal.h>
 #include <kconfig.h>
-#include <kaboutapplication.h>
+#include <kaboutapplicationdialog.h>
 #include <kaboutdata.h>
 #include <klocale.h>
 #include <kmenu.h>
@@ -168,7 +168,7 @@ NaughtyApplet::about()
      "(C) 2000 Rik Hemsley (rikkus) <rik@kde.org>"
    );
 
-  KAboutApplication a(&about, this);
+  KAboutApplicationDialog a(&about, this);
   a.exec();
 }
 

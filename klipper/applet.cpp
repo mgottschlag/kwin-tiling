@@ -20,7 +20,7 @@
 */
 #include "applet.h"
 
-#include <kaboutapplication.h>
+#include <kaboutapplicationdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kconfig.h>
@@ -97,7 +97,7 @@ void KlipperApplet::help()
 
 void KlipperApplet::about()
 {
-    KAboutApplication about(0L,this);
+    KAboutApplicationDialog about(0L,this);
     about.exec();
 }
 

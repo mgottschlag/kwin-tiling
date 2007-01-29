@@ -41,7 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kapplication.h>
-#include <kaboutapplication.h>
+#include <kaboutapplicationdialog.h>
 #include <kaboutdata.h>
 #include <kdialog.h>
 #include <kglobal.h>
@@ -510,7 +510,7 @@ void QuickLauncher::about()
                      I18N_NOOP("A simple application launcher"),
                      KAboutData::License_GPL_V2,
                      "(C) 2000 Bill Nagel\n(C) 2004 Dan Bullok\n(C) 2005 Fred Schaettgen");
-    KAboutApplication a(&about, this);
+    KAboutApplicationDialog a(&about, this);
     a.exec();
 }
 
