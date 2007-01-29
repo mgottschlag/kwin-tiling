@@ -21,6 +21,13 @@ set(kcontrol_SRCS
    kcrootonly.cpp 
    searchwidget.cpp )
 
+set(kcontrol_adaptor ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kcontrol/moduleIface.h)
+set(kcontrol_xml ${CMAKE_CURRENT_BINARY_DIR}/org.kde.KControl.xml)
+ADD_CUSTOM_COMMAND(OUTPUT ${kcontrol_xml}
+       COMMAND ${QT_DBUSCPP2XML_EXECUTABLE} ${kcontrol_adaptor} > ${kcontrol_xml}
+       DEPENDS ${kcontrol_adaptor})
+QT4_ADD_DBUS_INTERFACE( kcontrol_SRCS ${kcontrol_xml} kcontrol_interface )
+
 set(kcontrol_KDEINIT_SRCS ${kcontrol_SRCS})
 
 kde4_automoc(${kcontrol_KDEINIT_SRCS})

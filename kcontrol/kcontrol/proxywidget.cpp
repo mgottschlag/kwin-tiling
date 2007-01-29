@@ -45,7 +45,7 @@
 #include <Q3WhatsThis>
 #include <kdebug.h>
 #include <QTimer>
-
+#include <kcontrol_interface.h>
 class WhatsThis : public Q3WhatsThis
 {
 public:
@@ -278,8 +278,8 @@ void ProxyWidget::helpClicked()
 	  emit helpRequest();
   else
   {
-     QDBusInterface kcontrol("org.kde.kcontrol", "/moduleIface", "org.kde.kcontrol");
-     kcontrol.call( "invokeHelp" );
+     OrgKdeKcontrolKcontrolInterface  kcontrol("org.kde.kcontrol", "/moduleIface", QDBusConnection::sessionBus());
+     kcontrol.invokeHelp();
   }
 }
 
