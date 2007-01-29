@@ -97,6 +97,9 @@ int main(int argc, char* argv[])
                         "aseigo@kde.org");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
+    if (!KUniqueApplication::start()) {
+        return 0;
+    }
     KRunnerApp app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
 
     kDebug() << "Attempting to create KScreenSaverSettings::instance()" << endl;

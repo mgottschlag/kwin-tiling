@@ -21,6 +21,7 @@
 #include <QResizeEvent>
 #include <QSvgRenderer>
 #include <QVBoxLayout>
+#include <QShortcut>
 
 #include <kdebug.h>
 #include <KDialog>
@@ -84,6 +85,8 @@ kDebug() << "checkForCompositionManager " << m_compositeWatcher->owner() << " !=
 
     new InterfaceAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/Interface", this);
+
+    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(hide()));
 
     resize(400, 250); //FIXME
 }
