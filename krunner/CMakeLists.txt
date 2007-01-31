@@ -32,7 +32,10 @@ qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngi
 
 kde4_automoc(${krunner_SRCS})
 kde4_add_executable(krunner ${krunner_SRCS})
-target_link_libraries(krunner plasma kworkspace ${KDE4_KDEUI_LIBS} ${X11_Xss_LIB})
+target_link_libraries(krunner plasma kworkspace ${KDE4_KDEUI_LIBS})
+if(X11_Xss_LIB)
+  target_link_libraries(krunner ${X11_Xss_LIB})
+endif(X11_Xss_LIB)
 
 add_subdirectory( lock )
 
