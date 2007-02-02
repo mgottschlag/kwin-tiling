@@ -152,8 +152,7 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
     app.exec();
 
     delete target;
-    if ( demoWidget )
-        delete demoWidget;
+    delete demoWidget;
 
     return 0;
 }
