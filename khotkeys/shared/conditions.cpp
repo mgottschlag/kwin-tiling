@@ -135,6 +135,16 @@ Condition_list_base::Condition_list_base( KConfig& cfg_P, Condition_list_base* p
     cfg_P.setGroup( save_cfg_group );
     }
 
+Condition_list_base::~Condition_list_base()
+    {
+    while( !isEmpty())
+        {
+        Condition* c = getFirst();
+        remove( c );
+        delete c;
+        }
+    }
+    
 void Condition_list_base::cfg_write( KConfig& cfg_P ) const
     {
     QString save_cfg_group = cfg_P.group();

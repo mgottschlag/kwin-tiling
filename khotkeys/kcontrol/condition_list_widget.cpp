@@ -89,8 +89,8 @@ Condition_list_widget::~Condition_list_widget()
 void Condition_list_widget::clear_data()
     {
     comment_lineedit->clear();
-    conditions_listview->clear();
     conditions.clear();
+    conditions_listview->clear();
     }
 
 void Condition_list_widget::set_data( const Condition_list* data_P )
@@ -101,8 +101,8 @@ void Condition_list_widget::set_data( const Condition_list* data_P )
         return;
         }
     comment_lineedit->setText( data_P->comment());
-    conditions_listview->clear();
     conditions.clear();
+    conditions_listview->clear();
     insert_listview_items( data_P, conditions_listview, NULL );
 #ifdef KHOTKEYS_DEBUG
     kDebug( 1217 ) << "Condition_list_widget::set_data():" << endl;
@@ -285,12 +285,14 @@ Condition_list_item* Condition_list_widget::create_listview_item( Condition* con
         if( parent1_P == NULL )
             {
             parent2_P->setOpen( true );
-            conditions.append( new_cond ); // we own it, not the listview
+            if( new_cond->parent() == NULL ) // own only toplevels, they own the rest
+                conditions.append( new_cond ); // we own it, not the listview
             return new Condition_list_item( parent2_P, after_P, new_cond );
             }
         else
             {
-            conditions.append( new_cond ); // we own it, not the listview
+            if( new_cond->parent() == NULL )
+                conditions.append( new_cond ); // we own it, not the listview
             return new Condition_list_item( parent1_P, after_P, new_cond );
             }
         }
@@ -319,9 +321,11 @@ void Condition_list_widget::edit_listview_item( Condition_list_item* item_P )
         Condition* old_cond = item_P->condition();
         item_P->set_condition( new_condition );
         int pos = conditions.find( old_cond );
-        assert( pos >= 0 );
-        conditions.remove( pos ); // we own it
-        conditions.insert( pos, new_condition );
+        if( pos >= 0 )
+            {
+            conditions.remove( pos ); // we own it
+            conditions.insert( pos, new_condition );
+            }
         item_P->widthChanged( 0 );
         conditions_listview->repaintItem( item_P );
         }

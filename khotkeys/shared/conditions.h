@@ -214,12 +214,6 @@ Condition_list_base::Condition_list_base( const Q3PtrList< Condition >& children
     {
     }
 
-inline
-Condition_list_base::~Condition_list_base()
-    {
-    setAutoDelete( true );
-    }
-    
 // Condition_list
 
 inline

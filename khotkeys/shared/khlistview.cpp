@@ -100,8 +100,8 @@ void KHListView::insertItem( Q3ListViewItem* item_P )
 
 void KHListView::clearSelection()
     {
-    saved_current_item = NULL;
     K3ListView::clearSelection();
+    slot_current_changed( currentItem());
     }
 
 // items are often inserted using the QListViewItem constructor,
