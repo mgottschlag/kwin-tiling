@@ -113,7 +113,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     delete gestures_exclude;
     gestures_exclude = new Windowdef_list( cfg_P );
 	cfg_P.setGroup( "Voice" );
-	voice_shortcut=KShortcut( cfg_P.readEntry("Shortcut" , "Shift+F12")  );
+	voice_shortcut=KShortcut( cfg_P.readEntry("Shortcut" , "")  );
     return true;
     }
 
