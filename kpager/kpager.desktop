@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=KPager
+Name[x-test]=xxKPagerxx
+GenericName=Desktop Pager
+GenericName[el]=Αλλαγή Επιφάνειας Εργασίας
+GenericName[fr]=Gestionnaire de bureaux virtuels
+GenericName[x-test]=xxDesktop Pagerxx
+
+Icon=kpager
+Type=Application
+Exec=kpager
+DocPath=kpager/index.html
+Terminal=false
+X-KDE-StartupNotify=false
+X-DBUS-StartupType=Unique
+Categories=Qt;KDE;Utility;X-KDE-Utilities-Desktop;

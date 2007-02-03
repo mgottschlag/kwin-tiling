@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/khotkeys/shared/ )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/khotkeys/shared/ )
 
 
 ########### install files ###############

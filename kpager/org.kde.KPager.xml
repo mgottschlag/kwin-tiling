@@ -1,0 +1,13 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.KPager">
+    <method name="showAt">
+      <arg name="x" type="i" direction="in"/>
+      <arg name="y" type="i" direction="in"/>
+    </method>
+    <method name="toggleShow">
+	  <arg name="i" type="i" direction="in"/>
+      <arg name="y" type="i" direction="in"/>
+    </method>
+  </interface>
+</node>

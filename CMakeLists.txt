@@ -34,6 +34,7 @@ add_subdirectory( klipper )
 add_subdirectory( kmenuedit )
 add_subdirectory( kwin )
 add_subdirectory( plasma )
+add_subdirectory( khotkeys )
 
 # apps we need to figure out what to do with
 add_subdirectory( kcontrol )
@@ -49,6 +50,7 @@ add_subdirectory( menu )
 # apps on the chopping block
 add_subdirectory( kdesktop )
 add_subdirectory( kicker)
+add_subdirectory( kpager )
 
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 	add_subdirectory( kdm )
