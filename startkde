@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#  DEFAULT KDE STARTUP SCRIPT ( KDE-3.4 )
+#  DEFAULT KDE STARTUP SCRIPT ( KDE-3.80.2 )
 #
 
 # When the X server dies we get a HUP signal from xinit. We must ignore it
