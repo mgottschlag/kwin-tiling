@@ -157,9 +157,11 @@ TopLevel::TopLevel()
       connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
+#ifdef Q_WS_X11      
       KWin::setIcons(  winId(),
 		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 32 ),
 		       KIconLoader::global()->loadIcon("hwinfo", K3Icon::NoGroup, 16 ) );
+#endif
   }
   else
   {
