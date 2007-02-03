@@ -3,7 +3,6 @@ configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )
 
 set(kdmlib_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kdmlib/dmctl.cpp )
 
-set(libkrd_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/krdb/krdb.cpp)
 
 set( backgroundlib_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgrender.cpp

@@ -47,10 +47,10 @@
 #include <kstyle.h>
 
 #include "krdb.h"
-
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <QX11Info>
-
+#endif
 inline const char * gtkEnvVar(int version)
 {
     return 2==version ? "GTK2_RC_FILES" : "GTK_RC_FILES";
@@ -580,7 +580,7 @@ void runRdb( uint flags )
 
     delete settings;
     QApplication::flush();
-
+#ifdef Q_WS_X11
     // We let KIPC take care of ourselves, as we are in a KDE app with
     // QApp::setDesktopSettingsAware(false);
     // Instead of calling QApp::x11_apply_settings() directly, we instead
@@ -605,6 +605,7 @@ void runRdb( uint flags )
 		     (unsigned char*) stamp.buffer().data(),
 		     stamp.buffer().size() );
     QApplication::flush();
+#endif
   }
 }
 

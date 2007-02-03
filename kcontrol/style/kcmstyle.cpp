@@ -43,7 +43,9 @@
 #include <qpixmapcache.h>
 
 #include <QPushButton>
+#ifdef Q_WS_X11
 #include <QX11Info>
+#endif
 #include <QtDBus/QtDBus>
 
 #include <kapplication.h>
@@ -63,8 +65,9 @@
 
 #include "kcmstyle.h"
 #include "styleconfdialog.h"
-
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
+#endif
 #include <kvbox.h>
 // X11 namespace cleanup
 #undef Below
@@ -95,6 +98,7 @@ extern "C"
         runRdb( flags );
 
         // Write some Qt root property.
+#ifdef Q_WS_X11
 #ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
         QByteArray properties;
         QDataStream d(&properties, QIODevice::WriteOnly);
@@ -108,6 +112,7 @@ extern "C"
             XChangeProperty(QX11Info::display(), RootWindow(QX11Info::display(), i),
                             a, a, 8, PropModeReplace,
                             (unsigned char*) properties.data(), properties.size());
+#endif
 #endif
     }
 }
