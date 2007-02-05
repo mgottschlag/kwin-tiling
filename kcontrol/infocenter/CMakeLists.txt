@@ -1,6 +1,5 @@
 
 add_subdirectory( info ) 
-add_subdirectory( ioslaveinfo ) 
 add_subdirectory( nics ) 
 add_subdirectory( pics ) 
 add_subdirectory( usbview ) 
