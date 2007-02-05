@@ -4,7 +4,6 @@ project(kcontrol)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/background/  )
 
 macro_optional_find_package(Freetype)
-macro_optional_find_package(OpenSSL)
 
 set(libkxftconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/fonts/kxftconfig.cpp )
 
@@ -31,9 +30,6 @@ add_subdirectory( colors )
 add_subdirectory( energy )
 add_subdirectory( fonts )
 add_subdirectory( screensaver )
-if(OPENSSL_FOUND)
-add_subdirectory( crypto )
-endif(OPENSSL_FOUND)
 add_subdirectory( smserver )
 add_subdirectory( keys )
 add_subdirectory( componentchooser )
