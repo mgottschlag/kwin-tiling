@@ -392,6 +392,7 @@ bool CDisabledFonts::disable(const TFont &font)
 
             itsDisabledFonts.add(newFont);
             itsModified=true;
+            save();
             return true;
         }
         else
@@ -412,6 +413,7 @@ bool CDisabledFonts::disable(const TFont &font)
             {
                 itsDisabledFonts.add(newFont);
                 itsModified=true;
+                save();
                 return true;
             }
         }
