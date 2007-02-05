@@ -28,6 +28,9 @@
 #include <QStringList>
 #include <QFontDatabase>
 #include <kprinter.h>
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
 
 // Enable the following to allow printing of non-installed fonts. Doesnt seem to work :-(
 //#define KFI_PRINT_APP_FONTS
@@ -41,6 +44,11 @@ namespace Print
 static const int constMarginLineBefore=1;
 static const int constMarginLineAfter=2;
 static const int constMarginFont=4;
+
+inline bool sufficientSpace(int y, int pageHeight, int size)
+{
+    return (y+constMarginFont+size)<pageHeight;
+}
 
 static bool sufficientSpace(int y, int titleFontHeight, const int *sizes, int pageHeight, int size)
 {
@@ -61,6 +69,10 @@ static bool sufficientSpace(int y, int titleFontHeight, const int *sizes, int pa
 
 void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent)
 {
+#ifdef HAVE_LOCALE_H
+    char *oldLocale=setlocale(LC_NUMERIC, "C"),
+#endif
+
     QList<Misc::TFont>::ConstIterator it(items.begin()),
                                       end(items.end());
 #ifdef KFI_PRINT_APP_FONTS
@@ -121,6 +133,7 @@ void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent)
                   y=margin,
                   oneSize[2]={size, 0};
         const int *sizes=oneSize;
+        bool      firstFont(true);
 
         if(0==size)
             sizes=CFcEngine::constScalableSizes;
@@ -144,7 +157,7 @@ void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent)
             painter.setFont(sans);
             QCoreApplication::processEvents(QEventLoop::ExcludeUserInput, 0);
 
-            if(!sufficientSpace(y, painter.fontMetrics().height(), sizes, pageHeight, size))
+            if(!firstFont && !sufficientSpace(y, painter.fontMetrics().height(), sizes, pageHeight, size))
             {
                 printer.newPage();
                 y=margin;
@@ -204,11 +217,17 @@ void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent)
                     painter.setFont(font);
                 }
 #endif
-                painter.drawText(margin, y, str);
-                if(sizes[s+1])
-                    y+=constMarginFont;
+                if(sufficientSpace(y, pageHeight, sizes[s]))
+                {
+                    painter.drawText(margin, y, str);
+                    if(sizes[s+1])
+                        y+=constMarginFont;
+                }
+                else
+                    break;
             }
-            y+=(sizes[s-1]<25 ? 14 : 28);
+            y+=(s<1 || sizes[s-1]<25 ? 14 : 28);
+            firstFont=false;
         }
 
         painter.end();
@@ -222,6 +241,11 @@ void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent)
             else
                 settings.remove("/qt/embedFonts");
     }
+#ifdef HAVE_LOCALE_H
+    if(oldLocale)
+        setlocale(LC_NUMERIC, oldLocale);
+#endif
+
 }
 
 }
