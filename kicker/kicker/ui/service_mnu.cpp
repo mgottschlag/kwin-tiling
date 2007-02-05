@@ -51,7 +51,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <ksycocaentry.h>
 #include <kservice.h>
 #include <ktoolinvocation.h>
-#include <kio/job.h>
+#include <kio/copyjob.h>
 #include <kauthorized.h>
 #include <kworkspace.h>
 #include <QtDBus/QtDBus>
