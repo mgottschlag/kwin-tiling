@@ -58,7 +58,8 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
            : CActionDialog(parent),
              itsIt(itsUrls.end()),
              itsEnd(itsIt),
-             itsAutoSkip(false)
+             itsAutoSkip(false),
+             itsCancelClicked(false)
 {
     // Set core dump size to 0 because we will have root's password in memory.
     struct rlimit rlim;
@@ -208,7 +209,7 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)
     itsProgress->show();
     itsCmd=cmd;
     itsStatusLabel->setText(QString());
-    itsAutoSkip=false;
+    itsAutoSkip=itsCancelClicked=false;
     QTimer::singleShot(0, this, SLOT(doNext()));
     return CActionDialog::exec();
 }
@@ -233,7 +234,7 @@ void CJobRunner::doNext()
                 stream << (*itsIt);
         }
         else
-            itsProgress->setValue(itsProgress->value()+1);
+            itsProgress->setValue(itsProgress->maximum());
 
         itsUrls.empty();
         itsIt=itsEnd=itsUrls.end();
@@ -286,6 +287,15 @@ void CJobRunner::doNext()
 
 void CJobRunner::jobResult(KJob *job)
 {
+    if(itsCancelClicked)
+    {
+        stopAnimation();
+        if(KMessageBox::Yes==KMessageBox::warningYesNo(this, i18n("Are you sure you wish to cancel?")))
+            itsIt=itsEnd;
+        itsCancelClicked=false;
+        startAnimation();
+    }
+
     // itsIt will equal itsEnd if user decided to cancel the current op
     if(itsIt==itsEnd)
         doNext();
@@ -327,19 +337,15 @@ void CJobRunner::jobResult(KJob *job)
             }
         }
 
+        startAnimation();
         if(cont)
-        {
-            startAnimation();
             ++itsIt;
-            doNext();
-        }
         else
         {
             itsUrls.empty();
             itsIt=itsEnd=itsUrls.end();
-            hide();
-            reject();
         }
+        doNext();
     }
 }
 
@@ -362,9 +368,8 @@ void CJobRunner::cfgResult(KJob *job)
 
 void CJobRunner::slotButtonClicked(int)
 {
-    if(itsIt!=itsEnd &&
-       KMessageBox::Yes==KMessageBox::warningYesNo(this, i18n("Are you sure you wish to cancel?")))
-        itsIt=itsEnd;
+    if(itsIt!=itsEnd)
+        itsCancelClicked=true;
 }
 
 //

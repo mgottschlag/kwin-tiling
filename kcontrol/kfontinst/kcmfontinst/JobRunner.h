@@ -86,7 +86,8 @@ class CJobRunner : public CActionDialog
     QString                 itsPasswd;
     QLabel                  *itsStatusLabel;
     QProgressBar            *itsProgress;
-    bool                    itsAutoSkip;
+    bool                    itsAutoSkip,
+                            itsCancelClicked;
 };
 
 }
