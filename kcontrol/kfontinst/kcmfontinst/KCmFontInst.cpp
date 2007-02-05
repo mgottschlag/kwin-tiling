@@ -45,6 +45,7 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kio/job.h>
+#include <kio/copyjob.h>
 #include <kio/netaccess.h>
 #include <kpushbutton.h>
 #include <kguiitem.h>
