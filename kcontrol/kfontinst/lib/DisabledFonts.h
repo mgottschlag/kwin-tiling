@@ -70,7 +70,7 @@ class KFONTINST_EXPORT CDisabledFonts
         TFont(const Misc::TFont &f) : Misc::TFont(f) { }
 
         bool operator==(const TFont &o) const { return styleInfo==o.styleInfo && family==o.family; }
-        bool load(QDomElement &elem, bool ignoreFiles=false);
+        bool load(QDomElement &elem);
 
         const QString & getName() const;
 

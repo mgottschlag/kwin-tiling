@@ -293,7 +293,7 @@ bool CDisabledFonts::TFile::load(QDomElement &elem)
     return false;
 }
 
-bool CDisabledFonts::TFont::load(QDomElement &elem, bool ignoreFiles)
+bool CDisabledFonts::TFont::load(QDomElement &elem)
 {
     if(elem.hasAttribute(FAMILY_ATTR))
     {
@@ -325,7 +325,14 @@ bool CDisabledFonts::TFont::load(QDomElement &elem, bool ignoreFiles)
 
         styleInfo=FC::createStyleVal(weight, width, slant);
 
-        if(!ignoreFiles)
+        if(elem.hasAttribute(PATH_ATTR))
+        {
+            TFile file;
+
+            if(file.load(elem))
+                files.add(file);
+        }
+        else
             for(QDomNode n=elem.firstChild(); !n.isNull(); n=n.nextSibling())
             {
                 QDomElement ent=n.toElement();
@@ -339,7 +346,7 @@ bool CDisabledFonts::TFont::load(QDomElement &elem, bool ignoreFiles)
                 }
             }
 
-        return ignoreFiles || files.count()>0;
+        return files.count()>0;
     }
 
     return false;
@@ -543,11 +550,10 @@ static QString contractHome(QString path)
 
 QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFile &f)
 {
-    s << "    <"FILE_TAG" "PATH_ATTR"=\"" << contractHome(f.path) << "\" ";
+    s << PATH_ATTR"=\"" << contractHome(f.path) << "\" ";
 
     if(f.face>0)
         s << FACE_ATTR"=\"" << f.face << "\" ";
-    s << "/>" << endl;
 
     return s;
 }
@@ -571,7 +577,7 @@ QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFont &f)
                 fIt(saveFiles.begin()),
                 fEnd(saveFiles.end());
 
-        s << "  <"FONT_TAG" "FAMILY_ATTR"=\"" << f.family << "\" ";
+        s << " <"FONT_TAG" "FAMILY_ATTR"=\"" << f.family << "\" ";
 
         if(KFI_NULL_SETTING!=weight)
             s << WEIGHT_ATTR"=\"" << weight << "\" ";
@@ -579,11 +585,16 @@ QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFont &f)
             s << WIDTH_ATTR"=\"" << width << "\" ";
         if(KFI_NULL_SETTING!=slant)
             s << SLANT_ATTR"=\"" << slant << "\" ";
-        s << '>' << endl;
 
-        for(; fIt!=fEnd; ++fIt)
-            s << (*(*fIt));
-        s << "  </"FONT_TAG">" << endl;
+        if(1==saveFiles.count())
+            s << (*(*fIt)) << "/>" << endl;
+        else
+        {
+            s << '>' << endl;
+            for(; fIt!=fEnd; ++fIt)
+                s << "  <"FILE_TAG" " << (*(*fIt)) << "/>" << endl;
+            s << " </"FONT_TAG">" << endl;
+        }
     }
 
     return s;
