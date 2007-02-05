@@ -654,10 +654,12 @@ void KCMStyle::save()
 
 	if (m_bEffectsDirty) {
 		KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
+#ifdef Q_WS_X11		
         // Send signal to all kwin instances
         QDBusMessage message =
            QDBusMessage::createSignal("/KWin", "org.kde.KWin", "reloadConfig");
         QDBusConnection::sessionBus().send(message);
+#endif		
 	}
 
 	//update kicker to re-used tooltips kicker parameter otherwise, it overwritted
@@ -665,10 +667,11 @@ void KCMStyle::save()
 	QByteArray data;
 #ifdef __GNUC__	
 #warning "kde4: who is org.kde.kicker?"
-#endif	
+#endif
+#ifdef Q_WS_X11	
 	QDBusInterface kicker( "org.kde.kicker", "/kicker");
 	kicker.call("configure");
-
+#endif
 	// Clean up
 	m_bEffectsDirty  = false;
 	m_bToolbarsDirty = false;
