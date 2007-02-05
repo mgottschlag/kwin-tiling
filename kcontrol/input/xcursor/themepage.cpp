@@ -30,6 +30,7 @@
 #include <kmessagebox.h>
 #include <kurlrequesterdialog.h>
 #include <kio/job.h>
+#include <kio/deletejob.h>
 #include <kio/netaccess.h>
 #include <ktar.h>
 
@@ -245,9 +246,8 @@ void ThemePage::removeClicked()
 		return;
 
 	// Delete the theme from the harddrive
-        KUrl u;
-        u.setPath( themeInfo[  selectedTheme ]->path );
-	KIO::del( u );
+	KUrl u( themeInfo[ selectedTheme ]->path );
+	KIO::del( u ); // async
 
 	// Remove the theme from the listview and from the themeinfo dict
 	delete listview->findItem( selectedTheme, DirColumn );

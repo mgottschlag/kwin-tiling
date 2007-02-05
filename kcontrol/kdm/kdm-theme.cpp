@@ -23,6 +23,7 @@
 #include <kdialog.h>
 #include <kglobal.h>
 #include <kio/job.h>
+#include <kio/deletejob.h>
 #include <kio/netaccess.h>
 #include <klocale.h>
 #include <kmessagebox.h>
