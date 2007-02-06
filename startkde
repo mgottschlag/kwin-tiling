@@ -297,6 +297,10 @@ KDE_FULL_SESSION=true
 export KDE_FULL_SESSION
 xprop -root -f KDE_FULL_SESSION 8t -set KDE_FULL_SESSION true
 
+KDE_SESSION_VERSION=4
+export KDE_SESSION_VERSION
+xprop -root -f KDE_SESSION_VERSION 32c -set KDE_SESSION_VERSION 4
+
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
 # kdeinit unsets this variable before loading applications.
 LD_BIND_NOW=true kdeinit +kcminit_startup
