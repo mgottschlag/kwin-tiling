@@ -24,6 +24,7 @@
 #include "Misc.h"
 #include "Fc.h"
 #include "JobRunner.h"
+#include "FontList.h"
 #include <kapplication.h>
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -51,7 +52,7 @@
 namespace KFI
 {
 
-enum EColumns
+enum EDialogColumns
 {
     COL_FILE,
     COL_TRASH,
@@ -60,11 +61,12 @@ enum EColumns
     COL_LINK
 };
 
-CDuplicatesDialog::CDuplicatesDialog(QWidget *parent, CJobRunner *jr)
+CDuplicatesDialog::CDuplicatesDialog(QWidget *parent, CJobRunner *jr, CFontList *fl)
                  : CActionDialog(parent),
                    itsModifiedSys(false),
                    itsModifiedUser(false),
-                   itsRunner(jr)
+                   itsRunner(jr),
+                   itsFontList(fl)
 {
     setCaption(i18n("Duplicate Fonts"));
     setButtons(KDialog::Ok|KDialog::Cancel);
@@ -354,6 +356,12 @@ static uint qHash(const CFontFileList::TFile &key)
     return qHash(key.name.toLower());
 }
 
+CFontFileList::CFontFileList(CDuplicatesDialog *parent)
+             : QThread(parent),
+               itsTerminated(false)
+{
+}
+
 void CFontFileList::start()
 {
     if(!isRunning())
@@ -388,52 +396,26 @@ void CFontFileList::getDuplicateFonts(TFontMap &map)
 
 void CFontFileList::run()
 {
-    // Get font list from fontconfig...
-    FcInitReinitialize();
+    const QList<CFamilyItem *>          &families(((CDuplicatesDialog *)parent())->fontList()->families());
+    QList<CFamilyItem *>::ConstIterator it(families.begin()),
+                                        end(families.end());
 
-    FcPattern   *pat = FcPatternCreate();
-    FcObjectSet *os  = FcObjectSetBuild(FC_FILE, FC_FAMILY,
-                                        FC_WEIGHT,
-                                        FC_SCALABLE,
-#ifndef KFI_FC_NO_WIDTHS
-                                        FC_WIDTH,
-#endif
-                                        FC_SLANT, (void*)0);
-
-    FcFontSet   *fontList=FcFontList(0, pat, os);
-
-    FcPatternDestroy(pat);
-    FcObjectSetDestroy(os);
-
-    if(itsTerminated)
-        return;
-
-    if (fontList)
+    for(; it!=end; ++it)
     {
-        for (int i = 0; i < fontList->nfont && !itsTerminated; i++)
-        {
-            FcBool scalable;
+        QList<CFontItem *>::ConstIterator fontIt((*it)->fonts().begin()),
+                                          fontEnd((*it)->fonts().end());
 
-            if(FcResultMatch==FcPatternGetBool(fontList->fonts[i], FC_SCALABLE, 0, &scalable) && scalable)
+        for(; fontIt!=fontEnd; ++fontIt)
+            if(!(*fontIt)->isBitmap())
             {
-                QString fileName(FC::getFcString(fontList->fonts[i], FC_FILE));
+                Misc::TFont                font((*fontIt)->family(), (*fontIt)->styleInfo());
+                QStringList::ConstIterator fileIt((*fontIt)->files().begin()),
+                                           fileEnd((*fontIt)->files().end());
 
-                if(!fileName.isEmpty())
-                {
-                    Misc::TFont font(FC::getFcString(fontList->fonts[i], FC_FAMILY, 0),
-                                     FC::createStyleVal(FC::getFcInt(fontList->fonts[i],  FC_WEIGHT, 0, KFI_NULL_SETTING),
-#ifdef KFI_FC_NO_WIDTHS
-                                                        KFI_NULL_SETTING,
-#else
-                                                        FC::getFcInt(fontList->fonts[i],  FC_WIDTH, 0, KFI_NULL_SETTING),
-#endif
-                                                        FC::getFcInt(fontList->fonts[i],  FC_SLANT, 0, KFI_NULL_SETTING)));
-
-                    itsMap[font].append(fileName);
-                }
+                for(; fileIt!=fileEnd; ++fileIt)
+                    if(!Misc::isMetrics(*fileIt))
+                        itsMap[font].append(*fileIt);
             }
-        }
-        FcFontSetDestroy(fontList);
     }
 
     // if we have 2 fonts: /wibble/a.ttf and /wibble/a.TTF fontconfig only returns the 1st, so we
@@ -461,22 +443,6 @@ void CFontFileList::run()
 
         for(; folderIt!=folderEnd && !itsTerminated; ++folderIt)
             fileDuplicates(folderIt.key(), *folderIt);
-    }
-
-    if(!itsTerminated)
-    {
-        // Remove sym-links... ??
-
-        // Now get disabled list...
-        CDisabledFonts disabledFonts;
-
-        getFontList(disabledFonts);
-        if(!Misc::root() && !itsTerminated)
-        {
-            CDisabledFonts sysDisabledFonts(QString(), true);
-
-            getFontList(sysDisabledFonts);
-        }
     }
 
     emit finished();
@@ -513,21 +479,6 @@ void CFontFileList::fileDuplicates(const QString &folder, const QSet<TFile> &fil
             if(entry!=files.end())
                 (*((*entry).it)).append(fileInfo.absoluteFilePath());
         }
-    }
-}
-
-void CFontFileList::getFontList(CDisabledFonts &dis)
-{
-    CDisabledFonts::TFontList::ConstIterator it(dis.items().begin()),
-                                             end(dis.items().end());
-
-    for(; it!=end; ++it)
-    {
-        CDisabledFonts::TFileList::ConstIterator fIt((*it).files.begin()),
-                                                 fEnd((*it).files.end());
-
-        for(; fIt!=fEnd; ++fIt)
-            itsMap[*it].append((*fIt).path);
     }
 }
 

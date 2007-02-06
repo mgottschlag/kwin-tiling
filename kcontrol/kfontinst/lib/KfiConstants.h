@@ -70,6 +70,8 @@
 
 #define KFI_NULL_SETTING             0xFF
 
+#define KFI_FILE_LIST_SEPARATOR      ";"
+
 namespace KFI
 {
 
@@ -85,7 +87,8 @@ enum EUdsExtraEntries
 {
     UDS_EXTRA_FC_STYLE  = KIO::UDS_EXTRA,
     //UDS_EXTRA_FAMILY,
-    UDS_EXTRA_FILE_NAME
+    UDS_EXTRA_FILE_NAME,
+    UDS_EXTRA_FILE_LIST
 };
 
 }

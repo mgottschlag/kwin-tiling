@@ -179,7 +179,7 @@ class CFamilyItem : public CFontModelItem
     void                 touchThumbnail();
     const QString &      name() const                     { return itsName; }
     const QString &      icon() const                     { return itsIcon; }
-    QList<CFontItem *> & fonts()                          { return itsFonts; }
+    const QList<CFontItem *> & fonts() const              { return itsFonts; }
     void                 addFont(CFontItem *font);
     void                 removeFont(CFontItem *font);
     void                 refresh();
@@ -240,6 +240,7 @@ class CFontItem : public CFontModelItem
     const QPixmap *       pixmap(bool force=false);
     void                  clearPixmap()            { itsPixmap=NULL; }
     int                   rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
+    const QStringList &   files() const            { return itsFiles; }
 
     private:
 
@@ -253,6 +254,7 @@ class CFontItem : public CFontModelItem
                     itsDisplayStyleInfo;
     bool            itsBitmap,
                     itsEnabled;
+    QStringList     itsFiles;
 };
 
 class CFontListSortFilterProxy : public QSortFilterProxyModel

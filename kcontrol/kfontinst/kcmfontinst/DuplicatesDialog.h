@@ -26,8 +26,8 @@
 #include <QPixmap>
 #include <QThread>
 #include <QTreeWidget>
-#include "DisabledFonts.h"
 #include "ActionDialog.h"
+#include "Misc.h"
 
 class QTimer;
 class QLabel;
@@ -38,6 +38,8 @@ namespace KFI
 {
 
 class CJobRunner;
+class CFontList;
+class CDuplicatesDialog;
 
 class CFontFileList : public QThread
 {
@@ -69,7 +71,7 @@ class CFontFileList : public QThread
 
     public:
 
-    CFontFileList(QObject *parent) : QThread(parent), itsTerminated(false) { }
+    CFontFileList(CDuplicatesDialog *parent);
 
     void start();
     void terminate();
@@ -84,7 +86,6 @@ class CFontFileList : public QThread
 
     void run();
     void fileDuplicates(const QString &folder, const QSet<TFile> &files);
-    void getFontList(CDisabledFonts &dis);
 
     private:
 
@@ -135,12 +136,13 @@ class CDuplicatesDialog : public CActionDialog
 
     public:
 
-    CDuplicatesDialog(QWidget *parent, CJobRunner *jr);
+    CDuplicatesDialog(QWidget *parent, CJobRunner *jr, CFontList *fl);
 
     int   exec();
     bool  modifiedSys() const  { return itsModifiedSys; }
     bool  modifiedUser() const { return itsModifiedUser; }
 
+    const CFontList * fontList() const { return itsFontList; }
 
     private Q_SLOTS:
 
@@ -161,6 +163,7 @@ class CDuplicatesDialog : public CActionDialog
     QLabel            *itsLabel;
     CFontFileListView *itsView;
     CJobRunner        *itsRunner;
+    CFontList         *itsFontList;
 };
 
 }

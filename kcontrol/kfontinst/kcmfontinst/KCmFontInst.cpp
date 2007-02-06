@@ -988,7 +988,7 @@ void CKCmFontInst::previewMenu(const QPoint &pos)
 
 void CKCmFontInst::duplicateFonts()
 {
-    CDuplicatesDialog    dlg(this, itsRunner);
+    CDuplicatesDialog    dlg(this, itsRunner, itsFontList);
     CJobRunner::ItemList update;
 
     dlg.exec();

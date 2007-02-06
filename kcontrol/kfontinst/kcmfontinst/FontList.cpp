@@ -378,6 +378,13 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &st
     itsBitmap="application/x-font-pcf"==mime || "application/x-font-bdf"==mime;
     if(!Misc::root())
         setIsSystem(isSysFolder(url().path().section('/', 1, 1)));
+
+    QString fileList=udsEntry.stringValue((uint)UDS_EXTRA_FILE_LIST);
+
+    if(fileList.isEmpty())
+        itsFiles.append(itsFileName);
+    else
+        itsFiles=fileList.split(KFI_FILE_LIST_SEPARATOR);
 }
 
 void CFontItem::touchThumbnail()
@@ -1107,9 +1114,9 @@ bool CFontListSortFilterProxy::acceptFamily(CFamilyItem *fam) const
     if(CFamilyItem::DISABLED==fam->status() && !itsMgtMode)
         return false;
 
-    QList<CFontItem *>::Iterator it(fam->fonts().begin()),
-                                 end(fam->fonts().end());
-    bool                         familyMatch(matchString(fam->name(), itsFilterText));
+    QList<CFontItem *>::ConstIterator it(fam->fonts().begin()),
+                                      end(fam->fonts().end());
+    bool                              familyMatch(matchString(fam->name(), itsFilterText));
 
     for(; it!=end; ++it)
         if(acceptFont(*it, !familyMatch))
