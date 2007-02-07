@@ -1116,8 +1116,13 @@ bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkFontText) co
                                                end(fnt->files().end());
 
                     for(; it!=end && !fontMatch; ++it)
-                        if(0==Misc::getFile(*it).indexOf(itsFilterText, 0, Qt::CaseInsensitive))
+                    {
+                        QString file(Misc::getFile(*it));
+                        int     pos(Misc::isHidden(file) ? 1 : 0);
+
+                        if(pos==file.indexOf(itsFilterText, pos, Qt::CaseInsensitive))
                             fontMatch=true;
+                    }
                     break;
                 }
                 case CFontFilter::CRIT_LOCATION:
