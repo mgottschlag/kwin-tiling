@@ -38,6 +38,7 @@
 #include "Misc.h"
 #include "FontLister.h"
 #include "JobRunner.h"
+#include "FontFilter.h"
 
 class KFileItem;
 class KFileItemList;
@@ -267,7 +268,7 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
     virtual ~CFontListSortFilterProxy() { }
 
     QVariant         data(const QModelIndex &idx, int role) const;
-    bool             acceptFont(CFontItem *fnt, bool checkStyleText) const;
+    bool             acceptFont(CFontItem *fnt, bool checkFontText) const;
     bool             acceptFamily(CFamilyItem *fam) const;
     bool             filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
     bool             lessThan(const QModelIndex &left, const QModelIndex &right) const;
@@ -275,6 +276,7 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
     CGroupListItem * filterGroup()   { return itsGroup; }
 
     void             setFilterText(const QString &text);
+    void             setFilterCriteria(CFontFilter::ECriteria crit);
     void             setMgtMode(bool on);
     bool             mgtMode() const { return itsMgtMode; }
 
@@ -288,10 +290,11 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
 
     private:
 
-    bool           itsMgtMode;
-    CGroupListItem *itsGroup;
-    QString        itsFilterText;
-    QTimer         *itsTimer;
+    bool                   itsMgtMode;
+    CGroupListItem         *itsGroup;
+    QString                itsFilterText;
+    CFontFilter::ECriteria itsFilterCriteria;
+    QTimer                 *itsTimer;
 };
 
 class CFontListView : public QTreeView
@@ -331,6 +334,7 @@ class CFontListView : public QTreeView
 
     void            refreshFilter();
     void            filterText(const QString &text);
+    void            filterCriteria(int crit);
 
     private Q_SLOTS:
 

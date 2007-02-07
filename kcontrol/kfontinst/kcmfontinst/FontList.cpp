@@ -1007,7 +1007,8 @@ inline bool matchString(const QString &str, const QString &pattern)
 CFontListSortFilterProxy::CFontListSortFilterProxy(QObject *parent, QAbstractItemModel *model)
                         : QSortFilterProxyModel(parent),
                           itsMgtMode(false),
-                          itsGroup(NULL)
+                          itsGroup(NULL),
+                          itsFilterCriteria(CFontFilter::CRIT_FAMILY)
 {
     setSourceModel(model);
     setSortCaseSensitivity(Qt::CaseInsensitive);
@@ -1093,17 +1094,47 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
     return QVariant();
 }
 
-bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkStyleText) const
+bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkFontText) const
 {
     if((fnt->isBitmap() && !itsMgtMode) ||
        (fnt->isHidden() && !itsMgtMode))
         return false;
 
-    if(itsGroup && (CGroupListItem::ALL!=itsGroup->type() || (!itsFilterText.isEmpty() && checkStyleText)))
+    if(itsGroup && (CGroupListItem::ALL!=itsGroup->type() || (!itsFilterText.isEmpty() && checkFontText)))
     {
-        bool styleMatch(!checkStyleText || matchString(fnt->style(), itsFilterText));
+        bool fontMatch(!checkFontText);
 
-        return itsGroup->hasFont(fnt) && styleMatch;
+        if(!fontMatch)
+            switch(itsFilterCriteria)
+            {
+                case CFontFilter::CRIT_STYLE:
+                    fontMatch=matchString(fnt->style(), itsFilterText);
+                    break;
+                case CFontFilter::CRIT_FILENAME:
+                {
+                    QStringList::ConstIterator it(fnt->files().begin()),
+                                               end(fnt->files().end());
+
+                    for(; it!=end && !fontMatch; ++it)
+                        if(0==Misc::getFile(*it).indexOf(itsFilterText, 0, Qt::CaseInsensitive))
+                            fontMatch=true;
+                    break;
+                }
+                case CFontFilter::CRIT_LOCATION:
+                {
+                    QStringList::ConstIterator it(fnt->files().begin()),
+                                               end(fnt->files().end());
+
+                    for(; it!=end && !fontMatch; ++it)
+                        if(0==Misc::getDir(*it).indexOf(itsFilterText, 0, Qt::CaseInsensitive))
+                            fontMatch=true;
+                    break;
+                }
+                default:
+                    break;
+            }
+
+        return fontMatch && itsGroup->hasFont(fnt);
     }
 
     return true;
@@ -1116,7 +1147,8 @@ bool CFontListSortFilterProxy::acceptFamily(CFamilyItem *fam) const
 
     QList<CFontItem *>::ConstIterator it(fam->fonts().begin()),
                                       end(fam->fonts().end());
-    bool                              familyMatch(matchString(fam->name(), itsFilterText));
+    bool                              familyMatch(CFontFilter::CRIT_FAMILY==itsFilterCriteria &&
+                                                  matchString(fam->name(), itsFilterText));
 
     for(; it!=end; ++it)
         if(acceptFont(*it, !familyMatch))
@@ -1136,7 +1168,8 @@ bool CFontListSortFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex
         {
             CFontItem *font=static_cast<CFontItem *>(index.internalPointer());
 
-            return acceptFont(font, !matchString(font->family(), itsFilterText));
+            return acceptFont(font, !(CFontFilter::CRIT_FAMILY==itsFilterCriteria &&
+                                      matchString(font->family(), itsFilterText)));
         }
         else
             return acceptFamily(static_cast<CFamilyItem *>(index.internalPointer()));
@@ -1216,6 +1249,16 @@ void CFontListSortFilterProxy::setFilterText(const QString &text)
         }
         else
             itsTimer->start(400);
+    }
+}
+
+void CFontListSortFilterProxy::setFilterCriteria(CFontFilter::ECriteria crit)
+{
+    if(crit!=itsFilterCriteria)
+    {
+        itsFilterCriteria=crit;
+        itsTimer->stop();
+        timeout();
     }
 }
 
@@ -1469,6 +1512,11 @@ void CFontListView::refreshFilter()
 void CFontListView::filterText(const QString &text)
 {
     itsProxy->setFilterText(text);
+}
+
+void CFontListView::filterCriteria(int crit)
+{
+    itsProxy->setFilterCriteria((CFontFilter::ECriteria)crit);
 }
 
 void CFontListView::stats(int &enabled, int &disabled, int &partial)

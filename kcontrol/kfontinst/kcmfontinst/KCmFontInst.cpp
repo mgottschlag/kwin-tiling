@@ -29,6 +29,7 @@
 #include "FontList.h"
 #include "DuplicatesDialog.h"
 #include "PreviewSelectAction.h"
+#include "FontFilter.h"
 #include <QGridLayout>
 #include <QBoxLayout>
 #include <QLabel>
@@ -59,7 +60,6 @@
 #include <ktemporaryfile.h>
 #include <kicon.h>
 #include <kprocess.h>
-#include <klineedit.h>
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
 #include <kmenu.h>
@@ -221,11 +221,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
         itsModeAct=toolbar->addWidget(itsModeControl);
     }
 
-    KLineEdit *lineed=new KLineEdit(toolbar);
-    lineed->setClickMessage(i18n("Filter"));
-    lineed->setClearButtonShown(true);
-    lineed->setTrapReturnKey(true);
-    toolbar->addWidget(lineed);
+    CFontFilter *filter=new CFontFilter(toolbar);
+    filter->setClickMessage(i18n("Filter"));
+    filter->setClearButtonShown(true);
+    filter->setTrapReturnKey(true);
+    toolbar->addWidget(filter);
 
     itsPreviewControl=new CPreviewSelectAction(this);
     toolbar->addAction(itsPreviewControl);
@@ -335,7 +335,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsSplitter->setSizes(sizes);
 
     // Connect signals...
-    connect(lineed, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
+    connect(filter, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
+    connect(filter, SIGNAL(criteriaChanged(int)), itsFontListView, SLOT(filterCriteria(int)));
     connect(itsGroupListView, SIGNAL(del()), SLOT(removeGroup()));
     connect(itsGroupListView, SIGNAL(print()), SLOT(printGroup()));
     connect(itsGroupListView, SIGNAL(enable()), SLOT(enableGroup()));
