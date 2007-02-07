@@ -31,6 +31,7 @@
 #include <QPaintEvent>
 #include <kurl.h>
 #include "KfiConstants.h"
+#include "FcEngine.h"
 
 namespace KFI
 {
@@ -52,10 +53,10 @@ class CFontPreview : public QWidget
                          unsigned long styleInfo=KFI_NO_STYLE_INFO, int face=1);
     void        showFont();
 
-    void        setUnicodeStart(int u) { itsUnicodeStart=u; }
 
     public Q_SLOTS:
 
+    void        setUnicodeRange(const QList<CFcEngine::TRange> &r);
     void        showFace(int face);
 
     Q_SIGNALS:
@@ -64,14 +65,14 @@ class CFontPreview : public QWidget
 
     private:
 
-    QPixmap   itsPixmap;
-    KUrl      itsCurrentUrl;
-    int       itsCurrentFace,
-              itsLastWidth,
-              itsLastHeight,
-              itsUnicodeStart,
-              itsStyleInfo;
-    QString   itsFontName;
+    QPixmap                  itsPixmap;
+    KUrl                     itsCurrentUrl;
+    int                      itsCurrentFace,
+                             itsLastWidth,
+                             itsLastHeight,
+                             itsStyleInfo;
+    QString                  itsFontName;
+    QList<CFcEngine::TRange> itsRange;
 };
 
 }

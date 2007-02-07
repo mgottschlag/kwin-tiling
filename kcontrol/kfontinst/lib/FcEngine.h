@@ -54,8 +54,14 @@ class KDE_EXPORT CFcEngine
 {
     public:
 
-    static const int STD_PREVIEW = -1;
-    static const int ALL_CHARS   = -2;
+    struct TRange
+    {
+        TRange(quint32 f=0, quint32 t=0) : from(f), to(t) { }
+        bool null() const { return 0==from && 0==to; }
+
+        quint32 from,
+                to;
+    };
 
     static CFcEngine * instance();
 
@@ -68,7 +74,7 @@ class KDE_EXPORT CFcEngine
     bool                  drawPreview(const QString &item, QPixmap &pix, int h,
                                       unsigned long style=KFI_NO_STYLE_INFO, int face=0);
     bool                  draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb,
-                               int unicodeStart=STD_PREVIEW, const QString &name=QString(),
+                               const QList<TRange> &range=QList<TRange>(), const QString &name=QString(),
                                unsigned long style=KFI_NO_STYLE_INFO);
     int                   getNumIndexes() { return itsIndexCount; } // Only valid after draw has been called!
     const QString &       getName(const KUrl &url, int faceNo=0);

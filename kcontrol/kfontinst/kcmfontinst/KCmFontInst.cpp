@@ -28,6 +28,7 @@
 #include "Misc.h"
 #include "FontList.h"
 #include "DuplicatesDialog.h"
+#include "PreviewSelectAction.h"
 #include <QGridLayout>
 #include <QBoxLayout>
 #include <QLabel>
@@ -189,36 +190,22 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     previewFrameLayout->addWidget(itsPreview);
 
     // Toolbar...
-    QActionGroup *previewAction=new QActionGroup(this);
-    KActionMenu  *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
-    KAction      *changeTextAct=new KAction(KIcon("text"), i18n("Change Preview Text..."), this),
-                 *duplicateFontsAct=new KAction(KIcon("filefind"), i18n("Scan For Duplicate Fonts..."), this);
-                 //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
-                 //*downloadFontsAct=new KAction(KIcon("down"), i18n("Download Fonts..."), this);
+    KActionMenu *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
+    KAction     *changeTextAct=new KAction(KIcon("text"), i18n("Change Preview Text..."), this),
+                *duplicateFontsAct=new KAction(KIcon("filefind"), i18n("Scan For Duplicate Fonts..."), this);
+                //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
+                //*downloadFontsAct=new KAction(KIcon("down"), i18n("Download Fonts..."), this);
 
-    itsPreviewSettingsMenu=new KActionMenu(this);
-    itsPreviewMenu=new KActionMenu(i18n("Preview Type"), this);
-    itsStandardPreview=new KToggleAction(i18n("Standard Preview"), this);
-    itsAllCharsPreview=new KToggleAction(i18n("All Characters"), this);
     itsToolsMenu=new KActionMenu(KIcon("wizard"), i18n("Tools"), this);
     itsMgtMode=new KToggleAction(KIcon("fonts"),
                                  i18n("Font Management Mode"), this),
     itsShowPreview=new KToggleAction(KIcon("thumbnail"), i18n("Show Preview"), this);
     settingsMenu->addAction(itsMgtMode);
     itsMgtMode->setChecked(true);
-    itsPreviewMenu->setEnabled(false);
     settingsMenu->addSeparator();
     settingsMenu->addAction(itsShowPreview);
-    settingsMenu->addAction(itsPreviewMenu);
     settingsMenu->addAction(changeTextAct);
     settingsMenu->setDelayed(false);
-    itsPreviewSettingsMenu->addAction(itsPreviewMenu);
-    itsPreviewSettingsMenu->addAction(changeTextAct);
-    itsStandardPreview->setChecked(true);
-    previewAction->addAction(itsStandardPreview);
-    previewAction->addAction(itsAllCharsPreview);
-    itsPreviewMenu->addAction(itsStandardPreview);
-    itsPreviewMenu->addAction(itsAllCharsPreview);
     itsToolsMenu->addAction(duplicateFontsAct);
     //itsToolsMenu->addAction(validateFontsAct);
     //itsToolsMenu->addAction(downloadFontsAct);
@@ -240,6 +227,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     lineed->setTrapReturnKey(true);
     toolbar->addWidget(lineed);
 
+    itsPreviewControl=new CPreviewSelectAction(this);
+    toolbar->addAction(itsPreviewControl);
     // Details - Groups...
     itsGroupList=new CGroupList(itsGroupsWidget);
     itsGroupListView=new CGroupListView(itsGroupsWidget, itsGroupList);
@@ -346,8 +335,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsSplitter->setSizes(sizes);
 
     // Connect signals...
-    connect(itsStandardPreview, SIGNAL(triggered(bool)), SLOT(standardPreview()));
-    connect(itsAllCharsPreview, SIGNAL(triggered(bool)), SLOT(allCharsPreview()));
     connect(lineed, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
     connect(itsGroupListView, SIGNAL(del()), SLOT(removeGroup()));
     connect(itsGroupListView, SIGNAL(print()), SLOT(printGroup()));
@@ -384,7 +371,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     connect(itsMgtMode, SIGNAL(toggled(bool)), SLOT(toggleFontManagement(bool)));
     connect(itsShowPreview, SIGNAL(toggled(bool)), SLOT(showPreview(bool)));
     connect(changeTextAct, SIGNAL(triggered(bool)), SLOT(changeText()));
-    connect(itsPreview, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(previewMenu(const QPoint &)));
+    connect(itsPreviewControl, SIGNAL(range(const QList<CFcEngine::TRange> &)),
+            itsPreview, SLOT(setUnicodeRange(const QList<CFcEngine::TRange> &)));
     connect(duplicateFontsAct, SIGNAL(triggered(bool)), SLOT(duplicateFonts()));
     //connect(validateFontsAct, SIGNAL(triggered(bool)), SLOT(validateFonts()));
     //connect(downloadFontsAct, SIGNAL(triggered(bool)), SLOT(downloadFonts()));
@@ -393,6 +381,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
 
     itsMgtMode->setChecked(itsConfig.readEntry(CFG_FONT_MGT_MODE, false));
     itsShowPreview->setChecked(itsConfig.readEntry(CFG_SHOW_PREVIEW, false));
+    showPreview(itsShowPreview->isChecked());
     itsPreviewWidget->setVisible(itsShowPreview->isChecked());
     toggleFontManagement(itsMgtMode->isChecked());
     selectMainGroup();
@@ -966,24 +955,7 @@ void CKCmFontInst::changeText()
 void CKCmFontInst::showPreview(bool s)
 {
     itsPreviewWidget->setVisible(s);
-    itsPreviewMenu->setEnabled(s);
-}
-
-void CKCmFontInst::standardPreview()
-{
-    itsPreview->setUnicodeStart(CFcEngine::STD_PREVIEW);
-    itsPreview->showFont();
-}
-
-void CKCmFontInst::allCharsPreview()
-{
-    itsPreview->setUnicodeStart(CFcEngine::ALL_CHARS);
-    itsPreview->showFont();
-}
-
-void CKCmFontInst::previewMenu(const QPoint &pos)
-{
-    itsPreviewSettingsMenu->menu()->popup(itsPreview->mapToGlobal(pos));
+    itsPreviewControl->setVisible(itsMgtMode->isOn() && s);
 }
 
 void CKCmFontInst::duplicateFonts()
@@ -1204,6 +1176,9 @@ void CKCmFontInst::toggleFontManagement(bool on)
         itsMgtMode->setChecked(!on);
     else
     {
+        if(!on)
+            itsPreviewControl->setStd();
+        itsPreviewControl->setVisible(on && itsShowPreview->isOn());
         itsToolsMenu->setVisible(on);
         itsFontListView->setMgtMode(on);
         if(itsModeControl)

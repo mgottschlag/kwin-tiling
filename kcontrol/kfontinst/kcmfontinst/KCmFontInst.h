@@ -56,6 +56,7 @@ class CFontPreview;
 class CUpdateDialog;
 class CFontListView;
 class CProgressBar;
+class CPreviewSelectAction;
 
 class CKCmFontInst : public KCModule
 {
@@ -85,9 +86,6 @@ class CKCmFontInst : public KCModule
     void    exported(KIO::Job *job, const KUrl &from, const KUrl &to);
     void    changeText();
     void    showPreview(bool s);
-    void    standardPreview();
-    void    allCharsPreview();
-    void    previewMenu(const QPoint &pos);
     void    duplicateFonts();
     void    print();
     void    printGroup();
@@ -114,45 +112,41 @@ class CKCmFontInst : public KCModule
 
     private:
 
-    QWidget           *itsGroupsWidget,
-                      *itsFontsWidget,
-                      *itsPreviewWidget;
-    QComboBox         *itsModeControl;
-    //                  *itsPreviewType;
-    QAction           *itsModeAct;
-    QSplitter         *itsSplitter;
-    CFontPreview      *itsPreview;
-    KConfig           itsConfig;
-    QLabel            *itsStatusLabel;
-    CProgressBar      *itsListingProgress;
-    CFontList         *itsFontList;
-    CFontListView     *itsFontListView;
-    CGroupList        *itsGroupList;
-    CGroupListView    *itsGroupListView;
-    KToggleAction     *itsMgtMode,
-                      *itsShowPreview,
-                      *itsStandardPreview,
-                      *itsAllCharsPreview;
-    KActionMenu       *itsToolsMenu,
-                      *itsPreviewMenu,
-                      *itsPreviewSettingsMenu;
-    KPushButton       *itsDeleteGroupControl,
-                      *itsEnableGroupControl,
-                      *itsDisableGroupControl,
-                      *itsAddFontControl,
-                      *itsDeleteFontControl,
-                      *itsEnableFontControl,
-                      *itsDisableFontControl;
-    QString           itsLastStatusBarMsg;
-    KIO::Job          *itsJob;
-    KProgressDialog   *itsProgress;
-    CUpdateDialog     *itsUpdateDialog;
-    KTempDir          *itsTempDir;
-    KProcess          *itsPrintProc;
-    KZip              *itsExportFile;
-    QSet<QString>     itsDeletedFonts;
-    KUrl::List        itsModifiedUrls;
-    CJobRunner        *itsRunner;
+    QWidget              *itsGroupsWidget,
+                         *itsFontsWidget,
+                         *itsPreviewWidget;
+    QComboBox            *itsModeControl;
+    QAction              *itsModeAct;
+    QSplitter            *itsSplitter;
+    CFontPreview         *itsPreview;
+    KConfig              itsConfig;
+    QLabel               *itsStatusLabel;
+    CProgressBar         *itsListingProgress;
+    CFontList            *itsFontList;
+    CFontListView        *itsFontListView;
+    CGroupList           *itsGroupList;
+    CGroupListView       *itsGroupListView;
+    CPreviewSelectAction *itsPreviewControl;
+    KToggleAction        *itsMgtMode,
+                         *itsShowPreview;
+    KActionMenu          *itsToolsMenu;
+    KPushButton          *itsDeleteGroupControl,
+                         *itsEnableGroupControl,
+                         *itsDisableGroupControl,
+                         *itsAddFontControl,
+                         *itsDeleteFontControl,
+                         *itsEnableFontControl,
+                         *itsDisableFontControl;
+    QString              itsLastStatusBarMsg;
+    KIO::Job             *itsJob;
+    KProgressDialog      *itsProgress;
+    CUpdateDialog        *itsUpdateDialog;
+    KTempDir             *itsTempDir;
+    KProcess             *itsPrintProc;
+    KZip                 *itsExportFile;
+    QSet<QString>        itsDeletedFonts;
+    KUrl::List           itsModifiedUrls;
+    CJobRunner           *itsRunner;
 };
 
 }

@@ -24,6 +24,7 @@
 #include "Misc.h"
 #include "KfiConstants.h"
 #include "FcEngine.h"
+#include "PreviewSelectAction.h"
 #include <klocale.h>
 #include <QBoxLayout>
 #include <QGridLayout>
@@ -50,7 +51,6 @@
 #include <kprinter.h>
 #include <ktoolbarlabelaction.h>
 #include <kactioncollection.h>
-#include <kselectaction.h>
 #include <kicon.h>
 #include <kprocess.h>
 #include <kmimetype.h>
@@ -126,18 +126,11 @@ CFontViewPart::CFontViewPart(QWidget *parent)
 
     KToolBarLabelAction *toolbarLabelAction = new KToolBarLabelAction(i18n("Display:"), this);
     actionCollection()->addAction("displayLabel", toolbarLabelAction);
-    itsDisplayTypeAction=new KSelectAction(KIcon("charset"), i18n("Standard preview"), this);
-    actionCollection()->addAction("displayType", itsDisplayTypeAction);
-    connect(itsDisplayTypeAction, SIGNAL(triggered(int)), SLOT(displayType()));
+    CPreviewSelectAction *displayTypeAction=new CPreviewSelectAction(this, true);
+    actionCollection()->addAction("displayType", displayTypeAction);
+    connect(displayTypeAction, SIGNAL(range(const QList<CFcEngine::TRange> &)),
+            SLOT(displayType(const QList<CFcEngine::TRange> &)));
 
-    QStringList items;
-    items.append(i18n("Standard preview"));
-    items.append(i18n("All characters"));
-
-    for(int i=0; i<256;++i)
-        items.append(i18n("Characters %1 to %2", i*256, (i*256)+255));
-    itsDisplayTypeAction->setItems(items);
-    itsDisplayTypeAction->setCurrentItem(0);
     setXMLFile("kfontviewpart.rc");
     setWidget(itsFrame);
     emit enablePrintAction(false);
@@ -322,22 +315,10 @@ void CFontViewPart::print()
     }
 }
 
-void CFontViewPart::displayType()
+void CFontViewPart::displayType(const QList<CFcEngine::TRange> &range)
 {
-    switch(itsDisplayTypeAction->currentItem())
-    {
-        case 0:
-            itsPreview->setUnicodeStart(CFcEngine::STD_PREVIEW);
-            break;
-        case 1:
-            itsPreview->setUnicodeStart(CFcEngine::ALL_CHARS);
-            break;
-        default:
-            itsPreview->setUnicodeStart((itsDisplayTypeAction->currentItem()-2)*256);
-    }
-
-    itsPreview->showFont();
-    itsChangeTextAction->setEnabled(0==itsDisplayTypeAction->currentItem());
+    itsPreview->setUnicodeRange(range);
+    itsChangeTextAction->setEnabled(0==range.count());
 }
 
 bool CFontViewPart::isInstalled()

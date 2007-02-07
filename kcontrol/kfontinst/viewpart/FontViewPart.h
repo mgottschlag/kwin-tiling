@@ -35,7 +35,6 @@ class QLabel;
 class QBoxLayout;
 class KIntNumInput;
 class QAction;
-class KSelectAction;
 class KUrl;
 class KConfig;
 class KProcess;
@@ -68,7 +67,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void installlStatus(KProcess *proc);
     void changeText();
     void print();
-    void displayType();
+    void displayType(const QList<CFcEngine::TRange> &range);
 
     Q_SIGNALS:
 
@@ -88,7 +87,6 @@ class CFontViewPart : public KParts::ReadOnlyPart
     QLabel           *itsFaceLabel;
     KIntNumInput     *itsFaceSelector;
     QAction          *itsChangeTextAction;
-    KSelectAction    *itsDisplayTypeAction;
     int              itsFace;
     KSharedConfigPtr itsConfig;
     BrowserExtension *itsExtension;

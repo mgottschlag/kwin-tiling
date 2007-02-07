@@ -38,7 +38,6 @@ CFontPreview::CFontPreview(QWidget *parent)
               itsCurrentFace(1),
               itsLastWidth(0),
               itsLastHeight(0),
-              itsUnicodeStart(-1),
               itsStyleInfo(KFI_NO_STYLE_INFO)
 {
     QPalette p(palette());
@@ -68,7 +67,7 @@ void CFontPreview::showFont()
 
     if(!itsCurrentUrl.isEmpty() &&
        CFcEngine::instance()->draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap,
-                                   itsCurrentFace-1, false, itsUnicodeStart, itsFontName,
+                                   itsCurrentFace-1, false, itsRange, itsFontName,
                                    itsStyleInfo))
     {
         update();
@@ -82,6 +81,12 @@ void CFontPreview::showFont()
         update();
         emit status(false);
     }
+}
+
+void CFontPreview::setUnicodeRange(const QList<CFcEngine::TRange> &r)
+{
+    itsRange=r;
+    showFont();
 }
 
 void CFontPreview::paintEvent(QPaintEvent *)

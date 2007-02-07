@@ -138,28 +138,28 @@ static void drawText(QPainter &painter, int x, int y, int width, const QString &
 
     width-=x*2;
     while(s.length()>3 && painter.fontMetrics().size(0, s).width()>width)
-{
-        if(!addedElipses)
     {
+        if(!addedElipses)
+        {
             s.remove(s.length()-2, 2);
             s.append("...");
             addedElipses=true;
-    }
+        }
         else
             s.remove(s.length()-4, 1);
     }
     painter.drawText(x, y, s);
-    }
+}
 
 inline bool equal(double d1, double d2)
-    {
+{
     return (fabs(d1 - d2) < 0.0001);
-    }
+}
 
 inline bool equalWeight(int a, int b)
-    {
+{
     return a==b || FC::weight(a)==FC::weight(b);
-    }
+}
 
 #ifndef KFI_FC_NO_WIDTHS
 inline bool equalWidth(int a, int b)
@@ -211,7 +211,7 @@ static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, con
         return true;
     }
     return false;
-    }
+}
 
 static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_UInt i,
                       int &x, int &y, int &w, int &h, int fSize, int offset, bool oneLine)
@@ -527,7 +527,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
 }
 
 bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb,
-                     int unicodeStart, const QString &name, unsigned long style)
+                     const QList<TRange> &range, const QString &name, unsigned long style)
 {
     bool rv=false;
 
@@ -586,7 +586,8 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                 if(thumb)
                 {
-                    QString text(i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
+                    QString text(i18nc("All letters of the alphabet (in upper/lower case pairs), followed by numbers",
+                                       "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
 
                     //
                     // Calculate size of text...
@@ -626,7 +627,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                     break;
                     }
                 }
-                else if(STD_PREVIEW==unicodeStart)
+                else if(0==range.count())
                 {
                     QString lowercase(getLowercaseLetters()),
                             uppercase(getUppercaseLetters()),
@@ -694,7 +695,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     for(int l=0; l<offset; ++l)
                         painter.drawLine((w-1)-l, 0, (w-1)-l, h);
                 }
-                else if(ALL_CHARS==unicodeStart)
+                else if(1==range.count() && range.first().null())
                 {
                     drawName(painter, x, y, w, offset);
 
@@ -706,67 +707,45 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         XftFontClose(QX11Info::display(), xftFont);
                     }
                 }
-                else  // Want to draw 256 chars from font...
+                else
                 {
-                    static const int constGap=4;
-                    static const int constMinSize=8;
+                    QList<TRange>::ConstIterator it(range.begin()),
+                                                 end(range.end());
+                    quint32                      numChars(0);
 
-                    //
-                    // Calculate size of text...
-                    int fSize=(w-(2*offset))/16;
+                    for(; it!=end; ++it)
+                        numChars+=((*it).to-(*it).from)+1;
 
-                    fSize-=2*constGap;
-
-                    if(fSize<constMinSize)
-                        fSize=constMinSize;
-
-                    if(!itsScalable) // Then need to get nearest size...
+                    if((xftFont=getFont(itsAlphaSize)))
                     {
-                        int bSize=fSize;
-
-                        for(int s=0; s<itsSizes.size(); ++s)
-                            if (itsSizes[s]<=fSize)
-                                bSize=itsSizes[s];
-                        fSize=bSize;
-                    }
-
-                    xftFont=getFont(fSize);
-
-                    if(xftFont)
-                    {
-                        QString str("A");
+                        int blockSize((int)(itsAlphaSize*1.4)),
+                            charsPerLine((w-offset)/blockSize);
+                            //numLines((int)((numChars/charsPerLine)+0.5));
 
                         rv=true;
                         drawName(painter, x, y, w, offset);
-                        painter.setPen(Qt::gray);
-                        y+=constGap;
-                        int ds=16*(fSize+(2*constGap));
-                        for(int i=0; i<17; ++i)
-                        {
-                            painter.drawLine(x, y+(i*(fSize+(2*constGap))), x+ds-1,
-                                             y+(i*(fSize+(2*constGap))));
-                            painter.drawLine(x+(i*(fSize+(2*constGap))), y, x+(i*(fSize+(2*constGap))),
-                                             y+ds-1);
-                        }
-                        y+=fSize;
-                        x+=constGap;
-                        for(int a=0; a<256; ++a)
-                        {
-                            str[0]=unicodeStart+a;
-                            const FcChar16 *fcStr=(FcChar16 *)(&(str.utf16()[0]));
-                            XftDrawString16(xftDraw, &xftCol, xftFont, x, y, fcStr, 1);
 
-                            if(!((a+1)%16))
+                        y+=blockSize;
+
+                        int  a=0;
+                        bool stop=false;
+
+                        for(it=range.begin(); it!=end && !stop; ++it)
+                            for(quint32 c=(*it).from; c<=(*it).to && !stop; ++c, ++a)
                             {
-                                y+=fSize+(2*constGap);
-                                x=offset+constGap;
-                            }
-                            else
-                                x+=fSize+(2*constGap);
+                                XftDrawString32(xftDraw, &xftCol, xftFont, x, y, &c, 1);
 
-                            if(y>h)
-                                break;
-                        }
+                                if(!((a+1)%charsPerLine))
+                                {
+                                    y+=blockSize;
+                                    x=offset;
+                                }
+                                else
+                                    x+=blockSize;
+
+                                if(y>h)
+                                    stop=true;
+                            }
                     }
                 }
 
@@ -796,7 +775,7 @@ QString CFcEngine::getLowercaseLetters()
 
 QString CFcEngine::getPunctuation()
 {
-    return i18nc("Numbers and characters", "0123456789.:,;(*!?'/\\\")Â£$â¬%^&-+@~#<>{}[]");
+    return i18nc("Numbers and characters", "0123456789.:,;(*!?'/\\\")£$€%^&-+@~#<>{}[]");
 }
 
 #ifdef KFI_USE_TRANSLATED_FAMILY_NAME
