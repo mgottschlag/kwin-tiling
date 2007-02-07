@@ -28,6 +28,7 @@
 
 class QLabel;
 class QMenu;
+class QActionGroup;
 
 namespace KFI
 {
@@ -55,13 +56,11 @@ class CFontFilter : public KLineEdit
 
     private Q_SLOTS:
 
-    void filterFamily();
-    void filterStyle();
-    void filterFile();
-    void filterLocation();
+    void filterChanged();
 
     private:
 
+    void addAction(ECriteria crit, const QString &text, bool on);
     void paintEvent(QPaintEvent *ev);
     void resizeEvent(QResizeEvent *ev);
     void mousePressEvent(QMouseEvent *ev);
@@ -70,11 +69,12 @@ class CFontFilter : public KLineEdit
 
     private:
 
-    QLabel    *itsMenuButton;
-    QMenu     *itsMenu;
-    ECriteria itsCurrentCriteria;
-    QPixmap   itsPixmaps[4];
-    bool      itsClickInMenuButton;
+    QLabel       *itsMenuButton;
+    QMenu        *itsMenu;
+    ECriteria    itsCurrentCriteria;
+    QPixmap      itsPixmaps[4];
+    bool         itsClickInMenuButton;
+    QActionGroup *itsActionGroup;
 };
 
 }

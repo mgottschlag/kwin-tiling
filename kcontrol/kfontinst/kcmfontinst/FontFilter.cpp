@@ -23,6 +23,8 @@
 #include "FontFilter.h"
 #include <klocale.h>
 #include <kiconloader.h>
+#include <ktoggleaction.h>
+#include <kicon.h>
 #include <QLabel>
 #include <QPen>
 #include <QPainter>
@@ -30,6 +32,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QApplication>
+#include <QActionGroup>
 
 namespace KFI
 {
@@ -55,40 +58,37 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsPixmaps[CRIT_FILENAME]=SmallIcon("font_type1");
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
 
-    itsMenu->addAction(itsPixmaps[CRIT_FAMILY], i18n("Filter On Font Family"),
-                       this, SLOT(filterFamily()));
-    itsMenu->addAction(itsPixmaps[CRIT_STYLE], i18n("Filter On Font Style"),
-                      this, SLOT(filterStyle()));
-    itsMenu->addAction(itsPixmaps[CRIT_FILENAME], i18n("Filter On Font File"),
-                      this, SLOT(filterFile()));
-    itsMenu->addAction(itsPixmaps[CRIT_LOCATION], i18n("Filter On Font File Location"),
-                       this, SLOT(filterLocation()));
+    itsActionGroup=new QActionGroup(this);
+    addAction(CRIT_FAMILY, i18n("Filter On Font Family"), true);
+    addAction(CRIT_STYLE, i18n("Filter On Font Style"), false);
+    addAction(CRIT_FILENAME, i18n("Filter On Font File"), false);
+    addAction(CRIT_LOCATION, i18n("Filter On Font File Location"), false);
 
     setCriteria(CRIT_FAMILY);
 }
 
-void CFontFilter::filterFamily()
+void CFontFilter::filterChanged()
 {
-    if(itsCurrentCriteria!=CRIT_FAMILY)
-        setCriteria(CRIT_FAMILY);
+    QAction *act(itsActionGroup->checkedAction());
+
+    if(act)
+    {
+        ECriteria crit((ECriteria)act->data().toInt());
+
+        if(itsCurrentCriteria!=crit)
+            setCriteria(crit);
+    }
 }
 
-void CFontFilter::filterStyle()
+void CFontFilter::addAction(ECriteria crit, const QString &text, bool on)
 {
-    if(itsCurrentCriteria!=CRIT_STYLE)
-        setCriteria(CRIT_STYLE);
-}
-
-void CFontFilter::filterFile()
-{
-    if(itsCurrentCriteria!=CRIT_FILENAME)
-        setCriteria(CRIT_FILENAME);
-}
-
-void CFontFilter::filterLocation()
-{
-    if(itsCurrentCriteria!=CRIT_LOCATION)
-        setCriteria(CRIT_LOCATION);
+    KToggleAction *action=new KToggleAction(KIcon(itsPixmaps[crit]),
+                                            text, this);
+    itsMenu->addAction(action);
+    itsActionGroup->addAction(action);
+    action->setData((int)crit);
+    action->setChecked(on);
+    connect(action, SIGNAL(toggled(bool)), SLOT(filterChanged()));
 }
 
 void CFontFilter::paintEvent(QPaintEvent *ev)
@@ -154,9 +154,10 @@ void CFontFilter::setCriteria(ECriteria crit)
 {
     QPixmap arrowmap(itsPixmaps[crit].width()+constArrowPad, itsPixmaps[crit].height());
 
-    arrowmap.fill(backgroundColor());
+    arrowmap.fill(palette().color(QPalette::Active, QPalette::Base));
 
     QPainter p(&arrowmap);
+
     p.drawPixmap(0, 0, itsPixmaps[crit]);
     QStyleOption opt;
     opt.state = QStyle::State_None;
