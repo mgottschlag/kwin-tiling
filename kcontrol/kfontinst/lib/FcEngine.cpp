@@ -173,27 +173,33 @@ inline bool equalSlant(int a, int b)
     return a==b || FC::slant(a)==FC::slant(b);
 }
 
-static bool drawChar(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, const QString &text, int pos,
-                     int &x, int &y, int w, int h, int fSize, int offset)
+static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, quint32 ch,
+                       int &x, int &y, int w, int h, int fSize, int offset)
 {
-    XGlyphInfo     extents;
-    const FcChar16 *str=(FcChar16 *)(&(text.utf16()[pos]));
+    static const int constBorder=2;
 
-    XftTextExtents16(QX11Info::display(), xftFont, str, 1, &extents);
-
-    if(x+extents.width+2>w)
+    if(XftCharExists(QX11Info::display(), xftFont, ch))
     {
-        x=offset;
-        y+=fSize;
+        XGlyphInfo extents;
+
+        XftTextExtents32(QX11Info::display(), xftFont, &ch, 1, &extents);
+
+        if(x+extents.width+constBorder>w)
+        {
+            x=offset;
+            y+=fSize+constBorder;
+        }
+
+        if(y+offset<h)
+        {
+            XftDrawString32(xftDraw, xftCol, xftFont, x, y, &ch, 1);
+            x+=extents.width+constBorder;
+            return true;
+        }
+        return false;
     }
 
-    if(y+offset<h)
-    {
-        XftDrawString16(xftDraw, xftCol, xftFont, x, y, str, 1);
-        x+=extents.width+2;
-        return true;
-    }
-    return false;
+    return true;
 }
 
 static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, const QString &text,
@@ -607,8 +613,6 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         fSize=bSize;
                     }
 
-                    unsigned int ch;
-
                     xftFont=getFont(fSize);
 
                     y=fSize;
@@ -621,10 +625,14 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         if(valid.length()<(text.length()/2))
                             drawAllGlyphs(xftDraw, xftFont, &xftCol, fSize, x, y, w, h, offset);
                         else
-                            for(ch=0; ch<(unsigned int)valid.length(); ++ch) // Display char by char so wraps...
-                                if(!drawChar(xftDraw, xftFont, &xftCol, text, ch, x, y, w, h, fSize,
-                                             offset))
+                        {
+                            QVector<uint> ucs4(valid.toUcs4());
+
+                            for(int ch=0; ch<ucs4.size(); ++ch) // Display char by char so wraps...
+                                if(!drawChar32(xftDraw, xftFont, &xftCol, ucs4[ch], x, y, w, h, fSize,
+                                               offset))
                                     break;
+                        }
                     }
                 }
                 else if(0==range.count())
@@ -635,26 +643,20 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                     drawName(painter, x, y, w, offset);
 
-                    bool lc=true,
-                         uc=true,
-                         punc=true;
-
                     xftFont=getFont(itsAlphaSize);
                     if(xftFont)
                     {
-                        QString validPunc(usableStr(xftFont, punctuation));
-
-                        rv=true;
-                        lc=hasStr(xftFont, lowercase);
-                        uc=hasStr(xftFont, uppercase);
-                        punc=validPunc.length()>=(punctuation.length()/2);
-
-                        bool drawGlyphs=!lc && !uc;
+                        bool lc(hasStr(xftFont, lowercase)),
+                             uc(hasStr(xftFont, uppercase)),
+                             drawGlyphs=!lc && !uc;
 
                         if(drawGlyphs)
                             y-=8;
                         else
                         {
+                            QString validPunc(usableStr(xftFont, punctuation));
+                            bool    punc(validPunc.length()>=(punctuation.length()/2));
+
                             if(lc)
                                 drawString(xftDraw, xftFont, &xftCol, lowercase, x, y, h, offset);
                             if(uc)
@@ -711,41 +713,29 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                 {
                     QList<TRange>::ConstIterator it(range.begin()),
                                                  end(range.end());
-                    quint32                      numChars(0);
-
-                    for(; it!=end; ++it)
-                        numChars+=((*it).to-(*it).from)+1;
 
                     if((xftFont=getFont(itsAlphaSize)))
                     {
-                        int blockSize((int)(itsAlphaSize*1.4)),
-                            charsPerLine((w-offset)/blockSize);
-                            //numLines((int)((numChars/charsPerLine)+0.5));
-
                         rv=true;
                         drawName(painter, x, y, w, offset);
+                        y+=itsAlphaSize;
 
-                        y+=blockSize;
-
-                        int  a=0;
                         bool stop=false;
+                        int  xOrig(x), yOrig(y);
 
                         for(it=range.begin(); it!=end && !stop; ++it)
-                            for(quint32 c=(*it).from; c<=(*it).to && !stop; ++c, ++a)
-                            {
-                                XftDrawString32(xftDraw, &xftCol, xftFont, x, y, &c, 1);
-
-                                if(!((a+1)%charsPerLine))
-                                {
-                                    y+=blockSize;
-                                    x=offset;
-                                }
-                                else
-                                    x+=blockSize;
-
-                                if(y>h)
+                            for(quint32 c=(*it).from; c<=(*it).to && !stop; ++c)
+                                if(!drawChar32(xftDraw, xftFont, &xftCol, c, x, y, w, h, itsAlphaSize,
+                                               offset))
                                     stop=true;
-                            }
+
+                        if(x==xOrig && y==yOrig)
+                        {
+                            // No characters found within the selected range...
+                            painter.setFont(KGlobalSettings::generalFont());
+                            painter.setPen(theirTextCol);
+                            drawText(painter, x, y, w-offset, i18n("No characters found."));
+                        }
                     }
                 }
 

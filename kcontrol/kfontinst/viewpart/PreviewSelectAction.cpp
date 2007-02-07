@@ -46,7 +46,7 @@ CPreviewSelectAction::CPreviewSelectAction(QObject *parent, bool all)
     }
     else
         for(int i=0; constUnicodeScriptList[i]; ++i)
-            items.append(i18n("%1 Characters", i18n(constUnicodeScriptList[i])));
+            items.append(i18n(constUnicodeScriptList[i]));
 
     setItems(items);
     setCurrentItem(0);
