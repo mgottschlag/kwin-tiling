@@ -29,6 +29,7 @@
 #include <QStyleOption>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QApplication>
 
 namespace KFI
 {
@@ -47,7 +48,6 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsMenuButton->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     itsMenuButton->setCursor(Qt::ArrowCursor);
     itsMenuButton->setToolTip(i18n("Set Criteria"));
-    itsMenuButton->move(itsMenuButton->x()+2, itsMenuButton->y()+2);
 
     itsMenu=new QMenu(this);
     itsPixmaps[CRIT_FAMILY]=SmallIcon("text");
@@ -108,7 +108,7 @@ void CFontFilter::paintEvent(QPaintEvent *ev)
         // probably requires fixes to Qt itself to do this cleanly
         QRect cr(contentsRect());
 
-        cr.addCoords(itsMenuButton->width()+2, 0, -(itsMenuButton->width()+2), 0);
+        cr.addCoords(itsMenuButton->width()+4, 0, -(itsMenuButton->width()+4), 0);
         p.drawText(cr, Qt::AlignLeft|Qt::AlignVCenter, clickMessage());
         p.setPen(oldPen);
     }
@@ -120,6 +120,13 @@ void CFontFilter::resizeEvent(QResizeEvent *ev)
     setStyleSheet(QString("QLineEdit { padding-left: %1; padding-right : %2; }")
                   .arg(itsMenuButton->width())
                   .arg(itsMenuButton->width()-constArrowPad));
+
+    int frameWidth(style()->pixelMetric(QStyle::PM_DefaultFrameWidth));
+
+    if (qApp->isLeftToRight())
+        itsMenuButton->move(frameWidth + 1, frameWidth + 1);
+    else
+        itsMenuButton->move(size().width() - frameWidth - itsMenuButton->width() - 1, frameWidth + 1);
 }
 
 void CFontFilter::mousePressEvent(QMouseEvent *ev)
