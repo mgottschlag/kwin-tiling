@@ -43,7 +43,7 @@ CFontFilter::CFontFilter(QWidget *parent)
            : KLineEdit(parent),
              itsClickInMenuButton(false)
 {
-    setClickMessage(i18n("Filter"));
+    //setClickMessage(i18n("Filter"));
     setClearButtonShown(true);
     setTrapReturnKey(true);
 
@@ -76,7 +76,10 @@ void CFontFilter::filterChanged()
         ECriteria crit((ECriteria)act->data().toInt());
 
         if(itsCurrentCriteria!=crit)
+        {
             setCriteria(crit);
+            setClickMessage(act->text());
+        }
     }
 }
 
@@ -88,6 +91,8 @@ void CFontFilter::addAction(ECriteria crit, const QString &text, bool on)
     itsActionGroup->addAction(action);
     action->setData((int)crit);
     action->setChecked(on);
+    if(on)
+        setClickMessage(text);
     connect(action, SIGNAL(toggled(bool)), SLOT(filterChanged()));
 }
 
@@ -143,7 +148,7 @@ void CFontFilter::mouseReleaseEvent(QMouseEvent *ev)
     {
         itsClickInMenuButton=false;
         if (itsMenuButton->underMouse())
-            itsMenu->popup(ev->globalPos());
+            itsMenu->popup(mapToGlobal(QPoint(0, height())), 0);
         return;
     }
 

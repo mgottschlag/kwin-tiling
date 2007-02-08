@@ -1246,7 +1246,15 @@ void CFontListSortFilterProxy::setFilterText(const QString &text)
 {
     if(text!=itsFilterText)
     {
-        itsFilterText=text;
+        //
+        // If we are filtering on file location, then expand ~ to /home/user, etc.
+        if (CFontFilter::CRIT_LOCATION==itsFilterCriteria && !text.isEmpty() && '~'==text[0])
+            itsFilterText=1==text.length()
+                ? QDir::homePath()
+                : QString(text).replace(0, 1, QDir::homePath());
+        else
+            itsFilterText=text;
+
         if(itsFilterText.isEmpty())
         {
             itsTimer->stop();
@@ -1262,6 +1270,8 @@ void CFontListSortFilterProxy::setFilterCriteria(CFontFilter::ECriteria crit)
     if(crit!=itsFilterCriteria)
     {
         itsFilterCriteria=crit;
+        if(CFontFilter::CRIT_LOCATION==itsFilterCriteria)
+            setFilterText(itsFilterText);
         itsTimer->stop();
         timeout();
     }

@@ -222,9 +222,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     }
 
     CFontFilter *filter=new CFontFilter(toolbar);
-    filter->setClickMessage(i18n("Filter"));
-    filter->setClearButtonShown(true);
-    filter->setTrapReturnKey(true);
     toolbar->addWidget(filter);
 
     itsPreviewControl=new CPreviewSelectAction(this);
