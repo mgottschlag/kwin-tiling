@@ -59,11 +59,11 @@ namespace Misc
     extern KDE_EXPORT QString prettyUrl(const KUrl &url);
     inline KDE_EXPORT bool    isHidden(const QString &f)    { return QChar('.')==f[0]; }
     inline KDE_EXPORT bool    isHidden(const KUrl &url)     { return isHidden(url.fileName()); }
-    extern KDE_EXPORT bool    check(const QString &path, unsigned int fmt, bool checkW=false);
-    inline KDE_EXPORT bool    fExists(const QString &p)     { return check(p, S_IFREG, false); }
-    inline KDE_EXPORT bool    dExists(const QString &p)     { return check(p, S_IFDIR, false); }
-    inline KDE_EXPORT bool    fWritable(const QString &p)   { return check(p, S_IFREG, true); }
-    inline KDE_EXPORT bool    dWritable(const QString &p)   { return check(p, S_IFDIR, true); }
+    extern KDE_EXPORT bool    check(const QString &path, bool file, bool checkW=false);
+    inline KDE_EXPORT bool    fExists(const QString &p)     { return check(p, true, false); }
+    inline KDE_EXPORT bool    dExists(const QString &p)     { return check(p, false, false); }
+    inline KDE_EXPORT bool    fWritable(const QString &p)   { return check(p, true, true); }
+    inline KDE_EXPORT bool    dWritable(const QString &p)   { return check(p, false, true); }
     extern KDE_EXPORT QString linkedTo(const QString &i);
     extern KDE_EXPORT QString dirSyntax(const QString &d);  // Has trailing slash:  /file/path/
     extern KDE_EXPORT QString fileSyntax(const QString &f);

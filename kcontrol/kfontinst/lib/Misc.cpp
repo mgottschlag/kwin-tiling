@@ -213,12 +213,15 @@ time_t getTimeStamp(const QString &item)
 }
 
 
-bool check(const QString &path, unsigned int fmt, bool checkW)
+bool check(const QString &path, bool file, bool checkW)
 { 
     KDE_struct_stat info;
     QByteArray      pathC(QFile::encodeName(path));
 
-    return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt && (!checkW || 0==::access(pathC, W_OK));
+    return 0==KDE_lstat(pathC, &info) &&
+           (file ? (S_ISREG(info.st_mode) || S_ISLNK(info.st_mode))
+                 : S_ISDIR(info.st_mode)) &&
+           (!checkW || 0==::access(pathC, W_OK));
 }
 
 QString getFolder(const QString &defaultDir, const QString &root, QStringList &dirs)
