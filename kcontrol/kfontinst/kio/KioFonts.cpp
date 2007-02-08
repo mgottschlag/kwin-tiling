@@ -1237,14 +1237,15 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
 
     correctUrl(url);
 
-    bool            nrs=nonRootSys(url);
+    bool            nrs(nonRootSys(url)),
+                    clearList(!hasMetaData(KFI_KIO_NO_CLEAR));
     EFolder         destFolder(getFolder(url));
     QString         destFolderReal(getDestFolder(itsFolders[destFolder].location, url.fileName())),
-                    dest=destFolderReal+modifyName(url.fileName()),
+                    dest(destFolderReal+modifyName(url.fileName())),
                     passwd;
-    QByteArray      destC=QFile::encodeName(dest);
+    QByteArray      destC(QFile::encodeName(dest));
     KDE_struct_stat buffDest;
-    bool            destExists=(KDE_lstat(destC.constData(), &buffDest)!= -1);
+    bool            destExists(KDE_lstat(destC.constData(), &buffDest)!= -1);
 
     if (destExists && !overwrite && !resume)
     {
@@ -1273,7 +1274,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
 
     if(putReal(tmpFile.name(), tmpFileC, destExists, mode, resume))
     {
-        EFileType type=checkFile(tmpFile.name(), u);  // error logged in checkFile
+        EFileType type(checkFile(tmpFile.name(), u));  // error logged in checkFile
 
         if(FILE_UNKNOWN==type)
             return;
@@ -1301,7 +1302,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
             {
                 tmpFile.setAutoRemove(false);
                 if(FILE_FONT==type)
-                    modified(timeout, FOLDER_SYS, true, destFolderReal);
+                    modified(timeout, FOLDER_SYS, clearList, destFolderReal);
                 createAfm(dest, true, passwd);
             }
             else
@@ -1319,7 +1320,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
             {
                 ::chmod(destC.constData(), Misc::FILE_PERMS);
                 if(FILE_FONT==type)
-                    modified(timeout, FOLDER_USER, true, destFolderReal);
+                    modified(timeout, FOLDER_USER, clearList, destFolderReal);
                 createAfm(dest);
             }
             else
@@ -1683,7 +1684,8 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
             correctUrl(dest);
 
-            bool                   metrics=fromFonts ? false : Misc::isMetrics(src.fileName());
+            bool                   metrics(fromFonts ? false : Misc::isMetrics(src.fileName())),
+                                   clearList(!hasMetaData(KFI_KIO_NO_CLEAR));
             EFolder                destFolder(getFolder(dest));
             QMap<QString, QString> map;
 
@@ -1736,7 +1738,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
                     if(doRootCmd(cmd, passwd))
                     {
                         if(!metrics)
-                            modified(timeout, destFolder, true, addedFolders);
+                            modified(timeout, destFolder, clearList, addedFolders);
                         processedSize(size);
                         if(src.isLocalFile() && 1==srcFiles.count())
                             createAfm(itsFolders[destFolder].location+modifyName(map.begin().value()),
@@ -1853,7 +1855,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
                         processedSize(buffSrc.st_size);
                         if(!metrics)
-                            modified(timeout, destFolder, true, destFolderReal);
+                            modified(timeout, destFolder, clearList, destFolderReal);
                     }
 
                     if(src.isLocalFile() && 1==srcFiles.count())
@@ -1894,11 +1896,11 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                     srcEn(srcFile.mid(1));
             EFolder folder(getFolder(d));
             QString srcName(Misc::getFile(removeMultipleExtension(src)));
-            bool    clearList=!hasMetaData(KFI_KIO_NO_CLEAR),
-                    nrs=nonRootSys(src),
-                    enable=Misc::isHidden(srcFile) && !Misc::isHidden(destFile) && srcEn==destFile,
-                    disable=!Misc::isHidden(srcFile) && Misc::isHidden(destFile) &&
-                            destEn==srcFile;
+            bool    clearList(!hasMetaData(KFI_KIO_NO_CLEAR)),
+                    nrs(nonRootSys(src)),
+                    enable(Misc::isHidden(srcFile) && !Misc::isHidden(destFile) && srcEn==destFile),
+                    disable(!Misc::isHidden(srcFile) && Misc::isHidden(destFile) &&
+                            destEn==srcFile);
 
             if(enable && disabledIt!=itsFolders[folder].disabled->items().end())
             {
@@ -1907,7 +1909,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                     CDirList                                 folders;
                     CDisabledFonts::TFileList::ConstIterator it((*disabledIt).files.begin()),
                                                              end((*disabledIt).files.end());
-                    bool                                     ok=false;
+                    bool                                     ok(false);
 
                     for(; it!=end; ++it)
                         folders.add(Misc::getDir(*it));
@@ -2125,7 +2127,7 @@ void CKioFonts::del(const KUrl &url, bool)
        checkFiles(*entries))) && confirmMultiple(url, entries, getFolder(url), OP_DELETE))
     {
         CDisabledFonts::TFileList::ConstIterator it,
-                                                 end=entries->end();
+                                                 end(entries->end());
         CDirList                                 modifiedDirs;
         bool                                     clearList(!hasMetaData(KFI_KIO_NO_CLEAR));
         int                                      timeout(reconfigTimeout());
@@ -2905,6 +2907,8 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
 #endif
 
                 QString name(FC::createName(pat, weight, width, slant));
+
+                KFI_DBUG << "Check for name:" << name << endl;
 
                 // TODO: CDisabledFonts need to find on family & style info? Also need a find() that does
                 // not take into account face! Perhaps use -1?
