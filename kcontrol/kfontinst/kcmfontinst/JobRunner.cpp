@@ -267,11 +267,11 @@ void CJobRunner::doNext()
                 break;
             case CMD_ENABLE:
                 itsStatusLabel->setText(i18n("Enabling %1", (*itsIt).displayName()));
-                job=KIO::file_move(*itsIt, toggle(*itsIt, true), -1, false, false);
+                job=KIO::rename(*itsIt, toggle(*itsIt, true), false);
                 break;
             case CMD_DISABLE:
                 itsStatusLabel->setText(i18n("Disabling %1", (*itsIt).displayName()));
-                job=KIO::file_move(*itsIt, toggle(*itsIt, false), -1, false, false);
+                job=KIO::rename(*itsIt, toggle(*itsIt, false), false);
             default:
                 break;
         }
