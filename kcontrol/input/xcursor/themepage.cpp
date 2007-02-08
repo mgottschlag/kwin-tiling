@@ -79,17 +79,19 @@ ThemePage::ThemePage( QWidget* parent )
 	: QWidget( parent ), selectedTheme( NULL ), currentTheme( NULL )
 {
 	QBoxLayout *layout = new QVBoxLayout( this );
-	layout->setAutoAdd( true );
 	layout->setMargin( KDialog::marginHint() );
 	layout->setSpacing( KDialog::spacingHint() );
 
 	new QLabel( i18n("Select the cursor theme you want to use (hover preview to test cursor):"), this );
 
 	// Create the preview widget
-	preview = new PreviewWidget( new KHBox( this ) );
+        KHBox* hbox = new KHBox(this);
+        layout->addWidget(hbox);
+	preview = new PreviewWidget( hbox );
 
 	// Create the theme list view
 	listview = new K3ListView( this );
+        layout->addWidget(listview);
 	listview->setFullWidth( true );
 	listview->setAllColumnsShowFocus( true );
 	listview->addColumn( i18n("Name") );
@@ -101,7 +103,8 @@ ThemePage::ThemePage( QWidget* parent )
 	themeDirs = getThemeBaseDirs();
 	insertThemes();
 
-	KHBox *hbox = new KHBox( this );
+	hbox = new KHBox( this );
+        layout->addWidget(hbox);
 	hbox->setSpacing( KDialog::spacingHint() );
 	installButton = new QPushButton( i18n("Install New Theme..."), hbox );
 	removeButton = new QPushButton( i18n("Remove Theme"), hbox );
