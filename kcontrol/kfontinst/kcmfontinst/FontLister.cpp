@@ -107,8 +107,10 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
             itsItems.remove(it);
             if(itsItems.contains(toU))
             {
-                emit deleteItem(item);
-                delete item;
+                KFileItemList items;
+
+                items.append(item);
+                removeItems(items);
             }
             else
             {
@@ -143,7 +145,8 @@ void CFontLister::filesRemoved(const QStringList &files)
 #endif
     for(; it!=end; ++it)
     {
-        KUrl url(*it);
+        KUrl          url(*it);
+        KFileItemList itemsToRemove;
 
         if(KFI_KIO_FONTS_PROTOCOL==url.protocol())
         {
@@ -155,11 +158,12 @@ void CFontLister::filesRemoved(const QStringList &files)
 #ifdef KFI_FONTLISTER_DEBUG
                 kDebug() << "Delete : " << item->url().prettyUrl() << endl;
 #endif
-                emit deleteItem(item);
-                delete item;
+                itemsToRemove.append(item);
                 itsItems.remove(it);
             }
         }
+
+        removeItems(itemsToRemove);
     }
 }
 
@@ -171,6 +175,7 @@ void CFontLister::result(KJob *job)
 #endif
     if(job && !job->error())
     {
+        KFileItemList                     itemsToRemove;
         QMap<KUrl, KFileItem *>::Iterator it(itsItems.begin());
 
         while(it!=itsItems.end())
@@ -191,11 +196,12 @@ void CFontLister::result(KJob *job)
                 kDebug() << (*it)->url().prettyUrl() << " IS **NOT** MARKED" << endl;
 #endif
 
-                emit deleteItem(item);
+                itemsToRemove.append(item);
                 ++it;
-                delete item;
                 itsItems.remove(remove);
             }
+
+        removeItems(itemsToRemove);
     }
     else
     {
@@ -272,6 +278,17 @@ void CFontLister::totalSize(KJob *, qulonglong s)
 void CFontLister::infoMessage(KJob *, const QString &msg)
 {
     emit message(msg);
+}
+
+void CFontLister::removeItems(KFileItemList &items)
+{
+    emit deleteItems(items);
+
+    KFileItemList::Iterator it(items.begin()),
+                            end(items.end());
+
+    for(; it!=end; ++it)
+        delete *it;
 }
 
 }

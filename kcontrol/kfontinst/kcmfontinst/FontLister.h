@@ -48,7 +48,7 @@ class CFontLister : public QObject
     Q_SIGNALS:
 
     void newItems(const KFileItemList &items);
-    void deleteItem(KFileItem *item);
+    void deleteItems(const KFileItemList &items);
     void refreshItems(const KFileItemList &items);
     void completed();
     void percent(int);
@@ -64,6 +64,10 @@ class CFontLister : public QObject
     void processedSize(KJob *job, qulonglong s);
     void totalSize(KJob *job, qulonglong s);
     void infoMessage(KJob *job, const QString &msg);
+
+    private:
+
+    void removeItems(KFileItemList &items);
 
     private:
 

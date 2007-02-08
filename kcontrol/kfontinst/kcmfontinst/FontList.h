@@ -119,7 +119,7 @@ class CFontList : public QAbstractItemModel
     void            listingCompleted();
     void            newItems(const KFileItemList &items);
     void            clearItems();
-    void            deleteItem(KFileItem *item);
+    void            deleteItems(const KFileItemList &);
     void            refreshItems(const KFileItemList &);
 
     private:

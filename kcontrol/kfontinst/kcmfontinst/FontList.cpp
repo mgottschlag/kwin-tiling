@@ -594,8 +594,8 @@ CFontList::CFontList(QWidget *parent)
     connect(itsLister, SIGNAL(completed()), SLOT(listingCompleted()));
     connect(itsLister, SIGNAL(newItems(const KFileItemList &)),
             SLOT(newItems(const KFileItemList &)));
-    connect(itsLister, SIGNAL(deleteItem(KFileItem *)),
-            SLOT(deleteItem(KFileItem *)));
+    connect(itsLister, SIGNAL(deleteItems(const KFileItemList &)),
+            SLOT(deleteItems(const KFileItemList &)));
     connect(itsLister, SIGNAL(refreshItems(const KFileItemList &)),
             SLOT(refreshItems(const KFileItemList &)));
     connect(itsLister, SIGNAL(percent(int)), SIGNAL(percent(int)));
@@ -900,38 +900,32 @@ void CFontList::refreshItems(const KFileItemList &items)
         emit dataChanged(famTopLeft, famBottomRight);
 }
 
-void CFontList::deleteItem(KFileItem *item)
+void CFontList::deleteItems(const KFileItemList &items)
 {
 #ifdef KFI_FONTLIST_DEBUG
-    KFI_DBUG << "************** deleteItem " << (int)item << endl;
+    KFI_DBUG << "************** deleteItems " << items.count() << endl;
 #endif
 
-    CFontItem *font=findFont(item);
+    KFileItemList::ConstIterator it(items.begin()),
+                                 end(items.end());
 
-    if(font)
+    for(; it!=end; ++it)
     {
-        CFamilyItem *fam=static_cast<CFamilyItem *>(font->parent());
+        CFontItem *font=findFont(*it);
 
-        if(1==fam->fonts().count())
+        if(font)
         {
-            int rowNumber=fam->rowNumber();
-            beginRemoveRows(QModelIndex(), rowNumber, rowNumber);
-            endRemoveRows();
-            itsFamilies.remove(fam);
-            delete fam;
-        }
-        else
-        {
-            int rowNumber=font->rowNumber();
-            fam->removeFont(font);
-            beginRemoveRows(createIndex(fam->rowNumber(), 0, fam), rowNumber, rowNumber);
-            endRemoveRows();
-        }
-        itsFonts.remove(item);
+            CFamilyItem *fam=static_cast<CFamilyItem *>(font->parent());
 
-        if(!Misc::root())
-            emit layoutChanged();
+            if(1==fam->fonts().count())
+                itsFamilies.remove(fam);
+            else
+                fam->removeFont(font);
+            itsFonts.remove(*it);
+        }
     }
+
+    emit layoutChanged();
 }
 
 void CFontList::addItem(const KFileItem *item)
