@@ -39,7 +39,7 @@ ImportsView::ImportsView(QWidget * parent, KConfig *config )
     QBoxLayout *topLayout = new QVBoxLayout(this);
     topLayout->setMargin(KDialog::marginHint());
     topLayout->setSpacing(KDialog::spacingHint());
-    topLayout->setAutoAdd(true);
+    topLayout->addWidget(&list);
 
     list.setAllColumnsShowFocus(true);
     list.setShowSortIndicator(true);

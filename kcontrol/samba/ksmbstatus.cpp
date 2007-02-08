@@ -52,10 +52,11 @@ NetMon::NetMon( QWidget * parent, KConfig *config )
     QBoxLayout *topLayout = new QVBoxLayout(this);
     topLayout->setMargin(KDialog::marginHint());
     topLayout->setSpacing(KDialog::spacingHint());
-    topLayout->setAutoAdd(true);
 
     list=new Q3ListView(this,"Hello");
+    topLayout->addWidget(list);
     version=new QLabel(this);
+    topLayout->addWidget(version);
 
     list->setAllColumnsShowFocus(true);
     list->setMinimumSize(425,200);
