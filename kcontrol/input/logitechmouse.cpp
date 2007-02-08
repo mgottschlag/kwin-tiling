@@ -53,7 +53,7 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
 
     m_usbDeviceHandle = usb_open( usbDev );
 
-    if ( 0 > m_usbDeviceHandle ) {
+    if ( !m_usbDeviceHandle ) {
         kWarning() << "Error opening usbfs file: " << usb_strerror() << endl;
         return;
     }
