@@ -862,8 +862,7 @@ void CFontList::refreshItems(const KFileItemList &items)
         KFI_DBUG << "               " << (int)(*it) << endl;
 #endif
 
-    QModelIndex famTopLeft,
-                famBottomRight;
+    QSet<CFamilyItem *> families;
 
     for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
     {
@@ -871,24 +870,12 @@ void CFontList::refreshItems(const KFileItemList &items)
 
         if(font)
         {
-            CFamilyItem *fam=static_cast<CFamilyItem *>(font->parent());
-
-            const QModelIndex famIndex(createIndex(fam->rowNumber(), 0, fam));
-
-            if (!famTopLeft.isValid() || famIndex.row() < famTopLeft.row())
-                famTopLeft = famIndex;
-            if (!famBottomRight.isValid() || famIndex.row() > famBottomRight.row())
-                famBottomRight = famIndex;
-
-            const QModelIndex fontIndex(createIndex(font->rowNumber(), 0, font));
-
             font->updateStatus();
-            emit dataChanged(fontIndex, fontIndex);
 #ifdef KFI_FONTLIST_DEBUG
             KFI_DBUG << "               Found font, status now:" << font->isEnabled()
                      << " url" << (*it)->url().prettyUrl() << endl;
 #endif
-            fam->updateStatus();
+            families.insert(static_cast<CFamilyItem *>(font->parent()));
         }
 #ifdef KFI_FONTLIST_DEBUG
         else
@@ -896,8 +883,13 @@ void CFontList::refreshItems(const KFileItemList &items)
 #endif
     }
 
-    if(famTopLeft.isValid())
-        emit dataChanged(famTopLeft, famBottomRight);
+    QSet<CFamilyItem *>::ConstIterator it(families.begin()),
+                                       end(families.end());
+
+    for(; it!=end; ++it)
+        (*it)->updateStatus();
+
+    emit layoutChanged();
 }
 
 void CFontList::deleteItems(const KFileItemList &items)

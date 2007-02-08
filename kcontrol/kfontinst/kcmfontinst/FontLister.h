@@ -76,6 +76,7 @@ class CFontLister : public QObject
                             itsUpdateRequired;
     KIO::Job                *itsJob;
     qulonglong              itsJobSize;
+    KFileItemList           itsItemsToRefresh;
 };
 
 }

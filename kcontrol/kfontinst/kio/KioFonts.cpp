@@ -195,7 +195,7 @@ static QString removeMultipleExtension(const KUrl &url)
 
 static QString modifyName(const QString &fname, bool toUpper=false)
 {
-    static const char constSymbols[]={ '-', ' ', ':', 0 };
+    static const char constSymbols[]={ '-', ' ', ':', ';', '/', '~', 0 };
 
     QString rv(toUpper ? fname.toUpper() : fname.toLower());
 

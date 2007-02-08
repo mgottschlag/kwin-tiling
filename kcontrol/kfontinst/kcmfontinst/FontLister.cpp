@@ -53,6 +53,13 @@ void CFontLister::scan(const KUrl &url)
 {
     if(!busy())
     {
+        if(itsItemsToRefresh.count())
+        {
+            emit refreshItems(itsItemsToRefresh);
+            itsItemsToRefresh.clear();
+        }
+
+        itsUpdateRequired=false;
         if(Misc::root())
             itsJob=KIO::listDir(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), false);
         else if(url.isEmpty())
@@ -80,12 +87,16 @@ void CFontLister::setAutoUpdate(bool on)
     if(itsAutoUpdate!=on)
     {
         itsAutoUpdate=on;
-        if(on)
-            if(itsUpdateRequired)
+        if(on && itsUpdateRequired)
+        {
+            if(itsItemsToRefresh.count())
             {
-                itsUpdateRequired=false;
-                scan();
+                emit refreshItems(itsItemsToRefresh);
+                itsItemsToRefresh.clear();
             }
+            itsUpdateRequired=false;
+            scan();
+        }
     }
 }
 
@@ -121,7 +132,13 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
     }
 
     if(refresh.count())
-        emit refreshItems(refresh);
+        if(itsAutoUpdate)
+            emit refreshItems(refresh);
+        else
+        {
+            itsUpdateRequired=true;
+            itsItemsToRefresh+=refresh;
+        }
 }
 
 void CFontLister::filesAdded(const QString &dir)
