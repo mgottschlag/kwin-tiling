@@ -928,6 +928,9 @@ void CFontList::deleteItem(KFileItem *item)
             endRemoveRows();
         }
         itsFonts.remove(item);
+
+        if(!Misc::root())
+            emit layoutChanged();
     }
 }
 

@@ -25,6 +25,13 @@
 #include "KfiConstants.h"
 #include <kdirnotify.h>
 
+//#define KFI_FONTLISTER_DEBUG
+
+#ifdef KFI_FONTLISTER_DEBUG
+#include <kdebug.h>
+#define KFI_DBUG kDebug() << "[" << (int)(getpid()) << "] CFontLister "
+#endif
+
 namespace KFI
 {
 
@@ -35,11 +42,11 @@ CFontLister::CFontLister(QObject *parent)
              itsJob(NULL),
              itsJobSize(0)
 {
-  org::kde::KDirNotify *kdirnotify = new org::kde::KDirNotify(QString(), QString(),
-                                                              QDBusConnection::sessionBus(), this);
-  connect(kdirnotify, SIGNAL(FileRenamed(QString,QString)), SLOT(fileRenamed(QString,QString)));
-  connect(kdirnotify, SIGNAL(FilesAdded(QString)), SLOT(filesAdded(QString)));
-  connect(kdirnotify, SIGNAL(FilesRemoved(QStringList)), SLOT(filesRemoved(QStringList)));
+    org::kde::KDirNotify *kdirnotify = new org::kde::KDirNotify(QString(), QString(),
+                                                                QDBusConnection::sessionBus(), this);
+    connect(kdirnotify, SIGNAL(FileRenamed(QString,QString)), SLOT(fileRenamed(QString,QString)));
+    connect(kdirnotify, SIGNAL(FilesAdded(QString)), SLOT(filesAdded(QString)));
+    connect(kdirnotify, SIGNAL(FilesRemoved(QStringList)), SLOT(filesRemoved(QStringList)));
 }
 
 void CFontLister::scan(const KUrl &url)
@@ -131,6 +138,9 @@ void CFontLister::filesRemoved(const QStringList &files)
     QStringList::ConstIterator it(files.begin()),
                                end(files.end());
 
+#ifdef KFI_FONTLISTER_DEBUG
+    kDebug() << "Files removed : " << files.count() << endl;
+#endif
     for(; it!=end; ++it)
     {
         KUrl url(*it);
@@ -142,6 +152,9 @@ void CFontLister::filesRemoved(const QStringList &files)
             if(it!=itsItems.end())
             {
                 KFileItem *item(*it);
+#ifdef KFI_FONTLISTER_DEBUG
+                kDebug() << "Delete : " << item->url().prettyUrl() << endl;
+#endif
                 emit deleteItem(item);
                 delete item;
                 itsItems.remove(it);
@@ -153,7 +166,9 @@ void CFontLister::filesRemoved(const QStringList &files)
 void CFontLister::result(KJob *job)
 {
     itsJob=NULL;
-
+#ifdef KFI_FONTLISTER_DEBUG
+    kDebug() << "Got result" << endl;
+#endif
     if(job && !job->error())
     {
         QMap<KUrl, KFileItem *>::Iterator it(itsItems.begin());
@@ -161,6 +176,9 @@ void CFontLister::result(KJob *job)
         while(it!=itsItems.end())
             if((*it)->isMarked())
             {
+#ifdef KFI_FONTLISTER_DEBUG
+                kDebug() << (*it)->url().prettyUrl() << " IS MARKED" << endl;
+#endif
                 (*it)->unmark();
                 ++it;
             }
@@ -168,6 +186,10 @@ void CFontLister::result(KJob *job)
             {
                 QMap<KUrl, KFileItem *>::Iterator remove(it);
                 KFileItem                         *item(*it);
+
+#ifdef KFI_FONTLISTER_DEBUG
+                kDebug() << (*it)->url().prettyUrl() << " IS **NOT** MARKED" << endl;
+#endif
 
                 emit deleteItem(item);
                 ++it;
@@ -177,6 +199,9 @@ void CFontLister::result(KJob *job)
     }
     else
     {
+#ifdef KFI_FONTLISTER_DEBUG
+        kDebug() << "Error :-(" << endl;
+#endif
         QMap<KUrl, KFileItem *>::Iterator it(itsItems.begin()),
                                           end(itsItems.end());
 
@@ -205,15 +230,26 @@ void CFontLister::entries(KIO::Job *, const KIO::UDSEntryList &entries)
             {
                 KFileItem *item(new KFileItem(*it, url));
 
+#ifdef KFI_FONTLISTER_DEBUG
+                kDebug() << "New item:" << item->url().prettyUrl() << endl;
+#endif
                 itsItems[url]=item;
                 newFonts.append(item);
             }
             itsItems[url]->mark();
+#ifdef KFI_FONTLISTER_DEBUG
+            kDebug() << "Marking:" << itsItems[url]->url().prettyUrl() << endl;
+#endif
         }
     }
 
     if(newFonts.count())
+    {
+#ifdef KFI_FONTLISTER_DEBUG
+        kDebug() << "Have " << newFonts.count() << " new fonts" << endl;
+#endif
         emit newItems(newFonts);
+    }
 }
 
 /*
