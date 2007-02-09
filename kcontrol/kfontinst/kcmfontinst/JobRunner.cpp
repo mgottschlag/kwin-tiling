@@ -287,6 +287,8 @@ void CJobRunner::doNext()
 
 void CJobRunner::jobResult(KJob *job)
 {
+    Q_ASSERT(job);
+
     if(itsCancelClicked)
     {
         stopAnimation();
@@ -299,7 +301,7 @@ void CJobRunner::jobResult(KJob *job)
     // itsIt will equal itsEnd if user decided to cancel the current op
     if(itsIt==itsEnd)
         doNext();
-    else if (job && !job->error())
+    else if (!job->error())
     {
         ++itsIt;
         doNext();
