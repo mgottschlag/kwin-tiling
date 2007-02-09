@@ -143,9 +143,6 @@ int main( int argc, char **argv )
     app.disableSessionManagement();
     KGlobal::locale()->insertCatalog("libdmctl");
 
-    // we need to read from the right rc file - possibly taking screen number in account
-    KScreenSaverSettings::instance("kscreensaverrc");
-
     LockProcess process(child, args->isSet( "blank" ));
     if (!child)
         process.setChildren(child_sockets);

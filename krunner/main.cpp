@@ -102,10 +102,6 @@ int main(int argc, char* argv[])
     }
     KRunnerApp app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
 
-    kDebug() << "Attempting to create KScreenSaverSettings::instance()" << endl;
-    KScreenSaverSettings::instance("kscreensaverrc");
-    kDebug() << "Created KScreenSaverSettings::instance()" << endl;
-
     // LOCKING
     SaverEngine saver;
 
