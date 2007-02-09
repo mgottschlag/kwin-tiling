@@ -79,7 +79,7 @@ class KDE_EXPORT CFcEngine
     int                   getNumIndexes() { return itsIndexCount; } // Only valid after draw has been called!
     const QString &       getName(const KUrl &url, int faceNo=0);
     bool                  getInfo(const KUrl &url, int faceNo, QString &full, QString &family, QString &foundry,
-                                  QString &weight, QString &width, QString &spacing, QString &slant);
+                                  QString &weight, QString &width, QString &spacing, QString &slant, QString &version);
     bool                  getInfo(const KUrl &url, int faceNo, Misc::TFont &info);
     static QFont          getQFont(const QString &family, unsigned long style, int size);
 
@@ -134,6 +134,7 @@ class KDE_EXPORT CFcEngine
                   itsWidth,
                   itsSlant,
                   itsSpacing,
+                  itsVersion,
                   itsAlphaSize;
     QVector<int>  itsSizes;
     KUrl          itsLastUrl;

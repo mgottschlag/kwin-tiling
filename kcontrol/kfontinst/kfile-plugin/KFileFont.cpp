@@ -195,7 +195,7 @@ static const char * getFoundry(const char *notice)
 }
 
 static bool readAfm(const QString &file, QString &full, QString &family, QString &foundry,
-                    QString &weight, QString &width, QString &spacing, QString &slant)
+                    QString &weight, QString &width, QString &spacing, QString &slant, QString &version)
 {
     QFile f(file);
     bool  foundName=false,
@@ -238,6 +238,8 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
                                 ? FC_PROPORTIONAL : FC_MONO );
                 else if(0==line.indexOf("Notice "))
                     foundry=getFoundry(line.mid(7).toLatin1());
+                else if(0==line.indexOf("Version "))
+                    version=getFoundry(line.mid(8).toLatin1());
                 else if(0==line.indexOf("StartCharMetrics"))
                     break;
             }
@@ -306,6 +308,7 @@ void KFileFontPlugin::addMimeType(const char *mime)
     addItemInfo(group, "Width", i18n("Width"), QVariant::String);
     addItemInfo(group, "Spacing", i18n("Spacing"), QVariant::String);
     addItemInfo(group, "Slant", i18n("Slant"), QVariant::String);
+    addItemInfo(group, "Version", i18n("Version"), QVariant::String);
 }
 
 bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
@@ -318,18 +321,21 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 width,
                 spacing,
                 slant,
+                version,
                 fullAll,
                 familyAll,
                 foundryAll,
                 weightAll,
                 widthAll,
                 spacingAll,
-                slantAll;
+                slantAll,
+                versionAll;
     QStringList familes,
                 weights,
                 widths,
                 spacings,
-                slants;
+                slants,
+                versions;
     KUrl        url(info.url());
     QString     fName;
     bool        fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
@@ -352,12 +358,12 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
     {
         if("application/x-afm"==info.mimeType())  // Then fontconfig can't give us the data :-(
             status=readAfm(url.path(), fullAll, familyAll, foundryAll, weightAll, widthAll,
-                           spacingAll, slantAll);
+                           spacingAll, slantAll, versionAll);
         else
             for(int face=faceFrom; face<faceTo; ++face)
             {
                 if(CFcEngine::instance()->getInfo(url, face, full, family, foundry, weight, width,
-                                                  spacing, slant) && !full.isEmpty() && full!=lastFull)
+                                                  spacing, slant, version) && !full.isEmpty() && full!=lastFull)
                 {
                     addEntry(fullAll, full);
                     lastFull=full;
@@ -392,6 +398,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                         widths.append(width);
                         spacings.append(spacing);
                         slants.append(slant);
+                        versions.append(version);
                     }
 
                     status=true;
@@ -407,12 +414,13 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             group=appendGroup(info, "General");
             appendItem(group, "Full", fullAll);
 
-            if(same(weights) && same(widths) && same(spacings) && same(slants))
+            if(same(weights) && same(widths) && same(spacings) && same(slants) && same(versions))
             {
                 weightAll=weight;
                 widthAll=width;
                 spacingAll=spacing;
                 slantAll=slant;
+                versionAll=version;
             }
             else
             {
@@ -420,6 +428,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 combine(widths, widthAll);
                 combine(spacings, spacingAll);
                 combine(slants, slantAll);
+                combine(versions, versionAll);
             }
 
             if(KFileMetaInfo::Fastest!=what)
@@ -430,6 +439,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 appendItem(group, "Width", widthAll);
                 appendItem(group, "Spacing", spacingAll);
                 appendItem(group, "Slant", slantAll);
+                appendItem(group, "Version", versionAll);
             }
         }
 

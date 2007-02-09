@@ -314,6 +314,7 @@ CFcEngine::CFcEngine()
          : itsFcDirty(true),
            itsIndex(-1),
            itsIndexCount(1),
+           itsVersion(0),
            itsPreviewString(getDefaultPreviewString())
 {
     reinit();
@@ -811,7 +812,7 @@ QString CFcEngine::getFcLangString(FcPattern *pat, const char *val, const char *
 #endif
 
 bool CFcEngine::getInfo(const KUrl &url, int faceNo, QString &full, QString &family, QString &foundry, QString &weight,
-                        QString &width, QString &spacing, QString &slant)
+                        QString &width, QString &spacing, QString &slant, QString &version)
 {
     if(parseUrl(url, faceNo, true))
     {
@@ -832,6 +833,21 @@ bool CFcEngine::getInfo(const KUrl &url, int faceNo, QString &full, QString &fam
         slant=FC::slantStr(itsSlant, false);
         spacing=FC::spacingStr(itsSpacing);
         foundry=itsFoundry;
+
+        struct TFixed
+        {
+             TFixed(unsigned long v) : upper(v>>16), lower(v&0xFFFF) {}
+
+             short upper,
+                   lower;
+
+             float value() { return upper+(lower/65536.0); }
+        };
+
+        if(0==itsVersion)
+            version=i18n("Not Available");
+        else
+            version.setNum(TFixed((unsigned long)itsVersion).value());
         return true;
     }
 
@@ -884,6 +900,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
     if(faceNo<0)
         faceNo=0;
 
+    itsVersion=0;
     itsFileName.clear();
     itsIndex=faceNo;
 
@@ -1032,6 +1049,7 @@ KFI_DBUG << "isHidden:" << hidden << endl;
                 {
                     FcPatternGetInteger(pat, FC_SPACING, 0, &itsSpacing);
                     itsFoundry=FC::getFcString(pat, FC_FOUNDRY, 0);
+                    FcPatternGetInteger(pat, FC_FONTVERSION, faceNo, &itsVersion);
                 }
                 itsDescriptiveName=FC::createName(pat, itsWeight, itsWidth, itsSlant);
                 FcPatternDestroy(pat);
@@ -1062,6 +1080,7 @@ bool CFcEngine::parseName(const QString &name, int faceNo, unsigned long style, 
 
     itsDescriptiveName=name;
     itsSpacing=FC_PROPORTIONAL;
+    itsVersion=0;
 
     if(-1==(pos=name.indexOf(", ")))   // No style information...
     {
@@ -1093,16 +1112,16 @@ bool CFcEngine::parseName(const QString &name, int faceNo, unsigned long style, 
     itsFileName.clear();
     if(all)
     {
-        FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, (void *)0);
+        FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, FC_FONTVERSION, (void *)0);
         FcPattern   *pat = FcPatternBuild(NULL,
-                                            FC_FAMILY, FcTypeString,
-                                                (const FcChar8 *)(itsName.toUtf8().data()),
-                                            FC_WEIGHT, FcTypeInteger, itsWeight,
-                                            FC_SLANT, FcTypeInteger, itsSlant,
+                                          FC_FAMILY, FcTypeString,
+                                              (const FcChar8 *)(itsName.toUtf8().data()),
+                                          FC_WEIGHT, FcTypeInteger, itsWeight,
+                                          FC_SLANT, FcTypeInteger, itsSlant,
 #ifndef KFI_FC_NO_WIDTHS
-                                            FC_WIDTH, FcTypeInteger, itsWidth,
+                                          FC_WIDTH, FcTypeInteger, itsWidth,
 #endif
-                                            NULL);
+                                          NULL);
         FcFontSet   *set = FcFontList(0, pat, os);
 
         FcPatternDestroy(pat);
@@ -1112,6 +1131,7 @@ bool CFcEngine::parseName(const QString &name, int faceNo, unsigned long style, 
         {
             FcPatternGetInteger(set->fonts[0], FC_SPACING, faceNo, &itsSpacing);
             itsFoundry=FC::getFcString(set->fonts[0], FC_FOUNDRY, faceNo);
+            FcPatternGetInteger(set->fonts[0], FC_FONTVERSION, faceNo, &itsVersion);
         }
     }
 
