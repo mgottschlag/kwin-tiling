@@ -69,13 +69,6 @@
 // Not enabled - as it messes things up a little with fonts/group files.
 //#define KFI_KIO_ALL_URLS_HAVE_NAME
 
-//
-// Enable the following so that fonts:/ will obtain the font name from each font
-// that is about to be installed, and check to see whehter it is already installed.
-// Note, this slows down font installation - as for each font fontconfig's list will
-// be refreshed.
-#define KFI_KIO_CHECK_FONTS_WHEN_INSTALL
-
 #define KFI_DBUG kDebug() << "[" << (int)(getpid()) << "] "
 
 #define MAX_IPC_SIZE    (1024*32)
@@ -2862,19 +2855,19 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
 {
     //
     // To speed things up, check the files extension 1st...
-    if(
-#ifndef KFI_KIO_CHECK_FONTS_WHEN_INSTALL
-       Misc::checkExt(file, "ttf") || Misc::checkExt(file, "otf") || Misc::checkExt(file, "ttc") ||
-       Misc::checkExt(file, "pfa") || Misc::checkExt(file, "pfb") ||
-#endif
-       Misc::checkExt(file, "bdf") || Misc::checkExt(file, "bdf.gz") ||
+    if(Misc::checkExt(file, "bdf") || Misc::checkExt(file, "bdf.gz") ||
        Misc::checkExt(file, "pcf") || Misc::checkExt(file, "pcf.gz"))
-        return FILE_FONT;
-
-    if(isAAfm(file) || isAPfm(file))
+    {
+        // Need to check whether bitmaps have been hidden from from fontconfig - as happens on KUbuntu...
+        if(FC::bitmapsEnabled())
+            return FILE_FONT;
+        else
+            error(KIO::ERR_SLAVE_DEFINED, i18n("You cannot install bitmap fonts, as these have been "
+                                               "diabled on your system."));
+    }
+    else if(isAAfm(file) || isAPfm(file))
         return FILE_METRICS;
-
-    if(Misc::isPackage(file))
+    else if(Misc::isPackage(file))
         error(KIO::ERR_SLAVE_DEFINED, i18n("You cannot install a fonts package directly.\n"
                                            "Please extract %1, and install the components individually.",
                                            url.prettyUrl()));
@@ -2892,7 +2885,6 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
 
         if(pat)
         {
-#ifdef KFI_KIO_CHECK_FONTS_WHEN_INSTALL
             FcBool scalable;
 
             if(FcResultMatch==FcPatternGetBool(pat, FC_SCALABLE, 0, &scalable) && scalable)
@@ -2926,7 +2918,6 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
                     return FILE_UNKNOWN;
                 }
             }
-#endif
             FcPatternDestroy(pat);
             return FILE_FONT;
         }

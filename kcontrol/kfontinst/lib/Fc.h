@@ -112,6 +112,7 @@ namespace FC
     extern KDE_EXPORT QString       widthStr(int w, bool emptyNormal=true);
     extern KDE_EXPORT QString       slantStr(int s, bool emptyNormal=true);
     extern KDE_EXPORT QString       spacingStr(int s);
+    extern KDE_EXPORT bool          bitmapsEnabled();
 }
 }
 

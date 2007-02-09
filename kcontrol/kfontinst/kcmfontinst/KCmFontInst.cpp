@@ -24,6 +24,7 @@
 #include "KfiConstants.h"
 #include "PrintDialog.h"
 #include "FcEngine.h"
+#include "FcEngine.h"
 #include "FontPreview.h"
 #include "Misc.h"
 #include "FontList.h"
@@ -468,10 +469,12 @@ void CKCmFontInst::addFonts()
         QString filter("application/x-font-ttf application/x-font-otf "
                        "application/x-font-ttc application/x-font-type1");
 
-        // TODO: Need to work out if listing of bitmaps fonts is enabled in fontconfig - otherwise
-        //       installed bitmaps would disapper!
         if(itsMgtMode->isChecked())
-            filter+=" application/x-font-pcf application/x-font-bdf fonts/group";
+        {
+            if(FC::bitmapsEnabled())
+                filter+=" application/x-font-pcf application/x-font-bdf";
+            filter+=" fonts/group";
+        }
         filter+=" fonts/package";
 
         KUrl::List list=KFileDialog::getOpenUrls(KUrl(), filter, this, i18n("Add Fonts"));

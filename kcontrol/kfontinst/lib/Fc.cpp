@@ -570,6 +570,31 @@ QString spacingStr(int s)
     }
 }
 
+bool bitmapsEnabled()
+{
+    //
+    // On some systems, such as KUbuntu, fontconfig is configured to ignore all bitmap fonts.
+    // The folowing check tries to get a list of installed bitmaps, if it an empty list is returned
+    // it is assumed that bitmaps are disabled.
+    bool        rv(false);
+    FcObjectSet *os  = FcObjectSetBuild(FC_FAMILY, (void *)0);
+    FcPattern   *pat = FcPatternBuild(NULL, FC_SCALABLE, FcTypeBool, FcFalse, NULL);
+    FcFontSet   *set = FcFontList(0, pat, os);
+
+    FcPatternDestroy(pat);
+    FcObjectSetDestroy(os);
+
+    if (set)
+    {
+        if(set->nfont)
+            rv=true;
+
+        FcFontSetDestroy(set);
+    }
+
+    return rv;
+}
+
 }
 
 }
