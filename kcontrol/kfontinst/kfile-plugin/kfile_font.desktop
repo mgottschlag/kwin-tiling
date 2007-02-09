@@ -9,4 +9,4 @@ ServiceTypes=KFilePlugin
 X-KDE-Library=kfile_font
 MimeType=application/x-font-ttf;application/x-font-type1;application/x-font-bdf;application/x-font-pcf;application/x-font-otf;application/x-font-ttc;application/x-afm
 PreferredGroups=General
-PreferredItems=Full,Family,Foundry,Weight,Width,Spacing,Slant,Version
+PreferredItems=Full,Foundry,Family,Weight,Width,Spacing,Slant,Version

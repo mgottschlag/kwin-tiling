@@ -25,14 +25,14 @@
 
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
-#include <QtGui/QFrame>
+#include <QFrame>
+#include <QMap>
 #include <kconfig.h>
 #include "KfiConstants.h"
 #include "FontPreview.h"
 
 class QPushButton;
 class QLabel;
-class QBoxLayout;
 class KIntNumInput;
 class QAction;
 class KUrl;
@@ -68,6 +68,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void changeText();
     void print();
     void displayType(const QList<CFcEngine::TRange> &range);
+    void showFace(int f);
 
     Q_SIGNALS:
 
@@ -75,22 +76,24 @@ class CFontViewPart : public KParts::ReadOnlyPart
 
     private:
 
+    void getMetaInfo();
     bool isInstalled();
 
     private:
 
-    CFontPreview     *itsPreview;
-    QPushButton      *itsInstallButton;
-    QBoxLayout       *itsLayout;
-    QFrame           *itsFrame,
-                     *itsToolsFrame;
-    QLabel           *itsFaceLabel;
-    KIntNumInput     *itsFaceSelector;
-    QAction          *itsChangeTextAction;
-    int              itsFace;
-    KSharedConfigPtr itsConfig;
-    BrowserExtension *itsExtension;
-    KProcess         *itsProc;
+    QMap<int, QString> itsMetaInfo;
+    CFontPreview       *itsPreview;
+    QPushButton        *itsInstallButton;
+    QWidget            *itsFaceWidget;
+    QFrame             *itsFrame;
+    QLabel             *itsFaceLabel,
+                       *itsMetaLabel;
+    KIntNumInput       *itsFaceSelector;
+    QAction            *itsChangeTextAction;
+    int                itsFace;
+    KSharedConfigPtr   itsConfig;
+    BrowserExtension   *itsExtension;
+    KProcess           *itsProc;
 };
 
 class BrowserExtension : public KParts::BrowserExtension

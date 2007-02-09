@@ -26,8 +26,8 @@
 #include "FcEngine.h"
 #include "PreviewSelectAction.h"
 #include <klocale.h>
-#include <QBoxLayout>
 #include <QGridLayout>
+#include <QBoxLayout>
 #include <QPushButton>
 #include <QFrame>
 #include <QFile>
@@ -39,7 +39,9 @@
 #include <QStringList>
 #include <QTimer>
 #include <QApplication>
+#include <QGroupBox>
 #include <kio/netaccess.h>
+#include <kio/metainfojob.h>
 #include <kglobal.h>
 #include <kcomponentdata.h>
 #include <kmessagebox.h>
@@ -75,49 +77,55 @@ CFontViewPart::CFontViewPart(QWidget *parent)
 
     itsFrame=new QFrame(parent);
 
-    QFrame *previewFrame=new QFrame(itsFrame);
+    QFrame    *previewFrame=new QFrame(itsFrame);
+    QGroupBox *metaBox=new QGroupBox(i18n("Information:"), itsFrame);
 
-    itsToolsFrame=new QFrame(itsFrame);
+    itsFaceWidget=new QWidget(itsFrame);
 
-    itsLayout=new QBoxLayout(QBoxLayout::TopToBottom, itsFrame);
+    QGridLayout *mainLayout=new QGridLayout(itsFrame);
 
-    itsLayout->setMargin(KDialog::marginHint());
-    itsLayout->setSpacing(KDialog::spacingHint());
+    mainLayout->setMargin(KDialog::marginHint());
+    mainLayout->setSpacing(KDialog::spacingHint());
 
     QBoxLayout *previewLayout=new QBoxLayout(QBoxLayout::LeftToRight, previewFrame),
-               *toolsLayout=new QBoxLayout(QBoxLayout::LeftToRight, itsToolsFrame);
+               *faceLayout=new QBoxLayout(QBoxLayout::LeftToRight, itsFaceWidget);
+    QBoxLayout *metaLayout=new QBoxLayout(QBoxLayout::LeftToRight, metaBox);
 
+    itsMetaLabel=new QLabel(metaBox);
+    itsMetaLabel->setAlignment(Qt::AlignTop);
+    metaLayout->addWidget(itsMetaLabel);
     previewLayout->setMargin(0);
     previewLayout->setSpacing(0);
-    toolsLayout->setMargin(0);
-    toolsLayout->setSpacing(KDialog::spacingHint());
+    faceLayout->setMargin(0);
+    faceLayout->setSpacing(KDialog::spacingHint());
 
     itsFrame->setFrameShape(QFrame::NoFrame);
     itsFrame->setFocusPolicy(Qt::ClickFocus);
-    itsToolsFrame->setFrameShape(QFrame::NoFrame);
     previewFrame->setFrameShape(QFrame::StyledPanel);
     previewFrame->setFrameShadow(QFrame::Sunken);
     setComponentData(KComponentData(KFI_NAME));
 
     itsPreview=new CFontPreview(previewFrame);
     itsPreview->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    itsFaceLabel=new QLabel(i18n("Face:"), itsToolsFrame);
-    itsFaceSelector=new KIntNumInput(1, itsToolsFrame);
-    itsInstallButton=new QPushButton(i18n("Install..."), itsToolsFrame);
+    itsFaceLabel=new QLabel(i18n("Show Face:"), itsFaceWidget);
+    itsFaceSelector=new KIntNumInput(1, itsFaceWidget);
+    itsInstallButton=new QPushButton(i18n("Install..."), itsFrame);
     itsInstallButton->setEnabled(false);
     previewLayout->addWidget(itsPreview);
-    itsLayout->addWidget(previewFrame);
-    itsLayout->addWidget(itsToolsFrame);
-    toolsLayout->addWidget(itsFaceLabel);
-    toolsLayout->addWidget(itsFaceSelector);
-    itsFaceLabel->hide();
-    itsFaceSelector->hide();
-    toolsLayout->addItem(new QSpacerItem(5, 5, QSizePolicy::MinimumExpanding,
-                                         QSizePolicy::Minimum));
-    toolsLayout->addWidget(itsInstallButton);
+    faceLayout->addWidget(itsFaceLabel);
+    faceLayout->addWidget(itsFaceSelector);
+    faceLayout->addItem(new QSpacerItem(KDialog::spacingHint(), 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
+    itsFaceWidget->hide();
+
+    mainLayout->addWidget(previewFrame, 0, 0, 4, 1);
+    mainLayout->addWidget(metaBox, 0, 1);
+    mainLayout->addWidget(itsFaceWidget, 1, 1);
+    mainLayout->addItem(new QSpacerItem(KDialog::spacingHint(), KDialog::spacingHint(),
+                                        QSizePolicy::Fixed, QSizePolicy::MinimumExpanding), 2, 1);
+    mainLayout->addWidget(itsInstallButton, 3, 1);
     connect(itsPreview, SIGNAL(status(bool)), SLOT(previewStatus(bool)));
     connect(itsInstallButton, SIGNAL(clicked()), SLOT(install()));
-    connect(itsFaceSelector, SIGNAL(valueChanged(int)), itsPreview, SLOT(showFace(int)));
+    connect(itsFaceSelector, SIGNAL(valueChanged(int)), SLOT(showFace(int)));
 
     itsChangeTextAction=actionCollection()->addAction("changeText");
     itsChangeTextAction->setIcon(KIcon("text"));
@@ -145,6 +153,9 @@ bool CFontViewPart::openUrl(const KUrl &url)
 {
     if (!url.isValid() || !closeUrl())
         return false;
+
+    itsMetaLabel->setText(QString());
+    itsMetaInfo.clear();
 
     if(KFI_KIO_FONTS_PROTOCOL==url.protocol() || KIO::NetAccess::mostLocalUrl(url, itsFrame).isLocalFile())
     {
@@ -208,8 +219,8 @@ void CFontViewPart::timeout()
         itsFaceSelector->blockSignals(false);
     }
 
-    itsFaceLabel->setVisible(showFs);
-    itsFaceSelector->setVisible(showFs);
+    itsFaceWidget->setVisible(showFs);
+    getMetaInfo();
 }
 
 void CFontViewPart::previewStatus(bool st)
@@ -319,6 +330,55 @@ void CFontViewPart::displayType(const QList<CFcEngine::TRange> &range)
 {
     itsPreview->setUnicodeRange(range);
     itsChangeTextAction->setEnabled(0==range.count());
+}
+
+void CFontViewPart::showFace(int f)
+{
+    itsPreview->showFace(f);
+    itsMetaLabel->setText(itsMetaInfo[itsFaceSelector->isVisible() && itsFaceSelector->value()>0
+                                          ? itsFaceSelector->value()-1 : 0]);
+}
+
+void CFontViewPart::getMetaInfo()
+{
+    KFileMetaInfo meta(m_url, QString(), KFileMetaInfo::DontCare);
+
+    if(meta.isValid()) //  && !meta.isEmpty())
+    {
+        QStringList           keys(meta.preferredKeys());
+        QStringList::Iterator it(keys.begin()),
+                              end(keys.end());
+        QString               metaInfo;
+
+        //
+        // Decode meta info. In the case of TTC fonts, kfile_font will separate each face's
+        // details with "; ". However, version and foundry are listed for only the 1st face...
+        for(; it!=end; ++it)
+        {
+            KFileMetaInfoItem          mi(meta.item(*it));
+            QString                    tk(mi.translatedKey());
+            QStringList                list(mi.value().toString().split("; "));
+            QStringList::ConstIterator sit(list.begin()),
+                                       send(list.end());
+
+            for(int i=0; sit!=send; ++sit, ++i)
+                itsMetaInfo[i]+="<tr><td><b>"+tk+"</b></td><td>"+
+                                (*sit)+"</td></tr>";
+
+            if(itsMetaInfo.count()>1 && 1==list.count())
+                for(int i=1; i<itsMetaInfo.count(); ++i)
+                    itsMetaInfo[i]+="<tr><td><b>"+tk+"</b></td><td>"+
+                                    list.first()+"</td></tr>";
+        }
+
+        for(int i=0; i<itsMetaInfo.count(); ++i)
+            itsMetaInfo[i]="<table>"+itsMetaInfo[i]+"</table>";
+        itsMetaLabel->setText(itsMetaInfo[itsFaceSelector->isVisible() && itsFaceSelector->value()>0
+                                            ? itsFaceSelector->value()-1 : 0]);
+    }
+
+    if(0==itsMetaInfo.size())
+        itsMetaLabel->setText(i18n("<p>No information</p>"));
 }
 
 bool CFontViewPart::isInstalled()

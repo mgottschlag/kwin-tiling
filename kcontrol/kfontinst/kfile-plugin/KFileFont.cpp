@@ -29,11 +29,14 @@
 #include <QTextStream>
 #include <kgenericfactory.h>
 #include <kio/netaccess.h>
+#include <kdebug.h>
+
+#define KFI_DBUG kDebug(7034)
 
 static void addEntry(QString &existing, const QString &add)
 {
     if(existing.length())
-        existing.append(", ");
+        existing.append("; ");
     existing.append(add);
 }
 
@@ -302,8 +305,8 @@ void KFileFontPlugin::addMimeType(const char *mime)
     KFileMimeTypeInfo::GroupInfo *group=addGroupInfo(info, "General", i18n("General"));
 
     addItemInfo(group, "Full", i18n("Full Name"), QVariant::String);
-    addItemInfo(group, "Family", i18n("Family"), QVariant::String);
     addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
+    addItemInfo(group, "Family", i18n("Family"), QVariant::String);
     addItemInfo(group, "Weight", i18n("Weight"), QVariant::String);
     addItemInfo(group, "Width", i18n("Width"), QVariant::String);
     addItemInfo(group, "Spacing", i18n("Spacing"), QVariant::String);
@@ -330,12 +333,11 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 spacingAll,
                 slantAll,
                 versionAll;
-    QStringList familes,
+    QStringList families,
                 weights,
                 widths,
                 spacings,
-                slants,
-                versions;
+                slants;
     KUrl        url(info.url());
     QString     fName;
     bool        fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
@@ -347,6 +349,8 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                                                                      // Don't know - so just try 1st 10...
 
     what=0;
+
+    KFI_DBUG << "Get font meta info for:" << url.prettyUrl() << " face from:" << faceFrom << " to " << faceTo << endl;
 
     if(!fontsProt && !fileProt && KIO::NetAccess::download(url, fName, NULL))
     {
@@ -368,10 +372,10 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                     addEntry(fullAll, full);
                     lastFull=full;
 
-                    if(KFileMetaInfo::Fastest!=what)
+                    KFI_DBUG << "Read meta data for face " << face << " fullname:" << full << endl;
+                    if(faceFrom==face)
                     {
-                        addEntry(familyAll, family);
-                        if(faceFrom==face)
+                        if(foundryAll.isEmpty())
                         {
                             foundryAll=foundry;
 
@@ -394,13 +398,15 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                                     }
                             }
                         }
-                        weights.append(weight);
-                        widths.append(width);
-                        spacings.append(spacing);
-                        slants.append(slant);
-                        versions.append(version);
-                    }
 
+                        if(versionAll.isEmpty())
+                            versionAll=version;
+                    }
+                    families.append(family);
+                    weights.append(weight);
+                    widths.append(width);
+                    spacings.append(spacing);
+                    slants.append(slant);
                     status=true;
                 }
                 else
@@ -414,8 +420,9 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             group=appendGroup(info, "General");
             appendItem(group, "Full", fullAll);
 
-            if(same(weights) && same(widths) && same(spacings) && same(slants) && same(versions))
+            if(same(families) && same(weights) && same(widths) && same(spacings) && same(slants))
             {
+                familyAll=family;
                 weightAll=weight;
                 widthAll=width;
                 spacingAll=spacing;
@@ -424,23 +431,19 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             }
             else
             {
+                combine(families, familyAll);
                 combine(weights, weightAll);
                 combine(widths, widthAll);
                 combine(spacings, spacingAll);
                 combine(slants, slantAll);
-                combine(versions, versionAll);
             }
-
-            if(KFileMetaInfo::Fastest!=what)
-            {
-                appendItem(group, "Family", familyAll);
-                appendItem(group, "Foundry", foundryAll);
-                appendItem(group, "Weight", weightAll);
-                appendItem(group, "Width", widthAll);
-                appendItem(group, "Spacing", spacingAll);
-                appendItem(group, "Slant", slantAll);
-                appendItem(group, "Version", versionAll);
-            }
+            appendItem(group, "Foundry", foundryAll);
+            appendItem(group, "Family", familyAll);
+            appendItem(group, "Weight", weightAll);
+            appendItem(group, "Width", widthAll);
+            appendItem(group, "Spacing", spacingAll);
+            appendItem(group, "Slant", slantAll);
+            appendItem(group, "Version", versionAll);
         }
 
         if(downloaded)
