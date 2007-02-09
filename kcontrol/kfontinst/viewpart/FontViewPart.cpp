@@ -343,12 +343,11 @@ void CFontViewPart::getMetaInfo()
 {
     KFileMetaInfo meta(m_url, QString(), KFileMetaInfo::DontCare);
 
-    if(meta.isValid()) //  && !meta.isEmpty())
+    if(meta.isValid() && !meta.isEmpty())
     {
         QStringList           keys(meta.preferredKeys());
         QStringList::Iterator it(keys.begin()),
                               end(keys.end());
-        QString               metaInfo;
 
         //
         // Decode meta info. In the case of TTC fonts, kfile_font will separate each face's
