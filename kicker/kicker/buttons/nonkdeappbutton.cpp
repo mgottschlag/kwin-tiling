@@ -78,7 +78,7 @@ NonKDEAppButton::NonKDEAppButton( const KConfigGroup& config, QWidget* parent )
                config.readPathEntry("Path"),
                config.readEntry("Icon"),
                config.readPathEntry("CommandLine"),
-               config.readEntry("RunInTerminal", QVariant(false)).toBool());
+               config.readEntry("RunInTerminal", false));
 
     // see comment on connect in above constructor
     connect(this, SIGNAL(clicked()), SLOT(slotExec()));

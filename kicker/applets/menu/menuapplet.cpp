@@ -337,9 +337,9 @@ void Applet::readSettings()
     {
     KConfig cfg( "kdesktoprc", true );
     cfg.setGroup( "Menubar" );
-    desktop_menu = cfg.readEntry( "ShowMenubar", QVariant(false )).toBool();
+    desktop_menu = cfg.readEntry( "ShowMenubar", false);
     cfg.setGroup( "KDE" );
-    if( cfg.readEntry( "macStyle", QVariant(false )).toBool() || desktop_menu )
+    if( cfg.readEntry( "macStyle", false) || desktop_menu )
         this->setToolTip("");
     else
         this->setToolTip( i18n(

@@ -200,7 +200,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
   KConfig config("kcmdisplayrc", true );
   config.setGroup("X11");
 #ifdef Q_WS_X11
-  bool multihead = !config.readEntry( "disableMultihead", QVariant(false)).toBool() &&
+  bool multihead = !config.readEntry( "disableMultihead", false) &&
                     (ScreenCount(QX11Info::display()) > 1);
 #else
   bool multihead = false;

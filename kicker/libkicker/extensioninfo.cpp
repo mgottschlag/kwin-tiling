@@ -68,10 +68,10 @@ ExtensionInfo::ExtensionInfo( const QString& deskFile, const QString& configFile
     setLibrary(df.readEntry("X-KDE-Library"));
 
     // is it a unique applet?
-    setIsUnique(df.readEntry("X-KDE-UniqueExtension", QVariant(false)).toBool());
+    setIsUnique(df.readEntry("X-KDE-UniqueExtension", false));
 
     // should it be shown in the gui?
-    d->hidden = df.readEntry("Hidden", QVariant(false)).toBool();
+    d->hidden = df.readEntry("Hidden", false);
 
     if (configFile.isEmpty())
     {

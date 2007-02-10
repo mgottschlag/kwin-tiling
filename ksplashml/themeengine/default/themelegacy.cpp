@@ -36,9 +36,9 @@ DefaultConfig::DefaultConfig( QWidget *parent, KConfig *config )
   mConfig->setGroup( QString("KSplash Theme: Default") );
   KVBox *hbox = new KVBox( this );
   mFlash = new QCheckBox( i18n("Icons flash while they are starting"), hbox );
-  mFlash->setChecked( mConfig->readEntry("Icons Flashing", QVariant(true)).toBool() );
+  mFlash->setChecked( mConfig->readEntry("Icons Flashing", true) );
   mAlwaysShow = new QCheckBox( i18n("Always show progress bar"), hbox );
-  mAlwaysShow->setChecked( mConfig->readEntry("Always Show Progress", QVariant(true)).toBool() );
+  mAlwaysShow->setChecked( mConfig->readEntry("Always Show Progress", true) );
 }
 
 void DefaultConfig::save()

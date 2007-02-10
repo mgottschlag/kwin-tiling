@@ -178,8 +178,8 @@ void ExtensionManager::initialize()
 void ExtensionManager::configureMenubar(bool duringInit)
 {
     KConfig menuConfig("kdesktoprc", true);
-    if (KConfigGroup(&menuConfig, "KDE").readEntry("macStyle", QVariant(false)).toBool()
-        || KConfigGroup(&menuConfig, "Menubar").readEntry("ShowMenubar", QVariant(false)).toBool())
+    if (KConfigGroup(&menuConfig, "KDE").readEntry("macStyle", false)
+        || KConfigGroup(&menuConfig, "Menubar").readEntry("ShowMenubar", false))
     {
         if (KGlobal::dirs()->findResource("applets", "menuapplet.desktop").isEmpty() ||
             m_menubarPanel)
@@ -241,7 +241,7 @@ void ExtensionManager::migrateMenubar()
     KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup("General");
 
-    if (config->readEntry("CheckedForMenubar", QVariant(false)).toBool())
+    if (config->readEntry("CheckedForMenubar", false))
     {
         return;
     }

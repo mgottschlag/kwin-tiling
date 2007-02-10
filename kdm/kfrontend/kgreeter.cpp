@@ -347,7 +347,7 @@ KGreeter::insertSessions()
 				dsk.setGroup( "Desktop Entry" );
 				putSession( ent.left( ent.length() - 8 ),
 				            dsk.readEntry( "Name" ),
-				            (dsk.readEntry( "Hidden", QVariant( false ) ).toBool() ||
+				            (dsk.readEntry( "Hidden", false ) ||
 				             (dsk.hasKey( "TryExec" ) &&
 				              KStandardDirs::findExe( dsk.readEntry( "TryExec" ) ).isEmpty())),
 				            dsk.readEntry( "Exec" ).toLatin1() );

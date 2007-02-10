@@ -147,13 +147,13 @@ void ThemeStandard::_readSettings()
 
   QString sbpos = cfg->readEntry( "Statusbar Position", "Bottom" ).toUpper();
   mSbAtTop = ( sbpos == "TOP" );
-  mSbVisible = cfg->readEntry( "Statusbar Visible", QVariant(true)).toBool();
-  mSbPbVisible = cfg->readEntry( "Progress Visible", QVariant(true)).toBool();
+  mSbVisible = cfg->readEntry( "Statusbar Visible", true);
+  mSbPbVisible = cfg->readEntry( "Progress Visible", true);
 
   mSbFontName = cfg->readEntry( "Statusbar Font", "Sans Serif" );
   mSbFontSz = cfg->readEntry( "Statusbar Font Size", 16 );
-  mSbFontBold = cfg->readEntry( "Statusbar Font Bold", QVariant(true )).toBool();
-  mSbFontItalic = cfg->readEntry( "Statusbar Font Italic", QVariant(false )).toBool();
+  mSbFontBold = cfg->readEntry( "Statusbar Font Bold", true);
+  mSbFontItalic = cfg->readEntry( "Statusbar Font Italic", false);
   mSbFont = QFont( mSbFontName, mSbFontSz, ( mSbFontBold? QFont::Bold : QFont::Normal ) );
   if( mSbFontItalic )
     mSbFont.setItalic( true );

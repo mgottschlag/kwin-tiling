@@ -145,7 +145,7 @@ bool URLGrabber::checkNewData( const QString& clipData )
     actionMenu( true ); // also creates myMatches
 
     return ( !myMatches.isEmpty() &&
-             (!m_config->readEntry("Put Matching URLs in history", QVariant(true)).toBool()));
+             (!m_config->readEntry("Put Matching URLs in history", true)));
 }
 
 
@@ -452,7 +452,7 @@ ClipAction::ClipAction( KConfig *kc )
 
         addCommand( kc->readPathEntry( "Commandline" ),
                     kc->readEntry( "Description" ), // i18n'ed
-                    kc->readEntry( "Enabled" , QVariant(false)).toBool(),
+                    kc->readEntry( "Enabled" , false),
                     kc->readEntry( "Icon") );
     }
 }

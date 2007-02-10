@@ -97,7 +97,7 @@ Lockout::Lockout( const QString& configFile, QWidget *parent )
     lockButton->setMinimumSize(lockButton->iconSize());
     logoutButton->setMinimumSize(logoutButton->iconSize());
 
-    bTransparent = conf->readEntry( "Transparent", QVariant(bTransparent )).toBool();
+    bTransparent = conf->readEntry( "Transparent", bTransparent);
 
     lockButton->setAutoRaise( bTransparent );
     logoutButton->setAutoRaise( bTransparent );

@@ -103,9 +103,9 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     if( import_P != ImportNone )
         return true; // don't read global settings
     cfg_P.setGroup( "Main" ); // main group
-    daemon_disabled = cfg_P.readEntry( "Disabled", QVariant(false )).toBool();
+    daemon_disabled = cfg_P.readEntry( "Disabled", false);
     cfg_P.setGroup( "Gestures" );
-    gestures_disabled_globally = cfg_P.readEntry( "Disabled", QVariant(true )).toBool();
+    gestures_disabled_globally = cfg_P.readEntry( "Disabled", true);
     gesture_mouse_button = cfg_P.readEntry( "MouseButton", 2 );
     gesture_mouse_button = qBound( 2, gesture_mouse_button, 9 );
     gesture_timeout = cfg_P.readEntry( "Timeout", 300 );
@@ -238,7 +238,7 @@ void Settings::read_settings_v1( KConfig& cfg_P )
         QString run = cfg_P.readEntry( "Run" );
         if( run.isNull() )
             continue;
-        bool menuentry = cfg_P.readEntry( "MenuEntry", QVariant(false )).toBool();
+        bool menuentry = cfg_P.readEntry( "MenuEntry", false);
         // CHECKME tohle pridavani az pak je trosku HACK
         if( menuentry )
             {

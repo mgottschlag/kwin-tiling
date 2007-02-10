@@ -341,12 +341,12 @@ void ThemeRedmond::_readSettings()
   mIconPosition         = cfg->readEntry( QString("Icon Position %1").arg(screen.width()), absZero );
 
   // Allow the Theme to hide particular components.
-  mShowWelcomeText       = cfg->readEntry( "Show Welcome Text", QVariant(true )).toBool();
-  mShowWelcomeTextShadow = cfg->readEntry( "Show Welcome Shadow", QVariant(true )).toBool();
-  mShowUsernameText      = cfg->readEntry( "Show Username", QVariant(true )).toBool();
-  mShowActionText        = cfg->readEntry( "Show Action", QVariant(true )).toBool();
-  mShowIcon              = cfg->readEntry( "Show Icon", QVariant(true )).toBool();
-  mUseKdmUserIcon        = cfg->readEntry( "Use KDM User Icon", QVariant(true )).toBool();
+  mShowWelcomeText       = cfg->readEntry( "Show Welcome Text", true);
+  mShowWelcomeTextShadow = cfg->readEntry( "Show Welcome Shadow", true);
+  mShowUsernameText      = cfg->readEntry( "Show Username", true);
+  mShowActionText        = cfg->readEntry( "Show Action", true);
+  mShowIcon              = cfg->readEntry( "Show Icon", true);
+  mUseKdmUserIcon        = cfg->readEntry( "Use KDM User Icon", true);
 
   // Setup our fonts. There are only 3 elements which use 'em, so this is fairly
   // straightforward.

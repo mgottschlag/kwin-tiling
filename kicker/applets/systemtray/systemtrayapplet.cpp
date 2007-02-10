@@ -431,7 +431,7 @@ void SystemTrayApplet::loadSettings()
     KConfig *conf = config();
     conf->setGroup("General");
 
-    if (conf->readEntry("ShowPanelFrame", QVariant(false)).toBool())
+    if (conf->readEntry("ShowPanelFrame", false))
     {
         setFrameStyle(Panel | Sunken);
     }

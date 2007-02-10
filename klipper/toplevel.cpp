@@ -463,15 +463,15 @@ void KlipperWidget::readProperties(KConfig *kc)
 void KlipperWidget::readConfiguration( KConfig *kc )
 {
     kc->setGroup("General");
-    bPopupAtMouse = kc->readEntry("PopupAtMousePosition", QVariant(false)).toBool();
-    bKeepContents = kc->readEntry("KeepClipboardContents", QVariant(true)).toBool();
-    bURLGrabber = kc->readEntry("URLGrabberEnabled", QVariant(false)).toBool();
-    bReplayActionInHistory = kc->readEntry("ReplayActionInHistory", QVariant(false)).toBool();
-    bNoNullClipboard = kc->readEntry("NoEmptyClipboard", QVariant(true)).toBool();
-    bUseGUIRegExpEditor = kc->readEntry("UseGUIRegExpEditor", QVariant(true )).toBool();
+    bPopupAtMouse = kc->readEntry("PopupAtMousePosition", false);
+    bKeepContents = kc->readEntry("KeepClipboardContents", true);
+    bURLGrabber = kc->readEntry("URLGrabberEnabled", false);
+    bReplayActionInHistory = kc->readEntry("ReplayActionInHistory", false);
+    bNoNullClipboard = kc->readEntry("NoEmptyClipboard", true);
+    bUseGUIRegExpEditor = kc->readEntry("UseGUIRegExpEditor", true);
     history()->max_size( kc->readEntry("MaxClipItems", 7) );
-    bIgnoreSelection = kc->readEntry("IgnoreSelection", QVariant(false)).toBool();
-    bSynchronize = kc->readEntry("Synchronize", QVariant(false)).toBool();
+    bIgnoreSelection = kc->readEntry("IgnoreSelection", false);
+    bSynchronize = kc->readEntry("Synchronize", false);
     bSelectionTextOnly = kc->readEntry("SelectionTextOnly",true);
     bIgnoreImages = kc->readEntry("IgnoreImages",true);
 }
@@ -1161,7 +1161,7 @@ void Klipper::quitProcess()
 
 static void ensureGlobalSyncOff(KSharedConfigPtr config) {
     config->setGroup("General");
-    if ( config->readEntry( "SynchronizeClipboardAndSelection" , QVariant(false)).toBool() ) {
+    if ( config->readEntry( "SynchronizeClipboardAndSelection" , false) ) {
         kDebug() << "Shutting off global synchronization" << endl;
         config->writeEntry("SynchronizeClipboardAndSelection", false, KConfig::Normal | KConfig::Global );
         config->sync();
