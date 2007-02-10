@@ -7,6 +7,6 @@ Name[fr]=Informations sur les polices
 Name[x-test]=xxFont Informationxx
 ServiceTypes=KFilePlugin
 X-KDE-Library=kfile_font
-MimeType=application/x-font-ttf;application/x-font-type1;application/x-font-bdf;application/x-font-pcf;application/x-font-otf;application/x-font-ttc;application/x-afm
+MimeType=application/x-font-ttf;application/x-font-type1;application/x-font-bdf;application/x-font-pcf;application/x-font-otf;application/x-font-ttc;application/x-afm;fonts/package
 PreferredGroups=General
 PreferredItems=Full,Foundry,Family,Weight,Width,Spacing,Slant,Version

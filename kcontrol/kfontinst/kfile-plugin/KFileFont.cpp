@@ -297,6 +297,7 @@ KFileFontPlugin::KFileFontPlugin(QObject *parent, const QStringList& args)
     addMimeType("application/x-font-otf");
     addMimeType("application/x-font-ttc");
     addMimeType("application/x-afm");
+    addMimeType("fonts/package");
 }
 
 void KFileFontPlugin::addMimeType(const char *mime)
