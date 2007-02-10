@@ -1235,9 +1235,9 @@ void CKCmFontInst::deleteFonts(CJobRunner::ItemList &urls, const QStringList &fo
             break;
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
-                           i18nc("translators: not called for n == 1",
-                                "Do you really want to delete these %n fonts?",
-                                fonts.count()),
+                           i18np("Do you really want to delete this font?",
+                                 "Do you really want to delete these %n fonts?",
+                                 fonts.count()),
                            fonts, i18n("Delete Fonts"), KStandardGuiItem::del());
         }
 
@@ -1313,17 +1313,19 @@ void CKCmFontInst::toggleFonts(CJobRunner::ItemList &urls, const QStringList &fo
         default:
             doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                        grp.isEmpty()
-                            ? enable ? i18nc("translators: not called for n == 1",
+                            ? enable ? i18np("Do you really want to enable this font?",
                                              "Do you really want to enable these %n fonts?",
                                              urls.count())
-                                     : i18nc("translators: not called for n == 1",
+                                     : i18np("Do you really want to disable this font?",
                                              "Do you really want to disable these %n fonts?",
                                              urls.count())
-                            : enable ? i18nc("translators: not called for n == 1",
+                            : enable ? i18np("<p>Do you really want to enable this font "
+                                             "contained within group \'<b>%2</b>\'?</p>",
                                              "<p>Do you really want to enable these %n fonts "
                                              "contained within group \'<b>%2</b>\'?</p>",
                                              urls.count(), grp)
-                                     : i18nc("translators: not called for n == 1",
+                                     : i18np("<p>Do you really want to disable this font "
+                                             "contained within group \'<b>%2</b>\'?</p>",
                                              "<p>Do you really want to disable these %n fonts "
                                              "contained within group \'<b>%2</b>\'?</p>",
                                              urls.count(), grp),

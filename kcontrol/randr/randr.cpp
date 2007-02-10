@@ -567,7 +567,7 @@ RandRDisplay::RandRDisplay()
 	int major_version, minor_version;
 	XRRQueryVersion(QX11Info::display(), &major_version, &minor_version);
 
-	m_version = i18n("X Resize and Rotate extension version %1.%1",major_version,minor_version);
+	m_version = i18n("X Resize and Rotate extension version %1.%2",major_version,minor_version);
 
 	m_numScreens = ScreenCount(QX11Info::display());
 

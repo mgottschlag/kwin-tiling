@@ -354,7 +354,7 @@ void KSMServer::handlePendingInteractions()
 void KSMServer::cancelShutdown( KSMClient* c )
 {
     kDebug( 1218 ) << "Client " << c->program() << " (" << c->clientId() << ") canceled shutdown." << endl;
-    KNotification::event( "cancellogout" , i18n( "Logout canceled by '%1'" ).arg( c->program()),
+    KNotification::event( "cancellogout" , i18n( "Logout canceled by '%1'", c->program()),
         QPixmap() , 0l , KNotification::DefaultEvent  );
     clientInteracting = 0;
     foreach( KSMClient* c, clients ) {
