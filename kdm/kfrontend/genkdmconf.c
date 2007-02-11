@@ -658,7 +658,7 @@ static const char def_session1[] =
 "    xsess_tmp=";
 static const char def_session2[] =
 "\n"
-"    $SHELL -c \"if (-f /etc/csh.login) source /etc/csh.login; if (-f ~/.login) source ~/.login; /bin/sh -c export > $xsess_tmp\"\n"
+"    $SHELL -c \"if (-f /etc/csh.login) source /etc/csh.login; if (-f ~/.login) source ~/.login; /bin/sh -c export >! $xsess_tmp\"\n"
 "    . $xsess_tmp\n"
 "    rm -f $xsess_tmp\n"
 "    ;;\n"
