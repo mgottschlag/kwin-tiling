@@ -242,6 +242,7 @@ class CFontItem : public CFontModelItem
     void                  clearPixmap()            { itsPixmap=NULL; }
     int                   rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
     const QStringList &   files() const            { return itsFiles; }
+    KIO::filesize_t       size() const             { return itsItem ? itsItem->size() : 0; }
 
     private:
 

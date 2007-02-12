@@ -1041,6 +1041,68 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
 
     switch(role)
     {
+        case Qt::ToolTipRole:
+            if(itsMgtMode)
+                if(mi->isFamily())
+                {
+                    CFamilyItem *fam=static_cast<CFamilyItem *>(index.internalPointer());
+                    QList<CFontItem *>::ConstIterator it(fam->fonts().begin()),
+                                                      end(fam->fonts().end());
+                    QStringList                       allFiles;
+                    QString                           tip("<h3>"+fam->name()+"</h3>");
+                    int                               size(0);
+
+                    tip+=i18n("<p><b>Status:</b> %1</p>", CFamilyItem::ENABLED==fam->status()
+                                                            ? i18n("Enabled")
+                                                            : CFamilyItem::DISABLED==fam->status()
+                                                                ? i18n("Disabled")
+                                                                : i18n("Partial"));
+                    tip+="<p><b>";
+                    tip+=i18n("All Files:");
+                    tip+="</b><ul>";
+
+                    for(; it!=end; ++it)
+                    {
+                        allFiles+=(*it)->files();
+                        size+=(*it)->size();
+                    }
+
+                    qSort(allFiles);
+                    QStringList::ConstIterator fit(allFiles.begin()),
+                                               fend(allFiles.end());
+
+                    for(; fit!=fend; ++fit)
+                        tip+="<li>"+(*fit)+"</li>";
+
+                    tip+="</ul></p>";
+                    tip+=i18n("<p><b>Total File Size:</b> %1</p>", KGlobal::locale()->formatByteSize(size));
+                    return tip;
+                }
+                else
+                {
+                    CFontItem   *font=static_cast<CFontItem *>(index.internalPointer());
+                    QString     tip("<h3>"+font->name()+"</h3>");
+                    QStringList files(font->files());
+
+                    tip+=i18n("<p><b>Status:</b> %1</p>", font->isEnabled()
+                                                            ? i18n("Enabled")
+                                                            : i18n("Disabled"));
+                    tip+="<p><b>";
+                    tip+=i18n("Files:");
+                    tip+="</b><ul>";
+
+                    qSort(files);
+                    QStringList::ConstIterator fit(files.begin()),
+                                               fend(files.end());
+
+                    for(; fit!=fend; ++fit)
+                        tip+="<li>"+(*fit)+"</li>";
+
+                    tip+="</ul></p>";
+                    tip+=i18n("<p><b>Total File Size:</b> %1</p>", KGlobal::locale()->formatByteSize(font->size()));
+                    return tip;
+                }
+            break;
         case Qt::FontRole:
             if(COL_FONT==index.column())
             {
