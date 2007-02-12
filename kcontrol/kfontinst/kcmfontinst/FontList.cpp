@@ -103,6 +103,29 @@ static QString getName(const KFileItem *item)
         : QString();
 }
 
+static QString replaceEnvVar(const QString &text)
+{
+    QString mod(text);
+    int     endPos(text.indexOf('/'));
+
+    if(endPos==-1)
+        endPos=text.length()-1;
+    else
+        endPos--;
+
+    if(endPos>0)
+    {
+        QString envVar(text.mid(1, endPos));
+
+        const char *val=getenv(envVar.toLatin1().constData());
+
+        if(val)
+            mod=Misc::fileSyntax(QFile::decodeName(val)+mod.mid(endPos+1));
+    }
+
+    return mod;
+}
+
 //
 // Convert from list such as:
 //
@@ -1237,10 +1260,13 @@ void CFontListSortFilterProxy::setFilterText(const QString &text)
     {
         //
         // If we are filtering on file location, then expand ~ to /home/user, etc.
-        if (CFontFilter::CRIT_LOCATION==itsFilterCriteria && !text.isEmpty() && '~'==text[0])
-            itsFilterText=1==text.length()
-                ? QDir::homePath()
-                : QString(text).replace(0, 1, QDir::homePath());
+        if (CFontFilter::CRIT_LOCATION==itsFilterCriteria && !text.isEmpty() && ('~'==text[0] || '$'==text[0]))
+            if('~'==text[0])
+                itsFilterText=1==text.length()
+                    ? QDir::homePath()
+                    : QString(text).replace(0, 1, QDir::homePath());
+            else
+                itsFilterText=replaceEnvVar(text);
         else
             itsFilterText=text;
 
