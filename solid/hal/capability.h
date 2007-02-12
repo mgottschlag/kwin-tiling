@@ -86,6 +86,9 @@ public:
         case Solid::Capability::AudioHw:
             list << "alsa" << "oss";
             break;
+        case Solid::Capability::DvbHw:
+            list << "dvb";
+            break;
         case Solid::Capability::Unknown:
             break;
         }
@@ -123,6 +126,8 @@ public:
             return Solid::Capability::Display;
         else if ( capability == "alsa" || capability == "oss" )
             return Solid::Capability::AudioHw;
+        else if ( capability == "dvb" )
+            return Solid::Capability::DvbHw;
         else
             return Solid::Capability::Unknown;
     }

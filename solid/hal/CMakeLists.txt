@@ -22,7 +22,8 @@ set(solid_hal_discovery_PART_SRCS
    battery.cpp 
    button.cpp 
    display.cpp
-   audiohw.cpp )
+   audiohw.cpp
+   dvbhw.cpp )
 
 kde4_automoc(${solid_hal_discovery_PART_SRCS})
 

@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2005,2006 Kevin Ottens <ervin@kde.org>
+    Copyright (C) 2005-2007 Kevin Ottens <ervin@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -40,6 +40,7 @@
 #include "button.h"
 #include "display.h"
 #include "audiohw.h"
+#include "dvbhw.h"
 
 class HalDevicePrivate
 {
@@ -315,6 +316,9 @@ QObject *HalDevice::createCapability( const Solid::Capability::Type &capability 
         break;
     case Solid::Capability::AudioHw:
         iface = new AudioHw( this );
+        break;
+    case Solid::Capability::DvbHw:
+        iface = new DvbHw( this );
         break;
     case Solid::Capability::Unknown:
         break;
