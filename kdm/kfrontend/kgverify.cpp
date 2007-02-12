@@ -499,7 +499,7 @@ KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
 		int expire = rx.cap( 1 ).toInt();
 		mesg = expire ?
 			i18np("Your account expires tomorrow.",
-			      "Your account expires in %n days.", expire) :
+			      "Your account expires in %1 days.", expire) :
 			i18n("Your account expires today.");
 	} else {
 		rx.setPattern( "^Warning: your password will expire in (\\d+) day" );
@@ -507,7 +507,7 @@ KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
 			int expire = rx.cap( 1 ).toInt();
 			mesg = expire ?
 				i18np("Your password expires tomorrow.",
-				      "Your password expires in %n days.", expire) :
+				      "Your password expires in %1 days.", expire) :
 				i18n("Your password expires today.");
 		}
 	}
@@ -990,7 +990,7 @@ KGStdVerify::updateStatus()
 		QPalette p;
 		if (nfls < 0) {
 			failedLabel->setText( i18np( "Automatic login in 1 second ...",
-			                             "Automatic login in %n seconds ...",
+			                             "Automatic login in %1 seconds ...",
 			                             timedLeft ) );
 		} else {
 			switch (nfls) {

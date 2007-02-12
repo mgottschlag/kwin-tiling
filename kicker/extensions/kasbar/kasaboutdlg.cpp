@@ -163,7 +163,7 @@ void KasAboutDialog::addInfoPage()
 		     "<h2>Kasbar Version: %1</h2>"
 		     "<b>KDE Version:</b> %2"
 		     "</body></qt>" ,
-	         VERSION_STRING, KDE_VERSION_STRING ),
+	         QString( VERSION_STRING ), QString( KDE_VERSION_STRING ) ),
 	       aboutPage );
 
    KTextBrowser *text5 = new KTextBrowser( aboutPage );
@@ -177,10 +177,10 @@ void KasAboutDialog::addInfoPage()
 			 "</p>"
 			 "<p>"
 			 "You can find information about the latest developments in Kasbar at "
-			 "<a href=\"%3\">%4</a>, the Kasbar homepage."
+			 "<a href=\"%1\">%1</a>, the Kasbar homepage."
 			 "</p>"
 			 "</body></html>" ,
-		     HOMEPAGE_URL, HOMEPAGE_URL ) );
+		     QString( HOMEPAGE_URL ) ) );
 
    text5->setWordWrap( Q3TextEdit::WidgetWidth );
 }

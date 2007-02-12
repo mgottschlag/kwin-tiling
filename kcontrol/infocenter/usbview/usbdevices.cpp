@@ -200,9 +200,9 @@ QString USBDevice::dump()
     pr += "<td>(" + prname +")</td>";
   r += i18n("<tr><td><i>Protocol</i></td>%1</tr>", pr);
 #ifndef Q_OS_FREEBSD
-  r += i18n("<tr><td><i>USB Version</i></td><td>%1.%2</td></tr>",
-            QString::number(_verMajor,16),
-            QString::number(_verMinor,16).prepend(QChar::fromLatin1('0')).right(2));
+  r += ki18n("<tr><td><i>USB Version</i></td><td>%1.%2</td></tr>")
+            .subs(_verMajor,0,16).subs(_verMinor,2,16,QChar::fromLatin1('0'))
+            .toString();
 #endif
   r += "<tr><td></td></tr>";
 
@@ -216,9 +216,9 @@ QString USBDevice::dump()
   if (!pname.isEmpty())
     p += "<td>(" + pname +")</td>";
   r += i18n("<tr><td><i>Product ID</i></td><td>0x%1</td></tr>", p);
-  r += i18n("<tr><td><i>Revision</i></td><td>%1.%2</td></tr>",
-            QString::number(_revMajor,16),
-            QString::number(_revMinor,16).prepend(QChar::fromLatin1('0')).right(2));
+  r += ki18n("<tr><td><i>Revision</i></td><td>%1.%2</td></tr>")
+            .subs(_revMajor,0,16).subs(_revMinor,2,16,QChar::fromLatin1('0'))
+            .toString();
   r += "<tr><td></td></tr>";
 
   r += i18n("<tr><td><i>Speed</i></td><td>%1 Mbit/s</td></tr>", _speed);

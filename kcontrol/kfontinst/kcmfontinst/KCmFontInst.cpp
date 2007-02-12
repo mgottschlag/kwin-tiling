@@ -1040,7 +1040,7 @@ void CKCmFontInst::setStatusBar()
         itsFontListView->stats(enabled, disabled, partial);
         itsFontListView->selectedStatus(selectedEnabled, selectedDisabled);
 
-        QString text(i18np("1 Font", "%n Fonts", enabled+disabled+partial));
+        QString text(i18np("1 Font", "%1 Fonts", enabled+disabled+partial));
 
         if(disabled||partial)
             text+=i18n(" (%1 Enabled, %2 Disabled, %3 Partial)", enabled, disabled, partial);
@@ -1240,7 +1240,7 @@ void CKCmFontInst::deleteFonts(CJobRunner::ItemList &urls, const QStringList &fo
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                            i18np("Do you really want to delete this font?",
-                                 "Do you really want to delete these %n fonts?",
+                                 "Do you really want to delete these %1 fonts?",
                                  fonts.count()),
                            fonts, i18n("Delete Fonts"), KStandardGuiItem::del());
         }
@@ -1318,19 +1318,19 @@ void CKCmFontInst::toggleFonts(CJobRunner::ItemList &urls, const QStringList &fo
             doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                        grp.isEmpty()
                             ? enable ? i18np("Do you really want to enable this font?",
-                                             "Do you really want to enable these %n fonts?",
+                                             "Do you really want to enable these %1 fonts?",
                                              urls.count())
                                      : i18np("Do you really want to disable this font?",
-                                             "Do you really want to disable these %n fonts?",
+                                             "Do you really want to disable these %1 fonts?",
                                              urls.count())
                             : enable ? i18np("<p>Do you really want to enable this font "
                                              "contained within group \'<b>%2</b>\'?</p>",
-                                             "<p>Do you really want to enable these %n fonts "
+                                             "<p>Do you really want to enable these %1 fonts "
                                              "contained within group \'<b>%2</b>\'?</p>",
                                              urls.count(), grp)
                                      : i18np("<p>Do you really want to disable this font "
                                              "contained within group \'<b>%2</b>\'?</p>",
-                                             "<p>Do you really want to disable these %n fonts "
+                                             "<p>Do you really want to disable these %1 fonts "
                                              "contained within group \'<b>%2</b>\'?</p>",
                                              urls.count(), grp),
                        fonts,

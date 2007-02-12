@@ -319,7 +319,7 @@ void Dtime::save()
     proc << ntpUtility << timeServer;
     proc.start( KProcess::Block );
     if( proc.exitStatus() != 0 ){
-      KMessageBox::error( this, i18n(QString("Unable to contact time server: %1.").arg(timeServer).toLatin1()));
+      KMessageBox::error( this, i18n("Unable to contact time server: %1.", timeServer) );
       setDateTimeAuto->setChecked( false );
     }
     else {

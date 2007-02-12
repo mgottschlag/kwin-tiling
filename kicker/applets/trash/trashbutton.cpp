@@ -75,7 +75,7 @@ void TrashButton::setItemCount(int count)
     else
     {
         setIcon( "trashcan_full" );
-        this->setToolTip( i18np("One item", "%n items", count));
+        this->setToolTip( i18np("One item", "%1 items", count));
     }
 }
 

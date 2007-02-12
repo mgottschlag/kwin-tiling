@@ -233,7 +233,7 @@ static const QString Order( int order )
 
 static const QString BitString( unsigned long n )
 {
-    return i18np("1 Bit", "%n Bits", n); // singular & plural form of "%d Bit"
+    return i18np("1 Bit", "%1 Bits", n); // singular & plural form of "%d Bit"
 }
 
 static const QString ByteString( unsigned long n )

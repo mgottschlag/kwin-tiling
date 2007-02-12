@@ -724,7 +724,7 @@ void KMiniPagerButton::updateTipData(KickerTip::Data &data)
     if (taskCounter > 0)
     {
         data.subtext.prepend(i18np("One window:",
-                                  "%n Windows:",
+                                  "%1 Windows:",
                                   taskCounter));
     }
 

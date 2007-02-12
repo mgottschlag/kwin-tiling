@@ -89,7 +89,7 @@ decodeSess( dpySpec *sess, QString &user, QString &loc )
 {
 	if (sess->flags & isTTY) {
 		user =
-			i18np( "%1: TTY login", "%1: %n TTY logins", sess->count,
+			i18np( "%2: TTY login", "%2: %1 TTY logins", sess->count,
 			       sess->user );
 		loc =
 #ifdef HAVE_VTS

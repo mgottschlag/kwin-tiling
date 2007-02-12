@@ -1430,7 +1430,7 @@ void CFcEngine::drawName(QPainter &painter, int x, int &y, int w, int offset)
                     : itsDescriptiveName);
 
     if(1==itsSizes.size())
-        title=i18np("%1 [1 pixel]", "%1 [%n pixels]", itsSizes[0], title);
+        title=i18np("%2 [1 pixel]", "%2 [%1 pixels]", itsSizes[0], title);
 
     painter.setFont(KGlobalSettings::generalFont());
     painter.setPen(theirTextCol);
