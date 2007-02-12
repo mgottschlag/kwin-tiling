@@ -29,6 +29,7 @@
 class QLabel;
 class QMenu;
 class QActionGroup;
+class KToggleAction;
 
 namespace KFI
 {
@@ -44,11 +45,15 @@ class CFontFilter : public KLineEdit
         CRIT_FAMILY,
         CRIT_STYLE,
         CRIT_FILENAME,
-        CRIT_LOCATION
+        CRIT_LOCATION,
+
+        NUM_CRIT
     };
 
     CFontFilter(QWidget *parent);
     virtual ~CFontFilter() { }
+
+    void setMgtMode(bool m);
 
     Q_SIGNALS:
 
@@ -60,21 +65,20 @@ class CFontFilter : public KLineEdit
 
     private:
 
-    void addAction(ECriteria crit, const QString &text, bool on);
+    void addAction(ECriteria crit, const QString &text, bool on, bool visible);
     void paintEvent(QPaintEvent *ev);
     void resizeEvent(QResizeEvent *ev);
     void mousePressEvent(QMouseEvent *ev);
-    void mouseReleaseEvent(QMouseEvent *ev);
     void setCriteria(ECriteria crit);
 
     private:
 
-    QLabel       *itsMenuButton;
-    QMenu        *itsMenu;
-    ECriteria    itsCurrentCriteria;
-    QPixmap      itsPixmaps[4];
-    bool         itsClickInMenuButton;
-    QActionGroup *itsActionGroup;
+    QLabel        *itsMenuButton;
+    QMenu         *itsMenu;
+    ECriteria     itsCurrentCriteria;
+    QPixmap       itsPixmaps[NUM_CRIT];
+    KToggleAction *itsActions[NUM_CRIT];
+    QActionGroup  *itsActionGroup;
 };
 
 }

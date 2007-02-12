@@ -51,6 +51,7 @@ class QGridLayout;
 namespace KFI
 {
 
+class CFontFilter;
 class CFontList;
 class CFontPreview;
 class CUpdateDialog;
@@ -137,6 +138,7 @@ class CKCmFontInst : public KCModule
                          *itsDeleteFontControl,
                          *itsEnableFontControl,
                          *itsDisableFontControl;
+    CFontFilter          *itsFilter;
     QString              itsLastStatusBarMsg;
     KIO::Job             *itsJob;
     KProgressDialog      *itsProgress;

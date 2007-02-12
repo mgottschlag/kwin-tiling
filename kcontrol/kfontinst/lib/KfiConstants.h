@@ -55,7 +55,6 @@
 #define KFI_UI_CFG_FILE              KFI_NAME"uirc"
 #define KFI_ROOT_CFG_DIR             "/etc/fonts/"
 
-
 #define KFI_NO_STYLE_INFO            0xFFFFFFFF
 #define KFI_NAME_KEY                 "Name="
 #define KFI_STYLE_KEY                "Style="
@@ -67,6 +66,7 @@
 #define KFI_FONTS_GROUP              ".fontgroup.zip"
 #define KFI_FONTS_GROUP_LEN          14
 #define KFI_GROUPS_FILE              "groups.xml"
+#define KFI_TMP_DIR_PREFIX           "kfi"
 
 #define KFI_NULL_SETTING             0xFF
 

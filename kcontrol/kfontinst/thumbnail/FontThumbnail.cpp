@@ -26,10 +26,18 @@
 #include <QImage>
 #include <QBitmap>
 #include <QPainter>
+#include <QFile>
 #include <kiconloader.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
 #include <kurl.h>
+#include <kzip.h>
+#include <ktempdir.h>
+#include <kmimetype.h>
+#include <kstandarddirs.h>
+#include <kdebug.h>
+
+#define KFI_DBUG kDebug(7115)
 
 extern "C"
 {
@@ -49,11 +57,62 @@ CFontThumbnail::CFontThumbnail()
 
 bool CFontThumbnail::create(const QString &path, int width, int height, QImage &img)
 {
-    QPixmap pix;
+    QPixmap  pix;
+    QString  realPath(path);
+    KTempDir *tempDir(NULL);
 
     CFcEngine::setBgndCol(Qt::white);
     CFcEngine::setTextCol(Qt::black);
-    if(CFcEngine::instance()->draw(KUrl(path), width, height, pix, 0, true))
+
+    KFI_DBUG << "Create font thumbnail for:" << path << endl;
+
+    // Is this a fonts/package file? If so, extract 1 scalable font...
+    if(Misc::checkExt(path, &KFI_FONTS_PACKAGE[1]))
+    {
+        KZip zip(path);
+
+        if(zip.open(QIODevice::ReadOnly))
+        {
+            const KArchiveDirectory *zipDir=zip.directory();
+
+            if(zipDir)
+            {
+                QStringList fonts(zipDir->entries());
+
+                if(fonts.count())
+                {
+                    QStringList::ConstIterator it(fonts.begin()),
+                                               end(fonts.end());
+
+                    for(; it!=end; ++it)
+                    {
+                        const KArchiveEntry *entry=zipDir->entry(*it);
+
+                        if(entry && entry->isFile())
+                        {
+                            tempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
+                            tempDir->setAutoRemove(true);
+
+                            ((KArchiveFile *)entry)->copyTo(tempDir->name());
+
+                            QString mime(KMimeType::findByPath(tempDir->name()+entry->name())->name());
+
+                            if(mime=="application/x-font-ttf" || mime=="application/x-font-otf" ||
+                               mime=="application/x-font-ttc" || mime=="application/x-font-type1")
+                            {
+                                realPath=tempDir->name()+entry->name();
+                                break;
+                            }
+                            else
+                                ::unlink(QFile::encodeName(tempDir->name()+entry->name()).data());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if(CFcEngine::instance()->draw(KUrl(realPath), width, height, pix, 0, true))
     {
         img=pix.toImage().convertToFormat(QImage::Format_ARGB32);
 
@@ -69,9 +128,11 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
                                       0xFF-qRed(scanLine[pixel]));
         }
 
+        delete tempDir;
         return true;
     }
 
+    delete tempDir;
     return false;
 }
 

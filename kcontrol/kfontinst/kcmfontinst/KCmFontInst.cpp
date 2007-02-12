@@ -63,6 +63,7 @@
 #include <kprocess.h>
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
+#include <kstandarddirs.h>
 #include <kmenu.h>
 
 #define CFG_GROUP          "Main Settings"
@@ -222,8 +223,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
         itsModeAct=toolbar->addWidget(itsModeControl);
     }
 
-    CFontFilter *filter=new CFontFilter(toolbar);
-    toolbar->addWidget(filter);
+    itsFilter=new CFontFilter(toolbar);
+    toolbar->addWidget(itsFilter);
 
     itsPreviewControl=new CPreviewSelectAction(this);
     toolbar->addAction(itsPreviewControl);
@@ -333,8 +334,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsSplitter->setSizes(sizes);
 
     // Connect signals...
-    connect(filter, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
-    connect(filter, SIGNAL(criteriaChanged(int)), itsFontListView, SLOT(filterCriteria(int)));
+    connect(itsFilter, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
+    connect(itsFilter, SIGNAL(criteriaChanged(int)), itsFontListView, SLOT(filterCriteria(int)));
     connect(itsGroupListView, SIGNAL(del()), SLOT(removeGroup()));
     connect(itsGroupListView, SIGNAL(print()), SLOT(printGroup()));
     connect(itsGroupListView, SIGNAL(enable()), SLOT(enableGroup()));
@@ -526,7 +527,8 @@ void CKCmFontInst::addFonts()
                                             {
                                                 if(!itsTempDir)
                                                 {
-                                                    itsTempDir=new KTempDir;
+                                                    itsTempDir=new KTempDir(KStandardDirs::locateLocal("tmp",
+                                                                            KFI_TMP_DIR_PREFIX));
                                                     itsTempDir->setAutoRemove(true);
                                                 }
 
@@ -802,7 +804,7 @@ void CKCmFontInst::exportGroup()
                                KGuiItem(i18n("Overwrite")), KStandardGuiItem::cancel()))
                         {
                             delete itsTempDir;
-                            itsTempDir=new KTempDir;
+                            itsTempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
 
                             if(itsTempDir && !itsTempDir->name().isEmpty())
                             {
@@ -894,7 +896,7 @@ void CKCmFontInst::exported(KIO::Job *, const KUrl &, const KUrl &to)
                 if(zipDir)
                 {
                     QStringList fonts(zipDir->entries());
-                    KTempDir    tmpDir;
+                    KTempDir    tmpDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
 
                     if(fonts.count() && !tmpDir.name().isEmpty())
                     {
@@ -1182,6 +1184,7 @@ void CKCmFontInst::toggleFontManagement(bool on)
         itsPreviewControl->setVisible(on && itsShowPreview->isOn());
         itsToolsMenu->setVisible(on);
         itsFontListView->setMgtMode(on);
+        itsFilter->setMgtMode(on);
         if(itsModeControl)
             itsModeAct->setVisible(!on);
         itsEnableFontControl->setVisible(on);

@@ -40,8 +40,7 @@ namespace KFI
 static const int constArrowPad(5);
 
 CFontFilter::CFontFilter(QWidget *parent)
-           : KLineEdit(parent),
-             itsClickInMenuButton(false)
+           : KLineEdit(parent)
 {
     //setClickMessage(i18n("Filter"));
     setClearButtonShown(true);
@@ -59,12 +58,25 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
 
     itsActionGroup=new QActionGroup(this);
-    addAction(CRIT_FAMILY, i18n("Filter On Font Family"), true);
-    addAction(CRIT_STYLE, i18n("Filter On Font Style"), false);
-    addAction(CRIT_FILENAME, i18n("Filter On Font File"), false);
-    addAction(CRIT_LOCATION, i18n("Filter On Font File Location"), false);
+    addAction(CRIT_FAMILY, i18n("Filter On Font Family"), true, true);
+    addAction(CRIT_STYLE, i18n("Filter On Font Style"), false, true);
+    addAction(CRIT_FILENAME, i18n("Filter On Font File"), false, false);
+    addAction(CRIT_LOCATION, i18n("Filter On Font File Location"), false, false);
 
     setCriteria(CRIT_FAMILY);
+}
+
+void CFontFilter::setMgtMode(bool m)
+{
+    if(!m && (itsActions[CRIT_FILENAME]->isChecked() ||
+              itsActions[CRIT_LOCATION]->isChecked()))
+    {
+        setCriteria(CRIT_FAMILY);
+        itsActions[CRIT_FAMILY]->setChecked(true);
+        setText(QString());
+    }
+    itsActions[CRIT_FILENAME]->setVisible(m);
+    itsActions[CRIT_LOCATION]->setVisible(m);
 }
 
 void CFontFilter::filterChanged()
@@ -83,17 +95,18 @@ void CFontFilter::filterChanged()
     }
 }
 
-void CFontFilter::addAction(ECriteria crit, const QString &text, bool on)
+void CFontFilter::addAction(ECriteria crit, const QString &text, bool on, bool visible)
 {
-    KToggleAction *action=new KToggleAction(KIcon(itsPixmaps[crit]),
-                                            text, this);
-    itsMenu->addAction(action);
-    itsActionGroup->addAction(action);
-    action->setData((int)crit);
-    action->setChecked(on);
+    itsActions[crit]=new KToggleAction(KIcon(itsPixmaps[crit]),
+                                       text, this);
+    itsMenu->addAction(itsActions[crit]);
+    itsActionGroup->addAction(itsActions[crit]);
+    itsActions[crit]->setData((int)crit);
+    itsActions[crit]->setChecked(on);
+    itsActions[crit]->setVisible(visible);
     if(on)
         setClickMessage(text);
-    connect(action, SIGNAL(toggled(bool)), SLOT(filterChanged()));
+    connect(itsActions[crit], SIGNAL(toggled(bool)), SLOT(filterChanged()));
 }
 
 void CFontFilter::paintEvent(QPaintEvent *ev)
@@ -137,22 +150,9 @@ void CFontFilter::resizeEvent(QResizeEvent *ev)
 void CFontFilter::mousePressEvent(QMouseEvent *ev)
 {
     if(Qt::LeftButton==ev->button() && itsMenuButton->underMouse())
-        itsClickInMenuButton=true;
+        itsMenu->popup(mapToGlobal(QPoint(0, height())), 0);
     else
         KLineEdit::mousePressEvent(ev);
-}
-
-void CFontFilter::mouseReleaseEvent(QMouseEvent *ev)
-{
-    if (itsClickInMenuButton)
-    {
-        itsClickInMenuButton=false;
-        if (itsMenuButton->underMouse())
-            itsMenu->popup(mapToGlobal(QPoint(0, height())), 0);
-        return;
-    }
-
-    KLineEdit::mouseReleaseEvent(ev);
 }
 
 void CFontFilter::setCriteria(ECriteria crit)
@@ -171,6 +171,7 @@ void CFontFilter::setCriteria(ECriteria crit)
     p.end();
 
     itsMenuButton->setPixmap(arrowmap);
+    itsMenuButton->resize(arrowmap.width(), arrowmap.height());
     itsCurrentCriteria=crit;
 
     emit criteriaChanged(crit);

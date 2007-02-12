@@ -27,6 +27,7 @@
 #include <kzip.h>
 #include <ktempdir.h>
 #include <kmessagebox.h>
+#include <kstandarddirs.h>
 #include "JobRunner.h"
 
 namespace KFI
@@ -82,7 +83,7 @@ int CInstaller::install(const QStringList &fonts)
 
                         if(!itsTempDir)
                         {
-                            itsTempDir=new KTempDir;
+                            itsTempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
                             itsTempDir->setAutoRemove(true);
                         }
 

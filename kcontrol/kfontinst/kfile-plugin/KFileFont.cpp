@@ -29,6 +29,10 @@
 #include <QTextStream>
 #include <kgenericfactory.h>
 #include <kio/netaccess.h>
+#include <kzip.h>
+#include <ktempdir.h>
+#include <kmimetype.h>
+#include <kstandarddirs.h>
 #include <kdebug.h>
 
 #define KFI_DBUG kDebug(7034)
@@ -340,6 +344,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 spacings,
                 slants;
     KUrl        url(info.url());
+    KTempDir    *tempDir(NULL);
     QString     fName;
     bool        fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
                 fileProt   = "file"                 == url.protocol(),
@@ -365,6 +370,52 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             status=readAfm(url.path(), fullAll, familyAll, foundryAll, weightAll, widthAll,
                            spacingAll, slantAll, versionAll);
         else
+        {
+            if(!fontsProt && "fonts/package"==info.mimeType())
+            {
+                KZip zip(url.path());
+
+                if(zip.open(QIODevice::ReadOnly))
+                {
+                    const KArchiveDirectory *zipDir=zip.directory();
+
+                    if(zipDir)
+                    {
+                        QStringList fonts(zipDir->entries());
+
+                        if(fonts.count())
+                        {
+                            QStringList::ConstIterator it(fonts.begin()),
+                                                       end(fonts.end());
+
+                            for(; it!=end; ++it)
+                            {
+                                const KArchiveEntry *entry=zipDir->entry(*it);
+
+                                if(entry && entry->isFile())
+                                {
+                                    tempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
+                                    tempDir->setAutoRemove(true);
+
+                                    ((KArchiveFile *)entry)->copyTo(tempDir->name());
+
+                                    QString mime(KMimeType::findByPath(tempDir->name()+entry->name())->name());
+
+                                    if(mime=="application/x-font-ttf" || mime=="application/x-font-otf" ||
+                                       mime=="application/x-font-ttc" || mime=="application/x-font-type1")
+                                    {
+                                        url=KUrl::fromPath(tempDir->name()+entry->name());
+                                        break;
+                                    }
+                                    else
+                                        ::unlink(QFile::encodeName(tempDir->name()+entry->name()).data());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             for(int face=faceFrom; face<faceTo; ++face)
             {
                 if(CFcEngine::instance()->getInfo(url, face, full, family, foundry, weight, width,
@@ -413,6 +464,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 else
                     break;
             }
+        }
 
         if(status)
         {
@@ -450,6 +502,8 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
         if(downloaded)
             KIO::NetAccess::removeTempFile(fName);
     }
+
+    delete tempDir;
 
     return status;
 }
