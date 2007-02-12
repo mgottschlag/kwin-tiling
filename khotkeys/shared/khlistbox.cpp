@@ -22,15 +22,17 @@ namespace KHotKeys
 {
 
 KHListBox::KHListBox( QWidget* parent_P, const char* name_P )
-    : Q3ListBox( parent_P, name_P ), saved_current_item( NULL ),
+    : QListWidget( parent_P ), saved_current_item( NULL ),
         in_clear( false ), force_select( false )
     {
+    setObjectName( name_P );
+
     insert_select_timer.setSingleShot( true );
     
-    connect( this, SIGNAL( selectionChanged( Q3ListBoxItem* )),
-        SLOT( slot_selection_changed( Q3ListBoxItem* )));
-    connect( this, SIGNAL( currentChanged( Q3ListBoxItem* )),
-        SLOT( slot_current_changed( Q3ListBoxItem* )));
+    connect( this, SIGNAL( selectionChanged( QListWidgetItem* )),
+        SLOT( slot_selection_changed( QListWidgetItem* )));
+    connect( this, SIGNAL( currentChanged( QListWidgetItem* )),
+        SLOT( slot_current_changed( QListWidgetItem* )));
     // CHECKME grrr
     connect( this, SIGNAL( selectionChanged()),
         SLOT( slot_selection_changed()));
@@ -43,10 +45,10 @@ void KHListBox::slot_selection_changed()
     if( saved_current_item == NULL )
         slot_selection_changed( NULL );
     else if( !saved_current_item->isSelected()) // no way
-        setSelected( saved_current_item, true );
+        saved_current_item->setSelected( true );
     }
     
-void KHListBox::slot_selection_changed( Q3ListBoxItem* item_P )
+void KHListBox::slot_selection_changed( QListWidgetItem* item_P )
     {
     if( item_P == saved_current_item )
         return;
@@ -55,13 +57,13 @@ void KHListBox::slot_selection_changed( Q3ListBoxItem* item_P )
     emit current_changed( saved_current_item );
     }
     
-void KHListBox::slot_current_changed( Q3ListBoxItem* item_P )
+void KHListBox::slot_current_changed( QListWidgetItem* item_P )
     {
     insert_select_timer.stop();
     if( item_P == saved_current_item )
         return;
     saved_current_item = item_P;
-    setSelected( saved_current_item, true );
+    saved_current_item->setSelected( true );
     emit current_changed( saved_current_item );
     }
 
@@ -69,19 +71,19 @@ void KHListBox::slot_current_changed( Q3ListBoxItem* item_P )
 void KHListBox::clear()
     {
     in_clear = true;
-    Q3ListBox::clear();
+    QListWidget::clear();
     in_clear = false;
     slot_selection_changed( NULL );
     }
 
 
 // neni virtual :(( a vubec nefunguje
-void KHListBox::insertItem( Q3ListBoxItem* item_P )
+void KHListBox::insertItem( QListWidgetItem* item_P )
     {
     bool set = false;
     if( !in_clear )
         set = count() == 0;
-    Q3ListBox::insertItem( item_P );
+    QListWidget::addItem( item_P );
     if( set && force_select )
         {
         bool block = signalsBlocked();
@@ -96,7 +98,7 @@ void KHListBox::insertItem( Q3ListBoxItem* item_P )
 // which means that a derived class are not yet fully created
 void KHListBox::slot_insert_select()
     {
-    slot_current_changed( item( currentItem()));
+    slot_current_changed( item( currentRow()));
     }
     
 

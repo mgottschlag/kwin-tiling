@@ -48,7 +48,7 @@ class QComboBox;
 class QFrame;
 class Q3GroupBox;
 class QLabel;
-class Q3ListBox;
+class QListWidget;
 class Q3ListViewItem;
 class QSettings;
 class QSlider;

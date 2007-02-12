@@ -25,7 +25,7 @@ class QCheckBox;
 class QResizeEvent;
 class KLineEdit;
 class QPalette;
-class KListBox;
+class KListWidget;
 class KColorButton;
 class KConfig;
 class KStdDirs;
@@ -75,7 +75,7 @@ private:
     QSlider *sb;
     KColorTreeWidget *mColorTreeWidget;
     QPushButton *addBt, *removeBt, *importBt;
-    KListBox *sList;
+    KListWidget *sList;
     KColorSchemeList *mSchemeList;
     QString sCurrentScheme;
 

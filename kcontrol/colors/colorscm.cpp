@@ -34,7 +34,7 @@
 #include <kprocess.h>
 #include <kstandarddirs.h>
 #include <kaboutdata.h>
-#include <klistbox.h>
+#include <klistwidget.h>
 #include <kvbox.h>
 #include "../../../runtime/kcontrol/krdb/krdb.h"
 
@@ -139,7 +139,7 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     group->setColumns( 1 );
 
 
-    sList = new KListBox( group );
+    sList = new KListWidget( group );
     mSchemeList = new KColorSchemeList();
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
 
@@ -273,7 +273,7 @@ void KColorScheme::load()
     config->setGroup("KDE");
     sCurrentScheme = config->readEntry("colorScheme");
 
-    sList->setCurrentItem(findSchemeByName(sCurrentScheme));
+    sList->setCurrentRow(findSchemeByName(sCurrentScheme));
     readScheme(0);
 
     cbShadeList->setChecked(cs->shadeSortColumn);
@@ -371,11 +371,11 @@ void KColorScheme::save()
     sList->setCurrentItem(0);
     readScheme(0);
     QPixmap preview = mkColorPreview(cs);
-    sList->changeItem(preview, sList->text(0), 0);
-    sList->setCurrentItem(current);
+    sList->item(0)->setIcon(preview);
+    sList->setCurrentRow(current);
     readScheme(current);
     preview = mkColorPreview(cs);
-    sList->changeItem(preview, sList->text(current), current);
+    sList->item(current)->setIcon(preview);
 
     emit changed(false);
 }
@@ -384,7 +384,7 @@ void KColorScheme::save()
 void KColorScheme::defaults()
 {
     readScheme(1);
-    sList->setCurrentItem(1);
+    sList->setCurrentRow(1);
 
     cbShadeList->setChecked(cs->shadeSortColumn);
 
@@ -411,7 +411,7 @@ void KColorScheme::sliderValueChanged( int val )
 
 void KColorScheme::slotSave( )
 {
-    KColorSchemeEntry *entry = mSchemeList->at(sList->currentItem()-nSysSchemes);
+    KColorSchemeEntry *entry = mSchemeList->at(sList->currentRow()-nSysSchemes);
     if (!entry) return;
     sCurrentScheme = entry->path;
     KSimpleConfig *config = new KSimpleConfig(sCurrentScheme );
@@ -452,7 +452,7 @@ void KColorScheme::slotSave( )
 
 void KColorScheme::slotRemove()
 {
-    uint ind = sList->currentItem();
+    int ind = sList->currentRow();
     KColorSchemeEntry *entry = mSchemeList->at(ind-nSysSchemes);
     if (!entry) return;
 
@@ -464,10 +464,10 @@ void KColorScheme::slotRemove()
         return;
     }
 
-    sList->removeItem(ind);
+    delete sList->takeItem(ind);
     mSchemeList->remove(entry);
 
-    ind = sList->currentItem();
+    ind = sList->currentRow();
     entry = mSchemeList->at(ind-nSysSchemes);
     if (!entry) return;
     removeBt->setEnabled(entry ? entry->local : false);
@@ -480,8 +480,8 @@ void KColorScheme::slotRemove()
 void KColorScheme::slotAdd()
 {
     QString sName;
-    if (sList->currentItem() >= nSysSchemes)
-       sName = sList->currentText();
+    if (sList->currentRow() >= nSysSchemes)
+       sName = sList->currentItem()->text();
 
     QString sFile;
 
@@ -505,7 +505,7 @@ void KColorScheme::slotAdd()
         // Check if it's already there
         for (i=0; i < (int) sList->count(); i++)
         {
-            if (sName == sList->text(i))
+            if (sName == sList->item(i)->text())
             {
                 exists = i;
                 int result = KMessageBox::warningContinueCancel( this,
@@ -527,7 +527,7 @@ void KColorScheme::slotAdd()
     if (exists != -1)
     {
        sList->setFocus();
-       sList->setCurrentItem(exists);
+       sList->setCurrentRow(exists);
     }
     else
     {
@@ -543,8 +543,8 @@ void KColorScheme::slotAdd()
     slotSave();
 
     QPixmap preview = mkColorPreview(cs);
-    int current = sList->currentItem();
-    sList->changeItem(preview, sList->text(current), current);
+    int current = sList->currentRow();
+    sList->item(current)->setIcon(preview);
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
     slotPreviewScheme(current);
 }
@@ -574,8 +574,8 @@ void KColorScheme::slotImport()
 
 		insertEntry(sFile, sName);
 		QPixmap preview = mkColorPreview(cs);
-		int current = sList->currentItem();
-		sList->changeItem(preview, sList->text(current), current);
+		int current = sList->currentRow();
+		sList->item(current)->setIcon(preview);
 		connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
 		slotPreviewScheme(current);
 	}
@@ -716,7 +716,7 @@ void KColorScheme::readScheme( int index )
       config->setGroup("General");
     } else {
       // Open scheme file
-      KColorSchemeEntry *entry = mSchemeList->at(sList->currentItem()-nSysSchemes);
+      KColorSchemeEntry *entry = mSchemeList->at(sList->currentRow()-nSysSchemes);
       if (!entry) return;
       sCurrentScheme = entry->path;
       config = new KSimpleConfig(sCurrentScheme, true);
@@ -785,8 +785,8 @@ void KColorScheme::readSchemeNames()
     mSchemeList->clear();
     sList->clear();
     // Always a current and a default scheme
-    sList->insertItem( i18n("Current Scheme"), 0 );
-    sList->insertItem( i18n("KDE Default"), 1 );
+    sList->insertItem( 0 , i18n("Current Scheme") );
+    sList->insertItem( 1 , i18n("KDE Default") );
     nSysSchemes = 2;
 
     // Global + local schemes
@@ -811,15 +811,15 @@ void KColorScheme::readSchemeNames()
 
     for(KColorSchemeEntry *entry = mSchemeList->first(); entry; entry = mSchemeList->next())
     {
-       sList->insertItem(entry->name);
+       sList->addItem(entry->name);
     }
 
-    for (uint i = 0; i < (nSysSchemes + mSchemeList->count()); i++)
+    for (int i = 0; i < (nSysSchemes + mSchemeList->count()); i++)
     {
-       sList->setCurrentItem(i);
+       sList->setCurrentRow(i);
        readScheme(i);
        QPixmap preview = mkColorPreview(cs);
-       sList->changeItem(preview, sList->text(i), i);
+       sList->item(i)->setIcon(preview);
     }
 
 }
@@ -902,8 +902,8 @@ void KColorScheme::insertEntry(const QString &sFile, const QString &sName)
        KColorSchemeEntry *newEntry = new KColorSchemeEntry(sFile, sName, true);
        mSchemeList->inSort(newEntry);
        int newIndex = mSchemeList->findRef(newEntry)+nSysSchemes;
-       sList->insertItem(sName, newIndex);
-       sList->setCurrentItem(newIndex);
+       sList->insertItem(newIndex , sName);
+       sList->setCurrentRow(newIndex);
 }
 
 void KColorScheme::setColorName( const QString & name, int id , int id2 )
