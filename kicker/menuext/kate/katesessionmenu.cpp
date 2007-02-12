@@ -78,7 +78,7 @@ void KateSessionMenu::initialize()
 
   addSeparator();
 
-  QStringList list = KGlobal::dirs()->findAllResources( "data", "kate/sessions/*.katesession", false, true);
+  QStringList list = KGlobal::dirs()->findAllResources( "data", "kate/sessions/*.katesession", KStandardDirs::NoDuplicates );
   for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
   {
     KSimpleConfig config( *it, true );

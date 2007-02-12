@@ -791,7 +791,7 @@ void KColorScheme::readSchemeNames()
 
     // Global + local schemes
     QStringList list = KGlobal::dirs()->findAllResources("data",
-            "kdisplay/color-schemes/*.kcsrc", false, true);
+            "kdisplay/color-schemes/*.kcsrc", KStandardDirs::NoDuplicates);
 
     // And add them
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it) {

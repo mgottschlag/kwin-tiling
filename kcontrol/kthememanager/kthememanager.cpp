@@ -180,7 +180,7 @@ void kthememanager::listThemes()
     dlg->lvThemes->clear();
     dlg->lbPreview->setPixmap( QPixmap() );
 
-    QStringList themes = KGlobal::dirs()->findAllResources( "themes", "*.xml", true /*recursive*/ );
+    QStringList themes = KGlobal::dirs()->findAllResources( "themes", "*.xml", KStandardDirs::Recursive );
 
     QStringList::const_iterator it;
 
@@ -197,7 +197,7 @@ void kthememanager::listThemes()
 
 float kthememanager::getThemeVersion( const QString & themeName )
 {
-    QStringList themes = KGlobal::dirs()->findAllResources( "themes", "*.xml", true /*recursive*/ );
+    QStringList themes = KGlobal::dirs()->findAllResources( "themes", "*.xml", KStandardDirs::Recursive );
 
     QStringList::const_iterator it;
 

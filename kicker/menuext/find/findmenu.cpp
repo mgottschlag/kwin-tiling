@@ -44,7 +44,7 @@ FindMenu::~FindMenu()
 
 void FindMenu::initialize()
 {
-  QStringList list = KGlobal::dirs()->findAllResources( "data", "kicker/menuext/find/*.desktop", false, true );
+  QStringList list = KGlobal::dirs()->findAllResources( "data", "kicker/menuext/find/*.desktop", KStandardDirs::NoDuplicates );
 
   list.sort();
 

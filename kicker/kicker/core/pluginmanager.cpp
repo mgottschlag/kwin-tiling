@@ -61,28 +61,28 @@ PluginManager* PluginManager::self()
 AppletInfo::List PluginManager::applets(bool sort, AppletInfo::List* list)
 {
     QStringList rel;
-    KGlobal::dirs()->findAllResources("applets", "*.desktop", false, true, rel);
+    KGlobal::dirs()->findAllResources("applets", "*.desktop", KStandardDirs::NoDuplicates, rel);
     return plugins(rel, AppletInfo::Applet, sort, list);
 }
 
 AppletInfo::List PluginManager::extensions(bool sort, AppletInfo::List* list)
 {
     QStringList rel;
-    KGlobal::dirs()->findAllResources("extensions", "*.desktop", false, true, rel);
+    KGlobal::dirs()->findAllResources("extensions", "*.desktop", KStandardDirs::NoDuplicates, rel);
     return plugins(rel, AppletInfo::Extension, sort, list);
 }
 
 AppletInfo::List PluginManager::builtinButtons(bool sort, AppletInfo::List* list)
 {
     QStringList rel;
-    KGlobal::dirs()->findAllResources("builtinbuttons", "*.desktop", false, true, rel);
+    KGlobal::dirs()->findAllResources("builtinbuttons", "*.desktop", KStandardDirs::NoDuplicates, rel);
     return plugins(rel, AppletInfo::BuiltinButton, sort, list);
 }
 
 AppletInfo::List PluginManager::specialButtons(bool sort, AppletInfo::List* list)
 {
     QStringList rel;
-    KGlobal::dirs()->findAllResources("specialbuttons", "*.desktop", false, true, rel);
+    KGlobal::dirs()->findAllResources("specialbuttons", "*.desktop", KStandardDirs::NoDuplicates, rel);
     return plugins(rel, AppletInfo::SpecialButton, sort, list);
 }
 

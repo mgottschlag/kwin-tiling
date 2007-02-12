@@ -776,7 +776,9 @@ void KCMStyle::loadStyle( KConfig& config )
 	styleEntries.clear();
 
 	QString strWidgetStyle;
-	QStringList list = KGlobal::dirs()->findAllResources("themes", "*.themerc", true, true);
+	QStringList list = KGlobal::dirs()->findAllResources("themes", "*.themerc",
+														 KStandardDirs::Recursive |
+														 KStandardDirs::NoDuplicates);
 	for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
 	{
 		KSimpleConfig config( *it, true );

@@ -205,7 +205,7 @@ QStringList KBackgroundPattern::list()
     dirs->addResourceType("dtop_pattern", dirs->kde_default("data") +
                           "kdesktop/patterns");
     QStringList lst = dirs->findAllResources("dtop_pattern", "*.desktop",
-                                             false, true);
+                                             KStandardDirs::NoDuplicates);
     QStringList::Iterator it;
     for (it=lst.begin(); it!=lst.end(); ++it) {
         // Strip path and suffix
@@ -416,7 +416,7 @@ QStringList KBackgroundProgram::list()
     dirs->addResourceType("dtop_program", dirs->kde_default("data") +
                           "kdesktop/programs");
     QStringList lst = dirs->findAllResources("dtop_program", "*.desktop",
-                                             false, true);
+                                             KStandardDirs::NoDuplicates);
     QStringList::Iterator it;
     for (it=lst.begin(); it!=lst.end(); ++it) {
         // Strip path and suffix

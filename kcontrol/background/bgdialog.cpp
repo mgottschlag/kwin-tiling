@@ -521,7 +521,7 @@ void BGDialog::loadWallpaperFilesList() {
    QMap<QString, QPair<QString, QString> > papers;
 
    //search for .desktop files before searching for images without .desktop files
-   QStringList lst = m_pDirs->findAllResources("wallpaper", "*desktop", false, true);
+   QStringList lst = m_pDirs->findAllResources("wallpaper", "*desktop", KStandardDirs::NoDuplicates);
    QStringList files;
    for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
    {
@@ -555,7 +555,7 @@ void BGDialog::loadWallpaperFilesList() {
    }
 
    //now find any wallpapers that don't have a .desktop file
-   lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
+   lst = m_pDirs->findAllResources("wallpaper", "*", KStandardDirs::NoDuplicates);
    for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
    {
       if ( !(*it).endsWith(".desktop") && files.filter(*it).empty() ) {

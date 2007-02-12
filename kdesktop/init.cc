@@ -141,7 +141,7 @@ static void copyDesktopLinks()
        return;
 
     QStringList list =
-	KGlobal::dirs()->findAllResources("appdata", "DesktopLinks/*", false, true);
+	KGlobal::dirs()->findAllResources("appdata", "DesktopLinks/*", KStandardDirs::NoDuplicates);
 
     QString desktopPath = realDesktopPath();
 

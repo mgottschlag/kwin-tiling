@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 			KGlobal::dirs()->kde_default("apps") +
 			"apps/ScreenSavers/");
 	QStringList tempSaverFileList = KGlobal::dirs()->findAllResources("scrsav",
-			"*.desktop", false, true);
+			"*.desktop", KStandardDirs::NoDuplicates);
 
 	KService::List lst = KServiceTypeTrader::self()->query( "ScreenSaver");
 	QStringList saverFileList;

@@ -178,7 +178,7 @@ void KDMGeneralWidget::loadColorSchemes( KBackedComboBox *combo )
 {
 	// XXX: Global + local schemes
 	QStringList list = KGlobal::dirs()->
-		findAllResources( "data", "kdisplay/color-schemes/*.kcsrc", false, true );
+		findAllResources( "data", "kdisplay/color-schemes/*.kcsrc", KStandardDirs::NoDuplicates );
 	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
 		KSimpleConfig config( *it, true );
@@ -199,7 +199,7 @@ void KDMGeneralWidget::loadGuiStyles(KBackedComboBox *combo)
 {
 	// XXX: Global + local schemes
 	QStringList list = KGlobal::dirs()->
-		findAllResources( "data", "kstyle/themes/*.themerc", false, true );
+		findAllResources( "data", "kstyle/themes/*.themerc", KStandardDirs::NoDuplicates );
 	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
 		KSimpleConfig config( *it, true );

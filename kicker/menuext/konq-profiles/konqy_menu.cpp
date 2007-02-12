@@ -56,7 +56,7 @@ void KonquerorProfilesMenu::initialize()
    if (initialized()) clear();
    setInitialized(true);
 
-   QStringList profiles = KGlobal::dirs()->findAllResources( "data", "konqueror/profiles/*", false, true );
+   QStringList profiles = KGlobal::dirs()->findAllResources( "data", "konqueror/profiles/*", KStandardDirs::NoDuplicates );
 
    m_profiles.resize(profiles.count());
    int id=1;

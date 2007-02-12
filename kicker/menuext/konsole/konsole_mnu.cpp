@@ -103,7 +103,7 @@ void KonsoleMenu::initialize()
 
     QStringList list = KGlobal::dirs()->findAllResources("data",
                                                          "konsole/*.desktop",
-                                                          false, true);
+                                                         KStandardDirs::NoDuplicates);
 
     QString defaultShell = KStandardDirs::locate("data", "konsole/shell.desktop");
     list.prepend(defaultShell);
@@ -203,8 +203,8 @@ void KonsoleMenu::initialize()
     delete m_profileMenu;
     m_profileMenu = new KMenu(this);
     QStringList profiles = KGlobal::dirs()->findAllResources("data",
-                                                           "konsole/profiles/*",
-                                                           false, true );
+                                                             "konsole/profiles/*",
+                                                             KStandardDirs::NoDuplicates);
     m_profiles.resize(profiles.count());
     QStringList::ConstIterator pEnd = profiles.end();
     for (QStringList::ConstIterator pIt = profiles.begin(); pIt != pEnd; ++pIt)
