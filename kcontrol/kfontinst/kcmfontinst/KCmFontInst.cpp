@@ -24,7 +24,6 @@
 #include "KfiConstants.h"
 #include "PrintDialog.h"
 #include "FcEngine.h"
-#include "FcEngine.h"
 #include "FontPreview.h"
 #include "Misc.h"
 #include "FontList.h"
