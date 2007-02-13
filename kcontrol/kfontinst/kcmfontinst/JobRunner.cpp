@@ -54,6 +54,40 @@ static KUrl toggle(const KUrl &orig, bool enable)
     return url;
 }
 
+class CPasswordDialog : public KPasswordDialog
+{
+    public:
+
+    CPasswordDialog(QWidget *parent)
+        : KPasswordDialog(parent),
+          itsSuProc(KFI_SYS_USER)
+    {
+        setCaption(i18n("Authorisation Required"));
+
+        if(itsSuProc.useUsersOwnPassword())
+            setPrompt(i18n("The requested action requires administrator privilleges.\n"
+                           "If you have these privilleges, then please enter your password."));
+        else
+            setPrompt(i18n("The requested action requires administrator privilleges.\n"
+                           "Please enter the system administrator's password."));
+
+        setPixmap(DesktopIcon("password"));
+    }
+
+    bool checkPassword()
+    {
+        if(0!=itsSuProc.checkInstall(password().toLocal8Bit()))
+        {
+            showErrorMessage(i18n("Password Incorrect"));
+            return false;
+        }
+
+        return true;
+    }
+
+    SuProcess itsSuProc;
+};
+
 CJobRunner::CJobRunner(QWidget *parent, int xid)
            : CActionDialog(parent),
              itsIt(itsUrls.end()),
@@ -95,34 +129,11 @@ bool CJobRunner::getAdminPasswd(QWidget *parent)
         // Prompt user for password, if dont already have...
         if(itsPasswd.isEmpty())
         {
-            SuProcess proc(KFI_SYS_USER);
-            int       attempts(0);
+            CPasswordDialog dlg(parent);
 
-            do
-            {
-                KPasswordDialog dlg(parent);
-
-                dlg.setCaption(i18n("Authorisation Required"));
-                dlg.setPrompt(i18n("The requested action requires administrator privilleges.\n"
-                                   "If you have these privilleges, then please enter your password. "
-                                   "Otherwise enter the system administrator's password."));
-                if(!dlg.exec())
-                    return false;
-
-                if(0==proc.checkInstall(dlg.password().toLocal8Bit()))
-                {
-                    itsPasswd=dlg.password().toLocal8Bit();
-                    break;
-                }
-                if(KMessageBox::No==KMessageBox::warningYesNo(parent,
-                                                i18n("<p><b>Incorrect password.</b></p><p>Try again?</p>")))
-                    return false;
-                if(++attempts>4)
-                    return false;
-            }
-            while(itsPasswd.isEmpty());
-
-            // TODO: If keep, then need to store password into kwallet!
+            if(!dlg.exec())
+                return false;
+            itsPasswd=dlg.password().toLocal8Bit();
         }
     }
 
