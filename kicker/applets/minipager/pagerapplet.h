@@ -44,6 +44,7 @@ class KProcess;
 class KWinModule;
 class KShadowEngine;
 class OrgKdeKdesktopBackgroundInterface;
+class KSelectionOwner;
 
 namespace KWin {
     class WindowInfo;
@@ -131,6 +132,7 @@ private:
     int desktopLayoutOrientation;
     int desktopLayoutX;
     int desktopLayoutY;
+    KSelectionOwner* m_desktopLayoutOwner;
 
     KWinModule *m_kwin;
     KShadowEngine* m_shadowEngine;

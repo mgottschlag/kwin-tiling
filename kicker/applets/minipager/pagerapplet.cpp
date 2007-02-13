@@ -47,6 +47,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <netwm.h>
 #include <ktoolinvocation.h>
 #include <kauthorized.h>
+#include <kmanagerselection.h>
 
 #include "utils.h"
 #include "kickertip.h"
@@ -89,6 +90,7 @@ KMiniPager::KMiniPager(const QString& configFile, Plasma::Type type, int actions
                        QWidget *parent, const char *name)
     : KPanelApplet( configFile, type, actions, parent, name ),
       m_layout(0),
+      m_desktopLayoutOwner( NULL ),
       m_shadowEngine(0),
       m_contextMenu(0),
       m_settings( new PagerSettings(sharedConfig()) )
@@ -313,19 +315,28 @@ void KMiniPager::updateDesktopLayout(int o, int x, int y)
     {
       return;
     }
-#ifdef __GNUC__
-#warning "kde4: port to dbus"
-#endif    
-#if 0
-    if ( !(DCOPRef( "kwin", "KWinInterface" ).call( "setDesktopLayout(int, int, int) ", o, x, y) ).isValid() )
-    {
-        kDebug() << "KMiniPager: Call to KWinInterface::setDesktopLayout(int, int, int) failed" << endl;
-        return;
-    }
-#endif
     desktopLayoutOrientation = o;
     desktopLayoutX = x;
     desktopLayoutY = y;
+    if( x == -1 ) // do-the-maths-yourself is encoded as 0 in the wm spec
+        x = 0;
+    if( y == -1 )
+        y = 0;
+    if( m_desktopLayoutOwner == NULL )
+    { // must own manager selection before setting global desktop layout
+        int screen = QX11Info::appScreen();
+        m_desktopLayoutOwner = new KSelectionOwner( QString( "_NET_DESKTOP_LAYOUT_S%1" ).arg( screen ).latin1(),
+            screen, this );
+        if( !m_desktopLayoutOwner->claim( false ))
+        {
+            delete m_desktopLayoutOwner;
+            m_desktopLayoutOwner = NULL;
+            return;
+        }
+    }
+    NET::Orientation orient = o == Qt::Horizontal ? NET::OrientationHorizontal : NET::OrientationVertical;
+    NETRootInfo i( QX11Info::display(), 0 );
+    i.setDesktopLayout( orient, x, y, NET::DesktopLayoutCornerTopLeft );
 }
 
 void KMiniPager::paintEvent(QPaintEvent *)
