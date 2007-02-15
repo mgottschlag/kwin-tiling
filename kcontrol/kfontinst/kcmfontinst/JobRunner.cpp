@@ -65,10 +65,10 @@ class CPasswordDialog : public KPasswordDialog
         setCaption(i18n("Authorisation Required"));
 
         if(itsSuProc.useUsersOwnPassword())
-            setPrompt(i18n("The requested action requires administrator privilleges.\n"
-                           "If you have these privilleges, then please enter your password."));
+            setPrompt(i18n("The requested action requires administrator privileges.\n"
+                           "If you have these privileges, then please enter your password."));
         else
-            setPrompt(i18n("The requested action requires administrator privilleges.\n"
+            setPrompt(i18n("The requested action requires administrator privileges.\n"
                            "Please enter the system administrator's password."));
 
         setPixmap(DesktopIcon("password"));
@@ -76,13 +76,32 @@ class CPasswordDialog : public KPasswordDialog
 
     bool checkPassword()
     {
-        if(0!=itsSuProc.checkInstall(password().toLocal8Bit()))
+        switch (itsSuProc.checkInstall(password().toLocal8Bit()))
         {
-            showErrorMessage(i18n("Password Incorrect"));
-            return false;
+            case -1:
+                showErrorMessage(itsSuProc.useUsersOwnPassword()
+                                    ? i18n("Insufficient privileges.")
+                                    : i18n("Conversation with su failed."), UsernameError);
+                return false;
+            case 0:
+                return true;
+            case SuProcess::SuNotFound:
+                showErrorMessage(i18n("Could not launch '%1'.<br>"
+                                      "Make sure your PATH is set correctly.",
+                                      itsSuProc.useUsersOwnPassword() ? "sudo" : "su"), FatalError);
+                return false;
+            case SuProcess::SuNotAllowed:
+                showErrorMessage(i18n("Insufficient privileges."), FatalError);
+                return false;
+            case SuProcess::SuIncorrectPassword:
+                showErrorMessage(i18n("Incorrect password, please try again."), PasswordError);
+                return false;
+            default:
+                showErrorMessage(i18n("Internal error: illegal return from "
+                                      "SuProcess::checkInstall()"), FatalError);
+                done(Rejected);
+                return false;
         }
-
-        return true;
     }
 
     SuProcess itsSuProc;

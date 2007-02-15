@@ -2392,12 +2392,16 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
     QString       errorMsg;
 
     authInfo.url=KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS"/");
-    authInfo.keepPassword=true;
+    authInfo.keepPassword=false;
     authInfo.caption=i18n("Authorisation Required");
     authInfo.username=i18n(KFI_AUTHINF_USER);
-    authInfo.prompt=i18n("The requested action requires administrator privilleges.\n"
-                         "If you have these privilleges, then please enter your password. "
-                         "Otherwise enter the system administrator's password..");
+
+    if(proc.useUsersOwnPassword())
+        authInfo.prompt=i18n("The requested action requires administrator privileges.\n"
+                             "If you have these privileges, then please enter your password.");
+    else
+        authInfo.prompt=i18n("The requested action requires administrator privileges.\n"
+                             "Please enter the system administrator's password.");
 
     if(hasMetaData(KFI_KIO_PASS))
         authInfo.password=metaData(KFI_KIO_PASS);
@@ -2411,7 +2415,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
             KFI_DBUG << "ATTEMPT : " << attempts << endl;
             if(1==attempts)
                 errorMsg=i18n("Incorrect password.\n");
-            if((!openPasswordDialog(authInfo, errorMsg) && attempts) || ++attempts>4)
+            if(!openPasswordDialog(authInfo, errorMsg) && ++attempts>2)
                 error=true;
         }
         if(!error && authInfo.keepPassword)
