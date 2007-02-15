@@ -44,6 +44,7 @@ class CFontFilter : public KLineEdit
     {
         CRIT_FAMILY,
         CRIT_STYLE,
+        CRIT_FONTCONFIG,
         CRIT_FILENAME,
         CRIT_LOCATION,
 

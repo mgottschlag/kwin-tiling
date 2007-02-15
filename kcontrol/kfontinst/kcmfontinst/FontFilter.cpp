@@ -54,12 +54,14 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsMenu=new QMenu(this);
     itsPixmaps[CRIT_FAMILY]=SmallIcon("text");
     itsPixmaps[CRIT_STYLE]=SmallIcon("text_bold");
+    itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("filefind");
     itsPixmaps[CRIT_FILENAME]=SmallIcon("font_type1");
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
 
     itsActionGroup=new QActionGroup(this);
     addAction(CRIT_FAMILY, i18n("Filter On Font Family"), true, true);
     addAction(CRIT_STYLE, i18n("Filter On Font Style"), false, true);
+    addAction(CRIT_FONTCONFIG, i18n("Filter On FontConfig Match"), false, true);
     addAction(CRIT_FILENAME, i18n("Filter On Font File"), false, false);
     addAction(CRIT_LOCATION, i18n("Filter On Font File Location"), false, false);
 
@@ -75,6 +77,7 @@ void CFontFilter::setMgtMode(bool m)
         itsActions[CRIT_FAMILY]->setChecked(true);
         setText(QString());
     }
+    itsActions[CRIT_FONTCONFIG]->setVisible(m);
     itsActions[CRIT_FILENAME]->setVisible(m);
     itsActions[CRIT_LOCATION]->setVisible(m);
 }

@@ -55,6 +55,7 @@ namespace KFI
 class CFontItem;
 class CFamilyItem;
 class CGroupListItem;
+class CFcQuery;
 
 enum EColumns
 {
@@ -284,6 +285,7 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
     private Q_SLOTS:
 
     void             timeout();
+    void             fcResults();
 
     Q_SIGNALS:
 
@@ -291,11 +293,17 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
 
     private:
 
+    const QString &  filterText() const { return CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria
+                                                    ? itsFilterFcText : itsFilterText; }
+    private:
+
     bool                   itsMgtMode;
     CGroupListItem         *itsGroup;
-    QString                itsFilterText;
+    QString                itsFilterText,
+                           itsFilterFcText;
     CFontFilter::ECriteria itsFilterCriteria;
     QTimer                 *itsTimer;
+    CFcQuery               *itsFcQuery;
 };
 
 class CFontListView : public QTreeView

@@ -51,6 +51,7 @@
 #include <utime.h>
 #include "FcEngine.h"
 #include "KfiConstants.h"
+#include "FcQuery.h"
 #include "GroupList.h"
 #include "config.h"
 
@@ -1020,7 +1021,8 @@ CFontListSortFilterProxy::CFontListSortFilterProxy(QObject *parent, QAbstractIte
                         : QSortFilterProxyModel(parent),
                           itsMgtMode(false),
                           itsGroup(NULL),
-                          itsFilterCriteria(CFontFilter::CRIT_FAMILY)
+                          itsFilterCriteria(CFontFilter::CRIT_FAMILY),
+                          itsFcQuery(NULL)
 {
     setSourceModel(model);
     setSortCaseSensitivity(Qt::CaseInsensitive);
@@ -1051,6 +1053,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                     QStringList                       allFiles;
                     QString                           tip("<h3>"+fam->name()+"</h3>");
                     int                               size(0);
+                    bool                              markMatch(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria);
 
                     tip+=i18n("<p><b>Status:</b> %1</p>", CFamilyItem::ENABLED==fam->status()
                                                             ? i18n("Enabled")
@@ -1072,7 +1075,10 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                                                fend(allFiles.end());
 
                     for(; fit!=fend; ++fit)
-                        tip+="<li>"+(*fit)+"</li>";
+                        if(markMatch && (*fit)==itsFilterFcText)
+                            tip+="<li><b>"+(*fit)+"</b></li>";
+                        else
+                            tip+="<li>"+(*fit)+"</li>";
 
                     tip+="</ul></p>";
                     tip+=i18n("<p><b>Total File Size:</b> %1</p>", KGlobal::locale()->formatByteSize(size));
@@ -1083,6 +1089,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                     CFontItem   *font=static_cast<CFontItem *>(index.internalPointer());
                     QString     tip("<h3>"+font->name()+"</h3>");
                     QStringList files(font->files());
+                    bool        markMatch(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria);
 
                     tip+=i18n("<p><b>Status:</b> %1</p>", font->isEnabled()
                                                             ? i18n("Enabled")
@@ -1096,7 +1103,10 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                                                fend(files.end());
 
                     for(; fit!=fend; ++fit)
-                        tip+="<li>"+(*fit)+"</li>";
+                        if(markMatch && (*fit)==itsFilterFcText)
+                            tip+="<li><b>"+(*fit)+"</b></li>";
+                        else
+                            tip+="<li>"+(*fit)+"</li>";
 
                     tip+="</ul></p>";
                     tip+=i18n("<p><b>Total File Size:</b> %1</p>", KGlobal::locale()->formatByteSize(font->size()));
@@ -1174,13 +1184,16 @@ bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkFontText) co
        (fnt->isHidden() && !itsMgtMode))
         return false;
 
-    if(itsGroup && (CGroupListItem::ALL!=itsGroup->type() || (!itsFilterText.isEmpty() && checkFontText)))
+    if(itsGroup && (CGroupListItem::ALL!=itsGroup->type() || (!filterText().isEmpty() && checkFontText)))
     {
         bool fontMatch(!checkFontText);
 
         if(!fontMatch)
             switch(itsFilterCriteria)
             {
+                case CFontFilter::CRIT_FONTCONFIG:
+                    fontMatch=fnt->files().contains(itsFilterFcText);
+                    break;
                 case CFontFilter::CRIT_STYLE:
                     fontMatch=matchString(fnt->style(), itsFilterText);
                     break;
@@ -1338,7 +1351,7 @@ void CFontListSortFilterProxy::setFilterText(const QString &text)
             timeout();
         }
         else
-            itsTimer->start(400);
+            itsTimer->start(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria ? 750 : 400);
     }
 }
 
@@ -1347,6 +1360,7 @@ void CFontListSortFilterProxy::setFilterCriteria(CFontFilter::ECriteria crit)
     if(crit!=itsFilterCriteria)
     {
         itsFilterCriteria=crit;
+        itsFilterFcText=QString();
         if(CFontFilter::CRIT_LOCATION==itsFilterCriteria)
             setFilterText(itsFilterText);
         itsTimer->stop();
@@ -1365,8 +1379,48 @@ void CFontListSortFilterProxy::setMgtMode(bool on)
 
 void CFontListSortFilterProxy::timeout()
 {
-    clear();
-    emit refresh();
+    if(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria)
+    {
+        int     commaPos=itsFilterText.indexOf(',');
+        QString query(itsFilterText);
+
+        if(-1!=commaPos)
+        {
+            QString style(query.mid(commaPos+1));
+            query=query.left(commaPos);
+            query=query.trimmed();
+            query+=":style=";
+            style=style.trimmed();
+            query+=style;
+        }
+        else
+            query=query.trimmed();
+
+        itsFilterFcText=QString();
+
+        if(!itsFcQuery)
+        {
+            itsFcQuery=new CFcQuery(this);
+            connect(itsFcQuery, SIGNAL(finished()), SLOT(fcResults()));
+        }
+
+        itsFcQuery->run(query);
+    }
+    else
+    {
+        clear();
+        emit refresh();
+    }
+}
+
+void CFontListSortFilterProxy::fcResults()
+{
+    if(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria)
+    {
+        itsFilterFcText=itsFcQuery->file();
+        clear();
+        emit refresh();
+    }
 }
 
 class CFontListViewDelegate : public QItemDelegate
