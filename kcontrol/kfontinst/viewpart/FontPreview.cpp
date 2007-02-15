@@ -1,7 +1,7 @@
 /*
  * KFontInst - KDE Font Installer
  *
- * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ * (c) 2003-2007 Craig Drummond <craig@kde.org>
  *
  * ----
  *

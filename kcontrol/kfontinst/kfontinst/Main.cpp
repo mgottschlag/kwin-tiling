@@ -1,7 +1,7 @@
 /*
  * KFontInst - KDE Font Installer
  *
- * (c) 2003-2006 Craig Drummond <craig@kde.org>
+ * (c) 2003-2007 Craig Drummond <craig@kde.org>
  *
  * ----
  *
@@ -134,7 +134,7 @@ static void usage(char *app)
               << "    <style info> is a 24-bit decimal number composed as: <weight><width><slant>" << std::endl
               << std::endl
               << std::endl
-              << "  (C) Craig Drummond, 2003-2006" << std::endl
+              << "  (C) Craig Drummond, 2003-2007" << std::endl
               << std::endl;
 
     exit(-1);
@@ -151,7 +151,7 @@ static int installFonts(int argc, char **argv, bool plain)
         KAboutData aboutData(KFI_NAME, caption,
                             "1.0", KFI_INST_CAPTION,
                             KAboutData::License_GPL,
-                            "(C) Craig Drummond, 2003-2006");
+                            "(C) Craig Drummond, 2003-2007");
 
         char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)KFI_ICON};
 
@@ -221,7 +221,7 @@ static int printFonts(int argc, char **argv, bool listFile)
                 KAboutData aboutData(KFI_NAME, caption.isEmpty() ? KFI_PRINT_CAPTION : caption,
                                      "1.0", KFI_PRINT_CAPTION,
                                      KAboutData::License_GPL,
-                                     "(C) Craig Drummond, 2003-2006");
+                                     "(C) Craig Drummond, 2003-2007");
 
                 char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)KFI_ICON};
 
@@ -251,7 +251,7 @@ static int viewFont(int argc, char **argv)
             KAboutData aboutData(KFI_NAME, KFI_VIEW_CAPTION,
                                  "1.0", KFI_VIEW_CAPTION,
                                  KAboutData::License_GPL,
-                                 "(C) Craig Drummond, 2003-2006");
+                                 "(C) Craig Drummond, 2003-2007");
 
             char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)"kfontview"};
 
