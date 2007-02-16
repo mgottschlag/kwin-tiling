@@ -293,6 +293,10 @@ fi
 #     xprop -root | grep "^KDE_FULL_SESSION" >/dev/null 2>/dev/null
 #     if test $? -eq 0; then ... whatever
 #
+# Additionally there is (since KDE 3.5.7) $KDE_SESSION_UID with the uid
+# of the user running the KDE session. It should be rarely needed (e.g.
+# after sudo to prevent desktop-wide functionality in the new user's kded).
+#
 KDE_FULL_SESSION=true
 export KDE_FULL_SESSION
 xprop -root -f KDE_FULL_SESSION 8t -set KDE_FULL_SESSION true
@@ -300,6 +304,9 @@ xprop -root -f KDE_FULL_SESSION 8t -set KDE_FULL_SESSION true
 KDE_SESSION_VERSION=4
 export KDE_SESSION_VERSION
 xprop -root -f KDE_SESSION_VERSION 32c -set KDE_SESSION_VERSION 4
+
+KDE_SESSION_UID=$UID
+export KDE_SESSION_UID
 
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
 # kdeinit unsets this variable before loading applications.
@@ -362,5 +369,6 @@ unset KDE_FULL_SESSION
 xprop -root -remove KDE_FULL_SESSION
 unset KDE_SESSION_VERSION
 xprop -root -remove KDE_SESSION_VERSION
+unset KDE_SESSION_UID
 
 echo 'startkde: Done.'  1>&2
