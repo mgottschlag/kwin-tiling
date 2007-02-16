@@ -63,6 +63,14 @@ class KDE_EXPORT CFcEngine
                 to;
     };
 
+    struct TChar : public QRect
+    {
+        TChar(const QRect &r=QRect(), quint32 u=0)
+            : QRect(r), ucs2(u) { }
+
+        quint32 ucs2;
+    };
+
     static CFcEngine * instance();
 
     ~CFcEngine();
@@ -74,8 +82,8 @@ class KDE_EXPORT CFcEngine
     bool                  drawPreview(const QString &item, QPixmap &pix, int h,
                                       unsigned long style=KFI_NO_STYLE_INFO, int face=0);
     bool                  draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb,
-                               const QList<TRange> &range=QList<TRange>(), const QString &name=QString(),
-                               unsigned long style=KFI_NO_STYLE_INFO);
+                               const QList<TRange> &range=QList<TRange>(), QList<TChar> *chars=NULL,
+                               const QString &name=QString(), unsigned long style=KFI_NO_STYLE_INFO);
     int                   getNumIndexes() { return itsIndexCount; } // Only valid after draw has been called!
     const QString &       getName(const KUrl &url, int faceNo=0);
     bool                  getInfo(const KUrl &url, int faceNo, QString &full, QString &family, QString &foundry,

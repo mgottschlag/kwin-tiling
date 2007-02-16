@@ -22,12 +22,14 @@
 
 #include "FontPreview.h"
 #include "FcEngine.h"
+#include "CharTip.h"
 #include <kapplication.h>
 #include <klocale.h>
 #include <QPainter>
 #include <QImage>
 #include <QPixmap>
 #include <QPaintEvent>
+#include <QMouseEvent>
 #include <stdlib.h>
 
 namespace KFI
@@ -38,11 +40,18 @@ CFontPreview::CFontPreview(QWidget *parent)
               itsCurrentFace(1),
               itsLastWidth(0),
               itsLastHeight(0),
-              itsStyleInfo(KFI_NO_STYLE_INFO)
+              itsStyleInfo(KFI_NO_STYLE_INFO),
+              itsLastChar(itsChars.end()),
+              itsTip(NULL)
 {
     QPalette p(palette());
     p.setColor(backgroundRole(), CFcEngine::bgndCol());
     setPalette(p);
+}
+
+CFontPreview::~CFontPreview()
+{
+    delete itsTip;
 }
 
 void CFontPreview::showFont(const KUrl &url, const QString &name, unsigned long styleInfo,
@@ -67,9 +76,10 @@ void CFontPreview::showFont()
 
     if(!itsCurrentUrl.isEmpty() &&
        CFcEngine::instance()->draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap,
-                                   itsCurrentFace-1, false, itsRange, itsFontName,
+                                   itsCurrentFace-1, false, itsRange, &itsChars, itsFontName,
                                    itsStyleInfo))
     {
+        setMouseTracking(itsChars.count()>0);
         update();
         emit status(true);
     }
@@ -78,9 +88,11 @@ void CFontPreview::showFont()
         QPixmap nullPix;
 
         itsPixmap=nullPix;
+        setMouseTracking(false);
         update();
         emit status(false);
     }
+    itsLastChar=itsChars.end();
 }
 
 void CFontPreview::setUnicodeRange(const QList<CFcEngine::TRange> &r)
@@ -103,6 +115,23 @@ void CFontPreview::paintEvent(QPaintEvent *)
         else
             paint.drawPixmap(0, 0, itsPixmap);
     }
+}
+
+void CFontPreview::mouseMoveEvent(QMouseEvent *event)
+{
+    QList<CFcEngine::TChar>::ConstIterator end(itsChars.end());
+
+    if(itsLastChar==end || !(*itsLastChar).contains(event->pos()))
+        for(QList<CFcEngine::TChar>::ConstIterator it(itsChars.begin()); it!=end; ++it)
+            if((*it).contains(event->pos()))
+            {
+                if(!itsTip)
+                    itsTip=new CCharTip(this);
+
+                itsTip->setItem(*it);
+                itsLastChar=it;
+                break;
+            }
 }
 
 QSize CFontPreview::sizeHint() const

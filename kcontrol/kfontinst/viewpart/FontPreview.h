@@ -36,6 +36,8 @@
 namespace KFI
 {
 
+class CCharTip;
+
 class CFontPreview : public QWidget
 {
     Q_OBJECT
@@ -43,9 +45,10 @@ class CFontPreview : public QWidget
     public:
 
     CFontPreview(QWidget *parent);
-    virtual ~CFontPreview() {}
+    virtual ~CFontPreview();
 
     void        paintEvent(QPaintEvent *);
+    void        mouseMoveEvent(QMouseEvent *event);
     QSize       sizeHint() const;
     QSize       minimumSizeHint() const;
 
@@ -65,14 +68,19 @@ class CFontPreview : public QWidget
 
     private:
 
-    QPixmap                  itsPixmap;
-    KUrl                     itsCurrentUrl;
-    int                      itsCurrentFace,
-                             itsLastWidth,
-                             itsLastHeight,
-                             itsStyleInfo;
-    QString                  itsFontName;
-    QList<CFcEngine::TRange> itsRange;
+    QPixmap                                itsPixmap;
+    KUrl                                   itsCurrentUrl;
+    int                                    itsCurrentFace,
+                                           itsLastWidth,
+                                           itsLastHeight,
+                                           itsStyleInfo;
+    QString                                itsFontName;
+    QList<CFcEngine::TRange>               itsRange;
+    QList<CFcEngine::TChar>                itsChars;
+    QList<CFcEngine::TChar>::ConstIterator itsLastChar;
+    CCharTip                               *itsTip;
+
+    friend class CCharTip;
 };
 
 }

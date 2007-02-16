@@ -14,7 +14,7 @@
 
 # FILES='UnicodeData.txt Unihan.zip NamesList.txt Blocks.txt Scripts.txt'
 
-FILES='Blocks.txt Scripts.txt'
+FILES='UnicodeData.txt Blocks.txt Scripts.txt'
 
 mkdir -p ${1:-unicode} 
 
