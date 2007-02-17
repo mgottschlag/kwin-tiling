@@ -361,12 +361,12 @@ void CFontViewPart::getMetaInfo()
                                        send(list.end());
 
             for(int i=0; sit!=send; ++sit, ++i)
-                itsMetaInfo[i]+="<tr><td><b>"+tk+"</b></td><td>"+
+                itsMetaInfo[i]+="<tr><td><b>"+tk+"</b></td></tr><tr><td>"+
                                 (*sit)+"</td></tr>";
 
             if(itsMetaInfo.count()>1 && 1==list.count())
                 for(int i=1; i<itsMetaInfo.count(); ++i)
-                    itsMetaInfo[i]+="<tr><td><b>"+tk+"</b></td><td>"+
+                    itsMetaInfo[i]+="<tr><td><b>"+tk+"</b></td></tr><tr><td>"+
                                     list.first()+"</td></tr>";
         }
 
