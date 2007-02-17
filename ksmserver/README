@@ -4,7 +4,7 @@ KDE session manager  (ksmserver)
 Matthias Ettrich <ettrich@kde.org>
 Lubos Lunak <l.lunak@kde.org>
 
-ksmserver is KDE's new session management server. It talks the
+ksmserver is KDE's session management server. It talks the
 standard X11R6 session management protocol (XSMP).  Thus, in theory,
 it should be compatible with all session managment compliant X11R6
 applications. Unfortunately, there aren't that many of them. To be
