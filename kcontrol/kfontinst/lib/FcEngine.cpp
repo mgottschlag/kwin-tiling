@@ -725,7 +725,8 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     for(int l=0; l<offset; ++l)
                         painter.drawLine((w-1)-l, 0, (w-1)-l, h);
                 }
-                else if(1==range.count())
+                else if(1==range.count() && (range.first().null() ||
+                                             0==range.first().to))
                 {
                     if(range.first().null())
                     {

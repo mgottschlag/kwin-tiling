@@ -66,9 +66,9 @@ class KDE_EXPORT CFcEngine
     struct TChar : public QRect
     {
         TChar(const QRect &r=QRect(), quint32 u=0)
-            : QRect(r), ucs2(u) { }
+            : QRect(r), ucs4(u) { }
 
-        quint32 ucs2;
+        quint32 ucs4;
     };
 
     static CFcEngine * instance();

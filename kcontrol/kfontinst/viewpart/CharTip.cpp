@@ -165,33 +165,52 @@ void CCharTip::showTip()
     if(!itsParent->underMouse())
         return;
 
-    EUnicodeCategory cat(getCategory(itsItem.ucs2));
+    EUnicodeCategory cat(getCategory(itsItem.ucs4));
     QString          details("<table>");
 
     details+="<tr><td><b>"+i18n("Category")+"</b></td><td>"+
              toStr(cat)+"</td></tr>";
-    details+="<tr><td><b>"+i18n("UCS-2")+"</b></td><td>"+
-             QString().sprintf("U+%4.4X", itsItem.ucs2)+"</td></tr>";
+    details+="<tr><td><b>"+i18n("UCS-4")+"</b></td><td>"+
+             QString().sprintf("U+%4.4X", itsItem.ucs4)+"</td></tr>";
 
-    // TODO!!!
-/*
-    details+="<tr><td><b>"+i18n("UTF-16")+"</b></td><td>"+
-             QString().sprintf("0x%4.4X", 0)+"</td></tr>";
-    details+="<tr><td><b>"+i18n("UTF-8")+"</b></td><td>"+
-             QString().sprintf("0x%2.2X", 0)+"</td></tr>";
-*/
-    if ((0x0001 <= itsItem.ucs2 && itsItem.ucs2 <= 0xD7FF) ||
-        (0xE000 <= itsItem.ucs2 && itsItem.ucs2 <= 0xFFFD) ||
-        (0x10000 <= itsItem.ucs2 && itsItem.ucs2 <= 0x10FFFF))
+    QString str(QString::fromUcs4(&(itsItem.ucs4), 1));
+    details+="<tr><td><b>"+i18n("UTF-16")+"</b></td><td>";
+
+    const ushort *utf16(str.utf16());
+
+    for(int i=0; utf16[i]; ++i)
+    {
+        if(i)
+            details+=' ';
+        details+=QString().sprintf("0x%4.4X",  utf16[i]);
+    }
+    details+="</td></tr>";
+    details+="<tr><td><b>"+i18n("UTF-8")+"</b></td><td>";
+
+    QByteArray utf8(str.toUtf8());
+
+    for(int i=0; i<utf8.size(); ++i)
+    {
+        if(i)
+            details+=' ';
+        details+=QString().sprintf("0x%2.2X", (unsigned char)(utf8.constData()[i]));
+    }
+    details+="</td></tr>";
+
+    // Note: the "<b></b> below is just to stop Qt converting the xml entry into
+    // a character!
+    if ((0x0001 <= itsItem.ucs4 && itsItem.ucs4 <= 0xD7FF) ||
+        (0xE000 <= itsItem.ucs4 && itsItem.ucs4 <= 0xFFFD) ||
+        (0x10000 <= itsItem.ucs4 && itsItem.ucs4 <= 0x10FFFF))
         details+="<tr><td><b>"+i18n("XML Decimal Entity")+"</b></td><td>"+
-                 QString().sprintf("&\\#%d;", itsItem.ucs2)+"</td></tr>";  // TODO Escape symbols???
+                 QString().sprintf("&#<b></b>%d;", itsItem.ucs4)+"</td></tr>";
 
     details+="</table>";
     itsLabel->setText(details);
 
     QPixmap pix((itsItem.width()*3)+8, (itsItem.height()*3)+8);
     QList<CFcEngine::TRange> range;
-    range.append(CFcEngine::TRange(itsItem.ucs2, itsItem.ucs2));
+    range.append(CFcEngine::TRange(itsItem.ucs4, 0));
 
     QColor prevBgndCol(CFcEngine::bgndCol());
 
@@ -227,37 +246,16 @@ void CCharTip::reposition()
     rect.moveTopRight(itsParent->mapToGlobal(rect.topRight()));
 
     QPoint pos(rect.center());
-    // m_corner:
-    // 0: upperleft
-    // 1: upperright
-    // 2: lowerleft
-    // 3: lowerright
-    // 4+: none
-    //m_corner = 0;
-    // should the tooltip be shown to the left or to the right of the ivi ?
-    QRect desk = KGlobalSettings::desktopGeometry(rect.center());
+    QRect  desk(KGlobalSettings::desktopGeometry(rect.center()));
 
     if (rect.center().x() + width() > desk.right())
-    {
-        // to the left
         if (pos.x() - width() < 0)
-        {
             pos.setX(0);
-            //m_corner = 4;
-        }
         else
-        {
             pos.setX( pos.x() - width() );
-            //m_corner = 1;
-        }
-    }
     // should the tooltip be shown above or below the ivi ?
     if (rect.bottom() + height() > desk.bottom())
-    {
-        // above
         pos.setY( rect.top() - height() );
-        //m_corner += 2;
-    }
     else
         pos.setY(rect.bottom() + 1);
 
