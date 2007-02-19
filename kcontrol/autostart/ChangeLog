@@ -1,0 +1,6 @@
+0.5.0
+ - Added 4 new translations
+ - Able to handle Autostart, env and shutdown.
+ - Updated auto* tools to match those found in KDE 3.5.5
+1.0
+ - Ported to KDE4

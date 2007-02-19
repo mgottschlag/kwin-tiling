@@ -1,0 +1,98 @@
+<ui version="4.0" >
+ <class>AutostartConfig</class>
+ <widget class="QWidget" name="AutostartConfig" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>553</width>
+    <height>384</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item rowspan="5" row="0" column="0" >
+    <widget class="QTreeWidget" name="listCMD" >
+     <column>
+      <property name="text" >
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Command</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Run On</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QComboBox" name="cmbStartOn" >
+     <item>
+      <property name="text" >
+       <string>Startup</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Shutdown</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Pre-Desktop</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QPushButton" name="btnProperties" >
+     <property name="text" >
+      <string>&amp;Properties</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QPushButton" name="btnRemove" >
+     <property name="text" >
+      <string>&amp;Remove</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QPushButton" name="btnAdd" >
+     <property name="text" >
+      <string>&amp;Add</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
