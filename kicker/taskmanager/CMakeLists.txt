@@ -20,7 +20,7 @@ if (X11_Xcomposite_FOUND)
   target_link_libraries(taskmanager ${X11_Xcomposite_LIB})
 endif (X11_Xcomposite_FOUND)
 
-set_target_properties(taskmanager PROPERTIES VERSION 1.0.0 SOVERSION 1 )
+set_target_properties(taskmanager PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS taskmanager  DESTINATION ${LIB_INSTALL_DIR} )
 
 

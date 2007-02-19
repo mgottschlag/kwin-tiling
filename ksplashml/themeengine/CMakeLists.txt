@@ -19,7 +19,7 @@ if(X11_Xcursor_FOUND)
   target_link_libraries(ksplashthemes ${X11_Xcursor_LIB})
 endif(X11_Xcursor_FOUND)
 
-set_target_properties(ksplashthemes PROPERTIES VERSION 0.0.0 SOVERSION 0 )
+set_target_properties(ksplashthemes PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS ksplashthemes  DESTINATION ${LIB_INSTALL_DIR} )
 
 
