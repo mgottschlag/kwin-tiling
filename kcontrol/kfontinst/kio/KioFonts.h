@@ -156,7 +156,7 @@ class CKioFonts : public KIO::SlaveBase
                            { return doRootCmd(cmd, getRootPasswd(askPasswd)); }
     void               correctUrl(KUrl &url);
     void               clearFontList();
-    bool               updateFontList();
+    bool               updateFontList(bool initial=false);
     EFolder            getFolder(const KUrl &url);
     TFontMap::Iterator getMap(const KUrl &url);
     const CDisabledFonts::TFileList * getEntries(const KUrl &url, TFontMap::Iterator &enabledIt,

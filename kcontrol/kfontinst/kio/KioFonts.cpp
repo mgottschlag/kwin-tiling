@@ -765,6 +765,8 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
     // Ensure exists
     if(!Misc::dExists(itsFolders[mainFolder].location))
         Misc::createDir(itsFolders[mainFolder].location);
+
+    updateFontList(true);
 }
 
 CKioFonts::~CKioFonts()
@@ -2577,12 +2579,15 @@ void CKioFonts::clearFontList()
         itsFolders[FOLDER_USER].fontMap.clear();
 }
 
-bool CKioFonts::updateFontList()
+//
+// 'initial' is only set to true in the constructor - this is so that the font list
+// always contains data before each put(), get() etc. call.
+bool CKioFonts::updateFontList(bool initial)
 {
     KFI_DBUG << "updateFontList" << endl;
 
     // For some reason just the "!FcConfigUptoDate(0)" check does not always work :-(
-    if(!itsFontList || !FcConfigUptoDate(0) ||
+    if(initial || !itsFontList || !FcConfigUptoDate(0) ||
        (abs(time(NULL)-itsLastFcCheckTime)>constMaxFcCheckTime))
     {
         KFI_DBUG << "itsFontList:" << (intptr_t)itsFontList
