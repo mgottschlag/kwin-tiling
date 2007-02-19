@@ -29,7 +29,7 @@ kde4_add_library(kickermain SHARED ${kickermain_LIB_SRCS})
 
 target_link_libraries(kickermain  ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} kworkspace)
 
-set_target_properties(kickermain PROPERTIES VERSION 1.0.0 SOVERSION 1 )
+set_target_properties(kickermain PROPERTIES VERSION 2.0.0 SOVERSION 2 )
 install(TARGETS kickermain  DESTINATION ${LIB_INSTALL_DIR} )
 
 
