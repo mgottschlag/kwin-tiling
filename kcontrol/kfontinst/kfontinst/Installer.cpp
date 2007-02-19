@@ -28,17 +28,17 @@
 #include <ktempdir.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
+#include <kio/netaccess.h>
 #include "JobRunner.h"
 
 namespace KFI
 {
 
-int CInstaller::install(const QStringList &fonts)
+int CInstaller::install(const QSet<KUrl> &urls)
 {
-    QStringList::ConstIterator it(fonts.begin()),
-                               end(fonts.end());
-    bool                       sysInstall(false);
-
+    QSet<KUrl>::ConstIterator it(urls.begin()),
+                              end(urls.end());
+    bool                      sysInstall(false);
     CJobRunner *jobRunner=new CJobRunner(itsParent);
 
     if(!Misc::root())
@@ -61,78 +61,89 @@ int CInstaller::install(const QStringList &fonts)
         }
     }
 
-    QSet<KUrl> urls;
+    QSet<KUrl> instUrls;
 
     for(; it!=end; ++it)
-        if(Misc::isPackage(*it))
+    {
+        KUrl local(KIO::NetAccess::mostLocalUrl(*it, NULL));
+        bool package(false);
+
+        if(local.isLocalFile())
         {
-            KZip zip(*it);
+            QString localFile(local.path());
 
-            if(zip.open(QIODevice::ReadOnly))
+            if(Misc::isPackage(localFile))
             {
-                const KArchiveDirectory *zipDir=zip.directory();
+                KZip zip(localFile);
 
-                if(zipDir)
+                package=true;
+                if(zip.open(QIODevice::ReadOnly))
                 {
-                    QStringList fonts(zipDir->entries());
+                    const KArchiveDirectory *zipDir=zip.directory();
 
-                    if(fonts.count())
+                    if(zipDir)
                     {
-                        QStringList::ConstIterator it(fonts.begin()),
-                                                   end(fonts.end());
+                        QStringList fonts(zipDir->entries());
 
-                        if(!itsTempDir)
+                        if(fonts.count())
                         {
-                            itsTempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
-                            itsTempDir->setAutoRemove(true);
-                        }
+                            QStringList::ConstIterator it(fonts.begin()),
+                                                       end(fonts.end());
 
-                        for(; it!=end; ++it)
-                        {
-                            const KArchiveEntry *entry=zipDir->entry(*it);
-
-                            if(entry && entry->isFile())
+                            if(!itsTempDir)
                             {
-                                ((KArchiveFile *)entry)->copyTo(itsTempDir->name());
+                                itsTempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
+                                itsTempDir->setAutoRemove(true);
+                            }
 
-                                QString name(entry->name());
+                            for(; it!=end; ++it)
+                            {
+                                const KArchiveEntry *entry=zipDir->entry(*it);
 
-                                //
-                                // Cant install hidden fonts, therefore need to unhide 1st!
-                                if(Misc::isHidden(name))
+                                if(entry && entry->isFile())
                                 {
-                                    ::rename(QFile::encodeName(itsTempDir->name()+
-                                                               name).data(),
-                                           QFile::encodeName(itsTempDir->name()+
-                                                             name.mid(1)).data());
-                                    name=name.mid(1);
+                                    ((KArchiveFile *)entry)->copyTo(itsTempDir->name());
+
+                                    QString name(entry->name());
+
+                                    //
+                                    // Cant install hidden fonts, therefore need to unhide 1st!
+                                    if(Misc::isHidden(name))
+                                    {
+                                        ::rename(QFile::encodeName(itsTempDir->name()+
+                                                                name).data(),
+                                            QFile::encodeName(itsTempDir->name()+
+                                                                name.mid(1)).data());
+                                        name=name.mid(1);
+                                    }
+                                    instUrls.insert(KUrl(itsTempDir->name()+name));
                                 }
-                                urls.insert(KUrl(itsTempDir->name()+name));
                             }
                         }
                     }
                 }
             }
         }
-        else
+        if(!package)
         {
             KUrl::List associatedUrls;
 
             CJobRunner::getAssociatedUrls(*it, associatedUrls, false, itsParent);
-            urls.insert(KUrl(*it));
+            instUrls.insert(*it);
 
             KUrl::List::Iterator aIt(associatedUrls.begin()),
                                  aEnd(associatedUrls.end());
 
             for(; aIt!=aEnd; ++aIt)
-                urls.insert(*aIt);
+                instUrls.insert(*aIt);
         }
+    }
 
-    if(urls.count())
+    if(instUrls.count())
     {
         CJobRunner::ItemList      list;
-        QSet<KUrl>::ConstIterator it(urls.begin()),
-                                  end(urls.end());
+        QSet<KUrl>::ConstIterator it(instUrls.begin()),
+                                  end(instUrls.end());
 
         for(; it!=end; ++it)
             list.append(*it);

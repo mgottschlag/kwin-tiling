@@ -27,6 +27,7 @@
 #include "KfiPrint.h"
 #include "kxftconfig.h"
 #include <fontconfig/fontconfig.h>
+#include <QDir>
 #include <QFile>
 #include <QList>
 #include <QTextStream>
@@ -140,6 +141,16 @@ static void usage(char *app)
     exit(-1);
 }
 
+static KUrl toUrl(const QString &path)
+{
+    KUrl url(path);
+
+    if((url.protocol().isEmpty() || url.protocol()=="file") && '/'!=path[0])
+        url=KUrl::fromPath(QDir::cleanPath(QDir::currentPath()+'/'+path));
+
+    return url;
+}
+
 static int installFonts(int argc, char **argv, bool plain)
 {
     if(plain
@@ -155,22 +166,21 @@ static int installFonts(int argc, char **argv, bool plain)
 
         char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)KFI_ICON};
 
-        //KApplication::disableAutoDcopRegistration();
         KCmdLineArgs::init(3, dummyArgv, &aboutData);
 
         KApplication app;
-        QStringList  fonts;
+        QSet<KUrl>   urls;
         int          embedId(plain ? 0 : strtol(argv[2], NULL, 16));
 
         KLocale::setMainCatalog(KFI_CATALOGUE);
         KIconLoader::global()->addAppDir(KFI_NAME);
 
         for(int i=plain ? 2 : 4; i<argc; ++i)
-            fonts.append(argv[i]);
+            urls.insert(toUrl(QString::fromUtf8(argv[i])));
 
         KFI::CInstaller inst(createParent(embedId));
 
-        return inst.install(fonts);
+        return inst.install(urls);
     }
     return -1;
 }
@@ -225,7 +235,6 @@ static int printFonts(int argc, char **argv, bool listFile)
 
                 char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)KFI_ICON};
 
-//                KApplication::disableAutoDcopRegistration();
                 KCmdLineArgs::init(3, dummyArgv, &aboutData);
 
                 KApplication app;
@@ -244,18 +253,17 @@ static int viewFont(int argc, char **argv)
 {
     if(3==argc)
     {
-        KUrl url(QString::fromUtf8(argv[2]));
+        KUrl url(toUrl(QString::fromUtf8(argv[2])));
 
         if(url.isValid())
         {
             KAboutData aboutData(KFI_NAME, KFI_VIEW_CAPTION,
-                                 "1.0", KFI_VIEW_CAPTION,
+                                 "1.1", KFI_VIEW_CAPTION,
                                  KAboutData::License_GPL,
                                  "(C) Craig Drummond, 2003-2007");
 
             char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)"kfontview"};
 
-//                KApplication::disableAutoDcopRegistration();
             KCmdLineArgs::init(3, dummyArgv, &aboutData);
 
             KApplication app;

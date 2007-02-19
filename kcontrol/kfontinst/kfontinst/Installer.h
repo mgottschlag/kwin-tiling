@@ -24,8 +24,9 @@
  */
 
 #include <QObject>
+#include <QSet>
+#include <kurl.h>
 
-class QStringList;
 class QWidget;
 class KTempDir;
 
@@ -41,7 +42,7 @@ class CInstaller : public QObject
          : itsParent(p), itsTempDir(NULL) { }
     ~CInstaller();
 
-    int install(const QStringList &fonts);
+    int install(const QSet<KUrl> &urls);
 
     public Q_SLOTS:
 

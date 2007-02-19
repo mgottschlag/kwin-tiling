@@ -8,4 +8,4 @@ Name[el]=Εγκατάσταση
 Name[fr]=Installer
 Name[x-test]=xxInstallxx
 Icon=fonts
-Exec=kfontinst -I %F
+Exec=kfontinst -I %U
