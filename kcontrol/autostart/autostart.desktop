@@ -10,12 +10,8 @@ X-KDE-FactoryName=autostart
 X-KDE-ParentApp=kcontrol
 
 Name=Autostart Manager
-Name[ca]=Autoengega
-Name[es]=Arranque automático
 
 Comment=A KControl tool for managing what programs start up with KDE.
-Comment[ca]=Panell de control per a gestionar els programes que s'inicien amb la sessió de KDE.
-Comment[es]=Panel de control para gestionar los programas que se inician con la sesión de KDE.
 
 Keywords=autostart manager
 
