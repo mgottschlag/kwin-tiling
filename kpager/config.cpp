@@ -155,16 +155,15 @@ void KPagerConfigDialog::loadConfiguration()
 
 void KPagerConfigDialog::initConfiguration(void)
 {
-  KSharedConfig::Ptr cfg = KGlobal::config();
-  cfg->setGroup("KPager");
+  KConfigGroup cfg(KGlobal::config(), "KPager");
 
-  m_windowDrawMode=cfg->readEntry("windowDrawMode", int(Desktop::c_defWindowDrawMode));
-  m_showName=cfg->readEntry("showName", Desktop::c_defShowName);
-  m_showNumber=cfg->readEntry("showNumber", Desktop::c_defShowNumber);
-  m_showBackground=cfg->readEntry("showBackground", Desktop::c_defShowBackground);
-  m_showWindows=cfg->readEntry("showWindows", Desktop::c_defShowWindows);
-  m_layoutType=cfg->readEntry("layoutType", int(KPager::c_defLayout));
-  m_windowDragging=cfg->readEntry("windowDragging", true);
+  m_windowDrawMode=cfg.readEntry("windowDrawMode", int(Desktop::c_defWindowDrawMode));
+  m_showName=cfg.readEntry("showName", Desktop::c_defShowName);
+  m_showNumber=cfg.readEntry("showNumber", Desktop::c_defShowNumber);
+  m_showBackground=cfg.readEntry("showBackground", Desktop::c_defShowBackground);
+  m_showWindows=cfg.readEntry("showWindows", Desktop::c_defShowWindows);
+  m_layoutType=cfg.readEntry("layoutType", int(KPager::c_defLayout));
+  m_windowDragging=cfg.readEntry("windowDragging", true);
 }
 
 void KPagerConfigDialog::slotOk()

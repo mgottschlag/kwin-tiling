@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <klocale.h>
 #include <kseparator.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kstringhandler.h>
 
@@ -140,7 +140,7 @@ KGreeter::KGreeter( bool framed )
   , prevValid( true )
   , needLoad( false )
 {
-	stsFile = new KSimpleConfig( _stsFile );
+	stsFile = new KConfig( _stsFile, KConfig::OnlyLocal);
 	stsFile->setGroup( "PrevUser" );
 
 	if (_userList) {
@@ -343,7 +343,7 @@ KGreeter::insertSessions()
 	for (char **dit = _sessionsDirs; *dit; ++dit)
 		foreach (QString ent, QDir( *dit ).entryList())
 			if (ent.endsWith( ".desktop" )) {
-				KSimpleConfig dsk( QString( *dit ).append( '/' ).append( ent ) );
+				KConfig dsk( QString( *dit ).append( '/' ).append( ent ), KConfig::OnlyLocal);
 				dsk.setGroup( "Desktop Entry" );
 				putSession( ent.left( ent.length() - 8 ),
 				            dsk.readEntry( "Name" ),
@@ -544,8 +544,7 @@ KGreeter::verifyClear()
 void
 KGreeter::verifyOk()
 {
-	if (_preselUser == PRESEL_PREV && verify->entityPresettable())
-		stsFile->writeEntry( verify->entitiesLocal() ?
+	if (_preselUser == PRESEL_PREV && verify->entityPresettable()) stsFile->writeEntry( verify->entitiesLocal() ?
 		                       dName :
 		                       dName + '_' + verify->pluginName(),
 		                     verify->getEntity() );

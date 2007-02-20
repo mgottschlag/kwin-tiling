@@ -46,17 +46,16 @@ KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent)
 
 void KScreenSaverAdvancedDialog::readSettings()
 {
-	KConfig *config = new KConfig("kscreensaverrc");
-	config->setGroup("ScreenSaver");
+        KConfigGroup config(KSharedConfig::openConfig("kscreensaverrc"), "ScreenSaver");
 
-	mPriority = config->readEntry("Priority", 19);
+	mPriority = config.readEntry("Priority", 19);
 	if (mPriority < 0) mPriority = 0;
 	if (mPriority > 19) mPriority = 19;
 
-	dialog->qcbTopLeft->setCurrentIndex(config->readEntry("ActionTopLeft", 0));
-	dialog->qcbTopRight->setCurrentIndex(config->readEntry("ActionTopRight", 0));
-	dialog->qcbBottomLeft->setCurrentIndex(config->readEntry("ActionBottomLeft", 0));
-	dialog->qcbBottomRight->setCurrentIndex(config->readEntry("ActionBottomRight", 0));
+	dialog->qcbTopLeft->setCurrentIndex(config.readEntry("ActionTopLeft", 0));
+	dialog->qcbTopRight->setCurrentIndex(config.readEntry("ActionTopRight", 0));
+	dialog->qcbBottomLeft->setCurrentIndex(config.readEntry("ActionBottomLeft", 0));
+	dialog->qcbBottomRight->setCurrentIndex(config.readEntry("ActionBottomRight", 0));
 
 	switch(mPriority)
 	{
@@ -75,7 +74,6 @@ void KScreenSaverAdvancedDialog::readSettings()
 	}
 
 	mChanged = false;
-	delete config;
 }
 
 void KScreenSaverAdvancedDialog::slotPriorityChanged(int val)

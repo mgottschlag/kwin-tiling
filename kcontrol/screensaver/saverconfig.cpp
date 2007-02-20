@@ -9,30 +9,29 @@ SaverConfig::SaverConfig()
 
 bool SaverConfig::read(const QString &file)
 {
-    KDesktopFile config(file, true);
-#if 0    
+    KDesktopFile config(file);
+    const KConfigGroup group = config.desktopGroup();
+#if 0
     if( !config.tryExec())
       return false;
-#endif    
-    mExec = config.readPathEntry("Exec");
-    mName = config.readEntry("Name");
-    QString categoryName = config.readEntry("X-KDE-Category");
+#endif
+    mExec = group.readPathEntry("Exec");
+    mName = group.readEntry("Name");
+    QString categoryName = group.readEntry("X-KDE-Category");
     if(categoryName.isEmpty())
 	mCategory = categoryName;
-    else	    
+    else
         mCategory = i18nc("Screen saver category", // Must be same in CMakeFiles.txt
                      categoryName.toUtf8());
 
     if (config.hasActionGroup("Setup"))
     {
-      config.setActionGroup("Setup");
-      mSetup = config.readPathEntry("Exec");
+      mSetup = config.actionGroup("Setup").readPathEntry("Exec");
     }
 
     if (config.hasActionGroup("InWindow"))
     {
-      config.setActionGroup("InWindow");
-      mSaver = config.readPathEntry("Exec");
+      mSaver = config.actionGroup("InWindow").readPathEntry("Exec");
     }
 
     int indx = file.lastIndexOf('/');

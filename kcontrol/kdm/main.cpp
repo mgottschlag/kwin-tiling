@@ -39,7 +39,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmimetype.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 
 #include <QDropEvent>
 #include <QFile>
@@ -83,7 +83,7 @@ KUrl *decodeImgDrop( QDropEvent *e, QWidget *wdg )
 	return 0;
 }
 
-KSimpleConfig *config;
+KConfig *config;
 
 KDModule::KDModule( QWidget *parent, const QStringList & )
 	: KCModule( KDMFactory::componentData(), parent )
@@ -182,7 +182,7 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 		kWarning() << "user(s) '" << tgmapci.value().join( "," )
 		<< "' have unknown GID " << tgmapci.key() << endl;
 
-	config = new KSimpleConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc") );
+	config = new KConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc"), KConfig::OnlyLocal);
 
 	QVBoxLayout *top = new QVBoxLayout( this );
 	tab = new QTabWidget( this );

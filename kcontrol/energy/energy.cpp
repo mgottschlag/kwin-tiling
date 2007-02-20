@@ -97,8 +97,8 @@ extern "C" {
 
     KDE_EXPORT void kcminit_energy() {
 #ifdef HAVE_DPMS
-        KConfig *cfg = new KConfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
-        cfg->setGroup("DisplayEnergy");
+        KConfig *_cfg = new KConfig( "kcmdisplayrc", KConfig::NoGlobals );
+        KConfigGroup cfg(_cfg, "DisplayEnergy");
 
 	Display *dpy = QX11Info::display();
 	CARD16 pre_configured_status;
@@ -116,10 +116,10 @@ extern "C" {
 	    DPMSGetTimeouts(dpy, &pre_configured_standby, &pre_configured_suspend, &pre_configured_off);
 	    DPMSInfo(dpy, &pre_configured_status, &pre_configured_enabled);
 	    /* let the user override the settings */
-	    enabled = cfg->readEntry("displayEnergySaving", bool(pre_configured_enabled));
-	    standby = cfg->readEntry("displayStandby", int(pre_configured_standby/60));
-	    suspend = cfg->readEntry("displaySuspend", int(pre_configured_suspend/60));
-	    off = cfg->readEntry("displayPowerOff", int(pre_configured_off/60));
+	    enabled = cfg.readEntry("displayEnergySaving", bool(pre_configured_enabled));
+	    standby = cfg.readEntry("displayStandby", int(pre_configured_standby/60));
+	    suspend = cfg.readEntry("displaySuspend", int(pre_configured_suspend/60));
+	    off = cfg.readEntry("displayPowerOff", int(pre_configured_off/60));
 	} else {
 	/* provide our defauts */
 	    enabled = true;
@@ -127,8 +127,6 @@ extern "C" {
 	    suspend = DFLT_SUSPEND;
 	    off = DFLT_OFF;
 	}
-
-        delete cfg;
 
         KEnergy::applySettings(enabled, standby, suspend, off);
 #endif
@@ -233,7 +231,7 @@ KEnergy::KEnergy(QWidget *parent, const QStringList &args)
     else
        setButtons( KCModule::Help );
 
-    m_pConfig = new KConfig("kcmdisplayrc", false /*readwrite*/, false /*no globals*/);
+    m_pConfig = new KConfig("kcmdisplayrc", KConfig::NoGlobals);
     m_pConfig->setGroup("DisplayEnergy");
 
     load();

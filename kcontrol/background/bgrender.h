@@ -16,7 +16,7 @@
 #include <QPixmap>
 #include <QImage>
 #include <q3ptrvector.h>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 
 #include "bgsettings.h"
 

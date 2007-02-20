@@ -10,7 +10,7 @@
 #ifndef __BGManager_h_Included__
 #define __BGManager_h_Included__
 
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <QString>
 #include <QVector>
 

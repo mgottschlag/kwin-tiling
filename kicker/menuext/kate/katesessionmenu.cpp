@@ -29,7 +29,6 @@
 #include <klibloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
 #include <kworkspace.h>
@@ -81,8 +80,8 @@ void KateSessionMenu::initialize()
   QStringList list = KGlobal::dirs()->findAllResources( "data", "kate/sessions/*.katesession", KStandardDirs::NoDuplicates );
   for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
   {
-    KSimpleConfig config( *it, true );
-    config.setGroup( "General" );
+    KConfig _config( *it, KConfig::OnlyLocal );
+    KConfigGroup config(&_config, "General" );
     m_sessions.append( config.readEntry( "Name" ) );
   }
 

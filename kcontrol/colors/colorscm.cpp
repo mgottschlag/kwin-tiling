@@ -112,10 +112,8 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
        " Non-KDE applications may also obey some or all of the color"
        " settings, if this option is enabled."));
 
-    KConfig *cfg = new KConfig("kcmdisplayrc");
-    cfg->setGroup("X11");
-    useRM = cfg->readEntry("useResourceManager", true);
-    delete cfg;
+    KConfigGroup cfg(KSharedConfig::openConfig("kcmdisplayrc"), "X11");
+    useRM = cfg.readEntry("useResourceManager", true);
 
     cs = new WidgetCanvas( this );
     cs->setCursor( KCursor::handCursor() );
@@ -131,9 +129,9 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
 
     connect( cs, SIGNAL( colorDropped( int, const QColor&)),
          SLOT( slotColorForWidget( int, const QColor&)));
-    
+
     QSplitter *splitter = new QSplitter(this);
-    
+
     Q3GroupBox *group = new Q3GroupBox( i18n("Color Scheme"), splitter );
     group->setOrientation( Qt::Horizontal );
     group->setColumns( 1 );
@@ -174,7 +172,7 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
 		" current user." ));
 
 
-    
+
     KVBox *vb=new KVBox(splitter);
 
         // LAYOUT
@@ -186,9 +184,9 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     setLayout(toplayout);
 
     mColorTreeWidget = new KColorTreeWidget(vb);
-    connect(mColorTreeWidget , SIGNAL(colorChanged(int, const QColor& )) , 
+    connect(mColorTreeWidget , SIGNAL(colorChanged(int, const QColor& )) ,
             this , SLOT(slotColorChanged( int, const QColor& ) ));
-    
+
     setColorName(i18n("Inactive Title Bar") , CSM_Inactive_title_text , CSM_Inactive_title_bar);
     setColorName(i18n("Inactive Title Blend"), -1 , CSM_Inactive_title_blend);
     setColorName(i18n("Active Title Bar"), CSM_Active_title_text, CSM_Active_title_bar);
@@ -215,7 +213,7 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
        i18n("Check this box to show the sorted column in a list with a shaded background"));
 
     group = new Q3GroupBox(  i18n("Con&trast"), vb );
-    
+
     QVBoxLayout *groupLayout2 = new QVBoxLayout(group);
     QHBoxLayout *groupLayout = new QHBoxLayout;
     groupLayout2->addLayout(groupLayout);
@@ -243,7 +241,7 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
 
     cbExportColors->setWhatsThis( i18n("Check this box to apply the"
        " current color scheme to non-KDE applications."));
-    
+
     readSchemeNames();
     sList->setCurrentItem( 0 );
 
@@ -269,9 +267,8 @@ KColorScheme::~KColorScheme()
 
 void KColorScheme::load()
 {
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("KDE");
-    sCurrentScheme = config->readEntry("colorScheme");
+    KConfigGroup config(KGlobal::config(), "KDE");
+    sCurrentScheme = config.readEntry("colorScheme");
 
     sList->setCurrentRow(findSchemeByName(sCurrentScheme));
     readScheme(0);
@@ -283,8 +280,8 @@ void KColorScheme::load()
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
 
-    KConfig cfg("kcmdisplayrc", true, false);
-    cfg.setGroup("X11");
+    KConfig _cfg( "kcmdisplayrc", KConfig::NoGlobals  );
+    KConfigGroup cfg(&_cfg, "X11");
     bool exportColors = cfg.readEntry("exportKDEColors", true);
     cbExportColors->setChecked(exportColors);
 
@@ -294,56 +291,52 @@ void KColorScheme::load()
 
 void KColorScheme::save()
 {
-    KSharedConfig::Ptr cfg = KGlobal::config();
-    cfg->setGroup( "General" );
-    cfg->writeEntry("background", cs->back, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("selectBackground", cs->select, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("foreground", cs->txt, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("windowForeground", cs->windowTxt, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("windowBackground", cs->window, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("selectForeground", cs->selectTxt, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("buttonBackground", cs->button, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("buttonForeground", cs->buttonTxt, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("linkColor", cs->link, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("visitedLinkColor", cs->visitedLink, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("alternateBackground", cs->alternateBackground, KConfigBase::Normal|KConfigBase::Global);
+    KConfigGroup cfg(KGlobal::config(), "General");
+    cfg.writeEntry("background", cs->back, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("selectBackground", cs->select, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("foreground", cs->txt, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("windowForeground", cs->windowTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("windowBackground", cs->window, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("selectForeground", cs->selectTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("buttonBackground", cs->button, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("buttonForeground", cs->buttonTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("linkColor", cs->link, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("visitedLinkColor", cs->visitedLink, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("alternateBackground", cs->alternateBackground, KConfigBase::Normal|KConfigBase::Global);
 
-    cfg->writeEntry("shadeSortColumn", cs->shadeSortColumn, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("shadeSortColumn", cs->shadeSortColumn, KConfigBase::Normal|KConfigBase::Global);
 
-    cfg->setGroup( "WM" );
-    cfg->writeEntry("activeForeground", cs->aTxt, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("inactiveBackground", cs->iaTitle, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("inactiveBlend", cs->iaBlend, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("activeBackground", cs->aTitle, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("activeBlend", cs->aBlend, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("inactiveForeground", cs->iaTxt, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("activeTitleBtnBg", cs->aTitleBtn, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("frame", cs->aFrame, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("inactiveFrame", cs->iaFrame, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("handle", cs->aHandle, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("inactiveHandle", cs->iaHandle, KConfigBase::Normal|KConfigBase::Global);
+    cfg.changeGroup( "WM" );
+    cfg.writeEntry("activeForeground", cs->aTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("inactiveBackground", cs->iaTitle, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("inactiveBlend", cs->iaBlend, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("activeBackground", cs->aTitle, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("activeBlend", cs->aBlend, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("inactiveForeground", cs->iaTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("activeTitleBtnBg", cs->aTitleBtn, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("inactiveTitleBtnBg", cs->iTitleBtn, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("frame", cs->aFrame, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("inactiveFrame", cs->iaFrame, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("handle", cs->aHandle, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("inactiveHandle", cs->iaHandle, KConfigBase::Normal|KConfigBase::Global);
 
-    cfg->setGroup( "KDE" );
-    cfg->writeEntry("contrast", cs->contrast, KConfigBase::Normal|KConfigBase::Global);
-    cfg->writeEntry("colorScheme", sCurrentScheme, KConfigBase::Normal|KConfigBase::Global);
-    cfg->sync();
+    cfg.changeGroup( "KDE" );
+    cfg.writeEntry("contrast", cs->contrast, KConfigBase::Normal|KConfigBase::Global);
+    cfg.writeEntry("colorScheme", sCurrentScheme, KConfigBase::Normal|KConfigBase::Global);
+    cfg.sync();
 
     // KDE-1.x support
-    KSimpleConfig *config =
-    new KSimpleConfig( QDir::homePath() + "/.kderc" );
-    config->setGroup( "General" );
-    config->writeEntry("background", cs->back );
-    config->writeEntry("selectBackground", cs->select );
-    config->writeEntry("foreground", cs->txt, KConfigBase::Normal|KConfigBase::Global);
-    config->writeEntry("windowForeground", cs->windowTxt );
-    config->writeEntry("windowBackground", cs->window );
-    config->writeEntry("selectForeground", cs->selectTxt );
-    config->sync();
-    delete config;
+    KConfigGroup config(KSharedConfig::openConfig( QDir::homePath() + "/.kderc" ), "General" );
+    config.writeEntry("background", cs->back );
+    config.writeEntry("selectBackground", cs->select );
+    config.writeEntry("foreground", cs->txt, KConfigBase::Normal|KConfigBase::Global);
+    config.writeEntry("windowForeground", cs->windowTxt );
+    config.writeEntry("windowBackground", cs->window );
+    config.writeEntry("selectForeground", cs->selectTxt );
+    config.sync();
 
-    KConfig cfg2("kcmdisplayrc", false, false);
-    cfg2.setGroup("X11");
+    KConfig _cfg2("kcmdisplayrc", KConfig::NoGlobals);
+    KConfigGroup cfg2(&_cfg2, "X11");
     bool exportColors = cbExportColors->isChecked();
     cfg2.writeEntry("exportKDEColors", exportColors);
     cfg2.sync();
@@ -414,7 +407,7 @@ void KColorScheme::slotSave( )
     KColorSchemeEntry *entry = mSchemeList->at(sList->currentRow()-nSysSchemes);
     if (!entry) return;
     sCurrentScheme = entry->path;
-    KSimpleConfig *config = new KSimpleConfig(sCurrentScheme );
+    KConfig *config = new KConfig(sCurrentScheme, KConfig::OnlyLocal);
     int i = sCurrentScheme.lastIndexOf('/');
     if (i >= 0)
       sCurrentScheme = sCurrentScheme.mid(i+1);
@@ -532,12 +525,10 @@ void KColorScheme::slotAdd()
     else
     {
        sFile = KGlobal::dirs()->saveLocation("data", "kdisplay/color-schemes/") + sFile + ".kcsrc";
-       KSimpleConfig *config = new KSimpleConfig(sFile);
-       config->setGroup( "Color Scheme");
-       config->writeEntry("Name", sName);
-       delete config;
+       KConfigGroup config(KSharedConfig::openConfig(sFile, KConfig::OnlyLocal), "Color Scheme");
+       config.writeEntry("Name", sName);
 
-	   insertEntry(sFile, sName);
+       insertEntry(sFile, sName);
 
     }
     slotSave();
@@ -566,11 +557,8 @@ void KColorScheme::slotImport()
 	else
 	{
 		QString sFile = location + file.fileName( false );
-		KSimpleConfig *config = new KSimpleConfig(sFile);
-		config->setGroup( "Color Scheme");
-		QString sName = config->readEntry("Name", i18n("Untitled Theme"));
-		delete config;
-
+		KConfigGroup config(KSharedConfig::openConfig(sFile, KConfig::OnlyLocal), "Color Scheme");
+		QString sName = config.readEntry("Name", i18n("Untitled Theme"));
 
 		insertEntry(sFile, sName);
 		QPixmap preview = mkColorPreview(cs);
@@ -719,7 +707,7 @@ void KColorScheme::readScheme( int index )
       KColorSchemeEntry *entry = mSchemeList->at(sList->currentRow()-nSysSchemes);
       if (!entry) return;
       sCurrentScheme = entry->path;
-      config = new KSimpleConfig(sCurrentScheme, true);
+      config = new KConfig(sCurrentScheme, KConfig::OnlyLocal);
       config->setGroup("Color Scheme");
       int i = sCurrentScheme.lastIndexOf('/');
       if (i >= 0)
@@ -768,12 +756,12 @@ void KColorScheme::readScheme( int index )
     cs->contrast = config->readEntry( "contrast", 7 );
     if (index != 0)
       delete config;
-    
+
     mColorTreeWidget->blockSignals(true);   //block the colorChanged signal
     for(int f=0; f< CSM_LAST ; f++)
         mColorTreeWidget->setColor( f , color(f) );
     mColorTreeWidget->blockSignals(false);
-    
+
 }
 
 
@@ -795,16 +783,14 @@ void KColorScheme::readSchemeNames()
 
     // And add them
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it) {
-       KSimpleConfig *config = new KSimpleConfig(*it);
-       config->setGroup("Color Scheme");
-       QString str = config->readEntry("Name");
+       KConfigGroup config(KSharedConfig::openConfig(*it, KConfig::OnlyLocal), "Color Scheme");
+       QString str = config.readEntry("Name");
        if (str.isEmpty()) {
-          str =  config->readEntry("name");
+          str =  config.readEntry("name");
           if (str.isEmpty())
              continue;
        }
-       mSchemeList->append(new KColorSchemeEntry(*it, str, !config->isImmutable()));
-       delete config;
+       mSchemeList->append(new KColorSchemeEntry(*it, str, !config.isImmutable()));
     }
 
     mSchemeList->sort();

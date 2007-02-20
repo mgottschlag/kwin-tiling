@@ -335,10 +335,10 @@ void Applet::lostSelection()
 
 void Applet::readSettings()
     {
-    KConfig cfg( "kdesktoprc", true );
-    cfg.setGroup( "Menubar" );
+    KConfig _cfg( "kdesktoprc" );
+    KConfigGroup cfg(&_cfg, "Menubar" );
     desktop_menu = cfg.readEntry( "ShowMenubar", false);
-    cfg.setGroup( "KDE" );
+    cfg.changeGroup( "KDE" );
     if( cfg.readEntry( "macStyle", false) || desktop_menu )
         this->setToolTip("");
     else

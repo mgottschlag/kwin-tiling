@@ -77,17 +77,17 @@ do { \
     y -= iconArea.y(); \
     if (x > ((iconArea.width()*3) / 4)) x -= iconArea.width(); \
     if (y > ((iconArea.height()*3) / 4)) y -= iconArea.height(); \
-    (config)->writeEntry("X", x); (config)->writeEntry("Y", y); \
-    (config)->writeEntry(X_w, x); (config)->writeEntry(Y_h, y); \
+    (config).writeEntry("X", x); (config).writeEntry("Y", y); \
+    (config).writeEntry(X_w, x); (config).writeEntry(Y_h, y); \
 } while(false)
 
 #define readIconPosition(config, x, y, iconArea) \
 do { \
-    x = (config)->readEntry( X_w, -9999 ); \
-    if ( x == -9999 ) x = (config)->readEntry( "X", 0 ); \
+    x = (config).readEntry( X_w, -9999 ); \
+    if ( x == -9999 ) x = (config).readEntry( "X", 0 ); \
     if (x < 0) x += iconArea.width(); \
-    y = (config)->readEntry( Y_h, -9999 ); \
-    if ( y == -9999 ) y = (config)->readEntry( "Y", 0 ); \
+    y = (config).readEntry( Y_h, -9999 ); \
+    if ( y == -9999 ) y = (config).readEntry( "Y", 0 ); \
     if (y < 0) y += iconArea.height(); \
     x += iconArea.x(); \
     y += iconArea.y(); \
@@ -193,7 +193,7 @@ void KDIconView::initDotDirectories()
 
     delete m_dotDirectory;
 
-    m_dotDirectory = new KSimpleConfig( dotFileName );
+    m_dotDirectory = new KDesktopFile( dotFileName );
     // If we don't allow editable desktop icons, empty m_dotDirectory
     if (!m_bEditableDesktopIcons)
     {
@@ -215,24 +215,24 @@ void KDIconView::initDotDirectories()
 
         if (QFile::exists(dotFileName))
         {
-           KSimpleConfig dotDir(dotFileName, true); // Read only
+           KDesktopFile dotDir(dotFileName);
 
-           QStringList groups = dotDir.groupList();
+           const QStringList groups = dotDir.groupList();
            QStringList::ConstIterator gIt = groups.begin();
-           QStringList::ConstIterator gEnd = groups.end();
+           const QStringList::ConstIterator gEnd = groups.end();
            for (; gIt != gEnd; ++gIt )
            {
               if ( (*gIt).startsWith(prefix) )
               {
-                 dotDir.setGroup( *gIt );
-                 m_dotDirectory->setGroup( *gIt );
+                 const KConfigGroup dotDirGroup = dotDir.group(*gIt);
+                 KConfigGroup memberDotDirectoryGroup = m_dotDirectory->group(*gIt);
 
-                 if (!m_dotDirectory->hasKey( X_w ))
+                 if (!memberDotDirectoryGroup.hasKey( X_w ))
                  {
                     int x,y;
-                    readIconPosition(&dotDir, x, y, iconArea());
-                    m_dotDirectory->writeEntry( X_w, x );
-                    m_dotDirectory->writeEntry( Y_h, y ); // Not persistant!
+                    readIconPosition(dotDirGroup, x, y, iconArea());
+                    memberDotDirectoryGroup.writeEntry( X_w, x );
+                    memberDotDirectoryGroup.writeEntry( Y_h, y ); // Not persistant!
                  }
               }
            }
@@ -439,8 +439,8 @@ void KDIconView::createActions()
         trash->setShortcut(Qt::Key_Delete);
         connect(trash, SIGNAL(triggered(bool)), SLOT(slotTrash()));
 
-        KConfig config("kdeglobals", true, false);
-        config.setGroup( "KDE" );
+        KConfig _config( "kdeglobals", KConfig::NoGlobals  );
+        KConfigGroup config(&_config, "KDE" );
         action = m_actionCollection.addAction( "del" );
         action->setIcon( KIcon("editdelete") );
         action->setText( i18n( "&Delete" ) );
@@ -897,27 +897,27 @@ bool KDIconView::makeFriendlyText( KFileIVI *fileIVI )
 
     if ( !desktopFile.isEmpty() )
     {
-        KSimpleConfig cfg( desktopFile, true );
-        cfg.setDesktopGroup();
-        if (cfg.readEntry( "Hidden", false ))
+        KDesktopFile cfg(  desktopFile );
+        const KConfigGroup cg = cfg.desktopGroup();
+        if (cg.readEntry( "Hidden", false ))
             return false;
 
-        if (cfg.readEntry( "NoDisplay", false ))
+        if (cg.readEntry( "NoDisplay", false ))
             return false;
 
         QStringList tmpList;
-        if (cfg.hasKey("OnlyShowIn"))
+        if (cg.hasKey("OnlyShowIn"))
         {
-            if (!cfg.readEntry("OnlyShowIn", QStringList(), ';').contains("KDE"))
+            if (!cg.readEntry("OnlyShowIn", QStringList(), ';').contains("KDE"))
                 return false;
         }
-        if (cfg.hasKey("NotShowIn"))
+        if (cg.hasKey("NotShowIn"))
         {
-            if (cfg.readEntry("NotShowIn", QStringList(), ';').contains("KDE"))
+            if (cg.readEntry("NotShowIn", QStringList(), ';').contains("KDE"))
                 return false;
         }
 
-        QString name = cfg.readEntry("Name");
+        QString name = cg.readEntry("Name");
         if ( !name.isEmpty() )
             fileIVI->setText( name );
         else
@@ -1002,10 +1002,10 @@ void KDIconView::slotNewItems( const KFileItemList & entries )
       kDebug(1214) << "slotNewItems : looking for group " << group << endl;
       if ( m_dotDirectory->hasGroup( group ) )
       {
-        m_dotDirectory->setGroup( group );
+        const KConfigGroup cg( m_dotDirectory->group( group ) );
         m_hasExistingPos = true;
         int x,y;
-        readIconPosition(m_dotDirectory, x, y, area);
+        readIconPosition(cg, x, y, area);
 
         kDebug(1214)<<"slotNewItems() x: "<<x<<" y: "<<y<<endl;
 
@@ -1135,10 +1135,10 @@ void KDIconView::refreshTrashIcon()
         KFileIVI * fileIVI = static_cast<KFileIVI *>(it);
         KFileItem* item = fileIVI->item();
         if ( isDesktopFile( item ) ) {
-            KSimpleConfig cfg( item->url().path(), true );
-            cfg.setDesktopGroup();
-            if ( cfg.readEntry( "Type" ) == "Link" &&
-                 cfg.readEntry( "URL" ) == "trash:/" ) {
+            KDesktopFile cfg( item->url().path());
+            const KConfigGroup cg = cfg.desktopGroup();
+            if ( cg.readEntry( "Type" ) == "Link" &&
+                 cg.readEntry( "URL" ) == "trash:/" ) {
                 fileIVI->refreshIcon( true );
             }
         }
@@ -1239,7 +1239,7 @@ void KDIconView::slotClipboardDataChanged()
 
 void KDIconView::renameDesktopFile(const QString &path, const QString &name)
 {
-    KDesktopFile cfg( path, false );
+    KDesktopFile cfg( path );
 
     // if we don't have the desktop entry group, then we assume that
     // it's not a config file (and we don't nuke it!)
@@ -1320,8 +1320,8 @@ void KDIconView::slotAboutToCreate(const QPoint &pos, const QList<KIO::CopyInfo>
         kDebug(1214) << "KDIconView::saveFuturePosition x=" << m_lastDropPos.x() << " y=" << m_lastDropPos.y() << " filename=" << (*it).uDest.prettyUrl() << endl;
         if ((*it).uDest.isLocalFile() && ((*it).uDest.directory() == dir))
         {
-           m_dotDirectory->setGroup( iconPositionGroupPrefix() + (*it).uDest.fileName() );
-           saveIconPosition(m_dotDirectory, m_lastDropPos.x(), m_lastDropPos.y(), iconArea());
+           KConfigGroup group = m_dotDirectory->group( iconPositionGroupPrefix() + (*it).uDest.fileName() );
+           saveIconPosition(group, m_lastDropPos.x(), m_lastDropPos.y(), iconArea());
            int dX = m_lastDropPos.x() - m_dropPos.x();
            int dY = m_lastDropPos.y() - m_dropPos.y();
            if ((QABS(dX) > QABS(dY)) || (m_lastDropPos.x() + 2*gridX > width()))
@@ -1603,9 +1603,9 @@ void KDIconView::saveIconPositions()
     KFileIVI *ivi = static_cast<KFileIVI *>( it );
     KFileItem *item = ivi->item();
 
-    m_dotDirectory->setGroup( prefix + item->url().fileName() );
+    KConfigGroup cg = m_dotDirectory->group( prefix + item->url().fileName() );
     kDebug(1214) << "KDIconView::saveIconPositions " << item->url().fileName() << " " << it->x() << " " << it->y() << endl;
-    saveIconPosition(m_dotDirectory, it->x(), it->y(), iconArea());
+    saveIconPosition(cg, it->x(), it->y(), iconArea());
 
     it = it->nextItem();
   }

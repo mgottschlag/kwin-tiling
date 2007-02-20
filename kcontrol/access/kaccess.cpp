@@ -441,7 +441,7 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
 	  QPixmap screen = QPixmap::grabWindow(id, 0, 0, window.size.width, window.size.height);
 #ifdef __GNUC__
 #warning is this the best way to invert a pixmap?
-#endif	  
+#endif
 //	  QPixmap invert(window.size.width, window.size.height);
 	  QImage i = screen.toImage();
 	  i.invertPixels();
@@ -578,7 +578,7 @@ void KAccessApp::createDialogContents() {
       topcontents->setSpacing(KDialog::spacingHint()*2);
 #ifdef __GNUC__
 #warning "kde4 fixme"
-#endif      
+#endif
 	  //topcontents->setMargin(KDialog::marginHint());
 
       QWidget *contents = new QWidget(topcontents);
@@ -805,32 +805,31 @@ void KAccessApp::applyChanges() {
    unsigned int enabled  = requestedFeatures & ~features;
    unsigned int disabled = features & ~requestedFeatures;
 
-   KSharedConfig::Ptr config = KGlobal::config();
-   config->setGroup("Keyboard");
+   KConfigGroup config(KGlobal::config(), "Keyboard");
 
    if (enabled & XkbSlowKeysMask)
-      config->writeEntry("SlowKeys", true);
+      config.writeEntry("SlowKeys", true);
    else if (disabled & XkbSlowKeysMask)
-      config->writeEntry("SlowKeys", false);
+      config.writeEntry("SlowKeys", false);
 
    if (enabled & XkbBounceKeysMask)
-      config->writeEntry("BounceKeys", true);
+      config.writeEntry("BounceKeys", true);
    else if (disabled & XkbBounceKeysMask)
-      config->writeEntry("BounceKeys", false);
+      config.writeEntry("BounceKeys", false);
 
    if (enabled & XkbStickyKeysMask)
-      config->writeEntry("StickyKeys", true);
+      config.writeEntry("StickyKeys", true);
    else if (disabled & XkbStickyKeysMask)
-      config->writeEntry("StickyKeys", false);
+      config.writeEntry("StickyKeys", false);
 
-   config->setGroup("Mouse");
+   config.changeGroup("Mouse");
 
    if (enabled & XkbMouseKeysMask)
-      config->writeEntry("MouseKeys", true);
+      config.writeEntry("MouseKeys", true);
    else if (disabled & XkbMouseKeysMask)
-      config->writeEntry("MouseKeys", false);
+      config.writeEntry("MouseKeys", false);
 
-   config->sync();
+   config.sync();
 }
 
 void KAccessApp::yesClicked() {
@@ -838,23 +837,22 @@ void KAccessApp::yesClicked() {
       dialog->deleteLater();
    dialog = 0;
 
-   KSharedConfig::Ptr config = KGlobal::config();
-   config->setGroup("Keyboard");
+   KConfigGroup config(KGlobal::config(), "Keyboard");
    switch (showModeCombobox->currentIndex()) {
       case 0:
-         config->writeEntry("Gestures", true);
-         config->writeEntry("GestureConfirmation", false);
+         config.writeEntry("Gestures", true);
+         config.writeEntry("GestureConfirmation", false);
          break;
       default:
-         config->writeEntry("Gestures", true);
-         config->writeEntry("GestureConfirmation", true);
+         config.writeEntry("Gestures", true);
+         config.writeEntry("GestureConfirmation", true);
          break;
       case 2:
          requestedFeatures = 0;
-         config->writeEntry("Gestures", false);
-         config->writeEntry("GestureConfirmation", true);
+         config.writeEntry("Gestures", false);
+         config.writeEntry("GestureConfirmation", true);
    }
-   config->sync();
+   config.sync();
 
    if (features != requestedFeatures) {
       notifyChanges();
@@ -869,23 +867,22 @@ void KAccessApp::noClicked() {
    dialog = 0;
    requestedFeatures = features;
 
-   KSharedConfig::Ptr config = KGlobal::config();
-   config->setGroup("Keyboard");
+   KConfigGroup config(KGlobal::config(), "Keyboard");
    switch (showModeCombobox->currentIndex()) {
       case 0:
-         config->writeEntry("Gestures", true);
-         config->writeEntry("GestureConfirmation", false);
+         config.writeEntry("Gestures", true);
+         config.writeEntry("GestureConfirmation", false);
          break;
       default:
-         config->writeEntry("Gestures", true);
-         config->writeEntry("GestureConfirmation", true);
+         config.writeEntry("Gestures", true);
+         config.writeEntry("GestureConfirmation", true);
          break;
       case 2:
          requestedFeatures = 0;
-         config->writeEntry("Gestures", false);
-         config->writeEntry("GestureConfirmation", true);
+         config.writeEntry("Gestures", false);
+         config.writeEntry("GestureConfirmation", true);
    }
-   config->sync();
+   config.sync();
 
    if (features != requestedFeatures)
       applyChanges();

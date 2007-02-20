@@ -63,9 +63,8 @@ void KPanelMenu::init(const QString& path)
     connect(this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
 
     // setup cache timer
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("menus");
-    d->clearDelay = config->readEntry("MenuCacheTime", 60000); // 1 minute
+    KConfigGroup config(KGlobal::config(), "menus");
+    d->clearDelay = config.readEntry("MenuCacheTime", 60000); // 1 minute
 
     //KAcceleratorManager::manage(this);
     setKeyboardShortcutsEnabled(true);

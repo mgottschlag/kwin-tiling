@@ -32,7 +32,7 @@
 
 class KDirLister;
 class KonqSettings;
-class KSimpleConfig;
+class KDesktopFile;
 class KShadowEngine;
 class KDesktopShadowSettings;
 
@@ -212,7 +212,7 @@ private:
     QStringList m_desktopDirs;
 
     /** The desktop's .directory, used for storing icon positions */
-    KSimpleConfig *m_dotDirectory;
+    KDesktopFile *m_dotDirectory;
 
     /** Position of last deleted icon - used when renaming a file */
     QPoint m_lastDeletedIconPos;

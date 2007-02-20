@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kglobalsettings.h>
 #include <kcomponentdata.h>
 #include <kprocess.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 
 #include <QDesktopWidget>
@@ -143,9 +143,8 @@ kg_main( const char *argv0 )
 
 	_colorScheme = KStandardDirs::locate( "data", "kdisplay/color-schemes/" + _colorScheme + ".kcsrc" );
 	if (!_colorScheme.isEmpty()) {
-		KSimpleConfig config( _colorScheme, true );
-		config.setGroup( "Color Scheme" );
-		app.setPalette( KGlobalSettings::createApplicationPalette( &config, 7 ) );
+		KConfig config(  _colorScheme, KConfig::OnlyLocal);
+		app.setPalette( KGlobalSettings::createApplicationPalette( config.group( "Color Scheme" ), 7 ) );
 	}
 
 	KdmThemer *themer;
@@ -164,7 +163,7 @@ kg_main( const char *argv0 )
 		}
 		if (_autoLoginDelay)
 			showTypes["timed"] = false;
-		
+
 		// modes: console{,-fixed,-flexi}, remote{,-flexi}, flexi
 		themer = new KdmThemer( _theme, "console", showTypes, app.desktop()->screen() );
 		if (!themer->isOK()) {
@@ -173,7 +172,7 @@ kg_main( const char *argv0 )
 		}
 	} else
 		themer = 0;
-	
+
 	setup_modifiers( dpy, _numLockStatus );
 	SecureDisplay( dpy );
 	KProcess *proc = 0;

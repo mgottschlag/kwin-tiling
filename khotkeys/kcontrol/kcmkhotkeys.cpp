@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _KCMKHOTKEYS_CPP_
@@ -31,7 +31,6 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kglobal.h>
-#include <ksimpleconfig.h>
 #include <kfiledialog.h>
 #include <ktoolinvocation.h>
 #include <kgenericfactory.h>
@@ -55,8 +54,8 @@ extern "C"
 {
     KDE_EXPORT void kcminit_khotkeys()
     {
-    KConfig cfg( "khotkeysrc", true );
-    cfg.setGroup( "Main" );
+    KConfig _cfg( "khotkeysrc" );
+    KConfigGroup cfg(&_cfg, "Main" );
     if( !cfg.readEntry( "Autostart", false))
         return;
     // Non-xinerama multhead support in KDE is just a hack
@@ -89,7 +88,7 @@ Module::Module( QWidget* parent_P, const QStringList & )
     module = this;
     init_global_data( false, this ); // don't grab keys
     init_arts();
-    QVBoxLayout* vbox = new QVBoxLayout( this ); 
+    QVBoxLayout* vbox = new QVBoxLayout( this );
     vbox->setSpacing( 6 );
     vbox->setMargin( 11 );
     QSplitter* splt = new QSplitter( this );
@@ -105,16 +104,16 @@ Module::Module( QWidget* parent_P, const QStringList & )
     connect( buttons_widget, SIGNAL( delete_action_pressed()), SLOT( delete_action()));
     connect( buttons_widget, SIGNAL( global_settings_pressed()), SLOT( global_settings()));
 //    listview_current_action_changed(); // init
-						
+
 		KAboutData* about = new KAboutData("kcmkhotkeys", I18N_NOOP("KHotKeys"), KHOTKEYS_VERSION,
       0,
       KAboutData::License_GPL,
       I18N_NOOP("(c) 1999-2005 Lubos Lunak"), 0, 0);
     about->addAuthor("Lubos Lunak", I18N_NOOP("Maintainer"), "l.lunak@kde.org");
     setAboutData( about );
-							
+
 		}
-    
+
 Module::~Module()
     {
     _current_action_data = NULL;
@@ -122,7 +121,7 @@ Module::~Module()
     delete _actions_root;
     module = NULL;
     }
-    
+
 void Module::load()
     {
     actions_listview_widget->clear();
@@ -182,7 +181,7 @@ void Module::action_name_changed( const QString& name_P )
     current_action_data()->set_name( name_P );
     actions_listview_widget->action_name_changed( name_P );
     }
-    
+
 void Module::listview_current_action_changed()
     {
     // CHECKME tohle je trosku hack, aby se pri save zmenenych hodnot ve stare vybrane polozce
@@ -210,7 +209,7 @@ void Module::set_current_action_data( Action_data_base* data_P )
     actions_listview_widget->set_action_data( data_P, listview_is_changed );
 //    tab_widget->load_current_action(); CHECKME asi neni treba
     }
-    
+
 #if 0
 
 }
@@ -232,7 +231,7 @@ void check_tree( Action_data_group* b, int lev_P = 0 )
     }
 
 #endif
-    
+
 void Module::new_action()
     {
     tab_widget->save_current_action_changes();
@@ -253,7 +252,7 @@ void Module::new_action()
     set_new_current_action( false );
     }
 
-// CHECKME spojit tyhle dve do jedne    
+// CHECKME spojit tyhle dve do jedne
 void Module::new_action_group()
     {
     tab_widget->save_current_action_changes();
@@ -302,7 +301,7 @@ void Module::import()
         i18n( "Select File with Actions to Be Imported" ));
     if( file.isEmpty())
         return;
-    KSimpleConfig cfg( file, true );
+    KConfig cfg(  file, KConfig::OnlyLocal);
     if( !settings.import( cfg, true ))
         {
         KMessageBox::error( topLevelWidget(),
@@ -315,7 +314,7 @@ void Module::import()
     tab_widget->load_current_action();
     emit KCModule::changed( true );
     }
-    
+
 void Module::changed()
     {
     emit KCModule::changed( true );

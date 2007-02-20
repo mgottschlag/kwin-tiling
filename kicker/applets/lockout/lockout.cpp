@@ -63,8 +63,7 @@ extern "C"
 Lockout::Lockout( const QString& configFile, QWidget *parent )
     : KPanelApplet( configFile, Plasma::Normal, 0, parent ), bTransparent( false )
 {
-    KConfig *conf = config();
-    conf->setGroup("lockout");
+    KConfigGroup conf(config(), "lockout");
 
     setFrameStyle(Panel | Sunken);
     setBackgroundOrigin( AncestorOrigin );
@@ -97,7 +96,7 @@ Lockout::Lockout( const QString& configFile, QWidget *parent )
     lockButton->setMinimumSize(lockButton->iconSize());
     logoutButton->setMinimumSize(logoutButton->iconSize());
 
-    bTransparent = conf->readEntry( "Transparent", bTransparent);
+    bTransparent = conf.readEntry( "Transparent", bTransparent);
 
     lockButton->setAutoRaise( bTransparent );
     logoutButton->setAutoRaise( bTransparent );

@@ -40,7 +40,7 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kglobal.h>
 
 // for multihead
@@ -135,9 +135,8 @@ static QString realDesktopPath()
  */
 static void copyDesktopLinks()
 {
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("General");
-    if (!config->readEntry("CopyDesktopLinks", true))
+    KConfigGroup config(KGlobal::config(), "General");
+    if (!config.readEntry("CopyDesktopLinks", true))
        return;
 
     QStringList list =
@@ -214,7 +213,7 @@ void testLocalInstallation()
     if ( emptyDesktop || firstTimeWithNewTrash || installNewTrashi18n ) {
         QString oldIcon, oldEmptyIcon;
         if ( trashDesktopExists ) {
-            KDesktopFile trashDesktop( trashDesktopPath, true );
+            KDesktopFile trashDesktop( trashDesktopPath );
             oldIcon = trashDesktop.readIcon();
             oldEmptyIcon = trashDesktop.readEntry( "EmptyIcon" );
         }
@@ -237,7 +236,7 @@ void testLocalInstallation()
         (void)KIO::NetAccess::synchronousRun( job, 0 );
 
         // OK the only thing missing is to convert the icon position...
-        KSimpleConfig cfg( KStandardDirs::locateLocal("appdata", "IconPositions") );
+        KConfig cfg( KStandardDirs::locateLocal("appdata", "IconPositions") );
         if ( cfg.hasGroup( "IconPosition::Trash" ) && !cfg.hasGroup( "IconPosition::trash.desktop" ) ) {
             const QMap<QString, QString> entries = cfg.entryMap( "IconPosition::Trash" );
             cfg.setGroup( "IconPosition::trash.desktop" );

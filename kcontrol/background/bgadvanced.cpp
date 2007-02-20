@@ -93,7 +93,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
 
    if (m_multidesktop)
    {
-      KConfig cfg(desktopConfigname(), false, false);
+      KConfig cfg(desktopConfigname( ), KConfig::NoGlobals );
       cfg.setGroup( "General" );
       if (!cfg.readEntry( "Enabled", true ))
       {

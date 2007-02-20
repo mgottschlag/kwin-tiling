@@ -211,11 +211,11 @@ void ThemeDefault::_readSettings()
   if( !cfg )
     return;
 
-  cfg->setGroup( QString("KSplash Theme: %1").arg(mTheme->theme()) );
+  KConfigGroup cg(cfg, QString("KSplash Theme: %1").arg(mTheme->theme()));
 
-  mIconsFlashing = cfg->readEntry( "Icons Flashing", true );
+  mIconsFlashing = cg.readEntry( "Icons Flashing", true );
   QColor df(Qt::white);
-  mLabelForeground = cfg->readEntry( "Label Foreground", df );
+  mLabelForeground = cg.readEntry( "Label Foreground", df );
 }
 
 /*

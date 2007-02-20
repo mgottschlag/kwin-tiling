@@ -600,10 +600,9 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     dialogActive = false;
     saveSession = false;
     wmPhase1WaitingCount = 0;
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("General" );
+    KConfigGroup config(KGlobal::config(), "General");
     clientInteracting = 0;
-    xonCommand = config->readEntry( "xonCommand", "xon" );
+    xonCommand = config.readEntry( "xonCommand", "xon" );
 
     connect( &startupSuspendTimeoutTimer, SIGNAL( timeout()), SLOT( startupSuspendTimeout()));
     connect( &pendingShutdown, SIGNAL( timeout()), SLOT( pendingShutdownTimeout()));
@@ -812,9 +811,8 @@ QString KSMServer::currentSession()
 
 void KSMServer::discardSession()
 {
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup( sessionGroup );
-    int count =  config->readEntry( "count", 0 );
+    KConfigGroup config(KGlobal::config(), sessionGroup );
+    int count =  config.readEntry( "count", 0 );
 	foreach ( KSMClient *c, clients ) {
         QStringList discardCommand = c->discardCommand();
         if ( discardCommand.isEmpty())
@@ -824,7 +822,7 @@ void KSMServer::discardSession()
         // case up to KDE and Qt < 3.1
         int i = 1;
         while ( i <= count &&
-                config->readPathListEntry( QString("discardCommand") + QString::number(i) ) != discardCommand )
+                config.readPathListEntry( QString("discardCommand") + QString::number(i) ) != discardCommand )
             i++;
         if ( i <= count )
             executeCommand( discardCommand );

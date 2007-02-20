@@ -30,7 +30,7 @@
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kstandardguiitem.h>
 
@@ -55,7 +55,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-extern KSimpleConfig *config;
+extern KConfig *config;
 
 KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	: QWidget( parent )

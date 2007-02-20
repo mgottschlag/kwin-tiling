@@ -475,19 +475,17 @@ void KScreenSaver::save()
     if ( !mChanged )
         return;
 
-    KConfig *config = new KConfig( "kscreensaverrc");
-    config->setGroup( "ScreenSaver" );
+    KConfigGroup config(KSharedConfig::openConfig( "kscreensaverrc"), "ScreenSaver" );
 
-    config->writeEntry("Enabled", mEnabled);
-    config->writeEntry("Timeout", mTimeout);
-    config->writeEntry("LockGrace", mLockTimeout);
-    config->writeEntry("DPMS-dependent", mDPMS);
-    config->writeEntry("Lock", mLock);
+    config.writeEntry("Enabled", mEnabled);
+    config.writeEntry("Timeout", mTimeout);
+    config.writeEntry("LockGrace", mLockTimeout);
+    config.writeEntry("DPMS-dependent", mDPMS);
+    config.writeEntry("Lock", mLock);
 
     if ( !mSaver.isEmpty() )
-        config->writeEntry("Saver", mSaver);
-    config->sync();
-    delete config;
+        config.writeEntry("Saver", mSaver);
+    config.sync();
 
     // TODO (GJ): When you changed anything, these two lines will give a segfault
     // on exit. I don't know why yet.
@@ -521,7 +519,7 @@ void KScreenSaver::findSavers()
         } else
             delete saver;
     }
-    
+
     if ( mNumLoaded == mSaverServices.count() ) {
         Q3ListViewItem *selectedItem = 0;
         int categoryCount = 0;

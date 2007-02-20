@@ -103,7 +103,7 @@ static void applyGtkStyles(bool active, int version)
 
 // -----------------------------------------------------------------------------
 
-static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& newPal )
+static void applyQtColors( KConfigGroup kglobals, QSettings& settings, QPalette& newPal )
 {
   QStringList actcg, inactcg, discg;
   /* export kde color settings */
@@ -123,7 +123,7 @@ static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& new
   settings.setValue("/qt/Palette/disabled", discg);
 
   // export kwin's colors to qtrc for kstyle to use
-  kglobals.setGroup("WM");
+  kglobals.changeGroup("WM");
 
   // active colors
   QColor clr = newPal.color( QPalette::Active, QPalette::Background );
@@ -159,13 +159,13 @@ static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& new
   clr = kglobals.readEntry("inactiveTitleBtnBg", clr);
   settings.setValue("/qt/KWinPalette/inactiveTitleBtnBg", clr.name());
 
-  kglobals.setGroup("KDE");
+  kglobals.changeGroup("KDE");
   settings.setValue("/qt/KDE/contrast", kglobals.readEntry("contrast", 7));
 }
 
 // -----------------------------------------------------------------------------
 
-static void applyQtSettings( KConfig& kglobals, QSettings& settings )
+static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
 {
   /* export kde's plugin library path to qtrc */
 
@@ -254,10 +254,10 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
   settings.setValue(libPathKey, paths.join(QString(':')));
 
   /* export widget style */
-  kglobals.setGroup("General");
+  kglobals.changeGroup("General");
 #ifdef __GNUC__
 #warning FIXME KDE4: need replacement for defaultStyle()
-#endif  
+#endif
   // KStyle::defaultStyle()
   QString style = kglobals.readEntry("widgetStyle", "plastique" );
   if (!style.isEmpty())
@@ -273,7 +273,7 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
   settings.writeEntry("/qt/useXft", usexft); */
 
   /* export effects settings */
-  kglobals.setGroup("KDE");
+  kglobals.changeGroup("KDE");
   bool effectsEnabled = kglobals.readEntry("EffectsEnabled", false);
   bool fadeMenus = kglobals.readEntry("EffectFadeMenu", false);
   bool fadeTooltips = kglobals.readEntry("EffectFadeTooltip", false);
@@ -433,8 +433,8 @@ void runRdb( uint flags )
   bool exportQtSettings  = flags & KRdbExportQtSettings;
   bool exportXftSettings = flags & KRdbExportXftSettings;
 
-  KConfig kglobals("kdeglobals", true, false);
-  kglobals.setGroup("KDE");
+  KConfig _kglobals( "kdeglobals", KConfig::NoGlobals  );
+  KConfigGroup kglobals(KSharedConfig::openConfig( "kdeglobals" ), "KDE");
 
   KTemporaryFile tmpFile;
   if (!tmpFile.open())
@@ -499,8 +499,7 @@ void runRdb( uint flags )
     copyFile(tmpFile, homeDir + "/.Xdefaults", true);
 
   // Export the Xcursor theme & size settings
-  KConfig mousecfg( "kcminputrc" );
-  mousecfg.setGroup( "Mouse" );
+  KConfigGroup mousecfg(KSharedConfig::openConfig( "kcminputrc" ), "Mouse" );
   QString theme = mousecfg.readEntry("cursorTheme", QString());
   QString size  = mousecfg.readEntry("cursorSize", QString());
   QString contents;
@@ -513,7 +512,7 @@ void runRdb( uint flags )
 
   if (exportXftSettings)
   {
-    kglobals.setGroup("General");
+    kglobals.changeGroup("General");
 
     QString hintStyle(kglobals.readEntry("XftHintStyle", "hintmedium")),
             subPixel(kglobals.readEntry("XftSubPixel"));
@@ -537,8 +536,8 @@ void runRdb( uint flags )
     }
     if(!subPixel.isEmpty())
       contents += "Xft.rgba: " + subPixel + '\n';
-    KConfig cfgfonts("kcmfonts", true);
-    cfgfonts.setGroup("General");
+    KConfig _cfgfonts( "kcmfonts" );
+    KConfigGroup cfgfonts(&_cfgfonts, "General");
     if( cfgfonts.readEntry( "forceFontDPI", 0 ) != 0 )
       contents += "Xft.dpi: " + cfgfonts.readEntry( "forceFontDPI" ) + '\n';
     else

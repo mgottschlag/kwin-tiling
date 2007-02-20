@@ -1,7 +1,7 @@
 //
 // C++ Implementation: kxkbconfig
 //
-// Description: 
+// Description:
 //
 //
 // Author: Andriy Rysin <rysin@kde.org>, (C) 2006
@@ -15,7 +15,7 @@
 #include <QStringList>
 #include <QHash>
 
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kdebug.h>
 
 #include "kxkbconfig.h"
@@ -34,47 +34,46 @@ LayoutUnit KxkbConfig::getDefaultLayout()
 {
 	if( m_layouts.size() == 0 )
 		return DEFAULT_LAYOUT_UNIT;
-	
+
 	return m_layouts[0];
 }
 
-bool KxkbConfig::load(int loadMode) 
+bool KxkbConfig::load(int loadMode)
 {
-	KConfig *config = new KConfig("kxkbrc", true, false);
-	config->setGroup("Layout");
+        KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
 
 // Even if the layouts have been disabled we still want to set Xkb options
 // user can always switch them off now in the "Options" tab
-	m_enableXkbOptions = config->readEntry("EnableXkbOptions", false);
-	
+	m_enableXkbOptions = config.readEntry("EnableXkbOptions", false);
+
 	if( m_enableXkbOptions == true || loadMode == LOAD_ALL ) {
-		m_resetOldOptions = config->readEntry("ResetOldOptions", false);
-		m_options = config->readEntry("Options", "");
+		m_resetOldOptions = config.readEntry("ResetOldOptions", false);
+		m_options = config.readEntry("Options", "");
 		kDebug() << "Xkb options (enabled=" << m_enableXkbOptions << "): " << m_options << endl;
 	}
-	
-	m_useKxkb = config->readEntry("Use", false);
+
+	m_useKxkb = config.readEntry("Use", false);
 	kDebug() << "Use kxkb " << m_useKxkb << endl;
 
 	if( (m_useKxkb == false && loadMode == LOAD_ACTIVE_OPTIONS )
 	  		|| loadMode == LOAD_INIT_OPTIONS )
 		return true;
 
-	m_model = config->readEntry("Model", DEFAULT_MODEL);
+	m_model = config.readEntry("Model", DEFAULT_MODEL);
 	kDebug() << "Model: " << m_model << endl;
-	
+
 	QStringList layoutList;
-	if( config->hasKey("LayoutList") ) {
-		layoutList = config->readEntry("LayoutList", layoutList);
+	if( config.hasKey("LayoutList") ) {
+		layoutList = config.readEntry("LayoutList", layoutList);
 	}
 	else { // old config
-		QString mainLayout = config->readEntry("Layout", DEFAULT_LAYOUT_UNIT.toPair());
-		layoutList = config->readEntry("Additional", layoutList);
+		QString mainLayout = config.readEntry("Layout", DEFAULT_LAYOUT_UNIT.toPair());
+		layoutList = config.readEntry("Additional", layoutList);
 		layoutList.prepend(mainLayout);
 	}
 	if( layoutList.count() == 0 )
 		layoutList.append("us");
-	
+
 	m_layouts.clear();
 	for(QStringList::ConstIterator it = layoutList.begin(); it != layoutList.end() ; ++it) {
 		LayoutUnit layoutUnit(*it);
@@ -83,9 +82,9 @@ bool KxkbConfig::load(int loadMode)
 	}
 
 	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << getDefaultLayout().toPair() << endl;
-	
+
 	QStringList displayNamesList;
-	displayNamesList = config->readEntry("DisplayNames", displayNamesList, ',');
+	displayNamesList = config.readEntry("DisplayNames", displayNamesList, ',');
 	for(QStringList::ConstIterator it = displayNamesList.begin(); it != displayNamesList.end() ; ++it) {
 		QStringList displayNamePair = (*it).split(':');
 		if( displayNamePair.count() == 2 ) {
@@ -98,9 +97,9 @@ bool KxkbConfig::load(int loadMode)
 
 // 	m_includes.clear();
 	if( X11Helper::areSingleGroupsSupported() ) {
-		if( config->hasKey("IncludeGroups") ) {
+		if( config.hasKey("IncludeGroups") ) {
 			QStringList includeList;
-			includeList = config->readEntry("IncludeGroups", includeList, ',');
+			includeList = config.readEntry("IncludeGroups", includeList, ',');
 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
 				QStringList includePair = (*it).split(':');
 				if( includePair.count() == 2 ) {
@@ -115,7 +114,7 @@ bool KxkbConfig::load(int loadMode)
 		else { //old includes format
 			kDebug() << "Old includes..." << endl;
 			QStringList includeList;
-			includeList = config->readEntry("Includes", includeList);
+			includeList = config.readEntry("Includes", includeList);
 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
 				QString layoutName = LayoutUnit::parseLayout( *it );
 				LayoutUnit layoutUnit( layoutName, "" );
@@ -129,10 +128,10 @@ bool KxkbConfig::load(int loadMode)
 		}
 	}
 
-	m_showSingle = config->readEntry("ShowSingle", false);
-	m_showFlag = config->readEntry("ShowFlag", true);
-	
-	QString layoutOwner = config->readEntry("SwitchMode", "Global");
+	m_showSingle = config.readEntry("ShowSingle", false);
+	m_showFlag = config.readEntry("ShowFlag", true);
+
+	QString layoutOwner = config.readEntry("SwitchMode", "Global");
 
 	if( layoutOwner == "WinClass" ) {
 		m_switchingPolicy = SWITCH_POLICY_WIN_CLASS;
@@ -143,16 +142,16 @@ bool KxkbConfig::load(int loadMode)
 	else /*if( layoutOwner == "Global" )*/ {
 		m_switchingPolicy = SWITCH_POLICY_GLOBAL;
 	}
-	
+
 	if( m_layouts.count() < 2 && m_switchingPolicy != SWITCH_POLICY_GLOBAL ) {
 		kWarning() << "Layout count is less than 2, using Global switching policy" << endl;
 		m_switchingPolicy = SWITCH_POLICY_GLOBAL;
 	}
-	
+
 	kDebug() << "Layout owner mode " << layoutOwner << endl;
-	
-	m_stickySwitching = config->readEntry("StickySwitching", false);
-	m_stickySwitchingDepth = config->readEntry("StickySwitchingDepth", "2").toInt();
+
+	m_stickySwitching = config.readEntry("StickySwitching", false);
+	m_stickySwitchingDepth = config.readEntry("StickySwitchingDepth", "2").toInt();
 	if( m_stickySwitchingDepth < 2 )
 		m_stickySwitchingDepth = 2;
 
@@ -161,21 +160,19 @@ bool KxkbConfig::load(int loadMode)
 			kWarning() << "Layout count is less than 3, sticky switching will be off" << endl;
 			m_stickySwitching = false;
 		}
-		else	
+		else
 		if( (int)m_layouts.count() - 1 < m_stickySwitchingDepth ) {
 			kWarning() << "Sticky switching depth is more than layout count -1, adjusting..." << endl;
 			m_stickySwitchingDepth = m_layouts.count() - 1;
 		}
 	}
 
-	delete config;
-
 	return true;
 }
 
-void KxkbConfig::save() 
+void KxkbConfig::save()
 {
-	KConfig *config = new KConfig("kxkbrc", false, false);
+	KConfig *config = new KConfig("kxkbrc", KConfig::NoGlobals);
 	config->setGroup("Layout");
 
 	config->writeEntry("Model", m_model);
@@ -187,18 +184,18 @@ void KxkbConfig::save()
 	QStringList layoutList;
 	QStringList includeList;
 	QStringList displayNamesList;
-	
+
 	QList<LayoutUnit>::ConstIterator it;
 	for(it = m_layouts.begin(); it != m_layouts.end(); ++it) {
 		const LayoutUnit& layoutUnit = *it;
-		
+
 		layoutList.append( layoutUnit.toPair() );
-		
+
 		if( layoutUnit.includeGroup.isEmpty() == false ) {
 			QString incGroupUnit = QString("%1:%2").arg(layoutUnit.toPair(), layoutUnit.includeGroup);
 			includeList.append( incGroupUnit );
 		}
-	
+
 		QString displayName( layoutUnit.displayName );
 		kDebug() << " displayName " << layoutUnit.toPair() << " : " << displayName << endl;
 		if( displayName.isEmpty() == false && displayName != layoutUnit.layout ) {
@@ -206,13 +203,13 @@ void KxkbConfig::save()
 			displayNamesList.append( displayName );
 		}
 	}
-	
+
 	config->writeEntry("LayoutList", layoutList);
 	kDebug() << "Saving Layouts: " << layoutList << endl;
- 	
+
 	config->writeEntry("IncludeGroups", includeList);
  	kDebug() << "Saving includeGroups: " << includeList << endl;
-	
+
 //	if( displayNamesList.empty() == false )
 		config->writeEntry("DisplayNames", displayNamesList);
 // 	else
@@ -223,18 +220,18 @@ void KxkbConfig::save()
 	config->writeEntry("ShowFlag", m_showFlag);
 
 	config->writeEntry("SwitchMode", switchModes[m_switchingPolicy]);
-	
+
 	config->writeEntry("StickySwitching", m_stickySwitching);
 	config->writeEntry("StickySwitchingDepth", m_stickySwitchingDepth);
 
-	// remove old options 
+	// remove old options
  	config->deleteEntry("Variants");
 	config->deleteEntry("Includes");
 	config->deleteEntry("Encoding");
 	config->deleteEntry("AdditionalEncodings");
 	config->deleteEntry("Additional");
 	config->deleteEntry("Layout");
-	
+
 	config->sync();
 
 	delete config;
@@ -256,7 +253,7 @@ void KxkbConfig::setDefaults()
 	m_showFlag = true;
 
 	m_switchingPolicy = SWITCH_POLICY_GLOBAL;
-	
+
 	m_stickySwitching = false;
 	m_stickySwitchingDepth = 2;
 }
@@ -275,7 +272,7 @@ QStringList KxkbConfig::getLayoutStringList(/*bool compact*/)
 QString KxkbConfig::getDefaultDisplayName(const QString& code_)
 {
 	QString displayName;
-	
+
 	if( code_.length() <= 2 ) {
 		displayName = code_;
 	}
@@ -285,13 +282,13 @@ QString KxkbConfig::getDefaultDisplayName(const QString& code_)
 		QString rightCode;
 		if( sepPos != -1 )
 			rightCode = code_.mid(sepPos+1);
-		
+
 		if( rightCode.length() > 0 )
 			displayName = leftCode.left(2) + rightCode.left(1).toLower();
 		else
 			displayName = leftCode.left(3);
 	}
-	
+
 	return displayName;
 }
 
@@ -299,7 +296,7 @@ QString KxkbConfig::getDefaultDisplayName(const LayoutUnit& layoutUnit, bool sin
 {
 	if( layoutUnit.variant.isEmpty() )
 		return getDefaultDisplayName( layoutUnit.layout );
-	
+
 	QString displayName = layoutUnit.layout.left(2);
 	if( single == false )
 		displayName += layoutUnit.variant.left(1);

@@ -48,7 +48,7 @@ int main( int argc, char* argv[] )
     init_global_data( false, &app );
     Settings settings;
     settings.read_settings( true );
-    KConfig cfg( file, true );
+    KConfig cfg(  file );
     if( !settings.import( cfg, false ))
         {
         kWarning() << "Import of " << id << " failed!" << endl;

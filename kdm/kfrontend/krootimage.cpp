@@ -24,7 +24,7 @@ Boston, MA 02110-1301, USA.
 #include <kcmdlineargs.h>
 #include <kcomponentdata.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 
 #include <QDesktopWidget>
 #include <QFile>

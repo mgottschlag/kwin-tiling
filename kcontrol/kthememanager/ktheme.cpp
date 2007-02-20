@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <kio/netaccess.h>
 #include <klocale.h>
 #include <kservice.h>
-#include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
 #include <kstyle.h>
@@ -130,12 +129,12 @@ QString KTheme::createYourself( bool pack )
     // 2. Background theme
     KSharedConfig::Ptr globalConf = KGlobal::config();
 
-    KConfig kwinConf( "kwinrc", true );
-    kwinConf.setGroup( "Desktops" );
+    KConfig _kwinConf( "kwinrc" );
+    KConfigGroup kwinConf(&_kwinConf, "Desktops" );
     uint numDesktops = kwinConf.readEntry( "Number", 4 );
 
-    KConfig desktopConf( "kdesktoprc", true );
-    desktopConf.setGroup( "Background Common" );
+    KConfig _desktopConf( "kdesktoprc" );
+    KConfigGroup desktopConf(&_desktopConf, "Background Common" );
     bool common = desktopConf.readEntry( "CommonDesktop", true );
 
     for ( uint i=0; i < numDesktops-1; i++ )
@@ -144,7 +143,7 @@ QString KTheme::createYourself( bool pack )
         desktopElem.setAttribute( "number", i );
         desktopElem.setAttribute( "common", common );
 
-        desktopConf.setGroup( "Desktop" + QString::number( i ) );
+        desktopConf.changeGroup( "Desktop" + QString::number( i ) );
 
         QDomElement modeElem = m_dom.createElement( "mode" );
         modeElem.setAttribute( "id", desktopConf.readEntry( "BackgroundMode", "Flat" ) );
@@ -182,7 +181,7 @@ QString KTheme::createYourself( bool pack )
     }
 
     // 11. Screensaver
-    desktopConf.setGroup( "ScreenSaver" );
+    desktopConf.changeGroup( "ScreenSaver" );
     QDomElement saverElem = m_dom.createElement( "screensaver" );
     saverElem.setAttribute( "name", desktopConf.readEntry( "Saver" ) );
     m_root.appendChild( saverElem );
@@ -200,7 +199,7 @@ QString KTheme::createYourself( bool pack )
 
     // 4. Sounds
     // 4.1 Global sounds
-    KConfig * soundConf = new KConfig( "knotify.eventsrc", true );
+    KConfig * soundConf = new KConfig( "knotify.eventsrc" );
     QStringList stdEvents;
     stdEvents << "cannotopenfile" << "catastrophe" << "exitkde" << "fatalerror"
               << "notification" << "printerror" << "startkde" << "warning"
@@ -208,7 +207,7 @@ QString KTheme::createYourself( bool pack )
               << "messageboxQuestion";
 
     // 4.2 KWin sounds
-    KConfig * kwinSoundConf = new KConfig( "kwin.eventsrc", true );
+    KConfig * kwinSoundConf = new KConfig( "kwin.eventsrc" );
     QStringList kwinEvents;
     kwinEvents << "activate" << "close" << "delete" <<
         "desktop1" << "desktop2" << "desktop3" << "desktop4" <<
@@ -250,7 +249,7 @@ QString KTheme::createYourself( bool pack )
     m_root.appendChild( colorsElem );
 
     // 6. Cursors
-    KConfig* mouseConf = new KConfig( "kcminputrc", true );
+    KConfig* mouseConf = new KConfig( "kcminputrc" );
     mouseConf->setGroup( "Mouse" );
     QDomElement cursorsElem = m_dom.createElement( "cursors" );
     cursorsElem.setAttribute( "name", mouseConf->readEntry( "cursorTheme" ) );
@@ -259,7 +258,7 @@ QString KTheme::createYourself( bool pack )
     // TODO copy the cursor theme?
 
     // 7. KWin
-    kwinConf.setGroup( "Style" );
+    kwinConf.changeGroup( "Style" );
     QDomElement wmElem = m_dom.createElement( "wm" );
     wmElem.setAttribute( "name", kwinConf.readEntry( "PluginLib" ) );
     wmElem.setAttribute( "type", "builtin" );    // TODO support pixmap themes when the kwin client gets ported
@@ -276,8 +275,8 @@ QString KTheme::createYourself( bool pack )
     m_root.appendChild( wmElem );
 
     // 8. Konqueror
-    KConfig konqConf( "konquerorrc", true );
-    konqConf.setGroup( "Settings" );
+    KConfig _konqConf( "konquerorrc" );
+    KConfigGroup konqConf(&_konqConf, "Settings" );
     QDomElement konqElem = m_dom.createElement( "konqueror" );
     QDomElement konqWallElem = m_dom.createElement( "wallpaper" );
     QString bgImagePath = konqConf.readPathEntry( "BgImage" );
@@ -289,8 +288,8 @@ QString KTheme::createYourself( bool pack )
     m_root.appendChild( konqElem );
 
     // 9. Kicker (aka KDE Panel)
-    KConfig kickerConf( "kickerrc", true );
-    kickerConf.setGroup( "General" );
+    KConfig _kickerConf( "kickerrc" );
+    KConfigGroup kickerConf(&_kickerConf, "General" );
 
     QDomElement panelElem = m_dom.createElement( "panel" );
 
@@ -329,7 +328,7 @@ QString KTheme::createYourself( bool pack )
     QDomElement widgetsElem = m_dom.createElement( "widgets" );
 #ifdef __GNUC__
 #warning "qt4: FIXME KStyle::defaultStyle();";
-#endif    
+#endif
     widgetsElem.setAttribute( "name", globalConf->readEntry( "widgetStyle"/*,KStyle::defaultStyle()*/  ) );
     m_root.appendChild( widgetsElem );
 
@@ -350,7 +349,7 @@ QString KTheme::createYourself( bool pack )
         QString value;
 
         if ( group == "FMSettings" ) {
-            desktopConf.setGroup( group );
+            desktopConf.changeGroup( group );
             value = desktopConf.readEntry( key, QString() );
         }
         else {
@@ -402,8 +401,8 @@ void KTheme::apply()
     // 2. Background theme
 
     QDomNodeList desktopList = m_dom.elementsByTagName( "desktop" );
-    KConfig desktopConf( "kdesktoprc" );
-    desktopConf.setGroup( "Background Common" );
+    KConfig _desktopConf( "kdesktoprc" );
+    KConfigGroup desktopConf(&_desktopConf, "Background Common" );
 
     for ( int i = 0; i <= desktopList.count(); i++ )
     {
@@ -415,7 +414,7 @@ void KTheme::apply()
             desktopConf.writeEntry( "CommonDesktop", common );
             desktopConf.writeEntry( "DeskNum", desktopElem.attribute( "number", "0" ).toUInt() );
 
-            desktopConf.setGroup( QString( "Desktop%1" ).arg( i ) );
+            desktopConf.changeGroup( QString( "Desktop%1" ).arg( i ) );
             desktopConf.writeEntry( "BackgroundMode", getProperty( desktopElem, "mode", "id" ) );
             desktopConf.writeEntry( "Color1", QColor( getProperty( desktopElem, "color1", "rgb" ) ) );
             desktopConf.writeEntry( "Color2", QColor( getProperty( desktopElem, "color2", "rgb" ) ) );
@@ -438,7 +437,7 @@ void KTheme::apply()
 
     if ( !saverElem.isNull() )
     {
-        desktopConf.setGroup( "ScreenSaver" );
+        desktopConf.changeGroup( "ScreenSaver" );
         desktopConf.writeEntry( "Saver", saverElem.attribute( "name" ) );
     }
 
@@ -453,9 +452,8 @@ void KTheme::apply()
     QDomElement iconElem = m_dom.elementsByTagName( "icons" ).item( 0 ).toElement();
     if ( !iconElem.isNull() )
     {
-        KSharedConfig::Ptr iconConf = KGlobal::config();
-        iconConf->setGroup( "Icons" );
-        iconConf->writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), KConfigBase::Persistent|KConfigBase::Global);
+        KConfigGroup iconConf(KGlobal::config(), "Icons");
+        iconConf.writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), KConfigBase::Persistent|KConfigBase::Global);
 
         QDomNodeList iconList = iconElem.childNodes();
         for ( int i = 0; i < iconList.count(); i++ )
@@ -463,30 +461,30 @@ void KTheme::apply()
             QDomElement iconSubElem = iconList.item( i ).toElement();
             QString object = iconSubElem.attribute( "object" );
             if ( object == "desktop" )
-                iconConf->setGroup( "DesktopIcons" );
+                iconConf.changeGroup( "DesktopIcons" );
             else if ( object == "mainToolbar" )
-                iconConf->setGroup( "MainToolbarIcons" );
+                iconConf.changeGroup( "MainToolbarIcons" );
             else if ( object == "panel" )
-                iconConf->setGroup( "PanelIcons" );
+                iconConf.changeGroup( "PanelIcons" );
             else if ( object == "small" )
-                iconConf->setGroup( "SmallIcons" );
+                iconConf.changeGroup( "SmallIcons" );
             else if ( object == "toolbar" )
-                iconConf->setGroup( "ToolbarIcons" );
+                iconConf.changeGroup( "ToolbarIcons" );
 
             QString iconName = iconSubElem.tagName();
             if ( iconName.contains( "Color" ) )
             {
                 QColor iconColor = QColor( iconSubElem.attribute( "rgb" ) );
-                iconConf->writeEntry( iconName, iconColor, KConfigBase::Persistent|KConfigBase::Global);
+                iconConf.writeEntry( iconName, iconColor, KConfigBase::Persistent|KConfigBase::Global);
             }
             else if ( iconName.contains( "Value" ) || iconName == "Size" )
-                iconConf->writeEntry( iconName, iconSubElem.attribute( "value" ).toUInt(), KConfigBase::Persistent|KConfigBase::Global);
+                iconConf.writeEntry( iconName, iconSubElem.attribute( "value" ).toUInt(), KConfigBase::Persistent|KConfigBase::Global);
             else if ( iconName.contains( "Effect" ) )
-                iconConf->writeEntry( iconName, iconSubElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
+                iconConf.writeEntry( iconName, iconSubElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
             else
-                iconConf->writeEntry( iconName, static_cast<bool>( iconSubElem.attribute( "value" ).toUInt() ), KConfigBase::Persistent|KConfigBase::Global);
+                iconConf.writeEntry( iconName, static_cast<bool>( iconSubElem.attribute( "value" ).toUInt() ), KConfigBase::Persistent|KConfigBase::Global);
         }
-        iconConf->sync();
+        iconConf.sync();
 
         for ( int i = 0; i < K3Icon::LastGroup; i++ )
             KGlobalSettings::self()->emitChange( KGlobalSettings::IconChanged, i );
@@ -538,8 +536,7 @@ void KTheme::apply()
         KSharedConfig::Ptr colorConf = KGlobal::config();
 
         QString sCurrentScheme = KStandardDirs::locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");
-        KSimpleConfig *colorScheme = new KSimpleConfig( sCurrentScheme );
-        colorScheme->setGroup("Color Scheme" );
+        KConfigGroup colorScheme(KSharedConfig::openConfig( sCurrentScheme, KConfig::OnlyLocal), "Color Scheme" );
 
         for ( int i = 0; i < colorList.count(); i++ )
         {
@@ -553,15 +550,14 @@ void KTheme::apply()
             QString colName = colorElem.tagName();
             QColor curColor = QColor( colorElem.attribute( "rgb" ) );
             colorConf->writeEntry( colName, curColor, KConfigBase::Persistent|KConfigBase::Global); // kdeglobals
-            colorScheme->writeEntry( colName, curColor ); // thememgr.kcsrc
+            colorScheme.writeEntry( colName, curColor ); // thememgr.kcsrc
         }
 
         colorConf->setGroup( "KDE" );
         colorConf->writeEntry( "colorScheme", "thememgr.kcsrc", KConfigBase::Persistent|KConfigBase::Global);
         colorConf->writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ), KConfigBase::Persistent|KConfigBase::Global);
-        colorScheme->writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ) );
+        colorScheme.writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ) );
         colorConf->sync();
-        delete colorScheme;
 
         KGlobalSettings::self()->emitChange( KGlobalSettings::PaletteChanged );
     }
@@ -571,8 +567,8 @@ void KTheme::apply()
 
     if ( !cursorsElem.isNull() )
     {
-        KConfig mouseConf( "kcminputrc" );
-        mouseConf.setGroup( "Mouse" );
+        KConfig _mouseConf( "kcminputrc" );
+        KConfigGroup mouseConf(&_mouseConf, "Mouse" );
         mouseConf.writeEntry( "cursorTheme", cursorsElem.attribute( "name" ));
         // FIXME is there a way to notify KDE of cursor changes?
     }
@@ -582,8 +578,8 @@ void KTheme::apply()
 
     if ( !wmElem.isNull() )
     {
-        KConfig kwinConf( "kwinrc" );
-        kwinConf.setGroup( "Style" );
+        KConfig _kwinConf( "kwinrc" );
+        KConfigGroup kwinConf(&_kwinConf, "Style" );
         QString type = wmElem.attribute( "type" );
         if ( type == "builtin" )
             kwinConf.writeEntry( "PluginLib", wmElem.attribute( "name" ) );
@@ -603,7 +599,7 @@ void KTheme::apply()
 
         kwinConf.sync();
         org::kde::KWin kwin("org.kde.kwin", "/KWin", QDBusConnection::sessionBus());
-        kwin.reconfigure();	
+        kwin.reconfigure();
     }
 
     // 8. Konqueror
@@ -611,8 +607,8 @@ void KTheme::apply()
 
     if ( !konqElem.isNull() )
     {
-        KConfig konqConf( "konquerorrc" );
-        konqConf.setGroup( "Settings" );
+        KConfig _konqConf( "konquerorrc" );
+        KConfigGroup konqConf(&_konqConf, "Settings" );
         konqConf.writeEntry( "BgImage", unprocessFilePath( "konqueror", getProperty( konqElem, "wallpaper", "url" ) ) );
         konqConf.writeEntry( "BgColor", QColor( getProperty( konqElem, "bgcolor", "rgb" ) ) );
 
@@ -628,8 +624,8 @@ void KTheme::apply()
 
     if ( !panelElem.isNull() )
     {
-        KConfig kickerConf( "kickerrc" );
-        kickerConf.setGroup( "General" );
+        KConfig _kickerConf( "kickerrc" );
+        KConfigGroup kickerConf(&_kickerConf, "General" );
         QString kickerBgUrl = getProperty( panelElem, "background", "url" );
         if ( !kickerBgUrl.isEmpty() )
         {
@@ -657,10 +653,9 @@ void KTheme::apply()
 
     if ( !widgetsElem.isNull() )
     {
-        KSharedConfig::Ptr widgetConf = KGlobal::config();
-        widgetConf->setGroup( "General" );
-        widgetConf->writeEntry( "widgetStyle", widgetsElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
-        widgetConf->sync();
+        KConfigGroup widgetConf(KGlobal::config(), "General");
+        widgetConf.writeEntry( "widgetStyle", widgetsElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
+        widgetConf.sync();
         KGlobalSettings::self()->emitChange( KGlobalSettings::StyleChanged );
     }
 
@@ -669,7 +664,7 @@ void KTheme::apply()
     if ( !fontsElem.isNull() )
     {
         KSharedConfig::Ptr fontsConf = KGlobal::config();
-        KConfig * kde1xConf = new KSimpleConfig( QDir::homePath() + "/.kderc" );
+        KConfig * kde1xConf = new KConfig( QDir::homePath() + "/.kderc" );
         kde1xConf->setGroup( "General" );
 
         QDomNodeList fontList = fontsElem.childNodes();
@@ -681,7 +676,7 @@ void KTheme::apply()
             QString fontObject = fontElem.attribute( "object" );
 
             if ( fontObject == "FMSettings" ) {
-                desktopConf.setGroup( fontObject );
+                desktopConf.changeGroup( fontObject );
                 desktopConf.writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
                 desktopConf.sync();
             }

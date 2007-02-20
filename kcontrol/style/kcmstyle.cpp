@@ -57,7 +57,7 @@
 #include <klibloader.h>
 #include <k3listview.h>
 #include <kmessagebox.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstyle.h>
 #include <kstandarddirs.h>
 
@@ -88,8 +88,8 @@ extern "C"
     KDE_EXPORT void kcminit_style()
     {
         uint flags = KRdbExportQtSettings | KRdbExportQtColors | KRdbExportXftSettings;
-        KConfig config("kcmdisplayrc", true /*readonly*/, false /*don't read kdeglobals etc.*/);
-        config.setGroup("X11");
+        KConfig _config( "kcmdisplayrc", KConfig::NoGlobals  );
+        KConfigGroup config(&_config, "X11");
 
         // This key is written by the "colors" module.
         bool exportKDEColors = config.readEntry("exportKDEColors", true);
@@ -299,7 +299,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	sliderBox->setSpacing( KDialog::spacingHint() );
 #ifdef __GNUC__
 #warning "KDE4: fix setMargin"
-#endif	
+#endif
 	//sliderBox->setMargin( 0 );
 	slOpacity = new QSlider( Qt::Horizontal, sliderBox );
 	slOpacity->setMinimum( 0 );
@@ -500,7 +500,7 @@ void KCMStyle::styleSpecificConfig()
 
 void KCMStyle::load()
 {
-	KConfig config( "kdeglobals", true, false );
+	KConfig config( "kdeglobals", KConfig::NoGlobals );
 	// Page1 - Build up the Style ListBox
 	loadStyle( config );
 
@@ -573,8 +573,8 @@ void KCMStyle::save()
 
 
 	// Save effects.
-	KConfig config( "kdeglobals" );
-	config.setGroup("KDE");
+	KConfig _config( "kdeglobals" );
+	KConfigGroup config(&_config, "KDE");
 
 	config.writeEntry( "EffectsEnabled", cbEnableEffects->isChecked());
 	int item = comboComboEffect->currentIndex();
@@ -611,10 +611,10 @@ void KCMStyle::save()
 	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfigBase::Normal|KConfigBase::Global);
 	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), KConfigBase::Normal|KConfigBase::Global);
 
-	config.setGroup("General");
+	config.changeGroup("General");
 	config.writeEntry( "widgetStyle", currentStyle() );
 
-	config.setGroup("Toolbar style");
+	config.changeGroup("Toolbar style");
 	config.writeEntry( "Highlighting", cbHoverButtons->isChecked(), KConfigBase::Normal|KConfigBase::Global);
 	config.writeEntry( "TransparentMoving", cbTransparentToolbars->isChecked(), KConfigBase::Normal|KConfigBase::Global);
 	QString tbIcon;
@@ -635,8 +635,8 @@ void KCMStyle::save()
 	if (m_bStyleDirty | m_bEffectsDirty)	// Export only if necessary
 	{
 		uint flags = KRdbExportQtSettings;
-		KConfig kconfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
-		kconfig.setGroup("X11");
+		KConfig _kconfig( "kcmdisplayrc", KConfig::NoGlobals  );
+		KConfigGroup kconfig(&_kconfig, "X11");
 		bool exportKDEColors = kconfig.readEntry("exportKDEColors", true);
 		if (exportKDEColors)
 			flags |= KRdbExportColors;
@@ -654,21 +654,21 @@ void KCMStyle::save()
 
 	if (m_bEffectsDirty) {
 		KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
-#ifdef Q_WS_X11		
+#ifdef Q_WS_X11
         // Send signal to all kwin instances
         QDBusMessage message =
            QDBusMessage::createSignal("/KWin", "org.kde.KWin", "reloadConfig");
         QDBusConnection::sessionBus().send(message);
-#endif		
+#endif
 	}
 
 	//update kicker to re-used tooltips kicker parameter otherwise, it overwritted
 	//by style tooltips parameters.
 	QByteArray data;
-#ifdef __GNUC__	
+#ifdef __GNUC__
 #warning "kde4: who is org.kde.kicker?"
 #endif
-#ifdef Q_WS_X11	
+#ifdef Q_WS_X11
 	QDBusInterface kicker( "org.kde.kicker", "/kicker");
 	kicker.call("configure");
 #endif
@@ -781,7 +781,7 @@ void KCMStyle::loadStyle( KConfig& config )
 														 KStandardDirs::NoDuplicates);
 	for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
 	{
-		KSimpleConfig config( *it, true );
+		KConfig config(  *it, KConfig::OnlyLocal);
 		if ( !(config.hasGroup("KDE") && config.hasGroup("Misc")) )
 			continue;
 

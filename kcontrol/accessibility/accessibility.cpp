@@ -81,7 +81,7 @@ AccessibilityConfig::~AccessibilityConfig(){
 void AccessibilityConfig::load(){
    kDebug() << "Running: AccessibilityConfig::load()" << endl;
 
-   KConfig *bell = new KConfig("bellrc", true);
+   KConfig *bell = new KConfig("bellrc");
 
    bell->setGroup("General");
    widget->systemBell->setChecked(bell->readEntry("SystemBell", false));

@@ -30,7 +30,7 @@
 #include <kmessagebox.h>
 #include <knuminput.h>
 #include <kprocio.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <stdlib.h>
 
@@ -159,7 +159,7 @@ void FontUseItem::readFont()
     config = KGlobal::config().data();
   else
   {
-    config = new KConfig(_rcfile, true);
+    config = new KConfig(_rcfile);
     deleteme = true;
   }
 
@@ -178,7 +178,7 @@ void FontUseItem::writeFont()
     config->setGroup(_rcgroup);
     config->writeEntry(_rckey, font(), KConfigBase::Normal|KConfigBase::Global);
   } else {
-    config = new KSimpleConfig(KStandardDirs::locateLocal("config", _rcfile));
+    config = new KConfig(KStandardDirs::locateLocal("config", _rcfile));
     config->setGroup(_rcgroup);
     config->writeEntry(_rckey, font());
     config->sync();
@@ -323,7 +323,7 @@ bool FontAASettings::load()
 
   if(!xft.getHintStyle(hStyle) || KXftConfig::Hint::NotSet==hStyle)
   {
-    KConfig kglobals("kdeglobals", false, false);
+    KConfig kglobals("kdeglobals", KConfig::NoGlobals);
 
     kglobals.setGroup("General");
     hStyle=KXftConfig::Hint::Medium;
@@ -345,7 +345,7 @@ bool FontAASettings::load()
 bool FontAASettings::save( bool useAA )
 {
   KXftConfig xft(KXftConfig::constStyleSettings);
-  KConfig    kglobals("kdeglobals", false, false);
+  KConfig    kglobals("kdeglobals", KConfig::NoGlobals);
 
   kglobals.setGroup("General");
 
@@ -686,8 +686,8 @@ void KFonts::load()
   kDebug(1208) << "AA:" << ( useAA == Qt::Checked ) << endl;
   cbAA->setChecked(useAA == Qt::Checked);
 
-  KConfig cfgfonts("kcmfonts", true);
-  cfgfonts.setGroup("General");
+  KConfig _cfgfonts( "kcmfonts" );
+  KConfigGroup cfgfonts(&_cfgfonts, "General");
   int dpi = cfgfonts.readEntry( "forceFontDPI", 0 );
   cbForceDpi->setChecked( dpi == 96 || dpi == 120 );
   comboForceDpi->setCurrentIndex( dpi == 120 ? 1 : 0 );
@@ -708,8 +708,8 @@ void KFonts::save()
       i->writeFont();
   KGlobal::config()->sync();
 
-  KConfig cfgfonts("kcmfonts");
-  cfgfonts.setGroup("General");
+  KConfig _cfgfonts( "kcmfonts" );
+  KConfigGroup cfgfonts(&_cfgfonts, "General");
   int dpi;
   if( !cbForceDpi->isChecked())
       dpi = 0;
@@ -729,7 +729,7 @@ void KFonts::save()
   }
 
   // KDE-1.x support
-  KSimpleConfig* config = new KSimpleConfig( QDir::homePath() + "/.kderc" );
+  KConfig* config = new KConfig( QDir::homePath() + "/.kderc", KConfig::OnlyLocal);
   config->setGroup( "General" );
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() ) {
       if("font"==i->rcKey())

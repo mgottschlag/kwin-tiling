@@ -51,7 +51,7 @@ extern "C"
 {
 #ifdef __GNUC__
 #warning Porting needed
-#endif	
+#endif
 /*
 	KDE_EXPORT void init_randr()
 	{
@@ -69,7 +69,7 @@ extern "C"
 
 void KRandRModule::performApplyOnStartup()
 {
-	KConfig config("kcmrandrrc", true);
+	KConfig config("kcmrandrrc");
 	if (RandRDisplay::applyOnStartup(config))
 	{
 		// Load settings and apply appropriate config
@@ -293,7 +293,7 @@ void KRandRModule::load()
 	// It will be correct already if they wanted to retain their settings over KDE restarts,
 	// and if it isn't correct they have changed a) their X configuration, b) the screen
 	// with another program, or c) their hardware.
-	KConfig config("kcmrandrrc", true);
+	KConfig config("kcmrandrrc");
 	m_oldApply = loadDisplay(config, false);
 	m_oldSyncTrayApp = syncTrayApp(config);
 

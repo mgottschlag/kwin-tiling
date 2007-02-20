@@ -23,11 +23,11 @@
 
 #include <kapplication.h>
 #include <kicon.h>
-#include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
 #include <kworkspace.h>
 #include "findmenu.h"
+#include <kdesktopfile.h>
 
 K_EXPORT_KICKER_MENUEXT( find, FindMenu )
 
@@ -52,13 +52,13 @@ void FindMenu::initialize()
 
   mConfigList.clear();
   for ( QStringList::ConstIterator it = list.begin(); it != list.end(); ++it ) {
-    KSimpleConfig config( *it, true );
-    config.setDesktopGroup();
+    KDesktopFile config( *it );
+    const KConfigGroup cg = config.desktopGroup();
 
     mConfigList.append( *it );
-    QString text = config.readEntry( "Name" );
+    QString text = cg.readEntry( "Name" );
 
-    insertItem( KIcon( config.readEntry( "Icon" ) ), text, id );
+    insertItem( KIcon( cg.readEntry( "Icon" ) ), text, id );
     id++;
   }
 }

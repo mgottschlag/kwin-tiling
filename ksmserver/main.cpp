@@ -226,14 +226,13 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 
     IceSetIOErrorHandler( IoErrorHandler );
 
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup( "General" );
+    KConfigGroup config(KGlobal::config(), "General");
 
     int realScreenCount = ScreenCount( QX11Info::display() );
     bool screenCountChanged =
-         ( config->readEntry( "screenCount", realScreenCount ) != realScreenCount );
+         ( config.readEntry( "screenCount", realScreenCount ) != realScreenCount );
 
-    QString loginMode = config->readEntry( "loginMode", "restorePreviousLogout" );
+    QString loginMode = config.readEntry( "loginMode", "restorePreviousLogout" );
 
     if ( args->isSet("restore") && ! screenCountChanged )
         server->restoreSession( SESSION_BY_USER );

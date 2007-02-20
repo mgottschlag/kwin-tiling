@@ -660,7 +660,7 @@ void KAccessConfig::configChanged()
 
 void KAccessConfig::load()
 {
-  KConfig *config = new KConfig("kaccessrc", true);
+  KConfig *config = new KConfig("kaccessrc");
 
   config->setGroup("Bell");
 
@@ -713,7 +713,7 @@ void KAccessConfig::load()
 
 void KAccessConfig::save()
 {
-  KConfig *config= new KConfig("kaccessrc", false);
+  KConfig *config= new KConfig("kaccessrc");
 
   config->setGroup("Bell");
 
@@ -763,8 +763,8 @@ void KAccessConfig::save()
       customBell->isChecked() ||
       visibleBell->isChecked())
   {
-    KConfig cfg("kdeglobals", false, false);
-    cfg.setGroup("General");
+    KConfig _cfg("kdeglobals", KConfig::NoGlobals);
+    KConfigGroup cfg(&_cfg, "General");
     cfg.writeEntry("UseSystemBell", true);
     cfg.sync();
   }
@@ -779,8 +779,8 @@ void KAccessConfig::save()
   {
 #ifdef __GNUC__
 #warning "kde4: dbus port: need to test it"
-#endif	  
-      QDBusInterface kaccess("org.kde.kaccess", "/KAccess", "org.kde.kaccess.KAccess"); 
+#endif
+      QDBusInterface kaccess("org.kde.kaccess", "/KAccess", "org.kde.kaccess.KAccess");
 	  kaccess.call("quit");
       //DCOPRef kaccess( "kaccess", "qt/kaccess" );
       //kaccess.send( "quit" );
@@ -887,7 +887,7 @@ extern "C"
    */
   KDE_EXPORT void kcminit_access()
   {
-    KConfig *config = new KConfig("kaccessrc", true, false);
+    KConfig *config = new KConfig( "kaccessrc", KConfig::NoGlobals );
     bool run = needToRunKAccessDaemon( config );
 
     delete config;

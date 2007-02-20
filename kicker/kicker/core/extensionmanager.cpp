@@ -177,7 +177,7 @@ void ExtensionManager::initialize()
 
 void ExtensionManager::configureMenubar(bool duringInit)
 {
-    KConfig menuConfig("kdesktoprc", true);
+    KConfig menuConfig("kdesktoprc");
     if (KConfigGroup(&menuConfig, "KDE").readEntry("macStyle", false)
         || KConfigGroup(&menuConfig, "Menubar").readEntry("ShowMenubar", false))
     {
@@ -238,10 +238,9 @@ void ExtensionManager::migrateMenubar()
     // panel, meaning kickerrc itself would have to be vastly modified
     // with lots of complications. not work it IMHO.
 
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("General");
+    KConfigGroup config(KGlobal::config(), "General");
 
-    if (config->readEntry("CheckedForMenubar", false))
+    if (config.readEntry("CheckedForMenubar", false))
     {
         return;
     }
@@ -252,7 +251,7 @@ void ExtensionManager::migrateMenubar()
         return;
     }
 
-    QStringList elist = config->readEntry("Extensions2", QStringList() );
+    QStringList elist = config.readEntry("Extensions2", QStringList() );
     foreach (QString extensionId, elist)
     {
         if (extensionId.indexOf("Extension") == -1)
@@ -260,14 +259,14 @@ void ExtensionManager::migrateMenubar()
             continue;
         }
 
+        config.changeGroup(extensionId);
         // is there a config group for this extension?
-        if (!config->hasGroup(extensionId))
+        if (!config.exists() )
         {
             continue;
         }
 
-        config->setGroup(extensionId);
-        QString extension = config->readPathEntry("ConfigFile");
+        QString extension = config.readPathEntry("ConfigFile");
         KConfig extensionConfig(KStandardDirs::locate("config", extension));
         extensionConfig.setGroup("General");
 
@@ -295,10 +294,10 @@ void ExtensionManager::migrateMenubar()
                                              KStandardDirs::locateLocal("config",
                                              "kicker_menubarpanelrc"), 0);
                         elist.removeAll(appletId);
-                        config->setGroup("General");
-                        config->writeEntry("Extensions2", elist);
-                        config->writeEntry("CheckedForMenubar", true);
-                        config->sync();
+                        config.changeGroup("General");
+                        config.writeEntry("Extensions2", elist);
+                        config.writeEntry("CheckedForMenubar", true);
+                        config.sync();
                         return;
                     }
                 }
@@ -306,8 +305,8 @@ void ExtensionManager::migrateMenubar()
         }
     }
 
-    config->setGroup("General");
-    config->writeEntry("CheckedForMenubar", true);
+    config.changeGroup("General");
+    config.writeEntry("CheckedForMenubar", true);
 }
 
 void ExtensionManager::saveContainerConfig()

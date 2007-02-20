@@ -28,7 +28,7 @@
 #include <kglobalsettings.h>
 #include <kwinmodule.h>
 #include <kwin.h>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <ksharedpixmap.h>

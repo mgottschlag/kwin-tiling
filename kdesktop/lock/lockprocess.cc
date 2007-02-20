@@ -369,7 +369,7 @@ void LockProcess::readSaver()
 
 	bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
 	bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");
-        KDesktopFile config(file, true);
+        KDesktopFile config( file );
 	if (!config.readEntry("X-KDE-Type").toUtf8().isEmpty())
 	{
 		QString saverType = config.readEntry("X-KDE-Type").toUtf8();
@@ -397,8 +397,7 @@ void LockProcess::readSaver()
 
         if (config.hasActionGroup("Root"))
         {
-            config.setActionGroup("Root");
-            mSaverExec = config.readPathEntry("Exec");
+            mSaverExec = config.actionGroup("Root").readPathEntry("Exec");
         }
     }
 }

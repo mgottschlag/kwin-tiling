@@ -16,11 +16,11 @@
 #include <QColor>
 #include <QMap>
 #include <QVector>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 
 template <class QString, class T> class QMap;
 class KStandardDirs;
-class KSimpleConfig;
+class KDesktopFile;
 class QString;
 class QImage;
 
@@ -68,7 +68,7 @@ private:
     QString m_Name, m_Comment;
     QString m_Pattern, m_File;
     KStandardDirs *m_pDirs;
-    KSimpleConfig *m_pConfig;
+    KDesktopFile *m_pConfig;
 };
 
 
@@ -139,7 +139,7 @@ private:
     QString m_PreviewCommand, m_Comment;
     QString m_Executable, m_File;
     KStandardDirs *m_pDirs;
-    KSimpleConfig *m_pConfig;
+    KDesktopFile *m_pConfig;
 };
 
 

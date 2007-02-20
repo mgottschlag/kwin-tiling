@@ -193,23 +193,23 @@ void MenuFolderInfo::save(MenuFile *menuFile)
    {
       QString local = KDesktopFile::locateLocal(directoryFile);
 
-      KConfig *df = 0;
+      KDesktopFile *df = 0;
       if (directoryFile != local)
       {
-         KConfig orig(directoryFile, true, false, "apps");
+         KDesktopFile orig("apps", directoryFile);
          df = orig.copyTo(local);
       }
       else
       {
-         df = new KConfig(directoryFile, false, false, "apps");
+         df = new KDesktopFile("apps", directoryFile);
       }
 
-      df->setDesktopGroup();
-      df->writeEntry("Name", caption);
-      df->writeEntry("GenericName", genericname);
-      df->writeEntry("Comment", comment);
-      df->writeEntry("Icon", icon);
-      df->sync();
+      KConfigGroup dg( df->desktopGroup() );
+      dg.writeEntry("Name", caption);
+      dg.writeEntry("GenericName", genericname);
+      dg.writeEntry("Comment", comment);
+      dg.writeEntry("Icon", icon);
+      dg.sync();
       delete df;
       dirty = false;
    }
@@ -301,17 +301,17 @@ void MenuFolderInfo::setInUse(bool inUse)
 
 MenuEntryInfo::~MenuEntryInfo()
 {
-   df->rollback(false);
-   delete df;
+   m_desktopFile->rollback(false);
+   delete m_desktopFile;
 }
 
 KDesktopFile *MenuEntryInfo::desktopFile()
 {
-   if (!df)
+   if (!m_desktopFile)
    {
-      df = new KDesktopFile(service->desktopEntryPath());
+      m_desktopFile = new KDesktopFile(service->desktopEntryPath());
    }
-   return df;
+   return m_desktopFile;
 }
 
 void MenuEntryInfo::setDirty()
@@ -324,8 +324,7 @@ void MenuEntryInfo::setDirty()
    if (local != service->desktopEntryPath())
    {
       KDesktopFile *oldDf = desktopFile();
-      df = oldDf->copyTo(local);
-      df->setDesktopGroup();
+      m_desktopFile = oldDf->copyTo(local);
       delete oldDf;
    }
 }
@@ -340,7 +339,7 @@ void MenuEntryInfo::save()
 {
    if (dirty)
    {
-      df->sync();
+      m_desktopFile->sync();
       dirty = false;
    }
 
@@ -360,7 +359,7 @@ void MenuEntryInfo::setCaption(const QString &_caption)
       return;
    caption = _caption;
    setDirty();
-   desktopFile()->writeEntry("Name", caption);
+   desktopFile()->desktopGroup().writeEntry("Name", caption);
 }
 
 void MenuEntryInfo::setDescription(const QString &_description)
@@ -369,7 +368,7 @@ void MenuEntryInfo::setDescription(const QString &_description)
         return;
     description = _description;
     setDirty();
-    desktopFile()->writeEntry("GenericName", description);
+    desktopFile()->desktopGroup().writeEntry("GenericName", description);
 }
 
 void MenuEntryInfo::setIcon(const QString &_icon)
@@ -379,7 +378,7 @@ void MenuEntryInfo::setIcon(const QString &_icon)
 
    icon = _icon;
    setDirty();
-   desktopFile()->writeEntry("Icon", icon);
+   desktopFile()->desktopGroup().writeEntry("Icon", icon);
 }
 
 KShortcut MenuEntryInfo::shortcut()

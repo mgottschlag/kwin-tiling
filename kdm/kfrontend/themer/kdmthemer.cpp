@@ -30,7 +30,7 @@
 #include <kfdialog.h>
 
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 
 #include <QEvent>
 #include <QMouseEvent>
@@ -57,8 +57,8 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode,
 	// read the XML file and create DOM tree
 	QString filename = _filename;
 	if (!::access( QFile::encodeName( filename + "/KdmGreeterTheme.desktop" ), R_OK )) {
-		KSimpleConfig cfg( filename + "/KdmGreeterTheme.desktop" );
-		cfg.setGroup( "KdmGreeterTheme" );
+		KConfig _cfg( filename + "/KdmGreeterTheme.desktop", KConfig::OnlyLocal );
+		KConfigGroup cfg(&_cfg, "KdmGreeterTheme" );
 		filename += '/' + cfg.readEntry( "Greeter" );
 	}
 	QFile opmlFile( filename );

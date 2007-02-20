@@ -265,13 +265,12 @@ QPoint popupPosition(Plasma::Position d,
 
 void colorize(QImage& image)
 {
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("WM");
+    KConfigGroup config(KGlobal::config(), "WM");
     QPalette pal = QApplication::palette();
     pal.setCurrentColorGroup( QPalette::Active );
     QColor color = pal.color( QPalette::Highlight );
-    QColor activeTitle = config->readEntry("activeBackground", color);
-    QColor inactiveTitle = config->readEntry("inactiveBackground", color);
+    QColor activeTitle = config.readEntry("activeBackground", color);
+    QColor inactiveTitle = config.readEntry("inactiveBackground", color);
 
     // figure out which color is most suitable for recoloring to
     int h1, s1, v1, h2, s2, v2, h3, s3, v3;

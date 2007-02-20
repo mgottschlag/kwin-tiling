@@ -24,12 +24,12 @@
 #include "../background/bgdialog.h"
 
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 
 #include <QCheckBox>
 #include <QVBoxLayout>
 
-extern KSimpleConfig *config;
+extern KConfig *config;
 
 KBackground::KBackground(QWidget *parent)
 	: QWidget( parent )

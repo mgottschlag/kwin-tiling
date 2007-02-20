@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _SETTINGS_CPP_
@@ -35,10 +35,10 @@ Settings::Settings()
     : actions( NULL ), gestures_exclude( NULL )
     {
     }
-    
+
 bool Settings::read_settings( bool include_disabled_P )
     {
-    KConfig cfg( KHOTKEYS_CONFIG_FILE, true );
+    KConfig cfg( KHOTKEYS_CONFIG_FILE );
     return read_settings( cfg, include_disabled_P, ImportNone );
     }
 
@@ -119,7 +119,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
 
 void Settings::write_settings()
     {
-    KConfig cfg( KHOTKEYS_CONFIG_FILE, false );
+    KConfig cfg( KHOTKEYS_CONFIG_FILE );
 // CHECKME    smazat stare sekce ?
     QStringList groups = cfg.groupList();
     for( QStringList::ConstIterator it = groups.begin();
@@ -179,9 +179,9 @@ int Settings::write_actions_recursively_v2( KConfig& cfg_P, Action_data_group* p
 void Settings::read_settings_v2( KConfig& cfg_P, bool include_disabled_P  )
     {
     cfg_P.setGroup( "Data" );
-    read_actions_recursively_v2( cfg_P, actions, include_disabled_P );    
+    read_actions_recursively_v2( cfg_P, actions, include_disabled_P );
     }
-    
+
 void Settings::read_actions_recursively_v2( KConfig& cfg_P, Action_data_group* parent_P,
     bool include_disabled_P )
     {
@@ -205,7 +205,7 @@ void Settings::read_actions_recursively_v2( KConfig& cfg_P, Action_data_group* p
 
 // backward compatibility
 void Settings::read_settings_v1( KConfig& cfg_P )
-    {    
+    {
     int sections = cfg_P.readEntry( "Num_Sections", 0 );
     Action_data_group* menuentries = NULL;
     for( Action_data_group::Iterator it( actions->first_child());

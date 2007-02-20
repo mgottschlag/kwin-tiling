@@ -28,7 +28,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kprogressdialog.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
 #include <kurlrequester.h>
@@ -47,7 +47,7 @@
 
 #include <unistd.h>
 
-extern KSimpleConfig *config;
+extern KConfig *config;
 
 class ThemeData : public QTreeWidgetItem {
   public:
@@ -158,7 +158,7 @@ void KDMThemeWidget::makeReadOnly()
 
 void KDMThemeWidget::insertTheme( const QString &_theme )
 {
-	KSimpleConfig themeConfig( _theme + "/KdmGreeterTheme.desktop" );
+	KConfig themeConfig( _theme + "/KdmGreeterTheme.desktop", KConfig::OnlyLocal);
 
 	themeConfig.setGroup( "KdmGreeterTheme" );
 	QString name = themeConfig.readEntry( "Name" );

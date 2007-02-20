@@ -29,7 +29,7 @@
 #include <QToolTip>
 #include <QDesktopWidget>
 
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kcmdlineargs.h>
 #include <kcmultidialog.h>
 #include <kcrash.h>
@@ -93,7 +93,8 @@ Kicker::Kicker()
     // Make kicker immutable if configuration modules have been marked immutable
     if (isKioskImmutable() && KAuthorized::authorizeControlModules(Kicker::configModules(true)).isEmpty())
     {
-        KGlobal::config()->setReadOnly(true);
+#warning this should not be necessary
+        // KGlobal::config()->setReadOnly(true);
         KGlobal::config()->reparseConfiguration();
     }
 

@@ -33,7 +33,7 @@
 #include <kcrash.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kmanagerselection.h>
 #include <kglobal.h>
 #include <kauthorized.h>
@@ -192,7 +192,8 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     if (!KGlobal::config()->isImmutable() &&
         KAuthorized::authorizeControlModules(KRootWm::configModules()).isEmpty())
     {
-		KGlobal::config()->setReadOnly(true);
+#warning this does not seem to be necessary
+        // KGlobal::config()->setReadOnly(true);
        	KGlobal::config()->reparseConfiguration();
     }
 

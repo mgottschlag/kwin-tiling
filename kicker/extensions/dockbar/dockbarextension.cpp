@@ -89,7 +89,7 @@ QSize DockBarExtension::sizeHint(Plasma::Position p, QSize) const
 
 void DockBarExtension::resizeEvent(QResizeEvent*)
 {
-    layoutContainers();   
+    layoutContainers();
 }
 
 
@@ -113,7 +113,7 @@ void DockBarExtension::windowAdded(WId win)
         /* a good dockapp set the icon hint and the state hint,
            if it uses its icon, the window initial state must be "withdrawn"
            if not, then the initial state must be "normal"
-           this filters the problematic Eterm whose initial state is "normal" 
+           this filters the problematic Eterm whose initial state is "normal"
            and which has an iconwin.
         */
 	if ((wmhints->flags & IconWindowHint) &&
@@ -123,15 +123,15 @@ void DockBarExtension::windowAdded(WId win)
                 (resIconwin == 0 && wmhints->initial_state == 1);
 
         /* an alternative is a window who does not have an icon,
-           but whose initial state is set to "withdrawn". This has been 
-           added for wmxmms... I hope it won't swallow to much windows :-/ 
+           but whose initial state is set to "withdrawn". This has been
+           added for wmxmms... I hope it won't swallow to much windows :-/
         */
         } else if ((wmhints->flags & IconWindowHint) == 0 &&
                    (wmhints->flags & StateHint)) {
             is_valid = (wmhints->initial_state == 0);
         }
         XFree(wmhints);
-        if (!is_valid) 
+        if (!is_valid)
             return; // we won't swallow this one
     }
     else
@@ -157,7 +157,7 @@ void DockBarExtension::windowAdded(WId win)
         return;
     }
     /* withdrawing the window prevents kwin from managing the window,
-       which causes the double-launch bug (one instance from the kwin 
+       which causes the double-launch bug (one instance from the kwin
        session, and one from the dockbar) bug when kde is restarted */
     if (resIconwin != win) {
 		QX11Info info;
@@ -187,9 +187,9 @@ void DockBarExtension::layoutContainers()
 
 void DockBarExtension::embedWindow(WId win, QString command, QString resName, QString resClass)
 {
-    if (win == 0) return; 
+    if (win == 0) return;
     DockContainer* container = 0;
-   
+
     for (DockContainer::Vector::const_iterator it = containers.constBegin();
          it != containers.constEnd();
          ++it)
@@ -200,12 +200,12 @@ void DockBarExtension::embedWindow(WId win, QString command, QString resName, QS
             break;
         }
     }
-    
+
     if (container == 0) {
 	container = new DockContainer(command, this, resName, resClass);
 	addContainer(container);
     }
-    
+
     container->embed(win);
     layoutContainers();
     emit updateLayout();
@@ -232,9 +232,9 @@ void DockBarExtension::addContainer(DockContainer* c, int pos)
 
         containers.insert(it, c);
     }
-    connect(c, SIGNAL(embeddedWindowDestroyed(DockContainer*)), 
+    connect(c, SIGNAL(embeddedWindowDestroyed(DockContainer*)),
             SLOT(embeddedWindowDestroyed(DockContainer*)));
-    connect(c, SIGNAL(settingsChanged(DockContainer*)), 
+    connect(c, SIGNAL(settingsChanged(DockContainer*)),
             SLOT(settingsChanged(DockContainer*)));
     c->resize(DockContainer::sz(), DockContainer::sz());
     c->show();
@@ -290,28 +290,27 @@ void DockBarExtension::saveContainerConfig()
     }
     conf->setGroup("General");
     conf->writeEntry("Applets", applet_list);
-    conf->deleteEntry("Commands"); // cleanup old config    
+    conf->deleteEntry("Commands"); // cleanup old config
     conf->sync();
 }
 
 void DockBarExtension::loadContainerConfig()
 {
-    KConfig *conf = config();
-    conf->setGroup("General");
-    QStringList applets = conf->readEntry("Applets", QStringList() );
-    
+    KConfigGroup conf(config(), "General");
+    QStringList applets = conf.readEntry("Applets", QStringList() );
+
     QStringList fail_list;
     for (QStringList::Iterator it = applets.begin(); it != applets.end(); ++it) {
-        if (!conf->hasGroup(*it)) continue;
-        conf->setGroup(*it);
-        QString cmd = conf->readPathEntry("Command");
-        QString resName  = conf->readPathEntry("resName");
-        QString resClass = conf->readEntry("resClass");
+        conf.changeGroup(*it);
+        if (!conf.exists()) continue;
+        QString cmd = conf.readPathEntry("Command");
+        QString resName  = conf.readPathEntry("resName");
+        QString resClass = conf.readEntry("resClass");
         if (cmd.isEmpty() || resName.isEmpty() || resClass.isEmpty()) continue;
 
         DockContainer* c = new DockContainer(cmd, this, resName, resClass );
         addContainer(c);
-	
+
         KProcess proc;
         proc << KShell::splitArgs( cmd );
         if (!proc.start(KProcess::DontCare)) {
@@ -352,7 +351,7 @@ void DockBarExtension::mousePressEvent(QMouseEvent *e ) {
 
 void DockBarExtension::mouseReleaseEvent(QMouseEvent *e ) {
     if (e->button() != Qt::LeftButton) return;
-    if (dragging_container) {  
+    if (dragging_container) {
         releaseMouse();
         original_container->embed(dragging_container->embeddedWinId());
         delete dragging_container; dragging_container = 0;
@@ -382,9 +381,9 @@ void DockBarExtension::mouseMoveEvent(QMouseEvent *e) {
     }
     if (dragging_container) {
         dragging_container->move(e->globalPos() - mclic_dock_pos);
-        
-        // change layout of other containers 
-        QPoint dragpos(dragging_container->pos()), 
+
+        // change layout of other containers
+        QPoint dragpos(dragging_container->pos()),
             barpos(mapToGlobal(pos()));
         int pdrag1,pdrag2,psz;
         pdrag1 = dragpos.x() - barpos.x() + DockContainer::sz()/2;

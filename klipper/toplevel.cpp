@@ -45,7 +45,6 @@
 #include <ksavefile.h>
 #include <ksessionmanager.h>
 #include <kstandarddirs.h>
-#include <ksimpleconfig.h>
 #include <kstringhandler.h>
 #include <ksystemtrayicon.h>
 #include <k3urldrag.h>
@@ -460,41 +459,41 @@ void KlipperWidget::readProperties(KConfig *kc)
 }
 
 
-void KlipperWidget::readConfiguration( KConfig *kc )
+void KlipperWidget::readConfiguration( KConfig *_kc )
 {
-    kc->setGroup("General");
-    bPopupAtMouse = kc->readEntry("PopupAtMousePosition", false);
-    bKeepContents = kc->readEntry("KeepClipboardContents", true);
-    bURLGrabber = kc->readEntry("URLGrabberEnabled", false);
-    bReplayActionInHistory = kc->readEntry("ReplayActionInHistory", false);
-    bNoNullClipboard = kc->readEntry("NoEmptyClipboard", true);
-    bUseGUIRegExpEditor = kc->readEntry("UseGUIRegExpEditor", true);
-    history()->max_size( kc->readEntry("MaxClipItems", 7) );
-    bIgnoreSelection = kc->readEntry("IgnoreSelection", false);
-    bSynchronize = kc->readEntry("Synchronize", false);
-    bSelectionTextOnly = kc->readEntry("SelectionTextOnly",true);
-    bIgnoreImages = kc->readEntry("IgnoreImages",true);
+    KConfigGroup kc( _kc, "General");
+    bPopupAtMouse = kc.readEntry("PopupAtMousePosition", false);
+    bKeepContents = kc.readEntry("KeepClipboardContents", true);
+    bURLGrabber = kc.readEntry("URLGrabberEnabled", false);
+    bReplayActionInHistory = kc.readEntry("ReplayActionInHistory", false);
+    bNoNullClipboard = kc.readEntry("NoEmptyClipboard", true);
+    bUseGUIRegExpEditor = kc.readEntry("UseGUIRegExpEditor", true);
+    history()->max_size( kc.readEntry("MaxClipItems", 7) );
+    bIgnoreSelection = kc.readEntry("IgnoreSelection", false);
+    bSynchronize = kc.readEntry("Synchronize", false);
+    bSelectionTextOnly = kc.readEntry("SelectionTextOnly",true);
+    bIgnoreImages = kc.readEntry("IgnoreImages",true);
 }
 
-void KlipperWidget::writeConfiguration( KConfig *kc )
+void KlipperWidget::writeConfiguration( KConfig *_kc )
 {
-    kc->setGroup("General");
-    kc->writeEntry("PopupAtMousePosition", bPopupAtMouse);
-    kc->writeEntry("KeepClipboardContents", bKeepContents);
-    kc->writeEntry("ReplayActionInHistory", bReplayActionInHistory);
-    kc->writeEntry("NoEmptyClipboard", bNoNullClipboard);
-    kc->writeEntry("UseGUIRegExpEditor", bUseGUIRegExpEditor);
-    kc->writeEntry("MaxClipItems", history()->max_size() );
-    kc->writeEntry("IgnoreSelection", bIgnoreSelection);
-    kc->writeEntry("Synchronize", bSynchronize );
-    kc->writeEntry("SelectionTextOnly", bSelectionTextOnly);
-    kc->writeEntry("TrackImages", bIgnoreImages);
-    kc->writeEntry("Version", klipper_version );
+    KConfigGroup kc( _kc, "General");
+    kc.writeEntry("PopupAtMousePosition", bPopupAtMouse);
+    kc.writeEntry("KeepClipboardContents", bKeepContents);
+    kc.writeEntry("ReplayActionInHistory", bReplayActionInHistory);
+    kc.writeEntry("NoEmptyClipboard", bNoNullClipboard);
+    kc.writeEntry("UseGUIRegExpEditor", bUseGUIRegExpEditor);
+    kc.writeEntry("MaxClipItems", history()->max_size() );
+    kc.writeEntry("IgnoreSelection", bIgnoreSelection);
+    kc.writeEntry("Synchronize", bSynchronize );
+    kc.writeEntry("SelectionTextOnly", bSelectionTextOnly);
+    kc.writeEntry("TrackImages", bIgnoreImages);
+    kc.writeEntry("Version", klipper_version );
 
     if ( myURLGrabber )
-        myURLGrabber->writeConfiguration( kc );
+        myURLGrabber->writeConfiguration( _kc );
 
-    kc->sync();
+    kc.sync();
 }
 
 // save session on shutdown. Don't simply use the c'tor, as that may not be called.
@@ -592,15 +591,14 @@ void KlipperWidget::slotQuit()
     saveSession();
     int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?"),KGuiItem(i18n("Start")), KGuiItem(i18n("Do Not Start")) );
 
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("General");
+    KConfigGroup config( KGlobal::config(), "General");
     if ( autoStart == KMessageBox::Yes ) {
-        config->writeEntry("AutoStart", true);
+        config.writeEntry("AutoStart", true);
     } else if ( autoStart == KMessageBox::No) {
-        config->writeEntry("AutoStart", false);
+        config.writeEntry("AutoStart", false);
     } else  // cancel chosen don't quit
         return;
-    config->sync();
+    config.sync();
 
     kapp->quit();
 
@@ -633,9 +631,8 @@ void KlipperWidget::setURLGrabberEnabled( bool enable )
 {
     if (enable != bURLGrabber) {
       bURLGrabber = enable;
-      KConfig *kc = m_config.data();
-      kc->setGroup("General");
-      kc->writeEntry("URLGrabberEnabled", bURLGrabber);
+      KConfigGroup kc(m_config.data(), "General");
+      kc.writeEntry("URLGrabberEnabled", bURLGrabber);
       m_lastURLGrabberTextSelection = QString();
       m_lastURLGrabberTextClipboard = QString();
     }

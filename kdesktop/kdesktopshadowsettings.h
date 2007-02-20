@@ -25,7 +25,7 @@
 
 #include <QColor>
 #include <kstandarddirs.h>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 
 #include "kshadowsettings.h"
 

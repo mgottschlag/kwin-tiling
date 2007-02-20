@@ -60,10 +60,10 @@ public:
     // Remove sub menu (without deleting it)
     // @return true if found
     bool takeRecursive(MenuFolderInfo *info);
-    
+
     // Add entry
     void add(MenuEntryInfo *, bool initial = false);
-    
+
     // Remove entry (without deleting it)
     void take(MenuEntryInfo *);
 
@@ -110,13 +110,13 @@ public:
 
     // Mark menu as dirty
     void setDirty();
-    
+
     // Return whether this menu or any entry or submenu contained in it is dirty.
     bool hasDirt();
 
     // Return whether this menu should be explicitly added to its parent menu
     bool needInsertion();
-    
+
     // Save menu and all its entries and submenus
     void save(MenuFile *);
 
@@ -125,7 +125,7 @@ public:
 
     // Set whether the entry is in active use (as opposed to in the clipboard/deleted)
     void setInUse(bool inUse);
-    
+
 public:
     QString id; // Relative to parent
     QString fullId; // Name in tree
@@ -144,8 +144,8 @@ public:
 class MenuEntryInfo : public MenuInfo
 {
 public:
-    MenuEntryInfo(const KService::Ptr &_service, KDesktopFile *_df = 0) 
-     : service(_service), df(_df), 
+    MenuEntryInfo(const KService::Ptr &_service, KDesktopFile *_df = 0)
+     : service(_service), m_desktopFile(_df),
        shortcutLoaded(false), shortcutDirty(false), dirty(_df != 0), hidden(false)
     {
        caption = service->name();
@@ -157,15 +157,15 @@ public:
     void setCaption(const QString &_caption);
     void setDescription(const QString &_description);
     void setIcon(const QString &_icon);
-    
+
     QString menuId() const { return service->menuId(); }
-    
+
     QString file() const { return service->desktopEntryPath(); }
-    
+
     KShortcut shortcut();
     void setShortcut(const KShortcut &_shortcut);
     bool isShortcutAvailable(const KShortcut &_shortcut);
-    
+
     void setDirty();
 
     // Set whether the entry is in active use (as opposed to in the clipboard/deleted)
@@ -173,7 +173,7 @@ public:
 
     // Return whether this menu should be explicitly added to its parent menu
     bool needInsertion();
-    
+
     void save();
 
     KDesktopFile *desktopFile();
@@ -183,7 +183,7 @@ public:
     QString description;
     QString icon;
     KService::Ptr service;
-    KDesktopFile *df;
+    KDesktopFile *m_desktopFile;
     KShortcut shortCut;
     bool shortcutLoaded;
     bool shortcutDirty;

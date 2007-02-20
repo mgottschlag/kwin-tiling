@@ -45,7 +45,7 @@ extern "C"
 {
   KDE_EXPORT void kcminit_mouse()
   {
-    KConfig *config = new KConfig("kcminputrc", true, false); // Read-only, no globals
+      KConfig *config = new KConfig("kcminputrc", KConfig::NoGlobals );
     MouseSettings settings;
     settings.load(config);
     settings.apply(true); // force
@@ -83,7 +83,7 @@ extern "C"
        KToolInvocation::klauncher()->setLaunchEnv("XCURSOR_THEME", theme);
     if( !size.isEmpty())
        KToolInvocation::klauncher()->setLaunchEnv("XCURSOR_SIZE", size);
-	
+
 #endif
 
     delete config;

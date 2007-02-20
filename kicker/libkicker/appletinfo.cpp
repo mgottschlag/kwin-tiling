@@ -76,7 +76,7 @@ AppletInfo::AppletInfo( const QString& deskFile, const QString& configFile, cons
             break;
     }
 
-    KDesktopFile df(d->desktopFile, true, resource);
+    KDesktopFile df( resource, d->desktopFile);
 
     // set the appletssimple attributes
     setName(df.readName());

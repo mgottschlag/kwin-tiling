@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <kio/global.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 
 #include <QRegExp>
 #include <QFileInfo>
@@ -66,7 +66,7 @@ void KonquerorProfilesMenu::initialize()
       QFileInfo info( *pIt );
       QString profileName = KIO::decodeFileName( info.baseName() );
       QString niceName=profileName;
-      KSimpleConfig cfg( *pIt, true );
+      KConfig cfg( *pIt, KConfig::OnlyLocal);
       if ( cfg.hasGroup( "Profile" ) )
       {
          cfg.setGroup( "Profile" );

@@ -684,8 +684,6 @@ bool RandRDisplay::syncTrayApp(KConfig& config)
 
 void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp)
 {
-	Q_ASSERT(!config.isReadOnly());
-
 	config.setGroup("Display");
 	config.writeEntry("ApplyOnStartup", applyOnStartup);
 	config.writeEntry("SyncTrayApp", syncTrayApp);

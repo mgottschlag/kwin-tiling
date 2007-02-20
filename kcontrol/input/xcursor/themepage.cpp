@@ -24,7 +24,7 @@
 #include <kaboutdata.h>
 #include <kstandarddirs.h>
 #include <k3listview.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kglobalsettings.h>
 #include <kdialog.h>
 #include <kmessagebox.h>
@@ -137,8 +137,8 @@ void ThemePage::save()
 	if ( currentTheme == selectedTheme )
 		return;
 
-	KConfig c( "kcminputrc" );
-	c.setGroup( "Mouse" );
+	KConfig _c( "kcminputrc" );
+	KConfigGroup c(&_c, "Mouse" );
 	c.writeEntry( "cursorTheme", selectedTheme != "system" ? selectedTheme : QString() );
 
 	KMessageBox::information( this, i18n("You have to restart KDE for these "
@@ -156,8 +156,8 @@ void ThemePage::load()
 	currentTheme = theme;
 
 	// Get the name of the theme KDE is configured to use
-	KConfig c( "kcminputrc" );
-	c.setGroup( "Mouse" );
+	KConfig _c( "kcminputrc" );
+	KConfigGroup c(&_c, "Mouse" );
 	currentTheme = c.readEntry( "cursorTheme", currentTheme );
         if( currentTheme.isEmpty())
             currentTheme = "system";
@@ -336,8 +336,8 @@ void ThemePage::insertTheme( const QString &path )
 	QString desc   = i18n( "No description available" );
 	QString sample = "left_ptr";
 
-	KSimpleConfig c( path + "/index.theme", true ); // Open read-only
-	c.setGroup( "Icon Theme" );
+	KConfig _c( path + "/index.theme"  );
+	KConfigGroup c(&_c, "Icon Theme" );
 
 	// Don't insert the theme if it's hidden.
 	if ( c.readEntry( "Hidden", false) )
@@ -422,8 +422,8 @@ bool ThemePage::isCursorTheme( const QString &theme, const int depth ) const
 			// Parse the index.theme file if one exists
 			if ( haveIndexFile )
 			{
-				KSimpleConfig c( indexfile, true ); // Open read-only
-				c.setGroup( "Icon Theme" );
+                                KConfig _c( indexfile, KConfig::OnlyLocal );
+                                KConfigGroup c(&_c, "Icon Theme" );
 				inherit = c.readEntry( "Inherits", QStringList() );
 			}
 
@@ -486,8 +486,8 @@ void ThemePage::insertThemes()
 			// Parse the index.theme file if the theme has one.
 			if ( haveIndexFile )
 			{
-				KSimpleConfig c( indexfile, true );
-				c.setGroup( "Icon Theme" );
+				KConfig _c( indexfile, KConfig::OnlyLocal );
+				KConfigGroup c(&_c, "Icon Theme" );
 
 				// Skip this theme if it's hidden.
 				if ( c.readEntry( "Hidden", false) )

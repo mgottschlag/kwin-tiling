@@ -35,7 +35,7 @@
 #include <kprocess.h>
 #include <klineedit.h>
 #include <kpassworddialog.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 
 #include "kcmdnssd.h"
 #include <dnssd/settings.h>
@@ -67,7 +67,7 @@ KCMDnssd::KCMDnssd(QWidget *parent, const QStringList&)
 		else if (getenv("KDESU_USER")!=0) widget->tabs->removePage(widget->tab);
 	addConfig(DNSSD::Configuration::self(),this);
 	// it is host-wide setting so it has to be in global config file
-	domain = new KSimpleConfig( QLatin1String( KDE_CONFDIR "/kdnssdrc" ));
+	domain = new KConfig( QLatin1String( KDE_CONFDIR "/kdnssdrc" ), KConfig::OnlyLocal);
 	domain->setGroup("publishing");
 	load();
 	connect(widget->hostedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));

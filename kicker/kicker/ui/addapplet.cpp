@@ -73,9 +73,8 @@ AddAppletDialog::AddAppletDialog(ContainerArea *cArea,
 	setButtonGuiItem(User1, KGuiItem(i18n("Load Applet"), "ok"));
 	enableButton(KDialog::User1, false);
 
-	KSharedConfig::Ptr cfg = KGlobal::config();
-	cfg->setGroup("AddAppletDialog Settings");
-	restoreDialogSize(cfg.data());
+        KConfigGroup cg = KGlobal::config()->group( "AddAppletDialog Settings");
+	restoreDialogSize(cg);
 
 	centerOnScreen(this);
 
@@ -105,9 +104,8 @@ void AddAppletDialog::updateInsertionPoint()
 
 void AddAppletDialog::closeEvent(QCloseEvent *e)
 {
-	KSharedConfig::Ptr cfg = KGlobal::config();
-	cfg->setGroup("AddAppletDialog Settings");
-	KDialog::saveDialogSize(cfg.data());
+	KConfigGroup cg( KGlobal::config(), "AddAppletDialog Settings");
+	KDialog::saveDialogSize( cg );
 
 	KDialog::closeEvent(e);
 }

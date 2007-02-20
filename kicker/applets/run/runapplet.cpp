@@ -83,15 +83,14 @@ RunApplet::RunApplet(const QString& configFile, Plasma::Type type, int actions,
     connect(_input, SIGNAL(activated(const QString&)),
 	    SLOT(run_command(const QString&)));
 
-    KConfig *c = config();
-    c->setGroup("General");
+    KConfigGroup c(config(), "General");
 
     // restore history and completion list
-    QStringList list = c->readEntry("Completion list", QStringList() );
+    QStringList list = c.readEntry("Completion list", QStringList() );
     _input->completionObject()->setItems(list);
-    list = c->readEntry("History list", QStringList() );
+    list = c.readEntry("History list", QStringList() );
     _input->setHistoryItems(list);
-    int mode = c->readEntry( "CompletionMode", int(KGlobalSettings::completionMode()) );
+    int mode = c.readEntry( "CompletionMode", int(KGlobalSettings::completionMode()) );
     _input->setCompletionMode( (KGlobalSettings::Completion) mode );
 
     _filterData = new KUriFilterData();

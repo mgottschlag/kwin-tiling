@@ -24,7 +24,7 @@
 #include <kcombobox.h>
 #include <kdialog.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -36,7 +36,7 @@
 #include <QVBoxLayout>
 #include <q3header.h>
 
-extern KSimpleConfig *config;
+extern KConfig *config;
 
 KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	: QWidget( parent )

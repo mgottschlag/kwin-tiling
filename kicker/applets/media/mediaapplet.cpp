@@ -361,12 +361,11 @@ void MediaApplet::positionChange(Plasma::Position)
 
 void MediaApplet::loadConfig()
 {
-	KConfig *c = config();
-	c->setGroup("General");
+	KConfigGroup c(config(), "General");
 
-	if(c->hasKey("ExcludedTypes"))
+	if(c.hasKey("ExcludedTypes"))
 	{
-		mExcludedTypesList = c->readEntry("ExcludedTypes",QStringList(),';');
+		mExcludedTypesList = c.readEntry("ExcludedTypes",QStringList(),';');
 	}
 	else
 	{
@@ -379,9 +378,9 @@ void MediaApplet::loadConfig()
 		mExcludedTypesList << "media/smb_unmounted";
 	}
 
-	if(c->hasKey("ExcludedMedia"))
+	if(c.hasKey("ExcludedMedia"))
 	{
-		mExcludedList = c->readEntry("ExcludedMedia",QStringList(),';');
+		mExcludedList = c.readEntry("ExcludedMedia",QStringList(),';');
 	}
 	else
 	{
@@ -392,13 +391,12 @@ void MediaApplet::loadConfig()
 
 void MediaApplet::saveConfig()
 {
-	KConfig *c = config();
-	c->setGroup("General");
+	KConfigGroup c(config(), "General");
 
-	c->writeEntry("ExcludedTypes", mExcludedTypesList, ';');
-	c->writeEntry("ExcludedMedia", mExcludedList, ';');
+	c.writeEntry("ExcludedTypes", mExcludedTypesList, ';');
+	c.writeEntry("ExcludedMedia", mExcludedList, ';');
 
-	c->sync();
+	c.sync();
 }
 
 void MediaApplet::reloadList()

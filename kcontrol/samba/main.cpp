@@ -51,7 +51,7 @@ K_EXPORT_COMPONENT_FACTORY (samba, SambaFactory("kcmsamba") )
 
 SambaContainer::SambaContainer(QWidget *parent, const QStringList&)
 :KCModule(SambaFactory::componentData(), parent)
-,config("kcmsambarc",false,true)
+,config("kcmsambarc")
 ,tabs(this)
 ,status(&tabs,&config)
 ,imports(&tabs,&config)

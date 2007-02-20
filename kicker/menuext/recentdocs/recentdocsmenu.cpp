@@ -72,7 +72,7 @@ void RecentDocsMenu::initialize() {
 	     it != _fileList.end();
 	     ++it)
 	{
-		KDesktopFile f(*it, true /* read only */);
+		KDesktopFile f(*it);
 		insertItem(KIcon(f.readIcon()), f.readName().replace('&', QString::fromAscii("&&") ), id++);
     }
 
@@ -118,7 +118,7 @@ void RecentDocsMenu::mouseMoveEvent(QMouseEvent* e) {
 	if (id < 0)
 		return;
 
-	KDesktopFile f(_fileList[id], true /* read only */);
+	KDesktopFile f( _fileList[id] );
 
 	KUrl url ( f.readUrl() );
 

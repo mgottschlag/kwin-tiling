@@ -1025,7 +1025,7 @@ KVirtualBGRenderer::KVirtualBGRenderer(int desk, const KSharedConfigPtr &config)
         else
             configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-        m_pConfig = KSharedConfig::openConfig(configname, false, false);
+        m_pConfig = KSharedConfig::openConfig(configname, KConfig::NoGlobals);
     } else {
         m_pConfig = config;
     }

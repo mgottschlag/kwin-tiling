@@ -55,11 +55,10 @@ KMenuEdit::KMenuEdit (bool controlCenter)
 
 KMenuEdit::~KMenuEdit()
 {
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("General");
-    config->writeEntry("SplitterSizes", m_splitter->sizes());
+    KConfigGroup config(KGlobal::config(), "General");
+    config.writeEntry("SplitterSizes", m_splitter->sizes());
 
-    config->sync();
+    config.sync();
 }
 
 void KMenuEdit::setupActions()

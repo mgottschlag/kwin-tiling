@@ -288,9 +288,8 @@ void PanelKMenu::initialize()
     /*
       If  the user configured ksmserver to
     */
-    KConfig ksmserver("ksmserverrc", false, false);
-    ksmserver.setGroup("General");
-    if (ksmserver.readEntry( "loginMode" ) == "restoreSavedSession")
+    KConfig ksmserver("ksmserverrc", KConfig::NoGlobals);
+    if (ksmserver.group("General").readEntry( "loginMode" ) == "restoreSavedSession")
     {
         insertItem(Plasma::menuIconSet("filesave"),
                    i18n("Save Session"), this, SLOT(slotSaveSession()));
@@ -458,7 +457,7 @@ void PanelKMenu::resizeEvent(QResizeEvent * e)
     PanelServiceMenu::resizeEvent(e);
 #ifdef __GNUC__
 #warning "KDE4: Qt4 doesn't seem to provide a way of doing this, will need different impl. for side image"
-#endif    
+#endif
 //    setFrameRect( QStyle::visualRect( layoutDirection(), rect(), QRect( sidePixmap.width(), 0,
 //                                      width() - sidePixmap.width(), height() ) ) );
 }

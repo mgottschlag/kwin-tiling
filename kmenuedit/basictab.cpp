@@ -418,23 +418,24 @@ void BasicTab::apply()
         _menuEntryInfo->setIcon(_iconButton->icon());
 
         KDesktopFile *df = _menuEntryInfo->desktopFile();
-        df->writeEntry("Comment", _commentEdit->text());
+        KConfigGroup dg = df->desktopGroup();
+        dg.writeEntry("Comment", _commentEdit->text());
         if (_systrayCB->isChecked())
-          df->writePathEntry("Exec", _execEdit->lineEdit()->text().prepend("ksystraycmd "));
+          dg.writePathEntry("Exec", _execEdit->lineEdit()->text().prepend("ksystraycmd "));
         else
-          df->writePathEntry("Exec", _execEdit->lineEdit()->text());
+          dg.writePathEntry("Exec", _execEdit->lineEdit()->text());
 
-        df->writePathEntry("Path", _pathEdit->lineEdit()->text());
+        dg.writePathEntry("Path", _pathEdit->lineEdit()->text());
 
         if (_terminalCB->isChecked())
-            df->writeEntry("Terminal", 1);
+            dg.writeEntry("Terminal", 1);
         else
-            df->writeEntry("Terminal", 0);
+            dg.writeEntry("Terminal", 0);
 
-        df->writeEntry("TerminalOptions", _termOptEdit->text());
-        df->writeEntry("X-KDE-SubstituteUID", _uidCB->isChecked());
-        df->writeEntry("X-KDE-Username", _uidEdit->text());
-        df->writeEntry("StartupNotify", _launchCB->isChecked());
+        dg.writeEntry("TerminalOptions", _termOptEdit->text());
+        dg.writeEntry("X-KDE-SubstituteUID", _uidCB->isChecked());
+        dg.writeEntry("X-KDE-Username", _uidEdit->text());
+        dg.writeEntry("StartupNotify", _launchCB->isChecked());
     }
     else
     {

@@ -197,8 +197,8 @@ KCMInit::KCMInit( KCmdLineArgs* args )
 
   }
   // This key has no GUI apparently
-  KConfig config("kcmdisplayrc", true );
-  config.setGroup("X11");
+  KConfig _config( "kcmdisplayrc" );
+  KConfigGroup config(&_config, "X11");
 #ifdef Q_WS_X11
   bool multihead = !config.readEntry( "disableMultihead", false) &&
                     (ScreenCount(QX11Info::display()) > 1);
@@ -214,10 +214,10 @@ KCMInit::KCMInit( KCmdLineArgs* args )
   if( startup )
   {
      runModules( 0 );
-#ifdef Q_WS_X11    
+#ifdef Q_WS_X11
     org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
-    ksplash.upAndRunning("kcminit" ); 
-#endif     
+    ksplash.upAndRunning("kcminit" );
+#endif
      sendReady();
      QTimer::singleShot( 300 * 1000, qApp, SLOT( quit())); // just in case
      qApp->exec(); // wait for runPhase1() and runPhase2()

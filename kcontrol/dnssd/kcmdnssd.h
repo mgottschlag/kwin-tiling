@@ -27,7 +27,7 @@
 #include <kaboutdata.h>
 #include <kcmodule.h> 
 
-class KSimpleConfig;
+class KConfig;
 class KCMDnssd: public KCModule
 {
 	Q_OBJECT
@@ -44,7 +44,7 @@ private:
 	bool saveMdnsd();
 	QMap<QString,QString> mdnsdLines;
 	bool m_wdchanged;
-	KSimpleConfig* domain;
+	KConfig* domain;
     ConfigDialog *widget;
 };
 

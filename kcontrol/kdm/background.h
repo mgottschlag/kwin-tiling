@@ -10,10 +10,10 @@
 #define __Bgnd_h_Included__
 
 #include <QWidget>
-#include <kconfig.h>
+#include <ksharedconfig.h>
 
 class BGDialog;
-class KSimpleConfig;
+class KConfig;
 class QCheckBox;
 class QLabel;
 

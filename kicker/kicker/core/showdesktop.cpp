@@ -77,8 +77,8 @@ void ShowDesktop::slotWindowAdded(WId w)
     if ((windowType == NET::Normal || windowType == NET::Unknown) &&
         inf.mappingState() == NET::Visible)
     {
-        KConfig kwincfg( "kwinrc", true ); // see in kwin
-        kwincfg.setGroup( "Windows" );
+        KConfig _kwincfg( "kwinrc" );
+        KConfigGroup kwincfg(&_kwincfg, "Windows" );
         if( kwincfg.readEntry( "ShowDesktopIsMinimizeAll", false ))
         {
             m_iconifiedList.clear();
@@ -123,7 +123,7 @@ void ShowDesktop::showDesktop( bool b )
     {
         return;
     }
-    
+
     if( m_wmSupport )
     {
         NETRootInfo i( QX11Info::display(), 0 );

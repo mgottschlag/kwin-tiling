@@ -501,7 +501,7 @@ void MouseConfig::setHandedness(int val)
 
 void MouseConfig::load()
 {
-  KConfig config( "kcminputrc", true );
+  KConfig config( "kcminputrc" );
   settings->load(&config);
 
   tab1->rightHanded->setEnabled(settings->handedEnabled);
@@ -531,7 +531,7 @@ void MouseConfig::load()
   slotClick();
 
 
-  KConfig ac("kaccessrc", true);
+  KConfig ac("kaccessrc");
 
   ac.setGroup("Mouse");
   mouseKeys->setChecked(ac.readEntry("MouseKeys", false));
@@ -584,7 +584,7 @@ void MouseConfig::save()
   KConfig config( "kcminputrc" );
   settings->save(&config);
 
-  KConfig ac("kaccessrc", false);
+  KConfig ac("kaccessrc");
 
   ac.setGroup("Mouse");
 
@@ -728,7 +728,7 @@ void MouseSettings::load(KConfig *config)
     handed = LEFT_HANDED;
 #ifdef __GNUC__
 #warning was key == NULL how was this working? is key.isNull() what the coder meant?
-#endif  
+#endif
   else if (key.isNull())
     handed = h;
   reverseScrollPolarity = config->readEntry( "ReverseScrollPolarity", false);

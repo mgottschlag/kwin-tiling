@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "kpanelapplet.h"
 #include "kpanelapplet.moc"
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include <kglobal.h>
 #include <QResizeEvent>
 
@@ -64,7 +64,7 @@ KPanelApplet::KPanelApplet(const QString& configFile, Plasma::Type type,
   }
   setBackgroundOrigin( AncestorOrigin );
 
-  d->sharedConfig = KSharedConfig::openConfig(configFile, KGlobal::config()->isImmutable());
+  d->sharedConfig = KSharedConfig::openConfig(configFile);
 }
 
 KPanelApplet::~KPanelApplet()

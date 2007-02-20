@@ -100,7 +100,7 @@ void ServiceButton::loadServiceFromId(const QString &id)
        _id = KStandardDirs::locate("appdata", id.mid(1));
        if (!_id.isEmpty())
        {
-          KDesktopFile df(_id, true);
+          KDesktopFile df( _id );
           _service = new KService(&df);
        }
     }

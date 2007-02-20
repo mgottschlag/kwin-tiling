@@ -200,10 +200,9 @@ void ThemeRedmond::_initUi()
     const int fUserOnly   = fUserFirst+1;
 
     int faceSource = fAdminOnly;
-    KConfig *kdmconfig = new KConfig("kdm/kdmrc", true);
-    kdmconfig->setGroup("X-*-Greeter");
-    QString userPicsDir = kdmconfig->readEntry( "FaceDir", KGlobal::dirs()->resourceDirs("data").last() + "kdm/faces" ) + '/';
-    QString fs = kdmconfig->readEntry( "FaceSource" );
+    KConfigGroup kdmconfig(KSharedConfig::openConfig( "kdm/kdmrc" ), "X-*-Greeter");
+    QString userPicsDir = kdmconfig.readEntry( "FaceDir", KGlobal::dirs()->resourceDirs("data").last() + "kdm/faces" ) + '/';
+    QString fs = kdmconfig.readEntry( "FaceSource" );
     if (fs == QString::fromLatin1("UserOnly"))
       faceSource = fUserOnly;
     else if (fs == QString::fromLatin1("PreferUser"))
@@ -212,7 +211,6 @@ void ThemeRedmond::_initUi()
       faceSource = fAdminFirst;
     else
       faceSource = fAdminOnly; // Admin Only
-    delete kdmconfig;
 
     QPixmap userp;
     if ( faceSource == fAdminFirst )

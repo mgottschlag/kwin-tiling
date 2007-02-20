@@ -38,7 +38,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <krun.h>
 #include <kshell.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
+#include <kdesktopfile.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
 #include <kworkspace.h>
@@ -118,12 +119,12 @@ void KonsoleMenu::initialize()
            continue;
         }
 
-        KSimpleConfig conf(*it, true /* read only */);
-        conf.setDesktopGroup();
-        QString text = conf.readEntry("Name");
+        KDesktopFile conf(*it);
+        const KConfigGroup cg = conf.desktopGroup();
+        QString text = cg.readEntry("Name");
 
         // try to locate the binary
-        QString exec= conf.readPathEntry("Exec");
+        QString exec= cg.readPathEntry("Exec");
         if (exec.startsWith("su -c \'"))
         {
              exec = exec.mid(7,exec.length()-8);
@@ -133,12 +134,12 @@ void KonsoleMenu::initialize()
         exec = KShell::tildeExpand(exec);
         QString pexec = KGlobal::dirs()->findExe(exec);
         if (text.isEmpty() ||
-            conf.readEntry("Type") != "KonsoleApplication" ||
+            cg.readEntry("Type") != "KonsoleApplication" ||
             (!exec.isEmpty() && pexec.isEmpty()))
         {
             continue;
         }
-        insertItemSorted(this, KIcon(conf.readEntry("Icon", "konsole")),
+        insertItemSorted(this, KIcon(cg.readEntry("Icon", "konsole")),
                                             text, id++);
         QFileInfo fi(*it);
         sessionList.append(fi.completeBaseName());
@@ -212,13 +213,13 @@ void KonsoleMenu::initialize()
         QFileInfo info(*pIt);
         QString profileName = KIO::decodeFileName(info.baseName());
         QString niceName = profileName;
-        KSimpleConfig cfg(*pIt, true);
+        KConfig cfg(*pIt, KConfig::OnlyLocal);
         if (cfg.hasGroup("Profile"))
         {
-            cfg.setGroup("Profile");
-            if (cfg.hasKey("Name"))
+            const KConfigGroup cg( &cfg, "Profile" );
+            if (cg.hasKey("Name"))
             {
-                niceName = cfg.readEntry("Name");
+                niceName = cg.readEntry("Name");
             }
         }
 

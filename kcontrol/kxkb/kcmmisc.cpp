@@ -482,22 +482,21 @@ void set_repeatrate(int delay, double rate)
 
   KProcess p;
   p << exe << "r" << "rate" << QString::number(delay) << QString::number(r);
-  
+
   p.start(KProcess::Block);
 }
 #endif
 
 void KeyboardConfig::init_keyboard()
 {
-	KConfig *config = new KConfig("kcminputrc", true); // Read-only, no globals
-	config->setGroup("Keyboard");
+        KConfigGroup config(KSharedConfig::openConfig( "kcminputrc" ), "Keyboard");
 
 	XKeyboardState   kbd;
 	XKeyboardControl kbdc;
 
 	XGetKeyboardControl(QX11Info::display(), &kbd);
-	bool key = config->readEntry("KeyboardRepeating", true);
-	kbdc.key_click_percent = config->readEntry("ClickVolume", kbd.key_click_percent);
+	bool key = config.readEntry("KeyboardRepeating", true);
+	kbdc.key_click_percent = config.readEntry("ClickVolume", kbd.key_click_percent);
 	kbdc.auto_repeat_mode = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
 
 	XChangeKeyboardControl(QX11Info::display(),
@@ -505,17 +504,15 @@ void KeyboardConfig::init_keyboard()
 						   &kbdc);
 
 	if( key ) {
-		int delay_ = config->readEntry("RepeatDelay", 250);
-		double rate_ = config->readEntry("RepeatRate", 30.);
+		int delay_ = config.readEntry("RepeatDelay", 250);
+		double rate_ = config.readEntry("RepeatRate", 30.);
 		set_repeatrate(delay_, rate_);
 	}
 
 
-	int numlockState = config->readEntry( "NumLock", 2 );
+	int numlockState = config.readEntry( "NumLock", 2 );
 	if( numlockState != 2 )
 		numlockx_change_numlock_state( numlockState == 0 );
-
-	delete config;
 }
 
 #include "kcmmisc.moc"

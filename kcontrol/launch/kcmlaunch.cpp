@@ -159,7 +159,7 @@ LaunchConfig::slotTaskbarButton(bool b)
   void
 LaunchConfig::load()
 {
-  KConfig c("klaunchrc", false, false);
+  KConfig c("klaunchrc", KConfig::NoGlobals);
 
   c.setGroup("FeedbackStyle");
 
@@ -196,7 +196,7 @@ LaunchConfig::load()
   void
 LaunchConfig::save()
 {
-  KConfig c("klaunchrc", false, false);
+  KConfig c("klaunchrc", KConfig::NoGlobals);
 
   c.setGroup("FeedbackStyle");
   c.writeEntry("BusyCursor",   cb_busyCursor->currentIndex() != 0);
@@ -238,7 +238,7 @@ LaunchConfig::defaults()
   void
 LaunchConfig::checkChanged()
 {
-  KConfig c("klaunchrc", false, false);
+  KConfig c("klaunchrc", KConfig::NoGlobals);
 
   c.setGroup("FeedbackStyle");
 

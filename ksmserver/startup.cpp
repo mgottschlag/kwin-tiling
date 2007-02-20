@@ -253,24 +253,23 @@ void KSMServer::tryRestoreNext()
         return;
     restoreTimer.stop();
     startupSuspendTimeoutTimer.stop();
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup( sessionGroup );
+    KConfigGroup config(KGlobal::config(), sessionGroup );
 
     while ( lastAppStarted < appsToStart ) {
         publishProgress ( appsToStart - lastAppStarted );
         lastAppStarted++;
         QString n = QString::number(lastAppStarted);
-        QStringList restartCommand = config->readEntry( QString("restartCommand")+n, QStringList() );
+        QStringList restartCommand = config.readEntry( QString("restartCommand")+n, QStringList() );
         if ( restartCommand.isEmpty() ||
-             (config->readEntry( QString("restartStyleHint")+n, 0 ) == SmRestartNever)) {
+             (config.readEntry( QString("restartStyleHint")+n, 0 ) == SmRestartNever)) {
             continue;
         }
-        if ( wm == config->readEntry( QString("program")+n, QString() ) )
+        if ( wm == config.readEntry( QString("program")+n, QString() ) )
             continue;
         startApplication( restartCommand,
-                          config->readEntry( QString("clientMachine")+n, QString() ),
-                          config->readEntry( QString("userId")+n, QString() ));
-        lastIdStarted = config->readEntry( QString("clientId")+n, QString() );
+                          config.readEntry( QString("clientMachine")+n, QString() ),
+                          config.readEntry( QString("userId")+n, QString() ));
+        lastIdStarted = config.readEntry( QString("clientId")+n, QString() );
         if ( !lastIdStarted.isEmpty() ) {
             restoreTimer.setSingleShot( true );
             restoreTimer.start( 2000 );

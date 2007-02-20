@@ -49,7 +49,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kpanelmenu.h>
 #include <kprocess.h>
 #include <krun.h>
-#include <ksimpleconfig.h>
+#include <kdesktopfile.h>
 #include <kstringhandler.h>
 #include <kauthorized.h>
 #include <kworkspace.h>
@@ -193,9 +193,9 @@ void PanelBrowserMenu::initialize()
             // parse .directory if it does exist
             if (QFile::exists(path + "/.directory")) {
 
-                KSimpleConfig c(path + "/.directory", true);
-                c.setDesktopGroup();
-                QString iconPath = c.readEntry("Icon");
+                KDesktopFile c(path + "/.directory");
+                const KConfigGroup cg = c.desktopGroup();
+                QString iconPath = cg.readEntry("Icon");
 
                 if ( iconPath.startsWith("./") )
                     iconPath = path + '/' + iconPath.mid(2);
@@ -205,7 +205,7 @@ void PanelBrowserMenu::initialize()
                                                     K3Icon::DefaultState, 0, true);
                 if(icon.isNull())
                     icon = CICON("folder");
-                name = c.readEntry("Name", name);
+                name = cg.readEntry("Name", name);
             }
 
             // use cached folder icon for directories without special icon
@@ -243,17 +243,17 @@ void PanelBrowserMenu::initialize()
             // .desktop files
             if(KDesktopFile::isDesktopFile(path))
             {
-                KSimpleConfig c(path, true);
-                c.setDesktopGroup();
-                title = c.readEntry("Name", title);
+                KDesktopFile c( path );
+                const KConfigGroup cg = c.desktopGroup();
+                title = cg.readEntry("Name", title);
 
-                QString s = c.readEntry("Icon");
+                QString s = cg.readEntry("Icon");
                 if(!_icons->contains(s)) {
                     icon  = KIconLoader::global()->loadIcon(s, K3Icon::Small, K3Icon::SizeSmall,
                                                          K3Icon::DefaultState, 0, true);
 
                     if(icon.isNull()) {
-                        QString type = c.readEntry("Type", "Application");
+                        QString type = cg.readEntry("Type", "Application");
                         if (type == "Directory")
                             icon = CICON("folder");
                         else if (type == "Mimetype")
@@ -457,9 +457,8 @@ void PanelBrowserMenu::slotExec(int id)
 
 void PanelBrowserMenu::slotOpenTerminal()
 {
-    KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup("General");
-    QString term = config->readPathEntry("TerminalApplication", "konsole");
+    KConfigGroup config(KGlobal::config(), "General");
+    QString term = config.readPathEntry("TerminalApplication", "konsole");
 
     KProcess proc;
     proc << term;

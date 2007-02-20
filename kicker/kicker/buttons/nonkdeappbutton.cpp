@@ -183,8 +183,6 @@ void NonKDEAppButton::dropEvent(QDropEvent *ev)
             // this URL is actually a .desktop file, so let's grab
             // the URL it actually points to ...
             KDesktopFile deskFile(url.path());
-            deskFile.setDesktopGroup();
-
             // ... and add it to the exec string
             execStr += KProcess::quote(deskFile.readUrl()) + ' ';
         }
@@ -231,9 +229,8 @@ void NonKDEAppButton::runCommand(const QString& execStr)
         // run in a terminal? ok! we find this in the config file in the
         // [misc] group (this will usually be in kdeglobal, actually, which
         // get merged into the application config automagically for us
-        KSharedConfig::Ptr config = KGlobal::config();
-        config->setGroup("misc");
-        QString termStr = config->readPathEntry("Terminal", "konsole");
+        KConfigGroup config(KGlobal::config(), "misc");
+        QString termStr = config.readPathEntry("Terminal", "konsole");
 
         // and now we run the darn thing and store how we fared in result
         result = KRun::runCommand(termStr + " -e " + pathStr + ' ' +

@@ -78,20 +78,19 @@ KPagerMainWindow::KPagerMainWindow(QWidget *parent, const char *name)
     m_pPager = new KPager(this, 0);
     setCentralWidget(m_pPager);
 
-    KSharedConfig::Ptr cfg = KGlobal::config();
-    cfg->setGroup("KPager");
+    KConfigGroup cfg(KGlobal::config(), "KPager");
 
     // Update the last used geometry
-    int w = cfg->readEntry(m_pPager->lWidth(),-1);
-    int h = cfg->readEntry(m_pPager->lHeight(),-1);
+    int w = cfg.readEntry(m_pPager->lWidth(),-1);
+    int h = cfg.readEntry(m_pPager->lHeight(),-1);
     if (w > 0 && h > 0)
         resize(w,h);
     else
         resize(m_pPager->sizeHint());
     //  resize(cfg->readEntry(lWidth(),200),cfg->readEntry(lHeight(),90));
 
-    int xpos=cfg->readEntry("xPos",-1);
-    int ypos=cfg->readEntry("yPos",-1);
+    int xpos=cfg.readEntry("xPos",-1);
+    int ypos=cfg.readEntry("yPos",-1);
     if (xpos > 0 && ypos > 0)
       move(xpos,ypos);
     else
@@ -248,9 +247,8 @@ KPager::KPager(KPagerMainWindow *parent, const char *name)
              SLOT(slotBackgroundChanged(int)) );
 
     QFont defFont(KGlobalSettings::generalFont().family(), 10, QFont::Bold);
-    KSharedConfig::Ptr cfg = KGlobal::config();
-    cfg->setGroup("KPager");
-    defFont = cfg->readEntry("Font", defFont);
+    KConfigGroup cfg(KGlobal::config(), "KPager");
+    defFont = cfg.readEntry("Font", defFont);
     setFont(defFont);
 
     m_prefs_action = parent->actionCollection()->addAction( KStandardAction::Preferences, this, SLOT(configureDialog()) );

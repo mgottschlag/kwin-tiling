@@ -269,8 +269,8 @@ void SplashInstaller::defaults()
 
 void SplashInstaller::load()
 {
-  KConfig cnf("ksplashrc");
-  cnf.setGroup("KSplash");
+  KConfig _cnf( "ksplashrc" );
+  KConfigGroup cnf(&_cnf, "KSplash");
   QString curTheme = cnf.readEntry("Theme","Default");
   mThemesList->setCurrentRow(findTheme(curTheme));
   emit changed( false );
@@ -279,8 +279,8 @@ void SplashInstaller::load()
 //-----------------------------------------------------------------------------
 void SplashInstaller::save()
 {
-  KConfig cnf("ksplashrc");
-  cnf.setGroup("KSplash");
+  KConfig _cnf( "ksplashrc" );
+  KConfigGroup cnf(&_cnf, "KSplash");
   int cur = mThemesList->currentRow();
   if (cur < 0)
     return;

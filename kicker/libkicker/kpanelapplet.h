@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QFrame>
 
-#include <kconfig.h>
+#include <ksharedconfig.h>
 #include "utils.h"
 
 class QMenu;

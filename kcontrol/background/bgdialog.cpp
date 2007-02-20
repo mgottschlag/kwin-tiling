@@ -27,8 +27,6 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <config.h>
-
 #include <QCheckBox>
 #include <QLabel>
 #include <QPainter>
@@ -53,6 +51,7 @@
 #include <kstringhandler.h>
 #include <kurlrequester.h>
 #include <kwin.h>
+#include <kdesktopfile.h>
 #include <kimagefilepreview.h>
 #include <knewstuff/downloaddialog.h>
 
@@ -525,11 +524,11 @@ void BGDialog::loadWallpaperFilesList() {
    QStringList files;
    for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
    {
-      KSimpleConfig fileConfig(*it);
-      fileConfig.setGroup("Wallpaper");
+      KDesktopFile fileConfig(*it);
+      KConfigGroup cg = fileConfig.group("Wallpaper");
 
-      QString imageCaption = fileConfig.readEntry("Name");
-      QString fileName = fileConfig.readEntry("File");
+      QString imageCaption = cg.readEntry("Name");
+      QString fileName = cg.readEntry("File");
 
       if (imageCaption.isEmpty())
       {
@@ -548,7 +547,7 @@ void BGDialog::loadWallpaperFilesList() {
       }
       int slash = (*it).lastIndexOf('/') + 1;
       QString directory = (*it).left(slash);
-      if ( fileConfig.readEntry("ImageType") == "pixmap" ) {
+      if ( cg.readEntry("ImageType") == "pixmap" ) {
 	      papers[lrs] = qMakePair(rs, directory + fileName);
 	      files.append(directory + fileName);
       }
@@ -1239,9 +1238,9 @@ void BGDialog::slotGetNewStuff()
    //should really be in a .rc file but could be either
    //kcmshellrc or kcontrolrc
    KSharedConfig::Ptr config = KGlobal::config();
-   config->setGroup("KNewStuff");
-   config->writeEntry( "ProvidersUrl", "http://download.kde.org/khotnewstuff/wallpaper-providers.xml" );
-   config->writeEntry( "StandardResource", "wallpaper" );
+   KConfigGroup cg = config->group("KNewStuff");
+   cg.writeEntry( "ProvidersUrl", "http://download.kde.org/khotnewstuff/wallpaper-providers.xml" );
+   cg.writeEntry( "StandardResource", "wallpaper" );
    config->sync();
 
    KNS::DownloadDialog::open("wallpapers", i18n("Get New Wallpapers"));

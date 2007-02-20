@@ -27,7 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QWidget>
 
 #include <kapplication.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <klibloader.h>
 #include <kstandarddirs.h>
 #include <kpanelmenu.h>
@@ -47,7 +47,7 @@ public:
 MenuInfo::MenuInfo(const QString& desktopFile)
 {
     d = new Private;
-    KSimpleConfig df(KStandardDirs::locate("data", QString::fromLatin1("kicker/menuext/%1").arg(desktopFile)));
+    KConfig df(KStandardDirs::locate("data", QString::fromLatin1("kicker/menuext/%1").arg(desktopFile)));
     df.setGroup("Desktop Entry");
 
     QStringList list = df.readEntry("X-KDE-AuthorizeAction", QStringList() );

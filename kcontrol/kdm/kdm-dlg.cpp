@@ -32,7 +32,7 @@
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 
 #include <QButtonGroup>
@@ -47,7 +47,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-extern KSimpleConfig *config;
+extern KConfig *config;
 
 KDMDialogWidget::KDMDialogWidget( QWidget *parent )
 	: QWidget( parent )

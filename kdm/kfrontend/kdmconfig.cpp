@@ -151,11 +151,10 @@ void init_config_qapp( void )
 {
 	CONF_GREET_INIT_QAPP
 
-	KSharedConfig::Ptr cfg = KGlobal::config();
-	cfg->setGroup( "General" );
-	cfg->writeEntry( "nopaletteChange", true );
-	cfg->writeEntry( "font", *_normalFont );
+	KConfigGroup cfg(KGlobal::config(), "General");
+	cfg.writeEntry( "nopaletteChange", true );
+	cfg.writeEntry( "font", *_normalFont );
 	if (!_GUIStyle.isEmpty())
-		cfg->writeEntry( "widgetStyle", _GUIStyle );
+		cfg.writeEntry( "widgetStyle", _GUIStyle );
 }
 

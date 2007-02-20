@@ -25,7 +25,7 @@
 #include <kfontrequester.h>
 #include <klanguagebutton.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 
 #include <QCheckBox>
@@ -35,7 +35,7 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 
-extern KSimpleConfig *config;
+extern KConfig *config;
 
 KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	: QWidget( parent )
@@ -167,7 +167,7 @@ void KDMGeneralWidget::loadLanguageList( KLanguageButton *combo )
 		int index = fpath.lastIndexOf( '/' );
 		QString nid = fpath.mid( index + 1 );
 
-		KSimpleConfig entry( *it );
+		KConfig entry( *it, KConfig::OnlyLocal);
 		entry.setGroup( QLatin1String("KCM Locale") );
 		QString name = entry.readEntry( QLatin1String("Name"), i18n("without name") );
 		combo->insertLanguage( nid, name, QLatin1String("l10n/"), QString() );
@@ -181,8 +181,8 @@ void KDMGeneralWidget::loadColorSchemes( KBackedComboBox *combo )
 		findAllResources( "data", "kdisplay/color-schemes/*.kcsrc", KStandardDirs::NoDuplicates );
 	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
-		KSimpleConfig config( *it, true );
-		config.setGroup( "Color Scheme" );
+		KConfig _config( *it, KConfig::OnlyLocal );
+		KConfigGroup config(&_config, "Color Scheme" );
 
 		QString str;
 		if (!(str = config.readEntry( "Name" )).isEmpty() ||
@@ -202,7 +202,7 @@ void KDMGeneralWidget::loadGuiStyles(KBackedComboBox *combo)
 		findAllResources( "data", "kstyle/themes/*.themerc", KStandardDirs::NoDuplicates );
 	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
-		KSimpleConfig config( *it, true );
+		KConfig config( *it, KConfig::OnlyLocal);
 
 		if (!(config.hasGroup( "KDE" ) && config.hasGroup( "Misc" )))
 			continue;
@@ -250,7 +250,7 @@ void KDMGeneralWidget::load()
 	config->setGroup( "X-*-Greeter" );
 
 	useThemeCheck->setChecked( config->readEntry( "UseTheme", false ) );
-	
+
 	// Check the GUI type
 	guicombo->setCurrentId( config->readEntry( "GUIStyle" ) );
 

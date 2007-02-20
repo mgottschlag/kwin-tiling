@@ -103,19 +103,19 @@ int main(int argc, char *argv[])
 	KService::List lst = KServiceTypeTrader::self()->query( "ScreenSaver");
 	QStringList saverFileList;
 
-	KConfig type("krandom.kssrc");
-	type.setGroup("Settings");
-	bool opengl = type.readEntry("OpenGL", false);
-	bool manipulatescreen = type.readEntry("ManipulateScreen", false);
+	KConfig type("krandom.kssrc", KConfig::NoGlobals);
+        const KConfigGroup configGroup = type.group("Settings");
+	bool opengl = configGroup.readEntry("OpenGL", false);
+	bool manipulatescreen = configGroup.readEntry("ManipulateScreen", false);
         bool fortune = !KStandardDirs::findExe("fortune").isEmpty();
         for( KService::List::const_iterator it = lst.begin();
             it != lst.end(); it++)
 	{
 		QString file = KStandardDirs::locate("services", (*it)->desktopEntryPath());
 		kDebug() << "Looking at " << file << endl;
-		KDesktopFile saver(file, true);
+		KDesktopFile saver( file );
 		kDebug() << "read X-KDE-Type" << endl;
-		QString saverType = saver.readEntry("X-KDE-Type");
+		QString saverType = saver.desktopGroup().readEntry("X-KDE-Type");
 		if (saverType.isEmpty()) // no X-KDE-Type defined so must be OK
 		{
 			saverFileList.append(file);
@@ -157,18 +157,19 @@ int main(int argc, char *argv[])
 	int indx = rnd.getLong(saverFileList.count());
 	QString filename = saverFileList.at(indx);
 
-	KDesktopFile config(filename, true);
+	KDesktopFile config( filename );
 
+        KConfigGroup cg = config.desktopGroup();
 	QString cmd;
 	if (windowId && config.hasActionGroup("InWindow"))
 	{
-		config.setActionGroup("InWindow");
+		cg = config.actionGroup("InWindow");
 	}
 	else if ((windowId == 0) && config.hasActionGroup("Root"))
 	{
-		config.setActionGroup("Root");
+		cg = config.actionGroup("Root");
 	}
-	cmd = config.readPathEntry("Exec");
+	cmd = cg.readPathEntry("Exec");
 
 	QTextStream ts(&cmd, QIODevice::ReadOnly);
 	QString word;
@@ -234,22 +235,22 @@ KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
 
 	setMinimumSize( sizeHint() );
 
-	KConfig config("krandom.kssrc");
-	config.setGroup("Settings");
-	openGL->setChecked(config.readEntry("OpenGL", true));
-	manipulateScreen->setChecked(config.readEntry("ManipulateScreen", true));
+	KConfig config("krandom.kssrc", KConfig::NoGlobals);
+        const KConfigGroup configGroup = config.group("Settings");
+	openGL->setChecked(configGroup.readEntry("OpenGL", true));
+	manipulateScreen->setChecked(configGroup.readEntry("ManipulateScreen", true));
 
   connect( this, SIGNAL( okClicked() ), SLOT( slotOk() ) );
 }
 
 void KRandomSetup::slotOk()
 {
- 	KConfig config("krandom.kssrc");
-  config.setGroup("Settings");
- 	config.writeEntry("OpenGL", openGL->isChecked());
-  config.writeEntry("ManipulateScreen", manipulateScreen->isChecked());
+    KConfig config("krandom.kssrc");
+    KConfigGroup configGroup = config.group("Settings");
+    configGroup.writeEntry("OpenGL", openGL->isChecked());
+    configGroup.writeEntry("ManipulateScreen", manipulateScreen->isChecked());
 
- 	accept();
+    accept();
 }
 
 #include "random.moc"

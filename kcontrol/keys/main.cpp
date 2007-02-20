@@ -26,7 +26,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kcomponentdata.h>
 #include <kaction.h>
 #include <kactioncollection.h>

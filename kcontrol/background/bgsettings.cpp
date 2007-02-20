@@ -25,7 +25,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
-#include <ksimpleconfig.h>
+#include <kdesktopfile.h>
 #include <kstandarddirs.h>
 #include <krandomsequence.h>
 #include <konq_defaults.h>
@@ -104,11 +104,9 @@ void KBackgroundPattern::init(bool force_rw)
     m_File = m_pDirs->findResource("dtop_pattern", m_Name + ".desktop");
     if (force_rw || m_File.isEmpty()) {
         m_File = m_pDirs->saveLocation("dtop_pattern") + m_Name + ".desktop";
-        m_pConfig = new KSimpleConfig(m_File);
+        m_pConfig = new KDesktopFile(m_File);
     } else
-        m_pConfig = new KSimpleConfig(m_File);
-
-    m_pConfig->setGroup("KDE Desktop Pattern");
+        m_pConfig = new KDesktopFile(m_File);
 
     QFileInfo fi(m_File);
     m_bReadOnly = !fi.isWritable();
@@ -138,8 +136,10 @@ void KBackgroundPattern::readSettings()
     dirty = false;
     hashdirty = true;
 
-    m_Pattern = m_pConfig->readPathEntry("File");
-    m_Comment = m_pConfig->readEntry("Comment");
+    const KConfigGroup group = m_pConfig->group("KDE Desktop Pattern");
+
+    m_Pattern = group.readPathEntry("File");
+    m_Comment = group.readEntry("Comment");
     if (m_Comment.isEmpty())
        m_Comment = m_File.mid(m_File.lastIndexOf('/')+1);
 }
@@ -155,8 +155,9 @@ void KBackgroundPattern::writeSettings()
     if ( !m_pConfig )
         return; // better safe than sorry
 
-    m_pConfig->writePathEntry("File", m_Pattern);
-    m_pConfig->writeEntry("Comment", m_Comment);
+    KConfigGroup group = m_pConfig->group("KDE Desktop Pattern");
+    group.writePathEntry("File", m_Pattern);
+    group.writeEntry("Comment", m_Comment);
     m_pConfig->sync();
     dirty = false;
 }
@@ -271,13 +272,12 @@ void KBackgroundProgram::init(bool force_rw)
     m_File = m_pDirs->findResource("dtop_program", m_Name + ".desktop");
     if (force_rw || m_File.isEmpty()) {
         m_File = m_pDirs->saveLocation("dtop_program") + m_Name + ".desktop";
-        m_pConfig = new KSimpleConfig(m_File);
+        m_pConfig = new KDesktopFile(m_File);
         m_bReadOnly = false;
     } else {
-        m_pConfig = new KSimpleConfig(m_File);
+        m_pConfig = new KDesktopFile(m_File);
         m_bReadOnly = (m_File != KStandardDirs::locateLocal("dtop_program", m_Name + ".desktop"));
     }
-    m_pConfig->setGroup("KDE Desktop Program");
 }
 
 
@@ -339,11 +339,12 @@ void KBackgroundProgram::readSettings()
     dirty = false;
     hashdirty = true;
 
-    m_Comment = m_pConfig->readEntry("Comment");
-    m_Executable = m_pConfig->readPathEntry("Executable");
-    m_Command = m_pConfig->readPathEntry("Command");
-    m_PreviewCommand = m_pConfig->readPathEntry("PreviewCommand", m_Command);
-    m_Refresh = m_pConfig->readEntry("Refresh", 300);
+    const KConfigGroup group = m_pConfig->group("KDE Desktop Program");
+    m_Comment = group.readEntry("Comment");
+    m_Executable = group.readPathEntry("Executable");
+    m_Command = group.readPathEntry("Command");
+    m_PreviewCommand = group.readPathEntry("PreviewCommand", m_Command);
+    m_Refresh = group.readEntry("Refresh", 300);
 }
 
 
@@ -357,11 +358,12 @@ void KBackgroundProgram::writeSettings()
     if ( !m_pConfig )
         return; // better safe than sorry
 
-    m_pConfig->writeEntry("Comment", m_Comment);
-    m_pConfig->writePathEntry("Executable", m_Executable);
-    m_pConfig->writePathEntry("Command", m_Command);
-    m_pConfig->writeEntry("PreviewCommand", m_PreviewCommand);
-    m_pConfig->writeEntry("Refresh", m_Refresh);
+    KConfigGroup group = m_pConfig->group("KDE Desktop Program");
+    group.writeEntry("Comment", m_Comment);
+    group.writePathEntry("Executable", m_Executable);
+    group.writePathEntry("Command", m_Command);
+    group.writeEntry("PreviewCommand", m_PreviewCommand);
+    group.writeEntry("Refresh", m_Refresh);
     m_pConfig->sync();
     dirty = false;
 }
@@ -520,7 +522,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgrou
         else
             configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-        m_pConfig = KSharedConfig::openConfig(configname, false, false);
+        m_pConfig = KSharedConfig::openConfig(configname, KConfig::NoGlobals);
     } else {
         m_pConfig = config;
     }
@@ -751,22 +753,22 @@ void KBackgroundSettings::readSettings(bool reparse)
     if (reparse)
         m_pConfig->reparseConfiguration();
 
-    m_pConfig->setGroup(configGroupName());
+    KConfigGroup cg = m_pConfig->group(configGroupName());
 
     // Background mode (Flat, div. Gradients, Pattern or Program)
-    m_ColorA = m_pConfig->readEntry("Color1", defColorA);
-    m_ColorB = m_pConfig->readEntry("Color2", defColorB);
+    m_ColorA = cg.readEntry("Color1", defColorA);
+    m_ColorB = cg.readEntry("Color2", defColorB);
 
-    QString s = m_pConfig->readPathEntry("Pattern");
+    QString s = cg.readPathEntry("Pattern");
     if (!s.isEmpty())
         KBackgroundPattern::load(s);
 
-    s = m_pConfig->readPathEntry("Program");
+    s = cg.readPathEntry("Program");
     if (!s.isEmpty())
         KBackgroundProgram::load(s);
 
     m_BackgroundMode = defBackgroundMode;
-    s = m_pConfig->readEntry("BackgroundMode", "invalid");
+    s = cg.readEntry("BackgroundMode", "invalid");
 
     if (m_BMMap.contains(s)) {
         int mode = m_BMMap[s];
@@ -779,28 +781,28 @@ void KBackgroundSettings::readSettings(bool reparse)
     }
 
     m_BlendMode = defBlendMode;
-    s = m_pConfig->readEntry("BlendMode", "invalid");
+    s = cg.readEntry("BlendMode", "invalid");
     if (m_BlMMap.contains(s)) {
       m_BlendMode = m_BlMMap[s];
     }
 
     m_BlendBalance = defBlendBalance;
-    int value = m_pConfig->readEntry( "BlendBalance", defBlendBalance);
+    int value = cg.readEntry( "BlendBalance", defBlendBalance);
     if (value > -201 && value < 201)
       m_BlendBalance = value;
 
-    m_ReverseBlending = m_pConfig->readEntry( "ReverseBlending", defReverseBlending );
+    m_ReverseBlending = cg.readEntry( "ReverseBlending", defReverseBlending );
 
     // Multiple wallpaper config
-    m_WallpaperList = m_pConfig->readPathListEntry("WallpaperList");
+    m_WallpaperList = cg.readPathListEntry("WallpaperList");
 
-    m_Interval = m_pConfig->readEntry("ChangeInterval", 60);
-    m_LastChange = m_pConfig->readEntry("LastChange", 0);
-    m_CurrentWallpaper = m_pConfig->readEntry("CurrentWallpaper", 0);
-    m_CurrentWallpaperName = m_pConfig->readEntry("CurrentWallpaperName");
+    m_Interval = cg.readEntry("ChangeInterval", 60);
+    m_LastChange = cg.readEntry("LastChange", 0);
+    m_CurrentWallpaper = cg.readEntry("CurrentWallpaper", 0);
+    m_CurrentWallpaperName = cg.readEntry("CurrentWallpaperName");
 
     m_MultiMode = defMultiMode;
-    s = m_pConfig->readEntry("MultiWallpaperMode");
+    s = cg.readEntry("MultiWallpaperMode");
     if (m_MMMap.contains(s)) {
 	int mode = m_MMMap[s];
 	m_MultiMode = mode;
@@ -814,8 +816,8 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
-    m_Wallpaper = m_pConfig->readPathEntry("Wallpaper");
-    s = m_pConfig->readEntry("WallpaperMode", "invalid");
+    m_Wallpaper = cg.readPathEntry("Wallpaper");
+    s = cg.readEntry("WallpaperMode", "invalid");
     if (m_WMMap.contains(s)) {
         int mode = m_WMMap[s];
         // consistency check.
@@ -823,9 +825,9 @@ void KBackgroundSettings::readSettings(bool reparse)
             m_WallpaperMode = mode;
     }
 
-    m_MinOptimizationDepth = m_pConfig->readEntry( "MinOptimizationDepth",
+    m_MinOptimizationDepth = cg.readEntry( "MinOptimizationDepth",
         _defMinOptimizationDepth );
-    m_bShm = m_pConfig->readEntry( "UseSHM", _defShm );
+    m_bShm = cg.readEntry( "UseSHM", _defShm );
 
     dirty = false; hashdirty = true;
 }
@@ -839,26 +841,26 @@ void KBackgroundSettings::writeSettings()
     if (!dirty)
         return;
 
-    m_pConfig->setGroup(configGroupName());
-    m_pConfig->writeEntry("Color1", m_ColorA);
-    m_pConfig->writeEntry("Color2", m_ColorB);
-    m_pConfig->writePathEntry("Pattern", KBackgroundPattern::name());
-    m_pConfig->writeEntry("Program", KBackgroundProgram::name());
-    m_pConfig->writeEntry("BackgroundMode", QString(m_BMRevMap[m_BackgroundMode]));
-    m_pConfig->writePathEntry("Wallpaper", m_Wallpaper);
-    m_pConfig->writeEntry("WallpaperMode", QString(m_WMRevMap[m_WallpaperMode]));
-    m_pConfig->writeEntry("MultiWallpaperMode", QString(m_MMRevMap[m_MultiMode]));
-    m_pConfig->writeEntry("BlendMode", QString(m_BlMRevMap[m_BlendMode]));
-    m_pConfig->writeEntry("BlendBalance", m_BlendBalance);
-    m_pConfig->writeEntry("ReverseBlending", m_ReverseBlending);
-    m_pConfig->writeEntry("MinOptimizationDepth", m_MinOptimizationDepth);
-    m_pConfig->writeEntry("UseSHM", m_bShm);
+    KConfigGroup conf(m_pConfig, configGroupName());
+    conf.writeEntry("Color1", m_ColorA);
+    conf.writeEntry("Color2", m_ColorB);
+    conf.writePathEntry("Pattern", KBackgroundPattern::name());
+    conf.writeEntry("Program", KBackgroundProgram::name());
+    conf.writeEntry("BackgroundMode", QString(m_BMRevMap[m_BackgroundMode]));
+    conf.writePathEntry("Wallpaper", m_Wallpaper);
+    conf.writeEntry("WallpaperMode", QString(m_WMRevMap[m_WallpaperMode]));
+    conf.writeEntry("MultiWallpaperMode", QString(m_MMRevMap[m_MultiMode]));
+    conf.writeEntry("BlendMode", QString(m_BlMRevMap[m_BlendMode]));
+    conf.writeEntry("BlendBalance", m_BlendBalance);
+    conf.writeEntry("ReverseBlending", m_ReverseBlending);
+    conf.writeEntry("MinOptimizationDepth", m_MinOptimizationDepth);
+    conf.writeEntry("UseSHM", m_bShm);
 
-    m_pConfig->writePathEntry("WallpaperList", m_WallpaperList);
-    m_pConfig->writeEntry("ChangeInterval", m_Interval);
-    m_pConfig->writeEntry("LastChange", m_LastChange);
-    m_pConfig->deleteEntry("CurrentWallpaper"); // obsolete, remember name
-    m_pConfig->writeEntry("CurrentWallpaperName", m_CurrentWallpaperName);
+    conf.writePathEntry("WallpaperList", m_WallpaperList);
+    conf.writeEntry("ChangeInterval", m_Interval);
+    conf.writeEntry("LastChange", m_LastChange);
+    conf.deleteEntry("CurrentWallpaper"); // obsolete, remember name
+    conf.writeEntry("CurrentWallpaperName", m_CurrentWallpaperName);
 
     m_pConfig->sync();
 
@@ -972,10 +974,10 @@ void KBackgroundSettings::changeWallpaper(bool init)
 
     m_CurrentWallpaperName = m_WallpaperFiles[ m_CurrentWallpaper ];
     m_LastChange = (int) time(0L);
-    m_pConfig->setGroup(configGroupName());
-    m_pConfig->deleteEntry("CurrentWallpaper"); // obsolete, remember name
-    m_pConfig->writeEntry("CurrentWallpaperName", m_CurrentWallpaperName);
-    m_pConfig->writeEntry("LastChange", m_LastChange);
+    KConfigGroup conf(m_pConfig, configGroupName());
+    conf.deleteEntry("CurrentWallpaper"); // obsolete, remember name
+    conf.writeEntry("CurrentWallpaperName", m_CurrentWallpaperName);
+    conf.writeEntry("LastChange", m_LastChange);
     m_pConfig->sync();
 
     hashdirty = true;
@@ -1220,26 +1222,27 @@ void KGlobalBackgroundSettings::setTextWidth(int width)
 
 void KGlobalBackgroundSettings::readSettings()
 {
-    m_pConfig->setGroup("Background Common");
-    m_bCommonScreen = m_pConfig->readEntry("CommonScreen", _defCommonScreen);
-    m_bCommonDesk = m_pConfig->readEntry("CommonDesktop", _defCommonDesk);
-    m_bDock = m_pConfig->readEntry("Dock", _defDock);
-    m_bExport = m_pConfig->readEntry("Export", _defExport);
-    m_bLimitCache = m_pConfig->readEntry("LimitCache", _defLimitCache);
-    m_CacheSize = m_pConfig->readEntry("CacheSize", _defCacheSize);
+    const KConfigGroup common = m_pConfig->group( "Background Common");
+
+    m_bCommonScreen = common.readEntry("CommonScreen", _defCommonScreen);
+    m_bCommonDesk = common.readEntry("CommonDesktop", _defCommonDesk);
+    m_bDock = common.readEntry("Dock", _defDock);
+    m_bExport = common.readEntry("Export", _defExport);
+    m_bLimitCache = common.readEntry("LimitCache", _defLimitCache);
+    m_CacheSize = common.readEntry("CacheSize", _defCacheSize);
 
     NETRootInfo info( QX11Info::display(), NET::DesktopNames | NET::NumberOfDesktops );
     m_bDrawBackgroundPerScreen.resize(info.numberOfDesktops());
     for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
-        m_bDrawBackgroundPerScreen[i] = m_pConfig->readEntry( QString("DrawBackgroundPerScreen_%1").arg(i), _defDrawBackgroundPerScreen );
+        m_bDrawBackgroundPerScreen[i] = common.readEntry( QString("DrawBackgroundPerScreen_%1").arg(i), _defDrawBackgroundPerScreen );
 
     m_TextColor = KGlobalSettings::textColor();
-    m_pConfig->setGroup("FMSettings");
-    m_TextColor = m_pConfig->readEntry("NormalTextColor", m_TextColor);
-    m_TextBackgroundColor = m_pConfig->readEntry("ItemTextBackground");
-    m_shadowEnabled = m_pConfig->readEntry("ShadowEnabled", true);
-    m_textLines = m_pConfig->readEntry("TextHeight", DEFAULT_TEXTHEIGHT);
-    m_textWidth = m_pConfig->readEntry("TextWidth", DEFAULT_TEXTWIDTH);
+    const KConfigGroup fmSettings = m_pConfig->group("FMSettings");
+    m_TextColor = fmSettings.readEntry("NormalTextColor", m_TextColor);
+    m_TextBackgroundColor = fmSettings.readEntry("ItemTextBackground");
+    m_shadowEnabled = fmSettings.readEntry("ShadowEnabled", true);
+    m_textLines = fmSettings.readEntry("TextHeight", DEFAULT_TEXTHEIGHT);
+    m_textWidth = fmSettings.readEntry("TextWidth", DEFAULT_TEXTWIDTH);
 
     m_Names.clear();
     for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
@@ -1253,23 +1256,23 @@ void KGlobalBackgroundSettings::writeSettings()
     if (!dirty)
         return;
 
-    m_pConfig->setGroup("Background Common");
-    m_pConfig->writeEntry("CommonScreen", m_bCommonScreen);
-    m_pConfig->writeEntry("CommonDesktop", m_bCommonDesk);
-    m_pConfig->writeEntry("Dock", m_bDock);
-    m_pConfig->writeEntry("Export", m_bExport);
-    m_pConfig->writeEntry("LimitCache", m_bLimitCache);
-    m_pConfig->writeEntry("CacheSize", m_CacheSize);
+    KConfigGroup common = m_pConfig->group( "Background Common");
+    common.writeEntry("CommonScreen", m_bCommonScreen);
+    common.writeEntry("CommonDesktop", m_bCommonDesk);
+    common.writeEntry("Dock", m_bDock);
+    common.writeEntry("Export", m_bExport);
+    common.writeEntry("LimitCache", m_bLimitCache);
+    common.writeEntry("CacheSize", m_CacheSize);
 
     for ( int i = 0 ; i < m_bDrawBackgroundPerScreen.size() ; ++i )
-        m_pConfig->writeEntry(QString("DrawBackgroundPerScreen_%1").arg(i), m_bDrawBackgroundPerScreen[i] );
+        common.writeEntry(QString("DrawBackgroundPerScreen_%1").arg(i), m_bDrawBackgroundPerScreen[i] );
 
-    m_pConfig->setGroup("FMSettings");
-    m_pConfig->writeEntry("NormalTextColor", m_TextColor);
-    m_pConfig->writeEntry("ItemTextBackground", m_TextBackgroundColor);
-    m_pConfig->writeEntry("ShadowEnabled", m_shadowEnabled);
-    m_pConfig->writeEntry("TextHeight", m_textLines);
-    m_pConfig->writeEntry("TextWidth", m_textWidth);
+    KConfigGroup fmSettings = m_pConfig->group("FMSettings");
+    fmSettings.writeEntry("NormalTextColor", m_TextColor);
+    fmSettings.writeEntry("ItemTextBackground", m_TextBackgroundColor);
+    fmSettings.writeEntry("ShadowEnabled", m_shadowEnabled);
+    fmSettings.writeEntry("TextHeight", m_textLines);
+    fmSettings.writeEntry("TextWidth", m_textWidth);
 
     m_pConfig->sync();
     dirty = false;

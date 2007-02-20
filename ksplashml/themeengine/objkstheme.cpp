@@ -32,10 +32,9 @@ ObjKsTheme::ObjKsTheme( const QString& theme )
   :mActiveTheme (theme), mThemeDir("/"), mThemeConfig (0L), mThemePrefix( "Themes/" ), d(0)
 {
   // Get Xinerama config.
-  KSharedConfig::Ptr config = KGlobal::config();
-  config->setGroup( "Xinerama" );
+  KConfigGroup config(KGlobal::config(), "Xinerama");
   QDesktopWidget *desktop = kapp->desktop();
-  mXineramaScreen = config->readEntry("KSplashScreen", desktop->primaryScreen());
+  mXineramaScreen = config.readEntry("KSplashScreen", desktop->primaryScreen());
 
   // For Xinerama, let's put the mouse on the first head.  Otherwise it could appear anywhere!
   if (desktop->isVirtualDesktop() && mXineramaScreen != -2)

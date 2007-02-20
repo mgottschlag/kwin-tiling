@@ -24,7 +24,7 @@
 #include <kdialog.h>
 #include <klineedit.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kurlrequester.h>
 
 #include <QGroupBox>
@@ -32,7 +32,7 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 
-extern KSimpleConfig *config;
+extern KConfig *config;
 
 KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	: QWidget( parent )

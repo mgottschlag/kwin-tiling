@@ -40,7 +40,7 @@
 #include <klocale.h>
 #include <kcombobox.h>
 #include <kmessagebox.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kaction.h>
 #include <kactioncollection.h>
@@ -265,8 +265,8 @@ void ShortcutsModule::readSchemeNames()
 		//if( r.search( *it ) != -1 )
 		//   continue;
 
-		KSimpleConfig config( *it, true );
-		config.setGroup( "Settings" );
+		KConfig _config( *it, KConfig::OnlyLocal );
+		KConfigGroup config(&_config, "Settings" );
 		QString str = config.readEntry( "Name" );
 
 		m_pcbSchemes->addItem( str );
@@ -304,8 +304,8 @@ void ShortcutsModule::slotSelectScheme( int )
 	if( sFilename == "cur" ) {
 		KGlobalAccel::self()->readSettings();
 	} else {
-		KSimpleConfig config( sFilename );
-		config.setGroup( "Settings" );
+		KConfig _config( sFilename, KConfig::OnlyLocal );
+		KConfigGroup config(&_config, "Settings" );
 		//m_sBaseSchemeFile = config.readEntry( "Name" );
 
 		// If the user's keyboard layout doesn't support the Win key,
@@ -405,7 +405,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 		m_pcbSchemes->setCurrentIndex( iScheme );
 	}
 
-	KSimpleConfig *config = new KSimpleConfig( sFile );
+	KConfig *config = new KConfig( sFile, KConfig::OnlyLocal);
 
 	config->setGroup( "Settings" );
 	config->writeEntry( "Name", sName );
@@ -420,7 +420,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 void ShortcutsModule::saveScheme()
 {
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentIndex() ];
-	KSimpleConfig config( sFilename );
+	KConfig config( sFilename, KConfig::OnlyLocal);
 
 	m_pkcGeneral->commitChanges();
 	m_pkcSequence->commitChanges();

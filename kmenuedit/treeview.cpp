@@ -51,7 +51,7 @@
 #include <kmessagebox.h>
 #include <kservice.h>
 #include <kservicegroup.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <k3multipledrag.h>
 #include <k3urldrag.h>

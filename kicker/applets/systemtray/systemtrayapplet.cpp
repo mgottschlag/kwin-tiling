@@ -83,7 +83,7 @@ SystemTrayApplet::SystemTrayApplet(const QString& configFile, Plasma::Type type,
     // disabling of frame effect on mouse hover
 #ifdef __GNUC__
 #warning "kde4: dcop port it"
-#endif    
+#endif
     //kapp->dcopClient()->setNotifications(true);
     //connectDCOPSignal("kicker", "kicker", "configurationChanged()", "loadSettings()", false);
 
@@ -428,18 +428,17 @@ void SystemTrayApplet::loadSettings()
     setFrameStyle(NoFrame);
     m_showFrame = false;
 
-    KConfig *conf = config();
-    conf->setGroup("General");
+    KConfigGroup conf(config(), "General");
 
-    if (conf->readEntry("ShowPanelFrame", false))
+    if (conf.readEntry("ShowPanelFrame", false))
     {
         setFrameStyle(Panel | Sunken);
     }
 
-    conf->setGroup("HiddenTrayIcons");
-    m_hiddenIconList = conf->readEntry("Hidden", QStringList() );
-    conf->setGroup("SortedTrayIcons");
-    m_sortOrderIconList = conf->readListEntry("SortOrder", QStringList());
+    conf.changeGroup("HiddenTrayIcons");
+    m_hiddenIconList = conf.readEntry("Hidden", QStringList() );
+    conf.changeGroup("SortedTrayIcons");
+    m_sortOrderIconList = conf.readEntry("SortOrder", QStringList());
 }
 
 void SystemTrayApplet::systemTrayWindowAdded( WId w )
@@ -551,7 +550,7 @@ void SystemTrayApplet::updateVisibleWins()
             (*emb)->hide();
         }
     }
-    
+
     QMap< TrayEmbed*, QString > names; // cache names and classes
     QMap< TrayEmbed*, QString > classes;
     for( TrayEmbedList::const_iterator it = m_shownWins.begin();

@@ -61,14 +61,13 @@ SMServerConfig::SMServerConfig( QWidget *parent, const QStringList & )
 
 void SMServerConfig::load()
 {
-  KConfig *c = new KConfig("ksmserverrc", false, false);
-  c->setGroup("General");
-  dialog->confirmLogoutCheck->setChecked(c->readEntry("confirmLogout", true));
-  bool en = c->readEntry("offerShutdown", true);
+  KConfigGroup c(KSharedConfig::openConfig("ksmserverrc", KConfig::NoGlobals), "General");
+  dialog->confirmLogoutCheck->setChecked(c.readEntry("confirmLogout", true));
+  bool en = c.readEntry("offerShutdown", true);
   dialog->offerShutdownCheck->setChecked(en);
   dialog->sdGroup->setEnabled(en);
 
-  QString s = c->readEntry( "loginMode" );
+  QString s = c.readEntry( "loginMode" );
   if ( s == "default" )
       dialog->emptySessionRadio->setChecked(true);
   else if ( s == "restoreSavedSession" )
@@ -76,7 +75,7 @@ void SMServerConfig::load()
   else // "restorePreviousLogout"
       dialog->previousSessionRadio->setChecked(true);
 
-  switch (c->readEntry("shutdownType", int(KWorkSpace::ShutdownTypeNone))) {
+  switch (c.readEntry("shutdownType", int(KWorkSpace::ShutdownTypeNone))) {
   case int(KWorkSpace::ShutdownTypeHalt):
     dialog->haltRadio->setChecked(true);
     break;
@@ -87,16 +86,14 @@ void SMServerConfig::load()
     dialog->logoutRadio->setChecked(true);
     break;
   }
-  dialog->excludeLineedit->setText( c->readEntry("excludeApps"));
-
-  delete c;
+  dialog->excludeLineedit->setText( c.readEntry("excludeApps"));
 
   emit changed(false);
 }
 
 void SMServerConfig::save()
 {
-  KConfig *c = new KConfig("ksmserverrc", false, false);
+  KConfig *c = new KConfig("ksmserverrc", KConfig::NoGlobals);
   c->setGroup("General");
   c->writeEntry( "confirmLogout", dialog->confirmLogoutCheck->isChecked());
   c->writeEntry( "offerShutdown", dialog->offerShutdownCheck->isChecked());
