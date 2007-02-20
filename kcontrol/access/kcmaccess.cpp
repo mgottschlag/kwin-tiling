@@ -59,10 +59,10 @@ ExtendedIntNumInput::ExtendedIntNumInput
 ExtendedIntNumInput::~ExtendedIntNumInput () {
 }
 
-void ExtendedIntNumInput::setRange(int min, int max, int step, bool slider) {
-	KIntNumInput::setRange (min,max,step, slider);
+void ExtendedIntNumInput::setRange(int min, int max, int step, bool withSplider) {
+	KIntNumInput::setRange (min, max, step, withSplider);
 
-	if (slider) {
+	if (withSplider) {
 		disconnect(slider(), SIGNAL(valueChanged(int)),
 					  spinBox(), SLOT(setValue(int)));
 		disconnect(spinBox(), SIGNAL(valueChanged(int)),
