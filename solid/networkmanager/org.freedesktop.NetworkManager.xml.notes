@@ -1,0 +1,93 @@
+NM_DBUS_SERVICE "org.freedesktop.NetworkManager"
+NM_DBUS_PATH "/org/freedesktop/NetworkManager"
+NM_DBUS_INTERFACE "org.freedesktop.NetworkManager"
+NM_DBUS_PATH_DEVICES "/org/freedesktop/NetworkManager/Devices"
+NM_DBUS_INTERFACE_DEVICES "org.freedesktop.NetworkManager.Devices"
+NM_DBUS_PATH_DHCP "/org/freedesktop/NetworkManager/DhcpOptions"
+NM_DBUS_INTERFACE_DHCP "org.freedesktop.NetworkManager.DhcpOptions"
+
+NMI_DBUS_SERVICE "org.freedesktop.NetworkManagerInfo"
+NMI_DBUS_PATH "/org/freedesktop/NetworkManagerInfo"
+NMI_DBUS_INTERFACE "org.freedesktop.NetworkManagerInfo"
+
+### DBus housekeeping stuff ###
+msg, DBUS_INTERFACE_LOCAL, "Disconnected"
+DBUS_INTERFACE_DBUS, "NameOwnerChanged" s service s oldowner s newowner // dbus restarted
+DBUS_INTERFACE_DBUS, "NameAcquired" // probably tells us that we got the NetworkManagerInfo name for ourselves, see NetworkManagerInfoDBus::requestName
+
+### General ###
+## getters ##
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "state" returns uint32 state
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE_DEVICES, "getDevices" returns returns NM_DBUS_NO_DEVICES_ERROR or aop objpath i num_devices
+NM_DBUS_SERVICE, net_path, NM_DBUS_INTERFACE_DEVICES, "getProperties" return Network struct, see DeviceStoreDBus::updateNetworkCallback
+NM_DBUS_SERVICE, obj_path, NM_DBUS_INTERFACE_DEVICES, "getProperties" returns Device struct, see DeviceStoreDBus::updateDeviceCallback
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "getWirelessEnabled" returns bool
+## setters ##
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath // used for wired interfaces
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath s essid [encoding]
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setWirelessEnabled" boolean returns ?
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "sleep"
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "wake"
+## signals ##
+NM_DBUS_INTERFACE, NM_DBUS_SIGNAL_STATE_CHANGE uint32 state
+DeviceStrengthChanged (o obj_path, int32 strength)
+DeviceCarrierOn [device]
+DeviceCarrierOff [device]
+DeviceAdded [device]
+DeviceNoLongerActive [device]
+DeviceNowActive [device]
+DeviceActivating [device]
+NM_DBUS_INTERFACE, "DeviceRemoved" op obj_path
+NM_DBUS_INTERFACE, "WirelessNetworkAppeared" op obj_path op net_path
+NM_DBUS_INTERFACE, "WirelessNetworkDisappeared"  op obj_path op net_path
+NM_DBUS_INTERFACE, "WirelessNetworkStrengthChanged" op obj_path op net_path int32 strength
+NM_DBUS_INTERFACE, "DeviceActivationStage" op obj_path uint32 stage
+// after DeviceActivationFailed, need to update device and possibly network to get the right activation stage.
+NM_DBUS_INTERFACE, "DeviceActivationFailed" op obj_path op net_path
+OR
+NM_DBUS_INTERFACE, "DeviceActivationFailed" op obj_path // wired network?
+
+
+### Dialup ###
+## getters ##
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE_DEVICES, "getDialup" returns NM_DBUS_NO_DIALUP_ERROR or as dialups i num_dialups
+## setters ##
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "activateDialup s dialupname
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "deactivateDialup s dialupname
+
+### VPN ###
+## getters ##
+NM_DBUS_SERVICE, NM_DBUS_PATH_VPN, NM_DBUS_INTERFACE_VPN, "getVPNConnectionProperties" s name returns vpn struct, [s name, s user, s service_name, uint32 stage]
+## setters ##
+NM_DBUS_SERVICE, NM_DBUS_PATH_VPN, NM_DBUS_INTERFACE_VPN, "activateVPNConnection" s name, as passwords
+NM_DBUS_SERVICE, NM_DBUS_PATH_VPN, NM_DBUS_INTERFACE_VPN, "deactivateVPNConnection"
+## signals ##
+NM_DBUS_INTERFACE_VPN, "VPNConnectionAdded" s name
+NM_DBUS_INTERFACE_VPN, "VPNConnectionUpdate" s name
+NM_DBUS_INTERFACE_VPN, "VPNConnectionStateChange" s name uint32 stage
+NM_DBUS_INTERFACE_VPN, NM_DBUS_VPN_SIGNAL_LOGIN_FAILED s name s errormsg
+NM_DBUS_INTERFACE_VPN, NM_DBUS_VPN_SIGNAL_LAUNCH_FAILED s name s errormsg
+NM_DBUS_INTERFACE_VPN, NM_DBUS_VPN_SIGNAL_CONNECT_FAILED s name s errormsg
+NM_DBUS_INTERFACE_VPN, NM_DBUS_VPN_SIGNAL_VPN_CONFIG_BAD s name s errormsg
+NM_DBUS_INTERFACE_VPN, NM_DBUS_VPN_SIGNAL_IP_CONFIG_BAD s name s errormsg
+
+### NetworkManagerInfo ###
+signals:
+NMI_DBUS_PATH, NMI_DBUS_INTERFACE, "VPNConnectionUpdate"
+NMI_DBUS_PATH, NMI_DBUS_INTERFACE, "UserInterfaceActivated" // we emit this signal and NM does what?
+
+// probably this sets up the NMI object
+·   if (dbus_connection_register_object_path (_dbus_connection, NMI_DBUS_PATH, &vtable, _ctx)) {
+
+slots on NMInfo object
+getKeyForNetwork op dev_path op net_path s essid i attempt b new_key, returns[encoding] or .GetKeyError
+cancelGetKeyForNetwork
+getNetworks void, returns as essids
+getNetworkProperties s essid, returns s essid, int32 timestamp b trusted, as hwaddrs, [encryption]
+R .NoNetworks
+updateNetworkInfo s essid b automatic s bssid int32 we_cipher // what's this method do again? no reply.
+getVPNConnections void, returns as name or NM_DBUS_NO_VPN_CONNECTIONS
+getVPNConnectionProperties s name returns s name s service s user OR NM_DBUS_INVALID_VPN_CONNECTION
+getVPNConnectionVPNData s name, returns as data OR NM_DBUS_INVALID_VPN_CONNECTION
+getVPNConnectionRoutes s name, returns as routes OR NM_DBUS_INVALID_VPN_CONNECTION
+
