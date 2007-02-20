@@ -238,6 +238,7 @@ void Minicli::loadConfig()
 
   m_middleFilters = m_finalFilters;
   m_middleFilters.removeAll("localdomainurifilter");
+  m_middleFilters.removeAll("fixhosturifilter");
 
   // Provide username completions. Use saner and configurable maximum values.
   int maxEntries = KDesktopSettings::maxUsernameCompletions();
