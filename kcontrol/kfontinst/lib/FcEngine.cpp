@@ -182,8 +182,8 @@ static bool drawChar32Centre(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCo
 
         XftTextExtents32(QX11Info::display(), xftFont, &ch, 1, &extents);
 
-        int rx(((w-extents.width)/2)-extents.x),
-            ry((h-((h-extents.y)/2)));
+        int rx(((w-extents.width)/2)+extents.x),
+            ry(((h-extents.height)/2)+(extents.y));
 
         XftDrawString32(xftDraw, xftCol, xftFont, rx, ry, &ch, 1);
         return true;
@@ -193,7 +193,7 @@ static bool drawChar32Centre(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCo
 }
 
 static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, quint32 ch,
-                       int &x, int &y, int w, int h, int fSize, int offset, QRect &r)
+                       int &x, int &y, int w, int h, int fontHeight, int offset, QRect &r)
 {
     static const int constBorder=2;
 
@@ -204,10 +204,15 @@ static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, qui
 
         XftTextExtents32(QX11Info::display(), xftFont, &ch, 1, &extents);
 
+        if(extents.x>0)
+            x+=extents.x;
+
         if(x+extents.width+constBorder>w)
         {
             x=offset;
-            y+=fSize+constBorder;
+            if(extents.x>0)
+                x+=extents.x;
+            y+=fontHeight+constBorder;
         }
 
         if(y+offset<h)
@@ -215,7 +220,6 @@ static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, qui
             r=QRect(x-extents.x, y-extents.y, extents.width+constBorder, extents.height);
 
             XftDrawString32(xftDraw, xftCol, xftFont, x, y, &ch, 1);
-            //x+=extents.width+constBorder;
             x+=extents.xOff+constBorder;
             return true;
         }
@@ -243,7 +247,7 @@ static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, con
 }
 
 static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_UInt i,
-                      int &x, int &y, int &w, int &h, int fSize, int offset, bool oneLine)
+                      int &x, int &y, int &w, int &h, int fontHeight, int offset, bool oneLine)
 {
     XGlyphInfo extents;
 
@@ -255,7 +259,7 @@ static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_U
             return false;
 
         x=offset;
-        y+=fSize+2;
+        y+=fontHeight+2;
     }
 
     if(y+offset<h)
@@ -268,7 +272,7 @@ static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_U
 }
 
 static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol,
-                          int size, int &x, int &y, int &w, int &h, int offset, bool oneLine=false)
+                          int fontHeight, int &x, int &y, int &w, int &h, int offset, bool oneLine=false)
 {
     bool rv=false;
     if(xftFont)
@@ -277,15 +281,15 @@ static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol,
 
         if(face)
         {
-            int space=size/10;
+            int space=fontHeight/10;
 
             if(!space)
                 space=1;
 
             rv=true;
-            y+=size;
+            y+=fontHeight;
             for(int i=1; i<face->num_glyphs && y<h; ++i)
-                if(!drawGlyph(xftDraw, xftFont, xftCol, i, x, y, w, h, size, offset, oneLine))
+                if(!drawGlyph(xftDraw, xftFont, xftCol, i, x, y, w, h, fontHeight, offset, oneLine))
                     break;
 
             if(oneLine)
@@ -642,11 +646,11 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                     xftFont=getFont(fSize);
 
-                    y=fSize;
                     if(xftFont)
                     {
                         QString valid(usableStr(xftFont, text));
 
+                        y=fSize;
                         rv=true;
 
                         if(valid.length()<(text.length()/2))
@@ -710,9 +714,11 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         for(int s=0; s<itsSizes.size(); ++s)
                             if((xftFont=getFont(itsSizes[s])))
                             {
+                                int fontHeight=xftFont->ascent+xftFont->descent;
+
                                 rv=true;
                                 if(drawGlyphs)
-                                    drawAllGlyphs(xftDraw, xftFont, &xftCol, itsSizes[s], x, y, w, h, offset,
+                                    drawAllGlyphs(xftDraw, xftFont, &xftCol, fontHeight, x, y, w, h, offset,
                                                   itsSizes.count()>1);
                                 else
                                     drawString(xftDraw, xftFont, &xftCol, previewString, x, y, h,
@@ -734,8 +740,10 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                         if((xftFont=getFont(itsAlphaSize)))
                         {
+                            int fontHeight=xftFont->ascent+xftFont->descent;
+
                             y-=8;
-                            drawAllGlyphs(xftDraw, xftFont, &xftCol, itsAlphaSize, x, y, w, h, offset);
+                            drawAllGlyphs(xftDraw, xftFont, &xftCol, fontHeight, x, y, w, h, offset);
                             rv=true;
                             XftFontClose(QX11Info::display(), xftFont);
                         }
@@ -759,13 +767,13 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         y+=itsAlphaSize;
 
                         bool  stop=false;
-                        int   xOrig(x), yOrig(y);
+                        int   fontHeight=xftFont->ascent+xftFont->descent, xOrig(x), yOrig(y);
                         QRect r;
 
                         for(it=range.begin(); it!=end && !stop; ++it)
                             for(quint32 c=(*it).from; c<=(*it).to && !stop; ++c)
                             {
-                                if(drawChar32(xftDraw, xftFont, &xftCol, c, x, y, w, h, itsAlphaSize,
+                                if(drawChar32(xftDraw, xftFont, &xftCol, c, x, y, w, h, fontHeight,
                                               offset, r))
                                 {
                                     if(chars && !r.isEmpty())

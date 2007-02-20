@@ -208,7 +208,7 @@ void CCharTip::showTip()
     details+="</table>";
     itsLabel->setText(details);
 
-    QPixmap pix((itsItem.width()*3)+8, (itsItem.height()*3)+8);
+    QPixmap pix((int)(itsItem.width()*2.5), (int)(itsItem.height()*2.5));
     QList<CFcEngine::TRange> range;
     range.append(CFcEngine::TRange(itsItem.ucs4, 0));
 
