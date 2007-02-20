@@ -46,6 +46,9 @@ Q_INTERFACES(Solid::Ifaces::NetworkManager)
         void setWirelessEnabled( bool );
         void setNetworkingEnabled( bool );
         void notifyHiddenNetwork( const QString & );
+    protected Q_SLOTS:
+        void receivedDeviceAdded( QDBusObjectPath );
+        void receivedDeviceRemoved( QDBusObjectPath );
     private:
         NMNetworkManagerPrivate * d;
 };

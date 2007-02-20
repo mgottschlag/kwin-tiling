@@ -38,6 +38,8 @@ public:
 NMNetworkManager::NMNetworkManager( QObject * parent, const QStringList & args )
  : NetworkManager( parent ), d( new NMNetworkManagerPrivate )
 {
+    d->manager.connection().connect( "org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager", "org.freedesktop.NetworkManager", "DeviceAdded", this, SLOT(receivedDeviceAdded(QDBusObjectPath)) );
+    d->manager.connection().connect( "org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager", "org.freedesktop.NetworkManager", "DeviceRemoved", this, SLOT(receivedDeviceRemoved(QDBusObjectPath)) );
 }
 
 NMNetworkManager::~NMNetworkManager()
@@ -47,13 +49,14 @@ NMNetworkManager::~NMNetworkManager()
 
 QStringList NMNetworkManager::networkInterfaces() const
 {
-    kDebug() << "NMNetworkManager::networkInterfaces() implement me" << endl;
+    kDebug() << "NMNetworkManager::networkInterfaces()" << endl;
     QStringList networkInterfaces;
 
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 
+    // wtf does this work when not called on org.freedesktop.NetworkManager.Devices?
     QDBusReply< QList <QDBusObjectPath> > deviceList = d->manager.call( "getDevices" );
-    if ( true )
+    if ( deviceList.isValid() )
     {
         kDebug() << "Got device list" << endl; //Signature: " << deviceList.signature() << endl;
         QList <QDBusObjectPath> devices = deviceList.value();
@@ -86,28 +89,53 @@ QObject * NMNetworkManager::createAuthenticationValidator()
 
 bool NMNetworkManager::isNetworkingEnabled( ) const
 {
-    kDebug() << "NMNetworkManager::isNetworkingEnabled() implement me" << endl;
-    return false;
+    kDebug() << "NMNetworkManager::isNetworkingEnabled()" << endl;
+    QDBusReply< uint > state = d->manager.call( "state" );
+    if ( state.isValid() )
+    {
+        kDebug() << "  state: " << state.value() << endl;
+    }
+    return state > 1 ; // HACK, include NetworkManager.h
 }
 
 bool NMNetworkManager::isWirelessEnabled() const
 {
-    kDebug() << "NMNetworkManager::isNetworkingEnabled() implement me" << endl;
-    return false;
+    kDebug() << "NMNetworkManager::isWirelessEnabled()" << endl;
+    QDBusReply< bool > wirelessEnabled = d->manager.call( "getWirelessEnabled" );
+    if ( wirelessEnabled.isValid() )
+    {
+        kDebug() << "  wireless enabled: " << wirelessEnabled.value() << endl;
+    }
+    return wirelessEnabled.value();
 }
 
 void NMNetworkManager::setNetworkingEnabled( bool enabled )
 {
-    kDebug() << "NMNetworkManager::setNetworkingEnabled() implement me" << endl;
+    kDebug() << "NMNetworkManager::setNetworkingEnabled()" << endl;
+    d->manager.call( enabled ? "wake" : "sleep" ); //TODO Find out the semantics of the optional bool argument to 'sleep'
 }
 
 void NMNetworkManager::setWirelessEnabled( bool enabled )
 {
-    kDebug() << "NMNetworkManager::setWirelessEnabled() implement me" << endl;
+    kDebug() << "NMNetworkManager::setWirelessEnabled()" << endl;
+    d->manager.call( "setWirelessEnabled", enabled );
 }
 
 void NMNetworkManager::notifyHiddenNetwork( const QString & netname )
 {
     kDebug() << "NMNetworkManager::notifyHiddenNetwork() implement me" << endl;
 }
+
+void NMNetworkManager::receivedDeviceAdded( QDBusObjectPath objpath )
+{
+    kDebug() << "NMNetworkManager::receivedDeviceAdded()" << endl;
+    emit networkInterfaceAdded( objpath.path() );
+}
+
+void NMNetworkManager::receivedDeviceRemoved( QDBusObjectPath objpath )
+{
+    kDebug() << "NMNetworkManager::receivedDeviceRemoved()" << endl;
+    emit networkInterfaceRemoved( objpath.path() );
+}
+
 #include "NetworkManager-networkmanager.moc"

@@ -26,7 +26,10 @@ int main( int argc, char** argv )
 {
 	NMNetworkManager mgr( 0, QStringList() );
 	mgr.networkInterfaces();
-	kdDebug() << "That's it!" << endl;
+    mgr.isNetworkingEnabled();
+    mgr.isWirelessEnabled();
+    //mgr.setWirelessEnabled( true );
+	kDebug() << "That's it!" << endl;
 	NMObject obj( argc, argv );
 	obj.showDevices();
 	return obj.exec();
