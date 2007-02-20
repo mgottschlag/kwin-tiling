@@ -37,4 +37,76 @@ QString DvbHw::device() const
     return m_device->property( "dvb.device" ).toString();
 }
 
+int DvbHw::deviceAdapter() const
+{
+    // FIXME !!!
+    return 0;
+}
+
+Solid::DvbHw::DeviceType DvbHw::deviceType() const
+{
+    Solid::DvbHw::DeviceType type;
+    int index;
+
+    if (parseTypeIndex(&type, &index))
+        return type;
+    else
+        return Solid::DvbHw::DvbUnknown;
+}
+
+int DvbHw::deviceIndex() const
+{
+    Solid::DvbHw::DeviceType type;
+    int index;
+
+    if (parseTypeIndex(&type, &index))
+        return index;
+    else
+        return -1;
+}
+
+bool DvbHw::parseTypeIndex(Solid::DvbHw::DeviceType *type, int *index) const
+{
+    QString string = device();
+    int pos = string.lastIndexOf("/");
+    if (pos < 0)
+        return false;
+    string = string.mid(pos + 1);
+
+    if (string.startsWith("audio")) {
+        *type = Solid::DvbHw::DvbAudio;
+        string = string.mid(5);
+    } else if (string.startsWith("ca")) {
+        *type = Solid::DvbHw::DvbCa;
+        string = string.mid(2);
+    } else if (string.startsWith("demux")) {
+        *type = Solid::DvbHw::DvbDemux;
+        string = string.mid(5);
+    } else if (string.startsWith("dvr")) {
+        *type = Solid::DvbHw::DvbDvr;
+        string = string.mid(3);
+    } else if (string.startsWith("frontend")) {
+        *type = Solid::DvbHw::DvbFrontend;
+        string = string.mid(8);
+    } else if (string.startsWith("net")) {
+        *type = Solid::DvbHw::DvbNet;
+        string = string.mid(3);
+    } else if (string.startsWith("osd")) {
+        *type = Solid::DvbHw::DvbOsd;
+        string = string.mid(3);
+    } else if (string.startsWith("sec")) {
+        *type = Solid::DvbHw::DvbSec;
+        string = string.mid(3);
+    } else if (string.startsWith("video")) {
+        *type = Solid::DvbHw::DvbVideo;
+        string = string.mid(5);
+    } else
+        return false;
+
+    bool ok;
+    *index = string.toInt(&ok, 10);
+
+    return ok;
+}
+
 #include "dvbhw.moc"

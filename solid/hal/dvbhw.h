@@ -33,6 +33,12 @@ public:
     virtual ~DvbHw();
 
     virtual QString device() const;
+    virtual int deviceAdapter() const;
+    virtual Solid::DvbHw::DeviceType deviceType() const;
+    virtual int deviceIndex() const;
+
+private:
+    bool parseTypeIndex(Solid::DvbHw::DeviceType *type, int *index) const;
 };
 
 #endif
