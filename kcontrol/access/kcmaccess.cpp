@@ -63,28 +63,28 @@ void ExtendedIntNumInput::setRange(int min, int max, int step, bool slider) {
 	KIntNumInput::setRange (min,max,step, slider);
 
 	if (slider) {
-		disconnect(m_slider, SIGNAL(valueChanged(int)),
-					  m_spin, SLOT(setValue(int)));
-		disconnect(m_spin, SIGNAL(valueChanged(int)),
+		disconnect(slider(), SIGNAL(valueChanged(int)),
+					  spinBox(), SLOT(setValue(int)));
+		disconnect(spinBox(), SIGNAL(valueChanged(int)),
 					  this, SLOT(spinValueChanged(int)));
 
 		this->min = min;
 		this->max = max;
 		sliderMax = (int)floor (0.5
 				+ 2*(log(max)-log(min)) / (log(max)-log(max-1)));
-		m_slider->setRange(0, sliderMax);
-		m_slider->setSingleStep(step);
-		m_slider->setPageStep(sliderMax/10);
-		m_slider->setTickInterval(sliderMax/10);
+		slider()->setRange(0, sliderMax);
+		slider()->setSingleStep(step);
+		slider()->setPageStep(sliderMax/10);
+		slider()->setTickInterval(sliderMax/10);
 
 		double alpha  = sliderMax / (log(max) - log(min));
 		double logVal = alpha * (log(value())-log(min));
-		m_slider->setValue ((int)floor (0.5 + logVal));
+		slider()->setValue ((int)floor (0.5 + logVal));
 
-		connect(m_slider, SIGNAL(valueChanged(int)),
+		connect(slider(), SIGNAL(valueChanged(int)),
 				  this, SLOT(slotSliderValueChanged(int)));
-		connect(m_spin, SIGNAL(valueChanged(int)),
-				  this, SLOT(slotSpinValueChanged(int)));
+		connect(spinBox(), SIGNAL(valueChanged(int)),
+				   this, SLOT(slotSpinValueChanged(int)));
 	}
 }
 
@@ -94,10 +94,10 @@ void ExtendedIntNumInput::setRange(int min, int max, int step, bool slider) {
 void ExtendedIntNumInput::slotSpinValueChanged(int val)
 {
 
-	if(m_slider) {
+	if(slider()) {
 		double alpha  = sliderMax / (log(max) - log(min));
 		double logVal = alpha * (log(val)-log(min));
-		m_slider->setValue ((int)floor (0.5 + logVal));
+		slider()->setValue ((int)floor (0.5 + logVal));
 	}
 
 	emit valueChanged(val);
@@ -107,7 +107,7 @@ void ExtendedIntNumInput::slotSliderValueChanged(int val)
 {
 	double alpha  = sliderMax / (log(max) - log(min));
 	double linearVal = exp (val/alpha + log(min));
-	m_spin->setValue ((int)floor(0.5 + linearVal));
+	spinBox()->setValue ((int)floor(0.5 + linearVal));
 }
 
 static bool needToRunKAccessDaemon( KConfig *config )
