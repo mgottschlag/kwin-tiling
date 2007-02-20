@@ -50,7 +50,8 @@ SidebarExtension::SidebarExtension(const QString& configFile,
      m_resizing(false),
      m_expandedSize(200)
 {
-    new KonqHistoryManager(0);
+    // DF: what was this for?
+    //new KonqHistoryManager(0);
     m_layout=new QHBoxLayout(this);
     m_layout->activate();
     m_sbWrapper=new KVBox(this);

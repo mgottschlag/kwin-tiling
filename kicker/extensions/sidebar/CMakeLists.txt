@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/plasma/lib/ ${CMAKE_SOURCE_DIR}/libkonq   )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/plasma/lib/ )
 
 
 ########### next target ###############
@@ -10,8 +10,7 @@ kde4_automoc(${sidebar_panelextension_PART_SRCS})
 kde4_add_plugin(sidebar_panelextension ${sidebar_panelextension_PART_SRCS})
 
 
-target_link_libraries(sidebar_panelextension  ${KDE4_KDECORE_LIBS} kickermain ${KDE4_KDEUI_LIBS}
-    ${KDE4_KPARTS_LIBS} konq )
+target_link_libraries(sidebar_panelextension kickermain ${KDE4_KPARTS_LIBS} )
 
 install(TARGETS sidebar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
