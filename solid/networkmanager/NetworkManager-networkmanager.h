@@ -21,6 +21,7 @@
 #define NETWORKMANAGER_NETWORK_MANAGER_H
 
 #include <QObject>
+#include <qdbusextratypes.h>
 #include <QStringList>
 
 #include <kdemacros.h>

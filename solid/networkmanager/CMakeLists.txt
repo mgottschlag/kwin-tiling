@@ -2,6 +2,7 @@ add_subdirectory(tests)
 
 set(solid_networkmanager_PART_SRCS
 	NetworkManager-networkmanager.cpp
+	NetworkManager-networkinterface.cpp
 )
 
 kde4_automoc(${solid_networkmanager_PART_SRCS})

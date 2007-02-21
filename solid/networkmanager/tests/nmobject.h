@@ -3,11 +3,37 @@
 #define WILL_NM_OBJECT
 
 #include <QCoreApplication>
+#include <QStringList>
 #include <qdbusextratypes.h>
 
 class QDBusInterface;
 
 Q_DECLARE_METATYPE(QList<QDBusObjectPath>)
+
+struct NMDevice {
+	QDBusObjectPath path;
+	QString interface;
+	uint type;
+	QString udi;
+	bool active;
+	uint activationStage;
+	QString ipv4Address;
+	QString subnetMask;
+	QString broadcast;
+	QString hardwareAddress;
+	QString route;
+	QString primaryDNS;
+	QString secondaryDNS;
+	int mode;
+	int strength;
+	bool linkActive;
+	int speed;
+	uint capabilities;
+	uint capabilitiesType;
+	QString activeNetPath;
+	QStringList networks;
+};
+Q_DECLARE_METATYPE(NMDevice)
 
 class NMObject : public QCoreApplication
 {

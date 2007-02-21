@@ -21,6 +21,7 @@
 
 #include <kdebug.h>
 
+#include "NetworkManager-networkinterface.h"
 #include "NetworkManager-networkmanager.h"
 
 Q_DECLARE_METATYPE(QList<QDBusObjectPath>)
