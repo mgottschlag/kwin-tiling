@@ -151,3 +151,6 @@ endif (KDE4_XDMCP AND X11_Xdmcp_FOUND)
 
 option(KDE4_KDM_XCONSOLE "Build KDM with built-in xconsole" OFF)
 macro_bool_to_01(KDE4_KDM_XCONSOLE WITH_KDM_XCONSOLE)
+
+check_library_exists(X11 XkbSetPerClientControls "" HAVE_XKBSETPERCLIENTCONTROLS)
+
