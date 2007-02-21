@@ -1,6 +1,11 @@
 
 add_subdirectory( pics )
 
+# Currently needed for DEFAULT_TEXT_HEIGHT
+# The plan is to move konq_iconviewwidget to kdesktop and then it's all inside workspace.
+# But first KonqOperations must be redesigned to not use konq_iconviewwidget...
+include_directories( ${CMAKE_SOURCE_DIR}/libkonq )
+
 
 ########### next target ###############
 kde4_add_ui3_files(kcmbackgroundlib_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/bgdialog_ui.ui ${CMAKE_CURRENT_SOURCE_DIR}/bgwallpaper_ui.ui ${CMAKE_CURRENT_SOURCE_DIR}/bgadvanced_ui.ui )
