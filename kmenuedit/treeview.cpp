@@ -195,13 +195,12 @@ TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, 
     m_drag = 0;
 
     //	Read menu format configuration information
-    KSharedConfig::Ptr		pConfig = KSharedConfig::openConfig("kickerrc");
-
-    pConfig->setGroup("menus");
-    m_detailedMenuEntries = pConfig->readEntry("DetailedMenuEntries", true);
+    KSharedConfig::Ptr pConfig = KSharedConfig::openConfig("kickerrc");
+    KConfigGroup cg(pConfig, "menus");
+    m_detailedMenuEntries = cg.readEntry("DetailedMenuEntries", true);
     if (m_detailedMenuEntries)
     {
-        m_detailedEntriesNamesFirst = pConfig->readEntry("DetailedEntriesNamesFirst", false);
+        m_detailedEntriesNamesFirst = cg.readEntry("DetailedEntriesNamesFirst", false);
     }
 }
 
