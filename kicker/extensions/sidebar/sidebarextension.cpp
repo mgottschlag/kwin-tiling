@@ -27,7 +27,7 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QEvent>
-#include <konq_historymgr.h>
+//#include <konq_historymgr.h>
 #include <krun.h>
 #include <kurl.h>
 #include <kvbox.h>
