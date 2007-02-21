@@ -123,7 +123,7 @@ class ClipAction
 public:
   ClipAction( const QString& regExp, const QString& description );
   ClipAction( const ClipAction& );
-  ClipAction( KConfig *kc );
+  ClipAction( KConfig *kc, const QString& );
   ~ClipAction();
 
   void  setRegExp( const QString& r) 	      { myRegExp = QRegExp( r ); }
@@ -146,7 +146,7 @@ public:
   /**
    * Saves this action to a a given KConfig object
    */
-  void save( KConfig * ) const;
+  void save( KConfig *, const QString& ) const;
 
 
 private:

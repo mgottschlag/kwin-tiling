@@ -1157,11 +1157,11 @@ void Klipper::quitProcess()
 }
 
 static void ensureGlobalSyncOff(KSharedConfigPtr config) {
-    config->setGroup("General");
-    if ( config->readEntry( "SynchronizeClipboardAndSelection" , false) ) {
+    KConfigGroup cg(config, "General");
+    if ( cg.readEntry( "SynchronizeClipboardAndSelection" , false) ) {
         kDebug() << "Shutting off global synchronization" << endl;
-        config->writeEntry("SynchronizeClipboardAndSelection", false, KConfig::Normal | KConfig::Global );
-        config->sync();
+        cg.writeEntry("SynchronizeClipboardAndSelection", false, KConfig::Normal | KConfig::Global );
+        cg.sync();
         kapp->setSynchronizeClipboard(false);
         KGlobalSettings::self()->emitChange( KGlobalSettings::ClipboardConfigChanged, 0 );
     }

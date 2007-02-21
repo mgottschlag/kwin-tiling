@@ -292,27 +292,26 @@ void URLGrabber::editData()
 void URLGrabber::readConfiguration( KConfig *kc )
 {
     myActions->clear();
-    kc->setGroup( "General" );
-    int num = kc->readEntry("Number of Actions", 0);
-    myAvoidWindows = kc->readEntry("No Actions for WM_CLASS",QStringList());
-    myPopupKillTimeout = kc->readEntry( "Timeout for Action popups (seconds)", 8 );
-    m_trimmed = kc->readEntry("Strip Whitespace before exec", true);
+    KConfigGroup cg(kc, "General");
+    int num = cg.readEntry("Number of Actions", 0);
+    myAvoidWindows = cg.readEntry("No Actions for WM_CLASS",QStringList());
+    myPopupKillTimeout = cg.readEntry( "Timeout for Action popups (seconds)", 8 );
+    m_trimmed = cg.readEntry("Strip Whitespace before exec", true);
     QString group;
     for ( int i = 0; i < num; i++ ) {
         group = QString("Action_%1").arg( i );
-        kc->setGroup( group );
-        myActions->append( new ClipAction( kc ) );
+        myActions->append( new ClipAction( kc, group ) );
     }
 }
 
 
 void URLGrabber::writeConfiguration( KConfig *kc )
 {
-    kc->setGroup( "General" );
-    kc->writeEntry( "Number of Actions", myActions->count() );
-    kc->writeEntry( "Timeout for Action popups (seconds)", myPopupKillTimeout);
-    kc->writeEntry( "No Actions for WM_CLASS", myAvoidWindows );
-    kc->writeEntry( "Strip Whitespace before exec", m_trimmed );
+    KConfigGroup cg(kc, "General");
+    cg.writeEntry( "Number of Actions", myActions->count() );
+    cg.writeEntry( "Timeout for Action popups (seconds)", myPopupKillTimeout);
+    cg.writeEntry( "No Actions for WM_CLASS", myAvoidWindows );
+    cg.writeEntry( "Strip Whitespace before exec", m_trimmed );
 
     ActionListIterator it( *myActions );
     ClipAction *action;
@@ -321,8 +320,7 @@ void URLGrabber::writeConfiguration( KConfig *kc )
     QString group;
     while ( (action = it.current()) ) {
         group = QString("Action_%1").arg( i );
-        kc->setGroup( group );
-        action->save( kc );
+        action->save( kc, group );
         ++i;
         ++it;
     }
@@ -437,23 +435,24 @@ ClipAction::ClipAction( const ClipAction& action )
 }
 
 
-ClipAction::ClipAction( KConfig *kc )
-    : myRegExp( kc->readEntry( "Regexp" ) ),
-      myDescription( kc->readEntry( "Description" ) )
+ClipAction::ClipAction( KConfig *kc, const QString& group )
+    : myRegExp( kc->group(group).readEntry("Regexp") ),
+      myDescription (kc->group(group).readEntry("Description") )
 {
+    KConfigGroup cg(kc, group);
+
     myCommands.setAutoDelete( true );
-    int num = kc->readEntry( "Number of commands", 0 );
+    int num = cg.readEntry( "Number of commands", 0 );
 
     // read the commands
-    QString actionGroup = kc->group();
     for ( int i = 0; i < num; i++ ) {
-        QString group = actionGroup + "/Command_%1";
-        kc->setGroup( group.arg( i ) );
+        QString _group = group + "/Command_%1";
+        KConfigGroup _cg(kc, _group.arg(i));
 
-        addCommand( kc->readPathEntry( "Commandline" ),
-                    kc->readEntry( "Description" ), // i18n'ed
-                    kc->readEntry( "Enabled" , false),
-                    kc->readEntry( "Icon") );
+        addCommand( _cg.readPathEntry( "Commandline" ),
+                    _cg.readEntry( "Description" ), // i18n'ed
+                    _cg.readEntry( "Enabled" , false),
+                    _cg.readEntry( "Icon") );
     }
 }
 
@@ -476,25 +475,25 @@ void ClipAction::addCommand( const QString& command,
 
 
 // precondition: we're in the correct action's group of the KConfig object
-void ClipAction::save( KConfig *kc ) const
+void ClipAction::save( KConfig *kc, const QString& group ) const
 {
-    kc->writeEntry( "Description", description() );
-    kc->writeEntry( "Regexp", regExp() );
-    kc->writeEntry( "Number of commands", myCommands.count() );
+    KConfigGroup cg(kc, group);
+    cg.writeEntry( "Description", description() );
+    cg.writeEntry( "Regexp", regExp() );
+    cg.writeEntry( "Number of commands", myCommands.count() );
 
-    QString actionGroup = kc->group();
     struct ClipCommand *cmd;
     Q3PtrListIterator<struct ClipCommand> it( myCommands );
 
     // now iterate over all commands of this action
     int i = 0;
     while ( (cmd = it.current()) ) {
-        QString group = actionGroup + "/Command_%1";
-        kc->setGroup( group.arg( i ) );
+        QString _group = group + "/Command_%1";
+        KConfigGroup cg(kc, _group.arg(i));
 
-        kc->writePathEntry( "Commandline", cmd->command );
-        kc->writeEntry( "Description", cmd->description );
-        kc->writeEntry( "Enabled", cmd->isEnabled );
+        cg.writePathEntry( "Commandline", cmd->command );
+        cg.writeEntry( "Description", cmd->description );
+        cg.writeEntry( "Enabled", cmd->isEnabled );
 
         ++i;
         ++it;
