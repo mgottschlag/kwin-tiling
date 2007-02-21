@@ -355,20 +355,12 @@ CFcEngine::~CFcEngine()
 
 void CFcEngine::readConfig(KConfig &cfg)
 {
-    QString old(cfg.group());
-
-    cfg.setGroup(KFI_PREVIEW_GROUP);
-    itsPreviewString=cfg.readEntry(KFI_PREVIEW_STRING_KEY, getDefaultPreviewString());
-    cfg.setGroup(old);
+    cfg.group(KFI_PREVIEW_GROUP).readEntry(KFI_PREVIEW_STRING_KEY, getDefaultPreviewString());
 }
 
 void CFcEngine::writeConfig(KConfig &cfg)
 {
-    QString old(cfg.group());
-
-    cfg.setGroup(KFI_PREVIEW_GROUP);
-    cfg.writeEntry(KFI_PREVIEW_STRING_KEY, itsPreviewString);
-    cfg.setGroup(old);
+    cfg.group(KFI_PREVIEW_GROUP).writeEntry(KFI_PREVIEW_STRING_KEY, itsPreviewString);
 }
 
 const QString & CFcEngine::getName(const KUrl &url, int faceNo)

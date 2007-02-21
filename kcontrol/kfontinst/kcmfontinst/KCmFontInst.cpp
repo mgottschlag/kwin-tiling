@@ -317,7 +317,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsSplitter->setStretchFactor(2, 0);
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-    itsConfig.setGroup(CFG_GROUP);
+    KConfigGroup cg(&itsConfig, CFG_GROUP);
 
     QList<int> defaultSizes;
 
@@ -325,7 +325,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     defaultSizes+=350;
     defaultSizes+=150;
 
-    QList<int> sizes(itsConfig.readEntry(CFG_SPLITTER_SIZES, defaultSizes));
+    QList<int> sizes(cg.readEntry(CFG_SPLITTER_SIZES, defaultSizes));
 
     if(3!=sizes.count())
         sizes=defaultSizes;
@@ -378,8 +378,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     if(itsModeControl)
         connect(itsModeControl, SIGNAL(activated(int)), SLOT(selectGroup(int)));
 
-    itsMgtMode->setChecked(itsConfig.readEntry(CFG_FONT_MGT_MODE, false));
-    itsShowPreview->setChecked(itsConfig.readEntry(CFG_SHOW_PREVIEW, false));
+    itsMgtMode->setChecked(cg.readEntry(CFG_FONT_MGT_MODE, false));
+    itsShowPreview->setChecked(cg.readEntry(CFG_SHOW_PREVIEW, false));
     showPreview(itsShowPreview->isChecked());
     itsPreviewWidget->setVisible(itsShowPreview->isChecked());
     toggleFontManagement(itsMgtMode->isChecked());
@@ -389,10 +389,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
 
 CKCmFontInst::~CKCmFontInst()
 {
-    itsConfig.setGroup(CFG_GROUP);
-    itsConfig.writeEntry(CFG_SPLITTER_SIZES, itsSplitter->sizes());
-    itsConfig.writeEntry(CFG_FONT_MGT_MODE, itsMgtMode->isChecked());
-    itsConfig.writeEntry(CFG_SHOW_PREVIEW, itsShowPreview->isChecked());
+    KConfigGroup cg(&itsConfig, CFG_GROUP);
+
+    cg.writeEntry(CFG_SPLITTER_SIZES, itsSplitter->sizes());
+    cg.writeEntry(CFG_FONT_MGT_MODE, itsMgtMode->isChecked());
+    cg.writeEntry(CFG_SHOW_PREVIEW, itsShowPreview->isChecked());
     itsFontListView->writeConfig(itsConfig);
     delete itsTempDir;
     delete itsPrintProc;
@@ -623,9 +624,9 @@ void CKCmFontInst::print(bool all)
         if(fonts.count())
         {
             CPrintDialog dlg(this);
+            KConfigGroup cg(&itsConfig, CFG_GROUP);
 
-            itsConfig.setGroup(CFG_GROUP);
-            if(dlg.exec(itsConfig.readEntry(CFG_FONT_SIZE, 1)))
+            if(dlg.exec(cg.readEntry(CFG_FONT_SIZE, 1)))
             {
                 static const int constSizes[]={0, 12, 18, 24, 36, 48};
                 QSet<Misc::TFont>::ConstIterator it(fonts.begin()),
@@ -687,7 +688,7 @@ void CKCmFontInst::print(bool all)
                     }
                     else
                         KMessageBox::error(this, i18n("Failed to start font printer."));
-                itsConfig.writeEntry(CFG_FONT_SIZE, dlg.chosenSize());
+                cg.writeEntry(CFG_FONT_SIZE, dlg.chosenSize());
             }
         }
         else
