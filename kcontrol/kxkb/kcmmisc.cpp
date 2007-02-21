@@ -26,6 +26,7 @@
 
 
 #include <config.h>
+#include <config-X11.h>
 #include <math.h>
 
 #include <QSlider>

@@ -1,5 +1,6 @@
 include(ConfigureChecks.cmake)
 configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )
+configure_file(config-X11.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-X11.h )
 
 set(kdmlib_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kdmlib/dmctl.cpp )
 
@@ -16,7 +17,7 @@ set( kcmbackgroundlib_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgwallpaper.cpp
 )
 
-include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_CURRENT_BINARY_DIR} )
+include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR} )
 
 # libs
 add_subdirectory( lib )
