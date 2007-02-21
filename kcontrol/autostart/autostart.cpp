@@ -34,54 +34,28 @@
 #include <QHeaderView>
 #include <QTreeWidget>
 #include <QGridLayout>
+#include <QStringList>
 
 #include "autostart.h"
 
 class desktop : public QTreeWidgetItem {
 public:
-KService * service;
 bool bisDesktop;
 KUrl fileName;
-int iStartOn;
-enum { AutoStart, Shutdown, ENV };
 
-desktop( QString service, int startOn, QTreeWidget *parent ): QTreeWidgetItem( parent ) {
+desktop( QString service, QTreeWidget *parent ): QTreeWidgetItem( parent ) {
 	bisDesktop = false;
-	iStartOn = startOn;
 	fileName = KUrl(service);
 	if (service.endsWith(".desktop")) {
-		this->service = new KService(service);
 		bisDesktop = true;
 	}
 }
 bool isDesktop() { return bisDesktop; }
-int startOn() { return iStartOn; }
-QString fStartOn() {
-	switch (iStartOn) {
-		case AutoStart: return i18n("Startup"); break;
-		case Shutdown: return i18n("Shutdown"); break;
-		case ENV: return i18n("Pre-Desktop"); break;
-		default: return ""; break;
-	}
-}
-void setStartOn(int start) {
-	iStartOn = start;
-	setText(2, fStartOn() );
-	QString path;
-	KStandardDirs *ksd = new KStandardDirs();
-	switch (iStartOn) {
-		case AutoStart: path = KGlobalSettings::autostartPath()+"/"; break;
-		case Shutdown: path = ksd->localkdedir()+"shutdown/"; break;
-		case ENV: path = ksd->localkdedir()+"env/"; break;
-	}
-	KIO::NetAccess::file_move(fileName, KUrl( path + fileName.fileName() ));
-	fileName = path + fileName.fileName();
-}
-void updateService() {
-	if (bisDesktop) service = new KService( fileName.path() );
+void setPath(QString path) {
+	KIO::NetAccess::file_move(fileName, KUrl( path + '/' + fileName.fileName() ));
+	fileName = KUrl(path + fileName.fileName());
 }
 ~desktop() {
-	delete service;
 }
 };
 
@@ -121,15 +95,12 @@ autostart::~autostart()
 void autostart::load()
 {
 	KStandardDirs *ksd = componentData().dirs();
-
-	QStringList paths;
+	
 	paths << KGlobalSettings::autostartPath()
-		  << ksd->localkdedir() + "/shutdown"
-		  << ksd->localkdedir() + "/env";
-	int x=0;  // Required for specifying the location of the desktop within our object.
-			  // Paths should be in the same order as the enum found in the desktop object.
-	foreach (const QString& path, paths) {
+		  << ksd->localkdedir() + "shutdown/"
+		  << ksd->localkdedir() + "env/";
 
+	foreach (const QString& path, paths) {
 		if (! KStandardDirs::exists(path)) KStandardDirs::makeDir(path);
 
 		QDir *autostartdir = new QDir( path );
@@ -138,25 +109,25 @@ void autostart::load()
 		for (int i = 0; i < list.size(); ++i) {
 			QFileInfo fi = list.at(i);
 			QString filename = fi.fileName();
-			desktop * item = new desktop( fi.absoluteFilePath(), x, widget->listCMD );
+			desktop * item = new desktop( fi.absoluteFilePath(), widget->listCMD );
 			if ( ! item->isDesktop() ) {
 				if ( fi.isSymLink() ) {
 					QString link = fi.readLink();
 					item->setText( 0, filename );
 					item->setText( 1, link );
-					item->setText( 2, item->fStartOn() );
+					item->setText( 2, item->fileName.directory() );
 				} else {
 					item->setText( 0, filename );
 					item->setText( 1, filename );
-					item->setText( 2, item->fStartOn() );
+					item->setText( 2, item->fileName.directory() );
 				}
 			} else {
-				item->setText( 0, item->service->name() );
-				item->setText( 1, item->service->exec() );
-				item->setText( 2, item->fStartOn() );
+				KService * service = new KService(fi.absoluteFilePath());
+				item->setText( 0, service->name() );
+				item->setText( 1, service->exec() );
+				item->setText( 2, item->fileName.directory() );
 			}
 		}
-		x++;
 	}
 }
 
@@ -186,25 +157,21 @@ void autostart::addCMD() {
 		ksc.writeEntry("Type","Application");
 		ksc.sync();
 
-		// FIXME: Make it so you can't give focus to the parent before this goes away.
-		// If the parent closes before this does, a crash is generated.
 		KPropertiesDialog dlg( desktopTemplate, this );
 		if ( dlg.exec() != QDialog::Accepted )
 			return;
 	} else {
 		desktopTemplate = KUrl( KStandardDirs::locate("apps", service->desktopEntryPath()) );
 
-		// FIXME: Make it so you can't give focus to the parent before this goes away.
-		// If the parent closes before this does, a crash is generated.
 		KPropertiesDialog dlg( desktopTemplate, KUrl(kgs->autostartPath()), service->name() + ".desktop", this );
 		if ( dlg.exec() != QDialog::Accepted )
 			return;
 	}
 
-	desktop * item = new desktop( kgs->autostartPath() + service->name() + ".desktop", desktop::AutoStart, widget->listCMD );
-	item->setText( 0, item->service->name() );
-	item->setText( 1, item->service->exec() );
-	item->setText( 2, item->fStartOn() );
+	desktop * item = new desktop( kgs->autostartPath() + service->name() + ".desktop", widget->listCMD );
+	item->setText( 0, service->name() );
+	item->setText( 1, service->exec() );
+	item->setText( 2, item->fileName.directory() );
 	emit changed(true);
 }
 
@@ -225,17 +192,15 @@ void autostart::removeCMD() {
 void autostart::editCMD(QTreeWidgetItem* entry) {
 	if (!entry) return;
 
-	((desktop*)entry)->updateService();
 	KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( ((desktop*)entry)->fileName ), true );
 	if (! editCMD( kfi )) return;
 
-	// Remove and recreate
 	if (((desktop*)entry)->isDesktop()) {
-		widget->listCMD->takeTopLevelItem( widget->listCMD->indexOfTopLevelItem(widget->listCMD->selectedItems().first()) );
-		desktop * item = new desktop( ((desktop*)entry)->fileName.path(), ((desktop*)entry)->startOn(), widget->listCMD );
-		item->setText( 0, ((desktop*)entry)->service->name() );
-		item->setText( 1, ((desktop*)entry)->service->exec() );
-		item->setText( 2, ((desktop*)entry)->fStartOn() );
+		QTreeWidgetItem * item = widget->listCMD->selectedItems().first();
+		KService * service = new KService(((desktop*)entry)->fileName.path());
+		item->setText( 0, service->name() );
+		item->setText( 1, service->exec() );
+		item->setText( 2, ((desktop*)entry)->fileName.directory() );
 	}
 }
 
@@ -255,22 +220,19 @@ void autostart::editCMD() {
 
 void autostart::setStartOn( int index ) {
 	if ( widget->listCMD->selectedItems().size() == 0 ) return;
-	((desktop*)widget->listCMD->selectedItems().first())->setStartOn(index);
+	((desktop*)widget->listCMD->selectedItems().first())->setPath(paths.value(index));
+	((desktop*)widget->listCMD->selectedItems().first())->setText(2, ((desktop*)widget->listCMD->selectedItems().first())->fileName.directory() );
 }
 
 void autostart::selectionChanged() {
-	if ( widget->listCMD->selectedItems().size() == 0 ) {
-		widget->cmbStartOn->setEnabled(false);
-		widget->btnRemove->setEnabled(false);
-		widget->btnProperties->setEnabled(false);
-		return;
-	} else {
-		widget->cmbStartOn->setEnabled( true );
-		widget->btnRemove->setEnabled(true);
-		widget->btnProperties->setEnabled(true);
-	}
+	bool hasItems = (widget->listCMD->selectedItems().size() != 0 );
+	widget->cmbStartOn->setEnabled(hasItems);
+	widget->btnRemove->setEnabled(hasItems);
+	widget->btnProperties->setEnabled(hasItems);
+	if (!hasItems) return;
+	
 	QTreeWidgetItem* entry = widget->listCMD->selectedItems().first();
-	widget->cmbStartOn->setCurrentIndex( ((desktop*)entry)->startOn() );
+	widget->cmbStartOn->setCurrentIndex( paths.indexOf(((desktop*)entry)->fileName.directory()) );
 }
 
 void autostart::defaults()
