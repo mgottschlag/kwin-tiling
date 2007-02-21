@@ -365,8 +365,8 @@ void SplashInstaller::slotSetTheme(int id)
       }
       if (KIO::NetAccess::exists(url, true, 0))
       {
-        KConfig cnf(url.path());
-        cnf.setGroup( QString("KSplash Theme: %1").arg(themeName) );
+        KConfig _cnf(url.path());
+	KConfigGroup cnf(&_cnf, QString("KSplash Theme: %1").arg(themeName) );
 
         // Get theme information.
         infoTxt = "<qt>";
