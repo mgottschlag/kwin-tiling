@@ -15,7 +15,7 @@ set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS}
    shutdown.cpp 
    client.cpp)
 
-set(kcminit_adaptor ${CMAKE_SOURCE_DIR}/kcminit/main.h)
+set(kcminit_adaptor ${CMAKE_CURRENT_SOURCE_DIR}/../kcminit/main.h)
 set(kcminit_xml ${CMAKE_CURRENT_BINARY_DIR}/org.kde.KCMinit.xml)
 ADD_CUSTOM_COMMAND(OUTPUT ${kcminit_xml}
        COMMAND ${QT_DBUSCPP2XML_EXECUTABLE} ${kcminit_adaptor} > ${kcminit_xml}
