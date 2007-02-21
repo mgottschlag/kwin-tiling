@@ -10,9 +10,7 @@
 
 #define _TRIGGERS_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "config-khotkeys.h"
 
 #include "triggers.h"
 

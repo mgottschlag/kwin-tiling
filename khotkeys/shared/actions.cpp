@@ -10,10 +10,6 @@
 
 #define _ACTIONS_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "actions.h"
 
 #include <krun.h>

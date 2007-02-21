@@ -11,7 +11,7 @@
 #ifndef _CONDITIONS_H_
 #define _CONDITIONS_H_
 
-#include "config.h"
+#include "config-khotkeys.h"
 #include <QObject>
 #include <q3ptrlist.h>
 #include <QString>

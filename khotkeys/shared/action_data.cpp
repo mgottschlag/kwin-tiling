@@ -10,10 +10,6 @@
 
 #define _ACTION_DATA_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "action_data.h"
 
 #include <kconfig.h>

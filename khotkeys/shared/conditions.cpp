@@ -10,10 +10,6 @@
 
 #define _CONDITIONS_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "conditions.h"
 
 #ifdef KHOTKEYS_DEBUG

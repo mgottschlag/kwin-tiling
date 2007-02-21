@@ -10,15 +10,10 @@
 
 #define _WINDOWS_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "windows.h"
 
 #include <assert.h>
 #include <QRegExp>
-//Added by qt3to4:
 #include <Q3PtrList>
 
 #include <kconfig.h>

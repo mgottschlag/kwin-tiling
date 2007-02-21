@@ -16,10 +16,6 @@
 
 #define _GESTURES_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "gestures.h"
 
 #include <stdlib.h>

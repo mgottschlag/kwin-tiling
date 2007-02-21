@@ -10,10 +10,6 @@
 
 #define _SETTINGS_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "settings.h"
 
 #include <kconfig.h>

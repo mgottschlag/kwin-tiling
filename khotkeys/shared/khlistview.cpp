@@ -10,14 +10,9 @@
 
 #define _KHLISTVIEW_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "khlistview.h"
 
 #include <kdebug.h>
-//Added by qt3to4:
 #include <QDropEvent>
 
 namespace KHotKeys
