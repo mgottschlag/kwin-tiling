@@ -8,6 +8,7 @@ add_subdirectory( sessions )
 include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background
 	${CMAKE_SOURCE_DIR}/workspace/kdmlib
+	${CMAKE_SOURCE_DIR}/libkonq
 )
 
 set(kdmthemer_SRCS
