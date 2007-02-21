@@ -10,9 +10,7 @@
 
 #define _WINDOW_TRIGGER_WIDGET_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "window_trigger_widget.h"
 

@@ -10,9 +10,7 @@
 
 #define _ACTIONS_LISTVIEW_WIDGET_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "actions_listview_widget.h"
 

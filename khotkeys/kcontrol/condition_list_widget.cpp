@@ -10,9 +10,7 @@
 
 #define _CONDITIONS_LIST_WIDGET_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "condition_list_widget.h"
 

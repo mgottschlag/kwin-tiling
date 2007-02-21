@@ -10,7 +10,7 @@
 
 #define _KCMKHOTKEYS_CPP_
 
-#include <config.h>
+#include <config-khotkeys.h> // HAVE_ARTS
 
 #include "kcmkhotkeys.h"
 

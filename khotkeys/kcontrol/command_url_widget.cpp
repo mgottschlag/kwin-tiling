@@ -10,9 +10,7 @@
 
 #define _COMMAND_URL_WIDGET_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "command_url_widget.h"
 

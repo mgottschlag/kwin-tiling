@@ -10,9 +10,7 @@
 
 #define _KEYBOARD_INPUT_WIDGET_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "keyboard_input_widget.h"
 

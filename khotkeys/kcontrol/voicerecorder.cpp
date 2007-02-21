@@ -26,9 +26,7 @@
 #include <klibloader.h>
 #include <kstandarddirs.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-khotkeys.h>
 
 namespace KHotKeys
 {

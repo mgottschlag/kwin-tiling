@@ -10,9 +10,7 @@
 
 #define MAIN_BUTTONS_WIDGET_CPP
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "main_buttons_widget.h"
 

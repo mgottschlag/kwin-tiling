@@ -10,9 +10,7 @@
 
 #define _TRIGGERS_TAB_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-khotkeys.h>
 
 #include "triggers_tab.h"
 
@@ -23,7 +21,6 @@
 #include <QLayout>
 #include <QLabel>
 #include <q3header.h>
-//Added by qt3to4:
 #include <QVBoxLayout>
 
 #include <kdebug.h>

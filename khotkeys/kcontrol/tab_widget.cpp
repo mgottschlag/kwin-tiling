@@ -10,9 +10,7 @@
 
 #define _TAB_WIDGET_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-khotkeys.h>
 
 #include "tab_widget.h"
 

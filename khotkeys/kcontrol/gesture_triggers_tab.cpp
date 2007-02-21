@@ -10,9 +10,7 @@
 
 #define _GESTURE_TRIGGERS_TAB_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "gesture_triggers_tab.h"
 

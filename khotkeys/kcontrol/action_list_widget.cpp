@@ -10,9 +10,7 @@
 
 #define _ACTION_LIST_WIDGET_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "action_list_widget.h"
 

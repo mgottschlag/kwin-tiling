@@ -10,9 +10,7 @@
 
 #define _GENERAL_TAB_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "general_tab.h"
 

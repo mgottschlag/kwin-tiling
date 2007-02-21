@@ -10,9 +10,7 @@
 
 #define _ACTION_GROUP_TAB_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "action_group_tab.h"
 

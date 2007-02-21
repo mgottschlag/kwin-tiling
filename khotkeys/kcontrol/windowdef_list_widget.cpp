@@ -10,9 +10,7 @@
 
 #define _WINDOWDEF_LIST_WIDGET_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "windowdef_list_widget.h"
 

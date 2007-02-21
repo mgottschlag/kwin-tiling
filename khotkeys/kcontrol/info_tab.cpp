@@ -10,9 +10,7 @@
 
 #define _INFO_TAB_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 
 #include "info_tab.h"
 
