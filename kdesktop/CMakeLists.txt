@@ -91,7 +91,7 @@ install( FILES kdesktop.kcfg klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR} )
 #install( FILES kdesktop.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )
 install( FILES kdesktopSetAsBackground.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqueror/servicemenus )
 install( FILES kdesktop_custom_menu1 kdesktop_custom_menu2  DESTINATION  ${CONFIG_INSTALL_DIR} )
-install( FILES org.kde.kdesktop.Background.xml org.kde.kdesktop.Desktop.xml org.kde.kdesktop.ScreenSaver.xml DESTINATION ${DBUS_INTERFACES_DIR} )
+install( FILES org.kde.kdesktop.Background.xml org.kde.kdesktop.Desktop.xml DESTINATION ${DBUS_INTERFACES_DIR} )
 
 
 
