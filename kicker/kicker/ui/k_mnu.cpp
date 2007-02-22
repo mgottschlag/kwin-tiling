@@ -65,7 +65,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "k_mnu.h"
 #include "kdesktop_interface.h"
-#include "kdesktop_screensaver_interface.h"
+#include "screensaver_interface.h"
 #include "k_mnu.moc"
 
 PanelKMenu::PanelKMenu()
@@ -322,11 +322,8 @@ extern int kicker_screen_number;
 
 void PanelKMenu::slotLock()
 {
-    QString interface( "org.kde.kdesktop" );
-    if ( kicker_screen_number )
-        interface.sprintf("org.kde.kdesktop-screen-%d", kicker_screen_number);
-
-    org::kde::kdesktop::ScreenSaver screenSaverInterface( interface, "/ScreenSaver", QDBusConnection::sessionBus() );
+    QString interface( "org.kde.krunner" );
+    org::kde::ScreenSaver screenSaverInterface( interface, "/ScreenSaver", QDBusConnection::sessionBus() );
     if ( screenSaverInterface.isValid() )
         screenSaverInterface.lock();
 }
