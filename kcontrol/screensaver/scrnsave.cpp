@@ -490,7 +490,7 @@ void KScreenSaver::save()
     // TODO (GJ): When you changed anything, these two lines will give a segfault
     // on exit. I don't know why yet.
 
-    org::kde::ScreenSaver desktop("org.kde.krunner", "/Screensaver", QDBusConnection::sessionBus());
+    org::kde::ScreenSaver desktop("org.kde.screensaver", "/Screensaver", QDBusConnection::sessionBus());
     desktop.configure();
 
     mChanged = false;
