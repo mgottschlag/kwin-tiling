@@ -24,9 +24,6 @@
     <method name="background">
       <arg type="o" direction="out"/>
     </method>
-    <method name="screenSaver">
-      <arg type="o" direction="out"/>
-    </method>
     <method name="refresh">
     </method>
     <method name="logout">

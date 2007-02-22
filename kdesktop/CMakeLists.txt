@@ -36,18 +36,14 @@ install(TARGETS kcheckrunning DESTINATION ${BIN_INSTALL_DIR})
 set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
    main.cc
    krootwm.cc
-   xautolock.cc
    kdiconview.cc
    desktop.cc
-   lockeng.cc
    bgmanager.cc
    init.cc
    minicli.cpp
    pixmapserver.cc
    kcustommenu.cc
    startupid.cpp
-   xautolock_diy.c
-   xautolock_engine.c
    kshadowengine.cpp
    kshadowsettings.cpp
    kdesktopshadowsettings.cpp
@@ -61,8 +57,6 @@ QT4_ADD_DBUS_INTERFACE( kdesktop_SRCS ${kwin_xml} kwin_interface )
 
 qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Background.xml bgmanager.h KBackgroundManager )
 qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Desktop.xml desktop.h KDesktop )
-
-qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.ScreenSaver.xml lockeng.h SaverEngine )
 
 kde4_automoc(${kdesktop_SRCS})
 
@@ -86,7 +80,6 @@ install(TARGETS kdesktop DESTINATION ${BIN_INSTALL_DIR})
 
 ########### subdirs ###############
 
-add_subdirectory( lock )
 add_subdirectory( patterns )
 add_subdirectory( programs )
 add_subdirectory( init )

@@ -25,7 +25,6 @@
 #include "startupid.h"
 #include "kdiconview.h"
 #include "minicli.h"
-#include "lockeng.h"
 #include "kdesktopsettings.h"
 #include "klaunchsettings.h"
 #include "desktopadaptor.h"
@@ -906,11 +905,6 @@ bool KDesktop::event(QEvent * e)
 QDBusObjectPath KDesktop::background()
 {
     return QDBusObjectPath( KBackgroundManager::backgroundDBusObjectPath );
-}
-
-QDBusObjectPath KDesktop::screenSaver()
-{
-    return QDBusObjectPath( SaverEngine::screenSaverDBusObjectPath );
 }
 
 #include "desktop.moc"

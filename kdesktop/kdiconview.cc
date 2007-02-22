@@ -756,7 +756,7 @@ bool KDIconView::deleteGlobalDesktopFiles()
         }
 
         KDesktopFile df(desktopPath + fItem->url().fileName());
-        df.writeEntry("Hidden", true);
+        df.desktopGroup().writeEntry("Hidden", true);
         df.sync();
 
         delete it;
@@ -1249,8 +1249,8 @@ void KDIconView::renameDesktopFile(const QString &path, const QString &name)
     if ( cfg.readName() == name )
       return;
 
-    cfg.writeEntry( "Name", name );
-    cfg.writeEntry( "Name", name, KConfigBase::Normal|KConfigBase::NLS );
+    cfg.desktopGroup().writeEntry( "Name", name );
+    cfg.desktopGroup().writeEntry( "Name", name, KConfigBase::Normal|KConfigBase::NLS );
     cfg.sync();
 }
 

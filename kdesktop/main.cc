@@ -20,7 +20,6 @@
 #include <config.h>
 
 #include "desktop.h"
-#include "lockeng.h"
 #include "init.h"
 #include "krootwm.h"
 #include "kdesktopsettings.h"
@@ -179,9 +178,6 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
 
     bool x_root_hack = args->isSet("x-root");
     bool wait_for_kded = args->isSet("waitforkded");
-
-    // This MUST be created before any widgets are created
-    SaverEngine saver;
 
     // Do this before forking so that if a dialog box appears it won't
     // be covered by other apps.

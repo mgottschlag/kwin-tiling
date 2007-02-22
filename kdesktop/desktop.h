@@ -147,10 +147,6 @@ public:
    * Get the dbus object path for the background interface
    */
   QDBusObjectPath background();
-  /**
-   * Get the dbus object path for the screensaver interface
-   */
-  QDBusObjectPath screenSaver();
 
   // End of DBus-exported methods
 
