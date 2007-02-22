@@ -30,22 +30,34 @@ NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "sleep"
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "wake"
 ## signals ##
 NM_DBUS_INTERFACE, NM_DBUS_SIGNAL_STATE_CHANGE uint32 state
+
 DeviceStrengthChanged (o obj_path, int32 strength)
-DeviceCarrierOn [device]
-DeviceCarrierOff [device]
-DeviceAdded [device]
-DeviceNoLongerActive [device]
-DeviceNowActive [device]
-DeviceActivating [device]
+
+DeviceCarrierOn dev_path
+DeviceCarrierOff dev_path
+DeviceAdded dev_path
 NM_DBUS_INTERFACE, "DeviceRemoved" op obj_path
+DeviceNoLongerActive o dev_path
+DeviceNowActive o dev_path
+DeviceActivating o dev_path
+DeviceActivationFailed o dev_path, + s essid if wireless FUCKERS
+
 NM_DBUS_INTERFACE, "WirelessNetworkAppeared" op obj_path op net_path
 NM_DBUS_INTERFACE, "WirelessNetworkDisappeared"  op obj_path op net_path
 NM_DBUS_INTERFACE, "WirelessNetworkStrengthChanged" op obj_path op net_path int32 strength
 NM_DBUS_INTERFACE, "DeviceActivationStage" op obj_path uint32 stage
+    NM_ACT_STAGE_UNKNOWN = 0,
+	NM_ACT_STAGE_DEVICE_PREPARE,
+	NM_ACT_STAGE_DEVICE_CONFIG,
+	NM_ACT_STAGE_NEED_USER_KEY,
+	NM_ACT_STAGE_IP_CONFIG_START,
+	NM_ACT_STAGE_IP_CONFIG_GET,
+	NM_ACT_STAGE_IP_CONFIG_COMMIT,
+	NM_ACT_STAGE_ACTIVATED,
+	NM_ACT_STAGE_FAILED,
+	NM_ACT_STAGE_CANCELLED
+
 // after DeviceActivationFailed, need to update device and possibly network to get the right activation stage.
-NM_DBUS_INTERFACE, "DeviceActivationFailed" op obj_path op net_path
-OR
-NM_DBUS_INTERFACE, "DeviceActivationFailed" op obj_path // wired network?
 
 
 ### Dialup ###

@@ -17,20 +17,25 @@
 
 */
 
+#include <QApplication>
 #include <kdebug.h>
 #include "nmobject.h"
 
+#include "NetworkManager-networkinterface.h"
 #include "NetworkManager-networkmanager.h"
 
 int main( int argc, char** argv )
 {
-	//NMNetworkManager mgr( 0, QStringList() );
-	//mgr.networkInterfaces();
-    //mgr.isNetworkingEnabled();
-    //mgr.isWirelessEnabled();
+	QApplication app( argc, argv );
+    NMNetworkManager mgr( 0, QStringList() );
+    mgr.networkInterfaces();
+    mgr.isNetworkingEnabled();
+    mgr.isWirelessEnabled();
+    NMNetworkInterface * netIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth1" ) );
+    kDebug() << "Interface: " <<  netIface->uni() << ", " << netIface->signalStrength() << endl;
     //mgr.setWirelessEnabled( true );
-	kDebug() << "That's it!" << endl;
-	NMObject obj( argc, argv );
-	obj.showDevices();
-	return obj.exec();
+    kDebug() << "That's it!" << endl;
+    //NMObject obj( argc, argv );
+    //obj.showDevices();
+    return app.exec();
 }

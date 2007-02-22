@@ -17,6 +17,7 @@
 
 */
 
+#include <NetworkManager.h>
 #include <QtDBus>
 
 #include <kdebug.h>
@@ -93,6 +94,7 @@ NMNetworkInterface::NMNetworkInterface( const QString & objectPath )
     NMDBusDeviceProperties dev;
     deserialize( reply, dev );
     dump( dev );
+    setProperties( dev );
 }
 
 NMNetworkInterface::~NMNetworkInterface()
@@ -117,8 +119,7 @@ Solid::NetworkInterface::Type NMNetworkInterface::type() const
 
 Solid::NetworkInterface::ConnectionState NMNetworkInterface::connectionState() const
 {
-    // do something with activationstage
-    return Solid::NetworkInterface::UnknownState;
+    return ( Solid::NetworkInterface::ConnectionState )d->activationStage;
 }
 
 int NMNetworkInterface::signalStrength() const
@@ -153,22 +154,52 @@ QStringList NMNetworkInterface::networks() const
 
 void NMNetworkInterface::setProperties( const NMDBusDeviceProperties & props )
 {
-    // store props
+    switch ( props.type )
+    {
+        case DEVICE_TYPE_UNKNOWN:
+            d->type = Solid::NetworkInterface::UnknownType;
+            break;
+        case DEVICE_TYPE_802_3_ETHERNET:
+            d->type = Solid::NetworkInterface::Ieee8023;
+            break;
+        case DEVICE_TYPE_802_11_WIRELESS:
+            d->type = Solid::NetworkInterface::Ieee80211;
+            break;
+        default:
+            d->type = Solid::NetworkInterface::UnknownType;
+            break;
+    }
+    d->active = props.active;
+    d->activationStage = props.activationStage;
+    d->carrier = props.linkActive;
+    d->signalStrength = props.strength;
+    d->designSpeed = props.speed;
+    //d->networks
+    d->capabilities = 0;
+    if ( props.capabilities & NM_DEVICE_CAP_NM_SUPPORTED )
+        d->capabilities |= Solid::NetworkInterface::IsManageable;
+    if ( props.capabilities & NM_DEVICE_CAP_CARRIER_DETECT )
+        d->capabilities |= Solid::NetworkInterface::SupportsCarrierDetect;
+    if ( props.capabilities & NM_DEVICE_CAP_WIRELESS_SCAN )
+        d->capabilities |= Solid::NetworkInterface::SupportsWirelessScan;
 }
 
 void NMNetworkInterface::setSignalStrength( int strength )
 {
     d->signalStrength = strength;
+    emit signalStrengthChanged( strength );
 }
 
 void NMNetworkInterface::setCarrierOn( bool on )
 {
     d->carrier = on;
+    emit linkUpChanged( on );
 }
 
-void NMNetworkInterface::setActivationStage( uint activationStage )
+void NMNetworkInterface::setActivationStage( int activationStage )
 {
-    // convert 
+    d->activationStage = activationStage;
+    emit connectionStateChanged( activationStage );
 }
 
 #include "NetworkManager-networkinterface.moc"

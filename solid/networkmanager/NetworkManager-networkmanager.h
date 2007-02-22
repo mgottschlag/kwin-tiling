@@ -48,8 +48,19 @@ Q_INTERFACES(Solid::Ifaces::NetworkManager)
         void setNetworkingEnabled( bool );
         void notifyHiddenNetwork( const QString & );
     protected Q_SLOTS:
-        void receivedDeviceAdded( QDBusObjectPath );
-        void receivedDeviceRemoved( QDBusObjectPath );
+        void receivedDeviceAdded(QDBusObjectPath);
+        void receivedDeviceRemoved(QDBusObjectPath);
+        void deviceStrengthChanged(QDBusObjectPath,int strength);
+        void networkStrengthChanged(QDBusObjectPath,QDBusObjectPath,int);
+        void wirelessNetworkAppeared(QDBusObjectPath,QDBusObjectPath);
+        void wirelessNetworkDisappeared(QDBusObjectPath,QDBusObjectPath);
+        void deviceActivationStageChanged(QDBusObjectPath,uint);
+        void carrierOn(QDBusObjectPath);
+        void carrierOff(QDBusObjectPath);
+        void nowActive(QDBusObjectPath);
+        void noLongerActive(QDBusObjectPath);
+        void activating(QDBusObjectPath);
+        void activationFailed(QDBusObjectPath);
     private:
         NMNetworkManagerPrivate * d;
 };
