@@ -30,9 +30,11 @@
 
 #include "../plasma/lib/theme.h"
 
-#include "shellrunner.h"
-#include "apprunner.h"
-#include "searchrunner.h"
+#include <kservicetypetrader.h>
+//#include "shellrunner.h"
+//#include "apprunner.h"
+//#include "searchrunner.h"
+
 #include "interface.h"
 #include "interfaceadaptor.h"
 #include <QApplication>
@@ -220,9 +222,19 @@ void Interface::loadRunners()
     m_runners.clear();
     m_currentRunner = 0;
 
-    m_runners.append(new ShellRunner(this));
-    m_runners.append(new AppRunner(this));
-    m_runners.append(new SearchRunner(this));
+//    m_runners.append(new ShellRunner(this));
+//    m_runners.append(new AppRunner(this));
+//    m_runners.append(new SearchRunner(this));
+
+    KService::List offers = KServiceTypeTrader::self()->query("KRunner/Runner");
+    KService::List::ConstIterator it;
+	for(it = offers.begin(); it != offers.end(); ++it)
+	{
+		KService::Ptr service = *it;
+		
+kDebug() << "runner : " << service->name() << endl ;
+
+	}
 }
 
 #include "interface.moc"

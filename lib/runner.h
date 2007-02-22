@@ -22,7 +22,9 @@
 #include <QObject>
 #include <QList>
 
-class Runner : public QObject
+#include <kdemacros.h>
+
+class KDE_EXPORT Runner : public QObject
 {
     Q_OBJECT
 
@@ -42,5 +44,10 @@ class Runner : public QObject
     signals:
         void matches();
 };
+
+#define K_EXPORT_KRUNNER_RUNNER( libname, classname )                       \
+    K_EXPORT_COMPONENT_FACTORY(                                             \
+        krunner_##libname,                                               \
+        KGenericFactory<classname>("krunner_" #libname) )
 
 #endif

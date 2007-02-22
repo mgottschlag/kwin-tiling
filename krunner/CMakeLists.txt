@@ -9,21 +9,19 @@ set(krunner_dbusXML org.kde.krunner.Interface.xml)
 set(screensaver_dbusXML org.kde.ScreenSaver.xml)
 set(krunner_BGIMAGES images/background/dialog.svg)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/plasma/lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/plasma/lib ${CMAKE_CURRENT_SOURCE_DIR}/workspace/lib)
 
 set(krunner_SRCS interface.cpp
                  krunnerapp.cpp
-                 runner.cpp
-                 apprunner.cpp
                  restartingapplication.cpp
-                 searchrunner.cpp
-                 shellrunner.cpp
                  main.cpp
+                 runners/app/apprunner.cpp
+                 runners/shell/shellrunner.cpp
+                 saverengine.cpp
+                 startupid.cpp
                  xautolock.cpp
                  xautolock_diy.c
-                 xautolock_engine.c
-                 saverengine.cpp
-                 startupid.cpp)
+                 xautolock_engine.c)
 
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
@@ -38,6 +36,7 @@ if(X11_Xss_LIB)
 endif(X11_Xss_LIB)
 
 add_subdirectory( lock )
+add_subdirectory( runners )
 
 install(TARGETS krunner DESTINATION ${BIN_INSTALL_DIR})
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})

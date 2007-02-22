@@ -7,6 +7,7 @@ project(kworkspacelib)
 
 set(kworkspace_LIB_SRCS kworkspace.cpp
                         kwindowlistmenu.cpp
+                        runner.cpp
    )
 
 set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
