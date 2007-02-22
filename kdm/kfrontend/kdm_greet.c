@@ -56,7 +56,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #endif
 
 #ifdef HAVE_XKB
-# include <X11/XKBlib.h>
+#include <X11/XKBlib.h>
 #endif
 
 extern void LogOutOfMem( void );
@@ -414,7 +414,7 @@ SecureDisplay( Display *dpy )
 		XSync( dpy, 0 );
 	}
 	Debug( "done secure %s\n", dname );
-#ifdef HAVE_XKBSETPERCLIENTCONTROLS
+#if defined(HAVE_XKB) && defined(HAVE_XKBSETPERCLIENTCONTROLS)
 	/*
 	 * Activate the correct mapping for modifiers in XKB extension as
 	 * grabbed keyboard has its own mapping by default
