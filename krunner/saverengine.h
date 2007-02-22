@@ -11,6 +11,7 @@
 #include <QWidget>
 #include <kprocess.h>
 #include <QVector>
+#include <QDBusConnection>
 
 #include "xautolock.h"
 #include "xautolock_c.h"
@@ -95,7 +96,7 @@ protected:
     void processLockTransactions();
     xautolock_corner_t applyManualSettings(int);
 
-protected:
+private:
     enum State { Waiting, Preparing, Saving };
     bool        mEnabled;
     bool	mDPMS;
@@ -112,6 +113,7 @@ protected:
     int         mXExposures;
 
     bool	mBlankOnly;  // only use the blanker, not the defined saver
+    QDBusConnection screensaverService;
 //    QVector< DCOPClientTransaction* > mLockTransactions;
 };
 

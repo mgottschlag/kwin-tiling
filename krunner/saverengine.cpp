@@ -26,8 +26,6 @@
 #include "xautolock_c.h"
 extern xautolock_corner_t xautolock_corners[ 4 ];
 
-extern const char* screenSaverDBusObjectPath = "/ScreenSaver";
-
 //===========================================================================
 //
 // Screen saver engine. Doesn't handle the actual screensaver window,
@@ -36,11 +34,13 @@ extern const char* screenSaverDBusObjectPath = "/ScreenSaver";
 //
 SaverEngine::SaverEngine()
     : QWidget(),
-      mBlankOnly(false)
+      mBlankOnly(false),
+      screensaverService( QDBusConnection::connectToBus( QDBusConnection::SessionBus,
+                                                         "org.kde.screensaver" ) )
 {
-
     (void) new ScreenSaverAdaptor( this );
-    QDBusConnection::sessionBus().registerObject( screenSaverDBusObjectPath, this );
+    screensaverService.registerService( "org.kde.screensaver" ) ;
+    screensaverService.registerObject( "/ScreenSaver", this ) << endl;
 
     // Save X screensaver parameters
     XGetScreenSaver(QX11Info::display(), &mXTimeout, &mXInterval,
@@ -121,9 +121,9 @@ void SaverEngine::saverLockReady()
 {
     if( mState != Preparing )
     {
-	kDebug( 1204 ) << "Got unexpected saverReady()" << endl;
+	kDebug() << "Got unexpected saverReady()" << endl;
     }
-    kDebug( 1204 ) << "Saver Lock Ready" << endl;
+    kDebug() << "Saver Lock Ready" << endl;
     processLockTransactions();
 }
 
@@ -178,7 +178,7 @@ bool SaverEngine::enable( bool e )
 
         mXAutoLock->start();
 
-        kDebug(1204) << "Saver Engine started, timeout: " << mTimeout << endl;
+        kDebug() << "Saver Engine started, timeout: " << mTimeout << endl;
     }
     else
     {
@@ -189,7 +189,7 @@ bool SaverEngine::enable( bool e )
 	}
 
 	XSetScreenSaver(QX11Info::display(), 0, mXInterval, mXBlanking, mXExposures);
-        kDebug(1204) << "Saver Engine disabled" << endl;
+        kDebug() << "Saver Engine disabled" << endl;
     }
 
     return true;
@@ -253,7 +253,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     if (mState != Waiting)
         return true;
 
-    kDebug(1204) << "SaverEngine: starting saver" << endl;
+    kDebug() << "SaverEngine: starting saver" << endl;
     emit screenSaverStarted(); // DBus signal
 
     if (mLockProcess.isRunning())
@@ -264,7 +264,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     QString path = KStandardDirs::findExe( "krunner_lock" );
     if( path.isEmpty())
     {
-	kDebug( 1204 ) << "Can't find krunner_lock!" << endl;
+	kDebug() << "Can't find krunner_lock!" << endl;
 	return false;
     }
     mLockProcess << path;
@@ -284,7 +284,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 
     if (mLockProcess.start() == false )
     {
-	kDebug( 1204 ) << "Failed to start krunner_lock!" << endl;
+	kDebug() << "Failed to start krunner_lock!" << endl;
 	return false;
     }
 
@@ -304,10 +304,10 @@ void SaverEngine::stopLockProcess()
 {
     if (mState == Waiting)
     {
-        kWarning(1204) << "SaverEngine::stopSaver() saver not active" << endl;
+        kWarning() << "SaverEngine::stopSaver() saver not active" << endl;
         return;
     }
-    kDebug(1204) << "SaverEngine: stopping lock" << endl;
+    kDebug() << "SaverEngine: stopping lock" << endl;
     emit screenSaverStopped(); // DBus signal
 
     mLockProcess.kill();
@@ -323,7 +323,7 @@ void SaverEngine::stopLockProcess()
 
 void SaverEngine::lockProcessExited()
 {
-    kDebug(1204) << "SaverEngine: lock exited" << endl;
+    kDebug() << "SaverEngine: lock exited" << endl;
     if( mState == Waiting )
 	return;
     emit screenSaverStopped(); // DBus signal
