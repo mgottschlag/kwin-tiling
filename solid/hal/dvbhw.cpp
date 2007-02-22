@@ -39,8 +39,27 @@ QString DvbHw::device() const
 
 int DvbHw::deviceAdapter() const
 {
-    // FIXME !!!
-    return 0;
+    QString string = device();
+    int pos = string.lastIndexOf('/');
+    if (pos < 0)
+        return -1;
+    string = string.left(pos);
+
+    pos = string.lastIndexOf('/');
+    if (pos < 0)
+        return -1;
+    string = string.mid(pos + 1);
+
+    if (!string.startsWith("adapter"))
+        return -1;
+    string = string.mid(7);
+
+    bool ok;
+    int adapter = string.toInt(&ok, 10);
+    if (ok)
+        return adapter;
+    else
+        return -1;
 }
 
 Solid::DvbHw::DeviceType DvbHw::deviceType() const
@@ -68,7 +87,7 @@ int DvbHw::deviceIndex() const
 bool DvbHw::parseTypeIndex(Solid::DvbHw::DeviceType *type, int *index) const
 {
     QString string = device();
-    int pos = string.lastIndexOf("/");
+    int pos = string.lastIndexOf('/');
     if (pos < 0)
         return false;
     string = string.mid(pos + 1);
