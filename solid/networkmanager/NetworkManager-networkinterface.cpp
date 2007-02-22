@@ -196,6 +196,11 @@ void NMNetworkInterface::setCarrierOn( bool on )
     emit linkUpChanged( on );
 }
 
+void NMNetworkInterface::setActive( bool active )
+{
+    d->active = active;
+}
+
 void NMNetworkInterface::setActivationStage( int activationStage )
 {
     d->activationStage = activationStage;

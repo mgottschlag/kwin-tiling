@@ -48,6 +48,7 @@ Q_INTERFACES(Solid::Ifaces::NetworkManager)
         void setNetworkingEnabled( bool );
         void notifyHiddenNetwork( const QString & );
     protected Q_SLOTS:
+        void stateChanged(uint);
         void receivedDeviceAdded(QDBusObjectPath);
         void receivedDeviceRemoved(QDBusObjectPath);
         void deviceStrengthChanged(QDBusObjectPath,int strength);

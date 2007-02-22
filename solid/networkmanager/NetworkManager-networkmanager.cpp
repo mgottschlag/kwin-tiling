@@ -17,6 +17,8 @@
 
 */
 
+#include <NetworkManager.h>
+
 #include <QtDBus>
 
 #include <kdebug.h>
@@ -32,9 +34,10 @@ public:
     NMNetworkManagerPrivate() : manager( "org.freedesktop.NetworkManager",
                                          "/org/freedesktop/NetworkManager",
                                          "org.freedesktop.NetworkManager",
-                                         QDBusConnection::systemBus() ) { }
+                                         QDBusConnection::systemBus() ), cachedState( NM_STATE_UNKNOWN ) { }
     QDBusInterface manager;
     QMap<QString, NMNetworkInterface*> interfaces;
+    uint cachedState;
 };
 
 NMNetworkManager::NMNetworkManager( QObject * parent, const QStringList & args )
@@ -45,6 +48,7 @@ NMNetworkManager::NMNetworkManager( QObject * parent, const QStringList & args )
                                      "/org/freedesktop/NetworkManager", \
                                      "org.freedesktop.NetworkManager", \
                                      signal, this, SLOT(slot) );
+    connectNMToThis( NM_DBUS_SIGNAL_STATE_CHANGE, stateChanged(uint) );
     connectNMToThis( "DeviceAdded", receivedDeviceAdded(QDBusObjectPath) );
     connectNMToThis( "DeviceRemoved", receivedDeviceRemoved(QDBusObjectPath) );
     connectNMToThis( "DeviceStrengthChanged", deviceStrengthChanged(QDBusObjectPath,int) );
@@ -121,12 +125,16 @@ bool NMNetworkManager::isNetworkingEnabled( ) const
 {
 #warning implement NMNetworkManager::isNetworkingEnabled()
     kDebug() << "NMNetworkManager::isNetworkingEnabled()" << endl;
-    QDBusReply< uint > state = d->manager.call( "state" );
-    if ( state.isValid() )
+    if ( NM_STATE_UNKNOWN == d->cachedState )
     {
-        kDebug() << "  state: " << state.value() << endl;
+        QDBusReply< uint > state = d->manager.call( "state" );
+        if ( state.isValid() )
+        {
+            kDebug() << "  got state: " << state.value() << endl;
+            d->cachedState = state.value();
+        }
     }
-    return state > 1 ; // HACK, include NetworkManager.h
+    return NM_STATE_CONNECTING == d->cachedState || NM_STATE_CONNECTED == d->cachedState || NM_STATE_DISCONNECTED;
 }
 
 bool NMNetworkManager::isWirelessEnabled() const
@@ -155,6 +163,12 @@ void NMNetworkManager::setWirelessEnabled( bool enabled )
 void NMNetworkManager::notifyHiddenNetwork( const QString & netname )
 {
     kDebug() << "NMNetworkManager::notifyHiddenNetwork() implement me" << endl;
+}
+
+void NMNetworkManager::stateChanged( uint state )
+{
+    kDebug() << "NMNetworkManager::stateChanged() (" << state << ")" << endl;
+    d->cachedState = state;
 }
 
 void NMNetworkManager::receivedDeviceAdded( QDBusObjectPath objpath )
@@ -194,32 +208,49 @@ void NMNetworkManager::wirelessNetworkDisappeared( QDBusObjectPath devPath,QDBus
 void NMNetworkManager::deviceActivationStageChanged( QDBusObjectPath devPath, uint stage )
 {
     kDebug() << "NMNetworkManager::deviceActivationStageChanged() " << devPath.path() << " ("<< stage << ")" << endl;
+    if ( d->interfaces.contains( devPath.path() ) )
+        d->interfaces[ devPath.path() ]->setActivationStage( stage );
 }
+
 void NMNetworkManager::carrierOn(QDBusObjectPath devPath)
 {
     kDebug() << "NMNetworkManager::carrierOn(): " << devPath.path() << endl;
+    if ( d->interfaces.contains( devPath.path() ) )
+        d->interfaces[ devPath.path() ]->setCarrierOn( true );
 }
 void NMNetworkManager::carrierOff(QDBusObjectPath devPath)
 {
     kDebug() << "NMNetworkManager::carrierOff(): " << devPath.path() << endl;
+    if ( d->interfaces.contains( devPath.path() ) )
+        d->interfaces[ devPath.path() ]->setCarrierOn( false );
 }
+
 void NMNetworkManager::nowActive(QDBusObjectPath devPath)
 {
     kDebug() << "NMNetworkManager::nowActive(): " << devPath.path() << endl;
+    if ( d->interfaces.contains( devPath.path() ) )
+        d->interfaces[ devPath.path() ]->setActive( true );
 }
+
 void NMNetworkManager::noLongerActive(QDBusObjectPath devPath)
 {
     kDebug() << "NMNetworkManager::noLongerActive(): " << devPath.path() << endl;
+    if ( d->interfaces.contains( devPath.path() ) )
+        d->interfaces[ devPath.path() ]->setActive( false );
 }
+
 void NMNetworkManager::activating(QDBusObjectPath devPath)
 {
     kDebug() << "NMNetworkManager::activating(): " << devPath.path() << endl;
-}
-void NMNetworkManager::activationFailed(QDBusObjectPath devPath)
-{
-    kDebug() << "NMNetworkManager::activationFailed(): " << devPath.path() << endl;
+    // We don't do anything with this signal as it is duplicated by connectionStateChanged
 }
 
-// state change
-// check for bum input ie devPath
+void NMNetworkManager::activationFailed(QDBusObjectPath devPath)
+{
+    kDebug() << "NMNetworkManager::activationFailed() - implement me! : " << devPath.path() << endl;
+    if ( d->interfaces.contains( devPath.path() ) )
+        d->interfaces[ devPath.path() ]->setActivationStage( NM_ACT_STAGE_FAILED );
+}
+
+// TODO check for bum input at least to public methods ie devPath
 #include "NetworkManager-networkmanager.moc"

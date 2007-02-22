@@ -26,16 +26,21 @@
 
 int main( int argc, char** argv )
 {
+#if 1
 	QApplication app( argc, argv );
     NMNetworkManager mgr( 0, QStringList() );
     mgr.networkInterfaces();
     mgr.isNetworkingEnabled();
-    mgr.isWirelessEnabled();
-    NMNetworkInterface * netIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth1" ) );
-    kDebug() << "Interface: " <<  netIface->uni() << ", " << netIface->signalStrength() << endl;
+    //NMNetworkInterface * netIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth1" ) );
+    //kDebug() << "Interface: " <<  netIface->uni() << ", " << netIface->signalStrength() << endl;
     //mgr.setWirelessEnabled( true );
-    kDebug() << "That's it!" << endl;
-    //NMObject obj( argc, argv );
-    //obj.showDevices();
     return app.exec();
+#else
+//	QApplication app( argc, argv );
+    NMObject obj( argc, argv );
+    obj.showDevices();
+    NMNetworkManager mgr( 0, QStringList() );
+    mgr.networkInterfaces();
+    return obj.exec();
+#endif
 }

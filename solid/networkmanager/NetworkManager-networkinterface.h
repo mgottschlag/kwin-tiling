@@ -73,6 +73,7 @@ public:
     void setProperties( const NMDBusDeviceProperties & );
     void setSignalStrength( int );
     void setCarrierOn( bool );
+    void setActive( bool );
     void setActivationStage( int activationStage );
 private:
     NMNetworkInterfacePrivate * d;
