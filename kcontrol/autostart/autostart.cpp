@@ -21,7 +21,8 @@
 #include <KGenericFactory>
 #include <KLocale>
 #include <KGlobal>
-#include <KSimpleConfig>
+#include <KConfig>
+#include <KConfigGroup>
 #include <KGlobalSettings>
 #include <KStandardDirs>
 #include <KUrlRequester>
@@ -147,15 +148,15 @@ void autostart::addCMD() {
 
 	if ( service->desktopEntryName().isNull() ) {
 		desktopTemplate = KUrl( kgs->autostartPath() + service->name() + ".desktop" );
-		KSimpleConfig ksc(desktopTemplate.path());
-		ksc.setGroup("Desktop Entry");
-		ksc.writeEntry("Encoding","UTF-8");
-		ksc.writeEntry("Exec",service->exec());
-		ksc.writeEntry("Icon","exec");
-		ksc.writeEntry("Path","");
-		ksc.writeEntry("Terminal",false);
-		ksc.writeEntry("Type","Application");
-		ksc.sync();
+		KConfig kc(desktopTemplate.path(), KConfig::OnlyLocal);
+		KConfigGroup kcg = kc.group("Desktop Entry");
+		kcg.writeEntry("Encoding","UTF-8");
+		kcg.writeEntry("Exec",service->exec());
+		kcg.writeEntry("Icon","exec");
+		kcg.writeEntry("Path","");
+		kcg.writeEntry("Terminal",false);
+		kcg.writeEntry("Type","Application");
+		kcg.sync();
 
 		KPropertiesDialog dlg( desktopTemplate, this );
 		if ( dlg.exec() != QDialog::Accepted )
@@ -220,8 +221,9 @@ void autostart::editCMD() {
 
 void autostart::setStartOn( int index ) {
 	if ( widget->listCMD->selectedItems().size() == 0 ) return;
-	((desktop*)widget->listCMD->selectedItems().first())->setPath(paths.value(index));
-	((desktop*)widget->listCMD->selectedItems().first())->setText(2, ((desktop*)widget->listCMD->selectedItems().first())->fileName.directory() );
+	desktop* entry = (desktop*)widget->listCMD->selectedItems().first();
+	entry->setPath(paths.value(index));
+	entry->setText(2, entry->fileName.directory() );
 }
 
 void autostart::selectionChanged() {
