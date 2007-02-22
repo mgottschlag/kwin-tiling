@@ -40,7 +40,7 @@ SaverEngine::SaverEngine()
 {
     (void) new ScreenSaverAdaptor( this );
     screensaverService.registerService( "org.kde.screensaver" ) ;
-    screensaverService.registerObject( "/ScreenSaver", this ) << endl;
+    screensaverService.registerObject( "/ScreenSaver", this );
 
     // Save X screensaver parameters
     XGetScreenSaver(QX11Info::display(), &mXTimeout, &mXInterval,
