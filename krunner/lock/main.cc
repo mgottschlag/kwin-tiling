@@ -165,7 +165,7 @@ int main( int argc, char **argv )
 
     if( sig )
     {
-        org::kde::ScreenSaver runner("org.kde.krunner", "/ScreenSaver", QDBusConnection::sessionBus());
+        org::kde::ScreenSaver runner("org.kde.screensaver", "/ScreenSaver", QDBusConnection::sessionBus());
         runner.saverLockReady();
     }
 
