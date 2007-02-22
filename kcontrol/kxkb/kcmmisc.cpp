@@ -136,13 +136,12 @@ void KeyboardConfig::setNumLockState( int s )
 
 void KeyboardConfig::load()
 {
-  KConfig config("kcminputrc");
+  KConfigGroup config(KSharedConfig::openConfig("kcminputrc", KConfig::NoGlobals), "Keyboard");
 
   XKeyboardState kbd;
 
   XGetKeyboardControl(QX11Info::display(), &kbd);
 
-  config.setGroup("Keyboard");
   bool key = config.readEntry("KeyboardRepeating", true);
   keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
   ui->delay->setValue(config.readEntry( "RepeatDelay", 660 ));
@@ -157,7 +156,7 @@ void KeyboardConfig::load()
 
 void KeyboardConfig::save()
 {
-  KConfig config("kcminputrc");
+  KConfigGroup config(KSharedConfig::openConfig("kcminputrc", KConfig::NoGlobals), "Keyboard");
 
   XKeyboardControl kbd;
 
@@ -174,7 +173,6 @@ void KeyboardConfig::save()
     set_repeatrate(ui->delay->value(), ui->rate->value());
   }
 
-  config.setGroup("Keyboard");
   config.writeEntry("ClickVolume",clickVolume);
   config.writeEntry("KeyboardRepeating", (keyboardRepeat == AutoRepeatModeOn));
   config.writeEntry("RepeatRate", ui->rate->value() );

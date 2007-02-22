@@ -172,14 +172,13 @@ bool KxkbConfig::load(int loadMode)
 
 void KxkbConfig::save()
 {
-	KConfig *config = new KConfig("kxkbrc", KConfig::NoGlobals);
-	config->setGroup("Layout");
+	KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
 
-	config->writeEntry("Model", m_model);
+	config.writeEntry("Model", m_model);
 
-	config->writeEntry("EnableXkbOptions", m_enableXkbOptions );
-	config->writeEntry("ResetOldOptions", m_resetOldOptions);
-	config->writeEntry("Options", m_options );
+	config.writeEntry("EnableXkbOptions", m_enableXkbOptions );
+	config.writeEntry("ResetOldOptions", m_resetOldOptions);
+	config.writeEntry("Options", m_options );
 
 	QStringList layoutList;
 	QStringList includeList;
@@ -204,37 +203,35 @@ void KxkbConfig::save()
 		}
 	}
 
-	config->writeEntry("LayoutList", layoutList);
+	config.writeEntry("LayoutList", layoutList);
 	kDebug() << "Saving Layouts: " << layoutList << endl;
 
-	config->writeEntry("IncludeGroups", includeList);
+	config.writeEntry("IncludeGroups", includeList);
  	kDebug() << "Saving includeGroups: " << includeList << endl;
 
 //	if( displayNamesList.empty() == false )
-		config->writeEntry("DisplayNames", displayNamesList);
+		config.writeEntry("DisplayNames", displayNamesList);
 // 	else
-// 		config->deleteEntry("DisplayNames");
+// 		config.deleteEntry("DisplayNames");
 
-	config->writeEntry("Use", m_useKxkb);
-	config->writeEntry("ShowSingle", m_showSingle);
-	config->writeEntry("ShowFlag", m_showFlag);
+	config.writeEntry("Use", m_useKxkb);
+	config.writeEntry("ShowSingle", m_showSingle);
+	config.writeEntry("ShowFlag", m_showFlag);
 
-	config->writeEntry("SwitchMode", switchModes[m_switchingPolicy]);
+	config.writeEntry("SwitchMode", switchModes[m_switchingPolicy]);
 
-	config->writeEntry("StickySwitching", m_stickySwitching);
-	config->writeEntry("StickySwitchingDepth", m_stickySwitchingDepth);
+	config.writeEntry("StickySwitching", m_stickySwitching);
+	config.writeEntry("StickySwitchingDepth", m_stickySwitchingDepth);
 
 	// remove old options
- 	config->deleteEntry("Variants");
-	config->deleteEntry("Includes");
-	config->deleteEntry("Encoding");
-	config->deleteEntry("AdditionalEncodings");
-	config->deleteEntry("Additional");
-	config->deleteEntry("Layout");
+ 	config.deleteEntry("Variants");
+	config.deleteEntry("Includes");
+	config.deleteEntry("Encoding");
+	config.deleteEntry("AdditionalEncodings");
+	config.deleteEntry("Additional");
+	config.deleteEntry("Layout");
 
-	config->sync();
-
-	delete config;
+	config.sync();
 }
 
 void KxkbConfig::setDefaults()
