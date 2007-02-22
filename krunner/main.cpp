@@ -108,13 +108,10 @@ int main(int argc, char* argv[])
     // Startup stuff ported from kdesktop
     KLaunchSettings::self()->readConfig();
     StartupId *startup_id( NULL );
-    if( !KLaunchSettings::busyCursor() )
-    {
+    if( !KLaunchSettings::busyCursor() ) {
         delete startup_id;
         startup_id = NULL;
-    }
-    else
-    {
+    } else {
         if( startup_id == NULL )
             startup_id = new StartupId;
         startup_id->configure();

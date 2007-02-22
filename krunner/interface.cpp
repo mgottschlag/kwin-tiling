@@ -72,7 +72,7 @@ Interface::Interface(QWidget* parent)
 
     m_compositeWatcher = new KSelectionWatcher("_NET_WM_CM_S0");
     m_haveCompositionManager = m_compositeWatcher->owner() != None;
-kDebug() << "checkForCompositionManager " << m_compositeWatcher->owner() << " != " << None << endl;
+    kDebug() << "checkForCompositionManager " << m_compositeWatcher->owner() << " != " << None << endl;
     kDebug() << "m_haveCompositionManager: " << m_haveCompositionManager << endl;
     Display *dpy = XOpenDisplay(0); // open default display
     m_haveCompositionManager = !XGetSelectionOwner(dpy,

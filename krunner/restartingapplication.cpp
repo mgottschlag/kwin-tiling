@@ -31,15 +31,13 @@ RestartingApplication::RestartingApplication(Display *display,
                                              Qt::HANDLE colormap)
     : KUniqueApplication(display, visual, colormap)
 {
-    if (KCrash::crashHandler() == 0 )
-    {
+    if (KCrash::crashHandler() == 0 ) {
         // this means we've most likely crashed once. so let's see if we
         // stay up for more than 2 minutes time, and if so reset the
         // crash handler since the crash isn't a frequent offender
         QTimer::singleShot(120000, this, SLOT(setCrashHandler()));
     }
-    else
-    {
+    else {
         // See if a crash handler was installed. It was if the -nocrashhandler
         // argument was given, but the app eats the kde options so we can't
         // check that directly. If it wasn't, don't install our handler either.
