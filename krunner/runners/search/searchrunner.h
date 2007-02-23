@@ -23,6 +23,10 @@
 
 class QWidget;
 
+/**
+ * This class runs the entered text through a search engine and returns the set
+ * of results returned as possible programs, files, actions, etc to launch.
+ */
 class SearchRunner : public Runner
 {
     Q_OBJECT

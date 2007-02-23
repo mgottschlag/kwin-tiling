@@ -23,6 +23,10 @@
 
 class QWidget;
 
+/**
+ * This class runs programs using the literal name of the binary, much as one
+ * would use at a shell prompt.
+ */
 class ShellRunner : public Runner
 {
     Q_OBJECT
