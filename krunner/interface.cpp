@@ -31,11 +31,8 @@
 #include "../plasma/lib/theme.h"
 
 #include <kservicetypetrader.h>
-//#include "shellrunner.h"
-//#include "apprunner.h"
-//#include "searchrunner.h"
 
-#include "runners/app/apprunner.h"
+#include "runners/app/servicerunner.h"
 #include "runners/shell/shellrunner.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
@@ -80,10 +77,9 @@ Interface::Interface(QWidget* parent)
     kDebug() << "m_haveCompositionManager: " << m_haveCompositionManager << endl;
     Display *dpy = XOpenDisplay(0); // open default display
     m_haveCompositionManager = !XGetSelectionOwner(dpy,
-                                               XInternAtom(dpy,
-                                                           "_NET_WM_CM_S0",
-                                                           false)
-                                               );
+                                                   XInternAtom(dpy,
+                                                               "_NET_WM_CM_S0",
+                                                               false));
     connect(m_compositeWatcher, SIGNAL(newOwner(Window)),
             this, SLOT(checkForCompositionManager(Window)));
 
@@ -214,7 +210,7 @@ void Interface::loadRunners()
     m_runners.clear();
     m_currentRunner = 0;
 
-    m_runners.append(new AppRunner(this));
+    m_runners.append(new ServiceRunner(this));
     m_runners.append(new ShellRunner(this));
 //    m_runners.append(new SearchRunner(this));
 

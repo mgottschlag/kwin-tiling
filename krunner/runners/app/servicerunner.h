@@ -29,15 +29,15 @@ class QWidget;
  * appications menu and have it start the appropriate app. Essentially anything
  * that KService knows about, this runner can launch
  */
-class AppRunner : public Runner
+class ServiceRunner : public Runner
 {
     Q_OBJECT
 
     typedef QList<Runner*> List;
 
     public:
-        explicit AppRunner(QObject* parent = 0);
-        ~AppRunner();
+        explicit ServiceRunner(QObject* parent = 0);
+        ~ServiceRunner();
 
         bool accepts(const QString& term);
 

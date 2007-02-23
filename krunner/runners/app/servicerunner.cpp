@@ -18,31 +18,31 @@
 
 #include <QWidget>
 
-#include "apprunner.h"
+#include "servicerunner.h"
 
-AppRunner::AppRunner(QObject* parent)
+ServiceRunner::ServiceRunner(QObject* parent)
     : Runner(parent),
       m_options(0)
 {
     setName("Application");
 }
 
-AppRunner::~AppRunner()
+ServiceRunner::~ServiceRunner()
 {
     delete m_options;
 }
 
-bool AppRunner::accepts(const QString& term)
+bool ServiceRunner::accepts(const QString& term)
 {
     return false;
 }
 
-bool AppRunner::hasOptions()
+bool ServiceRunner::hasOptions()
 {
     return true;
 }
 
-QWidget* AppRunner::options()
+QWidget* ServiceRunner::options()
 {
     if (!m_options)
     {
@@ -53,9 +53,9 @@ QWidget* AppRunner::options()
     return m_options;
 }
 
-bool AppRunner::exec(const QString& command)
+bool ServiceRunner::exec(const QString& command)
 {
     return true;
 }
 
-#include "apprunner.moc"
+#include "servicerunner.moc"
