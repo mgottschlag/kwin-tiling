@@ -35,6 +35,8 @@
 //#include "apprunner.h"
 //#include "searchrunner.h"
 
+#include "runners/app/apprunner.h"
+#include "runners/shell/shellrunner.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
 #include <QApplication>
@@ -109,25 +111,21 @@ void Interface::display()
 void Interface::runText(const QString& term)
 {
     kDebug() << "looking for a runner for: " << term << endl;
-    if (m_currentRunner)
-    {
-        if (m_currentRunner->accepts(term))
-        {
+    if ( m_currentRunner ) {
+        if ( m_currentRunner->accepts(term) ) {
             kDebug() << "\tgoing with the same runner: " << m_currentRunner->name() << endl;
             return;
         }
 
-        m_currentRunner->disconnect(this);
+        m_currentRunner->disconnect( this );
         m_currentRunner = 0;
     }
 
-    foreach (Runner* runner, m_runners)
-    {
-        if (runner->accepts(term))
-        {
+    foreach (Runner* runner, m_runners) {
+        if (runner->accepts(term)) {
             m_currentRunner = runner;
-            m_optionsLabel->setEnabled(runner->hasOptions());
-            connect(runner, SIGNAL(matches()), this, SLOT(updateMatches()));
+            m_optionsLabel->setEnabled( runner->hasOptions() );
+            connect( runner, SIGNAL(matches()), this, SLOT(updateMatches()) );
             kDebug() << "\tswitching runners: " << m_currentRunner->name() << endl;
             return;
         }
@@ -141,7 +139,7 @@ void Interface::runText(const QString& term)
 void Interface::checkForCompositionManager(Window owner)
 {
 kDebug() << "checkForCompositionManager " << owner << " " << None << endl;
-    m_haveCompositionManager = (owner != None);
+    m_haveCompositionManager = ( owner != None );
 }
 
 void Interface::themeChanged()
@@ -149,7 +147,7 @@ void Interface::themeChanged()
     delete m_bgRenderer;
     kDebug() << "themeChanged() to " << m_theme->themeName()
              << "and we have " << m_theme->imagePath("/background/dialog") << endl;
-    m_bgRenderer = new QSvgRenderer(m_theme->imagePath("/background/dialog"), this);
+    m_bgRenderer = new QSvgRenderer( m_theme->imagePath( "/background/dialog" ), this );
 }
 
 void Interface::updateMatches()
@@ -159,14 +157,12 @@ void Interface::updateMatches()
 
 void Interface::exec()
 {
-    if (!m_currentRunner)
-    {
+    if (!m_currentRunner) {
         //TODO: give them some feedback
         return;
     }
 
-    if (m_currentRunner->exec(m_searchTerm->text()))
-    {
+    if ( m_currentRunner->exec( m_searchTerm->text() ) ) {
         hide();
     }
 }
@@ -177,21 +173,19 @@ void Interface::paintEvent(QPaintEvent *e)
     p.setRenderHint(QPainter::Antialiasing);
     p.setClipRect(e->rect());
 
-    if (m_haveCompositionManager)
-    {
+    if (m_haveCompositionManager) {
         //kDebug() << "gots us a compmgr!" << m_haveCompositionManager << endl;
         p.save();
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.fillRect(rect(), Qt::transparent);
+        p.setCompositionMode( QPainter::CompositionMode_Source );
+        p.fillRect( rect(), Qt::transparent );
         p.restore();
     }
 
-    if (m_renderDirty)
-    {
-        m_renderedSvg.fill(Qt::transparent);
-        QPainter p(&m_renderedSvg);
-        p.setRenderHint(QPainter::Antialiasing);
-        m_bgRenderer->render(&p);
+    if (m_renderDirty) {
+        m_renderedSvg.fill( Qt::transparent );
+        QPainter p( &m_renderedSvg );
+        p.setRenderHint( QPainter::Antialiasing );
+        m_bgRenderer->render( &p);
         p.end();
         m_renderDirty = false;
     }
@@ -201,9 +195,8 @@ void Interface::paintEvent(QPaintEvent *e)
 
 void Interface::resizeEvent(QResizeEvent *e)
 {
-    if (e->size() != m_renderedSvg.size())
-    {
-        m_renderedSvg = QPixmap(e->size());
+    if ( e->size() != m_renderedSvg.size() ) {
+        m_renderedSvg = QPixmap( e->size() );
         m_renderDirty = true;
         int w = e->size().width();
         int h = e->size().height();
@@ -215,26 +208,24 @@ void Interface::loadRunners()
     // ha! ha! get it? _load_ _runner_?! oh, i kill me.
     // but seriously, that game was the shiznit back in the day
 
-    foreach (Runner* runner, m_runners)
-    {
+    foreach ( Runner* runner, m_runners ) {
         delete runner;
     }
     m_runners.clear();
     m_currentRunner = 0;
 
-//    m_runners.append(new ShellRunner(this));
-//    m_runners.append(new AppRunner(this));
+    m_runners.append(new AppRunner(this));
+    m_runners.append(new ShellRunner(this));
 //    m_runners.append(new SearchRunner(this));
 
-    KService::List offers = KServiceTypeTrader::self()->query("KRunner/Runner");
+    KService::List offers = KServiceTypeTrader::self()->query( "KRunner/Runner" );
     KService::List::ConstIterator it;
-	for(it = offers.begin(); it != offers.end(); ++it)
-	{
-		KService::Ptr service = *it;
-		
-kDebug() << "runner : " << service->name() << endl ;
+    for( it = offers.begin(); it != offers.end(); ++it ) {
+        KService::Ptr service = *it;
 
-	}
+        kDebug() << "runner : " << service->name() << endl ;
+
+    }
 }
 
 #include "interface.moc"
