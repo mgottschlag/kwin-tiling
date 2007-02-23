@@ -15,7 +15,7 @@ set(krunner_SRCS interface.cpp
                  krunnerapp.cpp
                  restartingapplication.cpp
                  main.cpp
-                 runners/app/servicerunner.cpp
+                 runners/services/servicerunner.cpp
                  runners/shell/shellrunner.cpp
                  saverengine.cpp
                  startupid.cpp

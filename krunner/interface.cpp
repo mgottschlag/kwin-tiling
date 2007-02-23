@@ -32,7 +32,7 @@
 
 #include <kservicetypetrader.h>
 
-#include "runners/app/servicerunner.h"
+#include "runners/services/servicerunner.h"
 #include "runners/shell/shellrunner.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
