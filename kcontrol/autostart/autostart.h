@@ -45,6 +45,7 @@ public:
     void save();
     void defaults();
     QStringList paths;
+    QStringList pathName;
 
 public slots:
 	void addCMD();

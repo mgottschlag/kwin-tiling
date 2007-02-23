@@ -47,9 +47,7 @@ KUrl fileName;
 desktop( QString service, QTreeWidget *parent ): QTreeWidgetItem( parent ) {
 	bisDesktop = false;
 	fileName = KUrl(service);
-	if (service.endsWith(".desktop")) {
-		bisDesktop = true;
-	}
+	bisDesktop = service.endsWith(".desktop");
 }
 bool isDesktop() { return bisDesktop; }
 void setPath(QString path) {
@@ -95,11 +93,17 @@ autostart::~autostart()
 
 void autostart::load()
 {
-	KStandardDirs *ksd = componentData().dirs();
-	
+	// share/autostart may *only* contain .desktop files
+	// shutdown and env may *only* contain scripts, links or binaries
+	// autostart on the otherhand may contain all of the above.
 	paths << KGlobalSettings::autostartPath()
-		  << ksd->localkdedir() + "shutdown/"
-		  << ksd->localkdedir() + "env/";
+//		  << componentData().dirs()->localkdedir() + "share/autostart";
+		  << componentData().dirs()->localkdedir() + "shutdown/";
+//		  << componentData().dirs()->localkdedir() + "env/";
+
+	pathName << i18n("Autostart")
+			 << i18n("Shutdown");
+	widget->cmbStartOn->addItems(pathName);
 
 	foreach (const QString& path, paths) {
 		if (! KStandardDirs::exists(path)) KStandardDirs::makeDir(path);
@@ -116,17 +120,17 @@ void autostart::load()
 					QString link = fi.readLink();
 					item->setText( 0, filename );
 					item->setText( 1, link );
-					item->setText( 2, item->fileName.directory() );
+					item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 				} else {
 					item->setText( 0, filename );
 					item->setText( 1, filename );
-					item->setText( 2, item->fileName.directory() );
+					item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 				}
 			} else {
 				KService * service = new KService(fi.absoluteFilePath());
 				item->setText( 0, service->name() );
 				item->setText( 1, service->exec() );
-				item->setText( 2, item->fileName.directory() );
+				item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 			}
 		}
 	}
@@ -156,7 +160,7 @@ void autostart::addCMD() {
 		kcg.writeEntry("Path","");
 		kcg.writeEntry("Terminal",false);
 		kcg.writeEntry("Type","Application");
-		kcg.sync();
+		kc.sync();
 
 		KPropertiesDialog dlg( desktopTemplate, this );
 		if ( dlg.exec() != QDialog::Accepted )
@@ -172,7 +176,7 @@ void autostart::addCMD() {
 	desktop * item = new desktop( kgs->autostartPath() + service->name() + ".desktop", widget->listCMD );
 	item->setText( 0, service->name() );
 	item->setText( 1, service->exec() );
-	item->setText( 2, item->fileName.directory() );
+	item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 	emit changed(true);
 }
 
@@ -197,11 +201,10 @@ void autostart::editCMD(QTreeWidgetItem* entry) {
 	if (! editCMD( kfi )) return;
 
 	if (((desktop*)entry)->isDesktop()) {
-		QTreeWidgetItem * item = widget->listCMD->selectedItems().first();
 		KService * service = new KService(((desktop*)entry)->fileName.path());
-		item->setText( 0, service->name() );
-		item->setText( 1, service->exec() );
-		item->setText( 2, ((desktop*)entry)->fileName.directory() );
+		entry->setText( 0, service->name() );
+		entry->setText( 1, service->exec() );
+		entry->setText( 2, pathName.value(paths.indexOf((((desktop*)entry)->fileName.directory()+'/') )) );
 	}
 }
 
@@ -234,7 +237,7 @@ void autostart::selectionChanged() {
 	if (!hasItems) return;
 	
 	QTreeWidgetItem* entry = widget->listCMD->selectedItems().first();
-	widget->cmbStartOn->setCurrentIndex( paths.indexOf(((desktop*)entry)->fileName.directory()) );
+	widget->cmbStartOn->setCurrentIndex( paths.indexOf(((desktop*)entry)->fileName.directory()+'/') );
 }
 
 void autostart::defaults()

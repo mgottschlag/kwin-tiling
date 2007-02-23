@@ -52,23 +52,7 @@
     </spacer>
    </item>
    <item row="3" column="1" >
-    <widget class="QComboBox" name="cmbStartOn" >
-     <item>
-      <property name="text" >
-       <string>Startup</string>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Shutdown</string>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Pre-Desktop</string>
-      </property>
-     </item>
-    </widget>
+    <widget class="QComboBox" name="cmbStartOn" />
    </item>
    <item row="2" column="1" >
     <widget class="QPushButton" name="btnProperties" >
