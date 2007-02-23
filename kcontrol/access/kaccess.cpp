@@ -384,7 +384,7 @@ void KAccessApp::xkbStateNotify () {
       if (_kNotifyModifiers)
       for (int i = 0; i < 8; i++) {
          if (keys[i] != -1) {
-            if ( (modifierKeys[keys[i]].latchedText == "")
+            if ( !strcmp(modifierKeys[keys[i]].latchedText, "")
                 && ( (((mods >> i) & 0x101) != 0) != (((state >> i) & 0x101) != 0) ))
             {
                if ((mods >> i) & 1) {
@@ -394,7 +394,7 @@ void KAccessApp::xkbStateNotify () {
                   KNotification::event ("lockkey-unlocked", i18n(modifierKeys[keys[i]].unlatchedText));
                }
             }
-            else if ((modifierKeys[keys[i]].latchedText != "")
+            else if (strcmp(modifierKeys[keys[i]].latchedText, "")
                 && ( ((mods >> i) & 0x101) != ((state >> i) & 0x101) ))
             {
                if ((mods >> i) & 0x100) {
