@@ -22,6 +22,8 @@
 
 #include <kdemacros.h>
 
+#include "NetworkManager-network.h"
+
 #include <solid/ifaces/networkinterface.h>
 
 struct NMDBusDeviceProperties {
@@ -31,13 +33,7 @@ struct NMDBusDeviceProperties {
 	QString udi;
 	bool active;
 	uint activationStage;
-	QString ipv4Address;
-	QString subnetMask;
-	QString broadcast;
 	QString hardwareAddress;
-	QString route;
-	QString primaryDNS;
-	QString secondaryDNS;
 	int mode;
 	int strength;
 	bool linkActive;
@@ -71,10 +67,14 @@ public:
     // These setters are used to update the interface by the manager
     // in response to DBus signals
     void setProperties( const NMDBusDeviceProperties & );
+    void setNetwork( const NMDBusNetworkProperties & );
     void setSignalStrength( int );
     void setCarrierOn( bool );
     void setActive( bool );
     void setActivationStage( int activationStage );
+    void addNetwork( const QDBusObjectPath & netPath );
+    void removeNetwork( const QDBusObjectPath & netPath );
+    void updateNetworkStrength( const QDBusObjectPath & netPath, int strength );
 private:
     NMNetworkInterfacePrivate * d;
 };

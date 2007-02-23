@@ -21,50 +21,57 @@
 #include <QtDBus>
 
 #include <kdebug.h>
+
+#include "NetworkManager-network.h"
+
 #include "NetworkManager-networkinterface.h"
 
 void dump( const NMDBusDeviceProperties& device )
 {
-	kDebug() << "Object path: " << device.path.path() << "\nInterface: " << device.interface
-		<< "\nType: " << device.type << "\nUdi: " << device.udi << "\nActive: "<< device.active
-		<< "\nActivation stage: " << device.activationStage << "\nIPV4 address: " << device.ipv4Address
-		<< "\nsubnet mask: " << device.subnetMask << "\nBroadcast: " << device.broadcast
-		<< "\nroute: " << device.route << "\nprimary dns: " << device.primaryDNS 
-		<< "\nsecondary dns: " << device.secondaryDNS << "\nmode: " << device.mode 
-		<< "\nStrength: " << device.strength << "\nLink active: " << device.linkActive
-		<< "\nSpeed: " << device.speed << "\nCapabilities: " << device.capabilities 
-		<< "\nCapabilities type: " << device.capabilitiesType << "\nactive net path: "
-		<< device.activeNetPath << "\nNetworks:" << device.networks << endl;
+    kDebug() << "Object path: " << device.path.path() << "\nInterface: " << device.interface
+        << "\nType: " << device.type << "\nUdi: " << device.udi << "\nActive: "<< device.active
+        << "\nActivation stage: " << device.activationStage 
+        << "\nHardware address: " << device.hardwareAddress << "\nmode: " << device.mode
+        << "\nStrength: " << device.strength << "\nLink active: " << device.linkActive
+        << "\nSpeed: " << device.speed << "\nCapabilities: " << device.capabilities 
+        << "\nCapabilities type: " << device.capabilitiesType << "\nactive net path: "
+        << device.activeNetPath << "\nNetworks:" << device.networks << endl;
 }
 
-void deserialize( const QDBusMessage &message, NMDBusDeviceProperties & device )
+void dump( const NMDBusNetworkProperties & network )
 {
-	kDebug() << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature() << endl;
-	QList<QVariant> args = message.arguments();
-	device.path.setPath( args.takeFirst().toString() );
-	device.interface = args.takeFirst().toString();
-	device.type = args.takeFirst().toUInt();
-	device.udi = args.takeFirst().toString();
-	device.active = args.takeFirst().toBool();
-	device.activationStage = args.takeFirst().toUInt();
-	device.ipv4Address = args.takeFirst().toString();
-	device.subnetMask = args.takeFirst().toString();
-	device.broadcast = args.takeFirst().toString();
-	device.hardwareAddress = args.takeFirst().toString();
-	device.route = args.takeFirst().toString();
-	device.primaryDNS = args.takeFirst().toString();
-	device.secondaryDNS = args.takeFirst().toString();
-	device.mode = args.takeFirst().toInt();
-	device.strength = args.takeFirst().toInt();
-	device.linkActive = args.takeFirst().toBool();
-	device.speed = args.takeFirst().toInt();
-	device.capabilities = args.takeFirst().toUInt();
-	device.capabilitiesType = args.takeFirst().toUInt();
-	device.activeNetPath = args.takeFirst().toString();
-	device.networks = args.takeFirst().toStringList();
+    kDebug() << "\nIPV4 address: " << network.ipv4Address
+        << "\nsubnet mask: " << network.subnetMask << "\nBroadcast: " << network.broadcast
+        << "\nroute: " << network.route << "\nprimary dns: " << network.primaryDNS 
+        << "\nsecondary dns: " << network.secondaryDNS << endl;
 }
 
-typedef void NMNetwork;
+void deserialize( const QDBusMessage &message, NMDBusDeviceProperties & device, NMDBusNetworkProperties & network )
+{
+    kDebug() << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature() << endl;
+    QList<QVariant> args = message.arguments();
+    device.path.setPath( args.takeFirst().toString() );
+    device.interface = args.takeFirst().toString();
+    device.type = args.takeFirst().toUInt();
+    device.udi = args.takeFirst().toString();
+    device.active = args.takeFirst().toBool();
+    device.activationStage = args.takeFirst().toUInt();
+    network.ipv4Address = args.takeFirst().toString();
+    network.subnetMask = args.takeFirst().toString();
+    network.broadcast = args.takeFirst().toString();
+    device.hardwareAddress = args.takeFirst().toString();
+    network.route = args.takeFirst().toString();
+    network.primaryDNS = args.takeFirst().toString();
+    network.secondaryDNS = args.takeFirst().toString();
+    device.mode = args.takeFirst().toInt();
+    device.strength = args.takeFirst().toInt();
+    device.linkActive = args.takeFirst().toBool();
+    device.speed = args.takeFirst().toInt();
+    device.capabilities = args.takeFirst().toUInt();
+    device.capabilitiesType = args.takeFirst().toUInt();
+    device.activeNetPath = args.takeFirst().toString();
+    device.networks = args.takeFirst().toStringList();
+}
 
 class NMNetworkInterfacePrivate
 {
@@ -92,9 +99,17 @@ NMNetworkInterface::NMNetworkInterface( const QString & objectPath )
 {
     QDBusMessage reply = d->iface.call( "getProperties" );
     NMDBusDeviceProperties dev;
-    deserialize( reply, dev );
+    NMDBusNetworkProperties net;
+    deserialize( reply, dev, net );
     dump( dev );
+    dump( net );
     setProperties( dev );
+    // insert empty networks in our map.  These will be expanded on demand
+    foreach( QString netPath, dev.networks )
+        d->networks.insert( netPath, 0 );
+
+    if ( d->type == Solid::NetworkInterface::Ieee8023 )
+        setNetwork( net );
 }
 
 NMNetworkInterface::~NMNetworkInterface()
@@ -144,7 +159,17 @@ Solid::NetworkInterface::Capabilities NMNetworkInterface::capabilities() const
 
 QObject * NMNetworkInterface::createNetwork( const QString & uni )
 {
-    return 0; // TODO implement
+    kDebug() << "NMNetworkInterface::createNetwork() - " << uni << endl;
+    NMNetwork * net = 0;
+    if ( d->networks.contains( uni ) && d->networks[ uni ] != 0 )
+        net = d->networks[ uni ];
+    else
+    {
+        net = new NMNetwork( uni );
+        d->networks.insert( uni, net );
+    }
+    // maybe look up cached NetworkProperties for this uni here...
+    return net;
 }
 
 QStringList NMNetworkInterface::networks() const
@@ -184,6 +209,15 @@ void NMNetworkInterface::setProperties( const NMDBusDeviceProperties & props )
         d->capabilities |= Solid::NetworkInterface::SupportsWirelessScan;
 }
 
+void NMNetworkInterface::setNetwork( const NMDBusNetworkProperties & net )
+{
+    // we are a wired device, create a network instance which describes the IP network to which we are connected
+    QString netPath = d->objectPath + "/networks/ethernet";
+    NMNetwork * network = qobject_cast<NMNetwork*>( createNetwork( netPath ) );
+    network->setProperties( net );
+    network->setActivated( d->active );
+}
+
 void NMNetworkInterface::setSignalStrength( int strength )
 {
     d->signalStrength = strength;
@@ -199,6 +233,7 @@ void NMNetworkInterface::setCarrierOn( bool on )
 void NMNetworkInterface::setActive( bool active )
 {
     d->active = active;
+    emit activeChanged( active );
 }
 
 void NMNetworkInterface::setActivationStage( int activationStage )
@@ -207,4 +242,34 @@ void NMNetworkInterface::setActivationStage( int activationStage )
     emit connectionStateChanged( activationStage );
 }
 
+void NMNetworkInterface::addNetwork( const QDBusObjectPath & netPath )
+{
+    // check that it's not already present, as NetworkManager may
+    // detect networks that aren't really new.
+    if ( !d->networks.contains( netPath.path() ) )
+        d->networks.insert( netPath.path(), 0 );
+}
+
+void NMNetworkInterface::removeNetwork( const QDBusObjectPath & netPath )
+{
+    d->networks.remove( netPath.path() );
+}
+
+void NMNetworkInterface::updateNetworkStrength( const QDBusObjectPath & netPath, int strength )
+{
+    typedef void NMWirelessNetwork;
+    // check that it's not already present, as NetworkManager may
+    // detect networks that aren't really new.
+    if ( !d->networks.contains( netPath.path() ) )
+    {
+        NMNetwork * net = d->networks[ netPath.path() ];
+        if ( net != 0 )
+        {
+            NMWirelessNetwork * wlan = 0; // qobject_cast<NMWirelessNetwork*>( net );
+            if ( wlan != 0 )
+                ;
+                // fixme wlan->setSignalStrength( strength );
+        }
+    }
+}
 #include "NetworkManager-networkinterface.moc"

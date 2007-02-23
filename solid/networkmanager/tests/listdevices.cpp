@@ -18,25 +18,39 @@
 */
 
 #include <QApplication>
+#include <QStringList>
+
 #include <kdebug.h>
 #include "nmobject.h"
 
+#include "NetworkManager-network.h"
 #include "NetworkManager-networkinterface.h"
 #include "NetworkManager-networkmanager.h"
 
 int main( int argc, char** argv )
 {
 #if 1
-	QApplication app( argc, argv );
+    QApplication app( argc, argv );
     NMNetworkManager mgr( 0, QStringList() );
     mgr.networkInterfaces();
     mgr.isNetworkingEnabled();
-    //NMNetworkInterface * netIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth1" ) );
+    NMNetworkInterface * ethernetIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth0" ) );
+    NMNetworkInterface * wifiIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth1" ) );
+    QStringList networks = wifiIface->networks();
+    if ( networks.isEmpty() )
+    {
+		kDebug() << "network list was empty.. fix me!" << endl;
+        networks.append( "/org/freedesktop/NetworkManager/Devices/eth1/Networks/banjaxed" ); 
+	}
+    QString netPath = networks.first();
+    kDebug() << "Creating network: " << netPath << endl;
+    NMNetwork * network = qobject_cast<NMNetwork*>( wifiIface->createNetwork( netPath ) );
+
     //kDebug() << "Interface: " <<  netIface->uni() << ", " << netIface->signalStrength() << endl;
     //mgr.setWirelessEnabled( true );
     return app.exec();
 #else
-//	QApplication app( argc, argv );
+    //	QApplication app( argc, argv );
     NMObject obj( argc, argv );
     obj.showDevices();
     NMNetworkManager mgr( 0, QStringList() );

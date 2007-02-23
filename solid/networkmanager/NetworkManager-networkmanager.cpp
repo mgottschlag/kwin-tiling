@@ -123,7 +123,6 @@ QObject * NMNetworkManager::createAuthenticationValidator()
 
 bool NMNetworkManager::isNetworkingEnabled( ) const
 {
-#warning implement NMNetworkManager::isNetworkingEnabled()
     kDebug() << "NMNetworkManager::isNetworkingEnabled()" << endl;
     if ( NM_STATE_UNKNOWN == d->cachedState )
     {
@@ -193,16 +192,31 @@ void NMNetworkManager::deviceStrengthChanged(QDBusObjectPath devpath, int streng
 void NMNetworkManager::networkStrengthChanged(QDBusObjectPath devPath,QDBusObjectPath netPath, int strength )
 {
     kDebug() << "NMNetworkManager::networkStrengthChanged(): " << devPath.path() << ", " << netPath.path() << ", " << strength << endl;
+    if ( d->interfaces.contains( devPath.path() ) )
+    {
+        NMNetworkInterface * interface = d->interfaces[ devPath.path() ];
+        interface->updateNetworkStrength( netPath, strength );
+    }
 }
 
 void NMNetworkManager::wirelessNetworkAppeared( QDBusObjectPath devPath,QDBusObjectPath netPath )
 {
     kDebug() << "NMNetworkManager::wirelessNetworkAppeared(): " << devPath.path() << ", " << netPath.path() << endl;
+    if ( d->interfaces.contains( devPath.path() ) )
+    {
+        NMNetworkInterface * interface = d->interfaces[ devPath.path() ];
+        interface->addNetwork( netPath );
+    }
 }
 
 void NMNetworkManager::wirelessNetworkDisappeared( QDBusObjectPath devPath,QDBusObjectPath netPath )
 {
     kDebug() << "NMNetworkManager::wirelessNetworkDisappeared(): " << devPath.path() << ", " << netPath.path() << endl;
+    if ( d->interfaces.contains( devPath.path() ) )
+    {
+        NMNetworkInterface * interface = d->interfaces[ devPath.path() ];
+        interface->removeNetwork( netPath );
+    }
 }
 
 void NMNetworkManager::deviceActivationStageChanged( QDBusObjectPath devPath, uint stage )

@@ -3,6 +3,7 @@ add_subdirectory(tests)
 include_directories(/usr/include/NetworkManager)
 
 set(solid_networkmanager_PART_SRCS
+	NetworkManager-network.cpp
 	NetworkManager-networkmanager.cpp
 	NetworkManager-networkinterface.cpp
 )
