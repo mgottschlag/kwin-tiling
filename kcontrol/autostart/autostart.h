@@ -33,13 +33,13 @@
 
 class desktop;
 
-class autostart: public KCModule
+class Autostart: public KCModule
 {
     Q_OBJECT
 
 public:
-    autostart( QWidget* parent, const QStringList&  );
-    ~autostart();
+    Autostart( QWidget* parent, const QStringList&  );
+    ~Autostart();
 
     void load();
     void save();

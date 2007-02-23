@@ -58,11 +58,11 @@ void setPath(QString path) {
 }
 };
 
-typedef KGenericFactory<autostart, QWidget> autostartFactory;
-K_EXPORT_COMPONENT_FACTORY( autostart, autostartFactory("kcmautostart"))
+typedef KGenericFactory<Autostart, QWidget> AutostartFactory;
+K_EXPORT_COMPONENT_FACTORY( Autostart, AutostartFactory("kcmautostart"))
 
-autostart::autostart( QWidget* parent, const QStringList& )
-    : KCModule( autostartFactory::componentData(), parent ), myAboutData(0)
+Autostart::Autostart( QWidget* parent, const QStringList& )
+    : KCModule( AutostartFactory::componentData(), parent ), myAboutData(0)
 {
 	widget = new Ui_AutostartConfig();
 	widget->setupUi(this);
@@ -78,7 +78,7 @@ autostart::autostart( QWidget* parent, const QStringList& )
 
     load();
 
-	KAboutData* about = new KAboutData("autostart", I18N_NOOP("KDE Autostart Manager"), "1.0",
+	KAboutData* about = new KAboutData("Autostart", I18N_NOOP("KDE Autostart Manager"), "1.0",
 		I18N_NOOP("KDE Autostart Manager Control Panel Module"),
 		KAboutData::License_GPL,
 		I18N_NOOP("(c) 2006-2007 Stephen Leaf"), 0, 0);
@@ -87,11 +87,11 @@ autostart::autostart( QWidget* parent, const QStringList& )
 };
 
 
-autostart::~autostart()
+Autostart::~Autostart()
 {}
 
 
-void autostart::load()
+void Autostart::load()
 {
 	// share/autostart may *only* contain .desktop files
 	// shutdown and env may *only* contain scripts, links or binaries
@@ -136,7 +136,7 @@ void autostart::load()
 	}
 }
 
-void autostart::addCMD() {
+void Autostart::addCMD() {
 	KService::Ptr service;
 	KOpenWithDialog owdlg( this );
 	if (owdlg.exec() != QDialog::Accepted)
@@ -180,7 +180,7 @@ void autostart::addCMD() {
 	emit changed(true);
 }
 
-void autostart::removeCMD() {
+void Autostart::removeCMD() {
 	QList<QTreeWidgetItem *> list = widget->listCMD->selectedItems();
 	if (list.isEmpty()) return;
 	
@@ -194,7 +194,7 @@ void autostart::removeCMD() {
 	emit changed(true);
 }
 
-void autostart::editCMD(QTreeWidgetItem* entry) {
+void Autostart::editCMD(QTreeWidgetItem* entry) {
 	if (!entry) return;
 
 	KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( ((desktop*)entry)->fileName ), true );
@@ -208,7 +208,7 @@ void autostart::editCMD(QTreeWidgetItem* entry) {
 	}
 }
 
-bool autostart::editCMD( KFileItem item) {
+bool Autostart::editCMD( KFileItem item) {
 	KPropertiesDialog dlg( &item, this );
 	if ( dlg.exec() != QDialog::Accepted )
 		return false;
@@ -217,19 +217,19 @@ bool autostart::editCMD( KFileItem item) {
 	return true;
 }
 
-void autostart::editCMD() {
+void Autostart::editCMD() {
 	if ( widget->listCMD->selectedItems().size() == 0 ) return;
 	editCMD( widget->listCMD->selectedItems().first() );
 }
 
-void autostart::setStartOn( int index ) {
+void Autostart::setStartOn( int index ) {
 	if ( widget->listCMD->selectedItems().size() == 0 ) return;
 	desktop* entry = (desktop*)widget->listCMD->selectedItems().first();
 	entry->setPath(paths.value(index));
 	entry->setText(2, entry->fileName.directory() );
 }
 
-void autostart::selectionChanged() {
+void Autostart::selectionChanged() {
 	bool hasItems = (widget->listCMD->selectedItems().size() != 0 );
 	widget->cmbStartOn->setEnabled(hasItems);
 	widget->btnRemove->setEnabled(hasItems);
@@ -240,11 +240,11 @@ void autostart::selectionChanged() {
 	widget->cmbStartOn->setCurrentIndex( paths.indexOf(((desktop*)entry)->fileName.directory()+'/') );
 }
 
-void autostart::defaults()
+void Autostart::defaults()
 {
 }
 
-void autostart::save()
+void Autostart::save()
 {
 }
 
