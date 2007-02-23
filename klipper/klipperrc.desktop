@@ -89,7 +89,7 @@ Enabled=true
 
 [Action_3]
 Description=Text File
-Description[el]=Αρχείο Κειμένου
+Description[el]=Αρχείο κειμένου
 Description[fr]=Fichier texte
 Description[x-test]=xxText Filexx
 Number of commands=2

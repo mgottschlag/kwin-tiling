@@ -2,7 +2,7 @@
 Type=Plugin
 Encoding=UTF-8
 Name=Quick Launcher
-Name[el]=Γρήγορο Φόρτωμα
+Name[el]=Γρήγορο φόρτωμα
 Name[fr]=Lanceur d'applications
 Name[x-test]=xxQuick Launcherxx
 Comment=The quick launcher applet

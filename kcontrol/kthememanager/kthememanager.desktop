@@ -9,7 +9,7 @@ X-KDE-Library=kcm_kthememanager
 X-KDE-ParentApp=kcontrol
 
 Name=Theme Manager
-Name[el]=Διαχειριστής Θεμάτων
+Name[el]=Διαχειριστής θεμάτων
 Name[fr]=Gestionnaire de thèmes
 Name[x-test]=xxTheme Managerxx
 
