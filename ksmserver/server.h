@@ -134,7 +134,7 @@ private:
     void performLegacySessionSave();
     void storeLegacySession( KConfig* config );
     void restoreLegacySession( KConfig* config );
-    void restoreLegacySessionInternal( KConfig* config, char sep = ',' );
+    void restoreLegacySessionInternal( KConfigGroup* config, char sep = ',' );
     QStringList windowWmCommand(WId w);
     QString windowWmClientMachine(WId w);
     WId windowWmClientLeader(WId w);

@@ -237,7 +237,7 @@ void KSMServer::restoreLegacySession( KConfig* config )
 {
     if( config->hasGroup( "Legacy" + sessionGroup )) {
         KConfigGroup group( config, "Legacy" + sessionGroup );
-        restoreLegacySessionInternal( config );
+        restoreLegacySessionInternal( &group );
     } else if( wm == "kwin" ) { // backwards comp. - get it from kwinrc
         KConfigGroup group( config, sessionGroup );
         int count =  group.readEntry( "count", 0 );
@@ -254,8 +254,7 @@ void KSMServer::restoreLegacySession( KConfig* config )
                     ++it;
                     if( it != restartCommand.end()) {
                         KConfig cfg( "session/" + wm + '_' + (*it) );
-                        cfg.setGroup( "LegacySession" );
-                        restoreLegacySessionInternal( &cfg, ' ' );
+                        restoreLegacySessionInternal( &KConfigGroup(&cfg, "LegacySession"), ' ' );
                     }
                 }
             }
@@ -263,7 +262,7 @@ void KSMServer::restoreLegacySession( KConfig* config )
     }
 }
 
-void KSMServer::restoreLegacySessionInternal( KConfig* config, char sep )
+void KSMServer::restoreLegacySessionInternal( KConfigGroup* config, char sep )
 {
     int count = config->readEntry( "count",0 );
     for ( int i = 1; i <= count; i++ ) {

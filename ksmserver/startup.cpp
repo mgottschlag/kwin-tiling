@@ -103,17 +103,17 @@ void KSMServer::restoreSession( QString sessionName )
     KSharedConfig::Ptr config = KGlobal::config();
 
     sessionGroup = "Session: " + sessionName;
+    KConfigGroup configSessionGroup( config, sessionGroup);
 
-    config->setGroup( sessionGroup );
-    int count =  config->readEntry( "count", 0 );
+    int count =  configSessionGroup.readEntry( "count", 0 );
     appsToStart = count;
 
     QList<QStringList> wmCommands;
     if ( !wm.isEmpty() ) {
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
-	    if ( wm == config->readEntry( QString("program")+n, QString() ) ) {
-		wmCommands << config->readEntry( QString("restartCommand")+n, QStringList() );
+	    if ( wm == configSessionGroup.readEntry( QString("program")+n, QString() ) ) {
+		wmCommands << configSessionGroup.readEntry( QString("restartCommand")+n, QStringList() );
 	    }
 	}
     }

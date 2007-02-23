@@ -833,12 +833,12 @@ void KSMServer::storeSession()
 {
     KSharedConfig::Ptr config = KGlobal::config();
     config->reparseConfiguration(); // config may have changed in the KControl module
-    config->setGroup("General" );
-    excludeApps = config->readEntry( "excludeApps" ).toLower().split( QRegExp( "[,:]" ), QString::SkipEmptyParts );
-    config->setGroup( sessionGroup );
-    int count =  config->readEntry( "count", 0 );
+    KConfigGroup generalGroup(config, "General");
+    excludeApps = generalGroup.readEntry( "excludeApps" ).toLower().split( QRegExp( "[,:]" ), QString::SkipEmptyParts );
+    KConfigGroup configSessionGroup(config, sessionGroup);
+    int count =  configSessionGroup.readEntry( "count", 0 );
     for ( int i = 1; i <= count; i++ ) {
-        QStringList discardCommand = config->readPathListEntry( QString("discardCommand") + QString::number(i) );
+        QStringList discardCommand = configSessionGroup.readPathListEntry( QLatin1String("discardCommand") + QString::number(i) );
         if ( discardCommand.isEmpty())
             continue;
         // check that non of the new clients uses the exactly same
