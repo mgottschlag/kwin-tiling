@@ -44,36 +44,36 @@ class ContainerArea;
 
 class AddAppletDialog : public KDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	AddAppletDialog(ContainerArea *cArea, QWidget *parent, const char *name);
-	void updateInsertionPoint();
+    AddAppletDialog(ContainerArea *cArea, QWidget *parent, const char *name);
+    void updateInsertionPoint();
 
 protected:
-	void closeEvent(QCloseEvent *);
+    void closeEvent(QCloseEvent *);
 
 private Q_SLOTS:
-	void populateApplets();
-	void selectApplet(const QModelIndex &applet);
-	void addCurrentApplet(const QModelIndex &selectedApplet);
-	void search(const QString &s);
-	void filter(int i);
-	void slotUser1Clicked();
-	void updateAppletList();
+    void populateApplets();
+    void selectApplet(const QModelIndex &applet);
+    void addCurrentApplet(const QModelIndex &selectedApplet);
+    void search(const QString &s);
+    void filter(int i);
+    void slotUser1Clicked();
+    void updateAppletList();
 
 private:
-	bool appletMatchesSearch(const AppletInfo *i, const QString &s);
+    bool appletMatchesSearch(const AppletInfo *i, const QString &s);
 
-	AppletListModel *m_listModel;
-	Ui::AppletView *m_mainWidgetView;
-	QWidget *m_mainWidget;
+    AppletListModel *m_listModel;
+    Ui::AppletView *m_mainWidgetView;
+    QWidget *m_mainWidget;
 
-	QModelIndex selectedApplet;
-	AppletInfo::List m_applets;
-	ContainerArea *m_containerArea;
-	AppletInfo::AppletType m_selectedType;
-	QPoint m_insertionPoint;
+    QModelIndex selectedApplet;
+    AppletInfo::List m_applets;
+    ContainerArea *m_containerArea;
+    AppletInfo::AppletType m_selectedType;
+    QPoint m_insertionPoint;
 };
 
 #endif
