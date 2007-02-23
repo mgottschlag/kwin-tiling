@@ -93,7 +93,6 @@ private:
     AppletInfo::Dict m_appletDict;
     QStringList m_untrustedApplets;
     QStringList m_untrustedExtensions;
-
 };
 
 class LibUnloader : public QObject

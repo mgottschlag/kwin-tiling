@@ -60,240 +60,235 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 AddAppletDialog::AddAppletDialog(ContainerArea *cArea,
                                  QWidget *parent,
                                  const char *name)
-	: KDialog(parent)
-	, m_mainWidgetView(new Ui::AppletView())
-	, m_containerArea(cArea)
-	, m_insertionPoint(Kicker::self()->insertionPoint())
+    : KDialog(parent)
+    , m_mainWidgetView(new Ui::AppletView())
+    , m_containerArea(cArea)
+    , m_insertionPoint(Kicker::self()->insertionPoint())
 {
-	setCaption(i18n("Add Applet"));
-	Q_UNUSED(name);
-	setModal(false);
+    setCaption(i18n("Add Applet"));
+    Q_UNUSED(name);
+    setModal(false);
 
-	setButtons(KDialog::User1 | KDialog::Close);
-	setButtonGuiItem(User1, KGuiItem(i18n("Load Applet"), "ok"));
-	enableButton(KDialog::User1, false);
+    setButtons(KDialog::User1 | KDialog::Close);
+    setButtonGuiItem(User1, KGuiItem(i18n("Load Applet"), "ok"));
+    enableButton(KDialog::User1, false);
 
-        KConfigGroup cg = KGlobal::config()->group( "AddAppletDialog Settings");
-	restoreDialogSize(cg);
+    KConfigGroup cg = KGlobal::config()->group( "AddAppletDialog Settings");
+    restoreDialogSize(cg);
 
-	centerOnScreen(this);
+    centerOnScreen(this);
 
-	m_mainWidget = new QWidget(this);
-	m_mainWidgetView->setupUi(m_mainWidget);
-	setMainWidget(m_mainWidget);
+    m_mainWidget = new QWidget(this);
+    m_mainWidgetView->setupUi(m_mainWidget);
+    setMainWidget(m_mainWidget);
 
-	connect(m_mainWidgetView->appletSearch, SIGNAL(textChanged(const QString&)), this, SLOT(search(const QString&)));
-	connect(m_mainWidgetView->appletFilter, SIGNAL(activated(int)), this, SLOT(filter(int)));
-	connect(m_mainWidgetView->appletListView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(selectApplet(const QModelIndex&)));
-	connect(m_mainWidgetView->appletListView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(addCurrentApplet(const QModelIndex&)));
-	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotUser1Clicked()));
-	connect(PluginManager::self(), SIGNAL(pluginDestroyed()), this, SLOT(updateAppletList()));
+    connect(m_mainWidgetView->appletSearch, SIGNAL(textChanged(const QString&)), this, SLOT(search(const QString&)));
+    connect(m_mainWidgetView->appletFilter, SIGNAL(activated(int)), this, SLOT(filter(int)));
+    connect(m_mainWidgetView->appletListView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(selectApplet(const QModelIndex&)));
+    connect(m_mainWidgetView->appletListView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(addCurrentApplet(const QModelIndex&)));
+    connect(this, SIGNAL(user1Clicked()), this, SLOT(slotUser1Clicked()));
+    connect(PluginManager::self(), SIGNAL(pluginDestroyed()), this, SLOT(updateAppletList()));
 
-	m_selectedType = AppletInfo::Undefined;
+    m_selectedType = AppletInfo::Undefined;
 
     m_mainWidgetView->appletListView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     m_mainWidgetView->appletSearch->setClearButtonShown(true);
 
-	QTimer::singleShot(0, this, SLOT(populateApplets()));
+    QTimer::singleShot(0, this, SLOT(populateApplets()));
 }
 
 void AddAppletDialog::updateInsertionPoint()
 {
-	m_insertionPoint = Kicker::self()->insertionPoint();
+    m_insertionPoint = Kicker::self()->insertionPoint();
 }
 
 void AddAppletDialog::closeEvent(QCloseEvent *e)
 {
-	KConfigGroup cg( KGlobal::config(), "AddAppletDialog Settings");
-	KDialog::saveDialogSize( cg );
+    KConfigGroup cg( KGlobal::config(), "AddAppletDialog Settings");
+    KDialog::saveDialogSize( cg );
 
-	KDialog::closeEvent(e);
+    KDialog::closeEvent(e);
 }
 
 void AddAppletDialog::populateApplets()
 {
-	// Loading applets
-	m_applets = PluginManager::applets(false, &m_applets);
+    // Loading applets
+    m_applets = PluginManager::applets(false, &m_applets);
 
-	// Loading built in buttons
-	m_applets = PluginManager::builtinButtons(false, &m_applets);
+    // Loading built in buttons
+    m_applets = PluginManager::builtinButtons(false, &m_applets);
 
-	// Loading special buttons
-	m_applets = PluginManager::specialButtons(false, &m_applets);
+    // Loading special buttons
+    m_applets = PluginManager::specialButtons(false, &m_applets);
 
-	qHeapSort(m_applets);
+    qHeapSort(m_applets);
 
-	int i = 0;
-	for (AppletInfo::List::iterator it = m_applets.begin();
-		  it != m_applets.end();
-		  ++i)
-	{
-		if ((*it).isHidden() || (*it).name().isEmpty() ||
-			((*it).isUniqueApplet() &&
-			 PluginManager::self()->hasInstance(*it)))
-		{
-			it = m_applets.erase(it);
-			--i;
-			continue;
-		}
+    foreach(AppletInfo appletInfo, m_applets)
+    {
+        if (appletInfo.isHidden() || appletInfo.name().isEmpty())
+            m_applets.erase(&appletInfo);
+    }
 
-		++it;
-	}
+    m_listModel = new AppletListModel(m_applets, this);
+    m_mainWidgetView->appletListView->setModel(m_listModel);
 
-	m_listModel = new AppletListModel(m_applets, this);
-	m_mainWidgetView->appletListView->setModel(m_listModel);
+    int i = 0;
+    foreach(AppletInfo appletInfo, m_applets)
+    {
+        if (appletInfo.isUniqueApplet() && PluginManager::self()->hasInstance(appletInfo))
+            m_mainWidgetView->appletListView->setRowHidden(i, true);
 
-	AppletItemDelegate *appletItemDelegate = new AppletItemDelegate(this);
-	appletItemDelegate->setIconSize(48, 48);
-	appletItemDelegate->setMinimumItemWidth(200);
-	appletItemDelegate->setLeftMargin(20);
-	appletItemDelegate->setRightMargin(0);
-	appletItemDelegate->setSeparatorPixels(20);
-	m_mainWidgetView->appletListView->setItemDelegate(appletItemDelegate);
+        i++;
+    }
+
+    AppletItemDelegate *appletItemDelegate = new AppletItemDelegate(this);
+    appletItemDelegate->setIconSize(48, 48);
+    appletItemDelegate->setMinimumItemWidth(200);
+    appletItemDelegate->setLeftMargin(20);
+    appletItemDelegate->setRightMargin(0);
+    appletItemDelegate->setSeparatorPixels(20);
+    m_mainWidgetView->appletListView->setItemDelegate(appletItemDelegate);
 }
 
 void AddAppletDialog::selectApplet(const QModelIndex &applet)
 {
-	selectedApplet = applet;
+    selectedApplet = applet;
 
-	if (!isButtonEnabled(KDialog::User1))
-		enableButton(KDialog::User1, true);
+    if (!isButtonEnabled(KDialog::User1))
+        enableButton(KDialog::User1, true);
 }
 
 void AddAppletDialog::addCurrentApplet(const QModelIndex &selectedApplet)
 {
-	this->selectedApplet = selectedApplet;
-	AppletInfo applet(m_applets[selectedApplet.row()]);
+    this->selectedApplet = selectedApplet;
+    AppletInfo applet(m_applets[selectedApplet.row()]);
 
-	QPoint prevInsertionPoint = Kicker::self()->insertionPoint();
-	Kicker::self()->setInsertionPoint(m_insertionPoint);
+    QPoint prevInsertionPoint = Kicker::self()->insertionPoint();
+    Kicker::self()->setInsertionPoint(m_insertionPoint);
 
-	const QWidget* appletContainer = 0;
+    const QWidget* appletContainer = 0;
 
-	if (applet.type() == AppletInfo::Applet)
-	{
-		appletContainer = m_containerArea->addApplet(applet);
-	}
-	else if (applet.type() & AppletInfo::Button)
-	{
-		appletContainer = m_containerArea->addButton(applet);
-	}
+    if (applet.type() == AppletInfo::Applet)
+    {
+        appletContainer = m_containerArea->addApplet(applet);
+    }
+    else if (applet.type() & AppletInfo::Button)
+    {
+        appletContainer = m_containerArea->addButton(applet);
+    }
 
-	if (appletContainer)
-	{
-		ExtensionContainer* ec =
-				dynamic_cast<ExtensionContainer*>(m_containerArea->topLevelWidget());
+    if (appletContainer)
+    {
+        ExtensionContainer* ec = dynamic_cast<ExtensionContainer*>(m_containerArea->topLevelWidget());
 
-		if (ec)
-		{
-			// unhide the panel and keep it unhidden for at least the time the
-			// helper tip will be there
-			ec->unhideIfHidden(KickerSettings::mouseOversSpeed() + 2500);
-		}
+        if (ec)
+        {
+            // unhide the panel and keep it unhidden for at least the time the
+            // helper tip will be there
+            ec->unhideIfHidden(KickerSettings::mouseOversSpeed() + 2500);
+        }
 
-		new AddAppletVisualFeedback(selectedApplet,
+        new AddAppletVisualFeedback(selectedApplet,
                                     m_mainWidgetView->appletListView,
                                     appletContainer,
                                     m_containerArea->popupDirection());
-	}
+    }
 
-	if (applet.isUniqueApplet() &&
-	    PluginManager::self()->hasInstance(applet))
-	{
-		m_mainWidgetView->appletListView->setRowHidden(selectedApplet.row(), true);
-		m_mainWidgetView->appletListView->clearSelection();
-		enableButton(KDialog::User1, false);
-	}
+    if (applet.isUniqueApplet() && PluginManager::self()->hasInstance(applet))
+    {
+        m_mainWidgetView->appletListView->setRowHidden(selectedApplet.row(), true);
+        m_mainWidgetView->appletListView->clearSelection();
+        enableButton(KDialog::User1, false);
+    }
 
-	Kicker::self()->setInsertionPoint(prevInsertionPoint);
+    Kicker::self()->setInsertionPoint(prevInsertionPoint);
 }
 
 bool AddAppletDialog::appletMatchesSearch(const AppletInfo *i, const QString &s)
 {
-	if (i->type() == AppletInfo::Applet &&
-		 i->isUniqueApplet() &&
-		 PluginManager::self()->hasInstance(*i))
-	{
-		return false;
-	}
+    if (i->type() == AppletInfo::Applet &&
+        i->isUniqueApplet() && PluginManager::self()->hasInstance(*i))
+    {
+        return false;
+    }
 
-	return (m_selectedType == AppletInfo::Undefined ||
-			  i->type() & m_selectedType) &&
-			 (i->name().contains(s, Qt::CaseInsensitive) ||
-			  i->comment().contains(s, Qt::CaseInsensitive));
+    return (m_selectedType == AppletInfo::Undefined ||
+            i->type() & m_selectedType) &&
+            (i->name().contains(s, Qt::CaseInsensitive) ||
+             i->comment().contains(s, Qt::CaseInsensitive));
 }
 
 void AddAppletDialog::search(const QString &s)
 {
-	AppletInfo *appletInfo;
-	for (int i = 0; i < m_listModel->rowCount(); i++)
-	{
-		appletInfo = static_cast<AppletInfo*>(m_listModel->index(i).internalPointer());
-		m_mainWidgetView->appletListView->setRowHidden(i, !appletMatchesSearch(appletInfo, s) ||
-													   (appletInfo->isUniqueApplet() &&
-														PluginManager::self()->hasInstance(*appletInfo)));
-	}
+    AppletInfo *appletInfo;
+    for (int i = 0; i < m_listModel->rowCount(); i++)
+    {
+        appletInfo = static_cast<AppletInfo*>(m_listModel->index(i).internalPointer());
+        m_mainWidgetView->appletListView->setRowHidden(i, !appletMatchesSearch(appletInfo, s) ||
+                                                          (appletInfo->isUniqueApplet() &&
+                                                           PluginManager::self()->hasInstance(*appletInfo)));
+    }
 
-	/**
-	  * If our selection gets hidden because of searching, we deselect it and
-	  * disable the "Add Applet" button.
-	  */
-	if ((selectedApplet.isValid() &&
-		 (m_mainWidgetView->appletListView->isRowHidden(selectedApplet.row()))) ||
-		 (!selectedApplet.isValid()))
-	{
-		m_mainWidgetView->appletListView->clearSelection();
-		enableButton(KDialog::User1, false);
-	}
+    /**
+      * If our selection gets hidden because of searching, we deselect it and
+      * disable the "Add Applet" button.
+      */
+    if ((selectedApplet.isValid() &&
+        (m_mainWidgetView->appletListView->isRowHidden(selectedApplet.row()))) ||
+        (!selectedApplet.isValid()))
+    {
+        m_mainWidgetView->appletListView->clearSelection();
+        enableButton(KDialog::User1, false);
+    }
 }
 
 void AddAppletDialog::filter(int i)
 {
-	m_selectedType = AppletInfo::Undefined;
+    m_selectedType = AppletInfo::Undefined;
 
-	if (i == 1)
-	{
-		m_selectedType = AppletInfo::Applet;
-	}
-	else if (i == 2)
-	{
-		m_selectedType = AppletInfo::Button;
-	}
+    if (i == 1)
+    {
+        m_selectedType = AppletInfo::Applet;
+    }
+    else if (i == 2)
+    {
+        m_selectedType = AppletInfo::Button;
+    }
 
-	AppletInfo *appletInfo;
-	QString searchString = m_mainWidgetView->appletSearch->text();
-	for (int j = 0; j < m_listModel->rowCount(); j++)
-	{
-		appletInfo = static_cast<AppletInfo*>(m_listModel->index(j).internalPointer());
-		m_mainWidgetView->appletListView->setRowHidden(j, !appletMatchesSearch(appletInfo, searchString) ||
-													   (appletInfo->isUniqueApplet() &&
-													    PluginManager::self()->hasInstance(*appletInfo)));
-	}
+    AppletInfo *appletInfo;
+    QString searchString = m_mainWidgetView->appletSearch->text();
+    for (int j = 0; j < m_listModel->rowCount(); j++)
+    {
+        appletInfo = static_cast<AppletInfo*>(m_listModel->index(j).internalPointer());
+        m_mainWidgetView->appletListView->setRowHidden(j, !appletMatchesSearch(appletInfo, searchString) ||
+                                                          (appletInfo->isUniqueApplet() &&
+                                                           PluginManager::self()->hasInstance(*appletInfo)));
+    }
 
-	/**
-	  * If our selection gets hidden because of filtering, we deselect it and
-	  * disable the "Add Applet" button.
-	  */
-	if ((selectedApplet.isValid() &&
-		 (m_mainWidgetView->appletListView->isRowHidden(selectedApplet.row()))) ||
-		 (!selectedApplet.isValid()))
-	{
-		m_mainWidgetView->appletListView->clearSelection();
-		enableButton(KDialog::User1, false);
-	}
+    /**
+      * If our selection gets hidden because of filtering, we deselect it and
+      * disable the "Add Applet" button.
+      */
+    if ((selectedApplet.isValid() &&
+        (m_mainWidgetView->appletListView->isRowHidden(selectedApplet.row()))) ||
+        (!selectedApplet.isValid()))
+    {
+        m_mainWidgetView->appletListView->clearSelection();
+        enableButton(KDialog::User1, false);
+    }
 }
 
 void AddAppletDialog::slotUser1Clicked()
 {
-	if (selectedApplet.isValid())
-	{
-		addCurrentApplet(selectedApplet);
-	}
+    if (selectedApplet.isValid())
+    {
+        addCurrentApplet(selectedApplet);
+    }
 }
 
 void AddAppletDialog::updateAppletList()
 {
-	search(m_mainWidgetView->appletSearch->text());
+    search(m_mainWidgetView->appletSearch->text());
 }
 
 #include "addapplet.moc"
