@@ -46,11 +46,6 @@ bool SessionRunner::accepts(const QString& term)
     return false;
 }
 
-bool SessionRunner::hasOptions()
-{
-    return false;
-}
-
 bool SessionRunner::exec(const QString& command)
 {
     Q_UNUSED(command);

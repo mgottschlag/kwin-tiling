@@ -36,16 +36,51 @@ class KDE_EXPORT Runner : public QObject
         explicit Runner(QObject* parent = 0);
         virtual ~Runner();
 
+        /**
+         * If the runner can run precisely this term, return true. Each runner
+         * will be asked until one returns "true". Other possible matches
+         * should be offered via findMatches
+         */
         virtual bool accepts(const QString& term) = 0;
 
-        virtual bool hasOptions() = 0;
+        /**
+         * If the runner has options that the user can interact with to modify
+         * what happens when exec or one of the actions created in fillMatches
+         * is called, the runner should return true
+         */
+        virtual bool hasOptions();
+
+        /**
+         * If the hasOptions() returns true, this method will be called to get
+         * the widget displaying the options the user can interact with.
+         */
         virtual QWidget* options();
 
+        /**
+         * Take action on the command. What this means is dependant on the
+         * particular runner implementation, e.g. some runners may treat
+         * command as a shell command, while others may treat it as an
+         * equation or a user name or ...
+         */
         virtual bool exec(const QString& command) = 0;
 
         KActionCollection* matches(const QString& term, int max, int offset);
 
+    signals:
+        /**
+         * When emitted, the interface will update itself to show the new
+         * matches. This is meant to be used by asynchronous runners that will
+         * only be able to start a query on fillMatches being called with
+         * response (and therefore matches) coming later
+         */
+        void matchesUpdated(KActionCollection* matches);
+
     protected:
+        /**
+         * This method is called when there is text input to match. The runner
+         * should fill the matches action collection with one action per match
+         * to a maximium of max matches starting at offset in the data set
+         */
         virtual void fillMatches(KActionCollection* matches,
                                  const QString& term,
                                  int max, int offset);

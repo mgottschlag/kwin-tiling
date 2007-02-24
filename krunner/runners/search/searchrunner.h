@@ -38,10 +38,6 @@ class SearchRunner : public Runner
         ~SearchRunner();
 
         bool accepts(const QString& term);
-
-        bool hasOptions();
-        QWidget* options();
-
         bool exec(const QString& command);
 };
 

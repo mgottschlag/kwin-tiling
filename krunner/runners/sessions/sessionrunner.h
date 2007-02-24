@@ -39,8 +39,6 @@ class SessionRunner : public Runner
 
         bool accepts(const QString& term);
 
-        bool hasOptions();
-
         bool exec(const QString& command);
         QList<QAction*> matches(const QString& term);
 

@@ -42,6 +42,11 @@ Runner::~Runner()
     delete d;
 }
 
+bool Runner::hasOptions()
+{
+    return false;
+}
+
 QWidget* Runner::options()
 {
     return 0;

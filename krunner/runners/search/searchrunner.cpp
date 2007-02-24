@@ -32,17 +32,9 @@ SearchRunner::~SearchRunner()
 
 bool SearchRunner::accepts(const QString& term)
 {
+    // this should probably always turn down the term
+    // and only act on actions provided via fillMatches
     return false;
-}
-
-bool SearchRunner::hasOptions()
-{
-    return false;
-}
-
-QWidget* SearchRunner::options()
-{
-    return 0;
 }
 
 bool SearchRunner::exec(const QString& command)
