@@ -22,9 +22,5 @@ Comment[pt_BR]=Uma ferramenta do KControl para gerir os programas que são inici
 Comment[sv]=Ett verktyg i inställningscentralen för att hantera vilka program som startas tillsammans med KDE.
 
 Keywords=Autostart Manager
-Keywords[de]=autostart manager verwaltung einrichtung
-Keywords[pt]=auto-arranque gestor
-Keywords[pt_BR]=auto-arranque gestor
-Keywords[sv]=autostart hantering
 
 Categories=Qt;KDE;X-KDE-settings-components;
