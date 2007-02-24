@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef APPRUNNER_H
-#define APPRUNNER_H
+#ifndef SERVICERUNNER_H
+#define SERVICERUNNER_H
 
 #include "runner.h"
 
