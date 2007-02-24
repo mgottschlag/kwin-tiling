@@ -4,3 +4,5 @@
 
 # these are all loadable runners
 add_subdirectory(search)
+
+install( FILES  krunnerrunner.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
