@@ -19,9 +19,12 @@
 #ifndef KRUNNERAPP_H
 #define KRUNNERAPP_H
 
+#include <kworkspace.h>
+
 #include "restartingapplication.h"
 #include "saverengine.h"
-#include <kworkspace.h>
+#include "interface.h"
+
 class KActionCollection;
 
 class KRunnerApp : public RestartingApplication
@@ -31,6 +34,8 @@ public:
     KRunnerApp(Display *display,
                           Qt::HANDLE visual = 0,
                           Qt::HANDLE colormap = 0);
+    ~KRunnerApp();
+
     void initializeShortcuts ();
     void logout( KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype );
     // The action collection of the active widget
@@ -39,13 +44,7 @@ public:
     virtual int newInstance();
     SaverEngine& screensaver() { return m_saver; }
 
-signals:
-    void showInterface();
-
 public slots:
-    /** Show minicli,. the KDE command line interface */
-    void executeCommand();
-
     /** Show taskmanager (calls KSysGuard with --showprocesses option) */
     void showTaskManager();
     //void showWindowList();
@@ -59,6 +58,7 @@ public slots:
 private:
     KActionCollection *m_actionCollection;
     SaverEngine m_saver;
+    Interface* m_interface;
 };
 
 #endif /* KRUNNERAPP_H */

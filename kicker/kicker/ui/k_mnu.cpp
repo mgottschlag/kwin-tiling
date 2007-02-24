@@ -64,7 +64,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "recentapps.h"
 
 #include "k_mnu.h"
-#include "kdesktop_interface.h"
+#include "krunner_interface.h"
 #include "screensaver_interface.h"
 #include "k_mnu.moc"
 
@@ -408,12 +408,9 @@ void PanelKMenu::slotSaveSession()
 
 void PanelKMenu::slotRunCommand()
 {
-    QString interface( "org.kde.kdesktop" );
-    if ( kicker_screen_number )
-        interface.sprintf("org.kde.kdesktop-screen-%d", kicker_screen_number);
-
-    org::kde::kdesktop::Desktop desktopInterface( interface, "/Desktop", QDBusConnection::sessionBus() );
-    desktopInterface.popupExecuteCommand( QString() );
+    QString interface( "org.kde.krunner" );
+    org::kde::krunner::Interface desktopInterface( interface, "/Interface", QDBusConnection::sessionBus() );
+    desktopInterface.display();
 }
 
 void PanelKMenu::slotEditUserContact()

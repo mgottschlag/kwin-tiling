@@ -57,7 +57,8 @@ Interface::Interface(QWidget* parent)
 
     QVBoxLayout* layout = new QVBoxLayout(this);
 
-    m_searchTerm = new KLineEdit(this);
+    m_searchTerm = new KLineEdit( this );
+    m_searchTerm->setClearButtonShown( true );
     layout->addWidget(m_searchTerm);
     connect(m_searchTerm, SIGNAL(textChanged(QString)),
             this, SLOT(runText(QString)));
@@ -96,13 +97,15 @@ Interface::~Interface()
 {
 }
 
-void Interface::display()
+void Interface::display( const QString& term )
 {
     kDebug() << "display() called" << endl;
+    m_searchTerm->setText( term );
+    m_searchTerm->setFocus( );
     show();
     raise();
-    KWin::setOnDesktop(winId(), KWin::currentDesktop());
-    KDialog::centerOnScreen(this);
+    KWin::setOnDesktop( winId(), KWin::currentDesktop() );
+    KDialog::centerOnScreen( this );
 }
 
 void Interface::runText(const QString& term)
@@ -160,6 +163,7 @@ void Interface::exec()
     }
 
     if ( m_currentRunner->exec( m_searchTerm->text() ) ) {
+        m_searchTerm->clear();
         hide();
     }
 }

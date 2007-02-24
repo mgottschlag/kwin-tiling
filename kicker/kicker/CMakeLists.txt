@@ -15,7 +15,7 @@ include_directories(
 
 kde4_add_ui3_files(libkicker_ui_SRCS ui/nonKDEButtonSettings.ui)
 kde4_add_ui_files(libkicker_ui_SRCS ui/appletview.ui)
-qt4_add_dbus_interface(libkicker_ui_SRCS ../../kdesktop/org.kde.kdesktop.Desktop.xml kdesktop_interface )
+qt4_add_dbus_interface(libkicker_ui_SRCS ../../krunner/org.kde.krunner.Interface.xml krunner_interface )
 qt4_add_dbus_interface(libkicker_ui_SRCS ../../krunner/org.kde.ScreenSaver.xml screensaver_interface )
 
 set(kicker_KDEINIT_SRCS ${libkicker_buttons_SRCS} ${libkicker_ui_SRCS} ${libkicker_core_SRCS} )

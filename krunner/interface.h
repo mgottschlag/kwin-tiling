@@ -38,6 +38,7 @@ namespace Plasma
 class Interface : public QWidget
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.krunner.Interface")
 
     public:
         explicit Interface(QWidget* parent = 0);
@@ -45,7 +46,7 @@ class Interface : public QWidget
 
     public Q_SLOTS:
         // DBUS interface
-        void display();
+        void display(const QString& term = QString());
 
     protected Q_SLOTS:
         void runText(const QString& term);

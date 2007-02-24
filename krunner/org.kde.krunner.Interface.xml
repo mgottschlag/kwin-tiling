@@ -2,6 +2,9 @@
 <node>
   <interface name="org.kde.krunner.Interface">
     <method name="display">
+      <arg name="term" type="s" direction="in"/>
+    </method>
+    <method name="display">
     </method>
   </interface>
 </node>

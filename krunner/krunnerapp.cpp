@@ -37,16 +37,22 @@
 #include <QObject>
 #include <QtDBus/QtDBus>
 
-#include <interfaceadaptor.h>
+#include "interfaceadaptor.h"
+#include "interface.h"
 
 KRunnerApp::KRunnerApp(Display *display,
                        Qt::HANDLE visual,
                        Qt::HANDLE colormap)
     : RestartingApplication( display, visual, colormap )
 {
+    m_interface = new Interface( );
     initializeShortcuts();
 }
 
+KRunnerApp::~KRunnerApp()
+{
+    delete m_interface;
+}
 
 void KRunnerApp::initializeShortcuts()
 {
@@ -61,7 +67,7 @@ void KRunnerApp::initializeShortcuts()
         a = actionCollection->addAction( I18N_NOOP("Run Command") );
         a->setText( i18n( I18N_NOOP( "Run Command" ) ) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
-        connect(a, SIGNAL(triggered(bool)), SLOT(executeCommand())); // TODO: needs to be Interface.display() slot
+        connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(display()) );
     }
 
     a = actionCollection->addAction( I18N_NOOP( "Show Taskmanager" ) );
@@ -113,11 +119,6 @@ void KRunnerApp::initializeShortcuts()
     m_actionCollection->readSettings();
 } // end void KRunnerApp::initializeBindings
 
-
-void KRunnerApp::executeCommand()
-{
-    emit showInterface();
-}
 
 void KRunnerApp::switchUser()
 {
@@ -188,7 +189,7 @@ int KRunnerApp::newInstance()
         // App startup: do nothing
         firstTime = false;
     } else {
-        emit showInterface();
+        m_interface->display();
     }
     // Call parent class for the setNewStartupId stuff
     return KUniqueApplication::newInstance();

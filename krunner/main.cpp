@@ -23,7 +23,6 @@
 #include <KLocale>
 
 #include "krunnerapp.h"
-#include "interface.h"
 #include "saverengine.h"
 #include "startupid.h"
 #include "kscreensaversettings.h" // contains screen saver config
@@ -113,10 +112,6 @@ int main(int argc, char* argv[])
             startup_id = new StartupId;
         startup_id->configure();
     }
-
-    Interface interface;
-
-    QObject::connect( &app, SIGNAL( showInterface() ), &interface, SLOT( display() ) );
 
     return app.exec();
 }
