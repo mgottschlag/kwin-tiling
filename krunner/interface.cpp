@@ -16,6 +16,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QApplication>
 #include <QLabel>
 #include <QPainter>
 #include <QResizeEvent>
@@ -37,7 +38,6 @@
 #include "runners/shell/shellrunner.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
-#include <QApplication>
 
 Interface::Interface(QWidget* parent)
     : QWidget(parent, Qt::FramelessWindowHint),
@@ -102,10 +102,10 @@ void Interface::display( const QString& term )
     kDebug() << "display() called" << endl;
     m_searchTerm->setText( term );
     m_searchTerm->setFocus( );
-    show();
-    raise();
     KWin::setOnDesktop( winId(), KWin::currentDesktop() );
     KDialog::centerOnScreen( this );
+    show();
+    raise();
 }
 
 void Interface::runText(const QString& term)
