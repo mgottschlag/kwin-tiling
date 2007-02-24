@@ -33,6 +33,7 @@
 #include <kservicetypetrader.h>
 
 #include "runners/services/servicerunner.h"
+#include "runners/sessions/sessionrunner.h"
 #include "runners/shell/shellrunner.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
@@ -194,8 +195,8 @@ void Interface::resizeEvent(QResizeEvent *e)
     if ( e->size() != m_renderedSvg.size() ) {
         m_renderedSvg = QPixmap( e->size() );
         m_renderDirty = true;
-        int w = e->size().width();
-        int h = e->size().height();
+        /*int w = e->size().width();
+        int h = e->size().height();*/
     }
 }
 
@@ -210,8 +211,9 @@ void Interface::loadRunners()
     m_runners.clear();
     m_currentRunner = 0;
 
-    m_runners.append(new ServiceRunner(this));
-    m_runners.append(new ShellRunner(this));
+    m_runners.append( new ServiceRunner( this ) );
+    m_runners.append( new ShellRunner( this ) );
+    m_runners.append( new SessionRunner( this ) );
 //    m_runners.append(new SearchRunner(this));
 
     KService::List offers = KServiceTypeTrader::self()->query( "KRunner/Runner" );

@@ -52,7 +52,6 @@ void KRunnerApp::initializeShortcuts()
 {
     // Global keys
     KActionCollection* actionCollection = m_actionCollection = new KActionCollection( this );
-    // (void) new KRootWm( this );
     QAction* a = 0L;
 
     a = actionCollection->addAction( "Program:krunner" );
@@ -62,76 +61,77 @@ void KRunnerApp::initializeShortcuts()
         a = actionCollection->addAction( I18N_NOOP("Run Command") );
         a->setText( i18n( I18N_NOOP( "Run Command" ) ) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
-        connect(a, SIGNAL(triggered(bool)), SLOT(slotExecuteCommand())); // TODO: needs to be Interface.display() slot
+        connect(a, SIGNAL(triggered(bool)), SLOT(executeCommand())); // TODO: needs to be Interface.display() slot
     }
 
     a = actionCollection->addAction( I18N_NOOP( "Show Taskmanager" ) );
     a->setText( i18n( I18N_NOOP( "Show Taskmanager" ) ) );
     qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::CTRL+Qt::Key_Escape ) );
-    connect( a, SIGNAL(triggered(bool)), SLOT(slotShowTaskManager()) );
+    connect( a, SIGNAL(triggered(bool)), SLOT(showTaskManager()) );
 
+/*
+ * TODO: doesn't this belong in the window manager?
     a = actionCollection->addAction( I18N_NOOP( "Show Window List") );
     a->setText( i18n( I18N_NOOP( "Show Window List") ) );
     qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::ALT+Qt::Key_F5 ) );
     connect( a, SIGNAL(triggered(bool)), SLOT(slotShowWindowList()) );
-
+*/
     a = actionCollection->addAction( I18N_NOOP("Switch User") );
     a->setText( i18n( I18N_NOOP("Switch User") ) );
     qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_Insert ) );
-    connect(a, SIGNAL(triggered(bool)), SLOT(slotSwitchUser()));
+    connect(a, SIGNAL(triggered(bool)), SLOT(switchUser()));
 
-    /*  if (KAuthorized::authorizeKAction("lock_screen"))
-        {
-        a = actionCollection->addAction(I18N_NOOP("Lock Session"));
-        a->setText( i18n(I18N_NOOP("Lock Session")) );
-        qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_L));
-   connect(a, SIGNAL(triggered(bool)), KRootWm::self(), slotLock())
+    if ( KAuthorized::authorizeKAction( "lock_screen" ) ) {
+        a = actionCollection->addAction( I18N_NOOP( "Lock Session" ) );
+        a->setText( i18n( I18N_NOOP( "Lock Session" ) ) );
+        qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_L ) );
+        connect( a, SIGNAL(triggered(bool)), &m_saver, SLOT(lock()) );
     }
-*/
+
     if ( KAuthorized::authorizeKAction( "logout" ) ) {
         a = actionCollection->addAction( I18N_NOOP("Log Out") );
         a->setText( i18n(I18N_NOOP("Log Out")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Delete));
-        connect(a, SIGNAL(triggered(bool)), SLOT(slotLogout()));
+        connect(a, SIGNAL(triggered(bool)), SLOT(logout()));
 
         a = actionCollection->addAction( I18N_NOOP("Log Out Without Confirmation") );
         a->setText( i18n(I18N_NOOP("Log Out Without Confirmation")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_Delete));
-        connect(a, SIGNAL(triggered(bool)), SLOT(slotLogoutNoCnf()));
+        connect(a, SIGNAL(triggered(bool)), SLOT(logoutWithoutConfirmation()));
 
         a = actionCollection->addAction( I18N_NOOP("Halt without Confirmation") );
         a->setText( i18n(I18N_NOOP("Halt without Confirmation")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageDown));
-        connect(a, SIGNAL(triggered(bool)), SLOT(slotHaltNoCnf()));
+        connect(a, SIGNAL(triggered(bool)), SLOT(haltWithoutConfirmation()));
 
         a = actionCollection->addAction( I18N_NOOP("Reboot without Confirmation") );
         a->setText( i18n(I18N_NOOP("Reboot without Confirmation")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageUp));
-        connect(a, SIGNAL(triggered(bool)), SLOT(slotRebootNoCnf()));
+        connect(a, SIGNAL(triggered(bool)), SLOT(rebootWithoutConfirmation()));
     }
 
     m_actionCollection->readSettings();
 } // end void KRunnerApp::initializeBindings
 
 
-void KRunnerApp::slotExecuteCommand()
+void KRunnerApp::executeCommand()
 {
     emit showInterface();
 }
 
-void KRunnerApp::slotSwitchUser()
+void KRunnerApp::switchUser()
 {
-     //TODO: fixme - port from kdesktop, or move to kwin
-     //KRootWm::self()->slotSwitchUser();
+    //TODO: use the SessionRunner
 }
 
-void KRunnerApp::slotShowWindowList()
+/*TODO: fixme - move to kwin
+void KRunnerApp::showWindowList()
 {
-     //TODO: fixme - port from kdesktop, or move to kwin
      //KRootWm::self()->slotWindowList();
 }
+*/
 
-void KRunnerApp::slotShowTaskManager()
+void KRunnerApp::showTaskManager()
 {
     //kDebug(1204) << "Launching KSysGuard..." << endl;
     KProcess* p = new KProcess;
@@ -145,46 +145,40 @@ void KRunnerApp::slotShowTaskManager()
     delete p;
 }
 
-void KRunnerApp::slotLogout()
+void KRunnerApp::logout()
 {
     logout( KWorkSpace::ShutdownConfirmDefault,
             KWorkSpace::ShutdownTypeDefault );
 }
 
-void KRunnerApp::slotLogoutNoCnf()
+void KRunnerApp::logoutWithoutConfirmation()
 {
     logout( KWorkSpace::ShutdownConfirmNo,
             KWorkSpace::ShutdownTypeNone );
 }
 
-void KRunnerApp::slotHaltNoCnf()
+void KRunnerApp::haltWithoutConfirmation()
 {
     logout( KWorkSpace::ShutdownConfirmNo,
             KWorkSpace::ShutdownTypeHalt );
 }
 
-void KRunnerApp::slotRebootNoCnf()
+void KRunnerApp::rebootWithoutConfirmation()
 {
     logout( KWorkSpace::ShutdownConfirmNo,
             KWorkSpace::ShutdownTypeReboot );
 }
 
-// For the dbus interface [maybe the dbus interface should have those extra args?]
-void KRunnerApp::logout()
-{
-    logout( KWorkSpace::ShutdownConfirmDefault,
-            KWorkSpace::ShutdownTypeNone );
-}
-
 void KRunnerApp::logout( KWorkSpace::ShutdownConfirm confirm,
                        KWorkSpace::ShutdownType sdtype )
 {
-    if( !KWorkSpace::requestShutDown( confirm, sdtype ) ) {} //TODO: re-enable me
-        // this i18n string is also in kicker/applets/run/runapplet
-        //KMessageBox::error( this, i18n("Could not log out properly.\nThe session manager cannot "
-        //                                      "be contacted. You can try to force a shutdown by pressing "
-        //                                     "Ctrl+Alt+Backspace; note, however, that your current session "
-        //                                      "will not be saved with a forced shutdown." ) );
+    if ( !KWorkSpace::requestShutDown( confirm, sdtype ) ) {
+        // TODO: should we show these errors in Interface?
+        KMessageBox::error( 0, i18n("Could not log out properly.\nThe session manager cannot "
+                                    "be contacted. You can try to force a shutdown by pressing "
+                                    "Ctrl+Alt+Backspace; note, however, that your current session "
+                                    "will not be saved with a forced shutdown." ) );
+    }
 }
 
 int KRunnerApp::newInstance()

@@ -102,9 +102,6 @@ int main(int argc, char* argv[])
     }
     KRunnerApp app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
 
-    // LOCKING
-    SaverEngine saver;
-
     // Startup stuff ported from kdesktop
     KLaunchSettings::self()->readConfig();
     StartupId *startup_id( NULL );

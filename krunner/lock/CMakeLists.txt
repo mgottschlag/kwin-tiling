@@ -1,10 +1,10 @@
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/workspace/krunner ${CMAKE_SOURCE_DIR}/workspace/kcheckpass ${CMAKE_SOURCE_DIR}/workspace/kdmlib  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/krunner ${CMAKE_SOURCE_DIR}/workspace/kcheckpass )
 
 ########### next target ###############
 
 configure_file(config-krunner-lock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-krunner-lock.h)
 
-set(krunner_lock_SRCS ${kdmlib_SRCS}
+set(krunner_lock_SRCS
    lockprocess.cc
    lockdlg.cc
    autologout.cc
@@ -31,7 +31,7 @@ kde4_automoc(${krunner_lock_SRCS})
 
 kde4_add_executable(krunner_lock ${krunner_lock_SRCS} )
 
-target_link_libraries(krunner_lock  ${KDE4_KIO_LIBS} )
+target_link_libraries(krunner_lock  ${KDE4_KIO_LIBS} kworkspace )
 
 if (HAVE_XF86MISC)
   target_link_libraries(krunner_lock Xxf86misc)
