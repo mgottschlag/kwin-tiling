@@ -1,10 +1,10 @@
-include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core ${CMAKE_SOURCE_DIR}/kicker/kicker/ui  ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui ${CMAKE_BINARY_DIR}/workspace/kicker/kicker  )
+include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core ${CMAKE_SOURCE_DIR}/kicker/kicker/ui  ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui ${CMAKE_BINARY_DIR}/workspace/kicker/kicker  )
 
 
 ########### next target ###############
 
 #### ****** So many sources? This is recompiling all of kicker! This needs to be fixed! ****** ####
-set(launcher_panelapplet_PART_SRCS  ${kdmlib_SRCS}  ${libkicker_core_SRCS} ${libkicker_buttons_SRCS} ${libkicker_ui_SRCS}
+set(launcher_panelapplet_PART_SRCS  ${libkicker_core_SRCS} ${libkicker_buttons_SRCS} ${libkicker_ui_SRCS}
    quicklauncher.cpp 
    quickbutton.cpp 
    quickaddappsmenu.cpp 
@@ -30,7 +30,7 @@ kde4_add_kcfg_files(launcher_panelapplet_PART_SRCS prefs.kcfgc )
 kde4_add_plugin(launcher_panelapplet ${launcher_panelapplet_PART_SRCS})
 
 
-target_link_libraries(launcher_panelapplet ${KDE4_KDE3SUPPORT_LIBS}  konq kickermain )
+target_link_libraries(launcher_panelapplet ${KDE4_KDE3SUPPORT_LIBS} kworkspace konq kickermain )
 
 install(TARGETS launcher_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

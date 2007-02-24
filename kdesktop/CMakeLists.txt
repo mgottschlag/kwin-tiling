@@ -13,7 +13,6 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/lib
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background
 	${CMAKE_SOURCE_DIR}/libkonq
-	${CMAKE_SOURCE_DIR}/workspace/kdmlib
 	 )
 
 
@@ -33,7 +32,7 @@ install(TARGETS kcheckrunning DESTINATION ${BIN_INSTALL_DIR})
 
 
 # Please use .cpp for new files
-set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
+set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${backgroundlib_SRCS}
    main.cc
    krootwm.cc
    kdiconview.cc

@@ -1,12 +1,12 @@
 
 project(ksmserver)
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/plasma/lib )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/plasma/lib )
 
 configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
 
 ########### next target ###############
 
-set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS} 
+set(ksmserver_KDEINIT_SRCS
    main.cpp 
    server.cpp 
    shutdowndlg.cpp 
@@ -40,7 +40,7 @@ kde4_automoc(${ksmserver_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_ksmserver plasma ${KDE4_KDEUI_LIBS} ${KDE4_KDEFX_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${X11_LIBRARIES})
+target_link_libraries(kdeinit_ksmserver plasma kworkspace ${KDE4_KDEUI_LIBS} ${KDE4_KDEFX_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${X11_LIBRARIES})
 
 install(TARGETS kdeinit_ksmserver  DESTINATION ${LIB_INSTALL_DIR})
 
@@ -53,14 +53,14 @@ install(FILES ${ksmserver_BGIMAGES} DESTINATION ${DATA_INSTALL_DIR}/desktoptheme
 ########### next target ###############
 
 if(KDE4_BUILD_TESTS)
-set(testsh_SRCS ${kdmlib_SRCS} test.cpp shutdowndlg.cpp )
+set(testsh_SRCS test.cpp shutdowndlg.cpp )
 
 kde4_automoc(${testsh_SRCS})
 
 
 kde4_add_executable(testsh ${testsh_SRCS})
 
-target_link_libraries(testsh plasma ${KDE4_KDEUI_LIBS})
+target_link_libraries(testsh plasma kworkspace ${KDE4_KDEUI_LIBS})
 
 endif(KDE4_BUILD_TESTS)
 
