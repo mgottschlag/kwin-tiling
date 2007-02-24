@@ -5,7 +5,8 @@ project(kworkspacelib)
 
 ########### next target ###############
 
-set(kworkspace_LIB_SRCS kworkspace.cpp
+set(kworkspace_LIB_SRCS dmctl.cpp
+                        kworkspace.cpp
                         kwindowlistmenu.cpp
                         runner.cpp
    )

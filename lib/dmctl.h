@@ -22,12 +22,13 @@
 #define DMCTL_H
 
 #include <kworkspace.h>
+#include <kdemacros.h>
 #include <QString>
 #include <QList>
 #include <QString>
 #include <QByteArray>
 
-struct SessEnt {
+struct KDE_EXPORT SessEnt {
 	QString display, from, user, session;
 	int vt;
 	bool self:1, tty:1;
@@ -35,7 +36,7 @@ struct SessEnt {
 
 typedef QList<SessEnt> SessList;
 
-class DM {
+class KDE_EXPORT DM {
 
 #ifdef Q_WS_X11
 
