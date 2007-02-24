@@ -24,6 +24,8 @@
 
 #include <kdemacros.h>
 
+class KActionCollection;
+
 class KDE_EXPORT Runner : public QObject
 {
     Q_OBJECT
@@ -37,12 +39,20 @@ class KDE_EXPORT Runner : public QObject
         virtual bool accepts(const QString& term) = 0;
 
         virtual bool hasOptions() = 0;
-        virtual QWidget* options() = 0;
+        virtual QWidget* options();
 
         virtual bool exec(const QString& command) = 0;
 
-    signals:
-        void matches();
+        KActionCollection* matches(const QString& term, int max, int offset);
+
+    protected:
+        virtual void fillMatches(KActionCollection* matches,
+                                 const QString& term,
+                                 int max, int offset);
+
+    private:
+        class Private;
+        Private* d;
 };
 
 #define K_EXPORT_KRUNNER_RUNNER( libname, classname )                       \

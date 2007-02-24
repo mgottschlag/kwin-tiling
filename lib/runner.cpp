@@ -16,16 +16,49 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <KActionCollection>
+
 #include "runner.h"
 
-Runner::Runner(QObject* parent)
+class Runner::Private
 {
+    public:
+        Private( Runner* runner )
+        {
+            actions = new KActionCollection( runner );
+        }
+
+        KActionCollection* actions;
+};
+
+Runner::Runner( QObject* parent )
+    : QObject( parent )
+{
+    d = new Private( this );
 }
 
 Runner::~Runner()
 {
+    delete d;
 }
 
+QWidget* Runner::options()
+{
+    return 0;
+}
 
+KActionCollection* Runner::matches(const QString& term, int max, int offset)
+{
+    d->actions->clear();
+    fillMatches(d->actions, term, max, offset);
+    return d->actions;
+}
+
+void Runner::fillMatches(KActionCollection* matches, const QString& term, int max, int offset)
+{
+    Q_UNUSED(term);
+    Q_UNUSED(max);
+    Q_UNUSED(offset);
+}
 
 #include "runner.moc"
