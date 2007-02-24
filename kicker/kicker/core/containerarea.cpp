@@ -356,7 +356,7 @@ void ContainerArea::loadContainers(const QStringList& containers)
         else if (appletType == "Applet")
         {
             bool immutable = Kicker::self()->isImmutable() ||
-                             group.groupIsImmutable() ||
+                             group.isImmutable() ||
                              group.entryIsImmutable("ConfigFile");
             a = PluginManager::self()->createAppletContainer(
                    group.readPathEntry("DesktopFile"),
