@@ -102,12 +102,15 @@ Interface::~Interface()
 void Interface::display( const QString& term )
 {
     kDebug() << "display() called" << endl;
-    m_searchTerm->setText( term );
+    if ( !m_searchTerm->isModified() ) {
+        m_searchTerm->setText( term ); // check so that pressing ALT-F2 when a window is already open doesn't erase the existing text
+    }
     m_searchTerm->setFocus( );
     KWin::setOnDesktop( winId(), KWin::currentDesktop() );
     KDialog::centerOnScreen( this );
     show();
     raise();
+    KWin::activateWindow( winId(), KWin::currentDesktop() ); // qApp->setActiveWindow( this ) is buggy, need KWin stuff instead
 }
 
 void Interface::runText(const QString& term)
