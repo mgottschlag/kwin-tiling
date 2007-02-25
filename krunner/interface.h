@@ -47,6 +47,8 @@ class Interface : public QWidget
     public Q_SLOTS:
         // DBUS interface
         void display(const QString& term = QString());
+        void displayAndStealFocus( );
+        void vanish();
 
     protected Q_SLOTS:
         void runText(const QString& term);

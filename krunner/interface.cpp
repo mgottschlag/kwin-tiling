@@ -90,7 +90,9 @@ Interface::Interface(QWidget* parent)
     new InterfaceAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/Interface", this);
 
-    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(hide()));
+    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(vanish()));
+
+        m_searchTerm->clear();
 
     resize(400, 250); //FIXME
 }
@@ -99,7 +101,7 @@ Interface::~Interface()
 {
 }
 
-void Interface::display( const QString& term )
+void Interface::display( const QString& term)
 {
     kDebug() << "display() called" << endl;
     if ( !m_searchTerm->isModified() ) {
@@ -110,7 +112,19 @@ void Interface::display( const QString& term )
     KDialog::centerOnScreen( this );
     show();
     raise();
-    KWin::activateWindow( winId(), KWin::currentDesktop() ); // qApp->setActiveWindow( this ) is buggy, need KWin stuff instead
+}
+
+void Interface::displayAndStealFocus( ) // this is meant to be called by ALT-F2 only, since this is the only time we ever want to forcibly steal focus
+{
+    display();
+    KWin::forceActiveWindow( winId(), 0 ); // qApp->setActiveWindow( this ) is buggy, need KWin stuff instead
+}
+
+void Interface::vanish( ) // opposite of display
+{
+    kDebug() << "vanish() called" << endl;
+    hide();
+    m_searchTerm->setText( "" );
 }
 
 void Interface::runText(const QString& term)
@@ -168,8 +182,9 @@ void Interface::exec()
     }
 
     if ( m_currentRunner->exec( m_searchTerm->text() ) ) {
-        m_searchTerm->clear();
-        hide();
+        //m_searchTerm->clear();
+        //hide();
+        vanish();
     }
 }
 
