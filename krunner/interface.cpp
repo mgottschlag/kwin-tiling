@@ -25,6 +25,7 @@
 #include <QShortcut>
 
 #include <kdebug.h>
+#include <klocale.h>
 #include <KDialog>
 #include <KLineEdit>
 #include <KWin>
@@ -48,6 +49,7 @@ Interface::Interface(QWidget* parent)
 {
     // Make newInstance activate the window
     qApp->setActiveWindow( this );
+    setWindowTitle( i18n("Run Command") );
 
     m_theme = new Plasma::Theme(this);
     themeChanged();
