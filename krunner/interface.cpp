@@ -75,6 +75,8 @@ Interface::Interface(QWidget* parent)
     m_optionsLabel->setEnabled(false);
     layout->addWidget(m_optionsLabel);
 
+    //TODO: figure out why this KSelectionWatcher isn't working while the
+    //      (temporary) code below does
     m_compositeWatcher = new KSelectionWatcher("_NET_WM_CM_S0");
     m_haveCompositionManager = m_compositeWatcher->owner() != None;
     kDebug() << "checkForCompositionManager " << m_compositeWatcher->owner() << " != " << None << endl;
@@ -104,20 +106,15 @@ Interface::~Interface()
 void Interface::display( const QString& term)
 {
     kDebug() << "display() called" << endl;
-    if ( !m_searchTerm->isModified() ) {
-        m_searchTerm->setText( term ); // check so that pressing ALT-F2 when a window is already open doesn't erase the existing text
+    if ( !term.isEmpty() ) {
+        m_searchTerm->setText( term );
     }
     m_searchTerm->setFocus( );
     KWin::setOnDesktop( winId(), KWin::currentDesktop() );
     KDialog::centerOnScreen( this );
     show();
     raise();
-}
-
-void Interface::displayAndStealFocus( ) // this is meant to be called by ALT-F2 only, since this is the only time we ever want to forcibly steal focus
-{
-    display();
-    KWin::forceActiveWindow( winId(), 0 ); // qApp->setActiveWindow( this ) is buggy, need KWin stuff instead
+    KWin::forceActiveWindow( winId(), 0 );
 }
 
 void Interface::vanish( ) // opposite of display

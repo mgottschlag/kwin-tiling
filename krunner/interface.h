@@ -45,9 +45,9 @@ class Interface : public QWidget
         ~Interface();
 
     public Q_SLOTS:
-        // DBUS interface
+        // DBUS interface. if you change these methods, you MUST run:
+        // qdbuscpp2xml interface.h -o org.kde.krunner.Interface.xml
         void display(const QString& term = QString());
-        void displayAndStealFocus( );
         void vanish();
 
     protected Q_SLOTS:

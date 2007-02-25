@@ -67,7 +67,7 @@ void KRunnerApp::initializeShortcuts()
         a = actionCollection->addAction( I18N_NOOP("Run Command") );
         a->setText( i18n( I18N_NOOP( "Run Command" ) ) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
-        connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(displayAndStealFocus()) );
+        connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(display()) );
     }
 
     a = actionCollection->addAction( I18N_NOOP( "Show Taskmanager" ) );
