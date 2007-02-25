@@ -23,9 +23,9 @@
 
 #include "restartingapplication.h"
 #include "saverengine.h"
-#include "interface.h"
 
 class KActionCollection;
+class Interface;
 
 class KRunnerApp : public RestartingApplication
 {
