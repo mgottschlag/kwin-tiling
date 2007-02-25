@@ -90,11 +90,11 @@ void KSMShutdownFeedback::slotPaintEffect()
 KSMPushButton::KSMPushButton( const QString &text, QWidget *parent )
  : QPushButton( parent ), m_highlight( false ), m_popupMenu(0), m_popupTimer(0)
 {
-    setAttribute(Qt::WA_Hover, true);
-    m_text = text;
-    setFixedSize( 85, 85 );
-    connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
-    connect( this, SIGNAL(released()), SLOT(slotReleased()) );
+  setAttribute(Qt::WA_Hover, true);
+  m_text = text;
+  setMinimumSize( 85, 85 );
+  connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
+  connect( this, SIGNAL(released()), SLOT(slotReleased()) );
 }
 
 void KSMPushButton::paintEvent( QPaintEvent * e )
@@ -118,12 +118,48 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
 
   p.drawPixmap( width()/2 - 16, 9, m_pixmap );
 
+  p.save();
   p.translate( 0, 50 );
-  QFont fnt;
+  QFont fnt = p.font();
   fnt.setBold( true );
   p.setFont( fnt );
   p.setPen( QPen( QColor( Qt::black ) ) );
-  p.drawText( 0, 0, width(), height() - 50, Qt::AlignHCenter|Qt::AlignTop|Qt::TextWordWrap, m_text );
+
+  // Calculate the width of the text when splitted on two lines and
+  // properly resize the button.
+  if( QFontMetrics(fnt).width( m_text ) > width()-4 ||
+      2 * QFontMetrics(fnt).lineSpacing() > height()-52 ) {
+    int w, h;
+    int i = m_text.length()/2;
+    int fac = 1;
+    int diff = 1;
+    while( i && i < m_text.length() && m_text[i] != ' ' ) {
+      i = i + (diff * fac);
+      fac *= -1;
+      ++diff;
+    }
+    QString upper = m_text.left( i ).trimmed();
+    QString lower = m_text.right( m_text.length() - i ).trimmed();
+    w = QMAX( QFontMetrics(fnt).width( upper ) + 4, QFontMetrics(fnt).width( lower ) + 4 );
+    h = QMAX( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 );
+    if( w > width() || h > height()) {
+      setMinimumSize( w, h );
+      updateGeometry();
+    }
+  }
+  p.drawText( 0, 0, width(), height() - 50, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextWordWrap|Qt::TextShowMnemonic, m_text );
+  p.restore();
+
+  if( hasFocus() ) {
+    p.setRenderHints( QPainter::Antialiasing, false);
+    pen.setBrush( QColor( 50, 50, 50) );
+    pen.setStyle( Qt::DotLine );
+    p.setPen( pen );
+    p.drawLine( 2, 2, width()-2, 2 );
+    p.drawLine(width()-2, 2, width()-2, height()-2 );
+    p.drawLine(width()-2, height()-2, 2, height()-2 );
+    p.drawLine(2, height()-2, 2, 2 );
+  }
 }
 
 void KSMPushButton::setPixmap( const QPixmap &p )
@@ -220,6 +256,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     KSMPushButton* btnLogout = new KSMPushButton( i18n("End Current Session"), this );
     btnLogout->setPixmap( KIconLoader::global()->loadIcon( "undo", K3Icon::NoGroup, 32 ) );
+    btnLogout->setFocus();
     connect(btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
     btnLayout->addWidget( btnLogout, 0 );
 
