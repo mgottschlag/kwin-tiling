@@ -39,8 +39,7 @@ ServiceRunner::~ServiceRunner()
 bool ServiceRunner::accepts(const QString& term)
 {
     KService::Ptr service = KService::serviceByName(term);
-    // i reccomend not trying 'service != 0' (its not worth the errors)
-    return (service && service->name() == term && service->type() == "Application");
+    return service && !service->exec().isEmpty();
 }
 
 bool ServiceRunner::hasOptions()
@@ -62,7 +61,8 @@ QWidget* ServiceRunner::options()
 bool ServiceRunner::exec(const QString& term)
 {
     KService::Ptr service = KService::serviceByName(term);
-    return (KRun::runCommand(service->exec()) != 0);
+    return service &&
+           KRun::run(*service, KUrl::List(), 0) != 0;
 }
 
 #include "servicerunner.moc"
