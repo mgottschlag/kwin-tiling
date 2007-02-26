@@ -389,8 +389,8 @@ DM::lockSwitchVT( int vt )
 {
 	if (switchVT( vt ))
         {
-            QDBusInterface kdesktop("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.Screensaver");
-            kdesktop.call( "lock" );
+            QDBusInterface screensaver("org.kde.screensaver", "/ScreenSaver", "org.kde.ScreenSaver");
+            screensaver.call( "lock" );
         }
 }
 
