@@ -52,18 +52,20 @@ QWidget* Runner::options()
     return 0;
 }
 
-KActionCollection* Runner::matches(const QString& term, int max, int offset)
+KActionCollection* Runner::matches( const QString& term, int max, int offset )
 {
     d->actions->clear();
-    fillMatches(d->actions, term, max, offset);
+    fillMatches( d->actions, term, max, offset );
     return d->actions;
 }
 
-void Runner::fillMatches(KActionCollection* matches, const QString& term, int max, int offset)
+void Runner::fillMatches( KActionCollection* matches,
+                          const QString& term,
+                          int max, int offset )
 {
-    Q_UNUSED(term);
-    Q_UNUSED(max);
-    Q_UNUSED(offset);
+    Q_UNUSED( term );
+    Q_UNUSED( max );
+    Q_UNUSED( offset );
 }
 
 #include "runner.moc"

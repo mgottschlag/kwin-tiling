@@ -33,7 +33,7 @@ class KDE_EXPORT Runner : public QObject
     public:
         typedef QList<Runner*> List;
 
-        explicit Runner(QObject* parent = 0);
+        explicit Runner( QObject* parent = 0 );
         virtual ~Runner();
 
         /**
@@ -41,20 +41,20 @@ class KDE_EXPORT Runner : public QObject
          * will be asked until one returns "true". Other possible matches
          * should be offered via findMatches
          */
-        virtual bool accepts(const QString& term) = 0;
+        virtual bool accepts( const QString& term ) = 0;
 
         /**
          * If the runner has options that the user can interact with to modify
          * what happens when exec or one of the actions created in fillMatches
          * is called, the runner should return true
          */
-        virtual bool hasOptions();
+        virtual bool hasOptions( );
 
         /**
          * If the hasOptions() returns true, this method will be called to get
          * the widget displaying the options the user can interact with.
          */
-        virtual QWidget* options();
+        virtual QWidget* options( );
 
         /**
          * Take action on the command. What this means is dependant on the
@@ -62,9 +62,9 @@ class KDE_EXPORT Runner : public QObject
          * command as a shell command, while others may treat it as an
          * equation or a user name or ...
          */
-        virtual bool exec(const QString& command) = 0;
+        virtual bool exec( const QString& command ) = 0;
 
-        KActionCollection* matches(const QString& term, int max, int offset);
+        KActionCollection* matches( const QString& term, int max, int offset );
 
     signals:
         /**
@@ -73,7 +73,7 @@ class KDE_EXPORT Runner : public QObject
          * only be able to start a query on fillMatches being called with
          * response (and therefore matches) coming later
          */
-        void matchesUpdated(KActionCollection* matches);
+        void matchesUpdated( KActionCollection* matches );
 
     protected:
         /**
@@ -81,18 +81,18 @@ class KDE_EXPORT Runner : public QObject
          * should fill the matches action collection with one action per match
          * to a maximium of max matches starting at offset in the data set
          */
-        virtual void fillMatches(KActionCollection* matches,
-                                 const QString& term,
-                                 int max, int offset);
+        virtual void fillMatches( KActionCollection* matches,
+                                  const QString& term,
+                                  int max, int offset );
 
     private:
         class Private;
         Private* d;
 };
 
-#define K_EXPORT_KRUNNER_RUNNER( libname, classname )                       \
-    K_EXPORT_COMPONENT_FACTORY(                                             \
-        krunner_##libname,                                               \
+#define K_EXPORT_KRUNNER_RUNNER( libname, classname )     \
+    K_EXPORT_COMPONENT_FACTORY(                           \
+        krunner_##libname,                                \
         KGenericFactory<classname>("krunner_" #libname) )
 
 #endif
