@@ -9,3 +9,6 @@
 
 /* Define if you have the Xinerama extension */
 #cmakedefine HAVE_XINERAMA 1
+
+/* Define if you have the XSHM (MIT SHM) extension */
+#cmakedefine HAVE_XSHM 1
