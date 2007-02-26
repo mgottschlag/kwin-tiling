@@ -22,7 +22,6 @@
 #include <KService>
 
 #include "servicerunner.h"
-using namespace std;
 
 ServiceRunner::ServiceRunner(QObject* parent)
     : Runner(parent),
