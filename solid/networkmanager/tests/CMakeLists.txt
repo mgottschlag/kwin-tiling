@@ -1,6 +1,6 @@
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. )
 
 if(KDE4_BUILD_TESTS)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. )
 set (nmtest_SRCS
 	listdevices.cpp
 	nmobject.cpp
