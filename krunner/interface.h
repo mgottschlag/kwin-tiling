@@ -50,7 +50,7 @@ class Interface : public QWidget
         void display(const QString& term = QString());
 
     protected Q_SLOTS:
-        void runText(const QString& term);
+        void search(const QString& term);
         void checkForCompositionManager(Window);
         void themeChanged();
         void updateMatches();

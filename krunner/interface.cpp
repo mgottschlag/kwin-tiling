@@ -16,6 +16,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QAction>
 #include <QApplication>
 #include <QLabel>
 #include <QPainter>
@@ -24,15 +25,16 @@
 #include <QVBoxLayout>
 #include <QShortcut>
 
-#include <kdebug.h>
-#include <klocale.h>
+#include <KActionCollection>
+#include <KDebug>
 #include <KDialog>
 #include <KLineEdit>
+#include <KLocale>
+#include <KServiceTypeTrader>
 #include <KWin>
 
 #include "../plasma/lib/theme.h"
 
-#include <kservicetypetrader.h>
 
 #include "runners/services/servicerunner.h"
 #include "runners/sessions/sessionrunner.h"
@@ -64,7 +66,7 @@ Interface::Interface(QWidget* parent)
     m_searchTerm->setClearButtonShown( true );
     layout->addWidget(m_searchTerm);
     connect(m_searchTerm, SIGNAL(textChanged(QString)),
-            this, SLOT(runText(QString)));
+            this, SLOT(search(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()),
             this, SLOT(exec()));
 
@@ -109,6 +111,7 @@ void Interface::display( const QString& term)
     if ( !term.isEmpty() ) {
         m_searchTerm->setText( term );
     }
+
     m_searchTerm->setFocus( );
     KWin::setOnDesktop( winId(), KWin::currentDesktop() );
     KDialog::centerOnScreen( this );
@@ -116,40 +119,47 @@ void Interface::display( const QString& term)
     raise();
     KWin::forceActiveWindow( winId(), 0 );
 
+    if ( !term.isEmpty() ) {
+        search( term );
+    }
+
     KWin::WindowInfo info( winId(), NET::WMState |NET::XAWMState |NET::WMDesktop, 0 );
     kDebug() << "on desktop? " << info.isOnCurrentDesktop() << " geom is " << rect() << " and visible? " << isVisible() << endl;
 }
 
 void Interface::hideEvent( QHideEvent* e )
 {
+    Q_UNUSED( e )
+
     kDebug() << "hide event" << endl;
     m_searchTerm->setText( "" );
 }
 
-void Interface::runText(const QString& t)
+void Interface::search(const QString& t)
 {
     QString term = t.trimmed();
     kDebug() << "looking for a runner for: " << term << endl;
-    if ( m_currentRunner ) {
-        if ( m_currentRunner->accepts(term) ) {
-            kDebug() << "\tgoing with the same runner: " << m_currentRunner->name() << endl;
-            return;
-        }
-
+    if ( m_currentRunner && ! m_currentRunner->accepts(term) ) {
+        kDebug() << "\told runner " << m_currentRunner->objectName() << " giving up the torch" << endl;
         m_currentRunner->disconnect( this );
         m_currentRunner = 0;
     }
 
     foreach (Runner* runner, m_runners) {
-        if (runner->accepts(term)) {
+        kDebug() << "\trunner: " << runner->objectName() << endl;
+        if ( !m_currentRunner && runner->accepts( term ) ) {
             m_currentRunner = runner;
             m_optionsLabel->setEnabled( runner->hasOptions() );
             connect( runner, SIGNAL(matches()), this, SLOT(updateMatches()) );
-            kDebug() << "\tswitching runners: " << m_currentRunner->name() << endl;
-            return;
+            kDebug() << "\tswitching runners: " << m_currentRunner->objectName() << endl;
         }
 
-        kDebug() << "\trunner passed: " << runner->name() << endl;
+        // FIXME
+        KActionCollection* matches = runner->matches( term, 10, 0 );
+        kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
+        foreach ( const QAction* action, matches->actions() ) {
+            kDebug() << "\t\t " << action << ": " << action->text() << endl;
+        }
     }
 
     m_optionsLabel->setEnabled(false);
@@ -157,7 +167,7 @@ void Interface::runText(const QString& t)
 
 void Interface::checkForCompositionManager(Window owner)
 {
-kDebug() << "checkForCompositionManager " << owner << " " << None << endl;
+    kDebug() << "checkForCompositionManager " << owner << " " << None << endl;
     m_haveCompositionManager = ( owner != None );
 }
 
@@ -233,18 +243,22 @@ void Interface::loadRunners()
     m_runners.clear();
     m_currentRunner = 0;
 
+    //TODO: how should we order runners, particularly ones loaded from plugins?
     m_runners.append( new ServiceRunner( this ) );
     m_runners.append( new ShellRunner( this ) );
     m_runners.append( new SessionRunner( this ) );
 //    m_runners.append(new SearchRunner(this));
 
     KService::List offers = KServiceTypeTrader::self()->query( "KRunner/Runner" );
-    KService::List::ConstIterator it;
-    for( it = offers.begin(); it != offers.end(); ++it ) {
-        KService::Ptr service = *it;
-
-        kDebug() << "runner : " << service->name() << endl ;
-
+    foreach ( KService::Ptr service, offers ) {
+        Runner* runner = KService::createInstance<Runner>( service, this );
+        if ( runner ) {
+            kDebug() << "loaded runner : " << service->name() << endl ;
+            m_runners.append( runner );
+        }
+        else {
+            kDebug() << "failed to load runner : " << service->name() << endl ;
+        }
     }
 }
 
