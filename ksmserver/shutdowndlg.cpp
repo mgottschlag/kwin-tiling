@@ -31,6 +31,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kseparator.h>
 #include <kstandardguiitem.h>
 #include <kuser.h>
+#include <solid/powermanager.h>
 
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -150,8 +151,21 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
   p.drawText( 0, 0, width(), height() - 50, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextWordWrap|Qt::TextShowMnemonic, m_text );
   p.restore();
 
+  p.setRenderHints( QPainter::Antialiasing, false);
+  if( m_popupMenu ) {
+    p.save();
+    p.setBrush( Qt::black );
+    pen.setColor(QColor(Qt::black));
+    p.setPen( pen );
+    QPoint points[3] = {
+        QPoint( width()-10, height()-7 ),
+        QPoint( width()-4, height()-7 ),
+        QPoint( width()-7, height()-4 ) };
+    p.drawPolygon( points, 3 );
+    p.restore();
+  }
+
   if( hasFocus() ) {
-    p.setRenderHints( QPainter::Antialiasing, false);
     pen.setBrush( QColor( 50, 50, 50) );
     pen.setStyle( Qt::DotLine );
     p.setPen( pen );
@@ -269,6 +283,17 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         if ( sdtype == KWorkSpace::ShutdownTypeHalt )
             btnHalt->setFocus();
 
+        QMenu *shutdownMenu = new QMenu( btnHalt );
+        connect( shutdownMenu, SIGNAL(activated(int)), SLOT(slotSuspend(int)) );
+        btnHalt->setPopupMenu( shutdownMenu );
+        Solid::PowerManager::SuspendMethods spdMethods = Solid::PowerManager::self().supportedSuspendMethods();
+        if( spdMethods & Solid::PowerManager::Standby )
+          shutdownMenu->insertItem( i18n("Standby"), Solid::PowerManager::Standby );
+        if( spdMethods & Solid::PowerManager::ToRam )
+          shutdownMenu->insertItem( i18n("Suspend to RAM"), Solid::PowerManager::ToRam );
+        if( spdMethods & Solid::PowerManager::ToDisk )
+          shutdownMenu->insertItem( i18n("Suspend to Disk"), Solid::PowerManager::ToDisk );
+
         // Reboot
         KSMPushButton* btnReboot = new KSMPushButton( i18n("Restart Computer"), this );
         btnReboot->setPixmap( KIconLoader::global()->loadIcon( "reload", K3Icon::NoGroup, 32 ) );
@@ -378,6 +403,14 @@ void KSMShutdownDlg::slotHalt()
     accept();
 }
 
+
+void KSMShutdownDlg::slotSuspend(int method)
+{
+    m_bootOption.clear();
+    Solid::PowerManager::SuspendMethod spdMethod = static_cast<Solid::PowerManager::SuspendMethod>(method);
+    Solid::PowerManager::self().suspend( spdMethod );
+    reject();
+}
 
 bool KSMShutdownDlg::confirmShutdown( bool maysd, KWorkSpace::ShutdownType& sdtype, QString& bootOption )
 {

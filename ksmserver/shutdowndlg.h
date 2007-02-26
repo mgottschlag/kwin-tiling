@@ -82,6 +82,7 @@ public Q_SLOTS:
     void slotHalt();
     void slotReboot();
     void slotReboot(int);
+    void slotSuspend(int);
 
 protected Q_SLOTS:
     void themeChanged();
