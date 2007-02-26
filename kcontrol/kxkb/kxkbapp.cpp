@@ -67,6 +67,7 @@ int KXKBApp::newInstance()
 bool KXKBApp::settingsRead()
 {
 //	return m_kxkbCore->settingsRead();
+    return false;
 }
 
 // This function activates the keyboard layout specified by the
