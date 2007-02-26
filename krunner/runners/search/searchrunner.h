@@ -19,6 +19,8 @@
 #ifndef SEARCHRUNNER_H
 #define SEARCHRUNNER_H
 
+#include <KGenericFactory>
+
 #include "runner.h"
 
 class QWidget;
@@ -34,11 +36,22 @@ class SearchRunner : public Runner
     typedef QList<Runner*> List;
 
     public:
-        explicit SearchRunner(QObject* parent = 0);
+        explicit SearchRunner( QObject* parent, const QStringList& args );
         ~SearchRunner();
 
-        bool accepts(const QString& term);
-        bool exec(const QString& command);
+        bool accepts( const QString& term );
+        bool exec( const QString& command );
+
+    protected:
+        virtual void fillMatches( KActionCollection* matches,
+                                  const QString& term,
+                                  int max, int offset );
+
+    protected slots:
+        // this is just a dummy slot for testing purposes
+        void launchKonsole();
 };
+
+K_EXPORT_KRUNNER_RUNNER( searchrunner, SearchRunner )
 
 #endif

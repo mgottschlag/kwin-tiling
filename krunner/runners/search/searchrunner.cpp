@@ -16,30 +16,61 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QAction>
 #include <QWidget>
+
+#include <KActionCollection>
+#include <KIcon>
+#include <KLocale>
 
 #include "searchrunner.h"
 
-SearchRunner::SearchRunner(QObject* parent)
-    : Runner(parent)
+SearchRunner::SearchRunner( QObject* parent, const QStringList& args )
+    : Runner( parent )
 {
-    setName("Search");
+    setObjectName( i18n( "Search" ) );
 }
 
 SearchRunner::~SearchRunner()
 {
 }
 
-bool SearchRunner::accepts(const QString& term)
+bool SearchRunner::accepts( const QString& term )
 {
+    Q_UNUSED( term )
+
     // this should probably always turn down the term
     // and only act on actions provided via fillMatches
     return false;
 }
 
-bool SearchRunner::exec(const QString& command)
+bool SearchRunner::exec( const QString& command )
 {
+    Q_UNUSED( command )
+
     return true;
+}
+
+void SearchRunner::fillMatches( KActionCollection* matches,
+                                const QString& term,
+                                int max, int offset )
+{
+    Q_UNUSED( term )
+    Q_UNUSED( max )
+    Q_UNUSED( offset )
+
+    //TODO: actually ask strigi for results. for now, we just return a static set
+    //      in reality, we probably want to make this async and use matchesUpdated
+    QAction* action = matches->addAction( i18n( "Konsole" ) );
+    action->setIcon( KIcon( "konsole" ) );
+    action->setText( i18n( "Konsole" ) );
+    connect( action, SIGNAL(triggered()), SLOT(launchKonsole()) );
+}
+
+#include <KRun>
+void SearchRunner::launchKonsole()
+{
+    KRun::runCommand("konsole");
 }
 
 #include "searchrunner.moc"
