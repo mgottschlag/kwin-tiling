@@ -6,7 +6,5 @@
     </method>
     <method name="display">
     </method>
-    <method name="vanish">
-    </method>
   </interface>
 </node>

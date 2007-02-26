@@ -60,6 +60,7 @@ Interface::Interface(QWidget* parent)
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     m_searchTerm = new KLineEdit( this );
+    m_searchTerm->clear();
     m_searchTerm->setClearButtonShown( true );
     layout->addWidget(m_searchTerm);
     connect(m_searchTerm, SIGNAL(textChanged(QString)),
@@ -92,9 +93,7 @@ Interface::Interface(QWidget* parent)
     new InterfaceAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/Interface", this);
 
-    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(vanish()));
-
-        m_searchTerm->clear();
+    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(hide()));
 
     resize(400, 250); //FIXME
 }
@@ -103,6 +102,7 @@ Interface::~Interface()
 {
 }
 
+#include <KWin>
 void Interface::display( const QString& term)
 {
     kDebug() << "display() called" << endl;
@@ -115,17 +115,20 @@ void Interface::display( const QString& term)
     show();
     raise();
     KWin::forceActiveWindow( winId(), 0 );
+
+    KWin::WindowInfo info( winId(), NET::WMState |NET::XAWMState |NET::WMDesktop, 0 );
+    kDebug() << "on desktop? " << info.isOnCurrentDesktop() << " geom is " << rect() << " and visible? " << isVisible() << endl;
 }
 
-void Interface::vanish( ) // opposite of display
+void Interface::hideEvent( QHideEvent* e )
 {
-    kDebug() << "vanish() called" << endl;
-    hide();
+    kDebug() << "hide event" << endl;
     m_searchTerm->setText( "" );
 }
 
-void Interface::runText(const QString& term)
+void Interface::runText(const QString& t)
 {
+    QString term = t.trimmed();
     kDebug() << "looking for a runner for: " << term << endl;
     if ( m_currentRunner ) {
         if ( m_currentRunner->accepts(term) ) {
@@ -178,10 +181,8 @@ void Interface::exec()
         return;
     }
 
-    if ( m_currentRunner->exec( m_searchTerm->text() ) ) {
-        //m_searchTerm->clear();
-        //hide();
-        vanish();
+    if ( m_currentRunner->exec( m_searchTerm->text().trimmed() ) ) {
+        hide();
     }
 }
 

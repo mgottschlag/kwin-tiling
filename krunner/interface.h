@@ -48,7 +48,6 @@ class Interface : public QWidget
         // DBUS interface. if you change these methods, you MUST run:
         // qdbuscpp2xml interface.h -o org.kde.krunner.Interface.xml
         void display(const QString& term = QString());
-        void vanish();
 
     protected Q_SLOTS:
         void runText(const QString& term);
@@ -58,8 +57,9 @@ class Interface : public QWidget
         void exec();
 
     protected:
-        void paintEvent(QPaintEvent *e);
-        void resizeEvent(QResizeEvent *e);
+        void paintEvent( QPaintEvent *e );
+        void resizeEvent( QResizeEvent *e );
+        void hideEvent( QHideEvent* e );
 
     private:
         void loadRunners();
