@@ -37,3 +37,5 @@ endif (PAM_FOUND)
 
 check_function_exists(getpassphrase HAVE_GETPASSPHRASE)
 check_function_exists(vsyslog HAVE_VSYSLOG)
+
+macro_bool_to_01(X11_Xinerama_FOUND HAVE_XINERAMA)
