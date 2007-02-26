@@ -36,7 +36,7 @@ AudioHw::~AudioHw()
 }
 
 
-Solid::AudioHw::AudioDriver AudioHw::driver()
+Solid::AudioHw::AudioDriver AudioHw::driver() const
 {
     QString capacity = m_device->property( "info.category" ).toString();
 
@@ -54,7 +54,7 @@ Solid::AudioHw::AudioDriver AudioHw::driver()
     }
 }
 
-QString AudioHw::driverHandler()
+QString AudioHw::driverHandler() const
 {
     Solid::AudioHw::AudioDriver d = driver();
 
@@ -86,7 +86,7 @@ QString AudioHw::driverHandler()
     }
 }
 
-QString AudioHw::name()
+QString AudioHw::name() const
 {
     Solid::AudioHw::AudioDriver d = driver();
 
@@ -114,7 +114,7 @@ QString AudioHw::name()
     }
 }
 
-Solid::AudioHw::AudioHwTypes AudioHw::deviceType()
+Solid::AudioHw::AudioHwTypes AudioHw::deviceType() const
 {
     Solid::AudioHw::AudioDriver d = driver();
 
@@ -162,7 +162,7 @@ Solid::AudioHw::AudioHwTypes AudioHw::deviceType()
     }
 }
 
-Solid::AudioHw::SoundcardType AudioHw::soundcardType()
+Solid::AudioHw::SoundcardType AudioHw::soundcardType() const
 {
     if ( m_soundcardTypeValid )
     {
