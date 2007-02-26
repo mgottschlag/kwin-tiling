@@ -18,7 +18,11 @@
 
 #include <QWidget>
 
+#include <KRun>
+#include <KService>
+
 #include "servicerunner.h"
+using namespace std;
 
 ServiceRunner::ServiceRunner(QObject* parent)
     : Runner(parent),
@@ -34,7 +38,9 @@ ServiceRunner::~ServiceRunner()
 
 bool ServiceRunner::accepts(const QString& term)
 {
-    return false;
+    KService::Ptr service = KService::serviceByName(term);
+    // i reccomend not trying 'service != 0' (its not worth the errors)
+    return (service && service->name() == term && service->type() == "Application");
 }
 
 bool ServiceRunner::hasOptions()
@@ -53,9 +59,10 @@ QWidget* ServiceRunner::options()
     return m_options;
 }
 
-bool ServiceRunner::exec(const QString& command)
+bool ServiceRunner::exec(const QString& term)
 {
-    return true;
+    KService::Ptr service = KService::serviceByName(term);
+    return (KRun::runCommand(service->exec()) != 0);
 }
 
 #include "servicerunner.moc"
