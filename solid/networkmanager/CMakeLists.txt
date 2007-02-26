@@ -11,7 +11,7 @@ set(solid_networkmanager_PART_SRCS
 kde4_automoc(${solid_networkmanager_PART_SRCS})
 
 kde4_add_library(solid_networkmanager_static STATIC ${solid_networkmanager_PART_SRCS})
-target_link_libraries(solid_networkmanager_static solidifaces ${KDE4_KDECORE_LIBS} ${KDE4_SOLIDIFACES_LIBS})
+target_link_libraries(solid_networkmanager_static ${KDE4_KDECORE_LIBS} ${KDE4_SOLIDIFACES_LIBS})
 
 kde4_add_plugin(solid_networkmanager module.cpp ${solid_networkmanager_PART_SRCS})
 
