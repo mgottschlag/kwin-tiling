@@ -11,6 +11,7 @@
 
 #include <QSystemTrayIcon>
 #include <QMenu>
+#include <QMouseEvent>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -34,7 +35,11 @@ KxkbWidget::KxkbWidget():
 void KxkbWidget::setCurrentLayout(const LayoutUnit& layoutUnit)
 {
 	setToolTip(m_descriptionMap[layoutUnit.toPair()]);
-	setPixmap( LayoutIcon::getInstance().findPixmap(layoutUnit.layout, m_showFlag, layoutUnit.displayName) );
+	const QPixmap& icon = LayoutIcon::getInstance().findPixmap(layoutUnit.layout, m_showFlag, layoutUnit.displayName);
+	kDebug() << "setting pixmap: " << icon.width() << endl;
+//	setPixmap( icon );
+	kDebug() << "setting text: " << layoutUnit.layout << endl;
+	setText(layoutUnit.layout);
 }
 
 void KxkbWidget::setError(const QString& layoutInfo)
@@ -134,3 +139,19 @@ void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 	if( ! m_tray->isVisible() )
 		m_tray->show();
 }
+
+void MyLineEdit::mousePressEvent ( QMouseEvent * event ) {
+		if (event->button() == Qt::LeftButton)
+			emit leftClick();
+		else
+			emit rightClick(NULL);
+}
+
+void KxkbLabel::setPixmap(const QPixmap& pixmap)
+{
+	kDebug() << "setting pixmap to label, width: " << pixmap.width() << endl;
+	m_tray->setIcon( pixmap );
+	if( ! m_tray->isVisible() )
+		m_tray->show();
+}
+

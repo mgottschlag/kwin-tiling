@@ -7,3 +7,6 @@ Name[fr]=Outil de sélection du clavier
 Name[x-test]=xxKeyboard Map Toolxx
 Exec=kxkb
 X-DBUS-StartupType=Unique
+
+X-KDE-Library=kxkb_panelapplet
+X-KDE-UniqueApplet=true

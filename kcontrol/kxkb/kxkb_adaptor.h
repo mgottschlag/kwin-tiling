@@ -21,7 +21,8 @@
 #define KXKB_ADAPTOR_H
 
 #include <QtDBus/QtDBus>
-#include "kxkb.h"
+
+#include "kxkbapp.h"
 
 // Not really an adaptor, more like the object exposed to dbus
 // This allows this object to have the dbus path "/kxkb" instead of "/MainApplication",

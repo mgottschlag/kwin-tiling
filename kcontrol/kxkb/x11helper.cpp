@@ -130,10 +130,13 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 	  int colonPos = optionName.indexOf(':');
 	  QString groupName = optionName.mid(0, colonPos);
 
+
 	  if( colonPos != -1 ) {
+kDebug() << " option: " << optionName << endl;
 
 		if( ! rulesInfo->optionGroups.contains( groupName ) ) {
 		  rulesInfo->optionGroups.insert(groupName, createMissingGroup(groupName));
+kDebug() << " added missing option group: " << groupName << endl;
 		}
 		
 		XkbOption option;
@@ -149,6 +152,7 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 		optionGroup.description = xkbRules->options.desc[i].desc;
 		optionGroup.exclusive = isGroupExclusive( groupName );
 
+kDebug() << " option group: " << groupName << endl;
 		rulesInfo->optionGroups.insert(groupName, optionGroup);
 	  }
   }

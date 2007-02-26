@@ -15,10 +15,13 @@
 #include <QString>
 #include <QList>
 #include <QPixmap>
+#include <QLabel>
+#include <QMenu>
 
 #include <ksystemtrayicon.h>
 
 #include "kxkbconfig.h"
+
 
 class QMenu;
 class XkbRules;
@@ -50,6 +53,7 @@ protected:
 	virtual QMenu* contextMenu() = 0;
 	virtual void setToolTip(const QString& tip) = 0;
 	virtual void setPixmap(const QPixmap& pixmap) = 0;
+	virtual void setText(const QString& text) = 0;
 
 private:
 	bool m_showFlag;
@@ -71,12 +75,63 @@ protected:
 	QMenu* contextMenu() { return m_tray->contextMenu(); }
 	void setToolTip(const QString& tip) { m_tray->setToolTip(tip); }
 	void setPixmap(const QPixmap& pixmap);
+	void setText(const QString& text) { }//m_tray->setText(text); }
 
 protected slots:
 	void trayActivated(QSystemTrayIcon::ActivationReason);
 
 private:
     KSystemTrayIcon* m_tray;
+};
+
+
+class MyLineEdit : public QLabel {
+	Q_OBJECT
+
+	public:
+		MyLineEdit(QWidget* parent): QLabel(parent) {}
+	signals:
+		void leftClick();
+		void rightClick(QAction*);
+protected:
+	void mousePressEvent ( QMouseEvent * event );
+/*	{
+		if (event->button() == Qt::LeftButton)
+			emit leftClick();
+		else
+			emit rightClick(NULL);
+	}*/
+	
+};
+
+class KxkbLabel : public KxkbWidget
+{
+	Q_OBJECT
+
+public:
+	KxkbLabel(QWidget* parent=0):
+		KxkbWidget()
+		{ m_tray = new MyLineEdit(parent); m_menu = new QMenu(m_tray); 
+			connect(m_tray, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
+			connect(m_tray, SIGNAL(rightClick(QAction*)), this, SIGNAL(menuTriggered(QAction*))); 
+			m_tray->resize( 24,24 ); show(); }
+	~KxkbLabel() { delete m_tray; }
+	void show() { m_tray->show(); }
+    virtual void adjustSize() { m_tray->resize( 24,24/*m_pixmap.size()*/ );}
+
+protected:
+	QMenu* contextMenu() { return m_menu; }
+	void setToolTip(const QString& tip) { m_tray->setToolTip(tip); }
+	void setPixmap(const QPixmap& pixmap);
+	void setText(const QString& text) { m_tray->setText(text); }
+	
+	
+protected slots:
+//	void trayActivated(QSystemTrayIcon::ActivationReason);
+
+private:
+    QLabel* m_tray;
+	QMenu* m_menu;
 };
 
 #endif
