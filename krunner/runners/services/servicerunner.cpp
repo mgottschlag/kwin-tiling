@@ -18,6 +18,7 @@
 
 #include <QWidget>
 
+#include <KLocale>
 #include <KRun>
 #include <KService>
 
@@ -27,7 +28,7 @@ ServiceRunner::ServiceRunner(QObject* parent)
     : Runner(parent),
       m_options(0)
 {
-    setName("Application");
+    setObjectName( i18n( "Application" ) );
 }
 
 ServiceRunner::~ServiceRunner()

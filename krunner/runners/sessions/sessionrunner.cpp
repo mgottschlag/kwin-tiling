@@ -33,7 +33,7 @@
 SessionRunner::SessionRunner(QObject* parent)
     : Runner(parent)
 {
-    setName("Application");
+    setObjectName( i18n( "Sessions" ) );
 }
 
 SessionRunner::~SessionRunner()

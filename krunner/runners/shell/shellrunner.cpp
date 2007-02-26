@@ -18,6 +18,7 @@
 
 #include <QWidget>
 
+#include <KLocale>
 #include <KRun>
 #include <KStandardDirs>
 
@@ -27,7 +28,7 @@ ShellRunner::ShellRunner(QObject* parent)
     : Runner(parent),
       m_options(0)
 {
-    setName("Command");
+    setObjectName( i18n( "Command" ) );
 }
 
 ShellRunner::~ShellRunner()
