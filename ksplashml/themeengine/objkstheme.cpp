@@ -108,30 +108,30 @@ bool ObjKsTheme::loadKConfig( KConfig *cfg, const QString& activeTheme, bool for
   if( !cfg->hasGroup( QString("KSplash Theme: %1").arg(activeTheme) ) && !force )
     return false;
 
-  cfg->setGroup( QString("KSplash Theme: %1").arg(activeTheme) );
+  KConfigGroup cg(cfg, QString("KSplash Theme: %1").arg(activeTheme));
   mThemeConfig = cfg;
 
-  mThemeEngine = cfg->readEntry( "Engine", "Default" );
+  mThemeEngine = cg.readEntry( "Engine", "Default" );
 
   m_icons.clear();
-  m_icons.append( cfg->readEntry( "Icon1", "filetypes" ) );
-  m_icons.append( cfg->readEntry( "Icon2", "exec" ) );
-  m_icons.append( cfg->readEntry( "Icon3", "key_bindings" ) );
-  m_icons.append( cfg->readEntry( "Icon4", "window_list" ) );
-  m_icons.append( cfg->readEntry( "Icon5", "desktop" ) );
-  m_icons.append( cfg->readEntry( "Icon6", "style" ) );
-  m_icons.append( cfg->readEntry( "Icon7", "kcmsystem" ) );
-  m_icons.append( cfg->readEntry( "Icon8", "go" ) );
+  m_icons.append( cg.readEntry( "Icon1", "filetypes" ) );
+  m_icons.append( cg.readEntry( "Icon2", "exec" ) );
+  m_icons.append( cg.readEntry( "Icon3", "key_bindings" ) );
+  m_icons.append( cg.readEntry( "Icon4", "window_list" ) );
+  m_icons.append( cg.readEntry( "Icon5", "desktop" ) );
+  m_icons.append( cg.readEntry( "Icon6", "style" ) );
+  m_icons.append( cg.readEntry( "Icon7", "kcmsystem" ) );
+  m_icons.append( cg.readEntry( "Icon8", "go" ) );
 
   m_text.clear();
-  m_text.append( cfg->readEntry( "Message1", i18n("Setting up interprocess communication") ) );
-  m_text.append( cfg->readEntry( "Message2", i18n("Initializing system services") ) );
-  m_text.append( cfg->readEntry( "Message3", i18n("Initializing peripherals") ) );
-  m_text.append( cfg->readEntry( "Message4", i18n("Loading the window manager") ) );
-  m_text.append( cfg->readEntry( "Message5", i18n("Loading the desktop") ) );
-  m_text.append( cfg->readEntry( "Message6", i18n("Loading the panel") ) );
-  m_text.append( cfg->readEntry( "Message7", i18n("Restoring session") ) );
-  m_text.append( cfg->readEntry( "Message8", i18n("KDE is up and running") ) );
+  m_text.append( cg.readEntry( "Message1", i18n("Setting up interprocess communication") ) );
+  m_text.append( cg.readEntry( "Message2", i18n("Initializing system services") ) );
+  m_text.append( cg.readEntry( "Message3", i18n("Initializing peripherals") ) );
+  m_text.append( cg.readEntry( "Message4", i18n("Loading the window manager") ) );
+  m_text.append( cg.readEntry( "Message5", i18n("Loading the desktop") ) );
+  m_text.append( cg.readEntry( "Message6", i18n("Loading the panel") ) );
+  m_text.append( cg.readEntry( "Message7", i18n("Restoring session") ) );
+  m_text.append( cg.readEntry( "Message8", i18n("KDE is up and running") ) );
 
   return true;
 }

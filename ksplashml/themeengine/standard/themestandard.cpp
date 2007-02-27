@@ -143,30 +143,30 @@ void ThemeStandard::_readSettings()
 
   //if ( !cfg->hasGroup( QString("KSplash Theme: %1").arg(mTheme->theme()) ) )
   //  return;
-  cfg->setGroup( QString("KSplash Theme: %1").arg(mTheme->theme()) );
+  KConfigGroup cg(cfg, QString("KSplash Theme: %1").arg(mTheme->theme()));
 
-  QString sbpos = cfg->readEntry( "Statusbar Position", "Bottom" ).toUpper();
+  QString sbpos = cg.readEntry( "Statusbar Position", "Bottom" ).toUpper();
   mSbAtTop = ( sbpos == "TOP" );
-  mSbVisible = cfg->readEntry( "Statusbar Visible", true);
-  mSbPbVisible = cfg->readEntry( "Progress Visible", true);
+  mSbVisible = cg.readEntry( "Statusbar Visible", true);
+  mSbPbVisible = cg.readEntry( "Progress Visible", true);
 
-  mSbFontName = cfg->readEntry( "Statusbar Font", "Sans Serif" );
-  mSbFontSz = cfg->readEntry( "Statusbar Font Size", 16 );
-  mSbFontBold = cfg->readEntry( "Statusbar Font Bold", true);
-  mSbFontItalic = cfg->readEntry( "Statusbar Font Italic", false);
+  mSbFontName = cg.readEntry( "Statusbar Font", "Sans Serif" );
+  mSbFontSz = cg.readEntry( "Statusbar Font Size", 16 );
+  mSbFontBold = cg.readEntry( "Statusbar Font Bold", true);
+  mSbFontItalic = cg.readEntry( "Statusbar Font Italic", false);
   mSbFont = QFont( mSbFontName, mSbFontSz, ( mSbFontBold? QFont::Bold : QFont::Normal ) );
   if( mSbFontItalic )
     mSbFont.setItalic( true );
 
   QColor tmp = Qt::white;
-  mSbFg = cfg->readEntry( "Statusbar Foreground", tmp );
+  mSbFg = cg.readEntry( "Statusbar Foreground", tmp );
   tmp = Qt::black;
-  mSbBg = cfg->readEntry( "Statusbar Background", tmp );
-  mSbIcon = cfg->readEntry( "Statusbar Icon", "run" );
-  mIconsVisible = cfg->readEntry( "Icons Visible", true);
-  mIconsJumping = cfg->readEntry( "Icons Jumping", true);
-  mIconPos = (WndIcon::Position)cfg->readEntry( "Icon Position", 0 );
-  mSplashScreen = cfg->readEntry( "Splash Screen", "(Default)");
-  // cfg->readEntry( "Allow Configuration", QVariant(true )).toBool();
+  mSbBg = cg.readEntry( "Statusbar Background", tmp );
+  mSbIcon = cg.readEntry( "Statusbar Icon", "run" );
+  mIconsVisible = cg.readEntry( "Icons Visible", true);
+  mIconsJumping = cg.readEntry( "Icons Jumping", true);
+  mIconPos = (WndIcon::Position)cg.readEntry( "Icon Position", 0 );
+  mSplashScreen = cg.readEntry( "Splash Screen", "(Default)");
+  // cg.readEntry( "Allow Configuration", QVariant(true )).toBool();
 }
 

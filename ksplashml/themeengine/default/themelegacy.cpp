@@ -33,21 +33,21 @@
 DefaultConfig::DefaultConfig( QWidget *parent, KConfig *config )
     :ThemeEngineConfig( parent, config )
 {
-  mConfig->setGroup( QString("KSplash Theme: Default") );
+  KConfigGroup cg(mConfig, QString("KSplash Theme: Default"));
   KVBox *hbox = new KVBox( this );
   mFlash = new QCheckBox( i18n("Icons flash while they are starting"), hbox );
-  mFlash->setChecked( mConfig->readEntry("Icons Flashing", true) );
+  mFlash->setChecked( cg.readEntry("Icons Flashing", true) );
   mAlwaysShow = new QCheckBox( i18n("Always show progress bar"), hbox );
-  mAlwaysShow->setChecked( mConfig->readEntry("Always Show Progress", true) );
+  mAlwaysShow->setChecked( cg.readEntry("Always Show Progress", true) );
 }
 
 void DefaultConfig::save()
 {
   kDebug() << "DefaultConfig::save()" << endl;
-  mConfig->setGroup( QString("KSplash Theme: Default") );
-  mConfig->writeEntry( "Icons Flashing", mFlash->isChecked() );
-  mConfig->writeEntry( "Always Show Progress", mAlwaysShow->isChecked() );
-  mConfig->sync();
+  KConfigGroup cg(mConfig, QString("KSplash Theme: Default"));
+  cg.writeEntry( "Icons Flashing", mFlash->isChecked() );
+  cg.writeEntry( "Always Show Progress", mAlwaysShow->isChecked() );
+  cg.sync();
 }
 
 #define BIDI 0

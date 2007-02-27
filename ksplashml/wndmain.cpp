@@ -57,8 +57,7 @@ KSplash::KSplash()
 
   mCurrentAction = mActionList.first();
 
-  config->setGroup( "General" );
-  if ( config->readEntry( "CloseOnClick",true ) )
+  if ( config->group("General").readEntry( "CloseOnClick",true ) )
     mThemeEngine->installEventFilter( this );
 
   connect( mThemeEngine, SIGNAL(destroyed()), this, SLOT(close()) );
@@ -98,8 +97,7 @@ void KSplash::slotReadProperties( KConfig *config )
   mTheme = arg->getOption("theme");
   if (mTheme.isEmpty())
   {
-    config->setGroup( "KSplash" );
-    mTheme = config->readEntry( "Theme", "Default" );
+    mTheme = config->group("KSplash").readEntry( "Theme", "Default" );
   }
   loadTheme( mTheme ); // Guaranteed to return a valid theme.
 }

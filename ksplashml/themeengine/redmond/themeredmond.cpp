@@ -65,18 +65,19 @@ CfgRedmond::CfgRedmond( QWidget *p, KConfig *c )
   PreviewRedmond* _preview = new PreviewRedmond( hbox );
   _preview->setFixedSize( 320, 200 );
 
-  _preview->setWelcomeString( c->readEntry( "Welcome Text", i18n("Welcome") ) );
+  KConfigGroup cg(c, QByteArray(""));
+  _preview->setWelcomeString( cg.readEntry( "Welcome Text", i18n("Welcome") ) );
 
-  _preview->setWelcomeFont( c->readEntry( "Welcome Font", defaultFont ) );
-  _preview->setUserFont( c->readEntry( "Username Font", defaultUsernameFont ) );
-  _preview->setStatusFont( c->readEntry( "Action Font", defaultActionFont ) );
+  _preview->setWelcomeFont( cg.readEntry( "Welcome Font", defaultFont ) );
+  _preview->setUserFont( cg.readEntry( "Username Font", defaultUsernameFont ) );
+  _preview->setStatusFont( cg.readEntry( "Action Font", defaultActionFont ) );
 
-  _preview->setWelcomeColor( c->readEntry( "Welcome Text Color", defaultWhiteColor ) );
-  _preview->setWelcomeShadowColor( c->readEntry( "Welcome Shadow Color", defaultDarkColor ) );
-  _preview->setUserColor( c->readEntry( "Username Text Color", defaultWhiteColor ) );
-  _preview->setStatusColor( c->readEntry( "Action Text Color", defaultDarkColor ) );
+  _preview->setWelcomeColor( cg.readEntry( "Welcome Text Color", defaultWhiteColor ) );
+  _preview->setWelcomeShadowColor( cg.readEntry( "Welcome Shadow Color", defaultDarkColor ) );
+  _preview->setUserColor( cg.readEntry( "Username Text Color", defaultWhiteColor ) );
+  _preview->setStatusColor( cg.readEntry( "Action Text Color", defaultDarkColor ) );
 
-  _preview->setIcon( c->readEntry( "User Icon", "kmenu" ) );
+  _preview->setIcon( cg.readEntry( "User Icon", "kmenu" ) );
 
   QLabel *lbl = new QLabel( vbox );
   lbl->setText( i18n("(Sorry, but I have not finished writing this one yet...)") );
@@ -322,29 +323,29 @@ void ThemeRedmond::_readSettings()
 
   //if( !cfg->hasGroup( QString("KSplash Theme: %1").arg(mTheme->theme()) ) )
   //  return;
-  cfg->setGroup( QString("KSplash Theme: %1").arg(mTheme->theme()) );
+  KConfigGroup cg(cfg, QString("KSplash Theme: %1").arg(mTheme->theme()));
 
   // Overall appearance
-  mBackgroundImage = cfg->readEntry( "Background Image", QString() );
-  mIcon = cfg->readEntry( "User Icon", "kmenu" );
-  mWelcomeText = cfg->readEntry( "Welcome Text", i18n("Welcome") );
-  mUsernameText = cfg->readEntry( "Username Text", QString() );
+  mBackgroundImage = cg.readEntry( "Background Image", QString() );
+  mIcon = cg.readEntry( "User Icon", "kmenu" );
+  mWelcomeText = cg.readEntry( "Welcome Text", i18n("Welcome") );
+  mUsernameText = cg.readEntry( "Username Text", QString() );
 
   // If any of these are set to (0,0), then we will autoposition the text later (and it _will_
   // be centered on the screen!). The Theme may move this text however the author desires.
   QPoint absZero( 0, 0 );
-  mWelcomeTextPosition  = cfg->readEntry( QString("Welcome Text Position %1").arg(screen.width()), absZero );
-  mUsernameTextPosition = cfg->readEntry( QString("Username Text Position %1").arg(screen.width()), absZero );
-  mActionTextPosition   = cfg->readEntry( QString("Action Text Position %1").arg(screen.width()), absZero );
-  mIconPosition         = cfg->readEntry( QString("Icon Position %1").arg(screen.width()), absZero );
+  mWelcomeTextPosition  = cg.readEntry( QString("Welcome Text Position %1").arg(screen.width()), absZero );
+  mUsernameTextPosition = cg.readEntry( QString("Username Text Position %1").arg(screen.width()), absZero );
+  mActionTextPosition   = cg.readEntry( QString("Action Text Position %1").arg(screen.width()), absZero );
+  mIconPosition         = cg.readEntry( QString("Icon Position %1").arg(screen.width()), absZero );
 
   // Allow the Theme to hide particular components.
-  mShowWelcomeText       = cfg->readEntry( "Show Welcome Text", true);
-  mShowWelcomeTextShadow = cfg->readEntry( "Show Welcome Shadow", true);
-  mShowUsernameText      = cfg->readEntry( "Show Username", true);
-  mShowActionText        = cfg->readEntry( "Show Action", true);
-  mShowIcon              = cfg->readEntry( "Show Icon", true);
-  mUseKdmUserIcon        = cfg->readEntry( "Use KDM User Icon", true);
+  mShowWelcomeText       = cg.readEntry( "Show Welcome Text", true);
+  mShowWelcomeTextShadow = cg.readEntry( "Show Welcome Shadow", true);
+  mShowUsernameText      = cg.readEntry( "Show Username", true);
+  mShowActionText        = cg.readEntry( "Show Action", true);
+  mShowIcon              = cg.readEntry( "Show Icon", true);
+  mUseKdmUserIcon        = cg.readEntry( "Use KDM User Icon", true);
 
   // Setup our fonts. There are only 3 elements which use 'em, so this is fairly
   // straightforward.
@@ -353,16 +354,16 @@ void ThemeRedmond::_readSettings()
   QFont defaultUsernameFont( "Arial", 16, QFont::Bold );
   QFont defaultActionFont( "Arial", 12, QFont::Bold );
 
-  mWelcomeFont       = cfg->readEntry( "Welcome Font", defaultFont );
-  mWelcomeFontItalic = cfg->readEntry( "Welcome Font Italic", true );
-  mUsernameFont      = cfg->readEntry( "Username Font", defaultUsernameFont );
-  mActionFont        = cfg->readEntry( "Action Font", defaultActionFont );
+  mWelcomeFont       = cg.readEntry( "Welcome Font", defaultFont );
+  mWelcomeFontItalic = cg.readEntry( "Welcome Font Italic", true );
+  mUsernameFont      = cg.readEntry( "Username Font", defaultUsernameFont );
+  mActionFont        = cg.readEntry( "Action Font", defaultActionFont );
 
   QColor defaultDarkColor( 3, 47, 156 );
   QColor defaultWhiteColor( Qt::white );
 
-  mWelcomeTextColor       = cfg->readEntry( "Welcome Text Color", defaultWhiteColor );
-  mWelcomeTextShadowColor = cfg->readEntry( "Welcome Shadow Color", defaultDarkColor );
-  mUsernameTextColor      = cfg->readEntry( "Username Text Color", defaultWhiteColor );
-  mActionTextColor        = cfg->readEntry( "Action Text Color", defaultWhiteColor );
+  mWelcomeTextColor       = cg.readEntry( "Welcome Text Color", defaultWhiteColor );
+  mWelcomeTextShadowColor = cg.readEntry( "Welcome Shadow Color", defaultDarkColor );
+  mUsernameTextColor      = cg.readEntry( "Username Text Color", defaultWhiteColor );
+  mActionTextColor        = cg.readEntry( "Action Text Color", defaultWhiteColor );
 }
