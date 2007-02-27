@@ -61,20 +61,21 @@ KRunnerApp::~KRunnerApp()
 
 void KRunnerApp::initialize()
 {
-    m_interface = new Interface( );
+    m_interface = new Interface;
 
     // Global keys
     m_actionCollection = new KActionCollection( m_interface );
-    QAction* a = 0L;
-
-    a = m_actionCollection->addAction( "Program:krunner" );
-    a->setText( i18n("Runner") );
+    QAction* a = 0;
 
     if ( KAuthorized::authorizeKAction( "run_command" ) ) {
         a = m_actionCollection->addAction( I18N_NOOP("Run Command") );
         a->setText( i18n( I18N_NOOP( "Run Command" ) ) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
         connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(display()) );
+/*
+        QDialog* test = new QDialog;
+        connect( a, SIGNAL(triggered(bool)), test, SLOT(show()) );
+*/
     }
 
     a = m_actionCollection->addAction( I18N_NOOP( "Show Taskmanager" ) );
@@ -192,7 +193,7 @@ void KRunnerApp::logout( KWorkSpace::ShutdownConfirm confirm,
 int KRunnerApp::newInstance()
 {
     static bool firstTime = true;
-    if ( firstTime || restoringSession() ) {
+    if ( firstTime ) {
         // App startup: do nothing
         firstTime = false;
     } else {

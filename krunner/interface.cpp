@@ -41,6 +41,7 @@
 #include "runners/shell/shellrunner.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
+#include "krunnerapp.h"
 
 Interface::Interface(QWidget* parent)
     : QWidget( parent ),
@@ -55,8 +56,6 @@ Interface::Interface(QWidget* parent)
     m_theme = new Plasma::Theme( this );
     themeChanged();
     connect( m_theme, SIGNAL(changed()), this, SLOT(themeChanged()) );
-
-    loadRunners();
 
     QVBoxLayout* layout = new QVBoxLayout(this);
 
@@ -79,24 +78,28 @@ Interface::Interface(QWidget* parent)
 
     //TODO: figure out why this KSelectionWatcher isn't working while the
     //      (temporary) code below does
-    m_compositeWatcher = new KSelectionWatcher("_NET_WM_CM_S0");
-    m_haveCompositionManager = m_compositeWatcher->owner() != None;
+/*    m_compositeWatcher = new KSelectionWatcher("_NET_WM_CM_S0"); 
     kDebug() << "checkForCompositionManager " << m_compositeWatcher->owner() << " != " << None << endl;
+*/
+    m_haveCompositionManager = KRunnerApp::s_haveCompositeManager;
     kDebug() << "m_haveCompositionManager: " << m_haveCompositionManager << endl;
-    Display *dpy = XOpenDisplay(0); // open default display
+/*    Display *dpy = XOpenDisplay(0); // open default display
     m_haveCompositionManager = !XGetSelectionOwner(dpy,
                                                    XInternAtom(dpy,
                                                                "_NET_WM_CM_S0",
                                                                false));
+    XCloseDisplay(dpy);
     connect(m_compositeWatcher, SIGNAL(newOwner(Window)),
             this, SLOT(checkForCompositionManager(Window)));
+*/
+    new InterfaceAdaptor( this );
+    QDBusConnection::sessionBus().registerObject( "/Interface", this );
 
-    new InterfaceAdaptor(this);
-    QDBusConnection::sessionBus().registerObject("/Interface", this);
-
-    new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(hide()));
+    new QShortcut( QKeySequence( Qt::Key_Escape ), this, SLOT(hide()) );
 
     resize(400, 250); //FIXME
+
+    loadRunners();
 }
 
 Interface::~Interface()
@@ -115,7 +118,7 @@ void Interface::display( const QString& term)
     KDialog::centerOnScreen( this );
     show();
     raise();
-    KWin::forceActiveWindow( winId(), 0 );
+    KWin::forceActiveWindow( winId() );
 
     if ( !term.isEmpty() ) {
         search( term );
@@ -128,6 +131,7 @@ void Interface::hideEvent( QHideEvent* e )
 
     kDebug() << "hide event" << endl;
     m_searchTerm->clear();
+    QWidget::hideEvent( e );
 }
 
 void Interface::search(const QString& t)
@@ -157,7 +161,9 @@ void Interface::search(const QString& t)
         }
     }
 
-    m_optionsLabel->setEnabled(false);
+    if ( !m_currentRunner ) {
+        m_optionsLabel->setEnabled( false );
+    }
 }
 
 void Interface::checkForCompositionManager(Window owner)
@@ -225,6 +231,8 @@ void Interface::resizeEvent(QResizeEvent *e)
         /*int w = e->size().width();
         int h = e->size().height();*/
     }
+
+    QWidget::resizeEvent( e );
 }
 
 void Interface::loadRunners()

@@ -34,6 +34,8 @@
 static const char description[] = I18N_NOOP( "KDE run command interface" );
 static const char version[] = "0.1";
 
+bool KRunnerApp::s_haveCompositeManager = false;
+
 int main(int argc, char* argv[])
 {
     KAboutData aboutData( "krunner", I18N_NOOP( "Run Command Interface" ),
@@ -57,17 +59,17 @@ int main(int argc, char* argv[])
     }
 
     bool argbVisual = false ;
-    bool haveCompManager = !XGetSelectionOwner(dpy,
-                                               XInternAtom(dpy,
-                                                           "_NET_WM_CM_S0",
-                                                           false));
+    KRunnerApp::s_haveCompositeManager = !XGetSelectionOwner(dpy,
+                                                             XInternAtom(dpy,
+                                                                         "_NET_WM_CM_S0",
+                                                                         false));
 
     Colormap colormap = 0;
     Visual *visual = 0;
 
-    kDebug() << "haveCompManager: " << haveCompManager << endl;
+    kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager << endl;
 
-    if (haveCompManager)
+    if (KRunnerApp::s_haveCompositeManager)
     {
         int screen = DefaultScreen(dpy);
         int eventBase, errorBase;

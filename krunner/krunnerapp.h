@@ -45,6 +45,9 @@ public:
     virtual int newInstance();
     SaverEngine& screensaver() { return m_saver; }
 
+    //UGLY
+    static bool s_haveCompositeManager;
+
 public slots:
     /** Show taskmanager (calls KSysGuard with --showprocesses option) */
     void showTaskManager();
