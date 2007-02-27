@@ -30,7 +30,7 @@ class RestartingApplication : public KUniqueApplication
         RestartingApplication(Display *display,
                               Qt::HANDLE visual = 0,
                               Qt::HANDLE colormap = 0);
-
+        RestartingApplication() : KUniqueApplication() {}
     private slots:
         void setCrashHandler();
 

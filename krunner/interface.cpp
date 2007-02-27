@@ -43,19 +43,18 @@
 #include "interfaceadaptor.h"
 
 Interface::Interface(QWidget* parent)
-    : QWidget(parent, Qt::FramelessWindowHint),
-      m_haveCompositionManager(false),
-      m_bgRenderer(0),
-      m_renderDirty(true),
-      m_currentRunner(0)
+    : QWidget( parent ),
+      m_haveCompositionManager( false ),
+      m_bgRenderer( 0 ),
+      m_renderDirty( true ),
+      m_currentRunner( 0 )
 {
-    // Make newInstance activate the window
-    qApp->setActiveWindow( this );
+    setWindowFlags( Qt::Window | Qt::FramelessWindowHint );
     setWindowTitle( i18n("Run Command") );
 
-    m_theme = new Plasma::Theme(this);
+    m_theme = new Plasma::Theme( this );
     themeChanged();
-    connect(m_theme, SIGNAL(changed()), this, SLOT(themeChanged()));
+    connect( m_theme, SIGNAL(changed()), this, SLOT(themeChanged()) );
 
     loadRunners();
 
@@ -104,15 +103,14 @@ Interface::~Interface()
 {
 }
 
-#include <KWin>
 void Interface::display( const QString& term)
 {
     kDebug() << "display() called" << endl;
+    m_searchTerm->setFocus( );
     if ( !term.isEmpty() ) {
         m_searchTerm->setText( term );
     }
 
-    m_searchTerm->setFocus( );
     KWin::setOnDesktop( winId(), KWin::currentDesktop() );
     KDialog::centerOnScreen( this );
     show();
@@ -122,9 +120,6 @@ void Interface::display( const QString& term)
     if ( !term.isEmpty() ) {
         search( term );
     }
-
-    KWin::WindowInfo info( winId(), NET::WMState |NET::XAWMState |NET::WMDesktop, 0 );
-    kDebug() << "on desktop? " << info.isOnCurrentDesktop() << " geom is " << rect() << " and visible? " << isVisible() << endl;
 }
 
 void Interface::hideEvent( QHideEvent* e )
@@ -132,7 +127,7 @@ void Interface::hideEvent( QHideEvent* e )
     Q_UNUSED( e )
 
     kDebug() << "hide event" << endl;
-    m_searchTerm->setText( "" );
+    m_searchTerm->clear();
 }
 
 void Interface::search(const QString& t)
@@ -202,7 +197,7 @@ void Interface::paintEvent(QPaintEvent *e)
     p.setRenderHint(QPainter::Antialiasing);
     p.setClipRect(e->rect());
 
-    if (m_haveCompositionManager) {
+    if ( m_haveCompositionManager ) {
         //kDebug() << "gots us a compmgr!" << m_haveCompositionManager << endl;
         p.save();
         p.setCompositionMode( QPainter::CompositionMode_Source );
@@ -210,7 +205,7 @@ void Interface::paintEvent(QPaintEvent *e)
         p.restore();
     }
 
-    if (m_renderDirty) {
+    if ( m_renderDirty ) {
         m_renderedSvg.fill( Qt::transparent );
         QPainter p( &m_renderedSvg );
         p.setRenderHint( QPainter::Antialiasing );
@@ -219,7 +214,7 @@ void Interface::paintEvent(QPaintEvent *e)
         m_renderDirty = false;
     }
 
-    p.drawPixmap(0, 0, m_renderedSvg);
+    p.drawPixmap( 0, 0, m_renderedSvg );
 }
 
 void Interface::resizeEvent(QResizeEvent *e)

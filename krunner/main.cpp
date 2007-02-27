@@ -31,26 +31,37 @@
 
 #include <X11/extensions/Xrender.h>
 
-static const char description[] = I18N_NOOP("KDE run command interface");
+static const char description[] = I18N_NOOP( "KDE run command interface" );
 static const char version[] = "0.1";
 
 int main(int argc, char* argv[])
 {
+    KAboutData aboutData( "krunner", I18N_NOOP( "Run Command Interface" ),
+                          version, description, KAboutData::License_GPL,
+                          I18N_NOOP("(c) 2006, Aaron Seigo") );
+    aboutData.addAuthor( "Aaron J. Seigo",
+                         I18N_NOOP( "Author and maintainer" ),
+                         "aseigo@kde.org" );
+
+    KCmdLineArgs::init(argc, argv, &aboutData);
+    if ( !KUniqueApplication::start() ) {
+        return 0;
+    }
+
     // thanks to zack rusin and frederik for pointing me in the right direction
     // for the following bits of X11 code
     Display *dpy = XOpenDisplay(0); // open default display
     if (!dpy)
     {
-        qWarning("Cannot connect to the X server");
-        exit(1);
+        kFatal() << "Cannot connect to the X server" << endl;
     }
 
     bool argbVisual = false ;
     bool haveCompManager = !XGetSelectionOwner(dpy,
                                                XInternAtom(dpy,
                                                            "_NET_WM_CM_S0",
-                                                           false)
-                                               );
+                                                           false));
+
     Colormap colormap = 0;
     Visual *visual = 0;
 
@@ -88,18 +99,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    KAboutData aboutData( "krunner", I18N_NOOP("Run Command Interface"),
-                          version, description, KAboutData::License_GPL,
-                          I18N_NOOP("(c) 2006, Aaron Seigo") );
-    aboutData.addAuthor("Aaron J. Seigo",
-                        I18N_NOOP("Author and maintainer"),
-                        "aseigo@kde.org");
-
-    KCmdLineArgs::init(argc, argv, &aboutData);
-    if (!KUniqueApplication::start()) {
-        return 0;
-    }
     KRunnerApp app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
+    app.initialize();
 
     // Startup stuff ported from kdesktop
     KLaunchSettings::self()->readConfig();
@@ -108,8 +109,10 @@ int main(int argc, char* argv[])
         delete startup_id;
         startup_id = NULL;
     } else {
-        if( startup_id == NULL )
+        if( startup_id == NULL ) {
             startup_id = new StartupId;
+        }
+
         startup_id->configure();
     }
 

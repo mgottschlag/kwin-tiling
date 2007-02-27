@@ -34,9 +34,10 @@ public:
     KRunnerApp(Display *display,
                           Qt::HANDLE visual = 0,
                           Qt::HANDLE colormap = 0);
+    KRunnerApp();
     ~KRunnerApp();
 
-    void initializeShortcuts ();
+    void initialize();
     void logout( KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype );
     // The action collection of the active widget
     KActionCollection *actionCollection();

@@ -21,7 +21,8 @@
 
 #include <QWidget>
 
-#include <KSelectionWatcher> // to get definition for Window pulled in
+// pulls in definition for Window
+#include <KSelectionWatcher>
 
 #include "runner.h"
 

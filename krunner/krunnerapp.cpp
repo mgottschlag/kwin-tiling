@@ -45,8 +45,13 @@ KRunnerApp::KRunnerApp(Display *display,
                        Qt::HANDLE colormap)
     : RestartingApplication( display, visual, colormap )
 {
-    m_interface = new Interface( );
-    initializeShortcuts();
+    kDebug() << "new krunner app" << endl;
+}
+
+KRunnerApp::KRunnerApp()
+    : RestartingApplication()
+{
+    kDebug() << "new simple krunner app" << endl;
 }
 
 KRunnerApp::~KRunnerApp()
@@ -54,63 +59,65 @@ KRunnerApp::~KRunnerApp()
     delete m_interface;
 }
 
-void KRunnerApp::initializeShortcuts()
+void KRunnerApp::initialize()
 {
+    m_interface = new Interface( );
+
     // Global keys
-    KActionCollection* actionCollection = m_actionCollection = new KActionCollection( this );
+    m_actionCollection = new KActionCollection( m_interface );
     QAction* a = 0L;
 
-    a = actionCollection->addAction( "Program:krunner" );
+    a = m_actionCollection->addAction( "Program:krunner" );
     a->setText( i18n("Runner") );
 
     if ( KAuthorized::authorizeKAction( "run_command" ) ) {
-        a = actionCollection->addAction( I18N_NOOP("Run Command") );
+        a = m_actionCollection->addAction( I18N_NOOP("Run Command") );
         a->setText( i18n( I18N_NOOP( "Run Command" ) ) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
         connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(display()) );
     }
 
-    a = actionCollection->addAction( I18N_NOOP( "Show Taskmanager" ) );
+    a = m_actionCollection->addAction( I18N_NOOP( "Show Taskmanager" ) );
     a->setText( i18n( I18N_NOOP( "Show Taskmanager" ) ) );
     qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::CTRL+Qt::Key_Escape ) );
     connect( a, SIGNAL(triggered(bool)), SLOT(showTaskManager()) );
 
 /*
  * TODO: doesn't this belong in the window manager?
-    a = actionCollection->addAction( I18N_NOOP( "Show Window List") );
+    a = m_actionCollection->addAction( I18N_NOOP( "Show Window List") );
     a->setText( i18n( I18N_NOOP( "Show Window List") ) );
     qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::ALT+Qt::Key_F5 ) );
     connect( a, SIGNAL(triggered(bool)), SLOT(slotShowWindowList()) );
 */
-    a = actionCollection->addAction( I18N_NOOP("Switch User") );
+    a = m_actionCollection->addAction( I18N_NOOP("Switch User") );
     a->setText( i18n( I18N_NOOP("Switch User") ) );
     qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_Insert ) );
     connect(a, SIGNAL(triggered(bool)), SLOT(switchUser()));
 
     if ( KAuthorized::authorizeKAction( "lock_screen" ) ) {
-        a = actionCollection->addAction( I18N_NOOP( "Lock Session" ) );
+        a = m_actionCollection->addAction( I18N_NOOP( "Lock Session" ) );
         a->setText( i18n( I18N_NOOP( "Lock Session" ) ) );
         qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_L ) );
         connect( a, SIGNAL(triggered(bool)), &m_saver, SLOT(lock()) );
     }
 
     if ( KAuthorized::authorizeKAction( "logout" ) ) {
-        a = actionCollection->addAction( I18N_NOOP("Log Out") );
+        a = m_actionCollection->addAction( I18N_NOOP("Log Out") );
         a->setText( i18n(I18N_NOOP("Log Out")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Delete));
         connect(a, SIGNAL(triggered(bool)), SLOT(logout()));
 
-        a = actionCollection->addAction( I18N_NOOP("Log Out Without Confirmation") );
+        a = m_actionCollection->addAction( I18N_NOOP("Log Out Without Confirmation") );
         a->setText( i18n(I18N_NOOP("Log Out Without Confirmation")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_Delete));
         connect(a, SIGNAL(triggered(bool)), SLOT(logoutWithoutConfirmation()));
 
-        a = actionCollection->addAction( I18N_NOOP("Halt without Confirmation") );
+        a = m_actionCollection->addAction( I18N_NOOP("Halt without Confirmation") );
         a->setText( i18n(I18N_NOOP("Halt without Confirmation")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageDown));
         connect(a, SIGNAL(triggered(bool)), SLOT(haltWithoutConfirmation()));
 
-        a = actionCollection->addAction( I18N_NOOP("Reboot without Confirmation") );
+        a = m_actionCollection->addAction( I18N_NOOP("Reboot without Confirmation") );
         a->setText( i18n(I18N_NOOP("Reboot without Confirmation")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageUp));
         connect(a, SIGNAL(triggered(bool)), SLOT(rebootWithoutConfirmation()));
@@ -185,12 +192,13 @@ void KRunnerApp::logout( KWorkSpace::ShutdownConfirm confirm,
 int KRunnerApp::newInstance()
 {
     static bool firstTime = true;
-    if (firstTime) {
+    if ( firstTime || restoringSession() ) {
         // App startup: do nothing
         firstTime = false;
     } else {
         m_interface->display();
     }
+
     // Call parent class for the setNewStartupId stuff
     return KUniqueApplication::newInstance();
 }
