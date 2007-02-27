@@ -19,10 +19,14 @@
 #ifndef PLASMA_APP_H
 #define PLASMA_APP_H
 
-#include "lib/interface.h"
 
-#include <kuniquapplication.h>
+#include <KUniqueApplication>
 
+#include "interface.h"
+#include "enginemanager.h"
+
+class QGraphicsView;
+class QGraphicsScene;
 class PlasmaApp : public KUniqueApplication, public Plasma::Interface
 {
     public:
@@ -33,7 +37,7 @@ class PlasmaApp : public KUniqueApplication, public Plasma::Interface
 
         // Plasma::Interface
         bool loadDataEngine(const QString& name);
-        bool unloadDataEngine(const QString& name);
+        void unloadDataEngine(const QString& name);
 
         void notifyStartup(bool completed);
 
@@ -43,7 +47,8 @@ class PlasmaApp : public KUniqueApplication, public Plasma::Interface
     private:
         void crashHandler(int signal);
 
-        EngineManager engines;
+        DataEngineManager *m_engineManager;
+
 };
 
 #endif // multiple inclusion guard

@@ -20,19 +20,18 @@
 #define PLASMA_ENGINE_MANAGER_H
 
 #include <QHash>
-
-namespace Plasma
-{
-    class DataEngine;
-}
+#include "dataengine.h"
 
 class DataEngineManager
 {
     public:
+        typedef QHash<QString, Plasma::DataEngine*> Dict;
+
+    public:
         DataEngineManager();
         ~DataEngineManager();
 
-        Plasma::DataEngine* engine(const QString& name);
+        Plasma::DataEngine* engine(const QString& name) const;
         bool loadDataEngine(const QString& name);
         void unloadDataEngine(const QString& name);
 

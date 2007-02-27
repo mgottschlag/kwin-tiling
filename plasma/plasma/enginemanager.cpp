@@ -16,26 +16,29 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "enginemanager.h"
+
 #include <kservicetypetrader.h>
+#include <kparts/componentfactory.h>
+
+#include "enginemanager.h"
 
 DataEngineManager::DataEngineManager()
 {
 }
 
-~DataEngineManager::DataEngineManager()
+DataEngineManager::~DataEngineManager()
 {
-    foreach (Plasma::DataEngine* engine, engines)
+    foreach (Plasma::DataEngine* engine, m_engines)
     {
         delete engine;
     }
-    engines.clear();
+    m_engines.clear();
 }
 
 Plasma::DataEngine* DataEngineManager::engine(const QString& name) const
 {
-    Plasma::DataEngine::Dict::iterator it = engines.find(name);
-    if (it != engines.end())
+    Plasma::DataEngine::Dict::const_iterator it = m_engines.find(name);
+    if (it != m_engines.end())
     {
         // ref and return the engine
         //Plasma::DataEngine *engine = *it;
@@ -45,13 +48,14 @@ Plasma::DataEngine* DataEngineManager::engine(const QString& name) const
     return 0;
 }
 
-bool DataEngineManager::loadEngine(const QString& name)
+bool DataEngineManager::loadDataEngine(const QString& name)
 {
-    Plasma::DataEngine* engine = engine(name);
+/*
+    Plasma::DataEngine* dataEngine = engine(name);
 
-    if (engine)
+    if (dataEngine)
     {
-        engine->ref();
+        dataEngine->ref();
         return true;
     }
 
@@ -64,7 +68,7 @@ bool DataEngineManager::loadEngine(const QString& name)
     }
 
     int errorCode = 0;
-    engine = KParts::ComponentFactory::createInstanceFromService<Plasma::DataEngine>
+    dataEngine = KParts::ComponentFactory::createInstanceFromService<Plasma::DataEngine>
                                   (offers.first(), 0, 0, QStringList(), &errorCode);
 
     if (!engine)
@@ -72,22 +76,25 @@ bool DataEngineManager::loadEngine(const QString& name)
         return false;
     }
 
-    engines[name] = engine;
+    m_engines[name] = dataEngine;
     return true;
+*/
+
+    return false;
 }
 
-void DataEngineManager::unloadEngine(const QString& name)
+void DataEngineManager::unloadDataEngine(const QString& name)
 {
-    Plasma::DataEngine* engine = engine(name);
+    Plasma::DataEngine* dataEngine = engine(name);
 
-    if (engine)
+    if (dataEngine)
     {
-        engine->deref();
+        dataEngine->deref();
 
-        if (!engine->used())
+        if (!dataEngine->isUsed())
         {
-            engines.remove(name);
-            delete engine;
+            m_engines.remove(name);
+            delete dataEngine;
         }
     }
 }

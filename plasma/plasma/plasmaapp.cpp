@@ -20,9 +20,14 @@
 // LineGraph graph
 // plasma.connect(graph, "hardware", "cpu");
 
-#include "plasmaapp.h"
+#include <unistd.h>
+
+#include <QTimer>
 
 #include <kcrash.h>
+
+#include "plasmaapp.h"
+#include "plasmaapp.moc"
 
 PlasmaApp* PlasmaApp::self()
 {
@@ -31,7 +36,7 @@ PlasmaApp* PlasmaApp::self()
 
 PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
-      engines(0)
+      m_engineManager(0)
 {
     notifyStartup(false);
     if (KCrash::crashHandler() == 0 )
@@ -49,17 +54,19 @@ PlasmaApp::PlasmaApp()
         setCrashHandler();
     }
 
+/*
     dcopClient()->send("ksplash", "", "upAndRunning(QString)",
                        QString::fromLocal8Bit(KCmdLineArgs::appName()));
+*/
 
     m_interface = this;
-    engines = new DataEngineManager();
+    m_engineManager = new DataEngineManager;
     notifyStartup(true);
 }
 
 void PlasmaApp::setCrashHandler()
 {
-    KCrash::setEmergencySaveFunction(Kicker::crashHandler);
+//    KCrash::setEmergencySaveFunction(Kicker::crashHandler);
 }
 
 void PlasmaApp::crashHandler(int signal)
@@ -68,34 +75,30 @@ void PlasmaApp::crashHandler(int signal)
 
     fprintf(stderr, "Plasma crashed, attempting to automatically recover\n");
 
-    DCOPClient::emergencyClose();
+//    DCOPClient::emergencyClose();
     sleep(1);
     system("plasma --nocrashhandler &"); // try to restart
 }
 
 bool PlasmaApp::loadDataEngine(const QString& name)
 {
-    if (!engines)
-    {
+    if (!m_engineManager)
         return false;
-    }
 
-    Plasma::DataEngine* engine = engines->loadDataEngine(name);
-    return (engine != 0);
+    return m_engineManager->loadDataEngine(name);
 }
 
 void PlasmaApp::unloadDataEngine(const QString& name)
 {
-    if (!engines)
-    {
+    if (!m_engineManager)
         return;
-    }
 
-    engines->unloadDataEngine(name);
+    m_engineManager->unloadDataEngine(name);
 }
 
 void PlasmaApp::notifyStartup(bool completed)
 {
+/*
     const QString startupID("workspace desktop");
     DCOPClient cl;
     cl.attach();
@@ -110,4 +113,5 @@ void PlasmaApp::notifyStartup(bool completed)
     {
         r.send("suspendStartup", startupID);
     }
+*/
 }
