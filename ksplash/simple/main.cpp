@@ -11,7 +11,7 @@
 #include <config.h>
 
 #include <X11/Xlib.h>
-#include <config-ksplashml.h>
+#include <config-X11.h>
 #ifdef HAVE_XINERAMA
 extern "C" { // for older XFree86 versions
 #include <X11/extensions/Xinerama.h>
