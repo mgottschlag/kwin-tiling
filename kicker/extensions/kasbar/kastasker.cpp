@@ -593,11 +593,11 @@ void KasTasker::readConfig( KConfig *conf )
    else
        setItemSize( conf->readEntry( "ItemSize", KasBar::Medium ) );
 
-   setTint( conf->readEntry( "EnableTint", QVariant(false )).toBool() );
+   setTint( conf->readEntry( "EnableTint", false ) );
    setTintColor( conf->readEntry( "TintColor", &black ) );
    setTintAmount( conf->readDoubleNumEntry( "TintAmount", 0.1 ) );
-   setTransparent( conf->readEntry( "Transparent", QVariant(true )).toBool() );
-   setPaintInactiveFrames( conf->readEntry( "PaintInactiveFrames", QVariant(true )).toBool() );
+   setTransparent( conf->readEntry( "Transparent", true ) );
+   setPaintInactiveFrames( conf->readEntry( "PaintInactiveFrames", true ) );
 
    //
    // Painting colors
@@ -619,23 +619,23 @@ void KasTasker::readConfig( KConfig *conf )
    // Thumbnail Settings
    //
    conf->setGroup("Thumbnails");
-   setThumbnailsEnabled( conf->readEntry( "Thumbnails", QVariant(true )).toBool() );
+   setThumbnailsEnabled( conf->readEntry( "Thumbnails", true ) );
    setThumbnailSize( conf->readDoubleNumEntry( "ThumbnailSize", 0.2 ) );
    setThumbnailUpdateDelay( conf->readEntry( "ThumbnailUpdateDelay", 10 ) );
-   setEmbedThumbnails( conf->readEntry( "EmbedThumbnails", QVariant(false )).toBool() );
+   setEmbedThumbnails( conf->readEntry( "EmbedThumbnails", false ) );
 
    //
    // Behaviour Settings
    //
    conf->setGroup("Behaviour");
-   setNotifierEnabled( conf->readEntry( "StartupNotifier", QVariant(true )).toBool() );
-   setShowModified( conf->readEntry( "ModifiedIndicator", QVariant(true )).toBool() );
-   setShowProgress( conf->readEntry( "ProgressIndicator", QVariant(false )).toBool() );
-   setShowAttention( conf->readEntry( "AttentionIndicator", QVariant(true )).toBool() );
-   setShowAllWindows( conf->readEntry( "ShowAllWindows", QVariant(true )).toBool() );
-   setGroupWindows( conf->readEntry( "GroupWindows", QVariant(true )).toBool() );
-   setGroupInactiveDesktops( conf->readEntry( "GroupInactiveDesktops", QVariant(false )).toBool() );
-   setOnlyShowMinimized( conf->readEntry( "OnlyShowMinimized", QVariant(false )).toBool() );
+   setNotifierEnabled( conf->readEntry( "StartupNotifier", true ) );
+   setShowModified( conf->readEntry( "ModifiedIndicator", true ) );
+   setShowProgress( conf->readEntry( "ProgressIndicator", false ) );
+   setShowAttention( conf->readEntry( "AttentionIndicator", true ) );
+   setShowAllWindows( conf->readEntry( "ShowAllWindows", true ) );
+   setGroupWindows( conf->readEntry( "GroupWindows", true ) );
+   setGroupInactiveDesktops( conf->readEntry( "GroupInactiveDesktops", false ) );
+   setOnlyShowMinimized( conf->readEntry( "OnlyShowMinimized", false ) );
 
    //
    // Layout Settings
@@ -648,14 +648,14 @@ void KasTasker::readConfig( KConfig *conf )
 
    QPoint pos(100, 100);
    setDetachedPosition( conf->readPointEntry( "DetachedPosition", &pos ) );
-   setDetached( conf->readEntry( "Detached", QVariant(false )).toBool() );
+   setDetached( conf->readEntry( "Detached", false ) );
 
    //
    // Custom Items
    //
    conf->setGroup("Custom Items");
-   setShowClock( conf->readEntry( "ShowClock", QVariant(true )).toBool() );
-   setShowLoad( conf->readEntry( "ShowLoad", QVariant(true )).toBool() );
+   setShowClock( conf->readEntry( "ShowClock", true ) );
+   setShowLoad( conf->readEntry( "ShowLoad", true ) );
 
    //    fillBg = conf->readEntry( "FillIconBackgrounds", QVariant(/*true*/ false )).toBool();
    //    fillActiveBg = conf->readEntry( "FillActiveIconBackground", QVariant(true )).toBool();
