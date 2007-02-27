@@ -22,7 +22,10 @@
 
 #include <kdebug.h>
 
+#include <solid/networkinterface.h>
+
 #include "NetworkManager-network.h"
+#include "NetworkManager-wirelessnetwork.h"
 
 #include "NetworkManager-networkinterface.h"
 
@@ -165,7 +168,11 @@ QObject * NMNetworkInterface::createNetwork( const QString & uni )
         net = d->networks[ uni ];
     else
     {
-        net = new NMNetwork( uni );
+        // todo create WirelessNetwork if needed instead
+        if ( d->type == Solid::NetworkInterface::Ieee8023 )
+            net = new NMNetwork( uni );
+        else if ( d->type == Solid::NetworkInterface::Ieee80211 )
+            net = new NMWirelessNetwork( uni );
         d->networks.insert( uni, net );
     }
     // maybe look up cached NetworkProperties for this uni here...

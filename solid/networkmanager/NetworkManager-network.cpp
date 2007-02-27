@@ -26,12 +26,7 @@
 class NMNetworkPrivate
 {
 public:
-    NMNetworkPrivate( const QString & networkPath ) : iface( "org.freedesktop.NetworkManager",
-              networkPath,
-              "org.freedesktop.NetworkManager.Devices",
-              QDBusConnection::systemBus() ),
-       netPath( networkPath ) { }
-    QDBusInterface iface;
+    NMNetworkPrivate( const QString & networkPath ) : netPath( networkPath ) { }
     QString netPath;
     QList<KNetwork::KIpAddress> ipv4List;
     QString subnetMask;
@@ -44,10 +39,6 @@ public:
 NMNetwork::NMNetwork( const QString & netPath )
  : QObject(), d( new NMNetworkPrivate( netPath ) )
 {
-    // fixme move to wirelessnetwork
-    kDebug() << "NMNetwork::NMNetwork() - " << netPath << endl;
-    QDBusMessage reply = d->iface.call( "getProperties" );
-    kDebug() << reply.arguments() << endl;
 }
 
 NMNetwork::~NMNetwork()
@@ -97,6 +88,7 @@ bool NMNetwork::isActive() const
 
 void NMNetwork::setActivated( bool activated )
 {
+    // todo activate the device network here
     d->active = activated;
     emit activationStateChanged( activated );
 }

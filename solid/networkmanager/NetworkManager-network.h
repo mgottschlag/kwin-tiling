@@ -20,6 +20,7 @@
 #ifndef NETWORKMANAGER_NETWORK_H
 #define NETWORKMANAGER_NETWORK_H
 
+#include <QDBusInterface>
 #include <solid/ifaces/network.h>
 
 struct NMDBusNetworkProperties {
@@ -60,7 +61,6 @@ public:
 Q_SIGNALS:
     void ipDetailsChanged();
     void activationStateChanged( bool );
-
 private:
     NMNetworkPrivate * d;
 };

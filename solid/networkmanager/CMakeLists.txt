@@ -6,6 +6,7 @@ set(solid_networkmanager_PART_SRCS
 	NetworkManager-network.cpp
 	NetworkManager-networkmanager.cpp
 	NetworkManager-networkinterface.cpp
+	NetworkManager-wirelessnetwork.cpp
 )
 
 kde4_automoc(${solid_networkmanager_PART_SRCS})
