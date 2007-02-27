@@ -96,17 +96,20 @@ void Autostart::load()
 	// share/autostart may *only* contain .desktop files
 	// shutdown and env may *only* contain scripts, links or binaries
 	// autostart on the otherhand may contain all of the above.
+	// share/autostart is special as it overrides entries found in $KDEDIR/share/autostart
 	paths << KGlobalSettings::autostartPath()
-//		  << componentData().dirs()->localkdedir() + "share/autostart";
-		  << componentData().dirs()->localkdedir() + "shutdown/";
-//		  << componentData().dirs()->localkdedir() + "env/";
+//		  << componentData().dirs()->localkdedir() + "share/autostart"
+		  << componentData().dirs()->localkdedir() + "shutdown/"
+//		  << componentData().dirs()->localkdedir() + "env/"
+		;
 
 	pathName << i18n("Autostart")
 			 << i18n("Shutdown");
 	widget->cmbStartOn->addItems(pathName);
 
 	foreach (const QString& path, paths) {
-		if (! KStandardDirs::exists(path)) KStandardDirs::makeDir(path);
+		if (! KStandardDirs::exists(path))
+			KStandardDirs::makeDir(path);
 
 		QDir *autostartdir = new QDir( path );
 		autostartdir->setFilter( QDir::Files );
@@ -210,20 +213,20 @@ void Autostart::editCMD(QTreeWidgetItem* entry) {
 
 bool Autostart::editCMD( KFileItem item) {
 	KPropertiesDialog dlg( &item, this );
-	if ( dlg.exec() != QDialog::Accepted )
-		return false;
-
-	emit changed(true);
-	return true;
+	bool changed = ( dlg.exec() == QDialog::Accepted );
+	emit changed(changed);
+	return changed;
 }
 
 void Autostart::editCMD() {
-	if ( widget->listCMD->selectedItems().size() == 0 ) return;
+	if ( widget->listCMD->selectedItems().size() == 0 )
+		return;
 	editCMD( widget->listCMD->selectedItems().first() );
 }
 
 void Autostart::setStartOn( int index ) {
-	if ( widget->listCMD->selectedItems().size() == 0 ) return;
+	if ( widget->listCMD->selectedItems().size() == 0 )
+		return;
 	Desktop* entry = (Desktop*)widget->listCMD->selectedItems().first();
 	entry->setPath(paths.value(index));
 	entry->setText(2, entry->fileName.directory() );
@@ -234,7 +237,8 @@ void Autostart::selectionChanged() {
 	widget->cmbStartOn->setEnabled(hasItems);
 	widget->btnRemove->setEnabled(hasItems);
 	widget->btnProperties->setEnabled(hasItems);
-	if (!hasItems) return;
+	if (!hasItems)
+		return;
 	
 	QTreeWidgetItem* entry = widget->listCMD->selectedItems().first();
 	widget->cmbStartOn->setCurrentIndex( paths.indexOf(((Desktop*)entry)->fileName.directory()+'/') );
