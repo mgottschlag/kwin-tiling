@@ -11,15 +11,15 @@
 #ifndef SPLASHINSTALLER_H
 #define SPLASHINSTALLER_H
 
-#include <qmap.h>
-#include <qpoint.h>
+#include <QMap>
+#include <QPoint>
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QMouseEvent>
 #include <QLabel>
 #include <QDropEvent>
 
-#include <klistbox.h>
+#include <klistwidget.h>
 #include <kurl.h>
 
 class QLabel;
@@ -64,7 +64,7 @@ private:
   QLabel *mPreview;
 };
 
-class ThemeListBox: public KListBox
+class ThemeListBox: public KListWidget
 {
   Q_OBJECT
 public:
@@ -80,7 +80,7 @@ protected:
   void mouseMoveEvent(QMouseEvent *e);
 
 protected Q_SLOTS:
-  void slotMouseButtonPressed(int button, Q3ListBoxItem *item, const QPoint &p);
+  void slotMouseButtonPressed(int button, QListWidgetItem *item, const QPoint &p);
 
 private:
   QString mDragFile;

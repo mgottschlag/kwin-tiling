@@ -12,9 +12,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QDir>
+#include <QLabel>
+#include <QLayout>
 #include <q3textedit.h>
 //Added by qt3to4:
 #include <QPixmap>
@@ -36,16 +36,16 @@
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
-#include <ktrader.h>
+#include <kservicetypetrader.h>
 #include <k3urldrag.h>
 #include <kio/netaccess.h>
 
 ThemeListBox::ThemeListBox(QWidget *parent)
-  : KListBox(parent)
+  : KListWidget(parent)
 {
    setAcceptDrops(true);
-   connect(this, SIGNAL(mouseButtonPressed(int, Q3ListBoxItem *, const QPoint &)),
-           this, SLOT(slotMouseButtonPressed(int, Q3ListBoxItem *, const QPoint &)));
+   connect(this, SIGNAL(mouseButtonPressed(int, QListWidgetItem *, const QPoint &)),
+           this, SLOT(slotMouseButtonPressed(int, QListWidgetItem *, const QPoint &)));
 }
 
 void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
@@ -62,14 +62,14 @@ void ThemeListBox::dropEvent(QDropEvent* event)
    }
 }
 
-void ThemeListBox::slotMouseButtonPressed(int button, Q3ListBoxItem *item, const QPoint &p)
+void ThemeListBox::slotMouseButtonPressed(int button, QListWidgetItem *listItem, const QPoint &p)
 {
    if ((button & Qt::LeftButton) == 0) return;
    mOldPos = p;
    mDragFile.clear();
-   int cur = index(item);
+   int cur = row(listItem);
    if (cur >= 0)
-      mDragFile = text2path[text(cur)];
+      mDragFile = text2path[item(cur)->text()];
 }
 
 void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
@@ -89,7 +89,7 @@ void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
          d->dragCopy();
       }
    }
-   KListBox::mouseMoveEvent(e);
+   KListWidget::mouseMoveEvent(e);
 }
 
 //-----------------------------------------------------------------------------
@@ -106,7 +106,8 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   hbox->setMargin( 0 );
   hbox->setSpacing( KDialog::spacingHint() );
 
-  QVBoxLayout* leftbox = new QVBoxLayout( hbox );
+  QVBoxLayout* leftbox = new QVBoxLayout(  );
+  hbox->addItem( leftbox );
   leftbox->setSpacing( KDialog::spacingHint() );
   hbox->setStretchFactor( leftbox, 1 );
 
@@ -128,7 +129,8 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   leftbox->addWidget( mBtnTest );
   connect(mBtnTest, SIGNAL(clicked()), SLOT(slotTest()));
 
-  QVBoxLayout* rightbox = new QVBoxLayout( hbox );
+  QVBoxLayout* rightbox = new QVBoxLayout(  );
+  hbox->addItem( rightbox );
   rightbox->setSpacing( KDialog::spacingHint() );
   hbox->setStretchFactor( rightbox, 3 );
 
@@ -162,12 +164,12 @@ int SplashInstaller::addTheme(const QString &path, const QString &name)
   //kDebug() << "SplashInstaller::addTheme: " << path << " " << name << endl;
   QString tmp(i18n( name.toUtf8() ));
   int i = mThemesList->count();
-  while((i > 0) && (mThemesList->text(i-1) > tmp))
+  while((i > 0) && (mThemesList->item(i-1)->text() > tmp))
     i--;
-  if ((i > 0) && (mThemesList->text(i-1) == tmp))
+  if ((i > 0) && (mThemesList->item(i-1)->text() == tmp))
     return i-1;
-  mThemesList->insertItem(tmp, i);
-  mThemesList->text2path.insert( tmp, path+"/"+name );
+  mThemesList->insertItem(i , tmp);
+  mThemesList->text2path.insert( tmp, path+'/'+name );
   return i;
 }
 
@@ -181,13 +183,13 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   // Convert extension to lower case.
   if (i >= 0)
      filename = filename.left(i)+filename.mid(i).toLower();
-  url.setPath(locateLocal("tmp",filename));
+  url.setPath(KStandardDirs::locateLocal("tmp",filename));
 
   // Remove file from temporary directory if it aleady exists - usually the result of a failed install.
   if ( KIO::NetAccess::exists( url, true, 0 ) )
     KIO::NetAccess::del( url, 0 );
 
-  bool rc = KIO::NetAccess::copy(srcURL, url, 0);
+  bool rc = KIO::NetAccess::file_copy(srcURL, url, 0);
   if (!rc)
   {
     kWarning() << "Failed to copy theme " << srcURL.fileName()
@@ -219,14 +221,14 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
 #endif
   // TODO: Make sure we put the entries into a subdirectory if the tarball does not.
   // TODO: Warn the user if we overwrite something.
-  ad->copyTo(locateLocal("ksplashthemes","/"));
+  ad->copyTo(KStandardDirs::locate("ksplashthemes","/"));
   tarFile.close();
   KIO::NetAccess::del( url, 0 );
 
   // TODO: Update only the entries from this installation.
   readThemesList();
-  mThemesList->setCurrentItem(findTheme(themeName));
-  mThemesList->setSelected(mThemesList->currentItem(), true);
+  mThemesList->setCurrentRow(findTheme(themeName));
+  mThemesList->currentItem()->setSelected(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -261,28 +263,28 @@ void SplashInstaller::readThemesList()
 //-----------------------------------------------------------------------------
 void SplashInstaller::defaults()
 {
-  mThemesList->setCurrentItem(findTheme("Default"));
+  mThemesList->setCurrentRow(findTheme("Default"));
   emit changed( true );
 }
 
 void SplashInstaller::load()
 {
-  KConfig cnf("ksplashrc");
-  cnf.setGroup("KSplash");
+  KConfig _cnf( "ksplashrc" );
+  KConfigGroup cnf(&_cnf, "KSplash");
   QString curTheme = cnf.readEntry("Theme","Default");
-  mThemesList->setCurrentItem(findTheme(curTheme));
+  mThemesList->setCurrentRow(findTheme(curTheme));
   emit changed( false );
 }
 
 //-----------------------------------------------------------------------------
 void SplashInstaller::save()
 {
-  KConfig cnf("ksplashrc");
-  cnf.setGroup("KSplash");
-  int cur = mThemesList->currentItem();
+  KConfig _cnf( "ksplashrc" );
+  KConfigGroup cnf(&_cnf, "KSplash");
+  int cur = mThemesList->currentRow();
   if (cur < 0)
     return;
-  QString path = mThemesList->text(cur);
+  QString path = mThemesList->item(cur)->text();
   if ( mThemesList->text2path.contains( path ) )
     path = mThemesList->text2path[path];
   cur = path.lastIndexOf('/');
@@ -294,12 +296,12 @@ void SplashInstaller::save()
 //-----------------------------------------------------------------------------
 void SplashInstaller::slotRemove()
 {
-  int cur = mThemesList->currentItem();
+  int cur = mThemesList->currentRow();
   if (cur < 0)
     return;
 
   bool rc = false;
-  QString themeName = mThemesList->text(cur);
+  QString themeName = mThemesList->item(cur)->text();
   QString themeDir = mThemesList->text2path[themeName];
   if (!themeDir.isEmpty())
   {
@@ -317,8 +319,8 @@ void SplashInstaller::slotRemove()
   }
   //mThemesList->removeItem(cur);
   readThemesList();
-  cur = ((unsigned int)cur >= mThemesList->count())?mThemesList->count()-1:cur;
-  mThemesList->setCurrentItem(cur);
+  cur = (cur >= mThemesList->count())?mThemesList->count()-1:cur;
+  mThemesList->setCurrentRow(cur);
 }
 
 
@@ -338,7 +340,7 @@ void SplashInstaller::slotSetTheme(int id)
   else
   {
     QString error = i18n("(Could not load theme)");
-    path = mThemesList->text(id);
+    path = mThemesList->item(id)->text();
     if ( mThemesList->text2path.contains( path ) )
         path = mThemesList->text2path[path];
     enabled = false;
@@ -358,13 +360,13 @@ void SplashInstaller::slotSetTheme(int id)
         {
           url.setPath( path + "/theme.rc" );
           if (!KIO::NetAccess::exists(url, true, 0))
-            url.setPath( path + "/" + themeName + ".rc" );
+            url.setPath( path + '/' + themeName + ".rc" );
         }
       }
       if (KIO::NetAccess::exists(url, true, 0))
       {
-        KConfig cnf(url.path());
-        cnf.setGroup( QString("KSplash Theme: %1").arg(themeName) );
+        KConfig _cnf(url.path());
+	KConfigGroup cnf(&_cnf, QString("KSplash Theme: %1").arg(themeName) );
 
         // Get theme information.
         infoTxt = "<qt>";
@@ -381,7 +383,7 @@ void SplashInstaller::slotSetTheme(int id)
         infoTxt += "</qt>";
 
         QString pluginName( cnf.readEntry( "Engine", "Default" ) ); // Perhaps no default is better?
-        if ((KTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
+        if ((KServiceTypeTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
         {
           enabled = false;
           error = i18n("This theme requires the plugin %1 which is not installed.", pluginName);
@@ -398,7 +400,7 @@ void SplashInstaller::slotSetTheme(int id)
     mText->setText(infoTxt);
     if (!enabled)
     {
-      url.setPath( path + "/" + "Preview.png" );
+      url.setPath( path + '/' + "Preview.png" );
       if (KIO::NetAccess::exists(url, true, 0))
         mPreview->setPixmap(QPixmap(url.path()));
       else
@@ -407,7 +409,7 @@ void SplashInstaller::slotSetTheme(int id)
     }
     else
     {
-      url.setPath( path + "/" + "Preview.png" );
+      url.setPath( path + '/' + "Preview.png" );
       if (KIO::NetAccess::exists(url, true, 0))
         mPreview->setPixmap(QPixmap(url.path()));
       else
@@ -430,8 +432,8 @@ void SplashInstaller::slotAdd()
   if (!dlg.exec())
     return;
 
-  path = dlg.baseURL().url();
-  addNewTheme(dlg.selectedURL());
+  path = dlg.baseUrl().url();
+  addNewTheme(dlg.selectedUrl());
 }
 
 //-----------------------------------------------------------------------------
@@ -452,7 +454,7 @@ int SplashInstaller::findTheme( const QString &theme )
 
   while (id >= 0)
   {
-    if (mThemesList->text(id) == tmp)
+    if (mThemesList->item(id)->text() == tmp)
       return id;
     id--;
   }
@@ -463,10 +465,10 @@ int SplashInstaller::findTheme( const QString &theme )
 //-----------------------------------------------------------------------------
 void SplashInstaller::slotTest()
 {
-  int i = mThemesList->currentItem();
+  int i = mThemesList->currentRow();
   if (i < 0)
     return;
-  QString themeName = mThemesList->text2path[mThemesList->text(i)];
+  QString themeName = mThemesList->text2path[mThemesList->item(i)->text()];
   int r = themeName.lastIndexOf('/');
   if (r >= 0)
     themeName = themeName.mid(r+1);

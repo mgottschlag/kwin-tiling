@@ -8,12 +8,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include <config.h>
 
-#include <qlayout.h>
-#include <qtabwidget.h>
+#include <QLayout>
+#include <QTabWidget>
 //Added by qt3to4:
 #include <QHBoxLayout>
 
@@ -28,7 +26,7 @@
 class KSplashThemeMgr : public KCModule
 {
 public:
-  KSplashThemeMgr( QWidget *parent, const char *name, const QStringList &/*unused*/);
+  KSplashThemeMgr( QWidget *parent, const QStringList &/*unused*/);
   ~KSplashThemeMgr();
 
   QString quickHelp() const;
@@ -43,12 +41,12 @@ private:
 };
 
 typedef KGenericFactory< KSplashThemeMgr, QWidget > KSplashThemeMgrFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_ksplashthemes, KSplashThemeMgrFactory("ksplashthemes") )
+K_EXPORT_COMPONENT_FACTORY( ksplashthemes, KSplashThemeMgrFactory("ksplashthemes") )
 
 // -----------------------------------------------------------------------------------------
 
-KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const char *, const QStringList &args)
-  : KCModule( KSplashThemeMgrFactory::instance(), parent, args ), mInstaller(new SplashInstaller(this))
+KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const QStringList &args)
+  : KCModule( KSplashThemeMgrFactory::componentData(), parent, args ), mInstaller(new SplashInstaller(this))
 {
   init();
 
