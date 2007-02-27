@@ -59,7 +59,7 @@ Enabled=true
 [Action_1/Command_4]
 Commandline=kmail  --attach %s
 Description=Send &Page
-Description[el]=Αποστολή &Σελίδας
+Description[el]=Αποστολή &σελίδας
 Description[fr]=Envoyer la &page
 Description[x-test]=xxSend &Pagexx
 Enabled=true
@@ -130,7 +130,7 @@ Enabled=true
 [Action_4/Command_1]
 Commandline=kmail  --attach %s
 Description=Send &File
-Description[el]=Αποστολή &Αρχείου
+Description[el]=Αποστολή &αρχείου
 Description[fr]=Envoyer le &fichier
 Description[x-test]=xxSend &Filexx
 Enabled=true
@@ -153,7 +153,7 @@ Enabled=true
 [Action_5/Command_1]
 Commandline=kmail  --attach %s
 Description=Send &File
-Description[el]=Αποστολή &Αρχείου
+Description[el]=Αποστολή &αρχείου
 Description[fr]=Envoyer le &fichier
 Description[x-test]=xxSend &Filexx
 Enabled=true
@@ -200,7 +200,7 @@ Enabled=true
 [Action_6/Command_4]
 Commandline=kmail  --attach %s
 Description=Send &File
-Description[el]=Αποστολή &Αρχείου
+Description[el]=Αποστολή &αρχείου
 Description[fr]=Envoyer le &fichier
 Description[x-test]=xxSend &Filexx
 Enabled=true
