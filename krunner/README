@@ -29,3 +29,6 @@ Other Tidbits
 A restarting application so even a crash won't result in no krunner
 A window for accepting search input, implemented in the Interface class
 
+TODO
+====
+Please read http://techbase.kde.org/Projects/Plasma/Tasks for further information.
