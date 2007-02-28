@@ -59,10 +59,10 @@ int main(int argc, char* argv[])
     }
 
     bool argbVisual = false ;
-    KRunnerApp::s_haveCompositeManager = !XGetSelectionOwner(dpy,
-                                                             XInternAtom(dpy,
-                                                                         "_NET_WM_CM_S0",
-                                                                         false));
+    KRunnerApp::s_haveCompositeManager = XGetSelectionOwner(dpy,
+                                                            XInternAtom(dpy,
+                                                                        "_NET_WM_CM_S0",
+                                                                        false));
 
     Colormap colormap = 0;
     Visual *visual = 0;
