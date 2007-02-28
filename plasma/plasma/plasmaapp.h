@@ -19,35 +19,38 @@
 #ifndef PLASMA_APP_H
 #define PLASMA_APP_H
 
-
 #include <KUniqueApplication>
 
 #include "interface.h"
 #include "enginemanager.h"
 
+class Desktop;
 class QGraphicsView;
 class QGraphicsScene;
-class PlasmaApp : public KUniqueApplication, public Plasma::Interface
+class PlasmaApp : public KUniqueApplication,
+                  public Plasma::Interface
 {
-    public:
-        PlasmaApp();
-        ~PlasmaApp();
+    Q_OBJECT
+public:
+    PlasmaApp();
+    ~PlasmaApp();
 
-        static PlasmaApp* self();
+    static PlasmaApp* self();
 
-        // Plasma::Interface
-        bool loadDataEngine(const QString& name);
-        void unloadDataEngine(const QString& name);
+    // Plasma::Interface
+    bool loadDataEngine(const QString& name);
+    void unloadDataEngine(const QString& name);
 
-        void notifyStartup(bool completed);
+    void notifyStartup(bool completed);
 
-    private slots:
-        void setCrashHandler();
+private slots:
+    void setCrashHandler();
 
-    private:
-        void crashHandler(int signal);
+private:
+    void crashHandler(int signal);
 
-        DataEngineManager *m_engineManager;
+    DataEngineManager *m_engineManager;
+    Desktop *m_desktop;
 
 };
 

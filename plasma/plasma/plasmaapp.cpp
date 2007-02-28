@@ -26,6 +26,7 @@
 
 #include <kcrash.h>
 
+#include "desktop.h"
 #include "plasmaapp.h"
 #include "plasmaapp.moc"
 
@@ -61,7 +62,13 @@ PlasmaApp::PlasmaApp()
 
     m_interface = this;
     m_engineManager = new DataEngineManager;
+    m_desktop = new Desktop;
+
     notifyStartup(true);
+}
+
+PlasmaApp::~PlasmaApp()
+{
 }
 
 void PlasmaApp::setCrashHandler()

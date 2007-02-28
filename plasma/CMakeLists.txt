@@ -1,7 +1,7 @@
 
 project(plasma)
 
-#add_subdirectory( plasma )
+add_subdirectory( plasma )
 
 
 
