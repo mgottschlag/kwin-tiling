@@ -1,7 +1,0 @@
-make screensaver/lock more sexy
-    use an svg based background for the lock dialog? perhaps identical to the run dialog?
-options slide drawer
-install D-Bus autoactivation service, see:
-    http://developernew.kde.org/Development/Tutorials/D-Bus/Autostart_Services
-pull in options from kdesktop/minicli.cpp and merge into shell and app runners
-implement use of strigi in search runner
