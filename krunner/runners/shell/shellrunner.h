@@ -22,6 +22,7 @@
 #include "runner.h"
 
 class QWidget;
+class QAction;
 
 /**
  * This class runs programs using the literal name of the binary, much as one
@@ -37,7 +38,7 @@ class ShellRunner : public Runner
         explicit ShellRunner(QObject* parent = 0);
         ~ShellRunner();
 
-        bool accepts(const QString& term);
+        QAction* accepts(const QString& term);
 
         bool hasOptions();
         QWidget* options();

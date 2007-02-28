@@ -17,6 +17,7 @@
  */
 
 #include <QWidget>
+#include <QAction>
 
 #include <KLocale>
 #include <KRun>
@@ -36,9 +37,15 @@ ShellRunner::~ShellRunner()
     delete m_options;
 }
 
-bool ShellRunner::accepts(const QString& term)
+QAction* ShellRunner::accepts(const QString& term)
 {
-    return !KStandardDirs::findExe(term).isEmpty();
+    QString executable = KStandardDirs::findExe(term);
+    if ( !executable.isEmpty() ) {
+        QAction* action = new QAction( executable, this );
+        return action;
+    } else {
+        return 0;
+    }
 }
 
 bool ShellRunner::hasOptions()

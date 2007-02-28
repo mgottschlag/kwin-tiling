@@ -27,6 +27,7 @@
 #include "runner.h"
 
 class QLabel;
+class QListWidget;
 class QSvgRenderer;
 
 class KLineEdit;
@@ -77,6 +78,7 @@ class Interface : public QWidget
         Runner* m_currentRunner;
 
         KLineEdit* m_searchTerm;
+        QListWidget* m_actionsList;
         QWidget* m_matches;
         QLabel* m_optionsLabel;
 };

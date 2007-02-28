@@ -17,6 +17,8 @@
  */
 
 #include <QWidget>
+#include <QAction>
+#include <KIcon>
 
 #include <KLocale>
 #include <KRun>
@@ -36,10 +38,15 @@ ServiceRunner::~ServiceRunner()
     delete m_options;
 }
 
-bool ServiceRunner::accepts(const QString& term)
+QAction* ServiceRunner::accepts(const QString& term)
 {
     KService::Ptr service = KService::serviceByName(term);
-    return service && !service->exec().isEmpty();
+    if ( service && !service->exec().isEmpty() ) {
+        QAction* action = new QAction( KIcon(service->icon()), service->name(), this );
+        return action;
+    } else {
+        return 0;
+    }
 }
 
 bool ServiceRunner::hasOptions()

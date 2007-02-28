@@ -17,6 +17,7 @@
  */
 
 #include <QWidget>
+#include <QAction>
 
 #include <KAction>
 #include <KActionCollection>
@@ -40,10 +41,10 @@ SessionRunner::~SessionRunner()
 {
 }
 
-bool SessionRunner::accepts(const QString& term)
+QAction* SessionRunner::accepts(const QString& term)
 {
     Q_UNUSED(term);
-    return false;
+    return 0;
 }
 
 bool SessionRunner::exec(const QString& command)

@@ -41,7 +41,7 @@ class KDE_EXPORT Runner : public QObject
          * will be asked until one returns "true". Other possible matches
          * should be offered via findMatches
          */
-        virtual bool accepts( const QString& term ) = 0;
+        virtual QAction* accepts( const QString& term ) = 0;
 
         /**
          * If the runner has options that the user can interact with to modify

@@ -22,6 +22,7 @@
 #include "runner.h"
 
 class QWidget;
+class QAction;
 
 /**
  * This class looks for matches in the set of .desktop files installed by
@@ -39,7 +40,7 @@ class ServiceRunner : public Runner
         explicit ServiceRunner(QObject* parent = 0);
         ~ServiceRunner();
 
-        bool accepts(const QString& term);
+        QAction* accepts(const QString& term);
 
         bool hasOptions();
         QWidget* options();

@@ -22,6 +22,7 @@
 #include "runner.h"
 
 class QWidget;
+class QAction;
 
 /**
  * This class provides matches for running sessions as well as
@@ -37,7 +38,7 @@ class SessionRunner : public Runner
         explicit SessionRunner(QObject* parent = 0);
         ~SessionRunner();
 
-        bool accepts(const QString& term);
+        QAction* accepts(const QString& term);
 
         bool exec(const QString& command);
         QList<QAction*> matches(const QString& term);

@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QAction>
 #include <QWidget>
+#include <QAction>
 
 #include <KActionCollection>
 #include <KIcon>
@@ -35,13 +35,13 @@ SearchRunner::~SearchRunner()
 {
 }
 
-bool SearchRunner::accepts( const QString& term )
+QAction* SearchRunner::accepts( const QString& term )
 {
     Q_UNUSED( term )
 
     // this should probably always turn down the term
     // and only act on actions provided via fillMatches
-    return false;
+    return 0;
 }
 
 bool SearchRunner::exec( const QString& command )

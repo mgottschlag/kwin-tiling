@@ -24,6 +24,7 @@
 #include "runner.h"
 
 class QWidget;
+class QAction;
 
 /**
  * This class runs the entered text through a search engine and returns the set
@@ -39,7 +40,7 @@ class SearchRunner : public Runner
         explicit SearchRunner( QObject* parent, const QStringList& args );
         ~SearchRunner();
 
-        bool accepts( const QString& term );
+        QAction* accepts( const QString& term );
         bool exec( const QString& command );
 
     protected:

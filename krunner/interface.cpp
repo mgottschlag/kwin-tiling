@@ -19,6 +19,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QLabel>
+#include <QListWidget>
 #include <QPainter>
 #include <QResizeEvent>
 #include <QSvgRenderer>
@@ -71,6 +72,10 @@ Interface::Interface(QWidget* parent)
     m_matches = new QWidget(this);
     layout->addWidget(m_matches);
 
+    //TODO: temporary feedback, change later with the "icon parade" :)
+    m_actionsList = new QListWidget(this);
+    layout->addWidget(m_actionsList);
+
     m_optionsLabel = new QLabel(this);
     m_optionsLabel->setText("Options");
     m_optionsLabel->setEnabled(false);
@@ -110,6 +115,7 @@ void Interface::display( const QString& term)
 {
     kDebug() << "display() called" << endl;
     m_searchTerm->setFocus( );
+    m_actionsList->clear() ;
     if ( !term.isEmpty() ) {
         m_searchTerm->setText( term );
     }
@@ -144,12 +150,17 @@ void Interface::search(const QString& t)
         m_currentRunner = 0;
     }
 
+    QListWidgetItem* item ;
+    m_actionsList->clear() ;
     foreach (Runner* runner, m_runners) {
         kDebug() << "\trunner: " << runner->objectName() << endl;
-        if ( !m_currentRunner && runner->accepts( term ) ) {
+        QAction* exactMatch = runner->accepts( term ) ;
+        if ( !m_currentRunner && exactMatch ) {
             m_currentRunner = runner;
             m_optionsLabel->setEnabled( runner->hasOptions() );
             connect( runner, SIGNAL(matches()), this, SLOT(updateMatches()) );
+            item = new QListWidgetItem( exactMatch->icon(), exactMatch->text() + " (" + runner->objectName() + ")", m_actionsList , 0 );
+            m_actionsList->addItem( item );
             kDebug() << "\tswitching runners: " << m_currentRunner->objectName() << endl;
         }
 
@@ -158,6 +169,8 @@ void Interface::search(const QString& t)
         kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
         foreach ( const QAction* action, matches->actions() ) {
             kDebug() << "\t\t " << action << ": " << action->text() << endl;
+            item = new QListWidgetItem( action->icon(), action->text() + " (" + runner->objectName() + ")", m_actionsList , 0 );
+            m_actionsList->addItem( item );
         }
     }
 
@@ -250,7 +263,6 @@ void Interface::loadRunners()
     m_runners.append( new ServiceRunner( this ) );
     m_runners.append( new ShellRunner( this ) );
     m_runners.append( new SessionRunner( this ) );
-//    m_runners.append(new SearchRunner(this));
 
     KService::List offers = KServiceTypeTrader::self()->query( "KRunner/Runner" );
     foreach ( KService::Ptr service, offers ) {
