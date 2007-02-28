@@ -9,7 +9,7 @@ set(krunner_dbusXML org.kde.krunner.Interface.xml)
 set(screensaver_dbusXML org.kde.ScreenSaver.xml)
 set(krunner_BGIMAGES images/background/dialog.svg)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/plasma/lib ${CMAKE_CURRENT_SOURCE_DIR}/workspace/lib)
+include_directories(${CMAKE_SOURCE_DIR}/workspace/plasma/lib ${CMAKE_SOURCE_DIR}/workspace/lib)
 
 set(krunner_SRCS interface.cpp
                  krunnerapp.cpp

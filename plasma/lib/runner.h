@@ -37,9 +37,10 @@ class KDE_EXPORT Runner : public QObject
         virtual ~Runner();
 
         /**
-         * If the runner can run precisely this term, return true. Each runner
-         * will be asked until one returns "true". Other possible matches
-         * should be offered via findMatches
+         * If the runner can run precisely this term, return a QAction, else
+         * return 0. The first runner that returns a QAction will be the
+         * default runner. Other runner's actions will be suggested in the
+         * interface. Non-exact matches should be offered via findMatches.
          */
         virtual QAction* accepts( const QString& term ) = 0;
 

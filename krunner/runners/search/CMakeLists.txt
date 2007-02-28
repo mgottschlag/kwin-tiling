@@ -1,7 +1,7 @@
 
 ########### next target ###############
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/workspace/lib)
+include_directories(${CMAKE_SOURCE_DIR}/workspace/plasma/lib)
 
 set(krunner_searchrunner_SRCS
     searchrunner.cpp
@@ -9,7 +9,7 @@ set(krunner_searchrunner_SRCS
 
 kde4_automoc(${krunner_searchrunner_SRCS})
 kde4_add_plugin(krunner_searchrunner ${krunner_searchrunner_SRCS})
-target_link_libraries(krunner_searchrunner ${KDE4_KDECORE_LIBS} kworkspace)
+target_link_libraries(krunner_searchrunner ${KDE4_KDECORE_LIBS} plasma)
 
 install(TARGETS krunner_searchrunner DESTINATION ${PLUGIN_INSTALL_DIR} )
 

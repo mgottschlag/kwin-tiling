@@ -1,7 +1,7 @@
 
 project(plasma)
 
-#add_subdirectory( desktop ) 
+#add_subdirectory( plasma )
 
 
 
