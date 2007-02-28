@@ -46,12 +46,42 @@
 
 //#define FLASH_DIALOG 0
 
+// A little hack of a class to let us easily activate a match
+class SearchMatch : public QListWidgetItem
+{
+    public:
+        SearchMatch( QAction* action, Runner* runner, QListWidget* parent )
+            : QListWidgetItem( parent ),
+              m_action( action )
+        {
+            setIcon( m_action->icon() );
+
+            if ( parent->item( 0 ) != this ) {
+                setText( i18n("%1 (%2)",
+                         m_action->text(),
+                         runner->objectName() ) );
+            } else {
+                setText( i18n("Default: %1 (%2)",
+                         m_action->text(),
+                         runner->objectName() ) );
+            }
+        }
+
+        void exec()
+        {
+            m_action->activate( QAction::Trigger );
+        }
+
+    private:
+        QAction* m_action;
+};
+
+
 Interface::Interface(QWidget* parent)
     : QWidget( parent ),
       m_haveCompositionManager( false ),
       m_bgRenderer( 0 ),
-      m_renderDirty( true ),
-      m_currentRunner( 0 )
+      m_renderDirty( true )
 {
     setWindowFlags( Qt::Window | Qt::FramelessWindowHint );
     setWindowTitle( i18n("Run Command") );
@@ -76,6 +106,8 @@ Interface::Interface(QWidget* parent)
 
     //TODO: temporary feedback, change later with the "icon parade" :)
     m_actionsList = new QListWidget(this);
+    connect( m_actionsList, SIGNAL(itemActivated(QListWidgetItem*)),
+             SLOT(matchActivated(QListWidgetItem*)));
     layout->addWidget(m_actionsList);
 
     m_optionsLabel = new QLabel(this);
@@ -83,28 +115,15 @@ Interface::Interface(QWidget* parent)
     m_optionsLabel->setEnabled(false);
     layout->addWidget(m_optionsLabel);
 
-    //TODO: figure out why this KSelectionWatcher isn't working while the
-    //      (temporary) code below does
-/*    m_compositeWatcher = new KSelectionWatcher("_NET_WM_CM_S0"); 
-    kDebug() << "checkForCompositionManager " << m_compositeWatcher->owner() << " != " << None << endl;
-*/
     m_haveCompositionManager = KRunnerApp::s_haveCompositeManager;
-    kDebug() << "m_haveCompositionManager: " << m_haveCompositionManager << endl;
-/*    Display *dpy = XOpenDisplay(0); // open default display
-    m_haveCompositionManager = !XGetSelectionOwner(dpy,
-                                                   XInternAtom(dpy,
-                                                               "_NET_WM_CM_S0",
-                                                               false));
-    XCloseDisplay(dpy);
-    connect(m_compositeWatcher, SIGNAL(newOwner(Window)),
-            this, SLOT(checkForCompositionManager(Window)));
-*/
+
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
 
     new QShortcut( QKeySequence( Qt::Key_Escape ), this, SLOT(hide()) );
 
-    resize(400, 250); //FIXME
+    //FIXME: what size should we be?
+    resize(400, 250);
 
     loadRunners();
 
@@ -156,52 +175,60 @@ void Interface::hideEvent( QHideEvent* e )
 
     kDebug() << "hide event" << endl;
     m_searchTerm->clear();
+    m_actionsList->clear() ;
     QWidget::hideEvent( e );
+}
+
+void Interface::matchActivated(QListWidgetItem* item)
+{
+    SearchMatch* match = dynamic_cast<SearchMatch*>(item);
+
+    if ( match ) {
+        match->exec();
+        hide();
+    }
 }
 
 void Interface::search(const QString& t)
 {
-    QString term = t.trimmed();
-    kDebug() << "looking for a runner for: " << term << endl;
-    if ( m_currentRunner && ! m_currentRunner->accepts(term) ) {
-        kDebug() << "\told runner " << m_currentRunner->objectName() << " giving up the torch" << endl;
-        m_currentRunner->disconnect( this );
-        m_currentRunner = 0;
-    }
-
     QListWidgetItem* item ;
+    QString term = t.trimmed();
+    Runner* firstMatch = 0;
+
     m_actionsList->clear() ;
+
+    // get the exact matches
     foreach (Runner* runner, m_runners) {
         kDebug() << "\trunner: " << runner->objectName() << endl;
-        QAction* exactMatch = runner->accepts( term ) ;
-        if ( !m_currentRunner && exactMatch ) {
-            m_currentRunner = runner;
-            m_optionsLabel->setEnabled( runner->hasOptions() );
-            connect( runner, SIGNAL(matches()), this, SLOT(updateMatches()) );
-            item = new QListWidgetItem( exactMatch->icon(), exactMatch->text() + " (" + runner->objectName() + ")", m_actionsList , 0 );
-            m_actionsList->addItem( item );
-            kDebug() << "\tswitching runners: " << m_currentRunner->objectName() << endl;
-        }
+        QAction* exactMatch = runner->exactMatch( term ) ;
 
-        // FIXME
+        if ( exactMatch ) {
+            item = new SearchMatch( exactMatch,
+                                    runner,
+                                    m_actionsList );
+            if ( !firstMatch ) {
+                firstMatch = runner;
+            }
+        }
+    }
+
+    // get the inexact matches
+    foreach (Runner* runner, m_runners) {
         KActionCollection* matches = runner->matches( term, 10, 0 );
         kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
-        foreach ( const QAction* action, matches->actions() ) {
+        foreach ( QAction* action, matches->actions() ) {
             kDebug() << "\t\t " << action << ": " << action->text() << endl;
-            item = new QListWidgetItem( action->icon(), action->text() + " (" + runner->objectName() + ")", m_actionsList , 0 );
-            m_actionsList->addItem( item );
+            item = new SearchMatch( action,
+                                    runner,
+                                    m_actionsList );
+
+            if ( !firstMatch ) {
+                firstMatch = runner;
+            }
         }
     }
 
-    if ( !m_currentRunner ) {
-        m_optionsLabel->setEnabled( false );
-    }
-}
-
-void Interface::checkForCompositionManager(Window owner)
-{
-    kDebug() << "checkForCompositionManager " << owner << " " << None << endl;
-    m_haveCompositionManager = ( owner != None );
+    m_optionsLabel->setEnabled( firstMatch && firstMatch->hasOptions() );
 }
 
 void Interface::themeChanged()
@@ -219,14 +246,7 @@ void Interface::updateMatches()
 
 void Interface::exec()
 {
-    if (!m_currentRunner) {
-        //TODO: give them some feedback
-        return;
-    }
-
-    if ( m_currentRunner->exec( m_searchTerm->text().trimmed() ) ) {
-        hide();
-    }
+    matchActivated( m_actionsList->item( 0 ) );
 }
 
 void Interface::paintEvent(QPaintEvent *e)
@@ -260,8 +280,6 @@ void Interface::resizeEvent(QResizeEvent *e)
     if ( e->size() != m_renderedSvg.size() ) {
         m_renderedSvg = QPixmap( e->size() );
         m_renderDirty = true;
-        /*int w = e->size().width();
-        int h = e->size().height();*/
     }
 
     QWidget::resizeEvent( e );
@@ -276,7 +294,6 @@ void Interface::loadRunners()
         delete runner;
     }
     m_runners.clear();
-    m_currentRunner = 0;
 
     //TODO: how should we order runners, particularly ones loaded from plugins?
     m_runners.append( new ServiceRunner( this ) );

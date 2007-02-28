@@ -31,6 +31,7 @@ class QListWidget;
 class QSvgRenderer;
 
 class KLineEdit;
+class QListWidgetItem;
 
 namespace Plasma
 {
@@ -53,10 +54,10 @@ class Interface : public QWidget
 
     protected Q_SLOTS:
         void search(const QString& term);
-        void checkForCompositionManager(Window);
         void themeChanged();
         void updateMatches();
         void exec();
+        void matchActivated(QListWidgetItem*);
 
     protected:
         void paintEvent( QPaintEvent *e );
@@ -75,7 +76,6 @@ class Interface : public QWidget
         bool m_renderDirty;
 
         Runner::List m_runners;
-        Runner* m_currentRunner;
 
         KLineEdit* m_searchTerm;
         QListWidget* m_actionsList;

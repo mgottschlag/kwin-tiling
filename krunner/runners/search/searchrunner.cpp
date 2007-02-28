@@ -28,6 +28,7 @@
 SearchRunner::SearchRunner( QObject* parent, const QStringList& args )
     : Runner( parent )
 {
+    Q_UNUSED( args );
     setObjectName( i18n( "Search" ) );
 }
 

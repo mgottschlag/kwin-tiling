@@ -19,6 +19,7 @@
 #include <QWidget>
 #include <QAction>
 
+#include <KIcon>
 #include <KLocale>
 #include <KRun>
 #include <KStandardDirs>
@@ -41,7 +42,7 @@ QAction* ShellRunner::accepts(const QString& term)
 {
     QString executable = KStandardDirs::findExe(term);
     if ( !executable.isEmpty() ) {
-        QAction* action = new QAction( executable, this );
+        QAction* action = new QAction( KIcon( "exec" ), executable, this );
         return action;
     } else {
         return 0;
