@@ -38,12 +38,9 @@ class SessionRunner : public Runner
         explicit SessionRunner(QObject* parent = 0);
         ~SessionRunner();
 
-        QAction* accepts(const QString& term);
-
-        bool exec(const QString& command);
-        QList<QAction*> matches(const QString& term);
-
     protected:
+        QAction* accepts(const QString& term);
+        bool exec(const QString& command);
         void fillMatches(KActionCollection* actions, const QString& term, int max, int offset);
 
     private slots:

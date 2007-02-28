@@ -38,11 +38,11 @@ class ShellRunner : public Runner
         explicit ShellRunner(QObject* parent = 0);
         ~ShellRunner();
 
-        QAction* accepts(const QString& term);
-
         bool hasOptions();
         QWidget* options();
 
+    protected:
+        QAction* accepts(const QString& term);
         bool exec(const QString& command);
 
     private:
