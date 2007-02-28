@@ -67,8 +67,6 @@ int main(int argc, char* argv[])
     Colormap colormap = 0;
     Visual *visual = 0;
 
-    kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager << endl;
-
     if (KRunnerApp::s_haveCompositeManager)
     {
         int screen = DefaultScreen(dpy);
@@ -99,10 +97,21 @@ int main(int argc, char* argv[])
                 }
             }
         }
+
+        KRunnerApp::s_haveCompositeManager = argbVisual;
     }
 
-    KRunnerApp app(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
-    app.initialize();
+    kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager << endl;
+
+    KRunnerApp* app;
+
+    if ( KRunnerApp::s_haveCompositeManager ) {
+        app = new KRunnerApp( dpy, Qt::HANDLE( visual ), Qt::HANDLE( colormap ) );
+    } else {
+        app = new KRunnerApp;
+    }
+
+    app->initialize();
 
     // Startup stuff ported from kdesktop
     KLaunchSettings::self()->readConfig();
@@ -118,5 +127,8 @@ int main(int argc, char* argv[])
         startup_id->configure();
     }
 
-    return app.exec();
+    int rc = app->exec();
+    delete app;
+    return rc;
 }
+

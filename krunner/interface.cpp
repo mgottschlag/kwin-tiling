@@ -25,6 +25,7 @@
 #include <QSvgRenderer>
 #include <QVBoxLayout>
 #include <QShortcut>
+#include <QTimer>
 
 #include <KActionCollection>
 #include <KDebug>
@@ -36,13 +37,14 @@
 
 #include "../plasma/lib/theme.h"
 
-
 #include "runners/services/servicerunner.h"
 #include "runners/sessions/sessionrunner.h"
 #include "runners/shell/shellrunner.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
 #include "krunnerapp.h"
+
+//#define FLASH_DIALOG 0
 
 Interface::Interface(QWidget* parent)
     : QWidget( parent ),
@@ -105,6 +107,12 @@ Interface::Interface(QWidget* parent)
     resize(400, 250); //FIXME
 
     loadRunners();
+
+#ifdef FLASH_DIALOG
+    QTimer* t = new QTimer(this);
+    connect( t, SIGNAL(timeout()), this, SLOT(display()));
+    t->start( 250 );
+#endif
 }
 
 Interface::~Interface()
@@ -113,6 +121,17 @@ Interface::~Interface()
 
 void Interface::display( const QString& term)
 {
+#ifdef FLASH_DIALOG
+    static bool s_in = false;
+
+    if (s_in) {
+        s_in = false;
+        hide();
+        return;
+    }
+    s_in = true;
+#endif
+
     kDebug() << "display() called" << endl;
     m_searchTerm->setFocus( );
     m_actionsList->clear() ;
@@ -120,10 +139,10 @@ void Interface::display( const QString& term)
         m_searchTerm->setText( term );
     }
 
-    KWin::setOnDesktop( winId(), KWin::currentDesktop() );
-    KDialog::centerOnScreen( this );
     show();
     raise();
+    KWin::setOnDesktop( winId(), KWin::currentDesktop() );
+    KDialog::centerOnScreen( this );
     KWin::forceActiveWindow( winId() );
 
     if ( !term.isEmpty() ) {
