@@ -19,6 +19,8 @@
 #ifndef SERVICERUNNER_H
 #define SERVICERUNNER_H
 
+#include <KService>
+
 #include "runner.h"
 
 class QWidget;
@@ -40,14 +42,18 @@ class ServiceRunner : public Runner
         explicit ServiceRunner(QObject* parent = 0);
         ~ServiceRunner();
 
-        QAction* accepts(const QString& term);
-
         bool hasOptions();
         QWidget* options();
 
+    protected:
+        QAction* accepts(const QString& term);
+        void fillMatches( KActionCollection* matches,
+                          const QString& term,
+                          int max, int offset );
         bool exec(const QString& command);
 
     private:
+        QString formattedName( KService::Ptr );
         QWidget* m_options;
 };
 

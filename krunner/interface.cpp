@@ -79,12 +79,14 @@ class SearchMatch : public QListWidgetItem
 
 Interface::Interface(QWidget* parent)
     : QWidget( parent ),
-      m_haveCompositionManager( false ),
       m_bgRenderer( 0 ),
       m_renderDirty( true )
 {
     setWindowFlags( Qt::Window | Qt::FramelessWindowHint );
     setWindowTitle( i18n("Run Command") );
+
+    connect( &m_searchTimer, SIGNAL(timeout()),
+             this, SLOT(fuzzySearch()) );
 
     m_theme = new Plasma::Theme( this );
     themeChanged();
@@ -114,8 +116,6 @@ Interface::Interface(QWidget* parent)
     m_optionsLabel->setText("Options");
     m_optionsLabel->setEnabled(false);
     layout->addWidget(m_optionsLabel);
-
-    m_haveCompositionManager = KRunnerApp::s_haveCompositeManager;
 
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
@@ -191,11 +191,20 @@ void Interface::matchActivated(QListWidgetItem* item)
 
 void Interface::search(const QString& t)
 {
-    QListWidgetItem* item ;
-    QString term = t.trimmed();
-    Runner* firstMatch = 0;
+    m_searchTimer.stop();
 
-    m_actionsList->clear() ;
+    //FIXME: annoyingly, if the same list gets returned, this make it appear
+    //       to just "flicker" as the old list goes away and is replaced by
+    //       the new. something to think about when implementing the icon
+    //       parade
+    m_actionsList->clear();
+    QString term = t.trimmed();
+
+    if ( term.isEmpty() ) {
+        return;
+    }
+
+    Runner* firstMatch = 0;
 
     // get the exact matches
     foreach (Runner* runner, m_runners) {
@@ -203,25 +212,7 @@ void Interface::search(const QString& t)
         QAction* exactMatch = runner->exactMatch( term ) ;
 
         if ( exactMatch ) {
-            item = new SearchMatch( exactMatch,
-                                    runner,
-                                    m_actionsList );
-            if ( !firstMatch ) {
-                firstMatch = runner;
-            }
-        }
-    }
-
-    // get the inexact matches
-    foreach (Runner* runner, m_runners) {
-        KActionCollection* matches = runner->matches( term, 10, 0 );
-        kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
-        foreach ( QAction* action, matches->actions() ) {
-            kDebug() << "\t\t " << action << ": " << action->text() << endl;
-            item = new SearchMatch( action,
-                                    runner,
-                                    m_actionsList );
-
+            new SearchMatch( exactMatch, runner, m_actionsList );
             if ( !firstMatch ) {
                 firstMatch = runner;
             }
@@ -229,6 +220,35 @@ void Interface::search(const QString& t)
     }
 
     m_optionsLabel->setEnabled( firstMatch && firstMatch->hasOptions() );
+
+    m_searchTimer.start( 250 );
+}
+
+void Interface::fuzzySearch()
+{
+    m_searchTimer.stop();
+
+    QString term = m_searchTerm->text().trimmed();
+    Runner* firstMatch = 0;
+    bool needFirst = m_actionsList->item( 0 ) == 0;
+
+    // get the inexact matches
+    foreach (Runner* runner, m_runners) {
+        KActionCollection* matches = runner->matches( term, 10, 0 );
+        kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
+        foreach ( QAction* action, matches->actions() ) {
+            kDebug() << "\t\t " << action << ": " << action->text() << endl;
+            new SearchMatch( action, runner, m_actionsList );
+
+            if ( !firstMatch ) {
+                firstMatch = runner;
+            }
+        }
+    }
+
+    if ( needFirst ) {
+        m_optionsLabel->setEnabled( firstMatch && firstMatch->hasOptions() );
+    }
 }
 
 void Interface::themeChanged()
@@ -255,7 +275,7 @@ void Interface::paintEvent(QPaintEvent *e)
     p.setRenderHint(QPainter::Antialiasing);
     p.setClipRect(e->rect());
 
-    if ( m_haveCompositionManager ) {
+    if ( KRunnerApp::s_haveCompositeManager ) {
         //kDebug() << "gots us a compmgr!" << m_haveCompositionManager << endl;
         p.save();
         p.setCompositionMode( QPainter::CompositionMode_Source );
@@ -296,8 +316,8 @@ void Interface::loadRunners()
     m_runners.clear();
 
     //TODO: how should we order runners, particularly ones loaded from plugins?
-    m_runners.append( new ServiceRunner( this ) );
     m_runners.append( new ShellRunner( this ) );
+    m_runners.append( new ServiceRunner( this ) );
     m_runners.append( new SessionRunner( this ) );
 
     KService::List offers = KServiceTypeTrader::self()->query( "KRunner/Runner" );

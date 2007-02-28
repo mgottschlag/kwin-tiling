@@ -19,6 +19,7 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
+#include <QTimer>
 #include <QWidget>
 
 // pulls in definition for Window
@@ -58,6 +59,7 @@ class Interface : public QWidget
         void updateMatches();
         void exec();
         void matchActivated(QListWidgetItem*);
+        void fuzzySearch();
 
     protected:
         void paintEvent( QPaintEvent *e );
@@ -67,14 +69,12 @@ class Interface : public QWidget
     private:
         void loadRunners();
 
-        bool m_haveCompositionManager;
-        KSelectionWatcher* m_compositeWatcher;
-
         Plasma::Theme* m_theme;
         QSvgRenderer* m_bgRenderer;
         QPixmap m_renderedSvg;
         bool m_renderDirty;
 
+        QTimer m_searchTimer;
         Runner::List m_runners;
 
         KLineEdit* m_searchTerm;
