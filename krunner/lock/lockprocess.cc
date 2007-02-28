@@ -316,19 +316,17 @@ void LockProcess::quitSaver()
 void LockProcess::configure()
 {
     // the configuration is stored in krunner's config file
-    if( KScreenSaverSettings::lock() )
-    {
+    if( KScreenSaverSettings::lock() ) {
         mLockGrace = KScreenSaverSettings::lockGrace();
         if (mLockGrace < 0)
             mLockGrace = 0;
         else if (mLockGrace > 300000)
             mLockGrace = 300000; // 5 minutes, keep the value sane
-    }
-    else
+    } else {
         mLockGrace = -1;
+    }
 
-    if ( KScreenSaverSettings::autoLogout() )
-    {
+    if ( KScreenSaverSettings::autoLogout() ) {
         mAutoLogout = true;
         mAutoLogoutTimeout = KScreenSaverSettings::autoLogoutTimeout();
         mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000); // in milliseconds
@@ -345,14 +343,16 @@ void LockProcess::configure()
     if (mPriority > 19) mPriority = 19;
 
     mSaver = KScreenSaverSettings::saver();
-    if (mSaver.isEmpty() || mUseBlankOnly)
+    if (mSaver.isEmpty() || mUseBlankOnly) {
         mSaver = "KBlankscreen.desktop";
+    }
 
     readSaver();
 
     mPlugins = KScreenSaverSettings::pluginsUnlock();
-    if (mPlugins.isEmpty())
+    if (mPlugins.isEmpty()) {
         mPlugins = QStringList("classic");
+    }
     mPluginOptions = KScreenSaverSettings::pluginOptions();
 }
 
@@ -366,33 +366,34 @@ void LockProcess::readSaver()
     {
         QString file = KStandardDirs::locate("scrsav", mSaver);
 
-	bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
-	bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");
+        bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
+        bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");
         KDesktopFile config( file );
-	if (!config.readEntry("X-KDE-Type").toUtf8().isEmpty())
-	{
-		QString saverType = config.readEntry("X-KDE-Type").toUtf8();
-		QStringList saverTypes = saverType.split( ";");
-		for (int i = 0; i < saverTypes.count(); i++)
-		{
-			if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
-			{
-				kDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden" << endl;
-				mForbidden = true;
-			}
-			if ((saverTypes[i] == "OpenGL") && !opengl)
-			{
-				kDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden" << endl;
-				mForbidden = true;
-			}
-			if (saverTypes[i] == "OpenGL")
-			{
-				mOpenGLVisual = true;
-			}
-		}
-	}
+        KConfigGroup desktopGroup = config.desktopGroup();
+        if (!desktopGroup.readEntry("X-KDE-Type").toUtf8().isEmpty())
+        {
+            QString saverType = desktopGroup.readEntry("X-KDE-Type").toUtf8();
+            QStringList saverTypes = saverType.split( ";");
+            for (int i = 0; i < saverTypes.count(); i++)
+            {
+                if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
+                {
+                    kDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden" << endl;
+                    mForbidden = true;
+                }
+                if ((saverTypes[i] == "OpenGL") && !opengl)
+                {
+                    kDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden" << endl;
+                    mForbidden = true;
+                }
+                if (saverTypes[i] == "OpenGL")
+                {
+                    mOpenGLVisual = true;
+                }
+            }
+        }
 
-	kDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false") << endl;
+        kDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false") << endl;
 
         if (config.hasActionGroup("Root"))
         {
