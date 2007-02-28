@@ -33,7 +33,7 @@ class UserListView;
 class KdmClock;
 class KdmItem;
 
-class KConfig;
+class KConfigGroup;
 class QListWidgetItem;
 
 struct SessType {
@@ -77,7 +77,7 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	void setPrevWM( QAction * );
 
 	QString curUser, dName;
-	KConfig *stsFile;
+	KConfigGroup *stsGroup;
 	UserListView *userView;
 	QStringList *userList;
 	QMenu *sessMenu;

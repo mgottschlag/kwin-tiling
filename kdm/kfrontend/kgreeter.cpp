@@ -33,9 +33,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <klocale.h>
 #include <kseparator.h>
-#include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kstringhandler.h>
+#include <KConfigGroup>
 
 #include <QAction>
 #include <QDir>
@@ -140,8 +140,7 @@ KGreeter::KGreeter( bool framed )
   , prevValid( true )
   , needLoad( false )
 {
-	stsFile = new KConfig( _stsFile, KConfig::OnlyLocal);
-	stsFile->setGroup( "PrevUser" );
+	stsGroup = new KConfigGroup(KSharedConfig::openConfig(_stsFile), "PrevUser");
 
 	if (_userList) {
 		userView = new UserListView( this );
@@ -171,7 +170,7 @@ KGreeter::~KGreeter()
 	hide();
 	delete userList;
 	delete verify;
-	delete stsFile;
+	delete stsGroup;
 }
 
 void
@@ -343,8 +342,9 @@ KGreeter::insertSessions()
 	for (char **dit = _sessionsDirs; *dit; ++dit)
 		foreach (QString ent, QDir( *dit ).entryList())
 			if (ent.endsWith( ".desktop" )) {
-				KConfig dsk( QString( *dit ).append( '/' ).append( ent ), KConfig::OnlyLocal);
-				dsk.setGroup( "Desktop Entry" );
+				KConfigGroup dsk(
+				    KSharedConfig::openConfig(QString( *dit ).append( '/' ).append( ent )),
+				    "Desktop Entry");
 				putSession( ent.left( ent.length() - 8 ),
 				            dsk.readEntry( "Name" ),
 				            (dsk.readEntry( "Hidden", false ) ||
@@ -508,14 +508,14 @@ KGreeter::pluginSetup()
 	QString ent, pn( verify->pluginName() ), dn( dName + '_' + pn );
 
 	if (_preselUser != PRESEL_PREV)
-		stsFile->deleteEntry( verify->entitiesLocal() ? dName : dn, false );
+		stsGroup->deleteEntry( verify->entitiesLocal() ? dName : dn, false );
 	if (_preselUser != PRESEL_NONE && verify->entityPresettable()) {
 		if (verify->entitiesLocal())
 			ent = _preselUser == PRESEL_PREV ?
-				stsFile->readEntry( dName, QString() ) : _defaultUser;
+				stsGroup->readEntry( dName, QString() ) : _defaultUser;
 		else
 			ent = _preselUser == PRESEL_PREV ?
-				stsFile->readEntry( dn, QString() ) :
+				stsGroup->readEntry( dn, QString() ) :
 				verify->getConf( 0, (pn + ".DefaultEntity").toLatin1(), QVariant() ).toString();
 		field = verify->entitiesFielded() ?
 			verify->getConf( 0, (pn + ".FocusField").toLatin1(), QVariant( 0 ) ).toInt() :
@@ -544,7 +544,7 @@ KGreeter::verifyClear()
 void
 KGreeter::verifyOk()
 {
-	if (_preselUser == PRESEL_PREV && verify->entityPresettable()) stsFile->writeEntry( verify->entitiesLocal() ?
+	if (_preselUser == PRESEL_PREV && verify->entityPresettable()) stsGroup->writeEntry( verify->entitiesLocal() ?
 		                       dName :
 		                       dName + '_' + verify->pluginName(),
 		                     verify->getEntity() );
