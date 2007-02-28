@@ -165,10 +165,10 @@ private:
     /**
      * Creates a color DOM element @p name, with a specifier @p object,
      * appends it to @p parent; used when creating themes
-     * @param cfg The KConfig object to work with
+     * @param group The KConfigGroup object to work with
      */
     void createColorElem( const QString & name, const QString & object,
-                          QDomElement parent, KSharedConfigPtr cfg );
+                          QDomElement parent, const KConfigGroup & group );
     /**
      * Creates a list of "event" elements based on:
      * @param events The list of events to work on

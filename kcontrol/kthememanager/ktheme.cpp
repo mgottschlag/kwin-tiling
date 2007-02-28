@@ -187,9 +187,8 @@ QString KTheme::createYourself( bool pack )
     m_root.appendChild( saverElem );
 
     // 3. Icons
-    globalConf->setGroup( "Icons" );
     QDomElement iconElem = m_dom.createElement( "icons" );
-    iconElem.setAttribute( "name", globalConf->readEntry( "Theme",KIconTheme::current() ) );
+    iconElem.setAttribute("name", globalConf->group("Icons").readEntry("Theme",KIconTheme::current()));
     createIconElems( "DesktopIcons", "desktop", iconElem, globalConf );
     createIconElems( "MainToolbarIcons", "mainToolbar", iconElem, globalConf );
     createIconElems( "PanelIcons", "panel", iconElem, globalConf );
@@ -227,32 +226,30 @@ QString KTheme::createYourself( bool pack )
 
     // 5. Colors
     QDomElement colorsElem = m_dom.createElement( "colors" );
-    globalConf->setGroup( "KDE" );
-    colorsElem.setAttribute( "contrast", globalConf->readEntry( "contrast", 7 ) );
+    colorsElem.setAttribute( "contrast", globalConf->group("KDE").readEntry( "contrast", 7 ) );
     QStringList stdColors;
     stdColors << "background" << "selectBackground" << "foreground" << "windowForeground"
               << "windowBackground" << "selectForeground" << "buttonBackground"
               << "buttonForeground" << "linkColor" << "visitedLinkColor" << "alternateBackground";
 
-    globalConf->setGroup( "General" );
+    KConfigGroup generalGroup(globalConf, "General");
     for ( QStringList::Iterator it = stdColors.begin(); it != stdColors.end(); ++it )
-        createColorElem( ( *it ), "global", colorsElem, globalConf );
+        createColorElem( ( *it ), "global", colorsElem, generalGroup );
 
     QStringList kwinColors;
     kwinColors << "activeForeground" << "inactiveBackground" << "inactiveBlend" << "activeBackground"
                << "activeBlend" << "inactiveForeground" << "activeTitleBtnBg" << "inactiveTitleBtnBg"
                << "frame" << "inactiveFrame" << "handle" << "inactiveHandle";
-    globalConf->setGroup( "WM" );
+    KConfigGroup wmGroup(globalConf, "WM");
     for ( QStringList::Iterator it = kwinColors.begin(); it != kwinColors.end(); ++it )
-        createColorElem( ( *it ), "kwin", colorsElem, globalConf );
+        createColorElem( ( *it ), "kwin", colorsElem, wmGroup );
 
     m_root.appendChild( colorsElem );
 
     // 6. Cursors
     KConfig* mouseConf = new KConfig( "kcminputrc" );
-    mouseConf->setGroup( "Mouse" );
     QDomElement cursorsElem = m_dom.createElement( "cursors" );
-    cursorsElem.setAttribute( "name", mouseConf->readEntry( "cursorTheme" ) );
+    cursorsElem.setAttribute( "name", mouseConf->group("Mouse").readEntry( "cursorTheme" ) );
     m_root.appendChild( cursorsElem );
     delete mouseConf;
     // TODO copy the cursor theme?
@@ -324,12 +321,11 @@ QString KTheme::createYourself( bool pack )
     m_root.appendChild( panelElem );
 
     // 10. Widget style
-    globalConf->setGroup( "General" );
     QDomElement widgetsElem = m_dom.createElement( "widgets" );
 #ifdef __GNUC__
 #warning "qt4: FIXME KStyle::defaultStyle();";
 #endif
-    widgetsElem.setAttribute( "name", globalConf->readEntry( "widgetStyle"/*,KStyle::defaultStyle()*/  ) );
+    widgetsElem.setAttribute( "name", globalConf->group("General").readEntry( "widgetStyle"/*,KStyle::defaultStyle()*/  ) );
     m_root.appendChild( widgetsElem );
 
     // 12.
@@ -353,8 +349,7 @@ QString KTheme::createYourself( bool pack )
             value = desktopConf.readEntry( key, QString() );
         }
         else {
-            globalConf->setGroup( group );
-            value = globalConf->readEntry( key, QString() );
+            value = globalConf->group(group).readEntry( key, QString() );
         }
         QDomElement fontElem = m_dom.createElement( key );
         fontElem.setAttribute( "object", group );
@@ -495,8 +490,8 @@ void KTheme::apply()
     QDomElement soundsElem = m_dom.elementsByTagName( "sounds" ).item( 0 ).toElement();
     if ( !soundsElem.isNull() )
     {
-        KConfig soundConf( "knotify.eventsrc" );
-        KConfig kwinSoundConf( "kwin.eventsrc" );
+        KConfigGroup soundGroup(KSharedConfig::openConfig("knotify.eventsrc"), QByteArray(""));
+        KConfigGroup kwinSoundGroup(KSharedConfig::openConfig("kwin.eventsrc"), QByteArray(""));
         QDomNodeList eventList = soundsElem.elementsByTagName( "event" );
         for ( int i = 0; i < eventList.count(); i++ )
         {
@@ -505,20 +500,20 @@ void KTheme::apply()
 
             if ( object == "global" )
             {
-                soundConf.setGroup( eventElem.attribute( "name" ) );
-                soundConf.writeEntry( "soundfile", unprocessFilePath( "sounds", eventElem.attribute( "url" ) ) );
-                soundConf.writeEntry( "presentation", soundConf.readEntry( "presentation" ,0) | 1 );
+                soundGroup.changeGroup(eventElem.attribute("name"));
+                soundGroup.writeEntry( "soundfile", unprocessFilePath( "sounds", eventElem.attribute( "url" ) ) );
+                soundGroup.writeEntry( "presentation", soundGroup.readEntry( "presentation" ,0) | 1 );
             }
             else if ( object == "kwin" )
             {
-                kwinSoundConf.setGroup( eventElem.attribute( "name" ) );
-                kwinSoundConf.writeEntry( "soundfile", unprocessFilePath( "sounds", eventElem.attribute( "url" ) ) );
-                kwinSoundConf.writeEntry( "presentation", soundConf.readEntry( "presentation",0 ) | 1 );
+                kwinSoundGroup.changeGroup(eventElem.attribute("name"));
+                kwinSoundGroup.writeEntry( "soundfile", unprocessFilePath( "sounds", eventElem.attribute( "url" ) ) );
+                kwinSoundGroup.writeEntry( "presentation", soundGroup.readEntry( "presentation",0 ) | 1 );
             }
         }
 
-        soundConf.sync();
-        kwinSoundConf.sync();
+        soundGroup.sync();
+        kwinSoundGroup.sync();
 
         QDBusInterface knotify("org.kde.knotify", "/Notify", "org.kde.KNotify");
         if ( knotify.isValid() )
@@ -533,7 +528,7 @@ void KTheme::apply()
     if ( !colorsElem.isNull() )
     {
         QDomNodeList colorList = colorsElem.childNodes();
-        KSharedConfig::Ptr colorConf = KGlobal::config();
+        KConfigGroup colorGroup(KGlobal::config(), QByteArray(""));
 
         QString sCurrentScheme = KStandardDirs::locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");
         KConfigGroup colorScheme(KSharedConfig::openConfig( sCurrentScheme, KConfig::OnlyLocal), "Color Scheme" );
@@ -543,21 +538,21 @@ void KTheme::apply()
             QDomElement colorElem = colorList.item( i ).toElement();
             QString object = colorElem.attribute( "object" );
             if ( object == "global" )
-                colorConf->setGroup( "General" );
+                colorGroup.changeGroup("General");
             else if ( object == "kwin" )
-                colorConf->setGroup( "WM" );
+                colorGroup.changeGroup("WM");
 
             QString colName = colorElem.tagName();
             QColor curColor = QColor( colorElem.attribute( "rgb" ) );
-            colorConf->writeEntry( colName, curColor, KConfigBase::Persistent|KConfigBase::Global); // kdeglobals
+            colorGroup.writeEntry( colName, curColor, KConfigBase::Persistent|KConfigBase::Global); // kdeglobals
             colorScheme.writeEntry( colName, curColor ); // thememgr.kcsrc
         }
 
-        colorConf->setGroup( "KDE" );
-        colorConf->writeEntry( "colorScheme", "thememgr.kcsrc", KConfigBase::Persistent|KConfigBase::Global);
-        colorConf->writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ), KConfigBase::Persistent|KConfigBase::Global);
+        colorGroup.changeGroup("KDE");
+        colorGroup.writeEntry( "colorScheme", "thememgr.kcsrc", KConfigBase::Persistent|KConfigBase::Global);
+        colorGroup.writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ), KConfigBase::Persistent|KConfigBase::Global);
         colorScheme.writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ) );
-        colorConf->sync();
+        colorGroup.sync();
 
         KGlobalSettings::self()->emitChange( KGlobalSettings::PaletteChanged );
     }
@@ -663,9 +658,9 @@ void KTheme::apply()
     QDomElement fontsElem = m_dom.elementsByTagName( "fonts" ).item( 0 ).toElement();
     if ( !fontsElem.isNull() )
     {
-        KSharedConfig::Ptr fontsConf = KGlobal::config();
-        KConfig * kde1xConf = new KConfig( QDir::homePath() + "/.kderc" );
-        kde1xConf->setGroup( "General" );
+        KConfigGroup fontsGroup(KGlobal::config(), QByteArray(""));
+        KConfigGroup kde1xGroup(KSharedConfig::openConfig(QDir::homePath() + "/.kderc"),
+                                "General");
 
         QDomNodeList fontList = fontsElem.childNodes();
         for ( int i = 0; i < fontList.count(); i++ )
@@ -681,14 +676,14 @@ void KTheme::apply()
                 desktopConf.sync();
             }
             else {
-                fontsConf->setGroup( fontObject );
-                fontsConf->writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
+                fontsGroup.changeGroup(fontObject);
+                fontsGroup.writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
             }
-            kde1xConf->writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
+            kde1xGroup.writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
         }
 
-        fontsConf->sync();
-        kde1xConf->sync();
+        fontsGroup.sync();
+        kde1xGroup.sync();
         KGlobalSettings::self()->emitChange( KGlobalSettings::FontChanged );
     }
 
@@ -737,7 +732,7 @@ QString KTheme::getProperty( QDomElement parent, const QString & tag,
 void KTheme::createIconElems( const QString & group, const QString & object,
                               QDomElement parent, KSharedConfigPtr cfg )
 {
-    cfg->setGroup( group );
+    KConfigGroup cg(cfg, group);
     QStringList elemNames;
     elemNames << "Animated" << "DoublePixels" << "Size"
               << "ActiveColor" << "ActiveColor2" << "ActiveEffect"
@@ -748,29 +743,29 @@ void KTheme::createIconElems( const QString & group, const QString & object,
               << "DisabledSemiTransparent" << "DisabledValue";
     for ( QStringList::ConstIterator it = elemNames.begin(); it != elemNames.end(); ++it ) {
         if ( (*it).contains( "Color" ) )
-            createColorElem( *it, object, parent, cfg );
+            createColorElem( *it, object, parent, cg );
         else
         {
             QDomElement tmpCol = m_dom.createElement( *it );
             tmpCol.setAttribute( "object", object );
 
             if ( (*it).contains( "Value" ) || *it == "Size" )
-                tmpCol.setAttribute( "value", cfg->readEntry( *it, 1 ) );
+                tmpCol.setAttribute( "value", cg.readEntry( *it, 1 ) );
 	    else if ( (*it).contains( "DisabledEffect" ) )
-		tmpCol.setAttribute( "name", cfg->readEntry( *it, QString("togray") ) );
+		tmpCol.setAttribute( "name", cg.readEntry( *it, QString("togray") ) );
             else if ( (*it).contains( "Effect" ) )
-                tmpCol.setAttribute( "name", cfg->readEntry( *it, QString("none") ) );
+                tmpCol.setAttribute( "name", cg.readEntry( *it, QString("none") ) );
             else
-                tmpCol.setAttribute( "value", cfg->readEntry( *it, false ) );
+                tmpCol.setAttribute( "value", cg.readEntry( *it, false ) );
             parent.appendChild( tmpCol );
         }
     }
 }
 
 void KTheme::createColorElem( const QString & name, const QString & object,
-                              QDomElement parent, KSharedConfigPtr cfg )
+                              QDomElement parent, const KConfigGroup & group )
 {
-    QColor color = cfg->readEntry( name,QColor() );
+    QColor color = group.readEntry( name,QColor() );
     if ( color.isValid() )
     {
         QDomElement tmpCol = m_dom.createElement( name );
@@ -785,17 +780,16 @@ void KTheme::createSoundList( const QStringList & events, const QString & object
 {
     for ( QStringList::ConstIterator it = events.begin(); it != events.end(); ++it )
     {
-        QString group = ( *it );
-        if ( cfg->hasGroup( group ) )
+        KConfigGroup group(cfg, *it);
+        if ( group.exists() )
         {
-            cfg->setGroup( group );
-            QString soundURL = cfg->readPathEntry( "soundfile" );
-            int pres = cfg->readEntry( "presentation", 0 );
+            QString soundURL = group.readPathEntry( "soundfile" );
+            int pres = group.readEntry( "presentation", 0 );
             if ( !soundURL.isEmpty() && ( ( pres & 1 ) == 1 ) )
             {
                 QDomElement eventElem = m_dom.createElement( "event" );
                 eventElem.setAttribute( "object", object );
-                eventElem.setAttribute( "name", group );
+                eventElem.setAttribute( "name", group.group() );
                 eventElem.setAttribute( "url", processFilePath( "sounds", soundURL ) );
                 parent.appendChild( eventElem );
             }
