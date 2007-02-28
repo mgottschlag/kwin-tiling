@@ -1,4 +1,4 @@
-#define DEBUG
+//#define DEBUG
 
 const int MAX_ITEMS = 100;
 const int LAST_STATE = 7;

@@ -17,6 +17,11 @@ and then they replace what's at their position. Animations have all frames
 alphablended (if needed) with what's in the splash window but they do not
 replace window contents permanently.
 
+In a theme directory there can be a subdirectory for each screen resolution
+named the same like the resolution (e.g. "1600x1200"). A best match is searched
+for the active screen resolution. It should be usually enough to have just
+one set, e.g. 1600x1200; especially with SCALE OFF.
+
 
 FORMAT:
 
