@@ -660,50 +660,46 @@ void KAccessConfig::configChanged()
 
 void KAccessConfig::load()
 {
-  KConfig *config = new KConfig("kaccessrc");
+  KConfigGroup cg(KSharedConfig::openConfig("kaccessrc"), "Bell");
 
-  config->setGroup("Bell");
+  systemBell->setChecked(cg.readEntry("SystemBell", true));
+  customBell->setChecked(cg.readEntry("ArtsBell", false));
+  soundEdit->setText(cg.readPathEntry("ArtsBellFile"));
 
-  systemBell->setChecked(config->readEntry("SystemBell", true));
-  customBell->setChecked(config->readEntry("ArtsBell", false));
-  soundEdit->setText(config->readPathEntry("ArtsBellFile"));
-
-  visibleBell->setChecked(config->readEntry("VisibleBell", false));
-  invertScreen->setChecked(config->readEntry("VisibleBellInvert", true));
+  visibleBell->setChecked(cg.readEntry("VisibleBell", false));
+  invertScreen->setChecked(cg.readEntry("VisibleBellInvert", true));
   flashScreen->setChecked(!invertScreen->isChecked());
-  colorButton->setColor(config->readEntry("VisibleBellColor", Qt::red));
+  colorButton->setColor(cg.readEntry("VisibleBellColor", Qt::red));
 
-  durationSlider->setValue(config->readEntry("VisibleBellPause", 500));
+  durationSlider->setValue(cg.readEntry("VisibleBellPause", 500));
 
 
-  config->setGroup("Keyboard");
+  cg.changeGroup("Keyboard");
 
-  stickyKeys->setChecked(config->readEntry("StickyKeys", false));
-  stickyKeysLock->setChecked(config->readEntry("StickyKeysLatch", true));
-  stickyKeysAutoOff->setChecked(config->readEntry("StickyKeysAutoOff", false));
-  stickyKeysBeep->setChecked(config->readEntry("StickyKeysBeep", true));
-  toggleKeysBeep->setChecked(config->readEntry("ToggleKeysBeep", false));
-  kNotifyModifiers->setChecked(config->readEntry("kNotifyModifiers", false));
+  stickyKeys->setChecked(cg.readEntry("StickyKeys", false));
+  stickyKeysLock->setChecked(cg.readEntry("StickyKeysLatch", true));
+  stickyKeysAutoOff->setChecked(cg.readEntry("StickyKeysAutoOff", false));
+  stickyKeysBeep->setChecked(cg.readEntry("StickyKeysBeep", true));
+  toggleKeysBeep->setChecked(cg.readEntry("ToggleKeysBeep", false));
+  kNotifyModifiers->setChecked(cg.readEntry("kNotifyModifiers", false));
 
-  slowKeys->setChecked(config->readEntry("SlowKeys", false));
-  slowKeysDelay->setValue(config->readEntry("SlowKeysDelay", 500));
-  slowKeysPressBeep->setChecked(config->readEntry("SlowKeysPressBeep", true));
-  slowKeysAcceptBeep->setChecked(config->readEntry("SlowKeysAcceptBeep", true));
-  slowKeysRejectBeep->setChecked(config->readEntry("SlowKeysRejectBeep", true));
+  slowKeys->setChecked(cg.readEntry("SlowKeys", false));
+  slowKeysDelay->setValue(cg.readEntry("SlowKeysDelay", 500));
+  slowKeysPressBeep->setChecked(cg.readEntry("SlowKeysPressBeep", true));
+  slowKeysAcceptBeep->setChecked(cg.readEntry("SlowKeysAcceptBeep", true));
+  slowKeysRejectBeep->setChecked(cg.readEntry("SlowKeysRejectBeep", true));
 
-  bounceKeys->setChecked(config->readEntry("BounceKeys", false));
-  bounceKeysDelay->setValue(config->readEntry("BounceKeysDelay", 500));
-  bounceKeysRejectBeep->setChecked(config->readEntry("BounceKeysRejectBeep", true));
+  bounceKeys->setChecked(cg.readEntry("BounceKeys", false));
+  bounceKeysDelay->setValue(cg.readEntry("BounceKeysDelay", 500));
+  bounceKeysRejectBeep->setChecked(cg.readEntry("BounceKeysRejectBeep", true));
 
-  gestures->setChecked(config->readEntry("Gestures", true));
-  timeout->setChecked(config->readEntry("AccessXTimeout", false));
-  timeoutDelay->setValue(config->readEntry("AccessXTimeoutDelay", 30));
+  gestures->setChecked(cg.readEntry("Gestures", true));
+  timeout->setChecked(cg.readEntry("AccessXTimeout", false));
+  timeoutDelay->setValue(cg.readEntry("AccessXTimeoutDelay", 30));
 
-  accessxBeep->setChecked(config->readEntry("AccessXBeep", true));
-  gestureConfirmation->setChecked(config->readEntry("GestureConfirmation", false));
-  kNotifyAccessX->setChecked(config->readEntry("kNotifyAccessX", false));
-
-  delete config;
+  accessxBeep->setChecked(cg.readEntry("AccessXBeep", true));
+  gestureConfirmation->setChecked(cg.readEntry("GestureConfirmation", false));
+  kNotifyAccessX->setChecked(cg.readEntry("kNotifyAccessX", false));
 
   checkAccess();
 
@@ -713,51 +709,49 @@ void KAccessConfig::load()
 
 void KAccessConfig::save()
 {
-  KConfig *config= new KConfig("kaccessrc");
+  KConfigGroup cg(KSharedConfig::openConfig("kaccessrc"), "Bell");
 
-  config->setGroup("Bell");
+  cg.writeEntry("SystemBell", systemBell->isChecked());
+  cg.writeEntry("ArtsBell", customBell->isChecked());
+  cg.writePathEntry("ArtsBellFile", soundEdit->text());
 
-  config->writeEntry("SystemBell", systemBell->isChecked());
-  config->writeEntry("ArtsBell", customBell->isChecked());
-  config->writePathEntry("ArtsBellFile", soundEdit->text());
+  cg.writeEntry("VisibleBell", visibleBell->isChecked());
+  cg.writeEntry("VisibleBellInvert", invertScreen->isChecked());
+  cg.writeEntry("VisibleBellColor", colorButton->color());
 
-  config->writeEntry("VisibleBell", visibleBell->isChecked());
-  config->writeEntry("VisibleBellInvert", invertScreen->isChecked());
-  config->writeEntry("VisibleBellColor", colorButton->color());
-
-  config->writeEntry("VisibleBellPause", durationSlider->value());
+  cg.writeEntry("VisibleBellPause", durationSlider->value());
 
 
-  config->setGroup("Keyboard");
+  cg.changeGroup("Keyboard");
 
-  config->writeEntry("StickyKeys", stickyKeys->isChecked());
-  config->writeEntry("StickyKeysLatch", stickyKeysLock->isChecked());
-  config->writeEntry("StickyKeysAutoOff", stickyKeysAutoOff->isChecked());
-  config->writeEntry("StickyKeysBeep", stickyKeysBeep->isChecked());
-  config->writeEntry("ToggleKeysBeep", toggleKeysBeep->isChecked());
-  config->writeEntry("kNotifyModifiers", kNotifyModifiers->isChecked());
+  cg.writeEntry("StickyKeys", stickyKeys->isChecked());
+  cg.writeEntry("StickyKeysLatch", stickyKeysLock->isChecked());
+  cg.writeEntry("StickyKeysAutoOff", stickyKeysAutoOff->isChecked());
+  cg.writeEntry("StickyKeysBeep", stickyKeysBeep->isChecked());
+  cg.writeEntry("ToggleKeysBeep", toggleKeysBeep->isChecked());
+  cg.writeEntry("kNotifyModifiers", kNotifyModifiers->isChecked());
 
-  config->writeEntry("SlowKeys", slowKeys->isChecked());
-  config->writeEntry("SlowKeysDelay", slowKeysDelay->value());
-  config->writeEntry("SlowKeysPressBeep", slowKeysPressBeep->isChecked());
-  config->writeEntry("SlowKeysAcceptBeep", slowKeysAcceptBeep->isChecked());
-  config->writeEntry("SlowKeysRejectBeep", slowKeysRejectBeep->isChecked());
-
-
-  config->writeEntry("BounceKeys", bounceKeys->isChecked());
-  config->writeEntry("BounceKeysDelay", bounceKeysDelay->value());
-  config->writeEntry("BounceKeysRejectBeep", bounceKeysRejectBeep->isChecked());
-
-  config->writeEntry("Gestures", gestures->isChecked());
-  config->writeEntry("AccessXTimeout", timeout->isChecked());
-  config->writeEntry("AccessXTimeoutDelay", timeoutDelay->value());
-
-  config->writeEntry("AccessXBeep", accessxBeep->isChecked());
-  config->writeEntry("GestureConfirmation", gestureConfirmation->isChecked());
-  config->writeEntry("kNotifyAccessX", kNotifyAccessX->isChecked());
+  cg.writeEntry("SlowKeys", slowKeys->isChecked());
+  cg.writeEntry("SlowKeysDelay", slowKeysDelay->value());
+  cg.writeEntry("SlowKeysPressBeep", slowKeysPressBeep->isChecked());
+  cg.writeEntry("SlowKeysAcceptBeep", slowKeysAcceptBeep->isChecked());
+  cg.writeEntry("SlowKeysRejectBeep", slowKeysRejectBeep->isChecked());
 
 
-  config->sync();
+  cg.writeEntry("BounceKeys", bounceKeys->isChecked());
+  cg.writeEntry("BounceKeysDelay", bounceKeysDelay->value());
+  cg.writeEntry("BounceKeysRejectBeep", bounceKeysRejectBeep->isChecked());
+
+  cg.writeEntry("Gestures", gestures->isChecked());
+  cg.writeEntry("AccessXTimeout", timeout->isChecked());
+  cg.writeEntry("AccessXTimeoutDelay", timeoutDelay->value());
+
+  cg.writeEntry("AccessXBeep", accessxBeep->isChecked());
+  cg.writeEntry("GestureConfirmation", gestureConfirmation->isChecked());
+  cg.writeEntry("kNotifyAccessX", kNotifyAccessX->isChecked());
+
+
+  cg.sync();
 
   if (systemBell->isChecked() ||
       customBell->isChecked() ||
@@ -785,8 +779,6 @@ void KAccessConfig::save()
       //DCOPRef kaccess( "kaccess", "qt/kaccess" );
       //kaccess.send( "quit" );
   }
-
-  delete config;
 
   emit changed(false);
 }
