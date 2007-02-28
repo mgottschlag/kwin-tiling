@@ -1185,10 +1185,10 @@ QSize KVirtualBGRenderer::renderSize(int screen)
 
 void KVirtualBGRenderer::initRenderers()
 {
-    m_pConfig->setGroup("Background Common");
-    m_bDrawBackgroundPerScreen = m_pConfig->readEntry( QString("DrawBackgroundPerScreen_%1").arg(m_desk), _defDrawBackgroundPerScreen );
+    KConfigGroup cg(m_pConfig, "Background Common");
+    m_bDrawBackgroundPerScreen = cg.readEntry( QString("DrawBackgroundPerScreen_%1").arg(m_desk), _defDrawBackgroundPerScreen );
 
-    m_bCommonScreen = m_pConfig->readEntry("CommonScreen", _defCommonScreen);
+    m_bCommonScreen = cg.readEntry("CommonScreen", _defCommonScreen);
 
     m_numRenderers = m_bDrawBackgroundPerScreen ? QApplication::desktop()->numScreens() : 1;
 
@@ -1217,8 +1217,7 @@ void KVirtualBGRenderer::load(int desk, bool reparseConfig)
 {
     m_desk = desk;
 
-    m_pConfig->setGroup("Background Common");
-    m_bCommonScreen = m_pConfig->readEntry("CommonScreen", _defCommonScreen);
+    m_bCommonScreen = m_pConfig->group("Background Common").readEntry("CommonScreen", _defCommonScreen);
 
     initRenderers();
 
