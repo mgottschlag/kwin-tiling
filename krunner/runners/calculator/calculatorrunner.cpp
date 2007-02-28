@@ -37,7 +37,6 @@ CalculatorRunner::CalculatorRunner(QObject* parent, const QStringList& args)
     Q_UNUSED(args)
 	
     setObjectName( i18n( "Calculator" ) );
-    kDebug() << "CalculatorRunner initialized" << endl;
 }
 
 CalculatorRunner::~CalculatorRunner()
@@ -47,7 +46,6 @@ CalculatorRunner::~CalculatorRunner()
 
 QAction* CalculatorRunner::accepts(const QString& term)
 {
-    kDebug() << "in CalculatorRunner::accepts" << endl;
     QString cmd = term.stripWhiteSpace();
     QAction *action = 0;
     
