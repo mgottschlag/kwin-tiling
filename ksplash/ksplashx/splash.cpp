@@ -45,14 +45,6 @@ struct AnimData
     int remaining_delay;
     };
 
-struct ImageData
-    {
-    ImageData( int x, int y, const PixmapData& pixmap );
-    ~ImageData();
-    int x, y;
-    PixmapData pixmap;
-    };
-
 AnimData::AnimData( int x, int y, PixmapData* frames, int num_frames, int delay )
     : x( x ), y( y ), frames( frames ), num_frames( num_frames ), current_frame( 0 ), delay( delay ), remaining_delay( delay )
     {
@@ -84,24 +76,10 @@ bool AnimData::updateFrame( int change )
     return ret;
     }
 
-ImageData::ImageData( int x, int y, const PixmapData& pixmap )
-    : x( x ), y( y ), pixmap( pixmap )
-    {
-    }
-    
-ImageData::~ImageData()
-    {
-    if( pixmap.hd != None )
-        XFreePixmap( qt_xdisplay(), pixmap.hd );
-    }
-
-static QColor background;
-static QImage background_image;
-
+static QImage splash_image; // contents of the splash window (needed for alphablending)
+static Pixmap splash_pixmap; // the pixmap with window contents
 static AnimData* animations[ MAX_ITEMS ];
 static int anim_count;
-static ImageData* images[ MAX_ITEMS ];
-static int image_count;
 static Window window = None;
 static QRect geometry;
 static bool scale_on = true;
@@ -263,6 +241,8 @@ static QImage loadImage( const char* file )
     if( f == NULL )
         return QImage();
     QImage img = splash_read_png_image( f );
+    if( img.depth() != 32 )
+        img = img.convertDepth( 32 );
     fclose( f );
     if( img.isNull())
         {
@@ -313,6 +293,8 @@ static QImage loadAnimImage( const char* file, int frames )
         exit( 3 );
         }
     QImage img = splash_read_png_image( f );
+    if( img.depth() != 32 )
+        img = img.convertDepth( 32 );
     fclose( f );
     int framew, frameh;
     if( frames < ANIM_IMAGES_ROW )
@@ -405,27 +387,14 @@ static void doPaint( const QRect& area )
 #endif
     if( window == None )
         return; // delayed
+    // double-buffer
     Pixmap pixmap = XCreatePixmap( qt_xdisplay(), DefaultRootWindow( qt_xdisplay()),
         area.width(), area.height(), x11Depth());
-    XGCValues values;
-    values.foreground = background.pixel();
-    GC gc = XCreateGC( qt_xdisplay(), pixmap, GCForeground, &values );
-    XFillRectangle( qt_xdisplay(), pixmap, gc, 0, 0, area.width(), area.height());
-    XFreeGC( qt_xdisplay(), gc );
-    for( int i = 0;
-         i < MAX_ITEMS;
-         ++i )
-        {
-        if( images[ i ] != NULL
-            && area.intersects( QRect( images[ i ]->x, images[ i ]->y, images[ i ]->pixmap.w, images[ i ]->pixmap.h )))
-            {
-            GC gc = qt_xget_temp_gc( x11Screen(), false );
-            XCopyArea( qt_xdisplay(), images[ i ]->pixmap.hd, pixmap, gc,
-                QMAX( 0, area.x() - images[ i ]->x ), QMAX( 0, area.y() - images[ i ]->y ),
-                area.x() - images[ i ]->x + area.width(), area.y() - images[ i ]->y + area.height(),
-                QMAX( 0, images[ i ]->x - area.x()), QMAX( 0, images[ i ]->y - area.y()));
-            }
-        }
+    GC gc = qt_xget_temp_gc( x11Screen(), false );
+    // copy splash pixmap
+    XCopyArea( qt_xdisplay(), splash_pixmap, pixmap, gc,
+        area.x(), area.y(), area.width(), area.height(), 0, 0 );
+    // add animations
     for( int i = 0;
          i < MAX_ITEMS;
          ++i )
@@ -435,14 +404,12 @@ static void doPaint( const QRect& area )
         if( anim != NULL
             && area.intersects( QRect( anim->x, anim->y, frame->w, frame->h )))
             {
-            GC gc = qt_xget_temp_gc( x11Screen(), false );
             XCopyArea( qt_xdisplay(), frame->hd, pixmap, gc,
                 QMAX( 0, area.x() - anim->x ), QMAX( 0, area.y() - anim->y ),
                 area.x() - anim->x + area.width(), area.y() - anim->y + area.height(),
                 QMAX( 0, anim->x - area.x()), QMAX( 0, anim->y - area.y()));
             }
         }
-    gc = qt_xget_temp_gc( x11Screen(), false );
     XCopyArea( qt_xdisplay(), pixmap, window, gc, 0, 0, area.width(), area.height(), area.x(), area.y());
     XFreePixmap( qt_xdisplay(), pixmap );
     }
@@ -455,13 +422,22 @@ static void createWindow()
 #endif
     XSetWindowAttributes attrs;
     attrs.override_redirect = True;
+    attrs.background_pixmap = None;
 //    attrs.override_redirect = False;
     window = XCreateWindow( qt_xdisplay(), DefaultRootWindow( qt_xdisplay()),
         geometry.x(), geometry.y(), geometry.width(), geometry.height(),
-        0, CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attrs );
+        0, CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect | CWBackPixmap, &attrs );
     XSelectInput( qt_xdisplay(), window, ButtonPressMask | ExposureMask );
-    XSetWindowBackground( qt_xdisplay(), window, background.pixel());
     XMapRaised( qt_xdisplay(), window );
+    }
+
+static void createSplashImage()
+    {
+    assert( splash_image.isNull());
+    assert( splash_pixmap == None );
+    splash_image = QImage( geometry.size(), 32 );
+    splash_pixmap = XCreatePixmap( qt_xdisplay(), DefaultRootWindow( qt_xdisplay()),
+        geometry.width(), geometry.height(), x11Depth());
     }
 
 static bool waitState( int expected_state )
@@ -470,6 +446,11 @@ static bool waitState( int expected_state )
         return false;
     if( window == None )
         createWindow();
+    if( splash_image.isNull())
+        {
+        fprintf( stderr, "No window contents\n" );
+        exit( 3 );
+        }
     time_t test_time = time( NULL ) + 5;
 #ifdef DEBUG
     fprintf( stderr,"AWATING STATE: %d\n", expected_state );
@@ -644,24 +625,13 @@ static void blend( QImage& img, int x_pos, int y_pos, int x_img, int y_img, int 
          y < h_img;
          ++y )
         {
-        if( background_image.isNull())
+        QRgb* s = (( QRgb* )( splash_image.scanLine( y + y_pos ))) + x_pos;
+        QRgb* d = (( QRgb* )( img.scanLine( y + y_img ))) + x_img;
+        for( int x = 0;
+             x < w_img;
+             ++x, ++d, ++s )
             {
-            QRgb* d = (( QRgb* )( img.scanLine( y + y_img ))) + x_img;
-            for( int x = 0;
-                 x < w_img;
-                 ++x, ++d )
-                *d = blend( *d, background.rgb());
-            }
-        else
-            {
-            QRgb* s = (( QRgb* )( background_image.scanLine( y + y_pos ))) + x_pos;
-            QRgb* d = (( QRgb* )( img.scanLine( y + y_img ))) + x_img;
-            for( int x = 0;
-                 x < w_img;
-                 ++x, ++d, ++s )
-                {
-                *d = blend( *d, *s );
-                }
+            *d = blend( *d, *s );
             }
         }
     }
@@ -686,6 +656,27 @@ static void blendAnim( QImage& img, int x_pos, int y_pos, int frames )
     img.setAlphaBuffer( false );
     }
 
+static void updateSplashImage( const QImage& img, int x_pos, int y_pos )
+    {
+    for( int y = 0;
+         y < img.height();
+         ++y )
+        {
+        QRgb* s = (( QRgb* )( img.scanLine( y )));
+        QRgb* d = (( QRgb* )( splash_image.scanLine( y + y_pos ))) + x_pos;
+        for( int x = 0;
+             x < img.width();
+             ++x, ++d, ++s )
+            {
+            *d = *s;
+            }
+        }
+    PixmapData pix = imageToPixmap( img );
+    GC gc = qt_xget_temp_gc( x11Screen(), false );
+    XCopyArea( qt_xdisplay(), pix.hd, splash_pixmap, gc, 0, 0, img.width(), img.height(), x_pos, y_pos );
+    XFreePixmap( qt_xdisplay(), pix.hd );
+    }
+
 void runSplash( const char* them, bool t, int p )
     {
     geometry = screenGeometry();
@@ -694,9 +685,10 @@ void runSplash( const char* them, bool t, int p )
     test = t;
     parent_pipe = p;
     anim_count = 0;
-    image_count = 0;
     state = 0;
     window = None;
+    splash_image = QImage();
+    splash_pixmap = None;
     final_time = time( NULL ) + 60;
     int desc_w, desc_h;
     FILE* datafile = fopen( findFile( "description.txt", &desc_w, &desc_h ), "r" );
@@ -714,11 +706,7 @@ void runSplash( const char* them, bool t, int p )
     for( int i = 0;
          i < MAX_ITEMS;
          ++i )
-        {
         animations[ i ] = NULL;
-        images[ i ] = NULL;
-        }
-    background = Qt::black;
     while( !feof( datafile ))
         {
         char line[ 1024 ];
@@ -728,8 +716,8 @@ void runSplash( const char* them, bool t, int p )
         char buf[ 1024 ];
         int number, x, y, w, h, x_rel, y_rel, frames, delay;
         char screen_ref[ 3 ];
-        char image_ref[ 3 ];
         char window_ref[ 3 ];
+        char image_ref[ 3 ];
         if( line[ 0 ] == '#' || line[ 0 ] == '\0' )
             continue;
         else if( sscanf( line, "SCALE %1023s", buf ) == 1 )
@@ -763,6 +751,13 @@ void runSplash( const char* them, bool t, int p )
                 geometry = r;
                 if( window != None )
                     XMoveResizeWindow( qt_xdisplay(), window, x, y, w, h );
+                if( !splash_image.isNull())
+                    { // destroy and then recreate
+                    splash_image = QImage();
+                    XFreePixmap( qt_xdisplay(), splash_pixmap );
+                    splash_pixmap = None;
+                    }
+                createSplashImage();
                 }
             else
                 {
@@ -787,6 +782,13 @@ void runSplash( const char* them, bool t, int p )
                 geometry = r;
                 if( window != None )
                     XMoveResizeWindow( qt_xdisplay(), window, x, y, w, h );
+                if( !splash_image.isNull())
+                    { // destroy and then recreate
+                    splash_image = QImage();
+                    XFreePixmap( qt_xdisplay(), splash_pixmap );
+                    splash_pixmap = None;
+                    }
+                createSplashImage();
                 }
             else
                 {
@@ -794,65 +796,45 @@ void runSplash( const char* them, bool t, int p )
                 exit( 3 );
                 }
             }
-        else if( sscanf( line, "BACKGROUND_IMAGE %1023s", buf ) == 1 )
-            {
-            QImage img = loadImage( buf );
-            if( !img.isNull())
-                {
-                if( img.size() != geometry.size())
-                    {
-                    fprintf( stderr, "Background image size doesn't match: %s\n", line );
-                    exit( 3 );
-                    }
-                background_image = img;
-                PixmapData pix = imageToPixmap( img );
-                number = 0; // background image is in position 0
-                x = 0;
-                y = 0;
-                delete images[ number ];
-                images[ number ] = new ImageData( x, y, pix );
-                doPaint( QRect( x, y, pix.w, pix.h ));
-                }
-            else
-                {
-                fprintf( stderr, "Bad image: %s\n", line );
-                exit( 3 );
-                }
-            }
         else if( sscanf( line, "BACKGROUND %1023s", buf ) == 1 )
             {
-            background = QColor( buf );
+            QColor background = QColor( buf );
             if( !background.isValid())
                 {
                 fprintf( stderr, "Bad color: %s\n", line );
                 exit( 3 );
                 }
-            if( window != None )
-                {
-                XSetWindowBackground( qt_xdisplay(), window, background.pixel());
-                XClearWindow( qt_xdisplay(), window );
-                }
+            if( splash_image.isNull())
+                createSplashImage();
+            splash_image.fill( background.rgb());
+            XGCValues xgc;
+            xgc.foreground = background.pixel();
+            GC gc = XCreateGC( qt_xdisplay(), splash_pixmap, GCForeground, &xgc );
+            XFillRectangle( qt_xdisplay(), splash_pixmap, gc, 0, 0, geometry.width(), geometry.height());
+            XFreeGC( qt_xdisplay(), gc );
+            doPaint( QRect( 0, 0, geometry.width(), geometry.height()));
             }
-        else if( sscanf( line, "IMAGE %d %d %d %1023s", &number, &x, &y, buf ) == 4 )
+        else if( sscanf( line, "IMAGE %d %d %1023s", &x, &y, buf ) == 3 )
             {
             if( scale_on )
                 {
                 x = round( x / ratiox );
                 y = round( y / ratioy );
                 }
-            if( number <= 0 || number >= MAX_ITEMS )
-                {
-                fprintf( stderr,"Bad number: %s\n", line );
-                exit( 3 );
-                }
+            if( splash_image.isNull())
+                createSplashImage();
             QImage img = loadImage( buf );
             if( !img.isNull())
                 {
+                if( !QRect( 0, 0, geometry.width(), geometry.height())
+                    .contains( QRect( x, y, img.width(), img.height())))
+                    {
+                    fprintf( stderr, "Image outside of geometry: %s\n", line );
+                    exit( 3 );
+                    }
                 blend( img, x, y );
-                PixmapData pix = imageToPixmap( img );
-                delete images[ number ];
-                images[ number ] = new ImageData( x, y, pix );
-                doPaint( QRect( x, y, pix.w, pix.h ));
+                updateSplashImage( img, x, y );
+                doPaint( QRect( x, y, img.width(), img.height()));
                 }
             else
                 {
@@ -860,30 +842,31 @@ void runSplash( const char* them, bool t, int p )
                 exit( 3 );
                 }
             }
-        else if( sscanf( line, "IMAGE_REL %d %2s %d %d %2s %1023s",
-            &number, screen_ref, &x_rel, &y_rel, image_ref, buf ) == 6 )
+        else if( sscanf( line, "IMAGE_REL %2s %d %d %2s %1023s",
+            window_ref, &x_rel, &y_rel, image_ref, buf ) == 5 )
             {
-            if( number <= 0 || number >= MAX_ITEMS )
-                {
-                fprintf( stderr,"Bad number: %s\n", line );
-                exit( 3 );
-                }
-            if( !checkRelative( screen_ref )
-                || !checkRelative( image_ref ))
+            if( !checkRelative( window_ref )
+                || !checkRelative( window_ref ))
                 {
                 fprintf( stderr,"Bad reference point: %s\n", line );
                 exit( 3 );
                 }
+            if( splash_image.isNull())
+                createSplashImage();
             QImage img = loadImage( buf );
             if( !img.isNull())
                 {
-                x = makeAbsoluteX( screen_ref, x_rel, image_ref, img.width());
-                y = makeAbsoluteY( screen_ref, y_rel, image_ref, img.height());
+                x = makeAbsoluteX( window_ref, x_rel, image_ref, img.width());
+                y = makeAbsoluteY( window_ref, y_rel, image_ref, img.height());
+                if( !QRect( 0, 0, geometry.width(), geometry.height())
+                    .contains( QRect( x, y, img.width(), img.height())))
+                    {
+                    fprintf( stderr, "Image outside of geometry: %s\n", line );
+                    exit( 3 );
+                    }
                 blend( img, x, y );
-                PixmapData pix = imageToPixmap( img );
-                delete images[ number ];
-                images[ number ] = new ImageData( x, y, pix );
-                doPaint( QRect( x, y, pix.w, pix.h ));
+                updateSplashImage( img, x, y );
+                doPaint( QRect( x, y, img.width(), img.height()));
                 }
             else
                 {
@@ -908,6 +891,8 @@ void runSplash( const char* them, bool t, int p )
                 fprintf( stderr, "Frames limit reached: %s\n", line );
                 exit( 3 );
                 }
+            if( splash_image.isNull())
+                createSplashImage();
             QImage imgs = loadAnimImage( buf, frames );
             if( !imgs.isNull())
                 {
@@ -918,15 +903,15 @@ void runSplash( const char* them, bool t, int p )
                 }
             }
         else if( sscanf( line, "ANIM_REL %d %2s %d %d %2s %d %1023s %d",
-            &number, screen_ref, &x_rel, &y_rel, image_ref, &frames, buf, &delay ) == 8 )
+            &number, window_ref, &x_rel, &y_rel, image_ref, &frames, buf, &delay ) == 8 )
             {
             if( number <= 0 || number >= MAX_ITEMS )
                 {
                 fprintf( stderr,"Bad number: %s\n", line );
                 exit( 3 );
                 }
-            if( !checkRelative( screen_ref )
-                || !checkRelative( image_ref ))
+            if( !checkRelative( window_ref )
+                || !checkRelative( window_ref ))
                 {
                 fprintf( stderr,"Bad reference point: %s\n", line );
                 exit( 3 );
@@ -936,13 +921,15 @@ void runSplash( const char* them, bool t, int p )
                 fprintf( stderr, "Frames limit reached: %s\n", line );
                 exit( 3 );
                 }
+            if( splash_image.isNull())
+                createSplashImage();
             QImage imgs = loadAnimImage( buf, frames );
             if( !imgs.isNull())
                 {
                 int framew, frameh;
                 frameSize( imgs, frames, framew, frameh );
-                x = makeAbsoluteX( screen_ref, x_rel, image_ref, framew );
-                y = makeAbsoluteY( screen_ref, y_rel, image_ref, frameh );
+                x = makeAbsoluteX( window_ref, x_rel, image_ref, framew );
+                y = makeAbsoluteY( window_ref, y_rel, image_ref, frameh );
                 blendAnim( imgs, x, y, frames );
                 PixmapData* pixs = imageAnimToPixmaps( imgs, frames );
                 delete animations[ number ];
@@ -951,11 +938,13 @@ void runSplash( const char* them, bool t, int p )
             }
         else if( sscanf( line, "STOP_ANIM %d", &number ) == 1 )
             {
-            if( number <= 0 || number >= MAX_ITEMS )
+            if( number <= 0 || number >= MAX_ITEMS || animations[ number ] == NULL )
                 {
                 fprintf( stderr,"Bad number: %s\n", line );
                 exit( 3 );
                 }
+            AnimData* anim = animations[ number ];
+            doPaint( QRect( anim->x, anim->y, anim->frames[ 0 ].w, anim->frames[ 0 ].h ));
             delete animations[ number ];
             animations[ number ] = NULL;
             }
@@ -978,4 +967,7 @@ void runSplash( const char* them, bool t, int p )
     fclose( datafile );
     XDestroyWindow( qt_xdisplay(), window );
     window = None;
+    XFreePixmap( qt_xdisplay(), splash_pixmap );
+    splash_pixmap = None;
+    splash_image = QImage();
     }

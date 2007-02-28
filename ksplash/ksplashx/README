@@ -4,17 +4,18 @@ QApplication. Due to almost no link dependencies and no QApplication
 initialization this splashscreen has a very fast startup.
 
 
-RESTRICTIONS:
-limited transparency support (see below)
-
-
 USAGE:
 ksplashx <theme> [--test]
 
 
-NOTE:
+NOTES:
 Add a comment in description.txt and update it everytime you change anything.
 Caching of the splash is done and the timestamp of description.txt is used.
+
+New images are alphablended (if needed) with what's in the splash window
+and then they replace what's at their position. Animations have all frames
+alphablended (if needed) with what's in the splash window but they do not
+replace window contents permanently.
 
 
 FORMAT:
@@ -42,21 +43,15 @@ GEOMETRY x y w h
 GEOMETRY_REL screen_ref x_rel y_rel window_ref w h
 
 # color to fill the window with (this command also clears the whole window)
-# transparent images will be alphablended with this color
+# not necessary if image(s) will fill the area entirely
 BACKGROUND color
 
-# image to fill the window with (this command also clears the whole window)
-# transparent images will be alphablended with this image
-BACKGROUND_IMAGE name
-
 # place an image called name (no path, include extension) at position x,y 
-# number is the id of the image, specifying new image with the same number discards the old image
-IMAGE number x y name
+IMAGE x y name
 
 # place an image called name (no path, include extension) at relative position
 # see description of GEOMETRY_REL for screen_ref, x_rel, y_rel and image_ref (=window_ref)
-# number is the id of the image, specifying new image with the same number discards the old image
-IMAGE_REL number screen_ref x_rel y_xrel image_ref name
+IMAGE_REL screen_ref x_rel y_xrel image_ref name
 
 # place animation from file 'name' at position x,y, id is 'number'
 # animation is specified in a non-animated file as a sequence of images in rows,
@@ -70,6 +65,7 @@ ANIM number x y frames name delay
 ANIM_REL number screen_ref x_rel y_rel image_ref frames name delay
 
 # stop animation with the given id
+# this also clears the animation from the window
 STOP_ANIM number
 
 # wait until the specified ksplash state (1-7)
