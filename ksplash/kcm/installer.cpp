@@ -113,7 +113,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
 
   mThemesList = new ThemeListBox(this);
   mThemesList->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Expanding );
-  connect(mThemesList, SIGNAL(highlighted(int)), SLOT(slotSetTheme(int)));
+  connect(mThemesList, SIGNAL(currentRowChanged(int)), SLOT(slotSetTheme(int)));
   connect(mThemesList, SIGNAL(filesDropped(const KUrl::List&)), SLOT(slotFilesDropped(const KUrl::List&)));
   leftbox->addWidget(mThemesList);
 
