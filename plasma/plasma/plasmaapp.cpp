@@ -107,6 +107,8 @@ void PlasmaApp::unloadDataEngine(const QString& name)
 
 void PlasmaApp::notifyStartup(bool completed)
 {
+    Q_UNUSED(completed)
+
 /*
     const QString startupID("workspace desktop");
     DCOPClient cl;

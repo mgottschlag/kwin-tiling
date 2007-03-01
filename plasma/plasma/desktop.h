@@ -19,18 +19,17 @@
 #ifndef DESKTOP_H
 #define DESKTOP_H
 
-#include <QWidget>
+#include <QGraphicsView>
 
-class QGraphicsView;
 class QGraphicsScene;
-class Desktop : public QWidget
+class Desktop : public QGraphicsView
 {
     Q_OBJECT
 public:
     Desktop(QWidget *parent = 0);
+    ~Desktop();
 
 private:
-    QGraphicsView *m_graphicsView;
     QGraphicsScene *m_graphicsScene;
 
 };

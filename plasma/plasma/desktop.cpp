@@ -10,17 +10,16 @@
 #include "desktop.moc"
 
 Desktop::Desktop(QWidget *parent)
-    : QWidget(parent)
+    : QGraphicsView(parent)
 {
     int primaryScreen = QApplication::desktop()->primaryScreen();
     QRect desktopSize = QApplication::desktop()->screenGeometry(primaryScreen);
     setGeometry(desktopSize);
 
-    m_graphicsView = new QGraphicsView;
     m_graphicsScene = new QGraphicsScene(desktopSize);
-    m_graphicsView->setScene(m_graphicsScene);
-    m_graphicsView->setRenderHint(QPainter::Antialiasing, false);
-    m_graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+    setScene(m_graphicsScene);
+    setRenderHint(QPainter::Antialiasing, false);
+    setDragMode(QGraphicsView::RubberBandDrag);
 
     // Give it some silly default background
     QPixmap tile(100, 100);
@@ -30,12 +29,7 @@ Desktop::Desktop(QWidget *parent)
     pt.fillRect(0, 0, 50, 50, color);
     pt.fillRect(50, 50, 50, 50, color);
     pt.end();
-    m_graphicsView->setBackgroundBrush(tile);
-
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    layout->addWidget(m_graphicsView);
+    setBackgroundBrush(tile);
 
     // Make us legit via KWin
     KWin::setType( winId(), NET::Desktop );
@@ -43,5 +37,8 @@ Desktop::Desktop(QWidget *parent)
     KWin::setOnAllDesktops( winId(), true );
 }
 
+Desktop::~Desktop()
+{
+}
 
 
