@@ -59,6 +59,7 @@ protected:
 private:
   bool mGui;
   ThemeListBox *mThemesList;
+  QString mEngineOfSelected;
   QPushButton *mBtnAdd, *mBtnRemove, *mBtnTest;
   Q3TextEdit *mText;
   QLabel *mPreview;

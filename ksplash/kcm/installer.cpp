@@ -289,6 +289,8 @@ void SplashInstaller::save()
     path = mThemesList->text2path[path];
   cur = path.lastIndexOf('/');
   cnf.writeEntry("Theme", path.mid(cur+1) );
+  // save also the engine, so that it's known at KDE startup which splash implementation to use
+  cnf.writeEntry("Engine", mEngineOfSelected );
   cnf.sync();
   emit changed( false );
 }
@@ -382,16 +384,17 @@ void SplashInstaller::slotSetTheme(int id)
           infoTxt += i18n( "<b>Homepage:</b> %1<br>", cnf.readEntry( "Homepage", i18n( "Unknown" ) ) );
         infoTxt += "</qt>";
 
-        QString pluginName( cnf.readEntry( "Engine", "" ) );
+        QString pluginName( cnf.readEntry( "Engine", "KSplashX" ) );
         if( pluginName == "Simple" || pluginName == "None" || pluginName == "KSplashX" )
             enabled = true; // these are not plugins
-        if ((KServiceTypeTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
+        else if ((KServiceTypeTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
         {
           enabled = false;
           error = i18n("This theme requires the plugin %1 which is not installed.", pluginName);
         }
         else
           enabled = true; // Hooray, there is at least one plugin which can handle this theme.
+        mEngineOfSelected = pluginName;
       }
       else
       {
@@ -476,9 +479,9 @@ void SplashInstaller::slotTest()
     themeName = themeName.mid(r+1);
 
   // special handling for none and simple splashscreens
-  if( themeName == "None" )
+  if( mEngineOfSelected == "None" )
     return;
-  if( themeName == "Simple" )
+  else if( mEngineOfSelected == "Simple" )
   {
     KProcess proc;
     proc << "ksplashsimple" << "--test";
@@ -486,10 +489,21 @@ void SplashInstaller::slotTest()
       KMessageBox::error(this,i18n("Unable to start ksplashsimple."));
     return;
   }
-  KProcess proc;
-  proc << "ksplash" << "--test" << "--theme" << themeName;
-  if (!proc.start(KProcess::Block))
-    KMessageBox::error(this,i18n("Unable to start ksplash."));
+  else if( mEngineOfSelected == "KSplashX" )
+  {
+    KProcess proc;
+    proc << "ksplashx" << themeName << "--test";
+    if (!proc.start(KProcess::Block))
+      KMessageBox::error(this,i18n("Unable to start ksplashx."));
+    return;
+  }
+  else // KSplashML engines
+  {
+    KProcess proc;
+    proc << "ksplash" << "--test" << "--theme" << themeName;
+    if (!proc.start(KProcess::Block))
+      KMessageBox::error(this,i18n("Unable to start ksplash."));
+  }
 }
 
 //-----------------------------------------------------------------------------
