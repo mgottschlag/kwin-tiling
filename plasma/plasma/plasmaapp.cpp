@@ -62,7 +62,9 @@ PlasmaApp::PlasmaApp()
 
     m_interface = this;
     m_engineManager = new DataEngineManager;
+
     m_desktop = new Desktop;
+    m_desktop->show();
 
     notifyStartup(true);
 }
