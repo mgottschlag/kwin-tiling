@@ -9,7 +9,7 @@
 
 int main( int argc, char* argv[] )
     {
-    if( argc != 9 )
+    if( argc != 10 )
         return 1;
     QString theme = argv[ 1 ];
     QString file = argv[ 2 ];
@@ -19,8 +19,10 @@ int main( int argc, char* argv[] )
     int res_w = atoi( argv[ 6 ] );
     int res_h = atoi( argv[ 7 ] );
     time_t timestamp = atol( argv[ 8 ] );
+    bool locolor = strcmp( argv[ 9 ], "locolor" ) == 0;
     KComponentData k( "ksplashx_scale" );
-    QString outfile = QString( "ksplashx/%1-%2x%3-%4" ).arg( theme ).arg( res_w ).arg( res_h ).arg( file );
+    QString outfile = QString( "ksplashx/%1-%2x%3%4-%5" ).arg( theme ).arg( res_w ).arg( res_h )
+        .arg( locolor ? "-locolor" : "" ).arg( file );
     outfile = KStandardDirs::locateLocal( "cache", outfile );
     QImage img( real_file );
     if( img.isNull())

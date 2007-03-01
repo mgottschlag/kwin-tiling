@@ -22,6 +22,9 @@ named the same like the resolution (e.g. "1600x1200"). A best match is searched
 for the active screen resolution. It should be usually enough to have just
 one set, e.g. 1600x1200; especially with SCALE OFF.
 
+Low color screen depths are supported, with bpp <= 8 a directory called with
+"-locolor" (e.g. "1600x1200-locolor") appended is always searched first.
+
 
 FORMAT:
 

@@ -93,7 +93,7 @@ static int state;
 static time_t timestamp; // timestamp of the description.txt file, used for caching
 
 // returns a pointer to a static !
-static const char* findFileHelper( const char* name, int* w, int* h, bool lame )
+static const char* findFileHelper( const char* name, int* w, int* h, bool locolor, bool lame )
     {
     static char tmp[ 1024 ];
     char best[ 1024 ];
@@ -105,14 +105,16 @@ static const char* findFileHelper( const char* name, int* w, int* h, bool lame )
         while( dirent* file = readdir( dir ))
             {
             int w, h;
-            if( sscanf( file->d_name, "%dx%d", &w, &h ) == 2 )
+            if( locolor
+                ? sscanf( file->d_name, "%dx%d-locolor", &w, &h ) == 2
+                : sscanf( file->d_name, "%dx%d", &w, &h ) == 2 )
                 {
                 if( w > best_w
                     // only derive from themes with the same ratio if lame resolutions are not allowed, damn 1280x1024
                     && ( lame || w * screenGeometry().height() == h * screenGeometry().width())
                     )
                     {
-                    snprintf( tmp, 1024, "%s/%dx%d/%s", theme_dir, w, h, name );
+                    snprintf( tmp, 1024, "%s/%dx%d%s/%s", theme_dir, w, h, locolor ? "-locolor" : "", name );
 #ifdef DEBUG
                     fprintf( stderr, "FINDFILE3: %s %s\n", name, tmp );
 #endif
@@ -140,10 +142,11 @@ static const char* findFileHelper( const char* name, int* w, int* h, bool lame )
     }
 
 // returns a pointer to a static !
-static const char* findFile( const char* name, int* w = NULL, int* h = NULL )
+static const char* findFileWithDepth( const char* name, int* w, int* h, bool locolor )
     {
     static char tmp[ 1024 ];
-    snprintf( tmp, 1024, "%s/%dx%d/%s", theme_dir, screenGeometry().width(), screenGeometry().height(), name );
+    snprintf( tmp, 1024, "%s/%dx%d%s/%s", theme_dir, screenGeometry().width(), screenGeometry().height(),
+        locolor ? "-locolor" : "", name );
 #ifdef DEBUG
     fprintf( stderr, "FINDFILE1: %s %s\n", name, tmp );
 #endif
@@ -161,8 +164,8 @@ static const char* findFile( const char* name, int* w = NULL, int* h = NULL )
         else
             gethostname( hostname, 1023 );
         hostname[ 1023 ] = '\0';
-        snprintf( tmp, 1024, "%s/cache-%s/ksplashx/%s-%dx%d-%s", kdehome, hostname, theme_name,
-            screenGeometry().width(), screenGeometry().height(), name );
+        snprintf( tmp, 1024, "%s/cache-%s/ksplashx/%s-%dx%d%s-%s", kdehome, hostname, theme_name,
+            screenGeometry().width(), screenGeometry().height(), locolor ? "-locolor" : "", name );
 #ifdef DEBUG
         fprintf( stderr, "FINDFILE2: %s %s\n", name, tmp );
 #endif
@@ -185,21 +188,39 @@ static const char* findFile( const char* name, int* w = NULL, int* h = NULL )
         }
     if( w == NULL || h == NULL ) // no scaling possible
         return "";
-    const char* ret = findFileHelper( name, w, h, false );
+    const char* ret = findFileHelper( name, w, h, locolor, false );
     if( ret == NULL || *ret == '\0' )
-        ret = findFileHelper( name, w, h, true );
+        ret = findFileHelper( name, w, h, locolor, true );
     return ret;
+    }
+
+// returns a pointer to a static !
+static const char* findFile( const char* name, int* w = NULL, int* h = NULL, bool* locolor = NULL )
+    {
+    if( x11Depth() <= 8 )
+        {
+        if( const char* ret = findFileWithDepth( name, w, h, true )) // try locolor
+            {
+            if( locolor != NULL )
+                *locolor = true;
+            return ret;
+            }
+        }
+    if( locolor != NULL )
+        *locolor = false;
+    return findFileWithDepth( name, w, h, false ); // no locolor
     }
 
 // If a properly sized image doesn't exist save it in the cache location
 // for the next use, because that means no scaling and a smaller png image
 // to load.
-static void pregeneratePixmap( const char* file, const char* real_file, int width, int height )
+static void pregeneratePixmap( const char* file, const char* real_file, int width, int height, bool locolor )
     {
 #ifdef DEBUG
     static char cmd[ 1024 ];
-    snprintf( cmd, 1024, "ksplashx_scale \"%s\" \"%s\" \"%s\" %d %d %d %d %ld", theme_name,
-        file, real_file, width, height, screenGeometry().width(), screenGeometry().height(), timestamp );
+    snprintf( cmd, 1024, "ksplashx_scale \"%s\" \"%s\" \"%s\" %d %d %d %d %ld %s", theme_name,
+        file, real_file, width, height, screenGeometry().width(), screenGeometry().height(), timestamp,
+        locolor ? "locolor" : "no-locolor" );
     fprintf( stderr, "PREGENERATE PIXMAP CMD:%s\n", cmd );
 #endif
     char w[ 20 ], h[ 20 ], sw[ 20 ], sh[ 20 ], t[ 40 ];
@@ -217,7 +238,7 @@ static void pregeneratePixmap( const char* file, const char* real_file, int widt
             close( f );
         nice( 10 );
         sleep( 30 );
-        char* args[ 10 ];
+        char* args[ 20 ];
         args[ 0 ] = "ksplashx_scale";
         args[ 1 ] = theme_name;
         args[ 2 ] = ( char* ) file;
@@ -227,7 +248,8 @@ static void pregeneratePixmap( const char* file, const char* real_file, int widt
         args[ 6 ] = sw;
         args[ 7 ] = sh;
         args[ 8 ] = t;
-        args[ 9 ] = NULL;
+        args[ 9 ] = ( char* )( locolor ? "locolor" : "no-locolor" );
+        args[ 10 ] = NULL;
         execvp( args[ 0 ], args );
         _exit( 0 );
         }
@@ -236,7 +258,8 @@ static void pregeneratePixmap( const char* file, const char* real_file, int widt
 static QImage loadImage( const char* file )
     {
     int w, h;
-    const char* real_file = findFile( file, &w, &h ); // points to a static !
+    bool locolor;
+    const char* real_file = findFile( file, &w, &h, &locolor ); // points to a static !
     FILE* f = fopen( real_file, "r" );
     if( f == NULL )
         return QImage();
@@ -263,7 +286,7 @@ static QImage loadImage( const char* file )
 #endif
         img = scale( img, round( img.width() / ratiox ), round( img.height() / ratioy ));
         if( ratiox * ratioy > 1 ) // only downscale
-            pregeneratePixmap( file, real_file, img.width(), img.height());
+            pregeneratePixmap( file, real_file, img.width(), img.height(), locolor );
         }
     return img;
     }
@@ -285,7 +308,8 @@ static void frameSize( const QImage& img, int frames, int& framew, int& frameh )
 static QImage loadAnimImage( const char* file, int frames )
     {
     int w, h;
-    const char* real_file = findFile( file, &w, &h ); // points to a static !
+    bool locolor;
+    const char* real_file = findFile( file, &w, &h, &locolor ); // points to a static !
     FILE* f = fopen( real_file, "r" );
     if( f == NULL )
         {
@@ -349,7 +373,7 @@ static QImage loadAnimImage( const char* file, int frames )
         frameh = framehnew;
         img = imgnew;
         if( ratiox * ratioy > 1 ) // only downscale
-            pregeneratePixmap( file, real_file, img.width(), img.height());
+            pregeneratePixmap( file, real_file, img.width(), img.height(), locolor );
         }
     return img;
     }
