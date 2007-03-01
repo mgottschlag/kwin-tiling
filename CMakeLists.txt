@@ -19,7 +19,7 @@ include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_CURR
 # libs
 add_subdirectory( lib )
 add_subdirectory( kdmlib )
-add_subdirectory( plasma/lib )
+
 
 # core apps
 add_subdirectory( kcheckpass )
@@ -33,6 +33,8 @@ add_subdirectory( klipper )
 add_subdirectory( kmenuedit )
 add_subdirectory( kwin )
 add_subdirectory( plasma )
+
+
 add_subdirectory( khotkeys )
 
 # apps we need to figure out what to do with
