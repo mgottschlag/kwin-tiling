@@ -17,7 +17,7 @@
 
 */
 
-#include <NetworkManager.h>
+#include <NetworkManager/NetworkManager.h>
 
 #include <QtDBus>
 

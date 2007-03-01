@@ -1,6 +1,7 @@
-add_subdirectory(tests)
+find_package(NetworkManager REQUIRED)
+include_directories(${NETWORKMANAGER_DEFINITIONS})
 
-include_directories(/usr/include/NetworkManager)
+add_subdirectory(tests)
 
 set(solid_networkmanager_PART_SRCS
 	NetworkManager-network.cpp

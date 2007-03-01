@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+ServiceTypes=SolidNetworkManager
+X-KDE-Library=solid_networkmanager
+InitialPreference=100
+Name=NetworkManager
+Comment=Network management using the NetworkManager daemon
+
