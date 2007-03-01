@@ -12,6 +12,8 @@
 Desktop::Desktop(QWidget *parent)
     : QGraphicsView(parent)
 {
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Desktop);
+
     int primaryScreen = QApplication::desktop()->primaryScreen();
     QRect desktopSize = QApplication::desktop()->screenGeometry(primaryScreen);
     setGeometry(desktopSize);
@@ -22,6 +24,9 @@ Desktop::Desktop(QWidget *parent)
     setDragMode(QGraphicsView::RubberBandDrag);
     setCacheMode(QGraphicsView::CacheBackground);
     setInteractive(true);
+
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // Give it some silly default background
     QPixmap tile(100, 100);
