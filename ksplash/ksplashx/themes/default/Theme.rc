@@ -8,7 +8,7 @@ Author = Danny Allen <danny@dannyallen.co.uk>
 Homepage = http://www.kde-edu.org
 
 # Theme behaviour settings.
-Engine = Default
+Engine = KSplashX
 
 # Should icons blink ala KDE, or not?
 Icons Flashing = true
