@@ -4,7 +4,7 @@
 # Just run in the theme's directory with theme name as argument and it'll create a new subdirectory "theme".
 # Note that the positions in the icon bar may be a bit off, as KSplashML itself has them off;
 # if it doesn't work for you, fiddle with the positions below (two places, also the description.txt file)
-# You should also afterwards check Theme.rc (only Engine= descriptive fields like Name= should matter)
+# You should also afterwards check Theme.rc (only Engine= and descriptive fields like Name= should matter)
 
 # the -depth 8 is there to produce smaller png's (it doesn't seem to affect anything else *shrug*)
 
@@ -42,7 +42,10 @@ done
 cp Preview.png "$theme"/Preview.png
 
 # Theme.rc file
-cat Theme.rc | sed 's/Engine = Default/Engine = KSplashX/'> "$theme"/Theme.rc
+cat Theme.rc \
+    | sed 's/Engine = Default/Engine = KSplashX/' \
+    | sed "s/\[KSplash Theme: .*\]/\[KSplash Theme: $theme\]/" \
+    > "$theme"/Theme.rc
 
 # CMakeLists.txt
 
