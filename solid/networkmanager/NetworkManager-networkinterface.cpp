@@ -94,7 +94,9 @@ public:
     int signalStrength;
     int designSpeed;
     QMap<QString,NMNetwork *> networks;
+    QPair<QString, NMDBusNetworkProperties> cachedNetworkProps;
     Solid::NetworkInterface::Capabilities capabilities;
+    QString activeNetPath;
 };
 
 NMNetworkInterface::NMNetworkInterface( const QString & objectPath )
@@ -112,7 +114,17 @@ NMNetworkInterface::NMNetworkInterface( const QString & objectPath )
         d->networks.insert( netPath, 0 );
 
     if ( d->type == Solid::NetworkInterface::Ieee8023 )
-        setNetwork( net );
+    {
+        QString fakeNetPath = objectPath + "/networks/ethernet";
+        d->networks.insert( fakeNetPath, 0 );
+        d->cachedNetworkProps.first = fakeNetPath;
+        d->cachedNetworkProps.second = net;
+    }
+    else if ( d->type == Solid::NetworkInterface::Ieee80211 )
+    {
+        d->cachedNetworkProps.first = dev.activeNetPath;
+        d->cachedNetworkProps.second = net;
+    }
 }
 
 NMNetworkInterface::~NMNetworkInterface()
@@ -168,14 +180,19 @@ QObject * NMNetworkInterface::createNetwork( const QString & uni )
         net = d->networks[ uni ];
     else
     {
-        // todo create WirelessNetwork if needed instead
         if ( d->type == Solid::NetworkInterface::Ieee8023 )
+        {
             net = new NMNetwork( uni );
+            net->setActivated( true );
+        }
         else if ( d->type == Solid::NetworkInterface::Ieee80211 )
+        {
             net = new NMWirelessNetwork( uni );
+        }
+        if ( d->cachedNetworkProps.first == uni )
+            net->setProperties( d->cachedNetworkProps.second );
         d->networks.insert( uni, net );
     }
-    // maybe look up cached NetworkProperties for this uni here...
     return net;
 }
 
@@ -214,20 +231,21 @@ void NMNetworkInterface::setProperties( const NMDBusDeviceProperties & props )
         d->capabilities |= Solid::NetworkInterface::SupportsCarrierDetect;
     if ( props.capabilities & NM_DEVICE_CAP_WIRELESS_SCAN )
         d->capabilities |= Solid::NetworkInterface::SupportsWirelessScan;
-}
-
-void NMNetworkInterface::setNetwork( const NMDBusNetworkProperties & net )
-{
-    // we are a wired device, create a network instance which describes the IP network to which we are connected
-    QString netPath = d->objectPath + "/networks/ethernet";
-    NMNetwork * network = qobject_cast<NMNetwork*>( createNetwork( netPath ) );
-    network->setProperties( net );
-    network->setActivated( d->active );
+    d->activeNetPath = props.activeNetPath;
 }
 
 void NMNetworkInterface::setSignalStrength( int strength )
 {
     d->signalStrength = strength;
+    // update the network object
+    if ( d->networks.contains( d->activeNetPath ) )
+    {
+        NMWirelessNetwork * net = qobject_cast<NMWirelessNetwork*>( d->networks[ d->activeNetPath ] );
+        if ( net != 0 )
+        {
+            net->setSignalStrength( strength );
+        }
+    }
     emit signalStrengthChanged( strength );
 }
 

@@ -182,19 +182,20 @@ void NMNetworkManager::receivedDeviceRemoved( QDBusObjectPath objpath )
     emit networkInterfaceRemoved( objpath.path() );
 }
 
-void NMNetworkManager::deviceStrengthChanged(QDBusObjectPath devpath, int strength)
+void NMNetworkManager::deviceStrengthChanged(QDBusObjectPath devPath, int strength)
 {
     kDebug() << "NMNetworkManager::deviceStrengthChanged() ("<< strength << ")" << endl;
-    if ( d->interfaces.contains( devpath.path() ) )
-        d->interfaces[ devpath.path() ]->setSignalStrength( strength );
+    NMNetworkInterface * interface = 0;
+    if ( d->interfaces.contains( devPath.path() ) && ( interface = d->interfaces[ devPath.path() ] ) != 0 )
+        d->interfaces[ devPath.path() ]->setSignalStrength( strength );
 }
 
 void NMNetworkManager::networkStrengthChanged(QDBusObjectPath devPath,QDBusObjectPath netPath, int strength )
 {
     kDebug() << "NMNetworkManager::networkStrengthChanged(): " << devPath.path() << ", " << netPath.path() << ", " << strength << endl;
-    if ( d->interfaces.contains( devPath.path() ) )
+    NMNetworkInterface * interface = 0;
+    if ( d->interfaces.contains( devPath.path() ) && ( interface = d->interfaces[ devPath.path() ] ) != 0 )
     {
-        NMNetworkInterface * interface = d->interfaces[ devPath.path() ];
         interface->updateNetworkStrength( netPath, strength );
     }
 }

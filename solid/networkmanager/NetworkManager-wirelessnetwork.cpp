@@ -17,9 +17,102 @@
 
 */
 
+#include <iwlib.h>
+#include <wireless.h>
+
+#include <NetworkManager.h>
+
 #include <kdebug.h>
 
 #include "NetworkManager-wirelessnetwork.h"
+
+void dump( const Solid::WirelessNetwork::Capabilities & cap )
+{
+    kDebug() << "WEP      " << ( cap & Solid::WirelessNetwork::Wep ? "X " : " O" ) << endl;
+    kDebug() << "WPA      " << ( cap & Solid::WirelessNetwork::Wpa ? "X " : " O" ) << endl;
+    kDebug() << "WPA2     " << ( cap & Solid::WirelessNetwork::Wpa2 ? "X " : " O" ) << endl;
+    kDebug() << "PSK      " << ( cap & Solid::WirelessNetwork::Psk ? "X " : " O" ) << endl;
+    kDebug() << "Ieee8021x" << ( cap & Solid::WirelessNetwork::Ieee8021x ? "X " : " O" ) << endl;
+    kDebug() << "Wep40    " << ( cap & Solid::WirelessNetwork::Wep40 ? "X " : " O" ) << endl;
+    kDebug() << "Wep104   " << ( cap & Solid::WirelessNetwork::Wep104 ? "X " : " O" ) << endl;
+    kDebug() << "Wep192   " << ( cap & Solid::WirelessNetwork::Wep192 ? "X " : " O" ) << endl;
+    kDebug() << "Wep256   " << ( cap & Solid::WirelessNetwork::Wep256 ? "X " : " O" ) << endl;
+    kDebug() << "WepOther " << ( cap & Solid::WirelessNetwork::WepOther ? "X " : " O" ) << endl;
+    kDebug() << "TKIP     " << ( cap & Solid::WirelessNetwork::Tkip ? "X " : " O" ) << endl;
+    kDebug() << "CCMP     " << ( cap & Solid::WirelessNetwork::Ccmp ? "X " : " O" ) << endl;
+}
+
+void dump( const NMDBusWirelessNetworkProperties & network )
+{
+    kDebug() << "Object path: " << network.path.path() << "\nESSID: " << network.essid
+        << "\nHardware address: " << network.hwAddr << "\nSignal strength: " << network.strength
+        << "\nFrequency: " << network.frequency << "\nBit rate: " << network.rate
+        << "\nMode: " << network.mode
+        << "\nBroadcast: " << network.broadcast << "\nCapabilities: " << endl;
+    dump( network.capabilities );
+}
+
+Solid::WirelessNetwork::Capabilities getCapabilities( const int nm )
+{
+    Solid::WirelessNetwork::Capabilities caps;
+    if ( nm & NM_802_11_CAP_NONE )
+        caps |= Solid::WirelessNetwork::Unencrypted;
+    if ( nm & NM_802_11_CAP_PROTO_WEP )
+        caps |= Solid::WirelessNetwork::Wep;
+    if ( nm & NM_802_11_CAP_PROTO_WPA )
+        caps |= Solid::WirelessNetwork::Wpa;
+    if ( nm & NM_802_11_CAP_PROTO_WPA2 )
+        caps |= Solid::WirelessNetwork::Wpa2;
+    if ( nm & NM_802_11_CAP_KEY_MGMT_PSK )
+        caps |= Solid::WirelessNetwork::Psk;
+    if ( nm & NM_802_11_CAP_KEY_MGMT_802_1X )
+        caps |= Solid::WirelessNetwork::Ieee8021x;
+    if ( nm & NM_802_11_CAP_CIPHER_WEP40 )
+        caps |= Solid::WirelessNetwork::Wep40;
+    if ( nm & NM_802_11_CAP_CIPHER_WEP104 )
+        caps |= Solid::WirelessNetwork::Wep104;
+    if ( nm & NM_802_11_CAP_CIPHER_TKIP )
+        caps |= Solid::WirelessNetwork::Tkip;
+    if ( nm & NM_802_11_CAP_CIPHER_CCMP )
+        caps |= Solid::WirelessNetwork::Ccmp;
+    return caps;
+}
+
+Solid::WirelessNetwork::OperationMode getOperationMode( const int nm )
+{
+    Solid::WirelessNetwork::OperationMode mode = Solid::WirelessNetwork::Unassociated;
+    switch ( nm )
+    {
+        case IW_MODE_ADHOC:
+            mode = Solid::WirelessNetwork::Adhoc;
+            break;
+        case IW_MODE_INFRA:
+        case IW_MODE_MASTER:
+            mode = Solid::WirelessNetwork::Managed;
+            break;
+        case IW_MODE_REPEAT:
+            mode = Solid::WirelessNetwork::Repeater;
+            break;
+    }
+    return mode;
+}
+
+void deserialize( const QDBusMessage & message, NMDBusWirelessNetworkProperties & network )
+{
+    kDebug() << "signature: " << message.signature() << endl;
+    QList<QVariant> args = message.arguments();
+    network.path.setPath( args.takeFirst().toString() );
+    network.essid = args.takeFirst().toString();
+    network.hwAddr = args.takeFirst().toString();
+    network.strength = args.takeFirst().toInt();
+    network.frequency = args.takeFirst().toDouble();
+    network.rate = args.takeFirst().toInt();
+    network.mode = getOperationMode( args.takeFirst().toInt() );
+    network.capabilities = getCapabilities( args.takeFirst().toInt() );
+    network.broadcast = args.takeFirst().toBool();
+}
+
+
 
 typedef void Encryption;
 
@@ -49,7 +142,9 @@ NMWirelessNetwork::NMWirelessNetwork( const QString & networkPath )
 {
     kDebug() << "NMWirelessNetwork::NMWirelessNetwork() - " << networkPath << endl;
     QDBusMessage reply = d->iface.call( "getProperties" );
-    kDebug() << reply.arguments() << endl;
+    NMDBusWirelessNetworkProperties wlan;
+    deserialize( reply, wlan );
+    dump( wlan );
 }
 
 NMWirelessNetwork::~NMWirelessNetwork()
@@ -57,12 +152,24 @@ NMWirelessNetwork::~NMWirelessNetwork()
     delete d;
 }
 
+void NMWirelessNetwork::setProperties( const NMDBusWirelessNetworkProperties & props )
+{
+    d->essid = props.essid;
+    d->hwAddr.append( props.hwAddr );
+    d->strength = props.strength;
+    d->frequency = props.frequency;
+    d->rate = props.rate;
+    d->mode = props.mode;
+    d->capabilities = props.capabilities;
+    d->broadcast = props.broadcast;
+}
+
 int NMWirelessNetwork::signalStrength() const
 {
     return d->strength;
 }
 
-int NMWirelessNetwork::bitRate() const
+int NMWirelessNetwork::bitrate() const
 {
     return d->rate;
 }
@@ -117,6 +224,18 @@ Authentication * NMWirelessNetwork::authentication() const
 void NMWirelessNetwork::setAuthentication( Authentication * auth )
 {
     d->authentication = auth;
+}
+
+void NMWirelessNetwork::setSignalStrength( int strength )
+{
+    d->strength = strength;
+    emit signalStrengthChanged( strength );
+}
+
+void NMWirelessNetwork::setBitrate( int rate )
+{
+    d->rate = rate;
+    emit bitrateChanged( rate );
 }
 
 #include "NetworkManager-wirelessnetwork.moc"

@@ -42,9 +42,11 @@ int main( int argc, char** argv )
 		kDebug() << "network list was empty.. fix me!" << endl;
         networks.append( "/org/freedesktop/NetworkManager/Devices/eth1/Networks/banjaxed" ); 
 	}
-    QString netPath = networks.first();
-    kDebug() << "Creating network: " << netPath << endl;
-    NMNetwork * network = qobject_cast<NMNetwork*>( wifiIface->createNetwork( netPath ) );
+	foreach ( QString netPath, networks )
+	{
+		kDebug() << "Creating network: " << netPath << endl;
+		NMNetwork * network = qobject_cast<NMNetwork*>( wifiIface->createNetwork( netPath ) );
+	}
 
     //kDebug() << "Interface: " <<  netIface->uni() << ", " << netIface->signalStrength() << endl;
     //mgr.setWirelessEnabled( true );

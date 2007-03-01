@@ -37,8 +37,8 @@ struct NMDBusWirelessNetworkProperties
     int strength;
     double frequency;
     int rate;
-    int mode;
-    int capabilities;
+    Solid::WirelessNetwork::OperationMode mode;
+    Solid::WirelessNetwork::Capabilities capabilities;
     bool broadcast;
 };
 
@@ -55,7 +55,7 @@ public:
     NMWirelessNetwork( const QString & networkPath );
     virtual ~NMWirelessNetwork();
     int signalStrength() const;
-    int bitRate() const;
+    int bitrate() const;
     double frequency() const;
     Solid::WirelessNetwork::Capabilities capabilities() const;
     QString essid() const;
@@ -66,11 +66,15 @@ public:
     MacAddressList bssList() const;
     Authentication *authentication() const;
     void setAuthentication( Authentication *authentication );
+    void setSignalStrength( int strength );
+    void setBitrate( int rate );
 Q_SIGNALS:
     void signalStrengthChanged( int strength );
     void bitrateChanged( int bitrate );
     void associationChanged( bool associated ); // move to Device?
     void authenticationNeeded();
+protected:
+    void setProperties( const NMDBusWirelessNetworkProperties & );
 private:
     NMWirelessNetworkPrivate * d;
 };
