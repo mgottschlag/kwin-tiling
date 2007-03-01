@@ -119,7 +119,7 @@ int main( int argc, char* argv[])
 #ifdef DEBUG
                 fprintf( stderr,"MESSAGE: %s\n", s );
 #endif
-                if( strcmp( s, "dcop" ) == 0 && state < 1 )
+                if( strcmp( s, "qdbus" ) == 0 && state < 1 )
                     state = 1; // not actually used, state starts from 1, because dcop cannot be checked
                 else if( strcmp( s, "kded" ) == 0 && state < 2 )
                     state = 2;
