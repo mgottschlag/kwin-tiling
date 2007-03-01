@@ -768,6 +768,13 @@ void runSplash( const char* them, bool t, int p )
         else if( sscanf( line, "GEOMETRY_REL %2s %d %d %2s %d %d",
             screen_ref, &x_rel, &y_rel, window_ref, &w, &h ) == 6 )
             {
+            if( scale_on )
+                {
+                x_rel = round( x_rel / ratiox );
+                y_rel = round( y_rel / ratioy );
+                w = round( w / ratiox );
+                h = round( h / ratioy );
+                }
             if( !checkRelative( screen_ref )
                 || !checkRelative( window_ref ))
                 {
@@ -845,6 +852,11 @@ void runSplash( const char* them, bool t, int p )
         else if( sscanf( line, "IMAGE_REL %2s %d %d %2s %1023s",
             window_ref, &x_rel, &y_rel, image_ref, buf ) == 5 )
             {
+            if( scale_on )
+                {
+                x_rel = round( x_rel / ratiox );
+                y_rel = round( y_rel / ratioy );
+                }
             if( !checkRelative( window_ref )
                 || !checkRelative( window_ref ))
                 {
@@ -905,6 +917,11 @@ void runSplash( const char* them, bool t, int p )
         else if( sscanf( line, "ANIM_REL %d %2s %d %d %2s %d %1023s %d",
             &number, window_ref, &x_rel, &y_rel, image_ref, &frames, buf, &delay ) == 8 )
             {
+            if( scale_on )
+                {
+                x_rel = round( x_rel / ratiox );
+                y_rel = round( y_rel / ratioy );
+                }
             if( number <= 0 || number >= MAX_ITEMS )
                 {
                 fprintf( stderr,"Bad number: %s\n", line );
