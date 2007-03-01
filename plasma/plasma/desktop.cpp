@@ -20,6 +20,8 @@ Desktop::Desktop(QWidget *parent)
     setScene(m_graphicsScene);
     setRenderHint(QPainter::Antialiasing, false);
     setDragMode(QGraphicsView::RubberBandDrag);
+    setCacheMode(QGraphicsView::CacheBackground);
+    setInteractive(true);
 
     // Give it some silly default background
     QPixmap tile(100, 100);
@@ -29,7 +31,7 @@ Desktop::Desktop(QWidget *parent)
     pt.fillRect(0, 0, 50, 50, color);
     pt.fillRect(50, 50, 50, 50, color);
     pt.end();
-    setBackgroundBrush(tile);
+    setBackground(tile);
 
     // Make us legit via KWin
     KWin::setType( winId(), NET::Desktop );
@@ -41,4 +43,15 @@ Desktop::~Desktop()
 {
 }
 
+void Desktop::setBackground(const QString &path)
+{
+    QPixmap image(path);
+    setBackground(image);
+}
+
+void Desktop::setBackground(const QPixmap &image)
+{
+    resetCachedContent();
+    setBackgroundBrush(image);
+}
 

@@ -29,6 +29,10 @@ public:
     Desktop(QWidget *parent = 0);
     ~Desktop();
 
+public Q_SLOTS:
+    void setBackground(const QString &path);
+    void setBackground(const QPixmap &image);
+
 private:
     QGraphicsScene *m_graphicsScene;
 
