@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2006 Aaron Seigo <aseigo@kde.org>
+ *   Copyright (C) 2007 Matt Broadstone <mbroadst@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -23,8 +24,12 @@
 #include <unistd.h>
 
 #include <QTimer>
+#include <QtDBus/QtDBus>
 
-#include <kcrash.h>
+#include <KCrash>
+#include <KCmdLineArgs>
+#include <ksplash_interface.h>
+#include <ksmserver_interface.h>
 
 #include "desktop.h"
 #include "plasmaapp.h"
@@ -36,8 +41,8 @@ PlasmaApp* PlasmaApp::self()
 }
 
 PlasmaApp::PlasmaApp()
-    : KUniqueApplication(),
-      m_engineManager(0)
+    : m_engineManager(0),
+      m_desktop(0)
 {
     notifyStartup(false);
     if (KCrash::crashHandler() == 0 )
@@ -55,10 +60,10 @@ PlasmaApp::PlasmaApp()
         setCrashHandler();
     }
 
-/*
-    dcopClient()->send("ksplash", "", "upAndRunning(QString)",
-                       QString::fromLocal8Bit(KCmdLineArgs::appName()));
-*/
+    // Notify ksplash that we are up and running
+    const QString appName = QString::fromLocal8Bit(KCmdLineArgs::appName());
+    org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
+    ksplash.upAndRunning(appName);
 
     m_interface = this;
     m_engineManager = new DataEngineManager;
@@ -71,11 +76,13 @@ PlasmaApp::PlasmaApp()
 
 PlasmaApp::~PlasmaApp()
 {
+    delete m_desktop;
+    delete m_engineManager;
 }
 
 void PlasmaApp::setCrashHandler()
 {
-//    KCrash::setEmergencySaveFunction(Kicker::crashHandler);
+    KCrash::setEmergencySaveFunction(PlasmaApp::crashHandler);
 }
 
 void PlasmaApp::crashHandler(int signal)
@@ -86,7 +93,7 @@ void PlasmaApp::crashHandler(int signal)
 
 //    DCOPClient::emergencyClose();
     sleep(1);
-    system("plasma --nocrashhandler &"); // try to restart
+    system("plasma-qgv --nocrashhandler &"); // try to restart
 }
 
 bool PlasmaApp::loadDataEngine(const QString& name)
@@ -107,22 +114,11 @@ void PlasmaApp::unloadDataEngine(const QString& name)
 
 void PlasmaApp::notifyStartup(bool completed)
 {
-    Q_UNUSED(completed)
+    org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
 
-/*
     const QString startupID("workspace desktop");
-    DCOPClient cl;
-    cl.attach();
-    DCOPRef r("ksmserver", "ksmserver");
-    r.setDCOPClient(&cl);
-
     if (completed)
-    {
-        r.send("resumeStartup", startupID);
-    }
+        ksmserver.resumeStartup( startupID );
     else
-    {
-        r.send("suspendStartup", startupID);
-    }
-*/
+        ksmserver.suspendStartup( startupID );
 }

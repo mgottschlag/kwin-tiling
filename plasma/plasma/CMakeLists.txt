@@ -7,6 +7,14 @@ set(plasma_SRCS
     plasmaapp.cpp
     )
 
+set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
+QT4_ADD_DBUS_INTERFACE( plasma_SRCS ${ksmserver_xml} ksmserver_interface )
+set(ksplash_xml  ${CMAKE_SOURCE_DIR}/workspace/ksplashml/org.kde.KSplash.xml)
+QT4_ADD_DBUS_INTERFACE( plasma_SRCS ${ksplash_xml} ksplash_interface )
+
+
+
+
 kde4_automoc(${plasma_SRCS})
 
 kde4_add_executable(plasma-qgv ${plasma_SRCS})

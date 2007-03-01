@@ -47,7 +47,7 @@ private slots:
     void setCrashHandler();
 
 private:
-    void crashHandler(int signal);
+    static void crashHandler(int signal);
 
     DataEngineManager *m_engineManager;
     Desktop *m_desktop;
