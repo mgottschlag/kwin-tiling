@@ -20,7 +20,6 @@ DBUS_INTERFACE_DBUS, "NameAcquired" // probably tells us that we got the Network
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "state" returns uint32 state
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE_DEVICES, "getDevices" returns returns NM_DBUS_NO_DEVICES_ERROR or aop objpath i num_devices
 NM_DBUS_SERVICE, net_path, NM_DBUS_INTERFACE_DEVICES, "getProperties" return Network struct, see DeviceStoreDBus::updateNetworkCallback
-NM_DBUS_SERVICE, obj_path, NM_DBUS_INTERFACE_DEVICES, "getProperties" returns Device struct, see DeviceStoreDBus::updateDeviceCallback
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "getWirelessEnabled" returns bool
 ## setters ##
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath // used for wired interfaces
@@ -28,9 +27,25 @@ NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath s 
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setWirelessEnabled" boolean returns ?
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "sleep"
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "wake"
+# Device
+NM_DBUS_SERVICE, obj_path, NM_DBUS_INTERFACE_DEVICES, "getProperties" returns Device struct, see DeviceStoreDBus::updateDeviceCallback
+getName returns s interfacename
+getType returns int32 type
+getHalUdi returns s udi
+getIP4Address returns uint32 ip_address
+getHWAddress returns s hwaddr
+getMode returns int32 mode
+getActiveNetwork returns o net_path, or Error DeviceNotWireless or Error NoActiveNetwork 
+getNetworks returns ao or error NoNetworks or Error DeviceNotWireless
+getLinkActive returns bool
+setLinkActive bool // only usable on fake, test devices, returns NotTestDevice error otherwise
+getCapabilities returns uint capabilities
+getDriver returns s drivername
+
 ## signals ##
 NM_DBUS_INTERFACE, NM_DBUS_SIGNAL_STATE_CHANGE uint32 state
 
+# Device
 DeviceStrengthChanged (o obj_path, int32 strength)
 
 DeviceCarrierOn dev_path
