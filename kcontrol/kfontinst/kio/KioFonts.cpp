@@ -50,7 +50,6 @@
 #include <kprocess.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
-//#include <dcopclient.h>
 #include <kcodecs.h>
 #include <kzip.h>
 #include <kxftconfig.h>
