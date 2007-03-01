@@ -382,7 +382,9 @@ void SplashInstaller::slotSetTheme(int id)
           infoTxt += i18n( "<b>Homepage:</b> %1<br>", cnf.readEntry( "Homepage", i18n( "Unknown" ) ) );
         infoTxt += "</qt>";
 
-        QString pluginName( cnf.readEntry( "Engine", "Default" ) ); // Perhaps no default is better?
+        QString pluginName( cnf.readEntry( "Engine", "" ) );
+        if( pluginName == "Simple" || pluginName == "None" || pluginName == "KSplashX" )
+            enabled = true; // these are not plugins
         if ((KServiceTypeTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
         {
           enabled = false;
