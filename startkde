@@ -354,7 +354,6 @@ echo 'startkde: Shutting down...'  1>&2
 # Clean up
 kdeinit_shutdown
 #dcopserver_shutdown --wait
-#artsshell -q terminate
 
 echo 'startkde: Running shutdown scripts...'  1>&2
 
