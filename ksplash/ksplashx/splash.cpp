@@ -152,7 +152,7 @@ static const char* findFileWithDepth( const char* name, int* w, int* h, bool loc
 #endif
     if( access( tmp, R_OK ) != 0 )
         {
-        // ksplashx/<theme>-<resolution>-<file> in 'kde-config --path cache'
+        // ksplash/<theme>-<resolution>-<file> in 'kde-config --path cache'
         static char kdehome[ 1024 ];
         if( getenv( "KDEHOME" ) && getenv( "KDEHOME" )[ 0 ] )
             snprintf( kdehome, 1024, "%s", getenv( "KDEHOME" ));
@@ -705,7 +705,7 @@ void runSplash( const char* them, bool t, int p )
     {
     geometry = screenGeometry();
     snprintf( theme_name, 1024, "%s", them );
-    snprintf( theme_dir, 1024, "%s/ksplashx/Themes/%s", KDE_DATADIR, them );
+    snprintf( theme_dir, 1024, "%s/ksplash/Themes/%s", KDE_DATADIR, them );
     test = t;
     parent_pipe = p;
     anim_count = 0;
