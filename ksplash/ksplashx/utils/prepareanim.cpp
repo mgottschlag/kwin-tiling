@@ -1,3 +1,5 @@
+// This tool creates png image with animation (see README)
+
 #include <qfile.h>
 #include <qimage.h>
 #include <stdlib.h>

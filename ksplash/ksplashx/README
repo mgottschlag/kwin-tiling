@@ -3,6 +3,9 @@ It includes few sources from Qt which have been modified to work without
 QApplication. Due to almost no link dependencies and no QApplication
 initialization this splashscreen has a very fast startup.
 
+You can Freely distribute this program under the GNU General Public
+License. See the file "COPYING" for the exact licensing terms.
+
 
 USAGE:
 ksplashx <theme> [--test]
