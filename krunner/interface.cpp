@@ -101,11 +101,13 @@ Interface::Interface(QWidget* parent)
     m_headerLabel = new QLabel(this);
     //TODO: create a action so this can be changed by
     //various processes to give the user feedback
-    m_headerLabel->setText(i18n("Krunner - KDE4 Run Command Dialog!"));
-    m_headerLabel->setEnabled(true);
-    layout->addWidget(m_headerLabel);
+    m_headerLabel->setText( i18n( "Enter the name of an application, location or search term below." ) );
+    m_headerLabel->setEnabled( true );
+    m_headerLabel->setWordWrap( true );
+    layout->addWidget( m_headerLabel );
 
     m_searchTerm = new KLineEdit( this );
+    m_searchTerm->clear();
     m_searchTerm->setClickMessage( i18n( "Enter a command or search term here" ) );
     m_searchTerm->setClearButtonShown( true );
     layout->addWidget( m_searchTerm );
@@ -236,6 +238,7 @@ void Interface::search(const QString& t)
     QString term = t.trimmed();
 
     if ( term.isEmpty() ) {
+        m_runButton->setEnabled( false );
         return;
     }
 
