@@ -80,7 +80,9 @@ class Interface : public QWidget
         QListWidget* m_actionsList;
         QWidget* m_matches;
         QLabel* m_optionsLabel;
+        QLabel* m_headerLabel;
         QPushButton* m_cancelButton;
+        QPushButton* m_runButton;
 };
 
 #endif
