@@ -237,7 +237,7 @@ void Interface::matchActivated(QListWidgetItem* item)
 {
     SearchMatch* match = dynamic_cast<SearchMatch*>(item);
 
-    if ( match ) {
+    if ( match && match->actionEnabled() ) {
         match->exec();
         hide();
     }
@@ -336,10 +336,10 @@ void Interface::updateMatches()
 
 void Interface::exec()
 {
-    SearchMatch* item = dynamic_cast<SearchMatch*>( m_actionsList->currentItem() );
+    SearchMatch* match = dynamic_cast<SearchMatch*>( m_actionsList->currentItem() );
 
-    if ( item ) {
-        matchActivated( item );
+    if ( match && match->actionEnabled() ) {
+        matchActivated( match );
     } else if ( m_defaultMatch ) {
         matchActivated( m_defaultMatch );
     }
