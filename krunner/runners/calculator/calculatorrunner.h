@@ -29,21 +29,19 @@ class QAction;
 /**
  * This class evaluates the basic expressions given in the interface.
  */
-class CalculatorRunner : public Runner
+class CalculatorRunner : public Plasma::Runner
 {
     Q_OBJECT
 
-    typedef QList<Runner*> List;
-
     public:
-        explicit CalculatorRunner(QObject* parent, const QStringList& args);
+        CalculatorRunner( QObject* parent, const QStringList& args );
         ~CalculatorRunner();
 
-        QAction* accepts(const QString& term);
-        bool exec(const QString& term);
+        QAction* accepts( const QString& term );
+        bool exec( const QString& term );
 
     private:
-	QString calculate(const QString& term);
+        QString calculate( const QString& term );
         QWidget* m_options;
 };
 
