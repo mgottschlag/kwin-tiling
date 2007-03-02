@@ -27,13 +27,14 @@
 #include <QHBoxLayout>
 #include <QShortcut>
 #include <QTimer>
-#include <QPushButton>
 
 #include <KActionCollection>
 #include <KDebug>
 #include <KDialog>
 #include <KLineEdit>
 #include <KLocale>
+#include <KPushButton>
+#include <KStandardGuiItem>
 #include <KWin>
 
 #include "../plasma/lib/theme.h"
@@ -96,22 +97,22 @@ Interface::Interface(QWidget* parent)
 
     QVBoxLayout* layout = new QVBoxLayout(this);
     QHBoxLayout* bottomLayout = new QHBoxLayout(this);
-    
+
     m_headerLabel = new QLabel(this);
     //TODO: create a action so this can be changed by
     //various processes to give the user feedback
     m_headerLabel->setText(i18n("Krunner - KDE4 Run Command Dialog!"));
     m_headerLabel->setEnabled(true);
     layout->addWidget(m_headerLabel);
-    
+
     m_searchTerm = new KLineEdit( this );
-    m_searchTerm->clear();
+    m_searchTerm->setClickMessage( i18n( "Enter a command or search term here" ) );
     m_searchTerm->setClearButtonShown( true );
-    layout->addWidget(m_searchTerm);
-    connect(m_searchTerm, SIGNAL(textChanged(QString)),
-            this, SLOT(search(QString)));
-    connect(m_searchTerm, SIGNAL(returnPressed()),
-            this, SLOT(exec()));
+    layout->addWidget( m_searchTerm );
+    connect( m_searchTerm, SIGNAL(textChanged(QString)),
+            this, SLOT(search(QString)) );
+    connect( m_searchTerm, SIGNAL(returnPressed()),
+             this, SLOT(exec()) );
 
     m_matches = new QWidget(this);
     layout->addWidget(m_matches);
@@ -122,26 +123,28 @@ Interface::Interface(QWidget* parent)
              SLOT(matchActivated(QListWidgetItem*)));
     layout->addWidget(m_actionsList);
 
-    m_optionsLabel = new QLabel(this);
-    m_optionsLabel->setText(i18n("Options"));
-    m_optionsLabel->setEnabled(false);
-    bottomLayout->addWidget(m_optionsLabel);
-    
-    bottomLayout->addStretch();
-    
-    m_runButton = new QPushButton(i18n("Run"));
-    m_runButton->setFlat(true);
-    m_runButton->setIcon(KIcon("run"));
-    connect(m_runButton, SIGNAL(pressed()), SLOT(exec()));
-    bottomLayout->addWidget(m_runButton);
+    m_optionsLabel = new QLabel( this );
+    m_optionsLabel->setText( i18n( "Options" ) );
+    m_optionsLabel->setEnabled( false );
+    bottomLayout->addWidget( m_optionsLabel );
 
-    m_cancelButton = new QPushButton(i18n("Cancel"));
-    m_cancelButton->setFlat(true);
-    m_cancelButton->setIcon(KIcon("cancel"));
-    connect(m_cancelButton, SIGNAL(pressed()), SLOT(hide()));
-    bottomLayout->addWidget(m_cancelButton);
-    
-    layout->addLayout(bottomLayout);
+    bottomLayout->addStretch();
+
+    QString runButtonWhatsThis = i18n( "Click to execute the selected item above" );
+    m_runButton = new KPushButton( KGuiItem( i18n( "Run" ), "run",
+                                             QString(), runButtonWhatsThis ),
+                                   this );
+    m_runButton->setFlat( true );
+    m_runButton->setEnabled( false );
+    connect( m_runButton, SIGNAL(clicked(bool)), SLOT(exec()) );
+    bottomLayout->addWidget( m_runButton );
+
+    m_cancelButton = new KPushButton( KStandardGuiItem::cancel(), this );
+    m_cancelButton->setFlat( true );
+    connect( m_cancelButton, SIGNAL(clicked(bool)), SLOT(hide()) );
+    bottomLayout->addWidget( m_cancelButton );
+
+    layout->addLayout (bottomLayout );
 
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
@@ -183,7 +186,7 @@ void Interface::display( const QString& term)
 #endif
 
     kDebug() << "display() called" << endl;
-    m_searchTerm->setFocus( );
+    m_searchTerm->setFocus();
     m_actionsList->clear() ;
     if ( !term.isEmpty() ) {
         m_searchTerm->setText( term );
@@ -207,6 +210,7 @@ void Interface::hideEvent( QHideEvent* e )
     kDebug() << "hide event" << endl;
     m_searchTerm->clear();
     m_actionsList->clear() ;
+    m_runButton->setEnabled( false );
     QWidget::hideEvent( e );
 }
 
@@ -251,6 +255,7 @@ void Interface::search(const QString& t)
     }
 
     m_optionsLabel->setEnabled( firstMatch && firstMatch->hasOptions() );
+    m_runButton->setEnabled( firstMatch );
 
     m_searchTimer.start( 250 );
 }
@@ -279,6 +284,7 @@ void Interface::fuzzySearch()
 
     if ( needFirst ) {
         m_optionsLabel->setEnabled( firstMatch && firstMatch->hasOptions() );
+        m_runButton->setEnabled( firstMatch );
     }
 }
 

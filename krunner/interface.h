@@ -29,11 +29,11 @@
 
 class QLabel;
 class QListWidget;
+class QListWidgetItem;
 class QSvgRenderer;
-class QPushButton;
 
 class KLineEdit;
-class QListWidgetItem;
+class KPushButton;
 
 namespace Plasma
 {
@@ -81,8 +81,8 @@ class Interface : public QWidget
         QWidget* m_matches;
         QLabel* m_optionsLabel;
         QLabel* m_headerLabel;
-        QPushButton* m_cancelButton;
-        QPushButton* m_runButton;
+        KPushButton* m_cancelButton;
+        KPushButton* m_runButton;
 };
 
 #endif
