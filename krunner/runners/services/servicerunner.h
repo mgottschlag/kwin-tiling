@@ -32,11 +32,9 @@ class QAction;
  * appications menu and have it start the appropriate app. Essentially anything
  * that KService knows about, this runner can launch
  */
-class ServiceRunner : public Runner
+class ServiceRunner : public Plasma::Runner
 {
     Q_OBJECT
-
-    typedef QList<Runner*> List;
 
     public:
         explicit ServiceRunner(QObject* parent = 0);

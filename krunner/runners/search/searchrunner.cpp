@@ -26,7 +26,7 @@
 #include "searchrunner.h"
 
 SearchRunner::SearchRunner( QObject* parent, const QStringList& args )
-    : Runner( parent )
+    : Plasma::Runner( parent )
 {
     Q_UNUSED( args );
     setObjectName( i18n( "Search" ) );

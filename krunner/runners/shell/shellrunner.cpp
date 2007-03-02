@@ -26,9 +26,9 @@
 
 #include "shellrunner.h"
 
-ShellRunner::ShellRunner(QObject* parent)
-    : Runner(parent),
-      m_options(0)
+ShellRunner::ShellRunner( QObject* parent )
+    : Plasma::Runner( parent ),
+      m_options( 0 )
 {
     setObjectName( i18n( "Command" ) );
 }

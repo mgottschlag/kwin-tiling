@@ -29,9 +29,9 @@
 
 #include "servicerunner.h"
 
-ServiceRunner::ServiceRunner(QObject* parent)
-    : Runner(parent),
-      m_options(0)
+ServiceRunner::ServiceRunner( QObject* parent )
+    : Plasma::Runner( parent ),
+      m_options( 0 )
 {
     setObjectName( i18n( "Application" ) );
 }

@@ -28,11 +28,9 @@ class QAction;
  * This class runs programs using the literal name of the binary, much as one
  * would use at a shell prompt.
  */
-class ShellRunner : public Runner
+class ShellRunner : public Plasma::Runner
 {
     Q_OBJECT
-
-    typedef QList<Runner*> List;
 
     public:
         explicit ShellRunner(QObject* parent = 0);

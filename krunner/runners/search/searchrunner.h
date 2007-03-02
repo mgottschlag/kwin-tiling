@@ -30,11 +30,9 @@ class QAction;
  * This class runs the entered text through a search engine and returns the set
  * of results returned as possible programs, files, actions, etc to launch.
  */
-class SearchRunner : public Runner
+class SearchRunner : public Plasma::Runner
 {
     Q_OBJECT
-
-    typedef QList<Runner*> List;
 
     public:
         explicit SearchRunner( QObject* parent, const QStringList& args );

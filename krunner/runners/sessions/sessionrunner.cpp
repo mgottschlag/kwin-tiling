@@ -31,8 +31,8 @@
 #include "saverengine.h"
 #include "sessionrunner.h"
 
-SessionRunner::SessionRunner(QObject* parent)
-    : Runner(parent)
+SessionRunner::SessionRunner( QObject* parent )
+    : Plasma::Runner( parent )
 {
     setObjectName( i18n( "Sessions" ) );
 }

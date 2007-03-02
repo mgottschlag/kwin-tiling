@@ -28,11 +28,9 @@ class QAction;
  * This class provides matches for running sessions as well as
  * an action to start a new session, etc.
  */
-class SessionRunner : public Runner
+class SessionRunner : public Plasma::Runner
 {
     Q_OBJECT
-
-    typedef QList<Runner*> List;
 
     public:
         explicit SessionRunner(QObject* parent = 0);
