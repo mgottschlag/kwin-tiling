@@ -23,9 +23,6 @@
 
 #include "runner.h"
 
-class QWidget;
-class QAction;
-
 /**
  * This class runs the entered text through a search engine and returns the set
  * of results returned as possible programs, files, actions, etc to launch.
@@ -35,7 +32,7 @@ class SearchRunner : public Plasma::Runner
     Q_OBJECT
 
     public:
-        explicit SearchRunner( QObject* parent, const QStringList& args );
+        SearchRunner( QObject* parent, const QStringList& args );
         ~SearchRunner();
 
         QAction* accepts( const QString& term );

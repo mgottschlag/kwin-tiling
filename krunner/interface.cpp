@@ -54,13 +54,13 @@
 class SearchMatch : public QListWidgetItem
 {
     public:
-        SearchMatch( QAction* action, Plasma::Runner* runner, QListWidget* parent )
+        SearchMatch( QAction* action, Plasma::Runner* runner, QListWidget* parent, bool isDefault )
             : QListWidgetItem( parent ),
               m_action( action )
         {
             setIcon( m_action->icon() );
 
-            if ( parent->item( 0 ) != this ) {
+            if ( !action->isEnabled() || !isDefault ) {
                 setText( i18n("%1 (%2)",
                          m_action->text(),
                          runner->objectName() ) );
@@ -76,6 +76,11 @@ class SearchMatch : public QListWidgetItem
             m_action->activate( QAction::Trigger );
         }
 
+        bool actionEnabled()
+        {
+            return m_action->isEnabled();
+        }
+
     private:
         QAction* m_action;
 };
@@ -84,7 +89,8 @@ class SearchMatch : public QListWidgetItem
 Interface::Interface(QWidget* parent)
     : QWidget( parent ),
       m_bgRenderer( 0 ),
-      m_renderDirty( true )
+      m_renderDirty( true ),
+      m_defaultMatch( 0 )
 {
     setWindowFlags( Qt::Window | Qt::FramelessWindowHint );
     setWindowTitle( i18n("Run Command") );
@@ -246,6 +252,7 @@ void Interface::search(const QString& t)
     //       the new. something to think about when implementing the icon
     //       parade
     m_actionsList->clear();
+    m_defaultMatch = 0;
     QString term = t.trimmed();
 
     if ( term.isEmpty() ) {
@@ -253,23 +260,25 @@ void Interface::search(const QString& t)
         return;
     }
 
-    Plasma::Runner* firstMatch = 0;
-
     // get the exact matches
     foreach (Plasma::Runner* runner, m_runners) {
         kDebug() << "\trunner: " << runner->objectName() << endl;
         QAction* exactMatch = runner->exactMatch( term ) ;
 
         if ( exactMatch ) {
-            new SearchMatch( exactMatch, runner, m_actionsList );
-            if ( !firstMatch ) {
-                firstMatch = runner;
+            bool makeDefault = !m_defaultMatch && exactMatch->isEnabled();
+            SearchMatch* match = new SearchMatch( exactMatch, runner, m_actionsList, makeDefault );
+            if ( makeDefault ) {
+                m_defaultMatch = match;
+                m_optionsLabel->setEnabled( runner->hasOptions() );
+                m_runButton->setEnabled( true );
             }
         }
     }
 
-    m_optionsLabel->setEnabled( firstMatch && firstMatch->hasOptions() );
-    m_runButton->setEnabled( firstMatch );
+    if ( !m_defaultMatch ) {
+        m_runButton->setEnabled( false );
+    }
 
     m_searchTimer.start( 250 );
 }
@@ -279,26 +288,22 @@ void Interface::fuzzySearch()
     m_searchTimer.stop();
 
     QString term = m_searchTerm->text().trimmed();
-    Plasma::Runner* firstMatch = 0;
-    bool needFirst = m_actionsList->item( 0 ) == 0;
 
     // get the inexact matches
     foreach ( Plasma::Runner* runner, m_runners ) {
         KActionCollection* matches = runner->matches( term, 10, 0 );
         kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
         foreach ( QAction* action, matches->actions() ) {
-            kDebug() << "\t\t " << action << ": " << action->text() << endl;
-            new SearchMatch( action, runner, m_actionsList );
+            bool makeDefault = !m_defaultMatch && action->isEnabled();
+            kDebug() << "\t\t " << action << ": " << action->text() << " " << !m_defaultMatch << " " << action->isEnabled() << endl;
+            SearchMatch* match = new SearchMatch( action, runner, m_actionsList, makeDefault );
 
-            if ( !firstMatch ) {
-                firstMatch = runner;
+            if ( makeDefault ) {
+                m_defaultMatch = match;
+                m_runButton->setEnabled( true );
+                m_optionsLabel->setEnabled( runner->hasOptions() );
             }
         }
-    }
-
-    if ( needFirst ) {
-        m_optionsLabel->setEnabled( firstMatch && firstMatch->hasOptions() );
-        m_runButton->setEnabled( firstMatch );
     }
 }
 
@@ -331,7 +336,13 @@ void Interface::updateMatches()
 
 void Interface::exec()
 {
-    matchActivated( m_actionsList->item( 0 ) );
+    SearchMatch* item = dynamic_cast<SearchMatch*>( m_actionsList->currentItem() );
+
+    if ( item ) {
+        matchActivated( item );
+    } else if ( m_defaultMatch ) {
+        matchActivated( m_defaultMatch );
+    }
 }
 
 void Interface::paintEvent(QPaintEvent *e)

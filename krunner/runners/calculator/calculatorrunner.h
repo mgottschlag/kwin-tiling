@@ -24,7 +24,6 @@
 #include "runner.h"
 
 class QWidget;
-class QAction;
 
 /**
  * This class evaluates the basic expressions given in the interface.

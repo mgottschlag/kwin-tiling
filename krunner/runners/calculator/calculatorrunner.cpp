@@ -51,12 +51,15 @@ QAction* CalculatorRunner::accepts( const QString& term )
 
     if ( !cmd.isEmpty() && 
          ( cmd[0].isNumber() || ( cmd[0] == '(') ) &&
-         ( QRegExp("[a-zA-Z\\]\\[]").search(cmd) == -1 ) )
-    {
+         ( QRegExp("[a-zA-Z\\]\\[]").search(cmd) == -1 ) ) {
         QString result = calculate(cmd);
-        action = new QAction(KIcon("exec"),
-                             i18nc("Answer to a mathematical equation", "Result: %1", result),
-                             this);
+
+        if ( !result.isEmpty() ) {
+            action = new QAction( KIcon("kcalc"),
+                                  i18nc("Answer to a mathematical equation", "Result: %1", result),
+                                  this);
+            action->setEnabled( false );
+        }
     }
 
     return action;

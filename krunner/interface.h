@@ -36,6 +36,8 @@ class QSvgRenderer;
 class KLineEdit;
 class KPushButton;
 
+class SearchMatch;
+
 namespace Plasma
 {
     class Theme;
@@ -85,6 +87,8 @@ class Interface : public QWidget
         QLabel* m_headerLabel;
         KPushButton* m_cancelButton;
         KPushButton* m_runButton;
+
+        SearchMatch* m_defaultMatch;
 };
 
 #endif
