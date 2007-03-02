@@ -6,4 +6,4 @@ X-KDE-Library=solid_networkmanager
 InitialPreference=100
 Name=NetworkManager
 Comment=Network management using the NetworkManager daemon
-
+Icon=networkmanager

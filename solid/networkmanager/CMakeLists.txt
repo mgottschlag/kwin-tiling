@@ -22,3 +22,4 @@ install(TARGETS solid_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES solid_networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )
 
+kde4_install_icons( ${ICON_INSTALL_DIR} )
