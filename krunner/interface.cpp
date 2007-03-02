@@ -100,7 +100,7 @@ Interface::Interface(QWidget* parent)
     m_headerLabel = new QLabel(this);
     //TODO: create a action so this can be changed by
     //various processes to give the user feedback
-    m_headerLabel->setText("Krunner - KDE4 Run Dialog!");
+    m_headerLabel->setText(i18n("Krunner - KDE4 Run Command Dialog!"));
     m_headerLabel->setEnabled(true);
     layout->addWidget(m_headerLabel);
     
@@ -123,19 +123,19 @@ Interface::Interface(QWidget* parent)
     layout->addWidget(m_actionsList);
 
     m_optionsLabel = new QLabel(this);
-    m_optionsLabel->setText("Options");
+    m_optionsLabel->setText(i18n("Options"));
     m_optionsLabel->setEnabled(false);
     bottomLayout->addWidget(m_optionsLabel);
     
     bottomLayout->addStretch();
     
-    m_runButton = new QPushButton("Run");
+    m_runButton = new QPushButton(i18n("Run"));
     m_runButton->setFlat(true);
     m_runButton->setIcon(KIcon("run"));
     connect(m_runButton, SIGNAL(pressed()), SLOT(exec()));
     bottomLayout->addWidget(m_runButton);
 
-    m_cancelButton = new QPushButton("Cancel");
+    m_cancelButton = new QPushButton(i18n("Cancel"));
     m_cancelButton->setFlat(true);
     m_cancelButton->setIcon(KIcon("cancel"));
     connect(m_cancelButton, SIGNAL(pressed()), SLOT(hide()));
@@ -335,5 +335,4 @@ void Interface::resizeEvent(QResizeEvent *e)
 
     QWidget::resizeEvent( e );
 }
-
 #include "interface.moc"
