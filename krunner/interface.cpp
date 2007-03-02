@@ -52,7 +52,7 @@
 class SearchMatch : public QListWidgetItem
 {
     public:
-        SearchMatch( QAction* action, Runner* runner, QListWidget* parent )
+        SearchMatch( QAction* action, Plasma::Runner* runner, QListWidget* parent )
             : QListWidgetItem( parent ),
               m_action( action )
         {
@@ -156,7 +156,7 @@ Interface::Interface(QWidget* parent)
     m_runners.append( new ShellRunner( this ) );
     m_runners.append( new ServiceRunner( this ) );
     m_runners.append( new SessionRunner( this ) );
-    m_runners += Runner::loadRunners( this );
+    m_runners += Plasma::Runner::loadRunners( this );
 
 #ifdef FLASH_DIALOG
     QTimer* t = new QTimer(this);
@@ -235,10 +235,10 @@ void Interface::search(const QString& t)
         return;
     }
 
-    Runner* firstMatch = 0;
+    Plasma::Runner* firstMatch = 0;
 
     // get the exact matches
-    foreach (Runner* runner, m_runners) {
+    foreach (Plasma::Runner* runner, m_runners) {
         kDebug() << "\trunner: " << runner->objectName() << endl;
         QAction* exactMatch = runner->exactMatch( term ) ;
 
@@ -260,11 +260,11 @@ void Interface::fuzzySearch()
     m_searchTimer.stop();
 
     QString term = m_searchTerm->text().trimmed();
-    Runner* firstMatch = 0;
+    Plasma::Runner* firstMatch = 0;
     bool needFirst = m_actionsList->item( 0 ) == 0;
 
     // get the inexact matches
-    foreach (Runner* runner, m_runners) {
+    foreach ( Plasma::Runner* runner, m_runners ) {
         KActionCollection* matches = runner->matches( term, 10, 0 );
         kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
         foreach ( QAction* action, matches->actions() ) {

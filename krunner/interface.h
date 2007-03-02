@@ -74,7 +74,7 @@ class Interface : public QWidget
         bool m_renderDirty;
 
         QTimer m_searchTimer;
-        Runner::List m_runners;
+        Plasma::Runner::List m_runners;
 
         KLineEdit* m_searchTerm;
         QListWidget* m_actionsList;
