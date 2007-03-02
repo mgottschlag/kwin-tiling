@@ -27,6 +27,7 @@
 
 #include "runner.h"
 
+class QFrame;
 class QLabel;
 class QListWidget;
 class QListWidgetItem;
@@ -57,6 +58,7 @@ class Interface : public QWidget
     protected Q_SLOTS:
         void search(const QString& term);
         void themeChanged();
+        void setWidgetPalettes();
         void updateMatches();
         void exec();
         void matchActivated(QListWidgetItem*);
@@ -76,9 +78,9 @@ class Interface : public QWidget
         QTimer m_searchTimer;
         Plasma::Runner::List m_runners;
 
+        QFrame* m_header;
         KLineEdit* m_searchTerm;
         QListWidget* m_actionsList;
-        QWidget* m_matches;
         QLabel* m_optionsLabel;
         QLabel* m_headerLabel;
         KPushButton* m_cancelButton;

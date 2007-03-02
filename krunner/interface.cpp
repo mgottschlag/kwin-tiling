@@ -31,6 +31,7 @@
 #include <KActionCollection>
 #include <KDebug>
 #include <KDialog>
+#include <KGlobalSettings>
 #include <KLineEdit>
 #include <KLocale>
 #include <KPushButton>
@@ -98,13 +99,21 @@ Interface::Interface(QWidget* parent)
     QVBoxLayout* layout = new QVBoxLayout(this);
     QHBoxLayout* bottomLayout = new QHBoxLayout(this);
 
-    m_headerLabel = new QLabel(this);
+    m_header = new QFrame( this );
+    QHBoxLayout* headerLayout = new QHBoxLayout( m_header );
+    m_header->setFrameShape( QFrame::StyledPanel );
+    m_header->setFrameShadow( QFrame::Plain );
+    m_header->setAutoFillBackground( true );
+    m_header->setBackgroundRole( QPalette::Base );
+    layout->addWidget( m_header );
+
+    m_headerLabel = new QLabel( m_header );
     //TODO: create a action so this can be changed by
     //various processes to give the user feedback
     m_headerLabel->setText( i18n( "Enter the name of an application, location or search term below." ) );
     m_headerLabel->setEnabled( true );
     m_headerLabel->setWordWrap( true );
-    layout->addWidget( m_headerLabel );
+    headerLayout->addWidget( m_headerLabel );
 
     m_searchTerm = new KLineEdit( this );
     m_searchTerm->clear();
@@ -115,9 +124,6 @@ Interface::Interface(QWidget* parent)
             this, SLOT(search(QString)) );
     connect( m_searchTerm, SIGNAL(returnPressed()),
              this, SLOT(exec()) );
-
-    m_matches = new QWidget(this);
-    layout->addWidget(m_matches);
 
     //TODO: temporary feedback, change later with the "icon parade" :)
     m_actionsList = new QListWidget(this);
@@ -147,6 +153,10 @@ Interface::Interface(QWidget* parent)
     bottomLayout->addWidget( m_cancelButton );
 
     layout->addLayout (bottomLayout );
+
+    setWidgetPalettes();
+    connect( KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
+             SLOT(setWidgetPalettes()) );
 
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
@@ -299,6 +309,20 @@ void Interface::themeChanged()
     m_bgRenderer = new QSvgRenderer( m_theme->imagePath( "/background/dialog" ), this );
 }
 
+void Interface::setWidgetPalettes()
+{
+    // a nice palette to use with the widgets
+    QPalette widgetPalette = palette();
+    QColor headerBgColor = widgetPalette.color( QPalette::Active,
+                                                QPalette::Base );
+    headerBgColor.setAlpha( 200 );
+    widgetPalette.setColor( QPalette::Active, QPalette::Base, headerBgColor );
+
+    m_header->setPalette( widgetPalette );
+    m_searchTerm->setPalette( widgetPalette );
+    m_actionsList->setPalette( widgetPalette );
+}
+
 void Interface::updateMatches()
 {
     //TODO: implement
@@ -344,4 +368,5 @@ void Interface::resizeEvent(QResizeEvent *e)
 
     QWidget::resizeEvent( e );
 }
+
 #include "interface.moc"
