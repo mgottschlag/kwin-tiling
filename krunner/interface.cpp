@@ -32,10 +32,10 @@
 #include <KDialog>
 #include <KLineEdit>
 #include <KLocale>
-#include <KServiceTypeTrader>
 #include <KWin>
 
 #include "../plasma/lib/theme.h"
+#include "../plasma/lib/runner.h"
 
 #include "runners/services/servicerunner.h"
 #include "runners/sessions/sessionrunner.h"
@@ -125,7 +125,12 @@ Interface::Interface(QWidget* parent)
     //FIXME: what size should we be?
     resize(400, 250);
 
-    loadRunners();
+
+    //TODO: how should we order runners, particularly ones loaded from plugins?
+    m_runners.append( new ShellRunner( this ) );
+    m_runners.append( new ServiceRunner( this ) );
+    m_runners.append( new SessionRunner( this ) );
+    m_runners += Runner::loadRunners( this );
 
 #ifdef FLASH_DIALOG
     QTimer* t = new QTimer(this);
@@ -303,34 +308,6 @@ void Interface::resizeEvent(QResizeEvent *e)
     }
 
     QWidget::resizeEvent( e );
-}
-
-void Interface::loadRunners()
-{
-    // ha! ha! get it? _load_ _runner_?! oh, i kill me.
-    // but seriously, that game was the shiznit back in the day
-
-    foreach ( Runner* runner, m_runners ) {
-        delete runner;
-    }
-    m_runners.clear();
-
-    //TODO: how should we order runners, particularly ones loaded from plugins?
-    m_runners.append( new ShellRunner( this ) );
-    m_runners.append( new ServiceRunner( this ) );
-    m_runners.append( new SessionRunner( this ) );
-
-    KService::List offers = KServiceTypeTrader::self()->query( "KRunner/Runner" );
-    foreach ( KService::Ptr service, offers ) {
-        Runner* runner = KService::createInstance<Runner>( service, this );
-        if ( runner ) {
-            kDebug() << "loaded runner : " << service->name() << endl ;
-            m_runners.append( runner );
-        }
-        else {
-            kDebug() << "failed to load runner : " << service->name() << endl ;
-        }
-    }
 }
 
 #include "interface.moc"

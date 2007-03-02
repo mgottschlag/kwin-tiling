@@ -67,8 +67,6 @@ class Interface : public QWidget
         void hideEvent( QHideEvent* e );
 
     private:
-        void loadRunners();
-
         Plasma::Theme* m_theme;
         QSvgRenderer* m_bgRenderer;
         QPixmap m_renderedSvg;
