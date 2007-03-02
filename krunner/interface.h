@@ -30,6 +30,7 @@
 class QLabel;
 class QListWidget;
 class QSvgRenderer;
+class QPushButton;
 
 class KLineEdit;
 class QListWidgetItem;
@@ -79,6 +80,7 @@ class Interface : public QWidget
         QListWidget* m_actionsList;
         QWidget* m_matches;
         QLabel* m_optionsLabel;
+        QPushButton* m_cancelButton;
 };
 
 #endif

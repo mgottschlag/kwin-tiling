@@ -24,8 +24,10 @@
 #include <QResizeEvent>
 #include <QSvgRenderer>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QShortcut>
 #include <QTimer>
+#include <QPushButton>
 
 #include <KActionCollection>
 #include <KDebug>
@@ -93,6 +95,7 @@ Interface::Interface(QWidget* parent)
     connect( m_theme, SIGNAL(changed()), this, SLOT(themeChanged()) );
 
     QVBoxLayout* layout = new QVBoxLayout(this);
+    QHBoxLayout* bottomLayout = new QHBoxLayout(this);
 
     m_searchTerm = new KLineEdit( this );
     m_searchTerm->clear();
@@ -115,7 +118,15 @@ Interface::Interface(QWidget* parent)
     m_optionsLabel = new QLabel(this);
     m_optionsLabel->setText("Options");
     m_optionsLabel->setEnabled(false);
-    layout->addWidget(m_optionsLabel);
+    bottomLayout->addWidget(m_optionsLabel);
+
+    m_cancelButton = new QPushButton("");
+    m_cancelButton->setFlat(true);
+    m_cancelButton->setIcon(KIcon("cancel"));
+    connect(m_cancelButton, SIGNAL(pressed()), SLOT(hide()));
+    bottomLayout->addWidget(m_cancelButton);
+    
+    layout->addLayout(bottomLayout);
 
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
