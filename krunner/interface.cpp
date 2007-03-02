@@ -113,6 +113,7 @@ Interface::Interface(QWidget* parent)
     m_headerLabel->setText( i18n( "Enter the name of an application, location or search term below." ) );
     m_headerLabel->setEnabled( true );
     m_headerLabel->setWordWrap( true );
+    m_headerLabel->setAlignment( Qt::AlignCenter );
     headerLayout->addWidget( m_headerLabel );
 
     m_searchTerm = new KLineEdit( this );
