@@ -698,7 +698,7 @@ static KDesktopFile *copyDesktopFile(MenuEntryInfo *entryInfo, QString *menuId, 
 {
    QString result = createDesktopFile(entryInfo->file(), menuId, excludeList);
    KDesktopFile *df = entryInfo->desktopFile()->copyTo(result);
-   df->deleteEntry("Categories"); // Don't set any categories!
+   df->desktopGroup().deleteEntry("Categories"); // Don't set any categories!
 
    return df;
 }
@@ -753,7 +753,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
      QString result = createDesktopFile(path, &menuId, &m_newMenuIds);
      KDesktopFile orig_df(path);
      KDesktopFile *df = orig_df.copyTo(result);
-     df->deleteEntry("Categories"); // Don't set any categories!
+     df->desktopGroup().deleteEntry("Categories"); // Don't set any categories!
 
      KService::Ptr s(new KService(df));
      s->setMenuId(menuId);
@@ -1033,8 +1033,9 @@ void TreeView::newsubmenu()
    folderInfo->setDirty();
 
    KDesktopFile *df = new KDesktopFile(file);
-   df->writeEntry("Name", folderInfo->caption);
-   df->writeEntry("Icon", folderInfo->icon);
+   KConfigGroup desktopGroup = df->desktopGroup();
+   desktopGroup.writeEntry("Name", folderInfo->caption);
+   desktopGroup.writeEntry("Icon", folderInfo->icon);
    df->sync();
    delete df;
    // Add file to menu
@@ -1076,8 +1077,9 @@ void TreeView::newitem()
    file = createDesktopFile(file, &menuId, &m_newMenuIds); // Create
 
    KDesktopFile *df = new KDesktopFile(file);
-   df->writeEntry("Name", caption);
-   df->writeEntry("Type", "Application");
+   KConfigGroup desktopGroup = df->desktopGroup();
+   desktopGroup.writeEntry("Name", caption);
+   desktopGroup.writeEntry("Type", "Application");
 
    // get destination folder
    QString folder;

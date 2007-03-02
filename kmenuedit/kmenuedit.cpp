@@ -113,7 +113,8 @@ void KMenuEdit::setupView()
 
     // restore splitter sizes
     KSharedConfig::Ptr config = KGlobal::config();
-    QList<int> sizes = config->readEntry("SplitterSizes",QList<int>());
+    KConfigGroup generalGroup(config, "General");
+    QList<int> sizes = generalGroup.readEntry("SplitterSizes",QList<int>());
 
     if (sizes.isEmpty())
         sizes << 1 << 3;
