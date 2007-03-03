@@ -46,24 +46,24 @@ namespace Plasma
 class Interface : public QWidget
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.krunner.Interface")
+    Q_CLASSINFO( "D-Bus Interface", "org.kde.krunner.Interface" )
 
     public:
-        explicit Interface(QWidget* parent = 0);
+        explicit Interface( QWidget* parent = 0 );
         ~Interface();
 
     public Q_SLOTS:
         // DBUS interface. if you change these methods, you MUST run:
         // qdbuscpp2xml interface.h -o org.kde.krunner.Interface.xml
-        void display(const QString& term = QString());
+        void display( const QString& term = QString() );
 
     protected Q_SLOTS:
-        void search(const QString& term);
+        void match( const QString& term );
         void themeChanged();
         void setWidgetPalettes();
         void updateMatches();
         void exec();
-        void matchActivated(QListWidgetItem*);
+        void matchActivated( QListWidgetItem* );
         void fuzzySearch();
         void showOptions(bool show);
 
@@ -83,7 +83,7 @@ class Interface : public QWidget
 
         QFrame* m_header;
         KLineEdit* m_searchTerm;
-        QListWidget* m_actionsList;
+        QListWidget* m_matchList;
         QLabel* m_optionsLabel;
         QLabel* m_headerLabel;
         KPushButton* m_cancelButton;
@@ -91,6 +91,8 @@ class Interface : public QWidget
         KPushButton* m_optionsButton;
 
         SearchMatch* m_defaultMatch;
+        QMap<Plasma::Runner*, SearchMatch*> m_matches;
+        QList<SearchMatch*> m_searchMatches;
 };
 
 #endif
