@@ -31,22 +31,22 @@
 
 void dump( const NMDBusDeviceProperties& device )
 {
-    kDebug() << "Object path: " << device.path.path() << "\nInterface: " << device.interface
-        << "\nType: " << device.type << "\nUdi: " << device.udi << "\nActive: "<< device.active
-        << "\nActivation stage: " << device.activationStage 
-        << "\nHardware address: " << device.hardwareAddress << "\nmode: " << device.mode
-        << "\nStrength: " << device.strength << "\nLink active: " << device.linkActive
-        << "\nSpeed: " << device.speed << "\nCapabilities: " << device.capabilities 
-        << "\nCapabilities type: " << device.capabilitiesType << "\nactive net path: "
-        << device.activeNetPath << "\nNetworks:" << device.networks << endl;
+    kDebug() << "dump( const NMDBusDeviceProperties& device ):\n    Object path: " << device.path.path() << "\n    Interface: " << device.interface
+        << "\n    Type: " << device.type << "\n    Udi: " << device.udi << "\n    Active: "<< device.active
+        << "\n    Activation stage: " << device.activationStage 
+        << "\n    Hardware address: " << device.hardwareAddress << "\n    mode: " << device.mode
+        << "\n    Strength: " << device.strength << "\n    Link active: " << device.linkActive
+        << "\n    Speed: " << device.speed << "\n    Capabilities: " << device.capabilities
+        << "\n    Capabilities type: " << device.capabilitiesType << "\n    active net path: "
+        << device.activeNetPath << "\n    Networks:" << device.networks << endl;
 }
 
 void dump( const NMDBusNetworkProperties & network )
 {
-    kDebug() << "\nIPV4 address: " << network.ipv4Address
-        << "\nsubnet mask: " << network.subnetMask << "\nBroadcast: " << network.broadcast
-        << "\nroute: " << network.route << "\nprimary dns: " << network.primaryDNS 
-        << "\nsecondary dns: " << network.secondaryDNS << endl;
+    kDebug() << "dump( const NMDBusNetworkProperties &)\n    IPV4 address: " << network.ipv4Address
+        << "\n    subnet mask: " << network.subnetMask << "\n    Broadcast: " << network.broadcast
+        << "\n    route: " << network.route << "\n    primary dns: " << network.primaryDNS
+        << "\n    secondary dns: " << network.secondaryDNS << endl;
 }
 
 void deserialize( const QDBusMessage &message, NMDBusDeviceProperties & device, NMDBusNetworkProperties & network )
