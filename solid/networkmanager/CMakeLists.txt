@@ -1,4 +1,3 @@
-find_package(NetworkManager REQUIRED)
 include_directories(${NETWORKMANAGER_DEFINITIONS})
 
 add_subdirectory(tests)
