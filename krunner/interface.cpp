@@ -163,6 +163,8 @@ Interface::Interface(QWidget* parent)
     m_matchList = new QListWidget(this);
     connect( m_matchList, SIGNAL(itemActivated(QListWidgetItem*)),
              SLOT(matchActivated(QListWidgetItem*)) );
+    connect( m_matchList, SIGNAL(itemClicked(QListWidgetItem*)),
+             SLOT(setDefaultItem(QListWidgetItem*)) );
     layout->addWidget(m_matchList);
 
     m_optionsButton = new KPushButton( KStandardGuiItem::configure(), this );
@@ -266,6 +268,9 @@ void Interface::hideEvent( QHideEvent* e )
 void Interface::matchActivated(QListWidgetItem* item)
 {
     SearchMatch* match = dynamic_cast<SearchMatch*>(item);
+    
+    //m_optionsButton->setEnabled( match->runner()->hasOptions() );
+    m_optionsButton->setEnabled( true );
 
     if ( match && match->actionEnabled() ) {
         match->activate();
@@ -449,15 +454,28 @@ void Interface::resizeEvent(QResizeEvent *e)
 void Interface::showOptions(bool show)
 {
     if (show == true) {
-        m_optionsButton->setChecked(true);
+        m_optionsButton->setEnabled( true );
+        m_optionsButton->setChecked( true );
         kDebug() << "showing Options" << endl;
         //TODO: add code to show options
     } else {
-        m_optionsButton->setChecked(false);
+        m_optionsButton->setChecked( false );
         kDebug() << "hiding options" << endl;
         //TODO: add code to hide options
     }
     
+}
+
+void Interface::setDefaultItem( QListWidgetItem* item )
+{
+    if ( !item ) {
+        return;
+    }
+    if ( m_defaultMatch != 0 ) {
+        m_defaultMatch->setDefault( false );
+    }
+    m_defaultMatch = dynamic_cast<SearchMatch*>( item );
+    m_optionsButton->setEnabled( m_defaultMatch && m_defaultMatch->runner()->hasOptions() );
 }
 
 #include "interface.moc"

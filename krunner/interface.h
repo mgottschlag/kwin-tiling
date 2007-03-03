@@ -66,6 +66,7 @@ class Interface : public QWidget
         void matchActivated( QListWidgetItem* );
         void fuzzySearch();
         void showOptions(bool show);
+        void setDefaultItem( QListWidgetItem* );
 
     protected:
         void paintEvent( QPaintEvent *e );
