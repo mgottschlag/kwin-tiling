@@ -243,7 +243,38 @@ std::ostream &operator<<( std::ostream &out, const Solid::WirelessNetwork &netwo
     out << "  Frequency =            " << network.frequency() << endl;
     out << "  Rate =                 " << network.bitrate() << endl;
     out << "  Strength =             " << network.signalStrength() << endl;
-    out << "  Encrypted =            " << ( network.isEncrypted() ? "Yes" : "No" ) << endl;
+    if ( network.isEncrypted() )
+    {
+        out << "  Encrypted =            Yes (";
+        Solid::WirelessNetwork::Capabilities cap = network.capabilities();
+        if ( cap & Solid::WirelessNetwork::Wep )
+            out << "WEP,";
+        if ( cap & Solid::WirelessNetwork::Wpa )
+            out << "WPA,";
+        if ( cap & Solid::WirelessNetwork::Wpa2 )
+            out << "WPA2,";
+        if ( cap & Solid::WirelessNetwork::Psk )
+            out << "PSK,";
+        if ( cap & Solid::WirelessNetwork::Ieee8021x )
+            out << "Ieee8021x,";
+        if ( cap & Solid::WirelessNetwork::Wep40 )
+            out << "WEP40,";
+        if ( cap & Solid::WirelessNetwork::Wep104 )
+            out << "WEP104,";
+        if ( cap & Solid::WirelessNetwork::Wep192 )
+            out << "WEP192,";
+        if ( cap & Solid::WirelessNetwork::Wep256 )
+            out << "WEP256,";
+        if ( cap & Solid::WirelessNetwork::WepOther )
+            out << "WEP-Other,";
+        if ( cap & Solid::WirelessNetwork::Tkip )
+            out << "TKIP";
+        if ( cap & Solid::WirelessNetwork::Ccmp )
+            out << "CCMP";
+        out << ")" << endl;
+    }
+    else
+        out << "  Encrypted =            No" << endl;
 
     return out;
 }
