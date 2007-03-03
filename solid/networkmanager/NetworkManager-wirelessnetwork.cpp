@@ -152,6 +152,7 @@ NMWirelessNetwork::NMWirelessNetwork( const QString & networkPath )
     NMDBusWirelessNetworkProperties wlan;
     deserialize( reply, wlan );
     dump( wlan );
+    setProperties( wlan );
 }
 
 NMWirelessNetwork::~NMWirelessNetwork()
