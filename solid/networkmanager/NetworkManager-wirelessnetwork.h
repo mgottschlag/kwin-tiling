@@ -48,9 +48,10 @@ struct NMDBusWirelessNetworkProperties
 class Authentication;
 class NMWirelessNetworkPrivate;
 
-class KDE_EXPORT NMWirelessNetwork : public NMNetwork
+class KDE_EXPORT NMWirelessNetwork : public NMNetwork, virtual public Solid::Ifaces::WirelessNetwork
 {
 Q_OBJECT
+Q_INTERFACES(Solid::Ifaces::WirelessNetwork)
 public:
     NMWirelessNetwork( const QString & networkPath );
     virtual ~NMWirelessNetwork();
@@ -64,8 +65,8 @@ public:
     bool isEncrypted() const;
     bool isHidden() const;
     MacAddressList bssList() const;
-    Authentication *authentication() const;
-    void setAuthentication( Authentication *authentication );
+    Solid::Ifaces::Authentication *authentication() const;
+    void setAuthentication( Solid::Ifaces::Authentication *authentication );
     void setSignalStrength( int strength );
     void setBitrate( int rate );
 Q_SIGNALS:

@@ -51,6 +51,7 @@ class NMNetworkInterfacePrivate;
 class KDE_EXPORT NMNetworkInterface : public Solid::Ifaces::NetworkInterface
 {
 Q_OBJECT
+Q_INTERFACES(Solid::Ifaces::NetworkInterface)
 public:
     NMNetworkInterface( const QString & objectPath );
     virtual ~NMNetworkInterface();

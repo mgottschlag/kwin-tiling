@@ -141,7 +141,7 @@ public:
     Solid::WirelessNetwork::OperationMode mode;
     Solid::WirelessNetwork::Capabilities capabilities;
     bool broadcast;
-    Authentication * authentication;
+    Solid::Ifaces::Authentication * authentication;
 };
 
 NMWirelessNetwork::NMWirelessNetwork( const QString & networkPath )
@@ -223,12 +223,12 @@ MacAddressList NMWirelessNetwork::bssList() const
     return d->hwAddr;
 }
 
-Authentication * NMWirelessNetwork::authentication() const
+Solid::Ifaces::Authentication * NMWirelessNetwork::authentication() const
 {
     return d->authentication;
 }
 
-void NMWirelessNetwork::setAuthentication( Authentication * auth )
+void NMWirelessNetwork::setAuthentication( Solid::Ifaces::Authentication * auth )
 {
     d->authentication = auth;
 }

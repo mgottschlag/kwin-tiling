@@ -40,6 +40,7 @@ class NMNetworkPrivate;
 class KDE_EXPORT NMNetwork : public QObject, virtual public Solid::Ifaces::Network
 {
 Q_OBJECT
+Q_INTERFACES(Solid::Ifaces::Network)
 public:
     /**
      * Constructs a network and looks up its properties over DBus.
