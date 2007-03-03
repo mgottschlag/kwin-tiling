@@ -170,7 +170,7 @@ Interface::Interface(QWidget* parent)
     m_layout->addWidget(m_matchList);
 
     m_optionsButton = new KPushButton( KStandardGuiItem::configure(), this );
-    m_optionsButton->setText( i18n( "Options" ) );
+    m_optionsButton->setText( i18n( "Show Options" ) );
     m_optionsButton->setFlat( true );
     m_optionsButton->setEnabled( false );
     m_optionsButton->setCheckable( true );
@@ -340,7 +340,7 @@ void Interface::match(const QString& t)
     }
 
     m_matches = matches;
-    m_searchTimer.start( 250 );
+    m_searchTimer.start( 200 );
 }
 
 void Interface::fuzzySearch()
@@ -472,6 +472,9 @@ void Interface::showOptions(bool show)
         kDebug() << "set inner widget to " << m_defaultMatch->runner()->options() << endl;
         m_expander->show();
         m_expander->setInnerWidget( m_defaultMatch->runner()->options() );
+        m_optionsButton->setText( i18n( "Hide Options" ) );
+    } else {
+        m_optionsButton->setText( i18n( "Show Options" ) );
     }
 
     if ( m_expander ) {
