@@ -31,7 +31,7 @@
 
 void dump( const NMDBusDeviceProperties& device )
 {
-    kDebug() << "dump( const NMDBusDeviceProperties& device ):\n    Object path: " << device.path.path() << "\n    Interface: " << device.interface
+    kDebug(1441) << "dump( const NMDBusDeviceProperties& device ):\n    Object path: " << device.path.path() << "\n    Interface: " << device.interface
         << "\n    Type: " << device.type << "\n    Udi: " << device.udi << "\n    Active: "<< device.active
         << "\n    Activation stage: " << device.activationStage 
         << "\n    Hardware address: " << device.hardwareAddress << "\n    mode: " << device.mode
@@ -43,7 +43,7 @@ void dump( const NMDBusDeviceProperties& device )
 
 void dump( const NMDBusNetworkProperties & network )
 {
-    kDebug() << "dump( const NMDBusNetworkProperties &)\n    IPV4 address: " << network.ipv4Address
+    kDebug(1441) << "dump( const NMDBusNetworkProperties &)\n    IPV4 address: " << network.ipv4Address
         << "\n    subnet mask: " << network.subnetMask << "\n    Broadcast: " << network.broadcast
         << "\n    route: " << network.route << "\n    primary dns: " << network.primaryDNS
         << "\n    secondary dns: " << network.secondaryDNS << endl;
@@ -51,7 +51,7 @@ void dump( const NMDBusNetworkProperties & network )
 
 void deserialize( const QDBusMessage &message, NMDBusDeviceProperties & device, NMDBusNetworkProperties & network )
 {
-    kDebug() << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature() << endl;
+    //kDebug(1441) << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature() << endl;
     QList<QVariant> args = message.arguments();
     device.path.setPath( args.takeFirst().toString() );
     device.interface = args.takeFirst().toString();
@@ -106,8 +106,8 @@ NMNetworkInterface::NMNetworkInterface( const QString & objectPath )
     NMDBusDeviceProperties dev;
     NMDBusNetworkProperties net;
     deserialize( reply, dev, net );
-    dump( dev );
-    dump( net );
+    //dump( dev );
+    //dump( net );
     setProperties( dev );
     // insert empty networks in our map.  These will be expanded on demand
     foreach( QString netPath, dev.networks )
@@ -174,7 +174,7 @@ Solid::NetworkInterface::Capabilities NMNetworkInterface::capabilities() const
 
 QObject * NMNetworkInterface::createNetwork( const QString & uni )
 {
-    kDebug() << "NMNetworkInterface::createNetwork() - " << uni << endl;
+    kDebug(1441) << "NMNetworkInterface::createNetwork() - " << uni << endl;
     NMNetwork * net = 0;
     if ( d->networks.contains( uni ) && d->networks[ uni ] != 0 )
         net = d->networks[ uni ];

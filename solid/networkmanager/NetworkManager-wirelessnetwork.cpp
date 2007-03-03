@@ -35,23 +35,23 @@
 
 void dump( const Solid::WirelessNetwork::Capabilities & cap )
 {
-    kDebug() << "WEP      " << ( cap & Solid::WirelessNetwork::Wep ? "X " : " O" ) << endl;
-    kDebug() << "WPA      " << ( cap & Solid::WirelessNetwork::Wpa ? "X " : " O" ) << endl;
-    kDebug() << "WPA2     " << ( cap & Solid::WirelessNetwork::Wpa2 ? "X " : " O" ) << endl;
-    kDebug() << "PSK      " << ( cap & Solid::WirelessNetwork::Psk ? "X " : " O" ) << endl;
-    kDebug() << "Ieee8021x" << ( cap & Solid::WirelessNetwork::Ieee8021x ? "X " : " O" ) << endl;
-    kDebug() << "Wep40    " << ( cap & Solid::WirelessNetwork::Wep40 ? "X " : " O" ) << endl;
-    kDebug() << "Wep104   " << ( cap & Solid::WirelessNetwork::Wep104 ? "X " : " O" ) << endl;
-    kDebug() << "Wep192   " << ( cap & Solid::WirelessNetwork::Wep192 ? "X " : " O" ) << endl;
-    kDebug() << "Wep256   " << ( cap & Solid::WirelessNetwork::Wep256 ? "X " : " O" ) << endl;
-    kDebug() << "WepOther " << ( cap & Solid::WirelessNetwork::WepOther ? "X " : " O" ) << endl;
-    kDebug() << "TKIP     " << ( cap & Solid::WirelessNetwork::Tkip ? "X " : " O" ) << endl;
-    kDebug() << "CCMP     " << ( cap & Solid::WirelessNetwork::Ccmp ? "X " : " O" ) << endl;
+    kDebug(1441) << "WEP      " << ( cap & Solid::WirelessNetwork::Wep ? "X " : " O" ) << endl;
+    kDebug(1441) << "WPA      " << ( cap & Solid::WirelessNetwork::Wpa ? "X " : " O" ) << endl;
+    kDebug(1441) << "WPA2     " << ( cap & Solid::WirelessNetwork::Wpa2 ? "X " : " O" ) << endl;
+    kDebug(1441) << "PSK      " << ( cap & Solid::WirelessNetwork::Psk ? "X " : " O" ) << endl;
+    kDebug(1441) << "Ieee8021x" << ( cap & Solid::WirelessNetwork::Ieee8021x ? "X " : " O" ) << endl;
+    kDebug(1441) << "Wep40    " << ( cap & Solid::WirelessNetwork::Wep40 ? "X " : " O" ) << endl;
+    kDebug(1441) << "Wep104   " << ( cap & Solid::WirelessNetwork::Wep104 ? "X " : " O" ) << endl;
+    kDebug(1441) << "Wep192   " << ( cap & Solid::WirelessNetwork::Wep192 ? "X " : " O" ) << endl;
+    kDebug(1441) << "Wep256   " << ( cap & Solid::WirelessNetwork::Wep256 ? "X " : " O" ) << endl;
+    kDebug(1441) << "WepOther " << ( cap & Solid::WirelessNetwork::WepOther ? "X " : " O" ) << endl;
+    kDebug(1441) << "TKIP     " << ( cap & Solid::WirelessNetwork::Tkip ? "X " : " O" ) << endl;
+    kDebug(1441) << "CCMP     " << ( cap & Solid::WirelessNetwork::Ccmp ? "X " : " O" ) << endl;
 }
 
 void dump( const NMDBusWirelessNetworkProperties & network )
 {
-    kDebug() << "Object path: " << network.path.path() << "\nESSID: " << network.essid
+    kDebug(1441) << "Object path: " << network.path.path() << "\nESSID: " << network.essid
         << "\nHardware address: " << network.hwAddr << "\nSignal strength: " << network.strength
         << "\nFrequency: " << network.frequency << "\nBit rate: " << network.rate
         << "\nMode: " << network.mode
@@ -106,7 +106,7 @@ Solid::WirelessNetwork::OperationMode getOperationMode( const int nm )
 
 void deserialize( const QDBusMessage & message, NMDBusWirelessNetworkProperties & network )
 {
-    kDebug() << "signature: " << message.signature() << endl;
+    //Debug(1441) << "signature: " << message.signature() << endl;
     QList<QVariant> args = message.arguments();
     network.path.setPath( args.takeFirst().toString() );
     network.essid = args.takeFirst().toString();
@@ -147,7 +147,7 @@ public:
 NMWirelessNetwork::NMWirelessNetwork( const QString & networkPath )
  : NMNetwork( networkPath ), d( new NMWirelessNetworkPrivate( networkPath ) )
 {
-    kDebug() << "NMWirelessNetwork::NMWirelessNetwork() - " << networkPath << endl;
+    //kDebug(1441) << "NMWirelessNetwork::NMWirelessNetwork() - " << networkPath << endl;
     QDBusMessage reply = d->iface.call( "getProperties" );
     NMDBusWirelessNetworkProperties wlan;
     deserialize( reply, wlan );
@@ -204,7 +204,7 @@ Solid::WirelessNetwork::OperationMode NMWirelessNetwork::mode() const
 
 bool NMWirelessNetwork::isAssociated() const
 {
-    kDebug() << "Fixme: implement NMWirelessNetwork::isAssociated()" << endl;
+    kDebug(1441) << "Fixme: implement NMWirelessNetwork::isAssociated()" << endl;
     return true;
 }
 
@@ -215,7 +215,7 @@ bool NMWirelessNetwork::isEncrypted() const
 
 bool NMWirelessNetwork::isHidden() const
 {
-    kDebug() << "Fixme: implement NMWirelessNetwork::isHidden()" << endl;
+    kDebug(1441) << "Fixme: implement NMWirelessNetwork::isHidden()" << endl;
     return true;
 }
 
