@@ -268,9 +268,7 @@ void Interface::hideEvent( QHideEvent* e )
 void Interface::matchActivated(QListWidgetItem* item)
 {
     SearchMatch* match = dynamic_cast<SearchMatch*>(item);
-    
-    //m_optionsButton->setEnabled( match->runner()->hasOptions() );
-    m_optionsButton->setEnabled( true );
+    m_optionsButton->setEnabled( match && match->runner()->hasOptions() );
 
     if ( match && match->actionEnabled() ) {
         match->activate();
@@ -454,7 +452,10 @@ void Interface::resizeEvent(QResizeEvent *e)
 void Interface::showOptions(bool show)
 {
     if (show == true) {
-        m_optionsButton->setEnabled( true );
+        if ( !m_optionsButton->isEnabled() ) {
+            // in this case, there is nothing to show
+            return;
+        }
         m_optionsButton->setChecked( true );
         kDebug() << "showing Options" << endl;
         //TODO: add code to show options
@@ -463,7 +464,6 @@ void Interface::showOptions(bool show)
         kDebug() << "hiding options" << endl;
         //TODO: add code to hide options
     }
-    
 }
 
 void Interface::setDefaultItem( QListWidgetItem* item )
@@ -471,9 +471,11 @@ void Interface::setDefaultItem( QListWidgetItem* item )
     if ( !item ) {
         return;
     }
-    if ( m_defaultMatch != 0 ) {
+
+    if ( m_defaultMatch ) {
         m_defaultMatch->setDefault( false );
     }
+
     m_defaultMatch = dynamic_cast<SearchMatch*>( item );
     m_optionsButton->setEnabled( m_defaultMatch && m_defaultMatch->runner()->hasOptions() );
 }
