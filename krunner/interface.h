@@ -32,10 +32,12 @@ class QLabel;
 class QListWidget;
 class QListWidgetItem;
 class QSvgRenderer;
+class QVBoxLayout;
 
 class KLineEdit;
 class KPushButton;
 
+class CollapsibleWidget;
 class SearchMatch;
 
 namespace Plasma
@@ -82,6 +84,7 @@ class Interface : public QWidget
         QTimer m_searchTimer;
         Plasma::Runner::List m_runners;
 
+        QVBoxLayout* m_layout;
         QFrame* m_header;
         KLineEdit* m_searchTerm;
         QListWidget* m_matchList;
@@ -90,6 +93,7 @@ class Interface : public QWidget
         KPushButton* m_cancelButton;
         KPushButton* m_runButton;
         KPushButton* m_optionsButton;
+        CollapsibleWidget* m_expander;
 
         SearchMatch* m_defaultMatch;
         QMap<Plasma::Runner*, SearchMatch*> m_matches;

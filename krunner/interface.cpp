@@ -44,6 +44,7 @@
 #include "runners/services/servicerunner.h"
 #include "runners/sessions/sessionrunner.h"
 #include "runners/shell/shellrunner.h"
+#include "collapsiblewidget.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
 #include "krunnerapp.h"
@@ -118,6 +119,7 @@ Interface::Interface(QWidget* parent)
     : QWidget( parent ),
       m_bgRenderer( 0 ),
       m_renderDirty( true ),
+      m_expander( 0 ),
       m_defaultMatch( 0 )
 {
     setWindowFlags( Qt::Window | Qt::FramelessWindowHint );
@@ -130,7 +132,7 @@ Interface::Interface(QWidget* parent)
     themeChanged();
     connect( m_theme, SIGNAL(changed()), this, SLOT(themeChanged()) );
 
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    m_layout = new QVBoxLayout(this);
     QHBoxLayout* bottomLayout = new QHBoxLayout(this);
 
     m_header = new QFrame( this );
@@ -139,7 +141,7 @@ Interface::Interface(QWidget* parent)
     m_header->setFrameShadow( QFrame::Plain );
     m_header->setAutoFillBackground( true );
     m_header->setBackgroundRole( QPalette::Base );
-    layout->addWidget( m_header );
+    m_layout->addWidget( m_header );
 
     m_headerLabel = new QLabel( m_header );
     //TODO: create a action so this can be changed by various runners to give the user feedback
@@ -153,7 +155,7 @@ Interface::Interface(QWidget* parent)
     m_searchTerm->clear();
     m_searchTerm->setClickMessage( i18n( "Enter a command or search term here" ) );
     m_searchTerm->setClearButtonShown( true );
-    layout->addWidget( m_searchTerm );
+    m_layout->addWidget( m_searchTerm );
     connect( m_searchTerm, SIGNAL(textChanged(QString)),
             this, SLOT(match(QString)) );
     connect( m_searchTerm, SIGNAL(returnPressed()),
@@ -165,7 +167,7 @@ Interface::Interface(QWidget* parent)
              SLOT(matchActivated(QListWidgetItem*)) );
     connect( m_matchList, SIGNAL(itemClicked(QListWidgetItem*)),
              SLOT(setDefaultItem(QListWidgetItem*)) );
-    layout->addWidget(m_matchList);
+    m_layout->addWidget(m_matchList);
 
     m_optionsButton = new KPushButton( KStandardGuiItem::configure(), this );
     m_optionsButton->setText( i18n( "Options" ) );
@@ -191,7 +193,7 @@ Interface::Interface(QWidget* parent)
     connect( m_cancelButton, SIGNAL(clicked(bool)), SLOT(hide()) );
     bottomLayout->addWidget( m_cancelButton );
 
-    layout->addLayout (bottomLayout );
+    m_layout->addLayout (bottomLayout );
 
     setWidgetPalettes();
     connect( KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
@@ -451,19 +453,31 @@ void Interface::resizeEvent(QResizeEvent *e)
 
 void Interface::showOptions(bool show)
 {
-    if (show == true) {
-        if ( !m_optionsButton->isEnabled() ) {
+    //TODO: in the case where we are no longer showing options
+    //      should we have the runner delete it's options?
+    if ( show ) {
+        if ( !m_defaultMatch || !m_defaultMatch->runner()->hasOptions() ) {
             // in this case, there is nothing to show
             return;
         }
-        m_optionsButton->setChecked( true );
-        kDebug() << "showing Options" << endl;
-        //TODO: add code to show options
-    } else {
-        m_optionsButton->setChecked( false );
-        kDebug() << "hiding options" << endl;
-        //TODO: add code to hide options
+
+        if ( !m_expander ) {
+            kDebug() << "creating m_expander" << endl;
+            m_expander = new CollapsibleWidget( this );
+            connect( m_expander, SIGNAL( collapseCompleted() ),
+                     m_expander, SLOT( hide() ) );
+            m_layout->addWidget( m_expander );
+        }
+
+        kDebug() << "set inner widget to " << m_defaultMatch->runner()->options() << endl;
+        m_expander->show();
+        m_expander->setInnerWidget( m_defaultMatch->runner()->options() );
     }
+
+    if ( m_expander ) {
+        m_expander->setExpanded( show );
+    }
+    m_optionsButton->setChecked( show );
 }
 
 void Interface::setDefaultItem( QListWidgetItem* item )
@@ -477,7 +491,13 @@ void Interface::setDefaultItem( QListWidgetItem* item )
     }
 
     m_defaultMatch = dynamic_cast<SearchMatch*>( item );
-    m_optionsButton->setEnabled( m_defaultMatch && m_defaultMatch->runner()->hasOptions() );
+
+    bool hasOptions = m_defaultMatch && m_defaultMatch->runner()->hasOptions();
+    m_optionsButton->setEnabled( hasOptions );
+
+    if ( m_expander && !hasOptions ) {
+        m_expander->hide();
+    }
 }
 
 #include "interface.moc"

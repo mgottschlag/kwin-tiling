@@ -18,6 +18,7 @@
 
 #include <QWidget>
 #include <QAction>
+#include <QPushButton>
 
 #include <KAuthorized>
 #include <KIcon>
@@ -64,7 +65,8 @@ QWidget* ShellRunner::options()
 {
     if ( !m_options ) {
         // create options here
-        m_options = new QWidget;
+        m_options = new QPushButton( "woo!" );
+        m_options->resize( 100, 200 );
     }
 
     return m_options;
