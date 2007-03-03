@@ -35,6 +35,11 @@
 
 #include <solid/powermanager.h>
 
+#include <solid/networkmanager.h>
+#include <solid/networkinterface.h>
+#include <solid/network.h>
+#include <solid/wirelessnetwork.h>
+
 #include <kjob.h>
 
 
@@ -249,6 +254,11 @@ int main(int argc, char **argv)
       cout << "  solidshell power suspend 'method'" << endl;
       cout << i18n( "             # Suspend the computer using the given 'method'.\n" ) << endl;
 
+      cout << "  solidshell networking listdevices" << endl;
+      cout << i18n( "             # List the network devices present.\n" ) << endl;
+
+      cout << "  solidshell networking listnetworks 'uni'" << endl;
+      cout << i18n( "             # List the networks known to the device specified by 'uni'.\n" ) << endl;
       return 0;
   }
 
@@ -373,6 +383,23 @@ bool SolidShell::doIt()
             {
                 cerr << i18n( "Syntax Error: Unknown option '%1'" , type ) << endl;
             }
+        }
+        else
+        {
+            cerr << i18n( "Syntax Error: Unknown command '%1'" , command ) << endl;
+        }
+    }
+    else if ( domain == "networking" )
+    {
+        if ( command == "listdevices" )
+        {
+            return shell.netmgrList();
+        }
+        else if ( command == "listnetworks" )
+        {
+            checkArgumentCount( 3, 3 );
+            QString device( args->arg( 2 ) );
+            return shell.netmgrListNetworks( device );
         }
         else
         {
@@ -688,6 +715,40 @@ bool SolidShell::powerChangeCpuPolicy( const QString &policyName )
     }
 
     return manager.setCpuFreqPolicy( policy );
+}
+
+bool SolidShell::netmgrList()
+{
+    Solid::NetworkManager &manager = Solid::NetworkManager::self();
+
+    const Solid::NetworkInterfaceList all = manager.networkInterfaces();
+
+    cerr << "debug: network interface list contains: " << all.count() << " entries" << endl;
+    foreach ( const Solid::NetworkInterface device, all )
+    {
+        cout << "UNI = '" << device.uni() << "'" << endl;
+    }
+    return true;
+
+}
+
+bool SolidShell::netmgrListNetworks( const QString & deviceUni )
+{
+    Solid::NetworkManager &manager = Solid::NetworkManager::self();
+
+
+    Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );
+    
+    Solid::NetworkList networks = device.networks();
+#if 1 //copy constructor needed here
+    foreach ( const Solid::Network net, networks )
+    {
+        cout << "NETWORK UNI = '" << net.uni() << "'" << endl;
+    }
+
+    return true;
+#endif
+
 }
 
 void SolidShell::connectJob( KJob *job )

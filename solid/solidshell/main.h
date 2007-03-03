@@ -51,6 +51,9 @@ public:
     bool powerQueryCpuPolicies();
     bool powerChangeCpuPolicy( const QString &policyName );
 
+    bool netmgrList();
+    bool netmgrListNetworks( const QString &device );
+    //bool netmgrCapabilities( const QString &udi );
 private:
     void connectJob( KJob *job );
 
