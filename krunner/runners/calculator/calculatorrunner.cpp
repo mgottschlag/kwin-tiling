@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2007 Barış Metin <baris@pardus.org.tr>
+ *   Copyright (C) 2006 David Faure <faure@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -71,6 +72,7 @@ bool CalculatorRunner::exec( const QString& term )
     return true;
 }
 
+// function taken from kdesktop/minicli.cpp
 QString CalculatorRunner::calculate( const QString& term )
 {
     QString result, cmd;
