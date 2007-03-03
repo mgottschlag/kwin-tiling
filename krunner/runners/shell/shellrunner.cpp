@@ -19,6 +19,7 @@
 #include <QWidget>
 #include <QAction>
 
+#include <KAuthorized>
 #include <KIcon>
 #include <KLocale>
 #include <KRun>
@@ -31,6 +32,7 @@ ShellRunner::ShellRunner( QObject* parent )
       m_options( 0 )
 {
     setObjectName( i18n( "Command" ) );
+    m_enabled = KAuthorized::authorizeKAction( "shell_access" );
 }
 
 ShellRunner::~ShellRunner()
@@ -40,6 +42,10 @@ ShellRunner::~ShellRunner()
 
 QAction* ShellRunner::accepts(const QString& term)
 {
+    if ( !m_enabled ) {
+        return 0;
+    }
+
     QString executable = KStandardDirs::findExe(term);
     if ( !executable.isEmpty() ) {
         QAction* action = new QAction( KIcon( "exec" ), executable, this );
@@ -56,8 +62,7 @@ bool ShellRunner::hasOptions()
 
 QWidget* ShellRunner::options()
 {
-    if (!m_options)
-    {
+    if ( !m_options ) {
         // create options here
         m_options = new QWidget;
     }
@@ -67,7 +72,11 @@ QWidget* ShellRunner::options()
 
 bool ShellRunner::exec(const QString& command)
 {
-    return (KRun::runCommand(command) != 0);
+    if ( !m_enabled ) {
+        return false;
+    }
+
+    return ( KRun::runCommand( command ) != 0 );
 }
 
 #include "shellrunner.moc"

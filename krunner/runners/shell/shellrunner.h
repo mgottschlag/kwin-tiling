@@ -45,6 +45,7 @@ class ShellRunner : public Plasma::Runner
 
     private:
         QWidget* m_options;
+        bool m_enabled;
 };
 
 #endif
