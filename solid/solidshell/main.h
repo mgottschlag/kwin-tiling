@@ -52,6 +52,10 @@ public:
     bool powerChangeCpuPolicy( const QString &policyName );
 
     bool netmgrList();
+    bool netmgrNetworkingEnabled();
+    bool netmgrWirelessEnabled();
+    bool netmgrChangeNetworkingEnabled( bool enabled );
+    bool netmgrChangeWirelessEnabled( bool enabled );
     bool netmgrListNetworks( const QString &device );
     //bool netmgrCapabilities( const QString &udi );
 private:

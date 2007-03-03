@@ -254,11 +254,25 @@ int main(int argc, char **argv)
       cout << "  solidshell power suspend 'method'" << endl;
       cout << i18n( "             # Suspend the computer using the given 'method'.\n" ) << endl;
 
-      cout << "  solidshell networking listdevices" << endl;
+      cout << "  solidshell network listdevices" << endl;
       cout << i18n( "             # List the network devices present.\n" ) << endl;
 
-      cout << "  solidshell networking listnetworks 'uni'" << endl;
+      cout << "  solidshell network listnetworks 'uni'" << endl;
       cout << i18n( "             # List the networks known to the device specified by 'uni'.\n" ) << endl;
+
+      cout << "  solidshell network query (enabled|wireless)" << endl;
+      cout << i18n( "             # Query whether networking features are active or not.\n"
+                    "             # - If the 'enabled' option is given, return whether\n"
+                    "             # networking is enabled for the system\n"
+                    "             # - If the 'wireless' option is is given, return whether\n"
+                    "             # wireless is enabled for the system\n" ) << endl;
+
+      cout << "  solidshell network set wireless (enabled|disabled)" << endl;
+      cout << i18n( "             # Enable or disable networking on this system.\n" ) << endl;
+
+      cout << "  solidshell network set networking (enabled|disabled)" << endl;
+      cout << i18n( "             # Enable or disable networking on this system.\n" ) << endl;
+
       return 0;
   }
 
@@ -389,9 +403,55 @@ bool SolidShell::doIt()
             cerr << i18n( "Syntax Error: Unknown command '%1'" , command ) << endl;
         }
     }
-    else if ( domain == "networking" )
+    else if ( domain == "network" )
     {
-        if ( command == "listdevices" )
+        if ( command == "query" )
+        {
+            checkArgumentCount( 3, 3 );
+            QString what( args->arg( 2 ) );
+            if ( what == "enabled" )
+                return shell.netmgrNetworkingEnabled();
+            else if ( what == "wireless" )
+                return shell.netmgrWirelessEnabled();
+            else
+                cerr << i18n( "Syntax Error: Unknown option '%1'", what ) << endl;
+        }
+        else if ( command == "set" )
+        {
+            checkArgumentCount( 4, 4 );
+            QString what( args->arg( 2 ) );
+            QString how( args->arg( 3 ) );
+            bool enabled;
+            if ( how == "enabled" )
+            {
+                enabled = true;
+            }
+            else if ( how == "disabled" )
+            {
+                enabled = false;
+            }
+            else
+            {
+                cerr << i18n( "Syntax Error: Unknown option '%1'", how ) << endl;
+                return false;
+            }
+            if ( what == "networking" )
+            {
+                shell.netmgrChangeNetworkingEnabled( enabled );
+                return true;
+            }
+            else if ( what == "wireless" )
+            {
+                shell.netmgrChangeWirelessEnabled( enabled );
+                return true;
+            }
+            else
+            {
+                cerr << i18n( "Syntax Error: Unknown object '%1'", what ) << endl;
+                return false;
+            }
+        }
+        else if ( command == "listdevices" )
         {
             return shell.netmgrList();
         }
@@ -715,6 +775,38 @@ bool SolidShell::powerChangeCpuPolicy( const QString &policyName )
     }
 
     return manager.setCpuFreqPolicy( policy );
+}
+
+bool SolidShell::netmgrNetworkingEnabled()
+{
+    Solid::NetworkManager & manager = Solid::NetworkManager::self();
+    if ( manager.isNetworkingEnabled() )
+        cout << i18n( "networking: is enabled" )<< endl;
+    else
+        cout << i18n( "networking: is not enabled" )<< endl;
+}
+
+bool SolidShell::netmgrWirelessEnabled()
+{
+    Solid::NetworkManager & manager = Solid::NetworkManager::self();
+    if ( manager.isWirelessEnabled() )
+        cout << i18n( "wireless: is enabled" )<< endl;
+    else
+        cout << i18n( "wireless: is not enabled" )<< endl;
+}
+
+bool SolidShell::netmgrChangeNetworkingEnabled( bool enabled )
+{
+    Solid::NetworkManager & manager = Solid::NetworkManager::self();
+    manager.setNetworkingEnabled( enabled );
+    return true;
+}
+
+bool SolidShell::netmgrChangeWirelessEnabled( bool enabled )
+{
+    Solid::NetworkManager & manager = Solid::NetworkManager::self();
+    manager.setWirelessEnabled( enabled );
+    return true;
 }
 
 bool SolidShell::netmgrList()
