@@ -39,7 +39,7 @@ namespace KHotKeys
 
 // Action
 
-Action* Action::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
+Action* Action::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "COMMAND_URL" )
@@ -56,32 +56,31 @@ Action* Action::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
     return NULL;
     }
 
-void Action::cfg_write( KConfig& cfg_P ) const
+void Action::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" ); // derived classes should call with their type
     }
 
 // Action_list
 
-Action_list::Action_list( KConfig& cfg_P, Action_data* data_P )
+Action_list::Action_list( KConfigGroup& cfg_P, Action_data* data_P )
     : Q3PtrList< Action >()
     {
     setAutoDelete( true );
-    QString save_cfg_group = cfg_P.group();
     int cnt = cfg_P.readEntry( "ActionsCount", 0 );
+    QString save_cfg_group = cfg_P.group();
     for( int i = 0;
          i < cnt;
          ++i )
         {
-        cfg_P.setGroup( save_cfg_group + QString::number( i ));
-        Action* action = Action::create_cfg_read( cfg_P, data_P );
+        KConfigGroup group( cfg_P.config(), save_cfg_group + QString::number( i ) );
+        Action* action = Action::create_cfg_read( group, data_P );
         if( action )
             append( action );
         }
-    cfg_P.setGroup( save_cfg_group );
     }
 
-void Action_list::cfg_write( KConfig& cfg_P ) const
+void Action_list::cfg_write( KConfigGroup& cfg_P ) const
     {
     QString save_cfg_group = cfg_P.group();
     int i = 0;
@@ -89,22 +88,21 @@ void Action_list::cfg_write( KConfig& cfg_P ) const
          it;
          ++it, ++i )
         {
-        cfg_P.setGroup( save_cfg_group + QString::number( i ));
-        it.current()->cfg_write( cfg_P );
+        KConfigGroup group( cfg_P.config(), save_cfg_group + QString::number( i ) );
+        it.current()->cfg_write( group );
         }
-    cfg_P.setGroup( save_cfg_group );
     cfg_P.writeEntry( "ActionsCount", i );
     }
 
 // Command_url_action
 
-Command_url_action::Command_url_action( KConfig& cfg_P, Action_data* data_P )
+Command_url_action::Command_url_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Action( cfg_P, data_P )
     {
     _command_url = cfg_P.readEntry( "CommandURL" );
     }
 
-void Command_url_action::cfg_write( KConfig& cfg_P ) const
+void Command_url_action::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "CommandURL", command_url());
@@ -183,7 +181,7 @@ Action* Command_url_action::copy( Action_data* data_P ) const
 
 // Menuentry_action
 
-void Menuentry_action::cfg_write( KConfig& cfg_P ) const
+void Menuentry_action::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "MENUENTRY" ); // overwrites value set in base::cfg_write()
@@ -221,7 +219,7 @@ Action* Menuentry_action::copy( Action_data* data_P ) const
 
 // Dcop_action
 
-Dcop_action::Dcop_action( KConfig& cfg_P, Action_data* data_P )
+Dcop_action::Dcop_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Action( cfg_P, data_P )
     {
     app = cfg_P.readEntry( "RemoteApp" );
@@ -230,7 +228,7 @@ Dcop_action::Dcop_action( KConfig& cfg_P, Action_data* data_P )
     args = cfg_P.readEntry( "Arguments" );
     }
 
-void Dcop_action::cfg_write( KConfig& cfg_P ) const
+void Dcop_action::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "DCOP" ); // overwrites value set in base::cfg_write()
@@ -307,17 +305,15 @@ Action* Dcop_action::copy( Action_data* data_P ) const
 
 // Keyboard_input_action
 
-Keyboard_input_action::Keyboard_input_action( KConfig& cfg_P, Action_data* data_P )
+Keyboard_input_action::Keyboard_input_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Action( cfg_P, data_P )
     {
     _input = cfg_P.readEntry( "Input" );
     if( cfg_P.readEntry( "IsDestinationWindow" , false))
         {
-        QString save_cfg_group = cfg_P.group();
-        cfg_P.setGroup( save_cfg_group + "DestinationWindow" );
-        _dest_window = new Windowdef_list( cfg_P );
+        KConfigGroup windowGroup( cfg_P.config(), cfg_P.group() + "DestinationWindow" );
+        _dest_window = new Windowdef_list( windowGroup );
         _active_window = false; // ignored with _dest_window set anyway
-        cfg_P.setGroup( save_cfg_group );
         }
     else
         {
@@ -331,7 +327,7 @@ Keyboard_input_action::~Keyboard_input_action()
     delete _dest_window;
     }
 
-void Keyboard_input_action::cfg_write( KConfig& cfg_P ) const
+void Keyboard_input_action::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "KEYBOARD_INPUT" ); // overwrites value set in base::cfg_write()
@@ -339,10 +335,8 @@ void Keyboard_input_action::cfg_write( KConfig& cfg_P ) const
     if( dest_window() != NULL )
         {
         cfg_P.writeEntry( "IsDestinationWindow", true );
-        QString save_cfg_group = cfg_P.group();
-        cfg_P.setGroup( save_cfg_group + "DestinationWindow" );
-        dest_window()->cfg_write( cfg_P );
-        cfg_P.setGroup( save_cfg_group );
+        KConfigGroup windowGroup( cfg_P.config(), cfg_P.group() + "DestinationWindow" );
+        dest_window()->cfg_write( windowGroup );
         }
     else
         cfg_P.writeEntry( "IsDestinationWindow", false );
@@ -396,13 +390,12 @@ Action* Keyboard_input_action::copy( Action_data* data_P ) const
 
 // Activate_window_action
 
-Activate_window_action::Activate_window_action( KConfig& cfg_P, Action_data* data_P )
+Activate_window_action::Activate_window_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Action( cfg_P, data_P )
     {
     QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Window" );
-    _window = new Windowdef_list( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup windowGroup( cfg_P.config(), save_cfg_group + "Window" );
+    _window = new Windowdef_list( windowGroup );
     }
 
 Activate_window_action::~Activate_window_action()
@@ -410,14 +403,12 @@ Activate_window_action::~Activate_window_action()
     delete _window;
     }
 
-void Activate_window_action::cfg_write( KConfig& cfg_P ) const
+void Activate_window_action::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "ACTIVATE_WINDOW" ); // overwrites value set in base::cfg_write()
-    QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Window" );
-    window()->cfg_write( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup windowGroup( cfg_P.config(), cfg_P.group() + "Window" );
+    window()->cfg_write( windowGroup );
     }
 
 void Activate_window_action::execute()

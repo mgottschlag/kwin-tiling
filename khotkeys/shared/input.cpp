@@ -172,6 +172,8 @@ static bool xtest()
 // CHECKME nevola XFlush(), musi se pak volat rucne
 bool Kbd::send_macro_key( const QString& key, Window window_P )
     {
+    Q_UNUSED( key )
+
     return false;
     int keysym;
     uint x_mod;

@@ -44,8 +44,8 @@ class KDE_EXPORT Settings
         bool read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P );
         void read_settings_v1( KConfig& cfg_P );
         void read_settings_v2( KConfig& cfg_P, bool include_disabled_P );
-        int write_actions_recursively_v2( KConfig& cfg_P, Action_data_group* parent_P, bool enabled_P );
-        void read_actions_recursively_v2( KConfig& cfg_P, Action_data_group* parent_P,
+        int write_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_group* parent_P, bool enabled_P );
+        void read_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_group* parent_P,
             bool include_disabled_P );
     private:
         QStringList already_imported;

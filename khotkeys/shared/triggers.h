@@ -33,12 +33,12 @@ class KDE_EXPORT Trigger
     {
     public:
         Trigger( Action_data* data_P );
-        Trigger( KConfig& cfg_P, Action_data* data_P );
+        Trigger( KConfigGroup& cfg_P, Action_data* data_P );
         virtual ~Trigger();
-        virtual void cfg_write( KConfig& cfg_P ) const = 0;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const = 0;
         virtual Trigger* copy( Action_data* data_P ) const = 0;
         virtual const QString description() const = 0;
-        static Trigger* create_cfg_read( KConfig& cfg_P, Action_data* data_P );
+        static Trigger* create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P );
         virtual void activate( bool activate_P ) = 0;
     protected:
         Action_data* const data;
@@ -50,9 +50,9 @@ class KDE_EXPORT Trigger_list
     {
     public:
         Trigger_list( const QString& comment_P ); // CHECKME nebo i data ?
-        Trigger_list( KConfig& cfg_P, Action_data* data_P );
+        Trigger_list( KConfigGroup& cfg_P, Action_data* data_P );
         void activate( bool activate_P );
-        void cfg_write( KConfig& cfg_P ) const;
+        void cfg_write( KConfigGroup& cfg_P ) const;
         typedef Q3PtrListIterator< Trigger > Iterator;
         const QString& comment() const;
         Trigger_list* copy( Action_data* data_P ) const;
@@ -67,9 +67,9 @@ class KDE_EXPORT Shortcut_trigger
     typedef Trigger base;
     public:
         Shortcut_trigger( Action_data* data_P, const KShortcut& shortcut_P );
-        Shortcut_trigger( KConfig& cfg_P, Action_data* data_P );
+        Shortcut_trigger( KConfigGroup& cfg_P, Action_data* data_P );
         virtual ~Shortcut_trigger();
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Shortcut_trigger* copy( Action_data* data_P ) const;
         virtual const QString description() const;
         const KShortcut& shortcut() const;
@@ -93,9 +93,9 @@ class KDE_EXPORT Window_trigger
             WINDOW_DEACTIVATES     = ( 1 << 3 )
             };
         Window_trigger( Action_data* data_P, Windowdef_list* windows_P, int window_actions_P );
-        Window_trigger( KConfig& cfg_P, Action_data* data_P );
+        Window_trigger( KConfigGroup& cfg_P, Action_data* data_P );
         virtual ~Window_trigger();
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
 #ifdef HAVE_COVARIANT_RETURN    // stupid gcc, it doesn't even warn it can't do this
         virtual Window_trigger* copy( Action_data* data_P ) const;
 #else
@@ -128,9 +128,9 @@ class KDE_EXPORT Gesture_trigger
     typedef Trigger base;
     public:
         Gesture_trigger( Action_data* data_P, const QString& gesture_P );
-        Gesture_trigger( KConfig& cfg_P, Action_data* data_P );
+        Gesture_trigger( KConfigGroup& cfg_P, Action_data* data_P );
         virtual ~Gesture_trigger();
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Trigger* copy( Action_data* data_P ) const;
         virtual const QString description() const;
         const QString& gesturecode() const;
@@ -149,9 +149,9 @@ class KDE_EXPORT Voice_trigger
     typedef Trigger base;
     public:
 		Voice_trigger( Action_data* data_P, const QString& Voice_P, const VoiceSignature & signature1_P, const VoiceSignature & signature2_P );
-        Voice_trigger( KConfig& cfg_P, Action_data* data_P );
+        Voice_trigger( KConfigGroup& cfg_P, Action_data* data_P );
         virtual ~Voice_trigger();
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Trigger* copy( Action_data* data_P ) const;
         virtual const QString description() const;
         const QString& voicecode() const;
@@ -178,7 +178,7 @@ Trigger::Trigger( Action_data* data_P )
     }
 
 inline
-Trigger::Trigger( KConfig&, Action_data* data_P )
+Trigger::Trigger( KConfigGroup&, Action_data* data_P )
     : data( data_P )
     {
     }

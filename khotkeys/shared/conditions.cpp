@@ -40,14 +40,14 @@ Condition::Condition( Condition_list_base* parent_P )
         _parent->append( this );
     }
 
-Condition::Condition( KConfig&, Condition_list_base* parent_P )
+Condition::Condition( KConfigGroup&, Condition_list_base* parent_P )
     : _parent( parent_P )
     {
     if( _parent )
         _parent->append( this );
     }
 
-Condition* Condition::create_cfg_read( KConfig& cfg_P, Condition_list_base* parent_P )
+Condition* Condition::create_cfg_read( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "ACTIVE_WINDOW" )
@@ -71,7 +71,7 @@ Condition::~Condition()
     }
 
 
-void Condition::cfg_write( KConfig& cfg_P ) const
+void Condition::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" );
     }
@@ -116,19 +116,17 @@ void Condition::debug_list( const Q3PtrList< Condition >& list_P, int depth_P )
 
 // Condition_list_base
 
-Condition_list_base::Condition_list_base( KConfig& cfg_P, Condition_list_base* parent_P )
+Condition_list_base::Condition_list_base( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition( parent_P )
     {
-    QString save_cfg_group = cfg_P.group();
     int cnt = cfg_P.readEntry( "ConditionsCount", 0 );
     for( int i = 0;
          i < cnt;
          ++i )
         {
-        cfg_P.setGroup( save_cfg_group + QString::number( i ));
-        (void) Condition::create_cfg_read( cfg_P, this );
+        KConfigGroup conditionConfig( cfg_P.config(), cfg_P.group() + QString::number( i ) );
+        (void) Condition::create_cfg_read( conditionConfig, this );
         }
-    cfg_P.setGroup( save_cfg_group );
     }
 
 Condition_list_base::~Condition_list_base()
@@ -141,18 +139,16 @@ Condition_list_base::~Condition_list_base()
         }
     }
     
-void Condition_list_base::cfg_write( KConfig& cfg_P ) const
+void Condition_list_base::cfg_write( KConfigGroup& cfg_P ) const
     {
-    QString save_cfg_group = cfg_P.group();
     int i = 0;
     for( Iterator it( *this );
          it;
          ++it, ++i )
         {
-        cfg_P.setGroup( save_cfg_group + QString::number( i ));
-        it.current()->cfg_write( cfg_P );
+        KConfigGroup conditionConfig( cfg_P.config(), cfg_P.group() + QString::number( i ) );
+        it.current()->cfg_write( conditionConfig );
         }
-    cfg_P.setGroup( save_cfg_group );
     cfg_P.writeEntry( "ConditionsCount", i );
     }
 
@@ -178,13 +174,13 @@ void Condition_list_base::debug( int depth_P )
 
 // Condition_list
 
-Condition_list::Condition_list( KConfig& cfg_P, Action_data_base* data_P )
+Condition_list::Condition_list( KConfigGroup& cfg_P, Action_data_base* data_P )
     : Condition_list_base( cfg_P, NULL ), data( data_P )
     {
     _comment = cfg_P.readEntry( "Comment" );
     }
 
-void Condition_list::cfg_write( KConfig& cfg_P ) const
+void Condition_list::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Comment", comment());
@@ -242,13 +238,11 @@ Condition_list* Condition_list::copy( Condition_list_base* ) const
 
 // Active_window_condition
 
-Active_window_condition::Active_window_condition( KConfig& cfg_P, Condition_list_base* parent_P )
+Active_window_condition::Active_window_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition( cfg_P, parent_P )
     {
-    QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Window" );
-    _window = new Windowdef_list( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup windowConfig( cfg_P.config(), cfg_P.group() + "Window" );
+    _window = new Windowdef_list( windowConfig );
     init();
     set_match();
     }
@@ -271,13 +265,11 @@ void Active_window_condition::set_match()
     updated();
     }
 
-void Active_window_condition::cfg_write( KConfig& cfg_P ) const
+void Active_window_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Window" );
-    window()->cfg_write( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup windowConfig( cfg_P.config(), cfg_P.group() + "Window" );
+    window()->cfg_write( windowConfig );
     cfg_P.writeEntry( "Type", "ACTIVE_WINDOW" ); // overwrites value set in base::cfg_write()
     }
 
@@ -308,13 +300,11 @@ Active_window_condition::~Active_window_condition()
 
 // Existing_window_condition
 
-Existing_window_condition::Existing_window_condition( KConfig& cfg_P, Condition_list_base* parent_P )
+Existing_window_condition::Existing_window_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition( cfg_P, parent_P )
     {
-    QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Window" );
-    _window = new Windowdef_list( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup windowConfig( cfg_P.config(), cfg_P.group() + "Window" );
+    _window = new Windowdef_list( windowConfig );
     init();
     set_match();
     }
@@ -340,13 +330,11 @@ void Existing_window_condition::set_match( WId w_P )
     updated();
     }
 
-void Existing_window_condition::cfg_write( KConfig& cfg_P ) const
+void Existing_window_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Window" );
-    window()->cfg_write( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup windowConfig( cfg_P.config(), cfg_P.group() + "Window" );
+    window()->cfg_write( windowConfig );
     cfg_P.writeEntry( "Type", "EXISTING_WINDOW" ); // overwrites value set in base::cfg_write()
     }
 
@@ -382,7 +370,7 @@ Existing_window_condition::~Existing_window_condition()
 
 // Not_condition
 
-Not_condition::Not_condition( KConfig& cfg_P, Condition_list_base* parent_P )
+Not_condition::Not_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition_list_base( cfg_P, parent_P )
     {
     // CHECKME kontrola poctu ?
@@ -393,7 +381,7 @@ bool Not_condition::match() const
     return condition() ? !condition()->match() : false;
     }
 
-void Not_condition::cfg_write( KConfig& cfg_P ) const
+void Not_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "NOT" ); // overwrites value set in base::cfg_write()
@@ -419,7 +407,7 @@ bool Not_condition::accepts_children() const
 
 // And_condition
 
-And_condition::And_condition( KConfig& cfg_P, Condition_list_base* parent_P )
+And_condition::And_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition_list_base( cfg_P, parent_P )
     {
     // CHECKME kontrola poctu ?
@@ -435,7 +423,7 @@ bool And_condition::match() const
     return true; // all true (or empty)
     }
 
-void And_condition::cfg_write( KConfig& cfg_P ) const
+void And_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "AND" ); // overwrites value set in base::cfg_write()
@@ -458,7 +446,7 @@ const QString And_condition::description() const
 
 // Or_condition
 
-Or_condition::Or_condition( KConfig& cfg_P, Condition_list_base* parent_P )
+Or_condition::Or_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition_list_base( cfg_P, parent_P )
     {
     // CHECKME kontrola poctu ?
@@ -476,7 +464,7 @@ bool Or_condition::match() const
     return false;
     }
 
-void Or_condition::cfg_write( KConfig& cfg_P ) const
+void Or_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "OR" ); // overwrites value set in base::cfg_write()

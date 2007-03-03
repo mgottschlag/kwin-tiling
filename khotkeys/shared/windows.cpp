@@ -197,18 +197,18 @@ Window_data::Window_data( WId id_P )
 
 // Windowdef
 
-void Windowdef::cfg_write( KConfig& cfg_P ) const
+void Windowdef::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" );
     cfg_P.writeEntry( "Comment", comment());
     }
 
-Windowdef::Windowdef( KConfig& cfg_P )
+Windowdef::Windowdef( KConfigGroup& cfg_P )
     {
     _comment = cfg_P.readEntry( "Comment" );
     }
 
-Windowdef* Windowdef::create_cfg_read( KConfig& cfg_P )
+Windowdef* Windowdef::create_cfg_read( KConfigGroup& cfg_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "SIMPLE" )
@@ -219,37 +219,33 @@ Windowdef* Windowdef::create_cfg_read( KConfig& cfg_P )
 
 // Windowdef_list
 
-Windowdef_list::Windowdef_list( KConfig& cfg_P )
+Windowdef_list::Windowdef_list( KConfigGroup& cfg_P )
     : Q3PtrList< Windowdef >()
     {
     setAutoDelete( true );
-    QString save_cfg_group = cfg_P.group();
     _comment = cfg_P.readEntry( "Comment" );
     int cnt = cfg_P.readEntry( "WindowsCount", 0 );
     for( int i = 0;
          i < cnt;
          ++i )
         {
-        cfg_P.setGroup( save_cfg_group + QString::number( i ));
-        Windowdef* window = Windowdef::create_cfg_read( cfg_P );
+        KConfigGroup windowGroup( cfg_P.config(), cfg_P.group() + QString::number( i ));
+        Windowdef* window = Windowdef::create_cfg_read( windowGroup );
         if( window )
             append( window );
         }
-    cfg_P.setGroup( save_cfg_group );
     }
 
-void Windowdef_list::cfg_write( KConfig& cfg_P ) const
+void Windowdef_list::cfg_write( KConfigGroup& cfg_P ) const
     {
-    QString save_cfg_group = cfg_P.group();
     int i = 0;
     for( Iterator it( *this );
          it;
          ++it, ++i )
         {
-        cfg_P.setGroup( save_cfg_group + QString::number( i ));
-        it.current()->cfg_write( cfg_P );
+        KConfigGroup itGroup( cfg_P.config(), cfg_P.group() + QString::number( i ) );
+        it.current()->cfg_write( itGroup );
         }
-    cfg_P.setGroup( save_cfg_group );
     cfg_P.writeEntry( "WindowsCount", i );
     cfg_P.writeEntry( "Comment", comment());
     }
@@ -288,7 +284,7 @@ Windowdef_simple::Windowdef_simple( const QString& comment_P, const QString& tit
     {
     }
 
-Windowdef_simple::Windowdef_simple( KConfig& cfg_P )
+Windowdef_simple::Windowdef_simple( KConfigGroup& cfg_P )
     : Windowdef( cfg_P )
     {
     _title = cfg_P.readEntry( "Title" );
@@ -300,7 +296,7 @@ Windowdef_simple::Windowdef_simple( KConfig& cfg_P )
     _window_types = cfg_P.readEntry( "WindowTypes",0 );
     }
 
-void Windowdef_simple::cfg_write( KConfig& cfg_P ) const
+void Windowdef_simple::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Title", title());

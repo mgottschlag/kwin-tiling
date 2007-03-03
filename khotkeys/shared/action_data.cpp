@@ -32,16 +32,14 @@ Action_data_base::Action_data_base( Action_data_group* parent_P, const QString& 
         _conditions->set_data( this );
     }
     
-Action_data_base::Action_data_base( KConfig& cfg_P, Action_data_group* parent_P )
+Action_data_base::Action_data_base( KConfigGroup& cfg_P, Action_data_group* parent_P )
     : _parent( parent_P )
     {
-    QString save_cfg_group = cfg_P.group();
     _name = cfg_P.readEntry( "Name" );
     _comment = cfg_P.readEntry( "Comment" );
     _enabled = cfg_P.readEntry( "Enabled", true);
-    cfg_P.setGroup( save_cfg_group + "Conditions" );
-    _conditions = new Condition_list( cfg_P, this );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.group() + "Conditions" );
+    _conditions = new Condition_list( conditionsConfig, this );
     if( parent())
         parent()->add_child( this );
     }
@@ -54,21 +52,19 @@ Action_data_base::~Action_data_base()
     delete _conditions;
     }
     
-void Action_data_base::cfg_write( KConfig& cfg_P ) const
+void Action_data_base::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" ); // derived classes should call with their type
     cfg_P.writeEntry( "Name", name());
     cfg_P.writeEntry( "Comment", comment());
     cfg_P.writeEntry( "Enabled", enabled( true ));
-    QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Conditions" );
+    KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.group() + "Conditions" );
     assert( conditions() != NULL );
-    conditions()->cfg_write( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    conditions()->cfg_write( conditionsConfig );
     }
 
 
-Action_data_base* Action_data_base::create_cfg_read( KConfig& cfg_P, Action_data_group* parent_P )
+Action_data_base* Action_data_base::create_cfg_read( KConfigGroup& cfg_P, Action_data_group* parent_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "ACTION_DATA_GROUP" )
@@ -106,7 +102,7 @@ Action_data_base* Action_data_base::create_cfg_read( KConfig& cfg_P, Action_data
     return NULL;
     }
     
-bool Action_data_base::cfg_is_enabled( KConfig& cfg_P )
+bool Action_data_base::cfg_is_enabled( KConfigGroup& cfg_P )
     {
     return cfg_P.readEntry( "Enabled", true);
     }
@@ -136,7 +132,7 @@ bool Action_data_base::conditions_match() const
     
 // Action_data_group
 
-Action_data_group::Action_data_group( KConfig& cfg_P, Action_data_group* parent_P )
+Action_data_group::Action_data_group( KConfigGroup& cfg_P, Action_data_group* parent_P )
     : Action_data_base( cfg_P, parent_P )
     {
     unsigned int system_group_tmp = cfg_P.readEntry( "SystemGroup", 0 );
@@ -145,7 +141,7 @@ Action_data_group::Action_data_group( KConfig& cfg_P, Action_data_group* parent_
     _system_group = static_cast< system_group_t >( system_group_tmp );
     }
 
-void Action_data_group::cfg_write( KConfig& cfg_P ) const
+void Action_data_group::cfg_write( KConfigGroup& cfg_P ) const
     {
     Action_data_base::cfg_write( cfg_P );
     cfg_P.writeEntry( "SystemGroup", int(system_group()));
@@ -162,15 +158,13 @@ void Action_data_group::update_triggers()
 
 // Action_data
 
-Action_data::Action_data( KConfig& cfg_P, Action_data_group* parent_P )
+Action_data::Action_data( KConfigGroup& cfg_P, Action_data_group* parent_P )
     : Action_data_base( cfg_P, parent_P )
     {
-    QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Triggers" );
+    KConfigGroup triggersGroup( cfg_P.config(), cfg_P.group() + "Triggers" );
     _triggers = new Trigger_list( cfg_P, this );
-    cfg_P.setGroup( save_cfg_group + "Actions" );
-    _actions = new Action_list( cfg_P, this );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup actionsGroup( cfg_P.config(), cfg_P.group() + "Actions" );
+    _actions = new Action_list( actionsGroup, this );
     }
 
 Action_data::~Action_data()
@@ -181,15 +175,14 @@ Action_data::~Action_data()
     // CHECKME jeste remove z parenta ?
     }
     
-void Action_data::cfg_write( KConfig& cfg_P ) const
+void Action_data::cfg_write( KConfigGroup& cfg_P ) const
     {
     Action_data_base::cfg_write( cfg_P );
     QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Triggers" );
-    triggers()->cfg_write( cfg_P );
-    cfg_P.setGroup( save_cfg_group + "Actions" );
-    actions()->cfg_write( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup triggersGroup( cfg_P.config(), cfg_P.group() + "Triggers" );
+    triggers()->cfg_write( triggersGroup );
+    KConfigGroup actionsGroup( cfg_P.config(), cfg_P.group() + "Actions" );
+    actions()->cfg_write( actionsGroup );
     }
 
 void Action_data::execute()
@@ -273,7 +266,7 @@ void Action_data::update_triggers()
         
 // Generic_action_data
 
-void Generic_action_data::cfg_write( KConfig& cfg_P ) const
+void Generic_action_data::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "GENERIC_ACTION_DATA" );
@@ -293,7 +286,7 @@ Command_url_shortcut_action_data::Command_url_shortcut_action_data( Action_data_
 
 template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Command_url_action >
-    ::cfg_write( KConfig& cfg_P ) const
+    ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "COMMAND_URL_SHORTCUT_ACTION_DATA" );
@@ -313,7 +306,7 @@ Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( Action_data_grou
     
 template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Menuentry_action >
-    ::cfg_write( KConfig& cfg_P ) const
+    ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "MENUENTRY_SHORTCUT_ACTION_DATA" );
@@ -323,7 +316,7 @@ void Simple_action_data< Shortcut_trigger, Menuentry_action >
 
 template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Dcop_action >
-    ::cfg_write( KConfig& cfg_P ) const
+    ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "DCOP_SHORTCUT_ACTION_DATA" );
@@ -333,7 +326,7 @@ void Simple_action_data< Shortcut_trigger, Dcop_action >
 
 template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Keyboard_input_action >
-    ::cfg_write( KConfig& cfg_P ) const
+    ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA" );
@@ -343,7 +336,7 @@ void Simple_action_data< Shortcut_trigger, Keyboard_input_action >
 
 template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Activate_window_action >
-    ::cfg_write( KConfig& cfg_P ) const
+    ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" );
@@ -365,7 +358,7 @@ const Keyboard_input_action* Keyboard_input_gesture_action_data::action() const
     return static_cast< Keyboard_input_action* >( const_cast< Action_list* >( actions())->first());
     }
 
-void Keyboard_input_gesture_action_data::cfg_write( KConfig& cfg_P ) const
+void Keyboard_input_gesture_action_data::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "KEYBOARD_INPUT_GESTURE_ACTION_DATA" );

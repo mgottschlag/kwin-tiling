@@ -50,12 +50,12 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
             NULL, Action_data_group::SYSTEM_ROOT, true );
     if( cfg_P.groupList().count() == 0 ) // empty
         return false;
-    cfg_P.setGroup( "Main" ); // main group
+    KConfigGroup mainGroup( &cfg_P, "Main" ); // main group
     if( import_P == ImportNone ) // reading main cfg file
-        already_imported = cfg_P.readEntry( "AlreadyImported",QStringList() );
+        already_imported = mainGroup.readEntry( "AlreadyImported",QStringList() );
     else
         {
-        QString import_id = cfg_P.readEntry( "ImportId" );
+        QString import_id = mainGroup.readEntry( "ImportId" );
         if( !import_id.isEmpty())
             {
             if( already_imported.contains( import_id ))
@@ -79,7 +79,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
                 return true;
             }
         }
-    int version = cfg_P.readEntry( "Version", -1234576 );
+    int version = mainGroup.readEntry( "Version", -1234576 );
     switch( version )
         {
         case 1:
@@ -98,18 +98,17 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
         }
     if( import_P != ImportNone )
         return true; // don't read global settings
-    cfg_P.setGroup( "Main" ); // main group
-    daemon_disabled = cfg_P.readEntry( "Disabled", false);
-    cfg_P.setGroup( "Gestures" );
-    gestures_disabled_globally = cfg_P.readEntry( "Disabled", true);
-    gesture_mouse_button = cfg_P.readEntry( "MouseButton", 2 );
+    daemon_disabled = mainGroup.readEntry( "Disabled", false);
+    KConfigGroup gesturesConfig( &cfg_P, "Gestures" );
+    gestures_disabled_globally = gesturesConfig.readEntry( "Disabled", true);
+    gesture_mouse_button = gesturesConfig.readEntry( "MouseButton", 2 );
     gesture_mouse_button = qBound( 2, gesture_mouse_button, 9 );
-    gesture_timeout = cfg_P.readEntry( "Timeout", 300 );
-    cfg_P.setGroup( "GesturesExclude" );
+    gesture_timeout = gesturesConfig.readEntry( "Timeout", 300 );
+    KConfigGroup gesturesExcludeConfig( &cfg_P, "GesturesExclude" );
     delete gestures_exclude;
-    gestures_exclude = new Windowdef_list( cfg_P );
-	cfg_P.setGroup( "Voice" );
-	voice_shortcut=KShortcut( cfg_P.readEntry("Shortcut" , "")  );
+    gestures_exclude = new Windowdef_list( gesturesExcludeConfig );
+    KConfigGroup voiceConfig( &cfg_P, "Voice" );
+    voice_shortcut=KShortcut( voiceConfig.readEntry("Shortcut" , "")  );
     return true;
     }
 
@@ -122,34 +121,33 @@ void Settings::write_settings()
          it != groups.end();
          ++it )
         cfg.deleteGroup( *it );
-    cfg.setGroup( "Main" ); // main group
-    cfg.writeEntry( "Version", 2 ); // now it's version 2 cfg. file
-    cfg.writeEntry( "AlreadyImported", already_imported );
-    cfg.setGroup( "Data" );
-    int cnt = write_actions_recursively_v2( cfg, actions, true );
-    cfg.setGroup( "Main" );
-    cfg.writeEntry( "Autostart", cnt != 0 && !daemon_disabled );
-    cfg.writeEntry( "Disabled", daemon_disabled );
-    cfg.setGroup( "Gestures" );
-    cfg.writeEntry( "Disabled", gestures_disabled_globally );
-    cfg.writeEntry( "MouseButton", gesture_mouse_button );
-    cfg.writeEntry( "Timeout", gesture_timeout );
+    KConfigGroup mainGroup( &cfg, "Main" ); // main group
+    mainGroup.writeEntry( "Version", 2 ); // now it's version 2 cfg. file
+    mainGroup.writeEntry( "AlreadyImported", already_imported );
+    KConfigGroup dataGroup( &cfg,  "Data" );
+    int cnt = write_actions_recursively_v2( dataGroup, actions, true );
+    mainGroup.writeEntry( "Autostart", cnt != 0 && !daemon_disabled );
+    mainGroup.writeEntry( "Disabled", daemon_disabled );
+    KConfigGroup gesturesConfig( &cfg, "Gestures" );
+    gesturesConfig.writeEntry( "Disabled", gestures_disabled_globally );
+    gesturesConfig.writeEntry( "MouseButton", gesture_mouse_button );
+    gesturesConfig.writeEntry( "Timeout", gesture_timeout );
     if( gestures_exclude != NULL )
         {
-        cfg.setGroup( "GesturesExclude" );
-        gestures_exclude->cfg_write( cfg );
+        KConfigGroup gesturesExcludeConfig( &cfg, "GesturesExclude" );
+        gestures_exclude->cfg_write( gesturesExcludeConfig );
         }
     else
         cfg.deleteGroup( "GesturesExclude" );
-	cfg.setGroup( "Voice" );
-	cfg.writeEntry("Shortcut" , voice_shortcut.toString() );
+    KConfigGroup voiceConfig( &cfg, "Voice" );
+    voiceConfig.writeEntry("Shortcut" , voice_shortcut.toString() );
 
     }
 
 
 // return value means the number of enabled actions written in the cfg file
 // i.e. 'Autostart' for value > 0 should be on
-int Settings::write_actions_recursively_v2( KConfig& cfg_P, Action_data_group* parent_P, bool enabled_P )
+int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_group* parent_P, bool enabled_P )
     {
     int enabled_cnt = 0;
     QString save_cfg_group = cfg_P.group();
@@ -161,24 +159,23 @@ int Settings::write_actions_recursively_v2( KConfig& cfg_P, Action_data_group* p
         ++cnt;
         if( enabled_P && (*it)->enabled( true ))
             ++enabled_cnt;
-        cfg_P.setGroup( save_cfg_group + "_" + QString::number( cnt ));
-        ( *it )->cfg_write( cfg_P );
+        KConfigGroup itConfig( cfg_P.config(), save_cfg_group + "_" + QString::number( cnt ));
+        ( *it )->cfg_write( itConfig );
         Action_data_group* grp = dynamic_cast< Action_data_group* >( *it );
         if( grp != NULL )
             enabled_cnt += write_actions_recursively_v2( cfg_P, grp, enabled_P && (*it)->enabled( true ));
         }
-    cfg_P.setGroup( save_cfg_group );
     cfg_P.writeEntry( "DataCount", cnt );
     return enabled_cnt;
     }
 
 void Settings::read_settings_v2( KConfig& cfg_P, bool include_disabled_P  )
     {
-    cfg_P.setGroup( "Data" );
-    read_actions_recursively_v2( cfg_P, actions, include_disabled_P );
+    KConfigGroup dataGroup( &cfg_P, "Data" );
+    read_actions_recursively_v2( dataGroup, actions, include_disabled_P );
     }
 
-void Settings::read_actions_recursively_v2( KConfig& cfg_P, Action_data_group* parent_P,
+void Settings::read_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_group* parent_P,
     bool include_disabled_P )
     {
     QString save_cfg_group = cfg_P.group();
@@ -187,22 +184,22 @@ void Settings::read_actions_recursively_v2( KConfig& cfg_P, Action_data_group* p
          i <= cnt;
          ++i )
         {
-        cfg_P.setGroup( save_cfg_group + "_" + QString::number( i ));
-        if( include_disabled_P || Action_data_base::cfg_is_enabled( cfg_P ))
+        KConfigGroup itConfig( cfg_P.config(), save_cfg_group + "_" + QString::number( i ));
+        if( include_disabled_P || Action_data_base::cfg_is_enabled( itConfig ))
             {
-            Action_data_base* new_action = Action_data_base::create_cfg_read( cfg_P, parent_P );
+            Action_data_base* new_action = Action_data_base::create_cfg_read( itConfig, parent_P );
             Action_data_group* grp = dynamic_cast< Action_data_group* >( new_action );
             if( grp != NULL )
-                read_actions_recursively_v2( cfg_P, grp, include_disabled_P );
+                read_actions_recursively_v2( itConfig, grp, include_disabled_P );
             }
         }
-    cfg_P.setGroup( save_cfg_group );
     }
 
 // backward compatibility
 void Settings::read_settings_v1( KConfig& cfg_P )
     {
-    int sections = cfg_P.readEntry( "Num_Sections", 0 );
+    KConfigGroup mainGroup( &cfg_P, "Main" );
+    int sections = mainGroup.readEntry( "Num_Sections", 0 );
     Action_data_group* menuentries = NULL;
     for( Action_data_group::Iterator it( actions->first_child());
          *it;
@@ -224,17 +221,17 @@ void Settings::read_settings_v1( KConfig& cfg_P )
         QString group = QString( "Section%1" ).arg( sect );
         if( !cfg_P.hasGroup( group ))
             continue;
-        cfg_P.setGroup( group );
-        QString name = cfg_P.readEntry( "Name" );
+        KConfigGroup sectionConfig( &cfg_P, group );
+        QString name = sectionConfig.readEntry( "Name" );
         if( name.isNull() )
             continue;
-        QString shortcut = cfg_P.readEntry( "Shortcut" );
+        QString shortcut = sectionConfig.readEntry( "Shortcut" );
         if( shortcut.isNull() )
             continue;
-        QString run = cfg_P.readEntry( "Run" );
+        QString run = sectionConfig.readEntry( "Run" );
         if( run.isNull() )
             continue;
-        bool menuentry = cfg_P.readEntry( "MenuEntry", false);
+        bool menuentry = sectionConfig.readEntry( "MenuEntry", false);
         // CHECKME tohle pridavani az pak je trosku HACK
         if( menuentry )
             {

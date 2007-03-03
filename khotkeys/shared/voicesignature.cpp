@@ -398,7 +398,7 @@ QMap<int, QMap<int, double> > VoiceSignature::pond;
 
 
 
-void VoiceSignature::write(KConfigBase *cfg, const QString &key) const
+void VoiceSignature::write(KConfigGroup& cfg, const QString &key) const
 {
 	QStringList sl;
 	for(int x=0;x<WINDOW_NUMBER;x++)
@@ -406,12 +406,12 @@ void VoiceSignature::write(KConfigBase *cfg, const QString &key) const
 	{
 		sl.append( QString::number(data[x][y]) );
 	}
-	cfg->writeEntry(key,sl);
+	cfg.writeEntry(key,sl);
 }
 
-void VoiceSignature::read(KConfigBase *cfg, const QString &key)
+void VoiceSignature::read(KConfigGroup& cfg, const QString &key)
 {
-	QStringList sl=cfg->readListEntry(key);
+	QStringList sl=cfg.readEntry(key, QStringList());
 	for(int x=0;x<WINDOW_NUMBER;x++)
 		for(int y=0;y<FOUR_NUMBER;y++)
 	{

@@ -24,9 +24,9 @@
 #include <QVector>
 #include <qmap.h>
 #include <kdemacros.h>
+#include <KConfig>
 
 class Sound;
-class KConfigBase;
 
 
 #define WINDOW_MINIMUM 0.10
@@ -87,8 +87,8 @@ public:
 	static QVector<double> fft(const Sound& sound, unsigned int start, unsigned int stop);
 	static bool window(const Sound& sound, unsigned int *start, unsigned int *stop);
 
-	void write(KConfigBase *cfg, const QString &key) const;
-	void read(KConfigBase *cfg, const QString &key);
+	void write(KConfigGroup& cfg, const QString &key) const;
+	void read(KConfigGroup& cfg, const QString &key);
 	
 	inline bool isNull() const
 	{

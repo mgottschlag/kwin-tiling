@@ -22,7 +22,7 @@
 
 #include "khotkeysglobal.h"
 
-class KConfig;
+class KConfigGroup;
 class KWinModule;
 
 namespace KHotKeys
@@ -81,12 +81,12 @@ class KDE_EXPORT Windowdef
     {
     public:
         Windowdef( const QString& comment_P );
-        Windowdef( KConfig& cfg_P );
+        Windowdef( KConfigGroup& cfg_P );
         virtual ~Windowdef();
         const QString& comment() const;
         virtual bool match( const Window_data& window_P ) = 0;
-        static Windowdef* create_cfg_read( KConfig& cfg_P/*, Action_data_base* data_P*/ );
-        virtual void cfg_write( KConfig& cfg_P ) const = 0;
+        static Windowdef* create_cfg_read( KConfigGroup& cfg_P/*, Action_data_base* data_P*/ );
+        virtual void cfg_write( KConfigGroup& cfg_P ) const = 0;
         virtual Windowdef* copy( /*Action_data_base* data_P*/ ) const = 0;
         virtual const QString description() const = 0;
     private:
@@ -99,8 +99,8 @@ class KDE_EXPORT Windowdef_list
     {
     public:
         Windowdef_list( const QString& comment_P );
-        Windowdef_list( KConfig& cfg_P/*, Action_data_base* data_P*/ );
-        void cfg_write( KConfig& cfg_P ) const;
+        Windowdef_list( KConfigGroup& cfg_P/*, Action_data_base* data_P*/ );
+        void cfg_write( KConfigGroup& cfg_P ) const;
         bool match( const Window_data& window_P ) const;
         Windowdef_list* copy( /*Action_data_base* data_P*/ ) const;
         typedef Q3PtrListIterator< Windowdef > Iterator;
@@ -137,9 +137,9 @@ class KDE_EXPORT Windowdef_simple
         Windowdef_simple( const QString& comment_P, const QString& title_P,
             substr_type_t title_type_P, const QString& wclass_P, substr_type_t wclass_type_P,
             const QString& role_P, substr_type_t role_type_P, int window_types_P );
-        Windowdef_simple( KConfig& cfg_P );
+        Windowdef_simple( KConfigGroup& cfg_P );
         virtual bool match( const Window_data& window_P );
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         const QString& title() const;
         substr_type_t title_match_type() const;
         const QString& wclass() const;

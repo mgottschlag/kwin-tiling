@@ -37,12 +37,12 @@ namespace KHotKeys
 
 // Trigger
 
-void Trigger::cfg_write( KConfig& cfg_P ) const
+void Trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" );
     }
 
-Trigger* Trigger::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
+Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "SHORTCUT" || type == "SINGLE_SHORTCUT" )
@@ -60,38 +60,34 @@ Trigger* Trigger::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
 
 // Trigger_list
 
-Trigger_list::Trigger_list( KConfig& cfg_P, Action_data* data_P )
+Trigger_list::Trigger_list( KConfigGroup& cfg_P, Action_data* data_P )
     : Q3PtrList< Trigger >()
     {
     setAutoDelete( true );
     _comment = cfg_P.readEntry( "Comment" );
-    QString save_cfg_group = cfg_P.group();
     int cnt = cfg_P.readEntry( "TriggersCount", 0 );
     for( int i = 0;
          i < cnt;
          ++i )
         {
-        cfg_P.setGroup( save_cfg_group + QString::number( i ));
-        Trigger* trigger = Trigger::create_cfg_read( cfg_P, data_P );
+        KConfigGroup triggerConfig( cfg_P.config(), cfg_P.group() + QString::number( i ));
+        Trigger* trigger = Trigger::create_cfg_read( triggerConfig, data_P );
         if( trigger )
             append( trigger );
         }
-    cfg_P.setGroup( save_cfg_group );
     }
 
-void Trigger_list::cfg_write( KConfig& cfg_P ) const
+void Trigger_list::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Comment", comment());
-    QString save_cfg_group = cfg_P.group();
     int i = 0;
     for( Iterator it( *this );
          it;
          ++it, ++i )
         {
-        cfg_P.setGroup( save_cfg_group + QString::number( i ));
-        it.current()->cfg_write( cfg_P );
+        KConfigGroup triggerConfig( cfg_P.config(), cfg_P.group() + QString::number( i ));
+        it.current()->cfg_write( triggerConfig );
         }
-    cfg_P.setGroup( save_cfg_group );
     cfg_P.writeEntry( "TriggersCount", i );
     }
 
@@ -121,7 +117,7 @@ Shortcut_trigger::Shortcut_trigger( Action_data* data_P, const KShortcut& shortc
     keyboard_handler->insert_item( shortcut(), this );
     }
 
-Shortcut_trigger::Shortcut_trigger( KConfig& cfg_P, Action_data* data_P )
+Shortcut_trigger::Shortcut_trigger( KConfigGroup& cfg_P, Action_data* data_P )
     : Trigger( cfg_P, data_P ), _shortcut( cfg_P.readEntry( "Key", 0 ))
     {
     keyboard_handler->insert_item( shortcut(), this );
@@ -132,7 +128,7 @@ Shortcut_trigger::~Shortcut_trigger()
     keyboard_handler->remove_item( shortcut(), this );
     }
 
-void Shortcut_trigger::cfg_write( KConfig& cfg_P ) const
+void Shortcut_trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Key", _shortcut.toString());
@@ -173,14 +169,12 @@ void Shortcut_trigger::activate( bool activate_P )
 
 // Window_trigger
 
-Window_trigger::Window_trigger( KConfig& cfg_P, Action_data* data_P )
+Window_trigger::Window_trigger( KConfigGroup& cfg_P, Action_data* data_P )
     : Trigger( cfg_P, data_P ), active( false )
     {
 //    kDebug( 1217 ) << "Window_trigger" << endl;
-    QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Windows" );
-    _windows = new Windowdef_list( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup windowsConfig( cfg_P.config(), cfg_P.group() + "Windows" );
+    _windows = new Windowdef_list( windowsConfig );
     window_actions = cfg_P.readEntry( "WindowActions",0 );
     init();
     }
@@ -288,13 +282,12 @@ void Window_trigger::window_changed( WId window_P, unsigned int dirty_P )
     kDebug( 1217 ) << "Window_trigger::w_changed() : " << was_match << "|" << matches << endl;
     }
 
-void Window_trigger::cfg_write( KConfig& cfg_P ) const
+void Window_trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     QString save_cfg_group = cfg_P.group();
-    cfg_P.setGroup( save_cfg_group + "Windows" );
-    windows()->cfg_write( cfg_P );
-    cfg_P.setGroup( save_cfg_group );
+    KConfigGroup windowsConfig( cfg_P.config(), cfg_P.group() + "Windows" );
+    windows()->cfg_write( windowsConfig );
     cfg_P.writeEntry( "WindowActions", window_actions );
     cfg_P.writeEntry( "Type", "WINDOW" ); // overwrites value set in base::cfg_write()
     }
@@ -323,7 +316,7 @@ Gesture_trigger::Gesture_trigger( Action_data* data_P, const QString &gesturecod
     {
     }
 
-Gesture_trigger::Gesture_trigger( KConfig& cfg_P, Action_data* data_P )
+Gesture_trigger::Gesture_trigger( KConfigGroup& cfg_P, Action_data* data_P )
     : Trigger( cfg_P, data_P )
     {
     _gesturecode = cfg_P.readEntry( "Gesture" );
@@ -334,7 +327,7 @@ Gesture_trigger::~Gesture_trigger()
     gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString&, WId )));
     }
 
-void Gesture_trigger::cfg_write( KConfig& cfg_P ) const
+void Gesture_trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Gesture", gesturecode());
@@ -379,12 +372,12 @@ void Gesture_trigger::activate( bool activate_P )
 		_voicesignature[1]=signature2_P;
     }
 
-Voice_trigger::Voice_trigger( KConfig& cfg_P, Action_data* data_P )
+Voice_trigger::Voice_trigger( KConfigGroup& cfg_P, Action_data* data_P )
 	: Trigger( cfg_P, data_P )
     {
     _voicecode = cfg_P.readEntry( "Name" );
-	_voicesignature[0].read( &cfg_P , "Signature1" );
-	_voicesignature[1].read( &cfg_P , "Signature2" );
+	_voicesignature[0].read( cfg_P , "Signature1" );
+	_voicesignature[1].read( cfg_P , "Signature2" );
     }
 
 Voice_trigger::~Voice_trigger()
@@ -392,14 +385,14 @@ Voice_trigger::~Voice_trigger()
     voice_handler->unregister_handler( this );
     }
 
-void Voice_trigger::cfg_write( KConfig& cfg_P ) const
+void Voice_trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Name", voicecode());
     cfg_P.writeEntry( "Type", "VOICE" ); // overwrites value set in base::cfg_write()
-	_voicesignature[0].write( &cfg_P , "Signature1" );
-	_voicesignature[1].write( &cfg_P , "Signature2" );
-	}
+    _voicesignature[0].write( cfg_P , "Signature1" );
+    _voicesignature[1].write( cfg_P , "Signature2" );
+    }
 
 Trigger* Voice_trigger::copy( Action_data* data_P ) const
     {

@@ -35,16 +35,16 @@ class KDE_EXPORT Condition
     {
     public:
         Condition( Condition_list_base* parent_P );
-        Condition( KConfig& cfg_P, Condition_list_base* parent_P );
+        Condition( KConfigGroup& cfg_P, Condition_list_base* parent_P );
         virtual ~Condition();
         virtual bool match() const = 0;
         virtual void updated() const; // called when the condition changes
-        virtual void cfg_write( KConfig& cfg_P ) const = 0;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const = 0;
         virtual const QString description() const = 0;
         virtual Condition* copy( Condition_list_base* parent_P ) const = 0;
         const Condition_list_base* parent() const;
         Condition_list_base* parent();
-        static Condition* create_cfg_read( KConfig& cfg_P, Condition_list_base* parent_P );
+        static Condition* create_cfg_read( KConfigGroup& cfg_P, Condition_list_base* parent_P );
     protected:
         Condition_list_base* const _parent;
     KHOTKEYS_DISABLE_COPY( Condition );
@@ -58,9 +58,9 @@ class KDE_EXPORT Condition_list_base
         Condition_list_base( Condition_list_base* parent_P );
         Condition_list_base( const Q3PtrList< Condition >& children_P,
             Condition_list_base* parent_P );
-        Condition_list_base( KConfig& cfg_P, Condition_list_base* parent_P );
+        Condition_list_base( KConfigGroup& cfg_P, Condition_list_base* parent_P );
         virtual ~Condition_list_base();
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual bool accepts_children() const;
         typedef Q3PtrListIterator< Condition > Iterator;
     };
@@ -71,8 +71,8 @@ class KDE_EXPORT Condition_list
     typedef Condition_list_base base;
     public:
         Condition_list( const QString& comment_P, Action_data_base* data_P );
-        Condition_list( KConfig& cfg_P, Action_data_base* data_P );
-        void cfg_write( KConfig& cfg_P ) const;
+        Condition_list( KConfigGroup& cfg_P, Action_data_base* data_P );
+        void cfg_write( KConfigGroup& cfg_P ) const;
         Condition_list* copy( Action_data_base* data_P ) const;
         virtual bool match() const;
         const QString& comment() const;
@@ -92,10 +92,10 @@ class KDE_EXPORT Active_window_condition
     typedef Condition base;
     public:
         Active_window_condition( Windowdef_list* window_P, Condition_list_base* parent_P );
-        Active_window_condition( KConfig& cfg_P, Condition_list_base* parent_P );
+        Active_window_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P );
         virtual ~Active_window_condition();
         virtual bool match() const;
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         const Windowdef_list* window() const;
 #ifdef HAVE_COVARIANT_RETURN
         virtual Active_window_condition* copy( Condition_list_base* parent_P ) const;
@@ -119,10 +119,10 @@ class KDE_EXPORT Existing_window_condition
     typedef Condition base;
     public:
         Existing_window_condition( Windowdef_list* window_P, Condition_list_base* parent_P );
-        Existing_window_condition( KConfig& cfg_P, Condition_list_base* parent_P );
+        Existing_window_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P );
         virtual ~Existing_window_condition();
         virtual bool match() const;
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         const Windowdef_list* window() const;
 #ifdef HAVE_COVARIANT_RETURN
         virtual Existing_window_condition* copy( Condition_list_base* parent_P ) const;
@@ -146,9 +146,9 @@ class KDE_EXPORT Not_condition
     typedef Condition_list_base base;
     public:
         Not_condition( Condition_list_base* parent_P );
-        Not_condition( KConfig& cfg_P, Condition_list_base* parent_P );
+        Not_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P );
         virtual bool match() const;
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Not_condition* copy( Condition_list_base* parent_P ) const;
         virtual const QString description() const;
         const Condition* condition() const;
@@ -161,9 +161,9 @@ class KDE_EXPORT And_condition
     typedef Condition_list_base base;
     public:
         And_condition( Condition_list_base* parent_P );
-        And_condition( KConfig& cfg_P, Condition_list_base* parent_P );
+        And_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P );
         virtual bool match() const;
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual And_condition* copy( Condition_list_base* parent_P ) const;
         virtual const QString description() const;
     };
@@ -174,9 +174,9 @@ class KDE_EXPORT Or_condition
     typedef Condition_list_base base;
     public:
         Or_condition( Condition_list_base* parent_P );
-        Or_condition( KConfig& cfg_P, Condition_list_base* parent_P );
+        Or_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P );
         virtual bool match() const;
-        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Or_condition* copy( Condition_list_base* parent_P ) const;
         virtual const QString description() const;
     };
