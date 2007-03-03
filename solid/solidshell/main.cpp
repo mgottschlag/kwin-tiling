@@ -344,7 +344,7 @@ int main(int argc, char **argv)
       cout << "  solidshell network listnetworks 'uni'" << endl;
       cout << i18n( "             # List the networks known to the device specified by 'uni'.\n" ) << endl;
 
-      cout << "  solidshell network query (status|wireless)|(interface 'uni')|(network 'uni')" << endl;
+      cout << "  solidshell network query (status|wireless)|(interface 'uni')|(network 'device-uni' 'network-uni')" << endl;
       cout << i18n( "             # Query whether networking features are active or not.\n"
                     "             # - If the 'status' option is given, return whether\n"
                     "             # networking is enabled for the system\n"
@@ -353,7 +353,7 @@ int main(int argc, char **argv)
                     "             # - If the 'interface' option is given, print the\n"
                     "             # properties of the network interface that 'uni' refers to.\n"
                     "             # - If the 'network' option is given, print the\n"
-                    "             # properties of the network that 'uni' refers to.\n" ) << endl;
+                    "             # properties of the network on 'device-uni' that 'network-uni' refers to.\n" ) << endl;
 
       cout << "  solidshell network set wireless (enabled|disabled)" << endl;
       cout << i18n( "             # Enable or disable networking on this system.\n" ) << endl;
@@ -959,7 +959,6 @@ bool SolidShell::netmgrQueryNetwork( const QString & deviceUni, const QString & 
     Solid::WirelessNetwork * wlan = qobject_cast<Solid::WirelessNetwork*>( network );
     if ( wlan )
     {
-        cout << "DEBUG " << wlan->essid() << endl;
         cout << *wlan << endl;
     }
     return true;
