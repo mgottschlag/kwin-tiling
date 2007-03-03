@@ -151,7 +151,7 @@ NMWirelessNetwork::NMWirelessNetwork( const QString & networkPath )
     QDBusMessage reply = d->iface.call( "getProperties" );
     NMDBusWirelessNetworkProperties wlan;
     deserialize( reply, wlan );
-    dump( wlan );
+    //dump( wlan );
     setProperties( wlan );
 }
 
@@ -210,7 +210,7 @@ bool NMWirelessNetwork::isAssociated() const
 
 bool NMWirelessNetwork::isEncrypted() const
 {
-    return d->authentication != 0;
+    return !( d->capabilities & Solid::WirelessNetwork::Unencrypted ) ;
 }
 
 bool NMWirelessNetwork::isHidden() const
