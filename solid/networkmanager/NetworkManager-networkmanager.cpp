@@ -133,7 +133,7 @@ bool NMNetworkManager::isNetworkingEnabled( ) const
             d->cachedState = state.value();
         }
     }
-    return NM_STATE_CONNECTING == d->cachedState || NM_STATE_CONNECTED == d->cachedState || NM_STATE_DISCONNECTED;
+    return NM_STATE_CONNECTING == d->cachedState || NM_STATE_CONNECTED == d->cachedState || NM_STATE_DISCONNECTED == d->cachedState;
 }
 
 bool NMNetworkManager::isWirelessEnabled() const
