@@ -784,6 +784,7 @@ bool SolidShell::netmgrNetworkingEnabled()
         cout << i18n( "networking: is enabled" )<< endl;
     else
         cout << i18n( "networking: is not enabled" )<< endl;
+    return manager.isNetworkingEnabled();
 }
 
 bool SolidShell::netmgrWirelessEnabled()
@@ -793,6 +794,7 @@ bool SolidShell::netmgrWirelessEnabled()
         cout << i18n( "wireless: is enabled" )<< endl;
     else
         cout << i18n( "wireless: is not enabled" )<< endl;
+    return manager.isWirelessEnabled();
 }
 
 bool SolidShell::netmgrChangeNetworkingEnabled( bool enabled )
