@@ -114,8 +114,7 @@ Interface::Interface(QWidget* parent)
     layout->addWidget( m_header );
 
     m_headerLabel = new QLabel( m_header );
-    //TODO: create a action so this can be changed by
-    //various processes to give the user feedback
+    //TODO: create a action so this can be changed by various runners to give the user feedback
     m_headerLabel->setText( i18n( "Enter the name of an application, location or search term below." ) );
     m_headerLabel->setEnabled( true );
     m_headerLabel->setWordWrap( true );
@@ -137,11 +136,14 @@ Interface::Interface(QWidget* parent)
     connect( m_actionsList, SIGNAL(itemActivated(QListWidgetItem*)),
              SLOT(matchActivated(QListWidgetItem*)));
     layout->addWidget(m_actionsList);
-
-    m_optionsLabel = new QLabel( this );
-    m_optionsLabel->setText( i18n( "Options" ) );
-    m_optionsLabel->setEnabled( false );
-    bottomLayout->addWidget( m_optionsLabel );
+    
+    m_optionsButton = new KPushButton( KStandardGuiItem::configure(), this );
+    m_optionsButton -> setText( i18n( "Options" ) );
+    m_optionsButton->setFlat( true );
+    m_optionsButton->setEnabled( false );
+    m_optionsButton->setCheckable(true);
+    connect( m_optionsButton, SIGNAL(toggled(bool)), SLOT(showOptions(bool)) );
+    bottomLayout->addWidget( m_optionsButton );
 
     bottomLayout->addStretch();
 
@@ -151,7 +153,7 @@ Interface::Interface(QWidget* parent)
                                    this );
     m_runButton->setFlat( true );
     m_runButton->setEnabled( false );
-    connect( m_runButton, SIGNAL(clicked(bool)), SLOT(exec()) );
+    connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(exec()) );
     bottomLayout->addWidget( m_runButton );
 
     m_cancelButton = new KPushButton( KStandardGuiItem::cancel(), this );
@@ -227,9 +229,11 @@ void Interface::hideEvent( QHideEvent* e )
     Q_UNUSED( e )
 
     kDebug() << "hide event" << endl;
+    showOptions( false );
     m_searchTerm->clear();
     m_actionsList->clear() ;
     m_runButton->setEnabled( false );
+    m_optionsButton->setEnabled( false );
     QWidget::hideEvent( e );
 }
 
@@ -252,6 +256,7 @@ void Interface::search(const QString& t)
     //       the new. something to think about when implementing the icon
     //       parade
     m_actionsList->clear();
+    showOptions(false);
     m_defaultMatch = 0;
     QString term = t.trimmed();
 
@@ -270,7 +275,7 @@ void Interface::search(const QString& t)
             SearchMatch* match = new SearchMatch( exactMatch, runner, m_actionsList, makeDefault );
             if ( makeDefault ) {
                 m_defaultMatch = match;
-                m_optionsLabel->setEnabled( runner->hasOptions() );
+                m_optionsButton->setEnabled( runner->hasOptions() );
                 m_runButton->setEnabled( true );
             }
         }
@@ -286,7 +291,7 @@ void Interface::search(const QString& t)
 void Interface::fuzzySearch()
 {
     m_searchTimer.stop();
-
+    showOptions(false);
     QString term = m_searchTerm->text().trimmed();
 
     // get the inexact matches
@@ -301,7 +306,7 @@ void Interface::fuzzySearch()
             if ( makeDefault ) {
                 m_defaultMatch = match;
                 m_runButton->setEnabled( true );
-                m_optionsLabel->setEnabled( runner->hasOptions() );
+                m_optionsButton->setEnabled( runner->hasOptions() );
             }
         }
     }
@@ -379,6 +384,20 @@ void Interface::resizeEvent(QResizeEvent *e)
     }
 
     QWidget::resizeEvent( e );
+}
+
+void Interface::showOptions(bool show)
+{
+    if (show == true) {
+        m_optionsButton->setChecked(true);
+        kDebug() << "showing Options" << endl;
+        //TODO: add code to show options
+    } else {
+        m_optionsButton->setChecked(false);
+        kDebug() << "hiding options" << endl;
+        //TODO: add code to hide options
+    }
+    
 }
 
 #include "interface.moc"

@@ -65,6 +65,7 @@ class Interface : public QWidget
         void exec();
         void matchActivated(QListWidgetItem*);
         void fuzzySearch();
+        void showOptions(bool show);
 
     protected:
         void paintEvent( QPaintEvent *e );
@@ -87,6 +88,7 @@ class Interface : public QWidget
         QLabel* m_headerLabel;
         KPushButton* m_cancelButton;
         KPushButton* m_runButton;
+        KPushButton* m_optionsButton;
 
         SearchMatch* m_defaultMatch;
 };
