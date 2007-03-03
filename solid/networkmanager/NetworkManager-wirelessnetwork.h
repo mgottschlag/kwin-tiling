@@ -69,6 +69,7 @@ public:
     void setAuthentication( Solid::Ifaces::Authentication *authentication );
     void setSignalStrength( int strength );
     void setBitrate( int rate );
+    virtual void setActivated( bool activated );
 Q_SIGNALS:
     void signalStrengthChanged( int strength );
     void bitrateChanged( int bitrate );

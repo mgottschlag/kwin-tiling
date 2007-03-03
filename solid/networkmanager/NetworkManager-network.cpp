@@ -21,6 +21,8 @@
 #include <kdebug.h>
 #include <ksocketaddress.h>
 
+#include "NetworkManager-wirelessnetwork.h"
+
 #include "NetworkManager-network.h"
 
 class NMNetworkPrivate
@@ -90,6 +92,13 @@ void NMNetwork::setActivated( bool activated )
 {
     // todo activate the device network here
     d->active = activated;
+    QDBusInterface manager( "org.freedesktop.NetworkManager",
+            "/org/freedesktop/NetworkManager",
+            "org.freedesktop.NetworkManager",
+            QDBusConnection::systemBus() );
+    QString devicePath = d->netPath.left( d->netPath.indexOf( "/Networks" ) );
+    manager.call( "setActiveDevice", devicePath );
+
     emit activationStateChanged( activated );
 }
 

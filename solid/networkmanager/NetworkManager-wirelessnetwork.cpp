@@ -246,5 +246,19 @@ void NMWirelessNetwork::setBitrate( int rate )
     emit bitrateChanged( rate );
 }
 
+void NMWirelessNetwork::setActivated( bool activated )
+{
+    QDBusInterface manager( "org.freedesktop.NetworkManager",
+            "/org/freedesktop/NetworkManager",
+            "org.freedesktop.NetworkManager",
+            QDBusConnection::systemBus() );
+    QString devicePath = uni().left( uni().indexOf( "/Networks" ) );
+    kDebug( 1441 ) << k_funcinfo << devicePath << " - " << d->essid << endl;
+    QDBusObjectPath op( devicePath );
+    manager.call( "setActiveDevice", qVariantFromValue( op ), d->essid );
+
+    emit activationStateChanged( activated );
+}
+
 #include "NetworkManager-wirelessnetwork.moc"
 

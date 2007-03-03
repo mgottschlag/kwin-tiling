@@ -39,26 +39,16 @@ int main( int argc, char** argv )
     NMNetworkInterface * ethernetIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth0" ) );
     NMNetworkInterface * wifiIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth1" ) );
 	Solid::Ifaces::NetworkInterface * solidIface;
-	Q_ASSERT( ethernetIface );
-	solidIface = qobject_cast<Solid::Ifaces::NetworkInterface*>( ethernetIface );
-	if ( solidIface )
-		kDebug() << "SUCCESS!" << endl;
-	else
-		kDebug() << "FAIL!" << endl;
-	kDebug() << "NMNetworkInterface " << ( ethernetIface->inherits( "Solid::Ifaces::NetworkInterface" ) ? "does" : "does not" ) << " inherit Solid::Ifaces::NetworkInterface" << endl;
-
 	const QMetaObject * parentMo = wifiIface->metaObject()->superClass();
 	kDebug() << parentMo->className() << endl;
-    QStringList networks = wifiIface->networks();
-    if ( networks.isEmpty() )
-    {
-		kDebug() << "network list was empty.. fix me!" << endl;
-        networks.append( "/org/freedesktop/NetworkManager/Devices/eth1/Networks/banjaxed" ); 
-	}
+    QStringList networks = ethernetIface->networks();
+
 	foreach ( QString netPath, networks )
 	{
 		kDebug() << "Creating network: " << netPath << endl;
 		NMNetwork * network = qobject_cast<NMNetwork*>( wifiIface->createNetwork( netPath ) );
+		//if ( netPath == "/org/freedesktop/NetworkManager/Devices/eth1/Networks/banjaxed" )
+			network->setActivated( true );
 	}
 
     //kDebug() << "Interface: " <<  netIface->uni() << ", " << netIface->signalStrength() << endl;

@@ -23,7 +23,7 @@ NM_DBUS_SERVICE, net_path, NM_DBUS_INTERFACE_DEVICES, "getProperties" return Net
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "getWirelessEnabled" returns bool
 ## setters ##
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath // used for wired interfaces
-NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath s essid [encoding]
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath s essid THEN [encoding]
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setWirelessEnabled" boolean returns ?
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "sleep"
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "wake"

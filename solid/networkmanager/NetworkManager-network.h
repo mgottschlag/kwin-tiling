@@ -56,7 +56,7 @@ public:
     QString route() const;
     QList<KNetwork::KIpAddress> dnsServers() const;
     bool isActive() const;
-    void setActivated( bool activated );
+    virtual void setActivated( bool activated );
 
     void setProperties( const NMDBusNetworkProperties & props );
 Q_SIGNALS:
