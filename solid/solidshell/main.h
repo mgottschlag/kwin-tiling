@@ -57,6 +57,8 @@ public:
     bool netmgrChangeNetworkingEnabled( bool enabled );
     bool netmgrChangeWirelessEnabled( bool enabled );
     bool netmgrListNetworks( const QString &device );
+    bool netmgrQueryNetworkInterface( const QString & );
+    bool netmgrQueryNetwork( const QString & device, const QString & );
     //bool netmgrCapabilities( const QString &udi );
 private:
     void connectJob( KJob *job );

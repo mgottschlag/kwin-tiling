@@ -28,6 +28,7 @@
 #include <kcomponentdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
+#include <ksocketaddress.h>
 
 #include <solid/devicemanager.h>
 #include <solid/device.h>
@@ -164,6 +165,89 @@ std::ostream &operator<<( std::ostream &out, const QMap<QString,QVariant> &prope
     return out;
 }
 
+std::ostream &operator<<( std::ostream &out, const Solid::NetworkInterface &networkdevice )
+{
+    out << "  UNI =                " << QVariant( networkdevice.uni() ) << endl;
+    out << "  Type =               " << ( networkdevice.type() == Solid::NetworkInterface::Ieee8023 ? "Wired" : "802.11 Wireless" ) << endl;
+    out << "  Active =             " << ( networkdevice.isActive() ? "Yes" : "No" ) << endl;
+    //out << "  HW Address =         " << networkdevice.  // TODO add to solid API.
+    out << "\n  Capabilities:" << endl;
+    out << "    Supported =        " << ( networkdevice.capabilities() & Solid::NetworkInterface::IsManageable ? "Yes" : "No" ) << endl;
+    out << "    Speed =            " << networkdevice.designSpeed() << endl;
+    if ( networkdevice.type() == Solid::NetworkInterface::Ieee8023 )
+        out << "    Carrier Detect =   " << ( networkdevice.capabilities() & Solid::NetworkInterface::SupportsCarrierDetect ? "Yes" : "No" ) << endl;
+    else
+        out << "    Wireless Scan =    " << ( networkdevice.capabilities() & Solid::NetworkInterface::SupportsWirelessScan ? "Yes" : "No" ) << endl;
+    out << "    Link Up =          " << ( networkdevice.isLinkUp() ? "Yes" : "No" ) << endl;
+
+    return out;
+}
+
+std::ostream &operator<<( std::ostream &out, const Solid::Network &network )
+{
+    out << "  UNI =                " << QVariant( network.uni() ) << endl;
+    out << "  IPV4 Addresses:" << endl;
+    foreach ( KNetwork::KIpAddress addr, network.ipV4Addresses() )
+    {
+        out << "    " << addr.toString() << endl;
+    }
+    if ( network.ipV4Addresses().isEmpty() )
+        out << "     none" << endl;
+    out << "  IPV6 Addresses:" << endl;
+    foreach ( KNetwork::KIpAddress addr, network.ipV6Addresses() )
+    {
+        out << "    " << addr.toString() << endl;
+    }
+    if ( network.ipV6Addresses().isEmpty() )
+        out << "    none" << endl;
+    out << "  Subnet mask:         " << QVariant( network.subnetMask() ) << endl;
+    out << "  Broadcast addresss:  " << QVariant( network.broadcastAddress() ) << endl;
+    out << "  Route:               " << QVariant( network.route() ) <<  endl;
+    out << "  DNS Servers:" << endl;
+    int i = 1;
+    foreach ( KNetwork::KIpAddress addr, network.dnsServers() )
+    {
+        out << "  " << i++ << ": " << addr.toString() << endl;
+    }
+    out << "  Active =             " << ( network.isActive() ? "Yes" : "No" ) << endl;
+
+    return out;
+}
+
+std::ostream &operator<<( std::ostream &out, const Solid::WirelessNetwork &network )
+{
+    out << "  ESSID =                " << QVariant( network.essid() ) << endl;
+    out << "  Mode =                 ";
+    switch ( network.mode() )
+    {
+        case Solid::WirelessNetwork::Unassociated:
+            cout << "Unassociated" << endl;
+            break;
+        case Solid::WirelessNetwork::Adhoc:
+            cout << "Ad-hoc" << endl;
+            break;
+        case Solid::WirelessNetwork::Managed:
+            cout << "Infrastructure" << endl;
+            break;
+        case Solid::WirelessNetwork::Master:
+            cout << "Master" << endl;
+            break;
+        case Solid::WirelessNetwork::Repeater:
+            cout << "Repeater" << endl;
+            break;
+        default:
+            cout << "Unknown" << endl;
+            cerr << "Unknown network operation mode: " << network.mode() << endl;
+            break;
+    }
+    out << "  Frequency =            " << network.frequency() << endl;
+    out << "  Rate =                 " << network.bitrate() << endl;
+    out << "  Strength =             " << network.signalStrength() << endl;
+    out << "  Encrypted =            " << ( network.isEncrypted() ? "Yes" : "No" ) << endl;
+
+    return out;
+}
+
 void checkArgumentCount( int min, int max )
 {
     int count = KCmdLineArgs::parsedArgs()->count();
@@ -260,12 +344,16 @@ int main(int argc, char **argv)
       cout << "  solidshell network listnetworks 'uni'" << endl;
       cout << i18n( "             # List the networks known to the device specified by 'uni'.\n" ) << endl;
 
-      cout << "  solidshell network query (enabled|wireless)" << endl;
+      cout << "  solidshell network query (status|wireless)|(interface 'uni')|(network 'uni')" << endl;
       cout << i18n( "             # Query whether networking features are active or not.\n"
-                    "             # - If the 'enabled' option is given, return whether\n"
+                    "             # - If the 'status' option is given, return whether\n"
                     "             # networking is enabled for the system\n"
                     "             # - If the 'wireless' option is is given, return whether\n"
-                    "             # wireless is enabled for the system\n" ) << endl;
+                    "             # wireless is enabled for the system\n"
+                    "             # - If the 'interface' option is given, print the\n"
+                    "             # properties of the network interface that 'uni' refers to.\n"
+                    "             # - If the 'network' option is given, print the\n"
+                    "             # properties of the network that 'uni' refers to.\n" ) << endl;
 
       cout << "  solidshell network set wireless (enabled|disabled)" << endl;
       cout << i18n( "             # Enable or disable networking on this system.\n" ) << endl;
@@ -407,12 +495,25 @@ bool SolidShell::doIt()
     {
         if ( command == "query" )
         {
-            checkArgumentCount( 3, 3 );
+            checkArgumentCount( 3, 5 );
             QString what( args->arg( 2 ) );
-            if ( what == "enabled" )
+            if ( what == "status" )
                 return shell.netmgrNetworkingEnabled();
             else if ( what == "wireless" )
                 return shell.netmgrWirelessEnabled();
+            else if ( what == "interface" )
+            {
+                checkArgumentCount( 4, 4 );
+                QString uni( args->arg( 3 ) );
+                return shell.netmgrQueryNetworkInterface( uni );
+            }
+            else if ( what == "network" )
+            {
+                checkArgumentCount( 5, 5 );
+                QString dev( args->arg( 3 ) );
+                QString uni( args->arg( 4 ) );
+                return shell.netmgrQueryNetwork( dev, uni );
+            }
             else
                 cerr << i18n( "Syntax Error: Unknown option '%1'", what ) << endl;
         }
@@ -823,26 +924,45 @@ bool SolidShell::netmgrList()
         cout << "UNI = '" << device.uni() << "'" << endl;
     }
     return true;
-
 }
 
 bool SolidShell::netmgrListNetworks( const QString & deviceUni )
 {
     Solid::NetworkManager &manager = Solid::NetworkManager::self();
-
-
     Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );
-    
+
     Solid::NetworkList networks = device.networks();
-#if 1 //copy constructor needed here
-    foreach ( const Solid::Network net, networks )
+    foreach ( const Solid::Network * net, networks )
     {
-        cout << "NETWORK UNI = '" << net.uni() << "'" << endl;
+        cout << "NETWORK UNI = '" << net->uni() << "'" << endl;
     }
 
     return true;
-#endif
+}
 
+bool SolidShell::netmgrQueryNetworkInterface( const QString & deviceUni )
+{
+    cerr << "SolidShell::netmgrQueryNetworkInterface()" << endl;
+    Solid::NetworkManager &manager = Solid::NetworkManager::self();
+    Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );
+    cout << device << endl;
+    return true;
+}
+
+bool SolidShell::netmgrQueryNetwork( const QString & deviceUni, const QString & networkUni )
+{
+    cerr << "SolidShell::netmgrQueryNetwork()" << endl;
+    Solid::NetworkManager &manager = Solid::NetworkManager::self();
+    Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );
+    Solid::Network * network = device.findNetwork( networkUni );
+    cout << *network << endl;
+    Solid::WirelessNetwork * wlan = qobject_cast<Solid::WirelessNetwork*>( network );
+    if ( wlan )
+    {
+        cout << "DEBUG " << wlan->essid() << endl;
+        cout << *wlan << endl;
+    }
+    return true;
 }
 
 void SolidShell::connectJob( KJob *job )
