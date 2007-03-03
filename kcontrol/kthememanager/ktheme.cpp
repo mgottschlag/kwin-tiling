@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "kdesktop_background.h"
 
 KTheme::KTheme( QWidget *parent, const QString & xmlFile )
-	: m_parent(parent)
+    : m_parent(parent)
 {
     QFile file( xmlFile );
     file.open( QIODevice::ReadOnly );
@@ -189,11 +189,11 @@ QString KTheme::createYourself( bool pack )
     // 3. Icons
     QDomElement iconElem = m_dom.createElement( "icons" );
     iconElem.setAttribute("name", globalConf->group("Icons").readEntry("Theme",KIconTheme::current()));
-    createIconElems( "DesktopIcons", "desktop", iconElem, globalConf );
-    createIconElems( "MainToolbarIcons", "mainToolbar", iconElem, globalConf );
-    createIconElems( "PanelIcons", "panel", iconElem, globalConf );
-    createIconElems( "SmallIcons", "small", iconElem, globalConf );
-    createIconElems( "ToolbarIcons", "toolbar", iconElem, globalConf );
+    createIconElems( globalConf->group("DesktopIcons"), "desktop", iconElem );
+    createIconElems( globalConf->group("MainToolbarIcons"), "mainToolbar", iconElem );
+    createIconElems( globalConf->group("PanelIcons"), "panel", iconElem );
+    createIconElems( globalConf->group("SmallIcons"), "small", iconElem );
+    createIconElems( globalConf->group("ToolbarIcons"), "toolbar", iconElem );
     m_root.appendChild( iconElem );
 
     // 4. Sounds
@@ -639,8 +639,8 @@ void KTheme::apply()
         kickerConf.writeEntry( "ShowRightHideButton", static_cast<bool>( getProperty( panelElem, "showrighthidebutton", "value").toInt()));
 
         kickerConf.sync();
-		QDBusInterface kicker( "org.kde.kicker", "kicker");
-		kicker.call("configure");
+        QDBusInterface kicker( "org.kde.kicker", "kicker");
+        kicker.call("configure");
     }
 
     // 10. Widget style
@@ -729,10 +729,9 @@ QString KTheme::getProperty( QDomElement parent, const QString & tag,
     }
 }
 
-void KTheme::createIconElems( const QString & group, const QString & object,
-                              QDomElement parent, KSharedConfigPtr cfg )
+void KTheme::createIconElems( const KConfigGroup & group, const QString & object,
+                              QDomElement parent )
 {
-    KConfigGroup cg(cfg, group);
     QStringList elemNames;
     elemNames << "Animated" << "DoublePixels" << "Size"
               << "ActiveColor" << "ActiveColor2" << "ActiveEffect"
@@ -743,20 +742,20 @@ void KTheme::createIconElems( const QString & group, const QString & object,
               << "DisabledSemiTransparent" << "DisabledValue";
     for ( QStringList::ConstIterator it = elemNames.begin(); it != elemNames.end(); ++it ) {
         if ( (*it).contains( "Color" ) )
-            createColorElem( *it, object, parent, cg );
+            createColorElem( *it, object, parent, group );
         else
         {
             QDomElement tmpCol = m_dom.createElement( *it );
             tmpCol.setAttribute( "object", object );
 
             if ( (*it).contains( "Value" ) || *it == "Size" )
-                tmpCol.setAttribute( "value", cg.readEntry( *it, 1 ) );
-	    else if ( (*it).contains( "DisabledEffect" ) )
-		tmpCol.setAttribute( "name", cg.readEntry( *it, QString("togray") ) );
+                tmpCol.setAttribute( "value", group.readEntry( *it, 1 ) );
+        else if ( (*it).contains( "DisabledEffect" ) )
+        tmpCol.setAttribute( "name", group.readEntry( *it, QString("togray") ) );
             else if ( (*it).contains( "Effect" ) )
-                tmpCol.setAttribute( "name", cg.readEntry( *it, QString("none") ) );
+                tmpCol.setAttribute( "name", group.readEntry( *it, QString("none") ) );
             else
-                tmpCol.setAttribute( "value", cg.readEntry( *it, false ) );
+                tmpCol.setAttribute( "value", group.readEntry( *it, false ) );
             parent.appendChild( tmpCol );
         }
     }

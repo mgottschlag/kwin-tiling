@@ -159,8 +159,8 @@ private:
      * @param parent Parent element to append to
      * @param cfg The KConfig object to work with
      */
-    void createIconElems( const QString & group, const QString & object,
-                          QDomElement parent, KSharedConfigPtr cfg );
+    void createIconElems( const KConfigGroup & group, const QString & object,
+                          QDomElement parent );
 
     /**
      * Creates a color DOM element @p name, with a specifier @p object,
