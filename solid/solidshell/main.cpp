@@ -241,7 +241,10 @@ std::ostream &operator<<( std::ostream &out, const Solid::WirelessNetwork &netwo
             break;
     }
     out << "  Frequency =            " << network.frequency() << endl;
-    out << "  Rate =                 " << network.bitrate() << endl;
+#ifdef __GNUC__
+#warning network.bitrate() is not available - remove this?
+#endif
+//    out << "  Rate =                 " << network.bitrate() << endl;
     out << "  Strength =             " << network.signalStrength() << endl;
     if ( network.isEncrypted() )
     {
