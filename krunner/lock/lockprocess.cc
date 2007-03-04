@@ -457,7 +457,7 @@ void LockProcess::createSaverWindow()
     Window w = XCreateWindow( x11Display(), RootWindow( x11Display(), x11Screen()),
         x(), y(), width(), height(), 0, x11Depth(), InputOutput, visual, flags, &attrs );
 
-    create( 0, false );
+    create( w );
 
     // Some xscreensaver hacks check for this property
     const char *version = "KDE 4.0";
