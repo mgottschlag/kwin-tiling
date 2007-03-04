@@ -6,7 +6,7 @@ configure_file(config-xautolock.h.cmake config-xautolock.h)
 
 set(krunner_KCFG_SRCS kscreensaversettings.kcfgc klaunchsettings.kcfgc)
 set(krunner_dbusXML org.kde.krunner.Interface.xml)
-set(screensaver_dbusXML org.kde.ScreenSaver.xml)
+set(screensaver_dbusXML org.freedesktop.ScreenSaver.xml)
 set(krunner_BGIMAGES images/background/dialog.svg)
 
 include_directories(${CMAKE_SOURCE_DIR}/workspace/plasma/lib ${CMAKE_SOURCE_DIR}/workspace/lib)

@@ -12,7 +12,7 @@ set(launcher_panelapplet_PART_SRCS  ${libkicker_core_SRCS} ${libkicker_buttons_S
    popularity.cpp 
    configdlg.cpp )
 
-qt4_add_dbus_interface(launcher_panelapplet_PART_SRCS ../../../krunner/org.kde.ScreenSaver.xml screensaver_interface )
+qt4_add_dbus_interface(launcher_panelapplet_PART_SRCS ../../../krunner/org.freedesktop.ScreenSaver.xml screensaver_interface )
 qt4_add_dbus_interface(launcher_panelapplet_PART_SRCS ../../../kdesktop/org.kde.kdesktop.Desktop.xml kdesktop_interface )
 qt4_add_dbus_interface(launcher_panelapplet_PART_SRCS ../../../krunner/org.kde.krunner.Interface.xml krunner_interface )
 

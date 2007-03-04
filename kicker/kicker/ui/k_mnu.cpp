@@ -322,8 +322,8 @@ extern int kicker_screen_number;
 
 void PanelKMenu::slotLock()
 {
-    QString interface( "org.kde.screensaver" );
-    org::kde::ScreenSaver screenSaverInterface( interface, "/ScreenSaver", QDBusConnection::sessionBus() );
+    QString interface( "org.freedesktop.ScreenSaver" );
+    org::freedesktop::ScreenSaver screenSaverInterface( interface, "/ScreenSaver", QDBusConnection::sessionBus() );
     if ( screenSaverInterface.isValid() )
         screenSaverInterface.lock();
 }

@@ -1,61 +1,44 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
-  <interface name="org.kde.ScreenSaver">
-    <signal name="screenSaverStarted">
+  <interface name="org.freedesktop.ScreenSaver">
+    <signal name="ActiveChanged">
+      <arg type="b"/>
     </signal>
-    <signal name="screenSaverStopped">
-    </signal>
-    <method name="lock">
+    <method name="Lock">
     </method>
-    <method name="save">
+    <method name="SimulateUserActivity">
     </method>
-    <method name="poke">
-    </method>
-    <method name="quit">
-    </method>
-    <method name="getSessionIdle">
+    <method name="GetActive">
       <arg type="b" direction="out"/>
     </method>
-    <method name="getActive">
-      <arg type="b" direction="out"/>
-    </method>
-    <method name="getActiveTime">
+    <method name="GetActiveTime">
       <arg name="seconds" type="u" direction="out"/>
     </method>
-    <method name="getSessionIdleTime">
+    <method name="GetSessionIdleTime">
       <arg name="seconds" type="u" direction="out"/>
     </method>
-    <method name="isEnabled">
-      <arg type="b" direction="out"/>
-    </method>
-    <method name="enable">
+    <method name="SetActive">
       <arg type="b" direction="out"/>
       <arg name="e" type="b" direction="in"/>
     </method>
-    <method name="isBlanked">
-      <arg type="b" direction="out"/>
-    </method>
     <method name="configure">
-    </method>
-    <method name="setBlankOnly">
-      <arg name="blankOnly" type="b" direction="in"/>
     </method>
     <method name="saverLockReady">
     </method>
-    <method name="inhibit">
+    <method name="Inhibit">
       <arg name="application_name" type="s" direction="in"/>
       <arg name="reason_for_inhibit" type="s" direction="in"/>
       <arg name="cookie" type="u" direction="out"/>
     </method>
-    <method name="unInhibit">
+    <method name="UnInhibit">
       <arg name="cookie" type="u" direction="in"/>
     </method>
-    <method name="throttle">
+    <method name="Throttle">
       <arg name="application_name" type="s" direction="in"/>
       <arg name="reason_for_inhibit" type="s" direction="in"/>
       <arg name="cookie" type="u" direction="out"/>
     </method>
-    <method name="unThrottle">
+    <method name="UnThrottle">
       <arg name="cookie" type="u" direction="in"/>
     </method>
   </interface>

@@ -35,12 +35,11 @@ extern xautolock_corner_t xautolock_corners[ 4 ];
 //
 SaverEngine::SaverEngine()
     : QWidget(),
-      mBlankOnly(false),
       screensaverService( QDBusConnection::connectToBus( QDBusConnection::SessionBus,
-                                                         "org.kde.screensaver" ) )
+                                                         "org.freedesktop.ScreenSaver" ) )
 {
     (void) new ScreenSaverAdaptor( this );
-    screensaverService.registerService( "org.kde.screensaver" ) ;
+    screensaverService.registerService( "org.freedesktop.ScreenSaver" ) ;
     screensaverService.registerObject( "/ScreenSaver", this );
 
     // Save X screensaver parameters
@@ -85,7 +84,7 @@ SaverEngine::~SaverEngine()
 //---------------------------------------------------------------------------
 
 // This should be called only using DBus.
-void SaverEngine::lock()
+void SaverEngine::Lock()
 {
     bool ok = true;
     if (mState == Waiting)
@@ -139,7 +138,7 @@ void SaverEngine::saverLockReady()
     processLockTransactions();
 }
 
-void SaverEngine::poke()
+void SaverEngine::SimulateUserActivity()
 {
     if ( mState == Waiting )
     {
@@ -152,21 +151,24 @@ void SaverEngine::poke()
 }
 
 //---------------------------------------------------------------------------
-void SaverEngine::save()
+bool SaverEngine::save()
 {
     if (mState == Waiting)
     {
-        startLockProcess( DefaultLock );
+        return startLockProcess( DefaultLock );
     }
+    return false;
 }
 
 //---------------------------------------------------------------------------
-void SaverEngine::quit()
+bool SaverEngine::quit()
 {
     if (mState == Saving || mState == Preparing)
     {
         stopLockProcess();
+        return true;
     }
+    return false;
 }
 
 //---------------------------------------------------------------------------
@@ -260,17 +262,6 @@ void SaverEngine::configure()
 
 //---------------------------------------------------------------------------
 //
-//  Set a variable to indicate only using the blanker and not the saver.
-//
-void SaverEngine::setBlankOnly( bool blankOnly )
-{
-	mBlankOnly = blankOnly;
-	// FIXME: if running, stop  and restart?  What about security
-	// implications of this?
-}
-
-//---------------------------------------------------------------------------
-//
 // Start the screen saver.
 //
 bool SaverEngine::startLockProcess( LockType lock_type )
@@ -279,7 +270,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
         return true;
 
     kDebug() << "SaverEngine: starting saver" << endl;
-    emit screenSaverStarted(); // DBus signal
+    emit ActiveChanged(true); // DBus signal
 
     if (mLockProcess.isRunning())
     {
@@ -304,8 +295,8 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 	default:
 	  break;
     }
-    if (mBlankOnly)
-	    mLockProcess << QString( "--blank" );
+    if (m_nr_throttled)
+        mLockProcess << QString( "--blank" );
 
     m_actived_time = time( 0 );
     if (mLockProcess.start() == false )
@@ -336,7 +327,7 @@ void SaverEngine::stopLockProcess()
         return;
     }
     kDebug() << "SaverEngine: stopping lock" << endl;
-    emit screenSaverStopped(); // DBus signal
+    emit ActiveChanged(false); // DBus signal
 
     mLockProcess.kill();
 
@@ -355,7 +346,7 @@ void SaverEngine::lockProcessExited()
     kDebug() << "SaverEngine: lock exited" << endl;
     if( mState == Waiting )
 	return;
-    emit screenSaverStopped(); // DBus signal
+    emit ActiveChanged(false); // DBus signal
     if (mXAutoLock)
     {
         mXAutoLock->start();
@@ -400,38 +391,38 @@ xautolock_corner_t SaverEngine::applyManualSettings(int action)
     }
 }
 
-uint SaverEngine::getSessionIdleTime()
+uint SaverEngine::GetSessionIdleTime()
 {
     return mXAutoLock->idleTime();
 }
 
-bool SaverEngine::getSessionIdle()
+bool SaverEngine::GetSessionIdle()
 {
     // pointless?
-    return ( getSessionIdleTime() > 0 );
+    return ( GetSessionIdleTime() > 0 );
 }
 
-uint SaverEngine::getActiveTime()
+uint SaverEngine::GetActiveTime()
 {
     if ( m_actived_time == -1 )
         return 0;
     return time( 0 ) - m_actived_time;
 }
 
-bool SaverEngine::getActive()
+bool SaverEngine::GetActive()
 {
     return ( mState != Waiting );
 }
 
-void SaverEngine::setActive(bool state)
+bool SaverEngine::SetActive(bool state)
 {
     if ( state )
-        save();
+        return save();
     else
-        quit();
+        return quit();
 }
 
-uint SaverEngine::inhibit(const QString &application_name, const QString &reason_for_inhibit)
+uint SaverEngine::Inhibit(const QString &application_name, const QString &reason_for_inhibit)
 {
     ScreenSaverRequest sr;
     sr.appname = application_name;
@@ -445,7 +436,7 @@ uint SaverEngine::inhibit(const QString &application_name, const QString &reason
     return sr.cookie;
 }
 
-void SaverEngine::unInhibit(uint cookie)
+void SaverEngine::UnInhibit(uint cookie)
 {
     QMutableListIterator<ScreenSaverRequest> it( m_requests );
     while ( it.hasNext() )
@@ -459,7 +450,7 @@ void SaverEngine::unInhibit(uint cookie)
     }
 }
 
-uint SaverEngine::throttle(const QString &application_name, const QString &reason_for_inhibit)
+uint SaverEngine::Throttle(const QString &application_name, const QString &reason_for_inhibit)
 {
     ScreenSaverRequest sr;
     sr.appname = application_name;
@@ -474,7 +465,7 @@ uint SaverEngine::throttle(const QString &application_name, const QString &reaso
     return sr.cookie;
 }
 
-void SaverEngine::unThrottle(uint cookie)
+void SaverEngine::UnThrottle(uint cookie)
 {
     QMutableListIterator<ScreenSaverRequest> it( m_requests );
     while ( it.hasNext() )
@@ -490,6 +481,8 @@ void SaverEngine::unThrottle(uint cookie)
 
 void SaverEngine::serviceOwnerChanged(const QString& name,const QString &oldOwner,const QString &newOwner)
 {
+    Q_UNUSED( oldOwner );
+
     if ( !newOwner.isEmpty() ) // looking for deaths
         return;
 
@@ -500,9 +493,9 @@ void SaverEngine::serviceOwnerChanged(const QString& name,const QString &oldOwne
         if ( r.dbusid == name )
         {
             if ( r.type == ScreenSaverRequest::Throttle )
-                unThrottle( r.cookie );
+                UnThrottle( r.cookie );
             else
-                unInhibit( r.cookie );
+                UnInhibit( r.cookie );
         }
     }
 }

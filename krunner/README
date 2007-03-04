@@ -19,8 +19,8 @@ Runners may also be provided via plugins. See runners/search/ for an example.
 Screensaver and screen locking
 ==============================
 This functionality is provided by the D-Bus service described in
-org.kde.ScreenSaver.xml and is made available on the session bus under the
-service name org.kde.screensaver, path /ScreenSaver
+org.freedesktop.ScreenSaver.xml and is made available on the session bus under the
+service name org.freedesktop.ScreenSaver, path /ScreenSaver
 
 The locking is managed by a small app found in lock/
 

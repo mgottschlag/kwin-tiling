@@ -116,7 +116,7 @@ void SessionRunner::newSession()
         return;
     }
 
-    static_cast<KRunnerApp*>(qApp)->screensaver().lock();
+    static_cast<KRunnerApp*>(qApp)->screensaver().Lock();
     DM().startReserve();
 }
 

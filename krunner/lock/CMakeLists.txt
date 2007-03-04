@@ -12,7 +12,7 @@ set(krunner_lock_SRCS
 
 set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE(krunner_lock_SRCS ${ksmserver_xml} ksmserver_interface)
-set(krunner_xml  ${CMAKE_SOURCE_DIR}/workspace/krunner/org.kde.ScreenSaver.xml)
+set(krunner_xml  ${CMAKE_SOURCE_DIR}/workspace/krunner/org.freedesktop.ScreenSaver.xml)
 QT4_ADD_DBUS_INTERFACE(krunner_lock_SRCS ${krunner_xml} krunner_interface)
 
 set(kxkb_adaptor ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kxkb/kxkb_adaptor.h)

@@ -34,7 +34,7 @@ public:
 class SaverEngine : public QWidget
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.ScreenSaver")
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.ScreenSaver")
 
 public:
     SaverEngine();
@@ -44,22 +44,22 @@ public Q_SLOTS:
     /**
      * Lock the screen now even if the screensaver does not lock by default.
      */
-    void lock();
+    void Lock();
 
     /**
      * Save the screen now. If the user has locking enabled, the screen is locked also.
      */
-    void save();
+    bool save();
 
     /**
      * Quit the screensaver if it is running
      */
-    void quit();
+    bool quit();
 
     /**
      * Simulate user activity
      */
-    void poke();
+    void SimulateUserActivity();
 
     /**
      * Return true if the screensaver is enabled
@@ -83,13 +83,6 @@ public Q_SLOTS:
     void configure();
 
     /**
-     * Enable or disable "blank only" mode.  This is useful for
-     * laptops where one might not want a cpu thirsty screensaver
-     * draining the battery.
-     */
-    void setBlankOnly( bool blankOnly );
-
-    /**
      * Called by krunner_lock when locking is in effect.
      */
     void saverLockReady();
@@ -101,25 +94,25 @@ public Q_SLOTS:
      * screen and may run a graphical theme.  This does
      * not necessary mean that the screen is locked.
      */
-    void setActive( bool state );
+    bool SetActive( bool state );
 
     /// Returns the value of the current state of activity (See setActive)
-    bool getActive();
+    bool GetActive();
 
     /**
      * Returns the number of seconds that the screensaver has
      * been active.  Returns zero if the screensaver is not active.
      */
-    uint getActiveTime();
+    uint GetActiveTime();
 
     /// Returns the value of the current state of session idleness.
-    bool getSessionIdle();
+    bool GetSessionIdle();
 
     /**
      * Returns the number of seconds that the session has
      * been idle.  Returns zero if the session is not idle.
      */
-    uint getSessionIdleTime();
+    uint GetSessionIdleTime();
 
     /**
      * Request that saving the screen due to system idleness
@@ -127,9 +120,9 @@ public Q_SLOTS:
      * calling process exits.
      * The cookie is a random number used to identify the request
      */
-    uint inhibit(const QString &application_name, const QString &reason_for_inhibit);
+    uint Inhibit(const QString &application_name, const QString &reason_for_inhibit);
     /// Cancel a previous call to Inhibit() identified by the cookie.
-    void unInhibit(uint cookie);
+    void UnInhibit(uint cookie);
 
     /**
      * Request that running themes while the screensaver is active
@@ -137,14 +130,13 @@ public Q_SLOTS:
      * calling process exits.
      * The cookie is a random number used to identify the request
      */
-    uint throttle(const QString &application_name, const QString &reason_for_inhibit);
+    uint Throttle(const QString &application_name, const QString &reason_for_inhibit);
     /// Cancel a previous call to Throttle() identified by the cookie.
-    void unThrottle(uint cookie);
+    void UnThrottle(uint cookie);
 
 Q_SIGNALS:
     // DBus signals
-    void screenSaverStarted();
-    void screenSaverStopped();
+    void ActiveChanged(bool state);
 
 protected Q_SLOTS:
     void idleTimeout();
@@ -176,7 +168,6 @@ private:
     int         mXExposures;
 
     time_t      m_actived_time;
-    bool	mBlankOnly;  // only use the blanker, not the defined saver
     QDBusConnection screensaverService;
     QList<ScreenSaverRequest> m_requests;
     uint        m_next_cookie;
