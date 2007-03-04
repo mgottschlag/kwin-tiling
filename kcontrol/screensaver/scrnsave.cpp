@@ -252,16 +252,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
     mLockLbl->setWhatsThis( wltstr );
     mWaitLockEdit->setWhatsThis( wltstr );
 
-    mDPMSDependentCheckBox = new QCheckBox(i18n(
-        "Make aware of power &management"), mSettingsGroup);
-    mDPMSDependentCheckBox->setChecked( mDPMS );
-    connect( mDPMSDependentCheckBox, SIGNAL( toggled( bool ) ),
-             this, SLOT( slotDPMS( bool ) ) );
-    groupLayout->addWidget(mDPMSDependentCheckBox);
-    mDPMSDependentCheckBox->setWhatsThis( i18n(
-        "Enable this option if you want to disable the screen saver while "
-        "watching TV or movies.") );
-
     // right column
     QBoxLayout* rightColumnLayout = new QVBoxLayout();
     topLayout->addItem( rightColumnLayout );
@@ -405,25 +395,21 @@ void KScreenSaver::load()
 //
 void KScreenSaver::readSettings()
 {
-    KConfig *config = new KConfig( "kscreensaverrc");
+    KConfigGroup config( KSharedConfig::openConfig( "kscreensaverrc"), "ScreenSaver" );
 
-    mImmutable = config->groupIsImmutable("ScreenSaver");
+    mImmutable = config.groupIsImmutable();
 
-    config->setGroup( "ScreenSaver" );
-
-    mEnabled = config->readEntry("Enabled", false);
-    mTimeout = config->readEntry("Timeout", 300);
-    mLockTimeout = config->readEntry("LockGrace", 60000);
-    mDPMS = config->readEntry("DPMS-dependent", false);
-    mLock = config->readEntry("Lock", false);
-    mSaver = config->readEntry("Saver");
+    mEnabled = config.readEntry("Enabled", false);
+    mTimeout = config.readEntry("Timeout", 300);
+    mLockTimeout = config.readEntry("LockGrace", 60000);
+    mLock = config.readEntry("Lock", false);
+    mSaver = config.readEntry("Saver");
 
     if (mTimeout < 60) mTimeout = 60;
     if (mLockTimeout < 0) mLockTimeout = 0;
     if (mLockTimeout > 1800000) mLockTimeout = 1800000;
 
     mChanged = false;
-    delete config;
 }
 
 //---------------------------------------------------------------------------
@@ -441,7 +427,6 @@ void KScreenSaver::updateValues()
 
     mWaitLockEdit->setValue(mLockTimeout/1000);
     mLockCheckBox->setChecked(mLock);
-    mDPMSDependentCheckBox->setChecked(mDPMS);
 }
 
 //---------------------------------------------------------------------------
@@ -460,7 +445,6 @@ void KScreenSaver::defaults()
     }
     slotTimeoutChanged( 5 );
     slotLockTimeoutChanged( 60 );
-    slotDPMS( false );
     slotLock( false );
 
     updateValues();
@@ -480,7 +464,6 @@ void KScreenSaver::save()
     config.writeEntry("Enabled", mEnabled);
     config.writeEntry("Timeout", mTimeout);
     config.writeEntry("LockGrace", mLockTimeout);
-    config.writeEntry("DPMS-dependent", mDPMS);
     config.writeEntry("Lock", mLock);
 
     if ( !mSaver.isEmpty() )
@@ -875,14 +858,6 @@ void KScreenSaver::slotLockTimeoutChanged(int to )
     emit changed(true);
 }
 
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::slotDPMS( bool d )
-{
-    mDPMS = d;
-    mChanged = true;
-    emit changed(true);
-}
 
 //---------------------------------------------------------------------------
 //

@@ -59,7 +59,6 @@ protected Q_SLOTS:
     void slotStopTest();
     void slotTimeoutChanged( int );
     void slotLockTimeoutChanged( int );
-    void slotDPMS( bool );
     void slotLock( bool );
     void slotSetupDone(KProcess*);
     // when selecting a new screensaver, the old preview will
@@ -91,7 +90,6 @@ protected:
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;
     QCheckBox   *mEnabledCheckBox;
-    QCheckBox	*mDPMSDependentCheckBox;
     QLabel      *mMonitorLabel;
     QLabel      *mActivateLbl;
     QLabel      *mLockLbl;
@@ -110,7 +108,6 @@ protected:
     // Settings
     int         mTimeout;
     int         mLockTimeout;
-    bool	mDPMS;
     bool        mLock;
     bool        mEnabled;
     QString     mSaver;
