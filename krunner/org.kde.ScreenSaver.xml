@@ -9,6 +9,8 @@
     </method>
     <method name="save">
     </method>
+    <method name="poke">
+    </method>
     <method name="quit">
     </method>
     <method name="isEnabled">

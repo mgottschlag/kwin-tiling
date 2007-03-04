@@ -47,6 +47,11 @@ public Q_SLOTS:
     void quit();
 
     /**
+     * Simulate user activity
+     */
+    void poke();
+
+    /**
      * Return true if the screensaver is enabled
      */
     bool isEnabled();

@@ -127,6 +127,18 @@ void SaverEngine::saverLockReady()
     processLockTransactions();
 }
 
+void SaverEngine::poke()
+{
+    if ( mState == Waiting )
+    {
+        // disable
+        XSetScreenSaver(QX11Info::display(), 0, mXInterval, mXBlanking, mXExposures);
+        mXAutoLock->resetTrigger();
+        // reenable
+        XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, mXBlanking, mXExposures);
+    }
+}
+
 //---------------------------------------------------------------------------
 void SaverEngine::save()
 {
@@ -215,6 +227,7 @@ void SaverEngine::configure()
     KScreenSaverSettings::self()->readConfig();
 
     bool e  = KScreenSaverSettings::screenSaverEnabled();
+    kDebug() << "enabled " << e << endl;
     mTimeout = KScreenSaverSettings::timeout();
     mDPMS = KScreenSaverSettings::dpmsDependent();
 
