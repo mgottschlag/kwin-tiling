@@ -325,7 +325,7 @@ void PanelKMenu::slotLock()
     QString interface( "org.freedesktop.ScreenSaver" );
     org::freedesktop::ScreenSaver screenSaverInterface( interface, "/ScreenSaver", QDBusConnection::sessionBus() );
     if ( screenSaverInterface.isValid() )
-        screenSaverInterface.lock();
+        screenSaverInterface.Lock();
 }
 
 void PanelKMenu::slotLogout()
