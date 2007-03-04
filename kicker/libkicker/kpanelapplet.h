@@ -95,7 +95,7 @@ class QMenu;
  *
  * @author Matthias Elter <elter@kde.org>
  **/
-class KDEUI_EXPORT KPanelApplet : public QFrame
+class KDE_EXPORT KPanelApplet : public QFrame
 {
     Q_OBJECT
 

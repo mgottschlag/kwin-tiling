@@ -48,7 +48,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author The kicker maintainers, Michael Goffioul <kdeprint@swing.be>
  */
-class KDEUI_EXPORT KPanelMenu : public KMenu
+class KDE_EXPORT KPanelMenu : public KMenu
 {
     Q_OBJECT
 

@@ -96,7 +96,7 @@ class ExtensionSettings;
  *
  * @author Matthias Elter <elter@kde.org>
  **/
-class KDEUI_EXPORT KPanelExtension : public QWidget
+class KDE_EXPORT KPanelExtension : public QWidget
 {
     Q_OBJECT
 
