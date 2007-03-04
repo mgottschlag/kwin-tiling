@@ -115,26 +115,26 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 
     // Get root window size
     XWindowAttributes rootAttr;
-	QX11Info info;
+    QX11Info info;
     XGetWindowAttributes(QX11Info::display(), RootWindow(QX11Info::display(),
-                        info.screen()), &rootAttr);
+                                                         info.screen()), &rootAttr);
     mRootWidth = rootAttr.width;
     mRootHeight = rootAttr.height;
     XSelectInput( QX11Info::display(), QX11Info::appRootWindow(),
-        SubstructureNotifyMask | rootAttr.your_event_mask );
+                  SubstructureNotifyMask | rootAttr.your_event_mask );
 
     // Add non-KDE path
     KGlobal::dirs()->addResourceType("scrsav",
-                                    KGlobal::dirs()->kde_default("apps") +
-                                    "System/ScreenSavers/");
+                                     KGlobal::dirs()->kde_default("apps") +
+                                     "System/ScreenSavers/");
 
     // Add KDE specific screensaver path
     QString relPath="System/ScreenSavers/";
     KServiceGroup::Ptr servGroup = KServiceGroup::baseGroup( "screensavers");
     if (servGroup)
     {
-      relPath=servGroup->relPath();
-      kDebug(1204) << "relPath=" << relPath << endl;
+        relPath=servGroup->relPath();
+        kDebug(1204) << "relPath=" << relPath << endl;
     }
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
@@ -145,7 +145,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     gXA_SCREENSAVER_VERSION = XInternAtom (QX11Info::display(), "_SCREENSAVER_VERSION", False);
 
     connect(&mHackProc, SIGNAL(processExited(KProcess *)),
-                        SLOT(hackExited(KProcess *)));
+            SLOT(hackExited(KProcess *)));
 
     mSuspendTimer.setSingleShot(true);
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
@@ -203,12 +203,12 @@ static void sighup_handler(int)
 
 void LockProcess::timerEvent(QTimerEvent *ev)
 {
-	if (ev->timerId() == mAutoLogoutTimerId)
-	{
-		killTimer(mAutoLogoutTimerId);
-		AutoLogout autologout(this);
-		execDialog(&autologout);
-	}
+    if (ev->timerId() == mAutoLogoutTimerId)
+    {
+        killTimer(mAutoLogoutTimerId);
+        AutoLogout autologout(this);
+        execDialog(&autologout);
+    }
 }
 
 void LockProcess::setupSignals()
@@ -344,7 +344,7 @@ void LockProcess::configure()
 
     mSaver = KScreenSaverSettings::saver();
     if (mSaver.isEmpty() || mUseBlankOnly) {
-        mSaver = "KBlankscreen.desktop";
+        mSaver = "ScreenSavers/kblank.desktop";
     }
 
     readSaver();
@@ -364,7 +364,7 @@ void LockProcess::readSaver()
 {
     if (!mSaver.isEmpty())
     {
-        QString file = KStandardDirs::locate("scrsav", mSaver);
+        QString file = KStandardDirs::locate("services", mSaver);
 
         bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
         bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");
@@ -456,13 +456,15 @@ void LockProcess::createSaverWindow()
 #endif
     Window w = XCreateWindow( x11Display(), RootWindow( x11Display(), x11Screen()),
         x(), y(), width(), height(), 0, x11Depth(), InputOutput, visual, flags, &attrs );
-    create( w );
+
+    create( 0, false );
 
     // Some xscreensaver hacks check for this property
-    const char *version = "KDE 2.0";
+    const char *version = "KDE 4.0";
     XChangeProperty (QX11Info::display(), winId(),
                      gXA_SCREENSAVER_VERSION, XA_STRING, 8, PropModeReplace,
                      (unsigned char *) version, strlen(version));
+
 
     XSetWindowAttributes attr;
     attr.event_mask = KeyPressMask | ButtonPressMask | PointerMotionMask |
@@ -692,6 +694,7 @@ bool LockProcess::startSaver()
 
     raise();
     XSync(QX11Info::display(), False);
+
     setVRoot( winId(), winId() );
     startHack();
     return true;
@@ -823,26 +826,26 @@ bool LockProcess::startHack()
             mHackProc << word;
         }
 
-	    if (!mForbidden)
-	    {
+        if (!mForbidden)
+        {
 
-		    if (mHackProc.start() == true)
-		    {
+            if (mHackProc.start() == true)
+            {
 #ifdef HAVE_SETPRIORITY
-			    setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
+                setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
- 		        //bitBlt(this, 0, 0, &mOriginal);
-	            return true;
-		    }
-	    }
-	    else
-	    // we aren't allowed to start the specified screensaver either because it didn't run for some reason
+                //bitBlt(this, 0, 0, &mOriginal);
+                return true;
+            }
+        }
+        else
+        {
+            // we aren't allowed to start the specified screensaver either because it didn't run for some reason
 	    // according to the kiosk restrictions forbid it
-	    {
             QPalette palette;
             palette.setColor(backgroundRole(), Qt::black);
             setPalette(palette);
-	    }
+        }
     }
     return false;
 }
