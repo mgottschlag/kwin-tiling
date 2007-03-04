@@ -173,7 +173,7 @@ void MediaApplet::arrangeButtons()
 	// Center icons if we only have one column/row
 	if (mButtonList.count() < int(max_packed_buttons))
 	{
-		max_packed_buttons = qMax(1, mButtonList.count());
+		max_packed_buttons = qMax(1U, mButtonList.count());
 	}
 	max_packed_buttons = qMax(1, max_packed_buttons);
 
