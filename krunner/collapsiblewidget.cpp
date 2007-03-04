@@ -153,7 +153,6 @@ void CollapsibleWidget::setExpanded(bool expanded)
 void CollapsibleWidget::animateCollapse( qreal showAmount )
 {
     int pixels = d->innerWidget->sizeHint().height() * showAmount;
-    d->gridLayout->setRowMinimumHeight( 2, pixels );
 
     d->gridLayout->setRowMinimumHeight( 2, pixels );
 
