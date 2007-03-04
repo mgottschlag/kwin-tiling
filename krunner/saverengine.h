@@ -84,6 +84,33 @@ public Q_SLOTS:
      */
     void saverLockReady();
 
+    /**
+     * Request a change in the state of the screensaver.
+     * Set to TRUE to request that the screensaver activate.
+     * Active means that the screensaver has blanked the
+     * screen and may run a graphical theme.  This does
+     * not necessary mean that the screen is locked.
+     */
+    void setActive( bool state );
+
+    /// Returns the value of the current state of activity (See setActive)
+    bool getActive();
+
+    /**
+     * Returns the number of seconds that the screensaver has
+     * been active.  Returns zero if the screensaver is not active.
+     */
+    quint32 getActiveTime();
+
+    /// Returns the value of the current state of session idleness.
+    bool getSessionIdle();
+
+    /**
+     * Returns the number of seconds that the session has
+     * been idle.  Returns zero if the session is not idle.
+     */
+    quint32 getSessionIdleTime();
+
 Q_SIGNALS:
     // DBus signals
     void screenSaverStarted();
@@ -117,6 +144,7 @@ private:
     int         mXBlanking;
     int         mXExposures;
 
+    time_t      m_actived_time;
     bool	mBlankOnly;  // only use the blanker, not the defined saver
     QDBusConnection screensaverService;
 //    QVector< DCOPClientTransaction* > mLockTransactions;

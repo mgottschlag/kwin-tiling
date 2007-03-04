@@ -50,6 +50,8 @@ public:
     void setTrigger( time_t );
     // internal
     bool ignoreWindow( WId );
+    // internal
+    time_t idleTime();
     
 Q_SIGNALS:
     void timeout();
@@ -63,7 +65,7 @@ protected:
     int     mTimeout;
     time_t  mTrigger;
     bool    mActive;
-    time_t  mLastTimeout;
+    time_t  mLastTimeout, mLastReset;
     bool    mDPMS;
 };
 

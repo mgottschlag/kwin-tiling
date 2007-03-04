@@ -140,7 +140,8 @@ void XAutoLock::stop()
 //
 void XAutoLock::resetTrigger()
 {
-    mTrigger = time(0) + mTimeout;
+    mLastReset = time( 0 );
+    mTrigger = mLastReset + mTimeout;
 }
 
 //---------------------------------------------------------------------------
@@ -217,7 +218,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
         resetTrigger();
     }
 #endif
-    
+
 #ifdef HAVE_SCREENSAVER
     static XScreenSaverInfo* mitInfo = 0;
     if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
@@ -248,6 +249,11 @@ bool XAutoLock::ignoreWindow( WId w )
     if( w != QX11Info::appRootWindow() && QWidget::find( w ))
         return true;
     return false;
+}
+
+time_t XAutoLock::idleTime()
+{
+    return time( 0 ) - mLastReset;
 }
 
 extern "C"

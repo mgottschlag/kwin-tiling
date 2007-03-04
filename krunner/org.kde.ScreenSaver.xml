@@ -13,6 +13,18 @@
     </method>
     <method name="quit">
     </method>
+    <method name="getSessionIdle">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="getActive">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="getActiveTime">
+      <arg name="seconds" type="u" direction="out"/>
+    </method>
+    <method name="getSessionIdleTime">
+      <arg name="seconds" type="u" direction="out"/>
+    </method>
     <method name="isEnabled">
       <arg type="b" direction="out"/>
     </method>

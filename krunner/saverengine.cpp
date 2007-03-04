@@ -8,7 +8,6 @@
 
 #include <config.h>
 
-
 #include "saverengine.h"
 #include "kscreensaversettings.h"
 #include "screensaveradaptor.h"
@@ -22,6 +21,7 @@
 #include <QX11Info>
 #include <assert.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "xautolock_c.h"
 extern xautolock_corner_t xautolock_corners[ 4 ];
@@ -49,6 +49,8 @@ SaverEngine::SaverEngine()
     mState = Waiting;
     mXAutoLock = 0;
     mEnabled = false;
+
+    m_actived_time = -1;
 
     connect(&mLockProcess, SIGNAL(processExited(KProcess *)),
                         SLOT(lockProcessExited()));
@@ -295,9 +297,11 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     if (mBlankOnly)
 	    mLockProcess << QString( "--blank" );
 
+    m_actived_time = time( 0 );
     if (mLockProcess.start() == false )
     {
 	kDebug() << "Failed to start krunner_lock!" << endl;
+        m_actived_time = -1;
 	return false;
     }
 
@@ -315,6 +319,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 //
 void SaverEngine::stopLockProcess()
 {
+    m_actived_time = -1;
     if (mState == Waiting)
     {
         kWarning() << "SaverEngine::stopSaver() saver not active" << endl;
@@ -336,6 +341,7 @@ void SaverEngine::stopLockProcess()
 
 void SaverEngine::lockProcessExited()
 {
+    m_actived_time = -1;
     kDebug() << "SaverEngine: lock exited" << endl;
     if( mState == Waiting )
 	return;
@@ -382,6 +388,37 @@ xautolock_corner_t SaverEngine::applyManualSettings(int action)
         kDebug() << "no lock nothing" << endl;
         return ca_nothing;
     }
+}
+
+quint32 SaverEngine::getSessionIdleTime()
+{
+    return mXAutoLock->idleTime();
+}
+
+bool SaverEngine::getSessionIdle()
+{
+    // pointless?
+    return ( getSessionIdleTime() > 0 );
+}
+
+quint32 SaverEngine::getActiveTime()
+{
+    if ( m_actived_time == -1 )
+        return 0;
+    return time( 0 ) - m_actived_time;
+}
+
+bool SaverEngine::getActive()
+{
+    return ( mState != Waiting );
+}
+
+void SaverEngine::setActive(bool state)
+{
+    if ( state )
+        save();
+    else
+        quit();
 }
 
 #include "saverengine.moc"
