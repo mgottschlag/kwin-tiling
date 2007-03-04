@@ -15,6 +15,7 @@
 #include <kstandarddirs.h>
 #include <kapplication.h>
 #include <kservicegroup.h>
+#include <krandom.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <QFile>
@@ -50,11 +51,20 @@ SaverEngine::SaverEngine()
     mXAutoLock = 0;
     mEnabled = false;
 
+    m_nr_throttled = 0;
+    m_nr_inhibited = 0;
     m_actived_time = -1;
 
     connect(&mLockProcess, SIGNAL(processExited(KProcess *)),
                         SLOT(lockProcessExited()));
 
+    QObject::connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+                SLOT(serviceOwnerChanged(QString,QString,QString)));
+
+    // I make it a really random number to avoid
+    // some assumptions in clients, but just increase
+    // while gnome-ss creates a random number every time
+    m_next_cookie = KRandom::random() % 20000;
     configure();
 }
 
@@ -390,7 +400,7 @@ xautolock_corner_t SaverEngine::applyManualSettings(int action)
     }
 }
 
-quint32 SaverEngine::getSessionIdleTime()
+uint SaverEngine::getSessionIdleTime()
 {
     return mXAutoLock->idleTime();
 }
@@ -401,7 +411,7 @@ bool SaverEngine::getSessionIdle()
     return ( getSessionIdleTime() > 0 );
 }
 
-quint32 SaverEngine::getActiveTime()
+uint SaverEngine::getActiveTime()
 {
     if ( m_actived_time == -1 )
         return 0;
@@ -419,6 +429,82 @@ void SaverEngine::setActive(bool state)
         save();
     else
         quit();
+}
+
+uint SaverEngine::inhibit(const QString &application_name, const QString &reason_for_inhibit)
+{
+    ScreenSaverRequest sr;
+    sr.appname = application_name;
+    sr.reasongiven = reason_for_inhibit;
+    sr.cookie = m_next_cookie++;
+    sr.dbusid = "unknown"; // see below for throttle
+    sr.type = ScreenSaverRequest::Inhibit;
+    m_requests.append( sr );
+    m_nr_inhibited++;
+    enable( false );
+    return sr.cookie;
+}
+
+void SaverEngine::unInhibit(uint cookie)
+{
+    QMutableListIterator<ScreenSaverRequest> it( m_requests );
+    while ( it.hasNext() )
+    {
+        if ( it.next().cookie == cookie ) {
+            it.remove();
+            m_nr_inhibited--;
+            if ( m_nr_inhibited <= 0 )
+                enable( true );
+        }
+    }
+}
+
+uint SaverEngine::throttle(const QString &application_name, const QString &reason_for_inhibit)
+{
+    ScreenSaverRequest sr;
+    sr.appname = application_name;
+    sr.reasongiven = reason_for_inhibit;
+    sr.cookie = m_next_cookie++;
+    sr.type = ScreenSaverRequest::Throttle;
+#warning thiago says Qt 4.3 can query the dbus connection id in adaptors - waiting
+    sr.dbusid = "unknown"; // see above for inhibit
+    m_requests.append( sr );
+    m_nr_throttled++;
+    mLockProcess.suspend();
+    return sr.cookie;
+}
+
+void SaverEngine::unThrottle(uint cookie)
+{
+    QMutableListIterator<ScreenSaverRequest> it( m_requests );
+    while ( it.hasNext() )
+    {
+        if ( it.next().cookie == cookie ) {
+            it.remove();
+            m_nr_throttled--;
+            if ( m_nr_throttled <= 0 )
+                mLockProcess.resume();
+        }
+    }
+}
+
+void SaverEngine::serviceOwnerChanged(const QString& name,const QString &oldOwner,const QString &newOwner)
+{
+    if ( !newOwner.isEmpty() ) // looking for deaths
+        return;
+
+    QListIterator<ScreenSaverRequest> it( m_requests );
+    while ( it.hasNext() )
+    {
+        ScreenSaverRequest r = it.next();
+        if ( r.dbusid == name )
+        {
+            if ( r.type == ScreenSaverRequest::Throttle )
+                unThrottle( r.cookie );
+            else
+                unInhibit( r.cookie );
+        }
+    }
 }
 
 #include "saverengine.moc"

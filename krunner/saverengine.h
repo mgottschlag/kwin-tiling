@@ -16,6 +16,16 @@
 #include "xautolock.h"
 #include "xautolock_c.h"
 
+class ScreenSaverRequest
+{
+public:
+    QString appname;
+    QString reasongiven;
+    QString dbusid;
+    uint cookie;
+    enum { Inhibit,Throttle } type;
+};
+
 //===========================================================================
 /**
  * Screen saver engine.  Handles screensaver window, starting screensaver
@@ -100,7 +110,7 @@ public Q_SLOTS:
      * Returns the number of seconds that the screensaver has
      * been active.  Returns zero if the screensaver is not active.
      */
-    quint32 getActiveTime();
+    uint getActiveTime();
 
     /// Returns the value of the current state of session idleness.
     bool getSessionIdle();
@@ -109,7 +119,27 @@ public Q_SLOTS:
      * Returns the number of seconds that the session has
      * been idle.  Returns zero if the session is not idle.
      */
-    quint32 getSessionIdleTime();
+    uint getSessionIdleTime();
+
+    /**
+     * Request that saving the screen due to system idleness
+     * be blocked until UnInhibit is called or the
+     * calling process exits.
+     * The cookie is a random number used to identify the request
+     */
+    uint inhibit(const QString &application_name, const QString &reason_for_inhibit);
+    /// Cancel a previous call to Inhibit() identified by the cookie.
+    void unInhibit(uint cookie);
+
+    /**
+     * Request that running themes while the screensaver is active
+     * be blocked until UnThrottle is called or the
+     * calling process exits.
+     * The cookie is a random number used to identify the request
+     */
+    uint throttle(const QString &application_name, const QString &reason_for_inhibit);
+    /// Cancel a previous call to Throttle() identified by the cookie.
+    void unThrottle(uint cookie);
 
 Q_SIGNALS:
     // DBus signals
@@ -119,6 +149,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void idleTimeout();
     void lockProcessExited();
+    void serviceOwnerChanged(const QString&,const QString&,const QString&);
 
 protected:
     enum LockType { DontLock, DefaultLock, ForceLock };
@@ -147,6 +178,12 @@ private:
     time_t      m_actived_time;
     bool	mBlankOnly;  // only use the blanker, not the defined saver
     QDBusConnection screensaverService;
+    QList<ScreenSaverRequest> m_requests;
+    uint        m_next_cookie;
+    
+    int        m_nr_throttled;
+    int        m_nr_inhibited;
+ 
 //    QVector< DCOPClientTransaction* > mLockTransactions;
 };
 

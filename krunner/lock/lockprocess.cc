@@ -873,7 +873,7 @@ void LockProcess::hackExited(KProcess *)
 
 void LockProcess::suspend()
 {
-    if(!mSuspended)
+    if( !mSuspended && mHackProc.isRunning() )
     {
         mHackProc.kill(SIGSTOP);
         QApplication::syncX();
@@ -886,7 +886,7 @@ void LockProcess::resume( bool force )
 {
     if( !force && (!mDialogs.isEmpty() || !mVisibility ))
         return; // no resuming with dialog visible or when not visible
-    if(mSuspended)
+    if( mSuspended && mHackProc.isRunning() )
     {
         bitBlt( this, 0, 0, &mSavedScreen );
         QApplication::syncX();

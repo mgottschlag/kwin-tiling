@@ -42,5 +42,21 @@
     </method>
     <method name="saverLockReady">
     </method>
+    <method name="inhibit">
+      <arg name="application_name" type="s" direction="in"/>
+      <arg name="reason_for_inhibit" type="s" direction="in"/>
+      <arg name="cookie" type="u" direction="out"/>
+    </method>
+    <method name="unInhibit">
+      <arg name="cookie" type="u" direction="in"/>
+    </method>
+    <method name="throttle">
+      <arg name="application_name" type="s" direction="in"/>
+      <arg name="reason_for_inhibit" type="s" direction="in"/>
+      <arg name="cookie" type="u" direction="out"/>
+    </method>
+    <method name="unThrottle">
+      <arg name="cookie" type="u" direction="in"/>
+    </method>
   </interface>
 </node>
