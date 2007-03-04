@@ -175,6 +175,7 @@ void MediaApplet::arrangeButtons()
 	{
 		max_packed_buttons = qMax(1, mButtonList.count());
 	}
+	max_packed_buttons = qMax(1, max_packed_buttons);
 
 	int padded_button_size = kicker_size / max_packed_buttons;
 	mButtonSizeSum = 0;
