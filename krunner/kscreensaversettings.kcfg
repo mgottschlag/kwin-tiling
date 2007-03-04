@@ -17,9 +17,9 @@
       <whatsthis>Sets the seconds after which the screen saver is started.</whatsthis>
     </entry>
     <entry name="DpmsDependent" key="DPMS-dependent" type="Bool">
-      <default>false</default>
-      <label></label>
-      <whatsthis></whatsthis>
+      <default>true</default>
+      <label>Disable screen saver during presentation or TV</label>
+      <whatsthis>Enable this option if you want to disable the screen saver while watching TV or movies.</whatsthis>
     </entry>
     <entry key="ActionTopLeft" type="Int">
       <default>0</default>
