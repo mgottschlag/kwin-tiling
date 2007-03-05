@@ -73,6 +73,7 @@ class Interface : public QWidget
     protected:
         void paintEvent( QPaintEvent *e );
         void resizeEvent( QResizeEvent *e );
+        void showEvent( QShowEvent* e );
         void hideEvent( QHideEvent* e );
 
     private:

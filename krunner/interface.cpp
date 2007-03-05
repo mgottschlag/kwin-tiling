@@ -133,7 +133,6 @@ Interface::Interface(QWidget* parent)
     connect( m_theme, SIGNAL(changed()), this, SLOT(themeChanged()) );
 
     m_layout = new QVBoxLayout(this);
-    QHBoxLayout* bottomLayout = new QHBoxLayout(this);
 
     m_header = new QFrame( this );
     QHBoxLayout* headerLayout = new QHBoxLayout( m_header );
@@ -144,7 +143,7 @@ Interface::Interface(QWidget* parent)
     m_layout->addWidget( m_header );
 
     m_headerLabel = new QLabel( m_header );
-    //TODO: create a action so this can be changed by various runners to give the user feedback
+    //TODO: create a slot so this can be changed by various runners to give the user feedback?
     m_headerLabel->setText( i18n( "Enter the name of an application, location or search term below." ) );
     m_headerLabel->setEnabled( true );
     m_headerLabel->setWordWrap( true );
@@ -152,8 +151,8 @@ Interface::Interface(QWidget* parent)
     headerLayout->addWidget( m_headerLabel );
 
     m_searchTerm = new KLineEdit( this );
+    m_headerLabel->setBuddy( m_searchTerm );
     m_searchTerm->clear();
-    m_searchTerm->setClickMessage( i18n( "Enter a command or search term here" ) );
     m_searchTerm->setClearButtonShown( true );
     m_layout->addWidget( m_searchTerm );
     connect( m_searchTerm, SIGNAL(textChanged(QString)),
@@ -169,6 +168,8 @@ Interface::Interface(QWidget* parent)
              SLOT(setDefaultItem(QListWidgetItem*)) );
     m_layout->addWidget(m_matchList);
 
+    // buttons at the bottom
+    QHBoxLayout* bottomLayout = new QHBoxLayout(this);
     m_optionsButton = new KPushButton( KStandardGuiItem::configure(), this );
     m_optionsButton->setText( i18n( "Show Options" ) );
     m_optionsButton->setFlat( true );
@@ -245,13 +246,21 @@ void Interface::display( const QString& term)
         m_searchTerm->setText( term );
     }
 
-    show();
-    raise();
     KWin::setOnDesktop( winId(), KWin::currentDesktop() );
     KDialog::centerOnScreen( this );
+    show();
     KWin::forceActiveWindow( winId() );
 
+kDebug() << "about to match now that we've shown" << endl;
+
     match( term );
+}
+
+void Interface::showEvent( QShowEvent* e )
+{
+    Q_UNUSED( e )
+
+    kDebug() << "show event" << endl;
 }
 
 void Interface::hideEvent( QHideEvent* e )
@@ -264,7 +273,7 @@ void Interface::hideEvent( QHideEvent* e )
     m_matchList->clear() ;
     m_runButton->setEnabled( false );
     m_optionsButton->setEnabled( false );
-    QWidget::hideEvent( e );
+    e->accept();
 }
 
 void Interface::matchActivated(QListWidgetItem* item)
@@ -273,6 +282,7 @@ void Interface::matchActivated(QListWidgetItem* item)
     m_optionsButton->setEnabled( match && match->runner()->hasOptions() );
 
     if ( match && match->actionEnabled() ) {
+        kDebug() << "match activated! " << match->text() << endl;
         match->activate();
         hide();
     }
@@ -290,6 +300,7 @@ void Interface::match(const QString& t)
         m_searchMatches.clear();
         m_matchList->clear();
         m_runButton->setEnabled( false );
+        m_optionsButton->setEnabled( false );
         showOptions( false );
         return;
     }
@@ -381,8 +392,8 @@ void Interface::themeChanged()
 {
     delete m_bgRenderer;
     kDebug() << "themeChanged() to " << m_theme->themeName()
-             << "and we have " << m_theme->imagePath("/background/dialog") << endl;
-    m_bgRenderer = new QSvgRenderer( m_theme->imagePath( "/background/dialog" ), this );
+             << "and we have " << m_theme->image("/background/dialog") << endl;
+    m_bgRenderer = new QSvgRenderer( m_theme->image( "/background/dialog" ), this );
 }
 
 void Interface::setWidgetPalettes()
@@ -417,6 +428,7 @@ void Interface::exec()
 
 void Interface::paintEvent(QPaintEvent *e)
 {
+    kDebug() << "paint event!" << endl;
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     p.setClipRect(e->rect());
