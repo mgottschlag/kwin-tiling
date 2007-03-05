@@ -339,7 +339,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 void KSMShutdownDlg::themeChanged()
 {
     delete m_bgRenderer;
-    m_bgRenderer = new QSvgRenderer(m_theme->imagePath("/background/shutdowndlg"), this);
+    m_bgRenderer = new QSvgRenderer(m_theme->image("/background/shutdowndlg"), this);
 }
 
 void KSMShutdownDlg::paintEvent(QPaintEvent *e)
