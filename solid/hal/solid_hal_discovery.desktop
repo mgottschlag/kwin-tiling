@@ -5,5 +5,7 @@ ServiceTypes=SolidDeviceManager
 X-KDE-Library=solid_hal_discovery
 InitialPreference=100
 Name=HAL-Discovery
+Name[x-test]=xxHAL-Discoveryxx
 Comment=Hardware discovery using freedesktop.org HAL daemon
+Comment[x-test]=xxHardware discovery using freedesktop.org HAL daemonxx
 

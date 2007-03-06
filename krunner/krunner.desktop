@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=krunner
 X-DBUS-StartupType=wait
 Name=Command Runner
+Name[x-test]=xxCommand Runnerxx
 Type=Service
 X-KDE-StartupNotify=false
 OnlyShowIn=KDE;

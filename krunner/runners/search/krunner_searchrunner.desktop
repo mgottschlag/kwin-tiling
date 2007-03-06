@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Search Runner
+Name[x-test]=xxSearch Runnerxx
 Comment=Search files
+Comment[x-test]=xxSearch filesxx
 ServiceTypes=KRunner/Runner
 Type=Service
 X-KDE-Library=krunner_searchrunner

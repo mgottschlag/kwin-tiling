@@ -3,3 +3,4 @@ Encoding=UTF-8
 Icon=edu_miscellaneous
 Type=Directory
 Name=Miscellaneous
+Name[x-test]=xxMiscellaneousxx

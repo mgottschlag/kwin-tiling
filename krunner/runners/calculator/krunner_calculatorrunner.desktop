@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Calculator Runner
+Name[x-test]=xxCalculator Runnerxx
 Comment=Calculate expressions
+Comment[x-test]=xxCalculate expressionsxx
 ServiceTypes=KRunner/Runner
 Type=Service
 X-KDE-Library=krunner_calculatorrunner

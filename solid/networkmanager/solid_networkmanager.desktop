@@ -5,5 +5,7 @@ ServiceTypes=SolidNetworkManager
 X-KDE-Library=solid_networkmanager
 InitialPreference=100
 Name=NetworkManager
+Name[x-test]=xxNetworkManagerxx
 Comment=Network management using the NetworkManager daemon
+Comment[x-test]=xxNetwork management using the NetworkManager daemonxx
 Icon=networkmanager

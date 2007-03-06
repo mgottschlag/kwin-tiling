@@ -5,5 +5,7 @@ ServiceTypes=SolidPowerManager
 X-KDE-Library=solid_hal_power
 InitialPreference=100
 Name=HAL-Power
+Name[x-test]=xxHAL-Powerxx
 Comment=Hardware power management using freedesktop.org HAL daemon
+Comment[x-test]=xxHardware power management using freedesktop.org HAL daemonxx
 

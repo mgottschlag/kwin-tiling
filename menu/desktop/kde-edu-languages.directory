@@ -3,3 +3,4 @@ Encoding=UTF-8
 Icon=edu_languages
 Type=Directory
 Name=Languages
+Name[x-test]=xxLanguagesxx

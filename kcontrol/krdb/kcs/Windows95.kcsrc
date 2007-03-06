@@ -1,6 +1,13 @@
 #KDE Config File
 [Color Scheme]
 Name=Redmond 95
+Name[eo]=Redmondo 95
+Name[fa]=ردموند ۹۵
+Name[lv]=Redmonda 95
+Name[ne]=रेडमोन्ड ९५
+Name[ta]=ரெட் மோன்ட் 95
+Name[uk]=Редмонд 95
+Name[uz]=Редмонд 95
 Name[x-test]=xxRedmond 95xx
 background=#c3c3c3
 buttonBackground=#c3c3c3

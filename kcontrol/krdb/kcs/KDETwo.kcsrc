@@ -13,6 +13,7 @@ inactiveBlend=220,220,220
 inactiveForeground=0,0,0
 linkColor=0,0,192
 Name=KDE 2
+Name[fa]=KDE ۲
 Name[x-test]=xxKDE 2xx
 selectBackground=10,95,137
 selectForeground=255,255,255
