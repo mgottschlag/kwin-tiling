@@ -57,7 +57,9 @@ K_EXPORT_COMPONENT_FACTORY( accessibility, AccessibilityFactory("kcmaccessibilit
 AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QStringList &args)
   : KCModule( AccessibilityFactory::componentData(), parent)
 {
-	widget = new AccessibilityConfigWidget(parent, 0L);
+   Q_UNUSED( args )
+
+   widget = new AccessibilityConfigWidget(parent, 0L);
    KAboutData *about =
    new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
                   0, 0, KAboutData::License_GPL,
@@ -81,23 +83,21 @@ AccessibilityConfig::~AccessibilityConfig(){
 void AccessibilityConfig::load(){
    kDebug() << "Running: AccessibilityConfig::load()" << endl;
 
-   KConfig *bell = new KConfig("bellrc");
+   KConfig bell("bellrc");
+   KConfigGroup general( &bell, "General" );
+   widget->systemBell->setChecked(general.readEntry("SystemBell", false));
+   widget->customBell->setChecked(general.readEntry("CustomBell", false));
+   widget->visibleBell->setChecked(general.readEntry("VisibleBell", false));
 
-   bell->setGroup("General");
-   widget->systemBell->setChecked(bell->readEntry("SystemBell", false));
-   widget->customBell->setChecked(bell->readEntry("CustomBell", false));
-   widget->visibleBell->setChecked(bell->readEntry("VisibleBell", false));
+   KConfigGroup custom( &bell, "CustomBell" );
+   widget->soundToPlay->setPath(custom.readPathEntry("Sound", ""));
 
-   bell->setGroup("CustomBell");
-   widget->soundToPlay->setPath(bell->readPathEntry("Sound", ""));
+   KConfigGroup visible( &bell, "Visible" );
+   widget->invertScreen->setChecked(visible.readEntry("Invert", true));
+   widget->flashScreen->setChecked(visible.readEntry("Flash", false));
+   widget->flashScreenColor->setColor(visible.readEntry("FlashColor", Qt::red));
+   widget->visibleBellDuration->setValue(visible.readEntry("Duration", 500));
 
-   bell->setGroup("Visible");
-   widget->invertScreen->setChecked(bell->readEntry("Invert", true));
-   widget->flashScreen->setChecked(bell->readEntry("Flash", false));
-   widget->flashScreenColor->setColor(bell->readEntry("FlashColor", Qt::red));
-   widget->visibleBellDuration->setValue(bell->readEntry("Duration", 500));
-
-   delete bell;
 //    KConfig *config = new KConfig("kaccessrc", true);
 //
 //    config->setGroup("Bell");
@@ -136,24 +136,23 @@ void AccessibilityConfig::load(){
 void AccessibilityConfig::save(){
    kDebug() << "Running: AccessibilityConfig::save()" << endl;
 
-   KConfig *bell = new KConfig("bellrc");
+   KConfig bell("bellrc");
 
-   bell->setGroup("General");
-   bell->writeEntry("SystemBell", widget->systemBell->isChecked());
-   bell->writeEntry("CustomBell", widget->customBell->isChecked());
-   bell->writeEntry("VisibleBell", widget->visibleBell->isChecked());
+   KConfigGroup general( &bell, "General" );
+   general.writeEntry("SystemBell", widget->systemBell->isChecked());
+   general.writeEntry("CustomBell", widget->customBell->isChecked());
+   general.writeEntry("VisibleBell", widget->visibleBell->isChecked());
 
-   bell->setGroup("CustomBell");
-   bell->writePathEntry("Sound", widget->soundToPlay->url().url());
+   KConfigGroup custom( &bell, "CustomBell" );
+   custom.writePathEntry("Sound", widget->soundToPlay->url().url());
 
-   bell->setGroup("Visible");
-   bell->writeEntry("Invert", widget->invertScreen->isChecked());
-   bell->writeEntry("Flash", widget->flashScreen->isChecked());
-   bell->writeEntry("FlashColor", widget->flashScreenColor->color());
-   bell->writeEntry("Duration", widget->visibleBellDuration->value());
+   KConfigGroup visible( &bell, "Visible" );
+   visible.writeEntry("Invert", widget->invertScreen->isChecked());
+   visible.writeEntry("Flash", widget->flashScreen->isChecked());
+   visible.writeEntry("FlashColor", widget->flashScreenColor->color());
+   visible.writeEntry("Duration", widget->visibleBellDuration->value());
 
-   bell->sync();
-   delete bell;
+   bell.sync();
 //
 //
 //    config->setGroup("Keyboard");
