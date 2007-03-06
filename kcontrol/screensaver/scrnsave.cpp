@@ -397,7 +397,7 @@ void KScreenSaver::readSettings()
 {
     KConfigGroup config( KSharedConfig::openConfig( "kscreensaverrc"), "ScreenSaver" );
 
-    mImmutable = config.groupIsImmutable();
+    mImmutable = config.isImmutable();
 
     mEnabled = config.readEntry("Enabled", false);
     mTimeout = config.readEntry("Timeout", 300);
