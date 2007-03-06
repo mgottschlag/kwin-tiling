@@ -20,18 +20,17 @@
 #define INTERFACE_H
 
 #include <QTimer>
-#include <QWidget>
 
 // pulls in definition for Window
 #include <KSelectionWatcher>
 
+#include "krunnerdialog.h"
 #include "runner.h"
 
 class QFrame;
 class QLabel;
 class QListWidget;
 class QListWidgetItem;
-class QSvgRenderer;
 class QVBoxLayout;
 
 class KLineEdit;
@@ -40,12 +39,7 @@ class KPushButton;
 class CollapsibleWidget;
 class SearchMatch;
 
-namespace Plasma
-{
-    class Theme;
-}
-
-class Interface : public QWidget
+class Interface : public KRunnerDialog
 {
     Q_OBJECT
     Q_CLASSINFO( "D-Bus Interface", "org.kde.krunner.Interface" )
@@ -61,7 +55,6 @@ class Interface : public QWidget
 
     protected Q_SLOTS:
         void match( const QString& term );
-        void themeChanged();
         void setWidgetPalettes();
         void updateMatches();
         void exec();
@@ -71,17 +64,10 @@ class Interface : public QWidget
         void setDefaultItem( QListWidgetItem* );
 
     protected:
-        void paintEvent( QPaintEvent *e );
-        void resizeEvent( QResizeEvent *e );
         void showEvent( QShowEvent* e );
         void hideEvent( QHideEvent* e );
 
     private:
-        Plasma::Theme* m_theme;
-        QSvgRenderer* m_bgRenderer;
-        QPixmap m_renderedSvg;
-        bool m_renderDirty;
-
         QTimer m_searchTimer;
         Plasma::Runner::List m_runners;
 

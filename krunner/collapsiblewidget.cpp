@@ -77,7 +77,7 @@ CollapsibleWidget* SettingsContainer::insertWidget( QWidget *w, const QString& n
     return cw;
 }
 
-    CollapsibleWidget::CollapsibleWidget(QWidget *parent)
+CollapsibleWidget::CollapsibleWidget(QWidget *parent)
 : QWidget(parent), d(new CollapsibleWidget::Private)
 {
     init();

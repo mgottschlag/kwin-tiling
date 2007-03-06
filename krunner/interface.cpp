@@ -20,25 +20,22 @@
 #include <QApplication>
 #include <QLabel>
 #include <QListWidget>
-#include <QPainter>
-#include <QResizeEvent>
-#include <QSvgRenderer>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QShortcut>
 #include <QTimer>
+#include <QHideEvent>
 
 #include <KActionCollection>
 #include <KDebug>
 #include <KDialog>
-#include <KGlobalSettings>
 #include <KLineEdit>
 #include <KLocale>
+#include <KGlobalSettings>
 #include <KPushButton>
 #include <KStandardGuiItem>
 #include <KWin>
 
-#include "../plasma/lib/theme.h"
 #include "../plasma/lib/runner.h"
 
 #include "runners/services/servicerunner.h"
@@ -116,21 +113,14 @@ class SearchMatch : public QListWidgetItem
 };
 
 Interface::Interface(QWidget* parent)
-    : QWidget( parent ),
-      m_bgRenderer( 0 ),
-      m_renderDirty( true ),
+    : KRunnerDialog( parent ),
       m_expander( 0 ),
       m_defaultMatch( 0 )
 {
-    setWindowFlags( Qt::Window | Qt::FramelessWindowHint );
     setWindowTitle( i18n("Run Command") );
 
     connect( &m_searchTimer, SIGNAL(timeout()),
              this, SLOT(fuzzySearch()) );
-
-    m_theme = new Plasma::Theme( this );
-    themeChanged();
-    connect( m_theme, SIGNAL(changed()), this, SLOT(themeChanged()) );
 
     m_layout = new QVBoxLayout(this);
 
@@ -196,10 +186,6 @@ Interface::Interface(QWidget* parent)
 
     m_layout->addLayout (bottomLayout );
 
-    setWidgetPalettes();
-    connect( KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
-             SLOT(setWidgetPalettes()) );
-
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
 
@@ -208,7 +194,10 @@ Interface::Interface(QWidget* parent)
     //FIXME: what size should we be?
     resize(400, 250);
 
-
+    setWidgetPalettes();
+    connect( KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
+             SLOT(setWidgetPalettes()) );
+    
     //TODO: how should we order runners, particularly ones loaded from plugins?
     m_runners.append( new ShellRunner( this ) );
     m_runners.append( new ServiceRunner( this ) );
@@ -254,6 +243,20 @@ void Interface::display( const QString& term)
 kDebug() << "about to match now that we've shown" << endl;
 
     match( term );
+}
+
+void Interface::setWidgetPalettes()
+{
+    // a nice palette to use with the widgets
+    QPalette widgetPalette = palette();
+    QColor headerBgColor = widgetPalette.color( QPalette::Active,
+                                                QPalette::Base );
+    headerBgColor.setAlpha( 200 );
+    widgetPalette.setColor( QPalette::Active, QPalette::Base, headerBgColor );
+
+    m_header->setPalette( widgetPalette );
+    m_searchTerm->setPalette( widgetPalette );
+    m_matchList->setPalette( widgetPalette );
 }
 
 void Interface::showEvent( QShowEvent* e )
@@ -388,28 +391,6 @@ void Interface::fuzzySearch()
     }
 }
 
-void Interface::themeChanged()
-{
-    delete m_bgRenderer;
-    kDebug() << "themeChanged() to " << m_theme->themeName()
-             << "and we have " << m_theme->image("/background/dialog") << endl;
-    m_bgRenderer = new QSvgRenderer( m_theme->image( "/background/dialog" ), this );
-}
-
-void Interface::setWidgetPalettes()
-{
-    // a nice palette to use with the widgets
-    QPalette widgetPalette = palette();
-    QColor headerBgColor = widgetPalette.color( QPalette::Active,
-                                                QPalette::Base );
-    headerBgColor.setAlpha( 200 );
-    widgetPalette.setColor( QPalette::Active, QPalette::Base, headerBgColor );
-
-    m_header->setPalette( widgetPalette );
-    m_searchTerm->setPalette( widgetPalette );
-    m_matchList->setPalette( widgetPalette );
-}
-
 void Interface::updateMatches()
 {
     //TODO: implement
@@ -424,43 +405,6 @@ void Interface::exec()
     } else if ( m_defaultMatch ) {
         matchActivated( m_defaultMatch );
     }
-}
-
-void Interface::paintEvent(QPaintEvent *e)
-{
-    kDebug() << "paint event!" << endl;
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing);
-    p.setClipRect(e->rect());
-
-    if ( KRunnerApp::s_haveCompositeManager ) {
-        //kDebug() << "gots us a compmgr!" << m_haveCompositionManager << endl;
-        p.save();
-        p.setCompositionMode( QPainter::CompositionMode_Source );
-        p.fillRect( rect(), Qt::transparent );
-        p.restore();
-    }
-
-    if ( m_renderDirty ) {
-        m_renderedSvg.fill( Qt::transparent );
-        QPainter p( &m_renderedSvg );
-        p.setRenderHint( QPainter::Antialiasing );
-        m_bgRenderer->render( &p);
-        p.end();
-        m_renderDirty = false;
-    }
-
-    p.drawPixmap( 0, 0, m_renderedSvg );
-}
-
-void Interface::resizeEvent(QResizeEvent *e)
-{
-    if ( e->size() != m_renderedSvg.size() ) {
-        m_renderedSvg = QPixmap( e->size() );
-        m_renderDirty = true;
-    }
-
-    QWidget::resizeEvent( e );
 }
 
 void Interface::showOptions(bool show)
