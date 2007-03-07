@@ -23,6 +23,12 @@
 #include <QCoreApplication>
 #include <QEventLoop>
 
+namespace Solid {
+namespace Ifaces {
+    class Authentication;
+}
+}
+
 class KJob;
 
 class SolidShell : public QCoreApplication
@@ -59,6 +65,7 @@ public:
     bool netmgrListNetworks( const QString &device );
     bool netmgrQueryNetworkInterface( const QString & );
     bool netmgrQueryNetwork( const QString & device, const QString & );
+    bool netmgrActivateNetwork( const QString & device, const QString & uni, Solid::Ifaces::Authentication * auth = 0 );
     //bool netmgrCapabilities( const QString &udi );
 private:
     void connectJob( KJob *job );

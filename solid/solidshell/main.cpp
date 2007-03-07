@@ -36,6 +36,7 @@
 
 #include <solid/powermanager.h>
 
+#include <solid/ifaces/authentication.h>
 #include <solid/networkmanager.h>
 #include <solid/networkinterface.h>
 #include <solid/network.h>
@@ -192,7 +193,7 @@ std::ostream &operator<<( std::ostream &out, const Solid::Network &network )
         out << "    " << addr.toString() << endl;
     }
     if ( network.ipV4Addresses().isEmpty() )
-        out << "     none" << endl;
+        out << "    none" << endl;
     out << "  IPV6 Addresses:" << endl;
     foreach ( KNetwork::KIpAddress addr, network.ipV6Addresses() )
     {
@@ -209,6 +210,8 @@ std::ostream &operator<<( std::ostream &out, const Solid::Network &network )
     {
         out << "  " << i++ << ": " << addr.toString() << endl;
     }
+    if ( network.dnsServers().isEmpty() )
+        out << "    none" << endl;
     out << "  Active =             " << ( network.isActive() ? "Yes" : "No" ) << endl;
 
     return out;
@@ -395,6 +398,14 @@ int main(int argc, char **argv)
       cout << "  solidshell network set networking (enabled|disabled)" << endl;
       cout << i18n( "             # Enable or disable networking on this system.\n" ) << endl;
 
+      cout << "  solidshell network set network 'device-uni' 'network-uni' [authentication 'key']" << endl;
+      cout << i18n( "             # Activate the network 'network-uni' on 'device-uni'.\n"
+                    "             # Optionally, use WEP128, open-system encryption with hex key 'key'. (Hardcoded)"
+                    "             # Where 'authentication' is one of:\n"
+                    "             # wep hex64|ascii64|hex128|ascii128|passphrase 'key' [open|shared]\n"
+                    "             # wpapsk wpa|wpa2 tkip|aes-ccmp password - UNIMPLEMENTED IN SOLIDSHELL\n"
+                    "             # wpaeap UNIMPLEMENTED" ) << endl;
+
       return 0;
   }
 
@@ -553,32 +564,133 @@ bool SolidShell::doIt()
         }
         else if ( command == "set" )
         {
-            checkArgumentCount( 4, 4 );
+            checkArgumentCount( 4, 10 );
             QString what( args->arg( 2 ) );
             QString how( args->arg( 3 ) );
-            bool enabled;
-            if ( how == "enabled" )
-            {
-                enabled = true;
-            }
-            else if ( how == "disabled" )
-            {
-                enabled = false;
-            }
-            else
-            {
-                cerr << i18n( "Syntax Error: Unknown option '%1'", how ) << endl;
-                return false;
-            }
             if ( what == "networking" )
             {
+                bool enabled;
+                if ( how == "enabled" )
+                {
+                    enabled = true;
+                }
+                else if ( how == "disabled" )
+                {
+                    enabled = false;
+                }
+                else
+                {
+                    cerr << i18n( "Syntax Error: Unknown option '%1'", how ) << endl;
+                    return false;
+                }
                 shell.netmgrChangeNetworkingEnabled( enabled );
                 return true;
             }
             else if ( what == "wireless" )
             {
+                bool enabled;
+                if ( how == "enabled" )
+                {
+                    enabled = true;
+                }
+                else if ( how == "disabled" )
+                {
+                    enabled = false;
+                }
+                else
+                {
+                    cerr << i18n( "Syntax Error: Unknown option '%1'", how ) << endl;
+                    return false;
+                }
                 shell.netmgrChangeWirelessEnabled( enabled );
                 return true;
+            }
+      /*cout << "  solidshell network set network 'device-uni' 'network-uni' [authentication 'key']" << endl;*/
+            /*wep hex64|ascii64|hex128|ascii128|passphrase 'key' [open|shared] */
+             /* wpapsk wpa|wpa2 tkip|aes-ccmp password */
+            /* wpaeap UNIMPLEMENTED */
+            else if ( what == "network" )
+            {
+                checkArgumentCount( 5, 10 );
+                QString dev( args->arg( 3 ) );
+                QString uni( args->arg( 4 ) );
+
+                Solid::Ifaces::Authentication * auth = 0;
+                QMap<QString,QString> secrets;
+
+                QString hasAuth = args->arg( 5 );
+                if ( hasAuth == "authentication" )
+                {
+                    //encrypted network
+                    QString authScheme = args->arg( 6 );
+                    if ( authScheme == "wep" )
+                    {
+                        Solid::Ifaces::AuthenticationWep *wepAuth = new Solid::Ifaces::AuthenticationWep();
+                        QString keyType = args->arg( 7 );
+                        if ( keyType == "hex64" )
+                        {
+                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepHex );
+                            wepAuth->setKeyLength( 64 );
+                        }
+                        else if ( keyType == "ascii64" )
+                        {
+                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepAscii );
+                            wepAuth->setKeyLength( 64 );
+                        }
+                        if ( keyType == "hex128" )
+                        {
+                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepHex );
+                            wepAuth->setKeyLength( 128 );
+                        }
+                        else if ( keyType == "ascii128" )
+                        {
+                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepAscii );
+                            wepAuth->setKeyLength( 128 );
+                        }
+                        else if ( keyType == "passphrase" )
+                        {
+                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepPassphrase );
+                            wepAuth->setKeyLength( 128 );
+                        }
+                        else
+                        {
+                            cerr << i18n( "Unrecognised WEP type '%1'", keyType ) << endl;
+                            delete wepAuth;
+                            return false;
+                        }
+
+                        QString key = args->arg( 8 );
+                        secrets.insert( "key", key );
+                        wepAuth->setSecrets( secrets );
+
+                        QString method = args->arg( 9 );
+                        if ( method == "open" )
+                            wepAuth->setMethod( Solid::Ifaces::AuthenticationWep::WepOpenSystem );
+                        else if ( method == "shared" )
+                            wepAuth->setMethod( Solid::Ifaces::AuthenticationWep::WepSharedKey );
+                        else
+                        {
+                            cerr << i18n( "Unrecognised WEP method '%1'", method ) << endl;
+                            delete wepAuth;
+                            return false;
+                        }
+                        auth = wepAuth;
+                    }
+                    else if ( args->arg( 6 ) == "wpapsk" )
+                    {
+                        cerr << "Unimplemented WPA-PSK" << endl;
+                    }
+                    else
+                        cerr << i18n( "Unimplemented network type '%1'", args->arg(6 ) ) << endl;
+
+                }
+                else
+                {
+                    //unencrypted network
+                    auth = new Solid::Ifaces::AuthenticationNone;
+                }
+
+                return shell.netmgrActivateNetwork( dev, uni, auth );
             }
             else
             {
@@ -995,6 +1107,39 @@ bool SolidShell::netmgrQueryNetwork( const QString & deviceUni, const QString & 
     {
         cout << *wlan << endl;
     }
+    return true;
+}
+
+bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString & networkUni, Solid::Ifaces::Authentication * auth )
+{
+    Solid::NetworkManager &manager = Solid::NetworkManager::self();
+    Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );
+    Solid::Network * network = device.findNetwork( networkUni );
+    Solid::WirelessNetwork * wlan = 0;
+    if ( (  wlan = qobject_cast<Solid::WirelessNetwork*>( network ) ) )
+    {
+#if 0
+        //        Solid::Ifaces::AuthenticationWep auth;
+        //       auth.setMethod( Solid::Ifaces::AuthenticationWep::WepSharedKey );
+        //        auth.setKeyLength( 104 );
+        //        auth.setType( Solid::Ifaces::AuthenticationWep::WepHex );
+        //        QMap<QString,QString> secrets;
+        //        secrets.insert( "key", "49D68437B1FFB0DB3FDF2D4A93" );
+        //        auth.setSecrets( secrets );
+        //
+        Solid::Ifaces::AuthenticationWpaPersonal auth;
+        auth.setVersion( Solid::Ifaces::AuthenticationWpa::Wpa1 );
+        auth.setProtocol( Solid::Ifaces::AuthenticationWpa::WpaTkip );
+        auth.setKeyManagement( Solid::Ifaces::AuthenticationWpa::WpaPsk );
+        QMap<QString,QString> secrets;
+        secrets.insert( "key", "lisanncostello" );
+        auth.setSecrets( secrets );
+#endif
+        wlan->setAuthentication( auth );
+        wlan->setActivated( true );
+    }
+    else
+        network->setActivated( true );
     return true;
 }
 
