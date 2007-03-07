@@ -7,5 +7,6 @@ InitialPreference=100
 Name=HAL-Power
 Name[x-test]=xxHAL-Powerxx
 Comment=Hardware power management using freedesktop.org HAL daemon
+Comment[el]=Διαχείριση ενέργειας υλικού με χρήση του δαίμονα HAL του freedesktop.org
 Comment[x-test]=xxHardware power management using freedesktop.org HAL daemonxx
 

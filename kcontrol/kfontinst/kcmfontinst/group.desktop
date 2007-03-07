@@ -5,6 +5,7 @@ MimeType=fonts/group
 Icon=font
 Patterns=*.fontgroup.zip
 Comment=Font Group
+Comment[el]=Ομάδα γραμματοσειρών
 Comment[x-test]=xxFont Groupxx
 
 [Property::X-KDE-LocalProtocol]
