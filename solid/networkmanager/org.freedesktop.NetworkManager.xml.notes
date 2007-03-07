@@ -23,7 +23,7 @@ NM_DBUS_SERVICE, net_path, NM_DBUS_INTERFACE_DEVICES, "getProperties" return Net
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "getWirelessEnabled" returns bool
 ## setters ##
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath // used for wired interfaces
-NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath s essid THEN [encoding]
+NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setActiveDevice op objpath s essid b fallback THEN [encoding]
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "setWirelessEnabled" boolean returns ?
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "sleep"
 NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, "wake"
@@ -118,3 +118,40 @@ getVPNConnectionProperties s name returns s name s service s user OR NM_DBUS_INV
 getVPNConnectionVPNData s name, returns as data OR NM_DBUS_INVALID_VPN_CONNECTION
 getVPNConnectionRoutes s name, returns as routes OR NM_DBUS_INVALID_VPN_CONNECTION
 
+### Security ###
+FIRST
+int32 cipher { 
+IW_AUTH_CIPHER_WEP40:
+IW_AUTH_CIPHER_WEP104:
+{
+  //also cipher dependent?
+  s key
+  int32 authentication algorithm => {IW_AUTH_ALG_OPEN_SYSTEM,IW_AUTH_ALG_SHARED_KEY}
+}
+NM_AUTH_TYPE_WPA_PSK_AUTO:
+IW_AUTH_CIPHER_TKIP:
+IW_AUTH_CIPHER_CCMP:
+{
+  s key
+  int32 wpa version =>{IW_AUTH_WPA_VERSION_WPA,IW_AUTH_WPA_VERSION_WPA2}
+  int32 key mgmt => {IW_AUTH_KEY_MGMT_802_1X,IW_AUTH_KEY_MGMT_PSK}
+}
+NM_AUTH_TYPE_WPA_EAP:
+{
+  int32 eap method => {NM_EAP_METHOD_MD5,NM_EAP_METHOD_MSCHAP,NM_EAP_METHOD_OTP,NM_EAP_METHOD_GTC,NM_EAP_METHOD_PEAP,NM_EAP_METHOD_TLS,NM_EAP_METHOD_TTLS}
+  int32 key type => {NM_AUTH_TYPE_WPA_PSK_AUTO,IW_AUTH_CIPHER_CCMP,IW_AUTH_CIPHER_TKIP,IW_AUTH_CIPHER_WEP104}
+  s identity
+  s password
+  s anon identity
+  s priv key password
+  s priv key file
+  s client cert file
+  s ca cert file
+  int32 wpa version => {IW_AUTH_WPA_VERSION_WPA,IW_AUTH_WPA_VERSION_WPA2}
+}
+NM_AUTH_TYPE_LEAP:
+{
+  s username
+  s password
+  s key mgmt
+}
