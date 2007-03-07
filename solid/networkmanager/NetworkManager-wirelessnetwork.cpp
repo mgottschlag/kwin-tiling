@@ -30,7 +30,9 @@
 #include <NetworkManager/NetworkManager.h>
 
 #include <kdebug.h>
+#include <solid/ifaces/authentication.h>
 
+#include "NetworkManager-dbushelper.h"
 #include "NetworkManager-wirelessnetwork.h"
 
 void dump( const Solid::WirelessNetwork::Capabilities & cap )
@@ -204,6 +206,7 @@ Solid::WirelessNetwork::OperationMode NMWirelessNetwork::mode() const
 
 bool NMWirelessNetwork::isAssociated() const
 {
+#warning NMWirelessNetwork::isAssociated() is unimplemented
     kDebug(1441) << "Fixme: implement NMWirelessNetwork::isAssociated()" << endl;
     return true;
 }
@@ -215,6 +218,7 @@ bool NMWirelessNetwork::isEncrypted() const
 
 bool NMWirelessNetwork::isHidden() const
 {
+#warning NMWirelessNetwork::isHidden() is unimplemented
     kDebug(1441) << "Fixme: implement NMWirelessNetwork::isHidden()" << endl;
     return true;
 }
@@ -255,7 +259,16 @@ void NMWirelessNetwork::setActivated( bool activated )
     QString devicePath = uni().left( uni().indexOf( "/Networks" ) );
     kDebug( 1441 ) << k_funcinfo << devicePath << " - " << d->essid << endl;
     QDBusObjectPath op( devicePath );
-    manager.call( "setActiveDevice", qVariantFromValue( op ), d->essid );
+#warning fixme hardcoded false fallback bool in setActiveDevice
+    QList<QVariant> args;
+    args << qVariantFromValue( op ) << d->essid << false;
+    bool error;
+    args = NMDBusHelper::serialize( d->authentication, d->essid, args, &error );
+    kDebug( 1441 ) << " " << args << endl;
+    if ( !error )
+        manager.callWithArgumentList( QDBus::Block, "setActiveDevice", args );
+    if ( manager.lastError().isValid() )
+        kDebug( 1441 ) << "setActiveDevice returned error: " << manager.lastError().name() << ": " << manager.lastError().message() << endl;
 
     emit activationStateChanged( activated );
 }

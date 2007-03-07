@@ -7,6 +7,7 @@
 #  NETWORKMANAGER_DEFINITIONS - Compiler switches required for using NetworkManager
 
 # Copyright (c) 2006, Alexander Neundorf, <neundorf@kde.org>
+# Copyright (c) 2007, Will Stephenson, <wstephenson@kde.org>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
@@ -23,16 +24,19 @@ IF (NOT WIN32)
    INCLUDE(UsePkgConfig)
    PKGCONFIG(NetworkManager _NetworkManagerIncDir _NetworkManagerLinkDir _NetworkManagerLinkFlags _NetworkManagerCflags)
    SET(NETWORKMANAGER_DEFINITIONS ${_NetworkManagerCflags})
+   PKGCONFIG(libnm-util _libnm-utilIncDir _libnm-utilLinkDir _libnm-utilLinkFlags _libnm-utilCflags)
+   SET(NM-UTILS_DEFINITIONS ${_libnm-utilCflags})
 ENDIF (NOT WIN32)
 
+MESSAGE(STATUS "Found NetworkManager: ${_NetworkManagerLinkFlags}")
 FIND_PATH(NETWORKMANAGER_INCLUDE_DIR NetworkManager/NetworkManager.h
    PATHS
    ${_NetworkManagerIncDir}
    )
 
-FIND_LIBRARY(NETWORKMANAGER_LIBRARIES NAMES nm-util nm_glib
+FIND_LIBRARY(NM-UTIL_LIBRARY NAMES nm-util
    PATHS
-   ${_NetworkManagerLinkDir}
+   ${_libnm-utilLinkDir}
    )
 
 IF (NETWORKMANAGER_INCLUDE_DIR AND NETWORKMANAGER_LIBRARIES)
@@ -44,6 +48,7 @@ ENDIF (NETWORKMANAGER_INCLUDE_DIR AND NETWORKMANAGER_LIBRARIES)
 IF (NETWORKMANAGER_FOUND)
    IF (NOT NetworkManager_FIND_QUIETLY)
       MESSAGE(STATUS "Found NetworkManager: ${NETWORKMANAGER_LIBRARIES}")
+      MESSAGE(STATUS "Found libnm-util: ${NM-UTIL_LIBRARY}")
    ENDIF (NOT NetworkManager_FIND_QUIETLY)
 ELSE (NETWORKMANAGER_FOUND)
    IF (NetworkManager_FIND_REQUIRED)

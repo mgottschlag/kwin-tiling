@@ -1,4 +1,4 @@
-include_directories(${NETWORKMANAGER_DEFINITIONS})
+include_directories(${NETWORKMANAGER_DEFINITIONS} ${LIBNM-UTILS_DEFINITIONS})
 
 add_subdirectory(tests)
 
@@ -7,6 +7,7 @@ set(solid_networkmanager_PART_SRCS
 	NetworkManager-networkmanager.cpp
 	NetworkManager-networkinterface.cpp
 	NetworkManager-wirelessnetwork.cpp
+	NetworkManager-dbushelper.cpp
 )
 
 kde4_automoc(${solid_networkmanager_PART_SRCS})
@@ -16,7 +17,8 @@ target_link_libraries(solid_networkmanager_static ${KDE4_KDECORE_LIBS} ${KDE4_SO
 
 kde4_add_plugin(solid_networkmanager module.cpp ${solid_networkmanager_PART_SRCS})
 
-target_link_libraries(solid_networkmanager ${KDE4_KDECORE_LIBS} ${KDE4_SOLIDIFACES_LIBS})
+message(STATUS "nm-util Libs are ${NM-UTIL_LIBRARY}")
+target_link_libraries(solid_networkmanager ${NM-UTIL_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_SOLIDIFACES_LIBS})
 install(TARGETS solid_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES solid_networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )

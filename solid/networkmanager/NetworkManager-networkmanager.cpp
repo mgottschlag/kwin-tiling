@@ -40,7 +40,7 @@ public:
     uint cachedState;
 };
 
-NMNetworkManager::NMNetworkManager( QObject * parent, const QStringList & args )
+NMNetworkManager::NMNetworkManager( QObject * parent, const QStringList & /*args*/ )
  : NetworkManager( parent ), d( new NMNetworkManagerPrivate )
 {
     #define connectNMToThis( signal, slot ) \
@@ -90,6 +90,8 @@ QStringList NMNetworkManager::networkInterfaces() const
             kDebug(1441) << "  " << op.path() << endl;
         }
     }
+    else
+        kDebug( 1441 ) << "Error getting device list: " << deviceList.error().name() << ": " << deviceList.error().message() << endl;
     return networkInterfaces;
 }
 
@@ -159,8 +161,9 @@ void NMNetworkManager::setWirelessEnabled( bool enabled )
     d->manager.call( "setWirelessEnabled", enabled );
 }
 
-void NMNetworkManager::notifyHiddenNetwork( const QString & netname )
+void NMNetworkManager::notifyHiddenNetwork( const QString & /*netname*/ )
 {
+#warning NMNetworkManager::notifyHiddenNetwork() is unimplemented
     kDebug(1441) << "NMNetworkManager::notifyHiddenNetwork() implement me" << endl;
 }
 

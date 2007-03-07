@@ -28,11 +28,13 @@
 #include "NetworkManager-network.h"
 #include "NetworkManager-networkinterface.h"
 #include "NetworkManager-networkmanager.h"
+#include "NetworkManager-dbushelper.h"
 
 int main( int argc, char** argv )
 {
-#if 1
+//#if 1
     QApplication app( argc, argv );
+#if 0
     NMNetworkManager mgr( 0, QStringList() );
     mgr.networkInterfaces();
     mgr.isNetworkingEnabled();
@@ -41,23 +43,43 @@ int main( int argc, char** argv )
 	Solid::Ifaces::NetworkInterface * solidIface;
 	const QMetaObject * parentMo = wifiIface->metaObject()->superClass();
 	kDebug() << parentMo->className() << endl;
-    QStringList networks = ethernetIface->networks();
+    QStringList networks = wifiIface->networks();
 
 	foreach ( QString netPath, networks )
 	{
 		kDebug() << "Creating network: " << netPath << endl;
 		NMNetwork * network = qobject_cast<NMNetwork*>( wifiIface->createNetwork( netPath ) );
-		//if ( netPath == "/org/freedesktop/NetworkManager/Devices/eth1/Networks/banjaxed" )
+		if ( netPath == "/org/freedesktop/NetworkManager/Devices/eth1/Networks/testnet" )
 			network->setActivated( true );
 	}
-
+#endif
+#if 1
+/*	Solid::Ifaces::AuthenticationWep auth;
+	auth.setMethod( Solid::Ifaces::AuthenticationWep::WepSharedKey );
+	auth.setKeyLength( 104 );
+	auth.setType( Solid::Ifaces::AuthenticationWep::WepPassphrase );
+	QMap<QString,QString> secrets;
+	secrets.insert( "key", "testpassphrase" );
+   */
+	Solid::Ifaces::AuthenticationWpaPersonal auth;
+    auth.setVersion( Solid::Ifaces::AuthenticationWpa::Wpa1 );
+    auth.setProtocol( Solid::Ifaces::AuthenticationWpa::WpaTkip );
+    auth.setKeyManagement( Solid::Ifaces::AuthenticationWpa::WpaPsk );
+	QMap<QString,QString> secrets;
+	secrets.insert( "key", "testpassphrase" );
+	auth.setSecrets( secrets );
+	QList<QVariant> inArgs, outArgs;
+    bool error;
+	outArgs = NMDBusHelper::serialize( &auth, "nursery", inArgs, &error );
+	kDebug() << "Serialized arguments:" << outArgs << endl;
+	kDebug() << "Error?" << error << endl;
     //kDebug() << "Interface: " <<  netIface->uni() << ", " << netIface->signalStrength() << endl;
     //mgr.setWirelessEnabled( true );
     return app.exec();
 #else
     //	QApplication app( argc, argv );
     NMObject obj( argc, argv );
-    obj.showDevices();
+ //   obj.showDevices();
     NMNetworkManager mgr( 0, QStringList() );
     mgr.networkInterfaces();
     return obj.exec();

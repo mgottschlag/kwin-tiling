@@ -97,7 +97,7 @@ void NMNetwork::setActivated( bool activated )
             "org.freedesktop.NetworkManager",
             QDBusConnection::systemBus() );
     QString devicePath = d->netPath.left( d->netPath.indexOf( "/Networks" ) );
-    manager.call( "setActiveDevice", devicePath );
+    manager.call( "setActiveDevice", qVariantFromValue( QDBusObjectPath( devicePath ) ) );
 
     emit activationStateChanged( activated );
 }

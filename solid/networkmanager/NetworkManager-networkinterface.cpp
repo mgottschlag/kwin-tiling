@@ -282,18 +282,16 @@ void NMNetworkInterface::removeNetwork( const QDBusObjectPath & netPath )
 
 void NMNetworkInterface::updateNetworkStrength( const QDBusObjectPath & netPath, int strength )
 {
-    typedef void NMWirelessNetwork;
     // check that it's not already present, as NetworkManager may
     // detect networks that aren't really new.
-    if ( !d->networks.contains( netPath.path() ) )
+    if ( d->networks.contains( netPath.path() ) )
     {
         NMNetwork * net = d->networks[ netPath.path() ];
         if ( net != 0 )
         {
-            NMWirelessNetwork * wlan = 0; // qobject_cast<NMWirelessNetwork*>( net );
+            NMWirelessNetwork * wlan =  qobject_cast<NMWirelessNetwork*>( net );
             if ( wlan != 0 )
-                ;
-                // fixme wlan->setSignalStrength( strength );
+                wlan->setSignalStrength( strength );
         }
     }
 }
