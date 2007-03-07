@@ -22,37 +22,24 @@
 
 #include <KDebug>
 
-#include "../plasma/lib/theme.h"
+#include "../plasma/lib/svg.h"
 
 #include "krunnerdialog.h"
 #include "krunnerapp.h"
 
 KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
-    : QDialog( parent, f ),
-      m_bgRenderer( 0 ),
-      m_renderDirty( true )
-
+    : QDialog( parent, f )
 {
-    m_theme = new Plasma::Theme( this );
-    themeChanged();
-    connect( m_theme, SIGNAL(changed()), this, SLOT(themeChanged()) );
+    m_background = new Plasma::Svg( "/background/dialog", this );
+    connect( m_background, SIGNAL(repaintNeeded()), this, SLOT(update()) );
 }
 
 KRunnerDialog::~KRunnerDialog()
 {
 }
 
-void KRunnerDialog::themeChanged()
-{
-    delete m_bgRenderer;
-    kDebug() << "themeChanged() to " << m_theme->themeName()
-             << "and we have " << m_theme->image("/background/dialog") << endl;
-    m_bgRenderer = new QSvgRenderer( m_theme->image( "/background/dialog" ), this );
-}
-
 void KRunnerDialog::paintEvent(QPaintEvent *e)
 {
-    kDebug() << "paint event!" << endl;
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     p.setClipRect(e->rect());
@@ -65,25 +52,12 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
         p.restore();
     }
 
-    if ( m_renderDirty ) {
-        m_renderedSvg.fill( Qt::transparent );
-        QPainter p( &m_renderedSvg );
-        p.setRenderHint( QPainter::Antialiasing );
-        m_bgRenderer->render( &p);
-        p.end();
-        m_renderDirty = false;
-    }
-
-    p.drawPixmap( 0, 0, m_renderedSvg );
+    m_background->paint( &p, 0, 0 );
 }
 
 void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
-    if ( e->size() != m_renderedSvg.size() ) {
-        m_renderedSvg = QPixmap( e->size() );
-        m_renderDirty = true;
-    }
-
+    m_background->resize( e->size() );
     QDialog::resizeEvent( e );
 }
 

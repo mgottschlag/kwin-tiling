@@ -25,7 +25,7 @@ class QSvgRenderer;
 
 namespace Plasma
 {
-    class Theme;
+    class Svg;
 }
 
 class KRunnerDialog : public QDialog
@@ -37,18 +37,12 @@ class KRunnerDialog : public QDialog
                                 Qt::WindowFlags f =  Qt::Dialog | Qt::FramelessWindowHint );
         virtual ~KRunnerDialog();
 
-    protected Q_SLOTS:
-        void themeChanged();
-
     protected:
         void paintEvent( QPaintEvent *e );
         void resizeEvent( QResizeEvent *e );
 
     private:
-        Plasma::Theme* m_theme;
-        QSvgRenderer* m_bgRenderer;
-        QPixmap m_renderedSvg;
-        bool m_renderDirty;
+        Plasma::Svg* m_background;
 };
 
 #endif
