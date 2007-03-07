@@ -429,11 +429,8 @@ void BGDialog::slotIdentifyScreens()
    // Taken from PositionTab::showIdentify in kdebase/kcontrol/kicker/positiontab_impl.cpp
    for(unsigned s = 0; s < m_numScreens; s++)
    {
-      QLabel *screenLabel = new QLabel(0, Qt::WStyle_StaysOnTop | Qt::WDestructiveClose | Qt::WStyle_Customize | Qt::WStyle_NoBorder);
+      QLabel *screenLabel = new QLabel(0, Qt::WDestructiveClose | Qt::WStyle_Customize | Qt::X11BypassWindowManagerHint);
       screenLabel->setObjectName("Screen Identify");
-
-      KWin::setState( screenLabel->winId(), NET::Modal | NET::Sticky | NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
-      KWin::setType( screenLabel->winId(), NET::Override );
 
       QFont identifyFont(KGlobalSettings::generalFont());
       identifyFont.setPixelSize(100);

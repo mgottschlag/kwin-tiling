@@ -686,11 +686,8 @@ void PositionTab::showIdentify()
 {
     for(int s=0; s < QApplication::desktop()->numScreens();s++)
     {
-
-        QLabel *screenLabel = new QLabel(0,"Screen Identify", WStyle_StaysOnTop | WDestructiveClose | WStyle_Customize | WStyle_NoBorder);
-
-        KWin::setState( screenLabel->winId(), NET::Modal | NET::Sticky | NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
-        KWin::setType( screenLabel->winId(), NET::Override );
+        QLabel *screenLabel = new QLabel(0, Qt::WDestructiveClose | Qt::WStyle_Customize | Qt::X11BypassWindowManagerHint);
+        screenLabel->setObjectName("Screen Identify");
 
         QFont identifyFont(KGlobalSettings::generalFont());
         identifyFont.setPixelSize(100);
