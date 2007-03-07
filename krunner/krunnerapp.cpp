@@ -99,7 +99,7 @@ void KRunnerApp::initialize()
         a = m_actionCollection->addAction( I18N_NOOP( "Lock Session" ) );
         a->setText( i18n( I18N_NOOP( "Lock Session" ) ) );
         qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_L ) );
-        connect( a, SIGNAL(triggered(bool)), &m_saver, SLOT(lock()) );
+        connect( a, SIGNAL(triggered(bool)), &m_saver, SLOT(Lock()) );
     }
 
     if ( KAuthorized::authorizeKAction( "logout" ) ) {
