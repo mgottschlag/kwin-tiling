@@ -256,8 +256,10 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QFont fnt;
     fnt.setBold( true );
-    fnt.setPointSize( 12 );
-    QLabel *topLabel = new QLabel( i18n("End Session for %1", KUser().loginName()), this );
+    fnt.setPointSize( 13 );
+    QLabel *topLabel = new QLabel(this );
+    // FIXME Made the color picked from the user's one
+    topLabel->setText("<font color='#eeeeec'>" + i18n("End Session for %1", KUser().loginName()) + "</font>");
     topLabel->setFixedHeight( 30 );
     topLabel->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed ) );
     topLabel->setAlignment( Qt::AlignCenter );
