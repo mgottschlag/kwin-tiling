@@ -265,7 +265,9 @@ void NMWirelessNetwork::setActivated( bool activated )
     bool error;
     args = NMDBusHelper::serialize( d->authentication, d->essid, args, &error );
     kDebug( 1441 ) << " " << args << endl;
-    if ( !error )
+    if ( error )
+        kDebug( 1411 ) << "Error whilst serializing authentication." << endl;
+    else
         manager.callWithArgumentList( QDBus::Block, "setActiveDevice", args );
     if ( manager.lastError().isValid() )
         kDebug( 1441 ) << "setActiveDevice returned error: " << manager.lastError().name() << ": " << manager.lastError().message() << endl;

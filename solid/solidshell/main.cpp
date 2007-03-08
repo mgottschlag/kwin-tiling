@@ -244,10 +244,7 @@ std::ostream &operator<<( std::ostream &out, const Solid::WirelessNetwork &netwo
             break;
     }
     out << "  Frequency =            " << network.frequency() << endl;
-#ifdef __GNUC__
-#warning network.bitrate() is not available - remove this?
-#endif
-//    out << "  Rate =                 " << network.bitrate() << endl;
+    out << "  Rate =                 " << network.bitrate() << endl;
     out << "  Strength =             " << network.signalStrength() << endl;
     if ( network.isEncrypted() )
     {
@@ -403,8 +400,8 @@ int main(int argc, char **argv)
                     "             # Optionally, use WEP128, open-system encryption with hex key 'key'. (Hardcoded)"
                     "             # Where 'authentication' is one of:\n"
                     "             # wep hex64|ascii64|hex128|ascii128|passphrase 'key' [open|shared]\n"
-                    "             # wpapsk wpa|wpa2 tkip|aes-ccmp password - UNIMPLEMENTED IN SOLIDSHELL\n"
-                    "             # wpaeap UNIMPLEMENTED" ) << endl;
+                    "             # wpapsk wpa|wpa2 tkip|ccmp-aes password\n"
+                    "             # wpaeap UNIMPLEMENTED IN SOLIDSHELL" ) << endl;
 
       return 0;
   }
@@ -607,7 +604,6 @@ bool SolidShell::doIt()
             }
       /*cout << "  solidshell network set network 'device-uni' 'network-uni' [authentication 'key']" << endl;*/
             /*wep hex64|ascii64|hex128|ascii128|passphrase 'key' [open|shared] */
-             /* wpapsk wpa|wpa2 tkip|aes-ccmp password */
             /* wpaeap UNIMPLEMENTED */
             else if ( what == "network" )
             {
@@ -676,13 +672,42 @@ bool SolidShell::doIt()
                         }
                         auth = wepAuth;
                     }
-                    else if ( args->arg( 6 ) == "wpapsk" )
+                    else if ( authScheme == "wpapsk" )
                     {
-                        cerr << "Unimplemented WPA-PSK" << endl;
+                        /* wpapsk wpa|wpa2 tkip|ccmp-aes password */
+                        Solid::Ifaces::AuthenticationWpaPersonal *wpapAuth = new Solid::Ifaces::AuthenticationWpaPersonal();
+                        QString version = args->arg( 7 );
+                        if ( version == "wpa" )
+                            wpapAuth->setVersion( Solid::Ifaces::AuthenticationWpaPersonal::Wpa1 );
+                        else if ( version == "wpa2" )
+                            wpapAuth->setVersion( Solid::Ifaces::AuthenticationWpaPersonal::Wpa1 );
+                        else
+                        {
+                            cerr << i18n( "Unrecognised WPA version '%1'", version ) << endl;
+                            delete wpapAuth;
+                            return false;
+                        }
+                        QString protocol = args->arg( 8 );
+                        if ( protocol == "tkip" )
+                            wpapAuth->setProtocol( Solid::Ifaces::AuthenticationWpaPersonal::WpaTkip );
+                        else if ( protocol == "ccmp-aes" )
+                            wpapAuth->setProtocol( Solid::Ifaces::AuthenticationWpaPersonal::WpaCcmpAes );
+                        else
+                        {
+                            cerr << i18n( "Unrecognised WPA encryption protocol '%1'", protocol ) << endl;
+                            delete wpapAuth;
+                            return false;
+                        }
+                        QString key = args->arg( 9 );
+                        secrets.insert( "key", key );
+                        wpapAuth->setSecrets( secrets );
+                        auth = wpapAuth;
                     }
                     else
-                        cerr << i18n( "Unimplemented network type '%1'", args->arg(6 ) ) << endl;
-
+                    {
+                        cerr << i18n( "Unimplemented auth scheme '%1'", args->arg(6 ) ) << endl;
+                        return false;
+                    }
                 }
                 else
                 {
@@ -691,6 +716,7 @@ bool SolidShell::doIt()
                 }
 
                 return shell.netmgrActivateNetwork( dev, uni, auth );
+                delete auth;
             }
             else
             {
@@ -1118,23 +1144,6 @@ bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString
     Solid::WirelessNetwork * wlan = 0;
     if ( (  wlan = qobject_cast<Solid::WirelessNetwork*>( network ) ) )
     {
-#if 0
-        //        Solid::Ifaces::AuthenticationWep auth;
-        //       auth.setMethod( Solid::Ifaces::AuthenticationWep::WepSharedKey );
-        //        auth.setKeyLength( 104 );
-        //        auth.setType( Solid::Ifaces::AuthenticationWep::WepHex );
-        //        QMap<QString,QString> secrets;
-        //        secrets.insert( "key", "49D68437B1FFB0DB3FDF2D4A93" );
-        //        auth.setSecrets( secrets );
-        //
-        Solid::Ifaces::AuthenticationWpaPersonal auth;
-        auth.setVersion( Solid::Ifaces::AuthenticationWpa::Wpa1 );
-        auth.setProtocol( Solid::Ifaces::AuthenticationWpa::WpaTkip );
-        auth.setKeyManagement( Solid::Ifaces::AuthenticationWpa::WpaPsk );
-        QMap<QString,QString> secrets;
-        secrets.insert( "key", "lisanncostello" );
-        auth.setSecrets( secrets );
-#endif
         wlan->setAuthentication( auth );
         wlan->setActivated( true );
     }
