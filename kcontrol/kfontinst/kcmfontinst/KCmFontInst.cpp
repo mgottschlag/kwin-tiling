@@ -193,14 +193,14 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     // Toolbar...
     KActionMenu *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
     KAction     *changeTextAct=new KAction(KIcon("text"), i18n("Change Preview Text..."), this),
-                *duplicateFontsAct=new KAction(KIcon("filefind"), i18n("Scan For Duplicate Fonts..."), this);
+                *duplicateFontsAct=new KAction(KIcon("file-find"), i18n("Scan For Duplicate Fonts..."), this);
                 //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
-                //*downloadFontsAct=new KAction(KIcon("down"), i18n("Download Fonts..."), this);
+                //*downloadFontsAct=new KAction(KIcon("go-down"), i18n("Download Fonts..."), this);
 
     itsToolsMenu=new KActionMenu(KIcon("wizard"), i18n("Tools"), this);
     itsMgtMode=new KToggleAction(KIcon("fonts"),
                                  i18n("Font Management Mode"), this),
-    itsShowPreview=new KToggleAction(KIcon("thumbnail"), i18n("Show Preview"), this);
+    itsShowPreview=new KToggleAction(KIcon("thumbnail-show"), i18n("Show Preview"), this);
     settingsMenu->addAction(itsMgtMode);
     itsMgtMode->setChecked(true);
     settingsMenu->addSeparator();
@@ -237,11 +237,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
         for(int i=0; i<3; ++i)
             itsModeControl->addItem(itsGroupList->group((CGroupListItem::EType)i)->name());
 
-    KPushButton *createGroup=new CPushButton(KGuiItem(QString(), "add",
+    KPushButton *createGroup=new CPushButton(KGuiItem(QString(), "list-add",
                                                       i18n("Create a new group")),
                                              itsGroupsWidget);
 
-    itsDeleteGroupControl=new CPushButton(KGuiItem(QString(), "remove",
+    itsDeleteGroupControl=new CPushButton(KGuiItem(QString(), "list-remove",
                                                    i18n("Remove group")),
                                           itsGroupsWidget);
 
@@ -270,7 +270,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
                                                i18n("Install fonts")),
                                       itsFontsWidget);
 
-    itsDeleteFontControl=new CPushButton(KGuiItem(i18n("Delete..."), "editdelete",
+    itsDeleteFontControl=new CPushButton(KGuiItem(i18n("Delete..."), "edit-delete",
                                                   i18n("Delete all selected fonts")),
                                          itsFontsWidget);
 

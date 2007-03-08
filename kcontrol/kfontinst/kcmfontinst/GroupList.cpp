@@ -315,7 +315,7 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
                     case Qt::DecorationRole:
                         if(grp->highlighted())
                             return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection()
-                                       ? "1rightarrow" : "1leftarrow");
+                                       ? "arrow-right" : "arrow-left");
                     default:
                         break;
                 }
@@ -327,14 +327,14 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
                             switch(grp->status())
                             {
                                 case CFamilyItem::PARTIAL:
-                                    return SmallIcon("button_ok", 0, K3Icon::DisabledState);
+                                    return SmallIcon("dialog-ok", 0, K3Icon::DisabledState);
                                 case CFamilyItem::ENABLED:
-                                    return SmallIcon("button_ok");
+                                    return SmallIcon("dialog-ok");
                                 case CFamilyItem::DISABLED:
-                                    return SmallIcon("button_cancel");
+                                    return SmallIcon("dialog-cancel");
                             }
                         else
-                            return SmallIcon("button_cancel");
+                            return SmallIcon("dialog-cancel");
         }
     return QVariant();
 }
@@ -558,7 +558,7 @@ bool CGroupList::removeGroup(const QModelIndex &idx)
                                           i18n("<p>Do you really want to remove \'<b>%1</b>\'?</p>"
                                                "<p><i>This will only remove the group, and not "
                                                "the actual fonts.</i></p>", grp->name()),
-                                          i18n("Remove Group"), KGuiItem(i18n("Remove"), "remove",
+                                          i18n("Remove Group"), KGuiItem(i18n("Remove"), "list-remove",
                                           i18n("Remove group"))))
         {
             itsModified=true;
@@ -735,7 +735,7 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
     setRootIsDecorated(false);
     itsMenu=new QMenu(this);
 
-    itsDeleteAct=itsMenu->addAction(KIcon("remove"), i18n("Remove..."),
+    itsDeleteAct=itsMenu->addAction(KIcon("list-remove"), i18n("Remove..."),
                                     this, SIGNAL(del()));
     itsEnableAct=itsMenu->addAction(KIcon("enablefont"), i18n("Enable..."),
                                     this, SIGNAL(enable()));
@@ -745,7 +745,7 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
     itsRenameAct=itsMenu->addAction(i18n("Rename..."), this, SLOT(rename()));
     itsMenu->addSeparator();
     itsExportAct=itsMenu->addAction(i18n("Export..."), this, SIGNAL(exportGroup()));
-    itsPrintAct=itsMenu->addAction(KIcon("fileprint"), i18n("Print..."),
+    itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
                                    this, SIGNAL(print()));
 
     setWhatsThis(i18n("<p>This list shows font groups.</p>"));

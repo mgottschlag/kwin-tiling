@@ -243,7 +243,7 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
     menu->addTitle( *pixmap(), i18n( "KSysTrayCmd" ) );
     QAction * hideShowId = menu->addAction( isVisible ? i18n( "&Hide" ) : i18n( "&Restore" ) );
     QAction * undockId = menu->addAction( QIcon(SmallIcon("close")), i18n( "&Undock" ) );
-    QAction * quitId = menu->addAction( QIcon(SmallIcon("exit")), i18n( "&Quit" ) );
+    QAction * quitId = menu->addAction( QIcon(SmallIcon("application-exit")), i18n( "&Quit" ) );
 
     QAction * cmd = menu->exec( pos );
 

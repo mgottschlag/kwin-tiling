@@ -321,7 +321,7 @@ void PanelExtension::slotBuildOpMenu()
 
         if (!isMenuBar)
         {
-            m_opMenu->insertItem(KIcon("lock"), i18n("&Lock Panel"),
+            m_opMenu->insertItem(KIcon("system-lock-screen"), i18n("&Lock Panel"),
                                Kicker::self(), SLOT(toggleLock()));
 
             m_opMenu->insertItem(KIcon("configure"),
@@ -333,7 +333,7 @@ void PanelExtension::slotBuildOpMenu()
     else if (!Kicker::self()->isKioskImmutable())
     {
         m_opMenu->insertItem(kickerImmutable? KIcon("unlock") :
-                                            KIcon("lock"),
+                                            KIcon("system-lock-screen"),
                            kickerImmutable ? i18n("Un&lock Panels") :
                                              i18n("&Lock Panels"),
                            Kicker::self(), SLOT(toggleLock()));
@@ -342,7 +342,7 @@ void PanelExtension::slotBuildOpMenu()
     if (KAuthorized::authorizeKAction("action/help"))
     {
         KHelpMenu* help = new KHelpMenu( this, KGlobal::mainComponent().aboutData(), false);
-        m_opMenu->insertItem(KIcon("help"), KStandardGuiItem::help().text(), help->menu());
+        m_opMenu->insertItem(KIcon("help-contents"), KStandardGuiItem::help().text(), help->menu());
     }
     m_opMenu->adjustSize();
 }

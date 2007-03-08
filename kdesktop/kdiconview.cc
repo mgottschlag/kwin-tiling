@@ -434,7 +434,7 @@ void KDIconView::createActions()
         connect(action, SIGNAL(triggered(bool)), SLOT(slotProperties()));
         action->setShortcut(Qt::ALT+Qt::Key_Return);
         QAction* trash = m_actionCollection.addAction( "trash" );
-        trash->setIcon( KIcon("edittrash") );
+        trash->setIcon( KIcon("edit-trash") );
         trash->setText( i18n( "&Move to Trash" ) );
         trash->setShortcut(Qt::Key_Delete);
         connect(trash, SIGNAL(triggered(bool)), SLOT(slotTrash()));
@@ -442,7 +442,7 @@ void KDIconView::createActions()
         KConfig _config( "kdeglobals", KConfig::NoGlobals  );
         KConfigGroup config(&_config, "KDE" );
         action = m_actionCollection.addAction( "del" );
-        action->setIcon( KIcon("editdelete") );
+        action->setIcon( KIcon("edit-delete") );
         action->setText( i18n( "&Delete" ) );
         connect(action, SIGNAL(triggered(bool)), SLOT( slotDelete() ));
         action->setShortcut(Qt::SHIFT+Qt::Key_Delete);

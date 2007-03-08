@@ -196,7 +196,7 @@ KMenu *KasTasker::contextMenu()
 	connect( this, SIGNAL(detachedChanged(bool)), rotateBarAction, SLOT(setEnabled(bool)) );
 	connect( rotateBarAction, SIGNAL(activated()), SLOT(writeConfigLater()) );
 
-	menu->insertItem( SmallIcon("reload"), i18n("&Refresh"), this, SLOT( refreshAll() ) );
+	menu->insertItem( SmallIcon("view-refresh"), i18n("&Refresh"), this, SLOT( refreshAll() ) );
 
 	menu->addSeparator();
 
@@ -205,11 +205,11 @@ KMenu *KasTasker::contextMenu()
 	// Help menu
 	KMenu *help = new KMenu;
 	help->insertItem( SmallIcon("about"), i18n("&About Kasbar"), this, SLOT( showAbout() ) );
-	menu->insertItem( SmallIcon("help"), i18n("&Help"), help );
+	menu->insertItem( SmallIcon("help-contents"), i18n("&Help"), help );
 
 	if ( standalone_ ) {
 	    menu->addSeparator();
-	    menu->insertItem( SmallIcon("exit"), i18n("&Quit"), qApp, SLOT( quit() ) );
+	    menu->insertItem( SmallIcon("application-exit"), i18n("&Quit"), qApp, SLOT( quit() ) );
 	}
     }
 

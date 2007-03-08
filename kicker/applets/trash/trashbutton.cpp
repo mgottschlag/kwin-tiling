@@ -50,7 +50,7 @@ TrashButton::TrashButton(QWidget *parent)
 	resize(20, 20);
 
 	setTitle(i18n("Trash"));
-	setIcon( "trashcan_empty" );
+	setIcon( "user-trash" );
 
 	setAcceptDrops(true);
 
@@ -69,12 +69,12 @@ void TrashButton::setItemCount(int count)
 {
     if (count==0)
     {
-        setIcon( "trashcan_empty" );
+        setIcon( "user-trash" );
         this->setToolTip( i18n("Empty"));
     }
     else
     {
-        setIcon( "trashcan_full" );
+        setIcon( "user-trash-full" );
         this->setToolTip( i18np("One item", "%1 items", count));
     }
 }

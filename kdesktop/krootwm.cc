@@ -144,7 +144,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   if (KAuthorized::authorizeKAction("run_command"))
   {
       action = m_actionCollection->addAction( "exec" );
-      action->setIcon( KIcon("run") );
+      action->setIcon( KIcon("system-run") );
       action->setText( i18n("Run Command...") );
       connect(action, SIGNAL(triggered(bool)), m_pDesktop, SLOT( slotExecuteCommand() ));
   }
@@ -215,14 +215,14 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   if (KAuthorized::authorizeKAction("lock_screen"))
   {
       QAction *action = m_actionCollection->addAction( "lock" );
-      action->setIcon( KIcon("lock") );
+      action->setIcon( KIcon("system-lock-screen") );
       action->setText( i18n("Lock Session") );
       connect(action, SIGNAL(triggered(bool)), SLOT( slotLock() ));
   }
   if (KAuthorized::authorizeKAction("logout"))
   {
       QAction *action = m_actionCollection->addAction( "logout" );
-      action->setIcon( KIcon("exit") );
+      action->setIcon( KIcon("application-exit") );
       action->setText( i18n("Log Out \"%1\"...", KUser().loginName()) );
       connect(action, SIGNAL(triggered(bool)), SLOT( slotLogout() ));
 
@@ -237,7 +237,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
       if (KAuthorized::authorizeKAction("lock_screen"))
       {
           QAction *action = m_actionCollection->addAction( "lockNnewsession" );
-          action->setIcon( KIcon("lock") );
+          action->setIcon( KIcon("system-lock-screen") );
           action->setText( i18n("Lock Current && Start New Session") );
           connect(action, SIGNAL(triggered(bool)), SLOT( slotLockNNewSession() ));
       }

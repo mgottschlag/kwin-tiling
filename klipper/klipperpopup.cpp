@@ -167,7 +167,7 @@ void KlipperPopup::buildFromScratch() {
         //group = action->group();
         if ( group != lastGroup ) {
             if ( lastGroup == defaultGroup ) {
-                insertItem( KIcon("help"), KStandardGuiItem::help().text(), helpmenu->menu() );
+                insertItem( KIcon("help-contents"), KStandardGuiItem::help().text(), helpmenu->menu() );
             }
             addSeparator();
         }

@@ -89,7 +89,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     frame->setLineWidth( 2 );
 
     QLabel *pixLabel = new QLabel( frame );
-    pixLabel->setPixmap(DesktopIcon("lock"));
+    pixLabel->setPixmap(DesktopIcon("system-lock-screen"));
 
     KUser user;
     QLabel *greetLabel = new QLabel( user.fullName().isEmpty() ?

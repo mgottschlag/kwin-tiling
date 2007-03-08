@@ -606,14 +606,14 @@ void SystemTrayApplet::refreshExpandButton()
     if (orientation() == Qt::Vertical)
     {
         m_expandButton->setPixmap(m_showHidden ?
-            KIconLoader::global()->loadIcon("1downarrow", K3Icon::Panel, 16) :
-            KIconLoader::global()->loadIcon("1uparrow", K3Icon::Panel, 16));
+            KIconLoader::global()->loadIcon("arrow-down", K3Icon::Panel, 16) :
+            KIconLoader::global()->loadIcon("arrow-up", K3Icon::Panel, 16));
     }
     else
     {
         m_expandButton->setPixmap((m_showHidden ^ kapp->layoutDirection() == Qt::RightToLeft) ?
-            KIconLoader::global()->loadIcon("1rightarrow", K3Icon::Panel, 16) :
-            KIconLoader::global()->loadIcon("1leftarrow", K3Icon::Panel, 16));
+            KIconLoader::global()->loadIcon("arrow-right", K3Icon::Panel, 16) :
+            KIconLoader::global()->loadIcon("arrow-left", K3Icon::Panel, 16));
     }
 }
 

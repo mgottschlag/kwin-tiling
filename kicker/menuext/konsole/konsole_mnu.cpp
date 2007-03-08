@@ -238,7 +238,7 @@ void KonsoleMenu::initialize()
     connect(m_profileMenu, SIGNAL(activated(int)), SLOT(launchProfile(int)));
 
     addSeparator();
-    insertItem(KIcon("reload"),
+    insertItem(KIcon("view-refresh"),
                i18n("Reload Sessions"), this, SLOT(reinitialize()));
 }
 

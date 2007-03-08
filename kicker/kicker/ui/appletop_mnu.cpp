@@ -81,7 +81,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
             text = isButton ? (isMenu ? i18n("&Remove %1 Menu", titleText) :
                                         i18n("&Remove %1 Button", titleText)) :
                               i18n("&Remove %1", titleText);
-            insertItem(KIcon("remove"), text, Remove);
+            insertItem(KIcon("list-remove"), text, Remove);
             needSeparator = true;
         }
     }
@@ -119,7 +119,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
             addSeparator();
         }
 
-        insertItem(KIcon("help"), KStandardGuiItem::help().text(), Help);
+        insertItem(KIcon("help-contents"), KStandardGuiItem::help().text(), Help);
         needSeparator = true;
     }
 

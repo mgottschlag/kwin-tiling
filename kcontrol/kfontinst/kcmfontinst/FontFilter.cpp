@@ -53,8 +53,8 @@ CFontFilter::CFontFilter(QWidget *parent)
 
     itsMenu=new QMenu(this);
     itsPixmaps[CRIT_FAMILY]=SmallIcon("text");
-    itsPixmaps[CRIT_STYLE]=SmallIcon("text_bold");
-    itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("filefind");
+    itsPixmaps[CRIT_STYLE]=SmallIcon("format-text-bold");
+    itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("file-find");
     itsPixmaps[CRIT_FILENAME]=SmallIcon("font_type1");
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
 

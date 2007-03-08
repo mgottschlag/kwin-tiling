@@ -36,7 +36,7 @@ ThemeStandard::ThemeStandard( QWidget *parent, const QStringList &args )
   :ThemeEngine( parent, args ), mIcon(0L), mPrevIcon(0L), mIconCount(0), mStdIconWidth(-1),
   mIconPos(WndIcon::HBottomLeft), mSbAtTop(false), mSbVisible(true), mSbPbVisible(true), mSbFontName("helvetica"),
   mSbFontSz(16), mSbFontBold(true), mSbFontItalic(false), mSbFont(QFont()), mSbFg(QColor()), mSbBg(QColor()),
-  mSbIcon("run"), mIconsVisible(true), mIconsJumping(true), mSplashScreen("(Default)")
+  mSbIcon("system-run"), mIconsVisible(true), mIconsJumping(true), mSplashScreen("(Default)")
 {
   _readSettings();
   _initUi();
@@ -162,7 +162,7 @@ void ThemeStandard::_readSettings()
   mSbFg = cg.readEntry( "Statusbar Foreground", tmp );
   tmp = Qt::black;
   mSbBg = cg.readEntry( "Statusbar Background", tmp );
-  mSbIcon = cg.readEntry( "Statusbar Icon", "run" );
+  mSbIcon = cg.readEntry( "Statusbar Icon", "system-run" );
   mIconsVisible = cg.readEntry( "Icons Visible", true);
   mIconsJumping = cg.readEntry( "Icons Jumping", true);
   mIconPos = (WndIcon::Position)cg.readEntry( "Icon Position", 0 );

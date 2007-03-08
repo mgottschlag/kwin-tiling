@@ -54,7 +54,7 @@ RecentDocsMenu::~RecentDocsMenu()
 void RecentDocsMenu::initialize() {
 	if (initialized()) clear();
 
-	insertItem(KIcon("history_clear"), i18n("Clear History"),
+	insertItem(KIcon("history-clear"), i18n("Clear History"),
 	           this, SLOT(slotClearHistory()));
 	addSeparator();
 

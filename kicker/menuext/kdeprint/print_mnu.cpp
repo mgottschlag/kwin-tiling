@@ -69,14 +69,14 @@ void PrintMenu::initialize()
 
     if ((KMManager::self()->printerOperationMask() & KMManager::PrinterCreation) && KMManager::self()->hasManagement())
         insertItem(KIcon("wizard"), i18n("Add Printer..."), ADD_PRINTER_ID);
-    insertItem(KIcon("kdeprint_configmgr"), i18n("KDE Print Settings"), KDEPRINT_SETTINGS_ID);
+    insertItem(KIcon("kdeprint-configmgr"), i18n("KDE Print Settings"), KDEPRINT_SETTINGS_ID);
     if (KMManager::self()->serverOperationMask() & KMManager::ServerConfigure)
-        insertItem(KIcon("kdeprint_configsrv"), i18n("Configure Server"), CONFIG_SERVER_ID);
+        insertItem(KIcon("kdeprint-configsrv"), i18n("Configure Server"), CONFIG_SERVER_ID);
     addSeparator();
     insertItem(KIcon("kcontrol"), i18n("Print Manager"), PRINT_MANAGER_ID);
     insertItem(KIcon("konqueror"), i18n("Print Browser (Konqueror)"), PRINT_BROWSER_ID);
     addSeparator();
-    insertItem(KIcon("fileprint"), i18n("Print File..."), KPRINTER_ID);
+    insertItem(KIcon("document-print"), i18n("Print File..."), KPRINTER_ID);
 
     // printer list
     QList<KMPrinter*>    l = KMManager::self()->printerList();

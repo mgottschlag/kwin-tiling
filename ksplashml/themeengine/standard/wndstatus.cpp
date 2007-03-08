@@ -50,7 +50,7 @@ WndStatus::WndStatus( QPalette /*pal*/,
   // KGlobalSettings::splashScreenDesktopGeometry(); cannot be used here.
 
   QLabel *pix = new QLabel( this );
-  QPixmap _icon( SmallIcon(icon.isNull()||icon.isEmpty()?QString("run"):icon) );
+  QPixmap _icon( SmallIcon(icon.isNull()||icon.isEmpty()?QString("system-run"):icon) );
   pix->setPixmap( _icon );
   setStretchFactor(pix,0);
   pix->setFixedWidth(16);

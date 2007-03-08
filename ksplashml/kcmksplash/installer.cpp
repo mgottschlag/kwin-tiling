@@ -307,7 +307,7 @@ void SplashInstaller::slotRemove()
   {
      KUrl url;
      url.setPath(themeDir);
-     if (KMessageBox::warningContinueCancel(this,i18n("Delete folder %1 and its contents?", themeDir),"",KGuiItem(i18n("&Delete"),"editdelete"))==KMessageBox::Continue)
+     if (KMessageBox::warningContinueCancel(this,i18n("Delete folder %1 and its contents?", themeDir),"",KGuiItem(i18n("&Delete"),"edit-delete"))==KMessageBox::Continue)
        rc = KIO::NetAccess::del(url,this);
      else
        return;

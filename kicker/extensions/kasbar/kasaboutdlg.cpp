@@ -221,7 +221,7 @@ void KasAboutDialog::addBSDPage()
 {
    KVBox *bsdLicense = new KVBox( this );
    KPageWidgetItem *item = addPage( bsdLicense, i18n("BSD License") );
-   item->setIcon( Icon( "filefind" ) );
+   item->setIcon( Icon( "file-find" ) );
 
    new QLabel( i18n( "Kasbar may be used under the terms of either the BSD license, "
 		     "or the GNU Public License." ), bsdLicense );
@@ -250,7 +250,7 @@ void KasAboutDialog::addGPLPage()
    KVBox *gplPage = new KVBox( this );
    
    KPageWidgetItem *item = addPage( gplPage, i18n("GPL License") );
-   item->setIcon( Icon( "filefind" ) );
+   item->setIcon( Icon( "file-find" ) );
 
    new QLabel( i18n( "Kasbar may be used under the terms of either the BSD license, "
 		     "or the GNU Public License." ), gplPage );

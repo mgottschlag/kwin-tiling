@@ -99,7 +99,7 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 		menu->addAction(configAction);
 
 //		if( menu->indexOf(HELP_MENU_ID) == -1 )
-		QAction* helpAction = new QAction(SmallIcon("help"), i18n("Help"), menu);
+		QAction* helpAction = new QAction(SmallIcon("help-contents"), i18n("Help"), menu);
 		helpAction->setData(HELP_MENU_ID);
 		menu->addAction(helpAction);
 	}

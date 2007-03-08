@@ -162,7 +162,7 @@ QuickButton::QuickButton(const QString &u, QAction* configAction,
     _popup->insertItem(i18n("Add Application"), addAppsMenu);
     _popup->addAction( configAction );
         _popup->addSeparator();
-    _popup->insertItem(SmallIcon("remove"), i18n("Remove"),
+    _popup->insertItem(SmallIcon("list-remove"), i18n("Remove"),
             this, SLOT(removeApp()));
 
     m_stickyAction = new KToggleAction(i18n("Never Remove Automatically"), this);

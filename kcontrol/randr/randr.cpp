@@ -163,8 +163,8 @@ bool RandRScreen::confirm()
 											KTimerDialog::Ok|KTimerDialog::Cancel,
 											KTimerDialog::Cancel);
 
-	acceptDialog.setButtonGuiItem(KDialog::Ok, KGuiItem(i18n("&Accept Configuration"), "button_ok"));
-	acceptDialog.setButtonGuiItem(KDialog::Cancel, KGuiItem(i18n("&Return to Previous Configuration"), "button_cancel"));
+	acceptDialog.setButtonGuiItem(KDialog::Ok, KGuiItem(i18n("&Accept Configuration"), "dialog-ok"));
+	acceptDialog.setButtonGuiItem(KDialog::Cancel, KGuiItem(i18n("&Return to Previous Configuration"), "dialog-cancel"));
 
 	QLabel *label = new QLabel(i18n("Your screen orientation, size and refresh rate have been "
                     "changed to the requested settings. Please indicate whether you wish to keep "
@@ -304,17 +304,17 @@ QPixmap RandRScreen::rotationIcon(int rotation) const
 
 	switch (rotation) {
 		case RR_Rotate_0:
-			return SmallIcon("up");
+			return SmallIcon("go-up");
 		case RR_Rotate_90:
-			return SmallIcon("back");
+			return SmallIcon("go-previous");
 		case RR_Rotate_180:
-			return SmallIcon("down");
+			return SmallIcon("go-down");
 		case RR_Rotate_270:
-			return SmallIcon("forward");
+			return SmallIcon("go-next");
 		case RR_Reflect_X:
 		case RR_Reflect_Y:
 		default:
-			return SmallIcon("stop");
+			return SmallIcon("process-stop");
 	}
 }
 

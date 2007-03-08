@@ -38,7 +38,7 @@ PanelExtensionOpMenu::PanelExtensionOpMenu(const QString& extension, int actions
     setObjectName(name);
     if (!Kicker::self()->isImmutable())
     {
-        insertItem(KIcon("remove"), i18n("&Remove"), Remove);
+        insertItem(KIcon("list-remove"), i18n("&Remove"), Remove);
     }
 
     if (actions & Plasma::ReportBug)
@@ -58,7 +58,7 @@ PanelExtensionOpMenu::PanelExtensionOpMenu(const QString& extension, int actions
 
     if (actions & Plasma::Help)
     {
-        insertItem(KIcon("help"), KStandardGuiItem::help().text(), Help);
+        insertItem(KIcon("help-contents"), KStandardGuiItem::help().text(), Help);
     }
 
     if (!Kicker::self()->isImmutable() && (actions & Plasma::Preferences)) {

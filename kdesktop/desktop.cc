@@ -724,7 +724,7 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
     QAction* saveToDesktop  = 0;
     QAction* setAsWallpaper = 0;
     if ( m_pIconView )
-       saveToDesktop = popup.addAction(KIcon("filesave"), i18n("&Save to Desktop..."));
+       saveToDesktop = popup.addAction(KIcon("document-save"), i18n("&Save to Desktop..."));
     if ( ( m_pIconView && m_pIconView->maySetWallpaper() ) || m_pRootWidget )
        setAsWallpaper = popup.addAction(KIcon("background"), i18n("Set as &Wallpaper"));
     popup.addSeparator();

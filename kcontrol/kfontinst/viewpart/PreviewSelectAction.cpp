@@ -29,7 +29,7 @@ namespace KFI
 {
 
 CPreviewSelectAction::CPreviewSelectAction(QObject *parent, bool all)
-                    : KSelectAction(KIcon("charset"), i18n("Preview Type"), parent),
+                    : KSelectAction(KIcon("character-set"), i18n("Preview Type"), parent),
                       itsNumUnicodeBlocks(0)
 {
     QStringList items;

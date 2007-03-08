@@ -117,20 +117,20 @@ void HideButton::setArrowType(Qt::ArrowType arrow)
     switch (arrow)
     {
         case Qt::LeftArrow:
-            setPixmap(SmallIcon("1leftarrow"));
+            setPixmap(SmallIcon("arrow-left"));
         break;
 
         case Qt::RightArrow:
-            setPixmap(SmallIcon("1rightarrow"));
+            setPixmap(SmallIcon("arrow-right"));
         break;
 
         case Qt::UpArrow:
-            setPixmap(SmallIcon("1uparrow"));
+            setPixmap(SmallIcon("arrow-up"));
         break;
 
         case Qt::DownArrow:
         default:
-            setPixmap(SmallIcon("1downarrow"));
+            setPixmap(SmallIcon("arrow-down"));
         break;
     }
 }

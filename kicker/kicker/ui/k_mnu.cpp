@@ -269,7 +269,7 @@ void PanelKMenu::initialize()
     // run command
     if (KAuthorized::authorizeKAction("run_command"))
     {
-        insertItem(Plasma::menuIconSet("run"),
+        insertItem(Plasma::menuIconSet("system-run"),
                    i18n("Run Command..."),
                    this,
                    SLOT( slotRunCommand()));
@@ -291,19 +291,19 @@ void PanelKMenu::initialize()
     KConfig ksmserver("ksmserverrc", KConfig::NoGlobals);
     if (ksmserver.group("General").readEntry( "loginMode" ) == "restoreSavedSession")
     {
-        insertItem(Plasma::menuIconSet("filesave"),
+        insertItem(Plasma::menuIconSet("document-save"),
                    i18n("Save Session"), this, SLOT(slotSaveSession()));
     }
 
     if (KAuthorized::authorizeKAction("lock_screen"))
     {
-        insertItem(Plasma::menuIconSet("lock"),
+        insertItem(Plasma::menuIconSet("system-lock-screen"),
                    i18n("Lock Session"), this, SLOT(slotLock()));
     }
 
     if (KAuthorized::authorizeKAction("logout"))
     {
-        insertItem(Plasma::menuIconSet("exit"),
+        insertItem(Plasma::menuIconSet("application-exit"),
                    i18n("Log Out..."), this, SLOT(slotLogout()));
     }
 

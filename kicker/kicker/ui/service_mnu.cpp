@@ -500,7 +500,7 @@ void PanelServiceMenu::mouseReleaseEvent(QMouseEvent * ev)
             }
             if (KAuthorized::authorizeKAction("run_command"))
             {
-                popupMenu_->insertItem(KIcon("run"),
+                popupMenu_->insertItem(KIcon("system-run"),
                     i18n("Put Into Run Dialog"), PutIntoRunDialog);
             }
             break;

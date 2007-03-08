@@ -39,7 +39,7 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, Qt::WX11BypassWM)
 
     QLabel *pixLabel = new QLabel( frame );
     pixLabel->setObjectName( "pixlabel" );
-    pixLabel->setPixmap(DesktopIcon("exit"));
+    pixLabel->setPixmap(DesktopIcon("application-exit"));
 
     QLabel *greetLabel = new QLabel(i18n("<nobr><qt><b>Automatic Log Out</b></qt><nobr>"), frame);
     QLabel *infoLabel = new QLabel(i18n("<qt>To prevent being logged out, resume using this session by moving the mouse or pressing a key.</qt>"), frame);

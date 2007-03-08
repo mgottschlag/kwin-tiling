@@ -159,7 +159,7 @@ KlipperWidget::KlipperWidget(QWidget *parent, const KSharedConfigPtr &config)
     toggleURLGrabAction->setEnabled( true );
     //toggleURLGrabAction->setGroup( defaultGroup );
     clearHistoryAction = collection->addAction( "clearHistoryAction" );
-    clearHistoryAction->setIcon( KIcon("history_clear") );
+    clearHistoryAction->setIcon( KIcon("history-clear") );
     clearHistoryAction->setText( i18n("C&lear Clipboard History") );
     connect(clearHistoryAction, SIGNAL(triggered(bool) ), history(), SLOT( slotClear() ));
     connect( clearHistoryAction, SIGNAL( activated() ), SLOT( slotClearClipboard() ) );
@@ -170,7 +170,7 @@ KlipperWidget::KlipperWidget(QWidget *parent, const KSharedConfigPtr &config)
     connect(configureAction, SIGNAL(triggered(bool) ), SLOT( slotConfigure() ));
     //configureAction->setGroup( defaultGroup );
     quitAction = collection->addAction( "quitAction" );
-    quitAction->setIcon( KIcon("exit") );
+    quitAction->setIcon( KIcon("application-exit") );
     quitAction->setText( i18n("&Quit") );
     connect(quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
     //quitAction->setGroup( "exit" );

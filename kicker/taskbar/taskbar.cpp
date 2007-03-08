@@ -256,23 +256,23 @@ void TaskBar::configure()
         switch (m_direction)
         {
             case Plasma::Up:
-                icon = "1uparrow";
+                icon = "arrow-up";
                 m_windowListButton->setMaximumHeight(BUTTON_MAX_WIDTH);
                 break;
             case Plasma::Down:
-                icon = "1downarrow";
+                icon = "arrow-down";
                 m_windowListButton->setMaximumHeight(BUTTON_MAX_WIDTH);
                 break;
             case Plasma::Left:
-                icon = "1leftarrow";
+                icon = "arrow-left";
                 m_windowListButton->setMaximumWidth(BUTTON_MAX_WIDTH);
                 break;
             case Plasma::Right:
-                icon = "1rightarrow";
+                icon = "arrow-right";
                 m_windowListButton->setMaximumWidth(BUTTON_MAX_WIDTH);
                 break;
 	    case Plasma::Floating:
-		icon = "1uparrow";
+		icon = "arrow-up";
 		m_windowListButton->setMaximumWidth(BUTTON_MAX_WIDTH);
 		break;
         }
@@ -1225,23 +1225,23 @@ void TaskBar::popupDirectionChange(Plasma::Position d)
     switch (d)
     {
         case Plasma::Up:
-            icon = "1downarrow";
+            icon = "arrow-down";
             at = Qt::DownArrow;
             break;
         case Plasma::Down:
-            icon = "1uparrow";
+            icon = "arrow-up";
             at = Qt::UpArrow;
             break;
         case Plasma::Left:
-            icon = "1rightarrow";
+            icon = "arrow-right";
             at = Qt::RightArrow;
             break;
         case Plasma::Right:
-            icon = "1leftarrow";
+            icon = "arrow-left";
             at = Qt::LeftArrow;
             break;
 	case Plasma::Floating:
-	    icon = "1uparrow";
+	    icon = "arrow-up";
 	    at = Qt::UpArrow;
 	    break;
     }

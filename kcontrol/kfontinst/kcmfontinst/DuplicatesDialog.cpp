@@ -484,7 +484,7 @@ void CFontFileList::fileDuplicates(const QString &folder, const QSet<TFile> &fil
 
 inline void markItem(QTreeWidgetItem *item)
 {
-    item->setData(COL_TRASH, Qt::DecorationRole, QVariant(SmallIcon("remove")));
+    item->setData(COL_TRASH, Qt::DecorationRole, QVariant(SmallIcon("list-remove")));
 }
 
 inline void unmarkItem(QTreeWidgetItem *item)
@@ -507,7 +507,7 @@ CFontFileListView::CFontFileListView(QWidget *parent)
     headers.append(i18n("Date"));
     headers.append(i18n("Links To"));
     setHeaderLabels(headers);
-    headerItem()->setData(COL_TRASH, Qt::DecorationRole, QVariant(SmallIcon("edittrash")));
+    headerItem()->setData(COL_TRASH, Qt::DecorationRole, QVariant(SmallIcon("edit-trash")));
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setSelectionMode(ExtendedSelection);
     sortByColumn(COL_FILE, Qt::AscendingOrder);
@@ -519,12 +519,12 @@ CFontFileListView::CFontFileListView(QWidget *parent)
     itsMenu=new QMenu(this);
     itsMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer..."),
                        this, SLOT(openViewer()));
-    itsMenu->addAction(KIcon("info"), i18n("Properties..."),
+    itsMenu->addAction(KIcon("document-properties"), i18n("Properties..."),
                        this, SLOT(properties()));
     itsMenu->addSeparator();
     itsUnMarkAct=itsMenu->addAction(i18n("Unmark for deletion..."),
                                     this, SLOT(unmark()));
-    itsMarkAct=itsMenu->addAction(KIcon("editdelete"), i18n("Mark for deletion..."),
+    itsMarkAct=itsMenu->addAction(KIcon("edit-delete"), i18n("Mark for deletion..."),
                                   this, SLOT(mark()));
 
     connect(this, SIGNAL(itemSelectionChanged()), SLOT(selectionChanged()));

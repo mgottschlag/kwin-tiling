@@ -1157,11 +1157,11 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                         switch(fam->status())
                         {
                             case CFamilyItem::PARTIAL:
-                                return SmallIcon("button_ok", 0, K3Icon::DisabledState);
+                                return SmallIcon("dialog-ok", 0, K3Icon::DisabledState);
                             case CFamilyItem::ENABLED:
-                                return SmallIcon("button_ok");
+                                return SmallIcon("dialog-ok");
                             case CFamilyItem::DISABLED:
-                                return SmallIcon("button_cancel");
+                                return SmallIcon("dialog-cancel");
                         }
                         break;
                     default:
@@ -1171,7 +1171,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
             else
                 if(COL_STATUS==index.column())
                     return SmallIcon( (static_cast<CFontItem *>(index.internalPointer()))->isEnabled()
-                                      ? "button_ok" : "button_cancel", 10);
+                                      ? "dialog-ok" : "dialog-cancel", 10);
         default:
             break;
     }
@@ -1512,14 +1512,14 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
                       "<ul>"));
 
     itsStdMenu=new QMenu(this);
-    itsDeleteAct=itsStdMenu->addAction(KIcon("editdelete"), i18n("Delete..."),
+    itsDeleteAct=itsStdMenu->addAction(KIcon("edit-delete"), i18n("Delete..."),
                                        this, SIGNAL(del()));
-    itsPrintAct=itsStdMenu->addAction(KIcon("fileprint"), i18n("Print..."),
+    itsPrintAct=itsStdMenu->addAction(KIcon("document-print"), i18n("Print..."),
                                       this, SIGNAL(print()));
     itsViewAct=itsStdMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer..."),
                                       this, SLOT(view()));
     itsStdMenu->addSeparator();
-    QAction *reloadAct=itsStdMenu->addAction(KIcon("reload"), i18n("Reload"), this, SIGNAL(reload()));
+    QAction *reloadAct=itsStdMenu->addAction(KIcon("view-refresh"), i18n("Reload"), this, SIGNAL(reload()));
 
     itsMgtMenu=new QMenu(this);
     itsMgtMenu->addAction(itsDeleteAct);

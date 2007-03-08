@@ -90,8 +90,8 @@ Lockout::Lockout( const QString& configFile, QWidget *parent )
     lockButton->setToolTip( i18n("Lock the session") );
     logoutButton->setToolTip( i18n("Log out") );
 
-    lockButton->setPixmap( SmallIcon( "lock" ));
-    logoutButton->setPixmap( SmallIcon( "exit" ));
+    lockButton->setPixmap( SmallIcon( "system-lock-screen" ));
+    logoutButton->setPixmap( SmallIcon( "application-exit" ));
 
     lockButton->setMinimumSize(lockButton->iconSize());
     logoutButton->setMinimumSize(logoutButton->iconSize());
@@ -226,7 +226,7 @@ bool Lockout::eventFilter( QObject *o, QEvent *e )
             {
                 QMenu *popup = new QMenu();
 
-                popup->insertItem( SmallIcon( "lock" ), i18n("Lock Session"),
+                popup->insertItem( SmallIcon( "system-lock-screen" ), i18n("Lock Session"),
                                    this, SLOT( lock() ) );
                 popup->addSeparator();
                 popup->insertItem( i18n( "&Transparent" ), 100 );
@@ -247,7 +247,7 @@ bool Lockout::eventFilter( QObject *o, QEvent *e )
             {
                 QMenu *popup = new QMenu();
 
-                popup->insertItem( SmallIcon( "exit" ), i18n("&Log Out..."),
+                popup->insertItem( SmallIcon( "application-exit" ), i18n("&Log Out..."),
                                    this, SLOT( logout() ) );
                 popup->addSeparator();
                 popup->insertItem( i18n( "&Transparent" ), 100 );
@@ -297,8 +297,8 @@ void Lockout::slotLogoutPrefs()
 
 void Lockout::slotIconChanged()
 {
-    lockButton->setPixmap( SmallIcon( "lock" ));
-    logoutButton->setPixmap( SmallIcon( "exit" ));
+    lockButton->setPixmap( SmallIcon( "system-lock-screen" ));
+    logoutButton->setPixmap( SmallIcon( "application-exit" ));
 }
 
 #include "lockout.moc"

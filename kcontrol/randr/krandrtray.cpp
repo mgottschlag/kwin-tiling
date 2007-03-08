@@ -96,7 +96,7 @@ void KRandRSystemTray::prepareMenu()
         connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
 	menu->addAction( actPrefs );
 
-	menu->insertItem(SmallIcon("help"),KStandardGuiItem::help().text(), m_help->menu());
+	menu->insertItem(SmallIcon("help-contents"),KStandardGuiItem::help().text(), m_help->menu());
 	QAction *quitAction = actionCollection()->action(KStandardAction::name(KStandardAction::Quit));
 	menu->addAction( quitAction );
 }
@@ -115,7 +115,7 @@ void KRandRSystemTray::configChanged()
 	if (!first)
 		KRandrPassivePopup::message(
 		i18n("Screen configuration has changed"),
-		currentScreen()->changedMessage(), SmallIcon("window_fullscreen"),
+		currentScreen()->changedMessage(), SmallIcon("view-fullscreen"),
 		parentWidget());
 
 	first = false;
@@ -125,7 +125,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 {
 	int lastIndex = 0;
 
-	menu->addTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
+	menu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
 
 	int numSizes = currentScreen()->numSizes();
 	int* sizeSort = new int[numSizes];
@@ -160,7 +160,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 	// Don't display the rotation options if there is no point (ie. none are supported)
 	// XFree86 4.3 does not include rotation support.
 	if (currentScreen()->rotations() != RandRScreen::Rotate0) {
-		menu->addTitle(SmallIcon("reload"), i18n("Orientation"));
+		menu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
 
 		for (int i = 0; i < 6; i++) {
 			if ((1 << i) & currentScreen()->rotations()) {

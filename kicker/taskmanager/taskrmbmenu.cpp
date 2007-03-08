@@ -106,7 +106,7 @@ void TaskRMBMenu::fillMenu(Task::TaskPtr t)
 
     addSeparator();
 
-    id = insertItem(KIcon("fileclose"), i18n("&Close"), t.data(), SLOT(close()));
+    id = insertItem(KIcon("window-close"), i18n("&Close"), t.data(), SLOT(close()));
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionClose));
 }
 
@@ -191,7 +191,7 @@ void TaskRMBMenu::fillMenu()
 
 	enable = false;
 
-	insertItem( KIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
+	insertItem( KIcon( "list-remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
 }
 
 QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
@@ -201,17 +201,17 @@ QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
 
     menu->setCheckable(true);
 
-    id = menu->insertItem(KIcon("up"),
+    id = menu->insertItem(KIcon("go-up"),
                           i18n("Keep &Above Others"),
                           t.data(), SLOT(toggleAlwaysOnTop()));
     menu->setItemChecked(id, t->isAlwaysOnTop());
 
-    id = menu->insertItem(KIcon("down"),
+    id = menu->insertItem(KIcon("go-down"),
                           i18n("Keep &Below Others"),
                           t.data(), SLOT(toggleKeptBelowOthers()));
     menu->setItemChecked(id, t->isKeptBelowOthers());
 
-    id = menu->insertItem(KIcon("window_fullscreen"),
+    id = menu->insertItem(KIcon("view-fullscreen"),
                           i18n("&Fullscreen"),
                           t.data(), SLOT(toggleFullScreen()));
     menu->setItemChecked(id, t->isFullScreen());

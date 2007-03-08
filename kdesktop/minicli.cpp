@@ -92,7 +92,7 @@ Minicli::Minicli( QWidget *parent )
 {
   setPlainCaption( i18n("Run Command") );
   setButtons(None);
-  KWin::setIcons( winId(), DesktopIcon("run"), SmallIcon("run") );
+  KWin::setIcons( winId(), DesktopIcon("system-run"), SmallIcon("system-run") );
 
   m_dlg = new Ui::MinicliDlgUI();
   m_dlg->setupUi(mainWidget());
@@ -106,7 +106,7 @@ Minicli::Minicli( QWidget *parent )
   m_dlg->pbOptions->setGuiItem (KGuiItem( i18n("&Options >>"), "configure" ));
 
   // Run button...
-  m_dlg->pbRun->setGuiItem (KGuiItem( i18n("&Run"), "run" ));
+  m_dlg->pbRun->setGuiItem (KGuiItem( i18n("&Run"), "system-run" ));
 
   // Cancel button...
   m_dlg->pbCancel->setGuiItem ( KStandardGuiItem::cancel() );

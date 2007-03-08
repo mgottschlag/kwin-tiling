@@ -550,7 +550,7 @@ void PanelBrowserMenu::initIconMap()
 
     _icons->insert("folder", SmallIcon("folder"));
     _icons->insert("unknown", SmallIcon("mime_empty"));
-    _icons->insert("folder_open", SmallIcon("folder_open"));
+    _icons->insert("folder_open", SmallIcon("folder-open"));
     _icons->insert("kdisknav", SmallIcon("kdisknav"));
     _icons->insert("kfm", SmallIcon("kfm"));
     _icons->insert("terminal", SmallIcon("terminal"));

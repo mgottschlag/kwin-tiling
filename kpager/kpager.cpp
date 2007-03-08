@@ -362,7 +362,7 @@ void KPager::showPopupMenu( WId wid, QPoint pos)
             m_mnu->addSeparator();
 
             QAction *action = m_mnu->addAction( i18n("&Close") );
-            action->setIcon( QIcon( SmallIcon("fileclose") ) );
+            action->setIcon( QIcon( SmallIcon("window-close") ) );
             action->setData( CloseOp );
 
             m_mnu->addSeparator();
