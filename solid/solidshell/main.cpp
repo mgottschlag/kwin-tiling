@@ -610,103 +610,105 @@ bool SolidShell::doIt()
                 checkArgumentCount( 5, 10 );
                 QString dev( args->arg( 3 ) );
                 QString uni( args->arg( 4 ) );
-
                 Solid::Ifaces::Authentication * auth = 0;
                 QMap<QString,QString> secrets;
 
-                QString hasAuth = args->arg( 5 );
-                if ( hasAuth == "authentication" )
+                if ( KCmdLineArgs::parsedArgs()->count() > 5 )
                 {
-                    //encrypted network
-                    QString authScheme = args->arg( 6 );
-                    if ( authScheme == "wep" )
+                    QString hasAuth = args->arg( 5 );
+                    if ( hasAuth == "authentication" )
                     {
-                        Solid::Ifaces::AuthenticationWep *wepAuth = new Solid::Ifaces::AuthenticationWep();
-                        QString keyType = args->arg( 7 );
-                        if ( keyType == "hex64" )
+                        //encrypted network
+                        QString authScheme = args->arg( 6 );
+                        if ( authScheme == "wep" )
                         {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepHex );
-                            wepAuth->setKeyLength( 64 );
-                        }
-                        else if ( keyType == "ascii64" )
-                        {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepAscii );
-                            wepAuth->setKeyLength( 64 );
-                        }
-                        if ( keyType == "hex128" )
-                        {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepHex );
-                            wepAuth->setKeyLength( 128 );
-                        }
-                        else if ( keyType == "ascii128" )
-                        {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepAscii );
-                            wepAuth->setKeyLength( 128 );
-                        }
-                        else if ( keyType == "passphrase" )
-                        {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepPassphrase );
-                            wepAuth->setKeyLength( 128 );
-                        }
-                        else
-                        {
-                            cerr << i18n( "Unrecognised WEP type '%1'", keyType ) << endl;
-                            delete wepAuth;
-                            return false;
-                        }
+                            Solid::Ifaces::AuthenticationWep *wepAuth = new Solid::Ifaces::AuthenticationWep();
+                            QString keyType = args->arg( 7 );
+                            if ( keyType == "hex64" )
+                            {
+                                wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepHex );
+                                wepAuth->setKeyLength( 64 );
+                            }
+                            else if ( keyType == "ascii64" )
+                            {
+                                wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepAscii );
+                                wepAuth->setKeyLength( 64 );
+                            }
+                            if ( keyType == "hex128" )
+                            {
+                                wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepHex );
+                                wepAuth->setKeyLength( 128 );
+                            }
+                            else if ( keyType == "ascii128" )
+                            {
+                                wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepAscii );
+                                wepAuth->setKeyLength( 128 );
+                            }
+                            else if ( keyType == "passphrase" )
+                            {
+                                wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepPassphrase );
+                                wepAuth->setKeyLength( 128 );
+                            }
+                            else
+                            {
+                                cerr << i18n( "Unrecognised WEP type '%1'", keyType ) << endl;
+                                delete wepAuth;
+                                return false;
+                            }
 
-                        QString key = args->arg( 8 );
-                        secrets.insert( "key", key );
-                        wepAuth->setSecrets( secrets );
+                            QString key = args->arg( 8 );
+                            secrets.insert( "key", key );
+                            wepAuth->setSecrets( secrets );
 
-                        QString method = args->arg( 9 );
-                        if ( method == "open" )
-                            wepAuth->setMethod( Solid::Ifaces::AuthenticationWep::WepOpenSystem );
-                        else if ( method == "shared" )
-                            wepAuth->setMethod( Solid::Ifaces::AuthenticationWep::WepSharedKey );
+                            QString method = args->arg( 9 );
+                            if ( method == "open" )
+                                wepAuth->setMethod( Solid::Ifaces::AuthenticationWep::WepOpenSystem );
+                            else if ( method == "shared" )
+                                wepAuth->setMethod( Solid::Ifaces::AuthenticationWep::WepSharedKey );
+                            else
+                            {
+                                cerr << i18n( "Unrecognised WEP method '%1'", method ) << endl;
+                                delete wepAuth;
+                                return false;
+                            }
+                            auth = wepAuth;
+                        }
+                        else if ( authScheme == "wpapsk" )
+                        {
+                            /* wpapsk wpa|wpa2 tkip|ccmp-aes password */
+                            Solid::Ifaces::AuthenticationWpaPersonal *wpapAuth = new Solid::Ifaces::AuthenticationWpaPersonal();
+                            QString version = args->arg( 7 );
+                            if ( version == "wpa" )
+                                wpapAuth->setVersion( Solid::Ifaces::AuthenticationWpaPersonal::Wpa1 );
+                            else if ( version == "wpa2" )
+                                wpapAuth->setVersion( Solid::Ifaces::AuthenticationWpaPersonal::Wpa1 );
+                            else
+                            {
+                                cerr << i18n( "Unrecognised WPA version '%1'", version ) << endl;
+                                delete wpapAuth;
+                                return false;
+                            }
+                            QString protocol = args->arg( 8 );
+                            if ( protocol == "tkip" )
+                                wpapAuth->setProtocol( Solid::Ifaces::AuthenticationWpaPersonal::WpaTkip );
+                            else if ( protocol == "ccmp-aes" )
+                                wpapAuth->setProtocol( Solid::Ifaces::AuthenticationWpaPersonal::WpaCcmpAes );
+                            else
+                            {
+                                cerr << i18n( "Unrecognised WPA encryption protocol '%1'", protocol ) << endl;
+                                delete wpapAuth;
+                                return false;
+                            }
+                            QString key = args->arg( 9 );
+                            secrets.insert( "key", key );
+                            wpapAuth->setSecrets( secrets );
+                            auth = wpapAuth;
+                        }
                         else
                         {
-                            cerr << i18n( "Unrecognised WEP method '%1'", method ) << endl;
-                            delete wepAuth;
+                            cerr << i18n( "Unimplemented auth scheme '%1'", args->arg(6 ) ) << endl;
                             return false;
                         }
-                        auth = wepAuth;
-                    }
-                    else if ( authScheme == "wpapsk" )
-                    {
-                        /* wpapsk wpa|wpa2 tkip|ccmp-aes password */
-                        Solid::Ifaces::AuthenticationWpaPersonal *wpapAuth = new Solid::Ifaces::AuthenticationWpaPersonal();
-                        QString version = args->arg( 7 );
-                        if ( version == "wpa" )
-                            wpapAuth->setVersion( Solid::Ifaces::AuthenticationWpaPersonal::Wpa1 );
-                        else if ( version == "wpa2" )
-                            wpapAuth->setVersion( Solid::Ifaces::AuthenticationWpaPersonal::Wpa1 );
-                        else
-                        {
-                            cerr << i18n( "Unrecognised WPA version '%1'", version ) << endl;
-                            delete wpapAuth;
-                            return false;
-                        }
-                        QString protocol = args->arg( 8 );
-                        if ( protocol == "tkip" )
-                            wpapAuth->setProtocol( Solid::Ifaces::AuthenticationWpaPersonal::WpaTkip );
-                        else if ( protocol == "ccmp-aes" )
-                            wpapAuth->setProtocol( Solid::Ifaces::AuthenticationWpaPersonal::WpaCcmpAes );
-                        else
-                        {
-                            cerr << i18n( "Unrecognised WPA encryption protocol '%1'", protocol ) << endl;
-                            delete wpapAuth;
-                            return false;
-                        }
-                        QString key = args->arg( 9 );
-                        secrets.insert( "key", key );
-                        wpapAuth->setSecrets( secrets );
-                        auth = wpapAuth;
-                    }
-                    else
-                    {
-                        cerr << i18n( "Unimplemented auth scheme '%1'", args->arg(6 ) ) << endl;
-                        return false;
                     }
                 }
                 else

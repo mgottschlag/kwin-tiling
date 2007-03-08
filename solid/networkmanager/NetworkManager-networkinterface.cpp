@@ -115,7 +115,7 @@ NMNetworkInterface::NMNetworkInterface( const QString & objectPath )
 
     if ( d->type == Solid::NetworkInterface::Ieee8023 )
     {
-        QString fakeNetPath = objectPath + "/networks/ethernet";
+        QString fakeNetPath = objectPath + "/Networks/ethernet";
         d->networks.insert( fakeNetPath, 0 );
         d->cachedNetworkProps.first = fakeNetPath;
         d->cachedNetworkProps.second = net;
