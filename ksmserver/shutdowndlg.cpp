@@ -139,9 +139,10 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
       fac *= -1;
       ++diff;
     }
-    QString upper = m_text.left( i ).trimmed();
-    QString lower = m_text.right( m_text.length() - i ).trimmed();
-    w = QMAX( QFontMetrics(fnt).width( upper ) + 4, QFontMetrics(fnt).width( lower ) + 4 );
+    QString upper = m_text.left( i );
+    QString lower = m_text.right( m_text.length() - i );
+    w = QMAX( QFontMetrics(fnt).width( upper ) + 6, QFontMetrics(fnt).width( lower ) + 6 );
+    w = QMAX( w, width() );
     h = QMAX( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 );
     if( w > width() || h > height()) {
       setMinimumSize( w, h );
@@ -270,7 +271,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     mainLayout->addLayout( btnLayout );
     mainLayout->addSpacing( 5 );
 
-    KSMPushButton* btnLogout = new KSMPushButton( i18n("End Current Session"), this );
+    KSMPushButton* btnLogout = new KSMPushButton( i18n("Logout"), this );
     btnLogout->setPixmap( KIconLoader::global()->loadIcon( "edit-undo", K3Icon::NoGroup, 32 ) );
     btnLogout->setFocus();
     connect(btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
