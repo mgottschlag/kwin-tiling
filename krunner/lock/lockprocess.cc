@@ -34,6 +34,7 @@
 #include <kpushbutton.h>
 #include <KStandardGuiItem>
 #include <kauthorized.h>
+#include <kservicetypetrader.h>
 
 #include <qframe.h>
 #include <QLabel>
@@ -122,23 +123,6 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     mRootHeight = rootAttr.height;
     XSelectInput( QX11Info::display(), QX11Info::appRootWindow(),
                   SubstructureNotifyMask | rootAttr.your_event_mask );
-
-    // Add non-KDE path
-    KGlobal::dirs()->addResourceType("scrsav",
-                                     KGlobal::dirs()->kde_default("apps") +
-                                     "System/ScreenSavers/");
-
-    // Add KDE specific screensaver path
-    QString relPath="System/ScreenSavers/";
-    KServiceGroup::Ptr servGroup = KServiceGroup::baseGroup( "screensavers");
-    if (servGroup)
-    {
-        relPath=servGroup->relPath();
-        kDebug(1204) << "relPath=" << relPath << endl;
-    }
-    KGlobal::dirs()->addResourceType("scrsav",
-                                     KGlobal::dirs()->kde_default("apps") +
-                                     relPath);
 
     // virtual root property
     gXA_VROOT = XInternAtom (QX11Info::display(), "__SWM_VROOT", False);
@@ -344,7 +328,7 @@ void LockProcess::configure()
 
     mSaver = KScreenSaverSettings::saver();
     if (mSaver.isEmpty() || mUseBlankOnly) {
-        mSaver = "ScreenSavers/kblank.desktop";
+        mSaver = "kblank.desktop";
     }
 
     readSaver();
@@ -364,7 +348,17 @@ void LockProcess::readSaver()
 {
     if (!mSaver.isEmpty())
     {
-        QString file = KStandardDirs::locate("services", mSaver);
+        QString entryName = mSaver;
+        if( entryName.endsWith( ".desktop" ))
+            entryName = entryName.left( entryName.length() - 8 ); // strip it
+        KService::List offers = KServiceTypeTrader::self()->query( "ScreenSaver",
+            "DesktopEntryName == '" + entryName.lower() + "'" );
+        if( offers.count() == 0 )
+        {
+            kDebug(1204) << "Cannot find screesaver: " << mSaver << endl;
+            return;
+        }
+        QString file = KStandardDirs::locate("services", offers.first()->desktopEntryPath());
 
         bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
         bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");

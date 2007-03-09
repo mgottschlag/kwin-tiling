@@ -94,12 +94,6 @@ int main(int argc, char *argv[])
 		windowId = RootWindow(QX11Info::display(), info.screen());
 	}
 
-	KGlobal::dirs()->addResourceType("scrsav",
-			KGlobal::dirs()->kde_default("apps") +
-			"apps/ScreenSavers/");
-	QStringList tempSaverFileList = KGlobal::dirs()->findAllResources("scrsav",
-			"*.desktop", KStandardDirs::NoDuplicates);
-
 	KService::List lst = KServiceTypeTrader::self()->query( "ScreenSaver");
 	QStringList saverFileList;
 

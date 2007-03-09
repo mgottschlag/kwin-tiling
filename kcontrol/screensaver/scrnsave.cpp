@@ -95,11 +95,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
     mMonitor = 0;
     mTesting = false;
 
-    // Add non-KDE path
-    KGlobal::dirs()->addResourceType("scrsav",
-                                     KGlobal::dirs()->kde_default("apps") +
-                                     "apps/ScreenSavers/");
-
     setQuickHelp( i18n("<h1>Screen Saver</h1> This module allows you to enable and"
        " configure a screen saver. Note that you can enable a screen saver"
        " even if you have power saving features enabled for your display.<p>"
