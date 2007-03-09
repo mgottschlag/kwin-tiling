@@ -200,7 +200,8 @@ bool SaverEngine::enable( bool e )
 	//mXAutoLock->changeCornerLockStatus( mLockCornerTopLeft, mLockCornerTopRight, mLockCornerBottomLeft, mLockCornerBottomRight);
 
         // We'll handle blanking
-        XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, mXBlanking, mXExposures);
+        XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
+        kDebug() << "XSetScreenSaver " << mTimeout + 10 << endl;
 
         mXAutoLock->start();
 
@@ -214,7 +215,8 @@ bool SaverEngine::enable( bool e )
 	    mXAutoLock = 0;
 	}
 
-	XSetScreenSaver(QX11Info::display(), 0, mXInterval, mXBlanking, mXExposures);
+        XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
+        XSetScreenSaver(QX11Info::display(), 0, mXInterval,  PreferBlanking, DontAllowExposures);
         kDebug() << "Saver Engine disabled" << endl;
     }
 
@@ -306,6 +308,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 	return false;
     }
 
+    XSetScreenSaver(QX11Info::display(), 0, mXInterval,  PreferBlanking, mXExposures);
     mState = Preparing;
     if (mXAutoLock)
     {
@@ -337,7 +340,8 @@ void SaverEngine::stopLockProcess()
     }
     processLockTransactions();
     mState = Waiting;
-    XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, mXBlanking, mXExposures);
+    XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
+    XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
 }
 
 void SaverEngine::lockProcessExited()
@@ -353,7 +357,8 @@ void SaverEngine::lockProcessExited()
     }
     processLockTransactions();
     mState = Waiting;
-    XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, mXBlanking, mXExposures);
+    XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
+    XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
 }
 
 //---------------------------------------------------------------------------
@@ -363,7 +368,8 @@ void SaverEngine::lockProcessExited()
 void SaverEngine::idleTimeout()
 {
     // disable X screensaver
-    XSetScreenSaver(QX11Info::display(), 0, mXInterval, mXBlanking, mXExposures);
+    XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
+    XSetScreenSaver(QX11Info::display(), 0, mXInterval, PreferBlanking, DontAllowExposures);
     startLockProcess( DefaultLock );
 }
 

@@ -150,7 +150,9 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
         if (on)
         {
             connect(&mCheckDPMS, SIGNAL(timeout()), SLOT(checkDPMSActive()));
-            mCheckDPMS.start(60000);
+            // we can save CPU if we stop it as quickly as possible
+            // but we waste CPU if we check too often -> so take 10s
+            mCheckDPMS.start(10000);
         }
     }
 #endif
@@ -882,6 +884,7 @@ void LockProcess::resume( bool force )
         return; // no resuming with dialog visible or when not visible
     if( mSuspended && mHackProc.isRunning() )
     {
+        XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
         bitBlt( this, 0, 0, &mSavedScreen );
         QApplication::syncX();
         mHackProc.kill(SIGCONT);
@@ -1079,9 +1082,13 @@ void LockProcess::checkDPMSActive()
     BOOL on;
     CARD16 state;
     DPMSInfo(QX11Info::display(), &state, &on);
+    //kDebug() << "checkDPMSActive " << on << " " << state << endl;
     if (state == DPMSModeStandby || state == DPMSModeSuspend || state == DPMSModeOff)
     {
        suspend();
+    } else if ( mSuspended )
+    {
+        resume( true );
     }
 #endif
 }
