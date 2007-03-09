@@ -58,6 +58,7 @@ Name[uk]=Захоплювач процесів-дезертирів
 Name[x-test]=xxRunaway Process Catcherxx
 Name[zh_TW]=失控程式捕捉器
 Comment=Runaway process catcher for the KDE panel
+Comment[el]=Έλεγχος Runaway διεργασιών για τον πίνακα του KDE
 Comment[x-test]=xxRunaway process catcher for the KDE panelxx
 Icon=runprocesscatcher
 X-KDE-Library=naughty_panelapplet

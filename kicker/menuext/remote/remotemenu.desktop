@@ -57,6 +57,7 @@ Name[uz]=Тармоқ жилдлари
 Name[x-test]=xxNetwork Foldersxx
 Name[zh_TW]=網路資料夾
 Comment=Easy access to network folders
+Comment[el]=Εύκολη πρόσβαση σε δικτυακούς φακέλους
 Comment[x-test]=xxEasy access to network foldersxx
 Icon=network
 

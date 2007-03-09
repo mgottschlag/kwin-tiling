@@ -2,6 +2,7 @@
 Name=Search Runner
 Name[x-test]=xxSearch Runnerxx
 Comment=Search files
+Comment[el]=Αναζήτηση αρχείων
 Comment[x-test]=xxSearch filesxx
 ServiceTypes=KRunner/Runner
 Type=Service

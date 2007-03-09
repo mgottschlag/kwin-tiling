@@ -3,4 +3,5 @@ Encoding=UTF-8
 Type=Directory
 Icon=edu_mathematics
 Name=Mathematics
+Name[el]=Μαθηματικά
 Name[x-test]=xxMathematicsxx

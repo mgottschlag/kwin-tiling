@@ -58,6 +58,7 @@ Name[uz]=Қидириш
 Name[x-test]=xxFindxx
 Name[zh_TW]=尋找
 Comment=Quickly start a file or web search
+Comment[el]=Γρήγορη εκκίνηση ενός αρχείου ή αναζήτηση στον ιστό
 Comment[x-test]=xxQuickly start a file or web searchxx
 Icon=kfind
 

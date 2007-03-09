@@ -61,6 +61,7 @@ Name[x-test]=xxExternal Taskbarxx
 Name[xh]=Ibar yomsebenzi Wangaphandle
 Name[zh_TW]=外部工作列
 Comment=External taskbar panel extension.
+Comment[el]=Εξωτερική επέκταση γραμμής εργασιών του πίνακα
 Comment[x-test]=xxExternal taskbar panel extension.xx
 
 Icon=taskbar

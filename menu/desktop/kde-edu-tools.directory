@@ -3,4 +3,5 @@ Encoding=UTF-8
 Icon=package
 Type=Directory
 Name=Teaching Tools
+Name[el]=Εργαλείο διδασκαλίας
 Name[x-test]=xxTeaching Toolsxx

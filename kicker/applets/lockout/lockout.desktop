@@ -2,6 +2,7 @@
 Type=Plugin
 Encoding=UTF-8
 Name=Lock/Logout Applet
+Name[el]=Εφαρμογίδιο κλειδώματος/αποσύνδεσης
 Name[x-test]=xxLock/Logout Appletxx
 Comment=Adds buttons for locking screen and session logout
 Comment[af]=Voeg skerm sluit en afteken knoppies by

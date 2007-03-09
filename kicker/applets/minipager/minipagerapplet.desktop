@@ -52,6 +52,7 @@ Name[x-test]=xxDesktop Preview & Pagerxx
 Name[zh_TW]=桌面預覽與縮圖
 
 Comment=A virtual desktop switching panel applet
+Comment[el]=Ένα εφαρμογίδιο εναλλαγής εικονικών επιφανειών εργασίας
 Comment[x-test]=xxA virtual desktop switching panel appletxx
 
 Icon=kpager
