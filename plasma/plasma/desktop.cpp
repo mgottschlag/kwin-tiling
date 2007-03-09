@@ -6,6 +6,7 @@
 
 #include <KWin>
 
+#include "clock.h"
 #include "desktop.h"
 #include "desktop.moc"
 
@@ -19,6 +20,7 @@ Desktop::Desktop(QWidget *parent)
     setGeometry(desktopSize);
 
     m_graphicsScene = new QGraphicsScene(desktopSize);
+    m_graphicsScene->setItemIndexMethod(QGraphicsScene::NoIndex);
     setScene(m_graphicsScene);
     setRenderHint(QPainter::Antialiasing, false);
     setDragMode(QGraphicsView::RubberBandDrag);
@@ -39,9 +41,16 @@ Desktop::Desktop(QWidget *parent)
     setBackground(tile);
 
     // Make us legit via KWin
-    KWin::setType( winId(), NET::Desktop );
-    KWin::setState( winId(), NET::SkipPager );
-    KWin::setOnAllDesktops( winId(), true );
+    KWin::setType(winId(), NET::Desktop);
+    KWin::setState(winId(), NET::SkipPager);
+    KWin::setOnAllDesktops(winId(), true);
+
+    // Tmp
+    for (int i = 0; i < 10; i++)
+    {
+        Plasma::Clock *testClock = new Plasma::Clock;
+        m_graphicsScene->addItem(testClock);
+    }
 }
 
 Desktop::~Desktop()
