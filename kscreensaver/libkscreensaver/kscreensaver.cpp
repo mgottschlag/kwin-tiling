@@ -50,7 +50,7 @@ KScreenSaver::KScreenSaver( WId id ) : QWidget()
     unsigned int h = 0;
 
     d = new KScreenSaverPrivate;
-    d->owner = find( id );
+    d->owner = QWidget::find( id );
     if ( d->owner )
 	installEventFilter( this );
 
@@ -90,7 +90,7 @@ void KScreenSaver::embed( QWidget *w )
 bool KScreenSaver::eventFilter( QObject *o, QEvent *e )
 {
     // make sure events get to the original window owner
-    if ( d->owner && o == this ) {
+    if ( d->owner && o == this && QEvent::Paint != e->type()  ) {
 	QApplication::sendEvent( d->owner, e );
 	return false;
     }
