@@ -141,7 +141,7 @@ int main( int argc, char **argv )
     MyApp app;
     kDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
     app.disableSessionManagement();
-    KGlobal::locale()->insertCatalog("libdmctl");
+    KGlobal::locale()->insertCatalog("libworkspace");
 
     LockProcess process(child, args->isSet( "blank" ));
     if (!child)
