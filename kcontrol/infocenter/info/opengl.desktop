@@ -20,6 +20,7 @@ Comment=OpenGL information
 Comment[af]=OpenGL informasie
 Comment[ar]=معلومات OpenGL
 Comment[be]=Інфармацыя аб OpenGL
+Comment[bg]=Информация за OpenGL
 Comment[br]=Titouroù diwar-benn OpenGL
 Comment[ca]=Informació OpenGL
 Comment[cs]=Informace o OpenGL
@@ -75,6 +76,7 @@ Comment[zh_TW]=OpenGL 資訊
 
 Keywords=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display
 Keywords[be]=Відэакарта,паскарэнне,графіка,сервер X,дысплей,экран,OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display
+Keywords[bg]=видеокарта, хардуер,екран, ускорение, графика, OpenGL, DRI, GLX, 3D, VideoCard, Hardware Acceleration, Graphics, X, X11, Xserver, X-Server, XFree86, Display
 Keywords[ca]=OpenGL,DRI,GLX,3D,Targeta de vídeo,Hardware Acceleració,Gràfics,X,X11,Xserver,Servidor X,XFree86,Pantalla
 Keywords[cs]=OpenGL,DRI,GLX,3D,videokarta,akcelerace,grafika,X,X11,Xserver,X-Server,XFree86,Display
 Keywords[da]=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Grafik,X,X11,Xserver,X-Server,XFree86,Skærm
