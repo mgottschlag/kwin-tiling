@@ -143,10 +143,10 @@ void SaverEngine::SimulateUserActivity()
     if ( mState == Waiting )
     {
         // disable
-        XSetScreenSaver(QX11Info::display(), 0, mXInterval, mXBlanking, mXExposures);
+        XSetScreenSaver(QX11Info::display(), 0, mXInterval, PreferBlanking, mXExposures);
         mXAutoLock->resetTrigger();
         // reenable
-        XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, mXBlanking, mXExposures);
+        XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
     }
 }
 
