@@ -27,6 +27,7 @@
 #include <KStandardDirs>
 
 #include "shellrunner.h"
+#include "ui_shellOptions.h"
 
 ShellRunner::ShellRunner( QObject* parent )
     : Plasma::Runner( parent ),
@@ -39,6 +40,7 @@ ShellRunner::ShellRunner( QObject* parent )
 ShellRunner::~ShellRunner()
 {
     delete m_options;
+    delete m_optionsUi;
 }
 
 QAction* ShellRunner::accepts(const QString& term)
@@ -65,8 +67,13 @@ QWidget* ShellRunner::options()
 {
     if ( !m_options ) {
         // create options here
-        m_options = new QPushButton( "woo!" );
-        m_options->resize( 100, 200 );
+        //Ui::shellOptions optionsUi;
+        m_optionsUi = new Ui::shellOptions();
+        m_options = new QWidget;
+        m_optionsUi->setupUi( m_options );
+        //m_options->resize( 100, 200);
+        //m_options = new QPushButton( "woo!" );
+       // m_options->resize( 100, 200 );
     }
 
     return m_options;

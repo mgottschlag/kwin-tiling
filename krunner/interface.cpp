@@ -418,19 +418,30 @@ void Interface::showOptions(bool show)
         }
 
         if ( !m_expander ) {
+            /*m_matchList->hide();
+            m_header->hide();
+            m_searchTerm->show();*/
             kDebug() << "creating m_expander" << endl;
             m_expander = new CollapsibleWidget( this );
             connect( m_expander, SIGNAL( collapseCompleted() ),
                      m_expander, SLOT( hide() ) );
             m_layout->addWidget( m_expander );
         }
-
+        
+        m_matchList->hide();
+        m_header->hide();
+        m_searchTerm->show();
+            
         kDebug() << "set inner widget to " << m_defaultMatch->runner()->options() << endl;
         m_expander->show();
         m_expander->setInnerWidget( m_defaultMatch->runner()->options() );
         m_optionsButton->setText( i18n( "Hide Options" ) );
     } else {
+        m_matchList->show();
+        m_header->show();
+        m_searchTerm->show();
         m_optionsButton->setText( i18n( "Show Options" ) );
+        resize( 400, 250 );
     }
 
     if ( m_expander ) {

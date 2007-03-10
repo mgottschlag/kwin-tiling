@@ -33,6 +33,7 @@ qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusXML} interface.h Interface)
 qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
 
 kde4_automoc(${krunner_SRCS})
+kde4_add_ui_files(krunner_SRCS runners/shell/shellOptions.ui)
 kde4_add_executable(krunner ${krunner_SRCS})
 target_link_libraries(krunner plasma kworkspace ${KDE4_KDEUI_LIBS})
 if(X11_Xss_LIB)

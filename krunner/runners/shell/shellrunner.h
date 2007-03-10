@@ -21,6 +21,11 @@
 
 #include "runner.h"
 
+namespace Ui
+{
+    class shellOptions;
+}
+
 class QWidget;
 class QAction;
 
@@ -45,6 +50,7 @@ class ShellRunner : public Plasma::Runner
 
     private:
         QWidget* m_options;
+        Ui::shellOptions* m_optionsUi;
         bool m_enabled;
 };
 
