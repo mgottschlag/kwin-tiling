@@ -418,9 +418,6 @@ void Interface::showOptions(bool show)
         }
 
         if ( !m_expander ) {
-            /*m_matchList->hide();
-            m_header->hide();
-            m_searchTerm->show();*/
             kDebug() << "creating m_expander" << endl;
             m_expander = new CollapsibleWidget( this );
             connect( m_expander, SIGNAL( collapseCompleted() ),

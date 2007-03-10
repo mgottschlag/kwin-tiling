@@ -66,14 +66,9 @@ bool ShellRunner::hasOptions()
 QWidget* ShellRunner::options()
 {
     if ( !m_options ) {
-        // create options here
-        //Ui::shellOptions optionsUi;
         m_optionsUi = new Ui::shellOptions();
         m_options = new QWidget;
         m_optionsUi->setupUi( m_options );
-        //m_options->resize( 100, 200);
-        //m_options = new QPushButton( "woo!" );
-       // m_options->resize( 100, 200 );
     }
 
     return m_options;

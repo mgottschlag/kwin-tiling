@@ -134,6 +134,9 @@
           <property name="whatsThis" >
            <string>Enter the password here for the user you specified above.</string>
           </property>
+          <property name="echoMode" >
+           <enum>QLineEdit::Password</enum>
+          </property>
          </widget>
         </item>
         <item row="4" column="1" >
@@ -366,8 +369,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>92</x>
-     <y>36</y>
+     <x>153</x>
+     <y>59</y>
     </hint>
     <hint type="destinationlabel" >
      <x>96</x>
@@ -382,8 +385,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>66</x>
-     <y>39</y>
+     <x>127</x>
+     <y>59</y>
     </hint>
     <hint type="destinationlabel" >
      <x>188</x>
@@ -402,8 +405,8 @@
      <y>45</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>119</x>
-     <y>78</y>
+     <x>146</x>
+     <y>101</y>
     </hint>
    </hints>
   </connection>
@@ -418,8 +421,72 @@
      <y>41</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>221</x>
-     <y>77</y>
+     <x>323</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbPriority</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>textLabel1</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>82</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>108</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbPriority</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>slPriority</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>64</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>190</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbPriority</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lbLowPriority</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>192</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>193</x>
+     <y>139</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbPriority</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lbHighPriority</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>192</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>279</x>
+     <y>139</y>
     </hint>
    </hints>
   </connection>
