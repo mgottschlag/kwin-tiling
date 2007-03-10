@@ -422,26 +422,24 @@ void Interface::showOptions(bool show)
             m_expander = new CollapsibleWidget( this );
             connect( m_expander, SIGNAL( collapseCompleted() ),
                      m_expander, SLOT( hide() ) );
-            m_layout->addWidget( m_expander );
+            m_layout->insertWidget( 3, m_expander );
         }
-        
-        m_matchList->hide();
-        m_header->hide();
-        m_searchTerm->show();
-            
+
         kDebug() << "set inner widget to " << m_defaultMatch->runner()->options() << endl;
-        m_expander->show();
         m_expander->setInnerWidget( m_defaultMatch->runner()->options() );
+        m_expander->show();
         m_optionsButton->setText( i18n( "Hide Options" ) );
     } else {
-        m_matchList->show();
-        m_header->show();
-        m_searchTerm->show();
         m_optionsButton->setText( i18n( "Show Options" ) );
         resize( 400, 250 );
     }
 
     if ( m_expander ) {
+        //TODO: we need to insert an element into the krunner dialog
+        //      that is big enough for the options. this will prevent
+        //      other items in the dialog from moving around and look
+        //      more "natural"; it should appear as if a "drawer" is
+        //      being pulled open, e.g. an expander.
         m_expander->setExpanded( show );
     }
     m_optionsButton->setChecked( show );
