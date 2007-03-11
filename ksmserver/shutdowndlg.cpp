@@ -121,7 +121,8 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
 
   p.save();
   p.translate( 0, 50 );
-  QFont fnt = p.font();
+  QFont fnt;
+  fnt.setPixelSize( 13 );
   fnt.setBold( true );
   p.setFont( fnt );
   p.setPen( QPen( QColor( Qt::black ) ) );
@@ -257,7 +258,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QFont fnt;
     fnt.setBold( true );
-    fnt.setPointSize( 13 );
+    fnt.setPixelSize( 20 );
     QLabel *topLabel = new QLabel(this );
     // FIXME Made the color picked from the user's one
     topLabel->setText("<font color='#eeeeec'>" + i18n("End Session for %1", KUser().loginName()) + "</font>");
@@ -364,6 +365,7 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
         m_renderDirty = false;
     }
     p.drawPixmap(0, 0, m_renderedSvg);
+
 }
 
 void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
