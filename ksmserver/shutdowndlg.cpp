@@ -7,7 +7,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <config.h>
 
 #include "shutdowndlg.h"
-#include "../plasma/lib/theme.h"
+#include "../plasma/lib/svg.h"
 
 #include <QApplication>
 #include <QCursor>
@@ -44,6 +44,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include "shutdowndlg.moc"
 #include <QX11Info>
 #include <QDesktopWidget>
+#include <QTimeLine>
 
 KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
@@ -89,163 +90,193 @@ void KSMShutdownFeedback::slotPaintEffect()
 ////////////
 
 KSMPushButton::KSMPushButton( const QString &text, QWidget *parent )
- : QPushButton( parent ), m_highlight( false ), m_popupMenu(0), m_popupTimer(0)
+ : QPushButton( parent ), m_highlight( false ), m_popupMenu(0), m_popupTimer(0), 
+   m_glowOpacity( 0.0 ), m_text( text )
 {
-  setAttribute(Qt::WA_Hover, true);
-  m_text = text;
-  setMinimumSize( 85, 85 );
-  connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
-  connect( this, SIGNAL(released()), SLOT(slotReleased()) );
+    setAttribute(Qt::WA_Hover, true);
+    init();
+}
+
+void KSMPushButton::init()
+{
+    setMinimumSize( 100, 100 );
+    connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
+    connect( this, SIGNAL(released()), SLOT(slotReleased()) );
+
+    m_glowSvg = new Plasma::Svg( "background/shutdowndlgbuttonglow", this );
+    connect( m_glowSvg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
+
+    m_glowTimeLine = new QTimeLine( 200, this );
+    connect( m_glowTimeLine, SIGNAL(valueChanged(qreal)),
+            this, SLOT(animateGlow(qreal)) );
+
+    QFont fnt;
+    fnt.setPixelSize( 13 );
+    fnt.setBold( true );
+    // Calculate the width of the text when splitted on two lines and
+    // properly resize the button.
+    if( QFontMetrics(fnt).width( m_text ) > width()-4 ||
+          2 * QFontMetrics(fnt).lineSpacing() > height()-52 ) {
+        int w, h;
+        int i = m_text.length()/2;
+        int fac = 1;
+        int diff = 1;
+        while( i && i < m_text.length() && m_text[i] != ' ' ) {
+            i = i + (diff * fac);
+            fac *= -1;
+            ++diff;
+        }
+        QString upper = m_text.left( i );
+        QString lower = m_text.right( m_text.length() - i );
+        w = QMAX( QFontMetrics(fnt).width( upper ) + 6, QFontMetrics(fnt).width( lower ) + 6 );
+        w = QMAX( w, width() );
+        h = QMAX( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 );
+        if( w > width() || h > height()) {
+            setMinimumSize( w, h );
+            updateGeometry();
+        }
+    }
 }
 
 void KSMPushButton::paintEvent( QPaintEvent * e )
 {
-  QPainter p( this );
-  p.setClipRect( e->rect() );
-  p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-  QPen pen;
-  if( m_highlight ) {
-    p.setBrush( QColor(255,255,255,150) );
-    pen.setColor(QColor(Qt::black));
-  }
-  else {
+    QPainter p( this );
+    p.setClipRect( e->rect() );
+    p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    QPen pen;
     p.setBrush( QColor(255,255,255,40) );
     pen.setColor(QColor(150,150,150,200));
-  }
+    pen.setWidth(1);
+    p.setPen( pen );
+    QFont fnt;
+    fnt.setPixelSize( 13 );
+    fnt.setBold( true );
+    p.setFont( fnt );
 
-  pen.setWidth(1);
-  p.setPen( pen );
-  p.drawRect( rect() );
-
-  p.drawPixmap( width()/2 - 16, 9, m_pixmap );
-
-  p.save();
-  p.translate( 0, 50 );
-  QFont fnt;
-  fnt.setPixelSize( 13 );
-  fnt.setBold( true );
-  p.setFont( fnt );
-  p.setPen( QPen( QColor( Qt::black ) ) );
-
-  // Calculate the width of the text when splitted on two lines and
-  // properly resize the button.
-  if( QFontMetrics(fnt).width( m_text ) > width()-4 ||
-      2 * QFontMetrics(fnt).lineSpacing() > height()-52 ) {
-    int w, h;
-    int i = m_text.length()/2;
-    int fac = 1;
-    int diff = 1;
-    while( i && i < m_text.length() && m_text[i] != ' ' ) {
-      i = i + (diff * fac);
-      fac *= -1;
-      ++diff;
+    if( m_glowOpacity > 0 ) {
+        p.save();
+        p.setOpacity( m_glowOpacity );
+        m_glowSvg->paint( &p, 0, 0 );
+        p.restore();
     }
-    QString upper = m_text.left( i );
-    QString lower = m_text.right( m_text.length() - i );
-    w = QMAX( QFontMetrics(fnt).width( upper ) + 6, QFontMetrics(fnt).width( lower ) + 6 );
-    w = QMAX( w, width() );
-    h = QMAX( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 );
-    if( w > width() || h > height()) {
-      setMinimumSize( w, h );
-      updateGeometry();
-    }
-  }
-  p.drawText( 0, 0, width(), height() - 50, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextWordWrap|Qt::TextShowMnemonic, m_text );
-  p.restore();
 
-  p.setRenderHints( QPainter::Antialiasing, false);
-  if( m_popupMenu ) {
+    p.drawRect( QRect( 5, 5, width()-10, height()-10 ) );
+    p.drawPixmap( width()/2 - 16, 9, m_pixmap );
+
     p.save();
-    p.setBrush( Qt::black );
-    pen.setColor(QColor(Qt::black));
-    p.setPen( pen );
-    QPoint points[3] = {
-        QPoint( width()-10, height()-7 ),
-        QPoint( width()-4, height()-7 ),
-        QPoint( width()-7, height()-4 ) };
-    p.drawPolygon( points, 3 );
+    p.translate( 5, 55 );
+    p.setPen( QPen( QColor( Qt::black ) ) );
+    p.drawText( 0, 0, width()-10, height()-50, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextWordWrap|Qt::TextShowMnemonic, m_text );
     p.restore();
-  }
 
-  if( hasFocus() ) {
-    pen.setBrush( QColor( 50, 50, 50) );
-    pen.setStyle( Qt::DotLine );
-    p.setPen( pen );
-    p.drawLine( 2, 2, width()-2, 2 );
-    p.drawLine(width()-2, 2, width()-2, height()-2 );
-    p.drawLine(width()-2, height()-2, 2, height()-2 );
-    p.drawLine(2, height()-2, 2, 2 );
-  }
+    p.setRenderHints( QPainter::Antialiasing, false);
+    if( m_popupMenu ) {
+        p.save();
+        p.setBrush( Qt::black );
+        pen.setColor(QColor(Qt::black));
+        p.setPen( pen );
+        QPoint points[3] = {
+            QPoint( width()-15, height()-12 ),
+            QPoint( width()-9, height()-12 ),
+            QPoint( width()-12, height()-9 ) };
+        p.drawPolygon( points, 3 );
+        p.restore();
+    }
+
+    if( hasFocus() ) {
+        pen.setBrush( QColor( 50, 50, 50) );
+        pen.setStyle( Qt::DotLine );
+        p.setPen( pen );
+        p.drawLine( 7, 7, width()-7, 7 );
+        p.drawLine(width()-7, 7, width()-7, height()-7 );
+        p.drawLine(width()-7, height()-7, 7, height()-7 );
+        p.drawLine(7, height()-7, 7, 7 );
+    }
+}
+
+void KSMPushButton::resizeEvent(QResizeEvent *e)
+{
+    m_glowSvg->resize( e->size() );
+    QPushButton::resizeEvent( e );
+}
+
+void KSMPushButton::animateGlow( qreal value )
+{
+    m_glowOpacity = value;
+    update();
 }
 
 void KSMPushButton::setPixmap( const QPixmap &p )
 {
-  m_pixmap = p;
-  if( m_pixmap.size().width() != 32 || m_pixmap.size().height () != 32 )
-    m_pixmap = m_pixmap.scaled( 32, 32 );
-  update();
+    m_pixmap = p;
+    if( m_pixmap.size().width() != 32 || m_pixmap.size().height () != 32 )
+        m_pixmap = m_pixmap.scaled( 32, 32 );
+    update();
 }
 
 void KSMPushButton::setPopupMenu( QMenu *m )
 {
-  m_popupMenu = m;
-  if( !m_popupTimer ) {
-    m_popupTimer = new QTimer( this );
-    connect( m_popupTimer, SIGNAL(timeout()), this, SLOT(slotTimeout()));
-  }
+    m_popupMenu = m;
+    if( !m_popupTimer ) {
+        m_popupTimer = new QTimer( this );
+        connect( m_popupTimer, SIGNAL(timeout()), this, SLOT(slotTimeout()));
+    }
 }
 
 void KSMPushButton::slotPressed()
 {
-  if( m_popupTimer )
-    m_popupTimer->start( QApplication::startDragTime() );
+    if( m_popupTimer )
+        m_popupTimer->start( QApplication::startDragTime() );
 }
 
 void KSMPushButton::slotReleased()
 {
-  if( m_popupTimer )
-    m_popupTimer->stop();
+    if( m_popupTimer )
+        m_popupTimer->stop();
 }
 
 void KSMPushButton::slotTimeout()
 {
-  m_popupTimer->stop();
-  if( m_popupMenu ) {
-    m_popupMenu->popup( mapToGlobal(rect().bottomLeft()) );
-    m_highlight = false;
-    update();
-  }
+    m_popupTimer->stop();
+    if( m_popupMenu ) {
+        m_popupMenu->popup( mapToGlobal(rect().bottomLeft()) );
+        m_highlight = false;
+        update();
+    }
 }
 
 bool KSMPushButton::event( QEvent *e )
 {
-  if( e->type() == QEvent::HoverEnter )
-  {
-    m_highlight = true;
-    update();
-    return true;
-  }
-  else if( e->type() == QEvent::HoverLeave )
-  {
-    m_highlight = false;
-    update();
-    return true;
-  }
-  else
-    return QWidget::event( e );
+    if( e->type() == QEvent::HoverEnter )
+    {
+        m_highlight = true;
+        m_glowTimeLine->setDirection( QTimeLine::Forward );
+        m_glowTimeLine->start();
+        update();
+        return true;
+    }
+    else if( e->type() == QEvent::HoverLeave )
+    {
+        m_highlight = false;
+        m_glowTimeLine->setDirection( QTimeLine::Backward );
+        m_glowTimeLine->start();
+        update();
+        return true;
+    }
+    else
+        return QWidget::event( e );
 }
 
 //////
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KWorkSpace::ShutdownType sdtype )
-  : QDialog( parent, Qt::Popup ), m_bgRenderer(0), m_renderDirty(true)
+  : QDialog( parent, Qt::Popup )
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
-    m_theme = new Plasma::Theme(this);
-    themeChanged();
-    connect(m_theme, SIGNAL(changed()), this, SLOT(themeChanged()));
+    m_svg = new Plasma::Svg( "background/shutdowndlg", this);
+    connect( m_svg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
     setModal( true );
     resize(420, 180);
     KDialog::centerOnScreen(this);
@@ -340,12 +371,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     setLayout( mainLayout );
 }
 
-void KSMShutdownDlg::themeChanged()
-{
-    delete m_bgRenderer;
-    m_bgRenderer = new QSvgRenderer(m_theme->image("/background/shutdowndlg"), this);
-}
-
 void KSMShutdownDlg::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);
@@ -356,26 +381,13 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
     p.fillRect(rect(), Qt::transparent);
     p.restore();
 
-    if (m_renderDirty)
-    {
-        m_renderedSvg.fill(Qt::transparent);
-        QPainter p(&m_renderedSvg);
-        p.setRenderHints(QPainter::Antialiasing);
-        m_bgRenderer->render(&p);
-        m_renderDirty = false;
-    }
-    p.drawPixmap(0, 0, m_renderedSvg);
-
+    m_svg->paint( &p, 0, 0 );
 }
 
 void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
 {
-    if (e->size() != m_renderedSvg.size())
-    {
-        QSize s( e->size().width(), e->size().height() );
-        m_renderedSvg = QPixmap( s );
-        m_renderDirty = true;
-    }
+    m_svg->resize( e->size() );
+    QDialog::resizeEvent( e );
 }
 
 void KSMShutdownDlg::slotLogout()

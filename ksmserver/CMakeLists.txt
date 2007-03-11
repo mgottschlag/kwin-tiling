@@ -47,7 +47,7 @@ install(TARGETS kdeinit_ksmserver  DESTINATION ${LIB_INSTALL_DIR})
 target_link_libraries( ksmserver kdeinit_ksmserver )
 install(TARGETS ksmserver DESTINATION ${BIN_INSTALL_DIR})
 
-set(ksmserver_BGIMAGES images/background/shutdowndlg.svg)
+set(ksmserver_BGIMAGES images/background/shutdowndlg.svg images/background/shutdowndlgbuttonglow.svg )
 install(FILES ${ksmserver_BGIMAGES} DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/background)
 
 ########### next target ###############

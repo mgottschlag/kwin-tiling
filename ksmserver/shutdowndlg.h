@@ -13,11 +13,11 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 class QMenu;
 class QTimer;
-class QSvgRenderer;
+class QTimeLine;
 
 namespace Plasma
 {
-    class Theme;
+    class Svg;
 }
 
 // The (singleton) widget that makes the desktop gray.
@@ -55,7 +55,10 @@ public:
     void setPopupMenu( QMenu * );
 protected:
     void paintEvent(QPaintEvent *e);
+    void resizeEvent(QResizeEvent *e);
     bool event(QEvent *e);
+
+    void init();
 protected:
     QPixmap m_pixmap;
     bool m_highlight;
@@ -64,9 +67,13 @@ private Q_SLOTS:
     void slotPressed();
     void slotReleased();
     void slotTimeout();
+    void animateGlow( qreal );
 private:
-    QMenu *m_popupMenu;
-    QTimer *m_popupTimer;
+    QMenu* m_popupMenu;
+    QTimer* m_popupTimer;
+    Plasma::Svg* m_glowSvg;
+    qreal m_glowOpacity;
+    QTimeLine *m_glowTimeLine;
 };
 
 // The confirmation dialog
@@ -84,9 +91,6 @@ public Q_SLOTS:
     void slotReboot(int);
     void slotSuspend(int);
 
-protected Q_SLOTS:
-    void themeChanged();
-
 protected:
     ~KSMShutdownDlg() {};
     void paintEvent(QPaintEvent *e);
@@ -97,10 +101,8 @@ private:
     KWorkSpace::ShutdownType m_shutdownType;
     QString m_bootOption;
     QStringList rebootOptions;
-    QSvgRenderer* m_bgRenderer;
     QPixmap m_renderedSvg;
-    Plasma::Theme* m_theme;
-    bool m_renderDirty;
+    Plasma::Svg* m_svg;
 };
 
 #endif
