@@ -4,4 +4,5 @@ Icon=edu_languages
 Type=Directory
 Name=Languages
 Name[el]=Γλώσσες
+Name[ja]=言語
 Name[x-test]=xxLanguagesxx
