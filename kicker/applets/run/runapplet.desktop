@@ -59,6 +59,7 @@ Name[uz]=Буйруқни бажариш
 Name[x-test]=xxRun Commandxx
 Name[zh_TW]=執行命令
 Comment=A command line applet
+Comment[nds]=En Befehlsreeg-Lüttprogramm
 Comment[x-test]=xxA command line appletxx
 Icon=exec
 X-KDE-Library=run_panelapplet

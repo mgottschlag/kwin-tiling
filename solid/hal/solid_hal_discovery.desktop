@@ -6,8 +6,10 @@ X-KDE-Library=solid_hal_discovery
 InitialPreference=100
 Name=HAL-Discovery
 Name[el]=Εύρεση υπηρεσιών HAL
+Name[nds]=HAL-Opdecken
 Name[x-test]=xxHAL-Discoveryxx
 Comment=Hardware discovery using freedesktop.org HAL daemon
 Comment[el]=Ανίχνευση υλικού με χρήση του δαίμονα HAL του freedesktop.org
+Comment[nds]=Hardware mit den HAL-Dämoon vun freedesktop.org opdecken
 Comment[x-test]=xxHardware discovery using freedesktop.org HAL daemonxx
 

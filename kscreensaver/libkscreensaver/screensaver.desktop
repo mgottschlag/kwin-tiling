@@ -4,6 +4,7 @@ Type=ServiceType
 X-KDE-ServiceType=ScreenSaver
 Comment=ScreenSaver
 Comment[el]=Προφύλαξη οθόνης
+Comment[nds]=Pausschirm
 Comment[x-test]=xxScreenSaverxx
 [PropertyDef::X-KDE-Type]
 Type=QString

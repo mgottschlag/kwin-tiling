@@ -4,4 +4,5 @@ Icon=edu_science
 Type=Directory
 Name=Science
 Name[el]=Επιστήμη
+Name[nds]=Wetenschap
 Name[x-test]=xxSciencexx

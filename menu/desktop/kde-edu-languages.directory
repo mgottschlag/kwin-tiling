@@ -5,4 +5,5 @@ Type=Directory
 Name=Languages
 Name[el]=Γλώσσες
 Name[ja]=言語
+Name[nds]=Spraken
 Name[x-test]=xxLanguagesxx

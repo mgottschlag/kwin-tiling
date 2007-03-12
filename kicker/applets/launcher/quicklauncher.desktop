@@ -62,6 +62,7 @@ Name[x-test]=xxQuick Launcherxx
 Name[zh_TW]=快速起動
 Comment=The quick launcher applet
 Comment[el]=Το εφαρμογίδια γρήγορης εκτέλεσης
+Comment[nds]=Dat Fixstart-Lüttprogramm
 Comment[x-test]=xxThe quick launcher appletxx
 Icon=launch
 X-KDE-Library=launcher_panelapplet

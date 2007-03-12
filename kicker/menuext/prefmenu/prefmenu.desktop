@@ -61,6 +61,7 @@ Name[x-test]=xxSettingsxx
 Name[zh_TW]=設定
 Comment=Easy access to the Control Center modules
 Comment[el]=Εύκολη πρόσβαση στα αρθρώματα του Κέντρου ελέγχου
+Comment[nds]=Eenfach Togriep op de Kuntrullzentrum-Modulen
 Comment[x-test]=xxEasy access to the Control Center modulesxx
 Icon=package_settings
 

@@ -3,6 +3,7 @@ Encoding=UTF-8
 Type=Plugin
 Comment=A panel applet that displays your storage media
 Comment[el]=Ένα εφαρμογίδιο που εμφανίζει τις συσκευές αποθήκευσής σας
+Comment[nds]=En Paneel-Lüttprogramm, dat Dien Spiekermedien wiest
 Comment[x-test]=xxA panel applet that displays your storage mediaxx
 Name=Storage Media
 Name[af]=Stoor Media

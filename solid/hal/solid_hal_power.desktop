@@ -5,8 +5,10 @@ ServiceTypes=SolidPowerManager
 X-KDE-Library=solid_hal_power
 InitialPreference=100
 Name=HAL-Power
+Name[nds]=HAL-Stroompleeg
 Name[x-test]=xxHAL-Powerxx
 Comment=Hardware power management using freedesktop.org HAL daemon
 Comment[el]=Διαχείριση ενέργειας υλικού με χρήση του δαίμονα HAL του freedesktop.org
+Comment[nds]=Stroompleeg för de Hardware mit den HAL-Dämoon vun freedesktop.org
 Comment[x-test]=xxHardware power management using freedesktop.org HAL daemonxx
 

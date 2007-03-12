@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=Calculator Runner
+Name[nds]=Rekendreger
 Name[x-test]=xxCalculator Runnerxx
 Comment=Calculate expressions
+Comment[nds]=Utdrück utreken
 Comment[x-test]=xxCalculate expressionsxx
 ServiceTypes=KRunner/Runner
 Type=Service

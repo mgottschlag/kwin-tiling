@@ -5,4 +5,5 @@ X-KDE-ServiceType=KRunner/Runner
 
 Comment=KRunner plugin
 Comment[el]=Πρόσθετο του KRunner
+Comment[nds]=KRunner-Moduul
 Comment[x-test]=xxKRunner pluginxx
