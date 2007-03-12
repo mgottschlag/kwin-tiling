@@ -9,9 +9,8 @@
 #endif
 
 KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
-    : QX11EmbedWidget( parent ), colormap( None )
+    : QWidget( parent, wf ), colormap( None )
 {
-    setWindowFlags( wf ); // needs to be done before create() below
 // use visual with support for double-buffering, for opengl
 // this code is (apparently) duplicated in kdebase/workspace/krunner/lock/
 #ifdef HAVE_GLXCHOOSEVISUAL
