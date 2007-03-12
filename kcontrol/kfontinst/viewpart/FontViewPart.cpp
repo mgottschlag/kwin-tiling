@@ -232,7 +232,7 @@ void CFontViewPart::previewStatus(bool st)
             printable=!Misc::isHidden(url());
 #ifdef KFI_PRINT_APP_FONTS
         {
-            KMimeType::Ptr mime=KMimeType::findByUrl(KUrl::fromPath(m_file), 0, false, true);
+            KMimeType::Ptr mime=KMimeType::findByUrl(KUrl::fromPath(localFilePath()), 0, false, true);
 
             printable=mime->is("application/x-font-ttf") ||
                       mime->is("application/x-font-otf") ||
@@ -317,7 +317,7 @@ void CFontViewPart::print()
                      << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
                      << KGlobal::caption().toUtf8()
                      << "0"
-                     << m_file
+                     << localFilePath()
                      << QString().setNum(KFI_NO_STYLE_INFO);
 #endif
 
@@ -341,7 +341,7 @@ void CFontViewPart::showFace(int f)
 
 void CFontViewPart::getMetaInfo()
 {
-    KFileMetaInfo meta(m_url);
+    KFileMetaInfo meta(url());
 
     if(meta.isValid())
     {
