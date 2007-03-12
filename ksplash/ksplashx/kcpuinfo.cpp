@@ -46,20 +46,22 @@
 typedef void (*kde_sighandler_t) (int);
 
 #ifdef __i386__
-static jmp_buf KDE_NO_EXPORT env;
+#ifdef HAVE_X86_SSE
+static jmp_buf env;
 
 // Sighandler for the SSE OS support check
-static void KDE_NO_EXPORT sighandler( int )
+static void sighandler( int )
 {
     std::longjmp( env, 1 );
 }
 #endif
+#endif
 
 #ifdef __PPC__
-static sigjmp_buf KDE_NO_EXPORT jmpbuf;
-static sig_atomic_t KDE_NO_EXPORT canjump = 0;
+static sigjmp_buf jmpbuf;
+static sig_atomic_t canjump = 0;
 
-static void KDE_NO_EXPORT sigill_handler( int sig )
+static void sigill_handler( int sig )
 {
     if ( !canjump ) {
         signal( sig, SIG_DFL );
@@ -70,9 +72,9 @@ static void KDE_NO_EXPORT sigill_handler( int sig )
 }
 #endif
 
-static int KDE_NO_EXPORT getCpuFeatures()
+static int getCpuFeatures()
 {
-    int features = 0;
+    volatile int features = 0;
 
 #if defined( HAVE_GNU_INLINE_ASM )
 #if defined( __i386__ )
