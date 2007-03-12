@@ -62,6 +62,7 @@ KScreenSaver::KScreenSaver( WId id ) : QWidget()
 #endif
 
         create( id, false, true );
+        setAttribute( Qt::WA_NoSystemBackground );
     }
 
     if ( w == 0 ) w = 600;
