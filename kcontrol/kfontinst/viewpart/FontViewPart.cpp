@@ -341,9 +341,9 @@ void CFontViewPart::showFace(int f)
 
 void CFontViewPart::getMetaInfo()
 {
-    KFileMetaInfo meta(url(), QString(), KFileMetaInfo::DontCare);
+    KFileMetaInfo meta(m_url);
 
-    if(meta.isValid() && !meta.isEmpty())
+    if(meta.isValid())
     {
         QStringList           keys(meta.preferredKeys());
         QStringList::Iterator it(keys.begin()),
@@ -355,7 +355,7 @@ void CFontViewPart::getMetaInfo()
         for(; it!=end; ++it)
         {
             KFileMetaInfoItem          mi(meta.item(*it));
-            QString                    tk(mi.translatedKey());
+            QString                    tk(mi.name());
             QStringList                list(mi.value().toString().split("; "));
             QStringList::ConstIterator sit(list.begin()),
                                        send(list.end());

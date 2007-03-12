@@ -13,7 +13,7 @@ if (X11_XFT_FOUND)
 
   add_subdirectory( lib ) 
   add_subdirectory( kcmfontinst ) 
-  add_subdirectory( kfile-plugin ) 
+#  add_subdirectory( kfile-plugin ) 
   add_subdirectory( kfontinst ) 
   add_subdirectory( kio ) 
   add_subdirectory( thumbnail )

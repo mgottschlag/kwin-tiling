@@ -399,7 +399,7 @@ wp_load:
         if (kapp) {
             KFileMetaInfo metaInfo(file);
             if (metaInfo.isValid() && metaInfo.item("Orientation").isValid()) {
-                switch (metaInfo.item("Orientation").string().toInt()) {
+                switch (metaInfo.item("Orientation").value().toInt()) {
                     case 2:
                         // Flipped horizontally
                         m_Wallpaper.mirrored(true, false);
