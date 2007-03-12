@@ -163,9 +163,9 @@ void FontUseItem::readFont()
     deleteme = true;
   }
 
-  config->setGroup(_rcgroup);
+  KConfigGroup group(config, _rcgroup);
   QFont tmpFnt(_default);
-  setFont( config->readEntry(_rckey, tmpFnt), isFixedOnly() );
+  setFont( group.readEntry(_rckey, tmpFnt), isFixedOnly() );
   if (deleteme) delete config;
 }
 

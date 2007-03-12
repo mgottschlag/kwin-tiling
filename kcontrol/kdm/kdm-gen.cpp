@@ -168,8 +168,8 @@ void KDMGeneralWidget::loadLanguageList( KLanguageButton *combo )
 		QString nid = fpath.mid( index + 1 );
 
 		KConfig entry( *it, KConfig::OnlyLocal);
-		entry.setGroup( QLatin1String("KCM Locale") );
-		QString name = entry.readEntry( QLatin1String("Name"), i18n("without name") );
+                KConfigGroup group(&entry, "KCM Locale");
+		QString name = group.readEntry( QLatin1String("Name"), i18n("without name") );
 		combo->insertLanguage( nid, name, QLatin1String("l10n/"), QString() );
 	}
 }

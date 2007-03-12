@@ -246,7 +246,7 @@ void KSMServer::restoreLegacySession( KConfig* config )
             if ( group.readEntry( QString("program")+n, QString() ) != wm )
                 continue;
             QStringList restartCommand =
-                config->readEntry( QString("restartCommand")+n, QStringList() );
+                group.readEntry( QString("restartCommand")+n, QStringList() );
             for( QStringList::ConstIterator it = restartCommand.begin();
                 it != restartCommand.end();
                 ++it ) {
@@ -254,7 +254,8 @@ void KSMServer::restoreLegacySession( KConfig* config )
                     ++it;
                     if( it != restartCommand.end()) {
                         KConfig cfg( "session/" + wm + '_' + (*it) );
-                        restoreLegacySessionInternal( &KConfigGroup(&cfg, "LegacySession"), ' ' );
+                        KConfigGroup group(&cfg, "LegacySession");
+                        restoreLegacySessionInternal( &group, ' ' );
                     }
                 }
             }
