@@ -161,7 +161,7 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
     }
 
     p.drawRect( QRect( 5, 5, width()-10, height()-10 ) );
-    p.drawPixmap( width()/2 - 16, 9, m_pixmap );
+    p.drawPixmap( width()/2 - 16, 14, m_pixmap );
 
     p.save();
     p.translate( 5, 55 );
