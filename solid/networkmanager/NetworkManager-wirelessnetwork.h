@@ -65,8 +65,8 @@ public:
     bool isEncrypted() const;
     bool isHidden() const;
     MacAddressList bssList() const;
-    Solid::Ifaces::Authentication *authentication() const;
-    void setAuthentication( Solid::Ifaces::Authentication *authentication );
+    Solid::Authentication *authentication() const;
+    void setAuthentication( Solid::Authentication *authentication );
     void setSignalStrength( int strength );
     void setBitrate( int rate );
     virtual void setActivated( bool activated );

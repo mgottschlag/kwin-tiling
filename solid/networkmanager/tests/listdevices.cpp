@@ -61,10 +61,10 @@ int main( int argc, char** argv )
 	QMap<QString,QString> secrets;
 	secrets.insert( "key", "testpassphrase" );
    */
-	Solid::Ifaces::AuthenticationWpaPersonal auth;
-    auth.setVersion( Solid::Ifaces::AuthenticationWpa::Wpa1 );
-    auth.setProtocol( Solid::Ifaces::AuthenticationWpa::WpaTkip );
-    auth.setKeyManagement( Solid::Ifaces::AuthenticationWpa::WpaPsk );
+	Solid::AuthenticationWpaPersonal auth;
+    auth.setVersion( Solid::AuthenticationWpa::Wpa1 );
+    auth.setProtocol( Solid::AuthenticationWpa::WpaTkip );
+    auth.setKeyManagement( Solid::AuthenticationWpa::WpaPsk );
 	QMap<QString,QString> secrets;
 	secrets.insert( "key", "testpassphrase" );
 	auth.setSecrets( secrets );

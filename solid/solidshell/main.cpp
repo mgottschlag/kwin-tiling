@@ -610,7 +610,7 @@ bool SolidShell::doIt()
                 checkArgumentCount( 5, 10 );
                 QString dev( args->arg( 3 ) );
                 QString uni( args->arg( 4 ) );
-                Solid::Ifaces::Authentication * auth = 0;
+                Solid::Authentication * auth = 0;
                 QMap<QString,QString> secrets;
 
                 if ( KCmdLineArgs::parsedArgs()->count() > 5 )
@@ -622,36 +622,36 @@ bool SolidShell::doIt()
                     QString authScheme = args->arg( 6 );
                     if ( authScheme == "wep" )
                     {
-                        Solid::Ifaces::AuthenticationWep *wepAuth = new Solid::Ifaces::AuthenticationWep();
+                        Solid::AuthenticationWep *wepAuth = new Solid::AuthenticationWep();
                         QString keyType = args->arg( 7 );
                         if ( keyType == "hex64" )
                         {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepHex );
+                            wepAuth->setType( Solid::AuthenticationWep::WepHex );
                             wepAuth->setKeyLength( 64 );
                         }
                         else if ( keyType == "ascii64" )
                         {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepAscii );
+                            wepAuth->setType( Solid::AuthenticationWep::WepAscii );
                             wepAuth->setKeyLength( 64 );
                         }
                         else if ( keyType == "hex128" )
                         {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepHex );
+                            wepAuth->setType( Solid::AuthenticationWep::WepHex );
                             wepAuth->setKeyLength( 128 );
                         }
                         else if ( keyType == "ascii128" )
                         {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepAscii );
+                            wepAuth->setType( Solid::AuthenticationWep::WepAscii );
                             wepAuth->setKeyLength( 128 );
                         }
                         else if ( keyType == "passphrase64" )
                         {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepPassphrase );
+                            wepAuth->setType( Solid::AuthenticationWep::WepPassphrase );
                             wepAuth->setKeyLength( 64 );
                         }
                         else if ( keyType == "passphrase128" )
                         {
-                            wepAuth->setType( Solid::Ifaces::AuthenticationWep::WepPassphrase );
+                            wepAuth->setType( Solid::AuthenticationWep::WepPassphrase );
                             wepAuth->setKeyLength( 128 );
                         }
                         else
@@ -667,9 +667,9 @@ bool SolidShell::doIt()
 
                         QString method = args->arg( 9 );
                         if ( method == "open" )
-                            wepAuth->setMethod( Solid::Ifaces::AuthenticationWep::WepOpenSystem );
+                            wepAuth->setMethod( Solid::AuthenticationWep::WepOpenSystem );
                         else if ( method == "shared" )
-                            wepAuth->setMethod( Solid::Ifaces::AuthenticationWep::WepSharedKey );
+                            wepAuth->setMethod( Solid::AuthenticationWep::WepSharedKey );
                         else
                         {
                             cerr << i18n( "Unrecognised WEP method '%1'", method ) << endl;
@@ -681,12 +681,12 @@ bool SolidShell::doIt()
                     else if ( authScheme == "wpapsk" )
                     {
                         /* wpapsk wpa|wpa2 tkip|ccmp-aes password */
-                        Solid::Ifaces::AuthenticationWpaPersonal *wpapAuth = new Solid::Ifaces::AuthenticationWpaPersonal();
+                        Solid::AuthenticationWpaPersonal *wpapAuth = new Solid::AuthenticationWpaPersonal();
                         QString version = args->arg( 7 );
                         if ( version == "wpa" )
-                            wpapAuth->setVersion( Solid::Ifaces::AuthenticationWpaPersonal::Wpa1 );
+                            wpapAuth->setVersion( Solid::AuthenticationWpaPersonal::Wpa1 );
                         else if ( version == "wpa2" )
-                            wpapAuth->setVersion( Solid::Ifaces::AuthenticationWpaPersonal::Wpa1 );
+                            wpapAuth->setVersion( Solid::AuthenticationWpaPersonal::Wpa1 );
                         else
                         {
                             cerr << i18n( "Unrecognised WPA version '%1'", version ) << endl;
@@ -695,9 +695,9 @@ bool SolidShell::doIt()
                         }
                         QString protocol = args->arg( 8 );
                         if ( protocol == "tkip" )
-                            wpapAuth->setProtocol( Solid::Ifaces::AuthenticationWpaPersonal::WpaTkip );
+                            wpapAuth->setProtocol( Solid::AuthenticationWpaPersonal::WpaTkip );
                         else if ( protocol == "ccmp-aes" )
-                            wpapAuth->setProtocol( Solid::Ifaces::AuthenticationWpaPersonal::WpaCcmpAes );
+                            wpapAuth->setProtocol( Solid::AuthenticationWpaPersonal::WpaCcmpAes );
                         else
                         {
                             cerr << i18n( "Unrecognised WPA encryption protocol '%1'", protocol ) << endl;
@@ -719,7 +719,7 @@ bool SolidShell::doIt()
                 else
                 {
                     //unencrypted network
-                    auth = new Solid::Ifaces::AuthenticationNone;
+                    auth = new Solid::AuthenticationNone;
                 }
 
                 return shell.netmgrActivateNetwork( dev, uni, auth );
@@ -1143,7 +1143,7 @@ bool SolidShell::netmgrQueryNetwork( const QString & deviceUni, const QString & 
     return true;
 }
 
-bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString & networkUni, Solid::Ifaces::Authentication * auth )
+bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString & networkUni, Solid::Authentication * auth )
 {
     Solid::NetworkManager &manager = Solid::NetworkManager::self();
     Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );

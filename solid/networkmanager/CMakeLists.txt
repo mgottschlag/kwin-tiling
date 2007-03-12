@@ -18,7 +18,7 @@ target_link_libraries(solid_networkmanager_static ${KDE4_KDECORE_LIBS} ${KDE4_SO
 kde4_add_plugin(solid_networkmanager module.cpp ${solid_networkmanager_PART_SRCS})
 
 message(STATUS "nm-util Libs are ${NM-UTIL_LIBRARY}")
-target_link_libraries(solid_networkmanager ${NM-UTIL_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_SOLIDIFACES_LIBS})
+target_link_libraries(solid_networkmanager ${NM-UTIL_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${KDE4_SOLIDIFACES_LIBS})
 install(TARGETS solid_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES solid_networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )

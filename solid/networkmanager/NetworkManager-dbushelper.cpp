@@ -43,18 +43,18 @@
 
 #include "NetworkManager-dbushelper.h"
 
-QList<QVariant> NMDBusHelper::serialize( Solid::Ifaces::Authentication * auth, const QString & essid, QList<QVariant> & args, bool * error )
+QList<QVariant> NMDBusHelper::serialize( Solid::Authentication * auth, const QString & essid, QList<QVariant> & args, bool * error )
 {
     if ( auth )
     {
 
-        Solid::Ifaces::AuthenticationWep * wep = dynamic_cast<Solid::Ifaces::AuthenticationWep*>( auth ) ;
+        Solid::AuthenticationWep * wep = dynamic_cast<Solid::AuthenticationWep*>( auth ) ;
         if ( wep )
             return doSerialize( wep, essid, args, error );
-        Solid::Ifaces::AuthenticationWpaPersonal * wpap = dynamic_cast<Solid::Ifaces::AuthenticationWpaPersonal*>( auth ) ;
+        Solid::AuthenticationWpaPersonal * wpap = dynamic_cast<Solid::AuthenticationWpaPersonal*>( auth ) ;
         if ( wpap )
             return doSerialize( wpap, essid, args, error );
-        Solid::Ifaces::AuthenticationWpaEnterprise * wpae = dynamic_cast<Solid::Ifaces::AuthenticationWpaEnterprise*>( auth );
+        Solid::AuthenticationWpaEnterprise * wpae = dynamic_cast<Solid::AuthenticationWpaEnterprise*>( auth );
         if ( wpae )
             return doSerialize( wpae, essid, args, error );
     }
@@ -62,13 +62,13 @@ QList<QVariant> NMDBusHelper::serialize( Solid::Ifaces::Authentication * auth, c
     return QList<QVariant>();
 }
 
-QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWep * auth, const QString & essid, QList<QVariant> & args, bool * error )
+QList<QVariant> NMDBusHelper::doSerialize( Solid::AuthenticationWep * auth, const QString & essid, QList<QVariant> & args, bool * error )
 {
     // get correct cipher
     // what's the algorithm for deciding the right cipher to use?
     *error = false;
     IEEE_802_11_Cipher * cipher = 0;
-    if ( auth->type() == Solid::Ifaces::AuthenticationWep::WepAscii )
+    if ( auth->type() == Solid::AuthenticationWep::WepAscii )
     {
         if ( auth->keyLength() == 40 || auth->keyLength() == 64 )
             cipher = cipher_wep64_ascii_new();
@@ -78,7 +78,7 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWep * au
             //NM only supports these 2 key lengths, flag an error!
             *error = true;
     }
-    else if ( auth->type() == Solid::Ifaces::AuthenticationWep::WepHex )
+    else if ( auth->type() == Solid::AuthenticationWep::WepHex )
     {
         if ( auth->keyLength() == 40 || auth->keyLength() == 64 )
             cipher = cipher_wep64_hex_new();
@@ -88,7 +88,7 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWep * au
             //NM only supports these 2 key lengths, flag an error!
             *error = true;
     }
-    else if ( auth->type() == Solid::Ifaces::AuthenticationWep::WepPassphrase )
+    else if ( auth->type() == Solid::AuthenticationWep::WepPassphrase )
     {
         if ( auth->keyLength() == 40 || auth->keyLength() == 64 )
             cipher = cipher_wep64_passphrase_new();
@@ -114,7 +114,7 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWep * au
         free( rawHashedKey );
         args << QVariant( hashedKey );
         // int32 auth alg
-        if ( auth->method() == Solid::Ifaces::AuthenticationWep::WepOpenSystem )
+        if ( auth->method() == Solid::AuthenticationWep::WepOpenSystem )
             args << QVariant( IW_AUTH_ALG_OPEN_SYSTEM );
         else
             args << QVariant( IW_AUTH_ALG_SHARED_KEY );
@@ -125,7 +125,7 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWep * au
     return args;
 }
 
-QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWpaPersonal * auth, const QString & essid, QList<QVariant> & args, bool * error )
+QList<QVariant> NMDBusHelper::doSerialize( Solid::AuthenticationWpaPersonal * auth, const QString & essid, QList<QVariant> & args, bool * error )
 {
     *error = false;
     IEEE_802_11_Cipher * cipher = 0;
@@ -144,15 +144,15 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWpaPerso
 
     switch ( auth->protocol() )
     {
-        case Solid::Ifaces::AuthenticationWpaPersonal::WpaTkip:
+        case Solid::AuthenticationWpaPersonal::WpaTkip:
             cipher_wpa_psk_hex_set_we_cipher( hexCipher, NM_AUTH_TYPE_WPA_PSK_TKIP );
             cipher_wpa_psk_passphrase_set_we_cipher( ppCipher, NM_AUTH_TYPE_WPA_PSK_TKIP );
             break;
-        case Solid::Ifaces::AuthenticationWpaPersonal::WpaCcmpAes:
+        case Solid::AuthenticationWpaPersonal::WpaCcmpAes:
             cipher_wpa_psk_hex_set_we_cipher( hexCipher, NM_AUTH_TYPE_WPA_PSK_CCMP );
             cipher_wpa_psk_passphrase_set_we_cipher( ppCipher, NM_AUTH_TYPE_WPA_PSK_CCMP );
             break;
-        case Solid::Ifaces::AuthenticationWpaPersonal::WpaAuto:
+        case Solid::AuthenticationWpaPersonal::WpaAuto:
         default:
             cipher_wpa_psk_hex_set_we_cipher( hexCipher, NM_AUTH_TYPE_WPA_PSK_AUTO );
             cipher_wpa_psk_passphrase_set_we_cipher( ppCipher, NM_AUTH_TYPE_WPA_PSK_AUTO );
@@ -184,12 +184,12 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWpaPerso
         free( rawHashedKey );
         args << QVariant( hashedKey );
         // int32 wpa version
-        if ( auth->version() == Solid::Ifaces::AuthenticationWpaPersonal::Wpa1 )
+        if ( auth->version() == Solid::AuthenticationWpaPersonal::Wpa1 )
             args << QVariant( IW_AUTH_WPA_VERSION_WPA );
         else
             args << QVariant( IW_AUTH_WPA_VERSION_WPA2 );
         // int32 key management
-        if ( auth->keyManagement() == Solid::Ifaces::AuthenticationWpaPersonal::WpaPsk )
+        if ( auth->keyManagement() == Solid::AuthenticationWpaPersonal::WpaPsk )
             args << QVariant( IW_AUTH_KEY_MGMT_PSK );
         else
             args << QVariant( IW_AUTH_KEY_MGMT_802_1X );
@@ -198,7 +198,7 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWpaPerso
     return args;
 }
 
-QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWpaEnterprise * auth, const QString & essid, QList<QVariant> & args, bool * error )
+QList<QVariant> NMDBusHelper::doSerialize( Solid::AuthenticationWpaEnterprise * auth, const QString & essid, QList<QVariant> & args, bool * error )
 {
     Q_UNUSED( essid )
     Q_UNUSED( error )
@@ -207,25 +207,25 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::Ifaces::AuthenticationWpaEnter
     args << NM_AUTH_TYPE_WPA_EAP;
     switch ( auth->method() )
     {
-        case Solid::Ifaces::AuthenticationWpaEnterprise::EapPeap:
+        case Solid::AuthenticationWpaEnterprise::EapPeap:
             args << NM_EAP_METHOD_PEAP;
             break;
-        case Solid::Ifaces::AuthenticationWpaEnterprise::EapTls:
+        case Solid::AuthenticationWpaEnterprise::EapTls:
             args << NM_EAP_METHOD_TLS;
             break;
-        case Solid::Ifaces::AuthenticationWpaEnterprise::EapTtls :
+        case Solid::AuthenticationWpaEnterprise::EapTtls :
             args << NM_EAP_METHOD_TTLS;
             break;
-        case Solid::Ifaces::AuthenticationWpaEnterprise::EapMd5:
+        case Solid::AuthenticationWpaEnterprise::EapMd5:
             args << NM_EAP_METHOD_MD5;
             break;
-        case Solid::Ifaces::AuthenticationWpaEnterprise::EapMsChap:
+        case Solid::AuthenticationWpaEnterprise::EapMsChap:
             args << NM_EAP_METHOD_MSCHAP;
             break;
-        case Solid::Ifaces::AuthenticationWpaEnterprise::EapOtp:
+        case Solid::AuthenticationWpaEnterprise::EapOtp:
             args << NM_EAP_METHOD_OTP;
             break;
-        case Solid::Ifaces::AuthenticationWpaEnterprise::EapGtc:
+        case Solid::AuthenticationWpaEnterprise::EapGtc:
             args << NM_EAP_METHOD_GTC;
             break;
     }
