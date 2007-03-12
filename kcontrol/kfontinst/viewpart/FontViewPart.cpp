@@ -159,9 +159,9 @@ bool CFontViewPart::openUrl(const KUrl &url)
 
     if(KFI_KIO_FONTS_PROTOCOL==url.protocol() || KIO::NetAccess::mostLocalUrl(url, itsFrame).isLocalFile())
     {
-        m_url=url;
+        setUrl(url);
         emit started(0);
-        m_file = m_url.path();
+        setLocalFilePath(this->url().path());
         bool ret=openFile();
         if (ret)
             emit completed();
@@ -182,10 +182,10 @@ bool CFontViewPart::openFile()
 
 void CFontViewPart::timeout()
 {
-    bool          isFonts=KFI_KIO_FONTS_PROTOCOL==m_url.protocol(),
+    bool          isFonts=KFI_KIO_FONTS_PROTOCOL==url().protocol(),
                   isDisabled(false),
                   showFs=false;
-    KUrl          displayUrl(m_url);
+    KUrl          displayUrl(url());
     QString       name;
     unsigned long styleInfo=KFI_NO_STYLE_INFO;
 
@@ -195,7 +195,7 @@ void CFontViewPart::timeout()
 
         FcInitReinitialize();
 
-        if(KIO::NetAccess::stat(m_url, udsEntry, NULL))
+        if(KIO::NetAccess::stat(url(), udsEntry, NULL))
         {
             name=udsEntry.stringValue(KIO::UDS_NAME);
             styleInfo=FC::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
@@ -208,7 +208,7 @@ void CFontViewPart::timeout()
     itsInstallButton->setEnabled(!isFonts && !isInstalled());
     emit setWindowCaption(Misc::prettyUrl(displayUrl));
 
-    itsPreview->showFont(isFonts ? m_url : KUrl::fromPath(m_file), isDisabled ? QString() : name, styleInfo);
+    itsPreview->showFont(isFonts ? url() : KUrl::fromPath(localFilePath()), isDisabled ? QString() : name, styleInfo);
 
     if(!isFonts && CFcEngine::instance()->getNumIndexes()>1)
     {
@@ -228,8 +228,8 @@ void CFontViewPart::previewStatus(bool st)
     bool printable(false);
 
     if(st)
-        if(KFI_KIO_FONTS_PROTOCOL==m_url.protocol())
-            printable=!Misc::isHidden(m_url);
+        if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
+            printable=!Misc::isHidden(url());
 #ifdef KFI_PRINT_APP_FONTS
         {
             KMimeType::Ptr mime=KMimeType::findByUrl(KUrl::fromPath(m_file), 0, false, true);
@@ -258,7 +258,7 @@ void CFontViewPart::install()
                  << "-i"
                  << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
                  << KGlobal::caption().toUtf8()
-                 << m_url.prettyUrl();
+                 << url().prettyUrl();
         itsProc->start(KProcess::NotifyOnExit);
         connect(itsProc, SIGNAL(processExited(KProcess *)), SLOT(installlStatus(KProcess *)));
         itsInstallButton->setEnabled(false);
@@ -296,11 +296,11 @@ void CFontViewPart::print()
         else
             itsProc->clearArguments();
 
-        if(KFI_KIO_FONTS_PROTOCOL==m_url.protocol())
+        if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
         {
             Misc::TFont info;
 
-            CFcEngine::instance()->getInfo(m_url, 0, info);
+            CFcEngine::instance()->getInfo(url(), 0, info);
 
             *itsProc << KFI_APP
                      << "-P"
@@ -341,7 +341,7 @@ void CFontViewPart::showFace(int f)
 
 void CFontViewPart::getMetaInfo()
 {
-    KFileMetaInfo meta(m_url, QString(), KFileMetaInfo::DontCare);
+    KFileMetaInfo meta(url(), QString(), KFileMetaInfo::DontCare);
 
     if(meta.isValid() && !meta.isEmpty())
     {
@@ -384,7 +384,7 @@ bool CFontViewPart::isInstalled()
 {
     bool installed=false;
 
-    if(KFI_KIO_FONTS_PROTOCOL==m_url.protocol())
+    if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
         installed=true;
     else
     {
@@ -392,19 +392,19 @@ bool CFontViewPart::isInstalled()
 
         if(Misc::root())
         {
-            destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+CFcEngine::instance()->getName(m_url);
+            destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+CFcEngine::instance()->getName(url());
             installed=KIO::NetAccess::exists(destUrl, true, itsFrame->parentWidget());
         }
         else
         {
             destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+i18n(KFI_KIO_FONTS_SYS)+QChar('/')+
-                    CFcEngine::instance()->getName(m_url);
+                CFcEngine::instance()->getName(url());
             if(KIO::NetAccess::exists(destUrl, true, itsFrame->parentWidget()))
                 installed=true;
             else
             {
                 destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+i18n(KFI_KIO_FONTS_USER)+QChar('/')+
-                        CFcEngine::instance()->getName(m_url);
+                    CFcEngine::instance()->getName(url());
                 installed=KIO::NetAccess::exists(destUrl, true, itsFrame->parentWidget());
             }
         }
