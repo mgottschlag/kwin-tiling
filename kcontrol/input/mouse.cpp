@@ -533,29 +533,29 @@ void MouseConfig::load()
 
   KConfig ac("kaccessrc");
 
-  ac.setGroup("Mouse");
-  mouseKeys->setChecked(ac.readEntry("MouseKeys", false));
-  mk_delay->setValue(ac.readEntry("MKDelay", 160));
+  KConfigGroup group = ac.group("Mouse");
+  mouseKeys->setChecked(group.readEntry("MouseKeys", false));
+  mk_delay->setValue(group.readEntry("MKDelay", 160));
 
-  int interval = ac.readEntry("MKInterval", 5);
+  int interval = group.readEntry("MKInterval", 5);
   mk_interval->setValue(interval);
 
   // Default time to reach maximum speed: 5000 msec
-  int time_to_max = ac.readEntry("MKTimeToMax", (5000+interval/2)/interval);
-  time_to_max = ac.readEntry("MK-TimeToMax", time_to_max*interval);
+  int time_to_max = group.readEntry("MKTimeToMax", (5000+interval/2)/interval);
+  time_to_max = group.readEntry("MK-TimeToMax", time_to_max*interval);
   mk_time_to_max->setValue(time_to_max);
 
   // Default maximum speed: 1000 pixels/sec
   //     (The old default maximum speed from KDE <= 3.4
   //     (100000 pixels/sec) was way too fast)
-  long max_speed = ac.readEntry("MKMaxSpeed", interval);
+  long max_speed = group.readEntry("MKMaxSpeed", interval);
   max_speed = max_speed * 1000 / interval;
   if (max_speed > 2000)
      max_speed = 2000;
-  max_speed = ac.readEntry("MK-MaxSpeed", int(max_speed));
+  max_speed = group.readEntry("MK-MaxSpeed", int(max_speed));
   mk_max_speed->setValue(max_speed);
 
-  mk_curve->setValue(ac.readEntry("MKCurve", 0));
+  mk_curve->setValue(group.readEntry("MKCurve", 0));
 
   themetab->load();
 
@@ -586,21 +586,21 @@ void MouseConfig::save()
 
   KConfig ac("kaccessrc");
 
-  ac.setGroup("Mouse");
+  KConfigGroup group = ac.group("Mouse");
 
   int interval = mk_interval->value();
-  ac.writeEntry("MouseKeys", mouseKeys->isChecked());
-  ac.writeEntry("MKDelay", mk_delay->value());
-  ac.writeEntry("MKInterval", interval);
-  ac.writeEntry("MK-TimeToMax", mk_time_to_max->value());
-  ac.writeEntry("MKTimeToMax",
+  group.writeEntry("MouseKeys", mouseKeys->isChecked());
+  group.writeEntry("MKDelay", mk_delay->value());
+  group.writeEntry("MKInterval", interval);
+  group.writeEntry("MK-TimeToMax", mk_time_to_max->value());
+  group.writeEntry("MKTimeToMax",
                 (mk_time_to_max->value() + interval/2)/interval);
-  ac.writeEntry("MK-MaxSpeed", mk_max_speed->value());
-  ac.writeEntry("MKMaxSpeed",
+  group.writeEntry("MK-MaxSpeed", mk_max_speed->value());
+  group.writeEntry("MKMaxSpeed",
 					 (mk_max_speed->value()*interval + 500)/1000);
-   ac.writeEntry("MKCurve", mk_curve->value());
-  ac.sync();
-  ac.writeEntry("MKCurve", mk_curve->value());
+   group.writeEntry("MKCurve", mk_curve->value());
+  group.sync();
+  group.writeEntry("MKCurve", mk_curve->value());
 
   themetab->save();
 
@@ -708,20 +708,20 @@ void MouseSettings::load(KConfig *config)
     }
   }
 
-  config->setGroup("Mouse");
-  double a = config->readEntry("Acceleration",-1);
+  KConfigGroup group = config->group("Mouse");
+  double a = group.readEntry("Acceleration",-1);
   if (a == -1)
     accelRate = accel;
   else
     accelRate = a;
 
-  int t = config->readEntry("Threshold",-1);
+  int t = group.readEntry("Threshold",-1);
   if (t == -1)
     thresholdMove = threshold;
   else
     thresholdMove = t;
 
-  QString key = config->readEntry("MouseButtonMapping");
+  QString key = group.readEntry("MouseButtonMapping");
   if (key == "RightHanded")
     handed = RIGHT_HANDED;
   else if (key == "LeftHanded")
@@ -731,20 +731,20 @@ void MouseSettings::load(KConfig *config)
 #endif
   else if (key.isNull())
     handed = h;
-  reverseScrollPolarity = config->readEntry( "ReverseScrollPolarity", false);
+  reverseScrollPolarity = group.readEntry( "ReverseScrollPolarity", false);
   m_handedNeedsApply = false;
 
   // SC/DC/AutoSelect/ChangeCursor
-  config->setGroup("KDE");
-  doubleClickInterval = config->readEntry("DoubleClickInterval", 400);
-  dragStartTime = config->readEntry("StartDragTime", 500);
-  dragStartDist = config->readEntry("StartDragDist", 4);
-  wheelScrollLines = config->readEntry("WheelScrollLines", 3);
+  group = config->group("KDE");
+  doubleClickInterval = group.readEntry("DoubleClickInterval", 400);
+  dragStartTime = group.readEntry("StartDragTime", 500);
+  dragStartDist = group.readEntry("StartDragDist", 4);
+  wheelScrollLines = group.readEntry("WheelScrollLines", 3);
 
-  singleClick = config->readEntry("SingleClick", KDE_DEFAULT_SINGLECLICK);
-  autoSelectDelay = config->readEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
-  visualActivate = config->readEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
-  changeCursor = config->readEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
+  singleClick = group.readEntry("SingleClick", KDE_DEFAULT_SINGLECLICK);
+  autoSelectDelay = group.readEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
+  visualActivate = group.readEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
+  changeCursor = group.readEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
 }
 
 void MouseConfig::slotThreshChanged(int value)
@@ -839,24 +839,24 @@ void MouseSettings::apply(bool force)
 
 void MouseSettings::save(KConfig *config)
 {
-  config->setGroup("Mouse");
-  config->writeEntry("Acceleration",accelRate);
-  config->writeEntry("Threshold",thresholdMove);
+  KConfigGroup group = config->group("Mouse");
+  group.writeEntry("Acceleration",accelRate);
+  group.writeEntry("Threshold",thresholdMove);
   if (handed == RIGHT_HANDED)
-      config->writeEntry("MouseButtonMapping",QString("RightHanded"));
+      group.writeEntry("MouseButtonMapping",QString("RightHanded"));
   else
-      config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
-  config->writeEntry( "ReverseScrollPolarity", reverseScrollPolarity );
+      group.writeEntry("MouseButtonMapping",QString("LeftHanded"));
+  group.writeEntry( "ReverseScrollPolarity", reverseScrollPolarity );
 
-  config->setGroup("KDE");
-  config->writeEntry("DoubleClickInterval", doubleClickInterval, KConfigBase::Persistent|KConfigBase::Global);
-  config->writeEntry("StartDragTime", dragStartTime, KConfigBase::Persistent|KConfigBase::Global);
-  config->writeEntry("StartDragDist", dragStartDist, KConfigBase::Persistent|KConfigBase::Global);
-  config->writeEntry("WheelScrollLines", wheelScrollLines, KConfigBase::Persistent|KConfigBase::Global);
-  config->writeEntry("SingleClick", singleClick, KConfigBase::Persistent|KConfigBase::Global);
-  config->writeEntry("AutoSelectDelay", autoSelectDelay, KConfigBase::Persistent|KConfigBase::Global);
-  config->writeEntry("VisualActivate", visualActivate, KConfigBase::Persistent|KConfigBase::Global);
-  config->writeEntry("ChangeCursor", changeCursor,KConfigBase::Persistent|KConfigBase::Global);
+  group = config->group("KDE");
+  group.writeEntry("DoubleClickInterval", doubleClickInterval, KConfigBase::Persistent|KConfigBase::Global);
+  group.writeEntry("StartDragTime", dragStartTime, KConfigBase::Persistent|KConfigBase::Global);
+  group.writeEntry("StartDragDist", dragStartDist, KConfigBase::Persistent|KConfigBase::Global);
+  group.writeEntry("WheelScrollLines", wheelScrollLines, KConfigBase::Persistent|KConfigBase::Global);
+  group.writeEntry("SingleClick", singleClick, KConfigBase::Persistent|KConfigBase::Global);
+  group.writeEntry("AutoSelectDelay", autoSelectDelay, KConfigBase::Persistent|KConfigBase::Global);
+  group.writeEntry("VisualActivate", visualActivate, KConfigBase::Persistent|KConfigBase::Global);
+  group.writeEntry("ChangeCursor", changeCursor,KConfigBase::Persistent|KConfigBase::Global);
   // This iterates through the various Logitech mice, if we have support.
 #ifdef HAVE_LIBUSB
   LogitechMouse *logitechMouse;

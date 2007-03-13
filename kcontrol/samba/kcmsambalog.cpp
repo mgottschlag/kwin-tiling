@@ -131,25 +131,25 @@ LogView::LogView(QWidget *parent,KConfig *config)
 void LogView::loadSettings()
 {
    if (configFile==0) return;
-   configFile->setGroup(LOGGROUPNAME);
-   logFileName.setPath(configFile->readPathEntry( "SambaLogFile", "/var/log/samba.log"));
+   KConfigGroup group = configFile->group(LOGGROUPNAME);
+   logFileName.setPath(group.readPathEntry( "SambaLogFile", "/var/log/samba.log"));
 
-   showConnOpen.setChecked(configFile->readEntry( "ShowConnectionOpen", true));
-   showConnClose.setChecked(configFile->readEntry( "ShowConnectionClose", false));
-   showFileOpen.setChecked(configFile->readEntry( "ShowFileOpen", true));
-   showFileClose.setChecked(configFile->readEntry( "ShowFileClose", false));
+   showConnOpen.setChecked(group.readEntry( "ShowConnectionOpen", true));
+   showConnClose.setChecked(group.readEntry( "ShowConnectionClose", false));
+   showFileOpen.setChecked(group.readEntry( "ShowFileOpen", true));
+   showFileClose.setChecked(group.readEntry( "ShowFileClose", false));
 }
 
 void LogView::saveSettings()
 {
    if (configFile==0) return;
-   configFile->setGroup(LOGGROUPNAME);
-   configFile->writePathEntry( "SambaLogFile", logFileName.url().path());
+   KConfigGroup group = configFile->group(LOGGROUPNAME);
+   group.writePathEntry( "SambaLogFile", logFileName.url().path());
 
-   configFile->writeEntry( "ShowConnectionOpen", showConnOpen.isChecked());
-   configFile->writeEntry( "ShowConnectionClose", showConnClose.isChecked());
-   configFile->writeEntry( "ShowFileOpen", showFileOpen.isChecked());
-   configFile->writeEntry( "ShowFileClose", showFileClose.isChecked());
+   group.writeEntry( "ShowConnectionOpen", showConnOpen.isChecked());
+   group.writeEntry( "ShowConnectionClose", showConnClose.isChecked());
+   group.writeEntry( "ShowFileOpen", showFileOpen.isChecked());
+   group.writeEntry( "ShowFileClose", showFileClose.isChecked());
 }
 
 #define CONN_OPEN " connect to service "
