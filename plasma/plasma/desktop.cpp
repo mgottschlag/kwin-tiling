@@ -4,7 +4,8 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QDebug>
-
+#include <QGLWidget>
+#include <QGLWidget>
 #include <KWin>
 
 #include "widgets/pushbutton.h"
@@ -18,6 +19,7 @@ Desktop::Desktop(QWidget *parent)
     : QGraphicsView(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint | Qt::Desktop);
+    //setViewport(new QGLWidget  ( QGLFormat(QGL::StencilBuffer | QGL::AlphaChannel)   ));
 
     int primaryScreen = QApplication::desktop()->primaryScreen();
     QRect desktopSize = QApplication::desktop()->screenGeometry(primaryScreen);
@@ -49,8 +51,13 @@ Desktop::Desktop(QWidget *parent)
     KWin::setState(winId(), NET::SkipPager);
     KWin::setOnAllDesktops(winId(), true);
 
+        
+    //[mX] strange observation.. 
+        //try the following loop..takes only 19 - 21 MB so strange! 
+    
+    int count=0;
     // Tmp
-    for (int i = 0; i < 400; i++)
+    for (int i = 0; i < 20; i++)
     {
 /*
         Plasma::Clock *testClock = new Plasma::Clock;
@@ -59,15 +66,17 @@ Desktop::Desktop(QWidget *parent)
         Plasma::LineEdit *testLineEdit = new Plasma::LineEdit;
         m_graphicsScene->addItem(testLineEdit);
 */
+    for (int j = 0 ; j < 20 ; j++) {
 
         Plasma::PushButton *testButton = new Plasma::PushButton;
         testButton->setText(QString::number(i));
+        testButton->moveBy(j*testButton->width()/2, i*testButton->height()/2);
         m_graphicsScene->addItem(testButton);
-
-        int x = (qrand() % 275);
-        int y = (qrand() % 275);
-        qDebug() << "moving to: " << x << "," << y;
-        testButton->moveBy(x, y);
+        count++;
+     //   int x = (qrand() % 275);
+      //  int y = (qrand() % 275);
+        qDebug() << "moving to: " << count ;
+        }
     }
 }
 
