@@ -100,20 +100,20 @@ void KScreenSaverAdvancedDialog::accept()
 {
 	if (mChanged)
   {
-		KConfig *config = new KConfig("kscreensaverrc");
-  	config->setGroup( "ScreenSaver" );
+	KConfig *config = new KConfig("kscreensaverrc");
+	KConfigGroup group= config->group("ScreenSaver");
 
- 		config->writeEntry("Priority", mPriority);
-  	config->writeEntry(
+ 	group.writeEntry("Priority", mPriority);
+  	group.writeEntry(
  		"ActionTopLeft", dialog->qcbTopLeft->currentIndex());
-  	config->writeEntry(
+  	group.writeEntry(
  		"ActionTopRight", dialog->qcbTopRight->currentIndex());
-  	config->writeEntry(
+  	group.writeEntry(
 		"ActionBottomLeft", dialog->qcbBottomLeft->currentIndex());
-  	config->writeEntry(
+  	group.writeEntry(
  		"ActionBottomRight", dialog->qcbBottomRight->currentIndex());
-  	config->sync();
- 		delete config;
+  	group.sync();
+ 	delete config;
  	}
 
   KDialog::accept();

@@ -134,21 +134,21 @@ KCMXinerama::~KCMXinerama() {
 void KCMXinerama::load() {
 	if (QApplication::desktop()->isVirtualDesktop()) {
 		int item = 0;
-		config->setGroup("Windows");
-		xw->_enableXinerama->setChecked(config->readEntry(KWIN_XINERAMA, true));
-		xw->_enableResistance->setChecked(config->readEntry(KWIN_XINERAMA_MOVEMENT, true));
-		xw->_enablePlacement->setChecked(config->readEntry(KWIN_XINERAMA_PLACEMENT, true));
-		xw->_enableMaximize->setChecked(config->readEntry(KWIN_XINERAMA_MAXIMIZE, true));
-		xw->_enableFullscreen->setChecked(config->readEntry(KWIN_XINERAMA_FULLSCREEN, true));
-		item = config->readEntry("Unmanaged", QApplication::desktop()->primaryScreen());
+		KConfigGroup group = config->group("Windows");
+		xw->_enableXinerama->setChecked(group.readEntry(KWIN_XINERAMA, true));
+		xw->_enableResistance->setChecked(group.readEntry(KWIN_XINERAMA_MOVEMENT, true));
+		xw->_enablePlacement->setChecked(group.readEntry(KWIN_XINERAMA_PLACEMENT, true));
+		xw->_enableMaximize->setChecked(group.readEntry(KWIN_XINERAMA_MAXIMIZE, true));
+		xw->_enableFullscreen->setChecked(group.readEntry(KWIN_XINERAMA_FULLSCREEN, true));
+		item = group.readEntry("Unmanaged", QApplication::desktop()->primaryScreen());
 		if ((item < 0 || item >= _displays) && (item != -3))
 			xw->_unmanagedDisplay->setCurrentIndex(QApplication::desktop()->primaryScreen());
 		else if (item == -3) // pointer warp
 			xw->_unmanagedDisplay->setCurrentIndex(_displays);
 		else	xw->_unmanagedDisplay->setCurrentIndex(item);
 
-		ksplashrc->setGroup("Xinerama");
-		item = ksplashrc->readEntry("KSplashScreen", QApplication::desktop()->primaryScreen());
+		group =ksplashrc->group("Xinerama");
+		item = group.readEntry("KSplashScreen", QApplication::desktop()->primaryScreen());
 		if (item < 0 || item >= _displays)
 			xw->_ksplashDisplay->setCurrentIndex(QApplication::desktop()->primaryScreen());
 		else xw->_ksplashDisplay->setCurrentIndex(item);
@@ -160,27 +160,27 @@ void KCMXinerama::load() {
 
 void KCMXinerama::save() {
 	if (QApplication::desktop()->isVirtualDesktop()) {
-		config->setGroup("Windows");
-		config->writeEntry(KWIN_XINERAMA,
+		KConfigGroup group = config->group("Windows");
+		group.writeEntry(KWIN_XINERAMA,
 					xw->_enableXinerama->isChecked());
-		config->writeEntry(KWIN_XINERAMA_MOVEMENT,
+		group.writeEntry(KWIN_XINERAMA_MOVEMENT,
 					xw->_enableResistance->isChecked());
-		config->writeEntry(KWIN_XINERAMA_PLACEMENT,
+		group.writeEntry(KWIN_XINERAMA_PLACEMENT,
 					xw->_enablePlacement->isChecked());
-		config->writeEntry(KWIN_XINERAMA_MAXIMIZE,
+		group.writeEntry(KWIN_XINERAMA_MAXIMIZE,
 					xw->_enableMaximize->isChecked());
-		config->writeEntry(KWIN_XINERAMA_FULLSCREEN,
+		group.writeEntry(KWIN_XINERAMA_FULLSCREEN,
 					xw->_enableFullscreen->isChecked());
 		int item = xw->_unmanagedDisplay->currentIndex();
-		config->writeEntry("Unmanaged", item == _displays ? -3 : item);
-		config->sync();
+		group.writeEntry("Unmanaged", item == _displays ? -3 : item);
+		group.sync();
                 
                 org::kde::KWin kwin("org.kde.kwin", "/KWin", QDBusConnection::sessionBus());
                 kwin.reconfigure();
 
-		ksplashrc->setGroup("Xinerama");
-		ksplashrc->writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentIndex() : -2 /* ignore Xinerama */);
-		ksplashrc->sync();
+		group = config->group("Xinerama");
+		group.writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentIndex() : -2 /* ignore Xinerama */);
+		group.sync();
 	}
 
 	KMessageBox::information(this, i18n("Some settings may affect only newly started applications."), i18n("KDE Multiple Monitors"), "nomorexineramaplease");
