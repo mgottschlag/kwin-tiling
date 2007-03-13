@@ -55,7 +55,8 @@ int main(int argc, char* argv[])
     Display *dpy = XOpenDisplay(0); // open default display
     if (!dpy)
     {
-        kFatal() << "Cannot connect to the X server" << endl;
+        kError() << "Cannot connect to the X server" << endl;
+        return 1;
     }
 
     bool argbVisual = false ;
