@@ -90,8 +90,8 @@ void KSMShutdownFeedback::slotPaintEffect()
 ////////////
 
 KSMPushButton::KSMPushButton( const QString &text, QWidget *parent )
- : QPushButton( parent ), m_highlight( false ), m_popupMenu(0), m_popupTimer(0), 
-   m_glowOpacity( 0.0 ), m_text( text )
+ : QPushButton( parent ),  m_highlight( false ), m_text( text ), m_popupMenu(0), m_popupTimer(0), 
+   m_glowOpacity( 0.0 )
 {
     setAttribute(Qt::WA_Hover, true);
     init();
