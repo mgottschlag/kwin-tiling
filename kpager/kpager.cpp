@@ -137,17 +137,16 @@ extern bool closed_by_sm;
 
 bool KPagerMainWindow::queryClose()
 {
-    KSharedConfig::Ptr cfg = KGlobal::config();
+    KConfigGroup cfg = KGlobal::config()->group("KPager");
 
-    cfg->setGroup("KPager");
-    cfg->writeEntry("layoutType", static_cast<int>(m_pPager->m_layoutType));
-    cfg->writeEntry(m_pPager->lWidth(),width());
-    cfg->writeEntry(m_pPager->lHeight(),height());
-    cfg->writeEntry("xPos",x());
-    cfg->writeEntry("yPos",y());
-    cfg->sync();
+    cfg.writeEntry("layoutType", static_cast<int>(m_pPager->m_layoutType));
+    cfg.writeEntry(m_pPager->lWidth(),width());
+    cfg.writeEntry(m_pPager->lHeight(),height());
+    cfg.writeEntry("xPos",x());
+    cfg.writeEntry("yPos",y());
+    cfg.sync();
 
-	kDebug() << "queryCLose " << m_reallyClose << " " << closed_by_sm << endl;
+    kDebug() << "queryCLose " << m_reallyClose << " " << closed_by_sm << endl;
     if (m_reallyClose || closed_by_sm) return true;
 
     hide();
@@ -380,21 +379,20 @@ void KPager::configureDialog()
     if (dialog->exec())
     {
         m_layoutType=static_cast<enum KPager::LayoutTypes>(KPagerConfigDialog::m_layoutType);
-	KSharedConfig::Ptr cfg = KGlobal::config();
+	KConfigGroup cfg = KGlobal::config()->group("KPager");
 	int nWd = (parent() ? ((QWidget *)parent())->width() : width());
 	int nHg = (parent() ? ((QWidget *)parent())->width() : width());
 
-	cfg->setGroup("KPager");
 
-	cfg->writeEntry(lWidth(),nWd);
-	cfg->writeEntry(lHeight(),nHg);
-	cfg->writeEntry("windowDrawMode",KPagerConfigDialog::m_windowDrawMode);
-	cfg->writeEntry("layoutType",KPagerConfigDialog::m_layoutType);
-	cfg->writeEntry("showNumber",KPagerConfigDialog::m_showNumber);
-	cfg->writeEntry("showName",KPagerConfigDialog::m_showName);
-	cfg->writeEntry("showWindows",KPagerConfigDialog::m_showWindows);
-	cfg->writeEntry("showBackground",KPagerConfigDialog::m_showBackground);
-	cfg->writeEntry("windowDragging",KPagerConfigDialog::m_windowDragging);
+	cfg.writeEntry(lWidth(),nWd);
+	cfg.writeEntry(lHeight(),nHg);
+	cfg.writeEntry("windowDrawMode",KPagerConfigDialog::m_windowDrawMode);
+	cfg.writeEntry("layoutType",KPagerConfigDialog::m_layoutType);
+	cfg.writeEntry("showNumber",KPagerConfigDialog::m_showNumber);
+	cfg.writeEntry("showName",KPagerConfigDialog::m_showName);
+	cfg.writeEntry("showWindows",KPagerConfigDialog::m_showWindows);
+	cfg.writeEntry("showBackground",KPagerConfigDialog::m_showBackground);
+	cfg.writeEntry("windowDragging",KPagerConfigDialog::m_windowDragging);
 
         updateLayout();
         for( QList <Desktop *>::Iterator it = m_desktops.begin(); it != m_desktops.end(); ++it )
