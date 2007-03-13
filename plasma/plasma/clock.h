@@ -63,8 +63,7 @@ class Clock : public DataVisualization,
 
     public slots:
         void drawSeconds();
-        void data(const DataSource::Data& data) {}
-
+        void data(const DataSource::Data& data);
 
     protected:
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);

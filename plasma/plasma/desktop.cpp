@@ -3,8 +3,12 @@
 #include <QVBoxLayout>
 #include <QDesktopWidget>
 #include <QApplication>
+#include <QDebug>
 
 #include <KWin>
+
+#include "widgets/pushbutton.h"
+#include "widgets/lineedit.h"
 
 #include "clock.h"
 #include "desktop.h"
@@ -46,10 +50,24 @@ Desktop::Desktop(QWidget *parent)
     KWin::setOnAllDesktops(winId(), true);
 
     // Tmp
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 400; i++)
     {
+/*
         Plasma::Clock *testClock = new Plasma::Clock;
         m_graphicsScene->addItem(testClock);
+
+        Plasma::LineEdit *testLineEdit = new Plasma::LineEdit;
+        m_graphicsScene->addItem(testLineEdit);
+*/
+
+        Plasma::PushButton *testButton = new Plasma::PushButton;
+        testButton->setText(QString::number(i));
+        m_graphicsScene->addItem(testButton);
+
+        int x = (qrand() % 275);
+        int y = (qrand() % 275);
+        qDebug() << "moving to: " << x << "," << y;
+        testButton->moveBy(x, y);
     }
 }
 

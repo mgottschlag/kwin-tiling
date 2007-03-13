@@ -53,6 +53,10 @@ QRectF Clock::boundingRect() const
     return m_rect;
 }
 
+void Clock::data(const DataSource::Data &data)
+{
+}
+
 void Clock::setPath(QString str)
 {
     prefix  = str+"/";
@@ -130,8 +134,9 @@ void Clock::drawSeconds()
 
 void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    QRectF r = option->exposedRect;
+    Q_UNUSED(widget)
 
+    QRectF r = option->exposedRect;
     p->setRenderHint (QPainter::SmoothPixmapTransform);
     //  if (shade == 0)
     //  {
