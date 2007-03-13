@@ -159,9 +159,7 @@ LaunchConfig::slotTaskbarButton(bool b)
   void
 LaunchConfig::load()
 {
-  KConfig c("klaunchrc", KConfig::NoGlobals);
-
-  c.setGroup("FeedbackStyle");
+  KConfigGroup c =KConfig("klaunchrc", KConfig::NoGlobals).group("FeedbackStyle");
 
   bool busyCursor =
     c.readEntry("BusyCursor", (Default & BusyCursor));
@@ -171,7 +169,7 @@ LaunchConfig::load()
 
   cb_taskbarButton->setChecked(taskbarButton);
 
-  c.setGroup( "BusyCursorSettings" );
+  c= KConfig("klaunchrc", KConfig::NoGlobals).group( "BusyCursorSettings" );
   sb_cursorTimeout->setValue( c.readEntry( "Timeout", 30 ));
   bool busyBlinking =c.readEntry("Blinking", false);
   bool busyBouncing =c.readEntry("Bouncing", true);
@@ -184,7 +182,7 @@ LaunchConfig::load()
   else
      cb_busyCursor->setCurrentIndex(1);
 
-  c.setGroup( "TaskbarButtonSettings" );
+  c= KConfig("klaunchrc", KConfig::NoGlobals).group( "TaskbarButtonSettings" );
   sb_taskbarTimeout->setValue( c.readEntry( "Timeout", 30 ));
 
   slotBusyCursor( cb_busyCursor->currentIndex() );
@@ -196,18 +194,17 @@ LaunchConfig::load()
   void
 LaunchConfig::save()
 {
-  KConfig c("klaunchrc", KConfig::NoGlobals);
+  KConfigGroup  c = KConfig("klaunchrc", KConfig::NoGlobals).group("FeedbackStyle");
 
-  c.setGroup("FeedbackStyle");
   c.writeEntry("BusyCursor",   cb_busyCursor->currentIndex() != 0);
   c.writeEntry("TaskbarButton", cb_taskbarButton->isChecked());
 
-  c.setGroup( "BusyCursorSettings" );
+  c = KConfig("klaunchrc", KConfig::NoGlobals).group("BusyCursorSettings");
   c.writeEntry( "Timeout", sb_cursorTimeout->value());
   c.writeEntry("Blinking", cb_busyCursor->currentIndex() == 2);
   c.writeEntry("Bouncing", cb_busyCursor->currentIndex() == 3);
 
-  c.setGroup( "TaskbarButtonSettings" );
+  c = KConfig("klaunchrc", KConfig::NoGlobals).group("TaskbarButtonSettings");
   c.writeEntry( "Timeout", sb_taskbarTimeout->value());
 
   c.sync();
@@ -238,9 +235,7 @@ LaunchConfig::defaults()
   void
 LaunchConfig::checkChanged()
 {
-  KConfig c("klaunchrc", KConfig::NoGlobals);
-
-  c.setGroup("FeedbackStyle");
+  KConfigGroup  c = KConfig("klaunchrc", KConfig::NoGlobals).group("FeedbackStyle");
 
   bool savedBusyCursor =
     c.readEntry("BusyCursor", (Default & BusyCursor));
@@ -248,12 +243,12 @@ LaunchConfig::checkChanged()
   bool savedTaskbarButton =
     c.readEntry("TaskbarButton", (Default & TaskbarButton));
 
-  c.setGroup( "BusyCursorSettings" );
+  c = KConfig("klaunchrc", KConfig::NoGlobals).group("BusyCursorSettings");
   unsigned int savedCursorTimeout = c.readEntry( "Timeout", 30 );
   bool savedBusyBlinking =c.readEntry("Blinking", false);
   bool savedBusyBouncing =c.readEntry("Bouncing", true);
 
-  c.setGroup( "TaskbarButtonSettings" );
+  c = KConfig("klaunchrc", KConfig::NoGlobals).group("TaskbarButtonSettings");
   unsigned int savedTaskbarTimeout = c.readEntry( "Timeout", 30 );
 
   bool newBusyCursor =cb_busyCursor->currentIndex()!=0;
