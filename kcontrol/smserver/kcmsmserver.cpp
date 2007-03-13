@@ -94,23 +94,23 @@ void SMServerConfig::load()
 void SMServerConfig::save()
 {
   KConfig *c = new KConfig("ksmserverrc", KConfig::NoGlobals);
-  c->setGroup("General");
-  c->writeEntry( "confirmLogout", dialog->confirmLogoutCheck->isChecked());
-  c->writeEntry( "offerShutdown", dialog->offerShutdownCheck->isChecked());
+  KConfigGroup group = c->group("General");
+  group.writeEntry( "confirmLogout", dialog->confirmLogoutCheck->isChecked());
+  group.writeEntry( "offerShutdown", dialog->offerShutdownCheck->isChecked());
   QString s = "restorePreviousLogout";
   if ( dialog->emptySessionRadio->isChecked() )
       s = "default";
   else if ( dialog->savedSessionRadio->isChecked() )
       s = "restoreSavedSession";
-  c->writeEntry( "loginMode", s );
+  group.writeEntry( "loginMode", s );
 
-  c->writeEntry( "shutdownType",
+  group.writeEntry( "shutdownType",
                  dialog->haltRadio->isChecked() ?
                    int(KWorkSpace::ShutdownTypeHalt) :
                    dialog->rebootRadio->isChecked() ?
                      int(KWorkSpace::ShutdownTypeReboot) :
                      int(KWorkSpace::ShutdownTypeNone));
-  c->writeEntry("excludeApps", dialog->excludeLineedit->text());
+  group.writeEntry("excludeApps", dialog->excludeLineedit->text());
   c->sync();
   delete c;
 

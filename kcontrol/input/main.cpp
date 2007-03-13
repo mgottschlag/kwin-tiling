@@ -51,9 +51,9 @@ extern "C"
     settings.apply(true); // force
 
 #ifdef HAVE_XCURSOR
-    config->setGroup("Mouse");
-    QString theme = config->readEntry("cursorTheme", QString());
-    QString size = config->readEntry("cursorSize", QString());
+    KConfigGroup group = config->group("Mouse");
+    QString theme = group.readEntry("cursorTheme", QString());
+    QString size = group.readEntry("cursorSize", QString());
 
     // Note: If you update this code, update kapplymousetheme as well.
 

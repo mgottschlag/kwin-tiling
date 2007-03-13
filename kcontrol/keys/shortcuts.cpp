@@ -407,8 +407,8 @@ void ShortcutsModule::slotSaveSchemeAs()
 
 	KConfig *config = new KConfig( sFile, KConfig::OnlyLocal);
 
-	config->setGroup( "Settings" );
-	config->writeEntry( "Name", sName );
+	KConfigGroup group = config->group("Settings");
+	group.writeEntry( "Name", sName );
 	delete config;
 
 	saveScheme();

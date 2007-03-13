@@ -203,10 +203,10 @@ void KBellConfig::save()
   {
     KConfig config("kaccessrc");
 
-    config.setGroup("Bell");
-    config.writeEntry("SystemBell", false);
-    config.writeEntry("ArtsBell", false);
-    config.writeEntry("VisibleBell", false);
+    KConfigGroup group = config.group("Bell");
+    group.writeEntry("SystemBell", false);
+    group.writeEntry("ArtsBell", false);
+    group.writeEntry("VisibleBell", false);
   }
 }
 

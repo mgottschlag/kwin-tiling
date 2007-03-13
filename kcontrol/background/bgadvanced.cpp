@@ -94,8 +94,8 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    if (m_multidesktop)
    {
       KConfig cfg(desktopConfigname( ), KConfig::NoGlobals );
-      cfg.setGroup( "General" );
-      if (!cfg.readEntry( "Enabled", true ))
+      KConfigGroup group = cfg.group("General");
+      if (!group.readEntry( "Enabled", true ))
       {
          dlg->m_groupIconText->hide();
       }

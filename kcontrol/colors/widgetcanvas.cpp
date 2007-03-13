@@ -288,15 +288,14 @@ void WidgetCanvas::drawSampleWidgets()
     QFont windowFontGuess(KGlobalSettings::generalFont().family(), 12, QFont::SansSerif, true);
     windowFontGuess.setPixelSize(12);
 
-    c->setGroup("WM");
-    QFont windowFont = c->readEntry("activeFont", windowFontGuess);
+    KConfigGroup group = c->group("WM");
+    QFont windowFont = group.readEntry("activeFont", windowFontGuess);
 
-    c->setGroup("General");
+    group = c->group("General");
     QFont defaultMenuFont = KGlobalSettings::menuFont();
-    QFont menuFont = c->readEntry("menuFont", defaultMenuFont);
+    QFont menuFont = group.readEntry("menuFont", defaultMenuFont);
 
     delete c;
-    c = 0;
 
     // Calculate the highlight and lowloght from contrast value and create
     // color group from color scheme.
