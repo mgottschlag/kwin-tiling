@@ -261,8 +261,6 @@ void SystemTrayApplet::applySettings()
         return;
     }
 
-    KConfig *conf = config();
-
     // Save the sort order and hidden status using the window class (WM_CLASS) rather
     // than window name (caption) - window name is i18n-ed, so it's for example
     // not possible to create default settings.
@@ -281,7 +279,7 @@ void SystemTrayApplet::applySettings()
         windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
 
-    conf->setGroup("SortedTrayIcons");
+    KConfigGroup group = config()->group("SortedTrayIcons");
     m_sortOrderIconList.clear();
     QList<QListWidgetItem*> list = m_iconSelector->availableListWidget()->findItems(QString("*"), Qt::MatchRegExp);
     foreach (QListWidgetItem* item, list)
@@ -291,9 +289,9 @@ void SystemTrayApplet::applySettings()
         else
             m_sortOrderIconList.append(item->text());
     }
-    conf->writeEntry("SortOrder", m_sortOrderIconList);
+    group.writeEntry("SortOrder", m_sortOrderIconList);
 
-    conf->setGroup("HiddenTrayIcons");
+    group = config()->group("HiddenTrayIcons");
     m_hiddenIconList.clear();
     list = m_iconSelector->availableListWidget()->findItems(QString("*"), Qt::MatchRegExp);
     foreach (QListWidgetItem* item, list)
@@ -303,8 +301,9 @@ void SystemTrayApplet::applySettings()
         else
             m_hiddenIconList.append(item->text());
     }
-    conf->writeEntry("Hidden", m_hiddenIconList);
-    conf->sync();
+
+    group.writeEntry("Hidden", m_hiddenIconList);
+    group.sync();
 
     TrayEmbedList::iterator it = m_shownWins.begin();
     while (it != m_shownWins.end())
