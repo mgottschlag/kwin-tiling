@@ -46,6 +46,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <QDesktopWidget>
 #include <QTimeLine>
 
+#define GLOW_WIDTH 3
+
 KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
 KSMShutdownFeedback::KSMShutdownFeedback()
@@ -94,19 +96,20 @@ KSMPushButton::KSMPushButton( const QString &text, QWidget *parent )
    m_glowOpacity( 0.0 )
 {
     setAttribute(Qt::WA_Hover, true);
+    m_text = text;
     init();
 }
 
 void KSMPushButton::init()
 {
-    setMinimumSize( 100, 100 );
+    setMinimumSize( 85 + GLOW_WIDTH, 85 + GLOW_WIDTH );
     connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
     connect( this, SIGNAL(released()), SLOT(slotReleased()) );
 
     m_glowSvg = new Plasma::Svg( "background/shutdowndlgbuttonglow", this );
     connect( m_glowSvg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
 
-    m_glowTimeLine = new QTimeLine( 200, this );
+    m_glowTimeLine = new QTimeLine( 150, this );
     connect( m_glowTimeLine, SIGNAL(valueChanged(qreal)),
             this, SLOT(animateGlow(qreal)) );
 
@@ -115,8 +118,8 @@ void KSMPushButton::init()
     fnt.setBold( true );
     // Calculate the width of the text when splitted on two lines and
     // properly resize the button.
-    if( QFontMetrics(fnt).width( m_text ) > width()-4 ||
-          2 * QFontMetrics(fnt).lineSpacing() > height()-52 ) {
+    if( QFontMetrics(fnt).width( m_text ) > width()-4-(2*GLOW_WIDTH) ||
+          2 * QFontMetrics(fnt).lineSpacing() > height()-54-(2*GLOW_WIDTH) ) {
         int w, h;
         int i = m_text.length()/2;
         int fac = 1;
@@ -130,7 +133,7 @@ void KSMPushButton::init()
         QString lower = m_text.right( m_text.length() - i );
         w = QMAX( QFontMetrics(fnt).width( upper ) + 6, QFontMetrics(fnt).width( lower ) + 6 );
         w = QMAX( w, width() );
-        h = QMAX( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 );
+        h = QMAX( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 + GLOW_WIDTH );
         if( w > width() || h > height()) {
             setMinimumSize( w, h );
             updateGeometry();
@@ -160,25 +163,25 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
         p.restore();
     }
 
-    p.drawRect( QRect( 5, 5, width()-10, height()-10 ) );
+    p.setRenderHints( QPainter::Antialiasing, false);
+    p.drawRect( QRect( GLOW_WIDTH, GLOW_WIDTH, width()-(2*GLOW_WIDTH), height()-(2*GLOW_WIDTH) ) );
     p.drawPixmap( width()/2 - 16, 14, m_pixmap );
 
     p.save();
-    p.translate( 5, 55 );
+    p.translate( 0, 50 );
     p.setPen( QPen( QColor( Qt::black ) ) );
-    p.drawText( 0, 0, width()-10, height()-50, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextWordWrap|Qt::TextShowMnemonic, m_text );
+    p.drawText( 0, 0, width(), height()-50, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextWordWrap|Qt::TextShowMnemonic, m_text );
     p.restore();
 
-    p.setRenderHints( QPainter::Antialiasing, false);
     if( m_popupMenu ) {
         p.save();
         p.setBrush( Qt::black );
         pen.setColor(QColor(Qt::black));
         p.setPen( pen );
         QPoint points[3] = {
-            QPoint( width()-15, height()-12 ),
-            QPoint( width()-9, height()-12 ),
-            QPoint( width()-12, height()-9 ) };
+            QPoint( width()-10-GLOW_WIDTH, height()-7-GLOW_WIDTH ),
+            QPoint( width()-4-GLOW_WIDTH, height()-7-GLOW_WIDTH ),
+            QPoint( width()-7-GLOW_WIDTH, height()-4-GLOW_WIDTH ) };
         p.drawPolygon( points, 3 );
         p.restore();
     }
@@ -187,10 +190,7 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
         pen.setBrush( QColor( 50, 50, 50) );
         pen.setStyle( Qt::DotLine );
         p.setPen( pen );
-        p.drawLine( 7, 7, width()-7, 7 );
-        p.drawLine(width()-7, 7, width()-7, height()-7 );
-        p.drawLine(width()-7, height()-7, 7, height()-7 );
-        p.drawLine(7, height()-7, 7, 7 );
+        p.drawRect( QRect( 2+GLOW_WIDTH, 2+GLOW_WIDTH, width()-4-(2*GLOW_WIDTH), height()-4-(2*GLOW_WIDTH) ) );
     }
 }
 
