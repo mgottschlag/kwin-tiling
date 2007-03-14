@@ -19,73 +19,7 @@
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item row="6" column="1" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>79</width>
-       <height>141</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="1" >
-    <widget class="QPushButton" name="btnImportScript" >
-     <property name="text" >
-      <string>&amp;Import Script</string>
-     </property>
-     <property name="shortcut" >
-      <string>alt+i</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1" >
-    <widget class="QPushButton" name="btnRemove" >
-     <property name="text" >
-      <string>&amp;Remove</string>
-     </property>
-     <property name="shortcut" >
-      <string>alt+r</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1" >
-    <widget class="QCheckBox" name="cboxEnabled" >
-     <property name="text" >
-      <string>&amp;Enabled</string>
-     </property>
-     <property name="shortcut" >
-      <string>alt+e</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QPushButton" name="btnAdd" >
-     <property name="text" >
-      <string>&amp;Add Program</string>
-     </property>
-     <property name="shortcut" >
-      <string>alt+a</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" >
-    <widget class="QPushButton" name="btnProperties" >
-     <property name="text" >
-      <string>&amp;Properties</string>
-     </property>
-     <property name="shortcut" >
-      <string>alt+p</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1" >
-    <widget class="QComboBox" name="cmbStartOn" />
-   </item>
-   <item rowspan="7" row="0" column="0" >
+   <item rowspan="6" row="0" column="0" >
     <widget class="QTreeWidget" name="listCMD" >
      <column>
       <property name="text" >
@@ -103,6 +37,62 @@
       </property>
      </column>
     </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QComboBox" name="cmbStartOn" />
+   </item>
+   <item row="2" column="1" >
+    <widget class="QPushButton" name="btnProperties" >
+     <property name="text" >
+      <string>&amp;Properties</string>
+     </property>
+     <property name="shortcut" >
+      <string>Alt+P</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QPushButton" name="btnAdd" >
+     <property name="text" >
+      <string>Add</string>
+     </property>
+     <property name="shortcut" >
+      <string>Alt+A</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="QCheckBox" name="cboxEnabled" >
+     <property name="text" >
+      <string>&amp;Enabled</string>
+     </property>
+     <property name="shortcut" >
+      <string>Alt+E</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QPushButton" name="btnRemove" >
+     <property name="text" >
+      <string>&amp;Remove</string>
+     </property>
+     <property name="shortcut" >
+      <string>Alt+R</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>79</width>
+       <height>141</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

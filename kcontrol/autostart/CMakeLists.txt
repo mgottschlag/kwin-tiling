@@ -1,11 +1,12 @@
 ########### next target ###############
 
-set(kcm_autostart_PART_SRCS 
+set(kcm_autostart_PART_SRCS
+   adddialog.cpp
    autostart.cpp )
 
 kde4_automoc(${kcm_autostart_PART_SRCS})
 
-kde4_add_ui_files(kcm_autostart_PART_SRCS autostartconfig.ui )
+kde4_add_ui_files(kcm_autostart_PART_SRCS autostartconfig.ui addDialog.ui )
 
 kde4_add_plugin(kcm_autostart ${kcm_autostart_PART_SRCS})
 

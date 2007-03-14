@@ -19,48 +19,25 @@
  ***************************************************************************/
 
 
-#ifndef _AUTOSTART_H_
-#define _AUTOSTART_H_
+#ifndef _ADDDIALOG_H_
+#define _ADDDIALOG_H_
 
-#include <KCModule>
-#include <KAboutData>
-#include <KGlobalSettings>
-#include <QComboBox>
-#include <QPushButton>
-#include <QTreeWidget>
+#include "ui_addDialog.h"
 
-#include "ui_autostartconfig.h"
-#include "adddialog.h"
-
-class Desktop;
-
-class Autostart: public KCModule
+class AddDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    Autostart( QWidget* parent, const QStringList&  );
-    ~Autostart();
-
-    void load();
-    void save();
-    void defaults();
-    QStringList paths;
-    QStringList pathName;
+	AddDialog(QWidget* parent=0);
+	~AddDialog();
 
 public slots:
-	void addCMD();
-	void removeCMD();
-	void editCMD(QTreeWidgetItem*);
-	bool editCMD(KFileItem);
-	void editCMD();
-	void setStartOn(int);
-	void selectionChanged();
+	void addPrg();
+	void importPrg();
 
 private:
-	Ui_AutostartConfig *widget;
-	KAboutData *myAboutData;
-	KGlobalSettings *kgs;
+	Ui_AddDialog * widget;
 };
 
 #endif

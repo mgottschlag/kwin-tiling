@@ -45,7 +45,6 @@ bool bisDesktop;
 KUrl fileName;
 
 Desktop( QString service, QTreeWidget *parent ): QTreeWidgetItem( parent ) {
-	bisDesktop = false;
 	fileName = KUrl(service);
 	bisDesktop = service.endsWith(".desktop");
 }
@@ -98,13 +97,16 @@ void Autostart::load()
 	// autostart on the otherhand may contain all of the above.
 	// share/autostart is special as it overrides entries found in $KDEDIR/share/autostart
 	paths << KGlobalSettings::autostartPath()
-//		  << componentData().dirs()->localkdedir() + "share/autostart"
-		  << componentData().dirs()->localkdedir() + "shutdown/"
+		  << componentData().dirs()->localkdedir() + "share/autostart"
+//		  << componentData().dirs()->localkdedir() + "shutdown/"
 //		  << componentData().dirs()->localkdedir() + "env/"
 		;
 
+	// share/autostart shouldn't be an option as this should be reserved for global autostart entries
 	pathName << i18n("Autostart")
-			 << i18n("Shutdown");
+// 			 << i18n("Shutdown")
+// 			 << i18n("Pre-Desktop")
+			 ;
 	widget->cmbStartOn->addItems(pathName);
 
 	foreach (const QString& path, paths) {
@@ -140,53 +142,59 @@ void Autostart::load()
 }
 
 void Autostart::addCMD() {
-	KService::Ptr service;
-	KOpenWithDialog owdlg( this );
-	if (owdlg.exec() != QDialog::Accepted)
+	AddDialog * addDialog = new AddDialog(this);
+	int result = addDialog->exec();
+	if (result == QDialog::Rejected)
 		return;
-	service = owdlg.service();
-
-	Q_ASSERT(service);
-	if (!service)
-		return; // Don't crash if KOpenWith wasn't able to create service.
-
-
-	KUrl desktopTemplate;
-
-	if ( service->desktopEntryName().isNull() ) {
-		desktopTemplate = KUrl( kgs->autostartPath() + service->name() + ".desktop" );
-		KConfig kc(desktopTemplate.path(), KConfig::OnlyLocal);
-		KConfigGroup kcg = kc.group("Desktop Entry");
-		kcg.writeEntry("Encoding","UTF-8");
-		kcg.writeEntry("Exec",service->exec());
-		kcg.writeEntry("Icon","exec");
-		kcg.writeEntry("Path","");
-		kcg.writeEntry("Terminal",false);
-		kcg.writeEntry("Type","Application");
-		kc.sync();
-
-		KPropertiesDialog dlg( desktopTemplate, this );
-		if ( dlg.exec() != QDialog::Accepted )
+	else if (result == 4) {
+		KService::Ptr service;
+		KOpenWithDialog owdlg( this );
+		if (owdlg.exec() != QDialog::Accepted)
 			return;
-	} else {
-		desktopTemplate = KUrl( KStandardDirs::locate("apps", service->desktopEntryPath()) );
+		service = owdlg.service();
 
-		KPropertiesDialog dlg( desktopTemplate, KUrl(kgs->autostartPath()), service->name() + ".desktop", this );
-		if ( dlg.exec() != QDialog::Accepted )
-			return;
+		Q_ASSERT(service);
+		if (!service)
+			return; // Don't crash if KOpenWith wasn't able to create service.
+
+
+		KUrl desktopTemplate;
+
+		if ( service->desktopEntryName().isNull() ) {
+			desktopTemplate = KUrl( kgs->autostartPath() + service->name() + ".desktop" );
+			KConfig kc(desktopTemplate.path(), KConfig::OnlyLocal);
+			KConfigGroup kcg = kc.group("Desktop Entry");
+			kcg.writeEntry("Encoding","UTF-8");
+			kcg.writeEntry("Exec",service->exec());
+			kcg.writeEntry("Icon","exec");
+			kcg.writeEntry("Path","");
+			kcg.writeEntry("Terminal",false);
+			kcg.writeEntry("Type","Application");
+			kc.sync();
+
+			KPropertiesDialog dlg( desktopTemplate, this );
+			if ( dlg.exec() != QDialog::Accepted )
+				return;
+		} else {
+			desktopTemplate = KUrl( KStandardDirs::locate("apps", service->desktopEntryPath()) );
+
+			KPropertiesDialog dlg( desktopTemplate, KUrl(kgs->autostartPath()), service->name() + ".desktop", this );
+			if ( dlg.exec() != QDialog::Accepted )
+				return;
+		}
+
+		Desktop * item = new Desktop( kgs->autostartPath() + service->name() + ".desktop", widget->listCMD );
+		item->setText( 0, service->name() );
+		item->setText( 1, service->exec() );
+		item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 	}
-
-	Desktop * item = new Desktop( kgs->autostartPath() + service->name() + ".desktop", widget->listCMD );
-	item->setText( 0, service->name() );
-	item->setText( 1, service->exec() );
-	item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 	emit changed(true);
 }
 
 void Autostart::removeCMD() {
 	QList<QTreeWidgetItem *> list = widget->listCMD->selectedItems();
 	if (list.isEmpty()) return;
-	
+
 	QStringList delList;
 	foreach (QTreeWidgetItem *itm, list) {
 		widget->listCMD->takeTopLevelItem( widget->listCMD->indexOfTopLevelItem( itm ) );
@@ -213,9 +221,9 @@ void Autostart::editCMD(QTreeWidgetItem* entry) {
 
 bool Autostart::editCMD( KFileItem item) {
 	KPropertiesDialog dlg( &item, this );
-	bool changed = ( dlg.exec() == QDialog::Accepted );
-	emit changed(changed);
-	return changed;
+	bool c = ( dlg.exec() == QDialog::Accepted );
+	emit changed(c);
+	return c;
 }
 
 void Autostart::editCMD() {
@@ -239,7 +247,7 @@ void Autostart::selectionChanged() {
 	widget->btnProperties->setEnabled(hasItems);
 	if (!hasItems)
 		return;
-	
+
 	QTreeWidgetItem* entry = widget->listCMD->selectedItems().first();
 	widget->cmbStartOn->setCurrentIndex( paths.indexOf(((Desktop*)entry)->fileName.directory()+'/') );
 }
