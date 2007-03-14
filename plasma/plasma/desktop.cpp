@@ -28,7 +28,6 @@ Desktop::Desktop(QWidget *parent)
     m_graphicsScene = new QGraphicsScene(desktopSize);
     m_graphicsScene->setItemIndexMethod(QGraphicsScene::NoIndex);
     setScene(m_graphicsScene);
-    setRenderHint(QPainter::Antialiasing, false);
     setDragMode(QGraphicsView::RubberBandDrag);
     setCacheMode(QGraphicsView::CacheBackground);
     setInteractive(true);
@@ -49,35 +48,25 @@ Desktop::Desktop(QWidget *parent)
     // Make us legit via KWin
     KWin::setType(winId(), NET::Desktop);
     KWin::setState(winId(), NET::SkipPager);
-    KWin::setOnAllDesktops(winId(), true);
 
-        
-    //[mX] strange observation.. 
-        //try the following loop..takes only 19 - 21 MB so strange! 
-    
-    int count=0;
     // Tmp
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 4000; i++)
     {
-/*
-        Plasma::Clock *testClock = new Plasma::Clock;
-        m_graphicsScene->addItem(testClock);
-
-        Plasma::LineEdit *testLineEdit = new Plasma::LineEdit;
-        m_graphicsScene->addItem(testLineEdit);
-*/
-    for (int j = 0 ; j < 20 ; j++) {
+        int x = qrand() % 475;
+        int y = qrand() % 475;
 
         Plasma::PushButton *testButton = new Plasma::PushButton;
         testButton->setText(QString::number(i));
-        testButton->moveBy(j*testButton->width()/2, i*testButton->height()/2);
+        testButton->moveBy(x, y);
+
         m_graphicsScene->addItem(testButton);
-        count++;
-     //   int x = (qrand() % 275);
-      //  int y = (qrand() % 275);
-        qDebug() << "moving to: " << count ;
-        }
     }
+
+    // for (int i = 0; i < 5; i++)
+    // {
+        Plasma::Clock *clock = new Plasma::Clock;
+        m_graphicsScene->addItem(clock);
+    // }
 }
 
 Desktop::~Desktop()

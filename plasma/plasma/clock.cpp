@@ -137,18 +137,18 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     Q_UNUSED(widget)
 
     QRectF r = option->exposedRect;
-    p->setRenderHint (QPainter::SmoothPixmapTransform);
+    p->setRenderHint(QPainter::SmoothPixmapTransform);
+
     //  if (shade == 0)
     //  {
         p->drawImage(_clock_bg.rect(), _clock_bg);
         shade = 1;
     // }
 
-    p->drawPixmap (QRect (16, 16, face.width(), face.height()), face);
+    p->drawPixmap(QRect(16, 16, face.width(), face.height()), face);
 
     /*Draw Hours*/
-    p->save ();
-    p->setRenderHint(QPainter::SmoothPixmapTransform);
+    p->save();
     p->translate(_clock_bg.width() / 2, _clock_bg.height() / 2);
     p->rotate(_hour);
     p->drawPixmap(QRect
@@ -159,18 +159,16 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
 
     /* Draw Mins */
     p->save();
-    p->setRenderHint(QPainter::SmoothPixmapTransform);
     p->translate(_clock_bg.width() / 2, _clock_bg.height() / 2);
     p->rotate(_mins);
     p->drawPixmap(QRect
                 (-(ceil (_mins_hand.width() / 2)),
                     -(_mins_hand.height() - 16), _mins_hand.width(),
                     _mins_hand.height()), _mins_hand);
-    p->restore ();
+    p->restore();
 
     /*Draw Secs*/
     p->save();
-    p->setRenderHint (QPainter::SmoothPixmapTransform);
     p->translate(_clock_bg.width() / 2, _clock_bg.width() / 2);
     p->rotate(_secs);
     p->drawPixmap(QRect
@@ -192,8 +190,6 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->drawPixmap(QRect
                 ((_clock_bg.width() / 4) * 3, _clock_bg.height() / 2,
                     date.width(), date.height()), date);
-
-    // p.end ();
 }
 
 QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
