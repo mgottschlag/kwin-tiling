@@ -362,7 +362,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     }
 
     KSMPushButton* btnBack = new KSMPushButton( i18n("Cancel"), this );
-    btnBack->setPixmap( KIconLoader::global()->loadIcon( "cancel", K3Icon::NoGroup, 32 ) );
+    btnBack->setPixmap( KIconLoader::global()->loadIcon( "dialog-cancel", K3Icon::NoGroup, 32 ) );
     btnLayout->addWidget( btnBack, 0 );
     connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 
