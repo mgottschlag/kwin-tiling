@@ -34,11 +34,6 @@
 #include <QGraphicsItem>
 #include <QColor>
 
-#include <X11/Xlib.h>
-#include <X11/extensions/composite.h>
-#include <X11/extensions/Xrender.h>
-#include <X11/extensions/shape.h>
-
 #include <kdemacros.h>
 
 #include "datavisualization.h"
