@@ -13,12 +13,10 @@
    height="180"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.45"
-   sodipodi:docbase="/home/kde-devel/src/KDE/kdebase/workspace/ksmserver/images/background"
+   inkscape:version="0.44.1"
+   sodipodi:docbase="/home/kdedev/kdebase/workspace/ksmserver/images/background"
    sodipodi:docname="shutdowndlg.svg"
-   version="1.0"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   sodipodi:modified="true">
+   version="1.0">
   <defs
      id="defs4">
     <linearGradient
@@ -955,15 +953,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.0952381"
-     inkscape:cx="210"
-     inkscape:cy="74.492308"
+     inkscape:zoom="2.173764"
+     inkscape:cx="187.03682"
+     inkscape:cy="132.75906"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     inkscape:window-width="1392"
-     inkscape:window-height="961"
+     inkscape:window-width="1272"
+     inkscape:window-height="901"
      inkscape:window-x="0"
-     inkscape:window-y="30"
+     inkscape:window-y="0"
      showgrid="true"
      showguides="true"
      inkscape:guide-bbox="true">
@@ -994,9 +992,7 @@
        width="419.96503"
        height="181.27455"
        x="72.166832"
-       y="606.82324"
-       rx="15"
-       ry="15" />
+       y="606.82324" />
     <path
        sodipodi:nodetypes="cccccscccscccccc"
        id="path9935"
