@@ -281,7 +281,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     resize(420, 180);
     KDialog::centerOnScreen(this);
 
-    int space = maysd ? 15 : 80;
+    int space = maysd ? 10 : 80;
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->setMargin( 0 );
     QHBoxLayout *btnLayout = new QHBoxLayout();
@@ -366,6 +366,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     btnLayout->addWidget( btnBack, 0 );
     connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 
+    btnLayout->insertSpacing( 0, 10 );
+    btnLayout->insertSpacing( -1, 10 );
     btnLayout->insertStretch( 0, 1 );
     btnLayout->insertStretch( -1, 1 );
     setLayout( mainLayout );
