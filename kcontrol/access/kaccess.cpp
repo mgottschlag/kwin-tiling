@@ -132,7 +132,7 @@ void KAccessApp::readSettings()
   _player.load( cg.readPathEntry("ArtsBellFile") );
   _visibleBell = cg.readEntry("VisibleBell", false);
   _visibleBellInvert = cg.readEntry("VisibleBellInvert", false);
-  _visibleBellColor = cg.readEntry("VisibleBellColor", Qt::red);
+  _visibleBellColor = cg.readEntry("VisibleBellColor", QColor(Qt::red));
   _visibleBellPause = cg.readEntry("VisibleBellPause", 500);
 
   // select bell events if we need them

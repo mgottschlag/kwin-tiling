@@ -669,7 +669,7 @@ void KAccessConfig::load()
   visibleBell->setChecked(cg.readEntry("VisibleBell", false));
   invertScreen->setChecked(cg.readEntry("VisibleBellInvert", true));
   flashScreen->setChecked(!invertScreen->isChecked());
-  colorButton->setColor(cg.readEntry("VisibleBellColor", Qt::red));
+  colorButton->setColor(cg.readEntry("VisibleBellColor", QColor(Qt::red)));
 
   durationSlider->setValue(cg.readEntry("VisibleBellPause", 500));
 

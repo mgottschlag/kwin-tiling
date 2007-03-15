@@ -95,7 +95,7 @@ void AccessibilityConfig::load(){
    KConfigGroup visible( &bell, "Visible" );
    widget->invertScreen->setChecked(visible.readEntry("Invert", true));
    widget->flashScreen->setChecked(visible.readEntry("Flash", false));
-   widget->flashScreenColor->setColor(visible.readEntry("FlashColor", Qt::red));
+   widget->flashScreenColor->setColor(visible.readEntry("FlashColor", QColor(Qt::red)));
    widget->visibleBellDuration->setValue(visible.readEntry("Duration", 500));
 
 //    KConfig *config = new KConfig("kaccessrc", true);
