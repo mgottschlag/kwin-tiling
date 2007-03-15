@@ -148,9 +148,9 @@ class KThemedGreeter : public KGreeter {
 	        *console_rect, *userlist_rect,
 	        *session_button, *system_button;
 
-//  public: // from KGVerifyHandler
-//	virtual void verifyFailed();
-//	virtual void verifyRetry();
+  public: // from KGVerifyHandler
+	virtual void verifyFailed();
+	virtual void verifyRetry();
 };
 
 #endif /* KGREETER_H */

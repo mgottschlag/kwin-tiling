@@ -891,11 +891,12 @@ KThemedGreeter::pluginSetup()
 	}
 }
 
-#if 0
 void
 KThemedGreeter::verifyFailed()
 {
 //	goButton->setEnabled( false );
+        if (userView)
+		userView->setEnabled(false);
 	inherited::verifyFailed();
 }
 
@@ -903,9 +904,10 @@ void
 KThemedGreeter::verifyRetry()
 {
 //	goButton->setEnabled( true );
+	if (userView)
+		userView->setEnabled( true );
 	inherited::verifyRetry();
 }
-#endif
 
 void
 KThemedGreeter::updateStatus( bool fail, bool caps, int timedleft )
