@@ -86,8 +86,9 @@ ANIM_REL number screen_ref x_rel y_rel image_ref frames name delay
 # this also clears the animation from the window
 STOP_ANIM number
 
-# wait until the specified ksplash state (1-7)
-# specifying 8 means waiting until whole startup is complete (should be used at the very end)
+# wait until the specified ksplash state
+# see the splash toplevel README file (one directory up)
+# specifying "ready" means waiting until whole startup is complete (should be used at the very end)
 WAIT_STATE state
 
 

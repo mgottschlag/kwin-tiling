@@ -40,3 +40,23 @@ The group name is [KSplash Theme: <theme name>]. Name, Description, Version and 
 are shown in the configuration module. Engine selects which splash implementation
 the theme is for (currently 'None', 'Simple' and 'KSplashX' ). There may be futher
 implementation-dependent data in Theme.rc .
+
+
+Startup states:
+===============
+
+These are ksplash states:
+- initial - at the beginning
+- kded - after kded is running (dbus is ready, etc.)
+- confupdate - after kconf_update (settings updated after upgrade, etc.)
+- kcminit - after configuration setup
+- ksmserver - session manager is started
+- wm - window manager is running
+- desktop - desktop (plasma) is running
+- ready - session is ready (not fully actually, still e.g. restoring applications, but splash goes away)
+
+Note however that these states should not be relied on too much:
+- they do not represent very accurately what is actually going on
+- states may be removed (they'll take 0 time and directly go to another state)
+- states may be added
+- states may be reordered (waiting for a later state and then a sooner state means the sooner state will take 0 time)

@@ -1,9 +1,12 @@
 //#define DEBUG
 
 const int MAX_ITEMS = 100;
-const int LAST_STATE = 7;
 const int ANIM_IMAGES_ROW = 10;
 
+// for convering from startup states to (internal) numbers
+const char states[][ 12 ] =
+    { "initial", "kded", "confupdate", "kcminit", "ksmserver", "wm", "desktop", "ready" };
+const int LAST_STATE = 7;
 
 #include <config.h>
 
@@ -477,7 +480,7 @@ static bool waitState( int expected_state )
         }
     time_t test_time = time( NULL ) + 5;
 #ifdef DEBUG
-    fprintf( stderr,"AWATING STATE: %d\n", expected_state );
+    fprintf( stderr,"AWATING STATE: %d (%s)\n", expected_state, states[ expected_state ] );
 #endif
     if( parent_pipe >= 0 )
         { // wait for paint being finished, and tell parent to exit
@@ -510,23 +513,28 @@ static bool waitState( int expected_state )
 #ifdef DEBUG
                 fprintf( stderr,"MESSAGE: %s\n", s );
 #endif
-                if( strcmp( s, "dcop" ) == 0 && state < 1 )
-                    state = 1; // not actually used, state starts from 1, because dcop cannot be checked
-                else if( strcmp( s, "kded" ) == 0 && state < 2 )
-                    state = 2;
-                else if( strcmp( s, "kcminit" ) == 0 )
-                    ; // unused
-                else if( strcmp( s, "ksmserver" ) == 0 && state < 3 )
-                    state = 3;
-                else if( strcmp( s, "wm started" ) == 0 && state < 4 )
-                    state = 4;
-                else if( strcmp( s, "kdesktop" ) == 0 && state < 5 )
-                    state = 5;
-                else if(( strcmp( s, "kicker" ) == 0 && state < 6 )
-                    || ( strcmp( s, "session ready" ) == 0 && state < 7 ))
+                int new_state = 0;
+                for( int i = 1;
+                     i <= LAST_STATE;
+                     ++i )
                     {
-                    state = 7;
-                    final_time = time( NULL ) + 1; // quit after short time
+                    if( strcmp( s, states[ i ] ) == 0 )
+                        {
+                        new_state = i;
+                        break;
+                        }
+                    }
+                if( new_state == 0 )
+                    {
+#ifdef DEBUG
+                    fprintf( stderr, "UNKNOWN SPLASH STATE: %s\n", s );
+#endif
+                    }
+                else if( new_state > state )
+                    {
+                    state = new_state;
+                    if( state == LAST_STATE )
+                        final_time = time( NULL ) + 1; // quit after short time
                     }
                 }
             }
@@ -989,15 +997,29 @@ void runSplash( const char* them, bool t, int p )
             delete animations[ number ];
             animations[ number ] = NULL;
             }
-        else if( sscanf( line, "WAIT_STATE %d", &number ) == 1 )
+        else if( sscanf( line, "WAIT_STATE %s", buf ) == 1 )
             {
-            if( number < 0 || number > LAST_STATE + 1 )
+            int new_state = 0;
+            for( int i = 1;
+                 i <= LAST_STATE;
+                 ++i )
                 {
-                fprintf( stderr, "Bad state: %i\n", number );
-                exit( 3 );
+                if( strcmp( buf, states[ i ] ) == 0 )
+                    {
+                    new_state = i;
+                    break;
+                    }
                 }
-            if( waitState( number ))
-                break; // exiting
+            if( new_state == 0 )
+                {
+                fprintf( stderr, "Unknown splash state: %s\n", buf );
+                // don't make fatal, may be a theme for a newer version
+                }
+            else
+                {
+                if( waitState( new_state ))
+                    break; // exiting
+                }
             }
         else
             {

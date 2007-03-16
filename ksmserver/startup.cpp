@@ -98,7 +98,6 @@ void KSMServer::restoreSession( QString sessionName )
     state = LaunchingWM;
 
     kDebug( 1218 ) << "KSMServer::restoreSession " << sessionName << endl;
-    upAndRunning( "restore session");
     KSharedConfig::Ptr config = KGlobal::config();
 
     sessionGroup = "Session: " + sessionName;
@@ -183,8 +182,8 @@ void KSMServer::autoStart0Done()
     if( !checkStartupSuspend())
         return;
     kDebug( 1218 ) << "Autostart 0 done" << endl;
-    upAndRunning( "krunner" );
-    upAndRunning( "kicker" );
+    upAndRunning( "desktop" );
+    upAndRunning( "ready" ); // desktop is more or less ready at this point, tell ksplash to go away
     kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBusConnection::sessionBus(), this );
     if( !kcminitSignals->isValid())
         kWarning() << "kcminit not running?" << endl;
@@ -346,7 +345,6 @@ void KSMServer::finishStartup()
     if( waitAutoStart2 || waitKcmInit2 )
         return;
 
-    upAndRunning( "session ready" );
     state = Idle;
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.
 }
