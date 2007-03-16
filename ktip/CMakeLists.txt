@@ -9,10 +9,6 @@ add_subdirectory( pics )
 
 set(ktip_SRCS ktipwindow.cpp )
 
-set(ksplashml_xml  ${CMAKE_SOURCE_DIR}/workspace/ksplashml/org.kde.KSplash.xml)
-QT4_ADD_DBUS_INTERFACE( ktip_SRCS ${ksplashml_xml} ksplashml_interface )
-
-
 kde4_automoc(${ktip_SRCS})
 
 kde4_add_executable(ktip ${ktip_SRCS})
