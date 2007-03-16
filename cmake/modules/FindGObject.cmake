@@ -36,10 +36,24 @@ FIND_PATH(GOBJECT_INCLUDE_DIR gobject.h
    #PATH_SUFFIXES gst
    )
 
-FIND_LIBRARY(GOBJECT_LIBRARIES NAMES gobject-2.0
+FIND_LIBRARY(_GObjectLibs NAMES gobject-2.0
    PATHS
    ${_GObjectLinkDir}
    )
+FIND_LIBRARY(_GModuleLibs NAMES gmodule-2.0
+   PATHS
+   ${_GObjectLinkDir}
+   )
+FIND_LIBRARY(_GThreadLibs NAMES gthread-2.0
+   PATHS
+   ${_GObjectLinkDir}
+   )
+FIND_LIBRARY(_GLibs NAMES glib-2.0
+   PATHS
+   ${_GObjectLinkDir}
+   )
+
+SET( GOBJECT_LIBRARIES ${_GObjectLibs} ${_GModuleLibs} ${_GThreadLibs} ${_GLibs} )
 
 IF (GOBJECT_INCLUDE_DIR AND GOBJECT_LIBRARIES)
    SET(GOBJECT_FOUND TRUE)
