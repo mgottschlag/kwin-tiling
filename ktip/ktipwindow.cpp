@@ -50,8 +50,6 @@ int main(int argc, char *argv[])
 	tipDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
 
 	tipDialog->setCaption(i18n("Useful Tips"));
-        //org::kde::KSplash ksplashml("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
-        //ksplashml.close();
 	tipDialog->show();
 
 	QObject::connect(qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()));
