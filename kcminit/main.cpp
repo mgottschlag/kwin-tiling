@@ -40,7 +40,6 @@
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <QX11Info>
-#include <ksplash_interface.h>
 #endif
 
 #include <kservicetypetrader.h>
@@ -214,7 +213,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
   if( startup )
   {
      runModules( 0 );
-#ifdef Q_WS_X11
+#if 0
     org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
     ksplash.upAndRunning("kcminit" );
 #endif
