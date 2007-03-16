@@ -85,7 +85,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QApplication>
 
 //#include "kdesktop_interface.h"
-#include "ksplash_interface.h"
 #include "klauncher_interface.h"
 #include "kcminit_interface.h"
 
@@ -420,20 +419,25 @@ void KSMServer::resumeStartupInternal()
     }
 }
 
-void KSMServer::publishProgress( int progress, bool max  )
+void KSMServer::publishProgress( int progress, bool max )
 {
+    Q_UNUSED( progress );
+    Q_UNUSED( max );
+    // KSplash now goes away before restoring of session-saved apps starts, in order
+    // to make the startup visually faster, so this is not needed now. Also, there's
+    // no DBUS interface anymore.
+#if 0
     org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
     if(max)
 	ksplash.setMaxProgress(progress);
     else
         ksplash.setProgress(progress);
+#endif
 }
 
 
 void KSMServer::upAndRunning( const QString& msg )
 {
-    org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
-    ksplash.upAndRunning(msg);
     XEvent e;
     e.xclient.type = ClientMessage;
     e.xclient.message_type = XInternAtom( QX11Info::display(), "_KDE_SPLASH_PROGRESS", False );
