@@ -66,6 +66,7 @@ cat >$kdehome/share/config/startupconfigkeys <<EOF
 kcminputrc Mouse cursorTheme ''
 kcminputrc Mouse cursorSize ''
 ksplashrc KSplash Theme Default
+ksplashrc KSplash Engine KSplashX
 kcmrandrrc Display ApplyOnStartup false
 kcmrandrrc [Screen0]
 kcmrandrrc [Screen1]
@@ -144,6 +145,26 @@ elif test "$kcmfonts_general_forcefontdpi" -eq 96; then
     xrdb -quiet -merge -nocpp <<EOF
 Xft.dpi: 96
 EOF
+fi
+
+
+dl=$DESKTOP_LOCKED
+unset DESKTOP_LOCKED # Don't want it in the environment
+
+if test -z "$dl"; then
+  # the splashscreen and progress indicator
+  case "$ksplashrc_ksplash_engine" in
+    KSplashX)
+      ksplashx ${ksplashrc_ksplash_theme}
+      ;;
+    None)
+      ;;
+    Simple)
+      ksplashsimple
+      ;;
+    *)
+      ;;
+  esac
 fi
 
 # Source scripts found in <localprefix>/env/*.sh and <prefixes>/env/*.sh
@@ -253,9 +274,6 @@ done
 
 echo 'startkde: Starting up...'  1>&2
 
-dl=$DESKTOP_LOCKED
-unset DESKTOP_LOCKED # Don't want it in the environment
-
 # Make sure that D-Bus is running
 if ! qdbus >/dev/null 2>/dev/null; then
   # Remove the next two lines after D-Bus 1.0 is released.
@@ -268,19 +286,6 @@ if ! qdbus >/dev/null 2>/dev/null; then
   fi
 fi
 
-if test -z "$dl"; then
-  # the splashscreen and progress indicator
-  case "$ksplashrc_ksplash_theme" in
-    None)
-       ;; # nothing
-    Simple)
-       ksplashsimple
-       ;;
-    *)
-       ksplash --nodbus
-       ;;
-  esac
-fi
 
 # Mark that full KDE session is running (e.g. Konqueror preloading works only
 # with full KDE running). The KDE_FULL_SESSION property can be detected by
