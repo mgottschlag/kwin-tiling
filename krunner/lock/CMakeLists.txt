@@ -34,10 +34,10 @@ kde4_add_executable(krunner_lock ${krunner_lock_SRCS} )
 target_link_libraries(krunner_lock  ${KDE4_KIO_LIBS} kworkspace )
 
 if (HAVE_XF86MISC)
-  target_link_libraries(krunner_lock Xxf86misc)
+  target_link_libraries(krunner_lock ${X11_Xxf86misc_LIB})
 endif (HAVE_XF86MISC)
 if(HAVE_GLXCHOOSEVISUAL)
-   target_link_libraries(krunner_lock GL)
+   target_link_libraries(krunner_lock ${OPENGL_gl_LIBRARY})
 endif(HAVE_GLXCHOOSEVISUAL)
 
 install(TARGETS krunner_lock DESTINATION ${BIN_INSTALL_DIR})
