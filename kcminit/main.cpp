@@ -213,10 +213,15 @@ KCMInit::KCMInit( KCmdLineArgs* args )
   if( startup )
   {
      runModules( 0 );
-#if 0
-    org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
-    ksplash.upAndRunning("kcminit" );
-#endif
+     XEvent e;
+     e.xclient.type = ClientMessage;
+     e.xclient.message_type = XInternAtom( QX11Info::display(), "_KDE_SPLASH_PROGRESS", False );
+     e.xclient.display = QX11Info::display();
+     e.xclient.window = QX11Info::appRootWindow();
+     e.xclient.format = 8;
+     assert( strlen( msg.toLatin1()) < 20 );
+     strcpy( e.xclient.data.b, "kcminit" );
+     XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
      sendReady();
      QTimer::singleShot( 300 * 1000, qApp, SLOT( quit())); // just in case
      qApp->exec(); // wait for runPhase1() and runPhase2()
