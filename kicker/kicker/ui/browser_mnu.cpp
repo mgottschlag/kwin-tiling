@@ -50,7 +50,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kprocess.h>
 #include <krun.h>
 #include <kdesktopfile.h>
-#include <kstringhandler.h>
+
 #include <kauthorized.h>
 #include <kworkspace.h>
 
@@ -347,7 +347,7 @@ void PanelBrowserMenu::append(const QPixmap &pixmap, const QString &title, const
 {
     // avoid &'s being converted to accelerators
     QString newTitle = title;
-    newTitle = KStringHandler::cEmSqueeze( newTitle, fontMetrics(), 20 );
+    newTitle = fontMetrics().elidedText( newTitle, Qt::ElideMiddle, fontMetrics().maxWidth() * 20  );
     newTitle.replace("&", "&&");
 
     // insert menu item
@@ -365,7 +365,7 @@ void PanelBrowserMenu::append(const QPixmap &pixmap, const QString &title, Panel
 {
     // avoid &'s being converted to accelerators
     QString newTitle = title;
-    newTitle = KStringHandler::cEmSqueeze( newTitle, fontMetrics(), 20 );
+    newTitle = fontMetrics().elidedText( newTitle, Qt::ElideMiddle, fontMetrics().maxWidth() * 20  );
     newTitle.replace("&", "&&");
 
     // insert submenu
@@ -498,7 +498,7 @@ void PanelBrowserMenu::slotMimeCheck()
     QString icon = KMimeType::iconNameForUrl( url );
 //    kDebug() << url.url() << ": " << icon << endl;
 
-    file = KStringHandler::cEmSqueeze( file, fontMetrics(), 20 );
+    file = fontMetrics().elidedText( file, Qt::ElideMiddle, fontMetrics().maxWidth() * 20  );
     file.replace("&", "&&");
 
     if(!_icons->contains(icon)) {
