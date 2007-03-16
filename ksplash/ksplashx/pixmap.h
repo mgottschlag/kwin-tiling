@@ -33,6 +33,6 @@ PixmapData imageToPixmap( const QImage& im )
     return PP::convertFromImage( im, 0 );
     }
 
-QImage splash_read_png_image(FILE* f);;
+QImage splash_read_png_image(FILE* f);
 
 #endif
