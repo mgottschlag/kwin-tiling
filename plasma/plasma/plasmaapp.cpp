@@ -28,7 +28,6 @@
 
 #include <KCrash>
 #include <KCmdLineArgs>
-#include <ksplash_interface.h>
 #include <ksmserver_interface.h>
 
 #include "desktop.h"
@@ -59,11 +58,6 @@ PlasmaApp::PlasmaApp()
         // check that directly. If it wasn't, don't install our handler either.
         setCrashHandler();
     }
-
-    // Notify ksplash that we are up and running
-    const QString appName = QString::fromLocal8Bit(KCmdLineArgs::appName());
-    org::kde::KSplash ksplash("org.kde.ksplash", "/KSplash", QDBusConnection::sessionBus());
-    ksplash.upAndRunning(appName);
 
     m_interface = this;
     m_engineManager = new DataEngineManager;
