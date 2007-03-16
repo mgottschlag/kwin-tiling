@@ -59,7 +59,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
 {
     QPixmap  pix;
     QString  realPath(path);
-    KTempDir *tempDir(NULL);
+    KTempDir *tempDir = 0;
 
     CFcEngine::setBgndCol(Qt::white);
     CFcEngine::setTextCol(Qt::black);
@@ -90,6 +90,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
 
                         if(entry && entry->isFile())
                         {
+			    delete tempDir;
                             tempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
                             tempDir->setAutoRemove(true);
 
