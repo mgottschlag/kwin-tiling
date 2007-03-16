@@ -111,7 +111,6 @@ Q_EXPORT void qWarning( const char *, ... )	// print warning message
     __attribute__ ((format (printf, 1, 2)))
 #endif
     {}
-;
 
 inline
 Q_EXPORT void qFatal( const char *, ... )	// print fatal message and exit
@@ -121,7 +120,6 @@ Q_EXPORT void qFatal( const char *, ... )	// print fatal message and exit
     {
     abort();
     }
-;
 
 #include <stdio.h>
 
