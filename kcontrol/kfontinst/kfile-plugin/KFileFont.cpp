@@ -344,7 +344,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 spacings,
                 slants;
     KUrl        url(info.url());
-    KTempDir    *tempDir(NULL);
+    KTempDir    *tempDir = 0;
     QString     fName;
     bool        fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
                 fileProt   = "file"                 == url.protocol(),
@@ -394,6 +394,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 
                                 if(entry && entry->isFile())
                                 {
+				    delete tempDir;
                                     tempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
                                     tempDir->setAutoRemove(true);
 
