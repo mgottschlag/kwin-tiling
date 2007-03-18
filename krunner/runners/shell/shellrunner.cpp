@@ -40,7 +40,6 @@ ShellRunner::ShellRunner( QObject* parent )
 ShellRunner::~ShellRunner()
 {
     delete m_options;
-    delete m_optionsUi;
 }
 
 QAction* ShellRunner::accepts(const QString& term)
@@ -66,9 +65,9 @@ bool ShellRunner::hasOptions()
 QWidget* ShellRunner::options()
 {
     if ( !m_options ) {
-        m_optionsUi = new Ui::shellOptions();
+        Ui::shellOptions ui;
         m_options = new QWidget;
-        m_optionsUi->setupUi( m_options );
+        ui.setupUi( m_options );
     }
 
     return m_options;
