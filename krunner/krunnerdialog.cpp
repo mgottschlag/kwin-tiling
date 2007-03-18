@@ -46,10 +46,8 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
 
     if ( KRunnerApp::s_haveCompositeManager ) {
         //kDebug() << "gots us a compmgr!" << m_haveCompositionManager << endl;
-        p.save();
         p.setCompositionMode( QPainter::CompositionMode_Source );
         p.fillRect( rect(), Qt::transparent );
-        p.restore();
     }
 
     m_background->paint( &p, 0, 0 );

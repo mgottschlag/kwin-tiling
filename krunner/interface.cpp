@@ -197,7 +197,7 @@ Interface::Interface(QWidget* parent)
     setWidgetPalettes();
     connect( KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
              SLOT(setWidgetPalettes()) );
-    
+
     //TODO: how should we order runners, particularly ones loaded from plugins?
     m_runners.append( new ShellRunner( this ) );
     m_runners.append( new ServiceRunner( this ) );
@@ -228,7 +228,7 @@ void Interface::display( const QString& term)
     s_in = true;
 #endif
 
-    kDebug() << "display() called" << endl;
+    //kDebug() << "display() called, are we visible? " << isVisible() << endl;
     m_searchTerm->setFocus();
 
     if ( !term.isEmpty() ) {
@@ -240,7 +240,7 @@ void Interface::display( const QString& term)
     show();
     KWin::forceActiveWindow( winId() );
 
-kDebug() << "about to match now that we've shown" << endl;
+    //kDebug() << "about to match now that we've shown " << isVisible() << endl;
 
     match( term );
 }
@@ -263,14 +263,14 @@ void Interface::showEvent( QShowEvent* e )
 {
     Q_UNUSED( e )
 
-    kDebug() << "show event" << endl;
+    //kDebug() << "show event" << endl;
 }
 
 void Interface::hideEvent( QHideEvent* e )
 {
     Q_UNUSED( e )
 
-    kDebug() << "hide event" << endl;
+    //kDebug() << "hide event" << endl;
     showOptions( false );
     m_searchTerm->clear();
     m_matchList->clear() ;
