@@ -22,6 +22,7 @@
 #define _ADDDIALOG_H_
 
 #include "ui_addDialog.h"
+#include <KUrlRequester>
 
 class AddDialog : public QDialog
 {
@@ -30,6 +31,9 @@ class AddDialog : public QDialog
 public:
 	AddDialog(QWidget* parent=0);
 	~AddDialog();
+	// Returns the Url of the script to be imported
+	KUrl importUrl();
+	bool symLink();
 
 public slots:
 	void addPrg();

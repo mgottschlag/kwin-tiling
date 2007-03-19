@@ -19,6 +19,8 @@
  ***************************************************************************/
 
 #include "adddialog.h"
+#include <KLineEdit>
+#include <QCheckBox>
 
 AddDialog::AddDialog (QWidget* parent) : QDialog( parent ) {
 	widget = new Ui_AddDialog();
@@ -31,6 +33,13 @@ AddDialog::AddDialog (QWidget* parent) : QDialog( parent ) {
 
 AddDialog::~AddDialog()
 {}
+
+KUrl AddDialog::importUrl() {
+	return widget->kurlfrScript->lineEdit()->text();
+}
+bool AddDialog::symLink() {
+	return (widget->chkSymlink->checkState() == Qt::Checked);
+}
 
 void AddDialog::importPrg() {
 	done(3);

@@ -28,12 +28,12 @@
      </column>
      <column>
       <property name="text" >
-       <string>Command</string>
+       <string>Run On</string>
       </property>
      </column>
      <column>
       <property name="text" >
-       <string>Run On</string>
+       <string>Command</string>
       </property>
      </column>
     </widget>

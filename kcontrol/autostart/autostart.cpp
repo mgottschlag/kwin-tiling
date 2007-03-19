@@ -30,6 +30,7 @@
 #include <KPropertiesDialog>
 #include <KIO/NetAccess>
 #include <KIO/DeleteJob>
+#include <KIO/CopyJob>
 
 #include <QDir>
 #include <QHeaderView>
@@ -97,9 +98,9 @@ void Autostart::load()
 	// autostart on the otherhand may contain all of the above.
 	// share/autostart is special as it overrides entries found in $KDEDIR/share/autostart
 	paths << KGlobalSettings::autostartPath()
-		  << componentData().dirs()->localkdedir() + "share/autostart"
 //		  << componentData().dirs()->localkdedir() + "shutdown/"
 //		  << componentData().dirs()->localkdedir() + "env/"
+		  << componentData().dirs()->localkdedir() + "share/autostart"
 		;
 
 	// share/autostart shouldn't be an option as this should be reserved for global autostart entries
@@ -124,18 +125,18 @@ void Autostart::load()
 				if ( fi.isSymLink() ) {
 					QString link = fi.readLink();
 					item->setText( 0, filename );
-					item->setText( 1, link );
-					item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+					item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+					item->setText( 2, link );
 				} else {
 					item->setText( 0, filename );
-					item->setText( 1, filename );
-					item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+					item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+					item->setText( 2, filename );
 				}
 			} else {
 				KService * service = new KService(fi.absoluteFilePath());
 				item->setText( 0, service->name() );
-				item->setText( 1, service->exec() );
-				item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+				item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+				item->setText( 2, service->exec() );
 			}
 		}
 	}
@@ -144,9 +145,21 @@ void Autostart::load()
 void Autostart::addCMD() {
 	AddDialog * addDialog = new AddDialog(this);
 	int result = addDialog->exec();
-	if (result == QDialog::Rejected)
+
+	if (result == QDialog::Rejected) {
 		return;
-	else if (result == 4) {
+	} else if (result == 3) {
+		// For now Default into the first path, which should be ~/.kde/Autostart
+		if (addDialog->symLink())
+			KIO::link(addDialog->importUrl(), paths[0]);
+		else
+			KIO::copy(addDialog->importUrl(), paths[0]);
+
+		Desktop * item = new Desktop( paths[0] + addDialog->importUrl().fileName(), widget->listCMD );
+		item->setText( 0, addDialog->importUrl().fileName() );
+		item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+		item->setText( 2, addDialog->importUrl().fileName() );
+	} else if (result == 4) {
 		KService::Ptr service;
 		KOpenWithDialog owdlg( this );
 		if (owdlg.exec() != QDialog::Accepted)
@@ -185,9 +198,10 @@ void Autostart::addCMD() {
 
 		Desktop * item = new Desktop( kgs->autostartPath() + service->name() + ".desktop", widget->listCMD );
 		item->setText( 0, service->name() );
-		item->setText( 1, service->exec() );
-		item->setText( 2, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+		item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+		item->setText( 2, service->exec() );
 	}
+
 	emit changed(true);
 }
 
@@ -214,8 +228,8 @@ void Autostart::editCMD(QTreeWidgetItem* entry) {
 	if (((Desktop*)entry)->isDesktop()) {
 		KService * service = new KService(((Desktop*)entry)->fileName.path());
 		entry->setText( 0, service->name() );
-		entry->setText( 1, service->exec() );
-		entry->setText( 2, pathName.value(paths.indexOf((((Desktop*)entry)->fileName.directory()+'/') )) );
+		entry->setText( 1, pathName.value(paths.indexOf((((Desktop*)entry)->fileName.directory()+'/') )) );
+		entry->setText( 2, service->exec() );
 	}
 }
 
