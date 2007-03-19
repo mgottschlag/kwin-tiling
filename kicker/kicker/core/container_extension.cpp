@@ -245,7 +245,7 @@ static bool isnetwm12_below()
 
 void ExtensionContainer::readConfig()
 {
-    ExtensionSettings* s = m_extension->settings();
+    ExtensionSettings* s = m_extension ? m_extension->settings() : 0;
     if (s)
     {
         s->readConfig();
