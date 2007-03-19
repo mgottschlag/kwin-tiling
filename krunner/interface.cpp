@@ -228,7 +228,7 @@ void Interface::display( const QString& term)
     s_in = true;
 #endif
 
-    //kDebug() << "display() called, are we visible? " << isVisible() << endl;
+    kDebug() << "display() called, are we visible? " << isVisible() << endl;
     m_searchTerm->setFocus();
 
     if ( !term.isEmpty() ) {
@@ -240,7 +240,7 @@ void Interface::display( const QString& term)
     show();
     KWin::forceActiveWindow( winId() );
 
-    //kDebug() << "about to match now that we've shown " << isVisible() << endl;
+    kDebug() << "about to match now that we've shown " << isVisible() << endl;
 
     match( term );
 }
@@ -263,14 +263,13 @@ void Interface::showEvent( QShowEvent* e )
 {
     Q_UNUSED( e )
 
-    //kDebug() << "show event" << endl;
+    kDebug() << "show event" << endl;
+    KRunnerDialog::showEvent( e );
 }
 
 void Interface::hideEvent( QHideEvent* e )
 {
-    Q_UNUSED( e )
-
-    //kDebug() << "hide event" << endl;
+    kDebug() << "hide event" << endl;
     showOptions( false );
     m_searchTerm->clear();
     m_matchList->clear() ;
@@ -285,7 +284,7 @@ void Interface::matchActivated(QListWidgetItem* item)
     m_optionsButton->setEnabled( match && match->runner()->hasOptions() );
 
     if ( match && match->actionEnabled() ) {
-        kDebug() << "match activated! " << match->text() << endl;
+        //kDebug() << "match activated! " << match->text() << endl;
         match->activate();
         hide();
     }
@@ -314,7 +313,7 @@ void Interface::match(const QString& t)
 
     // get the exact matches
     foreach ( Plasma::Runner* runner, m_runners ) {
-        kDebug() << "\trunner: " << runner->objectName() << endl;
+        //kDebug() << "\trunner: " << runner->objectName() << endl;
         QAction* exactMatch = runner->exactMatch( term ) ;
 
         if ( exactMatch ) {
@@ -374,10 +373,10 @@ void Interface::fuzzySearch()
     // get the inexact matches
     foreach ( Plasma::Runner* runner, m_runners ) {
         KActionCollection* matches = runner->matches( term, 10, 0 );
-        kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
+        //kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
         foreach ( QAction* action, matches->actions() ) {
             bool makeDefault = !m_defaultMatch && action->isEnabled();
-            kDebug() << "\t\t " << action << ": " << action->text() << " " << !m_defaultMatch << " " << action->isEnabled() << endl;
+            //kDebug() << "\t\t " << action << ": " << action->text() << " " << !m_defaultMatch << " " << action->isEnabled() << endl;
             SearchMatch* match = new SearchMatch( action, runner, m_matchList );
             m_searchMatches.append( match );
 
@@ -418,14 +417,14 @@ void Interface::showOptions(bool show)
         }
 
         if ( !m_expander ) {
-            kDebug() << "creating m_expander" << endl;
+            //kDebug() << "creating m_expander" << endl;
             m_expander = new CollapsibleWidget( this );
             connect( m_expander, SIGNAL( collapseCompleted() ),
                      m_expander, SLOT( hide() ) );
             m_layout->insertWidget( 3, m_expander );
         }
 
-        kDebug() << "set inner widget to " << m_defaultMatch->runner()->options() << endl;
+        //kDebug() << "set inner widget to " << m_defaultMatch->runner()->options() << endl;
         m_expander->setInnerWidget( m_defaultMatch->runner()->options() );
         m_expander->show();
         m_optionsButton->setText( i18n( "Hide Options" ) );

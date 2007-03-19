@@ -43,6 +43,7 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     p.setClipRect(e->rect());
+    //kDebug() << "clip rect set to: " << e->rect() << endl;
 
     if ( KRunnerApp::s_haveCompositeManager ) {
         //kDebug() << "gots us a compmgr!" << m_haveCompositionManager << endl;

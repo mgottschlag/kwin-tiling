@@ -190,6 +190,7 @@ void KRunnerApp::logout( KWorkSpace::ShutdownConfirm confirm,
     }
 }
 
+#include <KStartupInfo>
 int KRunnerApp::newInstance()
 {
     static bool firstTime = true;
@@ -197,11 +198,12 @@ int KRunnerApp::newInstance()
         // App startup: do nothing
         firstTime = false;
     } else {
+        KStartupInfo::setNewStartupId( m_interface, KStartupInfo::createNewStartupId() );
         m_interface->display();
+        kDebug() << "startup id is " << startupId() << endl;
     }
 
-    // Call parent class for the setNewStartupId stuff
-    return KUniqueApplication::newInstance();
+    return 0;
 }
 
 #include "krunnerapp.moc"
