@@ -32,6 +32,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <kiconloader.h>
+#include <kservice.h>
 #include <kservicegroup.h>
 
 #include "treeview.h"
