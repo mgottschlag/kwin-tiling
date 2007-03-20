@@ -34,6 +34,7 @@
 #include <kpushbutton.h>
 #include <KStandardGuiItem>
 #include <kauthorized.h>
+#include <kdesktopfile.h>
 #include <kservicetypetrader.h>
 
 #include <qframe.h>
@@ -292,7 +293,7 @@ bool LockProcess::dontLock()
 void LockProcess::quitSaver()
 {
     stopSaver();
-    kapp->quit();
+    qApp->quit();
 }
 
 //---------------------------------------------------------------------------
@@ -994,7 +995,7 @@ bool LockProcess::x11Event(XEvent *event)
             if (!mLocked || checkPass())
             {
                 stopSaver();
-                kapp->quit();
+                qApp->quit();
             }
             else if (mAutoLogout) // we need to restart the auto logout countdown
             {
