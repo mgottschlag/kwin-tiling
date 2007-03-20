@@ -270,8 +270,8 @@ int getIntQueryVal(const KUrl &url, const char *key, int defVal)
 bool printable(const QString &mime)
 {
     return "application/x-font-type1"==mime || "application/x-font-ttf"==mime ||
-           "application/x-font-otf"==mime || "application/x-font-ttc"==mime ||
-           "application/x-font-ghostscript"==mime;
+           "application/x-font-otf"==mime || "application/x-font-ttf"==mime ||
+           "application/x-font-type1"==mime;
 }
 
 uint qHash(const KFI::Misc::TFont &key)

@@ -469,7 +469,7 @@ void CKCmFontInst::addFonts()
     if(!working())
     {
         QString filter("application/x-font-ttf application/x-font-otf "
-                       "application/x-font-ttc application/x-font-type1");
+                       "application/x-font-ttf application/x-font-type1");
 
         if(itsMgtMode->isChecked())
         {

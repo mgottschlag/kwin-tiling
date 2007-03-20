@@ -2006,7 +2006,7 @@ void CFontListView::dropEvent(QDropEvent *event)
 
             if(mime->is("application/x-font-ttf") ||
                mime->is("application/x-font-otf") ||
-               mime->is("application/x-font-ttc") ||
+               mime->is("application/x-font-ttf") ||
                mime->is("application/x-font-type1") ||
                mime->is("fonts/package") ||
                (!isColumnHidden(COL_STATUS) && 

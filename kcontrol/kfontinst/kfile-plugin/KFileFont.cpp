@@ -299,8 +299,8 @@ KFileFontPlugin::KFileFontPlugin(QObject *parent, const QStringList& args)
     addMimeType("application/x-font-bdf");
     addMimeType("application/x-font-pcf");
     addMimeType("application/x-font-otf");
-    addMimeType("application/x-font-ttc");
-    addMimeType("application/x-afm");
+    addMimeType("application/x-font-ttf");
+    addMimeType("application/x-font-afm");
     addMimeType("fonts/package");
 }
 
@@ -366,7 +366,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 
     if(downloaded || fontsProt || fileProt)
     {
-        if("application/x-afm"==info.mimeType())  // Then fontconfig can't give us the data :-(
+        if("application/x-font-afm"==info.mimeType())  // Then fontconfig can't give us the data :-(
             status=readAfm(url.path(), fullAll, familyAll, foundryAll, weightAll, widthAll,
                            spacingAll, slantAll, versionAll);
         else
@@ -403,7 +403,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                                     QString mime(KMimeType::findByPath(tempDir->name()+entry->name())->name());
 
                                     if(mime=="application/x-font-ttf" || mime=="application/x-font-otf" ||
-                                       mime=="application/x-font-ttc" || mime=="application/x-font-type1")
+                                       mime=="application/x-font-ttf" || mime=="application/x-font-type1")
                                     {
                                         url=KUrl::fromPath(tempDir->name()+entry->name());
                                         break;

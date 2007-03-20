@@ -236,7 +236,7 @@ void CFontViewPart::previewStatus(bool st)
 
             printable=mime->is("application/x-font-ttf") ||
                       mime->is("application/x-font-otf") ||
-                      mime->is("application/x-font-ttc");
+                      mime->is("application/x-font-ttf");
         }
 #endif
 

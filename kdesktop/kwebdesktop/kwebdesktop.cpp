@@ -155,7 +155,7 @@ KParts::ReadOnlyPart* KWebDesktop::createPart( const QString& mimeType )
     KMimeType::Ptr mime = KMimeType::mimeType( mimeType );
     if ( !mime || mime == KMimeType::defaultMimeTypePtr() )
         return 0;
-    if ( mime->is( "text/html" ) || mime->is( "text/xml" ) || mime->is( "application/xhtml+xml" ) )
+    if ( mime->is( "text/html" ) || mime->is( "application/xml" ) || mime->is( "application/xhtml+xml" ) )
     {
         KHTMLPart* htmlPart = new KHTMLPart;
         htmlPart->widget()->resize(m_width,m_height);
