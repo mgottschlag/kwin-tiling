@@ -50,7 +50,7 @@ public:
 
     bool isValidIndex(Index index) const;
     bool isValidInsertIndex(Index index) const;
-    virtual ~EasyVector(){};
+    virtual ~EasyVector(){}
 
 
 protected:

@@ -39,7 +39,7 @@ class LogView: public QWidget
    Q_OBJECT
    public:
       LogView(QWidget *parent=0, KConfig *config=0);
-      virtual ~LogView() {};
+      virtual ~LogView() {}
       void saveSettings();
       void loadSettings();
    private:
@@ -79,7 +79,7 @@ class QListViewItemX:public Q3ListViewItem
          setText( 6, c6 );
          if (c7==0) return;
          setText( 7, c7 );
-      };
+      }
 };
 
 #endif // main_included

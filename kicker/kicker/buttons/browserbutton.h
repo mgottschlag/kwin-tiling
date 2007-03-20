@@ -58,7 +58,7 @@ protected:
     virtual void dropEvent(QDropEvent *ev);
     virtual void dragEnterEvent(QDragEnterEvent *ev);
     virtual void dragLeaveEvent(QDragLeaveEvent *ev);
-    virtual QString defaultIcon() const { return "kdisknav"; };
+    virtual QString defaultIcon() const { return "kdisknav"; }
 
     PanelBrowserMenu*    topMenu;
     QString              _icon;

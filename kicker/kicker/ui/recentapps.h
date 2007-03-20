@@ -61,11 +61,11 @@ public:
     }
 
     QString getDesktopPath() const { return m_desktopPath; }
-    int getLaunchCount() const { return m_launchCount; };
-    time_t getLastLaunchTime() const { return m_lastLaunchTime; };
-    void increaseLaunchCount() { m_launchCount++; };
-    void setLaunchCount(int nLaunchCount) { m_launchCount = nLaunchCount; };
-    void setLastLaunchTime(time_t lastLaunch) { m_lastLaunchTime = lastLaunch; };
+    int getLaunchCount() const { return m_launchCount; }
+    time_t getLastLaunchTime() const { return m_lastLaunchTime; }
+    void increaseLaunchCount() { m_launchCount++; }
+    void setLaunchCount(int nLaunchCount) { m_launchCount = nLaunchCount; }
+    void setLastLaunchTime(time_t lastLaunch) { m_lastLaunchTime = lastLaunch; }
 
 private:
     QString m_desktopPath;

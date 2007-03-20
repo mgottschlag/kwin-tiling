@@ -255,7 +255,7 @@ protected:
     /**
      * @return the default icon for the button
      */
-    virtual QString defaultIcon() const { return "unknown"; };
+    virtual QString defaultIcon() const { return "unknown"; }
 
     /**
      * Called right before drag occurs.
@@ -406,7 +406,7 @@ protected:
      * Called each time the button is clicked and the popup
      * is displayed. Reimplement for dynamic popup menus.
      */
-    virtual void initPopup() {};
+    virtual void initPopup() {}
 
     /**
      * Called before drag occurs. Reimplement to do any

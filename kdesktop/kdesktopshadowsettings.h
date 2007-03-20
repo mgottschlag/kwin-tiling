@@ -77,19 +77,19 @@ class KDesktopShadowSettings : public KShadowSettings
      * Returns the text color as definied in the configuraiton
      * @return the text color as definied in the configuraiton
      */
-    QColor &textColor(){ return m_textColor; };
+    QColor &textColor(){ return m_textColor; }
     
     /**
      * Returns the shadow color as definied in the configuraiton
      * @return the shadow color as definied in the configuraiton
      */
-    QColor &bgColor() {  return m_bgColor; };
+    QColor &bgColor() {  return m_bgColor; }
     
     /**
      * Returns true if the shadow engine is enabled.
      * @return true if the shadow engine is enabled.
      */
-    bool isEnabled() { return m_isEnabled; };
+    bool isEnabled() { return m_isEnabled; }
     
     /**
      * Returns an UID for shadow rebuilding purposes

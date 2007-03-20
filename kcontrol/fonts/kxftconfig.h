@@ -76,7 +76,7 @@ class KXftConfig
         char *start,
              *end;
 #endif
-        virtual ~Item() {};
+        virtual ~Item() {}
         bool toBeRemoved;
     };
 

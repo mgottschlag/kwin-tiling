@@ -74,7 +74,7 @@ public:
     KPager(KPagerMainWindow *parent=0, const char *name=0);
     ~KPager();
 
-    class KWinModule *kwin() const { return m_winmodule; };
+    class KWinModule *kwin() const { return m_winmodule; }
     void updateLayout();
 
     void redrawDesktops();

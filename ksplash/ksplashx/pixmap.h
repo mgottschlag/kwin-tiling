@@ -12,7 +12,7 @@ enum Optimization { DefaultOptim, NoOptim, MemoryOptim=NoOptim,
 
 struct PixmapData
     {
-    PixmapData() : hd( None ), optim( NoOptim ), ximage( NULL ) {};
+    PixmapData() : hd( None ), optim( NoOptim ), ximage( NULL ) {}
     Pixmap hd;
     int w;
     int h;

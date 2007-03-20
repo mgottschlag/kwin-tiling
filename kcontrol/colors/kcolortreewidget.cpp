@@ -36,9 +36,9 @@ class KColorTreeWidgetItem : public QTreeWidgetItem
 {
   public:
     KColorTreeWidgetItem( QTreeWidget *parent, const QString& role , int fg_idx , int bg_idx );
-    ~KColorTreeWidgetItem() {};
+    ~KColorTreeWidgetItem() {}
 
-    QString role() const { return text(0); };
+    QString role() const { return text(0); }
     /* only true for a hl mode item using it's default style */
     bool defStyle() const;
     
@@ -127,7 +127,7 @@ void KColorTreeWidgetItem::setData( int column, int role, const QVariant& value 
 class KColorTreeDelegate : public QItemDelegate
 {
     public:
-        KColorTreeDelegate(QWidget* widget) : m_widget(widget) {};
+        KColorTreeDelegate(QWidget* widget) : m_widget(widget) {}
 
         virtual void paint( QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const;
 

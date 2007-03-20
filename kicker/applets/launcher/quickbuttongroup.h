@@ -15,8 +15,8 @@
 
 class QuickButtonGroup: virtual public EasyVector< QuickButton* > {
 public:
-    QuickButtonGroup(const EasyVector< QuickButton* > &kv):EasyVector< QuickButton* >(kv){};
-    QuickButtonGroup():EasyVector< QuickButton* >(){};
+    QuickButtonGroup(const EasyVector< QuickButton* > &kv):EasyVector< QuickButton* >(kv){}
+    QuickButtonGroup():EasyVector< QuickButton* >(){}
     Index findDescriptor(const QString &desc);
 
     void show();

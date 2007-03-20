@@ -71,18 +71,18 @@ void KDesktopShadowSettings::setConfig(const KSharedConfigPtr &val)
     // pixmaps
     setUID();
 
-    config->setGroup("FMSettings");
-    m_textColor = config->readEntry("NormalTextColor", QColor(Qt::white));
-    m_bgColor = config->readEntry("ItemTextBackground");
-    m_isEnabled = config->readEntry("ShadowEnabled", true);
+    KConfigGroup fmsettings(config, "FMSettings");
+    m_textColor = fmsettings.readEntry("NormalTextColor", QColor(Qt::white));
+    m_bgColor = fmsettings.readEntry("ItemTextBackground");
+    m_isEnabled = fmsettings.readEntry("ShadowEnabled", true);
 
 #ifdef DEBUG
     // debug
     kDebug(1204) << "setConfig()" << endl;
 #endif
 
-    if (config->hasKey(SHADOW_CONFIG_ENTRY))
-	fromString(config->readEntry(SHADOW_CONFIG_ENTRY, QString()));
+    if (fmsettings.hasKey(SHADOW_CONFIG_ENTRY))
+	fromString(fmsettings.readEntry(SHADOW_CONFIG_ENTRY, QString()));
     
 #ifdef DEBUG
     // debug

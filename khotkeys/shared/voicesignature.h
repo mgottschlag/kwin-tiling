@@ -70,7 +70,7 @@ class KDE_EXPORT VoiceSignature{
 public:
     explicit VoiceSignature(const Sound& s);
 
-	VoiceSignature(){};
+	VoiceSignature(){}
 	~VoiceSignature();
 
 	QMap<int, QMap<int, double> > data;

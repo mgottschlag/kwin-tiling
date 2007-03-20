@@ -38,8 +38,8 @@ class KConfig;
 class SmallLogItem
 {
  public:
-  SmallLogItem():name(""),count(0){};
-  SmallLogItem(QString n):name(n),count(1){};
+  SmallLogItem():name(""),count(0){}
+  SmallLogItem(QString n):name(n),count(1){}
   QString name;
   int count;
 };
@@ -47,12 +47,12 @@ class SmallLogItem
 class LogItem
 {
  public:
-  LogItem():name(""), accessed(),count(0) {};
+  LogItem():name(""), accessed(),count(0) {}
   LogItem(QString n, QString a):name(n), accessed(), count(1)
 	{
 	  accessed.setAutoDelete(true);
 	  accessed.append(new SmallLogItem(a));
-	};
+	}
   QString name;
   //QStrList accessedBy;
   Q3PtrList<SmallLogItem> accessed;
@@ -67,7 +67,7 @@ class SambaLog
   SambaLog()
 	{
 	  items.setAutoDelete(true);
-	};
+	}
   Q3PtrList<LogItem> items;
   void addItem (QString share, QString host);
   void printItems();
@@ -80,9 +80,9 @@ class StatisticsView: public QWidget
   Q_OBJECT
 public:
   StatisticsView(QWidget *parent=0, KConfig *config=0);
-  virtual ~StatisticsView() {};
-  void saveSettings() {};
-  void loadSettings() {};
+  virtual ~StatisticsView() {}
+  void saveSettings() {}
+  void loadSettings() {}
   public Q_SLOTS:
 	void setListInfo(Q3ListView *list, int nrOfFiles, int nrOfConnections);
 private:

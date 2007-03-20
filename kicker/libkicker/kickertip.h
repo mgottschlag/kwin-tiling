@@ -69,7 +69,7 @@ public:
     class KDE_EXPORT Client
     {
         public:
-            virtual ~Client() {};
+            virtual ~Client() {}
             virtual void updateTipData(KickerTip::Data&) = 0;
             void updateTip() const;
     };

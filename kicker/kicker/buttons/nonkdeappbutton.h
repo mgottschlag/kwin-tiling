@@ -77,7 +77,7 @@ protected:
     void runCommand(const QString& execStr = QString());
 
     // reimplemented from PanelButton
-    QString defaultIcon() const { return "exec"; };
+    QString defaultIcon() const { return "exec"; }
 
     // handle drag and drop actions
     virtual void dropEvent(QDropEvent *ev);

@@ -101,11 +101,11 @@ class KFileIVIDesktop : public KFileIVI
     virtual QImage *buildShadow(QPainter *p, const int align, QColor &shadowColor);
 
  protected:
-    void setNormalImage(QImage *newImage) { delete m_normalImage; m_normalImage = newImage; };
-    void setSelectedImage(QImage *newImage) { delete m_selectedImage; m_selectedImage = newImage; };
+    void setNormalImage(QImage *newImage) { delete m_normalImage; m_normalImage = newImage; }
+    void setSelectedImage(QImage *newImage) { delete m_selectedImage; m_selectedImage = newImage; }
 
-    QImage *normalImage() { return m_normalImage; };
-    QImage *selectedImage() { return m_selectedImage; };
+    QImage *normalImage() { return m_normalImage; }
+    QImage *selectedImage() { return m_selectedImage; }
 
  private:
     bool shouldUpdateShadow(bool selected);

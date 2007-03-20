@@ -282,14 +282,14 @@ protected:
      * Reimplement this change handler in order to adjust the look of your
      * applet.
      **/
-    virtual void positionChange( Plasma::Position ) {};
+    virtual void positionChange( Plasma::Position ) {}
 
     /**
      * This extension has changed its alignment.
      * Reimplement this change handler in order to adjust the look of your
      * applet.
      **/
-    virtual void alignmentChange( Plasma::Alignment ) {};
+    virtual void alignmentChange( Plasma::Alignment ) {}
 
     /**
      * Use this method to set the custom menu for this extensions so that it can be shown

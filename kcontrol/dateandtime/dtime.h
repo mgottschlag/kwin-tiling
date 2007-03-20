@@ -102,7 +102,7 @@ class Kclock : public QWidget
 
 public:
   Kclock( QWidget *parent=0 ) 
-    : QWidget(parent) {};
+    : QWidget(parent) {}
 
   void setTime(const QTime&);
 
@@ -119,7 +119,7 @@ class KStrictIntValidator : public QIntValidator
 public:
   KStrictIntValidator(int bottom, int top, QWidget * parent,
 		      const char * name = 0 )
-    : QIntValidator(bottom, top, parent, name) {};
+    : QIntValidator(bottom, top, parent, name) {}
 
   QValidator::State validate( QString & input, int & d ) const; 
 };

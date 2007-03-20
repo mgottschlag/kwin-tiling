@@ -50,7 +50,7 @@ public:
   Desktop( int desk, const QString &desktopName, QWidget *parent=0 );
   ~Desktop();
 
-  int id() const { return m_desk; };
+  int id() const { return m_desk; }
   bool isCurrent() const;
 
 //  int widthForHeight(int height) const;
@@ -66,10 +66,10 @@ public:
   static const WindowDrawMode c_defWindowDrawMode;
   static const WindowTransparentMode c_defWindowTransparentMode;
 
-  virtual int deskX() const { return 0; };
-  virtual int deskY() const { return 0; };
-  virtual int deskWidth() const { return width(); };
-  virtual int deskHeight() const { return height(); };
+  virtual int deskX() const { return 0; }
+  virtual int deskY() const { return 0; }
+  virtual int deskWidth() const { return width(); }
+  virtual int deskHeight() const { return height(); }
 
   void startDrag(const QPoint &point);
   void dragEnterEvent(QDragEnterEvent *ev);
@@ -78,7 +78,7 @@ public:
   void convertRectS2P(QRect &r);
   void convertCoordP2S(int &x, int &y);
 
-	static void removeCachedPixmap(int nWin) { m_windowPixmaps.remove(nWin); };
+	static void removeCachedPixmap(int nWin) { m_windowPixmaps.remove(nWin); }
 
   QSize sizeHint() const;
 

@@ -58,7 +58,7 @@ protected:
     virtual void startDrag();
     virtual void dropEvent(QDropEvent *);
     virtual void dragEnterEvent(QDragEnterEvent *);
-    QString defaultIcon() const { return "exec"; };
+    QString defaultIcon() const { return "exec"; }
     bool checkForBackingFile();
 
     KService::Ptr  _service;

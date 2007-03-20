@@ -13,10 +13,10 @@ public:
 
   XkbRules(bool layoutsOnly=false);
 
-  const QHash<QString, QString> &models() const { return m_models; };
-  const QHash<QString, QString> &layouts() const { return m_layouts; };
-  const QHash<QString, XkbOption> &options() const { return m_options; };
-  const QHash<QString, XkbOptionGroup> &optionGroups() const { return m_optionGroups; };
+  const QHash<QString, QString> &models() const { return m_models; }
+  const QHash<QString, QString> &layouts() const { return m_layouts; }
+  const QHash<QString, XkbOption> &options() const { return m_options; }
+  const QHash<QString, XkbOptionGroup> &optionGroups() const { return m_optionGroups; }
 
   QStringList getAvailableVariants(const QString& layout);
   unsigned int getDefaultGroup(const QString& layout, const QString& includeGroup);

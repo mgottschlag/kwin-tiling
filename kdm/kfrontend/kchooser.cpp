@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class ChooserListViewItem : public QTreeWidgetItem {
   public:
 	ChooserListViewItem( QTreeWidget *parent, int _id, const QString &nam, const QString &sts )
-		: QTreeWidgetItem( parent, QStringList() << nam << sts ) { id = _id; };
+		: QTreeWidgetItem( parent, QStringList() << nam << sts ) { id = _id; }
 
 	int id;
 };

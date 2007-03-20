@@ -107,7 +107,7 @@ class DeleteObject
     Q_OBJECT
     public:
         DeleteObject( QWidget* widget_P, QObject* parent_P )
-            : QObject( parent_P ), widget( widget_P ) {};
+            : QObject( parent_P ), widget( widget_P ) {}
         virtual ~DeleteObject() { delete widget; }
     private:
         QWidget* widget;

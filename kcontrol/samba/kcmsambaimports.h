@@ -33,9 +33,9 @@ class ImportsView: public QWidget
    Q_OBJECT
    public:
       ImportsView(QWidget *parent, KConfig *config=0);
-      virtual ~ImportsView() {};
-      void saveSettings() {};
-      void loadSettings() {};
+      virtual ~ImportsView() {}
+      void saveSettings() {}
+      void loadSettings() {}
 private:
    KConfig *configFile;
    Q3ListView list;

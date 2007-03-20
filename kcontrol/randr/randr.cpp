@@ -43,7 +43,7 @@
 class RandRScreenPrivate
 {
 public:
-	RandRScreenPrivate() : config(0L) {};
+	RandRScreenPrivate() : config(0L) {}
 	~RandRScreenPrivate()
 	{
 		if (config)

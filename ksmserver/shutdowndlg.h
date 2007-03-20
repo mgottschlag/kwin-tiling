@@ -92,7 +92,7 @@ public Q_SLOTS:
     void slotSuspend(int);
 
 protected:
-    ~KSMShutdownDlg() {};
+    ~KSMShutdownDlg() {}
     void paintEvent(QPaintEvent *e);
     void resizeEvent(QResizeEvent *e);
 

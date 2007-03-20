@@ -133,8 +133,8 @@ protected:
     void leaveEvent(QEvent*);
 
     void arrange(Plasma::Position p, Plasma::Alignment a, int XineramaScreen);
-    bool autoHidden() const { return _autoHidden; };
-    UserHidden userHidden() const { return _userHidden; };
+    bool autoHidden() const { return _autoHidden; }
+    UserHidden userHidden() const { return _userHidden; }
     void resetLayout();
     bool needsBorder();
 
