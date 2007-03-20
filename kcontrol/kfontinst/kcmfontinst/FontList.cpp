@@ -553,7 +553,7 @@ bool CFamilyItem::updateStatus()
 
     itsIcon=1==mimeTypes.count()
                 ? KMimeType::mimeType(mimeTypes[0])->iconName()
-                : "font";
+                : "font-truetype";
 
     if(!root)
         setIsSystem(sys);
@@ -1535,14 +1535,14 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
     itsMgtMenu->addAction(reloadAct);
 }
 
-void CFontListView::readConfig(KConfig &cfg)
+void CFontListView::readConfig(KConfigGroup &cg)
 {
-    setColumnWidth(COL_FONT, cfg.readEntry(COL_FONT_SIZE, 200));
+    setColumnWidth(COL_FONT, cg.readEntry(COL_FONT_SIZE, 200));
 }
 
-void CFontListView::writeConfig(KConfig &cfg)
+void CFontListView::writeConfig(KConfigGroup &cg)
 {
-    cfg.writeEntry(COL_FONT_SIZE, columnWidth(COL_FONT));
+    cg.writeEntry(COL_FONT_SIZE, columnWidth(COL_FONT));
 }
 
 void CFontListView::getFonts(CJobRunner::ItemList &urls, QStringList &fontNames, QSet<Misc::TFont> *fonts,
@@ -1954,7 +1954,7 @@ void CFontListView::startDrag(Qt::DropActions supportedActions)
             return;
 
         QModelIndex index(itsProxy->mapToSource(indexes.first()));
-        const char  *icon="font_bitmap";
+        const char  *icon="font-bitmap";
 
         if(index.isValid())
         {
@@ -1964,9 +1964,9 @@ void CFontListView::startDrag(Qt::DropActions supportedActions)
 
             if(font && !font->isBitmap())
                 if("application/x-font-type1"==font->mimetype())
-                    icon="font_type1";
+                    icon="font-type1";
                 else
-                    icon="font_truetype";
+                    icon="font-truetype";
         }
 
         QPoint  hotspot;

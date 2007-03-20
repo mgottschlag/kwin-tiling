@@ -156,7 +156,7 @@ void CDuplicatesDialog::scanFinished()
                 }
                 top->setExpanded(true);
                 top->setData(COL_FILE, Qt::DecorationRole,
-                             QVariant(SmallIcon(t1>tt ? "font_type1" : "font_truetype")));
+                             QVariant(SmallIcon(t1>tt ? "font-type1" : "font-truetype")));
                 top->setFont(COL_FILE, boldFont);
             }
             itsView->setSortingEnabled(true);

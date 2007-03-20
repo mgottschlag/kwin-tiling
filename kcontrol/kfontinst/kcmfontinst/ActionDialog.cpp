@@ -65,7 +65,7 @@ CActionDialog::CActionDialog(QWidget *parent)
 
     if(0==theUsageCount++)
     {
-        QImage img(KIconLoader::global()->loadIcon("font_truetype", K3Icon::NoGroup, 32));
+        QImage img(KIconLoader::global()->loadIcon("font-truetype", K3Icon::NoGroup, 32));
         double increment=360.0/constNumIcons;
 
         for(int i=0; i<constNumIcons; ++i)

@@ -148,6 +148,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
          "(c) Craig Drummond, 2000 - 2006"));
     about->addAuthor("Craig Drummond", I18N_NOOP("Developer and maintainer"), "craig@kde.org");
     setAboutData(about);
+
+    KConfigGroup cg(&itsConfig, CFG_GROUP);
+
     itsRunner=new CJobRunner(this);
 
     itsSplitter=new QSplitter(this);
@@ -264,7 +267,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsFontList=new CFontList(itsFontsWidget);
     itsFontListView=new CFontListView(itsFontsWidget, itsFontList);
     itsFontListView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    itsFontListView->readConfig(itsConfig);
+    itsFontListView->readConfig(cg);
 
     itsAddFontControl=new CPushButton(KGuiItem(i18n("Add..."), "newfont",
                                                i18n("Install fonts")),
@@ -316,8 +319,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsSplitter->setStretchFactor(1, 1);
     itsSplitter->setStretchFactor(2, 0);
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-
-    KConfigGroup cg(&itsConfig, CFG_GROUP);
 
     QList<int> defaultSizes;
 
@@ -394,7 +395,7 @@ CKCmFontInst::~CKCmFontInst()
     cg.writeEntry(CFG_SPLITTER_SIZES, itsSplitter->sizes());
     cg.writeEntry(CFG_FONT_MGT_MODE, itsMgtMode->isChecked());
     cg.writeEntry(CFG_SHOW_PREVIEW, itsShowPreview->isChecked());
-    itsFontListView->writeConfig(itsConfig);
+    itsFontListView->writeConfig(cg);
     delete itsTempDir;
     delete itsPrintProc;
     delete itsExportFile;

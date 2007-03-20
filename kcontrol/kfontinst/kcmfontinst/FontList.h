@@ -40,6 +40,7 @@
 #include "JobRunner.h"
 #include "FontFilter.h"
 
+class KConfigGroup;
 class KFileItem;
 class KFileItemList;
 class QMenu;
@@ -315,8 +316,8 @@ class CFontListView : public QTreeView
     CFontListView(QWidget *parent, CFontList *model);
     virtual ~CFontListView() { }
 
-    void            readConfig(KConfig &cfg);
-    void            writeConfig(KConfig &cfg);
+    void            readConfig(KConfigGroup &cg);
+    void            writeConfig(KConfigGroup &cg);
     QModelIndexList selectedItems() const  { return selectedIndexes(); }
     void            getFonts(CJobRunner::ItemList &urls, QStringList &fontNames, QSet<Misc::TFont> *fonts,
                              bool *hasSys, bool selected, bool getEnabled=true, bool getDisabled=true);
