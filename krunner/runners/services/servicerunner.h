@@ -21,7 +21,7 @@
 
 #include <KService>
 
-#include "runner.h"
+#include "abstractrunner.h"
 
 class QWidget;
 class QAction;
@@ -32,7 +32,7 @@ class QAction;
  * appications menu and have it start the appropriate app. Essentially anything
  * that KService knows about, this runner can launch
  */
-class ServiceRunner : public Plasma::Runner
+class ServiceRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
 

@@ -21,14 +21,14 @@
 
 #include <KGenericFactory>
 
-#include "runner.h"
+#include "abstractrunner.h"
 
 class QWidget;
 
 /**
  * This class evaluates the basic expressions given in the interface.
  */
-class CalculatorRunner : public Plasma::Runner
+class CalculatorRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
 

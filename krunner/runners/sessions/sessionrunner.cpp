@@ -32,7 +32,7 @@
 #include "sessionrunner.h"
 
 SessionRunner::SessionRunner( QObject* parent )
-    : Plasma::Runner( parent )
+    : Plasma::AbstractRunner( parent )
 {
     setObjectName( i18n( "Sessions" ) );
 }

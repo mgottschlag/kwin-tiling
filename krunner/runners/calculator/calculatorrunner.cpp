@@ -32,7 +32,7 @@
 #include "calculatorrunner.h"
 
 CalculatorRunner::CalculatorRunner( QObject* parent, const QStringList& args )
-    : Plasma::Runner( parent ),
+    : Plasma::AbstractRunner( parent ),
       m_options( 0 )
 {
     Q_UNUSED(args)

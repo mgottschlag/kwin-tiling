@@ -19,7 +19,7 @@
 #ifndef SHELLRUNNER_H
 #define SHELLRUNNER_H
 
-#include "runner.h"
+#include "abstractrunner.h"
 
 class QWidget;
 class QAction;
@@ -28,7 +28,7 @@ class QAction;
  * This class runs programs using the literal name of the binary, much as one
  * would use at a shell prompt.
  */
-class ShellRunner : public Plasma::Runner
+class ShellRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
 

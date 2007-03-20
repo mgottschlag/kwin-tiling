@@ -30,7 +30,7 @@
 #include "ui_shellOptions.h"
 
 ShellRunner::ShellRunner( QObject* parent )
-    : Plasma::Runner( parent ),
+    : Plasma::AbstractRunner( parent ),
       m_options( 0 )
 {
     setObjectName( i18n( "Command" ) );

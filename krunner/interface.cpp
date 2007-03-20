@@ -36,7 +36,7 @@
 #include <KStandardGuiItem>
 #include <KWin>
 
-#include "../plasma/lib/runner.h"
+#include "abstractrunner.h"
 
 #include "runners/services/servicerunner.h"
 #include "runners/sessions/sessionrunner.h"
@@ -53,7 +53,7 @@
 class SearchMatch : public QListWidgetItem
 {
     public:
-        SearchMatch( QAction* action, Plasma::Runner* runner, QListWidget* parent )
+        SearchMatch( QAction* action, Plasma::AbstractRunner* runner, QListWidget* parent )
             : QListWidgetItem( parent ),
               m_default( false ),
               m_action( 0 ),
@@ -85,7 +85,7 @@ class SearchMatch : public QListWidgetItem
             setDefault( m_default );
         }
 
-        Plasma::Runner* runner()
+        Plasma::AbstractRunner* runner()
         {
             return m_runner;
         }
@@ -109,7 +109,7 @@ class SearchMatch : public QListWidgetItem
     private:
         bool m_default;
         QAction* m_action;
-        Plasma::Runner* m_runner;
+        Plasma::AbstractRunner* m_runner;
 };
 
 Interface::Interface(QWidget* parent)
@@ -202,7 +202,7 @@ Interface::Interface(QWidget* parent)
     m_runners.append( new ShellRunner( this ) );
     m_runners.append( new ServiceRunner( this ) );
     m_runners.append( new SessionRunner( this ) );
-    m_runners += Plasma::Runner::loadRunners( this );
+    m_runners += Plasma::AbstractRunner::loadRunners( this );
 
 #ifdef FLASH_DIALOG
     QTimer* t = new QTimer(this);
@@ -307,12 +307,12 @@ void Interface::match(const QString& t)
         return;
     }
 
-    QMap<Plasma::Runner*, SearchMatch*> matches;
+    QMap<Plasma::AbstractRunner*, SearchMatch*> matches;
 
     int matchCount = 0;
 
     // get the exact matches
-    foreach ( Plasma::Runner* runner, m_runners ) {
+    foreach ( Plasma::AbstractRunner* runner, m_runners ) {
         //kDebug() << "\trunner: " << runner->objectName() << endl;
         QAction* exactMatch = runner->exactMatch( term ) ;
 
@@ -320,7 +320,7 @@ void Interface::match(const QString& t)
             SearchMatch* match = 0;
             bool makeDefault = !m_defaultMatch && exactMatch->isEnabled();
 
-            QMap<Plasma::Runner*, SearchMatch*>::iterator it = m_matches.find( runner );
+            QMap<Plasma::AbstractRunner*, SearchMatch*>::iterator it = m_matches.find( runner );
             if ( it != m_matches.end() ) {
                 match = it.value();
                 match->setAction( exactMatch );
@@ -371,7 +371,7 @@ void Interface::fuzzySearch()
     QString term = m_searchTerm->text().trimmed();
 
     // get the inexact matches
-    foreach ( Plasma::Runner* runner, m_runners ) {
+    foreach ( Plasma::AbstractRunner* runner, m_runners ) {
         KActionCollection* matches = runner->matches( term, 10, 0 );
         //kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
         foreach ( QAction* action, matches->actions() ) {

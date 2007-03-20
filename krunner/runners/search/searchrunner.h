@@ -21,13 +21,13 @@
 
 #include <KGenericFactory>
 
-#include "runner.h"
+#include "abstractrunner.h"
 
 /**
  * This class runs the entered text through a search engine and returns the set
  * of results returned as possible programs, files, actions, etc to launch.
  */
-class SearchRunner : public Plasma::Runner
+class SearchRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
 

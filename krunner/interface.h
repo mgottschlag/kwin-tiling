@@ -24,8 +24,11 @@
 // pulls in definition for Window
 #include <KSelectionWatcher>
 
+// libplasma includes
+#include "abstractrunner.h"
+
+// local includes
 #include "krunnerdialog.h"
-#include "runner.h"
 
 class QFrame;
 class QLabel;
@@ -69,7 +72,7 @@ class Interface : public KRunnerDialog
 
     private:
         QTimer m_searchTimer;
-        Plasma::Runner::List m_runners;
+        Plasma::AbstractRunner::List m_runners;
 
         QVBoxLayout* m_layout;
         QFrame* m_header;
@@ -83,7 +86,7 @@ class Interface : public KRunnerDialog
         CollapsibleWidget* m_expander;
 
         SearchMatch* m_defaultMatch;
-        QMap<Plasma::Runner*, SearchMatch*> m_matches;
+        QMap<Plasma::AbstractRunner*, SearchMatch*> m_matches;
         QList<SearchMatch*> m_searchMatches;
 };
 

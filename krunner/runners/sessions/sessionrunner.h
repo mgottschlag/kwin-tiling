@@ -19,7 +19,7 @@
 #ifndef SESSIONRUNNER_H
 #define SESSIONRUNNER_H
 
-#include "runner.h"
+#include "abstractrunner.h"
 
 class QWidget;
 class QAction;
@@ -28,7 +28,7 @@ class QAction;
  * This class provides matches for running sessions as well as
  * an action to start a new session, etc.
  */
-class SessionRunner : public Plasma::Runner
+class SessionRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
 

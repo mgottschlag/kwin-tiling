@@ -30,7 +30,7 @@
 #include "servicerunner.h"
 
 ServiceRunner::ServiceRunner( QObject* parent )
-    : Plasma::Runner( parent ),
+    : Plasma::AbstractRunner( parent ),
       m_options( 0 )
 {
     setObjectName( i18n( "Application" ) );
