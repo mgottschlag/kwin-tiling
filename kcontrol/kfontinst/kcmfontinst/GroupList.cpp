@@ -207,29 +207,8 @@ CGroupList::CGroupList(QWidget *parent)
                 new CGroupListItem(CGroupListItem::UNCLASSIFIED, this);
     itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
 
-    // Locate groups.xml file - normall will be ~/.fonts/groups.xml
-    FcStrList *list=FcConfigGetFontDirs(FcInitLoadConfig());
-    FcChar8   *dir;
-    QString   path,
-              home(QDir::homePath()),
-              defaultDir(home+"/.fonts");
-
-    while((dir=FcStrListNext(list)))
-    {
-        QString fcDir((const char *)dir);
-
-        if(0==fcDir.indexOf(home))
-            if(fcDir==defaultDir)
-            {
-                path=defaultDir;
-                break;
-            }
-            else if(path.isEmpty())
-                path=fcDir;
-    }
-
-    if(path.isEmpty())
-        path=defaultDir;
+    // Locate groups.xml file - normall will be ~/.config/fontgroups.xml
+    QString path(KGlobal::dirs()->localxdgconfdir());
 
     if(!Misc::dExists(path))
         Misc::createDir(path);
