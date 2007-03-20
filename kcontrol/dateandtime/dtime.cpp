@@ -405,6 +405,8 @@ void Kclock::paintEvent( QPaintEvent * )
   QPainter paint;
   paint.begin( this );
 
+  paint.setRenderHint(QPainter::Antialiasing);
+
   QPolygon pts;
   QPoint cp = rect().center();
   int d = qMin(width(),height());
