@@ -200,7 +200,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
                 //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
                 //*downloadFontsAct=new KAction(KIcon("go-down"), i18n("Download Fonts..."), this);
 
-    itsToolsMenu=new KActionMenu(KIcon("wizard"), i18n("Tools"), this);
+    itsToolsMenu=new KActionMenu(KIcon("tool2"), i18n("Tools"), this);
     itsMgtMode=new KToggleAction(KIcon("fonts"),
                                  i18n("Font Management Mode"), this),
     itsShowPreview=new KToggleAction(KIcon("thumbnail-show"), i18n("Show Preview"), this);
