@@ -43,7 +43,7 @@ KCustomMenu::KCustomMenu(const QString &configfile, QWidget *parent)
   int count = cfg.readEntry("NrOfItems", 0);
   for(int i = 0; i < count; i++)
   {
-     QString entry = cfg.readEntry(QString("Item%1").arg(i+1), QString());
+     QString entry = cfg.group("").readEntry(QString("Item%1").arg(i+1), QString());
      if (entry.isEmpty())
         continue;
 
