@@ -251,32 +251,25 @@ static int printFonts(int argc, char **argv, bool listFile)
 
 static int viewFont(int argc, char **argv)
 {
-    if(3==argc)
-    {
-        KUrl url(toUrl(QString::fromUtf8(argv[2])));
+    KUrl url(3==argc ? toUrl(QString::fromUtf8(argv[2])) : KUrl());
 
-        if(url.isValid())
-        {
-            KAboutData aboutData(KFI_NAME, KFI_VIEW_CAPTION,
-                                 "1.1", KFI_VIEW_CAPTION,
-                                 KAboutData::License_GPL,
-                                 "(C) Craig Drummond, 2003-2007");
+    KAboutData aboutData(KFI_NAME, KFI_VIEW_CAPTION,
+                         "1.1", KFI_VIEW_CAPTION,
+                         KAboutData::License_GPL,
+                         "(C) Craig Drummond, 2003-2007");
 
-            char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)"kfontview"};
+    char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)"kfontview"};
 
-            KCmdLineArgs::init(3, dummyArgv, &aboutData);
+    KCmdLineArgs::init(3, dummyArgv, &aboutData);
 
-            KApplication app;
+    KApplication app;
 
-            KLocale::setMainCatalog(KFI_CATALOGUE);
-            KFI::CViewer *viewer=new KFI::CViewer (url);
+    KLocale::setMainCatalog(KFI_CATALOGUE);
+    KFI::CViewer *viewer=new KFI::CViewer(url.isValid() ? url : KUrl());
 
-            app.setMainWidget(viewer);
-            viewer->show();
-            return app.exec();
-        }
-    }
-    return -1;
+    app.setMainWidget(viewer);
+    viewer->show();
+    return app.exec();
 }
 
 static QString removeQuotes(const QString &item)

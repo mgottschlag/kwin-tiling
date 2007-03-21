@@ -61,6 +61,6 @@ Name[x-test]=xxFont Filesxx
 Name[xh]=Iifayile Zohlobo lwamagama
 Name[zh_TW]=字型檔案
 ServiceTypes=ThumbCreator
-MimeTypes=application/x-font-ttf,application/x-font-type1,application/x-font-bdf,application/x-font-pcf,application/x-font-otf,application/x-font-ttf,fonts/package
+MimeTypes=application/x-font-ttf,application/x-font-type1,application/x-font-bdf,application/x-font-pcf,application/x-font-otf,fonts/package
 X-KDE-Library=fontthumbnail
 CacheThumbnail=true

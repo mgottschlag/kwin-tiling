@@ -13,5 +13,6 @@ target_link_libraries(kfontviewpart  ${KDE4_KPARTS_LIBS} kfontinstui kfontinst )
 install(TARGETS kfontviewpart  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES kfontviewpart.rc DESTINATION  ${DATA_INSTALL_DIR}/kfontinst )
 install( FILES kfontviewpart.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
+install( FILES kfontview.desktop  DESTINATION  ${XDG_APPS_DIR} )
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
 

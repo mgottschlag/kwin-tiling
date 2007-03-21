@@ -231,12 +231,12 @@ void CFontViewPart::previewStatus(bool st)
         if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
             printable=!Misc::isHidden(url());
 #ifdef KFI_PRINT_APP_FONTS
+        else
         {
+            // TODO: Make this work! Plus, printing of disabled TTF/OTF's shoud also be possible!
             KMimeType::Ptr mime=KMimeType::findByUrl(KUrl::fromPath(localFilePath()), 0, false, true);
 
-            printable=mime->is("application/x-font-ttf") ||
-                      mime->is("application/x-font-otf") ||
-                      mime->is("application/x-font-ttf");
+            printable=mime->is("application/x-font-ttf") || mime->is("application/x-font-otf");
         }
 #endif
 

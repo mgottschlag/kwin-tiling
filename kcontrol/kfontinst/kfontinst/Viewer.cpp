@@ -72,7 +72,7 @@ CViewer::~CViewer()
 void CViewer::fileOpen()
 {
     KUrl url(KFileDialog::getOpenUrl(KUrl(), "application/x-font-ttf application/x-font-otf "
-                                             "application/x-font-ttf application/x-font-type1 "
+                                             "application/x-font-type1 "
                                              "application/x-font-bdf application/x-font-pcf ",
                                      this, i18n("Select Font to View")));
     if(url.isValid())

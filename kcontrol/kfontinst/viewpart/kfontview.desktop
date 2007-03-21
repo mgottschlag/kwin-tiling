@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=KFontView
+Name[x-test]=xxKFontViewxx
+Exec=kfontinst -v %U
+TryExec=kfontinst
+Icon=kfontview
+X-KDE-StartupNotify=true
+Type=Application
+MimeType=application/x-font-ttf;application/x-font-type1;application/x-font-otf;application/x-font-pcf;application/x-font-bdf;fonts/package
+GenericName=Font Viewer
+GenericName[fr]=Afficheur de polices
+GenericName[x-test]=xxFont Viewerxx
+Terminal=false
+InitialPreference=1
+NoDisplay=true
+Categories=Qt;KDE;Utility;

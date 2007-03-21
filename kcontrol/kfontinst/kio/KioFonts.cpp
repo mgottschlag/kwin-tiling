@@ -2386,6 +2386,9 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
 {
     KFI_DBUG << "getRootPasswd" << endl;
 
+    if(hasMetaData(KFI_KIO_PASS))
+        return metaData(KFI_KIO_PASS);
+
     KIO::AuthInfo authInfo;
     SuProcess     proc(KFI_SYS_USER);
     bool          error=false;
@@ -2404,9 +2407,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
         authInfo.prompt=i18n("The requested action requires administrator privileges.\n"
                              "Please enter the system administrator's password.");
 
-    if(hasMetaData(KFI_KIO_PASS))
-        authInfo.password=metaData(KFI_KIO_PASS);
-    else if(!checkCachedAuthentication(authInfo) && !askPasswd)
+    if(!checkCachedAuthentication(authInfo) && !askPasswd)
         authInfo.password=itsPasswd;
 
     if(askPasswd)

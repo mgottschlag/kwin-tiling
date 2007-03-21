@@ -99,7 +99,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
                             QString mime(KMimeType::findByPath(tempDir->name()+entry->name())->name());
 
                             if(mime=="application/x-font-ttf" || mime=="application/x-font-otf" ||
-                               mime=="application/x-font-ttf" || mime=="application/x-font-type1")
+                               mime=="application/x-font-type1")
                             {
                                 realPath=tempDir->name()+entry->name();
                                 break;

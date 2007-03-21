@@ -299,7 +299,6 @@ KFileFontPlugin::KFileFontPlugin(QObject *parent, const QStringList& args)
     addMimeType("application/x-font-bdf");
     addMimeType("application/x-font-pcf");
     addMimeType("application/x-font-otf");
-    addMimeType("application/x-font-ttf");
     addMimeType("application/x-font-afm");
     addMimeType("fonts/package");
 }
@@ -351,7 +350,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 downloaded = false,
                 status     = false;
     int         faceFrom(KFI::Misc::getIntQueryVal(url, KFI_KIO_FACE, 0)),
-                faceTo=faceFrom ? faceFrom+1 : (fontsProt ? 1 : 10); // How to get num faces from fontconfig? don't know
+                faceTo=faceFrom ? faceFrom+1 : (fontsProt ? 1 : 10); // How to get num faces from fontconfig?
                                                                      // Don't know - so just try 1st 10...
 
     what=0;
@@ -394,7 +393,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 
                                 if(entry && entry->isFile())
                                 {
-				    delete tempDir;
+                                    delete tempDir;
                                     tempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
                                     tempDir->setAutoRemove(true);
 
@@ -403,7 +402,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                                     QString mime(KMimeType::findByPath(tempDir->name()+entry->name())->name());
 
                                     if(mime=="application/x-font-ttf" || mime=="application/x-font-otf" ||
-                                       mime=="application/x-font-ttf" || mime=="application/x-font-type1")
+                                       mime=="application/x-font-type1")
                                     {
                                         url=KUrl::fromPath(tempDir->name()+entry->name());
                                         break;
