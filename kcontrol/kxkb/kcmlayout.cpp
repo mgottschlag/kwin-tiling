@@ -645,9 +645,9 @@ void LayoutConfig::updateLayoutCommand()
     setxkbmap = "setxkbmap"; //-rules " + m_rule
     setxkbmap += " -model " + lookupLocalized(m_rules->models(), widget->comboModel->currentText())
       + " -layout ";
-    if( widget->chkLatin->isChecked() )
-      setxkbmap += "us,";
     setxkbmap += kbdLayout;
+    if( widget->chkLatin->isChecked() )
+      setxkbmap += ",us";
 
 /*	LayoutUnit layoutUnitKey = getLayoutUnitKey(sel);
 	layoutDisplayName = m_kxkbConfig.getLayoutDisplayName( *m_kxkbConfig.m_layouts.find(layoutUnitKey) );*/
