@@ -1106,8 +1106,7 @@ void CKioFonts::get(const KUrl &url)
             return;
         }
 
-        QString         realPath,
-                        useMime;
+        QString         realPath;
         KDE_struct_stat buff;
         bool            multiple=false;
 
@@ -1164,9 +1163,7 @@ void CKioFonts::get(const KUrl &url)
             {
                 // Determine the mimetype of the file to be retrieved, and emit it.
                 // This is mandatory in all slaves (for KRun/BrowserRun to work).
-                emit mimeType(useMime.isEmpty()
-                                ? KMimeType::findByPath(realPathC, buff.st_mode, true)->name()
-                                : useMime);
+                emit mimeType(KMimeType::findByPath(realPathC, buff.st_mode)->name());
 
                 totalSize(buff.st_size);
 
@@ -1406,9 +1403,7 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
             entry.insert(KIO::UDS_USER, getUserName(buff.st_uid));
             entry.insert(KIO::UDS_GROUP, getGroupName(buff.st_gid));
             entry.insert(KIO::UDS_ACCESS_TIME, buff.st_atime);
-            entry.insert(KIO::UDS_MIME_TYPE, KMimeType::findByPath(*it, 0, true)->name());
-            entry.insert(KIO::UDS_GUESSED_MIME_TYPE,
-                         QString::fromLatin1("application/octet-stream"));
+            entry.insert(KIO::UDS_MIME_TYPE, KMimeType::findByPath(*it)->name());
             entry.insert(UDS_EXTRA_FC_STYLE, FC::styleValToStr(styleVal));
 
             if(hidden)
@@ -1495,8 +1490,6 @@ bool CKioFonts::createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name,
                      QString::fromLatin1(sys
                                              ? KFI_KIO_FONTS_PROTOCOL"/system-folder"
                                              : KFI_KIO_FONTS_PROTOCOL"/folder"));
-        entry.insert(KIO::UDS_GUESSED_MIME_TYPE, QString::fromLatin1("application/octet-stream"));
-        QString url(KFI_KIO_FONTS_PROTOCOL+QString::fromLatin1(":/"));
         return true;
     }
     else if (sys && !Misc::root())   // Default system fonts folder does not actually exist yet!
@@ -1510,8 +1503,6 @@ bool CKioFonts::createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name,
         entry.insert(KIO::UDS_GROUP, QString::fromLatin1("root"));
         entry.insert(KIO::UDS_MIME_TYPE,
                      QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL"/system-folder"));
-        entry.insert(KIO::UDS_GUESSED_MIME_TYPE, QString::fromLatin1("application/octet-stream"));
-
         return true;
     }
 
@@ -1871,6 +1862,12 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
 
     if(src.directory()==d.directory())
     {
+        if(!itsRoot && "/"==src.directory())
+        {
+            error(KIO::ERR_SLAVE_DEFINED, i18n("You cannot rename font folders"));
+            return;
+        }
+
         CDisabledFonts::TFontList::Iterator disabledIt;
         TFontMap::Iterator                  enabledIt;
         const CDisabledFonts::TFileList     *entries(getEntries(src, enabledIt, disabledIt));
@@ -2017,7 +2014,10 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
         return;
     }
     else if(itsRoot) // Should never happen...
+    {
         error(KIO::ERR_UNSUPPORTED_ACTION, unsupportedActionErrorString(mProtocol, KIO::CMD_RENAME));
+        return;
+    }
     else if(Misc::isHidden(src) || Misc::isHidden(d))
     {
         error(KIO::ERR_SLAVE_DEFINED, i18n("Cannot move %1 to %2\nDisabled fonts cannot be moved.",
@@ -2026,6 +2026,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
     }
     else
     {
+KFI_DBUG << "Wibble" << endl;
         //
         // Can't rename from/to file:/ -> therefore rename can only be from fonts:/System to
         // fonts:/Personal, or vice versa.
@@ -2415,9 +2416,9 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
         while(!error && 0!=proc.checkInstall(authInfo.password.local8Bit()))
         {
             KFI_DBUG << "ATTEMPT : " << attempts << endl;
-            if(1==attempts)
+            if(1==attempts++)
                 errorMsg=i18n("Incorrect password.\n");
-            if(!openPasswordDialog(authInfo, errorMsg) && ++attempts>2)
+            if(attempts>2 || !openPasswordDialog(authInfo, errorMsg))
                 error=true;
         }
         if(!error && authInfo.keepPassword)
