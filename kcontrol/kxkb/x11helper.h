@@ -47,7 +47,7 @@ public:
 	 */
 	static const QString findX11Dir();
 	static const QString findXkbRulesFile(QString x11Dir, Display* dpy);
-	static QStringList* getVariants(const QString& layout, const QString& x11Dir, bool oldLayouts=false);
+	static QStringList* getVariants(const QString& layout, const QString& x11Dir);
 	static RulesInfo* loadRules(const QString& rulesFile, bool layoutsOnly=false);
 	static OldLayouts* loadOldLayouts(const QString& rulesFile);
 private:

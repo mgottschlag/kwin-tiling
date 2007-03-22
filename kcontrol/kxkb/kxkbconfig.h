@@ -39,9 +39,7 @@ inline QString createPair(QString key, QString value)
 struct LayoutUnit {
 	QString layout;
 	QString variant;
-	QString includeGroup;
 	QString displayName;
- 	int defaultGroup;
 	
 	LayoutUnit() {}
 	
@@ -104,7 +102,8 @@ public:
 	QString m_options;
 	QList<LayoutUnit> m_layouts;
 
-	LayoutUnit getDefaultLayout();
+	KxkbConfig();
+	int getDefaultLayout();
 	
 	bool load(int loadMode);
 	void save();

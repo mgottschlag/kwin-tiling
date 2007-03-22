@@ -59,7 +59,9 @@ Name[uz]=Тугмалар тартиби учун восита
 Name[x-test]=xxKeyboard Map Toolxx
 Name[xh]=Isixhobo semaphu yebhodi enezitshixo
 Name[zh_TW]=鍵盤映射工具
+
 Exec=kxkb
+Icon=keyboard
 X-DBUS-StartupType=Unique
 
 X-KDE-Library=kxkb_panelapplet

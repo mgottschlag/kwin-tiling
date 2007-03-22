@@ -37,7 +37,7 @@ void KxkbWidget::setCurrentLayout(const LayoutUnit& layoutUnit)
 	setToolTip(m_descriptionMap[layoutUnit.toPair()]);
 	const QPixmap& icon = LayoutIcon::getInstance().findPixmap(layoutUnit.layout, m_showFlag, layoutUnit.displayName);
 	kDebug() << "setting pixmap: " << icon.width() << endl;
-//	setPixmap( icon );
+	setPixmap( icon );
 	kDebug() << "setting text: " << layoutUnit.layout << endl;
 	setText(layoutUnit.layout);
 }
@@ -113,11 +113,14 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 }
 
 
+// ----------------------------
+// QSysTrayIcon implementation
+
 KxkbSysTrayIcon::KxkbSysTrayIcon()
 {
 	m_tray = new KSystemTrayIcon();
 
- 	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
+	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
 	connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), 
 					this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
 }
@@ -135,16 +138,38 @@ void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
 
 void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 {
+	kDebug() << "setting icon to tray" << endl;
 	m_tray->setIcon( pixmap );
-	if( ! m_tray->isVisible() )
+// 	if( ! m_tray->isVisible() )
 		m_tray->show();
 }
 
+// ----------------------------
+// text-only applet widget (temporary workaround)
+
 void MyLineEdit::mousePressEvent ( QMouseEvent * event ) {
-		if (event->button() == Qt::LeftButton)
-			emit leftClick();
-		else
-			emit rightClick(NULL);
+	if (event->button() == Qt::LeftButton)
+		emit leftClick();
+	else {
+		emit rightClick();
+	}
+}
+
+KxkbLabel::KxkbLabel(QWidget* parent):
+		KxkbWidget()
+{
+	m_tray = new MyLineEdit(parent); 
+	m_menu = new QMenu(m_tray); 
+	connect(m_tray, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
+	connect(m_tray, SIGNAL(rightClick()), this, SLOT(rightClick())); 
+	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
+	m_tray->resize( 24,24 ); 
+	show();
+}
+
+void KxkbLabel::rightClick() {
+	QMenu* menu = contextMenu();
+	menu->exec(m_tray->mapToGlobal(QPoint(0, 0)));
 }
 
 void KxkbLabel::setPixmap(const QPixmap& pixmap)

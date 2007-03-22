@@ -26,7 +26,7 @@ KXKBAdaptor::KXKBAdaptor( KXKBApp* app )
 
 bool KXKBAdaptor::setLayout(const QString& layout)
 {
-    return parent()->setLayout( layout );
+return false;//     return parent()->setLayout( layout );
 }
 
 QString KXKBAdaptor::getCurrentLayout()
@@ -39,9 +39,9 @@ QStringList KXKBAdaptor::getLayoutsList()
     return parent()->getLayoutsList();
 }
 
-void KXKBAdaptor::forceSetXKBMap( bool set )
-{
-    parent()->forceSetXKBMap( set );
-}
+// void KXKBAdaptor::forceSetXKBMap( bool set )
+// {
+//     parent()->forceSetXKBMap( set );
+// }
 
 #include "kxkb_adaptor.moc"

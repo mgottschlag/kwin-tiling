@@ -47,11 +47,12 @@ enum {
  LAYOUT_COLUMN_NAME = 1,
  LAYOUT_COLUMN_MAP = 2,
  LAYOUT_COLUMN_VARIANT = 3,
- LAYOUT_COLUMN_INCLUDE = 4,
- LAYOUT_COLUMN_DISPLAY_NAME = 5,
+ LAYOUT_COLUMN_DISPLAY_NAME = 4,
  SRC_LAYOUT_COLUMN_COUNT = 3,
- DST_LAYOUT_COLUMN_COUNT = 6
+ DST_LAYOUT_COLUMN_COUNT = 5
 };
+
+static const int GROUP_LIMIT = 4;
 
 static const QString DEFAULT_VARIANT_NAME("<default>");
 
@@ -131,9 +132,6 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
 
   connect( widget->editDisplayName, SIGNAL(textChanged(const QString&)), this, SLOT(displayNameChanged(const QString&)));
 
-  connect( widget->chkLatin, SIGNAL(clicked()), this, SLOT(changed()));
-  connect( widget->chkLatin, SIGNAL(clicked()), this, SLOT(latinChanged()));
-
   widget->btnUp->setIconSet(KIcon("arrow-up"));
   connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(changed()));
   connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(moveUp()));
@@ -148,16 +146,12 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
 
   widget->listLayoutsSrc->setColumnText(LAYOUT_COLUMN_FLAG, "");
   widget->listLayoutsDst->setColumnText(LAYOUT_COLUMN_FLAG, "");
-  widget->listLayoutsDst->setColumnText(LAYOUT_COLUMN_INCLUDE, "");
 //  widget->listLayoutsDst->setColumnText(LAYOUT_COLUMN_DISPLAY_NAME, "");
 
   widget->listLayoutsSrc->setColumnWidth(LAYOUT_COLUMN_FLAG, 28);
   widget->listLayoutsDst->setColumnWidth(LAYOUT_COLUMN_FLAG, 28);
 
-  widget->listLayoutsDst->header()->setResizeEnabled(false, LAYOUT_COLUMN_INCLUDE);
   widget->listLayoutsDst->header()->setResizeEnabled(false, LAYOUT_COLUMN_DISPLAY_NAME);
-  widget->listLayoutsDst->setColumnWidthMode(LAYOUT_COLUMN_INCLUDE, Q3ListView::Manual);
-  widget->listLayoutsDst->setColumnWidth(LAYOUT_COLUMN_INCLUDE, 0);
 //  widget->listLayoutsDst->setColumnWidth(LAYOUT_COLUMN_DISPLAY_NAME, 0);
 
   widget->listLayoutsDst->setSorting(-1);
@@ -211,7 +205,6 @@ void LayoutConfig::initUI() {
 				Q3ListViewItem* newItem = copyLVI(srcItem, widget->listLayoutsDst);
 
 				newItem->setText(LAYOUT_COLUMN_VARIANT, layoutUnit.variant);
-				newItem->setText(LAYOUT_COLUMN_INCLUDE, layoutUnit.includeGroup);
 				newItem->setText(LAYOUT_COLUMN_DISPLAY_NAME, layoutUnit.displayName);
 				widget->listLayoutsDst->insertItem(newItem);
 				newItem->moveItem(widget->listLayoutsDst->lastItem());
@@ -296,17 +289,14 @@ void LayoutConfig::save()
 	while (item) {
 		QString layout = item->text(LAYOUT_COLUMN_MAP);
 		QString variant = item->text(LAYOUT_COLUMN_VARIANT);
-		QString includes = item->text(LAYOUT_COLUMN_INCLUDE);
 		QString displayName = item->text(LAYOUT_COLUMN_DISPLAY_NAME);
 
 		LayoutUnit layoutUnit(layout, variant);
-		layoutUnit.includeGroup = includes;
 		layoutUnit.displayName = displayName;
 		layouts.append( layoutUnit );
 
 		item = item->nextSibling();
 		kDebug() << "To save: layout " << layoutUnit.toPair()
-				<< ", inc: " << layoutUnit.includeGroup
 				<< ", disp: " << layoutUnit.displayName << endl;
 	}
 	m_kxkbConfig.m_layouts = layouts;
@@ -361,7 +351,7 @@ void LayoutConfig::updateStickyLimit()
 void LayoutConfig::add()
 {
     Q3ListViewItem* sel = widget->listLayoutsSrc->selectedItem();
-    if( sel == 0 )
+    if( sel == 0 || widget->listLayoutsDst->childCount() >= GROUP_LIMIT )
 		return;
 
     // Create a copy of the sel widget, as one might add the same layout more
@@ -375,8 +365,16 @@ void LayoutConfig::add()
 //    widget->listLayoutsDst->setSelected(sel, true);
 //    layoutSelChanged(sel);
 
+	updateAddButton();
+	
     updateStickyLimit();
     changed();
+}
+
+void LayoutConfig::updateAddButton()
+{
+    bool aboveLimit = widget->listLayoutsDst->childCount() >= GROUP_LIMIT;
+	widget->btnAdd->setEnabled(! aboveLimit);
 }
 
 void LayoutConfig::remove()
@@ -397,6 +395,8 @@ void LayoutConfig::remove()
     if( newSel )
         widget->listLayoutsSrc->setSelected(newSel, true);
     layoutSelChanged(newSel);
+
+	updateAddButton();
 
     updateStickyLimit();
     changed();
@@ -477,33 +477,10 @@ void LayoutConfig::updateIndicator(Q3ListViewItem*)
 {
 }
 
-
-void LayoutConfig::latinChanged()
-{
-    Q3ListViewItem* selLayout = widget->listLayoutsDst->selectedItem();
-    if (  !selLayout ) {
-      widget->chkLatin->setChecked( false );
-      widget->chkLatin->setEnabled( false );
-      return;
-    }
-
-	QString include;
-	if( widget->chkLatin->isChecked() )
-		include = "us";
-    else
-		include = "";
-	selLayout->setText(LAYOUT_COLUMN_INCLUDE, include);
-
- 	LayoutUnit layoutUnitKey = getLayoutUnitKey(selLayout);
-	kDebug() << "layout " << layoutUnitKey.toPair() << ", inc: " << include << endl;
-}
-
 void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
 {
     widget->comboVariant->clear();
     widget->comboVariant->setEnabled( sel != NULL );
-    widget->chkLatin->setChecked( false );
-    widget->chkLatin->setEnabled( sel != NULL );
 
     if( sel == NULL ) {
         updateLayoutCommand();
@@ -513,21 +490,6 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
 
 	LayoutUnit layoutUnitKey = getLayoutUnitKey(sel);
 	QString kbdLayout = layoutUnitKey.layout;
-
-	// TODO: need better algorithm here for determining if needs us group
-    if (  ! m_rules->isSingleGroup(kbdLayout)
-	    		|| kbdLayout.startsWith("us") || kbdLayout.startsWith("en") ) {
-        widget->chkLatin->setEnabled( false );
-    }
-    else {
-		QString inc = sel->text(LAYOUT_COLUMN_INCLUDE);
-		if ( inc.startsWith("us") || inc.startsWith("en") ) {
-            widget->chkLatin->setChecked(true);
-        }
-        else {
-            widget->chkLatin->setChecked(false);
-        }
-    }
 
 	QStringList vars = m_rules->getAvailableVariants(kbdLayout);
 	kDebug() << "layout " << kbdLayout << " has " << vars.count() << " variants" << endl;
@@ -631,27 +593,42 @@ void LayoutConfig::updateOptionsCommand()
 }
 
 void LayoutConfig::updateLayoutCommand()
-{
-  QString setxkbmap;
-  QString layoutDisplayName;
-  Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
+{	
+	QString kbdLayouts;
+	QString kbdVariants;
+	
+	Q3ListViewItem *item = widget->listLayoutsDst->firstChild();
+	QList<LayoutUnit> layouts;
+	while (item) {
+		QString layout = item->text(LAYOUT_COLUMN_MAP);
+		QString variant = item->text(LAYOUT_COLUMN_VARIANT);
+		QString displayName = item->text(LAYOUT_COLUMN_DISPLAY_NAME);
 
-  if( sel != NULL ) {
-    QString kbdLayout = sel->text(LAYOUT_COLUMN_MAP);
-    QString variant = widget->comboVariant->currentText();
-	if( variant == DEFAULT_VARIANT_NAME )
-		variant = "";
+		if( variant == DEFAULT_VARIANT_NAME )
+			variant = "";
 
-    setxkbmap = "setxkbmap"; //-rules " + m_rule
-    setxkbmap += " -model " + lookupLocalized(m_rules->models(), widget->comboModel->currentText())
-      + " -layout ";
-    setxkbmap += kbdLayout;
-    if( widget->chkLatin->isChecked() )
-      setxkbmap += ",us";
+		if( kbdLayouts.length() > 0 ) {
+			kbdLayouts += ",";
+			kbdVariants += ",";
+		}
+		
+		kbdLayouts += layout;
+		kbdVariants += variant;
+		
+		item = item->nextSibling();
+	}
 
+    QString setxkbmap = "setxkbmap"; //-rules " + m_rule
+    setxkbmap += " -model " + lookupLocalized(m_rules->models(), widget->comboModel->currentText());
+    setxkbmap += " -layout " + kbdLayouts;
+    setxkbmap += " -variant " + kbdVariants;
+  
+	widget->editCmdLine->setText(setxkbmap);
+
+	Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
 /*	LayoutUnit layoutUnitKey = getLayoutUnitKey(sel);
 	layoutDisplayName = m_kxkbConfig.getLayoutDisplayName( *m_kxkbConfig.m_layouts.find(layoutUnitKey) );*/
-	layoutDisplayName = sel->text(LAYOUT_COLUMN_DISPLAY_NAME);
+/*	QString layoutDisplayName = sel->text(LAYOUT_COLUMN_DISPLAY_NAME);
 	if( layoutDisplayName.isEmpty() ) {
 		int count = 0;
 		Q3ListViewItem *item = widget->listLayoutsDst->firstChild();
@@ -664,20 +641,11 @@ void LayoutConfig::updateLayoutCommand()
 		bool single = count < 2;
 		layoutDisplayName = m_kxkbConfig.getDefaultDisplayName(LayoutUnit(kbdLayout, variant), single);
 	}
-	kDebug() << "disp: '" << layoutDisplayName << "'" << endl;
+	kDebug() << "disp: '" << layoutDisplayName << "'" << endl;*/
+//  }
 
-    if( !variant.isEmpty() ) {
-      setxkbmap += " -variant ";
-      if( widget->chkLatin->isChecked() )
-        setxkbmap += ',';
-      setxkbmap += variant;
-    }
-  }
-
-  widget->editCmdLine->setText(setxkbmap);
-
-  widget->editDisplayName->setEnabled( sel != NULL );
-  widget->editDisplayName->setText(layoutDisplayName);
+/*  widget->editDisplayName->setEnabled( sel != NULL );
+  widget->editDisplayName->setText(layoutDisplayName);*/
 }
 
 void LayoutConfig::changed()

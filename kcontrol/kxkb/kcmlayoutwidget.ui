@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>LayoutConfigWidget</class>
  <widget class="QWidget" name="LayoutConfigWidget" >
   <property name="geometry" >
@@ -69,6 +66,9 @@
          </property>
          <property name="title" >
           <string/>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -143,11 +143,6 @@
             <column>
              <property name="text" >
               <string>Variant</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>5</string>
              </property>
             </column>
             <column>
@@ -259,19 +254,6 @@
             </property>
             <property name="readOnly" >
              <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="2" colspan="3" >
-           <widget class="QCheckBox" name="chkLatin" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="whatsThis" >
-             <string>If after you switch to this layout some keyboard shortcuts based on latin keys do not work try to enable this option.</string>
-            </property>
-            <property name="text" >
-             <string>Include latin layout</string>
             </property>
            </widget>
           </item>
@@ -403,6 +385,9 @@
             <property name="title" >
              <string>Switching Policy</string>
             </property>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
             <property name="exclusive" >
              <bool>true</bool>
             </property>
@@ -457,6 +442,9 @@
            <widget class="Q3GroupBox" name="grpBoxStickySwitching" >
             <property name="title" >
              <string>Sticky Switching</string>
+            </property>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
             </property>
             <layout class="QGridLayout" >
              <property name="margin" >
@@ -545,6 +533,9 @@
          <property name="title" >
           <string>Xkb Options</string>
          </property>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
          <layout class="QGridLayout" >
           <property name="margin" >
            <number>11</number>
@@ -599,29 +590,24 @@
    <class>Q3ListView</class>
    <extends>Q3Frame</extends>
    <header>q3listview.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends>QFrame</extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>Q3ButtonGroup</class>
    <extends>Q3GroupBox</extends>
    <header>Qt3Support/Q3ButtonGroup</header>
    <container>1</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>Qt3Support/Q3GroupBox</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Q3Frame</class>
+   <extends>QFrame</extends>
+   <header>Qt3Support/Q3Frame</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

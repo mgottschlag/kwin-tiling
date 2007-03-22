@@ -92,16 +92,9 @@ class MyLineEdit : public QLabel {
 		MyLineEdit(QWidget* parent): QLabel(parent) {}
 	signals:
 		void leftClick();
-		void rightClick(QAction*);
+		void rightClick();
 protected:
-	void mousePressEvent ( QMouseEvent * event );
-/*	{
-		if (event->button() == Qt::LeftButton)
-			emit leftClick();
-		else
-			emit rightClick(NULL);
-	}*/
-	
+	void mousePressEvent ( QMouseEvent * event );	
 };
 
 class KxkbLabel : public KxkbWidget
@@ -109,13 +102,8 @@ class KxkbLabel : public KxkbWidget
 	Q_OBJECT
 
 public:
-	KxkbLabel(QWidget* parent=0):
-		KxkbWidget()
-		{ m_tray = new MyLineEdit(parent); m_menu = new QMenu(m_tray); 
-			connect(m_tray, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
-			connect(m_tray, SIGNAL(rightClick(QAction*)), this, SIGNAL(menuTriggered(QAction*))); 
-			m_tray->resize( 24,24 ); show(); }
-	~KxkbLabel() { delete m_tray; }
+	KxkbLabel(QWidget* parent=0);
+	~KxkbLabel() { } //delete m_tray; }
 	void show() { m_tray->show(); }
     virtual void adjustSize() { m_tray->resize( 24,24/*m_pixmap.size()*/ );}
 
@@ -128,9 +116,10 @@ protected:
 	
 protected slots:
 //	void trayActivated(QSystemTrayIcon::ActivationReason);
+	void rightClick();
 
 private:
-    QLabel* m_tray;
+    MyLineEdit* m_tray;
 	QMenu* m_menu;
 };
 

@@ -23,7 +23,7 @@ public:
 
   bool isSingleGroup(const QString& layout);
 
-  static bool areLayoutsClean() { return m_layoutsClean; }
+//  static bool areLayoutsClean() { return m_layoutsClean; }
 
 private:
 
@@ -41,15 +41,9 @@ private:
 #ifdef HAVE_XKLAVIER
   void loadNewRules(bool layoutsOnly);
 #else
-  QStringList m_oldLayouts;
-  QStringList m_nonLatinLayouts;
-
   void loadRules(QString filename, bool layoutsOnly=false);
-  void loadGroups(QString filename);
-  void loadOldLayouts(QString filename);
   void fixOptionGroups();
 #endif
 };
-
 
 #endif

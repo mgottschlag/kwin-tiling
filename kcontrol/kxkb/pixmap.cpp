@@ -117,7 +117,6 @@ QString LayoutIcon::getCountryFromLayoutName(const QString& layoutName)
 {
 	QString flag;
 
-	if( XkbRules::areLayoutsClean() ) { // >= Xorg 6.9.0
 		if( layoutName == "mkd" )
 			flag = "mk";
 		else
@@ -136,68 +135,6 @@ QString LayoutIcon::getCountryFromLayoutName(const QString& layoutName)
 				flag = "";
 		else
 				flag = layoutName;
-	}
-	else {
-		if( layoutName == "ar" )	// Arabic - not argentina
-			;
-		else
-			if( layoutName == "sr" || layoutName == "cs")	// Serbian language - Yugoslavia
-				flag = "yu";
-		else
-			if( layoutName == "bs" )	// Bosnian language - Bosnia
-				flag = "ba";
-		else
-			if( layoutName == "la" )	// Latin America
-				;
-		else
-			if( layoutName == "lo" )	// Lao
-				flag = "la";
-		else
-			if( layoutName == "pl2" )	// Poland
-				flag = "pl";
-		else
-			if( layoutName == "iu" )	// Inuktitut - Canada
-				flag = "ca";
-		else
-			if( layoutName == "syr" )	// Syriac
-				flag = "sy";
-		else
-			if( layoutName == "dz" )	// Dzongka/Tibetian - Buthan
-				flag = "bt";
-		else
-			if( layoutName == "ogham" )	// Ogham - Ireland
-				flag = "ie";
-		else
-			if( layoutName == "ge_la" || layoutName == "ge_ru" )
-				flag = "ge";
-		else
-			if( layoutName == "el" )
-				flag = "gr";
-		else
-			if( layoutName.endsWith("/jp") )
-				flag = "jp";
-		else
-			if( layoutName == "ml" || layoutName == "dev" || layoutName == "gur"
-						 || layoutName == "guj" || layoutName == "kan" || layoutName == "ori"
-						 || layoutName == "tel" || layoutName == "tml" || layoutName == "ben" ) // some Indian languages
-				flag = "in";
-		else {
-			int sepPos = layoutName.indexOf(QRegExp("[-_]"));
-			QString leftCode = layoutName.mid(0, sepPos);
-			QString rightCode;
-			if( sepPos != -1 )
-				rightCode = layoutName.mid(sepPos+1);
-//			kDebug() << "layout name breakup: " << leftCode << ":" << rightCode << endl;
-
-			if( rightCode.length() == 2
-					&& QRegExp("[A-Z][A-Z]").exactMatch(rightCode) ) {
-				flag = rightCode.toLower();
-			}
-			else {
-				flag = leftCode.length() == 2 ? leftCode : "";
-			}
-		}
-	}
 
     return flag;
 }

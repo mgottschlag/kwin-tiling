@@ -57,13 +57,12 @@ public:
 
 	virtual int newInstance();
 
-	bool setLayout(const LayoutUnit& layoutUnit, int group=-1);
+	bool setLayout(int layout);
 // k_dcop:
-public slots:
-	bool setLayout(const QString& layoutPair);
-	QString getCurrentLayout() { return m_currentLayout.toPair(); }
-	QStringList getLayoutsList() { return kxkbConfig.getLayoutStringList(); }
-	void forceSetXKBMap( bool set );
+ public slots:
+// 	bool setLayout(const QString& layoutPair);
+// 	QString getCurrentLayout() { return m_kxkbConfig.m_layouts[m_currentLayout].toPair(); }
+ 	QStringList getLayoutsList() { return kxkbConfig.getLayoutStringList(); }
 
 protected slots:
     void iconMenuTriggered(QAction*);
@@ -86,17 +85,16 @@ signals:
 private:
 	KxkbConfig kxkbConfig;
 
-    WId m_prevWinId;	// for tricky part of saving xkb group
+//     WId m_prevWinId;	// for tricky part of saving xkb group
     LayoutMap* m_layoutOwnerMap;
 
-	LayoutUnit m_currentLayout;
+	int m_currentLayout;
 
     XKBExtension *m_extension;
     XkbRules *m_rules;
     KxkbWidget *m_kxkbWidget;
     KActionCollection *keys;
     KWinModule* kWinModule;
-    bool m_forceSetXKBMap;
 };
 
 #endif

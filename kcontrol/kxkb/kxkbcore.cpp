@@ -64,12 +64,11 @@ DESCRIPTION
 #include "kxkbcore.moc"
 
 
-KxkbCore::KxkbCore(KxkbWidget* kxkbWidget)
-    : m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
+KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
+//     : m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
       m_rules(NULL),
       m_kxkbWidget(kxkbWidget),
-      kWinModule(NULL),
-      m_forceSetXKBMap( false )
+      kWinModule(NULL)
 {
     m_extension = new XKBExtension();
     if( !m_extension->init() ) {
@@ -142,7 +141,7 @@ bool KxkbCore::settingsRead()
         return false;
     }
 
-	m_prevWinId = X11Helper::UNKNOWN_WINDOW_ID;
+// 	m_prevWinId = X11Helper::UNKNOWN_WINDOW_ID;
 
 	if( kxkbConfig.m_switchingPolicy == SWITCH_POLICY_GLOBAL ) {
 		delete kWinModule;
@@ -159,33 +158,35 @@ bool KxkbCore::settingsRead()
 			kWinModule = new KWinModule(0, KWinModule::INFO_DESKTOP);
 			connect(kWinModule, SIGNAL(activeWindowChanged(WId)), SLOT(windowChanged(WId)));
 		}
-		m_prevWinId = kWinModule->activeWindow();
-		kDebug() << "Active window " << m_prevWinId << endl;
+/*		int m_prevWinId = kWinModule->activeWindow();
+		kDebug() << "Active window " << m_prevWinId << endl;*/
 	}
 
 	m_layoutOwnerMap->reset();
-	m_layoutOwnerMap->setCurrentWindow( m_prevWinId );
+	m_layoutOwnerMap->setCurrentWindow( X11Helper::UNKNOWN_WINDOW_ID ); //TODO
 
 	if( m_rules == NULL )
 		m_rules = new XkbRules(false);
 
-	for(int ii=0; ii<(int)kxkbConfig.m_layouts.count(); ii++) {
-		LayoutUnit& layoutUnit = kxkbConfig.m_layouts[ii];
-		layoutUnit.defaultGroup = m_rules->getDefaultGroup(layoutUnit.layout, layoutUnit.includeGroup);
-		kDebug() << "default group for " << layoutUnit.toPair() << " is " << layoutUnit.defaultGroup << endl;
-	}
+//	for(int ii=0; ii<(int)kxkbConfig.m_layouts.count(); ii++) {
+//		LayoutUnit& layoutUnit = kxkbConfig.m_layouts[ii];
+//		layoutUnit.defaultGroup = m_rules->getDefaultGroup(layoutUnit.layout, layoutUnit.includeGroup);
+//		kDebug() << "default group for " << layoutUnit.toPair() << " is " << layoutUnit.defaultGroup << endl;
+//	}
 
 	m_currentLayout = kxkbConfig.getDefaultLayout();
 
 	if( kxkbConfig.m_layouts.count() == 1 ) {
-		QString layoutName = m_currentLayout.layout;
-		QString variantName = m_currentLayout.variant;
-		QString includeName = m_currentLayout.includeGroup;
-		int group = m_currentLayout.defaultGroup;
+		const LayoutUnit& currentLayout = kxkbConfig.m_layouts[0];
+		QString layoutName = currentLayout.layout;
+		QString variantName = currentLayout.variant;
+// 		QString includeName = m_currentLayout.includeGroup;
+// 		int group = m_currentLayout.defaultGroup;
 
-		if( !m_extension->setLayout(kxkbConfig.m_model, layoutName, variantName, includeName, false)
-				   || !m_extension->setGroup( group ) ) {
-			kDebug() << "Error switching to single layout " << m_currentLayout.toPair() << endl;
+/*		if( !m_extension->setLayout(kxkbConfig.m_model, layoutName, variantName, includeName, false)
+				   || !m_extension->setGroup( group ) ) {*/
+		if( ! m_extension->setLayout(layoutName, variantName) ) {
+			kDebug() << "Error switching to single layout " << currentLayout.toPair() << endl;
 			// TODO: alert user
 		}
 
@@ -201,13 +202,14 @@ bool KxkbCore::settingsRead()
 			LayoutUnit& layoutUnit = kxkbConfig.m_layouts[ii];
 			layouts += layoutUnit.layout;
 			variants += layoutUnit.variant;
-			if( ii< kxkbConfig.m_layouts.count() ) {
+			if( ii < kxkbConfig.m_layouts.count() ) {
 				layouts += ",";
 				variants += ",";
 			}
 		}
 		kDebug() << "initing " << "-layout " << layouts << " - variants " << variants << endl;
 //		initPrecompiledLayouts();
+		m_extension->setLayout(layouts, variants);
 	}
 
 	initTray();
@@ -226,7 +228,7 @@ void KxkbCore::initTray()
 
 	m_kxkbWidget->setShowFlag(kxkbConfig.m_showFlag);
 	m_kxkbWidget->initLayoutList(kxkbConfig.m_layouts, *m_rules);
-	m_kxkbWidget->setCurrentLayout(m_currentLayout);
+	m_kxkbWidget->setCurrentLayout(kxkbConfig.m_layouts[m_currentLayout]);
     kDebug() << "inited tray" << endl;
 }
 
@@ -237,40 +239,43 @@ void KxkbCore::layoutApply()
     setLayout(m_currentLayout);
 }
 
-// kdcop
-bool KxkbCore::setLayout(const QString& layoutPair)
-{
-	const LayoutUnit layoutUnitKey(layoutPair);
-	if( kxkbConfig.m_layouts.contains(layoutUnitKey) ) {
-		int ind = kxkbConfig.m_layouts.indexOf(layoutUnitKey);
-		return setLayout( kxkbConfig.m_layouts[ind] );
-	}
-	return false;
-}
+// // kdcop
+// bool KxkbCore::setLayout(int layout)
+// {
+// 	const LayoutUnit layoutUnitKey(layoutPair);
+// 	if( kxkbConfig.m_layouts.contains(layoutUnitKey) ) {
+// 		int ind = kxkbConfig.m_layouts.indexOf(layoutUnitKey);
+// 		return setLayout( kxkbConfig.m_layouts[ind] );
+// 	}
+// 	return false;
+// }
 
 
 // Activates the keyboard layout specified by 'layoutUnit'
-bool KxkbCore::setLayout(const LayoutUnit& layoutUnit, int group)
+bool KxkbCore::setLayout(int layout)
 {
 	bool res = false;
 
-	if( group == -1 )
-		group = layoutUnit.defaultGroup;
+// 	res = m_extension->setLayout(kxkbConfig.m_model,
+//  					layoutUnit.layout, layoutUnit.variant,
+//  					layoutUnit.includeGroup);
+	int group = layout;
 
-	res = m_extension->setLayout(kxkbConfig.m_model,
- 					layoutUnit.layout, layoutUnit.variant,
- 					layoutUnit.includeGroup);
-	if( res )
-		m_extension->setGroup(group); // not checking for ret - not important
+	res = m_extension->setGroup(group); // not checking for ret - not important
 
-    if( res )
-        m_currentLayout = layoutUnit;
+    if( res ) {
+        m_currentLayout = layout;
+		int winId = kWinModule->activeWindow();
+ 		m_layoutOwnerMap->setCurrentWindow(winId);
+		m_layoutOwnerMap->setCurrentLayout(group);
+	}
 
     if( m_kxkbWidget ) {
+		const QString& layoutName = kxkbConfig.m_layouts[layout].toPair(); //displayName;
 		if( res )
-			m_kxkbWidget->setCurrentLayout(layoutUnit);
+			m_kxkbWidget->setCurrentLayout(layoutName);
 		else
-			m_kxkbWidget->setError(layoutUnit.toPair());
+			m_kxkbWidget->setError(layoutName);
 	}
 
     return res;
@@ -280,7 +285,8 @@ void KxkbCore::iconToggled()
 {
 //    if ( reason != QSystemTrayIcon::Trigger )
 //        return;
-    const LayoutUnit& layout = m_layoutOwnerMap->getNextLayout().layoutUnit;
+//     const LayoutUnit& layout = m_layoutOwnerMap->getNextLayout().layoutUnit;
+    int layout = m_layoutOwnerMap->getNextLayout();
     setLayout(layout);
 }
 
@@ -291,7 +297,8 @@ void KxkbCore::iconMenuTriggered(QAction* action)
     if( KxkbWidget::START_MENU_ID <= id
         && id < KxkbWidget::START_MENU_ID + (int)kxkbConfig.m_layouts.count() )
     {
-        const LayoutUnit& layout = kxkbConfig.m_layouts[id - KxkbWidget::START_MENU_ID];
+//         const LayoutUnit& layout = kxkbConfig.m_layouts[id - KxkbWidget::START_MENU_ID];
+        int layout = id - KxkbWidget::START_MENU_ID;
         m_layoutOwnerMap->setCurrentLayout( layout );
         setLayout( layout );
     }
@@ -314,35 +321,30 @@ void KxkbCore::iconMenuTriggered(QAction* action)
 // TODO: we also have to handle deleted windows
 void KxkbCore::windowChanged(WId winId)
 {
-//	kDebug() << "window switch" << endl;
 	if( kxkbConfig.m_switchingPolicy == SWITCH_POLICY_GLOBAL ) { // should not happen actually
 		kDebug() << "windowChanged() signal in GLOBAL switching policy" << endl;
 		return;
 	}
 
-	int group = m_extension->getGroup();
+// 	int group = m_extension->getGroup();
 
-	kDebug() << "old WinId: " << m_prevWinId << ", new WinId: " << winId << endl;
+// 	kDebug() << "old WinId: " << m_prevWinId << ", new WinId: " << winId << endl;
 
-	if( m_prevWinId != X11Helper::UNKNOWN_WINDOW_ID ) {	// saving layout/group from previous window
-// 		kDebug() << "storing " << m_currentLayout.toPair() << ":" << group << " for " << m_prevWinId << endl;
-// 		m_layoutOwnerMap->setCurrentWindow(m_prevWinId);
-		m_layoutOwnerMap->setCurrentLayout(m_currentLayout);
-		m_layoutOwnerMap->setCurrentGroup(group);
-	}
+//  	if( m_prevWinId != X11Helper::UNKNOWN_WINDOW_ID ) {	// saving layout/group from previous window
+//  		kDebug() << "storing " << m_currentLayout.toPair() << ":" << group << " for " << m_prevWinId << endl;
+//  		m_layoutOwnerMap->setCurrentWindow(m_prevWinId);
+// // 		m_layoutOwnerMap->setCurrentLayout(m_currentLayout);
+// 		m_layoutOwnerMap->setCurrentGroup(group);
+//  	}
 
-	m_prevWinId = winId;
+// 	m_prevWinId = winId;
 
 	if( winId != X11Helper::UNKNOWN_WINDOW_ID ) {
 		m_layoutOwnerMap->setCurrentWindow(winId);
-		const LayoutState& layoutState = m_layoutOwnerMap->getCurrentLayout();
+		int layoutState = m_layoutOwnerMap->getCurrentLayout();
 
-		if( layoutState.layoutUnit != m_currentLayout ) {
-			kDebug() << "switching to " << layoutState.layoutUnit.toPair() << ":" << group << " for "  << winId << endl;
-			setLayout( layoutState.layoutUnit, layoutState.group );
-		}
-		else if( layoutState.group != group ) {	// we need to change only the group
-			m_extension->setGroup(layoutState.group);
+		if( layoutState != m_currentLayout ) {
+			setLayout(layoutState);
 		}
 	}
 }
@@ -358,42 +360,3 @@ void KxkbCore::slotSettingsChanged(int category)
 	//TODO:
 	//keys->updateConnections();
 }
-
-/*
- Viki (onscreen keyboard) has problems determining some modifiers states
- when kxkb uses precompiled layouts instead of setxkbmap. Probably a bug
- in the xkb functions used for the precompiled layouts *shrug*.
-*/
-void KxkbCore::forceSetXKBMap( bool set )
-{
-    if( m_forceSetXKBMap == set )
-        return;
-    m_forceSetXKBMap = set;
-    layoutApply();
-}
-
-/*Precompiles the keyboard layouts for faster activation later.
-This is done by loading each one of them and then dumping the compiled
-map from the X server into our local buffer.*/
-// void KxkbCore::initPrecompiledLayouts()
-// {
-//     QStringList dirs = KGlobal::dirs()->findDirs ( "tmp", "" );
-//     QString tempDir = dirs.count() == 0 ? "/tmp/" : dirs[0];
-//
-// 	QValueList<LayoutUnit>::ConstIterator end = kxkbConfig.m_layouts.end();
-//
-// 	for (QValueList<LayoutUnit>::ConstIterator it = kxkbConfig.m_layouts.begin(); it != end; ++it)
-//     {
-// 		LayoutUnit layoutUnit(*it);
-// //	const char* baseGr = m_includes[layout];
-// //	int group = m_rules->getGroup(layout, baseGr);
-// //    	if( m_extension->setLayout(m_model, layout, m_variants[layout], group, baseGr) ) {
-// 		QString compiledLayoutFileName = tempDir + layoutUnit.layout + '.' + layoutUnit.variant + ".xkm";
-// //    	    if( m_extension->getCompiledLayout(compiledLayoutFileName) )
-// 		m_compiledLayoutFileNames[layoutUnit.toPair()] = compiledLayoutFileName;
-// //	}
-// //	else {
-// //    	    kDebug() << "Error precompiling layout " << layout << endl;
-// //	}
-//     }
-// }

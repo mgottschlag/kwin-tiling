@@ -56,13 +56,13 @@ public:
 	bool setLayout(const LayoutUnit& layoutUnit, int group=-1);
 // k_dcop:
 public slots:
-	bool setLayout(const QString& layoutPair);
-	QString getCurrentLayout() { return m_kxkbCore->getCurrentLayout(); }
-	QStringList getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
-	void forceSetXKBMap( bool set );
+// 	bool setLayout(const QString& layoutPair);
+	QString getCurrentLayout() { return "TODO"; } //m_kxkbCore->getCurrentLayout(); }
+ 	QStringList getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
+// 	void forceSetXKBMap( bool set );
 
 protected slots:
-    void windowChanged(WId winId);
+//     void windowChanged(WId winId);
 
     void slotSettingsChanged(int category);
 

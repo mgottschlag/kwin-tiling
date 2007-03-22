@@ -24,23 +24,9 @@
 #include "kxkbconfig.h"
 
 
-// LayoutInfo is used for sticky switching and per-window/application switching policy
-struct LayoutState {
-	const LayoutUnit& layoutUnit;
-	int group;
-	
-	LayoutState(const LayoutUnit& layoutUnit_):
-		layoutUnit(layoutUnit_),
-		group(layoutUnit_.defaultGroup)
-	{
-// 		kDebug() << "new LayoutState " << layoutUnit.toPair() << " group: " << group << endl;
-	}
-};
-
-
 // LayoutMap is used for per-window or per-application switching policy
 class LayoutMap {
-	typedef QQueue<LayoutState*> LayoutQueue;
+	typedef QQueue<int> LayoutQueue;
 	typedef QMap<WId, LayoutQueue> WinLayoutMap;
 	typedef QMap<QString, LayoutQueue> WinClassLayoutMap;
 
@@ -48,10 +34,9 @@ public:
 	LayoutMap(const KxkbConfig& kxkbConfig);
 //	void setConfig(const KxkbConfig& kxkbConfig);
 	
-	void setCurrentLayout(const LayoutUnit& layoutUnit);
-	void setCurrentGroup(int group);
-	LayoutState& getNextLayout();
-	LayoutState& getCurrentLayout();
+	void setCurrentLayout(int layout);
+	int getNextLayout();
+	int getCurrentLayout();
 	
 	void setCurrentWindow(WId winId);
 	void reset();

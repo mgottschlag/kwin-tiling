@@ -207,97 +207,19 @@ X11Helper::isGroupExclusive(const QString& groupName)
 	return false;
 }
 
-// check $oldlayouts and $nonlatin groups for XFree 4.3 and later
-OldLayouts*
-X11Helper::loadOldLayouts(const QString& rulesFile)
-{
-  static const char* oldLayoutsTag = "! $oldlayouts";
-  static const char* nonLatinLayoutsTag = "! $nonlatin";
-  QStringList m_oldLayouts;
-  QStringList m_nonLatinLayouts;
-  
-  QFile f(rulesFile);
-  
-  if (f.open(IO_ReadOnly))
-    {
-      QTextStream ts(&f);
-      QString line;
-
-	kDebug() << "Opened file for old layouts: " << rulesFile << endl;
-
-	  while ( ts.status() == QTextStream::Ok ) {
-
-	  QString str = ts.readLine();	  
-	  if( str.isNull() )
-			break;
-
-	  line = str.simplified();
-	  
-	  if( line.indexOf(oldLayoutsTag) == 0 ) {
-
-	    line = line.mid(strlen(oldLayoutsTag));
-	    line = line.mid(line.indexOf('=')+1).simplified();
-		
-		while( ts.status() == QTextStream::Ok && line.endsWith("\\") ) {
-		  QString str = ts.readLine();
-		  if( str.isNull() )
-			break;
-
-		  line = line.left(line.length()-1) + str;
-		}
-	    line = line.simplified();
-
-	    m_oldLayouts = line.split(QRegExp("\\s"));
-//	    kDebug() << "oldlayouts " << m_oldLayouts.join("|") << endl;
-	    if( !m_nonLatinLayouts.empty() )
-	      break;
-	    
-	  }
-	  else
-	  if( line.indexOf(nonLatinLayoutsTag) == 0 ) {
-
-	    line = line.mid(strlen(nonLatinLayoutsTag)+1).simplified();
-	    line = line.mid(line.indexOf('=')+1).simplified();
-		
-		while( ts.status() == QTextStream::Ok && line.endsWith("\\") ) {
-		QString str = ts.readLine();
-		if( str.isNull() )
-		  break;
-			line = line.left(line.length()-1) + str;
-		}
-	    line = line.simplified();
-
-	    m_nonLatinLayouts = line.split(QRegExp("\\s"));
-//	    kDebug() << "nonlatin " << m_nonLatinLayouts.join("|") << endl;
-	    if( !m_oldLayouts.empty() )
-	      break;
-	    
-	  }
-      }
-
-      f.close();
-    }
-	
-	OldLayouts* oldLayoutsStruct = new OldLayouts();
-	oldLayoutsStruct->oldLayouts = m_oldLayouts;
-	oldLayoutsStruct->nonLatinLayouts = m_nonLatinLayouts;
-	
-	return oldLayoutsStruct;
-}
-
 
 /* pretty simple algorithm - reads the layout file and
     tries to find "xkb_symbols"
     also checks whether previous line contains "hidden" to skip it
 */
 QStringList*
-X11Helper::getVariants(const QString& layout, const QString& x11Dir, bool oldLayouts)
+X11Helper::getVariants(const QString& layout, const QString& x11Dir)
 {
   QStringList* result = new QStringList();
 
   QString file = x11Dir + "xkb/symbols/";
   // workaround for XFree 4.3 new directory for one-group layouts
-  if( QDir(file+"pc").exists() && !oldLayouts )
+  if( QDir(file+"pc").exists() )
     file += "pc/";
     
   file += layout;

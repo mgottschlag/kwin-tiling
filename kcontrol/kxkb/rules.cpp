@@ -22,7 +22,7 @@
 
 static const QRegExp NON_CLEAN_LAYOUT_REGEXP("[^a-z]");
 
-bool XkbRules::m_layoutsClean = true;
+//bool XkbRules::m_layoutsClean = true;
 
 XkbRules::XkbRules(bool layoutsOnly)
 {
@@ -46,23 +46,8 @@ XkbRules::XkbRules(bool layoutsOnly)
 	}
 
 	loadRules(rulesFile, layoutsOnly);
-	loadOldLayouts(rulesFile);
-	loadGroups(KStandardDirs::locate("config", "kxkb_groups"));
 #endif
 
-	m_layoutsClean = true;
-	
-	QHashIterator<QString, QString> it( m_layouts );
-	for( ; it.hasNext() ; ) {
-		it.next();
-	    const QString& layoutName = it.key();	
-		if( layoutName.indexOf( QRegExp(NON_CLEAN_LAYOUT_REGEXP) ) != -1 
-				  && layoutName.endsWith("/jp") == false ) {
-			kDebug() << "Layouts are not clean (Xorg < 6.9.0 or XFree86), reason: " << layoutName << endl;
-			m_layoutsClean = false;
-			break;
-		}
-	}
 }
 
 
@@ -105,33 +90,6 @@ void XkbRules::loadRules(QString file, bool layoutsOnly)
 
 #endif
 
-bool XkbRules::isSingleGroup(const QString& layout)
-{
-#ifdef HAVE_XKLAVIER
-	return true;
-#else
-	  return X11Helper::areSingleGroupsSupported()
-			  && !m_oldLayouts.contains(layout)
-			  && !m_nonLatinLayouts.contains(layout);
-#endif
-}
-
-unsigned int
-XkbRules::getDefaultGroup(const QString& layout, const QString& includeGroup)
-{
-// check for new one-group layouts in XFree 4.3 and older
-    if( isSingleGroup(layout) ) {
-		if( includeGroup.isEmpty() == false )
-			return 1;
-		else
-			return 0;
-    }
-
-    QMap<QString, unsigned int>::const_iterator it = m_initialGroups.find(layout);
-    return it == m_initialGroups.constEnd() ? 0 : it.value();
-}
-
-
 QStringList
 XkbRules::getAvailableVariants(const QString& layout)
 {
@@ -146,54 +104,9 @@ XkbRules::getAvailableVariants(const QString& layout)
     if( result1 )
         return *result1;
 
-    bool oldLayouts = m_oldLayouts.contains(layout);
-    QStringList* result = X11Helper::getVariants(layout, X11_DIR, oldLayouts);
+    QStringList* result = X11Helper::getVariants(layout, X11_DIR);
 
     m_varLists.insert(layout, result);
     return *result;
 #endif
 }
-
-
-
-#ifndef HAVE_XKLAVIER
-
-// check $oldlayouts and $nonlatin groups for XFree 4.3 and later
-void XkbRules::loadOldLayouts(QString rulesFile)
-{
-	OldLayouts* oldLayoutsStruct = X11Helper::loadOldLayouts( rulesFile );
-	m_oldLayouts = oldLayoutsStruct->oldLayouts;
-	m_nonLatinLayouts = oldLayoutsStruct->nonLatinLayouts;
-}
-
-// for multi-group layouts in XFree 4.2 and older
-//    or if layout is present in $oldlayout or $nonlatin groups
-void XkbRules::loadGroups(QString file)
-{
-  kDebug() << "loading groups from " << file << endl;
-  QFile f(file);
-  if (f.open(IO_ReadOnly))
-    {
-      QTextStream ts(&f);
-      QString locale;
-      unsigned int grp;
-
-	  while ( ts.status() == QTextStream::Ok ) {
-         ts >> locale >> grp;
-
-		 if( locale.isNull() )
-			break;
-
-		locale.simplified();
-
-		if (locale[0] == '#' || locale.left(2) == "//" || locale.isEmpty())
-	  	  continue;
-
-    	m_initialGroups.insert(locale, grp);
-      }
-
-      f.close();
-    }
-}
-
-#endif

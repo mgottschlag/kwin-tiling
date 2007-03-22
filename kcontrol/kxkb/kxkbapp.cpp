@@ -47,9 +47,11 @@ DESCRIPTION
 
 
 KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
-    : KUniqueApplication(allowStyles, GUIenabled),
-      m_kxkbCore( new KxkbCore( new KxkbSysTrayIcon() ) )
+    : KUniqueApplication(allowStyles, GUIenabled)
 {
+	KxkbSysTrayIcon* kxkbWidget = new KxkbSysTrayIcon();
+	m_kxkbCore = new KxkbCore( kxkbWidget );
+// 	kxkbWidget->show();
     //TODO: don't do this if kxkb does not become a daemon
     new KXKBAdaptor( this );
 }
@@ -78,23 +80,23 @@ void KXKBApp::layoutApply()
 }
 
 // kdcop
-bool KXKBApp::setLayout(const QString& layoutPair)
-{
-	return m_kxkbCore->setLayout(layoutPair);
-}
+// bool KXKBApp::setLayout(const QString& layoutPair)
+// {
+// 	return m_kxkbCore->setLayout(layoutPair);
+// }
 
 
 // Activates the keyboard layout specified by 'layoutUnit'
-bool KXKBApp::setLayout(const LayoutUnit& layoutUnit, int group)
-{
-	return m_kxkbCore->setLayout(layoutUnit, group);
-}
+// bool KXKBApp::setLayout(const LayoutUnit& layoutUnit, int group)
+// {
+// 	return m_kxkbCore->setLayout(layoutUnit, group);
+// }
 
-// TODO: we also have to handle deleted windows
-void KXKBApp::windowChanged(WId winId)
-{
-//	return m_kxkbCore->windowChanged(winId);
-}
+// // TODO: we also have to handle deleted windows
+// void KXKBApp::windowChanged(WId winId)
+// {
+// //	return m_kxkbCore->windowChanged(winId);
+// }
 
 
 void KXKBApp::slotSettingsChanged(int category)
@@ -102,23 +104,14 @@ void KXKBApp::slotSettingsChanged(int category)
 //	return m_kxkbCore->slotSettingsChanged(category);
 }
 
-/*
- Viki (onscreen keyboard) has problems determining some modifiers states
- when kxkb uses precompiled layouts instead of setxkbmap. Probably a bug
- in the xkb functions used for the precompiled layouts *shrug*.
-*/
-void KXKBApp::forceSetXKBMap( bool set )
-{
-	return m_kxkbCore->forceSetXKBMap(set);
-}
 
 const char * DESCRIPTION =
   I18N_NOOP("A utility to switch keyboard maps");
 
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
-    KAboutData about("kxkb", I18N_NOOP("KDE Keyboard Tool"), "2.0",
-                     DESCRIPTION, KAboutData::License_LGPL,
+    KAboutData about("kxkb", I18N_NOOP("KDE Keyboard Layout Switcher"), "2.0",
+                     DESCRIPTION, KAboutData::License_GPL,
                      "Copyright (C) 2006-2007 Andriy Rysin");
     KCmdLineArgs::init(argc, argv, &about);
     KXKBApp::addCmdLineOptions();

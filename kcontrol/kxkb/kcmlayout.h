@@ -39,7 +39,7 @@ protected slots:
   void moveDown();
   void variantChanged();
   void displayNameChanged(const QString& name);
-  void latinChanged();
+//  void latinChanged();
   void layoutSelChanged(Q3ListViewItem *);
   void loadRules();
   void updateLayoutCommand();
@@ -58,6 +58,7 @@ private:
 
   QWidget* makeOptionsTab();
   void updateStickyLimit();
+  void updateAddButton();
   static LayoutUnit getLayoutUnitKey(Q3ListViewItem *sel);
 };
 

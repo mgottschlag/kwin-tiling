@@ -30,17 +30,21 @@ static const char* switchModes[SWITCH_POLICY_COUNT] = {
 const LayoutUnit DEFAULT_LAYOUT_UNIT = LayoutUnit("us", "");
 const char* DEFAULT_MODEL = "pc104";
 
-LayoutUnit KxkbConfig::getDefaultLayout()
+KxkbConfig::KxkbConfig() {
+	m_layouts.append( DEFAULT_LAYOUT_UNIT );
+}
+
+int KxkbConfig::getDefaultLayout()
 {
 	if( m_layouts.size() == 0 )
-		return DEFAULT_LAYOUT_UNIT;
+		return 0; //DEFAULT_LAYOUT_UNIT;
 
-	return m_layouts[0];
+	return 0; //m_layouts[0];
 }
 
 bool KxkbConfig::load(int loadMode)
 {
-        KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
+    KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
 
 // Even if the layouts have been disabled we still want to set Xkb options
 // user can always switch them off now in the "Options" tab
@@ -81,7 +85,7 @@ bool KxkbConfig::load(int loadMode)
 		kDebug() << " added layout " << layoutUnit.toPair() << endl;
 	}
 
-	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << getDefaultLayout().toPair() << endl;
+	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << m_layouts[getDefaultLayout()].toPair() << endl;
 
 	QStringList displayNamesList;
 	displayNamesList = config.readEntry("DisplayNames", displayNamesList, ',');
@@ -96,37 +100,37 @@ bool KxkbConfig::load(int loadMode)
 	}
 
 // 	m_includes.clear();
-	if( X11Helper::areSingleGroupsSupported() ) {
-		if( config.hasKey("IncludeGroups") ) {
-			QStringList includeList;
-			includeList = config.readEntry("IncludeGroups", includeList, ',');
-			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
-				QStringList includePair = (*it).split(':');
-				if( includePair.count() == 2 ) {
-					LayoutUnit layoutUnit( includePair[0] );
-					if( m_layouts.contains( layoutUnit ) ) {
-						m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = includePair[1];
-						kDebug() << "Got inc group: " << includePair[0] << ": " << includePair[1] << endl;
-					}
-				}
-			}
-		}
-		else { //old includes format
-			kDebug() << "Old includes..." << endl;
-			QStringList includeList;
-			includeList = config.readEntry("Includes", includeList);
-			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
-				QString layoutName = LayoutUnit::parseLayout( *it );
-				LayoutUnit layoutUnit( layoutName, "" );
-				kDebug() << "old layout for inc: " << layoutUnit.toPair() << " included " << m_layouts.contains( layoutUnit ) << endl;
-				if( m_layouts.contains( layoutUnit ) ) {
-					QString variantName = LayoutUnit::parseVariant(*it);
-					m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = variantName;
-					kDebug() << "Got inc group: " << layoutUnit.toPair() << ": " <<  variantName << endl;
-				}
-			}
-		}
-	}
+// 	if( X11Helper::areSingleGroupsSupported() ) {
+// 		if( config.hasKey("IncludeGroups") ) {
+// 			QStringList includeList;
+// 			includeList = config.readEntry("IncludeGroups", includeList, ',');
+// 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
+// 				QStringList includePair = (*it).split(':');
+// 				if( includePair.count() == 2 ) {
+// 					LayoutUnit layoutUnit( includePair[0] );
+// 					if( m_layouts.contains( layoutUnit ) ) {
+// 						m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = includePair[1];
+// 						kDebug() << "Got inc group: " << includePair[0] << ": " << includePair[1] << endl;
+// 					}
+// 				}
+// 			}
+// 		}
+// 		else { //old includes format
+// 			kDebug() << "Old includes..." << endl;
+// 			QStringList includeList;
+// 			includeList = config.readEntry("Includes", includeList);
+// 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
+// 				QString layoutName = LayoutUnit::parseLayout( *it );
+// 				LayoutUnit layoutUnit( layoutName, "" );
+// 				kDebug() << "old layout for inc: " << layoutUnit.toPair() << " included " << m_layouts.contains( layoutUnit ) << endl;
+// 				if( m_layouts.contains( layoutUnit ) ) {
+// 					QString variantName = LayoutUnit::parseVariant(*it);
+// 					m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = variantName;
+// 					kDebug() << "Got inc group: " << layoutUnit.toPair() << ": " <<  variantName << endl;
+// 				}
+// 			}
+// 		}
+// 	}
 
 	m_showSingle = config.readEntry("ShowSingle", false);
 	m_showFlag = config.readEntry("ShowFlag", true);
@@ -190,10 +194,10 @@ void KxkbConfig::save()
 
 		layoutList.append( layoutUnit.toPair() );
 
-		if( layoutUnit.includeGroup.isEmpty() == false ) {
-			QString incGroupUnit = QString("%1:%2").arg(layoutUnit.toPair(), layoutUnit.includeGroup);
-			includeList.append( incGroupUnit );
-		}
+// 		if( layoutUnit.includeGroup.isEmpty() == false ) {
+// 			QString incGroupUnit = QString("%1:%2").arg(layoutUnit.toPair(), layoutUnit.includeGroup);
+// 			includeList.append( incGroupUnit );
+// 		}
 
 		QString displayName( layoutUnit.displayName );
 		kDebug() << " displayName " << layoutUnit.toPair() << " : " << displayName << endl;

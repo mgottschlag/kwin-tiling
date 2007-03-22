@@ -41,7 +41,7 @@ public Q_SLOTS: // DBus exported
     Q_SCRIPTABLE bool setLayout(const QString& layout);
     Q_SCRIPTABLE QString getCurrentLayout();
     Q_SCRIPTABLE QStringList getLayoutsList();
-    Q_SCRIPTABLE void forceSetXKBMap( bool set );
+//     Q_SCRIPTABLE void forceSetXKBMap( bool set );
 
 };
 #endif /* KXKB_ADAPTOR_H */
