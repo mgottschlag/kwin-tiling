@@ -595,37 +595,43 @@ KFonts::KFonts(QWidget *parent, const QStringList &args)
     ++count;
   }
 
-   QHBoxLayout *lay = new QHBoxLayout();
-   layout->addItem(lay);
-   lay->setSpacing(KDialog::spacingHint());
-   lay->addStretch();
+   QHBoxLayout *hblay = new QHBoxLayout();
+   layout->addItem(hblay);
+   hblay->setSpacing(KDialog::spacingHint());
+   hblay->addStretch();
    QPushButton * fontAdjustButton = new QPushButton(i18n("Ad&just All Fonts..."), this);
    fontAdjustButton->setWhatsThis( i18n("Click to change all fonts"));
-   lay->addWidget( fontAdjustButton );
+   hblay->addWidget( fontAdjustButton );
    connect(fontAdjustButton, SIGNAL(clicked()), SLOT(slotApplyFontDiff()));
 
    layout->addSpacing(KDialog::spacingHint());
 
-   lay = new QHBoxLayout();
+   QGridLayout* lay = new QGridLayout();
    layout->addItem(lay);
+   lay->setColumnStretch( 3, 10 );
    lay->setSpacing(KDialog::spacingHint());
-   cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), this);
-   cbAA->setTristate( true );
+   QLabel* label = new QLabel( i18n( "Use a&nti-aliasing:" ), this );
+   lay->addWidget( label, 0, 0 );
+   cbAA = new QComboBox( this );
+   cbAA->insertItem( i18n( "Enabled" )); // change AASetting type if order changes
+   cbAA->insertItem( i18n( "System settings" ));
+   cbAA->insertItem( i18n( "Disabled" ));
    cbAA->setWhatsThis( i18n("If this option is selected, KDE will smooth the edges of curves in "
                               "fonts."));
    aaSettingsButton = new QPushButton( i18n( "Configure..." ), this);
    connect(aaSettingsButton, SIGNAL(clicked()), SLOT(slotCfgAa()));
-   lay->addWidget( cbAA );
-   lay->addWidget( aaSettingsButton );
-   lay->addStretch();
+   label->setBuddy( cbAA );
+   lay->addWidget( cbAA, 0, 1 );
+   lay->addWidget( aaSettingsButton, 0, 2 );
+   connect(cbAA, SIGNAL(activated(int)), SLOT(slotUseAntiAliasing()));
 
-   lay = new QHBoxLayout( layout, KDialog::spacingHint());
-   cbForceDpi = new QCheckBox( i18n( "Force fonts DPI" ), this );
-   lay->addWidget( cbForceDpi );
+   label = new QLabel( i18n( "Force fonts DPI:" ), this );
+   lay->addWidget( label, 1, 0 );
    comboForceDpi = new QComboBox( this );
+   label->setBuddy( comboForceDpi );
+   comboForceDpi->insertItem( i18n( "Disabled" )); // change DPISetti ng type if order changes
    comboForceDpi->addItem( i18n( "96 DPI" ));
    comboForceDpi->addItem( i18n( "120 DPI" ));
-   comboForceDpi->setDisabled( true );
    QString whatsthis = i18n(
        "<p>This option forces a specific DPI value for fonts. It may be useful"
        " when the real DPI of the hardware is not detected properly and it"
@@ -637,19 +643,13 @@ KFonts::KFonts(QWidget *parent, const QStringList &args)
        " ServerLocalArgs= in $KDEDIR/share/config/kdm/kdmrc). When fonts do not render"
        " properly with real DPI value better fonts should be used or configuration"
        " of font hinting should be checked.</p>" );
-   cbForceDpi->setWhatsThis(whatsthis);
    comboForceDpi->setWhatsThis(whatsthis);
-   connect( cbForceDpi, SIGNAL( toggled( bool )), comboForceDpi, SLOT( setEnabled( bool )));
-   connect( cbForceDpi, SIGNAL( toggled( bool )), SLOT( changed()));
    connect( comboForceDpi, SIGNAL( activated( int )), SLOT( changed()));
-   lay->addWidget( comboForceDpi );
-   lay->addStretch();
+   lay->addWidget( comboForceDpi, 1, 1 );
 
    layout->addStretch(1);
 
    aaSettings=new FontAASettings(this);
-
-   connect(cbAA, SIGNAL(stateChanged(int)), SLOT(slotUseAntiAliasing()));
 
    load();
 }
@@ -670,10 +670,10 @@ void KFonts::defaults()
   for ( int i = 0; i < (int) fontUseList.count(); i++ )
     fontUseList.at( i )->setDefault();
 
-  useAA = Qt::PartiallyChecked;
-  cbAA->setNoChange();
+  useAA = AASystem;
+  cbAA->setCurrentItem( useAA );
   aaSettings->defaults();
-  cbForceDpi->setChecked(false);
+  comboForceDpi->setCurrentItem( DPINone );
   emit changed(true);
 }
 
@@ -682,21 +682,20 @@ void KFonts::load()
   for ( uint i = 0; i < fontUseList.count(); i++ )
     fontUseList.at( i )->readFont();
 
-  useAA_original = useAA = aaSettings->load() ? Qt::Checked : Qt::Unchecked;
-  kDebug(1208) << "AA:" << ( useAA == Qt::Checked ) << endl;
-  cbAA->setChecked(useAA == Qt::Checked);
+  useAA_original = useAA = aaSettings->load() ? AAEnabled : AADisabled;
+  cbAA->setCurrentItem( useAA );
 
   KConfig _cfgfonts( "kcmfonts" );
   KConfigGroup cfgfonts(&_cfgfonts, "General");
-  int dpi = cfgfonts.readEntry( "forceFontDPI", 0 );
-  cbForceDpi->setChecked( dpi == 96 || dpi == 120 );
-  comboForceDpi->setCurrentIndex( dpi == 120 ? 1 : 0 );
+  int dpicfg = cfgfonts.readEntry( "forceFontDPI", 0 );
+  DPISetting dpi = dpicfg == 120 ? DPI120 : dpicfg == 96 ? DPI96 : DPINone;
+  comboForceDpi->setCurrentItem( dpi );
   dpi_original = dpi;
   if( cfgfonts.readEntry( "dontChangeAASettings", true )) {
-      cbAA->setNoChange();
-      useAA_original = useAA = Qt::PartiallyChecked;
+      useAA_original = useAA = AASystem;
+      cbAA->setCurrentItem( useAA );
   }
-  aaSettingsButton->setEnabled( cbAA->checkState() == Qt::Checked );
+  aaSettingsButton->setEnabled( cbAA->currentItem() == AAEnabled );
 
   emit changed(false);
 }
@@ -710,17 +709,14 @@ void KFonts::save()
 
   KConfig _cfgfonts( "kcmfonts" );
   KConfigGroup cfgfonts(&_cfgfonts, "General");
-  int dpi;
-  if( !cbForceDpi->isChecked())
-      dpi = 0;
-  else
-      dpi = comboForceDpi->currentIndex() == 0 ? 96 : 120;
-  cfgfonts.writeEntry( "forceFontDPI", dpi );
-  cfgfonts.writeEntry( "dontChangeAASettings", cbAA->checkState() == Qt::PartiallyChecked );
+  DPISetting dpi = static_cast< DPISetting >( comboForceDpi->currentItem());
+  const int dpi2value[] = { 0, 96, 120 };
+  cfgfonts.writeEntry( "forceFontDPI", dpi2value[ dpi ] );
+  cfgfonts.writeEntry( "dontChangeAASettings", cbAA->currentItem() == AASystem );
   cfgfonts.sync();
   // if the setting is reset in the module, remove the dpi value,
   // otherwise don't explicitly remove it and leave any possible system-wide value
-  if( dpi == 0 && dpi_original != 0 ) {
+  if( dpi == DPINone && dpi_original != DPINone ) {
       KProcIO proc;
       proc << "xrdb" << "-quiet" << "-remove" << "-nocpp";
       proc.writeStdin( QString( "Xft.dpi" ), true );
@@ -747,9 +743,9 @@ void KFonts::save()
   bool aaSave = false;
   // Don't overwrite global settings unless explicitly asked for - e.g. the system
   // fontconfig setup may be much more complex than this module can provide.
-  // TODO: With PartiallyChecked the changes already made by this module should be reverted somehow.
-  if( cbAA->checkState() != Qt::PartiallyChecked )
-      aaSave = aaSettings->save( useAA == Qt::Checked );
+  // TODO: With AASystem the changes already made by this module should be reverted somehow.
+  if( cbAA->currentItem() != AASystem )
+      aaSave = aaSettings->save( useAA == AAEnabled );
 
   if( aaSave || (useAA != useAA_original) || dpi != dpi_original) {
     KMessageBox::information(this,
@@ -782,8 +778,8 @@ void KFonts::slotApplyFontDiff()
 
 void KFonts::slotUseAntiAliasing()
 {
-    useAA = cbAA->checkState();
-    aaSettingsButton->setEnabled( cbAA->checkState() == Qt::Checked );
+    useAA = static_cast< AASetting >( cbAA->currentItem());
+    aaSettingsButton->setEnabled( cbAA->currentItem() == AAEnabled );
     emit changed(true);
 }
 
