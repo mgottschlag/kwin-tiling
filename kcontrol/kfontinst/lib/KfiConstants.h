@@ -49,6 +49,11 @@
 #define KFI_KIO_PASS                 "pass"
 #define KFI_KIO_FACE                 "face"
 
+#define KFI_DETAILS_QUERY            "?details="
+#define KFI_DETAILS_QUERY_LEN        9
+#define KFI_FILE_DETAILS_QUERY       "?fdetails="
+#define KFI_FILE_DETAILS_QUERY_LEN   10
+
 #define KFI_SYS_USER                 "root"
 
 #define KFI_AUTHINF_USER             I18N_NOOP("Administrator")

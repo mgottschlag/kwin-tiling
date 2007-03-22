@@ -1876,6 +1876,14 @@ void CFontListView::itemCollapsed(const QModelIndex &idx)
     }
 }
 
+static bool isScalable(const QString &str)
+{
+    QByteArray cFile(QFile::encodeName(str));
+
+    return Misc::checkExt(cFile, "ttf") || Misc::checkExt(cFile, "otf") || Misc::checkExt(cFile, "ttc") ||
+           Misc::checkExt(cFile, "pfa") || Misc::checkExt(cFile, "pfb");
+}
+
 void CFontListView::view()
 {
     // Number of fonts user has selected, before we ask if they really want to view them all...
@@ -1916,7 +1924,38 @@ void CFontListView::view()
         {
             KProcess proc;
 
-            proc << KFI_APP << "-v" << (*it)->url().prettyUrl().toUtf8();
+            proc << KFI_APP << "-v";
+
+            // If we can, speed up font viewer by passing the font details...
+            if((*it)->isEnabled())
+                proc << QString((*it)->url().prettyUrl().toUtf8()+KFI_DETAILS_QUERY+(*it)->name()+','+QString().setNum((*it)->styleInfo()));
+            else
+            {
+                // For a disalbed font, we need to find the fist scalable font entry in its file list...
+                QStringList::ConstIterator fit((*it)->files().begin()),
+                                           fend((*it)->files().end());
+                bool                       done(false);
+
+                for(; fit!=fend; ++fit)
+                    if(isScalable(*fit))
+                    {
+                        QString url(KFI_KIO_FONTS_PROTOCOL":/");
+
+                        if(!Misc::root())
+                            if((*it)->isSystem())
+                                url+=KFI_KIO_FONTS_SYS"/";
+                            else
+                                url+=KFI_KIO_FONTS_USER"/";
+                        url+=(*it)->name()+KFI_FILE_DETAILS_QUERY+(*fit)+','+QString().setNum((*it)->index());
+
+                        proc << url;
+                        done=true;
+                        break;
+                    }
+
+                if(!done)
+                    proc << (*it)->url().prettyUrl().toUtf8();
+            }
             proc.start(KProcess::DontCare);
         }
     }

@@ -69,6 +69,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void print();
     void displayType(const QList<CFcEngine::TRange> &range);
     void showFace(int f);
+    void statResult(KJob *job);
 
     Q_SIGNALS:
 
@@ -76,8 +77,8 @@ class CFontViewPart : public KParts::ReadOnlyPart
 
     private:
 
+    void stat(const QString &path=QString());
     void getMetaInfo();
-    bool isInstalled();
 
     private:
 
@@ -94,6 +95,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     KSharedConfigPtr   itsConfig;
     BrowserExtension   *itsExtension;
     KProcess           *itsProc;
+    QString            itsStatName;
 };
 
 class BrowserExtension : public KParts::BrowserExtension

@@ -41,7 +41,8 @@
 #include <QApplication>
 #include <QGroupBox>
 #include <kio/netaccess.h>
-#include <kio/metainfojob.h>
+#include <kio/job.h>
+#include <kio/jobuidelegate.h>
 #include <kglobal.h>
 #include <kcomponentdata.h>
 #include <kmessagebox.h>
@@ -56,6 +57,7 @@
 #include <kicon.h>
 #include <kprocess.h>
 #include <kmimetype.h>
+#include <kfilemetainfo.h>
 #include <fontconfig/fontconfig.h>
 
 // Enable the following to allow printing of non-installed fonts. Doesnt seem to work :-(
@@ -185,30 +187,63 @@ void CFontViewPart::timeout()
     bool          isFonts=KFI_KIO_FONTS_PROTOCOL==url().protocol(),
                   isDisabled(false),
                   showFs=false;
-    KUrl          displayUrl(url());
+    KUrl          displayUrl(url()),
+                  fileUrl;
+    int           fileIndex(-1);
     QString       name;
     unsigned long styleInfo=KFI_NO_STYLE_INFO;
 
     if(isFonts)
     {
-        KIO::UDSEntry udsEntry;
-
         FcInitReinitialize();
 
-        if(KIO::NetAccess::stat(url(), udsEntry, NULL))
+        //
+        // This is a fonts:/Url. Check to see whether we were passed any details in the query...
+        QString query(url().query());
+        int     commaPos(-1);
+
+        if(!query.isEmpty() && 0==query.indexOf(KFI_DETAILS_QUERY) && (commaPos=query.lastIndexOf(','))>KFI_DETAILS_QUERY_LEN+1)
         {
-            name=udsEntry.stringValue(KIO::UDS_NAME);
-            styleInfo=FC::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
-            isDisabled=udsEntry.numberValue(KIO::UDS_HIDDEN, 0) ? true : false;
+            // Its a enabled font, so we can get the name and style info from the query...
+            name=query.mid(KFI_DETAILS_QUERY_LEN, commaPos-KFI_DETAILS_QUERY_LEN);
+            styleInfo=FC::styleValFromStr(query.mid(commaPos+1));
+        }
+        else if(!query.isEmpty() && 0==query.indexOf(KFI_FILE_DETAILS_QUERY) && (commaPos=query.lastIndexOf(','))>KFI_FILE_DETAILS_QUERY_LEN+1)
+        {
+            // Its a enabled font, so we can get the file name and index from the query...
+            fileUrl=KUrl::fromPath(query.mid(KFI_FILE_DETAILS_QUERY_LEN, commaPos-KFI_FILE_DETAILS_QUERY_LEN));
+            fileIndex=query.mid(commaPos+1).toInt();
+            name=url().fileName();
+        }
+        else
+        {
+            // OK, no useable info in the query - stat fonts:/ to get the required info...
+            KIO::UDSEntry udsEntry;
+
+            if(KIO::NetAccess::stat(url(), udsEntry, NULL))
+            {
+                name=udsEntry.stringValue(KIO::UDS_NAME);
+                styleInfo=FC::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
+                isDisabled=udsEntry.numberValue(KIO::UDS_HIDDEN, 0) ? true : false;
+            }
         }
         if(!name.isEmpty())
-            displayUrl.setFileName(name);
+        {
+            displayUrl.setFileName(name.replace("%20", " "));
+            displayUrl.setQuery(QString());
+        }
     }
 
-    itsInstallButton->setEnabled(!isFonts && !isInstalled());
+    itsInstallButton->setEnabled(false);
+    if(!isFonts)
+        stat();
+
     emit setWindowCaption(Misc::prettyUrl(displayUrl));
 
-    itsPreview->showFont(isFonts ? url() : KUrl::fromPath(localFilePath()), isDisabled ? QString() : name, styleInfo);
+    if(isFonts && -1!=fileIndex)
+        itsPreview->showFont(fileUrl, QString(), styleInfo, fileIndex);
+    else
+        itsPreview->showFont(isFonts ? url() : KUrl::fromPath(localFilePath()), isDisabled ? QString() : name, styleInfo);
 
     if(!isFonts && CFcEngine::instance()->getNumIndexes()>1)
     {
@@ -267,7 +302,7 @@ void CFontViewPart::install()
 
 void CFontViewPart::installlStatus(KProcess *)
 {
-    itsInstallButton->setEnabled(!isInstalled());
+    stat();
 }
 
 void CFontViewPart::changeText()
@@ -339,6 +374,21 @@ void CFontViewPart::showFace(int f)
                                           ? itsFaceSelector->value()-1 : 0]);
 }
 
+void CFontViewPart::statResult(KJob *job)
+{
+    bool exists=!job->error();
+
+    if(!Misc::root() && !exists && !itsStatName.isEmpty())
+    {
+        // OK, file does not exist in fonts:/System, try fonts:/Personal
+        stat(QString(KFI_KIO_FONTS_PROTOCOL":/")+i18n(KFI_KIO_FONTS_USER)+QChar('/')+itsStatName);
+        itsStatName=QString();
+        return;
+    }
+
+    itsInstallButton->setEnabled(!exists);
+}
+
 void CFontViewPart::getMetaInfo()
 {
     KFileMetaInfo meta(url());
@@ -380,37 +430,23 @@ void CFontViewPart::getMetaInfo()
         itsMetaLabel->setText(i18n("<p>No information</p>"));
 }
 
-bool CFontViewPart::isInstalled()
+void CFontViewPart::stat(const QString &path)
 {
-    bool installed=false;
+    KUrl statUrl;
 
-    if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
-        installed=true;
-    else
+    if(path.isEmpty())
     {
-        KUrl destUrl;
-
-        if(Misc::root())
-        {
-            destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+CFcEngine::instance()->getName(url());
-            installed=KIO::NetAccess::exists(destUrl, true, itsFrame->parentWidget());
-        }
-        else
-        {
-            destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+i18n(KFI_KIO_FONTS_SYS)+QChar('/')+
-                CFcEngine::instance()->getName(url());
-            if(KIO::NetAccess::exists(destUrl, true, itsFrame->parentWidget()))
-                installed=true;
-            else
-            {
-                destUrl=QString(KFI_KIO_FONTS_PROTOCOL":/")+i18n(KFI_KIO_FONTS_USER)+QChar('/')+
-                    CFcEngine::instance()->getName(url());
-                installed=KIO::NetAccess::exists(destUrl, true, itsFrame->parentWidget());
-            }
-        }
+        itsStatName=CFcEngine::instance()->getName(url());
+        statUrl=Misc::root() ? KUrl(QString(KFI_KIO_FONTS_PROTOCOL":/")+itsStatName)
+                             : KUrl(QString(KFI_KIO_FONTS_PROTOCOL":/")+i18n(KFI_KIO_FONTS_SYS)+QChar('/')+itsStatName);
     }
+    else
+        statUrl=KUrl(path);
 
-    return installed;
+    KIO::StatJob * job = KIO::stat(statUrl, !statUrl.isLocalFile());
+    job->ui()->setWindow(itsFrame->parentWidget());
+    job->setSide(true);
+    connect(job, SIGNAL(result (KJob *)), this, SLOT(statResult(KJob *)));
 }
 
 BrowserExtension::BrowserExtension(CFontViewPart *parent)
