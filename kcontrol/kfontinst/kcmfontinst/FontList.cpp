@@ -399,7 +399,10 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &st
                                   KFI_KIO_FACE, 0);
     QString mime(mimetype());
 
-    itsBitmap="application/x-font-pcf"==mime || "application/x-font-bdf"==mime;
+//    itsBitmap="application/x-font-pcf"==mime || "application/x-font-bdf"==mime;
+    itsBitmap="application/x-font-ttf"!=mime && "application/x-font-otf"!=mime &&
+              "application/x-font-type1"!=mime;
+
     if(!Misc::root())
         setIsSystem(isSysFolder(url().path().section('/', 1, 1)));
 
