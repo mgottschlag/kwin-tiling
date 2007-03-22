@@ -114,7 +114,10 @@ private:
     void startKilling();
     void performStandardKilling();
     void completeKilling();
+    void killWM();
+    void completeKillingWM();
     void cancelShutdown( KSMClient* c );
+    void killingCompleted();
 
     void discardSession();
     void storeSession();
@@ -160,7 +163,7 @@ private:
         {
         Idle,
         LaunchingWM, AutoStart0, KcmInitPhase1, AutoStart1, Restoring, FinishingStartup, // startup
-        Shutdown, Checkpoint, KillingWM, Killing, WaitingForKNotify // shutdown
+        Shutdown, Checkpoint, Killing, KillingWM, WaitingForKNotify // shutdown
         };
     State state;
     bool dialogActive;

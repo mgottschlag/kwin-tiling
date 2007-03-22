@@ -452,27 +452,10 @@ void KSMServer::completeShutdownOrCheckpoint()
 
 void KSMServer::startKilling()
 {
-        state = KillingWM;
-// kill the WM first, so that it doesn't track changes that happen as a result of other
-// clients going away (e.g. if KWin is set to remember position of a window, it could
-// shift because of Kicker going away and KWin would remember wrong position)
-    foreach( KSMClient* c, clients ) {
-        if( isWM( c )) {
-            kDebug( 1218 ) << "Killing WM: " << c->program() << "(" << c->clientId() << ")" << endl;
-            QTimer::singleShot( 2000, this, SLOT( timeoutWMQuit()));
-            SmsDie( c->connection());
-            return;
-        }
-    }
-    performStandardKilling();
-}
-
-void KSMServer::performStandardKilling()
-{
     // kill all clients
     state = Killing;
     foreach( KSMClient* c, clients ) {
-        if( isWM( c ))
+        if( isWM( c )) // kill the WM as the last one in order to reduce flicker
             continue;
         kDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
         SmsDie( c->connection() );
@@ -489,22 +472,52 @@ void KSMServer::completeKilling()
     kDebug( 1218 ) << "KSMServer::completeKilling clients.count()=" <<
         clients.count() << endl;
     if( state == Killing ) {
-        if ( clients.isEmpty() ) {
-            kapp->quit();
-        }
-        return;
-    }
-    if( state == KillingWM ) {
-        bool iswm = false;
+        bool wait = false;
         foreach( KSMClient* c, clients ) {
             if( isWM( c ))
-                iswm = true;
+                continue;
+            wait = true; // still waiting for clients to go away
         }
-        if( !iswm )
-            performStandardKilling();
+        if( wait )
+            return;
+        killWM();
     }
 }
 
+void KSMServer::killWM()
+{
+    state = KillingWM;
+    bool iswm = false;
+    foreach( KSMClient* c, clients ) {
+        if( isWM( c )) {
+            iswm = true;
+            kDebug( 1218 ) << "killWM: client " << c->program() << "(" << c->clientId() << ")" << endl;
+            SmsDie( c->connection() );
+        }
+    }
+    if( iswm ) {
+        completeKillingWM();
+        QTimer::singleShot( 5000, this, SLOT( timeoutWMQuit() ) );
+    }
+    else
+        killingCompleted();
+}
+  
+void KSMServer::completeKillingWM()
+{
+    kDebug( 1218 ) << "KSMServer::completeKillingWM clients.count()=" <<
+        clients.count() << endl;
+    if( state == KillingWM ) {
+        if( clients.isEmpty())
+            killingCompleted();
+    }
+}
+
+// shutdown is fully complete
+void KSMServer::killingCompleted()
+{
+    kapp->quit();
+}
 
 void KSMServer::logoutSoundFinished(  )
 {
@@ -513,19 +526,18 @@ void KSMServer::logoutSoundFinished(  )
     startKilling();
 }
 
-
-void KSMServer::timeoutWMQuit()
-{
-    if( state == KillingWM ) {
-        kWarning( 1218 ) << "SmsDie WM timeout" << endl;
-        performStandardKilling();
-    }
-}
-
 void KSMServer::timeoutQuit()
 {
     foreach( KSMClient* c, clients ) {
         kWarning( 1218 ) << "SmsDie timeout, client " << c->program() << "(" << c->clientId() << ")" << endl;
     }
-    kapp->quit();
+    killWM();
+}
+
+void KSMServer::timeoutWMQuit()
+{
+    if( state == KillingWM ) {
+        kWarning( 1218 ) << "SmsDie WM timeout" << endl;
+    }
+    killingCompleted();
 }

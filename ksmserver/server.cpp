@@ -778,8 +778,10 @@ void KSMServer::deleteClient( KSMClient* client )
     delete client;
     if ( state == Shutdown || state == Checkpoint )
         completeShutdownOrCheckpoint();
-    if ( state == KillingWM || state == Killing )
+    if ( state == Killing )
         completeKilling();
+    if ( state == KillingWM )
+        completeKillingWM();
 }
 
 void KSMServer::newConnection( int /*socket*/ )
