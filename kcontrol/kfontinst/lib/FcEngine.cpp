@@ -999,7 +999,7 @@ KFI_DBUG << "isHidden:" << hidden << endl;
         else
             return false;
     }
-    else if(url.isLocalFile())
+    else if(url.isLocalFile() || url.protocol().isEmpty())
     {
         // Now lets see if its from the thumbnail job! if so, then file should contain either:
         //    a. fonts:/ Url
@@ -1016,7 +1016,7 @@ KFI_DBUG << "isHidden:" << hidden << endl;
             if(line2.isEmpty())
                 isThumbnailUrl=(0==line1.indexOf(KFI_KIO_FONTS_PROTOCOL) ||
                                 0==line1.indexOf("file:/")) &&
-                               parseUrl(KUrl(line1), faceNo, all);
+                                parseUrl(KUrl(line1), faceNo, all);
             else if(0==line1.indexOf(KFI_PATH_KEY) && 0==line2.indexOf(KFI_FACE_KEY))
             {
                 line1=line1.mid(strlen(KFI_PATH_KEY));
