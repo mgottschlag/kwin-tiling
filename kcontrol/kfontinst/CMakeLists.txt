@@ -18,6 +18,7 @@ if (X11_XFT_FOUND)
   add_subdirectory( kio ) 
   add_subdirectory( thumbnail )
   add_subdirectory( viewpart )
+  add_subdirectory( mime )
   install( FILES installfont.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqueror/servicemenus )
 
 else (X11_XFT_FOUND)

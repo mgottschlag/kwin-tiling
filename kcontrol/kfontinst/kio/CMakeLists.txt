@@ -10,7 +10,6 @@ target_link_libraries(kio_fonts ${KDE4_KIO_LIBS} ${KDE4_KDESU_LIBS} ${QT_QTNETWO
 install(TARGETS kio_fonts  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES fonts.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqsidebartng/virtual_folders/services )
-install( FILES folder.desktop system-folder.desktop package.desktop  DESTINATION  ${MIME_INSTALL_DIR}/fonts )
 install( FILES fonts.protocol  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 set(kio_fonts_helper_SRCS Helper.cpp Socket.cpp ${libkxftconfig_SRCS})
