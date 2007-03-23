@@ -59,6 +59,7 @@ private:
   QWidget* makeOptionsTab();
   void updateStickyLimit();
   void updateAddButton();
+  void updateDisplayName();
   static LayoutUnit getLayoutUnitKey(Q3ListViewItem *sel);
 };
 

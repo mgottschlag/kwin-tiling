@@ -1,20 +1,16 @@
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <qtabwidget.h>
+#include <QLabel>
+#include <QComboBox>
+#include <QTabWidget>
 #include <QGroupBox>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <Q3ListView>
 #include <Q3ListViewItem>
 #include <Q3CheckListItem>
 #include <QHeaderView>
-#include <qwhatsthis.h>
-#include <qcheckbox.h>
-#include <qradiobutton.h>
-#include <qlineedit.h>
-#include <qlistview.h>
-#include <qbuttongroup.h>
-#include <qspinbox.h>
+#include <QCheckBox>
+#include <QRadioButton>
+#include <QLineEdit>
+#include <QSpinBox>
 #include <QWidget>
 #include <QtGui>
 
@@ -22,7 +18,6 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <klocale.h>
-#include <kstandarddirs.h>
 #include <kdebug.h>
 #include <kapplication.h>
 #include <kiconloader.h>
@@ -125,7 +120,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
   connect( widget->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
   connect( widget->btnRemove, SIGNAL(clicked()), this, SLOT(remove()));
 
-  connect( widget->comboVariant, SIGNAL(activated(int)), this, SLOT(changed()));
+//  connect( widget->comboVariant, SIGNAL(activated(int)), this, SLOT(changed()));
   connect( widget->comboVariant, SIGNAL(activated(int)), this, SLOT(variantChanged()));
   connect( widget->listLayoutsDst, SIGNAL(selectionChanged(Q3ListViewItem *)),
 		this, SLOT(layoutSelChanged(Q3ListViewItem *)));
@@ -133,10 +128,10 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
   connect( widget->editDisplayName, SIGNAL(textChanged(const QString&)), this, SLOT(displayNameChanged(const QString&)));
 
   widget->btnUp->setIconSet(KIcon("arrow-up"));
-  connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(changed()));
+//  connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(changed()));
   connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(moveUp()));
   widget->btnDown->setIconSet(KIcon("arrow-down"));
-  connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(changed()));
+//  connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(changed()));
   connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(moveDown()));
 
   connect( widget->grpSwitching, SIGNAL( clicked( int ) ), SLOT(changed()));
@@ -183,7 +178,8 @@ void LayoutConfig::load()
 	initUI();
 }
 
-void LayoutConfig::initUI() {
+void LayoutConfig::initUI()
+{
 	QString modelName = m_rules->models()[m_kxkbConfig.m_model];
 	if( modelName.isEmpty() )
 		modelName = DEFAULT_MODEL;
@@ -270,6 +266,7 @@ void LayoutConfig::initUI() {
 		}
 	}
 
+	updateLayoutCommand();
 	updateOptionsCommand();
 	emit KCModule::changed( false );
 }
@@ -366,7 +363,7 @@ void LayoutConfig::add()
 //    layoutSelChanged(sel);
 
 	updateAddButton();
-	
+	updateLayoutCommand();
     updateStickyLimit();
     changed();
 }
@@ -382,23 +379,22 @@ void LayoutConfig::remove()
     Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
     Q3ListViewItem* newSel = 0;
 
-    if( sel == 0 )
-        return;
-
-    if( sel->itemBelow() )
-        newSel = sel->itemBelow();
-    else
-        if( sel->itemAbove() )
-            newSel = sel->itemAbove();
-
-    delete sel;
-    if( newSel )
-        widget->listLayoutsSrc->setSelected(newSel, true);
-    layoutSelChanged(newSel);
-
+    if( sel != NULL ) {
+		if( sel->itemBelow() )
+			newSel = sel->itemBelow();
+		else
+			if( sel->itemAbove() )
+				newSel = sel->itemAbove();
+	
+		delete sel;
+		if( newSel )
+			widget->listLayoutsSrc->setSelected(newSel, true);
+		layoutSelChanged(newSel);
+	}
+	
 	updateAddButton();
-
-    updateStickyLimit();
+	updateLayoutCommand();
+	updateStickyLimit();
     changed();
 }
 
@@ -415,15 +411,20 @@ void LayoutConfig::moveUp()
     }
     else
 		sel->moveItem(sel->itemAbove()->itemAbove());
+	
+	updateLayoutCommand();
+    changed();
 }
 
 void LayoutConfig::moveDown()
 {
     Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
     if( sel == 0 || sel->itemBelow() == 0 )
-	return;
+		return;
 
     sel->moveItem(sel->itemBelow());
+	updateLayoutCommand();
+    changed();
 }
 
 void LayoutConfig::variantChanged()
@@ -439,6 +440,9 @@ void LayoutConfig::variantChanged()
 	if( selectedVariant == DEFAULT_VARIANT_NAME )
 		selectedVariant = "";
 	selLayout->setText(LAYOUT_COLUMN_VARIANT, selectedVariant);
+	
+	updateLayoutCommand();
+    changed();
 }
 
 // helper
@@ -467,7 +471,7 @@ void LayoutConfig::displayNameChanged(const QString& newDisplayName)
 		kDebug() << "setting label for " << layoutUnit.toPair() << " : " << newDisplayName << endl;
 		selLayout->setText(LAYOUT_COLUMN_DISPLAY_NAME, newDisplayName);
 		updateIndicator(selLayout);
-		emit changed();
+		changed();
 	}
 }
 
@@ -483,10 +487,8 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
     widget->comboVariant->setEnabled( sel != NULL );
 
     if( sel == NULL ) {
-        updateLayoutCommand();
         return;
     }
-
 
 	LayoutUnit layoutUnitKey = getLayoutUnitKey(sel);
 	QString kbdLayout = layoutUnitKey.layout;
@@ -506,7 +508,7 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
 			widget->comboVariant->setCurrentIndex(0);
 		}
 	}
-    updateLayoutCommand();
+	updateDisplayName();
 }
 
 QWidget* LayoutConfig::makeOptionsTab()
@@ -624,33 +626,41 @@ void LayoutConfig::updateLayoutCommand()
     setxkbmap += " -variant " + kbdVariants;
   
 	widget->editCmdLine->setText(setxkbmap);
+}
 
+void LayoutConfig::updateDisplayName()
+{
 	Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
-/*	LayoutUnit layoutUnitKey = getLayoutUnitKey(sel);
-	layoutDisplayName = m_kxkbConfig.getLayoutDisplayName( *m_kxkbConfig.m_layouts.find(layoutUnitKey) );*/
-/*	QString layoutDisplayName = sel->text(LAYOUT_COLUMN_DISPLAY_NAME);
-	if( layoutDisplayName.isEmpty() ) {
-		int count = 0;
-		Q3ListViewItem *item = widget->listLayoutsDst->firstChild();
-		while (item) {
-			QString layout_ = item->text(LAYOUT_COLUMN_MAP);
-			if( layout_ == kbdLayout )
-				++count;
-			item = item->nextSibling();
+  
+	QString layoutDisplayName;
+		kDebug() << "sel: '" << sel << "'" << endl;
+	if( sel != NULL ) {
+		LayoutUnit layoutUnitKey = getLayoutUnitKey(sel);
+		QString kbdLayout = layoutUnitKey.layout;
+		QString variant = layoutUnitKey.variant;
+	//	QString layoutDisplayName = m_kxkbConfig.getLayoutDisplayName( *m_kxkbConfig.m_layouts.find(layoutUnitKey) );
+		layoutDisplayName = sel->text(LAYOUT_COLUMN_DISPLAY_NAME);
+		if( layoutDisplayName.isEmpty() ) {
+			int count = 0;
+			Q3ListViewItem *item = widget->listLayoutsDst->firstChild();
+			while (item) {
+				QString layout_ = item->text(LAYOUT_COLUMN_MAP);
+				if( layout_ == kbdLayout )
+					++count;
+				item = item->nextSibling();
+			}
+			bool single = count < 2;
+			layoutDisplayName = m_kxkbConfig.getDefaultDisplayName(LayoutUnit(kbdLayout, variant), single);
 		}
-		bool single = count < 2;
-		layoutDisplayName = m_kxkbConfig.getDefaultDisplayName(LayoutUnit(kbdLayout, variant), single);
+		kDebug() << "disp: '" << layoutDisplayName << "'" << endl;
 	}
-	kDebug() << "disp: '" << layoutDisplayName << "'" << endl;*/
-//  }
-
-/*  widget->editDisplayName->setEnabled( sel != NULL );
-  widget->editDisplayName->setText(layoutDisplayName);*/
+	
+	widget->editDisplayName->setEnabled( sel != NULL );
+	widget->editDisplayName->setText(layoutDisplayName);
 }
 
 void LayoutConfig::changed()
 {
-  updateLayoutCommand();
   emit KCModule::changed( true );
 }
 
@@ -796,84 +806,4 @@ extern "C"
 // please don't change/fix messages below
 // they're taken from XFree86 as is and should stay the same
    I18N_NOOP("Brazilian ABNT2");
-   I18N_NOOP("Dell 101-key PC");
-   I18N_NOOP("Everex STEPnote");
-   I18N_NOOP("Generic 101-key PC");
-   I18N_NOOP("Generic 102-key (Intl) PC");
-   I18N_NOOP("Generic 104-key PC");
-   I18N_NOOP("Generic 105-key (Intl) PC");
-   I18N_NOOP("Japanese 106-key");
-   I18N_NOOP("Microsoft Natural");
-   I18N_NOOP("Northgate OmniKey 101");
-   I18N_NOOP("Keytronic FlexPro");
-   I18N_NOOP("Winbook Model XP5");
-
-// These options are from XFree 4.1.0
- I18N_NOOP("Group Shift/Lock behavior");
- I18N_NOOP("R-Alt switches group while pressed");
- I18N_NOOP("Right Alt key changes group");
- I18N_NOOP("Caps Lock key changes group");
- I18N_NOOP("Menu key changes group");
- I18N_NOOP("Both Shift keys together change group");
- I18N_NOOP("Control+Shift changes group");
- I18N_NOOP("Alt+Control changes group");
- I18N_NOOP("Alt+Shift changes group");
- I18N_NOOP("Control Key Position");
- I18N_NOOP("Make CapsLock an additional Control");
- I18N_NOOP("Swap Control and Caps Lock");
- I18N_NOOP("Control key at left of 'A'");
- I18N_NOOP("Control key at bottom left");
- I18N_NOOP("Use keyboard LED to show alternative group");
- I18N_NOOP("Num_Lock LED shows alternative group");
- I18N_NOOP("Caps_Lock LED shows alternative group");
- I18N_NOOP("Scroll_Lock LED shows alternative group");
-
-//these seem to be new in XFree86 4.2.0
- I18N_NOOP("Left Win-key switches group while pressed");
- I18N_NOOP("Right Win-key switches group while pressed");
- I18N_NOOP("Both Win-keys switch group while pressed");
- I18N_NOOP("Left Win-key changes group");
- I18N_NOOP("Right Win-key changes group");
- I18N_NOOP("Third level choosers");
- I18N_NOOP("Press Right Control to choose 3rd level");
- I18N_NOOP("Press Menu key to choose 3rd level");
- I18N_NOOP("Press any of Win-keys to choose 3rd level");
- I18N_NOOP("Press Left Win-key to choose 3rd level");
- I18N_NOOP("Press Right Win-key to choose 3rd level");
- I18N_NOOP("CapsLock key behavior");
- I18N_NOOP("uses internal capitalization. Shift cancels Caps.");
- I18N_NOOP("uses internal capitalization. Shift does not cancel Caps.");
- I18N_NOOP("acts as Shift with locking. Shift cancels Caps.");
- I18N_NOOP("acts as Shift with locking. Shift does not cancel Caps.");
- I18N_NOOP("Alt/Win key behavior");
- I18N_NOOP("Add the standard behavior to Menu key.");
- I18N_NOOP("Alt and Meta on the Alt keys (default).");
- I18N_NOOP("Meta is mapped to the Win-keys.");
- I18N_NOOP("Meta is mapped to the left Win-key.");
- I18N_NOOP("Super is mapped to the Win-keys (default).");
- I18N_NOOP("Hyper is mapped to the Win-keys.");
- I18N_NOOP("Right Alt is Compose");
- I18N_NOOP("Right Win-key is Compose");
- I18N_NOOP("Menu is Compose");
-
-//these seem to be new in XFree86 4.3.0
- I18N_NOOP( "Both Ctrl keys together change group" );
- I18N_NOOP( "Both Alt keys together change group" );
- I18N_NOOP( "Left Shift key changes group" );
- I18N_NOOP( "Right Shift key changes group" );
- I18N_NOOP( "Right Ctrl key changes group" );
- I18N_NOOP( "Left Alt key changes group" );
- I18N_NOOP( "Left Ctrl key changes group" );
- I18N_NOOP( "Compose Key" );
-
-//these seem to be new in XFree86 4.4.0
- I18N_NOOP("Shift with numpad keys works as in MS Windows.");
- I18N_NOOP("Special keys (Ctrl+Alt+<key>) handled in a server.");
- I18N_NOOP("Miscellaneous compatibility options");
- I18N_NOOP("Right Control key works as Right Alt");
-
-//these seem to be in x.org and Debian XFree86 4.3
- I18N_NOOP("Right Alt key switches group while pressed");
- I18N_NOOP("Left Alt key switches group while pressed");
- I18N_NOOP("Press Right Alt-key to choose 3rd level");
 #endif

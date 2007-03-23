@@ -59,7 +59,6 @@ public slots:
 // 	bool setLayout(const QString& layoutPair);
 	QString getCurrentLayout() { return "TODO"; } //m_kxkbCore->getCurrentLayout(); }
  	QStringList getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
-// 	void forceSetXKBMap( bool set );
 
 protected slots:
 //     void windowChanged(WId winId);
