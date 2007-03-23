@@ -3,6 +3,7 @@ Encoding=UTF-8
 Icon=edu_miscellaneous
 Type=Directory
 Name=Miscellaneous
+Name[csb]=(7) Wszelejaczé
 Name[el]=Διάφορα
 Name[nds]=Annerswat
 Name[x-test]=xxMiscellaneousxx

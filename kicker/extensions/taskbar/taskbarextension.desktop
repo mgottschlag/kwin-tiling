@@ -8,6 +8,7 @@ Name[bg]=Допълнителна лента
 Name[br]=Barrenn dleadoù diavaez
 Name[ca]=Barra de tasques externa
 Name[cs]=Externí pruh úloh
+Name[csb]=Bùtnowô lëstew dzejaniów
 Name[cy]=Bar tasgau allanol
 Name[da]=Ekstern opgavelinje
 Name[de]=Externe Fensterleiste
@@ -61,7 +62,8 @@ Name[x-test]=xxExternal Taskbarxx
 Name[xh]=Ibar yomsebenzi Wangaphandle
 Name[zh_TW]=外部工作列
 Comment=External taskbar panel extension.
-Comment[el]=Εξωτερική επέκταση γραμμής εργασιών του πίνακα
+Comment[csb]=Rozszérzenié panelu z bùtnową lëstwą dzejaniów
+Comment[el]=Εξωτερική επέκταση γραμμής εργασιών του πίνακα.
 Comment[nds]=En Programmbalken buten dat Paneel
 Comment[x-test]=xxExternal taskbar panel extension.xx
 

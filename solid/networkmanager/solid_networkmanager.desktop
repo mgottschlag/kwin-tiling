@@ -5,6 +5,7 @@ ServiceTypes=SolidNetworkManager
 X-KDE-Library=solid_networkmanager
 InitialPreference=100
 Name=NetworkManager
+Name[csb]=Menedżer logòwaniô
 Name[el]=Διαχειριστής δικτύου
 Name[nds]=Nettwark-Pleger
 Name[x-test]=xxNetworkManagerxx

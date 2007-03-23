@@ -2,6 +2,7 @@
 Type=Plugin
 Encoding=UTF-8
 Name=Lock/Logout Applet
+Name[csb]=Knąpë blokòwaniô ekranu/wëlogòwaniô
 Name[el]=Εφαρμογίδιο κλειδώματος/αποσύνδεσης
 Name[nds]=Afsluut-/Afmell-Lüttprogramm
 Name[x-test]=xxLock/Logout Appletxx
@@ -12,6 +13,7 @@ Comment[be]=Дадае кнопкі для блакіроўкі экрана і 
 Comment[bg]=Добавяне на бутоните за заключване на екрана и изход
 Comment[ca]=Afegeix botons per bloquejar la pantalla i sortir de la sessió
 Comment[cs]=Přidá tlačítka pro uzamčení obrazovky a odhlášení z relace
+Comment[csb]=Dodôwô knapë blokòwaniô ekranu ë wëlogòwaniô
 Comment[da]=Tilføjer knapper for at låse skærmen og logge ud fra sessionen
 Comment[de]=Fügt Knöpfe zur Bildschirmsperre und Abmeldung aus KDE hinzu
 Comment[el]=Προσθέτει κουμπιά για το κλείδωμα της οθόνης και την αποσύνδεση συνεδρίας
