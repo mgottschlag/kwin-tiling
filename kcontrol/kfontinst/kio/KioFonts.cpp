@@ -22,6 +22,7 @@
 
 #include "KioFonts.h"
 #include <stdlib.h>
+#include <stdint.h>
 #include <pwd.h>
 #include <grp.h>
 #include <sys/types.h>
