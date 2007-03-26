@@ -5,7 +5,7 @@
 #include <kcmdlineargs.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kprocess.h>
+#include <k3process.h>
 
 #include "ksystraycmd.h"
 
@@ -98,7 +98,7 @@ int main( int argc, char *argv[] )
   // Read the command
   QString command;
   for ( int i = 0; i < args->count(); i++ )
-    command += KProcess::quote(QString::fromLocal8Bit( args->arg(i) )) + ' ';
+    command += K3Process::quote(QString::fromLocal8Bit( args->arg(i) )) + ' ';
   if ( !command.isEmpty() )
       cmd.setCommand( command );
 

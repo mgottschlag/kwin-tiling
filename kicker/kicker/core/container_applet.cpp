@@ -39,7 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmessagebox.h>
 #include <kpanelapplet.h>
 #include <kmenu.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kstandarddirs.h>
 #include <khbox.h>
 #include <kauthorized.h>

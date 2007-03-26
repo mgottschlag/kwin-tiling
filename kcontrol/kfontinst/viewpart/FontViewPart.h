@@ -37,7 +37,7 @@ class KIntNumInput;
 class QAction;
 class KUrl;
 class KConfig;
-class KProcess;
+class K3Process;
 
 namespace KFI
 {
@@ -64,7 +64,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void previewStatus(bool st);
     void timeout();
     void install();
-    void installlStatus(KProcess *proc);
+    void installlStatus(K3Process *proc);
     void changeText();
     void print();
     void displayType(const QList<CFcEngine::TRange> &range);
@@ -94,7 +94,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     int                itsFace;
     KSharedConfigPtr   itsConfig;
     BrowserExtension   *itsExtension;
-    KProcess           *itsProc;
+    K3Process           *itsProc;
     QString            itsStatName;
 };
 

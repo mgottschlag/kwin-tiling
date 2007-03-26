@@ -40,7 +40,7 @@
 #include <kdebug.h>
 #include <kglobalsettings.h>
 #include <kstandarddirs.h>
-#include <kprocio.h>
+#include <k3procio.h>
 #include <ksavefile.h>
 #include <ktemporaryfile.h>
 #include <klocale.h>
@@ -542,11 +542,11 @@ void runRdb( uint flags )
       contents += "Xft.dpi: " + cfgfonts.readEntry( "forceFontDPI" ) + '\n';
     else
     {
-      KProcIO proc;
+      K3ProcIO proc;
       proc << "xrdb" << "-quiet" << "-remove" << "-nocpp";
       proc.writeStdin( QByteArray( "Xft.dpi" ), true );
       proc.closeWhenDone();
-      proc.start( KProcess::Block );
+      proc.start( K3Process::Block );
     }
   }
 
@@ -555,13 +555,13 @@ void runRdb( uint flags )
 
   tmpFile.flush();
 
-  KProcess proc;
+  K3Process proc;
 #ifndef NDEBUG
   proc << "xrdb" << "-merge" << tmpFile.fileName();
 #else
   proc << "xrdb" << "-quiet" << "-merge" << tmpFile.fileName();
 #endif
-  proc.start( KProcess::Block, KProcess::Stdin );
+  proc.start( K3Process::Block, K3Process::Stdin );
 
   applyGtkStyles(exportColors, 1);
   applyGtkStyles(exportColors, 2);

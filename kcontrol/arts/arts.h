@@ -42,7 +42,7 @@
 #include "hardwaretab.h"
 
 
-class KProcess;
+class K3Process;
 class DeviceManager;
 
 class KArtsModule : public KCModule
@@ -66,8 +66,8 @@ private Q_SLOTS:
   void slotChanged();
   void slotTestSound();
   void slotTestMIDI();
-  void slotArtsdExited(KProcess* proc);
-  void slotProcessArtsdOutput(KProcess* p, char* buf, int len);
+  void slotArtsdExited(K3Process* proc);
+  void slotProcessArtsdOutput(K3Process* p, char* buf, int len);
   //void slotStartServerChanged();
 
 private:

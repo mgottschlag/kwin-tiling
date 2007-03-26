@@ -55,7 +55,7 @@
 #include <ktoolbarlabelaction.h>
 #include <kactioncollection.h>
 #include <kicon.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kmimetype.h>
 #include <kfilemetainfo.h>
 #include <fontconfig/fontconfig.h>
@@ -285,7 +285,7 @@ void CFontViewPart::install()
     if(!itsProc || !itsProc->isRunning())
     {
         if(!itsProc)
-            itsProc=new KProcess;
+            itsProc=new K3Process;
         else
             itsProc->clearArguments();
 
@@ -294,13 +294,13 @@ void CFontViewPart::install()
                  << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
                  << KGlobal::caption().toUtf8()
                  << url().prettyUrl();
-        itsProc->start(KProcess::NotifyOnExit);
-        connect(itsProc, SIGNAL(processExited(KProcess *)), SLOT(installlStatus(KProcess *)));
+        itsProc->start(K3Process::NotifyOnExit);
+        connect(itsProc, SIGNAL(processExited(K3Process *)), SLOT(installlStatus(K3Process *)));
         itsInstallButton->setEnabled(false);
     }
 }
 
-void CFontViewPart::installlStatus(KProcess *)
+void CFontViewPart::installlStatus(K3Process *)
 {
     stat();
 }
@@ -327,7 +327,7 @@ void CFontViewPart::print()
     if(!itsProc || !itsProc->isRunning())
     {
         if(!itsProc)
-            itsProc=new KProcess;
+            itsProc=new K3Process;
         else
             itsProc->clearArguments();
 
@@ -357,7 +357,7 @@ void CFontViewPart::print()
 #endif
 
         if(itsProc)
-            itsProc->start(KProcess::DontCare);
+            itsProc->start(K3Process::DontCare);
     }
 }
 

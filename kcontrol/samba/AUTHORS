@@ -6,7 +6,7 @@ Conversion to kcontrol applet:
 
   Matthias Hoelzer <hoelzer@physik.uni-wuerzburg.de>
 
-Use of KProcess instead of popen, and more error checking
+Use of K3Process instead of popen, and more error checking
 
   David Faure <David.Faure@insa-lyon.fr>
 

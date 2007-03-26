@@ -44,7 +44,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kmimetype.h>
 #include <kmenu.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <krun.h>
 #include <kservicegroup.h>
 #include <ksycoca.h>
@@ -540,7 +540,7 @@ void PanelServiceMenu::mouseReleaseEvent(QMouseEvent * ev)
 
 void PanelServiceMenu::slotContextMenu(int selected)
 {
-    KProcess *proc;
+    K3Process *proc;
     KService::Ptr service;
     KServiceGroup::Ptr g;
 
@@ -568,7 +568,7 @@ void PanelServiceMenu::slotContextMenu(int selected)
             break;
 		}
 	case EditItem:
-            proc = new KProcess(this);
+            proc = new K3Process(this);
             *proc << KStandardDirs::findExe(QString::fromLatin1("kmenuedit"));
             *proc << '/'+relPath_ << KService::Ptr::staticCast(contextKSycocaEntry_)->menuId();
             proc->start();
@@ -606,7 +606,7 @@ void PanelServiceMenu::slotContextMenu(int selected)
             break;
 		}
         case EditMenu:
-            proc = new KProcess(this);
+            proc = new K3Process(this);
             *proc << KStandardDirs::findExe(QString::fromLatin1("kmenuedit"));
             *proc << '/'+KServiceGroup::Ptr::staticCast(contextKSycocaEntry_)->relPath();
             proc->start();

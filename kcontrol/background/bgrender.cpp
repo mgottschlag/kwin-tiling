@@ -29,7 +29,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kimageeffect.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <ktemporaryfile.h>
 #include <kcursor.h>
 #include <kfilemetainfo.h>
@@ -136,7 +136,7 @@ QString KBackgroundRenderer::buildCommand()
         switch (cmd.at(pos+1).toLatin1()) {
         case 'f':
             createTempFile();
-            cmd.replace(pos, 2, KShellProcess::quote(m_Tempfile->fileName()));
+            cmd.replace(pos, 2, K3ShellProcess::quote(m_Tempfile->fileName()));
             pos += m_Tempfile->fileName().length() - 2;
             break;
 
@@ -237,11 +237,11 @@ int KBackgroundRenderer::doBackground(bool quit)
             break;
 
         delete m_pProc;
-        m_pProc = new KShellProcess;
+        m_pProc = new K3ShellProcess;
         *m_pProc << file;
-        connect(m_pProc, SIGNAL(processExited(KProcess *)),
-                SLOT(slotBackgroundDone(KProcess *)));
-        m_pProc->start(KShellProcess::NotifyOnExit);
+        connect(m_pProc, SIGNAL(processExited(K3Process *)),
+                SLOT(slotBackgroundDone(K3Process *)));
+        m_pProc->start(K3ShellProcess::NotifyOnExit);
         retval = Wait;
         break;
 
@@ -732,7 +732,7 @@ void KBackgroundRenderer::blend(QImage& dst, QRect dr, const QImage& src, QPoint
 
 
 
-void KBackgroundRenderer::slotBackgroundDone(KProcess *process)
+void KBackgroundRenderer::slotBackgroundDone(K3Process *process)
 {
     Q_ASSERT(process == m_pProc);
     m_State |= BackgroundDone;

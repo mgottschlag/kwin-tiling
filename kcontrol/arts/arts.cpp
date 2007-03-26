@@ -46,7 +46,7 @@
 #include <kdialog.h>
 #include <klineedit.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <krichtextlabel.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
@@ -100,16 +100,16 @@ static bool startArts()
  */
 void KArtsModule::initAudioIOList()
 {
-	KProcess* artsd = new KProcess();
+	K3Process* artsd = new K3Process();
 	*artsd << "artsd";
 	*artsd << "-A";
 
-	connect(artsd, SIGNAL(processExited(KProcess*)),
-	        this, SLOT(slotArtsdExited(KProcess*)));
-	connect(artsd, SIGNAL(receivedStderr(KProcess*, char*, int)),
-	        this, SLOT(slotProcessArtsdOutput(KProcess*, char*, int)));
+	connect(artsd, SIGNAL(processExited(K3Process*)),
+	        this, SLOT(slotArtsdExited(K3Process*)));
+	connect(artsd, SIGNAL(receivedStderr(K3Process*, char*, int)),
+	        this, SLOT(slotProcessArtsdOutput(K3Process*, char*, int)));
 
-	if (!artsd->start(KProcess::Block, KProcess::Stderr)) {
+	if (!artsd->start(K3Process::Block, K3Process::Stderr)) {
 		KMessageBox::error(0, i18n("Unable to start the sound server to "
 		                           "retrieve possible sound I/O methods.\n"
 		                           "Only automatic detection will be "
@@ -118,13 +118,13 @@ void KArtsModule::initAudioIOList()
 	}
 }
 
-void KArtsModule::slotArtsdExited(KProcess* proc)
+void KArtsModule::slotArtsdExited(K3Process* proc)
 {
 	latestProcessStatus = proc->exitStatus();
 	delete proc;
 }
 
-void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
+void KArtsModule::slotProcessArtsdOutput(K3Process*, char* buf, int len)
 {
 	// XXX(gioele): I suppose this will be called with full lines, am I wrong?
 
@@ -436,10 +436,10 @@ void KArtsModule::slotTestSound()
 	if (configChanged && (userSavedChanges() == KMessageBox::Yes) || !artsdIsRunning() )
 		restartServer();
 
-	KProcess test;
+	K3Process test;
 	test << "artsplay";
 	test << locate("sound", "KDE_Startup_1.ogg");
-	test.start(KProcess::DontCare);
+	test.start(K3Process::DontCare);
 }
 
 void KArtsModule::slotTestMIDI()
@@ -447,10 +447,10 @@ void KArtsModule::slotTestMIDI()
 	if (configChanged && (userSavedChanges() == KMessageBox::Yes) || !artsdIsRunning() )
 		restartServer();
 
-	//KProcess test;
+	//K3Process test;
 	//test << "artsplay";
 	//test << locate("sound", "KDE_Startup_1.ogg");
-	//test.start(KProcess::DontCare);
+	//test.start(K3Process::DontCare);
 }
 
 
@@ -568,13 +568,13 @@ bool KArtsModule::realtimeIsPossible()
 	static bool checked = false;
 	if (!checked)
 	{
-	KProcess* checkProcess = new KProcess();
+	K3Process* checkProcess = new K3Process();
 	*checkProcess << "artswrapper";
 	*checkProcess << "check";
 
-	connect(checkProcess, SIGNAL(processExited(KProcess*)),
-	        this, SLOT(slotArtsdExited(KProcess*)));
-	if (!checkProcess->start(KProcess::Block))
+	connect(checkProcess, SIGNAL(processExited(K3Process*)),
+	        this, SLOT(slotArtsdExited(K3Process*)));
+	if (!checkProcess->start(K3Process::Block))
 	{
 		delete checkProcess;
 		realtimePossible =  false;
@@ -604,10 +604,10 @@ void KArtsModule::restartServer()
 	DCOPRef("knotify", "qt/knotify").send("quit");
 
 	// Shut down artsd
-	KProcess terminateArts;
+	K3Process terminateArts;
 	terminateArts << "artsshell";
 	terminateArts << "terminate";
-	terminateArts.start(KProcess::Block);
+	terminateArts.start(K3Process::Block);
 
 	if (starting)
 	{
@@ -624,10 +624,10 @@ void KArtsModule::restartServer()
 
 bool KArtsModule::artsdIsRunning()
 {
-	KProcess check;
+	K3Process check;
 	check << "artsshell";
 	check << "status";
-	check.start(KProcess::Block);
+	check.start(K3Process::Block);
 
 	return (check.exitStatus() == 0);
 }

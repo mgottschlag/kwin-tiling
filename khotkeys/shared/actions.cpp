@@ -23,7 +23,7 @@
 #include <klocale.h>
 #include <kservice.h>
 #include <ksharedptr.h>
-#include <kprocess.h>
+#include <k3process.h>
 
 #include "windows.h"
 #include "action_data.h"
@@ -286,9 +286,9 @@ void Dcop_action::execute()
             }
         }
     kDebug( 1217 ) << "DCOP call:" << app << ":" << obj << ":" << call << ":" << args_list << endl;
-    KProcess proc;
+    K3Process proc;
     proc << "dcop" << app << obj << call << args_list;
-    proc.start( KProcess::DontCare );
+    proc.start( K3Process::DontCare );
     }
 
 const QString Dcop_action::description() const

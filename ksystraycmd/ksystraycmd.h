@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <kwin.h>
 
-class KShellProcess;
+class K3ShellProcess;
 class KWinModule;
 
 /**
@@ -75,7 +75,7 @@ private:
   bool ownIcon; ///< tells if the ksystraycmd icon must be used in systray
 
   WId win;
-  KShellProcess *client;
+  K3ShellProcess *client;
   KWinModule *kwinmodule;
   QString errStr;
 

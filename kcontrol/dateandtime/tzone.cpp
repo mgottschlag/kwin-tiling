@@ -41,7 +41,7 @@
 #include <kmessagebox.h>
 #include <kdialog.h>
 #include <kio/netaccess.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kstandarddirs.h>
 #include <ksystemtimezone.h>
 
@@ -173,9 +173,9 @@ void Tzone::save()
 
         if( !KStandardDirs::findExe( "zic" ).isEmpty())
         {
-            KProcess proc;
+            K3Process proc;
             proc << "zic" << "-l" << selectedzone;
-            proc.start( KProcess::Block );
+            proc.start( K3Process::Block );
         }
         else
         {

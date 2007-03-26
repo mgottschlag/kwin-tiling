@@ -49,7 +49,7 @@
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <knuminput.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kservicegroup.h>
 #include <kstandarddirs.h>
 
@@ -111,13 +111,13 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
 
     readSettings();
 
-    mSetupProc = new KProcess;
-    connect(mSetupProc, SIGNAL(processExited(KProcess *)),
-            this, SLOT(slotSetupDone(KProcess *)));
+    mSetupProc = new K3Process;
+    connect(mSetupProc, SIGNAL(processExited(K3Process *)),
+            this, SLOT(slotSetupDone(K3Process *)));
 
-    mPreviewProc = new KProcess;
-    connect(mPreviewProc, SIGNAL(processExited(KProcess *)),
-            this, SLOT(slotPreviewExited(KProcess *)));
+    mPreviewProc = new K3Process;
+    connect(mPreviewProc, SIGNAL(processExited(K3Process *)),
+            this, SLOT(slotPreviewExited(K3Process *)));
 
     QBoxLayout *topLayout = new QHBoxLayout(this);
     topLayout->setSpacing(KDialog::spacingHint());
@@ -575,7 +575,7 @@ void KScreenSaver::setMonitor()
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::slotPreviewExited(KProcess *)
+void KScreenSaver::slotPreviewExited(K3Process *)
 {
     // Ugly hack to prevent continual respawning of savers that crash
     if (mSelected == mPrevSelected)
@@ -769,7 +769,7 @@ void KScreenSaver::slotTest()
         return;
 
     if (!mTestProc) {
-        mTestProc = new KProcess;
+        mTestProc = new K3Process;
     }
 
     mTestProc->clearArguments();
@@ -815,7 +815,7 @@ void KScreenSaver::slotTest()
         }
 
 	mTesting = true;
-        mTestProc->start(KProcess::NotifyOnExit);
+        mTestProc->start(K3Process::NotifyOnExit);
     }
 }
 
@@ -867,7 +867,7 @@ void KScreenSaver::slotLock( bool l )
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::slotSetupDone(KProcess *)
+void KScreenSaver::slotSetupDone(K3Process *)
 {
     mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
     setMonitor();

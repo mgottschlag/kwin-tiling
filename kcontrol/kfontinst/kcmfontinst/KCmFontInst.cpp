@@ -59,7 +59,7 @@
 #include <ktempdir.h>
 #include <ktemporaryfile.h>
 #include <kicon.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
 #include <kstandarddirs.h>
@@ -637,7 +637,7 @@ void CKCmFontInst::print(bool all)
                                                  startProc(true);
 
                 if(!itsPrintProc)
-                    itsPrintProc=new KProcess;
+                    itsPrintProc=new K3Process;
                 else
                     itsPrintProc->clearArguments();
 
@@ -682,7 +682,7 @@ void CKCmFontInst::print(bool all)
                 }
 
                 if(startProc)
-                    if(itsPrintProc->start(KProcess::DontCare))
+                    if(itsPrintProc->start(K3Process::DontCare))
                     {
                         if(useGrpFile)
                             tmpFile.setAutoRemove(false);

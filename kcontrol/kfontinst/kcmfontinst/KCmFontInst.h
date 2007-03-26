@@ -39,7 +39,7 @@ class KPushButton;
 class KProgressDialog;
 class KTreeWidgetSearchLineWidget;
 class KTempDir;
-class KProcess;
+class K3Process;
 class KZip;
 class KToggleAction;
 class KActionMenu;
@@ -144,7 +144,7 @@ class CKCmFontInst : public KCModule
     KProgressDialog      *itsProgress;
     CUpdateDialog        *itsUpdateDialog;
     KTempDir             *itsTempDir;
-    KProcess             *itsPrintProc;
+    K3Process             *itsPrintProc;
     KZip                 *itsExportFile;
     QSet<QString>        itsDeletedFonts;
     KUrl::List           itsModifiedUrls;

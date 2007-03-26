@@ -29,7 +29,7 @@
 #include <kiconloader.h>
 #include <kde_file.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <QFont>
 #include <QMap>
 #include <QFile>
@@ -1922,7 +1922,7 @@ void CFontListView::view()
 
         for(; it!=end; ++it)
         {
-            KProcess proc;
+            K3Process proc;
 
             proc << KFI_APP << "-v";
 
@@ -1956,7 +1956,7 @@ void CFontListView::view()
                 if(!done)
                     proc << (*it)->url().prettyUrl().toUtf8();
             }
-            proc.start(KProcess::DontCare);
+            proc.start(K3Process::DontCare);
         }
     }
 }

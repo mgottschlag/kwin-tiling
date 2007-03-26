@@ -32,7 +32,7 @@
 #include <kglobalsettings.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
@@ -483,25 +483,25 @@ void SplashInstaller::slotTest()
     return;
   else if( mEngineOfSelected == "Simple" )
   {
-    KProcess proc;
+    K3Process proc;
     proc << "ksplashsimple" << "--test";
-    if (!proc.start(KProcess::Block))
+    if (!proc.start(K3Process::Block))
       KMessageBox::error(this,i18n("Unable to start ksplashsimple."));
     return;
   }
   else if( mEngineOfSelected == "KSplashX" )
   {
-    KProcess proc;
+    K3Process proc;
     proc << "ksplashx" << themeName << "--test";
-    if (!proc.start(KProcess::Block))
+    if (!proc.start(K3Process::Block))
       KMessageBox::error(this,i18n("Unable to start ksplashx."));
     return;
   }
   else // KSplashML engines
   {
-    KProcess proc;
+    K3Process proc;
     proc << "ksplash" << "--test" << "--theme" << themeName;
-    if (!proc.start(KProcess::Block))
+    if (!proc.start(K3Process::Block))
       KMessageBox::error(this,i18n("Unable to start ksplash."));
   }
 }

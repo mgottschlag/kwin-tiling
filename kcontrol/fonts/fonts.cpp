@@ -29,7 +29,7 @@
 #include <kgenericfactory.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
-#include <kprocio.h>
+#include <k3procio.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <stdlib.h>
@@ -717,11 +717,11 @@ void KFonts::save()
   // if the setting is reset in the module, remove the dpi value,
   // otherwise don't explicitly remove it and leave any possible system-wide value
   if( dpi == DPINone && dpi_original != DPINone ) {
-      KProcIO proc;
+      K3ProcIO proc;
       proc << "xrdb" << "-quiet" << "-remove" << "-nocpp";
       proc.writeStdin( QString( "Xft.dpi" ), true );
       proc.closeWhenDone();
-      proc.start( KProcess::Block );
+      proc.start( K3Process::Block );
   }
 
   // KDE-1.x support

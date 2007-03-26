@@ -47,7 +47,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmimetype.h>
 #include <konq_operations.h>
 #include <kpanelmenu.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <krun.h>
 #include <kdesktopfile.h>
 
@@ -460,13 +460,13 @@ void PanelBrowserMenu::slotOpenTerminal()
     KConfigGroup config(KGlobal::config(), "General");
     QString term = config.readPathEntry("TerminalApplication", "konsole");
 
-    KProcess proc;
+    K3Process proc;
     proc << term;
     if (term == "konsole")
       proc << "--workdir" << path();
     else
       proc.setWorkingDirectory(path());
-    proc.start(KProcess::DontCare);
+    proc.start(K3Process::DontCare);
 }
 
 void PanelBrowserMenu::slotOpenFileManager()

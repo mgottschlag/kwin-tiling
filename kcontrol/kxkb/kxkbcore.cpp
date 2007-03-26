@@ -37,7 +37,7 @@ DESCRIPTION
 #include <kglobal.h>
 #include <kglobalaccel.h>
 #include <klocale.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kwinmodule.h>
 #include <kwin.h>
 #include <ktemporaryfile.h>
@@ -304,9 +304,9 @@ void KxkbCore::iconMenuTriggered(QAction* action)
     }
     else if (id == KxkbWidget::CONFIG_MENU_ID)
     {
-        KProcess p;
+        K3Process p;
         p << "kcmshell" << "keyboard_layout";
-        p.start(KProcess::DontCare);
+        p.start(K3Process::DontCare);
     }
     else if (id == KxkbWidget::HELP_MENU_ID)
     {

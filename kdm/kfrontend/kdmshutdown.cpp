@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <kdialog.h>
 #include <klocale.h>
-#include <kprocio.h>
+#include <k3procio.h>
 #include <kseparator.h>
 #include <kstandarddirs.h>
 #include <KStandardGuiItem>
@@ -331,9 +331,9 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 static int
 get_date( const char *str )
 {
-	KProcIO prc;
+	K3ProcIO prc;
 	prc << "/bin/date" << "+%s" << "-d" << str;
-	prc.start( KProcess::Block, false );
+	prc.start( K3Process::Block, false );
 	QString dstr;
 	if (prc.readln( dstr, false, 0 ) < 0)
 		return -1;

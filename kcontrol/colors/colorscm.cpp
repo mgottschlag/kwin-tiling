@@ -31,7 +31,7 @@
 #include <kinputdialog.h>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kstandarddirs.h>
 #include <kaboutdata.h>
 #include <klistwidget.h>

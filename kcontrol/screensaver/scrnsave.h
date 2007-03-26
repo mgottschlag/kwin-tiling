@@ -33,7 +33,7 @@ class Q3ListView;
 class Q3ListViewItem;
 class QPushButton;
 class KIntNumInput;
-class KProcess;
+class K3Process;
 
 //===========================================================================
 class KScreenSaver : public KCModule
@@ -60,11 +60,11 @@ protected Q_SLOTS:
     void slotTimeoutChanged( int );
     void slotLockTimeoutChanged( int );
     void slotLock( bool );
-    void slotSetupDone(KProcess*);
+    void slotSetupDone(K3Process*);
     // when selecting a new screensaver, the old preview will
     // be killed. -- This callback is responsible for restarting the
     // new preview
-    void slotPreviewExited(KProcess *);
+    void slotPreviewExited(K3Process *);
     void findSavers();
 
 protected:
@@ -78,9 +78,9 @@ protected:
 
 protected:
     TestWin     *mTestWin;
-    KProcess    *mTestProc;
-    KProcess    *mSetupProc;
-    KProcess    *mPreviewProc;
+    K3Process    *mTestProc;
+    K3Process    *mSetupProc;
+    K3Process    *mPreviewProc;
     KSSMonitor  *mMonitor;
     QPushButton *mSetupBt;
     QPushButton *mTestBt;

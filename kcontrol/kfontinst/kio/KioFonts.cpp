@@ -39,7 +39,7 @@
 #include <kio/connection.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <QDir>
 #include <QDataStream>
 #include <QTextStream>
@@ -48,7 +48,7 @@
 #include <kde_file.h>
 #include <ktemporaryfile.h>
 #include <kdesu/su.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kcodecs.h>

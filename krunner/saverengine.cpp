@@ -54,7 +54,7 @@ SaverEngine::SaverEngine()
     m_nr_inhibited = 0;
     m_actived_time = -1;
 
-    connect(&mLockProcess, SIGNAL(processExited(KProcess *)),
+    connect(&mLockProcess, SIGNAL(processExited(K3Process *)),
                         SLOT(lockProcessExited()));
 
     QObject::connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString,QString,QString)),

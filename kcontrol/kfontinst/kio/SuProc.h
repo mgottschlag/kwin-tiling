@@ -32,7 +32,7 @@
 //#define KFI_SUDO_XTERM
 
 #ifdef KFI_SUDO_XTERM
-#include <kprocess.h>
+#include <k3process.h>
 #endif
 
 class QString;
@@ -56,7 +56,7 @@ class CSuProc : public QThread
     private:
 
 #ifdef KFI_SUDO_XTERM
-    KProcess  itsProc;
+    K3Process  itsProc;
 #else
     SuProcess itsProc;
 #endif

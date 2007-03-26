@@ -129,8 +129,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     gXA_VROOT = XInternAtom (QX11Info::display(), "__SWM_VROOT", False);
     gXA_SCREENSAVER_VERSION = XInternAtom (QX11Info::display(), "_SCREENSAVER_VERSION", False);
 
-    connect(&mHackProc, SIGNAL(processExited(KProcess *)),
-            SLOT(hackExited(KProcess *)));
+    connect(&mHackProc, SIGNAL(processExited(K3Process *)),
+            SLOT(hackExited(K3Process *)));
 
     mSuspendTimer.setSingleShot(true);
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
@@ -859,7 +859,7 @@ void LockProcess::stopHack()
 
 //---------------------------------------------------------------------------
 //
-void LockProcess::hackExited(KProcess *)
+void LockProcess::hackExited(K3Process *)
 {
 	// Hack exited while we're supposed to be saving the screen.
 	// Make sure the saver window is black.

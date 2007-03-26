@@ -22,7 +22,7 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <kurl.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
@@ -198,9 +198,9 @@ void ThemePage::fixCursorFile()
 	QString cmd = KGlobal::dirs()->findExe( "mkfontdir" );
 	if ( !cmd.isEmpty() )
 	{
-		KProcess p;
+		K3Process p;
 		p << cmd << overrideDir;
-		p.start(KProcess::Block);
+		p.start(K3Process::Block);
 	}
 }
 

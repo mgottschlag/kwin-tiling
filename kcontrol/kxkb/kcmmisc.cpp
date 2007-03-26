@@ -44,7 +44,7 @@
 #include <kapplication.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
 
@@ -479,10 +479,10 @@ void set_repeatrate(int delay, double rate)
   if (exe.isEmpty())
     return;
 
-  KProcess p;
+  K3Process p;
   p << exe << "r" << "rate" << QString::number(delay) << QString::number(r);
 
-  p.start(KProcess::Block);
+  p.start(K3Process::Block);
 }
 #endif
 

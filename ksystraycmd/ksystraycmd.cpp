@@ -12,7 +12,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kwinmodule.h>
 #include <kconfig.h>
 #include <ksystemtrayicon.h>
@@ -73,7 +73,7 @@ bool KSysTrayCmd::start()
 
   // Run the command and watch for its window
   if ( !startClient() ) {
-    errStr = i18n( "KSysTrayCmd: KShellProcess cannot find a shell." );
+    errStr = i18n( "KSysTrayCmd: K3ShellProcess cannot find a shell." );
     clientExited();
     return false;
   }
@@ -183,10 +183,10 @@ void KSysTrayCmd::refresh()
 
 bool KSysTrayCmd::startClient()
 {
-  client = new KShellProcess();
+  client = new K3ShellProcess();
   *client << command;
   connect( kwinmodule, SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)) );
-  connect( client, SIGNAL( processExited(KProcess *) ),
+  connect( client, SIGNAL( processExited(K3Process *) ),
 	   this, SLOT( clientExited() ) );
 
   return client->start();

@@ -26,7 +26,7 @@
 #include <QString>
 #include <QStringList>
 
-#include <kprocess.h>
+#include <k3process.h>
 #include <kconfig.h>
 
 

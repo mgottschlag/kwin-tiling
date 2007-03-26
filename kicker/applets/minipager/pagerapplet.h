@@ -40,7 +40,7 @@ class QButtonGroup;
 class QGridLayout;
 class QTimer;
 
-class KProcess;
+class K3Process;
 class KWinModule;
 class KShadowEngine;
 class OrgKdeKdesktopBackgroundInterface;

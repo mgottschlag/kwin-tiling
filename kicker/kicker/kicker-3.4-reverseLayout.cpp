@@ -8,7 +8,7 @@
 #include <kcmdlineargs.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <ktemporaryfile.h>
 
 struct AppletInfo
@@ -145,8 +145,8 @@ int main(int argc, char** argv)
         upd.flush();
 
         // Run kconf_update on the childpanel config files.
-        KProcess kconf_update;
+        K3Process kconf_update;
         kconf_update << "kconf_update" << tempFile.fileName();
-        kconf_update.start(KProcess::Block);
+        kconf_update.start(K3Process::Block);
     }
 }

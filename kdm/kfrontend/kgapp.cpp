@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kcrash.h>
 #include <kglobalsettings.h>
 #include <kcomponentdata.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
 
@@ -175,10 +175,10 @@ kg_main( const char *argv0 )
 
 	setup_modifiers( dpy, _numLockStatus );
 	SecureDisplay( dpy );
-	KProcess *proc = 0;
+	K3Process *proc = 0;
 	if (!_grabServer) {
 		if (_useBackground && !themer) {
-			proc = new KProcess;
+			proc = new K3Process;
 			*proc << QByteArray( argv0, strrchr( argv0, '/' ) - argv0 + 1 ) + "krootimage";
 			*proc << _backgroundCfg;
 			proc->start();
@@ -223,7 +223,7 @@ kg_main( const char *argv0 )
 			cmd = G_Greet;
 		}
 
-		KProcess *proc2 = 0;
+		K3Process *proc2 = 0;
 		app.setOverrideCursor( Qt::WaitCursor );
 		FDialog *dialog;
 #ifdef XDMCP
@@ -242,7 +242,7 @@ kg_main( const char *argv0 )
 			else
 				dialog = new KStdGreeter;
 			if (*_preloader) {
-				proc2 = new KProcess;
+				proc2 = new K3Process;
 				*proc2 << _preloader;
 				proc2->start();
 			}

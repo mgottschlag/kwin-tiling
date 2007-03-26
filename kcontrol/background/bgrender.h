@@ -25,9 +25,9 @@ class QRect;
 class QString;
 class QTimer;
 
-class KProcess;
+class K3Process;
 class KTemporaryFile;
-class KShellProcess;
+class K3ShellProcess;
 class KStandardDirs;
 
 /**
@@ -69,7 +69,7 @@ Q_SIGNALS:
     void programSuccess(int desk);                //programSuccess is emitted after imageDone
 
 private Q_SLOTS:
-    void slotBackgroundDone(KProcess *);
+    void slotBackgroundDone(K3Process *);
     void render();
     void done();
 
@@ -111,7 +111,7 @@ private:
     QTimer *m_pTimer;
 
     KStandardDirs *m_pDirs;
-    KShellProcess *m_pProc;
+    K3ShellProcess *m_pProc;
 };
 
 /**

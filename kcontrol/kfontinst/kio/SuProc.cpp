@@ -23,7 +23,7 @@
 #include "SuProc.h"
 #include "KfiConstants.h"
 #include <QFile>
-#include <kprocess.h>
+#include <k3process.h>
 #include <unistd.h>
 #include "config.h"
 
@@ -47,7 +47,7 @@ CSuProc::CSuProc(QByteArray &sock, QString &passwd)
     QByteArray cmd(KDE_DATADIR"/"KFI_NAME"/bin/kio_fonts_helper");
 
     cmd+=' ';
-    cmd+=QFile::encodeName(KProcess::quote(sock));
+    cmd+=QFile::encodeName(K3Process::quote(sock));
     cmd+=' ';
     cmd+=QString().setNum(getuid()).latin1();
     itsProc.setCommand(cmd);
@@ -57,7 +57,7 @@ CSuProc::CSuProc(QByteArray &sock, QString &passwd)
 void CSuProc::run()
 {
 #ifdef KFI_SUDO_XTERM
-    itsProc.start(KProcess::Block, KProcess::NoCommunication);
+    itsProc.start(K3Process::Block, K3Process::NoCommunication);
 #else
     itsProc.exec(itsPasswd.toLocal8Bit());
 #endif

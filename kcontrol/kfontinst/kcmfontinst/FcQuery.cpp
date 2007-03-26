@@ -22,7 +22,7 @@
 
 #include "FcQuery.h"
 #include <QStringList>
-#include <kprocess.h>
+#include <k3process.h>
 #include <stdio.h>
 namespace KFI
 {
@@ -39,12 +39,12 @@ void CFcQuery::run(const QString &query)
 
     itsFile=QString();
     itsBuffer=QByteArray();
-    itsProc=new KProcess;
+    itsProc=new K3Process;
     *itsProc << "fc-match" << "-v" << query;
-    connect(itsProc, SIGNAL(processExited(KProcess *)), SLOT(procExited()));
-    connect(itsProc, SIGNAL(receivedStdout(KProcess *, char *, int)),
-            SLOT(data(KProcess *, char *, int)));
-    itsProc->start(KProcess::NotifyOnExit, KProcess::Stdout);
+    connect(itsProc, SIGNAL(processExited(K3Process *)), SLOT(procExited()));
+    connect(itsProc, SIGNAL(receivedStdout(K3Process *, char *, int)),
+            SLOT(data(K3Process *, char *, int)));
+    itsProc->start(K3Process::NotifyOnExit, K3Process::Stdout);
 }
 
 void CFcQuery::procExited()
@@ -72,7 +72,7 @@ void CFcQuery::procExited()
     emit finished();
 }
 
-void CFcQuery::data(KProcess *, char *buffer, int buflen)
+void CFcQuery::data(K3Process *, char *buffer, int buflen)
 {
     int current=itsBuffer.size();
 

@@ -74,7 +74,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kapplication.h>
 #include <kstaticdeleter.h>
 #include <ktemporaryfile.h>
-#include <kprocess.h>
+#include <k3process.h>
 
 #include "server.h"
 #include "global.h"
@@ -136,9 +136,9 @@ void KSMServer::executeCommand( const QStringList& command )
     if ( command.isEmpty() )
         return;
 
-    KProcess proc;
+    K3Process proc;
     proc << command;
-    proc.start( KProcess::Block );
+    proc.start( K3Process::Block );
 }
 
 IceAuthDataEntry *authDataEntries = 0;
@@ -443,9 +443,9 @@ Status SetAuthentication (int count, IceListenObj *listenObjs,
         return 0;
     }
 
-    KProcess p;
+    K3Process p;
     p << iceAuth << "source" << addTempFile.fileName();
-    p.start(KProcess::Block);
+    p.start(K3Process::Block);
 
     return (1);
 }
@@ -473,9 +473,9 @@ void FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
         return;
     }
 
-    KProcess p;
+    K3Process p;
     p << iceAuth << "source" << remTempFile->fileName();
-    p.start(KProcess::Block);
+    p.start(K3Process::Block);
 
     delete remTempFile;
     remTempFile = 0;

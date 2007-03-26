@@ -41,7 +41,7 @@
 #include <kfiledialog.h>
 #include <kcombobox.h>
 #include <kkeydialog.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <khbox.h>
 
 #include "khotkeys.h"
@@ -485,7 +485,7 @@ void BasicTab::slotExecSelected()
 {
     QString path = _execEdit->lineEdit()->text();
     if (!path.startsWith("'"))
-        _execEdit->lineEdit()->setText(KProcess::quote(path));
+        _execEdit->lineEdit()->setText(K3Process::quote(path));
 }
 
 void BasicTab::slotCapturedShortcut(const KShortcut& cut)

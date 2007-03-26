@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kwinmodule.h>
 #include <kdebug.h>
 #include <kconfig.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kshell.h>
 #include <kwin.h>
 #include <kstandarddirs.h>
@@ -311,9 +311,9 @@ void DockBarExtension::loadContainerConfig()
         DockContainer* c = new DockContainer(cmd, this, resName, resClass );
         addContainer(c);
 
-        KProcess proc;
+        K3Process proc;
         proc << KShell::splitArgs( cmd );
-        if (!proc.start(KProcess::DontCare)) {
+        if (!proc.start(K3Process::DontCare)) {
             fail_list.append(cmd);
             removeContainer(c);
         }

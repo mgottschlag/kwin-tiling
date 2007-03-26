@@ -8,7 +8,7 @@
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <kprocess.h>
+#include <k3process.h>
 
 #include <X11/Xatom.h>
 #include <X11/Xos.h>
@@ -103,13 +103,13 @@ bool XKBExtension::setXkbOptions(const QString& options, bool resetOld)
     if (exe.isEmpty())
         return false;
 
-    KProcess p;
+    K3Process p;
     p << exe;
     if( resetOld )
         p << "-option";
     p << "-option" << options;
 
-    p.start(KProcess::Block);
+    p.start(K3Process::Block);
 
     return p.normalExit() && (p.exitStatus() == 0);
 }
@@ -176,7 +176,7 @@ bool XKBExtension::setLayoutInternal(const QString& model,
         fullVariant += variant;
     }
  
-    KProcess p;
+    K3Process p;
     p << exe;
 //  p << "-rules" << rule;
 	if( model.isEmpty() == false )
@@ -187,7 +187,7 @@ bool XKBExtension::setLayoutInternal(const QString& model,
 
 	kDebug() << "Ext: setting " << fullLayout << ", " << fullVariant << endl;
 	
-    if (p.start(KProcess::Block) && p.normalExit() && (p.exitStatus() == 0)) {
+    if (p.start(K3Process::Block) && p.normalExit() && (p.exitStatus() == 0)) {
 		return true; //setGroup( group );
     }
     else {

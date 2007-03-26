@@ -48,7 +48,7 @@
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kio/netaccess.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <ksycoca.h>
 #include <ktemporaryfile.h>
 #include <kmessagebox.h>
@@ -478,13 +478,13 @@ void KDesktop::slotShowWindowList()
 void KDesktop::slotShowTaskManager()
 {
     //kDebug(1204) << "Launching KSysGuard..." << endl;
-    KProcess* p = new KProcess;
+    K3Process* p = new K3Process;
     Q_CHECK_PTR(p);
 
     *p << "ksysguard";
     *p << "--showprocesses";
 
-    p->start(KProcess::DontCare);
+    p->start(K3Process::DontCare);
 
     delete p;
 }

@@ -30,7 +30,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
+#include <k3process.h>
 #include <kdesu/su.h>
 #include <kfileitem.h>
 #include <kpropertiesdialog.h>
@@ -333,7 +333,7 @@ QSet<QString> CDuplicatesDialog::deleteSysFiles(const QStringList &files)
         for(; it!=end; ++it)
         {
             cmd+=' ';
-            cmd+=QFile::encodeName(KProcess::quote(*it));
+            cmd+=QFile::encodeName(K3Process::quote(*it));
         }
 
         SuProcess proc(KFI_SYS_USER);
@@ -608,10 +608,10 @@ void CFontFileListView::openViewer()
 
         for(; it!=end; ++it)
         {
-            KProcess proc;
+            K3Process proc;
 
             proc << KFI_APP << "-v" << (*it).toUtf8();
-            proc.start(KProcess::DontCare);
+            proc.start(K3Process::DontCare);
         }
     }
 }

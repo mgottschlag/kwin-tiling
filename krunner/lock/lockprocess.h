@@ -11,7 +11,7 @@
 
 #include <kgreeterplugin.h>
 
-#include <kprocess.h>
+#include <k3process.h>
 
 #include <QWidget>
 #include <QTimer>
@@ -65,7 +65,7 @@ protected:
     virtual void timerEvent(QTimerEvent *);
 
 private Q_SLOTS:
-    void hackExited(KProcess *);
+    void hackExited(K3Process *);
     void signalPipeSignal();
     bool startLock();
     void suspend();
@@ -101,7 +101,7 @@ private:
     int         mLockGrace;
     int         mPriority;
     bool        mBusy;
-    KProcess    mHackProc;
+    K3Process    mHackProc;
     int         mRootWidth;
     int         mRootHeight;
     QString     mSaverExec;
