@@ -297,7 +297,7 @@ uint qHash(const KFI::Misc::TFont &key)
 }
 
 //
-// mkfontscale doesnt ingore hidden files :-(
+// mkfontscale doesn't ingore hidden files :-(
 static void removeHiddenEntries(const QString &file)
 {
     QStringList lines;

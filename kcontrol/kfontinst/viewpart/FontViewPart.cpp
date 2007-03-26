@@ -175,7 +175,7 @@ bool CFontViewPart::openUrl(const KUrl &url)
 
 bool CFontViewPart::openFile()
 {
-    // NOTE: Cant do the real open here, as dont seem to be able to use KIO::NetAccess functions
+    // NOTE: Can't do the real open here, as we don't seem to be able to use KIO::NetAccess functions
     // during initial start-up. Bug report 111535 indicates that calling "konqueror <font>" crashes.
     itsInstallButton->setEnabled(false);
     QTimer::singleShot(0, this, SLOT(timeout()));
@@ -268,7 +268,7 @@ void CFontViewPart::previewStatus(bool st)
 #ifdef KFI_PRINT_APP_FONTS
         else
         {
-            // TODO: Make this work! Plus, printing of disabled TTF/OTF's shoud also be possible!
+            // TODO: Make this work! Plus, printing of disabled TTF/OTF's should also be possible!
             KMimeType::Ptr mime=KMimeType::findByUrl(KUrl::fromPath(localFilePath()), 0, false, true);
 
             printable=mime->is("application/x-font-ttf") || mime->is("application/x-font-otf");

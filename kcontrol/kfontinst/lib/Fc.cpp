@@ -574,7 +574,7 @@ bool bitmapsEnabled()
 {
     //
     // On some systems, such as KUbuntu, fontconfig is configured to ignore all bitmap fonts.
-    // The folowing check tries to get a list of installed bitmaps, if it an empty list is returned
+    // The following check tries to get a list of installed bitmaps, if it an empty list is returned
     // it is assumed that bitmaps are disabled.
     bool        rv(false);
     FcObjectSet *os  = FcObjectSetBuild(FC_FAMILY, (void *)0);

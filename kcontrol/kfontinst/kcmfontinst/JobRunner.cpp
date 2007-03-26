@@ -145,7 +145,7 @@ bool CJobRunner::getAdminPasswd(QWidget *parent)
 {
     if(!Misc::root())
     {
-        // Prompt user for password, if dont already have...
+        // Prompt the user for a password, if we do not already have it...
         if(itsPasswd.isEmpty() || 0!=SuProcess(KFI_SYS_USER).checkInstall(itsPasswd.toLocal8Bit()))
         {
             CPasswordDialog dlg(parent);

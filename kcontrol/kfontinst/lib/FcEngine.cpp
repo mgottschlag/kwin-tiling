@@ -1209,7 +1209,7 @@ XftFont * CFcEngine::queryFont()
 
         f=getFont(constQuerySize);
 
-        // This time dont bother checking family - we've re-inited fc anyway, so things should be
+        // This time don't bother checking family - we've re-inited fc anyway, so things should be
         // up to date... And for "Symbol" Fc returns "Standard Symbols L", so wont match anyway!
         if(f && !isCorrect(f, false))
         {

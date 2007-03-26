@@ -1220,7 +1220,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
         return;
     }
 
-    // updateFontList(); // CPD: dont update font list upon a put - is too slow. Just stat on
+    // updateFontList(); // CPD: don't update font list upon a put - it's too slow. Just stat on
     //                   // filename!
     //checkUrl(u) // CPD: Don't need to check Url, as the call to "confirmUrl()" below will sort out
     //            // any probs!
@@ -1656,7 +1656,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
     bool fromFonts=KFI_KIO_FONTS_PROTOCOL==src.protocol();
 
-    // CPD: dont update font list upon a copy from file - is too slow. Just stat on filename!
+    // CPD: don't update font list upon a copy from file - it's too slow. Just stat on filename!
     if(!fromFonts || updateFontList() && checkUrl(src) && checkAllowed(src))
     {
         //checkUrl(u) // CPD as per comment in ::put()
@@ -2880,7 +2880,7 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
             return FILE_FONT;
         else
             error(KIO::ERR_SLAVE_DEFINED, i18n("You cannot install bitmap fonts, as these have been "
-                                               "diabled on your system."));
+                                               "disabled on your system."));
     }
     else if(isAAfm(file) || isAPfm(file))
         return FILE_METRICS;
@@ -3017,8 +3017,8 @@ bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFol
                           Misc::fExists(destFile=(*it)+modifyName(src.fileName())) ||
                           Misc::fExists(destFile=(*it)+modifyName(src.fileName(), true)) ) )
         {
-            // If copying / moveing a TTC and it is the *same* file, then dont log an error, but
-            // dont continue transaction...
+            // If copying / moving a TTC and it is the *same* file, then don't log an error, but
+            // dont continue the transaction...
             //
             // Reason being that fonts:/ lists the font names (not filenames) so for a TTC there'll
             // be multiple entries...
@@ -3074,8 +3074,8 @@ bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, con
                NULL!=(destEntry=getEntry(destFolder, modifyName(fIt.value()))) ||  // lowercase
                NULL!=(destEntry=getEntry(destFolder, modifyName(fIt.value()), true)))  // uppercase
             {
-                // If copying / moveing a TTC and it is the *same* file, then dont log an error, but
-                // dont continue transaction...
+                // If copying / moving a TTC and it is the *same* file, then don't log an error, but
+                // don't continue the transaction...
                 //
                 // Reason being that fonts:/ lists the font names (not filenames) so for a TTC there'll
                 // be multiple entries for a TTC...

@@ -28,7 +28,7 @@
 
 //
 // Enabling KFI_SUDO_XTERM will cuase kio_fonts_helper to be launched in an xterm
-// window via sudo - used only for debugging, and whilst kdesu doesnt work
+// window via sudo - used only for debugging, and whilst kdesu doesn't work
 //#define KFI_SUDO_XTERM
 
 #ifdef KFI_SUDO_XTERM
@@ -42,7 +42,7 @@ namespace KFI
 
 //
 // SuProcess::exec blocks until command terminates - therefore
-// we need to run this in a seperate thread!
+// we need to run this in a separate thread!
 class CSuProc : public QThread
 {
     public:
