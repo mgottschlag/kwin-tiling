@@ -293,16 +293,16 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QString userName = KUser().fullName();
     QString loginName = KUser().loginName();
-    QString userId;
+    QString logoutMsg;
     if (userName.isEmpty()) {
-        userId = loginName;
+        logoutMsg = i18n( "End Session for %1", loginName );
     } else {
-        userId = userName + " (" + loginName + ')';
+        logoutMsg = i18n( "End Session for %1 (%2)", userName, loginName );
     }
 
     QLabel *topLabel = new QLabel( this );
     // FIXME Made the color picked from the user's one
-    topLabel->setText("<font color='#eeeeec'>" + i18n("End Session for %1", userId) + "</font>");
+    topLabel->setText( "<font color='#eeeeec'>" + logoutMsg + "</font>" );
     topLabel->setFixedHeight( 30 );
     topLabel->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed ) );
     topLabel->setAlignment( Qt::AlignCenter );
