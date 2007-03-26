@@ -36,7 +36,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <krecentdocument.h>
 #include <kmenu.h>
 #include <kworkspace.h>
-#include <kdedesktopmimetype.h>
+#include <kdesktopfileactions.h>
 #include "recentdocsmenu.h"
 
 K_EXPORT_KICKER_MENUEXT(recentdocs, RecentDocsMenu)
@@ -89,7 +89,7 @@ void RecentDocsMenu::slotExec(int id) {
 		KWorkSpace::propagateSessionManager();
 		KUrl u;
 		u.setPath(_fileList[id]);
-		KDEDesktopMimeType::run(u, true);
+		KDesktopFileActions::run(u, true);
 	}
 }
 
