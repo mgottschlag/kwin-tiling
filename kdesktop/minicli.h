@@ -59,7 +59,6 @@ public:
   void saveConfig();
   void clearHistory();
 
-  virtual void show();
   virtual QSize sizeHint() const;
 
 protected Q_SLOTS:
@@ -72,6 +71,7 @@ protected:
   bool needsKDEsu();
   virtual void keyPressEvent( QKeyEvent* );
   virtual void fontChange( const QFont & );
+  virtual void showEvent(QShowEvent *event);
 
 private Q_SLOTS:
   void slotAdvanced();

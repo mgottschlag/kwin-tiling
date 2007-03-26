@@ -220,8 +220,10 @@ public:
             actionWidget->cbUseGUIRegExpEditor->setChecked( enabled );
     }
 
-    virtual void show();
     void commitShortcuts();
+
+protected:
+    virtual void showEvent( QShowEvent *event );
 
 private:
     GeneralWidget *generalWidget;

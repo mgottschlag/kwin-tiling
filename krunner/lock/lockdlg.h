@@ -40,7 +40,7 @@ class PasswordDlg : public QDialog, public KGreeterPluginHandler
 public:
     PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin);
     ~PasswordDlg();
-    virtual void show();
+    virtual void setVisible(bool visible);
 
     // from KGreetPluginHandler
     virtual void gplugReturnText( const char *text, int tag );

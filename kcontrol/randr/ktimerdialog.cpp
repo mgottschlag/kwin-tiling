@@ -89,11 +89,14 @@ KTimerDialog::~KTimerDialog()
 {
 }
 
-void KTimerDialog::show()
+void KTimerDialog::setVisible( bool visible )
 {
-    KDialog::show();
-    totalTimer->start( msecTotal );
-    updateTimer->start( updateInterval );
+    KDialog::setVisible( visible );
+  
+    if ( visible ) {
+        totalTimer->start( msecTotal );
+        updateTimer->start( updateInterval );
+    }
 }
 
 int KTimerDialog::exec()

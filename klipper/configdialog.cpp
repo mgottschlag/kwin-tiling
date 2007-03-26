@@ -73,24 +73,22 @@ ConfigDialog::~ConfigDialog()
 }
 
 // prevent huge size due to long regexps in the action-widget
-void ConfigDialog::show()
+void ConfigDialog::showEvent( QShowEvent *event )
 {
-    if ( !isVisible() ) {
-	KWinModule module(0, KWinModule::INFO_DESKTOP);
-	QSize s1 = sizeHint();
-	QSize s2 = module.workArea().size();
-	int w = s1.width();
-	int h = s1.height();
+    KWinModule module(0, KWinModule::INFO_DESKTOP);
+    QSize s1 = sizeHint();
+    QSize s2 = module.workArea().size();
+    int w = s1.width();
+    int h = s1.height();
 
-	if ( s1.width() >= s2.width() )
-	    w = s2.width();
-	if ( s1.height() >= s2.height() )
-	    h = s2.height();
+    if ( s1.width() >= s2.width() )
+        w = s2.width();
+    if ( s1.height() >= s2.height() )
+        h = s2.height();
 
- 	resize( w, h );
-    }
+    resize( w, h );
 
-    KDialog::show();
+    KDialog::showEvent( event );
 }
 
 void ConfigDialog::commitShortcuts()

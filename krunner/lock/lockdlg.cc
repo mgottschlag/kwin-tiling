@@ -528,10 +528,12 @@ void PasswordDlg::slotOK()
 }
 
 
-void PasswordDlg::show()
+void PasswordDlg::setVisible( bool visible )
 {
-    QDialog::show();
-    QApplication::flush();
+    QDialog::setVisible( visible );
+  
+    if ( visible )
+        QApplication::flush();
 }
 
 void PasswordDlg::slotStartNewSession()

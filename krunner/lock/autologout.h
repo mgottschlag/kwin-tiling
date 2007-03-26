@@ -27,7 +27,7 @@ class AutoLogout : public QDialog
 public:
     AutoLogout(LockProcess *parent);
     ~AutoLogout();
-    virtual void show();
+    virtual void setVisible(bool visible);
  
 protected:
     virtual void timerEvent(QTimerEvent *);

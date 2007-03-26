@@ -114,10 +114,12 @@ void AutoLogout::logout()
     ksmserver.logout( 0, 2, 0 );
 }
 
-void AutoLogout::show()
+void AutoLogout::setVisible(bool visible)
 {
-    QDialog::show();
-    QApplication::flush();
+    QDialog::setVisible(visible);
+
+    if (visible)
+        QApplication::flush();
 }
 
 #include "autologout.moc"

@@ -198,11 +198,11 @@ QSize Minicli::sizeHint() const
   return QSize(maxWidth, -1);
 }
 
-void Minicli::show()
+void Minicli::showEvent(QShowEvent *event)
 {
   adjustSize();
   KWin::setState( winId(), NET::StaysOnTop );
-  KDialog::show();
+  KDialog::showEvent(event);
 }
 
 void Minicli::loadConfig()

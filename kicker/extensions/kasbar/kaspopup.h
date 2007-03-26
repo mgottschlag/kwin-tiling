@@ -83,6 +83,9 @@ public:
 
    static QPoint calcPosition( KasItem *item, int w, int h );
 
+   /** Reimplemented for internal reasons. */
+   virtual void setVisible( bool visible );
+
 public Q_SLOTS:
    /**
     * Move the popup to the right position. You should not need
@@ -90,9 +93,6 @@ public Q_SLOTS:
     */
    void positionSelf();
    
-   /** Reimplemented for internal reasons. */
-   void show();
-
 Q_SIGNALS:
    void aboutToShow();
    void shown();

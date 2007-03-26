@@ -87,7 +87,7 @@ class KTimerDialog : public KDialog
     /**
      * Execute the dialog modelessly - see @see QDialog .
      */
-    virtual void show();
+    virtual void setVisible( bool visible );
 
     /**
      * Set the refresh interval for the timer progress. Defaults to one second.

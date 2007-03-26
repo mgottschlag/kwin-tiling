@@ -75,11 +75,16 @@ void KasPopup::positionSelf()
    move( calcPosition( item_, width(), height() ) );
 }
 
-void KasPopup::show()
+void KasPopup::setVisible( bool visible )
 {
+   if (! visible) {
+      Q3HBox::setVisible( visible );
+      return;
+   }
+  
    emit aboutToShow();
    positionSelf();
-   QWidget::show();
+   QWidget::setVisible(/*visible=*/ true);
    emit shown();
 }
 
