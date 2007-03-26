@@ -82,8 +82,8 @@ void ShortcutsModule::save()
 	}
 	KGlobal::config()->sync();
 
-	m_pkcGeneral->commitChanges();
-	m_pkcSequence->commitChanges();
+	//m_pkcGeneral->commitChanges();
+	//m_pkcSequence->commitChanges();
 	m_pkcApplication->save();
 
 	KGlobalAccel::self()->writeSettings();
@@ -93,9 +93,9 @@ void ShortcutsModule::save()
 
 void ShortcutsModule::defaults()
 {
-	m_pkcGeneral->allDefault();
+	/*m_pkcGeneral->allDefault();
 	m_pkcSequence->allDefault();
-	m_pkcApplication->allDefault();
+	m_pkcApplication->allDefault();*/
 }
 
 QString ShortcutsModule::quickHelp() const
@@ -422,9 +422,9 @@ void ShortcutsModule::saveScheme()
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentIndex() ];
 	KConfig config( sFilename, KConfig::OnlyLocal);
 
-	m_pkcGeneral->commitChanges();
+	/*m_pkcGeneral->commitChanges();
 	m_pkcSequence->commitChanges();
-	m_pkcApplication->commitChanges();
+	m_pkcApplication->commitChanges();*/
 
 	KGlobalAccel::self()->writeSettings();
 }

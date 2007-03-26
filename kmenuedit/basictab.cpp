@@ -325,7 +325,7 @@ void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
     _systrayCB->setChecked(false);
     _terminalCB->setChecked(false);
     _uidCB->setChecked(false);
-    _keyEdit->setShortcut(KShortcut());
+    //_keyEdit->setShortcut(KShortcut());
 
     enableWidgets(false, folderInfo->hidden);
     blockSignals(false);
@@ -345,7 +345,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
        _iconButton->setIcon(QString());
 
        // key binding part
-       _keyEdit->setShortcut( KShortcut() );
+       //_keyEdit->setShortcut( KShortcut() );
        _execEdit->lineEdit()->setText(QString());
        _systrayCB->setChecked(false);
 
@@ -373,7 +373,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     // key binding part
     if( KHotKeys::present())
     {
-        _keyEdit->setShortcut( entryInfo->shortcut() );
+        //_keyEdit->setShortcut( entryInfo->shortcut() );
     }
 
     QString temp = df->readPathEntry("Exec");
@@ -493,9 +493,9 @@ void BasicTab::slotCapturedShortcut(const KShortcut& cut)
     if (signalsBlocked())
        return;
 
-    if( KKeyChooser::checkGlobalShortcutsConflict( cut, true, topLevelWidget())
+    /*if( KKeyChooser::checkGlobalShortcutsConflict( cut, true, topLevelWidget())
         || KKeyChooser::checkStandardShortcutsConflict( cut, true, topLevelWidget()))
-        return;
+        return;*/
 
     if ( KHotKeys::present() )
     {
@@ -518,7 +518,7 @@ void BasicTab::slotCapturedShortcut(const KShortcut& cut)
        }
        _menuEntryInfo->setShortcut( cut );
     }
-    _keyEdit->setShortcut(cut);
+    //_keyEdit->setShortcut(cut);
     if (_menuEntryInfo)
        emit changed( _menuEntryInfo );
 }

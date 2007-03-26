@@ -95,7 +95,7 @@ void ConfigDialog::show()
 
 void ConfigDialog::commitShortcuts()
 {
-    keysWidget->commitChanges();
+    //keysWidget->commitChanges();
 }
 
 /////////////////////////////////////////

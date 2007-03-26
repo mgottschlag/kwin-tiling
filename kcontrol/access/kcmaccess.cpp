@@ -168,7 +168,7 @@ QString mouseKeysShortcut (Display *display) {
   ev.xkey.keycode = code;
   ev.xkey.state = 0;
   int key;
-  KKeyServer::xEventToQt(&ev, key);
+  KKeyServer::xEventToQt(&ev, &key);
   QString keyname = QKeySequence(key).toString();
 
   unsigned int AltMask   = KKeyServer::modXAlt();

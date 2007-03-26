@@ -31,12 +31,12 @@ Voice_settings_tab::Voice_settings_tab( QWidget* parent_P, const char* name_P )
 
 void Voice_settings_tab::read_data()
     {
-		keyButton->setShortcut( module->voice_shortcut() );
+//		keyButton->setShortcut( module->voice_shortcut() );
     }
 
 void Voice_settings_tab::write_data() const
     {
-		module->set_voice_shortcut( keyButton->shortcut() );
+//		module->set_voice_shortcut( keyButton->shortcut() );
     }
 
 void Voice_settings_tab::clear_data()
@@ -55,12 +55,12 @@ void Voice_settings_tab::slotCapturedKey( const KShortcut& cut)
 			   return;
 	   }*/
 	   
-	   if(KKeyChooser::checkGlobalShortcutsConflict(cut,true,this))
+/*	   if(KKeyChooser::checkGlobalShortcutsConflict(cut,true,this))
 		   return;
 	   if(KKeyChooser::checkStandardShortcutsConflict(cut,true,this))
-		   return;
+		   return;*/
 	   
-	   keyButton->setShortcut(cut);
+//	   keyButton->setShortcut(cut);
 	   module->changed();
    }
 } // namespace KHotKeys
