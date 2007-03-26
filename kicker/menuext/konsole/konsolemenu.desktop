@@ -63,6 +63,7 @@ Name[zh_TW]=終端機工作階段
 Comment=Directly start terminal emulator with a session or bookmark
 Comment[csb]=Menu zrëszëniô òkna terminala ze spamiãtóną sesëją abò załóżka
 Comment[el]=Απευθείας εκκίνηση ενός εξομοιωτή τερματικού με μια συνεδρία ή σελιδοδείκτη
+Comment[ja]=指定したセッションやブックマーク先でターミナルエミュレータを起動します
 Comment[nds]=Den Terminal-Emulator mit en Leesteken oder Törn starten
 Comment[x-test]=xxDirectly start terminal emulator with a session or bookmarkxx
 Icon=konsole

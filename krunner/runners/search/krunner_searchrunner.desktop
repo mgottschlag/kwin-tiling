@@ -1,9 +1,11 @@
 [Desktop Entry]
 Name=Search Runner
+Name[ja]=検索 Runner
 Name[nds]=Söökdreger
 Name[x-test]=xxSearch Runnerxx
 Comment=Search files
 Comment[el]=Αναζήτηση αρχείων
+Comment[ja]=ファイルを検索
 Comment[nds]=Dateien söken
 Comment[x-test]=xxSearch filesxx
 ServiceTypes=KRunner/Runner

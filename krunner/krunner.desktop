@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=krunner
 X-DBUS-StartupType=wait
 Name=Command Runner
+Name[ja]=コマンド Runner
 Name[nds]=Befehldreger
 Name[x-test]=xxCommand Runnerxx
 Type=Service

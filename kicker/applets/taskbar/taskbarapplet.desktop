@@ -65,6 +65,7 @@ Name[zh_TW]=工作列
 Comment=The default taskbar panel applet
 Comment[csb]=Alternatiwnô lëstew dzejaniów dlô panelu.
 Comment[el]=Το προκαθορισμένο εφαρμογίδιο γραμμής εργασιών για τον πίνακα
+Comment[ja]=標準のタスクバーパネルアプレット
 Comment[nds]=Dat Paneel-Lüttprogramm för den Standard-Programmbalken
 Comment[x-test]=xxThe default taskbar panel appletxx
 Icon=taskbar

@@ -53,7 +53,9 @@ Name[x-test]=xxDesktop Preview & Pagerxx
 Name[zh_TW]=桌面預覽與縮圖
 
 Comment=A virtual desktop switching panel applet
+Comment[de]=Wechseln der virtuellen Arbeitsfläche
 Comment[el]=Ένα εφαρμογίδιο εναλλαγής εικονικών επιφανειών εργασίας
+Comment[ja]=仮想デスクトップを切り替えるためのパネルアプレット
 Comment[nds]=En Lüttprogramm för't Wesseln vun den virtuellen Schriefdisch
 Comment[x-test]=xxA virtual desktop switching panel appletxx
 

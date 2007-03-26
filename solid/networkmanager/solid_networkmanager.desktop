@@ -11,6 +11,7 @@ Name[nds]=Nettwark-Pleger
 Name[x-test]=xxNetworkManagerxx
 Comment=Network management using the NetworkManager daemon
 Comment[el]=Διαχείριση δικτύου με χρήση του δαίμονα HAL του freedesktop.org
+Comment[ja]=NetworkManager デーモンを用いたネットワーク管理
 Comment[nds]=Nettwarkpleeg mit den NetworkManager-Dämoon
 Comment[x-test]=xxNetwork management using the NetworkManager daemonxx
 Icon=networkmanager

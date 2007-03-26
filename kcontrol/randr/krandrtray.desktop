@@ -63,6 +63,7 @@ GenericName[uz]=Экранинг ўлчамини ўзгартириш ва бу
 GenericName[x-test]=xxScreen Resize & Rotatexx
 GenericName[zh_TW]=螢幕調整大小及旋轉
 Comment=A panel applet for resizing and reorientating X screens.
+Comment[ja]=スクリーンのサイズや向きを変更するためのアプレット
 Comment[nds]=En Paneel-Lüttprogramm för't Ännern vun Grött un Utrichten vun X-Schirmen
 Comment[x-test]=xxA panel applet for resizing and reorientating X screens.xx
 Exec=krandrtray

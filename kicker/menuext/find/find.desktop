@@ -61,6 +61,7 @@ Name[zh_TW]=尋找
 Comment=Quickly start a file or web search
 Comment[csb]=Menu naczãca szëkbë w sécë abò lopków
 Comment[el]=Γρήγορη εκκίνηση ενός αρχείου ή αναζήτηση στον ιστό
+Comment[ja]=ファイルの検索やウェブ検索を素早く開始
 Comment[nds]=Gau na Dateien oder in't Nett söken
 Comment[x-test]=xxQuickly start a file or web searchxx
 Icon=kfind

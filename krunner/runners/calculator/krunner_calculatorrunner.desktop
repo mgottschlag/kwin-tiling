@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Calculator Runner
+Name[ja]=計算機 Runner
 Name[nds]=Rekendreger
 Name[x-test]=xxCalculator Runnerxx
 Comment=Calculate expressions
+Comment[ja]=数式を計算
 Comment[nds]=Utdrück utreken
 Comment[x-test]=xxCalculate expressionsxx
 ServiceTypes=KRunner/Runner
