@@ -706,11 +706,10 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
     if(status)
     {
 #ifdef HAVE_FcFreeTypeQueryFace
-        FcPattern *pat=FcFreeTypeQueryFace(itsFt.face, fileName, face, NULL);
+        FcPattern *pat=FcFreeTypeQueryFace(itsFt.face, (FcChar8*) fileName, face, NULL);
 
         itsWeight=FC_WEIGHT_REGULAR;
         itsWidth=KFI_FC_WIDTH_NORMAL;
-        itsSlant=FC_SLANT_ROMAN;
         itsSpacing=FC_PROPORTIONAL;
 
         if(pat)
@@ -731,9 +730,9 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
             // Try to make foundry similar to that of AFMs...
             if(itsFoundry== QString::fromLatin1("ibm"))
                 itsFoundry= QString::fromLatin1("IBM");
-            else if(itsFoundry= QString::fromLatin1("urw"))
+            else if(itsFoundry== QString::fromLatin1("urw"))
                 itsFoundry= QString::fromLatin1("URW");
-            else if(itsFoundry= QString::fromLatin1("itc"))
+            else if(itsFoundry== QString::fromLatin1("itc"))
                 itsFoundry= QString::fromLatin1("ITC");
             else
             {
@@ -741,9 +740,9 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
                 int   len(itsFoundry.length());
                 bool  isSpace(true);
 
-                for(; len--; ++s)
+                while(len--)
                 {
-                    if (space)
+                    if (isSpace)
                         *ch=ch->toUpper();
 
                     isSpace=ch->isSpace();

@@ -37,6 +37,7 @@
 
 #if (FC_VERSION>=20402)
 #define HAVE_FcFreeTypeQueryFace
+#include <fontconfig/fcfreetype.h>
 #endif
 
 #include <ft2build.h>
