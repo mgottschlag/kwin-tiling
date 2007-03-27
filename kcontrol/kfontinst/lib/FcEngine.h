@@ -86,8 +86,6 @@ class KDE_EXPORT CFcEngine
                                const QString &name=QString(), unsigned long style=KFI_NO_STYLE_INFO);
     int                   getNumIndexes() { return itsIndexCount; } // Only valid after draw has been called!
     const QString &       getName(const KUrl &url, int faceNo=0);
-    bool                  getInfo(const KUrl &url, int faceNo, QString &full, QString &family, QString &foundry,
-                                  QString &weight, QString &width, QString &spacing, QString &slant, QString &version);
     bool                  getInfo(const KUrl &url, int faceNo, Misc::TFont &info);
     static QFont          getQFont(const QString &family, unsigned long style, int size);
 
@@ -116,10 +114,8 @@ class KDE_EXPORT CFcEngine
 
     CFcEngine();
 
-    bool                  parseUrl(const KUrl &url, int faceNo, bool all=false);
-    bool                  parseName(const QString &name, int faceNo,
-                                    unsigned long style=KFI_NO_STYLE_INFO, bool all=false,
-                                    const KUrl &url=KUrl());
+    bool                  parseUrl(const KUrl &url, int faceNo);
+    bool                  parseName(const QString &name, unsigned long style=KFI_NO_STYLE_INFO, const KUrl &url=KUrl());
     XftFont *             queryFont();
     XftFont *             getFont(int size);
     bool                  isCorrect(XftFont *f, bool checkFamily);
@@ -134,15 +130,12 @@ class KDE_EXPORT CFcEngine
                   itsFcDirty;
     QString       itsName,
                   itsFileName,
-                  itsDescriptiveName,
-                  itsFoundry;
+                  itsDescriptiveName;
     int           itsIndex,
                   itsIndexCount,
                   itsWeight,
                   itsWidth,
                   itsSlant,
-                  itsSpacing,
-                  itsVersion,
                   itsAlphaSize;
     QVector<int>  itsSizes;
     KUrl          itsLastUrl;
