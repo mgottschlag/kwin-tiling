@@ -24,7 +24,6 @@
 #include <kvbox.h>
 #include <QLinkedList>
 #include <k3listview.h>
-#include <kfiledetailview.h>
 
 class MediumTypeItem : public Q3CheckListItem
 {
