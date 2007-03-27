@@ -8,8 +8,6 @@
 
 class QDBusInterface;
 
-Q_DECLARE_METATYPE(QList<QDBusObjectPath>)
-
 struct NMDevice {
 	QDBusObjectPath path;
 	QString interface;
