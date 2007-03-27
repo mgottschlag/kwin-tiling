@@ -40,6 +40,7 @@
 #include <QTextStream>
 #include <QMenu>
 #include <QComboBox>
+#include <QProcess>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kgenericfactory.h>
@@ -59,7 +60,6 @@
 #include <ktempdir.h>
 #include <ktemporaryfile.h>
 #include <kicon.h>
-#include <k3process.h>
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
 #include <kstandarddirs.h>
@@ -397,7 +397,6 @@ CKCmFontInst::~CKCmFontInst()
     cg.writeEntry(CFG_SHOW_PREVIEW, itsShowPreview->isChecked());
     itsFontListView->writeConfig(cg);
     delete itsTempDir;
-    delete itsPrintProc;
     delete itsExportFile;
 }
 
@@ -616,7 +615,7 @@ void CKCmFontInst::print(bool all)
     // In order to support printing of newly installed/enabled fonts, the actual printing
     // is carried out by the kfontinst helper app. This way we know Qt's font list will be
     // up to date.
-    if(!working() && (!itsPrintProc || !itsPrintProc->isRunning()))
+    if(!working() && (!itsPrintProc || QProcess::NotRunning==itsPrintProc->state()))
     {
         QSet<Misc::TFont> fonts;
 
@@ -635,13 +634,13 @@ void CKCmFontInst::print(bool all)
                 KTemporaryFile                   tmpFile;
                 bool                             useGrpFile(fonts.count()>64),
                                                  startProc(true);
+                QStringList                      args;
 
                 if(!itsPrintProc)
-                    itsPrintProc=new K3Process;
+                    itsPrintProc=new QProcess(this);
                 else
-                    itsPrintProc->clearArguments();
+                    itsPrintProc->kill();
 
-                *itsPrintProc << KFI_APP;
                 //
                 // If we have lots of fonts to print, pass kfontinst a tempory groups file to print
                 // instead of passing font by font...
@@ -655,13 +654,12 @@ void CKCmFontInst::print(bool all)
                             str << (*it).family << endl
                                 << (*it).styleInfo << endl;
 
-                        *itsPrintProc << "-p"
-                                      << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
-                                      << KGlobal::caption().toUtf8()
-                                      << QString().setNum(constSizes[dlg.chosenSize() < 6
-                                                           ? dlg.chosenSize() : 2])
-                                      << tmpFile.fileName()
-                                      << "y"; // y => implies kfontinst will remove our tmp file
+                        args << "-p"
+                             << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
+                             << KGlobal::caption().toUtf8()
+                             << QString().setNum(constSizes[dlg.chosenSize() < 6 ? dlg.chosenSize() : 2])
+                             << tmpFile.fileName()
+                             << "y"; // y => implies kfontinst will remove our tmp file
                     }
                     else
                     {
@@ -671,24 +669,28 @@ void CKCmFontInst::print(bool all)
                 }
                 else
                 {
-                    *itsPrintProc << "-P"
-                                  << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
-                                  << KGlobal::caption().toUtf8()
-                                  << QString().setNum(constSizes[dlg.chosenSize()<6 ? dlg.chosenSize() : 2]);
+                    args << "-P"
+                         << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
+                         << KGlobal::caption().toUtf8()
+                         << QString().setNum(constSizes[dlg.chosenSize()<6 ? dlg.chosenSize() : 2]);
 
                     for(; it!=end; ++it)
-                        *itsPrintProc << (*it).family.toUtf8()
-                                      << QString().setNum((*it).styleInfo);
+                        args << (*it).family.toUtf8()
+                             << QString().setNum((*it).styleInfo);
                 }
 
                 if(startProc)
-                    if(itsPrintProc->start(K3Process::DontCare))
+                {
+                    itsPrintProc->start(KFI_APP, args);
+
+                    if(itsPrintProc->waitForStarted(1000))
                     {
                         if(useGrpFile)
                             tmpFile.setAutoRemove(false);
                     }
                     else
                         KMessageBox::error(this, i18n("Failed to start font printer."));
+                }
                 cg.writeEntry(CFG_FONT_SIZE, dlg.chosenSize());
             }
         }

@@ -22,29 +22,34 @@
 
 #include "FcQuery.h"
 #include <QStringList>
-#include <k3process.h>
+#include <QProcess>
 #include <stdio.h>
+
 namespace KFI
 {
 
 CFcQuery::~CFcQuery()
 {
-    delete itsProc;
 }
 
 void CFcQuery::run(const QString &query)
 {
-    if(itsProc)
-        delete itsProc;
+    QStringList args;
 
     itsFile=QString();
     itsBuffer=QByteArray();
-    itsProc=new K3Process;
-    *itsProc << "fc-match" << "-v" << query;
-    connect(itsProc, SIGNAL(processExited(K3Process *)), SLOT(procExited()));
-    connect(itsProc, SIGNAL(receivedStdout(K3Process *, char *, int)),
-            SLOT(data(K3Process *, char *, int)));
-    itsProc->start(K3Process::NotifyOnExit, K3Process::Stdout);
+
+    if(itsProc)
+        itsProc->kill();
+    else
+        itsProc=new QProcess(this);
+
+    args << "-v" << query;
+
+    connect(itsProc, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(procExited()));
+    connect(itsProc, SIGNAL(readyReadStandardOutput()), SLOT(data()));
+
+    itsProc->start("fc-match", args);
 }
 
 void CFcQuery::procExited()
@@ -72,12 +77,9 @@ void CFcQuery::procExited()
     emit finished();
 }
 
-void CFcQuery::data(K3Process *, char *buffer, int buflen)
+void CFcQuery::data()
 {
-    int current=itsBuffer.size();
-
-    itsBuffer.resize(itsBuffer.size()+buflen);
-    memcpy(&(itsBuffer.data()[current]), buffer, buflen);
+    itsBuffer+=itsProc->readAllStandardOutput();
 }
 
 }

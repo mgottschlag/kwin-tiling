@@ -40,6 +40,7 @@
 #include <QTimer>
 #include <QApplication>
 #include <QGroupBox>
+#include <QProcess>
 #include <kio/netaccess.h>
 #include <kio/job.h>
 #include <kio/jobuidelegate.h>
@@ -55,7 +56,6 @@
 #include <ktoolbarlabelaction.h>
 #include <kactioncollection.h>
 #include <kicon.h>
-#include <k3process.h>
 #include <kmimetype.h>
 #include <kfilemetainfo.h>
 #include <fontconfig/fontconfig.h>
@@ -148,7 +148,6 @@ CFontViewPart::CFontViewPart(QWidget *parent)
 
 CFontViewPart::~CFontViewPart()
 {
-    delete itsProc;
 }
 
 bool CFontViewPart::openUrl(const KUrl &url)
@@ -282,25 +281,27 @@ void CFontViewPart::previewStatus(bool st)
 
 void CFontViewPart::install()
 {
-    if(!itsProc || !itsProc->isRunning())
+    if(!itsProc || QProcess::NotRunning==itsProc->state())
     {
-        if(!itsProc)
-            itsProc=new K3Process;
-        else
-            itsProc->clearArguments();
+        QStringList args;
 
-        *itsProc << KFI_APP
-                 << "-i"
-                 << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-                 << KGlobal::caption().toUtf8()
-                 << url().prettyUrl();
-        itsProc->start(K3Process::NotifyOnExit);
-        connect(itsProc, SIGNAL(processExited(K3Process *)), SLOT(installlStatus(K3Process *)));
+        if(!itsProc)
+            itsProc=new QProcess(this);
+        else
+            itsProc->kill();
+
+        args << "-i"
+             << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+             << KGlobal::caption().toUtf8()
+             << url().prettyUrl();
+
+        connect(itsProc, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(installlStatus()));
+        itsProc->start(KFI_APP, args);
         itsInstallButton->setEnabled(false);
     }
 }
 
-void CFontViewPart::installlStatus(K3Process *)
+void CFontViewPart::installlStatus()
 {
     stat();
 }
@@ -324,41 +325,33 @@ void CFontViewPart::changeText()
 
 void CFontViewPart::print()
 {
-    if(!itsProc || !itsProc->isRunning())
+    QStringList args;
+
+    if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
     {
-        if(!itsProc)
-            itsProc=new K3Process;
-        else
-            itsProc->clearArguments();
+        Misc::TFont info;
 
-        if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
-        {
-            Misc::TFont info;
+        CFcEngine::instance()->getInfo(url(), 0, info);
 
-            CFcEngine::instance()->getInfo(url(), 0, info);
-
-            *itsProc << KFI_APP
-                     << "-P"
-                     << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-                     << KGlobal::caption().toUtf8()
-                     << "0"
-                     << info.family.toUtf8()
-                     << QString().setNum(info.styleInfo);
-        }
+        args << "-P"
+             << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+             << KGlobal::caption().toUtf8()
+             << "0"
+             << info.family.toUtf8()
+             << QString().setNum(info.styleInfo);
+    }
 #ifdef KFI_PRINT_APP_FONTS
-        else
-            *itsProc << KFI_APP
-                     << "-P"
-                     << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-                     << KGlobal::caption().toUtf8()
-                     << "0"
-                     << localFilePath()
-                     << QString().setNum(KFI_NO_STYLE_INFO);
+    else
+        args << "-P"
+             << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+             << KGlobal::caption().toUtf8()
+             << "0"
+             << localFilePath()
+             << QString().setNum(KFI_NO_STYLE_INFO);
 #endif
 
-        if(itsProc)
-            itsProc->start(K3Process::DontCare);
-    }
+    if(args.count())
+        QProcess::startDetached(KFI_APP, args);
 }
 
 void CFontViewPart::displayType(const QList<CFcEngine::TRange> &range)

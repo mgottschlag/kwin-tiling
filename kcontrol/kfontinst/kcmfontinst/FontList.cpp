@@ -29,7 +29,7 @@
 #include <kiconloader.h>
 #include <kde_file.h>
 #include <kmessagebox.h>
-#include <k3process.h>
+#include <QProcess>
 #include <QFont>
 #include <QMap>
 #include <QFile>
@@ -1922,13 +1922,13 @@ void CFontListView::view()
 
         for(; it!=end; ++it)
         {
-            K3Process proc;
+            QStringList args;
 
-            proc << KFI_APP << "-v";
+            args << "-v";
 
             // If we can, speed up font viewer by passing the font details...
             if((*it)->isEnabled())
-                proc << QString((*it)->url().prettyUrl().toUtf8()+KFI_DETAILS_QUERY+(*it)->name()+','+QString().setNum((*it)->styleInfo()));
+                args << QString((*it)->url().prettyUrl().toUtf8()+KFI_DETAILS_QUERY+(*it)->name()+','+QString().setNum((*it)->styleInfo()));
             else
             {
                 // For a disalbed font, we need to find the fist scalable font entry in its file list...
@@ -1948,15 +1948,16 @@ void CFontListView::view()
                                 url+=KFI_KIO_FONTS_USER"/";
                         url+=(*it)->name()+KFI_FILE_DETAILS_QUERY+(*fit)+','+QString().setNum((*it)->index());
 
-                        proc << url;
+                        args << url;
                         done=true;
                         break;
                     }
 
                 if(!done)
-                    proc << (*it)->url().prettyUrl().toUtf8();
+                    args << (*it)->url().prettyUrl().toUtf8();
             }
-            proc.start(K3Process::DontCare);
+
+            QProcess::startDetached(KFI_APP, args);
         }
     }
 }

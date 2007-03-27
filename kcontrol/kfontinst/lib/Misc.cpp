@@ -24,7 +24,7 @@
 #include <QFile>
 #include <QByteArray>
 #include <QTextStream>
-#include <k3process.h> 
+#include <QProcess>
 #include <kstandarddirs.h>
 #include <kde_file.h>
 #include <ksavefile.h>
@@ -119,20 +119,16 @@ bool createDir(const QString &dir)
 
 bool doCmd(const QString &cmd, const QString &p1, const QString &p2, const QString &p3)
 {
-    K3Process proc;
-
-    proc << cmd;
+    QStringList args;
 
     if(!p1.isEmpty())
-        proc << p1;
+        args << p1;
     if(!p2.isEmpty())
-        proc << p2;
+        args << p2;
     if(!p3.isEmpty())
-        proc << p3;
+        args << p3;
 
-    proc.start(K3Process::Block);
-
-    return proc.normalExit() && proc.exitStatus()==0;
+    return 0==QProcess::execute(cmd, args);
 }
 
 QString changeExt(const QString &f, const QString &newExt)

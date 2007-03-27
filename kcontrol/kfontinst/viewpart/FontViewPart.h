@@ -33,11 +33,11 @@
 
 class QPushButton;
 class QLabel;
-class KIntNumInput;
+class QProcess;
 class QAction;
+class KIntNumInput;
 class KUrl;
 class KConfig;
-class K3Process;
 
 namespace KFI
 {
@@ -64,7 +64,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void previewStatus(bool st);
     void timeout();
     void install();
-    void installlStatus(K3Process *proc);
+    void installlStatus();
     void changeText();
     void print();
     void displayType(const QList<CFcEngine::TRange> &range);
@@ -94,7 +94,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     int                itsFace;
     KSharedConfigPtr   itsConfig;
     BrowserExtension   *itsExtension;
-    K3Process           *itsProc;
+    QProcess           *itsProc;
     QString            itsStatName;
 };
 

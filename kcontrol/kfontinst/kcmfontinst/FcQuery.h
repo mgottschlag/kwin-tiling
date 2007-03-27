@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QByteArray>
 
-class K3Process;
+class QProcess;
 
 namespace KFI
 {
@@ -47,7 +47,7 @@ class CFcQuery : public QObject
     private Q_SLOTS:
 
     void procExited();
-    void data(K3Process *proc, char *buffer, int buflen);
+    void data();
 
     Q_SIGNALS:
 
@@ -55,7 +55,7 @@ class CFcQuery : public QObject
 
     private:
 
-    K3Process   *itsProc;
+    QProcess   *itsProc;
     QByteArray itsBuffer;
     QString    itsFile;
 };
