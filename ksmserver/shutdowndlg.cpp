@@ -291,9 +291,11 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     fnt.setBold( true );
     fnt.setPixelSize( 20 );
 
-    QString userName = KUser().fullName();
-    QString loginName = KUser().loginName();
+    KUser userInformation;
     QString logoutMsg;
+    QString userName = userInformation.fullName();
+    QString loginName = userInformation.loginName();
+
     if (userName.isEmpty()) {
         logoutMsg = i18n( "End Session for %1", loginName );
     } else {
