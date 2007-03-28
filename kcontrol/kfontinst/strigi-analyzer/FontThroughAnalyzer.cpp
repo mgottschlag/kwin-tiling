@@ -147,29 +147,30 @@ jstreams::InputStream * FontThroughAnalyzer::connectInputStream(jstreams::InputS
                 break;
         }
 
-        switch(type)
-        {
-            case CFontEngine::TYPE_OTF:
-                analysisResult->setMimeType("application/x-font-otf");
-                break;
-            case CFontEngine::TYPE_TTF:
-            case CFontEngine::TYPE_TTC:
-                analysisResult->setMimeType("application/x-font-ttf");
-                break;
-            case CFontEngine::TYPE_TYPE1:
-                analysisResult->setMimeType("application/x-font-type1");
-                break;
-            case CFontEngine::TYPE_PCF:
-                analysisResult->setMimeType("application/x-font-pcf");
-                break;
-            case CFontEngine::TYPE_BDF:
-                analysisResult->setMimeType("application/x-font-bdf");
-                break;
-            case CFontEngine::TYPE_AFM:
-                analysisResult->setMimeType("application/x-font-afm");
-            default:
-                break;
-        }
+        if(status)
+            switch(type)
+            {
+                case CFontEngine::TYPE_OTF:
+                    analysisResult->setMimeType("application/x-font-otf");
+                    break;
+                case CFontEngine::TYPE_TTF:
+                case CFontEngine::TYPE_TTC:
+                    analysisResult->setMimeType("application/x-font-ttf");
+                    break;
+                case CFontEngine::TYPE_TYPE1:
+                    analysisResult->setMimeType("application/x-font-type1");
+                    break;
+                case CFontEngine::TYPE_PCF:
+                    analysisResult->setMimeType("application/x-font-pcf");
+                    break;
+                case CFontEngine::TYPE_BDF:
+                    analysisResult->setMimeType("application/x-font-bdf");
+                    break;
+                case CFontEngine::TYPE_AFM:
+                    analysisResult->setMimeType("application/x-font-afm");
+                default:
+                    break;
+            }
     }
 
     in->reset(0);

@@ -1,30 +1,24 @@
-///////////////////////////////////////////////////////////////////////////////
-//
-// Class Name    : KFI::CFontEngine
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 29/04/2001
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003, 2004
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2007 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 //
 // This class contains code inspired/copied/nicked from mkfontscale. Specifically
@@ -234,10 +228,12 @@ CFontEngine::EType CFontEngine::getType(const char *fileName, jstreams::InputStr
     if(Misc::checkExt(fileName, "pfa") || Misc::checkExt(fileName, "pfb"))
         return TYPE_TYPE1;
 
-    if(Misc::checkExt(fileName, "pcf") || Misc::checkExt(fileName, "pcf.gz"))
+    //
+    // NOTE: Dont accept .gz extension - strigi will decompress for us.
+    if(Misc::checkExt(fileName, "pcf"))
         return TYPE_PCF;
 
-    if(Misc::checkExt(fileName, "bdf") || Misc::checkExt(fileName, "bdf.gz"))
+    if(Misc::checkExt(fileName, "bdf"))
         return TYPE_BDF;
 
     if(Misc::checkExt(fileName, "afm"))
@@ -246,7 +242,7 @@ CFontEngine::EType CFontEngine::getType(const char *fileName, jstreams::InputStr
     return TYPE_UNKNOWN;
 }
 
-bool CFontEngine::openFont(CFontEngine::EType type, jstreams::InputStream *in, const char *fileName, int face)
+bool CFontEngine::openFont(EType type, jstreams::InputStream *in, const char *fileName, int face)
 {
     bool ok=false;
 
@@ -264,9 +260,11 @@ bool CFontEngine::openFont(CFontEngine::EType type, jstreams::InputStream *in, c
         default:
             ok=openFontFt(in, fileName, face);
             break;
+#ifndef HAVE_FcFreeTypeQueryFace
         case TYPE_PCF:
             ok=openFontPcf(in);
             break;
+#endif
         case TYPE_BDF:
             ok=openFontBdf(in);
             break;
@@ -279,16 +277,14 @@ bool CFontEngine::openFont(CFontEngine::EType type, jstreams::InputStream *in, c
 
 void CFontEngine::closeFont()
 {
-#ifndef HAVE_FcFreeTypeQueryFace
     if(itsFt.open)
     {
         FT_Done_Face(itsFt.face);
         itsFt.open=false;
     }
-#endif
 }
 
-int CFontEngine::strToWeight(const QString &str)
+static int strToWeight(const QString &str)
 {
     if(str.isEmpty())
         return FC_WEIGHT_MEDIUM;
@@ -328,7 +324,7 @@ int CFontEngine::strToWeight(const QString &str)
         return FC_WEIGHT_MEDIUM;
 }
 
-int CFontEngine::strToWidth(const QString &str)
+static int strToWidth(const QString &str)
 {
     if(str.isEmpty())
         return KFI_FC_WIDTH_NORMAL;
@@ -367,7 +363,7 @@ static const char * getFoundry(const char *notice)
                    *foundry;
     };
 
-    static const Map map[]=   // These are (mainly) taken from type1inst
+    static const Map map[]=
     {
         { "Bigelow",                            "B&H"},
         { "Adobe",                              "Adobe"},
@@ -384,34 +380,6 @@ static const char * getFoundry(const char *notice)
         { "Omega",                              "Omega"},
         { "Font21",                             "Hwan"},
         { "HanYang System",                     "Hanyang"},
-        { "Richard Mitchell",                   "Mitchell" },
-        { "Doug Miles",                         "Miles" },
-        { "Hank Gillette",                      "Gillette" },
-        { "Three Islands Press",                "3ip" },
-        { "MacroMind",                          "Macromind" },
-        { "MWSoft",                             "MWSoft" },
-        { "Digiteyes Multimedia",               "DigitEyes" },
-        { "ZSoft",                              "ZSoft" },
-        { "Title Wave",                         "Titlewave" },
-        { "Southern Software",                  "Southern" },
-        { "Reasonable Solutions",               "Reasonable" },
-        { "David Rakowski",                     "Rakowski" },
-        { "D. Rakowski",                        "Rakowski" },
-        { "S. G. Moye",                         "Moye" },
-        { "S.G. Moye",                          "Moye" },
-        { "Andrew s. Meit",                     "Meit" },
-        { "A.S.Meit",                           "Meit" },
-        { "Hershey",                            "Hershey" },
-        { "FontBank",                           "FontBank" },
-        { "A. Carr",                            "Carr" },
-        { "Brendel Informatik",                 "Brendel" },
-        { "Jonathan Brecher",                   "Brecher" },
-        { "SoftMaker",                          "Softmaker" },
-        { "LETRASET",                           "Letraset" },
-        { "Corel Corp",                         "Corel"},
-        { "PUBLISHERS PARADISE",                "Paradise" },
-        { "Publishers Paradise",                "Paradise" },
-        { "Allied Corporation",                 "Allied" },
         { NULL,                                 NULL }
     };
 
@@ -493,8 +461,6 @@ static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
     static const int constVendLen=4;
 
     // These are taken from ttmkfdir
-    // Removed any commas - StarOffice doesn't like these...
-    // Shortened quite a few entires to help with StarOffice
     static const Map map[]=
     {
         { "ADBE", "Adobe"},
@@ -526,109 +492,6 @@ static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
         { "RICO", "Ricoh"},
         { "URW",  "URW"},
         { "Y&Y" , "Z&Y"},
-        { "2REB", "2Rebels"}, 
-        { "3IP" , "3ip"},
-        { "ABC" , "Altek Inst"},
-        { "ACUT", "AcuteType"},
-        { "AOP" , "Art Of Penguin"},
-        { "AZLS", "Azalea"},
-        { "BARS", "CIA UK"},
-        { "BERT", "Berthold"},
-        { "BITM", "Bitmap Soft"},
-        { "BLAH", "MisterBlas"},
-        { "BOYB", "I Frances"},
-        { "BRTC", "Bear Rock"},
-        { "BWFW", "B/W Fontworks"},
-        { "C&C",  "Carter&Cone"},
-        { "CAK" , "Pluginfonts"},
-        { "CASL", "H W Caslon"},
-        { "COOL", "CoolFonts"},
-        { "CTDL", "ChinaType"},
-        { "DAMA", "DM Ltd"},
-        { "DS"  , "Dainippon"},
-        { "DSCI", "Design Science"},
-        { "DTC",  "Digital Typeface"},
-        { "DTPS", "DTP Software"},
-        { "DUXB", "Duxbury"},
-        { "ECF" , "Emerald City"},
-        { "EDGE", "Rivers Edge"},
-        { "EFF" , "Electronic"},
-        { "EFNT", "E Fonts"},
-        { "ELSE", "Elseware"},
-        { "ERAM", "Eraman"},
-        { "ESIG", "E Signature"},
-        { "FBI",  "Font Bureau"},
-        { "FCAB", "Font Cabinet"},
-        { "FONT", "Font Source"},
-        { "FS"  , "Formula"},
-        { "FSE" , "Font Source Europe"},
-        { "FSI" , "FSI GmbH"},
-        { "FTFT", "FontFont"},
-        { "FWRE", "Fontware"},
-        { "GALA", "Galapagos"},
-        { "GD"  , "GDFonts"},
-        { "GLYF", "Glyph Systems"},
-        { "GPI",  "Gamma Productions"},
-        { "HY",   "HanYang System"},
-        { "HILL", "Hill Systems"},
-        { "HOUS", "House Industries"},
-        { "HP",   "HP"},
-        { "IDEE", "IDEE"},
-        { "IDF",  "Digital Fonts"},
-        { "ILP",  "Indigenous Lang"},
-        { "ITF" , "Int Type Founders"},
-        { "KATF", "Kingsley"},
-        { "LANS", "Lanston"},
-        { "LGX" , "Logix Research"},
-        { "LING", "Linguists"},
-        { "LP",   "LetterPerfect"},
-        { "LTRX", "Lighttracks"},
-        { "MC"  , "Cerajewski"},
-        { "MILL", "Millan"},
-        { "MJ"  , "Majus"},
-        { "MLGC", "Micrologic"},
-        { "MSCR", "Majus"},
-        { "MTY" , "Motoya"},
-        { "MUTF", "CACHE"},
-        { "NB"  , "No Bodoni"},
-        { "NDTC", "Neufville Digital"},
-        { "NIS" , "NIS"},
-        { "ORBI", "Orbit"},
-        { "P22" , "P22"},
-        { "PDWX", "Parsons Design"},
-        { "PF"  , "Phils Fonts"},
-        { "PRFS", "Production"},
-        { "RKFN", "R K Fonts"},
-        { "ROBO", "Buro Petr"},
-        { "RUDY", "Rudyn Fluffy"},
-        { "SAX" , "SAX gmbh"},
-        { "SEAN", "The FontSite"},
-        { "SFI" , "Software Friends"},
-        { "SFUN", "Soft Union"},
-        { "SG"  , "Scooter Graphics"},
-        { "SIG" , "Signature"},
-        { "SKZ" , "Celtic Ladys"},
-        { "SN"  , "SourceNet"},
-        { "SOHO", "SoftHorizons"},
-        { "SOS" , "Standing Ovations"},
-        { "STF" , "Brian Sooy"},
-        { "STON", "ZHUHAI"},
-        { "SUNW", "Sunwalk"},
-        { "SWFT", "Swfte"},
-        { "SYN" , "SynFonts"},
-        { "TDR" , "Tansin A Darcos"},
-        { "TF"  , "Treacyfaces"},
-        { "TILD", "SIA Tilde"},
-        { "TPTC", "Test Pilot"},
-        { "TR"  , "Type Revivals"},
-        { "TS"  , "TamilSoft"},
-        { "UA"  , "UnAuthorized Type"},
-        { "VKP" , "Vijay K Patel"},
-        { "VLKF", "Visualogik"},
-        { "VOG" , "Martin Vogel"},
-        { "ZEGR", "Zebra Font Facit"},
-        { "ZETA", "Tangram Studio"},
-        { "ZSFT", "ZSoft"},
         { NULL  ,  NULL}
     };
 
@@ -696,6 +559,11 @@ static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
 }
 #endif
 
+inline float decodeFixed(long v)
+{
+    return (v>>16)+(((double)(v&0xFFFF))/0xFFFF);
+}
+
 bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, int face)
 {
     bool status=openFtFace(itsFt.library, in, face, &itsFt.face) ? false : true;
@@ -705,6 +573,10 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
 
     if(status)
     {
+        PS_FontInfoRec t1info;
+
+        bool type1(0==FT_Get_PS_Font_Info(itsFt.face, &t1info));
+
 #ifdef HAVE_FcFreeTypeQueryFace
         FcPattern *pat=FcFreeTypeQueryFace(itsFt.face, (FcChar8*) fileName, face, NULL);
 
@@ -714,8 +586,6 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
 
         if(pat)
         {
-            int version;
-
             itsFamily=FC::getFcString(pat, FC_FAMILY, face);
             FcPatternGetInteger(pat, FC_WEIGHT, face, &itsWeight);
 #ifndef KFI_FC_NO_WIDTHS
@@ -724,16 +594,31 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
             FcPatternGetInteger(pat, FC_SLANT, face, &itsItalic);
             FcPatternGetInteger(pat, FC_SPACING, face, &itsSpacing);
             itsFoundry=FC::getFcString(pat, FC_FOUNDRY, face);
-            FcPatternGetInteger(pat, FC_FONTVERSION, face, &version);
+
+            if(type1)
+                itsVersion=t1info.version;
+            else
+            {
+                int version;
+
+                FcPatternGetInteger(pat, FC_FONTVERSION, face, &version);
+                if(version>0)
+                    itsVersion.setNum(decodeFixed(version));
+            }
+
             FcPatternDestroy(pat);
 
             // Try to make foundry similar to that of AFMs...
-            if(itsFoundry== QString::fromLatin1("ibm"))
-                itsFoundry= QString::fromLatin1("IBM");
-            else if(itsFoundry== QString::fromLatin1("urw"))
-                itsFoundry= QString::fromLatin1("URW");
-            else if(itsFoundry== QString::fromLatin1("itc"))
-                itsFoundry= QString::fromLatin1("ITC");
+            if(itsFoundry==QString::fromLatin1("ibm"))
+                itsFoundry=QString::fromLatin1("IBM");
+            else if(itsFoundry==QString::fromLatin1("urw"))
+                itsFoundry=QString::fromLatin1("URW");
+            else if(itsFoundry==QString::fromLatin1("itc"))
+                itsFoundry=QString::fromLatin1("ITC");
+            else if(itsFoundry==QString::fromLatin1("nec"))
+                itsFoundry=QString::fromLatin1("NEC");
+            else if(itsFoundry==QString::fromLatin1("b&h"))
+                itsFoundry=QString::fromLatin1("B&H");
             else
             {
                 QChar *ch(itsFoundry.data());
@@ -768,16 +653,12 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
             TTF_WIDTH_ULTRA_EXPANDED  = 9
         };
 
-        bool type1(false);
+        QString fullName;
 
-        PS_FontInfoRec t1info;
-        QString        fullName;
-
-        if(0==FT_Get_PS_Font_Info(itsFt.face, &t1info))
+        if(type1)
         {
             fullName=t1info.full_name;
             itsFamily=t1info.family_name;
-            type1=true;
         }
         else
         {
@@ -814,16 +695,6 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
                 #define WEIGHT_UNKNOWN 0xFFFF
                 #define WIDTH_UNKNOWN  0xFFFF
 
-                struct TFixed
-                {
-                    TFixed(unsigned long v) : upper(v>>16), lower(v&0xFFFF) {}
-
-                    short upper,
-                          lower;
-
-                    float value() { return upper+(lower/65536.0); }
-                };
-
                 TT_Postscript *post=(TT_Postscript *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post);
                 TT_OS2        *os2=(TT_OS2 *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2);
                 TT_Header     *head=(TT_Header *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head);
@@ -859,22 +730,31 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
                     {
                         case TTF_WIDTH_ULTRA_CONDENSED:
                             itsWidth=FC_WIDTH_ULTRACONDENSED;
+                            break;
                         case TTF_WIDTH_EXTRA_CONDENSED:
                             itsWidth=FC_WIDTH_EXTRACONDENSED;
+                            break;
                         case TTF_WIDTH_CONDENSED:
                             itsWidth=FC_WIDTH_CONDENSED;
+                            break;
                         case TTF_WIDTH_SEMI_CONDENSED:
                             itsWidth=FC_WIDTH_SEMICONDENSED;
+                            break;
                         case TTF_WIDTH_NORMAL:
                             itsWidth=FC_WIDTH_NORMAL;
+                            break;
                         case TTF_WIDTH_SEMI_EXPANDED:
                             itsWidth=FC_WIDTH_SEMIEXPANDED;
+                            break;
                         case TTF_WIDTH_EXPANDED:
                             itsWidth=FC_WIDTH_EXPANDED;
+                            break;
                         case TTF_WIDTH_EXTRA_EXPANDED:
                             itsWidth=FC_WIDTH_EXTRAEXPANDED;
+                            break;
                         case TTF_WIDTH_ULTRA_EXPANDED:
                             itsWidth=FC_WIDTH_ULTRAEXPANDED;
+                            break;
                     }
 
                     itsItalic=os2->fsSelection&(1 << 0) ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
@@ -896,12 +776,12 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
                 }
 
                 if(head)
-                    itsVersion.setNum(TFixed((unsigned long)head->Font_Revision).value());
+                    itsVersion.setNum(decodeFixed(head->Font_Revision));
 
                 if(!gotItalic && NULL!=post)
                 {
                     gotItalic=true;
-                    itsItalic=0.0f==((TFixed)post->italicAngle).value() ? FC_SLANT_ROMAN : FC_SLANT_ITALIC;
+                    itsItalic=0.0f==decodeFixed(post->italicAngle) ? FC_SLANT_ROMAN : FC_SLANT_ITALIC;
                 }
 
                 itsItalic=checkItalic(itsItalic, fullName);
@@ -977,8 +857,6 @@ bool CFontEngine::openFontAfm(jstreams::InputStream *in)
 
     return !full.isEmpty() && !itsFamily.isEmpty();
 }
-
-static const unsigned int constBitmapMaxProps=1024;
 
 static int charToItalic(char c)
 {
@@ -1148,6 +1026,7 @@ bool CFontEngine::openFontBdf(jstreams::InputStream *in)
     return foundXlfd;
 }
 
+#ifndef HAVE_FcFreeTypeQueryFace
 static unsigned int readLsb32(jstreams::InputStream *in)
 {
     const char *n;
@@ -1178,6 +1057,8 @@ static unsigned int read32(jstreams::InputStream *in, bool msb)
 
     return readLsb32(in);
 }
+
+static const unsigned int constBitmapMaxProps=1024;
 
 bool CFontEngine::openFontPcf(jstreams::InputStream *in)
 {
@@ -1286,6 +1167,7 @@ bool CFontEngine::openFontPcf(jstreams::InputStream *in)
 
     return foundXlfd;
 }
+#endif
 
 CFontEngine::TFtData::TFtData()
                     : open(false)

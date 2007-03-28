@@ -1,33 +1,27 @@
 #ifndef __FONT_ENGINE_H__
 #define __FONT_ENGINE_H__
 
-////////////////////////////////////////////////////////////////////////////////
-//
-// Class Name    : KFI::CFontEngine
-// Author        : Craig Drummond
-// Project       : K Font Installer
-// Creation Date : 29/04/2001
-// Version       : $Revision$ $Date$
-//
-////////////////////////////////////////////////////////////////////////////////
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003, 2004
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * KFontInst - KDE Font Installer
+ *
+ * (c) 2003-2007 Craig Drummond <craig@kde.org>
+ *
+ * ----
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -83,9 +77,6 @@ class CFontEngine
     CFontEngine()                     { }
     ~CFontEngine()                    { closeFont(); }
 
-    static int     strToWeight(const QString &str);
-    static int     strToWidth(const QString &str);
-
     //
     // General functions - these should be used instead of specfic ones below...
     //
@@ -110,7 +101,9 @@ class CFontEngine
     bool            openFontAfm(jstreams::InputStream *in);
     void            parseXlfdBmp(const QString &lfd);
     bool            openFontBdf(jstreams::InputStream *in);
+#ifndef HAVE_FcFreeTypeQueryFace
     bool            openFontPcf(jstreams::InputStream *in);
+#endif
 
     private:
 
