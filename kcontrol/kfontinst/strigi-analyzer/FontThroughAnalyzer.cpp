@@ -30,8 +30,7 @@
 #include "KfiConstants.h"
 #include "Misc.h"
 #include "FontEngine.h"
-#include <QFile>
-#include <QTextStream>
+#include <QByteArray>
 #include <list>
 
 static const int constMaxFaces(8); // Max number of faces supported in a TTC...
@@ -117,8 +116,12 @@ FontThroughAnalyzer::FontThroughAnalyzer(const FontThroughAnalyzerFactory *f)
 
 jstreams::InputStream * FontThroughAnalyzer::connectInputStream(jstreams::InputStream *in)
 {
-    in->reset(0);
+    //
+    // For some reason, when called vie KFileMetaInfo in->getSize() is 0. So, set a maximum size that
+    // we want to read in...
+    static const int constMaxFileSize=30*1024*1024;
 
+    int                size=in->getSize()>0 ? in->getSize() : constMaxFileSize;
     KUrl               url(analysisResult->path().c_str());
     QString            fName;
     bool               fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
@@ -132,9 +135,18 @@ jstreams::InputStream * FontThroughAnalyzer::connectInputStream(jstreams::InputS
         int         faceFrom(0),
                     faceTo(constMaxFaces);
 
+        const char *d;
+        int         n=in->read(d, size, -1);
+
+        in->reset(0);
+        if(-2==n)
+            return in;
+
+        QByteArray data=QByteArray::fromRawData(d, n);
+
         for(int face=faceFrom; face<faceTo; ++face)
         {
-            if(fe.openFont(type, in, analysisResult->path().c_str(), face))
+            if(fe.openFont(type, data, analysisResult->path().c_str(), face))
             {
                 add(fe.getFamilyName(), fe.getFoundry(),
                     KFI::FC::weightStr(fe.getWeight(), false), KFI::FC::widthStr(fe.getWidth(), false),
@@ -173,7 +185,6 @@ jstreams::InputStream * FontThroughAnalyzer::connectInputStream(jstreams::InputS
             }
     }
 
-    in->reset(0);
     return in;
 }
 

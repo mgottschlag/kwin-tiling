@@ -62,6 +62,8 @@
 #include FT_TRUETYPE_IDS_H
 #include FT_TRUETYPE_TABLES_H
 #include FT_TYPE1_TABLES_H
+#include <QBuffer>
+#include <QTextStream>
 
 static const char *constOblique = "Oblique";
 static const char *constSlanted = "Slanted";
@@ -69,68 +71,20 @@ static const char *constSlanted = "Slanted";
 namespace KFI
 {
 
-static bool readChar(jstreams::InputStream *in, char *val)
-{
-    const char *ch;
-
-    if(1==in->read(ch, 1, 1))
-    {
-        *val=*ch;
-        return true;
-    }
-
-    return false;
-}
-
-static const char * readString(jstreams::InputStream *in, char *buf, int len)
-{
-    char *b=buf;
-
-    if (NULL==buf || len <= 0)
-        return NULL;
-
-    while(--len > 0 && readChar(in, buf) && *buf++ != '\n')
-        ;
-    *buf = '\0';
-
-    return b == buf && len > 0 ? NULL : b;
-}
-
 static unsigned long ftStreamRead(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count)
 {
-    jstreams::InputStream *in((jstreams::InputStream *)stream->descriptor.pointer);
-    int64_t               pos(in->getPosition()),
-                          bytesRead(0);
+    QByteArray *in((QByteArray *)stream->descriptor.pointer);
 
-    if(offset<pos)
+    if((offset+count)<=in->size())
     {
-        in->reset(0);
-        in->skip(offset);
-    }
-    else if(offset>pos)
-        in->skip(offset-pos);
-
-    if (count > 0)
-    {
-        const char *h;
-
-        bytesRead=in->read(h, (int32_t)count, (int32_t)count);
-
-        if(bytesRead>0)
-            memcpy(buffer, h, bytesRead);
+        memcpy(buffer, &(in->data()[offset]), count);
+        return count;
     }
 
-    return bytesRead;
+    return 0;
 }
 
-static void ftStreamClose(FT_Stream stream)
-{
-    jstreams::InputStream *in = (jstreams::InputStream *)stream->descriptor.pointer;
-
-    in->reset(0);
-}
-
-static FT_Error openFtFace(FT_Library library, jstreams::InputStream *in, FT_Long index, FT_Face *face)
+static FT_Error openFtFace(FT_Library library, QByteArray &in, FT_Long index, FT_Face *face)
 {
     FT_Open_Args args;
     FT_Stream    stream;
@@ -139,29 +93,24 @@ static FT_Error openFtFace(FT_Library library, jstreams::InputStream *in, FT_Lon
     if(NULL==(stream=(FT_Stream)calloc(1, sizeof(*stream))))
         return FT_Err_Out_Of_Memory;
 
-    stream->descriptor.pointer = in;
+    stream->descriptor.pointer = &in;
     stream->pathname.pointer   = NULL;
-    stream->size               = in->getSize();
+    stream->size               = in.size();
     stream->pos                = 0;
 
     stream->read  = ftStreamRead;
-    stream->close = ftStreamClose;
     args.flags  = FT_OPEN_STREAM;
     args.stream = stream;
 
     error = FT_Open_Face(library, &args, index, face);
 
     if (FT_Err_Ok!=error)
-    {
-        stream->close(stream);
         free(stream);
-    }
     else
         (*face)->face_flags &= ~FT_FACE_FLAG_EXTERNAL_STREAM;
 
     return error;
 }
-
 
 CFontEngine::EType CFontEngine::getType(const char *fileName, jstreams::InputStream *in)
 {
@@ -181,8 +130,11 @@ CFontEngine::EType CFontEngine::getType(const char *fileName, jstreams::InputStr
     // PCF  : 01 fcp                                 4
     static const int constHeaderLen=69;
     const char * h;
+    int          n=in->read(h, constHeaderLen, constHeaderLen);
 
-    if(in->read(h, constHeaderLen, constHeaderLen)>=constHeaderLen)
+    in->reset(0);
+
+    if(n==constHeaderLen)
     {
         const unsigned char *hdr=(const unsigned char *)h;
 
@@ -242,12 +194,11 @@ CFontEngine::EType CFontEngine::getType(const char *fileName, jstreams::InputStr
     return TYPE_UNKNOWN;
 }
 
-bool CFontEngine::openFont(EType type, jstreams::InputStream *in, const char *fileName, int face)
+bool CFontEngine::openFont(EType type, QByteArray &in, const char *fileName, int face)
 {
     bool ok=false;
 
     closeFont();
-    in->reset(0);
 
     itsWeight=FC_WEIGHT_MEDIUM;
     itsWidth=FC_WIDTH_NORMAL;
@@ -264,10 +215,10 @@ bool CFontEngine::openFont(EType type, jstreams::InputStream *in, const char *fi
         case TYPE_PCF:
             ok=openFontPcf(in);
             break;
-#endif
         case TYPE_BDF:
             ok=openFontBdf(in);
             break;
+#endif
         case TYPE_AFM:
             ok=openFontAfm(in);
     }
@@ -559,15 +510,16 @@ static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
 }
 #endif
 
-inline float decodeFixed(long v)
+inline double decodeFixed(long v)
 {
     return (v>>16)+(((double)(v&0xFFFF))/0xFFFF);
 }
 
-bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, int face)
+bool CFontEngine::openFontFt(QByteArray &in, const char *fileName, int face)
 {
     bool status=openFtFace(itsFt.library, in, face, &itsFt.face) ? false : true;
 
+printf("Open font %s\n", fileName);
     if(status)
         itsFt.open=true;
 
@@ -776,7 +728,12 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
                 }
 
                 if(head)
-                    itsVersion.setNum(decodeFixed(head->Font_Revision));
+                {
+                    double version=decodeFixed(head->Font_Revision);
+
+                    if(version>0)
+                        itsVersion.setNum(version);
+                }
 
                 if(!gotItalic && NULL!=post)
                 {
@@ -810,16 +767,15 @@ bool CFontEngine::openFontFt(jstreams::InputStream *in, const char *fileName, in
     return status;
 }
 
-bool CFontEngine::openFontAfm(jstreams::InputStream *in)
+bool CFontEngine::openFontAfm(QByteArray &in)
 {
-    bool      inMetrics=false;
-    const int constMaxLineLen=1024;
-    char      buffer[constMaxLineLen];
-    QString   full;
+    bool        inMetrics=false;
+    QString     full;
+    QTextStream ds(&in, QIODevice::ReadOnly);
 
-    while(NULL!=readString(in, buffer, constMaxLineLen))
+    while(!ds.atEnd())
     {
-        QString line(QString::fromLatin1(buffer));
+        QString line(ds.readLine());
         line=line.simplified();
 
         if(inMetrics)
@@ -858,6 +814,7 @@ bool CFontEngine::openFontAfm(jstreams::InputStream *in)
     return !full.isEmpty() && !itsFamily.isEmpty();
 }
 
+#ifndef HAVE_FcFreeTypeQueryFace
 static int charToItalic(char c)
 {
     switch(c)
@@ -959,64 +916,23 @@ void CFontEngine::parseXlfdBmp(const QString &xlfd)
     }
 }
 
-static const char * getTokenBdf(const char *str, const char *key, bool noquotes=false)
+bool CFontEngine::openFontBdf(QByteArray &in)
 {
-    const char   *s=NULL;
-    unsigned int keyLen=strlen(key),
-                 sLen=strlen(str);
+    bool        foundXlfd=false;
+    QString     full;
+    QTextStream ds(&in, QIODevice::ReadOnly);
 
-    if(keyLen+1<sLen && NULL!=(s=strstr(str, key)) && (s==str || (!isalnum(s[-1]) && '_'!=s[-1])) &&
-      (!noquotes || (noquotes && s[keyLen+1]=='-')))
+    while(!ds.atEnd())
     {
-        const int   constMaxTokenSize=256;
-        static char tokenBuffer[constMaxTokenSize];
+        QString line(ds.readLine());
 
-        char        *end=NULL,
-                    *token;
-
-        strncpy(tokenBuffer, s, constMaxTokenSize);
-        tokenBuffer[constMaxTokenSize-1]='\0';
-        token=tokenBuffer;
-
-        if(noquotes)
+        if(!foundXlfd)
         {
-            token+=strlen(key)+1;
-            if(NULL!=(end=strchr(token, '\n')))
+            int pos=line.indexOf("FONT ", Qt::CaseSensitive);
+
+            if(pos>-1)
             {
-                *end='\0';
-                return token;
-            }
-        }
-        else
-            if(NULL!=(token=strchr(token, '\"')))
-            {
-                token++;
-                if(NULL!=(end=strchr(token, '\"')))
-                {
-                    *end='\0';
-                    return token;
-                }
-            }
-    }
-
-    return NULL;
-}
-
-bool CFontEngine::openFontBdf(jstreams::InputStream *in)
-{
-    bool      foundXlfd=false;
-    const int constMaxLineLen=1024;
-    char      buffer[constMaxLineLen];
-
-    while(NULL!=readString(in, buffer, constMaxLineLen) && !foundXlfd)
-    {
-        const char *str;
-
-        if(!foundXlfd && NULL!=(str=getTokenBdf(buffer, "FONT", true)))   // "FONT" does not have quotes!
-        {
-            if(strlen(str))
-            {
-                parseXlfdBmp(str);
+                parseXlfdBmp(line.mid(pos+5));
                 foundXlfd=true;
             }
             break;
@@ -1026,31 +942,24 @@ bool CFontEngine::openFontBdf(jstreams::InputStream *in)
     return foundXlfd;
 }
 
-#ifndef HAVE_FcFreeTypeQueryFace
-static unsigned int readLsb32(jstreams::InputStream *in)
+static unsigned int readLsb32(QBuffer &in)
 {
-    const char *n;
+    unsigned char num[4];
 
-    if(4==in->read(n, 4, 4))
-    {
-        const unsigned char *num=(const unsigned char *)n;
+    if(4==in.read((char *)num, 4))
         return (num[0])+(num[1]<<8)+(num[2]<<16)+(num[3]<<24);
-    }
 
     return 0;
 }
 
-static unsigned int read32(jstreams::InputStream *in, bool msb)
+static unsigned int read32(QBuffer &in, bool msb)
 {
     if(msb)
     {
-        const char *n;
+        unsigned char num[4];
 
-        if(4==in->read(n, 4, 4))
-        {
-            const unsigned char *num=(const unsigned char *)n;
+        if(4==in.read((char *)num, 4))
             return (num[0]<<24)+(num[1]<<16)+(num[2]<<8)+(num[3]);
-        }
         else
             return 0;
     }
@@ -1060,80 +969,82 @@ static unsigned int read32(jstreams::InputStream *in, bool msb)
 
 static const unsigned int constBitmapMaxProps=1024;
 
-bool CFontEngine::openFontPcf(jstreams::InputStream *in)
+bool CFontEngine::openFontPcf(QByteArray &in)
 {
     bool               foundXlfd=false;
     const unsigned int contPcfVersion=(('p'<<24)|('c'<<16)|('f'<<8)|1);
+    QBuffer            buf;
 
-    if(contPcfVersion==readLsb32(in))
+    buf.setBuffer(&in);
+    buf.open(QIODevice::ReadOnly);
+
+    if(contPcfVersion==readLsb32(buf))
     {
         const unsigned int constPropertiesType=1;
 
-        unsigned int numTables=readLsb32(in),
+        unsigned int numTables=readLsb32(buf),
                      table,
                      type,
                      format,
                      size,
                      offset;
 
-        for(table=0; table<numTables && jstreams::Ok==in->getStatus() && !foundXlfd; ++table)
+        for(table=0; table<numTables && !buf.atEnd() && !foundXlfd; ++table)
         {
-            type=readLsb32(in);
-            format=readLsb32(in);
-            size=readLsb32(in);
-            offset=readLsb32(in);
+            type=readLsb32(buf);
+            format=readLsb32(buf);
+            size=readLsb32(buf);
+            offset=readLsb32(buf);
             if(constPropertiesType==type)
             {
-                in->reset(0);
-                in->skip(offset);
-                if(jstreams::Ok==in->getStatus())
+                if(buf.seek(offset))
                 {
                     const unsigned int constFormatMask=0xffffff00;
 
-                    format=readLsb32(in);
+                    format=readLsb32(buf);
                     if(0==(format&constFormatMask))
                     {
                         const unsigned int constByteMask=0x4;
 
                         bool         msb=format&constByteMask;
-                        unsigned int numProps=read32(in, msb);
+                        unsigned int numProps=read32(buf, msb);
 
                         if(numProps>0 && numProps<constBitmapMaxProps)
                         {
                             unsigned int strSize,
-                                            skip;
+                                         skip;
 
                             struct TProp
                             {
                                 unsigned int name,
-                                                value;
+                                             value;
                                 bool         isString;
                             } *props=new struct TProp [numProps];
 
                             if(props)
                             {
-                                const char     *tmp;
+                                char           tmp;
                                 unsigned short prop;
 
                                 for(prop=0; prop<numProps; ++prop)
                                 {
-                                    props[prop].name=read32(in, msb);
-                                    in->read(tmp, 1, 1);
+                                    props[prop].name=read32(buf, msb);
+                                    buf.read(&tmp, 1);
                                     props[prop].isString=tmp ? true : false;
-                                    props[prop].value=read32(in, msb);
+                                    props[prop].value=read32(buf, msb);
                                 }
 
                                 skip=4-((numProps*9)%4);
                                 if(skip!=4)
-                                    in->skip(skip);
+                                    buf.seek(buf.pos()+skip);
 
-                                strSize=read32(in, msb);
+                                strSize=read32(buf, msb);
 
                                 if(strSize>0)
                                 {
-                                    const char *str;
+                                    QByteArray str=buf.read(strSize);
 
-                                    if(in->read(str, strSize, strSize)==(int)strSize)
+                                    if(str.size()==(int)strSize)
                                     {
                                         // Finally we have the data............
                                         const int constMaxStrLen=1024;
@@ -1141,12 +1052,12 @@ bool CFontEngine::openFontPcf(jstreams::InputStream *in)
                                         char tmp[constMaxStrLen];
 
                                         for(prop=0; prop<numProps && !foundXlfd; ++prop)
-                                            if(kasciistricmp(&str[props[prop].name], "FONT")==0)
+                                            if(kasciistricmp(&(str.data()[props[prop].name]), "FONT")==0)
                                             {
-                                                if(props[prop].isString && strlen(&str[props[prop].value]))
+                                                if(props[prop].isString && strlen(&(str.data()[props[prop].value])))
                                                 {
                                                     foundXlfd=true;
-                                                    strncpy(tmp, &str[props[prop].value], constMaxStrLen);
+                                                    strncpy(tmp, &(str.data()[props[prop].value]), constMaxStrLen);
                                                     tmp[constMaxStrLen-1]='\0';
                                                     parseXlfdBmp(tmp);
                                                 }
@@ -1163,7 +1074,6 @@ bool CFontEngine::openFontPcf(jstreams::InputStream *in)
             }
         }
     }
-
 
     return foundXlfd;
 }

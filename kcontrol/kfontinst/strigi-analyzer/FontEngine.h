@@ -36,9 +36,10 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <qstring.h>
-#include <qstringlist.h>
+#include <QString>
 #include <strigi/inputstream.h>
+
+class QByteArray;
 
 namespace KFI
 {
@@ -81,7 +82,7 @@ class CFontEngine
     // General functions - these should be used instead of specfic ones below...
     //
     static EType    getType(const char *fileName, jstreams::InputStream *in);
-    bool            openFont(EType type, jstreams::InputStream *in, const char *fileName, int face=0);
+    bool            openFont(EType type, QByteArray &in, const char *fileName, int face=0);
     void            closeFont();
 
     //
@@ -97,12 +98,12 @@ class CFontEngine
 
     private:
 
-    bool            openFontFt(jstreams::InputStream *in, const char *fileName, int face);
-    bool            openFontAfm(jstreams::InputStream *in);
-    void            parseXlfdBmp(const QString &lfd);
-    bool            openFontBdf(jstreams::InputStream *in);
+    bool            openFontFt(QByteArray &in, const char *fileName, int face);
+    bool            openFontAfm(QByteArray &in);
 #ifndef HAVE_FcFreeTypeQueryFace
-    bool            openFontPcf(jstreams::InputStream *in);
+    void            parseXlfdBmp(const QString &lfd);
+    bool            openFontBdf(QByteArray &in);
+    bool            openFontPcf(QByteArray &in);
 #endif
 
     private:
