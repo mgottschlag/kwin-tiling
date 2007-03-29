@@ -36,7 +36,7 @@ static int highest_bit( uint v )
 static int lowest_bit( uint v )
 {
     int i;
-    ulong lb;
+    unsigned long lb;
     lb = 1;
     for (i=0; ((v & lb) == 0) && i<32;  i++, lb<<=1);
     return i==32 ? -1 : i;
