@@ -1928,7 +1928,15 @@ void CFontListView::view()
 
             // If we can, speed up font viewer by passing the font details...
             if((*it)->isEnabled())
-                args << QString((*it)->url().prettyUrl().toUtf8()+KFI_DETAILS_QUERY+(*it)->name()+','+QString().setNum((*it)->styleInfo()));
+            {
+                KUrl url((*it)->url());
+
+                url.addQueryItem(KFI_NAME_QUERY, (*it)->name());
+                url.addQueryItem(KFI_STYLE_QUERY, QString().setNum((*it)->styleInfo()));
+                url.addQueryItem(KFI_MIME_QUERY, (*it)->mimetype());
+
+                args << url.url();
+            }
             else
             {
                 // For a disalbed font, we need to find the fist scalable font entry in its file list...
@@ -1939,22 +1947,28 @@ void CFontListView::view()
                 for(; fit!=fend; ++fit)
                     if(isScalable(*fit))
                     {
-                        QString url(KFI_KIO_FONTS_PROTOCOL":/");
+                        QString urlStr(KFI_KIO_FONTS_PROTOCOL":/");
 
                         if(!Misc::root())
                             if((*it)->isSystem())
-                                url+=KFI_KIO_FONTS_SYS"/";
+                                urlStr+=KFI_KIO_FONTS_SYS"/";
                             else
-                                url+=KFI_KIO_FONTS_USER"/";
-                        url+=(*it)->name()+KFI_FILE_DETAILS_QUERY+(*fit)+','+QString().setNum((*it)->index());
+                                urlStr+=KFI_KIO_FONTS_USER"/";
+                        urlStr+=(*it)->name();
 
-                        args << url;
+                        KUrl url(urlStr);
+
+                        url.addQueryItem(KFI_FILE_QUERY, *fit);
+                        url.addQueryItem(KFI_KIO_FACE, QString().setNum((*it)->index()));
+                        url.addQueryItem(KFI_MIME_QUERY, (*it)->mimetype());
+
+                        args << url.url();
                         done=true;
                         break;
                     }
 
                 if(!done)
-                    args << (*it)->url().prettyUrl().toUtf8();
+                    args << (*it)->url().url();
             }
 
             QProcess::startDetached(KFI_APP, args);

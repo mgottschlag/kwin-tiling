@@ -31,9 +31,9 @@
 #include "Misc.h"
 #include "FontEngine.h"
 #include <QByteArray>
+#include <QFile>
+#include <kio/netaccess.h>
 #include <list>
-
-static const int constMaxFaces(8); // Max number of faces supported in a TTC...
 
 using namespace Strigi;
 using namespace std;
@@ -73,7 +73,6 @@ class FontThroughAnalyzerFactory : public StreamThroughAnalyzerFactory
     void registerFields(FieldRegister &reg);
 };
 
-
 const cnstr FontThroughAnalyzerFactory::constFamilyName("Family");
 const cnstr FontThroughAnalyzerFactory::constFoundry("Foundry");
 const cnstr FontThroughAnalyzerFactory::constWeight("Weight");
@@ -84,13 +83,13 @@ const cnstr FontThroughAnalyzerFactory::constVersion("Version");
 
 void FontThroughAnalyzerFactory::registerFields(FieldRegister &reg)
 {
-    constFamilyNameField=reg.registerField(constFamilyName, FieldRegister::stringType, constMaxFaces, 0);
-    constFoundryField=reg.registerField(constFoundry, FieldRegister::stringType, constMaxFaces, 0);
-    constWeightField=reg.registerField(constWeight, FieldRegister::stringType, constMaxFaces, 0);
-    constWidthField=reg.registerField(constWidth, FieldRegister::stringType, constMaxFaces, 0);
-    constSpacingField=reg.registerField(constSpacing, FieldRegister::stringType, constMaxFaces, 0);
-    constSlantField=reg.registerField(constSlant, FieldRegister::stringType, constMaxFaces, 0);
-    constVersionField=reg.registerField(constVersion, FieldRegister::stringType, constMaxFaces, 0);
+    constFamilyNameField=reg.registerField(constFamilyName, FieldRegister::stringType, 1, 0);
+    constWeightField=reg.registerField(constWeight, FieldRegister::stringType, 1, 0);
+    constSlantField=reg.registerField(constSlant, FieldRegister::stringType, 1, 0);
+    constWidthField=reg.registerField(constWidth, FieldRegister::stringType, 1, 0);
+    constSpacingField=reg.registerField(constSpacing, FieldRegister::stringType, 1, 0);
+    constFoundryField=reg.registerField(constFoundry, FieldRegister::stringType, 1, 0);
+    constVersionField=reg.registerField(constVersion, FieldRegister::stringType, 1, 0);
 }
 
 class Factory : public AnalyzerFactoryFactory
@@ -109,6 +108,36 @@ class Factory : public AnalyzerFactoryFactory
 // macro that initializes the Factory when the plugin is loaded
 STRIGI_ANALYZER_FACTORY(Factory)
 
+static QString getFamily(const QString &font)
+{
+    int     commaPos=font.lastIndexOf(',');
+    return -1==commaPos ? font : font.left(commaPos);
+}
+
+static QString toMime(CFontEngine::EType type)
+{
+    switch(type)
+    {
+        case CFontEngine::TYPE_OTF:
+            return "application/x-font-otf";
+        case CFontEngine::TYPE_TTF:
+        case CFontEngine::TYPE_TTC:
+            return "application/x-font-ttf";
+        case CFontEngine::TYPE_TYPE1:
+            return "application/x-font-type1";
+        case CFontEngine::TYPE_PCF:
+            return "application/x-font-pcf";
+        case CFontEngine::TYPE_BDF:
+            return "application/x-font-bdf";
+        case CFontEngine::TYPE_AFM:
+            return "application/x-font-afm";
+        default:
+            break;
+    }
+
+    return QString();
+}
+
 FontThroughAnalyzer::FontThroughAnalyzer(const FontThroughAnalyzerFactory *f)
                    : factory(f)
 {
@@ -116,90 +145,155 @@ FontThroughAnalyzer::FontThroughAnalyzer(const FontThroughAnalyzerFactory *f)
 
 jstreams::InputStream * FontThroughAnalyzer::connectInputStream(jstreams::InputStream *in)
 {
-    //
-    // For some reason, when called vie KFileMetaInfo in->getSize() is 0. So, set a maximum size that
-    // we want to read in...
-    static const int constMaxFileSize=30*1024*1024;
+    KUrl    url(analysisResult->path().c_str());
+    bool    fontsProt = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
+            fileProt  = "file"                 == url.protocol() || url.protocol().isEmpty();
+    int     face(0);
 
-    int                size=in->getSize()>0 ? in->getSize() : constMaxFileSize;
-    KUrl               url(analysisResult->path().c_str());
-    QString            fName;
-    bool               fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
-                       fileProt   = "file"                 == url.protocol() || url.protocol().isEmpty(),
-                       status     = false;
-    CFontEngine::EType type(CFontEngine::getType(analysisResult->path().c_str(), in));
-
-    if( (fontsProt || fileProt) && CFontEngine::TYPE_UNKNOWN!=type )
+    if( fontsProt )
     {
-        CFontEngine fe;
-        int         faceFrom(0),
-                    faceTo(constMaxFaces);
+        // OK, its a fonts:/ url - are we passed any data in the query?
+        QString      path=url.queryItem(KFI_FILE_QUERY),
+                     name=url.queryItem(KFI_NAME_QUERY),
+                     mime=url.queryItem(KFI_MIME_QUERY);
+        unsigned int styleInfo=Misc::getIntQueryVal(url, KFI_STYLE_QUERY, KFI_NO_STYLE_INFO);
 
-        const char *d;
-        int         n=in->read(d, size, -1);
+        face=Misc::getIntQueryVal(url, KFI_KIO_FACE, -1);
 
-        in->reset(0);
-        if(-2==n)
-            return in;
-
-        QByteArray data=QByteArray::fromRawData(d, n);
-
-        for(int face=faceFrom; face<faceTo; ++face)
+        if(name.isEmpty() && path.isEmpty())
         {
-            if(fe.openFont(type, data, analysisResult->path().c_str(), face))
+            // OK, no useable info in the query - stat fonts:/ to get the required info...
+            KIO::UDSEntry udsEntry;
+
+            if(KIO::NetAccess::stat(url, udsEntry, NULL))
             {
-                add(fe.getFamilyName(), fe.getFoundry(),
-                    KFI::FC::weightStr(fe.getWeight(), false), KFI::FC::widthStr(fe.getWidth(), false),
-                    KFI::FC::spacingStr(fe.getSpacing()), KFI::FC::slantStr(fe.getItalic(), false), fe.getVersion());
-                status=true;
-                if(CFontEngine::TYPE_TTC!=type || face>=fe.getNumFaces())
-                    break;
+                if(udsEntry.numberValue(KIO::UDS_HIDDEN, 0))
+                {
+                    path=udsEntry.stringValue(UDS_EXTRA_FILE_NAME);
+                    face=Misc::getIntQueryVal(url, KFI_KIO_FACE, 0);
+                }
+                else
+                {
+                    name=udsEntry.stringValue(KIO::UDS_NAME);
+                    styleInfo=FC::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
+                }
+                mime=udsEntry.stringValue(KIO::UDS_MIME_TYPE);
             }
-            else
-                break;
         }
 
-        if(status)
-            switch(type)
+        if(path.isNull())
+        {
+            // Enabled font...
+            if(!name.isNull())
             {
-                case CFontEngine::TYPE_OTF:
-                    analysisResult->setMimeType("application/x-font-otf");
-                    break;
-                case CFontEngine::TYPE_TTF:
-                case CFontEngine::TYPE_TTC:
-                    analysisResult->setMimeType("application/x-font-ttf");
-                    break;
-                case CFontEngine::TYPE_TYPE1:
-                    analysisResult->setMimeType("application/x-font-type1");
-                    break;
-                case CFontEngine::TYPE_PCF:
-                    analysisResult->setMimeType("application/x-font-pcf");
-                    break;
-                case CFontEngine::TYPE_BDF:
-                    analysisResult->setMimeType("application/x-font-bdf");
-                    break;
-                case CFontEngine::TYPE_AFM:
-                    analysisResult->setMimeType("application/x-font-afm");
-                default:
-                    break;
+                int weight, width, slant;
+
+                FC::decomposeStyleVal(styleInfo, weight, width, slant);
+
+                FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, FC_FONTVERSION, (void *)0);
+                FcPattern   *pat = FcPatternBuild(NULL,
+                                                    FC_FAMILY, FcTypeString,
+                                                    (const FcChar8 *)(getFamily(name).toUtf8().data()),
+                                                    FC_WEIGHT, FcTypeInteger, weight,
+                                                    FC_SLANT, FcTypeInteger, slant,
+#ifndef KFI_FC_NO_WIDTHS
+                                                    FC_WIDTH, FcTypeInteger, width,
+#endif
+                                                    NULL);
+
+                FcFontSet   *set = FcFontList(0, pat, os);
+
+                FcPatternDestroy(pat);
+                FcObjectSetDestroy(os);
+
+                if(set && set->nfont)
+                {
+                    int     spacing,
+                            version;
+                    QString foundry(FC::getFcString(set->fonts[0], FC_FOUNDRY, 0)),
+                            versionStr;
+
+                    FcPatternGetInteger(set->fonts[0], FC_SPACING, 0, &spacing);
+                    FcPatternGetInteger(set->fonts[0], FC_FONTVERSION, 0, &version);
+
+                    if(version)
+                        versionStr.setNum(CFontEngine::decodeFixed(version));
+
+                    result(name, foundry,
+                           KFI::FC::weightStr(weight, false), KFI::FC::widthStr(width, false),
+                           KFI::FC::spacingStr(spacing), KFI::FC::slantStr(slant, false),
+                           versionStr, mime);
+                }
             }
+        }
+        else // Its a disabled font, so read file...
+        {
+            CFontEngine fe;
+            QByteArray  data;
+
+            if(fe.openFont(CFontEngine::TYPE_UNKNOWN, data,
+                           QFile::encodeName(path).constData(), face) &&
+               !fe.getFamilyName().isEmpty())
+                result(fe.getFamilyName(), fe.getFoundry(),
+                       KFI::FC::weightStr(fe.getWeight(), false),
+                       KFI::FC::widthStr(fe.getWidth(), false),
+                       KFI::FC::spacingStr(fe.getSpacing()),
+                       KFI::FC::slantStr(fe.getItalic(), false), fe.getVersion(), mime);
+        }
+    }
+
+    if(fileProt)
+    {
+        CFontEngine::EType type(CFontEngine::getType(analysisResult->path().c_str(), in));
+
+        if(CFontEngine::TYPE_UNKNOWN!=type)
+        {
+            // For some reason, when called vie KFileMetaInfo in->getSize() is 0. So, set a maximum
+            // size that we want to read in...
+            static const int constMaxFileSize=30*1024*1024;
+
+            int        size=in->getSize()>0 ? in->getSize() : constMaxFileSize;
+            const char *d;
+            int        n=in->read(d, size, -1);
+
+            in->reset(0);
+            if(-2==n)
+                return in;
+
+            CFontEngine fe;
+            QByteArray  data=QByteArray::fromRawData(d, n);
+
+            face=Misc::getIntQueryVal(url, KFI_KIO_FACE, 0);
+
+            if(fe.openFont(type, data, analysisResult->path().c_str(), face) &&
+               !fe.getFamilyName().isEmpty())
+                result(fe.getFamilyName(), fe.getFoundry(),
+                       KFI::FC::weightStr(fe.getWeight(), false),
+                       KFI::FC::widthStr(fe.getWidth(), false),
+                       KFI::FC::spacingStr(fe.getSpacing()),
+                       KFI::FC::slantStr(fe.getItalic(), false),
+                       fe.getVersion(), toMime(type));
+        }
     }
 
     return in;
 }
 
-void FontThroughAnalyzer::add(const QString &family, const QString &foundry, const QString &weight, const QString &width,
-                              const QString &spacing, const QString &slant,  const QString &version)
+void FontThroughAnalyzer::result(const QString &family, const QString &foundry, const QString &weight,
+                                 const QString &width, const QString &spacing, const QString &slant,
+                                 const QString &version, const QString &mime)
 {
+    analysisResult->setField(factory->constFamilyNameField, (const char *)family.toUtf8());
+    analysisResult->setField(factory->constWeightField, (const char *)weight.toUtf8());
+    analysisResult->setField(factory->constSlantField, (const char *)slant.toUtf8());
+    analysisResult->setField(factory->constWidthField, (const char *)width.toUtf8());
+    analysisResult->setField(factory->constSpacingField, (const char *)spacing.toUtf8());
     analysisResult->setField(factory->constFoundryField, foundry.isEmpty()
                                     ? (const char *)i18n(KFI_UNKNOWN_FOUNDRY).toUtf8()
                                     : (const char *)foundry.toUtf8());
-    analysisResult->setField(factory->constFamilyNameField, (const char *)family.toUtf8());
-    analysisResult->setField(factory->constWeightField, (const char *)weight.toUtf8());
-    analysisResult->setField(factory->constWidthField, (const char *)width.toUtf8());
-    analysisResult->setField(factory->constSpacingField, (const char *)spacing.toUtf8());
-    analysisResult->setField(factory->constSlantField, (const char *)slant.toUtf8());
     if(!version.isEmpty())
         analysisResult->setField(factory->constVersionField, (const char *)version.toUtf8());
+
+    analysisResult->setMimeType((const char *)mime.toUtf8());
 }
 

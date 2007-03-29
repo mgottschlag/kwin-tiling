@@ -49,10 +49,10 @@
 #define KFI_KIO_PASS                 "pass"
 #define KFI_KIO_FACE                 "face"
 
-#define KFI_DETAILS_QUERY            "?details="
-#define KFI_DETAILS_QUERY_LEN        9
-#define KFI_FILE_DETAILS_QUERY       "?fdetails="
-#define KFI_FILE_DETAILS_QUERY_LEN   10
+#define KFI_FILE_QUERY               "file"
+#define KFI_NAME_QUERY               "name"
+#define KFI_STYLE_QUERY              "style"
+#define KFI_MIME_QUERY               "mime"
 
 #define KFI_SYS_USER                 "root"
 

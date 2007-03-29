@@ -42,9 +42,9 @@ class FontThroughAnalyzer : public Strigi::StreamThroughAnalyzer
 
     private:
 
-    void         add(const QString &family,  const QString &foundry, const QString &weight,
-                     const QString &width,   const QString &spacing, const QString &slant,
-                     const QString &version);
+    void         result(const QString &family,  const QString &foundry, const QString &weight,
+                        const QString &width,   const QString &spacing, const QString &slant,
+                        const QString &version, const QString &mime);
 
     private:
 

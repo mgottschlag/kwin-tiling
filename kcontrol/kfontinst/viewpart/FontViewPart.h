@@ -25,9 +25,10 @@
 
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
+#include <kconfig.h>
+#include <kurl.h>
 #include <QFrame>
 #include <QMap>
-#include <kconfig.h>
 #include "KfiConstants.h"
 #include "FontPreview.h"
 
@@ -36,7 +37,6 @@ class QLabel;
 class QProcess;
 class QAction;
 class KIntNumInput;
-class KUrl;
 class KConfig;
 
 namespace KFI
@@ -78,7 +78,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     private:
 
     void stat(const QString &path=QString());
-    void getMetaInfo();
+    void getMetaInfo(int face);
 
     private:
 
@@ -96,6 +96,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     BrowserExtension   *itsExtension;
     QProcess           *itsProc;
     QString            itsStatName;
+    KUrl               itsMetaUrl;
 };
 
 class BrowserExtension : public KParts::BrowserExtension

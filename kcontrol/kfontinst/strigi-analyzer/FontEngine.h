@@ -85,6 +85,7 @@ class CFontEngine
     bool            openFont(EType type, QByteArray &in, const char *fileName, int face=0);
     void            closeFont();
 
+    static double   decodeFixed(long v) { return (v>>16)+(((double)(v&0xFFFF))/0xFFFF); }
     //
     // These are only for non-bitmap fonts...
     const QString & getFamilyName()   { return itsFamily; }

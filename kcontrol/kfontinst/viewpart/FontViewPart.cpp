@@ -192,29 +192,21 @@ void CFontViewPart::timeout()
     QString       name;
     unsigned long styleInfo=KFI_NO_STYLE_INFO;
 
+    itsMetaUrl=url();
     if(isFonts)
     {
         FcInitReinitialize();
 
         //
         // This is a fonts:/Url. Check to see whether we were passed any details in the query...
-        QString query(url().query());
-        int     commaPos(-1);
+        QString path=url().queryItem(KFI_FILE_QUERY),
+                name=url().queryItem(KFI_NAME_QUERY),
+                mime=url().queryItem(KFI_MIME_QUERY);
 
-        if(!query.isEmpty() && 0==query.indexOf(KFI_DETAILS_QUERY) && (commaPos=query.lastIndexOf(','))>KFI_DETAILS_QUERY_LEN+1)
-        {
-            // Its a enabled font, so we can get the name and style info from the query...
-            name=query.mid(KFI_DETAILS_QUERY_LEN, commaPos-KFI_DETAILS_QUERY_LEN);
-            styleInfo=FC::styleValFromStr(query.mid(commaPos+1));
-        }
-        else if(!query.isEmpty() && 0==query.indexOf(KFI_FILE_DETAILS_QUERY) && (commaPos=query.lastIndexOf(','))>KFI_FILE_DETAILS_QUERY_LEN+1)
-        {
-            // Its a enabled font, so we can get the file name and index from the query...
-            fileUrl=KUrl::fromPath(query.mid(KFI_FILE_DETAILS_QUERY_LEN, commaPos-KFI_FILE_DETAILS_QUERY_LEN));
-            fileIndex=query.mid(commaPos+1).toInt();
-            name=url().fileName();
-        }
-        else
+        styleInfo=Misc::getIntQueryVal(url(), KFI_STYLE_QUERY, KFI_NO_STYLE_INFO);
+        fileIndex=Misc::getIntQueryVal(url(), KFI_KIO_FACE, -1);
+
+        if(name.isEmpty() && path.isEmpty())
         {
             // OK, no useable info in the query - stat fonts:/ to get the required info...
             KIO::UDSEntry udsEntry;
@@ -224,13 +216,42 @@ void CFontViewPart::timeout()
                 name=udsEntry.stringValue(KIO::UDS_NAME);
                 styleInfo=FC::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
                 isDisabled=udsEntry.numberValue(KIO::UDS_HIDDEN, 0) ? true : false;
+                mime=udsEntry.stringValue(KIO::UDS_MIME_TYPE);
             }
         }
+        else if(!path.isEmpty())
+        {
+            // Its a disabled font, so we can get the file name and index from the query...
+            fileUrl=KUrl::fromPath(path);
+            name=url().fileName();
+        }
+
         if(!name.isEmpty())
         {
             displayUrl.setFileName(name.replace("%20", " "));
             displayUrl.setQuery(QString());
         }
+
+        // What query to pass to meta info?
+        if(path.isEmpty())
+        {
+            itsMetaUrl.removeQueryItem(KFI_NAME_QUERY);
+            itsMetaUrl.addQueryItem(KFI_NAME_QUERY, name);
+            itsMetaUrl.removeQueryItem(KFI_STYLE_QUERY);
+            if(KFI_NO_STYLE_INFO!=styleInfo)
+                itsMetaUrl.addQueryItem(KFI_STYLE_QUERY, QString().setNum(styleInfo));
+        }
+        else
+        {
+            itsMetaUrl.removeQueryItem(KFI_FILE_QUERY);
+            itsMetaUrl.addQueryItem(KFI_FILE_QUERY, path);
+            itsMetaUrl.removeQueryItem(KFI_KIO_FACE);
+            if(fileIndex>0)
+                itsMetaUrl.addQueryItem(KFI_KIO_FACE, QString().setNum(fileIndex));
+        }
+
+        itsMetaUrl.removeQueryItem(KFI_MIME_QUERY);
+        itsMetaUrl.addQueryItem(KFI_MIME_QUERY, mime);
     }
 
     itsInstallButton->setEnabled(false);
@@ -254,7 +275,7 @@ void CFontViewPart::timeout()
     }
 
     itsFaceWidget->setVisible(showFs);
-    getMetaInfo();
+    getMetaInfo(0);
 }
 
 void CFontViewPart::previewStatus(bool st)
@@ -363,8 +384,8 @@ void CFontViewPart::displayType(const QList<CFcEngine::TRange> &range)
 void CFontViewPart::showFace(int f)
 {
     itsPreview->showFace(f);
-    itsMetaLabel->setText(itsMetaInfo[itsFaceSelector->isVisible() && itsFaceSelector->value()>0
-                                          ? itsFaceSelector->value()-1 : 0]);
+    getMetaInfo(itsFaceSelector->isVisible() && itsFaceSelector->value()>0
+                                          ? itsFaceSelector->value()-1 : 0);
 }
 
 void CFontViewPart::statResult(KJob *job)
@@ -382,45 +403,43 @@ void CFontViewPart::statResult(KJob *job)
     itsInstallButton->setEnabled(!exists);
 }
 
-void CFontViewPart::getMetaInfo()
+void CFontViewPart::getMetaInfo(int face)
 {
-    KFileMetaInfo meta(url());
-
-    if(meta.isValid())
+    if(itsMetaInfo[face].isEmpty())
     {
-        QStringList           keys(meta.preferredKeys());
-        QStringList::Iterator it(keys.begin()),
-                              end(keys.end());
-
-        //
-        // Decode meta info. In the case of TTC fonts, kfile_font will separate each face's
-        // details with "; ". However, version and foundry are listed for only the 1st face...
-        for(; it!=end; ++it)
+        // Pass as much inofmration as possible to analyzer...
+        if(KFI_KIO_FONTS_PROTOCOL!=itsMetaUrl.protocol())
         {
-            KFileMetaInfoItem          mi(meta.item(*it));
-            QString                    tk(mi.name());
-            QStringList                list(mi.value().toString().split("; "));
-            QStringList::ConstIterator sit(list.begin()),
-                                       send(list.end());
-
-            for(int i=0; sit!=send; ++sit, ++i)
-                itsMetaInfo[i]+="<tr><td><b>"+tk+"</b></td></tr><tr><td>"+
-                                (*sit)+"</td></tr>";
-
-            if(itsMetaInfo.count()>1 && 1==list.count())
-                for(int i=1; i<itsMetaInfo.count(); ++i)
-                    itsMetaInfo[i]+="<tr><td><b>"+tk+"</b></td></tr><tr><td>"+
-                                    list.first()+"</td></tr>";
+            itsMetaUrl.removeQueryItem(KFI_KIO_FACE);
+            if(face>0)
+                itsMetaUrl.addQueryItem(KFI_KIO_FACE, QString().setNum(face));
         }
 
-        for(int i=0; i<itsMetaInfo.count(); ++i)
-            itsMetaInfo[i]="<table>"+itsMetaInfo[i]+"</table>";
-        itsMetaLabel->setText(itsMetaInfo[itsFaceSelector->isVisible() && itsFaceSelector->value()>0
-                                            ? itsFaceSelector->value()-1 : 0]);
-    }
+        KFileMetaInfo meta(itsMetaUrl);
 
-    if(0==itsMetaInfo.size())
-        itsMetaLabel->setText(i18n("<p>No information</p>"));
+        if(meta.isValid() && meta.keys().count())
+        {
+            QStringList           keys(meta.keys());
+            QStringList::Iterator it(keys.begin()),
+                                  end(keys.end());
+
+            itsMetaInfo[face]="<table>";
+            for(; it!=end; ++it)
+            {
+                KFileMetaInfoItem mi(meta.item(*it));
+
+                itsMetaInfo[face]+="<tr><td><b>"+mi.name()+"</b></td></tr><tr><td>"+
+                                   mi.value().toString()+"</td></tr>";
+            }
+
+            itsMetaInfo[face]+="</table>";
+            itsMetaLabel->setText(itsMetaInfo[face]);
+        }
+        else
+            itsMetaLabel->setText(i18n("<p>No information</p>"));
+    }
+    else
+        itsMetaLabel->setText(itsMetaInfo[face]);
 }
 
 void CFontViewPart::stat(const QString &path)

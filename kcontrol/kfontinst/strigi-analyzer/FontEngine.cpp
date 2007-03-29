@@ -206,22 +206,25 @@ bool CFontEngine::openFont(EType type, QByteArray &in, const char *fileName, int
     itsItalic=FC_SLANT_ROMAN;
     itsFamily=itsFoundry=itsVersion=QString();
 
-    switch(type)
-    {
-        default:
-            ok=openFontFt(in, fileName, face);
-            break;
+    if(in.isEmpty())
+        ok=openFontFt(in, fileName, face);
+    else
+        switch(type)
+        {
+            default:
+                ok=openFontFt(in, fileName, face);
+                break;
 #ifndef HAVE_FcFreeTypeQueryFace
-        case TYPE_PCF:
-            ok=openFontPcf(in);
-            break;
-        case TYPE_BDF:
-            ok=openFontBdf(in);
-            break;
+            case TYPE_PCF:
+                ok=openFontPcf(in);
+                break;
+            case TYPE_BDF:
+                ok=openFontBdf(in);
+                break;
 #endif
-        case TYPE_AFM:
-            ok=openFontAfm(in);
-    }
+            case TYPE_AFM:
+                ok=openFontAfm(in);
+        }
 
     return ok;
 }
@@ -510,16 +513,12 @@ static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
 }
 #endif
 
-inline double decodeFixed(long v)
-{
-    return (v>>16)+(((double)(v&0xFFFF))/0xFFFF);
-}
-
 bool CFontEngine::openFontFt(QByteArray &in, const char *fileName, int face)
 {
-    bool status=openFtFace(itsFt.library, in, face, &itsFt.face) ? false : true;
+    bool status=in.isEmpty()
+            ? FT_New_Face(itsFt.library, fileName, face, &itsFt.face) ? false : true
+            : openFtFace(itsFt.library, in, face, &itsFt.face) ? false : true;
 
-printf("Open font %s\n", fileName);
     if(status)
         itsFt.open=true;
 
@@ -918,38 +917,30 @@ void CFontEngine::parseXlfdBmp(const QString &xlfd)
 
 bool CFontEngine::openFontBdf(QByteArray &in)
 {
-    bool        foundXlfd=false;
-    QString     full;
     QTextStream ds(&in, QIODevice::ReadOnly);
 
+    ds.readLine(); // Skip 1st line.
     while(!ds.atEnd())
     {
         QString line(ds.readLine());
 
-        if(!foundXlfd)
+        if(0==line.indexOf("FONT ", Qt::CaseInsensitive))
         {
-            int pos=line.indexOf("FONT ", Qt::CaseSensitive);
-
-            if(pos>-1)
-            {
-                parseXlfdBmp(line.mid(pos+5));
-                foundXlfd=true;
-            }
-            break;
+            parseXlfdBmp(line.mid(5));
+            return true;
         }
     }
 
-    return foundXlfd;
+    return false;
 }
 
 static unsigned int readLsb32(QBuffer &in)
 {
     unsigned char num[4];
 
-    if(4==in.read((char *)num, 4))
-        return (num[0])+(num[1]<<8)+(num[2]<<16)+(num[3]<<24);
-
-    return 0;
+    return 4==in.read((char *)num, 4)
+            ? (num[0])+(num[1]<<8)+(num[2]<<16)+(num[3]<<24)
+            : 0;
 }
 
 static unsigned int read32(QBuffer &in, bool msb)
@@ -958,10 +949,9 @@ static unsigned int read32(QBuffer &in, bool msb)
     {
         unsigned char num[4];
 
-        if(4==in.read((char *)num, 4))
-            return (num[0]<<24)+(num[1]<<16)+(num[2]<<8)+(num[3]);
-        else
-            return 0;
+        return 4==in.read((char *)num, 4)
+                ? (num[0]<<24)+(num[1]<<16)+(num[2]<<8)+(num[3])
+                : 0;
     }
 
     return readLsb32(in);
