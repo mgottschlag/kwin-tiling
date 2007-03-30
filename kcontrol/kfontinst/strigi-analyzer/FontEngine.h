@@ -75,17 +75,19 @@ class CFontEngine
 
     public:
 
+    static EType     getType(const char *fileName, jstreams::InputStream *in);
+    static double    decodeFixed(long v) { return (v>>16)+(((double)(v&0xFFFF))/0xFFFF); }
+    static QString & fixFoundry(QString &foundry);
+
     CFontEngine()                     { }
     ~CFontEngine()                    { closeFont(); }
 
     //
     // General functions - these should be used instead of specfic ones below...
     //
-    static EType    getType(const char *fileName, jstreams::InputStream *in);
     bool            openFont(EType type, QByteArray &in, const char *fileName, int face=0);
     void            closeFont();
 
-    static double   decodeFixed(long v) { return (v>>16)+(((double)(v&0xFFFF))/0xFFFF); }
     //
     // These are only for non-bitmap fonts...
     const QString & getFamilyName()   { return itsFamily; }

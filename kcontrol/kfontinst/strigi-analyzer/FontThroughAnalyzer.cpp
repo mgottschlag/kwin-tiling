@@ -189,11 +189,12 @@ jstreams::InputStream * FontThroughAnalyzer::connectInputStream(jstreams::InputS
                 int weight, width, slant;
 
                 FC::decomposeStyleVal(styleInfo, weight, width, slant);
+                name=getFamily(name);
 
                 FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, FC_FONTVERSION, (void *)0);
                 FcPattern   *pat = FcPatternBuild(NULL,
                                                     FC_FAMILY, FcTypeString,
-                                                    (const FcChar8 *)(getFamily(name).toUtf8().data()),
+                                                    (const FcChar8 *)(name.toUtf8().data()),
                                                     FC_WEIGHT, FcTypeInteger, weight,
                                                     FC_SLANT, FcTypeInteger, slant,
 #ifndef KFI_FC_NO_WIDTHS
@@ -219,7 +220,7 @@ jstreams::InputStream * FontThroughAnalyzer::connectInputStream(jstreams::InputS
                     if(version)
                         versionStr.setNum(CFontEngine::decodeFixed(version));
 
-                    result(name, foundry,
+                    result(name, CFontEngine::fixFoundry(foundry),
                            KFI::FC::weightStr(weight, false), KFI::FC::widthStr(width, false),
                            KFI::FC::spacingStr(spacing), KFI::FC::slantStr(slant, false),
                            versionStr, mime);

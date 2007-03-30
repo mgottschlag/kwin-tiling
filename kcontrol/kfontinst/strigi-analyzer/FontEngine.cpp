@@ -194,6 +194,38 @@ CFontEngine::EType CFontEngine::getType(const char *fileName, jstreams::InputStr
     return TYPE_UNKNOWN;
 }
 
+QString & CFontEngine::fixFoundry(QString &foundry)
+{
+    // Try to make foundry similar to that of AFMs...
+    if(foundry==QString::fromLatin1("ibm"))
+        foundry=QString::fromLatin1("IBM");
+    else if(foundry==QString::fromLatin1("urw"))
+        foundry=QString::fromLatin1("URW");
+    else if(foundry==QString::fromLatin1("itc"))
+        foundry=QString::fromLatin1("ITC");
+    else if(foundry==QString::fromLatin1("nec"))
+        foundry=QString::fromLatin1("NEC");
+    else if(foundry==QString::fromLatin1("b&h"))
+        foundry=QString::fromLatin1("B&H");
+    else
+    {
+        QChar *ch(foundry.data());
+        int   len(foundry.length());
+        bool  isSpace(true);
+
+        while(len--)
+        {
+            if (isSpace)
+                *ch=ch->toUpper();
+
+            isSpace=ch->isSpace();
+            ++ch;
+        }
+    }
+
+    return foundry;
+}
+
 bool CFontEngine::openFont(EType type, QByteArray &in, const char *fileName, int face)
 {
     bool ok=false;
@@ -558,33 +590,7 @@ bool CFontEngine::openFontFt(QByteArray &in, const char *fileName, int face)
             }
 
             FcPatternDestroy(pat);
-
-            // Try to make foundry similar to that of AFMs...
-            if(itsFoundry==QString::fromLatin1("ibm"))
-                itsFoundry=QString::fromLatin1("IBM");
-            else if(itsFoundry==QString::fromLatin1("urw"))
-                itsFoundry=QString::fromLatin1("URW");
-            else if(itsFoundry==QString::fromLatin1("itc"))
-                itsFoundry=QString::fromLatin1("ITC");
-            else if(itsFoundry==QString::fromLatin1("nec"))
-                itsFoundry=QString::fromLatin1("NEC");
-            else if(itsFoundry==QString::fromLatin1("b&h"))
-                itsFoundry=QString::fromLatin1("B&H");
-            else
-            {
-                QChar *ch(itsFoundry.data());
-                int   len(itsFoundry.length());
-                bool  isSpace(true);
-
-                while(len--)
-                {
-                    if (isSpace)
-                        *ch=ch->toUpper();
-
-                    isSpace=ch->isSpace();
-                    ++ch;
-                }
-            }
+            fixFoundry(itsFoundry);
         }
         else
             status=false;
