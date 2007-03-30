@@ -143,7 +143,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
     connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotSwitchUser()));
 
-    if (!DM().isSwitchable())
+    if (!DM().isSwitchable() || !KAuthorized::authorizeKAction("switch_user"))
         mNewSessButton->hide();
 
     installEventFilter(this);
