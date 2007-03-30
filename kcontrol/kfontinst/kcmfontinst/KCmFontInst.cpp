@@ -217,6 +217,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     toolbar->addAction(settingsMenu);
     toolbar->addAction(itsToolsMenu);
     toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    toolbar->setMovable(false);
     if(Misc::root())
         itsModeControl=NULL;
     else
