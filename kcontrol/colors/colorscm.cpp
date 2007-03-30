@@ -412,32 +412,32 @@ void KColorScheme::slotSave( )
     if (i >= 0)
       sCurrentScheme = sCurrentScheme.mid(i+1);
 
-    config->setGroup("Color Scheme" );
-    config->writeEntry("background", cs->back );
-    config->writeEntry("selectBackground", cs->select );
-    config->writeEntry("foreground", cs->txt );
-    config->writeEntry("activeForeground", cs->aTxt );
-    config->writeEntry("inactiveBackground", cs->iaTitle );
-    config->writeEntry("inactiveBlend", cs->iaBlend );
-    config->writeEntry("activeBackground", cs->aTitle );
-    config->writeEntry("activeBlend", cs->aBlend );
-    config->writeEntry("inactiveForeground", cs->iaTxt );
-    config->writeEntry("windowForeground", cs->windowTxt );
-    config->writeEntry("windowBackground", cs->window );
-    config->writeEntry("selectForeground", cs->selectTxt );
-    config->writeEntry("contrast", cs->contrast );
-    config->writeEntry("buttonForeground", cs->buttonTxt );
-    config->writeEntry("buttonBackground", cs->button );
-    config->writeEntry("activeTitleBtnBg", cs->aTitleBtn);
-    config->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn);
-    config->writeEntry("frame", cs->aFrame);
-    config->writeEntry("inactiveFrame", cs->iaFrame);
-    config->writeEntry("handle", cs->aHandle);
-    config->writeEntry("inactiveHandle", cs->iaHandle);
-    config->writeEntry("linkColor", cs->link);
-    config->writeEntry("visitedLinkColor", cs->visitedLink);
-    config->writeEntry("alternateBackground", cs->alternateBackground);
-    config->writeEntry("shadeSortColumn", cs->shadeSortColumn);
+    KConfigGroup group = config->group("Color Scheme" );
+    group.writeEntry("background", cs->back );
+    group.writeEntry("selectBackground", cs->select );
+    group.writeEntry("foreground", cs->txt );
+    group.writeEntry("activeForeground", cs->aTxt );
+    group.writeEntry("inactiveBackground", cs->iaTitle );
+    group.writeEntry("inactiveBlend", cs->iaBlend );
+    group.writeEntry("activeBackground", cs->aTitle );
+    group.writeEntry("activeBlend", cs->aBlend );
+    group.writeEntry("inactiveForeground", cs->iaTxt );
+    group.writeEntry("windowForeground", cs->windowTxt );
+    group.writeEntry("windowBackground", cs->window );
+    group.writeEntry("selectForeground", cs->selectTxt );
+    group.writeEntry("contrast", cs->contrast );
+    group.writeEntry("buttonForeground", cs->buttonTxt );
+    group.writeEntry("buttonBackground", cs->button );
+    group.writeEntry("activeTitleBtnBg", cs->aTitleBtn);
+    group.writeEntry("inactiveTitleBtnBg", cs->iTitleBtn);
+    group.writeEntry("frame", cs->aFrame);
+    group.writeEntry("inactiveFrame", cs->iaFrame);
+    group.writeEntry("handle", cs->aHandle);
+    group.writeEntry("inactiveHandle", cs->iaHandle);
+    group.writeEntry("linkColor", cs->link);
+    group.writeEntry("visitedLinkColor", cs->visitedLink);
+    group.writeEntry("alternateBackground", cs->alternateBackground);
+    group.writeEntry("shadeSortColumn", cs->shadeSortColumn);
 
     delete config;
 }
