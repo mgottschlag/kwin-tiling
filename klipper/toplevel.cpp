@@ -38,7 +38,6 @@
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kkeydialog.h>
 #include <kicon.h>
 #include <klocale.h>
 #include <kmessagebox.h>

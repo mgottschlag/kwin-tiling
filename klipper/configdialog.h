@@ -27,7 +27,6 @@
 
 #include <kpagedialog.h>
 #include <keditlistbox.h>
-#include <kkeydialog.h>
 #include <k3listview.h>
 #include <knuminput.h>
 #include <kvbox.h>
@@ -35,7 +34,7 @@
 #include "urlgrabber.h"
 
 class KGlobalAccel;
-class KKeyChooser;
+class KShortcutsEditor;
 class K3ListView;
 class QPushButton;
 class QDialog;
@@ -127,7 +126,7 @@ public:
     ~KeysWidget();
 
 private:
-    KKeyChooser *keyChooser;
+    KShortcutsEditor *shortcutsEditor;
 };*/
 
 
@@ -228,7 +227,7 @@ protected:
 private:
     GeneralWidget *generalWidget;
     ActionWidget *actionWidget;
-    KKeyChooser *keysWidget;
+    KShortcutsEditor *shortcutsWidget;
 
 };
 

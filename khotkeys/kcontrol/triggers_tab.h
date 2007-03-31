@@ -17,6 +17,7 @@
 
 #include <triggers.h>
 #include <triggers_tab_ui.h>
+#include <kkeysequencewidget.h>
 #include <window_trigger_widget.h>
 
 class KKeyButton;
@@ -90,9 +91,9 @@ class Shortcut_trigger_widget
     public Q_SLOTS:
         void clear_data();
     private Q_SLOTS:
-        void capturedShortcut( const KShortcut& );
+        void capturedShortcut( const QKeySequence& );
     private:
-        KKeyButton* bt;
+        KKeySequenceWidget* ksw;
     };
 
 typedef Shortcut_trigger_widget Shortcut_trigger_tab;

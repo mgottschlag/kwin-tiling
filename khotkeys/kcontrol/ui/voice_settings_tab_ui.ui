@@ -43,12 +43,9 @@
                         <string>Shortcut:</string>
                     </property>
                 </widget>
-                <widget class="KKeyButton">
+                <widget class="KKeySequenceWidget">
                     <property name="name">
-                        <cstring>keyButton</cstring>
-                    </property>
-                    <property name="text">
-                        <string>None</string>
+                        <cstring>keySequenceWidget</cstring>
                     </property>
                 </widget>
                 <spacer>
@@ -102,6 +99,6 @@ make sure &lt;i&gt;Full duplex&lt;/i&gt; is checked in your &lt;i&gt;Sound Syste
 </customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kkeybutton.h</includehint>
+    <includehint>kkeysequencewidget.h</includehint>
 </includehints>
 </UI>

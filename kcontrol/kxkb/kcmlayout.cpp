@@ -14,7 +14,7 @@
 #include <QWidget>
 #include <QtGui>
 
-#include <kkeydialog.h>
+#include <kshortcutsdialog.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <klocale.h>

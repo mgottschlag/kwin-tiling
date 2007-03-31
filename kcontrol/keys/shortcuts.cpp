@@ -84,7 +84,7 @@ void ShortcutsModule::save()
 
 	//m_pkcGeneral->commitChanges();
 	//m_pkcSequence->commitChanges();
-	m_pkcApplication->save();
+	m_pseApplication->save();
 
 	KGlobalAccel::self()->writeSettings();
 
@@ -183,19 +183,19 @@ void ShortcutsModule::initGUI()
 
 	m_listGeneral = new KActionCollection( this );
 	//m_listGeneral->addActions(m_actionsGeneral);
-	m_pkcGeneral = new KKeyChooser( m_listGeneral, this, false );
-	m_pTab->addTab( m_pkcGeneral, i18n("&Global Shortcuts") );
-	connect( m_pkcGeneral, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
+	m_pseGeneral = new KShortcutsEditor( m_listGeneral, this, false );
+	m_pTab->addTab( m_pseGeneral, i18n("&Global Shortcuts") );
+	//connect( m_pseGeneral, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
 	m_listSequence = new KActionCollection( this );
-	m_pkcSequence = new KKeyChooser( m_listSequence, this, false );
-	m_pTab->addTab( m_pkcSequence, i18n("Shortcut Se&quences") );
-	connect( m_pkcSequence, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
+	m_pseSequence = new KShortcutsEditor( m_listSequence, this, false );
+	m_pTab->addTab( m_pseSequence, i18n("Shortcut Se&quences") );
+	//connect( m_pseSequence, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
 	m_listApplication = new KActionCollection( this );
-	m_pkcApplication = new KKeyChooser( m_listApplication, this, false );
-	m_pTab->addTab( m_pkcApplication, i18n("App&lication Shortcuts") );
-	connect( m_pkcApplication, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
+	m_pseApplication = new KShortcutsEditor( m_listApplication, this, false );
+	m_pTab->addTab( m_pseApplication, i18n("App&lication Shortcuts") );
+	//connect( m_pseApplication, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
 	kDebug(125) << "G-----------" << endl;
 	readSchemeNames();

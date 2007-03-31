@@ -35,6 +35,7 @@
 #include <kmenu.h>
 #include <kwinmodule.h>
 #include <kregexpeditorinterface.h>
+#include <kshortcutsdialog.h>
 #include <kparts/componentfactory.h>
 #include <kvbox.h>
 #include <khbox.h>
@@ -63,7 +64,7 @@ ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
     addPage( w, i18n("Ac&tions") );
 
     w = new KVBox( this );
-    keysWidget = new KKeyChooser( w, KKeyChooser::GlobalAction );
+    shortcutsWidget = new KShortcutsEditor( w, KShortcutsEditor::GlobalAction );
     addPage( w, i18n("&Shortcuts") );
 }
 

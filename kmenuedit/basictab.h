@@ -27,7 +27,7 @@
 
 #include <klineedit.h>
 
-class KKeyButton;
+class KKeySequenceWidget;
 class KLineEdit;
 class KIconButton;
 class QCheckBox;
@@ -63,7 +63,7 @@ protected Q_SLOTS:
     void systraycb_clicked();
     void termcb_clicked();
     void uidcb_clicked();
-    void slotCapturedShortcut(const KShortcut&);
+    void slotCapturedKeySequence(const QKeySequence&);
     void slotExecSelected();
 
 protected:
@@ -72,7 +72,7 @@ protected:
 protected:
     KLineEdit    *_nameEdit, *_commentEdit;
     KLineEdit	 *_descriptionEdit;
-    KKeyButton   *_keyEdit;
+    KKeySequenceWidget *_keyEdit;
     KUrlRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;
     QCheckBox    *_terminalCB, *_uidCB, *_launchCB, *_systrayCB;

@@ -22,7 +22,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QLayout>
-#include <kkeydialog.h>
+//#include <kkeydialog.h>
 #include <QtDBus/QtDBus>
 
 #include <settings.h>

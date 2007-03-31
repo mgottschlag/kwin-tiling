@@ -27,7 +27,7 @@
 #include <QRadioButton>
 #include <QTabWidget>
 #include <kcombobox.h>
-#include <kkeydialog.h>
+#include <kshortcutsdialog.h>
 
 class ShortcutsModule : public QWidget
 {
@@ -69,7 +69,7 @@ class ShortcutsModule : public QWidget
 	KActionCollection* m_actionsGeneral, * m_actionsSequence;//, m_actionsApplication;
 	KActionCollection* m_listGeneral, * m_listSequence, * m_listApplication;
 
-	KKeyChooser* m_pkcGeneral, * m_pkcSequence, * m_pkcApplication;
+	KShortcutsEditor* m_pseGeneral, * m_pseSequence, * m_pseApplication;
 };
 
 #endif // __SHORTCUTS_MODULE_H

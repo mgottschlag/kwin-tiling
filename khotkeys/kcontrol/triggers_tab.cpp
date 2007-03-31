@@ -28,8 +28,7 @@
 #include <kapplication.h>
 #include <kshortcut.h>
 #include <kconfig.h>
-#include <kkeybutton.h>
-#include <kkeydialog.h>
+#include <kkeysequencewidget.h>
 #include <kvbox.h>
 
 #include "kcmkhotkeys.h"
@@ -237,12 +236,12 @@ Shortcut_trigger_widget::Shortcut_trigger_widget( QWidget* parent_P, const char*
     QLabel* lbl = new QLabel( i18n( "Select keyboard shortcut:" ), this );
     lay->addWidget( lbl );
     lay->addSpacing( 10 );
-    bt = new KKeyButton( this );
-    lay->addWidget( bt, 0 , Qt::AlignHCenter );
+    ksw = new KKeySequenceWidget( this );
+    lay->addWidget( ksw, 0 , Qt::AlignHCenter );
     lay->addStretch();
     clear_data();
-    connect( bt, SIGNAL( capturedShortcut( const KShortcut& )),
-        this, SLOT( capturedShortcut( const KShortcut& )));
+    connect( ksw, SIGNAL( capturedKeySequence( const QKeySequence& )),
+        this, SLOT( capturedShortcut( const QKeySequence& )));
     }
 
 void Shortcut_trigger_widget::clear_data()
@@ -250,7 +249,7 @@ void Shortcut_trigger_widget::clear_data()
     //bt->setShortcut( KShortcut() );
     }
 
-void Shortcut_trigger_widget::capturedShortcut( const KShortcut& s_P )
+void Shortcut_trigger_widget::capturedShortcut( const QKeySequence& s_P )
     {
     /*if( KKeyChooser::checkGlobalShortcutsConflict( s_P, true, topLevelWidget())
         || KKeyChooser::checkStandardShortcutsConflict( s_P, true, topLevelWidget()))
