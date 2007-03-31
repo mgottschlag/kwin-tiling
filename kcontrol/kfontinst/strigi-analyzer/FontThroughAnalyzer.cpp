@@ -60,7 +60,7 @@ class FontThroughAnalyzerFactory : public StreamThroughAnalyzerFactory
     static const cnstr      constVersion;
     const RegisteredField * constVersionField;
 
-    const char * getName() const
+    const char * name() const
     {
         return "FontThroughAnalyzer";
     }
@@ -96,7 +96,7 @@ class Factory : public AnalyzerFactoryFactory
 {
     public:
 
-    list<StreamThroughAnalyzerFactory *> getStreamThroughAnalyzerFactories() const
+    list<StreamThroughAnalyzerFactory *> streamThroughAnalyzerFactories() const
     {
         list<StreamThroughAnalyzerFactory *> af;
 
@@ -143,7 +143,7 @@ FontThroughAnalyzer::FontThroughAnalyzer(const FontThroughAnalyzerFactory *f)
 {
 }
 
-jstreams::InputStream * FontThroughAnalyzer::connectInputStream(jstreams::InputStream *in)
+InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
 {
     KUrl    url(analysisResult->path().c_str());
     bool    fontsProt = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
@@ -249,11 +249,11 @@ jstreams::InputStream * FontThroughAnalyzer::connectInputStream(jstreams::InputS
 
         if(CFontEngine::TYPE_UNKNOWN!=type)
         {
-            // For some reason, when called vie KFileMetaInfo in->getSize() is 0. So, set a maximum
+            // For some reason, when called vie KFileMetaInfo in->size() is 0. So, set a maximum
             // size that we want to read in...
             static const int constMaxFileSize=30*1024*1024;
 
-            int        size=in->getSize()>0 ? in->getSize() : constMaxFileSize;
+            int        size=in->size()>0 ? in->size() : constMaxFileSize;
             const char *d;
             int        n=in->read(d, size, -1);
 
@@ -284,16 +284,16 @@ void FontThroughAnalyzer::result(const QString &family, const QString &foundry, 
                                  const QString &width, const QString &spacing, const QString &slant,
                                  const QString &version, const QString &mime)
 {
-    analysisResult->setField(factory->constFamilyNameField, (const char *)family.toUtf8());
-    analysisResult->setField(factory->constWeightField, (const char *)weight.toUtf8());
-    analysisResult->setField(factory->constSlantField, (const char *)slant.toUtf8());
-    analysisResult->setField(factory->constWidthField, (const char *)width.toUtf8());
-    analysisResult->setField(factory->constSpacingField, (const char *)spacing.toUtf8());
-    analysisResult->setField(factory->constFoundryField, foundry.isEmpty()
+    analysisResult->addValue(factory->constFamilyNameField, (const char *)family.toUtf8());
+    analysisResult->addValue(factory->constWeightField, (const char *)weight.toUtf8());
+    analysisResult->addValue(factory->constSlantField, (const char *)slant.toUtf8());
+    analysisResult->addValue(factory->constWidthField, (const char *)width.toUtf8());
+    analysisResult->addValue(factory->constSpacingField, (const char *)spacing.toUtf8());
+    analysisResult->addValue(factory->constFoundryField, foundry.isEmpty()
                                     ? (const char *)i18n(KFI_UNKNOWN_FOUNDRY).toUtf8()
                                     : (const char *)foundry.toUtf8());
     if(!version.isEmpty())
-        analysisResult->setField(factory->constVersionField, (const char *)version.toUtf8());
+        analysisResult->addValue(factory->constVersionField, (const char *)version.toUtf8());
 
     analysisResult->setMimeType((const char *)mime.toUtf8());
 }

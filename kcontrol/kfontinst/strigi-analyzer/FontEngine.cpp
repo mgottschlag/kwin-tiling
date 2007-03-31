@@ -112,7 +112,7 @@ static FT_Error openFtFace(FT_Library library, QByteArray &in, FT_Long index, FT
     return error;
 }
 
-CFontEngine::EType CFontEngine::getType(const char *fileName, jstreams::InputStream *in)
+CFontEngine::EType CFontEngine::getType(const char *fileName, Strigi::InputStream *in)
 {
     // TTF  : 00 01 00 00 00                         5
     //      : FFIL                                   4

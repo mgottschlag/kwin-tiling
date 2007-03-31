@@ -37,7 +37,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <QString>
-#include <strigi/inputstream.h>
+#include <strigi/streambase.h>
 
 class QByteArray;
 
@@ -75,7 +75,7 @@ class CFontEngine
 
     public:
 
-    static EType     getType(const char *fileName, jstreams::InputStream *in);
+    static EType     getType(const char *fileName, Strigi::InputStream *in);
     static double    decodeFixed(long v) { return (v>>16)+(((double)(v&0xFFFF))/0xFFFF); }
     static QString & fixFoundry(QString &foundry);
 

@@ -34,10 +34,10 @@ class FontThroughAnalyzer : public Strigi::StreamThroughAnalyzer
     FontThroughAnalyzer(const FontThroughAnalyzerFactory *f);
 
     bool         checkHeader(const char *header, int32_t headersize) const;
-    char         analyze(Strigi::AnalysisResult &idx, jstreams::InputStream *in);
+    char         analyze(Strigi::AnalysisResult &idx, Strigi::InputStream *in);
 
     void                    setIndexable(Strigi::AnalysisResult* i) { analysisResult = i; }
-    jstreams::InputStream * connectInputStream(jstreams::InputStream *in);
+    Strigi::InputStream * connectInputStream(Strigi::InputStream *in);
     bool                    isReadyWithStream()                     { return true; }
 
     private:
