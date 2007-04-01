@@ -881,7 +881,7 @@ void Minicli::slotRealtime(bool enabled)
                 i18n("Running a realtime application can be very dangerous. "
                     "If the application misbehaves, the system might hang "
                     "unrecoverably.\nAre you sure you want to continue?"),
-                i18n("Warning - Run Command"), KGuiItem(i18n("&Run Realtime")),QString(),KMessageBox::Notify|KMessageBox::PlainCaption)
+                i18n("Warning - Run Command"), KGuiItem(i18n("&Run Realtime")),KStandardGuiItem::cancel(),QString(),KMessageBox::Notify|KMessageBox::PlainCaption)
         != KMessageBox::Continue )
     {
       m_iScheduler = StubProcess::SchedNormal;

@@ -109,6 +109,7 @@ void SessionRunner::newSession()
                 7, 8),
             i18n("Warning - New Session"),
             KGuiItem(i18n("&Start New Session"), "fork"),
+            KStandardGuiItem::cancel(),
             ":confirmNewSession",
             KMessageBox::PlainCaption | KMessageBox::Notify);
 
