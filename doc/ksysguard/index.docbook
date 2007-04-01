@@ -61,9 +61,7 @@ application, with the additional functionality of
 <title>Introduction</title>
 
 <para>&ksysguard; is the &kde; Task Manager and Performance Monitor. It features 
-
-a
-client/server architecture that allows monitoring of local as well as remote
+a client/server architecture that allows monitoring of local as well as remote
 hosts. The graphical front end uses so-called sensors to retrieve the
 information it displays. A sensor can return simple values or more complex
 information like tables. For each type of information, one or more displays are
@@ -72,7 +70,6 @@ independently from each other. So, &ksysguard; is not only a simple task manager
 but also a very powerful tool to control large server farms.</para>
 
 </chapter>
-
 
 <chapter id="usingtheksysguard">
 <title>Using &ksysguard;</title>
@@ -110,8 +107,7 @@ monitors a certain system value.</para>
 
 <para>To connect to a new host use <guimenuitem>Connect Hosts</guimenuitem>
 from the <guimenu>File</guimenu> menu. A dialog box will appear and allows you 
-to
-enter the name of the host you want to connect to. Below the name you can choose
+to enter the name of the host you want to connect to. Below the name you can choose
 the connection method. The default is <application>ssh</application>, the secure
 shell. Alternatively the <application>rsh</application>, the remote shell, or
 the daemon mode can be used. Click <guibutton>OK</guibutton> to
@@ -196,7 +192,7 @@ frames will be grayed and the displays won't update any longer.</para>
 <guimenuitem>New</guimenuitem> from the <guimenu>File</guimenu> menu to create a
 new work sheet. A dialog will appear where you can set the name, the
 dimension and the update interval of the work sheet. To remove a work sheet 
-again, select
+again, select 
 <guimenuitem>Close</guimenuitem> from the <guimenu>File</guimenu> menu. Any
 modifications will be saved to the work sheet file. If a work sheet has
 never been saved, you will be asked for a file name. Work sheets consist of 
@@ -207,8 +203,7 @@ organized as a grid.</para>
 fill a cell by dragging a sensor from the sensor browser and dropping it over
 the cell. If there is more than one type of display available for that type
 of sensor, a popup menu will appear. You can then select which display you 
-prefer
-to use. Certain types of displays can display more than one sensor. Add more
+prefer to use. Certain types of displays can display more than one sensor. Add more
 sensors to a display by dragging them over from the sensor browser and dropping
 them over the already existing display.</para>
 
@@ -378,9 +373,8 @@ list.</para>
 <title>The <guibutton>Kill</guibutton> Button </title>
 
 <para>If you have selected one or more processes you can press the kill button
-to kill them. A so called <errorcode>SIGKIL</errorcode> is sent to the processes 
-
-which causes them to
+to kill them. A so called <errorcode>SIGKILL</errorcode> is sent to the processes 
+which causes them to 
 terminate immediately. If these applications still have unsaved data this data
 will be lost. So use this button with care.</para>
 
