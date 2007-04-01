@@ -242,7 +242,7 @@ BasicTab::BasicTab( QWidget *parent )
     QLabel *l = new QLabel( i18n("Current shortcut &key:"), general_group_keybind);
     l->setBuddy( _keyEdit );
     grid_keybind->addWidget(l, 0, 0);
-    connect( _keyEdit, SIGNAL(capturedKeySequence(QKeySequence)),
+    connect( _keyEdit, SIGNAL(keySequenceChanged(const QKeySequence&)),
              this, SLOT(slotCapturedKeySequence(const QKeySequence&)));
     grid_keybind->addWidget(_keyEdit, 0, 1);
     //grid_keybind->addWidget(_keyButton, 0, 2 );
