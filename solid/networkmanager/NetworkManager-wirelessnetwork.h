@@ -20,7 +20,7 @@
 #ifndef NETWORKMANAGER_WIRELESSNETWORK_H
 #define NETWORKMANAGER_WIRELESSNETWORK_H
 
-#include <kdelibs_export.h>
+#include <kdemacros.h>
 
 #include <QStringList>
 #include <qdbusextratypes.h>

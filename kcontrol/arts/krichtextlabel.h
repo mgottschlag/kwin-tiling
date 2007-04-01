@@ -21,8 +21,6 @@
 
 #include <QLabel>
 
-#include <kdelibs_export.h>
-
 /**
  * @short A replacement for QLabel that supports richtext and proper layout management
  *
@@ -32,7 +30,7 @@
 /*
  * QLabel
  */
-class KDEUI_EXPORT KRichTextLabel : public QLabel {
+class KRichTextLabel : public QLabel {
   Q_OBJECT
 
 public:

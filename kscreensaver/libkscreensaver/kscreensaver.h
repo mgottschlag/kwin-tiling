@@ -24,7 +24,7 @@
 
 #include <QWidget>
 
-#include <kdelibs_export.h>
+#include <kdemacros.h>
 #include <kaboutdata.h> // needed by all users of this header, so no point in a forward declaration
 
 class KScreenSaverPrivate;
