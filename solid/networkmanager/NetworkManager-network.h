@@ -49,12 +49,12 @@ public:
     NMNetwork( const QString & networkPath );
     virtual ~NMNetwork();
     QString uni() const;
-    QList<KNetwork::KIpAddress> ipV4Addresses() const;
-    QList<KNetwork::KIpAddress> ipV6Addresses() const;
+    QList<QHostAddress> ipV4Addresses() const;
+    QList<QHostAddress> ipV6Addresses() const;
     QString subnetMask() const;
     QString broadcastAddress() const;
     QString route() const;
-    QList<KNetwork::KIpAddress> dnsServers() const;
+    QList<QHostAddress> dnsServers() const;
     bool isActive() const;
     virtual void setActivated( bool activated );
 

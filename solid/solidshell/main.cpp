@@ -188,14 +188,14 @@ std::ostream &operator<<( std::ostream &out, const Solid::Network &network )
 {
     out << "  UNI =                " << QVariant( network.uni() ) << endl;
     out << "  IPV4 Addresses:" << endl;
-    foreach ( KNetwork::KIpAddress addr, network.ipV4Addresses() )
+    foreach ( QHostAddress addr, network.ipV4Addresses() )
     {
         out << "    " << addr.toString() << endl;
     }
     if ( network.ipV4Addresses().isEmpty() )
         out << "    none" << endl;
     out << "  IPV6 Addresses:" << endl;
-    foreach ( KNetwork::KIpAddress addr, network.ipV6Addresses() )
+    foreach ( QHostAddress addr, network.ipV6Addresses() )
     {
         out << "    " << addr.toString() << endl;
     }
@@ -206,7 +206,7 @@ std::ostream &operator<<( std::ostream &out, const Solid::Network &network )
     out << "  Route:               " << QVariant( network.route() ) <<  endl;
     out << "  DNS Servers:" << endl;
     int i = 1;
-    foreach ( KNetwork::KIpAddress addr, network.dnsServers() )
+    foreach ( QHostAddress addr, network.dnsServers() )
     {
         out << "  " << i++ << ": " << addr.toString() << endl;
     }
