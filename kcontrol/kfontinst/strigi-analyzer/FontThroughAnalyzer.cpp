@@ -45,19 +45,12 @@ class FontThroughAnalyzerFactory : public StreamThroughAnalyzerFactory
 
     public:
 
-    static const cnstr      constFamilyName;
     const RegisteredField * constFamilyNameField;
-    static const cnstr      constFoundry;
     const RegisteredField * constFoundryField;
-    static const cnstr      constWeight;
     const RegisteredField * constWeightField;
-    static const cnstr      constWidth;
     const RegisteredField * constWidthField;
-    static const cnstr      constSpacing;
     const RegisteredField * constSpacingField;
-    static const cnstr      constSlant;
     const RegisteredField * constSlantField;
-    static const cnstr      constVersion;
     const RegisteredField * constVersionField;
 
     const char * name() const
@@ -73,23 +66,15 @@ class FontThroughAnalyzerFactory : public StreamThroughAnalyzerFactory
     void registerFields(FieldRegister &reg);
 };
 
-const cnstr FontThroughAnalyzerFactory::constFamilyName("Family");
-const cnstr FontThroughAnalyzerFactory::constFoundry("Foundry");
-const cnstr FontThroughAnalyzerFactory::constWeight("Weight");
-const cnstr FontThroughAnalyzerFactory::constWidth("Width");
-const cnstr FontThroughAnalyzerFactory::constSpacing("Spacing");
-const cnstr FontThroughAnalyzerFactory::constSlant("Slant");
-const cnstr FontThroughAnalyzerFactory::constVersion("Version");
-
 void FontThroughAnalyzerFactory::registerFields(FieldRegister &reg)
 {
-    constFamilyNameField=reg.registerField(constFamilyName, FieldRegister::stringType, 1, 0);
-    constWeightField=reg.registerField(constWeight, FieldRegister::stringType, 1, 0);
-    constSlantField=reg.registerField(constSlant, FieldRegister::stringType, 1, 0);
-    constWidthField=reg.registerField(constWidth, FieldRegister::stringType, 1, 0);
-    constSpacingField=reg.registerField(constSpacing, FieldRegister::stringType, 1, 0);
-    constFoundryField=reg.registerField(constFoundry, FieldRegister::stringType, 1, 0);
-    constVersionField=reg.registerField(constVersion, FieldRegister::stringType, 1, 0);
+    constFamilyNameField=reg.registerField("Family", FieldRegister::stringType, 1, 0);
+    constWeightField=reg.registerField("Weight", FieldRegister::stringType, 1, 0);
+    constSlantField=reg.registerField("Slant", FieldRegister::stringType, 1, 0);
+    constWidthField=reg.registerField("Width", FieldRegister::stringType, 1, 0);
+    constSpacingField=reg.registerField("Spacing", FieldRegister::stringType, 1, 0);
+    constFoundryField=reg.registerField("Foundry", FieldRegister::stringType, 1, 0);
+    constVersionField=reg.registerField("Version", FieldRegister::stringType, 1, 0);
 }
 
 class Factory : public AnalyzerFactoryFactory
