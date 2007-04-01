@@ -20,8 +20,6 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include <kdelibs_export.h>
-
 #include <solid/ifaces/button.h>
 #include "capability.h"
 
