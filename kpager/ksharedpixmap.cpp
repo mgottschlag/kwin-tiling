@@ -37,16 +37,7 @@
 
 #include <netwm.h>
 
-// Clean up the mess
-
-#undef Bool
-#undef Above
-#undef Below
-#undef KeyPress
-#undef KeyRelease
-#undef FocusOut
-
-extern GC kde_xget_temp_gc( int scrn, bool monochrome );		// get temporary GC
+#include <fixx11h.h>
 
 /**
  * KSharedPixmap
@@ -181,10 +172,12 @@ bool KSharedPixmap::x11Event(XEvent *event)
     if (d->rect.isEmpty())
     {
 	d->pixmap_data = QPixmap(width, height);
-	XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), kde_xget_temp_gc(inf.screen(), false),
+        GC gc = XCreateGC(QX11Info::display(), pixmap, 0, NULL );
+	XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), gc,
 		0, 0, width, height, 0, 0);
 
         XFree(pixmap_id);
+        XFreeGC(QX11Info::display(), gc);
 	XDeleteProperty(QX11Info::display(), winId(), ev->property);
 	d->selection = None;
 	emit done(true);
@@ -219,16 +212,18 @@ bool KSharedPixmap::x11Event(XEvent *event)
 
     d->pixmap_data = QPixmap( tw+origin.x(), th+origin.y() );
 
-    XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), kde_xget_temp_gc(inf.screen(), false),
+    GC gc = XCreateGC(QX11Info::display(), pixmap, 0, NULL );
+    XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), gc,
             xa, ya, t1w+origin.x(), t1h+origin.y(), origin.x(), origin.y() );
-    XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), kde_xget_temp_gc(inf.screen(), false),
+    XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), gc,
 	    0, ya, tw-t1w, t1h, t1w, 0);
-    XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), kde_xget_temp_gc(inf.screen(), false),
+    XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), gc,
 	    xa, 0, t1w, th-t1h, 0, t1h);
-    XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), kde_xget_temp_gc(inf.screen(), false),
+    XCopyArea(QX11Info::display(), pixmap, d->pixmap_data.handle(), gc,
 	    0, 0, tw-t1w, th-t1h, t1w, t1h);
 
     XFree(pixmap_id);
+    XFreeGC(QX11Info::display(), gc);
 
     d->selection = None;
     XDeleteProperty(QX11Info::display(), winId(), ev->property);
