@@ -45,7 +45,9 @@ extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
 
   Klipper *toplevel = new Klipper();
 
-  KWin::setSystemTrayWindowFor( toplevel->winId(), 0 );
+#ifdef __GNUC__
+#warning Port to KSystemTrayIcon
+#endif
   toplevel->setGeometry(-100, -100, 42, 42 );
   toplevel->show();
 
