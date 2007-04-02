@@ -19,7 +19,6 @@
 
 #include <QtDBus>
 #include <kdebug.h>
-#include <ksocketaddress.h>
 
 #include "NetworkManager-wirelessnetwork.h"
 
