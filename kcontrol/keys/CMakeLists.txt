@@ -14,7 +14,7 @@ kde4_automoc(${kcm_keys_PART_SRCS})
 kde4_add_plugin(kcm_keys ${kcm_keys_PART_SRCS})
 
 
-target_link_libraries(kcm_keys  ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY} ${X11_X11_LIB})
+target_link_libraries(kcm_keys ${KDE4_KDE3SUPPORT_LIBS} ${X11_X11_LIB})
 
 install(TARGETS kcm_keys  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

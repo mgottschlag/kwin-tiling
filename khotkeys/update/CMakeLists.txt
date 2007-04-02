@@ -9,7 +9,7 @@ kde4_automoc(${khotkeys_update_SRCS})
 
 kde4_add_executable( khotkeys_update ${khotkeys_update_SRCS})
 
-target_link_libraries( khotkeys_update ${KDE4_KIO_LIBS} )
+target_link_libraries( khotkeys_update ${KDE4_KDE3SUPPORT_LIBS} )
 if(X11_XTest_FOUND)
   target_link_libraries( khotkeys_update ${X11_XTest_LIB} )
 endif(X11_XTest_FOUND)
