@@ -28,8 +28,8 @@ struct NMDBusNetworkProperties {
 	QString subnetMask;
 	QString broadcast;
 	QString route;
-	QString primaryDNS;
-	QString secondaryDNS;
+	QHostAddress primaryDNS;
+	QHostAddress secondaryDNS;
 };
 
 class NMNetworkPrivate;
