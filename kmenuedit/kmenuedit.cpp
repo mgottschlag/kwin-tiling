@@ -199,7 +199,6 @@ bool KMenuEdit::queryClose()
 
 void KMenuEdit::slotConfigureToolbars()
 {
-    KEditToolbar dlg( factory() );
-
+    KEditToolBar dlg( factory() );
     dlg.exec();
 }
