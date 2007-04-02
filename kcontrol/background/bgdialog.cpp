@@ -53,7 +53,7 @@
 #include <kwin.h>
 #include <kdesktopfile.h>
 #include <kimagefilepreview.h>
-#include <knewstuff/downloaddialog.h>
+#include <knewstuff2/engine.h>
 
 #include <stdlib.h>
 
@@ -1234,13 +1234,15 @@ void BGDialog::slotGetNewStuff()
    //FIXME set this to a server when we get one
    //should really be in a .rc file but could be either
    //kcmshellrc or kcontrolrc
+   // FIXME (KNS2): should *really* be in a .knsrc file, since writing to .rc doesn't help
    KSharedConfig::Ptr config = KGlobal::config();
-   KConfigGroup cg = config->group("KNewStuff");
+   KConfigGroup cg = config->group("KNewStuff2");
    cg.writeEntry( "ProvidersUrl", "http://download.kde.org/khotnewstuff/wallpaper-providers.xml" );
    cg.writeEntry( "StandardResource", "wallpaper" );
    config->sync();
 
-   KNS::DownloadDialog::open("wallpapers", i18n("Get New Wallpapers"));
+   // FIXME: title = i18n("Get New Wallpapers")
+   KNS::Engine::download();
    loadWallpaperFilesList();
 }
 
