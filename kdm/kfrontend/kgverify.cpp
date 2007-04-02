@@ -899,13 +899,14 @@ KGVerify::init( const QStringList &plugins )
                     LogError( "Cannot load GreeterPlugin %s (%s)\n", qPrintable( pg ), qPrintable( path ) );
 			continue;
 		}
-		if (!plugin.library->hasSymbol( "kgreeterplugin_info" )) {
+		plugin.info = (kgreeterplugin_info*)plugin.library->resolveSymbol( "kgreeterplugin_info" );
+                if (!plugin.info) {
 			LogError( "GreeterPlugin %s (%s) is no valid greet widget plugin\n",
 			          qPrintable( pg ), qPrintable( path ) );
 			plugin.library->unload();
 			continue;
 		}
-		plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
+
 		if (!plugin.info->init( QString(), getConf, 0 )) {
 			LogError( "GreeterPlugin %s (%s) refuses to serve\n",
 			          qPrintable( pg ), qPrintable( path ) );

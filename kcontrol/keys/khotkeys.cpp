@@ -41,20 +41,20 @@ bool KHotKeys::init()
     KLibrary* lib = KLibLoader::self()->library( "kcm_khotkeys.la" );
     if( lib == NULL ) return false;
 
-    khotkeys_init_2 = ( void (*)(void)) ( lib->symbol( "khotkeys_init" ));
-    khotkeys_cleanup_2 = ( void (*)(void)) ( lib->symbol( "khotkeys_cleanup" ));
+    khotkeys_init_2 = ( void (*)(void)) ( lib->resolveFunction( "khotkeys_init" ));
+    khotkeys_cleanup_2 = ( void (*)(void)) ( lib->resolveFunction( "khotkeys_cleanup" ));
     khotkeys_get_menu_entry_shortcut_2 =
         ( QString (*)( const QString& ))
-        ( lib->symbol( "khotkeys_get_menu_entry_shortcut" ));
+        ( lib->resolveFunction( "khotkeys_get_menu_entry_shortcut" ));
     khotkeys_change_menu_entry_shortcut_2 =
         ( QString (*)( const QString&, const QString& ))
-        ( lib->symbol( "khotkeys_change_menu_entry_shortcut" ));
+        ( lib->resolveFunction( "khotkeys_change_menu_entry_shortcut" ));
     khotkeys_menu_entry_moved_2 =
         ( bool (*)( const QString&, const QString& ))
-        ( lib->symbol( "khotkeys_menu_entry_moved" ));
+        ( lib->resolveFunction( "khotkeys_menu_entry_moved" ));
     khotkeys_menu_entry_deleted_2 =
         ( void (*)( const QString& ))
-        ( lib->symbol( "khotkeys_menu_entry_deleted" ));
+        ( lib->resolveFunction( "khotkeys_menu_entry_deleted" ));
     if( khotkeys_init_2
         && khotkeys_cleanup_2
         && khotkeys_get_menu_entry_shortcut_2

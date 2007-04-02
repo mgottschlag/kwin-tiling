@@ -198,7 +198,7 @@ KPanelApplet* AppletProxy::loadApplet(const AppletInfo& info)
     }
 
     KPanelApplet* (*init_ptr)(QWidget *, const QString&);
-    init_ptr = (KPanelApplet* (*)(QWidget *, const QString&))lib->symbol( "init" );
+    init_ptr = (KPanelApplet* (*)(QWidget *, const QString&))lib->resolveFunction( "init" );
 
     if (!init_ptr)
     {
@@ -346,7 +346,7 @@ bool AppletProxy::process(const DCOPCString &fun, const QByteArray &data,
 		    _applet->blockSignals(true);
 #ifdef __GNUC__
 #warning FixedPixmap looks weired - port me
-#endif		    
+#endif
 		    //_applet->setBackgroundMode(Qt::FixedPixmap);
 		    _applet->setPaletteBackgroundPixmap(_bg);
 		    repaintApplet(_applet);

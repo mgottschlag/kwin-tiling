@@ -64,7 +64,7 @@ KPanelExtension* loadExtension(const AppletInfo& info)
     }
 
     KPanelExtension* (*init_ptr)(QWidget *, const QString&);
-    init_ptr = (KPanelExtension* (*)(QWidget *, const QString&))lib->symbol( "init" );
+    init_ptr = (KPanelExtension* (*)(QWidget *, const QString&))lib->resolveFunction( "init" );
 
     if (!init_ptr)
     {

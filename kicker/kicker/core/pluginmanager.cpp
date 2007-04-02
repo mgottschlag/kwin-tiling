@@ -152,7 +152,7 @@ KPanelApplet* PluginManager::loadApplet(const AppletInfo& info,
     }
 
     KPanelApplet* (*init_ptr)(QWidget *, const QString&);
-    init_ptr = (KPanelApplet* (*)(QWidget *, const QString&))lib->symbol( "init" );
+    init_ptr = (KPanelApplet* (*)(QWidget *, const QString&))lib->resolveFunction( "init" );
 
     if (!init_ptr)
     {
@@ -191,7 +191,7 @@ KPanelExtension* PluginManager::loadExtension(const AppletInfo& info, QWidget* p
     }
 
     KPanelExtension* (*init_ptr)(QWidget *, const QString&);
-    init_ptr = (KPanelExtension* (*)(QWidget *, const QString&))lib->symbol( "init" );
+    init_ptr = (KPanelExtension* (*)(QWidget *, const QString&))lib->resolveFunction( "init" );
 
     if(!init_ptr){
         kWarning() << info.library() << " is not a kicker extension!" << endl;

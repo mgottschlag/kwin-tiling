@@ -452,7 +452,7 @@ void KCMStyle::styleSpecificConfig()
 		return;
 	}
 
-	void* allocPtr = library->symbol("allocate_kstyle_config");
+        KLibrary::void_function_ptr allocPtr = library->resolveFunction("allocate_kstyle_config");
 
 	if (!allocPtr)
 	{

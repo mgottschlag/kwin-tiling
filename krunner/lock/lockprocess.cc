@@ -758,12 +758,12 @@ bool LockProcess::startLock()
             kWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" << endl;
             continue;
         }
-        if (!plugin.library->hasSymbol( "kgreeterplugin_info" )) {
+        plugin.info = (kgreeterplugin_info*)plugin.library->resolveSymbol( "kgreeterplugin_info" );
+        if (!plugin.info ) {
             kWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") is no valid greet widget plugin" << endl;
             plugin.library->unload();
             continue;
         }
-        plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
         if (plugin.info->method && !mMethod.isEmpty() && mMethod != plugin.info->method) {
             kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") serves " << plugin.info->method << ", not " << mMethod << endl;
             plugin.library->unload();
