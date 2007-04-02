@@ -28,7 +28,7 @@
 #include <kcomponentdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
-#include <ksocketaddress.h>
+#include <k3socketaddress.h>
 
 #include <solid/devicemanager.h>
 #include <solid/device.h>
