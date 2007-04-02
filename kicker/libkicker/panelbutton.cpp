@@ -41,10 +41,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QStyleOption>
 #include <QToolTip>
 #include <QApplication>
+#include <qcursor.h>
 
 
 #include <kconfig.h>
-#include <kcursor.h>
 #include <kdialog.h>
 #include <kdirwatch.h>
 #include <kglobal.h>
@@ -200,7 +200,7 @@ void PanelButton::updateSettings(int category)
 
     if (d->changeCursorOverItem)
     {
-        setCursor(KCursor::handCursor());
+        setCursor(QCursor::HandCursor);
     }
     else
     {
