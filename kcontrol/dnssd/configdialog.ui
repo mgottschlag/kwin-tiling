@@ -1,317 +1,61 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>ConfigDialog</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>ConfigDialog</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>571</width>
-            <height>486</height>
-        </rect>
-    </property>
-    <property name="sizePolicy">
-        <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>7</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </property>
-    <property name="minimumSize">
-        <size>
-            <width>0</width>
-            <height>0</height>
-        </size>
-    </property>
-    <property name="windowTitle">
-        <string>MyDialog1</string>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QTabWidget" row="0" column="0">
-            <property name="name">
-                <cstring>tabs</cstring>
-            </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>&amp;General</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>kcfg_BrowseLocal</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Browse local networ&amp;k</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>Browse local network (domain .local) using multicast DNS.</string>
-                        </property>
-                    </widget>
-                    <widget class="KEditListBox">
-                        <property name="name">
-                            <cstring>kcfg_DomainList</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>7</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="title">
-                            <string>Additional Domains</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>List of Internet domains  that will be browsed for services. Do not put .local here - it
-is configured with 'Browse local network' option above.</string>
-                        </property>
-                    </widget>
-                    <widget class="QButtonGroup">
-                        <property name="name">
-                            <cstring>kcfg_PublishType</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>5</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="title">
-                            <string>Publishing Mode</string>
-                        </property>
-                        <widget class="QRadioButton">
-                            <property name="name">
-                                <cstring>LANButtor</cstring>
-                            </property>
-                            <property name="geometry">
-                                <rect>
-                                    <x>11</x>
-                                    <y>23</y>
-                                    <width>618</width>
-                                    <height>22</height>
-                                </rect>
-                            </property>
-                            <property name="text">
-                                <string>Loc&amp;al network</string>
-                            </property>
-                            <property name="checked">
-                                <bool>false</bool>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Advertise services on local network (in domain .local) using multicast DNS.</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton">
-                            <property name="name">
-                                <cstring>WANButton</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>true</bool>
-                            </property>
-                            <property name="geometry">
-                                <rect>
-                                    <x>11</x>
-                                    <y>51</y>
-                                    <width>618</width>
-                                    <height>22</height>
-                                </rect>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Wide area network</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Advertise services on Internet domain using public IP. To have this option working you need to configure wide area operation in using administrator mode</string>
-                            </property>
-                        </widget>
-                    </widget>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>kcfg_Recursive</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>0</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="text">
-                            <string>D&amp;iscover more domains</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>If selected every configured domain will be queried for list of domain to browse. This 
-process will be recursive.</string>
-                        </property>
-                    </widget>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>W&amp;ide area</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout7</cstring>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>textLabel2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Shared secret:</string>
-                                </property>
-                            </widget>
-                            <spacer row="1" column="1" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>spacer4</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>130</width>
-                                        <height>21</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="KLineEdit" row="1" column="3">
-                                <property name="name">
-                                    <cstring>hostedit</cstring>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Name of this machine. Must be in fully qualified form (host.domain)</string>
-                                </property>
-                            </widget>
-                            <widget class="KLineEdit" row="2" column="3">
-                                <property name="name">
-                                    <cstring>secretedit</cstring>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Optional shared secret used for authorization of DNS dynamic updates.</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
-                                <property name="name">
-                                    <cstring>domainLabel</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="text">
-                                    <string>Domain:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>textLabel1</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Hostname:</string>
-                                </property>
-                            </widget>
-                            <widget class="KLineEdit" row="0" column="3">
-                                <property name="name">
-                                    <cstring>domainedit</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <spacer row="0" column="2">
-                                <property name="name">
-                                    <cstring>spacer1</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>90</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <spacer row="2" column="2">
-                                <property name="name">
-                                    <cstring>spacer5</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>90</width>
-                                        <height>21</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </grid>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer7</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>50</width>
-                                <height>110</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-        </widget>
-    </grid>
-</widget>
-<slots>
-    <slot>radioButton2_2_toggled(bool)</slot>
-</slots>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>keditlistbox.h</includehint>
-    <includehint>klineedit.h</includehint>
-</includehints>
-</UI>
+<ui version="4.0" >
+ <class>ConfigDialog</class>
+ <widget class="QWidget" name="ConfigDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>571</width>
+    <height>486</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>MyDialog1</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="KEditListBox" name="kcfg_DomainList" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="whatsThis" >
+      <string>List of Internet domains that will be browsed for services in addition to default domain (typically local network). </string>
+     </property>
+     <property name="title" >
+      <string>Additional Domains</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KEditListBox</class>
+   <extends>QGroupBox</extends>
+   <header>keditlistbox.h</header>
+  </customwidget>
+ </customwidgets>
+ <includes>
+  <include location="local" >keditlistbox.h</include>
+  <include location="local" >klineedit.h</include>
+ </includes>
+ <resources/>
+ <connections/>
+</ui>

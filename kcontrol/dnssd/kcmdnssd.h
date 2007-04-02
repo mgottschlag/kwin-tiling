@@ -23,7 +23,7 @@
 
 #include <QMap>
 
-#include <configdialog.h>
+#include <ui_configdialog.h>
 #include <kaboutdata.h>
 #include <kcmodule.h> 
 
@@ -36,16 +36,8 @@ public:
 	KCMDnssd( QWidget *parent=0, const QStringList& = QStringList() );
 	~KCMDnssd();
 	virtual void save();
-	virtual void load();
-private Q_SLOTS:
-	void wdchanged();
 private: 
-	void loadMdnsd();
-	bool saveMdnsd();
-	QMap<QString,QString> mdnsdLines;
-	bool m_wdchanged;
-	KConfig* domain;
-    ConfigDialog *widget;
+	Ui_ConfigDialog *widget;
 };
 
 #endif
