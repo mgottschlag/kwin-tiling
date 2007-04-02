@@ -38,8 +38,7 @@ DESCRIPTION
 #include <kglobalaccel.h>
 #include <klocale.h>
 #include <k3process.h>
-#include <kwinmodule.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 #include <kaction.h>
@@ -67,8 +66,7 @@ DESCRIPTION
 KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
 //     : m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
       m_rules(NULL),
-      m_kxkbWidget(kxkbWidget),
-      kWinModule(NULL)
+      m_kxkbWidget(kxkbWidget)
 {
     m_extension = new XKBExtension();
     if( !m_extension->init() ) {
@@ -112,7 +110,6 @@ KxkbCore::~KxkbCore()
     delete m_rules;
     delete m_extension;
 	delete m_layoutOwnerMap;
-	delete kWinModule;
 }
 
 int KxkbCore::newInstance()
@@ -144,8 +141,7 @@ bool KxkbCore::settingsRead()
 // 	m_prevWinId = X11Helper::UNKNOWN_WINDOW_ID;
 
 	if( kxkbConfig.m_switchingPolicy == SWITCH_POLICY_GLOBAL ) {
-		delete kWinModule;
-		kWinModule = NULL;
+		disconnect(KWM::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 	}
 	else {
 		QDesktopWidget desktopWidget;
@@ -154,10 +150,8 @@ bool KxkbCore::settingsRead()
 			//TODO: find out how to handle that
 		}
 
-		if( kWinModule == NULL ) {
-			kWinModule = new KWinModule(0, KWinModule::INFO_DESKTOP);
-			connect(kWinModule, SIGNAL(activeWindowChanged(WId)), SLOT(windowChanged(WId)));
-		}
+		disconnect(KWM::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
+		connect(KWM::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 /*		int m_prevWinId = kWinModule->activeWindow();
 		kDebug() << "Active window " << m_prevWinId << endl;*/
 	}
@@ -265,7 +259,7 @@ bool KxkbCore::setLayout(int layout)
 
     if( res ) {
         m_currentLayout = layout;
-		int winId = kWinModule->activeWindow();
+		int winId = KWM::activeWindow();
  		m_layoutOwnerMap->setCurrentWindow(winId);
 		m_layoutOwnerMap->setCurrentLayout(group);
 	}

@@ -23,7 +23,6 @@
 #include "khotkeysglobal.h"
 
 class KConfigGroup;
-class KWinModule;
 
 namespace KHotKeys
 {
@@ -64,7 +63,6 @@ class KDE_EXPORT Windows
         void window_changed_slot( WId window_P, unsigned int flags_P );
     private:
         bool signals_enabled;
-        KWinModule* kwin_module;
         WId _action_window;
     };
     

@@ -37,8 +37,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kstringhandler.h>
 #include <kstyle.h>
-#include <kwin.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <netwm.h>
 
 #undef Bool
@@ -46,7 +45,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "kwindowlistmenu.moc"
 #include "kwin_interface.h"
 
-static bool compareKWinWindowInfo( KWin::WindowInfo* firstInfo, KWin::WindowInfo* secondInfo )
+static bool compareKWinWindowInfo( KWM::WindowInfo* firstInfo, KWM::WindowInfo* secondInfo )
 {
   QString firstTitle, secondTitle;
 
@@ -61,14 +60,11 @@ static bool compareKWinWindowInfo( KWin::WindowInfo* firstInfo, KWin::WindowInfo
 
 class KWindowListMenu::Private
 {
-  public:
-    KWinModule* kwinModule;
 };
 
 KWindowListMenu::KWindowListMenu( QWidget *parent )
   : KMenu( parent ), d( new Private )
 {
-  d->kwinModule = new KWinModule( this );
 }
 
 KWindowListMenu::~KWindowListMenu()
@@ -76,14 +72,14 @@ KWindowListMenu::~KWindowListMenu()
   delete d;
 }
 
-static bool standaloneDialog( const KWin::WindowInfo* info, const QList<KWin::WindowInfo*>& list )
+static bool standaloneDialog( const KWM::WindowInfo* info, const QList<KWM::WindowInfo*>& list )
 {
   WId group = info->groupLeader();
 
   if ( group == 0 )
     return info->transientFor() == QX11Info::appRootWindow();
 
-  foreach ( KWin::WindowInfo* info, list )
+  foreach ( KWM::WindowInfo* info, list )
     if ( info->groupLeader() == group )
       return false;
 
@@ -92,9 +88,9 @@ static bool standaloneDialog( const KWin::WindowInfo* info, const QList<KWin::Wi
 
 void KWindowListMenu::init()
 {
-  int numberOfDesktops = d->kwinModule->numberOfDesktops();
-  int currentDesktop = d->kwinModule->currentDesktop();
-  WId activeWindow = d->kwinModule->activeWindow();
+  int numberOfDesktops = KWM::numberOfDesktops();
+  int currentDesktop = KWM::currentDesktop();
+  WId activeWindow = KWM::activeWindow();
 
   // Make sure the popup is not too wide, otherwise clicking in the middle of kdesktop
   // wouldn't leave any place for the popup, and release would activate some menu entry.
@@ -111,9 +107,9 @@ void KWindowListMenu::init()
   if ( numberOfDesktops == 1 )
     addSeparator();
 
-  QList<KWin::WindowInfo> windows;
-  foreach ( WId id, d->kwinModule->windows() )
-    windows.append( KWin::windowInfo( id, NET::WMDesktop ) );
+  QList<KWM::WindowInfo> windows;
+  foreach ( WId id, KWM::windows() )
+    windows.append( KWM::windowInfo( id, NET::WMDesktop ) );
 
   bool showAllDesktopsGroup = ( numberOfDesktops > 1 );
 
@@ -126,12 +122,12 @@ void KWindowListMenu::init()
     //if (!activeWindow && d == cd)
         //setItemChecked(1000 + d, true);
 
-    QList<KWin::WindowInfo*> list;
+    QList<KWM::WindowInfo*> list;
 
-    foreach (KWin::WindowInfo wi, windows) {
+    foreach (KWM::WindowInfo wi, windows) {
       if ( (wi.desktop() == j) || (onAllDesktops && wi.onAllDesktops())
            || (!showAllDesktopsGroup && wi.onAllDesktops()) ) {
-        list.append( new KWin::WindowInfo( wi.win(),
+        list.append( new KWM::WindowInfo( wi.win(),
                          NET::WMVisibleName | NET::WMState | NET::XAWMState | NET::WMWindowType,
                          NET::WM2GroupLeader | NET::WM2TransientFor ) );
       }
@@ -139,7 +135,7 @@ void KWindowListMenu::init()
 
     qStableSort( list.begin(), list.end(), compareKWinWindowInfo );
 
-    foreach ( KWin::WindowInfo* info, list ) {
+    foreach ( KWM::WindowInfo* info, list ) {
       ++i;
       QString itemText = fontMetrics().elidedText(info->visibleNameWithState(), Qt::ElideMiddle, maxwidth);
 
@@ -151,13 +147,13 @@ void KWindowListMenu::init()
               || (windowType == NET::Dialog && standaloneDialog( info, list )))
               && !(info->state() & NET::SkipTaskbar) ) {
 
-        QPixmap pm = KWin::icon( info->win(), 16, 16, true );
+        QPixmap pm = KWM::icon( info->win(), 16, 16, true );
         items++;
 
         // ok, we have items on this desktop, let's show the title
         if ( items == 1 && numberOfDesktops > 1 ) {
           if( !onAllDesktops )
-              addTitle( d->kwinModule->desktopName( j ) );
+              addTitle( KWM::desktopName( j ) );
           else
               addTitle( i18n( "On All Desktops" ) );
         }
@@ -196,7 +192,7 @@ void KWindowListMenu::slotForceActiveWindow()
     if (!window || !window->data().canConvert(QVariant::Int))
         return;
 
-    KWin::forceActiveWindow(window->data().toInt());
+    KWM::forceActiveWindow(window->data().toInt());
 }
 
 void KWindowListMenu::slotSetCurrentDesktop()
@@ -205,7 +201,7 @@ void KWindowListMenu::slotSetCurrentDesktop()
     if (!window || !window->data().canConvert(QVariant::Int))
         return;
 
-    KWin::setCurrentDesktop(window->data().toInt());
+    KWM::setCurrentDesktop(window->data().toInt());
 }
 
 // This popup is much more useful from keyboard if it has the active

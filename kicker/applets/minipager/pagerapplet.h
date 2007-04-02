@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QHash>
 
 #include <kpanelapplet.h>
+#include <kwm.h>
 
 #include "pagerbutton.h"
 #include "pagersettings.h"
@@ -41,14 +42,9 @@ class QGridLayout;
 class QTimer;
 
 class K3Process;
-class KWinModule;
 class KShadowEngine;
 class OrgKdeKdesktopBackgroundInterface;
 class KSelectionOwner;
-
-namespace KWin {
-    class WindowInfo;
-}
 
 class PagerSettings;
 
@@ -65,8 +61,7 @@ public:
     int widthForHeight(int height) const;
     int heightForWidth(int width) const;
 
-    KWin::WindowInfo* info( WId win );
-    KWinModule* kwin() { return m_kwin; }
+    KWM::WindowInfo* info( WId win );
     KShadowEngine* shadowEngine();
 
     void setActive( WId active ) { m_activeWindow = active; }
@@ -123,7 +118,7 @@ private:
     int m_curDesk;
     int m_rmbDesk;
 
-    QHash< int, KWin::WindowInfo* > m_windows;
+    QHash< int, KWM::WindowInfo* > m_windows;
     WId m_activeWindow;
 
     QButtonGroup *m_group;
@@ -134,7 +129,6 @@ private:
     int desktopLayoutY;
     KSelectionOwner* m_desktopLayoutOwner;
 
-    KWinModule *m_kwin;
     KShadowEngine* m_shadowEngine;
 
     OrgKdeKdesktopBackgroundInterface* m_backgroundInterface;

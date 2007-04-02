@@ -25,7 +25,6 @@
 #include <kstandarddirs.h>
 #include <ktip.h>
 #include <kuniqueapplication.h>
-#include <kwin.h>
 #include <stdlib.h>
 #include <QtDBus/QtDBus>
 

@@ -27,11 +27,10 @@
 
 #include <kiconloader.h>
 #include <kconfig.h>
-#include <kwin.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kmenu.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -69,7 +68,7 @@ QString pixmapName(int desk)
 
 /**** KBackgroundManager ****/
 
-KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
+KBackgroundManager::KBackgroundManager(QWidget *desktop)
     : QObject()
 {
 
@@ -94,7 +93,6 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
     m_Serial = 0; m_Hash = 0;
     m_pConfig = KGlobal::config();
     m_bExport = m_bCommon = m_bInit = false;
-    m_pKwinmodule = kwinModule;
     m_pPixmapServer = new KPixmapServer();
     m_xrootpmap = None;
 
@@ -115,9 +113,9 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
     connect(m_pTimer, SIGNAL(timeout()), SLOT(slotTimeout()));
     m_pTimer->start( 60000 );
 
-    connect(m_pKwinmodule, SIGNAL(currentDesktopChanged(int)),
+    connect(KWM::self(), SIGNAL(currentDesktopChanged(int)),
 	    SLOT(slotChangeDesktop(int)));
-    connect(m_pKwinmodule, SIGNAL(numberOfDesktopsChanged(int)),
+    connect(KWM::self(), SIGNAL(numberOfDesktopsChanged(int)),
 	    SLOT(slotChangeNumberOfDesktops(int)));
 
     connect( kapp->desktop(), SIGNAL( resized( int )), SLOT( desktopResized())); // RANDR support
@@ -240,7 +238,7 @@ void KBackgroundManager::configure()
 
 int KBackgroundManager::realDesktop()
 {
-    int desk = m_pKwinmodule->currentDesktop();
+    int desk = KWM::currentDesktop();
     if (desk) desk--;
     return desk;
 }
@@ -306,7 +304,7 @@ void KBackgroundManager::slotChangeDesktop(int desk)
 
     // Lazy initialisation of # of desktops
     if ( desk >= m_Renderer.size())
-	slotChangeNumberOfDesktops( m_pKwinmodule->numberOfDesktops() );
+	slotChangeNumberOfDesktops( KWM::numberOfDesktops() );
 
     int edesk = effectiveDesktop();
     m_Serial++;
@@ -626,7 +624,7 @@ void KBackgroundManager::slotTimeout()
 int KBackgroundManager::validateDesk(int desk)
 {
     if (desk > (int)m_Renderer.size())
-        slotChangeNumberOfDesktops( m_pKwinmodule->numberOfDesktops() );
+        slotChangeNumberOfDesktops( KWM::numberOfDesktops() );
 
     if ( (desk <= 0) || (desk > (int)m_Renderer.size()) )
         return realDesktop();

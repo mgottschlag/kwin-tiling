@@ -23,7 +23,6 @@
 
 #include <klocale.h>
 #include <kcmdlineargs.h>
-#include <kwin.h>
 #include <kaboutdata.h>
 #include <kuniqueapplication.h>
 

@@ -4,9 +4,6 @@
 #include <QHash>
 #include <QStringList>
 
-#include <kwin.h>
-
-
 struct XkbOptionGroup {
   QString name;
   QString description;

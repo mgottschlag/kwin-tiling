@@ -6,7 +6,7 @@
 #include <kgenericfactory.h>
 
 #include <ksystemtrayicon.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kdebug.h>
 
 #include "kcmlayout.h"

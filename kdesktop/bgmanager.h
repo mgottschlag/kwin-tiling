@@ -18,7 +18,6 @@ class KConfig;
 class QTimer;
 class QPixmap;
 class KMenu;
-class KWinModule;
 class QPixmap;
 class KVirtualBGRenderer;
 class KPixmapServer;
@@ -49,7 +48,7 @@ class KBackgroundManager : public QObject
     Q_OBJECT
 
 public:
-    KBackgroundManager(QWidget *desktop, KWinModule* kwinModule);
+    KBackgroundManager(QWidget *desktop);
     ~KBackgroundManager();
 
     // Most of this is DBus-exported
@@ -119,7 +118,6 @@ private:
     QVector<KVirtualBGRenderer*> m_Renderer;
     QVector<KBackgroundCacheEntry*> m_Cache;
 
-    KWinModule *m_pKwinmodule;
     KPixmapServer *m_pPixmapServer;
 
     unsigned long m_xrootpmap;

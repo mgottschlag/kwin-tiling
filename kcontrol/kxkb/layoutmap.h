@@ -17,8 +17,8 @@
 
 #include <QQueue>
 #include <QMap>
+#include <qwidget.h>
 
-#include <kwinmodule.h>
 #include <kdebug.h>
 
 #include "kxkbconfig.h"

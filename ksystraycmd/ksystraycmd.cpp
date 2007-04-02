@@ -13,7 +13,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <k3process.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <kconfig.h>
 #include <ksystemtrayicon.h>
 #include <kconfiggroup.h>
@@ -28,11 +28,10 @@
 KSysTrayCmd::KSysTrayCmd()
   : QLabel( 0 ),
     isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ), onTop(false), ownIcon(false),
-    win(0), client(0), kwinmodule(0), top(0), left(0)
+    win(0), client(0), top(0), left(0)
 {
   setObjectName("systray_cmd" );
   setAlignment( Qt::AlignCenter );
-  kwinmodule = new KWinModule( this );
   refresh();
 }
 
@@ -61,7 +60,7 @@ bool KSysTrayCmd::start()
       if ( win ) {
         // Window always on top
         if (onTop) {
-          KWin::setState(win, NET::StaysOnTop);
+          KWM::setState(win, NET::StaysOnTop);
         }
         return true;
       }
@@ -97,10 +96,10 @@ void KSysTrayCmd::showWindow()
   // Window always on top
   if (onTop)
   {
-    KWin::setState(win, NET::StaysOnTop);
+    KWM::setState(win, NET::StaysOnTop);
   }
 
-  KWin::activateWindow( win );
+  KWM::activateWindow( win );
 
 }
 
@@ -110,30 +109,30 @@ void KSysTrayCmd::hideWindow()
   if ( !win )
     return;
   //We memorize the position of the window
-  left = KWin::windowInfo(win, NET::WMFrameExtents).frameGeometry().left();
-  top=KWin::windowInfo(win, NET::WMFrameExtents).frameGeometry().top();
+  left = KWM::windowInfo(win, NET::WMFrameExtents).frameGeometry().left();
+  top=KWM::windowInfo(win, NET::WMFrameExtents).frameGeometry().top();
 
   XUnmapWindow( QX11Info::display(), win );
 }
 
 void KSysTrayCmd::setTargetWindow( WId w )
 {
-  disconnect( kwinmodule, SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
-  connect( kwinmodule, SIGNAL(windowChanged(WId)), SLOT(windowChanged(WId)) );
+  disconnect( KWM::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
+  connect( KWM::self(), SIGNAL(windowChanged(WId)), SLOT(windowChanged(WId)) );
   win = w;
-//  KWin::setSystemTrayWindowFor( winId(), win );
+//  KWM::setSystemTrayWindowFor( winId(), win );
   refresh();
   show();
 
   if ( isVisible )
-    KWin::activateWindow( win );
+    KWM::activateWindow( win );
   else
     hideWindow();
 
   // Always on top ?
   if (onTop)
   {
-    KWin::setState(win, NET::StaysOnTop);
+    KWM::setState(win, NET::StaysOnTop);
   }
 }
 
@@ -143,7 +142,7 @@ void KSysTrayCmd::setTargetWindow( WId w )
 
 void KSysTrayCmd::refresh()
 {
-//  KWin::setSystemTrayWindowFor( winId(), win ? win : winId() );
+//  KWM::setSystemTrayWindowFor( winId(), win ? win : winId() );
 
   this->setToolTip( QString() );
   if ( win ) {
@@ -159,10 +158,10 @@ void KSysTrayCmd::refresh()
     }
     else
     {
-      setWindowIcon( KWin::icon( win, iconWidth, iconWidth, true ) );
+      setWindowIcon( KWM::icon( win, iconWidth, iconWidth, true ) );
     }
 
-    this->setToolTip( KWin::windowInfo( win, NET::WMName ).name() );
+    this->setToolTip( KWM::windowInfo( win, NET::WMName ).name() );
   }
   else {
     if ( !tooltip.isEmpty() )
@@ -185,7 +184,7 @@ bool KSysTrayCmd::startClient()
 {
   client = new K3ShellProcess();
   *client << command;
-  connect( kwinmodule, SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)) );
+  connect( KWM::self(), SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)) );
   connect( client, SIGNAL( processExited(K3Process *) ),
 	   this, SLOT( clientExited() ) );
 
@@ -274,7 +273,7 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
 void KSysTrayCmd::checkExistingWindows()
 {
   QList<WId>::ConstIterator it;
-  for ( it = kwinmodule->windows().begin(); it != kwinmodule->windows().end(); ++it ) {
+  for ( it = KWM::windows().begin(); it != KWM::windows().end(); ++it ) {
     windowAdded( *it );
     if ( win )
       break;
@@ -283,7 +282,7 @@ void KSysTrayCmd::checkExistingWindows()
 
 void KSysTrayCmd::windowAdded(WId w)
 {
-  if ( !window.isEmpty() && ( QRegExp( window ).indexIn( KWin::windowInfo(w,NET::WMName).name() ) == -1 ) )
+  if ( !window.isEmpty() && ( QRegExp( window ).indexIn( KWM::windowInfo(w,NET::WMName).name() ) == -1 ) )
     return; // no match
   setTargetWindow( w );
 }

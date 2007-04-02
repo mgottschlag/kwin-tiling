@@ -4,10 +4,8 @@
 #define KSYSTRAYCMD_H
 
 #include <QLabel>
-#include <kwin.h>
 
 class K3ShellProcess;
-class KWinModule;
 
 /**
  * Provides a system tray icon for a normal window.
@@ -76,7 +74,6 @@ private:
 
   WId win;
   K3ShellProcess *client;
-  KWinModule *kwinmodule;
   QString errStr;
 
   /** Memorized 'top' position of the window*/

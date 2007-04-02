@@ -33,7 +33,7 @@
 #include <QGridLayout>
 #include <QMenu>
 #include <kmainwindow.h>
-#include <kwin.h>
+#include <kwm.h>
 
 class KPager;
 class QMenu;
@@ -74,14 +74,13 @@ public:
     KPager(KPagerMainWindow *parent=0, const char *name=0);
     ~KPager();
 
-    class KWinModule *kwin() const { return m_winmodule; }
     void updateLayout();
 
     void redrawDesktops();
 
     void showPopupMenu( WId wid, QPoint pos);
 
-    KWin::WindowInfo* info( WId win );
+    KWM::WindowInfo* info( WId win );
 
     QSize sizeHint() const;
 
@@ -117,10 +116,9 @@ protected:
     };
 
 protected:
-    KWinModule *m_winmodule;
     QList<class Desktop *> m_desktops;
 
-    Q3IntDict<KWin::WindowInfo> m_windows;
+    Q3IntDict<KWM::WindowInfo> m_windows;
     WId m_activeWin;
 
     const QString lWidth();
@@ -137,7 +135,7 @@ protected:
     QMenu *m_smnu, *m_dmnu;
     QAction *m_quit_action;
     QAction *m_prefs_action;
-    KWin::WindowInfo m_winfo;
+    KWM::WindowInfo m_winfo;
 
     QTimer *m_grabWinTimer;
     int     m_currentDesktop;

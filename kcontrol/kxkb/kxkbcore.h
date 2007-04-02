@@ -37,7 +37,6 @@ DESCRIPTION
 class XKBExtension;
 class XkbRules;
 class KActionCollection;
-class KWinModule;
 class LayoutMap;
 class KxkbWidget;
 class QAction;
@@ -94,7 +93,6 @@ private:
     XkbRules *m_rules;
     KxkbWidget *m_kxkbWidget;
     KActionCollection *keys;
-    KWinModule* kWinModule;
 };
 
 #endif

@@ -28,7 +28,6 @@
 #include <kglobalsettings.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kwin.h>
 #include <kgenericfactory.h>
 #include <QtDBus/QtDBus>
 

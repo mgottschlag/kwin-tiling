@@ -1,6 +1,5 @@
 #include <config-screensaver.h>
 
-#include <kwin.h>
 #include "testwin.h"
 #include <X11/Xlib.h>
 

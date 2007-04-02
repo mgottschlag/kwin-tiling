@@ -54,9 +54,8 @@
 #include <kmessagebox.h>
 #include <kglobalaccel.h>
 #include <kauthorized.h>
-#include <kwinmodule.h>
 #include <krun.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kglobalsettings.h>
 #include <kmenu.h>
 #include <kapplication.h>
@@ -147,13 +146,12 @@ KDesktop::KDesktop( bool x_root_hack, bool wait_for_kded ) :
   dbus.connect(QString(), "/Desktop", "org.kde.kdesktop.Desktop", "reconfigure", this, SLOT(slotConfigure()));
 
   setAcceptDrops(true); // WStyle_Customize seems to disable that
-  m_pKwinmodule = new KWinModule( this );
   updateWorkAreaTimer = new QTimer( this );
   updateWorkAreaTimer->setSingleShot( true );
 
   connect( updateWorkAreaTimer, SIGNAL( timeout() ),
            this, SLOT( updateWorkArea() ) );
-  connect( m_pKwinmodule, SIGNAL( workAreaChanged() ),
+  connect( KWM::self(), SIGNAL( workAreaChanged() ),
            this, SLOT( workAreaChanged() ) );
 
   // Dont repaint on configuration changes during construction
@@ -230,7 +228,7 @@ KDesktop::initRoot()
 
      // Geert Jansen: backgroundmanager belongs here
      // TODO tell KBackgroundManager if we change widget()
-     bgMgr = new KBackgroundManager( m_pIconView, m_pKwinmodule );
+     bgMgr = new KBackgroundManager( m_pIconView );
      bgMgr->setExport(1);
      connect( bgMgr, SIGNAL( initDone()), SLOT( backgroundInitDone()));
      if (!m_bInit)
@@ -272,7 +270,7 @@ KDesktop::initRoot()
 
      // Geert Jansen: backgroundmanager belongs here
      // TODO tell KBackgroundManager if we change widget()
-     bgMgr = new KBackgroundManager( m_pIconView, m_pKwinmodule );
+     bgMgr = new KBackgroundManager( m_pIconView );
      bgMgr->setExport(1);
      connect( bgMgr, SIGNAL( initDone()), SLOT( backgroundInitDone()));
 
@@ -291,9 +289,9 @@ KDesktop::initRoot()
          ksmserver.resumeStartup(QString( "kdesktop" ));
    }
 
-   KWin::setType( winId(), NET::Desktop );
-   KWin::setState( winId(), NET::SkipPager );
-   KWin::setOnAllDesktops( winId(), true );
+   KWM::setType( winId(), NET::Desktop );
+   KWM::setState( winId(), NET::SkipPager );
+   KWM::setOnAllDesktops( winId(), true );
 }
 
 void
@@ -451,12 +449,12 @@ void KDesktop::popupExecuteCommand( const QString& command )
 
   // Move minicli to the current desktop
   NETWinInfo info( QX11Info::display(), m_miniCli->winId(), QX11Info::appRootWindow(), NET::WMDesktop );
-  int currentDesktop = kwinModule()->currentDesktop();
+  int currentDesktop = KWM::currentDesktop();
   if ( info.desktop() != currentDesktop )
       info.setDesktop( currentDesktop );
 
   if ( m_miniCli->isVisible() ) {
-      KWin::forceActiveWindow( m_miniCli->winId() );
+      KWM::forceActiveWindow( m_miniCli->winId() );
   } else {
       QRect rect = KGlobalSettings::desktopGeometry(QCursor::pos());
       m_miniCli->move(rect.x() + (rect.width() - m_miniCli->width())/2,
@@ -626,7 +624,7 @@ void KDesktop::slotSetVRoot()
     if (!m_pIconView)
         return;
 
-    if (KWin::windowInfo(winId(), NET::XAWMState).mappingState() == NET::Withdrawn) {
+    if (KWM::windowInfo(winId(), NET::XAWMState).mappingState() == NET::Withdrawn) {
         QTimer::singleShot(100, this, SLOT(slotSetVRoot()));
         return;
     }
@@ -683,23 +681,23 @@ void KDesktop::updateWorkArea()
 {
     if (m_pIconView)
     {
-        QRect wr( kwinModule()->workArea( kwinModule()->currentDesktop() ) );
+        QRect wr( KWM::workArea( KWM::currentDesktop() ) );
         m_pIconView->updateWorkArea( wr );
     }
 }
 
 void KDesktop::slotSwitchDesktops(int delta)
 {
-    if(m_bWheelSwitchesWorkspace && KWin::numberOfDesktops() > 1)
+    if(m_bWheelSwitchesWorkspace && KWM::numberOfDesktops() > 1)
     {
-      int newDesk, curDesk = KWin::currentDesktop();
+      int newDesk, curDesk = KWM::currentDesktop();
 
       if( (delta < 0 && m_eWheelDirection == Forward) || (delta > 0 && m_eWheelDirection == Reverse) )
-        newDesk = curDesk % KWin::numberOfDesktops() + 1;
+        newDesk = curDesk % KWM::numberOfDesktops() + 1;
       else
-        newDesk = ( KWin::numberOfDesktops() + curDesk - 2 ) % KWin::numberOfDesktops() + 1;
+        newDesk = ( KWM::numberOfDesktops() + curDesk - 2 ) % KWM::numberOfDesktops() + 1;
 
-      KWin::setCurrentDesktop( newDesk );
+      KWM::setCurrentDesktop( newDesk );
     }
 }
 

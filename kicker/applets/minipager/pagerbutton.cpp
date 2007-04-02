@@ -41,7 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <netwm.h>
 
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <ksharedpixmap.h>
 #include <kpixmapeffect.h>
 #include <kstringhandler.h>
@@ -81,7 +81,7 @@ KMiniPagerButton::KMiniPagerButton(int desk, KMiniPager *parent, const char *nam
     //setBackgroundOrigin(AncestorOrigin);
     installEventFilter(KickerTip::self());
 
-    m_desktopName = m_pager->kwin()->desktopName(m_desktop);
+    m_desktopName = KWM::desktopName(m_desktop);
 
     connect(this, SIGNAL(clicked()), SLOT(slotClicked()));
     connect(this, SIGNAL(toggled(bool)), SLOT(slotToggled(bool)));
@@ -102,7 +102,7 @@ KMiniPagerButton::~KMiniPagerButton()
     delete m_bgPixmap;
 }
 
-bool KMiniPagerButton::shouldPaintWindow( KWin::WindowInfo *info )
+bool KMiniPagerButton::shouldPaintWindow( KWM::WindowInfo *info )
 {
     if (!info)
       return false;
@@ -349,12 +349,11 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
     // window preview...
     if (m_pager->desktopPreview())
     {
-        KWinModule* kwin = m_pager->kwin();
-        KWin::WindowInfo *info = 0;
+        KWM::WindowInfo *info = 0;
         int dw = QApplication::desktop()->width();
         int dh = QApplication::desktop()->height();
 
-        QList<WId> windows = kwin->stackingOrder();
+        QList<WId> windows = KWM::stackingOrder();
         QList<WId>::const_iterator itEnd = windows.constEnd();
         for (QList<WId>::ConstIterator it = windows.constBegin(); it != itEnd; ++it)
         {
@@ -366,7 +365,7 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
                 r = QRect(r.x() * width() / dw, 2 + r.y() * height() / dh,
                           r.width() * width() / dw, r.height() * height() / dh);
 
-                if (kwin->activeWindow() == info->win())
+                if (KWM::activeWindow() == info->win())
                 {
                     QBrush brush = palette().brush(QPalette::Highlight);
                     qDrawShadeRect(&bp, r, palette(), false, 1, 0, &brush);
@@ -391,7 +390,7 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
 
                 if (m_pager->windowIcons() && r.width() > 15 && r.height() > 15)
                 {
-                    QPixmap icon = KWin::icon(*it, 16, 16, true);
+                    QPixmap icon = KWM::icon(*it, 16, 16, true);
                     if (!icon.isNull())
                     {
                         bp.drawPixmap(r.left() + ((r.width() - 16) / 2),
@@ -620,7 +619,7 @@ void KMiniPagerButton::dragLeaveEvent( QDragLeaveEvent* e )
 {
     m_dragSwitchTimer.stop();
 
-    if (m_pager->kwin()->currentDesktop() != m_desktop)
+    if (KWM::currentDesktop() != m_desktop)
     {
         setDown(false);
     }
@@ -666,7 +665,7 @@ bool KMiniPagerButton::eventFilter( QObject *o, QEvent * e)
     if (o && o == m_lineEdit &&
         (e->type() == QEvent::FocusOut || e->type() == QEvent::Hide))
     {
-        m_pager->kwin()->setDesktopName( m_desktop, m_lineEdit->text() );
+        KWM::setDesktopName( m_desktop, m_lineEdit->text() );
         m_desktopName = m_lineEdit->text();
         QTimer::singleShot( 0, m_lineEdit, SLOT( deleteLater() ) );
         m_lineEdit = 0;

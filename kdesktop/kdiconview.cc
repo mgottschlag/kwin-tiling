@@ -42,9 +42,7 @@
 #include <kprotocolinfo.h>
 #include <kstandardaction.h>
 #include <kstandarddirs.h>
-#include <kwin.h>
 #include <kdirnotify.h>
-#include <kwinmodule.h>
 
 #include <fixx11h.h>
 

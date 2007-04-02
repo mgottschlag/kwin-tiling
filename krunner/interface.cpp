@@ -34,7 +34,7 @@
 #include <KGlobalSettings>
 #include <KPushButton>
 #include <KStandardGuiItem>
-#include <KWin>
+#include <KWM>
 
 #include "abstractrunner.h"
 
@@ -235,10 +235,10 @@ void Interface::display( const QString& term)
         m_searchTerm->setText( term );
     }
 
-    KWin::setOnDesktop( winId(), KWin::currentDesktop() );
+    KWM::setOnDesktop( winId(), KWM::currentDesktop() );
     KDialog::centerOnScreen( this );
     show();
-    KWin::forceActiveWindow( winId() );
+    KWM::forceActiveWindow( winId() );
 
     kDebug() << "about to match now that we've shown " << isVisible() << endl;
 

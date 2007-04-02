@@ -38,11 +38,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdebug.h>
 #include <kglobal.h>
 #include <krun.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <kdialog.h>
 #include <kactionselector.h>
 #include <kiconloader.h>
-#include <kwin.h>
 
 #include "simplebutton.h"
 
@@ -77,8 +76,6 @@ SystemTrayApplet::SystemTrayApplet(const QString& configFile, Plasma::Type type,
 
     setBackgroundOrigin(AncestorOrigin);
 
-    kwin_module = new KWinModule(this);
-
     // kApplication notifies us of settings changes. added to support
     // disabling of frame effect on mouse hover
 #ifdef __GNUC__
@@ -92,15 +89,17 @@ SystemTrayApplet::SystemTrayApplet(const QString& configFile, Plasma::Type type,
 
 void SystemTrayApplet::initialize()
 {
+    bool existing = false;
+#if 0
     // register existing tray windows
     const QList<WId> systemTrayWindows = kwin_module->systemTrayWindows();
-    bool existing = false;
     for (QList<WId>::ConstIterator it = systemTrayWindows.begin();
          it != systemTrayWindows.end(); ++it )
     {
         embedWindow(*it, true);
         existing = true;
     }
+#endif
 
     showExpandButton(!m_hiddenWins.isEmpty());
 
@@ -110,11 +109,13 @@ void SystemTrayApplet::initialize()
         layoutTray();
     }
 
+#if 0
     // the KWinModule notifies us when tray windows are added or removed
     connect( kwin_module, SIGNAL( systemTrayWindowAdded(WId) ),
              this, SLOT( systemTrayWindowAdded(WId) ) );
     connect( kwin_module, SIGNAL( systemTrayWindowRemoved(WId) ),
              this, SLOT( updateTrayWindows() ) );
+#endif
 
     QByteArray screenstr;
 	QX11Info info;
@@ -224,11 +225,11 @@ void SystemTrayApplet::preferences()
     TrayEmbedList::const_iterator itEnd = m_shownWins.end();
     for (; it != itEnd; ++it)
     {
-        QString name = KWin::windowInfo((*it)->containerWinId(), NET::WMName).name();
+        QString name = KWM::windowInfo((*it)->containerWinId(), NET::WMName).name();
 	QList<QListWidgetItem *> itemlist = shownListWidget->findItems(name, Qt::MatchExactly | Qt::MatchCaseSensitive);
         if(itemlist.isEmpty() )
         {
-            new QListWidgetItem(QIcon(KWin::icon((*it)->containerWinId(), 22, 22, true)), name, shownListWidget, 0);
+            new QListWidgetItem(QIcon(KWM::icon((*it)->containerWinId(), 22, 22, true)), name, shownListWidget, 0);
         }
     }
 
@@ -236,11 +237,11 @@ void SystemTrayApplet::preferences()
     itEnd = m_hiddenWins.end();
     for (; it != itEnd; ++it)
     {
-        QString name = KWin::windowInfo((*it)->containerWinId(), NET::WMName).name();
+        QString name = KWM::windowInfo((*it)->containerWinId(), NET::WMName).name();
 	QList<QListWidgetItem *> itemlist = hiddenListWidget->findItems(name, Qt::MatchExactly | Qt::MatchCaseSensitive);
         if(itemlist.isEmpty())
         {
-            new QListWidgetItem(QIcon(KWin::icon((*it)->containerWinId(), 22, 22, true)), name, hiddenListWidget, 0);
+            new QListWidgetItem(QIcon(KWM::icon((*it)->containerWinId(), 22, 22, true)), name, hiddenListWidget, 0);
         }
     }
 
@@ -269,13 +270,13 @@ void SystemTrayApplet::applySettings()
     for( TrayEmbedList::ConstIterator it = m_shownWins.begin();
          it != m_shownWins.end();
          ++it ) {
-        KWin::WindowInfo info = KWin::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
+        KWM::WindowInfo info = KWM::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
         windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
     for( TrayEmbedList::ConstIterator it = m_hiddenWins.begin();
          it != m_hiddenWins.end();
          ++it ) {
-        KWin::WindowInfo info = KWin::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
+        KWM::WindowInfo info = KWM::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
         windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
 
@@ -525,9 +526,9 @@ bool SystemTrayApplet::isWinManaged(WId w)
 
 bool SystemTrayApplet::shouldHide(WId w)
 {
-    return m_hiddenIconList.contains(KWin::windowInfo(w,NET::WMName).name());
-    return m_hiddenIconList.contains(KWin::windowInfo(w,NET::WMName).name())
-        || m_hiddenIconList.contains('!'+KWin::windowInfo(w,0,NET::WM2WindowClass).windowClassClass());
+    return m_hiddenIconList.contains(KWM::windowInfo(w,NET::WMName).name());
+    return m_hiddenIconList.contains(KWM::windowInfo(w,NET::WMName).name())
+        || m_hiddenIconList.contains('!'+KWM::windowInfo(w,0,NET::WM2WindowClass).windowClassClass());
 }
 
 void SystemTrayApplet::updateVisibleWins()
@@ -555,7 +556,7 @@ void SystemTrayApplet::updateVisibleWins()
     for( TrayEmbedList::const_iterator it = m_shownWins.begin();
          it != m_shownWins.end();
          ++it ) {
-        KWin::WindowInfo info = KWin::windowInfo((*it)->containerWinId(),NET::WMName,NET::WM2WindowClass);
+        KWM::WindowInfo info = KWM::windowInfo((*it)->containerWinId(),NET::WMName,NET::WM2WindowClass);
         names[ *it ] = info.name();
         classes[ *it ] = '!'+info.windowClassClass();
     }
@@ -653,7 +654,7 @@ void SystemTrayApplet::updateTrayWindows()
     {
         WId wid = (*emb)->containerWinId();
         if ((wid == 0) ||
-            ((*emb)->kdeTray() && !kwin_module->systemTrayWindows().contains(wid)))
+            ((*emb)->kdeTray())) // && !kwin_module->systemTrayWindows().contains(wid)))
         {
             (*emb)->deleteLater();
             emb = m_shownWins.erase(emb);
@@ -669,7 +670,7 @@ void SystemTrayApplet::updateTrayWindows()
     {
         WId wid = (*emb)->containerWinId();
         if ((wid == 0) ||
-            ((*emb)->kdeTray() && !kwin_module->systemTrayWindows().contains(wid)))
+            ((*emb)->kdeTray())) // && !kwin_module->systemTrayWindows().contains(wid)))
         {
             (*emb)->deleteLater();
             emb = m_hiddenWins.erase(emb);

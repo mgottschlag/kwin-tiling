@@ -27,7 +27,7 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kglobalsettings.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kapplication.h>
 #include <kglobalsettings.h>
 #include <kdebug.h>
@@ -105,7 +105,7 @@ KlipperPopup::KlipperPopup( History* history, QWidget* parent )
       m_filterWidgetId( 10 ),
       n_history_items( 0 )
 {
-    KWin::WindowInfo i = KWin::windowInfo( winId(), NET::WMGeometry );
+    KWM::WindowInfo i = KWM::windowInfo( winId(), NET::WMGeometry );
     QRect g = i.geometry();
     QRect screen = KGlobalSettings::desktopGeometry(g.center());
     int menu_height = ( screen.height() ) * 3/4;

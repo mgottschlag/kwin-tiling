@@ -11,7 +11,6 @@
 
 #include <kuniqueapplication.h>
 #include <kurl.h>
-#include <kwinmodule.h>
 
 #include <phonon/audioplayer.h>
 
@@ -74,7 +73,6 @@ private:
 
   QWidget *overlay;
 
-  KWinModule wm;
   Phonon::AudioPlayer _player;
 
   WId _activeWindow;

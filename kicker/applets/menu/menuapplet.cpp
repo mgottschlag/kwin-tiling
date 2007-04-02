@@ -37,8 +37,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
-#include <kwin.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 
 #include <netwm.h>
 
@@ -116,7 +115,7 @@ void Applet::windowAdded( WId w_P )
     if( info.windowType( SUPPORTED_WINDOW_TYPES ) != NET::TopMenu )
 	return;
 //    kDebug() << "embedding:" << w_P << endl;
-    Window transient_for = KWin::transientFor( w_P );
+    Window transient_for = KWM::transientFor( w_P );
     if( transient_for == None )
 	return;
     MenuEmbed* embed;
@@ -126,7 +125,7 @@ void Applet::windowAdded( WId w_P )
     }
     else
         {
-        KWin::WindowInfo info2 = KWin::windowInfo( transient_for, NET::WMWindowType );
+        KWM::WindowInfo info2 = KWM::windowInfo( transient_for, NET::WMWindowType );
         embed = new MenuEmbed( transient_for,
             info2.windowType( SUPPORTED_WINDOW_TYPES ) == NET::Desktop, this );
         }
@@ -172,7 +171,7 @@ void Applet::activeWindowChanged( WId w_P )
     bool try_desktop = desktop_menu;
     if( !try_desktop && w_P != None )
         { // also use the desktop menu if the active window is desktop
-        KWin::WindowInfo info = KWin::windowInfo( w_P, NET::WMWindowType );
+        KWM::WindowInfo info = KWM::windowInfo( w_P, NET::WMWindowType );
         if( info.windowType( SUPPORTED_WINDOW_TYPES ) == NET::Desktop )
             try_desktop = true;
         }
@@ -223,10 +222,10 @@ void Applet::updateMenuGeometry( MenuEmbed* embed )
 // If the window is modal (_NET_WM_STATE_MODAL), stop.
 WId Applet::tryTransientFor( WId w_P )
     {
-    KWin::WindowInfo info = KWin::windowInfo( w_P, NET::WMState );
+    KWM::WindowInfo info = KWM::windowInfo( w_P, NET::WMState );
     if( info.state() & NET::Modal )
 	return None;
-    WId ret = KWin::transientFor( w_P );
+    WId ret = KWM::transientFor( w_P );
     if( ret == QX11Info::appRootWindow())
         ret = None;
     return ret;

@@ -50,7 +50,7 @@
 #include <kstandarddirs.h>
 #include <kstringhandler.h>
 #include <kurlrequester.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kdesktopfile.h>
 #include <kimagefilepreview.h>
 #include <knewstuff2/engine.h>
@@ -72,7 +72,7 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _multi
    m_multidesktop = _multidesktop;
    m_previewUpdates = true;
 
-   m_numDesks = m_multidesktop ? KWin::numberOfDesktops() : 1;
+   m_numDesks = m_multidesktop ? KWM::numberOfDesktops() : 1;
    m_numScreens = QApplication::desktop()->numScreens();
 
    QString multiHead = getenv("KDE_MULTIHEAD");
@@ -81,7 +81,7 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _multi
       m_numScreens = 1;
    }
 
-   m_desk = m_multidesktop ? KWin::currentDesktop() : 1;
+   m_desk = m_multidesktop ? KWM::currentDesktop() : 1;
    m_screen = QApplication::desktop()->screenNumber(this);
    if (m_screen >= (int)m_numScreens)
       m_screen = m_numScreens-1;

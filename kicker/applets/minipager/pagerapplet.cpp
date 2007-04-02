@@ -35,8 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QResizeEvent>
 
 #include <kglobalsettings.h>
-#include <kwin.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -113,9 +112,8 @@ KMiniPager::KMiniPager(const QString& configFile, Plasma::Type type, int actions
 
     setFont( KGlobalSettings::taskbarFont() );
 
-    m_kwin = new KWinModule(this);
-    m_activeWindow = m_kwin->activeWindow();
-    m_curDesk = m_kwin->currentDesktop();
+    m_activeWindow = KWM::activeWindow();
+    m_curDesk = KWM::currentDesktop();
 
     if (m_curDesk == 0) // kwin not yet launched
     {
@@ -128,13 +126,13 @@ KMiniPager::KMiniPager(const QString& configFile, Plasma::Type type, int actions
 
     drawButtons();
 
-    connect( m_kwin, SIGNAL( currentDesktopChanged(int)), SLOT( slotSetDesktop(int) ) );
-    connect( m_kwin, SIGNAL( numberOfDesktopsChanged(int)), SLOT( slotSetDesktopCount(int) ) );
-    connect( m_kwin, SIGNAL( activeWindowChanged(WId)), SLOT( slotActiveWindowChanged(WId) ) );
-    connect( m_kwin, SIGNAL( windowAdded(WId) ), this, SLOT( slotWindowAdded(WId) ) );
-    connect( m_kwin, SIGNAL( windowRemoved(WId) ), this, SLOT( slotWindowRemoved(WId) ) );
-    connect( m_kwin, SIGNAL( windowChanged(WId,unsigned int) ), this, SLOT( slotWindowChanged(WId,unsigned int) ) );
-    connect( m_kwin, SIGNAL( desktopNamesChanged() ), this, SLOT( slotDesktopNamesChanged() ) );
+    connect( KWM::self(), SIGNAL( currentDesktopChanged(int)), SLOT( slotSetDesktop(int) ) );
+    connect( KWM::self(), SIGNAL( numberOfDesktopsChanged(int)), SLOT( slotSetDesktopCount(int) ) );
+    connect( KWM::self(), SIGNAL( activeWindowChanged(WId)), SLOT( slotActiveWindowChanged(WId) ) );
+    connect( KWM::self(), SIGNAL( windowAdded(WId) ), this, SLOT( slotWindowAdded(WId) ) );
+    connect( KWM::self(), SIGNAL( windowRemoved(WId) ), this, SLOT( slotWindowRemoved(WId) ) );
+    connect( KWM::self(), SIGNAL( windowChanged(WId,unsigned int) ), this, SLOT( slotWindowChanged(WId,unsigned int) ) );
+    connect( KWM::self(), SIGNAL( desktopNamesChanged() ), this, SLOT( slotDesktopNamesChanged() ) );
 
     m_backgroundInterface = new org::kde::kdesktop::Background( "kdesktop", "/Background", QDBusConnection::sessionBus() );
     connect( m_backgroundInterface, SIGNAL(backgroundChanged(int)),
@@ -149,7 +147,7 @@ KMiniPager::KMiniPager(const QString& configFile, Plasma::Type type, int actions
         setCustomMenu(m_contextMenu);
     }
 
-    QList<WId> ids = m_kwin->windows();
+    QList<WId> ids = KWM::windows();
     foreach ( WId id, ids )
     {
         slotWindowAdded( id );
@@ -167,9 +165,9 @@ KMiniPager::~KMiniPager()
 
 void KMiniPager::slotBackgroundChanged(int desk)
 {
-    if (m_kwin->numberOfDesktops() > static_cast<int>(m_desktops.count()))
+    if (KWM::numberOfDesktops() > static_cast<int>(m_desktops.count()))
     {
-        slotSetDesktopCount( m_kwin->numberOfDesktops() );
+        slotSetDesktopCount( KWM::numberOfDesktops() );
     }
 
     m_desktops[desk - 1]->backgroundChanged();
@@ -177,12 +175,12 @@ void KMiniPager::slotBackgroundChanged(int desk)
 
 void KMiniPager::slotSetDesktop(int desktop)
 {
-    if (m_kwin->numberOfDesktops() > static_cast<int>(m_desktops.count()))
+    if (KWM::numberOfDesktops() > static_cast<int>(m_desktops.count()))
     {
-        slotSetDesktopCount( m_kwin->numberOfDesktops() );
+        slotSetDesktopCount( KWM::numberOfDesktops() );
     }
 
-    if (desktop != KWin::currentDesktop())
+    if (desktop != KWM::currentDesktop())
     {
         // this can happen when the user clicks on a desktop,
         // holds down the key combo to switch desktops, lets the
@@ -208,7 +206,7 @@ void KMiniPager::slotSetDesktop(int desktop)
 
 void KMiniPager::slotButtonSelected( int desk )
 {
-    KWin::setCurrentDesktop( desk );
+    KWM::setCurrentDesktop( desk );
     slotSetDesktop( desk );
 }
 
@@ -219,7 +217,7 @@ int KMiniPager::widthForHeight(int h) const
         return width();
     }
 
-    int deskNum = m_kwin->numberOfDesktops();
+    int deskNum = KWM::numberOfDesktops();
     int rowNum = m_settings->numberOfRows();
     if (rowNum == 0)
     {
@@ -253,7 +251,7 @@ int KMiniPager::widthForHeight(int h) const
         int bw = (h/rowNum) + 1;
         for (int i = 1; i <= deskNum; i++ )
         {
-            int sw = fontMetrics().width( m_kwin->desktopName( i ) ) + 16;
+            int sw = fontMetrics().width( KWM::desktopName( i ) ) + 16;
             if ( sw > bw )
             {
                 bw = sw;
@@ -272,7 +270,7 @@ int KMiniPager::heightForWidth(int w) const
         return height();
     }
 
-    int deskNum = m_kwin->numberOfDesktops();
+    int deskNum = KWM::numberOfDesktops();
     int rowNum = m_settings->numberOfRows(); // actually these are columns now... oh well.
     if (rowNum == 0)
     {
@@ -411,7 +409,7 @@ void KMiniPager::resizeEvent(QResizeEvent*)
 void KMiniPager::wheelEvent( QWheelEvent* e )
 {
     int newDesk;
-    int desktops = KWin::numberOfDesktops();
+    int desktops = KWM::numberOfDesktops();
     if (e->delta() < 0)
     {
         newDesk = m_curDesk % desktops + 1;
@@ -426,7 +424,7 @@ void KMiniPager::wheelEvent( QWheelEvent* e )
 
 void KMiniPager::drawButtons()
 {
-    int deskNum = m_kwin->numberOfDesktops();
+    int deskNum = KWM::numberOfDesktops();
     KMiniPagerButton *desk;
 
     for ( int i = 1; i <= deskNum; ++i )
@@ -463,7 +461,7 @@ void KMiniPager::slotSetDesktopCount( int )
 
     drawButtons();
 
-    m_curDesk = m_kwin->currentDesktop();
+    m_curDesk = KWM::currentDesktop();
     if ( m_curDesk == 0 )
     {
         m_curDesk = 1;
@@ -477,8 +475,8 @@ void KMiniPager::slotActiveWindowChanged( WId win )
 {
     if (desktopPreview())
     {
-        KWin::WindowInfo* inf1 = m_activeWindow ? info( m_activeWindow ) : NULL;
-        KWin::WindowInfo* inf2 = win ? info( win ) : NULL;
+        KWM::WindowInfo* inf1 = m_activeWindow ? info( m_activeWindow ) : NULL;
+        KWM::WindowInfo* inf2 = win ? info( win ) : NULL;
         m_activeWindow = win;
 
         QList<KMiniPagerButton*>::ConstIterator it;
@@ -498,7 +496,7 @@ void KMiniPager::slotWindowAdded( WId win)
 {
     if (desktopPreview())
     {
-        KWin::WindowInfo* inf = info( win );
+        KWM::WindowInfo* inf = info( win );
 
         if (inf->state() & NET::SkipPager)
         {
@@ -521,7 +519,7 @@ void KMiniPager::slotWindowRemoved(WId win)
 {
     if (desktopPreview())
     {
-        KWin::WindowInfo* inf = info(win);
+        KWM::WindowInfo* inf = info(win);
         bool onAllDesktops = inf->onAllDesktops();
         bool skipPager = inf->state() & NET::SkipPager;
         int desktop = inf->desktop();
@@ -566,7 +564,7 @@ void KMiniPager::slotWindowChanged( WId win , unsigned int properties )
 
     if (desktopPreview())
     {
-        KWin::WindowInfo* inf = m_windows[win];
+        KWM::WindowInfo* inf = m_windows[win];
         bool onAllDesktops = inf ? inf->onAllDesktops() : false;
         bool skipPager = inf ? inf->state() & NET::SkipPager : false;
         int desktop = inf ? inf->desktop() : 0;
@@ -595,11 +593,11 @@ void KMiniPager::slotWindowChanged( WId win , unsigned int properties )
     }
 }
 
-KWin::WindowInfo* KMiniPager::info( WId win )
+KWM::WindowInfo* KMiniPager::info( WId win )
 {
     if (!m_windows[win] )
     {
-        KWin::WindowInfo* info = new KWin::WindowInfo( win,
+        KWM::WindowInfo* info = new KWM::WindowInfo( win,
             NET::WMWindowType | NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMGeometry | NET::WMKDEFrameStrut, 0 );
 
         m_windows.insert( (long) win, info );

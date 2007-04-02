@@ -45,7 +45,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -85,7 +85,6 @@ void KSMServer::performLegacySessionSave()
     XErrorHandler oldHandler = XSetErrorHandler(winsErrorHandler);
     // Compute set of leader windows that need legacy session management
     // and determine which style (WM_COMMAND or WM_SAVE_YOURSELF)
-    KWinModule module;
     if( wm_save_yourself == (Atom)XNone ) {
         Atom atoms[ 4 ];
         const char* const names[]
@@ -97,8 +96,8 @@ void KSMServer::performLegacySessionSave()
         wm_client_leader = atoms[ 2 ];
         sm_client_id = atoms[ 3 ];
     }
-    for ( QList<WId>::ConstIterator it = module.windows().begin();
-        it != module.windows().end(); ++it) {
+    for ( QList<WId>::ConstIterator it = KWM::windows().begin();
+        it != KWM::windows().end(); ++it) {
         WId leader = windowWmClientLeader( *it );
         if (!legacyWindows.contains(leader) && windowSessionId( *it, leader ).isEmpty()) {
             SMType wtype = SM_WMCOMMAND;

@@ -17,7 +17,6 @@
 #include <kglobalaccel.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kwinmodule.h>
 #include <klocale.h>
 #include <netwm_def.h>
 

@@ -1,4 +1,3 @@
-#include <kwin.h>
 #include "testwin.h"
 
 TestWin::TestWin()

@@ -38,7 +38,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <kwin.h>
 
 #include "bgrender.h"
 #include "bgadvanced.h"

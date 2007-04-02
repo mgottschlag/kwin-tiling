@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QGLWidget>
 #include <QGLWidget>
-#include <KWin>
+#include <KWM>
 
 #include "widgets/pushbutton.h"
 #include "widgets/lineedit.h"
@@ -46,8 +46,7 @@ Desktop::Desktop(QWidget *parent)
     setBackground(tile);
 
     // Make us legit via KWin
-    KWin::setType(winId(), NET::Desktop);
-    KWin::setState(winId(), NET::SkipPager);
+    KWM::setType(winId(), NET::Desktop);
 
     // Tmp
     for (int i = 0; i < 4000; i++)

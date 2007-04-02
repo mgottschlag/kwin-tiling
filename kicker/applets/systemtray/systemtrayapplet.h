@@ -35,7 +35,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "utils.h"
 
 class QTimer;
-class KWinModule;
 class TrayEmbed;
 class KDialog;
 class KActionSelector;
@@ -90,7 +89,6 @@ private:
     TrayEmbedList m_hiddenWins;
     QStringList m_hiddenIconList;
     QStringList m_sortOrderIconList;
-    KWinModule *kwin_module;
     Atom net_system_tray_selection;
     Atom net_system_tray_opcode;
     bool m_showFrame;

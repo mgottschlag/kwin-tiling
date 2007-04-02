@@ -34,7 +34,7 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QPaintEvent>
-#include <kwin.h>
+#include <kwm.h>
 
 class KSharedPixmap;
 class KMenu;
@@ -101,9 +101,9 @@ protected:
 
   void paintEvent( QPaintEvent *ev );
 
-  KWin::WindowInfo *windowAtPosition (const QPoint &p, QPoint *internalpos);
+  KWM::WindowInfo *windowAtPosition (const QPoint &p, QPoint *internalpos);
 
-  bool shouldPaintWindow( KWin::WindowInfo *info );
+  bool shouldPaintWindow( KWM::WindowInfo *info );
 
   int m_desk;
   QString m_name;
@@ -116,15 +116,15 @@ protected:
   static QMap<int,bool> m_windowPixmapsDirty;
   WindowTransparentMode m_transparentMode;
 
-  QPixmap *paintNewWindow(const KWin::WindowInfo *info);
+  QPixmap *paintNewWindow(const KWM::WindowInfo *info);
 
-  void paintWindow(QPainter &p, const KWin::WindowInfo *info,
+  void paintWindow(QPainter &p, const KWM::WindowInfo *info,
 			bool onDesktop=true);
-  void paintWindowPlain(QPainter &p, const KWin::WindowInfo *info,
+  void paintWindowPlain(QPainter &p, const KWM::WindowInfo *info,
 			bool onDesktop=true);
-  void paintWindowIcon(QPainter &p, const KWin::WindowInfo *info,
+  void paintWindowIcon(QPainter &p, const KWM::WindowInfo *info,
 			bool onDesktop=true);
-  void paintWindowPixmap(QPainter &p, const KWin::WindowInfo *info,
+  void paintWindowPixmap(QPainter &p, const KWM::WindowInfo *info,
 			bool onDesktop=true);
 
 private:

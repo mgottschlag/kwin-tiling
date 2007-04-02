@@ -38,8 +38,7 @@ DESCRIPTION
 #include <kglobalaccel.h>
 #include <klocale.h>
 #include <k3process.h>
-#include <kwinmodule.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 #include <kaction.h>
@@ -68,7 +67,6 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
       m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
       m_rules(NULL),
       m_kxkbWidget(NULL),
-      kWinModule(NULL),
       m_forceSetXKBMap( false )
 {
     m_extension = new XKBExtension();
@@ -107,7 +105,6 @@ KXKBApp::~KXKBApp()
     delete m_rules;
     delete m_extension;
 	delete m_layoutOwnerMap;
-	delete kWinModule;
 }
 
 int KXKBApp::newInstance()
@@ -139,8 +136,7 @@ bool KXKBApp::settingsRead()
 	m_prevWinId = X11Helper::UNKNOWN_WINDOW_ID;
 
 	if( kxkbConfig.m_switchingPolicy == SWITCH_POLICY_GLOBAL ) {
-		delete kWinModule;
-		kWinModule = NULL;
+		disconnect(KWM::self(), SIGNAL(activeWindowChanged(WId)), SLOT(windowChanged(WId)));
 	}
 	else {
 		QDesktopWidget desktopWidget;
@@ -149,11 +145,10 @@ bool KXKBApp::settingsRead()
 			//TODO: find out how to handle that
 		}
 
-		if( kWinModule == NULL ) {
-			kWinModule = new KWinModule(0, KWinModule::INFO_DESKTOP);
-			connect(kWinModule, SIGNAL(activeWindowChanged(WId)), SLOT(windowChanged(WId)));
+		disconnect(KWM::self(), SIGNAL(activeWindowChanged(WId)), SLOT(windowChanged(WId)));
+		connect(KWM::self(), SIGNAL(activeWindowChanged(WId)), SLOT(windowChanged(WId)));
 		}
-		m_prevWinId = kWinModule->activeWindow();
+		m_prevWinId = KWM::activeWindow();
 		kDebug() << "Active window " << m_prevWinId << endl;
 	}
 

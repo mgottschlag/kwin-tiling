@@ -33,7 +33,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <kregexpeditorinterface.h>
 #include <kshortcutsdialog.h>
 #include <kparts/componentfactory.h>
@@ -76,9 +76,8 @@ ConfigDialog::~ConfigDialog()
 // prevent huge size due to long regexps in the action-widget
 void ConfigDialog::showEvent( QShowEvent *event )
 {
-    KWinModule module(0, KWinModule::INFO_DESKTOP);
     QSize s1 = sizeHint();
-    QSize s2 = module.workArea().size();
+    QSize s2 = KWM::workArea().size();
     int w = s1.width();
     int h = s1.height();
 

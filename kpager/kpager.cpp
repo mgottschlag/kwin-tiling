@@ -56,8 +56,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kwin.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <netwm.h>
 #include "desktop.h"
 #include <kmenu.h>
@@ -105,11 +104,11 @@ KPagerMainWindow::KPagerMainWindow(QWidget *parent, const char *name)
     }
 
     // Set the wm flags to this window
-    KWin::setState( winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::Sticky | NET::SkipPager );
-    KWin::setOnAllDesktops( winId(), true);
-    if ( KWin::windowInfo( winId(), NET::WMWindowType, 0 ).windowType(NET::Normal) == NET::Normal )
+    KWM::setState( winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::Sticky | NET::SkipPager );
+    KWM::setOnAllDesktops( winId(), true);
+    if ( KWM::windowInfo( winId(), NET::WMWindowType, 0 ).windowType(NET::Normal) == NET::Normal )
     {
-       KWin::setType( winId(), NET::Utility );
+       KWM::setType( winId(), NET::Utility );
     }
 
     XWMHints *hints = XGetWMHints(QX11Info::display(), winId());
@@ -170,7 +169,7 @@ void KPagerMainWindow::reallyClose()
 void KPagerMainWindow::showAt(int x, int y)
 {
   // Just in case we lost the sticky bit... (as when a window is hidden)
-  KWin::setOnAllDesktops( winId(), true);
+  KWM::setOnAllDesktops( winId(), true);
 
   if (x>qApp->desktop()->width()/2) // Right
     x-=m_pPager->width()+5;
@@ -205,8 +204,7 @@ KPager::KPager(KPagerMainWindow *parent, const char *name)
     QPalette pal = palette();
     pal.setColor( backgroundRole(), Qt::black );
     setPalette( pal );
-    m_winmodule=new KWinModule(this);
-    m_currentDesktop=m_winmodule->currentDesktop();
+    m_currentDesktop=KWM::currentDesktop();
 
     m_grabWinTimer=new QTimer( this );
     m_grabWinTimer->setObjectName( "grabWinTimer" );
@@ -215,30 +213,30 @@ KPager::KPager(KPagerMainWindow *parent, const char *name)
 
     KPagerConfigDialog::initConfiguration();
 
-    int numberOfDesktops=m_winmodule->numberOfDesktops();
+    int numberOfDesktops=KWM::numberOfDesktops();
     for (int i=0;i<numberOfDesktops;i++)
     {
-        Desktop *dsk=new Desktop(i+1,m_winmodule->desktopName(i),this);
+        Desktop *dsk=new Desktop(i+1,KWM::desktopName(i),this);
         m_desktops.append(dsk);
     }
 
     m_layoutType=static_cast<enum KPager::LayoutTypes>( KPagerConfigDialog::m_layoutType );
 
-    connect( m_winmodule, SIGNAL( activeWindowChanged(WId)),
+    connect( KWM::self(), SIGNAL( activeWindowChanged(WId)),
              SLOT(slotActiveWindowChanged(WId)));
-    connect( m_winmodule, SIGNAL( windowAdded(WId) ),
+    connect( KWM::self(), SIGNAL( windowAdded(WId) ),
              SLOT( slotWindowAdded(WId) ) );
-    connect( m_winmodule, SIGNAL( windowRemoved(WId) ),
+    connect( KWM::self(), SIGNAL( windowRemoved(WId) ),
              SLOT( slotWindowRemoved(WId) ) );
-    connect( m_winmodule, SIGNAL( windowChanged(WId,unsigned int) ),
+    connect( KWM::self(), SIGNAL( windowChanged(WId,unsigned int) ),
              SLOT( slotWindowChanged(WId,unsigned int) ) );
-    connect( m_winmodule, SIGNAL( stackingOrderChanged() ),
+    connect( KWM::self(), SIGNAL( stackingOrderChanged() ),
              SLOT( slotStackingOrderChanged() ) );
-    connect( m_winmodule, SIGNAL( desktopNamesChanged() ),
+    connect( KWM::self(), SIGNAL( desktopNamesChanged() ),
              SLOT( slotDesktopNamesChanged() ) );
-    connect( m_winmodule, SIGNAL( numberOfDesktopsChanged(int) ),
+    connect( KWM::self(), SIGNAL( numberOfDesktopsChanged(int) ),
              SLOT( slotNumberOfDesktopsChanged(int) ) );
-    connect( m_winmodule, SIGNAL( currentDesktopChanged(int)),
+    connect( KWM::self(), SIGNAL( currentDesktopChanged(int)),
              SLOT( slotCurrentDesktopChanged(int) ) );
 
     m_backgroundInterface = new org::kde::kdesktop::Background( "org.kde.kdesktop", "/Background", QDBusConnection::sessionBus() );
@@ -329,7 +327,7 @@ void KPager::showPopupMenu( WId wid, QPoint pos)
 	m_smnu->popup(pos);
     }
     else {
-        m_winfo = KWin::windowInfo(wid, NET::WMName | NET::WMState | NET::XAWMState | NET::WMDesktop);
+        m_winfo = KWM::windowInfo(wid, NET::WMName | NET::WMState | NET::XAWMState | NET::WMDesktop);
 
         if (!m_mnu) {
             m_mnu = new KMenu(this);
@@ -400,12 +398,12 @@ void KPager::configureDialog()
     }
 }
 
-KWin::WindowInfo* KPager::info( WId win )
+KWM::WindowInfo* KPager::info( WId win )
 {
-    KWin::WindowInfo* info = m_windows[win];
+    KWM::WindowInfo* info = m_windows[win];
     if (!info )
     {
-        info = new KWin::WindowInfo( KWin::windowInfo( win,
+        info = new KWM::WindowInfo( KWM::windowInfo( win,
             NET::WMName | NET::WMState | NET::XAWMState | NET::WMDesktop ));
         if( !info->valid() || info->desktop() == 0 )
         {
@@ -419,8 +417,8 @@ KWin::WindowInfo* KPager::info( WId win )
 
 void KPager::slotActiveWindowChanged( WId win )
 {
-    KWin::WindowInfo* inf1 = info( m_activeWin );
-    KWin::WindowInfo* inf2 = info( win );
+    KWM::WindowInfo* inf1 = info( m_activeWin );
+    KWM::WindowInfo* inf2 = info( win );
     m_activeWin = win;
 
     // update window pixmap
@@ -438,7 +436,7 @@ void KPager::slotActiveWindowChanged( WId win )
 
 void KPager::slotWindowAdded( WId win)
 {
-    KWin::WindowInfo* inf = info( win );
+    KWM::WindowInfo* inf = info( win );
     if (!inf)
         return; // never should be here
 
@@ -451,7 +449,7 @@ void KPager::slotWindowAdded( WId win)
 
 void KPager::slotWindowRemoved( WId win )
 {
-    KWin::WindowInfo* inf = m_windows[win];
+    KWM::WindowInfo* inf = m_windows[win];
     if (inf)
     {
         bool onAllDesktops = inf->onAllDesktops();
@@ -470,11 +468,11 @@ void KPager::slotWindowChanged( WId win , unsigned int prop)
 {
     bool repaint=false;
 
-    KWin::WindowInfo* inf = m_windows[win];
+    KWM::WindowInfo* inf = m_windows[win];
     if (!inf)
     {
       inf=info(win);
-      prop=0; // info already calls KWin::info, so there's no need
+      prop=0; // info already calls KWM::info, so there's no need
       // to update anything else.
       repaint=true;
     };
@@ -517,7 +515,7 @@ void KPager::slotDesktopNamesChanged()
 {
     for ( int i=1; i <= (int) m_desktops.count(); ++i)
     {
-        m_desktops[i-1]->setToolTip( kwin()->desktopName(i));
+        m_desktops[i-1]->setToolTip( KWM::desktopName(i));
     }
 
     update();
@@ -551,7 +549,7 @@ void KPager::slotNumberOfDesktopsChanged(int ndesktops)
 
         for (int d=m_desktops.count()+1;d<=nDesktops; d++)
         {
-            Desktop *dsk=new Desktop(d,kwin()->desktopName(d-1),this);
+            Desktop *dsk=new Desktop(d,KWM::desktopName(d-1),this);
             m_desktops.append(dsk);
             dsk->show();
         }
@@ -589,9 +587,9 @@ void KPager::sendToDesktop(QAction *action)
     int desk = action->data().toInt();
 
     if (desk == 0)
-        KWin::setOnAllDesktops(m_winfo.win(), true);
+        KWM::setOnAllDesktops(m_winfo.win(), true);
     else {
-        KWin::setOnDesktop(m_winfo.win(), desk);
+        KWM::setOnDesktop(m_winfo.win(), desk);
     }
 }
 
@@ -600,7 +598,7 @@ void KPager::clientPopupAboutToShow()
     if (!m_mnu) return;
 
     m_mnu_title->setText(m_winfo.name() );
-    m_mnu_title->setIcon( KWin::icon(m_winfo.win(),16,16,true) );
+    m_mnu_title->setIcon( KWM::icon(m_winfo.win(),16,16,true) );
     m_iconify_action->setChecked( m_winfo.isMinimized() );
     m_maximize_action->setChecked( m_winfo.state() & NET::Max );
     m_sticky_action->setText( m_winfo.onAllDesktops() ? i18n("Un&sticky") : i18n("&Sticky") );
@@ -619,9 +617,9 @@ void KPager::desktopPopupAboutToShow()
     if (m_winfo.onAllDesktops())
         action->setChecked( true );
 
-    for ( int i = 1; i <= m_winmodule->numberOfDesktops(); i++ ) {
+    for ( int i = 1; i <= KWM::numberOfDesktops(); i++ ) {
         action = m_dmnu->addAction( QString("&")+QString::number(i )+QString(" ")
-                                 + m_winmodule->desktopName(i) );
+                                 + KWM::desktopName(i) );
         action->setData( i );
         action->setCheckable( true );
         if ( m_winfo.desktop() == i )
@@ -645,16 +643,16 @@ void KPager::clientPopupActivated( QAction *action )
 	    break;
 	case IconifyOp:
 	    if ( !m_winfo.isMinimized() ) {
-		KWin::iconifyWindow( m_winfo.win());
+		KWM::minimizeWindow( m_winfo.win());
 	    } else {
-		KWin::forceActiveWindow( m_winfo.win() );
+		KWM::forceActiveWindow( m_winfo.win() );
 	    }
 	    break;
 	case StickyOp:
 	    if ( m_winfo.onAllDesktops() ) {
-		KWin::setOnAllDesktops(m_winfo.win(), false);
+		KWM::setOnAllDesktops(m_winfo.win(), false);
 	    } else {
-		KWin::setOnAllDesktops(m_winfo.win(), true);
+		KWM::setOnAllDesktops(m_winfo.win(), true);
 	    }
 	    break;
 	case CloseOp: {

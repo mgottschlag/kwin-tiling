@@ -19,7 +19,7 @@
 #include <klocale.h>
 #include <netwm.h>
 #include <kshortcut.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kkeyserver.h>
 
 #include <X11/XKBlib.h>
@@ -95,10 +95,10 @@ static ModifierKey modifierKeys[] = {
 
 KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   : KUniqueApplication(allowStyles, GUIenabled),
-  overlay(0), wm(0, KWinModule::INFO_DESKTOP),_player(Phonon::AccessibilityCategory)
+  overlay(0), _player(Phonon::AccessibilityCategory)
 {
-  _activeWindow = wm.activeWindow();
-  connect(&wm, SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
+  _activeWindow = KWM::activeWindow();
+  connect(KWM::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
 
   connect( &_player, SIGNAL( finished() ), SLOT( slotBellFinished() ));
 
@@ -764,7 +764,7 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
         featuresLabel->setText ( question+"\n\n"+explanation
               +" "+i18n("These AccessX settings are needed for some users with motion impairments and can be configured in the KDE Control Center. You can also turn them on and off with standardized keyboard gestures.\n\nIf you do not need them, you can select \"Deactivate all AccessX features and gestures\".") );
 
-        KWin::setState( dialog->winId(), NET::KeepAbove );
+        KWM::setState( dialog->winId(), NET::KeepAbove );
         kapp->updateUserTimestamp();
         dialog->show();
      }
