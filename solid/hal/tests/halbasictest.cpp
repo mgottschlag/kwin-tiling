@@ -27,7 +27,7 @@
 #include <solid/ifaces/processor.h>
 #include "processor.h"
 
-QTEST_KDEMAIN( HalBasicTest, NoGUI )
+QTEST_KDEMAIN_CORE( HalBasicTest )
 
 
 void HalBasicTest::testBasic()
