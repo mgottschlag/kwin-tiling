@@ -195,7 +195,7 @@ void SimpleButton::slotSettingsChanged(int category)
 
     if (changeCursor)
     {
-        setCursor(KCursor::handCursor());
+        setCursor(Qt::PointingHandCursor);
     }
     else
     {

@@ -200,7 +200,7 @@ void PanelButton::updateSettings(int category)
 
     if (d->changeCursorOverItem)
     {
-        setCursor(QCursor::HandCursor);
+        setCursor(Qt::PointingHandCursor);
     }
     else
     {
