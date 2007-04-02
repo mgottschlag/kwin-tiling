@@ -73,7 +73,9 @@ KCMDnssd::KCMDnssd(QWidget *parent, const QStringList&)
 	connect(widget->hostedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));
 	connect(widget->secretedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));
 	connect(widget->domainedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));
+#if 0
 	if (DNSSD::Configuration::self()->publishDomain().isEmpty()) widget->WANButton->setEnabled(false);
+#endif
 }
 
 KCMDnssd::~KCMDnssd()
