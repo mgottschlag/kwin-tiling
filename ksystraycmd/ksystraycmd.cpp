@@ -121,7 +121,7 @@ void KSysTrayCmd::setTargetWindow( WId w )
   disconnect( kwinmodule, SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
   connect( kwinmodule, SIGNAL(windowChanged(WId)), SLOT(windowChanged(WId)) );
   win = w;
-  KWin::setSystemTrayWindowFor( winId(), win );
+//  KWin::setSystemTrayWindowFor( winId(), win );
   refresh();
   show();
 
@@ -143,7 +143,7 @@ void KSysTrayCmd::setTargetWindow( WId w )
 
 void KSysTrayCmd::refresh()
 {
-  KWin::setSystemTrayWindowFor( winId(), win ? win : winId() );
+//  KWin::setSystemTrayWindowFor( winId(), win ? win : winId() );
 
   this->setToolTip( QString() );
   if ( win ) {
