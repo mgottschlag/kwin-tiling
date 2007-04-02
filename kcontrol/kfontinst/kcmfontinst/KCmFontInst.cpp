@@ -55,7 +55,6 @@
 #include <kinputdialog.h>
 #include <kiconloader.h>
 #include <kprogressdialog.h>
-#include <kdirselectdialog.h>
 #include <kzip.h>
 #include <ktempdir.h>
 #include <ktemporaryfile.h>
@@ -793,12 +792,12 @@ void CKCmFontInst::exportGroup()
                         urls.append(*it);
 
                     QString name(grp->name());
-                    KUrl    dir=KDirSelectDialog::selectDirectory(KUrl(), true, this,
+                    QString dir=KFileDialog::getExistingDirectory(KUrl(), this,
                                                                   i18n("Select Export Folder For \"%1\"", name));
 
                     if(!dir.isEmpty())
                     {
-                        QString file(Misc::dirSyntax(dir.path())+name+KFI_FONTS_GROUP);
+                        QString file(Misc::dirSyntax(dir)+name+KFI_FONTS_GROUP);
 
                         if(!Misc::fExists(file) ||
                            KMessageBox::Yes==KMessageBox::warningYesNo(this,
@@ -841,7 +840,7 @@ void CKCmFontInst::exportGroup()
                                 else
                                 {
                                     KMessageBox::error(this, i18n("Could not create %1",
-                                                                  dir.path()+name+KFI_FONTS_GROUP));
+                                                                  dir+name+KFI_FONTS_GROUP));
                                     delete itsExportFile;
                                     itsExportFile=NULL;
                                     delete itsTempDir;
