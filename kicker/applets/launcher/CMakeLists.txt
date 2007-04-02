@@ -31,7 +31,7 @@ kde4_add_kcfg_files(launcher_panelapplet_PART_SRCS prefs.kcfgc )
 kde4_add_plugin(launcher_panelapplet ${launcher_panelapplet_PART_SRCS})
 
 
-target_link_libraries(launcher_panelapplet ${KDE4_KDE3SUPPORT_LIBS} kworkspace konq kickermain )
+target_link_libraries(launcher_panelapplet ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kworkspace konq kickermain )
 
 install(TARGETS launcher_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
