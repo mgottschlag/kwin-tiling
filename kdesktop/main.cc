@@ -173,7 +173,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     KUniqueApplication app;
     app.disableSessionManagement(); // Do SM, but don't restart.
 
-    KDesktopSettings::instance(appname + QByteArray("rc"));
+    KDesktopSettings::instance(QByteArray(appname + QByteArray("rc")).constData());
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     bool x_root_hack = args->isSet("x-root");
