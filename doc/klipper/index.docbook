@@ -76,7 +76,7 @@ for contact details).</para>
 <para>To display the clipboard history, click on the &klipper; icon in
  the &kde; panel, or press <keycombo
  action="simul">&Ctrl;&Alt;<keycap>V</keycap> </keycombo>. Previous
- clipboard entries are shown at the top of the pop-up menu which
+ clipboard entries are shown at the top of the popup menu which
  appears. Selecting one of these copies it to the clipboard, from
  where it can be pasted into any &kde; or X application as
  usual.</para>
@@ -208,7 +208,7 @@ selected, the clipboard functions in the &UNIX; mode; if not, the
 </chapter>
 
 <chapter id="preferences">
-<title>Configuring Klipper</title>
+<title>Configuring &klipper;</title>
 
 <sect1 id="viewing-options">
 
@@ -228,7 +228,7 @@ below.</para>
 
 <varlistentry>
 <term><guilabel>Popup menu at mouse-cursor position</guilabel></term>
-<listitem><para>Make the &klipper; pop-up menus appear at the position of
+<listitem><para>Make the &klipper; popup menus appear at the position of
 the mouse cursor, instead of their default position (in the &kde; Panel).
 Useful if you use the mouse more than the keyboard.</para></listitem>
 </varlistentry>
@@ -243,8 +243,8 @@ history will be saved when &klipper; exits, allowing you to use it next time
 </varlistentry>
 
 <varlistentry>
-<term><guilabel>Remove whitespace when executing actions</guilabel></term>
-<listitem><para>If selected, any whitespace (spaces, tabs, &etc;) at the
+<term><guilabel>Remove white space when executing actions</guilabel></term>
+<listitem><para>If selected, any white space (spaces, tabs, &etc;) at the
 beginning and end of the clipboard contents will be removed before passing the
 clipboard contents to an application. This is useful, for example, if the
 clipboard contains a &URL; with spaces which, if opened by a web browser, would
@@ -294,7 +294,7 @@ selection</guilabel></term>
 
 <varlistentry>
 <term><guilabel>Timeout for Action pop-ups</guilabel></term>
-<listitem><para>Set the time that a pop-up menu will remain for if you do
+<listitem><para>Set the time that a popup menu will remain for if you do
 nothing with it.</para></listitem>
 </varlistentry>
 
@@ -415,7 +415,7 @@ type the desired key combination on your keyboard, as in any &kde; application.
 &klipper;
 </para>
 <para>
-Program copyright 1998 Andrew Stanley-Jones <email>asj@cban.com</email>
+Program copyright 1998 &Andrew.Stanley-Jones; <email>asj@cban.com</email>
 </para>
 <para>
 Program copyright 1998-2000 &Carsten.Pfeiffer; &Carsten.Pfeiffer.mail;</para>
@@ -429,6 +429,7 @@ for contact details.
 Documentation copyright 2000-2003, 2005 &Philip.Rodrigues;
 &Philip.Rodrigues.mail;</para>
 
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 &underFDL;
 &underGPL;
 
@@ -449,10 +450,9 @@ Documentation copyright 2000-2003, 2005 &Philip.Rodrigues;
 <para>&klipper; should compile and install along with the kdebase
 package, and appear on your &kde; panel (&kicker;) when you run &kde;
 3. If it does not appear, you can start it by selecting
-<menuchoice><guimenu>Panel
-Menu</guimenu><guisubmenu>Add</guisubmenu><guisubmenu>Applet</guisubmenu><guimenuitem>Klipper</guimenuitem>
-</menuchoice>
-in any context menu in &kicker;, the &kde; Panel.</para> 
+<guimenuitem>Add Applet to Panel...</guimenuitem> 
+in any context menu in &kicker;, the &kde; Panel 
+and choosing <guilabel>Klipper</guilabel> in the dialog.</para> 
 
 <screenshot>
 <screeninfo>&klipper; icon</screeninfo>
