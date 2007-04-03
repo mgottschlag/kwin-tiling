@@ -116,7 +116,7 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     useRM = cfg.readEntry("useResourceManager", true);
 
     cs = new WidgetCanvas( this );
-    cs->setCursor( KCursor::handCursor() );
+    cs->setCursor( Qt::PointingHandCursor );
 
 
     cs->setFixedHeight(160);
