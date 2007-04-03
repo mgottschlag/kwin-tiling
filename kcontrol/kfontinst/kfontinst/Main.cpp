@@ -61,10 +61,9 @@ static QWidget * createParent(int xid)
     if(!xid)
         return NULL;
 
-    QWidget *parent=new QWidget;
+    QWidget *parent=new QWidget(NULL, Qt::FramelessWindowHint);
 
-    parent->resize(0, 0);
-    parent->setParent(NULL, Qt::FramelessWindowHint);
+    parent->resize(1, 1);
     parent->show();
 
     XWindowAttributes attr;
