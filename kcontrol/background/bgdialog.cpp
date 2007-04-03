@@ -1231,18 +1231,18 @@ void BGDialog::slotAdvanced()
 
 void BGDialog::slotGetNewStuff()
 {
-   //FIXME set this to a server when we get one
-   //should really be in a .rc file but could be either
-   //kcmshellrc or kcontrolrc
-   // FIXME (KNS2): should *really* be in a .knsrc file, since writing to .rc doesn't help
-   KSharedConfig::Ptr config = KGlobal::config();
-   KConfigGroup cg = config->group("KNewStuff2");
-   cg.writeEntry( "ProvidersUrl", "http://download.kde.org/khotnewstuff/wallpaper-providers.xml" );
-   cg.writeEntry( "StandardResource", "wallpaper" );
-   config->sync();
+   // We use the more complicated KNewStuff2 API here because these settings
+   // might affect both kcmshell and kcontrol
 
-   // FIXME: title = i18n("Get New Wallpapers")
-   KNS::Engine::download();
+   KNS::Engine *engine = new KNS::Engine();
+   engine->init("wallpaper.knsrc");
+   //FIXME (KNS2): monday change
+   //engine->setTitle(i18n("Get New Wallpapers"));
+   engine->downloadDialogModal();
+   delete engine;
+
+   // FIXME (KNS2): engine->download gives us meta infos, write those into
+   // the .desktop files
    loadWallpaperFilesList();
 }
 

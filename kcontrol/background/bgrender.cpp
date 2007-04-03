@@ -845,7 +845,7 @@ void KBackgroundRenderer::setBusyCursor(bool isBusy) {
       return;
    m_isBusyCursor = isBusy;
    if(isBusy)
-      QApplication::setOverrideCursor( KCursor::workingCursor() );
+      QApplication::setOverrideCursor( QCursor(Qt::BusyCursor) );
    else
       QApplication::restoreOverrideCursor();
 }

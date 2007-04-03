@@ -27,6 +27,7 @@ install(TARGETS kcm_background  DESTINATION ${PLUGIN_INSTALL_DIR})
 ########### install files ###############
 
 install( FILES background.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
+install( FILES background.knsrc  DESTINATION  ${CONFIG_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
