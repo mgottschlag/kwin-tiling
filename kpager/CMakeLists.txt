@@ -16,7 +16,7 @@ kde4_automoc(${kpager_SRCS})
 
 kde4_add_executable(kpager ${kpager_SRCS})
 
-target_link_libraries(kpager  ${KDE4_KDEUI_LIBS} )
+target_link_libraries(kpager  ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 
 install(TARGETS kpager DESTINATION ${BIN_INSTALL_DIR})
 
