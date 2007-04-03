@@ -29,6 +29,7 @@
 #include <kconfig.h>
 #include <kstandardaction.h>
 #include <kactioncollection.h>
+#include <kparts/browserextension.h>
 
 #define CFG_GROUP    "FontViewer Settings"
 #define CFG_SIZE_KEY "Window Size"
@@ -42,12 +43,17 @@ CViewer::CViewer(const KUrl &url)
 
     if(factory)
     {
+        itsPreview=(KParts::ReadOnlyPart *)factory->create(this, "KParts::ReadOnlyPart");
+
         actionCollection()->addAction(KStandardAction::Open, this, SLOT(fileOpen()));
         actionCollection()->addAction(KStandardAction::Quit, kapp, SLOT(quit()));
-        //actionCollection()->addAction(KStandardAction::Print, itsPreview,
-        //                              SLOT(print()))->setEnabled(false);
+        itsPrintAct=actionCollection()->addAction(KStandardAction::Print, itsPreview, SLOT(print()));
 
-        itsPreview=(KParts::ReadOnlyPart *)factory->create(this, "KParts::ReadOnlyPart");
+        itsPrintAct->setEnabled(false);
+
+        if(itsPreview->browserExtension())
+            connect(itsPreview->browserExtension(), SIGNAL(enableAction(const char *, bool)),
+                    this, SLOT(enableAction(const char *, bool)));
 
         setCentralWidget(itsPreview->widget());
         createGUI(itsPreview);
@@ -77,6 +83,12 @@ void CViewer::fileOpen()
                                      this, i18n("Select Font to View")));
     if(url.isValid())
         itsPreview->openUrl(url);
+}
+
+void CViewer::enableAction(const char *name, bool enable)
+{
+    if(0==qstrcmp("print", name))
+        itsPrintAct->setEnabled(enable);
 }
 
 }

@@ -27,6 +27,8 @@
 #include <kparts/part.h>
 #include <kparts/mainwindow.h>
 
+class QAction;
+
 namespace KFI
 {
 
@@ -42,11 +44,12 @@ class CViewer : public KParts::MainWindow
     public Q_SLOTS:
 
     void fileOpen();
+    void enableAction(const char *name, bool enable);
 
     private:
 
     KParts::ReadOnlyPart *itsPreview;
-
+    QAction              *itsPrintAct;
 };
 
 }

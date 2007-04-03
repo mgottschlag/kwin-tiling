@@ -71,10 +71,6 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void showFace(int f);
     void statResult(KJob *job);
 
-    Q_SIGNALS:
-
-    void enablePrintAction(bool enable);
-
     private:
 
     void stat(const QString &path=QString());

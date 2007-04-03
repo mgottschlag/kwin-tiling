@@ -49,7 +49,7 @@
 #define KFI_INST_CAPTION  I18N_NOOP("Font Installer")
 #define KFI_PRINT_CAPTION I18N_NOOP("Font Printer")
 #define KFI_VIEW_CAPTION  I18N_NOOP("Font Viewer")
-
+#define KFI_COPYRIGHT     "(C) Craig Drummond, 2003-2007"
 //
 // *Very* hacky way to get some KDE dialogs to appear to be transient
 // for 'xid'
@@ -109,17 +109,17 @@ static void usage(char *app)
                  << std::endl
               << std::endl
               << std::endl
-              << "    Font installtion:" << std::endl
+              << "    Font installation:" << std::endl
               << std::endl
               << "      -i <x id> <caption> <font file> [<font file...>] Install font files, if non-root will be " << std::endl
               << "                                                       prompted for destination." << std::endl
-              << "      -I <font file> [<font file...>]                  As above, but not xid/caption." << std::endl
+              << "      -I <font file> [<font file...>]                  As above, but no xid/caption." << std::endl
               << std::endl
               << std::endl
               << "    Font Printing:" << std::endl
               << std::endl
               << "       -P <x id> <caption> <size> <family> <style info> [...] Print fonts" << std::endl
-              << "       -p <x id> <caption> <size> <list file> <y/n>           Print fonts, *removes* file if last param==y"
+              << "       -p <x id> <caption> <size> <list file> <y/n>           Print fonts, *removes* list file if last param==y"
                  << std::endl
               << std::endl
               << std::endl
@@ -134,7 +134,7 @@ static void usage(char *app)
               << "    <style info> is a 24-bit decimal number composed as: <weight><width><slant>" << std::endl
               << std::endl
               << std::endl
-              << "  (C) Craig Drummond, 2003-2007" << std::endl
+              << "  " << KFI_COPYRIGHT << std::endl
               << std::endl;
 
     exit(-1);
@@ -158,10 +158,8 @@ static int installFonts(int argc, char **argv, bool plain)
     {
         const char *caption(plain || argv[3][0]=='\0' ? KFI_INST_CAPTION : argv[3]);
 
-        KAboutData aboutData(KFI_NAME, caption,
-                            "1.0", KFI_INST_CAPTION,
-                            KAboutData::License_GPL,
-                            "(C) Craig Drummond, 2003-2007");
+        KAboutData aboutData(KFI_NAME, caption, "1.0", KFI_INST_CAPTION,
+                             KAboutData::License_GPL,  KFI_COPYRIGHT);
 
         char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)KFI_ICON};
 
@@ -228,9 +226,7 @@ static int printFonts(int argc, char **argv, bool listFile)
             {
                 QByteArray caption(argv[3]);
                 KAboutData aboutData(KFI_NAME, caption.isEmpty() ? KFI_PRINT_CAPTION : caption,
-                                     "1.0", KFI_PRINT_CAPTION,
-                                     KAboutData::License_GPL,
-                                     "(C) Craig Drummond, 2003-2007");
+                                     "1.0", KFI_PRINT_CAPTION,  KAboutData::License_GPL, KFI_COPYRIGHT);
 
                 char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)KFI_ICON};
 
@@ -252,10 +248,8 @@ static int viewFont(int argc, char **argv)
 {
     KUrl url(3==argc ? toUrl(QString::fromUtf8(argv[2])) : KUrl());
 
-    KAboutData aboutData(KFI_NAME, KFI_VIEW_CAPTION,
-                         "1.1", KFI_VIEW_CAPTION,
-                         KAboutData::License_GPL,
-                         "(C) Craig Drummond, 2003-2007");
+    KAboutData aboutData(KFI_NAME, KFI_VIEW_CAPTION, "1.1", KFI_VIEW_CAPTION,
+                         KAboutData::License_GPL, KFI_COPYRIGHT);
 
     char *dummyArgv[]={ argv[0], (char *)"--icon", (char *)"kfontview"};
 
@@ -266,7 +260,6 @@ static int viewFont(int argc, char **argv)
     KLocale::setMainCatalog(KFI_CATALOGUE);
     KFI::CViewer *viewer=new KFI::CViewer(url.isValid() ? url : KUrl());
 
-    app.setMainWidget(viewer);
     viewer->show();
     return app.exec();
 }

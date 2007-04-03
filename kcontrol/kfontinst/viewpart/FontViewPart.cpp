@@ -143,7 +143,7 @@ CFontViewPart::CFontViewPart(QWidget *parent)
 
     setXMLFile("kfontviewpart.rc");
     setWidget(itsFrame);
-    emit enablePrintAction(false);
+    itsExtension->enablePrint(false);
 }
 
 CFontViewPart::~CFontViewPart()
@@ -297,7 +297,6 @@ void CFontViewPart::previewStatus(bool st)
 
     itsChangeTextAction->setEnabled(st);
     itsExtension->enablePrint(st && printable);
-    emit enablePrintAction(st && printable);
 }
 
 void CFontViewPart::install()
@@ -469,7 +468,8 @@ BrowserExtension::BrowserExtension(CFontViewPart *parent)
 
 void BrowserExtension::enablePrint(bool enable)
 {
-    emit enableAction("print", enable);
+    if(enable!=isActionEnabled("print"))
+        emit enableAction("print", enable);
 }
 
 void BrowserExtension::print()
