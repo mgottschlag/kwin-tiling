@@ -56,7 +56,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <dcopclient.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kglobal.h>
 #include <klocale.h>
 
@@ -113,7 +113,7 @@ int main( int argc, char **argv )
   kasbar->show();
 
   kasbar->setDetached( true );
-  KWin::setOnAllDesktops( kasbar->winId(), true );
+  KWM::setOnAllDesktops( kasbar->winId(), true );
   kDebug() << "kasbar: Window id is " << kasbar->winId() << endl;
 
   KApplication::kApplication()->dcopClient()->registerAs( "kasbar" );

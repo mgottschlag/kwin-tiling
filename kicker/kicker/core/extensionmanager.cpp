@@ -39,8 +39,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmenubar.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <kwinmodule.h>
 #include <kglobalsettings.h>
+#include <kwm.h>
 
 #include "utils.h"
 #include "kicker.h"
@@ -594,7 +594,7 @@ QRect ExtensionManager::workArea(ExtensionContainer* extension,
 {
     if (!extension)
     {
-        return Kicker::self()->kwinModule()->workArea(XineramaScreen);
+        return KWM::workArea(XineramaScreen);
     }
 
     QList<WId> list;
@@ -642,11 +642,11 @@ QRect ExtensionManager::workArea(ExtensionContainer* extension,
     if (XineramaScreen == Plasma::XineramaAllScreens)
     {
          /* special value for all screens */
-         workArea = Kicker::self()->kwinModule()->workArea(list);
+         workArea = KWM::workArea(list);
     }
     else
     {
-        workArea = Kicker::self()->kwinModule()->workArea(list, XineramaScreen)
+        workArea = KWM::workArea(list, XineramaScreen)
                    .intersect(QApplication::desktop()->screenGeometry(XineramaScreen));
     }
 

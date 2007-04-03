@@ -34,7 +34,7 @@
 #include <kpanelextension.h>
 #include <QPixmap>
 #include <kstandarddirs.h>
-#include <kwin.h>
+#include <kwm.h>
 
 #include "main.h"
 #include "../background/bgrender.h"

@@ -46,13 +46,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <kicker.h>
 #include <kstandarddirs.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <klocale.h>
 #include <kglobalsettings.h>
 #include <kapplication.h>
 #include <netwm.h>
 #include <fixx11h.h>
-#include <kwinmodule.h>
 #include <kmenu.h>
 #include <QX11Info>
 #include <kauthorized.h>
@@ -132,12 +131,12 @@ ExtensionContainer::ExtensionContainer(KPanelExtension* extension,
 void ExtensionContainer::init()
 {
     // panels live in the dock
-    KWin::setType(winId(), NET::Dock);
-    KWin::setState(winId(), NET::Sticky);
-    KWin::setOnAllDesktops(winId(), true);
+    KWM::setType(winId(), NET::Dock);
+    KWM::setState(winId(), NET::Sticky);
+    KWM::setOnAllDesktops(winId(), true);
 
-    connect(Kicker::self()->kwinModule(), SIGNAL(strutChanged()), this, SLOT(strutChanged()));
-    connect(Kicker::self()->kwinModule(), SIGNAL(currentDesktopChanged(int)),
+    connect(KWM::self(), SIGNAL(strutChanged()), this, SLOT(strutChanged()));
+    connect(KWM::self(), SIGNAL(currentDesktopChanged(int)),
             this, SLOT( currentDesktopChanged(int)));
 
     setFrameStyle(NoFrame);
@@ -279,24 +278,24 @@ void ExtensionContainer::readConfig()
     {
         if (m_hideMode == BackgroundHide)
         {
-            KWin::setState( winId(), NET::KeepBelow );
+            KWM::setState( winId(), NET::KeepBelow );
             UnhideTrigger::self()->setEnabled( true );
         }
         else
         {
-            KWin::clearState( winId(), NET::KeepBelow );
+            KWM::clearState( winId(), NET::KeepBelow );
         }
     }
     else if (m_hideMode == BackgroundHide)
     {
         // old way
-        KWin::clearState( winId(), NET::StaysOnTop );
+        KWM::clearState( winId(), NET::StaysOnTop );
         UnhideTrigger::self()->setEnabled( true );
     }
     else
     {
         // the other old way
-        KWin::setState( winId(), NET::StaysOnTop );
+        KWM::setState( winId(), NET::StaysOnTop );
     }
 
     actuallyUpdateLayout();
@@ -618,7 +617,7 @@ void ExtensionContainer::unhideTriggered(Plasma::ScreenEdge tr, int XineramaScre
 
             if (m_hideMode == BackgroundHide)
             {
-                KWin::raiseWindow(winId());
+                KWM::raiseWindow(winId());
             }
             else if (_autoHidden)
             {
@@ -1022,12 +1021,12 @@ void ExtensionContainer::updateWindowManager()
             "\tbottom: " << strut.bottom_width << " " << strut.bottom_start << " " << strut.bottom_end << endl; */
         _strut = strut;
 
-        KWin::setExtendedStrut(winId(),
+        KWM::setExtendedStrut(winId(),
             strut.left_width, strut.left_start, strut.left_end,
             strut.right_width, strut.right_start, strut.right_end,
             strut.top_width, strut.top_start, strut.top_end,
             strut.bottom_width, strut.bottom_start, strut.bottom_end);
-        KWin::setStrut(winId(), strut.left_width, strut.right_width, strut.top_width, strut.bottom_width);
+        KWM::setStrut(winId(), strut.left_width, strut.right_width, strut.top_width, strut.bottom_width);
     }
     /*else
     {
@@ -1046,7 +1045,7 @@ void ExtensionContainer::currentDesktopChanged(int)
         }
         else if (m_hideMode == BackgroundHide)
         {
-            KWin::raiseWindow(winId());
+            KWM::raiseWindow(winId());
         }
     }
 

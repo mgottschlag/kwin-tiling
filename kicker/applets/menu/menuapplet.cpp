@@ -84,7 +84,6 @@ const long SUPPORTED_WINDOW_TYPES = NET::NormalMask | NET::DesktopMask | NET::Do
 Applet::Applet( const QString& configFile_P, QWidget* parent_P )
     :   KPanelApplet( configFile_P, Plasma::Normal, 0, parent_P ),
         //DCOPObject( "menuapplet" ),
-        module( NULL ),
         active_menu( NULL ),
         selection( NULL ),
         selection_watcher( NULL ),
@@ -105,7 +104,6 @@ Applet::~Applet()
     lostSelection(); // release all menu's before really loosing the selection
     delete selection;
     delete selection_watcher;
-    delete module;
     KGlobal::locale()->removeCatalog("kmenuapplet");
     }
 
@@ -140,7 +138,7 @@ void Applet::windowAdded( WId w_P )
 	}
     menus.append( embed );
     // in case the app mapped its menu after its mainwindow, check which menu should be shown
-    activeWindowChanged( module->activeWindow());
+    activeWindowChanged( KWM::activeWindow());
     }
 
 // - if the active window has its topmenu -> show the menu
@@ -246,7 +244,7 @@ void Applet::menuLost( MenuEmbed* embed )
 		{
 		active_menu = NULL;
 		// trigger selecting new active menu
-		activeWindowChanged( module->activeWindow());
+		activeWindowChanged( KWM::activeWindow());
 		}
 	    return;
 	    }
@@ -294,16 +292,15 @@ void Applet::claimSelection()
         delete selection_watcher;
         selection_watcher = NULL;
         connect( selection, SIGNAL( lostOwnership()), SLOT( lostSelection()));
-        module = new KWinModule;
-	connect( module, SIGNAL( windowAdded( WId )), this, SLOT( windowAdded( WId )));
-	connect( module, SIGNAL( activeWindowChanged( WId )),
+	connect( KWM::self(), SIGNAL( windowAdded( WId )), this, SLOT( windowAdded( WId )));
+	connect( KWM::self(), SIGNAL( activeWindowChanged( WId )),
 	    this, SLOT( activeWindowChanged( WId )));
-	QList< WId > windows = module->windows();
+	QList< WId > windows = KWM::windows();
 	for( QList< WId >::ConstIterator it = windows.begin();
 	     it != windows.end();
 	     ++it )
 	    windowAdded( *it );
-	activeWindowChanged( module->activeWindow());
+	activeWindowChanged( KWM::activeWindow());
 	}
     else
         lostSelection();
@@ -325,8 +322,7 @@ void Applet::lostSelection()
         selection_watcher = new KSelectionWatcher( makeSelectionAtom(), DefaultScreen( QX11Info::display()));
         connect( selection_watcher, SIGNAL( lostOwner()), this, SLOT( claimSelection()));
         }
-    delete module;
-    module = NULL;
+    disconnect( KWM::self(), NULL, this, NULL );
     selection->deleteLater();
     selection = NULL;
     // selection_watcher stays
@@ -345,7 +341,7 @@ void Applet::readSettings()
             "You do not appear to have enabled the standalone menubar; "
             "enable it in the Behavior control module for desktop." ));
     if( !isDisabled() && active_menu == NULL )
-        activeWindowChanged( module->activeWindow()); //enforce desktop_menu
+        activeWindowChanged( KWM::activeWindow()); //enforce desktop_menu
     }
 
 void Applet::configure()

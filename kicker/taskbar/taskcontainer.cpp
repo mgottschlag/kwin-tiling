@@ -1513,7 +1513,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
     if (pixmap.isNull() && !tasks.isEmpty())
     {
         // try to load icon via net_wm
-        pixmap = KWin::icon(tasks.last()->window(),
+        pixmap = KWM::icon(tasks.last()->window(),
                             K3Icon::SizeMedium,
                             K3Icon::SizeMedium,
                             true);
@@ -1552,7 +1552,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
 
     QString details;
 
-    if (TaskBarSettings::showAllWindows() && KWin::numberOfDesktops() > 1)
+    if (TaskBarSettings::showAllWindows() && KWM::numberOfDesktops() > 1)
     {
         if (desktopMap.isEmpty())
         {

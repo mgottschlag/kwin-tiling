@@ -26,12 +26,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMouseEvent>
 
 #include <klocale.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <k3process.h>
 #include <kshell.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
@@ -59,8 +59,7 @@ DockBarExtension::DockBarExtension(const QString& configFile,
   : KPanelExtension(configFile, actions, parent)
 {
     dragging_container = 0;
-    kwin_module = new KWinModule(this);
-    connect( kwin_module, SIGNAL( windowAdded(WId) ), SLOT( windowAdded(WId) ) );
+    connect( KWM::self(), SIGNAL( windowAdded(WId) ), SLOT( windowAdded(WId) ) );
     setMinimumSize(DockContainer::sz(), DockContainer::sz());
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadContainerConfig();
@@ -162,7 +161,7 @@ void DockBarExtension::windowAdded(WId win)
     if (resIconwin != win) {
 		QX11Info info;
         XWithdrawWindow( QX11Info::display(), win, info.screen() );
-        while( KWin::windowInfo(win, NET::XAWMState).mappingState() != NET::Withdrawn );
+        while( KWM::windowInfo(win, NET::XAWMState).mappingState() != NET::Withdrawn );
     }
 
     // add a container

@@ -39,7 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kpanelapplet.h>
 #include <kaboutdata.h>
 #include <QFileInfo>
-#include <kwin.h>
+#include <kwm.h>
 
 #include "appletinfo.h"
 

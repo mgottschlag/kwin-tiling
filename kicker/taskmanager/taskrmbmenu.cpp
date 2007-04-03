@@ -67,7 +67,7 @@ void TaskRMBMenu::fillMenu(Task::TaskPtr t)
     setCheckable(true);
 
     insertItem(i18n("Ad&vanced"), makeAdvancedMenu(t));
-    bool checkActions = KWin::allowedActionsSupported();
+    bool checkActions = KWM::allowedActionsSupported();
 
     if (TaskManager::self()->numberOfDesktops() > 1)
     {
@@ -216,7 +216,7 @@ QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
                           t.data(), SLOT(toggleFullScreen()));
     menu->setItemChecked(id, t->isFullScreen());
 
-    if (KWin::allowedActionsSupported())
+    if (KWM::allowedActionsSupported())
     {
         menu->setItemEnabled(id, t->info().actionSupported(NET::ActionFullScreen));
     }

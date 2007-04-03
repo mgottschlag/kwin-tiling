@@ -38,7 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 // #include <kpixmapio.h>
 #include <kstaticdeleter.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <netwm.h>
 #include <QX11Info>
 
@@ -62,23 +62,22 @@ TaskManager::TaskManager()
     : QObject(),
       _active(0),
       _startup_info(0),
-      m_winModule(new KWinModule()),
       m_trackGeometry(false)
 {
     KGlobal::locale()->insertCatalog("libtaskmanager");
-    connect(m_winModule, SIGNAL(windowAdded(WId)),
+    connect(KWM::self(), SIGNAL(windowAdded(WId)),
             this,       SLOT(windowAdded(WId)));
-    connect(m_winModule, SIGNAL(windowRemoved(WId)),
+    connect(KWM::self(), SIGNAL(windowRemoved(WId)),
             this,       SLOT(windowRemoved(WId)));
-    connect(m_winModule, SIGNAL(activeWindowChanged(WId)),
+    connect(KWM::self(), SIGNAL(activeWindowChanged(WId)),
             this,       SLOT(activeWindowChanged(WId)));
-    connect(m_winModule, SIGNAL(currentDesktopChanged(int)),
+    connect(KWM::self(), SIGNAL(currentDesktopChanged(int)),
             this,       SLOT(currentDesktopChanged(int)));
-    connect(m_winModule, SIGNAL(windowChanged(WId,unsigned int)),
+    connect(KWM::self(), SIGNAL(windowChanged(WId,unsigned int)),
             this,       SLOT(windowChanged(WId,unsigned int)));
 
     // register existing windows
-    const QList<WId> windows = m_winModule->windows();
+    const QList<WId> windows = KWM::windows();
     QList<WId>::ConstIterator end(windows.end());
     for (QList<WId>::ConstIterator it = windows.begin(); it != end; ++it)
     {
@@ -86,7 +85,7 @@ TaskManager::TaskManager()
     }
 
     // set active window
-    WId win = m_winModule->activeWindow();
+    WId win = KWM::activeWindow();
     activeWindowChanged(win);
     configure_startup();
 }
@@ -234,7 +233,7 @@ Task::TaskPtr TaskManager::findTask(WId w)
 
 Task::TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
 {
-    QList<WId> list = winModule()->stackingOrder();
+    QList<WId> list = KWM::stackingOrder();
 
     Task::TaskPtr task;
     int currentIndex = -1;
@@ -550,12 +549,12 @@ void TaskManager::killStartup(Startup::StartupPtr s)
 
 QString TaskManager::desktopName(int desk) const
 {
-    return m_winModule->desktopName(desk);
+    return KWM::desktopName(desk);
 }
 
 int TaskManager::numberOfDesktops() const
 {
-    return m_winModule->numberOfDesktops();
+    return KWM::numberOfDesktops();
 }
 
 bool TaskManager::isOnTop(const Task* task)
@@ -565,8 +564,8 @@ bool TaskManager::isOnTop(const Task* task)
         return false;
     }
 
-    QList<WId>::const_iterator begin(m_winModule->stackingOrder().constBegin());
-    QList<WId>::const_iterator it = m_winModule->stackingOrder().begin() + (m_winModule->stackingOrder().size() - 1);
+    QList<WId>::const_iterator begin(KWM::stackingOrder().constBegin());
+    QList<WId>::const_iterator it = KWM::stackingOrder().begin() + (KWM::stackingOrder().size() - 1);
     do
     {
         Task::Dict::iterator taskItEnd = m_tasksByWId.end();
@@ -602,7 +601,7 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
         return true;
     }
 
-    KWin::WindowInfo wi = KWin::windowInfo(wid, NET::WMKDEFrameStrut);
+    KWM::WindowInfo wi = KWM::windowInfo(wid, NET::WMKDEFrameStrut);
 
     // for window decos that fudge a bit and claim to extend beyond the
     // edge of the screen, we just contract a bit.
@@ -617,7 +616,7 @@ Task::Task(WId win, QObject *parent, const char *name)
     _active(false),
     _win(win),
     m_frameId(win),
-    _info(KWin::windowInfo(_win,
+    _info(KWM::windowInfo(_win,
         NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry,
         NET::WM2AllowedActions)),
     _lastWidth(0),
@@ -631,7 +630,7 @@ Task::Task(WId win, QObject *parent, const char *name)
     setObjectName( name );
 
     // try to load icon via net_wm
-    _pixmap = KWin::icon(_win, 16, 16, true);
+    _pixmap = KWM::icon(_win, 16, 16, true);
 
     // try to guess the icon from the classhint
     if(_pixmap.isNull())
@@ -712,7 +711,7 @@ void Task::findWindowFrameId()
 void Task::refreshIcon()
 {
     // try to load icon via net_wm
-    _pixmap = KWin::icon(_win, 16, 16, true);
+    _pixmap = KWM::icon(_win, 16, 16, true);
 
     // try to guess the icon from the classhint
     if(_pixmap.isNull())
@@ -737,7 +736,7 @@ void Task::refreshIcon()
 void Task::refresh(unsigned int dirty)
 {
     QString name = visibleName();
-    _info = KWin::windowInfo(_win,
+    _info = KWM::windowInfo(_win,
         NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry,
         NET::WM2AllowedActions);
 
@@ -901,7 +900,7 @@ QPixmap Task::icon( int width, int height, bool allowResize )
        && (!_lastIcon.isNull()) )
     return _lastIcon;
 
-  QPixmap newIcon = KWin::icon( _win, width, height, allowResize );
+  QPixmap newIcon = KWM::icon( _win, width, height, allowResize );
   if ( !newIcon.isNull() ) {
     _lastIcon = newIcon;
     _lastWidth = width;
@@ -1010,13 +1009,13 @@ void Task::move()
 
     if (!on_current)
     {
-        KWin::setCurrentDesktop(_info.desktop());
-        KWin::forceActiveWindow(_win);
+        KWM::setCurrentDesktop(_info.desktop());
+        KWM::forceActiveWindow(_win);
     }
 
     if (_info.isMinimized())
     {
-        KWin::deIconifyWindow(_win);
+        KWM::unminimizeWindow(_win);
     }
 
     QRect geom = _info.geometry();
@@ -1033,13 +1032,13 @@ void Task::resize()
 
     if (!on_current)
     {
-        KWin::setCurrentDesktop(_info.desktop());
-        KWin::forceActiveWindow(_win);
+        KWM::setCurrentDesktop(_info.desktop());
+        KWM::forceActiveWindow(_win);
     }
 
     if (_info.isMinimized())
     {
-        KWin::deIconifyWindow(_win);
+        KWM::unminimizeWindow(_win);
     }
 
     QRect geom = _info.geometry();
@@ -1052,17 +1051,17 @@ void Task::resize()
 
 void Task::setMaximized(bool maximize)
 {
-    KWin::WindowInfo info = KWin::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
+    KWM::WindowInfo info = KWM::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
 
     if (!on_current)
     {
-        KWin::setCurrentDesktop(info.desktop());
+        KWM::setCurrentDesktop(info.desktop());
     }
 
     if (info.isMinimized())
     {
-        KWin::deIconifyWindow(_win);
+        KWM::unminimizeWindow(_win);
     }
 
     NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
@@ -1078,7 +1077,7 @@ void Task::setMaximized(bool maximize)
 
     if (!on_current)
     {
-        KWin::forceActiveWindow(_win);
+        KWM::forceActiveWindow(_win);
     }
 }
 
@@ -1089,17 +1088,17 @@ void Task::toggleMaximized()
 
 void Task::restore()
 {
-    KWin::WindowInfo info = KWin::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
+    KWM::WindowInfo info = KWM::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
 
     if (!on_current)
     {
-        KWin::setCurrentDesktop(info.desktop());
+        KWM::setCurrentDesktop(info.desktop());
     }
 
     if( info.isMinimized())
     {
-        KWin::deIconifyWindow(_win);
+        KWM::unminimizeWindow(_win);
     }
 
     NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
@@ -1107,7 +1106,7 @@ void Task::restore()
 
     if (!on_current)
     {
-        KWin::forceActiveWindow( _win );
+        KWM::forceActiveWindow( _win );
     }
 }
 
@@ -1115,23 +1114,23 @@ void Task::setIconified(bool iconify)
 {
     if (iconify)
     {
-        KWin::iconifyWindow(_win);
+        KWM::minimizeWindow(_win);
     }
     else
     {
-        KWin::WindowInfo info = KWin::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
+        KWM::WindowInfo info = KWM::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
         bool on_current = info.isOnCurrentDesktop();
 
         if (!on_current)
         {
-            KWin::setCurrentDesktop(info.desktop());
+            KWM::setCurrentDesktop(info.desktop());
         }
 
-        KWin::deIconifyWindow(_win);
+        KWM::unminimizeWindow(_win);
 
         if (!on_current)
         {
-            KWin::forceActiveWindow(_win);
+            KWM::forceActiveWindow(_win);
         }
     }
 }
@@ -1150,13 +1149,13 @@ void Task::close()
 void Task::raise()
 {
 //    kDebug(1210) << "Task::raise(): " << name() << endl;
-    KWin::raiseWindow( _win );
+    KWM::raiseWindow( _win );
 }
 
 void Task::lower()
 {
 //    kDebug(1210) << "Task::lower(): " << name() << endl;
-    KWin::lowerWindow( _win );
+    KWM::lowerWindow( _win );
 }
 
 void Task::activate()
@@ -1167,7 +1166,7 @@ void Task::activate()
     {
         w = _transients_demanding_attention.last();
     }
-    KWin::forceActiveWindow( w );
+    KWM::forceActiveWindow( w );
 }
 
 void Task::activateRaiseOrIconify()
@@ -1193,8 +1192,8 @@ void Task::toDesktop(int desk)
     {
         if (_info.valid() && _info.onAllDesktops())
         {
-            ni.setDesktop(TaskManager::self()->winModule()->currentDesktop());
-            KWin::forceActiveWindow(_win);
+            ni.setDesktop(KWM::currentDesktop());
+            KWM::forceActiveWindow(_win);
         }
         else
         {
@@ -1204,13 +1203,13 @@ void Task::toDesktop(int desk)
         return;
     }
     ni.setDesktop(desk);
-    if(desk == TaskManager::self()->winModule()->currentDesktop())
-        KWin::forceActiveWindow(_win);
+    if(desk == KWM::currentDesktop())
+        KWM::forceActiveWindow(_win);
 }
 
 void Task::toCurrentDesktop()
 {
-    toDesktop(TaskManager::self()->winModule()->currentDesktop());
+    toDesktop(KWM::currentDesktop());
 }
 
 void Task::setAlwaysOnTop(bool stay)
@@ -1475,7 +1474,7 @@ void Startup::update(const KStartupInfoData& data)
 
 int TaskManager::currentDesktop() const
 {
-    return m_winModule->currentDesktop();
+    return KWM::currentDesktop();
 }
 
 TaskDrag::TaskDrag(const Task::List& tasks, QWidget* source)

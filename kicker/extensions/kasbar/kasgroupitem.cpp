@@ -61,7 +61,7 @@
 
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kwin.h>
+#include <kwm.h>
 #include <kiconloader.h>
 #include <QPixmap>
 #include <kpixmapeffect.h>

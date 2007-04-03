@@ -39,7 +39,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <ksharedptr.h>
 #include <kstartupinfo.h>
-#include <kwin.h>
+#include <kwm.h>
+#include <netwm.h>
 
 #include <config.h>
 
@@ -58,7 +59,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 #endif
 
-class KWinModule;
 class TaskManager;
 
 typedef QList<WId> WindowList;
@@ -67,7 +67,6 @@ typedef QList<WId> WindowList;
  * A dynamic interface to a task (main window).
  *
  * @see TaskManager
- * @see KWinModule
  */
 class KDE_EXPORT Task: public QObject, public KShared
 {
@@ -101,7 +100,7 @@ public:
     virtual ~Task();
 
     WId window() const { return _win; }
-    KWin::WindowInfo info() const { return _info; }
+    KWM::WindowInfo info() const { return _info; }
 
     QString visibleName() const { return _info.visibleName(); }
     QString visibleNameWithState() const { return _info.visibleNameWithState(); }
@@ -445,7 +444,7 @@ private:
     WId                 _win;
     WId                 m_frameId;
     QPixmap             _pixmap;
-    KWin::WindowInfo    _info;
+    KWM::WindowInfo    _info;
     WindowList          _transients;
     WindowList          _transients_demanding_attention;
 
@@ -548,7 +547,6 @@ private:
  *
  * @see Task
  * @see Startup
- * @see KWinModule
  */
 class KDE_EXPORT TaskManager : public QObject
 {
@@ -611,8 +609,6 @@ public:
     * Returns whether the Window with WId wid is on the screen screen
     */
     static bool isOnScreen( int screen, const WId wid );
-
-    KWinModule* winModule() const { return m_winModule; }
 
     void setXCompositeEnabled(bool state);
     static bool xCompositeEnabled() { return m_xCompositeEnabled != 0; }
@@ -685,7 +681,6 @@ private:
     WindowList _skiptaskbar_windows;
     Startup::List _startups;
     KStartupInfo* _startup_info;
-    KWinModule* m_winModule;
     bool m_trackGeometry;
 
     static TaskManager* m_self;

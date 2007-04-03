@@ -44,8 +44,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <kwin.h>
-#include <kwinmodule.h>
+#include <kwm.h>
 #include <kauthorized.h>
 
 #include "extensionmanager.h"
@@ -68,7 +67,6 @@ Kicker* Kicker::self()
 Kicker::Kicker()
     : KUniqueApplication(),
       m_actionCollection(0),
-      m_kwinModule(0),
       m_configDialog(0),
       m_canAddContainers(true)
 {
@@ -325,7 +323,7 @@ void Kicker::showConfig(const QString& configPath, int page)
     }
     */
 
-    KWin::setOnDesktop(m_configDialog->winId(), KWin::currentDesktop());
+    KWM::setOnDesktop(m_configDialog->winId(), KWM::currentDesktop());
     m_configDialog->show();
     m_configDialog->raise();
     if (page > -1)
@@ -362,14 +360,3 @@ void Kicker::clearQuickStartMenu()
 {
     MenuManager::self()->kmenu()->clearRecentMenuItems();
 }
-
-KWinModule* Kicker::kwinModule()
-{
-    if (!m_kwinModule)
-    {
-        m_kwinModule = new KWinModule();
-    }
-
-    return m_kwinModule;
-}
-

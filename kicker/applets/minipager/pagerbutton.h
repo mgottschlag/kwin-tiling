@@ -38,7 +38,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskmanager.h"
 #include "kickertip.h"
 
-class KWinModule;
 class KMiniPager;
 class KSharedPixmap;
 class QLineEdit;
@@ -85,7 +84,7 @@ private Q_SLOTS:
     void backgroundLoaded( bool loaded );
 
 private:
-    bool shouldPaintWindow( KWin::WindowInfo *info );
+    bool shouldPaintWindow( KWM::WindowInfo *info );
     void loadBgPixmap();
 
     KMiniPager* m_pager;

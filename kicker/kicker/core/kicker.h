@@ -29,7 +29,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class KCMultiDialog;
 class KDirWatch;
 class KActionCollection;
-class KWinModule;
 class PanelKMenu;
 class PanelPopupButton;
 
@@ -58,7 +57,6 @@ public:
 
     static Kicker* self();
     KDirWatch* fileWatcher();
-    KWinModule* kwinModule();
 
     bool isImmutable() const;
     bool isKioskImmutable() const;
@@ -107,7 +105,6 @@ private:
     static void crashHandler(int signal);
 
     KActionCollection* m_actionCollection;
-    KWinModule*    m_kwinModule;
     KCMultiDialog* m_configDialog;
     bool           m_canAddContainers;
     QPoint         m_insertionPoint;

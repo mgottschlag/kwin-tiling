@@ -37,8 +37,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "utils.h"
 
-class KWinModule;
-
 namespace KickerMenuApplet
 {
 
@@ -135,7 +133,6 @@ class Applet : public KPanelApplet
 	 */
 	static Atom makeSelectionAtom();
         void updateTopEdgeOffset();
-	KWinModule* module;
 
 	/**
 	 * List of all known menus.
