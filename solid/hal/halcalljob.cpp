@@ -50,9 +50,13 @@ void HalCallJob::doStart()
     QDBusMessage msg = QDBusMessage::createMethodCall( "org.freedesktop.Hal", m_udi,
                                                        m_iface, m_method );
 
-    msg << m_params;
+    foreach(QVariant param, m_params) {
+        msg << param;
+    }
 
-    if ( !m_connection.callWithCallback(msg, this, SLOT( callReply( const QDBusMessage& ) ) ) )
+    if (!m_connection.callWithCallback(msg, this,
+                                       SLOT(callReply(const QDBusMessage&)),
+                                       SLOT(callError(const QDBusError&))))
     {
         setError( 1 );
         setErrorText( m_connection.lastError().name()+": "+m_connection.lastError().message() );
@@ -60,22 +64,18 @@ void HalCallJob::doStart()
     }
 }
 
-void HalCallJob::callReply( const QDBusMessage &reply )
+void HalCallJob::callReply(const QDBusMessage &reply)
 {
-    setError( 0 );
-
-    if ( reply.type() == QDBusMessage::InvalidMessage )
-    {
-        setError( 1 );
-        setErrorText( m_connection.lastError().name()+": "+m_connection.lastError().message() );
-    }
-    else if ( reply.type() == QDBusMessage::ErrorMessage )
-    {
-        setError( 1 );
-        setErrorText( reply.interface()+": "+reply.arguments().at( 0 ).toString() );
-    }
-
+    setError(0);
     emitResult();
 }
+
+void HalCallJob::callError(const QDBusError &error)
+{
+    setError(1);
+    setErrorText(error.name()+": "+error.message());
+    emitResult();
+}
+
 
 #include "halcalljob.moc"

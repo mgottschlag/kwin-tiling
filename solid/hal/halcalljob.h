@@ -23,6 +23,7 @@
 #include <kjob.h>
 #include <qdbusconnection.h>
 #include <qdbusmessage.h>
+#include <qdbuserror.h>
 #include <QList>
 #include <QVariant>
 
@@ -40,7 +41,8 @@ public:
 
 private Q_SLOTS:
     void doStart();
-    void callReply( const QDBusMessage &reply );
+    void callReply(const QDBusMessage &reply);
+    void callError(const QDBusError &error);
 
 private:
     QDBusConnection m_connection;
