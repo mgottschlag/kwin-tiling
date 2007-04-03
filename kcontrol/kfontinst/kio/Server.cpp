@@ -41,7 +41,6 @@
 #include <config.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
-#include <ksocks.h>
 #include "Server.h"
 #include "Socket.h"
 #include "Misc.h"
