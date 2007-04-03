@@ -239,7 +239,7 @@ void QuickButton::drawButtonLabel(QPainter *p)
 void QuickButton::enterEvent(QEvent*)
 {
    if (_changeCursorOverItem)
-      setCursor(KCursor().handCursor());
+      setCursor(Qt::PointingHandCursor);
    _highlight = true;
    repaint();
 }
