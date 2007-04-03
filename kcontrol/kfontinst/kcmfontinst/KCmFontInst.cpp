@@ -340,7 +340,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     connect(itsGroupListView, SIGNAL(print()), SLOT(printGroup()));
     connect(itsGroupListView, SIGNAL(enable()), SLOT(enableGroup()));
     connect(itsGroupListView, SIGNAL(disable()), SLOT(disableGroup()));
-    connect(itsGroupListView, SIGNAL(exportGroup()), SLOT(exportGroup()));
     connect(itsGroupListView, SIGNAL(itemSelected(const QModelIndex &)),
            SLOT(groupSelected(const QModelIndex &)));
     connect(itsGroupListView, SIGNAL(unclassifiedChanged()), SLOT(setStatusBar()));
@@ -470,12 +469,9 @@ void CKCmFontInst::addFonts()
         QString filter("application/x-font-ttf application/x-font-otf "
                        "application/x-font-type1");
 
-        if(itsMgtMode->isChecked())
-        {
-            if(FC::bitmapsEnabled())
-                filter+=" application/x-font-pcf application/x-font-bdf";
-            filter+=" fonts/group";
-        }
+        if(itsMgtMode->isChecked() && FC::bitmapsEnabled())
+            filter+=" application/x-font-pcf application/x-font-bdf";
+
         filter+=" fonts/package";
 
         KUrl::List list=KFileDialog::getOpenUrls(KUrl(), filter, this, i18n("Add Fonts"));
@@ -496,10 +492,7 @@ void CKCmFontInst::addFonts()
                     {
                         QString file(url.path());
 
-                        bool package=Misc::isPackage(file),
-                             group=!package && Misc::isGroup(file);
-
-                        if(package || group) // If its a package or group - we need to unzip 1st...
+                        if(Misc::isPackage(file)) // If its a package we need to unzip 1st...
                         {
                             KZip zip(url.path());
 
@@ -534,33 +527,22 @@ void CKCmFontInst::addFonts()
 
                                                 ((KArchiveFile *)entry)->copyTo(itsTempDir->name());
 
-                                                if(group && KFI_GROUPS_FILE==entry->name())
+                                                QString name(entry->name());
+
+                                                //
+                                                // Cant install hidden fonts, therefore need to
+                                                // unhide 1st!
+                                                if(Misc::isHidden(name))
                                                 {
-                                                    itsGroupList->merge(itsTempDir->name()+entry->name());
-                                                    ::unlink(QFile::encodeName(itsTempDir->name()+
-                                                                               entry->name()));
+                                                    ::rename(QFile::encodeName(itsTempDir->name()+name).data(),
+                                                             QFile::encodeName(itsTempDir->name()+name.mid(1)).data());
+                                                    name=name.mid(1);
                                                 }
-                                                else
-                                                {
-                                                    QString name(entry->name());
 
-                                                    //
-                                                    // Cant install hidden fonts, therefore need to
-                                                    // unhide 1st!
-                                                    if(Misc::isHidden(name))
-                                                    {
-                                                        ::rename(QFile::encodeName(itsTempDir->name()+
-                                                                                   name).data(),
-                                                                 QFile::encodeName(itsTempDir->name()+
-                                                                                  name.mid(1)).data());
-                                                        name=name.mid(1);
-                                                    }
+                                                KUrl url(itsTempDir->name()+name);
 
-                                                    KUrl url(itsTempDir->name()+name);
-
-                                                    if(!Misc::isMetrics(name))
-                                                        urls.insert(url);
-                                               }
+                                                if(!Misc::isMetrics(name))
+                                                    urls.insert(url);
                                             }
                                         }
                                     }
@@ -764,178 +746,6 @@ void CKCmFontInst::disableGroup()
     toggleGroup(false);
 }
 
-void CKCmFontInst::exportGroup()
-{
-    if(!working())
-    {
-        QModelIndex index(itsGroupListView->currentIndex());
-
-        if(index.isValid())
-        {
-            CGroupListItem *grp=static_cast<CGroupListItem *>(index.internalPointer());
-
-            if(grp)
-            {
-                CJobRunner::ItemList items;
-                QStringList          fontNames;
-
-                itsFontListView->getFonts(items, fontNames, NULL, NULL, false, true, true);
-
-                if(items.count())
-                {
-                    KUrl::List urls;
-
-                    CJobRunner::ItemList::ConstIterator it(items.begin()),
-                                                        end(items.end());
-
-                    for(; it!=end; ++it)
-                        urls.append(*it);
-
-                    QString name(grp->name());
-                    QString dir=KFileDialog::getExistingDirectory(KUrl(), this,
-                                                                  i18n("Select Export Folder For \"%1\"", name));
-
-                    if(!dir.isEmpty())
-                    {
-                        QString file(Misc::dirSyntax(dir)+name+KFI_FONTS_GROUP);
-
-                        if(!Misc::fExists(file) ||
-                           KMessageBox::Yes==KMessageBox::warningYesNo(this,
-                               i18n("<p>A font group package named <b>%1</b> already exists!</p>"
-                                    "<p>Do you wish to overwrite this?</p>", file),
-                               i18n("Exported Group Exists"),
-                               KGuiItem(i18n("Overwrite")), KStandardGuiItem::cancel()))
-                        {
-                            delete itsTempDir;
-                            itsTempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
-
-                            if(itsTempDir && !itsTempDir->name().isEmpty())
-                            {
-                                itsTempDir->setAutoRemove(true);
-                                itsExportFile=new KZip(file);
-
-                                if(itsExportFile && itsExportFile->open(IO_WriteOnly))
-                                {
-                                    if(itsGroupList->save(itsTempDir->name()+KFI_GROUPS_FILE, grp))
-                                    {
-                                        itsExportFile->addLocalFile(itsTempDir->name()+KFI_GROUPS_FILE,
-                                                                    KFI_GROUPS_FILE);
-                                        ::unlink(QFile::encodeName(itsTempDir->name()+KFI_GROUPS_FILE));
-                                        itsJob=KIO::copy(urls, itsTempDir->name(), true);
-                                        connect(itsJob, SIGNAL(result(KJob *)),
-                                                SLOT(exportJobResult(KJob *)));
-                                        connect(itsJob, SIGNAL(copyingDone(KIO::Job *, const KUrl &,
-                                                               const KUrl &, time_t, bool, bool)),
-                                                SLOT(exported(KIO::Job *, const KUrl &, const KUrl &)));
-                                    }
-                                    else
-                                    {
-                                        KMessageBox::error(this, i18n("Could not save group details!"));
-                                        delete itsTempDir;
-                                        itsTempDir=NULL;
-                                        delete itsExportFile;
-                                        itsExportFile=NULL;
-                                    }
-                                }
-                                else
-                                {
-                                    KMessageBox::error(this, i18n("Could not create %1",
-                                                                  dir+name+KFI_FONTS_GROUP));
-                                    delete itsExportFile;
-                                    itsExportFile=NULL;
-                                    delete itsTempDir;
-                                    itsTempDir=NULL;
-                                }
-                            }
-                            else
-                            {
-                                KMessageBox::error(this, i18n("Could not create temporary folder to save "
-                                                              "group into."));
-                                delete itsTempDir;
-                                itsTempDir=NULL;
-                            }
-                        }
-                    }
-                }
-                else
-                    KMessageBox::error(this, i18n("<qt>Group <b>%1</b> has no fonts!</b>",
-                                                  grp->name()));
-            }
-        }
-    }
-}
-
-void CKCmFontInst::exportJobResult(KJob *job)
-{
-    bool ok=job && 0==job->error();
-
-    itsJob=NULL;
-
-    if(!ok && itsExportFile)
-    {
-        itsExportFile->close();
-        unlink(QFile::encodeName(itsExportFile->fileName()));
-    }
-    delete itsExportFile;
-    delete itsTempDir;
-    itsExportFile=NULL;
-    itsTempDir=NULL;
-}
-
-void CKCmFontInst::exported(KIO::Job *, const KUrl &, const KUrl &to)
-{
-    if(itsExportFile)
-    {
-        QString file(to.fileName());
-
-        if(Misc::isPackage(file))
-        {
-            KZip zip(to.path());
-
-            if(zip.open(IO_ReadOnly))
-            {
-                const KArchiveDirectory *zipDir=zip.directory();
-
-                if(zipDir)
-                {
-                    QStringList fonts(zipDir->entries());
-                    KTempDir    tmpDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
-
-                    if(fonts.count() && !tmpDir.name().isEmpty())
-                    {
-                        QStringList::ConstIterator it(fonts.begin()),
-                                                   end(fonts.end());
-
-                        tmpDir.setAutoRemove(true);
-                        for(; it!=end; ++it)
-                        {
-                            const KArchiveEntry *entry=zipDir->entry(*it);
-
-                            if(entry && entry->isFile() &&
-                               (NULL==itsExportFile->directory() ||
-                               (NULL==itsExportFile->directory()->entry(entry->name()))))
-                            {
-                                ((KArchiveFile *)entry)->copyTo(tmpDir.name());
-                                itsExportFile->addLocalFile(tmpDir.name()+entry->name(),
-                                                            entry->name());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            QString destFile(Misc::unhide(Misc::getFile(to.path())));
-
-            if (NULL==itsExportFile->directory() ||
-                NULL==itsExportFile->directory()->entry(destFile))
-            itsExportFile->addLocalFile(to.path(), destFile);
-        }
-        ::unlink(QFile::encodeName(to.path()));
-    }
-}
-
 void CKCmFontInst::changeText()
 {
     if(!working())
@@ -1060,8 +870,7 @@ void CKCmFontInst::setStatusBar()
 
     itsGroupListView->controlMenu(itsDeleteGroupControl->isEnabled(),
                                   itsEnableGroupControl->isEnabled(),
-                                  itsDisableGroupControl->isEnabled(), enabled||partial,
-                                  enabled||partial||disabled);
+                                  itsDisableGroupControl->isEnabled(), enabled||partial);
 
     itsEnableFontControl->setEnabled(selectedDisabled);
     itsDisableFontControl->setEnabled(selectedEnabled);

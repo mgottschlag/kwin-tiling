@@ -723,7 +723,6 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
     itsMenu->addSeparator();
     itsRenameAct=itsMenu->addAction(i18n("Rename..."), this, SLOT(rename()));
     itsMenu->addSeparator();
-    itsExportAct=itsMenu->addAction(i18n("Export..."), this, SIGNAL(exportGroup()));
     itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
                                    this, SIGNAL(print()));
 
@@ -749,14 +748,13 @@ CGroupListItem::EType CGroupListView::getType()
     return CGroupListItem::ALL;
 }
 
-void CGroupListView::controlMenu(bool del, bool en, bool dis, bool p, bool ex)
+void CGroupListView::controlMenu(bool del, bool en, bool dis, bool p)
 {
     itsDeleteAct->setEnabled(del);
     itsRenameAct->setEnabled(del);
     itsEnableAct->setEnabled(en);
     itsDisableAct->setEnabled(dis);
     itsPrintAct->setEnabled(p);
-    itsExportAct->setEnabled(ex);
 }
 
 void CGroupListView::selectionChanged(const QItemSelection &selected,

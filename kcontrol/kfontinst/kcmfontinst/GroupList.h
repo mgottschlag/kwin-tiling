@@ -188,7 +188,7 @@ class CGroupListView : public QTreeView
     bool                  isStandard()     { return CGroupListItem::STANDARD==getType(); }
     bool                  isUnclassified() { return CGroupListItem::UNCLASSIFIED==getType(); }
     CGroupListItem::EType getType();
-    void                  controlMenu(bool del, bool en, bool dis, bool p, bool ex);
+    void                  controlMenu(bool del, bool en, bool dis, bool p);
 
     Q_SIGNALS:
 
@@ -224,7 +224,6 @@ class CGroupListView : public QTreeView
                 *itsEnableAct,
                 *itsDisableAct,
                 *itsPrintAct,
-                *itsExportAct,
                 *itsRenameAct;
     QModelIndex itsCurrentDropItem;
 };

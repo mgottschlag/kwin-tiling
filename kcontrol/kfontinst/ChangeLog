@@ -30,23 +30,22 @@ KDE3.5 -> KDE4.0
          wibble.ttf ->   ~/.fonts/w/wibble.ttf
 14. Better unique names when creating font packages.
 15. Use zip and not tar.gz for font packages.
-16. Export to GroupName.fontgroup.zip (fonts/group).
-17. Allow import of fonts/package and fonts/group.
-18. Allow fonts/package to be installed via konqueror service menu.
-19. Better TTC handling.
-20. When installing to fonts:/, as non-root, automatically install to fonts:/Personal.
+16. Allow import of fonts/package.
+17. Allow fonts/package to be installed via konqueror service menu.
+18. Better TTC handling.
+19. When installing to fonts:/, as non-root, automatically install to fonts:/Personal.
     To install to fonts:/System need to explicity copy to fonts:/System.
-21. Removal of kfontview app - only kpart is really required.
-22. Renamed kcmfontinst to just fontinst.
-23. When printing, use external kfontinst app - that way newly installed fonts can
+20. Removal of kfontview app - only kpart is really required.
+21. Renamed kcmfontinst to just fontinst.
+22. When printing, use external kfontinst app - that way newly installed fonts can
     also be printed.
-24. When run as non-root, the kcontrol module will have a combo box allowing the user
+23. When run as non-root, the kcontrol module will have a combo box allowing the user
     to select Personal or System fonts.
-25. Better bitmap font previews - list of sizes obtained via fontconfig.
-26. Regular fonts listed as fonts:/<family>, Regular - e.g. fonts:/Times, Regular
-27. Use a kio_font_helper app when accesing fonts:/System - much faster, as kdesu is
+24. Better bitmap font previews - list of sizes obtained via fontconfig.
+25. Regular fonts listed as fonts:/<family>, Regular - e.g. fonts:/Times, Regular
+26. Use a kio_font_helper app when accesing fonts:/System - much faster, as kdesu is
     not required to be called for each action.
-28. Add a "Find Duplicates" tool, that looks for multiple installtions of the same font.
+27. Add a "Find Duplicates" tool, that looks for multiple installtions of the same font.
     i.e. different locations, or the same location but different filename case
     (e.g. times.ttf / times.TTF)
 

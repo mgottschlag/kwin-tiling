@@ -68,8 +68,6 @@
 
 #define KFI_FONTS_PACKAGE            ".fonts.zip"
 #define KFI_FONTS_PACKAGE_LEN        10
-#define KFI_FONTS_GROUP              ".fontgroup.zip"
-#define KFI_FONTS_GROUP_LEN          14
 #define KFI_GROUPS_FILE              "fontgroups.xml"
 #define KFI_TMP_DIR_PREFIX           "kfi"
 

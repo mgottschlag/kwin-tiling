@@ -2888,10 +2888,6 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
         error(KIO::ERR_SLAVE_DEFINED, i18n("You cannot install a fonts package directly.\n"
                                            "Please extract %1, and install the components individually.",
                                            url.prettyUrl()));
-    else if(Misc::isGroup(file))
-        error(KIO::ERR_SLAVE_DEFINED,i18n("You cannot install a font group directly.\n"
-                                          "Please extract %1, and install the components individually.",
-                                          url.prettyUrl()));
     else
     {
         //

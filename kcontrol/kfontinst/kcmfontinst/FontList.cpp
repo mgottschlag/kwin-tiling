@@ -2067,8 +2067,7 @@ void CFontListView::dropEvent(QDropEvent *event)
                mime->is("fonts/package") ||
                (!isColumnHidden(COL_STATUS) && 
                 (mime->is("application/x-font-pcf") ||
-                 mime->is("application/x-font-bdf") ||
-                 mime->is("fonts/group"))))
+                 mime->is("application/x-font-bdf"))))
                 kurls.insert(*it);
         }
 

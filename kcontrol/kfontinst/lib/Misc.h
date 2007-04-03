@@ -84,8 +84,6 @@ namespace Misc
     inline KDE_EXPORT bool    isMetrics(const KUrl &url) { return isMetrics(url.fileName()); }
     inline KDE_EXPORT bool    isPackage(const QString &file)
                       { return file.indexOf(KFI_FONTS_PACKAGE)==(file.length()-KFI_FONTS_PACKAGE_LEN); }
-    inline KDE_EXPORT bool    isGroup(const QString &file)
-                      { return file.indexOf(KFI_FONTS_GROUP)==(file.length()-KFI_FONTS_GROUP_LEN); }
     extern KDE_EXPORT int     getIntQueryVal(const KUrl &url, const char *key, int defVal);
     extern KDE_EXPORT bool    printable(const QString &mime);
     inline KDE_EXPORT QString unhide(const QString &f) { return '.'==f[0] ? f.mid(1) : f; }
