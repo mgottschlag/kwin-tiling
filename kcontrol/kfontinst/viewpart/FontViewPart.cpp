@@ -310,13 +310,13 @@ void CFontViewPart::install()
         else
             itsProc->kill();
 
-        args << "-i"
-             << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-             << KGlobal::caption().toUtf8()
+        args << "--embed" <<  QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+             << "--caption" << KGlobal::caption().toUtf8()
+             << "--icon" << "kfontview"
              << url().prettyUrl();
 
         connect(itsProc, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(installlStatus()));
-        itsProc->start(KFI_APP, args);
+        itsProc->start(KFI_INSTALLER, args);
         itsInstallButton->setEnabled(false);
     }
 }
@@ -353,25 +353,24 @@ void CFontViewPart::print()
 
         CFcEngine::instance()->getInfo(url(), 0, info);
 
-        args << "-P"
-             << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-             << KGlobal::caption().toUtf8()
-             << "0"
-             << info.family.toUtf8()
-             << QString().setNum(info.styleInfo);
+        args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+             << "--caption" << KGlobal::caption().toUtf8()
+             << "--icon" << "kfontview"
+             << "--size" << "0"
+             << "--font" << QString(info.family+','+QString().setNum(info.styleInfo));
     }
 #ifdef KFI_PRINT_APP_FONTS
     else
-        args << "-P"
-             << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-             << KGlobal::caption().toUtf8()
-             << "0"
+        args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+             << "--caption" << KGlobal::caption().toUtf8()
+             << "--icon" << "kfontview"
+             << "--size " << "0"
              << localFilePath()
              << QString().setNum(KFI_NO_STYLE_INFO);
 #endif
 
     if(args.count())
-        QProcess::startDetached(KFI_APP, args);
+        QProcess::startDetached(KFI_PRINTER, args);
 }
 
 void CFontViewPart::displayType(const QList<CFcEngine::TRange> &range)

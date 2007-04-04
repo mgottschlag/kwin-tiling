@@ -1,5 +1,5 @@
-#ifndef __PRINT_H__
-#define __PRINT_H__
+#ifndef __INSTALLER_H__
+#define __INSTALLER_H__
 
 /*
  * KFontInst - KDE Font Installer
@@ -23,20 +23,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QString>
-#include <QList>
-#include "Misc.h"
+#include <QSet>
+#include <kurl.h>
 
 class QWidget;
+class KTempDir;
 
 namespace KFI
 {
-
-namespace Print
+class CInstaller
 {
+    public:
 
-extern void printItems(const QList<Misc::TFont> &items, int size, QWidget *parent);
-}
+    CInstaller(QWidget *p)
+         : itsParent(p), itsTempDir(NULL) { }
+    ~CInstaller();
+
+    int install(const QSet<KUrl> &urls);
+
+    private:
+
+    QWidget  *itsParent;
+    KTempDir *itsTempDir;
+};
 
 }
 

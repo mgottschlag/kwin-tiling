@@ -13,13 +13,12 @@ if (X11_XFT_FOUND)
 
   add_subdirectory( lib ) 
   add_subdirectory( kcmfontinst ) 
-  add_subdirectory ( strigi-analyzer )
-  add_subdirectory( kfontinst ) 
+  add_subdirectory( strigi-analyzer )
+  add_subdirectory( apps ) 
   add_subdirectory( kio ) 
   add_subdirectory( thumbnail )
   add_subdirectory( viewpart )
   add_subdirectory( mime )
-  install( FILES installfont.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqueror/servicemenus )
 
 else (X11_XFT_FOUND)
 

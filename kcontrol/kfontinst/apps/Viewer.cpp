@@ -22,6 +22,9 @@
 
 #include "Viewer.h"
 #include "KfiConstants.h"
+#include <kcmdlineargs.h>
+#include <kaboutdata.h>
+#include <kapplication.h>
 #include <klibloader.h>
 #include <klocale.h>
 #include <kglobal.h>
@@ -37,7 +40,7 @@
 namespace KFI
 {
 
-CViewer::CViewer(const KUrl &url)
+CViewer::CViewer()
 {
     KLibFactory *factory=KLibLoader::self()->factory("libkfontviewpart");
 
@@ -58,8 +61,15 @@ CViewer::CViewer(const KUrl &url)
         setCentralWidget(itsPreview->widget());
         createGUI(itsPreview);
 
-        if(url.isValid())
-            itsPreview->openUrl(url);
+        KCmdLineArgs *args(KCmdLineArgs::parsedArgs());
+
+        if(args->count() > 0)
+        {
+            KUrl url(args->url(args->count() - 1));
+
+            if(url.isValid())
+                itsPreview->openUrl(url);
+        }
 
         QSize defSize(440, 530);
 
@@ -91,6 +101,29 @@ void CViewer::enableAction(const char *name, bool enable)
         itsPrintAct->setEnabled(enable);
 }
 
+}
+
+static KCmdLineOptions options[] =
+{
+    { "+[URL]", I18N_NOOP("URL to open"), 0 },
+    KCmdLineLastOption
+};
+
+static KAboutData aboutData("kfontview", I18N_NOOP("Font Viewer"), "1.1", I18N_NOOP("Simple font viewer"),
+                            KAboutData::License_GPL, I18N_NOOP("(C) Craig Drummond, 2004-2007"));
+
+int main(int argc, char **argv)
+{
+    KCmdLineArgs::init(argc, argv, &aboutData);
+    KCmdLineArgs::addCmdLineOptions(options);
+
+    KApplication app;
+
+    KLocale::setMainCatalog(KFI_CATALOGUE);
+    KFI::CViewer *viewer=new KFI::CViewer;
+
+    viewer->show();
+    return app.exec();
 }
 
 #include "Viewer.moc"

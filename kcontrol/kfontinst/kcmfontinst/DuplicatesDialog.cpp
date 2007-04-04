@@ -611,9 +611,9 @@ void CFontFileListView::openViewer()
         {
             QStringList args;
 
-            args << "-v" << (*it);
+            args << (*it);
 
-            QProcess::startDetached(KFI_APP, args);
+            QProcess::startDetached(KFI_VIEWER, args);
         }
     }
 }

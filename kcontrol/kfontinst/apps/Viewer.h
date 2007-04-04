@@ -1,5 +1,5 @@
-#ifndef __INSTALLER_H__
-#define __INSTALLER_H__
+#ifndef __VIEWER_H__
+#define __VIEWER_H__
 
 /*
  * KFontInst - KDE Font Installer
@@ -23,33 +23,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QObject>
-#include <QSet>
-#include <kurl.h>
+#include <kparts/part.h>
+#include <kparts/mainwindow.h>
 
-class QWidget;
-class KTempDir;
+class QAction;
 
 namespace KFI
 {
-class CInstaller : public QObject
+
+class CViewer : public KParts::MainWindow
 {
     Q_OBJECT
 
     public:
 
-    CInstaller(QWidget *p)
-         : itsParent(p), itsTempDir(NULL) { }
-    ~CInstaller();
-
-    int install(const QSet<KUrl> &urls);
+    CViewer();
+    virtual ~CViewer();
 
     public Q_SLOTS:
 
+    void fileOpen();
+    void enableAction(const char *name, bool enable);
+
     private:
 
-    QWidget  *itsParent;
-    KTempDir *itsTempDir;
+    KParts::ReadOnlyPart *itsPreview;
+    QAction              *itsPrintAct;
 };
 
 }

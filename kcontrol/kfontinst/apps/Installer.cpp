@@ -24,12 +24,17 @@
 #include "Misc.h"
 #include <QFile>
 #include <QList>
+#include <kcmdlineargs.h>
+#include <kaboutdata.h>
+#include <kapplication.h>
 #include <kzip.h>
 #include <ktempdir.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include "JobRunner.h"
+#include "Misc.h"
+#include "CreateParent.h"
 
 namespace KFI
 {
@@ -110,10 +115,8 @@ int CInstaller::install(const QSet<KUrl> &urls)
                                     // Cant install hidden fonts, therefore need to unhide 1st!
                                     if(Misc::isHidden(name))
                                     {
-                                        ::rename(QFile::encodeName(itsTempDir->name()+
-                                                                name).data(),
-                                            QFile::encodeName(itsTempDir->name()+
-                                                                name.mid(1)).data());
+                                        ::rename(QFile::encodeName(itsTempDir->name()+name).data(),
+                                            QFile::encodeName(itsTempDir->name()+name.mid(1)).data());
                                         name=name.mid(1);
                                     }
                                     instUrls.insert(KUrl(itsTempDir->name()+name));
@@ -166,4 +169,48 @@ CInstaller::~CInstaller()
 
 }
 
-#include "Installer.moc"
+static KCmdLineOptions options[] =
+{
+    { "x <folder>",    I18N_NOOP("Configure folder for X11 - create fonts.dir and fonts.scale, plus remove hidden entries."
+                                 " (NOTE: Use this option on its own)"), 0},
+    { "embed <winid>", I18N_NOOP("Makes the dialogue transient for an X app specified by winid"), 0 },
+    { "+[URL]",        I18N_NOOP("URL to install"), 0 },
+    KCmdLineLastOption
+};
+
+static KAboutData aboutData("kfontinst", I18N_NOOP("Font Installer"), "1.0", I18N_NOOP("Simple font installer"),
+                            KAboutData::License_GPL, I18N_NOOP("(C) Craig Drummond, 2007"));
+
+int main(int argc, char **argv)
+{
+    //
+    // Do a quick check to see if we're just being run to configure X...
+    if(3==argc && 0==strcmp(argv[1], "-x"))
+    {
+        QString dir(KFI::Misc::dirSyntax(QFile::decodeName(argv[2])));
+
+        return KFI::Misc::dExists(dir) && KFI::Misc::configureForX11(dir) ? 0 : -1;
+    }
+    else
+    {
+        KCmdLineArgs::init(argc, argv, &aboutData);
+        KCmdLineArgs::addCmdLineOptions(options);
+
+        QSet<KUrl>   urls;
+        KCmdLineArgs *args(KCmdLineArgs::parsedArgs());
+
+        for(int i=0; i < args->count(); i++)
+            urls.insert(args->url(i));
+
+        if(urls.count())
+        {
+            KApplication    app;
+            QByteArray      opt(args->getOption("embed"));
+            KFI::CInstaller inst(createParent(opt.size() ? strtol(opt.constData(), NULL, 16) : 0));
+
+            return inst.install(urls);
+        }
+
+        return -1;
+    }
+}

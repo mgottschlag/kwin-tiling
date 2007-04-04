@@ -35,9 +35,9 @@ KDE3.5 -> KDE4.0
 18. Better TTC handling.
 19. When installing to fonts:/, as non-root, automatically install to fonts:/Personal.
     To install to fonts:/System need to explicity copy to fonts:/System.
-20. Removal of kfontview app - only kpart is really required.
+20. Hide kfontview from KMenu - its only required by kcm, and when cliking on a font.
 21. Renamed kcmfontinst to just fontinst.
-22. When printing, use external kfontinst app - that way newly installed fonts can
+22. When printing, use external kfontprint app - that way newly installed fonts can
     also be printed.
 23. When run as non-root, the kcontrol module will have a combo box allowing the user
     to select Personal or System fonts.

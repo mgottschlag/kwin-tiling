@@ -614,7 +614,7 @@ void CKCmFontInst::print(bool all)
                 QSet<Misc::TFont>::ConstIterator it(fonts.begin()),
                                                  end(fonts.end());
                 KTemporaryFile                   tmpFile;
-                bool                             useGrpFile(fonts.count()>64),
+                bool                             useFile(fonts.count()>16),
                                                  startProc(true);
                 QStringList                      args;
 
@@ -626,7 +626,7 @@ void CKCmFontInst::print(bool all)
                 //
                 // If we have lots of fonts to print, pass kfontinst a tempory groups file to print
                 // instead of passing font by font...
-                if(useGrpFile)
+                if(useFile)
                 {
                     if(tmpFile.open())
                     {
@@ -636,12 +636,11 @@ void CKCmFontInst::print(bool all)
                             str << (*it).family << endl
                                 << (*it).styleInfo << endl;
 
-                        args << "-p"
-                             << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
-                             << KGlobal::caption().toUtf8()
-                             << QString().setNum(constSizes[dlg.chosenSize() < 6 ? dlg.chosenSize() : 2])
-                             << tmpFile.fileName()
-                             << "y"; // y => implies kfontinst will remove our tmp file
+                        args << "--embed" << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
+                             << "--caption" << KGlobal::caption().toUtf8()
+                             << "--size" << QString().setNum(constSizes[dlg.chosenSize() < 6 ? dlg.chosenSize() : 2])
+                             << "--listfile" << tmpFile.fileName()
+                             << "--deletefile";
                     }
                     else
                     {
@@ -651,23 +650,21 @@ void CKCmFontInst::print(bool all)
                 }
                 else
                 {
-                    args << "-P"
-                         << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
-                         << KGlobal::caption().toUtf8()
-                         << QString().setNum(constSizes[dlg.chosenSize()<6 ? dlg.chosenSize() : 2]);
+                    args << "--embed" << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
+                         << "--caption" << KGlobal::caption().toUtf8()
+                         << "--size" << QString().setNum(constSizes[dlg.chosenSize()<6 ? dlg.chosenSize() : 2]);
 
                     for(; it!=end; ++it)
-                        args << (*it).family.toUtf8()
-                             << QString().setNum((*it).styleInfo);
+                        args << "--pfont" << QString((*it).family.toUtf8()+','+QString().setNum((*it).styleInfo));
                 }
 
                 if(startProc)
                 {
-                    itsPrintProc->start(KFI_APP, args);
+                    itsPrintProc->start(KFI_PRINTER, args);
 
                     if(itsPrintProc->waitForStarted(1000))
                     {
-                        if(useGrpFile)
+                        if(useFile)
                             tmpFile.setAutoRemove(false);
                     }
                     else
@@ -678,8 +675,7 @@ void CKCmFontInst::print(bool all)
         }
         else
             KMessageBox::information(this, i18n("There are no printable fonts.\n"
-                                                "You can only print non-bitmap "
-                                                 "and enabled fonts."),
+                                                "You can only print non-bitmap and enabled fonts."),
                                      i18n("Cannot Print"));
     }
 }

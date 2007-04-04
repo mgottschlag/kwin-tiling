@@ -34,9 +34,17 @@
 #define KFI_CATALOGUE                KFI_NAME
 
 #ifdef KDE_BINDIR
-#define KFI_APP KDE_BINDIR"/"KFI_NAME
+#define KFI_INSTALLER KDE_BINDIR"/kfontinst"
+#define KFI_VIEWER    KDE_BINDIR"/kfontview"
 #else
-#define KFI_APP KFI_NAME
+#define KFI_INSTALLER "kfontinst"
+#define KFI_VIEWER    "kfontview"
+#endif
+
+#ifdef KDE_DATADIR
+#define KFI_PRINTER   KDE_DATADIR"/"KFI_NAME"/bin/kfontprint"
+#else
+#define KFI_PRINTER "kfontprint"
 #endif
 
 #define KFI_PRINT_GROUP              "Print"

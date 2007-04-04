@@ -1924,8 +1924,6 @@ void CFontListView::view()
         {
             QStringList args;
 
-            args << "-v";
-
             // If we can, speed up font viewer by passing the font details...
             if((*it)->isEnabled())
             {
@@ -1971,7 +1969,7 @@ void CFontListView::view()
                     args << (*it)->url().url();
             }
 
-            QProcess::startDetached(KFI_APP, args);
+            QProcess::startDetached(KFI_VIEWER, args);
         }
     }
 }
