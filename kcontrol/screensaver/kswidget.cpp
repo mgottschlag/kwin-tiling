@@ -1,7 +1,6 @@
 #include <config-screensaver.h>
 
 #include "testwin.h"
-#include <X11/Xlib.h>
 
 #ifdef HAVE_GLXCHOOSEVISUAL
 #include <GL/glx.h>
@@ -62,8 +61,10 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
 
 KSWidget::~KSWidget()
 {
+#ifdef HAVE_GLXCHOOSEVISUAL
     if( colormap != None )
         XFreeColormap( x11Display(), colormap );
+#endif
 }
 
 #include "kswidget.moc"
