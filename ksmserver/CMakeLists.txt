@@ -4,6 +4,8 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/plasm
 
 configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
 
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 set(ksmserver_KDEINIT_SRCS

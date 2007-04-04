@@ -1,6 +1,8 @@
 
 configure_file (config-screensaver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-screensaver.h )
 
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 set(kcm_screensaver_PART_SRCS 

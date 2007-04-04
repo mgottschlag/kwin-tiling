@@ -6,6 +6,7 @@ configure_file (config-kcontrol-input.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config
 
 include_directories( ${KDE4_INCLUDES} )
 
+add_definitions (-DQT3_SUPPORT)
 
 if (LIBUSB_FOUND)
   include_directories( ${LIBUSB_INCLUDE_DIR} )

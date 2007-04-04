@@ -1,6 +1,8 @@
 add_subdirectory( pics ) 
 #add_subdirectory( tests ) 
 
+add_definitions (-DQT3_SUPPORT)
+
 OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" ON)
 
 MESSAGE(STATUS "option: USE_XKLAVIER  <${USE_XKLAVIER}>")

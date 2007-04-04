@@ -3,6 +3,8 @@ if (X11_XFT_FOUND)
 
   add_definitions(${FREETYPE_INCLUDE_DIR})
 
+  add_definitions (-DQT3_SUPPORT)
+
   set(libkfontinstview_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/FontPreview.cpp 
                             ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/PreviewSelectAction.cpp
                             ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/CharTip.cpp )

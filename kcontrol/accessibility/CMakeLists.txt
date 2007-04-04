@@ -1,6 +1,8 @@
 
 
 
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 set(kcm_accessibility_PART_SRCS accessibility.cpp )

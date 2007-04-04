@@ -1,6 +1,8 @@
 
 project(kicker)
 
+add_definitions (-DQT3_SUPPORT)
+
 set(libkicker_core_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/kicker.cpp

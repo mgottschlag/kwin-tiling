@@ -1,4 +1,6 @@
 
+add_definitions (-DQT3_SUPPORT)
+
 add_subdirectory( info ) 
 add_subdirectory( nics ) 
 add_subdirectory( pics ) 

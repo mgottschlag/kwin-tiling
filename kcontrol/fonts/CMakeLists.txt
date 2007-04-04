@@ -3,6 +3,8 @@
 include_directories(${FONTCONFIG_INCLUDE_DIR})
 include_directories(${FREETYPE_INCLUDE_DIR})
 
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 set(kcm_fonts_PART_SRCS ${libkrd_SRCS} fonts.cpp ${libkxftconfig_SRCS} )

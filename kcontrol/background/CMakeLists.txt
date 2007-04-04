@@ -6,6 +6,7 @@ add_subdirectory( pics )
 # But first KonqOperations must be redesigned to not use konq_iconviewwidget...
 include_directories( ${CMAKE_SOURCE_DIR}/libkonq )
 
+add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
 kde4_add_ui3_files(kcmbackgroundlib_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/bgdialog_ui.ui ${CMAKE_CURRENT_SOURCE_DIR}/bgwallpaper_ui.ui ${CMAKE_CURRENT_SOURCE_DIR}/bgadvanced_ui.ui )

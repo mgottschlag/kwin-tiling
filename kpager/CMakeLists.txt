@@ -1,6 +1,8 @@
 
 project(kpager)
 
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 set(kpager_SRCS 

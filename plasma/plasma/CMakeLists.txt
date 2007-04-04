@@ -1,5 +1,7 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/workspace/plasma/lib ${CMAKE_SOURCE_DIR}/workspace/lib)
 
+add_definitions (-DQT3_SUPPORT)
+
 set(plasma_SRCS 
     clock.cpp
     main.cpp

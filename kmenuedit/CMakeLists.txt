@@ -4,6 +4,7 @@ project(kmenuedit)
 add_subdirectory( pixmaps ) 
 
 
+add_definitions (-DQT3_SUPPORT)
 
 set(kmenueditcommon_STAT_SRCS basictab.cpp treeview.cpp kmenuedit.cpp khotkeys.cpp menufile.cpp menuinfo.cpp )
 

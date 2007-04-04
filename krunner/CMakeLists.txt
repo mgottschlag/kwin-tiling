@@ -11,6 +11,8 @@ set(krunner_BGIMAGES images/background/dialog.svg)
 
 include_directories(${CMAKE_SOURCE_DIR}/workspace/plasma/lib ${CMAKE_SOURCE_DIR}/workspace/lib)
 
+add_definitions (-DQT3_SUPPORT)
+
 set(krunner_SRCS
                  krunnerdialog.cpp
                  collapsiblewidget.cpp

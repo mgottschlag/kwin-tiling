@@ -3,6 +3,8 @@ project(ksystraycmd)
 
 
 
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 set(ksystraycmd_SRCS ksystraycmd.cpp main.cpp )

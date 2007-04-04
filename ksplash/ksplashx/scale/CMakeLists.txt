@@ -1,5 +1,7 @@
 ########### next target ###############
 
+add_definitions (-DQT3_SUPPORT)
+
 set( ksplashx_scale_SRCS
     main.cpp )
 

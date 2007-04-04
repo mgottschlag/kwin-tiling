@@ -1,3 +1,6 @@
+
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 set( prepareanim_SRCS

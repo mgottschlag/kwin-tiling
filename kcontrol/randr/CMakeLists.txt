@@ -1,6 +1,8 @@
 include_directories( ${X11_Xrandr_INCLUDE_PATH}  )
 
 
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 set(randrinternal_PART_SRCS ktimerdialog.cpp randr.cpp)
