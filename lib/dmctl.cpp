@@ -402,7 +402,7 @@ DM::GDMAuthenticate()
 	int dnl;
 	Xauth *xau;
 
-	dpy = DisplayString( QPaintDevice::x11AppDisplay() );
+	dpy = DisplayString( QX11Info::display() );
 	if (!dpy) {
 		dpy = ::getenv( "DISPLAY" );
 		if (!dpy)
