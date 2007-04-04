@@ -17,7 +17,6 @@ if(X11_Xaccess_FOUND)
 endif(X11_Xaccess_FOUND)    
 add_subdirectory( bell )
 add_subdirectory( background )
-add_subdirectory( samba )
 
 add_subdirectory( input )
 add_subdirectory( kdm )
