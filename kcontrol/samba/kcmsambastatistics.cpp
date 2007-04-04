@@ -166,7 +166,7 @@ void StatisticsView::calculate()
                else item3=hostLe->text();
                sLog.addItem(item2,item3);
                //count++;
-            };
+            }
          }
          else
          {
@@ -179,10 +179,10 @@ void StatisticsView::calculate()
                else item3=hostLe->text();
                sLog.addItem(item2,item3);
 
-            };
-         };
+            }
+         }
          item=item->nextSibling();
-      };
+      }
       for (LogItem* tmpItem=sLog.items.first();tmpItem!=0;tmpItem=sLog.items.next())
       {
          for (SmallLogItem *tmpStr=tmpItem->accessed.first();tmpStr!=0;tmpStr=tmpItem->accessed.next())
@@ -217,9 +217,9 @@ void StatisticsView::calculate()
             if ((QString(item->text(1)).contains(i18n("FILE OPENED")))
                 && (QString(item->text(2)).contains(rService)) && (QString(item->text(3)).contains(rHost)))
                count++;
-         };
+         }
          item=item->nextSibling();
-      };
+      }
       QString number("");
       number.sprintf("%6d",calcCount);
       QString hits("");
@@ -247,7 +247,7 @@ void SambaLog::printItems()
    kDebug() << "------ end of printing ------" << endl << endl;
 }
 
-LogItem* SambaLog::itemInList(QString name)
+LogItem* SambaLog::itemInList(const QString &name)
 {
    LogItem* tmpItem(items.first());
    LogItem* foundItem(0);
@@ -255,11 +255,11 @@ LogItem* SambaLog::itemInList(QString name)
    {
       if (tmpItem->name==name) foundItem=tmpItem;
       tmpItem=items.next();
-   };
+   }
    return foundItem;
 }
 
-void SambaLog::addItem(QString share, QString user)
+void SambaLog::addItem(const QString &share, const QString &user)
 {
    //cout<<"            adding connection: -"<<share<<"-   -"<<user<<"-"<<endl;
    LogItem* tmp(itemInList(share));
@@ -274,7 +274,7 @@ void SambaLog::addItem(QString share, QString user)
    };
 }
 
-SmallLogItem* LogItem::itemInList(QString name)
+SmallLogItem* LogItem::itemInList(const QString &name)
 {
    SmallLogItem* tmpItem(accessed.first());
    SmallLogItem* foundItem(0);
@@ -282,11 +282,11 @@ SmallLogItem* LogItem::itemInList(QString name)
    {
       if (tmpItem->name==name) foundItem=tmpItem;
       tmpItem=accessed.next();
-   };
+   }
    return foundItem;
 }
 
-void LogItem::addItem (QString host)
+void LogItem::addItem (const QString &host)
 {
    SmallLogItem* tmp(itemInList(host));
    if (tmp!=0)
@@ -294,3 +294,4 @@ void LogItem::addItem (QString host)
    else
       accessed.append(new SmallLogItem(host));
 }
+

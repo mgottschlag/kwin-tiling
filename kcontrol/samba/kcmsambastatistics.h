@@ -39,7 +39,7 @@ class SmallLogItem
 {
  public:
   SmallLogItem():name(""),count(0){}
-  SmallLogItem(QString n):name(n),count(1){}
+  SmallLogItem(const QString &n):name(n),count(1){}
   QString name;
   int count;
 };
@@ -48,7 +48,7 @@ class LogItem
 {
  public:
   LogItem():name(""), accessed(),count(0) {}
-  LogItem(QString n, QString a):name(n), accessed(), count(1)
+  LogItem(const QString &n, const QString &a):name(n), accessed(), count(1)
 	{
 	  accessed.setAutoDelete(true);
 	  accessed.append(new SmallLogItem(a));
@@ -57,8 +57,8 @@ class LogItem
   //QStrList accessedBy;
   Q3PtrList<SmallLogItem> accessed;
   int count;
-  SmallLogItem* itemInList(QString name);
-  void addItem (QString host);
+  SmallLogItem* itemInList(const QString &name);
+  void addItem (const QString &host);
 };
 
 class SambaLog
@@ -69,10 +69,10 @@ class SambaLog
 	  items.setAutoDelete(true);
 	}
   Q3PtrList<LogItem> items;
-  void addItem (QString share, QString host);
+  void addItem (const QString &share, const QString &host);
   void printItems();
  private:
-  LogItem* itemInList(QString name);
+  LogItem* itemInList(const QString &name);
 };
 
 class StatisticsView: public QWidget
@@ -104,3 +104,4 @@ private Q_SLOTS:
   void calculate();
 };
 #endif // main_included
+
