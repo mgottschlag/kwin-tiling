@@ -199,7 +199,6 @@ class CGroupListView : public QTreeView
     void                  addFamilies(const QModelIndex &group, const QSet<QString> &);
     void                  removeFamilies(const QModelIndex &group, const QSet<QString> &);
     void                  itemSelected(const QModelIndex &);
-    void                  exportGroup();
     void                  unclassifiedChanged();
 
     private Q_SLOTS:
