@@ -6,6 +6,8 @@
 //
 // Ported to kcontrol2 by Geert Jansen.
 
+#include <config.h>
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
@@ -39,6 +41,12 @@
 #include "fonts.moc"
 
 #include <kdebug.h>
+
+#ifdef HAVE_FREETYPE
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_LCD_FILTER_H
+#endif
 
 #include <X11/Xlib.h>
 #include <QX11Info>
@@ -461,6 +469,19 @@ void FontAASettings::enableWidgets()
   excludeTo->setEnabled(excludeRange->isChecked());
   excludeToLabel->setEnabled(excludeRange->isChecked());
   subPixelType->setEnabled(useSubPixel->isChecked());
+#ifdef HAVE_FREETYPE
+  static int ft_has_subpixel = -1;
+  if( ft_has_subpixel == -1 ) {
+    FT_Library            ftLibrary;
+    if(FT_Init_FreeType(&ftLibrary) == 0) {
+      ft_has_subpixel = ( FT_Library_SetLcdFilter(ftLibrary, FT_LCD_FILTER_DEFAULT )
+        == FT_Err_Unimplemented_Feature ) ? 0 : 1;
+      FT_Done_FreeType(ftLibrary);
+    }
+  }
+  useSubPixel->setEnabled(ft_has_subpixel);
+  subPixelType->setEnabled(ft_has_subpixel);
+#endif
 }
 
 void FontAASettings::changed()
