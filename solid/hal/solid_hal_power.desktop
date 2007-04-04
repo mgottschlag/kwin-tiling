@@ -8,10 +8,12 @@ Name=HAL-Power
 Name[de]=HAL-Energieverwaltung
 Name[nds]=HAL-Stroompleeg
 Name[x-test]=xxHAL-Powerxx
+Name[zh_TW]=HAL 電源管理
 Comment=Hardware power management using freedesktop.org HAL daemon
 Comment[de]=Energieverwaltung mit Hilfe des HAL-Dienstes von freedesktop.org
 Comment[el]=Διαχείριση ενέργειας υλικού με χρήση του δαίμονα HAL του freedesktop.org
 Comment[ja]=freedesktop.org の HAL デーモンを用いたハードウェア電源管理
 Comment[nds]=Stroompleeg för de Hardware mit den HAL-Dämoon vun freedesktop.org
 Comment[x-test]=xxHardware power management using freedesktop.org HAL daemonxx
+Comment[zh_TW]=使用 freedesktop.org 的 HAL 伺服程式做電源管理
 

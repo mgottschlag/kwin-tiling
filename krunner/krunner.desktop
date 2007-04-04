@@ -6,6 +6,7 @@ Name=Command Runner
 Name[ja]=コマンド Runner
 Name[nds]=Befehldreger
 Name[x-test]=xxCommand Runnerxx
+Name[zh_TW]=命令執行者
 Type=Service
 X-KDE-StartupNotify=false
 OnlyShowIn=KDE;

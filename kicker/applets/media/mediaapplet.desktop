@@ -8,6 +8,7 @@ Comment[el]=Ένα εφαρμογίδιο που εμφανίζει τις συ�
 Comment[ja]=記憶メディアを表示するパネルアプレット
 Comment[nds]=En Paneel-Lüttprogramm, dat Dien Spiekermedien wiest
 Comment[x-test]=xxA panel applet that displays your storage mediaxx
+Comment[zh_TW]=直接存取您的儲存媒體的面板小程式
 Name=Storage Media
 Name[af]=Stoor Media
 Name[ar]=وسائط التخزين

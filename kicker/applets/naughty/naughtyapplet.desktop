@@ -65,6 +65,7 @@ Comment[el]=Έλεγχος Runaway διεργασιών για τον πίνακ
 Comment[ja]=KDE パネルのための手に負えないプロセスのキャッチャー
 Comment[nds]=Grieper för dörgahn Perzessen för dat KDE-Paneel
 Comment[x-test]=xxRunaway process catcher for the KDE panelxx
+Comment[zh_TW]=失控程式捕捉器
 Icon=runprocesscatcher
 X-KDE-Library=naughty_panelapplet
 X-KDE-UniqueApplet=true

@@ -59,6 +59,7 @@ Comment=Easy access to system places
 Comment[ja]=システムの場所に素早くアクセス
 Comment[nds]=Eenfach Togriep op Systeem-Öörd
 Comment[x-test]=xxEasy access to system placesxx
+Comment[zh_TW]=系統選單
 Icon=system
 
 X-KDE-Library=kickermenu_systemmenu

@@ -67,5 +67,6 @@ Comment[el]=Το εφαρμογίδια γρήγορης εκτέλεσης
 Comment[ja]=クイックランチャーアプレット
 Comment[nds]=Dat Fixstart-Lüttprogramm
 Comment[x-test]=xxThe quick launcher appletxx
+Comment[zh_TW]=快速起動小程式
 Icon=launch
 X-KDE-Library=launcher_panelapplet

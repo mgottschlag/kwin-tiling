@@ -64,6 +64,7 @@ Comment[el]=Γρήγορη εκκίνηση ενός αρχείου ή αναζ�
 Comment[ja]=ファイルの検索やウェブ検索を素早く開始
 Comment[nds]=Gau na Dateien oder in't Nett söken
 Comment[x-test]=xxQuickly start a file or web searchxx
+Comment[zh_TW]=快速啟動檔案或網頁搜尋
 Icon=kfind
 
 X-KDE-Library=kickermenu_find

@@ -64,6 +64,7 @@ Comment[de]=Eine Mini-Befehlszeile
 Comment[ja]=コマンドラインアプレット
 Comment[nds]=En Befehlsreeg-Lüttprogramm
 Comment[x-test]=xxA command line appletxx
+Comment[zh_TW]=一個命令列的小程式
 Icon=exec
 X-KDE-Library=run_panelapplet
 X-KDE-UniqueApplet=true

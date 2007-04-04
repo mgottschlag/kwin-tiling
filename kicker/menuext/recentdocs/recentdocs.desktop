@@ -66,6 +66,7 @@ Comment[el]=Έγγραφα που χρησιμοποιήθηκαν πρόσφα�
 Comment[ja]=最近使ったドキュメント
 Comment[nds]=Dokmenten, de Du tolest bruukt hest
 Comment[x-test]=xxRecent documents you have usedxx
+Comment[zh_TW]=您最近使用過的文件選單
 Icon=document
 
 X-KDE-Library=kickermenu_recentdocs

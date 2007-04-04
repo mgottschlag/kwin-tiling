@@ -63,6 +63,7 @@ Comment[el]=Εύκολη πρόσβαση σε δικτυακούς φακέλο
 Comment[ja]=ネットワークフォルダに素早くアクセス
 Comment[nds]=Eenfach Togriep op Nettwarkornern
 Comment[x-test]=xxEasy access to network foldersxx
+Comment[zh_TW]=網路資料夾選單
 Icon=network
 
 X-KDE-Library=kickermenu_remotemenu

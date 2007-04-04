@@ -8,6 +8,7 @@ Name[el]=Εφαρμογίδιο κλειδώματος/αποσύνδεσης
 Name[ja]=ロック/ログアウトアプレット
 Name[nds]=Afsluut-/Afmell-Lüttprogramm
 Name[x-test]=xxLock/Logout Appletxx
+Name[zh_TW]=「螢幕鎖定/登出」小程式
 Comment=Adds buttons for locking screen and session logout
 Comment[af]=Voeg skerm sluit en afteken knoppies by
 Comment[ar]=يضيف أزرار لإقفال الشاشة و الخروج من الجلسة

@@ -7,6 +7,7 @@ Comment[el]=Εμφανίζει τον Κάδο Απορριμμάτων και �
 Comment[ja]=ごみ箱を表示し、ごみ箱へのファイルのドロップを可能にします
 Comment[nds]=Wiest de Affalltünn, Dateien laat sik dor rintrecken.
 Comment[x-test]=xxDisplays the trashbin and allows dropping files on itxx
+Comment[zh_TW]=顯示垃圾筒並且允許將檔案丟到其中
 Name=Trash
 Name[af]=Gemors
 Name[ar]=سلة النفايات

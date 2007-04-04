@@ -66,6 +66,7 @@ Comment[el]=Απευθείας εκκίνηση ενός εξομοιωτή τε
 Comment[ja]=指定したセッションやブックマーク先でターミナルエミュレータを起動します
 Comment[nds]=Den Terminal-Emulator mit en Leesteken oder Törn starten
 Comment[x-test]=xxDirectly start terminal emulator with a session or bookmarkxx
+Comment[zh_TW]=用來啟動作業階段和書籤的終端機模擬程式的選單
 Icon=konsole
 
 X-KDE-Library=kickermenu_konsole

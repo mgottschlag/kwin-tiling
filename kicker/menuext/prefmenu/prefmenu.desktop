@@ -66,6 +66,7 @@ Comment[el]=Εύκολη πρόσβαση στα αρθρώματα του Κέ�
 Comment[ja]=コントロールセンターの設定モジュールに素早くアクセス
 Comment[nds]=Eenfach Togriep op de Kuntrullzentrum-Modulen
 Comment[x-test]=xxEasy access to the Control Center modulesxx
+Comment[zh_TW]=簡易使用控制中心模組
 Icon=package_settings
 
 X-KDE-Library=kickermenu_prefmenu
