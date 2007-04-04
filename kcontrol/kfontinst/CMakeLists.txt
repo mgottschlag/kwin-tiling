@@ -1,7 +1,7 @@
 
 if (X11_XFT_FOUND)
 
-  add_definitions(${FREETYPE_INCLUDE_DIR})
+  include_directories(${FREETYPE_INCLUDE_DIR})
 
   add_definitions (-DQT3_SUPPORT)
 
