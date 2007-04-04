@@ -6,7 +6,7 @@ include_directories(
     )
 
 set(kfontinst_bin_SRCS ${libkfontinstjobrunner_SRCS} Installer.cpp )
-set(kfontprint_bin_SRCS KfiPrint.cpp )
+set(kfontprint_bin_SRCS Printer.cpp )
 set(kfontview_bin_SRCS Viewer.cpp )
 
 kde4_automoc(${kfontinst_bin_SRCS} ${kfontprint_bin_SRCS} ${kfontview_bin_SRCS} )
@@ -26,7 +26,7 @@ target_link_libraries(kfontview_bin ${KDE4_KIO_LIBS} ${KDE4_KPARTS_LIBS} kfontin
 install(TARGETS kfontinst_bin DESTINATION ${BIN_INSTALL_DIR} )
 install(TARGETS kfontprint_bin DESTINATION ${DATA_INSTALL_DIR}/kfontinst/bin )
 install(TARGETS kfontview_bin DESTINATION ${BIN_INSTALL_DIR} )
-install(FILES kfontinstui.rc DESTINATION ${DATA_INSTALL_DIR}/kfontinst )
+install(FILES kfontviewui.rc DESTINATION ${DATA_INSTALL_DIR}/kfontview )
 install(FILES kfontview.desktop DESTINATION ${XDG_APPS_DIR} )
 install(FILES installfont.desktop DESTINATION ${DATA_INSTALL_DIR}/konqueror/servicemenus )
 
