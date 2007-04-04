@@ -55,7 +55,7 @@ extern "C"
 }
 
 DockBarExtension::DockBarExtension(const QString& configFile,
-				   int actions, QWidget *parent)
+                                   int actions, QWidget *parent)
   : KPanelExtension(configFile, actions, parent)
 {
     dragging_container = 0;
@@ -81,9 +81,9 @@ DockBarExtension::~DockBarExtension()
 QSize DockBarExtension::sizeHint(Plasma::Position p, QSize) const
 {
     if (p == Plasma::Left || p == Plasma::Right)
-	return QSize(DockContainer::sz(), DockContainer::sz() * containers.count());
+        return QSize(DockContainer::sz(), DockContainer::sz() * containers.count());
     else
-	return QSize(DockContainer::sz() * containers.count(), DockContainer::sz());
+        return QSize(DockContainer::sz() * containers.count(), DockContainer::sz());
 }
 
 void DockBarExtension::resizeEvent(QResizeEvent*)
@@ -99,15 +99,15 @@ void DockBarExtension::windowAdded(WId win)
     char **argv;
     QString command;
     if (XGetCommand(QX11Info::display(), win, &argv, &argc)) {
-	command = KShell::joinArgs(argv, argc);
-	XFreeStringList(argv);
+        command = KShell::joinArgs(argv, argc);
+        XFreeStringList(argv);
     }
 
     // try to read wm hints
     WId resIconwin = 0;
     XWMHints *wmhints = XGetWMHints(QX11Info::display(), win);
     if (0 != wmhints) { // we managed to read wm hints
-	// read IconWindowHint
+        // read IconWindowHint
         bool is_valid = false;
         /* a good dockapp set the icon hint and the state hint,
            if it uses its icon, the window initial state must be "withdrawn"
@@ -115,7 +115,7 @@ void DockBarExtension::windowAdded(WId win)
            this filters the problematic Eterm whose initial state is "normal"
            and which has an iconwin.
         */
-	if ((wmhints->flags & IconWindowHint) &&
+        if ((wmhints->flags & IconWindowHint) &&
             (wmhints->flags & StateHint)) {
             resIconwin = wmhints->icon_window;
             is_valid = (resIconwin && wmhints->initial_state == 0) ||
@@ -134,7 +134,7 @@ void DockBarExtension::windowAdded(WId win)
             return; // we won't swallow this one
     }
     else
-	return;
+        return;
 
     // The following if statement was at one point commented out,
     // without a comment as to why. This caused problems like
@@ -142,7 +142,7 @@ void DockBarExtension::windowAdded(WId win)
     // get bug reports about whatever commenting it out was supposed
     // to fix.
     if (resIconwin == 0)
-	resIconwin = win;
+        resIconwin = win;
 
     // try to read class hint
     XClassHint hint;
@@ -159,13 +159,13 @@ void DockBarExtension::windowAdded(WId win)
        which causes the double-launch bug (one instance from the kwin
        session, and one from the dockbar) bug when kde is restarted */
     if (resIconwin != win) {
-		QX11Info info;
+        QX11Info info;
         XWithdrawWindow( QX11Info::display(), win, info.screen() );
         while( KWM::windowInfo(win, NET::XAWMState).mappingState() != NET::Withdrawn );
     }
 
     // add a container
-    embedWindow(resIconwin, command.isNull() ? resClass : command, resName, resClass);
+    embedWindow(resIconwin, command, resName, resClass);
     saveContainerConfig();
 }
 
@@ -188,29 +188,36 @@ void DockBarExtension::embedWindow(WId win, QString command, QString resName, QS
 {
     if (win == 0) return;
     DockContainer* container = 0;
+    bool ncmd = false;
 
     for (DockContainer::Vector::const_iterator it = containers.constBegin();
          it != containers.constEnd();
          ++it)
     {
         DockContainer* c = *it;
-        if (c->embeddedWinId() == 0 && c->resName() == resName && c->resClass() == resClass) {
+        if (c->embeddedWinId() == 0 &&
+            c->resName() == resName &&
+            c->resClass() == resClass &&
+            (command.isNull() || c->command() == command))
+        {
             container = c;
             break;
         }
     }
 
     if (container == 0) {
-	container = new DockContainer(command, this, resName, resClass);
-	addContainer(container);
+        QString cmd = command.isNull() ? resClass : command;
+        if (KStandardDirs::findExe(KShell::splitArgs(cmd).front()).isEmpty())
+            ncmd = true;
+        container = new DockContainer(cmd, this, resName, resClass);
+        addContainer(container);
     }
 
     container->embed(win);
     layoutContainers();
     emit updateLayout();
-    if (KStandardDirs::findExe(KShell::splitArgs(container->command()).front()).isEmpty()) {
+    if (ncmd)
         container->askNewCommand();
-    }
  }
 
 void DockBarExtension::addContainer(DockContainer* c, int pos)
