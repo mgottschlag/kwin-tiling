@@ -109,7 +109,7 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::AuthenticationWep * auth, cons
         // s key
         //   cipher, essid, key
         char * rawHashedKey = 0;
-        rawHashedKey = ieee_802_11_cipher_hash( cipher, essid.utf8(), auth->secrets()[ "key" ].utf8() );
+        rawHashedKey = ieee_802_11_cipher_hash( cipher, essid.toUtf8(), auth->secrets()[ "key" ].toUtf8() );
         QString hashedKey = QString::fromAscii( rawHashedKey );
         free( rawHashedKey );
         args << QVariant( hashedKey );
@@ -159,12 +159,12 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::AuthenticationWpaPersonal * au
             break;
     }
     // now try both ciphers on the raw key
-    if ( ieee_802_11_cipher_validate( hexCipher, essid.utf8(), rawKey.utf8() ) == 0 )
+    if ( ieee_802_11_cipher_validate( hexCipher, essid.toUtf8(), rawKey.toUtf8() ) == 0 )
     {
         kDebug() << "HEX" << endl;
         cipher = hexCipher;
     }
-    else if ( ieee_802_11_cipher_validate( ppCipher, essid.utf8(), rawKey.utf8() ) == 0 )
+    else if ( ieee_802_11_cipher_validate( ppCipher, essid.toUtf8(), rawKey.toUtf8() ) == 0 )
     {
         kDebug() << "PP" << endl;
         cipher = ppCipher;
@@ -179,7 +179,7 @@ QList<QVariant> NMDBusHelper::doSerialize( Solid::AuthenticationWpaPersonal * au
         args << QVariant( we_cipher );
         // s key
         char * rawHashedKey = 0;
-        rawHashedKey = ieee_802_11_cipher_hash( cipher, essid.utf8(), rawKey.utf8() );
+        rawHashedKey = ieee_802_11_cipher_hash( cipher, essid.toUtf8(), rawKey.toUtf8() );
         QString hashedKey = QString::fromAscii( rawHashedKey );
         free( rawHashedKey );
         args << QVariant( hashedKey );
