@@ -1027,6 +1027,7 @@ void CKCmFontInst::selectGroup(int grp)
     if(itsModeControl)
         itsModeControl->setCurrentItem(grp);
     itsFontListView->refreshFilter();
+    setStatusBar();
 }
 
 void CKCmFontInst::deleteFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool hasSys)
