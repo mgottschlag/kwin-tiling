@@ -68,7 +68,7 @@ JoyWidget::JoyWidget(QWidget *parent)
   new QLabel(i18n("Device:"), devHbox);
   device = new QComboBox(devHbox);
   device->setEditable( true );
-  device->setInsertPolicy(QComboBox::NoInsertion);
+  device->setInsertPolicy(QComboBox::NoInsert);
   connect(device, SIGNAL(activated(const QString &)), this, SLOT(deviceChanged(const QString &)));
   devHbox->setStretchFactor(device, 3);
 
@@ -212,7 +212,7 @@ void JoyWidget::restoreCurrDev()
 {
   if ( !joydev )  // no device open
   {
-    device->setCurrentText("");
+    device->setEditText("");
     calibrate->setEnabled(false);
   }
   else
