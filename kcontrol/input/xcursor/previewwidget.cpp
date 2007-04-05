@@ -338,8 +338,11 @@ void PreviewWidget::paintEvent( QPaintEvent * )
                                       cursors[i]->width(), cursors[i]->height() );
 		}
 	}
+	p.end();
 
-	bitBlt( this, 0, 0, &buffer );
+	QPainter p2( this );
+	p2.drawPixmap( 0, 0, buffer );
+	p2.end();
 
 	if ( buffer.x11PictureHandle()==0 )
             XRenderFreePicture( QX11Info::display(), dest );

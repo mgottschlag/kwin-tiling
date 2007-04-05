@@ -47,7 +47,7 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
     if ( !name )
         setObjectName( "LogitechMouse" );
 
-    cordlessNameLabel->setText( i18n("Mouse type: %1", this->name() ) );
+    cordlessNameLabel->setText( i18n("Mouse type: %1", objectName() ) );
 
     m_mouseCapabilityFlags = mouseCapabilityFlags;
 
@@ -128,7 +128,7 @@ void LogitechMouse::initCordlessStatusReporting()
 
 void LogitechMouse::updateCordlessStatus()
 {
-    QByteArray status(8);
+    QByteArray status(8, '\0');
 
     int result =  usb_control_msg(  m_usbDeviceHandle,
                                     USB_TYPE_VENDOR | USB_ENDPOINT_IN,0x09,

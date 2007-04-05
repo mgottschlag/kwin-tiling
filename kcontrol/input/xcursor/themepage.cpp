@@ -43,6 +43,7 @@
 #include <QPainter>
 #include <QFileInfo>
 #include <QPushButton>
+#include <QX11Info>
 
 #include <cstdlib> // for getenv()
 
@@ -152,7 +153,7 @@ void ThemePage::save()
 void ThemePage::load()
 {
 	// Get the name of the theme libXcursor currently uses
-	const char *theme = XcursorGetTheme( x11Display() );
+	const char *theme = XcursorGetTheme( x11Info().display() );
 	currentTheme = theme;
 
 	// Get the name of the theme KDE is configured to use
@@ -574,8 +575,7 @@ QPixmap ThemePage::createIcon( const QString &theme, const QString &sample ) con
 		int size = qMax( iconSize, qMax( r.width(), r.height() ) );
 
 		// Create the intermediate QImage
-		QImage image( size, size, 32 );
-		image.setAlphaBuffer( true );
+		QImage image( size, size, QImage::Format_ARGB32 );
 
 		// Clear the image
 		quint32 *dst = reinterpret_cast<quint32*>( image.bits() );
@@ -620,8 +620,7 @@ QPixmap ThemePage::createIcon( const QString &theme, const QString &sample ) con
 		XcursorImageDestroy( xcur );
 	} else {
 
-		QImage image( iconSize, iconSize, 32 );
-		image.setAlphaBuffer( true );
+		QImage image( iconSize, iconSize, QImage::Format_ARGB32 );
 
 		quint32 *data = reinterpret_cast< quint32* >( image.bits() );
 		for ( int i = 0; i < image.width() * image.height(); i++ )

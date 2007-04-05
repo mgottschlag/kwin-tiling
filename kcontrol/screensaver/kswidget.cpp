@@ -2,6 +2,8 @@
 
 #include "testwin.h"
 
+#include <QX11Info>
+
 #ifdef HAVE_GLXCHOOSEVISUAL
 #include <GL/glx.h>
 #endif
@@ -42,10 +44,10 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
              i < sizeof( attribs ) / sizeof( attribs[ 0 ] );
              ++i )
         {
-            if( XVisualInfo* info = glXChooseVisual( x11Display(), x11Screen(), attribs[ i ] ))
+            if( XVisualInfo* info = glXChooseVisual( x11Info().display(), x11Info().screen(), attribs[ i ] ))
             {
                 visual = info->visual;
-                colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
+                colormap = XCreateColormap( x11Info().display(), RootWindow( x11Info().display(), x11Info().screen()), visual, AllocNone );
                 attrs.colormap = colormap;
                 flags |= CWColormap;
                 XFree( info );
@@ -53,8 +55,8 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
             }
         }
     }
-    Window w = XCreateWindow( x11Display(), parentWidget() ? parentWidget()->winId() : RootWindow( x11Display(), x11Screen()),
-        x(), y(), width(), height(), 0, x11Depth(), InputOutput, visual, flags, &attrs );
+    Window w = XCreateWindow( x11Info().display(), parentWidget() ? parentWidget()->winId() : RootWindow( x11Info().display(), x11Info().screen()),
+        x(), y(), width(), height(), 0, x11Info().depth(), InputOutput, visual, flags, &attrs );
     create( w );
 #endif
 }
@@ -63,7 +65,7 @@ KSWidget::~KSWidget()
 {
 #ifdef HAVE_GLXCHOOSEVISUAL
     if( colormap != None )
-        XFreeColormap( x11Display(), colormap );
+        XFreeColormap( x11Info().display(), colormap );
 #endif
 }
 
