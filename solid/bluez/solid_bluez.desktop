@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+ServiceTypes=SolidBluetoothManager
+X-KDE-Library=solid_bluez
+InitialPreference=100
+Name=BlueZ
+Comment=Bluetooth management using the BlueZ stack
+
