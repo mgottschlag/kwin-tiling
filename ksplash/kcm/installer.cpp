@@ -16,7 +16,6 @@
 #include <QLabel>
 #include <QLayout>
 #include <q3textedit.h>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -37,7 +36,6 @@
 #include <kstandarddirs.h>
 #include <ktar.h>
 #include <kservicetypetrader.h>
-#include <k3urldrag.h>
 #include <kio/netaccess.h>
 
 ThemeListBox::ThemeListBox(QWidget *parent)
@@ -50,13 +48,13 @@ ThemeListBox::ThemeListBox(QWidget *parent)
 
 void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
 {
-   event->setAccepted((event->source() != this) && K3URLDrag::canDecode(event));
+   event->setAccepted((event->source() != this) && KUrl::List::canDecode(event->mimeData()));
 }
 
 void ThemeListBox::dropEvent(QDropEvent* event)
 {
-   KUrl::List urls;
-   if (K3URLDrag::decode(event, urls))
+   KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
+   if (!urls.isEmpty())
    {
       emit filesDropped(urls);
    }
@@ -85,8 +83,11 @@ void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
          url.setPath(mDragFile);
          KUrl::List urls;
          urls.append(url);
-         K3URLDrag *d = new K3URLDrag(urls, this);
-         d->dragCopy();
+         QDrag *drag = new QDrag(this);
+         QMimeData *mime = new QMimeData();
+         urls.populateMimeData(mime);
+         drag->setMimeData(mime);
+         drag->start();
       }
    }
    KListWidget::mouseMoveEvent(e);
