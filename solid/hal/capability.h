@@ -30,6 +30,7 @@
 class Capability : public QObject, virtual public Solid::Ifaces::Capability
 {
     Q_OBJECT
+    Q_INTERFACES( Solid::Ifaces::Capability )
 public:
     Capability( HalDevice *device );
     virtual ~Capability();
