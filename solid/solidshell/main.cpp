@@ -24,6 +24,7 @@
 #include <QStringList>
 #include <QMetaProperty>
 #include <QMetaEnum>
+#include <QTimer>
 
 #include <kcomponentdata.h>
 #include <kcmdlineargs.h>
@@ -41,6 +42,11 @@
 #include <solid/networkinterface.h>
 #include <solid/network.h>
 #include <solid/wirelessnetwork.h>
+
+#include <solid/bluetoothmanager.h>
+#include <solid/bluetoothinterface.h>
+#include <solid/bluetoothremotedevice.h>
+#include <solid/bluetoothinputdevice.h>
 
 #include <kjob.h>
 
@@ -372,6 +378,8 @@ int main(int argc, char **argv)
       cout << "  solidshell power suspend 'method'" << endl;
       cout << i18n( "             # Suspend the computer using the given 'method'.\n" ) << endl;
 
+      cout << endl;
+
       cout << "  solidshell network listdevices" << endl;
       cout << i18n( "             # List the network devices present.\n" ) << endl;
 
@@ -401,7 +409,34 @@ int main(int argc, char **argv)
                     "             # Where 'authentication' is one of:\n"
                     "             # wep hex64|ascii64|hex128|ascii128|passphrase64|passphrase128 'key' [open|shared]\n"
                     "             # wpapsk wpa|wpa2 tkip|ccmp-aes password\n"
-                    "             # wpaeap UNIMPLEMENTED IN SOLIDSHELL" ) << endl;
+                    "             # wpaeap UNIMPLEMENTED IN SOLIDSHELL\n" ) << endl;
+
+      cout << endl;
+
+      cout << "  solidshell bluetooth listadapters" << endl;
+      cout << i18n( "             # List bluetooth adapters/interfaces\n" ) << endl;
+
+      cout << "  solidshell bluetooth defaultadapter" << endl;
+      cout << i18n( "             # List bluetooth default adapter/interface\n" ) << endl;
+
+      cout << "  solidshell bluetooth query (address|bondings|connections|name) (interface 'ubi')" << endl;
+      cout << i18n( "             # Query information about the bluetooth adapter/interface with 'ubi'\n" ) << endl;
+
+      cout << "  solidshell bluetooth set (mode|name) (interface 'ubi') 'value'" << endl;
+      cout << i18n( "             # Set the bluetooth adapter name.\n"
+                    "             # Set the bluetooth adapter mode. Where 'value' is one of:\n"
+                    "             # off|connectable|discoverable\n" ) << endl;
+
+      cout << "  solidshell bluetooth scan (interface 'ubi')" << endl;
+      cout << i18n( "             # Scan for bluetooth remote devices.\n" ) << endl;
+
+      cout << "  solidshell bluetooth input listdevices" << endl;
+      cout << i18n( "             # List configured input deviceses.\n" ) << endl;
+
+      cout << "  solidshell bluetooth input (setup|remove|connect|disconnect) (device 'ubi')" << endl;
+      cout << i18n( "             # Setup bluetooth input device.\n"
+                    "             # Remove configuration of remote input device.\n"
+		    "		  # Connect or disconnect bluetooth input device.\n" ) << endl;
 
       return 0;
   }
@@ -745,6 +780,99 @@ bool SolidShell::doIt()
         {
             cerr << i18n( "Syntax Error: Unknown command '%1'" , command ) << endl;
         }
+    } else if ( domain == "bluetooth" )
+    {
+        if ( command == "listadapters" )
+        {
+            return shell.bluetoothListAdapters();
+        }
+        else if ( command == "defaultadapter" )
+        {
+            return shell.bluetoothDefaultAdapter();
+        }
+        else if ( command == "set" )
+        {
+            QString what( args->arg( 2 ) );
+            QString ubi( args->arg( 3 ) );
+            QString value( args->arg( 4 ) );
+
+            if ( what == "name" )
+            {
+                return shell.bluetoothAdapterSetName( ubi, value );
+            }
+            else if ( what == "mode" )
+            {
+                return shell.bluetoothAdapterSetMode( ubi, value );
+            }
+
+        }
+        else if ( command == "query" )
+        {
+            QString what( args->arg( 2 ) );
+            QString ubi( args->arg( 3 ) );
+
+            if ( what == "mode" )
+            {
+                return shell.bluetoothAdapterMode( ubi );
+            }
+            else if ( what == "address" )
+            {
+                return shell.bluetoothAdapterAddress( ubi );
+            }
+            else if ( what == "name" )
+            {
+                return shell.bluetoothAdapterName( ubi );
+            }
+            else if ( what == "connections" )
+            {
+                return shell.bluetoothAdapterListConnections( ubi );
+            }
+            else if ( what == "bondings" )
+            {
+                return shell.bluetoothAdapterListBondings( ubi );
+            }
+
+        }
+        else if ( command == "scan" )
+        {
+            QString ubi ( args->arg( 2 ) );
+            return shell.bluetoothAdapterScan( ubi );
+        }
+        else if ( command == "input" )
+        {
+            QString what ( args->arg( 2 ) );
+
+            if ( what == "listdevices" )
+            {
+                return shell.bluetoothInputListDevices();
+            }
+            else if ( what == "setup" )
+            {
+                QString ubi ( args->arg( 3 ) );
+                return shell.bluetoothInputSetup( ubi );
+            }
+            else if ( what == "remove" )
+            {
+                QString ubi ( args->arg( 3 ) );
+                return shell.bluetoothInputRemoveSetup( ubi );
+            }
+            else if ( what == "connect" )
+            {
+                QString ubi ( args->arg( 3 ) );
+                return shell.bluetoothInputConnect( ubi );
+            }
+            else if ( what == "disconnect" )
+            {
+                QString ubi ( args->arg( 3 ) );
+                return shell.bluetoothInputDisconnect( ubi );
+            }
+
+        }
+        else
+        {
+            cerr << i18n( "Syntax Error: Unknown command '%1'" , command ) << endl;
+        }
+
     }
     else
     {
@@ -1156,6 +1284,207 @@ bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString
     }
     else
         network->setActivated( true );
+    return true;
+}
+
+bool SolidShell::bluetoothListAdapters()
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+
+    const Solid::BluetoothInterfaceList all = manager.bluetoothInterfaces();
+
+    foreach ( const Solid::BluetoothInterface device, all )
+    {
+        cout << "UBI = '" << device.ubi() << "'" << endl;
+    }
+    return true;
+}
+
+bool SolidShell::bluetoothDefaultAdapter()
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+
+    cout << "UBI = '" <<  manager.defaultInterface() << "'" << endl;
+
+    return true;
+}
+
+bool SolidShell::bluetoothAdapterAddress( const QString &ubi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+
+    cout << "'" <<  adapter.address() << "'" << endl;
+
+    return true;
+}
+
+bool SolidShell::bluetoothAdapterName( const QString &ubi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+
+    cout << "'" <<  adapter.name() << "'" << endl;
+
+    return true;
+}
+
+bool SolidShell::bluetoothAdapterSetName( const QString &ubi, const QString &name )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+
+    adapter.setName( name );
+
+    return true;
+}
+
+bool SolidShell::bluetoothAdapterMode( const QString &ubi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+
+    cout << "'" <<  adapter.mode() << "'" << endl;
+
+    return true;
+}
+
+bool SolidShell::bluetoothAdapterSetMode( const QString &ubi, const QString &mode )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+
+    adapter.setMode( mode );
+
+    return true;
+}
+
+bool SolidShell::bluetoothAdapterListConnections( const QString &ubi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+
+    const Solid::BluetoothRemoteDeviceList all = adapter.listConnections();
+
+    cout << "Current connections of Bluetooth Adapter: " << ubi << endl;
+    foreach ( const Solid::BluetoothRemoteDevice device, all )
+    {
+        cout << "UBI = '" << device.ubi() << "'" << endl;
+    }
+    return true;
+}
+
+bool SolidShell::bluetoothAdapterListBondings( const QString &ubi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+
+    const QStringList all = adapter.listBondings();
+
+    cout << "Current bonded/paired remote bluetooth devices of Bluetooth Adapter: " << ubi << endl;
+    foreach ( const QString device, all )
+    {
+        cout << "UBI = '" << device << "'" << endl;
+    }
+    return true;
+}
+
+bool SolidShell::bluetoothAdapterScan( const QString &ubi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+
+    connect( &adapter, SIGNAL( remoteDeviceFound( const QString &, int, int ) ),
+           this, SLOT( slotBluetoothDeviceFound( const QString &, int, int ) ) );
+    connect( &adapter, SIGNAL( discoveryCompleted() ),
+           this, SLOT( slotBluetoothDiscoveryCompleted() ) );
+
+    adapter.discoverDevices();
+    // Workaround for the fakebluetooth backend... quit the discovery after 30 seconds
+    QTimer::singleShot( 30000, this, SLOT( slotBluetoothDiscoveryCompleted() ) );
+    cout << "Searching ..." << endl;
+    m_loop.exec();
+
+    return true;
+}
+
+void SolidShell::slotBluetoothDeviceFound( const QString &ubi, int deviceClass, int rssi )
+{
+    cout << QString( "['%1','%2','%3']" ).arg( ubi ).arg( deviceClass ).arg( rssi ) << endl;
+}
+
+void SolidShell::slotBluetoothDiscoveryCompleted()
+{
+    kDebug() << k_funcinfo << endl;
+    m_loop.exit();
+}
+
+bool SolidShell::bluetoothInputListDevices()
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+
+    const Solid::BluetoothInputDeviceList all = manager.bluetoothInputDevices();
+
+    foreach ( const Solid::BluetoothInputDevice device, all )
+    {
+        cout << "UBI = '" << device.ubi() << "'" << endl;
+    }
+
+    return true;
+}
+
+bool SolidShell::bluetoothInputSetup( const QString &deviceUbi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+
+    KJob *job = manager.setupInputDevice( deviceUbi );
+
+    if ( job==0 )
+    {
+        cerr << i18n( "Error: unsupported operation!" ) << endl;
+        return false;
+    }
+
+    connectJob( job );
+
+    job->start();
+    m_loop.exec();
+
+    if ( m_error )
+    {
+        cerr << i18n( "Error: %1" , m_errorString ) << endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool SolidShell::bluetoothInputRemoveSetup( const QString &deviceUbi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+
+    manager.removeInputDevice( deviceUbi );
+
+    return true;
+}
+
+bool SolidShell::bluetoothInputConnect( const QString &deviceUbi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
+
+    device.slotConnect();
+
+    return true;
+}
+
+bool SolidShell::bluetoothInputDisconnect( const QString &deviceUbi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
+
+    device.slotDisconnect();
+
     return true;
 }
 

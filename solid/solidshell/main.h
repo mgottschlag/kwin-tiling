@@ -65,6 +65,24 @@ public:
     bool netmgrQueryNetwork( const QString & device, const QString & );
     bool netmgrActivateNetwork( const QString & device, const QString & uni, Solid::Authentication * auth = 0 );
     //bool netmgrCapabilities( const QString &udi );
+
+    bool bluetoothListAdapters();
+    bool bluetoothDefaultAdapter();
+    bool bluetoothAdapterAddress( const QString &ubi );
+    bool bluetoothAdapterName( const QString &ubi );
+    bool bluetoothAdapterSetName( const QString &ubi, const QString &name );
+    bool bluetoothAdapterMode( const QString &ubi );
+    bool bluetoothAdapterSetMode( const QString &ubi, const QString &mode );
+    bool bluetoothAdapterListConnections( const QString &ubi );
+    bool bluetoothAdapterListBondings( const QString &ubi );
+    bool bluetoothAdapterScan( const QString &ubi );
+
+    bool bluetoothInputListDevices();
+    bool bluetoothInputSetup( const QString &deviceUbi );
+    bool bluetoothInputRemoveSetup( const QString &deviceUbi );
+    bool bluetoothInputConnect( const QString &deviceUbi );
+    bool bluetoothInputDisconnect( const QString &deviceUbi );
+
 private:
     void connectJob( KJob *job );
 
@@ -75,6 +93,8 @@ private slots:
     void slotResult( KJob *job );
     void slotPercent( KJob *job, unsigned long percent );
     void slotInfoMessage( KJob *job, const QString &message );
+    void slotBluetoothDeviceFound( const QString &ubi, int deviceClass, int rssi );
+    void slotBluetoothDiscoveryCompleted();
 };
 
 
