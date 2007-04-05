@@ -1765,6 +1765,8 @@ void CFontListView::setMgtMode(bool on)
         setDragEnabled(on);
         setDragDropMode(on ? QAbstractItemView::DragDrop : QAbstractItemView::DropOnly);
         setColumnHidden(COL_STATUS, !on);
+        if(on)
+            resizeColumnToContents(COL_STATUS);
 
         itsModel->setAllowDisabled(on);
         itsProxy->setMgtMode(on);
@@ -1937,7 +1939,7 @@ void CFontListView::view()
             }
             else
             {
-                // For a disalbed font, we need to find the fist scalable font entry in its file list...
+                // For a disalbed font, we need to find the first scalable font entry in its file list...
                 QStringList::ConstIterator fit((*it)->files().begin()),
                                            fend((*it)->files().end());
                 bool                       done(false);
@@ -2063,7 +2065,7 @@ void CFontListView::dropEvent(QDropEvent *event)
                mime->is("application/x-font-otf") ||
                mime->is("application/x-font-type1") ||
                mime->is("fonts/package") ||
-               (!isColumnHidden(COL_STATUS) && 
+               (itsProxy->mgtMode() && 
                 (mime->is("application/x-font-pcf") ||
                  mime->is("application/x-font-bdf"))))
                 kurls.insert(*it);
@@ -2080,7 +2082,7 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
 
     itsDeleteAct->setEnabled(valid);
 
-    if(isColumnHidden(COL_STATUS))
+    if(!itsProxy->mgtMode())
     {
         itsPrintAct->setEnabled(valid);
         itsViewAct->setEnabled(valid);
