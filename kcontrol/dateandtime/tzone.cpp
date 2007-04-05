@@ -62,10 +62,15 @@ Tzone::Tzone(QWidget * parent)
 {
     setTitle(i18n("To change the timezone, select your area from the list below"));
 
+    QVBoxLayout *lay = new QVBoxLayout(this);
+
     tzonelist = new KTimeZoneWidget(this, &m_zoneDb);
     connect( tzonelist, SIGNAL(itemSelectionChanged()), SLOT(handleZoneChange()) );
 
     m_local = new QLabel(this);
+
+    lay->addWidget(m_local);
+    lay->addWidget(tzonelist);
 
     load();
 
