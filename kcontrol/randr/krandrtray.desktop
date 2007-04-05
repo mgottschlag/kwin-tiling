@@ -1,7 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KRandRTray
-Name[be]=Змена параметраў манітора
 Name[hu]=Képernyőfelbontás
 Name[ne]=KRandR ट्रे
 Name[pt_BR]=Ícone do KRandR
@@ -9,7 +8,6 @@ Name[sv]=Krandrtray
 Name[x-test]=xxKRandRTrayxx
 GenericName=Screen Resize & Rotate
 GenericName[af]=Skerm Hervergroot & Roteer
-GenericName[be]=Змена памераў экрана і перагортванне
 GenericName[bg]=Размер и ротация на екрана
 GenericName[br]=Adventañ ha treiñ ar skramm
 GenericName[ca]=Amida i gira la pantalla

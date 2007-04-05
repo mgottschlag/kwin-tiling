@@ -23,7 +23,6 @@ Name[x-test]=xxSCSIxx
 Comment=SCSI information
 Comment[af]=Scsi informasie
 Comment[ar]=معلومات SCSI
-Comment[be]=Інфармацыя аб SCSI
 Comment[bg]=Информация за шината SCSI
 Comment[br]=Titouroù diwar-benn ar SCSI
 Comment[ca]=Informació de SCSI
@@ -84,7 +83,6 @@ Comment[zh_TW]=SCSI 資訊
 
 Keywords=SCSI,SCSI-Bus,System Information
 Keywords[af]=SCSI,SCSI-Bus,System Informasie
-Keywords[be]=Шына SCSI,Сістэмная інфармацыя,SCSI,SCSI-Bus,System Information
 Keywords[bg]=информация, система, системна, шина, SCSI, SCSI-Bus, System Information
 Keywords[br]=SCSI,bus SCSI,titouroù reizhiad
 Keywords[ca]=SCSI,Bus SCSI,Informació del sistema

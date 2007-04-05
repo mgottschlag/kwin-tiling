@@ -3,7 +3,6 @@ Encoding=UTF-8
 Name=Universal Sidebar
 Name[af]=Universele Kantbalk
 Name[ar]=الشريط الجانبي العالمي
-Name[be]=Універсальная бакавая панэль
 Name[bg]=Универсален панел
 Name[ca]=Barra universal
 Name[cs]=Univerzální postranní lišta
@@ -60,7 +59,6 @@ Name[zh_TW]=整體的邊列
 
 Comment=Wrapper around Konqueror's navigation panel
 Comment[af]='n Toevou program rondom Konqueror se navigasie paneel
-Comment[be]=Панэль для хуткай навігацыі
 Comment[bg]=Допълнителен универсален панел, подобен на панела на браузъра
 Comment[ca]=Embolcall al voltant del plafó de navegació del Konqueror
 Comment[csb]=Programa òpakòwującô nawigacëjny panel Konquerora

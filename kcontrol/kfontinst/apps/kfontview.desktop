@@ -1,7 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KFontView
-Name[be]=Прагляд шрыфтоў
 Name[cs]=Prohlížeč písem
 Name[eo]=Tiparorigardilo
 Name[eu]=KFontWiew
@@ -21,7 +20,6 @@ MimeType=application/x-font-ttf;application/x-font-type1;application/x-font-otf;
 GenericName=Font Viewer
 GenericName[af]=Skriftipe Besigter
 GenericName[ar]=معاين المحرف
-GenericName[be]=Праглядальнік шрыфтоў
 GenericName[bg]=Преглед на шрифтове
 GenericName[br]=Gweler Nodrezhoù
 GenericName[ca]=Visor de fonts

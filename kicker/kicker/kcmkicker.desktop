@@ -10,7 +10,6 @@ Exec=kcmshell %i kicker_config kcmtaskbar
 Name=Configure the Panel
 Name[af]=Stel die paneel op
 Name[ar]=قم بإعداد اللوحة
-Name[be]=Настаўленне панэлі
 Name[bg]=Настройки на панела
 Name[br]=Kefluniañ ar panell
 Name[ca]=Configura el plafó

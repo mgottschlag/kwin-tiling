@@ -3,7 +3,6 @@ Command=xplanet --geometry %xx%y --num_times 1 --output %f.jpg && mv %f.jpg %f
 Comment=XPlanet by Hari Nair
 Comment[af]=XPlaneet deur Hari Nair
 Comment[ar]=XPlanet من تليف Hari Nair
-Comment[be]=Планета (Hari Nair)
 Comment[br]=XPlanet gant Hari Nair
 Comment[ca]=XPlanet per en Hari Nair
 Comment[cs]=XPlanet od Hariho Naira
