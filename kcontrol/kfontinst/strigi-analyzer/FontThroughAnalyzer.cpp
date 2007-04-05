@@ -68,13 +68,13 @@ class FontThroughAnalyzerFactory : public StreamThroughAnalyzerFactory
 
 void FontThroughAnalyzerFactory::registerFields(FieldRegister &reg)
 {
-    constFamilyNameField=reg.registerField("Family", FieldRegister::stringType, 1, 0);
-    constWeightField=reg.registerField("Weight", FieldRegister::stringType, 1, 0);
-    constSlantField=reg.registerField("Slant", FieldRegister::stringType, 1, 0);
-    constWidthField=reg.registerField("Width", FieldRegister::stringType, 1, 0);
-    constSpacingField=reg.registerField("Spacing", FieldRegister::stringType, 1, 0);
-    constFoundryField=reg.registerField("Foundry", FieldRegister::stringType, 1, 0);
-    constVersionField=reg.registerField("Version", FieldRegister::stringType, 1, 0);
+    constFamilyNameField=reg.registerField("family", FieldRegister::stringType, 1, 0);
+    constWeightField=reg.registerField("weight", FieldRegister::stringType, 1, 0);
+    constSlantField=reg.registerField("slant", FieldRegister::stringType, 1, 0);
+    constWidthField=reg.registerField("width", FieldRegister::stringType, 1, 0);
+    constSpacingField=reg.registerField("spacing", FieldRegister::stringType, 1, 0);
+    constFoundryField=reg.registerField("foundry", FieldRegister::stringType, 1, 0);
+    constVersionField=reg.registerField("version", FieldRegister::stringType, 1, 0);
 }
 
 class Factory : public AnalyzerFactoryFactory
