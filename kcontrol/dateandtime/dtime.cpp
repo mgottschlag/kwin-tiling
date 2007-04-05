@@ -23,7 +23,7 @@
 #include <sys/types.h>
 
 #include <QComboBox>
-#include <q3groupbox.h>
+#include <qgroupbox.h>
 #include <QPushButton>
 #include <QPainter>
 #include <QLayout>
@@ -89,7 +89,7 @@ Dtime::Dtime(QWidget * parent)
   timeServerList->setObjectName( "timeServerList" );
   timeServerList->setEditable(false);
   connect(timeServerList, SIGNAL(activated(int)), SLOT(configChanged()));
-  connect(timeServerList, SIGNAL(textChanged(const QString &)), SLOT(configChanged()));
+  connect(timeServerList, SIGNAL(editTextChanged(const QString &)), SLOT(configChanged()));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), timeServerList, SLOT(setEnabled(bool)));
   timeServerList->setEnabled(false);
   timeServerList->setEditable(true);
@@ -97,7 +97,8 @@ Dtime::Dtime(QWidget * parent)
   findNTPutility();
 
   // Date box
-  Q3GroupBox* dateBox = new Q3GroupBox( this, "dateBox" );
+  QGroupBox* dateBox = new QGroupBox( this );
+  dateBox->setObjectName( QLatin1String( "dateBox" ) );
 
   QVBoxLayout *l1 = new QVBoxLayout( dateBox );
   l1->setMargin( 0 );
@@ -109,7 +110,8 @@ Dtime::Dtime(QWidget * parent)
   cal->setWhatsThis( i18n("Here you can change the system date's day of the month, month and year.") );
 
   // Time frame
-  Q3GroupBox* timeBox = new Q3GroupBox( this, "timeBox" );
+  QGroupBox* timeBox = new QGroupBox( this );
+  timeBox->setObjectName( QLatin1String( "timeBox" ) );
 
   QVBoxLayout *v2 = new QVBoxLayout( timeBox );
   v2->setMargin( 0 );
