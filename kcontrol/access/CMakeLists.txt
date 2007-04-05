@@ -1,8 +1,6 @@
 
 
 
-add_definitions (-DQT3_SUPPORT)
-
 ########### next target ###############
 
 set(kcm_access_PART_SRCS kcmaccess.cpp )

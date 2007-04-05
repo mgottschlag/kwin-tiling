@@ -218,7 +218,8 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     QHBoxLayout *groupLayout = new QHBoxLayout;
     groupLayout2->addLayout(groupLayout);
 
-    sb = new QSlider( Qt::Horizontal,group,"Slider" );
+    sb = new QSlider(Qt::Horizontal, group);
+    sb->setObjectName(QLatin1String("Slider"));
     sb->setRange( 0, 10 );
     sb->setFocusPolicy( Qt::StrongFocus );
     connect(sb, SIGNAL(valueChanged(int)), SLOT(sliderValueChanged(int)));

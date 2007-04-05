@@ -167,7 +167,7 @@ Dtime::Dtime(QWidget * parent)
 #endif  
   v3->addWidget(second, 0, isRTL ? 2 : 6, 2, 1);
 
-  v3->addColSpacing(7, 7);
+  v3->addItem(new QSpacerItem(7, 0), 0, 7);
 
   QString wtstr = i18n("Here you can change the system time. Click into the"
     " hours, minutes or seconds field to change the relevant value, either"
@@ -268,12 +268,12 @@ void Dtime::load()
 {
   KConfig _config( "kcmclockrc", KConfig::NoGlobals  );
   KConfigGroup config(&_config, "NTP");
-  timeServerList->addItems(QStringList::split(',', config.readEntry("servers",
+  timeServerList->addItems(config.readEntry("servers",
     i18n("Public Time Server (pool.ntp.org),\
 asia.pool.ntp.org,\
 europe.pool.ntp.org,\
 north-america.pool.ntp.org,\
-oceania.pool.ntp.org"))));
+oceania.pool.ntp.org")).split(',', QString::SkipEmptyParts));
   setDateTimeAuto->setChecked(config.readEntry("enabled", false));
 
   // Reset to the current date and time
@@ -297,7 +297,7 @@ void Dtime::save()
   if( timeServerList->count() != 0)
     list.append(timeServerList->currentText());
   for ( int i=0; i<timeServerList->count();i++ ) {
-    QString text = timeServerList->text(i);
+    QString text = timeServerList->itemText(i);
     if( !list.contains(text) )
       list.append(text);
     // Limit so errors can go away and not stored forever
@@ -466,7 +466,7 @@ void Kclock::paintEvent( QPaintEvent * )
 QValidator::State KStrictIntValidator::validate( QString & input, int & d ) const
 {
   if( input.isEmpty() )
-    return Valid;
+    return Intermediate;
 
   State st = QIntValidator::validate( input, d );
 

@@ -555,7 +555,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
 
   gestures = new QCheckBox(i18n("Use gestures for activating sticky keys and slow keys"), grp);
   vvbox->addWidget(gestures);
-  QString shortcut = mouseKeysShortcut(this->x11Display());
+  QString shortcut = mouseKeysShortcut(x11Info().display());
   if (shortcut.isEmpty())
 	  gestures->setWhatsThis( i18n("Here you can activate keyboard gestures that turn on the following features: \n"
 			  "Sticky keys: Press Shift key 5 consecutive times\n"

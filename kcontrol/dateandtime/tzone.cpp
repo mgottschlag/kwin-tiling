@@ -57,8 +57,8 @@
 #include <sys/stat.h>
 #endif
 
-Tzone::Tzone(QWidget * parent, const char *name)
-  : QGroupBox(parent, name)
+Tzone::Tzone(QWidget * parent)
+  : QGroupBox(parent)
 {
     setTitle(i18n("To change the timezone, select your area from the list below"));
 
@@ -82,7 +82,7 @@ void Tzone::load()
 
 void Tzone::currentZone()
 {
-    QByteArray result(100);
+    QByteArray result(100, '\0');
 
     time_t now = time(0);
     tzset();

@@ -444,7 +444,9 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
 //	  QPixmap invert(window.size.width, window.size.height);
 	  QImage i = screen.toImage();
 	  i.invertPixels();
-	  overlay->setBackgroundPixmap(QPixmap::fromImage(i));
+	  QPalette pal = overlay->palette();
+	  pal.setBrush(overlay->backgroundRole(), QBrush(QPixmap::fromImage(i)));
+	  overlay->setPalette(pal);
 /*
 	  QPainter p(&invert);
 	  p.setRasterOp(QPainter::NotCopyROP);
@@ -453,7 +455,11 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
 */
 	}
       else
-	overlay->setBackgroundColor(_visibleBellColor);
+        {
+	  QPalette pal = overlay->palette();
+	  pal.setColor(overlay->backgroundRole(), _visibleBellColor);
+	  overlay->setPalette(pal);
+        }
 
       // flash the overlay widget
       overlay->raise();

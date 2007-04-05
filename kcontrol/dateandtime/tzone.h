@@ -36,7 +36,7 @@ class Tzone : public QGroupBox
   Q_OBJECT
 
 public:
-  Tzone( QWidget *parent=0, const char* name=0 );
+  Tzone( QWidget *parent=0 );
 
   void	save();
   void  load();

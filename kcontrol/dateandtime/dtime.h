@@ -117,9 +117,8 @@ private:
 class KStrictIntValidator : public QIntValidator 
 {
 public:
-  KStrictIntValidator(int bottom, int top, QWidget * parent,
-		      const char * name = 0 )
-    : QIntValidator(bottom, top, parent, name) {}
+  KStrictIntValidator(int bottom, int top, QWidget * parent)
+    : QIntValidator(bottom, top, parent) {}
 
   QValidator::State validate( QString & input, int & d ) const; 
 };

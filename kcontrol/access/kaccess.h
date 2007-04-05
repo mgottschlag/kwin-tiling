@@ -93,7 +93,7 @@ class VisualBell : public QWidget
 public:
 
   VisualBell(int pause)
-    : QWidget(( QWidget* )0, Qt::WX11BypassWM), _pause(pause)
+    : QWidget(( QWidget* )0, Qt::X11BypassWindowManagerHint), _pause(pause)
     {}
 
 
