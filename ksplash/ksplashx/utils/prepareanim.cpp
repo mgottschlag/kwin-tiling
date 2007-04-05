@@ -28,10 +28,9 @@ int main( int argc, char* argv[] )
         if( result.isNull())
             { // initialize
             if( frames < ANIM_IMAGES_ROW )
-                result = QImage( frames * w, h, 32 );
+                result = QImage( frames * w, h, QImage::Format_ARGB32 );
             else
-                result = QImage( ANIM_IMAGES_ROW * w, ( frames + ANIM_IMAGES_ROW - 1 ) / ANIM_IMAGES_ROW * h, 32 );
-            result.setAlphaBuffer( true );
+                result = QImage( ANIM_IMAGES_ROW * w, ( frames + ANIM_IMAGES_ROW - 1 ) / ANIM_IMAGES_ROW * h, QImage::Format_ARGB32 );
             }
         int basex = ( frame % ANIM_IMAGES_ROW ) * w;
         int basey = frame / ANIM_IMAGES_ROW * h;

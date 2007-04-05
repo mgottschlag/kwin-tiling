@@ -74,7 +74,7 @@ void ThemeListBox::slotMouseButtonPressed(int button, QListWidgetItem *listItem,
 
 void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
 {
-   if (((e->state() & Qt::LeftButton) != 0) && !mDragFile.isEmpty())
+   if (((e->buttons() & Qt::LeftButton) != 0) && !mDragFile.isEmpty())
    {
       int delay = KGlobalSettings::dndEventDelay();
       QPoint newPos = e->globalPos();

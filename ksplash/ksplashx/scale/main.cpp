@@ -27,7 +27,7 @@ int main( int argc, char* argv[] )
     QImage img( real_file );
     if( img.isNull())
         return 2;
-    QImage img2 = img.smoothScale( width, height );
+    QImage img2 = img.scaled(width, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     if( img2.save( outfile + ".tmp", "PNG" ))
         {
         rename( QFile::encodeName( outfile + ".tmp" ), QFile::encodeName( outfile ));
