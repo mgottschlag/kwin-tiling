@@ -1,5 +1,7 @@
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/krunner ${CMAKE_SOURCE_DIR}/workspace/kcheckpass ${CMAKE_SOURCE_DIR}/workspace/kdmlib )
 
+add_definitions (-DQT3_SUPPORT)
+
 ########### next target ###############
 
 configure_file(config-krunner-lock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-krunner-lock.h)

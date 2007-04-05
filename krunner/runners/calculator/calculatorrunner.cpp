@@ -47,12 +47,12 @@ CalculatorRunner::~CalculatorRunner()
 
 QAction* CalculatorRunner::accepts( const QString& term )
 {
-    QString cmd = term.stripWhiteSpace();
+    QString cmd = term.trimmed();
     QAction *action = 0;
 
     if ( !cmd.isEmpty() && 
          ( cmd[0].isNumber() || ( cmd[0] == '(') ) &&
-         ( QRegExp("[a-zA-Z\\]\\[]").search(cmd) == -1 ) ) {
+         ( QRegExp("[a-zA-Z\\]\\[]").indexIn(cmd) == -1 ) ) {
         QString result = calculate(cmd);
 
         if ( !result.isEmpty() ) {
@@ -90,8 +90,8 @@ QString CalculatorRunner::calculate( const QString& term )
     if (fs)
     {
         { // scope for QTextStream
-            QTextStream ts(fs, IO_ReadOnly);
-            result = ts.read().stripWhiteSpace();
+            QTextStream ts(fs, QIODevice::ReadOnly);
+            result = ts.readAll().trimmed();
         }
         pclose(fs);
     }

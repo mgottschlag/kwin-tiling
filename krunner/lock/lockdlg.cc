@@ -79,7 +79,7 @@
 // Simple dialog for entering a password.
 //
 PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
-    : QDialog(parent, Qt::WX11BypassWM),
+    : QDialog(parent, Qt::X11BypassWindowManagerHint),
       mPlugin( plugin ),
       mCapsLocked(-1),
       mUnlockingFailed(false)
@@ -492,7 +492,7 @@ void PasswordDlg::gplugActivity()
 
 void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
-    QDialog dialog( this, Qt::WX11BypassWM );
+    QDialog dialog( this, Qt::X11BypassWindowManagerHint );
     dialog.setModal( true );
     QFrame *winFrame = new QFrame( &dialog );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
@@ -546,7 +546,7 @@ void PasswordDlg::slotStartNewSession()
     killTimer(mTimeoutTimerId);
     mTimeoutTimerId = 0;
 
-    QDialog *dialog = new QDialog( this, Qt::WX11BypassWM );
+    QDialog *dialog = new QDialog( this, Qt::X11BypassWindowManagerHint );
     dialog->setObjectName( "warnbox" );
     dialog->setModal( true );
     QFrame *winFrame = new QFrame( dialog );
@@ -668,7 +668,7 @@ void PasswordDlg::slotSwitchUser()
     int p = 0;
     DM dm;
 
-    QDialog dialog( this, Qt::WX11BypassWM );
+    QDialog dialog( this, Qt::X11BypassWindowManagerHint );
     dialog.setObjectName( "sessbox" );
     dialog.setModal( true );
     QFrame *winFrame = new QFrame( &dialog );

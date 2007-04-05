@@ -99,7 +99,7 @@ static Atom   gXA_SCREENSAVER_VERSION;
 // starting screensaver hacks, and password entry.f
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
-    : QWidget(0L, Qt::WX11BypassWM),
+    : QWidget(0L, Qt::X11BypassWindowManagerHint),
       mOpenGLVisual(0),
       child_saver(child),
       mParent(0),
@@ -355,7 +355,7 @@ void LockProcess::readSaver()
         if( entryName.endsWith( ".desktop" ))
             entryName = entryName.left( entryName.length() - 8 ); // strip it
         KService::List offers = KServiceTypeTrader::self()->query( "ScreenSaver",
-            "DesktopEntryName == '" + entryName.lower() + "'" );
+            "DesktopEntryName == '" + entryName.toLower() + "'" );
         if( offers.count() == 0 )
         {
             kDebug(1204) << "Cannot find screesaver: " << mSaver << endl;
@@ -436,13 +436,13 @@ void LockProcess::createSaverWindow()
              i < sizeof( attribs ) / sizeof( attribs[ 0 ] );
              ++i )
         {
-            if( XVisualInfo* info = glXChooseVisual( x11Display(), x11Screen(), attribs[ i ] ))
+            if( XVisualInfo* info = glXChooseVisual( x11Info().display(), x11Info().screen(), attribs[ i ] ))
             {
                 visual = info->visual;
                 static Colormap colormap = 0;
                 if( colormap != 0 )
-                    XFreeColormap( x11Display(), colormap );
-                colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
+                    XFreeColormap( x11Info().display(), colormap );
+                colormap = XCreateColormap( x11Info().display(), RootWindow( x11Info().display(), x11Info().screen()), visual, AllocNone );
                 attrs.colormap = colormap;
                 flags |= CWColormap;
                 XFree( info );
@@ -451,8 +451,8 @@ void LockProcess::createSaverWindow()
         }
     }
 #endif
-    Window w = XCreateWindow( x11Display(), RootWindow( x11Display(), x11Screen()),
-        x(), y(), width(), height(), 0, x11Depth(), InputOutput, visual, flags, &attrs );
+    Window w = XCreateWindow( x11Info().display(), RootWindow( x11Info().display(), x11Info().screen()),
+        x(), y(), width(), height(), 0, x11Info().depth(), InputOutput, visual, flags, &attrs );
 
     create( w );
 
@@ -1070,7 +1070,7 @@ void LockProcess::stayOnTop()
              ++it )
             stack[ count++ ] = (*it)->winId();
         stack[ count++ ] = winId();
-        XRestackWindows( x11Display(), stack, count );
+        XRestackWindows( x11Info().display(), stack, count );
         delete[] stack;
     }
     else
@@ -1141,7 +1141,7 @@ void LockProcess::unlockXF86()
 
 void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
 {
-    QDialog box( 0, Qt::WX11BypassWM );
+    QDialog box( 0, Qt::X11BypassWindowManagerHint );
     box.setModal( true );
     QFrame *winFrame = new QFrame( &box );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );

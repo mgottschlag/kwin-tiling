@@ -190,7 +190,7 @@ void StartupId::start_startupid( const QString& icon_P )
         icon_pixmap = SmallIcon( "exec" );
     if( startup_widget == NULL )
         {
-        startup_widget = new QWidget( 0, Qt::WX11BypassWM );
+        startup_widget = new QWidget( 0, Qt::X11BypassWindowManagerHint );
         XSetWindowAttributes attr;
         attr.save_under = True; // useful saveunder if possible to avoid redrawing
         XChangeWindowAttributes( QX11Info::display(), startup_widget->winId(), CWSaveUnder, &attr );
@@ -207,7 +207,9 @@ void StartupId::start_startupid( const QString& icon_P )
             {
             pixmaps[ i ] = QPixmap( window_w, window_h );
             pixmaps[ i ].fill( startup_colors[ i ] );
-            bitBlt( &pixmaps[ i ], 0, 0, &icon_pixmap );
+            QPainter p( &pixmaps[ i ] );
+            p.drawPixmap( 0, 0, icon_pixmap );
+            p.end();
             }
         color_index = 0;
         }
