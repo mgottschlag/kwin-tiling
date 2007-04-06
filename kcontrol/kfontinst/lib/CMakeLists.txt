@@ -1,4 +1,4 @@
-add_definitions(${FREETYPE_INCLUDE_DIR})
+include_directories(${FREETYPE_INCLUDE_DIR})
 
 set(kfontinst_LIB_SRCS Misc.cpp DisabledFonts.cpp Fc.cpp)
 set(kfontinstui_LIB_SRCS FcEngine.cpp )
