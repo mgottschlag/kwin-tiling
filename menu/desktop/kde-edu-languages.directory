@@ -3,6 +3,7 @@ Encoding=UTF-8
 Icon=edu_languages
 Type=Directory
 Name=Languages
+Name[de]=Sprachen
 Name[el]=Γλώσσες
 Name[ja]=言語
 Name[nds]=Spraken

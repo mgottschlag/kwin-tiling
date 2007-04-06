@@ -4,6 +4,7 @@ Type=ServiceType
 X-KDE-ServiceType=KRunner/Runner
 
 Comment=KRunner plugin
+Comment[de]=Programmstarter-Modul
 Comment[el]=Πρόσθετο του KRunner
 Comment[ja]=KRunner プラグイン
 Comment[nds]=KRunner-Moduul

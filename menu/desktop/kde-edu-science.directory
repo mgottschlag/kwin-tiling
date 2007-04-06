@@ -3,6 +3,7 @@ Encoding=UTF-8
 Icon=edu_science
 Type=Directory
 Name=Science
+Name[de]=Wissenschaft
 Name[el]=Επιστήμη
 Name[ja]=サイエンス
 Name[nds]=Wetenschap

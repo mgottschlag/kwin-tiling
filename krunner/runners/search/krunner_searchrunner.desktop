@@ -1,10 +1,12 @@
 [Desktop Entry]
 Name=Search Runner
+Name[de]=Suche durchführen
 Name[ja]=検索 Runner
 Name[nds]=Söökdreger
 Name[x-test]=xxSearch Runnerxx
 Name[zh_TW]=搜索執行者
 Comment=Search files
+Comment[de]=Dateien suchen
 Comment[el]=Αναζήτηση αρχείων
 Comment[ja]=ファイルを検索
 Comment[nds]=Dateien söken

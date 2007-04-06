@@ -61,6 +61,7 @@ Name[xh]=Intlanganiso Yesiphelo sendlela
 Name[zh_TW]=終端機工作階段
 Comment=Directly start terminal emulator with a session or bookmark
 Comment[csb]=Menu zrëszëniô òkna terminala ze spamiãtóną sesëją abò załóżka
+Comment[de]=Schnellstart des Terminal-Emulators mit einer Sitzung oder einem Lesezeichenn
 Comment[el]=Απευθείας εκκίνηση ενός εξομοιωτή τερματικού με μια συνεδρία ή σελιδοδείκτη
 Comment[ja]=指定したセッションやブックマーク先でターミナルエミュレータを起動します
 Comment[nds]=Den Terminal-Emulator mit en Leesteken oder Törn starten

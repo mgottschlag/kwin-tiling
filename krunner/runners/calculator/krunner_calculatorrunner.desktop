@@ -1,10 +1,12 @@
 [Desktop Entry]
 Name=Calculator Runner
+Name[de]=Rechner-Starter
 Name[ja]=計算機 Runner
 Name[nds]=Rekendreger
 Name[x-test]=xxCalculator Runnerxx
 Name[zh_TW]=計算機執行者
 Comment=Calculate expressions
+Comment[de]=Berechnungen durchführen
 Comment[ja]=数式を計算
 Comment[nds]=Utdrück utreken
 Comment[x-test]=xxCalculate expressionsxx
