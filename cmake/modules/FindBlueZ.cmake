@@ -18,11 +18,30 @@ IF (NOT WIN32)
    PKGCONFIG(bluez _BlueZIncDir _BlueZLinkDir _BlueZLinkFlags _BlueZCflags)
 ENDIF (NOT WIN32)
 
-MESSAGE(STATUS "Found BlueZ")
-SET(BLUEZ_FOUND TRUE)
+find_path(BLUEZ_INCLUDE_DIR bluetooth/bluetooth.h
+    PATHS
+    ${_BlueZIncDir}
+    /usr/X11/include
+  )
 
-IF (NOT BLUEZ_FOUND)
-   IF (BLUEZ_FIND_REQUIRED)
+find_library(BLUEZ_LIBRARIES NAMES libbluetooth
+    PATHS
+    ${_BlueZLinkDir}
+  )
+
+if (BLUEZ_LIBRARIES AND BLUEZ_INCLUDE_DIR)
+     set(BLUEZ_FOUND TRUE)
+endif (BLUEZ_LIBRARIES AND BLUEZ_INCLUDE_DIR)
+
+
+IF (BLUEZ_FOUND)
+   if (NOT BlueZ_FIND_QUIETLY)
+      message(STATUS "Found bluez: ${BLUEZ_LIBRARIES}")
+   endif (NOT BlueZ_FIND_QUIETLY)
+ELSE(BLUEZ_FOUND)
+   IF (BlueZ_FIND_REQUIRED)
       MESSAGE(SEND_ERROR "Could NOT find BlueZ")
-   ENDIF (BLUEZ_FIND_REQUIRED)
-ENDIF (NOT BLUEZ_FOUND)
+   ENDIF (BlueZ_FIND_REQUIRED)
+ENDIF (BLUEZ_FOUND)
+
+mark_as_advanced( BLUEZ_LIBRARIES BLUEZ_INCLUDE_DIR)
