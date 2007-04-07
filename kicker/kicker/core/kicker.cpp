@@ -123,7 +123,7 @@ Kicker::Kicker()
     // set up our global settings
     configure();
 
-    connect(this, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
+    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
 
     connect(desktop(), SIGNAL(resized(int)), SLOT(slotDesktopResized()));
 
