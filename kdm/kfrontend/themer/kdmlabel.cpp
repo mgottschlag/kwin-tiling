@@ -175,13 +175,13 @@ KdmLabel::drawContents( QPainter *p, const QRect &/*r*/  )
 		QFontMetrics fm( l->font.font );
 		QString left = pText.left( pAccelOff );
 		p->drawText( area, 0, left );
-		tarea.rLeft() += fm.width( left );
+		tarea.setLeft( tarea.left() + fm.width( left ) );
 		QFont f( l->font.font );
 		f.setUnderline( true );
 		p->setFont( f );
 		QString acc( pText[pAccelOff] );
 		p->drawText( tarea, 0, acc );
-		tarea.rLeft() += fm.width( acc );
+		tarea.setLeft( tarea.left() + fm.width( acc ) );
 		p->setFont( l->font.font );
 		p->drawText( tarea, 0, pText.mid( pAccelOff + 1 ) );
 	} else

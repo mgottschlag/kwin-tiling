@@ -5,8 +5,6 @@ add_subdirectory( themes )
 add_subdirectory( pics )
 add_subdirectory( sessions )
 
-add_definitions (-DQT3_SUPPORT)
-
 include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background
 	${CMAKE_SOURCE_DIR}/workspace/kdmlib
