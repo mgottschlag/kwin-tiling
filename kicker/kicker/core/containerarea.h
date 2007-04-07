@@ -132,9 +132,9 @@ protected:
 
     void addContainer(BaseContainer* a, bool arrange = false);
     void removeAllContainers();
-    void resizeContents();
 
 protected Q_SLOTS:
+    void resizeContents();
     void autoScroll();
     void immutabilityChanged(bool);
     void startContainerMove(BaseContainer*);
