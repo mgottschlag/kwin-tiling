@@ -6,4 +6,6 @@ X-KDE-Library=solid_bluez
 InitialPreference=100
 Name=BlueZ
 Comment=Bluetooth management using the BlueZ stack
+Comment[de]=Bluetooth-Verwaltung mit Hilfe von Bluez
+Comment[nds]=Bluetooth-Pleeg mit BlueZ
 
