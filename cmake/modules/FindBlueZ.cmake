@@ -24,7 +24,7 @@ find_path(BLUEZ_INCLUDE_DIR bluetooth/bluetooth.h
     /usr/X11/include
   )
 
-find_library(BLUEZ_LIBRARIES NAMES libbluetooth
+find_library(BLUEZ_LIBRARIES NAMES bluetooth
     PATHS
     ${_BlueZLinkDir}
   )
