@@ -50,9 +50,6 @@ BluezBluetoothInterface::BluezBluetoothInterface(const QString & objectPath)
                                    "org.bluez.Adapter", \
                                    signal, this, SLOT(slot) );
 
-    connectInterfaceToThis("RemoteDeviceFound", slotRemoteDeviceFound(const QString&, uint, short));
-
-
     connectInterfaceToThis("ModeChanged", slotModeChanged(const QString&));
     connectInterfaceToThis("DiscoverableTimeoutChanged", slotDiscoverableTimeoutChanged(int));
     connectInterfaceToThis("MinorClassChanged", slotMinorClassChanged(const QString&));
@@ -60,7 +57,7 @@ BluezBluetoothInterface::BluezBluetoothInterface(const QString & objectPath)
     connectInterfaceToThis("DiscoveryStarted", slotDiscoveryStarted());
     connectInterfaceToThis("DiscoveryCompleted", slotDiscoveryCompleted());
     connectInterfaceToThis("RemoteDeviceDisappeared", slotDiscoveryDisappeared(const QString&));
-
+    connectInterfaceToThis("RemoteDeviceFound", slotRemoteDeviceFound(const QString&, uint, short));
 }
 
 BluezBluetoothInterface::~BluezBluetoothInterface()
@@ -75,74 +72,32 @@ QString BluezBluetoothInterface::ubi() const
 
 QString BluezBluetoothInterface::address() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > address = d->iface.call("GetAddress");
-    if (address.isValid()) {
-        return address.value();
-    }
-
-    return QString::null;
+    return stringReply("GetAddress");
 }
 
 QString BluezBluetoothInterface::version() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > version = d->iface.call("GetVersion");
-    if (version.isValid()) {
-        return version.value();
-    }
-
-    return QString::null;
+    return stringReply("GetVersion");
 }
 
 QString BluezBluetoothInterface::revision() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > revision = d->iface.call("GetRevision");
-    if (revision.isValid()) {
-        return revision.value();
-    }
-
-    return QString::null;
+    return stringReply("GetRevision");
 }
 
 QString BluezBluetoothInterface::manufacturer() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > manufacturer = d->iface.call("GetManufacturer");
-    if (manufacturer.isValid()) {
-        return manufacturer.value();
-    }
-
-    return QString::null;
+    return stringReply("GetManufacturer");
 }
 
 QString BluezBluetoothInterface::company() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > company = d->iface.call("GetCompany");
-    if (company.isValid()) {
-        return company.value();
-    }
-
-    return QString::null;
+    return stringReply("GetCompany");
 }
 
 QString BluezBluetoothInterface::mode() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > mode = d->iface.call("GetMode");
-    if (mode.isValid()) {
-        return mode.value();
-    }
-
-    return QString::null;
+    return stringReply("GetMode");
 }
 
 int BluezBluetoothInterface::discoverableTimeout() const
@@ -159,199 +114,141 @@ int BluezBluetoothInterface::discoverableTimeout() const
 
 bool BluezBluetoothInterface::isDiscoverable() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< bool > discoverable = d->iface.call("IsDiscoverable");
-    if (discoverable.isValid()) {
-        return discoverable.value();
-    }
-
-    return false;
+    return boolReply("IsDiscoverable");
 }
 
 QStringList BluezBluetoothInterface::listConnections() const
 {
-    return QStringList();
+    return listReply("ListConnections");
 }
 
 QString BluezBluetoothInterface::majorClass() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > majorClass = d->iface.call("GetMajorClass");
-    if (majorClass.isValid()) {
-        return majorClass.value();
-    }
-
-    return QString::null;
+    return stringReply("GetMajorClass");
 }
 
 QStringList BluezBluetoothInterface::listAvailableMinorClasses() const
 {
-    return QStringList();
+    return listReply("ListAvailableMinorClasses");
 }
 
 QString BluezBluetoothInterface::minorClass() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > minorClass = d->iface.call("GetMinorClass");
-    if (minorClass.isValid()) {
-        return minorClass.value();
-    }
-
-    return QString::null;
+    return stringReply("GetMinorClass");
 }
 
 QStringList BluezBluetoothInterface::serviceClasses() const
 {
-    return QStringList();
+    return listReply("GetServiceClasses");
 }
 
 QString BluezBluetoothInterface::name() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > name = d->iface.call("GetName");
-    if (name.isValid()) {
-        return name.value();
-    }
-
-    return QString::null;
+    return stringReply("GetName");
 }
 
 QStringList BluezBluetoothInterface::listBondings() const
 {
-    return QStringList();
+    return listReply("ListBondings");
 }
 
 bool BluezBluetoothInterface::isPeriodicDiscovery() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< bool > discovery = d->iface.call("IsPeriodicDiscovery");
-    if (discovery.isValid()) {
-        return discovery.value();
-    }
-
-    return false;
+    return boolReply("IsPeriodicDiscovery");
 }
 
 bool BluezBluetoothInterface::isPeriodicDiscoveryNameResolving() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< bool > discovery = d->iface.call("IsPeriodicDiscoveryNameResolving");
-    if (discovery.isValid()) {
-        return discovery.value();
-    }
-
-    return false;
+    return boolReply("IsPeriodicDiscoveryNameResolving");
 }
 
 QStringList BluezBluetoothInterface::listRemoteDevices() const
 {
-    return QStringList();
+    return listReply("ListRemoteDevces");
 }
 
 QStringList BluezBluetoothInterface::listRecentRemoteDevices(const QString&) const
 {
-    return QStringList();
+    return listReply("ListRecentRemoteDevices");
 }
 
 void BluezBluetoothInterface::setMode(const QString &mode)
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("SetMode", mode);
 }
 
 void BluezBluetoothInterface::setDiscoverableTimeout(int timeout)
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("SetDiscoverableTimeout", timeout);
 }
 
 void BluezBluetoothInterface::setMinorClass(const QString &minorClass)
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("SetMinorClass", minorClass);
 }
 
 void BluezBluetoothInterface::setName(const QString &name)
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("SetName", name);
 }
 
 void BluezBluetoothInterface::discoverDevices()
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("DiscoverDevices");
 }
 
 void BluezBluetoothInterface::discoverDevicesWithoutNameResolving()
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("DiscoverDevicesWithoutNameResolving");
 }
 
 void BluezBluetoothInterface::cancelDiscovery()
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("CancelDiscovery");
 }
 
 void BluezBluetoothInterface::startPeriodicDiscovery()
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("StartPeriodicDiscovery");
 }
 
 void BluezBluetoothInterface::stopPeriodicDiscovery()
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("StopPeriodicDiscovery");
 }
 
 void BluezBluetoothInterface::setPeriodicDiscoveryNameResolving(bool nameResolving)
 {
-    kDebug() << k_funcinfo << endl;
     d->iface.call("SetPeriodicDiscoveryNameResolving", nameResolving);
 }
 
 void BluezBluetoothInterface::slotModeChanged(const QString &mode)
 {
-    kDebug() << k_funcinfo << endl;
     emit modeChanged(mode);
 }
 
 void BluezBluetoothInterface::slotDiscoverableTimeoutChanged(int timeout)
 {
-    kDebug() << k_funcinfo << endl;
     emit discoverableTimeoutChanged(timeout);
 }
 
 void BluezBluetoothInterface::slotMinorClassChanged(const QString &minorClass)
 {
-    kDebug() << k_funcinfo << endl;
     emit minorClassChanged(minorClass);
 }
 
 void BluezBluetoothInterface::slotNameChanged(const QString &name)
 {
-    kDebug() << k_funcinfo << endl;
     emit nameChanged(name);
 }
 
 void BluezBluetoothInterface::slotDiscoveryStarted()
 {
-    kDebug() << k_funcinfo << endl;
     emit discoveryStarted();
 }
 
 void BluezBluetoothInterface::slotDiscoveryCompleted()
 {
-    kDebug() << k_funcinfo << endl;
     emit discoveryCompleted();
 }
 
@@ -371,9 +268,41 @@ void BluezBluetoothInterface::slotRemoteDeviceDisappeared(const QString &address
 }
 
 // TODO: Write BluetoothDevices iface object ...
-QObject *BluezBluetoothInterface::createBluetoothRemoteDevice(const QString& ubi)
+QObject *BluezBluetoothInterface::createBluetoothRemoteDevice(const QString& /*ubi*/)
 {
     return NULL;
+}
+
+/*******************************/
+
+QStringList BluezBluetoothInterface::listReply(const QString &method) const
+{
+    QDBusReply< QStringList > list = d->iface.call(method);
+    if (!list.isValid()) {
+        return QStringList();
+    }
+
+    return list.value();
+}
+
+QString BluezBluetoothInterface::stringReply(const QString &method) const
+{
+    QDBusReply< QString > reply = d->iface.call(method);
+    if (reply.isValid()) {
+        return reply.value();
+    }
+
+    return QString::null;
+}
+
+bool BluezBluetoothInterface::boolReply(const QString &method) const
+{
+    QDBusReply< bool > reply = d->iface.call(method);
+    if (reply.isValid()) {
+        return reply.value();
+    }
+
+    return false;
 }
 
 #include "bluez-bluetoothinterface.moc"

@@ -77,6 +77,9 @@ private:
     QString m_address;
     QString m_adapter;
 
+    QStringList listReply(const QString &method) const;
+    QString stringReply(const QString &method) const;
+    bool boolReply(const QString &method) const;
 };
 
 #endif

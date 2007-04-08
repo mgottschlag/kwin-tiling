@@ -79,9 +79,12 @@ public Q_SLOTS:
     void slotRemoteDeviceFound(const QString &ubi, uint deviceClass, short rssi);
     void slotRemoteDeviceDisappeared(const QString &ubi);
 
-
 private:
     BluezBluetoothInterfacePrivate * d;
+
+    QStringList listReply(const QString &method) const;
+    QString stringReply(const QString &method) const;
+    bool boolReply(const QString &method) const;
 };
 
 #endif

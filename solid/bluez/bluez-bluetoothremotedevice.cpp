@@ -58,145 +58,68 @@ QString BluezBluetoothRemoteDevice::address() const
 
 bool BluezBluetoothRemoteDevice::isConnected() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< bool > path = device->call("IsConnected", m_address);
-    if (!path.isValid())
-        return false;
-
-    return path.value();
+    return boolReply("IsConnected");
 }
 
 QString BluezBluetoothRemoteDevice::name() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetRemoteName", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetRemoteName");
 }
 
 QString BluezBluetoothRemoteDevice::version() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetRemoteVersion", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetRemoteVersion");
 }
 
 QString BluezBluetoothRemoteDevice::revision() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetRemoteRevision", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetRemoteRevision");
 }
 
 QString BluezBluetoothRemoteDevice::manufacturer() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetRemoteManufacturer", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetRemoteManufacturer");
 }
 
 QString BluezBluetoothRemoteDevice::company() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetRemoteCompany", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetRemoteCompany");
 }
 
 QString BluezBluetoothRemoteDevice::majorClass() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetMajorClass", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetRemoteMajorClass");
 }
 
 QString BluezBluetoothRemoteDevice::minorClass() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetMajorClass", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetRemoteMajorClass");
 }
 
 QStringList BluezBluetoothRemoteDevice::serviceClasses() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QStringList > path = device->call("GetServiceClasses", m_address);
-    if (!path.isValid())
-        return QStringList();
-
-    return path.value();
+    return listReply("GetRemoteServiceClasses");
 }
 
 QString BluezBluetoothRemoteDevice::alias() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetRemoteAlias", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetRemoteAlias");
 }
 
 QString BluezBluetoothRemoteDevice::lastSeen() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("LastSeen", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("LastSeen");
 }
 
 QString BluezBluetoothRemoteDevice::lastUsed() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("LastUsed", m_address);
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("LastUsed");
 }
 
 bool BluezBluetoothRemoteDevice::hasBonding() const
 {
-    kDebug() << k_funcinfo << endl;
 
-    QDBusReply< bool > path = device->call("HasBonding", m_address);
-    if (!path.isValid())
-        return false;
-
-    return path.value();
+    return boolReply("HasBonding");
 }
 
 int BluezBluetoothRemoteDevice::pinCodeLength() const
@@ -255,6 +178,35 @@ void BluezBluetoothRemoteDevice::removeBonding()
 {
     kDebug() << k_funcinfo << endl;
     device->call("RemoveBonding", m_address);
+}
+
+/******************************/
+
+QStringList BluezBluetoothRemoteDevice::listReply(const QString &method) const
+{
+    QDBusReply< QStringList > reply = device->call(method, m_address);
+    if (!reply.isValid())
+        return QStringList();
+
+    return reply.value();
+}
+
+QString BluezBluetoothRemoteDevice::stringReply(const QString &method) const
+{
+    QDBusReply< QString > reply = device->call(method, m_address);
+    if (!reply.isValid())
+        return QString::null;
+
+    return reply.value();
+}
+
+bool BluezBluetoothRemoteDevice::boolReply(const QString &method) const
+{
+    QDBusReply< bool > reply = device->call(method, m_address);
+    if (!reply.isValid())
+        return false;
+
+    return reply.value();
 }
 
 #include "bluez-bluetoothremotedevice.moc"

@@ -44,7 +44,7 @@ public:
 
 };
 
-BluezBluetoothManager::BluezBluetoothManager(QObject * parent, const QStringList & args)
+BluezBluetoothManager::BluezBluetoothManager(QObject * parent, const QStringList & /*args*/)
         : BluetoothManager(parent), d(new BluezBluetoothManagerPrivate)
 {
 #define connectManagerToThis( signal, slot ) \

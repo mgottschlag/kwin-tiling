@@ -6,11 +6,6 @@
 #include "bluez-bluetoothinterface.h"
 #include "bluez-bluetoothremotedevice.h"
 
-void foobar(const QString&, uint deviceClass, short rssi)
-{
-    kDebug() << k_funcinfo << endl;
-}
-
 int main(int argc, char **argv)
 {
 
@@ -29,7 +24,7 @@ int main(int argc, char **argv)
     iface.startPeriodicDiscovery();
 
 #if 0
-    BluezBluetoothRemoteDevice remote( "/org/bluez/hci0/00:16:BC:15:A3:FF" );
+    BluezBluetoothRemoteDevice remote("/org/bluez/hci0/00:16:BC:15:A3:FF");
 
     kDebug() << "Name: " << remote.name() << endl;
     kDebug() << "Company: " << remote.company() << endl;
@@ -37,8 +32,7 @@ int main(int argc, char **argv)
     kDebug() << "Major Class: " << remote.majorClass() << endl;
     kDebug() << "Minor Class: " << remote.minorClass() << endl;
 
-    if ( remote.hasBonding() )
-    {
+    if (remote.hasBonding()) {
         remote.removeBonding();
     }
 
@@ -46,7 +40,7 @@ int main(int argc, char **argv)
 
 
     kDebug() << mgr.setupInputDevice("/org/bluez/hci0/00:04:61:81:75:FF") << endl;
-#endif    
+#endif
 
     return app.exec();
 }

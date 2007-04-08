@@ -47,71 +47,57 @@ QString BluezBluetoothInputDevice::ubi() const
 
 QString BluezBluetoothInputDevice::address() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetAddress");
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetAddress");
 }
 
 bool BluezBluetoothInputDevice::isConnected() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< bool > path = device->call("IsConnected");
-    if (!path.isValid())
-        return false;
-
-    return path.value();
+    return boolReply("IsConnected");
 }
 
 QString BluezBluetoothInputDevice::name() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetName");
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetName");
 }
-
 
 QString BluezBluetoothInputDevice::productID() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetProductID");
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetProductID");
 }
-
 
 QString BluezBluetoothInputDevice::vendorID() const
 {
-    kDebug() << k_funcinfo << endl;
-
-    QDBusReply< QString > path = device->call("GetVendorID");
-    if (!path.isValid())
-        return QString::null;
-
-    return path.value();
+    return stringReply("GetVendorID");
 }
 
 void BluezBluetoothInputDevice::slotConnect()
 {
-    kDebug() << k_funcinfo << endl;
     device->call("Connect");
 }
 
 void BluezBluetoothInputDevice::slotDisconnect()
 {
-    kDebug() << k_funcinfo << endl;
     device->call("Disconnect");
+}
+
+/******************************/
+
+QString BluezBluetoothInputDevice::stringReply(const QString &method) const
+{
+    QDBusReply< QString > reply = device->call(method);
+    if (!reply.isValid())
+        return QString::null;
+
+    return reply.value();
+}
+
+bool BluezBluetoothInputDevice::boolReply(const QString &method) const
+{
+    QDBusReply< bool > reply = device->call(method);
+    if (!reply.isValid())
+        return false;
+
+    return reply.value();
 }
 
 #include "bluez-bluetoothinputdevice.moc"

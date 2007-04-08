@@ -59,6 +59,7 @@ protected Q_SLOTS:
 
     void slotInputDeviceCreated(const QString&);
     void slotInputDeviceRemoved(const QString&);
+
 private:
     BluezBluetoothManagerPrivate * d;
     QString m_inputManagerDest;

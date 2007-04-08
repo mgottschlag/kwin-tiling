@@ -43,6 +43,7 @@ public:
 public Q_SLOTS:
     void slotConnect();
     void slotDisconnect();
+
 Q_SIGNALS:
     void connected();
     void disconnected();
@@ -51,6 +52,8 @@ private:
     QString m_objectPath;
     QDBusInterface *device;
 
+    QString stringReply(const QString &method) const;
+    bool boolReply(const QString &method) const;
 };
 
 #endif
