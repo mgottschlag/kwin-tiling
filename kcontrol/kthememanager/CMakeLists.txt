@@ -28,7 +28,6 @@ install(TARGETS kcm_kthememanager  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES x-ktheme.desktop  DESTINATION  ${MIME_INSTALL_DIR}/application )
 install( FILES kthememanager.desktop installktheme.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install(PROGRAMS kdeinstallktheme DESTINATION ${BIN_INSTALL_DIR})
 
