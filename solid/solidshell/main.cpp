@@ -436,7 +436,12 @@ int main(int argc, char **argv)
       cout << "  solidshell bluetooth input (setup|remove|connect|disconnect) (device 'ubi')" << endl;
       cout << i18n( "             # Setup bluetooth input device.\n"
                     "             # Remove configuration of remote input device.\n"
-		    "		  # Connect or disconnect bluetooth input device.\n" ) << endl;
+                    "             # Connect or disconnect bluetooth input device.\n" ) << endl;
+
+      cout << "  solidshell bluetooth remote (createbonding|removebonding|hasbonding) (device 'ubi')" << endl;
+      cout << i18n( "             # Create bonding (pairing) with bluetooth remote device.\n"
+                    "             # Remove bonding of bluetooth remote device.\n"
+                    "             # Check for bonding of bluetooth remote device.\n" ) << endl;
 
       return 0;
   }
@@ -846,25 +851,43 @@ bool SolidShell::doIt()
             {
                 return shell.bluetoothInputListDevices();
             }
-            else if ( what == "setup" )
+
+            QString ubi ( args->arg( 3 ) );
+
+            if ( what == "setup" )
             {
-                QString ubi ( args->arg( 3 ) );
                 return shell.bluetoothInputSetup( ubi );
             }
             else if ( what == "remove" )
             {
-                QString ubi ( args->arg( 3 ) );
                 return shell.bluetoothInputRemoveSetup( ubi );
             }
             else if ( what == "connect" )
             {
-                QString ubi ( args->arg( 3 ) );
                 return shell.bluetoothInputConnect( ubi );
             }
             else if ( what == "disconnect" )
             {
-                QString ubi ( args->arg( 3 ) );
                 return shell.bluetoothInputDisconnect( ubi );
+            }
+        }
+        else if ( command == "remote" )
+        {
+            QString what ( args->arg( 2 ) );
+            QString adapter ( args->arg( 3 ) );
+            QString remote ( args->arg( 4 ) );
+
+            if ( what == "createbonding" )
+            {
+                return shell.bluetoothRemoteCreateBonding( adapter, remote );
+            }
+            else if ( what == "removebonding" )
+            {
+                return shell.bluetoothRemoteRemoveBonding( adapter, remote );
+            }
+            else if ( what == "hasbonding" )
+            {
+                return shell.bluetoothRemoteHasBonding( adapter, remote );
             }
 
         }
@@ -1422,7 +1445,6 @@ void SolidShell::slotBluetoothDiscoveryCompleted()
 bool SolidShell::bluetoothInputListDevices()
 {
     Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-
     const Solid::BluetoothInputDeviceList all = manager.bluetoothInputDevices();
 
     foreach ( const Solid::BluetoothInputDevice device, all )
@@ -1436,7 +1458,6 @@ bool SolidShell::bluetoothInputListDevices()
 bool SolidShell::bluetoothInputSetup( const QString &deviceUbi )
 {
     Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-
     KJob *job = manager.setupInputDevice( deviceUbi );
 
     if ( job==0 )
@@ -1484,6 +1505,55 @@ bool SolidShell::bluetoothInputDisconnect( const QString &deviceUbi )
     Solid::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
 
     device.slotDisconnect();
+
+    return true;
+}
+
+bool SolidShell::bluetoothRemoteCreateBonding( const QString &adapterUbi, const QString &deviceUbi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
+    Solid::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
+
+    KJob *job = device.createBonding();
+
+    connectJob( job );
+
+    job->start();
+    m_loop.exec();
+
+    if ( m_error )
+    {
+        cerr << i18n( "Error: %1" , m_errorString ) << endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool SolidShell::bluetoothRemoteRemoveBonding( const QString &adapterUbi, const QString &deviceUbi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
+    Solid::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
+
+    device.removeBonding();
+
+    return true;
+}
+
+bool SolidShell::bluetoothRemoteHasBonding( const QString &adapterUbi, const QString &deviceUbi )
+{
+    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
+    Solid::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
+
+    if ( device.hasBonding() )
+    {
+        cout << "'" << deviceUbi << "' is bonded/paired." << endl;
+    } else {
+        cout << "'" << deviceUbi << "' isn't bonded/paired." << endl;
+    }
 
     return true;
 }

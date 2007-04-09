@@ -83,6 +83,10 @@ public:
     bool bluetoothInputConnect( const QString &deviceUbi );
     bool bluetoothInputDisconnect( const QString &deviceUbi );
 
+    bool bluetoothRemoteCreateBonding( const QString &adapterUbi, const QString &deviceUbi );
+    bool bluetoothRemoteRemoveBonding( const QString &adapterUbi, const QString &deviceUbi );
+    bool bluetoothRemoteHasBonding( const QString &adapterUbi, const QString &deviceUbi );
+
 private:
     void connectJob( KJob *job );
 
