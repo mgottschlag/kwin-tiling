@@ -48,7 +48,15 @@ QAction* ShellRunner::accepts(const QString& term)
         return 0;
     }
 
-    QString executable = KStandardDirs::findExe(term);
+    QString executable = term;
+    int space = executable.indexOf( " " );
+
+    if ( space > 0 ) {
+        executable = executable.left( space );
+    }
+
+    executable = KStandardDirs::findExe( executable );
+
     if ( !executable.isEmpty() ) {
         QAction* action = new QAction( KIcon( "exec" ), executable, this );
         return action;
