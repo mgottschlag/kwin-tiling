@@ -45,7 +45,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "kwindowlistmenu.moc"
 #include "kwin_interface.h"
 
-static bool compareKWinWindowInfo( KWM::WindowInfo* firstInfo, KWM::WindowInfo* secondInfo )
+static bool compareKWinWindowInfo( KWindowInfo* firstInfo, KWindowInfo* secondInfo )
 {
   QString firstTitle, secondTitle;
 
@@ -72,14 +72,14 @@ KWindowListMenu::~KWindowListMenu()
   delete d;
 }
 
-static bool standaloneDialog( const KWM::WindowInfo* info, const QList<KWM::WindowInfo*>& list )
+static bool standaloneDialog( const KWindowInfo* info, const QList<KWindowInfo*>& list )
 {
   WId group = info->groupLeader();
 
   if ( group == 0 )
     return info->transientFor() == QX11Info::appRootWindow();
 
-  foreach ( KWM::WindowInfo* info, list )
+  foreach ( KWindowInfo* info, list )
     if ( info->groupLeader() == group )
       return false;
 
@@ -107,7 +107,7 @@ void KWindowListMenu::init()
   if ( numberOfDesktops == 1 )
     addSeparator();
 
-  QList<KWM::WindowInfo> windows;
+  QList<KWindowInfo> windows;
   foreach ( WId id, KWM::windows() )
     windows.append( KWM::windowInfo( id, NET::WMDesktop ) );
 
@@ -122,12 +122,12 @@ void KWindowListMenu::init()
     //if (!activeWindow && d == cd)
         //setItemChecked(1000 + d, true);
 
-    QList<KWM::WindowInfo*> list;
+    QList<KWindowInfo*> list;
 
-    foreach (KWM::WindowInfo wi, windows) {
+    foreach (KWindowInfo wi, windows) {
       if ( (wi.desktop() == j) || (onAllDesktops && wi.onAllDesktops())
            || (!showAllDesktopsGroup && wi.onAllDesktops()) ) {
-        list.append( new KWM::WindowInfo( wi.win(),
+        list.append( new KWindowInfo( wi.win(),
                          NET::WMVisibleName | NET::WMState | NET::XAWMState | NET::WMWindowType,
                          NET::WM2GroupLeader | NET::WM2TransientFor ) );
       }
@@ -135,7 +135,7 @@ void KWindowListMenu::init()
 
     qStableSort( list.begin(), list.end(), compareKWinWindowInfo );
 
-    foreach ( KWM::WindowInfo* info, list ) {
+    foreach ( KWindowInfo* info, list ) {
       ++i;
       QString itemText = fontMetrics().elidedText(info->visibleNameWithState(), Qt::ElideMiddle, maxwidth);
 
