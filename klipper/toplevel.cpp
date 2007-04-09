@@ -313,7 +313,7 @@ void KlipperWidget::showPopupMenu( QMenu *menu )
         else
             menu->popup(QPoint(g.x(), g.y()));
     } else {
-        KWM::WindowInfo i = KWM::windowInfo( winId(), NET::WMGeometry );
+        KWindowInfo i = KWM::windowInfo( winId(), NET::WMGeometry );
         QRect g = i.geometry();
         QRect screen = KGlobalSettings::desktopGeometry(g.center());
 
