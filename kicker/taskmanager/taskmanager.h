@@ -100,7 +100,7 @@ public:
     virtual ~Task();
 
     WId window() const { return _win; }
-    KWM::WindowInfo info() const { return _info; }
+    KWindowInfo info() const { return _info; }
 
     QString visibleName() const { return _info.visibleName(); }
     QString visibleNameWithState() const { return _info.visibleNameWithState(); }
@@ -444,7 +444,7 @@ private:
     WId                 _win;
     WId                 m_frameId;
     QPixmap             _pixmap;
-    KWM::WindowInfo    _info;
+    KWindowInfo    _info;
     WindowList          _transients;
     WindowList          _transients_demanding_attention;
 
