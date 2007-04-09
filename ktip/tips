@@ -25,9 +25,8 @@ KDE is translated into many languages. You can change the country and
 language with the Control Center in "Regional &amp; Accessibility"
 ->."Country/Region &amp; Language".
 </p>
-
 <p>For more information about KDE translations and translators, see <a
-href="http://i18n.kde.org/">http://i18n.kde.org</a>.
+href="http://l10n.kde.org/">http://l10n.kde.org</a>.
 </p>
 <br>
 <center>
@@ -43,8 +42,9 @@ href="http://i18n.kde.org/">http://i18n.kde.org</a>.
 You can minimize all your windows on the current desktop at once and
 thus reach the desktop itself by clicking on the desktop icon on the
 panel.</p>
-
-<p>If you do not currently have the icon there, you can add it by right clicking on the panel, and then selecting Add to Panel->Special Button->Desktop Access.
+<p>If you do not currently have the icon there, you can add it by 
+right clicking on the panel, and then selecting 
+Add Applet to Panel->Show Desktop.
 <br>
 <center>
 <img src="crystalsvg/48x48/filesystems/desktop.png">
@@ -60,7 +60,6 @@ in" the panel</strong> by clicking on one of the arrows at the ends of
 the panel. Alternatively, make it hide automatically by changing the
 settings in the Control Center (Desktop->Panels, Hiding tab).
 </p>
-
 <p>For more information about Kicker, the KDE Panel, see <a
 href="help:/kicker">the Kicker Handbook</a>.
 </p>
@@ -100,7 +99,7 @@ press Alt+F5 to display the window list.</p><br>
 <tip category="Konqueror">
 <html>
 <p>The <b>"Location" label</b> in Konqueror is draggable.</p>
-<p>This means you can a shortcut (e.g. on the desktop or the panel)
+<p>This means you can create a shortcut (e.g. on the desktop or the panel)
 by dragging it there with the mouse. You can also drop it on to Konsole or
 edit fields to get the URL typed in there (as you can with links or files
 displayed in Konqueror).</p>
@@ -144,8 +143,8 @@ You can cycle through the windows on a virtual desktop by holding the
 Alt key and pressing Tab or Shift+Tab.</p><br>
 <center><img src="crystalsvg/48x48/apps/kcmkwm.png"></center></p>
 
-<p>For more information, see <a
-href="help:/khelpcenter/userguide/windows-how-to-work.html">the KDE
+<p>For more information, see 
+<a href="help:/khelpcenter/userguide/windows-how-to-work.html">the KDE
 User Guide</a>.</p>
 </html>
 </tip>
