@@ -271,7 +271,7 @@ KdmLabel::lookupText( const QString &t )
 	m['s'] = timedUser;
 	// xgettext:no-c-format
 	KGlobal::locale()->setDateFormat( i18nc("date format", "%a %d %B") );
-	m['c'] = KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), false, false );
+	m['c'] = KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), KLocale::LongDate );
 
 	return KMacroExpander::expandMacros( text, m );
 }
