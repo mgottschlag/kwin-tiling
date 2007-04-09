@@ -1,7 +1,7 @@
 # Currently needed for DEFAULT_TEXT_HEIGHT
 # The plan is to move konq_iconviewwidget to kdesktop and then it's all inside workspace.
 # But first KonqOperations must be redesigned to not use konq_iconviewwidget...
-include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/runtime/kcontrol/locale )
+include_directories( ${CMAKE_SOURCE_DIR}/libkonq )
 
 add_definitions (-DQT3_SUPPORT)
 
@@ -17,7 +17,7 @@ set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
    kdm-users.cpp 
    kdm-conv.cpp 
    main.cpp
-   ${CMAKE_SOURCE_DIR}/runtime/kcontrol/locale/klanguagebutton.cpp
+   klanguagebutton.cpp
    kbackedcombobox.cpp
    positioner.cpp)
 
