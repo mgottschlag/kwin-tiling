@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <klocale.h>
 #include <kconfig.h>
-#include <kcombobox.h>
+#include <khistorycombobox.h>
 #include <kurifilter.h>
 #include <kdialog.h>
 #include <krun.h>
@@ -76,7 +76,7 @@ RunApplet::RunApplet(const QString& configFile, Plasma::Type type, int actions,
     connect(_btn, SIGNAL(clicked()), SLOT(popup_combo()));
 
     // setup history combo
-    _input = new KHistoryCombo(this);
+    _input = new KHistoryComboBox(this);
     _input->setFocus();
     _input->clearEditText();
     watchForFocus(_input->lineEdit());

@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class QLabel;
 class QPushButton;
-class KHistoryCombo;
+class KHistoryComboBox;
 class KUriFilterData;
 
 class RunApplet : public KPanelApplet
@@ -59,7 +59,7 @@ protected Q_SLOTS:
     void setButtonText();
 
 private:
-    KHistoryCombo  *_input;
+    KHistoryComboBox  *_input;
     KUriFilterData *_filterData;
     QLabel         *_label;
     QPushButton    *_btn;
