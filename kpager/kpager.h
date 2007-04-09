@@ -80,7 +80,7 @@ public:
 
     void showPopupMenu( WId wid, QPoint pos);
 
-    KWM::WindowInfo* info( WId win );
+    KWindowInfo* info( WId win );
 
     QSize sizeHint() const;
 
@@ -118,7 +118,7 @@ protected:
 protected:
     QList<class Desktop *> m_desktops;
 
-    Q3IntDict<KWM::WindowInfo> m_windows;
+    Q3IntDict<KWindowInfo> m_windows;
     WId m_activeWin;
 
     const QString lWidth();
@@ -135,7 +135,7 @@ protected:
     QMenu *m_smnu, *m_dmnu;
     QAction *m_quit_action;
     QAction *m_prefs_action;
-    KWM::WindowInfo m_winfo;
+    KWindowInfo m_winfo;
 
     QTimer *m_grabWinTimer;
     int     m_currentDesktop;

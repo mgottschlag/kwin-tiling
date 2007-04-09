@@ -101,9 +101,9 @@ protected:
 
   void paintEvent( QPaintEvent *ev );
 
-  KWM::WindowInfo *windowAtPosition (const QPoint &p, QPoint *internalpos);
+  KWindowInfo *windowAtPosition (const QPoint &p, QPoint *internalpos);
 
-  bool shouldPaintWindow( KWM::WindowInfo *info );
+  bool shouldPaintWindow( KWindowInfo *info );
 
   int m_desk;
   QString m_name;
@@ -116,15 +116,15 @@ protected:
   static QMap<int,bool> m_windowPixmapsDirty;
   WindowTransparentMode m_transparentMode;
 
-  QPixmap *paintNewWindow(const KWM::WindowInfo *info);
+  QPixmap *paintNewWindow(const KWindowInfo *info);
 
-  void paintWindow(QPainter &p, const KWM::WindowInfo *info,
+  void paintWindow(QPainter &p, const KWindowInfo *info,
 			bool onDesktop=true);
-  void paintWindowPlain(QPainter &p, const KWM::WindowInfo *info,
+  void paintWindowPlain(QPainter &p, const KWindowInfo *info,
 			bool onDesktop=true);
-  void paintWindowIcon(QPainter &p, const KWM::WindowInfo *info,
+  void paintWindowIcon(QPainter &p, const KWindowInfo *info,
 			bool onDesktop=true);
-  void paintWindowPixmap(QPainter &p, const KWM::WindowInfo *info,
+  void paintWindowPixmap(QPainter &p, const KWindowInfo *info,
 			bool onDesktop=true);
 
 private:

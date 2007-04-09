@@ -99,7 +99,7 @@ void Desktop::mousePressEvent( QMouseEvent * ev)
 	startDrag(ev->pos());
     else if (ev->button()==Qt::RightButton) {
 	QPoint pos;
-	KWM::WindowInfo *info = windowAtPosition(ev->pos(), &pos);
+	KWindowInfo *info = windowAtPosition(ev->pos(), &pos);
 	if ( info && showWindows )
 	    pager()->showPopupMenu(info->win(), mapToGlobal(ev->pos()));
 	else
@@ -118,7 +118,7 @@ void Desktop::mouseReleaseEvent( QMouseEvent *ev )
     KWM::setCurrentDesktop(m_desk);
     if (showWindows)
     {
-      KWM::WindowInfo *info = windowAtPosition(ev->pos(), &pos);
+      KWindowInfo *info = windowAtPosition(ev->pos(), &pos);
       if (info)
       {
 	KWM::forceActiveWindow(info->win());
@@ -130,7 +130,7 @@ void Desktop::mouseReleaseEvent( QMouseEvent *ev )
   }
 }
 
-KWM::WindowInfo *Desktop::windowAtPosition(const QPoint &p, QPoint *internalpos)
+KWindowInfo *Desktop::windowAtPosition(const QPoint &p, QPoint *internalpos)
 {
 	QRect r;
 	const QList<WId> &list(KWM::stackingOrder());
@@ -139,7 +139,7 @@ KWM::WindowInfo *Desktop::windowAtPosition(const QPoint &p, QPoint *internalpos)
 
 	for (QList<WId>::ConstIterator it = list.end(); ; --it)
 	{
-		KWM::WindowInfo* info = pager()->info( *it );
+		KWindowInfo* info = pager()->info( *it );
 		if (shouldPaintWindow(info))
 		{
 			r=info->geometry();
@@ -244,7 +244,7 @@ void Desktop::loadBgPixmap(void)
   m_bgPixmap->loadFromShared(QString("DESKTOP%1").arg(m_isCommon?1:m_desk));
 }
 
-void Desktop::paintWindow(QPainter &p, const KWM::WindowInfo *info, bool onDesktop)
+void Desktop::paintWindow(QPainter &p, const KWindowInfo *info, bool onDesktop)
 {
     switch (static_cast<WindowDrawMode>(KPagerConfigDialog::m_windowDrawMode ) )
 	{
@@ -254,7 +254,7 @@ void Desktop::paintWindow(QPainter &p, const KWM::WindowInfo *info, bool onDeskt
 	}
 }
 
-QPixmap *Desktop::paintNewWindow(const KWM::WindowInfo *info)
+QPixmap *Desktop::paintNewWindow(const KWindowInfo *info)
 {
     QRect r = info->frameGeometry();
     int dw = QApplication::desktop()->width();
@@ -279,7 +279,7 @@ QPixmap *Desktop::paintNewWindow(const KWM::WindowInfo *info)
 void Desktop::startDrag(const QPoint &p)
 {
   QPoint dragpos;
-  KWM::WindowInfo *info=windowAtPosition(p,&dragpos);
+  KWindowInfo *info=windowAtPosition(p,&dragpos);
   if ( (!info)/* || (info->state & NET::Max)*/ ) return;
 
   QPixmap *pixmap=paintNewWindow(info);
@@ -341,7 +341,7 @@ void Desktop::dropEvent(QDropEvent *ev)
   {
     if (origdesk==0) KWM::setOnAllDesktops(win, false);
 
-    KWM::WindowInfo *info = pager()->info(win);
+    KWindowInfo *info = pager()->info(win);
     if (!info->onAllDesktops())
       KWM::setOnDesktop(win, m_desk);
   }
@@ -349,7 +349,7 @@ void Desktop::dropEvent(QDropEvent *ev)
   XMoveWindow(x11Info().display(), win, x, y );
 }
 
-bool Desktop::shouldPaintWindow( KWM::WindowInfo *info )
+bool Desktop::shouldPaintWindow( KWindowInfo *info )
 {
   if (!info)
     return false;
@@ -464,7 +464,7 @@ void Desktop::paintEvent( QPaintEvent * )
 	for ( it = KWM::stackingOrder().begin();
 	      it != KWM::stackingOrder().end(); ++it ) {
 
-	    KWM::WindowInfo* info = pager()->info( *it );
+	    KWindowInfo* info = pager()->info( *it );
 
 	    if (shouldPaintWindow(info))
 		paintWindow(p,info);
@@ -483,7 +483,7 @@ void Desktop::paintEvent( QPaintEvent * )
     m_grabWindows=false;
 }
 
-void Desktop::paintWindowPlain(QPainter &p, const KWM::WindowInfo *info, bool onDesktop)
+void Desktop::paintWindowPlain(QPainter &p, const KWindowInfo *info, bool onDesktop)
 {
     QRect r =  info->frameGeometry();
     int dw = QApplication::desktop()->width();
@@ -517,7 +517,7 @@ void Desktop::paintWindowPlain(QPainter &p, const KWM::WindowInfo *info, bool on
 }
 
 
-void Desktop::paintWindowIcon(QPainter &p, const KWM::WindowInfo *info, bool onDesktop)
+void Desktop::paintWindowIcon(QPainter &p, const KWindowInfo *info, bool onDesktop)
 {
   QRect r =  info->frameGeometry();
   int dw = QApplication::desktop()->width();
@@ -541,7 +541,7 @@ void Desktop::paintWindowIcon(QPainter &p, const KWM::WindowInfo *info, bool onD
 
 }
 
-void Desktop::paintWindowPixmap(QPainter &p, const KWM::WindowInfo *info,
+void Desktop::paintWindowPixmap(QPainter &p, const KWindowInfo *info,
 					bool onDesktop)
 {
 	const int knDefaultPixmapWd = 100;

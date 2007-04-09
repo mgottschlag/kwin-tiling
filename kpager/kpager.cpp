@@ -398,12 +398,12 @@ void KPager::configureDialog()
     }
 }
 
-KWM::WindowInfo* KPager::info( WId win )
+KWindowInfo* KPager::info( WId win )
 {
-    KWM::WindowInfo* info = m_windows[win];
+    KWindowInfo* info = m_windows[win];
     if (!info )
     {
-        info = new KWM::WindowInfo( KWM::windowInfo( win,
+        info = new KWindowInfo( KWM::windowInfo( win,
             NET::WMName | NET::WMState | NET::XAWMState | NET::WMDesktop ));
         if( !info->valid() || info->desktop() == 0 )
         {
@@ -417,8 +417,8 @@ KWM::WindowInfo* KPager::info( WId win )
 
 void KPager::slotActiveWindowChanged( WId win )
 {
-    KWM::WindowInfo* inf1 = info( m_activeWin );
-    KWM::WindowInfo* inf2 = info( win );
+    KWindowInfo* inf1 = info( m_activeWin );
+    KWindowInfo* inf2 = info( win );
     m_activeWin = win;
 
     // update window pixmap
@@ -436,7 +436,7 @@ void KPager::slotActiveWindowChanged( WId win )
 
 void KPager::slotWindowAdded( WId win)
 {
-    KWM::WindowInfo* inf = info( win );
+    KWindowInfo* inf = info( win );
     if (!inf)
         return; // never should be here
 
@@ -449,7 +449,7 @@ void KPager::slotWindowAdded( WId win)
 
 void KPager::slotWindowRemoved( WId win )
 {
-    KWM::WindowInfo* inf = m_windows[win];
+    KWindowInfo* inf = m_windows[win];
     if (inf)
     {
         bool onAllDesktops = inf->onAllDesktops();
@@ -468,7 +468,7 @@ void KPager::slotWindowChanged( WId win , unsigned int prop)
 {
     bool repaint=false;
 
-    KWM::WindowInfo* inf = m_windows[win];
+    KWindowInfo* inf = m_windows[win];
     if (!inf)
     {
       inf=info(win);
