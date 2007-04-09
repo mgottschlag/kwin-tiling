@@ -270,13 +270,13 @@ void SystemTrayApplet::applySettings()
     for( TrayEmbedList::ConstIterator it = m_shownWins.begin();
          it != m_shownWins.end();
          ++it ) {
-        KWM::WindowInfo info = KWM::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
+        KWindowInfo info = KWM::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
         windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
     for( TrayEmbedList::ConstIterator it = m_hiddenWins.begin();
          it != m_hiddenWins.end();
          ++it ) {
-        KWM::WindowInfo info = KWM::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
+        KWindowInfo info = KWM::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
         windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
 
@@ -556,7 +556,7 @@ void SystemTrayApplet::updateVisibleWins()
     for( TrayEmbedList::const_iterator it = m_shownWins.begin();
          it != m_shownWins.end();
          ++it ) {
-        KWM::WindowInfo info = KWM::windowInfo((*it)->containerWinId(),NET::WMName,NET::WM2WindowClass);
+        KWindowInfo info = KWM::windowInfo((*it)->containerWinId(),NET::WMName,NET::WM2WindowClass);
         names[ *it ] = info.name();
         classes[ *it ] = '!'+info.windowClassClass();
     }
