@@ -36,8 +36,7 @@ BluezCallJob::BluezCallJob(const QDBusConnection &connection, const QString &des
 {}
 
 BluezCallJob::~BluezCallJob()
-{
-}
+{}
 
 void BluezCallJob::start()
 {
@@ -45,8 +44,7 @@ void BluezCallJob::start()
 }
 
 void BluezCallJob::kill(bool /*quietly*/)
-{
-}
+{}
 
 void BluezCallJob::doStart()
 {
@@ -54,25 +52,24 @@ void BluezCallJob::doStart()
                        m_iface, m_method);
     msg.setArguments(m_params);
 
-    if (!m_connection.callWithCallback(msg, this, SLOT(callReply(const QDBusMessage&)))) {
+    if (!m_connection.callWithCallback(msg, this, SLOT(callReply(const QDBusMessage&)), SLOT(callError(const QDBusError&)))) {
         setError(1);
         setErrorText(m_connection.lastError().name() + ": " + m_connection.lastError().message());
         emitResult();
     }
 }
 
-void BluezCallJob::callReply(const QDBusMessage &reply)
+void BluezCallJob::callError(const QDBusError &error)
+{
+    setError(1);
+    setErrorText(error.name() + ": " + error.message());
+
+    emitResult();
+}
+
+void BluezCallJob::callReply(const QDBusMessage & /*reply*/)
 {
     setError(0);
-
-    if (reply.type() == QDBusMessage::InvalidMessage) {
-        setError(1);
-        setErrorText(m_connection.lastError().name() + ": " + m_connection.lastError().message());
-    } else if (reply.type() == QDBusMessage::ErrorMessage) {
-        setError(1);
-        setErrorText(reply.interface() + ": " + reply.arguments().at(0).toString());
-    }
-
     emitResult();
 }
 

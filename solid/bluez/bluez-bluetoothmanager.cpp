@@ -108,7 +108,7 @@ QObject * BluezBluetoothManager::createInterface(const QString & ubi)
 {
     BluezBluetoothInterface * bluetoothInterface;
     if (d->interfaces.contains(ubi)) {
-        bluetoothInterface = d->interfaces[ ubi ];
+        bluetoothInterface = d->interfaces[ubi];
     } else {
         bluetoothInterface = new BluezBluetoothInterface(ubi);
         d->interfaces.insert(ubi, bluetoothInterface);
@@ -151,7 +151,7 @@ QObject *BluezBluetoothManager::createBluetoothInputDevice(QString const &ubi)
 {
     BluezBluetoothInputDevice *bluetoothInputDevice;
     if (d->inputDevices.contains(ubi)) {
-        bluetoothInputDevice = d->inputDevices[ ubi ];
+        bluetoothInputDevice = d->inputDevices[ubi];
     } else {
         bluetoothInputDevice = new BluezBluetoothInputDevice(ubi, m_inputManagerDest);
         d->inputDevices.insert(ubi, bluetoothInputDevice);

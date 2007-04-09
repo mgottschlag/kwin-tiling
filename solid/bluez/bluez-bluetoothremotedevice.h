@@ -51,11 +51,12 @@ public:
     int pinCodeLength() const;
     int encryptionKeySize() const;
 
+    KJob *createBonding();
+
 public Q_SLOTS:
     void setAlias(const QString &alias);
     void clearAlias();
     void disconnect();
-    void createBonding();
     void cancelBondingProcess();
     void removeBonding();
 

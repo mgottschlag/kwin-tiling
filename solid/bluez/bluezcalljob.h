@@ -42,6 +42,7 @@ public:
 
 private Q_SLOTS:
     void doStart();
+    void callError(const QDBusError &error);
     void callReply(const QDBusMessage &reply);
 
 private:

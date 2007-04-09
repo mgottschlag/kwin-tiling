@@ -20,12 +20,13 @@
 */
 
 #include <QtDBus>
-
 #include <kdebug.h>
 
 #include <solid/bluetoothinterface.h>
 
+#include "bluez-bluetoothremotedevice.h"
 #include "bluez-bluetoothinterface.h"
+
 
 class BluezBluetoothInterfacePrivate
 {
@@ -39,11 +40,14 @@ public:
     { }
     QDBusInterface iface;
     QString objectPath;
+
+    QMap<QString, BluezBluetoothRemoteDevice*> devices;
 };
 
 BluezBluetoothInterface::BluezBluetoothInterface(const QString & objectPath)
         : BluetoothInterface(0), d(new BluezBluetoothInterfacePrivate(objectPath))
 {
+
 #define connectInterfaceToThis( signal, slot ) \
     d->iface.connection().connect( "org.bluez", \
                                    objectPath, \
@@ -56,7 +60,7 @@ BluezBluetoothInterface::BluezBluetoothInterface(const QString & objectPath)
     connectInterfaceToThis("NameChanged", slotNameChanged(const QString&));
     connectInterfaceToThis("DiscoveryStarted", slotDiscoveryStarted());
     connectInterfaceToThis("DiscoveryCompleted", slotDiscoveryCompleted());
-    connectInterfaceToThis("RemoteDeviceDisappeared", slotDiscoveryDisappeared(const QString&));
+    connectInterfaceToThis("RemoteDeviceDisappeared", slotRemoteDeviceDisappeared(const QString&));
     connectInterfaceToThis("RemoteDeviceFound", slotRemoteDeviceFound(const QString&, uint, short));
 }
 
@@ -262,15 +266,21 @@ void BluezBluetoothInterface::slotRemoteDeviceFound(const QString &address, uint
 
 void BluezBluetoothInterface::slotRemoteDeviceDisappeared(const QString &address)
 {
-    kDebug() << k_funcinfo << endl;
+    kDebug() << k_funcinfo << "address: " << address << endl;
     QString remoteubi = QString("%1/%2").arg(ubi()).arg(address);
     emit remoteDeviceDisappeared(remoteubi);
 }
 
-// TODO: Write BluetoothDevices iface object ...
-QObject *BluezBluetoothInterface::createBluetoothRemoteDevice(const QString& /*ubi*/)
+QObject *BluezBluetoothInterface::createBluetoothRemoteDevice(const QString& ubi)
 {
-    return NULL;
+    BluezBluetoothRemoteDevice *bluetoothInterface;
+    if (d->devices.contains(ubi)) {
+        bluetoothInterface = d->devices[ubi];
+    } else {
+        bluetoothInterface = new BluezBluetoothRemoteDevice(ubi);
+        d->devices.insert(ubi, bluetoothInterface);
+    }
+    return bluetoothInterface;
 }
 
 /*******************************/

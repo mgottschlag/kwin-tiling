@@ -25,16 +25,18 @@
 
 #include <solid/bluetoothremotedevice.h>
 
+#include "bluezcalljob.h"
 #include "bluez-bluetoothremotedevice.h"
 
 BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath)
         : BluetoothRemoteDevice(0), m_objectPath(objectPath)
 {
-    kDebug() << k_funcinfo << " path: " << m_objectPath << endl;
 
     // size("/FF:FF:FF:FF:FF:FF") == 18
-    m_adapter = m_objectPath.left(m_objectPath.size() - 18);
+    m_adapter = m_objectPath.left(objectPath.size() - 18);
     m_address = m_objectPath.right(17);
+
+    kDebug() << k_funcinfo << " path: " << m_adapter << " address: " << m_address << endl;
 
     device = new QDBusInterface("org.bluez", m_adapter,
                                 "org.bluez.Adapter", QDBusConnection::systemBus());
@@ -144,6 +146,15 @@ int BluezBluetoothRemoteDevice::encryptionKeySize() const
     return path.value();
 }
 
+KJob *BluezBluetoothRemoteDevice::createBonding()
+{
+    QList<QVariant> params;
+    params << m_address;
+
+    return new BluezCallJob(QDBusConnection::systemBus(), "org.bluez", m_adapter,
+                            "org.bluez.Adapter", "CreateBonding", params);
+}
+
 void BluezBluetoothRemoteDevice::setAlias(const QString &alias)
 {
     kDebug() << k_funcinfo << endl;
@@ -160,12 +171,6 @@ void BluezBluetoothRemoteDevice::disconnect()
 {
     kDebug() << k_funcinfo << endl;
     device->call("DisconnectRemoteDevice", m_address);
-}
-
-void BluezBluetoothRemoteDevice::createBonding()
-{
-    kDebug() << k_funcinfo << endl;
-    device->call("CreateBonding", m_address);
 }
 
 void BluezBluetoothRemoteDevice::cancelBondingProcess()
