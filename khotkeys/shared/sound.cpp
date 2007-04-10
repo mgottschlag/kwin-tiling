@@ -62,15 +62,15 @@ void Sound::load(const QString& filename)
 	Q_INT32 magic;
 	
 	MAGIC("RIFF");
-	READ_FROM_STREAM(Q_UINT32,ChunkSize);
+	READ_FROM_STREAM(quint32,ChunkSize);
 	MAGIC("WAVE");
 	MAGIC("fmt ");
-	READ_FROM_STREAM(Q_UINT32,ChunkSize2);
+	READ_FROM_STREAM(quint32,ChunkSize2);
 	READ_FROM_STREAM(Q_INT16,AudioFormat);
 	READ_FROM_STREAM(Q_UINT16,NumberOfChannels);
-	READ_FROM_STREAM(Q_UINT32,SampleRate);
+	READ_FROM_STREAM(quint32,SampleRate);
 	_fs=SampleRate;
-	READ_FROM_STREAM(Q_UINT32,ByteRate);
+	READ_FROM_STREAM(quint32,ByteRate);
 	READ_FROM_STREAM(Q_UINT16,BlockAlign);
 	READ_FROM_STREAM(Q_UINT16,BitsPerSample);
 	MAGIC("data");
@@ -137,23 +137,23 @@ void Sound::save(const QString& filename) const
 	}
 
 	Q_UINT16 NumberOfChannels=2;
-	Q_UINT32 SampleRate=_fs;
+	quint32 SampleRate=_fs;
 
 	SMAGIC("RIFF");
-	//READ_FROM_STREAM(Q_UINT32,ChunkSize);
-	stream <<  (Q_UINT32)(36+ SoundData.size());
+	//READ_FROM_STREAM(quint32,ChunkSize);
+	stream <<  (quint32)(36+ SoundData.size());
 	SMAGIC("WAVE");
 	SMAGIC("fmt ");
-	//READ_FROM_STREAM(Q_UINT32,ChunkSize2);
-	stream <<  (Q_UINT32)(16);
+	//READ_FROM_STREAM(quint32,ChunkSize2);
+	stream <<  (quint32)(16);
 	//READ_FROM_STREAM(Q_INT16,AudioFormat);
 	stream <<  (Q_INT16)(1);
 	//READ_FROM_STREAM(Q_UINT16,NumberOfChannels);
 	stream <<  (Q_UINT16)(NumberOfChannels);
-	//READ_FROM_STREAM(Q_UINT32,SampleRate);
-	stream <<  (Q_UINT32)(SampleRate);
-	//READ_FROM_STREAM(Q_UINT32,ByteRate);
-	stream <<  (Q_UINT32)(NumberOfChannels*SampleRate*16/8);
+	//READ_FROM_STREAM(quint32,SampleRate);
+	stream <<  (quint32)(SampleRate);
+	//READ_FROM_STREAM(quint32,ByteRate);
+	stream <<  (quint32)(NumberOfChannels*SampleRate*16/8);
 	//READ_FROM_STREAM(Q_UINT16,BlockAlign);
 	stream <<  (Q_UINT16)(16/8 *NumberOfChannels);
 	//READ_FROM_STREAM(Q_UINT16,BitsPerSample);

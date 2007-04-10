@@ -45,8 +45,8 @@ void GestureDrawer::setData(const QString &data)
 void GestureDrawer::paintEvent(QPaintEvent *ev)
     {
   // Iterate through the data points and draw a line to each of them
-    Q_UINT32 startCell = 0;
-    Q_UINT32 endCell = 0;
+    quint32 startCell = 0;
+    quint32 endCell = 0;
     QPoint startPoint;
     QPoint endPoint;
 
@@ -83,14 +83,14 @@ void GestureDrawer::paintEvent(QPaintEvent *ev)
     QFrame::paintEvent(ev);
     }
 
-QPoint GestureDrawer::lookupCellCoords(Q_UINT32 cell)
+QPoint GestureDrawer::lookupCellCoords(quint32 cell)
     {
   // First divide the widget into thirds, horizontally and vertically
-    Q_UINT32 w = width();
-    Q_UINT32 h = height();
+    quint32 w = width();
+    quint32 h = height();
 
-    Q_UINT32 wThird = w / 3;
-    Q_UINT32 hThird = h / 3;
+    quint32 wThird = w / 3;
+    quint32 hThird = h / 3;
 
     switch(cell)
         {

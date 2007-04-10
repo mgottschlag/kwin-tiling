@@ -37,7 +37,7 @@ class GestureDrawer : public QFrame
         void paintEvent(QPaintEvent *ev);
 
     private:
-        QPoint lookupCellCoords(Q_UINT32 cell);
+        QPoint lookupCellCoords(quint32 cell);
         void drawArrowHead(QPoint &start, QPoint &end,
                            QPainter &p);
 

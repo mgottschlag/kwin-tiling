@@ -932,7 +932,7 @@ uint QColor::pixel() const
 
 QDataStream &operator<<( QDataStream &s, const QColor &c )
 {
-    Q_UINT32 p = (Q_UINT32)c.rgb();
+    quint32 p = (quint32)c.rgb();
     if ( s.version() == 1 )			// Swap red and blue
 	p = ((p << 16) & 0xff0000) | ((p >> 16) & 0xff) | (p & 0xff00ff00);
     return s << p;
@@ -947,7 +947,7 @@ QDataStream &operator<<( QDataStream &s, const QColor &c )
 
 QDataStream &operator>>( QDataStream &s, QColor &c )
 {
-    Q_UINT32 p;
+    quint32 p;
     s >> p;
     if ( s.version() == 1 )			// Swap red and blue
 	p = ((p << 16) & 0xff0000) | ((p >> 16) & 0xff) | (p & 0xff00ff00);

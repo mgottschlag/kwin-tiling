@@ -51,7 +51,7 @@ public:
 	}
 
 	QVector<Q_INT32> data;
-	Q_UINT32 max;
+	quint32 max;
 	uint _fs;
 };
 

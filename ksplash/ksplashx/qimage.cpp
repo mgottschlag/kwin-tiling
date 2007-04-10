@@ -1055,15 +1055,15 @@ void QImage::fill( uint pixel )
 
 void QImage::invertPixels( bool invertAlpha )
 {
-    Q_UINT32 n = numBytes();
+    quint32 n = numBytes();
     if ( n % 4 ) {
 	Q_UINT8 *p = (Q_UINT8*)bits();
 	Q_UINT8 *end = p + n;
 	while ( p < end )
 	    *p++ ^= 0xff;
     } else {
-	Q_UINT32 *p = (Q_UINT32*)bits();
-	Q_UINT32 *end = p + n/4;
+	quint32 *p = (quint32*)bits();
+	quint32 *end = p + n/4;
 	uint xorbits = invertAlpha && depth() == 32 ? 0x00ffffff : 0xffffffff;
 	while ( p < end )
 	    *p++ ^= xorbits;
@@ -3239,8 +3239,8 @@ QImage QImage::mirror(bool horizontal, bool vertical) const
     // 32 bit
     else if (depth() == 32) {
 	for (int sy = 0; sy < h; sy++, dy += dyi) {
-	    Q_UINT32* ssl = (Q_UINT32*)(data->bits[sy]);
-	    Q_UINT32* dsl = (Q_UINT32*)(result.data->bits[dy]);
+	    quint32* ssl = (quint32*)(data->bits[sy]);
+	    quint32* dsl = (quint32*)(result.data->bits[dy]);
 	    int dx = dxs;
 	    for (int sx = 0; sx < w; sx++, dx += dxi)
 		dsl[dx] = ssl[sx];

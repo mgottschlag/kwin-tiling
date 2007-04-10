@@ -66,7 +66,7 @@ typedef unsigned char		Q_UINT8;	// 8 bit unsigned
 typedef short			Q_INT16;	// 16 bit signed
 typedef unsigned short		Q_UINT16;	// 16 bit unsigned
 typedef int			Q_INT32;	// 32 bit signed
-typedef unsigned int		Q_UINT32;	// 32 bit unsigned
+typedef unsigned int		quint32;	// 32 bit unsigned
 #if defined(Q_OS_WIN64)
 typedef __int64			Q_LONG;		// word up to 64 bit signed
 typedef unsigned __int64	Q_ULONG;	// word up to 64 bit unsigned

@@ -56,7 +56,7 @@ class GestureRecordPage : public KVBox
 
         QString _gest;
 
-        Q_UINT32 _tryCount;
+        quint32 _tryCount;
     };
 
 } // namespace KHotKeys
