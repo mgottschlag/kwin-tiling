@@ -360,7 +360,7 @@
         </spacer>
        </item>
        <item row="0" column="0" >
-        <widget class="Q3Frame" name="optionsFrame" >
+        <widget class="QFrame" name="optionsFrame" >
          <property name="frameShape" >
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -601,12 +601,6 @@
    <class>Q3GroupBox</class>
    <extends>QGroupBox</extends>
    <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends>QFrame</extends>
-   <header>Qt3Support/Q3Frame</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
