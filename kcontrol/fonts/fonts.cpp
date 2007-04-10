@@ -44,8 +44,10 @@
 
 #ifdef HAVE_FREETYPE
 #include <ft2build.h>
+#ifdef FT_LCD_FILTER_H
 #include FT_FREETYPE_H
 #include FT_LCD_FILTER_H
+#endif
 #endif
 
 #include <X11/Xlib.h>
@@ -469,7 +471,7 @@ void FontAASettings::enableWidgets()
   excludeTo->setEnabled(excludeRange->isChecked());
   excludeToLabel->setEnabled(excludeRange->isChecked());
   subPixelType->setEnabled(useSubPixel->isChecked());
-#ifdef HAVE_FREETYPE
+#ifdef FT_LCD_FILTER_H
   static int ft_has_subpixel = -1;
   if( ft_has_subpixel == -1 ) {
     FT_Library            ftLibrary;
