@@ -469,7 +469,7 @@
     </widget>
    </item>
    <item row="1" column="1" >
-    <widget class="KHistoryCombo" name="cbCommand" >
+    <widget class="KHistoryComboBox" name="cbCommand" >
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>3</hsizetype>
@@ -531,9 +531,9 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>KHistoryCombo</class>
+   <class>KHistoryComboBox</class>
    <extends></extends>
-   <header>kcombobox.h</header>
+   <header>khistorycombobox.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
