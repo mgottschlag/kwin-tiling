@@ -190,7 +190,7 @@ void LogitechMouse::updateGUI()
 {
     updateCordlessStatus();
 
-    batteryBar->setProgress( batteryLevel() );
+    batteryBar->setValue( batteryLevel() );
 
     if ( isDualChannelCapable() ) {
         if ( 2 == channel() ) {

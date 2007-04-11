@@ -90,8 +90,8 @@
               <number>0</number>
             </property>
             <item>
-              <widget class="Q3ProgressBar" name="batteryBar" >
-                <property name="totalSteps" >
+              <widget class="QProgressBar" name="batteryBar" >
+                <property name="maximum" >
                   <number>7</number>
                 </property>
               </widget>
