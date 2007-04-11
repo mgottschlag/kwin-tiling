@@ -315,6 +315,10 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 		if (pretc != PAM_SUCCESS)
 			goto pam_bail;
 	}
+# ifdef __sun__ /* Only Solaris <= 9, but checking it does not seem worth it. */
+	else if (pam_set_item( pamh, PAM_RHOST, 0 ) != PAM_SUCCESS)
+		goto pam_bail;
+# endif
 # ifdef PAM_FAIL_DELAY
 	pam_set_item( pamh, PAM_FAIL_DELAY, (void *)fail_delay );
 # endif
