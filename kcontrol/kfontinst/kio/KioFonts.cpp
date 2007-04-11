@@ -2027,7 +2027,6 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
     }
     else
     {
-KFI_DBUG << "Wibble" << endl;
         //
         // Can't rename from/to file:/ -> therefore rename can only be from fonts:/System to
         // fonts:/Personal, or vice versa.
