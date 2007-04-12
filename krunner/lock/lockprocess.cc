@@ -854,6 +854,10 @@ void LockProcess::stopHack()
     if (mHackProc.isRunning())
     {
         mHackProc.kill();
+        if (!mHackProc.wait(10))
+        {
+            mHackProc.kill(SIGKILL);
+        }
     }
 }
 
