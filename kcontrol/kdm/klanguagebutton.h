@@ -27,8 +27,6 @@
 #ifndef KLANGBUTTON_H
 #define KLANGBUTTON_H
 
-#include <kdeui_export.h>
-
 #include <QtGui/QWidget>
 
 class QIcon;
@@ -44,7 +42,7 @@ class QAction;
  * Combined version of KTagCombo and KLanguageCombo but using a QPushButton
  * instead.
  */
-class KDEUI_EXPORT KLanguageButton : public QWidget
+class KLanguageButton : public QWidget
 {
   Q_OBJECT
 
