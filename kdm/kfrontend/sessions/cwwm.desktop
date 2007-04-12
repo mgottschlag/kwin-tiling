@@ -5,6 +5,7 @@ Exec=cwwm
 TryExec=cwwm
 Name=CWWM
 Name[eo]=CWFA
+Name[te]=సి డబ్ల్యు డబ్ల్యు ఎం
 Name[x-test]=xxCWWMxx
 Comment=The ChezWam Window Manager, a minimalist window manager based on EvilWM
 Comment[af]=Die ChezWam venster bestuurder. Dis 'n minimalistiese venster bestuurder wat op EvilWM gebaseer is.

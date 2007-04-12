@@ -5,6 +5,7 @@ Exec=flwm
 TryExec=flwm
 Name=FLWM
 Name[eo]=RMFA
+Name[te]=ఎఫ్ ఎల్ డబ్ల్యు ఎం
 Name[x-test]=xxFLWMxx
 Comment=The Fast Light Window Manager, based primarily on WM2
 Comment[af]=Die Vinnige, ligte venster bestuurder, wat op WM2 gebaseer is

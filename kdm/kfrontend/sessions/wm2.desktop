@@ -5,6 +5,7 @@ Exec=wm2
 TryExec=wm2
 Name=WM2
 Name[eo]=Fa2
+Name[te]=డబ్ల్యు ఎం 2
 Name[x-test]=xxWM2xx
 Comment=A small, non-configurable window manager
 Comment[af]='n Klein, nie opstelbare venster bestuurder

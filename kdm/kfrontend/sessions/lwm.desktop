@@ -5,6 +5,7 @@ Exec=lwm
 TryExec=lwm
 Name=LWM
 Name[eo]=MFA
+Name[te]=ఎల్ డబ్ల్యు ఎం
 Name[x-test]=xxLWMxx
 Comment=The Lightweight Window Manager. A non-configurable, bare window manager
 Comment[af]=Die lig gewig venster bestuurder.

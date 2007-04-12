@@ -4,6 +4,7 @@ Type=XSession
 Exec=fvwm
 TryExec=fvwm
 Name=FVWM
+Name[te]=ఎఫ్ వి డబ్ల్యు ఎం
 Name[x-test]=xxFVWMxx
 Comment=A powerful ICCCM-compliant multiple virtual desktop window manager
 Comment[af]='n Kragtige, ICCCM-aanpasbare veelvuldige virtuele werkskermvenster bestuurder.

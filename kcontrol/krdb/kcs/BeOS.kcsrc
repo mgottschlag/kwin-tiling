@@ -7,6 +7,7 @@ selectBackground=168,168,168
 inactiveBackground=237,237,237
 Name=BeOS
 Name[af]=Beos
+Name[te]=బిఓఎస్
 Name[tg]=Системаи омили Be
 Name[x-test]=xxBeOSxx
 contrast=7

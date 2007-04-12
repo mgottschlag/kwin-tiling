@@ -4,6 +4,7 @@ Type=XSession
 Exec=/usr/dt/bin/Xsession
 TryExec=/usr/dt/bin/Xsession
 Name=CDE
+Name[te]=సిడిఈ
 Name[tg]=Муҳити графикии муштарак (CDE)
 Name[x-test]=xxCDExx
 Comment=The Common Desktop Environment, a proprietary industry standard desktop environment

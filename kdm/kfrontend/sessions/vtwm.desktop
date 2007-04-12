@@ -5,6 +5,7 @@ Exec=vtwm
 TryExec=vtwm
 Name=VTWM
 Name[eo]=VTFA
+Name[te]= వి టి డబ్ల్యు ఎం
 Name[x-test]=xxVTWMxx
 Comment=The Virtual Tab Window Manager. TWM enhanced by virtual screens, etc.
 Comment[af]=Die virtuele tab venster bestuurder. TWM wat met virtuele skerms uitgebreik is.

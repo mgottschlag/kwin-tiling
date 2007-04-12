@@ -17,6 +17,7 @@ Name[he]=התקני PCI
 Name[is]=PCI-braut
 Name[ro]=Magistrala PCI
 Name[ru]=Шина PCI
+Name[te]=పి సి ఐ
 Name[uk]=Шина PCI
 Name[x-test]=xxPCIxx
 
@@ -73,6 +74,7 @@ Comment[sr]=PCI информације
 Comment[sr@Latn]=PCI informacije
 Comment[sv]=PCI-information
 Comment[ta]=PCI தகவல்
+Comment[te]=పి సి ఐ సమాచారం
 Comment[tg]=Иттилооти PCI
 Comment[tr]=PCI hakkında bilgi
 Comment[uk]=Інформація щодо шини PCI

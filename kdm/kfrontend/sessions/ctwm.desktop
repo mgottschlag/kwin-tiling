@@ -5,6 +5,7 @@ Exec=ctwm
 TryExec=ctwm
 Name=CTWM
 Name[eo]=TFAC
+Name[te]=సి టి డబ్ల్యు ఎం
 Name[x-test]=xxCTWMxx
 Comment=Claude's Tab Window Manager, TWM enhanced by virtual screens, etc.
 Comment[af]=Claude se Tab venster bestuurder. Dis TWM wat met virtuele skerms verbeter is

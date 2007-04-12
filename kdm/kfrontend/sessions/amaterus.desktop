@@ -4,6 +4,7 @@ Type=XSession
 Exec=amaterus
 TryExec=amaterus
 Name=AMATERUS
+Name[te]=అమాటెరస్
 Name[x-test]=xxAMATERUSxx
 Comment=A GTK+ based window manager with a window grouping feature
 Comment[af]='n GTK+ gebaseerde venster bestuurder met 'n venster groepering funksie

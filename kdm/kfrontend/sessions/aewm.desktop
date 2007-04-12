@@ -5,6 +5,7 @@ Exec=aewm
 TryExec=aewm
 Name=AEWM
 Name[eo]=MFA
+Name[te]=ఎ ఈ డబ్ల్యు ఎం
 Name[x-test]=xxAEWMxx
 Comment=A minimalist window manager
 Comment[af]='n Minimale venster bestuurder

@@ -4,6 +4,7 @@ Type=XSession
 Exec=fvwm95
 TryExec=fvwm95
 Name=FVWM95
+Name[te]=ఎఫ్ వి డబ్ల్యు ఎం 95
 Name[x-test]=xxFVWM95xx
 Comment=A Windows 95 look-alike derivative of FVWM
 Comment[af]='n FVWM venster bestuurder wat soos Windows 95 lyk

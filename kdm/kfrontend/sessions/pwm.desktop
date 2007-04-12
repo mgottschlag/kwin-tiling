@@ -5,6 +5,7 @@ Exec=pwm
 TryExec=pwm
 Name=PWM
 Name[eo]=UnuFA
+Name[te]=పి డబ్ల్యు ఎం
 Name[x-test]=xxPWMxx
 Comment=A lightweight window manager able to attach multiple windows to one frame
 Comment[af]='n Lig gewig venster bestuurder wat veelvuldige vensters aan een raam kan koppel
