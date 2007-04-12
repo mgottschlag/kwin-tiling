@@ -238,7 +238,7 @@ bool CFontEngine::openFont(EType type, QByteArray &in, const char *fileName, int
     itsItalic=FC_SLANT_ROMAN;
     itsFamily=itsFoundry=itsVersion=QString();
 
-    if(in.isEmpty())
+    if(in.size()<=0)
         ok=openFontFt(in, fileName, face);
     else
         switch(type)
@@ -547,7 +547,7 @@ static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
 
 bool CFontEngine::openFontFt(QByteArray &in, const char *fileName, int face)
 {
-    bool status=in.isEmpty()
+    bool status=in.size()<=0
             ? FT_New_Face(itsFt.library, fileName, face, &itsFt.face) ? false : true
             : openFtFace(itsFt.library, in, face, &itsFt.face) ? false : true;
 

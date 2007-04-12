@@ -58,6 +58,10 @@
 #include <kicon.h>
 #include <kmimetype.h>
 #include <kfilemetainfo.h>
+#include <kzip.h>
+#include <ktempdir.h>
+#include <kstandarddirs.h>
+#include <kmessagebox.h>
 #include <fontconfig/fontconfig.h>
 
 // Enable the following to allow printing of non-installed fonts. Doesnt seem to work :-(
@@ -68,7 +72,8 @@ namespace KFI
 
 CFontViewPart::CFontViewPart(QWidget *parent)
              : itsConfig(KGlobal::config()),
-               itsProc(NULL)
+               itsProc(NULL),
+               itsTempDir(NULL)
 {
     CFcEngine::instance()->readConfig(*itsConfig);
     CFcEngine::setBgndCol(QApplication::palette().color(QPalette::Active, QPalette::Base));
@@ -127,7 +132,7 @@ CFontViewPart::CFontViewPart(QWidget *parent)
     mainLayout->addWidget(itsInstallButton, 3, 1);
     connect(itsPreview, SIGNAL(status(bool)), SLOT(previewStatus(bool)));
     connect(itsInstallButton, SIGNAL(clicked()), SLOT(install()));
-    connect(itsFaceSelector, SIGNAL(valueChanged(int)), SLOT(showFace(int)));
+    connect(itsFaceSelector, SIGNAL(valueChanged(int)), itsPreview, SLOT(showFace(int)));
 
     itsChangeTextAction=actionCollection()->addAction("changeText");
     itsChangeTextAction->setIcon(KIcon("text"));
@@ -148,6 +153,8 @@ CFontViewPart::CFontViewPart(QWidget *parent)
 
 CFontViewPart::~CFontViewPart()
 {
+    delete itsTempDir;
+    itsTempDir=NULL;
 }
 
 bool CFontViewPart::openUrl(const KUrl &url)
@@ -183,16 +190,19 @@ bool CFontViewPart::openFile()
 
 void CFontViewPart::timeout()
 {
-    bool          isFonts=KFI_KIO_FONTS_PROTOCOL==url().protocol(),
+    bool          isFonts(KFI_KIO_FONTS_PROTOCOL==url().protocol()),
                   isDisabled(false),
-                  showFs=false;
+                  showFs(false);
     KUrl          displayUrl(url()),
                   fileUrl;
     int           fileIndex(-1);
     QString       name;
-    unsigned long styleInfo=KFI_NO_STYLE_INFO;
+    unsigned long styleInfo(KFI_NO_STYLE_INFO);
 
     itsMetaUrl=url();
+    delete itsTempDir;
+    itsTempDir=NULL;
+
     if(isFonts)
     {
         FcInitReinitialize();
@@ -253,6 +263,58 @@ void CFontViewPart::timeout()
         itsMetaUrl.removeQueryItem(KFI_MIME_QUERY);
         itsMetaUrl.addQueryItem(KFI_MIME_QUERY, mime);
     }
+    else
+    {
+        QString path(url().path());
+
+        // Is this a fonts/package file? If so, extract 1 scalable font...
+        if(Misc::isPackage(path))
+        {
+            KZip zip(path);
+
+            if(zip.open(QIODevice::ReadOnly))
+            {
+                const KArchiveDirectory *zipDir=zip.directory();
+
+                if(zipDir)
+                {
+                    QStringList fonts(zipDir->entries());
+
+                    if(fonts.count())
+                    {
+                        QStringList::ConstIterator it(fonts.begin()),
+                                                   end(fonts.end());
+
+                        for(; it!=end; ++it)
+                        {
+                            const KArchiveEntry *entry=zipDir->entry(*it);
+
+                            if(entry && entry->isFile())
+                            {
+                                delete itsTempDir;
+                                itsTempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
+                                itsTempDir->setAutoRemove(true);
+
+                                ((KArchiveFile *)entry)->copyTo(itsTempDir->name());
+
+                                QString mime(KMimeType::findByPath(itsTempDir->name()+entry->name())->name());
+
+                                if(mime=="application/x-font-ttf" || mime=="application/x-font-otf" ||
+                                   mime=="application/x-font-type1")
+                                {
+                                    setLocalFilePath(itsTempDir->name()+entry->name());
+                                    itsMetaUrl=KUrl::fromPath(localFilePath());
+                                    break;
+                                }
+                                else
+                                    ::unlink(QFile::encodeName(itsTempDir->name()+entry->name()).data());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     itsInstallButton->setEnabled(false);
     if(!isFonts)
@@ -275,7 +337,6 @@ void CFontViewPart::timeout()
     }
 
     itsFaceWidget->setVisible(showFs);
-    getMetaInfo(0);
 }
 
 void CFontViewPart::previewStatus(bool st)
@@ -297,6 +358,11 @@ void CFontViewPart::previewStatus(bool st)
 
     itsChangeTextAction->setEnabled(st);
     itsExtension->enablePrint(st && printable);
+    if(st)
+        getMetaInfo(itsFaceSelector->isVisible() && itsFaceSelector->value()>0
+                                          ? itsFaceSelector->value()-1 : 0);
+    else
+        KMessageBox::error(itsFrame, i18n("Could not read font."));
 }
 
 void CFontViewPart::install()
@@ -377,13 +443,6 @@ void CFontViewPart::displayType(const QList<CFcEngine::TRange> &range)
 {
     itsPreview->setUnicodeRange(range);
     itsChangeTextAction->setEnabled(0==range.count());
-}
-
-void CFontViewPart::showFace(int f)
-{
-    itsPreview->showFace(f);
-    getMetaInfo(itsFaceSelector->isVisible() && itsFaceSelector->value()>0
-                                          ? itsFaceSelector->value()-1 : 0);
 }
 
 void CFontViewPart::statResult(KJob *job)

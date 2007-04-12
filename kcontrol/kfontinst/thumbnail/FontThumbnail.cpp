@@ -67,7 +67,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
     KFI_DBUG << "Create font thumbnail for:" << path << endl;
 
     // Is this a fonts/package file? If so, extract 1 scalable font...
-    if(Misc::checkExt(path, &KFI_FONTS_PACKAGE[1]))
+    if(Misc::isPackage(path))
     {
         KZip zip(path);
 
@@ -90,7 +90,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
 
                         if(entry && entry->isFile())
                         {
-			    delete tempDir;
+                            delete tempDir;
                             tempDir=new KTempDir(KStandardDirs::locateLocal("tmp", KFI_TMP_DIR_PREFIX));
                             tempDir->setAutoRemove(true);
 

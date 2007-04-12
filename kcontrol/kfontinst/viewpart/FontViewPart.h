@@ -38,6 +38,7 @@ class QProcess;
 class QAction;
 class KIntNumInput;
 class KConfig;
+class KTempDir;
 
 namespace KFI
 {
@@ -68,7 +69,6 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void changeText();
     void print();
     void displayType(const QList<CFcEngine::TRange> &range);
-    void showFace(int f);
     void statResult(KJob *job);
 
     private:
@@ -93,6 +93,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     QProcess           *itsProc;
     QString            itsStatName;
     KUrl               itsMetaUrl;
+    KTempDir           *itsTempDir;
 };
 
 class BrowserExtension : public KParts::BrowserExtension
