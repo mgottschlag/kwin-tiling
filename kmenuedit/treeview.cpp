@@ -24,10 +24,10 @@
 #include <QCursor>
 #include <QDataStream>
 #include <QDir>
-#include <q3dragobject.h>
+#include <Qt3Support/Q3ColorDrag>
 #include <QEvent>
 #include <QFileInfo>
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 #include <QPainter>
 #include <QRegExp>
 #include <QStringList>

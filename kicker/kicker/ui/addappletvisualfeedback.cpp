@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QLabel>
 #include <QPainter>
 #include <QTimer>
-#include <q3simplerichtext.h>
+#include <Qt3Support/Q3SimpleRichText>
 #include <QListView>
 
 #include <kdialog.h>

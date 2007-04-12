@@ -20,7 +20,7 @@
 #ifndef _BGDIALOG_H_
 #define _BGDIALOG_H_
 
-#include <q3ptrvector.h>
+#include <Qt3Support/Q3PtrVector>
 #include <QMap>
 
 #include "bgdialog_ui.h"

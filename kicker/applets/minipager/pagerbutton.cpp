@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qdrawutil.h>
+#include <QtGui/qdrawutil.h>
 
 #include <QBitmap>
 #include <QCursor>

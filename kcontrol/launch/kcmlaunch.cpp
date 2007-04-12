@@ -17,7 +17,7 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <q3groupbox.h>
+#include <Qt3Support/Q3GroupBox>
 #include <QLabel>
 #include <QLayout>
 

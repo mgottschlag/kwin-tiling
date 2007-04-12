@@ -36,7 +36,7 @@
 #include <kglobal.h>
 
 #include <QLayout>
-#include <q3listview.h>
+#include <Qt3Support/Q3CheckListItem>
 #include <QPushButton>
 #include <QTabWidget>
 #include <QTimer>

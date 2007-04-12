@@ -20,7 +20,7 @@
 
 #include <QLayout>
 #include <QPushButton>
-#include <q3listview.h>
+#include <Qt3Support/Q3CheckListItem>
 #include <QFile>
 #include <QTextStream>
 //Added by qt3to4:

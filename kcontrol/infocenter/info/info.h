@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTimer>
-#include <q3listview.h>
+#include <Qt3Support/Q3CheckListItem>
 #include <QFile>
 #include <QEvent>
 

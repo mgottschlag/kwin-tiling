@@ -54,8 +54,8 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <q3grid.h>
-#include <q3groupbox.h>
+#include <Qt3Support/Q3Grid>
+#include <Qt3Support/Q3GroupBox>
 #include <QLabel>
 #include <QSlider>
 #include <QSpinBox>

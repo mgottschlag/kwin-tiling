@@ -23,7 +23,7 @@
 
 #include <QCheckBox>
 #include <QRadioButton>
-#include <q3buttongroup.h>
+#include <Qt3Support/Q3ButtonGroup>
 #include <QWidget>
 #include <kvbox.h>
 #include <khbox.h>

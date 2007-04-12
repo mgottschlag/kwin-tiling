@@ -13,7 +13,7 @@
 
 #include <assert.h>
 #include <QString>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 
 #include <kdebug.h>
 

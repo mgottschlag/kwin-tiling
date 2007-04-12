@@ -33,7 +33,6 @@
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include "JobRunner.h"
-#include "Misc.h"
 #include "CreateParent.h"
 
 namespace KFI

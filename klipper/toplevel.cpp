@@ -27,8 +27,8 @@
 #include <QFile>
 #include <QPainter>
 #include <QToolTip>
-#include <qmime.h>
-#include <q3dragobject.h>
+#include <QtGui/QMacMime>
+#include <Qt3Support/Q3ColorDrag>
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QX11Info>
@@ -50,7 +50,7 @@
 #include <kwm.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
-#include <qdbusconnection.h>
+#include <QtDBus/QDBusConnection>
 #include <kiconloader.h>
 #include <khelpmenu.h>
 #include <kstandardguiitem.h>

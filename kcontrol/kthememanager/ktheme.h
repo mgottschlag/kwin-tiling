@@ -19,7 +19,7 @@
 #ifndef KTHEME_H
 #define KTHEME_H
 
-#include <qdom.h>
+#include <Qt/qdom.h>
 #include <QPointer>
 #include <QString>
 #include <QStringList>

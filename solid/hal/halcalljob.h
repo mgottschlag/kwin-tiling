@@ -21,9 +21,9 @@
 #define HALCALLJOB_H
 
 #include <kjob.h>
-#include <qdbusconnection.h>
-#include <qdbusmessage.h>
-#include <qdbuserror.h>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusError>
 #include <QList>
 #include <QVariant>
 

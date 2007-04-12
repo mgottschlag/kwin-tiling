@@ -24,7 +24,7 @@
 #include <QApplication>
 #include <QDialog>
 #include <QAbstractEventDispatcher>
-#include <qprogressbar.h>
+#include <QtGui/QProgressBar>
 #include <QtDBus/QtDBus>
 
 #define COUNTDOWN 30

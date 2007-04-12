@@ -15,8 +15,8 @@
 
 #include <QObject>
 #include <QString>
-#include <q3ptrlist.h>
-#include <qwindowdefs.h>
+#include <Qt3Support/Q3PtrList>
+#include <QtGui/QWidgetList>
 
 #include <netwm_def.h>
 

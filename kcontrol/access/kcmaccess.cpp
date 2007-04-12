@@ -12,14 +12,14 @@
 
 #include <QTabWidget>
 #include <QLayout>
-#include <q3groupbox.h>
+#include <Qt3Support/Q3GroupBox>
 #include <QLabel>
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QRadioButton>
 #include <QSlider>
 #include <QSpinBox>
-#include <qx11info_x11.h>
+#include <QtGui/QX11Info>
 #include <QtDBus/QtDBus>
 
 //Added by qt3to4:

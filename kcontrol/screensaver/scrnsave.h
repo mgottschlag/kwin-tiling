@@ -21,7 +21,6 @@
 #include "saverconfig.h"
 #include "testwin.h"
 #include "advanceddialog.h"
-#include "kssmonitor.h"
 #include "saverlist.h"
 
 class QTimer;

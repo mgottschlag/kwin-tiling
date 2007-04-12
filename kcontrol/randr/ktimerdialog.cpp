@@ -25,7 +25,7 @@
 #include <QPixmap>
 #include <QTimer>
 
-#include <qprogressbar.h>
+#include <QtGui/QProgressBar>
 
 #include <kwm.h>
 #include <kiconloader.h>

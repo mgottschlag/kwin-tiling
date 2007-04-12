@@ -13,7 +13,7 @@
 #define __USB_DB_H__
 
 
-#include <q3dict.h>
+#include <Qt3Support/Q3Dict>
 
 
 class USBDB

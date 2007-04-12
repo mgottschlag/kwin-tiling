@@ -16,10 +16,9 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kapplication.h>
 #include <kworkspace.h>
 #include <QTimer>
-#include <q3cstring.h>
+#include <Qt3Support/Q3CString>
 #include <QTime>
 #include <QMap>
-#include <kworkspace.h>
 
 #include "server2.h"
 

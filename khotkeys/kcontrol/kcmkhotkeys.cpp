@@ -27,7 +27,6 @@
 #include <klocale.h>
 #include <kapplication.h>
 #include <kconfig.h>
-#include <kapplication.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kglobal.h>

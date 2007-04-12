@@ -18,7 +18,7 @@
 #include <assert.h>
 
 #include <QTimer>
-#include <q3scrollview.h>
+#include <Qt3Support/Q3ScrollView>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QVector>

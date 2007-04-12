@@ -16,9 +16,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <q3buttongroup.h>
+#include <Qt3Support/Q3ButtonGroup>
 #include <QCheckBox>
-#include <qdesktopwidget.h>
+#include <QtGui/QDesktopWidget>
 #include <QLabel>
 #include <QLayout>
 #include <QRadioButton>

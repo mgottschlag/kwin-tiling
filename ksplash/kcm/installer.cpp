@@ -15,7 +15,7 @@
 #include <QDir>
 #include <QLabel>
 #include <QLayout>
-#include <q3textedit.h>
+#include <Qt3Support/Q3TextEdit>
 #include <QPixmap>
 #include <QFrame>
 #include <QHBoxLayout>

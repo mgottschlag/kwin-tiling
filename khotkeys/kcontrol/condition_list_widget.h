@@ -11,8 +11,8 @@
 #ifndef _CONDITIONS_LIST_WIDGET_H_
 #define _CONDITIONS_LIST_WIDGET_H_
 
-#include <q3listview.h>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3CheckListItem>
+#include <Qt3Support/Q3PtrList>
 
 #include <kdialog.h>
 

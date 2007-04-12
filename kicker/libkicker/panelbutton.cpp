@@ -41,7 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QStyleOption>
 #include <QToolTip>
 #include <QApplication>
-#include <qcursor.h>
+#include <QtGui/QCursor>
 
 
 #include <kconfig.h>

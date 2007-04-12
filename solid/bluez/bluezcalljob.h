@@ -23,8 +23,8 @@
 #define BLUEZCALLJOB_H
 
 #include <kjob.h>
-#include <qdbusconnection.h>
-#include <qdbusmessage.h>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusMessage>
 #include <QList>
 #include <QVariant>
 

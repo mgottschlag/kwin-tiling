@@ -17,7 +17,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QCheckBox>
-#include <q3groupbox.h>
+#include <Qt3Support/Q3GroupBox>
 
 #include <kdebug.h>
 

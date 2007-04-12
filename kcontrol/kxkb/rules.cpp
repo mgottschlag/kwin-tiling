@@ -1,4 +1,4 @@
-#include <qwindowdefs.h>
+#include <QtGui/QWidgetList>
 #include <QX11Info>
 #include <QRegExp>
 #include <QStringList>

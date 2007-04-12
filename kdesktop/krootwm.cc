@@ -70,7 +70,6 @@
 #include <QDesktopWidget>
 #include <Q3IconView>
 #include <kauthorized.h>
-#include <ktoolinvocation.h>
 
 KRootWm * KRootWm::s_rootWm = 0;
 

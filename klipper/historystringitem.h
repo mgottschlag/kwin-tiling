@@ -21,7 +21,7 @@
 #define _HISTORYSTRINGITEM_H_
 
 #include <QString>
-#include <q3dragobject.h>
+#include <Qt3Support/Q3ColorDrag>
 
 #include "historyitem.h"
 

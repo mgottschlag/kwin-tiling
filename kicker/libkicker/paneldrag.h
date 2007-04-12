@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef _paneldrag_h_
 #define _paneldrag_h_
 
-#include <q3dragobject.h>
+#include <Qt3Support/Q3ColorDrag>
 
 #include <kdemacros.h>
 

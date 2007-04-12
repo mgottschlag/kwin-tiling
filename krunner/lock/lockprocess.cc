@@ -37,7 +37,7 @@
 #include <kdesktopfile.h>
 #include <kservicetypetrader.h>
 
-#include <qframe.h>
+#include <QtGui/QFrame>
 #include <QLabel>
 #include <QLayout>
 #include <QCursor>

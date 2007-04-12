@@ -33,7 +33,6 @@
 #include <kmenu.h>
 #include <kstandardaction.h>
 #include <kstandardguiitem.h>
-#include <kactioncollection.h>
 #include "krandrtray.h"
 #include "krandrpassivepopup.h"
 #include "krandrtray.moc"

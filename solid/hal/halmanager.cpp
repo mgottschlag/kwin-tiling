@@ -17,9 +17,9 @@
 
 */
 
-#include <qdbusconnection.h>
-#include <qdbusinterface.h>
-#include <qdbusreply.h>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
 
 #include <kdebug.h>
 

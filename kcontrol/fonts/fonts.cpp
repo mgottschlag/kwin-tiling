@@ -14,7 +14,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QPushButton>
-#include <qsettings.h>
+#include <QtCore/QSettings>
 #include <QToolTip>
 
 //Added by qt3to4:

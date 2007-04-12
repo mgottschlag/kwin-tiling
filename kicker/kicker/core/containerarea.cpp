@@ -60,7 +60,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kservice.h>
 #include <kmenu.h>
 #include <kauthorized.h>
-#include <kstandarddirs.h>
 
 #include "addapplet.h"
 #include "browser_dlg.h"

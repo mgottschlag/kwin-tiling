@@ -14,7 +14,7 @@
 
 
 #include <QString>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 
 #ifdef Q_OS_FREEBSD
 #include <dev/usb/usb.h>

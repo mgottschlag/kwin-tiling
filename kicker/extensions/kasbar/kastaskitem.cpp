@@ -61,7 +61,7 @@
 #include <QPainter>
 #include <QRegExp>
 #include <QTabWidget>
-#include <q3textview.h>
+#include <Qt3Support/Q3TextView>
 #include <QTimer>
 #include <QPixmap>
 #include <QVBoxLayout>

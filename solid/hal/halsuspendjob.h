@@ -21,8 +21,8 @@
 #define HALSUSPENDJOB_H
 
 #include <kjob.h>
-#include <qdbusinterface.h>
-#include <qdbusmessage.h>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMessage>
 
 #include "halpower.h"
 

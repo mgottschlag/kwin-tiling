@@ -49,7 +49,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kpanelmenu.h>
 #include <k3process.h>
 #include <krun.h>
-#include <kdesktopfile.h>
 
 #include <kauthorized.h>
 #include <kworkspace.h>

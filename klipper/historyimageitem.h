@@ -23,7 +23,7 @@
 
 #include "historyitem.h"
 #include <QPixmap>
-#include <q3dragobject.h>
+#include <Qt3Support/Q3ColorDrag>
 
 /**
  * A image entry in the clipboard history.

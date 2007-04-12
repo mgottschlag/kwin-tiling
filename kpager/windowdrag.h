@@ -24,7 +24,7 @@
 #ifndef WINDOWDRAG_H
 #define WINDOWDRAG_H
 
-#include <q3dragobject.h>
+#include <Qt3Support/Q3ColorDrag>
 //Added by qt3to4:
 #include <QDragMoveEvent>
 #include <QDropEvent>

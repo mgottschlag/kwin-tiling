@@ -21,7 +21,7 @@
 
 #include <k3multipledrag.h>
 #include <k3urldrag.h>
-#include <q3cstring.h>
+#include <Qt3Support/Q3CString>
 
 HistoryURLItem::HistoryURLItem( const KUrl::List &_urls, QMap<QString, QString> _metaData, bool _cut )
     : urls( _urls ), metaData( _metaData ), cut( _cut )

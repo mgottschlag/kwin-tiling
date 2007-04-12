@@ -22,7 +22,7 @@
 
 #include <QCheckBox>
 #include <QEvent>
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 #include <QRadioButton>
 
 #include <kpagedialog.h>

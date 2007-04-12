@@ -20,7 +20,7 @@
 #include <QMenu>
 #include <QLayout>
 #include <QLabel>
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 #include <QVBoxLayout>
 
 #include <kdebug.h>

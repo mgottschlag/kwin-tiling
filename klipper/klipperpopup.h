@@ -21,7 +21,7 @@
 #define _KLIPPERPOPUP_H_
 
 #include <kmenu.h>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 #include <QString>
 //Added by qt3to4:
 #include <QKeyEvent>

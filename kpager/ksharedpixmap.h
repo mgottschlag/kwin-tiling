@@ -12,7 +12,7 @@
 #ifndef KSHAREDPIXMAP_H
 #define KSHAREDPIXMAP_H
 
-#include <qwidget.h>
+#include <QtGui/QWidget>
 
 class QPixmap;
 class QString;

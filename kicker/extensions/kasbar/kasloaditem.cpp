@@ -9,7 +9,7 @@
 #include <QPainter>
 #include <QBitmap>
 #include <QDateTime>
-#include <qdrawutil.h>
+#include <QtGui/qdrawutil.h>
 #include <QTimer>
 //Added by qt3to4:
 #include <QMouseEvent>

@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __MINIPAGERBUTTON_H
 #define __MINIPAGERBUTTON_H
 
-#include <q3button.h>
+#include <Qt3Support/Q3Button>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QDragEnterEvent>

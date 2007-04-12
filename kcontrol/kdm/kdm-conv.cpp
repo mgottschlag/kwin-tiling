@@ -34,7 +34,7 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 
 extern KConfig *config;
 

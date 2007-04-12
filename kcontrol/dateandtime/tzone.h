@@ -22,7 +22,7 @@
 #ifndef tzone_included
 #define tzone_included
 
-#include <q3groupbox.h>
+#include <Qt3Support/Q3GroupBox>
 //Added by qt3to4:
 #include <QLabel>
 #include <ktimezones.h>

@@ -13,7 +13,7 @@
 
 
 #include <QString>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 #include <QTimer>
 
 #include <kservice.h>

@@ -49,9 +49,9 @@
 #include <fstab.h>
 #include <string.h>
 
-#include <q3dict.h>
+#include <Qt3Support/Q3Dict>
 #include <QFile>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 #include <QString>
 #include <QTextStream>
 

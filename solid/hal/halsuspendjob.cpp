@@ -19,7 +19,7 @@
 
 #include "halsuspendjob.h"
 
-#include <qdbusmessage.h>
+#include <QtDBus/QDBusMessage>
 #include <QTimer>
 
 HalSuspendJob::HalSuspendJob( QDBusInterface &powermanagement,

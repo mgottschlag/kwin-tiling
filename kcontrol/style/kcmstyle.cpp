@@ -30,17 +30,17 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <kcombobox.h>
-#include <q3groupbox.h>
+#include <Qt3Support/Q3GroupBox>
 #include <QLabel>
 #include <QLayout>
 #include <QSlider>
-#include <qstylefactory.h>
+#include <QtGui/QStyleFactory>
 #include <QTabWidget>
 
 #include <QFile>
-#include <qsettings.h>
+#include <QtCore/QSettings>
 #include <QObject>
-#include <qpixmapcache.h>
+#include <QtGui/QPixmapCache>
 
 #include <QPushButton>
 #ifdef Q_WS_X11

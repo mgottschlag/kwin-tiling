@@ -48,7 +48,6 @@
 #include <kde_file.h>
 #include <ktemporaryfile.h>
 #include <kdesu/su.h>
-#include <k3process.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kcodecs.h>

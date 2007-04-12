@@ -23,7 +23,7 @@
 #include <sys/types.h>
 
 #include <QComboBox>
-#include <qgroupbox.h>
+#include <QtGui/QGroupBox>
 #include <QPushButton>
 #include <QPainter>
 #include <QLayout>

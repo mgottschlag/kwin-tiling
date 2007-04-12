@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "panelmenuiteminfo.h"
 #include "removeextension_mnu.h"
 #include "removeextension_mnu.moc"
-#include <q3tl.h>
+#include <Qt3Support/q3tl.h>
 #include <QList>
 #include <QMenu>
 

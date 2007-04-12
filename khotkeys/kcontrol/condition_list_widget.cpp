@@ -16,7 +16,7 @@
 
 #include <assert.h>
 #include <QPushButton>
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 #include <QLineEdit>
 #include <QMenu>
 

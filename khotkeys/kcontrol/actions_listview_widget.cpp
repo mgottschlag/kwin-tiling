@@ -14,11 +14,11 @@
 
 #include "actions_listview_widget.h"
 
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 
 #include <klocale.h>
 #include <kdebug.h>
-#include <q3dragobject.h>
+#include <Qt3Support/Q3ColorDrag>
 
 #include <khlistview.h>
 #include <actions.h>

@@ -8,9 +8,9 @@
  
 ****************************************************************************/
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
 #include <klineedit.h>
 #include <kstandarddirs.h>
 

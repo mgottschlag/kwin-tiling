@@ -8,12 +8,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <q3groupbox.h>
-#include <q3header.h>
+#include <Qt3Support/Q3GroupBox>
+#include <Qt3Support/Q3Header>
 #include <QLayout>
-#include <q3listview.h>
+#include <Qt3Support/Q3CheckListItem>
 #include <QSplitter>
-#include <qtextedit.h>
+#include <QtGui/QTextEdit>
 #include <QTimer>
 //Added by qt3to4:
 #include <QVBoxLayout>

@@ -17,7 +17,7 @@
 
 #include <QQueue>
 #include <QMap>
-#include <qwidget.h>
+#include <QtGui/QWidget>
 
 #include <kdebug.h>
 

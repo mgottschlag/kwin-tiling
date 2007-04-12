@@ -32,7 +32,7 @@
 #include <QtDBus/QtDBus>
 
 #include <QCheckBox>
-#include <qdesktopwidget.h>
+#include <QtGui/QDesktopWidget>
 #include <QLayout>
 #include <QLabel>
 #include <QComboBox>

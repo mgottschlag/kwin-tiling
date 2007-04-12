@@ -19,8 +19,8 @@
  ***************************************************************************/
 
 #include "sound.h"
-#include <qfile.h>
-#include <qdatastream.h>
+#include <QtCore/QFile>
+#include <QtCore/QDataStream>
 #include <kdebug.h>
 
 

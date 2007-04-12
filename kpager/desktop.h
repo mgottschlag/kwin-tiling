@@ -26,7 +26,7 @@
 #define __DESKTOP_H
 
 #include <QWidget>
-#include <q3intdict.h>
+#include <Qt3Support/Q3IntDict>
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QMouseEvent>

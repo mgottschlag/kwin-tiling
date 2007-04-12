@@ -6,13 +6,13 @@
 //
 
 #include <QEvent>
-#include <qdrawutil.h>
+#include <QtGui/qdrawutil.h>
 #include <QPainter>
-#include <qscrollbar.h>
+#include <QtGui/QScrollBar>
 #include <QBitmap>
 #include <QToolTip>
 #include <QStyle>
-#include <qstyleoption.h>
+#include <QtGui/QStyleHintReturn>
 #include <QMenu>
 #include <QDragEnterEvent>
 

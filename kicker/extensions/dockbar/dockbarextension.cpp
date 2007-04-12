@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kconfig.h>
 #include <k3process.h>
 #include <kshell.h>
-#include <kwm.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kapplication.h>

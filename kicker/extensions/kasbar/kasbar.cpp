@@ -56,7 +56,7 @@
 #include <QBitmap>
 #include <QCursor>
 #include <QPainter>
-#include <q3memarray.h>
+#include <Qt3Support/Q3MemArray>
 #include <QTimer>
 //Added by qt3to4:
 #include <QPixmap>

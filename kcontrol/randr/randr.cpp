@@ -27,7 +27,7 @@
 #include <kglobal.h>
 #include <kapplication.h>
 #include <kiconloader.h>
-#include <qlabel.h>
+#include <QtGui/QLabel>
 #include <QDesktopWidget>
 #include "ktimerdialog.h"
 

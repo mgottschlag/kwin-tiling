@@ -56,7 +56,6 @@
 #include <kauthorized.h>
 #include <krun.h>
 #include <kwm.h>
-#include <kglobalsettings.h>
 #include <kmenu.h>
 #include <kapplication.h>
 #include <QX11Info>

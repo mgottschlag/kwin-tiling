@@ -8,8 +8,8 @@
  
 ****************************************************************************/
 
-#include <qcolor.h>
-#include <qevent.h>
+#include <QtGui/QColor>
+#include <QtGui/QActionEvent>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

@@ -61,7 +61,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "extensionop_mnu.h"
 #include "extensionSettings.h"
 #include "hidebutton.h"
-#include "kicker.h"
 #include "kickerSettings.h"
 #include "kickertip.h"
 #include "pluginmanager.h"

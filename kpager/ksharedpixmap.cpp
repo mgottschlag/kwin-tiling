@@ -13,12 +13,12 @@
  */
 #include "config.h"
 
-#include <qrect.h>
-#include <qsize.h>
-#include <qstring.h>
-#include <qpixmap.h>
-#include <qwindowdefs.h>
-#include <qwidget.h>
+#include <QtCore/QRect>
+#include <QtCore/QSize>
+#include <QtCore/QCharRef>
+#include <QtGui/QPixmap>
+#include <QtGui/QWidgetList>
+#include <QtGui/QWidget>
 
 #include "ksharedpixmap.h"
 

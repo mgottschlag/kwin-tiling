@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QTimer>
 #include <QToolTip>
-#include <q3dragobject.h>
+#include <Qt3Support/Q3ColorDrag>
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>

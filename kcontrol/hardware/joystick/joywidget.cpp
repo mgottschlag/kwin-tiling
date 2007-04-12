@@ -23,7 +23,7 @@
 #include "poswidget.h"
 #include "caldialog.h"
 
-#include <qtablewidget.h>
+#include <QtGui/QTableWidget>
 #include <QLabel>
 #include <QComboBox>
 #include <QCheckBox>

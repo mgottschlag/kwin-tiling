@@ -29,7 +29,6 @@
 #include <kglobalsettings.h>
 #include <kwm.h>
 #include <kapplication.h>
-#include <kglobalsettings.h>
 #include <kdebug.h>
 
 #include "klipperpopup.h"

@@ -27,7 +27,7 @@
 	be copied to kde/applnk/Settings/Information !!
 */
 
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 #include <klocale.h>
 #include <QLayout>
 //Added by qt3to4:

@@ -15,7 +15,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QImage>
-#include <q3ptrvector.h>
+#include <Qt3Support/Q3PtrVector>
 #include <ksharedconfig.h>
 
 #include "bgsettings.h"

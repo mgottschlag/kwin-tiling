@@ -20,7 +20,7 @@
 #include <QPainter>
 #include <QSlider>
 #include <QSplitter>
-#include <q3groupbox.h>
+#include <Qt3Support/Q3GroupBox>
 #include <Q3PtrList>
 
 #include <kcolorbutton.h>

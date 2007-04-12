@@ -6,7 +6,7 @@
 
 #include <QLayout>
 #include <QLabel>
-#include <qdesktopwidget.h>
+#include <QtGui/QDesktopWidget>
 
 #include <kdialog.h>
 #include <kmessagebox.h>

@@ -20,7 +20,7 @@
 
 #include <QToolTip>
 #include <QTextDocument>
-#include <q3simplerichtext.h>
+#include <Qt3Support/Q3SimpleRichText>
 //Added by qt3to4:
 #include <QLabel>
 

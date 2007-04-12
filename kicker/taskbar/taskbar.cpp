@@ -27,11 +27,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QApplication>
 #include <QBitmap>
-#include <qdesktopwidget.h>
+#include <QtGui/QDesktopWidget>
 #include <QLayout>
 #include <QPainter>
 #include <QStringList>
-#include <q3tl.h>
+#include <Qt3Support/q3tl.h>
 #include <QWheelEvent>
 #include <QPixmap>
 #include <QResizeEvent>

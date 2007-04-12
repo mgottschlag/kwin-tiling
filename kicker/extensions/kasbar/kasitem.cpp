@@ -53,7 +53,7 @@
 */
 #include <QCursor>
 #include <QPainter>
-#include <qdrawutil.h>
+#include <QtGui/qdrawutil.h>
 #include <QRegExp>
 #include <QTimer>
 #include <QApplication>

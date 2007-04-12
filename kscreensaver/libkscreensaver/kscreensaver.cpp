@@ -20,7 +20,7 @@
 
 #include <QPainter>
 #include <QTimer>
-#include <qx11info_x11.h>
+#include <QtGui/QX11Info>
 #include <QApplication>
 #include <krandom.h>
 #include "kscreensaver.h"

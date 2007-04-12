@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QLineEdit>
 #include <QPalette>
 #include <QTimer>
-#include <q3tl.h>
+#include <Qt3Support/q3tl.h>
 
 #include <QMimeData>
 #include <QMouseEvent>

@@ -28,7 +28,7 @@
 #include <QColor>
 #include <kdebug.h>
 #include <stdlib.h>
-#include <qsessionmanager.h>
+#include <QtGui/QSessionManager>
 
 #include "kpager.h"
 

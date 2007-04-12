@@ -23,8 +23,8 @@
 #ifndef BGADVANCED_H
 #define BGADVANCED_H
 
-#include <q3dict.h>
-#include <q3listview.h>
+#include <Qt3Support/Q3Dict>
+#include <Qt3Support/Q3CheckListItem>
 #include <QStringList>
 
 #include <kdialog.h>

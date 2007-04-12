@@ -17,8 +17,8 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#include <qmime.h>
-#include <q3dragobject.h>
+#include <QtGui/QMacMime>
+#include <Qt3Support/Q3ColorDrag>
 #include <QMap>
 #include <QString>
 #include <QPixmap>

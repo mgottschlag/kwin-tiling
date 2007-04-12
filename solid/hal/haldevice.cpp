@@ -18,11 +18,11 @@
 */
 
 #include <kdebug.h>
-#include <qdbusconnection.h>
-#include <qdbusinterface.h>
-#include <qdbusreply.h>
-#include <qdbusargument.h>
-#include <qdbusmetatype.h>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusArgument>
+#include <QtDBus/QDBusMetaType>
 
 #include "haldevice.h"
 #include "capability.h"

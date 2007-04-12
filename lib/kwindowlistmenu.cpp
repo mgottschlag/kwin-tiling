@@ -22,7 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qglobal.h>
+#include <QtCore/QBool>
 
 #ifdef Q_WS_X11
 

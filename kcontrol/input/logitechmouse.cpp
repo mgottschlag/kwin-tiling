@@ -26,7 +26,7 @@
 #include <QButtonGroup>
 #include <QWidget>
 #include <QLayout>
-#include <qprogressbar.h>
+#include <QtGui/QProgressBar>
 #include <QTimer>
 
 #include <kdebug.h>

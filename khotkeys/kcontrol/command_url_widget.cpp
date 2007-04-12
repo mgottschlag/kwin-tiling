@@ -18,7 +18,7 @@
 #include <QLineEdit>
 #include <klineedit.h>
 #include <QCheckBox>
-#include <q3groupbox.h>
+#include <Qt3Support/Q3GroupBox>
 #include <kurlrequester.h>
 
 #include <actions.h>

@@ -22,7 +22,7 @@
 #define _HISTORY_H_
 
 #include <QObject>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 #include "historyitem.h"
 
 class KlipperPopup;

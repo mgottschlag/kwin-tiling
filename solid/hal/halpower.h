@@ -20,8 +20,8 @@
 #ifndef HALPOWER_H
 #define HALPOWER_H
 
-#include <qdbusconnection.h>
-#include <qdbusinterface.h>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusInterface>
 
 #include <kdemacros.h>
 

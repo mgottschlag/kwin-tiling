@@ -8,8 +8,8 @@
  
 ****************************************************************************/
 
-#include <qcolor.h>
-#include <qevent.h>
+#include <QtGui/QColor>
+#include <QtGui/QActionEvent>
 
 #include "voicerecorder.h"
 #include "soundrecorder.h"
@@ -20,8 +20,8 @@
 #include <klineedit.h>
 #include <klocale.h>
 #include <ktemporaryfile.h>
-#include <qlabel.h>
-#include <qpainter.h>
+#include <QtGui/QLabel>
+#include <QtGui/QPainter>
 #include <kmessagebox.h>
 #include <klibloader.h>
 #include <kstandarddirs.h>

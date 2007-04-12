@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QPixmap>
 #include <QStyle>
 #include <QToolTip>
-#include <q3tl.h>
+#include <Qt3Support/q3tl.h>
 #include <QStyleOption>
 #include <QDragLeaveEvent>
 #include <QPaintEvent>

@@ -34,7 +34,7 @@
 #include <QButtonGroup>
 #include <QDialog>
 #include <QLabel>
-#include <qlcdnumber.h>
+#include <QtGui/QLCDNumber>
 #include <QPushButton>
 #include <QRadioButton>
 

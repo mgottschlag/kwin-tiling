@@ -33,14 +33,14 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QMessageBox>
-#include <q3simplerichtext.h>
+#include <Qt3Support/Q3SimpleRichText>
 #include <QLabel>
 #include <QStringList>
 #include <QFontMetrics>
 #include <QStyle>
 #include <QApplication>
-#include <q3listview.h>
-#include <q3header.h>
+#include <Qt3Support/Q3CheckListItem>
+#include <Qt3Support/Q3Header>
 #include <QCheckBox>
 //Added by qt3to4:
 #include <QGridLayout>

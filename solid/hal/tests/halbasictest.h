@@ -20,9 +20,9 @@
 #ifndef HALBASICTEST_H
 #define HALBASICTEST_H
 
-#include <qobject.h>
-#include <qmap.h>
-#include <qstring.h>
+#include <QtCore/QObject>
+#include <QtCore/QMap>
+#include <QtCore/QCharRef>
 
 #include <solid/ifaces/device.h>
 

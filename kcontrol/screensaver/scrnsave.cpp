@@ -19,12 +19,12 @@
 
 #include <kservicetypetrader.h>
 #include <kstandarddirs.h>
-#include <q3buttongroup.h>
+#include <Qt3Support/Q3ButtonGroup>
 #include <QCheckBox>
-#include <q3header.h>
+#include <Qt3Support/Q3Header>
 #include <QLabel>
 #include <QLayout>
-#include <q3listview.h>
+#include <Qt3Support/Q3CheckListItem>
 #include <QPushButton>
 #include <QSlider>
 #include <QTimer>
@@ -45,13 +45,11 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <knuminput.h>
 #include <k3process.h>
 #include <kservicegroup.h>
-#include <kstandarddirs.h>
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>

@@ -57,7 +57,7 @@
 #define KASPOPUP_H
 
 #include <QPointer>
-#include <q3hbox.h>
+#include <Qt3Support/Q3HBox>
 #include <QPixmap>
 
 #include "kasitem.h"

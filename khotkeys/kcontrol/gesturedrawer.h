@@ -12,7 +12,7 @@
 #ifndef GESTURE_DRAWER_H
 #define GESTURE_DRAWER_H
 
-#include <qframe.h>
+#include <QtGui/QFrame>
 #include <QString>
 #include <QEvent>
 #include <QPoint>

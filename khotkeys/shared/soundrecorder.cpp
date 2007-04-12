@@ -24,7 +24,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <qtimer.h>
+#include <QtCore/QTimer>
 #include <klibloader.h>
 
 #include "khotkeysglobal.h"

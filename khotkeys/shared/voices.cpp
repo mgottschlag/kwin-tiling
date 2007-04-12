@@ -26,7 +26,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kxerrorhandler.h>
-#include <qtimer.h>
+#include <QtCore/QTimer>
 
 
 #include <X11/Xlib.h>

@@ -11,9 +11,9 @@
 #include "voice_settings_tab.h"
 
 #include <klocale.h>
-#include <qcombobox.h>
+#include <QtGui/QComboBox>
 #include <knuminput.h>
-#include <qcheckbox.h>
+#include <QtGui/QCheckBox>
 #include <kkeysequencewidget.h>
 
 #include "kcmkhotkeys.h"

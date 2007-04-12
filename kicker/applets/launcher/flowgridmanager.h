@@ -7,7 +7,7 @@
 #ifndef __const_space_grid_h__
 #define __const_space_grid_h__
 
-#include <qnamespace.h>
+#include <QtCore/QCOORD>
 #include <QPoint>
 #include <QSize>
 

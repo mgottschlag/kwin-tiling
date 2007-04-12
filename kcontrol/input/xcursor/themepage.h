@@ -19,7 +19,7 @@
 #ifndef __THEMEPAGE_H
 #define __THEMEPAGE_H
 
-#include <q3dict.h>
+#include <Qt3Support/Q3Dict>
 
 
 class K3ListView;

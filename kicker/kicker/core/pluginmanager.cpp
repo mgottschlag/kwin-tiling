@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QFile>
 #include <QTimer>
-#include <q3tl.h>
+#include <Qt3Support/q3tl.h>
 //Added by qt3to4:
 #include <QMenu>
 
@@ -36,7 +36,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kpanelapplet.h>
 #include <kpanelextension.h>
 #include <kstandarddirs.h>
-#include <kstaticdeleter.h>
 
 #include "appletinfo.h"
 #include "container_applet.h"

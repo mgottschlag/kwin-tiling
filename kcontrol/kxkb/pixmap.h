@@ -2,9 +2,9 @@
 #define __PIXMAP_H__
 
 
-#include <qpixmap.h>
-#include <qhash.h>
-#include <qstring.h>
+#include <QtGui/QPixmap>
+#include <QtCore/QHash>
+#include <QtCore/QCharRef>
 
 
 class LayoutIcon {

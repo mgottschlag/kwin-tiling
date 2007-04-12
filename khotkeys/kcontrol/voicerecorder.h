@@ -11,7 +11,7 @@
 #ifndef VOICE_RECORDER_H
 #define VOICE_RECORDER_H
 
-#include <qframe.h>
+#include <QtGui/QFrame>
 #include "voice_input_widget_ui.h"
 
 

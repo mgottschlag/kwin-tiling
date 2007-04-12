@@ -11,7 +11,7 @@
 #ifndef _TRIGGERS_H_
 #define _TRIGGERS_H_
 
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 #include <QTimer>
 #include <QMap>
 #include <kdemacros.h>

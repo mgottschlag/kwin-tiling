@@ -20,8 +20,8 @@
 #ifndef URLGRABBER_H
 #define URLGRABBER_H
 
-#include <q3ptrlist.h>
-#include <q3intdict.h>
+#include <Qt3Support/Q3PtrList>
+#include <Qt3Support/Q3IntDict>
 #include <QRegExp>
 #include <QString>
 #include <QStringList>

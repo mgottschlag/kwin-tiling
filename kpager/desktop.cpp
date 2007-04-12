@@ -36,7 +36,7 @@
 #include <QtDBus/QtDBus>
 #include <QPixmap>
 #include <QPainter>
-#include <qdrawutil.h>
+#include <QtGui/qdrawutil.h>
 #include <QPoint>
 //Added by qt3to4:
 #include <QPaintEvent>

@@ -38,7 +38,7 @@
 #include <kcrash.h>
 #include <kaboutdata.h>
 
-#include <qx11info_x11.h>
+#include <QtGui/QX11Info>
 
 static const KCmdLineOptions options[] =
 {

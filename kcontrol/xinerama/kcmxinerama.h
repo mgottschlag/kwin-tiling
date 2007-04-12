@@ -22,7 +22,7 @@
 #define _KCM_XINERAMA_H
 
 #include <kcmodule.h>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 #include <QTimer>
 
 #include "xineramawidget.h"

@@ -12,7 +12,7 @@
 #ifndef _KCMUSB_H
 #define _KCMUSB_H
 
-#include <q3intdict.h>
+#include <Qt3Support/Q3IntDict>
 
 #include <kcmodule.h>
 

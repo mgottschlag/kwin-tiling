@@ -6,7 +6,7 @@
 
 #include <QHash>
 #include <QString>
-#include <qlistview.h>
+#include <QtGui/QListView>
 
 #include "kxkbconfig.h"
 

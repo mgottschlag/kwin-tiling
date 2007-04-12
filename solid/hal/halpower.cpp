@@ -17,7 +17,7 @@
 
 */
 
-#include <qdbusreply.h>
+#include <QtDBus/QDBusReply>
 
 #include <kdebug.h>
 

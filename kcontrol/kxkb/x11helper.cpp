@@ -1,4 +1,4 @@
-#include <qwindowdefs.h>
+#include <QtGui/QWidgetList>
 #include <QDir>
 #include <QString>
 #include <QString>

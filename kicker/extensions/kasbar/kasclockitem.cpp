@@ -1,8 +1,8 @@
 #include <QPainter>
 #include <QBitmap>
 #include <QDateTime>
-#include <qdrawutil.h>
-#include <qlcdnumber.h>
+#include <QtGui/qdrawutil.h>
+#include <QtGui/QLCDNumber>
 #include <QTimer>
 //Added by qt3to4:
 #include <QMouseEvent>

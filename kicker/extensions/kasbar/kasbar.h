@@ -61,9 +61,9 @@
 
 #include <QWidget>
 #include <QPoint>
-#include <q3ptrlist.h>
+#include <Qt3Support/Q3PtrList>
 #include <QLayout>
-#include <qnamespace.h>
+#include <QtCore/QCOORD>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QPaintEvent>

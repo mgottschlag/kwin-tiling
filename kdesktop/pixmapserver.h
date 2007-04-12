@@ -10,7 +10,7 @@
 #ifndef __PixmapServer_h_Included__
 #define __PixmapServer_h_Included__
 
-#include <qwindowdefs.h>
+#include <QtGui/QWidgetList>
 
 #include <QWidget>
 #include <QMap>

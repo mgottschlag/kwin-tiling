@@ -12,7 +12,7 @@
 #define _INPUT_H_
 
 #include <QObject>
-#include <qwindowdefs.h>
+#include <QtGui/QWidgetList>
 #include <QHash>
 #include <QWidget>
 

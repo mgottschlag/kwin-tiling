@@ -22,7 +22,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QPainter>
-#include <qdrawutil.h>
+#include <QtGui/qdrawutil.h>
 #include <QMenu>
 #include <QStyle>
 #include <QToolTip>
