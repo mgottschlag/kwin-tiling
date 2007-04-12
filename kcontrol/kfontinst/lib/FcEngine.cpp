@@ -857,7 +857,7 @@ QString CFcEngine::getFcLangString(FcPattern *pat, const char *val, const char *
 
 bool CFcEngine::getInfo(const KUrl &url, int faceNo, Misc::TFont &info)
 {
-    if(parseUrl(url, faceNo))
+    if((url==itsLastUrl && faceNo==itsIndex) || parseUrl(url, faceNo))
     {
         if(url.isLocalFile() || Misc::isHidden(url))
         {

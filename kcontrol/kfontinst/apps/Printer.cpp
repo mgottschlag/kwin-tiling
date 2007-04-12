@@ -23,7 +23,6 @@
 #include "FcEngine.h"
 #include <QCoreApplication>
 #include <QPainter>
-#include <QSettings>
 #include <QStringList>
 #include <QFontDatabase>
 #include <QWidget>
@@ -97,33 +96,14 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
     {
         QPainter   painter;
         QFont      sans("sans", 12, QFont::Bold);
-        QSettings  settings;
-        bool       entryExists(settings.contains("/qt/embedFonts")),
-                   embedFonts,
-                   changedFontEmbeddingSetting(false);
+        bool       changedFontEmbeddingSetting(false);
         QString    str(CFcEngine::instance()->getPreviewString());
 
-
-//        if(!printer.fontEmbeddingEnabled())
-//        {
-//            printer.setFontEmbeddingEnabled(true);
-//            changedFontEmbeddingSetting=true;
-//        }
-
-//........
-        //
-        // Check whether the user has enabled font embedding...
-        if(entryExists)
-            embedFonts=settings.value("/qt/embedFonts", false).toBool();
-
-        // ...if not, then turn on - we may have installed new fonts, without ghostscript being
-        // informed, etc.
-        if(!entryExists || !embedFonts)
+        if(!printer.fontEmbeddingEnabled())
         {
-            settings.setValue("/qt/embedFonts", true);
+            printer.setFontEmbeddingEnabled(true);
             changedFontEmbeddingSetting=true;
         }
-//........
 
         printer.setResolution(72);
         painter.begin(&printer);
@@ -236,11 +216,7 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
         //
         // Did we change the users font settings? If so, reset to their previous values...
         if(changedFontEmbeddingSetting)
-//            printer.setFontEmbeddingEnabled(false)
-            if(entryExists)
-                settings.setValue("/qt/embedFonts", false);
-            else
-                settings.remove("/qt/embedFonts");
+            printer.setFontEmbeddingEnabled(false);
     }
 #ifdef HAVE_LOCALE_H
     if(oldLocale)
@@ -250,9 +226,9 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
 
 static KCmdLineOptions options[] =
 {
-    { "embed <winid>",   I18N_NOOP("Makes the dialogue transient for an X app specified by winid"), 0 },
+    { "embed <winid>",   I18N_NOOP("Makes the dialog transient for an X app specified by winid"), 0 },
     { "size <index>",    I18N_NOOP("Size index to print fonts"), 0 },
-    { "pfont <font>",    I18N_NOOP("Font to print, specified as \"Family,Style\" where Style is a 24-bit decimal number composed as: <weight><width><slant>. "), 0},
+    { "pfont <font>",    I18N_NOOP("Font to print, specified as \"Family,Style\" where Style is a 24-bit decimal number composed as: <weight><width><slant>"), 0},
     { "listfile <file>", I18N_NOOP("File containing list of fonts to print"), 0 },
     { "deletefile",      I18N_NOOP("Remove file containing list of fonts to print"), 0},
     KCmdLineLastOption

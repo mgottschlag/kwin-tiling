@@ -190,6 +190,9 @@ bool CFontViewPart::openFile()
 
 void CFontViewPart::timeout()
 {
+    if(!itsInstallButton)
+        return;
+
     bool          isFonts(KFI_KIO_FONTS_PROTOCOL==url().protocol()),
                   isDisabled(false),
                   showFs(false);
@@ -210,9 +213,9 @@ void CFontViewPart::timeout()
         //
         // This is a fonts:/Url. Check to see whether we were passed any details in the query...
         QString path=url().queryItem(KFI_FILE_QUERY),
-                name=url().queryItem(KFI_NAME_QUERY),
                 mime=url().queryItem(KFI_MIME_QUERY);
 
+        name=url().queryItem(KFI_NAME_QUERY);
         styleInfo=Misc::getIntQueryVal(url(), KFI_STYLE_QUERY, KFI_NO_STYLE_INFO);
         fileIndex=Misc::getIntQueryVal(url(), KFI_KIO_FACE, -1);
 
@@ -423,7 +426,7 @@ void CFontViewPart::print()
              << "--caption" << KGlobal::caption().toUtf8()
              << "--icon" << "kfontview"
              << "--size" << "0"
-             << "--font" << QString(info.family+','+QString().setNum(info.styleInfo));
+             << "--pfont" << QString(info.family+','+QString().setNum(info.styleInfo));
     }
 #ifdef KFI_PRINT_APP_FONTS
     else
