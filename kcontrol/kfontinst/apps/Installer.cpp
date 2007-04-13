@@ -23,7 +23,6 @@
 #include "Installer.h"
 #include "Misc.h"
 #include <QFile>
-#include <QList>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <kapplication.h>

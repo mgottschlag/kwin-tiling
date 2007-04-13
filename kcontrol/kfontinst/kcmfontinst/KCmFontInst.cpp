@@ -38,17 +38,14 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QTextStream>
-#include <QMenu>
 #include <QComboBox>
 #include <QProcess>
 #include <kaboutdata.h>
-#include <kapplication.h>
 #include <kgenericfactory.h>
 #include <ktoolbar.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kio/job.h>
-#include <kio/copyjob.h>
 #include <kio/netaccess.h>
 #include <kpushbutton.h>
 #include <kguiitem.h>

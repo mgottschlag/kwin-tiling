@@ -32,14 +32,9 @@
 #include <sys/resource.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <kio/global.h>
 #include <kio/ioslave_defaults.h>
-#include <kio/netaccess.h>
-#include <kio/slaveinterface.h>
-#include <kio/connection.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
-#include <k3process.h>
 #include <QDir>
 #include <QDataStream>
 #include <QTextStream>

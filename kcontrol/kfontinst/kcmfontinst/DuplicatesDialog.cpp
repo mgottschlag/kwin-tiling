@@ -25,7 +25,6 @@
 #include "Fc.h"
 #include "JobRunner.h"
 #include "FontList.h"
-#include <kapplication.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -33,7 +32,6 @@
 #include <kdesu/su.h>
 #include <kfileitem.h>
 #include <kpropertiesdialog.h>
-#include <kimageeffect.h>
 #include <kshell.h>
 #include <QLabel>
 #include <QTimer>

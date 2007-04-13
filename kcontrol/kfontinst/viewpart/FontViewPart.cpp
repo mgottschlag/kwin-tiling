@@ -25,22 +25,20 @@
 #include "KfiConstants.h"
 #include "FcEngine.h"
 #include "PreviewSelectAction.h"
-#include <klocale.h>
 #include <QGridLayout>
 #include <QBoxLayout>
 #include <QPushButton>
 #include <QFrame>
 #include <QFile>
 #include <QLabel>
-#include <QPainter>
 #include <QValidator>
 #include <QRegExp>
-#include <QSettings>
 #include <QStringList>
 #include <QTimer>
 #include <QApplication>
 #include <QGroupBox>
 #include <QProcess>
+#include <klocale.h>
 #include <kio/netaccess.h>
 #include <kio/job.h>
 #include <kio/jobuidelegate.h>
@@ -52,7 +50,6 @@
 #include <kaction.h>
 #include <kinputdialog.h>
 #include <kdialog.h>
-#include <kprinter.h>
 #include <ktoolbarlabelaction.h>
 #include <kactioncollection.h>
 #include <kicon.h>
@@ -61,7 +58,6 @@
 #include <kzip.h>
 #include <ktempdir.h>
 #include <kstandarddirs.h>
-#include <kmessagebox.h>
 #include <fontconfig/fontconfig.h>
 
 // Enable the following to allow printing of non-installed fonts. Doesnt seem to work :-(

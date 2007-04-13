@@ -26,7 +26,6 @@
 #include <kapplication.h>
 #include <klocale.h>
 #include <QPainter>
-#include <QImage>
 #include <QPixmap>
 #include <QPaintEvent>
 #include <QMouseEvent>

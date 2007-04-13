@@ -24,8 +24,7 @@
 #include "KfiConstants.h"
 #include "FcEngine.h"
 #include <QImage>
-#include <QBitmap>
-#include <QPainter>
+#include <QPixmap>
 #include <QFile>
 #include <kiconloader.h>
 #include <kglobalsettings.h>
