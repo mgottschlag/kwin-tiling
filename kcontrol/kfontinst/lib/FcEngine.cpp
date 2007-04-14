@@ -192,11 +192,11 @@ static bool drawChar32Centre(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCo
     return false;
 }
 
+static const int constBorder=2;
+
 static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, quint32 ch,
                        int &x, int &y, int w, int h, int fontHeight, int offset, QRect &r)
 {
-    static const int constBorder=2;
-
     r=QRect();
     if(XftCharExists(QX11Info::display(), xftFont, ch))
     {
@@ -247,7 +247,8 @@ static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, con
 }
 
 static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_UInt i,
-                      int &x, int &y, int &w, int &h, int fontHeight, int offset, bool oneLine)
+                      int &x, int &y, int w, int h, int fontHeight, int offset, bool oneLine,
+                      QRect &r)
 {
     XGlyphInfo extents;
 
@@ -266,22 +267,28 @@ static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_U
     {
         XftDrawGlyphs(xftDraw, xftCol, xftFont, x, y, &i, 1);
         x+=extents.width+2;
+        r=QRect(x-extents.x, y-extents.y, extents.width+constBorder, extents.height);
+
         return true;
     }
     return false;
 }
 
-static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol,
-                          int fontHeight, int &x, int &y, int &w, int &h, int offset, bool oneLine=false)
+static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, int fontHeight,
+                          int &x, int &y, int w, int h, int offset, bool oneLine=false, int max=-1,
+                          QRect *used=NULL)
 {
-    bool rv=false;
+    bool rv(false);
+
     if(xftFont)
     {
         FT_Face face=XftLockFace(xftFont);
 
         if(face)
         {
-            int space=fontHeight/10;
+            int   space(fontHeight/10),
+                  drawn(1);
+            QRect r;
 
             if(!space)
                 space=1;
@@ -289,7 +296,20 @@ static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol,
             rv=true;
             y+=fontHeight;
             for(int i=1; i<face->num_glyphs && y<h; ++i)
-                if(!drawGlyph(xftDraw, xftFont, xftCol, i, x, y, w, h, fontHeight, offset, oneLine))
+                if(drawGlyph(xftDraw, xftFont, xftCol, i, x, y, w, h, fontHeight, offset, oneLine, r))
+                {
+                    if(r.height()>0)
+                    {
+                        if(used)
+                            if(used->isEmpty())
+                                *used=r;
+                            else
+                                *used=used->united(r);
+                        if(max>0 && ++drawn>=max)
+                            break;
+                    }
+                }
+                else
                     break;
 
             if(oneLine)
@@ -583,12 +603,12 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                        : 4,
             x=offset, y=offset;
 
-        pix=QPixmap(w, h);
+        getSizes();
+
+        pix=thumb && itsScalable ? QPixmap(w*4, h*2) : QPixmap(w, h);
         pix.fill(theirBgndCol);
 
         QPainter painter(&pix);
-
-        getSizes();
 
         if(itsSizes.size())
         {
@@ -614,16 +634,14 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                 if(thumb)
                 {
-                    QString text(i18nc("All letters of the alphabet (in upper/lower case pairs), followed by numbers",
-                                       "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
+                    QString text(itsScalable
+                                    ? i18nc("First letter of the alphabet (in upper then lower case)", "Aa")
+                                    : i18nc("All letters of the alphabet (in upper/lower case pairs), followed by numbers",
+                                            "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
 
                     //
                     // Calculate size of text...
-                    int fSize= h <= 32
-                                ? h-(offset*2)          // 1 line of chars...
-                                : /*h < 132
-                                        ?*/ (h-(offset*3))/2   // 2 lines...
-                                        /*: (h-(offset*4))/3*/;  // 3 lines or more
+                    int fSize= h-(offset*2);
 
                     if(!itsScalable) // Then need to get nearest size...
                     {
@@ -640,21 +658,61 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     if(xftFont)
                     {
                         QString valid(usableStr(xftFont, text));
+                        QRect   used(0, 0, 0, 0);
 
                         y=fSize;
                         rv=true;
 
-                        if(valid.length()<(text.length()/2))
-                            drawAllGlyphs(xftDraw, xftFont, &xftCol, fSize, x, y, w, h, offset);
+                        if(itsScalable)
+                        {
+                            if(valid.length()!=text.length())
+                            {
+                                text=getPunctuation().mid(1, 2);  // '1' '2'
+                                valid=usableStr(xftFont, text);
+                            }
+                        }
+                        else
+                            if(valid.length()<(text.length()/2))
+                                for(int i=0; i<3; ++i)
+                                {
+                                    text=0==i ? getUppercaseLetters() : 1==i ? getLowercaseLetters() : getPunctuation();
+                                    valid=usableStr(xftFont, text);
+
+                                    if(valid.length()>=(text.length()/2))
+                                        break;
+                                }
+
+                        if(itsScalable
+                            ? valid.length()!=text.length()
+                            : valid.length()<(text.length()/2))
+                            drawAllGlyphs(xftDraw, xftFont, &xftCol, fSize, x, y, pix.width(), pix.height(), offset, true,
+                                          itsScalable ? 4 : -1, itsScalable ? &used : NULL);
                         else
                         {
                             QVector<uint> ucs4(valid.toUcs4());
                             QRect         r;
 
                             for(int ch=0; ch<ucs4.size(); ++ch) // Display char by char so wraps...
-                                if(!drawChar32(xftDraw, xftFont, &xftCol, ucs4[ch], x, y, w, h, fSize,
+                                if(drawChar32(xftDraw, xftFont, &xftCol, ucs4[ch], x, y, pix.width(), pix.height(), fSize,
                                                offset, r))
+                                {
+                                    if(used.isEmpty())
+                                        used=r;
+                                    else
+                                        used=used.united(r);
+                                }
+                                else
                                     break;
+                        }
+
+                        painter.end();
+
+                        if(itsScalable && !used.isEmpty())
+                        {
+                            used.addCoords(-1*offset, -1*offset, offset, offset);
+
+                            if(used.width()<pix.width() && used.height()<pix.height())
+                                pix=pix.copy(used);
                         }
                     }
                 }
@@ -722,8 +780,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     for(int l=0; l<offset; ++l)
                         painter.drawLine((w-1)-l, 0, (w-1)-l, h);
                 }
-                else if(1==range.count() && (range.first().null() ||
-                                             0==range.first().to))
+                else if(1==range.count() && (range.first().null() || 0==range.first().to))
                 {
                     if(range.first().null())
                     {
@@ -1252,8 +1309,7 @@ bool CFcEngine::isCorrect(XftFont *f, bool checkFamily)
                   (!checkFamily ||
                     (FcResultMatch==FcPatternGetString(f->pattern, FC_FAMILY, 0, &str) && str &&
                      QString::fromUtf8((char *)str)==itsName))
-                : FcResultMatch==FcPatternGetInteger(f->pattern, FC_INDEX, 0, &iv) &&
-                  itsIndex==iv &&
+                : (itsIndex<0 || (FcResultMatch==FcPatternGetInteger(f->pattern, FC_INDEX, 0, &iv) && itsIndex==iv)) &&
                   FcResultMatch==FcPatternGetString(f->pattern, FC_FILE, 0, &str) && str &&
                   QString::fromUtf8((char *)str)==itsFileName
             : false;
