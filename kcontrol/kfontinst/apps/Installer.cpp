@@ -202,6 +202,8 @@ int main(int argc, char **argv)
 
         if(urls.count())
         {
+            KLocale::setMainCatalog(KFI_CATALOGUE);
+
             KApplication    app;
             QByteArray      opt(args->getOption("embed"));
             KFI::CInstaller inst(createParent(opt.size() ? strtol(opt.constData(), NULL, 16) : 0));
