@@ -1,285 +1,202 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
-<class>StylePreview</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>StylePreview</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>483</width>
-            <height>254</height>
-        </rect>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <spacer row="1" column="0">
-            <property name="name">
-                <cstring>spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>50</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QTabWidget" row="0" column="0">
-            <property name="name">
-                <cstring>TabWidget2</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>1</horstretch>
-                    <verstretch>0</verstretch>
+<ui version="4.0" >
+ <class>StylePreview</class>
+ <widget class="QWidget" name="StylePreview" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>541</width>
+    <height>231</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QTabWidget" name="TabWidget2" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Tab 1</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QGroupBox" name="GroupBox1" >
+           <property name="title" >
+            <string>Group Box</string>
+           </property>
+           <layout class="QVBoxLayout" >
+            <item>
+             <widget class="QRadioButton" name="RadioButton1" >
+              <property name="text" >
+               <string>Radio button</string>
+              </property>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="RadioButton2" >
+              <property name="text" >
+               <string>Radio button</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="Line1" >
+              <property name="frameShape" >
+               <enum>QFrame::HLine</enum>
+              </property>
+              <property name="frameShadow" >
+               <enum>QFrame::Sunken</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="CheckBox1" >
+              <property name="text" >
+               <string>Checkbox</string>
+              </property>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
+              <property name="tristate" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QProgressBar" name="ProgressBar1" >
+             <property name="value" >
+              <number>70</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSlider" name="Slider1" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" >
+             <item>
+              <widget class="QSpinBox" name="SpinBox1" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
                 </sizepolicy>
-            </property>
-            <property name="margin">
-                <number>2</number>
-            </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Tab 1</string>
-                </attribute>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QButtonGroup" row="0" column="0" rowspan="4" colspan="1">
-                        <property name="name">
-                            <cstring>ButtonGroup1</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Button Group</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>RadioButton1</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Radio button</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>RadioButton2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Radio button</string>
-                                </property>
-                            </widget>
-                            <widget class="Line">
-                                <property name="name">
-                                    <cstring>Line1</cstring>
-                                </property>
-                                <property name="frameShape">
-                                    <enum>HLine</enum>
-                                </property>
-                                <property name="frameShadow">
-                                    <enum>Sunken</enum>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>CheckBox1</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Checkbox</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="tristate">
-                                    <bool>false</bool>
-                                </property>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QScrollBar" row="0" column="2" rowspan="4" colspan="1">
-                        <property name="name">
-                            <cstring>ScrollBar1</cstring>
-                        </property>
-                        <property name="maximum">
-                            <number>19</number>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                    </widget>
-                    <widget class="QComboBox" row="3" column="1">
-                        <item>
-                            <property name="text">
-                                <string>Combobox</string>
-                            </property>
-                        </item>
-                        <property name="name">
-                            <cstring>ComboBox1</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QProgressBar" row="0" column="1">
-                        <property name="name">
-                            <cstring>ProgressBar1</cstring>
-                        </property>
-                        <property name="progress">
-                            <number>70</number>
-                        </property>
-                    </widget>
-                    <widget class="QSlider" row="1" column="1">
-                        <property name="name">
-                            <cstring>Slider1</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget" row="2" column="1">
-                        <property name="name">
-                            <cstring>layout3</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>spacer6</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>40</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QSpinBox">
-                                <property name="name">
-                                    <cstring>SpinBox1</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>1</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>0</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                                <property name="maximumSize">
-                                    <size>
-                                        <width>200</width>
-                                        <height>32767</height>
-                                    </size>
-                                </property>
-                                <property name="maximum">
-                                    <number>999999</number>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton">
-                                <property name="name">
-                                    <cstring>PushButton1</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>1</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>0</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                                <property name="maximumSize">
-                                    <size>
-                                        <width>200</width>
-                                        <height>32767</height>
-                                    </size>
-                                </property>
-                                <property name="text">
-                                    <string>Button</string>
-                                </property>
-                            </widget>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>spacer3</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>30</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </hbox>
-                    </widget>
-                </grid>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>200</width>
+                 <height>32767</height>
+                </size>
+               </property>
+               <property name="maximum" >
+                <number>999999</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="PushButton1" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>200</width>
+                 <height>32767</height>
+                </size>
+               </property>
+               <property name="text" >
+                <string>Button</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QComboBox" name="ComboBox1" >
+             <item>
+              <property name="text" >
+               <string>Combobox</string>
+              </property>
+             </item>
             </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Tab 2</string>
-                </attribute>
-            </widget>
-        </widget>
-    </grid>
-</widget>
-<includes>
-    <include location="local" impldecl="in implementation">kdialog.h</include>
-    <include location="local" impldecl="in implementation">stylepreview.ui.h</include>
-</includes>
-<slots>
-    <slot>init()</slot>
-    <slot returnType="bool">eventFilter( QObject *, QEvent * ev )</slot>
-</slots>
-<layoutdefaults spacing="6" margin="10"/>
-<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-</UI>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>21</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QScrollBar" name="ScrollBar1" >
+           <property name="maximum" >
+            <number>19</number>
+           </property>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Tab 2</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="10" />
+ <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <resources/>
+ <connections/>
+</ui>

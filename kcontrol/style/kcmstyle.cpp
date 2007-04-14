@@ -2,6 +2,7 @@
  * KCMStyle
  * Copyright (C) 2002 Karol Szwed <gallium@kde.org>
  * Copyright (C) 2002 Daniel Molkentin <molkentin@kde.org>
+ * Copyright (C) 2007 Urs Wolfer <uwolfer @ kde.org>
  *
  * Portions Copyright (C) 2000 TrollTech AS.
  *
@@ -20,55 +21,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "kcmstyle.h"
 
-#include <QCheckBox>
-//Added by qt3to4:
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <kcombobox.h>
-#include <Qt3Support/Q3GroupBox>
-#include <QLabel>
-#include <QLayout>
-#include <QSlider>
-#include <QtGui/QStyleFactory>
-#include <QTabWidget>
+#include "styleconfdialog.h"
+#include "ui_stylepreview.h"
 
-#include <QFile>
-#include <QtCore/QSettings>
-#include <QObject>
-#include <QtGui/QPixmapCache>
-
-#include <QPushButton>
-#ifdef Q_WS_X11
-#include <QX11Info>
-#endif
-#include <QtDBus/QtDBus>
-
-#include <kapplication.h>
-#include <kglobalsettings.h>
-#include <kdebug.h>
-#include <klocale.h>
 #include <kaboutdata.h>
-#include <kdialog.h>
-#include <klibloader.h>
-#include <k3listview.h>
+#include <kapplication.h>
+#include <kcombobox.h>
 #include <kmessagebox.h>
-#include <kconfig.h>
 #include <kstyle.h>
 #include <kstandarddirs.h>
 
+#include <QtCore/QFile>
+#include <QtCore/QSettings>
+#include <QtGui/QLabel>
+#include <QtGui/QPixmapCache>
+#include <QtGui/QStyleFactory>
+#include <QtDBus/QtDBus>
+
+#ifdef Q_WS_X11
+#include <QX11Info>
+#endif
+
 #include "../krdb/krdb.h"
 
-#include "kcmstyle.h"
-#include "styleconfdialog.h"
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #endif
-#include <kvbox.h>
+
 // X11 namespace cleanup
 #undef Below
 #undef KeyPress
@@ -117,6 +98,47 @@ extern "C"
     }
 }
 
+class StylePreview : public QWidget, public Ui::StylePreview
+{
+public:
+    StylePreview(QWidget *parent = 0)
+    : QWidget(parent)
+    {
+        setupUi(this);
+
+        // Ensure that the user can't toy with the child widgets.
+        // Method borrowed from Qt's qtconfig.
+        QList<QWidget*> widgets = findChildren<QWidget*>();
+        foreach (QWidget* widget, widgets)
+        {
+            widget->installEventFilter(this);
+            widget->setFocusPolicy(Qt::NoFocus);
+        }
+    }
+
+    bool eventFilter( QObject* /* obj */, QEvent* ev )
+    {
+        switch( ev->type() )
+        {
+            case QEvent::MouseButtonPress:
+            case QEvent::MouseButtonRelease:
+            case QEvent::MouseButtonDblClick:
+            case QEvent::MouseMove:
+            case QEvent::KeyPress:
+            case QEvent::KeyRelease:
+            case QEvent::Enter:
+            case QEvent::Leave:
+            case QEvent::Wheel:
+            case QEvent::ContextMenu:
+                return true; // ignore
+            default:
+                break;
+        }
+        return false;
+    }
+};
+
+
 KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	: KCModule( KCMStyleFactory::componentData(), parent ), appliedStyle(NULL)
 {
@@ -150,29 +172,20 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 
 	page1 = new QWidget;
 	page1Layout = new QVBoxLayout( page1 );
-	page1Layout->setMargin( KDialog::marginHint() );
-	page1Layout->setSpacing( KDialog::spacingHint() );
 	page2 = new QWidget;
 	page2Layout = new QVBoxLayout( page2 );
-	page2Layout->setMargin( KDialog::marginHint() );
-	page2Layout->setSpacing( KDialog::spacingHint() );
 	page3 = new QWidget;
 	page3Layout = new QVBoxLayout( page3 );
-	page3Layout->setMargin( KDialog::marginHint() );
-	page3Layout->setSpacing( KDialog::spacingHint() );
 
 	// Add Page1 (Style)
 	// -----------------
-	gbWidgetStyle = new Q3GroupBox( i18n("Widget Style"), page1, "gbWidgetStyle" );
-	gbWidgetStyle->setColumnLayout( 0, Qt::Vertical );
-	gbWidgetStyle->layout()->setMargin( KDialog::marginHint() );
-	gbWidgetStyle->layout()->setSpacing( KDialog::spacingHint() );
+	gbWidgetStyle = new QGroupBox( i18n("Widget Style"), page1 );
+	QVBoxLayout *widgetLayout = new QVBoxLayout(gbWidgetStyle);
 
 	gbWidgetStyleLayout = new QVBoxLayout( );
-        gbWidgetStyle->layout()->addItem( gbWidgetStyleLayout );
+        widgetLayout->addLayout( gbWidgetStyleLayout );
 	gbWidgetStyleLayout->setAlignment( Qt::AlignTop );
 	hbLayout = new QHBoxLayout( );
-        hbLayout->setSpacing( KDialog::spacingHint() );
 	hbLayout->setObjectName( "hbLayout" );
 
 	cbStyle = new KComboBox( gbWidgetStyle );
@@ -188,7 +201,6 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	gbWidgetStyleLayout->addLayout( hbLayout );
 
 	lblStyleDesc = new QLabel( gbWidgetStyle );
-	lblStyleDesc->setTextFormat(Qt::RichText);
 	gbWidgetStyleLayout->addWidget( lblStyleDesc );
 
 	cbIconsOnButtons = new QCheckBox( i18n("Sho&w icons on buttons"), gbWidgetStyle );
@@ -199,16 +211,15 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	gbWidgetStyleLayout->addWidget( cbTearOffHandles );
 	cbTearOffHandles->hide(); // reenable when the corresponding Qt method is virtual and properly reimplemented
 
-	Q3GroupBox *gbPreview = new Q3GroupBox( i18n( "Preview" ), page1 );
-	gbPreview->setColumnLayout( 0, Qt::Vertical );
-	gbPreview->layout()->setMargin( 0 );
-	gbPreview->layout()->setSpacing( KDialog::spacingHint() );
-	gbPreview->setFlat( true );
+	QGroupBox *gbPreview = new QGroupBox( i18n( "Preview" ), page1 );
+	QVBoxLayout *previewLayout = new QVBoxLayout(gbPreview);
+	previewLayout->setMargin( 0 );
 	stylePreview = new StylePreview( gbPreview );
 	gbPreview->layout()->addWidget( stylePreview );
 
 	page1Layout->addWidget( gbWidgetStyle );
 	page1Layout->addWidget( gbPreview );
+	page1Layout->addStretch();
 
 	// Connect all required stuff
 	connect( cbStyle, SIGNAL(activated(int)), this, SLOT(styleChanged()) );
@@ -220,10 +231,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	cbEnableEffects = new QCheckBox( i18n("&Enable GUI effects"), page2 );
 	containerFrame = new QFrame( page2 );
 	containerFrame->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
-	//containerFrame->setMargin(0);
 	containerLayout = new QGridLayout( containerFrame );
-        containerLayout->setMargin( KDialog::marginHint() );
-        containerLayout->setSpacing( KDialog::spacingHint() );
 
 	comboComboEffect = new QComboBox( containerFrame );
 	comboComboEffect->setEditable( false );
@@ -279,10 +287,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	// Now implement the Menu Transparency container.
 	menuContainer = new QFrame( page2 );
 	menuContainer->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
-	//menuContainer->setMargin(0);
 	menuContainerLayout = new QGridLayout( menuContainer );
-        menuContainerLayout->setMargin( KDialog::marginHint() );
-        menuContainerLayout->setSpacing( KDialog::spacingHint() );
 
 	menuPreview = new MenuPreview( menuContainer, /* opacity */ 90, MenuPreview::Blend );
 
@@ -296,11 +301,6 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 
 	// So much stuffing around for a simple slider..
 	sliderBox = new KVBox( menuContainer );
-	sliderBox->setSpacing( KDialog::spacingHint() );
-#ifdef __GNUC__
-#warning "KDE4: fix setMargin"
-#endif
-	//sliderBox->setMargin( 0 );
 	slOpacity = new QSlider( Qt::Horizontal, sliderBox );
 	slOpacity->setMinimum( 0 );
 	slOpacity->setMaximum( 100 );
@@ -308,8 +308,6 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	slOpacity->setTickPosition( QSlider::TicksBelow );
 	slOpacity->setTickInterval( 10 );
 	KHBox* box1 = new KHBox( sliderBox );
-	box1->setSpacing( KDialog::spacingHint() );
-	//box1->setMargin( 0 );
 	QLabel* lbl = new QLabel( i18n("0%"), box1 );
 	lbl->setAlignment( Qt::AlignLeft );
 	lbl = new QLabel( i18n("50%"), box1 );
@@ -320,7 +318,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	lblMenuEffectType = new QLabel( i18n("Menu trans&lucency type:"), menuContainer );
 	lblMenuEffectType->setBuddy( comboMenuEffectType );
 	lblMenuEffectType->setAlignment( Qt::AlignBottom | Qt::AlignLeft );
-	lblMenuOpacity    = new QLabel( i18n("Menu &opacity:"), menuContainer );
+	lblMenuOpacity = new QLabel( i18n("Menu &opacity:"), menuContainer );
 	lblMenuOpacity->setBuddy( slOpacity );
 	lblMenuOpacity->setAlignment( Qt::AlignBottom | Qt::AlignLeft );
 
@@ -356,8 +354,6 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	QWidget * dummy = new QWidget( page3 );
 
 	QHBoxLayout* box2 = new QHBoxLayout( dummy );
-	box2->setSpacing( KDialog::spacingHint() );
-	box2->setMargin( 0 );
 	lbl = new QLabel( i18n("Text pos&ition:"), dummy );
 	comboToolbarIcons = new QComboBox( dummy );
 	comboToolbarIcons->setEditable( false );
@@ -406,9 +402,9 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	addWhatsThis();
 
 	// Insert the pages into the tabWidget
-	tabWidget->insertTab( page1, i18n("&Style"));
-	tabWidget->insertTab( page2, i18n("&Effects"));
-	tabWidget->insertTab( page3, i18n("&Toolbar"));
+	tabWidget->addTab( page1, i18n("&Style"));
+	tabWidget->addTab( page2, i18n("&Effects"));
+	tabWidget->addTab( page3, i18n("&Toolbar"));
 
 	//Enable/disable the button for the initial style
 	updateConfigButton();
@@ -532,8 +528,8 @@ void KCMStyle::save()
 	if (appliedStyle && appliedStyle->inherits("KStyle"))
 	{
 		allowMenuDropShadow = true;
-		KStyle* style = dynamic_cast<KStyle*>(appliedStyle);
-/*		if (style) {
+/*		KStyle* style = dynamic_cast<KStyle*>(appliedStyle);
+		if (style) {
 			KStyle::KStyleFlags flags = style->styleFlags();
 			if (flags & KStyle::AllowMenuTransparency)
 				allowMenuTransparency = true;
@@ -785,22 +781,22 @@ void KCMStyle::loadStyle( KConfig& config )
 		if ( !(config.hasGroup("KDE") && config.hasGroup("Misc")) )
 			continue;
 
-		config.setGroup("KDE");
+		KConfigGroup configGroup = config.group("KDE");
 
-		strWidgetStyle = config.readEntry("WidgetStyle");
+		strWidgetStyle = configGroup.readEntry("WidgetStyle");
 		if (strWidgetStyle.isNull())
 			continue;
 
 		// We have a widgetstyle, so lets read the i18n entries for it...
 		StyleEntry* entry = new StyleEntry;
-		config.setGroup("Misc");
-		entry->name = config.readEntry("Name");
-		entry->desc = config.readEntry("Comment", i18n("No description available."));
-		entry->configPage = config.readEntry("ConfigPage", QString());
+		configGroup = config.group("Misc");
+		entry->name = configGroup.readEntry("Name");
+		entry->desc = configGroup.readEntry("Comment", i18n("No description available."));
+		entry->configPage = configGroup.readEntry("ConfigPage", QString());
 
 		// Check if this style should be shown
-		config.setGroup("Desktop Entry");
-		entry->hidden = config.readEntry("Hidden", false);
+		configGroup = config.group("Desktop Entry");
+		entry->hidden = configGroup.readEntry("Hidden", false);
 
 		// Insert the entry into our dictionary.
 		styleEntries.insert(strWidgetStyle.toLower(), entry);
@@ -838,9 +834,9 @@ void KCMStyle::loadStyle( KConfig& config )
 	cbStyle->addItems( styles );
 
 	// Find out which style is currently being used
-	config.setGroup( "General" );
+	KConfigGroup configGroup = config.group( "General" );
 	QString defaultStyle = "plastique"; //### KDE4: FIXME KStyle::defaultStyle();
-	QString cfgStyle = config.readEntry( "widgetStyle", defaultStyle );
+	QString cfgStyle = configGroup.readEntry( "widgetStyle", defaultStyle );
 
 	// Select the current style
 	// Do not use cbStyle->listBox() as this may be NULL for some styles when
@@ -859,7 +855,7 @@ void KCMStyle::loadStyle( KConfig& config )
 			break;
 		else if ( id.contains( cfgStyle ) )
 			break;
-		else if ( id.contains( QApplication::style()->className() ) )
+		else if ( id.contains( QApplication::style()->metaObject()->className() ) )
 			break;
 		item = 0;
 	}
@@ -915,7 +911,7 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 {
 	// Don't let broken styles kill the palette
 	// for other styles being previewed. (e.g SGI style)
-	w->unsetPalette();
+	w->setPalette(QPalette());
 
 	QPalette newPalette(KGlobalSettings::createApplicationPalette());
 	s->polish( newPalette );
@@ -943,34 +939,34 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 void KCMStyle::loadEffects( KConfig& config )
 {
 	// Load effects.
-	config.setGroup("KDE");
+	KConfigGroup configGroup = config.group("KDE");
 
-	cbEnableEffects->setChecked( config.readEntry( "EffectsEnabled", false) );
+	cbEnableEffects->setChecked( configGroup.readEntry( "EffectsEnabled", false) );
 
-	if ( config.readEntry( "EffectAnimateCombo", false) )
+	if ( configGroup.readEntry( "EffectAnimateCombo", false) )
 		comboComboEffect->setCurrentIndex( 1 );
 	else
 		comboComboEffect->setCurrentIndex( 0 );
 
-	if ( config.readEntry( "EffectAnimateTooltip", false) )
+	if ( configGroup.readEntry( "EffectAnimateTooltip", false) )
 		comboTooltipEffect->setCurrentIndex( 1 );
-	else if ( config.readEntry( "EffectFadeTooltip", false) )
+	else if ( configGroup.readEntry( "EffectFadeTooltip", false) )
 		comboTooltipEffect->setCurrentIndex( 2 );
 	else
 		comboTooltipEffect->setCurrentIndex( 0 );
 
-	if ( config.readEntry( "EffectAnimateMenu", false) )
+	if ( configGroup.readEntry( "EffectAnimateMenu", false) )
 		comboMenuEffect->setCurrentIndex( 1 );
-	else if ( config.readEntry( "EffectFadeMenu", false) )
+	else if ( configGroup.readEntry( "EffectFadeMenu", false) )
 		comboMenuEffect->setCurrentIndex( 2 );
 	else
 		comboMenuEffect->setCurrentIndex( 0 );
 
-	comboMenuHandle->setCurrentIndex(config.readEntry("InsertTearOffHandle", 0));
+	comboMenuHandle->setCurrentIndex(configGroup.readEntry("InsertTearOffHandle", 0));
 
 	// KStyle Menu transparency and drop-shadow options...
 	QSettings settings;
-	QString effectEngine = settings.readEntry("/KStyle/Settings/MenuTransparencyEngine", "Disabled" );
+	QString effectEngine = settings.value("/KStyle/Settings/MenuTransparencyEngine", "Disabled" ).toString();
 
 #ifdef HAVE_XRENDER
 	if (effectEngine == "XRender") {
@@ -1056,11 +1052,11 @@ void KCMStyle::menuEffectChanged( bool enabled )
 void KCMStyle::loadMisc( KConfig& config )
 {
 	// KDE's Part via KConfig
-	config.setGroup("Toolbar style");
-	cbHoverButtons->setChecked(config.readEntry("Highlighting", true));
-	cbTransparentToolbars->setChecked(config.readEntry("TransparentMoving", true));
+	KConfigGroup configGroup = config.group("Toolbar style");
+	cbHoverButtons->setChecked(configGroup.readEntry("Highlighting", true));
+	cbTransparentToolbars->setChecked(configGroup.readEntry("TransparentMoving", true));
 
-	QString tbIcon = config.readEntry("IconText", "IconOnly");
+	QString tbIcon = configGroup.readEntry("IconText", "IconOnly");
 	if (tbIcon == "TextOnly")
 		comboToolbarIcons->setCurrentIndex(1);
 	else if (tbIcon == "IconTextRight")
@@ -1070,10 +1066,10 @@ void KCMStyle::loadMisc( KConfig& config )
 	else
 		comboToolbarIcons->setCurrentIndex(0);
 
-	config.setGroup("KDE");
-	cbIconsOnButtons->setChecked(config.readEntry("ShowIconsOnPushButtons", false));
-	cbEnableTooltips->setChecked(!config.readEntry("EffectNoTooltip", false));
-	cbTearOffHandles->setChecked(config.readEntry("InsertTearOffHandle", false));
+	configGroup = config.group("KDE");
+	cbIconsOnButtons->setChecked(configGroup.readEntry("ShowIconsOnPushButtons", false));
+	cbEnableTooltips->setChecked(!configGroup.readEntry("EffectNoTooltip", false));
+	cbTearOffHandles->setChecked(configGroup.readEntry("InsertTearOffHandle", false));
 
 	m_bToolbarsDirty = false;
 }

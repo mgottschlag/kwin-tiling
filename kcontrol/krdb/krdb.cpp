@@ -25,6 +25,7 @@
 #include <QBuffer>
 #include <QDir>
 #include <QtCore/QSettings>
+#include <QtCore/QTextCodec>
 #include <QToolTip>
 //Added by qt3to4:
 #include <QPixmap>
@@ -143,17 +144,17 @@ static void applyQtColors( KConfigGroup kglobals, QSettings& settings, QPalette&
   settings.setValue("/qt/KWinPalette/activeTitleBtnBg", clr.name());
 
   // inactive colors
-  clr = newPal.inactive().background();
+  clr = newPal.color(QPalette::Inactive, QPalette::Background);
   clr = kglobals.readEntry("inactiveBackground", clr);
   settings.setValue("/qt/KWinPalette/inactiveBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
   clr = kglobals.readEntry("inactiveBlend", clr);
   settings.setValue("/qt/KWinPalette/inactiveBlend", clr.name());
-  clr = newPal.inactive().background().dark();
+  clr = newPal.color(QPalette::Inactive, QPalette::Background).dark();
   clr = kglobals.readEntry("inactiveForeground", clr);
   settings.setValue("/qt/KWinPalette/inactiveForeground", clr.name());
-  clr = newPal.inactive().background();
+  clr = newPal.color(QPalette::Inactive, QPalette::Background);
   clr = kglobals.readEntry("inactiveFrame", clr);
   settings.setValue("/qt/KWinPalette/inactiveFrame", clr.name());
   clr = kglobals.readEntry("inactiveTitleBtnBg", clr);
@@ -183,12 +184,12 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
      qversion.truncate( qversion.lastIndexOf( '-' ) );
 
   QStringList kdeAdded =
-    settings.readListEntry("/qt/KDE/kdeAddedLibraryPaths");
+    settings.value("/qt/KDE/kdeAddedLibraryPaths").toStringList();
   QString libPathKey =
     QString("/qt/%1/libraryPath").arg( qversion );
 
   //Read qt library path..
-  QStringList plugins = settings.readListEntry(libPathKey, ':');
+  QStringList plugins = settings.value(libPathKey, ':').toStringList();
   for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
   {
     QString path = *it;
@@ -314,7 +315,7 @@ static void copyFile(QFile& tmp, QString const& filename, bool )
 {
   QFile f( filename );
   if ( f.open(QIODevice::ReadOnly) ) {
-      QByteArray buf( 8192 );
+      QByteArray buf( 8192, ' ' );
       while ( !f.atEnd() ) {
           int read = f.read( buf.data(), buf.size() );
           if ( read > 0 )
@@ -335,7 +336,7 @@ static QString color( const QColor& col )
     return QString( "{ %1, %2, %3 }" ).arg( item( col.red() ) ).arg( item( col.green() ) ).arg( item( col.blue() ) );
 }
 
-static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
+static void createGtkrc( bool exportColors, const QPalette& cg, int version )
 {
     // lukas: why does it create in ~/.kde/share/config ???
     // pfeiffer: so that we don't overwrite the user's gtkrc.
@@ -360,29 +361,29 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
     t << "{" << endl;
     if (exportColors)
     {
-        t << "  bg[NORMAL] = " << color( cg.color( QPalette::Background ) ) << endl;
-        t << "  bg[SELECTED] = " << color( cg.color(QPalette::Highlight) ) << endl;
-        t << "  bg[INSENSITIVE] = " << color( cg.background() ) << endl;
-        t << "  bg[ACTIVE] = " << color( cg.mid() ) << endl;
-        t << "  bg[PRELIGHT] = " << color( cg.background() ) << endl;
+        t << "  bg[NORMAL] = " << color( cg.color( QPalette::Active, QPalette::Background ) ) << endl;
+        t << "  bg[SELECTED] = " << color( cg.color(QPalette::Active, QPalette::Highlight) ) << endl;
+        t << "  bg[INSENSITIVE] = " << color( cg.color( QPalette::Active, QPalette::Background ) ) << endl;
+        t << "  bg[ACTIVE] = " << color( cg.color( QPalette::Active, QPalette::Mid ) ) << endl;
+        t << "  bg[PRELIGHT] = " << color( cg.color( QPalette::Active, QPalette::Background ) ) << endl;
         t << endl;
-        t << "  base[NORMAL] = " << color( cg.base() ) << endl;
-        t << "  base[SELECTED] = " << color( cg.color(QPalette::Highlight) ) << endl;
-        t << "  base[INSENSITIVE] = " << color( cg.background() ) << endl;
-        t << "  base[ACTIVE] = " << color( cg.color(QPalette::Highlight) ) << endl;
-        t << "  base[PRELIGHT] = " << color( cg.color(QPalette::Highlight) ) << endl;
+        t << "  base[NORMAL] = " << color( cg.color( QPalette::Active, QPalette::Base ) ) << endl;
+        t << "  base[SELECTED] = " << color( cg.color(QPalette::Active, QPalette::Highlight) ) << endl;
+        t << "  base[INSENSITIVE] = " << color( cg.color( QPalette::Active, QPalette::Background ) ) << endl;
+        t << "  base[ACTIVE] = " << color( cg.color(QPalette::Active, QPalette::Highlight) ) << endl;
+        t << "  base[PRELIGHT] = " << color( cg.color(QPalette::Active, QPalette::Highlight) ) << endl;
         t << endl;
-        t << "  text[NORMAL] = " << color( cg.color(QPalette::Text) ) << endl;
-        t << "  text[SELECTED] = " << color( cg.color(QPalette::HighlightedText) ) << endl;
-        t << "  text[INSENSITIVE] = " << color( cg.mid() ) << endl;
-        t << "  text[ACTIVE] = " << color( cg.color(QPalette::HighlightedText) ) << endl;
-        t << "  text[PRELIGHT] = " << color( cg.color(QPalette::HighlightedText) ) << endl;
+        t << "  text[NORMAL] = " << color( cg.color(QPalette::Active, QPalette::Text) ) << endl;
+        t << "  text[SELECTED] = " << color( cg.color(QPalette::Active, QPalette::HighlightedText) ) << endl;
+        t << "  text[INSENSITIVE] = " << color( cg.color( QPalette::Active, QPalette::Mid ) ) << endl;
+        t << "  text[ACTIVE] = " << color( cg.color(QPalette::Active, QPalette::HighlightedText) ) << endl;
+        t << "  text[PRELIGHT] = " << color( cg.color(QPalette::Active, QPalette::HighlightedText) ) << endl;
         t << endl;
-        t << "  fg[NORMAL] = " << color ( cg.color( QPalette::Foreground ) ) << endl;
-        t << "  fg[SELECTED] = " << color( cg.color(QPalette::HighlightedText) ) << endl;
-        t << "  fg[INSENSITIVE] = " << color( cg.mid() ) << endl;
-        t << "  fg[ACTIVE] = " << color( cg.color( QPalette::Foreground ) ) << endl;
-        t << "  fg[PRELIGHT] = " << color( cg.color( QPalette::Foreground ) ) << endl;
+        t << "  fg[NORMAL] = " << color ( cg.color( QPalette::Active, QPalette::Foreground ) ) << endl;
+        t << "  fg[SELECTED] = " << color( cg.color(QPalette::Active, QPalette::HighlightedText) ) << endl;
+        t << "  fg[INSENSITIVE] = " << color( cg.color( QPalette::Active, QPalette::Mid ) ) << endl;
+        t << "  fg[ACTIVE] = " << color( cg.color( QPalette::Active, QPalette::Foreground ) ) << endl;
+        t << "  fg[PRELIGHT] = " << color( cg.color( QPalette::Active, QPalette::Foreground ) ) << endl;
     }
 
     t << "}" << endl;
@@ -399,11 +400,11 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
         // tooltips don't have the standard background color
         t << "style \"ToolTip\"" << endl;
         t << "{" << endl;
-        QColorGroup group = QToolTip::palette().active();
-        t << "  bg[NORMAL] = " << color( group.background() ) << endl;
-        t << "  base[NORMAL] = " << color( group.base() ) << endl;
-        t << "  text[NORMAL] = " << color( group.text() ) << endl;
-        t << "  fg[NORMAL] = " << color( group.color( QPalette::Foreground ) ) << endl;
+        QPalette group = QToolTip::palette();
+        t << "  bg[NORMAL] = " << color( group.color( QPalette::Active, QPalette::Background ) ) << endl;
+        t << "  base[NORMAL] = " << color( group.color( QPalette::Active, QPalette::Base ) ) << endl;
+        t << "  text[NORMAL] = " << color( group.color( QPalette::Active, QPalette::Text ) ) << endl;
+        t << "  fg[NORMAL] = " << color( group.color( QPalette::Active, QPalette::Foreground ) ) << endl;
         t << "}" << endl;
         t << endl;
         t << "widget \"gtk-tooltips\" style \"ToolTip\"" << endl;
@@ -447,21 +448,20 @@ void runRdb( uint flags )
   if (exportColors)
   {
     KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
-    QColorGroup cg = newPal.active();
     KGlobal::locale()->insertCatalog("krdb");
-    createGtkrc( true, cg, 1 );
-    createGtkrc( true, cg, 2 );
+    createGtkrc( true, newPal, 1 );
+    createGtkrc( true, newPal, 2 );
 
     QString preproc;
-    QColor backCol = cg.background();
-    addColorDef(preproc, "FOREGROUND"         , cg.color( QPalette::Foreground ) );
+    QColor backCol = newPal.color( QPalette::Active, QPalette::Background );
+    addColorDef(preproc, "FOREGROUND"         , newPal.color( QPalette::Active, QPalette::Foreground ) );
     addColorDef(preproc, "BACKGROUND"         , backCol);
     addColorDef(preproc, "HIGHLIGHT"          , backCol.light(100+(2*KGlobalSettings::contrast()+4)*16/1));
     addColorDef(preproc, "LOWLIGHT"           , backCol.dark(100+(2*KGlobalSettings::contrast()+4)*10));
-    addColorDef(preproc, "SELECT_BACKGROUND"  , cg.color( QPalette::Highlight));
-    addColorDef(preproc, "SELECT_FOREGROUND"  , cg.color( QPalette::HighlightedText));
-    addColorDef(preproc, "WINDOW_BACKGROUND"  , cg.color( QPalette::Base ) );
-    addColorDef(preproc, "WINDOW_FOREGROUND"  , cg.color( QPalette::Foreground ) );
+    addColorDef(preproc, "SELECT_BACKGROUND"  , newPal.color( QPalette::Active, QPalette::Highlight));
+    addColorDef(preproc, "SELECT_FOREGROUND"  , newPal.color( QPalette::Active, QPalette::HighlightedText));
+    addColorDef(preproc, "WINDOW_BACKGROUND"  , newPal.color( QPalette::Active, QPalette::Base ) );
+    addColorDef(preproc, "WINDOW_FOREGROUND"  , newPal.color( QPalette::Active, QPalette::Foreground ) );
     addColorDef(preproc, "INACTIVE_BACKGROUND", KGlobalSettings::inactiveTitleColor());
     addColorDef(preproc, "INACTIVE_FOREGROUND", KGlobalSettings::inactiveTitleColor());
     addColorDef(preproc, "ACTIVE_BACKGROUND"  , KGlobalSettings::activeTitleColor());
@@ -479,7 +479,7 @@ void runRdb( uint flags )
       if ( dSys.exists() ) {
         dSys.setFilter( QDir::Files );
         dSys.setSorting( QDir::Name );
-        dSys.setNameFilter("*.ad");
+        dSys.setNameFilters(QStringList("*.ad"));
         list += dSys.entryList();
       }
     }

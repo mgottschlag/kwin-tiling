@@ -2,6 +2,7 @@
  * KCMStyle
  * Copyright (C) 2002 Karol Szwed <gallium@kde.org>
  * Copyright (C) 2002 Daniel Molkentin <molkentin@kde.org>
+ * Copyright (C) 2007 Urs Wolfer <uwolfer @ kde.org>
  *
  * Portions Copyright (C) TrollTech AS.
  *
@@ -24,40 +25,28 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __KCMSTYLE_H
-#define __KCMSTYLE_H
+#ifndef KCMSTYLE_H
+#define KCMSTYLE_H
 
 #include <QHash>
-#include <QString>
-#include <QTimer>
-//Added by qt3to4:
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QVBoxLayout>
+#include <QLayout>
+#include <QMap>
 
 #include <kcmodule.h>
 #include <kvbox.h>
 
-#include "stylepreview.h"
 #include "menupreview.h"
 
 class KComboBox;
+class KConfig;
 class QCheckBox;
 class QComboBox;
-class QFrame;
-class Q3GroupBox;
+class QGroupBox;
 class QLabel;
-class QListWidget;
-class Q3ListViewItem;
-class QSettings;
+class QPushButton;
 class QSlider;
-class QSpacerItem;
-class QStyle;
+class StylePreview;
 class QTabWidget;
-class QVBoxLayout;
-class StyleConfigDialog;
-class WidgetPreview;
 
 struct StyleEntry {
 	QString name;
@@ -116,7 +105,7 @@ private:
 	QVBoxLayout* page3Layout;
 
 	// Page1 widgets
-	Q3GroupBox* gbWidgetStyle;
+	QGroupBox* gbWidgetStyle;
 	QVBoxLayout* gbWidgetStyleLayout;
 	QHBoxLayout* hbLayout;
 	KComboBox* cbStyle;
@@ -153,7 +142,7 @@ private:
 	QCheckBox* cbMenuShadow;
 
 	// Page3 widgets
-	Q3GroupBox* gbVisualAppearance;
+	QGroupBox* gbVisualAppearance;
 
 	QCheckBox* cbHoverButtons;
 	QCheckBox* cbTransparentToolbars;

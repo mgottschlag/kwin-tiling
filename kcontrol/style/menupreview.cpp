@@ -21,7 +21,6 @@
 
 #include <QPainter>
 #include <QImage>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QPaintEvent>
 
@@ -33,7 +32,7 @@
 
 
 MenuPreview::MenuPreview( QWidget* parent, int opacity, PreviewMode pvm )
-	: QWidget( parent, Qt::WStyle_Customize | Qt::WNoAutoErase ),
+	: QWidget( parent ),
 	pixBackground(NULL), pixOverlay(NULL), pixBlended(NULL)
 {
 	setFixedSize(150, 150);
@@ -71,9 +70,8 @@ void MenuPreview::createPixmaps()
 	if (pixBlended)
 		*pixBlended = QPixmap( w, h );
 
-	QColorGroup cg = QColorGroup( palette() );
-	QColor c1 = cg.color( backgroundRole() );
-	QColor c2 = cg.mid();
+	QColor c1 = palette().color(backgroundRole());
+	QColor c2 = palette().color(QPalette::Mid);
 
 	if (pixBackground) {
 		// Paint checkerboard
@@ -86,13 +84,13 @@ void MenuPreview::createPixmaps()
 								((y % 2) ?  c2 : c1  ) : 	// See the grid? ;-)
 								((y % 2) ?  c1 : c2  ) );
 		KIconLoader* icl = KIconLoader::global();
-		QPixmap pix = icl->loadIcon("go", K3Icon::Desktop, K3Icon::SizeLarge, K3Icon::ActiveState);
+		QPixmap pix = icl->loadIcon("about-kde", K3Icon::Desktop, K3Icon::SizeLarge, K3Icon::ActiveState);
 		p.drawPixmap( (width()-2-pix.width())/2, (height()-2-pix.height())/2, pix );
 	}
 
 	if (pixOverlay) {
-                c1 = cg.color(QPalette::Button).light(110);
-		c2 = cg.color(QPalette::Button).dark(110);
+                c1 = palette().color(QPalette::Button).light(110);
+		c2 = palette().color(QPalette::Button).dark(110);
 		KPixmapEffect::gradient( *pixOverlay, c1, c2, KPixmapEffect::VerticalGradient );
 	}
 }
