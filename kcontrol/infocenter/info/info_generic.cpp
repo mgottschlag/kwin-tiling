@@ -30,52 +30,52 @@
 */
        
 
-bool GetInfo_CPU( QListView * )
+bool GetInfo_CPU( Q3ListView * )
 {
 	return false;
 }
 
-bool GetInfo_IRQ( QListView * )
+bool GetInfo_IRQ( Q3ListView * )
 {
 	return false;
 }
 
-bool GetInfo_DMA( QListView * )
+bool GetInfo_DMA( Q3ListView * )
 {
 	return false;
 }
 
-bool GetInfo_PCI( QListView * )
+bool GetInfo_PCI( Q3ListView * )
 {
 	return false;
 }
 
-bool GetInfo_IO_Ports( QListView * )
+bool GetInfo_IO_Ports( Q3ListView * )
 {
 	return false;
 }
 
-bool GetInfo_Sound( QListView * )
+bool GetInfo_Sound( Q3ListView * )
 {
 	return false;
 }
 
-bool GetInfo_Devices( QListView * )
+bool GetInfo_Devices( Q3ListView * )
 {
 	return false;
 }
 
-bool GetInfo_SCSI( QListView * )
+bool GetInfo_SCSI( Q3ListView * )
 {
 	return false;
 }
 
-bool GetInfo_Partitions( QListView * )
+bool GetInfo_Partitions( Q3ListView * )
 {
 	return false;
 }
 
-bool GetInfo_XServer_and_Video( QListView *lBox )
+bool GetInfo_XServer_and_Video( Q3ListView *lBox )
 {
 	return GetInfo_XServer_Generic( lBox );
 }
