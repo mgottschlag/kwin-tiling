@@ -16,7 +16,9 @@
 #include <QString>
 #include <Qt3Support/Q3PtrList>
 
-#ifdef Q_OS_FREEBSD
+#if defined(__DragonFly__)
+#include <bus/usb/usb.h>
+#elif defined(Q_OS_FREEBSD)
 #include <dev/usb/usb.h>
 #endif
 

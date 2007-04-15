@@ -350,7 +350,7 @@ void USBDevice::collectData( int fd, int level, usb_device_info &di, int parent)
 	_channels     = di.udi_nports;
 
 	// determine the speed
-#if __FreeBSD_version > 490102
+#if defined(__DragonFly__) || __FreeBSD_version > 490102
 	switch (di.udi_speed) {
 		case USB_SPEED_LOW:  _speed = 1.5;   break;
 		case USB_SPEED_FULL: _speed = 12.0;  break;
