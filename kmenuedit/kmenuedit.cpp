@@ -40,7 +40,7 @@
 #include "kmenuedit.moc"
 
 KMenuEdit::KMenuEdit (bool controlCenter)
-  : KMainWindow (0), m_tree(0), m_basicTab(0), m_splitter(0), m_controlCenter(controlCenter)
+  : KXmlGuiWindow (0), m_tree(0), m_basicTab(0), m_splitter(0), m_controlCenter(controlCenter)
 {
 #if 0
     m_showHidden = config->readEntry("ShowHidden", QVariant(false)).toBool();
@@ -148,9 +148,9 @@ void KMenuEdit::slotChangeView()
     if (!m_splitter)
        setupView();
     if (m_controlCenter)
-       setupGUI(KMainWindow::ToolBar|Keys|Save|Create, "kcontroleditui.rc");
+       setupGUI(KXmlGuiWindow::ToolBar|Keys|Save|Create, "kcontroleditui.rc");
     else
-       setupGUI(KMainWindow::ToolBar|Keys|Save|Create, "kmenueditui.rc");
+       setupGUI(KXmlGuiWindow::ToolBar|Keys|Save|Create, "kmenueditui.rc");
 
     m_tree->setViewMode(m_showHidden);
 }

@@ -68,7 +68,7 @@
 #include <QtDBus/QtDBus>
 
 KPagerMainWindow::KPagerMainWindow(QWidget *parent, const char *name)
-	: KMainWindow(parent)
+	: KXmlGuiWindow(parent)
 {
     setObjectName( name );
 
@@ -157,7 +157,7 @@ bool KPagerMainWindow::queryClose()
 void KPagerMainWindow::showEvent( QShowEvent *ev )
 {
   timeout->stop();
-  KMainWindow::showEvent(ev);
+  KXmlGuiWindow::showEvent(ev);
 }
 
 void KPagerMainWindow::reallyClose()

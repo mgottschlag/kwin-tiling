@@ -32,14 +32,14 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QMenu>
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <kwm.h>
 
 class KPager;
 class QMenu;
 class OrgKdeKdesktopBackgroundInterface;
 
-class KPagerMainWindow : public KMainWindow
+class KPagerMainWindow : public KXmlGuiWindow
 {
     Q_OBJECT
 

@@ -20,7 +20,7 @@
 #ifndef __kmenuedit_h__
 #define __kmenuedit_h__
 
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <treeview.h>
 
 class BasicTab;
@@ -28,7 +28,7 @@ class QSplitter;
 class QAction;
 class KToggleAction;
 
-class KMenuEdit : public KMainWindow
+class KMenuEdit : public KXmlGuiWindow
 {
     Q_OBJECT
 
