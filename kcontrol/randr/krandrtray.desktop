@@ -64,6 +64,7 @@ Comment=A panel applet for resizing and reorientating X screens.
 Comment[de]=Ein Werkzeug zum Ändern der Bildschirmgröße und -ausrichtung
 Comment[ja]=スクリーンのサイズや向きを変更するためのアプレット
 Comment[nds]=En Paneel-Lüttprogramm för't Ännern vun Grött un Utrichten vun X-Schirmen
+Comment[sv]=Ett miniprogram för panelen som ändrar storlek och roterar X-skärmar.
 Comment[x-test]=xxA panel applet for resizing and reorientating X screens.xx
 Comment[zh_TW]=一個重新調整 X 螢幕的面板小程式。
 Exec=krandrtray

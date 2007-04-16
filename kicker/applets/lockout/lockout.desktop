@@ -7,6 +7,7 @@ Name[de]=Bildschirmsperre und Abmeldung aus KDE
 Name[el]=Εφαρμογίδιο κλειδώματος/αποσύνδεσης
 Name[ja]=ロック/ログアウトアプレット
 Name[nds]=Afsluut-/Afmell-Lüttprogramm
+Name[sv]=Lås/Logga ut-miniprogram
 Name[x-test]=xxLock/Logout Appletxx
 Name[zh_TW]=「螢幕鎖定/登出」小程式
 Comment=Adds buttons for locking screen and session logout

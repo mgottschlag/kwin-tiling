@@ -6,6 +6,7 @@ Name=Command Runner
 Name[de]=Programmstarter
 Name[ja]=コマンド Runner
 Name[nds]=Befehldreger
+Name[sv]=Kör kommando
 Name[x-test]=xxCommand Runnerxx
 Name[zh_TW]=命令執行者
 Type=Service

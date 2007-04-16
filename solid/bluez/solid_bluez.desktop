@@ -8,5 +8,6 @@ Name=BlueZ
 Comment=Bluetooth management using the BlueZ stack
 Comment[de]=Bluetooth-Verwaltung mit Hilfe von Bluez
 Comment[nds]=Bluetooth-Pleeg mit BlueZ
+Comment[sv]=Blåtandshantering som använder BlueZ
 Comment[zh_TW]=用 BlueZ 堆疊做藍芽管理
 

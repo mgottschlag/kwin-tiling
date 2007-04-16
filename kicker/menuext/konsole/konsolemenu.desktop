@@ -66,6 +66,7 @@ Comment[de]=Schnellstart des Terminal-Emulators mit einer Sitzung oder einem Les
 Comment[el]=Απευθείας εκκίνηση ενός εξομοιωτή τερματικού με μια συνεδρία ή σελιδοδείκτη
 Comment[ja]=指定したセッションやブックマーク先でターミナルエミュレータを起動します
 Comment[nds]=Den Terminal-Emulator mit en Leesteken oder Törn starten
+Comment[sv]=Starta direkt en terminalemulator med en session eller bokmärke
 Comment[x-test]=xxDirectly start terminal emulator with a session or bookmarkxx
 Comment[zh_TW]=用來啟動作業階段和書籤的終端機模擬程式的選單
 Icon=konsole
