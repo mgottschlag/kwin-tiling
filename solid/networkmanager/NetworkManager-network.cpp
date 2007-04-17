@@ -29,9 +29,7 @@ class NMNetworkPrivate
 public:
     NMNetworkPrivate( const QString & networkPath ) : netPath( networkPath ) { }
     QString netPath;
-    QList<QHostAddress> ipv4List;
-    QString subnetMask;
-    QString broadcast;
+    QList<QNetworkAddressEntry> addrList;
     QString route;
     QList<QHostAddress> dnsServers;
     bool active;
@@ -52,24 +50,9 @@ QString NMNetwork::uni() const
     return d->netPath;
 }
 
-QList<QHostAddress> NMNetwork::ipV4Addresses() const
+QList<QNetworkAddressEntry> NMNetwork::addressEntries() const
 {
-    return d->ipv4List;
-}
-
-QList<QHostAddress> NMNetwork::ipV6Addresses() const
-{
-    return QList<QHostAddress>();
-}
-
-QString NMNetwork::subnetMask() const
-{
-    return d->subnetMask;
-}
-
-QString NMNetwork::broadcastAddress() const
-{
-    return d->broadcast;
+    return d->addrList;
 }
 
 QString NMNetwork::route() const
@@ -103,9 +86,11 @@ void NMNetwork::setActivated( bool activated )
 
 void NMNetwork::setProperties( const NMDBusNetworkProperties & props )
 {
-    d->ipv4List.append( QHostAddress( props.ipv4Address ) );
-    d->subnetMask = props.subnetMask;
-    d->broadcast = props.broadcast;
+    QNetworkAddressEntry addr;
+    addr.setIp( QHostAddress( props.ipv4Address ) );
+    addr.setNetmask( QHostAddress( props.subnetMask ) );
+    addr.setBroadcast( QHostAddress( props.broadcast ) );
+    d->addrList.append( addr );
     d->route = props.route;
     d->dnsServers.append( props.primaryDNS );
     d->dnsServers.append( props.secondaryDNS );

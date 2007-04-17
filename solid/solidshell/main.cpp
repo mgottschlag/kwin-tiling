@@ -193,22 +193,13 @@ std::ostream &operator<<( std::ostream &out, const Solid::NetworkInterface &netw
 std::ostream &operator<<( std::ostream &out, const Solid::Network &network )
 {
     out << "  UNI =                " << QVariant( network.uni() ) << endl;
-    out << "  IPV4 Addresses:" << endl;
-    foreach ( QHostAddress addr, network.ipV4Addresses() )
+    out << "  Addresses:" << endl;
+    foreach ( QNetworkAddressEntry addr, network.addressEntries() )
     {
-        out << "    " << addr.toString() << endl;
+        out << "    (" << addr.ip().toString() << "," << addr.broadcast().toString() << "," << addr.ip().toString() << ")" << endl;
     }
-    if ( network.ipV4Addresses().isEmpty() )
+    if ( network.addressEntries().isEmpty() )
         out << "    none" << endl;
-    out << "  IPV6 Addresses:" << endl;
-    foreach ( QHostAddress addr, network.ipV6Addresses() )
-    {
-        out << "    " << addr.toString() << endl;
-    }
-    if ( network.ipV6Addresses().isEmpty() )
-        out << "    none" << endl;
-    out << "  Subnet mask:         " << QVariant( network.subnetMask() ) << endl;
-    out << "  Broadcast addresss:  " << QVariant( network.broadcastAddress() ) << endl;
     out << "  Route:               " << QVariant( network.route() ) <<  endl;
     out << "  DNS Servers:" << endl;
     int i = 1;

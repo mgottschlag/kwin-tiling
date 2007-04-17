@@ -49,10 +49,7 @@ public:
     NMNetwork( const QString & networkPath );
     virtual ~NMNetwork();
     QString uni() const;
-    QList<QHostAddress> ipV4Addresses() const;
-    QList<QHostAddress> ipV6Addresses() const;
-    QString subnetMask() const;
-    QString broadcastAddress() const;
+    QList<QNetworkAddressEntry> addressEntries() const;
     QString route() const;
     QList<QHostAddress> dnsServers() const;
     bool isActive() const;
