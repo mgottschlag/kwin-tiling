@@ -99,9 +99,23 @@ QString BluezBluetoothInterface::company() const
     return stringReply("GetCompany");
 }
 
-QString BluezBluetoothInterface::mode() const
+Solid::BluetoothInterface::Mode BluezBluetoothInterface::mode() const
 {
-    return stringReply("GetMode");
+    QString theMode = stringReply("GetMode");
+    Solid::BluetoothInterface::Mode modeEnum;
+    if ( theMode == "off" )
+    {
+        modeEnum = Solid::BluetoothInterface::Off;
+    }
+    else if ( theMode == "connectable" )
+    {
+        modeEnum = Solid::BluetoothInterface::Connectable;
+    }
+    else if ( theMode == "discoverable" )
+    {
+        modeEnum = Solid::BluetoothInterface::Discoverable;
+    }
+    return modeEnum;
 }
 
 int BluezBluetoothInterface::discoverableTimeout() const
@@ -156,12 +170,12 @@ QStringList BluezBluetoothInterface::listBondings() const
     return listReply("ListBondings");
 }
 
-bool BluezBluetoothInterface::isPeriodicDiscovery() const
+bool BluezBluetoothInterface::isPeriodicDiscoveryActive() const
 {
     return boolReply("IsPeriodicDiscovery");
 }
 
-bool BluezBluetoothInterface::isPeriodicDiscoveryNameResolving() const
+bool BluezBluetoothInterface::isPeriodicDiscoveryNameResolvingActive() const
 {
     return boolReply("IsPeriodicDiscoveryNameResolving");
 }
@@ -171,12 +185,12 @@ QStringList BluezBluetoothInterface::listRemoteDevices() const
     return listReply("ListRemoteDevces");
 }
 
-QStringList BluezBluetoothInterface::listRecentRemoteDevices(const QString&) const
+QStringList BluezBluetoothInterface::listRecentRemoteDevices(const QDateTime&) const
 {
     return listReply("ListRecentRemoteDevices");
 }
 
-void BluezBluetoothInterface::setMode(const QString &mode)
+void BluezBluetoothInterface::setMode(const Solid::BluetoothInterface::Mode mode)
 {
     d->iface.call("SetMode", mode);
 }
@@ -226,7 +240,7 @@ void BluezBluetoothInterface::setPeriodicDiscoveryNameResolving(bool nameResolvi
     d->iface.call("SetPeriodicDiscoveryNameResolving", nameResolving);
 }
 
-void BluezBluetoothInterface::slotModeChanged(const QString &mode)
+void BluezBluetoothInterface::slotModeChanged(const Solid::BluetoothInterface::Mode mode)
 {
     emit modeChanged(mode);
 }

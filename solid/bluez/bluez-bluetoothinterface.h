@@ -41,7 +41,7 @@ public:
     QString revision() const;
     QString manufacturer() const;
     QString company() const;
-    QString mode() const;
+    Solid::BluetoothInterface::Mode mode() const;
     int discoverableTimeout() const;
     bool isDiscoverable() const;
     QStringList listConnections() const;
@@ -51,15 +51,15 @@ public:
     QStringList serviceClasses() const;
     QString name() const;
     QStringList listBondings() const;
-    bool isPeriodicDiscovery() const;
-    bool isPeriodicDiscoveryNameResolving() const;
+    bool isPeriodicDiscoveryActive() const;
+    bool isPeriodicDiscoveryNameResolvingActive() const;
     QStringList listRemoteDevices() const;
-    QStringList listRecentRemoteDevices(const QString&) const;
+    QStringList listRecentRemoteDevices(const QDateTime&) const;
 
     QObject *createBluetoothRemoteDevice(const QString&);
 
 public Q_SLOTS:
-    void setMode(const QString&);
+    void setMode(const Solid::BluetoothInterface::Mode);
     void setDiscoverableTimeout(int);
     void setMinorClass(const QString&);
     void setName(const QString&);
@@ -70,7 +70,7 @@ public Q_SLOTS:
     void stopPeriodicDiscovery();
     void setPeriodicDiscoveryNameResolving(bool);
 
-    void slotModeChanged(const QString &mode);
+    void slotModeChanged(const Solid::BluetoothInterface::Mode mode);
     void slotDiscoverableTimeoutChanged(int timeout);
     void slotMinorClassChanged(const QString &minor);
     void slotNameChanged(const QString &name);

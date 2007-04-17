@@ -1367,8 +1367,20 @@ bool SolidShell::bluetoothAdapterSetMode( const QString &ubi, const QString &mod
 {
     Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
     Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
-
-    adapter.setMode( mode );
+    Solid::BluetoothInterface::Mode modeEnum( Solid::BluetoothInterface::Off );
+    if ( mode == "off" )
+    {
+        modeEnum = Solid::BluetoothInterface::Off;
+    }
+    else if ( mode == "connectable" )
+    {
+        modeEnum = Solid::BluetoothInterface::Connectable;
+    }
+    else if ( mode == "discoverable" )
+    {
+        modeEnum = Solid::BluetoothInterface::Discoverable;
+    }
+    adapter.setMode( modeEnum );
 
     return true;
 }
