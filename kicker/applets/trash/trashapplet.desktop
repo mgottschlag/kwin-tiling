@@ -2,7 +2,6 @@
 Encoding=UTF-8
 Type=Plugin
 Comment=Displays the trashbin and allows dropping files on it
-Comment[csb]=Wëskrzëniwô zamkłósc kòsza ë zezwôlô przecygac do niegò lopczi
 Comment[de]=Mülleimerfunktion in der Kontrollleiste
 Comment[el]=Εμφανίζει τον Κάδο Απορριμμάτων και επιτρέπει την απόθεση αρχείων πάνω του
 Comment[ja]=ごみ箱を表示し、ごみ箱へのファイルのドロップを可能にします
@@ -17,7 +16,6 @@ Name[bg]=Кошче
 Name[br]=Pod-lastez
 Name[ca]=Paperera
 Name[cs]=Koš
-Name[csb]=Kòsz
 Name[cy]=Sbwriel
 Name[da]=Affald
 Name[de]=Mülleimer

@@ -3,7 +3,6 @@ Encoding=UTF-8
 Type=ServiceType
 X-KDE-ServiceType=ScreenSaver
 Comment=ScreenSaver
-Comment[csb]=Wëgaszôcz ekranu
 Comment[de]=Bildschirmschoner
 Comment[el]=Προφύλαξη οθόνης
 Comment[ja]=スクリーンセーバー

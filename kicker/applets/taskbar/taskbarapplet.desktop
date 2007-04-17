@@ -8,7 +8,6 @@ Name[bg]=Панел за задачи
 Name[br]=Barrenn dleadoù
 Name[ca]=Barra de tasques
 Name[cs]=Pruh úloh
-Name[csb]=Lëstew dzejaniów
 Name[cy]=Bar tasgau
 Name[da]=Opgavelinje
 Name[de]=Fensterleiste
@@ -62,7 +61,6 @@ Name[xh]=Ibar yomsebenzi
 Name[zh_TW]=工作列
 
 Comment=The default taskbar panel applet
-Comment[csb]=Alternatiwnô lëstew dzejaniów dlô panelu.
 Comment[el]=Το προκαθορισμένο εφαρμογίδιο γραμμής εργασιών για τον πίνακα
 Comment[ja]=標準のタスクバーパネルアプレット
 Comment[nds]=Dat Paneel-Lüttprogramm för den Standard-Programmbalken
