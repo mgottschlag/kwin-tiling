@@ -475,7 +475,7 @@ static int GetInfo_ReadfromPipe( Q3ListView *lBox, const char *FileName, bool Wi
 #include "info_linux.cpp"
 #elif defined(sgi) && sgi
 #include "info_sgi.cpp"
-#elif __FreeBSD__
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
 #include "info_fbsd.cpp"
 #elif __hpux
 #include "info_hpux.cpp"
