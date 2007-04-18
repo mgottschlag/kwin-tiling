@@ -34,6 +34,7 @@
 #include "KfiConstants.h"
 
 class QWidget;
+class QTextStream;
 
 namespace KFI
 {
@@ -89,6 +90,7 @@ namespace Misc
     inline KDE_EXPORT QString unhide(const QString &f) { return '.'==f[0] ? f.mid(1) : f; }
     extern KDE_EXPORT uint    qHash(const TFont &key);
     extern KDE_EXPORT bool    configureForX11(const QString &dir);
+    extern KDE_EXPORT QString encodeText(const QString &str, QTextStream &s);
 }
 
 }

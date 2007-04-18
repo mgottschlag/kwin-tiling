@@ -53,44 +53,53 @@ class CGroupListItem
 
     enum EType
     {
+        STANDARD_TITLE,
         ALL,
         PERSONAL,
         SYSTEM,
         UNCLASSIFIED,
-        STANDARD
+        GROUPS_TITLE,
+        CUSTOM,
+        WS_TITLE,
+        WRITING_SYSTEM
     };
 
     union Data
     {
-        bool       validated;
-        CGroupList *parent;
+        bool       validated;      //CUSTOM
+        CGroupList *parent;        //UNCLASSIFIED
+        qulonglong writingSystem;  //WRITING_SYSTEM
     };
 
     CGroupListItem(const QString &name);
     CGroupListItem(EType type, CGroupList *p);
+    CGroupListItem(qulonglong ws);
 
     const QString &      name() const                        { return itsName; }
     void                 setName(const QString &n)           { itsName=n; }
     QSet<QString> &      families()                          { return itsFamilies; }
     const EType          type() const                        { return itsType; }
-    bool                 isStandard() const                  { return STANDARD==itsType; }
+    bool                 isCustom() const                    { return CUSTOM==itsType; }
     bool                 isAll() const                       { return ALL==itsType; }
     bool                 isUnclassified() const              { return UNCLASSIFIED==itsType; }
     bool                 isPersonal() const                  { return PERSONAL==itsType; }
     bool                 isSystem() const                    { return SYSTEM==itsType; }
-    bool                 validated() const                   { return isStandard() ? itsData.validated : true; }
-    void                 setValidated()                      { if(isStandard()) itsData.validated=true; }
+    bool                 isWritingSystem() const             { return WRITING_SYSTEM==itsType; }
+    bool                 validated() const                   { return isCustom() ? itsData.validated : true; }
+    void                 setValidated()                      { if(isCustom()) itsData.validated=true; }
     bool                 highlighted() const                 { return itsHighlighted; }
     void                 setHighlighted(bool b)              { itsHighlighted=b; }
     bool                 hasFont(const CFontItem *fnt) const;
     CFamilyItem::EStatus status() const                      { return itsStatus; }
-    void                 updateStatus(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial);
+    void                 updateStatus(QSet<QString> &enabled, QSet<QString> &disabled,
+                                      QSet<QString> &partial);
     bool                 load(QDomElement &elem);
     bool                 addFamilies(QDomElement &elem);
     void                 save(QTextStream &str);
     void                 addFamily(const QString &family)    { itsFamilies.insert(family); }
     void                 removeFamily(const QString &family) { itsFamilies.remove(family); }
     bool                 hasFamily(const QString &family)    { return itsFamilies.contains(family); }
+    qulonglong           writingSystem() const               { return itsData.writingSystem; }
 
     private:
 
@@ -121,7 +130,8 @@ class CGroupList : public QAbstractItemModel
     int             rowCount(const QModelIndex &parent = QModelIndex()) const;
     int             columnCount(const QModelIndex &parent = QModelIndex()) const;
     void            update(const QModelIndex &unHighlight, const QModelIndex &highlight);
-    void            updateStatus(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial);
+    void            updateStatus(QSet<QString> &enabled, QSet<QString> &disabled,
+                                 QSet<QString> &partial, qulonglong writingSystems);
     void            setSysMode(bool sys);
     void            rescan();
     void            load();
@@ -136,6 +146,7 @@ class CGroupList : public QAbstractItemModel
     bool            removeGroup(const QModelIndex &idx);
     void            removeFamily(const QString &family);
     bool            removeFromGroup(CGroupListItem *grp, const QString &family);
+    QString         whatsThis() const;
 
     CGroupListItem * group(CGroupListItem::EType t)
                         { return itsSpecialGroups[t]; }
@@ -161,14 +172,14 @@ class CGroupList : public QAbstractItemModel
 
     private:
 
-    QString                 itsFileName;
-    time_t                  itsTimeStamp;
-    bool                    itsModified;
-    QWidget                 *itsParent;
-    QList<CGroupListItem *> itsGroups;
-    CGroupListItem          *itsSpecialGroups[4];
-    Qt::SortOrder           itsSortOrder;
-    int                     itsSortCol;
+    QString                                       itsFileName;
+    time_t                                        itsTimeStamp;
+    bool                                          itsModified;
+    QWidget                                       *itsParent;
+    QList<CGroupListItem *>                       itsGroups;
+    QMap<CGroupListItem::EType, CGroupListItem *> itsSpecialGroups;
+    Qt::SortOrder                                 itsSortOrder;
+    qulonglong                                    itsWritingSystems;
 
     friend class CGroupListItem;
     friend class CGroupListView;
@@ -185,7 +196,7 @@ class CGroupListView : public QTreeView
 
     QSize                 sizeHint() const { return QSize(32, 32); }
 
-    bool                  isStandard()     { return CGroupListItem::STANDARD==getType(); }
+    bool                  isCustom()       { return CGroupListItem::CUSTOM==getType(); }
     bool                  isUnclassified() { return CGroupListItem::UNCLASSIFIED==getType(); }
     CGroupListItem::EType getType();
     void                  controlMenu(bool del, bool en, bool dis, bool p);

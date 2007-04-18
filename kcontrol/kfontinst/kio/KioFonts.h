@@ -85,10 +85,11 @@ class CKioFonts : public KIO::SlaveBase
 
     struct TFontDetails
     {
-        TFontDetails() { }
+        TFontDetails() : writingSystems(0) { }
 
         CDisabledFonts::TFileList files;
         unsigned long             styleVal;
+        qulonglong                writingSystems;
     };
 
     typedef QHash<QString, TFontDetails> TFontMap;
@@ -138,7 +139,8 @@ class CKioFonts : public KIO::SlaveBase
     QString            getGroupName(gid_t gid);
     bool               createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
                                           const CDisabledFonts::TFileList &patterns,
-                                          unsigned long styleVal, bool sys, bool hidden=false);
+                                          unsigned long styleVal, qulonglong writingSystems,
+                                          bool sys, bool hidden=false);
     bool               createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, const QString &path,
                                             bool sys);
     bool               putReal(const QString &destOrig, const QByteArray &destOrigC, bool origExists,
@@ -156,7 +158,7 @@ class CKioFonts : public KIO::SlaveBase
                            { return doRootCmd(cmd, getRootPasswd(askPasswd)); }
     void               correctUrl(KUrl &url);
     void               clearFontList();
-    bool               updateFontList(bool initial=false);
+    bool               updateFontList();
     EFolder            getFolder(const KUrl &url);
     TFontMap::Iterator getMap(const KUrl &url);
     const CDisabledFonts::TFileList * getEntries(const KUrl &url, TFontMap::Iterator &enabledIt,

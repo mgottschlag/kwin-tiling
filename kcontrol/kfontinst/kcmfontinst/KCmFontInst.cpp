@@ -73,6 +73,22 @@ K_EXPORT_COMPONENT_FACTORY(fontinst, FontInstallFactory("fontinst"))
 namespace KFI
 {
 
+static int constModeList[]=
+    {CGroupListItem::ALL, CGroupListItem::PERSONAL, CGroupListItem::SYSTEM, -1};
+
+inline CGroupListItem::EType modeToGrp(int mode)
+{
+    return (CGroupListItem::EType)(constModeList[mode]);
+}
+
+static int grpToMode(CGroupListItem::EType type)
+{
+    for(int i=0; i<3; ++i)
+        if(constModeList[i]==type)
+            return i;
+    return 0;
+}
+
 class CPushButton : public KPushButton
 {
     public:
@@ -199,7 +215,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsToolsMenu=new KActionMenu(KIcon("tool2"), i18n("Tools"), this);
     itsMgtMode=new KToggleAction(KIcon("fonts"),
                                  i18n("Font Management Mode"), this),
-    itsShowPreview=new KToggleAction(KIcon("thumbnail-show"), i18n("Show Preview"), this);
+    itsShowPreview=new KToggleAction(KIcon("thumbnail-show"), i18n("Show Large Preview"), this);
     settingsMenu->addAction(itsMgtMode);
     itsMgtMode->setChecked(true);
     settingsMenu->addSeparator();
@@ -231,11 +247,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsGroupList=new CGroupList(itsGroupsWidget);
     itsGroupListView=new CGroupListView(itsGroupsWidget, itsGroupList);
 
-    //itsGroupListView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
-
     if(itsModeControl)
         for(int i=0; i<3; ++i)
-            itsModeControl->addItem(itsGroupList->group((CGroupListItem::EType)i)->name());
+            itsModeControl->addItem(itsGroupList->group(modeToGrp(i))->name());
 
     KPushButton *createGroup=new CPushButton(KGuiItem(QString(), "list-add",
                                                       i18n("Create a new group")),
@@ -339,8 +353,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     connect(itsGroupListView, SIGNAL(disable()), SLOT(disableGroup()));
     connect(itsGroupListView, SIGNAL(itemSelected(const QModelIndex &)),
            SLOT(groupSelected(const QModelIndex &)));
-    connect(itsGroupListView, SIGNAL(unclassifiedChanged()), SLOT(setStatusBar()));
-    connect(itsGroupList, SIGNAL(refresh()), SLOT(refreshFamilies()));
+    connect(itsGroupList, SIGNAL(refresh()), SLOT(refreshFontList()));
     connect(itsFontList, SIGNAL(finished()), SLOT(listingCompleted()));
     connect(itsFontList, SIGNAL(percent(int)), itsListingProgress, SLOT(setValue(int)));
     connect(itsFontList, SIGNAL(status(const QString &)), itsStatusLabel,
@@ -373,7 +386,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     //connect(validateFontsAct, SIGNAL(triggered(bool)), SLOT(validateFonts()));
     //connect(downloadFontsAct, SIGNAL(triggered(bool)), SLOT(downloadFonts()));
     if(itsModeControl)
-        connect(itsModeControl, SIGNAL(activated(int)), SLOT(selectGroup(int)));
+        connect(itsModeControl, SIGNAL(activated(int)), SLOT(selectMode(int)));
 
     itsMgtMode->setChecked(cg.readEntry(CFG_FONT_MGT_MODE, false));
     itsShowPreview->setChecked(cg.readEntry(CFG_SHOW_PREVIEW, false));
@@ -571,7 +584,7 @@ void CKCmFontInst::groupSelected(const QModelIndex &index)
 
     //
     // Check fonts listed within group are still valid!
-    if(grp && grp->isStandard() && !grp->validated())
+    if(grp && grp->isCustom() && !grp->validated())
     {
         QSet<QString>           remList;
         QSet<QString>::Iterator it(grp->families().begin()),
@@ -820,14 +833,23 @@ void CKCmFontInst::listingCompleted()
     itsFontListView->selectFirstFont();
 }
 
+void CKCmFontInst::refreshFontList()
+{
+    itsFontListView->refreshFilter();
+    refreshFamilies();
+}
+
 void CKCmFontInst::refreshFamilies()
 {
     QSet<QString> enabledFamilies,
                   disabledFamilies,
                   partialFamilies;
+    qulonglong    writingSystems;
 
-    itsFontList->getFamilyStats(enabledFamilies, disabledFamilies, partialFamilies);
-    itsGroupList->updateStatus(enabledFamilies, disabledFamilies, partialFamilies);
+    itsFontList->getFamilyStats(enabledFamilies, disabledFamilies, partialFamilies,
+                                writingSystems);
+    itsGroupList->updateStatus(enabledFamilies, disabledFamilies, partialFamilies,
+                               writingSystems);
     setStatusBar();
 }
 
@@ -854,9 +876,12 @@ void CKCmFontInst::setStatusBar()
         itsStatusLabel->setText(text);
     }
 
-    bool isStd(itsGroupListView->isStandard());
+    CGroupListItem::EType type(itsGroupListView->getType());
 
-    itsAddFontControl->setEnabled(!isStd);
+    bool isStd(CGroupListItem::CUSTOM==type);
+
+    itsAddFontControl->setEnabled(CGroupListItem::ALL==type||CGroupListItem::UNCLASSIFIED==type||
+                                  CGroupListItem::PERSONAL==type||CGroupListItem::SYSTEM==type);
     itsDeleteGroupControl->setEnabled(isStd);
     itsEnableGroupControl->setEnabled(disabled||partial);
     itsDisableGroupControl->setEnabled(isStd && (enabled||partial));
@@ -872,7 +897,7 @@ void CKCmFontInst::setStatusBar()
 
 void CKCmFontInst::addFonts(const QSet<KUrl> &src)
 {
-    if(!working() && src.count() && !itsGroupListView->isStandard())
+    if(!working() && src.count() && !itsGroupListView->isCustom())
     {
         KUrl dest;
 
@@ -1000,29 +1025,31 @@ void CKCmFontInst::toggleFontManagement(bool on)
     }
 }
 
-void CKCmFontInst::selectGroup(int grp)
+void CKCmFontInst::selectMode(int mode)
 {
-    CGroupListItem::EType t((CGroupListItem::EType)grp);
-    QModelIndex           current(itsGroupListView->currentIndex());
+    selectGroup(modeToGrp(mode));
+}
+
+void CKCmFontInst::selectGroup(CGroupListItem::EType grp)
+{
+    QModelIndex current(itsGroupListView->currentIndex());
 
     if(current.isValid())
     {
         CGroupListItem *grpItem=static_cast<CGroupListItem *>(current.internalPointer());
 
-        if(grpItem && t==grpItem->type())
+        if(grpItem && grp==grpItem->type())
             return;
         else
             itsGroupListView->selectionModel()->select(current,
                                                        QItemSelectionModel::Deselect);
     }
 
-    QModelIndex idx(itsGroupList->index(t));
+    QModelIndex idx(itsGroupList->index(grp));
 
     itsGroupListView->selectionModel()->select(idx, QItemSelectionModel::Select);
     itsGroupListView->setCurrentIndex(idx);
     groupSelected(idx);
-    if(itsModeControl)
-        itsModeControl->setCurrentItem(grp);
     itsFontListView->refreshFilter();
     setStatusBar();
 }
@@ -1183,6 +1210,10 @@ void CKCmFontInst::selectMainGroup()
 {
     selectGroup(Misc::root() || itsMgtMode->isOn()
                     ? CGroupListItem::ALL : CGroupListItem::PERSONAL);
+    if(itsModeControl)
+        itsModeControl->setCurrentItem(grpToMode(Misc::root()
+                                                    ? CGroupListItem::ALL
+                                                    : CGroupListItem::PERSONAL));
 }
 
 void CKCmFontInst::doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &urls, const KUrl &dest)
@@ -1202,7 +1233,7 @@ CGroupListItem::EType CKCmFontInst::getCurrentGroupType()
     if(itsMgtMode->isOn())
         return itsGroupListView->getType();
     else if(itsModeControl)
-        return (CGroupListItem::EType)itsModeControl->currentItem();
+        return modeToGrp(itsModeControl->currentItem());
 
     return CGroupListItem::ALL;
 }

@@ -160,7 +160,7 @@ InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
                 else
                 {
                     name=udsEntry.stringValue(KIO::UDS_NAME);
-                    styleInfo=FC::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
+                    styleInfo=udsEntry.numberValue(UDS_EXTRA_FC_STYLE);
                 }
                 mime=udsEntry.stringValue(KIO::UDS_MIME_TYPE);
             }

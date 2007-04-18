@@ -262,11 +262,10 @@ static void setTimeStamp(const QString &f)
 #endif
 QString CPreviewCache::thumbKey(const QString &name, unsigned long style, int height)
 {
-    QString str;
-
-    str.sprintf("--%06X--%02d", (unsigned int)style, height);
-
-    return replaceChars(name+str)+".png";
+    return replaceChars(name)+
+           QString().sprintf("-%06lX%02d%02X%02X%02X%02X%02X%02X.png", style, height,
+                             CFcEngine::bgndCol().red(), CFcEngine::bgndCol().green(), CFcEngine::bgndCol().blue(),
+                             CFcEngine::textCol().red(), CFcEngine::textCol().green(), CFcEngine::textCol().blue());
 }
 
 QPixmap * CPreviewCache::getPixmap(const QString &family, const QString &name, const QString &fileName,
@@ -394,9 +393,10 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &st
     FC::decomposeStyleVal(FC::createStyleVal(itsName), weight, width, slant);
     itsDisplayStyleInfo=(weight<<16)+(slant<<8)+(width);
     itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
-    itsStyleInfo=FC::styleValFromStr(udsEntry.stringValue((uint)UDS_EXTRA_FC_STYLE));
+    itsStyleInfo=udsEntry.numberValue((uint)UDS_EXTRA_FC_STYLE);
     itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDS_URL)),
                                   KFI_KIO_FACE, 0);
+    itsWritingSystems=udsEntry.numberValue((uint)UDS_EXTRA_WRITING_SYSTEMS);
     QString mime(mimetype());
 
 //    itsBitmap="application/x-font-pcf"==mime || "application/x-font-bdf"==mime;
@@ -726,6 +726,8 @@ QVariant CFontList::headerData(int section, Qt::Orientation orientation,
                 if(COL_STATUS==section)
                     return i18n("This column shows the status of the font family, and of the "
                                 "individual font styles.");
+            case Qt::WhatsThisRole:
+                return whatsThis();
             default:
                 break;
         }
@@ -826,12 +828,16 @@ void CFontList::setAllowDisabled(bool on)
         (*it)->refresh();
 }
 
-void CFontList::getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial)
+void CFontList::getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled,
+                               QSet<QString> &partial, qulonglong &writingSystems)
 {
     QList<CFamilyItem *>::ConstIterator it(itsFamilies.begin()),
                                         end(itsFamilies.end());
 
+    writingSystems=0;
+
     for(; it!=end; ++it)
+    {
         switch((*it)->realStatus())
         {
             case CFamilyItem::ENABLED:
@@ -844,6 +850,29 @@ void CFontList::getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, 
                 disabled.insert((*it)->name());
                 break;
         }
+
+        QList<CFontItem *>::ConstIterator fit((*it)->fonts().begin()),
+                                          fend((*it)->fonts().end());
+
+        for(; fit!=fend; ++fit)
+            writingSystems|=(*fit)->writingSystems();
+    }
+}
+
+QString CFontList::whatsThis() const
+{
+    return i18n("<p>This list shows your installed fonts. The fonts are grouped by family, and the"
+                  " number in square brackets represents the number of styles that the family is "
+                  " avaiable in. e.g.</p>"
+                  "<ul>"
+                    "<li>Times [4]"
+                        "<ul><li>Regular</li>"
+                            "<li>Bold</li>"
+                            "<li>Bold Italic</li>"
+                            "<li>Italic</li>"
+                        "</ul>"
+                    "</li>"
+                    "<ul>");
 }
 
 void CFontList::listingCompleted()
@@ -1501,19 +1530,8 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
     connect(header(), SIGNAL(sectionClicked(int)), SLOT(setSortColumn(int)));
     connect(itsProxy, SIGNAL(refresh()), SIGNAL(refresh()));
 
-    setWhatsThis(i18n("<p>This list shows your installed fonts. The fonts are grouped by family, and the"
-                      " number in square brackets represents the number of styles that the family is "
-                      " avaiable in. e.g.</p>"
-                      "<ul>"
-                        "<li>Times [4]"
-                          "<ul><li>Regular</li>"
-                              "<li>Bold</li>"
-                              "<li>Bold Italic</li>"
-                              "<li>Italic</li>"
-                          "</ul>"
-                        "</li>"
-                      "<ul>"));
-
+    setWhatsThis(model->whatsThis());
+    header()->setWhatsThis(whatsThis());
     itsStdMenu=new QMenu(this);
     itsDeleteAct=itsStdMenu->addAction(KIcon("edit-delete"), i18n("Delete..."),
                                        this, SIGNAL(del()));
@@ -1624,7 +1642,7 @@ void CFontListView::setFilterGroup(CGroupListItem *grp)
     CGroupListItem *oldGrp(itsProxy->filterGroup());
 
     itsProxy->setFilterGroup(grp);
-    itsAllowDrops=grp && !grp->isStandard();
+    itsAllowDrops=grp && !grp->isCustom();
 
     if(!Misc::root())
     {
@@ -1636,14 +1654,14 @@ void CFontListView::setFilterGroup(CGroupListItem *grp)
         {
             // Check to see whether we have changed from listing all fonts,
             // listing just system or listing personal fonts.
-            CGroupListItem::EType aType(CGroupListItem::STANDARD==grp->type() ||
+            CGroupListItem::EType aType(CGroupListItem::CUSTOM==grp->type() ||
                                         CGroupListItem::ALL==grp->type() ||
                                         CGroupListItem::UNCLASSIFIED==grp->type()
-                                            ? CGroupListItem::STANDARD : grp->type()),
-                                  bType(CGroupListItem::STANDARD==oldGrp->type() ||
+                                            ? CGroupListItem::CUSTOM : grp->type()),
+                                  bType(CGroupListItem::CUSTOM==oldGrp->type() ||
                                         CGroupListItem::ALL==oldGrp->type() ||
                                         CGroupListItem::UNCLASSIFIED==oldGrp->type()
-                                            ? CGroupListItem::STANDARD : oldGrp->type());
+                                            ? CGroupListItem::CUSTOM : oldGrp->type());
             refreshStats=aType!=bType;
         }
 

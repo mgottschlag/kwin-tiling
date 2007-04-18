@@ -42,6 +42,7 @@ class CSocket
     bool read(QVariant &var, int timeout=constTimeout);
     bool read(QString &str, int timeout=constTimeout);
     bool read(int &i, int timeout=constTimeout);
+    bool read(qulonglong &i, int timeout=constTimeout);
     bool read(bool &b, int timeout=constTimeout);
     bool write(const QVariant &var, int timeout=constTimeout);
     bool connectToServer(const QByteArray &sock, unsigned int socketUid);

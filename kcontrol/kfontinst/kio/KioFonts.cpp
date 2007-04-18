@@ -39,6 +39,7 @@
 #include <QDataStream>
 #include <QTextStream>
 #include <QRegExp>
+#include <QFontDatabase>
 #include <kcomponentdata.h>
 #include <kde_file.h>
 #include <ktemporaryfile.h>
@@ -63,7 +64,7 @@
 // Not enabled - as it messes things up a little with fonts/group files.
 //#define KFI_KIO_ALL_URLS_HAVE_NAME
 
-#define KFI_DBUG kDebug() << "[" << (int)(getpid()) << "] "
+#define KFI_DBUG kDebug(7000) << "[" << (int)(getpid()) << "] " << " (" << time(NULL) << ") "
 
 #define MAX_IPC_SIZE    (1024*32)
 #define DEFAULT_TIMEOUT 2         // Time between last mod and writing files...
@@ -683,6 +684,81 @@ static QString getFamily(const QString &font)
     return -1==commaPos ? font : font.left(commaPos);
 }
 
+inline qulonglong toBit(QFontDatabase::WritingSystem ws)
+{
+    return ((qulonglong)1) << (int)ws;
+}
+
+//.........the following section is inspired by qfontdatabase_x11.cpp / loadFontConfig
+
+
+// Unfortunately FontConfig doesn't know about some languages. We have to test these through the
+// charset. The lists below contain the systems where we need to do this.
+static const struct
+{
+    QFontDatabase::WritingSystem ws;
+    ushort                       ch;
+} sampleCharForWritingSystem[] =
+{
+    { QFontDatabase::Telugu, 0xc15 },
+    { QFontDatabase::Kannada, 0xc95 },
+    { QFontDatabase::Malayalam, 0xd15 },
+    { QFontDatabase::Sinhala, 0xd9a },
+    { QFontDatabase::Myanmar, 0x1000 },
+    { QFontDatabase::Ogham, 0x1681 },
+    { QFontDatabase::Runic, 0x16a0 },
+    { QFontDatabase::Any, 0x0 }
+};
+
+static qulonglong getWritingSystems(FcPattern *pat)
+{
+    qulonglong ws(0);
+
+    FcLangSet                                  *langset(0);
+    const CDisabledFonts::LangWritingSystemMap *langForWritingSystem(CDisabledFonts::languageForWritingSystemMap());
+
+    if (FcResultMatch==FcPatternGetLangSet(pat, FC_LANG, 0, &langset))
+    {
+        for (int i = 0; langForWritingSystem[i].lang; ++i)
+            if (FcLangDifferentLang!=FcLangSetHasLang(langset, langForWritingSystem[i].lang))
+                ws|=toBit(langForWritingSystem[i].ws);
+    }
+    else
+        ws|=toBit(QFontDatabase::Other);
+
+    FcCharSet *cs(0);
+
+    if (FcResultMatch == FcPatternGetCharSet(pat, FC_CHARSET, 0, &cs))
+    {
+        // some languages are not supported by FontConfig, we rather check the
+        // charset to detect these
+        for (int i = 0; QFontDatabase::Any!=sampleCharForWritingSystem[i].ws; ++i)
+            if (FcCharSetHasChar(cs, sampleCharForWritingSystem[i].ch))
+                ws|=toBit(sampleCharForWritingSystem[i].ws);
+    }
+
+    return ws;
+}
+
+static QString obtainMimeType(const QString &file)
+{
+    if(Misc::checkExt(file, "ttf") || Misc::checkExt(file, "ttc"))
+        return "application/x-font-ttf";
+    if(Misc::checkExt(file, "otf"))
+        return "application/x-font-otf";
+    if(Misc::checkExt(file, "pfa") || Misc::checkExt(file, "pfb"))
+        return "application/x-font-type1";
+    if(Misc::checkExt(file, "pcf.gz") || Misc::checkExt(file, "pcf"))
+        return "application/x-font-pcf";
+    if(Misc::checkExt(file, "bdf.gz") || Misc::checkExt(file, "bdf"))
+        return "application/x-font-bdf";
+
+    // File extension check failed, use kmimetype to read contents...
+    return KMimeType::findByPath(file)->name();
+}
+
+//.........
+
 CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
          : KIO::SlaveBase(KFI_KIO_FONTS_PROTOCOL, pool, app),
            itsRoot(Misc::root()),
@@ -760,7 +836,7 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
     if(!Misc::dExists(itsFolders[mainFolder].location))
         Misc::createDir(itsFolders[mainFolder].location);
 
-    updateFontList(true);
+    updateFontList();
 }
 
 CKioFonts::~CKioFonts()
@@ -832,7 +908,7 @@ void CKioFonts::listDir(EFolder folder, KIO::UDSEntry &entry)
         {
             entry.clear();
             if(createFontUDSEntry(entry, it.key(), it.value().files, it.value().styleVal,
-                                  FOLDER_SYS==folder))
+                                  it.value().writingSystems, FOLDER_SYS==folder))
                 listEntry(entry, false);
         }
     }
@@ -842,9 +918,10 @@ void CKioFonts::listDir(EFolder folder, KIO::UDSEntry &entry)
 
     for(; dIt!=dEnd; ++dIt)
         if(createFontUDSEntry(entry, (*dIt).getName(), (*dIt).files,
-                              (*dIt).styleInfo, FOLDER_SYS==folder, true))
+                              (*dIt).styleInfo, (*dIt).writingSystems, FOLDER_SYS==folder, true))
             listEntry(entry, false);
 }
+
 void CKioFonts::stat(const KUrl &url)
 {
     KFI_DBUG << "stat " << url.prettyUrl() << " query:" << url.query() << endl;
@@ -973,7 +1050,7 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KUrl &url, EFolder f
                 files.append(CDisabledFonts::TFile((*it)+fileName));
                 entry.clear();
                 ok=createFontUDSEntry(entry, i18n("Invalid Font"), files,
-                                      KFI_NO_STYLE_INFO, FOLDER_SYS==folder,
+                                      KFI_NO_STYLE_INFO, 0, FOLDER_SYS==folder,
                                       Misc::isHidden(url)) && getSize(entry)>0;
             }
     }
@@ -994,7 +1071,7 @@ bool CKioFonts::createStatEntryReal(KIO::UDSEntry &entry, const KUrl &url, EFold
     {
         KFI_DBUG << "createStatEntryReal - its a normal font" << endl;
         return createFontUDSEntry(entry, it.key(), it.value().files, it.value().styleVal,
-                                  FOLDER_SYS==folder);
+                                  it.value().writingSystems, FOLDER_SYS==folder);
     }
 
     KFI_DBUG << "createStatEntryReal - try looking in disabled fonts" << endl;
@@ -1007,7 +1084,7 @@ bool CKioFonts::createStatEntryReal(KIO::UDSEntry &entry, const KUrl &url, EFold
     {
         KFI_DBUG << "createStatEntryReal - its a disabled font" << endl;
         return createFontUDSEntry(entry, (*dIt).getName(), (*dIt).files, (*dIt).styleInfo,
-                                  FOLDER_SYS==folder, true);
+                                  (*dIt).writingSystems, FOLDER_SYS==folder, true);
     }
 
     return false;
@@ -1349,10 +1426,11 @@ QString CKioFonts::getGroupName(gid_t gid)
 
 bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
                                    const CDisabledFonts::TFileList &patterns,
-                                   unsigned long styleVal, bool sys, bool hidden)
+                                   unsigned long styleVal, qulonglong writingSystems,
+                                   bool sys, bool hidden)
 {
-    KFI_DBUG << "createFontUDSEntry name:" << name << " style:" << styleVal << " #"
-             << patterns.count() << endl;
+    //KFI_DBUG << "createFontUDSEntry name:" << name << " style:" << styleVal << " #"
+    //         << patterns.count() << endl;
 
     //
     // First of all get list of real files - i.e. remove any duplicates due to symlinks
@@ -1391,6 +1469,9 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
 
         if(-1!=KDE_lstat(cPath, &buff))
         {
+            if(0==writingSystems)
+                writingSystems=toBit(QFontDatabase::Other);
+
             entry.insert(KIO::UDS_NAME, name);
             entry.insert(KIO::UDS_FILE_TYPE, buff.st_mode&S_IFMT);
             entry.insert(KIO::UDS_ACCESS, buff.st_mode&07777);
@@ -1398,8 +1479,9 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
             entry.insert(KIO::UDS_USER, getUserName(buff.st_uid));
             entry.insert(KIO::UDS_GROUP, getGroupName(buff.st_gid));
             entry.insert(KIO::UDS_ACCESS_TIME, buff.st_atime);
-            entry.insert(KIO::UDS_MIME_TYPE, KMimeType::findByPath(*it)->name());
-            entry.insert(UDS_EXTRA_FC_STYLE, FC::styleValToStr(styleVal));
+            entry.insert(KIO::UDS_MIME_TYPE, obtainMimeType(*it));
+            entry.insert(UDS_EXTRA_FC_STYLE, styleVal);
+            entry.insert(UDS_EXTRA_WRITING_SYSTEMS, writingSystems);
 
             if(hidden)
                 entry.insert(KIO::UDS_HIDDEN, 1);
@@ -1956,6 +2038,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
 
                             c.args.append(getFamily(enabledIt.key()));
                             c.args.append((int)(*enabledIt).styleVal);
+                            c.args.append((*enabledIt).writingSystems);
                             c.args.append((int)(nameIt.key()));
                             c.args.append((*enabledIt).files.count());
                             for(it=(*enabledIt).files.begin(); it!=end; ++it)
@@ -1969,7 +2052,8 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                             CDisabledFonts::TFont font(-1==commaPos
                                                         ? fontStr
                                                         : fontStr.left(commaPos),
-                                                       (*enabledIt).styleVal);
+                                                       (*enabledIt).styleVal,
+                                                       (*enabledIt).writingSystems);
 
                             font.files=(*enabledIt).files;
                             if(1==font.files.count())
@@ -2574,16 +2658,14 @@ void CKioFonts::clearFontList()
         itsFolders[FOLDER_USER].fontMap.clear();
 }
 
-//
-// 'initial' is only set to true in the constructor - this is so that the font list
-// always contains data before each put(), get() etc. call.
-bool CKioFonts::updateFontList(bool initial)
+bool CKioFonts::updateFontList()
 {
     KFI_DBUG << "updateFontList" << endl;
 
     // For some reason just the "!FcConfigUptoDate(0)" check does not always work :-(
-    if(initial || !itsFontList || !FcConfigUptoDate(0) ||
-       (abs(time(NULL)-itsLastFcCheckTime)>constMaxFcCheckTime))
+    if(0!=itsLastFcCheckTime &&
+       (!itsFontList || !FcConfigUptoDate(0) ||
+        (abs(time(NULL)-itsLastFcCheckTime)>constMaxFcCheckTime)))
     {
         KFI_DBUG << "itsFontList:" << (intptr_t)itsFontList
                  << " FcConfigUptoDate:" << (int)FcConfigUptoDate(0)
@@ -2603,7 +2685,7 @@ bool CKioFonts::updateFontList(bool initial)
 
     if(!itsFontList)
     {
-        KFI_DBUG << "updateFontList - update list of fonts " << endl;
+        KFI_DBUG << "updateFontList - update list of fonts" << endl;
 
         itsLastFcCheckTime=time(NULL);
 
@@ -2612,7 +2694,7 @@ bool CKioFonts::updateFontList(bool initial)
 #ifdef KFI_USE_TRANSLATED_FAMILY_NAME
                                             FC_FAMILYLANG,
 #endif
-                                            FC_WEIGHT,
+                                            FC_WEIGHT, FC_LANG, FC_CHARSET,
                                             //FC_SCALABLE,
 #ifndef KFI_FC_NO_WIDTHS
                                             FC_WIDTH,
@@ -2654,6 +2736,7 @@ bool CKioFonts::updateFontList(bool initial)
                     bool         use=true;
 
                     details.styleVal=styleVal;
+                    details.writingSystems|=getWritingSystems(itsFontList->fonts[i]);
 
                     if(details.files.count()) // Check for duplicates...
                     {
@@ -2669,6 +2752,8 @@ bool CKioFonts::updateFontList(bool initial)
                 }
             }
         }
+
+        KFI_DBUG << "updateFontList - updated list of fonts" << endl;
     }
 
     if(NULL==itsFontList)

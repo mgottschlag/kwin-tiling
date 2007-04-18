@@ -88,14 +88,16 @@ class CKCmFontInst : public KCModule
     void    print();
     void    printGroup();
     void    listingCompleted();
+    void    refreshFontList();
     void    refreshFamilies();
     void    setStatusBar();
     void    addFonts(const QSet<KUrl> &src);
     void    toggleFontManagement(bool on);
-    void    selectGroup(int grp);
+    void    selectMode(int mode);
 
     private:
 
+    void    selectGroup(CGroupListItem::EType grp);
     void    print(bool all);
     void    deleteFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool hasSys);
     void    toggleGroup(bool enable);

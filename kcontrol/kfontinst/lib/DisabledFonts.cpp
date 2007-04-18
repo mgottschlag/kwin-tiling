@@ -49,6 +49,8 @@ namespace KFI
 #define WIDTH_ATTR    "width"
 #define SLANT_ATTR    "slant"
 #define FACE_ATTR     "face"
+#define LANGS_ATTR    "langs"
+#define LANG_SEP      ","
 
 static const int     constStaleLockTime(5);
 static const QString constLockExt(".lock");
@@ -123,11 +125,72 @@ static bool changeStatus(const CDisabledFonts::TFileList &files, bool enable)
     return true;
 }
 
+CDisabledFonts::LangWritingSystemMap CDisabledFonts::theirLanguageForWritingSystem[]=
+{
+    { QFontDatabase::Latin, (const FcChar8 *)"en" },
+    { QFontDatabase::Greek, (const FcChar8 *)"el" },
+    { QFontDatabase::Cyrillic, (const FcChar8 *)"ru" },
+    { QFontDatabase::Armenian, (const FcChar8 *)"hy" },
+    { QFontDatabase::Hebrew, (const FcChar8 *)"he" },
+    { QFontDatabase::Arabic, (const FcChar8 *)"ar" },
+    { QFontDatabase::Syriac, (const FcChar8 *)"syr" },
+    { QFontDatabase::Thaana, (const FcChar8 *)"div" },
+    { QFontDatabase::Devanagari, (const FcChar8 *)"hi" },
+    { QFontDatabase::Bengali, (const FcChar8 *)"bn" },
+    { QFontDatabase::Gurmukhi, (const FcChar8 *)"pa" },
+    { QFontDatabase::Gujarati, (const FcChar8 *)"gu" },
+    { QFontDatabase::Oriya, (const FcChar8 *)"or" },
+    { QFontDatabase::Tamil, (const FcChar8 *)"ta" },
+    { QFontDatabase::Telugu, (const FcChar8 *)"te" },
+    { QFontDatabase::Kannada, (const FcChar8 *)"kn" },
+    { QFontDatabase::Malayalam, (const FcChar8 *)"ml" },
+    { QFontDatabase::Sinhala, (const FcChar8 *)"si" },
+    { QFontDatabase::Thai, (const FcChar8 *)"th" },
+    { QFontDatabase::Lao, (const FcChar8 *)"lo" },
+    { QFontDatabase::Tibetan, (const FcChar8 *)"bo" },
+    { QFontDatabase::Myanmar, (const FcChar8 *)"my" },
+    { QFontDatabase::Georgian, (const FcChar8 *)"ka" },
+    { QFontDatabase::Khmer, (const FcChar8 *)"km" },
+    { QFontDatabase::SimplifiedChinese, (const FcChar8 *)"zh-cn" },
+    { QFontDatabase::TraditionalChinese, (const FcChar8 *)"zh-tw" },
+    { QFontDatabase::Japanese, (const FcChar8 *)"ja" },
+    { QFontDatabase::Korean, (const FcChar8 *)"ko" },
+    { QFontDatabase::Vietnamese, (const FcChar8 *)"vi" },
+    { QFontDatabase::Other, NULL },
+
+    // The following is only used to save writing system data for disabled fonts...
+    { QFontDatabase::Telugu, (const FcChar8 *)"Qt-Telugu" },
+    { QFontDatabase::Kannada, (const FcChar8 *)"Qt-Kannada" },
+    { QFontDatabase::Malayalam, (const FcChar8 *)"Qt-Malayalam" },
+    { QFontDatabase::Sinhala, (const FcChar8 *)"Qt-Sinhala" },
+    { QFontDatabase::Myanmar, (const FcChar8 *)"Qt-Myanmar" },
+    { QFontDatabase::Ogham, (const FcChar8 *)"Qt-Ogham" },
+    { QFontDatabase::Runic, (const FcChar8 *)"Qt-Runic" },
+
+    { QFontDatabase::Any, NULL }
+};
+
+// Cache qstring->ws value
+
+static QMap<QString, qulonglong> constWritingSystemMap;
+
+void CDisabledFonts::createWritingSystemMap()
+{
+    // check if we have created the cache yet...
+    if(constWritingSystemMap.isEmpty())
+        for(int i=0; QFontDatabase::Any!=theirLanguageForWritingSystem[i].ws; ++i)
+            if(theirLanguageForWritingSystem[i].lang)
+                constWritingSystemMap[(const char *)theirLanguageForWritingSystem[i].lang]=
+                    ((qulonglong)1)<<theirLanguageForWritingSystem[i].ws;
+}
+
 CDisabledFonts::CDisabledFonts(const QString &path, bool sys)
               : itsTimeStamp(0),
                 itsModified(false)
 {
     QString p;
+
+    createWritingSystemMap();
 
     if(path.isEmpty())
     {
@@ -170,10 +233,15 @@ CDisabledFonts::CDisabledFonts(const QString &path, bool sys)
 
 bool CDisabledFonts::refresh()
 {
-    bool update=Misc::getTimeStamp(itsFileName)!=itsTimeStamp;
-    save();
-    load();
-    return update;
+    time_t ts=Misc::getTimeStamp(itsFileName);
+
+    if(!ts || ts!=itsTimeStamp)
+    {
+        save();
+        load();
+        return true;
+    }
+    return false;
 }
 
 //
@@ -285,6 +353,7 @@ bool CDisabledFonts::TFile::load(QDomElement &elem)
 
         if(elem.hasAttribute(FACE_ATTR))
             face=elem.attribute(FACE_ATTR).toInt(&ok);
+
         if(!ok || face<0)
             face=0;
         return Misc::fExists(path);
@@ -324,6 +393,17 @@ bool CDisabledFonts::TFont::load(QDomElement &elem)
         }
 
         styleInfo=FC::createStyleVal(weight, width, slant);
+
+        if(elem.hasAttribute(LANGS_ATTR))
+        {
+            QStringList langs(elem.attribute(LANGS_ATTR).split(LANG_SEP, QString::SkipEmptyParts));
+
+            QStringList::ConstIterator it(langs.begin()),
+                                       end(langs.end());
+
+            for(; it!=end; ++it)
+                writingSystems|=constWritingSystemMap[*it];
+        }
 
         if(elem.hasAttribute(PATH_ATTR))
         {
@@ -380,7 +460,7 @@ bool CDisabledFonts::disable(const TFont &font)
 
     if(it==itsDisabledFonts.end())
     {
-        TFont newFont(font.family, font.styleInfo);
+        TFont newFont(font.family, font.styleInfo, font.writingSystems);
 
         if(changeStatus(font.files, false))
         {
@@ -552,7 +632,7 @@ static QString contractHome(QString path)
 
 QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFile &f)
 {
-    s << PATH_ATTR"=\"" << contractHome(f.path) << "\" ";
+    s << PATH_ATTR"=\"" << KFI::Misc::encodeText(contractHome(f.path), s) << "\" ";
 
     if(f.face>0)
         s << FACE_ATTR"=\"" << f.face << "\" ";
@@ -562,41 +642,41 @@ QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFile &f)
 
 QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFont &f)
 {
-    int                                                  weight, width, slant;
-    QList<KFI::CDisabledFonts::TFileList::ConstIterator> saveFiles;
-    KFI::CDisabledFonts::TFileList::ConstIterator        it(f.files.begin()),
-                                                         end(f.files.end());
+    int weight, width, slant;
 
     KFI::FC::decomposeStyleVal(f.styleInfo, weight, width, slant);
 
-    for(; it!=end; ++it)
-        if(KFI::Misc::fExists((*it).path))
-            saveFiles.append(it);
+    s << " <"FONT_TAG" "FAMILY_ATTR"=\"" << KFI::Misc::encodeText(f.family, s) << "\" ";
 
-    if(saveFiles.count())
+    if(KFI_NULL_SETTING!=weight)
+        s << WEIGHT_ATTR"=\"" << weight << "\" ";
+    if(KFI_NULL_SETTING!=width)
+        s << WIDTH_ATTR"=\"" << width << "\" ";
+    if(KFI_NULL_SETTING!=slant)
+        s << SLANT_ATTR"=\"" << slant << "\" ";
+
+    QStringList                              ws;
+    QMap<QString, qulonglong>::ConstIterator wit(KFI::constWritingSystemMap.begin()),
+                                             wend(KFI::constWritingSystemMap.end());
+
+    for(; wit!=wend; ++wit)
+        if(f.writingSystems&wit.value())
+            ws+=wit.key();
+
+    if(ws.count())
+        s << LANGS_ATTR"=\"" << ws.join(LANG_SEP) << "\" ";
+
+    if(1==f.files.count())
+        s << *(f.files.begin()) << "/>" << endl;
+    else
     {
-        QList<KFI::CDisabledFonts::TFileList::ConstIterator>::ConstIterator
-                fIt(saveFiles.begin()),
-                fEnd(saveFiles.end());
+        KFI::CDisabledFonts::TFileList::ConstIterator it(f.files.begin()),
+                                                      end(f.files.end());
 
-        s << " <"FONT_TAG" "FAMILY_ATTR"=\"" << f.family << "\" ";
-
-        if(KFI_NULL_SETTING!=weight)
-            s << WEIGHT_ATTR"=\"" << weight << "\" ";
-        if(KFI_NULL_SETTING!=width)
-            s << WIDTH_ATTR"=\"" << width << "\" ";
-        if(KFI_NULL_SETTING!=slant)
-            s << SLANT_ATTR"=\"" << slant << "\" ";
-
-        if(1==saveFiles.count())
-            s << (*(*fIt)) << "/>" << endl;
-        else
-        {
-            s << '>' << endl;
-            for(; fIt!=fEnd; ++fIt)
-                s << "  <"FILE_TAG" " << (*(*fIt)) << "/>" << endl;
-            s << " </"FONT_TAG">" << endl;
-        }
+        s << '>' << endl;
+        for(; it!=end; ++it)
+            s << "  <"FILE_TAG" " << *it << "/>" << endl;
+        s << " </"FONT_TAG">" << endl;
     }
 
     return s;

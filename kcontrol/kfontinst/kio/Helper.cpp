@@ -178,17 +178,18 @@ bool CHelper::disableFont()
 {
     kDebug() << "disableFont" << endl;
 
-    QString family;
-    int     style,
-            face,
-            numFiles;
+    QString    family;
+    int        style,
+               face,
+               numFiles;
+    qulonglong writingSystems;
 
-    if(read(family) && read(style) && read(face) && read(numFiles))
+    if(read(family) && read(style) && read(writingSystems) && read(face) && read(numFiles))
     {
         kDebug() << "family:" << family << " style:" << style << " face:" << face
                  << " numFiles:" << numFiles << endl;
 
-        CDisabledFonts::TFont font(family, style);
+        CDisabledFonts::TFont font(family, style, writingSystems);
 
         for(int i=0; i<numFiles; ++i)
             if(!getFile(font))

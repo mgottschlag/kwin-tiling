@@ -345,6 +345,64 @@ bool configureForX11(const QString &dir)
     return rv;
 }
 
+// Taken from qdom.cpp
+QString encodeText(const QString &str, QTextStream &s)
+{
+    const QTextCodec *const codec = s.codec();
+
+    Q_ASSERT(codec);
+
+    QString retval(str);
+    int     len = retval.length(),
+            i = 0;
+
+    while (i < len)
+    {
+        const QChar ati(retval.at(i));
+
+        if (ati == QLatin1Char('<'))
+        {
+            retval.replace(i, 1, QLatin1String("&lt;"));
+            len += 3;
+            i += 4;
+        }
+        else if (ati == QLatin1Char('"'))
+        {
+            retval.replace(i, 1, QLatin1String("&quot;"));
+            len += 5;
+            i += 6;
+        }
+        else if (ati == QLatin1Char('&'))
+        {
+            retval.replace(i, 1, QLatin1String("&amp;"));
+            len += 4;
+            i += 5;
+        }
+        else if (ati == QLatin1Char('>') && i >= 2 && retval[i - 1] == QLatin1Char(']') && retval[i - 2] == QLatin1Char(']'))
+        {
+            retval.replace(i, 1, QLatin1String("&gt;"));
+            len += 3;
+            i += 4;
+        }
+        else
+        {
+            if(codec->canEncode(ati))
+                ++i;
+            else
+            {
+                // We have to use a character reference to get it through.
+                const ushort codepoint(ati.unicode());
+                const QString replacement(QLatin1String("&#x") + QString::number(codepoint, 16) + QLatin1Char(';'));
+                retval.replace(i, 1, replacement);
+                i += replacement.length();
+                len += replacement.length() - 1;
+            }
+        }
+    }
+
+    return retval;
+}
+
 } // Misc::
 
 } // KFI::

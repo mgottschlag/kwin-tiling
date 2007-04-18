@@ -108,7 +108,9 @@ class CFontList : public QAbstractItemModel
     bool            allowSys() const      { return itsAllowSys; }
     bool            allowUser() const     { return itsAllowUser; }
     bool            allowDisabled() const { return itsAllowDisabled; }
-    void            getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial);
+    void            getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled,
+                                   QSet<QString> &partial, qulonglong &writingSystems);
+    QString         whatsThis() const;
 
     Q_SIGNALS:
 
@@ -245,6 +247,7 @@ class CFontItem : public CFontModelItem
     int                   rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
     const QStringList &   files() const            { return itsFiles; }
     KIO::filesize_t       size() const             { return itsItem ? itsItem->size() : 0; }
+    qulonglong            writingSystems() const   { return itsWritingSystems; }
 
     private:
 
@@ -259,6 +262,7 @@ class CFontItem : public CFontModelItem
     bool            itsBitmap,
                     itsEnabled;
     QStringList     itsFiles;
+    qulonglong      itsWritingSystems;
 };
 
 class CFontListSortFilterProxy : public QSortFilterProxyModel

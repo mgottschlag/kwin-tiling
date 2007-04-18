@@ -27,10 +27,12 @@
 #include <QStringList>
 #include <QSet>
 #include <QList>
+#include <QFontDatabase>
 #include <time.h>
 #include "KfiConstants.h"
 #include "Misc.h"
 #include "kfontinst_export.h"
+#include <fontconfig/fontconfig.h>
 
 class QDomDocument;
 class QDomElement;
@@ -44,6 +46,12 @@ namespace KFI
 class KFONTINST_EXPORT CDisabledFonts
 {
     public:
+
+    struct LangWritingSystemMap
+    {
+        QFontDatabase::WritingSystem ws;
+        const FcChar8                *lang;
+    };
 
     struct TFile
     {
@@ -66,8 +74,8 @@ class KFONTINST_EXPORT CDisabledFonts
 
     struct KFONTINST_EXPORT TFont : public Misc::TFont
     {
-        TFont(const QString &f=QString(), unsigned long s=KFI_NO_STYLE_INFO) : Misc::TFont(f, s) { }
-        TFont(const Misc::TFont &f) : Misc::TFont(f) { }
+        TFont(const QString &f=QString(), unsigned long s=KFI_NO_STYLE_INFO, qulonglong ws=0) : Misc::TFont(f, s), writingSystems(ws) { }
+        TFont(const Misc::TFont &f) : Misc::TFont(f), writingSystems(0) { }
 
         bool operator==(const TFont &o) const { return styleInfo==o.styleInfo && family==o.family; }
         bool load(QDomElement &elem);
@@ -76,6 +84,7 @@ class KFONTINST_EXPORT CDisabledFonts
 
         mutable QString name;
         TFileList       files;
+        qulonglong      writingSystems;
     };
 
     struct KFONTINST_EXPORT TFontList : public QSet<TFont>
@@ -87,6 +96,8 @@ class KFONTINST_EXPORT CDisabledFonts
 
     CDisabledFonts(const QString &path=QString(), bool sys=false);
     ~CDisabledFonts()          { save(); }
+
+    static const LangWritingSystemMap * languageForWritingSystemMap() { return theirLanguageForWritingSystem; }
 
     //
     // Refresh checks the timestamp of the file to determine if changes have been
@@ -114,6 +125,8 @@ class KFONTINST_EXPORT CDisabledFonts
     CDisabledFonts(const CDisabledFonts &o);
     void merge(const CDisabledFonts &other);
 
+    static void createWritingSystemMap();
+
     private:
 
     QString   itsFileName;
@@ -121,6 +134,8 @@ class KFONTINST_EXPORT CDisabledFonts
     bool      itsModified,
               itsModifiable;
     TFontList itsDisabledFonts;
+
+    static LangWritingSystemMap theirLanguageForWritingSystem[];
 };
 
 inline KDE_EXPORT uint qHash(const CDisabledFonts::TFont &key)

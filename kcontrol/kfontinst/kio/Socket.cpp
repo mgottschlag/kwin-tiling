@@ -93,6 +93,16 @@ bool CSocket::read(QVariant &var, int timeout)
                 }
                 break;
             }
+            case QVariant::ULongLong:
+            {
+                qulonglong val;
+                if(readBlock((char *)(&val), sizeof(qulonglong), timeout))
+                {
+                    var=QVariant(val);
+                    return true;
+                }
+                break;
+            }
             case QVariant::Bool:
             {
                 unsigned char val;
@@ -152,6 +162,19 @@ bool CSocket::read(int &i, int timeout)
     return false;
 }
 
+bool CSocket::read(qulonglong &i, int timeout)
+{
+    QVariant var;
+
+    if(read(var, timeout) && QVariant::ULongLong==var.type())
+    {
+        i=var.toULongLong();
+        return true;
+    }
+
+    return false;
+}
+
 bool CSocket::read(bool &b, int timeout)
 {
     QVariant var;
@@ -179,6 +202,12 @@ bool CSocket::write(const QVariant &var, int timeout)
             int val(var.toInt());
             return writeBlock((const char *)(&type), sizeof(int), timeout) &&
                    writeBlock((const char *)(&val), sizeof(int), timeout);
+        }
+        case QVariant::ULongLong:
+        {
+            qulonglong val(var.toInt());
+            return writeBlock((const char *)(&type), sizeof(int), timeout) &&
+                   writeBlock((const char *)(&val), sizeof(qulonglong), timeout);
         }
         case QVariant::Bool:
         {

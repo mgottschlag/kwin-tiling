@@ -223,7 +223,7 @@ void CFontViewPart::timeout()
             if(KIO::NetAccess::stat(url(), udsEntry, NULL))
             {
                 name=udsEntry.stringValue(KIO::UDS_NAME);
-                styleInfo=FC::styleValFromStr(udsEntry.stringValue(UDS_EXTRA_FC_STYLE));
+                styleInfo=udsEntry.numberValue(UDS_EXTRA_FC_STYLE);
                 isDisabled=udsEntry.numberValue(KIO::UDS_HIDDEN, 0) ? true : false;
                 mime=udsEntry.stringValue(KIO::UDS_MIME_TYPE);
             }

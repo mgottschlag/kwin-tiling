@@ -981,7 +981,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
         {
             name=udsEntry.stringValue((uint)KIO::UDS_NAME);
             itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
-            style=FC::styleValFromStr(udsEntry.stringValue((uint)UDS_EXTRA_FC_STYLE));
+            style=udsEntry.numberValue((uint)UDS_EXTRA_FC_STYLE);
             itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDS_URL)),
                                           KFI_KIO_FACE, 0);
 #ifdef KFI_FC_DEBUG
