@@ -41,7 +41,7 @@ void HalBasicTest::testBasic()
 
     QString proc_udi = manager->devicesFromQuery( QString(), Solid::Capability::Processor ).at( 0 );
 
-    Solid::Ifaces::Device *processor = qobject_cast<Solid::Ifaces::Device*>( manager->createDevice( proc_udi ) );
+    HalDevice *processor = qobject_cast<HalDevice*>( manager->createDevice( proc_udi ) );
 
     QCOMPARE( processor->udi(), proc_udi );
     QCOMPARE( processor->parentUdi(), QString( "/org/freedesktop/Hal/devices/computer" ) );
@@ -72,7 +72,7 @@ void HalBasicTest::testBasic()
 void HalBasicTest::testSignalHandling()
 {
     HalManager *manager = new HalManager( 0, QStringList() );
-    m_device = qobject_cast<Solid::Ifaces::Device*>( manager->createDevice( "/org/freedesktop/Hal/devices/computer" ) );
+    m_device = qobject_cast<HalDevice*>( manager->createDevice( "/org/freedesktop/Hal/devices/computer" ) );
 
     connect( m_device, SIGNAL( propertyChanged( const QMap<QString,int>& ) ),
              this, SLOT( slotPropertyChanged( const QMap<QString,int>& ) ) );

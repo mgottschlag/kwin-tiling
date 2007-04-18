@@ -9,6 +9,7 @@ set(solid_hal_discovery_PART_SRCS
    haldevice.cpp 
    halcalljob.cpp 
    capability.cpp 
+   genericinterface.cpp 
    processor.cpp 
    block.cpp 
    storage.cpp 

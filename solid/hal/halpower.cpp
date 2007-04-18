@@ -429,8 +429,7 @@ void HalPower::slotPlugStateChanged( bool newState )
 
 void HalPower::slotButtonPressed( int type )
 {
-    Solid::Device *device = qobject_cast<Solid::Device*>( sender() );
-    Solid::Button *button = device->as<Solid::Button>();
+    Solid::Button *button = qobject_cast<Solid::Button*>( sender() );
 
     if ( button == 0 ) return;
 

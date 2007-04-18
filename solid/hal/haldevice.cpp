@@ -26,6 +26,7 @@
 
 #include "haldevice.h"
 #include "capability.h"
+#include "genericinterface.h"
 #include "processor.h"
 #include "block.h"
 #include "storage.h"
@@ -269,12 +270,18 @@ bool HalDevice::queryCapability( const Solid::Capability::Type &capability ) con
 
 QObject *HalDevice::createCapability( const Solid::Capability::Type &capability )
 {
-    if ( !queryCapability( capability ) ) return 0;
+    if (capability!=Solid::Capability::GenericInterface
+     && !queryCapability(capability)) {
+        return 0;
+    }
 
     Capability *iface = 0;
 
     switch( capability )
     {
+    case Solid::Capability::GenericInterface:
+        iface = new GenericInterface( this );
+        break;
     case Solid::Capability::Processor:
         iface = new Processor( this );
         break;
@@ -377,15 +384,15 @@ void HalDevice::slotPropertyModified( int /*count*/, const QList<ChangeDescripti
         bool added = change.added;
         bool removed = change.removed;
 
-        Solid::Device::PropertyChange type = Solid::Device::PropertyModified;
+        Solid::GenericInterface::PropertyChange type = Solid::GenericInterface::PropertyModified;
 
         if ( added )
         {
-            type = Solid::Device::PropertyAdded;
+            type = Solid::GenericInterface::PropertyAdded;
         }
         else if ( removed )
         {
-            type = Solid::Device::PropertyRemoved;
+            type = Solid::GenericInterface::PropertyRemoved;
         }
 
         result[key] = type;

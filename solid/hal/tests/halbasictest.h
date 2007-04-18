@@ -24,7 +24,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QCharRef>
 
-#include <solid/ifaces/device.h>
+#include "haldevice.h"
 
 class HalBasicTest : public QObject
 {
@@ -36,7 +36,7 @@ private slots:
     void slotPropertyChanged( const QMap<QString,int> &changes );
 
 private:
-    Solid::Ifaces::Device *m_device;
+    HalDevice *m_device;
     bool m_signalProcessed;
 };
 

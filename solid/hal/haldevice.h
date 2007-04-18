@@ -63,6 +63,10 @@ public:
     virtual bool isLocked() const;
     virtual QString lockReason() const;
 
+Q_SIGNALS:
+    void propertyChanged(const QMap<QString,int> &changes);
+    void conditionRaised(const QString &condition, const QString &reason);
+
 private Q_SLOTS:
     void slotPropertyModified( int count, const QList<ChangeDescription> &changes );
     void slotCondition( const QString &condition, const QString &reason );

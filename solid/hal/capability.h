@@ -45,6 +45,9 @@ public:
 
         switch( capability )
         {
+        case Solid::Capability::GenericInterface:
+            // Doesn't exist with HAL
+            break;
         case Solid::Capability::Processor:
             list << "processor";
             break;
