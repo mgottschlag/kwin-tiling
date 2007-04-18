@@ -35,7 +35,9 @@ static const char* X11DirList[] =
         "/usr/lib/X11/",
         "/usr/lib64/X11/",
         "/usr/local/lib/X11/",
-        "/usr/local/lib64/X11/"
+        "/usr/local/lib64/X11/",
+        "/usr/pkg/share/X11/",
+        "/usr/pkg/xorg/lib/X11/"
     };
 
 // Compiler will size array automatically.
