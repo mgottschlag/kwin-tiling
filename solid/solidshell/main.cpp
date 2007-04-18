@@ -33,6 +33,7 @@
 
 #include <solid/devicemanager.h>
 #include <solid/device.h>
+#include <solid/genericinterface.h>
 #include <solid/volume.h>
 
 #include <solid/powermanager.h>
@@ -910,9 +911,9 @@ bool SolidShell::hwList( bool capabilities, bool system )
         {
             cout << device << endl;
         }
-        else if ( system )
+        else if (system && device.is<Solid::GenericInterface>())
         {
-            QMap<QString,QVariant> properties = device.allProperties();
+            QMap<QString,QVariant> properties = device.as<Solid::GenericInterface>()->allProperties();
             cout << properties << endl;
         }
     }
@@ -937,8 +938,10 @@ bool SolidShell::hwProperties( const QString &udi )
     const Solid::Device device = manager.findDevice( udi );
 
     cout << "udi = '" << device.udi() << "'" << endl;
-    QMap<QString,QVariant> properties = device.allProperties();
-    cout << properties << endl;
+    if (device.is<Solid::GenericInterface>()) {
+        QMap<QString,QVariant> properties = device.as<Solid::GenericInterface>()->allProperties();
+        cout << properties << endl;
+    }
 
     return true;
 }
