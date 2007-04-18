@@ -334,7 +334,7 @@ void Dtime::save()
     K3Process c_proc;
 
   // BSD systems reverse year compared to Susv3
-#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
     BufS.sprintf("%04d%02d%02d%02d%02d.%02d",
                date.year(),
                date.month(), date.day(),
@@ -352,7 +352,7 @@ void Dtime::save()
     c_proc.start( K3Process::Block );
     int result = c_proc.exitStatus();
     if (result != 0
-#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
   	  && result != 2	// can only set local date, which is okay
 #endif
       ) {
