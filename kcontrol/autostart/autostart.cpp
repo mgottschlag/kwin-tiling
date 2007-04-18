@@ -56,7 +56,7 @@ void setPath(QString path) {
 }
 ~Desktop() {
 }
-};
+}
 
 typedef KGenericFactory<Autostart, QWidget> AutostartFactory;
 K_EXPORT_COMPONENT_FACTORY( Autostart, AutostartFactory("kcmautostart"))
@@ -84,7 +84,7 @@ Autostart::Autostart( QWidget* parent, const QStringList& )
 		I18N_NOOP("(c) 2006-2007 Stephen Leaf"), 0, 0);
 	about->addAuthor("Stephen Leaf", 0, "smileaf@smileaf.org");
 	setAboutData( about );
-};
+}
 
 
 Autostart::~Autostart()
