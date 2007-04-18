@@ -21,9 +21,9 @@
 #define ACADAPTER_H
 
 #include <solid/ifaces/acadapter.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
-class AcAdapter : public Capability, virtual public Solid::Ifaces::AcAdapter
+class AcAdapter : public DeviceInterface, virtual public Solid::Ifaces::AcAdapter
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::AcAdapter )

@@ -22,7 +22,7 @@
 #include "haldevice.h"
 
 Display::Display( HalDevice *device)
-    : Capability( device )
+    : DeviceInterface( device )
 {
 
 }

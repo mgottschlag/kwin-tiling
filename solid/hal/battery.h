@@ -21,9 +21,9 @@
 #define BATTERY_H
 
 #include <solid/ifaces/battery.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
-class Battery : public Capability, virtual public Solid::Ifaces::Battery
+class Battery : public DeviceInterface, virtual public Solid::Ifaces::Battery
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::Battery )

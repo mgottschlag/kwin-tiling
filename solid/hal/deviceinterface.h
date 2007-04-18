@@ -17,123 +17,123 @@
 
 */
 
-#ifndef CAPABILITY_H
-#define CAPABILITY_H
+#ifndef DEVICEINTERFACE_H
+#define DEVICEINTERFACE_H
 
 #include <QObject>
 #include <QStringList>
 
-#include <solid/ifaces/capability.h>
+#include <solid/ifaces/deviceinterface.h>
 
 #include "haldevice.h"
 
-class Capability : public QObject, virtual public Solid::Ifaces::Capability
+class DeviceInterface : public QObject, virtual public Solid::Ifaces::DeviceInterface
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Capability )
+    Q_INTERFACES( Solid::Ifaces::DeviceInterface )
 public:
-    Capability( HalDevice *device );
-    virtual ~Capability();
+    DeviceInterface( HalDevice *device );
+    virtual ~DeviceInterface();
 
 protected:
     HalDevice *m_device;
 
 public:
-    inline static QStringList toStringList( Solid::Capability::Type capability )
+    inline static QStringList toStringList(Solid::DeviceInterface::Type type)
     {
         QStringList list;
 
-        switch( capability )
+        switch(type)
         {
-        case Solid::Capability::GenericInterface:
+        case Solid::DeviceInterface::GenericInterface:
             // Doesn't exist with HAL
             break;
-        case Solid::Capability::Processor:
+        case Solid::DeviceInterface::Processor:
             list << "processor";
             break;
-        case Solid::Capability::Block:
+        case Solid::DeviceInterface::Block:
             list << "block";
             break;
-        case Solid::Capability::Storage:
+        case Solid::DeviceInterface::Storage:
             list << "storage";
             break;
-        case Solid::Capability::Cdrom:
+        case Solid::DeviceInterface::Cdrom:
             list << "storage.cdrom";
             break;
-        case Solid::Capability::Volume:
+        case Solid::DeviceInterface::Volume:
             list << "volume";
             break;
-        case Solid::Capability::OpticalDisc:
+        case Solid::DeviceInterface::OpticalDisc:
             list << "volume.disc";
             break;
-        case Solid::Capability::Camera:
+        case Solid::DeviceInterface::Camera:
             list << "camera";
             break;
-        case Solid::Capability::PortableMediaPlayer:
+        case Solid::DeviceInterface::PortableMediaPlayer:
             list << "portable_audio_player";
             break;
-        case Solid::Capability::NetworkHw:
+        case Solid::DeviceInterface::NetworkHw:
             list << "net";
             break;
-        case Solid::Capability::AcAdapter:
+        case Solid::DeviceInterface::AcAdapter:
             list << "ac_adapter";
             break;
-        case Solid::Capability::Battery:
+        case Solid::DeviceInterface::Battery:
             list << "battery";
             break;
-        case Solid::Capability::Button:
+        case Solid::DeviceInterface::Button:
             list << "button";
             break;
-        case Solid::Capability::Display:
+        case Solid::DeviceInterface::Display:
             list << "display_device";
             break;
-        case Solid::Capability::AudioHw:
+        case Solid::DeviceInterface::AudioHw:
             list << "alsa" << "oss";
             break;
-        case Solid::Capability::DvbHw:
+        case Solid::DeviceInterface::DvbHw:
             list << "dvb";
             break;
-        case Solid::Capability::Unknown:
+        case Solid::DeviceInterface::Unknown:
             break;
         }
 
         return list;
     }
 
-    inline static Solid::Capability::Type fromString( const QString &capability )
+    inline static Solid::DeviceInterface::Type fromString( const QString &capability )
     {
         if ( capability == "processor" )
-            return Solid::Capability::Processor;
+            return Solid::DeviceInterface::Processor;
         else if ( capability == "block" )
-            return Solid::Capability::Block;
+            return Solid::DeviceInterface::Block;
         else if ( capability == "storage" )
-            return Solid::Capability::Storage;
+            return Solid::DeviceInterface::Storage;
         else if ( capability == "storage.cdrom" )
-            return Solid::Capability::Cdrom;
+            return Solid::DeviceInterface::Cdrom;
         else if ( capability == "volume" )
-            return Solid::Capability::Volume;
+            return Solid::DeviceInterface::Volume;
         else if ( capability == "volume.disc" )
-            return Solid::Capability::OpticalDisc;
+            return Solid::DeviceInterface::OpticalDisc;
         else if ( capability == "camera" )
-            return Solid::Capability::Camera;
+            return Solid::DeviceInterface::Camera;
         else if ( capability == "portable_audio_player" )
-            return Solid::Capability::PortableMediaPlayer;
+            return Solid::DeviceInterface::PortableMediaPlayer;
         else if ( capability == "net" )
-            return Solid::Capability::NetworkHw;
+            return Solid::DeviceInterface::NetworkHw;
         else if ( capability == "ac_adapter" )
-            return Solid::Capability::AcAdapter;
+            return Solid::DeviceInterface::AcAdapter;
         else if ( capability == "battery" )
-            return Solid::Capability::Battery;
+            return Solid::DeviceInterface::Battery;
         else if ( capability == "button" )
-            return Solid::Capability::Button;
+            return Solid::DeviceInterface::Button;
         else if ( capability == "display_device" )
-            return Solid::Capability::Display;
+            return Solid::DeviceInterface::Display;
         else if ( capability == "alsa" || capability == "oss" )
-            return Solid::Capability::AudioHw;
+            return Solid::DeviceInterface::AudioHw;
         else if ( capability == "dvb" )
-            return Solid::Capability::DvbHw;
+            return Solid::DeviceInterface::DvbHw;
         else
-            return Solid::Capability::Unknown;
+            return Solid::DeviceInterface::Unknown;
     }
 };
 

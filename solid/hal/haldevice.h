@@ -54,9 +54,9 @@ public:
     virtual bool removeProperty( const QString &key );
     virtual bool propertyExists( const QString &key ) const;
 
-    virtual bool addCapability( const Solid::Capability::Type &capability );
-    virtual bool queryCapability( const Solid::Capability::Type &capability ) const;
-    virtual QObject *createCapability( const Solid::Capability::Type &capability );
+    virtual bool addDeviceInterface( const Solid::DeviceInterface::Type &type );
+    virtual bool queryDeviceInterface( const Solid::DeviceInterface::Type &type ) const;
+    virtual QObject *createDeviceInterface( const Solid::DeviceInterface::Type &type );
 
     virtual bool lock(const QString &reason);
     virtual bool unlock();

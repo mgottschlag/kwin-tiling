@@ -20,7 +20,7 @@
 #include "button.h"
 
 Button::Button( HalDevice *device )
-    : Capability( device )
+    : DeviceInterface( device )
 {
     connect( device, SIGNAL( conditionRaised( const QString&, const QString& ) ),
              this, SLOT( slotConditionRaised( const QString&, const QString& ) ) );

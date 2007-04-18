@@ -23,11 +23,11 @@
 #include <QStringList>
 
 #include <solid/ifaces/portablemediaplayer.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
 class HalDevice;
 
-class PortableMediaPlayer : public Capability, virtual public Solid::Ifaces::PortableMediaPlayer
+class PortableMediaPlayer : public DeviceInterface, virtual public Solid::Ifaces::PortableMediaPlayer
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::PortableMediaPlayer )

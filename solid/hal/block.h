@@ -21,9 +21,9 @@
 #define BLOCK_H
 
 #include <solid/ifaces/block.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
-class Block : public Capability, virtual public Solid::Ifaces::Block
+class Block : public DeviceInterface, virtual public Solid::Ifaces::Block
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::Block )

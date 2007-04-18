@@ -20,7 +20,7 @@
 #include "portablemediaplayer.h"
 
 PortableMediaPlayer::PortableMediaPlayer( HalDevice *device )
-    : Capability( device )
+    : DeviceInterface( device )
 {
 
 }

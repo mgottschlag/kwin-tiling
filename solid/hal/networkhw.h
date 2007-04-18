@@ -21,11 +21,11 @@
 #define NETWORKHW_H
 
 #include <solid/ifaces/networkhw.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
 class HalDevice;
 
-class NetworkHw : public Capability, virtual public Solid::Ifaces::NetworkHw
+class NetworkHw : public DeviceInterface, virtual public Solid::Ifaces::NetworkHw
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::NetworkHw )

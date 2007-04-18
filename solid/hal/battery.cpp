@@ -20,7 +20,7 @@
 #include "battery.h"
 
 Battery::Battery( HalDevice *device )
-    : Capability( device )
+    : DeviceInterface( device )
 {
     connect( device, SIGNAL( propertyChanged( const QMap<QString,int>& ) ),
              this, SLOT( slotPropertyChanged( const QMap<QString,int>& ) ) );

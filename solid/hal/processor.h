@@ -21,11 +21,11 @@
 #define PROCESSOR_H
 
 #include <solid/ifaces/processor.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
 class HalDevice;
 
-class Processor : public Capability, virtual public Solid::Ifaces::Processor
+class Processor : public DeviceInterface, virtual public Solid::Ifaces::Processor
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::Processor )

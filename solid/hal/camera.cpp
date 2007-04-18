@@ -20,7 +20,7 @@
 #include "camera.h"
 
 Camera::Camera( HalDevice *device )
-    : Capability( device )
+    : DeviceInterface( device )
 {
 
 }

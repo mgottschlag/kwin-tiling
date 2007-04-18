@@ -24,7 +24,7 @@
 #include <QStringList>
 
 NetworkHw::NetworkHw( HalDevice *device )
-    : Capability( device )
+    : DeviceInterface( device )
 {
 
 }

@@ -117,15 +117,14 @@ bool HalManager::deviceExists( const QString &udi )
     return reply;
 }
 
-QStringList HalManager::devicesFromQuery( const QString &parentUdi,
-                                          Solid::Capability::Type capability )
+QStringList HalManager::devicesFromQuery(const QString &parentUdi,
+                                         Solid::DeviceInterface::Type type)
 {
     if ( !parentUdi.isEmpty() )
     {
         QStringList result = findDeviceStringMatch( "info.parent", parentUdi );
 
-        if ( capability!=Solid::Capability::Unknown )
-        {
+        if (type!=Solid::DeviceInterface::Unknown) {
             QStringList::Iterator it = result.begin();
             QStringList::ConstIterator end = result.end();
 
@@ -133,21 +132,17 @@ QStringList HalManager::devicesFromQuery( const QString &parentUdi,
             {
                 HalDevice device( *it );
 
-                if ( !device.queryCapability( capability ) )
-                {
+                if (!device.queryDeviceInterface(type)) {
                     result.erase( it );
                 }
             }
         }
 
         return result;
-    }
-    else if ( capability!=Solid::Capability::Unknown )
-    {
-        return findDeviceByCapability( capability );
-    }
-    else
-    {
+
+    } else if (type!=Solid::DeviceInterface::Unknown) {
+        return findDeviceByDeviceInterface(type);
+    } else {
         return allDevices();
     }
 }
@@ -170,14 +165,14 @@ QStringList HalManager::findDeviceStringMatch( const QString &key, const QString
     return reply;
 }
 
-QStringList HalManager::findDeviceByCapability( const Solid::Capability::Type &capability )
+QStringList HalManager::findDeviceByDeviceInterface(const Solid::DeviceInterface::Type &type)
 {
-    QStringList cap_list = Capability::toStringList( capability );
+    QStringList cap_list = DeviceInterface::toStringList(type);
     QStringList result;
 
     foreach ( QString cap, cap_list )
     {
-        QDBusReply<QStringList> reply = d->manager.call( "FindDeviceByCapability", cap );
+        QDBusReply<QStringList> reply = d->manager.call( "FindDeviceByDeviceInterface", cap );
 
         if ( !reply.isValid() )
         {
@@ -203,9 +198,9 @@ void HalManager::slotDeviceRemoved( const QString &udi )
     emit deviceRemoved( udi );
 }
 
-void HalManager::slotNewCapability( const QString &udi, const QString &capability )
+void HalManager::slotNewCapability(const QString &udi, const QString &capability)
 {
-    emit newCapability( udi, Capability::fromString( capability ) );
+    emit newDeviceInterface(udi, DeviceInterface::fromString(capability));
 }
 
 #include "halmanager.moc"

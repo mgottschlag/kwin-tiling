@@ -24,7 +24,7 @@
 #include "halpower.h"
 #include "halsuspendjob.h"
 
-#include <solid/capability.h>
+#include <solid/deviceinterface.h>
 #include <solid/acadapter.h>
 #include <solid/battery.h>
 #include <solid/button.h>
@@ -46,8 +46,8 @@ HalPower::HalPower( QObject *parent, const QStringList & /*args*/ )
 {
     connect( &Solid::DeviceManager::self(), SIGNAL( deviceRemoved( const QString& ) ),
              this, SLOT( slotDeviceRemoved( const QString& ) ) );
-    connect( &Solid::DeviceManager::self(), SIGNAL( newCapability( const QString&, int ) ),
-             this, SLOT( slotNewCapability( const QString&, int ) ) );
+    connect( &Solid::DeviceManager::self(), SIGNAL( newDeviceInterface( const QString&, int ) ),
+             this, SLOT( slotNewDeviceInterface( const QString&, int ) ) );
 
     m_pluggedAdapterCount = 0;
     computeAcAdapters();
@@ -343,7 +343,7 @@ bool HalPower::setCpuEnabled( int /*cpuNum*/, bool /*enabled*/ )
 void HalPower::computeAcAdapters()
 {
     Solid::DeviceList adapters
-        = Solid::DeviceManager::self().findDevicesFromQuery( Solid::Capability::AcAdapter );
+        = Solid::DeviceManager::self().findDevicesFromQuery( Solid::DeviceInterface::AcAdapter );
 
     foreach( Solid::Device adapter, adapters )
     {
@@ -366,7 +366,7 @@ void HalPower::computeBatteries()
     predicate = predicate.arg( (int)Solid::Battery::PrimaryBattery );
 
     Solid::DeviceList batteries
-        = Solid::DeviceManager::self().findDevicesFromQuery( Solid::Capability::Battery,
+        = Solid::DeviceManager::self().findDevicesFromQuery( Solid::DeviceInterface::Battery,
                                                              predicate );
 
     foreach( Solid::Device battery, batteries )
@@ -382,7 +382,7 @@ void HalPower::computeBatteries()
 void HalPower::computeButtons()
 {
     Solid::DeviceList buttons
-        = Solid::DeviceManager::self().findDevicesFromQuery( Solid::Capability::Button );
+        = Solid::DeviceManager::self().findDevicesFromQuery( Solid::DeviceInterface::Button );
 
     foreach( Solid::Device button, buttons )
     {
@@ -457,11 +457,11 @@ void HalPower::slotButtonPressed( int type )
     }
 }
 
-void HalPower::slotNewCapability( const QString &udi, int capability )
+void HalPower::slotNewDeviceInterface(const QString &udi, int type)
 {
-    switch( capability )
+    switch (type)
     {
-    case Solid::Capability::AcAdapter:
+    case Solid::DeviceInterface::AcAdapter:
         m_acAdapters[udi] = new Solid::Device( udi );
         connect( m_acAdapters[udi]->as<Solid::AcAdapter>(), SIGNAL( plugStateChanged( bool ) ),
                  this, SLOT( slotPlugStateChanged( bool ) ) );
@@ -472,12 +472,12 @@ void HalPower::slotNewCapability( const QString &udi, int capability )
             m_pluggedAdapterCount++;
         }
         break;
-    case Solid::Capability::Battery:
+    case Solid::DeviceInterface::Battery:
         m_batteries[udi] = new Solid::Device( udi );
         connect( m_batteries[udi]->as<Solid::Battery>(), SIGNAL( chargePercentChanged( int ) ),
                  this, SLOT( updateBatteryStats() ) );
         break;
-    case Solid::Capability::Button:
+    case Solid::DeviceInterface::Button:
         m_buttons[udi] = new Solid::Device( udi );
         connect( m_buttons[udi]->as<Solid::Button>(), SIGNAL( pressed( int ) ),
                  this, SLOT( slotButtonPressed( int ) ) );

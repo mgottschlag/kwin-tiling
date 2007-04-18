@@ -25,7 +25,7 @@
 #include <QStringList>
 #include <kdemacros.h>
 
-#include "capability.h"
+#include "deviceinterface.h"
 
 class HalManagerPrivate;
 
@@ -40,8 +40,8 @@ public:
     virtual QStringList allDevices();
     virtual bool deviceExists( const QString &udi );
 
-    virtual QStringList devicesFromQuery( const QString &parentUdi,
-                                          Solid::Capability::Type capability );
+    virtual QStringList devicesFromQuery(const QString &parentUdi,
+                                         Solid::DeviceInterface::Type type);
 
     virtual QObject *createDevice( const QString &udi );
 
@@ -53,7 +53,7 @@ private Q_SLOTS:
 
 private:
     QStringList findDeviceStringMatch( const QString &key, const QString &value );
-    QStringList findDeviceByCapability( const Solid::Capability::Type &capability );
+    QStringList findDeviceByDeviceInterface(const Solid::DeviceInterface::Type &type);
 
     HalManagerPrivate *d;
 };

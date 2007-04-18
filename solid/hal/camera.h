@@ -21,9 +21,9 @@
 #define CAMERA_H
 
 #include <solid/ifaces/camera.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
-class Camera : public Capability, virtual public Solid::Ifaces::Camera
+class Camera : public DeviceInterface, virtual public Solid::Ifaces::Camera
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::Camera )

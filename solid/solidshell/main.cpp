@@ -123,17 +123,17 @@ std::ostream &operator<<( std::ostream &out, const Solid::Device &device )
     out << "  vendor = " << QVariant( device.vendor() ) << endl;
     out << "  product = " << QVariant( device.product() ) << endl;
 
-    int index = Solid::Capability::staticMetaObject.indexOfEnumerator("Type");
-    QMetaEnum typeEnum = Solid::Capability::staticMetaObject.enumerator(index);
+    int index = Solid::DeviceInterface::staticMetaObject.indexOfEnumerator("Type");
+    QMetaEnum typeEnum = Solid::DeviceInterface::staticMetaObject.enumerator(index);
 
     for (int i=0; i<typeEnum.keyCount(); i++)
     {
-        Solid::Capability::Type cap = (Solid::Capability::Type)typeEnum.value(i);
-        const Solid::Capability *capability = device.asCapability( cap );
+        Solid::DeviceInterface::Type type = (Solid::DeviceInterface::Type)typeEnum.value(i);
+        const Solid::DeviceInterface *interface = device.asDeviceInterface(type);
 
-        if ( capability )
+        if (interface)
         {
-            const QMetaObject *meta = capability->metaObject();
+            const QMetaObject *meta = interface->metaObject();
 
             for ( int i=meta->propertyOffset(); i<meta->propertyCount(); i++ )
             {
@@ -141,7 +141,7 @@ std::ostream &operator<<( std::ostream &out, const Solid::Device &device )
                 out << "  " << QString( meta->className() ).mid( 7 ) << "." << property.name()
                     << " = ";
 
-                QVariant value = property.read( capability );
+                QVariant value = property.read(interface);
 
                 if (property.isEnumType()) {
                     QMetaEnum metaEnum = property.enumerator();
@@ -319,13 +319,13 @@ int main(int argc, char **argv)
                     "             # - If the 'nonportableinfo' option is specified, the device\n"
                     "             # properties are listed (be careful, in this case property names\n"
                     "             # are backend dependent),\n"
-                    "             # - If the 'details' option is specified, the device capabilities\n"
+                    "             # - If the 'details' option is specified, the device interfaces\n"
                     "             # and the corresponding properties are listed in a platform\n"
                     "             # neutral fashion,\n"
                     "             # - Otherwise only device UDIs are listed.\n" ) << endl;
 
       cout << "  solidshell hardware details 'udi'" << endl;
-      cout << i18n( "             # Display all the capabilities and properties of the device\n"
+      cout << i18n( "             # Display all the interfaces and properties of the device\n"
                     "             # corresponding to 'udi' in a platform neutral fashion.\n" ) << endl;
 
       cout << "  solidshell hardware nonportableinfo 'udi'" << endl;
@@ -897,7 +897,7 @@ bool SolidShell::doIt()
     return false;
 }
 
-bool SolidShell::hwList( bool capabilities, bool system )
+bool SolidShell::hwList( bool interfaces, bool system )
 {
     Solid::DeviceManager &manager = Solid::DeviceManager::self();
 
@@ -907,7 +907,7 @@ bool SolidShell::hwList( bool capabilities, bool system )
     {
         cout << "udi = '" << device.udi() << "'" << endl;
 
-        if ( capabilities )
+        if (interfaces)
         {
             cout << device << endl;
         }
@@ -966,7 +966,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
 
     if ( !device.is<Solid::Volume>() )
     {
-        cerr << i18n( "Error: %1 does not have the capability Volume." , udi ) << endl;
+        cerr << i18n( "Error: %1 does not have the interface Volume." , udi ) << endl;
         return false;
     }
 

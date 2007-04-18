@@ -17,15 +17,15 @@
 
 */
 
-#include "capability.h"
+#include "deviceinterface.h"
 
-Capability::Capability( HalDevice *device )
+DeviceInterface::DeviceInterface( HalDevice *device )
     : QObject( device ), m_device( device )
 {
 }
 
-Capability::~Capability()
+DeviceInterface::~DeviceInterface()
 {
 }
 
-#include "capability.moc"
+#include "deviceinterface.moc"

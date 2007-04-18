@@ -22,7 +22,7 @@
 
 #include <solid/ifaces/genericinterface.h>
 #include <solid/genericinterface.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
 class HalDevice;
 

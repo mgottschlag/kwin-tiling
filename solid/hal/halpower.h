@@ -65,7 +65,7 @@ private slots:
     void updateBatteryStats();
     void slotPlugStateChanged( bool newState );
     void slotButtonPressed( int type );
-    void slotNewCapability( const QString &udi, int capability );
+    void slotNewDeviceInterface(const QString &udi, int type);
     void slotDeviceRemoved( const QString &udi );
 
 private:

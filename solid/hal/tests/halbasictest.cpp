@@ -23,7 +23,7 @@
 
 #include "halmanager.h"
 #include <solid/ifaces/device.h>
-#include <solid/ifaces/capability.h>
+#include <solid/ifaces/deviceinterface.h>
 #include <solid/ifaces/processor.h>
 #include "processor.h"
 
@@ -37,9 +37,9 @@ void HalBasicTest::testBasic()
     QVERIFY( manager->deviceExists( "/org/freedesktop/Hal/devices/computer" ) );
     QVERIFY( !manager->allDevices().isEmpty() );
 
-    QVERIFY( !manager->devicesFromQuery( QString(), Solid::Capability::Processor ).isEmpty() );
+    QVERIFY( !manager->devicesFromQuery( QString(), Solid::DeviceInterface::Processor ).isEmpty() );
 
-    QString proc_udi = manager->devicesFromQuery( QString(), Solid::Capability::Processor ).at( 0 );
+    QString proc_udi = manager->devicesFromQuery( QString(), Solid::DeviceInterface::Processor ).at( 0 );
 
     HalDevice *processor = qobject_cast<HalDevice*>( manager->createDevice( proc_udi ) );
 
@@ -48,11 +48,11 @@ void HalBasicTest::testBasic()
     QVERIFY( !processor->allProperties().isEmpty() );
     QVERIFY( processor->propertyExists( "info.product" ) );
     QVERIFY( !processor->propertyExists( "the.meaning.of.life" ) );
-    QVERIFY( processor->queryCapability( Solid::Capability::Processor ) );
-    QVERIFY( !processor->queryCapability( Solid::Capability::OpticalDisc ) );
+    QVERIFY( processor->queryDeviceInterface( Solid::DeviceInterface::Processor ) );
+    QVERIFY( !processor->queryDeviceInterface( Solid::DeviceInterface::OpticalDisc ) );
 
-    QObject *capability = processor->createCapability( Solid::Capability::Processor );
-    Solid::Ifaces::Processor *proc_iface = qobject_cast<Solid::Ifaces::Processor*>( capability );
+    QObject *interface = processor->createDeviceInterface( Solid::DeviceInterface::Processor );
+    Solid::Ifaces::Processor *proc_iface = qobject_cast<Solid::Ifaces::Processor*>(interface);
 
     QVERIFY( proc_iface!=0 );
 
@@ -63,7 +63,7 @@ void HalBasicTest::testBasic()
     QVERIFY( !processor->lock( "Need a reason?" ) );
     QVERIFY( processor->unlock() );
 
-    QCOMPARE( capability->parent(), processor );
+    QCOMPARE( interface->parent(), processor );
 
     delete processor;
     delete manager;

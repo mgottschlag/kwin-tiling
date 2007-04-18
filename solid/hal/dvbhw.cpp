@@ -22,7 +22,7 @@
 #include "haldevice.h"
 
 DvbHw::DvbHw( HalDevice *device )
-    : Capability( device )
+    : DeviceInterface( device )
 {
 
 }

@@ -21,11 +21,11 @@
 #define BUTTON_H
 
 #include <solid/ifaces/button.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
 class HalDevice;
 
-class Button : public Capability, virtual public Solid::Ifaces::Button
+class Button : public DeviceInterface, virtual public Solid::Ifaces::Button
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::Button )

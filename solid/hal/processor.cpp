@@ -22,7 +22,7 @@
 #include "haldevice.h"
 
 Processor::Processor( HalDevice *device )
-    : Capability( device )
+    : DeviceInterface( device )
 {
 
 }

@@ -21,9 +21,9 @@
 #define DVBHW_H
 
 #include <solid/ifaces/dvbhw.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
-class DvbHw : public Capability, virtual public Solid::Ifaces::DvbHw
+class DvbHw : public DeviceInterface, virtual public Solid::Ifaces::DvbHw
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::DvbHw )

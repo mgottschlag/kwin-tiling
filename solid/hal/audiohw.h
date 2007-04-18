@@ -21,11 +21,11 @@
 #define AUDIOHW_H
 
 #include <solid/ifaces/audiohw.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
 class HalDevice;
 
-class AudioHw : public Capability, virtual public Solid::Ifaces::AudioHw
+class AudioHw : public DeviceInterface, virtual public Solid::Ifaces::AudioHw
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::AudioHw )

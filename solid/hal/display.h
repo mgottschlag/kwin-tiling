@@ -21,11 +21,11 @@
 #define DISPLAY_H
 
 #include <solid/ifaces/display.h>
-#include "capability.h"
+#include "deviceinterface.h"
 
 class HalDevice;
 
-class Display : public Capability, virtual public Solid::Ifaces::Display
+class Display : public DeviceInterface, virtual public Solid::Ifaces::Display
 {
     Q_OBJECT
     Q_INTERFACES( Solid::Ifaces::Display )

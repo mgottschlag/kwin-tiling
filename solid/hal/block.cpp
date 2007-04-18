@@ -22,7 +22,7 @@
 #include "haldevice.h"
 
 Block::Block( HalDevice *device )
-    : Capability( device )
+    : DeviceInterface( device )
 {
 
 }

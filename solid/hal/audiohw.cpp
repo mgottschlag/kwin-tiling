@@ -23,7 +23,7 @@
 #include <kdebug.h>
 
 AudioHw::AudioHw( HalDevice *device )
-    : Capability( device ),
+    : DeviceInterface( device ),
     m_soundcardType( Solid::AudioHw::InternalSoundcard ),
     m_soundcardTypeValid( false )
 {

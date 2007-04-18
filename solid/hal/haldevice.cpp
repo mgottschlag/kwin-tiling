@@ -25,7 +25,7 @@
 #include <QtDBus/QDBusMetaType>
 
 #include "haldevice.h"
-#include "capability.h"
+#include "deviceinterface.h"
 #include "genericinterface.h"
 #include "processor.h"
 #include "block.h"
@@ -231,12 +231,12 @@ bool HalDevice::propertyExists( const QString &key ) const
     return reply;
 }
 
-bool HalDevice::addCapability( const Solid::Capability::Type &capability )
+bool HalDevice::addDeviceInterface(const Solid::DeviceInterface::Type &type)
 {
     QList<QVariant> args;
-    args << Capability::toStringList( capability ).first();
+    args << DeviceInterface::toStringList(type).first();
     QDBusReply<void> reply = d->device.callWithArgumentList( QDBus::BlockWithGui,
-                                                             "AddCapability", args );
+                                                             "AddDeviceInterface", args );
 
     if ( !reply.isValid() )
     {
@@ -247,9 +247,9 @@ bool HalDevice::addCapability( const Solid::Capability::Type &capability )
     return true;
 }
 
-bool HalDevice::queryCapability( const Solid::Capability::Type &capability ) const
+bool HalDevice::queryDeviceInterface(const Solid::DeviceInterface::Type &type) const
 {
-    QStringList cap_list = Capability::toStringList( capability );
+    QStringList cap_list = DeviceInterface::toStringList(type);
     QStringList result;
 
     foreach ( QString cap, cap_list )
@@ -268,66 +268,66 @@ bool HalDevice::queryCapability( const Solid::Capability::Type &capability ) con
     return false;
 }
 
-QObject *HalDevice::createCapability( const Solid::Capability::Type &capability )
+QObject *HalDevice::createDeviceInterface(const Solid::DeviceInterface::Type &type)
 {
-    if (capability!=Solid::Capability::GenericInterface
-     && !queryCapability(capability)) {
+    if (type!=Solid::DeviceInterface::GenericInterface
+     && !queryDeviceInterface(type)) {
         return 0;
     }
 
-    Capability *iface = 0;
+    DeviceInterface *iface = 0;
 
-    switch( capability )
+    switch (type)
     {
-    case Solid::Capability::GenericInterface:
+    case Solid::DeviceInterface::GenericInterface:
         iface = new GenericInterface( this );
         break;
-    case Solid::Capability::Processor:
+    case Solid::DeviceInterface::Processor:
         iface = new Processor( this );
         break;
-    case Solid::Capability::Block:
+    case Solid::DeviceInterface::Block:
         iface = new Block( this );
         break;
-    case Solid::Capability::Storage:
+    case Solid::DeviceInterface::Storage:
         iface = new Storage( this );
         break;
-    case Solid::Capability::Cdrom:
+    case Solid::DeviceInterface::Cdrom:
         iface = new Cdrom( this );
         break;
-    case Solid::Capability::Volume:
+    case Solid::DeviceInterface::Volume:
         iface = new Volume( this );
         break;
-    case Solid::Capability::OpticalDisc:
+    case Solid::DeviceInterface::OpticalDisc:
         iface = new OpticalDisc( this );
         break;
-    case Solid::Capability::Camera:
+    case Solid::DeviceInterface::Camera:
         iface = new Camera( this );
         break;
-    case Solid::Capability::PortableMediaPlayer:
+    case Solid::DeviceInterface::PortableMediaPlayer:
         iface = new PortableMediaPlayer( this );
         break;
-    case Solid::Capability::NetworkHw:
+    case Solid::DeviceInterface::NetworkHw:
         iface = new NetworkHw( this );
         break;
-    case Solid::Capability::AcAdapter:
+    case Solid::DeviceInterface::AcAdapter:
         iface = new AcAdapter( this );
         break;
-    case Solid::Capability::Battery:
+    case Solid::DeviceInterface::Battery:
         iface = new Battery( this );
         break;
-    case Solid::Capability::Button:
+    case Solid::DeviceInterface::Button:
         iface = new Button( this );
         break;
-    case Solid::Capability::Display:
+    case Solid::DeviceInterface::Display:
         iface = new Display( this );
         break;
-    case Solid::Capability::AudioHw:
+    case Solid::DeviceInterface::AudioHw:
         iface = new AudioHw( this );
         break;
-    case Solid::Capability::DvbHw:
+    case Solid::DeviceInterface::DvbHw:
         iface = new DvbHw( this );
         break;
-    case Solid::Capability::Unknown:
+    case Solid::DeviceInterface::Unknown:
         break;
     }
 
