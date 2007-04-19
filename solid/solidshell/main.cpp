@@ -1189,43 +1189,37 @@ bool SolidShell::powerChangeCpuPolicy( const QString &policyName )
 
 bool SolidShell::netmgrNetworkingEnabled()
 {
-    Solid::NetworkManager & manager = Solid::NetworkManager::self();
-    if ( manager.isNetworkingEnabled() )
+    if (Solid::NetworkManager::isNetworkingEnabled())
         cout << i18n( "networking: is enabled" )<< endl;
     else
         cout << i18n( "networking: is not enabled" )<< endl;
-    return manager.isNetworkingEnabled();
+    return Solid::NetworkManager::isNetworkingEnabled();
 }
 
 bool SolidShell::netmgrWirelessEnabled()
 {
-    Solid::NetworkManager & manager = Solid::NetworkManager::self();
-    if ( manager.isWirelessEnabled() )
+    if (Solid::NetworkManager::isWirelessEnabled())
         cout << i18n( "wireless: is enabled" )<< endl;
     else
         cout << i18n( "wireless: is not enabled" )<< endl;
-    return manager.isWirelessEnabled();
+    return Solid::NetworkManager::isWirelessEnabled();
 }
 
 bool SolidShell::netmgrChangeNetworkingEnabled( bool enabled )
 {
-    Solid::NetworkManager & manager = Solid::NetworkManager::self();
-    manager.setNetworkingEnabled( enabled );
+    Solid::NetworkManager::setNetworkingEnabled(enabled);
     return true;
 }
 
 bool SolidShell::netmgrChangeWirelessEnabled( bool enabled )
 {
-    Solid::NetworkManager & manager = Solid::NetworkManager::self();
-    manager.setWirelessEnabled( enabled );
+    Solid::NetworkManager::setWirelessEnabled(enabled);
     return true;
 }
 
 bool SolidShell::netmgrList()
 {
-    Solid::NetworkManager &manager = Solid::NetworkManager::self();
-
-    const Solid::NetworkInterfaceList all = manager.networkInterfaces();
+    const Solid::NetworkInterfaceList all = Solid::NetworkManager::networkInterfaces();
 
     cerr << "debug: network interface list contains: " << all.count() << " entries" << endl;
     foreach ( const Solid::NetworkInterface device, all )
@@ -1237,8 +1231,7 @@ bool SolidShell::netmgrList()
 
 bool SolidShell::netmgrListNetworks( const QString & deviceUni )
 {
-    Solid::NetworkManager &manager = Solid::NetworkManager::self();
-    Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );
+    Solid::NetworkInterface device = Solid::NetworkManager::findNetworkInterface(deviceUni);
 
     Solid::NetworkList networks = device.networks();
     foreach ( const Solid::Network * net, networks )
@@ -1252,8 +1245,7 @@ bool SolidShell::netmgrListNetworks( const QString & deviceUni )
 bool SolidShell::netmgrQueryNetworkInterface( const QString & deviceUni )
 {
     cerr << "SolidShell::netmgrQueryNetworkInterface()" << endl;
-    Solid::NetworkManager &manager = Solid::NetworkManager::self();
-    Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );
+    Solid::NetworkInterface device = Solid::NetworkManager::findNetworkInterface(deviceUni);
     cout << device << endl;
     return true;
 }
@@ -1261,8 +1253,7 @@ bool SolidShell::netmgrQueryNetworkInterface( const QString & deviceUni )
 bool SolidShell::netmgrQueryNetwork( const QString & deviceUni, const QString & networkUni )
 {
     cerr << "SolidShell::netmgrQueryNetwork()" << endl;
-    Solid::NetworkManager &manager = Solid::NetworkManager::self();
-    Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );
+    Solid::NetworkInterface device = Solid::NetworkManager::findNetworkInterface(deviceUni);
     Solid::Network * network = device.findNetwork( networkUni );
     cout << *network << endl;
     Solid::WirelessNetwork * wlan = qobject_cast<Solid::WirelessNetwork*>( network );
@@ -1275,8 +1266,7 @@ bool SolidShell::netmgrQueryNetwork( const QString & deviceUni, const QString & 
 
 bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString & networkUni, Solid::Authentication * auth )
 {
-    Solid::NetworkManager &manager = Solid::NetworkManager::self();
-    Solid::NetworkInterface device = manager.findNetworkInterface( deviceUni );
+    Solid::NetworkInterface device = Solid::NetworkManager::findNetworkInterface(deviceUni);
     Solid::Network * network = device.findNetwork( networkUni );
     Solid::WirelessNetwork * wlan = 0;
     if ( (  wlan = qobject_cast<Solid::WirelessNetwork*>( network ) ) )
