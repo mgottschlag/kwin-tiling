@@ -32,7 +32,6 @@ class NMNetworkManagerPrivate;
 class KDE_EXPORT NMNetworkManager : public Solid::Ifaces::NetworkManager
 {
 Q_OBJECT
-Q_INTERFACES(Solid::Ifaces::NetworkManager)
     public:
         NMNetworkManager( QObject * parent, const QStringList & args );
         virtual ~NMNetworkManager();

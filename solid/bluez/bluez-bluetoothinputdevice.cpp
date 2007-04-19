@@ -23,8 +23,6 @@
 
 #include <kdebug.h>
 
-#include <solid/bluetoothinputdevice.h>
-
 #include "bluez-bluetoothinputdevice.h"
 
 BluezBluetoothInputDevice::BluezBluetoothInputDevice(const QString &objectPath,

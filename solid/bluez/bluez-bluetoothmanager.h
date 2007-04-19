@@ -35,7 +35,6 @@ class BluezBluetoothManagerPrivate;
 class KDE_EXPORT BluezBluetoothManager : public Solid::Ifaces::BluetoothManager
 {
     Q_OBJECT
-    Q_INTERFACES(Solid::Ifaces::BluetoothManager)
 
 public:
     BluezBluetoothManager(QObject * parent, const QStringList & args);
