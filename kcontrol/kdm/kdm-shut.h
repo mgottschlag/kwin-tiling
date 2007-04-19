@@ -20,6 +20,8 @@
 #ifndef __KDMSESS_H__
 #define __KDMSESS_H__
 
+#include <KConfigGroup>
+
 #include <QWidget>
 
 class KBackedComboBox;
@@ -44,8 +46,8 @@ class KDMSessionsWidget : public QWidget {
 	void changed();
 
   private:
-	void readSD( QComboBox *, const QString & );
-	void writeSD( QComboBox * );
+	void readSD( QComboBox *, const QString &, KConfigGroup group );
+	void writeSD( QComboBox *, KConfigGroup group );
 
 	QComboBox *sdlcombo, *sdrcombo;
 	QLabel *sdllabel, *sdrlabel;

@@ -20,18 +20,20 @@
 
 #include "kdm-theme.h"
 
-#include <kdialog.h>
-#include <kglobal.h>
-#include <kio/job.h>
-#include <kio/deletejob.h>
-#include <kio/netaccess.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kprogressdialog.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
-#include <ktar.h>
-#include <kurlrequester.h>
+#include <KDialog>
+#include <KGlobal>
+#include <KIO/Job>
+#include <KIO/DeleteJob>
+#include <KIO/NetAccess>
+#include <KLocale>
+#include <KMessageBox>
+#include <KProgressDialog>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KStandardDirs>
+#include <KTar>
+#include <KUrlRequester>
+//#include <KUrlRequesterDialog>
 #include <kurlrequesterdialog.h>
 
 #include <QDir>
@@ -130,16 +132,12 @@ void KDMThemeWidget::selectTheme( const QString &path )
 
 void KDMThemeWidget::load()
 {
-	config->setGroup( "X-*-Greeter" );
-
-	selectTheme( config->readEntry( "Theme", themeDir + "circles" ) );
+	selectTheme( config->group("X-*-Greeter").readEntry( "Theme", themeDir + "circles" ) );
 }
 
 void KDMThemeWidget::save()
 {
-	config->setGroup( "X-*-Greeter" );
-
-	config->writeEntry( "Theme", defaultTheme ? defaultTheme->path : "" );
+	config->group("X-*-Greeter").writeEntry( "Theme", defaultTheme ? defaultTheme->path : "" );
 }
 
 void KDMThemeWidget::defaults()
@@ -159,19 +157,19 @@ void KDMThemeWidget::makeReadOnly()
 void KDMThemeWidget::insertTheme( const QString &_theme )
 {
 	KConfig themeConfig( _theme + "/KdmGreeterTheme.desktop", KConfig::OnlyLocal);
+	KConfigGroup themeGroup = themeConfig.group("KdmGreeterTheme");
 
-	themeConfig.setGroup( "KdmGreeterTheme" );
-	QString name = themeConfig.readEntry( "Name" );
+	QString name = themeGroup.readEntry( "Name" );
 	if (name.isEmpty())
 		return;
 
 	ThemeData *child = new ThemeData( themeWidget );
 	child->setText( 0, name );
-	child->setText( 1, themeConfig.readEntry( "Author" ) );
+	child->setText( 1, themeGroup.readEntry( "Author" ) );
 	child->path = _theme;
-	child->screenShot = themeConfig.readEntry( "Screenshot" );
-	child->copyright = themeConfig.readEntry( "Copyright" );
-	child->description = themeConfig.readEntry( "Description" );
+	child->screenShot = themeGroup.readEntry( "Screenshot" );
+	child->copyright = themeGroup.readEntry( "Copyright" );
+	child->description = themeGroup.readEntry( "Description" );
 }
 
 void KDMThemeWidget::updateInfoView( ThemeData *theme )
@@ -197,7 +195,7 @@ void KDMThemeWidget::updateInfoView( ThemeData *theme )
 // Theme installation code inspired by kcm_icon
 void KDMThemeWidget::installNewTheme()
 {
-	KUrlRequesterDialog fileRequester( QString::null, i18n("Drag or Type Theme URL"), this );
+	KUrlRequesterDialog fileRequester( QString(), i18n("Drag or Type Theme URL"), this );
 	fileRequester.urlRequester()->setMode( KFile::File | KFile::Directory | KFile::ExistingOnly );
 	KUrl themeURL = fileRequester.getUrl();
 	if (themeURL.isEmpty())

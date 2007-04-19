@@ -22,18 +22,19 @@
 #include "positioner.h"
 
 #include <KApplication>
-#include <k3urldrag.h>
-#include <kdialog.h>
-#include <kfiledialog.h>
-#include <kiconloader.h>
-#include <kimagefilepreview.h>
-#include <kimageio.h>
-#include <kio/netaccess.h>
-#include <klineedit.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
+#include <K3URLDrag>
+#include <KDialog>
+#include <KFileDialog>
+#include <KIconLoader>
+#include <KImageFilePreview>
+#include <KImageIO>
+#include <KIO/NetAccess>
+#include <KLineEdit>
+#include <KLocale>
+#include <KMessageBox>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KStandardDirs>
 
 #include <QButtonGroup>
 #include <QDragEnterEvent>
@@ -257,30 +258,30 @@ void KDMDialogWidget::iconLoaderDropEvent( QDropEvent *e )
 
 void KDMDialogWidget::save()
 {
-	config->setGroup( "X-*-Greeter" );
+	KConfigGroup configGrp = config->group( "X-*-Greeter" );
 
-	config->writeEntry( "GreetString", greetstr_lined->text() );
+	configGrp.writeEntry( "GreetString", greetstr_lined->text() );
 
-	config->writeEntry( "LogoArea", noneRadio->isChecked() ? "None" :
+	configGrp.writeEntry( "LogoArea", noneRadio->isChecked() ? "None" :
 	                    logoRadio->isChecked() ? "Logo" : "Clock" );
 
-	config->writeEntry( "LogoPixmap", KIconLoader::global()->iconPath( logopath, K3Icon::Desktop, true ) );
+	configGrp.writeEntry( "LogoPixmap", KIconLoader::global()->iconPath( logopath, K3Icon::Desktop, true ) );
 
-	config->writeEntry( "GreeterPos",
+	configGrp.writeEntry( "GreeterPos",
 		QString("%1,%2").arg( positioner->x() ).arg( positioner->y() ) );
 }
 
 
 void KDMDialogWidget::load()
 {
-	config->setGroup( "X-*-Greeter" );
+	KConfigGroup configGrp = config->group( "X-*-Greeter" );
 
 	// Read the greeting string
-	greetstr_lined->setText( config->readEntry( "GreetString",
+	greetstr_lined->setText( configGrp.readEntry( "GreetString",
 	                                            i18n("Welcome to %s at %n") ) );
 
 	// Regular logo or clock
-	QString logoArea = config->readEntry( "LogoArea", "Logo" );
+	QString logoArea = configGrp.readEntry( "LogoArea", "Logo" );
 	if (logoArea == "Clock") {
 		clockRadio->setChecked( true );
 		slotAreaRadioClicked( KdmClock );
@@ -293,9 +294,9 @@ void KDMDialogWidget::load()
 	}
 
 	// See if we use alternate logo
-	setLogo( config->readEntry( "LogoPixmap" ) );
+	setLogo( configGrp.readEntry( "LogoPixmap" ) );
 
-	QStringList sl = config->readEntry( "GreeterPos", QStringList() );
+	QStringList sl = configGrp.readEntry( "GreeterPos", QStringList() );
 	if (sl.count() != 2)
 		positioner->setPosition( 50, 50 );
 	else

@@ -20,11 +20,12 @@
 
 #include "kdm-conv.h"
 
-#include <k3listview.h>
-#include <kcombobox.h>
-#include <kdialog.h>
-#include <klocale.h>
-#include <kconfig.h>
+#include <K3ListView>
+#include <KComboBox>
+#include <KDialog>
+#include <KLocale>
+#include <KConfig>
+#include <KConfigGroup>
 
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -212,55 +213,53 @@ void KDMConvenienceWidget::slotPresChanged()
 
 void KDMConvenienceWidget::save()
 {
-	config->setGroup( "X-:0-Core" );
-	config->writeEntry( "AutoLoginEnable", alGroup->isChecked() );
-	config->writeEntry( "AutoLoginUser", userlb->currentText() );
-	config->writeEntry( "AutoLoginLocked", autoLockCheck->isChecked() );
+	KConfigGroup configGrp = config->group( "X-:0-Core" );
+	configGrp.writeEntry( "AutoLoginEnable", alGroup->isChecked() );
+	configGrp.writeEntry( "AutoLoginUser", userlb->currentText() );
+	configGrp.writeEntry( "AutoLoginLocked", autoLockCheck->isChecked() );
 
-	config->setGroup( "X-:*-Core" );
-	config->writeEntry( "NoPassEnable", npGroup->isChecked() );
-	config->writeEntry( "NoPassUsers", noPassUsers );
+	configGrp = config->group( "X-:*-Core" );
+	configGrp.writeEntry( "NoPassEnable", npGroup->isChecked() );
+	configGrp.writeEntry( "NoPassUsers", noPassUsers );
 
-	config->setGroup( "X-*-Core" );
-	config->writeEntry( "AutoReLogin", cbarlen->isChecked() );
+	config->group("X-*-Core").writeEntry( "AutoReLogin", cbarlen->isChecked() );
 
-	config->setGroup( "X-:*-Greeter" );
-	config->writeEntry( "PreselectUser",
+	configGrp = config->group( "X-:*-Greeter" );
+	configGrp.writeEntry( "PreselectUser",
 	                    npRadio->isChecked() ? "None" :
 	                    ppRadio->isChecked() ? "Previous" :
 	                    "Default" );
-	config->writeEntry( "DefaultUser", puserlb->currentText() );
-	config->writeEntry( "FocusPasswd", cbjumppw->isChecked() );
+	configGrp.writeEntry( "DefaultUser", puserlb->currentText() );
+	configGrp.writeEntry( "FocusPasswd", cbjumppw->isChecked() );
 }
 
 
 void KDMConvenienceWidget::load()
 {
-	config->setGroup( "X-:0-Core" );
-	bool alenable = config->readEntry( "AutoLoginEnable", false );
-	autoUser = config->readEntry( "AutoLoginUser" );
-	autoLockCheck->setChecked( config->readEntry( "AutoLoginLocked", false ) );
+	KConfigGroup configGrp = config->group( "X-:0-Core" );
+	bool alenable = configGrp.readEntry( "AutoLoginEnable", false );
+	autoUser = configGrp.readEntry( "AutoLoginUser" );
+	autoLockCheck->setChecked( configGrp.readEntry( "AutoLoginLocked", false ) );
 	if (autoUser.isEmpty())
 		alenable = false;
 	alGroup->setChecked( alenable );
 
-	config->setGroup( "X-:*-Core" );
-	npGroup->setChecked( config->readEntry( "NoPassEnable", false ) );
-	noPassUsers = config->readEntry( "NoPassUsers", QStringList() );
+	configGrp = config->group( "X-:*-Core" );
+	npGroup->setChecked( configGrp.readEntry( "NoPassEnable", false ) );
+	noPassUsers = configGrp.readEntry( "NoPassUsers", QStringList() );
 
-	config->setGroup( "X-*-Core" );
-	cbarlen->setChecked( config->readEntry( "AutoReLogin", false ) );
+	cbarlen->setChecked( config->group("X-*-Core").readEntry( "AutoReLogin", false ) );
 
-	config->setGroup( "X-:*-Greeter" );
-	QString presstr = config->readEntry( "PreselectUser", "None" );
+	configGrp = config->group( "X-:*-Greeter" );
+	QString presstr = configGrp.readEntry( "PreselectUser", "None" );
 	if (presstr == "Previous")
 		ppRadio->setChecked( true );
 	else if (presstr == "Default")
 		spRadio->setChecked( true );
 	else
 		npRadio->setChecked( true );
-	preselUser = config->readEntry( "DefaultUser" );
-	cbjumppw->setChecked( config->readEntry( "FocusPasswd", false ) );
+	preselUser = configGrp.readEntry( "DefaultUser" );
+	cbjumppw->setChecked( configGrp.readEntry( "FocusPasswd", false ) );
 
 	slotPresChanged();
 }

@@ -21,12 +21,13 @@
 
 #include "kbackedcombobox.h"
 
-#include <kdialog.h>
-#include <kfontrequester.h>
-#include <klanguagebutton.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
+#include <KDialog>
+#include <KFontRequester>
+#include <KLanguageButton>
+#include <KLocale>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KStandardDirs>
 
 #include <QCheckBox>
 #include <QGroupBox>
@@ -207,17 +208,14 @@ void KDMGeneralWidget::loadGuiStyles(KBackedComboBox *combo)
 		if (!(config.hasGroup( "KDE" ) && config.hasGroup( "Misc" )))
 			continue;
 
-		config.setGroup( "Desktop Entry" );
-		if (config.readEntry( "Hidden" , false ))
+		if (config.group( "Desktop Entry" ).readEntry( "Hidden" , false ))
 			continue;
 
-		config.setGroup( "KDE" );
-		QString str2 = config.readEntry( "WidgetStyle" );
+		QString str2 = config.group( "KDE" ).readEntry( "WidgetStyle" );
 		if (str2.isNull())
 			continue;
 
-		config.setGroup( "Misc" );
-		combo->insertItem( str2, config.readEntry( "Name" ) );
+		combo->insertItem( str2, config.group( "Misc" ).readEntry( "Name" ) );
 	}
 }
 
@@ -230,16 +228,16 @@ void KDMGeneralWidget::set_def()
 
 void KDMGeneralWidget::save()
 {
-	config->setGroup( "X-*-Greeter" );
+	KConfigGroup configGrp = config->group( "X-*-Greeter" );
 
-	config->writeEntry( "UseTheme", useThemeCheck->isChecked() );
-	config->writeEntry( "GUIStyle", guicombo->currentId() );
-	config->writeEntry( "ColorScheme", colcombo->currentId() );
-	config->writeEntry( "Language", langcombo->current() );
-	config->writeEntry( "StdFont", stdFontChooser->font() );
-	config->writeEntry( "GreetFont", greetingFontChooser->font() );
-	config->writeEntry( "FailFont", failFontChooser->font() );
-	config->writeEntry( "AntiAliasing", aacb->isChecked() );
+	configGrp.writeEntry( "UseTheme", useThemeCheck->isChecked() );
+	configGrp.writeEntry( "GUIStyle", guicombo->currentId() );
+	configGrp.writeEntry( "ColorScheme", colcombo->currentId() );
+	configGrp.writeEntry( "Language", langcombo->current() );
+	configGrp.writeEntry( "StdFont", stdFontChooser->font() );
+	configGrp.writeEntry( "GreetFont", greetingFontChooser->font() );
+	configGrp.writeEntry( "FailFont", failFontChooser->font() );
+	configGrp.writeEntry( "AntiAliasing", aacb->isChecked() );
 }
 
 
@@ -247,28 +245,28 @@ void KDMGeneralWidget::load()
 {
 	set_def();
 
-	config->setGroup( "X-*-Greeter" );
+	KConfigGroup configGrp = config->group( "X-*-Greeter" );
 
-	useThemeCheck->setChecked( config->readEntry( "UseTheme", false ) );
+	useThemeCheck->setChecked( configGrp.readEntry( "UseTheme", false ) );
 
 	// Check the GUI type
-	guicombo->setCurrentId( config->readEntry( "GUIStyle" ) );
+	guicombo->setCurrentId( configGrp.readEntry( "GUIStyle" ) );
 
 	// Check the Color Scheme
-	colcombo->setCurrentId( config->readEntry("ColorScheme" ) );
+	colcombo->setCurrentId( configGrp.readEntry("ColorScheme" ) );
 
 	// get the language
-	langcombo->setCurrentItem( config->readEntry( "Language", "C" ) );
+	langcombo->setCurrentItem( configGrp.readEntry( "Language", "C" ) );
 
 	// Read the fonts
 	QFont font = stdFontChooser->font();
-	stdFontChooser->setFont( config->readEntry( "StdFont", font ) );
+	stdFontChooser->setFont( configGrp.readEntry( "StdFont", font ) );
 	font = failFontChooser->font();
-	failFontChooser->setFont( config->readEntry( "FailFont", font ) );
+	failFontChooser->setFont( configGrp.readEntry( "FailFont", font ) );
 	font = greetingFontChooser->font();
-	greetingFontChooser->setFont( config->readEntry( "GreetFont", font ) );
+	greetingFontChooser->setFont( configGrp.readEntry( "GreetFont", font ) );
 
-	aacb->setChecked( config->readEntry( "AntiAliasing", false ) );
+	aacb->setChecked( configGrp.readEntry( "AntiAliasing", false ) );
 }
 
 

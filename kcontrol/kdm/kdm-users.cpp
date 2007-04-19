@@ -19,20 +19,21 @@
 
 #include "kdm-users.h"
 
-#include <k3listview.h>
-#include <k3urldrag.h>
-#include <kcombobox.h>
-#include <kfiledialog.h>
-#include <kglobal.h>
-#include <kimagefilepreview.h>
-#include <kimageio.h>
-#include <kio/netaccess.h>
-#include <klineedit.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
-#include <kstandardguiitem.h>
+#include <K3ListView>
+#include <K3URLDrag>
+#include <KComboBox>
+#include <KFileDialog>
+#include <KGlobal>
+#include <KImageFilePreview>
+#include <KImageIO>
+#include <KIO/NetAccess>
+#include <KLineEdit>
+#include <KLocale>
+#include <KMessageBox>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KStandardDirs>
+#include <KStandardGuiItem>
 
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -85,8 +86,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 
 	// We assume that $kde_datadir/kdm exists, but better check for pics/ and pics/users,
 	// and create them if necessary.
-	config->setGroup( "X-*-Greeter" );
-	m_userPixDir = config->readEntry( "FaceDir", KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/faces" ) + '/';
+	m_userPixDir = config->group("X-*-Greeter").readEntry( "FaceDir", KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/faces" ) + '/';
 	m_notFirst = false;
 	QDir testDir( m_userPixDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
@@ -394,21 +394,21 @@ void KDMUsersWidget::userButtonDropEvent( QDropEvent *e )
 
 void KDMUsersWidget::save()
 {
-	config->setGroup( "X-*-Greeter" );
+	KConfigGroup configGrp = config->group( "X-*-Greeter" );
 
-	config->writeEntry( "MinShowUID", leminuid->text() );
-	config->writeEntry( "MaxShowUID", lemaxuid->text() );
+	configGrp.writeEntry( "MinShowUID", leminuid->text() );
+	configGrp.writeEntry( "MaxShowUID", lemaxuid->text() );
 
-	config->writeEntry( "UserList", cbshowlist->isChecked() );
-	config->writeEntry( "UserCompletion", cbcomplete->isChecked() );
-	config->writeEntry( "ShowUsers",
+	configGrp.writeEntry( "UserList", cbshowlist->isChecked() );
+	configGrp.writeEntry( "UserCompletion", cbcomplete->isChecked() );
+	configGrp.writeEntry( "ShowUsers",
 	                    cbinverted->isChecked() ? "NotHidden" : "Selected" );
-	config->writeEntry( "SortUsers", cbusrsrt->isChecked() );
+	configGrp.writeEntry( "SortUsers", cbusrsrt->isChecked() );
 
-	config->writeEntry( "HiddenUsers", hiddenUsers );
-	config->writeEntry( "SelectedUsers", selectedUsers );
+	configGrp.writeEntry( "HiddenUsers", hiddenUsers );
+	configGrp.writeEntry( "SelectedUsers", selectedUsers );
 
-	config->writeEntry( "FaceSource",
+	configGrp.writeEntry( "FaceSource",
 	                    rbadmonly->isChecked() ? "AdminOnly" :
 	                    rbprefadm->isChecked() ? "PreferAdmin" :
 	                    rbprefusr->isChecked() ? "PreferUser" : "UserOnly" );
@@ -482,20 +482,20 @@ void KDMUsersWidget::load()
 {
 	QString str;
 
-	config->setGroup( "X-*-Greeter" );
+	KConfigGroup configGrp = config->group( "X-*-Greeter" );
 
-	selectedUsers = config->readEntry( "SelectedUsers", QStringList() );
-	hiddenUsers = config->readEntry( "HiddenUsers", QStringList() );
+	selectedUsers = configGrp.readEntry( "SelectedUsers", QStringList() );
+	hiddenUsers = configGrp.readEntry( "HiddenUsers", QStringList() );
 
-	leminuid->setText( config->readEntry( "MinShowUID", defminuid ) );
-	lemaxuid->setText( config->readEntry( "MaxShowUID", defmaxuid ) );
+	leminuid->setText( configGrp.readEntry( "MinShowUID", defminuid ) );
+	lemaxuid->setText( configGrp.readEntry( "MaxShowUID", defmaxuid ) );
 
-	cbshowlist->setChecked( config->readEntry( "UserList", true ) );
-	cbcomplete->setChecked( config->readEntry( "UserCompletion", false ) );
-	cbinverted->setChecked( config->readEntry( "ShowUsers" ) != "Selected" );
-	cbusrsrt->setChecked( config->readEntry( "SortUsers", true ) );
+	cbshowlist->setChecked( configGrp.readEntry( "UserList", true ) );
+	cbcomplete->setChecked( configGrp.readEntry( "UserCompletion", false ) );
+	cbinverted->setChecked( configGrp.readEntry( "ShowUsers" ) != "Selected" );
+	cbusrsrt->setChecked( configGrp.readEntry( "SortUsers", true ) );
 
-	QString ps = config->readEntry( "FaceSource" );
+	QString ps = configGrp.readEntry( "FaceSource" );
 	if (ps == QLatin1String("UserOnly"))
 		rbusronly->setChecked( true );
 	else if (ps == QLatin1String("PreferUser"))

@@ -21,11 +21,11 @@
 
 #include "kbackedcombobox.h"
 
-#include <kdialog.h>
-#include <klineedit.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <kurlrequester.h>
+#include <KDialog>
+#include <KLineEdit>
+#include <KLocale>
+#include <KConfig>
+#include <KUrlRequester>
 
 #include <QGroupBox>
 #include <QLabel>
@@ -153,7 +153,7 @@ void KDMSessionsWidget::makeReadOnly()
 	bm_combo->setEnabled( false );
 }
 
-void KDMSessionsWidget::writeSD( QComboBox *combo )
+void KDMSessionsWidget::writeSD( QComboBox *combo, KConfigGroup group )
 {
 	QString what;
 	switch (combo->currentIndex()) {
@@ -161,27 +161,25 @@ void KDMSessionsWidget::writeSD( QComboBox *combo )
 	case SdRoot: what = "Root"; break;
 	default: what = "None"; break;
 	}
-	config->writeEntry( "AllowShutdown", what );
+	group.writeEntry( "AllowShutdown", what );
 }
 
 void KDMSessionsWidget::save()
 {
-	config->setGroup( "X-:*-Core" );
-	writeSD( sdlcombo );
+	writeSD( sdlcombo, config->group("X-:*-Core") );
 
-	config->setGroup( "X-*-Core" );
-	writeSD( sdrcombo );
+	writeSD( sdrcombo, config->group("X-*-Core") );
 
-	config->setGroup( "Shutdown" );
-	config->writeEntry( "HaltCmd", shutdown_lined->url().url(), KConfigBase::Persistent );
-	config->writeEntry( "RebootCmd", restart_lined->url().url(), KConfigBase::Persistent );
+	KConfigGroup configGrp = config->group( "Shutdown" );
+	configGrp.writeEntry( "HaltCmd", shutdown_lined->url().url(), KConfigBase::Persistent );
+	configGrp.writeEntry( "RebootCmd", restart_lined->url().url(), KConfigBase::Persistent );
 
-	config->writeEntry( "BootManager", bm_combo->currentId() );
+	configGrp.writeEntry( "BootManager", bm_combo->currentId() );
 }
 
-void KDMSessionsWidget::readSD( QComboBox *combo, const QString &def )
+void KDMSessionsWidget::readSD( QComboBox *combo, const QString &def, KConfigGroup group )
 {
-	QString str = config->readEntry( "AllowShutdown", def );
+	QString str = group.readEntry( "AllowShutdown", def );
 	SdModes sdMode;
 	if (str == "All")
 		sdMode = SdAll;
@@ -194,17 +192,15 @@ void KDMSessionsWidget::readSD( QComboBox *combo, const QString &def )
 
 void KDMSessionsWidget::load()
 {
-	config->setGroup( "X-:*-Core" );
-	readSD( sdlcombo, "All" );
+	readSD( sdlcombo, "All", config->group("X-:*-Core") );
 
-	config->setGroup( "X-*-Core" );
-	readSD( sdrcombo, "Root" );
+	readSD( sdrcombo, "Root", config->group("X-*-Core") );
 
-	config->setGroup( "Shutdown" );
-	restart_lined->setUrl( config->readEntry( "RebootCmd", "/sbin/reboot" ) );
-	shutdown_lined->setUrl( config->readEntry( "HaltCmd", "/sbin/halt" ) );
+	KConfigGroup configGrp = config->group( "Shutdown" );
+	restart_lined->setUrl( configGrp.readEntry( "RebootCmd", "/sbin/reboot" ) );
+	shutdown_lined->setUrl( configGrp.readEntry( "HaltCmd", "/sbin/halt" ) );
 
-	bm_combo->setCurrentId( config->readEntry( "BootManager", "None" ) );
+	bm_combo->setCurrentId( configGrp.readEntry( "BootManager", "None" ) );
 }
 
 void KDMSessionsWidget::defaults()
