@@ -24,14 +24,14 @@
 
 #include <kdemacros.h>
 
-#include <solid/ifaces/bluetoothinterface.h>
+#include <solid/experimental/ifaces/bluetoothinterface.h>
 
 class BluezBluetoothInterfacePrivate;
 
-class KDE_EXPORT BluezBluetoothInterface : public Solid::Ifaces::BluetoothInterface
+class KDE_EXPORT BluezBluetoothInterface : public SolidExperimental::Ifaces::BluetoothInterface
 {
     Q_OBJECT
-    Q_INTERFACES(Solid::Ifaces::BluetoothInterface)
+    Q_INTERFACES(SolidExperimental::Ifaces::BluetoothInterface)
 public:
     BluezBluetoothInterface(const QString & objectPath);
     virtual ~BluezBluetoothInterface();
@@ -41,7 +41,7 @@ public:
     QString revision() const;
     QString manufacturer() const;
     QString company() const;
-    Solid::BluetoothInterface::Mode mode() const;
+    SolidExperimental::BluetoothInterface::Mode mode() const;
     int discoverableTimeout() const;
     bool isDiscoverable() const;
     QStringList listConnections() const;
@@ -59,7 +59,7 @@ public:
     QObject *createBluetoothRemoteDevice(const QString&);
 
 public Q_SLOTS:
-    void setMode(const Solid::BluetoothInterface::Mode);
+    void setMode(const SolidExperimental::BluetoothInterface::Mode);
     void setDiscoverableTimeout(int);
     void setMinorClass(const QString&);
     void setName(const QString&);
@@ -70,7 +70,7 @@ public Q_SLOTS:
     void stopPeriodicDiscovery();
     void setPeriodicDiscoveryNameResolving(bool);
 
-    void slotModeChanged(const Solid::BluetoothInterface::Mode mode);
+    void slotModeChanged(const SolidExperimental::BluetoothInterface::Mode mode);
     void slotDiscoverableTimeoutChanged(int timeout);
     void slotMinorClassChanged(const QString &minor);
     void slotNameChanged(const QString &name);

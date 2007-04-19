@@ -24,9 +24,9 @@
 
 #include <kdemacros.h>
 
-#include <solid/ifaces/bluetoothinputdevice.h>
+#include <solid/experimental/ifaces/bluetoothinputdevice.h>
 
-class KDE_EXPORT BluezBluetoothInputDevice : public Solid::Ifaces::BluetoothInputDevice
+class KDE_EXPORT BluezBluetoothInputDevice : public SolidExperimental::Ifaces::BluetoothInputDevice
 {
     Q_OBJECT
 public:

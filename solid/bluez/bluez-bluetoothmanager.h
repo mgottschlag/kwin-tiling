@@ -29,10 +29,10 @@
 
 #include <kdemacros.h>
 
-#include <solid/ifaces/bluetoothmanager.h>
+#include <solid/experimental/ifaces/bluetoothmanager.h>
 
 class BluezBluetoothManagerPrivate;
-class KDE_EXPORT BluezBluetoothManager : public Solid::Ifaces::BluetoothManager
+class KDE_EXPORT BluezBluetoothManager : public SolidExperimental::Ifaces::BluetoothManager
 {
     Q_OBJECT
 

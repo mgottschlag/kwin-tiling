@@ -44,10 +44,10 @@
 #include <solid/network.h>
 #include <solid/wirelessnetwork.h>
 
-#include <solid/bluetoothmanager.h>
-#include <solid/bluetoothinterface.h>
-#include <solid/bluetoothremotedevice.h>
-#include <solid/bluetoothinputdevice.h>
+#include <solid/experimental/bluetoothmanager.h>
+#include <solid/experimental/bluetoothinterface.h>
+#include <solid/experimental/bluetoothremotedevice.h>
+#include <solid/experimental/bluetoothinputdevice.h>
 
 #include <kjob.h>
 
@@ -1291,11 +1291,11 @@ bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString
 
 bool SolidShell::bluetoothListAdapters()
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
 
-    const Solid::BluetoothInterfaceList all = manager.bluetoothInterfaces();
+    const SolidExperimental::BluetoothInterfaceList all = manager.bluetoothInterfaces();
 
-    foreach ( const Solid::BluetoothInterface device, all )
+    foreach ( const SolidExperimental::BluetoothInterface device, all )
     {
         cout << "UBI = '" << device.ubi() << "'" << endl;
     }
@@ -1304,7 +1304,7 @@ bool SolidShell::bluetoothListAdapters()
 
 bool SolidShell::bluetoothDefaultAdapter()
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
 
     cout << "UBI = '" <<  manager.defaultInterface() << "'" << endl;
 
@@ -1313,8 +1313,8 @@ bool SolidShell::bluetoothDefaultAdapter()
 
 bool SolidShell::bluetoothAdapterAddress( const QString &ubi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     cout << "'" <<  adapter.address() << "'" << endl;
 
@@ -1323,8 +1323,8 @@ bool SolidShell::bluetoothAdapterAddress( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterName( const QString &ubi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     cout << "'" <<  adapter.name() << "'" << endl;
 
@@ -1333,8 +1333,8 @@ bool SolidShell::bluetoothAdapterName( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterSetName( const QString &ubi, const QString &name )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     adapter.setName( name );
 
@@ -1343,8 +1343,8 @@ bool SolidShell::bluetoothAdapterSetName( const QString &ubi, const QString &nam
 
 bool SolidShell::bluetoothAdapterMode( const QString &ubi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     cout << "'" <<  adapter.mode() << "'" << endl;
 
@@ -1353,20 +1353,20 @@ bool SolidShell::bluetoothAdapterMode( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterSetMode( const QString &ubi, const QString &mode )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
-    Solid::BluetoothInterface::Mode modeEnum( Solid::BluetoothInterface::Off );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    SolidExperimental::BluetoothInterface::Mode modeEnum( SolidExperimental::BluetoothInterface::Off );
     if ( mode == "off" )
     {
-        modeEnum = Solid::BluetoothInterface::Off;
+        modeEnum = SolidExperimental::BluetoothInterface::Off;
     }
     else if ( mode == "connectable" )
     {
-        modeEnum = Solid::BluetoothInterface::Connectable;
+        modeEnum = SolidExperimental::BluetoothInterface::Connectable;
     }
     else if ( mode == "discoverable" )
     {
-        modeEnum = Solid::BluetoothInterface::Discoverable;
+        modeEnum = SolidExperimental::BluetoothInterface::Discoverable;
     }
     adapter.setMode( modeEnum );
 
@@ -1375,13 +1375,13 @@ bool SolidShell::bluetoothAdapterSetMode( const QString &ubi, const QString &mod
 
 bool SolidShell::bluetoothAdapterListConnections( const QString &ubi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
-    const Solid::BluetoothRemoteDeviceList all = adapter.listConnections();
+    const SolidExperimental::BluetoothRemoteDeviceList all = adapter.listConnections();
 
     cout << "Current connections of Bluetooth Adapter: " << ubi << endl;
-    foreach ( const Solid::BluetoothRemoteDevice device, all )
+    foreach ( const SolidExperimental::BluetoothRemoteDevice device, all )
     {
         cout << "UBI = '" << device.ubi() << "'" << endl;
     }
@@ -1390,8 +1390,8 @@ bool SolidShell::bluetoothAdapterListConnections( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterListBondings( const QString &ubi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     const QStringList all = adapter.listBondings();
 
@@ -1405,8 +1405,8 @@ bool SolidShell::bluetoothAdapterListBondings( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterScan( const QString &ubi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     connect( &adapter, SIGNAL( remoteDeviceFound( const QString &, int, int ) ),
            this, SLOT( slotBluetoothDeviceFound( const QString &, int, int ) ) );
@@ -1435,10 +1435,10 @@ void SolidShell::slotBluetoothDiscoveryCompleted()
 
 bool SolidShell::bluetoothInputListDevices()
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    const Solid::BluetoothInputDeviceList all = manager.bluetoothInputDevices();
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    const SolidExperimental::BluetoothInputDeviceList all = manager.bluetoothInputDevices();
 
-    foreach ( const Solid::BluetoothInputDevice device, all )
+    foreach ( const SolidExperimental::BluetoothInputDevice device, all )
     {
         cout << "UBI = '" << device.ubi() << "'" << endl;
     }
@@ -1448,7 +1448,7 @@ bool SolidShell::bluetoothInputListDevices()
 
 bool SolidShell::bluetoothInputSetup( const QString &deviceUbi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
     KJob *job = manager.setupInputDevice( deviceUbi );
 
     if ( job==0 )
@@ -1473,7 +1473,7 @@ bool SolidShell::bluetoothInputSetup( const QString &deviceUbi )
 
 bool SolidShell::bluetoothInputRemoveSetup( const QString &deviceUbi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
 
     manager.removeInputDevice( deviceUbi );
 
@@ -1482,8 +1482,8 @@ bool SolidShell::bluetoothInputRemoveSetup( const QString &deviceUbi )
 
 bool SolidShell::bluetoothInputConnect( const QString &deviceUbi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
 
     device.slotConnect();
 
@@ -1492,8 +1492,8 @@ bool SolidShell::bluetoothInputConnect( const QString &deviceUbi )
 
 bool SolidShell::bluetoothInputDisconnect( const QString &deviceUbi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
 
     device.slotDisconnect();
 
@@ -1502,9 +1502,9 @@ bool SolidShell::bluetoothInputDisconnect( const QString &deviceUbi )
 
 bool SolidShell::bluetoothRemoteCreateBonding( const QString &adapterUbi, const QString &deviceUbi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
-    Solid::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
+    SolidExperimental::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
 
     KJob *job = device.createBonding();
 
@@ -1524,9 +1524,9 @@ bool SolidShell::bluetoothRemoteCreateBonding( const QString &adapterUbi, const 
 
 bool SolidShell::bluetoothRemoteRemoveBonding( const QString &adapterUbi, const QString &deviceUbi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
-    Solid::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
+    SolidExperimental::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
 
     device.removeBonding();
 
@@ -1535,9 +1535,9 @@ bool SolidShell::bluetoothRemoteRemoveBonding( const QString &adapterUbi, const 
 
 bool SolidShell::bluetoothRemoteHasBonding( const QString &adapterUbi, const QString &deviceUbi )
 {
-    Solid::BluetoothManager &manager = Solid::BluetoothManager::self();
-    Solid::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
-    Solid::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
+    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
+    SolidExperimental::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
 
     if ( device.hasBonding() )
     {

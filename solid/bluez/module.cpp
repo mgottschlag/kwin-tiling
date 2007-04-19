@@ -24,6 +24,6 @@
 // KDE includes
 #include <kgenericfactory.h>
 
-typedef KGenericFactory<BluezBluetoothManager, Solid::Ifaces::BluetoothManager> BluetoothManagerBackendFactory;
+typedef KGenericFactory<BluezBluetoothManager, SolidExperimental::Ifaces::BluetoothManager> BluetoothManagerBackendFactory;
 K_EXPORT_COMPONENT_FACTORY(solid_bluez, BluetoothManagerBackendFactory("BluetoothManagerbackend"))
 

@@ -23,7 +23,7 @@
 
 #include <kdebug.h>
 
-#include <solid/bluetoothremotedevice.h>
+#include <solid/experimental/bluetoothremotedevice.h>
 
 #include "bluezcalljob.h"
 #include "bluez-bluetoothremotedevice.h"

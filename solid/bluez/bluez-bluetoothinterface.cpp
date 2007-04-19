@@ -22,7 +22,7 @@
 #include <QtDBus>
 #include <kdebug.h>
 
-#include <solid/bluetoothinterface.h>
+#include <solid/experimental/bluetoothinterface.h>
 
 #include "bluez-bluetoothremotedevice.h"
 #include "bluez-bluetoothinterface.h"
@@ -99,21 +99,21 @@ QString BluezBluetoothInterface::company() const
     return stringReply("GetCompany");
 }
 
-Solid::BluetoothInterface::Mode BluezBluetoothInterface::mode() const
+SolidExperimental::BluetoothInterface::Mode BluezBluetoothInterface::mode() const
 {
     QString theMode = stringReply("GetMode");
-    Solid::BluetoothInterface::Mode modeEnum;
+    SolidExperimental::BluetoothInterface::Mode modeEnum;
     if ( theMode == "off" )
     {
-        modeEnum = Solid::BluetoothInterface::Off;
+        modeEnum = SolidExperimental::BluetoothInterface::Off;
     }
     else if ( theMode == "connectable" )
     {
-        modeEnum = Solid::BluetoothInterface::Connectable;
+        modeEnum = SolidExperimental::BluetoothInterface::Connectable;
     }
     else if ( theMode == "discoverable" )
     {
-        modeEnum = Solid::BluetoothInterface::Discoverable;
+        modeEnum = SolidExperimental::BluetoothInterface::Discoverable;
     }
     return modeEnum;
 }
@@ -190,7 +190,7 @@ QStringList BluezBluetoothInterface::listRecentRemoteDevices(const QDateTime&) c
     return listReply("ListRecentRemoteDevices");
 }
 
-void BluezBluetoothInterface::setMode(const Solid::BluetoothInterface::Mode mode)
+void BluezBluetoothInterface::setMode(const SolidExperimental::BluetoothInterface::Mode mode)
 {
     d->iface.call("SetMode", mode);
 }
@@ -240,7 +240,7 @@ void BluezBluetoothInterface::setPeriodicDiscoveryNameResolving(bool nameResolvi
     d->iface.call("SetPeriodicDiscoveryNameResolving", nameResolving);
 }
 
-void BluezBluetoothInterface::slotModeChanged(const Solid::BluetoothInterface::Mode mode)
+void BluezBluetoothInterface::slotModeChanged(const SolidExperimental::BluetoothInterface::Mode mode)
 {
     emit modeChanged(mode);
 }
