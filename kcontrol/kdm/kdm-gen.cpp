@@ -20,10 +20,10 @@
 #include "kdm-gen.h"
 
 #include "kbackedcombobox.h"
+#include "klanguagebutton.h"
 
 #include <KDialog>
 #include <KFontRequester>
-#include <KLanguageButton>
 #include <KLocale>
 #include <KConfig>
 #include <KConfigGroup>
