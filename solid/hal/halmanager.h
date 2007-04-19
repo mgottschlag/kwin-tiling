@@ -49,7 +49,6 @@ public:
 private Q_SLOTS:
     void slotDeviceAdded( const QString &udi );
     void slotDeviceRemoved( const QString &udi );
-    void slotNewCapability( const QString &udi, const QString &capability );
 
 private:
     QStringList findDeviceStringMatch( const QString &key, const QString &value );

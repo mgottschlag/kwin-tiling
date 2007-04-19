@@ -55,13 +55,6 @@ HalManager::HalManager( QObject *parent, const QStringList & /*args*/)
                                      "org.freedesktop.Hal.Manager",
                                      "DeviceRemoved",
                                      this, SLOT( slotDeviceRemoved( const QString& ) ) );
-
-    d->manager.connection().connect( "org.freedesktop.Hal",
-                                     "/org/freedesktop/Hal/Manager",
-                                     "org.freedesktop.Hal.Manager",
-                                     "NewCapability",
-                                     this,
-                                     SLOT( slotNewCapability(const QString&, const QString& ) ) );
 }
 
 HalManager::~HalManager()
@@ -196,11 +189,6 @@ void HalManager::slotDeviceRemoved( const QString &udi )
 {
     d->devicesCache.removeAll( udi );
     emit deviceRemoved( udi );
-}
-
-void HalManager::slotNewCapability(const QString &udi, const QString &capability)
-{
-    emit newDeviceInterface(udi, DeviceInterface::fromString(capability));
 }
 
 #include "halmanager.moc"

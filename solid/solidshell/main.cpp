@@ -921,7 +921,7 @@ bool SolidShell::hwList( bool interfaces, bool system )
 
 bool SolidShell::hwCapabilities( const QString &udi )
 {
-    const Solid::Device device = Solid::DeviceManager::findDevice(udi);
+    const Solid::Device device(udi);
 
     cout << "udi = '" << device.udi() << "'" << endl;
     cout << device << endl;
@@ -931,7 +931,7 @@ bool SolidShell::hwCapabilities( const QString &udi )
 
 bool SolidShell::hwProperties( const QString &udi )
 {
-    const Solid::Device device = Solid::DeviceManager::findDevice(udi);
+    const Solid::Device device(udi);
 
     cout << "udi = '" << device.udi() << "'" << endl;
     if (device.is<Solid::GenericInterface>()) {
@@ -957,7 +957,7 @@ bool SolidShell::hwQuery( const QString &parentUdi, const QString &query )
 
 bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &udi )
 {
-    Solid::Device device = Solid::DeviceManager::findDevice(udi);
+    Solid::Device device(udi);
 
     if ( !device.is<Solid::Volume>() )
     {
