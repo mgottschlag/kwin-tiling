@@ -172,7 +172,7 @@ QStringList HalManager::findDeviceByDeviceInterface(const Solid::DeviceInterface
 
     foreach ( QString cap, cap_list )
     {
-        QDBusReply<QStringList> reply = d->manager.call( "FindDeviceByDeviceInterface", cap );
+        QDBusReply<QStringList> reply = d->manager.call( "FindDeviceByCapability", cap );
 
         if ( !reply.isValid() )
         {
