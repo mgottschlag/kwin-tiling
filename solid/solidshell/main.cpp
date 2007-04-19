@@ -899,9 +899,7 @@ bool SolidShell::doIt()
 
 bool SolidShell::hwList( bool interfaces, bool system )
 {
-    Solid::DeviceManager &manager = Solid::DeviceManager::self();
-
-    const Solid::DeviceList all = manager.allDevices();
+    const QList<Solid::Device> all = Solid::DeviceManager::allDevices();
 
     foreach ( const Solid::Device device, all )
     {
@@ -923,8 +921,7 @@ bool SolidShell::hwList( bool interfaces, bool system )
 
 bool SolidShell::hwCapabilities( const QString &udi )
 {
-    Solid::DeviceManager &manager = Solid::DeviceManager::self();
-    const Solid::Device device = manager.findDevice( udi );
+    const Solid::Device device = Solid::DeviceManager::findDevice(udi);
 
     cout << "udi = '" << device.udi() << "'" << endl;
     cout << device << endl;
@@ -934,8 +931,7 @@ bool SolidShell::hwCapabilities( const QString &udi )
 
 bool SolidShell::hwProperties( const QString &udi )
 {
-    Solid::DeviceManager &manager = Solid::DeviceManager::self();
-    const Solid::Device device = manager.findDevice( udi );
+    const Solid::Device device = Solid::DeviceManager::findDevice(udi);
 
     cout << "udi = '" << device.udi() << "'" << endl;
     if (device.is<Solid::GenericInterface>()) {
@@ -948,8 +944,8 @@ bool SolidShell::hwProperties( const QString &udi )
 
 bool SolidShell::hwQuery( const QString &parentUdi, const QString &query )
 {
-    Solid::DeviceManager &manager = Solid::DeviceManager::self();
-    const Solid::DeviceList devices = manager.findDevicesFromQuery( query, parentUdi );
+    const QList<Solid::Device> devices
+        = Solid::DeviceManager::findDevicesFromQuery(query, parentUdi);
 
     foreach ( const Solid::Device device, devices )
     {
@@ -961,8 +957,7 @@ bool SolidShell::hwQuery( const QString &parentUdi, const QString &query )
 
 bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &udi )
 {
-    Solid::DeviceManager &manager = Solid::DeviceManager::self();
-    Solid::Device device = manager.findDevice( udi );
+    Solid::Device device = Solid::DeviceManager::findDevice(udi);
 
     if ( !device.is<Solid::Volume>() )
     {
@@ -1009,9 +1004,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
 
 bool SolidShell::powerQuerySuspendMethods()
 {
-    Solid::PowerManager &manager = Solid::PowerManager::self();
-
-    Solid::PowerManager::SuspendMethods methods = manager.supportedSuspendMethods();
+    Solid::PowerManager::SuspendMethods methods = Solid::PowerManager::supportedSuspendMethods();
 
     if ( methods & Solid::PowerManager::ToDisk )
     {
@@ -1033,9 +1026,8 @@ bool SolidShell::powerQuerySuspendMethods()
 
 bool SolidShell::powerSuspend( const QString &strMethod )
 {
-    Solid::PowerManager &manager = Solid::PowerManager::self();
-
-    Solid::PowerManager::SuspendMethods supported = manager.supportedSuspendMethods();
+    Solid::PowerManager::SuspendMethods supported
+        = Solid::PowerManager::supportedSuspendMethods();
 
     Solid::PowerManager::SuspendMethod method = Solid::PowerManager::UnknownSuspendMethod;
 
@@ -1057,7 +1049,7 @@ bool SolidShell::powerSuspend( const QString &strMethod )
         return false;
     }
 
-    KJob *job = manager.suspend( method );
+    KJob *job = Solid::PowerManager::suspend(method);
 
     if ( job==0 )
     {
@@ -1083,14 +1075,12 @@ bool SolidShell::powerSuspend( const QString &strMethod )
 
 bool SolidShell::powerQuerySchemes()
 {
-    Solid::PowerManager &manager = Solid::PowerManager::self();
-
-    QString current = manager.scheme();
-    QStringList schemes = manager.supportedSchemes();
+    QString current = Solid::PowerManager::scheme();
+    QStringList schemes = Solid::PowerManager::supportedSchemes();
 
     foreach ( QString scheme, schemes )
     {
-        cout << scheme << " (" << manager.schemeDescription( scheme ) << ")";
+        cout << scheme << " (" << Solid::PowerManager::schemeDescription(scheme) << ")";
 
         if ( scheme==current )
         {
@@ -1107,9 +1097,7 @@ bool SolidShell::powerQuerySchemes()
 
 bool SolidShell::powerChangeScheme( const QString &schemeName )
 {
-    Solid::PowerManager &manager = Solid::PowerManager::self();
-
-    QStringList supported = manager.supportedSchemes();
+    QStringList supported = Solid::PowerManager::supportedSchemes();
 
     if ( !supported.contains( schemeName ) )
     {
@@ -1117,15 +1105,13 @@ bool SolidShell::powerChangeScheme( const QString &schemeName )
         return false;
     }
 
-    return manager.setScheme( schemeName );
+    return Solid::PowerManager::setScheme(schemeName);
 }
 
 bool SolidShell::powerQueryCpuPolicies()
 {
-    Solid::PowerManager &manager = Solid::PowerManager::self();
-
-    Solid::PowerManager::CpuFreqPolicy current = manager.cpuFreqPolicy();
-    Solid::PowerManager::CpuFreqPolicies policies = manager.supportedCpuFreqPolicies();
+    Solid::PowerManager::CpuFreqPolicy current = Solid::PowerManager::cpuFreqPolicy();
+    Solid::PowerManager::CpuFreqPolicies policies = Solid::PowerManager::supportedCpuFreqPolicies();
 
     QList<Solid::PowerManager::CpuFreqPolicy> all_policies;
     all_policies << Solid::PowerManager::OnDemand
@@ -1171,9 +1157,8 @@ bool SolidShell::powerQueryCpuPolicies()
 
 bool SolidShell::powerChangeCpuPolicy( const QString &policyName )
 {
-    Solid::PowerManager &manager = Solid::PowerManager::self();
-
-    Solid::PowerManager::CpuFreqPolicies supported = manager.supportedCpuFreqPolicies();
+    Solid::PowerManager::CpuFreqPolicies supported
+        = Solid::PowerManager::supportedCpuFreqPolicies();
 
     Solid::PowerManager::CpuFreqPolicy policy = Solid::PowerManager::UnknownCpuFreqPolicy;
 
@@ -1199,7 +1184,7 @@ bool SolidShell::powerChangeCpuPolicy( const QString &policyName )
         return false;
     }
 
-    return manager.setCpuFreqPolicy( policy );
+    return Solid::PowerManager::setCpuFreqPolicy(policy);
 }
 
 bool SolidShell::netmgrNetworkingEnabled()

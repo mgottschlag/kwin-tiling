@@ -44,10 +44,10 @@ HalPower::HalPower( QObject *parent, const QStringList & /*args*/ )
                     "org.freedesktop.Hal.Device.CPUFreq",
                     QDBusConnection::systemBus() )
 {
-    connect( &Solid::DeviceManager::self(), SIGNAL( deviceRemoved( const QString& ) ),
-             this, SLOT( slotDeviceRemoved( const QString& ) ) );
-    connect( &Solid::DeviceManager::self(), SIGNAL( newDeviceInterface( const QString&, int ) ),
-             this, SLOT( slotNewDeviceInterface( const QString&, int ) ) );
+    connect(Solid::DeviceManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
+            this, SLOT(slotDeviceRemoved(const QString&)));
+    connect(Solid::DeviceManager::notifier(), SIGNAL(newDeviceInterface(const QString&, int)),
+            this, SLOT(slotNewDeviceInterface(const QString&, int)));
 
     m_pluggedAdapterCount = 0;
     computeAcAdapters();
@@ -343,7 +343,7 @@ bool HalPower::setCpuEnabled( int /*cpuNum*/, bool /*enabled*/ )
 void HalPower::computeAcAdapters()
 {
     Solid::DeviceList adapters
-        = Solid::DeviceManager::self().findDevicesFromQuery( Solid::DeviceInterface::AcAdapter );
+        = Solid::DeviceManager::findDevicesFromQuery(Solid::DeviceInterface::AcAdapter);
 
     foreach( Solid::Device adapter, adapters )
     {
@@ -366,8 +366,8 @@ void HalPower::computeBatteries()
     predicate = predicate.arg( (int)Solid::Battery::PrimaryBattery );
 
     Solid::DeviceList batteries
-        = Solid::DeviceManager::self().findDevicesFromQuery( Solid::DeviceInterface::Battery,
-                                                             predicate );
+        = Solid::DeviceManager::findDevicesFromQuery(Solid::DeviceInterface::Battery,
+                                                     predicate);
 
     foreach( Solid::Device battery, batteries )
     {
@@ -382,7 +382,7 @@ void HalPower::computeBatteries()
 void HalPower::computeButtons()
 {
     Solid::DeviceList buttons
-        = Solid::DeviceManager::self().findDevicesFromQuery( Solid::DeviceInterface::Button );
+        = Solid::DeviceManager::findDevicesFromQuery(Solid::DeviceInterface::Button);
 
     foreach( Solid::Device button, buttons )
     {
