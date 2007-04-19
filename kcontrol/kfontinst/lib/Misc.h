@@ -91,6 +91,7 @@ namespace Misc
     extern KDE_EXPORT uint    qHash(const TFont &key);
     extern KDE_EXPORT bool    configureForX11(const QString &dir);
     extern KDE_EXPORT QString encodeText(const QString &str, QTextStream &s);
+    extern KDE_EXPORT QString contractHome(QString path);
 }
 
 }

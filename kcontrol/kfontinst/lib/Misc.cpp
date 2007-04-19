@@ -21,6 +21,7 @@
  */
 
 #include "Misc.h"
+#include <QDir>
 #include <QFile>
 #include <QByteArray>
 #include <QTextStream>
@@ -401,6 +402,24 @@ QString encodeText(const QString &str, QTextStream &s)
     }
 
     return retval;
+}
+
+QString contractHome(QString path)
+{
+    if (!path.isEmpty() && '/'==path[0])
+    {
+        QString home(QDir::homePath());
+
+        if(path.startsWith(home))
+        {
+            int len = home.length();
+
+            if(len>=0 && (path.length() == len || path[len] == '/'))
+                return path.replace(0, len, QString::fromLatin1("~"));
+        }
+    }
+
+    return path;
 }
 
 } // Misc::

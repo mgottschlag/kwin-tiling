@@ -1070,6 +1070,8 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
     if (!idx.isValid())
         return QVariant();
 
+    static const int constMaxFiles=20;
+
     QModelIndex    index(mapToSource(idx));
     CFontModelItem *mi=static_cast<CFontModelItem *>(index.internalPointer());
 
@@ -1083,18 +1085,10 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                     QList<CFontItem *>::ConstIterator it(fam->fonts().begin()),
                                                       end(fam->fonts().end());
                     QStringList                       allFiles;
-                    QString                           tip("<h3>"+fam->name()+"</h3>");
+                    QString                           tip("<b>"+fam->name()+"</b>");
                     int                               size(0);
                     bool                              markMatch(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria);
-
-                    tip+=i18n("<p><b>Status:</b> %1</p>", CFamilyItem::ENABLED==fam->status()
-                                                            ? i18n("Enabled")
-                                                            : CFamilyItem::DISABLED==fam->status()
-                                                                ? i18n("Disabled")
-                                                                : i18n("Partial"));
-                    tip+="<p><b>";
-                    tip+=i18n("All Files:");
-                    tip+="</b><ul>";
+                    tip+="<p style='white-space:pre'><table>";
 
                     for(; it!=end; ++it)
                     {
@@ -1106,42 +1100,39 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                     QStringList::ConstIterator fit(allFiles.begin()),
                                                fend(allFiles.end());
 
-                    for(; fit!=fend; ++fit)
+                    for(int i=0; fit!=fend && i<constMaxFiles; ++fit, ++i)
                         if(markMatch && (*fit)==itsFilterFcText)
-                            tip+="<li><b>"+(*fit)+"</b></li>";
+                            tip+="<tr><td><b>"+Misc::contractHome(*fit)+"</b></tr></td>";
                         else
-                            tip+="<li>"+(*fit)+"</li>";
+                            tip+="<tr><td>"+Misc::contractHome(*fit)+"</tr></td>";
+                    if(allFiles.count()>constMaxFiles)
+                        tip+="<tr><td><i>"+i18n("...plus %1 more", allFiles.count()-constMaxFiles)+"</tr></td>";
 
-                    tip+="</ul></p>";
-                    tip+=i18n("<p><b>Total File Size:</b> %1</p>", KGlobal::locale()->formatByteSize(size));
+                    tip+="</table></p>";
                     return tip;
                 }
                 else
                 {
                     CFontItem   *font=static_cast<CFontItem *>(index.internalPointer());
-                    QString     tip("<h3>"+font->name()+"</h3>");
+                    QString     tip("<b>"+font->name()+"</b>");
                     QStringList files(font->files());
                     bool        markMatch(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria);
 
-                    tip+=i18n("<p><b>Status:</b> %1</p>", font->isEnabled()
-                                                            ? i18n("Enabled")
-                                                            : i18n("Disabled"));
-                    tip+="<p><b>";
-                    tip+=i18n("Files:");
-                    tip+="</b><ul>";
+                    tip+="<p style='white-space:pre'><table>";
 
                     qSort(files);
                     QStringList::ConstIterator fit(files.begin()),
                                                fend(files.end());
 
-                    for(; fit!=fend; ++fit)
+                    for(int i=0; fit!=fend && i<constMaxFiles; ++fit, ++i)
                         if(markMatch && (*fit)==itsFilterFcText)
-                            tip+="<li><b>"+(*fit)+"</b></li>";
+                            tip+="<tr><td><b>"+Misc::contractHome(*fit)+"</b></tr></td>";
                         else
-                            tip+="<li>"+(*fit)+"</li>";
+                            tip+="<tr><td>"+Misc::contractHome(*fit)+"</tr></td>";
+                    if(files.count()>constMaxFiles)
+                        tip+="<tr><td><i>"+i18n("...plus %1 more", files.count()-constMaxFiles)+"</tr></td></li>";
 
-                    tip+="</ul></p>";
-                    tip+=i18n("<p><b>Total File Size:</b> %1</p>", KGlobal::locale()->formatByteSize(font->size()));
+                    tip+="</table></p>";
                     return tip;
                 }
             break;
@@ -1788,6 +1779,7 @@ void CFontListView::setMgtMode(bool on)
 
         itsModel->setAllowDisabled(on);
         itsProxy->setMgtMode(on);
+        setMouseTracking(on);
     }
 }
 

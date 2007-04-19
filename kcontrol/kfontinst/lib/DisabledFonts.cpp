@@ -186,7 +186,8 @@ void CDisabledFonts::createWritingSystemMap()
 
 CDisabledFonts::CDisabledFonts(const QString &path, bool sys)
               : itsTimeStamp(0),
-                itsModified(false)
+                itsModified(false),
+                itsMods(0)
 {
     QString p;
 
@@ -198,10 +199,10 @@ CDisabledFonts::CDisabledFonts(const QString &path, bool sys)
             p=KFI_ROOT_CFG_DIR;
         else
         {
-            FcStrList   *list=FcConfigGetFontDirs(FcInitLoadConfig());
-            FcChar8     *dir;
-            QString     home(QDir::homePath()),
-                        defaultDir(home+"/.fonts");
+            FcStrList *list=FcConfigGetFontDirs(FcInitLoadConfig());
+            FcChar8   *dir;
+            QString   home(QDir::homePath()),
+                      defaultDir(home+"/.fonts");
 
             while((dir=FcStrListNext(list)))
             {
@@ -280,7 +281,7 @@ void CDisabledFonts::load(bool lock)
                             TFont font;
 
                             if(font.load(e))
-                                itsDisabledFonts.add(font);
+                                itsFonts.add(font);
                         }
                     }
 
@@ -317,8 +318,8 @@ bool CDisabledFonts::save()
 
                 str << "<"DISABLED_DOC">" << endl;
 
-                TFontList::Iterator it(itsDisabledFonts.begin()),
-                                    end(itsDisabledFonts.end());
+                TFontList::Iterator it(itsFonts.begin()),
+                                    end(itsFonts.end());
 
                 for(; it!=end; ++it)
                     str << (*it);
@@ -328,7 +329,10 @@ bool CDisabledFonts::save()
                                     QFile::ReadGroup|QFile::ReadOther);
                 rv=file.finalize();
                 if(rv)
+                {
                     itsTimeStamp=Misc::getTimeStamp(itsFileName);
+                    itsMods=0;
+                }
             }
         }
     }
@@ -456,9 +460,11 @@ void CDisabledFonts::TFontList::add(const TFont &t) const
 
 bool CDisabledFonts::disable(const TFont &font)
 {
-    TFontList::Iterator it=itsDisabledFonts.locate(font);
+    static const int constMaxMods=100;
 
-    if(it==itsDisabledFonts.end())
+    TFontList::Iterator it=itsFonts.locate(font);
+
+    if(it==itsFonts.end())
     {
         TFont newFont(font.family, font.styleInfo, font.writingSystems);
 
@@ -470,9 +476,11 @@ bool CDisabledFonts::disable(const TFont &font)
             for(; it!=end; ++it)
                 newFont.files.add(TFile(changeName((*it).path, false), (*it).face));
 
-            itsDisabledFonts.add(newFont);
+            itsFonts.add(newFont);
             itsModified=true;
-            save();
+
+            if(++itsMods>constMaxMods)
+                save();
             return true;
         }
         else
@@ -491,9 +499,10 @@ bool CDisabledFonts::disable(const TFont &font)
 
             if(newFont.files.count()==font.files.count())
             {
-                itsDisabledFonts.add(newFont);
+                itsFonts.add(newFont);
                 itsModified=true;
-                save();
+                if(++itsMods>constMaxMods)
+                    save();
                 return true;
             }
         }
@@ -506,11 +515,11 @@ bool CDisabledFonts::disable(const TFont &font)
 
 bool CDisabledFonts::enable(TFontList::Iterator font)
 {
-    if(font!=itsDisabledFonts.end())
+    if(font!=itsFonts.end())
     {
         if(changeStatus((*font).files, true))
         {
-            itsDisabledFonts.erase(font);
+            itsFonts.erase(font);
             itsModified=true;
             return true;
         }
@@ -531,7 +540,7 @@ bool CDisabledFonts::enable(TFontList::Iterator font)
 
             if(mod.count()==(*font).files.count())
             {
-                itsDisabledFonts.erase(font);
+                itsFonts.erase(font);
                 itsModified=true;
                 return true;
             }
@@ -545,8 +554,8 @@ bool CDisabledFonts::enable(TFontList::Iterator font)
 
 CDisabledFonts::TFontList::Iterator CDisabledFonts::find(const QString &name, int face)
 {
-    TFontList::Iterator it(itsDisabledFonts.begin()),
-                        end(itsDisabledFonts.end());
+    TFontList::Iterator it(itsFonts.begin()),
+                        end(itsFonts.end());
     QString             fontName(name);
 
     if('.'==fontName[0])
@@ -557,7 +566,7 @@ CDisabledFonts::TFontList::Iterator CDisabledFonts::find(const QString &name, in
             break;
 
     if(it==end && '.'==name[0])
-        for(it=itsDisabledFonts.begin(); it!=end ; ++it)
+        for(it=itsFonts.begin(); it!=end ; ++it)
         {
             TFileList::ConstIterator fit((*it).files.begin()),
                                      fend((*it).files.end());
@@ -583,14 +592,14 @@ CDisabledFonts::CDisabledFonts(const CDisabledFonts &o)
 
 void CDisabledFonts::merge(const CDisabledFonts &other)
 {
-    TFontList::ConstIterator it(other.itsDisabledFonts.begin()),
-                             end(other.itsDisabledFonts.end());
+    TFontList::ConstIterator it(other.itsFonts.begin()),
+                             end(other.itsFonts.end());
 
     for(; it!=end; ++it)
     {
-        TFontList::Iterator existing(itsDisabledFonts.locate(*it));
+        TFontList::Iterator existing(itsFonts.locate(*it));
 
-        if(existing!=itsDisabledFonts.end())
+        if(existing!=itsFonts.end())
         {
             TFileList::ConstIterator fit((*it).files.begin()),
                                      fend((*it).files.end());
@@ -604,7 +613,7 @@ void CDisabledFonts::merge(const CDisabledFonts &other)
         }
         else
         {
-            itsDisabledFonts.add(*it);
+            itsFonts.add(*it);
             itsModified=true;
         }
     }
@@ -612,27 +621,9 @@ void CDisabledFonts::merge(const CDisabledFonts &other)
 
 }
 
-static QString contractHome(QString path)
-{
-    if (!path.isEmpty() && '/'==path[0])
-    {
-        QString home(QDir::homePath());
-
-        if(path.startsWith(home))
-        {
-            int len = home.length();
-
-            if(len>=0 && (path.length() == len || path[len] == '/'))
-                return path.replace(0, len, QString::fromLatin1("~"));
-        }
-    }
-
-    return path;
-}
-
 QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFile &f)
 {
-    s << PATH_ATTR"=\"" << KFI::Misc::encodeText(contractHome(f.path), s) << "\" ";
+    s << PATH_ATTR"=\"" << KFI::Misc::encodeText(KFI::Misc::contractHome(f.path), s) << "\" ";
 
     if(f.face>0)
         s << FACE_ATTR"=\"" << f.face << "\" ";

@@ -112,13 +112,13 @@ class KFONTINST_EXPORT CDisabledFonts
     bool enable(const QString &family, unsigned long styleInfo)
              { return enable(TFont(family, styleInfo)); }
     bool enable(const TFont &font)
-             { return enable(itsDisabledFonts.locate(font)); }
+             { return enable(itsFonts.locate(font)); }
     bool enable(TFontList::Iterator font);
 
     TFontList::Iterator find(const QString &name, int face);
-    void                remove(TFontList::Iterator it)  { itsDisabledFonts.erase(it);
+    void                remove(TFontList::Iterator it)  { itsFonts.erase(it);
                                                           itsModified=true; }
-    TFontList & items() { return itsDisabledFonts; }
+    TFontList & items() { return itsFonts; }
 
     private:
 
@@ -133,7 +133,8 @@ class KFONTINST_EXPORT CDisabledFonts
     time_t    itsTimeStamp;
     bool      itsModified,
               itsModifiable;
-    TFontList itsDisabledFonts;
+    TFontList itsFonts;
+    int       itsMods;
 
     static LangWritingSystemMap theirLanguageForWritingSystem[];
 };
