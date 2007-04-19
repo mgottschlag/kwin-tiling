@@ -118,7 +118,7 @@ class CKioFonts : public KIO::SlaveBase
     public:
 
     CKioFonts(const QByteArray &pool, const QByteArray &app);
-    virtual ~CKioFonts();
+    virtual ~CKioFonts() { cleanup(); }
 
     static QString     getSect(const QString &f) { return f.section('/', 1, 1); }
 
@@ -132,6 +132,7 @@ class CKioFonts : public KIO::SlaveBase
     void               copy(const KUrl &src, const KUrl &dest, int mode, bool overwrite);
     void               rename(const KUrl &src, const KUrl &dest, bool overwrite);
     void               del(const KUrl &url, bool isFile);
+    void               cleanup();
 
     private:
 

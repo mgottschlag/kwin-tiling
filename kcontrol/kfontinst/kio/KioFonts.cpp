@@ -77,6 +77,17 @@ extern "C"
     KDE_EXPORT int kdemain(int argc, char **argv);
 }
 
+static KFI::CKioFonts *slaveInstance=NULL;
+
+void kioFontsExitHandler()
+{
+    if(slaveInstance)
+    {
+        slaveInstance->cleanup();
+        slaveInstance=NULL;
+    }
+}
+
 int kdemain(int argc, char **argv)
 {
     if (argc != 4)
@@ -91,6 +102,7 @@ int kdemain(int argc, char **argv)
     KComponentData componentData("kio_" KFI_KIO_FONTS_PROTOCOL);
     KFI::CKioFonts slave(argv[2], argv[3]);
 
+    atexit(kioFontsExitHandler);
     slave.dispatchLoop();
 
     return 0;
@@ -770,6 +782,8 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
 {
     KFI_DBUG << "Constructor" << endl;
 
+    slaveInstance=this;
+
     if(!itsRoot)
     {
         // Set core dump size to 0 because we will have
@@ -839,9 +853,11 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
     updateFontList();
 }
 
-CKioFonts::~CKioFonts()
+void CKioFonts::cleanup()
 {
-    KFI_DBUG << "Destructor" << endl;
+    slaveInstance=NULL;
+
+    KFI_DBUG << "Cleanup" << endl;
     doModified();
 
     if(itsServer.isOpen() && itsSuProc && itsSocket)
