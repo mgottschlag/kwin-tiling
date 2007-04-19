@@ -135,7 +135,7 @@ InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
             fileProt  = "file"                 == url.protocol() || url.protocol().isEmpty();
     int     face(0);
 
-    if( fontsProt )
+    if(fontsProt)
     {
         // OK, its a fonts:/ url - are we passed any data in the query?
         QString      path=url.queryItem(KFI_FILE_QUERY),
@@ -143,7 +143,7 @@ InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
                      mime=url.queryItem(KFI_MIME_QUERY);
         unsigned int styleInfo=Misc::getIntQueryVal(url, KFI_STYLE_QUERY, KFI_NO_STYLE_INFO);
 
-        face=Misc::getIntQueryVal(url, KFI_KIO_FACE, -1);
+        face=Misc::getIntQueryVal(url, KFI_KIO_FACE, 0);
 
         if(name.isEmpty() && path.isEmpty())
         {
