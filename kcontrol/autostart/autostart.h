@@ -25,6 +25,8 @@
 #include <KCModule>
 #include <KAboutData>
 #include <KGlobalSettings>
+#include <KFileItem>
+
 #include <QComboBox>
 #include <QPushButton>
 #include <QTreeWidget>

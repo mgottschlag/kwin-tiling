@@ -18,6 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
+#include "autostart.h"
+
 #include <KGenericFactory>
 #include <KLocale>
 #include <KGlobal>
@@ -38,19 +40,17 @@
 #include <QGridLayout>
 #include <QStringList>
 
-#include "autostart.h"
-
 class Desktop : public QTreeWidgetItem {
 public:
 bool bisDesktop;
 KUrl fileName;
 
-Desktop( QString service, QTreeWidget *parent ): QTreeWidgetItem( parent ) {
+Desktop( const QString &service, QTreeWidget *parent ): QTreeWidgetItem( parent ) {
 	fileName = KUrl(service);
 	bisDesktop = service.endsWith(".desktop");
 }
 bool isDesktop() { return bisDesktop; }
-void setPath(QString path) {
+void setPath(const QString &path) {
 	KIO::NetAccess::file_move(fileName, KUrl( path + '/' + fileName.fileName() ));
 	fileName = KUrl(path + fileName.fileName());
 }
