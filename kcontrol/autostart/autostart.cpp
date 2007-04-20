@@ -56,7 +56,7 @@ void setPath(const QString &path) {
 }
 ~Desktop() {
 }
-}
+};
 
 typedef KGenericFactory<Autostart, QWidget> AutostartFactory;
 K_EXPORT_COMPONENT_FACTORY( Autostart, AutostartFactory("kcmautostart"))
