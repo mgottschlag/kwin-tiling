@@ -327,7 +327,7 @@ VoiceSignature::VoiceSignature(const Sound& sound)
 
 	}
 	
-//	kdDebug( 1217 ) << k_funcinfo << "wind: "<< temp_wind << "  - fft: " << temp_fft << "  - moy: " << temp_moy << endl;
+//	kDebug( 1217 ) << k_funcinfo << "wind: "<< temp_wind << "  - fft: " << temp_fft << "  - moy: " << temp_moy << endl;
 }
 
 

@@ -39,7 +39,7 @@ bool VoiceRecorder::init( KLibrary* lib )
     if( arts_play == NULL && lib != NULL )
         arts_play = (arts_play_fun) lib->symbol( "khotkeys_voicerecorder_arts_play" );
 #endif
-//    kdDebug( 1217 ) << "voicerecorder:" << arts_play << ":" << lib << endl;
+//    kDebug( 1217 ) << "voicerecorder:" << arts_play << ":" << lib << endl;
     return arts_play != NULL;
 }
 

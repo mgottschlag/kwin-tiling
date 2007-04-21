@@ -168,7 +168,7 @@ void Voice::slot_sound_recorded(const Sound &sound_P)
 
 	KKeyNative keyNative( pEvent );
 
-	//kdDebug(1217) << k_funcinfo << keyNative.key().toString() << endl;
+	//kDebug(1217) << k_funcinfo << keyNative.key().toString() << endl;
 
 	if(_shortcut.contains(keyNative))
 	{
