@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMovie>
 #include <QPainter>
 #include <QTimer>
-#include <QToolTip>
+
 
 #include <QMenuItem>
 #include <QPaintEvent>

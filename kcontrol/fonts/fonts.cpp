@@ -15,7 +15,7 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QtCore/QSettings>
-#include <QToolTip>
+
 
 //Added by qt3to4:
 #include <QPixmap>

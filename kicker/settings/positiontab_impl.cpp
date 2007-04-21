@@ -24,7 +24,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QSlider>
-#include <QToolTip>
+
 #include <QTimer>
 
 #include <kapplication.h>

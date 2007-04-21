@@ -26,7 +26,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QPainter>
-#include <QToolTip>
+
 #include <QtGui/QMacMime>
 #include <Qt3Support/Q3ColorDrag>
 #include <QPaintEvent>

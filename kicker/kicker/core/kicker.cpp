@@ -26,7 +26,7 @@
 
 #include <QFile>
 #include <QTimer>
-#include <QToolTip>
+
 #include <QDesktopWidget>
 
 #include <ksharedconfig.h>

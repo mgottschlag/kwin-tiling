@@ -22,7 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <QLayout>
-#include <QToolTip>
+
 #include <QBoxLayout>
 #include <QWheelEvent>
 #include <QResizeEvent>

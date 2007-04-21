@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QStyle>
 #include <QStyleOption>
 #include <QTimer>
-#include <QToolTip>
+
 
 #include <kpushbutton.h>
 #include <kapplication.h>

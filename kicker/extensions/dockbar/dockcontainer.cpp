@@ -22,7 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <QWidget>
-#include <QToolTip>
+
 #include <kwm.h>
 #include <QValidator>
 #include <kinputdialog.h>

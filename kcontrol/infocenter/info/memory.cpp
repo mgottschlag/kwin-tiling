@@ -27,7 +27,7 @@
 #include <QLayout>
 #include <QPainter>
 #include <QtGui/qdrawutil.h>
-#include <QToolTip>
+
 //Added by qt3to4:
 #include <QPixmap>
 #include <QLabel>

@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QLayout>
 #include <QFile>
 #include <QTimer>
-#include <QToolTip>
+
 #include <QMenuItem>
 #include <QPixmap>
 #include <QMenu>

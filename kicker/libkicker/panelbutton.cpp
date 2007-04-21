@@ -39,7 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QResizeEvent>
 #include <QStyle>
 #include <QStyleOption>
-#include <QToolTip>
+
 #include <QApplication>
 #include <QtGui/QCursor>
 

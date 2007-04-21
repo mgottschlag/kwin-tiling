@@ -20,7 +20,7 @@
 #include "trashbutton.h"
 
 #include <QMenu>
-#include <QToolTip>
+
 
 #include <klocale.h>
 #include <kmenu.h>

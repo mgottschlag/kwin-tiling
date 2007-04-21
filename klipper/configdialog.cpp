@@ -21,7 +21,7 @@
 #include <QLayout>
 #include <Qt3Support/Q3CheckListItem>
 #include <QPushButton>
-#include <QToolTip>
+
 
 //Added by qt3to4:
 #include <QPixmap>

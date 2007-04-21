@@ -33,7 +33,7 @@
 #include <QRadioButton>
 #include <QSlider>
 #include <QTimer>
-#include <QToolTip>
+
 
 #include <QApplication>
 #include <QPixmap>

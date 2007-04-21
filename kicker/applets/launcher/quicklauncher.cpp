@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMenu>
 #include <QSlider>
 #include <QTimer>
-#include <QToolTip>
+
 //Added by qt3to4:
 #include <QPixmap>
 #include <QDragLeaveEvent>

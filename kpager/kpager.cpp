@@ -37,7 +37,7 @@
 #include "kpager.h"
 
 #include <QLayout>
-#include <QToolTip>
+
 #include <QTimer>
 //Added by qt3to4:
 #include <QShowEvent>

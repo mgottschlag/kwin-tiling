@@ -21,7 +21,7 @@
 #include <QPixmap>
 #include <QPushButton>
 #include <QToolButton>
-#include <QToolTip>
+
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QVBoxLayout>

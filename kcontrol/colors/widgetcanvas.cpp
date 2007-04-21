@@ -10,7 +10,7 @@
 #include <QPainter>
 #include <QtGui/QScrollBar>
 #include <QBitmap>
-#include <QToolTip>
+
 #include <QStyle>
 #include <QtGui/QStyleHintReturn>
 #include <QMenu>

@@ -1,4 +1,4 @@
-#include <QToolTip>
+
 #include <QTextStream>
 #include <QImage>
 #include <QRegExp>

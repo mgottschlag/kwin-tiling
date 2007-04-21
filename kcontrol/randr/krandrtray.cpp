@@ -17,7 +17,7 @@
  */
 
 #include <QTimer>
-#include <QToolTip>
+
 //Added by qt3to4:
 #include <QMouseEvent>
 
