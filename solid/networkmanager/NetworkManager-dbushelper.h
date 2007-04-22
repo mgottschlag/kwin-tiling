@@ -22,8 +22,8 @@
 
 #include <QList>
 #include <QVariant>
-#include <solid/ifaces/authentication.h>
-#include <solid/authentication.h>
+#include <solid/experimental/ifaces/authentication.h>
+#include <solid/experimental/authentication.h>
 
 /**
  * marshaller/unmarshaller for doing dbus operations with Authentication objects
@@ -31,11 +31,11 @@
 class KDE_EXPORT NMDBusHelper
 {
 public:
-    static QList<QVariant> serialize( Solid::Authentication *, const QString & essid, QList<QVariant> & args, bool * error );
+    static QList<QVariant> serialize( SolidExperimental::Authentication *, const QString & essid, QList<QVariant> & args, bool * error );
 private:
-    static QList<QVariant> doSerialize( Solid::AuthenticationWep *, const QString & essid, QList<QVariant> & args, bool * error );
-    static QList<QVariant> doSerialize( Solid::AuthenticationWpaPersonal *, const QString & essid, QList<QVariant> & args, bool * error );
-    static QList<QVariant> doSerialize( Solid::AuthenticationWpaEnterprise *, const QString & essid, QList<QVariant> & args, bool * error );
+    static QList<QVariant> doSerialize( SolidExperimental::AuthenticationWep *, const QString & essid, QList<QVariant> & args, bool * error );
+    static QList<QVariant> doSerialize( SolidExperimental::AuthenticationWpaPersonal *, const QString & essid, QList<QVariant> & args, bool * error );
+    static QList<QVariant> doSerialize( SolidExperimental::AuthenticationWpaEnterprise *, const QString & essid, QList<QVariant> & args, bool * error );
 };
 
 #endif

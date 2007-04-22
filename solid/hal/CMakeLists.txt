@@ -49,11 +49,11 @@ set(solid_hal_power_PART_SRCS
 kde4_automoc(${solid_hal_power_PART_SRCS})
 
 kde4_add_library(solid_hal_power_static STATIC ${solid_hal_power_PART_SRCS})
-target_link_libraries(solid_hal_power_static ${KDE4_KDECORE_LIBS} ${KDE4_SOLIDIFACES_LIBS} ${KDE4_SOLID_LIBS} )
+target_link_libraries(solid_hal_power_static ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidexperimentalifaces)
 
 kde4_add_plugin(solid_hal_power module_power.cpp ${solid_hal_power_PART_SRCS})
 
-target_link_libraries(solid_hal_power ${KDE4_KDECORE_LIBS} ${KDE4_SOLIDIFACES_LIBS} ${KDE4_SOLID_LIBS} )
+target_link_libraries(solid_hal_power ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidexperimentalifaces)
 
 
 

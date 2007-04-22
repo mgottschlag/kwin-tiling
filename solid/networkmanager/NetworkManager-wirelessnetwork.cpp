@@ -30,25 +30,25 @@
 #include <NetworkManager/NetworkManager.h>
 
 #include <kdebug.h>
-#include <solid/ifaces/authentication.h>
+#include <solid/experimental/ifaces/authentication.h>
 
 #include "NetworkManager-dbushelper.h"
 #include "NetworkManager-wirelessnetwork.h"
 
-void dump( const Solid::WirelessNetwork::Capabilities & cap )
+void dump( const SolidExperimental::WirelessNetwork::Capabilities & cap )
 {
-    kDebug(1441) << "WEP      " << ( cap & Solid::WirelessNetwork::Wep ? "X " : " O" ) << endl;
-    kDebug(1441) << "WPA      " << ( cap & Solid::WirelessNetwork::Wpa ? "X " : " O" ) << endl;
-    kDebug(1441) << "WPA2     " << ( cap & Solid::WirelessNetwork::Wpa2 ? "X " : " O" ) << endl;
-    kDebug(1441) << "PSK      " << ( cap & Solid::WirelessNetwork::Psk ? "X " : " O" ) << endl;
-    kDebug(1441) << "Ieee8021x" << ( cap & Solid::WirelessNetwork::Ieee8021x ? "X " : " O" ) << endl;
-    kDebug(1441) << "Wep40    " << ( cap & Solid::WirelessNetwork::Wep40 ? "X " : " O" ) << endl;
-    kDebug(1441) << "Wep104   " << ( cap & Solid::WirelessNetwork::Wep104 ? "X " : " O" ) << endl;
-    kDebug(1441) << "Wep192   " << ( cap & Solid::WirelessNetwork::Wep192 ? "X " : " O" ) << endl;
-    kDebug(1441) << "Wep256   " << ( cap & Solid::WirelessNetwork::Wep256 ? "X " : " O" ) << endl;
-    kDebug(1441) << "WepOther " << ( cap & Solid::WirelessNetwork::WepOther ? "X " : " O" ) << endl;
-    kDebug(1441) << "TKIP     " << ( cap & Solid::WirelessNetwork::Tkip ? "X " : " O" ) << endl;
-    kDebug(1441) << "CCMP     " << ( cap & Solid::WirelessNetwork::Ccmp ? "X " : " O" ) << endl;
+    kDebug(1441) << "WEP      " << ( cap & SolidExperimental::WirelessNetwork::Wep ? "X " : " O" ) << endl;
+    kDebug(1441) << "WPA      " << ( cap & SolidExperimental::WirelessNetwork::Wpa ? "X " : " O" ) << endl;
+    kDebug(1441) << "WPA2     " << ( cap & SolidExperimental::WirelessNetwork::Wpa2 ? "X " : " O" ) << endl;
+    kDebug(1441) << "PSK      " << ( cap & SolidExperimental::WirelessNetwork::Psk ? "X " : " O" ) << endl;
+    kDebug(1441) << "Ieee8021x" << ( cap & SolidExperimental::WirelessNetwork::Ieee8021x ? "X " : " O" ) << endl;
+    kDebug(1441) << "Wep40    " << ( cap & SolidExperimental::WirelessNetwork::Wep40 ? "X " : " O" ) << endl;
+    kDebug(1441) << "Wep104   " << ( cap & SolidExperimental::WirelessNetwork::Wep104 ? "X " : " O" ) << endl;
+    kDebug(1441) << "Wep192   " << ( cap & SolidExperimental::WirelessNetwork::Wep192 ? "X " : " O" ) << endl;
+    kDebug(1441) << "Wep256   " << ( cap & SolidExperimental::WirelessNetwork::Wep256 ? "X " : " O" ) << endl;
+    kDebug(1441) << "WepOther " << ( cap & SolidExperimental::WirelessNetwork::WepOther ? "X " : " O" ) << endl;
+    kDebug(1441) << "TKIP     " << ( cap & SolidExperimental::WirelessNetwork::Tkip ? "X " : " O" ) << endl;
+    kDebug(1441) << "CCMP     " << ( cap & SolidExperimental::WirelessNetwork::Ccmp ? "X " : " O" ) << endl;
 }
 
 void dump( const NMDBusWirelessNetworkProperties & network )
@@ -61,46 +61,46 @@ void dump( const NMDBusWirelessNetworkProperties & network )
     dump( network.capabilities );
 }
 
-Solid::WirelessNetwork::Capabilities getCapabilities( const int nm )
+SolidExperimental::WirelessNetwork::Capabilities getCapabilities( const int nm )
 {
-    Solid::WirelessNetwork::Capabilities caps;
+    SolidExperimental::WirelessNetwork::Capabilities caps;
     if ( nm & NM_802_11_CAP_NONE )
-        caps |= Solid::WirelessNetwork::Unencrypted;
+        caps |= SolidExperimental::WirelessNetwork::Unencrypted;
     if ( nm & NM_802_11_CAP_PROTO_WEP )
-        caps |= Solid::WirelessNetwork::Wep;
+        caps |= SolidExperimental::WirelessNetwork::Wep;
     if ( nm & NM_802_11_CAP_PROTO_WPA )
-        caps |= Solid::WirelessNetwork::Wpa;
+        caps |= SolidExperimental::WirelessNetwork::Wpa;
     if ( nm & NM_802_11_CAP_PROTO_WPA2 )
-        caps |= Solid::WirelessNetwork::Wpa2;
+        caps |= SolidExperimental::WirelessNetwork::Wpa2;
     if ( nm & NM_802_11_CAP_KEY_MGMT_PSK )
-        caps |= Solid::WirelessNetwork::Psk;
+        caps |= SolidExperimental::WirelessNetwork::Psk;
     if ( nm & NM_802_11_CAP_KEY_MGMT_802_1X )
-        caps |= Solid::WirelessNetwork::Ieee8021x;
+        caps |= SolidExperimental::WirelessNetwork::Ieee8021x;
     if ( nm & NM_802_11_CAP_CIPHER_WEP40 )
-        caps |= Solid::WirelessNetwork::Wep40;
+        caps |= SolidExperimental::WirelessNetwork::Wep40;
     if ( nm & NM_802_11_CAP_CIPHER_WEP104 )
-        caps |= Solid::WirelessNetwork::Wep104;
+        caps |= SolidExperimental::WirelessNetwork::Wep104;
     if ( nm & NM_802_11_CAP_CIPHER_TKIP )
-        caps |= Solid::WirelessNetwork::Tkip;
+        caps |= SolidExperimental::WirelessNetwork::Tkip;
     if ( nm & NM_802_11_CAP_CIPHER_CCMP )
-        caps |= Solid::WirelessNetwork::Ccmp;
+        caps |= SolidExperimental::WirelessNetwork::Ccmp;
     return caps;
 }
 
-Solid::WirelessNetwork::OperationMode getOperationMode( const int nm )
+SolidExperimental::WirelessNetwork::OperationMode getOperationMode( const int nm )
 {
-    Solid::WirelessNetwork::OperationMode mode = Solid::WirelessNetwork::Unassociated;
+    SolidExperimental::WirelessNetwork::OperationMode mode = SolidExperimental::WirelessNetwork::Unassociated;
     switch ( nm )
     {
         case IW_MODE_ADHOC:
-            mode = Solid::WirelessNetwork::Adhoc;
+            mode = SolidExperimental::WirelessNetwork::Adhoc;
             break;
         case IW_MODE_INFRA:
         case IW_MODE_MASTER:
-            mode = Solid::WirelessNetwork::Managed;
+            mode = SolidExperimental::WirelessNetwork::Managed;
             break;
         case IW_MODE_REPEAT:
-            mode = Solid::WirelessNetwork::Repeater;
+            mode = SolidExperimental::WirelessNetwork::Repeater;
             break;
     }
     return mode;
@@ -140,10 +140,10 @@ public:
     int strength;
     double frequency;
     int rate;
-    Solid::WirelessNetwork::OperationMode mode;
-    Solid::WirelessNetwork::Capabilities capabilities;
+    SolidExperimental::WirelessNetwork::OperationMode mode;
+    SolidExperimental::WirelessNetwork::Capabilities capabilities;
     bool broadcast;
-    Solid::Authentication * authentication;
+    SolidExperimental::Authentication * authentication;
 };
 
 NMWirelessNetwork::NMWirelessNetwork( const QString & networkPath )
@@ -189,7 +189,7 @@ double NMWirelessNetwork::frequency() const
     return d->frequency;
 }
 
-Solid::WirelessNetwork::Capabilities NMWirelessNetwork::capabilities() const
+SolidExperimental::WirelessNetwork::Capabilities NMWirelessNetwork::capabilities() const
 {
     return d->capabilities;
 }
@@ -199,7 +199,7 @@ QString NMWirelessNetwork::essid() const
     return d->essid;
 }
 
-Solid::WirelessNetwork::OperationMode NMWirelessNetwork::mode() const
+SolidExperimental::WirelessNetwork::OperationMode NMWirelessNetwork::mode() const
 {
     return d->mode;
 }
@@ -213,7 +213,7 @@ bool NMWirelessNetwork::isAssociated() const
 
 bool NMWirelessNetwork::isEncrypted() const
 {
-    return !( d->capabilities & Solid::WirelessNetwork::Unencrypted ) ;
+    return !( d->capabilities & SolidExperimental::WirelessNetwork::Unencrypted ) ;
 }
 
 bool NMWirelessNetwork::isHidden() const
@@ -228,12 +228,12 @@ MacAddressList NMWirelessNetwork::bssList() const
     return d->hwAddr;
 }
 
-Solid::Authentication * NMWirelessNetwork::authentication() const
+SolidExperimental::Authentication * NMWirelessNetwork::authentication() const
 {
     return d->authentication;
 }
 
-void NMWirelessNetwork::setAuthentication( Solid::Authentication * auth )
+void NMWirelessNetwork::setAuthentication( SolidExperimental::Authentication * auth )
 {
     d->authentication = auth;
 }

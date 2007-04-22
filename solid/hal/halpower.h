@@ -28,9 +28,9 @@
 #include <solid/devicemanager.h>
 #include <solid/device.h>
 
-#include <solid/ifaces/powermanager.h>
+#include <solid/experimental/ifaces/powermanager.h>
 
-class KDE_EXPORT HalPower : public Solid::Ifaces::PowerManager
+class KDE_EXPORT HalPower : public SolidExperimental::Ifaces::PowerManager
 {
     Q_OBJECT
 
@@ -43,16 +43,16 @@ public:
     virtual QString scheme() const;
     virtual bool setScheme( const QString &name );
 
-    virtual Solid::PowerManager::BatteryState batteryState() const;
+    virtual SolidExperimental::PowerManager::BatteryState batteryState() const;
     virtual int batteryChargePercent() const;
-    virtual Solid::PowerManager::AcAdapterState acAdapterState() const;
+    virtual SolidExperimental::PowerManager::AcAdapterState acAdapterState() const;
 
-    virtual Solid::PowerManager::SuspendMethods supportedSuspendMethods() const;
-    virtual KJob *suspend( Solid::PowerManager::SuspendMethod method ) const;
+    virtual SolidExperimental::PowerManager::SuspendMethods supportedSuspendMethods() const;
+    virtual KJob *suspend( SolidExperimental::PowerManager::SuspendMethod method ) const;
 
-    virtual Solid::PowerManager::CpuFreqPolicies supportedCpuFreqPolicies() const;
-    virtual Solid::PowerManager::CpuFreqPolicy cpuFreqPolicy() const;
-    virtual bool setCpuFreqPolicy( Solid::PowerManager::CpuFreqPolicy newPolicy );
+    virtual SolidExperimental::PowerManager::CpuFreqPolicies supportedCpuFreqPolicies() const;
+    virtual SolidExperimental::PowerManager::CpuFreqPolicy cpuFreqPolicy() const;
+    virtual bool setCpuFreqPolicy( SolidExperimental::PowerManager::CpuFreqPolicy newPolicy );
     virtual bool canDisableCpu( int cpuNum ) const;
     virtual bool setCpuEnabled( int cpuNum, bool enabled );
 

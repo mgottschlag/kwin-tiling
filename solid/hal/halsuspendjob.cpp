@@ -23,19 +23,19 @@
 #include <QTimer>
 
 HalSuspendJob::HalSuspendJob( QDBusInterface &powermanagement,
-                              Solid::PowerManager::SuspendMethod method,
-                              Solid::PowerManager::SuspendMethods supported )
+                              SolidExperimental::PowerManager::SuspendMethod method,
+                              SolidExperimental::PowerManager::SuspendMethods supported )
     : KJob(), m_halPowerManagement( powermanagement )
 {
     if ( supported & method )
     {
         switch( method )
         {
-        case Solid::PowerManager::ToRam:
+        case SolidExperimental::PowerManager::ToRam:
             m_dbusMethod = "Suspend";
             m_dbusParam = 0;
             break;
-        case Solid::PowerManager::ToDisk:
+        case SolidExperimental::PowerManager::ToDisk:
             m_dbusMethod = "Hibernate";
             m_dbusParam = -1;
             break;

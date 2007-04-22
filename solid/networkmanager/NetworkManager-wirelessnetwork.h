@@ -25,7 +25,7 @@
 #include <QStringList>
 #include <qdbusextratypes.h>
 
-#include <solid/ifaces/wirelessnetwork.h>
+#include <solid/experimental/ifaces/wirelessnetwork.h>
 
 #include "NetworkManager-network.h"
 
@@ -37,8 +37,8 @@ struct NMDBusWirelessNetworkProperties
     int strength;
     double frequency;
     int rate;
-    Solid::WirelessNetwork::OperationMode mode;
-    Solid::WirelessNetwork::Capabilities capabilities;
+    SolidExperimental::WirelessNetwork::OperationMode mode;
+    SolidExperimental::WirelessNetwork::Capabilities capabilities;
     bool broadcast;
 };
 
@@ -48,25 +48,25 @@ struct NMDBusWirelessNetworkProperties
 class Authentication;
 class NMWirelessNetworkPrivate;
 
-class KDE_EXPORT NMWirelessNetwork : public NMNetwork, virtual public Solid::Ifaces::WirelessNetwork
+class KDE_EXPORT NMWirelessNetwork : public NMNetwork, virtual public SolidExperimental::Ifaces::WirelessNetwork
 {
 Q_OBJECT
-Q_INTERFACES(Solid::Ifaces::WirelessNetwork)
+Q_INTERFACES(SolidExperimental::Ifaces::WirelessNetwork)
 public:
     NMWirelessNetwork( const QString & networkPath );
     virtual ~NMWirelessNetwork();
     int signalStrength() const;
     int bitrate() const;
     double frequency() const;
-    Solid::WirelessNetwork::Capabilities capabilities() const;
+    SolidExperimental::WirelessNetwork::Capabilities capabilities() const;
     QString essid() const;
-    Solid::WirelessNetwork::OperationMode mode() const;
+    SolidExperimental::WirelessNetwork::OperationMode mode() const;
     bool isAssociated() const; // move to Device, is this a property on device?
     bool isEncrypted() const;
     bool isHidden() const;
     MacAddressList bssList() const;
-    Solid::Authentication *authentication() const;
-    void setAuthentication( Solid::Authentication *authentication );
+    SolidExperimental::Authentication *authentication() const;
+    void setAuthentication( SolidExperimental::Authentication *authentication );
     void setSignalStrength( int strength );
     void setBitrate( int rate );
     virtual void setActivated( bool activated );

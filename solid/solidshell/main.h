@@ -25,7 +25,7 @@
 
 class KJob;
 
-namespace Solid {
+namespace SolidExperimental {
     class Authentication;
 }
 
@@ -63,7 +63,7 @@ public:
     bool netmgrListNetworks( const QString &device );
     bool netmgrQueryNetworkInterface( const QString & );
     bool netmgrQueryNetwork( const QString & device, const QString & );
-    bool netmgrActivateNetwork( const QString & device, const QString & uni, Solid::Authentication * auth = 0 );
+    bool netmgrActivateNetwork( const QString & device, const QString & uni, SolidExperimental::Authentication * auth = 0 );
     //bool netmgrCapabilities( const QString &udi );
 
     bool bluetoothListAdapters();

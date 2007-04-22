@@ -21,7 +21,7 @@
 #include <QStringList>
 
 #include <kdebug.h>
-#include <solid/ifaces/networkinterface.h>
+#include <solid/experimental/ifaces/networkinterface.h>
 
 #include "nmobject.h"
 
@@ -40,7 +40,7 @@ int main( int argc, char** argv )
     mgr.isNetworkingEnabled();
     NMNetworkInterface * ethernetIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth0" ) );
     NMNetworkInterface * wifiIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth1" ) );
-	Solid::Ifaces::NetworkInterface * solidIface;
+	SolidExperimental::Ifaces::NetworkInterface * solidIface;
 	const QMetaObject * parentMo = wifiIface->metaObject()->superClass();
 	kDebug() << parentMo->className() << endl;
     QStringList networks = wifiIface->networks();
@@ -54,17 +54,17 @@ int main( int argc, char** argv )
 	}
 #endif
 #if 1
-/*	Solid::Ifaces::AuthenticationWep auth;
-	auth.setMethod( Solid::Ifaces::AuthenticationWep::WepSharedKey );
+/*	SolidExperimental::Ifaces::AuthenticationWep auth;
+	auth.setMethod( SolidExperimental::Ifaces::AuthenticationWep::WepSharedKey );
 	auth.setKeyLength( 104 );
-	auth.setType( Solid::Ifaces::AuthenticationWep::WepPassphrase );
+	auth.setType( SolidExperimental::Ifaces::AuthenticationWep::WepPassphrase );
 	QMap<QString,QString> secrets;
 	secrets.insert( "key", "testpassphrase" );
    */
-	Solid::AuthenticationWpaPersonal auth;
-    auth.setVersion( Solid::AuthenticationWpa::Wpa1 );
-    auth.setProtocol( Solid::AuthenticationWpa::WpaTkip );
-    auth.setKeyManagement( Solid::AuthenticationWpa::WpaPsk );
+	SolidExperimental::AuthenticationWpaPersonal auth;
+    auth.setVersion( SolidExperimental::AuthenticationWpa::Wpa1 );
+    auth.setProtocol( SolidExperimental::AuthenticationWpa::WpaTkip );
+    auth.setKeyManagement( SolidExperimental::AuthenticationWpa::WpaPsk );
 	QMap<QString,QString> secrets;
 	secrets.insert( "key", "testpassphrase" );
 	auth.setSecrets( secrets );

@@ -30,8 +30,8 @@ class HalSuspendJob : public KJob
 {
     Q_OBJECT
 public:
-    HalSuspendJob( QDBusInterface &powermanagement, Solid::PowerManager::SuspendMethod method,
-                   Solid::PowerManager::SuspendMethods supported );
+    HalSuspendJob( QDBusInterface &powermanagement, SolidExperimental::PowerManager::SuspendMethod method,
+                   SolidExperimental::PowerManager::SuspendMethods supported );
     virtual ~HalSuspendJob();
 
     void start();
