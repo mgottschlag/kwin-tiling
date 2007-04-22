@@ -25,7 +25,7 @@
 
 #include <QMap>
 #include <QSocketNotifier>
-#include <QString>
+
 #include <QTimer>
 //Added by qt3to4:
 #include <Q3PtrList>

@@ -20,7 +20,7 @@
 #ifndef _HISTORYSTRINGITEM_H_
 #define _HISTORYSTRINGITEM_H_
 
-#include <QString>
+
 #include <Qt3Support/Q3ColorDrag>
 
 #include "historyitem.h"

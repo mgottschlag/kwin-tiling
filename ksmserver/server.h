@@ -10,7 +10,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 // needed to avoid clash with INT8 defined in X11/Xmd.h on solaris
 #define QT_CLEAN_NAMESPACE 1
 #include <QObject>
-#include <QString>
+
 #include <QStringList>
 #include <QSocketNotifier>
 #include <kapplication.h>

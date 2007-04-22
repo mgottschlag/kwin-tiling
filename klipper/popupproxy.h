@@ -21,7 +21,7 @@
 #define _POPUPPROXY_H_
 
 #include <QObject>
-#include <QString>
+
 #include <QRegExp>
 
 #include <kmenu.h>

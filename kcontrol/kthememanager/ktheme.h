@@ -21,7 +21,7 @@
 
 #include <Qt/qdom.h>
 #include <QPointer>
-#include <QString>
+
 #include <QStringList>
 #include <QWidget>
 

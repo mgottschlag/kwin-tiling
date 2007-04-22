@@ -25,7 +25,7 @@
 #include <QDateTime> 
 #include <QLineEdit> 
 #include <QSpinBox> 
-#include <QString>
+
 #include <QTimer>
 #include <QValidator>
 #include <QWidget>

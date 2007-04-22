@@ -13,7 +13,7 @@
 #define GESTURE_RECORDER_H
 
 #include <QtGui/QFrame>
-#include <QString>
+
 
 #include <gestures.h>
 

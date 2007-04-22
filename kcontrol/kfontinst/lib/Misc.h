@@ -27,7 +27,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
-#include <QString>
+
 #include <QStringList>
 #include <QDataStream>
 #include <kurl.h>

@@ -23,7 +23,7 @@
 #include <config.h>
 
 #include <kpanelapplet.h>
-#include <QString>
+
 #include <kurl.h>
 #include <kdirlister.h>
 

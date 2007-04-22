@@ -23,7 +23,7 @@
 #include <config.h>
 
 #include <QLinkedList>
-#include <QString>
+
 
 #include <kpanelapplet.h>
 #include <kconfig.h>

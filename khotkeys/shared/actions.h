@@ -12,7 +12,7 @@
 #define _ACTIONS_H_
 
 
-#include <QString>
+
 #include <Qt3Support/Q3PtrList>
 #include <QTimer>
 

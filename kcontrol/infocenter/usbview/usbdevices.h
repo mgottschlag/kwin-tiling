@@ -13,7 +13,7 @@
 #define __USB_DEVICES_H__
 
 
-#include <QString>
+
 #include <Qt3Support/Q3PtrList>
 
 #if defined(__DragonFly__)

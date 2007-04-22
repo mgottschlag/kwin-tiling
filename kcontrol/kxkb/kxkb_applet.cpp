@@ -1,5 +1,5 @@
 #include <QWidget>
-#include <QString>
+
 
 #include <kglobal.h>
 #include <klocale.h>

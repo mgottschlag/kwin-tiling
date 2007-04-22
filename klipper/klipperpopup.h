@@ -22,7 +22,7 @@
 
 #include <kmenu.h>
 #include <Qt3Support/Q3PtrList>
-#include <QString>
+
 //Added by qt3to4:
 #include <QKeyEvent>
 

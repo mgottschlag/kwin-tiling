@@ -11,7 +11,7 @@
 #define __BGManager_h_Included__
 
 #include <ksharedconfig.h>
-#include <QString>
+
 #include <QVector>
 
 class KConfig;

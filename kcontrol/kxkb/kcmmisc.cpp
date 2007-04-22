@@ -32,7 +32,7 @@
 #include <QSlider>
 #include <QFileInfo>
 #include <QCheckBox>
-#include <QString>
+
 #include <QLayout>
 #include <QWhatsThis>
 #include <Q3ButtonGroup>

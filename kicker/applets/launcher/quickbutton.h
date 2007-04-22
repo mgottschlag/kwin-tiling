@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QAbstractButton>
 #include <QPoint>
-#include <QString>
+
 #include <QPixmap>
 #include <QCursor>
 #include <QMouseEvent>

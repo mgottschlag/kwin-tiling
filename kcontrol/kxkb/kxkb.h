@@ -27,7 +27,7 @@ DESCRIPTION
 #define __K_XKB_H__
 
 
-#include <QString>
+
 #include <QStringList>
 #include <QHash>
 #include <QQueue>

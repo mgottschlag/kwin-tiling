@@ -1,7 +1,7 @@
 #include <QFile>
 #include <QMap>
 #include <QRegExp>
-#include <QString>
+
 #include <QTextStream>
 
 #include <kapplication.h>

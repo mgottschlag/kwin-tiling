@@ -13,7 +13,7 @@
 
 #include <gesture_triggers_tab_ui.h>
 
-#include <QString>
+
 
 #include <kdialog.h>
 

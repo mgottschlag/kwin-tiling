@@ -12,7 +12,7 @@
 #ifndef KXKBCONFIG_H
 #define KXKBCONFIG_H
 
-#include <QString>
+
 #include <QStringList>
 #include <QQueue>
 #include <QMap>

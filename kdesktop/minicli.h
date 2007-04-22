@@ -31,7 +31,7 @@
 #ifndef MINICLI_H
 #define MINICLI_H
 
-#include <QString>
+
 #include <QStringList>
 
 #include <kdialog.h>

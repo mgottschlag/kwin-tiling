@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 #include <QFile>
-#include <QString>
+
 #include <QStringList>
 #include <QTextStream>
 #include <QDir>

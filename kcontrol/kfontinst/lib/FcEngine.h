@@ -27,7 +27,7 @@
 #include "config.h"
 #endif
 
-#include <QString>
+
 #include <QStringList>
 #include <QVector>
 #include <QFont>

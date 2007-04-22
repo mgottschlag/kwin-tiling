@@ -20,7 +20,7 @@
 #ifndef KXKBAPPLET_H
 #define KXKBAPPLET_H
 
-#include <QString>
+
 #include <QMouseEvent>
 #include <QPixmap>
 

@@ -23,7 +23,7 @@
 #include <Qt3Support/Q3PtrList>
 #include <Qt3Support/Q3IntDict>
 #include <QRegExp>
-#include <QString>
+
 #include <QStringList>
 
 #include <k3process.h>

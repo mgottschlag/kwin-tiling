@@ -19,7 +19,7 @@
 #ifndef KNEWTHEMEDLG_H
 #define KNEWTHEMEDLG_H
 
-#include <QString>
+
 
 #include <kdialog.h>
 

@@ -28,7 +28,7 @@
 #include <kio/slavebase.h>
 #include <kurl.h>
 #include <klocale.h>
-#include <QString>
+
 #include <QByteArray>
 #include <QHash>
 #include <QSet>

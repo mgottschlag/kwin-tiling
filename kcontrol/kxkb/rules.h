@@ -1,7 +1,7 @@
 #ifndef __RULES_H__
 #define __RULES_H__
 
-#include <QString>
+
 #include <QHash>
 #include <QMap>
 

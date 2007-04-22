@@ -1,6 +1,6 @@
 #include <locale.h>
 
-#include <QString>
+
 #include <QStringList>
 
 #include <kglobal.h>

@@ -12,7 +12,7 @@
 #define _ACTION_DATA_H_
 
 #include <assert.h>
-#include <QString>
+
 #include <Qt3Support/Q3PtrList>
 
 #include <kdebug.h>

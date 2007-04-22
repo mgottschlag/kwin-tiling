@@ -22,7 +22,7 @@
 
 #include <panelbutton.h>
 #include <QPoint>
-#include <QString>
+
 #include <QPixmap>
 #include <QCursor>
 #include <QTimer>

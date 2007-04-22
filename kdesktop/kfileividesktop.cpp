@@ -25,7 +25,7 @@
 
 #include <QColor>
 #include <QPalette>
-#include <QString>
+
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOptionFocusRect>

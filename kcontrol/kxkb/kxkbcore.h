@@ -27,7 +27,7 @@ DESCRIPTION
 #define __KXKBCORE_H__
 
 
-#include <QString>
+
 #include <QStringList>
 #include <QHash>
 #include <QQueue>

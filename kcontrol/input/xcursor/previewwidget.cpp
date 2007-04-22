@@ -21,7 +21,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QPixmap>
-#include <QString>
+
 #include <QCursor>
 //Added by qt3to4:
 #include <QMouseEvent>

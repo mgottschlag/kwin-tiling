@@ -5,7 +5,7 @@
 #include <QPixmap>
 #include <kdebug.h>
 
-#include <QString>
+
 
 #include <config.h>
 

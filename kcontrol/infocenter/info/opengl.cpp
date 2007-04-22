@@ -27,7 +27,7 @@
 #include <QRegExp>
 #include <q3listview.h>
 #include <QFile>
-#include <QString>
+
 //Added by qt3to4:
 #include <QTextStream>
 

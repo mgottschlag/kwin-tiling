@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtDBus/QtDBus>
 
-#include <QString>
+
 
 #include <config.h>
 #include <klocale.h>

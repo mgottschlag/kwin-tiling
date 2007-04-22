@@ -1,7 +1,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include <QString>
+
 #include <QMap>
 #include <QFile>
 #include <QX11Info>

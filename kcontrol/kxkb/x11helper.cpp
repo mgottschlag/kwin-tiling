@@ -1,7 +1,7 @@
 #include <QtGui/QWidgetList>
 #include <QDir>
-#include <QString>
-#include <QString>
+
+
 #include <QStringList>
 #include <QHash>
 #include <QRegExp>

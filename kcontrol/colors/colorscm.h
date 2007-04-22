@@ -10,7 +10,7 @@
 
 #include <QColor>
 #include <QObject>
-#include <QString>
+
 #include <QStringList>
 
 #include <kcmodule.h>

@@ -25,7 +25,7 @@
 #endif
 
 #include <QStringList>
-#include <QString>
+
 #include <Qt3Support/Q3PtrList>
 #include <stdio.h>
 #include <fstream>

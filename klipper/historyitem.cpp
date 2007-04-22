@@ -20,7 +20,7 @@
 #include <QtGui/QMacMime>
 #include <Qt3Support/Q3ColorDrag>
 #include <QMap>
-#include <QString>
+
 #include <QPixmap>
 
 #include <kdebug.h>

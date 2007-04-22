@@ -12,7 +12,7 @@
 #ifndef KXKBWIDGET_H
 #define KXKBWIDGET_H
 
-#include <QString>
+
 #include <QList>
 #include <QPixmap>
 #include <QLabel>

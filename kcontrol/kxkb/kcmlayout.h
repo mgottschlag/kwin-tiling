@@ -5,7 +5,7 @@
 #include <kcmodule.h>
 
 #include <QHash>
-#include <QString>
+
 #include <QtGui/QListView>
 
 #include "kxkbconfig.h"

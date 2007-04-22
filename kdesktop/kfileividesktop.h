@@ -27,7 +27,7 @@
 #include <QColor>
 #include <QPixmap>
 #include <QImage>
-#include <QString>
+
 #include <kfileivi.h>
 
 /*

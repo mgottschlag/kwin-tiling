@@ -49,7 +49,7 @@
 #include <QFile>
 #include <QFontMetrics>
 #include <Q3PtrList>
-#include <QString>
+
 #include <QTextStream>
 
 #include <kdebug.h>

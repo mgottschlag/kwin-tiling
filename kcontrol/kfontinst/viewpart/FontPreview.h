@@ -23,7 +23,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QString>
+
 #include <QPixmap>
 #include <QSize>
 #include <QWidget>

@@ -14,7 +14,7 @@
 #include "config-khotkeys.h"
 #include <QObject>
 #include <Qt3Support/Q3PtrList>
-#include <QString>
+
 
 #include "khotkeysglobal.h"
 #include "windows.h"

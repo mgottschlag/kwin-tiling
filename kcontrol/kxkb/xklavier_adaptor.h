@@ -3,7 +3,7 @@
 #include <X11/Xlib.h>
 
 #include <QHash>
-#include <QString>
+
 
 class XKlavierAdaptorPriv;
 

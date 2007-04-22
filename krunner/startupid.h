@@ -24,7 +24,7 @@
 
 #include <QWidget>
 #include <QPixmap>
-#include <QString>
+
 #include <QTimer>
 #include <QMap>
 #include <kstartupinfo.h>

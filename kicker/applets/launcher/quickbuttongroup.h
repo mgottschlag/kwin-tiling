@@ -7,7 +7,7 @@
 #ifndef __quickbuttongroup_h__
 #define __quickbuttongroup_h__
 
-#include <QString>
+
 #include <functional>
 #include "easyvector.h"
 #include "quickbutton.h"

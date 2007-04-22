@@ -52,7 +52,7 @@
 #include <Qt3Support/Q3Dict>
 #include <QFile>
 #include <Qt3Support/Q3PtrList>
-#include <QString>
+
 #include <QTextStream>
 
 class Device {

@@ -14,7 +14,7 @@
 #include <sys/types.h>
 
 #include <QObject>
-#include <QString>
+
 #include <Qt3Support/Q3PtrList>
 #include <QtGui/QWidgetList>
 

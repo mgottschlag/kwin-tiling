@@ -21,7 +21,7 @@
 #define __basictab_h__
 
 #include <QWidget>
-#include <QString>
+
 //Added by qt3to4:
 #include <QLabel>
 

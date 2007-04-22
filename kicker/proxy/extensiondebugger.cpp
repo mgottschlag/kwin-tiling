@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QResizeEvent>
-#include <QString>
+
 
 #include <kapplication.h>
 #include <kglobal.h>
