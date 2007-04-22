@@ -317,7 +317,7 @@ void PanelServiceMenu::insertMenuItem(KService::Ptr & s, int nId,
             {
                 if (comment.indexOf(serviceName, 0, Qt::CaseInsensitive) == -1)
                 {
-                    serviceName = QString("%1 %2").arg(serviceName, comment);
+                    serviceName = i18nc("Entries in K-menu: %1 app name, %2 description", "%1 - %2", serviceName, comment);
                 }
                 else
                 {
@@ -327,7 +327,7 @@ void PanelServiceMenu::insertMenuItem(KService::Ptr & s, int nId,
         }
         else if (KickerSettings::menuEntryFormat() == KickerSettings::DescriptionAndName)
         {
-            serviceName = QString("%1 (%2)").arg(comment, serviceName);
+            serviceName = i18nc("Entries in K-menu: %1 description, %2 app name", "%1 (%2)", comment, serviceName);
         }
         else if (KickerSettings::menuEntryFormat() == KickerSettings::DescriptionOnly)
         {
