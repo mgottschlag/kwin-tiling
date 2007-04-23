@@ -37,7 +37,6 @@ public:
     KRunnerApp();
     ~KRunnerApp();
 
-    void initialize();
     void logout( KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype );
     // The action collection of the active widget
     KActionCollection *actionCollection();
@@ -60,6 +59,8 @@ public slots:
     void rebootWithoutConfirmation();
 
 private:
+    void initialize();
+
     KActionCollection *m_actionCollection;
     SaverEngine m_saver;
     Interface* m_interface;

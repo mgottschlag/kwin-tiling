@@ -112,22 +112,6 @@ int main(int argc, char* argv[])
         app = new KRunnerApp;
     }
 
-    app->initialize();
-
-    // Startup stuff ported from kdesktop
-    KLaunchSettings::self()->readConfig();
-    StartupId *startup_id( NULL );
-    if( !KLaunchSettings::busyCursor() ) {
-        delete startup_id;
-        startup_id = NULL;
-    } else {
-        if( startup_id == NULL ) {
-            startup_id = new StartupId;
-        }
-
-        startup_id->configure();
-    }
-
     int rc = app->exec();
     delete app;
     return rc;

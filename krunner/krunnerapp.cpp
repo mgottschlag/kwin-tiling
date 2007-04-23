@@ -39,19 +39,25 @@
 
 #include "interfaceadaptor.h"
 #include "interface.h"
+#include "startupid.h"
+#include "klaunchsettings.h"
 
 KRunnerApp::KRunnerApp(Display *display,
                        Qt::HANDLE visual,
                        Qt::HANDLE colormap)
-    : RestartingApplication( display, visual, colormap )
+    : RestartingApplication( display, visual, colormap ),
+      m_interface( 0 )
 {
     kDebug() << "new krunner app" << endl;
+    initialize();
 }
 
 KRunnerApp::KRunnerApp()
-    : RestartingApplication()
+    : RestartingApplication(),
+      m_interface( 0 )
 {
     kDebug() << "new simple krunner app" << endl;
+    initialize();
 }
 
 KRunnerApp::~KRunnerApp()
@@ -61,6 +67,21 @@ KRunnerApp::~KRunnerApp()
 
 void KRunnerApp::initialize()
 {
+    // Startup notification
+    KLaunchSettings::self()->readConfig();
+    StartupId *startup_id( NULL );
+    if( !KLaunchSettings::busyCursor() ) {
+        delete startup_id;
+        startup_id = NULL;
+    } else {
+        if( startup_id == NULL ) {
+            startup_id = new StartupId;
+        }
+
+        startup_id->configure();
+    }
+
+    kDebug() << "initliaze!()" << endl;
     m_interface = new Interface;
 
     // Global keys
@@ -125,6 +146,7 @@ void KRunnerApp::initialize()
     }
 
     m_actionCollection->readSettings();
+
 } // end void KRunnerApp::initializeBindings
 
 
