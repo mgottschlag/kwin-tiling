@@ -944,7 +944,7 @@ bool SolidShell::hwProperties(const QString &udi)
 bool SolidShell::hwQuery(const QString &parentUdi, const QString &query)
 {
     const QList<Solid::Device> devices
-        = Solid::Device::findDevicesFromQuery(query, parentUdi);
+        = Solid::Device::listFromQuery(query, parentUdi);
 
     foreach (const Solid::Device device, devices)
     {
