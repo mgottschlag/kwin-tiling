@@ -22,5 +22,5 @@
 #include "halpower.h"
 
 typedef KGenericFactory<HalPower, Solid::Control::Ifaces::PowerManager> HalBackendFactory;
-K_EXPORT_COMPONENT_FACTORY( solid_hal_power, HalBackendFactory( "halbackend" ) )
+K_EXPORT_COMPONENT_FACTORY(solid_hal_power, HalBackendFactory("halbackend"))
 

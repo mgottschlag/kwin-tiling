@@ -34,24 +34,24 @@ class KDE_EXPORT HalManager : public Solid::Ifaces::DeviceManager
     Q_OBJECT
 
 public:
-    HalManager( QObject *parent, const QStringList &args );
+    HalManager(QObject *parent, const QStringList &args);
     virtual ~HalManager();
 
     virtual QStringList allDevices();
-    virtual bool deviceExists( const QString &udi );
+    virtual bool deviceExists(const QString &udi);
 
     virtual QStringList devicesFromQuery(const QString &parentUdi,
                                          Solid::DeviceInterface::Type type);
 
-    virtual QObject *createDevice( const QString &udi );
+    virtual QObject *createDevice(const QString &udi);
 
 
 private Q_SLOTS:
-    void slotDeviceAdded( const QString &udi );
-    void slotDeviceRemoved( const QString &udi );
+    void slotDeviceAdded(const QString &udi);
+    void slotDeviceRemoved(const QString &udi);
 
 private:
-    QStringList findDeviceStringMatch( const QString &key, const QString &value );
+    QStringList findDeviceStringMatch(const QString &key, const QString &value);
     QStringList findDeviceByDeviceInterface(const Solid::DeviceInterface::Type &type);
 
     HalManagerPrivate *d;

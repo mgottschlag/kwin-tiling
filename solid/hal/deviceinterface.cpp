@@ -19,8 +19,8 @@
 
 #include "deviceinterface.h"
 
-DeviceInterface::DeviceInterface( HalDevice *device )
-    : QObject( device ), m_device( device )
+DeviceInterface::DeviceInterface(HalDevice *device)
+    : QObject(device), m_device(device)
 {
 }
 

@@ -55,9 +55,9 @@ namespace Control
 
     private:
         NetworkInterfaceList buildDeviceList(const QStringList &uniList);
-        QPair<NetworkInterface*, Ifaces::NetworkInterface*> findRegisteredNetworkInterface(const QString &uni);
+        QPair<NetworkInterface *, Ifaces::NetworkInterface *> findRegisteredNetworkInterface(const QString &uni);
 
-        QMap<QString, QPair<NetworkInterface*, Ifaces::NetworkInterface*> > m_networkInterfaceMap;
+        QMap<QString, QPair<NetworkInterface *, Ifaces::NetworkInterface *> > m_networkInterfaceMap;
         NetworkInterface m_invalidDevice;
     };
 }

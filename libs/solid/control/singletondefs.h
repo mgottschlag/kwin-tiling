@@ -34,14 +34,14 @@ namespace Control
     template<typename T>
     class SingletonHelper { public: T instance; };
 
-#define SOLID_SINGLETON( Type )                                   \
+#define SOLID_SINGLETON(Type)                                   \
 public:                                                           \
     static Type &self();                                          \
-    static Type &selfForceBackend( QObject *backend );            \
+    static Type &selfForceBackend(QObject *backend);            \
 private:                                                          \
     friend class Solid::Control::SingletonHelper< Type >;
 
-#define SOLID_SINGLETON_IMPLEMENTATION( Type, Name )              \
+#define SOLID_SINGLETON_IMPLEMENTATION(Type, Name)              \
     K_GLOBAL_STATIC(Solid::Control::SingletonHelper< Type >, global##Name) \
                                                                   \
     Type &Type::self()                                            \

@@ -19,8 +19,8 @@
 
 #include "storage.h"
 
-Storage::Storage( HalDevice *device )
-    : Block( device )
+Storage::Storage(HalDevice *device)
+    : Block(device)
 {
 
 }
@@ -32,25 +32,25 @@ Storage::~Storage()
 
 Solid::Storage::Bus Storage::bus() const
 {
-    QString bus = m_device->property( "storage.bus" ).toString();
+    QString bus = m_device->property("storage.bus").toString();
 
-    if ( bus=="ide" )
+    if (bus=="ide")
     {
         return Solid::Storage::Ide;
     }
-    else if ( bus=="usb" )
+    else if (bus=="usb")
     {
         return Solid::Storage::Usb;
     }
-    else if ( bus=="ieee1394" )
+    else if (bus=="ieee1394")
     {
         return Solid::Storage::Ieee1394;
     }
-    else if ( bus=="scsi" )
+    else if (bus=="scsi")
     {
         return Solid::Storage::Scsi;
     }
-    else if ( bus=="sata" )
+    else if (bus=="sata")
     {
         return Solid::Storage::Sata;
     }
@@ -62,37 +62,37 @@ Solid::Storage::Bus Storage::bus() const
 
 Solid::Storage::DriveType Storage::driveType() const
 {
-    QString type = m_device->property( "storage.drive_type" ).toString();
+    QString type = m_device->property("storage.drive_type").toString();
 
-    if ( type=="disk" )
+    if (type=="disk")
     {
         return Solid::Storage::HardDisk;
     }
-    else if ( type=="cdrom" )
+    else if (type=="cdrom")
     {
         return Solid::Storage::CdromDrive;
     }
-    else if ( type=="floppy" )
+    else if (type=="floppy")
     {
         return Solid::Storage::Floppy;
     }
-    else if ( type=="tape" )
+    else if (type=="tape")
     {
         return Solid::Storage::Tape;
     }
-    else if ( type=="compact_flash" )
+    else if (type=="compact_flash")
     {
         return Solid::Storage::CompactFlash;
     }
-    else if ( type=="memory_stick" )
+    else if (type=="memory_stick")
     {
         return Solid::Storage::MemoryStick;
     }
-    else if ( type=="smart_media" )
+    else if (type=="smart_media")
     {
         return Solid::Storage::SmartMedia;
     }
-    else if ( type=="sd_mmc" )
+    else if (type=="sd_mmc")
     {
         return Solid::Storage::SdMmc;
     }
@@ -104,32 +104,32 @@ Solid::Storage::DriveType Storage::driveType() const
 
 bool Storage::isRemovable() const
 {
-    return m_device->property( "storage.removable" ).toBool();
+    return m_device->property("storage.removable").toBool();
 }
 
 bool Storage::isEjectRequired() const
 {
-    return m_device->property( "storage.requires_eject" ).toBool();
+    return m_device->property("storage.requires_eject").toBool();
 }
 
 bool Storage::isHotpluggable() const
 {
-    return m_device->property( "storage.hotpluggable" ).toBool();
+    return m_device->property("storage.hotpluggable").toBool();
 }
 
 bool Storage::isMediaCheckEnabled() const
 {
-    return m_device->property( "storage.media_check_enabled" ).toBool();
+    return m_device->property("storage.media_check_enabled").toBool();
 }
 
 QString Storage::vendor() const
 {
-    return m_device->property( "storage.vendor" ).toString();
+    return m_device->property("storage.vendor").toString();
 }
 
 QString Storage::product() const
 {
-    return m_device->property( "storage.model" ).toString();
+    return m_device->property("storage.model").toString();
 }
 
 #include "storage.moc"

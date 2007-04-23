@@ -53,7 +53,7 @@ class KDE_EXPORT NMWirelessNetwork : public NMNetwork, virtual public Solid::Con
 Q_OBJECT
 Q_INTERFACES(Solid::Control::Ifaces::WirelessNetwork)
 public:
-    NMWirelessNetwork( const QString & networkPath );
+    NMWirelessNetwork(const QString  & networkPath);
     virtual ~NMWirelessNetwork();
     int signalStrength() const;
     int bitrate() const;
@@ -66,17 +66,17 @@ public:
     bool isHidden() const;
     MacAddressList bssList() const;
     Solid::Control::Authentication *authentication() const;
-    void setAuthentication( Solid::Control::Authentication *authentication );
-    void setSignalStrength( int strength );
-    void setBitrate( int rate );
-    virtual void setActivated( bool activated );
+    void setAuthentication(Solid::Control::Authentication *authentication);
+    void setSignalStrength(int strength);
+    void setBitrate(int rate);
+    virtual void setActivated(bool activated);
 Q_SIGNALS:
-    void signalStrengthChanged( int strength );
-    void bitrateChanged( int bitrate );
-    void associationChanged( bool associated ); // move to Device?
+    void signalStrengthChanged(int strength);
+    void bitrateChanged(int bitrate);
+    void associationChanged(bool associated); // move to Device?
     void authenticationNeeded();
 protected:
-    void setProperties( const NMDBusWirelessNetworkProperties & );
+    void setProperties(const NMDBusWirelessNetworkProperties  &);
 private:
     NMWirelessNetworkPrivate * d;
 };

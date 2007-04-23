@@ -33,7 +33,7 @@ private slots:
     void testBasic();
     void testSignalHandling();
 
-    void slotPropertyChanged( const QMap<QString,int> &changes );
+    void slotPropertyChanged(const QMap<QString,int> &changes);
 
 private:
     HalDevice *m_device;

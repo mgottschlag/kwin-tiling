@@ -26,19 +26,19 @@
 class AcAdapter : public DeviceInterface, virtual public Solid::Ifaces::AcAdapter
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::AcAdapter )
+    Q_INTERFACES(Solid::Ifaces::AcAdapter)
 
 public:
-    AcAdapter( HalDevice *device );
+    AcAdapter(HalDevice *device);
     virtual ~AcAdapter();
 
     virtual bool isPlugged() const;
 
 Q_SIGNALS:
-    void plugStateChanged( bool newState );
+    void plugStateChanged(bool newState);
 
 private Q_SLOTS:
-    void slotPropertyChanged( const QMap<QString,int> &changes );
+    void slotPropertyChanged(const QMap<QString,int> &changes);
 };
 
 #endif

@@ -46,17 +46,17 @@ public:
     virtual QString vendor() const;
     virtual QString product() const;
 
-    virtual bool setProperty( const QString &key, const QVariant &value );
-    virtual QVariant property( const QString &key ) const;
+    virtual bool setProperty(const QString &key, const QVariant &value);
+    virtual QVariant property(const QString &key) const;
 
     virtual QMap<QString, QVariant> allProperties() const;
 
-    virtual bool removeProperty( const QString &key );
-    virtual bool propertyExists( const QString &key ) const;
+    virtual bool removeProperty(const QString &key);
+    virtual bool propertyExists(const QString &key) const;
 
-    virtual bool addDeviceInterface( const Solid::DeviceInterface::Type &type );
-    virtual bool queryDeviceInterface( const Solid::DeviceInterface::Type &type ) const;
-    virtual QObject *createDeviceInterface( const Solid::DeviceInterface::Type &type );
+    virtual bool addDeviceInterface(const Solid::DeviceInterface::Type &type);
+    virtual bool queryDeviceInterface(const Solid::DeviceInterface::Type &type) const;
+    virtual QObject *createDeviceInterface(const Solid::DeviceInterface::Type &type);
 
     virtual bool lock(const QString &reason);
     virtual bool unlock();
@@ -68,8 +68,8 @@ Q_SIGNALS:
     void conditionRaised(const QString &condition, const QString &reason);
 
 private Q_SLOTS:
-    void slotPropertyModified( int count, const QList<ChangeDescription> &changes );
-    void slotCondition( const QString &condition, const QString &reason );
+    void slotPropertyModified(int count, const QList<ChangeDescription> &changes);
+    void slotCondition(const QString &condition, const QString &reason);
 
 private:
     HalDevicePrivate *d;

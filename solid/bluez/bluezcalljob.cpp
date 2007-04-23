@@ -43,7 +43,7 @@ void BluezCallJob::start()
     QTimer::singleShot(0, this, SLOT(doStart()));
 }
 
-void BluezCallJob::kill(bool /*quietly*/)
+void BluezCallJob::kill(bool /*quietly */)
 {}
 
 void BluezCallJob::doStart()
@@ -52,7 +52,7 @@ void BluezCallJob::doStart()
                        m_iface, m_method);
     msg.setArguments(m_params);
 
-    if (!m_connection.callWithCallback(msg, this, SLOT(callReply(const QDBusMessage&)), SLOT(callError(const QDBusError&)))) {
+    if (!m_connection.callWithCallback(msg, this, SLOT(callReply(const QDBusMessage &)), SLOT(callError(const QDBusError &)))) {
         setError(1);
         setErrorText(m_connection.lastError().name() + ": " + m_connection.lastError().message());
         emitResult();
@@ -67,7 +67,7 @@ void BluezCallJob::callError(const QDBusError &error)
     emitResult();
 }
 
-void BluezCallJob::callReply(const QDBusMessage & /*reply*/)
+void BluezCallJob::callReply(const QDBusMessage  & /*reply */)
 {
     setError(0);
     emitResult();

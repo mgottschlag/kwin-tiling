@@ -24,14 +24,14 @@
 #include "../soliddefs_p.h"
 #include <solid/control/ifaces/network.h>
 
-Solid::Control::Network::Network( QObject *backendObject )
+Solid::Control::Network::Network(QObject *backendObject)
     : QObject(), d_ptr(new NetworkPrivate(this))
 {
     Q_D(Network);
     d->setBackendObject(backendObject);
 }
 
-Solid::Control::Network::Network( const Network &network )
+Solid::Control::Network::Network(const Network &network)
     : QObject(), d_ptr(new NetworkPrivate(this))
 {
     Q_D(Network);
@@ -66,37 +66,37 @@ bool Solid::Control::Network::isValid() const
 QList<QNetworkAddressEntry> Solid::Control::Network::addressEntries() const
 {
     Q_D(const Network);
-    return_SOLID_CALL(Ifaces::Network*, d->backendObject(), QList<QNetworkAddressEntry>(), addressEntries());
+    return_SOLID_CALL(Ifaces::Network *, d->backendObject(), QList<QNetworkAddressEntry>(), addressEntries());
 }
 
 QString Solid::Control::Network::route() const
 {
     Q_D(const Network);
-    return_SOLID_CALL(Ifaces::Network*, d->backendObject(), QString(), route());
+    return_SOLID_CALL(Ifaces::Network *, d->backendObject(), QString(), route());
 }
 
 QList<QHostAddress> Solid::Control::Network::dnsServers() const
 {
     Q_D(const Network);
-    return_SOLID_CALL(Ifaces::Network*, d->backendObject(), QList<QHostAddress>(), dnsServers());
+    return_SOLID_CALL(Ifaces::Network *, d->backendObject(), QList<QHostAddress>(), dnsServers());
 }
 
-void Solid::Control::Network::setActivated( bool active )
+void Solid::Control::Network::setActivated(bool active)
 {
     Q_D(const Network);
-    SOLID_CALL(Ifaces::Network*, d->backendObject(), setActivated(active));
+    SOLID_CALL(Ifaces::Network *, d->backendObject(), setActivated(active));
 }
 
 bool Solid::Control::Network::isActive() const
 {
     Q_D(const Network);
-    return_SOLID_CALL(Ifaces::Network*, d->backendObject(), false, isActive());
+    return_SOLID_CALL(Ifaces::Network *, d->backendObject(), false, isActive());
 }
 
 QString Solid::Control::Network::uni() const
 {
     Q_D(const Network);
-    return_SOLID_CALL(Ifaces::Network*, d->backendObject(), QString(), uni());
+    return_SOLID_CALL(Ifaces::Network *, d->backendObject(), QString(), uni());
 }
 
 void Solid::Control::NetworkPrivate::setBackendObject(QObject *object)

@@ -29,11 +29,11 @@
 class HalManagerPrivate
 {
 public:
-    HalManagerPrivate() : manager( "org.freedesktop.Hal",
+    HalManagerPrivate() : manager("org.freedesktop.Hal",
                                    "/org/freedesktop/Hal/Manager",
                                    "org.freedesktop.Hal.Manager",
-                                   QDBusConnection::systemBus() ),
-                          cacheSynced( false ) { }
+                                   QDBusConnection::systemBus()),
+                          cacheSynced(false) { }
 
     QDBusInterface manager;
     QList<QString> devicesCache;
@@ -41,20 +41,20 @@ public:
 };
 
 
-HalManager::HalManager( QObject *parent, const QStringList & /*args*/)
-    : DeviceManager(parent),  d( new HalManagerPrivate() )
+HalManager::HalManager(QObject *parent, const QStringList  & /*args */)
+    : DeviceManager(parent),  d(new HalManagerPrivate())
 {
-    d->manager.connection().connect( "org.freedesktop.Hal",
+    d->manager.connection().connect("org.freedesktop.Hal",
                                      "/org/freedesktop/Hal/Manager",
                                      "org.freedesktop.Hal.Manager",
                                      "DeviceAdded",
-                                     this, SLOT( slotDeviceAdded( const QString& ) ) );
+                                     this, SLOT(slotDeviceAdded(const QString &)));
 
-    d->manager.connection().connect( "org.freedesktop.Hal",
+    d->manager.connection().connect("org.freedesktop.Hal",
                                      "/org/freedesktop/Hal/Manager",
                                      "org.freedesktop.Hal.Manager",
                                      "DeviceRemoved",
-                                     this, SLOT( slotDeviceRemoved( const QString& ) ) );
+                                     this, SLOT(slotDeviceRemoved(const QString &)));
 }
 
 HalManager::~HalManager()
@@ -64,14 +64,14 @@ HalManager::~HalManager()
 
 QStringList HalManager::allDevices()
 {
-    if ( d->cacheSynced )
+    if (d->cacheSynced)
     {
         return d->devicesCache;
     }
 
-    QDBusReply<QStringList> reply = d->manager.call( "GetAllDevices" );
+    QDBusReply<QStringList> reply = d->manager.call("GetAllDevices");
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
         return QStringList();
@@ -83,28 +83,28 @@ QStringList HalManager::allDevices()
     return reply;
 }
 
-bool HalManager::deviceExists( const QString &udi )
+bool HalManager::deviceExists(const QString &udi)
 {
-    if ( d->devicesCache.contains( udi ) )
+    if (d->devicesCache.contains(udi))
     {
         return true;
     }
-    else if ( d->cacheSynced )
+    else if (d->cacheSynced)
     {
         return false;
     }
 
-    QDBusReply<bool> reply = d->manager.call( "DeviceExists", udi );
+    QDBusReply<bool> reply = d->manager.call("DeviceExists", udi);
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
         return false;
     }
 
-    if ( reply )
+    if (reply)
     {
-        d->devicesCache.append( udi );
+        d->devicesCache.append(udi);
     }
 
     return reply;
@@ -113,20 +113,20 @@ bool HalManager::deviceExists( const QString &udi )
 QStringList HalManager::devicesFromQuery(const QString &parentUdi,
                                          Solid::DeviceInterface::Type type)
 {
-    if ( !parentUdi.isEmpty() )
+    if (!parentUdi.isEmpty())
     {
-        QStringList result = findDeviceStringMatch( "info.parent", parentUdi );
+        QStringList result = findDeviceStringMatch("info.parent", parentUdi);
 
         if (type!=Solid::DeviceInterface::Unknown) {
             QStringList::Iterator it = result.begin();
             QStringList::ConstIterator end = result.end();
 
-            for ( ; it!=end; ++it )
+            for (; it!=end; ++it)
             {
-                HalDevice device( *it );
+                HalDevice device(*it);
 
                 if (!device.queryDeviceInterface(type)) {
-                    result.erase( it );
+                    result.erase(it);
                 }
             }
         }
@@ -140,16 +140,16 @@ QStringList HalManager::devicesFromQuery(const QString &parentUdi,
     }
 }
 
-QObject *HalManager::createDevice( const QString &udi )
+QObject *HalManager::createDevice(const QString &udi)
 {
-    return new HalDevice( udi );
+    return new HalDevice(udi);
 }
 
-QStringList HalManager::findDeviceStringMatch( const QString &key, const QString &value )
+QStringList HalManager::findDeviceStringMatch(const QString &key, const QString &value)
 {
-    QDBusReply<QStringList> reply = d->manager.call( "FindDeviceStringMatch", key, value );
+    QDBusReply<QStringList> reply = d->manager.call("FindDeviceStringMatch", key, value);
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
         return QStringList();
@@ -163,11 +163,11 @@ QStringList HalManager::findDeviceByDeviceInterface(const Solid::DeviceInterface
     QStringList cap_list = DeviceInterface::toStringList(type);
     QStringList result;
 
-    foreach ( QString cap, cap_list )
+    foreach (QString cap, cap_list)
     {
-        QDBusReply<QStringList> reply = d->manager.call( "FindDeviceByCapability", cap );
+        QDBusReply<QStringList> reply = d->manager.call("FindDeviceByCapability", cap);
 
-        if ( !reply.isValid() )
+        if (!reply.isValid())
         {
             kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
             return QStringList();
@@ -179,16 +179,16 @@ QStringList HalManager::findDeviceByDeviceInterface(const Solid::DeviceInterface
     return result;
 }
 
-void HalManager::slotDeviceAdded( const QString &udi )
+void HalManager::slotDeviceAdded(const QString &udi)
 {
-    d->devicesCache.append( udi );
-    emit deviceAdded( udi );
+    d->devicesCache.append(udi);
+    emit deviceAdded(udi);
 }
 
-void HalManager::slotDeviceRemoved( const QString &udi )
+void HalManager::slotDeviceRemoved(const QString &udi)
 {
-    d->devicesCache.removeAll( udi );
-    emit deviceRemoved( udi );
+    d->devicesCache.removeAll(udi);
+    emit deviceRemoved(udi);
 }
 
 #include "halmanager.moc"

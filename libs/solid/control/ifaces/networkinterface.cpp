@@ -19,8 +19,8 @@
 
 #include "networkinterface.h"
 
-Solid::Control::Ifaces::NetworkInterface::NetworkInterface( QObject *parent )
-    : QObject( parent )
+Solid::Control::Ifaces::NetworkInterface::NetworkInterface(QObject *parent)
+    : QObject(parent)
 {
 
 }

@@ -21,8 +21,8 @@
 
 #include "haldevice.h"
 
-Display::Display( HalDevice *device)
-    : DeviceInterface( device )
+Display::Display(HalDevice *device)
+    : DeviceInterface(device)
 {
 
 }
@@ -36,7 +36,7 @@ Solid::Display::DisplayType Display::type() const
 {
     QString displaytype = m_device->property("display_device.type").toString();
 
-    if ( displaytype=="lcd" )
+    if (displaytype=="lcd")
     {
         return Solid::Display::Lcd;
     }

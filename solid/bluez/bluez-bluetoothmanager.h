@@ -37,27 +37,27 @@ class KDE_EXPORT BluezBluetoothManager : public Solid::Control::Ifaces::Bluetoot
     Q_OBJECT
 
 public:
-    BluezBluetoothManager(QObject * parent, const QStringList & args);
+    BluezBluetoothManager(QObject * parent, const QStringList  & args);
     virtual ~BluezBluetoothManager();
     QStringList bluetoothInterfaces() const;
-    QObject * createInterface(const QString&);
+    QObject * createInterface(const QString &);
     QStringList bluetoothInputDevices() const;
     QString defaultInterface() const;
 
-    QObject * createBluetoothInputDevice(const QString&);
-    KJob *setupInputDevice(const QString&);
+    QObject * createBluetoothInputDevice(const QString &);
+    KJob *setupInputDevice(const QString &);
 
 public Q_SLOTS:
-    void removeInputDevice(const QString&);
+    void removeInputDevice(const QString &);
 
 protected Q_SLOTS:
 
-    void slotDeviceAdded(const QString&);
-    void slotDeviceRemoved(const QString&);
-    void slotDefaultDeviceChanged(const QString&);
+    void slotDeviceAdded(const QString &);
+    void slotDeviceRemoved(const QString &);
+    void slotDefaultDeviceChanged(const QString &);
 
-    void slotInputDeviceCreated(const QString&);
-    void slotInputDeviceRemoved(const QString&);
+    void slotInputDeviceCreated(const QString &);
+    void slotInputDeviceRemoved(const QString &);
 
 private:
     BluezBluetoothManagerPrivate * d;

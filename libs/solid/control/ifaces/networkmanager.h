@@ -46,7 +46,7 @@ namespace Ifaces
          *
          * @param parent the parent object
          */
-        NetworkManager( QObject * parent = 0 );
+        NetworkManager(QObject * parent = 0);
         /**
          * Destructs a NetworkManager object.
          */
@@ -67,7 +67,7 @@ namespace Ifaces
          * @param uni the identifier of the network interface instantiated
          * @returns a new NetworkInterface object if there's a device having the given UNI, 0 otherwise
          */
-        virtual QObject *createNetworkInterface( const QString &uni ) = 0;
+        virtual QObject *createNetworkInterface(const QString &uni) = 0;
 
         /**
          * Instantiates a new AuthenticationValidator object.
@@ -98,21 +98,21 @@ namespace Ifaces
          *
          * @param enabled true to activate networking, false otherwise
          */
-        virtual void setNetworkingEnabled( bool enabled ) = 0;
+        virtual void setNetworkingEnabled(bool enabled) = 0;
 
         /**
          * Activates or deactivates wireless networking.
          *
          * @param enabled true to activate wireless networking, false otherwise
          */
-        virtual void setWirelessEnabled( bool enabled ) = 0;
+        virtual void setWirelessEnabled(bool enabled) = 0;
 
         /**
          * Informs the system of hidden networks.
          *
          * @param networkName the name of the hidden network that could be discovered
          */
-        virtual void notifyHiddenNetwork( const QString &networkName ) = 0;
+        virtual void notifyHiddenNetwork(const QString &networkName) = 0;
 
     Q_SIGNALS:
         /**
@@ -120,14 +120,14 @@ namespace Ifaces
          *
          * @param uni the network interface identifier
          */
-        void networkInterfaceAdded( const QString & uni );
+        void networkInterfaceAdded(const QString  & uni);
 
         /**
          * This signal is emitted when a network interface is not available anymore.
          *
          * @param uni the network interface identifier
          */
-        void networkInterfaceRemoved( const QString & uni );
+        void networkInterfaceRemoved(const QString  & uni);
     };
 
 } // Ifaces

@@ -21,8 +21,8 @@
 
 #include "haldevice.h"
 
-Processor::Processor( HalDevice *device )
-    : DeviceInterface( device )
+Processor::Processor(HalDevice *device)
+    : DeviceInterface(device)
 {
 
 }
@@ -34,17 +34,17 @@ Processor::~Processor()
 
 int Processor::number() const
 {
-    return m_device->property( "processor.number" ).toInt();
+    return m_device->property("processor.number").toInt();
 }
 
 qulonglong Processor::maxSpeed() const
 {
-    return m_device->property( "processor.maximum_speed" ).toULongLong();
+    return m_device->property("processor.maximum_speed").toULongLong();
 }
 
 bool Processor::canThrottle() const
 {
-    return m_device->property( "processor.can_throttle" ).toBool();
+    return m_device->property("processor.can_throttle").toBool();
 }
 
 #include "processor.moc"

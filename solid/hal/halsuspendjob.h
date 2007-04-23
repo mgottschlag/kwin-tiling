@@ -30,16 +30,16 @@ class HalSuspendJob : public KJob
 {
     Q_OBJECT
 public:
-    HalSuspendJob( QDBusInterface &powermanagement, Solid::Control::PowerManager::SuspendMethod method,
-                   Solid::Control::PowerManager::SuspendMethods supported );
+    HalSuspendJob(QDBusInterface &powermanagement, Solid::Control::PowerManager::SuspendMethod method,
+                   Solid::Control::PowerManager::SuspendMethods supported);
     virtual ~HalSuspendJob();
 
     void start();
-    void kill( bool quietly );
+    void kill(bool quietly);
 
 private Q_SLOTS:
     void doStart();
-    void resumeDone( const QDBusMessage &reply );
+    void resumeDone(const QDBusMessage &reply);
 
 private:
     QDBusInterface &m_halPowerManagement;

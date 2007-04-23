@@ -39,8 +39,8 @@ namespace Control
     class SOLID_EXPORT NetworkInterface : public QObject
     {
         Q_OBJECT
-        Q_ENUMS( ConnectionState Capability Type )
-        Q_FLAGS( Capabilities )
+        Q_ENUMS(ConnectionState Capability Type)
+        Q_FLAGS(Capabilities)
 
     public:
         // == NM ActivationStage
@@ -68,7 +68,7 @@ namespace Control
          */
         enum Type { UnknownType, Ieee8023, Ieee80211 };
 
-        Q_DECLARE_FLAGS( Capabilities, Capability )
+        Q_DECLARE_FLAGS(Capabilities, Capability)
 
 
 
@@ -82,21 +82,21 @@ namespace Control
          *
          * @param uni the uni of the network interface to create
          */
-        explicit NetworkInterface( const QString &uni );
+        explicit NetworkInterface(const QString &uni);
 
         /**
          * Constructs a new network interface taking its data from a backend.
          *
          * @param backendObject the object given by the backend
          */
-        explicit NetworkInterface( QObject *backendObject );
+        explicit NetworkInterface(QObject *backendObject);
 
         /**
          * Constructs a copy of a network interface.
          *
          * @param device the network interface to copy
          */
-        NetworkInterface( const NetworkInterface &device );
+        NetworkInterface(const NetworkInterface &device);
 
         /**
          * Destroys the device.
@@ -109,7 +109,7 @@ namespace Control
          * @param device the network interface to assign
          * @return a reference to the network interface
          */
-        NetworkInterface &operator=( const NetworkInterface &device );
+        NetworkInterface &operator=(const NetworkInterface &device);
 
         /**
          * Indicates if this network interface is valid.
@@ -191,7 +191,7 @@ namespace Control
          * @param uni the identifier of the network to find from this network interface
          * @returns a valid Network object if a network having the given UNI for this device is known to the system, an invalid Network object otherwise
          */
-        Network *findNetwork( const QString & uni ) const;
+        Network *findNetwork(const QString  & uni) const;
 
         /**
          * Retrieves the networks available via this network interfaces.
@@ -210,7 +210,7 @@ namespace Control
          *
          * @param activated true if the device is active, false otherwise
          */
-        void activeChanged( bool activated );
+        void activeChanged(bool activated);
 
         /**
          * This signal is emitted when the device's link status changed. For example, if there
@@ -218,14 +218,14 @@ namespace Control
          *
          * @param linkActivated true if the carrier got detected, false otherwise
          */
-        void linkUpChanged( bool linkActivated );
+        void linkUpChanged(bool linkActivated);
 
         /**
          * This signal is emitted when the device's signal strength changed.
          *
          * @param strength the new device signal strength
          */
-        void signalStrengthChanged( int strength );
+        void signalStrengthChanged(int strength);
 
         /**
          * This signal is emitted when the device's link status changed. For example, if there
@@ -234,25 +234,25 @@ namespace Control
          * @param state the new state of the connection
          * @see Solid::Control::NetworkInterface::ConnectionState
          */
-        void connectionStateChanged( int state );
+        void connectionStateChanged(int state);
 
         /**
          * This signal is emitted when the device detects a new reachable network.
          *
          * @param uni the new network identifier
          */
-        void networkAppeared( const QString & uni );
+        void networkAppeared(const QString  & uni);
 
         /**
          * This signal is emitted when the device decides that a network is not reachable anymore.
          *
          * @param uni the identifier of the network that disappeared
          */
-        void networkDisappeared( const QString & uni );
+        void networkDisappeared(const QString  & uni);
 
 
     private:
-        Q_PRIVATE_SLOT(d, void _k_destroyed(QObject*))
+        Q_PRIVATE_SLOT(d, void _k_destroyed(QObject *))
 
         NetworkInterfacePrivate * const d;
     };
@@ -260,6 +260,6 @@ namespace Control
 } //Control
 } //Solid
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::NetworkInterface::Capabilities )
+Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::NetworkInterface::Capabilities)
 
 #endif

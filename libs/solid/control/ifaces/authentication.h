@@ -47,12 +47,12 @@ namespace Ifaces
              * Call this to check if an authentication is valid
              * (All secrets present, passphrase length correct
              */
-            virtual bool validate( const Authentication * ) = 0;
+            virtual bool validate(const Authentication *) = 0;
     };
 } // Ifaces
 } // Control
 } // Solid
 
-Q_DECLARE_INTERFACE( Solid::Control::Ifaces::AuthenticationValidator, "org.kde.Solid.Control.Ifaces.AuthenticationValidator/0.1" )
+Q_DECLARE_INTERFACE(Solid::Control::Ifaces::AuthenticationValidator, "org.kde.Solid.Control.Ifaces.AuthenticationValidator/0.1")
 
 #endif /* SOLID_IFACES_AUTHENTICATION_H */

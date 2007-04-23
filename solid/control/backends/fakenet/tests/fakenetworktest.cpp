@@ -24,14 +24,14 @@
 
 #include "fakenetworktest.h"
 
-QTEST_KDEMAIN_CORE( FakeNetworking_Test )
+QTEST_KDEMAIN_CORE(FakeNetworking_Test)
 
 void FakeNetworking_Test::testFakeNetworking()
 {
-    FakeNetworkManager *fnm = new FakeNetworkManager(0, QStringList(), TEST_DATA );
-    QVERIFY( !fnm->networkInterfaces().isEmpty() );
-    QVERIFY( fnm->createNetworkInterface( "/org/kde/solid/fakenet/eth0" ) != 0 );
-    QVERIFY( fnm->createNetworkInterface( "/org/kde/wobbly/jellynet/eth0" ) == 0 );
+    FakeNetworkManager *fnm = new FakeNetworkManager(0, QStringList(), TEST_DATA);
+    QVERIFY(!fnm->networkInterfaces().isEmpty());
+    QVERIFY(fnm->createNetworkInterface("/org/kde/solid/fakenet/eth0") != 0);
+    QVERIFY(fnm->createNetworkInterface("/org/kde/wobbly/jellynet/eth0") == 0);
     delete fnm;
 }
 

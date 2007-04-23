@@ -19,8 +19,8 @@
 
 #include "opticaldisc.h"
 
-OpticalDisc::OpticalDisc( HalDevice *device )
-    : Volume( device )
+OpticalDisc::OpticalDisc(HalDevice *device)
+    : Volume(device)
 {
 
 }
@@ -42,9 +42,9 @@ Solid::OpticalDisc::ContentTypes OpticalDisc::availableContent() const
     map[Solid::OpticalDisc::SuperVideoCd] = "volume.disc.is_svcd";
     map[Solid::OpticalDisc::VideoDvd] ="volume.disc.is_videodvd";
 
-    foreach( const Solid::OpticalDisc::ContentType type, map.keys() )
+    foreach (const Solid::OpticalDisc::ContentType type, map.keys())
     {
-        if ( m_device->property( map[type] ).toBool() )
+        if (m_device->property(map[type]).toBool())
         {
             content|= type;
         }
@@ -55,41 +55,41 @@ Solid::OpticalDisc::ContentTypes OpticalDisc::availableContent() const
 
 Solid::OpticalDisc::DiscType OpticalDisc::discType() const
 {
-    QString type = m_device->property( "volume.disc.type" ).toString();
+    QString type = m_device->property("volume.disc.type").toString();
 
-    if ( type == "cd_rom" )
+    if (type == "cd_rom")
     {
         return Solid::OpticalDisc::CdRom;
     }
-    else if ( type == "cd_r" )
+    else if (type == "cd_r")
     {
         return Solid::OpticalDisc::CdRecordable;
     }
-    else if ( type == "cd_rw" )
+    else if (type == "cd_rw")
     {
         return Solid::OpticalDisc::CdRewritable;
     }
-    else if ( type == "dvd_rom" )
+    else if (type == "dvd_rom")
     {
         return Solid::OpticalDisc::DvdRom;
     }
-    else if ( type == "dvd_ram" )
+    else if (type == "dvd_ram")
     {
         return Solid::OpticalDisc::DvdRam;
     }
-    else if ( type == "dvd_r" )
+    else if (type == "dvd_r")
     {
         return Solid::OpticalDisc::DvdRecordable;
     }
-    else if ( type == "dvd_rw" )
+    else if (type == "dvd_rw")
     {
         return Solid::OpticalDisc::DvdRewritable;
     }
-    else if ( type == "dvd_plus_r" )
+    else if (type == "dvd_plus_r")
     {
         return Solid::OpticalDisc::DvdPlusRecordable;
     }
-    else if ( type == "dvd_plus_rw" )
+    else if (type == "dvd_plus_rw")
     {
         return Solid::OpticalDisc::DvdPlusRewritable;
     }
@@ -101,22 +101,22 @@ Solid::OpticalDisc::DiscType OpticalDisc::discType() const
 
 bool OpticalDisc::isAppendable() const
 {
-    return m_device->property( "volume.disc.is_appendable" ).toBool();
+    return m_device->property("volume.disc.is_appendable").toBool();
 }
 
 bool OpticalDisc::isBlank() const
 {
-    return m_device->property( "volume.disc.is_blank" ).toBool();
+    return m_device->property("volume.disc.is_blank").toBool();
 }
 
 bool OpticalDisc::isRewritable() const
 {
-    return m_device->property( "volume.disc.is_rewritable" ).toBool();
+    return m_device->property("volume.disc.is_rewritable").toBool();
 }
 
 qulonglong OpticalDisc::capacity() const
 {
-    return m_device->property( "volume.disc.capacity" ).toULongLong();
+    return m_device->property("volume.disc.capacity").toULongLong();
 }
 
 #include "opticaldisc.moc"

@@ -27,21 +27,21 @@
 #include <solid/control/ifaces/networkinterface.h>
 
 struct NMDBusDeviceProperties {
-	QDBusObjectPath path;
-	QString interface;
-	uint type;
-	QString udi;
-	bool active;
-	uint activationStage;
-	QString hardwareAddress;
-	int mode;
-	int strength;
-	bool linkActive;
-	int speed;
-	uint capabilities;
-	uint capabilitiesType;
-	QString activeNetPath;
-	QStringList networks;
+    QDBusObjectPath path;
+    QString interface;
+    uint type;
+    QString udi;
+    bool active;
+    uint activationStage;
+    QString hardwareAddress;
+    int mode;
+    int strength;
+    bool linkActive;
+    int speed;
+    uint capabilities;
+    uint capabilitiesType;
+    QString activeNetPath;
+    QStringList networks;
 };
 
 Q_DECLARE_METATYPE(NMDBusDeviceProperties)
@@ -53,7 +53,7 @@ class KDE_EXPORT NMNetworkInterface : public Solid::Control::Ifaces::NetworkInte
 Q_OBJECT
 Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
 public:
-    NMNetworkInterface( const QString & objectPath );
+    NMNetworkInterface(const QString  & objectPath);
     virtual ~NMNetworkInterface();
     QString uni() const;
     bool isActive() const;
@@ -63,21 +63,21 @@ public:
     int designSpeed() const;
     bool isLinkUp() const;
     Solid::Control::NetworkInterface::Capabilities capabilities() const;
-    QObject *createNetwork( const QString & uni );
+    QObject *createNetwork(const QString  & uni);
     QStringList networks() const;
     // These setters are used to update the interface by the manager
     // in response to DBus signals
-    void setProperties( const NMDBusDeviceProperties & );
-	// Used for ethernet devices to create the network object implied by
-	// NetworkManager using the info returned by getProperties
-    void setNetwork( const NMDBusNetworkProperties & );
-    void setSignalStrength( int );
-    void setCarrierOn( bool );
-    void setActive( bool );
-    void setActivationStage( int activationStage );
-    void addNetwork( const QDBusObjectPath & netPath );
-    void removeNetwork( const QDBusObjectPath & netPath );
-    void updateNetworkStrength( const QDBusObjectPath & netPath, int strength );
+    void setProperties(const NMDBusDeviceProperties  &);
+    // Used for ethernet devices to create the network object implied by
+    // NetworkManager using the info returned by getProperties
+    void setNetwork(const NMDBusNetworkProperties  &);
+    void setSignalStrength(int);
+    void setCarrierOn(bool);
+    void setActive(bool);
+    void setActivationStage(int activationStage);
+    void addNetwork(const QDBusObjectPath  & netPath);
+    void removeNetwork(const QDBusObjectPath  & netPath);
+    void updateNetworkStrength(const QDBusObjectPath  & netPath, int strength);
 private:
     NMNetworkInterfacePrivate * d;
 };

@@ -33,19 +33,19 @@ class KDE_EXPORT NMNetworkManager : public Solid::Control::Ifaces::NetworkManage
 {
 Q_OBJECT
     public:
-        NMNetworkManager( QObject * parent, const QStringList & args );
+        NMNetworkManager(QObject * parent, const QStringList  & args);
         virtual ~NMNetworkManager();
         QStringList networkInterfaces() const;
         QStringList activeNetworkInterfaces() const;
-        QObject * createNetworkInterface( const QString &);
+        QObject * createNetworkInterface(const QString &);
         QObject * createAuthenticationValidator();
 
         bool isNetworkingEnabled() const;
         bool isWirelessEnabled() const;
     public Q_SLOTS:
-        void setWirelessEnabled( bool );
-        void setNetworkingEnabled( bool );
-        void notifyHiddenNetwork( const QString & );
+        void setWirelessEnabled(bool);
+        void setNetworkingEnabled(bool);
+        void notifyHiddenNetwork(const QString  &);
     protected Q_SLOTS:
         void stateChanged(uint);
         void receivedDeviceAdded(QDBusObjectPath);

@@ -21,11 +21,11 @@
 
 #include "halcalljob.h"
 
-Volume::Volume( HalDevice *device )
-    : Block( device )
+Volume::Volume(HalDevice *device)
+    : Block(device)
 {
-    connect( device, SIGNAL( propertyChanged( const QMap<QString,int>& ) ),
-             this, SLOT( slotPropertyChanged( const QMap<QString,int>& ) ) );
+    connect(device, SIGNAL(propertyChanged(const QMap<QString,int> &)),
+             this, SLOT(slotPropertyChanged(const QMap<QString,int> &)));
 }
 
 Volume::~Volume()
@@ -36,36 +36,36 @@ Volume::~Volume()
 
 bool Volume::isIgnored() const
 {
-    return m_device->property( "volume.ignore" ).toBool();
+    return m_device->property("volume.ignore").toBool();
 }
 
 bool Volume::isMounted() const
 {
-    return m_device->property( "volume.is_mounted" ).toBool();
+    return m_device->property("volume.is_mounted").toBool();
 }
 
 QString Volume::mountPoint() const
 {
-    return m_device->property( "volume.mount_point" ).toString();
+    return m_device->property("volume.mount_point").toString();
 }
 
 Solid::Volume::UsageType Volume::usage() const
 {
-    QString usage = m_device->property( "volume.fsusage" ).toString();
+    QString usage = m_device->property("volume.fsusage").toString();
 
-    if ( usage == "filesystem" )
+    if (usage == "filesystem")
     {
         return Solid::Volume::FileSystem;
     }
-    else if ( usage == "partitiontable" )
+    else if (usage == "partitiontable")
     {
         return Solid::Volume::PartitionTable;
     }
-    else if ( usage == "raid" )
+    else if (usage == "raid")
     {
         return Solid::Volume::Raid;
     }
-    else if ( usage == "unused" )
+    else if (usage == "unused")
     {
         return Solid::Volume::Unused;
     }
@@ -77,22 +77,22 @@ Solid::Volume::UsageType Volume::usage() const
 
 QString Volume::fsType() const
 {
-    return m_device->property( "volume.fstype" ).toString();
+    return m_device->property("volume.fstype").toString();
 }
 
 QString Volume::label() const
 {
-    return m_device->property( "volume.label" ).toString();
+    return m_device->property("volume.label").toString();
 }
 
 QString Volume::uuid() const
 {
-    return m_device->property( "volume.uuid" ).toString();
+    return m_device->property("volume.uuid").toString();
 }
 
 qulonglong Volume::size() const
 {
-    return m_device->property( "volume.size" ).toULongLong();
+    return m_device->property("volume.size").toULongLong();
 }
 
 KJob * Volume::mount()
@@ -103,8 +103,8 @@ KJob * Volume::mount()
 
     params << "" << "" << QStringList();
 
-    return new HalCallJob( c, udi, "org.freedesktop.Hal.Device.Volume",
-                           "Mount", params );
+    return new HalCallJob(c, udi, "org.freedesktop.Hal.Device.Volume",
+                           "Mount", params);
 }
 
 KJob * Volume::unmount()
@@ -115,8 +115,8 @@ KJob * Volume::unmount()
 
     params << QStringList();
 
-    return new HalCallJob( c, udi, "org.freedesktop.Hal.Device.Volume",
-                           "Unmount", params );
+    return new HalCallJob(c, udi, "org.freedesktop.Hal.Device.Volume",
+                           "Unmount", params);
 }
 
 KJob * Volume::eject()
@@ -127,15 +127,15 @@ KJob * Volume::eject()
 
     params << QStringList();
 
-    return new HalCallJob( c, udi, "org.freedesktop.Hal.Device.Volume",
-                           "Eject", params );
+    return new HalCallJob(c, udi, "org.freedesktop.Hal.Device.Volume",
+                           "Eject", params);
 }
 
-void Volume::slotPropertyChanged( const QMap<QString,int> &changes )
+void Volume::slotPropertyChanged(const QMap<QString,int> &changes)
 {
-    if ( changes.contains( "volume.is_mounted" ) )
+    if (changes.contains("volume.is_mounted"))
     {
-        emit mountStateChanged( isMounted() );
+        emit mountStateChanged(isMounted());
     }
 }
 

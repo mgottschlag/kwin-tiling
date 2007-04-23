@@ -24,5 +24,5 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<FakeBluetoothManager, Solid::Control::Ifaces::BluetoothManager> FakeBluetoothBackendFactory;
-K_EXPORT_COMPONENT_FACTORY( solid_fake_bluetoothmgmt, FakeBluetoothBackendFactory( "fakebluetoothbackend" ) )
+K_EXPORT_COMPONENT_FACTORY(solid_fake_bluetoothmgmt, FakeBluetoothBackendFactory("fakebluetoothbackend"))
 

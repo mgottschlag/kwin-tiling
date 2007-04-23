@@ -23,8 +23,8 @@
 
 #include <QStringList>
 
-NetworkHw::NetworkHw( HalDevice *device )
-    : DeviceInterface( device )
+NetworkHw::NetworkHw(HalDevice *device)
+    : DeviceInterface(device)
 {
 
 }
@@ -36,30 +36,30 @@ NetworkHw::~NetworkHw()
 
 QString NetworkHw::ifaceName() const
 {
-    return m_device->property( "net.interface" ).toString();
+    return m_device->property("net.interface").toString();
 }
 
 bool NetworkHw::isWireless() const
 {
-    QStringList capabilities = m_device->property( "info.capabilities" ).toStringList();
+    QStringList capabilities = m_device->property("info.capabilities").toStringList();
 
-    return capabilities.contains( "net.80211" );
+    return capabilities.contains("net.80211");
 }
 
 QString NetworkHw::hwAddress() const
 {
-    return m_device->property( "net.address" ).toString();
+    return m_device->property("net.address").toString();
 }
 
 qulonglong NetworkHw::macAddress() const
 {
-    if ( m_device->propertyExists( "net.80211.mac_address" ) )
+    if (m_device->propertyExists("net.80211.mac_address"))
     {
-        return m_device->property( "net.80211.mac_address" ).toULongLong();
+        return m_device->property("net.80211.mac_address").toULongLong();
     }
     else
     {
-        return m_device->property( "net.80203.mac_address" ).toULongLong();
+        return m_device->property("net.80203.mac_address").toULongLong();
     }
 }
 

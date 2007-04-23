@@ -30,9 +30,9 @@
 class DeviceInterface : public QObject, virtual public Solid::Ifaces::DeviceInterface
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::DeviceInterface )
+    Q_INTERFACES(Solid::Ifaces::DeviceInterface)
 public:
-    DeviceInterface( HalDevice *device );
+    DeviceInterface(HalDevice *device);
     virtual ~DeviceInterface();
 
 protected:
@@ -100,37 +100,37 @@ public:
         return list;
     }
 
-    inline static Solid::DeviceInterface::Type fromString( const QString &capability )
+    inline static Solid::DeviceInterface::Type fromString(const QString &capability)
     {
-        if ( capability == "processor" )
+        if (capability == "processor")
             return Solid::DeviceInterface::Processor;
-        else if ( capability == "block" )
+        else if (capability == "block")
             return Solid::DeviceInterface::Block;
-        else if ( capability == "storage" )
+        else if (capability == "storage")
             return Solid::DeviceInterface::Storage;
-        else if ( capability == "storage.cdrom" )
+        else if (capability == "storage.cdrom")
             return Solid::DeviceInterface::Cdrom;
-        else if ( capability == "volume" )
+        else if (capability == "volume")
             return Solid::DeviceInterface::Volume;
-        else if ( capability == "volume.disc" )
+        else if (capability == "volume.disc")
             return Solid::DeviceInterface::OpticalDisc;
-        else if ( capability == "camera" )
+        else if (capability == "camera")
             return Solid::DeviceInterface::Camera;
-        else if ( capability == "portable_audio_player" )
+        else if (capability == "portable_audio_player")
             return Solid::DeviceInterface::PortableMediaPlayer;
-        else if ( capability == "net" )
+        else if (capability == "net")
             return Solid::DeviceInterface::NetworkHw;
-        else if ( capability == "ac_adapter" )
+        else if (capability == "ac_adapter")
             return Solid::DeviceInterface::AcAdapter;
-        else if ( capability == "battery" )
+        else if (capability == "battery")
             return Solid::DeviceInterface::Battery;
-        else if ( capability == "button" )
+        else if (capability == "button")
             return Solid::DeviceInterface::Button;
-        else if ( capability == "display_device" )
+        else if (capability == "display_device")
             return Solid::DeviceInterface::Display;
-        else if ( capability == "alsa" || capability == "oss" )
+        else if (capability == "alsa" || capability == "oss")
             return Solid::DeviceInterface::AudioHw;
-        else if ( capability == "dvb" )
+        else if (capability == "dvb")
             return Solid::DeviceInterface::DvbHw;
         else
             return Solid::DeviceInterface::Unknown;

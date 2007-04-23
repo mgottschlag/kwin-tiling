@@ -36,29 +36,29 @@ class KDE_EXPORT FakeBluetoothManager : public Solid::Control::Ifaces::Bluetooth
 {
     Q_OBJECT
 public:
-    FakeBluetoothManager(QObject * parent, const QStringList & args);
-    FakeBluetoothManager(QObject * parent, const QStringList & args, const QString & xmlFile);
+    FakeBluetoothManager(QObject * parent, const QStringList  & args);
+    FakeBluetoothManager(QObject * parent, const QStringList  & args, const QString  & xmlFile);
     ~FakeBluetoothManager();
     QStringList bluetoothInterfaces() const;
-    FakeBluetoothInterface* createBluetoothInterface(const QString &);
+    FakeBluetoothInterface *createBluetoothInterface(const QString &);
     QString defaultInterface() const;
-    QObject* createInterface(const QString&);
+    QObject *createInterface(const QString &);
 
     QStringList bluetoothInputDevices() const;
     FakeBluetoothInputDevice *createBluetoothInputDevice(const QString &ubi);
     KJob *setupInputDevice(const QString &ubi);
 
 public Q_SLOTS:
-    void removeInputDevice(const QString & ubi);
+    void removeInputDevice(const QString  & ubi);
 
 private:
     void parseBluetoothFile();
     FakeBluetoothInterface *parseDeviceElement(const QDomElement &deviceElement);
     QMap<QString, QVariant> parseBluetoothElement(const QDomElement &deviceElement);
 
-    QMap<QString, FakeBluetoothInterface*> mBluetoothInterfaces;
-    QMap<QString, FakeBluetoothInputDevice*> mBluetoothInputDevices;
-    QMap<QString, FakeBluetoothRemoteDevice*> mBluetoothRemoteDevices;
+    QMap<QString, FakeBluetoothInterface *> mBluetoothInterfaces;
+    QMap<QString, FakeBluetoothInputDevice *> mBluetoothInputDevices;
+    QMap<QString, FakeBluetoothRemoteDevice *> mBluetoothRemoteDevices;
     QString mXmlFile;
 };
 

@@ -26,10 +26,10 @@
 class Volume : public Block, virtual public Solid::Ifaces::Volume
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Volume )
+    Q_INTERFACES(Solid::Ifaces::Volume)
 
 public:
-    Volume( HalDevice *device );
+    Volume(HalDevice *device);
     virtual ~Volume();
 
     virtual bool isIgnored() const;
@@ -46,10 +46,10 @@ public:
     virtual KJob *eject();
 
 Q_SIGNALS:
-    void mountStateChanged( bool newState );
+    void mountStateChanged(bool newState);
 
 private Q_SLOTS:
-    void slotPropertyChanged( const QMap<QString,int> &changes );
+    void slotPropertyChanged(const QMap<QString,int> &changes);
 };
 
 #endif

@@ -32,12 +32,12 @@ FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &
 
     mXmlFile = KStandardDirs::locate("data", "solidfakebackend/fakebluetooth.xml");
 
-//     QDBusConnection::sessionBus().registerObject( "/org/kde/solid/fake", this, QDBusConnection::ExportNonScriptableSlots );
+//     QDBusConnection::sessionBus().registerObject("/org/kde/solid/fake", this, QDBusConnection::ExportNonScriptableSlots);
 
     parseBluetoothFile();
 }
 
-FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &, const QString& xmlFile) : Solid::Control::Ifaces::BluetoothManager(parent)
+FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &, const QString &xmlFile) : Solid::Control::Ifaces::BluetoothManager(parent)
 {
     kDebug() << k_funcinfo << endl;
     mXmlFile = xmlFile;
@@ -50,7 +50,7 @@ FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &
 
 FakeBluetoothManager::~FakeBluetoothManager()
 {
-    foreach(FakeBluetoothInterface *interface, mBluetoothInterfaces) {
+    foreach (FakeBluetoothInterface *interface, mBluetoothInterfaces) {
         delete interface;
     }
 
@@ -62,7 +62,7 @@ QStringList FakeBluetoothManager::bluetoothInterfaces() const
     return mBluetoothInterfaces.keys();
 }
 
-QObject * FakeBluetoothManager::createInterface(const QString & ubi)
+QObject * FakeBluetoothManager::createInterface(const QString  & ubi)
 {
     if (mBluetoothInterfaces.contains(ubi))
         return mBluetoothInterfaces[ubi];
@@ -104,7 +104,7 @@ void FakeBluetoothManager::parseBluetoothFile()
             if (tempDevice) {
                 mBluetoothInterfaces.insert(tempDevice->ubi(), tempDevice);
 // Use the DeviceManager for now, the udi/ubi should
-//                emit deviceAdded( tempDevice->ubi());
+//                emit deviceAdded(tempDevice->ubi());
             }
         }
         node = node.nextSibling();
@@ -146,7 +146,7 @@ FakeBluetoothInterface *FakeBluetoothManager::parseDeviceElement(const QDomEleme
     interface = new FakeBluetoothInterface(propertyMap);
 
     // Inject Remote devices....
-    foreach(FakeBluetoothRemoteDevice *device, mBluetoothRemoteDevices) {
+    foreach (FakeBluetoothRemoteDevice *device, mBluetoothRemoteDevices) {
         kDebug() << "Injecting " << device->name() << endl;
         interface->injectDevice(device->ubi(), device);
     }
@@ -202,13 +202,13 @@ FakeBluetoothInputDevice *FakeBluetoothManager::createBluetoothInputDevice(const
         return 0;
 }
 
-KJob *FakeBluetoothManager::setupInputDevice(const QString & /*ubi*/)
+KJob *FakeBluetoothManager::setupInputDevice(const QString  & /*ubi */)
 {
     // TODO
     return NULL;
 }
 
-void FakeBluetoothManager::removeInputDevice(const QString & /*ubi*/)
+void FakeBluetoothManager::removeInputDevice(const QString  & /*ubi */)
 {
     //TODO
 }

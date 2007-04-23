@@ -28,10 +28,10 @@ class HalDevice;
 class Button : public DeviceInterface, virtual public Solid::Ifaces::Button
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Button )
+    Q_INTERFACES(Solid::Ifaces::Button)
 
 public:
-    Button( HalDevice *device );
+    Button(HalDevice *device);
     virtual ~Button();
 
     virtual Solid::Button::ButtonType type() const;
@@ -39,10 +39,10 @@ public:
     virtual bool stateValue() const;
 
 Q_SIGNALS:
-    void pressed( int type );
+    void pressed(int type);
 
 private Q_SLOTS:
-    void slotConditionRaised( const QString &condition, const QString &reason );
+    void slotConditionRaised(const QString &condition, const QString &reason);
 };
 
 #endif

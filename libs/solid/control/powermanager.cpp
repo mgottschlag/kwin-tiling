@@ -50,84 +50,84 @@ Solid::Control::PowerManagerPrivate::~PowerManagerPrivate()
 
 QStringList Solid::Control::PowerManager::supportedSchemes()
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       QStringList(), supportedSchemes());
 }
 
 QString Solid::Control::PowerManager::schemeDescription(const QString &schemeName)
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       QString(), schemeDescription(schemeName));
 }
 
 QString Solid::Control::PowerManager::scheme()
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(), QString(), scheme());
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(), QString(), scheme());
 }
 
 bool Solid::Control::PowerManager::setScheme(const QString &name)
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       false, setScheme(name));
 }
 
 Solid::Control::PowerManager::BatteryState Solid::Control::PowerManager::batteryState()
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       NoBatteryState, batteryState());
 }
 
 int Solid::Control::PowerManager::batteryChargePercent()
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       -1, batteryChargePercent());
 }
 
 Solid::Control::PowerManager::AcAdapterState Solid::Control::PowerManager::acAdapterState()
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       Plugged, acAdapterState());
 }
 
 Solid::Control::PowerManager::SuspendMethods Solid::Control::PowerManager::supportedSuspendMethods()
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       UnknownSuspendMethod, supportedSuspendMethods());
 }
 
 KJob *Solid::Control::PowerManager::suspend(SuspendMethod method)
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       0, suspend(method));
 }
 
 Solid::Control::PowerManager::CpuFreqPolicies Solid::Control::PowerManager::supportedCpuFreqPolicies()
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       UnknownCpuFreqPolicy, supportedCpuFreqPolicies());
 }
 
 Solid::Control::PowerManager::CpuFreqPolicy Solid::Control::PowerManager::cpuFreqPolicy()
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       UnknownCpuFreqPolicy, cpuFreqPolicy());
 }
 
 bool Solid::Control::PowerManager::setCpuFreqPolicy(CpuFreqPolicy newPolicy)
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       false, setCpuFreqPolicy(newPolicy));
 }
 
 bool Solid::Control::PowerManager::canDisableCpu(int cpuNum)
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       false, canDisableCpu(cpuNum));
 }
 
 bool Solid::Control::PowerManager::setCpuEnabled(int cpuNum, bool enabled)
 {
-    return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       false, setCpuEnabled(cpuNum, enabled));
 }
 

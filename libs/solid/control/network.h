@@ -49,14 +49,14 @@ namespace Control
          *
          * @param backendObject the network object provided by the backend
          */
-        Network( QObject *backendObject = 0 );
+        Network(QObject *backendObject = 0);
 
         /**
          * Constructs a copy of a network.
          *
          * @param network the network to copy
          */
-        Network( const Network &network );
+        Network(const Network &network);
 
         /**
          * Destroys a Network object.
@@ -115,7 +115,7 @@ namespace Control
          *
          * @param activated true to activate this network, false otherwise
          */
-        void setActivated( bool activated );
+        void setActivated(bool activated);
 
     Q_SIGNALS:
         /**
@@ -129,7 +129,7 @@ namespace Control
          *
          * @param activated true if the network is activated, false otherwise
          */
-        void activationStateChanged( bool activated );
+        void activationStateChanged(bool activated);
 
     protected:
         /**
@@ -149,7 +149,7 @@ namespace Control
         friend class NetworkInterfacePrivate;
     //HACK: to make NetworkList polymorphic (containing both wired and wireless networks, I used Network * here - Will.
     };
-    typedef QList<Network*> NetworkList;
+    typedef QList<Network *> NetworkList;
 
 
 } //Control

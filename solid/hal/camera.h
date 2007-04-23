@@ -26,10 +26,10 @@
 class Camera : public DeviceInterface, virtual public Solid::Ifaces::Camera
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Camera )
+    Q_INTERFACES(Solid::Ifaces::Camera)
 
 public:
-    Camera( HalDevice *device );
+    Camera(HalDevice *device);
     virtual ~Camera();
 
     virtual Solid::Camera::AccessType accessMethod() const;

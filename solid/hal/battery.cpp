@@ -19,11 +19,11 @@
 
 #include "battery.h"
 
-Battery::Battery( HalDevice *device )
-    : DeviceInterface( device )
+Battery::Battery(HalDevice *device)
+    : DeviceInterface(device)
 {
-    connect( device, SIGNAL( propertyChanged( const QMap<QString,int>& ) ),
-             this, SLOT( slotPropertyChanged( const QMap<QString,int>& ) ) );
+    connect(device, SIGNAL(propertyChanged(const QMap<QString,int> &)),
+             this, SLOT(slotPropertyChanged(const QMap<QString,int> &)));
 }
 
 Battery::~Battery()
@@ -34,38 +34,38 @@ Battery::~Battery()
 
 bool Battery::isPlugged() const
 {
-    return m_device->property( "battery.present" ).toBool();
+    return m_device->property("battery.present").toBool();
 }
 
 Solid::Battery::BatteryType Battery::type() const
 {
-    QString name = m_device->property( "battery.type" ).toString();
+    QString name = m_device->property("battery.type").toString();
 
-    if ( name == "pda" )
+    if (name == "pda")
     {
         return Solid::Battery::PdaBattery;
     }
-    else if ( name == "ups" )
+    else if (name == "ups")
     {
         return Solid::Battery::UpsBattery;
     }
-    else if ( name == "primary" )
+    else if (name == "primary")
     {
         return Solid::Battery::PrimaryBattery;
     }
-    else if ( name == "mouse" )
+    else if (name == "mouse")
     {
         return Solid::Battery::MouseBattery;
     }
-    else if ( name == "keyboard" )
+    else if (name == "keyboard")
     {
         return Solid::Battery::KeyboardBattery;
     }
-    else if ( name == "keyboard_mouse" )
+    else if (name == "keyboard_mouse")
     {
         return Solid::Battery::KeyboardMouseBattery;
     }
-    else if ( name == "camera" )
+    else if (name == "camera")
     {
         return Solid::Battery::CameraBattery;
     }
@@ -77,23 +77,23 @@ Solid::Battery::BatteryType Battery::type() const
 
 QString Battery::chargeLevelUnit() const
 {
-    return m_device->property( "battery.charge_level.unit" ).toString();
+    return m_device->property("battery.charge_level.unit").toString();
 }
 
-int Battery::charge( Solid::Battery::LevelType type ) const
+int Battery::charge(Solid::Battery::LevelType type) const
 {
-    switch( type )
+    switch(type)
     {
     case Solid::Battery::MaxLevel:
-        return m_device->property( "battery.charge_level.design" ).toInt();
+        return m_device->property("battery.charge_level.design").toInt();
     case Solid::Battery::LastFullLevel:
-        return m_device->property( "battery.charge_level.last_full" ).toInt();
+        return m_device->property("battery.charge_level.last_full").toInt();
     case Solid::Battery::CurrentLevel:
-        return m_device->property( "battery.charge_level.current" ).toInt();
+        return m_device->property("battery.charge_level.current").toInt();
     case Solid::Battery::WarningLevel:
-        return m_device->property( "battery.charge_level.warning" ).toInt();
+        return m_device->property("battery.charge_level.warning").toInt();
     case Solid::Battery::LowLevel:
-        return m_device->property( "battery.charge_level.low" ).toInt();
+        return m_device->property("battery.charge_level.low").toInt();
     }
 
     // Shouldn't happen...
@@ -102,34 +102,34 @@ int Battery::charge( Solid::Battery::LevelType type ) const
 
 int Battery::chargePercent() const
 {
-    return m_device->property( "battery.charge_level.percentage" ).toInt();
+    return m_device->property("battery.charge_level.percentage").toInt();
 }
 
 QString Battery::voltageUnit() const
 {
-    return m_device->property( "battery.voltage.unit" ).toString();
+    return m_device->property("battery.voltage.unit").toString();
 }
 
 int Battery::voltage() const
 {
-    return m_device->property( "battery.voltage.current" ).toInt();
+    return m_device->property("battery.voltage.current").toInt();
 }
 
 bool Battery::isRechargeable() const
 {
-    return m_device->property( "battery.is_rechargeable" ).toBool();
+    return m_device->property("battery.is_rechargeable").toBool();
 }
 
 Solid::Battery::ChargeState Battery::chargeState() const
 {
-    bool charging = m_device->property( "battery.rechargeable.is_charging" ).toBool();
-    bool discharging = m_device->property( "battery.rechargeable.is_discharging" ).toBool();
+    bool charging = m_device->property("battery.rechargeable.is_charging").toBool();
+    bool discharging = m_device->property("battery.rechargeable.is_discharging").toBool();
 
-    if ( !charging && !discharging )
+    if (!charging && !discharging)
     {
         return Solid::Battery::NoCharge;
     }
-    else if ( charging )
+    else if (charging)
     {
         return Solid::Battery::Charging;
     }
@@ -139,16 +139,16 @@ Solid::Battery::ChargeState Battery::chargeState() const
     }
 }
 
-void Battery::slotPropertyChanged( const QMap<QString,int> &changes )
+void Battery::slotPropertyChanged(const QMap<QString,int> &changes)
 {
-    if ( changes.contains( "battery.charge_level.percentage" ) )
+    if (changes.contains("battery.charge_level.percentage"))
     {
-        emit chargePercentChanged( chargePercent() );
+        emit chargePercentChanged(chargePercent());
     }
-    else if ( changes.contains( "battery.rechargeable.is_charging" )
-           || changes.contains( "battery.rechargeable.is_discharging" ) )
+    else if (changes.contains("battery.rechargeable.is_charging")
+           || changes.contains("battery.rechargeable.is_discharging"))
     {
-        emit chargeStateChanged( chargeState() );
+        emit chargeStateChanged(chargeState());
     }
 }
 

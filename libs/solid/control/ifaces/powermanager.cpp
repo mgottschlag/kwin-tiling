@@ -20,7 +20,7 @@
 #include "powermanager.h"
 
 
-Solid::Control::Ifaces::PowerManager::PowerManager( QObject *parent )
+Solid::Control::Ifaces::PowerManager::PowerManager(QObject *parent)
     : QObject(parent)
 {
 

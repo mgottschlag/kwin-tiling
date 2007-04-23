@@ -22,14 +22,14 @@
 #include <QtDBus/QDBusMessage>
 #include <QTimer>
 
-HalSuspendJob::HalSuspendJob( QDBusInterface &powermanagement,
+HalSuspendJob::HalSuspendJob(QDBusInterface &powermanagement,
                               Solid::Control::PowerManager::SuspendMethod method,
-                              Solid::Control::PowerManager::SuspendMethods supported )
-    : KJob(), m_halPowerManagement( powermanagement )
+                              Solid::Control::PowerManager::SuspendMethods supported)
+    : KJob(), m_halPowerManagement(powermanagement)
 {
-    if ( supported & method )
+    if (supported  & method)
     {
-        switch( method )
+        switch(method)
         {
         case Solid::Control::PowerManager::ToRam:
             m_dbusMethod = "Suspend";
@@ -52,52 +52,52 @@ HalSuspendJob::~HalSuspendJob()
 
 void HalSuspendJob::start()
 {
-    QTimer::singleShot( 0, this, SLOT( doStart() ) );
+    QTimer::singleShot(0, this, SLOT(doStart()));
 }
 
-void HalSuspendJob::kill( bool /*quietly*/ )
+void HalSuspendJob::kill(bool /*quietly */)
 {
 
 }
 
 void HalSuspendJob::doStart()
 {
-    if ( m_dbusMethod.isEmpty() )
+    if (m_dbusMethod.isEmpty())
     {
-        setError( 1 );
-        setErrorText( "Unsupported suspend method" );
+        setError(1);
+        setErrorText("Unsupported suspend method");
         emitResult();
         return;
     }
 
     QList<QVariant> args;
 
-    if ( m_dbusParam>=0 )
+    if (m_dbusParam>=0)
     {
         args << m_dbusParam;
     }
 
-    if ( !m_halPowerManagement.callWithCallback(m_dbusMethod, args,
-                                                this, SLOT( resumeDone( const QDBusMessage& ) ) ) )
+    if (!m_halPowerManagement.callWithCallback(m_dbusMethod, args,
+                                                this, SLOT(resumeDone(const QDBusMessage &))))
     {
-        setError( 1 );
-        setErrorText( m_halPowerManagement.lastError().name()+": "
-                     +m_halPowerManagement.lastError().message() );
+        setError(1);
+        setErrorText(m_halPowerManagement.lastError().name()+": "
+                     +m_halPowerManagement.lastError().message());
         emitResult();
     }
 }
 
 
-void HalSuspendJob::resumeDone( const QDBusMessage &reply )
+void HalSuspendJob::resumeDone(const QDBusMessage &reply)
 {
-    if ( reply.type() == QDBusMessage::ErrorMessage )
+    if (reply.type() == QDBusMessage::ErrorMessage)
     {
         // We ignore the NoReply error, since we can timeout anyway
         // if the computer is suspended for too long.
-        if ( reply.errorName() != "org.freedesktop.DBus.Error.NoReply" )
+        if (reply.errorName() != "org.freedesktop.DBus.Error.NoReply")
         {
-            setError( 1 );
-            setErrorText( reply.errorName()+": "+reply.arguments().at( 0 ).toString() );
+            setError(1);
+            setErrorText(reply.errorName()+": "+reply.arguments().at(0).toString());
         }
     }
 

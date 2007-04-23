@@ -35,7 +35,7 @@ class KDE_EXPORT FakeBluetoothRemoteDevice : public Solid::Control::Ifaces::Blue
     Q_OBJECT
     Q_INTERFACES(Solid::Control::Ifaces::BluetoothRemoteDevice)
 public:
-    FakeBluetoothRemoteDevice(const QMap<QString, QVariant> & propertyMap,
+    FakeBluetoothRemoteDevice(const QMap<QString, QVariant>  & propertyMap,
                               QObject *parent = 0);
     virtual ~FakeBluetoothRemoteDevice();
     QString ubi() const

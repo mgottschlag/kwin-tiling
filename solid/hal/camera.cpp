@@ -19,8 +19,8 @@
 
 #include "camera.h"
 
-Camera::Camera( HalDevice *device )
-    : DeviceInterface( device )
+Camera::Camera(HalDevice *device)
+    : DeviceInterface(device)
 {
 
 }
@@ -33,13 +33,13 @@ Camera::~Camera()
 
 Solid::Camera::AccessType Camera::accessMethod() const
 {
-    QString method = m_device->property( "camera.access_method" ).toString();
+    QString method = m_device->property("camera.access_method").toString();
 
-    if ( method=="storage" )
+    if (method=="storage")
     {
         return Solid::Camera::MassStorage;
     }
-    else if ( method=="ptp" )
+    else if (method=="ptp")
     {
         return Solid::Camera::Ptp;
     }
@@ -51,7 +51,7 @@ Solid::Camera::AccessType Camera::accessMethod() const
 
 bool Camera::isGphotoSupported() const
 {
-    return m_device->property( "camera.libgphoto2.support" ).toBool();
+    return m_device->property("camera.libgphoto2.support").toBool();
 }
 
 #include "camera.moc"

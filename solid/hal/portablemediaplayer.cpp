@@ -19,8 +19,8 @@
 
 #include "portablemediaplayer.h"
 
-PortableMediaPlayer::PortableMediaPlayer( HalDevice *device )
-    : DeviceInterface( device )
+PortableMediaPlayer::PortableMediaPlayer(HalDevice *device)
+    : DeviceInterface(device)
 {
 
 }
@@ -34,7 +34,7 @@ Solid::PortableMediaPlayer::AccessType PortableMediaPlayer::accessMethod() const
 {
     QString type = m_device->property("portable_audio_player.access_method").toString();
 
-    if ( type == "storage" )
+    if (type == "storage")
     {
         return Solid::PortableMediaPlayer::MassStorage;
     }

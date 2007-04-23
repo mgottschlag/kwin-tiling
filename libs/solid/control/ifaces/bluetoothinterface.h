@@ -297,7 +297,7 @@ Q_SIGNALS:
      *
      * @param mode the changed mode
      */
-    void modeChanged( Solid::Control::BluetoothInterface::Mode );
+    void modeChanged(Solid::Control::BluetoothInterface::Mode);
 
     /**
      * The signal is emitted if the discoverable timeout of the bluetooth interface/adapter

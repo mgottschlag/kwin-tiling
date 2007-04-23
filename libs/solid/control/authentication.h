@@ -42,7 +42,7 @@ namespace Control
          * All the authentication's secrets are stored in this map.
          * These can be plaintext passwords, hashed passwords, certificate passphrases
          */
-        void setSecrets( const SecretMap& );
+        void setSecrets(const SecretMap &);
         /**
          * retrieve the map containing secrets.
          */
@@ -89,7 +89,7 @@ namespace Control
         /**
          * Set the auth scheme in use
          */
-        void setMethod( WepMethod );
+        void setMethod(WepMethod);
         /**
          * Get the auth scheme in use
          */
@@ -97,7 +97,7 @@ namespace Control
         /**
          * Set the password scheme in use
          */
-        void setType( WepType );
+        void setType(WepType);
         /**
          * Get the password scheme in use
          */
@@ -110,7 +110,7 @@ namespace Control
          *                  256
          *                  other values (rare)
          */
-        void setKeyLength( int );
+        void setKeyLength(int);
         /**
          * Get the key length, in bits
          */
@@ -149,7 +149,7 @@ namespace Control
         /**
          * Set the protocol in use
          */
-        void setProtocol( WpaProtocol );
+        void setProtocol(WpaProtocol);
         /**
          * Set the protocol in use
          */
@@ -158,7 +158,7 @@ namespace Control
         /**
          * Set the WPA version
          */
-        void setVersion( WpaVersion );
+        void setVersion(WpaVersion);
         /**
          * Get the WPA version
          */
@@ -167,7 +167,7 @@ namespace Control
         /**
          * Set the key management scheme
          */
-        void setKeyManagement( WpaKeyManagement );
+        void setKeyManagement(WpaKeyManagement);
 
         /**
          * Get the key management scheme
@@ -205,7 +205,7 @@ namespace Control
         /**
          * TODO: check with thoenig what this means - probably identity off one of the certs
          */
-        void setIdentity( const QString & );
+        void setIdentity(const QString  &);
         /**
          * TODO: check with thoenig what this means - probably identity off one of the certs
          */
@@ -214,7 +214,7 @@ namespace Control
         /**
          * TODO: check with thoenig what this means - probably identity off one of the certs
          */
-        void setAnonIdentity( const QString & );
+        void setAnonIdentity(const QString  &);
         /**
          * TODO: check with thoenig what this means - probably identity off one of the certs
          */
@@ -223,7 +223,7 @@ namespace Control
         /**
          * Set path to the client certificate
          */
-        void setCertClient( const QString & );
+        void setCertClient(const QString  &);
         /**
          * Get path to the client certificate
          */
@@ -231,7 +231,7 @@ namespace Control
         /**
          * Set path to the certification authority certificate
          */
-        void setCertCA( const QString & );
+        void setCertCA(const QString  &);
         /**
          * Get path to the certification authority certificate
          */
@@ -240,7 +240,7 @@ namespace Control
         /**
          * Set path to the private certificate
          */
-        void setCertPrivate( const QString & );
+        void setCertPrivate(const QString  &);
         /**
          * Get path to the private certificate
          */
@@ -248,7 +248,7 @@ namespace Control
         /**
          * Set the EAP method
          */
-        void setMethod( EapMethod );
+        void setMethod(EapMethod);
         /**
          * Get the EAP method
          */
@@ -256,7 +256,7 @@ namespace Control
         /**
          * Set the ID password key (helper method)
          */
-        void setIdPasswordKey( const QString & );
+        void setIdPasswordKey(const QString  &);
         /**
          * Set the ID password key (helper method)
          */
@@ -265,7 +265,7 @@ namespace Control
         /**
          * Set the private certificate password key (helper method)
          */
-        void setCertPrivatePasswordKey( const QString & );
+        void setCertPrivatePasswordKey(const QString  &);
         /**
          * Get the private certificate password key (helper method)
          */
@@ -290,7 +290,7 @@ namespace Control
              * Call this to check if an authentication is valid
              * (All secrets present, passphrase length correct
              */
-            bool validate( const Authentication * );
+            bool validate(const Authentication *);
         private:
             class Private;
             Private * d;

@@ -26,10 +26,10 @@
 class Block : public DeviceInterface, virtual public Solid::Ifaces::Block
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Block )
+    Q_INTERFACES(Solid::Ifaces::Block)
 
 public:
-    Block( HalDevice *device );
+    Block(HalDevice *device);
     virtual ~Block();
 
     virtual int deviceMajor() const;

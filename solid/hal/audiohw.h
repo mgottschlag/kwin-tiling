@@ -28,10 +28,10 @@ class HalDevice;
 class AudioHw : public DeviceInterface, virtual public Solid::Ifaces::AudioHw
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::AudioHw )
+    Q_INTERFACES(Solid::Ifaces::AudioHw)
 
 public:
-    AudioHw( HalDevice *device );
+    AudioHw(HalDevice *device);
     virtual ~AudioHw();
 
     virtual Solid::AudioHw::AudioDriver driver() const;

@@ -39,22 +39,22 @@ public:
     QDBusInterface manager;
     QDBusInterface *inputManager;
 
-    QMap<QString, BluezBluetoothInterface*> interfaces;
-    QMap<QString, BluezBluetoothInputDevice*> inputDevices;
+    QMap<QString, BluezBluetoothInterface *> interfaces;
+    QMap<QString, BluezBluetoothInputDevice *> inputDevices;
 
 };
 
-BluezBluetoothManager::BluezBluetoothManager(QObject * parent, const QStringList & /*args*/)
+BluezBluetoothManager::BluezBluetoothManager(QObject * parent, const QStringList  & /*args */)
         : BluetoothManager(parent), d(new BluezBluetoothManagerPrivate)
 {
-#define connectManagerToThis( signal, slot ) \
-    d->manager.connection().connect( "org.bluez", \
+#define connectManagerToThis(signal, slot) \
+    d->manager.connection().connect("org.bluez", \
                                      "/org/bluez", \
                                      "org.bluez.Manager", \
-                                     signal, this, SLOT(slot) );
-    connectManagerToThis("AdapterAdded", slotDeviceAdded(const QString&));
-    connectManagerToThis("AdapterRemoved", slotDeviceRemoved(const QString&));
-    connectManagerToThis("DefaultAdapterChanged", slotDefaultDeviceChanged(const QString&));
+                                     signal, this, SLOT(slot));
+    connectManagerToThis("AdapterAdded", slotDeviceAdded(const QString &));
+    connectManagerToThis("AdapterRemoved", slotDeviceRemoved(const QString &));
+    connectManagerToThis("DefaultAdapterChanged", slotDefaultDeviceChanged(const QString &));
 
 
     QDBusReply< QString > busId = d->manager.call("ActivateService", "input");
@@ -65,14 +65,14 @@ BluezBluetoothManager::BluezBluetoothManager(QObject * parent, const QStringList
     d->inputManager = new QDBusInterface(m_inputManagerDest, "/org/bluez/input",
                                          "org.bluez.input.Manager", QDBusConnection::systemBus());
 
-#define connectInputManagerToThis( signal, slot ) \
-    d->inputManager->connection().connect( m_inputManagerDest, \
+#define connectInputManagerToThis(signal, slot) \
+    d->inputManager->connection().connect(m_inputManagerDest, \
                                            "/org/bluez/input", \
                                            "org.bluez.input.Manager", \
-                                           signal, this, SLOT(slot) );
+                                           signal, this, SLOT(slot));
 
-    connectInputManagerToThis("DeviceCreated", inputDeviceCreated(const QString&));
-    connectInputManagerToThis("DeviceRemoved", inputDeviceRemoved(const QString&));
+    connectInputManagerToThis("DeviceCreated", inputDeviceCreated(const QString &));
+    connectInputManagerToThis("DeviceRemoved", inputDeviceRemoved(const QString &));
 }
 
 BluezBluetoothManager::~BluezBluetoothManager()
@@ -88,7 +88,7 @@ QStringList BluezBluetoothManager::bluetoothInterfaces() const
     QDBusReply< QStringList > deviceList = d->manager.call("ListAdapters");
     if (deviceList.isValid()) {
         QStringList devices = deviceList.value();
-        foreach(QString path, devices) {
+        foreach (QString path, devices) {
             bluetoothInterfaces.append(path);
         }
     }
@@ -104,7 +104,7 @@ QString BluezBluetoothManager::defaultInterface() const
     return path.value();
 }
 
-QObject * BluezBluetoothManager::createInterface(const QString & ubi)
+QObject * BluezBluetoothManager::createInterface(const QString  & ubi)
 {
     BluezBluetoothInterface * bluetoothInterface;
     if (d->interfaces.contains(ubi)) {
@@ -134,7 +134,7 @@ QStringList BluezBluetoothManager::bluetoothInputDevices() const
     QDBusReply< QStringList > deviceList = d->inputManager->call("ListDevices");
     if (deviceList.isValid()) {
         QStringList devices = deviceList.value();
-        foreach(QString path, devices) {
+        foreach (QString path, devices) {
             bluetoothInputDevices.append(path);
         }
     }

@@ -26,10 +26,10 @@
 class OpticalDisc : public Volume, virtual public Solid::Ifaces::OpticalDisc
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::OpticalDisc )
+    Q_INTERFACES(Solid::Ifaces::OpticalDisc)
 
 public:
-    OpticalDisc( HalDevice *device );
+    OpticalDisc(HalDevice *device);
     virtual ~OpticalDisc();
 
     virtual Solid::OpticalDisc::ContentTypes availableContent() const;

@@ -24,12 +24,12 @@
 #include <solid/control/ifaces/network.h>
 
 struct NMDBusNetworkProperties {
-	QString ipv4Address;
-	QString subnetMask;
-	QString broadcast;
-	QString route;
-	QHostAddress primaryDNS;
-	QHostAddress secondaryDNS;
+    QString ipv4Address;
+    QString subnetMask;
+    QString broadcast;
+    QString route;
+    QHostAddress primaryDNS;
+    QHostAddress secondaryDNS;
 };
 
 class NMNetworkPrivate;
@@ -46,19 +46,19 @@ public:
      * Constructs a network and looks up its properties over DBus.
      * @param net contains the IP details of the network.
      */
-    NMNetwork( const QString & networkPath );
+    NMNetwork(const QString  & networkPath);
     virtual ~NMNetwork();
     QString uni() const;
     QList<QNetworkAddressEntry> addressEntries() const;
     QString route() const;
     QList<QHostAddress> dnsServers() const;
     bool isActive() const;
-    virtual void setActivated( bool activated );
+    virtual void setActivated(bool activated);
 
-    void setProperties( const NMDBusNetworkProperties & props );
+    void setProperties(const NMDBusNetworkProperties  & props);
 Q_SIGNALS:
     void ipDetailsChanged();
-    void activationStateChanged( bool );
+    void activationStateChanged(bool);
 private:
     NMNetworkPrivate * d;
 };

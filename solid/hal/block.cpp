@@ -21,8 +21,8 @@
 
 #include "haldevice.h"
 
-Block::Block( HalDevice *device )
-    : DeviceInterface( device )
+Block::Block(HalDevice *device)
+    : DeviceInterface(device)
 {
 
 }
@@ -34,17 +34,17 @@ Block::~Block()
 
 int Block::deviceMajor() const
 {
-    return m_device->property( "block.major" ).toInt();
+    return m_device->property("block.major").toInt();
 }
 
 int Block::deviceMinor() const
 {
-    return m_device->property( "block.minor" ).toInt();
+    return m_device->property("block.minor").toInt();
 }
 
 QString Block::device() const
 {
-    return m_device->property( "block.device" ).toString();
+    return m_device->property("block.device").toString();
 }
 
 #include "block.moc"

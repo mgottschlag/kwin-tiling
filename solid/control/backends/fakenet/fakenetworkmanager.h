@@ -43,20 +43,20 @@ class KDE_EXPORT FakeNetworkManager : public Solid::Control::Ifaces::NetworkMana
 {
 Q_OBJECT
     public:
-        FakeNetworkManager( QObject * parent, const QStringList & args );
-        FakeNetworkManager( QObject * parent, const QStringList & args, const QString & xmlFile );
+        FakeNetworkManager(QObject * parent, const QStringList  & args);
+        FakeNetworkManager(QObject * parent, const QStringList  & args, const QString  & xmlFile);
         virtual ~FakeNetworkManager();
         QStringList networkInterfaces() const;
         QStringList activeNetworkInterfaces() const;
-        QObject * createNetworkInterface( const QString &);
+        QObject * createNetworkInterface(const QString &);
         QObject * createAuthenticationValidator();
 
         bool isNetworkingEnabled() const;
         bool isWirelessEnabled() const;
     public Q_SLOTS:
-        void setWirelessEnabled( bool );
-        void setNetworkingEnabled( bool );
-        void notifyHiddenNetwork( const QString & );
+        void setWirelessEnabled(bool);
+        void setNetworkingEnabled(bool);
+        void notifyHiddenNetwork(const QString  &);
 
     private:
         void parseNetworkingFile();
@@ -65,7 +65,7 @@ Q_OBJECT
 
         bool mUserNetworkingEnabled;
         bool mUserWirelessEnabled;
-        QMap<QString, FakeNetworkInterface*> mNetworkInterfaces;
+        QMap<QString, FakeNetworkInterface *> mNetworkInterfaces;
         FakeAuthenticationValidator * mAuthValidator;
         QString mXmlFile;
 };
@@ -73,11 +73,11 @@ Q_OBJECT
 class FakeAuthenticationValidator : public QObject, public Solid::Control::Ifaces::AuthenticationValidator
 {
 Q_OBJECT
-Q_INTERFACES( Solid::Control::Ifaces::AuthenticationValidator )
+Q_INTERFACES(Solid::Control::Ifaces::AuthenticationValidator)
     public:
-        FakeAuthenticationValidator( QObject * parent );
+        FakeAuthenticationValidator(QObject * parent);
         virtual ~FakeAuthenticationValidator();
-        bool validate( const Solid::Control::Authentication * );
+        bool validate(const Solid::Control::Authentication *);
 };
 
 #endif

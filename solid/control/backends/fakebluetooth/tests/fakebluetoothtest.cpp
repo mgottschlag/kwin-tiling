@@ -34,7 +34,7 @@ void FakeBluetooth_Test::testFakeBluetooth()
     QVERIFY(!fbm->bluetoothInterfaces().isEmpty());
 
     // Bluetooth Interface
-    FakeBluetoothInterface *interface = static_cast<FakeBluetoothInterface*>(fbm->createBluetoothInterface("/org/kde/solid/fakebluetooth/hci0"));
+    FakeBluetoothInterface *interface = static_cast<FakeBluetoothInterface *>(fbm->createBluetoothInterface("/org/kde/solid/fakebluetooth/hci0"));
 
     QCOMPARE(interface->ubi(), QString("/org/kde/solid/fakebluetooth/hci0"));
     QCOMPARE(interface->address(), QString("00:E0:98:DD:4E:FF"));
@@ -49,13 +49,13 @@ void FakeBluetooth_Test::testFakeBluetooth()
     QCOMPARE(interface->bluetoothRemoteDevices().count(), 4);
     kDebug() << "REMOTE DEVICES: " << interface->bluetoothRemoteDevices() << endl;
     FakeBluetoothRemoteDevice *device =
-        static_cast<FakeBluetoothRemoteDevice*>(interface->createBluetoothRemoteDevice("/org/kde/solid/fakebluetooth/hci0/EE:EE:EE:EE:EE:EE"));
+        static_cast<FakeBluetoothRemoteDevice *>(interface->createBluetoothRemoteDevice("/org/kde/solid/fakebluetooth/hci0/EE:EE:EE:EE:EE:EE"));
 
     QCOMPARE(device->name(), QString("N800"));
     QCOMPARE(device->alias(), QString("My N800"));
 
     // Bluetooth Interface
-    interface = static_cast<FakeBluetoothInterface*>(fbm->createBluetoothInterface("/org/kde/solid/fakebluetooth/XXX"));
+    interface = static_cast<FakeBluetoothInterface *>(fbm->createBluetoothInterface("/org/kde/solid/fakebluetooth/XXX"));
 
     QCOMPARE(interface->ubi(), QString("/org/kde/solid/fakebluetooth/XXX"));
     QCOMPARE(interface->address(), QString("AA:FF:EE:AA:FF:EE"));

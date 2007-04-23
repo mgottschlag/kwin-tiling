@@ -32,10 +32,10 @@ using namespace Solid::Control::Ifaces;
 class KDE_EXPORT FakeNetwork : public QObject, virtual public Solid::Control::Ifaces::Network
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Control::Ifaces::Network )
+    Q_INTERFACES(Solid::Control::Ifaces::Network)
 public:
-    FakeNetwork( const QString & uni, const QMap<QString, QVariant> & propertyMap,
-                 QObject * parent = 0 );
+    FakeNetwork(const QString  & uni, const QMap<QString, QVariant>  & propertyMap,
+                 QObject * parent = 0);
     virtual ~FakeNetwork();
 
     QList<QNetworkAddressEntry> addressEntries() const;
@@ -44,17 +44,17 @@ public:
 
     QList<QHostAddress> dnsServers() const;
 
-    void setActivated( bool );
+    void setActivated(bool);
     bool isActive() const;
 
     QString uni() const;
 Q_SIGNALS:
     void ipDetailsChanged();
-    void activationStateChanged( bool );
+    void activationStateChanged(bool);
 
 protected:
-    QList<QHostAddress> stringlistToKIpAddress(  const QStringList & addrStringList ) const;
-    QList<QNetworkAddressEntry> stringlistsToQNetworkAddressEntries( const QStringList &,const QStringList &,const QStringList & ) const;
+    QList<QHostAddress> stringlistToKIpAddress( const QStringList  & addrStringList) const;
+    QList<QNetworkAddressEntry> stringlistsToQNetworkAddressEntries(const QStringList &,const QStringList &,const QStringList  &) const;
     QMap<QString, QVariant> mPropertyMap;
 };
 

@@ -39,14 +39,14 @@ namespace Control
 }
 }
 
-Solid::Control::WirelessNetwork::WirelessNetwork( QObject *backendObject )
+Solid::Control::WirelessNetwork::WirelessNetwork(QObject *backendObject)
     : Network(*new WirelessNetworkPrivate(this), backendObject)
 {
     Q_D(WirelessNetwork);
     d->setBackendObject(backendObject);
 }
 
-Solid::Control::WirelessNetwork::WirelessNetwork( const WirelessNetwork & network )
+Solid::Control::WirelessNetwork::WirelessNetwork(const WirelessNetwork  & network)
     : Network(*new WirelessNetworkPrivate(this), network)
 {
     Q_D(WirelessNetwork);
@@ -74,16 +74,16 @@ Solid::Control::WirelessNetwork::~WirelessNetwork()
 
 }
 
-bool Solid::Control::WirelessNetwork::isSameAs( const WirelessNetwork & other) const
+bool Solid::Control::WirelessNetwork::isSameAs(const WirelessNetwork  & other) const
 {
-    if ( other.essid() == essid() )
+    if (other.essid() == essid())
     {
-        QStringListIterator it( bssList() );
+        QStringListIterator it(bssList());
         const QStringList otherBSSList = other.bssList();
-        while ( it.hasNext() )
+        while (it.hasNext())
         {
             QString bss = it.next();
-            if ( other.bssList().contains( bss ) )
+            if (other.bssList().contains(bss))
             {
                 return true;
             }
@@ -95,73 +95,73 @@ bool Solid::Control::WirelessNetwork::isSameAs( const WirelessNetwork & other) c
 int Solid::Control::WirelessNetwork::signalStrength() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), 0, signalStrength());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), 0, signalStrength());
 }
 
 int Solid::Control::WirelessNetwork::bitrate() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), 0, bitrate());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), 0, bitrate());
 }
 
 double Solid::Control::WirelessNetwork::frequency() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), 0, frequency());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), 0, frequency());
 }
 
 Solid::Control::MacAddressList Solid::Control::WirelessNetwork::bssList() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), MacAddressList(), bssList());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), MacAddressList(), bssList());
 }
 
 Solid::Control::Authentication *Solid::Control::WirelessNetwork::authentication() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), 0, authentication());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), 0, authentication());
 }
 
 Solid::Control::WirelessNetwork::Capabilities Solid::Control::WirelessNetwork::capabilities() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), Capabilities(), capabilities());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), Capabilities(), capabilities());
 }
 
 QString Solid::Control::WirelessNetwork::essid() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), QString(), essid());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), QString(), essid());
 }
 
 Solid::Control::WirelessNetwork::OperationMode Solid::Control::WirelessNetwork::mode() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), Unassociated, mode());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), Unassociated, mode());
 }
 
 bool Solid::Control::WirelessNetwork::isAssociated() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), false, isAssociated());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), false, isAssociated());
 }
 
 bool Solid::Control::WirelessNetwork::isEncrypted() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), false, isEncrypted());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), false, isEncrypted());
 }
 
 bool Solid::Control::WirelessNetwork::isHidden() const
 {
     Q_D(const WirelessNetwork);
-    return_SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), false, isHidden());
+    return_SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), false, isHidden());
 }
 
-void Solid::Control::WirelessNetwork::setAuthentication( Authentication *authentication )
+void Solid::Control::WirelessNetwork::setAuthentication(Authentication *authentication)
 {
     Q_D(WirelessNetwork);
-    SOLID_CALL(Ifaces::WirelessNetwork*, d->backendObject(), setAuthentication( authentication ));
+    SOLID_CALL(Ifaces::WirelessNetwork *, d->backendObject(), setAuthentication(authentication));
 }
 
 #include "wirelessnetwork.moc"

@@ -48,7 +48,7 @@ namespace Ifaces
          *
          * @param parent the parent object
          */
-        NetworkInterface( QObject *parent = 0 );
+        NetworkInterface(QObject *parent = 0);
 
         /**
          * Destructs a NetworkInterface object.
@@ -125,7 +125,7 @@ namespace Ifaces
          * @param uni the identifier of the network instantiated
          * @returns a new Network object if there's a network having the given UNI for this device, 0 otherwise
          */
-        virtual QObject *createNetwork( const QString & uni ) = 0;
+        virtual QObject *createNetwork(const QString  & uni) = 0;
 
         /**
          * Retrieves the networks available via this network interfaces.
@@ -145,7 +145,7 @@ namespace Ifaces
          *
          * @param activated true if the device is active, false otherwise
          */
-        void activeChanged( bool activated );
+        void activeChanged(bool activated);
 
         /**
          * This signal is emitted when the device's link status changed. For example, if there
@@ -153,7 +153,7 @@ namespace Ifaces
          *
          * @param linkActivated true if the carrier got detected, false otherwise
          */
-        void linkUpChanged( bool linkActivated );
+        void linkUpChanged(bool linkActivated);
 
 
         /**
@@ -161,7 +161,7 @@ namespace Ifaces
          *
          * @param strength the new device signal strength
          */
-        void signalStrengthChanged( int strength );
+        void signalStrengthChanged(int strength);
 
         /**
          * This signal is emitted when the device's connection state changed.
@@ -170,26 +170,26 @@ namespace Ifaces
          * @param state the new state of the connection
          * @see Solid::Control::NetworkInterface::ConnectionState
          */
-        void connectionStateChanged( int state );
+        void connectionStateChanged(int state);
 
         /**
          * This signal is emitted when the device detects a new reachable network.
          *
          * @param uni the new network identifier
          */
-        void networkAppeared( const QString & uni );
+        void networkAppeared(const QString  & uni);
 
         /**
          * This signal is emitted when the device decides that a network is not reachable anymore.
          *
          * @param uni the identifier of the network that disappeared
          */
-        void networkDisappeared( const QString & uni );
+        void networkDisappeared(const QString  & uni);
     };
 } //Ifaces
 } //Control
 } //Solid
 
-Q_DECLARE_INTERFACE( Solid::Control::Ifaces::NetworkInterface, "org.kde.Solid.Control.Ifaces.NetworkInterface/0.1" )
+Q_DECLARE_INTERFACE(Solid::Control::Ifaces::NetworkInterface, "org.kde.Solid.Control.Ifaces.NetworkInterface/0.1")
 
 #endif

@@ -54,7 +54,7 @@ void SolidBluetoothTest::testBluetoothInterfaces()
 
     expected_ubis = QSet<QString>::fromList(fakeManager->bluetoothInterfaces());
 
-    foreach(Solid::Control::BluetoothInterface iface , interfaces) {
+    foreach (Solid::Control::BluetoothInterface iface , interfaces) {
         received_ubis << iface.ubi();
     }
 

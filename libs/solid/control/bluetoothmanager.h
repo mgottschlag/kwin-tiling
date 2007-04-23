@@ -83,7 +83,7 @@ public:
      * @param ubi the identifier of the bluetooth interface to find
      * @returns a valid BlueoothInterface object if there's a device having the given UBI, an invalid one otherwise
      */
-    const BluetoothInterface &findBluetoothInterface(const QString & ubi) const;
+    const BluetoothInterface &findBluetoothInterface(const QString  & ubi) const;
 
 
     /**
@@ -92,7 +92,7 @@ public:
      * @param ubi the identifier of the bluetooth input device to find
      * @returns a valid BlueoothInputDevice object if there's a device having the given UBI, an invalid one otherwise
      */
-    const BluetoothInputDevice &findBluetoothInputDevice(const QString & ubi) const;
+    const BluetoothInputDevice &findBluetoothInputDevice(const QString  & ubi) const;
 
     /**
      * Retrieves the list of Universal Bluetooth Identifiers (UBIs) of bluetooth input devices
@@ -124,7 +124,7 @@ public Q_SLOTS:
      *
      * @param ubi the bluetooth input device identifier
      */
-    void removeInputDevice(const QString & ubi);
+    void removeInputDevice(const QString  & ubi);
 
 Q_SIGNALS:
     /**
@@ -132,50 +132,50 @@ Q_SIGNALS:
      *
      * @param ubi the bluetooth interface identifier
      */
-    void interfaceAdded(const QString & ubi);
+    void interfaceAdded(const QString  & ubi);
 
     /**
      * This signal is emitted when a bluetooth interface is not available anymore.
      *
      * @param ubi the bluetooth interface identifier
      */
-    void interfaceRemoved(const QString & ubi);
+    void interfaceRemoved(const QString  & ubi);
 
     /**
      * This signal is emitted when the default bluetooth interface changed.
      *
      * @param ubi the bluetooth interface identifier
      */
-    void defaultInterfaceChanged(const QString & ubi);
+    void defaultInterfaceChanged(const QString  & ubi);
 
     /**
      * This signal is emitted when a new bluetooth input device got configured/created.
      *
      * @param ubi the bluetooth input device identifier
      */
-    void inputDeviceCreated(const QString & ubi);
+    void inputDeviceCreated(const QString  & ubi);
 
     /**
      * This signal is emitted when a bluetooth input device configuration is not available anymore.
      *
      * @param ubi the bluetooth input device identifier
      */
-    void inputDeviceRemoved(const QString & ubi);
+    void inputDeviceRemoved(const QString  & ubi);
 
 
 private:
     BluetoothManager();
     ~BluetoothManager();
 
-    BluetoothInterfaceList buildDeviceList(const QStringList & ubiList) const;
+    BluetoothInterfaceList buildDeviceList(const QStringList  & ubiList) const;
 
-    Q_PRIVATE_SLOT(d, void _k_interfaceAdded(const QString&))
-    Q_PRIVATE_SLOT(d, void _k_interfaceRemoved(const QString&))
-    Q_PRIVATE_SLOT(d, void _k_interfaceDestroyed(QObject*))
+    Q_PRIVATE_SLOT(d, void _k_interfaceAdded(const QString &))
+    Q_PRIVATE_SLOT(d, void _k_interfaceRemoved(const QString &))
+    Q_PRIVATE_SLOT(d, void _k_interfaceDestroyed(QObject *))
 
-    Q_PRIVATE_SLOT(d, void _k_inputDeviceCreated(const QString&))
-    Q_PRIVATE_SLOT(d, void _k_inputDeviceRemoved(const QString&))
-    Q_PRIVATE_SLOT(d, void _k_inputDeviceDestroyed(QObject*))
+    Q_PRIVATE_SLOT(d, void _k_inputDeviceCreated(const QString &))
+    Q_PRIVATE_SLOT(d, void _k_inputDeviceRemoved(const QString &))
+    Q_PRIVATE_SLOT(d, void _k_inputDeviceDestroyed(QObject *))
 
     BluetoothManagerPrivate * const d;
     friend class BluetoothManagerPrivate;

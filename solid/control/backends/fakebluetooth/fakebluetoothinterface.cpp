@@ -26,7 +26,7 @@
 
 #include <kdebug.h>
 
-FakeBluetoothInterface::FakeBluetoothInterface(const QMap<QString, QVariant> & propertyMap, QObject * parent)
+FakeBluetoothInterface::FakeBluetoothInterface(const QMap<QString, QVariant>  & propertyMap, QObject * parent)
         : Solid::Control::Ifaces::BluetoothInterface(parent), mPropertyMap(propertyMap)
 {
     mAddress = mPropertyMap["address"].toString();
@@ -34,7 +34,7 @@ FakeBluetoothInterface::FakeBluetoothInterface(const QMap<QString, QVariant> & p
     mRevision = mPropertyMap["revision"].toString();
     mManufacturer = mPropertyMap["manufacturer"].toString();
     mCompany = mPropertyMap["company"].toString();
-    mMode = ( Solid::Control::BluetoothInterface::Mode) mPropertyMap["mode"].toInt();
+    mMode = (Solid::Control::BluetoothInterface::Mode) mPropertyMap["mode"].toInt();
     mDiscoverableTimeout = mPropertyMap["discoverableTimeout"].toInt();
     mDiscoverable = mPropertyMap["isDiscoverable"].toBool();
     mConnections.append(mPropertyMap["connections"].toString());
@@ -54,7 +54,7 @@ FakeBluetoothInterface::FakeBluetoothInterface(const QMap<QString, QVariant> & p
 
 FakeBluetoothInterface::~FakeBluetoothInterface()
 {
-    foreach(FakeBluetoothRemoteDevice *device, mBluetoothRemoteDevices) {
+    foreach (FakeBluetoothRemoteDevice *device, mBluetoothRemoteDevices) {
         kDebug() << "DEVICE: " << device->ubi() << endl;
         delete device;
     }
@@ -62,7 +62,7 @@ FakeBluetoothInterface::~FakeBluetoothInterface()
     mBluetoothRemoteDevices.clear();
 }
 
-QObject * FakeBluetoothInterface::createBluetoothRemoteDevice(const QString & ubi)
+QObject * FakeBluetoothInterface::createBluetoothRemoteDevice(const QString  & ubi)
 {
     if (mBluetoothRemoteDevices.contains(ubi)) {
         kDebug() << k_funcinfo << "found " << ubi << endl;

@@ -23,5 +23,5 @@
 
 
 typedef KGenericFactory<HalManager, Solid::Ifaces::DeviceManager> HalBackendFactory;
-K_EXPORT_COMPONENT_FACTORY( solid_hal_discovery, HalBackendFactory( "halbackend" ) )
+K_EXPORT_COMPONENT_FACTORY(solid_hal_discovery, HalBackendFactory("halbackend"))
 

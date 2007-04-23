@@ -136,7 +136,7 @@ namespace Ifaces
          *
          * @param authentication the new authentication scheme to use
          */
-        virtual void setAuthentication( Authentication *authentication ) = 0;
+        virtual void setAuthentication(Authentication *authentication) = 0;
 
     protected:
     //Q_SIGNALS:
@@ -146,14 +146,14 @@ namespace Ifaces
          *
          * @param strength the new signal strength value for this network
          */
-        virtual void signalStrengthChanged( int strength ) = 0;
+        virtual void signalStrengthChanged(int strength) = 0;
 
         /**
          * This signal is emitted when the bitrate of this network has changed.
          *
          * @param bitrate the new bitrate value for this network
          */
-        virtual void bitrateChanged( int bitrate ) = 0;
+        virtual void bitrateChanged(int bitrate) = 0;
 
         /**
          * This signal is emitted when the association state of this device
@@ -161,7 +161,7 @@ namespace Ifaces
          *
          * @param associated true if the network is associated, false otherwise
          */
-        virtual void associationChanged( bool associated ) = 0;
+        virtual void associationChanged(bool associated) = 0;
 
         /**
          * Emitted when the network requires authentication data in order to be able to connect.
@@ -176,6 +176,6 @@ namespace Ifaces
 } //Control
 } //Solid
 
-Q_DECLARE_INTERFACE( Solid::Control::Ifaces::WirelessNetwork, "org.kde.Solid.Control.Ifaces.WirelessNetwork/0.1" )
+Q_DECLARE_INTERFACE(Solid::Control::Ifaces::WirelessNetwork, "org.kde.Solid.Control.Ifaces.WirelessNetwork/0.1")
 
 #endif

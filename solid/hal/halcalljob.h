@@ -31,13 +31,13 @@ class HalCallJob : public KJob
 {
     Q_OBJECT
 public:
-    HalCallJob( const QDBusConnection &connection, const QString &udi,
+    HalCallJob(const QDBusConnection &connection, const QString &udi,
                 const QString &interface,  const QString &methodName,
-                const QList<QVariant> &parameters );
+                const QList<QVariant> &parameters);
     virtual ~HalCallJob();
 
     void start();
-    void kill( bool quietly );
+    void kill(bool quietly);
 
 private Q_SLOTS:
     void doStart();

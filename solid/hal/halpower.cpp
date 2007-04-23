@@ -29,25 +29,25 @@
 #include <solid/battery.h>
 #include <solid/button.h>
 
-HalPower::HalPower( QObject *parent, const QStringList & /*args*/ )
-    : PowerManager( parent ),
-      m_halComputer( "org.freedesktop.Hal",
+HalPower::HalPower(QObject *parent, const QStringList  & /*args */)
+    : PowerManager(parent),
+      m_halComputer("org.freedesktop.Hal",
                      "/org/freedesktop/Hal/devices/computer",
                      "org.freedesktop.Hal.Device",
-                     QDBusConnection::systemBus() ),
-      m_halPowerManagement( "org.freedesktop.Hal",
+                     QDBusConnection::systemBus()),
+      m_halPowerManagement("org.freedesktop.Hal",
                             "/org/freedesktop/Hal/devices/computer",
                             "org.freedesktop.Hal.Device.SystemPowerManagement",
-                            QDBusConnection::systemBus() ),
-      m_halCpuFreq( "org.freedesktop.Hal",
+                            QDBusConnection::systemBus()),
+      m_halCpuFreq("org.freedesktop.Hal",
                     "/org/freedesktop/Hal/devices/computer",
                     "org.freedesktop.Hal.Device.CPUFreq",
-                    QDBusConnection::systemBus() )
+                    QDBusConnection::systemBus())
 {
-    connect(Solid::DeviceManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
-            this, SLOT(slotDeviceRemoved(const QString&)));
-    connect(Solid::DeviceManager::notifier(), SIGNAL(newDeviceInterface(const QString&, int)),
-            this, SLOT(slotNewDeviceInterface(const QString&, int)));
+    connect(Solid::DeviceManager::notifier(), SIGNAL(deviceRemoved(const QString &)),
+            this, SLOT(slotDeviceRemoved(const QString &)));
+    connect(Solid::DeviceManager::notifier(), SIGNAL(newDeviceInterface(const QString &, int)),
+            this, SLOT(slotNewDeviceInterface(const QString &, int)));
 
     m_pluggedAdapterCount = 0;
     computeAcAdapters();
@@ -60,13 +60,13 @@ HalPower::HalPower( QObject *parent, const QStringList & /*args*/ )
 
 HalPower::~HalPower()
 {
-    QList<Solid::Device*> devices;
+    QList<Solid::Device *> devices;
 
     devices << m_acAdapters.values();
     devices << m_batteries.values();
     devices << m_buttons.values();
 
-    foreach( Solid::Device *dev, devices )
+    foreach (Solid::Device *dev, devices)
     {
         delete dev;
     }
@@ -77,7 +77,7 @@ QStringList HalPower::supportedSchemes() const
     return QStringList() << "performance" << "powersaving";
 }
 
-QString HalPower::schemeDescription( const QString &schemeName ) const
+QString HalPower::schemeDescription(const QString &schemeName) const
 {
     if (schemeName=="performance")
     {
@@ -101,7 +101,7 @@ QString HalPower::scheme() const
     return QString();
 }
 
-bool HalPower::setScheme( const QString &name )
+bool HalPower::setScheme(const QString &name)
 {
     bool powersave;
 
@@ -109,7 +109,7 @@ bool HalPower::setScheme( const QString &name )
     {
         powersave = true;
     }
-    else if ( name=="performance" )
+    else if (name=="performance")
     {
         powersave = false;
     }
@@ -118,9 +118,9 @@ bool HalPower::setScheme( const QString &name )
         return false;
     }
 
-    QDBusReply<int> reply = m_halPowerManagement.call( "SetPowerSave", powersave );
+    QDBusReply<int> reply = m_halPowerManagement.call("SetPowerSave", powersave);
 
-    if ( reply.isValid() )
+    if (reply.isValid())
     {
         int code = reply;
         return code==0;
@@ -133,19 +133,19 @@ bool HalPower::setScheme( const QString &name )
 
 Solid::Control::PowerManager::BatteryState HalPower::batteryState() const
 {
-    if ( m_batteries.size()==0 )
+    if (m_batteries.size()==0)
     {
         return Solid::Control::PowerManager::NoBatteryState;
     }
-    else if ( m_currentBatteryCharge <= m_criticalBatteryCharge )
+    else if (m_currentBatteryCharge <= m_criticalBatteryCharge)
     {
         return Solid::Control::PowerManager::Critical;
     }
-    else if ( m_currentBatteryCharge <= m_lowBatteryCharge )
+    else if (m_currentBatteryCharge <= m_lowBatteryCharge)
     {
         return Solid::Control::PowerManager::Low;
     }
-    else if ( m_currentBatteryCharge <= m_warningBatteryCharge )
+    else if (m_currentBatteryCharge <= m_warningBatteryCharge)
     {
         return Solid::Control::PowerManager::Warning;
     }
@@ -157,16 +157,16 @@ Solid::Control::PowerManager::BatteryState HalPower::batteryState() const
 
 int HalPower::batteryChargePercent() const
 {
-    return ( m_currentBatteryCharge*100 )/m_maxBatteryCharge;
+    return (m_currentBatteryCharge *100)/m_maxBatteryCharge;
 }
 
 Solid::Control::PowerManager::AcAdapterState HalPower::acAdapterState() const
 {
-    if ( m_acAdapters.size()==0 )
+    if (m_acAdapters.size()==0)
     {
         return Solid::Control::PowerManager::UnknownAcAdapterState;
     }
-    else if ( m_pluggedAdapterCount==0 )
+    else if (m_pluggedAdapterCount==0)
     {
         return Solid::Control::PowerManager::Unplugged;
     }
@@ -180,12 +180,12 @@ Solid::Control::PowerManager::SuspendMethods HalPower::supportedSuspendMethods()
 {
     Solid::Control::PowerManager::SuspendMethods supported = Solid::Control::PowerManager::UnknownSuspendMethod;
 
-    QDBusReply<bool> reply = m_halComputer.call( "GetPropertyBoolean", "power_management.can_hibernate" );
+    QDBusReply<bool> reply = m_halComputer.call("GetPropertyBoolean", "power_management.can_hibernate");
 
-    if ( reply.isValid() )
+    if (reply.isValid())
     {
         bool can_suspend = reply;
-        if ( can_suspend )
+        if (can_suspend)
         {
             supported |= Solid::Control::PowerManager::ToRam;
         }
@@ -195,12 +195,12 @@ Solid::Control::PowerManager::SuspendMethods HalPower::supportedSuspendMethods()
         kDebug() << reply.error().name() << ": " << reply.error().message() << endl;
     }
 
-    reply = m_halComputer.call( "GetPropertyBoolean", "power_management.can_hibernate" );
+    reply = m_halComputer.call("GetPropertyBoolean", "power_management.can_hibernate");
 
-    if ( reply.isValid() )
+    if (reply.isValid())
     {
         bool can_hibernate = reply;
-        if ( can_hibernate )
+        if (can_hibernate)
         {
             supported |= Solid::Control::PowerManager::ToDisk;
         }
@@ -213,7 +213,7 @@ Solid::Control::PowerManager::SuspendMethods HalPower::supportedSuspendMethods()
     return supported;
 }
 
-KJob *HalPower::suspend( Solid::Control::PowerManager::SuspendMethod method ) const
+KJob *HalPower::suspend(Solid::Control::PowerManager::SuspendMethod method) const
 {
     return new HalSuspendJob(m_halPowerManagement,
                              method, supportedSuspendMethods());
@@ -221,9 +221,9 @@ KJob *HalPower::suspend( Solid::Control::PowerManager::SuspendMethod method ) co
 
 Solid::Control::PowerManager::CpuFreqPolicies HalPower::supportedCpuFreqPolicies() const
 {
-    QDBusReply<QStringList> reply = m_halCpuFreq.call( "GetCPUFreqAvailableGovernors" );
+    QDBusReply<QStringList> reply = m_halCpuFreq.call("GetCPUFreqAvailableGovernors");
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         return Solid::Control::PowerManager::UnknownCpuFreqPolicy;
     }
@@ -232,21 +232,21 @@ Solid::Control::PowerManager::CpuFreqPolicies HalPower::supportedCpuFreqPolicies
         QStringList governors = reply;
         Solid::Control::PowerManager::CpuFreqPolicies policies = Solid::Control::PowerManager::UnknownCpuFreqPolicy;
 
-        foreach( QString governor, governors )
+        foreach (QString governor, governors)
         {
-            if ( governor == "ondemand" )
+            if (governor == "ondemand")
             {
                 policies|= Solid::Control::PowerManager::OnDemand;
             }
-            else if ( governor == "userspace" )
+            else if (governor == "userspace")
             {
                 policies|= Solid::Control::PowerManager::Userspace;
             }
-            else if ( governor == "powersave" )
+            else if (governor == "powersave")
             {
                 policies|= Solid::Control::PowerManager::Powersave;
             }
-            else if ( governor == "performance" )
+            else if (governor == "performance")
             {
                 policies|= Solid::Control::PowerManager::Performance;
             }
@@ -262,9 +262,9 @@ Solid::Control::PowerManager::CpuFreqPolicies HalPower::supportedCpuFreqPolicies
 
 Solid::Control::PowerManager::CpuFreqPolicy HalPower::cpuFreqPolicy() const
 {
-    QDBusReply<QString> reply = m_halCpuFreq.call( "GetCPUFreqGovernor" );
+    QDBusReply<QString> reply = m_halCpuFreq.call("GetCPUFreqGovernor");
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         return Solid::Control::PowerManager::UnknownCpuFreqPolicy;
     }
@@ -272,19 +272,19 @@ Solid::Control::PowerManager::CpuFreqPolicy HalPower::cpuFreqPolicy() const
     {
         QString governor = reply;
 
-        if ( governor == "ondemand" )
+        if (governor == "ondemand")
         {
             return Solid::Control::PowerManager::OnDemand;
         }
-        else if ( governor == "userspace" )
+        else if (governor == "userspace")
         {
             return Solid::Control::PowerManager::Userspace;
         }
-        else if ( governor == "powersave" )
+        else if (governor == "powersave")
         {
             return Solid::Control::PowerManager::Powersave;
         }
-        else if ( governor == "performance" )
+        else if (governor == "performance")
         {
             return Solid::Control::PowerManager::Performance;
         }
@@ -295,11 +295,11 @@ Solid::Control::PowerManager::CpuFreqPolicy HalPower::cpuFreqPolicy() const
     }
 }
 
-bool HalPower::setCpuFreqPolicy( Solid::Control::PowerManager::CpuFreqPolicy newPolicy )
+bool HalPower::setCpuFreqPolicy(Solid::Control::PowerManager::CpuFreqPolicy newPolicy)
 {
     QString governor;
 
-    switch( newPolicy )
+    switch(newPolicy)
     {
     case Solid::Control::PowerManager::OnDemand:
         governor = "ondemand";
@@ -317,9 +317,9 @@ bool HalPower::setCpuFreqPolicy( Solid::Control::PowerManager::CpuFreqPolicy new
         return false;
     }
 
-    QDBusReply<int> reply = m_halCpuFreq.call( "SetCPUFreqGovernor", governor );
+    QDBusReply<int> reply = m_halCpuFreq.call("SetCPUFreqGovernor", governor);
 
-    if ( reply.isValid() )
+    if (reply.isValid())
     {
         int code = reply;
         return code==0;
@@ -330,12 +330,12 @@ bool HalPower::setCpuFreqPolicy( Solid::Control::PowerManager::CpuFreqPolicy new
     }
 }
 
-bool HalPower::canDisableCpu( int /*cpuNum*/ ) const
+bool HalPower::canDisableCpu(int /*cpuNum */) const
 {
     return false;
 }
 
-bool HalPower::setCpuEnabled( int /*cpuNum*/, bool /*enabled*/ )
+bool HalPower::setCpuEnabled(int /*cpuNum */, bool /*enabled */)
 {
     return false;
 }
@@ -345,14 +345,14 @@ void HalPower::computeAcAdapters()
     Solid::DeviceList adapters
         = Solid::DeviceManager::findDevicesFromQuery(Solid::DeviceInterface::AcAdapter);
 
-    foreach( Solid::Device adapter, adapters )
+    foreach (Solid::Device adapter, adapters)
     {
-        m_acAdapters[adapter.udi()] = new Solid::Device( adapter );
-        connect( m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>(), SIGNAL( plugStateChanged( bool ) ),
-                 this, SLOT( slotPlugStateChanged( bool ) ) );
+        m_acAdapters[adapter.udi()] = new Solid::Device(adapter);
+        connect(m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool)),
+                 this, SLOT(slotPlugStateChanged(bool)));
 
-        if ( m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>()!=0
-          && m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>()->isPlugged() )
+        if (m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>()!=0
+          && m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>()->isPlugged())
         {
             m_pluggedAdapterCount++;
         }
@@ -363,17 +363,17 @@ void HalPower::computeBatteries()
 {
     QString predicate = "Battery.type == %1";
 
-    predicate = predicate.arg( (int)Solid::Battery::PrimaryBattery );
+    predicate = predicate.arg((int)Solid::Battery::PrimaryBattery);
 
     Solid::DeviceList batteries
         = Solid::DeviceManager::findDevicesFromQuery(Solid::DeviceInterface::Battery,
                                                      predicate);
 
-    foreach( Solid::Device battery, batteries )
+    foreach (Solid::Device battery, batteries)
     {
-        m_batteries[battery.udi()] = new Solid::Device( battery );
-        connect( m_batteries[battery.udi()]->as<Solid::Battery>(), SIGNAL( chargePercentChanged( int ) ),
-                 this, SLOT( updateBatteryStats() ) );
+        m_batteries[battery.udi()] = new Solid::Device(battery);
+        connect(m_batteries[battery.udi()]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int)),
+                 this, SLOT(updateBatteryStats()));
     }
 
     updateBatteryStats();
@@ -384,11 +384,11 @@ void HalPower::computeButtons()
     Solid::DeviceList buttons
         = Solid::DeviceManager::findDevicesFromQuery(Solid::DeviceInterface::Button);
 
-    foreach( Solid::Device button, buttons )
+    foreach (Solid::Device button, buttons)
     {
-        m_buttons[button.udi()] = new Solid::Device( button );
-        connect( m_buttons[button.udi()]->as<Solid::Button>(), SIGNAL( pressed( int ) ),
-                 this, SLOT( slotButtonPressed( int ) ) );
+        m_buttons[button.udi()] = new Solid::Device(button);
+        connect(m_buttons[button.udi()]->as<Solid::Button>(), SIGNAL(pressed(int)),
+                 this, SLOT(slotButtonPressed(int)));
     }
 }
 
@@ -400,24 +400,24 @@ void HalPower::updateBatteryStats()
     m_lowBatteryCharge = 0;
     m_criticalBatteryCharge = 0;
 
-    foreach( Solid::Device *d, m_batteries.values() )
+    foreach (Solid::Device *d, m_batteries.values())
     {
         Solid::Battery *battery = d->as<Solid::Battery>();
 
-        if ( battery == 0 ) continue;
+        if (battery == 0) continue;
 
-        m_currentBatteryCharge+= battery->charge( Solid::Battery::CurrentLevel );
-        m_maxBatteryCharge+= battery->charge( Solid::Battery::LastFullLevel );
-        m_warningBatteryCharge+= battery->charge( Solid::Battery::WarningLevel );
-        m_lowBatteryCharge+= battery->charge( Solid::Battery::LowLevel );
+        m_currentBatteryCharge+= battery->charge(Solid::Battery::CurrentLevel);
+        m_maxBatteryCharge+= battery->charge(Solid::Battery::LastFullLevel);
+        m_warningBatteryCharge+= battery->charge(Solid::Battery::WarningLevel);
+        m_lowBatteryCharge+= battery->charge(Solid::Battery::LowLevel);
     }
 
     m_criticalBatteryCharge = m_lowBatteryCharge/2;
 }
 
-void HalPower::slotPlugStateChanged( bool newState )
+void HalPower::slotPlugStateChanged(bool newState)
 {
-    if ( newState )
+    if (newState)
     {
         m_pluggedAdapterCount++;
     }
@@ -427,28 +427,28 @@ void HalPower::slotPlugStateChanged( bool newState )
     }
 }
 
-void HalPower::slotButtonPressed( int type )
+void HalPower::slotButtonPressed(int type)
 {
-    Solid::Button *button = qobject_cast<Solid::Button*>( sender() );
+    Solid::Button *button = qobject_cast<Solid::Button *>(sender());
 
-    if ( button == 0 ) return;
+    if (button == 0) return;
 
-    switch( type )
+    switch(type)
     {
     case Solid::Button::PowerButton:
-        emit buttonPressed( Solid::Control::PowerManager::PowerButton );
+        emit buttonPressed(Solid::Control::PowerManager::PowerButton);
         break;
     case Solid::Button::SleepButton:
-        emit buttonPressed( Solid::Control::PowerManager::SleepButton );
+        emit buttonPressed(Solid::Control::PowerManager::SleepButton);
         break;
     case Solid::Button::LidButton:
-        if ( button->stateValue() )
+        if (button->stateValue())
         {
-            emit buttonPressed( Solid::Control::PowerManager::LidClose );
+            emit buttonPressed(Solid::Control::PowerManager::LidClose);
         }
         else
         {
-            emit buttonPressed( Solid::Control::PowerManager::LidOpen );
+            emit buttonPressed(Solid::Control::PowerManager::LidOpen);
         }
         break;
     default:
@@ -462,47 +462,47 @@ void HalPower::slotNewDeviceInterface(const QString &udi, int type)
     switch (type)
     {
     case Solid::DeviceInterface::AcAdapter:
-        m_acAdapters[udi] = new Solid::Device( udi );
-        connect( m_acAdapters[udi]->as<Solid::AcAdapter>(), SIGNAL( plugStateChanged( bool ) ),
-                 this, SLOT( slotPlugStateChanged( bool ) ) );
+        m_acAdapters[udi] = new Solid::Device(udi);
+        connect(m_acAdapters[udi]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool)),
+                 this, SLOT(slotPlugStateChanged(bool)));
 
-        if ( m_acAdapters[udi]->as<Solid::AcAdapter>()!=0
-          && m_acAdapters[udi]->as<Solid::AcAdapter>()->isPlugged() )
+        if (m_acAdapters[udi]->as<Solid::AcAdapter>()!=0
+          && m_acAdapters[udi]->as<Solid::AcAdapter>()->isPlugged())
         {
             m_pluggedAdapterCount++;
         }
         break;
     case Solid::DeviceInterface::Battery:
-        m_batteries[udi] = new Solid::Device( udi );
-        connect( m_batteries[udi]->as<Solid::Battery>(), SIGNAL( chargePercentChanged( int ) ),
-                 this, SLOT( updateBatteryStats() ) );
+        m_batteries[udi] = new Solid::Device(udi);
+        connect(m_batteries[udi]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int)),
+                 this, SLOT(updateBatteryStats()));
         break;
     case Solid::DeviceInterface::Button:
-        m_buttons[udi] = new Solid::Device( udi );
-        connect( m_buttons[udi]->as<Solid::Button>(), SIGNAL( pressed( int ) ),
-                 this, SLOT( slotButtonPressed( int ) ) );
+        m_buttons[udi] = new Solid::Device(udi);
+        connect(m_buttons[udi]->as<Solid::Button>(), SIGNAL(pressed(int)),
+                 this, SLOT(slotButtonPressed(int)));
         break;
     default:
         break;
     }
 }
 
-void HalPower::slotDeviceRemoved( const QString &udi )
+void HalPower::slotDeviceRemoved(const QString &udi)
 {
     Solid::Device *device = 0;
 
-    device = m_acAdapters.take( udi );
+    device = m_acAdapters.take(udi);
 
-    if ( device!=0 )
+    if (device!=0)
     {
         delete device;
 
         m_pluggedAdapterCount = 0;
 
-        foreach( Solid::Device *d, m_acAdapters.values() )
+        foreach (Solid::Device *d, m_acAdapters.values())
         {
-            if ( d->as<Solid::AcAdapter>()!=0
-              && d->as<Solid::AcAdapter>()->isPlugged() )
+            if (d->as<Solid::AcAdapter>()!=0
+              && d->as<Solid::AcAdapter>()->isPlugged())
             {
                 m_pluggedAdapterCount++;
             }
@@ -511,18 +511,18 @@ void HalPower::slotDeviceRemoved( const QString &udi )
         return;
     }
 
-    device = m_batteries.take( udi );
+    device = m_batteries.take(udi);
 
-    if ( device!=0 )
+    if (device!=0)
     {
         delete device;
         updateBatteryStats();
         return;
     }
 
-    device = m_buttons.take( udi );
+    device = m_buttons.take(udi);
 
-    if ( device!=0 )
+    if (device!=0)
     {
         delete device;
         return;

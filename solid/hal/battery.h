@@ -26,17 +26,17 @@
 class Battery : public DeviceInterface, virtual public Solid::Ifaces::Battery
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Battery )
+    Q_INTERFACES(Solid::Ifaces::Battery)
 
 public:
-    Battery( HalDevice *device );
+    Battery(HalDevice *device);
     virtual ~Battery();
 
     virtual bool isPlugged() const;
     virtual Solid::Battery::BatteryType type() const;
 
     virtual QString chargeLevelUnit() const;
-    virtual int charge( Solid::Battery::LevelType type = Solid::Battery::CurrentLevel ) const;
+    virtual int charge(Solid::Battery::LevelType type = Solid::Battery::CurrentLevel) const;
     virtual int chargePercent() const;
 
     virtual QString voltageUnit() const;
@@ -46,11 +46,11 @@ public:
     virtual Solid::Battery::ChargeState chargeState() const;
 
 Q_SIGNALS:
-    void chargePercentChanged( int value );
-    void chargeStateChanged( int newState );
+    void chargePercentChanged(int value);
+    void chargeStateChanged(int newState);
 
 private Q_SLOTS:
-    void slotPropertyChanged( const QMap<QString,int> &changes );
+    void slotPropertyChanged(const QMap<QString,int> &changes);
 };
 
 #endif

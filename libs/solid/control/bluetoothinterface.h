@@ -109,7 +109,7 @@ public:
      * @param ubi the identifier of the bluetooth device to instantiate
      * @returns a bluetooth object, if a bluetooth device having the given UBI, for this interface exists, 0 otherwise
      */
-    BluetoothRemoteDevice *createBluetoothRemoteDevice(const QString & ubi);
+    BluetoothRemoteDevice *createBluetoothRemoteDevice(const QString  & ubi);
 
     /**
      * Finds a BluetoothRemoteDevice object given its UBI.
@@ -343,7 +343,7 @@ Q_SIGNALS:
      *
      * @param mode the changed mode
      */
-    void modeChanged( Solid::Control::BluetoothInterface::Mode );
+    void modeChanged(Solid::Control::BluetoothInterface::Mode);
 
     /**
      * The signal is emitted if the discoverable timeout of the bluetooth interface/adapter
@@ -397,7 +397,7 @@ Q_SIGNALS:
     void remoteDeviceDisappeared(const QString &ubi);
 
 private:
-    Q_PRIVATE_SLOT(d, void _k_destroyed(QObject*))
+    Q_PRIVATE_SLOT(d, void _k_destroyed(QObject *))
 
     BluetoothInterfacePrivate * const d;
 };

@@ -35,7 +35,7 @@ class KDE_EXPORT FakeBluetoothInputDevice : public Solid::Control::Ifaces::Bluet
     Q_OBJECT
     Q_INTERFACES(Solid::Control::Ifaces::BluetoothInputDevice)
 public:
-    FakeBluetoothInputDevice(const QMap<QString, QVariant> & propertyMap,
+    FakeBluetoothInputDevice(const QMap<QString, QVariant>  & propertyMap,
                              QObject *parent = 0);
     virtual ~FakeBluetoothInputDevice();
     QString ubi() const

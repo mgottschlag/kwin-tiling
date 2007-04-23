@@ -33,7 +33,7 @@ class KDE_EXPORT BluezBluetoothInterface : public Solid::Control::Ifaces::Blueto
     Q_OBJECT
     Q_INTERFACES(Solid::Control::Ifaces::BluetoothInterface)
 public:
-    BluezBluetoothInterface(const QString & objectPath);
+    BluezBluetoothInterface(const QString  & objectPath);
     virtual ~BluezBluetoothInterface();
     QString ubi() const;
     QString address() const;
@@ -54,15 +54,15 @@ public:
     bool isPeriodicDiscoveryActive() const;
     bool isPeriodicDiscoveryNameResolvingActive() const;
     QStringList listRemoteDevices() const;
-    QStringList listRecentRemoteDevices(const QDateTime&) const;
+    QStringList listRecentRemoteDevices(const QDateTime &) const;
 
-    QObject *createBluetoothRemoteDevice(const QString&);
+    QObject *createBluetoothRemoteDevice(const QString &);
 
 public Q_SLOTS:
     void setMode(const Solid::Control::BluetoothInterface::Mode);
     void setDiscoverableTimeout(int);
-    void setMinorClass(const QString&);
-    void setName(const QString&);
+    void setMinorClass(const QString &);
+    void setName(const QString &);
     void discoverDevices();
     void discoverDevicesWithoutNameResolving();
     void cancelDiscovery();

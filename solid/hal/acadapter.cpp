@@ -19,11 +19,11 @@
 
 #include "acadapter.h"
 
-AcAdapter::AcAdapter( HalDevice *device )
-    : DeviceInterface( device )
+AcAdapter::AcAdapter(HalDevice *device)
+    : DeviceInterface(device)
 {
-    connect( device, SIGNAL( propertyChanged( const QMap<QString,int>& ) ),
-             this, SLOT( slotPropertyChanged( const QMap<QString,int>& ) ) );
+    connect(device, SIGNAL(propertyChanged(const QMap<QString,int> &)),
+             this, SLOT(slotPropertyChanged(const QMap<QString,int> &)));
 }
 
 AcAdapter::~AcAdapter()
@@ -33,14 +33,14 @@ AcAdapter::~AcAdapter()
 
 bool AcAdapter::isPlugged() const
 {
-    return m_device->property( "ac_adapter.present" ).toBool();
+    return m_device->property("ac_adapter.present").toBool();
 }
 
-void AcAdapter::slotPropertyChanged( const QMap<QString,int> &changes )
+void AcAdapter::slotPropertyChanged(const QMap<QString,int> &changes)
 {
-    if ( changes.contains( "ac_adapter.present" ) )
+    if (changes.contains("ac_adapter.present"))
     {
-        emit plugStateChanged( isPlugged() );
+        emit plugStateChanged(isPlugged());
     }
 }
 

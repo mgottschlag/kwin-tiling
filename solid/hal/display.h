@@ -28,10 +28,10 @@ class HalDevice;
 class Display : public DeviceInterface, virtual public Solid::Ifaces::Display
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Display )
+    Q_INTERFACES(Solid::Ifaces::Display)
 
 public:
-    Display( HalDevice *device );
+    Display(HalDevice *device);
     virtual ~Display();
 
     virtual Solid::Display::DisplayType type() const;

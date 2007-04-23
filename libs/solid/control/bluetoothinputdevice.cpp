@@ -60,7 +60,7 @@ Solid::Control::BluetoothInputDevice::BluetoothInputDevice(const BluetoothInputD
 Solid::Control::BluetoothInputDevice::~BluetoothInputDevice()
 {}
 
-Solid::Control::BluetoothInputDevice &Solid::Control::BluetoothInputDevice::operator=(const Solid::Control::BluetoothInputDevice & dev)
+Solid::Control::BluetoothInputDevice &Solid::Control::BluetoothInputDevice::operator=(const Solid::Control::BluetoothInputDevice  & dev)
 {
     d->setBackendObject(dev.d->backendObject());
 
@@ -69,42 +69,42 @@ Solid::Control::BluetoothInputDevice &Solid::Control::BluetoothInputDevice::oper
 
 QString Solid::Control::BluetoothInputDevice::ubi() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice*, d->backendObject(), QString(), ubi());
+    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), ubi());
 }
 
 bool Solid::Control::BluetoothInputDevice::isConnected() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice*, d->backendObject(), false, isConnected());
+    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), false, isConnected());
 }
 
 QString Solid::Control::BluetoothInputDevice::name() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice*, d->backendObject(), QString(), name());
+    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), name());
 }
 
 QString Solid::Control::BluetoothInputDevice::address() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice*, d->backendObject(), QString(), address());
+    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), address());
 }
 
 QString Solid::Control::BluetoothInputDevice::productID() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice*, d->backendObject(), QString(), productID());
+    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), productID());
 }
 
 QString Solid::Control::BluetoothInputDevice::vendorID() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice*, d->backendObject(), QString(), vendorID());
+    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), vendorID());
 }
 
 void Solid::Control::BluetoothInputDevice::slotConnect()
 {
-    SOLID_CALL(Ifaces::BluetoothInputDevice*, d->backendObject(), slotConnect());
+    SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), slotConnect());
 }
 
 void Solid::Control::BluetoothInputDevice::slotDisconnect()
 {
-    SOLID_CALL(Ifaces::BluetoothInputDevice*, d->backendObject(), slotDisconnect());
+    SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), slotDisconnect());
 }
 
 void Solid::Control::BluetoothInputDevicePrivate::setBackendObject(QObject *object)

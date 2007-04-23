@@ -28,10 +28,10 @@ class HalDevice;
 class Processor : public DeviceInterface, virtual public Solid::Ifaces::Processor
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Processor )
+    Q_INTERFACES(Solid::Ifaces::Processor)
 
 public:
-    Processor( HalDevice *device );
+    Processor(HalDevice *device);
     virtual ~Processor();
 
     virtual int number() const;

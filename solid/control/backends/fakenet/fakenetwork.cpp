@@ -19,40 +19,40 @@
 
 #include "fakenetwork.h"
 
-QList<QHostAddress> FakeNetwork::stringlistToKIpAddress(  const QStringList & addrStringList ) const
+QList<QHostAddress> FakeNetwork::stringlistToKIpAddress( const QStringList  & addrStringList) const
 {
     QList<QHostAddress> ipv4Addrs;
-    foreach ( const QString &addrString, addrStringList )
+    foreach (const QString &addrString, addrStringList)
     {
-        QHostAddress addr(  addrString );
-        ipv4Addrs.append(  addr );
+        QHostAddress addr( addrString);
+        ipv4Addrs.append( addr);
     }
     return ipv4Addrs;
 }
 
-QList<QNetworkAddressEntry> FakeNetwork::stringlistsToQNetworkAddressEntries( const QStringList & addrStringList, const QStringList & subnets, const QStringList & bcasts ) const
+QList<QNetworkAddressEntry> FakeNetwork::stringlistsToQNetworkAddressEntries(const QStringList  & addrStringList, const QStringList  & subnets, const QStringList  & bcasts) const
 {
-    if ( !( addrStringList.count() == subnets.count() == bcasts.count() ) )
+    if (!(addrStringList.count() == subnets.count() == bcasts.count()))
         return QList<QNetworkAddressEntry>();
 
     QList<QNetworkAddressEntry> entries;
-    for ( int i = 0; i< addrStringList.count(); ++i )
+    for (int i = 0; i< addrStringList.count(); ++i)
     {
         QNetworkAddressEntry addr;
-        addr.setIp( QHostAddress( addrStringList[ i ] ) );
-        addr.setNetmask( QHostAddress( subnets[ i ] ) );
-        addr.setBroadcast( QHostAddress( bcasts[ i ] ) );
-        entries.append( addr );
+        addr.setIp(QHostAddress(addrStringList[i]));
+        addr.setNetmask(QHostAddress(subnets[i]));
+        addr.setBroadcast(QHostAddress(bcasts[i]));
+        entries.append(addr);
     }
     return entries;
 
 }
 
-FakeNetwork::FakeNetwork( const QString & uni, const QMap<QString, QVariant> & propertyMap,
-                          QObject * parent )
-: QObject( parent ), mPropertyMap( propertyMap )
+FakeNetwork::FakeNetwork(const QString  & uni, const QMap<QString, QVariant>  & propertyMap,
+                          QObject * parent)
+: QObject(parent), mPropertyMap(propertyMap)
 {
-    mPropertyMap.insert( "uni", QVariant( uni ) );
+    mPropertyMap.insert("uni", QVariant(uni));
 }
 
 FakeNetwork::~FakeNetwork()
@@ -62,35 +62,35 @@ FakeNetwork::~FakeNetwork()
 
 QList<QNetworkAddressEntry> FakeNetwork::addressEntries() const
 {
-    return stringlistsToQNetworkAddressEntries( mPropertyMap[ "addresses" ].toStringList(),
-                                   mPropertyMap[ "subnet" ].toStringList(),
-                                   mPropertyMap[ "broadcast" ].toStringList()
-                                 );
+    return stringlistsToQNetworkAddressEntries(mPropertyMap["addresses"].toStringList(),
+                                   mPropertyMap["subnet"].toStringList(),
+                                   mPropertyMap["broadcast"].toStringList()
+                                );
 }
 
 QString FakeNetwork::route() const
 {
-    return mPropertyMap[ "route" ].toString();
+    return mPropertyMap["route"].toString();
 }
 
 QList<QHostAddress> FakeNetwork::dnsServers() const
 {
-        return stringlistToKIpAddress( mPropertyMap[ "dns" ].toString().simplified().split( ',' ) );
+        return stringlistToKIpAddress(mPropertyMap["dns"].toString().simplified().split(','));
 }
 
-void FakeNetwork::setActivated( bool active )
+void FakeNetwork::setActivated(bool active)
 {
-    mPropertyMap.insert( "active", QVariant( active ) );
+    mPropertyMap.insert("active", QVariant(active));
 }
 
 bool FakeNetwork::isActive() const
 {
-    return mPropertyMap[ "active" ].toBool();
+    return mPropertyMap["active"].toBool();
 }
 
 QString FakeNetwork::uni() const
 {
-    return mPropertyMap[ "uni" ].toString();
+    return mPropertyMap["uni"].toString();
 }
 
 #include "fakenetwork.moc"

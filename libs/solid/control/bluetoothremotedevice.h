@@ -141,7 +141,7 @@ public:
 
     /**
      * Retrieves a list of service classes of the remote device.
-     * Example: ["networking", "object transfer" ]
+     * Example: ["networking", "object transfer"]
      *
      * @returns list of service classes of the remote device.
      */
@@ -300,7 +300,7 @@ protected:
     BluetoothRemoteDevicePrivate *d_ptr;
 
 private:
-    Q_PRIVATE_SLOT(d_func(), void _k_destroyed(QObject*))
+    Q_PRIVATE_SLOT(d_func(), void _k_destroyed(QObject *))
 };
 
 } //Control

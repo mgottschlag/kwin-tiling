@@ -26,10 +26,10 @@
 class Cdrom : public Storage, virtual public Solid::Ifaces::Cdrom
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Cdrom )
+    Q_INTERFACES(Solid::Ifaces::Cdrom)
 
 public:
-    Cdrom( HalDevice *device );
+    Cdrom(HalDevice *device);
     virtual ~Cdrom();
 
     virtual Solid::Cdrom::MediumTypes supportedMedia() const;
@@ -41,7 +41,7 @@ Q_SIGNALS:
     void ejectPressed();
 
 private Q_SLOTS:
-    void slotCondition( const QString &name, const QString &reason );
+    void slotCondition(const QString &name, const QString &reason);
 };
 
 #endif

@@ -50,7 +50,7 @@ namespace Ifaces
         /**
          * Constructs a PowerManager
          */
-        PowerManager( QObject *parent = 0 );
+        PowerManager(QObject *parent = 0);
 
         /**
          * Destructs a PowerManager object
@@ -71,7 +71,7 @@ namespace Ifaces
          * @param schemeName the name of the scheme we request the description for
          * @return the associated description
          */
-        virtual QString schemeDescription( const QString &schemeName ) const = 0;
+        virtual QString schemeDescription(const QString &schemeName) const = 0;
 
         /**
          * Retrieves the name of the current power management scheme used
@@ -87,7 +87,7 @@ namespace Ifaces
          * @param name the name of the new scheme
          * @return true if the scheme change succeeded, false otherwise
          */
-        virtual bool setScheme( const QString &name ) = 0;
+        virtual bool setScheme(const QString &name) = 0;
 
 
         /**
@@ -129,7 +129,7 @@ namespace Ifaces
          * @param method the suspend method to use
          * @return the job handling the operation
          */
-        virtual KJob *suspend( Solid::Control::PowerManager::SuspendMethod method ) const = 0;
+        virtual KJob *suspend(Solid::Control::PowerManager::SuspendMethod method) const = 0;
 
 
         /**
@@ -156,7 +156,7 @@ namespace Ifaces
          * @return true if the policy change succeeded, false otherwise
          * @see Solid::Control::PowerManager::CpuFreqPolicy
          */
-        virtual bool setCpuFreqPolicy( Solid::Control::PowerManager::CpuFreqPolicy newPolicy ) = 0;
+        virtual bool setCpuFreqPolicy(Solid::Control::PowerManager::CpuFreqPolicy newPolicy) = 0;
 
         /**
          * Checks if a CPU can be disabled.
@@ -164,7 +164,7 @@ namespace Ifaces
          * @param cpuNum the number of the CPU we want to check
          * @return true if the given CPU can be disabled, false otherwise
          */
-        virtual bool canDisableCpu( int cpuNum ) const = 0;
+        virtual bool canDisableCpu(int cpuNum) const = 0;
 
         /**
          * Enables or disables a CPU.
@@ -173,7 +173,7 @@ namespace Ifaces
          * @param enabled the new state of the CPU
          * @return true if the state change succeeded, false otherwise
          */
-        virtual bool setCpuEnabled( int cpuNum, bool enabled ) = 0;
+        virtual bool setCpuEnabled(int cpuNum, bool enabled) = 0;
 
     Q_SIGNALS:
         /**
@@ -181,7 +181,7 @@ namespace Ifaces
          *
          * @param newScheme the new scheme name
          */
-        void schemeChanged( QString newScheme );
+        void schemeChanged(QString newScheme);
 
         /**
          * This signal is emitted when the AC adapter is plugged or unplugged.
@@ -189,7 +189,7 @@ namespace Ifaces
          * @param newState the new state of the AC adapter, it's one of the
          * type @see Solid::Control::PowerManager::AcAdapterState
          */
-        void acAdapterStateChanged( int newState );
+        void acAdapterStateChanged(int newState);
 
         /**
          * This signal is emitted when the system battery state changed.
@@ -197,7 +197,7 @@ namespace Ifaces
          * @param newState the new state of the system battery, it's one of the
          * type @see Solid::Control::PowerManager::BatteryState
          */
-        void batteryStateChanged( int newState );
+        void batteryStateChanged(int newState);
 
         /**
          * This signal is emitted when a button has been pressed.
@@ -205,7 +205,7 @@ namespace Ifaces
          * @param buttonType the pressed button type, it's one of the
          * type @see Solid::Control::PowerManager::ButtonType
          */
-        void buttonPressed( int buttonType );
+        void buttonPressed(int buttonType);
     };
 }
 }

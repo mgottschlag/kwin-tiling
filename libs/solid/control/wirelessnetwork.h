@@ -39,8 +39,8 @@ namespace Control
     class SOLID_EXPORT WirelessNetwork : public Network
     {
         Q_OBJECT
-        Q_ENUMS( OperationMode DeviceInterface )
-        Q_FLAGS( Capabilities )
+        Q_ENUMS(OperationMode DeviceInterface)
+        Q_FLAGS(Capabilities)
         Q_DECLARE_PRIVATE(WirelessNetwork)
 
     public:
@@ -49,7 +49,7 @@ namespace Control
         enum DeviceInterface { Unencrypted = 0x1, Wep = 0x2, Wpa = 0x4, Wpa2 = 0x8, Psk = 0x10,
                           Ieee8021x = 0x20, Wep40 = 0x40, Wep104 = 0x80, Wep192 = 0x100, Wep256 = 0x200,
                           WepOther = 0x400, Tkip = 0x800, Ccmp = 0x1000 };
-        Q_DECLARE_FLAGS( Capabilities, DeviceInterface )
+        Q_DECLARE_FLAGS(Capabilities, DeviceInterface)
 
 
 
@@ -58,12 +58,12 @@ namespace Control
          *
          * @param backendObject the network object provided by the backend
          */
-        explicit WirelessNetwork( QObject *backendObject );
+        explicit WirelessNetwork(QObject *backendObject);
 
         /**
          * Creates a new WirelessNetwork object as a copy of another instance.
          */
-        WirelessNetwork( const WirelessNetwork & );
+        WirelessNetwork(const WirelessNetwork  &);
 
         /**
          * Destroys a WirelessNetwork object
@@ -76,7 +76,7 @@ namespace Control
          * @param other the network to compare
          * @return true if other and this wireless network are the same network, false otherwise
          */
-        bool isSameAs( const WirelessNetwork &other ) const;
+        bool isSameAs(const WirelessNetwork &other) const;
 
         /**
          * Retrieves the current signal strength of this wifi network.
@@ -164,7 +164,7 @@ namespace Control
          *
          * @param authentication the new authentication scheme to use
          */
-        void setAuthentication( Authentication *authentication );
+        void setAuthentication(Authentication *authentication);
 
     Q_SIGNALS:
         /**
@@ -172,14 +172,14 @@ namespace Control
          *
          * @param strength the new signal strength value for this network
          */
-        void signalStrengthChanged( int strength );
+        void signalStrengthChanged(int strength);
 
         /**
          * This signal is emitted when the bitrate of this network has changed.
          *
          * @param bitrate the new bitrate value for this network
          */
-        void bitrateChanged( int bitrate );
+        void bitrateChanged(int bitrate);
 
         /**
          * This signal is emitted when the association state of this device
@@ -187,7 +187,7 @@ namespace Control
          *
          * @param associated true if the network is associated, false otherwise
          */
-        void associationChanged( bool associated );
+        void associationChanged(bool associated);
 
         /**
          * Emitted when the network requires authentication data in order to be able to connect.
@@ -202,6 +202,6 @@ namespace Control
 } //Control
 } //Solid
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::WirelessNetwork::Capabilities )
+Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::WirelessNetwork::Capabilities)
 
 #endif

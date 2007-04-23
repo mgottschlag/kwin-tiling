@@ -110,7 +110,7 @@ public Q_SLOTS:
      *
      * @param ubi the bluetooth input device identifier
      */
-    virtual void removeInputDevice(const QString & ubi) = 0;
+    virtual void removeInputDevice(const QString  & ubi) = 0;
 
 Q_SIGNALS:
     /**
@@ -118,35 +118,35 @@ Q_SIGNALS:
      *
      * @param ubi the bluetooth interface identifier
      */
-    void interfaceAdded(const QString & ubi);
+    void interfaceAdded(const QString  & ubi);
 
     /**
      * This signal is emitted when a bluetooth interface is not available anymore.
      *
      * @param ubi the bluetooth interface identifier
      */
-    void interfaceRemoved(const QString & ubi);
+    void interfaceRemoved(const QString  & ubi);
 
     /**
      * This signal is emitted when the default bluetooth interface changed. 
      *
      * @param ubi the bluetooth interface identifier
      */
-    void defaultInterfaceChanged(const QString & ubi);
+    void defaultInterfaceChanged(const QString  & ubi);
 
     /**
      * This signal is emitted when a new bluetooth input device got configured/created.
      *
      * @param ubi the bluetooth input device identifier
      */
-    void inputDeviceCreated(const QString & ubi);
+    void inputDeviceCreated(const QString  & ubi);
 
     /**
      * This signal is emitted when a bluetooth input device configuration is not available anymore.
      *
      * @param ubi the bluetooth input device identifier
      */
-    void inputDeviceRemoved(const QString & ubi);
+    void inputDeviceRemoved(const QString  & ubi);
 
 };
 

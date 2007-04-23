@@ -46,9 +46,9 @@ public:
 
     void setBackendObject(QObject *object);
 
-    QPair<BluetoothRemoteDevice*, Ifaces::BluetoothRemoteDevice*> findRegisteredBluetoothRemoteDevice(const QString &ubi) const;
+    QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> findRegisteredBluetoothRemoteDevice(const QString &ubi) const;
 
-    mutable QMap<QString, QPair<BluetoothRemoteDevice*, Ifaces::BluetoothRemoteDevice*> > remoteDeviceMap;
+    mutable QMap<QString, QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> > remoteDeviceMap;
     mutable BluetoothRemoteDevice invalidDevice;
 };
 }
@@ -80,16 +80,16 @@ Solid::Control::BluetoothInterface::BluetoothInterface(const BluetoothInterface 
 Solid::Control::BluetoothInterface::~BluetoothInterface()
 {
     // Delete all the interfaces, they are now outdated
-    typedef QPair<BluetoothRemoteDevice*, Ifaces::BluetoothRemoteDevice*> BluetoothRemoteDeviceIfacePair;
+    typedef QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> BluetoothRemoteDeviceIfacePair;
 
     // Delete all the devices, they are now outdated
-    foreach(const BluetoothRemoteDeviceIfacePair &pair, d->remoteDeviceMap.values()) {
+    foreach (const BluetoothRemoteDeviceIfacePair &pair, d->remoteDeviceMap.values()) {
         delete pair.first;
         delete pair.second;
     }
 }
 
-Solid::Control::BluetoothInterface &Solid::Control::BluetoothInterface::operator=(const Solid::Control::BluetoothInterface & dev)
+Solid::Control::BluetoothInterface &Solid::Control::BluetoothInterface::operator=(const Solid::Control::BluetoothInterface  & dev)
 {
     d->setBackendObject(dev.d->backendObject());
 
@@ -98,12 +98,12 @@ Solid::Control::BluetoothInterface &Solid::Control::BluetoothInterface::operator
 
 QString Solid::Control::BluetoothInterface::ubi() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QString(), ubi());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), ubi());
 }
 
 const Solid::Control::BluetoothRemoteDevice &Solid::Control::BluetoothInterface::findBluetoothRemoteDevice(const QString &ubi) const
 {
-    QPair<BluetoothRemoteDevice*, Ifaces::BluetoothRemoteDevice*> pair = d->findRegisteredBluetoothRemoteDevice(ubi);
+    QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> pair = d->findRegisteredBluetoothRemoteDevice(ubi);
 
     if (pair.first != 0) {
         return *pair.first;
@@ -114,54 +114,54 @@ const Solid::Control::BluetoothRemoteDevice &Solid::Control::BluetoothInterface:
 
 QString Solid::Control::BluetoothInterface::address() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QString(), address());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), address());
 }
 
 QString Solid::Control::BluetoothInterface::version() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QString(), version());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), version());
 }
 
 QString Solid::Control::BluetoothInterface::revision() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QString(), revision());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), revision());
 }
 
 QString Solid::Control::BluetoothInterface::manufacturer() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QString(), manufacturer());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), manufacturer());
 }
 
 QString Solid::Control::BluetoothInterface::company() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QString(), company());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), company());
 }
 
 Solid::Control::BluetoothInterface::Mode Solid::Control::BluetoothInterface::mode() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), Solid::Control::BluetoothInterface::Off, mode());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), Solid::Control::BluetoothInterface::Off, mode());
 }
 
 int Solid::Control::BluetoothInterface::discoverableTimeout() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), 0, discoverableTimeout());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), 0, discoverableTimeout());
 }
 
 bool Solid::Control::BluetoothInterface::isDiscoverable() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), false, isDiscoverable());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), false, isDiscoverable());
 }
 
 Solid::Control::BluetoothRemoteDeviceList Solid::Control::BluetoothInterface::listConnections() const
 {
     BluetoothRemoteDeviceList list;
-    Ifaces::BluetoothInterface *backend = qobject_cast<Ifaces::BluetoothInterface*>(d->backendObject());
+    Ifaces::BluetoothInterface *backend = qobject_cast<Ifaces::BluetoothInterface *>(d->backendObject());
 
     if (backend == 0) return list;
 
     QStringList ubis = backend->listConnections();
 
-    foreach(const QString &ubi, ubis) {
+    foreach (const QString &ubi, ubis) {
         BluetoothRemoteDevice remoteDevice = findBluetoothRemoteDevice(ubi);
         list.append(remoteDevice);
     }
@@ -171,56 +171,56 @@ Solid::Control::BluetoothRemoteDeviceList Solid::Control::BluetoothInterface::li
 
 QString Solid::Control::BluetoothInterface::majorClass() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QString(), majorClass());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), majorClass());
 }
 
 QStringList Solid::Control::BluetoothInterface::listAvailableMinorClasses() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QStringList(), listAvailableMinorClasses());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QStringList(), listAvailableMinorClasses());
 }
 
 QString Solid::Control::BluetoothInterface::minorClass() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QString(), minorClass());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), minorClass());
 }
 
 QStringList Solid::Control::BluetoothInterface::serviceClasses() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QStringList(), serviceClasses());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QStringList(), serviceClasses());
 }
 
 QString Solid::Control::BluetoothInterface::name() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QString(), name());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), name());
 }
 
 QStringList Solid::Control::BluetoothInterface::listBondings() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QStringList(), listBondings());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QStringList(), listBondings());
 }
 
 bool Solid::Control::BluetoothInterface::isPeriodicDiscoveryActive() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), false, isPeriodicDiscoveryActive());
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), false, isPeriodicDiscoveryActive());
 }
 
 bool Solid::Control::BluetoothInterface::isPeriodicDiscoveryNameResolvingActive() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), false,
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), false,
                       isPeriodicDiscoveryNameResolvingActive());
 }
 
 // TODO: QStringList or BluetoothRemoteDeviceList?
 QStringList Solid::Control::BluetoothInterface::listRemoteDevices() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QStringList(),
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QStringList(),
                       listRemoteDevices());
 }
 
 // TODO: QStringList or BluetoothRemoteDeviceList?
 QStringList Solid::Control::BluetoothInterface::listRecentRemoteDevices(const QDateTime &date) const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), QStringList(),
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QStringList(),
                       listRecentRemoteDevices(date));
 }
 
@@ -228,53 +228,53 @@ QStringList Solid::Control::BluetoothInterface::listRecentRemoteDevices(const QD
 
 void Solid::Control::BluetoothInterface::setMode(const Solid::Control::BluetoothInterface::Mode mode)
 {
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), setMode(mode));
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setMode(mode));
 }
 
 void Solid::Control::BluetoothInterface::setDiscoverableTimeout(int timeout)
 {
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), setDiscoverableTimeout(timeout));
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setDiscoverableTimeout(timeout));
 }
 
 void Solid::Control::BluetoothInterface::setMinorClass(const QString &minor)
 {
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), setMinorClass(minor));
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setMinorClass(minor));
 }
 
 void Solid::Control::BluetoothInterface::setName(const QString &name)
 {
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), setName(name));
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setName(name));
 }
 
 void Solid::Control::BluetoothInterface::discoverDevices()
 {
     kDebug() << k_funcinfo << endl;
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), discoverDevices());
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), discoverDevices());
 }
 
 void Solid::Control::BluetoothInterface::discoverDevicesWithoutNameResolving()
 {
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), discoverDevicesWithoutNameResolving());
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), discoverDevicesWithoutNameResolving());
 }
 
 void Solid::Control::BluetoothInterface::cancelDiscovery()
 {
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), cancelDiscovery());
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), cancelDiscovery());
 }
 
 void Solid::Control::BluetoothInterface::startPeriodicDiscovery()
 {
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), startPeriodicDiscovery());
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), startPeriodicDiscovery());
 }
 
 void Solid::Control::BluetoothInterface::stopPeriodicDiscovery()
 {
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), stopPeriodicDiscovery());
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), stopPeriodicDiscovery());
 }
 
 void Solid::Control::BluetoothInterface::setPeriodicDiscoveryNameResolving(bool resolveNames)
 {
-    SOLID_CALL(Ifaces::BluetoothInterface*, d->backendObject(), setPeriodicDiscoveryNameResolving(resolveNames));
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setPeriodicDiscoveryNameResolving(resolveNames));
 }
 
 void Solid::Control::BluetoothInterfacePrivate::setBackendObject(QObject *object)
@@ -282,46 +282,46 @@ void Solid::Control::BluetoothInterfacePrivate::setBackendObject(QObject *object
     FrontendObjectPrivate::setBackendObject(object);
 
     if (object) {
-        QObject::connect(object, SIGNAL(modeChanged(const QString&)),
-                         parent(), SIGNAL(modeChanged(const QString&)));
+        QObject::connect(object, SIGNAL(modeChanged(const QString &)),
+                         parent(), SIGNAL(modeChanged(const QString &)));
         QObject::connect(object, SIGNAL(discoverableTimeoutChanged(int)),
                          parent(), SIGNAL(discoverableTimeoutChanged(int)));
-        QObject::connect(object, SIGNAL(minorClassChanged(const QString&)),
-                         parent(), SIGNAL(minorClassChanged(const QString&)));
-        QObject::connect(object, SIGNAL(nameChanged(const QString&)),
-                         parent(), SIGNAL(nameChanged(const QString&)));
+        QObject::connect(object, SIGNAL(minorClassChanged(const QString &)),
+                         parent(), SIGNAL(minorClassChanged(const QString &)));
+        QObject::connect(object, SIGNAL(nameChanged(const QString &)),
+                         parent(), SIGNAL(nameChanged(const QString &)));
         QObject::connect(object, SIGNAL(discoveryStarted()),
                          parent(), SIGNAL(discoveryStarted()));
         QObject::connect(object, SIGNAL(discoveryCompleted()),
                          parent(), SIGNAL(discoveryCompleted()));
-        QObject::connect(object, SIGNAL(remoteDeviceFound(const QString&, int, int)),
-                         parent(), SIGNAL(remoteDeviceFound(const QString&, int, int)));
-        QObject::connect(object, SIGNAL(remoteDeviceDisappeared(const QString&)),
-                         parent(), SIGNAL(remoteDeviceDisappeared(const QString&)));
+        QObject::connect(object, SIGNAL(remoteDeviceFound(const QString &, int, int)),
+                         parent(), SIGNAL(remoteDeviceFound(const QString &, int, int)));
+        QObject::connect(object, SIGNAL(remoteDeviceDisappeared(const QString &)),
+                         parent(), SIGNAL(remoteDeviceDisappeared(const QString &)));
     }
 }
 
-QPair<Solid::Control::BluetoothRemoteDevice*, Solid::Control::Ifaces::BluetoothRemoteDevice*> Solid::Control::BluetoothInterfacePrivate::findRegisteredBluetoothRemoteDevice(const QString &ubi) const
+QPair<Solid::Control::BluetoothRemoteDevice *, Solid::Control::Ifaces::BluetoothRemoteDevice *> Solid::Control::BluetoothInterfacePrivate::findRegisteredBluetoothRemoteDevice(const QString &ubi) const
 {
     if (remoteDeviceMap.contains(ubi)) {
         return remoteDeviceMap[ubi];
     } else {
-        Ifaces::BluetoothInterface *backend = qobject_cast<Ifaces::BluetoothInterface*>(backendObject());
+        Ifaces::BluetoothInterface *backend = qobject_cast<Ifaces::BluetoothInterface *>(backendObject());
         Ifaces::BluetoothRemoteDevice *iface = 0;
 
         if (backend != 0) {
-            iface = qobject_cast<Ifaces::BluetoothRemoteDevice*>(backend->createBluetoothRemoteDevice(ubi));
+            iface = qobject_cast<Ifaces::BluetoothRemoteDevice *>(backend->createBluetoothRemoteDevice(ubi));
         }
 
         if (iface != 0) {
             BluetoothRemoteDevice *device = new BluetoothRemoteDevice(iface);
 
-            QPair<BluetoothRemoteDevice*, Ifaces::BluetoothRemoteDevice*> pair(device, iface);
+            QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> pair(device, iface);
             remoteDeviceMap[ubi] = pair;
 
             return pair;
         } else {
-            return QPair<BluetoothRemoteDevice*, Ifaces::BluetoothRemoteDevice*>(0, 0);
+            return QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *>(0, 0);
         }
 
     }

@@ -19,11 +19,11 @@
 
 #include "button.h"
 
-Button::Button( HalDevice *device )
-    : DeviceInterface( device )
+Button::Button(HalDevice *device)
+    : DeviceInterface(device)
 {
-    connect( device, SIGNAL( conditionRaised( const QString&, const QString& ) ),
-             this, SLOT( slotConditionRaised( const QString&, const QString& ) ) );
+    connect(device, SIGNAL(conditionRaised(const QString &, const QString &)),
+             this, SLOT(slotConditionRaised(const QString &, const QString &)));
 }
 
 Button::~Button()
@@ -33,17 +33,17 @@ Button::~Button()
 
 Solid::Button::ButtonType Button::type() const
 {
-    QString buttontype = m_device->property( "button.type" ).toString();
+    QString buttontype = m_device->property("button.type").toString();
 
-    if ( buttontype=="lid" )
+    if (buttontype=="lid")
     {
         return Solid::Button::LidButton;
     }
-    else if ( buttontype=="power" )
+    else if (buttontype=="power")
     {
         return Solid::Button::PowerButton;
     }
-    else if ( buttontype=="sleep" )
+    else if (buttontype=="sleep")
     {
         return Solid::Button::SleepButton;
     }
@@ -55,19 +55,19 @@ Solid::Button::ButtonType Button::type() const
 
 bool Button::hasState() const
 {
-    return m_device->property( "button.has_state" ).toBool();
+    return m_device->property("button.has_state").toBool();
 }
 
 bool Button::stateValue() const
 {
-    return m_device->property( "button.state.value" ).toBool();
+    return m_device->property("button.state.value").toBool();
 }
 
-void Button::slotConditionRaised( const QString &name, const QString &/*reason*/ )
+void Button::slotConditionRaised(const QString &name, const QString &/*reason */)
 {
-    if ( name == "ButtonPressed" )
+    if (name == "ButtonPressed")
     {
-        emit pressed( type() );
+        emit pressed(type());
     }
 }
 

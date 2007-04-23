@@ -85,7 +85,7 @@ namespace Ifaces
          *
          * @param activated true to activate this network, false otherwise
          */
-        virtual void setActivated( bool activated ) = 0;
+        virtual void setActivated(bool activated) = 0;
 
     protected:
     //Q_SIGNALS:
@@ -100,12 +100,12 @@ namespace Ifaces
          *
          * @param activated true if the network is activated, false otherwise
          */
-        virtual void activationStateChanged( bool activated ) = 0;
+        virtual void activationStateChanged(bool activated) = 0;
     };
 } //Ifaces
 } //Control
 } //Solid
 
-Q_DECLARE_INTERFACE( Solid::Control::Ifaces::Network, "org.kde.Solid.Control.Ifaces.Network/0.1" )
+Q_DECLARE_INTERFACE(Solid::Control::Ifaces::Network, "org.kde.Solid.Control.Ifaces.Network/0.1")
 
 #endif

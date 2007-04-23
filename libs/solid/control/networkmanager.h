@@ -65,7 +65,7 @@ namespace Control
          * @param uni the identifier of the network interface to find
          * @returns a valid NetworkInterface object if there's a device having the given UNI, an invalid one otherwise
          */
-        SOLID_EXPORT const NetworkInterface &findNetworkInterface(const QString& uni);
+        SOLID_EXPORT const NetworkInterface &findNetworkInterface(const QString &uni);
 
         /**
          * Retrieves the status of networking (as a whole) in the system.

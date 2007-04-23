@@ -21,11 +21,11 @@
 
 #include <QStringList>
 
-Cdrom::Cdrom( HalDevice *device )
-    : Storage( device )
+Cdrom::Cdrom(HalDevice *device)
+    : Storage(device)
 {
-    connect( device, SIGNAL( conditionRaised( const QString&, const QString& ) ),
-             this, SLOT( slotCondition( const QString&, const QString& ) ) );
+    connect(device, SIGNAL(conditionRaised(const QString &, const QString &)),
+             this, SLOT(slotCondition(const QString &, const QString &)));
 }
 
 Cdrom::~Cdrom()
@@ -49,9 +49,9 @@ Solid::Cdrom::MediumTypes Cdrom::supportedMedia() const
     map[Solid::Cdrom::Dvdplusrw] ="storage.cdrom.dvdplusrw";
     map[Solid::Cdrom::Dvdplusdl] ="storage.cdrom.dvdplusrdl";
 
-    foreach( const Solid::Cdrom::MediumType type, map.keys() )
+    foreach (const Solid::Cdrom::MediumType type, map.keys())
     {
-        if ( m_device->property( map[type] ).toBool() )
+        if (m_device->property(map[type]).toBool())
         {
             supported|= type;
         }
@@ -62,20 +62,20 @@ Solid::Cdrom::MediumTypes Cdrom::supportedMedia() const
 
 int Cdrom::readSpeed() const
 {
-    return m_device->property( "storage.cdrom.read_speed" ).toInt();
+    return m_device->property("storage.cdrom.read_speed").toInt();
 }
 
 int Cdrom::writeSpeed() const
 {
-    return m_device->property( "storage.cdrom.write_speed" ).toInt();
+    return m_device->property("storage.cdrom.write_speed").toInt();
 }
 
 QList<int> Cdrom::writeSpeeds() const
 {
     QList<int> speeds;
-    QStringList speed_strlist = m_device->property( "storage.cdrom.write_speeds" ).toStringList();
+    QStringList speed_strlist = m_device->property("storage.cdrom.write_speeds").toStringList();
 
-    foreach( const QString speed_str, speed_strlist )
+    foreach (const QString speed_str, speed_strlist)
     {
         speeds << speed_str.toInt();
     }
@@ -83,9 +83,9 @@ QList<int> Cdrom::writeSpeeds() const
     return speeds;
 }
 
-void Cdrom::slotCondition( const QString &name, const QString &/*reason*/ )
+void Cdrom::slotCondition(const QString &name, const QString &/*reason */)
 {
-    if ( name == "EjectPressed" )
+    if (name == "EjectPressed")
     {
         emit ejectPressed();
     }

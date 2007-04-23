@@ -133,7 +133,7 @@ Q_SIGNALS:
     void disconnected();
 
 private:
-    Q_PRIVATE_SLOT(d, void _k_destroyed(QObject*))
+    Q_PRIVATE_SLOT(d, void _k_destroyed(QObject *))
 
     BluetoothInputDevicePrivate * const d;
 };
@@ -142,6 +142,6 @@ private:
 
 } //Solid
 
-//Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::BluetoothInputDevice::Capabilities )
+//Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::BluetoothInputDevice::Capabilities)
 
 #endif

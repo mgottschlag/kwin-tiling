@@ -87,7 +87,7 @@ namespace Control
         /**
          * This type stores an OR combination of SuspendMethod values.
          */
-        Q_DECLARE_FLAGS( SuspendMethods, SuspendMethod )
+        Q_DECLARE_FLAGS(SuspendMethods, SuspendMethod)
 
         /**
          * This enum type defines the different CPU frequency policies.
@@ -103,7 +103,7 @@ namespace Control
         /**
          * This type stores an OR combination of CpuFreqPolicy values.
          */
-        Q_DECLARE_FLAGS( CpuFreqPolicies, CpuFreqPolicy )
+        Q_DECLARE_FLAGS(CpuFreqPolicies, CpuFreqPolicy)
 
 
 
@@ -265,7 +265,7 @@ namespace Control
 }
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::PowerManager::SuspendMethods )
-Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::PowerManager::CpuFreqPolicies )
+Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::PowerManager::SuspendMethods)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::PowerManager::CpuFreqPolicies)
 
 #endif

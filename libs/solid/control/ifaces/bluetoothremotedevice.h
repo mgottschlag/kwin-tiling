@@ -122,7 +122,7 @@ public:
 
     /**
      * Retrieves a list of service classes of the remote device.
-     * Example: ["networking", "object transfer" ]
+     * Example: ["networking", "object transfer"]
      *
      * @returns list of service classes of the remote device.
      */

@@ -28,10 +28,10 @@ class HalDevice;
 class NetworkHw : public DeviceInterface, virtual public Solid::Ifaces::NetworkHw
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::NetworkHw )
+    Q_INTERFACES(Solid::Ifaces::NetworkHw)
 
 public:
-    NetworkHw( HalDevice *device );
+    NetworkHw(HalDevice *device);
     virtual ~NetworkHw();
 
     virtual QString ifaceName() const;

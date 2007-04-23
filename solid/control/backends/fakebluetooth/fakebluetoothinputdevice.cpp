@@ -24,7 +24,7 @@
 
 #include <kdebug.h>
 
-FakeBluetoothInputDevice::FakeBluetoothInputDevice(const QMap<QString, QVariant> & propertyMap, QObject * parent)
+FakeBluetoothInputDevice::FakeBluetoothInputDevice(const QMap<QString, QVariant>  & propertyMap, QObject * parent)
         : Solid::Control::Ifaces::BluetoothInputDevice(parent), mPropertyMap(propertyMap)
 {
 

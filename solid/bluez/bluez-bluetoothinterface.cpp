@@ -31,7 +31,7 @@
 class BluezBluetoothInterfacePrivate
 {
 public:
-    BluezBluetoothInterfacePrivate(const QString & objPath)
+    BluezBluetoothInterfacePrivate(const QString  & objPath)
             : iface("org.bluez",
                     objPath,
                     "org.bluez.Adapter",
@@ -41,27 +41,27 @@ public:
     QDBusInterface iface;
     QString objectPath;
 
-    QMap<QString, BluezBluetoothRemoteDevice*> devices;
+    QMap<QString, BluezBluetoothRemoteDevice *> devices;
 };
 
-BluezBluetoothInterface::BluezBluetoothInterface(const QString & objectPath)
+BluezBluetoothInterface::BluezBluetoothInterface(const QString  & objectPath)
         : BluetoothInterface(0), d(new BluezBluetoothInterfacePrivate(objectPath))
 {
 
-#define connectInterfaceToThis( signal, slot ) \
-    d->iface.connection().connect( "org.bluez", \
+#define connectInterfaceToThis(signal, slot) \
+    d->iface.connection().connect("org.bluez", \
                                    objectPath, \
                                    "org.bluez.Adapter", \
-                                   signal, this, SLOT(slot) );
+                                   signal, this, SLOT(slot));
 
-    connectInterfaceToThis("ModeChanged", slotModeChanged(const QString&));
+    connectInterfaceToThis("ModeChanged", slotModeChanged(const QString &));
     connectInterfaceToThis("DiscoverableTimeoutChanged", slotDiscoverableTimeoutChanged(int));
-    connectInterfaceToThis("MinorClassChanged", slotMinorClassChanged(const QString&));
-    connectInterfaceToThis("NameChanged", slotNameChanged(const QString&));
+    connectInterfaceToThis("MinorClassChanged", slotMinorClassChanged(const QString &));
+    connectInterfaceToThis("NameChanged", slotNameChanged(const QString &));
     connectInterfaceToThis("DiscoveryStarted", slotDiscoveryStarted());
     connectInterfaceToThis("DiscoveryCompleted", slotDiscoveryCompleted());
-    connectInterfaceToThis("RemoteDeviceDisappeared", slotRemoteDeviceDisappeared(const QString&));
-    connectInterfaceToThis("RemoteDeviceFound", slotRemoteDeviceFound(const QString&, uint, short));
+    connectInterfaceToThis("RemoteDeviceDisappeared", slotRemoteDeviceDisappeared(const QString &));
+    connectInterfaceToThis("RemoteDeviceFound", slotRemoteDeviceFound(const QString &, uint, short));
 }
 
 BluezBluetoothInterface::~BluezBluetoothInterface()
@@ -103,15 +103,15 @@ Solid::Control::BluetoothInterface::Mode BluezBluetoothInterface::mode() const
 {
     QString theMode = stringReply("GetMode");
     Solid::Control::BluetoothInterface::Mode modeEnum;
-    if ( theMode == "off" )
+    if (theMode == "off")
     {
         modeEnum = Solid::Control::BluetoothInterface::Off;
     }
-    else if ( theMode == "connectable" )
+    else if (theMode == "connectable")
     {
         modeEnum = Solid::Control::BluetoothInterface::Connectable;
     }
-    else if ( theMode == "discoverable" )
+    else if (theMode == "discoverable")
     {
         modeEnum = Solid::Control::BluetoothInterface::Discoverable;
     }
@@ -185,7 +185,7 @@ QStringList BluezBluetoothInterface::listRemoteDevices() const
     return listReply("ListRemoteDevces");
 }
 
-QStringList BluezBluetoothInterface::listRecentRemoteDevices(const QDateTime&) const
+QStringList BluezBluetoothInterface::listRecentRemoteDevices(const QDateTime &) const
 {
     return listReply("ListRecentRemoteDevices");
 }
@@ -285,7 +285,7 @@ void BluezBluetoothInterface::slotRemoteDeviceDisappeared(const QString &address
     emit remoteDeviceDisappeared(remoteubi);
 }
 
-QObject *BluezBluetoothInterface::createBluetoothRemoteDevice(const QString& ubi)
+QObject *BluezBluetoothInterface::createBluetoothRemoteDevice(const QString &ubi)
 {
     BluezBluetoothRemoteDevice *bluetoothInterface;
     if (d->devices.contains(ubi)) {

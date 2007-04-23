@@ -26,10 +26,10 @@
 class Storage : public Block, virtual public Solid::Ifaces::Storage
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::Storage )
+    Q_INTERFACES(Solid::Ifaces::Storage)
 
 public:
-    Storage( HalDevice *device );
+    Storage(HalDevice *device);
     virtual ~Storage();
 
     virtual Solid::Storage::Bus bus() const;

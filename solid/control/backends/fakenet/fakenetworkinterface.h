@@ -35,10 +35,10 @@ class KDE_EXPORT FakeNetworkInterface : public Solid::Control::Ifaces::NetworkIn
 {
     friend class FakeNetworkManager;
     Q_OBJECT
-    Q_INTERFACES( Solid::Control::Ifaces::NetworkInterface )
+    Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
 public:
-        FakeNetworkInterface( const QMap<QString, QVariant> & propertyMap,
-                          QObject *parent = 0 );
+        FakeNetworkInterface(const QMap<QString, QVariant>  & propertyMap,
+                          QObject *parent = 0);
         virtual ~FakeNetworkInterface();
         QString uni() const;
         bool isActive() const;
@@ -48,21 +48,21 @@ public:
         int designSpeed() const;
         bool isLinkUp() const;
         Solid::Control::NetworkInterface::Capabilities capabilities() const;
-        QObject * createNetwork( const QString & uni );
+        QObject * createNetwork(const QString  & uni);
         QStringList networks() const;
     Q_SIGNALS:
-        void activeChanged( bool );
-        void linkUpChanged( bool );
-        void signalStrengthChanged( int );
-        void connectionStateChanged( int /*NetworkStatus::ConnectionState*/ );
-        void networkAppeared( const QString & uni );
-        void networkDisappeared( const QString & uni );
+        void activeChanged(bool);
+        void linkUpChanged(bool);
+        void signalStrengthChanged(int);
+        void connectionStateChanged(int /*NetworkStatus::ConnectionState */);
+        void networkAppeared(const QString  & uni);
+        void networkDisappeared(const QString  & uni);
 
     protected:
         /* These methods are operations that are carried out by the manager
            In a real backend they would be events coming up from the network layer */
-        void setActive( bool active );
-        void injectNetwork( const QString & uni, FakeNetwork * net );
+        void setActive(bool active);
+        void injectNetwork(const QString  & uni, FakeNetwork * net);
         QMap<QString, FakeNetwork *> mNetworks;
         QMap<QString, QVariant> mPropertyMap;
 };

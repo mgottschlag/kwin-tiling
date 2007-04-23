@@ -31,11 +31,11 @@
 class KDE_EXPORT NMDBusHelper
 {
 public:
-    static QList<QVariant> serialize( Solid::Control::Authentication *, const QString & essid, QList<QVariant> & args, bool * error );
+    static QList<QVariant> serialize(Solid::Control::Authentication *, const QString  & essid, QList<QVariant>  & args, bool * error);
 private:
-    static QList<QVariant> doSerialize( Solid::Control::AuthenticationWep *, const QString & essid, QList<QVariant> & args, bool * error );
-    static QList<QVariant> doSerialize( Solid::Control::AuthenticationWpaPersonal *, const QString & essid, QList<QVariant> & args, bool * error );
-    static QList<QVariant> doSerialize( Solid::Control::AuthenticationWpaEnterprise *, const QString & essid, QList<QVariant> & args, bool * error );
+    static QList<QVariant> doSerialize(Solid::Control::AuthenticationWep *, const QString  & essid, QList<QVariant>  & args, bool * error);
+    static QList<QVariant> doSerialize(Solid::Control::AuthenticationWpaPersonal *, const QString  & essid, QList<QVariant>  & args, bool * error);
+    static QList<QVariant> doSerialize(Solid::Control::AuthenticationWpaEnterprise *, const QString  & essid, QList<QVariant>  & args, bool * error);
 };
 
 #endif

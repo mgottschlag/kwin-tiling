@@ -27,7 +27,7 @@
 class NMNetworkPrivate
 {
 public:
-    NMNetworkPrivate( const QString & networkPath ) : netPath( networkPath ) { }
+    NMNetworkPrivate(const QString  & networkPath) : netPath(networkPath) { }
     QString netPath;
     QList<QNetworkAddressEntry> addrList;
     QString route;
@@ -35,8 +35,8 @@ public:
     bool active;
 };
 
-NMNetwork::NMNetwork( const QString & netPath )
- : QObject(), d( new NMNetworkPrivate( netPath ) )
+NMNetwork::NMNetwork(const QString  & netPath)
+ : QObject(), d(new NMNetworkPrivate(netPath))
 {
 }
 
@@ -70,30 +70,30 @@ bool NMNetwork::isActive() const
     return d->active;
 }
 
-void NMNetwork::setActivated( bool activated )
+void NMNetwork::setActivated(bool activated)
 {
     // todo activate the device network here
     d->active = activated;
-    QDBusInterface manager( "org.freedesktop.NetworkManager",
+    QDBusInterface manager("org.freedesktop.NetworkManager",
             "/org/freedesktop/NetworkManager",
             "org.freedesktop.NetworkManager",
-            QDBusConnection::systemBus() );
-    QString devicePath = d->netPath.left( d->netPath.indexOf( "/Networks" ) );
-    manager.call( "setActiveDevice", qVariantFromValue( QDBusObjectPath( devicePath ) ) );
+            QDBusConnection::systemBus());
+    QString devicePath = d->netPath.left(d->netPath.indexOf("/Networks"));
+    manager.call("setActiveDevice", qVariantFromValue(QDBusObjectPath(devicePath)));
 
-    emit activationStateChanged( activated );
+    emit activationStateChanged(activated);
 }
 
-void NMNetwork::setProperties( const NMDBusNetworkProperties & props )
+void NMNetwork::setProperties(const NMDBusNetworkProperties  & props)
 {
     QNetworkAddressEntry addr;
-    addr.setIp( QHostAddress( props.ipv4Address ) );
-    addr.setNetmask( QHostAddress( props.subnetMask ) );
-    addr.setBroadcast( QHostAddress( props.broadcast ) );
-    d->addrList.append( addr );
+    addr.setIp(QHostAddress(props.ipv4Address));
+    addr.setNetmask(QHostAddress(props.subnetMask));
+    addr.setBroadcast(QHostAddress(props.broadcast));
+    d->addrList.append(addr);
     d->route = props.route;
-    d->dnsServers.append( props.primaryDNS );
-    d->dnsServers.append( props.secondaryDNS );
+    d->dnsServers.append(props.primaryDNS);
+    d->dnsServers.append(props.secondaryDNS);
 }
 
 #include "NetworkManager-network.moc"

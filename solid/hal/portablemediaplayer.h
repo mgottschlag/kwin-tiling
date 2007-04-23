@@ -30,10 +30,10 @@ class HalDevice;
 class PortableMediaPlayer : public DeviceInterface, virtual public Solid::Ifaces::PortableMediaPlayer
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::PortableMediaPlayer )
+    Q_INTERFACES(Solid::Ifaces::PortableMediaPlayer)
 
 public:
-    PortableMediaPlayer( HalDevice *device );
+    PortableMediaPlayer(HalDevice *device);
     virtual ~PortableMediaPlayer();
 
     virtual Solid::PortableMediaPlayer::AccessType accessMethod() const;

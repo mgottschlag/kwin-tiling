@@ -26,10 +26,10 @@
 class DvbHw : public DeviceInterface, virtual public Solid::Ifaces::DvbHw
 {
     Q_OBJECT
-    Q_INTERFACES( Solid::Ifaces::DvbHw )
+    Q_INTERFACES(Solid::Ifaces::DvbHw)
 
 public:
-    DvbHw( HalDevice *device );
+    DvbHw(HalDevice *device);
     virtual ~DvbHw();
 
     virtual QString device() const;

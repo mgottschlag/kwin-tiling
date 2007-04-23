@@ -21,12 +21,12 @@
 
 #include <QTimer>
 
-HalCallJob::HalCallJob( const QDBusConnection &connection, const QString &udi,
+HalCallJob::HalCallJob(const QDBusConnection &connection, const QString &udi,
                         const QString &interface, const QString &methodName,
-                        const QList<QVariant> &parameters )
-    : KJob(), m_connection( connection ), m_udi( udi ),
-      m_iface( interface ), m_method( methodName ),
-      m_params( parameters )
+                        const QList<QVariant> &parameters)
+    : KJob(), m_connection(connection), m_udi(udi),
+      m_iface(interface), m_method(methodName),
+      m_params(parameters)
 {
 }
 
@@ -37,29 +37,29 @@ HalCallJob::~HalCallJob()
 
 void HalCallJob::start()
 {
-    QTimer::singleShot( 0, this, SLOT( doStart() ) );
+    QTimer::singleShot(0, this, SLOT(doStart()));
 }
 
-void HalCallJob::kill( bool /*quietly*/ )
+void HalCallJob::kill(bool /*quietly */)
 {
 
 }
 
 void HalCallJob::doStart()
 {
-    QDBusMessage msg = QDBusMessage::createMethodCall( "org.freedesktop.Hal", m_udi,
-                                                       m_iface, m_method );
+    QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.Hal", m_udi,
+                                                       m_iface, m_method);
 
-    foreach(QVariant param, m_params) {
+    foreach (QVariant param, m_params) {
         msg << param;
     }
 
     if (!m_connection.callWithCallback(msg, this,
-                                       SLOT(callReply(const QDBusMessage&)),
-                                       SLOT(callError(const QDBusError&))))
+                                       SLOT(callReply(const QDBusMessage &)),
+                                       SLOT(callError(const QDBusError &))))
     {
-        setError( 1 );
-        setErrorText( m_connection.lastError().name()+": "+m_connection.lastError().message() );
+        setError(1);
+        setErrorText(m_connection.lastError().name()+": "+m_connection.lastError().message());
         emitResult();
     }
 }

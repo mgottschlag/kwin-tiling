@@ -26,7 +26,7 @@
 
 #include <kdebug.h>
 
-FakeBluetoothRemoteDevice::FakeBluetoothRemoteDevice(const QMap<QString, QVariant> & propertyMap, QObject * parent)
+FakeBluetoothRemoteDevice::FakeBluetoothRemoteDevice(const QMap<QString, QVariant>  & propertyMap, QObject * parent)
         : Solid::Control::Ifaces::BluetoothRemoteDevice(parent), mPropertyMap(propertyMap)
 {
 

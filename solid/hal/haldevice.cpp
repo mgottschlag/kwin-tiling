@@ -46,12 +46,12 @@
 class HalDevicePrivate
 {
 public:
-    HalDevicePrivate( const QString &udi )
-        : device( "org.freedesktop.Hal",
+    HalDevicePrivate(const QString &udi)
+        : device("org.freedesktop.Hal",
                   udi,
                   "org.freedesktop.Hal.Device",
-                  QDBusConnection::systemBus() ),
-          cacheSynced( false ) { }
+                  QDBusConnection::systemBus()),
+          cacheSynced(false) { }
 
     QDBusInterface device;
     QMap<QString,QVariant> cache;
@@ -61,7 +61,7 @@ public:
 Q_DECLARE_METATYPE(ChangeDescription)
 Q_DECLARE_METATYPE(QList<ChangeDescription>)
 
-const QDBusArgument &operator<<( QDBusArgument &arg, const ChangeDescription &change )
+const QDBusArgument &operator<<(QDBusArgument &arg, const ChangeDescription &change)
 {
     arg.beginStructure();
     arg << change.key << change.added << change.removed;
@@ -69,7 +69,7 @@ const QDBusArgument &operator<<( QDBusArgument &arg, const ChangeDescription &ch
     return arg;
 }
 
-const QDBusArgument &operator>>( const QDBusArgument &arg, ChangeDescription &change )
+const QDBusArgument &operator>>(const QDBusArgument &arg, ChangeDescription &change)
 {
     arg.beginStructure();
     arg >> change.key >> change.added >> change.removed;
@@ -78,19 +78,19 @@ const QDBusArgument &operator>>( const QDBusArgument &arg, ChangeDescription &ch
 }
 
 HalDevice::HalDevice(const QString &udi)
-    : Device(), d( new HalDevicePrivate( udi ) )
+    : Device(), d(new HalDevicePrivate(udi))
 {
     qDBusRegisterMetaType<ChangeDescription>();
     qDBusRegisterMetaType< QList<ChangeDescription> >();
 
-    d->device.connection().connect( "org.freedesktop.Hal",
+    d->device.connection().connect("org.freedesktop.Hal",
                                     udi, "org.freedesktop.Hal.Device",
                                     "PropertyModified",
-                                    this, SLOT( slotPropertyModified( int, const QList<ChangeDescription>& ) ) );
-    d->device.connection().connect( "org.freedesktop.Hal",
+                                    this, SLOT(slotPropertyModified(int, const QList<ChangeDescription> &)));
+    d->device.connection().connect("org.freedesktop.Hal",
                                     udi, "org.freedesktop.Hal.Device",
                                     "Condition",
-                                    this, SLOT( slotCondition( const QString&, const QString& ) ) );
+                                    this, SLOT(slotCondition(const QString &, const QString &)));
 }
 
 HalDevice::~HalDevice()
@@ -100,32 +100,32 @@ HalDevice::~HalDevice()
 
 QString HalDevice::udi() const
 {
-    return property( "info.udi" ).toString();
+    return property("info.udi").toString();
 }
 
 QString HalDevice::parentUdi() const
 {
-    return property( "info.parent" ).toString();
+    return property("info.parent").toString();
 }
 
 QString HalDevice::vendor() const
 {
-    return property( "info.vendor" ).toString();
+    return property("info.vendor").toString();
 }
 
 QString HalDevice::product() const
 {
-    return property( "info.product" ).toString();
+    return property("info.product").toString();
 }
 
-bool HalDevice::setProperty( const QString &key, const QVariant &value )
+bool HalDevice::setProperty(const QString &key, const QVariant &value)
 {
     QList<QVariant> args;
     args << key << value;
-    QDBusReply<void> reply = d->device.callWithArgumentList( QDBus::BlockWithGui,
-                                                             "SetProperty", args );
+    QDBusReply<void> reply = d->device.callWithArgumentList(QDBus::BlockWithGui,
+                                                             "SetProperty", args);
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
         return false;
@@ -136,28 +136,28 @@ bool HalDevice::setProperty( const QString &key, const QVariant &value )
     return true;
 }
 
-QVariant HalDevice::property( const QString &key ) const
+QVariant HalDevice::property(const QString &key) const
 {
-    if ( d->cache.contains( key ) )
+    if (d->cache.contains(key))
     {
         return d->cache[key];
     }
-    else if ( d->cacheSynced )
+    else if (d->cacheSynced)
     {
         return QVariant();
     }
 
-    QDBusMessage reply = d->device.call( "GetProperty", key );
+    QDBusMessage reply = d->device.call("GetProperty", key);
 
-    if ( reply.type()!=QDBusMessage::ReplyMessage
-      && reply.errorName()!="org.freedesktop.Hal.NoSuchProperty" )
+    if (reply.type()!=QDBusMessage::ReplyMessage
+      && reply.errorName()!="org.freedesktop.Hal.NoSuchProperty")
     {
         kDebug() << k_funcinfo << " error: " << reply.errorName()
                  << ", " << reply.arguments().at(0).toString() << endl;
         return QVariant();
     }
 
-    if ( reply.errorName()=="org.freedesktop.Hal.NoSuchProperty" )
+    if (reply.errorName()=="org.freedesktop.Hal.NoSuchProperty")
     {
         d->cache[key] = QVariant();
     }
@@ -171,14 +171,14 @@ QVariant HalDevice::property( const QString &key ) const
 
 QMap<QString, QVariant> HalDevice::allProperties() const
 {
-    if ( d->cacheSynced )
+    if (d->cacheSynced)
     {
         return d->cache;
     }
 
-    QDBusReply<QVariantMap> reply = d->device.call( "GetAllProperties" );
+    QDBusReply<QVariantMap> reply = d->device.call("GetAllProperties");
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name()
                  << ", " << reply.error().message() << endl;
@@ -191,38 +191,38 @@ QMap<QString, QVariant> HalDevice::allProperties() const
     return reply;
 }
 
-bool HalDevice::removeProperty( const QString &key )
+bool HalDevice::removeProperty(const QString &key)
 {
     QList<QVariant> args;
     args << key;
-    QDBusReply<void> reply = d->device.callWithArgumentList( QDBus::BlockWithGui,
-                                                             "RemoveProperty", args );
+    QDBusReply<void> reply = d->device.callWithArgumentList(QDBus::BlockWithGui,
+                                                             "RemoveProperty", args);
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
         return false;
     }
 
-    d->cache.remove( key );
+    d->cache.remove(key);
 
     return true;
 }
 
-bool HalDevice::propertyExists( const QString &key ) const
+bool HalDevice::propertyExists(const QString &key) const
 {
-    if ( d->cache.contains( key ) )
+    if (d->cache.contains(key))
     {
         return d->cache[key].isValid();
     }
-    else if ( d->cacheSynced )
+    else if (d->cacheSynced)
     {
         return false;
     }
 
-    QDBusReply<bool> reply = d->device.call( "PropertyExists", key );
+    QDBusReply<bool> reply = d->device.call("PropertyExists", key);
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
         return false;
@@ -235,10 +235,10 @@ bool HalDevice::addDeviceInterface(const Solid::DeviceInterface::Type &type)
 {
     QList<QVariant> args;
     args << DeviceInterface::toStringList(type).first();
-    QDBusReply<void> reply = d->device.callWithArgumentList( QDBus::BlockWithGui,
-                                                             "AddDeviceInterface", args );
+    QDBusReply<void> reply = d->device.callWithArgumentList(QDBus::BlockWithGui,
+                                                             "AddDeviceInterface", args);
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
         return false;
@@ -252,17 +252,17 @@ bool HalDevice::queryDeviceInterface(const Solid::DeviceInterface::Type &type) c
     QStringList cap_list = DeviceInterface::toStringList(type);
     QStringList result;
 
-    foreach ( QString cap, cap_list )
+    foreach (QString cap, cap_list)
     {
-        QDBusReply<bool> reply = d->device.call( "QueryCapability", cap );
+        QDBusReply<bool> reply = d->device.call("QueryCapability", cap);
 
-        if ( !reply.isValid() )
+        if (!reply.isValid())
         {
             kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
             return false;
         }
 
-        if ( reply ) return reply;
+        if (reply) return reply;
     }
 
     return false;
@@ -280,52 +280,52 @@ QObject *HalDevice::createDeviceInterface(const Solid::DeviceInterface::Type &ty
     switch (type)
     {
     case Solid::DeviceInterface::GenericInterface:
-        iface = new GenericInterface( this );
+        iface = new GenericInterface(this);
         break;
     case Solid::DeviceInterface::Processor:
-        iface = new Processor( this );
+        iface = new Processor(this);
         break;
     case Solid::DeviceInterface::Block:
-        iface = new Block( this );
+        iface = new Block(this);
         break;
     case Solid::DeviceInterface::Storage:
-        iface = new Storage( this );
+        iface = new Storage(this);
         break;
     case Solid::DeviceInterface::Cdrom:
-        iface = new Cdrom( this );
+        iface = new Cdrom(this);
         break;
     case Solid::DeviceInterface::Volume:
-        iface = new Volume( this );
+        iface = new Volume(this);
         break;
     case Solid::DeviceInterface::OpticalDisc:
-        iface = new OpticalDisc( this );
+        iface = new OpticalDisc(this);
         break;
     case Solid::DeviceInterface::Camera:
-        iface = new Camera( this );
+        iface = new Camera(this);
         break;
     case Solid::DeviceInterface::PortableMediaPlayer:
-        iface = new PortableMediaPlayer( this );
+        iface = new PortableMediaPlayer(this);
         break;
     case Solid::DeviceInterface::NetworkHw:
-        iface = new NetworkHw( this );
+        iface = new NetworkHw(this);
         break;
     case Solid::DeviceInterface::AcAdapter:
-        iface = new AcAdapter( this );
+        iface = new AcAdapter(this);
         break;
     case Solid::DeviceInterface::Battery:
-        iface = new Battery( this );
+        iface = new Battery(this);
         break;
     case Solid::DeviceInterface::Button:
-        iface = new Button( this );
+        iface = new Button(this);
         break;
     case Solid::DeviceInterface::Display:
-        iface = new Display( this );
+        iface = new Display(this);
         break;
     case Solid::DeviceInterface::AudioHw:
-        iface = new AudioHw( this );
+        iface = new AudioHw(this);
         break;
     case Solid::DeviceInterface::DvbHw:
-        iface = new DvbHw( this );
+        iface = new DvbHw(this);
         break;
     case Solid::DeviceInterface::Unknown:
         break;
@@ -338,10 +338,10 @@ bool HalDevice::lock(const QString &reason)
 {
     QList<QVariant> args;
     args << reason;
-    QDBusReply<void> reply = d->device.callWithArgumentList( QDBus::BlockWithGui,
-                                                             "Lock", args );
+    QDBusReply<void> reply = d->device.callWithArgumentList(QDBus::BlockWithGui,
+                                                             "Lock", args);
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
         return false;
@@ -352,10 +352,10 @@ bool HalDevice::lock(const QString &reason)
 
 bool HalDevice::unlock()
 {
-    QDBusReply<void> reply = d->device.callWithArgumentList( QDBus::AutoDetect,
-                                                             "Unlock", QList<QVariant>() );
+    QDBusReply<void> reply = d->device.callWithArgumentList(QDBus::AutoDetect,
+                                                             "Unlock", QList<QVariant>());
 
-    if ( !reply.isValid() )
+    if (!reply.isValid())
     {
         kDebug() << k_funcinfo << " error: " << reply.error().name() << endl;
         return false;
@@ -366,19 +366,19 @@ bool HalDevice::unlock()
 
 bool HalDevice::isLocked() const
 {
-    return property( "info.locked" ).toBool();
+    return property("info.locked").toBool();
 }
 
 QString HalDevice::lockReason() const
 {
-    return property( "info.locked.reason" ).toString();
+    return property("info.locked.reason").toString();
 }
 
-void HalDevice::slotPropertyModified( int /*count*/, const QList<ChangeDescription> &changes )
+void HalDevice::slotPropertyModified(int /*count */, const QList<ChangeDescription> &changes)
 {
     QMap<QString,int> result;
 
-    foreach( const ChangeDescription change, changes )
+    foreach (const ChangeDescription change, changes)
     {
         QString key = change.key;
         bool added = change.added;
@@ -386,28 +386,28 @@ void HalDevice::slotPropertyModified( int /*count*/, const QList<ChangeDescripti
 
         Solid::GenericInterface::PropertyChange type = Solid::GenericInterface::PropertyModified;
 
-        if ( added )
+        if (added)
         {
             type = Solid::GenericInterface::PropertyAdded;
         }
-        else if ( removed )
+        else if (removed)
         {
             type = Solid::GenericInterface::PropertyRemoved;
         }
 
         result[key] = type;
 
-        d->cache.remove( key );
+        d->cache.remove(key);
     }
 
     d->cacheSynced = false;
 
-    emit propertyChanged( result );
+    emit propertyChanged(result);
 }
 
-void HalDevice::slotCondition( const QString &condition, const QString &reason )
+void HalDevice::slotCondition(const QString &condition, const QString &reason)
 {
-    emit conditionRaised( condition, reason );
+    emit conditionRaised(condition, reason);
 }
 
 #include "haldevice.moc"

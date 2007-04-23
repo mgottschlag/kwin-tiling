@@ -40,11 +40,11 @@ class KDE_EXPORT FakeBluetoothInterface : public Solid::Control::Ifaces::Bluetoo
     Q_OBJECT
     Q_INTERFACES(Solid::Control::Ifaces::BluetoothInterface)
 public:
-    FakeBluetoothInterface(const QMap<QString, QVariant> & propertyMap,
+    FakeBluetoothInterface(const QMap<QString, QVariant>  & propertyMap,
                            QObject *parent = 0);
     virtual ~FakeBluetoothInterface();
 
-    QObject * createBluetoothRemoteDevice(const QString & ubi);
+    QObject * createBluetoothRemoteDevice(const QString  & ubi);
     QStringList bluetoothRemoteDevices() const;
 
     QString ubi() const
@@ -124,12 +124,12 @@ public:
     {
         return mRemoteDevices;
     }
-    QStringList listRecentRemoteDevices(const QDateTime&) const
+    QStringList listRecentRemoteDevices(const QDateTime &) const
     {
         return mRecentRemoteDevices;
     }
 
-    void injectDevice(const QString& , FakeBluetoothRemoteDevice*);
+    void injectDevice(const QString &, FakeBluetoothRemoteDevice *);
 private:
     int mTimeout;
     QString mName;
@@ -156,7 +156,7 @@ private:
 public Q_SLOTS:
     void setMode(const Solid::Control::BluetoothInterface::Mode mode)
     {
-        mMode = mode; /* emit modeChanged( mMode );*/
+        mMode = mode; /* emit modeChanged(mMode); */
     }
     void setDiscoverableTimeout(int timeout)
     {
@@ -185,7 +185,7 @@ public Q_SLOTS:
     }
 
 Q_SIGNALS:
-    void modeChanged( Solid::Control::BluetoothInterface::Mode mode);
+    void modeChanged(Solid::Control::BluetoothInterface::Mode mode);
     void discoverableTimeoutChanged(int timeout);
     void minorClassChanged(const QString &minor);
     void nameChanged(const QString &name);
@@ -197,7 +197,7 @@ Q_SIGNALS:
 protected:
     /* These methods are operations that are carried out by the manager
        In a real backend they would be events coming up from the network layer */
-    void injectBluetooth(const QString & ubi, FakeBluetoothRemoteDevice * device);
+    void injectBluetooth(const QString  & ubi, FakeBluetoothRemoteDevice * device);
     QMap<QString, FakeBluetoothRemoteDevice *> mBluetoothRemoteDevices;
     QMap<QString, QVariant> mPropertyMap;
 };

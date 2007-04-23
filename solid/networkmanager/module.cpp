@@ -23,5 +23,5 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<NMNetworkManager, Solid::Control::Ifaces::NetworkManager> NetworkManagerBackendFactory;
-K_EXPORT_COMPONENT_FACTORY( solid_networkmanager, NetworkManagerBackendFactory( "NetworkManagerbackend" ) )
+K_EXPORT_COMPONENT_FACTORY(solid_networkmanager, NetworkManagerBackendFactory("NetworkManagerbackend"))
 

@@ -21,8 +21,8 @@
 
 #include "haldevice.h"
 
-DvbHw::DvbHw( HalDevice *device )
-    : DeviceInterface( device )
+DvbHw::DvbHw(HalDevice *device)
+    : DeviceInterface(device)
 {
 
 }
@@ -34,7 +34,7 @@ DvbHw::~DvbHw()
 
 QString DvbHw::device() const
 {
-    return m_device->property( "dvb.device" ).toString();
+    return m_device->property("dvb.device").toString();
 }
 
 int DvbHw::deviceAdapter() const

@@ -35,26 +35,26 @@ class KDE_EXPORT HalPower : public Solid::Control::Ifaces::PowerManager
     Q_OBJECT
 
 public:
-    HalPower( QObject *parent, const QStringList &args );
+    HalPower(QObject *parent, const QStringList &args);
     virtual ~HalPower();
 
     virtual QStringList supportedSchemes() const;
-    virtual QString schemeDescription( const QString &schemeName ) const;
+    virtual QString schemeDescription(const QString &schemeName) const;
     virtual QString scheme() const;
-    virtual bool setScheme( const QString &name );
+    virtual bool setScheme(const QString &name);
 
     virtual Solid::Control::PowerManager::BatteryState batteryState() const;
     virtual int batteryChargePercent() const;
     virtual Solid::Control::PowerManager::AcAdapterState acAdapterState() const;
 
     virtual Solid::Control::PowerManager::SuspendMethods supportedSuspendMethods() const;
-    virtual KJob *suspend( Solid::Control::PowerManager::SuspendMethod method ) const;
+    virtual KJob *suspend(Solid::Control::PowerManager::SuspendMethod method) const;
 
     virtual Solid::Control::PowerManager::CpuFreqPolicies supportedCpuFreqPolicies() const;
     virtual Solid::Control::PowerManager::CpuFreqPolicy cpuFreqPolicy() const;
-    virtual bool setCpuFreqPolicy( Solid::Control::PowerManager::CpuFreqPolicy newPolicy );
-    virtual bool canDisableCpu( int cpuNum ) const;
-    virtual bool setCpuEnabled( int cpuNum, bool enabled );
+    virtual bool setCpuFreqPolicy(Solid::Control::PowerManager::CpuFreqPolicy newPolicy);
+    virtual bool canDisableCpu(int cpuNum) const;
+    virtual bool setCpuEnabled(int cpuNum, bool enabled);
 
 private:
     void computeAcAdapters();
@@ -63,15 +63,15 @@ private:
 
 private slots:
     void updateBatteryStats();
-    void slotPlugStateChanged( bool newState );
-    void slotButtonPressed( int type );
+    void slotPlugStateChanged(bool newState);
+    void slotButtonPressed(int type);
     void slotNewDeviceInterface(const QString &udi, int type);
-    void slotDeviceRemoved( const QString &udi );
+    void slotDeviceRemoved(const QString &udi);
 
 private:
-    QMap<QString, Solid::Device*> m_acAdapters;
-    QMap<QString, Solid::Device*> m_batteries;
-    QMap<QString, Solid::Device*> m_buttons;
+    QMap<QString, Solid::Device *> m_acAdapters;
+    QMap<QString, Solid::Device *> m_batteries;
+    QMap<QString, Solid::Device *> m_buttons;
 
     int m_pluggedAdapterCount;
 
