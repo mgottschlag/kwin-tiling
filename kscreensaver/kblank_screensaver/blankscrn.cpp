@@ -17,7 +17,6 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kcolordialog.h>
-#include <kbuttonbox.h>
 #include <kcolorbutton.h>
 #include <kglobal.h>
 #include "blankscrn.h"
