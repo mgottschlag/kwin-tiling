@@ -26,6 +26,8 @@ class QObject;
 
 namespace Solid
 {
+namespace Control
+{
     /**
      * @internal
      */
@@ -37,17 +39,18 @@ public:                                                           \
     static Type &self();                                          \
     static Type &selfForceBackend( QObject *backend );            \
 private:                                                          \
-    friend class Solid::SingletonHelper< Type >;
+    friend class Solid::Control::SingletonHelper< Type >;
 
 #define SOLID_SINGLETON_IMPLEMENTATION( Type, Name )              \
-    K_GLOBAL_STATIC(Solid::SingletonHelper< Type >, global##Name) \
+    K_GLOBAL_STATIC(Solid::Control::SingletonHelper< Type >, global##Name) \
                                                                   \
     Type &Type::self()                                            \
     {                                                             \
-        Solid::SingletonHelper< Type > *singleton = global##Name; \
+        Solid::Control::SingletonHelper< Type > *singleton = global##Name; \
                                                                   \
         return singleton->instance;                               \
     }
+}
 }
 
 #endif

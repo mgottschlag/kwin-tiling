@@ -22,6 +22,6 @@
 // KDE includes
 #include <kgenericfactory.h>
 
-typedef KGenericFactory<NMNetworkManager, SolidExperimental::Ifaces::NetworkManager> NetworkManagerBackendFactory;
+typedef KGenericFactory<NMNetworkManager, Solid::Control::Ifaces::NetworkManager> NetworkManagerBackendFactory;
 K_EXPORT_COMPONENT_FACTORY( solid_networkmanager, NetworkManagerBackendFactory( "NetworkManagerbackend" ) )
 

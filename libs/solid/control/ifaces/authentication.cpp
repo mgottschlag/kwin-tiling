@@ -22,6 +22,6 @@
 
 /******************************************************************************/
 
-SolidExperimental::Ifaces::AuthenticationValidator::~AuthenticationValidator()
+Solid::Control::Ifaces::AuthenticationValidator::~AuthenticationValidator()
 {
 }

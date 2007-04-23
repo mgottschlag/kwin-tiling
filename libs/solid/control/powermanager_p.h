@@ -24,7 +24,9 @@
 
 #include "powermanager.h"
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     class PowerManagerPrivate : public PowerManager::Notifier, public ManagerBasePrivate
     {
@@ -33,6 +35,7 @@ namespace SolidExperimental
         PowerManagerPrivate();
         ~PowerManagerPrivate();
     };
+}
 }
 
 #endif

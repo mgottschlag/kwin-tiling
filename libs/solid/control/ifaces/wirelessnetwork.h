@@ -24,14 +24,16 @@
 
 #include <QStringList>
 
-#include <solid/experimental/wirelessnetwork.h>
-#include <solid/experimental/ifaces/network.h>
+#include <solid/control/wirelessnetwork.h>
+#include <solid/control/ifaces/network.h>
 
 
 typedef QString MacAddress;
 typedef QStringList MacAddressList;
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 namespace Ifaces
 {
@@ -71,9 +73,9 @@ namespace Ifaces
          * Retrieves the capabilities of this wifi network.
          *
          * @return the flag set describing the capabilities
-         * @see SolidExperimental::WirelessNetwork::DeviceInterface
+         * @see Solid::Control::WirelessNetwork::DeviceInterface
          */
-        virtual SolidExperimental::WirelessNetwork::Capabilities capabilities() const = 0;
+        virtual Solid::Control::WirelessNetwork::Capabilities capabilities() const = 0;
 
 
 
@@ -89,9 +91,9 @@ namespace Ifaces
          * Retrieves the operation mode of this network.
          *
          * @return the current mode
-         * @see SolidExperimental::WirelessNetwork::OperationMode
+         * @see Solid::Control::WirelessNetwork::OperationMode
          */
-        virtual SolidExperimental::WirelessNetwork::OperationMode mode() const = 0;
+        virtual Solid::Control::WirelessNetwork::OperationMode mode() const = 0;
 
         /**
          * Indicates if the network interface is associated to this network.
@@ -127,7 +129,7 @@ namespace Ifaces
          *
          * @return the current authentication object, or 0 if none is used for now
          */
-        virtual SolidExperimental::Authentication *authentication() const = 0;
+        virtual Solid::Control::Authentication *authentication() const = 0;
 
         /**
          * Sets the authentication object to use with this network.
@@ -171,8 +173,9 @@ namespace Ifaces
         virtual void authenticationNeeded() = 0;
     };
 } //Ifaces
+} //Control
 } //Solid
 
-Q_DECLARE_INTERFACE( SolidExperimental::Ifaces::WirelessNetwork, "org.kde.Solid.Ifaces.WirelessNetwork/0.1" )
+Q_DECLARE_INTERFACE( Solid::Control::Ifaces::WirelessNetwork, "org.kde.Solid.Control.Ifaces.WirelessNetwork/0.1" )
 
 #endif

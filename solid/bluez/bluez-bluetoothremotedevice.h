@@ -24,12 +24,12 @@
 
 #include <kdemacros.h>
 
-#include <solid/experimental/ifaces/bluetoothremotedevice.h>
+#include <solid/control/ifaces/bluetoothremotedevice.h>
 
-class KDE_EXPORT BluezBluetoothRemoteDevice : public SolidExperimental::Ifaces::BluetoothRemoteDevice
+class KDE_EXPORT BluezBluetoothRemoteDevice : public Solid::Control::Ifaces::BluetoothRemoteDevice
 {
     Q_OBJECT
-    Q_INTERFACES(SolidExperimental::Ifaces::BluetoothRemoteDevice)
+    Q_INTERFACES(Solid::Control::Ifaces::BluetoothRemoteDevice)
 public:
     BluezBluetoothRemoteDevice(const QString &objectPath);
     virtual ~BluezBluetoothRemoteDevice();

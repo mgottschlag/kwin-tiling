@@ -23,7 +23,9 @@
 
 #include "frontendobject_p.h"
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     class NetworkPrivate : public FrontendObjectPrivate
     {
@@ -33,6 +35,7 @@ namespace SolidExperimental
 
         void setBackendObject(QObject *object);
     };
+}
 }
 
 #endif

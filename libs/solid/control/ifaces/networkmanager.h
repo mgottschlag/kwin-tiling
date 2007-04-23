@@ -23,7 +23,9 @@
 #include <QObject>
 #include <solid/solid_export.h>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 namespace Ifaces
 {
@@ -129,6 +131,8 @@ namespace Ifaces
     };
 
 } // Ifaces
+
+} // Control
 
 } // Solid
 

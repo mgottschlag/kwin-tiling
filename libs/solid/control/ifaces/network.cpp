@@ -19,7 +19,7 @@
 
 #include "network.h"
 
-SolidExperimental::Ifaces::Network::~Network()
+Solid::Control::Ifaces::Network::~Network()
 {
 
 }

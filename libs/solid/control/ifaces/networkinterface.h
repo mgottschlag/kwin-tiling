@@ -23,11 +23,13 @@
 #include <QList>
 #include <solid/solid_export.h>
 
-#include <solid/experimental/networkinterface.h>
+#include <solid/control/networkinterface.h>
 
 #include <QObject>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 namespace Ifaces
 {
@@ -35,7 +37,7 @@ namespace Ifaces
      * Represents a network interface as seen by the networking subsystem.
      *
      * For non network specific hardware details,
-     * @see SolidExperimental::Ifaces::NetworkHw
+     * @see Solid::Control::Ifaces::NetworkHw
      */
     class SOLIDIFACES_EXPORT NetworkInterface : public QObject
     {
@@ -73,9 +75,9 @@ namespace Ifaces
          * if a device is wired or wireless.
          *
          * @return this network interface type
-         * @see SolidExperimental::NetworkInterface::Type
+         * @see Solid::Control::NetworkInterface::Type
          */
-        virtual SolidExperimental::NetworkInterface::Type type() const = 0;
+        virtual Solid::Control::NetworkInterface::Type type() const = 0;
 
         /**
          * Retrieves the current state of the network connection held by this device.
@@ -83,9 +85,9 @@ namespace Ifaces
          * it provides states coming from different layers.
          *
          * @return the current connection state
-         * @see SolidExperimental::NetworkInterface::ConnectionState
+         * @see Solid::Control::NetworkInterface::ConnectionState
          */
-        virtual SolidExperimental::NetworkInterface::ConnectionState connectionState() const = 0;
+        virtual Solid::Control::NetworkInterface::ConnectionState connectionState() const = 0;
 
         /**
          * Retrieves the current signal strength of this network interface. It ranges from 0 to 100.
@@ -113,9 +115,9 @@ namespace Ifaces
          * Retrieves the capabilities supported by this device.
          *
          * @return the capabilities of the device
-         * @see SolidExperimental::NetworkInterface::Capabilities
+         * @see Solid::Control::NetworkInterface::Capabilities
          */
-        virtual SolidExperimental::NetworkInterface::Capabilities capabilities() const = 0;
+        virtual Solid::Control::NetworkInterface::Capabilities capabilities() const = 0;
 
         /**
          * Instantiates a new Network object from the current backend given its UNI.
@@ -166,7 +168,7 @@ namespace Ifaces
          * For example, if the device was disconnected and started to activate
          *
          * @param state the new state of the connection
-         * @see SolidExperimental::NetworkInterface::ConnectionState
+         * @see Solid::Control::NetworkInterface::ConnectionState
          */
         void connectionStateChanged( int state );
 
@@ -185,8 +187,9 @@ namespace Ifaces
         void networkDisappeared( const QString & uni );
     };
 } //Ifaces
+} //Control
 } //Solid
 
-Q_DECLARE_INTERFACE( SolidExperimental::Ifaces::NetworkInterface, "org.kde.Solid.Ifaces.NetworkInterface/0.1" )
+Q_DECLARE_INTERFACE( Solid::Control::Ifaces::NetworkInterface, "org.kde.Solid.Control.Ifaces.NetworkInterface/0.1" )
 
 #endif

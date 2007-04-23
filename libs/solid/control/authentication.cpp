@@ -21,11 +21,13 @@
 #include "../soliddefs_p.h"
 #include "authentication.h"
 #include "networkmanager_p.h"
-#include <solid/experimental/networkmanager.h>
-#include <solid/experimental/ifaces/networkmanager.h>
-#include <solid/experimental/ifaces/authentication.h>
+#include <solid/control/networkmanager.h>
+#include <solid/control/ifaces/networkmanager.h>
+#include <solid/control/ifaces/authentication.h>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     class AuthenticationValidator::Private
     {
@@ -68,27 +70,28 @@ namespace SolidExperimental
         QString certPrivatePasswordKey;
     };
 }
+}
 
 
 /******************************************************************************/
 
-SolidExperimental::Authentication::Authentication()
+Solid::Control::Authentication::Authentication()
     : d( new Private )
 {
 
 }
 
-SolidExperimental::Authentication::~Authentication()
+Solid::Control::Authentication::~Authentication()
 {
     delete d;
 }
 
-void SolidExperimental::Authentication::setSecrets( const SecretMap& secrets )
+void Solid::Control::Authentication::setSecrets( const SecretMap& secrets )
 {
     d->secrets = secrets;
 }
 
-SolidExperimental::Authentication::SecretMap SolidExperimental::Authentication::secrets() const
+Solid::Control::Authentication::SecretMap Solid::Control::Authentication::secrets() const
 {
     return d->secrets;
 }
@@ -97,12 +100,12 @@ SolidExperimental::Authentication::SecretMap SolidExperimental::Authentication::
 
 /******************************************************************************/
 
-SolidExperimental::AuthenticationNone::AuthenticationNone()
+Solid::Control::AuthenticationNone::AuthenticationNone()
 {
 
 }
 
-SolidExperimental::AuthenticationNone::~AuthenticationNone()
+Solid::Control::AuthenticationNone::~AuthenticationNone()
 {
 
 }
@@ -111,98 +114,98 @@ SolidExperimental::AuthenticationNone::~AuthenticationNone()
 
 /******************************************************************************/
 
-SolidExperimental::AuthenticationWep::AuthenticationWep()
+Solid::Control::AuthenticationWep::AuthenticationWep()
     : d( new Private )
 {
 
 }
 
-SolidExperimental::AuthenticationWep::~AuthenticationWep()
+Solid::Control::AuthenticationWep::~AuthenticationWep()
 {
     delete d;
 }
 
-void SolidExperimental::AuthenticationWep::setMethod( WepMethod method )
+void Solid::Control::AuthenticationWep::setMethod( WepMethod method )
 {
     d->method = method;
 }
 
-SolidExperimental::AuthenticationWep::WepMethod SolidExperimental::AuthenticationWep::method() const
+Solid::Control::AuthenticationWep::WepMethod Solid::Control::AuthenticationWep::method() const
 {
     return d->method;
 }
 
-void SolidExperimental::AuthenticationWep::setType( WepType type )
+void Solid::Control::AuthenticationWep::setType( WepType type )
 {
     d->type = type;
 }
 
-SolidExperimental::AuthenticationWep::WepType SolidExperimental::AuthenticationWep::type() const
+Solid::Control::AuthenticationWep::WepType Solid::Control::AuthenticationWep::type() const
 {
     return d->type;
 }
 
-void SolidExperimental::AuthenticationWep::setKeyLength( int length )
+void Solid::Control::AuthenticationWep::setKeyLength( int length )
 {
     d->keyLength = length;
 }
 
-int SolidExperimental::AuthenticationWep::keyLength() const
+int Solid::Control::AuthenticationWep::keyLength() const
 {
     return d->keyLength;
 }
 
 /******************************************************************************/
 
-SolidExperimental::AuthenticationWpa::AuthenticationWpa()
+Solid::Control::AuthenticationWpa::AuthenticationWpa()
     : d( new Private )
 {
 
 }
 
-SolidExperimental::AuthenticationWpa::~AuthenticationWpa()
+Solid::Control::AuthenticationWpa::~AuthenticationWpa()
 {
     delete d;
 }
 
-void SolidExperimental::AuthenticationWpa::setProtocol( WpaProtocol protocol )
+void Solid::Control::AuthenticationWpa::setProtocol( WpaProtocol protocol )
 {
     d->protocol = protocol;
 }
 
-SolidExperimental::AuthenticationWpa::WpaProtocol SolidExperimental::AuthenticationWpa::protocol() const
+Solid::Control::AuthenticationWpa::WpaProtocol Solid::Control::AuthenticationWpa::protocol() const
 {
     return d->protocol;
 }
 
-void SolidExperimental::AuthenticationWpa::setVersion( WpaVersion version )
+void Solid::Control::AuthenticationWpa::setVersion( WpaVersion version )
 {
     d->version = version;
 }
 
-SolidExperimental::AuthenticationWpa::WpaVersion SolidExperimental::AuthenticationWpa::version() const
+Solid::Control::AuthenticationWpa::WpaVersion Solid::Control::AuthenticationWpa::version() const
 {
     return d->version;
 }
 
-void SolidExperimental::AuthenticationWpa::setKeyManagement( WpaKeyManagement mgmt )
+void Solid::Control::AuthenticationWpa::setKeyManagement( WpaKeyManagement mgmt )
 {
     d->mgmt = mgmt;
 }
 
-SolidExperimental::AuthenticationWpa::WpaKeyManagement SolidExperimental::AuthenticationWpa::keyManagement() const
+Solid::Control::AuthenticationWpa::WpaKeyManagement Solid::Control::AuthenticationWpa::keyManagement() const
 {
     return d->mgmt;
 }
 
 /******************************************************************************/
 
-SolidExperimental::AuthenticationWpaPersonal::AuthenticationWpaPersonal()
+Solid::Control::AuthenticationWpaPersonal::AuthenticationWpaPersonal()
 {
 
 }
 
-SolidExperimental::AuthenticationWpaPersonal::~AuthenticationWpaPersonal()
+Solid::Control::AuthenticationWpaPersonal::~AuthenticationWpaPersonal()
 {
 
 }
@@ -211,101 +214,101 @@ SolidExperimental::AuthenticationWpaPersonal::~AuthenticationWpaPersonal()
 
 /******************************************************************************/
 
-SolidExperimental::AuthenticationWpaEnterprise::AuthenticationWpaEnterprise()
+Solid::Control::AuthenticationWpaEnterprise::AuthenticationWpaEnterprise()
     : d( new Private )
 {
 
 }
 
-SolidExperimental::AuthenticationWpaEnterprise::~AuthenticationWpaEnterprise()
+Solid::Control::AuthenticationWpaEnterprise::~AuthenticationWpaEnterprise()
 {
     delete d;
 }
 
-void SolidExperimental::AuthenticationWpaEnterprise::setIdentity( const QString &identity )
+void Solid::Control::AuthenticationWpaEnterprise::setIdentity( const QString &identity )
 {
     d->identity = identity;
 }
 
-QString SolidExperimental::AuthenticationWpaEnterprise::identity() const
+QString Solid::Control::AuthenticationWpaEnterprise::identity() const
 {
     return d->identity;
 }
 
-void SolidExperimental::AuthenticationWpaEnterprise::setAnonIdentity( const QString &anonIdentity)
+void Solid::Control::AuthenticationWpaEnterprise::setAnonIdentity( const QString &anonIdentity)
 {
     d->anonIdentity = anonIdentity;
 }
 
-QString SolidExperimental::AuthenticationWpaEnterprise::anonIdentity() const
+QString Solid::Control::AuthenticationWpaEnterprise::anonIdentity() const
 {
     return d->anonIdentity;
 }
 
-void SolidExperimental::AuthenticationWpaEnterprise::setCertClient( const QString &certClient )
+void Solid::Control::AuthenticationWpaEnterprise::setCertClient( const QString &certClient )
 {
     d->certClient = certClient;
 }
 
-QString SolidExperimental::AuthenticationWpaEnterprise::certClient() const
+QString Solid::Control::AuthenticationWpaEnterprise::certClient() const
 {
     return d->certClient;
 }
 
-void SolidExperimental::AuthenticationWpaEnterprise::setCertCA( const QString &certCA )
+void Solid::Control::AuthenticationWpaEnterprise::setCertCA( const QString &certCA )
 {
     d->certCA = certCA;
 }
 
-QString SolidExperimental::AuthenticationWpaEnterprise::certCA() const
+QString Solid::Control::AuthenticationWpaEnterprise::certCA() const
 {
     return d->certCA;
 }
 
-void SolidExperimental::AuthenticationWpaEnterprise::setCertPrivate( const QString &certPrivate )
+void Solid::Control::AuthenticationWpaEnterprise::setCertPrivate( const QString &certPrivate )
 {
     d->certPrivate = certPrivate;
 }
 
-QString SolidExperimental::AuthenticationWpaEnterprise::certPrivate() const
+QString Solid::Control::AuthenticationWpaEnterprise::certPrivate() const
 {
     return d->certPrivate;
 }
 
 
-void SolidExperimental::AuthenticationWpaEnterprise::setMethod( EapMethod method )
+void Solid::Control::AuthenticationWpaEnterprise::setMethod( EapMethod method )
 {
     d->method = method;
 }
 
-SolidExperimental::AuthenticationWpaEnterprise::EapMethod SolidExperimental::AuthenticationWpaEnterprise::method() const
+Solid::Control::AuthenticationWpaEnterprise::EapMethod Solid::Control::AuthenticationWpaEnterprise::method() const
 {
     return d->method;
 }
 
-void SolidExperimental::AuthenticationWpaEnterprise::setIdPasswordKey( const QString &idPasswordKey )
+void Solid::Control::AuthenticationWpaEnterprise::setIdPasswordKey( const QString &idPasswordKey )
 {
     d->idPasswordKey = idPasswordKey;
 }
 
-QString SolidExperimental::AuthenticationWpaEnterprise::idPasswordKey() const
+QString Solid::Control::AuthenticationWpaEnterprise::idPasswordKey() const
 {
     return d->idPasswordKey;
 }
 
-void SolidExperimental::AuthenticationWpaEnterprise::setCertPrivatePasswordKey( const QString &certPrivatePasswordKey )
+void Solid::Control::AuthenticationWpaEnterprise::setCertPrivatePasswordKey( const QString &certPrivatePasswordKey )
 {
     d->certPrivatePasswordKey = certPrivatePasswordKey;
 }
 
-QString SolidExperimental::AuthenticationWpaEnterprise::certPrivatePasswordKey() const
+QString Solid::Control::AuthenticationWpaEnterprise::certPrivatePasswordKey() const
 {
     return d->certPrivatePasswordKey;
 }
 
 
 
-SolidExperimental::AuthenticationValidator::AuthenticationValidator()
+Solid::Control::AuthenticationValidator::AuthenticationValidator()
     : d( new Private )
 {
 #if 0
@@ -318,13 +321,13 @@ SolidExperimental::AuthenticationValidator::AuthenticationValidator()
 #endif
 }
 
-SolidExperimental::AuthenticationValidator::~AuthenticationValidator()
+Solid::Control::AuthenticationValidator::~AuthenticationValidator()
 {
     delete d->backendObject;
     delete d;
 }
 
-bool SolidExperimental::AuthenticationValidator::validate( const SolidExperimental::Authentication *authentication )
+bool Solid::Control::AuthenticationValidator::validate( const Solid::Control::Authentication *authentication )
 {
     return_SOLID_CALL( Ifaces::AuthenticationValidator*, d->backendObject, false, validate(authentication) );
 }

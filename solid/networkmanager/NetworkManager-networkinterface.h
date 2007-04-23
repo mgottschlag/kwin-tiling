@@ -24,7 +24,7 @@
 
 #include "NetworkManager-network.h"
 
-#include <solid/experimental/ifaces/networkinterface.h>
+#include <solid/control/ifaces/networkinterface.h>
 
 struct NMDBusDeviceProperties {
 	QDBusObjectPath path;
@@ -48,21 +48,21 @@ Q_DECLARE_METATYPE(NMDBusDeviceProperties)
 
 class NMNetworkInterfacePrivate;
 
-class KDE_EXPORT NMNetworkInterface : public SolidExperimental::Ifaces::NetworkInterface
+class KDE_EXPORT NMNetworkInterface : public Solid::Control::Ifaces::NetworkInterface
 {
 Q_OBJECT
-Q_INTERFACES(SolidExperimental::Ifaces::NetworkInterface)
+Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
 public:
     NMNetworkInterface( const QString & objectPath );
     virtual ~NMNetworkInterface();
     QString uni() const;
     bool isActive() const;
-    SolidExperimental::NetworkInterface::Type type() const;
-    SolidExperimental::NetworkInterface::ConnectionState connectionState() const;
+    Solid::Control::NetworkInterface::Type type() const;
+    Solid::Control::NetworkInterface::ConnectionState connectionState() const;
     int signalStrength() const;
     int designSpeed() const;
     bool isLinkUp() const;
-    SolidExperimental::NetworkInterface::Capabilities capabilities() const;
+    Solid::Control::NetworkInterface::Capabilities capabilities() const;
     QObject *createNetwork( const QString & uni );
     QStringList networks() const;
     // These setters are used to update the interface by the manager

@@ -25,11 +25,13 @@
 
 #include <solid/solid_export.h>
 
-#include <solid/experimental/powermanager.h>
+#include <solid/control/powermanager.h>
 
 class KJob;
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 namespace Ifaces
 {
@@ -92,9 +94,9 @@ namespace Ifaces
          * Retrieves the current state of the system battery.
          *
          * @return the current battery state
-         * @see SolidExperimental::PowerManager::BatteryState
+         * @see Solid::Control::PowerManager::BatteryState
          */
-        virtual SolidExperimental::PowerManager::BatteryState batteryState() const = 0;
+        virtual Solid::Control::PowerManager::BatteryState batteryState() const = 0;
 
         /**
          * Retrieves the current charge percentage of the system batteries.
@@ -107,19 +109,19 @@ namespace Ifaces
          * Retrieves the current state of the system AC adapter.
          *
          * @return the current AC adapter state
-         * @see SolidExperimental::PowerManager::AcAdapterState
+         * @see Solid::Control::PowerManager::AcAdapterState
          */
-        virtual SolidExperimental::PowerManager::AcAdapterState acAdapterState() const = 0;
+        virtual Solid::Control::PowerManager::AcAdapterState acAdapterState() const = 0;
 
 
         /**
          * Retrieves the set of suspend methods supported by the system.
          *
          * @return the suspend methods supported by this system
-         * @see SolidExperimental::PowerManager::SuspendMethod
-         * @see SolidExperimental::PowerManager::SuspendMethods
+         * @see Solid::Control::PowerManager::SuspendMethod
+         * @see Solid::Control::PowerManager::SuspendMethods
          */
-        virtual SolidExperimental::PowerManager::SuspendMethods supportedSuspendMethods() const = 0;
+        virtual Solid::Control::PowerManager::SuspendMethods supportedSuspendMethods() const = 0;
 
         /**
          * Requests a suspend of the system.
@@ -127,34 +129,34 @@ namespace Ifaces
          * @param method the suspend method to use
          * @return the job handling the operation
          */
-        virtual KJob *suspend( SolidExperimental::PowerManager::SuspendMethod method ) const = 0;
+        virtual KJob *suspend( Solid::Control::PowerManager::SuspendMethod method ) const = 0;
 
 
         /**
          * Retrieves the set of CPU frequency policies supported by the system.
          *
          * @return the CPU frequency policies supported by this system
-         * @see SolidExperimental::PowerManager::CpuFreqPolicy
-         * @see SolidExperimental::PowerManager::CpuFreqPolicies
+         * @see Solid::Control::PowerManager::CpuFreqPolicy
+         * @see Solid::Control::PowerManager::CpuFreqPolicies
          */
-        virtual SolidExperimental::PowerManager::CpuFreqPolicies supportedCpuFreqPolicies() const = 0;
+        virtual Solid::Control::PowerManager::CpuFreqPolicies supportedCpuFreqPolicies() const = 0;
 
         /**
          * Retrieves the current CPU frequency policy of the system.
          *
          * @return the current CPU frequency policy used by the system
-         * @see SolidExperimental::PowerManager::CpuFreqPolicy
+         * @see Solid::Control::PowerManager::CpuFreqPolicy
          */
-        virtual SolidExperimental::PowerManager::CpuFreqPolicy cpuFreqPolicy() const = 0;
+        virtual Solid::Control::PowerManager::CpuFreqPolicy cpuFreqPolicy() const = 0;
 
         /**
          * Changes the current CPU frequency policy of the system.
          *
          * @param newPolicy the new policy
          * @return true if the policy change succeeded, false otherwise
-         * @see SolidExperimental::PowerManager::CpuFreqPolicy
+         * @see Solid::Control::PowerManager::CpuFreqPolicy
          */
-        virtual bool setCpuFreqPolicy( SolidExperimental::PowerManager::CpuFreqPolicy newPolicy ) = 0;
+        virtual bool setCpuFreqPolicy( Solid::Control::PowerManager::CpuFreqPolicy newPolicy ) = 0;
 
         /**
          * Checks if a CPU can be disabled.
@@ -185,7 +187,7 @@ namespace Ifaces
          * This signal is emitted when the AC adapter is plugged or unplugged.
          *
          * @param newState the new state of the AC adapter, it's one of the
-         * type @see SolidExperimental::PowerManager::AcAdapterState
+         * type @see Solid::Control::PowerManager::AcAdapterState
          */
         void acAdapterStateChanged( int newState );
 
@@ -193,7 +195,7 @@ namespace Ifaces
          * This signal is emitted when the system battery state changed.
          *
          * @param newState the new state of the system battery, it's one of the
-         * type @see SolidExperimental::PowerManager::BatteryState
+         * type @see Solid::Control::PowerManager::BatteryState
          */
         void batteryStateChanged( int newState );
 
@@ -201,10 +203,11 @@ namespace Ifaces
          * This signal is emitted when a button has been pressed.
          *
          * @param buttonType the pressed button type, it's one of the
-         * type @see SolidExperimental::PowerManager::ButtonType
+         * type @see Solid::Control::PowerManager::ButtonType
          */
         void buttonPressed( int buttonType );
     };
+}
 }
 }
 

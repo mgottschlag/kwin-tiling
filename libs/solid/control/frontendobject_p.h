@@ -22,7 +22,9 @@
 
 class QObject;
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     class FrontendObjectPrivate
     {
@@ -41,6 +43,7 @@ namespace SolidExperimental
         QObject *m_parent;
         QObject *m_backendObject;
     };
+}
 }
 
 #endif

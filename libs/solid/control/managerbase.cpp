@@ -28,16 +28,16 @@
 
 static QMap<QString, QObject*> _k_preloadedBackends;
 
-SolidExperimental::ManagerBasePrivate::ManagerBasePrivate()
+Solid::Control::ManagerBasePrivate::ManagerBasePrivate()
     : m_backend(0)
 {
 }
 
-SolidExperimental::ManagerBasePrivate::~ManagerBasePrivate()
+Solid::Control::ManagerBasePrivate::~ManagerBasePrivate()
 {
 }
 
-void SolidExperimental::ManagerBasePrivate::loadBackend(const QString &description, const char *serviceName,
+void Solid::Control::ManagerBasePrivate::loadBackend(const QString &description, const char *serviceName,
                                             const char *backendClassName)
 {
     if (_k_preloadedBackends.contains(backendClassName)) {
@@ -98,17 +98,17 @@ void SolidExperimental::ManagerBasePrivate::loadBackend(const QString &descripti
     }
 }
 
-QString SolidExperimental::ManagerBasePrivate::errorText() const
+QString Solid::Control::ManagerBasePrivate::errorText() const
 {
     return m_errorText;
 }
 
-QObject *SolidExperimental::ManagerBasePrivate::managerBackend() const
+QObject *Solid::Control::ManagerBasePrivate::managerBackend() const
 {
     return m_backend;
 }
 
-void SolidExperimental::ManagerBasePrivate::_k_forcePreloadedBackend(const char *backendClassName, QObject *backend)
+void Solid::Control::ManagerBasePrivate::_k_forcePreloadedBackend(const char *backendClassName, QObject *backend)
 {
     _k_preloadedBackends[backendClassName] = backend;
 }

@@ -26,7 +26,9 @@
 
 #include <solid/solid_export.h>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     class Authentication;
 
@@ -48,8 +50,9 @@ namespace Ifaces
             virtual bool validate( const Authentication * ) = 0;
     };
 } // Ifaces
+} // Control
 } // Solid
 
-Q_DECLARE_INTERFACE( SolidExperimental::Ifaces::AuthenticationValidator, "org.kde.Solid.Ifaces.AuthenticationValidator/0.1" )
+Q_DECLARE_INTERFACE( Solid::Control::Ifaces::AuthenticationValidator, "org.kde.Solid.Control.Ifaces.AuthenticationValidator/0.1" )
 
 #endif /* SOLID_IFACES_AUTHENTICATION_H */

@@ -25,7 +25,9 @@
 
 #include "solid/solid_export.h"
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     class ManagerBasePrivate
     {
@@ -43,6 +45,7 @@ namespace SolidExperimental
         QObject *m_backend;
         QString m_errorText;
     };
+}
 }
 
 #endif

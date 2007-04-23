@@ -8,7 +8,7 @@ set (nmtest_SRCS
 
 kde4_automoc(${nmtest_SRCS})
 kde4_add_executable(nmtest RUN_UNINSTALLED ${nmtest_SRCS})
-target_link_libraries(nmtest solid_networkmanager_static solidexperimental ${NM-UTIL_LIBRARY} ${KDE4_KDECORE_LIBS} ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY})
+target_link_libraries(nmtest solid_networkmanager_static solidcontrol ${NM-UTIL_LIBRARY} ${KDE4_KDECORE_LIBS} ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY})
 #QT_QTTEST_LIBRARY
 
 endif(KDE4_BUILD_TESTS)

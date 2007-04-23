@@ -36,18 +36,18 @@
 #include <solid/genericinterface.h>
 #include <solid/volume.h>
 
-#include <solid/experimental/powermanager.h>
+#include <solid/control/powermanager.h>
 
-#include <solid/experimental/ifaces/authentication.h>
-#include <solid/experimental/networkmanager.h>
-#include <solid/experimental/networkinterface.h>
-#include <solid/experimental/network.h>
-#include <solid/experimental/wirelessnetwork.h>
+#include <solid/control/ifaces/authentication.h>
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkinterface.h>
+#include <solid/control/network.h>
+#include <solid/control/wirelessnetwork.h>
 
-#include <solid/experimental/bluetoothmanager.h>
-#include <solid/experimental/bluetoothinterface.h>
-#include <solid/experimental/bluetoothremotedevice.h>
-#include <solid/experimental/bluetoothinputdevice.h>
+#include <solid/control/bluetoothmanager.h>
+#include <solid/control/bluetoothinterface.h>
+#include <solid/control/bluetoothremotedevice.h>
+#include <solid/control/bluetoothinputdevice.h>
 
 #include <kjob.h>
 
@@ -173,25 +173,25 @@ std::ostream &operator<<( std::ostream &out, const QMap<QString,QVariant> &prope
     return out;
 }
 
-std::ostream &operator<<( std::ostream &out, const SolidExperimental::NetworkInterface &networkdevice )
+std::ostream &operator<<( std::ostream &out, const Solid::Control::NetworkInterface &networkdevice )
 {
     out << "  UNI =                " << QVariant( networkdevice.uni() ) << endl;
-    out << "  Type =               " << ( networkdevice.type() == SolidExperimental::NetworkInterface::Ieee8023 ? "Wired" : "802.11 Wireless" ) << endl;
+    out << "  Type =               " << ( networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023 ? "Wired" : "802.11 Wireless" ) << endl;
     out << "  Active =             " << ( networkdevice.isActive() ? "Yes" : "No" ) << endl;
     //out << "  HW Address =         " << networkdevice.  // TODO add to solid API.
     out << "\n  Capabilities:" << endl;
-    out << "    Supported =        " << ( networkdevice.capabilities() & SolidExperimental::NetworkInterface::IsManageable ? "Yes" : "No" ) << endl;
+    out << "    Supported =        " << ( networkdevice.capabilities() & Solid::Control::NetworkInterface::IsManageable ? "Yes" : "No" ) << endl;
     out << "    Speed =            " << networkdevice.designSpeed() << endl;
-    if ( networkdevice.type() == SolidExperimental::NetworkInterface::Ieee8023 )
-        out << "    Carrier Detect =   " << ( networkdevice.capabilities() & SolidExperimental::NetworkInterface::SupportsCarrierDetect ? "Yes" : "No" ) << endl;
+    if ( networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023 )
+        out << "    Carrier Detect =   " << ( networkdevice.capabilities() & Solid::Control::NetworkInterface::SupportsCarrierDetect ? "Yes" : "No" ) << endl;
     else
-        out << "    Wireless Scan =    " << ( networkdevice.capabilities() & SolidExperimental::NetworkInterface::SupportsWirelessScan ? "Yes" : "No" ) << endl;
+        out << "    Wireless Scan =    " << ( networkdevice.capabilities() & Solid::Control::NetworkInterface::SupportsWirelessScan ? "Yes" : "No" ) << endl;
     out << "    Link Up =          " << ( networkdevice.isLinkUp() ? "Yes" : "No" ) << endl;
 
     return out;
 }
 
-std::ostream &operator<<( std::ostream &out, const SolidExperimental::Network &network )
+std::ostream &operator<<( std::ostream &out, const Solid::Control::Network &network )
 {
     out << "  UNI =                " << QVariant( network.uni() ) << endl;
     out << "  Addresses:" << endl;
@@ -215,25 +215,25 @@ std::ostream &operator<<( std::ostream &out, const SolidExperimental::Network &n
     return out;
 }
 
-std::ostream &operator<<( std::ostream &out, const SolidExperimental::WirelessNetwork &network )
+std::ostream &operator<<( std::ostream &out, const Solid::Control::WirelessNetwork &network )
 {
     out << "  ESSID =                " << QVariant( network.essid() ) << endl;
     out << "  Mode =                 ";
     switch ( network.mode() )
     {
-        case SolidExperimental::WirelessNetwork::Unassociated:
+        case Solid::Control::WirelessNetwork::Unassociated:
             cout << "Unassociated" << endl;
             break;
-        case SolidExperimental::WirelessNetwork::Adhoc:
+        case Solid::Control::WirelessNetwork::Adhoc:
             cout << "Ad-hoc" << endl;
             break;
-        case SolidExperimental::WirelessNetwork::Managed:
+        case Solid::Control::WirelessNetwork::Managed:
             cout << "Infrastructure" << endl;
             break;
-        case SolidExperimental::WirelessNetwork::Master:
+        case Solid::Control::WirelessNetwork::Master:
             cout << "Master" << endl;
             break;
-        case SolidExperimental::WirelessNetwork::Repeater:
+        case Solid::Control::WirelessNetwork::Repeater:
             cout << "Repeater" << endl;
             break;
         default:
@@ -247,30 +247,30 @@ std::ostream &operator<<( std::ostream &out, const SolidExperimental::WirelessNe
     if ( network.isEncrypted() )
     {
         out << "  Encrypted =            Yes (";
-        SolidExperimental::WirelessNetwork::Capabilities cap = network.capabilities();
-        if ( cap & SolidExperimental::WirelessNetwork::Wep )
+        Solid::Control::WirelessNetwork::Capabilities cap = network.capabilities();
+        if ( cap & Solid::Control::WirelessNetwork::Wep )
             out << "WEP,";
-        if ( cap & SolidExperimental::WirelessNetwork::Wpa )
+        if ( cap & Solid::Control::WirelessNetwork::Wpa )
             out << "WPA,";
-        if ( cap & SolidExperimental::WirelessNetwork::Wpa2 )
+        if ( cap & Solid::Control::WirelessNetwork::Wpa2 )
             out << "WPA2,";
-        if ( cap & SolidExperimental::WirelessNetwork::Psk )
+        if ( cap & Solid::Control::WirelessNetwork::Psk )
             out << "PSK,";
-        if ( cap & SolidExperimental::WirelessNetwork::Ieee8021x )
+        if ( cap & Solid::Control::WirelessNetwork::Ieee8021x )
             out << "Ieee8021x,";
-        if ( cap & SolidExperimental::WirelessNetwork::Wep40 )
+        if ( cap & Solid::Control::WirelessNetwork::Wep40 )
             out << "WEP40,";
-        if ( cap & SolidExperimental::WirelessNetwork::Wep104 )
+        if ( cap & Solid::Control::WirelessNetwork::Wep104 )
             out << "WEP104,";
-        if ( cap & SolidExperimental::WirelessNetwork::Wep192 )
+        if ( cap & Solid::Control::WirelessNetwork::Wep192 )
             out << "WEP192,";
-        if ( cap & SolidExperimental::WirelessNetwork::Wep256 )
+        if ( cap & Solid::Control::WirelessNetwork::Wep256 )
             out << "WEP256,";
-        if ( cap & SolidExperimental::WirelessNetwork::WepOther )
+        if ( cap & Solid::Control::WirelessNetwork::WepOther )
             out << "WEP-Other,";
-        if ( cap & SolidExperimental::WirelessNetwork::Tkip )
+        if ( cap & Solid::Control::WirelessNetwork::Tkip )
             out << "TKIP";
-        if ( cap & SolidExperimental::WirelessNetwork::Ccmp )
+        if ( cap & Solid::Control::WirelessNetwork::Ccmp )
             out << "CCMP";
         out << ")" << endl;
     }
@@ -642,7 +642,7 @@ bool SolidShell::doIt()
                 checkArgumentCount( 5, 10 );
                 QString dev( args->arg( 3 ) );
                 QString uni( args->arg( 4 ) );
-                SolidExperimental::Authentication * auth = 0;
+                Solid::Control::Authentication * auth = 0;
                 QMap<QString,QString> secrets;
 
                 if ( KCmdLineArgs::parsedArgs()->count() > 5 )
@@ -654,36 +654,36 @@ bool SolidShell::doIt()
                     QString authScheme = args->arg( 6 );
                     if ( authScheme == "wep" )
                     {
-                        SolidExperimental::AuthenticationWep *wepAuth = new SolidExperimental::AuthenticationWep();
+                        Solid::Control::AuthenticationWep *wepAuth = new Solid::Control::AuthenticationWep();
                         QString keyType = args->arg( 7 );
                         if ( keyType == "hex64" )
                         {
-                            wepAuth->setType( SolidExperimental::AuthenticationWep::WepHex );
+                            wepAuth->setType( Solid::Control::AuthenticationWep::WepHex );
                             wepAuth->setKeyLength( 64 );
                         }
                         else if ( keyType == "ascii64" )
                         {
-                            wepAuth->setType( SolidExperimental::AuthenticationWep::WepAscii );
+                            wepAuth->setType( Solid::Control::AuthenticationWep::WepAscii );
                             wepAuth->setKeyLength( 64 );
                         }
                         else if ( keyType == "hex128" )
                         {
-                            wepAuth->setType( SolidExperimental::AuthenticationWep::WepHex );
+                            wepAuth->setType( Solid::Control::AuthenticationWep::WepHex );
                             wepAuth->setKeyLength( 128 );
                         }
                         else if ( keyType == "ascii128" )
                         {
-                            wepAuth->setType( SolidExperimental::AuthenticationWep::WepAscii );
+                            wepAuth->setType( Solid::Control::AuthenticationWep::WepAscii );
                             wepAuth->setKeyLength( 128 );
                         }
                         else if ( keyType == "passphrase64" )
                         {
-                            wepAuth->setType( SolidExperimental::AuthenticationWep::WepPassphrase );
+                            wepAuth->setType( Solid::Control::AuthenticationWep::WepPassphrase );
                             wepAuth->setKeyLength( 64 );
                         }
                         else if ( keyType == "passphrase128" )
                         {
-                            wepAuth->setType( SolidExperimental::AuthenticationWep::WepPassphrase );
+                            wepAuth->setType( Solid::Control::AuthenticationWep::WepPassphrase );
                             wepAuth->setKeyLength( 128 );
                         }
                         else
@@ -699,9 +699,9 @@ bool SolidShell::doIt()
 
                         QString method = args->arg( 9 );
                         if ( method == "open" )
-                            wepAuth->setMethod( SolidExperimental::AuthenticationWep::WepOpenSystem );
+                            wepAuth->setMethod( Solid::Control::AuthenticationWep::WepOpenSystem );
                         else if ( method == "shared" )
-                            wepAuth->setMethod( SolidExperimental::AuthenticationWep::WepSharedKey );
+                            wepAuth->setMethod( Solid::Control::AuthenticationWep::WepSharedKey );
                         else
                         {
                             cerr << i18n( "Unrecognised WEP method '%1'", method ) << endl;
@@ -713,12 +713,12 @@ bool SolidShell::doIt()
                     else if ( authScheme == "wpapsk" )
                     {
                         /* wpapsk wpa|wpa2 tkip|ccmp-aes password */
-                        SolidExperimental::AuthenticationWpaPersonal *wpapAuth = new SolidExperimental::AuthenticationWpaPersonal();
+                        Solid::Control::AuthenticationWpaPersonal *wpapAuth = new Solid::Control::AuthenticationWpaPersonal();
                         QString version = args->arg( 7 );
                         if ( version == "wpa" )
-                            wpapAuth->setVersion( SolidExperimental::AuthenticationWpaPersonal::Wpa1 );
+                            wpapAuth->setVersion( Solid::Control::AuthenticationWpaPersonal::Wpa1 );
                         else if ( version == "wpa2" )
-                            wpapAuth->setVersion( SolidExperimental::AuthenticationWpaPersonal::Wpa1 );
+                            wpapAuth->setVersion( Solid::Control::AuthenticationWpaPersonal::Wpa1 );
                         else
                         {
                             cerr << i18n( "Unrecognised WPA version '%1'", version ) << endl;
@@ -727,9 +727,9 @@ bool SolidShell::doIt()
                         }
                         QString protocol = args->arg( 8 );
                         if ( protocol == "tkip" )
-                            wpapAuth->setProtocol( SolidExperimental::AuthenticationWpaPersonal::WpaTkip );
+                            wpapAuth->setProtocol( Solid::Control::AuthenticationWpaPersonal::WpaTkip );
                         else if ( protocol == "ccmp-aes" )
-                            wpapAuth->setProtocol( SolidExperimental::AuthenticationWpaPersonal::WpaCcmpAes );
+                            wpapAuth->setProtocol( Solid::Control::AuthenticationWpaPersonal::WpaCcmpAes );
                         else
                         {
                             cerr << i18n( "Unrecognised WPA encryption protocol '%1'", protocol ) << endl;
@@ -751,7 +751,7 @@ bool SolidShell::doIt()
                 else
                 {
                     //unencrypted network
-                    auth = new SolidExperimental::AuthenticationNone;
+                    auth = new Solid::Control::AuthenticationNone;
                 }
 
                 return shell.netmgrActivateNetwork( dev, uni, auth );
@@ -1004,19 +1004,19 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
 
 bool SolidShell::powerQuerySuspendMethods()
 {
-    SolidExperimental::PowerManager::SuspendMethods methods = SolidExperimental::PowerManager::supportedSuspendMethods();
+    Solid::Control::PowerManager::SuspendMethods methods = Solid::Control::PowerManager::supportedSuspendMethods();
 
-    if ( methods & SolidExperimental::PowerManager::ToDisk )
+    if ( methods & Solid::Control::PowerManager::ToDisk )
     {
         cout << "to_disk" << endl;
     }
 
-    if ( methods & SolidExperimental::PowerManager::ToRam )
+    if ( methods & Solid::Control::PowerManager::ToRam )
     {
         cout << "to_ram" << endl;
     }
 
-    if ( methods & SolidExperimental::PowerManager::Standby )
+    if ( methods & Solid::Control::PowerManager::Standby )
     {
         cout << "standby" << endl;
     }
@@ -1026,22 +1026,22 @@ bool SolidShell::powerQuerySuspendMethods()
 
 bool SolidShell::powerSuspend( const QString &strMethod )
 {
-    SolidExperimental::PowerManager::SuspendMethods supported
-        = SolidExperimental::PowerManager::supportedSuspendMethods();
+    Solid::Control::PowerManager::SuspendMethods supported
+        = Solid::Control::PowerManager::supportedSuspendMethods();
 
-    SolidExperimental::PowerManager::SuspendMethod method = SolidExperimental::PowerManager::UnknownSuspendMethod;
+    Solid::Control::PowerManager::SuspendMethod method = Solid::Control::PowerManager::UnknownSuspendMethod;
 
-    if ( strMethod == "to_disk" && (supported & SolidExperimental::PowerManager::ToDisk) )
+    if ( strMethod == "to_disk" && (supported & Solid::Control::PowerManager::ToDisk) )
     {
-        method = SolidExperimental::PowerManager::ToDisk;
+        method = Solid::Control::PowerManager::ToDisk;
     }
-    else if ( strMethod == "to_ram" && (supported & SolidExperimental::PowerManager::ToRam) )
+    else if ( strMethod == "to_ram" && (supported & Solid::Control::PowerManager::ToRam) )
     {
-        method = SolidExperimental::PowerManager::ToRam;
+        method = Solid::Control::PowerManager::ToRam;
     }
-    else if ( strMethod == "standby" && (supported & SolidExperimental::PowerManager::Standby) )
+    else if ( strMethod == "standby" && (supported & Solid::Control::PowerManager::Standby) )
     {
-        method = SolidExperimental::PowerManager::Standby;
+        method = Solid::Control::PowerManager::Standby;
     }
     else
     {
@@ -1049,7 +1049,7 @@ bool SolidShell::powerSuspend( const QString &strMethod )
         return false;
     }
 
-    KJob *job = SolidExperimental::PowerManager::suspend(method);
+    KJob *job = Solid::Control::PowerManager::suspend(method);
 
     if ( job==0 )
     {
@@ -1075,12 +1075,12 @@ bool SolidShell::powerSuspend( const QString &strMethod )
 
 bool SolidShell::powerQuerySchemes()
 {
-    QString current = SolidExperimental::PowerManager::scheme();
-    QStringList schemes = SolidExperimental::PowerManager::supportedSchemes();
+    QString current = Solid::Control::PowerManager::scheme();
+    QStringList schemes = Solid::Control::PowerManager::supportedSchemes();
 
     foreach ( QString scheme, schemes )
     {
-        cout << scheme << " (" << SolidExperimental::PowerManager::schemeDescription(scheme) << ")";
+        cout << scheme << " (" << Solid::Control::PowerManager::schemeDescription(scheme) << ")";
 
         if ( scheme==current )
         {
@@ -1097,7 +1097,7 @@ bool SolidShell::powerQuerySchemes()
 
 bool SolidShell::powerChangeScheme( const QString &schemeName )
 {
-    QStringList supported = SolidExperimental::PowerManager::supportedSchemes();
+    QStringList supported = Solid::Control::PowerManager::supportedSchemes();
 
     if ( !supported.contains( schemeName ) )
     {
@@ -1105,39 +1105,39 @@ bool SolidShell::powerChangeScheme( const QString &schemeName )
         return false;
     }
 
-    return SolidExperimental::PowerManager::setScheme(schemeName);
+    return Solid::Control::PowerManager::setScheme(schemeName);
 }
 
 bool SolidShell::powerQueryCpuPolicies()
 {
-    SolidExperimental::PowerManager::CpuFreqPolicy current = SolidExperimental::PowerManager::cpuFreqPolicy();
-    SolidExperimental::PowerManager::CpuFreqPolicies policies = SolidExperimental::PowerManager::supportedCpuFreqPolicies();
+    Solid::Control::PowerManager::CpuFreqPolicy current = Solid::Control::PowerManager::cpuFreqPolicy();
+    Solid::Control::PowerManager::CpuFreqPolicies policies = Solid::Control::PowerManager::supportedCpuFreqPolicies();
 
-    QList<SolidExperimental::PowerManager::CpuFreqPolicy> all_policies;
-    all_policies << SolidExperimental::PowerManager::OnDemand
-                 << SolidExperimental::PowerManager::Userspace
-                 << SolidExperimental::PowerManager::Powersave
-                 << SolidExperimental::PowerManager::Performance;
+    QList<Solid::Control::PowerManager::CpuFreqPolicy> all_policies;
+    all_policies << Solid::Control::PowerManager::OnDemand
+                 << Solid::Control::PowerManager::Userspace
+                 << Solid::Control::PowerManager::Powersave
+                 << Solid::Control::PowerManager::Performance;
 
-    foreach ( SolidExperimental::PowerManager::CpuFreqPolicy policy, all_policies )
+    foreach ( Solid::Control::PowerManager::CpuFreqPolicy policy, all_policies )
     {
         if ( policies & policy )
         {
             switch ( policy )
             {
-            case SolidExperimental::PowerManager::OnDemand:
+            case Solid::Control::PowerManager::OnDemand:
                 cout << "ondemand";
                 break;
-            case SolidExperimental::PowerManager::Userspace:
+            case Solid::Control::PowerManager::Userspace:
                 cout << "userspace";
                 break;
-            case SolidExperimental::PowerManager::Powersave:
+            case Solid::Control::PowerManager::Powersave:
                 cout << "powersave";
                 break;
-            case SolidExperimental::PowerManager::Performance:
+            case Solid::Control::PowerManager::Performance:
                 cout << "performance";
                 break;
-            case SolidExperimental::PowerManager::UnknownCpuFreqPolicy:
+            case Solid::Control::PowerManager::UnknownCpuFreqPolicy:
                 break;
             }
 
@@ -1157,26 +1157,26 @@ bool SolidShell::powerQueryCpuPolicies()
 
 bool SolidShell::powerChangeCpuPolicy( const QString &policyName )
 {
-    SolidExperimental::PowerManager::CpuFreqPolicies supported
-        = SolidExperimental::PowerManager::supportedCpuFreqPolicies();
+    Solid::Control::PowerManager::CpuFreqPolicies supported
+        = Solid::Control::PowerManager::supportedCpuFreqPolicies();
 
-    SolidExperimental::PowerManager::CpuFreqPolicy policy = SolidExperimental::PowerManager::UnknownCpuFreqPolicy;
+    Solid::Control::PowerManager::CpuFreqPolicy policy = Solid::Control::PowerManager::UnknownCpuFreqPolicy;
 
-    if ( policyName == "ondemand" && (supported & SolidExperimental::PowerManager::OnDemand) )
+    if ( policyName == "ondemand" && (supported & Solid::Control::PowerManager::OnDemand) )
     {
-        policy = SolidExperimental::PowerManager::OnDemand;
+        policy = Solid::Control::PowerManager::OnDemand;
     }
-    else if ( policyName == "userspace" && (supported & SolidExperimental::PowerManager::Userspace) )
+    else if ( policyName == "userspace" && (supported & Solid::Control::PowerManager::Userspace) )
     {
-        policy = SolidExperimental::PowerManager::Userspace;
+        policy = Solid::Control::PowerManager::Userspace;
     }
-    else if ( policyName == "performance" && (supported & SolidExperimental::PowerManager::Performance) )
+    else if ( policyName == "performance" && (supported & Solid::Control::PowerManager::Performance) )
     {
-        policy = SolidExperimental::PowerManager::Performance;
+        policy = Solid::Control::PowerManager::Performance;
     }
-    else if ( policyName == "powersave" && (supported & SolidExperimental::PowerManager::Powersave) )
+    else if ( policyName == "powersave" && (supported & Solid::Control::PowerManager::Powersave) )
     {
-        policy = SolidExperimental::PowerManager::Powersave;
+        policy = Solid::Control::PowerManager::Powersave;
     }
     else
     {
@@ -1184,45 +1184,45 @@ bool SolidShell::powerChangeCpuPolicy( const QString &policyName )
         return false;
     }
 
-    return SolidExperimental::PowerManager::setCpuFreqPolicy(policy);
+    return Solid::Control::PowerManager::setCpuFreqPolicy(policy);
 }
 
 bool SolidShell::netmgrNetworkingEnabled()
 {
-    if (SolidExperimental::NetworkManager::isNetworkingEnabled())
+    if (Solid::Control::NetworkManager::isNetworkingEnabled())
         cout << i18n( "networking: is enabled" )<< endl;
     else
         cout << i18n( "networking: is not enabled" )<< endl;
-    return SolidExperimental::NetworkManager::isNetworkingEnabled();
+    return Solid::Control::NetworkManager::isNetworkingEnabled();
 }
 
 bool SolidShell::netmgrWirelessEnabled()
 {
-    if (SolidExperimental::NetworkManager::isWirelessEnabled())
+    if (Solid::Control::NetworkManager::isWirelessEnabled())
         cout << i18n( "wireless: is enabled" )<< endl;
     else
         cout << i18n( "wireless: is not enabled" )<< endl;
-    return SolidExperimental::NetworkManager::isWirelessEnabled();
+    return Solid::Control::NetworkManager::isWirelessEnabled();
 }
 
 bool SolidShell::netmgrChangeNetworkingEnabled( bool enabled )
 {
-    SolidExperimental::NetworkManager::setNetworkingEnabled(enabled);
+    Solid::Control::NetworkManager::setNetworkingEnabled(enabled);
     return true;
 }
 
 bool SolidShell::netmgrChangeWirelessEnabled( bool enabled )
 {
-    SolidExperimental::NetworkManager::setWirelessEnabled(enabled);
+    Solid::Control::NetworkManager::setWirelessEnabled(enabled);
     return true;
 }
 
 bool SolidShell::netmgrList()
 {
-    const SolidExperimental::NetworkInterfaceList all = SolidExperimental::NetworkManager::networkInterfaces();
+    const Solid::Control::NetworkInterfaceList all = Solid::Control::NetworkManager::networkInterfaces();
 
     cerr << "debug: network interface list contains: " << all.count() << " entries" << endl;
-    foreach ( const SolidExperimental::NetworkInterface device, all )
+    foreach ( const Solid::Control::NetworkInterface device, all )
     {
         cout << "UNI = '" << device.uni() << "'" << endl;
     }
@@ -1231,10 +1231,10 @@ bool SolidShell::netmgrList()
 
 bool SolidShell::netmgrListNetworks( const QString & deviceUni )
 {
-    SolidExperimental::NetworkInterface device = SolidExperimental::NetworkManager::findNetworkInterface(deviceUni);
+    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
 
-    SolidExperimental::NetworkList networks = device.networks();
-    foreach ( const SolidExperimental::Network * net, networks )
+    Solid::Control::NetworkList networks = device.networks();
+    foreach ( const Solid::Control::Network * net, networks )
     {
         cout << "NETWORK UNI = '" << net->uni() << "'" << endl;
     }
@@ -1245,7 +1245,7 @@ bool SolidShell::netmgrListNetworks( const QString & deviceUni )
 bool SolidShell::netmgrQueryNetworkInterface( const QString & deviceUni )
 {
     cerr << "SolidShell::netmgrQueryNetworkInterface()" << endl;
-    SolidExperimental::NetworkInterface device = SolidExperimental::NetworkManager::findNetworkInterface(deviceUni);
+    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
     cout << device << endl;
     return true;
 }
@@ -1253,10 +1253,10 @@ bool SolidShell::netmgrQueryNetworkInterface( const QString & deviceUni )
 bool SolidShell::netmgrQueryNetwork( const QString & deviceUni, const QString & networkUni )
 {
     cerr << "SolidShell::netmgrQueryNetwork()" << endl;
-    SolidExperimental::NetworkInterface device = SolidExperimental::NetworkManager::findNetworkInterface(deviceUni);
-    SolidExperimental::Network * network = device.findNetwork( networkUni );
+    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+    Solid::Control::Network * network = device.findNetwork( networkUni );
     cout << *network << endl;
-    SolidExperimental::WirelessNetwork * wlan = qobject_cast<SolidExperimental::WirelessNetwork*>( network );
+    Solid::Control::WirelessNetwork * wlan = qobject_cast<Solid::Control::WirelessNetwork*>( network );
     if ( wlan )
     {
         cout << *wlan << endl;
@@ -1264,12 +1264,12 @@ bool SolidShell::netmgrQueryNetwork( const QString & deviceUni, const QString & 
     return true;
 }
 
-bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString & networkUni, SolidExperimental::Authentication * auth )
+bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString & networkUni, Solid::Control::Authentication * auth )
 {
-    SolidExperimental::NetworkInterface device = SolidExperimental::NetworkManager::findNetworkInterface(deviceUni);
-    SolidExperimental::Network * network = device.findNetwork( networkUni );
-    SolidExperimental::WirelessNetwork * wlan = 0;
-    if ( (  wlan = qobject_cast<SolidExperimental::WirelessNetwork*>( network ) ) )
+    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+    Solid::Control::Network * network = device.findNetwork( networkUni );
+    Solid::Control::WirelessNetwork * wlan = 0;
+    if ( (  wlan = qobject_cast<Solid::Control::WirelessNetwork*>( network ) ) )
     {
         wlan->setAuthentication( auth );
         wlan->setActivated( true );
@@ -1281,11 +1281,11 @@ bool SolidShell::netmgrActivateNetwork( const QString & deviceUni, const QString
 
 bool SolidShell::bluetoothListAdapters()
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
 
-    const SolidExperimental::BluetoothInterfaceList all = manager.bluetoothInterfaces();
+    const Solid::Control::BluetoothInterfaceList all = manager.bluetoothInterfaces();
 
-    foreach ( const SolidExperimental::BluetoothInterface device, all )
+    foreach ( const Solid::Control::BluetoothInterface device, all )
     {
         cout << "UBI = '" << device.ubi() << "'" << endl;
     }
@@ -1294,7 +1294,7 @@ bool SolidShell::bluetoothListAdapters()
 
 bool SolidShell::bluetoothDefaultAdapter()
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
 
     cout << "UBI = '" <<  manager.defaultInterface() << "'" << endl;
 
@@ -1303,8 +1303,8 @@ bool SolidShell::bluetoothDefaultAdapter()
 
 bool SolidShell::bluetoothAdapterAddress( const QString &ubi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     cout << "'" <<  adapter.address() << "'" << endl;
 
@@ -1313,8 +1313,8 @@ bool SolidShell::bluetoothAdapterAddress( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterName( const QString &ubi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     cout << "'" <<  adapter.name() << "'" << endl;
 
@@ -1323,8 +1323,8 @@ bool SolidShell::bluetoothAdapterName( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterSetName( const QString &ubi, const QString &name )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     adapter.setName( name );
 
@@ -1333,8 +1333,8 @@ bool SolidShell::bluetoothAdapterSetName( const QString &ubi, const QString &nam
 
 bool SolidShell::bluetoothAdapterMode( const QString &ubi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     cout << "'" <<  adapter.mode() << "'" << endl;
 
@@ -1343,20 +1343,20 @@ bool SolidShell::bluetoothAdapterMode( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterSetMode( const QString &ubi, const QString &mode )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
-    SolidExperimental::BluetoothInterface::Mode modeEnum( SolidExperimental::BluetoothInterface::Off );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    Solid::Control::BluetoothInterface::Mode modeEnum( Solid::Control::BluetoothInterface::Off );
     if ( mode == "off" )
     {
-        modeEnum = SolidExperimental::BluetoothInterface::Off;
+        modeEnum = Solid::Control::BluetoothInterface::Off;
     }
     else if ( mode == "connectable" )
     {
-        modeEnum = SolidExperimental::BluetoothInterface::Connectable;
+        modeEnum = Solid::Control::BluetoothInterface::Connectable;
     }
     else if ( mode == "discoverable" )
     {
-        modeEnum = SolidExperimental::BluetoothInterface::Discoverable;
+        modeEnum = Solid::Control::BluetoothInterface::Discoverable;
     }
     adapter.setMode( modeEnum );
 
@@ -1365,13 +1365,13 @@ bool SolidShell::bluetoothAdapterSetMode( const QString &ubi, const QString &mod
 
 bool SolidShell::bluetoothAdapterListConnections( const QString &ubi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
-    const SolidExperimental::BluetoothRemoteDeviceList all = adapter.listConnections();
+    const Solid::Control::BluetoothRemoteDeviceList all = adapter.listConnections();
 
     cout << "Current connections of Bluetooth Adapter: " << ubi << endl;
-    foreach ( const SolidExperimental::BluetoothRemoteDevice device, all )
+    foreach ( const Solid::Control::BluetoothRemoteDevice device, all )
     {
         cout << "UBI = '" << device.ubi() << "'" << endl;
     }
@@ -1380,8 +1380,8 @@ bool SolidShell::bluetoothAdapterListConnections( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterListBondings( const QString &ubi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     const QStringList all = adapter.listBondings();
 
@@ -1395,8 +1395,8 @@ bool SolidShell::bluetoothAdapterListBondings( const QString &ubi )
 
 bool SolidShell::bluetoothAdapterScan( const QString &ubi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( ubi );
 
     connect( &adapter, SIGNAL( remoteDeviceFound( const QString &, int, int ) ),
            this, SLOT( slotBluetoothDeviceFound( const QString &, int, int ) ) );
@@ -1425,10 +1425,10 @@ void SolidShell::slotBluetoothDiscoveryCompleted()
 
 bool SolidShell::bluetoothInputListDevices()
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    const SolidExperimental::BluetoothInputDeviceList all = manager.bluetoothInputDevices();
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    const Solid::Control::BluetoothInputDeviceList all = manager.bluetoothInputDevices();
 
-    foreach ( const SolidExperimental::BluetoothInputDevice device, all )
+    foreach ( const Solid::Control::BluetoothInputDevice device, all )
     {
         cout << "UBI = '" << device.ubi() << "'" << endl;
     }
@@ -1438,7 +1438,7 @@ bool SolidShell::bluetoothInputListDevices()
 
 bool SolidShell::bluetoothInputSetup( const QString &deviceUbi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
     KJob *job = manager.setupInputDevice( deviceUbi );
 
     if ( job==0 )
@@ -1463,7 +1463,7 @@ bool SolidShell::bluetoothInputSetup( const QString &deviceUbi )
 
 bool SolidShell::bluetoothInputRemoveSetup( const QString &deviceUbi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
 
     manager.removeInputDevice( deviceUbi );
 
@@ -1472,8 +1472,8 @@ bool SolidShell::bluetoothInputRemoveSetup( const QString &deviceUbi )
 
 bool SolidShell::bluetoothInputConnect( const QString &deviceUbi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
 
     device.slotConnect();
 
@@ -1482,8 +1482,8 @@ bool SolidShell::bluetoothInputConnect( const QString &deviceUbi )
 
 bool SolidShell::bluetoothInputDisconnect( const QString &deviceUbi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInputDevice device = manager.findBluetoothInputDevice( deviceUbi );
 
     device.slotDisconnect();
 
@@ -1492,9 +1492,9 @@ bool SolidShell::bluetoothInputDisconnect( const QString &deviceUbi )
 
 bool SolidShell::bluetoothRemoteCreateBonding( const QString &adapterUbi, const QString &deviceUbi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
-    SolidExperimental::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
+    Solid::Control::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
 
     KJob *job = device.createBonding();
 
@@ -1514,9 +1514,9 @@ bool SolidShell::bluetoothRemoteCreateBonding( const QString &adapterUbi, const 
 
 bool SolidShell::bluetoothRemoteRemoveBonding( const QString &adapterUbi, const QString &deviceUbi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
-    SolidExperimental::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
+    Solid::Control::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
 
     device.removeBonding();
 
@@ -1525,9 +1525,9 @@ bool SolidShell::bluetoothRemoteRemoveBonding( const QString &adapterUbi, const 
 
 bool SolidShell::bluetoothRemoteHasBonding( const QString &adapterUbi, const QString &deviceUbi )
 {
-    SolidExperimental::BluetoothManager &manager = SolidExperimental::BluetoothManager::self();
-    SolidExperimental::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
-    SolidExperimental::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface( adapterUbi );
+    Solid::Control::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice( deviceUbi );
 
     if ( device.hasBonding() )
     {

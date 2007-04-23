@@ -27,7 +27,9 @@
 
 class KJob;
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 namespace Ifaces
 {
@@ -280,8 +282,10 @@ Q_SIGNALS:
 
 } // Ifaces
 
+} // Control
+
 } // Solid
 
-Q_DECLARE_INTERFACE(SolidExperimental::Ifaces::BluetoothRemoteDevice, "org.kde.Solid.Ifaces.BluetoothRemoteDevice/0.1")
+Q_DECLARE_INTERFACE(Solid::Control::Ifaces::BluetoothRemoteDevice, "org.kde.Solid.Control.Ifaces.BluetoothRemoteDevice/0.1")
 
 #endif

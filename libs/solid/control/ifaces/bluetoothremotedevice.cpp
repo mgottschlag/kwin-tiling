@@ -21,10 +21,10 @@
 
 #include "bluetoothremotedevice.h"
 
-SolidExperimental::Ifaces::BluetoothRemoteDevice::BluetoothRemoteDevice(QObject * parent) : QObject(parent)
+Solid::Control::Ifaces::BluetoothRemoteDevice::BluetoothRemoteDevice(QObject * parent) : QObject(parent)
 {}
 
-SolidExperimental::Ifaces::BluetoothRemoteDevice::~BluetoothRemoteDevice()
+Solid::Control::Ifaces::BluetoothRemoteDevice::~BluetoothRemoteDevice()
 {}
 
 #include "bluetoothremotedevice.moc"

@@ -26,11 +26,11 @@
 
 #include <kglobal.h>
 
-K_GLOBAL_STATIC(SolidExperimental::PowerManagerPrivate, globalPowerManager)
+K_GLOBAL_STATIC(Solid::Control::PowerManagerPrivate, globalPowerManager)
 
-SolidExperimental::PowerManagerPrivate::PowerManagerPrivate()
+Solid::Control::PowerManagerPrivate::PowerManagerPrivate()
 {
-    loadBackend("Power Management", "SolidPowerManager", "SolidExperimental::Ifaces::PowerManager");
+    loadBackend("Power Management", "SolidPowerManager", "Solid::Control::Ifaces::PowerManager");
 
     if (managerBackend()!=0) {
         connect(managerBackend(), SIGNAL(schemeChanged(QString)),
@@ -44,94 +44,94 @@ SolidExperimental::PowerManagerPrivate::PowerManagerPrivate()
     }
 }
 
-SolidExperimental::PowerManagerPrivate::~PowerManagerPrivate()
+Solid::Control::PowerManagerPrivate::~PowerManagerPrivate()
 {
 }
 
-QStringList SolidExperimental::PowerManager::supportedSchemes()
+QStringList Solid::Control::PowerManager::supportedSchemes()
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       QStringList(), supportedSchemes());
 }
 
-QString SolidExperimental::PowerManager::schemeDescription(const QString &schemeName)
+QString Solid::Control::PowerManager::schemeDescription(const QString &schemeName)
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       QString(), schemeDescription(schemeName));
 }
 
-QString SolidExperimental::PowerManager::scheme()
+QString Solid::Control::PowerManager::scheme()
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(), QString(), scheme());
 }
 
-bool SolidExperimental::PowerManager::setScheme(const QString &name)
+bool Solid::Control::PowerManager::setScheme(const QString &name)
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       false, setScheme(name));
 }
 
-SolidExperimental::PowerManager::BatteryState SolidExperimental::PowerManager::batteryState()
+Solid::Control::PowerManager::BatteryState Solid::Control::PowerManager::batteryState()
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       NoBatteryState, batteryState());
 }
 
-int SolidExperimental::PowerManager::batteryChargePercent()
+int Solid::Control::PowerManager::batteryChargePercent()
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       -1, batteryChargePercent());
 }
 
-SolidExperimental::PowerManager::AcAdapterState SolidExperimental::PowerManager::acAdapterState()
+Solid::Control::PowerManager::AcAdapterState Solid::Control::PowerManager::acAdapterState()
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       Plugged, acAdapterState());
 }
 
-SolidExperimental::PowerManager::SuspendMethods SolidExperimental::PowerManager::supportedSuspendMethods()
+Solid::Control::PowerManager::SuspendMethods Solid::Control::PowerManager::supportedSuspendMethods()
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       UnknownSuspendMethod, supportedSuspendMethods());
 }
 
-KJob *SolidExperimental::PowerManager::suspend(SuspendMethod method)
+KJob *Solid::Control::PowerManager::suspend(SuspendMethod method)
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       0, suspend(method));
 }
 
-SolidExperimental::PowerManager::CpuFreqPolicies SolidExperimental::PowerManager::supportedCpuFreqPolicies()
+Solid::Control::PowerManager::CpuFreqPolicies Solid::Control::PowerManager::supportedCpuFreqPolicies()
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       UnknownCpuFreqPolicy, supportedCpuFreqPolicies());
 }
 
-SolidExperimental::PowerManager::CpuFreqPolicy SolidExperimental::PowerManager::cpuFreqPolicy()
+Solid::Control::PowerManager::CpuFreqPolicy Solid::Control::PowerManager::cpuFreqPolicy()
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       UnknownCpuFreqPolicy, cpuFreqPolicy());
 }
 
-bool SolidExperimental::PowerManager::setCpuFreqPolicy(CpuFreqPolicy newPolicy)
+bool Solid::Control::PowerManager::setCpuFreqPolicy(CpuFreqPolicy newPolicy)
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       false, setCpuFreqPolicy(newPolicy));
 }
 
-bool SolidExperimental::PowerManager::canDisableCpu(int cpuNum)
+bool Solid::Control::PowerManager::canDisableCpu(int cpuNum)
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       false, canDisableCpu(cpuNum));
 }
 
-bool SolidExperimental::PowerManager::setCpuEnabled(int cpuNum, bool enabled)
+bool Solid::Control::PowerManager::setCpuEnabled(int cpuNum, bool enabled)
 {
     return_SOLID_CALL(Ifaces::PowerManager*, globalPowerManager->managerBackend(),
                       false, setCpuEnabled(cpuNum, enabled));
 }
 
-SolidExperimental::PowerManager::Notifier *SolidExperimental::PowerManager::notifier()
+Solid::Control::PowerManager::Notifier *Solid::Control::PowerManager::notifier()
 {
     return globalPowerManager;
 }

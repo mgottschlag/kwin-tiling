@@ -26,7 +26,9 @@
 #include <QtCore/QList>
 #include <QtNetwork/QNetworkAddressEntry>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 namespace Ifaces
 {
@@ -101,8 +103,9 @@ namespace Ifaces
         virtual void activationStateChanged( bool activated ) = 0;
     };
 } //Ifaces
+} //Control
 } //Solid
 
-Q_DECLARE_INTERFACE( SolidExperimental::Ifaces::Network, "org.kde.Solid.Ifaces.Network/0.1" )
+Q_DECLARE_INTERFACE( Solid::Control::Ifaces::Network, "org.kde.Solid.Control.Ifaces.Network/0.1" )
 
 #endif

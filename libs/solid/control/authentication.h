@@ -21,9 +21,11 @@
 #ifndef SOLID_AUTHENTICATION_H
 #define SOLID_AUTHENTICATION_H
 
-#include <solid/experimental/ifaces/authentication.h>
+#include <solid/control/ifaces/authentication.h>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     /**
      * Base class for wireless authentication schemes.  No need to instantiate this
@@ -293,6 +295,7 @@ namespace SolidExperimental
             class Private;
             Private * d;
     };
+}
 }
 
 #endif

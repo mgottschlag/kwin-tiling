@@ -25,7 +25,9 @@
 
 #include <solid/solid_export.h>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     namespace Ifaces
     {
@@ -125,6 +127,7 @@ namespace SolidExperimental
         SOLID_EXPORT Notifier *notifier();
     }
 
+} // Control
 } // Solid
 
 #endif

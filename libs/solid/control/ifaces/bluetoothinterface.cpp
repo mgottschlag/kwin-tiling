@@ -21,11 +21,11 @@
 
 #include "bluetoothinterface.h"
 
-SolidExperimental::Ifaces::BluetoothInterface::BluetoothInterface(QObject *parent)
+Solid::Control::Ifaces::BluetoothInterface::BluetoothInterface(QObject *parent)
         : QObject(parent)
 {}
 
-SolidExperimental::Ifaces::BluetoothInterface::~BluetoothInterface()
+Solid::Control::Ifaces::BluetoothInterface::~BluetoothInterface()
 {}
 
 #include "bluetoothinterface.moc"

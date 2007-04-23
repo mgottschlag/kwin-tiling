@@ -21,7 +21,7 @@
 #include <QStringList>
 
 #include <kdebug.h>
-#include <solid/experimental/ifaces/networkinterface.h>
+#include <solid/control/ifaces/networkinterface.h>
 
 #include "nmobject.h"
 
@@ -40,7 +40,7 @@ int main( int argc, char** argv )
     mgr.isNetworkingEnabled();
     NMNetworkInterface * ethernetIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth0" ) );
     NMNetworkInterface * wifiIface = qobject_cast<NMNetworkInterface*>( mgr.createNetworkInterface( "/org/freedesktop/NetworkManager/Devices/eth1" ) );
-	SolidExperimental::Ifaces::NetworkInterface * solidIface;
+	Solid::Control::Ifaces::NetworkInterface * solidIface;
 	const QMetaObject * parentMo = wifiIface->metaObject()->superClass();
 	kDebug() << parentMo->className() << endl;
     QStringList networks = wifiIface->networks();
@@ -54,17 +54,17 @@ int main( int argc, char** argv )
 	}
 #endif
 #if 1
-/*	SolidExperimental::Ifaces::AuthenticationWep auth;
-	auth.setMethod( SolidExperimental::Ifaces::AuthenticationWep::WepSharedKey );
+/*	Solid::Control::Ifaces::AuthenticationWep auth;
+	auth.setMethod( Solid::Control::Ifaces::AuthenticationWep::WepSharedKey );
 	auth.setKeyLength( 104 );
-	auth.setType( SolidExperimental::Ifaces::AuthenticationWep::WepPassphrase );
+	auth.setType( Solid::Control::Ifaces::AuthenticationWep::WepPassphrase );
 	QMap<QString,QString> secrets;
 	secrets.insert( "key", "testpassphrase" );
    */
-	SolidExperimental::AuthenticationWpaPersonal auth;
-    auth.setVersion( SolidExperimental::AuthenticationWpa::Wpa1 );
-    auth.setProtocol( SolidExperimental::AuthenticationWpa::WpaTkip );
-    auth.setKeyManagement( SolidExperimental::AuthenticationWpa::WpaPsk );
+	Solid::Control::AuthenticationWpaPersonal auth;
+    auth.setVersion( Solid::Control::AuthenticationWpa::Wpa1 );
+    auth.setProtocol( Solid::Control::AuthenticationWpa::WpaTkip );
+    auth.setKeyManagement( Solid::Control::AuthenticationWpa::WpaPsk );
 	QMap<QString,QString> secrets;
 	secrets.insert( "key", "testpassphrase" );
 	auth.setSecrets( secrets );

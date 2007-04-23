@@ -22,7 +22,7 @@
 
 #include <kdebug.h>
 
-#include <solid/experimental/networkinterface.h>
+#include <solid/control/networkinterface.h>
 
 #include "NetworkManager-network.h"
 #include "NetworkManager-wirelessnetwork.h"
@@ -88,14 +88,14 @@ public:
     QDBusInterface iface;
     QString objectPath;
     bool active;
-    SolidExperimental::NetworkInterface::Type type;
+    Solid::Control::NetworkInterface::Type type;
     int activationStage;
     bool carrier;
     int signalStrength;
     int designSpeed;
     QMap<QString,NMNetwork *> networks;
     QPair<QString, NMDBusNetworkProperties> cachedNetworkProps;
-    SolidExperimental::NetworkInterface::Capabilities capabilities;
+    Solid::Control::NetworkInterface::Capabilities capabilities;
     QString activeNetPath;
 };
 
@@ -113,14 +113,14 @@ NMNetworkInterface::NMNetworkInterface( const QString & objectPath )
     foreach( QString netPath, dev.networks )
         d->networks.insert( netPath, 0 );
 
-    if ( d->type == SolidExperimental::NetworkInterface::Ieee8023 )
+    if ( d->type == Solid::Control::NetworkInterface::Ieee8023 )
     {
         QString fakeNetPath = objectPath + "/Networks/ethernet";
         d->networks.insert( fakeNetPath, 0 );
         d->cachedNetworkProps.first = fakeNetPath;
         d->cachedNetworkProps.second = net;
     }
-    else if ( d->type == SolidExperimental::NetworkInterface::Ieee80211 )
+    else if ( d->type == Solid::Control::NetworkInterface::Ieee80211 )
     {
         d->cachedNetworkProps.first = dev.activeNetPath;
         d->cachedNetworkProps.second = net;
@@ -142,14 +142,14 @@ bool NMNetworkInterface::isActive() const
     return d->active;
 }
 
-SolidExperimental::NetworkInterface::Type NMNetworkInterface::type() const
+Solid::Control::NetworkInterface::Type NMNetworkInterface::type() const
 {
     return d->type;
 }
 
-SolidExperimental::NetworkInterface::ConnectionState NMNetworkInterface::connectionState() const
+Solid::Control::NetworkInterface::ConnectionState NMNetworkInterface::connectionState() const
 {
-    return ( SolidExperimental::NetworkInterface::ConnectionState )d->activationStage;
+    return ( Solid::Control::NetworkInterface::ConnectionState )d->activationStage;
 }
 
 int NMNetworkInterface::signalStrength() const
@@ -167,7 +167,7 @@ bool NMNetworkInterface::isLinkUp() const
     return d->carrier;
 }
 
-SolidExperimental::NetworkInterface::Capabilities NMNetworkInterface::capabilities() const
+Solid::Control::NetworkInterface::Capabilities NMNetworkInterface::capabilities() const
 {
     return d->capabilities;
 }
@@ -180,12 +180,12 @@ QObject * NMNetworkInterface::createNetwork( const QString & uni )
         net = d->networks[ uni ];
     else
     {
-        if ( d->type == SolidExperimental::NetworkInterface::Ieee8023 )
+        if ( d->type == Solid::Control::NetworkInterface::Ieee8023 )
         {
             net = new NMNetwork( uni );
             net->setActivated( true );
         }
-        else if ( d->type == SolidExperimental::NetworkInterface::Ieee80211 )
+        else if ( d->type == Solid::Control::NetworkInterface::Ieee80211 )
         {
             net = new NMWirelessNetwork( uni );
         }
@@ -206,16 +206,16 @@ void NMNetworkInterface::setProperties( const NMDBusDeviceProperties & props )
     switch ( props.type )
     {
         case DEVICE_TYPE_UNKNOWN:
-            d->type = SolidExperimental::NetworkInterface::UnknownType;
+            d->type = Solid::Control::NetworkInterface::UnknownType;
             break;
         case DEVICE_TYPE_802_3_ETHERNET:
-            d->type = SolidExperimental::NetworkInterface::Ieee8023;
+            d->type = Solid::Control::NetworkInterface::Ieee8023;
             break;
         case DEVICE_TYPE_802_11_WIRELESS:
-            d->type = SolidExperimental::NetworkInterface::Ieee80211;
+            d->type = Solid::Control::NetworkInterface::Ieee80211;
             break;
         default:
-            d->type = SolidExperimental::NetworkInterface::UnknownType;
+            d->type = Solid::Control::NetworkInterface::UnknownType;
             break;
     }
     d->active = props.active;
@@ -226,11 +226,11 @@ void NMNetworkInterface::setProperties( const NMDBusDeviceProperties & props )
     //d->networks
     d->capabilities = 0;
     if ( props.capabilities & NM_DEVICE_CAP_NM_SUPPORTED )
-        d->capabilities |= SolidExperimental::NetworkInterface::IsManageable;
+        d->capabilities |= Solid::Control::NetworkInterface::IsManageable;
     if ( props.capabilities & NM_DEVICE_CAP_CARRIER_DETECT )
-        d->capabilities |= SolidExperimental::NetworkInterface::SupportsCarrierDetect;
+        d->capabilities |= Solid::Control::NetworkInterface::SupportsCarrierDetect;
     if ( props.capabilities & NM_DEVICE_CAP_WIRELESS_SCAN )
-        d->capabilities |= SolidExperimental::NetworkInterface::SupportsWirelessScan;
+        d->capabilities |= Solid::Control::NetworkInterface::SupportsWirelessScan;
     d->activeNetPath = props.activeNetPath;
 }
 

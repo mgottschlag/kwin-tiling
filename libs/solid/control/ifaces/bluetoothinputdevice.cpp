@@ -21,10 +21,10 @@
 
 #include "bluetoothinputdevice.h"
 
-SolidExperimental::Ifaces::BluetoothInputDevice::BluetoothInputDevice(QObject * parent) : QObject(parent)
+Solid::Control::Ifaces::BluetoothInputDevice::BluetoothInputDevice(QObject * parent) : QObject(parent)
 {}
 
-SolidExperimental::Ifaces::BluetoothInputDevice::~BluetoothInputDevice()
+Solid::Control::Ifaces::BluetoothInputDevice::~BluetoothInputDevice()
 {}
 
 #include "bluetoothinputdevice.moc"

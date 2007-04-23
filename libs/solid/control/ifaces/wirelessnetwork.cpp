@@ -19,7 +19,7 @@
 
 #include "wirelessnetwork.h"
 
-SolidExperimental::Ifaces::WirelessNetwork::~WirelessNetwork()
+Solid::Control::Ifaces::WirelessNetwork::~WirelessNetwork()
 {
 
 }

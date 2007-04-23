@@ -21,26 +21,26 @@
 
 #include <QtCore/QObject>
 
-SolidExperimental::FrontendObjectPrivate::FrontendObjectPrivate(QObject *parent)
+Solid::Control::FrontendObjectPrivate::FrontendObjectPrivate(QObject *parent)
     : m_parent(parent), m_backendObject(0)
 {
 }
 
-SolidExperimental::FrontendObjectPrivate::~FrontendObjectPrivate()
+Solid::Control::FrontendObjectPrivate::~FrontendObjectPrivate()
 {
 }
 
-QObject *SolidExperimental::FrontendObjectPrivate::parent() const
+QObject *Solid::Control::FrontendObjectPrivate::parent() const
 {
     return m_parent;
 }
 
-QObject *SolidExperimental::FrontendObjectPrivate::backendObject() const
+QObject *Solid::Control::FrontendObjectPrivate::backendObject() const
 {
     return m_backendObject;
 }
 
-void SolidExperimental::FrontendObjectPrivate::setBackendObject(QObject *object)
+void Solid::Control::FrontendObjectPrivate::setBackendObject(QObject *object)
 {
     if (m_backendObject)
     {
@@ -57,7 +57,7 @@ void SolidExperimental::FrontendObjectPrivate::setBackendObject(QObject *object)
     }
 }
 
-void SolidExperimental::FrontendObjectPrivate::_k_destroyed(QObject *object)
+void Solid::Control::FrontendObjectPrivate::_k_destroyed(QObject *object)
 {
     if (m_backendObject == object) {
         m_backendObject = 0;

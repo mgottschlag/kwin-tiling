@@ -24,12 +24,14 @@
 
 #include <QtCore/QObject>
 
-#include <solid/experimental/bluetoothmanager.h>
-#include <solid/experimental/bluetoothinterface.h>
+#include <solid/control/bluetoothmanager.h>
+#include <solid/control/bluetoothinterface.h>
 
 class KJob;
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 class BluetoothRemoteDevicePrivate;
 
@@ -301,6 +303,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _k_destroyed(QObject*))
 };
 
+} //Control
 } //Solid
 
 #endif

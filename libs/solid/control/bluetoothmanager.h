@@ -25,15 +25,17 @@
 
 #include <QtCore/QObject>
 
-#include <solid/experimental/singletondefs.h>
+#include <solid/control/singletondefs.h>
 #include <solid/solid_export.h>
 
-#include <solid/experimental/bluetoothinterface.h>
-#include <solid/experimental/bluetoothinputdevice.h>
+#include <solid/control/bluetoothinterface.h>
+#include <solid/control/bluetoothinputdevice.h>
 
 class KJob;
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 namespace Ifaces
 {
@@ -178,6 +180,7 @@ private:
     BluetoothManagerPrivate * const d;
     friend class BluetoothManagerPrivate;
 };
+} // Control
 } // Solid
 
 #endif

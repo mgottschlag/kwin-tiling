@@ -29,13 +29,13 @@
 
 #include <kglobal.h>
 
-K_GLOBAL_STATIC(SolidExperimental::NetworkManagerPrivate, globalNetworkManager)
+K_GLOBAL_STATIC(Solid::Control::NetworkManagerPrivate, globalNetworkManager)
 
-SolidExperimental::NetworkManagerPrivate::NetworkManagerPrivate()
+Solid::Control::NetworkManagerPrivate::NetworkManagerPrivate()
 {
     loadBackend("Network Management",
                 "SolidNetworkManager",
-                "SolidExperimental::Ifaces::NetworkManager");
+                "Solid::Control::Ifaces::NetworkManager");
 
     if (managerBackend()!=0) {
         connect(managerBackend(), SIGNAL(networkInterfaceAdded(const QString&)),
@@ -45,7 +45,7 @@ SolidExperimental::NetworkManagerPrivate::NetworkManagerPrivate()
     }
 }
 
-SolidExperimental::NetworkManagerPrivate::~NetworkManagerPrivate()
+Solid::Control::NetworkManagerPrivate::~NetworkManagerPrivate()
 {
     // Delete all the devices, they are now outdated
     typedef QPair<NetworkInterface*, Ifaces::NetworkInterface*> NetworkInterfaceIfacePair;
@@ -59,7 +59,7 @@ SolidExperimental::NetworkManagerPrivate::~NetworkManagerPrivate()
     m_networkInterfaceMap.clear();
 }
 
-SolidExperimental::NetworkInterfaceList SolidExperimental::NetworkManagerPrivate::buildDeviceList(const QStringList &uniList)
+Solid::Control::NetworkInterfaceList Solid::Control::NetworkManagerPrivate::buildDeviceList(const QStringList &uniList)
 {
     NetworkInterfaceList list;
     Ifaces::NetworkManager *backend = qobject_cast<Ifaces::NetworkManager*>(managerBackend());
@@ -79,7 +79,7 @@ SolidExperimental::NetworkInterfaceList SolidExperimental::NetworkManagerPrivate
     return list;
 }
 
-SolidExperimental::NetworkInterfaceList SolidExperimental::NetworkManagerPrivate::networkInterfaces()
+Solid::Control::NetworkInterfaceList Solid::Control::NetworkManagerPrivate::networkInterfaces()
 {
     Ifaces::NetworkManager *backend = qobject_cast<Ifaces::NetworkManager*>(managerBackend());
 
@@ -93,37 +93,37 @@ SolidExperimental::NetworkInterfaceList SolidExperimental::NetworkManagerPrivate
     }
 }
 
-SolidExperimental::NetworkInterfaceList SolidExperimental::NetworkManager::networkInterfaces()
+Solid::Control::NetworkInterfaceList Solid::Control::NetworkManager::networkInterfaces()
 {
     return globalNetworkManager->networkInterfaces();
 }
 
-bool SolidExperimental::NetworkManager::isNetworkingEnabled()
+bool Solid::Control::NetworkManager::isNetworkingEnabled()
 {
     return_SOLID_CALL(Ifaces::NetworkManager*, globalNetworkManager->managerBackend(), false, isNetworkingEnabled());
 }
 
-bool SolidExperimental::NetworkManager::isWirelessEnabled()
+bool Solid::Control::NetworkManager::isWirelessEnabled()
 {
     return_SOLID_CALL(Ifaces::NetworkManager*, globalNetworkManager->managerBackend(), false, isWirelessEnabled());
 }
 
-void SolidExperimental::NetworkManager::setNetworkingEnabled(bool enabled)
+void Solid::Control::NetworkManager::setNetworkingEnabled(bool enabled)
 {
     SOLID_CALL(Ifaces::NetworkManager*, globalNetworkManager->managerBackend(), setNetworkingEnabled(enabled));
 }
 
-void SolidExperimental::NetworkManager::setWirelessEnabled(bool enabled)
+void Solid::Control::NetworkManager::setWirelessEnabled(bool enabled)
 {
     SOLID_CALL(Ifaces::NetworkManager*, globalNetworkManager->managerBackend(), setWirelessEnabled(enabled));
 }
 
-void SolidExperimental::NetworkManager::notifyHiddenNetwork(const QString &networkName)
+void Solid::Control::NetworkManager::notifyHiddenNetwork(const QString &networkName)
 {
     SOLID_CALL(Ifaces::NetworkManager*, globalNetworkManager->managerBackend(), notifyHiddenNetwork(networkName));
 }
 
-const SolidExperimental::NetworkInterface &SolidExperimental::NetworkManagerPrivate::findNetworkInterface(const QString &uni)
+const Solid::Control::NetworkInterface &Solid::Control::NetworkManagerPrivate::findNetworkInterface(const QString &uni)
 {
     Ifaces::NetworkManager *backend = qobject_cast<Ifaces::NetworkManager*>(managerBackend());
 
@@ -141,12 +141,12 @@ const SolidExperimental::NetworkInterface &SolidExperimental::NetworkManagerPriv
     }
 }
 
-const SolidExperimental::NetworkInterface &SolidExperimental::NetworkManager::findNetworkInterface(const QString &uni)
+const Solid::Control::NetworkInterface &Solid::Control::NetworkManager::findNetworkInterface(const QString &uni)
 {
     return globalNetworkManager->findNetworkInterface(uni);
 }
 
-void SolidExperimental::NetworkManagerPrivate::_k_networkInterfaceAdded(const QString &uni)
+void Solid::Control::NetworkManagerPrivate::_k_networkInterfaceAdded(const QString &uni)
 {
     QPair<NetworkInterface*, Ifaces::NetworkInterface*> pair = m_networkInterfaceMap.take(uni);
 
@@ -162,7 +162,7 @@ void SolidExperimental::NetworkManagerPrivate::_k_networkInterfaceAdded(const QS
     emit networkInterfaceAdded(uni);
 }
 
-void SolidExperimental::NetworkManagerPrivate::_k_networkInterfaceRemoved(const QString &uni)
+void Solid::Control::NetworkManagerPrivate::_k_networkInterfaceRemoved(const QString &uni)
 {
     QPair<NetworkInterface*, Ifaces::NetworkInterface*> pair = m_networkInterfaceMap.take(uni);
 
@@ -175,7 +175,7 @@ void SolidExperimental::NetworkManagerPrivate::_k_networkInterfaceRemoved(const 
     emit networkInterfaceRemoved(uni);
 }
 
-void SolidExperimental::NetworkManagerPrivate::_k_destroyed(QObject *object)
+void Solid::Control::NetworkManagerPrivate::_k_destroyed(QObject *object)
 {
     Ifaces::NetworkInterface *device = qobject_cast<Ifaces::NetworkInterface*>( object );
 
@@ -189,8 +189,8 @@ void SolidExperimental::NetworkManagerPrivate::_k_destroyed(QObject *object)
 
 /***************************************************************************/
 
-QPair<SolidExperimental::NetworkInterface*, SolidExperimental::Ifaces::NetworkInterface*>
-SolidExperimental::NetworkManagerPrivate::findRegisteredNetworkInterface(const QString &uni)
+QPair<Solid::Control::NetworkInterface*, Solid::Control::Ifaces::NetworkInterface*>
+Solid::Control::NetworkManagerPrivate::findRegisteredNetworkInterface(const QString &uni)
 {
     if (m_networkInterfaceMap.contains(uni)) {
         return m_networkInterfaceMap[uni];

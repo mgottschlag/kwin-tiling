@@ -27,7 +27,9 @@
 
 #include <solid/solid_export.h>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     class NetworkInterface;
     class NetworkInterfacePrivate;
@@ -150,6 +152,7 @@ namespace SolidExperimental
     typedef QList<Network*> NetworkList;
 
 
+} //Control
 } //Solid
 
 #endif

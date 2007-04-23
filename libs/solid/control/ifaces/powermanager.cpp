@@ -20,13 +20,13 @@
 #include "powermanager.h"
 
 
-SolidExperimental::Ifaces::PowerManager::PowerManager( QObject *parent )
+Solid::Control::Ifaces::PowerManager::PowerManager( QObject *parent )
     : QObject(parent)
 {
 
 }
 
-SolidExperimental::Ifaces::PowerManager::~PowerManager()
+Solid::Control::Ifaces::PowerManager::~PowerManager()
 {
 
 }

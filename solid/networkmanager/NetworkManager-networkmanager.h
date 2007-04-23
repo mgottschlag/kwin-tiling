@@ -26,10 +26,10 @@
 
 #include <kdemacros.h>
 
-#include <solid/experimental/ifaces/networkmanager.h>
+#include <solid/control/ifaces/networkmanager.h>
 
 class NMNetworkManagerPrivate;
-class KDE_EXPORT NMNetworkManager : public SolidExperimental::Ifaces::NetworkManager
+class KDE_EXPORT NMNetworkManager : public Solid::Control::Ifaces::NetworkManager
 {
 Q_OBJECT
     public:

@@ -22,84 +22,84 @@
 #include "network_p.h"
 
 #include "../soliddefs_p.h"
-#include <solid/experimental/ifaces/network.h>
+#include <solid/control/ifaces/network.h>
 
-SolidExperimental::Network::Network( QObject *backendObject )
+Solid::Control::Network::Network( QObject *backendObject )
     : QObject(), d_ptr(new NetworkPrivate(this))
 {
     Q_D(Network);
     d->setBackendObject(backendObject);
 }
 
-SolidExperimental::Network::Network( const Network &network )
+Solid::Control::Network::Network( const Network &network )
     : QObject(), d_ptr(new NetworkPrivate(this))
 {
     Q_D(Network);
     d->setBackendObject(network.d_ptr->backendObject());
 }
 
-SolidExperimental::Network::Network(NetworkPrivate &dd, QObject *backendObject)
+Solid::Control::Network::Network(NetworkPrivate &dd, QObject *backendObject)
     : QObject(), d_ptr(&dd)
 {
     Q_D(Network);
     d->setBackendObject(backendObject);
 }
 
-SolidExperimental::Network::Network(NetworkPrivate &dd, const Network &network)
+Solid::Control::Network::Network(NetworkPrivate &dd, const Network &network)
     : d_ptr(&dd)
 {
     Q_D(Network);
     d->setBackendObject(network.d_ptr->backendObject());
 }
 
-SolidExperimental::Network::~Network()
+Solid::Control::Network::~Network()
 {
 
 }
 
-bool SolidExperimental::Network::isValid() const
+bool Solid::Control::Network::isValid() const
 {
     Q_D(const Network);
     return d->backendObject()!=0;
 }
 
-QList<QNetworkAddressEntry> SolidExperimental::Network::addressEntries() const
+QList<QNetworkAddressEntry> Solid::Control::Network::addressEntries() const
 {
     Q_D(const Network);
     return_SOLID_CALL(Ifaces::Network*, d->backendObject(), QList<QNetworkAddressEntry>(), addressEntries());
 }
 
-QString SolidExperimental::Network::route() const
+QString Solid::Control::Network::route() const
 {
     Q_D(const Network);
     return_SOLID_CALL(Ifaces::Network*, d->backendObject(), QString(), route());
 }
 
-QList<QHostAddress> SolidExperimental::Network::dnsServers() const
+QList<QHostAddress> Solid::Control::Network::dnsServers() const
 {
     Q_D(const Network);
     return_SOLID_CALL(Ifaces::Network*, d->backendObject(), QList<QHostAddress>(), dnsServers());
 }
 
-void SolidExperimental::Network::setActivated( bool active )
+void Solid::Control::Network::setActivated( bool active )
 {
     Q_D(const Network);
     SOLID_CALL(Ifaces::Network*, d->backendObject(), setActivated(active));
 }
 
-bool SolidExperimental::Network::isActive() const
+bool Solid::Control::Network::isActive() const
 {
     Q_D(const Network);
     return_SOLID_CALL(Ifaces::Network*, d->backendObject(), false, isActive());
 }
 
-QString SolidExperimental::Network::uni() const
+QString Solid::Control::Network::uni() const
 {
     Q_D(const Network);
     return_SOLID_CALL(Ifaces::Network*, d->backendObject(), QString(), uni());
 }
 
-void SolidExperimental::NetworkPrivate::setBackendObject(QObject *object)
+void Solid::Control::NetworkPrivate::setBackendObject(QObject *object)
 {
     FrontendObjectPrivate::setBackendObject(object);
 

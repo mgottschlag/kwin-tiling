@@ -21,11 +21,13 @@
 #ifndef SOLID_WIRELESSNETWORK_H
 #define SOLID_WIRELESSNETWORK_H
 
-#include <solid/experimental/network.h>
-#include <solid/experimental/authentication.h>
+#include <solid/control/network.h>
+#include <solid/control/authentication.h>
 
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     typedef QString MacAddress;
     typedef QStringList MacAddressList;
@@ -101,7 +103,7 @@ namespace SolidExperimental
          * Retrieves the capabilities of this wifi network.
          *
          * @return the flag set describing the capabilities
-         * @see SolidExperimental::WirelessNetwork::DeviceInterface
+         * @see Solid::Control::WirelessNetwork::DeviceInterface
          */
         Capabilities capabilities() const;
 
@@ -117,7 +119,7 @@ namespace SolidExperimental
          * Retrieves the operation mode of this network.
          *
          * @return the current mode
-         * @see SolidExperimental::WirelessNetwork::OperationMode
+         * @see Solid::Control::WirelessNetwork::OperationMode
          */
         OperationMode mode() const;
 
@@ -197,8 +199,9 @@ namespace SolidExperimental
         void authenticationNeeded();
     };
 
+} //Control
 } //Solid
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( SolidExperimental::WirelessNetwork::Capabilities )
+Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::WirelessNetwork::Capabilities )
 
 #endif

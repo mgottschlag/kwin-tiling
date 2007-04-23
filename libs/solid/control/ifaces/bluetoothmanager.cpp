@@ -21,10 +21,10 @@
 
 #include "bluetoothmanager.h"
 
-SolidExperimental::Ifaces::BluetoothManager::BluetoothManager(QObject * parent) : QObject(parent)
+Solid::Control::Ifaces::BluetoothManager::BluetoothManager(QObject * parent) : QObject(parent)
 {}
 
-SolidExperimental::Ifaces::BluetoothManager::~BluetoothManager()
+Solid::Control::Ifaces::BluetoothManager::~BluetoothManager()
 {}
 
 #include "bluetoothmanager.moc"

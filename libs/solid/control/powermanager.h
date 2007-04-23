@@ -26,7 +26,9 @@
 
 class KJob;
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     /**
      * This namespace allows to query the underlying system to obtain information
@@ -141,7 +143,7 @@ namespace SolidExperimental
          * Retrieves the current state of the system battery.
          *
          * @return the current battery state
-         * @see SolidExperimental::PowerManager::BatteryState
+         * @see Solid::Control::PowerManager::BatteryState
          */
         SOLID_EXPORT BatteryState batteryState();
 
@@ -156,7 +158,7 @@ namespace SolidExperimental
          * Retrieves the current state of the system AC adapter.
          *
          * @return the current AC adapter state
-         * @see SolidExperimental::PowerManager::AcAdapterState
+         * @see Solid::Control::PowerManager::AcAdapterState
          */
         SOLID_EXPORT AcAdapterState acAdapterState();
 
@@ -165,8 +167,8 @@ namespace SolidExperimental
          * Retrieves the set of suspend methods supported by the system.
          *
          * @return the suspend methods supported by this system
-         * @see SolidExperimental::PowerManager::SuspendMethod
-         * @see SolidExperimental::PowerManager::SuspendMethods
+         * @see Solid::Control::PowerManager::SuspendMethod
+         * @see Solid::Control::PowerManager::SuspendMethods
          */
         SOLID_EXPORT SuspendMethods supportedSuspendMethods();
 
@@ -183,8 +185,8 @@ namespace SolidExperimental
          * Retrieves the set of CPU frequency policies supported by the system.
          *
          * @return the CPU frequency policies supported by this system
-         * @see SolidExperimental::PowerManager::CpuFreqPolicy
-         * @see SolidExperimental::PowerManager::CpuFreqPolicies
+         * @see Solid::Control::PowerManager::CpuFreqPolicy
+         * @see Solid::Control::PowerManager::CpuFreqPolicies
          */
         SOLID_EXPORT CpuFreqPolicies supportedCpuFreqPolicies();
 
@@ -192,7 +194,7 @@ namespace SolidExperimental
          * Retrieves the current CPU frequency policy of the system.
          *
          * @return the current CPU frequency policy used by the system
-         * @see SolidExperimental::PowerManager::CpuFreqPolicy
+         * @see Solid::Control::PowerManager::CpuFreqPolicy
          */
         SOLID_EXPORT CpuFreqPolicy cpuFreqPolicy();
 
@@ -201,7 +203,7 @@ namespace SolidExperimental
          *
          * @param newPolicy the new policy
          * @return true if the policy change succeeded, false otherwise
-         * @see SolidExperimental::PowerManager::CpuFreqPolicy
+         * @see Solid::Control::PowerManager::CpuFreqPolicy
          */
         SOLID_EXPORT bool setCpuFreqPolicy(CpuFreqPolicy newPolicy);
 
@@ -237,7 +239,7 @@ namespace SolidExperimental
              * This signal is emitted when the AC adapter is plugged or unplugged.
              *
              * @param newState the new state of the AC adapter, it's one of the
-             * type @see SolidExperimental::PowerManager::AcAdapterState
+             * type @see Solid::Control::PowerManager::AcAdapterState
              */
             void acAdapterStateChanged(int newState);
 
@@ -245,7 +247,7 @@ namespace SolidExperimental
              * This signal is emitted when the system battery state changed.
              *
              * @param newState the new state of the system battery, it's one of the
-             * type @see SolidExperimental::PowerManager::BatteryState
+             * type @see Solid::Control::PowerManager::BatteryState
              */
             void batteryStateChanged(int newState);
 
@@ -253,7 +255,7 @@ namespace SolidExperimental
              * This signal is emitted when a button has been pressed.
              *
              * @param buttonType the pressed button type, it's one of the
-             * type @see SolidExperimental::PowerManager::ButtonType
+             * type @see Solid::Control::PowerManager::ButtonType
              */
             void buttonPressed(int buttonType);
         };
@@ -261,8 +263,9 @@ namespace SolidExperimental
         SOLID_EXPORT Notifier *notifier();
     }
 }
+}
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( SolidExperimental::PowerManager::SuspendMethods )
-Q_DECLARE_OPERATORS_FOR_FLAGS( SolidExperimental::PowerManager::CpuFreqPolicies )
+Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::PowerManager::SuspendMethods )
+Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::PowerManager::CpuFreqPolicies )
 
 #endif

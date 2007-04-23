@@ -39,22 +39,22 @@
 #include <QtDBus>
 
 #include <kdebug.h>
-#include <solid/experimental/ifaces/authentication.h>
+#include <solid/control/ifaces/authentication.h>
 
 #include "NetworkManager-dbushelper.h"
 
-QList<QVariant> NMDBusHelper::serialize( SolidExperimental::Authentication * auth, const QString & essid, QList<QVariant> & args, bool * error )
+QList<QVariant> NMDBusHelper::serialize( Solid::Control::Authentication * auth, const QString & essid, QList<QVariant> & args, bool * error )
 {
     if ( auth )
     {
 
-        SolidExperimental::AuthenticationWep * wep = dynamic_cast<SolidExperimental::AuthenticationWep*>( auth ) ;
+        Solid::Control::AuthenticationWep * wep = dynamic_cast<Solid::Control::AuthenticationWep*>( auth ) ;
         if ( wep )
             return doSerialize( wep, essid, args, error );
-        SolidExperimental::AuthenticationWpaPersonal * wpap = dynamic_cast<SolidExperimental::AuthenticationWpaPersonal*>( auth ) ;
+        Solid::Control::AuthenticationWpaPersonal * wpap = dynamic_cast<Solid::Control::AuthenticationWpaPersonal*>( auth ) ;
         if ( wpap )
             return doSerialize( wpap, essid, args, error );
-        SolidExperimental::AuthenticationWpaEnterprise * wpae = dynamic_cast<SolidExperimental::AuthenticationWpaEnterprise*>( auth );
+        Solid::Control::AuthenticationWpaEnterprise * wpae = dynamic_cast<Solid::Control::AuthenticationWpaEnterprise*>( auth );
         if ( wpae )
             return doSerialize( wpae, essid, args, error );
     }
@@ -62,13 +62,13 @@ QList<QVariant> NMDBusHelper::serialize( SolidExperimental::Authentication * aut
     return QList<QVariant>();
 }
 
-QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWep * auth, const QString & essid, QList<QVariant> & args, bool * error )
+QList<QVariant> NMDBusHelper::doSerialize( Solid::Control::AuthenticationWep * auth, const QString & essid, QList<QVariant> & args, bool * error )
 {
     // get correct cipher
     // what's the algorithm for deciding the right cipher to use?
     *error = false;
     IEEE_802_11_Cipher * cipher = 0;
-    if ( auth->type() == SolidExperimental::AuthenticationWep::WepAscii )
+    if ( auth->type() == Solid::Control::AuthenticationWep::WepAscii )
     {
         if ( auth->keyLength() == 40 || auth->keyLength() == 64 )
             cipher = cipher_wep64_ascii_new();
@@ -78,7 +78,7 @@ QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWep 
             //NM only supports these 2 key lengths, flag an error!
             *error = true;
     }
-    else if ( auth->type() == SolidExperimental::AuthenticationWep::WepHex )
+    else if ( auth->type() == Solid::Control::AuthenticationWep::WepHex )
     {
         if ( auth->keyLength() == 40 || auth->keyLength() == 64 )
             cipher = cipher_wep64_hex_new();
@@ -88,7 +88,7 @@ QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWep 
             //NM only supports these 2 key lengths, flag an error!
             *error = true;
     }
-    else if ( auth->type() == SolidExperimental::AuthenticationWep::WepPassphrase )
+    else if ( auth->type() == Solid::Control::AuthenticationWep::WepPassphrase )
     {
         if ( auth->keyLength() == 40 || auth->keyLength() == 64 )
             cipher = cipher_wep64_passphrase_new();
@@ -114,7 +114,7 @@ QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWep 
         free( rawHashedKey );
         args << QVariant( hashedKey );
         // int32 auth alg
-        if ( auth->method() == SolidExperimental::AuthenticationWep::WepOpenSystem )
+        if ( auth->method() == Solid::Control::AuthenticationWep::WepOpenSystem )
             args << QVariant( IW_AUTH_ALG_OPEN_SYSTEM );
         else
             args << QVariant( IW_AUTH_ALG_SHARED_KEY );
@@ -125,7 +125,7 @@ QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWep 
     return args;
 }
 
-QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWpaPersonal * auth, const QString & essid, QList<QVariant> & args, bool * error )
+QList<QVariant> NMDBusHelper::doSerialize( Solid::Control::AuthenticationWpaPersonal * auth, const QString & essid, QList<QVariant> & args, bool * error )
 {
     *error = false;
     IEEE_802_11_Cipher * cipher = 0;
@@ -144,15 +144,15 @@ QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWpaP
 
     switch ( auth->protocol() )
     {
-        case SolidExperimental::AuthenticationWpaPersonal::WpaTkip:
+        case Solid::Control::AuthenticationWpaPersonal::WpaTkip:
             cipher_wpa_psk_hex_set_we_cipher( hexCipher, NM_AUTH_TYPE_WPA_PSK_TKIP );
             cipher_wpa_psk_passphrase_set_we_cipher( ppCipher, NM_AUTH_TYPE_WPA_PSK_TKIP );
             break;
-        case SolidExperimental::AuthenticationWpaPersonal::WpaCcmpAes:
+        case Solid::Control::AuthenticationWpaPersonal::WpaCcmpAes:
             cipher_wpa_psk_hex_set_we_cipher( hexCipher, NM_AUTH_TYPE_WPA_PSK_CCMP );
             cipher_wpa_psk_passphrase_set_we_cipher( ppCipher, NM_AUTH_TYPE_WPA_PSK_CCMP );
             break;
-        case SolidExperimental::AuthenticationWpaPersonal::WpaAuto:
+        case Solid::Control::AuthenticationWpaPersonal::WpaAuto:
         default:
             cipher_wpa_psk_hex_set_we_cipher( hexCipher, NM_AUTH_TYPE_WPA_PSK_AUTO );
             cipher_wpa_psk_passphrase_set_we_cipher( ppCipher, NM_AUTH_TYPE_WPA_PSK_AUTO );
@@ -184,12 +184,12 @@ QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWpaP
         free( rawHashedKey );
         args << QVariant( hashedKey );
         // int32 wpa version
-        if ( auth->version() == SolidExperimental::AuthenticationWpaPersonal::Wpa1 )
+        if ( auth->version() == Solid::Control::AuthenticationWpaPersonal::Wpa1 )
             args << QVariant( IW_AUTH_WPA_VERSION_WPA );
         else
             args << QVariant( IW_AUTH_WPA_VERSION_WPA2 );
         // int32 key management
-        if ( auth->keyManagement() == SolidExperimental::AuthenticationWpaPersonal::WpaPsk )
+        if ( auth->keyManagement() == Solid::Control::AuthenticationWpaPersonal::WpaPsk )
             args << QVariant( IW_AUTH_KEY_MGMT_PSK );
         else
             args << QVariant( IW_AUTH_KEY_MGMT_802_1X );
@@ -198,7 +198,7 @@ QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWpaP
     return args;
 }
 
-QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWpaEnterprise * auth, const QString & essid, QList<QVariant> & args, bool * error )
+QList<QVariant> NMDBusHelper::doSerialize( Solid::Control::AuthenticationWpaEnterprise * auth, const QString & essid, QList<QVariant> & args, bool * error )
 {
     Q_UNUSED( essid )
     Q_UNUSED( error )
@@ -207,25 +207,25 @@ QList<QVariant> NMDBusHelper::doSerialize( SolidExperimental::AuthenticationWpaE
     args << NM_AUTH_TYPE_WPA_EAP;
     switch ( auth->method() )
     {
-        case SolidExperimental::AuthenticationWpaEnterprise::EapPeap:
+        case Solid::Control::AuthenticationWpaEnterprise::EapPeap:
             args << NM_EAP_METHOD_PEAP;
             break;
-        case SolidExperimental::AuthenticationWpaEnterprise::EapTls:
+        case Solid::Control::AuthenticationWpaEnterprise::EapTls:
             args << NM_EAP_METHOD_TLS;
             break;
-        case SolidExperimental::AuthenticationWpaEnterprise::EapTtls :
+        case Solid::Control::AuthenticationWpaEnterprise::EapTtls :
             args << NM_EAP_METHOD_TTLS;
             break;
-        case SolidExperimental::AuthenticationWpaEnterprise::EapMd5:
+        case Solid::Control::AuthenticationWpaEnterprise::EapMd5:
             args << NM_EAP_METHOD_MD5;
             break;
-        case SolidExperimental::AuthenticationWpaEnterprise::EapMsChap:
+        case Solid::Control::AuthenticationWpaEnterprise::EapMsChap:
             args << NM_EAP_METHOD_MSCHAP;
             break;
-        case SolidExperimental::AuthenticationWpaEnterprise::EapOtp:
+        case Solid::Control::AuthenticationWpaEnterprise::EapOtp:
             args << NM_EAP_METHOD_OTP;
             break;
-        case SolidExperimental::AuthenticationWpaEnterprise::EapGtc:
+        case Solid::Control::AuthenticationWpaEnterprise::EapGtc:
             args << NM_EAP_METHOD_GTC;
             break;
     }

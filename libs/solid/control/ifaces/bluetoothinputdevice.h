@@ -25,7 +25,9 @@
 #include <QObject>
 #include <solid/solid_export.h>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 namespace Ifaces
 {
@@ -119,8 +121,10 @@ Q_SIGNALS:
 
 } // Ifaces
 
+} // Control
+
 } // Solid
 
-Q_DECLARE_INTERFACE(SolidExperimental::Ifaces::BluetoothInputDevice, "org.kde.Solid.Ifaces.BluetoothInputDevice/0.1")
+Q_DECLARE_INTERFACE(Solid::Control::Ifaces::BluetoothInputDevice, "org.kde.Solid.Control.Ifaces.BluetoothInputDevice/0.1")
 
 #endif

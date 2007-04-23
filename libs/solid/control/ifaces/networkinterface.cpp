@@ -19,13 +19,13 @@
 
 #include "networkinterface.h"
 
-SolidExperimental::Ifaces::NetworkInterface::NetworkInterface( QObject *parent )
+Solid::Control::Ifaces::NetworkInterface::NetworkInterface( QObject *parent )
     : QObject( parent )
 {
 
 }
 
-SolidExperimental::Ifaces::NetworkInterface::~NetworkInterface()
+Solid::Control::Ifaces::NetworkInterface::~NetworkInterface()
 {
 
 }

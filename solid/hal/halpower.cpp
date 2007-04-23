@@ -131,27 +131,27 @@ bool HalPower::setScheme( const QString &name )
     }
 }
 
-SolidExperimental::PowerManager::BatteryState HalPower::batteryState() const
+Solid::Control::PowerManager::BatteryState HalPower::batteryState() const
 {
     if ( m_batteries.size()==0 )
     {
-        return SolidExperimental::PowerManager::NoBatteryState;
+        return Solid::Control::PowerManager::NoBatteryState;
     }
     else if ( m_currentBatteryCharge <= m_criticalBatteryCharge )
     {
-        return SolidExperimental::PowerManager::Critical;
+        return Solid::Control::PowerManager::Critical;
     }
     else if ( m_currentBatteryCharge <= m_lowBatteryCharge )
     {
-        return SolidExperimental::PowerManager::Low;
+        return Solid::Control::PowerManager::Low;
     }
     else if ( m_currentBatteryCharge <= m_warningBatteryCharge )
     {
-        return SolidExperimental::PowerManager::Warning;
+        return Solid::Control::PowerManager::Warning;
     }
     else
     {
-        return SolidExperimental::PowerManager::Normal;
+        return Solid::Control::PowerManager::Normal;
     }
 }
 
@@ -160,25 +160,25 @@ int HalPower::batteryChargePercent() const
     return ( m_currentBatteryCharge*100 )/m_maxBatteryCharge;
 }
 
-SolidExperimental::PowerManager::AcAdapterState HalPower::acAdapterState() const
+Solid::Control::PowerManager::AcAdapterState HalPower::acAdapterState() const
 {
     if ( m_acAdapters.size()==0 )
     {
-        return SolidExperimental::PowerManager::UnknownAcAdapterState;
+        return Solid::Control::PowerManager::UnknownAcAdapterState;
     }
     else if ( m_pluggedAdapterCount==0 )
     {
-        return SolidExperimental::PowerManager::Unplugged;
+        return Solid::Control::PowerManager::Unplugged;
     }
     else
     {
-        return SolidExperimental::PowerManager::Plugged;
+        return Solid::Control::PowerManager::Plugged;
     }
 }
 
-SolidExperimental::PowerManager::SuspendMethods HalPower::supportedSuspendMethods() const
+Solid::Control::PowerManager::SuspendMethods HalPower::supportedSuspendMethods() const
 {
-    SolidExperimental::PowerManager::SuspendMethods supported = SolidExperimental::PowerManager::UnknownSuspendMethod;
+    Solid::Control::PowerManager::SuspendMethods supported = Solid::Control::PowerManager::UnknownSuspendMethod;
 
     QDBusReply<bool> reply = m_halComputer.call( "GetPropertyBoolean", "power_management.can_hibernate" );
 
@@ -187,7 +187,7 @@ SolidExperimental::PowerManager::SuspendMethods HalPower::supportedSuspendMethod
         bool can_suspend = reply;
         if ( can_suspend )
         {
-            supported |= SolidExperimental::PowerManager::ToRam;
+            supported |= Solid::Control::PowerManager::ToRam;
         }
     }
     else
@@ -202,7 +202,7 @@ SolidExperimental::PowerManager::SuspendMethods HalPower::supportedSuspendMethod
         bool can_hibernate = reply;
         if ( can_hibernate )
         {
-            supported |= SolidExperimental::PowerManager::ToDisk;
+            supported |= Solid::Control::PowerManager::ToDisk;
         }
     }
     else
@@ -213,42 +213,42 @@ SolidExperimental::PowerManager::SuspendMethods HalPower::supportedSuspendMethod
     return supported;
 }
 
-KJob *HalPower::suspend( SolidExperimental::PowerManager::SuspendMethod method ) const
+KJob *HalPower::suspend( Solid::Control::PowerManager::SuspendMethod method ) const
 {
     return new HalSuspendJob(m_halPowerManagement,
                              method, supportedSuspendMethods());
 }
 
-SolidExperimental::PowerManager::CpuFreqPolicies HalPower::supportedCpuFreqPolicies() const
+Solid::Control::PowerManager::CpuFreqPolicies HalPower::supportedCpuFreqPolicies() const
 {
     QDBusReply<QStringList> reply = m_halCpuFreq.call( "GetCPUFreqAvailableGovernors" );
 
     if ( !reply.isValid() )
     {
-        return SolidExperimental::PowerManager::UnknownCpuFreqPolicy;
+        return Solid::Control::PowerManager::UnknownCpuFreqPolicy;
     }
     else
     {
         QStringList governors = reply;
-        SolidExperimental::PowerManager::CpuFreqPolicies policies = SolidExperimental::PowerManager::UnknownCpuFreqPolicy;
+        Solid::Control::PowerManager::CpuFreqPolicies policies = Solid::Control::PowerManager::UnknownCpuFreqPolicy;
 
         foreach( QString governor, governors )
         {
             if ( governor == "ondemand" )
             {
-                policies|= SolidExperimental::PowerManager::OnDemand;
+                policies|= Solid::Control::PowerManager::OnDemand;
             }
             else if ( governor == "userspace" )
             {
-                policies|= SolidExperimental::PowerManager::Userspace;
+                policies|= Solid::Control::PowerManager::Userspace;
             }
             else if ( governor == "powersave" )
             {
-                policies|= SolidExperimental::PowerManager::Powersave;
+                policies|= Solid::Control::PowerManager::Powersave;
             }
             else if ( governor == "performance" )
             {
-                policies|= SolidExperimental::PowerManager::Performance;
+                policies|= Solid::Control::PowerManager::Performance;
             }
             else
             {
@@ -260,13 +260,13 @@ SolidExperimental::PowerManager::CpuFreqPolicies HalPower::supportedCpuFreqPolic
     }
 }
 
-SolidExperimental::PowerManager::CpuFreqPolicy HalPower::cpuFreqPolicy() const
+Solid::Control::PowerManager::CpuFreqPolicy HalPower::cpuFreqPolicy() const
 {
     QDBusReply<QString> reply = m_halCpuFreq.call( "GetCPUFreqGovernor" );
 
     if ( !reply.isValid() )
     {
-        return SolidExperimental::PowerManager::UnknownCpuFreqPolicy;
+        return Solid::Control::PowerManager::UnknownCpuFreqPolicy;
     }
     else
     {
@@ -274,43 +274,43 @@ SolidExperimental::PowerManager::CpuFreqPolicy HalPower::cpuFreqPolicy() const
 
         if ( governor == "ondemand" )
         {
-            return SolidExperimental::PowerManager::OnDemand;
+            return Solid::Control::PowerManager::OnDemand;
         }
         else if ( governor == "userspace" )
         {
-            return SolidExperimental::PowerManager::Userspace;
+            return Solid::Control::PowerManager::Userspace;
         }
         else if ( governor == "powersave" )
         {
-            return SolidExperimental::PowerManager::Powersave;
+            return Solid::Control::PowerManager::Powersave;
         }
         else if ( governor == "performance" )
         {
-            return SolidExperimental::PowerManager::Performance;
+            return Solid::Control::PowerManager::Performance;
         }
         else
         {
-            return SolidExperimental::PowerManager::UnknownCpuFreqPolicy;
+            return Solid::Control::PowerManager::UnknownCpuFreqPolicy;
         }
     }
 }
 
-bool HalPower::setCpuFreqPolicy( SolidExperimental::PowerManager::CpuFreqPolicy newPolicy )
+bool HalPower::setCpuFreqPolicy( Solid::Control::PowerManager::CpuFreqPolicy newPolicy )
 {
     QString governor;
 
     switch( newPolicy )
     {
-    case SolidExperimental::PowerManager::OnDemand:
+    case Solid::Control::PowerManager::OnDemand:
         governor = "ondemand";
         break;
-    case SolidExperimental::PowerManager::Userspace:
+    case Solid::Control::PowerManager::Userspace:
         governor = "userspace";
         break;
-    case SolidExperimental::PowerManager::Powersave:
+    case Solid::Control::PowerManager::Powersave:
         governor = "powersave";
         break;
-    case SolidExperimental::PowerManager::Performance:
+    case Solid::Control::PowerManager::Performance:
         governor = "performance";
         break;
     default:
@@ -436,19 +436,19 @@ void HalPower::slotButtonPressed( int type )
     switch( type )
     {
     case Solid::Button::PowerButton:
-        emit buttonPressed( SolidExperimental::PowerManager::PowerButton );
+        emit buttonPressed( Solid::Control::PowerManager::PowerButton );
         break;
     case Solid::Button::SleepButton:
-        emit buttonPressed( SolidExperimental::PowerManager::SleepButton );
+        emit buttonPressed( Solid::Control::PowerManager::SleepButton );
         break;
     case Solid::Button::LidButton:
         if ( button->stateValue() )
         {
-            emit buttonPressed( SolidExperimental::PowerManager::LidClose );
+            emit buttonPressed( Solid::Control::PowerManager::LidClose );
         }
         else
         {
-            emit buttonPressed( SolidExperimental::PowerManager::LidOpen );
+            emit buttonPressed( Solid::Control::PowerManager::LidOpen );
         }
         break;
     default:

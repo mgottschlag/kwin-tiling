@@ -27,7 +27,9 @@
 
 class KJob;
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 namespace Ifaces
 {
@@ -149,6 +151,8 @@ Q_SIGNALS:
 };
 
 } // Ifaces
+
+} // Control
 
 } // Solid
 

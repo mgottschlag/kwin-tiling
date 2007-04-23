@@ -24,7 +24,9 @@
 
 #include <QtCore/QObject>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
 class BluetoothInputDevicePrivate;
 
@@ -136,8 +138,10 @@ private:
     BluetoothInputDevicePrivate * const d;
 };
 
+} //Control
+
 } //Solid
 
-//Q_DECLARE_OPERATORS_FOR_FLAGS( SolidExperimental::BluetoothInputDevice::Capabilities )
+//Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::BluetoothInputDevice::Capabilities )
 
 #endif

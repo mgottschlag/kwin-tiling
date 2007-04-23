@@ -22,7 +22,7 @@
 #include <QMap>
 #include <QStringList>
 
-#include <solid/experimental/ifaces/bluetoothremotedevice.h>
+#include <solid/control/ifaces/bluetoothremotedevice.h>
 
 #include "frontendobject_p.h"
 
@@ -30,7 +30,9 @@
 #include "bluetoothmanager.h"
 #include "bluetoothinterface.h"
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     class BluetoothRemoteDevicePrivate : public FrontendObjectPrivate
     {
@@ -41,25 +43,26 @@ namespace SolidExperimental
         void setBackendObject(QObject *object);
     };
 }
+}
 
-SolidExperimental::BluetoothRemoteDevice::BluetoothRemoteDevice(QObject *backendObject)
+Solid::Control::BluetoothRemoteDevice::BluetoothRemoteDevice(QObject *backendObject)
     : QObject(), d_ptr(new BluetoothRemoteDevicePrivate(this))
 {
     Q_D(BluetoothRemoteDevice);
     d->setBackendObject(backendObject);
 }
 
-SolidExperimental::BluetoothRemoteDevice::BluetoothRemoteDevice(const BluetoothRemoteDevice &device)
+Solid::Control::BluetoothRemoteDevice::BluetoothRemoteDevice(const BluetoothRemoteDevice &device)
     : QObject(), d_ptr(new BluetoothRemoteDevicePrivate(this))
 {
     Q_D(BluetoothRemoteDevice);
     d->setBackendObject(device.d_ptr->backendObject());
 }
 
-SolidExperimental::BluetoothRemoteDevice::~BluetoothRemoteDevice()
+Solid::Control::BluetoothRemoteDevice::~BluetoothRemoteDevice()
 {}
 
-SolidExperimental::BluetoothRemoteDevice &SolidExperimental::BluetoothRemoteDevice::operator=(const SolidExperimental::BluetoothRemoteDevice & dev)
+Solid::Control::BluetoothRemoteDevice &Solid::Control::BluetoothRemoteDevice::operator=(const Solid::Control::BluetoothRemoteDevice & dev)
 {
     Q_D(BluetoothRemoteDevice);
     d->setBackendObject(dev.d_ptr->backendObject());
@@ -67,145 +70,145 @@ SolidExperimental::BluetoothRemoteDevice &SolidExperimental::BluetoothRemoteDevi
     return *this;
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::ubi() const
+QString Solid::Control::BluetoothRemoteDevice::ubi() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), ubi());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::address() const
+QString Solid::Control::BluetoothRemoteDevice::address() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), address());
 }
 
-bool SolidExperimental::BluetoothRemoteDevice::isConnected() const
+bool Solid::Control::BluetoothRemoteDevice::isConnected() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), false, isConnected());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::version() const
+QString Solid::Control::BluetoothRemoteDevice::version() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), version());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::revision() const
+QString Solid::Control::BluetoothRemoteDevice::revision() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), revision());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::manufacturer() const
+QString Solid::Control::BluetoothRemoteDevice::manufacturer() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), manufacturer());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::company() const
+QString Solid::Control::BluetoothRemoteDevice::company() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), company());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::majorClass() const
+QString Solid::Control::BluetoothRemoteDevice::majorClass() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), majorClass());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::minorClass() const
+QString Solid::Control::BluetoothRemoteDevice::minorClass() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), minorClass());
 }
 
-QStringList SolidExperimental::BluetoothRemoteDevice::serviceClasses() const
+QStringList Solid::Control::BluetoothRemoteDevice::serviceClasses() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QStringList(), serviceClasses());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::name() const
+QString Solid::Control::BluetoothRemoteDevice::name() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), name());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::alias() const
+QString Solid::Control::BluetoothRemoteDevice::alias() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), alias());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::lastSeen() const
+QString Solid::Control::BluetoothRemoteDevice::lastSeen() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), lastSeen());
 }
 
-QString SolidExperimental::BluetoothRemoteDevice::lastUsed() const
+QString Solid::Control::BluetoothRemoteDevice::lastUsed() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), QString(), lastUsed());
 }
 
-bool SolidExperimental::BluetoothRemoteDevice::hasBonding() const
+bool Solid::Control::BluetoothRemoteDevice::hasBonding() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), false, hasBonding());
 }
 
-int SolidExperimental::BluetoothRemoteDevice::pinCodeLength() const
+int Solid::Control::BluetoothRemoteDevice::pinCodeLength() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), 0, pinCodeLength());
 }
 
-int SolidExperimental::BluetoothRemoteDevice::encryptionKeySize() const
+int Solid::Control::BluetoothRemoteDevice::encryptionKeySize() const
 {
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), 0, encryptionKeySize());
 }
 
-KJob *SolidExperimental::BluetoothRemoteDevice::createBonding()
+KJob *Solid::Control::BluetoothRemoteDevice::createBonding()
 {
     Q_D(BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), 0, createBonding());
 }
 
-void SolidExperimental::BluetoothRemoteDevice::setAlias(const QString &alias)
+void Solid::Control::BluetoothRemoteDevice::setAlias(const QString &alias)
 {
     Q_D(BluetoothRemoteDevice);
     SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), setAlias(alias));
 }
 
-void SolidExperimental::BluetoothRemoteDevice::clearAlias()
+void Solid::Control::BluetoothRemoteDevice::clearAlias()
 {
     Q_D(BluetoothRemoteDevice);
     SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), clearAlias());
 }
 
-void SolidExperimental::BluetoothRemoteDevice::disconnect()
+void Solid::Control::BluetoothRemoteDevice::disconnect()
 {
     Q_D(BluetoothRemoteDevice);
     SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), disconnect());
 }
 
-void SolidExperimental::BluetoothRemoteDevice::cancelBondingProcess()
+void Solid::Control::BluetoothRemoteDevice::cancelBondingProcess()
 {
     Q_D(BluetoothRemoteDevice);
     SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), cancelBondingProcess());
 }
 
-void SolidExperimental::BluetoothRemoteDevice::removeBonding()
+void Solid::Control::BluetoothRemoteDevice::removeBonding()
 {
     Q_D(const BluetoothRemoteDevice);
     SOLID_CALL(Ifaces::BluetoothRemoteDevice*, d->backendObject(), removeBonding());
 }
 
-void SolidExperimental::BluetoothRemoteDevicePrivate::setBackendObject(QObject *object)
+void Solid::Control::BluetoothRemoteDevicePrivate::setBackendObject(QObject *object)
 {
     FrontendObjectPrivate::setBackendObject(object);
 

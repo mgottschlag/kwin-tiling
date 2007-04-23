@@ -22,7 +22,7 @@
 #include <QtDBus>
 #include <kdebug.h>
 
-#include <solid/experimental/bluetoothinterface.h>
+#include <solid/control/bluetoothinterface.h>
 
 #include "bluez-bluetoothremotedevice.h"
 #include "bluez-bluetoothinterface.h"
@@ -99,21 +99,21 @@ QString BluezBluetoothInterface::company() const
     return stringReply("GetCompany");
 }
 
-SolidExperimental::BluetoothInterface::Mode BluezBluetoothInterface::mode() const
+Solid::Control::BluetoothInterface::Mode BluezBluetoothInterface::mode() const
 {
     QString theMode = stringReply("GetMode");
-    SolidExperimental::BluetoothInterface::Mode modeEnum;
+    Solid::Control::BluetoothInterface::Mode modeEnum;
     if ( theMode == "off" )
     {
-        modeEnum = SolidExperimental::BluetoothInterface::Off;
+        modeEnum = Solid::Control::BluetoothInterface::Off;
     }
     else if ( theMode == "connectable" )
     {
-        modeEnum = SolidExperimental::BluetoothInterface::Connectable;
+        modeEnum = Solid::Control::BluetoothInterface::Connectable;
     }
     else if ( theMode == "discoverable" )
     {
-        modeEnum = SolidExperimental::BluetoothInterface::Discoverable;
+        modeEnum = Solid::Control::BluetoothInterface::Discoverable;
     }
     return modeEnum;
 }
@@ -190,7 +190,7 @@ QStringList BluezBluetoothInterface::listRecentRemoteDevices(const QDateTime&) c
     return listReply("ListRecentRemoteDevices");
 }
 
-void BluezBluetoothInterface::setMode(const SolidExperimental::BluetoothInterface::Mode mode)
+void BluezBluetoothInterface::setMode(const Solid::Control::BluetoothInterface::Mode mode)
 {
     d->iface.call("SetMode", mode);
 }
@@ -240,7 +240,7 @@ void BluezBluetoothInterface::setPeriodicDiscoveryNameResolving(bool nameResolvi
     d->iface.call("SetPeriodicDiscoveryNameResolving", nameResolving);
 }
 
-void BluezBluetoothInterface::slotModeChanged(const SolidExperimental::BluetoothInterface::Mode mode)
+void BluezBluetoothInterface::slotModeChanged(const Solid::Control::BluetoothInterface::Mode mode)
 {
     emit modeChanged(mode);
 }

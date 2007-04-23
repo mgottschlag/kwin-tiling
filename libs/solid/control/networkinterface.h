@@ -22,9 +22,11 @@
 #define SOLID_NETWORKINTERFACE_H
 
 #include <QtCore/QObject>
-#include <solid/experimental/network.h>
+#include <solid/control/network.h>
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     class NetworkInterfacePrivate;
 
@@ -32,7 +34,7 @@ namespace SolidExperimental
      * Represents a network interface as seen by the networking subsystem.
      *
      * For non-networking specific hardware details,
-     * @see SolidExperimental::NetworkHw
+     * @see Solid::Control::NetworkHw
      */
     class SOLID_EXPORT NetworkInterface : public QObject
     {
@@ -137,7 +139,7 @@ namespace SolidExperimental
          * if a device is wired or wireless.
          *
          * @return this network interface type
-         * @see SolidExperimental::NetworkInterface::Type
+         * @see Solid::Control::NetworkInterface::Type
          */
         Type type() const;
 
@@ -147,7 +149,7 @@ namespace SolidExperimental
          * actually it provides state coming from different layers.
          *
          * @return the current connection state
-         * @see SolidExperimental::NetworkInterface::ConnectionState
+         * @see Solid::Control::NetworkInterface::ConnectionState
          */
         ConnectionState connectionState() const;
 
@@ -230,7 +232,7 @@ namespace SolidExperimental
          * is no carrier anymore.
          *
          * @param state the new state of the connection
-         * @see SolidExperimental::NetworkInterface::ConnectionState
+         * @see Solid::Control::NetworkInterface::ConnectionState
          */
         void connectionStateChanged( int state );
 
@@ -255,8 +257,9 @@ namespace SolidExperimental
         NetworkInterfacePrivate * const d;
     };
 
+} //Control
 } //Solid
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( SolidExperimental::NetworkInterface::Capabilities )
+Q_DECLARE_OPERATORS_FOR_FLAGS( Solid::Control::NetworkInterface::Capabilities )
 
 #endif

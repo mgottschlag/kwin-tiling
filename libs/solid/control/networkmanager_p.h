@@ -29,7 +29,9 @@
 #include "networkmanager.h"
 #include "networkinterface.h"
 
-namespace SolidExperimental
+namespace Solid
+{
+namespace Control
 {
     namespace Ifaces
     {
@@ -58,6 +60,7 @@ namespace SolidExperimental
         QMap<QString, QPair<NetworkInterface*, Ifaces::NetworkInterface*> > m_networkInterfaceMap;
         NetworkInterface m_invalidDevice;
     };
+}
 }
 
 #endif
