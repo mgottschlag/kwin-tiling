@@ -44,9 +44,9 @@ HalPower::HalPower(QObject *parent, const QStringList  & /*args */)
                     "org.freedesktop.Hal.Device.CPUFreq",
                     QDBusConnection::systemBus())
 {
-    connect(Solid::DeviceManager::notifier(), SIGNAL(deviceRemoved(const QString &)),
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
             this, SLOT(slotDeviceRemoved(const QString &)));
-    connect(Solid::DeviceManager::notifier(), SIGNAL(newDeviceInterface(const QString &, int)),
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(newDeviceInterface(const QString &, int)),
             this, SLOT(slotNewDeviceInterface(const QString &, int)));
 
     m_pluggedAdapterCount = 0;
@@ -343,7 +343,7 @@ bool HalPower::setCpuEnabled(int /*cpuNum */, bool /*enabled */)
 void HalPower::computeAcAdapters()
 {
     Solid::DeviceList adapters
-        = Solid::DeviceManager::findDevicesFromQuery(Solid::DeviceInterface::AcAdapter);
+        = Solid::Device::findDevicesFromQuery(Solid::DeviceInterface::AcAdapter);
 
     foreach (Solid::Device adapter, adapters)
     {
@@ -366,7 +366,7 @@ void HalPower::computeBatteries()
     predicate = predicate.arg((int)Solid::Battery::PrimaryBattery);
 
     Solid::DeviceList batteries
-        = Solid::DeviceManager::findDevicesFromQuery(Solid::DeviceInterface::Battery,
+        = Solid::Device::findDevicesFromQuery(Solid::DeviceInterface::Battery,
                                                      predicate);
 
     foreach (Solid::Device battery, batteries)
@@ -382,7 +382,7 @@ void HalPower::computeBatteries()
 void HalPower::computeButtons()
 {
     Solid::DeviceList buttons
-        = Solid::DeviceManager::findDevicesFromQuery(Solid::DeviceInterface::Button);
+        = Solid::Device::findDevicesFromQuery(Solid::DeviceInterface::Button);
 
     foreach (Solid::Device button, buttons)
     {

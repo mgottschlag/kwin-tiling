@@ -25,7 +25,7 @@
 
 #include <kdemacros.h>
 
-#include <solid/devicemanager.h>
+#include <solid/devicenotifier.h>
 #include <solid/device.h>
 
 #include <solid/control/ifaces/powermanager.h>

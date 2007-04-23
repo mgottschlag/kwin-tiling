@@ -31,7 +31,6 @@
 #include <klocale.h>
 #include <k3socketaddress.h>
 
-#include <solid/devicemanager.h>
 #include <solid/device.h>
 #include <solid/genericinterface.h>
 #include <solid/volume.h>
@@ -899,7 +898,7 @@ bool SolidShell::doIt()
 
 bool SolidShell::hwList(bool interfaces, bool system)
 {
-    const QList<Solid::Device> all = Solid::DeviceManager::allDevices();
+    const QList<Solid::Device> all = Solid::Device::allDevices();
 
     foreach (const Solid::Device device, all)
     {
@@ -945,7 +944,7 @@ bool SolidShell::hwProperties(const QString &udi)
 bool SolidShell::hwQuery(const QString &parentUdi, const QString &query)
 {
     const QList<Solid::Device> devices
-        = Solid::DeviceManager::findDevicesFromQuery(query, parentUdi);
+        = Solid::Device::findDevicesFromQuery(query, parentUdi);
 
     foreach (const Solid::Device device, devices)
     {
