@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdemacros.h>
 
 class QMimeData;
+class QObject;
 
 class KDE_EXPORT AppletInfo
 {
