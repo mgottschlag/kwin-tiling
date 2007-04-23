@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QWidget>
 
-#include <kpanelapplet.h>
+#include "kpanelapplet.h"
 
 class QEvent;
 class QMouseEvent;

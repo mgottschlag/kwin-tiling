@@ -36,6 +36,6 @@ install(TARGETS kickermain  DESTINATION ${LIB_INSTALL_DIR} )
 ########### install files ###############
 
 install( FILES kickerSettings.kcfg extensionSettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR} )
-install( FILES kpanelapplet.h kpanelextension.h kpanelmenu.h kickertip.h utils.h paneldrag.h DESTINATION ${INCLUDE_INSTALL_DIR}/plasma )
+install( FILES kpanelapplet.h kpanelextension.h kpanelmenu.h kickertip.h utils.h paneldrag.h appletinfo.h DESTINATION ${INCLUDE_INSTALL_DIR}/plasma )
 
 
