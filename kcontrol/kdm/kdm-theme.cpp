@@ -242,7 +242,8 @@ void KDMThemeWidget::installNewTheme()
 		KMessageBox::error( this, i18n("The file is not a valid KDM theme archive.") );
 	else {
 		KProgressDialog progressDiag( this,
-			i18n("Installing KDM themes"), QString(), true );
+			i18n("Installing KDM themes"), QString() );
+		progressDiag.setModal( true );
 		progressDiag.setAutoClose( true );
 		progressDiag.progressBar()->setMaximum( foundThemes.size() );
 		progressDiag.show();

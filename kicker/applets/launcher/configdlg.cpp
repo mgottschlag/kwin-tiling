@@ -36,10 +36,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ConfigDlg::ConfigDlg(QWidget *parent, const char *name, Prefs *config,
                      int autoSize,FaceType  dialogType,
                      ButtonCodes dialogButtons) :
-    KConfigDialog(parent, name, config, dialogType, dialogButtons),
+    KConfigDialog(parent, name, config),
     m_settings(config),
     m_autoSize(autoSize)
 {
+    setFaceType(dialogType);
+    setButtons(dialogButtons);
     QFrame * frame = new QFrame( this );
     setMainWidget( frame );
     m_ui = new ConfigDlgBase(frame);

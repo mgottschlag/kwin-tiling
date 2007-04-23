@@ -955,7 +955,8 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
         if(!itsProgress)
         {
             itsProgress=new KProgressDialog(this, i18n("Scanning Files..."),
-                                            i18n("Looking for additional files to install..."), true);
+                                            i18n("Looking for additional files to install..."));
+            itsProgress->setModal(true);
             itsProgress->setAutoReset(true);
             itsProgress->setAutoClose(true);
         }
