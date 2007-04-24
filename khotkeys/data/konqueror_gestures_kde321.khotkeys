@@ -2,7 +2,7 @@
 DataCount=1
 
 [Data_1]
-Comment=Basic Konqueror gestures.\n
+Comment=Basic Konqueror gestures.
 DataCount=14
 Enabled=true
 Name=Konqueror Gestures
@@ -32,13 +32,13 @@ Type=SIMPLE
 WindowTypes=1
 
 [Data_1_1]
-Comment=Press, move left, release.\n
+Comment=Press, move left, release.
 Enabled=true
 Name=Back
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_10]
-Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.\n
+Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
 Enabled=false
 Name=Stop Loading
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -64,7 +64,7 @@ Gesture=258
 Type=GESTURE
 
 [Data_1_11]
-Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.\n
+Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
 Enabled=true
 Name=Up
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -90,7 +90,7 @@ Gesture=36547
 Type=GESTURE
 
 [Data_1_12]
-Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.\n
+Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
 Enabled=false
 Name=Up #2
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -116,7 +116,7 @@ Gesture=36987
 Type=GESTURE
 
 [Data_1_13]
-Comment=Press, move up, move right, release.\n\n
+Comment=Press, move up, move right, release.
 Enabled=true
 Name=Activate Next Tab
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -142,7 +142,7 @@ Gesture=14789
 Type=GESTURE
 
 [Data_1_14]
-Comment=Press, move up, move left, release.\n
+Comment=Press, move up, move left, release.
 Enabled=true
 Name=Activate Previous Tab
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -188,7 +188,7 @@ Gesture=654
 Type=GESTURE
 
 [Data_1_2]
-Comment=Press, move down, move up, move down, release.\n
+Comment=Press, move down, move up, move down, release.
 Enabled=true
 Name=Duplicate Tab
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -214,7 +214,7 @@ Gesture=8525852
 Type=GESTURE
 
 [Data_1_3]
-Comment=Press, move down, move up, release.\n
+Comment=Press, move down, move up, release.
 Enabled=true
 Name=Duplicate Window
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -240,7 +240,7 @@ Gesture=85258
 Type=GESTURE
 
 [Data_1_4]
-Comment=Press, move right, release.\n
+Comment=Press, move right, release.
 Enabled=true
 Name=Forward
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -266,7 +266,7 @@ Gesture=456
 Type=GESTURE
 
 [Data_1_5]
-Comment=Press, move down, move half up, move right, move down, release.\n(Drawing a lowercase 'h'.)\n
+Comment=Press, move down, move half up, move right, move down, release.\n(Drawing a lowercase 'h'.)
 Enabled=true
 Name=Home
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -296,7 +296,7 @@ Gesture=7414563
 Type=GESTURE
 
 [Data_1_6]
-Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.\n
+Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.
 Enabled=true
 Name=Close Tab
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -326,7 +326,7 @@ Gesture=74123
 Type=GESTURE
 
 [Data_1_7]
-Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.\n
+Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.
 Enabled=true
 Name=New Tab
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -352,7 +352,7 @@ Gesture=258
 Type=GESTURE
 
 [Data_1_8]
-Comment=Press, move down, release.\n
+Comment=Press, move down, release.
 Enabled=true
 Name=New Window
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
@@ -378,7 +378,7 @@ Gesture=852
 Type=GESTURE
 
 [Data_1_9]
-Comment=Press, move up, move down, release.\n
+Comment=Press, move up, move down, release.
 Enabled=true
 Name=Reload
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
