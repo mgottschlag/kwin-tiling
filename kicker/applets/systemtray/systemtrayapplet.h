@@ -21,12 +21,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#ifndef __systemtrayapplet_h__
-#define __systemtrayapplet_h__
+#ifndef SYSTEMTRAYAPPLET_H
+#define SYSTEMTRAYAPPLET_H
 
 #include <QVector>
 #include <QStringList>
-#include <QX11EmbedWidget>
+#include <QX11EmbedContainer>
 #include <QResizeEvent>
 
 #include <kapplication.h>
@@ -100,7 +100,7 @@ private:
     bool m_autoRetract;
 };
 
-class TrayEmbed : public QX11EmbedWidget
+class TrayEmbed : public QX11EmbedContainer
 {
     Q_OBJECT
 public:

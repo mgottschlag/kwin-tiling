@@ -225,11 +225,11 @@ void SystemTrayApplet::preferences()
     TrayEmbedList::const_iterator itEnd = m_shownWins.end();
     for (; it != itEnd; ++it)
     {
-        QString name = KWM::windowInfo((*it)->containerWinId(), NET::WMName).name();
+        QString name = KWM::windowInfo((*it)->clientWinId(), NET::WMName).name();
 	QList<QListWidgetItem *> itemlist = shownListWidget->findItems(name, Qt::MatchExactly | Qt::MatchCaseSensitive);
         if(itemlist.isEmpty() )
         {
-            new QListWidgetItem(QIcon(KWM::icon((*it)->containerWinId(), 22, 22, true)), name, shownListWidget, 0);
+            new QListWidgetItem(QIcon(KWM::icon((*it)->clientWinId(), 22, 22, true)), name, shownListWidget, 0);
         }
     }
 
@@ -237,11 +237,11 @@ void SystemTrayApplet::preferences()
     itEnd = m_hiddenWins.end();
     for (; it != itEnd; ++it)
     {
-        QString name = KWM::windowInfo((*it)->containerWinId(), NET::WMName).name();
+        QString name = KWM::windowInfo((*it)->clientWinId(), NET::WMName).name();
 	QList<QListWidgetItem *> itemlist = hiddenListWidget->findItems(name, Qt::MatchExactly | Qt::MatchCaseSensitive);
         if(itemlist.isEmpty())
         {
-            new QListWidgetItem(QIcon(KWM::icon((*it)->containerWinId(), 22, 22, true)), name, hiddenListWidget, 0);
+            new QListWidgetItem(QIcon(KWM::icon((*it)->clientWinId(), 22, 22, true)), name, hiddenListWidget, 0);
         }
     }
 
@@ -270,13 +270,13 @@ void SystemTrayApplet::applySettings()
     for( TrayEmbedList::ConstIterator it = m_shownWins.begin();
          it != m_shownWins.end();
          ++it ) {
-        KWindowInfo info = KWM::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
+        KWindowInfo info = KWM::windowInfo( (*it)->clientWinId(), NET::WMName, NET::WM2WindowClass);
         windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
     for( TrayEmbedList::ConstIterator it = m_hiddenWins.begin();
          it != m_hiddenWins.end();
          ++it ) {
-        KWindowInfo info = KWM::windowInfo( (*it)->containerWinId(), NET::WMName, NET::WM2WindowClass);
+        KWindowInfo info = KWM::windowInfo( (*it)->clientWinId(), NET::WMName, NET::WM2WindowClass);
         windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
 
@@ -309,7 +309,7 @@ void SystemTrayApplet::applySettings()
     TrayEmbedList::iterator it = m_shownWins.begin();
     while (it != m_shownWins.end())
     {
-        if (shouldHide((*it)->containerWinId()))
+        if (shouldHide((*it)->clientWinId()))
         {
             m_hiddenWins.append(*it);
             it = m_shownWins.erase(it);
@@ -323,7 +323,7 @@ void SystemTrayApplet::applySettings()
     it = m_hiddenWins.begin();
     while (it != m_hiddenWins.end())
     {
-        if (!shouldHide((*it)->containerWinId()))
+        if (!shouldHide((*it)->clientWinId()))
         {
             m_shownWins.append(*it);
             it = m_hiddenWins.erase(it);
@@ -472,21 +472,20 @@ void SystemTrayApplet::embedWindow( WId w, bool kde_tray )
     {
         static Atom hack_atom = XInternAtom( QX11Info::display(), "_KDE_SYSTEM_TRAY_EMBEDDING", False );
         XChangeProperty( QX11Info::display(), w, hack_atom, hack_atom, 32, PropModeReplace, NULL, 0 );
-        emb->embedInto(w);
+        emb->embedClient(w);
         XDeleteProperty( QX11Info::display(), w, hack_atom );
     }
     else
     {
-        emb->embedInto(w);
+        emb->embedClient(w);
     }
-
-    if (emb->containerWinId() == 0)  // error embedding
+    if (emb->clientWinId() == 0)  // error embedding
     {
         delete emb;
         return;
     }
 
-    connect(emb, SIGNAL(containerClosed()), SLOT(updateTrayWindows()));
+    connect(emb, SIGNAL(clientClosed()), SLOT(updateTrayWindows()));
     emb->resize(24, 24);
     if (shouldHide(w))
     {
@@ -506,7 +505,7 @@ bool SystemTrayApplet::isWinManaged(WId w)
     TrayEmbedList::const_iterator lastEmb = m_shownWins.end();
     for (TrayEmbedList::const_iterator emb = m_shownWins.begin(); emb != lastEmb; ++emb)
     {
-        if ((*emb)->containerWinId() == w) // we already manage it
+        if ((*emb)->clientWinId() == w) // we already manage it
         {
             return true;
         }
@@ -515,7 +514,7 @@ bool SystemTrayApplet::isWinManaged(WId w)
     lastEmb = m_hiddenWins.end();
     for (TrayEmbedList::const_iterator emb = m_hiddenWins.begin(); emb != lastEmb; ++emb)
     {
-        if ((*emb)->containerWinId() == w) // we already manage it
+        if ((*emb)->clientWinId() == w) // we already manage it
         {
             return true;
         }
@@ -556,7 +555,7 @@ void SystemTrayApplet::updateVisibleWins()
     for( TrayEmbedList::const_iterator it = m_shownWins.begin();
          it != m_shownWins.end();
          ++it ) {
-        KWindowInfo info = KWM::windowInfo((*it)->containerWinId(),NET::WMName,NET::WM2WindowClass);
+        KWindowInfo info = KWM::windowInfo((*it)->clientWinId(),NET::WMName,NET::WM2WindowClass);
         names[ *it ] = info.name();
         classes[ *it ] = '!'+info.windowClassClass();
     }
@@ -652,7 +651,7 @@ void SystemTrayApplet::updateTrayWindows()
     TrayEmbedList::iterator emb = m_shownWins.begin();
     while (emb != m_shownWins.end())
     {
-        WId wid = (*emb)->containerWinId();
+        WId wid = (*emb)->clientWinId();
         if ((wid == 0) ||
             ((*emb)->kdeTray())) // && !kwin_module->systemTrayWindows().contains(wid)))
         {
@@ -668,7 +667,7 @@ void SystemTrayApplet::updateTrayWindows()
     emb = m_hiddenWins.begin();
     while (emb != m_hiddenWins.end())
     {
-        WId wid = (*emb)->containerWinId();
+        WId wid = (*emb)->clientWinId();
         if ((wid == 0) ||
             ((*emb)->kdeTray())) // && !kwin_module->systemTrayWindows().contains(wid)))
         {
@@ -965,7 +964,7 @@ void SystemTrayApplet::layoutTray()
 }
 
 TrayEmbed::TrayEmbed( bool kdeTray, QWidget* parent )
-    : QX11EmbedWidget( parent ), kde_tray( kdeTray )
+    : QX11EmbedContainer( parent ), kde_tray( kdeTray )
 {
 //    if( kde_tray ) // after QXEmbed reparents windows to the root window as unmapped.
 //        setMapAfterRelease( true ); // systray one will have to be made visible somehow
