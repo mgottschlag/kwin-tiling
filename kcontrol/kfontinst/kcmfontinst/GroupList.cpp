@@ -94,32 +94,10 @@ CGroupListItem::CGroupListItem(EType type, CGroupList *p)
         case GROUPS_TITLE:
             itsName=i18n("Custom:");
             break;
-        case WS_TITLE:
-            itsName=i18n("Writing Systems:");
-            break;
         default:
             itsName=i18n("Unclassified");
     }
     itsData.parent=p;
-}
-
-CGroupListItem::CGroupListItem(qulonglong ws)
-              : itsType(WRITING_SYSTEM)
-{
-    int w(0);
-
-    itsData.writingSystem=ws;
-
-    ws>>=1;
-    while(ws)
-    {
-        ws>>=1;
-        w++;
-    }
-
-    itsName=QFontDatabase::Other==w
-                ? i18n("Symbol/Other")
-                : QFontDatabase::writingSystemName((QFontDatabase::WritingSystem)w);
 }
 
 bool CGroupListItem::hasFont(const CFontItem *fnt) const
@@ -144,16 +122,13 @@ bool CGroupListItem::hasFont(const CFontItem *fnt) const
                     return false;
             return true;
         }
-        case WRITING_SYSTEM:
-            return fnt->writingSystems()&itsData.writingSystem;
         default:
             return false;
     }
     return false;
 }
 
-void CGroupListItem::updateStatus(QSet<QString> &enabled, QSet<QString> &disabled,
-                                  QSet<QString> &partial)
+void CGroupListItem::updateStatus(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial)
 {
     QSet<QString> families(itsFamilies);
 
@@ -243,8 +218,6 @@ CGroupList::CGroupList(QWidget *parent)
     itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
     itsSpecialGroups[CGroupListItem::GROUPS_TITLE]=new CGroupListItem(CGroupListItem::GROUPS_TITLE, this);
     itsGroups.append(itsSpecialGroups[CGroupListItem::GROUPS_TITLE]);
-    itsSpecialGroups[CGroupListItem::WS_TITLE]=new CGroupListItem(CGroupListItem::WS_TITLE, this);
-    itsGroups.append(itsSpecialGroups[CGroupListItem::WS_TITLE]);
     // Locate groups.xml file - normall will be ~/.config/fontgroups.xml
     QString path(KGlobal::dirs()->localxdgconfdir());
 
@@ -287,7 +260,7 @@ void CGroupList::update(const QModelIndex &unHighlight, const QModelIndex &highl
 }
 
 void CGroupList::updateStatus(QSet<QString> &enabled, QSet<QString> &disabled,
-                              QSet<QString> &partial, qulonglong writingSystems)
+                              QSet<QString> &partial)
 {
     QList<CGroupListItem *>::Iterator it(itsGroups.begin()),
                                       end(itsGroups.end());
@@ -295,43 +268,6 @@ void CGroupList::updateStatus(QSet<QString> &enabled, QSet<QString> &disabled,
     for(; it!=end; ++it)
         if((*it)->isCustom())
             (*it)->updateStatus(enabled, disabled, partial);
-
-    if(itsWritingSystems!=writingSystems)
-    {
-        qulonglong ws=writingSystems;
-
-        it=itsGroups.begin();
-
-        while(it!=end)
-            if((*it)->isWritingSystem())
-                if((*it)->writingSystem()&writingSystems)
-                {
-                    ws^=(*it)->writingSystem();
-                    it++;
-                }
-                else
-                {
-                    QList<CGroupListItem *>::Iterator del(it);
-                    it++;
-                    itsGroups.remove(*del);
-                    delete *del;
-                }
-            else
-                it++;
-
-        for(int i=1; ws && i<64; ++i)
-        {
-            qulonglong w=((qulonglong)1)<<i;
-
-            if(w&ws)
-            {
-                itsGroups.append(new CGroupListItem(w));
-                ws^=w;
-            }
-        }
-
-        itsWritingSystems=writingSystems;
-    }
 
     emit layoutChanged();
 }
@@ -359,7 +295,6 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
                         {
                             case CGroupListItem::STANDARD_TITLE:
                             case CGroupListItem::GROUPS_TITLE:
-                            case CGroupListItem::WS_TITLE:
                             {
                                 QPalette pal(QApplication::palette());
 
@@ -375,7 +310,6 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
                         {
                             case CGroupListItem::STANDARD_TITLE:
                             case CGroupListItem::GROUPS_TITLE:
-                            case CGroupListItem::WS_TITLE:
                             {
                                 QFont font;
                                 font.setPointSizeF(font.pointSizeF()*0.75);
@@ -397,7 +331,7 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
                                 return i18n("%1 (Partial)", grp->name());
                         return grp->name();
                     case Qt::DecorationRole:
-                        if(!grp->isWritingSystem() && grp->highlighted())
+                        if(grp->highlighted())
                             return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection()
                                        ? "arrow-right" : "arrow-left");
                     default:
@@ -420,10 +354,7 @@ Qt::ItemFlags CGroupList::flags(const QModelIndex &index) const
         {
             case CGroupListItem::STANDARD_TITLE:
             case CGroupListItem::GROUPS_TITLE:
-            case CGroupListItem::WS_TITLE:
                 return Qt::ItemIsEnabled;
-            case CGroupListItem::WRITING_SYSTEM:
-                return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
             default:
                 break;
         }
@@ -587,7 +518,6 @@ void CGroupList::clear()
     }
     itsGroups.removeFirst(); // Remove unclassif...
     itsGroups.removeFirst(); // Remove GROUPS_TITLE
-    itsGroups.removeFirst(); // Remove WS_TITLE
     qDeleteAll(itsGroups);
     itsGroups.clear();
     itsGroups.append(itsSpecialGroups[CGroupListItem::STANDARD_TITLE]);
@@ -599,7 +529,6 @@ void CGroupList::clear()
     }
     itsGroups.append(itsSpecialGroups[CGroupListItem::UNCLASSIFIED]);
     itsGroups.append(itsSpecialGroups[CGroupListItem::GROUPS_TITLE]);
-    itsGroups.append(itsSpecialGroups[CGroupListItem::WS_TITLE]);
 }
 
 QModelIndex CGroupList::index(CGroupListItem::EType t)
@@ -685,16 +614,12 @@ void CGroupList::removeFromGroup(const QModelIndex &group, const QSet<QString> &
 QString CGroupList::whatsThis() const
 {
     return i18n("<h3>Font Groups</h3><p>This list displays the font groups available on your system. "
-                                       "There are 3 main types of font groups:"
+                                       "There are 2 main types of font groups:"
                "<ul><li><b>Standard</b> are special groups used by the font manager.<ul>%1</ul></li>"
                    "<li><b>Custom</b> are groups created by you. To add a font family to one of "
                                      "these groups simply drag it from the list of fonts, and drop "
                                      "onto the desired group. To remove a family from the group, drag "
                                      "the font onto the \"All Fonts\" group.<li>"
-                   "<li><b>Writing Systems</b> are the writing systems (Latin, Greek, etc.) that the "
-                                              "installed fonts are usable with. This list is "
-                                              "automatically generated from the information contained "
-                                              "within the font files.</li>"
                    "</ul></p>",
                 Misc::root()
                     ? i18n("<li><i>All Fonts</i> contains all the fonts installed on your system.</li>"

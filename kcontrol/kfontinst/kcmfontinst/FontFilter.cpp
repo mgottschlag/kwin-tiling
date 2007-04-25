@@ -24,6 +24,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <ktoggleaction.h>
+#include <kactionmenu.h>
 #include <kicon.h>
 #include <QLabel>
 #include <QPen>
@@ -42,7 +43,6 @@ static const int constArrowPad(5);
 CFontFilter::CFontFilter(QWidget *parent)
            : KLineEdit(parent)
 {
-    //setClickMessage(i18n("Filter"));
     setClearButtonShown(true);
     setTrapReturnKey(true);
 
@@ -57,13 +57,35 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("file-find");
     itsPixmaps[CRIT_FILENAME]=SmallIcon("font-type1");
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
+    itsPixmaps[CRIT_WS]=SmallIcon("pencil");
 
     itsActionGroup=new QActionGroup(this);
-    addAction(CRIT_FAMILY, i18n("Filter On Font Family"), true, true);
-    addAction(CRIT_STYLE, i18n("Filter On Font Style"), false, true);
-    addAction(CRIT_FONTCONFIG, i18n("Filter On FontConfig Match"), false, true);
-    addAction(CRIT_FILENAME, i18n("Filter On Font File"), false, false);
-    addAction(CRIT_LOCATION, i18n("Filter On Font File Location"), false, false);
+    itsWsGroup=new QActionGroup(this);
+    addAction(CRIT_FAMILY, i18n("Family"), true, true);
+    addAction(CRIT_STYLE, i18n("Style"), false, true);
+    addAction(CRIT_FONTCONFIG, i18n("FontConfig Match"), false, true);
+    addAction(CRIT_FILENAME, i18n("File"), false, false);
+    addAction(CRIT_LOCATION, i18n("File Location"), false, false);
+
+    KActionMenu *wsMenu=new KActionMenu(KIcon(itsPixmaps[CRIT_WS]), i18n("Writing System"), this);
+    itsActions[CRIT_WS]=wsMenu;
+    itsMenu->addAction(itsActions[CRIT_WS]);
+    wsMenu->setData((int)CRIT_WS);
+    wsMenu->setVisible(false);
+
+    itsCurrentWs=QFontDatabase::Any;
+    for(int i=QFontDatabase::Latin; i<QFontDatabase::WritingSystemsCount; ++i)
+    {
+        KToggleAction *wsAct=new KToggleAction(QFontDatabase::Other==i
+                                                ? i18n("Symbol/Other")
+                                                : QFontDatabase::writingSystemName((QFontDatabase::WritingSystem)i), this);
+
+        wsMenu->addAction(wsAct);
+        itsWsGroup->addAction(wsAct);
+        wsAct->setChecked(false);
+        wsAct->setData(i);
+        connect(wsAct, SIGNAL(toggled(bool)), SLOT(wsChanged()));
+    }
 
     setCriteria(CRIT_FAMILY);
 }
@@ -80,6 +102,7 @@ void CFontFilter::setMgtMode(bool m)
     itsActions[CRIT_FONTCONFIG]->setVisible(m);
     itsActions[CRIT_FILENAME]->setVisible(m);
     itsActions[CRIT_LOCATION]->setVisible(m);
+    itsActions[CRIT_WS]->setVisible(m);
 }
 
 void CFontFilter::filterChanged()
@@ -92,8 +115,43 @@ void CFontFilter::filterChanged()
 
         if(itsCurrentCriteria!=crit)
         {
+            if(itsCurrentWs!=QFontDatabase::Any)
+            {
+                QAction *prev(itsWsGroup->checkedAction());
+                if(prev)
+                    prev->setChecked(false);
+
+                setText(QString());
+                itsCurrentWs=QFontDatabase::Any;
+            }
             setCriteria(crit);
-            setClickMessage(act->text());
+            setClickMessage(i18n("Type here to filter on %1", act->text()));
+            setReadOnly(false);
+            modifyPadding();
+        }
+    }
+}
+
+void CFontFilter::wsChanged()
+{
+    QAction *act(itsWsGroup->checkedAction());
+
+    if(act)
+    {
+        QFontDatabase::WritingSystem ws((QFontDatabase::WritingSystem)act->data().toInt());
+
+        if(itsCurrentWs!=ws)
+        {
+            QAction *prev(itsActionGroup->checkedAction());
+            if(prev)
+                prev->setChecked(false);
+            itsCurrentWs=ws;
+            itsCurrentCriteria=CRIT_WS;
+            setReadOnly(true);
+            modifyPadding();
+            setCriteria(itsCurrentCriteria);
+            setText(i18n("%1 (Writing System)", act->text()));
+            setClickMessage(text());
         }
     }
 }
@@ -108,7 +166,7 @@ void CFontFilter::addAction(ECriteria crit, const QString &text, bool on, bool v
     itsActions[crit]->setChecked(on);
     itsActions[crit]->setVisible(visible);
     if(on)
-        setClickMessage(text);
+        setClickMessage(i18n("Type here to filter on %1", text));
     connect(itsActions[crit], SIGNAL(toggled(bool)), SLOT(filterChanged()));
 }
 
@@ -138,9 +196,7 @@ void CFontFilter::paintEvent(QPaintEvent *ev)
 void CFontFilter::resizeEvent(QResizeEvent *ev)
 {
     KLineEdit::resizeEvent(ev);
-    setStyleSheet(QString("QLineEdit { padding-left: %1; padding-right : %2; }")
-                  .arg(itsMenuButton->width())
-                  .arg(itsMenuButton->width()-constArrowPad));
+    modifyPadding();
 
     int frameWidth(style()->pixelMetric(QStyle::PM_DefaultFrameWidth));
 
@@ -177,7 +233,14 @@ void CFontFilter::setCriteria(ECriteria crit)
     itsMenuButton->resize(arrowmap.width(), arrowmap.height());
     itsCurrentCriteria=crit;
 
-    emit criteriaChanged(crit);
+    emit criteriaChanged(crit, ((qulonglong)1) << (int)itsCurrentWs);
+}
+
+void CFontFilter::modifyPadding()
+{
+    setStyleSheet(QString("QLineEdit { padding-left: %1; padding-right : %2; }")
+                  .arg(itsMenuButton->width())
+                  .arg(itsMenuButton->width()-constArrowPad));
 }
 
 }

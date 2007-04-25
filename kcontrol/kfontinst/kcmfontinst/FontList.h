@@ -35,10 +35,12 @@
 #include <QModelIndex>
 #include <QVariant>
 #include <QSortFilterProxyModel>
+#include <QFontDatabase>
 #include "Misc.h"
 #include "FontLister.h"
 #include "JobRunner.h"
 #include "FontFilter.h"
+#include "FcQuery.h"
 
 class KConfigGroup;
 class KFileItem;
@@ -56,7 +58,6 @@ namespace KFI
 class CFontItem;
 class CFamilyItem;
 class CGroupListItem;
-class CFcQuery;
 
 enum EColumns
 {
@@ -108,8 +109,7 @@ class CFontList : public QAbstractItemModel
     bool            allowSys() const      { return itsAllowSys; }
     bool            allowUser() const     { return itsAllowUser; }
     bool            allowDisabled() const { return itsAllowDisabled; }
-    void            getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled,
-                                   QSet<QString> &partial, qulonglong &writingSystems);
+    void            getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial);
     QString         whatsThis() const;
 
     Q_SIGNALS:
@@ -283,7 +283,7 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
     CGroupListItem * filterGroup()   { return itsGroup; }
 
     void             setFilterText(const QString &text);
-    void             setFilterCriteria(CFontFilter::ECriteria crit);
+    void             setFilterCriteria(CFontFilter::ECriteria crit, qulonglong ws);
     void             setMgtMode(bool on);
     bool             mgtMode() const { return itsMgtMode; }
 
@@ -298,15 +298,15 @@ class CFontListSortFilterProxy : public QSortFilterProxyModel
 
     private:
 
-    const QString &  filterText() const { return CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria
-                                                    ? itsFilterFcText : itsFilterText; }
+    QString          filterText() const { return CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria
+                                                    ? (itsFcQuery ? itsFcQuery->font() : QString()) : itsFilterText; }
     private:
 
     bool                   itsMgtMode;
     CGroupListItem         *itsGroup;
-    QString                itsFilterText,
-                           itsFilterFcText;
+    QString                itsFilterText;
     CFontFilter::ECriteria itsFilterCriteria;
+    qulonglong             itsFilterWs;
     QTimer                 *itsTimer;
     CFcQuery               *itsFcQuery;
 };
@@ -348,7 +348,7 @@ class CFontListView : public QTreeView
 
     void            refreshFilter();
     void            filterText(const QString &text);
-    void            filterCriteria(int crit);
+    void            filterCriteria(int crit, qulonglong ws);
 
     private Q_SLOTS:
 

@@ -346,7 +346,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
 
     // Connect signals...
     connect(itsFilter, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
-    connect(itsFilter, SIGNAL(criteriaChanged(int)), itsFontListView, SLOT(filterCriteria(int)));
+    connect(itsFilter, SIGNAL(criteriaChanged(int, qulonglong)), itsFontListView, SLOT(filterCriteria(int, qulonglong)));
     connect(itsGroupListView, SIGNAL(del()), SLOT(removeGroup()));
     connect(itsGroupListView, SIGNAL(print()), SLOT(printGroup()));
     connect(itsGroupListView, SIGNAL(enable()), SLOT(enableGroup()));
@@ -844,12 +844,9 @@ void CKCmFontInst::refreshFamilies()
     QSet<QString> enabledFamilies,
                   disabledFamilies,
                   partialFamilies;
-    qulonglong    writingSystems;
 
-    itsFontList->getFamilyStats(enabledFamilies, disabledFamilies, partialFamilies,
-                                writingSystems);
-    itsGroupList->updateStatus(enabledFamilies, disabledFamilies, partialFamilies,
-                               writingSystems);
+    itsFontList->getFamilyStats(enabledFamilies, disabledFamilies, partialFamilies);
+    itsGroupList->updateStatus(enabledFamilies, disabledFamilies, partialFamilies);
     setStatusBar();
 }
 
@@ -922,6 +919,10 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
                         case KMessageBox::No:
                             if(itsRunner->getAdminPasswd(this))
                                 dest=baseUrl(true);
+                            else if(KMessageBox::Yes==KMessageBox::questionYesNo(this,
+                                    i18n("Would you like to install the font(s) for personal use?"),
+                                    i18n("Authorization Failed")))
+                                dest=baseUrl(false);
                             else
                                 return;
                             break;
@@ -936,6 +937,10 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
                 case CGroupListItem::SYSTEM:
                     if(itsRunner->getAdminPasswd(this))
                         dest=baseUrl(true);
+                    else if(KMessageBox::Yes==KMessageBox::questionYesNo(this,
+                            i18n("Would you like to install the font(s) for personal use?"),
+                            i18n("Authorization Failed")))
+                        dest=baseUrl(false);
                     else
                         return;
                     break;

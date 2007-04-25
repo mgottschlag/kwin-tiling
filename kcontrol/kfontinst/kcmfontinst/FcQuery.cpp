@@ -21,12 +21,26 @@
  */
 
 #include "FcQuery.h"
+#include "Fc.h"
 #include <QStringList>
 #include <QProcess>
 #include <stdio.h>
 
 namespace KFI
 {
+
+// key: 0(i)(s)
+static int getInt(const QString &str)
+{
+    int rv=KFI_NULL_SETTING,
+        start=str.lastIndexOf(':')+1,
+        end=str.lastIndexOf("(i)(s)");
+
+    if(end>start)
+        rv=str.mid(start, end-start).stripWhiteSpace().toInt();
+
+    return rv;
+}
 
 CFcQuery::~CFcQuery()
 {
@@ -36,7 +50,7 @@ void CFcQuery::run(const QString &query)
 {
     QStringList args;
 
-    itsFile=QString();
+    itsFile=itsFont=QString();
     itsBuffer=QByteArray();
 
     if(itsProc)
@@ -54,6 +68,8 @@ void CFcQuery::run(const QString &query)
 
 void CFcQuery::procExited()
 {
+    QString     family;
+    int         weight(KFI_NULL_SETTING), slant(KFI_NULL_SETTING), width(KFI_NULL_SETTING);
     QStringList results(QString::fromUtf8(itsBuffer, itsBuffer.length()).split('\n'));
 
     if(results.size())
@@ -65,15 +81,32 @@ void CFcQuery::procExited()
         {
             QString line((*it).trimmed());
 
-            if(0==line.indexOf("file:"))  // file: "/wibble/wobble.ttf"(s)
+            if(0==line.indexOf("file:"))  // file: "Wibble"(s)
             {
                 int endPos=line.indexOf("\"(s)");
 
                 if(-1!=endPos)
                     itsFile=line.mid(7, endPos-7);
             }
+            else if(0==line.indexOf("family:"))  // family: "Wibble"(s)
+            {
+                int endPos=line.indexOf("\"(s)");
+
+                if(-1!=endPos)
+                    family=line.mid(9, endPos-9);
+            }
+            else if(0==line.indexOf("slant:"))  // slant: 0(i)(s)
+                slant=getInt(line);
+            else if(0==line.indexOf("weight:"))  // weight: 0(i)(s)
+                weight=getInt(line);
+            else if(0==line.indexOf("width:"))  // width: 0(i)(s)
+                width=getInt(line);
         }
     }
+
+    if(!family.isEmpty())
+        itsFont=FC::createName(family, weight, width, slant);
+
     emit finished();
 }
 

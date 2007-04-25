@@ -60,20 +60,16 @@ class CGroupListItem
         UNCLASSIFIED,
         GROUPS_TITLE,
         CUSTOM,
-        WS_TITLE,
-        WRITING_SYSTEM
     };
 
     union Data
     {
         bool       validated;      //CUSTOM
         CGroupList *parent;        //UNCLASSIFIED
-        qulonglong writingSystem;  //WRITING_SYSTEM
     };
 
     CGroupListItem(const QString &name);
     CGroupListItem(EType type, CGroupList *p);
-    CGroupListItem(qulonglong ws);
 
     const QString &      name() const                        { return itsName; }
     void                 setName(const QString &n)           { itsName=n; }
@@ -84,7 +80,6 @@ class CGroupListItem
     bool                 isUnclassified() const              { return UNCLASSIFIED==itsType; }
     bool                 isPersonal() const                  { return PERSONAL==itsType; }
     bool                 isSystem() const                    { return SYSTEM==itsType; }
-    bool                 isWritingSystem() const             { return WRITING_SYSTEM==itsType; }
     bool                 validated() const                   { return isCustom() ? itsData.validated : true; }
     void                 setValidated()                      { if(isCustom()) itsData.validated=true; }
     bool                 highlighted() const                 { return itsHighlighted; }
@@ -99,7 +94,6 @@ class CGroupListItem
     void                 addFamily(const QString &family)    { itsFamilies.insert(family); }
     void                 removeFamily(const QString &family) { itsFamilies.remove(family); }
     bool                 hasFamily(const QString &family)    { return itsFamilies.contains(family); }
-    qulonglong           writingSystem() const               { return itsData.writingSystem; }
 
     private:
 
@@ -131,7 +125,7 @@ class CGroupList : public QAbstractItemModel
     int             columnCount(const QModelIndex &parent = QModelIndex()) const;
     void            update(const QModelIndex &unHighlight, const QModelIndex &highlight);
     void            updateStatus(QSet<QString> &enabled, QSet<QString> &disabled,
-                                 QSet<QString> &partial, qulonglong writingSystems);
+                                 QSet<QString> &partial);
     void            setSysMode(bool sys);
     void            rescan();
     void            load();
@@ -179,7 +173,6 @@ class CGroupList : public QAbstractItemModel
     QList<CGroupListItem *>                       itsGroups;
     QMap<CGroupListItem::EType, CGroupListItem *> itsSpecialGroups;
     Qt::SortOrder                                 itsSortOrder;
-    qulonglong                                    itsWritingSystems;
 
     friend class CGroupListItem;
     friend class CGroupListView;

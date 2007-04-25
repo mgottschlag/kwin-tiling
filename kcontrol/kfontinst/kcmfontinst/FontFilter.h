@@ -25,11 +25,12 @@
 
 #include <klineedit.h>
 #include <QPixmap>
+#include <QFontDatabase>
 
 class QLabel;
 class QMenu;
 class QActionGroup;
-class KToggleAction;
+class KAction;
 
 namespace KFI
 {
@@ -47,6 +48,7 @@ class CFontFilter : public KLineEdit
         CRIT_FONTCONFIG,
         CRIT_FILENAME,
         CRIT_LOCATION,
+        CRIT_WS,
 
         NUM_CRIT
     };
@@ -58,11 +60,12 @@ class CFontFilter : public KLineEdit
 
     Q_SIGNALS:
 
-    void criteriaChanged(int crit);
+    void criteriaChanged(int crit, qulonglong ws);
 
     private Q_SLOTS:
 
     void filterChanged();
+    void wsChanged();
 
     private:
 
@@ -71,15 +74,18 @@ class CFontFilter : public KLineEdit
     void resizeEvent(QResizeEvent *ev);
     void mousePressEvent(QMouseEvent *ev);
     void setCriteria(ECriteria crit);
+    void modifyPadding();
 
     private:
 
-    QLabel        *itsMenuButton;
-    QMenu         *itsMenu;
-    ECriteria     itsCurrentCriteria;
-    QPixmap       itsPixmaps[NUM_CRIT];
-    KToggleAction *itsActions[NUM_CRIT];
-    QActionGroup  *itsActionGroup;
+    QLabel                       *itsMenuButton;
+    QMenu                        *itsMenu;
+    ECriteria                    itsCurrentCriteria;
+    QFontDatabase::WritingSystem itsCurrentWs;
+    QPixmap                      itsPixmaps[NUM_CRIT];
+    KAction                      *itsActions[NUM_CRIT];
+    QActionGroup                 *itsActionGroup,
+                                 *itsWsGroup;
 };
 
 }

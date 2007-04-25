@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QByteArray>
+#include "Misc.h"
 
 class QProcess;
 
@@ -42,7 +43,8 @@ class CFcQuery : public QObject
 
     void run(const QString &query);
 
-    const QString & file() const    { return itsFile; }
+    const QString & font() const { return itsFont; }
+    const QString & file() const { return itsFile; }
 
     private Q_SLOTS:
 
@@ -57,7 +59,8 @@ class CFcQuery : public QObject
 
     QProcess   *itsProc;
     QByteArray itsBuffer;
-    QString    itsFile;
+    QString    itsFile,
+               itsFont;
 };
 
 }
