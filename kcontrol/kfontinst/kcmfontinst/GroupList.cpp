@@ -48,7 +48,7 @@
 #include "FcEngine.h"
 #include "Misc.h"
 #include "KfiConstants.h"
-#include "config.h"
+#include <config.h>
 
 namespace KFI
 {
@@ -251,7 +251,7 @@ CGroupList::CGroupList(QWidget *parent)
     if(!Misc::dExists(path))
         Misc::createDir(path);
 
-    itsFileName=path+"/"KFI_GROUPS_FILE;
+    itsFileName=path+'/'+KFI_GROUPS_FILE;
 
     rescan();
 }
@@ -318,7 +318,7 @@ void CGroupList::updateStatus(QSet<QString> &enabled, QSet<QString> &disabled,
                 }
             else
                 it++;
-            
+
         for(int i=1; ws && i<64; ++i)
         {
             qulonglong w=((qulonglong)1)<<i;

@@ -24,7 +24,7 @@
 #define __FC_H__
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 #include <fontconfig/fontconfig.h>
 #include "kfontinst_export.h"

@@ -1526,7 +1526,7 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
                 url+=Misc::getFile(*it);
 #endif
             if(files.count()==1 && (*it).face>0)
-                url+="?"KFI_KIO_FACE"="+QString::number((*it).face);
+                url+='?'+KFI_KIO_FACE+'='+QString::number((*it).face);
 
             entry.insert(KIO::UDS_URL, url);
 

@@ -24,6 +24,8 @@
 // This file contains code taken from kdelibs/kdesu/client.cpp
 //
 
+#include "Socket.h"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -33,10 +35,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <sys/stat.h>
-#include <QVariant>
 #include <QByteArray>
-#include "Socket.h"
-#include "config.h"
 
 #define KFI_TEST
 

@@ -225,7 +225,7 @@ CDisabledFonts::CDisabledFonts(const QString &path, bool sys)
     else
         p=path;
 
-    itsFileName=p+"/"FILE_NAME".xml";
+    itsFileName=p+'/'+FILE_NAME".xml";
 
     itsModifiable=Misc::fWritable(itsFileName) ||
                   (!Misc::fExists(itsFileName) && Misc::dWritable(Misc::getDir(itsFileName)));

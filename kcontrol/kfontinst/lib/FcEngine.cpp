@@ -20,6 +20,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "FcEngine.h"
+
 #include <QPainter>
 #include <QPixmap>
 #include <QFile>
@@ -33,7 +35,6 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <math.h>
-#include "FcEngine.h"
 #include <X11/Xlib.h>
 #include <X11/Xft/Xft.h>
 #include <fixx11h.h>

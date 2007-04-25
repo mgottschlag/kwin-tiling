@@ -20,12 +20,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "FontThroughAnalyzer.h"
+
 #define STRIGI_IMPORT_API
 #include <strigi/streamthroughanalyzer.h>
 #include <strigi/analyzerplugin.h>
 #include <strigi/fieldtypes.h>
 #include <strigi/analysisresult.h>
-#include "FontThroughAnalyzer.h"
 #include "Fc.h"
 #include "KfiConstants.h"
 #include "Misc.h"

@@ -53,7 +53,7 @@
 #include "KfiConstants.h"
 #include "FcQuery.h"
 #include "GroupList.h"
-#include "config.h"
+#include <config.h>
 
 //#define KFI_FONTLIST_DEBUG
 
@@ -2075,7 +2075,7 @@ void CFontListView::dropEvent(QDropEvent *event)
                mime->is("application/x-font-otf") ||
                mime->is("application/x-font-type1") ||
                mime->is("fonts/package") ||
-               (itsProxy->mgtMode() && 
+               (itsProxy->mgtMode() &&
                 (mime->is("application/x-font-pcf") ||
                  mime->is("application/x-font-bdf"))))
                 kurls.insert(*it);
