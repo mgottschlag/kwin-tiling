@@ -32,7 +32,7 @@ QList<QHostAddress> FakeNetwork::stringlistToKIpAddress( const QStringList  & ad
 
 QList<QNetworkAddressEntry> FakeNetwork::stringlistsToQNetworkAddressEntries(const QStringList  & addrStringList, const QStringList  & subnets, const QStringList  & bcasts) const
 {
-    if (!(addrStringList.count() == subnets.count() == bcasts.count()))
+    if (!(addrStringList.count() == subnets.count() && subnets.count() == bcasts.count()))
         return QList<QNetworkAddressEntry>();
 
     QList<QNetworkAddressEntry> entries;
