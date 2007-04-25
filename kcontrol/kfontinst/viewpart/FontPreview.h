@@ -52,7 +52,7 @@ class CFontPreview : public QWidget
     QSize       sizeHint() const;
     QSize       minimumSizeHint() const;
 
-    void        showFont(const KUrl &url, const QString &name=QString::null,
+    void        showFont(const KUrl &url, const QString &name=QString(),
                          unsigned long styleInfo=KFI_NO_STYLE_INFO, int face=1);
     void        showFont();
 

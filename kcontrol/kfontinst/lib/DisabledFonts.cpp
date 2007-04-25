@@ -340,11 +340,12 @@ bool CDisabledFonts::save()
     return rv;
 }
 
-static QString expandHome(QString path)
+static QString expandHome(const QString &path)
 {
-    return !path.isEmpty() && '~'==path[0]
-        ? 1==path.length() ? QDir::homePath() : path.replace(0, 1, QDir::homePath())
-        : path;
+	QString mpath = path;
+    return !mpath.isEmpty() && '~'==mpath[0]
+        ? 1==mpath.length() ? QDir::homePath() : mpath.replace(0, 1, QDir::homePath())
+        : mpath;
 }
 
 bool CDisabledFonts::TFile::load(QDomElement &elem)

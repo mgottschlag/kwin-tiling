@@ -181,7 +181,7 @@ class CKioFonts : public KIO::SlaveBase
     bool               checkUrl(const KUrl &u, bool rootOk=false, bool logError=true);
     bool               checkAllowed(const KUrl &u);
     void               createAfm(const QString &file, bool nrs=false,
-                                 const QString &passwd=QString::null);
+                                 const QString &passwd=QString());
     int                reconfigTimeout();
 
     private:

@@ -171,7 +171,7 @@ static KCmdLineOptions options[] =
 {
     { "x <folder>",    I18N_NOOP("Configure folder for X11 - create fonts.dir and fonts.scale, plus remove hidden entries."
                                  " (NOTE: Use this option on its own)"), 0},
-    { "embed <winid>", I18N_NOOP("Makes the dialogue transient for an X app specified by winid"), 0 },
+    { "embed <winid>", I18N_NOOP("Makes the dialog transient for an X app specified by winid"), 0 },
     { "+[URL]",        I18N_NOOP("URL to install"), 0 },
     KCmdLineLastOption
 };

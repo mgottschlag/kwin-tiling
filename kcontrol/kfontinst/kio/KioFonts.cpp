@@ -572,7 +572,7 @@ struct KfiFont
 {
     struct Path
     {
-        Path(const QString &p=QString::null) : orig(p) { }
+        Path(const QString &p=QString()) : orig(p) { }
 
         QString orig,
                 modified;
@@ -580,7 +580,7 @@ struct KfiFont
         bool operator==(const Path &p) const { return p.orig==orig; }
     };
 
-    KfiFont(const QString &n=QString::null, const QString &p=QString::null) : name(n)
+    KfiFont(const QString &n=QString::null, const QString &p=QString()) : name(n)
         { if(!p.isEmpty()) paths.append(Path(p)); }
 
     QString     name;
@@ -3108,7 +3108,7 @@ bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFol
                           Misc::fExists(destFile=(*it)+modifyName(src.fileName(), true)) ) )
         {
             // If copying / moving a TTC and it is the *same* file, then don't log an error, but
-            // dont continue the transaction...
+            // don't continue the transaction...
             //
             // Reason being that fonts:/ lists the font names (not filenames) so for a TTC there'll
             // be multiple entries...

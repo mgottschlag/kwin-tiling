@@ -83,7 +83,7 @@ class CFontEngine
     ~CFontEngine()                    { closeFont(); }
 
     //
-    // General functions - these should be used instead of specfic ones below...
+    // General functions - these should be used instead of specific ones below...
     //
     bool            openFont(EType type, QByteArray &in, const char *fileName, int face=0);
     void            closeFont();
