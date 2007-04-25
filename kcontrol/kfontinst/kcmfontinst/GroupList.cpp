@@ -619,7 +619,7 @@ QString CGroupList::whatsThis() const
                    "<li><b>Custom</b> are groups created by you. To add a font family to one of "
                                      "these groups simply drag it from the list of fonts, and drop "
                                      "onto the desired group. To remove a family from the group, drag "
-                                     "the font onto the \"All Fonts\" group.<li>"
+                                     "the font onto the \"All Fonts\" group.</li>"
                    "</ul></p>",
                 Misc::root()
                     ? i18n("<li><i>All Fonts</i> contains all the fonts installed on your system.</li>"
