@@ -59,7 +59,7 @@ class CGroupListItem
         SYSTEM,
         UNCLASSIFIED,
         GROUPS_TITLE,
-        CUSTOM,
+        CUSTOM
     };
 
     union Data
