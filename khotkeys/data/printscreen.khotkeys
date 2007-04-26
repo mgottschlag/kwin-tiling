@@ -3,9 +3,11 @@ DataCount=1
 
 [Data_1]
 Comment=This group contains actions that are set up by default.
+Comment[zh_TW]=此群組包含了預先設定好的動作。
 DataCount=1
 Enabled=true
 Name=Preset Actions
+Name[zh_TW]=預先設定動作
 SystemGroup=0
 Type=ACTION_DATA_GROUP
 AllowMerge=true
@@ -16,6 +18,7 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Launches KSnapShot when PrintScrn is pressed.
+Comment[zh_TW]=按下 PrintScreen 鍵時叫出 KSnapShot。
 Enabled=true
 Name=PrintScreen
 Type=COMMAND_URL_SHORTCUT_ACTION_DATA
@@ -33,6 +36,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Simple_action
+Comment[zh_TW]=簡易動作
 TriggersCount=1
 
 [Data_1_1Triggers0]

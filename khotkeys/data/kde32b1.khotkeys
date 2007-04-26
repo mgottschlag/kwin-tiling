@@ -3,9 +3,11 @@ DataCount=1
 
 [Data_1]
 Comment=This group contains various examples demonstrating most of the features of KHotkeys. (Note that this group and all its actions are disabled by default.)
+Comment[zh_TW]=這個群組包含了展示 KHotkeys 大部份功能的各種範例。（注意這個群組與其定義的動作預設是關閉的）
 DataCount=8
 Enabled=false
 Name=Examples
+Name[zh_TW]=範例
 SystemGroup=0
 Type=ACTION_DATA_GROUP
 
@@ -15,8 +17,10 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=After pressing Ctrl+Alt+I, the KSIRC window will be activated, if it exists. Simple.
+Comment[zh_TW]=按下 Ctrl+Alt+I 會叫出隱藏的 KSIRC 視窗。就這麼簡單。
 Enabled=false
 Name=Activate KSIRC Window
+Name[zh_TW]=叫出 KSIRC 視窗
 Type=ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA
 
 [Data_1_1Actions]
@@ -27,6 +31,7 @@ Type=ACTIVATE_WINDOW
 
 [Data_1_1Actions0Window]
 Comment=KSIRC window
+Comment[zh_TW]=KSIRC 視窗
 WindowsCount=1
 
 [Data_1_1Actions0Window0]
@@ -46,6 +51,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Simple_action
+Comment[zh_TW]=簡易動作
 TriggersCount=1
 
 [Data_1_1Triggers0]
@@ -54,8 +60,10 @@ Type=SHORTCUT
 
 [Data_1_2]
 Comment=After pressing Alt+Ctrl+H, 'Hello' input will be simulated just like if you typed it. Especially useful if you're lazy to type things like 'unsigned'. Every keypress in the input is separated by a colon ':' . Note that the keypresses mean really keypresses, so you have to write what you'd really press on the keyboard. In the table below, left column shows the input and the right column shows what to type.\n\n"enter" (i.e. new line)                Enter or Return\na (i.e. small a)                          A\nA (i.e. capital a)                       Shift+A\n: (colon)                                  Shift+;\n' '  (space)                              Space
+Comment[zh_TW]=按下 Alt+Ctrl+H 會模擬您在鍵盤上輸入 'Hello'。若是您挺懶得打一些常用的如 'unsigned' 之類的字，這類動作就很好用。輸入的每個按鍵以冒號 : 區隔。注意按鍵就是按鍵，您必須定義您實際要按下的鍵。在底下的表格中，左方的欄位顯示實際輸入，右方的欄位顯示要按的鍵。\n\n"enter"（換行）                  Enter 或 Return\na （小寫 a）                  A\nA（大寫 A）                  Shift+A\n:（冒號）                  Shift+;\n' '（空白鍵）                  Space
 Enabled=false
 Name=Type 'Hello'
+Name[zh_TW]=輸入 Hello
 Type=KEYBOARD_INPUT_SHORTCUT_ACTION_DATA
 
 [Data_1_2Actions]
@@ -72,6 +80,7 @@ ConditionsCount=0
 
 [Data_1_2Triggers]
 Comment=Simple_action
+Comment[zh_TW]=簡易動作
 TriggersCount=1
 
 [Data_1_2Triggers0]
@@ -80,8 +89,10 @@ Type=SHORTCUT
 
 [Data_1_3]
 Comment=This action runs Konsole, after pressing Ctrl+Alt+T.
+Comment[zh_TW]=這個動作會在按下 Ctrl+Alt+T 時執行 Konsole
 Enabled=false
 Name=Run Konsole
+Name[zh_TW]=執行 Konsole
 Type=COMMAND_URL_SHORTCUT_ACTION_DATA
 
 [Data_1_3Actions]
@@ -97,6 +108,7 @@ ConditionsCount=0
 
 [Data_1_3Triggers]
 Comment=Simple_action
+Comment[zh_TW]=簡易動作
 TriggersCount=1
 
 [Data_1_3Triggers0]
@@ -105,8 +117,10 @@ Type=SHORTCUT
 
 [Data_1_4]
 Comment=Read the comment on action "Type 'Hello'" first.\n\nQt Designer uses Ctrl+F4 for closing windows (maybe because MS Windows does it that way *shrug*). But Ctrl+F4 in KDE stands for going to virtual desktop 4, so it doesn't work in Qt Designer, and also, Qt Designer doesn't use KDE's standard Ctrl+W for closing the window.\n\nBut the problem can be solved by remaping Ctrl+W to Ctrl+F4 when the active window is Qt Designer. When Qt Designer is active, every time Ctrl+W is pressed, Ctrl+F4 will be sent to Qt Designer instead. In other applications, Ctrl+W remains working the usual way of course.\n\nWe now need to specify three things: A new shortcut trigger on 'Ctrl+W', a new keyboard input action sending Ctrl+F4, and a new condition that the active window is Qt Designer.\nQt Designer seems to always have title 'Qt Designer by Trolltech', so the condition will check for the active window having that title.
+Comment[zh_TW]=請先參考「輸入 Hello」的註解。\n\nQt 設計器用 Ctrl+F4 來關閉視窗（也許是因為微軟用這個鍵？），不過在 KDE 中 Ctrl+F4 是跳到 4 號虛擬桌面，所以在 Qt 設計師中會無法使用。此外，Qt 設計師並未使用 KDE 標準的關閉視窗鍵 Ctrl+W。\n\n不過您可以利用此重新映射的功能來解決這個問題。當 Qt 設計師視窗取得焦點時，每次按下 Ctrl+W 鍵，實際上會送出 Ctrl+F4 給 Qt 設計師。而在其他應用程式中，Ctrl+W 鍵則不受影響。\n\n要使用此功能，要指定三個參數：快捷鍵 Ctrl+W，要做的動作為送出 Ctrl+F4，以及生效條件為目前焦點處於 Qt 設計師視窗。\nQt 設計師的視窗標題是 'Qt Designer by Trolltech'，所以生效條件可以檢查視窗的標題是否符合。
 Enabled=false
 Name=Remap Ctrl+W to Ctrl+F4 in Qt Designer
+Name[zh_TW]=在 Qt 設計師中重新映射 Ctrl+W 到 Ctrl+F4
 Type=GENERIC_ACTION_DATA
 
 [Data_1_4Actions]
@@ -126,6 +140,7 @@ Type=ACTIVE_WINDOW
 
 [Data_1_4Conditions0Window]
 Comment=Qt Designer
+Comment[zh_TW]=Qt 設計器
 WindowsCount=1
 
 [Data_1_4Conditions0Window0]
@@ -149,8 +164,10 @@ Type=SHORTCUT
 
 [Data_1_5]
 Comment=By pressing Alt+Ctrl+W a DCOP call will be performed that will show the minicli. You can use any kind of DCOP call, just like using the command line 'dcop' tool.
+Comment[zh_TW]=按下 Alt+Ctrl+W 時，會產生一個 DCOP 呼叫來顯示 minicli。您可以使用任何種類的 DCOP 呼叫，就如同在命令列中使用 dcop 一樣。
 Enabled=false
 Name=Perform DCOP call 'kdesktop KDesktopIface popupExecuteCommand()'
+Name[zh_TW]=執行 DCOP 呼叫 'kdesktop KDesktopIface popupExecuteCommand()'
 Type=DCOP_SHORTCUT_ACTION_DATA
 
 [Data_1_5Actions]
@@ -169,6 +186,7 @@ ConditionsCount=0
 
 [Data_1_5Triggers]
 Comment=Simple_action
+Comment[zh_TW]=簡易動作
 TriggersCount=1
 
 [Data_1_5Triggers0]
@@ -177,8 +195,10 @@ Type=SHORTCUT
 
 [Data_1_6]
 Comment=Read the comment on action "Type 'Hello'" first.\n\nJust like the "Type 'Hello'" action, this one simulates a keyboard input, specifically, after pressing Ctrl+Alt+B, it sends B to XMMS (B in XMMS jumps to the next song). The 'Send to specific window' checkbox is checked and a window with its class containing 'XMMS_Player' is specified; this will make the input always be sent to this window. This way, you can control XMMS even if it's e.g. on a different virtual desktop.\n\n(Run 'xprop' and click on the XMMS window and search for WM_CLASS to see 'XMMS_Player').
+Comment[zh_TW]=請先參考「輸入 Hello」的註解。就如同「輸入 Hello」的動作，這個動作模擬鍵盤的輸入，在按下 Ctrl+Alt＋B 之後，會送出 B 到 XMMS（在 XMMS 中 B 是跳到下一首歌）。勾選「送到指定視窗」，並指定視窗類別為包含 XMMS_Player。這會讓此輸入永遠送到這個視窗。您可以用這個方法控制 XMMS，即使是在不同的虛擬桌面上。\n\n（執行 xprop 並點選 XMMS 視窗，搜尋 WM_CLASS 可以看到 XMMS_Player）。
 Enabled=false
 Name=Next in XMMS
+Name[zh_TW]=命令 XMMS 跳到下一首
 Type=KEYBOARD_INPUT_SHORTCUT_ACTION_DATA
 
 [Data_1_6Actions]
@@ -191,12 +211,14 @@ Type=KEYBOARD_INPUT
 
 [Data_1_6Actions0DestinationWindow]
 Comment=XMMS window
+Comment[zh_TW]=XMMS 視窗
 WindowsCount=1
 
 [Data_1_6Actions0DestinationWindow0]
 Class=XMMS_Player
 ClassType=1
 Comment=XMMS Player window
+Comment[zh_TW]=XMMS 播放器視窗
 Role=
 RoleType=0
 Title=
@@ -210,6 +232,7 @@ ConditionsCount=0
 
 [Data_1_6Triggers]
 Comment=Simple_action
+Comment[zh_TW]=簡易動作
 TriggersCount=1
 
 [Data_1_6Triggers0]
@@ -218,14 +241,17 @@ Type=SHORTCUT
 
 [Data_1_7]
 Comment=Ok, Konqi in KDE3.1 has tabs, and now you can also have gestures. No need to use other browsers >;).\n\nJust press the middle mouse button and start drawing one of the gestures, and after you're finished, release the mouse button. If you only need to paste the selection, it still works, simply only click the middle mouse button. (You can change the mouse button to use in the global settings).\n\nRight now, there are these gestures available:\nmove right and back left - Forward (ALt+Right)\nmove left and back right - Back (Alt+Left)\nmove up and back down  - Up (Alt+Up)\ncircle anticlockwise - Reload (F5)\n (As soon as I find out which ones are in Opera or Mozilla, I'll add more and make sure they are the same. Or if you do it yourself, feel free to help me and send me your khotkeysrc.)\n\nThe gestures shapes (some of the dialogs are from KGesture, thanks to Mike Pilone) can be simply entered by performing them in the configuration dialog. You can also look at your numeric pad to help you, gestures are recognized like a 3x3 grid of fields, numbered 1 to 9.\n\nNote that you must perform exactly the gesture to trigger the action. Because of this, it's possible to enter more gestures for the action. You should try to avoid complicated gestures where you change the direction of mouse moving more than once (i.e. do e.g. 45654 or 74123 as they are simple to perform but e.g. 1236987 may be already quite difficult).\n\nThe condition for all gestures are defined in this group. All these gestures are active only if the active window is Konqueror (class contains 'konqueror').
+Comment[zh_TW]=KDE 3.1 中的 Konqi 有分頁，現在您也可以用手勢。不需要使用其它的瀏覽器了。\n\n只要按住滑鼠中鍵，然後開始畫某個手勢，畫完以後放開。如果您只是要貼上選擇的文字，您還是可以只簡單點選中鍵。（您可以在全域設定中改變滑鼠按鍵的定義。）\n\n現在，有這些手勢可以使用：\n往右移再往左移─表示往下一頁（Alt+右鍵）\n往左移再往右移─表示返回前一頁（Alt+左鍵）\n往上移再往下移─表示往上一層（Alt+上鍵）\n逆時針畫圈圈─重新載入（F5）\n（等我找出更多 Opera 或 Mozilla 的手勢，我會再加入。您也可以自己加入，並將您的 khotkeysrc 寄送給我。）\n\n手勢的形狀（有些對話框是從 KGesture 而來，感謝 Mike Pilone）可以在設定對話框中輸入。您也可以用鍵盤上的數字方向鍵。手勢就像是個 3x3 的格子，從 1 到 9。\n\n注意，您必須要完整做完手勢才會觸發動作，因此您可以對某動作輸入多個手勢。您應該避免使用太複雜的手勢，（例如：45654 或 74123 夠簡單，可以使用，但是 1236987 就可能有點困難）。\n\n所有手勢的條件都定義在此群組中。這些手勢只會在視窗類別為 Konqueror 才有作用。
 DataCount=4
 Enabled=false
 Name=Konqi Gestures
+Name[zh_TW]=Konqi 手勢
 SystemGroup=0
 Type=ACTION_DATA_GROUP
 
 [Data_1_7Conditions]
 Comment=Konqueror window
+Comment[zh_TW]=Konqueror 視窗
 ConditionsCount=1
 
 [Data_1_7Conditions0]
@@ -250,6 +276,7 @@ WindowTypes=33
 Comment=
 Enabled=false
 Name=Back
+Name[zh_TW]=返回
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_7_1Actions]
@@ -266,6 +293,7 @@ ConditionsCount=0
 
 [Data_1_7_1Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=3
 
 [Data_1_7_1Triggers0]
@@ -284,6 +312,7 @@ Type=GESTURE
 Comment=
 Enabled=false
 Name=Forward
+Name[zh_TW]=往前
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_7_2Actions]
@@ -300,6 +329,7 @@ ConditionsCount=0
 
 [Data_1_7_2Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=3
 
 [Data_1_7_2Triggers0]
@@ -318,6 +348,7 @@ Type=GESTURE
 Comment=
 Enabled=false
 Name=Up
+Name[zh_TW]=上一層
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_7_3Actions]
@@ -334,6 +365,7 @@ ConditionsCount=0
 
 [Data_1_7_3Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=3
 
 [Data_1_7_3Triggers0]
@@ -352,6 +384,7 @@ Type=GESTURE
 Comment=
 Enabled=false
 Name=Reload
+Name[zh_TW]=重新載入
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_7_4Actions]
@@ -368,6 +401,7 @@ ConditionsCount=0
 
 [Data_1_7_4Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=3
 
 [Data_1_7_4Triggers0]
@@ -384,8 +418,10 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=After pressing Win+E (Tux+E), WWW browser will be launched and it will open http://www.kde.org . You may run all kind of commands you can run in minicli (Alt+F2).
+Comment[zh_TW]=按下 Win+E（Tux+E）後會開啟瀏覽器，並跳到 http://www.kde.org。您也可以在 minicli（Alt+F2）中執行所有可執行的指令。
 Enabled=false
 Name=Go to KDE Website
+Name[zh_TW]=跳到 KDE 網站
 Type=COMMAND_URL_SHORTCUT_ACTION_DATA
 
 [Data_1_8Actions]
@@ -401,6 +437,7 @@ ConditionsCount=0
 
 [Data_1_8Triggers]
 Comment=Simple_action
+Comment[zh_TW]=簡易動作
 TriggersCount=1
 
 [Data_1_8Triggers0]

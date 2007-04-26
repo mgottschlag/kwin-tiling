@@ -3,14 +3,17 @@ DataCount=1
 
 [Data_1]
 Comment=Basic Konqueror gestures.
+Comment[zh_TW]=基本的 Konqueror 手勢
 DataCount=14
 Enabled=true
 Name=Konqueror Gestures
+Name[zh_TW]=Konqueror 手勢
 SystemGroup=0
 Type=ACTION_DATA_GROUP
 
 [Data_1Conditions]
 Comment=Konqueror window
+Comment[zh_TW]=Konqueror 視窗
 ConditionsCount=1
 
 [Data_1Conditions0]
@@ -33,14 +36,18 @@ WindowTypes=1
 
 [Data_1_1]
 Comment=Press, move left, release.
+Comment[zh_TW]=按下，往左移，再放開。
 Enabled=true
 Name=Back
+Name[zh_TW]=返回
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_10]
 Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
+Comment[zh_TW]=Opera 風格：按下，往上移，再放開。\n注意：會與「新增分頁」衝突，預設為關閉。
 Enabled=false
 Name=Stop Loading
+Name[zh_TW]=停止載入
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_10Actions]
@@ -57,6 +64,7 @@ ConditionsCount=0
 
 [Data_1_10Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_10Triggers0]
@@ -65,8 +73,10 @@ Type=GESTURE
 
 [Data_1_11]
 Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
+Comment[zh_TW]=往上一層的網址或目錄。\nMozilla 風格：按住，往上移，往左移，往上移，再放開。
 Enabled=true
 Name=Up
+Name[zh_TW]=上一層
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_11Actions]
@@ -83,6 +93,7 @@ ConditionsCount=0
 
 [Data_1_11Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_11Triggers0]
@@ -91,8 +102,10 @@ Type=GESTURE
 
 [Data_1_12]
 Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
+Comment[zh_TW]=往上一層的網址或目錄。\nOpera 風格：按住，往上移，往左移，往上移，再放開。\n注意：會與「跳到前一個分頁」衝突，預設為關閉。
 Enabled=false
 Name=Up #2
+Name[zh_TW]=往上層（2）
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_12Actions]
@@ -109,6 +122,7 @@ ConditionsCount=0
 
 [Data_1_12Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_12Triggers0]
@@ -117,8 +131,10 @@ Type=GESTURE
 
 [Data_1_13]
 Comment=Press, move up, move right, release.
+Comment[zh_TW]=按住，往上移，往右移，再放開。
 Enabled=true
 Name=Activate Next Tab
+Name[zh_TW]=跳到下一個分頁
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_13Actions]
@@ -135,6 +151,7 @@ ConditionsCount=0
 
 [Data_1_13Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_13Triggers0]
@@ -143,8 +160,10 @@ Type=GESTURE
 
 [Data_1_14]
 Comment=Press, move up, move left, release.
+Comment[zh_TW]=按住，往上移，往左移，再放開。
 Enabled=true
 Name=Activate Previous Tab
+Name[zh_TW]=跳到前一個分頁
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_14Actions]
@@ -161,6 +180,7 @@ ConditionsCount=0
 
 [Data_1_14Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_14Triggers0]
@@ -181,6 +201,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_1Triggers0]
@@ -189,8 +210,10 @@ Type=GESTURE
 
 [Data_1_2]
 Comment=Press, move down, move up, move down, release.
+Comment[zh_TW]=按住，往下移，往上移，往下移，再放開。
 Enabled=true
 Name=Duplicate Tab
+Name[zh_TW]=複製分頁
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_2Actions]
@@ -207,6 +230,7 @@ ConditionsCount=0
 
 [Data_1_2Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_2Triggers0]
@@ -215,8 +239,10 @@ Type=GESTURE
 
 [Data_1_3]
 Comment=Press, move down, move up, release.
+Comment[zh_TW]=按住，往下移，往上移，再放開。
 Enabled=true
 Name=Duplicate Window
+Name[zh_TW]=複製視窗
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_3Actions]
@@ -233,6 +259,7 @@ ConditionsCount=0
 
 [Data_1_3Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_3Triggers0]
@@ -241,8 +268,10 @@ Type=GESTURE
 
 [Data_1_4]
 Comment=Press, move right, release.
+Comment[zh_TW]=按住，往右移，再放開。
 Enabled=true
 Name=Forward
+Name[zh_TW]=往前
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_4Actions]
@@ -259,6 +288,7 @@ ConditionsCount=0
 
 [Data_1_4Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_4Triggers0]
@@ -267,6 +297,7 @@ Type=GESTURE
 
 [Data_1_5]
 Comment=Press, move down, move half up, move right, move down, release.\n(Drawing a lowercase 'h'.)
+Comment[zh_TW]=按住，往下移，往上移一半，往右移，往下移，再放開。\n（就像寫一個小寫的 h）
 Enabled=true
 Name=Home
 Name[af]=Tuiste
@@ -343,6 +374,7 @@ ConditionsCount=0
 
 [Data_1_5Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=2
 
 [Data_1_5Triggers0]
@@ -355,8 +387,10 @@ Type=GESTURE
 
 [Data_1_6]
 Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.
+Comment[zh_TW]=按住，往右移，往下移，往右移，再放開。\nMozilla 風格：按住，往下移，往右移，再放開。
 Enabled=true
 Name=Close Tab
+Name[zh_TW]=關閉分頁
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_6Actions]
@@ -373,6 +407,7 @@ ConditionsCount=0
 
 [Data_1_6Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=2
 
 [Data_1_6Triggers0]
@@ -385,8 +420,10 @@ Type=GESTURE
 
 [Data_1_7]
 Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.
+Comment[zh_TW]=按住，往上移，再放開。\n與預設為關閉的 Opera 風格「往上層（2）」衝突，
 Enabled=true
 Name=New Tab
+Name[zh_TW]=新分頁
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_7Actions]
@@ -403,6 +440,7 @@ ConditionsCount=0
 
 [Data_1_7Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_7Triggers0]
@@ -411,6 +449,7 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=Press, move down, release.
+Comment[zh_TW]=按住，往下移，再放開。
 Enabled=true
 Name=New Window
 Name[af]=Nuwe Venster
@@ -464,6 +503,7 @@ Name[tr]=Yeni Pencere
 Name[uk]=Нове вікно
 Name[uz]=Янги ойна
 Name[xh]=Window Entsha
+Name[zh_TW]=新視窗
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_8Actions]
@@ -480,6 +520,7 @@ ConditionsCount=0
 
 [Data_1_8Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_8Triggers0]
@@ -488,8 +529,10 @@ Type=GESTURE
 
 [Data_1_9]
 Comment=Press, move up, move down, release.
+Comment[zh_TW]=按住，往上移，往下移，再放開。
 Enabled=true
 Name=Reload
+Name[zh_TW]=重新載入
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_9Actions]
@@ -506,6 +549,7 @@ ConditionsCount=0
 
 [Data_1_9Triggers]
 Comment=Gesture_triggers
+Comment[zh_TW]=手勢觸發
 TriggersCount=1
 
 [Data_1_9Triggers0]
