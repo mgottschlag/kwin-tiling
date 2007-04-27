@@ -7,6 +7,7 @@ Comment[zh_TW]=這個群組包含了展示 KHotkeys 大部份功能的各種範�
 DataCount=8
 Enabled=false
 Name=Examples
+Name[csb]=Przëmiôrë
 Name[zh_TW]=範例
 SystemGroup=0
 Type=ACTION_DATA_GROUP
@@ -92,6 +93,7 @@ Comment=This action runs Konsole, after pressing Ctrl+Alt+T.
 Comment[zh_TW]=這個動作會在按下 Ctrl+Alt+T 時執行 Konsole
 Enabled=false
 Name=Run Konsole
+Name[csb]=Zrëszë kònsolã
 Name[zh_TW]=執行 Konsole
 Type=COMMAND_URL_SHORTCUT_ACTION_DATA
 
@@ -198,6 +200,7 @@ Comment=Read the comment on action "Type 'Hello'" first.\n\nJust like the "Type 
 Comment[zh_TW]=請先參考「輸入 Hello」的註解。就如同「輸入 Hello」的動作，這個動作模擬鍵盤的輸入，在按下 Ctrl+Alt＋B 之後，會送出 B 到 XMMS（在 XMMS 中 B 是跳到下一首歌）。勾選「送到指定視窗」，並指定視窗類別為包含 XMMS_Player。這會讓此輸入永遠送到這個視窗。您可以用這個方法控制 XMMS，即使是在不同的虛擬桌面上。\n\n（執行 xprop 並點選 XMMS 視窗，搜尋 WM_CLASS 可以看到 XMMS_Player）。
 Enabled=false
 Name=Next in XMMS
+Name[csb]=Pòstãpné w XMMS
 Name[zh_TW]=命令 XMMS 跳到下一首
 Type=KEYBOARD_INPUT_SHORTCUT_ACTION_DATA
 
@@ -251,6 +254,7 @@ Type=ACTION_DATA_GROUP
 
 [Data_1_7Conditions]
 Comment=Konqueror window
+Comment[csb]=Òkno Konquerora
 Comment[zh_TW]=Konqueror 視窗
 ConditionsCount=1
 
@@ -276,6 +280,7 @@ WindowTypes=33
 Comment=
 Enabled=false
 Name=Back
+Name[csb]=Nazôd
 Name[zh_TW]=返回
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -312,6 +317,7 @@ Type=GESTURE
 Comment=
 Enabled=false
 Name=Forward
+Name[csb]=Wprzódk
 Name[zh_TW]=往前
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -348,6 +354,7 @@ Type=GESTURE
 Comment=
 Enabled=false
 Name=Up
+Name[csb]=W górã
 Name[zh_TW]=上一層
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -384,6 +391,7 @@ Type=GESTURE
 Comment=
 Enabled=false
 Name=Reload
+Name[csb]=Òdswiéżë
 Name[zh_TW]=重新載入
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 

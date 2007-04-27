@@ -7,6 +7,7 @@ Comment[zh_TW]=此群組包含了預先設定好的動作。
 DataCount=1
 Enabled=true
 Name=Preset Actions
+Name[csb]=Ùstawioné akcëje
 Name[zh_TW]=預先設定動作
 SystemGroup=0
 Type=ACTION_DATA_GROUP

@@ -3,16 +3,19 @@ DataCount=1
 
 [Data_1]
 Comment=Basic Konqueror gestures.
+Comment[csb]=Pòdspòdlowé gestë Konquerora
 Comment[zh_TW]=基本的 Konqueror 手勢
 DataCount=14
 Enabled=true
 Name=Konqueror Gestures
+Name[csb]=Gestë Konquerora
 Name[zh_TW]=Konqueror 手勢
 SystemGroup=0
 Type=ACTION_DATA_GROUP
 
 [Data_1Conditions]
 Comment=Konqueror window
+Comment[csb]=Òkno Konquerora
 Comment[zh_TW]=Konqueror 視窗
 ConditionsCount=1
 
@@ -39,6 +42,7 @@ Comment=Press, move left, release.
 Comment[zh_TW]=按下，往左移，再放開。
 Enabled=true
 Name=Back
+Name[csb]=Nazôd
 Name[zh_TW]=返回
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -47,6 +51,7 @@ Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', a
 Comment[zh_TW]=Opera 風格：按下，往上移，再放開。\n注意：會與「新增分頁」衝突，預設為關閉。
 Enabled=false
 Name=Stop Loading
+Name[csb]=Zatrzëmôj ladowanié
 Name[zh_TW]=停止載入
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -76,6 +81,7 @@ Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, mov
 Comment[zh_TW]=往上一層的網址或目錄。\nMozilla 風格：按住，往上移，往左移，往上移，再放開。
 Enabled=true
 Name=Up
+Name[csb]=W górã
 Name[zh_TW]=上一層
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -242,6 +248,7 @@ Comment=Press, move down, move up, release.
 Comment[zh_TW]=按住，往下移，往上移，再放開。
 Enabled=true
 Name=Duplicate Window
+Name[csb]=Duplikùjë òkno
 Name[zh_TW]=複製視窗
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -271,6 +278,7 @@ Comment=Press, move right, release.
 Comment[zh_TW]=按住，往右移，再放開。
 Enabled=true
 Name=Forward
+Name[csb]=Wprzódk
 Name[zh_TW]=往前
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -532,6 +540,7 @@ Comment=Press, move up, move down, release.
 Comment[zh_TW]=按住，往上移，往下移，再放開。
 Enabled=true
 Name=Reload
+Name[csb]=Òdswiéżë
 Name[zh_TW]=重新載入
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
