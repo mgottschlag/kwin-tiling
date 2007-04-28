@@ -5,6 +5,7 @@ macro_optional_find_package(BlueZ)
 macro_log_feature(BLUEZ_FOUND "BlueZ" "BlueZ is the linux bluetooth subsystem" "http://www.bluez.org")
 
 add_subdirectory( control )
+add_subdirectory( kcm )
 add_subdirectory( solidshell )
 add_subdirectory( hal )
 if (NETWORKMANAGER_FOUND)
