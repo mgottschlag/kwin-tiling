@@ -5,6 +5,7 @@ DataCount=1
 Comment=This group contains various examples demonstrating most of the features of KHotkeys. (Note that this group and all its actions are disabled by default.)
 Comment[ja]=このグループには KHotkeys が提供するさまざまな機能の使用例が含まれています (デフォルトではこのグループとそのアクションはすべて無効になっています)。
 Comment[nds]=Disse Koppel bargt en Reeg Bispelen, de de mehrsten Funkschonen vun KHotkeys wiest (Beacht bitte, dat disse Koppel un all sien Akschonen standardwies utmaakt sünd).
+Comment[x-test]=xxThis group contains various examples demonstrating most of the features of KHotkeys. (Note that this group and all its actions are disabled by default.)xx
 Comment[zh_TW]=這個群組包含了展示 KHotkeys 大部份功能的各種範例。（注意這個群組與其定義的動作預設是關閉的）
 DataCount=8
 Enabled=false
@@ -12,6 +13,7 @@ Name=Examples
 Name[csb]=Przëmiôrë
 Name[ja]=使用例
 Name[nds]=Bispelen
+Name[x-test]=xxExamplesxx
 Name[zh_TW]=範例
 SystemGroup=0
 Type=ACTION_DATA_GROUP
@@ -24,11 +26,13 @@ ConditionsCount=0
 Comment=After pressing Ctrl+Alt+I, the KSIRC window will be activated, if it exists. Simple.
 Comment[ja]=Ctrl+Alt+I を押すと、存在すれば KSIRC ウィンドウがアクティブになります。これは単純です。
 Comment[nds]=Dat drücken vun Strg+Alt+I maakt dat KSirc-Finster aktiv, wenn dat een gifft. Eenfach.
+Comment[x-test]=xxAfter pressing Ctrl+Alt+I, the KSIRC window will be activated, if it exists. Simple.xx
 Comment[zh_TW]=按下 Ctrl+Alt+I 會叫出隱藏的 KSIRC 視窗。就這麼簡單。
 Enabled=false
 Name=Activate KSIRC Window
 Name[ja]=KSIRC ウィンドウをアクティブに
 Name[nds]=KSirc-Finster aktiv maken
+Name[x-test]=xxActivate KSIRC Windowxx
 Name[zh_TW]=叫出 KSIRC 視窗
 Type=ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA
 
@@ -42,6 +46,7 @@ Type=ACTIVATE_WINDOW
 Comment=KSIRC window
 Comment[ja]=KSIRC ウィンドウ
 Comment[nds]=KSirc-Finster
+Comment[x-test]=xxKSIRC windowxx
 Comment[zh_TW]=KSIRC 視窗
 WindowsCount=1
 
@@ -50,6 +55,7 @@ Class=ksirc
 ClassType=1
 Comment=KSIRC
 Comment[nds]=KSirc
+Comment[x-test]=xxKSIRCxx
 Role=
 RoleType=0
 Title=
@@ -64,6 +70,7 @@ ConditionsCount=0
 [Data_1_1Triggers]
 Comment=Simple_action
 Comment[nds]=Eenfach_Akschoon
+Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
 TriggersCount=1
 
@@ -78,6 +85,7 @@ Enabled=false
 Name=Type 'Hello'
 Name[ja]='Hello' を入力
 Name[nds]="Hello" tippen
+Name[x-test]=xxType 'Hello'xx
 Name[zh_TW]=輸入 Hello
 Type=KEYBOARD_INPUT_SHORTCUT_ACTION_DATA
 
@@ -96,6 +104,7 @@ ConditionsCount=0
 [Data_1_2Triggers]
 Comment=Simple_action
 Comment[nds]=Eenfach_Akschoon
+Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
 TriggersCount=1
 
@@ -107,12 +116,14 @@ Type=SHORTCUT
 Comment=This action runs Konsole, after pressing Ctrl+Alt+T.
 Comment[ja]=Ctrl+Alt+T を押して Konsole を起動します。
 Comment[nds]=Disse Akschoon röppt Konsole mit Strg+Alt+T op.
+Comment[x-test]=xxThis action runs Konsole, after pressing Ctrl+Alt+T.xx
 Comment[zh_TW]=這個動作會在按下 Ctrl+Alt+T 時執行 Konsole
 Enabled=false
 Name=Run Konsole
 Name[csb]=Zrëszë kònsolã
 Name[ja]=Konsole を起動
 Name[nds]=Konsole opropen
+Name[x-test]=xxRun Konsolexx
 Name[zh_TW]=執行 Konsole
 Type=COMMAND_URL_SHORTCUT_ACTION_DATA
 
@@ -130,6 +141,7 @@ ConditionsCount=0
 [Data_1_3Triggers]
 Comment=Simple_action
 Comment[nds]=Eenfach_Akschoon
+Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
 TriggersCount=1
 
@@ -144,6 +156,7 @@ Enabled=false
 Name=Remap Ctrl+W to Ctrl+F4 in Qt Designer
 Name[ja]=Qt デザイナーで Ctrl+W を Ctrl+F4 に割り当て直す
 Name[nds]=Binnen Qt-Designer Strg+F4 na Strg+W toornen
+Name[x-test]=xxRemap Ctrl+W to Ctrl+F4 in Qt Designerxx
 Name[zh_TW]=在 Qt 設計師中重新映射 Ctrl+W 到 Ctrl+F4
 Type=GENERIC_ACTION_DATA
 
@@ -166,6 +179,7 @@ Type=ACTIVE_WINDOW
 Comment=Qt Designer
 Comment[ja]=Qt デザイナー
 Comment[nds]=Qt-Designer
+Comment[x-test]=xxQt Designerxx
 Comment[zh_TW]=Qt 設計器
 WindowsCount=1
 
@@ -192,11 +206,13 @@ Type=SHORTCUT
 Comment=By pressing Alt+Ctrl+W a DCOP call will be performed that will show the minicli. You can use any kind of DCOP call, just like using the command line 'dcop' tool.
 Comment[ja]=Alt+Ctrl+W を押すと、「コマンドを実行」ダイアログを表示する DCOP 呼び出しが実行されます。コマンドラインの 'dcop' ツールと同様に、あらゆる DCOP 呼び出しが使えます。
 Comment[nds]=Dat Drücken vun Strg+Alt+W föhrt en DCOP-Oproop ut, de den Dialoog "Befehl utföhren" opröppt. Du kannst all DCOP-Oprööp bruken, jüst as mit dat Konsool-Programm "dcop".
+Comment[x-test]=xxBy pressing Alt+Ctrl+W a DCOP call will be performed that will show the minicli. You can use any kind of DCOP call, just like using the command line 'dcop' tool.xx
 Comment[zh_TW]=按下 Alt+Ctrl+W 時，會產生一個 DCOP 呼叫來顯示 minicli。您可以使用任何種類的 DCOP 呼叫，就如同在命令列中使用 dcop 一樣。
 Enabled=false
 Name=Perform DCOP call 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[ja]=DCOP 呼び出し 'kdesktop KDesktopIface popupExecuteCommand()' を実行
 Name[nds]=DCOP-Oproop "kdesktop KDesktopIface popupExecuteCommand" utföhren
+Name[x-test]=xxPerform DCOP call 'kdesktop KDesktopIface popupExecuteCommand()'xx
 Name[zh_TW]=執行 DCOP 呼叫 'kdesktop KDesktopIface popupExecuteCommand()'
 Type=DCOP_SHORTCUT_ACTION_DATA
 
@@ -217,6 +233,7 @@ ConditionsCount=0
 [Data_1_5Triggers]
 Comment=Simple_action
 Comment[nds]=Eenfach_Akschoon
+Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
 TriggersCount=1
 
@@ -232,6 +249,7 @@ Name=Next in XMMS
 Name[csb]=Pòstãpné w XMMS
 Name[ja]=XMMS の次の曲
 Name[nds]=Nakamen XMMS-Stück
+Name[x-test]=xxNext in XMMSxx
 Name[zh_TW]=命令 XMMS 跳到下一首
 Type=KEYBOARD_INPUT_SHORTCUT_ACTION_DATA
 
@@ -247,6 +265,7 @@ Type=KEYBOARD_INPUT
 Comment=XMMS window
 Comment[ja]=XMMS ウィンドウ
 Comment[nds]=XMMS-Finster
+Comment[x-test]=xxXMMS windowxx
 Comment[zh_TW]=XMMS 視窗
 WindowsCount=1
 
@@ -256,6 +275,7 @@ ClassType=1
 Comment=XMMS Player window
 Comment[ja]=XMMS プレーヤウィンドウ
 Comment[nds]=XMMS-Afspeler-Finster
+Comment[x-test]=xxXMMS Player windowxx
 Comment[zh_TW]=XMMS 播放器視窗
 Role=
 RoleType=0
@@ -271,6 +291,7 @@ ConditionsCount=0
 [Data_1_6Triggers]
 Comment=Simple_action
 Comment[nds]=Eenfach_Akschoon
+Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
 TriggersCount=1
 
@@ -286,6 +307,7 @@ Enabled=false
 Name=Konqi Gestures
 Name[ja]=Konqi ジェスチャー
 Name[nds]=Konqui-Muustekens
+Name[x-test]=xxKonqi Gesturesxx
 Name[zh_TW]=Konqi 手勢
 SystemGroup=0
 Type=ACTION_DATA_GROUP
@@ -295,6 +317,7 @@ Comment=Konqueror window
 Comment[csb]=Òkno Konquerora
 Comment[ja]=Konqueror ウィンドウ
 Comment[nds]=Konqueror-Finster
+Comment[x-test]=xxKonqueror windowxx
 Comment[zh_TW]=Konqueror 視窗
 ConditionsCount=1
 
@@ -303,12 +326,14 @@ Type=ACTIVE_WINDOW
 
 [Data_1_7Conditions0Window]
 Comment=Konqueror
+Comment[x-test]=xxKonquerorxx
 WindowsCount=1
 
 [Data_1_7Conditions0Window0]
 Class=konqueror
 ClassType=1
 Comment=Konqueror
+Comment[x-test]=xxKonquerorxx
 Role=
 RoleType=0
 Title=
@@ -323,6 +348,7 @@ Name=Back
 Name[csb]=Nazôd
 Name[ja]=戻る
 Name[nds]=Torüch
+Name[x-test]=xxBackxx
 Name[zh_TW]=返回
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -341,6 +367,7 @@ ConditionsCount=0
 [Data_1_7_1Triggers]
 Comment=Gesture_triggers
 Comment[nds]=Muustekens
+Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
 TriggersCount=3
 
@@ -363,6 +390,7 @@ Name=Forward
 Name[csb]=Wprzódk
 Name[ja]=進む
 Name[nds]=Vörut
+Name[x-test]=xxForwardxx
 Name[zh_TW]=往前
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -381,6 +409,7 @@ ConditionsCount=0
 [Data_1_7_2Triggers]
 Comment=Gesture_triggers
 Comment[nds]=Muustekens
+Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
 TriggersCount=3
 
@@ -403,6 +432,7 @@ Name=Up
 Name[csb]=W górã
 Name[ja]=上
 Name[nds]=Na baven
+Name[x-test]=xxUpxx
 Name[zh_TW]=上一層
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -421,6 +451,7 @@ ConditionsCount=0
 [Data_1_7_3Triggers]
 Comment=Gesture_triggers
 Comment[nds]=Muustekens
+Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
 TriggersCount=3
 
@@ -443,6 +474,7 @@ Name=Reload
 Name[csb]=Òdswiéżë
 Name[ja]=再読み込み
 Name[nds]=Nieg laden
+Name[x-test]=xxReloadxx
 Name[zh_TW]=重新載入
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
@@ -461,6 +493,7 @@ ConditionsCount=0
 [Data_1_7_4Triggers]
 Comment=Gesture_triggers
 Comment[nds]=Muustekens
+Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
 TriggersCount=3
 
@@ -480,11 +513,13 @@ Type=GESTURE
 Comment=After pressing Win+E (Tux+E), WWW browser will be launched and it will open http://www.kde.org . You may run all kind of commands you can run in minicli (Alt+F2).
 Comment[ja]=Win+E (Tux+E) を押すと、ウェブブラウザが起動し、http://www.kde.org を開きます。Alt+F2 で開く「コマンドを実行」ダイアログで実行できるあらゆるコマンドを指定できます。
 Comment[nds]=Dat Drücken vun Win+E (Tux+E) maakt den Nettkieker op, de denn "http://www.kde.org" laadt. Du kannst so all Befehlen utföhren, de Du ok över den Dialoog "Befehl utföhren" (Alt+F2) opropen kannst.
+Comment[x-test]=xxAfter pressing Win+E (Tux+E), WWW browser will be launched and it will open http://www.kde.org . You may run all kind of commands you can run in minicli (Alt+F2).xx
 Comment[zh_TW]=按下 Win+E（Tux+E）後會開啟瀏覽器，並跳到 http://www.kde.org。您也可以在 minicli（Alt+F2）中執行所有可執行的指令。
 Enabled=false
 Name=Go to KDE Website
 Name[ja]=KDE ウェブサイトを訪問
 Name[nds]=De KDE-Nettsiet opmaken
+Name[x-test]=xxGo to KDE Websitexx
 Name[zh_TW]=跳到 KDE 網站
 Type=COMMAND_URL_SHORTCUT_ACTION_DATA
 
@@ -502,6 +537,7 @@ ConditionsCount=0
 [Data_1_8Triggers]
 Comment=Simple_action
 Comment[nds]=Eenfach_Akschoon
+Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
 TriggersCount=1
 
