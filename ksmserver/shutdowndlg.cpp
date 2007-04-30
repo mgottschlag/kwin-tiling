@@ -31,7 +31,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kseparator.h>
 #include <kstandardguiitem.h>
 #include <kuser.h>
-#include <solid/powermanager.h>
+#include <solid/control/powermanager.h>
 
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -334,13 +334,13 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         QMenu *shutdownMenu = new QMenu( btnHalt );
         connect( shutdownMenu, SIGNAL(activated(int)), SLOT(slotSuspend(int)) );
         btnHalt->setPopupMenu( shutdownMenu );
-        Solid::PowerManager::SuspendMethods spdMethods = Solid::PowerManager::self().supportedSuspendMethods();
-        if( spdMethods & Solid::PowerManager::Standby )
-          shutdownMenu->insertItem( i18n("Standby"), Solid::PowerManager::Standby );
-        if( spdMethods & Solid::PowerManager::ToRam )
-          shutdownMenu->insertItem( i18n("Suspend to RAM"), Solid::PowerManager::ToRam );
-        if( spdMethods & Solid::PowerManager::ToDisk )
-          shutdownMenu->insertItem( i18n("Suspend to Disk"), Solid::PowerManager::ToDisk );
+        Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
+        if( spdMethods & Solid::Control::PowerManager::Standby )
+          shutdownMenu->insertItem( i18n("Standby"), Solid::Control::PowerManager::Standby );
+        if( spdMethods & Solid::Control::PowerManager::ToRam )
+          shutdownMenu->insertItem( i18n("Suspend to RAM"), Solid::Control::PowerManager::ToRam );
+        if( spdMethods & Solid::Control::PowerManager::ToDisk )
+          shutdownMenu->insertItem( i18n("Suspend to Disk"), Solid::Control::PowerManager::ToDisk );
 
         // Reboot
         KSMPushButton* btnReboot = new KSMPushButton( i18n("Restart Computer"), this );
@@ -439,8 +439,8 @@ void KSMShutdownDlg::slotHalt()
 void KSMShutdownDlg::slotSuspend(int method)
 {
     m_bootOption.clear();
-    Solid::PowerManager::SuspendMethod spdMethod = static_cast<Solid::PowerManager::SuspendMethod>(method);
-    Solid::PowerManager::self().suspend( spdMethod );
+    Solid::Control::PowerManager::SuspendMethod spdMethod = static_cast<Solid::Control::PowerManager::SuspendMethod>(method);
+    Solid::Control::PowerManager::suspend( spdMethod );
     reject();
 }
 
