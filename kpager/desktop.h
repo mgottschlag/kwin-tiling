@@ -34,7 +34,7 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QPaintEvent>
-#include <kwm.h>
+#include <kwindowsystem.h>
 
 class KSharedPixmap;
 class KMenu;

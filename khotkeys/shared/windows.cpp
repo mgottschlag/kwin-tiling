@@ -18,7 +18,7 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <klocale.h>
 
 #include "khotkeysglobal.h"
@@ -40,9 +40,9 @@ Windows::Windows( bool enable_signal_P, QObject* parent_P )
     windows_handler = this;
     if( signals_enabled )
         {
-        connect( KWM::self(), SIGNAL( windowAdded( WId )), SLOT( window_added_slot( WId )));
-        connect( KWM::self(), SIGNAL( windowRemoved( WId )), SLOT( window_removed_slot( WId )));
-        connect( KWM::self(), SIGNAL( activeWindowChanged( WId )),
+        connect( KWindowSystem::self(), SIGNAL( windowAdded( WId )), SLOT( window_added_slot( WId )));
+        connect( KWindowSystem::self(), SIGNAL( windowRemoved( WId )), SLOT( window_removed_slot( WId )));
+        connect( KWindowSystem::self(), SIGNAL( activeWindowChanged( WId )),
             SLOT( active_window_changed_slot( WId )));
         }
     }
@@ -89,7 +89,7 @@ void Windows::window_changed_slot( WId window_P, unsigned int flags_P )
 QString Windows::get_window_role( WId id_P )
     {
     // TODO this is probably just a hack
-    return KWM::windowInfo( id_P, 0, NET::WM2WindowRole ).windowRole();
+    return KWindowSystem::windowInfo( id_P, 0, NET::WM2WindowRole ).windowRole();
     }
 
 QString Windows::get_window_class( WId id_P )
@@ -107,7 +107,7 @@ QString Windows::get_window_class( WId id_P )
 
 WId Windows::active_window()
     {
-    return KWM::activeWindow();
+    return KWindowSystem::activeWindow();
     }
 
 WId Windows::action_window()
@@ -122,8 +122,8 @@ void Windows::set_action_window( WId window_P )
 
 WId Windows::find_window( const Windowdef_list* window_P )
     {
-    for( QList< WId >::const_iterator it = KWM::windows().begin();
-         it != KWM::windows().end();
+    for( QList< WId >::const_iterator it = KWindowSystem::windows().begin();
+         it != KWindowSystem::windows().end();
          ++it )
         {
         Window_data tmp( *it );
@@ -172,7 +172,7 @@ WId Windows::window_at_position( int x, int y )
 
 void Windows::activate_window( WId id_P )
     {
-    KWM::forceActiveWindow( id_P );
+    KWindowSystem::forceActiveWindow( id_P );
     }
 
 // Window_data
@@ -180,7 +180,7 @@ void Windows::activate_window( WId id_P )
 Window_data::Window_data( WId id_P )
     : type( NET::Unknown )
     {
-    KWindowInfo kwin_info = KWM::windowInfo( id_P, NET::WMName | NET::WMWindowType ); // TODO optimize
+    KWindowInfo kwin_info = KWindowSystem::windowInfo( id_P, NET::WMName | NET::WMWindowType ); // TODO optimize
     if( kwin_info.valid())
         {
         title = kwin_info.name();

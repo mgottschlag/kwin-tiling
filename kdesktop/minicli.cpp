@@ -51,7 +51,7 @@
 #include <kdebug.h>
 #include <kpassworddialog.h>
 #include <krun.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kstandarddirs.h>
 #include <kconfig.h>
 #include <kiconloader.h>
@@ -92,7 +92,7 @@ Minicli::Minicli( QWidget *parent )
 {
   setPlainCaption( i18n("Run Command") );
   setButtons(None);
-  KWM::setIcons( winId(), DesktopIcon("system-run"), SmallIcon("system-run") );
+  KWindowSystem::setIcons( winId(), DesktopIcon("system-run"), SmallIcon("system-run") );
 
   m_dlg = new Ui::MinicliDlgUI();
   m_dlg->setupUi(mainWidget());
@@ -201,7 +201,7 @@ QSize Minicli::sizeHint() const
 void Minicli::showEvent(QShowEvent *event)
 {
   adjustSize();
-  KWM::setState( winId(), NET::StaysOnTop );
+  KWindowSystem::setState( winId(), NET::StaysOnTop );
   KDialog::showEvent(event);
 }
 

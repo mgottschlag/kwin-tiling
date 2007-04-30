@@ -30,7 +30,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kmenu.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -113,9 +113,9 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop)
     connect(m_pTimer, SIGNAL(timeout()), SLOT(slotTimeout()));
     m_pTimer->start( 60000 );
 
-    connect(KWM::self(), SIGNAL(currentDesktopChanged(int)),
+    connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
 	    SLOT(slotChangeDesktop(int)));
-    connect(KWM::self(), SIGNAL(numberOfDesktopsChanged(int)),
+    connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
 	    SLOT(slotChangeNumberOfDesktops(int)));
 
     connect( kapp->desktop(), SIGNAL( resized( int )), SLOT( desktopResized())); // RANDR support
@@ -238,7 +238,7 @@ void KBackgroundManager::configure()
 
 int KBackgroundManager::realDesktop()
 {
-    int desk = KWM::currentDesktop();
+    int desk = KWindowSystem::currentDesktop();
     if (desk) desk--;
     return desk;
 }
@@ -304,7 +304,7 @@ void KBackgroundManager::slotChangeDesktop(int desk)
 
     // Lazy initialisation of # of desktops
     if ( desk >= m_Renderer.size())
-	slotChangeNumberOfDesktops( KWM::numberOfDesktops() );
+	slotChangeNumberOfDesktops( KWindowSystem::numberOfDesktops() );
 
     int edesk = effectiveDesktop();
     m_Serial++;
@@ -624,7 +624,7 @@ void KBackgroundManager::slotTimeout()
 int KBackgroundManager::validateDesk(int desk)
 {
     if (desk > (int)m_Renderer.size())
-        slotChangeNumberOfDesktops( KWM::numberOfDesktops() );
+        slotChangeNumberOfDesktops( KWindowSystem::numberOfDesktops() );
 
     if ( (desk <= 0) || (desk > (int)m_Renderer.size()) )
         return realDesktop();

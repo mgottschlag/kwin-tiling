@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QHash>
 
 #include <kpanelapplet.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 
 #include "pagerbutton.h"
 #include "pagersettings.h"
@@ -61,7 +61,7 @@ public:
     int widthForHeight(int height) const;
     int heightForWidth(int width) const;
 
-    KWM::WindowInfo* info( WId win );
+    KWindowSystem::WindowInfo* info( WId win );
     KShadowEngine* shadowEngine();
 
     void setActive( WId active ) { m_activeWindow = active; }
@@ -118,7 +118,7 @@ private:
     int m_curDesk;
     int m_rmbDesk;
 
-    QHash< int, KWM::WindowInfo* > m_windows;
+    QHash< int, KWindowSystem::WindowInfo* > m_windows;
     WId m_activeWindow;
 
     QButtonGroup *m_group;

@@ -45,7 +45,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -96,8 +96,8 @@ void KSMServer::performLegacySessionSave()
         wm_client_leader = atoms[ 2 ];
         sm_client_id = atoms[ 3 ];
     }
-    for ( QList<WId>::ConstIterator it = KWM::windows().begin();
-        it != KWM::windows().end(); ++it) {
+    for ( QList<WId>::ConstIterator it = KWindowSystem::windows().begin();
+        it != KWindowSystem::windows().end(); ++it) {
         WId leader = windowWmClientLeader( *it );
         if (!legacyWindows.contains(leader) && windowSessionId( *it, leader ).isEmpty()) {
             SMType wtype = SM_WMCOMMAND;

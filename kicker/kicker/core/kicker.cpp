@@ -44,7 +44,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kauthorized.h>
 
 #include "extensionmanager.h"
@@ -323,7 +323,7 @@ void Kicker::showConfig(const QString& configPath, int page)
     }
     */
 
-    KWM::setOnDesktop(m_configDialog->winId(), KWM::currentDesktop());
+    KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());
     m_configDialog->show();
     m_configDialog->raise();
     if (page > -1)

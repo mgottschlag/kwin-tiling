@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QWidget>
 
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <QValidator>
 #include <kinputdialog.h>
 #include <klocale.h>
@@ -78,12 +78,12 @@ void DockContainer::embed( WId id )
 {
     if( id == _embeddedWinId || id == 0)
         return;
-    QRect geom = KWM::windowInfo(id,NET::WMKDEFrameStrut).frameGeometry();
+    QRect geom = KWindowSystem::windowInfo(id,NET::WMKDEFrameStrut).frameGeometry();
 
-    // does the same as KWM::prepareForSwallowing()
+    // does the same as KWindowSystem::prepareForSwallowing()
 	QX11Info info;
     XWithdrawWindow( QX11Info::display(), id, info.screen() );
-    while( KWM::windowInfo(id, NET::XAWMState).mappingState() != NET::Withdrawn );
+    while( KWindowSystem::windowInfo(id, NET::XAWMState).mappingState() != NET::Withdrawn );
 
     XReparentWindow( QX11Info::display(), id, winId(), 0, 0 );
 

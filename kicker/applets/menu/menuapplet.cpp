@@ -37,7 +37,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 
 #include <netwm.h>
 
@@ -113,7 +113,7 @@ void Applet::windowAdded( WId w_P )
     if( info.windowType( SUPPORTED_WINDOW_TYPES ) != NET::TopMenu )
 	return;
 //    kDebug() << "embedding:" << w_P << endl;
-    Window transient_for = KWM::transientFor( w_P );
+    Window transient_for = KWindowSystem::transientFor( w_P );
     if( transient_for == None )
 	return;
     MenuEmbed* embed;
@@ -123,7 +123,7 @@ void Applet::windowAdded( WId w_P )
     }
     else
         {
-        KWindowInfo info2 = KWM::windowInfo( transient_for, NET::WMWindowType );
+        KWindowInfo info2 = KWindowSystem::windowInfo( transient_for, NET::WMWindowType );
         embed = new MenuEmbed( transient_for,
             info2.windowType( SUPPORTED_WINDOW_TYPES ) == NET::Desktop, this );
         }
@@ -138,7 +138,7 @@ void Applet::windowAdded( WId w_P )
 	}
     menus.append( embed );
     // in case the app mapped its menu after its mainwindow, check which menu should be shown
-    activeWindowChanged( KWM::activeWindow());
+    activeWindowChanged( KWindowSystem::activeWindow());
     }
 
 // - if the active window has its topmenu -> show the menu
@@ -169,7 +169,7 @@ void Applet::activeWindowChanged( WId w_P )
     bool try_desktop = desktop_menu;
     if( !try_desktop && w_P != None )
         { // also use the desktop menu if the active window is desktop
-        KWindowInfo info = KWM::windowInfo( w_P, NET::WMWindowType );
+        KWindowInfo info = KWindowSystem::windowInfo( w_P, NET::WMWindowType );
         if( info.windowType( SUPPORTED_WINDOW_TYPES ) == NET::Desktop )
             try_desktop = true;
         }
@@ -220,10 +220,10 @@ void Applet::updateMenuGeometry( MenuEmbed* embed )
 // If the window is modal (_NET_WM_STATE_MODAL), stop.
 WId Applet::tryTransientFor( WId w_P )
     {
-    KWindowInfo info = KWM::windowInfo( w_P, NET::WMState );
+    KWindowInfo info = KWindowSystem::windowInfo( w_P, NET::WMState );
     if( info.state() & NET::Modal )
 	return None;
-    WId ret = KWM::transientFor( w_P );
+    WId ret = KWindowSystem::transientFor( w_P );
     if( ret == QX11Info::appRootWindow())
         ret = None;
     return ret;
@@ -244,7 +244,7 @@ void Applet::menuLost( MenuEmbed* embed )
 		{
 		active_menu = NULL;
 		// trigger selecting new active menu
-		activeWindowChanged( KWM::activeWindow());
+		activeWindowChanged( KWindowSystem::activeWindow());
 		}
 	    return;
 	    }
@@ -292,15 +292,15 @@ void Applet::claimSelection()
         delete selection_watcher;
         selection_watcher = NULL;
         connect( selection, SIGNAL( lostOwnership()), SLOT( lostSelection()));
-	connect( KWM::self(), SIGNAL( windowAdded( WId )), this, SLOT( windowAdded( WId )));
-	connect( KWM::self(), SIGNAL( activeWindowChanged( WId )),
+	connect( KWindowSystem::self(), SIGNAL( windowAdded( WId )), this, SLOT( windowAdded( WId )));
+	connect( KWindowSystem::self(), SIGNAL( activeWindowChanged( WId )),
 	    this, SLOT( activeWindowChanged( WId )));
-	QList< WId > windows = KWM::windows();
+	QList< WId > windows = KWindowSystem::windows();
 	for( QList< WId >::ConstIterator it = windows.begin();
 	     it != windows.end();
 	     ++it )
 	    windowAdded( *it );
-	activeWindowChanged( KWM::activeWindow());
+	activeWindowChanged( KWindowSystem::activeWindow());
 	}
     else
         lostSelection();
@@ -322,7 +322,7 @@ void Applet::lostSelection()
         selection_watcher = new KSelectionWatcher( makeSelectionAtom(), DefaultScreen( QX11Info::display()));
         connect( selection_watcher, SIGNAL( lostOwner()), this, SLOT( claimSelection()));
         }
-    disconnect( KWM::self(), NULL, this, NULL );
+    disconnect( KWindowSystem::self(), NULL, this, NULL );
     selection->deleteLater();
     selection = NULL;
     // selection_watcher stays
@@ -341,7 +341,7 @@ void Applet::readSettings()
             "You do not appear to have enabled the standalone menubar; "
             "enable it in the Behavior control module for desktop." ));
     if( !isDisabled() && active_menu == NULL )
-        activeWindowChanged( KWM::activeWindow()); //enforce desktop_menu
+        activeWindowChanged( KWindowSystem::activeWindow()); //enforce desktop_menu
     }
 
 void Applet::configure()

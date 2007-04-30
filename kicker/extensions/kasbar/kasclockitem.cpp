@@ -10,7 +10,7 @@
 
 #include <kdatepicker.h>
 #include <kglobal.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kiconloader.h>
 #include <QPixmap>
 #include <kpixmapeffect.h>

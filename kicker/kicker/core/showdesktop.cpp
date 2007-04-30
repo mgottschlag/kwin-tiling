@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "kicker.h"
 #include "kickerSettings.h"
 
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <netwm.h>
 #include <QX11Info>
 
@@ -51,9 +51,9 @@ ShowDesktop::ShowDesktop()
     m_wmSupport = i.isSupported( NET::WM2ShowingDesktop );
     if( m_wmSupport )
     {
-        connect( KWM::self(), SIGNAL( showingDesktopChanged( bool )),
+        connect( KWindowSystem::self(), SIGNAL( showingDesktopChanged( bool )),
             SLOT( showingDesktopChanged( bool )));
-        showingDesktopChanged( m_showingDesktop = KWM::showingDesktop());
+        showingDesktopChanged( m_showingDesktop = KWindowSystem::showingDesktop());
     }
 }
 
@@ -132,10 +132,10 @@ void ShowDesktop::showDesktop( bool b )
 
     if (b)
     {
-        m_activeWindow = KWM::activeWindow();
+        m_activeWindow = KWindowSystem::activeWindow();
         m_iconifiedList.clear();
 
-        const QList<WId> windows = KWM::windows();
+        const QList<WId> windows = KWindowSystem::windows();
         QList<WId>::const_iterator itEnd = windows.constEnd();
         for (QList<WId>::const_iterator it = windows.constBegin();
              it != itEnd;
@@ -148,7 +148,7 @@ void ShowDesktop::showDesktop( bool b )
 
             if (info.mappingState() == NET::Visible &&
                 (info.desktop() == NETWinInfo::OnAllDesktops ||
-                 info.desktop() == (int)KWM::currentDesktop()))
+                 info.desktop() == (int)KWindowSystem::currentDesktop()))
             {
                 m_iconifiedList.append( w );
             }
@@ -161,24 +161,24 @@ void ShowDesktop::showDesktop( bool b )
              it != itEnd2;
              ++it)
         {
-            KWM::minimizeWindow( *it, false );
+            KWindowSystem::minimizeWindow( *it, false );
         }
 
         // on desktop changes or when a window is deiconified, we abort the show desktop mode
-        connect(KWM::self(), SIGNAL(currentDesktopChanged(int)),
+        connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
                 SLOT(slotCurrentDesktopChanged(int)));
-        connect(KWM::self(), SIGNAL(windowChanged(WId,unsigned int)),
+        connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)),
                 SLOT(slotWindowChanged(WId,unsigned int)));
-        connect(KWM::self(), SIGNAL(windowAdded(WId)),
+        connect(KWindowSystem::self(), SIGNAL(windowAdded(WId)),
                 SLOT(slotWindowAdded(WId)));
     }
     else
     {
-        disconnect(KWM::self(), SIGNAL(currentDesktopChanged(int)),
+        disconnect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
                    this, SLOT(slotCurrentDesktopChanged(int)));
-        disconnect(KWM::self(), SIGNAL(windowChanged(WId,unsigned int)),
+        disconnect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)),
                    this, SLOT(slotWindowChanged(WId,unsigned int)));
-        disconnect(KWM::self(), SIGNAL(windowAdded(WId)),
+        disconnect(KWindowSystem::self(), SIGNAL(windowAdded(WId)),
                    this, SLOT(slotWindowAdded(WId)));
 
         QVector<WId>::const_iterator itEnd = m_iconifiedList.constEnd();
@@ -186,10 +186,10 @@ void ShowDesktop::showDesktop( bool b )
              it != itEnd;
              ++it)
         {
-            KWM::unminimizeWindow(*it, false);
+            KWindowSystem::unminimizeWindow(*it, false);
         }
 
-        KWM::forceActiveWindow(m_activeWindow);
+        KWindowSystem::forceActiveWindow(m_activeWindow);
     }
 
     m_showingDesktop = b;

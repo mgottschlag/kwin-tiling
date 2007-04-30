@@ -29,7 +29,7 @@
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 
 #define protected public
 #include "kcmtaskbarui.h"
@@ -157,7 +157,7 @@ TaskbarConfig::TaskbarConfig(QWidget *parent, const char* name, const QStringLis
 
     updateAppearanceCombo();
 
-    if (KWM::numberOfDesktops() < 2)
+    if (KWindowSystem::numberOfDesktops() < 2)
     {
         m_widget->kcfg_ShowAllWindows->hide();
         m_widget->kcfg_SortByDesktop->hide();

@@ -46,7 +46,7 @@ Desktop::Desktop(QWidget *parent)
     setBackground(tile);
 
     // Make us legit via KWin
-    KWM::setType(winId(), NET::Desktop);
+    KWindowSystem::setType(winId(), NET::Desktop);
 
     // Tmp
     for (int i = 0; i < 4000; i++)

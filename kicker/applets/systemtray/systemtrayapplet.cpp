@@ -38,7 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdebug.h>
 #include <kglobal.h>
 #include <krun.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kdialog.h>
 #include <kactionselector.h>
 #include <kiconloader.h>
@@ -225,11 +225,11 @@ void SystemTrayApplet::preferences()
     TrayEmbedList::const_iterator itEnd = m_shownWins.end();
     for (; it != itEnd; ++it)
     {
-        QString name = KWM::windowInfo((*it)->clientWinId(), NET::WMName).name();
+        QString name = KWindowSystem::windowInfo((*it)->clientWinId(), NET::WMName).name();
 	QList<QListWidgetItem *> itemlist = shownListWidget->findItems(name, Qt::MatchExactly | Qt::MatchCaseSensitive);
         if(itemlist.isEmpty() )
         {
-            new QListWidgetItem(QIcon(KWM::icon((*it)->clientWinId(), 22, 22, true)), name, shownListWidget, 0);
+            new QListWidgetItem(QIcon(KWindowSystem::icon((*it)->clientWinId(), 22, 22, true)), name, shownListWidget, 0);
         }
     }
 
@@ -237,11 +237,11 @@ void SystemTrayApplet::preferences()
     itEnd = m_hiddenWins.end();
     for (; it != itEnd; ++it)
     {
-        QString name = KWM::windowInfo((*it)->clientWinId(), NET::WMName).name();
+        QString name = KWindowSystem::windowInfo((*it)->clientWinId(), NET::WMName).name();
 	QList<QListWidgetItem *> itemlist = hiddenListWidget->findItems(name, Qt::MatchExactly | Qt::MatchCaseSensitive);
         if(itemlist.isEmpty())
         {
-            new QListWidgetItem(QIcon(KWM::icon((*it)->clientWinId(), 22, 22, true)), name, hiddenListWidget, 0);
+            new QListWidgetItem(QIcon(KWindowSystem::icon((*it)->clientWinId(), 22, 22, true)), name, hiddenListWidget, 0);
         }
     }
 
@@ -270,13 +270,13 @@ void SystemTrayApplet::applySettings()
     for( TrayEmbedList::ConstIterator it = m_shownWins.begin();
          it != m_shownWins.end();
          ++it ) {
-        KWindowInfo info = KWM::windowInfo( (*it)->clientWinId(), NET::WMName, NET::WM2WindowClass);
+        KWindowInfo info = KWindowSystem::windowInfo( (*it)->clientWinId(), NET::WMName, NET::WM2WindowClass);
         windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
     for( TrayEmbedList::ConstIterator it = m_hiddenWins.begin();
          it != m_hiddenWins.end();
          ++it ) {
-        KWindowInfo info = KWM::windowInfo( (*it)->clientWinId(), NET::WMName, NET::WM2WindowClass);
+        KWindowInfo info = KWindowSystem::windowInfo( (*it)->clientWinId(), NET::WMName, NET::WM2WindowClass);
         windowNameToClass[ info.name() ] = '!' + info.windowClassClass();
     }
 
@@ -525,9 +525,9 @@ bool SystemTrayApplet::isWinManaged(WId w)
 
 bool SystemTrayApplet::shouldHide(WId w)
 {
-    return m_hiddenIconList.contains(KWM::windowInfo(w,NET::WMName).name());
-    return m_hiddenIconList.contains(KWM::windowInfo(w,NET::WMName).name())
-        || m_hiddenIconList.contains('!'+KWM::windowInfo(w,0,NET::WM2WindowClass).windowClassClass());
+    return m_hiddenIconList.contains(KWindowSystem::windowInfo(w,NET::WMName).name());
+    return m_hiddenIconList.contains(KWindowSystem::windowInfo(w,NET::WMName).name())
+        || m_hiddenIconList.contains('!'+KWindowSystem::windowInfo(w,0,NET::WM2WindowClass).windowClassClass());
 }
 
 void SystemTrayApplet::updateVisibleWins()
@@ -555,7 +555,7 @@ void SystemTrayApplet::updateVisibleWins()
     for( TrayEmbedList::const_iterator it = m_shownWins.begin();
          it != m_shownWins.end();
          ++it ) {
-        KWindowInfo info = KWM::windowInfo((*it)->clientWinId(),NET::WMName,NET::WM2WindowClass);
+        KWindowInfo info = KWindowSystem::windowInfo((*it)->clientWinId(),NET::WMName,NET::WM2WindowClass);
         names[ *it ] = info.name();
         classes[ *it ] = '!'+info.windowClassClass();
     }

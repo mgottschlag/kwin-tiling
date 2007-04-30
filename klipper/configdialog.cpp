@@ -33,7 +33,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kregexpeditorinterface.h>
 #include <kshortcutsdialog.h>
 #include <kparts/componentfactory.h>
@@ -77,7 +77,7 @@ ConfigDialog::~ConfigDialog()
 void ConfigDialog::showEvent( QShowEvent *event )
 {
     QSize s1 = sizeHint();
-    QSize s2 = KWM::workArea().size();
+    QSize s2 = KWindowSystem::workArea().size();
     int w = s1.width();
     int h = s1.height();
 

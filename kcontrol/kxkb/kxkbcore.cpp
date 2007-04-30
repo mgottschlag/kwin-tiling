@@ -38,7 +38,7 @@ DESCRIPTION
 #include <kglobalaccel.h>
 #include <klocale.h>
 #include <k3process.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 #include <kaction.h>
@@ -154,7 +154,7 @@ bool KxkbCore::settingsRead()
 // 	m_prevWinId = X11Helper::UNKNOWN_WINDOW_ID;
 
 	if( kxkbConfig.m_switchingPolicy == SWITCH_POLICY_GLOBAL ) {
-		disconnect(KWM::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
+		disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 	}
 	else {
 		QDesktopWidget desktopWidget;
@@ -163,8 +163,8 @@ bool KxkbCore::settingsRead()
 			//TODO: find out how to handle that
 		}
 
-		disconnect(KWM::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
-		connect(KWM::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
+		disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
+		connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 /*		int m_prevWinId = kWinModule->activeWindow();
 		kDebug() << "Active window " << m_prevWinId << endl;*/
 	}
@@ -278,7 +278,7 @@ void KxkbCore::updateIndicator(int layout, int res)
 {
     if( res ) {
   		m_currentLayout = layout;
-		int winId = KWM::activeWindow();
+		int winId = KWindowSystem::activeWindow();
  		m_layoutOwnerMap->setCurrentWindow(winId);
 		m_layoutOwnerMap->setCurrentLayout(layout);
 	}

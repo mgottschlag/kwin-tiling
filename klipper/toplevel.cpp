@@ -47,7 +47,7 @@
 #include <kstringhandler.h>
 #include <ksystemtrayicon.h>
 #include <k3urldrag.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
 #include <QtDBus/QDBusConnection>
@@ -313,7 +313,7 @@ void KlipperWidget::showPopupMenu( QMenu *menu )
         else
             menu->popup(QPoint(g.x(), g.y()));
     } else {
-        KWindowInfo i = KWM::windowInfo( winId(), NET::WMGeometry );
+        KWindowInfo i = KWindowSystem::windowInfo( winId(), NET::WMGeometry );
         QRect g = i.geometry();
         QRect screen = KGlobalSettings::desktopGeometry(g.center());
 

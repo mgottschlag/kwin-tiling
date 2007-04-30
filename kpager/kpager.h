@@ -33,7 +33,7 @@
 #include <QGridLayout>
 #include <QMenu>
 #include <kxmlguiwindow.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 
 class KPager;
 class QMenu;

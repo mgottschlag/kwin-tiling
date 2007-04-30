@@ -1745,7 +1745,7 @@ void ContainerArea::showAddAppletDialog()
         m_addAppletDialog->updateInsertionPoint();
     }
 
-    KWM::setOnDesktop(m_addAppletDialog->winId(), KWM::currentDesktop());
+    KWindowSystem::setOnDesktop(m_addAppletDialog->winId(), KWindowSystem::currentDesktop());
     m_addAppletDialog->show();
     m_addAppletDialog->raise();
 }

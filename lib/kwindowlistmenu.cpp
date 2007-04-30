@@ -37,7 +37,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kstringhandler.h>
 #include <kstyle.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <netwm.h>
 
 #undef Bool
@@ -88,9 +88,9 @@ static bool standaloneDialog( const KWindowInfo* info, const QList<KWindowInfo*>
 
 void KWindowListMenu::init()
 {
-  int numberOfDesktops = KWM::numberOfDesktops();
-  int currentDesktop = KWM::currentDesktop();
-  WId activeWindow = KWM::activeWindow();
+  int numberOfDesktops = KWindowSystem::numberOfDesktops();
+  int currentDesktop = KWindowSystem::currentDesktop();
+  WId activeWindow = KWindowSystem::activeWindow();
 
   // Make sure the popup is not too wide, otherwise clicking in the middle of kdesktop
   // wouldn't leave any place for the popup, and release would activate some menu entry.
@@ -108,8 +108,8 @@ void KWindowListMenu::init()
     addSeparator();
 
   QList<KWindowInfo> windows;
-  foreach ( WId id, KWM::windows() )
-    windows.append( KWM::windowInfo( id, NET::WMDesktop ) );
+  foreach ( WId id, KWindowSystem::windows() )
+    windows.append( KWindowSystem::windowInfo( id, NET::WMDesktop ) );
 
   bool showAllDesktopsGroup = ( numberOfDesktops > 1 );
 
@@ -147,13 +147,13 @@ void KWindowListMenu::init()
               || (windowType == NET::Dialog && standaloneDialog( info, list )))
               && !(info->state() & NET::SkipTaskbar) ) {
 
-        QPixmap pm = KWM::icon( info->win(), 16, 16, true );
+        QPixmap pm = KWindowSystem::icon( info->win(), 16, 16, true );
         items++;
 
         // ok, we have items on this desktop, let's show the title
         if ( items == 1 && numberOfDesktops > 1 ) {
           if( !onAllDesktops )
-              addTitle( KWM::desktopName( j ) );
+              addTitle( KWindowSystem::desktopName( j ) );
           else
               addTitle( i18n( "On All Desktops" ) );
         }
@@ -192,7 +192,7 @@ void KWindowListMenu::slotForceActiveWindow()
     if (!window || !window->data().canConvert(QVariant::Int))
         return;
 
-    KWM::forceActiveWindow(window->data().toInt());
+    KWindowSystem::forceActiveWindow(window->data().toInt());
 }
 
 void KWindowListMenu::slotSetCurrentDesktop()
@@ -201,7 +201,7 @@ void KWindowListMenu::slotSetCurrentDesktop()
     if (!window || !window->data().canConvert(QVariant::Int))
         return;
 
-    KWM::setCurrentDesktop(window->data().toInt());
+    KWindowSystem::setCurrentDesktop(window->data().toInt());
 }
 
 // This popup is much more useful from keyboard if it has the active

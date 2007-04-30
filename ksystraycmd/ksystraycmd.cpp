@@ -13,7 +13,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <k3process.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kconfig.h>
 #include <ksystemtrayicon.h>
 #include <kconfiggroup.h>
@@ -60,7 +60,7 @@ bool KSysTrayCmd::start()
       if ( win ) {
         // Window always on top
         if (onTop) {
-          KWM::setState(win, NET::StaysOnTop);
+          KWindowSystem::setState(win, NET::StaysOnTop);
         }
         return true;
       }
@@ -96,10 +96,10 @@ void KSysTrayCmd::showWindow()
   // Window always on top
   if (onTop)
   {
-    KWM::setState(win, NET::StaysOnTop);
+    KWindowSystem::setState(win, NET::StaysOnTop);
   }
 
-  KWM::activateWindow( win );
+  KWindowSystem::activateWindow( win );
 
 }
 
@@ -109,30 +109,30 @@ void KSysTrayCmd::hideWindow()
   if ( !win )
     return;
   //We memorize the position of the window
-  left = KWM::windowInfo(win, NET::WMFrameExtents).frameGeometry().left();
-  top=KWM::windowInfo(win, NET::WMFrameExtents).frameGeometry().top();
+  left = KWindowSystem::windowInfo(win, NET::WMFrameExtents).frameGeometry().left();
+  top=KWindowSystem::windowInfo(win, NET::WMFrameExtents).frameGeometry().top();
 
   XUnmapWindow( QX11Info::display(), win );
 }
 
 void KSysTrayCmd::setTargetWindow( WId w )
 {
-  disconnect( KWM::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
-  connect( KWM::self(), SIGNAL(windowChanged(WId)), SLOT(windowChanged(WId)) );
+  disconnect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
+  connect( KWindowSystem::self(), SIGNAL(windowChanged(WId)), SLOT(windowChanged(WId)) );
   win = w;
-//  KWM::setSystemTrayWindowFor( winId(), win );
+//  KWindowSystem::setSystemTrayWindowFor( winId(), win );
   refresh();
   show();
 
   if ( isVisible )
-    KWM::activateWindow( win );
+    KWindowSystem::activateWindow( win );
   else
     hideWindow();
 
   // Always on top ?
   if (onTop)
   {
-    KWM::setState(win, NET::StaysOnTop);
+    KWindowSystem::setState(win, NET::StaysOnTop);
   }
 }
 
@@ -142,7 +142,7 @@ void KSysTrayCmd::setTargetWindow( WId w )
 
 void KSysTrayCmd::refresh()
 {
-//  KWM::setSystemTrayWindowFor( winId(), win ? win : winId() );
+//  KWindowSystem::setSystemTrayWindowFor( winId(), win ? win : winId() );
 
   this->setToolTip( QString() );
   if ( win ) {
@@ -158,10 +158,10 @@ void KSysTrayCmd::refresh()
     }
     else
     {
-      setWindowIcon( KWM::icon( win, iconWidth, iconWidth, true ) );
+      setWindowIcon( KWindowSystem::icon( win, iconWidth, iconWidth, true ) );
     }
 
-    this->setToolTip( KWM::windowInfo( win, NET::WMName ).name() );
+    this->setToolTip( KWindowSystem::windowInfo( win, NET::WMName ).name() );
   }
   else {
     if ( !tooltip.isEmpty() )
@@ -184,7 +184,7 @@ bool KSysTrayCmd::startClient()
 {
   client = new K3ShellProcess();
   *client << command;
-  connect( KWM::self(), SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)) );
+  connect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)) );
   connect( client, SIGNAL( processExited(K3Process *) ),
 	   this, SLOT( clientExited() ) );
 
@@ -273,7 +273,7 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
 void KSysTrayCmd::checkExistingWindows()
 {
   QList<WId>::ConstIterator it;
-  for ( it = KWM::windows().begin(); it != KWM::windows().end(); ++it ) {
+  for ( it = KWindowSystem::windows().begin(); it != KWindowSystem::windows().end(); ++it ) {
     windowAdded( *it );
     if ( win )
       break;
@@ -282,7 +282,7 @@ void KSysTrayCmd::checkExistingWindows()
 
 void KSysTrayCmd::windowAdded(WId w)
 {
-  if ( !window.isEmpty() && ( QRegExp( window ).indexIn( KWM::windowInfo(w,NET::WMName).name() ) == -1 ) )
+  if ( !window.isEmpty() && ( QRegExp( window ).indexIn( KWindowSystem::windowInfo(w,NET::WMName).name() ) == -1 ) )
     return; // no match
   setTargetWindow( w );
 }

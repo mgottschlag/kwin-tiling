@@ -26,7 +26,7 @@
 #include "kpager.h"
 
 #include <kglobalsettings.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <ksharedconfig.h>
 #include <kglobal.h>
 #include <kdebug.h>
@@ -115,13 +115,13 @@ void Desktop::mouseReleaseEvent( QMouseEvent *ev )
   {
     bool showWindows= KPagerConfigDialog::m_showWindows;
     QPoint pos;
-    KWM::setCurrentDesktop(m_desk);
+    KWindowSystem::setCurrentDesktop(m_desk);
     if (showWindows)
     {
       KWindowInfo *info = windowAtPosition(ev->pos(), &pos);
       if (info)
       {
-	KWM::forceActiveWindow(info->win());
+	KWindowSystem::forceActiveWindow(info->win());
 
 	//	    if ( static_cast<WindowDrawMode>( KPagerConfigDialog::m_windowDrawMode ) == Pixmap )
 	//		m_windowPixmapsDirty.replace(info->win,true);
@@ -133,7 +133,7 @@ void Desktop::mouseReleaseEvent( QMouseEvent *ev )
 KWindowInfo *Desktop::windowAtPosition(const QPoint &p, QPoint *internalpos)
 {
 	QRect r;
-	const QList<WId> &list(KWM::stackingOrder());
+	const QList<WId> &list(KWindowSystem::stackingOrder());
 	if (list.count() <= 0)
 		return 0L;
 
@@ -331,19 +331,19 @@ void Desktop::dropEvent(QDropEvent *ev)
      * because in other case, kwm raises the window when it's in a semi
      * changed state and doesn't work well with kpager. Let's see how well
      * KWin behaves.
-     * if (activedesktop!=KWM::desktop(w))
-     *  KWM::moveToDesktop(w,activedesktop);
+     * if (activedesktop!=KWindowSystem::desktop(w))
+     *  KWindowSystem::moveToDesktop(w,activedesktop);
      */
-//    KWM::setState(win, NET::Sticky);
-    KWM::setOnAllDesktops(win, true);
+//    KWindowSystem::setState(win, NET::Sticky);
+    KWindowSystem::setOnAllDesktops(win, true);
   }
   else
   {
-    if (origdesk==0) KWM::setOnAllDesktops(win, false);
+    if (origdesk==0) KWindowSystem::setOnAllDesktops(win, false);
 
     KWindowInfo *info = pager()->info(win);
     if (!info->onAllDesktops())
-      KWM::setOnDesktop(win, m_desk);
+      KWindowSystem::setOnDesktop(win, m_desk);
   }
 
   XMoveWindow(x11Info().display(), win, x, y );
@@ -450,9 +450,9 @@ void Desktop::paintEvent( QPaintEvent * )
 
 	// draw text
 	if ( sname && snumber )
-	    txt=QString("%1. %2").arg(m_desk).arg(KWM::desktopName( m_desk ));
+	    txt=QString("%1. %2").arg(m_desk).arg(KWindowSystem::desktopName( m_desk ));
 	else if ( sname )
-	    txt=KWM::desktopName( m_desk );
+	    txt=KWindowSystem::desktopName( m_desk );
 	else if ( snumber )
 	    txt=QString::number( m_desk );
 	p.drawText(2, 0, width()-4, height(), Qt::AlignCenter, txt );
@@ -461,8 +461,8 @@ void Desktop::paintEvent( QPaintEvent * )
     // paint windows
     if ( KPagerConfigDialog::m_showWindows ) {
 	QList<WId>::ConstIterator it;
-	for ( it = KWM::stackingOrder().begin();
-	      it != KWM::stackingOrder().end(); ++it ) {
+	for ( it = KWindowSystem::stackingOrder().begin();
+	      it != KWindowSystem::stackingOrder().end(); ++it ) {
 
 	    KWindowInfo* info = pager()->info( *it );
 
@@ -493,7 +493,7 @@ void Desktop::paintWindowPlain(QPainter &p, const KWindowInfo *info, bool onDesk
     if ( !onDesktop )
 	r.moveTopLeft(QPoint(0,0));
 
-  bool isActive=(KWM::activeWindow() == info->win());
+  bool isActive=(KWindowSystem::activeWindow() == info->win());
 
   QBrush brush;
 
@@ -524,7 +524,7 @@ void Desktop::paintWindowIcon(QPainter &p, const KWindowInfo *info, bool onDeskt
   int dh = QApplication::desktop()->height();
   r = QRect( r.x() * width() / dw, 2 + r.y() * height() / dh,
       r.width() * width() / dw, r.height() * height() / dh );
-  QPixmap icon=KWM::icon( info->win(), int(r.width()*0.8),
+  QPixmap icon=KWindowSystem::icon( info->win(), int(r.width()*0.8),
 			   int(r.height()*0.8), true);
 
   NET::WindowType type = info->windowType( NET::NormalMask | NET::DesktopMask
@@ -612,7 +612,7 @@ KPager *Desktop::pager() const
 
 bool Desktop::isCurrent() const
 {
-  return KWM::currentDesktop()==m_desk;
+  return KWindowSystem::currentDesktop()==m_desk;
 }
 
 void Desktop::backgroundLoaded(bool b)

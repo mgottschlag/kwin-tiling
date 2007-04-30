@@ -27,7 +27,7 @@
 
 #include <QtGui/QProgressBar>
 
-#include <kwm.h>
+#include <kwindowsystem.h>
 #include <kiconloader.h>
 
 #include <klocale.h>
@@ -64,7 +64,7 @@ KTimerDialog::KTimerDialog( int msec, TimerStyle style, QWidget *parent,
     msecTotal = msecRemaining = msec;
     updateInterval = 1000;
     tStyle = style;
-	KWM::setIcons( winId(), DesktopIcon("randr"), SmallIcon("randr") );
+	KWindowSystem::setIcons( winId(), DesktopIcon("randr"), SmallIcon("randr") );
     // default to canceling the dialog on timeout
     if ( buttonMask & Cancel )
         buttonOnTimeout = Cancel;

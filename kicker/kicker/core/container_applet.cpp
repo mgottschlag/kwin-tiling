@@ -272,14 +272,14 @@ void AppletContainer::slotRemoved(KConfig* config)
 
 void AppletContainer::activateWindow()
 {
-    KWM::forceActiveWindow(topLevelWidget()->winId());
+    KWindowSystem::forceActiveWindow(topLevelWidget()->winId());
 }
 
 void AppletContainer::focusRequested(bool focus)
 {
     if (focus)
     {
-        KWM::forceActiveWindow(topLevelWidget()->winId());
+        KWindowSystem::forceActiveWindow(topLevelWidget()->winId());
     }
 
     emit maintainFocus(focus);

@@ -235,10 +235,10 @@ void Interface::display( const QString& term)
         m_searchTerm->setText( term );
     }
 
-    KWM::setOnDesktop( winId(), KWM::currentDesktop() );
+    KWindowSystem::setOnDesktop( winId(), KWindowSystem::currentDesktop() );
     KDialog::centerOnScreen( this );
     show();
-    KWM::forceActiveWindow( winId() );
+    KWindowSystem::forceActiveWindow( winId() );
 
     kDebug() << "about to match now that we've shown " << isVisible() << endl;
 

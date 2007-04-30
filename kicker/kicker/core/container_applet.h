@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __container_applet_h__
 
 #include <kpanelapplet.h>
-#include <kwm.h>
+#include <kwindowsystem.h>
 
 #include "appletinfo.h"
 #include "container_base.h"
