@@ -555,8 +555,7 @@ void KlipperWidget::slotConfigure()
         bSynchronize = dlg->synchronize();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         dlg->commitShortcuts();
-        // the keys need to be written to kdeglobals, not kickerrc --ellis, 22/9/02
-        globalKeys->writeSettings(0, true);
+        globalKeys->writeSettings();
         //globalKeys->updateConnections();
 #ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)

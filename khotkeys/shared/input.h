@@ -63,6 +63,7 @@ private:
     QHash< Kbd_receiver*, Receiver_data > receivers;
     QHash< KShortcut, int > grabs;
     KActionCollection* kga;
+    bool grabbingEnabled;
 };
 
 class Mouse

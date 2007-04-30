@@ -41,12 +41,12 @@ namespace KHotKeys
 // Kbd
 
 Kbd::Kbd( bool grabbing_enabled_P, QObject* parent_P )
-    : QObject( parent_P )
+    : QObject( parent_P ),
+      grabbingEnabled(grabbing_enabled_P)
     {
     assert( keyboard_handler == NULL );
     keyboard_handler = this;
     kga = new KActionCollection( this );
-    kga->setEnabled( grabbing_enabled_P );
     connect(kga, SIGNAL(actionTriggered(QAction*)), SLOT(actionTriggered(QAction*)));
     }
 
@@ -112,6 +112,7 @@ void Kbd::grab_shortcut( const KShortcut& shortcut_P )
 #endif
         QString name = ' ' + shortcut_P.toString();
         KAction* a = new KAction(name, this);
+        a->setEnabled(grabbingEnabled);
         kga->addAction( name.toLatin1().constData(), a);
         a->setGlobalShortcut(shortcut_P);
         }
