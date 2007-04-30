@@ -33,7 +33,7 @@
 
 #include <solid/device.h>
 #include <solid/genericinterface.h>
-#include <solid/volume.h>
+#include <solid/storagevolume.h>
 
 #include <solid/control/powermanager.h>
 
@@ -958,27 +958,25 @@ bool SolidShell::hwVolumeCall(SolidShell::VolumeCallType type, const QString &ud
 {
     Solid::Device device(udi);
 
-    if (!device.is<Solid::Volume>())
+    if (!device.is<Solid::StorageVolume>())
     {
-        cerr << i18n("Error: %1 does not have the interface Volume." , udi) << endl;
+        cerr << i18n("Error: %1 does not have the interface StorageVolume." , udi) << endl;
         return false;
     }
-
-    KJob *job = 0;
 
     switch(type)
     {
     case Mount:
-        job = device.as<Solid::Volume>()->mount();
+        device.as<Solid::StorageVolume>()->mount(0, 0); // FIXME
         break;
     case Unmount:
-        job = device.as<Solid::Volume>()->unmount();
+        device.as<Solid::StorageVolume>()->unmount(0, 0); // FIXME
         break;
     case Eject:
-        job = device.as<Solid::Volume>()->eject();
+        device.as<Solid::StorageVolume>()->eject(0, 0); // FIXME
         break;
     }
-
+#if 0
     if (job==0)
     {
         cerr << i18n("Error: unsupported operation!") << endl;
@@ -996,6 +994,7 @@ bool SolidShell::hwVolumeCall(SolidShell::VolumeCallType type, const QString &ud
         return false;
     }
     else
+#endif
     {
         return true;
     }
