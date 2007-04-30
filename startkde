@@ -318,11 +318,11 @@ export KDE_SESSION_UID
 
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
 # kdeinit unsets this variable before loading applications.
-LD_BIND_NOW=true kdeinit +kcminit_startup
+LD_BIND_NOW=true kdeinit4 +kcminit_startup
 if test $? -ne 0; then
   # Startup error
-  echo 'startkde: Could not start kdeinit. Check your installation.'  1>&2
-  xmessage -geometry 500x100 "Could not start kdeinit. Check your installation."
+  echo 'startkde: Could not start kdeinit4. Check your installation.'  1>&2
+  xmessage -geometry 500x100 "Could not start kdeinit4. Check your installation."
 fi
 
 # If the session should be locked from the start (locked autologin),
@@ -360,7 +360,7 @@ done
 echo 'startkde: Shutting down...'  1>&2
 
 # Clean up
-kdeinit_shutdown
+kdeinit4_shutdown
 #dcopserver_shutdown --wait
 
 echo 'startkde: Running shutdown scripts...'  1>&2
