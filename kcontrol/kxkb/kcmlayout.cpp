@@ -799,11 +799,3 @@ extern "C"
 		}
 	}
 }
-
-
-
-#if 0// do not remove!
-// please don't change/fix messages below
-// they're taken from XFree86 as is and should stay the same
-   I18N_NOOP("Brazilian ABNT2");
-#endif
