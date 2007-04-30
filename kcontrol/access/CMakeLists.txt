@@ -10,7 +10,7 @@ kde4_automoc(${kcm_access_PART_SRCS})
 kde4_add_plugin(kcm_access ${kcm_access_PART_SRCS})
 
 
-target_link_libraries(kcm_access  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_PHONONCORE_LIBRARY} ${KDE4_KNOTIFYCONFIG_LIBS}  )
+target_link_libraries(kcm_access  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_PHONON_LIBS} ${KDE4_KNOTIFYCONFIG_LIBS})
 
 install(TARGETS kcm_access  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
@@ -23,7 +23,7 @@ kde4_automoc(${kaccess_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kaccess ${kaccess_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kaccess  ${KDE4_KDEUI_LIBS} ${KDE4_PHONONCORE_LIBRARY}  )
+target_link_libraries(kdeinit_kaccess  ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS})
 
 install(TARGETS kdeinit_kaccess  DESTINATION ${LIB_INSTALL_DIR} )
 
