@@ -249,7 +249,7 @@ void KDMThemeWidget::installNewTheme()
 		progressDiag.show();
 
 		foreach (const KArchiveDirectory *ard, foundThemes) {
-			progressDiag.setLabel(
+			progressDiag.setLabelText(
 				i18n("<qt>Installing <strong>%1</strong> theme</qt>", ard->name() ) );
 
 			QString path = themeDir + ard->name();

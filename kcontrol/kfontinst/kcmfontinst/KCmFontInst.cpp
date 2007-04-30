@@ -977,7 +977,7 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
         {
             KUrl::List associatedUrls;
 
-            itsProgress->setLabel(i18n("Looking for files associated with %1", (*it).prettyUrl()));
+            itsProgress->setLabelText(i18n("Looking for files associated with %1", (*it).prettyUrl()));
             itsProgress->progressBar()->setValue(itsProgress->progressBar()->value()+1);
             if(1==steps || 0==(itsProgress->progressBar()->value()%steps))
             {
