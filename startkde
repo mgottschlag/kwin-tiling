@@ -328,7 +328,7 @@ fi
 # If the session should be locked from the start (locked autologin),
 # lock now and do the rest of the KDE startup underneath the locker.
 if test -n "$dl"; then
-  kwrapper krunner_lock --forcelock &
+  kwrapper4 krunner_lock --forcelock &
   # Give it some time for starting up. This is somewhat unclean; some
   # notification would be better.
   sleep 1
@@ -339,13 +339,13 @@ fi
 # if the KDEWM environment variable has been set, then it will be used as KDE's
 # window manager instead of kwin.
 # if KDEWM is not set, ksmserver will ensure kwin is started.
-# kwrapper is used to reduce startup time and memory usage
-# kwrapper does not return usefull error codes such as the exit code of ksmserver.
+# kwrapper4 is used to reduce startup time and memory usage
+# kwrapper4 does not return useful error codes such as the exit code of ksmserver.
 # We only check for 255 which means that the ksmserver process could not be 
 # started, any problems thereafter, e.g. ksmserver failing to initialize, 
 # will remain undetected.
 test -n "$KDEWM" && KDEWM="--windowmanager $KDEWM"
-kwrapper ksmserver $KDEWM 
+kwrapper4 ksmserver $KDEWM 
 if test $? -eq 255; then
   # Startup error
   echo 'startkde: Could not start ksmserver. Check your installation.'  1>&2
