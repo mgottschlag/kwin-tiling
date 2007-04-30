@@ -78,6 +78,7 @@ KConsole::~KConsole()
 int
 KConsole::OpenConsole()
 {
+	int slave_fd;
 #ifdef TIOCCONS
 	static const char on = 1;
 #endif
@@ -96,9 +97,11 @@ KConsole::OpenConsole()
 		return 0;
 	}
 
+	slave_fd = open( pty->ttyName(), O_RDWR );
 #ifdef TIOCCONS
-	if (ioctl( pty->slaveFd(), TIOCCONS, &on ) < 0) {
+	if (ioctl( slave_fd, TIOCCONS, &on ) < 0) {
 		perror( "ioctl TIOCCONS" );
+		::close( slave_fd );
 		delete pty;
 		pty = 0;
 		return 0;
@@ -107,6 +110,7 @@ KConsole::OpenConsole()
 	int consfd;
 	if ((consfd = open( "/dev/console", O_RDONLY )) < 0) {
 		perror( "opening /dev/console" );
+		::close( slave_fd );
 		delete pty;
 		pty = 0;
 		return 0;
@@ -114,12 +118,14 @@ KConsole::OpenConsole()
 	if (ioctl( consfd, SRIOCSREDIR, slave_fd ) < 0) {
 		perror( "ioctl SRIOCSREDIR" );
 		::close( consfd );
+		::close( slave_fd );
 		delete pty;
 		pty = 0;
 		return 0;
 	}
 	::close( consfd );
 #endif
+	::close( slave_fd );
 	fd = pty->masterFd();
 
   gotcon:
