@@ -48,6 +48,7 @@ DESCRIPTION
 #include <ktoolinvocation.h>
 #include <kglobalsettings.h>
 #include <kactioncollection.h>
+#include <kapplication.h>
 
 //#include "kxkb_adaptor.h"
 
@@ -63,6 +64,18 @@ DESCRIPTION
 #include "kxkbcore.moc"
 
 
+
+class DummyWidget: public QWidget
+{
+  KxkbCore* kxkb;
+public:
+    HackWidget(KxkbCore* kxkb_):
+	  kxkb(kxkb_)
+	{ }
+protected:
+    bool x11Event( XEvent * e) { return kxkb->x11EventFilter(e); }
+};
+
 KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
 //     : m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
       m_rules(NULL),
@@ -73,6 +86,8 @@ KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
         kDebug() << "xkb initialization failed, exiting..." << endl;
         ::exit(1);
     }
+
+	KApplication::kApplication()->installX11EventFilter(new HackWidget(this));
 
     // keep in sync with kcmlayout.cpp
 //    keys = new KActionCollection(this);
@@ -103,8 +118,6 @@ KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
 
 KxkbCore::~KxkbCore()
 {
-//    deletePrecompiledLayouts();
-
     delete keys;
     delete m_kxkbWidget;
     delete m_rules;
@@ -253,15 +266,21 @@ bool KxkbCore::setLayout(int layout)
 // 	res = m_extension->setLayout(kxkbConfig.m_model,
 //  					layoutUnit.layout, layoutUnit.variant,
 //  					layoutUnit.includeGroup);
-	int group = layout;
 
-	res = m_extension->setGroup(group); // not checking for ret - not important
+	res = m_extension->setGroup(layout); // not checking for ret - not important
 
+	updateIndicator(layout, res);
+	
+    return res;
+}
+
+void KxkbCore::updateIndicator(int layout, int res)
+{
     if( res ) {
-        m_currentLayout = layout;
+  		m_currentLayout = layout;
 		int winId = KWM::activeWindow();
  		m_layoutOwnerMap->setCurrentWindow(winId);
-		m_layoutOwnerMap->setCurrentLayout(group);
+		m_layoutOwnerMap->setCurrentLayout(layout);
 	}
 
     if( m_kxkbWidget ) {
@@ -271,8 +290,6 @@ bool KxkbCore::setLayout(int layout)
 		else
 			m_kxkbWidget->setError(layoutName);
 	}
-
-    return res;
 }
 
 void KxkbCore::iconToggled()
@@ -353,4 +370,18 @@ void KxkbCore::slotSettingsChanged(int category)
     keys->readSettings();
 	//TODO:
 	//keys->updateConnections();
+}
+
+
+bool KxkbCore::x11EventFilter ( XEvent * event )
+{
+//kDebug() << "Ev" << endl;
+  if( (event->type == m_extension->xkb_opcode) ) {
+    int group = m_extension->getGroup();
+	if( group != m_currentLayout ) {
+	  kDebug() << " group ev: " << group << endl;
+	  updateIndicator(group, 1);
+	}
+  }
+  return false;
 }

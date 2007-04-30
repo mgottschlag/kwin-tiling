@@ -21,6 +21,8 @@ public:
 	bool setGroup(unsigned int group);
 	unsigned int getGroup() const;
 
+    int xkb_opcode;
+
 private:
     Display *m_dpy;
 /*	QString m_tempDir;

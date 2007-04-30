@@ -64,7 +64,7 @@ bool XKBExtension::init()
 
     int opcode_rtrn;
     int error_rtrn;
-    int xkb_opcode;
+//    int xkb_opcode;
     if (!XkbQueryExtension(m_dpy, &opcode_rtrn, &xkb_opcode, &error_rtrn,
                          &major, &minor))
     {
@@ -75,6 +75,14 @@ bool XKBExtension::init()
 
     // Do it, or face horrible memory corrupting bugs
     ::XkbInitAtoms(NULL);
+
+	int eventMask = XkbNewKeyboardNotifyMask | XkbStateNotifyMask;
+    if (!XkbSelectEvents(m_dpy, XkbUseCoreKbd, eventMask, eventMask)) {
+	   kDebug() << "Couldn't select desired XKB events" << endl;
+	   return false;
+	}
+
+	kDebug() << "XKB inited" << endl;
 
     return true;
 }

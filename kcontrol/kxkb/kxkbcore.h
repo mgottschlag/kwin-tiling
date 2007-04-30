@@ -57,6 +57,8 @@ public:
 	virtual int newInstance();
 
 	bool setLayout(int layout);
+
+	bool x11EventFilter ( XEvent * event );
 // k_dcop:
  public slots:
 // 	bool setLayout(const QString& layoutPair);
@@ -76,6 +78,7 @@ protected:
     void layoutApply();
     
 private:
+	void updateIndicator(int layout, int res);
 	void initTray();
 
 signals:
