@@ -69,7 +69,7 @@ class DummyWidget: public QWidget
 {
   KxkbCore* kxkb;
 public:
-    HackWidget(KxkbCore* kxkb_):
+    DummyWidget(KxkbCore* kxkb_):
 	  kxkb(kxkb_)
 	{ }
 protected:
@@ -87,7 +87,7 @@ KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
         ::exit(1);
     }
 
-	KApplication::kApplication()->installX11EventFilter(new HackWidget(this));
+	KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
 
     // keep in sync with kcmlayout.cpp
 //    keys = new KActionCollection(this);
