@@ -406,10 +406,10 @@ void HalPower::updateBatteryStats()
 
         if (battery == 0) continue;
 
-        m_currentBatteryCharge+= battery->charge(Solid::Battery::CurrentLevel);
-        m_maxBatteryCharge+= battery->charge(Solid::Battery::LastFullLevel);
-        m_warningBatteryCharge+= battery->charge(Solid::Battery::WarningLevel);
-        m_lowBatteryCharge+= battery->charge(Solid::Battery::LowLevel);
+        m_currentBatteryCharge+= battery->chargeValue(Solid::Battery::CurrentLevel);
+        m_maxBatteryCharge+= battery->chargeValue(Solid::Battery::LastFullLevel);
+        m_warningBatteryCharge+= battery->chargeValue(Solid::Battery::WarningLevel);
+        m_lowBatteryCharge+= battery->chargeValue(Solid::Battery::LowLevel);
     }
 
     m_criticalBatteryCharge = m_lowBatteryCharge/2;
