@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QGLWidget>
 #include <QGLWidget>
-#include <KWM>
+#include <KWindowSystem>
 
 #include "widgets/pushbutton.h"
 #include "widgets/lineedit.h"
