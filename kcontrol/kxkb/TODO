@@ -1,24 +1,24 @@
 KDE4:
- for Group switching:
-  - Window switching
-  - Sticky
-  - Catch switching
+ Catch events - layout change
+ Applet - make icon work, check startup and conflict with kxkb
+ Modifier shortcuts - easier screen for Ctrl+Shift
+ Shortcut per layout
+ KPart
+ i18n
 
  general:
   - KAccels
   - libxklavier languages
 
   - integrate libxklavier (switch groups etc...)
-  - pure modifier keyboard shortcuts (Ctrl+Shift)
   - port deprecated Qt3 widget calls
 
   - return DCOP or make KPart or Applet etc...
+
 Others:
+- kdesktop_lock: layouts menu, flag icons, better error handling (kpart?)
+
 - setting up own layout if you're not root - using xkbcomp
-
-- check the problem with gnome apps, first switch of layout with keyboard shortcut locks input
-
-- kdesktop_lock: layouts menu, flag icons, better error handling
 
 - prevent application/window list from growing endlessly
 

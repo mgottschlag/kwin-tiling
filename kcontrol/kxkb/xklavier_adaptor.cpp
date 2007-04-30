@@ -152,14 +152,7 @@ void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
 	
 	void *userData = priv;
 
-#ifdef HAVE_SET_CUSTOM_CHARSET
 	xkl_config_registry_set_custom_charset(priv->config, "UTF-8");
-#else
-#ifdef __GNUC__
-#warning "No xkl_config_registry_set_custom_curset found - local layout names may be corrupted! Consider updating libxklavier"
-#endif
-#endif	
-
 	
 	xkl_config_registry_foreach_layout(priv->config, processLayout, userData);
 

@@ -22,8 +22,8 @@ else (LIBXKLAVIER_DEFINITIONS AND LIBXKLAVIER_LIBRARIES)
 		# find again pkg-config, to query it about libxklavier version
 		FIND_PROGRAM(PKGCONFIG_EXECUTABLE NAMES pkg-config PATHS /usr/bin/ /usr/local/bin )
 
-		# query pkg-config asking for a libxklavier >= 2.91
-		EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS --atleast-version=2.91 libxklavier RETURN_VALUE _return_VALUE OUTPUT_VARIABLE _pkgconfigDevNull )
+		# query pkg-config asking for a libxklavier >= 3.0
+		EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS --atleast-version=3.0 libxklavier RETURN_VALUE _return_VALUE OUTPUT_VARIABLE _pkgconfigDevNull )
 		if(_return_VALUE STREQUAL "0")
         		set(LIBXKLAVIER_DEFINITIONS ${_LibXKlavierCflags})
 		endif(_return_VALUE STREQUAL "0")

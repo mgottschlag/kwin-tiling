@@ -27,7 +27,7 @@ link_directories(lib)
 # set(kxkb_aplt_KDEINIT_SRCS ${kxkb_applt_SRCS_COMMON})
 # 
 # 
-# ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 -DHAVE_SET_CUSTOM_CHARSET=1 ${LIBXKLAVIER_DEFINITIONS} ${_LibGLIB2Cflags})
+# ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 ${LIBXKLAVIER_DEFINITIONS} ${_LibGLIB2Cflags})
 # 
 # kde4_automoc(${kxkb_aplt_KDEINIT_SRCS})
 # 
