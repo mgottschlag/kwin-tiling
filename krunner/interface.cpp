@@ -34,7 +34,7 @@
 #include <KGlobalSettings>
 #include <KPushButton>
 #include <KStandardGuiItem>
-#include <KWM>
+#include <KWindowSystem>
 
 #include "abstractrunner.h"
 
