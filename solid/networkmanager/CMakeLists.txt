@@ -1,0 +1,26 @@
+include_directories(${NETWORKMANAGER_DEFINITIONS} ${LIBNM-UTILS_DEFINITIONS} ${CMAKE_CURRENT_SOURCE_DIR}/../control)
+
+add_subdirectory(tests)
+
+set(solid_networkmanager_PART_SRCS
+	NetworkManager-network.cpp
+	NetworkManager-networkmanager.cpp
+	NetworkManager-networkinterface.cpp
+	NetworkManager-wirelessnetwork.cpp
+	NetworkManager-dbushelper.cpp
+)
+
+kde4_automoc(${solid_networkmanager_PART_SRCS})
+
+kde4_add_library(solid_networkmanager_static STATIC ${solid_networkmanager_PART_SRCS})
+target_link_libraries(solid_networkmanager_static ${KDE4_KDECORE_LIBS} solidcontrolifaces)
+
+kde4_add_plugin(solid_networkmanager module.cpp ${solid_networkmanager_PART_SRCS})
+
+message(STATUS "nm-util Libs are ${NM-UTIL_LIBRARY}")
+target_link_libraries(solid_networkmanager ${NM-UTIL_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol solidcontrolifaces)
+install(TARGETS solid_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
+
+install(FILES solid_networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )
+
+kde4_install_icons( ${ICON_INSTALL_DIR} )
