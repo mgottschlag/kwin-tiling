@@ -210,8 +210,8 @@ bool KxkbCore::settingsRead()
 			layouts += layoutUnit.layout;
 			variants += layoutUnit.variant;
 			if( ii < kxkbConfig.m_layouts.count() ) {
-				layouts += ",";
-				variants += ",";
+				layouts += ',';
+				variants += ',';
 			}
 		}
 		kDebug() << "initing " << "-layout " << layouts << " - variants " << variants << endl;
@@ -270,7 +270,7 @@ bool KxkbCore::setLayout(int layout)
 	res = m_extension->setGroup(layout); // not checking for ret - not important
 
 	updateIndicator(layout, res);
-	
+
     return res;
 }
 

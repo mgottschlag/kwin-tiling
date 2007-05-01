@@ -33,7 +33,7 @@ private:
   QHash<QString, XkbOption> m_options;
   QMap<QString, unsigned int> m_initialGroups;
   QHash<QString, QStringList*> m_varLists;
-  
+
   QString X11_DIR;	// pseudo-constant
 
   static bool m_layoutsClean;
@@ -41,7 +41,7 @@ private:
 #ifdef HAVE_XKLAVIER
   void loadNewRules(bool layoutsOnly);
 #else
-  void loadRules(QString filename, bool layoutsOnly=false);
+  void loadRules(const QString &filename, bool layoutsOnly=false);
   void fixOptionGroups();
 #endif
 };

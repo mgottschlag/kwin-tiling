@@ -385,13 +385,13 @@ void LayoutConfig::remove()
 		else
 			if( sel->itemAbove() )
 				newSel = sel->itemAbove();
-	
+
 		delete sel;
 		if( newSel )
 			widget->listLayoutsSrc->setSelected(newSel, true);
 		layoutSelChanged(newSel);
 	}
-	
+
 	updateAddButton();
 	updateLayoutCommand();
 	updateStickyLimit();
@@ -411,7 +411,7 @@ void LayoutConfig::moveUp()
     }
     else
 		sel->moveItem(sel->itemAbove()->itemAbove());
-	
+
 	updateLayoutCommand();
     changed();
 }
@@ -440,7 +440,7 @@ void LayoutConfig::variantChanged()
 	if( selectedVariant == DEFAULT_VARIANT_NAME )
 		selectedVariant = "";
 	selLayout->setText(LAYOUT_COLUMN_VARIANT, selectedVariant);
-	
+
 	updateLayoutCommand();
     changed();
 }
@@ -595,10 +595,10 @@ void LayoutConfig::updateOptionsCommand()
 }
 
 void LayoutConfig::updateLayoutCommand()
-{	
+{
 	QString kbdLayouts;
 	QString kbdVariants;
-	
+
 	Q3ListViewItem *item = widget->listLayoutsDst->firstChild();
 	QList<LayoutUnit> layouts;
 	while (item) {
@@ -610,13 +610,13 @@ void LayoutConfig::updateLayoutCommand()
 			variant = "";
 
 		if( kbdLayouts.length() > 0 ) {
-			kbdLayouts += ",";
-			kbdVariants += ",";
+			kbdLayouts += ',';
+			kbdVariants += ',';
 		}
-		
+
 		kbdLayouts += layout;
 		kbdVariants += variant;
-		
+
 		item = item->nextSibling();
 	}
 
@@ -624,14 +624,14 @@ void LayoutConfig::updateLayoutCommand()
     setxkbmap += " -model " + lookupLocalized(m_rules->models(), widget->comboModel->currentText());
     setxkbmap += " -layout " + kbdLayouts;
     setxkbmap += " -variant " + kbdVariants;
-  
+
 	widget->editCmdLine->setText(setxkbmap);
 }
 
 void LayoutConfig::updateDisplayName()
 {
 	Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
-  
+
 	QString layoutDisplayName;
 		kDebug() << "sel: '" << sel << "'" << endl;
 	if( sel != NULL ) {
@@ -654,7 +654,7 @@ void LayoutConfig::updateDisplayName()
 		}
 		kDebug() << "disp: '" << layoutDisplayName << "'" << endl;
 	}
-	
+
 	widget->editDisplayName->setEnabled( sel != NULL );
 	widget->editDisplayName->setText(layoutDisplayName);
 }

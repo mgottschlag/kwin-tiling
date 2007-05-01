@@ -69,7 +69,7 @@ void XkbRules::loadNewRules(bool layoutsOnly)
 
 #else
 
-void XkbRules::loadRules(QString file, bool layoutsOnly)
+void XkbRules::loadRules(const QString &file, bool layoutsOnly)
 {
 	RulesInfo* rules = X11Helper::loadRules(file, layoutsOnly);
 

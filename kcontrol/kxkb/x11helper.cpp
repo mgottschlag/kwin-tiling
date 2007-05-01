@@ -61,20 +61,20 @@ X11Helper::findX11Dir()
 		const char* xDir = X11DirList[ii];
 		if( xDir != NULL && QDir(QString(xDir) + "xkb").exists() ) {
 //			for(int jj=0; jj<X11_RULES_COUNT; jj++) {
-//				
+//
 //			}
 			return QString(xDir);
 	    }
-	
+
 //	  if( X11_DIR.isEmpty() ) {
 //	    return;
 //	  }
 	}
-	return NULL;	
+	return NULL;
 }
 
 const QString
-X11Helper::findXkbRulesFile(QString x11Dir, Display *dpy)
+X11Helper::findXkbRulesFile(const QString &x11Dir, Display *dpy)
 {
 	QString rulesFile;
 	XkbRF_VarDefsRec vd;
@@ -97,12 +97,12 @@ X11Helper::findXkbRulesFile(QString x11Dir, Display *dpy)
 		    }
     	}
     }
-	
+
 	return rulesFile;
 }
 
 RulesInfo*
-X11Helper::loadRules(const QString& file, bool layoutsOnly) 
+X11Helper::loadRules(const QString& file, bool layoutsOnly)
 {
 	XkbRF_RulesPtr xkbRules = XkbRF_Load(QFile::encodeName(file).data(), (char*)"", true, true);
 
@@ -122,7 +122,7 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 		XkbRF_Free(xkbRules, true);
 		return rulesInfo;
 	}
-  
+
   for (int i = 0; i < xkbRules->models.num_desc; ++i)
       rulesInfo->models.insert(xkbRules->models.desc[i].name, QString( xkbRules->models.desc[i].desc ) );
 
@@ -140,7 +140,7 @@ kDebug() << " option: " << optionName << endl;
 		  rulesInfo->optionGroups.insert(groupName, createMissingGroup(groupName));
 kDebug() << " added missing option group: " << groupName << endl;
 		}
-		
+
 		XkbOption option;
 		option.name = optionName;
 		option.description = xkbRules->options.desc[i].desc;
@@ -164,10 +164,10 @@ kDebug() << " option group: " << groupName << endl;
 /*
    for(QHashIterator<QString, QString> it(rulesInfo->options) ; it.hasNext();  ) {
 	  it.next();
-	   
+
 	  QString option(it.key());
 	  int columnPos = option.indexOf(":");
-	  
+
 	  if( columnPos != -1 ) {
 		  QString group = option.mid(0, columnPos);
 		  if( !rulesInfo->options.contains(group) ) {
@@ -186,7 +186,7 @@ kDebug() << " option group: " << groupName << endl;
 }
 
 
-XkbOptionGroup 
+XkbOptionGroup
 X11Helper::createMissingGroup(const QString& groupName)
 {
 // workaround for empty 'compose' options group description
@@ -205,7 +205,7 @@ X11Helper::isGroupExclusive(const QString& groupName)
 {
     if( groupName == "ctrl" || groupName == "caps" || groupName == "altwin" )
 		return true;
-		
+
 	return false;
 }
 
@@ -223,11 +223,11 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir)
   // workaround for XFree 4.3 new directory for one-group layouts
   if( QDir(file+"pc").exists() )
     file += "pc/";
-    
+
   file += layout;
 
 //  kDebug() << "reading variants from " << file << endl;
-  
+
   QFile f(file);
   if (f.open(IO_ReadOnly))
     {
@@ -238,11 +238,11 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir)
 
 	  while ( ts.status() == QTextStream::Ok ) {
     	prev_line = line;
-		
+
 		QString str = ts.readLine();
 		if( str.isNull() )
 		  break;
-		
+
 		line = str.simplified();
 
 	    if (line[0] == '#' || line.left(2) == "//" || line.isEmpty())
@@ -275,7 +275,7 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir)
 const QString X11Helper::X11_WIN_CLASS_ROOT = "<root>";
 const QString X11Helper::X11_WIN_CLASS_UNKNOWN = "<unknown>";
 
-QString 
+QString
 X11Helper::getWindowClass(WId winId, Display* dpy)
 {
   unsigned long nitems_ret, bytes_after_ret;
@@ -289,7 +289,7 @@ X11Helper::getWindowClass(WId winId, Display* dpy)
 	  kDebug() << "Got window class for " << winId << ": '" << X11_WIN_CLASS_ROOT << "'" << endl;
 	  return X11_WIN_CLASS_ROOT;
   }
-  
+
 //  kDebug() << "Getting window class for " << winId << endl;
   if((XGetWindowProperty(dpy, w, XA_WM_CLASS, 0L, 256L, 0, XA_STRING,
 			&type_ret, &format_ret, &nitems_ret,
@@ -301,6 +301,6 @@ X11Helper::getWindowClass(WId winId, Display* dpy)
 	  property = X11_WIN_CLASS_UNKNOWN;
   }
   kDebug() << "Got window class for " << winId << ": '" << property << "'" << endl;
-  
+
   return property;
 }
