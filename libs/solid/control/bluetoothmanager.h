@@ -55,7 +55,7 @@ class BluetoothManagerPrivate;
  * A bluetooth manager allow to query the underlying platform to discover the
  * available bluetooth interfaces.
  */
-class SOLID_EXPORT BluetoothManager : public QObject
+class SOLIDCONTROL_EXPORT BluetoothManager : public QObject
 {
     Q_OBJECT
     SOLID_SINGLETON(BluetoothManager)

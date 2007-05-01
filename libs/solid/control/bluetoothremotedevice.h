@@ -38,7 +38,7 @@ class BluetoothRemoteDevicePrivate;
 /**
  * Represents a bluetooth remote device as seen by the bluetoothing subsystem.
  */
-class SOLID_EXPORT BluetoothRemoteDevice : public QObject
+class SOLIDCONTROL_EXPORT BluetoothRemoteDevice : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(BluetoothRemoteDevice)

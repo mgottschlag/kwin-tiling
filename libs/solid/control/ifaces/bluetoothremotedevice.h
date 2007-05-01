@@ -36,7 +36,7 @@ namespace Ifaces
 /**
  * This interface represents a remote bluetooth device which we may be connected to.
  */
-class SOLIDIFACES_EXPORT BluetoothRemoteDevice : public QObject
+class SOLIDCONTROLIFACES_EXPORT BluetoothRemoteDevice : public QObject
 {
     Q_OBJECT
 public:

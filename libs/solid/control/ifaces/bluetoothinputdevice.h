@@ -34,7 +34,7 @@ namespace Ifaces
 /**
  * A BluetoothInputDevice object allows to manage the connection of a bluetooth input device.
  */
-class SOLIDIFACES_EXPORT BluetoothInputDevice : public QObject
+class SOLIDCONTROLIFACES_EXPORT BluetoothInputDevice : public QObject
 {
     Q_OBJECT
 public:

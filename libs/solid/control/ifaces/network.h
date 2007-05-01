@@ -35,7 +35,7 @@ namespace Ifaces
     /**
      * This interface represents a generic Internet Protocol (IP) network which we may be connected to.
      */
-    class SOLIDIFACES_EXPORT Network
+    class SOLIDCONTROLIFACES_EXPORT Network
     {
     public:
         /**

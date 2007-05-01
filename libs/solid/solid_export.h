@@ -46,10 +46,32 @@
 # endif
 #endif
 
+#ifndef SOLIDCONTROL_EXPORT
+# if defined(MAKE_SOLIDCONTROL_LIB)
+   /* We are building this library */
+#  define SOLIDCONTROL_EXPORT KDE_EXPORT
+# else
+   /* We are using this library */
+#  define SOLIDCONTROL_EXPORT KDE_IMPORT
+# endif
+#endif
+
+#ifndef SOLIDCONTROLIFACES_EXPORT
+# if defined(MAKE_SOLIDCONTROLIFACES_LIB)
+   /* We are building this library */
+#  define SOLIDCONTROLIFACES_EXPORT KDE_EXPORT
+# else
+   /* We are using this library */
+#  define SOLIDCONTROLIFACES_EXPORT KDE_IMPORT
+# endif
+#endif
+
 #else /* UNIX */
 
 #define SOLID_EXPORT KDE_EXPORT
 #define SOLIDIFACES_EXPORT KDE_EXPORT
+#define SOLIDCONTROL_EXPORT KDE_EXPORT
+#define SOLIDCONTROLIFACES_EXPORT KDE_EXPORT
 
 #endif
 

@@ -62,13 +62,13 @@ namespace Control
          * never automatically disconnect.
          * @return whether the management request succeeded.
          */
-        SOLID_EXPORT Result beginManagingSocket( QAbstractSocket * socket, uint autoDisconnectTimeout = 0 );
+        SOLIDCONTROL_EXPORT Result beginManagingSocket( QAbstractSocket * socket, uint autoDisconnectTimeout = 0 );
 
         /**
          * Remove the socket from the list of sockets to manage.  The socket's state is unaltered.
          * @param socket the socket to stop managing.
          */
-        SOLID_EXPORT void stopManagingSocket( QAbstractSocket * socket );
+        SOLIDCONTROL_EXPORT void stopManagingSocket( QAbstractSocket * socket );
 
         /**
          * Requests that the networking subsystem makes a connection.  If an on-demand connection
@@ -83,14 +83,14 @@ namespace Control
          * @param member the slot to call.
          * @return a Result indication whether the request was accepted.
          */
-        SOLID_EXPORT Result requestConnection( QObject * receiver = 0, const char * member = 0 );
+        SOLIDCONTROL_EXPORT Result requestConnection( QObject * receiver = 0, const char * member = 0 );
 
         /**
          * Activates or deactivates networking (as a whole).
          *
          * @param enabled true to activate networking, false otherwise
          */
-        SOLID_EXPORT void releaseConnection();
+        SOLIDCONTROL_EXPORT void releaseConnection();
     } // Networking
 
 } // namespace Control

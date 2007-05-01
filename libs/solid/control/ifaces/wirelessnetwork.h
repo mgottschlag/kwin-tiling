@@ -40,7 +40,7 @@ namespace Ifaces
     /**
      * This type of networks is used by wifi network interfaces.
      */
-    class SOLIDIFACES_EXPORT WirelessNetwork : virtual public Network
+    class SOLIDCONTROLIFACES_EXPORT WirelessNetwork : virtual public Network
     {
     public:
         /**

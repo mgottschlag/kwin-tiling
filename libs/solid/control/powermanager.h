@@ -112,7 +112,7 @@ namespace Control
          *
          * @return the available power management schemes
          */
-        SOLID_EXPORT QStringList supportedSchemes();
+        SOLIDCONTROL_EXPORT QStringList supportedSchemes();
 
         /**
          * Retrieves a localized description corresponding to the given scheme.
@@ -120,7 +120,7 @@ namespace Control
          * @param schemeName the name of the scheme we request the description for
          * @return the associated description
          */
-        SOLID_EXPORT QString schemeDescription(const QString &schemeName);
+        SOLIDCONTROL_EXPORT QString schemeDescription(const QString &schemeName);
 
         /**
          * Retrieves the name of the current power management scheme used
@@ -128,7 +128,7 @@ namespace Control
          *
          * @return the current scheme
          */
-        SOLID_EXPORT QString scheme();
+        SOLIDCONTROL_EXPORT QString scheme();
 
         /**
          * Changes the current power management scheme.
@@ -136,7 +136,7 @@ namespace Control
          * @param name the name of the new scheme
          * @return true if the scheme change succeeded, false otherwise
          */
-        SOLID_EXPORT bool setScheme(const QString &name);
+        SOLIDCONTROL_EXPORT bool setScheme(const QString &name);
 
 
         /**
@@ -145,14 +145,14 @@ namespace Control
          * @return the current battery state
          * @see Solid::Control::PowerManager::BatteryState
          */
-        SOLID_EXPORT BatteryState batteryState();
+        SOLIDCONTROL_EXPORT BatteryState batteryState();
 
         /**
          * Retrieves the current charge percentage of the system batteries.
          *
          * @return the current global battery charge percentage
          */
-        SOLID_EXPORT int batteryChargePercent();
+        SOLIDCONTROL_EXPORT int batteryChargePercent();
 
         /**
          * Retrieves the current state of the system AC adapter.
@@ -160,7 +160,7 @@ namespace Control
          * @return the current AC adapter state
          * @see Solid::Control::PowerManager::AcAdapterState
          */
-        SOLID_EXPORT AcAdapterState acAdapterState();
+        SOLIDCONTROL_EXPORT AcAdapterState acAdapterState();
 
 
         /**
@@ -170,7 +170,7 @@ namespace Control
          * @see Solid::Control::PowerManager::SuspendMethod
          * @see Solid::Control::PowerManager::SuspendMethods
          */
-        SOLID_EXPORT SuspendMethods supportedSuspendMethods();
+        SOLIDCONTROL_EXPORT SuspendMethods supportedSuspendMethods();
 
         /**
          * Requests a suspend of the system.
@@ -178,7 +178,7 @@ namespace Control
          * @param method the suspend method to use
          * @return the job handling the operation
          */
-        SOLID_EXPORT KJob *suspend(SuspendMethod method);
+        SOLIDCONTROL_EXPORT KJob *suspend(SuspendMethod method);
 
 
         /**
@@ -188,7 +188,7 @@ namespace Control
          * @see Solid::Control::PowerManager::CpuFreqPolicy
          * @see Solid::Control::PowerManager::CpuFreqPolicies
          */
-        SOLID_EXPORT CpuFreqPolicies supportedCpuFreqPolicies();
+        SOLIDCONTROL_EXPORT CpuFreqPolicies supportedCpuFreqPolicies();
 
         /**
          * Retrieves the current CPU frequency policy of the system.
@@ -196,7 +196,7 @@ namespace Control
          * @return the current CPU frequency policy used by the system
          * @see Solid::Control::PowerManager::CpuFreqPolicy
          */
-        SOLID_EXPORT CpuFreqPolicy cpuFreqPolicy();
+        SOLIDCONTROL_EXPORT CpuFreqPolicy cpuFreqPolicy();
 
         /**
          * Changes the current CPU frequency policy of the system.
@@ -205,7 +205,7 @@ namespace Control
          * @return true if the policy change succeeded, false otherwise
          * @see Solid::Control::PowerManager::CpuFreqPolicy
          */
-        SOLID_EXPORT bool setCpuFreqPolicy(CpuFreqPolicy newPolicy);
+        SOLIDCONTROL_EXPORT bool setCpuFreqPolicy(CpuFreqPolicy newPolicy);
 
         /**
          * Checks if a CPU can be disabled.
@@ -213,7 +213,7 @@ namespace Control
          * @param cpuNum the number of the CPU we want to check
          * @return true if the given CPU can be disabled, false otherwise
          */
-        SOLID_EXPORT bool canDisableCpu(int cpuNum);
+        SOLIDCONTROL_EXPORT bool canDisableCpu(int cpuNum);
 
         /**
          * Enables or disables a CPU.
@@ -222,9 +222,9 @@ namespace Control
          * @param enabled the new state of the CPU
          * @return true if the state change succeeded, false otherwise
          */
-        SOLID_EXPORT bool setCpuEnabled(int cpuNum, bool enabled);
+        SOLIDCONTROL_EXPORT bool setCpuEnabled(int cpuNum, bool enabled);
 
-        class Notifier : public QObject
+        class SOLIDCONTROL_EXPORT Notifier : public QObject
         {
             Q_OBJECT
         Q_SIGNALS:
@@ -260,7 +260,7 @@ namespace Control
             void buttonPressed(int buttonType);
         };
 
-        SOLID_EXPORT Notifier *notifier();
+        SOLIDCONTROL_EXPORT Notifier *notifier();
     }
 }
 }

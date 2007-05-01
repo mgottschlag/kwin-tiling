@@ -40,7 +40,7 @@ namespace Ifaces
  * A bluetooth manager allow to query the underlying platform to discover the
  * available bluetooth interfaces.
  */
-class SOLIDIFACES_EXPORT BluetoothManager : public QObject
+class SOLIDCONTROLIFACES_EXPORT BluetoothManager : public QObject
 {
     Q_OBJECT
 public:

@@ -42,7 +42,7 @@ class BluetoothInterfacePrivate;
 /**
  * Represents a bluetooth interface as seen by the bluetooth subsystem.
  */
-class SOLID_EXPORT BluetoothInterface : public QObject
+class SOLIDCONTROL_EXPORT BluetoothInterface : public QObject
 {
     Q_OBJECT
 

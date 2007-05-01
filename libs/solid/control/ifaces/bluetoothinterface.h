@@ -39,7 +39,7 @@ namespace Ifaces
 /**
  * Represents a bluetooth interface as seen by the bluetooth subsystem.
  */
-class SOLIDIFACES_EXPORT BluetoothInterface : public QObject
+class SOLIDCONTROLIFACES_EXPORT BluetoothInterface : public QObject
 {
     Q_OBJECT
 public:

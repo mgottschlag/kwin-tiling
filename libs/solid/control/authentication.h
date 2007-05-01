@@ -30,7 +30,7 @@ namespace Control
     /**
      * Base class for wireless authentication schemes.  No need to instantiate this
      */
-    class SOLID_EXPORT Authentication
+    class SOLIDCONTROL_EXPORT Authentication
     {
     public:
         typedef QMap<QString, QString> SecretMap;
@@ -56,7 +56,7 @@ namespace Control
     /**
      * This Authentication is a null authentication.  Used for open networks
      */
-    class SOLID_EXPORT AuthenticationNone : public Authentication
+    class SOLIDCONTROL_EXPORT AuthenticationNone : public Authentication
     {
     public:
         AuthenticationNone();
@@ -67,7 +67,7 @@ namespace Control
      * WEP (Wired Equivalent Privacy) Authentication.
      * Better than prayer for protecting your data, but not much.
      */
-    class SOLID_EXPORT AuthenticationWep : public Authentication
+    class SOLIDCONTROL_EXPORT AuthenticationWep : public Authentication
     {
     public:
         /**
@@ -125,7 +125,7 @@ namespace Control
      * AuthenticationWpa contains functionality shared by both Personal and Enterprise
      * authentication flavors
      */
-    class SOLID_EXPORT AuthenticationWpa : public Authentication
+    class SOLIDCONTROL_EXPORT AuthenticationWpa : public Authentication
     {
     public:
         /**
@@ -182,7 +182,7 @@ namespace Control
     /**
      * WPA Personal authentication.
      */
-    class SOLID_EXPORT AuthenticationWpaPersonal : public AuthenticationWpa
+    class SOLIDCONTROL_EXPORT AuthenticationWpaPersonal : public AuthenticationWpa
     {
     public:
         AuthenticationWpaPersonal();
@@ -192,7 +192,7 @@ namespace Control
     /**
      * WPA Enterprise
      */
-    class SOLID_EXPORT AuthenticationWpaEnterprise : public AuthenticationWpa
+    class SOLIDCONTROL_EXPORT AuthenticationWpaEnterprise : public AuthenticationWpa
     {
     public:
         /**
@@ -281,7 +281,7 @@ namespace Control
      * Contains a backend specific validator instance to validate authentication
      * Can be used for example to authenticate user input as they type
      */
-    class SOLID_EXPORT AuthenticationValidator
+    class SOLIDCONTROL_EXPORT AuthenticationValidator
     {
         public:
             AuthenticationValidator();

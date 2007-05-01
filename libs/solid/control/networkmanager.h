@@ -57,7 +57,7 @@ namespace Control
          *
          * @return the list of network interfaces available in this system
          */
-        SOLID_EXPORT NetworkInterfaceList networkInterfaces();
+        SOLIDCONTROL_EXPORT NetworkInterfaceList networkInterfaces();
 
         /**
          * Find a new NetworkInterface object given its UNI.
@@ -65,7 +65,7 @@ namespace Control
          * @param uni the identifier of the network interface to find
          * @returns a valid NetworkInterface object if there's a device having the given UNI, an invalid one otherwise
          */
-        SOLID_EXPORT const NetworkInterface &findNetworkInterface(const QString &uni);
+        SOLIDCONTROL_EXPORT const NetworkInterface &findNetworkInterface(const QString &uni);
 
         /**
          * Retrieves the status of networking (as a whole) in the system.
@@ -74,14 +74,14 @@ namespace Control
          *
          * @return true if this networking is enabled, false otherwise
          */
-        SOLID_EXPORT bool isNetworkingEnabled();
+        SOLIDCONTROL_EXPORT bool isNetworkingEnabled();
 
         /**
          * Retrieves the activation status of wireless networking in the system.
          *
          * @return true if this wireless networking is enabled, false otherwise
          */
-        SOLID_EXPORT bool isWirelessEnabled();
+        SOLIDCONTROL_EXPORT bool isWirelessEnabled();
 
 
         /**
@@ -89,23 +89,23 @@ namespace Control
          *
          * @param enabled true to activate networking, false otherwise
          */
-        SOLID_EXPORT void setNetworkingEnabled(bool enabled);
+        SOLIDCONTROL_EXPORT void setNetworkingEnabled(bool enabled);
 
         /**
          * Activates or deactivates wireless networking.
          *
          * @param enabled true to activate wireless networking, false otherwise
          */
-        SOLID_EXPORT void setWirelessEnabled(bool enabled);
+        SOLIDCONTROL_EXPORT void setWirelessEnabled(bool enabled);
 
         /**
          * Informs the system of hidden networks.
          *
          * @param networkName the name of the hidden network that could be discovered
          */
-        SOLID_EXPORT void notifyHiddenNetwork(const QString &networkName);
+        SOLIDCONTROL_EXPORT void notifyHiddenNetwork(const QString &networkName);
 
-        class Notifier : public QObject
+        class SOLIDCONTROL_EXPORT Notifier : public QObject
         {
             Q_OBJECT
         Q_SIGNALS:
@@ -124,7 +124,7 @@ namespace Control
             void networkInterfaceRemoved(const QString &uni);
         };
 
-        SOLID_EXPORT Notifier *notifier();
+        SOLIDCONTROL_EXPORT Notifier *notifier();
     }
 
 } // Control

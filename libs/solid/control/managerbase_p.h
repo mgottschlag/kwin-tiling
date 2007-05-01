@@ -36,7 +36,7 @@ namespace Control
         virtual ~ManagerBasePrivate();
         void loadBackend(const QString &description, const char *serviceName, const char *backendClassName);
 
-        SOLID_EXPORT static void _k_forcePreloadedBackend(const char *backendClassName, QObject *backend);
+        SOLIDCONTROL_EXPORT static void _k_forcePreloadedBackend(const char *backendClassName, QObject *backend);
 
         QObject *managerBackend() const;
         QString errorText() const;
