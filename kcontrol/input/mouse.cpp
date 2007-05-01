@@ -197,7 +197,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QStringList &args)
     lay->setMargin(KDialog::marginHint());
     lay->setSpacing(KDialog::spacingHint());
 
-    accel = new KDoubleNumInput(1, 20, 2, tab2,0.1, 1);
+    accel = new KDoubleNumInput(0.1, 20, 2, tab2, 0.1, 1);
     accel->setLabel(i18n("Pointer acceleration:"));
     accel->setSuffix("x");
     lay->addWidget(accel);
