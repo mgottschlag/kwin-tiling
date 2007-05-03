@@ -143,8 +143,7 @@ QStringList BluezBluetoothManager::bluetoothInputDevices() const
 
 void BluezBluetoothManager::removeInputDevice(const QString &ubi)
 {
-    QString error;
-    d->inputManager->call("RemoveDevice", ubi , &error);
+    d->inputManager->call("RemoveDevice", ubi);
 }
 
 QObject *BluezBluetoothManager::createBluetoothInputDevice(QString const &ubi)
