@@ -30,6 +30,7 @@ class KSMListener;
 class KSMConnection;
 class KSMClient;
 
+class OrgKdeKLauncherInterface;
 class QDBusInterface;
 
 enum SMType { SM_ERROR, SM_WMCOMMAND, SM_WMSAVEYOURSELF };
@@ -205,7 +206,7 @@ private:
 
     WindowMap legacyWindows;
     
-    QDBusInterface* klauncherSignals;
+    OrgKdeKLauncherInterface* klauncherSignals;
     QDBusInterface* kcminitSignals;
 };
 
