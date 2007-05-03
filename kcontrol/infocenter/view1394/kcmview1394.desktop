@@ -66,6 +66,7 @@ Name[tg]=Дастгоҳҳои EEE 1394
 Name[tr]=IEEE 1394 Aygıtları
 Name[uk]=Пристрої IEEE 1394
 Name[uz]=IEEE 1394 ускуналар
+Name[wa]=Éndjins IEEE 1394
 Name[x-test]=xxIEEE 1394 Devicesxx
 Name[zh_TW]=IEEE 1394 裝置
 
@@ -125,6 +126,7 @@ Comment[tg]= Намоиши дастгоҳҳои IEEE 1394 мутассал ба
 Comment[tr]=Bu bilgisayara bağlanmış IEEE 1394 aygıtlarını gör
 Comment[uk]=Перегляд пристроїв IEEE 1394, приєднаних до комп'ютера
 Comment[uz]=Компьютерга уланган IEEE 1394 ускуналарни кўриш
+Comment[wa]=Vey les éndjins IEEE 1394 raloyîs a cisse copiutrece chal
 Comment[x-test]=xxView the IEEE 1394 devices attached to this computerxx
 Comment[zh_TW]=查看連接到這台電腦的 IEEE 1394 裝置
 
@@ -178,5 +180,6 @@ Keywords[ta]=1394,ஃபயர்ஒயர்,சாதனங்கள்,கா
 Keywords[tr]=1394,firewire,aygıtlar,izleyici,denetim,kontrol
 Keywords[uk]=1394,Firewire,пристрої,перегляд,керування
 Keywords[uz]=1394,Firewire,ускуналар,кўрувчи,бошқарув
+Keywords[wa]=1394,IEEE 1394,Firewire,éndjins,håyneu,contrôle,corwaitaedje
 Keywords[x-test]=xx1394,Firewire,devices,viewer,controlxx
 Keywords[zh_TW]=1394,Firewire,devices,viewer,control,裝置,檢視器,控制

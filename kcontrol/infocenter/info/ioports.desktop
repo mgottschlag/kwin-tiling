@@ -70,6 +70,7 @@ Name[tg]=Даргоҳҳои дохил/баромад
 Name[tr]=G/Ç Portları
 Name[uk]=Порти В/В
 Name[uz]=К/Ч портлар
+Name[wa]=Pôrts I/R
 Name[x-test]=xxIO-Portsxx
 Name[xh]=IO-Ufako
 
@@ -131,6 +132,7 @@ Comment[tg]=Иттилооти даргоҳиҳои дохил/баромад
 Comment[tr]=Girdi Çıktı portları hakkında bilgi
 Comment[uk]=Інформація щодо портів вводу/виводу
 Comment[uz]=Кириш/чиқиш портлар ҳақида маълумот
+Comment[wa]=Informåcion so les pôrts d' Intrêye/Rexhowe
 Comment[x-test]=xxIO-port informationxx
 Comment[xh]=IO-ulwazi lwezibuko
 Comment[zh_TW]=IO-Port 資訊
