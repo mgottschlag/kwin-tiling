@@ -1,5 +1,6 @@
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ )
 include_directories(${FREETYPE_INCLUDE_DIR})
+include_directories(${STRIGI_INCLUDE_DIR})
 add_library(font MODULE FontThroughAnalyzer.cpp FontEngine.cpp )
 target_link_libraries(font ${STREAMANALYZER_LIBRARY} kfontinst )
 set_target_properties(font PROPERTIES  PREFIX strigita_)
