@@ -11,7 +11,7 @@
 #include "lockprocess.h"
 #include "lockdlg.h"
 
-#include <kcheckpass.h>
+#include <kcheckpass-enums.h>
 #include <dmctl.h>
 
 #include <kapplication.h>
