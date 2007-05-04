@@ -29,9 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
+#include <config-unix.h> // HAVE_LIMITS_H
 
 #include <pwd.h>
 #include <sys/types.h>
@@ -440,7 +439,7 @@ void KSMServer::completeShutdownOrCheckpoint()
         KNotification *n = KNotification::event( "exitkde" , QString() , QPixmap() , 0l ,  KNotification::DefaultEvent  ); // KDE says good bye
         connect(n, SIGNAL( closed() ) , this, SLOT(logoutSoundFinished()) );
 	state = WaitingForKNotify;
- 
+
     } else if ( state == Checkpoint ) {
         foreach( KSMClient* c, clients ) {
             SmsSaveComplete( c->connection());
@@ -501,7 +500,7 @@ void KSMServer::killWM()
     else
         killingCompleted();
 }
-  
+
 void KSMServer::completeKillingWM()
 {
     kDebug( 1218 ) << "KSMServer::completeKillingWM clients.count()=" <<

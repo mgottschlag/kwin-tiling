@@ -6,8 +6,6 @@
 //
 
 
-#include <config.h>
-
 #include "saverengine.h"
 #include "kscreensaversettings.h"
 #include "screensaveradaptor.h"

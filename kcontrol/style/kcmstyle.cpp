@@ -23,6 +23,8 @@
 
 #include "kcmstyle.h"
 
+#include <config-X11.h>
+
 #include "styleconfdialog.h"
 #include "ui_stylepreview.h"
 

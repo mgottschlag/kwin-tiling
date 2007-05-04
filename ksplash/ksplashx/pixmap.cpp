@@ -1,4 +1,4 @@
-#include <config.h>
+#include <config-X11.h>
 
 #ifdef HAVE_XSHM
 #define QT_MITSHM_CONVERSIONS

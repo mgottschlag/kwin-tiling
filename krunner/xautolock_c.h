@@ -21,9 +21,7 @@
 #ifndef __xautolock_c_h
 #define __xautolock_c_h
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-X11.h>
 
 #ifdef HAVE_XSCREENSAVER
 #include <X11/extensions/scrnsaver.h>

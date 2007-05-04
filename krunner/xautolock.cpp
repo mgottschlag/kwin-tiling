@@ -13,14 +13,13 @@
 #include "xautolock.h"
 #include "xautolock.moc"
 
-#include <kapplication.h>
-// #include <kdebug.h>
-
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <ctime>
 #include "xautolock_c.h"
-//Added by qt3to4:
+
+#include <kapplication.h>
+
 #include <QTimerEvent>
 #include <QX11Info>
 

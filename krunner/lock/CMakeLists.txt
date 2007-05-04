@@ -4,6 +4,8 @@ add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
 
+check_library_exists(Xxf86misc XF86MiscSetGrabKeysState "" HAVE_XF86MISCSETGRABKEYSSTATE)
+
 configure_file(config-krunner-lock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-krunner-lock.h)
 
 set(krunner_lock_SRCS

@@ -4,8 +4,11 @@ check_struct_member("struct passwd" "pw_expire" "pwd.h" HAVE_STRUCT_PASSWD_PW_EX
 check_struct_member("struct utmp" "ut_user" "utmp.h" HAVE_STRUCT_UTMP_UT_USER)
 
 check_include_files(lastlog.h HAVE_LASTLOG_H)
+check_include_files(termio.h HAVE_TERMIO_H)
+check_include_files(termios.h HAVE_TERMIOS_H)
 
 check_symbol_exists(sysinfo "sys/sysinfo.h" HAVE_SYSINFO)
+check_symbol_exists(getdomainname   "unistd.h"    HAVE_GETDOMAINNAME)
 
 check_function_exists(initgroups HAVE_INITGROUPS)
 check_function_exists(mkstemp HAVE_MKSTEMP)
@@ -153,4 +156,12 @@ option(KDE4_KDM_XCONSOLE "Build KDM with built-in xconsole" OFF)
 macro_bool_to_01(KDE4_KDM_XCONSOLE WITH_KDM_XCONSOLE)
 
 check_library_exists(X11 XkbSetPerClientControls "" HAVE_XKBSETPERCLIENTCONTROLS)
+
+check_function_exists(getifaddrs  HAVE_GETIFADDRS)
+check_function_exists(getloadavg  HAVE_GETLOADAVG)
+check_function_exists(setproctitle HAVE_SETPROCTITLE)
+check_function_exists(strnlen     HAVE_STRNLEN)
+
+check_struct_member("struct sockaddr_in" "sin_len" "sys/socket.h;netinet/in.h" HAVE_STRUCT_SOCKADDR_IN_SIN_LEN)
+check_struct_member("struct sockaddr_in6" "sin6_len" "sys/socket.h;netinet/in.h" HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN)
 

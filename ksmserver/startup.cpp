@@ -29,9 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
+#include <config-unix.h> // HAVE_LIMITS_H
 
 #include <pwd.h>
 #include <sys/types.h>
@@ -297,7 +296,7 @@ void KSMServer::autoStart2()
     kded.call( "loadSecondPhase" );
     //org::kde::kdesktop::Desktop desktop("org.kde.kdesktop", "/Desktop", QDBusConnection::sessionBus());
     //desktop.runAutoStart();
-    
+
     connect( kcminitSignals, SIGNAL( phase2Done()), SLOT( kcmPhase2Done()));
     QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
     org::kde::KCMInit kcminit("org.kde.kcminit", "/kcminit" , QDBusConnection::sessionBus());

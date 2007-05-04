@@ -43,6 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <netwm.h>
 
 #include <config.h>
+#include <config-X11.h>
 
 #if defined(HAVE_XCOMPOSITE) && \
     defined(HAVE_XRENDER) && \

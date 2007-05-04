@@ -1,8 +1,8 @@
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
-
 project(krunner)
 
-configure_file(config-xautolock.h.cmake config-xautolock.h)
+macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
+
+configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
 set(krunner_KCFG_SRCS kscreensaversettings.kcfgc klaunchsettings.kcfgc)
 set(krunner_dbusXML org.kde.krunner.Interface.xml)

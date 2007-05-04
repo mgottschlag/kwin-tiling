@@ -6,7 +6,7 @@
 // Copyright (c) 2003 Chris Howells <howells@kde.org>
 // Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
 
-#include <config.h>
+#include <config-unix.h> // HAVE_PAM
 
 #include "lockprocess.h"
 #include "lockdlg.h"

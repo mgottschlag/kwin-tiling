@@ -38,5 +38,18 @@ endif (PAM_FOUND)
 check_function_exists(getpassphrase HAVE_GETPASSPHRASE)
 check_function_exists(vsyslog HAVE_VSYSLOG)
 
+check_include_files(limits.h HAVE_LIMITS_H)
+
+macro_bool_to_01(FONTCONFIG_FOUND HAVE_FONTCONFIG) # kcontrol/{fonts,kfontinst}
+macro_bool_to_01(OPENGL_FOUND HAVE_OPENGL) # kwin
+macro_bool_to_01(X11_XShm_FOUND HAVE_XSHM) # kwin, ksplash
+macro_bool_to_01(X11_XTest_FOUND HAVE_XTEST) # khotkeys, kxkb, kdm
+macro_bool_to_01(X11_Xcomposite_FOUND HAVE_XCOMPOSITE) # kicker, kwin
+macro_bool_to_01(X11_Xcursor_FOUND HAVE_XCURSOR) # many uses
+macro_bool_to_01(X11_Xdamage_FOUND HAVE_XDAMAGE) # kwin
+macro_bool_to_01(X11_Xfixes_FOUND HAVE_XFIXES) # klipper, kicker, kwin
 macro_bool_to_01(X11_Xinerama_FOUND HAVE_XINERAMA)
-macro_bool_to_01(X11_XShm_FOUND HAVE_XSHM)
+macro_bool_to_01(X11_Xrandr_FOUND HAVE_XRANDR) # kwin
+macro_bool_to_01(X11_Xrender_FOUND HAVE_XRENDER) # kcontrol/style, kicker
+macro_bool_to_01(X11_Xxf86misc_FOUND HAVE_XF86MISC) # kdesktop and kcontrol/lock
+macro_bool_to_01(X11_dpms_FOUND HAVE_DPMS) # kdesktop

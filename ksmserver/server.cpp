@@ -30,9 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
+#include <config-unix.h> // HAVE_LIMITS_H
 #include <config-ksmserver.h>
 #include <pwd.h>
 #include <sys/types.h>

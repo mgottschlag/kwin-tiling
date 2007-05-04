@@ -10,13 +10,13 @@
 
 #define _INPUT_CPP_
 
+#include <config-X11.h>
 #include "config-khotkeys.h"
 
 #include "input.h"
 
 #include <assert.h>
 #include <QWidget>
-//Added by qt3to4:
 #include <QList>
 
 #include <kactioncollection.h>

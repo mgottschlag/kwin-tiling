@@ -90,3 +90,29 @@
 /* Define if you have XkbSetPerClientControls */
 #cmakedefine HAVE_XKBSETPERCLIENTCONTROLS 1
 
+/* Define to 1 if you have the `getifaddrs' function. */
+#cmakedefine HAVE_GETIFADDRS 1
+
+/* Define to 1 if you have the `getloadavg' function. */
+#cmakedefine HAVE_GETLOADAVG 1
+
+/* Define to 1 if you have the `setproctitle' function. */
+#cmakedefine HAVE_SETPROCTITLE 1
+
+/* Define to 1 if you have the `strnlen' function. */
+#cmakedefine HAVE_STRNLEN 1
+
+/* Define to 1 if `sin6_len' is member of `struct sockaddr_in6'. */
+#cmakedefine HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN
+
+/* Define to 1 if `sin_len' is member of `struct sockaddr_in'. */
+#cmakedefine HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
+
+/* Define if you have getdomainname */
+#cmakedefine HAVE_GETDOMAINNAME 1
+
+/* Define to 1 if you have the <termio.h> header file. */
+#cmakedefine HAVE_TERMIO_H 1
+
+/* Define to 1 if you have the <termios.h> header file. */
+#cmakedefine HAVE_TERMIOS_H 1
