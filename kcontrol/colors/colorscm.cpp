@@ -40,9 +40,9 @@
 
 #include "colorscm.h"
 #include "kcolortreewidget.h"
-#include <QX11Info>
 
-#if defined Q_WS_X11 && !defined K_WS_QTONLY
+#if defined Q_WS_X11
+#include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #endif
@@ -349,7 +349,7 @@ void KColorScheme::save()
         flags |= KRdbExportColors;
     else
     {
-#if defined Q_WS_X11 && !defined K_WS_QTONLY
+#if defined Q_WS_X11
         // Undo the property xrdb has placed on the root window (if any),
         // i.e. remove all entries, including ours
         XDeleteProperty( QX11Info::display(), QX11Info::appRootWindow(), XA_RESOURCE_MANAGER );
