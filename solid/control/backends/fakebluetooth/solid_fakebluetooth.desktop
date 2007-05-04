@@ -6,4 +6,6 @@ X-KDE-Library=solid_fakebluetooth
 InitialPreference=10
 Icon=system
 Name=Fake Bluetooth
+Name[zh_TW]=Fake 藍芽
 Comment=Fake Bluetooth Management
+Comment[zh_TW]=Fake 藍芽管理

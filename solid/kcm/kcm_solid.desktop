@@ -13,6 +13,7 @@ X-KDE-ParentApp=kcontrol
 Name=Solid
 
 Comment=Hardware Integration Configuration
+Comment[zh_TW]=系統整合設定
 
 Keywords=Solid,Hardware,Power,Network,Discovery,Management
 
