@@ -17,13 +17,13 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <config.h>
-
 #include "desktop.h"
 #include "init.h"
 #include "krootwm.h"
 #include "kdesktopsettings.h"
 #include <ksmserver_interface.h>
+
+#include <kdeversion.h>
 
 #include <kuniqueapplication.h>
 #include <klocale.h>
@@ -46,8 +46,6 @@
 
 static const char description[] =
         I18N_NOOP("The KDE desktop");
-
-static const char version[] = VERSION;
 
 static KCmdLineOptions options[] =
 {
@@ -148,7 +146,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     QDBusConnection::sessionBus().interface()->registerService( "org.kde." + appname, QDBusConnectionInterface::DontQueueService );
 
     KAboutData aboutData( appname.data(), I18N_NOOP("KDesktop"),
-			  version, description, KAboutData::License_GPL,
+			  KDE_VERSION_STRING, description, KAboutData::License_GPL,
 			  "(c) 1998-2000, The KDesktop Authors");
     aboutData.addAuthor("David Faure", I18N_NOOP("Current maintainer"), "faure@kde.org");
     aboutData.addAuthor("Martin Koller", 0, "m.koller@surfeu.at");

@@ -33,7 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 
-#include <config.h>
+#include <kdeversion.h>
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kdebug.h>
@@ -46,8 +46,6 @@ int kicker_screen_number = 0;
 
 static const char description[] =
         I18N_NOOP("The KDE panel");
-
-static const char version[] = VERSION;
 
 static void sighandler(int)
 {
@@ -120,7 +118,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
     }
 
     KAboutData aboutData( appname.data(), I18N_NOOP("KDE Panel"),
-                          version, description, KAboutData::License_BSD,
+                          KDE_VERSION_STRING, description, KAboutData::License_BSD,
                           I18N_NOOP("(c) 1999-2004, The KDE Team") );
 
     aboutData.addAuthor("Aaron J. Seigo", I18N_NOOP("Current maintainer"), "aseigo@kde.org");

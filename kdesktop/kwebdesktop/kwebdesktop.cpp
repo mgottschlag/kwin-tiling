@@ -19,8 +19,7 @@
 // Idea by Gael Duval
 // Implementation by David Faure
 
-#include <config.h>
-
+#include <kdeversion.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -90,7 +89,7 @@ void KWebDesktopRun::slotFinished( KJob * job )
 int main( int argc, char **argv )
 {
     KAboutData data( "kwebdesktop", I18N_NOOP("KDE Web Desktop"),
-                     VERSION,
+                     KDE_VERSION_STRING,
                      I18N_NOOP("Displays an HTML page as the background of the desktop"),
                      KAboutData::License_GPL,
                      "(c) 2000, David Faure <faure@kde.org>" );
