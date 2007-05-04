@@ -3,7 +3,7 @@ add_subdirectory( keramik )
 
 ########### next target ###############
 
-set(kcm_style_PART_SRCS ${libkrd_SRCS} menupreview.cpp styleconfdialog.cpp kcmstyle.cpp)
+set(kcm_style_PART_SRCS ../krdb/krdb.cpp menupreview.cpp styleconfdialog.cpp kcmstyle.cpp)
 
 kde4_automoc(${kcm_style_PART_SRCS})
 
