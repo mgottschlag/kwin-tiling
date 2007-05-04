@@ -4,6 +4,8 @@
  *  Torsten Kasch <tk@Genetik.Uni-Bielefeld.DE>
  */
 
+#include "config-infocenter.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mnttab.h>
@@ -267,7 +269,7 @@ bool GetInfo_Partitions( QListView *lBox ) {
 			ptr = strrchr( timetxt, '\n' );
 			*ptr = '\0';
 		}
-		
+
 		new QListViewItem(
 			lBox,
 			mnt.mnt_special,
@@ -280,7 +282,7 @@ bool GetInfo_Partitions( QListView *lBox ) {
 		);
 	}
 	fclose( mnttab );
-	
+
 	lBox->setSorting( 0 );
 	// sorting_allowed = true;
 

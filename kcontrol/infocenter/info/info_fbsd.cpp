@@ -4,7 +4,7 @@
  * it's running on.
  *
  * All of the devinfo bits were blatantly stolen from the devinfo utility
- * provided with FreeBSD 5.0 (and later).  No gross hacks were harmed 
+ * provided with FreeBSD 5.0 (and later).  No gross hacks were harmed
  * during the creation of info_fbsd.cpp.  Thanks Mike.
  */
 
@@ -25,19 +25,10 @@
  * was filled into the lBox-Widget. Returning false indicates that
  * information was not available.
  */
-
-#ifdef HAVE_CONFIG_H
-	#include <config.h>
-#endif
+#include "config-infocenter.h" // HAVE_DEVINFO_H
 
 #include <sys/types.h>
 #include <sys/sysctl.h>
-
-//#if __FreeBSD_version >= 500042
-//	#define we should have devinfo.h
-//#else
-//	#define we probably don't have devinfo.h
-//#endif
 
 #ifdef HAVE_DEVINFO_H
 	extern "C" {
@@ -51,7 +42,6 @@
 
 #include <Qt3Support/Q3Dict>
 #include <QFile>
-#include <Qt3Support/Q3PtrList>
 
 #include <QTextStream>
 

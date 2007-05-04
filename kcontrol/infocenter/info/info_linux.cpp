@@ -37,7 +37,6 @@
 
 #include <QRegExp>
 
-#include <kapplication.h>
 #include <kiconloader.h>
 
 #define INFO_CPU_AVAILABLE
@@ -142,7 +141,7 @@ bool GetInfo_IRQ(Q3ListView * lBox)
 bool GetInfo_DMA(Q3ListView * lBox)
 {
     QFile file(INFO_DMA);
-    
+
     lBox->addColumn(i18n("DMA-Channel"));
     lBox->addColumn(i18n("Used By"));
 
@@ -150,7 +149,7 @@ bool GetInfo_DMA(Q3ListView * lBox)
 	QTextStream stream(&file);
 	QString line;
 	Q3ListViewItem *child=0L;
-	
+
 	while (!stream.atEnd()) {
 	    line = stream.readLine();
 	    if (!line.isEmpty()) {
@@ -220,7 +219,7 @@ bool GetInfo_Devices(Q3ListView * lBox)
 	QTextStream stream(&file);
 	QString line;
 	Q3ListViewItem *parent=0L, *child=0L;
-	
+
 	while (!stream.atEnd()) {
 	    line = stream.readLine();
 	    if (!line.isEmpty()) {
@@ -251,17 +250,17 @@ bool GetInfo_Devices(Q3ListView * lBox)
     } else {
 	return false;
     }
-    
+
     file.setFileName(INFO_MISC);
     if (misc && file.exists() && file.open(QIODevice::ReadOnly)) {
 	QTextStream stream(&file);
 	QString line;
 	Q3ListViewItem *child=0L;
-	
+
 	misc->setText(0,i18n("Miscellaneous Devices"));
 	misc->setPixmap(0,SmallIcon("memory"));
 	misc->setOpen(true);
-	
+
 	while (!stream.atEnd()) {
 	    line = stream.readLine();
 	    if (!line.isEmpty()) {
@@ -273,7 +272,7 @@ bool GetInfo_Devices(Q3ListView * lBox)
 	}
 	file.close();
     }
-    
+
     return true;
 }
 

@@ -13,7 +13,7 @@
 #include <kcmodule.h>
 #include <kaboutdata.h>
 
-#include "config.h"
+#include "config-infocenter.h"
 
 /* function call-back-prototypes... */
 
@@ -36,12 +36,12 @@ public:
 
   virtual void load();
   virtual QString quickHelp() const;
-  
+
 private:
   Q3ListView 	*lBox;
   bool 		(*getlistbox) (Q3ListView *);
   QString title;
-  
+
   QLabel	*NoInfoText;
   QString	ErrorString;
   QStackedWidget  *widgetStack;

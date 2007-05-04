@@ -25,7 +25,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
-#include <config.h>
+
+#include "config-nic.h"
 #ifdef HAVE_SYS_SOCKIO_H
 #include <sys/sockio.h>
 #endif
@@ -40,7 +41,6 @@
 #include <QPushButton>
 #include <QTabWidget>
 #include <QTimer>
-//Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <Q3PtrList>
@@ -137,7 +137,7 @@ void KCMNic::update()
 static QString HWaddr2String(const char *hwaddr )
 {
    QString ret;
-   for (int i=0; i<6; i++, hwaddr++) 
+   for (int i=0; i<6; i++, hwaddr++)
    {
       int v = (*hwaddr & 0xff);
       QString num = QString("%1").arg(v,0,16);
@@ -310,14 +310,14 @@ QString flags_tos (unsigned int flags)
     }
     tmp += i18n("Broadcast");
   }
-  
+
   if (flags & IFF_MULTICAST) {
     if (tmp.length()) {
       tmp += QLatin1String(", ");
     }
     tmp += i18n("Multicast");
   }
-  
+
   if (flags & IFF_LOOPBACK) {
     if (tmp.length()) {
       tmp += QLatin1String(", ");

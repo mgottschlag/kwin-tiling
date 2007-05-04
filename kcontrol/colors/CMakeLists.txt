@@ -4,7 +4,7 @@ add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
 
-set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp kcolortreewidget.cpp ${libkrd_SRCS})
+set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp kcolortreewidget.cpp ../krdb/krdb.cpp)
 
 kde4_automoc(${kcm_colors_PART_SRCS})
 

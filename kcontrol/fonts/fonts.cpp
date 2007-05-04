@@ -36,7 +36,7 @@
 #include <kstandarddirs.h>
 #include <stdlib.h>
 
-#include "../../../runtime/kcontrol/krdb/krdb.h"
+#include "../krdb/krdb.h"
 #include "fonts.h"
 #include "fonts.moc"
 

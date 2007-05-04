@@ -8,24 +8,19 @@
 
 #include <kcmodule.h>
 #include <kaboutdata.h>
-#include <config.h>
 class QStringList;
 
-#ifdef HAVE_LONG_LONG
-/* better to use long-long, because some 32bit-machines have more total 
+/* better to use quint64, because some 32bit-machines have more total
    memory (with swap) than just the 4GB which fits into a 32bit-long */
-typedef unsigned long long t_memsize;
-#else
-typedef unsigned long t_memsize;
-#endif
+typedef quint64 t_memsize;
 
 #define COLOR_USED_MEMORY QColor(255,0,0)
 #define COLOR_USED_SWAP   QColor(255,134,64)
 #define COLOR_FREE_MEMORY QColor(127,255,212)
 
 class KMemoryWidget:public KCModule {
-  Q_OBJECT 
-	  
+  Q_OBJECT
+
   public:
     KMemoryWidget(QWidget *parent, const QStringList &);
     ~KMemoryWidget();
@@ -37,15 +32,15 @@ class KMemoryWidget:public KCModule {
     QTimer *timer;
 
     bool ram_colors_initialized,
-	swap_colors_initialized, 
+	swap_colors_initialized,
 	all_colors_initialized;
 
     QColor ram_colors[4];
     QString ram_text[4];
-    
+
     QColor swap_colors[2];
     QString swap_text[2];
-    
+
     QColor all_colors[3];
     QString all_text[3];
 
@@ -54,7 +49,7 @@ class KMemoryWidget:public KCModule {
     bool Display_Graph(int widgetindex,
 		      int count,
 		      t_memsize total,
-		      t_memsize *used, 
+		      t_memsize *used,
 		      QColor *color,
 		      QString *text);
     public Q_SLOTS:

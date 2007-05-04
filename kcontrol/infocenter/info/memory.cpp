@@ -329,12 +329,7 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
     while (count--) {
 	last_used = *used;
 
-#ifdef HAVE_LONG_LONG
-    	percent = (((long long)last_used) * 100) / total;
-#else
-	/* prevent integer overflow with usage of double type */
-	percent = (int) ((((double)last_used) * 100) / total);
-#endif
+    	percent = (((qint64)last_used) * 100) / total;
 
     	if (count)
 		localheight = ((height-2) * percent) / 100;

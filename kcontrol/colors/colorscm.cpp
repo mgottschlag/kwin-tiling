@@ -36,7 +36,7 @@
 #include <kaboutdata.h>
 #include <klistwidget.h>
 #include <kvbox.h>
-#include "../../../runtime/kcontrol/krdb/krdb.h"
+#include "../krdb/krdb.h"
 
 #include "colorscm.h"
 #include "kcolortreewidget.h"
