@@ -2859,7 +2859,7 @@ const CDisabledFonts::TFileList * CKioFonts::getEntries(const KUrl &url,
         // Oops... we have a match for both a hidden, and non-hidden font! Have to ask which one...
         // This should never really happen, as hidden fonts will start with a period.
         if(KMessageBox::Yes==messageBox(QuestionYesNo,
-                                  i18n("The selected URL (%1) matches both an enabled, and disabled"
+                                  i18n("The selected URL (%1) matches both an enabled, and disabled "
                                        "font. Which one do you wish to access?", url.prettyUrl()),
                                   i18n("Duplicate Font"), i18n("Enabled Font"),
                                   i18n("Disabled Font")))
