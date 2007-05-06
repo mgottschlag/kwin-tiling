@@ -1073,7 +1073,7 @@ void CKCmFontInst::deleteFonts(CJobRunner::ItemList &urls, const QStringList &fo
             case 1:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
                            i18n("<p>Do you really want to "
-                                "delete</p></p>\'<b>%1</b>\'?</p>", fonts.first()),
+                                "delete</p><p>\'<b>%1</b>\'?</p>", fonts.first()),
                            i18n("Delete Font"), KStandardGuiItem::del());
             break;
             default:
