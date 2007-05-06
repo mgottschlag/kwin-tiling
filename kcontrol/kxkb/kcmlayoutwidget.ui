@@ -225,7 +225,7 @@
              </size>
             </property>
             <property name="whatsThis" >
-             <string>This is the list of available keyboard layouts in your system. You can add layout to the active list by selecting it and pressing "Add" button.</string>
+             <string>This is the list of available keyboard layouts in your system. You can add a layout to the active list by selecting it and pressing "Add" button.</string>
             </property>
             <property name="allColumnsShowFocus" >
              <bool>true</bool>
