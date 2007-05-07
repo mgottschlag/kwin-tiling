@@ -600,7 +600,7 @@ int Minicli::runCommand()
       }
     }
 
-    if ( KRun::runCommand( cmd, exec, m_iconName ) )
+    if ( KRun::runCommand( cmd, exec, m_iconName, this ) )
       return 0;
     else
     {

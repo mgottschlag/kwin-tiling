@@ -144,7 +144,7 @@ void Command_url_action::execute()
                 KService::Ptr service = KService::serviceByDesktopName( cmd );
                 if( service )
                     {
-                    KRun::run( *service, KUrl::List(), 0 );
+                    KRun::run( *service, KUrl::List(), NULL );
                   break;
                     }
                 }
@@ -156,7 +156,7 @@ void Command_url_action::execute()
 		return;
             if( !KRun::runCommand(
                 cmd + ( uri.hasArgsAndOptions() ? uri.argsAndOptions() : "" ),
-                cmd, uri.iconName())) {
+                cmd, uri.iconName(), NULL )) {
                 // CHECKME ?
              }
           break;
