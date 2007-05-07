@@ -235,13 +235,13 @@ void NonKDEAppButton::runCommand(const QString& execStr)
         // and now we run the darn thing and store how we fared in result
         result = KRun::runCommand(termStr + " -e " + pathStr + ' ' +
                                   cmdStr + ' ' + execStr,
-                                  pathStr, iconStr);
+                                  pathStr, iconStr, this);
     }
     else
     {
         // just run it...
         result = KRun::runCommand(pathStr + ' ' + cmdStr  + ' ' + execStr,
-                                  pathStr, iconStr);
+                                  pathStr, iconStr,this);
     }
 
     if (!result)

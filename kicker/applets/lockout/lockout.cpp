@@ -274,7 +274,7 @@ bool Lockout::eventFilter( QObject *o, QEvent *e )
 void Lockout::slotLockPrefs()
 {
     // Run the screensaver settings
-    KRun::run( "kcmshell screensaver", KUrl::List() );
+    KRun::run( "kcmshell screensaver", KUrl::List(), this );
 }
 
 void Lockout::slotTransparent()
@@ -292,7 +292,7 @@ void Lockout::slotTransparent()
 void Lockout::slotLogoutPrefs()
 {
     // Run the logout settings.
-    KRun::run( "kcmshell kcmsmserver", KUrl::List() );
+    KRun::run( "kcmshell kcmsmserver", KUrl::List(), this );
 }
 
 void Lockout::slotIconChanged()

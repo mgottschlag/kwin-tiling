@@ -117,10 +117,10 @@ void PrintMenu::slotExec(int ID)
 	    KToolInvocation::kdeinitExec("kaddprinterwizard", QStringList("--serverconfig"));
 	    break;
         case PRINT_MANAGER_ID:
-            KRun::runCommand("kcmshell kde-printers.desktop");
+            KRun::runCommand("kcmshell kde-printers.desktop", QString(), QString(), this);
             break;
         case PRINT_BROWSER_ID:
-            KRun::runCommand("kfmclient openProfile filemanagement print:/", "kfmclient", "konqueror");
+            KRun::runCommand("kfmclient openProfile filemanagement print:/", "kfmclient", "konqueror",this);
             break;
 	case KPRINTER_ID:
 	    KToolInvocation::kdeinitExec("kprinter");

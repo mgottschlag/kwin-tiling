@@ -281,7 +281,7 @@ void RunApplet::run_command(const QString& command)
 		    goto hide;
 		}
 	}
-    if (KRun::runCommand( cmd, exec, "" ))
+    if (KRun::runCommand( cmd, exec, "", this ))
 	goto hide;
     else
 	{
