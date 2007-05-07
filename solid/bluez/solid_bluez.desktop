@@ -8,6 +8,7 @@ Name=BlueZ
 Name[x-test]=xxBlueZxx
 Comment=Bluetooth management using the BlueZ stack
 Comment[de]=Bluetooth-Verwaltung mit Hilfe von Bluez
+Comment[el]=Διαχείριση bluetooth με χρήση της στοίβας BlueZ
 Comment[nds]=Bluetooth-Pleeg mit BlueZ
 Comment[sv]=Blåtandshantering som använder BlueZ
 Comment[x-test]=xxBluetooth management using the BlueZ stackxx

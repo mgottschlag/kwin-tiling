@@ -3,6 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=This group contains various examples demonstrating most of the features of KHotkeys. (Note that this group and all its actions are disabled by default.)
+Comment[de]=Diese Gruppe enthält einige Beispiele für die meisten Funktionen von KHotkeys. (Hinweis: Diese Gruppe und alle ihre Aktionen sind in der Voreinstellung deaktiviert.)
 Comment[ja]=このグループには KHotkeys が提供するさまざまな機能の使用例が含まれています (デフォルトではこのグループとそのアクションはすべて無効になっています)。
 Comment[nds]=Disse Koppel bargt en Reeg Bispelen, de de mehrsten Funkschonen vun KHotkeys wiest (Beacht bitte, dat disse Koppel un all sien Akschonen standardwies utmaakt sünd).
 Comment[x-test]=xxThis group contains various examples demonstrating most of the features of KHotkeys. (Note that this group and all its actions are disabled by default.)xx
@@ -11,6 +12,8 @@ DataCount=8
 Enabled=false
 Name=Examples
 Name[csb]=Przëmiôrë
+Name[de]=Beispiele
+Name[el]=Παραδείγματα
 Name[ja]=使用例
 Name[nds]=Bispelen
 Name[x-test]=xxExamplesxx
@@ -24,12 +27,14 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=After pressing Ctrl+Alt+I, the KSIRC window will be activated, if it exists. Simple.
+Comment[de]=Wenn Sie Strg+Alt+I drücken, wird das KSIRC-Fenster aktiviert (sofern es eines gibt).
 Comment[ja]=Ctrl+Alt+I を押すと、存在すれば KSIRC ウィンドウがアクティブになります。これは単純です。
 Comment[nds]=Dat drücken vun Strg+Alt+I maakt dat KSirc-Finster aktiv, wenn dat een gifft. Eenfach.
 Comment[x-test]=xxAfter pressing Ctrl+Alt+I, the KSIRC window will be activated, if it exists. Simple.xx
 Comment[zh_TW]=按下 Ctrl+Alt+I 會叫出隱藏的 KSIRC 視窗。就這麼簡單。
 Enabled=false
 Name=Activate KSIRC Window
+Name[de]=Aktiviert KSIRC-Fenster
 Name[ja]=KSIRC ウィンドウをアクティブに
 Name[nds]=KSirc-Finster aktiv maken
 Name[x-test]=xxActivate KSIRC Windowxx
@@ -44,6 +49,7 @@ Type=ACTIVATE_WINDOW
 
 [Data_1_1Actions0Window]
 Comment=KSIRC window
+Comment[de]=KSIRC-Fenster
 Comment[ja]=KSIRC ウィンドウ
 Comment[nds]=KSirc-Finster
 Comment[x-test]=xxKSIRC windowxx
@@ -69,6 +75,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Simple_action
+Comment[de]=Einfache_Aktion
 Comment[nds]=Eenfach_Akschoon
 Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
@@ -80,9 +87,9 @@ Type=SHORTCUT
 
 [Data_1_2]
 Comment=After pressing Alt+Ctrl+H, 'Hello' input will be simulated just like if you typed it. Especially useful if you're lazy to type things like 'unsigned'. Every keypress in the input is separated by a colon ':' . Note that the keypresses mean really keypresses, so you have to write what you'd really press on the keyboard. In the table below, left column shows the input and the right column shows what to type.\n\n"enter" (i.e. new line)                Enter or Return\na (i.e. small a)                          A\nA (i.e. capital a)                       Shift+A\n: (colon)                                  Shift+;\n' '  (space)                              Space
-Comment[ja]=Alt+Ctrl+H を押して 'Hello' という文字列を入力します。例えば 'unsigned' のような表現を入力するのが面倒だと思う場合に役立ちます。キーボード入力に登録するキー押下は、それぞれコロン (:) で区切ります。このキー押下とは、押すキーを意味します。つまり、キーによって入力される文字ではなく、あなたが実際に押すキーボード上のキーを登録しなければなりません。以下の例では、左側が入力で、右側がキー押下です。\n\n"enter" (改行)                Enter または Return\na (小文字の a)                          A\nA (大文字の a)                       Shift+A\n: (コロン)                                  Shift+; (US 配列の場合)\n' '  (スペース)                              Space
 Enabled=false
 Name=Type 'Hello'
+Name[de]='Hello' ausgeben
 Name[ja]='Hello' を入力
 Name[nds]="Hello" tippen
 Name[x-test]=xxType 'Hello'xx
@@ -103,6 +110,7 @@ ConditionsCount=0
 
 [Data_1_2Triggers]
 Comment=Simple_action
+Comment[de]=Einfache_Aktion
 Comment[nds]=Eenfach_Akschoon
 Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
@@ -114,6 +122,7 @@ Type=SHORTCUT
 
 [Data_1_3]
 Comment=This action runs Konsole, after pressing Ctrl+Alt+T.
+Comment[de]=Nach dem Drücken von Strg+Alt+T wird das Terminalprogramm "Konsole" gestartet.
 Comment[ja]=Ctrl+Alt+T を押して Konsole を起動します。
 Comment[nds]=Disse Akschoon röppt Konsole mit Strg+Alt+T op.
 Comment[x-test]=xxThis action runs Konsole, after pressing Ctrl+Alt+T.xx
@@ -121,6 +130,8 @@ Comment[zh_TW]=這個動作會在按下 Ctrl+Alt+T 時執行 Konsole
 Enabled=false
 Name=Run Konsole
 Name[csb]=Zrëszë kònsolã
+Name[de]=Konsole starten
+Name[el]=Εκτέλεση του Konsole
 Name[ja]=Konsole を起動
 Name[nds]=Konsole opropen
 Name[x-test]=xxRun Konsolexx
@@ -140,6 +151,7 @@ ConditionsCount=0
 
 [Data_1_3Triggers]
 Comment=Simple_action
+Comment[de]=Einfache_Aktion
 Comment[nds]=Eenfach_Akschoon
 Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
@@ -151,9 +163,9 @@ Type=SHORTCUT
 
 [Data_1_4]
 Comment=Read the comment on action "Type 'Hello'" first.\n\nQt Designer uses Ctrl+F4 for closing windows (maybe because MS Windows does it that way *shrug*). But Ctrl+F4 in KDE stands for going to virtual desktop 4, so it doesn't work in Qt Designer, and also, Qt Designer doesn't use KDE's standard Ctrl+W for closing the window.\n\nBut the problem can be solved by remaping Ctrl+W to Ctrl+F4 when the active window is Qt Designer. When Qt Designer is active, every time Ctrl+W is pressed, Ctrl+F4 will be sent to Qt Designer instead. In other applications, Ctrl+W remains working the usual way of course.\n\nWe now need to specify three things: A new shortcut trigger on 'Ctrl+W', a new keyboard input action sending Ctrl+F4, and a new condition that the active window is Qt Designer.\nQt Designer seems to always have title 'Qt Designer by Trolltech', so the condition will check for the active window having that title.
-Comment[ja]=まず「'Hello' を入力」の説明をお読みください。\n\nQt デザイナーは Ctrl+F4 でウィンドウを閉じます (おそらく MS Windows がそのようになっているためでしょう、やれやれ)。しかし、KDE では Ctrl+F4 は仮想デスクトップ 4 への切り替えに割り当てられているため、動きません。また、Qt デザイナーは KDE 標準の Ctrl+W でウィンドウを閉じません。\n\nこの問題は、Qt デザイナーがアクティブウィンドウである場合に限って Ctrl+W を Ctrl+F4 に割り当て直すことで解決できます。Qt デザイナーがアクティブなときに Ctrl+W を押すと、Ctrl+F4 が代わりに Qt デザイナーへ送られます。他のアプリケーションでは Ctrl+W が通常どおりに動きます。\n\nこのためには 3 つのことを指定する必要があります。新しいショートカットトリガ 'Ctrl+W'、Ctrl+F4 を送る新しいキーボード入力アクション、そして「アクティブウィンドウは Qt デザイナー」という条件です。\nQt デザイナーは常に 'Qt Designer by Trolltech' というタイトルを持っているようなので、そのタイトルを持つアクティブウィンドウという条件を指定します。
 Enabled=false
 Name=Remap Ctrl+W to Ctrl+F4 in Qt Designer
+Name[de]=Strg+W in Qt-Designer auf Strg+F4 umleiten
 Name[ja]=Qt デザイナーで Ctrl+W を Ctrl+F4 に割り当て直す
 Name[nds]=Binnen Qt-Designer Strg+F4 na Strg+W toornen
 Name[x-test]=xxRemap Ctrl+W to Ctrl+F4 in Qt Designerxx
@@ -177,6 +189,8 @@ Type=ACTIVE_WINDOW
 
 [Data_1_4Conditions0Window]
 Comment=Qt Designer
+Comment[de]=Qt-Designer
+Comment[el]=Σχεδιαστής Qt
 Comment[ja]=Qt デザイナー
 Comment[nds]=Qt-Designer
 Comment[x-test]=xxQt Designerxx
@@ -204,12 +218,14 @@ Type=SHORTCUT
 
 [Data_1_5]
 Comment=By pressing Alt+Ctrl+W a DCOP call will be performed that will show the minicli. You can use any kind of DCOP call, just like using the command line 'dcop' tool.
+Comment[de]=Durch Drücken von Strg+Alt+W wird ein DCOP-Aufruf getätigt, der das Fenster "Befehl ausführen" anzeigt. Natürlich können Sie jede Art von DCOP-Aufruf verwenden, genauso als würden Sie das Kommandozeilenprogramm "dcop" verwenden.
 Comment[ja]=Alt+Ctrl+W を押すと、「コマンドを実行」ダイアログを表示する DCOP 呼び出しが実行されます。コマンドラインの 'dcop' ツールと同様に、あらゆる DCOP 呼び出しが使えます。
 Comment[nds]=Dat Drücken vun Strg+Alt+W föhrt en DCOP-Oproop ut, de den Dialoog "Befehl utföhren" opröppt. Du kannst all DCOP-Oprööp bruken, jüst as mit dat Konsool-Programm "dcop".
 Comment[x-test]=xxBy pressing Alt+Ctrl+W a DCOP call will be performed that will show the minicli. You can use any kind of DCOP call, just like using the command line 'dcop' tool.xx
 Comment[zh_TW]=按下 Alt+Ctrl+W 時，會產生一個 DCOP 呼叫來顯示 minicli。您可以使用任何種類的 DCOP 呼叫，就如同在命令列中使用 dcop 一樣。
 Enabled=false
 Name=Perform DCOP call 'kdesktop KDesktopIface popupExecuteCommand()'
+Name[de]=DCOP-Aufruf ausführen "kdesktop KDesktopIface popupExecuteCommand()"
 Name[ja]=DCOP 呼び出し 'kdesktop KDesktopIface popupExecuteCommand()' を実行
 Name[nds]=DCOP-Oproop "kdesktop KDesktopIface popupExecuteCommand" utföhren
 Name[x-test]=xxPerform DCOP call 'kdesktop KDesktopIface popupExecuteCommand()'xx
@@ -232,6 +248,7 @@ ConditionsCount=0
 
 [Data_1_5Triggers]
 Comment=Simple_action
+Comment[de]=Einfache_Aktion
 Comment[nds]=Eenfach_Akschoon
 Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
@@ -243,10 +260,11 @@ Type=SHORTCUT
 
 [Data_1_6]
 Comment=Read the comment on action "Type 'Hello'" first.\n\nJust like the "Type 'Hello'" action, this one simulates a keyboard input, specifically, after pressing Ctrl+Alt+B, it sends B to XMMS (B in XMMS jumps to the next song). The 'Send to specific window' checkbox is checked and a window with its class containing 'XMMS_Player' is specified; this will make the input always be sent to this window. This way, you can control XMMS even if it's e.g. on a different virtual desktop.\n\n(Run 'xprop' and click on the XMMS window and search for WM_CLASS to see 'XMMS_Player').
-Comment[ja]=まず「'Hello' を入力」の説明をお読みください。\n\nアクション「'Hello' を入力」と同様に、これもキーボード入力をシミュレートします。具体的には、Ctrl+Alt+B を押して XMMS に B を送ります (XMMS では B で次の曲に移ります)。入力の送り先に「特定のウィンドウ」を選択し、ウィンドウクラスに 'XMMS_Player' を指定します (入力を常にこのウィンドウに送るため)。これによって、他の仮想デスクトップにある XMMS も制御することができます。\n\n('XMMS_Player' を見るには、'xprop' を実行し、XMMS ウィンドウをクリックして WM_CLASS を探します)
 Enabled=false
 Name=Next in XMMS
 Name[csb]=Pòstãpné w XMMS
+Name[de]=Nächstes Stück in XMMS
+Name[el]=Επόμενο στο XMMS
 Name[ja]=XMMS の次の曲
 Name[nds]=Nakamen XMMS-Stück
 Name[x-test]=xxNext in XMMSxx
@@ -263,6 +281,7 @@ Type=KEYBOARD_INPUT
 
 [Data_1_6Actions0DestinationWindow]
 Comment=XMMS window
+Comment[de]=XMMS-Fenster
 Comment[ja]=XMMS ウィンドウ
 Comment[nds]=XMMS-Finster
 Comment[x-test]=xxXMMS windowxx
@@ -273,6 +292,7 @@ WindowsCount=1
 Class=XMMS_Player
 ClassType=1
 Comment=XMMS Player window
+Comment[de]=XMMS Wiedergabe-Fenster
 Comment[ja]=XMMS プレーヤウィンドウ
 Comment[nds]=XMMS-Afspeler-Finster
 Comment[x-test]=xxXMMS Player windowxx
@@ -290,6 +310,7 @@ ConditionsCount=0
 
 [Data_1_6Triggers]
 Comment=Simple_action
+Comment[de]=Einfache_Aktion
 Comment[nds]=Eenfach_Akschoon
 Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
@@ -301,10 +322,10 @@ Type=SHORTCUT
 
 [Data_1_7]
 Comment=Ok, Konqi in KDE3.1 has tabs, and now you can also have gestures. No need to use other browsers >;).\n\nJust press the middle mouse button and start drawing one of the gestures, and after you're finished, release the mouse button. If you only need to paste the selection, it still works, simply only click the middle mouse button. (You can change the mouse button to use in the global settings).\n\nRight now, there are these gestures available:\nmove right and back left - Forward (ALt+Right)\nmove left and back right - Back (Alt+Left)\nmove up and back down  - Up (Alt+Up)\ncircle anticlockwise - Reload (F5)\n (As soon as I find out which ones are in Opera or Mozilla, I'll add more and make sure they are the same. Or if you do it yourself, feel free to help me and send me your khotkeysrc.)\n\nThe gestures shapes (some of the dialogs are from KGesture, thanks to Mike Pilone) can be simply entered by performing them in the configuration dialog. You can also look at your numeric pad to help you, gestures are recognized like a 3x3 grid of fields, numbered 1 to 9.\n\nNote that you must perform exactly the gesture to trigger the action. Because of this, it's possible to enter more gestures for the action. You should try to avoid complicated gestures where you change the direction of mouse moving more than once (i.e. do e.g. 45654 or 74123 as they are simple to perform but e.g. 1236987 may be already quite difficult).\n\nThe condition for all gestures are defined in this group. All these gestures are active only if the active window is Konqueror (class contains 'konqueror').
-Comment[ja]=Konqueror は KDE 3.1 でタブとマウスジェスチャーを実装しました。もう他のブラウザを使う必要はありません。;)\n\nまずマウスの中ボタンを押して、押したままジェスチャーを描いて、描き終えたらボタンを放してください。選択を貼り付けるときは、マウスの中ボタンを押すだけです。マウスジェスチャーに使用するボタンは「全体設定」で変更できます。\n\n現在利用できるジェスチャーは以下のとおりです。\n右->左 - 進む (ALt+右)\n左->右 - 戻る (Alt+左)\n上->下 - 上 (Alt+上)\n反時計回りに一周 - 再読み込み (F5)\n (これ以外にも Opera や Mozilla で実装されているものが分かれば、Konqueror にも追加し、同じように動くようにします。あなた自身で追加したら、ぜひあなたの khotkeysrc を送ってください)\n\nジェスチャーの形は設定ダイアログで実際に描くことによって登録できます (ダイアログの一部は Mike Pilone による KGesture から流用しました)。テンキーも参考にしてください。ジェスチャーは 3x3 のグリッドの 1 から 9 の数値として認識されます。\n\nアクションはジェスチャーを正確に再現しなければ実行されません。このため、一つのアクションに複数のジェスチャーを登録できるようになっています。マウスを動かす方向を 2 度以上変える場合は、あまり複雑にしないでください (45654 や 74123 を描くのは簡単ですが、1236987 は既に難しいかもしれません)。\n\nすべてのジェスチャーの条件はこのグループに定義されています。これらのジェスチャーは、アクティブなウィンドウが Konqueror の場合 (ウィンドウのクラスが 'konqueror' を含む場合) にのみ有効になります。
 DataCount=4
 Enabled=false
 Name=Konqi Gestures
+Name[de]=Konqueror-Gesten
 Name[ja]=Konqi ジェスチャー
 Name[nds]=Konqui-Muustekens
 Name[x-test]=xxKonqi Gesturesxx
@@ -315,6 +336,8 @@ Type=ACTION_DATA_GROUP
 [Data_1_7Conditions]
 Comment=Konqueror window
 Comment[csb]=Òkno Konquerora
+Comment[de]=Konqueror-Fenster
+Comment[el]=Παράθυρο του Konqueror
 Comment[ja]=Konqueror ウィンドウ
 Comment[nds]=Konqueror-Finster
 Comment[x-test]=xxKonqueror windowxx
@@ -346,6 +369,8 @@ Comment=
 Enabled=false
 Name=Back
 Name[csb]=Nazôd
+Name[de]=Zurück
+Name[el]=Πίσω
 Name[ja]=戻る
 Name[nds]=Torüch
 Name[x-test]=xxBackxx
@@ -366,6 +391,7 @@ ConditionsCount=0
 
 [Data_1_7_1Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -388,6 +414,8 @@ Comment=
 Enabled=false
 Name=Forward
 Name[csb]=Wprzódk
+Name[de]=Nach vorne
+Name[el]=Μπροστά
 Name[ja]=進む
 Name[nds]=Vörut
 Name[x-test]=xxForwardxx
@@ -408,6 +436,7 @@ ConditionsCount=0
 
 [Data_1_7_2Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -430,6 +459,8 @@ Comment=
 Enabled=false
 Name=Up
 Name[csb]=W górã
+Name[de]=Aufwärts
+Name[el]=Πάνω
 Name[ja]=上
 Name[nds]=Na baven
 Name[x-test]=xxUpxx
@@ -450,6 +481,7 @@ ConditionsCount=0
 
 [Data_1_7_3Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -472,6 +504,8 @@ Comment=
 Enabled=false
 Name=Reload
 Name[csb]=Òdswiéżë
+Name[de]=Dokument erneut laden
+Name[el]=Επαναφόρτωση
 Name[ja]=再読み込み
 Name[nds]=Nieg laden
 Name[x-test]=xxReloadxx
@@ -492,6 +526,7 @@ ConditionsCount=0
 
 [Data_1_7_4Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -511,12 +546,14 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=After pressing Win+E (Tux+E), WWW browser will be launched and it will open http://www.kde.org . You may run all kind of commands you can run in minicli (Alt+F2).
+Comment[de]=Wenn Sie Windows+E drücken, wird der Webbrowser gestartet und http://www.kde.org geladen. Sie können alle Befehle ausführen, die von der Mini-Befehlszeile unterstützt werden (Alt+F2).
 Comment[ja]=Win+E (Tux+E) を押すと、ウェブブラウザが起動し、http://www.kde.org を開きます。Alt+F2 で開く「コマンドを実行」ダイアログで実行できるあらゆるコマンドを指定できます。
 Comment[nds]=Dat Drücken vun Win+E (Tux+E) maakt den Nettkieker op, de denn "http://www.kde.org" laadt. Du kannst so all Befehlen utföhren, de Du ok över den Dialoog "Befehl utföhren" (Alt+F2) opropen kannst.
 Comment[x-test]=xxAfter pressing Win+E (Tux+E), WWW browser will be launched and it will open http://www.kde.org . You may run all kind of commands you can run in minicli (Alt+F2).xx
 Comment[zh_TW]=按下 Win+E（Tux+E）後會開啟瀏覽器，並跳到 http://www.kde.org。您也可以在 minicli（Alt+F2）中執行所有可執行的指令。
 Enabled=false
 Name=Go to KDE Website
+Name[de]=KDE-Webseite aufrufen
 Name[ja]=KDE ウェブサイトを訪問
 Name[nds]=De KDE-Nettsiet opmaken
 Name[x-test]=xxGo to KDE Websitexx
@@ -536,6 +573,7 @@ ConditionsCount=0
 
 [Data_1_8Triggers]
 Comment=Simple_action
+Comment[de]=Einfache_Aktion
 Comment[nds]=Eenfach_Akschoon
 Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作

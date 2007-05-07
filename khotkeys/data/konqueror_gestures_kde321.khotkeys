@@ -4,6 +4,7 @@ DataCount=1
 [Data_1]
 Comment=Basic Konqueror gestures.
 Comment[csb]=Pòdspòdlowé gestë Konquerora
+Comment[de]=Grundlegende Gesten für Konqueror
 Comment[ja]=Konqueror の基本的なジェスチャーです。(マウスジェスチャーに使用するボタンは「全体設定」で変更できます)
 Comment[nds]=Eenfach Muustekens för Konqueror
 Comment[x-test]=xxBasic Konqueror gestures.xx
@@ -12,6 +13,7 @@ DataCount=14
 Enabled=true
 Name=Konqueror Gestures
 Name[csb]=Gestë Konquerora
+Name[de]=Konqueror-Gesten
 Name[ja]=Konqueror ジェスチャー
 Name[nds]=Konqueror-Muustekens
 Name[x-test]=xxKonqueror Gesturesxx
@@ -22,6 +24,8 @@ Type=ACTION_DATA_GROUP
 [Data_1Conditions]
 Comment=Konqueror window
 Comment[csb]=Òkno Konquerora
+Comment[de]=Konqueror-Fenster
+Comment[el]=Παράθυρο του Konqueror
 Comment[ja]=Konqueror ウィンドウ
 Comment[nds]=Konqueror-Finster
 Comment[x-test]=xxKonqueror windowxx
@@ -50,6 +54,7 @@ WindowTypes=1
 
 [Data_1_1]
 Comment=Press, move left, release.
+Comment[de]=Drücken, nach links, loslassen.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを左に動かし、ボタンを放します。
 Comment[nds]=Drücken, na links, looslaten.
 Comment[x-test]=xxPress, move left, release.xx
@@ -57,6 +62,8 @@ Comment[zh_TW]=按下，往左移，再放開。
 Enabled=true
 Name=Back
 Name[csb]=Nazôd
+Name[de]=Zurück
+Name[el]=Πίσω
 Name[ja]=戻る
 Name[nds]=Torüch
 Name[x-test]=xxBackxx
@@ -65,10 +72,11 @@ Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_10]
 Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
-Comment[ja]=Opera スタイル: マウスの中ボタンを押したまま、マウスを上に動かし、ボタンを放します。\n注意: 「新規タブ」と競合するため、デフォルトでは無効になっています。
 Enabled=false
 Name=Stop Loading
 Name[csb]=Zatrzëmôj ladowanié
+Name[de]=Ladevorgang abbrechen
+Name[el]=Σταμάτημα φόρτωσης
 Name[ja]=読み込みを停止
 Name[nds]=Laden anhollen
 Name[x-test]=xxStop Loadingxx
@@ -89,6 +97,7 @@ ConditionsCount=0
 
 [Data_1_10Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -100,10 +109,11 @@ Type=GESTURE
 
 [Data_1_11]
 Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
-Comment[ja]=URL/ディレクトリ構造の一つ上に移動します。\nMozilla スタイル: マウスの中ボタンを押したまま、マウスを上->左->上の順に動かし、ボタンを放します。
 Enabled=true
 Name=Up
 Name[csb]=W górã
+Name[de]=Aufwärts
+Name[el]=Πάνω
 Name[ja]=上
 Name[nds]=Na baven
 Name[x-test]=xxUpxx
@@ -124,6 +134,7 @@ ConditionsCount=0
 
 [Data_1_11Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -135,9 +146,9 @@ Type=GESTURE
 
 [Data_1_12]
 Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
-Comment[ja]=URL/ディレクトリ構造の一つ上に移動します。\nOpera スタイル: マウスの中ボタンを押したまま、マウスを上->左->上の順に動かし、ボタンを放します。\n注意: 「前のタブをアクティブに」と競合するため、デフォルトでは無効になっています。
 Enabled=false
 Name=Up #2
+Name[de]=Nach oben (2)
 Name[ja]=上 #2
 Name[nds]=Na baven (2)
 Name[x-test]=xxUp #2xx
@@ -158,6 +169,7 @@ ConditionsCount=0
 
 [Data_1_12Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -169,12 +181,15 @@ Type=GESTURE
 
 [Data_1_13]
 Comment=Press, move up, move right, release.
+Comment[de]=Drücken, nach oben, nach rechts, loslassen.
 Comment[ja]=マウスの中ボタン押したまま、マウスを上->右の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na baven, na rechts, looslaten.
 Comment[x-test]=xxPress, move up, move right, release.xx
 Comment[zh_TW]=按住，往上移，往右移，再放開。
 Enabled=true
 Name=Activate Next Tab
+Name[de]=Nächstes Unterfenster aktivieren
+Name[el]=Ενεργοποίηση επόμενης καρτέλας
 Name[ja]=次のタブをアクティブに
 Name[nds]=Nakamen Paneel aktiv maken
 Name[x-test]=xxActivate Next Tabxx
@@ -195,6 +210,7 @@ ConditionsCount=0
 
 [Data_1_13Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -206,12 +222,15 @@ Type=GESTURE
 
 [Data_1_14]
 Comment=Press, move up, move left, release.
+Comment[de]=Drücken, nach oben, nach links, loslassen.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを上->左の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na baven, na links, looslaten.
 Comment[x-test]=xxPress, move up, move left, release.xx
 Comment[zh_TW]=按住，往上移，往左移，再放開。
 Enabled=true
 Name=Activate Previous Tab
+Name[de]=Vorheriges Unterfenster aktivieren
+Name[el]=Ενεργοποίηση προηγούμενης καρτέλας
 Name[ja]=前のタブをアクティブに
 Name[nds]=Verleden Paneel aktiv maken
 Name[x-test]=xxActivate Previous Tabxx
@@ -232,6 +251,7 @@ ConditionsCount=0
 
 [Data_1_14Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -255,6 +275,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -266,12 +287,15 @@ Type=GESTURE
 
 [Data_1_2]
 Comment=Press, move down, move up, move down, release.
+Comment[de]=Drücken, nach unten, nach oben, nach unten, loslassen.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを下->上->下の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na nerrn, na baven, na nerrn, looslaten.
 Comment[x-test]=xxPress, move down, move up, move down, release.xx
 Comment[zh_TW]=按住，往下移，往上移，往下移，再放開。
 Enabled=true
 Name=Duplicate Tab
+Name[de]=Unterfenster duplizieren
+Name[el]=Αντίγραφο καρτέλας
 Name[ja]=タブを複製
 Name[nds]=Paneel verdubbeln
 Name[x-test]=xxDuplicate Tabxx
@@ -292,6 +316,7 @@ ConditionsCount=0
 
 [Data_1_2Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -303,6 +328,7 @@ Type=GESTURE
 
 [Data_1_3]
 Comment=Press, move down, move up, release.
+Comment[de]=Drücken, nach unten, nach oben, loslassen.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを下->上の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na nerrn, na baven, looslaten.
 Comment[x-test]=xxPress, move down, move up, release.xx
@@ -310,6 +336,8 @@ Comment[zh_TW]=按住，往下移，往上移，再放開。
 Enabled=true
 Name=Duplicate Window
 Name[csb]=Duplikùjë òkno
+Name[de]=Fenster duplizieren
+Name[el]=Αντίγραφο παραθύρου
 Name[ja]=ウィンドウを複製
 Name[nds]=Finster verdubbeln
 Name[x-test]=xxDuplicate Windowxx
@@ -330,6 +358,7 @@ ConditionsCount=0
 
 [Data_1_3Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -341,6 +370,7 @@ Type=GESTURE
 
 [Data_1_4]
 Comment=Press, move right, release.
+Comment[de]=Drücken, nach rechts, loslassen
 Comment[ja]=マウスの中ボタンを押したまま、マウスを右に動かし、ボタンを放します。
 Comment[nds]=Drücken, na rechts, looslaten.
 Comment[x-test]=xxPress, move right, release.xx
@@ -348,6 +378,8 @@ Comment[zh_TW]=按住，往右移，再放開。
 Enabled=true
 Name=Forward
 Name[csb]=Wprzódk
+Name[de]=Nach vorne
+Name[el]=Μπροστά
 Name[ja]=進む
 Name[nds]=Vörut
 Name[x-test]=xxForwardxx
@@ -368,6 +400,7 @@ ConditionsCount=0
 
 [Data_1_4Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -379,6 +412,7 @@ Type=GESTURE
 
 [Data_1_5]
 Comment=Press, move down, move half up, move right, move down, release.\n(Drawing a lowercase 'h'.)
+Comment[de]=Drücken, nach unten, halb nach oben, nach rechts, nach unten, loslassen. (ein kleines "h" zeichnen")
 Comment[ja]=マウスの中ボタンを押したまま、マウスを下に動かし、次に半分の距離だけ上に動かし、さらに右->下の順に動かし、ボタンを放します。\n(小文字の 'h' を描くように)
 Enabled=true
 Name=Home
@@ -457,6 +491,7 @@ ConditionsCount=0
 
 [Data_1_5Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -472,9 +507,10 @@ Type=GESTURE
 
 [Data_1_6]
 Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.
-Comment[ja]=マウスの中ボタンを押したまま、マウスを右->下->右の順に動かし、ボタンを放します。\nMozilla スタイル: マウスの中ボタンを押したまま、マウスを下->右の順に動かし、ボタンを放します。
 Enabled=true
 Name=Close Tab
+Name[de]=Unterfenster schließen
+Name[el]=Κλείσιμο καρτέλας
 Name[ja]=タブを閉じる
 Name[nds]=Paneel tomaken
 Name[x-test]=xxClose Tabxx
@@ -495,6 +531,7 @@ ConditionsCount=0
 
 [Data_1_6Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -510,9 +547,10 @@ Type=GESTURE
 
 [Data_1_7]
 Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.
-Comment[ja]=マウスの中ボタンを押したまま、マウスを上に動かし、ボタンを放します。\nデフォルトで無効になっている Opera スタイルの「上 #2」と競合します。
 Enabled=true
 Name=New Tab
+Name[de]=Neues Unterfenster
+Name[el]=Νέα καρτέλα
 Name[ja]=新規タブ
 Name[nds]=Nieg Paneel
 Name[x-test]=xxNew Tabxx
@@ -533,6 +571,7 @@ ConditionsCount=0
 
 [Data_1_7Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -544,6 +583,7 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=Press, move down, release.
+Comment[de]=Drücken, nach unten, loslassen.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを下に動かし、ボタンを放します。
 Comment[nds]=Drücken, na nerrn, looslaten.
 Comment[x-test]=xxPress, move down, release.xx
@@ -558,6 +598,8 @@ Name[ca]=Nova finestra
 Name[cs]=Nové okno
 Name[cy]=Ffenestr Newydd
 Name[da]=Nyt vindue
+Name[de]=Neues Fenster
+Name[el]=Νέο παράθυρο
 Name[eo]=Nova fenestro
 Name[es]=Nueva ventana
 Name[et]=Uus aken
@@ -621,6 +663,7 @@ ConditionsCount=0
 
 [Data_1_8Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -632,6 +675,7 @@ Type=GESTURE
 
 [Data_1_9]
 Comment=Press, move up, move down, release.
+Comment[de]=Drücken, nach oben, nach unten, loslassen.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを上->下の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na baven, na nerrn, looslaten.
 Comment[x-test]=xxPress, move up, move down, release.xx
@@ -639,6 +683,8 @@ Comment[zh_TW]=按住，往上移，往下移，再放開。
 Enabled=true
 Name=Reload
 Name[csb]=Òdswiéżë
+Name[de]=Dokument erneut laden
+Name[el]=Επαναφόρτωση
 Name[ja]=再読み込み
 Name[nds]=Nieg laden
 Name[x-test]=xxReloadxx
@@ -659,6 +705,7 @@ ConditionsCount=0
 
 [Data_1_9Triggers]
 Comment=Gesture_triggers
+Comment[de]=Gesten_Aktivierung
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發

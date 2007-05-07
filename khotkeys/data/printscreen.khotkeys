@@ -3,6 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=This group contains actions that are set up by default.
+Comment[de]=Diese Gruppe enthält einige voreingestellte Aktionen.
 Comment[ja]=このグループにはデフォルトで設定されているアクションが含まれています。
 Comment[nds]=Disse Koppel bargt vörinstellt Akschonen.
 Comment[x-test]=xxThis group contains actions that are set up by default.xx
@@ -11,6 +12,8 @@ DataCount=1
 Enabled=true
 Name=Preset Actions
 Name[csb]=Ùstawioné akcëje
+Name[de]=Voreingestellte Aktionen
+Name[el]=Προκαθορισμένες ενέργειες
 Name[ja]=プリセットアクション
 Name[nds]=Vörinstellt Akschonen
 Name[x-test]=xxPreset Actionsxx
@@ -25,12 +28,14 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Launches KSnapShot when PrintScrn is pressed.
+Comment[de]=Startet KSnapShot wenn "Bildschirm Drucken" gedrückt wurde.
 Comment[ja]=PrintScrn を押して KSnapShot を起動します。
 Comment[nds]=Röppt "KSnapShot" op, wenn Een de "PrintScreen"-Tast drückt.
 Comment[x-test]=xxLaunches KSnapShot when PrintScrn is pressed.xx
 Comment[zh_TW]=按下 PrintScreen 鍵時叫出 KSnapShot。
 Enabled=true
 Name=PrintScreen
+Name[de]=Bildschirm Drucken
 Name[nds]=Schirmfoto
 Name[x-test]=xxPrintScreenxx
 Type=COMMAND_URL_SHORTCUT_ACTION_DATA
@@ -48,6 +53,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Simple_action
+Comment[de]=Einfache_Aktion
 Comment[nds]=Eenfach_Akschoon
 Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作
