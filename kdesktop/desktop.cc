@@ -455,7 +455,7 @@ void KDesktop::popupExecuteCommand( const QString& command )
   if ( m_miniCli->isVisible() ) {
       KWindowSystem::forceActiveWindow( m_miniCli->winId() );
   } else {
-      NETRootInfo i( qt_xdisplay(), NET::Supported );
+      NETRootInfo i( QX11Info::display(), NET::Supported );
       if( !i.isSupported( NET::WM2FullPlacement )) {
           QRect rect = KGlobalSettings::desktopGeometry(QCursor::pos());
           m_miniCli->move(rect.x() + (rect.width() - m_miniCli->width())/2,
