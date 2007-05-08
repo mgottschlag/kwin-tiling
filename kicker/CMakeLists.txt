@@ -1,6 +1,6 @@
 
 project(kicker)
-
+KDE4_NO_ENABLE_FINAL(kicker)
 add_definitions (-DQT3_SUPPORT)
 
 set(libkicker_core_SRCS

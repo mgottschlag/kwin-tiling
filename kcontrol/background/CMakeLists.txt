@@ -1,6 +1,6 @@
 
 add_subdirectory( pics )
-
+KDE4_NO_ENABLE_FINAL(background)
 # Currently needed for DEFAULT_TEXT_HEIGHT
 # The plan is to move konq_iconviewwidget to kdesktop and then it's all inside workspace.
 # But first KonqOperations must be redesigned to not use konq_iconviewwidget...

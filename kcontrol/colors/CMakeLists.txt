@@ -1,7 +1,7 @@
 
 
 add_definitions (-DQT3_SUPPORT)
-
+KDE4_NO_ENABLE_FINAL(colors)
 ########### next target ###############
 
 set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp kcolortreewidget.cpp ../krdb/krdb.cpp)

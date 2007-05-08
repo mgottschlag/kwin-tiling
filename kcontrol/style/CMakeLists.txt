@@ -1,4 +1,4 @@
-
+KDE4_NO_ENABLE_FINAL(styles)
 add_subdirectory( keramik )
 
 ########### next target ###############

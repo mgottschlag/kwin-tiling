@@ -1,6 +1,6 @@
 add_subdirectory( pics ) 
 #add_subdirectory( tests ) 
-
+KDE4_NO_ENABLE_FINAL(kxkb)
 add_definitions (-DQT3_SUPPORT)
 
 OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" ON)

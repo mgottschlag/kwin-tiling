@@ -1,5 +1,5 @@
 
-
+KDE4_NO_ENABLE_FINAL(fonts)
 include_directories(${FONTCONFIG_INCLUDE_DIR})
 include_directories(${FREETYPE_INCLUDE_DIR})
 

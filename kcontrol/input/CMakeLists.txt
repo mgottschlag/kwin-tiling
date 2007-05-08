@@ -1,6 +1,6 @@
 
 add_subdirectory( pics ) 
-
+KDE4_NO_ENABLE_FINAL(input)
 macro_bool_to_01(LIBUSB_FOUND HAVE_LIBUSB)
 configure_file (config-kcontrol-input.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kcontrol-input.h )
 
