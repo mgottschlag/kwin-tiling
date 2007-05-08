@@ -119,7 +119,7 @@ int main( int argc, char **argv )
     if (url.isEmpty())
       url = KWebDesktopSettings::uRL();
     // Apply uri filter
-    KUriFilterData uridata = url;
+    KUriFilterData uridata(url);
     KUriFilter::self()->filterUri( uridata );
     KUrl u = uridata.uri();
 
