@@ -208,7 +208,7 @@ public:
     virtual QStringList listRemoteDevices() const = 0;
 
     /**
-     * List the Universal Bluetooth Identifier (UBI) of all known remote devices since a specifc
+     * List the Universal Bluetooth Identifier (UBI) of all known remote devices since a specific
      * datestamp. Known remote  devices means remote bluetooth which are seen, used or
      * paired/bonded.
      *

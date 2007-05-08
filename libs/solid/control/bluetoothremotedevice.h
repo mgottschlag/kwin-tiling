@@ -159,7 +159,7 @@ public:
      * Retrieves alias of remote device. This is a local alias name for the remote device.
      * If this string is empty the frontend should should use name(). This is handy if
      * someone is using several bluetooth remote device with the same name. alias() should
-     * be prefered used by the frontend.
+     * be preferred used by the frontend.
      * Example: "Company mobile"
      *
      * @retuns local alias of remote device.
