@@ -514,30 +514,41 @@ void runRdb( uint flags )
   {
     kglobals.changeGroup("General");
 
-    QString hintStyle(kglobals.readEntry("XftHintStyle", "hintmedium")),
-            subPixel(kglobals.readEntry("XftSubPixel"));
-
-    contents += "Xft.antialias: ";
-    if(kglobals.readEntry("XftAntialias", false))
-      contents += '1';
-    else
-      contents += '0';
-
-    contents += "\nXft.hinting: ";
-    if(hintStyle.isEmpty())
-      contents += "-1";
-    else
+    if (kglobals.hasKey("XftAntialias"))
     {
-      if(hintStyle!="hintnone")
-        contents += '1';
+      contents += "Xft.antialias: ";
+      if(kglobals.readEntry("XftAntialias", true))
+        contents += "1\n";
       else
-        contents += '0';
-      contents += "\nXft.hintstyle: " + hintStyle + '\n';
+        contents += "0\n";
     }
-    if(!subPixel.isEmpty())
-      contents += "Xft.rgba: " + subPixel + '\n';
+
+    if (kglobals.hasKey("XftHintStyle"))
+    {
+      QString hintStyle = kglobals.readEntry("XftHintStyle", "hintmedium");
+      contents += "Xft.hinting: ";
+      if(hintStyle.isEmpty())
+        contents += "-1\n";
+      else
+      {
+        if(hintStyle!="hintnone")
+          contents += "1\n";
+        else
+          contents += "0\n";
+        contents += "Xft.hintstyle: " + hintStyle + '\n';
+      }
+    }
+
+    if (kglobals.hasKey("XftSubPixel"))
+    {
+      QString subPixel = kglobals.readEntry("XftSubPixel");
+      if(!subPixel.isEmpty())
+        contents += "Xft.rgba: " + subPixel + '\n';
+    }
+
     KConfig _cfgfonts( "kcmfonts" );
     KConfigGroup cfgfonts(&_cfgfonts, "General");
+
     if( cfgfonts.readEntry( "forceFontDPI", 0 ) != 0 )
       contents += "Xft.dpi: " + cfgfonts.readEntry( "forceFontDPI" ) + '\n';
     else
