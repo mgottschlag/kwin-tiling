@@ -44,6 +44,13 @@ public:
     //
     void stop();
 
+    //-----------------------------------------------------------------------
+    //
+    // Should be called only from a slot connected to the timeout() signal. Will
+    // result in the timeout() signal being emitted again with a delay (i.e. postponed).
+    //
+    void postpone();
+
     // internal
     void resetTrigger();
     // internal

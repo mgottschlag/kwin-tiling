@@ -145,6 +145,15 @@ void XAutoLock::resetTrigger()
 
 //---------------------------------------------------------------------------
 //
+// Move the trigger time in order to postpone (repeat) emitting of timeout().
+//
+void XAutoLock::postpone()
+{
+    mTrigger = time(0) + 60; // delay by 60sec
+}
+
+//---------------------------------------------------------------------------
+//
 // Set the remaining time to 't', if it's shorter than already set.
 //
 void XAutoLock::setTrigger( time_t t )
