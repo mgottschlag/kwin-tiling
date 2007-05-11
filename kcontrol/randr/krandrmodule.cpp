@@ -100,9 +100,11 @@ KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
 	QHBoxLayout *hboxLayout1 = new QHBoxLayout( screenBox );
 	 screenBox ->setLayout(hboxLayout1);
 	topLayout->addWidget(screenBox);
-	QLabel *screenLabel = new QLabel(i18n("Settings for screen:"), screenBox);
-	m_screenSelector = new KComboBox(screenBox);
+	QLabel *screenLabel = new QLabel(i18n("Settings for screen:"));
+        hboxLayout1->addWidget(screenLabel);
+	m_screenSelector = new KComboBox;
 
+        hboxLayout1->addWidget(m_screenSelector);
 	for (int s = 0; s < numScreens(); s++) {
 		m_screenSelector->addItem(i18n("Screen %1", s+1));
 	}
@@ -120,18 +122,22 @@ KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
 	QHBoxLayout *hboxLayout2 = new QHBoxLayout( sizeBox );
 	 sizeBox ->setLayout(hboxLayout2);
 	topLayout->addWidget(sizeBox);
-	QLabel *sizeLabel = new QLabel(i18n("Screen size:"), sizeBox);
-	m_sizeCombo = new KComboBox(sizeBox);
+	QLabel *sizeLabel = new QLabel(i18n("Screen size:"));
+        hboxLayout2->addWidget(sizeLabel);
+	m_sizeCombo = new KComboBox;
+        hboxLayout2->addWidget(m_sizeCombo);
 	m_sizeCombo->setWhatsThis( i18n("The size, otherwise known as the resolution, of your screen can be selected from this drop-down list."));
 	connect(m_sizeCombo, SIGNAL(activated(int)), SLOT(slotSizeChanged(int)));
         sizeLabel->setBuddy( m_sizeCombo );
 
 	QWidget* refreshBox = new QWidget(this);
 	QHBoxLayout *hboxLayout3 = new QHBoxLayout( refreshBox );
-	 refreshBox ->setLayout(hboxLayout3);
+	refreshBox->setLayout(hboxLayout3);
 	topLayout->addWidget(refreshBox);
-	QLabel *rateLabel = new QLabel(i18n("Refresh rate:"), refreshBox);
-	m_refreshRates = new KComboBox(refreshBox);
+	QLabel *rateLabel = new QLabel(i18n("Refresh rate:"));
+        hboxLayout3->addWidget(rateLabel);
+	m_refreshRates = new KComboBox;
+        hboxLayout3->addWidget(m_refreshRates);
 	m_refreshRates->setWhatsThis( i18n("The refresh rate of your screen can be selected from this drop-down list."));
 	connect(m_refreshRates, SIGNAL(activated(int)), SLOT(slotRefreshChanged(int)));
         rateLabel->setBuddy( m_refreshRates );
