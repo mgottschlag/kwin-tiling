@@ -16,34 +16,35 @@ void KThemeDlg::startKonqui( const QString & url )
 
 void KThemeDlg::startBackground()
 {
-    KRun::runCommand("kcmshell kde-background");
+    KRun::runCommand("kcmshell background");
 }
 
 
 void KThemeDlg::startColors()
 {
-    KRun::runCommand("kcmshell kde-colors");
+    KRun::runCommand("kcmshell colors");
 }
 
 
 void KThemeDlg::startStyle()
 {
-    KRun::runCommand("kcmshell kde-style");
+    KRun::runCommand("kcmshell style");
 }
 
 
 void KThemeDlg::startIcons()
 {
-    KRun::runCommand("kcmshell kde-icons");
+    KRun::runCommand("kcmshell icons");
 }
 
 void KThemeDlg::startFonts()
 {
-   KRun::runCommand("kcmshell kde-fonts");
+   KRun::runCommand("kcmshell fonts");
 }
 
 
 void KThemeDlg::startSaver()
 {
-    KRun::runCommand("kcmshell kde-screensaver");
+    KRun::runCommand("kcmshell screensaver");
 }
+
