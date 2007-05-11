@@ -15,8 +15,10 @@ Name[el]=Συμπαγές
 
 Comment=Hardware Integration Configuration
 Comment[de]=Einrichtung zur Hardware-Einbindung
+Comment[nds]=Instellen för't Inbinnen vun Hardware
 Comment[zh_TW]=系統整合設定
 
 Keywords=Solid,Hardware,Power,Network,Discovery,Management
 Keywords[de]=Solid,Hardware,Energie,Netzwerk,Discovery,Management,Verwaltung,Erkennung
+Keywords[nds]=Solid,Hardware,Stroom,Nettwark,Opdecken,Pleeg,Pleger
 
