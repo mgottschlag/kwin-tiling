@@ -31,21 +31,21 @@ public:
   
   USBDevice();
 
-  void parseLine(QString line);
-  void parseSysDir(int bus, int parent, int level, QString line);
+  void parseLine(const QString &line);
+  void parseSysDir(int bus, int parent, int level, const QString &line);
 
-  int level() { return _level; }
-  int device() { return _device; }
-  int parent() { return _parent; }
-  int bus() { return _bus; }
+  int level() const { return _level; }
+  int device() const { return _device; }
+  int parent() const { return _parent; }
+  int bus() const { return _bus; }
   QString product();
 
   QString dump();
 
   static Q3PtrList<USBDevice> &devices() { return _devices; }
   static USBDevice *find(int bus, int device);
-  static bool parse(QString fname);
-  static bool parseSys(QString fname);
+  static bool parse(const QString& fname);
+  static bool parseSys(const QString& fname);
 
 
 private:

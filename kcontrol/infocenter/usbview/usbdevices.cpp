@@ -71,7 +71,7 @@ static QString catFile(QString fname)
   return result.stripWhiteSpace();
 }
 
-void USBDevice::parseSysDir(int bus, int parent, int level, QString dname)
+void USBDevice::parseSysDir(int bus, int parent, int level, const QString& dname)
 {
   _level = level;
   _parent = parent;
@@ -113,7 +113,7 @@ void USBDevice::parseSysDir(int bus, int parent, int level, QString dname)
   }
 }
 
-void USBDevice::parseLine(QString line)
+void USBDevice::parseLine(const QString& line)
 {
   if (line.startsWith("T:"))
     sscanf(line.toLocal8Bit().data(),
@@ -255,7 +255,7 @@ QString USBDevice::dump()
 
 
 #ifndef Q_OS_FREEBSD
-bool USBDevice::parse(QString fname)
+bool USBDevice::parse(const QString &fname)
 {
   _devices.clear();
 
@@ -298,7 +298,7 @@ bool USBDevice::parse(QString fname)
   return true;
 }
 
-bool USBDevice::parseSys(QString dname)
+bool USBDevice::parseSys(const QString &dname)
 {
    QDir d(dname);
    d.setNameFilter("usb*");

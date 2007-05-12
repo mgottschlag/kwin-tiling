@@ -190,7 +190,7 @@ void USBViewer::selectionChanged(Q3ListViewItem *item)
       USBDevice *dev = USBDevice::find(busdev>>8, busdev&255);
       if (dev)
 	{
-	  _details->setText(dev->dump());
+	  _details->setHtml(dev->dump());
 	  return;
 	}
     }
