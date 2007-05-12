@@ -20,7 +20,7 @@
 #ifndef SOLID_IFACES_WIRELESSNETWORK_H
 #define SOLID_IFACES_WIRELESSNETWORK_H
 
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 #include <QStringList>
 

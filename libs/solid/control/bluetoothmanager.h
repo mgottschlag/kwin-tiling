@@ -26,7 +26,7 @@
 #include <QtCore/QObject>
 
 #include <solid/control/singletondefs.h>
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 #include <solid/control/bluetoothinterface.h>
 #include <solid/control/bluetoothinputdevice.h>

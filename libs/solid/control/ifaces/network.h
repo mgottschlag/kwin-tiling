@@ -20,7 +20,7 @@
 #ifndef SOLID_IFACES_NETWORK_H
 #define SOLID_IFACES_NETWORK_H
 
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QList>

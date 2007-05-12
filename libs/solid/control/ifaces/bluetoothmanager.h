@@ -23,7 +23,7 @@
 #define SOLID_IFACES_BLUETOOTHMANAGER
 
 #include <QObject>
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 class KJob;
 

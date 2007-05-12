@@ -23,7 +23,7 @@
 #define SOLID_IFACES_BLUETOOTHINTERFACE_H
 
 #include <QList>
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 #include <solid/control/bluetoothinterface.h>
 #include <solid/control/ifaces/bluetoothremotedevice.h>

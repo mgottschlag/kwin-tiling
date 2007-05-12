@@ -23,7 +23,7 @@
 
 #include <QtCore/QObject>
 
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 class QAbstractSocket;
 
 namespace Solid
