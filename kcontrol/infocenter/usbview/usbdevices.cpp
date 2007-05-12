@@ -392,7 +392,7 @@ void USBDevice::collectData( int fd, int level, usb_device_info &di, int parent)
 
 
 
-bool USBDevice::parse(QString fname)
+bool USBDevice::parse(const QString &fname)
 {
 	static bool showErrorMessage = true;
 	bool error = false;
