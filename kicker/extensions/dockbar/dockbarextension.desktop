@@ -2,7 +2,6 @@
 Encoding=UTF-8
 Name=Dock Application Bar
 Name[af]=Vasmeer Program Balk
-Name[bg]=Допълнителен панел
 Name[ca]=Barra per ancorar aplicacions
 Name[cs]=Lišta pro dokování aplikací
 Name[csb]=Lëstew przërzeszaniô programów
@@ -57,7 +56,6 @@ Name[xh]=Ibar Yesicelo ye Dock
 Name[zh_TW]=嵌入程式工具列
 Comment=Dock application bar extension.
 Comment[af]=Vasmeer program balk uitbreidings
-Comment[bg]=Разширение на системния панел
 Comment[ca]=Una extensió de la barra per ancorar aplicacions.
 Comment[cs]=Rozšíření lišty pro dokování aplikací.
 Comment[csb]=Rozszérzenié do przërzeszaniô programów.

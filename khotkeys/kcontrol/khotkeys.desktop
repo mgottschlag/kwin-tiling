@@ -11,7 +11,6 @@ X-KDE-ParentApp=kcontrol
 Name=Input Actions
 Name[af]=Inset Aksies
 Name[ar]=نشاطات الإدخال
-Name[bg]=Действия
 Name[br]=Oberoù enkas
 Name[ca]=Accions d'entrada
 Name[cs]=Vstupní činnosti
@@ -65,7 +64,6 @@ Name[zh_TW]=輸入動作
 
 Comment=Configure Hotkey settings
 Comment[af]=Stel kortpad sleutels op
-Comment[bg]=Настройки на жестове с мишката
 Comment[br]=Kefluniañ dibarzhoù Hotkey
 Comment[ca]=Configura l'arranjament de les tecles ràpides
 Comment[cs]=Nastavení horkých kláves

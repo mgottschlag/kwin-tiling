@@ -2,7 +2,6 @@
 Encoding=UTF-8
 Name=KasBar
 Name[af]=Kasbar
-Name[bg]=Алтернативен панел
 Name[cs]=Kasbar
 Name[csb]=Lëstew dzejaniów (Kasbar)
 Name[de]=Kasbar
@@ -24,7 +23,6 @@ Name[x-test]=xxKasBarxx
 
 Comment=An alternative taskbar panel applet.
 Comment[af]='n Alternatiewe taakbalk paneel miniprogram.
-Comment[bg]=Алтернативен аплет за лентата със задачите
 Comment[br]=Arloadig barrenn poelladoù dazeilat evit ar bannell.
 Comment[ca]=Un applet per al plafó alternatiu a la barra de tasques.
 Comment[cs]=Applet s alternativním pruhem úloh

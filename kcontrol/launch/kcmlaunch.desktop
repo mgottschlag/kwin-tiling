@@ -13,7 +13,6 @@ X-KDE-ParentApp=kcontrol
 
 Name=Launch Feedback
 Name[af]=Lanseer Terugvoer
-Name[bg]=Обратна връзка
 Name[ca]=Engegador ràpid
 Name[cs]=Odezva při spouštění aplikací
 Name[csb]=Zrëszanié programów
@@ -70,7 +69,6 @@ Name[zh_TW]=程式啟動回饋風格
 
 Comment=Choose application-launch feedback style
 Comment[af]=Kies application-launch terugvoer styl
-Comment[bg]=Настройки на известяването при стартиране
 Comment[ca]=Escull l'estil per a carregar ràpidament una aplicació
 Comment[cs]=Vyberte styl odezvy při spouštění aplikací
 Comment[csb]=Wëbierzë ôrt dôwaniô wiédzë ò zrëszaniô programë
@@ -125,7 +123,6 @@ Comment[x-test]=xxChoose application-launch feedback stylexx
 Comment[xh]=Khetha isicelo-yenza uhlobo lwesiphumo seLaunch
 Comment[zh_TW]=選擇程式啟動時的回饋風格
 Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,rotating,spinning,disk,startup,program,report
-Keywords[bg]=програма, приложение, стартиране, зает, показалец, курсор, мишка, показалеца, application, start, launch, busy, cursor, feedback, mouse, pointer, rotating, spinning, disk, startup, program, report
 Keywords[ca]=aplicació,iniciar,carregar,ocupat,cursor,notificació,ratlí,punter,rotació,gir,disc,arrencar,programa,informe
 Keywords[cs]=aplikace,spuštění,start,pracuje,kurzor,reakce,odezva,myš,otáčení,rotace,disk,startování,program,oznámení
 Keywords[csb]=programa,sztart,zrëszanié,òbczas,kùrsor,pòkrok,mësz,kùrsor,rotujący,krãceniowi,disk,programa,rapòrt
