@@ -19,10 +19,11 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "kdmlabel.h"
+
 #include <config.h>
 #include <config-kdm.h>
 
-#include "kdmlabel.h"
 #include "kdmthemer.h"
 
 #include <kglobal.h>

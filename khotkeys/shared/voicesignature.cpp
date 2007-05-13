@@ -374,7 +374,7 @@ float VoiceSignature::diff(const VoiceSignature &s1, const VoiceSignature &s2)
 			d+= d1*d1;//*pond[x][y];
 		}
 		d=sqrt(d);
-		g[i][j]=QMIN(QMIN( g[i-1][j]+d, g[i][j-1]+d )  ,  g[i-1][j-1]+d+d  );
+		g[i][j]=qMin(qMin( g[i-1][j]+d, g[i][j-1]+d )  ,  g[i-1][j-1]+d+d  );
 	}
 
 	return g[I][J]/(I+J);	

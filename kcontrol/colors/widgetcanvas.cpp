@@ -22,7 +22,6 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <QPixmap>
-#include <QPixmap>
 
 #include "widgetcanvas.h"
 #include "widgetcanvas.moc"

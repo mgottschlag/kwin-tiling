@@ -41,7 +41,6 @@
 
 #include <X11/Xlib.h>
 
-#include <config.h>
 #include <QX11Info>
 #include <QDesktopWidget>
 

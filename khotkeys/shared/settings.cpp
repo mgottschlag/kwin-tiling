@@ -159,7 +159,7 @@ int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_gro
         ++cnt;
         if( enabled_P && (*it)->enabled( true ))
             ++enabled_cnt;
-        KConfigGroup itConfig( cfg_P.config(), save_cfg_group + "_" + QString::number( cnt ));
+        KConfigGroup itConfig( cfg_P.config(), save_cfg_group + '_' + QString::number( cnt ));
         ( *it )->cfg_write( itConfig );
         Action_data_group* grp = dynamic_cast< Action_data_group* >( *it );
         if( grp != NULL )
@@ -184,7 +184,7 @@ void Settings::read_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_gro
          i <= cnt;
          ++i )
         {
-        KConfigGroup itConfig( cfg_P.config(), save_cfg_group + "_" + QString::number( i ));
+        KConfigGroup itConfig( cfg_P.config(), save_cfg_group + '_' + QString::number( i ));
         if( include_disabled_P || Action_data_base::cfg_is_enabled( itConfig ))
             {
             Action_data_base* new_action = Action_data_base::create_cfg_read( itConfig, parent_P );

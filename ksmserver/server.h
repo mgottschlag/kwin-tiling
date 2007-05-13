@@ -72,14 +72,14 @@ public:
     void clientRegistered( const char* previousId );
 
     // public API
-    void restoreSession( QString sessionName );
+    void restoreSession( const QString &sessionName );
     void startDefaultSession();
     void shutdown( KWorkSpace::ShutdownConfirm confirm,
                    KWorkSpace::ShutdownType sdtype,
                    KWorkSpace::ShutdownMode sdmode );
 
-    virtual void suspendStartup( QString app );
-    virtual void resumeStartup( QString app );
+    virtual void suspendStartup( const QString &app );
+    virtual void resumeStartup( const QString &app );
 
 public Q_SLOTS:
     void cleanUp();
@@ -153,7 +153,7 @@ private:
     void logout( int, int, int );
     QString currentSession();
     void saveCurrentSession();
-    void saveCurrentSessionAs( QString );
+    void saveCurrentSessionAs( const QString & );
     QStringList sessionList();
  private:
     QList<KSMListener*> listener;

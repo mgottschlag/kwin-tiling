@@ -25,7 +25,6 @@
 #include <kdemacros.h>
 #include <QString>
 #include <QList>
-#include <QString>
 #include <QByteArray>
 
 struct KDE_EXPORT SessEnt {

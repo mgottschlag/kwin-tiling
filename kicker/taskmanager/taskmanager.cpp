@@ -40,7 +40,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstaticdeleter.h>
 #include <kwindowsystem.h>
 #include <netwm.h>
-#include <QX11Info>
 
 #include "taskmanager.h"
 #include "taskmanager.moc"

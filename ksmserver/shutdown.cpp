@@ -67,7 +67,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
-#include <unistd.h>
 #include <kapplication.h>
 #include <kstaticdeleter.h>
 #include <ktemporaryfile.h>
@@ -243,7 +242,7 @@ void KSMServer::saveCurrentSession()
         completeShutdownOrCheckpoint();
 }
 
-void KSMServer::saveCurrentSessionAs( QString session )
+void KSMServer::saveCurrentSessionAs( const QString &session )
 {
     if ( state != Idle || dialogActive )
         return;

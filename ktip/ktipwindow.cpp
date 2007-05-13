@@ -1,8 +1,8 @@
 /*
     KTip, the KDE Tip Of the Day
 
-	Copyright (c) 2000, Matthias Hoelzer-Kluepfel
-	Copyright (c) 2002 Tobias Koenig <tokoe82@yahoo.de>
+    Copyright (c) 2000, Matthias Hoelzer-Kluepfel
+    Copyright (c) 2002 Tobias Koenig <tokoe82@yahoo.de>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public

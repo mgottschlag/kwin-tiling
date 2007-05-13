@@ -18,7 +18,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <QStyle>
 #include <QTimer>
 #include <QSvgRenderer>
-#include <QPainter>
 #include <QPaintEvent>
 
 #include <kdebug.h>
@@ -131,6 +130,9 @@ void KSMPushButton::init()
         }
         QString upper = m_text.left( i );
         QString lower = m_text.right( m_text.length() - i );
+#ifdef __GNUC__
+#warning "Which one of the following two is correct?"
+#endif
         w = QMAX( QFontMetrics(fnt).width( upper ) + 6, QFontMetrics(fnt).width( lower ) + 6 );
         w = QMAX( w, width() );
         h = QMAX( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 + GLOW_WIDTH );

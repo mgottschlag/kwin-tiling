@@ -22,10 +22,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
+#include "kgapp.h"
+
 #include "kdm_greet.h"
 #include "kdmshutdown.h"
 #include "kdmconfig.h"
-#include "kgapp.h"
 #include "kgreeter.h"
 #ifdef XDMCP
 # include "kchooser.h"

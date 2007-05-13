@@ -32,8 +32,6 @@
  * This class provides a means for applications to obtain information at
  * runtime about processor support for certain architecture extensions,
  * such as MMX, SSE, 3DNow and AltiVec.
- *
- * @since 3.2
  */
 class KCPUInfo
 {

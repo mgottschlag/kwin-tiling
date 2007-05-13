@@ -356,7 +356,7 @@ void LockProcess::readSaver()
         if( entryName.endsWith( ".desktop" ))
             entryName = entryName.left( entryName.length() - 8 ); // strip it
         KService::List offers = KServiceTypeTrader::self()->query( "ScreenSaver",
-            "DesktopEntryName == '" + entryName.toLower() + "'" );
+            "DesktopEntryName == '" + entryName.toLower() + '\'' );
         if( offers.count() == 0 )
         {
             kDebug(1204) << "Cannot find screesaver: " << mSaver << endl;

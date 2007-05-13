@@ -24,8 +24,8 @@
 #ifndef KGREETERPLUGIN_H
 #define KGREETERPLUGIN_H
 
-#include <QVariant>
-#include <QMessageBox>
+#include <QtCore/QVariant>
+#include <QtGui/QMessageBox>
 #include <kdemacros.h>
 
 class QWidget;

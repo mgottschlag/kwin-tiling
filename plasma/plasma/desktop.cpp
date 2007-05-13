@@ -5,7 +5,6 @@
 #include <QApplication>
 #include <QDebug>
 #include <QGLWidget>
-#include <QGLWidget>
 #include <KWindowSystem>
 
 #include "widgets/pushbutton.h"

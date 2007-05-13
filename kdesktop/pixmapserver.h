@@ -72,7 +72,7 @@ public:
      * @param pm A pointer to the pixmap.
      * @param overwrite Should an pixmap with the same name be overwritten?
      */
-    void add(QString name, QPixmap *pm, bool overwrite=true);
+    void add(const QString &name, QPixmap *pm, bool overwrite=true);
 
     /**
      * Remove a pixmap from the server. This will delete the pixmap after 
@@ -80,7 +80,7 @@ public:
      *
      * @param name The name of the shared pixmap.
      */
-    void remove(QString name);
+    void remove(const QString &name);
 
     /**
      * List all pixmaps currently served by this server.
@@ -94,7 +94,7 @@ public:
      *
      * @param name The name of the shared pixmap.
      */
-    void setOwner(QString name);
+    void setOwner(const QString &name);
 
 Q_SIGNALS:
     /** 

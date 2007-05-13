@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QPoint>
 #include <QMimeData>
 #include <QMap>
-#include <QPixmap>
 #include <QDrag>
 #include <QRect>
 #include <QVector>

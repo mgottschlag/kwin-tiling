@@ -58,7 +58,6 @@
 #include <QX11Info>
 #include <QDesktopWidget>
 #include <screensaver_interface.h>
-#include <fixx11h.h>
 
 template class QList<SaverConfig*>;
 

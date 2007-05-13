@@ -52,7 +52,7 @@ class Clock : public DataVisualization,
         ~Clock();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
-        void setPath(QString);
+        void setPath(const QString&);
         void drawClock();
         QRectF boundingRect() const;
 

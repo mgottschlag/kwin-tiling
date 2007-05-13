@@ -57,9 +57,9 @@ void Clock::data(const DataSource::Data &data)
 {
 }
 
-void Clock::setPath(QString str)
+void Clock::setPath(const QString &str)
 {
-    prefix  = str+"/";
+    prefix  = str+'/';
 }
 
 void Clock::drawClock()
@@ -86,7 +86,7 @@ void Clock::drawClock()
     _secs_hand = QPixmap (QImage (prefix + "second-hand-long.png"));
     sec_timer = new QTimer (this);
     connect (sec_timer, SIGNAL (timeout ()), this, SLOT (drawSeconds ()));
-    sec_timer->start (500, FALSE);
+    sec_timer->start (500, false);
     /** Mins after that **/
     _mins_hand = QPixmap (QImage (prefix + "second-hand.png"));
     _hour_hand = QPixmap (QImage (prefix + "second-hand.png"));

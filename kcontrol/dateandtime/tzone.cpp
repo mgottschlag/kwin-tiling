@@ -51,7 +51,6 @@
 
 #if defined(USE_SOLARIS)
 #include <ktemporaryfile.h>
-#include <kstandarddirs.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/stat.h>

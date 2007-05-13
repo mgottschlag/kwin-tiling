@@ -60,7 +60,7 @@ KPixmapServer::~KPixmapServer()
 }
 
 
-void KPixmapServer::add(QString name, QPixmap *pm, bool overwrite)
+void KPixmapServer::add(const QString &name, QPixmap *pm, bool overwrite)
 {
     if (m_Names.contains(name)) 
     {
@@ -96,7 +96,7 @@ void KPixmapServer::add(QString name, QPixmap *pm, bool overwrite)
 }
 
 
-void KPixmapServer::remove(QString name)
+void KPixmapServer::remove(const QString &name)
 {
     // Remove the name
     NameIterator it = m_Names.find(name);
@@ -133,7 +133,7 @@ QStringList KPixmapServer::list()
 }
 
 
-void KPixmapServer::setOwner(QString name)
+void KPixmapServer::setOwner(const QString &name)
 {
     NameIterator it = m_Names.find(name);
     if (it == m_Names.end())

@@ -67,7 +67,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
-#include <unistd.h>
 #include <kapplication.h>
 #include <kstaticdeleter.h>
 #include <ktemporaryfile.h>
@@ -89,7 +88,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /*!  Restores the previous session. Ensures the window manager is
   running (if specified).
  */
-void KSMServer::restoreSession( QString sessionName )
+void KSMServer::restoreSession( const QString &sessionName )
 {
     if( state != Idle )
         return;
@@ -360,7 +359,7 @@ bool KSMServer::checkStartupSuspend()
     return false;
 }
 
-void KSMServer::suspendStartup( QString app )
+void KSMServer::suspendStartup( const QString &app )
 {
 #if KDE_IS_VERSION( 3, 90, 0 )
 #ifdef __GNUC__
@@ -373,7 +372,7 @@ void KSMServer::suspendStartup( QString app )
     ++startupSuspendCount[ app ];
 }
 
-void KSMServer::resumeStartup( QString app )
+void KSMServer::resumeStartup( const QString &app )
 {
     return;
     if( !startupSuspendCount.contains( app ))
