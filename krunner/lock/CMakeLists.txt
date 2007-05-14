@@ -35,7 +35,8 @@ kde4_automoc(${krunner_lock_SRCS})
 
 kde4_add_executable(krunner_lock ${krunner_lock_SRCS} )
 
-target_link_libraries(krunner_lock  ${KDE4_KIO_LIBS} kworkspace )
+# needs qt3support for Q3ListView
+target_link_libraries(krunner_lock  ${KDE4_KIO_LIBS} kworkspace ${QT_QT3SUPPORT_LIBRARY})
 
 if (HAVE_XF86MISC)
   target_link_libraries(krunner_lock ${X11_Xxf86misc_LIB})
