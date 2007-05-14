@@ -51,6 +51,7 @@ class KDMThemeWidget : public QWidget {
 	QLabel *info;
 	QPushButton *bInstallTheme;
 	QPushButton *bRemoveTheme;
+	QPushButton *bGetNewThemes;
 
 	ThemeData *defaultTheme;
 	QString themeDir;
@@ -62,6 +63,7 @@ class KDMThemeWidget : public QWidget {
 	void themeSelected();
 	void removeSelectedThemes();
 	void installNewTheme();
+	void getNewStuff();
 
 };
 

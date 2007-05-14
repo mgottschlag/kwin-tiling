@@ -1,0 +1,4 @@
+[KNewStuff2]
+ProvidersUrl=http://download.kde.org/khotnewstuff/kdmthemes-providers.xml
+TargetDir=kdm/themes # becomes $KDEHOME/share/apps/kdm/themes
+Uncompress=true # unpack the downloaded archive

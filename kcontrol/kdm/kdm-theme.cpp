@@ -33,8 +33,8 @@
 #include <KStandardDirs>
 #include <KTar>
 #include <KUrlRequester>
-//#include <KUrlRequesterDialog>
-#include <kurlrequesterdialog.h>
+#include <KUrlRequesterDialog>
+#include <knewstuff2/engine.h>
 
 #include <QDir>
 #include <QGridLayout>
@@ -103,9 +103,15 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 
 	ml->addWidget( bRemoveTheme, 2, 1 );
 
+	bGetNewThemes = new QPushButton( i18n("&Get New Themes"), this );
+	bGetNewThemes->setWhatsThis( i18n("Get New Themes") );
+
+	ml->addWidget( bGetNewThemes, 2, 2 );
+
 	connect( themeWidget, SIGNAL(itemSelectionChanged()), SLOT(themeSelected()) );
 	connect( bInstallTheme, SIGNAL(clicked()), SLOT(installNewTheme()) );
 	connect( bRemoveTheme, SIGNAL(clicked()), SLOT(removeSelectedThemes()) );
+	connect( bGetNewThemes, SIGNAL(clicked()), SLOT(getNewStuff()) );
 
 	themeDir = KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/themes/";
 	QDir testDir( themeDir );
@@ -297,6 +303,15 @@ void KDMThemeWidget::removeSelectedThemes()
 
 	foreach (QTreeWidgetItem *itm, themes)
 		themeWidget->takeTopLevelItem( themeWidget->indexOfTopLevelItem( itm ) );
+}
+
+void KDMThemeWidget::getNewStuff()
+{
+	KNS::Engine *engine = new KNS::Engine();
+	engine->init("kdm.knsrc");
+	KNS::Entry::List entries = engine->downloadDialogModal();
+	// if !entry, then something went wrong
+	delete engine;
 }
 
 #include "kdm-theme.moc"

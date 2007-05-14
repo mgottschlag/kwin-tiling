@@ -8,14 +8,14 @@ add_definitions (-DQT3_SUPPORT)
 kde4_add_ui3_files(kcmbackgroundlib_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgdialog_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgwallpaper_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgadvanced_ui.ui)
 
 
-set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS} 
-   background.cpp 
-   kdm-gen.cpp 
-   kdm-dlg.cpp 
-   kdm-theme.cpp 
-   kdm-shut.cpp 
-   kdm-users.cpp 
-   kdm-conv.cpp 
+set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
+   background.cpp
+   kdm-gen.cpp
+   kdm-dlg.cpp
+   kdm-theme.cpp
+   kdm-shut.cpp
+   kdm-users.cpp
+   kdm-conv.cpp
    main.cpp
    klanguagebutton.cpp
    kbackedcombobox.cpp
@@ -38,3 +38,4 @@ install( FILES kdm.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 install( FILES anchor.png  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol/pics )
+install( FILES kdm.knsrc DESTINATION ${CONFIG_INSTALL_DIR} )
