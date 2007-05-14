@@ -141,7 +141,7 @@ KPanelApplet* PluginManager::loadApplet(const AppletInfo& info,
                                         QWidget* parent )
 {
     KLibLoader* loader = KLibLoader::self();
-    KLibrary* lib = loader->library( QFile::encodeName(info.library()) );
+    KLibrary* lib = loader->library( info.library() );
 
     if (!lib)
     {
@@ -156,7 +156,7 @@ KPanelApplet* PluginManager::loadApplet(const AppletInfo& info,
     if (!init_ptr)
     {
         kWarning() << info.library() << " is not a kicker extension!" << endl;
-        loader->unloadLibrary( QFile::encodeName(info.library()) );
+        loader->unloadLibrary( info.library() );
         return 0;
     }
 
@@ -174,14 +174,14 @@ KPanelApplet* PluginManager::loadApplet(const AppletInfo& info,
 
 KPanelExtension* PluginManager::loadExtension(const AppletInfo& info, QWidget* parent )
 {
-    if (info.library() == "childpanel_panelextension"
+    if (info.library() == QLatin1String("childpanel_panelextension")
         /* KDE4? || info.library() == "panel" */)
     {
         return new PanelExtension(info.configFile(), parent);
     }
 
     KLibLoader* loader = KLibLoader::self();
-    KLibrary* lib = loader->library( QFile::encodeName(info.library()) );
+    KLibrary* lib = loader->library( info.library() );
 
     if( !lib ) {
         kWarning() << "cannot open extension: " << info.library()
@@ -194,7 +194,7 @@ KPanelExtension* PluginManager::loadExtension(const AppletInfo& info, QWidget* p
 
     if(!init_ptr){
         kWarning() << info.library() << " is not a kicker extension!" << endl;
-        loader->unloadLibrary( QFile::encodeName(info.library()) );
+        loader->unloadLibrary( info.library() );
         return 0;
     }
 
@@ -369,7 +369,7 @@ void LibUnloader::unload( const QString &libName )
 
 void LibUnloader::unload()
 {
-    KLibLoader::self()->unloadLibrary( QFile::encodeName( _libName ) );
+    KLibLoader::self()->unloadLibrary( _libName );
     deleteLater();
 }
 

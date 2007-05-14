@@ -324,7 +324,7 @@ void Module::init_arts()
 #ifdef HAVE_ARTS
     if( haveArts())
         {
-        KLibrary* arts = KLibLoader::self()->library( "khotkeys_arts" );
+        KLibrary* arts = KLibLoader::self()->library( QLatin1String("khotkeys_arts") );
         if( arts == NULL )
             kDebug( 1217 ) << "Couldn't load khotkeys_arts:" << KLibLoader::self()->lastErrorMessage() << endl;
         if( arts != NULL && VoiceRecorder::init( arts ))

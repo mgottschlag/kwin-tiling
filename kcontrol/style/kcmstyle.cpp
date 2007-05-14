@@ -440,7 +440,7 @@ void KCMStyle::styleSpecificConfig()
 	// any errors that arise
 	KLibLoader* loader = KLibLoader::self();
 
-	KLibrary* library = loader->library( QFile::encodeName(libname) );
+	KLibrary* library = loader->library( libname );
 	if (!library)
 	{
 		KMessageBox::detailedError(this,

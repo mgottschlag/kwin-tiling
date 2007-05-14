@@ -188,7 +188,7 @@ void AppletProxy::loadApplet(const QString& desktopFile, const QString& configFi
 KPanelApplet* AppletProxy::loadApplet(const AppletInfo& info)
 {
     KLibLoader* loader = KLibLoader::self();
-    KLibrary* lib = loader->library(QFile::encodeName(info.library()));
+    KLibrary* lib = loader->library(info.library());
 
     if (!lib)
     {

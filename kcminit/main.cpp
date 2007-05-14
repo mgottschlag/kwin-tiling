@@ -74,7 +74,7 @@ static void waitForReady()
 
 bool KCMInit::runModule(const QString &libName, KLibLoader *loader, KService::Ptr service)
 {
-    KLibrary *lib = loader->library(QFile::encodeName(libName));
+    KLibrary *lib = loader->library(libName);
     if (lib) {
         QVariant tmp = service->property("X-KDE-Init-Symbol", QVariant::String);
         QString kcminit;
@@ -97,7 +97,7 @@ bool KCMInit::runModule(const QString &libName, KLibLoader *loader, KService::Pt
 	    func();
 	    return true;
 	}
-	loader->unloadLibrary(QFile::encodeName(libName));
+	loader->unloadLibrary(libName);
     }
     return false;
 }

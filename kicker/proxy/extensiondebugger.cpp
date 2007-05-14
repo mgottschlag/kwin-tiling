@@ -54,7 +54,7 @@ static KCmdLineOptions options[] =
 KPanelExtension* loadExtension(const AppletInfo& info)
 {
     KLibLoader* loader = KLibLoader::self();
-    KLibrary* lib = loader->library(QFile::encodeName(info.library()));
+    KLibrary* lib = loader->library(info.library());
 
     if (!lib)
     {
