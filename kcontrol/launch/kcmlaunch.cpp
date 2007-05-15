@@ -17,9 +17,9 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <Qt3Support/Q3GroupBox>
 #include <QLabel>
 #include <QLayout>
+#include <QGroupBox>
 
 //Added by qt3to4:
 #include <QVBoxLayout>
@@ -49,8 +49,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QStringList &)
     setQuickHelp( i18n ( "<h1>Launch Feedback</h1>"
      " You can configure the application-launch feedback here." ) );
 
-    Q3GroupBox* GroupBox1 = new Q3GroupBox( this, "GroupBox1" );
-    GroupBox1->setTitle( i18n( "Bus&y Cursor" ) );
+    QGroupBox* GroupBox1 = new QGroupBox(i18n( "Bus&y Cursor" ));
     GroupBox1->setWhatsThis( i18n(
      "<h1>Busy Cursor</h1>\n"
      "KDE offers a busy cursor for application startup notification.\n"
@@ -60,10 +59,12 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QStringList &)
      "notification. In this case, the cursor stops blinking after the time\n"
      "given in the section 'Startup indication timeout'"));
 
-    GroupBox1->setColumnLayout(0, Qt::Vertical );
-    GroupBox1->layout()->setSpacing( 0 );
-    GroupBox1->layout()->setMargin( 0 );
-    Form1Layout->addWidget( GroupBox1 );
+    QVBoxLayout *lay = new QVBoxLayout;
+    lay->setSpacing( 0 );
+    lay->setMargin( 0 );
+    GroupBox1->setLayout(lay);
+    Form1Layout->addWidget(GroupBox1);
+
     QGridLayout* GroupBox1Layout = new QGridLayout();
     GroupBox1->layout()->addItem( GroupBox1Layout );
     GroupBox1Layout->setSpacing( 6 );
@@ -93,8 +94,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QStringList &)
     connect( sb_cursorTimeout, SIGNAL( valueChanged(int) ),
             SLOT( checkChanged() ) );
 
-    Q3GroupBox* GroupBox2 = new Q3GroupBox( this, "GroupBox2" );
-    GroupBox2->setTitle( i18n( "Taskbar &Notification" ) );
+    QGroupBox* GroupBox2 = new QGroupBox( i18n( "Taskbar &Notification" ) );
     GroupBox2->setWhatsThis( i18n("<H1>Taskbar Notification</H1>\n"
     "You can enable a second method of startup notification which is\n"
     "used by the taskbar where a button with a rotating hourglass appears,\n"
@@ -103,9 +103,10 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QStringList &)
      "notification. In this case, the button disappears after the time\n"
      "given in the section 'Startup indication timeout'"));
 
-    GroupBox2->setColumnLayout( 0, Qt::Vertical );
-    GroupBox2->layout()->setSpacing( 0 );
-    GroupBox2->layout()->setMargin( 0 );
+    lay = new QVBoxLayout;
+    lay->setSpacing( 0 );
+    lay->setMargin( 0 );
+    GroupBox2->setLayout(lay);
     Form1Layout->addWidget( GroupBox2 );
     QGridLayout* GroupBox2Layout = new QGridLayout();
     GroupBox2->layout()->addItem( GroupBox2Layout );
