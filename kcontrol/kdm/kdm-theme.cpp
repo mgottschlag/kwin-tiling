@@ -307,11 +307,9 @@ void KDMThemeWidget::removeSelectedThemes()
 
 void KDMThemeWidget::getNewStuff()
 {
-	KNS::Engine *engine = new KNS::Engine();
-	engine->init("kdm.knsrc");
-	KNS::Entry::List entries = engine->downloadDialogModal();
-	// if !entry, then something went wrong
-	delete engine;
+	KNS::Engine engine;
+	engine.init("kdm.knsrc");
+	KNS::Entry::List entries = engine.downloadDialogModal();
 }
 
 #include "kdm-theme.moc"
