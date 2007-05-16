@@ -22,10 +22,10 @@
 #ifndef dtime_included
 #define dtime_included
 
-#include <QDateTime> 
-#include <QLineEdit> 
-#include <QSpinBox> 
-
+#include <QDateTime>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QComboBox>
 #include <QTimer>
 #include <QValidator>
 #include <QWidget>
@@ -63,10 +63,10 @@ Q_SIGNALS:
 
  private Q_SLOTS:
   void	configChanged();
-  void	serverTimeCheck(); 
+  void	serverTimeCheck();
   void	timeout();
   void	set_time();
-  void	changeDate(QDate);
+  void	changeDate(const QDate&);
 
 private:
   void	findNTPutility();
@@ -101,7 +101,7 @@ class Kclock : public QWidget
   Q_OBJECT
 
 public:
-  Kclock( QWidget *parent=0 ) 
+  Kclock( QWidget *parent=0 )
     : QWidget(parent) {}
 
   void setTime(const QTime&);
@@ -114,13 +114,13 @@ private:
   QTime		time;
 };
 
-class KStrictIntValidator : public QIntValidator 
+class KStrictIntValidator : public QIntValidator
 {
 public:
   KStrictIntValidator(int bottom, int top, QWidget * parent)
     : QIntValidator(bottom, top, parent) {}
 
-  QValidator::State validate( QString & input, int & d ) const; 
+  QValidator::State validate( QString & input, int & d ) const;
 };
 
 #endif // dtime_included

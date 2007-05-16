@@ -18,6 +18,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#include "dtime.h"
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -46,7 +48,6 @@
 #include <kdialog.h>
 #include <kconfig.h>
 
-#include "dtime.h"
 #include "dtime.moc"
 
 HMSTimeWidget::HMSTimeWidget(QWidget *parent) :
@@ -138,7 +139,7 @@ Dtime::Dtime(QWidget * parent)
   hour->setMaximum(23);
 #ifdef __GNUC__
 #warning fixme hour->setValidator(new KStrictIntValidator(0, 23, hour));
-#endif  
+#endif
   v3->addWidget(hour, 0, isRTL ? 6 : 2, 2, 1);
 
   QLabel *dots1 = new QLabel(":", timeBox);
@@ -150,9 +151,9 @@ Dtime::Dtime(QWidget * parent)
   minute->setWrapping(true);
   minute->setMinimum(0);
   minute->setMaximum(59);
-#ifdef __GNUC__  
+#ifdef __GNUC__
   #warning fixme minute->setValidator(new KStrictIntValidator(0, 59, minute));
-#endif  
+#endif
   v3->addWidget(minute, 0, 4, 2, 1);
 
   QLabel *dots2 = new QLabel(":", timeBox);
@@ -166,7 +167,7 @@ Dtime::Dtime(QWidget * parent)
   second->setMaximum(59);
 #ifdef __GNUC__
   #warning fixme second->setValidator(new KStrictIntValidator(0, 59, second));
-#endif  
+#endif
   v3->addWidget(second, 0, isRTL ? 2 : 6, 2, 1);
 
   v3->addItem(new QSpacerItem(7, 0), 0, 7);
@@ -256,7 +257,7 @@ void Dtime::set_time()
   emit timeChanged( true );
 }
 
-void Dtime::changeDate(QDate d)
+void Dtime::changeDate(const QDate &d)
 {
   date = d;
   emit timeChanged( true );

@@ -65,7 +65,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void imageDone(int desk, int screen);
-    void programFailure(int desk, int exitstatus); //Guaranteed either programFailure or 
+    void programFailure(int desk, int exitstatus); //Guaranteed either programFailure or
     void programSuccess(int desk);                //programSuccess is emitted after imageDone
 
 private Q_SLOTS:
@@ -82,8 +82,8 @@ private:
 
     QString buildCommand();
     void createTempFile();
-    void tile(QImage& dst, QRect rect, const QImage& src);
-    void blend(QImage& dst, QRect dr, const QImage& src, QPoint soffs = QPoint(0, 0), int blendFactor=100);
+    void tile(QImage& dst, const QRect &rect, const QImage& src);
+    void blend(QImage& dst, const QRect &dr, const QImage& src, const QPoint &soffs = QPoint(0, 0), int blendFactor=100);
 
     void wallpaperBlend();
     void fastWallpaperBlend();

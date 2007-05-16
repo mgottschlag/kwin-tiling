@@ -39,7 +39,7 @@
  * QString -> int hash. From Qt's QGDict::hashKeyString().
  */
 
-static int BGHash(QString key)
+static int BGHash(const QString &key)
 {
     int g, h = 0;
     const QChar *p = key.unicode();
@@ -56,7 +56,7 @@ static int BGHash(QString key)
 /**** KBackgroundPattern ****/
 
 
-KBackgroundPattern::KBackgroundPattern(QString name)
+KBackgroundPattern::KBackgroundPattern(const QString &name)
 {
     dirty = false;
     hashdirty = true;
@@ -89,7 +89,7 @@ void KBackgroundPattern::copyConfig(const KBackgroundPattern *settings)
     m_File = settings->m_File;
 }
 
-void KBackgroundPattern::load(QString name)
+void KBackgroundPattern::load(const QString &name)
 {
     m_Name = name;
     init();
@@ -122,7 +122,7 @@ void KBackgroundPattern::setComment(const QString &comment)
 }
 
 
-void KBackgroundPattern::setPattern(QString pattern)
+void KBackgroundPattern::setPattern(const QString &pattern)
 {
     if (m_Pattern == pattern)
         return;
@@ -224,7 +224,7 @@ QStringList KBackgroundPattern::list()
 /**** KBackgroundProgram ****/
 
 
-KBackgroundProgram::KBackgroundProgram(QString name)
+KBackgroundProgram::KBackgroundProgram(const QString &name)
 {
     dirty = false;
     hashdirty = true;
@@ -593,7 +593,7 @@ void KBackgroundSettings::setColorB(const QColor& color)
 }
 
 
-void KBackgroundSettings::setPatternName(QString name)
+void KBackgroundSettings::setPatternName(const QString &name)
 {
     int ohash = KBackgroundPattern::hash();
     KBackgroundPattern::load(name);
@@ -605,7 +605,7 @@ void KBackgroundSettings::setPatternName(QString name)
 }
 
 
-void KBackgroundSettings::setProgram(QString name)
+void KBackgroundSettings::setProgram(const QString &name)
 {
     int ohash = KBackgroundProgram::hash();
     KBackgroundProgram::load(name);
@@ -650,7 +650,7 @@ void KBackgroundSettings::setReverseBlending(bool value)
 }
 
 
-void KBackgroundSettings::setWallpaper(QString wallpaper)
+void KBackgroundSettings::setWallpaper(const QString &wallpaper)
 {
     if (m_Wallpaper == wallpaper)
         return;
@@ -668,7 +668,7 @@ void KBackgroundSettings::setWallpaperMode(int mode)
 }
 
 
-void KBackgroundSettings::setWallpaperList(QStringList list)
+void KBackgroundSettings::setWallpaperList(const QStringList &list)
 {
     KStandardDirs *d = KGlobal::dirs();
     if (m_WallpaperList == list)
@@ -1180,7 +1180,7 @@ void KGlobalBackgroundSettings::setExportBackground(bool _export)
     m_bExport = _export;
 }
 
-void KGlobalBackgroundSettings::setTextColor(QColor _color)
+void KGlobalBackgroundSettings::setTextColor(const QColor &_color)
 {
     if (_color == m_TextColor)
         return;
@@ -1188,7 +1188,7 @@ void KGlobalBackgroundSettings::setTextColor(QColor _color)
     m_TextColor = _color;
 }
 
-void KGlobalBackgroundSettings::setTextBackgroundColor(QColor _color)
+void KGlobalBackgroundSettings::setTextBackgroundColor(const QColor &_color)
 {
     if (_color == m_TextBackgroundColor)
         return;

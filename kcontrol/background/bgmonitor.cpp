@@ -66,7 +66,7 @@ BGMonitor * BGMonitorArrangement::monitor( unsigned screen ) const
 }
 
 
-QRect BGMonitorArrangement::expandToPreview( QRect r ) const
+QRect BGMonitorArrangement::expandToPreview( const QRect &r ) const
 {
     double scaleX = 200.0 / 151.0;
     double scaleY = 186.0 / 115.0;
@@ -74,7 +74,7 @@ QRect BGMonitorArrangement::expandToPreview( QRect r ) const
 }
 
 
-QSize BGMonitorArrangement::expandToPreview( QSize s ) const
+QSize BGMonitorArrangement::expandToPreview( const QSize &s ) const
 {
     double scaleX = 200.0 / 151.0;
     double scaleY = 186.0 / 115.0;
@@ -82,7 +82,7 @@ QSize BGMonitorArrangement::expandToPreview( QSize s ) const
 }
 
 
-QPoint BGMonitorArrangement::expandToPreview( QPoint p ) const
+QPoint BGMonitorArrangement::expandToPreview( const QPoint &p ) const
 {
     double scaleX = 200.0 / 151.0;
     double scaleY = 186.0 / 115.0;

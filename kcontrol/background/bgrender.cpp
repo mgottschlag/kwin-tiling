@@ -94,8 +94,9 @@ void KBackgroundRenderer::desktopResized()
 }
 
 
-void KBackgroundRenderer::tile(QImage& dest, QRect rect, const QImage& src)
+void KBackgroundRenderer::tile(QImage& dest, const QRect &_rect, const QImage& src)
 {
+    QRect rect = _rect;
     rect &= dest.rect();
 
     int x, y;
@@ -706,8 +707,9 @@ void KBackgroundRenderer::fullWallpaperBlend()
  * Default offset is QPoint(0, 0).
  * blendfactor = [0, 100%]
  */
-void KBackgroundRenderer::blend(QImage& dst, QRect dr, const QImage& src, QPoint soffs, int blendFactor)
+void KBackgroundRenderer::blend(QImage& dst, const QRect &_dr, const QImage& src, const QPoint &soffs, int blendFactor)
 {
+    QRect dr = _dr;
     int x, y, a;
     dr &= dst.rect();
 

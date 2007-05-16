@@ -18,6 +18,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#include "main.h"
+
 #include <unistd.h>
 
 #include <QLabel>
@@ -31,7 +33,6 @@
 #include <kdialog.h>
 #include <kgenericfactory.h>
 
-#include "main.h"
 #include "main.moc"
 
 #include "tzone.h"

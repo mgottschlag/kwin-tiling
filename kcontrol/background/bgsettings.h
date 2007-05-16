@@ -33,18 +33,18 @@ class QImage;
 class KBackgroundPattern
 {
 public:
-    KBackgroundPattern(QString name=QString());
+    KBackgroundPattern(const QString &name=QString());
     ~KBackgroundPattern();
 
     void copyConfig(const KBackgroundPattern*);
 
     QString name() const { return m_Name; }
-    void load(QString name);
+    void load(const QString &name);
 
     void setComment(const QString &comment);
     QString comment() const {return m_Comment; }
 
-    void setPattern(QString file);
+    void setPattern(const QString &file);
     QString pattern() const { return m_Pattern; }
 
     void readSettings();
@@ -91,7 +91,7 @@ private:
 class KBackgroundProgram
 {
 public:
-    KBackgroundProgram(QString name=QString());
+    KBackgroundProgram(const QString &name=QString());
     ~KBackgroundProgram();
 
     void copyConfig(const KBackgroundProgram*);
@@ -175,8 +175,8 @@ public:
     void setColorB(const QColor &color);
     QColor colorB() const { return m_ColorB; }
 
-    void setProgram(QString program);
-    void setPatternName(QString pattern);
+    void setProgram(const QString &program);
+    void setPatternName(const QString &pattern);
 
     enum BackgroundMode {
 	Flat, Pattern, Program,
@@ -202,7 +202,7 @@ public:
     void setBlendBalance(int value);
     int blendBalance() const { return m_BlendBalance; }
 
-    void setWallpaper(QString name);
+    void setWallpaper(const QString &name);
     QString wallpaper() const { return m_Wallpaper; }
 
     enum WallpaperMode {
@@ -212,7 +212,7 @@ public:
     void setWallpaperMode(int mode);
     int wallpaperMode() const { return m_WallpaperMode; }
 
-    void setWallpaperList(QStringList);
+    void setWallpaperList(const QStringList&);
     QStringList wallpaperList() const;
     QStringList wallpaperFiles() const;
 
@@ -332,10 +332,10 @@ public:
     bool exportBackground() {return m_bExport; }
     void setExportBackground(bool _export);
 
-    void setTextColor(QColor _color);
+    void setTextColor(const QColor &_color);
     QColor textColor() const { return m_TextColor; }
 
-    void setTextBackgroundColor(QColor _color);
+    void setTextBackgroundColor(const QColor &_color);
     QColor textBackgroundColor() const { return m_TextBackgroundColor; }
 
     void setShadowEnabled(bool enabled);

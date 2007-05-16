@@ -6,16 +6,16 @@
    Copyright (C) 2002 Laurent Montel <montell@club-internet.fr>
    Copyright (C) 2003 Waldo Bastian <bastian@kde.org>
    Copyright (C) 2005 David Saxton <david@bluehaze.org>
-  
+
    This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License 
+   modify it under the terms of the GNU General Public License
    version 2 as published by the Free Software Foundation.
-   
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Library General Public License for more details.
-   
+
    You should have received a copy of the GNU Library General Public License
    along with this library; see the file COPYING.LIB.  If not, write to
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -44,7 +44,7 @@ class BGMonitorArrangement : public QWidget
     Q_OBJECT
 public:
     BGMonitorArrangement(QWidget *parent);
-    
+
     /**
      * Splits up the pixmap according to monitor geometries and sets each
      * BGMonitor pixmap accordingly.
@@ -53,19 +53,19 @@ public:
     QSize combinedPreviewSize() const { return m_combinedPreviewSize; }
     QSize maxPreviewSize() const { return m_maxPreviewSize; }
     unsigned numMonitors() const { return m_pBGMonitor.size(); }
-    
+
     BGMonitor * monitor( unsigned screen ) const;
     void updateArrangement();
 
 signals:
     void imageDropped(const QString &);
-    
+
 protected:
     virtual void resizeEvent( QResizeEvent * );
-    QRect expandToPreview( QRect r ) const;
-    QSize expandToPreview( QSize s ) const;
-    QPoint expandToPreview( QPoint p ) const;
-    
+    QRect expandToPreview( const QRect &r ) const;
+    QSize expandToPreview( const QSize &s ) const;
+    QPoint expandToPreview( const QPoint &p ) const;
+
     QVector<BGMonitorLabel*> m_pBGMonitor;
     QSize m_combinedPreviewSize;
     QSize m_maxPreviewSize;
@@ -78,13 +78,13 @@ class BGMonitorLabel : public QLabel
 {
 public:
     BGMonitorLabel(QWidget *parent, const char *name=0L);
-    
+
     BGMonitor * monitor() const { return m_pBGMonitor; }
     void updateMonitorGeometry();
-    
-    void setPreviewPosition( QRect r ) { m_previewPosition = r; }
+
+    void setPreviewPosition( const QRect &r ) { m_previewPosition = r; }
     QRect previewPosition() const { return m_previewPosition; }
-    
+
 protected:
     virtual void resizeEvent( QResizeEvent * );
     BGMonitor * m_pBGMonitor;

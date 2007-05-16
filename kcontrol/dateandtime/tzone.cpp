@@ -18,6 +18,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#include "tzone.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,7 +47,6 @@
 #include <ksystemtimezone.h>
 
 //#include "xpm/world.xpm"
-#include "tzone.h"
 #include "tzone.moc"
 
 #if defined(USE_SOLARIS)
