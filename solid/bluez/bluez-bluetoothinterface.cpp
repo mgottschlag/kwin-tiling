@@ -102,6 +102,7 @@ QString BluezBluetoothInterface::company() const
 Solid::Control::BluetoothInterface::Mode BluezBluetoothInterface::mode() const
 {
     QString theMode = stringReply("GetMode");
+    Solid::Control::BluetoothInterface::Mode modeEnum;
     if (theMode == "connectable")
     {
         modeEnum = Solid::Control::BluetoothInterface::Connectable;
