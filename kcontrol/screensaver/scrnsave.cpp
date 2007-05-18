@@ -220,7 +220,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
     hbox->addWidget(mLockLbl);
     mWaitLockEdit = new QSpinBox(mSettingsGroup);
     //mWaitLockEdit->setSteps(1, 10);
-    mWaitLockEdit->setRange(1, 1800);
+    mWaitLockEdit->setRange(1, 300);
     mWaitLockEdit->setSuffix(i18n(" sec"));
     mWaitLockEdit->setValue(mLockTimeout/1000);
     mWaitLockEdit->setEnabled(mEnabled && mLock);
@@ -399,7 +399,7 @@ void KScreenSaver::readSettings()
 
     if (mTimeout < 60) mTimeout = 60;
     if (mLockTimeout < 0) mLockTimeout = 0;
-    if (mLockTimeout > 1800000) mLockTimeout = 1800000;
+    if (mLockTimeout > 300000) mLockTimeout = 300000;
 
     mChanged = false;
 }
