@@ -24,7 +24,7 @@
 #include "interface.h"
 #include "enginemanager.h"
 
-class Desktop;
+class RootWidget;
 class QGraphicsView;
 class QGraphicsScene;
 class PlasmaApp : public KUniqueApplication,
@@ -50,8 +50,7 @@ private:
     static void crashHandler(int signal);
 
     DataEngineManager *m_engineManager;
-    Desktop *m_desktop;
-
+    RootWidget *m_root;
 };
 
 #endif // multiple inclusion guard

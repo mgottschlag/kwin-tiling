@@ -1,4 +1,5 @@
 /*
+ *   Copyright (C) 2006 Aaron Seigo <aseigo@kde.org>
  *   Copyright (C) 2007 Matt Broadstone <mbroadst@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -16,33 +17,28 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef DESKTOP_H
-#define DESKTOP_H
+#ifndef ROOTWIDGET_H
+#define ROOTWIDGET_H
 
-#include <QGraphicsView>
+#include <QWidget>
 
-class QGraphicsScene;
-namespace Plasma
-{
-    class Svg;
-}
+class Desktop;
 
-class Desktop : public QGraphicsView
+class RootWidget : public QWidget
 {
     Q_OBJECT
-public:
-    Desktop(QWidget *parent = 0);
-    ~Desktop();
 
-protected:
-    void resizeEvent(QResizeEvent* event);
-    void drawBackground(QPainter * painter, const QRectF & rect);
+    public:
+        RootWidget();
+        ~RootWidget();
 
-private:
-    QGraphicsScene *m_graphicsScene;
-    Plasma::Svg* m_background;
+        Desktop* desktop() const;
+
+    protected slots:
+        void adjustSize();
+
+    private:
+        Desktop* m_desktop;
 };
 
 #endif
-
-

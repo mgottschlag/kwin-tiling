@@ -38,27 +38,27 @@
 
 #include "datavisualization.h"
 
-
 class QTimer;
 namespace Plasma
 {
+    class Svg;
+}
 
-class Clock : public DataVisualization,
+class Clock : public Plasma::DataVisualization,
               public QGraphicsItem
 {
         Q_OBJECT
     public:
-        Clock (QGraphicsItem *parent = 0);
+        Clock(QGraphicsItem *parent = 0);
         ~Clock();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
         void setPath(const QString&);
-        void drawClock();
         QRectF boundingRect() const;
 
     public slots:
         void drawSeconds();
-        void data(const DataSource::Data& data);
+        void data(const Plasma::DataSource::Data& data);
 
     protected:
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
@@ -66,41 +66,14 @@ class Clock : public DataVisualization,
     private:
         QRectF m_rect;
 
-        QTimer *sec_timer;
-        QTimer *mins_timer;
-        QTimer *hours_timer;
+        QTimer *m_timer;
 
-        QPixmap  _secs_hand;
-        QPixmap  _mins_hand;
-        QPixmap  _hour_hand;
-
-        QStringList _hour_path;
-        QStringList _mins_path;
-        QStringList _secs_path;
-
-        QImage _clock_bg;
-        QImage _bg;
-        QString prefix;
-
-        double _secs;
-        double _mins;
-        double _hour;
+        Plasma::Svg* m_theme;
 
         int seconds;
         int s_a;
         QTime time;
         QPoint clickPos;
-        QPixmap face;
-
-        /*additional Clock images : Opera Clock seems to do so*/
-        QImage gloss;
-        QPixmap thedot;
-        int shade;
-        QImage lens;
-        QPixmap date;
-
 };
-
-}   // Plasma namespace
 
 #endif

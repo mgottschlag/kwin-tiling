@@ -4,11 +4,12 @@ add_definitions (-DQT3_SUPPORT)
 
 set(plasma_SRCS 
     clock.cpp
-    main.cpp
     desktop.cpp
     enginemanager.cpp
+    main.cpp
     plasmaapp.cpp
-    )
+    rootwidget.cpp
+)
 
 set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE( plasma_SRCS ${ksmserver_xml} ksmserver_interface )

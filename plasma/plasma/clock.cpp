@@ -29,94 +29,35 @@
 #include <QStyleOptionGraphicsItem>
 #include <QDebug>
 
-#include "clock.h"
-#include "clock.moc"
+#include "svg.h"
 
-namespace Plasma
-{
+#include "clock.h"
 
 Clock::Clock(QGraphicsItem * parent)
-    :   DataVisualization(),
+    :   Plasma::DataVisualization(),
         QGraphicsItem(parent)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
     m_rect = QRectF(0, 0, 300, 300);
 
-    shade = 0;
-    prefix = QString("/home/kde4/clock/");
-    drawClock();
+    m_theme = new Plasma::Svg("widgets/clock", this);
+    m_timer = new QTimer(this);
+    connect (m_timer, SIGNAL(timeout()), this, SLOT(update()));
+
+    //FIXME: this needs to be less than .5 s; particularly when we allow to not show the seconds
+    m_timer->start (500, false);
 }
 
 QRectF Clock::boundingRect() const
 {
+    //FIXME: this needs to be settable / adjustable
     return m_rect;
 }
 
-void Clock::data(const DataSource::Data &data)
+void Clock::data(const Plasma::DataSource::Data &data)
 {
-}
-
-void Clock::setPath(const QString &str)
-{
-    prefix  = str+'/';
-}
-
-void Clock::drawClock()
-{
-    qDebug() << "prefix is: " << prefix;
-
-    _clock_bg = QImage (prefix + "background.png");
-    _clock_bg = _clock_bg.convertDepth (32);
-    _clock_bg.setAlphaBuffer (true);
-
-    //this->//resize (_clock_bg.width (), _clock_bg.height ());
-
-    /*gloss stuff*/
-    gloss = QImage(prefix + "gloss.png");
-    gloss.convertDepth(32);
-    gloss.setAlphaBuffer(true);
-
-    face = QPixmap (prefix + "face.png");
-    thedot = QPixmap (prefix + "thedot.png");
-    //date = QPixmap(prefix+"date_field.png");
-
-
-    /**seconds first **/
-    _secs_hand = QPixmap (QImage (prefix + "second-hand-long.png"));
-    sec_timer = new QTimer (this);
-    connect (sec_timer, SIGNAL (timeout ()), this, SLOT (drawSeconds ()));
-    sec_timer->start (500, false);
-    /** Mins after that **/
-    _mins_hand = QPixmap (QImage (prefix + "second-hand.png"));
-    _hour_hand = QPixmap (QImage (prefix + "second-hand.png"));
-
-
-    /**Createsa a nice Lense**/
-    /** Prerender into Qimage to save Processing in Painter event**/
-    double rad = ((face.width () / 2)) - 8.0;
-    int offset = 28;
-    QRect bounds (0, 0, face.width () - offset, face.height () - offset);
-    QPainter p;
-
-    lens =
-    QImage (QSize (face.width () - offset, face.height () - offset),
-            QImage::Format_ARGB32_Premultiplied);
-
-    lens.fill (0);
-
-    p.begin (&lens);
-    QRadialGradient gr (rad, rad, rad, 3 * rad / 5, 3 * rad / 5);
-    gr.setColorAt (0.0, QColor (255, 255, 255, 191));
-    gr.setColorAt (0.2, QColor (255, 255, 231, 191));
-    gr.setColorAt (0.9, QColor (150, 150, 200, 65));
-    gr.setColorAt (0.95, QColor (0, 0, 0, 0));
-    gr.setColorAt (1, QColor (0, 0, 0, 0));
-    p.setRenderHint (QPainter::Antialiasing);
-    p.setBrush (gr);
-    p.setPen (Qt::NoPen);
-    p.drawEllipse (0, 0, bounds.width (), bounds.height ());
-    p.end ();
+    Q_UNUSED(data);
 }
 
 Clock::~Clock()
@@ -125,10 +66,6 @@ Clock::~Clock()
 
 void Clock::drawSeconds()
 {
-    time = QTime::currentTime ();
-    _secs = 6.0 * time.second ();
-    _mins = 6.0 * time.minute ();
-    _hour =  30.0 * time.hour ();
     update ();
 }
 
@@ -136,60 +73,54 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
 {
     Q_UNUSED(widget)
 
+    time = QTime::currentTime ();
+    qreal seconds = 6.0 * time.second();
+    qreal minutes = 6.0 * time.minute();
+    qreal hours =  30.0 * time.hour();
+
     QRectF r = option->exposedRect;
     p->setRenderHint(QPainter::SmoothPixmapTransform);
 
-    //  if (shade == 0)
-    //  {
-        p->drawImage(_clock_bg.rect(), _clock_bg);
-        shade = 1;
-    // }
-
-    p->drawPixmap(QRect(16, 16, face.width(), face.height()), face);
+    QSizeF clockSize = m_theme->elementSize("ClockFace");
+    m_theme->paint(p, m_rect, "ClockFace");
 
     /*Draw Hours*/
     p->save();
-    p->translate(_clock_bg.width() / 2, _clock_bg.height() / 2);
-    p->rotate(_hour);
-    p->drawPixmap(QRect
-                (-(ceil (_hour_hand.width() / 2)),
-                    -(_hour_hand.height() - 32), _hour_hand.width(),
-                    _hour_hand.height()), _hour_hand);
+    p->translate(clockSize.width() / 2, clockSize.height() / 2);
+    p->rotate(hours);
+    QSizeF elementSize = m_theme->elementSize("HourHand");
+    QRectF rect = QRectF(-(elementSize.width() / 2), -(elementSize.height() - 32),
+                         elementSize.width(), elementSize.height());
+    m_theme->paint(p, rect, "HourHand");
     p->restore();
 
     /* Draw Mins */
     p->save();
-    p->translate(_clock_bg.width() / 2, _clock_bg.height() / 2);
-    p->rotate(_mins);
-    p->drawPixmap(QRect
-                (-(ceil (_mins_hand.width() / 2)),
-                    -(_mins_hand.height() - 16), _mins_hand.width(),
-                    _mins_hand.height()), _mins_hand);
+    p->translate(clockSize.width() / 2, clockSize.height() / 2);
+    p->rotate(minutes);
+    elementSize = m_theme->elementSize("MinuteHand");
+    rect = QRectF(-(elementSize.width() / 2),-(elementSize.height() - 16),
+                  elementSize.width(), elementSize.height());
+    m_theme->paint(p, rect, "MinuteHand");
     p->restore();
 
     /*Draw Secs*/
     p->save();
-    p->translate(_clock_bg.width() / 2, _clock_bg.width() / 2);
-    p->rotate(_secs);
-    p->drawPixmap(QRect
-                (-(ceil (_secs_hand.width() / 2)),
-                    -(_secs_hand.height() - 32), _secs_hand.width(),
-                    _secs_hand.height()), _secs_hand);
+    p->translate(clockSize.width() / 2, clockSize.width() / 2);
+    p->rotate(seconds);
+    elementSize = m_theme->elementSize("SecondHand");
+    rect = QRectF(-(elementSize.width() / 2),-(elementSize.height() - 16),
+                  elementSize.width(), elementSize.height());
+    m_theme->paint(p, rect, "SecondHand");
     p->restore();
 
     p->save();
-    p->translate(_clock_bg.width() / 2, _clock_bg.width() / 2);
-    p->drawPixmap(QRect
-                (-(thedot.width() / 2), -(thedot.height() / 2),
-                    thedot.width(), thedot.height()), QPixmap (thedot));
+    p->translate(clockSize.width() / 2, clockSize.width() / 2);
+    m_theme->paint(p, 0, 0, "HandCenterScrew");
     p->restore();
 
-    p->drawImage(QRect(29, 29, gloss.width(), gloss.height()), gloss);
-    p->drawImage(QRect(28, 28, lens.width(), lens.height()), lens);
-
-    p->drawPixmap(QRect
-                ((_clock_bg.width() / 4) * 3, _clock_bg.height() / 2,
-                    date.width(), date.height()), date);
+    m_theme->paint(p, 0, 0, "Glass");
+    p->drawRect(m_rect);
 }
 
 QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -209,7 +140,4 @@ QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
     return QGraphicsItem::itemChange(change, value);
 }
 
-
-
-} // Plasma namespace
-
+#include "clock.moc"

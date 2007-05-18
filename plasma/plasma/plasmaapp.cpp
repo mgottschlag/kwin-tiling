@@ -30,9 +30,8 @@
 #include <KCmdLineArgs>
 #include <ksmserver_interface.h>
 
-#include "desktop.h"
+#include "rootwidget.h"
 #include "plasmaapp.h"
-#include "plasmaapp.moc"
 
 PlasmaApp* PlasmaApp::self()
 {
@@ -41,10 +40,13 @@ PlasmaApp* PlasmaApp::self()
 
 PlasmaApp::PlasmaApp()
     : m_engineManager(0),
-      m_desktop(0)
+      m_root(0)
 {
     notifyStartup(false);
-    if (KCrash::crashHandler() == 0 )
+
+    // this same pattern is in KRunner (see workspace/krunner/restartingapplication.h)
+    // would be interesting to see if this could be shared.
+    if (KCrash::crashHandler() == 0)
     {
         // this means we've most likely crashed once. so let's see if we
         // stay up for more than 2 minutes time, and if so reset the
@@ -62,15 +64,16 @@ PlasmaApp::PlasmaApp()
     m_interface = this;
     m_engineManager = new DataEngineManager;
 
-    m_desktop = new Desktop;
-    m_desktop->show();
+    m_root = new RootWidget();
+    m_root->show();
 
     notifyStartup(true);
 }
 
 PlasmaApp::~PlasmaApp()
 {
-    delete m_desktop;
+    delete m_root;
+    //delete m_desktop;
     delete m_engineManager;
 }
 
@@ -111,8 +114,11 @@ void PlasmaApp::notifyStartup(bool completed)
     org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
 
     const QString startupID("workspace desktop");
-    if (completed)
-        ksmserver.resumeStartup( startupID );
-    else
-        ksmserver.suspendStartup( startupID );
+    if (completed) {
+        ksmserver.resumeStartup(startupID);
+    } else {
+        ksmserver.suspendStartup(startupID);
+    }
 }
+
+#include "plasmaapp.moc"

@@ -10,6 +10,8 @@
 #include "widgets/pushbutton.h"
 #include "widgets/lineedit.h"
 
+#include "svg.h"
+
 #include "clock.h"
 #include "desktop.h"
 #include "desktop.moc"
@@ -17,14 +19,16 @@
 Desktop::Desktop(QWidget *parent)
     : QGraphicsView(parent)
 {
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Desktop);
+    setFrameShape(QFrame::NoFrame);
+/*    setBackgroundMode(Qt::NoBackground);*/
+    setAutoFillBackground(true);
+
+/*    QPalette pal = palette();
+    pal.setBrush(QPalette::Base, Qt::transparent);
+    setPalette(pal);*/
     //setViewport(new QGLWidget  ( QGLFormat(QGL::StencilBuffer | QGL::AlphaChannel)   ));
 
-    int primaryScreen = QApplication::desktop()->primaryScreen();
-    QRect desktopSize = QApplication::desktop()->screenGeometry(primaryScreen);
-    setGeometry(desktopSize);
-
-    m_graphicsScene = new QGraphicsScene(desktopSize);
+    m_graphicsScene = new QGraphicsScene(rect());
     m_graphicsScene->setItemIndexMethod(QGraphicsScene::NoIndex);
     setScene(m_graphicsScene);
     setDragMode(QGraphicsView::RubberBandDrag);
@@ -35,51 +39,49 @@ Desktop::Desktop(QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // Give it some silly default background
-    QPixmap tile(100, 100);
-    tile.fill(Qt::white);
-    QPainter pt(&tile);
-    QColor color(220, 220, 220);
-    pt.fillRect(0, 0, 50, 50, color);
-    pt.fillRect(50, 50, 50, 50, color);
-    pt.end();
-    setBackground(tile);
-
-    // Make us legit via KWin
-    KWindowSystem::setType(winId(), NET::Desktop);
+//     QPixmap tile(100, 100);
+//     tile.fill(Qt::white);
+//     QPainter pt(&tile);
+//     QColor color(220, 220, 220);
+//     pt.fillRect(0, 0, 50, 50, color);
+//     pt.fillRect(50, 50, 50, 50, color);
+//     pt.end();
+//     setBackground(tile);
 
     // Tmp
-    for (int i = 0; i < 4000; i++)
-    {
-        int x = qrand() % 475;
-        int y = qrand() % 475;
-
-        Plasma::PushButton *testButton = new Plasma::PushButton;
-        testButton->setText(QString::number(i));
-        testButton->moveBy(x, y);
-
-        m_graphicsScene->addItem(testButton);
-    }
+//     for (int i = 0; i < 4000; i++)
+//     {
+//         int x = qrand() % 475;
+//         int y = qrand() % 475;
+// 
+//         Plasma::PushButton *testButton = new Plasma::PushButton;
+//         testButton->setText(QString::number(i));
+//         testButton->moveBy(x, y);
+// 
+//         m_graphicsScene->addItem(testButton);
+//     }
 
     // for (int i = 0; i < 5; i++)
     // {
-        Plasma::Clock *clock = new Plasma::Clock;
+        Clock *clock = new Clock;
         m_graphicsScene->addItem(clock);
     // }
+    m_background = new Plasma::Svg("background/dialog", this);
 }
 
 Desktop::~Desktop()
 {
 }
 
-void Desktop::setBackground(const QString &path)
+void Desktop::drawBackground(QPainter * painter, const QRectF &)
 {
-    QPixmap image(path);
-    setBackground(image);
+    m_background->paint(painter, rect());
 }
 
-void Desktop::setBackground(const QPixmap &image)
+void Desktop::resizeEvent(QResizeEvent* event)
 {
-    resetCachedContent();
-    setBackgroundBrush(image);
+    Q_UNUSED(event);
+    m_graphicsScene->setSceneRect(rect());
+    m_background->resize(width(), height());
 }
 
