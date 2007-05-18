@@ -252,7 +252,7 @@ void Interface::setWidgetPalettes()
     QColor headerBgColor = widgetPalette.color( QPalette::Active,
                                                 QPalette::Base );
     headerBgColor.setAlpha( 200 );
-    widgetPalette.setColor( QPalette::Active, QPalette::Base, headerBgColor );
+    widgetPalette.setColor( QPalette::Base, headerBgColor );
 
     m_header->setPalette( widgetPalette );
     m_searchTerm->setPalette( widgetPalette );
