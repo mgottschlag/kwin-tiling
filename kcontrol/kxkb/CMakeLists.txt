@@ -78,8 +78,11 @@ kde4_add_plugin(kcm_keyboard ${kcm_keyboard_PART_SRCS})
 
 target_link_libraries(kcm_keyboard
     ${KDE4_KIO_LIBS} xkbfile ${QT_QT3SUPPORT_LIBRARY}
-    ${XKB_SUPPORT_LIB} ${X11_XTest_LIB}
+    ${XKB_SUPPORT_LIB}
 )
+if(X11_XTest_FOUND)
+  target_link_libraries(kcm_keyboard ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
 
 install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
@@ -97,9 +100,12 @@ kde4_automoc(${kxkb_panelapplet_PART_SRCS})
 kde4_add_plugin(kxkb_panelapplet ${kxkb_panelapplet_PART_SRCS})
 
 target_link_libraries(kxkb_panelapplet kworkspace kickermain  
-    ${KDE4_KIO_LIBS} xkbfile 
-    ${XKB_SUPPORT_LIB} ${X11_XTest_LIB}
+    ${KDE4_KIO_LIBS} xkbfile
+    ${XKB_SUPPORT_LIB}
 )
+if(X11_XTest_FOUND)
+  target_link_libraries(kxkb_panelapplet ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
 
 install(TARGETS kxkb_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

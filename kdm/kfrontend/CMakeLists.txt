@@ -67,7 +67,11 @@ endif (WITH_KDM_XCONSOLE)
 macro_add_file_dependencies(kdm_greet.h ${confci})
 kde4_automoc(${kdm_greet_SRCS})
 kde4_add_executable(kdm_greet ${kdm_greet_SRCS})
-target_link_libraries(kdm_greet ${KDE4_KDEUI_LIBS} ${X11_XTest_LIB} ${POSIX4_LIBRARIES})
+target_link_libraries(kdm_greet ${KDE4_KDEUI_LIBS} ${POSIX4_LIBRARIES})
+if(X11_XTest_FOUND)
+  target_link_libraries(kdm_greet ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
+
 install(TARGETS kdm_greet DESTINATION ${BIN_INSTALL_DIR})
 
 set(kdm_config_SRCS kdm_config.c)
