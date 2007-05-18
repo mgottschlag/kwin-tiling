@@ -111,7 +111,7 @@ void AutoLogout::logout()
 {
     QAbstractEventDispatcher::instance()->unregisterTimers(this);
     org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
-    ksmserver.logout( 0, 2, 0 );
+    ksmserver.logout( 0, 0, 0 );
 }
 
 void AutoLogout::setVisible(bool visible)
