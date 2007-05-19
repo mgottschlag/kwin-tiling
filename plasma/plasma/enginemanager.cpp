@@ -16,9 +16,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
-#include <kservicetypetrader.h>
-#include <kparts/componentfactory.h>
+#include <KDebug>
+#include <KServiceTypeTrader>
+#include <KParts/ComponentFactory>
 
 #include "enginemanager.h"
 
@@ -35,7 +35,7 @@ DataEngineManager::~DataEngineManager()
     m_engines.clear();
 }
 
-Plasma::DataEngine* DataEngineManager::engine(const QString& name) const
+Plasma::DataEngine* DataEngineManager::dataEngine(const QString& name) const
 {
     Plasma::DataEngine::Dict::const_iterator it = m_engines.find(name);
     if (it != m_engines.end())
@@ -48,53 +48,47 @@ Plasma::DataEngine* DataEngineManager::engine(const QString& name) const
     return 0;
 }
 
-bool DataEngineManager::loadDataEngine(const QString& name)
+Plasma::DataEngine* DataEngineManager::loadDataEngine(const QString& name)
 {
-/*
-    Plasma::DataEngine* dataEngine = engine(name);
+    Plasma::DataEngine* engine = dataEngine(name);
 
-    if (dataEngine)
-    {
-        dataEngine->ref();
-        return true;
+    if (engine) {
+        engine->ref();
+        return engine;
     }
 
     // load the engine, add it to the engines
-    KService::List offers = KServiceTypeTrader::self()->query("Plasma/Engine");
+    QString constraint = QString("[X-EngineName] == '%1'").arg(name);
+    KService::List offers = KServiceTypeTrader::self()->query("Plasma/DataEngine",
+                                                              constraint);
 
-    if (offers.isEmpty())
-    {
-        return false;
+    if (offers.isEmpty()) {
+        kDebug() << "offers are empty for " << name << " with constraint " << constraint << endl;
+        return 0;
     }
 
     int errorCode = 0;
-    dataEngine = KParts::ComponentFactory::createInstanceFromService<Plasma::DataEngine>
-                                  (offers.first(), 0, 0, QStringList(), &errorCode);
-
-    if (!engine)
-    {
-        return false;
+    engine = KService::createInstance<Plasma::DataEngine>(offers.first(), 0);
+    if (!engine) {
+        kDebug() << errorCode << " couldn't load engine! " << name << endl;
+        return 0;
     }
 
-    m_engines[name] = dataEngine;
-    return true;
-*/
-
-    return false;
+    engine->ref();
+    m_engines[name] = engine;
+    return engine;
 }
 
 void DataEngineManager::unloadDataEngine(const QString& name)
 {
-    Plasma::DataEngine* dataEngine = engine(name);
+    Plasma::DataEngine* engine = dataEngine(name);
 
-    if (dataEngine)
-    {
-        dataEngine->deref();
+    if (engine) {
+        engine->deref();
 
-        if (!dataEngine->isUsed())
-        {
+        if (!engine->isUsed()) {
             m_engines.remove(name);
-            delete dataEngine;
+            delete engine;
         }
     }
 }
