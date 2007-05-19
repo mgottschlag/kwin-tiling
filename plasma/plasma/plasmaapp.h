@@ -38,7 +38,8 @@ public:
     static PlasmaApp* self();
 
     // Plasma::Interface
-    bool loadDataEngine(const QString& name);
+    Plasma::DataEngine* dataEngine(const QString& name);
+    Plasma::DataEngine* loadDataEngine(const QString& name);
     void unloadDataEngine(const QString& name);
 
     void notifyStartup(bool completed);

@@ -93,11 +93,15 @@ void PlasmaApp::crashHandler(int signal)
     system("plasma-qgv --nocrashhandler &"); // try to restart
 }
 
-bool PlasmaApp::loadDataEngine(const QString& name)
+Plasma::DataEngine* PlasmaApp::dataEngine(const QString& name)
 {
-    if (!m_engineManager)
-        return false;
+    Q_ASSERT(m_engineManager);
+    return m_engineManager->dataEngine(name);
+}
 
+Plasma::DataEngine* PlasmaApp::loadDataEngine(const QString& name)
+{
+    Q_ASSERT(m_engineManager);
     return m_engineManager->loadDataEngine(name);
 }
 
