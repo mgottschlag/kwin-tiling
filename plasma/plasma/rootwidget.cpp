@@ -50,7 +50,6 @@ RootWidget::RootWidget()
 
 RootWidget::~RootWidget()
 {
-    delete m_desktop;
 }
 
 Desktop* RootWidget::desktop() const
