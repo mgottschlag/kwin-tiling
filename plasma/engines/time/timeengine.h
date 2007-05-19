@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CALCULATORRUNNER_H
-#define CALCULATORRUNNER_H
+#ifndef TIMEENGINE_H
+#define TIMEENGINE_H
 
 #include <KGenericFactory>
 
