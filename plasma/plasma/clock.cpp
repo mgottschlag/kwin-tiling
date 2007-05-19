@@ -27,64 +27,63 @@
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QStyleOptionGraphicsItem>
-#include <QDebug>
+
+#include <KDebug>
+#include <KLocale>
 
 #include "svg.h"
+#include "interface.h"
 
 #include "clock.h"
 
 Clock::Clock(QGraphicsItem * parent)
-    :   Plasma::DataVisualization(),
-        QGraphicsItem(parent)
+    : Plasma::DataVisualization(),
+      QGraphicsItem(parent)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
-    m_rect = QRectF(0, 0, 300, 300);
+    Plasma::DataEngine* timeEngine = Plasma::Interface::self()->loadDataEngine("time");
+    if (timeEngine) {
+        timeEngine->connectSource("time", this);
+    }
 
     m_theme = new Plasma::Svg("widgets/clock", this);
-    m_timer = new QTimer(this);
-    connect (m_timer, SIGNAL(timeout()), this, SLOT(update()));
-
-    //FIXME: this needs to be less than .5 s; particularly when we allow to not show the seconds
-    m_timer->start (500, false);
+    m_theme->resize(300, 300);
 }
 
 QRectF Clock::boundingRect() const
 {
     //FIXME: this needs to be settable / adjustable
-    return m_rect;
+    return QRectF(0, 0, 300, 300);
 }
 
-void Clock::data(const Plasma::DataSource::Data &data)
+void Clock::updated(const Plasma::DataSource::Data &data)
 {
-    Q_UNUSED(data);
+    m_time = data[i18n("Local")].toTime();
+    update();
 }
 
 Clock::~Clock()
 {
-}
-
-void Clock::drawSeconds()
-{
-    update ();
+    Plasma::Interface::self()->unloadDataEngine("time");
 }
 
 void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
 
-    time = QTime::currentTime ();
-    qreal seconds = 6.0 * time.second();
-    qreal minutes = 6.0 * time.minute();
-    qreal hours =  30.0 * time.hour();
+    qreal seconds = 6.0 * m_time.second();
+    qreal minutes = 6.0 * m_time.minute();
+    qreal hours = 30.0 * m_time.hour();
+
+    QRectF boundRect = boundingRect();
 
     QRectF r = option->exposedRect;
     p->setRenderHint(QPainter::SmoothPixmapTransform);
 
     QSizeF clockSize = m_theme->elementSize("ClockFace");
-    m_theme->paint(p, m_rect, "ClockFace");
-
-    /*Draw Hours*/
+    m_theme->paint(p, boundRect, "ClockFace");
+/*
     p->save();
     p->translate(clockSize.width() / 2, clockSize.height() / 2);
     p->rotate(hours);
@@ -94,7 +93,6 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     m_theme->paint(p, rect, "HourHand");
     p->restore();
 
-    /* Draw Mins */
     p->save();
     p->translate(clockSize.width() / 2, clockSize.height() / 2);
     p->rotate(minutes);
@@ -104,7 +102,6 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     m_theme->paint(p, rect, "MinuteHand");
     p->restore();
 
-    /*Draw Secs*/
     p->save();
     p->translate(clockSize.width() / 2, clockSize.width() / 2);
     p->rotate(seconds);
@@ -117,12 +114,13 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->save();
     p->translate(clockSize.width() / 2, clockSize.width() / 2);
     m_theme->paint(p, 0, 0, "HandCenterScrew");
-    p->restore();
+    p->restore();*/
 
-    m_theme->paint(p, 0, 0, "Glass");
-    p->drawRect(m_rect);
+    m_theme->paint(p, boundRect, "Glass");
+    p->drawText(100, 100, m_time.toString());
+//     p->drawRect(boundRect);
 }
-
+/*
 QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == ItemPositionChange && scene())
@@ -138,6 +136,6 @@ QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
     }
 
     return QGraphicsItem::itemChange(change, value);
-}
+}*/
 
 #include "clock.moc"

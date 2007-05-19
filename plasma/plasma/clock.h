@@ -37,6 +37,7 @@
 #include <kdemacros.h>
 
 #include "datavisualization.h"
+#include "dataengine.h"
 
 class QTimer;
 namespace Plasma
@@ -57,23 +58,16 @@ class Clock : public Plasma::DataVisualization,
         QRectF boundingRect() const;
 
     public slots:
-        void drawSeconds();
-        void data(const Plasma::DataSource::Data& data);
+        void updated(const Plasma::DataSource::Data& data);
 
     protected:
-        QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+//         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     private:
-        QRectF m_rect;
-
+        int m_pixelSize;
         QTimer *m_timer;
-
         Plasma::Svg* m_theme;
-
-        int seconds;
-        int s_a;
-        QTime time;
-        QPoint clickPos;
+        QTime m_time;
 };
 
 #endif
