@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Time Data Engine
+Comment=Time data for Plasmoids
+ServiceTypes=Plasma/DataEngine
+Type=Service
+X-KDE-Library=plasma_time_engine
+X-EngineName=time
