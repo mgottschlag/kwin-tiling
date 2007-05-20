@@ -20,7 +20,7 @@
         <number>0</number>
       </property>
       <item>
-        <widget class="Q3GroupBox" name="topBox" >
+        <widget class="QGroupBox" name="topBox" >
           <property name="sizePolicy" >
             <sizepolicy>
               <hsizetype>5</hsizetype>
