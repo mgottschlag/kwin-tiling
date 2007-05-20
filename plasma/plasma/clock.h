@@ -40,6 +40,7 @@
 #include "dataengine.h"
 
 class QTimer;
+
 namespace Plasma
 {
     class Svg;

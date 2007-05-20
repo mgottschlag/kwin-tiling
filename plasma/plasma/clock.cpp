@@ -28,6 +28,8 @@
 #include <QGraphicsScene>
 #include <QStyleOptionGraphicsItem>
 
+#include <QSvgRenderer>
+
 #include <KDebug>
 #include <KLocale>
 
@@ -41,7 +43,6 @@ Clock::Clock(QGraphicsItem * parent)
       QGraphicsItem(parent)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
-
     Plasma::DataEngine* timeEngine = Plasma::Interface::self()->loadDataEngine("time");
     if (timeEngine) {
         timeEngine->connectSource("time", this);
@@ -71,54 +72,64 @@ Clock::~Clock()
 void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
+    p->setRenderHint(QPainter::SmoothPixmapTransform);
 
     qreal seconds = 6.0 * m_time.second();
     qreal minutes = 6.0 * m_time.minute();
     qreal hours = 30.0 * m_time.hour();
 
+    QRectF rrr(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
-
-    QRectF r = option->exposedRect;
-    p->setRenderHint(QPainter::SmoothPixmapTransform);
-
     QSizeF clockSize = m_theme->elementSize("ClockFace");
     m_theme->paint(p, boundRect, "ClockFace");
-/*
+    QSize elementSize;
+
     p->save();
-    p->translate(clockSize.width() / 2, clockSize.height() / 2);
-    p->rotate(hours);
-    QSizeF elementSize = m_theme->elementSize("HourHand");
-    QRectF rect = QRectF(-(elementSize.width() / 2), -(elementSize.height() - 32),
-                         elementSize.width(), elementSize.height());
-    m_theme->paint(p, rect, "HourHand");
+      p->translate(clockSize.height()/2, clockSize.width()/2);
+      p->rotate(seconds-90);
+      elementSize = m_theme->elementSize("SecondHand");
+      m_theme->resize(elementSize);
+      rrr.setSize(elementSize);
+      m_theme->paint(p, rrr, "SecondHand");
+//     p->drawRect(rrr);
     p->restore();
 
+    elementSize = QSize(0, 0);
+
     p->save();
-    p->translate(clockSize.width() / 2, clockSize.height() / 2);
-    p->rotate(minutes);
-    elementSize = m_theme->elementSize("MinuteHand");
-    rect = QRectF(-(elementSize.width() / 2),-(elementSize.height() - 16),
-                  elementSize.width(), elementSize.height());
-    m_theme->paint(p, rect, "MinuteHand");
+      p->translate(clockSize.height()/2, clockSize.width()/2);
+      p->rotate(hours-90);
+#warning FIXME: Need to uncomment these 3 linse, but (dunno why) if I calculate the size, I get 0 witdth.
+//     elementSize = m_theme->elementSize("HourHand");
+//     m_theme->resize(elementSize);
+//     rrr.setSize(elementSize);
+      m_theme->paint(p, rrr, "HourHand");
     p->restore();
 
+    elementSize = QSize(0, 0);
+
     p->save();
-    p->translate(clockSize.width() / 2, clockSize.width() / 2);
-    p->rotate(seconds);
-    elementSize = m_theme->elementSize("SecondHand");
-    rect = QRectF(-(elementSize.width() / 2),-(elementSize.height() - 16),
-                  elementSize.width(), elementSize.height());
-    m_theme->paint(p, rect, "SecondHand");
+      p->translate(clockSize.height()/2, clockSize.width()/2);
+      p->rotate(minutes-90);
+//       elementSize = m_theme->elementSize("MinuteHand");
+//       m_theme->resize(elementSize);
+//       rrr.setSize(elementSize);
+      m_theme->paint(p, rrr, "MinuteHand");
+//     p->drawRect(rrr);
     p->restore();
 
-    p->save();
-    p->translate(clockSize.width() / 2, clockSize.width() / 2);
-    m_theme->paint(p, 0, 0, "HandCenterScrew");
-    p->restore();*/
-
-    m_theme->paint(p, boundRect, "Glass");
-    p->drawText(100, 100, m_time.toString());
-//     p->drawRect(boundRect);
+//FIXME: re-enable this.
+//     elementSize = QSize(0, 0);
+// 
+//     p->save();
+//     p->translate(clockSize.width() / 2, clockSize.width() / 2);
+//     elementSize = m_theme->elementSize("HandCenterScrew");
+//     m_theme->resize(elementSize);
+//     rrr.setSize(elementSize);
+//     m_theme->paint(p, 0, 0, "HandCenterScrew");
+//     p->restore();
+    p->drawText(boundingRect().width()/2, (boundingRect().height()/2)+32, m_time.toString());
+    m_theme->resize(boundingRect().size());
 }
 /*
 QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
