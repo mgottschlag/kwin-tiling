@@ -9,7 +9,7 @@ set(time_engine_SRCS
 
 kde4_automoc(${time_engine_SRCS})
 kde4_add_plugin(plasma_time_engine ${time_engine_SRCS})
-target_link_libraries(plasma_time_engine ${KDE4_KDECORE_LIBS} plasmoid)
+target_link_libraries(plasma_time_engine ${KDE4_KDECORE_LIBS} plasma)
 
 install(TARGETS plasma_time_engine DESTINATION ${PLUGIN_INSTALL_DIR} )
 
