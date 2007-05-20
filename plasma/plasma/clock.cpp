@@ -48,13 +48,14 @@ Clock::Clock(QGraphicsItem * parent)
     }
 
     m_theme = new Plasma::Svg("widgets/clock", this);
-    m_theme->resize(300, 300);
+    m_theme->resize(/*300, 300*/);
 }
 
 QRectF Clock::boundingRect() const
 {
     //FIXME: this needs to be settable / adjustable
-    return QRectF(0, 0, 300, 300);
+    QSize s = m_theme->size();
+    return QRectF(0, 0, s.width(), s.height());
 }
 
 void Clock::updated(const Plasma::DataEngine::Data &data)
@@ -80,6 +81,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     QMatrix matrix = p->worldMatrix();
     QRectF rrr(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
+    QSizeF boundSize = boundRect.size();
     QSizeF clockSize = m_theme->elementSize("ClockFace");
     m_theme->paint(p, boundRect, "ClockFace");
     QSize elementSize;
@@ -96,7 +98,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->save();
     p->translate(clockSize.height()/2, clockSize.width()/2);
     p->rotate(hours);
-    m_theme->resize(300, 300);
+    m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HourHand");
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
@@ -106,7 +108,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->save();
     p->translate(clockSize.height()/2, clockSize.width()/2);
     p->rotate(minutes);
-    m_theme->resize(300, 300);
+    m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("MinuteHand");
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
@@ -114,7 +116,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->restore();
 
     p->save();
-    m_theme->resize(300, 300);
+    m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HandCenterScrew");
     m_theme->resize(elementSize);
 
@@ -126,9 +128,10 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     //FIXME: temporary time output
     QString time = m_time.toString();
     QFontMetrics fm(QApplication::font());
-    p->drawText(boundRect.width()/2 - fm.width(time) / 2, (boundingRect().height()/2) - fm.xHeight()*3, m_time.toString());
+    p->drawText(boundRect.width()/2 - fm.width(time) / 2,
+                (boundRect.height()/2) - fm.xHeight()*3, m_time.toString());
 
-    m_theme->resize(boundRect.size());
+    m_theme->resize(boundSize);
     m_theme->paint(p, boundRect, "Glass");
 }
 /*
