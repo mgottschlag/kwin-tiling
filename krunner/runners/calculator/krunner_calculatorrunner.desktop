@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Calculator Runner
 Name[de]=Rechner-Starter
+Name[el]=Εκτελεστής υπολογισμών
 Name[ja]=計算機 Runner
 Name[nds]=Rekendreger
 Name[sv]=Kör miniräknare
@@ -8,6 +9,7 @@ Name[x-test]=xxCalculator Runnerxx
 Name[zh_TW]=計算機執行者
 Comment=Calculate expressions
 Comment[de]=Berechnungen durchführen
+Comment[el]=Υπολογισμός εκφράσεων
 Comment[ja]=数式を計算
 Comment[nds]=Utdrück utreken
 Comment[sv]=Beräkna uttryck

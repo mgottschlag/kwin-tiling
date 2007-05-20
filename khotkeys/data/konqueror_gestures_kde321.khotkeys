@@ -5,6 +5,7 @@ DataCount=1
 Comment=Basic Konqueror gestures.
 Comment[csb]=Pòdspòdlowé gestë Konquerora
 Comment[de]=Grundlegende Gesten für Konqueror
+Comment[el]=Βασικές χειρονομίες Konqueror.
 Comment[ja]=Konqueror の基本的なジェスチャーです。(マウスジェスチャーに使用するボタンは「全体設定」で変更できます)
 Comment[nds]=Eenfach Muustekens för Konqueror
 Comment[x-test]=xxBasic Konqueror gestures.xx
@@ -14,6 +15,7 @@ Enabled=true
 Name=Konqueror Gestures
 Name[csb]=Gestë Konquerora
 Name[de]=Konqueror-Gesten
+Name[el]=Χειρονομίες Konqueror
 Name[ja]=Konqueror ジェスチャー
 Name[nds]=Konqueror-Muustekens
 Name[x-test]=xxKonqueror Gesturesxx
@@ -56,6 +58,7 @@ WindowTypes=1
 [Data_1_1]
 Comment=Press, move left, release.
 Comment[de]=Drücken, nach links, loslassen.
+Comment[el]=Πιέστε, μετακινηθείτε αριστερά, ελευθερώστε.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを左に動かし、ボタンを放します。
 Comment[nds]=Drücken, na links, looslaten.
 Comment[x-test]=xxPress, move left, release.xx
@@ -99,6 +102,7 @@ ConditionsCount=0
 [Data_1_10Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -136,6 +140,7 @@ ConditionsCount=0
 [Data_1_11Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -150,6 +155,7 @@ Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move 
 Enabled=false
 Name=Up #2
 Name[de]=Nach oben (2)
+Name[el]=Πάνω #2
 Name[ja]=上 #2
 Name[nds]=Na baven (2)
 Name[x-test]=xxUp #2xx
@@ -171,6 +177,7 @@ ConditionsCount=0
 [Data_1_12Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -183,6 +190,7 @@ Type=GESTURE
 [Data_1_13]
 Comment=Press, move up, move right, release.
 Comment[de]=Drücken, nach oben, nach rechts, loslassen.
+Comment[el]=Πίεση, μετακίνηση πάνω, μετακίνηση δεξιά, ελευθέρωση.
 Comment[ja]=マウスの中ボタン押したまま、マウスを上->右の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na baven, na rechts, looslaten.
 Comment[x-test]=xxPress, move up, move right, release.xx
@@ -212,6 +220,7 @@ ConditionsCount=0
 [Data_1_13Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -224,6 +233,7 @@ Type=GESTURE
 [Data_1_14]
 Comment=Press, move up, move left, release.
 Comment[de]=Drücken, nach oben, nach links, loslassen.
+Comment[el]=Πίεση, μετακίνηση πάνω, μετακίνηση αριστερά, ελευθέρωση.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを上->左の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na baven, na links, looslaten.
 Comment[x-test]=xxPress, move up, move left, release.xx
@@ -253,6 +263,7 @@ ConditionsCount=0
 [Data_1_14Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -277,6 +288,7 @@ ConditionsCount=0
 [Data_1_1Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -289,6 +301,7 @@ Type=GESTURE
 [Data_1_2]
 Comment=Press, move down, move up, move down, release.
 Comment[de]=Drücken, nach unten, nach oben, nach unten, loslassen.
+Comment[el]=Πίεση, μετακίνηση κάτω, μετακίνηση πάνω, μετακίνηση κάτω, ελευθέρωση.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを下->上->下の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na nerrn, na baven, na nerrn, looslaten.
 Comment[x-test]=xxPress, move down, move up, move down, release.xx
@@ -318,6 +331,7 @@ ConditionsCount=0
 [Data_1_2Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -330,6 +344,7 @@ Type=GESTURE
 [Data_1_3]
 Comment=Press, move down, move up, release.
 Comment[de]=Drücken, nach unten, nach oben, loslassen.
+Comment[el]=Πίεση, μετακίνηση κάτω, μετακίνηση πάνω, ελευθέρωση.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを下->上の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na nerrn, na baven, looslaten.
 Comment[x-test]=xxPress, move down, move up, release.xx
@@ -360,6 +375,7 @@ ConditionsCount=0
 [Data_1_3Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -372,6 +388,7 @@ Type=GESTURE
 [Data_1_4]
 Comment=Press, move right, release.
 Comment[de]=Drücken, nach rechts, loslassen
+Comment[el]=Πίεση, μετακίνηση δεξιά, ελευθέρωση.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを右に動かし、ボタンを放します。
 Comment[nds]=Drücken, na rechts, looslaten.
 Comment[x-test]=xxPress, move right, release.xx
@@ -380,7 +397,7 @@ Enabled=true
 Name=Forward
 Name[csb]=Wprzódk
 Name[de]=Nach vorne
-Name[el]=Μπροστά
+Name[el]=Εμπρός
 Name[ja]=進む
 Name[nds]=Vörut
 Name[x-test]=xxForwardxx
@@ -402,6 +419,7 @@ ConditionsCount=0
 [Data_1_4Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -414,7 +432,6 @@ Type=GESTURE
 [Data_1_5]
 Comment=Press, move down, move half up, move right, move down, release.\n(Drawing a lowercase 'h'.)
 Comment[de]=Drücken, nach unten, halb nach oben, nach rechts, nach unten, loslassen. (ein kleines "h" zeichnen")
-Comment[ja]=マウスの中ボタンを押したまま、マウスを下に動かし、次に半分の距離だけ上に動かし、さらに右->下の順に動かし、ボタンを放します。\n(小文字の 'h' を描くように)
 Enabled=true
 Name=Home
 Name[af]=Tuiste
@@ -492,6 +509,7 @@ ConditionsCount=0
 [Data_1_5Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -532,6 +550,7 @@ ConditionsCount=0
 [Data_1_6Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -572,6 +591,7 @@ ConditionsCount=0
 [Data_1_7Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -584,6 +604,7 @@ Type=GESTURE
 [Data_1_8]
 Comment=Press, move down, release.
 Comment[de]=Drücken, nach unten, loslassen.
+Comment[el]=Πίεση, μετακίνηση κάτω, ελευθέρωση.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを下に動かし、ボタンを放します。
 Comment[nds]=Drücken, na nerrn, looslaten.
 Comment[x-test]=xxPress, move down, release.xx
@@ -663,6 +684,7 @@ ConditionsCount=0
 [Data_1_8Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發
@@ -675,6 +697,7 @@ Type=GESTURE
 [Data_1_9]
 Comment=Press, move up, move down, release.
 Comment[de]=Drücken, nach oben, nach unten, loslassen.
+Comment[el]=Πίεση, μετακίνηση πάνω, μετακίνηση κάτω, ελευθέρωση.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを上->下の順に動かし、ボタンを放します。
 Comment[nds]=Drücken, na baven, na nerrn, looslaten.
 Comment[x-test]=xxPress, move up, move down, release.xx
@@ -705,6 +728,7 @@ ConditionsCount=0
 [Data_1_9Triggers]
 Comment=Gesture_triggers
 Comment[de]=Gesten_Aktivierung
+Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[nds]=Muustekens
 Comment[x-test]=xxGesture_triggersxx
 Comment[zh_TW]=手勢觸發

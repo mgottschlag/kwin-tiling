@@ -4,6 +4,7 @@ DataCount=1
 [Data_1]
 Comment=This group contains actions that are set up by default.
 Comment[de]=Diese Gruppe enthält einige voreingestellte Aktionen.
+Comment[el]=Η ομάδα αυτή περιέχει ενέργειες που είναι προκαθορισμένα καθορισμένες.
 Comment[ja]=このグループにはデフォルトで設定されているアクションが含まれています。
 Comment[nds]=Disse Koppel bargt vörinstellt Akschonen.
 Comment[x-test]=xxThis group contains actions that are set up by default.xx
@@ -29,6 +30,7 @@ ConditionsCount=0
 [Data_1_1]
 Comment=Launches KSnapShot when PrintScrn is pressed.
 Comment[de]=Startet KSnapShot wenn "Bildschirm Drucken" gedrückt wurde.
+Comment[el]=Εκτέλεση του KSnapShot όταν πατηθεί το PrintScrn.
 Comment[ja]=PrintScrn を押して KSnapShot を起動します。
 Comment[nds]=Röppt "KSnapShot" op, wenn Een de "PrintScreen"-Tast drückt.
 Comment[x-test]=xxLaunches KSnapShot when PrintScrn is pressed.xx
@@ -54,6 +56,7 @@ ConditionsCount=0
 [Data_1_1Triggers]
 Comment=Simple_action
 Comment[de]=Einfache_Aktion
+Comment[el]=Απλή_ενέργεια
 Comment[nds]=Eenfach_Akschoon
 Comment[x-test]=xxSimple_actionxx
 Comment[zh_TW]=簡易動作

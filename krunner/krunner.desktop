@@ -4,6 +4,7 @@ Exec=krunner
 X-DBUS-StartupType=wait
 Name=Command Runner
 Name[de]=Programmstarter
+Name[el]=Εκτελεστής εντολών
 Name[ja]=コマンド Runner
 Name[nds]=Befehldreger
 Name[sv]=Kör kommando
