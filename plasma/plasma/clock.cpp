@@ -20,15 +20,14 @@
 
 #include <math.h>
 
-#include <QMatrix>
-#include <QPixmap>
-#include <QPaintEvent>
+#include <QApplication>
 #include <QBitmap>
-#include <QPainter>
 #include <QGraphicsScene>
+#include <QMatrix>
+#include <QPaintEvent>
+#include <QPainter>
+#include <QPixmap>
 #include <QStyleOptionGraphicsItem>
-
-#include <QSvgRenderer>
 
 #include <KDebug>
 #include <KLocale>
@@ -74,10 +73,11 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     Q_UNUSED(widget)
     p->setRenderHint(QPainter::SmoothPixmapTransform);
 
-    qreal seconds = 6.0 * m_time.second();
-    qreal minutes = 6.0 * m_time.minute();
-    qreal hours = 30.0 * m_time.hour();
+    qreal seconds = 6.0 * m_time.second() - 180;
+    qreal minutes = 6.0 * m_time.minute() - 180;
+    qreal hours = 30.0 * m_time.hour() - 180;
 
+    QMatrix matrix = p->worldMatrix();
     QRectF rrr(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
     QSizeF clockSize = m_theme->elementSize("ClockFace");
@@ -85,51 +85,51 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     QSize elementSize;
 
     p->save();
-      p->translate(clockSize.height()/2, clockSize.width()/2);
-      p->rotate(seconds-90);
-      elementSize = m_theme->elementSize("SecondHand");
-      m_theme->resize(elementSize);
-      rrr.setSize(elementSize);
-      m_theme->paint(p, rrr, "SecondHand");
-//     p->drawRect(rrr);
+    p->translate(clockSize.height()/2, clockSize.width()/2);
+    p->rotate(seconds);
+    elementSize = m_theme->elementSize("SecondHand");
+    m_theme->resize(elementSize);
+    rrr.setSize(elementSize);
+    m_theme->paint(p, rrr, "SecondHand", &matrix);
     p->restore();
-
-    elementSize = QSize(0, 0);
 
     p->save();
-      p->translate(clockSize.height()/2, clockSize.width()/2);
-      p->rotate(hours-90);
-#warning FIXME: Need to uncomment these 3 linse, but (dunno why) if I calculate the size, I get 0 witdth.
-//     elementSize = m_theme->elementSize("HourHand");
-//     m_theme->resize(elementSize);
-//     rrr.setSize(elementSize);
-      m_theme->paint(p, rrr, "HourHand");
+    p->translate(clockSize.height()/2, clockSize.width()/2);
+    p->rotate(hours);
+    m_theme->resize(300, 300);
+    elementSize = m_theme->elementSize("HourHand");
+    m_theme->resize(elementSize);
+    rrr.setSize(elementSize);
+    m_theme->paint(p, rrr, "HourHand", &matrix);
     p->restore();
-
-    elementSize = QSize(0, 0);
 
     p->save();
-      p->translate(clockSize.height()/2, clockSize.width()/2);
-      p->rotate(minutes-90);
-//       elementSize = m_theme->elementSize("MinuteHand");
-//       m_theme->resize(elementSize);
-//       rrr.setSize(elementSize);
-      m_theme->paint(p, rrr, "MinuteHand");
-//     p->drawRect(rrr);
+    p->translate(clockSize.height()/2, clockSize.width()/2);
+    p->rotate(minutes);
+    m_theme->resize(300, 300);
+    elementSize = m_theme->elementSize("MinuteHand");
+    m_theme->resize(elementSize);
+    rrr.setSize(elementSize);
+    m_theme->paint(p, rrr, "MinuteHand", &matrix);
     p->restore();
 
-//FIXME: re-enable this.
-//     elementSize = QSize(0, 0);
-// 
-//     p->save();
-//     p->translate(clockSize.width() / 2, clockSize.width() / 2);
-//     elementSize = m_theme->elementSize("HandCenterScrew");
-//     m_theme->resize(elementSize);
-//     rrr.setSize(elementSize);
-//     m_theme->paint(p, 0, 0, "HandCenterScrew");
-//     p->restore();
-    p->drawText(boundingRect().width()/2, (boundingRect().height()/2)+32, m_time.toString());
-    m_theme->resize(boundingRect().size());
+    p->save();
+    m_theme->resize(300, 300);
+    elementSize = m_theme->elementSize("HandCenterScrew");
+    m_theme->resize(elementSize);
+
+    rrr.setSize(elementSize);
+    p->translate(clockSize.width() / 2 - elementSize.width() / 2, clockSize.height() / 2 - elementSize.height() / 2);
+    m_theme->paint(p, rrr, "HandCenterScrew", &matrix);
+    p->restore();
+
+    //FIXME: temporary time output
+    QString time = m_time.toString();
+    QFontMetrics fm(QApplication::font());
+    p->drawText(boundRect.width()/2 - fm.width(time) / 2, (boundingRect().height()/2) - fm.xHeight()*3, m_time.toString());
+
+    m_theme->resize(boundRect.size());
+    m_theme->paint(p, boundRect, "Glass");
 }
 /*
 QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
