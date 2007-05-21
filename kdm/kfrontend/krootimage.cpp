@@ -109,7 +109,7 @@ main( int argc, char *argv[] )
 	if (!args->count())
 		args->usage();
 	KComponentData inst(KCmdLineArgs::aboutData());
-	MyApplication app( args->arg( 0 ), *KCmdLineArgs::qt_argc(), *KCmdLineArgs::qt_argv() );
+	MyApplication app( args->arg( 0 ), KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv() );
 	args->clear();
 
 	app.exec();
