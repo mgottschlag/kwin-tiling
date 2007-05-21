@@ -3,4 +3,17 @@
 *
 * Documentation for the Plamsa libraries and utilities.
 *
+* - <a href="../lib/html"><b>libplasma</b></a>
+*   (<a href="../lib/html/classes.html">classes</a>)\n
+*   <i>The Plasma Library</i>
+* - <a href="../plasma/html"><b>plasma application</b></a>
+*   (<a href="../plasma/html/classes.html">classes</a>)\n
+*   <i>The Plasma Application that runs on the desktop</i>
+* - <a href="../engines/html"><b>engines</b></a>
+*   (<a href="../engines/html/classes.html">classes</a>)\n
+*   <i>Engines for Plasma</i>
+* - <a href="../applets/html"><b>applets</b></a>
+*   (<a href="../applets/html/classes.html">classes</a>)\n
+*   <i>Plasma Applets</i>
+*
 */
