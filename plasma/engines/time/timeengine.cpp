@@ -27,6 +27,7 @@
 TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)
 {
+    Q_UNUSED(args)
     //TODO: we need to add the ability to configure this so that can limit
     //      it to minutes only as well as set which TZs to publish
     m_timer = new QTimer(this);
