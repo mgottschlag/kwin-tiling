@@ -29,7 +29,7 @@
 #include "desktop.h"
 
 RootWidget::RootWidget()
-    : QWidget( 0L, Qt::WResizeNoErase | Qt::WStyle_NoBorder )
+    : QWidget(0, Qt::FramelessWindowHint)
 {
     setFocusPolicy( Qt::NoFocus );
     setGeometry( QApplication::desktop()->geometry() );
