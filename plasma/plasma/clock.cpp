@@ -76,7 +76,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
 
     qreal seconds = 6.0 * m_time.second() - 180;
     qreal minutes = 6.0 * m_time.minute() - 180;
-    qreal hours = 30.0 * m_time.hour() - 180;
+    qreal hours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
 
     QMatrix matrix = p->worldMatrix();
     QRectF rrr(0, 0, 0, 0);
