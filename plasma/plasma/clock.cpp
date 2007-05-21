@@ -48,7 +48,7 @@ Clock::Clock(QGraphicsItem * parent)
     }
 
     m_theme = new Plasma::Svg("widgets/clock", this);
-    m_theme->resize(/*300, 300*/);
+    m_theme->resize();
 }
 
 QRectF Clock::boundingRect() const
@@ -82,21 +82,21 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     QRectF rrr(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
     QSizeF boundSize = boundRect.size();
-    QSizeF clockSize = m_theme->elementSize("ClockFace");
+    //QSizeF clockSize = m_theme->elementSize("ClockFace");
+    //kDebug() << "painting clock face at " << boundRect << endl;
     m_theme->paint(p, boundRect, "ClockFace");
-    QSize elementSize;
 
     p->save();
-    p->translate(clockSize.height()/2, clockSize.width()/2);
+    p->translate(boundSize.height()/2, boundSize.width()/2);
     p->rotate(seconds);
-    elementSize = m_theme->elementSize("SecondHand");
+    QSize elementSize = m_theme->elementSize("SecondHand");
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
     m_theme->paint(p, rrr, "SecondHand", &matrix);
     p->restore();
 
     p->save();
-    p->translate(clockSize.height()/2, clockSize.width()/2);
+    p->translate(boundSize.height()/2, boundSize.width()/2);
     p->rotate(hours);
     m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HourHand");
@@ -106,7 +106,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->restore();
 
     p->save();
-    p->translate(clockSize.height()/2, clockSize.width()/2);
+    p->translate(boundSize.height()/2, boundSize.width()/2);
     p->rotate(minutes);
     m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("MinuteHand");
@@ -119,9 +119,8 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HandCenterScrew");
     m_theme->resize(elementSize);
-
     rrr.setSize(elementSize);
-    p->translate(clockSize.width() / 2 - elementSize.width() / 2, clockSize.height() / 2 - elementSize.height() / 2);
+    p->translate(boundSize.width() / 2 - elementSize.width() / 2, boundSize.height() / 2 - elementSize.height() / 2);
     m_theme->paint(p, rrr, "HandCenterScrew", &matrix);
     p->restore();
 

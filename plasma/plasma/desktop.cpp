@@ -7,12 +7,12 @@
 #include <QGLWidget>
 #include <KWindowSystem>
 
-#include "widgets/pushbutton.h"
+#include "clock.h"
+#include "dataengine.h"
+#include "plasmaapp.h"
+#include "svg.h"
 #include "widgets/lineedit.h"
 
-#include "svg.h"
-
-#include "clock.h"
 #include "desktop.h"
 #include "desktop.moc"
 
@@ -65,6 +65,12 @@ Desktop::Desktop(QWidget *parent)
     // {
         Clock *clock = new Clock;
         m_graphicsScene->addItem(clock);
+
+        Plasma::DataEngine* time = PlasmaApp::self()->loadDataEngine("time");
+        Plasma::LineEdit* l = new Plasma::LineEdit;
+        m_graphicsScene->addItem(l);
+        l->moveBy(400, 400);
+        time->connectSource("time", l);
     // }
     m_background = new Plasma::Svg("background/dialog", this);
 }
