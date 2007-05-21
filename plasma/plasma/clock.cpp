@@ -78,13 +78,13 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     qreal minutes = 6.0 * m_time.minute() - 180;
     qreal hours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
 
-    QMatrix matrix = p->worldMatrix();
+    QMatrix matrix;
     QRectF rrr(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
     QSizeF boundSize = boundRect.size();
     //QSizeF clockSize = m_theme->elementSize("ClockFace");
     //kDebug() << "painting clock face at " << boundRect << endl;
-    m_theme->paint(p, boundRect, "ClockFace");
+    m_theme->paint(p, boundRect, "ClockFace", &matrix);
 
     p->save();
     p->translate(boundSize.height()/2, boundSize.width()/2);
@@ -131,7 +131,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
                 (boundRect.height()/2) - fm.xHeight()*3, m_time.toString());
 
     m_theme->resize(boundSize);
-    m_theme->paint(p, boundRect, "Glass");
+    m_theme->paint(p, boundRect, "Glass", &matrix);
 }
 /*
 QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
