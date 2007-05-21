@@ -18,6 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
+#include "clock.h"
+
 #include <math.h>
 
 #include <QApplication>
@@ -34,8 +36,6 @@
 
 #include "svg.h"
 #include "interface.h"
-
-#include "clock.h"
 
 Clock::Clock(QGraphicsItem * parent)
     : Plasma::DataVisualization(),

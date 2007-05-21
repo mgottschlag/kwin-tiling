@@ -16,13 +16,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "timeengine.h"
+
 #include <QDate>
 #include <QTime>
 #include <QTimer>
 
 #include <KDebug>
-
-#include "timeengine.h"
 
 TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)

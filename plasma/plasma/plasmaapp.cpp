@@ -21,6 +21,8 @@
 // LineGraph graph
 // plasma.connect(graph, "hardware", "cpu");
 
+#include "plasmaapp.h"
+
 #include <unistd.h>
 
 #include <QTimer>
@@ -31,7 +33,6 @@
 #include <ksmserver_interface.h>
 
 #include "rootwidget.h"
-#include "plasmaapp.h"
 
 PlasmaApp* PlasmaApp::self()
 {

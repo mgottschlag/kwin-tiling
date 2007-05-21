@@ -16,11 +16,11 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "enginemanager.h"
+
 #include <KDebug>
 #include <KServiceTypeTrader>
 #include <KParts/ComponentFactory>
-
-#include "enginemanager.h"
 
 DataEngineManager::DataEngineManager()
 {

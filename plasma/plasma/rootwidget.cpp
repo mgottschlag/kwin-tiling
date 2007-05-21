@@ -17,6 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "rootwidget.h"
+
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QVBoxLayout>
@@ -24,8 +26,6 @@
 #include <KWindowSystem>
 
 #include "svg.h"
-
-#include "rootwidget.h"
 #include "desktop.h"
 
 RootWidget::RootWidget()

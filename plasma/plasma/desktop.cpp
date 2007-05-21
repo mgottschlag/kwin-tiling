@@ -1,3 +1,5 @@
+#include "desktop.h"
+
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QVBoxLayout>
@@ -12,8 +14,6 @@
 #include "plasmaapp.h"
 #include "svg.h"
 #include "widgets/lineedit.h"
-
-#include "desktop.h"
 #include "desktop.moc"
 
 Desktop::Desktop(QWidget *parent)
