@@ -38,6 +38,7 @@ class QVBoxLayout;
 
 class KLineEdit;
 class KPushButton;
+class KTitleWidget;
 
 class CollapsibleWidget;
 class SearchMatch;
@@ -75,11 +76,10 @@ class Interface : public KRunnerDialog
         Plasma::AbstractRunner::List m_runners;
 
         QVBoxLayout* m_layout;
-        QFrame* m_header;
+        KTitleWidget* m_header;
         KLineEdit* m_searchTerm;
         QListWidget* m_matchList;
         QLabel* m_optionsLabel;
-        QLabel* m_headerLabel;
         KPushButton* m_cancelButton;
         KPushButton* m_runButton;
         KPushButton* m_optionsButton;

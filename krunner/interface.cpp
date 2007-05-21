@@ -34,6 +34,7 @@
 #include <KGlobalSettings>
 #include <KPushButton>
 #include <KStandardGuiItem>
+#include <KTitleWidget>
 #include <KWindowSystem>
 
 #include "abstractrunner.h"
@@ -124,24 +125,13 @@ Interface::Interface(QWidget* parent)
 
     m_layout = new QVBoxLayout(this);
 
-    m_header = new QFrame( this );
-    QHBoxLayout* headerLayout = new QHBoxLayout( m_header );
-    m_header->setFrameShape( QFrame::StyledPanel );
-    m_header->setFrameShadow( QFrame::Plain );
-    m_header->setAutoFillBackground( true );
+    m_header = new KTitleWidget(this);
     m_header->setBackgroundRole( QPalette::Base );
+    m_header->setText(i18n("Enter the name of an application, location or search term below."));
     m_layout->addWidget( m_header );
 
-    m_headerLabel = new QLabel( m_header );
-    //TODO: create a slot so this can be changed by various runners to give the user feedback?
-    m_headerLabel->setText( i18n( "Enter the name of an application, location or search term below." ) );
-    m_headerLabel->setEnabled( true );
-    m_headerLabel->setWordWrap( true );
-    m_headerLabel->setAlignment( Qt::AlignCenter );
-    headerLayout->addWidget( m_headerLabel );
-
     m_searchTerm = new KLineEdit( this );
-    m_headerLabel->setBuddy( m_searchTerm );
+    m_header->setBuddy(m_searchTerm);
     m_searchTerm->clear();
     m_searchTerm->setClearButtonShown( true );
     m_layout->addWidget( m_searchTerm );
