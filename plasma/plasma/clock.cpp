@@ -78,7 +78,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     qreal minutes = 6.0 * m_time.minute() - 180;
     qreal hours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
 
-    QRectF rrr(0, 0, 0, 0);
+    QRectF tempRect(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
     QSizeF boundSize = boundRect.size();
     //QSizeF clockSize = m_theme->elementSize("ClockFace");
@@ -91,8 +91,8 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     QSize elementSize = m_theme->elementSize("SecondHand");
     p->translate(-elementSize.width()/2, -5.5); //hardcoded since this is the difference between the centre of the clockface and the y-zero-position of the SVG element
     m_theme->resize(elementSize);
-    rrr.setSize(elementSize);
-    m_theme->paint(p, rrr, "SecondHand");
+    tempRect.setSize(elementSize);
+    m_theme->paint(p, tempRect, "SecondHand");
     p->restore();
 
     p->save();
@@ -102,8 +102,8 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     elementSize = m_theme->elementSize("HourHand");
     p->translate(-elementSize.width()/2, -3.75);
     m_theme->resize(elementSize);
-    rrr.setSize(elementSize);
-    m_theme->paint(p, rrr, "HourHand");
+    tempRect.setSize(elementSize);
+    m_theme->paint(p, tempRect, "HourHand");
     p->restore();
 
     p->save();
@@ -113,17 +113,17 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     elementSize = m_theme->elementSize("MinuteHand");
     p->translate(-elementSize.width()/2, -2.5);
     m_theme->resize(elementSize);
-    rrr.setSize(elementSize);
-    m_theme->paint(p, rrr, "MinuteHand");
+    tempRect.setSize(elementSize);
+    m_theme->paint(p, tempRect, "MinuteHand");
     p->restore();
 
     p->save();
     m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HandCenterScrew");
     m_theme->resize(elementSize);
-    rrr.setSize(elementSize);
+    tempRect.setSize(elementSize);
     p->translate(boundSize.width() / 2 - elementSize.width() / 2, boundSize.height() / 2 - elementSize.height() / 2);
-    m_theme->paint(p, rrr, "HandCenterScrew");
+    m_theme->paint(p, tempRect, "HandCenterScrew");
     p->restore();
 
     //FIXME: temporary time output
