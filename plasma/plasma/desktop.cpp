@@ -7,8 +7,10 @@
 #include <QApplication>
 #include <QDebug>
 #include <QGLWidget>
+#include <QProcess>
 #include <KWindowSystem>
 #include <KMenu>
+#include <KLocale>
 
 #include "clock.h"
 #include "dataengine.h"
@@ -66,6 +68,10 @@ Desktop::Desktop(QWidget *parent)
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayContextMenu(QPoint)));
+    engineExplorer = new QAction(i18n("Engine Explorer"), this);
+    connect(engineExplorer, SIGNAL(triggered(bool)), this, SLOT(launchExplorer(bool)));
+    exitPlasma = new QAction(i18n("Exit Plasma"), this);
+    connect(exitPlasma, SIGNAL(triggered(bool)), kapp, SLOT(quit()));
 }
 
 Desktop::~Desktop()
@@ -87,21 +93,28 @@ void Desktop::resizeEvent(QResizeEvent* event)
 void Desktop::displayContextMenu(const QPoint& point)
 {
     Plasma::Applet* applet = qgraphicsitem_cast<Plasma::Applet*>( itemAt( point ) );
-    KMenu* desktopMenu = new KMenu(this);
+    KMenu desktopMenu(this);
     if(!applet) {
-        desktopMenu->setTitle("Desktop");
-        desktopMenu->addAction("The");
-        desktopMenu->addAction("desktop");
-        desktopMenu->addAction("menu");
+        desktopMenu.setTitle("Desktop");
+        desktopMenu.addAction("The");
+        desktopMenu.addAction("desktop");
+        desktopMenu.addAction("menu");
+        desktopMenu.addAction(engineExplorer);
+        desktopMenu.addAction(exitPlasma);
     } else {
-        //desktopMenu->setTitle( applet->name() ); //This isn't implemented in Applet yet...
-        desktopMenu->addAction("Widget");
-        desktopMenu->addAction("settings");
-        desktopMenu->addAction("like");
-        desktopMenu->addAction("opacity");
-        desktopMenu->addSeparator();
-        //applet->addAppletMenuEntries(desktopMenu); //This isn't implemented in Applet yet...
+        //desktopMenu.setTitle( applet->name() ); //This isn't implemented in Applet yet...
+        desktopMenu.addAction("Widget");
+        desktopMenu.addAction("settings");
+        desktopMenu.addAction("like");
+        desktopMenu.addAction("opacity");
+        desktopMenu.addSeparator();
+        //applet.configureDialog(); //This isn't implemented in Applet yet...
     }
-    desktopMenu->exec(point);
+    desktopMenu.exec(point);
+}
+
+void Desktop::launchExplorer(bool /*param*/)
+{
+    QProcess::execute("plasmaengineexplorer");
 }
 

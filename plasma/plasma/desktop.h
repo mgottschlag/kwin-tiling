@@ -40,9 +40,12 @@ public:
 protected:
     void resizeEvent(QResizeEvent* event);
     void drawBackground(QPainter * painter, const QRectF & rect);
+    QAction *engineExplorer;
+    QAction *exitPlasma;
 
 protected Q_SLOTS:
     void displayContextMenu(const QPoint& point);
+    void launchExplorer(bool /*param*/);
 
 private:
     QGraphicsScene *m_graphicsScene;
