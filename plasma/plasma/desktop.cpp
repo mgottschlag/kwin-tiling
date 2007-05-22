@@ -24,6 +24,10 @@
 #include "applet.h"
 #include "desktop.moc"
 
+extern "C" {
+    typedef QGraphicsItem* (*loadKaramba)(const KUrl &theme, QGraphicsView *view);
+}
+
 Desktop::Desktop(QWidget *parent)
     : QGraphicsView(parent)
 {
