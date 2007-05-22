@@ -75,6 +75,7 @@ Plasma::DataEngine* DataEngineManager::loadDataEngine(const QString& name)
     }
 
     engine->ref();
+    engine->setObjectName(offers.first()->name());
     m_engines[name] = engine;
     return engine;
 }
@@ -91,5 +92,16 @@ void DataEngineManager::unloadDataEngine(const QString& name)
             delete engine;
         }
     }
+}
+
+QStringList DataEngineManager::knownEngines() const
+{
+    QStringList engines;
+    KService::List offers = KServiceTypeTrader::self()->query("Plasma/DataEngine");
+    foreach (KService::Ptr service, offers) {
+        engines.append(service->property("X-EngineName").toString());
+    }
+
+    return engines;
 }
 

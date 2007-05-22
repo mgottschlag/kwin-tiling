@@ -58,7 +58,7 @@ QRectF Clock::boundingRect() const
     return QRectF(0, 0, s.width(), s.height());
 }
 
-void Clock::updated(const Plasma::DataEngine::Data &data)
+void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     m_time = data[i18n("Local")].toTime();
     update();

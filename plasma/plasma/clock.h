@@ -59,7 +59,7 @@ class Clock : public Plasma::DataVisualization,
         QRectF boundingRect() const;
 
     public slots:
-        void updated(const Plasma::DataEngine::Data& data);
+        void updated(const QString &name, const Plasma::DataEngine::Data &data);
 
     protected:
 //         QVariant itemChange(GraphicsItemChange change, const QVariant &value);

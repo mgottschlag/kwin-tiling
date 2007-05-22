@@ -35,6 +35,8 @@ class DataEngineManager
         Plasma::DataEngine* loadDataEngine(const QString& name);
         void unloadDataEngine(const QString& name);
 
+        QStringList knownEngines() const;
+
     private:
         Plasma::DataEngine::Dict m_engines;
 };
