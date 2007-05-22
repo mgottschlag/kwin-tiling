@@ -12,6 +12,10 @@
 #include <KMenu>
 #include <KLocale>
 
+#include <KLibrary>
+#include <KLibLoader>
+#include <QFile>
+
 #include "clock.h"
 #include "dataengine.h"
 #include "plasmaapp.h"
@@ -63,6 +67,23 @@ Desktop::Desktop(QWidget *parent)
     m_graphicsScene->addItem(l);
     l->moveBy(400, 400);
     time->connectSource("time", l);
+
+    // Loading SuperKaramba themes example
+    /*
+    QString karambaLib = QFile::encodeName(KLibLoader::self()->findLibrary(QLatin1String("libsuperkaramba")));
+    KLibLoader* loader = KLibLoader::self();
+    KLibrary* lib = loader->library(karambaLib);
+
+    if (lib) {
+        loadKaramba startKaramba = 0;
+        startKaramba = (loadKaramba)lib->resolveFunction("startKaramba");
+        if (startKaramba) {
+            startKaramba(KUrl("~/themes/aero_aio.skz"), this);
+        }
+
+        lib->unload();
+    }
+    */
 
     m_background = new Plasma::Svg("background/dialog", this);
 
