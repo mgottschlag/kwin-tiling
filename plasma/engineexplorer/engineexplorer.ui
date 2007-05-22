@@ -1,0 +1,74 @@
+<ui version="4.0" >
+ <class>EngineExplorer</class>
+ <widget class="QWidget" name="EngineExplorer" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>-1</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="KTitleWidget" name="m_title" >
+     <property name="text" >
+      <string>Plasma DataEngine Explorer</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="m_engines" />
+   </item>
+   <item>
+    <widget class="QTreeView" name="m_data" >
+     <property name="allColumnsShowFocus" >
+      <bool>true</bool>
+     </property>
+     <column>
+      <property name="text" >
+       <string>DataSource</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Key</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Value</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KTitleWidget</class>
+   <extends>QWidget</extends>
+   <header>ktitlewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
