@@ -86,29 +86,32 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     m_theme->paint(p, boundRect, "ClockFace");
 
     p->save();
-    p->translate(boundSize.height()/2, boundSize.width()/2);
+    p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(seconds);
     QSize elementSize = m_theme->elementSize("SecondHand");
+    p->translate(-elementSize.width()/2, -5.5); //hardcoded since this is the difference between the centre of the clockface and the y-zero-position of the SVG element
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
     m_theme->paint(p, rrr, "SecondHand");
     p->restore();
 
     p->save();
-    p->translate(boundSize.height()/2, boundSize.width()/2);
+    p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(hours);
     m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HourHand");
+    p->translate(-elementSize.width()/2, -3.75);
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
     m_theme->paint(p, rrr, "HourHand");
     p->restore();
 
     p->save();
-    p->translate(boundSize.height()/2, boundSize.width()/2);
+    p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(minutes);
     m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("MinuteHand");
+    p->translate(-elementSize.width()/2, -2.5);
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
     m_theme->paint(p, rrr, "MinuteHand");
