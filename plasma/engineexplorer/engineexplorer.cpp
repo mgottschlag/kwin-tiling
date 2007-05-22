@@ -24,8 +24,6 @@
 #include <KIconLoader>
 #include <KIconTheme>
 
-#include "datavisualization.h"
-
 #include "enginemanager.h"
 
 EngineExplorer::EngineExplorer(QWidget* parent)

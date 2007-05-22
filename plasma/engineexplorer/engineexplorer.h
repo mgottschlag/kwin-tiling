@@ -23,7 +23,6 @@ class QStandardItemModel;
 class QStandardItem;
 
 #include "dataengine.h"
-#include "datavisualization.h"
 
 #include "ui_engineexplorer.h"
 
