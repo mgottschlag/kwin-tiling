@@ -65,6 +65,7 @@ Desktop::Desktop(QWidget *parent)
     // {
         Clock *clock = new Clock;
         m_graphicsScene->addItem(clock);
+//        clock->shear(2, 2);
 
         Plasma::DataEngine* time = PlasmaApp::self()->loadDataEngine("time");
         Plasma::LineEdit* l = new Plasma::LineEdit;

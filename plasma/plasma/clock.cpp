@@ -78,13 +78,12 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     qreal minutes = 6.0 * m_time.minute() - 180;
     qreal hours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
 
-    QMatrix matrix;
     QRectF rrr(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
     QSizeF boundSize = boundRect.size();
     //QSizeF clockSize = m_theme->elementSize("ClockFace");
     //kDebug() << "painting clock face at " << boundRect << endl;
-    m_theme->paint(p, boundRect, "ClockFace", &matrix);
+    m_theme->paint(p, boundRect, "ClockFace");
 
     p->save();
     p->translate(boundSize.height()/2, boundSize.width()/2);
@@ -92,7 +91,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     QSize elementSize = m_theme->elementSize("SecondHand");
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
-    m_theme->paint(p, rrr, "SecondHand", &matrix);
+    m_theme->paint(p, rrr, "SecondHand");
     p->restore();
 
     p->save();
@@ -102,7 +101,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     elementSize = m_theme->elementSize("HourHand");
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
-    m_theme->paint(p, rrr, "HourHand", &matrix);
+    m_theme->paint(p, rrr, "HourHand");
     p->restore();
 
     p->save();
@@ -112,7 +111,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     elementSize = m_theme->elementSize("MinuteHand");
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
-    m_theme->paint(p, rrr, "MinuteHand", &matrix);
+    m_theme->paint(p, rrr, "MinuteHand");
     p->restore();
 
     p->save();
@@ -121,7 +120,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     m_theme->resize(elementSize);
     rrr.setSize(elementSize);
     p->translate(boundSize.width() / 2 - elementSize.width() / 2, boundSize.height() / 2 - elementSize.height() / 2);
-    m_theme->paint(p, rrr, "HandCenterScrew", &matrix);
+    m_theme->paint(p, rrr, "HandCenterScrew");
     p->restore();
 
     //FIXME: temporary time output
@@ -131,7 +130,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
                 (boundRect.height()/2) - fm.xHeight()*3, m_time.toString());
 
     m_theme->resize(boundSize);
-    m_theme->paint(p, boundRect, "Glass", &matrix);
+    m_theme->paint(p, boundRect, "Glass");
 }
 /*
 QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
