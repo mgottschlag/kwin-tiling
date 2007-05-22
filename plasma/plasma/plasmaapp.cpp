@@ -91,7 +91,7 @@ void PlasmaApp::crashHandler(int signal)
 
 //    DCOPClient::emergencyClose();
     sleep(1);
-    system("plasma-qgv --nocrashhandler &"); // try to restart
+    system("plasma --nocrashhandler &"); // try to restart
 }
 
 Plasma::DataEngine* PlasmaApp::dataEngine(const QString& name)
