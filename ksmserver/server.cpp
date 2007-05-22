@@ -50,6 +50,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <kdefakes.h>
 
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
