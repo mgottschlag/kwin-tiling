@@ -34,6 +34,7 @@ TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
     m_timer->setSingleShot(false);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(updateTime()));
     m_timer->start(1000);
+    updateTime();
 }
 
 TimeEngine::~TimeEngine()
