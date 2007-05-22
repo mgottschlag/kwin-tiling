@@ -8,12 +8,14 @@
 #include <QDebug>
 #include <QGLWidget>
 #include <KWindowSystem>
+#include <KMenu>
 
 #include "clock.h"
 #include "dataengine.h"
 #include "plasmaapp.h"
 #include "svg.h"
 #include "widgets/lineedit.h"
+#include "applet.h"
 #include "desktop.moc"
 
 Desktop::Desktop(QWidget *parent)
@@ -38,16 +40,6 @@ Desktop::Desktop(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    // Give it some silly default background
-//     QPixmap tile(100, 100);
-//     tile.fill(Qt::white);
-//     QPainter pt(&tile);
-//     QColor color(220, 220, 220);
-//     pt.fillRect(0, 0, 50, 50, color);
-//     pt.fillRect(50, 50, 50, 50, color);
-//     pt.end();
-//     setBackground(tile);
-
     // Tmp
 //     for (int i = 0; i < 4000; i++)
 //     {
@@ -61,18 +53,19 @@ Desktop::Desktop(QWidget *parent)
 //         m_graphicsScene->addItem(testButton);
 //     }
 
-    // for (int i = 0; i < 5; i++)
-    // {
-        Clock *clock = new Clock;
-        m_graphicsScene->addItem(clock);
+    Clock *clock = new Clock;
+    m_graphicsScene->addItem(clock);
 
-        Plasma::DataEngine* time = PlasmaApp::self()->loadDataEngine("time");
-        Plasma::LineEdit* l = new Plasma::LineEdit;
-        m_graphicsScene->addItem(l);
-        l->moveBy(400, 400);
-        time->connectSource("time", l);
-    // }
+    Plasma::DataEngine* time = PlasmaApp::self()->loadDataEngine("time");
+    Plasma::LineEdit* l = new Plasma::LineEdit;
+    m_graphicsScene->addItem(l);
+    l->moveBy(400, 400);
+    time->connectSource("time", l);
+
     m_background = new Plasma::Svg("background/dialog", this);
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayContextMenu(QPoint)));
 }
 
 Desktop::~Desktop()
@@ -89,5 +82,26 @@ void Desktop::resizeEvent(QResizeEvent* event)
     Q_UNUSED(event);
     m_graphicsScene->setSceneRect(rect());
     m_background->resize(width(), height());
+}
+
+void Desktop::displayContextMenu(const QPoint& point)
+{
+    Plasma::Applet* applet = qgraphicsitem_cast<Plasma::Applet*>( itemAt( point ) );
+    KMenu* desktopMenu = new KMenu(this);
+    if(!applet) {
+        desktopMenu->setTitle("Desktop");
+        desktopMenu->addAction("The");
+        desktopMenu->addAction("desktop");
+        desktopMenu->addAction("menu");
+    } else {
+        //desktopMenu->setTitle( applet->name() ); //This isn't implemented in Applet yet...
+        desktopMenu->addAction("Widget");
+        desktopMenu->addAction("settings");
+        desktopMenu->addAction("like");
+        desktopMenu->addAction("opacity");
+        desktopMenu->addSeparator();
+        //applet->addAppletMenuEntries(desktopMenu); //This isn't implemented in Applet yet...
+    }
+    desktopMenu->exec(point);
 }
 

@@ -28,7 +28,7 @@ static const char version[] = "0.0";
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData("plasma-qgv", I18N_NOOP("Plasma Engine Explorer"),
+    KAboutData aboutData("plasmaengineexplorer", I18N_NOOP("Plasma Engine Explorer"),
                          version, description, KAboutData::License_GPL,
                          "(c) 2006, The KDE Team");
     aboutData.addAuthor("Aaron J. Seigo",

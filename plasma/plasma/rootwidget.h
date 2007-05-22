@@ -24,6 +24,9 @@
 
 class Desktop;
 
+/**
+ * @short The base widget that contains the desktop
+ */
 class RootWidget : public QWidget
 {
     Q_OBJECT

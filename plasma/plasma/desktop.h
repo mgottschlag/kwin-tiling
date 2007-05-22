@@ -27,6 +27,9 @@ namespace Plasma
     class Svg;
 }
 
+/**
+ * @short The view that displays the all the desktop
+ */
 class Desktop : public QGraphicsView
 {
     Q_OBJECT
@@ -37,6 +40,9 @@ public:
 protected:
     void resizeEvent(QResizeEvent* event);
     void drawBackground(QPainter * painter, const QRectF & rect);
+
+protected Q_SLOTS:
+    void displayContextMenu(const QPoint& point);
 
 private:
     QGraphicsScene *m_graphicsScene;
