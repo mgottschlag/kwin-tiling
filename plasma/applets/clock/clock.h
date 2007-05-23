@@ -36,7 +36,7 @@
 
 #include <kdemacros.h>
 
-#include <Plasma/Applet>
+#include <applet.h>
 #include <dataengine.h>
 #include <plasma_export.h>
 
