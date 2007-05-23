@@ -102,7 +102,7 @@ void RecentlyLaunchedApps::save()
     }
 
     KickerSettings::setRecentAppsStat(recentApps);
-    KickerSettings::writeConfig();
+    KickerSettings::self()->writeConfig();
 }
 
 void RecentlyLaunchedApps::appLaunched(const QString& strApp)

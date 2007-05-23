@@ -176,7 +176,7 @@ static bool isNewRelease()
       KDesktopSettings::setKDEVersionMajor( KDE_VERSION_MAJOR );
       KDesktopSettings::setKDEVersionMinor( KDE_VERSION_MINOR );
       KDesktopSettings::setKDEVersionRelease( KDE_VERSION_RELEASE );
-      KDesktopSettings::writeConfig();
+      KDesktopSettings::self()->writeConfig();
     }
 
     return bNewRelease;

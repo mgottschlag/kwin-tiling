@@ -536,13 +536,13 @@ void KRootWm::buildMenus()
 void KRootWm::slotToggleDirFirst( bool b )
 {
     KDesktopSettings::setSortDirectoriesFirst( b );
-    KDesktopSettings::writeConfig();
+    KDesktopSettings::self()->writeConfig();
 }
 
 void KRootWm::slotToggleAutoAlign( bool b )
 {
     KDesktopSettings::setAutoLineUpIcons( b );
-    KDesktopSettings::writeConfig();
+    KDesktopSettings::self()->writeConfig();
 
     // Auto line-up icons
     m_pDesktop->iconView()->setAutoAlign( b );
@@ -741,7 +741,7 @@ void KRootWm::slotToggleLockIcons( bool lock )
     {
         m_pDesktop->iconView()->setItemsMovable( !lock );
         KDesktopSettings::setLockIcons( lock );
-        KDesktopSettings::writeConfig();
+        KDesktopSettings::self()->writeConfig();
     }
 }
 
@@ -784,7 +784,7 @@ static void sendToAppropriate(const char* baseApp, const char* iface, const char
 void KRootWm::slotToggleDesktopMenu()
 {
     KDesktopSettings::setShowMenubar( !(m_bShowMenuBar && menuBar) );
-    KDesktopSettings::writeConfig();
+    KDesktopSettings::self()->writeConfig();
 
     sendToAppropriate("kdesktop", "org.kde.kdesktop.Desktop", "configure", "/Desktop");
     // for the standalone menubar setting

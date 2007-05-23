@@ -665,7 +665,7 @@ void KBackgroundManager::setCommon(int common)
 {
     applyCommon(common);
     KDesktopSettings::setCommonDesktop( m_bCommon );
-    KDesktopSettings::writeConfig();
+    KDesktopSettings::self()->writeConfig();
     slotChangeDesktop(0);
 }
 
@@ -723,7 +723,7 @@ void KBackgroundManager::setCache( int bLimit, int size )
     applyCache( bLimit, size*1024 );
     KDesktopSettings::setLimitCache( (bool) bLimit );
     KDesktopSettings::setCacheSize( size );
-    KDesktopSettings::writeConfig();
+    KDesktopSettings::self()->writeConfig();
 }
 
 // DBus exported

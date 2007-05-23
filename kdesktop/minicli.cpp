@@ -266,7 +266,7 @@ void Minicli::saveConfig()
   KDesktopSettings::setTerminalApps( m_terminalAppList );
   KDesktopSettings::setCompletionItems( m_dlg->cbCommand->completionObject()->items() );
   KDesktopSettings::setCompletionMode( m_dlg->cbCommand->completionMode() );
-  KDesktopSettings::writeConfig();
+  KDesktopSettings::self()->writeConfig();
 }
 
 void Minicli::clearHistory()

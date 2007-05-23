@@ -853,7 +853,7 @@ void KDesktop::setVRoot( bool enable )
     set_vroot = enable;
     kDebug(1204) << "setVRoot " << enable << endl;
     KDesktopSettings::setSetVRoot( set_vroot );
-    KDesktopSettings::writeConfig();
+    KDesktopSettings::self()->writeConfig();
     slotSetVRoot();
 }
 
@@ -871,7 +871,7 @@ void KDesktop::setIconsEnabled( bool enable )
     m_bDesktopEnabled = enable;
     kDebug(1204) << "setIcons " << enable << endl;
     KDesktopSettings::setDesktopEnabled( m_bDesktopEnabled );
-    KDesktopSettings::writeConfig();
+    KDesktopSettings::self()->writeConfig();
     if (!enable) {
         delete m_pIconView;
         m_pIconView = 0;

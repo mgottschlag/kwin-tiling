@@ -536,7 +536,7 @@ void KDIconView::lineupIcons(Q3IconView::Arrangement align)
         rearrangeIcons();
 
     KDesktopSettings::setVertAlign( m_bVertAlign );
-    KDesktopSettings::writeConfig();
+    KDesktopSettings::self()->writeConfig();
 }
 
 // Only used for DCOP
