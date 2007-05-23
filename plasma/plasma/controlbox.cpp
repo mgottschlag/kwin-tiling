@@ -19,31 +19,76 @@
 #include "controlbox.h"
 
 #include <QtGui/QLabel>
-#include <QtGui/QVBoxLayout>
 #include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
 #include <QtGui/QListView>
 #include <QtGui/QMouseEvent>
+#include <QtGui/QPainter>
+#include <QtGui/QPushButton>
+#include <QtGui/QVBoxLayout>
 #include <QtCore/QTimeLine>
 #include <KLocale>
 #include <KDebug>
 
+#include "svg.h"
+
+class DisplayLabel : public QLabel
+{
+    public:
+        DisplayLabel(const QString& text, QWidget *parent);
+        //QSize minimumSizeHint();
+
+    protected:
+        void paintEvent(QPaintEvent *event);
+
+    private:
+        Plasma::Svg m_background;
+};
+
+DisplayLabel::DisplayLabel(const QString& text, QWidget *parent)
+    : QLabel(text, parent),
+      m_background("background/dialog") //FIXME: we need a proper SVG for this =)
+{
+    setAlignment(Qt::AlignCenter);
+//    resize(minimumSizeHint());
+    m_background.resize(size());
+}
+
+/*
+QSize DisplayLabel::minimumSizeHint()
+{
+    QSize size = QLabel::minimumSizeHint();
+    size.setHeight(size.height() * 2);
+    size.setWidth(size.width() * 5 / 3);
+    return size;
+}
+*/
+
+void DisplayLabel::paintEvent(QPaintEvent* event)
+{
+    Q_UNUSED(event)
+
+    QPainter p(this);
+    m_background.paint(&p, rect());
+    QLabel::paintEvent(event);
+}
+
 ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
 {
-    displayLabel = new QLabel(i18n("Configure Desktop"), this);
-    displayLabel->show();
-    resize(displayLabel->size());
+    m_displayLabel = new DisplayLabel(i18n("Configure Desktop"), this);
+    m_displayLabel->show();
+    m_displayLabel->installEventFilter(this);
+    resize(m_displayLabel->size());
 
     //the config box
-    box = new QWidget(parent);
+    m_box = new QWidget(parent);
     setupBox();
-    box->hide();
+    m_box->hide();
 
     //Set up the animation timeline
-    timeLine = new QTimeLine(1000, this);
-    timeLine->setFrameRange(0, 50); //50 step anumation
-    timeLine->setCurveShape(QTimeLine::EaseOutCurve);
-    connect(timeLine, SIGNAL(frameChanged(int)), this, SLOT(animateBox(int)));
+    m_timeLine = new QTimeLine(300, this);
+    m_timeLine->setFrameRange(0, 50); //50 step anumation
+    m_timeLine->setCurveShape(QTimeLine::EaseInOutCurve);
+    connect(m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(animateBox(int)));
 
     connect(this, SIGNAL(boxRequested()), this, SLOT(showBox()));
 }
@@ -52,49 +97,62 @@ ControlBox::~ControlBox()
 {
 }
 
+bool ControlBox::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched != m_displayLabel) {
+        return false;
+    }
+
+    if (event->type() == QEvent::Enter) {
+        showBox();
+    }
+
+    return false;
+}
+
 void ControlBox::setupBox()
 {
     //This is all to change of course
-    QVBoxLayout* boxLayout = new QVBoxLayout(box);
+    QVBoxLayout* boxLayout = new QVBoxLayout(m_box);
 
-    QPushButton* hideBoxButton = new QPushButton(i18n("Hide Config Box"), box);
+    QPushButton* hideBoxButton = new QPushButton(i18n("Hide Config Box"), m_box);
     connect(hideBoxButton, SIGNAL(pressed()), this, SLOT(hideBox()));
-    QListView* appletList = new QListView(box);
+    QListView* appletList = new QListView(m_box);
     boxLayout->addWidget(hideBoxButton);
     boxLayout->addWidget(appletList);
     hideBoxButton->show();
     appletList->show();
-    box->setLayout(boxLayout);
-    box->resize(400,500);
+    m_box->setLayout(boxLayout);
+    m_box->resize(400,500);
 }
 
 void ControlBox::showBox()
 {
-    box->move(-box->size().width(),-box->size().height());
-    box->show();
-    timeLine->setDirection(QTimeLine::Forward);
-    timeLine->start();
+    m_box->move(-m_box->size().width(),-m_box->size().height());
+    m_box->show();
+    m_timeLine->setDirection(QTimeLine::Forward);
+    m_timeLine->start();
 }
 
 void ControlBox::hideBox()
 {
-    timeLine->setDirection(QTimeLine::Backward);
-    timeLine->start();
+    m_timeLine->setDirection(QTimeLine::Backward);
+    m_timeLine->start();
 }
 
 void ControlBox::animateBox(int frame)
 {
     //Display the config box
-    qreal boxWidth = box->size().width();
-    qreal boxHeight = box->size().height();
+    qreal boxWidth = m_box->size().width();
+    qreal boxHeight = m_box->size().height();
     qreal boxStep = ((qreal(frame)/50) - 1.0);
-    box->move(boxWidth*boxStep,boxHeight*boxStep);
+    m_box->move(boxWidth*boxStep,boxHeight*boxStep);
 
     //And hide the label
-    qreal labelWidth = displayLabel->size().width();
-    qreal labelHeight = displayLabel->size().height();
+    qreal labelWidth = m_displayLabel->size().width();
+    qreal labelHeight = m_displayLabel->size().height();
     qreal labelStep = (-qreal(frame)/50);
-    displayLabel->move(labelWidth*labelStep,labelHeight*labelStep);
+    m_displayLabel->move(labelWidth*labelStep,labelHeight*labelStep);
 }
 
 void ControlBox::mousePressEvent(QMouseEvent* event)

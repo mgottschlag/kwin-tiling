@@ -23,6 +23,7 @@
 
 class QLabel;
 class QTimeLine;
+class DisplayLabel;
 
 /**
  * @short The Desktop configuration widget
@@ -34,22 +35,24 @@ class ControlBox : public QWidget
     public:
         ControlBox(QWidget* parent);
         ~ControlBox();
+        bool eventFilter(QObject *watched, QEvent *event);
+
+    Q_SIGNALS:
+        void boxRequested();
 
     protected:
         void mousePressEvent (QMouseEvent* event);
         void setupBox(); ///<Create contents of the config dialog
-
-        QWidget* box; ///<The configuraion dialog widget
-        QLabel* displayLabel; ///<The 'show config' button
-        QTimeLine* timeLine;
 
     protected Q_SLOTS:
         void showBox(); ///<Show the config widget
         void hideBox(); ///<Hide the config widget
         void animateBox(int frame); ///<Process the frames to create an animation
 
-    Q_SIGNALS:
-        void boxRequested();
+    private:
+        QWidget* m_box; ///<The configuraion dialog widget
+        DisplayLabel* m_displayLabel; ///<The 'show config' button
+        QTimeLine* m_timeLine;
 };
 
 #endif // multiple inclusion guard

@@ -36,8 +36,8 @@ RootWidget::RootWidget()
     setGeometry( QApplication::desktop()->geometry() );
     lower();
 
-    // Make us legit via KWin
     KWindowSystem::setType(winId(), NET::Desktop);
+
     QVBoxLayout* rootLayout = new QVBoxLayout(this);
     rootLayout->setMargin(0);
     rootLayout->setSpacing(0);
