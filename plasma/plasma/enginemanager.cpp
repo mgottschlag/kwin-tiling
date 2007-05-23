@@ -28,8 +28,7 @@ DataEngineManager::DataEngineManager()
 
 DataEngineManager::~DataEngineManager()
 {
-    foreach (Plasma::DataEngine* engine, m_engines)
-    {
+    foreach (Plasma::DataEngine* engine, m_engines) {
         delete engine;
     }
     m_engines.clear();
@@ -38,8 +37,7 @@ DataEngineManager::~DataEngineManager()
 Plasma::DataEngine* DataEngineManager::dataEngine(const QString& name) const
 {
     Plasma::DataEngine::Dict::const_iterator it = m_engines.find(name);
-    if (it != m_engines.end())
-    {
+    if (it != m_engines.end()) {
         // ref and return the engine
         //Plasma::DataEngine *engine = *it;
         return *it;
@@ -76,6 +74,7 @@ Plasma::DataEngine* DataEngineManager::loadDataEngine(const QString& name)
 
     engine->ref();
     engine->setObjectName(offers.first()->name());
+    engine->setIcon(offers.first()->icon());
     m_engines[name] = engine;
     return engine;
 }
