@@ -174,13 +174,13 @@ void ControlBox::animateBox(int frame)
     qreal boxWidth = m_box->size().width();
     qreal boxHeight = m_box->size().height();
     qreal boxStep = ((qreal(frame)/25) - 1.0);
-    m_box->move(boxWidth*boxStep,boxHeight*boxStep);
+    m_box->move(static_cast<int>(boxWidth*boxStep),static_cast<int>(boxHeight*boxStep));
 
     //And hide the label
     qreal labelWidth = m_displayLabel->size().width();
     qreal labelHeight = m_displayLabel->size().height();
     qreal labelStep = (-qreal(frame)/25);
-    m_displayLabel->move(labelWidth*labelStep,labelHeight*labelStep);
+    m_displayLabel->move(static_cast<int>(labelWidth*labelStep),static_cast<int>(labelHeight*labelStep));
 }
 
 void ControlBox::mousePressEvent(QMouseEvent* event)

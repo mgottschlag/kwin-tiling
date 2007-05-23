@@ -53,7 +53,7 @@ Desktop::Desktop(QWidget *parent)
     Clock *clock = new Clock(0, 1);
     m_graphicsScene->addItem(clock);
 
-    Plasma::DataEngine* time = PlasmaApp::self()->loadDataEngine("time");
+//    Plasma::DataEngine* time = PlasmaApp::self()->loadDataEngine("time");
 //     Plasma::LineEdit* l = new Plasma::LineEdit;
 //     m_graphicsScene->addItem(l);
 //     l->moveBy(400, 400);

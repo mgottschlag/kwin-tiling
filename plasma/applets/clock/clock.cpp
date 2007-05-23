@@ -62,6 +62,7 @@ QRectF Clock::boundingRect() const
 
 void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 {
+    Q_UNUSED(source)
     m_time = data[i18n("Local")].toTime();
     QGraphicsItem::update();
 }
@@ -74,6 +75,7 @@ Clock::~Clock()
 void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
+    Q_UNUSED(option)
     p->setRenderHint(QPainter::SmoothPixmapTransform);
 
     qreal seconds = 6.0 * m_time.second() - 180;
@@ -131,8 +133,8 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     //FIXME: temporary time output
     QString time = m_time.toString();
     QFontMetrics fm(QApplication::font());
-    p->drawText(boundRect.width()/2 - fm.width(time) / 2,
-                (boundRect.height()/2) - fm.xHeight()*3, m_time.toString());
+    p->drawText(static_cast<int>(boundRect.width()/2 - fm.width(time) / 2),
+                static_cast<int>((boundRect.height()/2) - fm.xHeight()*3), m_time.toString());
 
     m_theme->resize(boundSize);
     m_theme->paint(p, boundRect, "Glass");
