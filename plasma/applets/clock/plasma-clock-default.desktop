@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=A Plasma Clock
 Comment=Shows the time in several fashion... and it's the first plasmoid ever!
+Type=Service
 
 [X-KDE Plugin Info]
 Author=The Plasma Team
