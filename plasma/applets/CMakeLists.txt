@@ -1,2 +1,1 @@
-# add_subdirectory( test )
-# add_subdirectory( clock )
+add_subdirectory( clock )

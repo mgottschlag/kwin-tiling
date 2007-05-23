@@ -34,12 +34,14 @@
 #include <KDebug>
 #include <KLocale>
 
-#include "svg.h"
-#include "interface.h"
+#include <Plasma/Svg>
+#include <Plasma/Interface>
 
-Clock::Clock(QGraphicsItem * parent)
-    : Plasma::DataVisualization(),
-      QGraphicsItem(parent)
+using namespace Plasma;
+
+Clock::Clock(QGraphicsItem * parent,
+             int appletId)
+    : Plasma::Applet(parent, /*"clock", appletId) /*/"plasma-clock-default", appletId)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
     Plasma::DataEngine* timeEngine = Plasma::Interface::self()->loadDataEngine("time");
@@ -61,7 +63,7 @@ QRectF Clock::boundingRect() const
 void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     m_time = data[i18n("Local")].toTime();
-    update();
+    QGraphicsItem::update();
 }
 
 Clock::~Clock()

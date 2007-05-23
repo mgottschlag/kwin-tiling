@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=A Plasma Clock
+Comment=Shows the time in several fashion... and it's the first plasmoid ever!
+
+[X-KDE Plugin Info]
+Author=The Plasma Team
+Email=panel-devel@kde.org
+PluginName=clock
+Version=pre0.1
+Website=http://plasma.kde.org/
+Category=
+Depends=
+License=GPL
+EnabledByDefault=true

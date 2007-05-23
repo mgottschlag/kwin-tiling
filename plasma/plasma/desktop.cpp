@@ -16,14 +16,14 @@
 #include <KLibLoader>
 #include <QFile>
 
-#include "clock.h"
+#include <clock.h>
 #include "dataengine.h"
 #include "plasmaapp.h"
 #include "svg.h"
 #include "widgets/lineedit.h"
 #include "applet.h"
 #include "desktop.moc"
-
+using namespace Plasma;
 extern "C" {
     typedef QGraphicsItem* (*loadKaramba)(const KUrl &theme, QGraphicsView *view);
 }
@@ -50,27 +50,14 @@ Desktop::Desktop(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    // Tmp
-//     for (int i = 0; i < 4000; i++)
-//     {
-//         int x = qrand() % 475;
-//         int y = qrand() % 475;
-// 
-//         Plasma::PushButton *testButton = new Plasma::PushButton;
-//         testButton->setText(QString::number(i));
-//         testButton->moveBy(x, y);
-// 
-//         m_graphicsScene->addItem(testButton);
-//     }
-
-    Clock *clock = new Clock;
+    Clock *clock = new Clock(0, 1);
     m_graphicsScene->addItem(clock);
 
     Plasma::DataEngine* time = PlasmaApp::self()->loadDataEngine("time");
-    Plasma::LineEdit* l = new Plasma::LineEdit;
-    m_graphicsScene->addItem(l);
-    l->moveBy(400, 400);
-    time->connectSource("time", l);
+//     Plasma::LineEdit* l = new Plasma::LineEdit;
+//     m_graphicsScene->addItem(l);
+//     l->moveBy(400, 400);
+//     time->connectSource("time", l);
 
     // Loading SuperKaramba themes example
     /*
@@ -88,7 +75,6 @@ Desktop::Desktop(QWidget *parent)
         lib->unload();
     }
     */
-
     m_background = new Plasma::Svg("background/dialog", this);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
