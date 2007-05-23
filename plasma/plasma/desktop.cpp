@@ -133,7 +133,10 @@ void Desktop::displayContextMenu(const QPoint& point)
         desktopMenu.addAction("like");
         desktopMenu.addAction("opacity");
         desktopMenu.addSeparator();
-        //applet.configureDialog(); //This isn't implemented in Applet yet...
+        QAction* configureApplet = new QAction(i18n("Configure Applet..."), this);
+        connect(configureApplet, SIGNAL(triggered(bool)),
+                applet, SLOT(configureDialog())); //This isn't implemented in Applet yet...
+        desktopMenu.addAction(configureApplet);
     }
     desktopMenu.exec(point);
 }
