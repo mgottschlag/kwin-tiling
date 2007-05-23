@@ -20,4 +20,4 @@ target_link_libraries(plasma-qgv plasma kworkspace ${KDE4_KDEUI_LIBS} ${KDE4_KIO
 set_target_properties(plasma-qgv PROPERTIES OUTPUT_NAME plasma)
 
 install(TARGETS plasma-qgv DESTINATION ${BIN_INSTALL_DIR})
-
+install( FILES plasma.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )

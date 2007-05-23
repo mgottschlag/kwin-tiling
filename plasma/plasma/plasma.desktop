@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=plasma
+X-DBUS-StartupType=wait
+Name=Plasma
+Type=Service
+X-KDE-StartupNotify=false
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=0
+
