@@ -28,7 +28,8 @@
 
 EngineExplorer::EngineExplorer(QWidget* parent)
     : KDialog(parent),
-      m_engine(0)
+      m_engine(0),
+      m_sourceCount(0)
 {
     setButtons(KDialog::Close);
     setWindowTitle(i18n("Plasma Engine Explorer"));
@@ -83,6 +84,7 @@ void EngineExplorer::showEngine(const QString& name)
     headers << i18n("DataSource") << i18n("Key") << i18n("Value");
     m_dataModel->setHorizontalHeaderLabels(headers);
     m_engine = 0;
+    m_sourceCount = 0;
 
     if (!m_engineName.isEmpty()) {
         m_engineManager->unloadDataEngine(m_engineName);
@@ -96,10 +98,12 @@ void EngineExplorer::showEngine(const QString& name)
     m_engine = m_engineManager->loadDataEngine(m_engineName);
     if (!m_engine) {
         m_engineName.clear();
+        updateTitle();
         return;
     }
 
     QStringList sources = m_engine->dataSources();
+
     kDebug() << "showing engine " << m_engine->objectName() << endl;
     kDebug() << "we have " << sources.count() << " data sources" << endl;
     foreach (const QString& source, sources) {
@@ -122,6 +126,9 @@ void EngineExplorer::addSource(const QString& source)
     Plasma::DataEngine::Data data = m_engine->query(source);
     showData(parent, data);
     m_engine->connectSource(source, this);
+
+    ++m_sourceCount;
+    updateTitle();
 }
 
 void EngineExplorer::removeSource(const QString& source)
@@ -135,6 +142,9 @@ void EngineExplorer::removeSource(const QString& source)
     foreach (QStandardItem* item, items) {
         m_dataModel->removeRow(item->row());
     }
+
+    --m_sourceCount;
+    updateTitle();
 }
 
 void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data data)
@@ -149,6 +159,17 @@ void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data da
         parent->setChild(rowCount, 2, new QStandardItem(it.value().toString()));
         ++rowCount;
     }
+}
+
+void EngineExplorer::updateTitle()
+{
+    if (!m_engine) {
+        m_title->setText(i18n("Plasma DataEngine Explorer"));
+        return;
+    }
+
+    m_title->setText(i18nc("The name of the engine followed by the number of data sources",
+                           "%1 - %2 data sources", m_engine->objectName(), m_sourceCount));
 }
 
 #include "engineexplorer.moc"

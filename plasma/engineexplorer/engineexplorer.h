@@ -51,11 +51,13 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
     private:
         void listEngines();
         void showData(QStandardItem* parent, Plasma::DataEngine::Data data);
+        void updateTitle();
 
         DataEngineManager* m_engineManager;
         QStandardItemModel* m_dataModel;
         QString m_engineName;
         Plasma::DataEngine* m_engine;
+        int m_sourceCount;
 };
 
 #endif // multiple inclusion guard
