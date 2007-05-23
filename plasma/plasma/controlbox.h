@@ -53,6 +53,9 @@ class ControlBox : public QWidget
         QWidget* m_box; ///<The configuraion dialog widget
         DisplayLabel* m_displayLabel; ///<The 'show config' button
         QTimeLine* m_timeLine;
+        QTimer* m_exitTimer;
+
+        bool boxIsShown;
 };
 
 #endif // multiple inclusion guard

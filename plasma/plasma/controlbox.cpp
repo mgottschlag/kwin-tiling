@@ -26,6 +26,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QVBoxLayout>
 #include <QtCore/QTimeLine>
+#include <QtCore/QTimer>
 #include <KLocale>
 #include <KDebug>
 
@@ -74,19 +75,28 @@ void DisplayLabel::paintEvent(QPaintEvent* event)
 
 ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
 {
+    //The display box label/button
     m_displayLabel = new DisplayLabel(i18n("Configure Desktop"), this);
     m_displayLabel->show();
     m_displayLabel->installEventFilter(this);
     resize(m_displayLabel->size());
 
+    //The hide box timer
+    m_exitTimer = new QTimer(this);
+    m_exitTimer->setInterval(500);
+    m_exitTimer->setSingleShot(true);
+    connect(m_exitTimer, SIGNAL(timeout()), this, SLOT(hideBox()));
+
     //the config box
-    m_box = new QWidget(parent);
+    m_box = new QWidget(this);
+    m_box->installEventFilter(this);
     setupBox();
     m_box->hide();
+    boxIsShown = false;
 
     //Set up the animation timeline
     m_timeLine = new QTimeLine(300, this);
-    m_timeLine->setFrameRange(0, 25); //50 step anumation
+    m_timeLine->setFrameRange(0, 25); //25 step anumation
     m_timeLine->setCurveShape(QTimeLine::EaseInOutCurve);
     connect(m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(animateBox(int)));
 
@@ -99,15 +109,19 @@ ControlBox::~ControlBox()
 
 bool ControlBox::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched != m_displayLabel) {
-        return false;
+    if (watched == m_displayLabel) {
+        if (event->type() == QEvent::Enter) {
+            showBox();
+        }
+    } else if (watched == m_box) {
+        if (event->type() == QEvent::Leave) {
+            m_exitTimer->start();
+        } else {
+            m_exitTimer->stop(); //If not a leave event, stop the box from closing
+        }
     }
 
-    if (event->type() == QEvent::Enter) {
-        showBox();
-    }
-
-    return false;
+    return QWidget::eventFilter(watched, event);
 }
 
 void ControlBox::setupBox()
@@ -128,7 +142,12 @@ void ControlBox::setupBox()
 
 void ControlBox::showBox()
 {
+    if(boxIsShown) {
+        return;
+    }
+    boxIsShown = true;
     m_box->move(-m_box->size().width(),-m_box->size().height());
+    resize(m_box->size()); //resize this widget so the full contents of m_box can be seen.
     m_box->show();
     m_timeLine->setDirection(QTimeLine::Forward);
     m_timeLine->start();
@@ -136,12 +155,21 @@ void ControlBox::showBox()
 
 void ControlBox::hideBox()
 {
+    if(!boxIsShown) {
+        return;
+    }
+    boxIsShown = false;
     m_timeLine->setDirection(QTimeLine::Backward);
     m_timeLine->start();
 }
 
 void ControlBox::animateBox(int frame)
 {
+    if ((frame == 1) && (m_timeLine->direction() == QTimeLine::Backward)) {
+        resize(m_displayLabel->size()); //resize this widget so it's only the size of the label
+        m_box->hide();
+    }
+
     //Display the config box
     qreal boxWidth = m_box->size().width();
     qreal boxHeight = m_box->size().height();
