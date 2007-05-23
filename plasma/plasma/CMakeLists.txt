@@ -4,7 +4,6 @@ set(plasma_SRCS
     clock.cpp
     controlbox.cpp
     desktop.cpp
-    enginemanager.cpp
     main.cpp
     plasmaapp.cpp
     rootwidget.cpp

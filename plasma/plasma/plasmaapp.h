@@ -22,11 +22,15 @@
 #include <KUniqueApplication>
 
 #include "interface.h"
-#include "enginemanager.h"
 
+namespace Plasma
+{
+    class DataEngineManager;
+}
 class RootWidget;
 class QGraphicsView;
 class QGraphicsScene;
+
 class PlasmaApp : public KUniqueApplication,
                   public Plasma::Interface
 {
@@ -50,7 +54,7 @@ private slots:
 private:
     static void crashHandler(int signal);
 
-    DataEngineManager *m_engineManager;
+    Plasma::DataEngineManager *m_engineManager;
     RootWidget *m_root;
 };
 

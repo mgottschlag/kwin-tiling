@@ -24,7 +24,7 @@
 #include <KIconLoader>
 #include <KIconTheme>
 
-#include "enginemanager.h"
+#include "dataenginemanager.h"
 
 EngineExplorer::EngineExplorer(QWidget* parent)
     : KDialog(parent),
@@ -37,7 +37,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     setMainWidget(mainWidget);
     setupUi(mainWidget);
 
-    m_engineManager = new DataEngineManager();
+    m_engineManager = new Plasma::DataEngineManager();
     m_dataModel = new QStandardItemModel(this);
     KIcon pix("plasma");
     int size = IconSize(K3Icon::Dialog);

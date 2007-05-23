@@ -21,8 +21,6 @@
 // LineGraph graph
 // plasma.connect(graph, "hardware", "cpu");
 
-#include "plasmaapp.h"
-
 #include <unistd.h>
 
 #include <QTimer>
@@ -32,6 +30,9 @@
 #include <KCmdLineArgs>
 #include <ksmserver_interface.h>
 
+#include "dataenginemanager.h"
+
+#include "plasmaapp.h"
 #include "rootwidget.h"
 
 PlasmaApp* PlasmaApp::self()
@@ -63,7 +64,7 @@ PlasmaApp::PlasmaApp()
     }
 
     m_interface = this;
-    m_engineManager = new DataEngineManager;
+    m_engineManager = new Plasma::DataEngineManager;
 
     m_root = new RootWidget();
     m_root->show();

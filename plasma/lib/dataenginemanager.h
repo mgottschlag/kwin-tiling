@@ -22,7 +22,10 @@
 #include <QHash>
 #include "dataengine.h"
 
-class DataEngineManager
+namespace Plasma
+{
+
+class PLASMA_EXPORT DataEngineManager
 {
     public:
         typedef QHash<QString, Plasma::DataEngine*> Dict;
@@ -40,5 +43,7 @@ class DataEngineManager
     private:
         Plasma::DataEngine::Dict m_engines;
 };
+
+} // namespace Plasma
 
 #endif // multiple inclusion guard

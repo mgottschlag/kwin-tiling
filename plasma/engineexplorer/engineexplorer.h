@@ -26,9 +26,9 @@ class QStandardItem;
 
 #include "ui_engineexplorer.h"
 
-class DataEngineManager;
 namespace Plasma
 {
+    class DataEngineManager;
     class DataEngine;
 } // namespace Plasma
 
@@ -53,7 +53,7 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
         void showData(QStandardItem* parent, Plasma::DataEngine::Data data);
         void updateTitle();
 
-        DataEngineManager* m_engineManager;
+        Plasma::DataEngineManager* m_engineManager;
         QStandardItemModel* m_dataModel;
         QString m_engineName;
         Plasma::DataEngine* m_engine;

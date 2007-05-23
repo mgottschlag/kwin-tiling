@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Time Data Engine
-Name[zh_TW]=時間資料引擎
+Name[zh_TW]=æéè³æå¼æ
+Name[fa]=موتور داده زمان
 Comment=Time data for Plasmoids
-Comment[zh_TW]=Plasmoids 的時間資料
+Comment[zh_TW]=Plasmoids çæéè³æ
+Comment[fa]=موتور داده زمان برای پلاسموید‌ها
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=alarmclock
