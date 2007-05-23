@@ -86,7 +86,7 @@ ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
 
     //Set up the animation timeline
     m_timeLine = new QTimeLine(300, this);
-    m_timeLine->setFrameRange(0, 50); //50 step anumation
+    m_timeLine->setFrameRange(0, 25); //50 step anumation
     m_timeLine->setCurveShape(QTimeLine::EaseInOutCurve);
     connect(m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(animateBox(int)));
 
@@ -145,13 +145,13 @@ void ControlBox::animateBox(int frame)
     //Display the config box
     qreal boxWidth = m_box->size().width();
     qreal boxHeight = m_box->size().height();
-    qreal boxStep = ((qreal(frame)/50) - 1.0);
+    qreal boxStep = ((qreal(frame)/25) - 1.0);
     m_box->move(boxWidth*boxStep,boxHeight*boxStep);
 
     //And hide the label
     qreal labelWidth = m_displayLabel->size().width();
     qreal labelHeight = m_displayLabel->size().height();
-    qreal labelStep = (-qreal(frame)/50);
+    qreal labelStep = (-qreal(frame)/25);
     m_displayLabel->move(labelWidth*labelStep,labelHeight*labelStep);
 }
 
