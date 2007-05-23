@@ -27,6 +27,7 @@
 
 #include "svg.h"
 #include "desktop.h"
+#include "controlbox.h"
 
 RootWidget::RootWidget()
     : QWidget(0, Qt::FramelessWindowHint)
@@ -46,6 +47,8 @@ RootWidget::RootWidget()
     m_desktop->show();
 
     connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize()));
+    m_controlBox = new ControlBox(this);
+    m_controlBox->show();
 }
 
 RootWidget::~RootWidget()

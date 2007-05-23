@@ -2,6 +2,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/workspace/pl
 
 set(plasma_SRCS
     clock.cpp
+    controlbox.cpp
     desktop.cpp
     enginemanager.cpp
     main.cpp
