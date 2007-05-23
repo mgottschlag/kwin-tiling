@@ -34,8 +34,8 @@
 #include <KDebug>
 #include <KLocale>
 
-#include <Plasma/Svg>
-#include <Plasma/Interface>
+#include <svg.h>
+#include <interface.h>
 
 using namespace Plasma;
 
