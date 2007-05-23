@@ -83,7 +83,7 @@ ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
 
     //The hide box timer
     m_exitTimer = new QTimer(this);
-    m_exitTimer->setInterval(500);
+    m_exitTimer->setInterval(300);
     m_exitTimer->setSingleShot(true);
     connect(m_exitTimer, SIGNAL(timeout()), this, SLOT(hideBox()));
 
@@ -116,7 +116,7 @@ bool ControlBox::eventFilter(QObject *watched, QEvent *event)
     } else if (watched == m_box) {
         if (event->type() == QEvent::Leave) {
             m_exitTimer->start();
-        } else {
+        } else if (event->type() == QEvent::Enter) {
             m_exitTimer->stop(); //If not a leave event, stop the box from closing
         }
     }
