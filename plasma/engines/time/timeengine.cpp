@@ -33,7 +33,7 @@ TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
     m_timer = new QTimer(this);
     m_timer->setSingleShot(false);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(updateTime()));
-    m_timer->start(1000);
+    m_timer->start(500);
     updateTime();
 }
 
