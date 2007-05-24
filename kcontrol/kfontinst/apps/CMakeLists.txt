@@ -1,9 +1,9 @@
 include_directories(
-    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/
-    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/
-    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/kcmfontinst/
-    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/
-    )
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/kcmfontinst/
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/
+	)
 
 set(kfontinst_bin_SRCS ${libkfontinstjobrunner_SRCS} Installer.cpp )
 set(kfontprint_bin_SRCS Printer.cpp )
@@ -26,7 +26,7 @@ target_link_libraries(kfontview_bin ${KDE4_KIO_LIBS} ${KDE4_KPARTS_LIBS} kfontin
 install(TARGETS kfontinst_bin DESTINATION ${BIN_INSTALL_DIR} )
 install(TARGETS kfontprint_bin DESTINATION ${BIN_INSTALL_DIR} )
 install(TARGETS kfontview_bin DESTINATION ${BIN_INSTALL_DIR} )
-install(FILES kfontviewui.rc DESTINATION ${BIN_INSTALL_DIR} )
+install(FILES kfontviewui.rc DESTINATION ${DATA_INSTALL_DIR}/kfontview )
 install(FILES kfontview.desktop DESTINATION ${XDG_APPS_DIR} )
 install(FILES installfont.desktop DESTINATION ${DATA_INSTALL_DIR}/konqueror/servicemenus )
 
