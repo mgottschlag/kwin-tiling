@@ -16,13 +16,14 @@
 #include <KLibLoader>
 #include <QFile>
 
-#include <clock.h>
+#include "applet.h"
 #include "dataengine.h"
-#include "plasmaapp.h"
 #include "svg.h"
 #include "widgets/lineedit.h"
-#include "applet.h"
-#include "desktop.moc"
+
+//#include <clock.h>
+#include "plasmaapp.h"
+
 using namespace Plasma;
 extern "C" {
     typedef QGraphicsItem* (*loadKaramba)(const KUrl &theme, QGraphicsView *view);
@@ -50,8 +51,20 @@ Desktop::Desktop(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    Clock *clock = new Clock(0, 1);
-    m_graphicsScene->addItem(clock);
+    KPluginInfo::List applets = Plasma::Applet::knownApplets();
+    kDebug() << "======= Applets =========" << endl;
+    foreach (KPluginInfo* info, applets) {
+        kDebug() << info->pluginName() << ": " << info->name() << endl;
+    }
+    kDebug() << "=========================" << endl;
+
+//    Clock *clock = new Clock(0, 1);
+    Plasma::Applet* clock = Plasma::Applet::loadApplet("clock");
+    if (clock) {
+        m_graphicsScene->addItem(clock);
+    } else {
+        kDebug() << "what, no pretty clocks? *sob*" << endl;
+    }
 
 //    Plasma::DataEngine* time = PlasmaApp::self()->loadDataEngine("time");
 //     Plasma::LineEdit* l = new Plasma::LineEdit;
@@ -131,4 +144,6 @@ void Desktop::launchExplorer(bool /*param*/)
 {
     QProcess::execute("plasmaengineexplorer");
 }
+
+#include "desktop.moc"
 
