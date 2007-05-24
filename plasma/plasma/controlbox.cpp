@@ -27,10 +27,18 @@
 #include <QtGui/QVBoxLayout>
 #include <QtCore/QTimeLine>
 #include <QtCore/QTimer>
+#include <QtGui/QListView>
+#include <QtGui/QStringListModel>
+#include <QtCore/QStringList>
 #include <KLocale>
 #include <KDebug>
+#include <KLibrary>
+//#include <KLibLoader>
 
+#include "applet.h"
 #include "svg.h"
+
+//BEGIN - DisplayLabel
 
 class DisplayLabel : public QLabel
 {
@@ -50,7 +58,6 @@ DisplayLabel::DisplayLabel(const QString& text, QWidget *parent)
       m_background("background/dialog") //FIXME: we need a proper SVG for this =)
 {
     setAlignment(Qt::AlignCenter);
-//    resize(minimumSizeHint());
     m_background.resize(size());
 }
 
@@ -73,6 +80,56 @@ void DisplayLabel::paintEvent(QPaintEvent* event)
     QLabel::paintEvent(event);
 }
 
+//BEGIN - ControlWidget
+
+ControlWidget::ControlWidget(QWidget *parent)
+    : QWidget(parent)
+{
+    //This is all to change of course
+    QVBoxLayout* boxLayout = new QVBoxLayout(this);
+
+    QPushButton* hideBoxButton = new QPushButton(i18n("Hide Config Box"), this);
+    appletList = new QListView(this);
+    m_label = new QLabel("Plasmoids:", this);
+    boxLayout->addWidget(hideBoxButton);
+    boxLayout->addWidget(m_label);
+    boxLayout->addWidget(appletList);
+
+    hideBoxButton->show();
+    appletList->show();
+    setLayout(boxLayout);
+    //resize(400,500);
+
+    connect(hideBoxButton, SIGNAL(pressed()), parent, SLOT(hideBox()));
+
+    appletListModel = new QStringListModel(this);
+    appletList->setModel(appletListModel);
+    appletList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    connect(appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addPlasmoidSlot(QModelIndex)));
+
+    refreshPlasmiodList();
+}
+
+ControlWidget::~ControlWidget() {}
+
+void ControlWidget::refreshPlasmiodList()
+{
+    KPluginInfo::List applets = Plasma::Applet::knownApplets();
+    QStringList appletList;
+    foreach (KPluginInfo* info, applets) {
+        appletList << info->pluginName();
+    }
+    appletListModel->setStringList(appletList);
+}
+
+void ControlWidget::addPlasmoidSlot(const QModelIndex& plasmoidIndex)
+{
+    kDebug() << "plasmoidIndex.data()" << ": " << plasmoidIndex.data() << endl;
+    emit addPlasmoid(plasmoidIndex.data().toString());
+}
+
+//BEGIN - ControlBox
+
 ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
 {
     //The display box label/button
@@ -88,11 +145,11 @@ ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
     connect(m_exitTimer, SIGNAL(timeout()), this, SLOT(hideBox()));
 
     //the config box
-    m_box = new QWidget(this);
+    m_box = new ControlWidget(this);
     m_box->installEventFilter(this);
-    setupBox();
     m_box->hide();
     boxIsShown = false;
+    connect(m_box, SIGNAL(addPlasmoid(const QString&)), this, SIGNAL(addPlasmoid(const QString&)));
 
     //Set up the animation timeline
     m_timeLine = new QTimeLine(300, this);
@@ -124,22 +181,6 @@ bool ControlBox::eventFilter(QObject *watched, QEvent *event)
     return QWidget::eventFilter(watched, event);
 }
 
-void ControlBox::setupBox()
-{
-    //This is all to change of course
-    QVBoxLayout* boxLayout = new QVBoxLayout(m_box);
-
-    QPushButton* hideBoxButton = new QPushButton(i18n("Hide Config Box"), m_box);
-    connect(hideBoxButton, SIGNAL(pressed()), this, SLOT(hideBox()));
-    QListView* appletList = new QListView(m_box);
-    boxLayout->addWidget(hideBoxButton);
-    boxLayout->addWidget(appletList);
-    hideBoxButton->show();
-    appletList->show();
-    m_box->setLayout(boxLayout);
-    m_box->resize(400,500);
-}
-
 void ControlBox::showBox()
 {
     if(boxIsShown) {
@@ -147,7 +188,7 @@ void ControlBox::showBox()
     }
     boxIsShown = true;
     m_box->move(-m_box->size().width(),-m_box->size().height());
-    resize(m_box->size()); //resize this widget so the full contents of m_box can be seen.
+    resize(m_box->sizeHint()); //resize this widget so the full contents of m_box can be seen.
     m_box->show();
     m_timeLine->setDirection(QTimeLine::Forward);
     m_timeLine->start();

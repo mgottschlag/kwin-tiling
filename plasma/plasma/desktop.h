@@ -25,6 +25,7 @@ class QGraphicsScene;
 namespace Plasma
 {
     class Svg;
+    class Applet;
 }
 
 /**
@@ -32,16 +33,23 @@ namespace Plasma
  */
 class Desktop : public QGraphicsView
 {
-    Q_OBJECT
+Q_OBJECT
+
+//typedef QHash<QString, QList<Plasma::Applet*> > layouts;
+
 public:
     Desktop(QWidget *parent = 0);
     ~Desktop();
+
+public Q_SLOTS:
+    void addPlasmoid(const QString& name);
 
 protected:
     void resizeEvent(QResizeEvent* event);
     void drawBackground(QPainter * painter, const QRectF & rect);
     QAction *engineExplorer;
     QAction *exitPlasma;
+    QList<Plasma::Applet*> loadedPlasmoidList;
 
 protected Q_SLOTS:
     void displayContextMenu(const QPoint& point);

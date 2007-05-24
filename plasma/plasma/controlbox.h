@@ -24,6 +24,10 @@
 class QLabel;
 class QTimeLine;
 class DisplayLabel;
+class ControlWidget;
+class QListView;
+class QStringListModel;
+class QModelIndex;
 
 /**
  * @short The Desktop configuration widget
@@ -39,6 +43,7 @@ class ControlBox : public QWidget
 
     Q_SIGNALS:
         void boxRequested();
+        void addPlasmoid(const QString&);
 
     protected:
         void mousePressEvent (QMouseEvent* event);
@@ -50,12 +55,39 @@ class ControlBox : public QWidget
         void animateBox(int frame); ///<Process the frames to create an animation
 
     private:
-        QWidget* m_box; ///<The configuraion dialog widget
+        ControlWidget* m_box; ///<The configuraion dialog widget
         DisplayLabel* m_displayLabel; ///<The 'show config' button
         QTimeLine* m_timeLine;
         QTimer* m_exitTimer;
 
         bool boxIsShown;
+};
+
+/**
+ * @short The widget that contains the actual settings
+ */
+class ControlWidget : public QWidget
+{
+    Q_OBJECT
+
+    public:
+        ControlWidget(QWidget* parent);
+        ~ControlWidget();
+
+    protected:
+        void refreshPlasmiodList();
+
+        QLabel* m_label;
+        QListView* appletList;
+        QStringListModel* appletListModel;
+
+    protected Q_SLOTS:
+        void addPlasmoidSlot(const QModelIndex& plasmoidIndex);
+
+    Q_SIGNALS:
+        void addPlasmoid(const QString&);
+
+    private:
 };
 
 #endif // multiple inclusion guard

@@ -49,6 +49,8 @@ RootWidget::RootWidget()
     connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize()));
     m_controlBox = new ControlBox(this);
     m_controlBox->show();
+
+    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_desktop, SLOT(addPlasmoid(const QString&)));
 }
 
 RootWidget::~RootWidget()

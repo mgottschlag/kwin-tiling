@@ -96,10 +96,27 @@ Desktop::Desktop(QWidget *parent)
     connect(engineExplorer, SIGNAL(triggered(bool)), this, SLOT(launchExplorer(bool)));
     exitPlasma = new QAction(i18n("Exit Plasma"), this);
     connect(exitPlasma, SIGNAL(triggered(bool)), kapp, SLOT(quit()));
+
+    connect(exitPlasma, SIGNAL(triggered(bool)), kapp, SLOT(quit()));
 }
 
 Desktop::~Desktop()
 {
+    foreach (Plasma::Applet* plasmoid, loadedPlasmoidList) {
+        delete plasmoid;
+    }
+    loadedPlasmoidList.clear();
+}
+
+void Desktop::addPlasmoid(const QString& name)
+{
+    Plasma::Applet* plasmoid = Plasma::Applet::loadApplet(name);
+    if (plasmoid) {
+        m_graphicsScene->addItem(plasmoid);
+        loadedPlasmoidList << plasmoid;
+    } else {
+        kDebug() << "Plasmoid " << name << " could not be loaded." << endl;
+    }
 }
 
 void Desktop::drawBackground(QPainter * painter, const QRectF &)
