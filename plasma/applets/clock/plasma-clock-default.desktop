@@ -2,14 +2,15 @@
 Name=A Plasma Clock
 Comment=Shows the time in several fashion... and it's the first plasmoid ever!
 Type=Service
+ServiceTypes=Plasma/Applet
 
-[X-KDE Plugin Info]
-Author=The Plasma Team
-Email=panel-devel@kde.org
-PluginName=clock
-Version=pre0.1
-Website=http://plasma.kde.org/
-Category=
-Depends=
-License=GPL
-EnabledByDefault=true
+X-KDE-Library=plasma_applet_clock
+X-KDE-PluginInfo-Author=The Plasma Team
+X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Name=clock
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

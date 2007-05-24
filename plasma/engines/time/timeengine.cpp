@@ -23,6 +23,7 @@
 #include <QTimer>
 
 #include <KDebug>
+#include <KLocale>
 
 TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)

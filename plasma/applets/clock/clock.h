@@ -34,25 +34,23 @@
 #include <QGraphicsItem>
 #include <QColor>
 
-#include <kdemacros.h>
-
 #include <applet.h>
 #include <dataengine.h>
-#include <plasma_export.h>
 
 class QTimer;
 
 namespace Plasma
 {
     class Svg;
+}
 
-
-class PLASMA_EXPORT Clock : public Plasma::Applet
+class Clock : public Plasma::Applet
 {
         Q_OBJECT
     public:
-        Clock(QGraphicsItem *parent,
-              int appletId );
+/*        Clock(QGraphicsItem *parent,
+              int appletId);*/
+        Clock(QObject *parent, const QStringList &args);
         ~Clock();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
@@ -72,5 +70,6 @@ class PLASMA_EXPORT Clock : public Plasma::Applet
         QTime m_time;
 };
 
-} // namespace Plasma
+K_EXPORT_PLASMA_APPLET(clock, Clock)
+
 #endif

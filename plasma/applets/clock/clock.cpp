@@ -39,9 +39,11 @@
 
 using namespace Plasma;
 
-Clock::Clock(QGraphicsItem * parent,
+/*Clock::Clock(QGraphicsItem * parent,
              int appletId)
-    : Plasma::Applet(parent, "plasma-clock-default", appletId)
+    : Plasma::Applet(parent, "plasma-clock-default", appletId)*/
+Clock::Clock(QObject *parent, const QStringList &args)
+    : Plasma::Applet(parent, args) //"plasma-clock-default", appletId)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
     Plasma::DataEngine* timeEngine = Plasma::Interface::self()->loadDataEngine("time");
@@ -74,6 +76,7 @@ Clock::~Clock()
 
 void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(option)
     Q_UNUSED(widget)
     Q_UNUSED(option)
     p->setRenderHint(QPainter::SmoothPixmapTransform);

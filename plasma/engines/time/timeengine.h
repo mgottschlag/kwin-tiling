@@ -19,8 +19,6 @@
 #ifndef TIMEENGINE_H
 #define TIMEENGINE_H
 
-#include <KGenericFactory>
-
 #include "dataengine.h"
 
 class QTimer;
@@ -46,6 +44,6 @@ class TimeEngine : public Plasma::DataEngine
         QTimer* m_timer;
 };
 
-K_EXPORT_PLASMA_DATAENGINE( time, TimeEngine )
+K_EXPORT_PLASMA_DATAENGINE(time, TimeEngine)
 
 #endif
