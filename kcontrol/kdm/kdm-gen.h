@@ -40,7 +40,6 @@ class KDMGeneralWidget : public QWidget {
 
 	void loadColorSchemes( KBackedComboBox *combo );
 	void loadGuiStyles( KBackedComboBox *combo );
-	void loadLanguageList( KLanguageButton *combo );
 
   Q_SIGNALS:
 	void changed();

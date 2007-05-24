@@ -17,7 +17,6 @@ set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
    kdm-users.cpp
    kdm-conv.cpp
    main.cpp
-   klanguagebutton.cpp
    kbackedcombobox.cpp
    positioner.cpp)
 

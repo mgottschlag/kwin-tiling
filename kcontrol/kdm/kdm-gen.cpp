@@ -20,7 +20,6 @@
 #include "kdm-gen.h"
 
 #include "kbackedcombobox.h"
-#include "klanguagebutton.h"
 
 #include <KDialog>
 #include <KFontRequester>
@@ -28,6 +27,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>
+#include <KLanguageButton>
 
 #include <QCheckBox>
 #include <QGroupBox>
@@ -94,7 +94,8 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 
 	// The Language group box
 	langcombo = new KLanguageButton( box );
-	loadLanguageList( langcombo );
+	langcombo->showLanguageCodes(true);
+	langcombo->loadAllLanguages();
 	connect( langcombo, SIGNAL(activated( const QString & )), SIGNAL(changed()) );
 	label = new QLabel( i18n("&Language:"), this );
 	label->setBuddy( langcombo );
@@ -154,25 +155,6 @@ void KDMGeneralWidget::makeReadOnly()
 	failFontChooser->button()->setEnabled( false );
 	greetingFontChooser->button()->setEnabled( false );
 	aacb->setEnabled( false );
-}
-
-void KDMGeneralWidget::loadLanguageList( KLanguageButton *combo )
-{
-	QStringList langlist = KGlobal::dirs()->
-		findAllResources( "locale", QLatin1String("*/entry.desktop") );
-	langlist.sort();
-	for (QStringList::ConstIterator it = langlist.begin();
-	     it != langlist.end(); ++it)
-	{
-		QString fpath = (*it).left( (*it).length() - 14 );
-		int index = fpath.lastIndexOf( '/' );
-		QString nid = fpath.mid( index + 1 );
-
-		KConfig entry( *it, KConfig::OnlyLocal);
-                KConfigGroup group(&entry, "KCM Locale");
-		QString name = group.readEntry( QLatin1String("Name"), i18n("without name") );
-		combo->insertLanguage( nid, name, QLatin1String("l10n/"), QString() );
-	}
 }
 
 void KDMGeneralWidget::loadColorSchemes( KBackedComboBox *combo )
