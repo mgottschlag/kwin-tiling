@@ -42,6 +42,8 @@ RootWidget::RootWidget()
     rootLayout->setSpacing(0);
 
     m_view = new Corona(this);
+    m_view->setFormFactor(Plasma::Planar);
+    m_view->setLocation(Plasma::Desktop);
     rootLayout->addWidget(m_view);
     m_view->show();
 

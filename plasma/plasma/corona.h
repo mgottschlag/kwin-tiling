@@ -21,11 +21,14 @@
 
 #include <QGraphicsView>
 
+#include "plasma.h"
+#include "applet.h"
+
 class QGraphicsScene;
 namespace Plasma
 {
+    class Layout;
     class Svg;
-    class Applet;
 }
 
 /**
@@ -41,15 +44,38 @@ public:
     Corona(QWidget *parent = 0);
     ~Corona();
 
+    /**
+     * The location of the Corona. @see Plasma::Location
+     */
+    Plasma::Location location() const;
+
+    /**
+     * Informs the Corona as to what position it is in. This is informational
+     * only, as the Corona doesn't change it's actual location. This is,
+     * however, passed on to Applets that may be managed by this Corona.
+     *
+     * @param location the new location of this Corona
+     */
+    void setLocation(Plasma::Location location);
+
+    /**
+     * The current form factor for this Corona. @see Plasma::FormFactor
+     **/
+    Plasma::FormFactor formFactor() const;
+
+    /**
+     * Sets the form factor for this Corona. This may cause changes in both
+     * the arrangement of Applets as well as the display choices of individual
+     * Applets.
+     */
+    void setFormFactor(Plasma::FormFactor formFactor);
+
 public Q_SLOTS:
     void addPlasmoid(const QString& name);
 
 protected:
     void resizeEvent(QResizeEvent* event);
     void drawBackground(QPainter * painter, const QRectF & rect);
-    QAction *engineExplorer;
-    QAction *exitPlasma;
-    QList<Plasma::Applet*> loadedPlasmoidList;
 
 protected Q_SLOTS:
     void displayContextMenu(const QPoint& point);
@@ -57,6 +83,13 @@ protected Q_SLOTS:
 
 private:
     QGraphicsScene *m_graphicsScene;
+    QAction *m_engineExplorerAction;
+    Plasma::Applet::List m_applets;
+    Plasma::FormFactor m_formFactor;
+    Plasma::Location m_location;
+    Plasma::Layout* m_layout;
+
+    //TODO: replace m_background with something actually useful.
     Plasma::Svg* m_background;
 };
 

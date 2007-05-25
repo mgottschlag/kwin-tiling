@@ -36,7 +36,7 @@
 #include "applet.h"
 #include "dataengine.h"
 #include "svg.h"
-#include "widgets/lineedit.h"
+#include "widgets/vboxlayout.h"
 
 #include "corona.h"
 #include "plasmaapp.h"
@@ -47,7 +47,10 @@ extern "C" {
 }
 
 Corona::Corona(QWidget *parent)
-    : QGraphicsView(parent)
+    : QGraphicsView(parent),
+      m_formFactor(Plasma::Planar),
+      m_location(Plasma::Floating),
+      m_layout(0)
 {
     setFrameShape(QFrame::NoFrame);
 /*    setBackgroundMode(Qt::NoBackground);*/
@@ -68,26 +71,14 @@ Corona::Corona(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    /*
     KPluginInfo::List applets = Plasma::Applet::knownApplets();
     kDebug() << "======= Applets =========" << endl;
     foreach (KPluginInfo* info, applets) {
         kDebug() << info->pluginName() << ": " << info->name() << endl;
     }
     kDebug() << "=========================" << endl;
-
-//    Clock *clock = new Clock(0, 1);
-    Plasma::Applet* clock = Plasma::Applet::loadApplet("clock");
-    if (clock) {
-        m_graphicsScene->addItem(clock);
-    } else {
-        kDebug() << "what, no pretty clocks? *sob*" << endl;
-    }
-
-//    Plasma::DataEngine* time = PlasmaApp::self()->loadDataEngine("time");
-//     Plasma::LineEdit* l = new Plasma::LineEdit;
-//     m_graphicsScene->addItem(l);
-//     l->moveBy(400, 400);
-//     time->connectSource("time", l);
+    */
 
     // Loading SuperKaramba themes example
     /*
@@ -107,30 +98,82 @@ Corona::Corona(QWidget *parent)
     */
     m_background = new Plasma::Svg("background/dialog", this);
 
-    setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayContextMenu(QPoint)));
-    engineExplorer = new QAction(i18n("Engine Explorer"), this);
-    connect(engineExplorer, SIGNAL(triggered(bool)), this, SLOT(launchExplorer(bool)));
-    exitPlasma = new QAction(i18n("Exit Plasma"), this);
-    connect(exitPlasma, SIGNAL(triggered(bool)), kapp, SLOT(quit()));
-
-    connect(exitPlasma, SIGNAL(triggered(bool)), kapp, SLOT(quit()));
+    m_engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
+    connect(m_engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer(bool)));
+    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 Corona::~Corona()
 {
-    foreach (Plasma::Applet* plasmoid, loadedPlasmoidList) {
-        delete plasmoid;
+    foreach (Plasma::Applet* applet, m_applets) {
+        delete applet;
     }
-    loadedPlasmoidList.clear();
+    m_applets.clear();
 }
+
+Plasma::Location Corona::location() const
+{
+    return m_location;
+}
+
+void Corona::setLocation(Plasma::Location location)
+{
+    m_location = location;
+}
+
+Plasma::FormFactor Corona::formFactor() const
+{
+    return m_formFactor;
+}
+
+void Corona::setFormFactor(Plasma::FormFactor formFactor)
+{
+    if (m_formFactor == formFactor) {
+        return;
+    }
+
+    m_formFactor = formFactor;
+    delete m_layout;
+    m_layout = 0;
+
+    switch (m_formFactor) {
+        case Plasma::Planar:
+            break;
+        case Plasma::Horizontal:
+            //m_layout = new Plasma::HBoxLayout;
+            break;
+        case Plasma::Vertical:
+            m_layout = new Plasma::VBoxLayout;
+            break;
+        case Plasma::MediaCenter:
+            break;
+        default:
+            kDebug() << "This can't be happening!" << endl;
+            break;
+    }
+
+    if (!m_layout) {
+        return;
+    }
+
+    foreach (Applet* applet, m_applets) {
+        //FIXME: the applet needs a way to query for its constraints
+        //       currently there is no framework for this!
+        //       so we tell them the constraints are updated, and they should
+        //       in turn query for what they are and do any layouting changes
+        //       they need to.....
+        applet->constraintsUpdated();
+    }
+}
+
 
 void Corona::addPlasmoid(const QString& name)
 {
-    Plasma::Applet* plasmoid = Plasma::Applet::loadApplet(name);
-    if (plasmoid) {
-        m_graphicsScene->addItem(plasmoid);
-        loadedPlasmoidList << plasmoid;
+    Plasma::Applet* applet = Plasma::Applet::loadApplet(name);
+    if (applet) {
+        m_graphicsScene->addItem(applet);
+        m_applets << applet;
     } else {
         kDebug() << "Plasmoid " << name << " could not be loaded." << endl;
     }
@@ -157,8 +200,7 @@ void Corona::displayContextMenu(const QPoint& point)
         desktopMenu.addAction("The");
         desktopMenu.addAction("desktop");
         desktopMenu.addAction("menu");
-        desktopMenu.addAction(engineExplorer);
-        desktopMenu.addAction(exitPlasma);
+        desktopMenu.addAction(m_engineExplorerAction);
     } else {
         //desktopMenu.setTitle( applet->name() ); //This isn't implemented in Applet yet...
         desktopMenu.addAction("Widget");
