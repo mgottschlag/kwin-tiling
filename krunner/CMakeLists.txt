@@ -36,7 +36,7 @@ kde4_automoc(${krunner_SRCS})
 kde4_add_ui_files(krunner_SRCS runners/shell/shellOptions.ui)
 kde4_add_executable(krunner ${krunner_SRCS})
 # needs qt3support for Q3ListView in lockdlg
-target_link_libraries(krunner plasma kworkspace ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(krunner plasma kworkspace ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 if(X11_Xss_LIB)
   target_link_libraries(krunner ${X11_Xss_LIB})
 endif(X11_Xss_LIB)
