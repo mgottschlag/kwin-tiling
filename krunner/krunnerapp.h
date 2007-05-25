@@ -31,9 +31,9 @@ class KRunnerApp : public RestartingApplication
 {
     Q_OBJECT
 public:
-    KRunnerApp(Display *display,
+/*    KRunnerApp(Display *display,
                           Qt::HANDLE visual = 0,
-                          Qt::HANDLE colormap = 0);
+                          Qt::HANDLE colormap = 0);*/
     KRunnerApp();
     ~KRunnerApp();
 

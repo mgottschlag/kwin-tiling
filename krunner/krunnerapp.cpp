@@ -42,21 +42,80 @@
 #include "startupid.h"
 #include "klaunchsettings.h"
 
+#include <X11/extensions/Xrender.h>
+
+Display* dpy = 0;
+Colormap colormap = 0;
+Visual *visual = 0;
+bool argbVisual = false;
+
+bool checkComposite()
+{
+    dpy = XOpenDisplay(0); // open default display
+    if (!dpy)
+    {
+        kError() << "Cannot connect to the X server" << endl;
+        return true;
+    }
+
+    KRunnerApp::s_haveCompositeManager = XGetSelectionOwner(dpy,
+                                                            XInternAtom(dpy,
+                                                                        "_NET_WM_CM_S0",
+                                                                        false));
+
+    if (KRunnerApp::s_haveCompositeManager)
+    {
+        int screen = DefaultScreen(dpy);
+        int eventBase, errorBase;
+
+        if (XRenderQueryExtension(dpy, &eventBase, &errorBase))
+        {
+            int nvi;
+            XVisualInfo templ;
+            templ.screen  = screen;
+            templ.depth   = 32;
+            templ.c_class = TrueColor;
+            XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
+                                                   VisualDepthMask |
+                                                   VisualClassMask,
+                                              &templ, &nvi);
+            for (int i = 0; i < nvi; ++i)
+            {
+                XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
+                                                                    xvi[i].visual);
+                if (format->type == PictTypeDirect && format->direct.alphaMask)
+                {
+                    visual = xvi[i].visual;
+                    colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
+                                               visual, AllocNone);
+                    argbVisual = true;
+                    break;
+                }
+            }
+        }
+
+        KRunnerApp::s_haveCompositeManager = argbVisual;
+    }
+
+    kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager << endl;
+    return true;
+}
+/*
 KRunnerApp::KRunnerApp(Display *display,
                        Qt::HANDLE visual,
                        Qt::HANDLE colormap)
-    : RestartingApplication( display, visual, colormap ),
+    : RestartingApplication(display, visual, colormap ),
       m_interface( 0 )
 {
     kDebug() << "new krunner app" << endl;
     initialize();
-}
+}*/
 
 KRunnerApp::KRunnerApp()
-    : RestartingApplication(),
+    : RestartingApplication(checkComposite() ? dpy : dpy, dpy ? Qt::HANDLE(visual) : 0, dpy ? Qt::HANDLE(colormap) : 0),
       m_interface( 0 )
 {
-    kDebug() << "new simple krunner app" << endl;
+    kDebug() << "new simple krunner app " << dpy << " " << argbVisual << endl;
     initialize();
 }
 
@@ -220,12 +279,13 @@ int KRunnerApp::newInstance()
         // App startup: do nothing
         firstTime = false;
     } else {
-        KStartupInfo::setNewStartupId( m_interface, KStartupInfo::createNewStartupId() );
+        //KStartupInfo::setNewStartupId( m_interface, KStartupInfo::createNewStartupId() );
         m_interface->display();
-        kDebug() << "startup id is " << startupId() << endl;
+        //kDebug() << "startup id is " << startupId() << endl;
     }
 
-    return 0;
+    return RestartingApplication::newInstance();
+    //return 0;
 }
 
 #include "krunnerapp.moc"
