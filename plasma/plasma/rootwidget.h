@@ -22,7 +22,7 @@
 
 #include <QWidget>
 
-class Desktop;
+class Corona;
 class ControlBox;
 
 /**
@@ -36,13 +36,11 @@ class RootWidget : public QWidget
         RootWidget();
         ~RootWidget();
 
-        Desktop* desktop() const;
-
     protected slots:
         void adjustSize();
 
     private:
-        Desktop* m_desktop;
+        Corona* m_view;
         ControlBox* m_controlBox;
 };
 

@@ -17,8 +17,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "rootwidget.h"
-
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QVBoxLayout>
@@ -26,8 +24,9 @@
 #include <KWindowSystem>
 
 #include "svg.h"
-#include "desktop.h"
+#include "corona.h"
 #include "controlbox.h"
+#include "rootwidget.h"
 
 RootWidget::RootWidget()
     : QWidget(0, Qt::FramelessWindowHint)
@@ -42,24 +41,19 @@ RootWidget::RootWidget()
     rootLayout->setMargin(0);
     rootLayout->setSpacing(0);
 
-    m_desktop = new Desktop(this);
-    rootLayout->addWidget(m_desktop);
-    m_desktop->show();
+    m_view = new Corona(this);
+    rootLayout->addWidget(m_view);
+    m_view->show();
 
     connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize()));
     m_controlBox = new ControlBox(this);
     m_controlBox->show();
 
-    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_desktop, SLOT(addPlasmoid(const QString&)));
+    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_view, SLOT(addPlasmoid(const QString&)));
 }
 
 RootWidget::~RootWidget()
 {
-}
-
-Desktop* RootWidget::desktop() const
-{
-    return m_desktop;
 }
 
 void RootWidget::adjustSize()

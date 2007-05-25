@@ -1,4 +1,21 @@
-#include "desktop.h"
+/*
+ *   Copyright (C) 2007 Matt Broadstone <mbroadst@gmail.com>
+ *   Copyright (C) 2007 Aaron Seigo <aseigo@kde.org>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License version 2 as
+ *   published by the Free Software Foundation
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 
 #include <QGraphicsView>
 #include <QGraphicsScene>
@@ -21,7 +38,7 @@
 #include "svg.h"
 #include "widgets/lineedit.h"
 
-//#include <clock.h>
+#include "corona.h"
 #include "plasmaapp.h"
 
 using namespace Plasma;
@@ -29,7 +46,7 @@ extern "C" {
     typedef QGraphicsItem* (*loadKaramba)(const KUrl &theme, QGraphicsView *view);
 }
 
-Desktop::Desktop(QWidget *parent)
+Corona::Corona(QWidget *parent)
     : QGraphicsView(parent)
 {
     setFrameShape(QFrame::NoFrame);
@@ -100,7 +117,7 @@ Desktop::Desktop(QWidget *parent)
     connect(exitPlasma, SIGNAL(triggered(bool)), kapp, SLOT(quit()));
 }
 
-Desktop::~Desktop()
+Corona::~Corona()
 {
     foreach (Plasma::Applet* plasmoid, loadedPlasmoidList) {
         delete plasmoid;
@@ -108,7 +125,7 @@ Desktop::~Desktop()
     loadedPlasmoidList.clear();
 }
 
-void Desktop::addPlasmoid(const QString& name)
+void Corona::addPlasmoid(const QString& name)
 {
     Plasma::Applet* plasmoid = Plasma::Applet::loadApplet(name);
     if (plasmoid) {
@@ -119,24 +136,24 @@ void Desktop::addPlasmoid(const QString& name)
     }
 }
 
-void Desktop::drawBackground(QPainter * painter, const QRectF &)
+void Corona::drawBackground(QPainter * painter, const QRectF &)
 {
     m_background->paint(painter, rect());
 }
 
-void Desktop::resizeEvent(QResizeEvent* event)
+void Corona::resizeEvent(QResizeEvent* event)
 {
     Q_UNUSED(event);
     m_graphicsScene->setSceneRect(rect());
     m_background->resize(width(), height());
 }
 
-void Desktop::displayContextMenu(const QPoint& point)
+void Corona::displayContextMenu(const QPoint& point)
 {
     Plasma::Applet* applet = qgraphicsitem_cast<Plasma::Applet*>( itemAt( point ) );
     KMenu desktopMenu(this);
     if(!applet) {
-        desktopMenu.setTitle("Desktop");
+        desktopMenu.setTitle("Corona");
         desktopMenu.addAction("The");
         desktopMenu.addAction("desktop");
         desktopMenu.addAction("menu");
@@ -157,10 +174,10 @@ void Desktop::displayContextMenu(const QPoint& point)
     desktopMenu.exec(point);
 }
 
-void Desktop::launchExplorer(bool /*param*/)
+void Corona::launchExplorer(bool /*param*/)
 {
     QProcess::execute("plasmaengineexplorer");
 }
 
-#include "desktop.moc"
+#include "corona.moc"
 

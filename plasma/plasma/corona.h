@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef DESKTOP_H
-#define DESKTOP_H
+#ifndef CORONA_H
+#define CORONA_H
 
 #include <QGraphicsView>
 
@@ -31,15 +31,15 @@ namespace Plasma
 /**
  * @short The view that displays the all the desktop
  */
-class Desktop : public QGraphicsView
+class Corona : public QGraphicsView
 {
 Q_OBJECT
 
 //typedef QHash<QString, QList<Plasma::Applet*> > layouts;
 
 public:
-    Desktop(QWidget *parent = 0);
-    ~Desktop();
+    Corona(QWidget *parent = 0);
+    ~Corona();
 
 public Q_SLOTS:
     void addPlasmoid(const QString& name);
