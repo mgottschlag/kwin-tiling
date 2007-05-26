@@ -18,8 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef CLOCK
-#define CLOCK
+#ifndef CLOCK_H
+#define CLOCK_H
 
 #include <QImage>
 #include <QPaintDevice>
@@ -38,6 +38,8 @@
 #include <dataengine.h>
 
 class QTimer;
+class QDialog;
+class QCheckBox;
 
 namespace Plasma
 {
@@ -48,8 +50,6 @@ class Clock : public Plasma::Applet
 {
         Q_OBJECT
     public:
-/*        Clock(QGraphicsItem *parent,
-              int appletId);*/
         Clock(QObject *parent, const QStringList &args);
         ~Clock();
 
@@ -59,15 +59,21 @@ class Clock : public Plasma::Applet
 
     public slots:
         void updated(const QString &name, const Plasma::DataEngine::Data &data);
-
-    protected:
-//         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+        void configureDialog();
+        void acceptedConfigDialog();
 
     private:
+        bool boolShowTimeString;
+
+        int m_oldMinutes;
+        int m_oldHours;
+
         int m_pixelSize;
         QTimer *m_timer;
         Plasma::Svg* m_theme;
         QTime m_time;
+        QDialog *m_dialog; //should we move this into another class?
+        QCheckBox *m_showTimeString;
 };
 
 K_EXPORT_PLASMA_APPLET(clock, Clock)

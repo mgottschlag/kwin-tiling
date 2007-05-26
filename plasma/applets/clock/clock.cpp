@@ -30,18 +30,24 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QStyleOptionGraphicsItem>
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QCheckBox>
+#include <QPushButton>
 
 #include <KDebug>
 #include <KLocale>
+#include <KIcon>
+#include <KSharedConfig>
 
 #include <svg.h>
 #include <interface.h>
 
-using namespace Plasma;
-
 /*Clock::Clock(QGraphicsItem * parent,
              int appletId)
     : Plasma::Applet(parent, "plasma-clock-default", appletId)*/
+
 Clock::Clock(QObject *parent, const QStringList &args)
     : Plasma::Applet(parent, args) //"plasma-clock-default", appletId)
 {
@@ -49,6 +55,22 @@ Clock::Clock(QObject *parent, const QStringList &args)
     Plasma::DataEngine* timeEngine = Plasma::Interface::self()->loadDataEngine("time");
     if (timeEngine) {
         timeEngine->connectSource("time", this);
+    }
+    m_oldMinutes = 6.0 * m_time.minute() - 180;
+    m_oldHours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
+
+    m_dialog = 0;
+    boolShowTimeString = false;
+    m_showTimeString = new QCheckBox("Show the time with a string over the clock.");
+
+    KConfigGroup cg = globalAppletConfig();
+    kDebug() << "Value: " << cg.readEntry("showTimeString") << endl;
+    if(cg.readEntry("showTimeString") == "false") {
+        m_showTimeString->setCheckState(Qt::Unchecked);
+        boolShowTimeString = false;
+    } else {
+        boolShowTimeString = true;
+        m_showTimeString->setCheckState(Qt::Checked);
     }
 
     m_theme = new Plasma::Svg("widgets/clock", this);
@@ -64,9 +86,48 @@ QRectF Clock::boundingRect() const
 
 void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    Q_UNUSED(source)
+    Q_UNUSED(source);
     m_time = data[i18n("Local")].toTime();
     QGraphicsItem::update();
+}
+
+void Clock::configureDialog() //TODO: Make the size settable
+{
+    QPushButton *closeButton = new QPushButton("Close");
+    QLabel *label = new QLabel("Hello Configuration World!");
+    m_showTimeString = new QCheckBox("Show the time with a string over the clock.");
+
+    QVBoxLayout *lay = new QVBoxLayout;
+    QHBoxLayout *buttonLay = new QHBoxLayout;
+    buttonLay->addWidget(closeButton);
+    lay->addWidget(label);
+    lay->addWidget(m_showTimeString);
+    lay->addLayout(buttonLay);
+
+    if (m_dialog == 0) {
+        m_dialog = new QDialog;
+        connect(okButton, SIGNAL(clicked()), m_dialog, SLOT(accept()));
+        connect(m_showTimeString, SIGNAL(stateChanged(int)), this, SLOT(acceptedConfigDialog()));
+        m_dialog->setLayout(lay);
+    }
+
+    m_dialog->show();
+}
+
+void Clock::acceptedConfigDialog()
+{
+    KConfigGroup cg = globalAppletConfig();
+    if (m_showTimeString->checkState() == Qt::Checked) {
+        boolShowTimeString = true;
+        cg.writeEntry("showTimeString", "true");
+        QGraphicsItem::update();
+    }
+    if (m_showTimeString->checkState() == Qt::Unchecked) {
+        boolShowTimeString = false;
+        cg.writeEntry("showTimeString", "false");
+        QGraphicsItem::update();
+    }
+    cg.config()->sync(); //NOTE: This shouldn't be needed, but automatically handled from Plasma
 }
 
 Clock::~Clock()
@@ -76,38 +137,28 @@ Clock::~Clock()
 
 void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-    Q_UNUSED(option)
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
+    QRectF tempRect(0, 0, 0, 0);
+    QRectF boundRect = boundingRect();
+    QSizeF boundSize = boundRect.size();
+    QSize elementSize;
+
     p->setRenderHint(QPainter::SmoothPixmapTransform);
 
     qreal seconds = 6.0 * m_time.second() - 180;
     qreal minutes = 6.0 * m_time.minute() - 180;
     qreal hours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
 
-    QRectF tempRect(0, 0, 0, 0);
-    QRectF boundRect = boundingRect();
-    QSizeF boundSize = boundRect.size();
-    //QSizeF clockSize = m_theme->elementSize("ClockFace");
-    //kDebug() << "painting clock face at " << boundRect << endl;
     m_theme->paint(p, boundRect, "ClockFace");
 
     p->save();
     p->translate(boundSize.width()/2, boundSize.height()/2);
-    p->rotate(seconds);
-    QSize elementSize = m_theme->elementSize("SecondHand");
-    p->translate(-elementSize.width()/2, -5.5); //hardcoded since this is the difference between the centre of the clockface and the y-zero-position of the SVG element
-    m_theme->resize(elementSize);
-    tempRect.setSize(elementSize);
-    m_theme->paint(p, tempRect, "SecondHand");
-    p->restore();
-
-    p->save();
-    p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(hours);
-    m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HourHand");
-    p->translate(-elementSize.width()/2, -3.75);
+//     p->translate(-elementSize.width()/2, -3.75); //hardcoded since this is the difference between the centre of the clockface and the y-zero-position of the SVG element
+    p->translate(-elementSize.width()/2, -elementSize.width());
     m_theme->resize(elementSize);
     tempRect.setSize(elementSize);
     m_theme->paint(p, tempRect, "HourHand");
@@ -118,10 +169,24 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->rotate(minutes);
     m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("MinuteHand");
-    p->translate(-elementSize.width()/2, -2.5);
+//     p->translate(-elementSize.width()/2, -2.5);
+    p->translate(-elementSize.width()/2, -elementSize.width());
     m_theme->resize(elementSize);
     tempRect.setSize(elementSize);
     m_theme->paint(p, tempRect, "MinuteHand");
+    p->restore();
+    
+    //Make sure we paint the second hand on top of the others
+    p->save();
+    p->translate(boundSize.width()/2, boundSize.height()/2);
+    p->rotate(seconds);
+    m_theme->resize(boundSize);
+    elementSize = m_theme->elementSize("SecondHand");
+//     p->translate(-elementSize.width()/2, -5.5);
+    p->translate(-elementSize.width()/2, -elementSize.width());
+    m_theme->resize(elementSize);
+    tempRect.setSize(elementSize);
+    m_theme->paint(p, tempRect, "SecondHand");
     p->restore();
 
     p->save();
@@ -133,31 +198,16 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     m_theme->paint(p, tempRect, "HandCenterScrew");
     p->restore();
 
-    //FIXME: temporary time output
-    QString time = m_time.toString();
-    QFontMetrics fm(QApplication::font());
-    p->drawText(static_cast<int>(boundRect.width()/2 - fm.width(time) / 2),
-                static_cast<int>((boundRect.height()/2) - fm.xHeight()*3), m_time.toString());
+    if(boolShowTimeString) {
+        //FIXME: temporary time output
+        QString time = m_time.toString();
+        QFontMetrics fm(QApplication::font());
+        p->drawText((int)(boundRect.width()/2 - fm.width(time) / 2),
+                    (int)((boundRect.height()/2) - fm.xHeight()*3), m_time.toString());
+    }
 
     m_theme->resize(boundSize);
     m_theme->paint(p, boundRect, "Glass");
 }
-/*
-QVariant Clock::itemChange(GraphicsItemChange change, const QVariant &value)
-{
-    if (change == ItemPositionChange && scene())
-    {
-        QPointF pos = value.toPointF();
-        QRectF sceneRect = scene()->sceneRect();
-        if (!sceneRect.contains(pos))
-        {
-            pos.setX(qMin(sceneRect.right(), qMax(pos.x(), sceneRect.left())));
-            pos.setY(qMin(sceneRect.bottom(), qMax(pos.y(), sceneRect.top())));
-            return pos;
-        }
-    }
-
-    return QGraphicsItem::itemChange(change, value);
-}*/
 
 #include "clock.moc"
