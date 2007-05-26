@@ -56,11 +56,8 @@ Clock::Clock(QObject *parent, const QStringList &args)
     if (timeEngine) {
         timeEngine->connectSource("time", this);
     }
-    m_oldMinutes = 6.0 * m_time.minute() - 180;
-    m_oldHours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
 
     m_dialog = 0;
-    boolShowTimeString = false;
     m_showTimeString = new QCheckBox("Show the time with a string over the clock.");
 
     KConfigGroup cg = globalAppletConfig();
@@ -74,6 +71,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
     }
 
     m_theme = new Plasma::Svg("widgets/clock", this);
+    m_customSize = boundingRect().width();
     m_theme->resize();
 }
 
@@ -106,7 +104,7 @@ void Clock::configureDialog() //TODO: Make the size settable
 
     if (m_dialog == 0) {
         m_dialog = new QDialog;
-        connect(okButton, SIGNAL(clicked()), m_dialog, SLOT(accept()));
+        connect(closeButton, SIGNAL(clicked()), m_dialog, SLOT(accept()));
         connect(m_showTimeString, SIGNAL(stateChanged(int)), this, SLOT(acceptedConfigDialog()));
         m_dialog->setLayout(lay);
     }
@@ -142,6 +140,10 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
 
     QRectF tempRect(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
+
+    int SVGSize = boundRect.width(); //store the dimensions of the clock. Assuming it's a square
+    int scaleFactor = m_customSize / SVGSize;
+
     QSizeF boundSize = boundRect.size();
     QSize elementSize;
 

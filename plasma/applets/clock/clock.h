@@ -64,10 +64,7 @@ class Clock : public Plasma::Applet
 
     private:
         bool boolShowTimeString;
-
-        int m_oldMinutes;
-        int m_oldHours;
-
+        int m_customSize;
         int m_pixelSize;
         QTimer *m_timer;
         Plasma::Svg* m_theme;
