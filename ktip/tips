@@ -79,7 +79,7 @@ URLs, for example) be executed.</p>
 href="help:/klipper">the Klipper Handbook</a></p>
 <br>
 <center>
-<img src="crystalsvg/48x48/apps/klipper.png">
+<img src="oxygen/48x48/apps/klipper.png">
 </center>
 </html>
 </tip>
@@ -141,7 +141,7 @@ a look at <a href="help:/khelpcenter/userguide/windows-how-to-work.html">the KDE
 <p>
 You can cycle through the windows on a virtual desktop by holding the
 Alt key and pressing Tab or Shift+Tab.</p><br>
-<center><img src="crystalsvg/48x48/apps/kcmkwm.png"></center></p>
+<center><img src="oxygen/48x48/apps/kcmkwm.png"></center></p>
 
 <p>For more information, see 
 <a href="help:/khelpcenter/userguide/windows-how-to-work.html">the KDE
@@ -209,7 +209,7 @@ like to contribute in other ways.</p>
 by regularly checking the web site <A
  HREF="http://www.kde.org">http://www.kde.org</A>.</p>
 <BR>
-<center><img src="crystalsvg/48x48/apps/konqueror.png"></center></p>
+<center><img src="oxygen/48x48/apps/konqueror.png"></center></p>
 </html>
 </tip>
 
@@ -259,7 +259,7 @@ language well suited to desktop development. The KDE object model
 extends the power of C++ even further. See
  <a href="http://developer.kde.org/">http://developer.kde.org/</a>
 for details.</p><br>
-<center><img src="crystalsvg/48x48/apps/konqueror.png"></center>
+<center><img src="oxygen/48x48/apps/konqueror.png"></center>
 </html>
 </tip>
 
@@ -321,7 +321,7 @@ href="help:/khelpcenter/userguide/getting-help.html">the KDE User
 Guide</a>.</p>
 
 <br>
-<center><img src="crystalsvg/48x48/apps/khelpcenter.png"></center>
+<center><img src="oxygen/48x48/apps/khelpcenter.png"></center>
 </html>
 </tip>
 
@@ -464,7 +464,7 @@ If you know its name, you can <strong>execute any program</strong> by pressing
 and entering the program name in the command-line window provided.<p>
 <br>
 <center>
-<img src="crystalsvg/48x48/apps/kmenu.png">
+<img src="oxygen/48x48/apps/kmenu.png">
 </html>
 </tip>
 
@@ -476,7 +476,7 @@ You can <strong>browse any URL</strong> by pressing
 command-line window provided.
 </p><br>
 <center>
-<img src="crystalsvg/48x48/filesystems/network.png">
+<img src="oxygen/48x48/filesystems/network.png">
 </html>
 </tip>
 
@@ -499,7 +499,7 @@ hash mark (#) and the name of the man page wherever you can enter
 a URL, like in the location field of the web browser or the
 <strong>Alt+F2</strong> command-line.</p><br>
 <center>
-<img src="crystalsvg/48x48/apps/khelpcenter.png">
+<img src="oxygen/48x48/apps/khelpcenter.png">
 </html>
 </tip>
 
@@ -513,7 +513,7 @@ line of the web browser or the <strong>Alt+F2</strong> command-line.
 </p>
 <br>
 <center>
-<img src="crystalsvg/48x48/apps/khelpcenter.png">
+<img src="oxygen/48x48/apps/khelpcenter.png">
 </html>
 </tip>
 
@@ -656,7 +656,7 @@ look for the release schedule on <a
  href="http://developer.kde.org/">http://developer.kde.org</a>. If you only
 find old release schedules, there will probably be some weeks/months of
 intensive development left before the next release.</p><br>
-<center><img src="crystalsvg/48x48/apps/konqueror.png"></center>
+<center><img src="oxygen/48x48/apps/konqueror.png"></center>
 </html>
 </tip>
 
