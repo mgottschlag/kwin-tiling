@@ -41,8 +41,8 @@
 #include <KIcon>
 #include <KSharedConfig>
 
+#include <dataenginemanager.h>
 #include <svg.h>
-#include <interface.h>
 
 /*Clock::Clock(QGraphicsItem * parent,
              int appletId)
@@ -52,7 +52,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
     : Plasma::Applet(parent, args) //"plasma-clock-default", appletId)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
-    Plasma::DataEngine* timeEngine = Plasma::Interface::self()->loadDataEngine("time");
+    Plasma::DataEngine* timeEngine = Plasma::DataEngineManager::self()->loadDataEngine("time");
     if (timeEngine) {
         timeEngine->connectSource("time", this);
     }
@@ -130,7 +130,7 @@ void Clock::acceptedConfigDialog()
 
 Clock::~Clock()
 {
-    Plasma::Interface::self()->unloadDataEngine("time");
+    Plasma::DataEngineManager::self()->unloadDataEngine("time");
 }
 
 void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)

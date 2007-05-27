@@ -21,18 +21,11 @@
 
 #include <KUniqueApplication>
 
-#include "interface.h"
-
-namespace Plasma
-{
-    class DataEngineManager;
-}
 class RootWidget;
 class QGraphicsView;
 class QGraphicsScene;
 
-class PlasmaApp : public KUniqueApplication,
-                  public Plasma::Interface
+class PlasmaApp : public KUniqueApplication
 {
     Q_OBJECT
 public:
@@ -40,12 +33,6 @@ public:
     ~PlasmaApp();
 
     static PlasmaApp* self();
-
-    // Plasma::Interface
-    Plasma::DataEngine* dataEngine(const QString& name);
-    Plasma::DataEngine* loadDataEngine(const QString& name);
-    void unloadDataEngine(const QString& name);
-
     void notifyStartup(bool completed);
 
 private slots:
@@ -54,7 +41,6 @@ private slots:
 private:
     static void crashHandler(int signal);
 
-    Plasma::DataEngineManager *m_engineManager;
     RootWidget *m_root;
 };
 

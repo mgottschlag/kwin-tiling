@@ -30,8 +30,6 @@
 #include <KCmdLineArgs>
 #include <ksmserver_interface.h>
 
-#include "dataenginemanager.h"
-
 #include "plasmaapp.h"
 #include "rootwidget.h"
 
@@ -41,8 +39,7 @@ PlasmaApp* PlasmaApp::self()
 }
 
 PlasmaApp::PlasmaApp()
-    : m_engineManager(0),
-      m_root(0)
+    : m_root(0)
 {
     notifyStartup(false);
 
@@ -63,9 +60,6 @@ PlasmaApp::PlasmaApp()
         setCrashHandler();
     }
 
-    m_interface = this;
-    m_engineManager = new Plasma::DataEngineManager;
-
     m_root = new RootWidget();
     m_root->show();
 
@@ -75,8 +69,6 @@ PlasmaApp::PlasmaApp()
 PlasmaApp::~PlasmaApp()
 {
     delete m_root;
-    //delete m_desktop;
-    delete m_engineManager;
 }
 
 void PlasmaApp::setCrashHandler()
@@ -93,26 +85,6 @@ void PlasmaApp::crashHandler(int signal)
 //    DCOPClient::emergencyClose();
     sleep(1);
     system("plasma --nocrashhandler &"); // try to restart
-}
-
-Plasma::DataEngine* PlasmaApp::dataEngine(const QString& name)
-{
-    Q_ASSERT(m_engineManager);
-    return m_engineManager->dataEngine(name);
-}
-
-Plasma::DataEngine* PlasmaApp::loadDataEngine(const QString& name)
-{
-    Q_ASSERT(m_engineManager);
-    return m_engineManager->loadDataEngine(name);
-}
-
-void PlasmaApp::unloadDataEngine(const QString& name)
-{
-    if (!m_engineManager)
-        return;
-
-    m_engineManager->unloadDataEngine(name);
 }
 
 void PlasmaApp::notifyStartup(bool completed)
