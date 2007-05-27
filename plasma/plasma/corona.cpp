@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QGLWidget>
 #include <QProcess>
+#include <QContextMenuEvent>
 #include <KWindowSystem>
 #include <KMenu>
 #include <KLocale>
@@ -96,6 +97,7 @@ Corona::Corona(QWidget *parent)
         lib->unload();
     }
     */
+
     m_background = new Plasma::Svg("background/dialog", this);
 
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayContextMenu(QPoint)));
@@ -193,6 +195,15 @@ void Corona::resizeEvent(QResizeEvent* event)
 
 void Corona::displayContextMenu(const QPoint& point)
 {
+    /*
+    QGraphicsItem *item = itemAt(point)->parentItem();
+    QObject *object = dynamic_cast<QObject*>(item);
+    if(object->objectName().startsWith("karamba")) {
+        QContextMenuEvent event(QContextMenuEvent::Mouse, point);
+        contextMenuEvent(&event);
+        return;
+    }
+    */
     Plasma::Applet* applet = qgraphicsitem_cast<Plasma::Applet*>( itemAt( point ) );
     KMenu desktopMenu(this);
     if(!applet) {
