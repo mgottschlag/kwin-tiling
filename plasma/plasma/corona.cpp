@@ -196,6 +196,7 @@ void Corona::resizeEvent(QResizeEvent* event)
 void Corona::displayContextMenu(const QPoint& point)
 {
     /*
+     * example for displaying the SuperKaramba context menu
     QGraphicsItem *item = itemAt(point)->parentItem();
     QObject *object = dynamic_cast<QObject*>(item);
     if(object->objectName().startsWith("karamba")) {
