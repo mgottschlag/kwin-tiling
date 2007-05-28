@@ -75,6 +75,10 @@ public Q_SLOTS:
 
 protected:
     void resizeEvent(QResizeEvent* event);
+    void dragEnterEvent(QDragEnterEvent* event);
+    void dragLeaveEvent(QDragLeaveEvent* event);
+    void dragMoveEvent(QDragMoveEvent* event);
+    void dropEvent(QDropEvent* event);
     void drawBackground(QPainter * painter, const QRectF & rect);
 
 protected Q_SLOTS:

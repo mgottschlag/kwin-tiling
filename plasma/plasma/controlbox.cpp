@@ -80,6 +80,36 @@ void DisplayLabel::paintEvent(QPaintEvent* event)
     QLabel::paintEvent(event);
 }
 
+//BEGIN- PlasmoidListItemModel
+
+PlasmoidListItemModel::PlasmoidListItemModel(QWidget* parent)
+    : QStandardItemModel(parent)
+{
+}
+
+QStringList PlasmoidListItemModel::mimeTypes() const
+{
+    QStringList types;
+    types << QLatin1String("application/x-plasmoidlistitemmodeldatalist");
+    return types;
+}
+
+QMimeData* PlasmoidListItemModel::mimeData(const QModelIndexList &indexes) const
+{
+    if (indexes.count() <= 0)
+        return 0;
+    QStringList types = mimeTypes();
+    if (types.isEmpty())
+        return 0;
+    QMimeData *data = new QMimeData();
+    QString format = types.at(0);
+    QByteArray byteArray;
+    QStandardItem* selectedItem = item(indexes[0].row(), 1);
+    byteArray.append(selectedItem->data(Qt::DisplayRole).toByteArray());
+    data->setData(format, byteArray);
+    return data;
+}
+
 //BEGIN - ControlWidget
 
 ControlWidget::ControlWidget(QWidget *parent)
@@ -90,6 +120,7 @@ ControlWidget::ControlWidget(QWidget *parent)
 
     QPushButton* hideBoxButton = new QPushButton(i18n("Hide Config Box"), this);
     m_appletList = new QListView(this);
+    m_appletList->setDragEnabled(true);
     m_label = new QLabel("Plasmoids:", this);
     boxLayout->addWidget(hideBoxButton);
     boxLayout->addWidget(m_label);
@@ -102,7 +133,7 @@ ControlWidget::ControlWidget(QWidget *parent)
 
     connect(hideBoxButton, SIGNAL(pressed()), parent, SLOT(hideBox()));
 
-    m_appletListModel = new QStandardItemModel(this);
+    m_appletListModel = new PlasmoidListItemModel(this);
     m_appletList->setModel(m_appletListModel);
     m_appletList->setEditTriggers(QAbstractItemView::NoEditTriggers);
     connect(m_appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addPlasmoidSlot(QModelIndex)));
@@ -233,12 +264,12 @@ void ControlBox::finishBoxHiding()
     }
 }
 
-void ControlBox::mousePressEvent(QMouseEvent* event)
+/*void ControlBox::mousePressEvent(QMouseEvent* event)
 {
-    /*QWidget::mousePressEvent(event);
+    QWidget::mousePressEvent(event);
     if (event->button() == Qt::LeftButton) {
         emit boxRequested();
-    }*/
-}
+    }
+}*/
 
 #include "controlbox.moc"

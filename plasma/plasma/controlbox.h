@@ -20,11 +20,13 @@
 #define CONTROL_BOX_H
 
 #include <QtGui/QWidget>
+#include <QtGui/QStandardItemModel>
 
 class QLabel;
 class QTimeLine;
 class DisplayLabel;
 class ControlWidget;
+class PlasmoidListItemModel;
 class QListView;
 class QStandardItemModel;
 class QModelIndex;
@@ -46,7 +48,7 @@ class ControlBox : public QWidget
         void addPlasmoid(const QString&);
 
     protected:
-        void mousePressEvent (QMouseEvent* event);
+        //void mousePressEvent (QMouseEvent* event);
         void setupBox(); ///<Create contents of the config dialog
 
     protected Q_SLOTS:
@@ -80,7 +82,7 @@ class ControlWidget : public QWidget
 
         QLabel* m_label;
         QListView* m_appletList;
-        QStandardItemModel* m_appletListModel;
+        PlasmoidListItemModel* m_appletListModel;
 
     protected Q_SLOTS:
         void addPlasmoidSlot(const QModelIndex& plasmoidIndex);
@@ -89,6 +91,19 @@ class ControlWidget : public QWidget
         void addPlasmoid(const QString&);
 
     private:
+};
+
+/**
+ * A custom Item Model so that the correct MIME type can be set and so the name
+ * of the plasmoid can be passed.
+ */
+class PlasmoidListItemModel : public QStandardItemModel
+{
+    public:
+        PlasmoidListItemModel(QWidget* parent = 0);
+
+        QStringList mimeTypes() const;
+        QMimeData* mimeData(const QModelIndexList &indexes) const;
 };
 
 #endif // multiple inclusion guard

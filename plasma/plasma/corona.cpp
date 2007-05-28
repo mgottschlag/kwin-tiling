@@ -68,6 +68,7 @@ Corona::Corona(QWidget *parent)
     setDragMode(QGraphicsView::RubberBandDrag);
     setCacheMode(QGraphicsView::CacheBackground);
     setInteractive(true);
+    setAcceptDrops(true);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -189,6 +190,32 @@ void Corona::resizeEvent(QResizeEvent* event)
     Q_UNUSED(event);
     m_graphicsScene->setSceneRect(rect());
     m_background->resize(width(), height());
+}
+
+void Corona::dragEnterEvent(QDragEnterEvent* event)
+{
+    kDebug() << "Corona::dragEnterEvent(QDragEnterEvent* event)" << endl;
+
+    QString plasmoidName;
+    plasmoidName = event->mimeData()->data("application/x-plasmoidlistitemmodeldatalist");
+    kDebug() << acceptDrops() << endl;
+    addPlasmoid(plasmoidName);
+    m_applets.last();
+}
+
+void Corona::dragLeaveEvent(QDragLeaveEvent* event)
+{
+    kDebug() << "Corona::dragLeaveEvent(QDragLeaveEvent* event)" << endl;
+}
+
+void Corona::dragMoveEvent(QDragMoveEvent* event)
+{
+    kDebug() << "Corona::dragMoveEvent(QDragMoveEvent* event)" << endl;
+}
+
+void Corona::dropEvent(QDropEvent* event)
+{
+    kDebug() << "Corona::dropEvent(QDropEvent* event)" << endl;
 }
 
 void Corona::displayContextMenu(const QPoint& point)
