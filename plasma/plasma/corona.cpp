@@ -195,14 +195,17 @@ void Corona::displayContextMenu(const QPoint& point)
 {
     /*
      * example for displaying the SuperKaramba context menu
-    QGraphicsItem *item = itemAt(point)->parentItem();
-    QObject *object = dynamic_cast<QObject*>(item);
-    if(object && object->objectName().startsWith("karamba")) {
-        QContextMenuEvent event(QContextMenuEvent::Mouse, point);
-        contextMenuEvent(&event);
-        return;
+    QGraphicsItem *item = itemAt(point);
+    if(item) {
+        QObject *object = dynamic_cast<QObject*>(item->parentItem());
+        if(object && object->objectName().startsWith("karamba")) {
+            QContextMenuEvent event(QContextMenuEvent::Mouse, point);
+            contextMenuEvent(&event);
+            return;
+        }
     }
     */
+
     Plasma::Applet* applet = qgraphicsitem_cast<Plasma::Applet*>( itemAt( point ) );
     KMenu desktopMenu(this);
     if(!applet) {
