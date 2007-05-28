@@ -342,7 +342,7 @@ bool HalPower::setCpuEnabled(int /*cpuNum */, bool /*enabled */)
 
 void HalPower::computeAcAdapters()
 {
-    Solid::DeviceList adapters
+    QList<Solid::Device> adapters
         = Solid::Device::listFromType(Solid::DeviceInterface::AcAdapter);
 
     foreach (Solid::Device adapter, adapters)
@@ -365,7 +365,7 @@ void HalPower::computeBatteries()
 
     predicate = predicate.arg((int)Solid::Battery::PrimaryBattery);
 
-    Solid::DeviceList batteries
+    QList<Solid::Device> batteries
         = Solid::Device::listFromType(Solid::DeviceInterface::Battery,
                                                      predicate);
 
@@ -381,7 +381,7 @@ void HalPower::computeBatteries()
 
 void HalPower::computeButtons()
 {
-    Solid::DeviceList buttons
+    QList<Solid::Device> buttons
         = Solid::Device::listFromType(Solid::DeviceInterface::Button);
 
     foreach (Solid::Device button, buttons)
