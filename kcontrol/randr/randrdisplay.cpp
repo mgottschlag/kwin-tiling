@@ -146,21 +146,19 @@ bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
 
 bool RandRDisplay::applyOnStartup(KConfig& config)
 {
-	config.setGroup("Display");
-	return config.readEntry("ApplyOnStartup", false);
+	return config.group("Display").readEntry("ApplyOnStartup", false);
 }
 
 bool RandRDisplay::syncTrayApp(KConfig& config)
 {
-	config.setGroup("Display");
-	return config.readEntry("SyncTrayApp", false);
+	return config.group("Display").readEntry("SyncTrayApp", false);
 }
 
 void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp)
 {
-	config.setGroup("Display");
-	config.writeEntry("ApplyOnStartup", applyOnStartup);
-	config.writeEntry("SyncTrayApp", syncTrayApp);
+	KConfigGroup group = config.group("Display");
+	group.writeEntry("ApplyOnStartup", applyOnStartup);
+	group.writeEntry("SyncTrayApp", syncTrayApp);
 
 	for (int i = 0; i < m_screens.size(); ++i) {
 		RandRScreen* s = m_screens.at(i);

@@ -534,23 +534,25 @@ bool RandRScreen::proposeSize(int newSize)
 
 void RandRScreen::load(KConfig& config)
 {
-	config.setGroup(QString("Screen%1").arg(m_screen));
+	KConfigGroup group = config.group(QString("Screen%1").arg(m_screen));
 
-	if (proposeSize(sizeIndex(QSize(config.readEntry("width", currentPixelWidth()), config.readEntry("height", currentPixelHeight())))))
-		proposeRefreshRate(refreshRateHzToIndex(proposedSize(), config.readEntry("refresh", currentRefreshRate())));
+	if (proposeSize(sizeIndex(QSize(group.readEntry("width", currentPixelWidth()), group.readEntry("height", currentPixelHeight())))))
+		proposeRefreshRate(refreshRateHzToIndex(proposedSize(), group.readEntry("refresh", currentRefreshRate())));
 
-	proposeRotation(rotationDegreeToIndex(config.readEntry("rotation", 0)) + (config.readEntry("reflectX", false) ? ReflectX : 0) + (config.readEntry("reflectY",false) ? ReflectY : 0));
+	proposeRotation(rotationDegreeToIndex(	group.readEntry("rotation", 0)) + 
+						(group.readEntry("reflectX", false) ? ReflectX : 0) + 
+						(group.readEntry("reflectY",false) ? ReflectY : 0));
 }
 
 void RandRScreen::save(KConfig& config) const
 {
-	config.setGroup(QString("Screen%1").arg(m_screen));
-	config.writeEntry("width", currentPixelWidth());
-	config.writeEntry("height", currentPixelHeight());
-	config.writeEntry("refresh", refreshRateIndexToHz(currentSize(), currentRefreshRate()));
-	config.writeEntry("rotation", rotationIndexToDegree(currentRotation()));
-	config.writeEntry("reflectX", (bool)(currentRotation() & ReflectMask) == ReflectX);
-	config.writeEntry("reflectY", (bool)(currentRotation() & ReflectMask) == ReflectY);
+	KConfigGroup group = config.group(QString("Screen%1").arg(m_screen));
+	group.writeEntry("width", currentPixelWidth());
+	group.writeEntry("height", currentPixelHeight());
+	group.writeEntry("refresh", refreshRateIndexToHz(currentSize(), currentRefreshRate()));
+	group.writeEntry("rotation", rotationIndexToDegree(currentRotation()));
+	group.writeEntry("reflectX", (bool)(currentRotation() & ReflectMask) == ReflectX);
+	group.writeEntry("reflectY", (bool)(currentRotation() & ReflectMask) == ReflectY);
 }
 
 int RandRScreen::pixelCount( int index ) const
