@@ -108,10 +108,8 @@ Corona::Corona(QWidget *parent)
 
 Corona::~Corona()
 {
-    foreach (Plasma::Applet* applet, m_applets) {
-        delete applet;
-    }
-    m_applets.clear();
+    while(!m_applets.isEmpty())
+        delete m_applets.takeFirst();
 }
 
 Plasma::Location Corona::location() const
