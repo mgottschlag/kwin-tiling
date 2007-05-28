@@ -48,7 +48,7 @@ namespace Plasma
 
 class Clock : public Plasma::Applet
 {
-        Q_OBJECT
+    Q_OBJECT
     public:
         Clock(QObject *parent, const QStringList &args);
         ~Clock();
@@ -60,6 +60,8 @@ class Clock : public Plasma::Applet
     public slots:
         void updated(const QString &name, const Plasma::DataEngine::Data &data);
         void configureDialog();
+
+    protected Q_SLOTS:
         void acceptedConfigDialog();
 
     private:
