@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Commit Log
+Comment=Shows the commit log for a project using CIA.vc
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_ciavc
+X-KDE-PluginInfo-Author=Aaron Seigo
+X-KDE-PluginInfo-Email=aseigo@kde.org
+X-KDE-PluginInfo-Name=ciavc
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://cia.vc/
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
