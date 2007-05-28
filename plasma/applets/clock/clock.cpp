@@ -159,9 +159,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(hours);
     elementSize = m_theme->elementSize("HourHand");
-//     p->translate(-elementSize.width()/2, -3.75); //hardcoded since this is the difference between the centre of the clockface and the y-zero-position of the SVG element
     p->translate(-elementSize.width()/2, -elementSize.width());
-    m_theme->resize(elementSize);
     tempRect.setSize(elementSize);
     m_theme->paint(p, tempRect, "HourHand");
     p->restore();
@@ -169,32 +167,24 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->save();
     p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(minutes);
-    m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("MinuteHand");
-//     p->translate(-elementSize.width()/2, -2.5);
     p->translate(-elementSize.width()/2, -elementSize.width());
-    m_theme->resize(elementSize);
     tempRect.setSize(elementSize);
     m_theme->paint(p, tempRect, "MinuteHand");
     p->restore();
-    
+
     //Make sure we paint the second hand on top of the others
     p->save();
     p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(seconds);
-    m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("SecondHand");
-//     p->translate(-elementSize.width()/2, -5.5);
     p->translate(-elementSize.width()/2, -elementSize.width());
-    m_theme->resize(elementSize);
     tempRect.setSize(elementSize);
     m_theme->paint(p, tempRect, "SecondHand");
     p->restore();
 
     p->save();
-    m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HandCenterScrew");
-    m_theme->resize(elementSize);
     tempRect.setSize(elementSize);
     p->translate(boundSize.width() / 2 - elementSize.width() / 2, boundSize.height() / 2 - elementSize.height() / 2);
     m_theme->paint(p, tempRect, "HandCenterScrew");
@@ -208,7 +198,6 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
                     (int)((boundRect.height()/2) - fm.xHeight()*3), m_time.toString());
     }
 
-    m_theme->resize(boundSize);
     m_theme->paint(p, boundRect, "Glass");
 }
 
