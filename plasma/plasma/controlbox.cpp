@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2005 by Matt Williams <matt@milliams.com>
+ *   Copyright (C) 2007 by Matt Williams <matt@milliams.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -161,6 +161,7 @@ ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
     m_timeLine->setFrameRange(0, 25); //25 step anumation
     m_timeLine->setCurveShape(QTimeLine::EaseInOutCurve);
     connect(m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(animateBox(int)));
+    connect(m_timeLine, SIGNAL(finished()), this, SLOT(finishBoxHiding()));
 
     connect(this, SIGNAL(boxRequested()), this, SLOT(showBox()));
 }
@@ -211,11 +212,6 @@ void ControlBox::hideBox()
 
 void ControlBox::animateBox(int frame)
 {
-    if ((frame == 1) && (m_timeLine->direction() == QTimeLine::Backward)) {
-        resize(m_displayLabel->size()); //resize this widget so it's only the size of the label
-        m_box->hide();
-    }
-
     //Display the config box
     qreal boxWidth = m_box->size().width();
     qreal boxHeight = m_box->size().height();
@@ -229,12 +225,20 @@ void ControlBox::animateBox(int frame)
     m_displayLabel->move(static_cast<int>(labelWidth*labelStep),static_cast<int>(labelHeight*labelStep));
 }
 
+void ControlBox::finishBoxHiding()
+{
+    if (m_timeLine->direction() == QTimeLine::Backward) {
+        resize(m_displayLabel->size()); //resize this widget so it's only the size of the label
+        m_box->hide();
+    }
+}
+
 void ControlBox::mousePressEvent(QMouseEvent* event)
 {
-    QWidget::mousePressEvent(event);
+    /*QWidget::mousePressEvent(event);
     if (event->button() == Qt::LeftButton) {
         emit boxRequested();
-    }
+    }*/
 }
 
 #include "controlbox.moc"

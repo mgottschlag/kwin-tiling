@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2005 by Matt Williams <matt@milliams.com>
+ *   Copyright (C) 2007 by Matt Williams <matt@milliams.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -52,6 +52,7 @@ class ControlBox : public QWidget
     protected Q_SLOTS:
         void showBox(); ///<Show the config widget
         void hideBox(); ///<Hide the config widget
+        void finishBoxHiding();
         void animateBox(int frame); ///<Process the frames to create an animation
 
     private:
