@@ -1,5 +1,3 @@
-find_package(KdepimLibs)
-
 add_subdirectory(clock)
 
 if(KDE4_SYNDICATION_LIBS)
