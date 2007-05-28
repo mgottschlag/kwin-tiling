@@ -169,6 +169,8 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 
 	// Setup pages and mainLayout
 	mainLayout = new QVBoxLayout( this );
+	mainLayout->setMargin(0);
+
 	tabWidget  = new QTabWidget( this );
 	mainLayout->addWidget( tabWidget );
 

@@ -179,6 +179,8 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     splitter->addWidget(group);
     splitter->addWidget(vb);
     QVBoxLayout *toplayout = new QVBoxLayout(this);
+    toplayout->setMargin(0);
+
     toplayout->addWidget(cs);
     toplayout->addWidget(splitter);
     setLayout(toplayout);

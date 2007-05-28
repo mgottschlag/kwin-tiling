@@ -79,6 +79,7 @@ void KeyModule::initGUI()
 {
 	m_pTab = new QTabWidget( this );
 	QVBoxLayout *l = new QVBoxLayout(this);
+    l->setMargin(0);
 	l->addWidget(m_pTab);
 
 	m_pShortcuts = new ShortcutsModule( this );
