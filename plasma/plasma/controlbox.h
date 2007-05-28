@@ -26,7 +26,7 @@ class QTimeLine;
 class DisplayLabel;
 class ControlWidget;
 class QListView;
-class QStringListModel;
+class QStandardItemModel;
 class QModelIndex;
 
 /**
@@ -78,8 +78,8 @@ class ControlWidget : public QWidget
         void refreshPlasmiodList();
 
         QLabel* m_label;
-        QListView* appletList;
-        QStringListModel* appletListModel;
+        QListView* m_appletList;
+        QStandardItemModel* m_appletListModel;
 
     protected Q_SLOTS:
         void addPlasmoidSlot(const QModelIndex& plasmoidIndex);

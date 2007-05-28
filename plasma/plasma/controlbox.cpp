@@ -28,7 +28,7 @@
 #include <QtCore/QTimeLine>
 #include <QtCore/QTimer>
 #include <QtGui/QListView>
-#include <QtGui/QStringListModel>
+#include <QtGui/QStandardItemModel>
 #include <QtCore/QStringList>
 #include <KLocale>
 #include <KDebug>
@@ -89,23 +89,23 @@ ControlWidget::ControlWidget(QWidget *parent)
     QVBoxLayout* boxLayout = new QVBoxLayout(this);
 
     QPushButton* hideBoxButton = new QPushButton(i18n("Hide Config Box"), this);
-    appletList = new QListView(this);
+    m_appletList = new QListView(this);
     m_label = new QLabel("Plasmoids:", this);
     boxLayout->addWidget(hideBoxButton);
     boxLayout->addWidget(m_label);
-    boxLayout->addWidget(appletList);
+    boxLayout->addWidget(m_appletList);
 
     hideBoxButton->show();
-    appletList->show();
+    m_appletList->show();
     setLayout(boxLayout);
     //resize(400,500);
 
     connect(hideBoxButton, SIGNAL(pressed()), parent, SLOT(hideBox()));
 
-    appletListModel = new QStringListModel(this);
-    appletList->setModel(appletListModel);
-    appletList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    connect(appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addPlasmoidSlot(QModelIndex)));
+    m_appletListModel = new QStandardItemModel(this);
+    m_appletList->setModel(m_appletListModel);
+    m_appletList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    connect(m_appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addPlasmoidSlot(QModelIndex)));
 
     refreshPlasmiodList();
 }
@@ -115,17 +115,22 @@ ControlWidget::~ControlWidget() {}
 void ControlWidget::refreshPlasmiodList()
 {
     KPluginInfo::List applets = Plasma::Applet::knownApplets();
-    QStringList appletList;
+
+    m_appletListModel->clear();
+    m_appletListModel->setColumnCount(2);
+    m_appletListModel->setRowCount(applets.count());
+
+    int count = 0;
     foreach (KPluginInfo* info, applets) {
-        appletList << info->pluginName();
+        m_appletListModel->setItem(count, 0, new QStandardItem(info->name()));
+        m_appletListModel->setItem(count, 1, new QStandardItem(info->pluginName()));
+        ++count;
     }
-    appletListModel->setStringList(appletList);
 }
 
 void ControlWidget::addPlasmoidSlot(const QModelIndex& plasmoidIndex)
 {
-    kDebug() << "plasmoidIndex.data()" << ": " << plasmoidIndex.data() << endl;
-    emit addPlasmoid(plasmoidIndex.data().toString());
+    emit addPlasmoid(m_appletListModel->item(plasmoidIndex.row(), 1)->text());
 }
 
 //BEGIN - ControlBox
