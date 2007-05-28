@@ -1,4 +1,5 @@
-include_directories(${CMAKE_SOURCE_DIR}/workspace/plasma/lib)
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/workspace/plasma/lib)
 
 set(ciavc_engine_SRCS
     ciavc.cpp
