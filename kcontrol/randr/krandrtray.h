@@ -23,7 +23,7 @@
 
 #include <ksystemtrayicon.h>
 
-#include "randr.h"
+#include "randrdisplay.h"
 
 class KHelpMenu;
 class QMenu;

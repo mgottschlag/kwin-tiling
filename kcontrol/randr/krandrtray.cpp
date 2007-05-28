@@ -36,6 +36,7 @@
 #include "krandrtray.h"
 #include "krandrpassivepopup.h"
 #include "krandrtray.moc"
+#include "randrscreen.h"
 
 KRandRSystemTray::KRandRSystemTray(QWidget* parent)
 	: KSystemTrayIcon(parent)

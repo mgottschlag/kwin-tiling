@@ -19,7 +19,7 @@
 #ifndef KRANDRMODULE_H
 #define KRANDRMODULE_H
 
-#include "randr.h"
+#include "randrdisplay.h"
 
 class Q3ButtonGroup;
 class KComboBox;

@@ -16,7 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "randr.h"
+#include "randrscreen.h"
 
 #include <QTimer>
 //Added by qt3to4:
@@ -553,163 +553,10 @@ void RandRScreen::save(KConfig& config) const
 	config.writeEntry("reflectY", (bool)(currentRotation() & ReflectMask) == ReflectY);
 }
 
-RandRDisplay::RandRDisplay()
-	: m_valid(true)
-{
-	// Check extension
-	Status s = XRRQueryExtension(QX11Info::display(), &m_eventBase, &m_errorBase);
-	if (!s) {
-		m_errorCode = QString("%1, base %1").arg(s).arg(m_errorBase);
-		m_valid = false;
-		return;
-	}
-
-	int major_version, minor_version;
-	XRRQueryVersion(QX11Info::display(), &major_version, &minor_version);
-
-	m_version = i18n("X Resize and Rotate extension version %1.%2",major_version,minor_version);
-
-	m_numScreens = ScreenCount(QX11Info::display());
-
-	// This assumption is WRONG with Xinerama
-	// Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(QX11Info::display()));
-
-	for (int i = 0; i < m_numScreens; i++) {
-		m_screens.append(new RandRScreen(i));
-	}
-
-	setCurrentScreen(QApplication::desktop()->primaryScreen());
-}
-
-RandRDisplay::~RandRDisplay()
-{
-		qDeleteAll(m_screens);
-		m_screens.clear();
-}
-
-bool RandRDisplay::isValid() const
-{
-	return m_valid;
-}
-
-const QString& RandRDisplay::errorCode() const
-{
-	return m_errorCode;
-}
-
-int RandRDisplay::eventBase() const
-{
-	return m_eventBase;
-}
-
-int RandRDisplay::screenChangeNotifyEvent() const
-{
-	return m_eventBase + RRScreenChangeNotify;
-}
-
-int RandRDisplay::errorBase() const
-{
-	return m_errorBase;
-}
-
-const QString& RandRDisplay::version() const
-{
-	return m_version;
-}
-
-void RandRDisplay::setCurrentScreen(int index)
-{
-	m_currentScreenIndex = index;
-	m_currentScreen = m_screens.at(m_currentScreenIndex);
-	Q_ASSERT(m_currentScreen);
-}
-
-int RandRDisplay::screenIndexOfWidget(QWidget* widget)
-{
-	int ret = QApplication::desktop()->screenNumber(widget);
-	return ret != -1 ? ret : QApplication::desktop()->primaryScreen();
-}
-
-int RandRDisplay::currentScreenIndex() const
-{
-	return m_currentScreenIndex;
-}
-
-void RandRDisplay::refresh()
-{
-	for (int i = 0; i < m_screens.size(); ++i) {
-		RandRScreen* s = m_screens.at(i);
-		s->loadSettings();
-	}
-}
-
-int RandRDisplay::numScreens() const
-{
-	return m_numScreens;
-}
-
-RandRScreen* RandRDisplay::screen(int index)
-{
-	return m_screens.at(index);
-}
-
-RandRScreen* RandRDisplay::currentScreen()
-{
-	return m_currentScreen;
-}
-
-bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
-{
-	if (loadScreens)
-	{
-    	for (int i = 0; i < m_screens.size(); ++i) {
-        	RandRScreen* s = m_screens.at(i);
-        	s->load(config);
-		}
-    }
-	return applyOnStartup(config);
-}
-
-bool RandRDisplay::applyOnStartup(KConfig& config)
-{
-	config.setGroup("Display");
-	return config.readEntry("ApplyOnStartup", false);
-}
-
-bool RandRDisplay::syncTrayApp(KConfig& config)
-{
-	config.setGroup("Display");
-	return config.readEntry("SyncTrayApp", false);
-}
-
-void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp)
-{
-	config.setGroup("Display");
-	config.writeEntry("ApplyOnStartup", applyOnStartup);
-	config.writeEntry("SyncTrayApp", syncTrayApp);
-
-	for (int i = 0; i < m_screens.size(); ++i) {
-		RandRScreen* s = m_screens.at(i);
-        s->save(config);
-	}
-}
-
-void RandRDisplay::applyProposed(bool confirm)
-{
-	for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
-		if (screen(screenIndex)->proposedChanged()) {
-			if (confirm)
-					screen(screenIndex)->applyProposedAndConfirm();
-			else
-					screen(screenIndex)->applyProposed();
-		}
-	}
-}
-
 int RandRScreen::pixelCount( int index ) const
 {
 	QSize sz = pixelSize(index);
 	return sz.width() * sz.height();
 }
 
-#include "randr.moc"
+#include "randrscreen.moc"

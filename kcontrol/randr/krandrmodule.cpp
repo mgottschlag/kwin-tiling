@@ -35,8 +35,9 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <QDesktopWidget>
+
 #include "krandrmodule.h"
-#include "krandrmodule.moc"
+#include "randrscreen.h"
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
@@ -386,3 +387,6 @@ void KRandRModule::update()
 	m_refreshRates->setCurrentIndex(currentScreen()->proposedRefreshRate());
 	m_refreshRates->blockSignals(false);
 }
+
+
+#include "krandrmodule.moc"

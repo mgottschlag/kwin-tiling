@@ -16,8 +16,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __RANDR_H__
-#define __RANDR_H__
+#ifndef __RANDRSCREEN_H__
+#define __RANDRSCREEN_H__
 
 #include <QObject>
 #include <QStringList>
@@ -176,61 +176,6 @@ private:
 private Q_SLOTS:
 	void		desktopResized();
 	void		shownDialogDestroyed();
-};
-
-typedef QList<RandRScreen*> ScreenList;
-
-class RandRDisplay
-{
-public:
-	RandRDisplay();
-	~RandRDisplay();
-	bool			isValid() const;
-	const QString&	errorCode() const;
-	const QString&	version() const;
-
-	int		eventBase() const;
-	int		screenChangeNotifyEvent() const;
-	int		errorBase() const;
-
-	int		screenIndexOfWidget(QWidget* widget);
-
-	int				numScreens() const;
-	RandRScreen*	screen(int index);
-
-	void			setCurrentScreen(int index);
-	int				currentScreenIndex() const;
-	RandRScreen*	currentScreen();
-
-	void	refresh();
-
-	/**
-	 * Loads saved settings.
-	 *
-	 * @param config the KConfig object to load from
-	 * @param loadScreens whether to call RandRScreen::load() for each screen
-	 * @retuns true if the settings should be applied on KDE startup.
-	 */
-	bool	loadDisplay(KConfig& config, bool loadScreens = true);
-	void	saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp);
-
-	static bool		applyOnStartup(KConfig& config);
-	static bool		syncTrayApp(KConfig& config);
-
-	void	applyProposed(bool confirm = true);
-
-private:
-	int				m_numScreens;
-	int				m_currentScreenIndex;
-	RandRScreen*	m_currentScreen;
-	ScreenList		m_screens;
-
-	bool			m_valid;
-	QString			m_errorCode;
-	QString			m_version;
-
-	int				m_eventBase;
-	int				m_errorBase;
 };
 
 #endif
