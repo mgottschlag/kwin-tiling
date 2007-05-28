@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=CIA.vc Data Engine
+Comment=F/OSS Project Commits Data Engine
+Comment=Time data for Plasmoids
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=rss
+X-KDE-Library=plasma_engine_ciavc
+X-EngineName=ciavc
