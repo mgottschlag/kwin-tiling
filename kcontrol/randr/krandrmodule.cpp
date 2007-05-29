@@ -47,27 +47,6 @@
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
 K_EXPORT_COMPONENT_FACTORY (randr, KSSFactory("krandr") )
 
-extern "C"
-
-{
-#ifdef __GNUC__
-#warning Porting needed
-#endif
-/*
-	KDE_EXPORT void init_randr()
-	{
-		KRandRModule::performApplyOnStartup();
-	}
-*/
-	KDE_EXPORT bool test_randr()
-	{
-	        int eventBase, errorBase;
-		if( XRRQueryExtension(QX11Info::display(), &eventBase, &errorBase ) )
-			return true;
-		return false;
-	}
-}
-
 void KRandRModule::performApplyOnStartup()
 {
 	KConfig config("kcmrandrrc");
@@ -171,6 +150,8 @@ KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
 	slotScreenChanged(QApplication::desktop()->primaryScreen());
 
 	setButtons(KCModule::Apply);
+
+	performApplyOnStartup();
 }
 
 void KRandRModule::addRotationButton(int thisRotation, bool checkbox)
