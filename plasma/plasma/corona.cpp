@@ -197,12 +197,20 @@ void Corona::dragEnterEvent(QDragEnterEvent* event)
     kDebug() << "Corona::dragEnterEvent(QDragEnterEvent* event)" << endl;
     if (event->mimeData()->hasFormat("text/x-plasmoidservicename")) {
         event->acceptProposedAction();
+        //TODO Create the applet, move to mouse position then send the 
+        //     following event to lock it to the mouse
+        //QMouseEvent event(QEvent::MouseButtonPress, event->pos(), Qt::LeftButton, event->mouseButtons(), 0);
+        //QApplication::sendEvent(this, &event);
     }
+    //TODO Allow dragging an applet from another Corona into this one while
+    //     keeping its settings etc.
 }
 
 void Corona::dragLeaveEvent(QDragLeaveEvent* event)
 {
     kDebug() << "Corona::dragLeaveEvent(QDragLeaveEvent* event)" << endl;
+    //TODO If an established Applet is dragged out of the Corona, remove it and
+    //     create a QDrag type thing to keep the Applet's settings
 }
 
 void Corona::dragMoveEvent(QDragMoveEvent* event)
@@ -214,6 +222,7 @@ void Corona::dropEvent(QDropEvent* event)
 {
     kDebug() << "Corona::dropEvent(QDropEvent* event)" << endl;
     if (event->mimeData()->hasFormat("text/x-plasmoidservicename")) {
+        //TODO This will pretty much move into dragEnterEvent()
         QString plasmoidName;
         plasmoidName = event->mimeData()->data("text/x-plasmoidservicename");
         kDebug() << acceptDrops() << endl;

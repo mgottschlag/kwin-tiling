@@ -78,7 +78,7 @@ class ControlWidget : public QWidget
         ~ControlWidget();
 
     protected:
-        void refreshPlasmiodList();
+        void refreshPlasmoidList();
 
         QLabel* m_label;
         QListView* m_appletList;

@@ -138,12 +138,12 @@ ControlWidget::ControlWidget(QWidget *parent)
     connect(m_appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addPlasmoidSlot(QModelIndex)));
 
     //TODO: this should be delayed until (if) the box is actually shown.
-    refreshPlasmiodList();
+    refreshPlasmoidList();
 }
 
 ControlWidget::~ControlWidget() {}
 
-void ControlWidget::refreshPlasmiodList()
+void ControlWidget::refreshPlasmoidList()
 {
     KPluginInfo::List applets = Plasma::Applet::knownApplets();
 
