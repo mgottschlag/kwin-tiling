@@ -138,6 +138,7 @@ ControlWidget::ControlWidget(QWidget *parent)
     m_appletList->setEditTriggers(QAbstractItemView::NoEditTriggers);
     connect(m_appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addPlasmoidSlot(QModelIndex)));
 
+    //TODO: this should be delayed until (if) the box is actually shown.
     refreshPlasmiodList();
 }
 
