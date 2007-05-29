@@ -22,12 +22,7 @@
 #include <QX11Info>
 
 #include "randrdisplay.h"
-#include "randrscreen.h"
-
-namespace RandR
-{
-	bool has_1_2 = false;
-}
+#include "oldrandrscreen.h"
 
 RandRDisplay::RandRDisplay()
 	: m_valid(true)
@@ -48,6 +43,8 @@ RandRDisplay::RandRDisplay()
 	// check if we have the new version of the XRandR extension
 	if (major_version > 1 || (major_version == 1 && minor_version >= 2))
 		RandR::has_1_2 = true;
+	else
+		RandR::has_1_2 = false;
 
 	m_numScreens = ScreenCount(QX11Info::display());
 
@@ -55,7 +52,7 @@ RandRDisplay::RandRDisplay()
 	// Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(QX11Info::display()));
 
 	for (int i = 0; i < m_numScreens; i++) {
-		m_screens.append(new RandRScreen(i));
+		m_screens.append(new OldRandRScreen(i));
 	}
 
 	setCurrentScreen(QApplication::desktop()->primaryScreen());
@@ -118,7 +115,7 @@ int RandRDisplay::currentScreenIndex() const
 void RandRDisplay::refresh()
 {
 	for (int i = 0; i < m_screens.size(); ++i) {
-		RandRScreen* s = m_screens.at(i);
+		OldRandRScreen* s = m_screens.at(i);
 		s->loadSettings();
 	}
 }
@@ -128,12 +125,12 @@ int RandRDisplay::numScreens() const
 	return m_numScreens;
 }
 
-RandRScreen* RandRDisplay::screen(int index)
+OldRandRScreen* RandRDisplay::screen(int index)
 {
 	return m_screens.at(index);
 }
 
-RandRScreen* RandRDisplay::currentScreen()
+OldRandRScreen* RandRDisplay::currentScreen()
 {
 	return m_currentScreen;
 }
@@ -143,7 +140,7 @@ bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
 	if (loadScreens)
 	{
     	for (int i = 0; i < m_screens.size(); ++i) {
-        	RandRScreen* s = m_screens.at(i);
+        	OldRandRScreen* s = m_screens.at(i);
         	s->load(config);
 		}
     }
@@ -167,8 +164,8 @@ void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTr
 	group.writeEntry("SyncTrayApp", syncTrayApp);
 
 	for (int i = 0; i < m_screens.size(); ++i) {
-		RandRScreen* s = m_screens.at(i);
-        s->save(config);
+		OldRandRScreen* s = m_screens.at(i);
+        	s->save(config);
 	}
 }
 

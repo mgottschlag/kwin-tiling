@@ -37,7 +37,7 @@
 #include <QDesktopWidget>
 
 #include "krandrmodule.h"
-#include "randrscreen.h"
+#include "oldrandrscreen.h"
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
@@ -158,12 +158,12 @@ void KRandRModule::addRotationButton(int thisRotation, bool checkbox)
 {
 	Q_ASSERT(m_rotationGroup);
 	if (!checkbox) {
-		QRadioButton* thisButton = new QRadioButton(RandRScreen::rotationName(thisRotation));
+		QRadioButton* thisButton = new QRadioButton(RandR::rotationName(thisRotation));
 		 m_rotationGroup->insert( thisButton );
 		thisButton->setEnabled(thisRotation & currentScreen()->rotations());
 		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
 	} else {
-		QCheckBox* thisButton = new QCheckBox(RandRScreen::rotationName(thisRotation));
+		QCheckBox* thisButton = new QCheckBox(RandR::rotationName(thisRotation));
 		m_rotationGroup->insert( thisButton );
 		thisButton->setEnabled(thisRotation & currentScreen()->rotations());
 		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
@@ -191,8 +191,8 @@ void KRandRModule::slotScreenChanged(int screen)
 		m_rotationGroup->remove(m_rotationGroup->find(i));
 
 	// Create rotations
-	for (int i = 0; i < RandRScreen::OrientationCount; i++)
-		addRotationButton(1 << i, i > RandRScreen::RotationCount - 1);
+	for (int i = 0; i < RandR::OrientationCount; i++)
+		addRotationButton(1 << i, i > RandR::RotationCount - 1);
 
 	populateRefreshRates();
 
@@ -204,21 +204,21 @@ void KRandRModule::slotScreenChanged(int screen)
 void KRandRModule::slotRotationChanged()
 {
 	if (m_rotationGroup->find(0)->isChecked())
-		currentScreen()->proposeRotation(RandRScreen::Rotate0);
+		currentScreen()->proposeRotation(RandR::Rotate0);
 	else if (m_rotationGroup->find(1)->isChecked())
-		currentScreen()->proposeRotation(RandRScreen::Rotate90);
+		currentScreen()->proposeRotation(RandR::Rotate90);
 	else if (m_rotationGroup->find(2)->isChecked())
-		currentScreen()->proposeRotation(RandRScreen::Rotate180);
+		currentScreen()->proposeRotation(RandR::Rotate180);
 	else {
 		Q_ASSERT(m_rotationGroup->find(3)->isChecked());
-		currentScreen()->proposeRotation(RandRScreen::Rotate270);
+		currentScreen()->proposeRotation(RandR::Rotate270);
 	}
 
 	if (m_rotationGroup->find(4)->isChecked())
-		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandRScreen::ReflectX);
+		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandR::ReflectX);
 
 	if (m_rotationGroup->find(5)->isChecked())
-		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandRScreen::ReflectY);
+		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandR::ReflectY);
 
 	setChanged();
 }
@@ -342,26 +342,26 @@ void KRandRModule::update()
 	m_sizeCombo->blockSignals(false);
 
 	m_rotationGroup->blockSignals(true);
-	switch (currentScreen()->proposedRotation() & RandRScreen::RotateMask) {
-		case RandRScreen::Rotate0:
+	switch (currentScreen()->proposedRotation() & RandR::RotateMask) {
+		case RandR::Rotate0:
 			m_rotationGroup->setButton(0);
 			break;
-		case RandRScreen::Rotate90:
+		case RandR::Rotate90:
 			m_rotationGroup->setButton(1);
 			break;
-		case RandRScreen::Rotate180:
+		case RandR::Rotate180:
 			m_rotationGroup->setButton(2);
 			break;
-		case RandRScreen::Rotate270:
+		case RandR::Rotate270:
 			m_rotationGroup->setButton(3);
 			break;
 		default:
 			// Shouldn't hit this one
-			Q_ASSERT(currentScreen()->proposedRotation() & RandRScreen::RotateMask);
+			Q_ASSERT(currentScreen()->proposedRotation() & RandR::RotateMask);
 			break;
 	}
-	m_rotationGroup->find(4)->setDown(currentScreen()->proposedRotation() & RandRScreen::ReflectX);
-	m_rotationGroup->find(5)->setDown(currentScreen()->proposedRotation() & RandRScreen::ReflectY);
+	m_rotationGroup->find(4)->setDown(currentScreen()->proposedRotation() & RandR::ReflectX);
+	m_rotationGroup->find(5)->setDown(currentScreen()->proposedRotation() & RandR::ReflectY);
 	m_rotationGroup->blockSignals(false);
 
 	m_refreshRates->blockSignals(true);

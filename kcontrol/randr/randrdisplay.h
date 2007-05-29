@@ -24,9 +24,9 @@
 #include <KConfig>
 #include "randr.h"
 
-class RandRScreen;
+class OldRandRScreen;
 
-typedef QList<RandRScreen*> ScreenList;
+typedef QList<OldRandRScreen*> OldScreenList;
 
 class RandRDisplay
 {
@@ -44,11 +44,11 @@ public:
 	int		screenIndexOfWidget(QWidget* widget);
 
 	int				numScreens() const;
-	RandRScreen*	screen(int index);
+	OldRandRScreen*	screen(int index);
 
 	void			setCurrentScreen(int index);
 	int				currentScreenIndex() const;
-	RandRScreen*	currentScreen();
+	OldRandRScreen*	currentScreen();
 
 	void	refresh();
 
@@ -56,7 +56,7 @@ public:
 	 * Loads saved settings.
 	 *
 	 * @param config the KConfig object to load from
-	 * @param loadScreens whether to call RandRScreen::load() for each screen
+	 * @param loadScreens whether to call OldRandRScreen::load() for each screen
 	 * @retuns true if the settings should be applied on KDE startup.
 	 */
 	bool	loadDisplay(KConfig& config, bool loadScreens = true);
@@ -70,8 +70,8 @@ public:
 private:
 	int				m_numScreens;
 	int				m_currentScreenIndex;
-	RandRScreen*	m_currentScreen;
-	ScreenList		m_screens;
+	OldRandRScreen*	m_currentScreen;
+	OldScreenList		m_screens;
 
 	bool			m_valid;
 	QString			m_errorCode;

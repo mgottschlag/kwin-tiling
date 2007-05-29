@@ -36,7 +36,7 @@
 #include "krandrtray.h"
 #include "krandrpassivepopup.h"
 #include "krandrtray.moc"
-#include "randrscreen.h"
+#include "oldrandrscreen.h"
 
 KRandRSystemTray::KRandRSystemTray(QWidget* parent)
 	: KSystemTrayIcon(parent)
@@ -159,12 +159,13 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 
 	// Don't display the rotation options if there is no point (ie. none are supported)
 	// XFree86 4.3 does not include rotation support.
-	if (currentScreen()->rotations() != RandRScreen::Rotate0) {
+	if (currentScreen()->rotations() != RandR::Rotate0) {
 		menu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
 
 		for (int i = 0; i < 6; i++) {
 			if ((1 << i) & currentScreen()->rotations()) {
-				lastIndex = menu->insertItem(QIcon(currentScreen()->rotationIcon(1 << i)), RandRScreen::rotationName(1 << i));
+				lastIndex = menu->insertItem(	QIcon(RandR::rotationIcon(1 << i, currentScreen()->currentRotation())), 
+								RandR::rotationName(1 << i));
 
 				if (currentScreen()->proposedRotation() & (1 << i))
 					menu->setItemChecked(lastIndex, true);
@@ -212,8 +213,8 @@ void KRandRSystemTray::slotOrientationChanged(int parameter)
 {
 	int propose = currentScreen()->currentRotation();
 
-	if (parameter & RandRScreen::RotateMask)
-		propose &= RandRScreen::ReflectMask;
+	if (parameter & RandR::RotateMask)
+		propose &= RandR::ReflectMask;
 
 	propose ^= parameter;
 

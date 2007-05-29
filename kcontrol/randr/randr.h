@@ -1,6 +1,9 @@
 #ifndef __RANDR_H__
 #define __RANDR_H__
 
+#include <QString>
+#include <QPixmap>
+
 extern "C"
 {
 #include <X11/Xlib.h>
@@ -16,9 +19,29 @@ extern "C"
 #endif
 }
 
-namespace RandR
+class RandR
 {
-	extern bool has_1_2;
-}
+public:
+	static bool has_1_2;
+
+	enum Orientations {
+		Rotate0			= 0x1,
+		Rotate90		= 0x2,
+		Rotate180		= 0x4,
+		Rotate270		= 0x8,
+		RotateMask		= 15,
+		RotationCount	= 4,
+		ReflectX		= 0x10,
+		ReflectY		= 0x20,
+		ReflectMask		= 48,
+		OrientationMask	= 63,
+		OrientationCount = 6
+	};
+
+	static QString	rotationName(int rotation, bool pastTense = false, bool capitalised = true);
+	
+	static QPixmap	rotationIcon(int rotation, int currentRotation);
+
+};
 
 #endif

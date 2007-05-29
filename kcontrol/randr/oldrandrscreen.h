@@ -30,29 +30,14 @@
 
 class KTimerDialog;
 
-class RandRScreenPrivate;
-
-class RandRScreen : public QObject
+class OldRandRScreen : public QObject
 {
 	Q_OBJECT
 
 public:
-	enum orientations {
-		Rotate0			= 0x1,
-		Rotate90		= 0x2,
-		Rotate180		= 0x4,
-		Rotate270		= 0x8,
-		RotateMask		= 15,
-		RotationCount	= 4,
-		ReflectX		= 0x10,
-		ReflectY		= 0x20,
-		ReflectMask		= 48,
-		OrientationMask	= 63,
-		OrientationCount = 6
-	};
-
-	RandRScreen(int screenIndex);
-	~RandRScreen();
+	
+	OldRandRScreen(int screenIndex);
+	~OldRandRScreen();
 
 	void		loadSettings();
 	void		setOriginal();
@@ -75,8 +60,6 @@ public:
 
 	bool		proposedChanged() const;
 
-	static QString	rotationName(int rotation, bool pastTense = false, bool capitalised = true);
-	QPixmap	        rotationIcon(int rotation) const;
 	QString			currentRotationDescription() const;
 
 	int				rotationIndexToDegree(int rotation) const;
@@ -153,7 +136,7 @@ public:
 	void		save(KConfig& config) const;
 
 private:
-	RandRScreenPrivate*	d;
+	XRRScreenConfiguration*	m_config;
 
 	int			m_screen;
 
