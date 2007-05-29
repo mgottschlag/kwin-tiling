@@ -90,7 +90,7 @@ PlasmoidListItemModel::PlasmoidListItemModel(QWidget* parent)
 QStringList PlasmoidListItemModel::mimeTypes() const
 {
     QStringList types;
-    types << QLatin1String("application/x-plasmoidlistitemmodeldatalist");
+    types << QLatin1String("text/x-plasmoidservicename");
     return types;
 }
 
@@ -129,7 +129,6 @@ ControlWidget::ControlWidget(QWidget *parent)
     hideBoxButton->show();
     m_appletList->show();
     setLayout(boxLayout);
-    //resize(400,500);
 
     connect(hideBoxButton, SIGNAL(pressed()), parent, SLOT(hideBox()));
 

@@ -195,12 +195,9 @@ void Corona::resizeEvent(QResizeEvent* event)
 void Corona::dragEnterEvent(QDragEnterEvent* event)
 {
     kDebug() << "Corona::dragEnterEvent(QDragEnterEvent* event)" << endl;
-
-    QString plasmoidName;
-    plasmoidName = event->mimeData()->data("application/x-plasmoidlistitemmodeldatalist");
-    kDebug() << acceptDrops() << endl;
-    addPlasmoid(plasmoidName);
-    m_applets.last();
+    if (event->mimeData()->hasFormat("text/x-plasmoidservicename")) {
+        event->acceptProposedAction();
+    }
 }
 
 void Corona::dragLeaveEvent(QDragLeaveEvent* event)
@@ -216,6 +213,15 @@ void Corona::dragMoveEvent(QDragMoveEvent* event)
 void Corona::dropEvent(QDropEvent* event)
 {
     kDebug() << "Corona::dropEvent(QDropEvent* event)" << endl;
+    if (event->mimeData()->hasFormat("text/x-plasmoidservicename")) {
+        QString plasmoidName;
+        plasmoidName = event->mimeData()->data("text/x-plasmoidservicename");
+        kDebug() << acceptDrops() << endl;
+        addPlasmoid(plasmoidName);
+        m_applets.last()->setPos(event->pos());
+
+        event->acceptProposedAction();
+    }
 }
 
 void Corona::displayContextMenu(const QPoint& point)
