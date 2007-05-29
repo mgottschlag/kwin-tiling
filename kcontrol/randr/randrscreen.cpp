@@ -16,11 +16,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "randrscreen.h"
+
 
 #include <QTimer>
 //Added by qt3to4:
 #include <QPixmap>
+#include "ktimerdialog.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -29,16 +30,9 @@
 #include <kiconloader.h>
 #include <QtGui/QLabel>
 #include <QDesktopWidget>
-#include "ktimerdialog.h"
 
-#include <X11/Xlib.h>
-#define INT8 _X11INT8
-#define INT32 _X11INT32
-#include <X11/Xproto.h>
-#undef INT8
-#undef INT32
-#include <X11/extensions/Xrandr.h>
 #include <QX11Info>
+#include "randrscreen.h"
 
 class RandRScreenPrivate
 {

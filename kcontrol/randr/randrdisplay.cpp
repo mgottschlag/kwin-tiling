@@ -16,16 +16,18 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "randrdisplay.h"
-#include "randrscreen.h"
-
+#include <KLocale>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QX11Info>
-#include <KLocale>
 
-#include <X11/Xlib.h>
-#include <X11/extensions/Xrandr.h>
+#include "randrdisplay.h"
+#include "randrscreen.h"
+
+namespace RandR
+{
+	bool has_1_2 = false;
+}
 
 RandRDisplay::RandRDisplay()
 	: m_valid(true)
@@ -42,6 +44,10 @@ RandRDisplay::RandRDisplay()
 	XRRQueryVersion(QX11Info::display(), &major_version, &minor_version);
 
 	m_version = i18n("X Resize and Rotate extension version %1.%2",major_version,minor_version);
+
+	// check if we have the new version of the XRandR extension
+	if (major_version > 1 || (major_version == 1 && minor_version >= 2))
+		RandR::has_1_2 = true;
 
 	m_numScreens = ScreenCount(QX11Info::display());
 
@@ -177,3 +183,4 @@ void RandRDisplay::applyProposed(bool confirm)
 		}
 	}
 }
+

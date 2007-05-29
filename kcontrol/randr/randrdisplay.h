@@ -22,6 +22,7 @@
 #include <QList>
 #include <QWidget>
 #include <KConfig>
+#include "randr.h"
 
 class RandRScreen;
 

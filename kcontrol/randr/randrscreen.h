@@ -26,8 +26,10 @@
 
 #include <kcmodule.h>
 #include <kconfig.h>
+#include "randr.h"
 
 class KTimerDialog;
+
 class RandRScreenPrivate;
 
 class RandRScreen : public QObject
