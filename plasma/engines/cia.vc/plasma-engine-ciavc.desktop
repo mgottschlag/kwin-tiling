@@ -2,6 +2,7 @@
 Name=CIA.vc Data Engine
 Comment=F/OSS Project Commits Data Engine
 Comment=Time data for Plasmoids
+Comment[zh_TW]=電漿時鐘的時間資料
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=rss
