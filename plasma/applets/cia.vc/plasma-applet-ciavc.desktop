@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Commit Log
+Name[zh_TW]=提交紀錄
 Comment=Shows the commit log for a project using CIA.vc
+Comment[zh_TW]=顯示使用 CIA.vc 的專案的提交紀錄
 Type=Service
 ServiceTypes=Plasma/Applet
 

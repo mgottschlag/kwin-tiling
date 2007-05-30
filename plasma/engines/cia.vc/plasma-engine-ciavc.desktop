@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=CIA.vc Data Engine
+Name[zh_TW]=CIA.vc 資料引擎
 Comment=F/OSS Project Commits Data Engine
+Comment[zh_TW]=自由軟體/開放源碼軟體專案提交資料引擎
 Comment=Time data for Plasmoids
 Comment[zh_TW]=電漿時鐘的時間資料
 ServiceTypes=Plasma/DataEngine
