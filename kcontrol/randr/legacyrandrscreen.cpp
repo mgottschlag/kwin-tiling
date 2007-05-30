@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2002,2003 Hamish Rodda <rodda@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -32,9 +33,9 @@
 #include <QDesktopWidget>
 
 #include <QX11Info>
-#include "oldrandrscreen.h"
+#include "legacyrandrscreen.h"
 
-OldRandRScreen::OldRandRScreen(int screenIndex)
+LegacyRandRScreen::LegacyRandRScreen(int screenIndex)
 	: m_config(0L)
 	, m_screen(screenIndex)
 	, m_shownDialog(NULL)
@@ -43,13 +44,13 @@ OldRandRScreen::OldRandRScreen(int screenIndex)
 	setOriginal();
 }
 
-OldRandRScreen::~OldRandRScreen()
+LegacyRandRScreen::~LegacyRandRScreen()
 {
 	if (m_config)
 		XRRFreeScreenConfigInfo(m_config);
 }
 
-void OldRandRScreen::loadSettings()
+void LegacyRandRScreen::loadSettings()
 {
 	if (m_config)
 		XRRFreeScreenConfigInfo(m_config);
@@ -75,14 +76,14 @@ void OldRandRScreen::loadSettings()
 	m_currentRefreshRate = m_proposedRefreshRate = refreshRateHzToIndex(m_currentSize, XRRConfigCurrentRate(m_config));
 }
 
-void OldRandRScreen::setOriginal()
+void LegacyRandRScreen::setOriginal()
 {
 	m_originalSize = m_currentSize;
 	m_originalRotation = m_currentRotation;
 	m_originalRefreshRate = m_currentRefreshRate;
 }
 
-bool OldRandRScreen::applyProposed()
+bool LegacyRandRScreen::applyProposed()
 {
 	//kDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) << endl;
 
@@ -109,7 +110,7 @@ bool OldRandRScreen::applyProposed()
 	return false;
 }
 
-bool OldRandRScreen::applyProposedAndConfirm()
+bool LegacyRandRScreen::applyProposedAndConfirm()
 {
 	if (proposedChanged()) {
 		setOriginal();
@@ -128,7 +129,7 @@ bool OldRandRScreen::applyProposedAndConfirm()
 	return true;
 }
 
-bool OldRandRScreen::confirm()
+bool LegacyRandRScreen::confirm()
 {
 	// uncomment the line below and edit out the KTimerDialog stuff to get
 	// a version which works on today's kdelibs (no accept dialog is presented)
@@ -163,19 +164,19 @@ bool OldRandRScreen::confirm()
     return acceptDialog.exec();
 }
 
-void OldRandRScreen::shownDialogDestroyed()
+void LegacyRandRScreen::shownDialogDestroyed()
 {
     m_shownDialog = NULL;
     disconnect( kapp->desktop(), SIGNAL( resized(int)), this, SLOT( desktopResized()));
 }
 
-void OldRandRScreen::desktopResized()
+void LegacyRandRScreen::desktopResized()
 {
 	if( m_shownDialog != NULL )
 		KDialog::centerOnScreen(m_shownDialog, m_screen);
 }
 
-QString OldRandRScreen::changedMessage() const
+QString LegacyRandRScreen::changedMessage() const
 {
 	if (currentRefreshRate() == -1)
 		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3",
@@ -190,24 +191,24 @@ QString OldRandRScreen::changedMessage() const
 			 currentRefreshRateDescription());
 }
 
-bool OldRandRScreen::changedFromOriginal() const
+bool LegacyRandRScreen::changedFromOriginal() const
 {
 	return m_currentSize != m_originalSize || m_currentRotation != m_originalRotation || m_currentRefreshRate != m_originalRefreshRate;
 }
 
-void OldRandRScreen::proposeOriginal()
+void LegacyRandRScreen::proposeOriginal()
 {
 	m_proposedSize = m_originalSize;
 	m_proposedRotation = m_originalRotation;
 	m_proposedRefreshRate = m_originalRefreshRate;
 }
 
-bool OldRandRScreen::proposedChanged() const
+bool LegacyRandRScreen::proposedChanged() const
 {
 	return m_currentSize != m_proposedSize || m_currentRotation != m_proposedRotation || m_currentRefreshRate != m_proposedRefreshRate;
 }
 
-QString OldRandRScreen::currentRotationDescription() const
+QString LegacyRandRScreen::currentRotationDescription() const
 {
 	QString ret = RandR::rotationName(m_currentRotation & RandR::RotateMask);
 
@@ -220,7 +221,7 @@ QString OldRandRScreen::currentRotationDescription() const
 	return ret;
 }
 
-int OldRandRScreen::rotationIndexToDegree(int rotation) const
+int LegacyRandRScreen::rotationIndexToDegree(int rotation) const
 {
 	switch (rotation & RandR::RotateMask) {
 		case RR_Rotate_90:
@@ -237,7 +238,7 @@ int OldRandRScreen::rotationIndexToDegree(int rotation) const
 	}
 }
 
-int OldRandRScreen::rotationDegreeToIndex(int degree) const
+int LegacyRandRScreen::rotationDegreeToIndex(int degree) const
 {
 	switch (degree) {
 		case 90:
@@ -254,27 +255,27 @@ int OldRandRScreen::rotationDegreeToIndex(int degree) const
 	}
 }
 
-int OldRandRScreen::currentPixelWidth() const
+int LegacyRandRScreen::currentPixelWidth() const
 {
 	return m_pixelSizes[m_currentSize].width();
 }
 
-int OldRandRScreen::currentPixelHeight() const
+int LegacyRandRScreen::currentPixelHeight() const
 {
 	return m_pixelSizes[m_currentSize].height();
 }
 
-int OldRandRScreen::currentMMWidth() const
+int LegacyRandRScreen::currentMMWidth() const
 {
 	return m_pixelSizes[m_currentSize].width();
 }
 
-int OldRandRScreen::currentMMHeight() const
+int LegacyRandRScreen::currentMMHeight() const
 {
 	return m_pixelSizes[m_currentSize].height();
 }
 
-QStringList OldRandRScreen::refreshRates(int size) const
+QStringList LegacyRandRScreen::refreshRates(int size) const
 {
 	int nrates;
 	short* rates = XRRRates(QX11Info::display(), m_screen, (SizeID)size, &nrates);
@@ -286,22 +287,22 @@ QStringList OldRandRScreen::refreshRates(int size) const
 	return ret;
 }
 
-QString OldRandRScreen::refreshRateDirectDescription(int rate) const
+QString LegacyRandRScreen::refreshRateDirectDescription(int rate) const
 {
 	return i18nc("Refresh rate in Hertz (Hz)", "%1 Hz", rate);
 }
 
-QString OldRandRScreen::refreshRateIndirectDescription(int size, int index) const
+QString LegacyRandRScreen::refreshRateIndirectDescription(int size, int index) const
 {
 	return i18nc("Refresh rate in Hertz (Hz)", "%1 Hz", refreshRateIndexToHz(size, index));
 }
 
-QString OldRandRScreen::refreshRateDescription(int size, int index) const
+QString LegacyRandRScreen::refreshRateDescription(int size, int index) const
 {
 	return refreshRates(size)[index];
 }
 
-bool OldRandRScreen::proposeRefreshRate(int index)
+bool LegacyRandRScreen::proposeRefreshRate(int index)
 {
 	if (index >= 0 && (int)refreshRates(proposedSize()).count() > index) {
 		m_proposedRefreshRate = index;
@@ -311,22 +312,22 @@ bool OldRandRScreen::proposeRefreshRate(int index)
 	return false;
 }
 
-int OldRandRScreen::currentRefreshRate() const
+int LegacyRandRScreen::currentRefreshRate() const
 {
 	return m_currentRefreshRate;
 }
 
-QString OldRandRScreen::currentRefreshRateDescription() const
+QString LegacyRandRScreen::currentRefreshRateDescription() const
 {
 	return refreshRateIndirectDescription(m_currentSize, m_currentRefreshRate);
 }
 
-int OldRandRScreen::proposedRefreshRate() const
+int LegacyRandRScreen::proposedRefreshRate() const
 {
 	return m_proposedRefreshRate;
 }
 
-int OldRandRScreen::refreshRateHzToIndex(int size, int hz) const
+int LegacyRandRScreen::refreshRateHzToIndex(int size, int hz) const
 {
 	int nrates;
 	short* rates = XRRRates(QX11Info::display(), m_screen, (SizeID)size, &nrates);
@@ -342,7 +343,7 @@ int OldRandRScreen::refreshRateHzToIndex(int size, int hz) const
 	return -1;
 }
 
-int OldRandRScreen::refreshRateIndexToHz(int size, int index) const
+int LegacyRandRScreen::refreshRateIndexToHz(int size, int index) const
 {
 	int nrates;
 	short* rates = XRRRates(QX11Info::display(), m_screen, (SizeID)size, &nrates);
@@ -357,22 +358,22 @@ int OldRandRScreen::refreshRateIndexToHz(int size, int index) const
 	return rates[index];
 }
 
-int OldRandRScreen::numSizes() const
+int LegacyRandRScreen::numSizes() const
 {
 	return m_pixelSizes.count();
 }
 
-const QSize& OldRandRScreen::pixelSize(int index) const
+const QSize& LegacyRandRScreen::pixelSize(int index) const
 {
 	return m_pixelSizes[index];
 }
 
-const QSize& OldRandRScreen::mmSize(int index) const
+const QSize& LegacyRandRScreen::mmSize(int index) const
 {
 	return m_mmSizes[index];
 }
 
-int OldRandRScreen::sizeIndex(QSize pixelSize) const
+int LegacyRandRScreen::sizeIndex(QSize pixelSize) const
 {
 	for (int i = 0; i < m_pixelSizes.count(); i++)
 		if (m_pixelSizes[i] == pixelSize)
@@ -381,37 +382,37 @@ int OldRandRScreen::sizeIndex(QSize pixelSize) const
 	return -1;
 }
 
-int OldRandRScreen::rotations() const
+int LegacyRandRScreen::rotations() const
 {
 	return m_rotations;
 }
 
-int OldRandRScreen::currentRotation() const
+int LegacyRandRScreen::currentRotation() const
 {
 	return m_currentRotation;
 }
 
-int OldRandRScreen::currentSize() const
+int LegacyRandRScreen::currentSize() const
 {
 	return m_currentSize;
 }
 
-int OldRandRScreen::proposedRotation() const
+int LegacyRandRScreen::proposedRotation() const
 {
 	return m_proposedRotation;
 }
 
-void OldRandRScreen::proposeRotation(int newRotation)
+void LegacyRandRScreen::proposeRotation(int newRotation)
 {
 	m_proposedRotation = newRotation & RandR::OrientationMask;
 }
 
-int OldRandRScreen::proposedSize() const
+int LegacyRandRScreen::proposedSize() const
 {
 	return m_proposedSize;
 }
 
-bool OldRandRScreen::proposeSize(int newSize)
+bool LegacyRandRScreen::proposeSize(int newSize)
 {
 	if ((int)m_pixelSizes.count() > newSize) {
 		m_proposedSize = newSize;
@@ -421,7 +422,7 @@ bool OldRandRScreen::proposeSize(int newSize)
 	return false;
 }
 
-void OldRandRScreen::load(KConfig& config)
+void LegacyRandRScreen::load(KConfig& config)
 {
 	KConfigGroup group = config.group(QString("Screen%1").arg(m_screen));
 
@@ -433,7 +434,7 @@ void OldRandRScreen::load(KConfig& config)
 						(group.readEntry("reflectY",false) ? RandR::ReflectY : 0));
 }
 
-void OldRandRScreen::save(KConfig& config) const
+void LegacyRandRScreen::save(KConfig& config) const
 {
 	KConfigGroup group = config.group(QString("Screen%1").arg(m_screen));
 	group.writeEntry("width", currentPixelWidth());
@@ -444,10 +445,10 @@ void OldRandRScreen::save(KConfig& config) const
 	group.writeEntry("reflectY", (bool)(currentRotation() & RandR::ReflectMask) == RandR::ReflectY);
 }
 
-int OldRandRScreen::pixelCount( int index ) const
+int LegacyRandRScreen::pixelCount( int index ) const
 {
 	QSize sz = pixelSize(index);
 	return sz.width() * sz.height();
 }
 
-#include "oldrandrscreen.moc"
+#include "legacyrandrscreen.moc"

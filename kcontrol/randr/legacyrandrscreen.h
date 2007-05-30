@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2002,2003 Hamish Rodda <rodda@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -16,8 +17,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __RANDRSCREEN_H__
-#define __RANDRSCREEN_H__
+#ifndef __LEGACYRANDRSCREEN_H__
+#define __LEGACYRANDRSCREEN_H__
 
 #include <QObject>
 #include <QStringList>
@@ -30,14 +31,14 @@
 
 class KTimerDialog;
 
-class OldRandRScreen : public QObject
+class LegacyRandRScreen : public QObject
 {
 	Q_OBJECT
 
 public:
 	
-	OldRandRScreen(int screenIndex);
-	~OldRandRScreen();
+	LegacyRandRScreen(int screenIndex);
+	~LegacyRandRScreen();
 
 	void		loadSettings();
 	void		setOriginal();

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2002,2003 Hamish Rodda <rodda@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,9 +25,13 @@
 #include <KConfig>
 #include "randr.h"
 
-class OldRandRScreen;
+#ifdef HAS_RANDR_1_2
+class RandRScreen;
+typedef QList<RandRScreen*> ScreenList;
+#endif
 
-typedef QList<OldRandRScreen*> OldScreenList;
+class LegacyRandRScreen;
+typedef QList<LegacyRandRScreen*> LegacyScreenList;
 
 class RandRDisplay
 {
@@ -44,11 +49,14 @@ public:
 	int		screenIndexOfWidget(QWidget* widget);
 
 	int				numScreens() const;
-	OldRandRScreen*	screen(int index);
-
+	LegacyRandRScreen*	legacyScreen(int index);
+	LegacyRandRScreen*	currentLegacyScreen();
+#ifdef HAS_RANDR_1_2
+	RandRScreen*		screen(int index);
+	RandRScreen*		currentScreen();
+#endif
 	void			setCurrentScreen(int index);
 	int				currentScreenIndex() const;
-	OldRandRScreen*	currentScreen();
 
 	void	refresh();
 
@@ -56,7 +64,7 @@ public:
 	 * Loads saved settings.
 	 *
 	 * @param config the KConfig object to load from
-	 * @param loadScreens whether to call OldRandRScreen::load() for each screen
+	 * @param loadScreens whether to call LegacyRandRScreen::load() for each screen
 	 * @retuns true if the settings should be applied on KDE startup.
 	 */
 	bool	loadDisplay(KConfig& config, bool loadScreens = true);
@@ -70,8 +78,10 @@ public:
 private:
 	int				m_numScreens;
 	int				m_currentScreenIndex;
-	OldRandRScreen*	m_currentScreen;
-	OldScreenList		m_screens;
+	LegacyScreenList		m_legacyScreens;
+#ifdef HAS_RANDR_1_2
+	ScreenList			m_screens;
+#endif
 
 	bool			m_valid;
 	QString			m_errorCode;

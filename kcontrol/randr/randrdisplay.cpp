@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2002,2003 Hamish Rodda <rodda@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,8 @@
 #include <QX11Info>
 
 #include "randrdisplay.h"
-#include "oldrandrscreen.h"
+#include "randrscreen.h"
+#include "legacyrandrscreen.h"
 
 RandRDisplay::RandRDisplay()
 	: m_valid(true)
@@ -52,7 +54,12 @@ RandRDisplay::RandRDisplay()
 	// Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(QX11Info::display()));
 
 	for (int i = 0; i < m_numScreens; i++) {
-		m_screens.append(new OldRandRScreen(i));
+#ifdef HAS_RANDR_1_2
+		if (RandR::has_1_2)
+			m_screens.append(new RandRScreen(i));
+		else
+#endif
+			m_legacyScreens.append(new LegacyRandRScreen(i));
 	}
 
 	setCurrentScreen(QApplication::desktop()->primaryScreen());
@@ -60,8 +67,8 @@ RandRDisplay::RandRDisplay()
 
 RandRDisplay::~RandRDisplay()
 {
-		qDeleteAll(m_screens);
-		m_screens.clear();
+		qDeleteAll(m_legacyScreens);
+		m_legacyScreens.clear();
 }
 
 bool RandRDisplay::isValid() const
@@ -97,8 +104,6 @@ const QString& RandRDisplay::version() const
 void RandRDisplay::setCurrentScreen(int index)
 {
 	m_currentScreenIndex = index;
-	m_currentScreen = m_screens.at(m_currentScreenIndex);
-	Q_ASSERT(m_currentScreen);
 }
 
 int RandRDisplay::screenIndexOfWidget(QWidget* widget)
@@ -114,9 +119,17 @@ int RandRDisplay::currentScreenIndex() const
 
 void RandRDisplay::refresh()
 {
-	for (int i = 0; i < m_screens.size(); ++i) {
-		OldRandRScreen* s = m_screens.at(i);
-		s->loadSettings();
+	for (int i = 0; i < m_legacyScreens.size(); ++i) {
+#ifdef HAS_RANDR_1_2
+		if (RandR::has_1_2)
+			//TODO: refresh screen information here
+			currentScreenIndex();
+		else
+#endif
+		{
+			LegacyRandRScreen* s = m_legacyScreens.at(i);
+			s->loadSettings();
+		}
 	}
 }
 
@@ -125,25 +138,45 @@ int RandRDisplay::numScreens() const
 	return m_numScreens;
 }
 
-OldRandRScreen* RandRDisplay::screen(int index)
+LegacyRandRScreen* RandRDisplay::legacyScreen(int index)
+{
+	return m_legacyScreens.at(index);
+}
+
+LegacyRandRScreen* RandRDisplay::currentLegacyScreen()
+{
+	return m_legacyScreens.at(m_currentScreenIndex);
+}
+
+#ifdef HAS_RANDR_1_2
+RandRScreen* RandRDisplay::screen(int index)
 {
 	return m_screens.at(index);
 }
 
-OldRandRScreen* RandRDisplay::currentScreen()
+RandRScreen* RandRDisplay::currentScreen()
 {
-	return m_currentScreen;
+	return m_screens.at(m_currentScreenIndex);
 }
+#endif
 
 bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
 {
 	if (loadScreens)
 	{
-    	for (int i = 0; i < m_screens.size(); ++i) {
-        	OldRandRScreen* s = m_screens.at(i);
-        	s->load(config);
+		for (int i = 0; i < m_legacyScreens.size(); ++i) {
+#ifdef HAS_RANDR_1_2
+			if (RandR::has_1_2)
+				//TODO: load screen settings here
+				currentScreenIndex();
+			else
+#endif
+			{
+        			LegacyRandRScreen* s = m_legacyScreens.at(i);
+        			s->load(config);
+			}
 		}
-    }
+	}
 	return applyOnStartup(config);
 }
 
@@ -163,20 +196,37 @@ void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTr
 	group.writeEntry("ApplyOnStartup", applyOnStartup);
 	group.writeEntry("SyncTrayApp", syncTrayApp);
 
-	for (int i = 0; i < m_screens.size(); ++i) {
-		OldRandRScreen* s = m_screens.at(i);
-        	s->save(config);
+	for (int i = 0; i < m_legacyScreens.size(); ++i) {
+#ifdef HAS_RANDR_1_2
+		if (RandR::has_1_2)
+			//TODO: save screen settings here
+			currentScreenIndex();
+		else
+#endif
+		{
+			LegacyRandRScreen* s = m_legacyScreens.at(i);
+        		s->save(config);
+		}
 	}
 }
 
 void RandRDisplay::applyProposed(bool confirm)
 {
-	for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
-		if (screen(screenIndex)->proposedChanged()) {
-			if (confirm)
-					screen(screenIndex)->applyProposedAndConfirm();
-			else
-					screen(screenIndex)->applyProposed();
+
+#ifdef HAS_RANDR_1_2
+	if (RandR::has_1_2)
+		//TODO: apply display settings here
+		currentScreenIndex();
+	else
+#endif
+	{
+		for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
+			if (legacyScreen(screenIndex)->proposedChanged()) {
+				if (confirm)
+						legacyScreen(screenIndex)->applyProposedAndConfirm();
+				else
+						legacyScreen(screenIndex)->applyProposed();
+			}
 		}
 	}
 }

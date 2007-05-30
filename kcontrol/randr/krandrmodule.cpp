@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2002,2003 Hamish Rodda <rodda@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -37,7 +38,7 @@
 #include <QDesktopWidget>
 
 #include "krandrmodule.h"
-#include "oldrandrscreen.h"
+#include "legacyrandrscreen.h"
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
@@ -157,29 +158,36 @@ KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
 void KRandRModule::addRotationButton(int thisRotation, bool checkbox)
 {
 	Q_ASSERT(m_rotationGroup);
+
+	LegacyRandRScreen *screen = currentLegacyScreen();
+	Q_ASSERT(screen);
+
 	if (!checkbox) {
 		QRadioButton* thisButton = new QRadioButton(RandR::rotationName(thisRotation));
 		 m_rotationGroup->insert( thisButton );
-		thisButton->setEnabled(thisRotation & currentScreen()->rotations());
+		thisButton->setEnabled(thisRotation & screen->rotations());
 		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
 	} else {
 		QCheckBox* thisButton = new QCheckBox(RandR::rotationName(thisRotation));
 		m_rotationGroup->insert( thisButton );
-		thisButton->setEnabled(thisRotation & currentScreen()->rotations());
+		thisButton->setEnabled(thisRotation & screen->rotations());
 		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
 	}
 }
 
-void KRandRModule::slotScreenChanged(int screen)
+void KRandRModule::slotScreenChanged(int screenId)
 {
-	setCurrentScreen(screen);
+	setCurrentScreen(screenId);
 
 	// Clear resolutions
 	m_sizeCombo->clear();
 
+	LegacyRandRScreen *screen = currentLegacyScreen();
+	Q_ASSERT(screen);
+
 	// Add new resolutions
-	for (int i = 0; i < currentScreen()->numSizes(); i++) {
-		m_sizeCombo->addItem(i18n("%1 x %2", currentScreen()->pixelSize(i).width(), currentScreen()->pixelSize(i).height()));
+	for (int i = 0; i < screen->numSizes(); i++) {
+		m_sizeCombo->addItem(i18n("%1 x %2", screen->pixelSize(i).width(), screen->pixelSize(i).height()));
 
 		// Aspect ratio
 		/* , aspect ratio %5)*/
@@ -203,34 +211,40 @@ void KRandRModule::slotScreenChanged(int screen)
 
 void KRandRModule::slotRotationChanged()
 {
+	LegacyRandRScreen *screen = currentLegacyScreen();
+	Q_ASSERT(screen);
+
 	if (m_rotationGroup->find(0)->isChecked())
-		currentScreen()->proposeRotation(RandR::Rotate0);
+		screen->proposeRotation(RandR::Rotate0);
 	else if (m_rotationGroup->find(1)->isChecked())
-		currentScreen()->proposeRotation(RandR::Rotate90);
+		screen->proposeRotation(RandR::Rotate90);
 	else if (m_rotationGroup->find(2)->isChecked())
-		currentScreen()->proposeRotation(RandR::Rotate180);
+		screen->proposeRotation(RandR::Rotate180);
 	else {
 		Q_ASSERT(m_rotationGroup->find(3)->isChecked());
-		currentScreen()->proposeRotation(RandR::Rotate270);
+		screen->proposeRotation(RandR::Rotate270);
 	}
 
 	if (m_rotationGroup->find(4)->isChecked())
-		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandR::ReflectX);
+		screen->proposeRotation(screen->proposedRotation() ^ RandR::ReflectX);
 
 	if (m_rotationGroup->find(5)->isChecked())
-		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandR::ReflectY);
+		screen->proposeRotation(screen->proposedRotation() ^ RandR::ReflectY);
 
 	setChanged();
 }
 
 void KRandRModule::slotSizeChanged(int index)
 {
-	int oldProposed = currentScreen()->proposedSize();
+	LegacyRandRScreen *screen = currentLegacyScreen();
+	Q_ASSERT(screen);
 
-	currentScreen()->proposeSize(index);
+	int oldProposed = screen->proposedSize();
 
-	if (currentScreen()->proposedSize() != oldProposed) {
-		currentScreen()->proposeRefreshRate(0);
+	screen->proposeSize(index);
+
+	if (screen->proposedSize() != oldProposed) {
+		screen->proposeRefreshRate(0);
 
 		populateRefreshRates();
 
@@ -242,16 +256,22 @@ void KRandRModule::slotSizeChanged(int index)
 
 void KRandRModule::slotRefreshChanged(int index)
 {
-	currentScreen()->proposeRefreshRate(index);
+	LegacyRandRScreen *screen = currentLegacyScreen();
+	Q_ASSERT(screen);
+
+	screen->proposeRefreshRate(index);
 
 	setChanged();
 }
 
 void KRandRModule::populateRefreshRates()
 {
+	LegacyRandRScreen *screen = currentLegacyScreen();
+	Q_ASSERT(screen);
+
 	m_refreshRates->clear();
 
-	QStringList rr = currentScreen()->refreshRates(currentScreen()->proposedSize());
+	QStringList rr = screen->refreshRates(screen->proposedSize());
 
 	m_refreshRates->setEnabled(rr.count());
 
@@ -262,11 +282,14 @@ void KRandRModule::populateRefreshRates()
 
 void KRandRModule::defaults()
 {
-	if (currentScreen()->changedFromOriginal()) {
-		currentScreen()->proposeOriginal();
-		currentScreen()->applyProposed();
+	LegacyRandRScreen *screen = currentLegacyScreen();
+	Q_ASSERT(screen);
+
+	if (screen->changedFromOriginal()) {
+		screen->proposeOriginal();
+		screen->applyProposed();
 	} else {
-		currentScreen()->proposeOriginal();
+		screen->proposeOriginal();
 	}
 
 	update();
@@ -313,7 +336,7 @@ void KRandRModule::setChanged()
 
 	if (!isChanged)
 		for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
-			if (screen(screenIndex)->proposedChanged()) {
+			if (legacyScreen(screenIndex)->proposedChanged()) {
 				isChanged = true;
 				break;
 			}
@@ -337,12 +360,15 @@ void KRandRModule::apply()
 
 void KRandRModule::update()
 {
+	LegacyRandRScreen *screen = currentLegacyScreen();
+	Q_ASSERT(screen);
+
 	m_sizeCombo->blockSignals(true);
-	m_sizeCombo->setCurrentIndex(currentScreen()->proposedSize());
+	m_sizeCombo->setCurrentIndex(screen->proposedSize());
 	m_sizeCombo->blockSignals(false);
 
 	m_rotationGroup->blockSignals(true);
-	switch (currentScreen()->proposedRotation() & RandR::RotateMask) {
+	switch (screen->proposedRotation() & RandR::RotateMask) {
 		case RandR::Rotate0:
 			m_rotationGroup->setButton(0);
 			break;
@@ -357,15 +383,15 @@ void KRandRModule::update()
 			break;
 		default:
 			// Shouldn't hit this one
-			Q_ASSERT(currentScreen()->proposedRotation() & RandR::RotateMask);
+			Q_ASSERT(screen->proposedRotation() & RandR::RotateMask);
 			break;
 	}
-	m_rotationGroup->find(4)->setDown(currentScreen()->proposedRotation() & RandR::ReflectX);
-	m_rotationGroup->find(5)->setDown(currentScreen()->proposedRotation() & RandR::ReflectY);
+	m_rotationGroup->find(4)->setDown(screen->proposedRotation() & RandR::ReflectX);
+	m_rotationGroup->find(5)->setDown(screen->proposedRotation() & RandR::ReflectY);
 	m_rotationGroup->blockSignals(false);
 
 	m_refreshRates->blockSignals(true);
-	m_refreshRates->setCurrentIndex(currentScreen()->proposedRefreshRate());
+	m_refreshRates->setCurrentIndex(screen->proposedRefreshRate());
 	m_refreshRates->blockSignals(false);
 }
 

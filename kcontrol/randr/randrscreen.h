@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002 Hamish Rodda <rodda@kde.org>
+ * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,45 +16,35 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KRANDRTRAY_H
-#define KRANDRTRAY_H
+#ifndef __RANDRSCREEN_H__
+#define __RANDRSCREEN_H__
 
-#include <QMouseEvent>
+#include <QObject>
+#include <QSize>
+#include "randr.h"
 
-#include <ksystemtrayicon.h>
-
-#include "randrdisplay.h"
-
-class KHelpMenu;
-class QMenu;
-
-class KRandRSystemTray :  public KSystemTrayIcon, public RandRDisplay
+#ifdef HAS_RANDR_1_2
+class RandRScreen : public QObject
 {
 	Q_OBJECT
 
 public:
-	KRandRSystemTray(QWidget* parent = 0);
+	RandRScreen(int screenIndex);
+	~RandRScreen();
 
-	void configChanged();
+	QSize minSize() const;
+	QSize maxSize() const;
 
-protected Q_SLOTS:
-	void slotScreenActivated();
-	void slotResolutionChanged(int parameter);
-	void slotOrientationChanged(int parameter);
-	void slotRefreshRateChanged(int parameter);
-	void slotPrefs();
-	void slotActivated(QSystemTrayIcon::ActivationReason reason);
-
-protected:
-	void prepareMenu();
-
+	void loadSettings();
+	
 private:
-	void populateMenu(KMenu* menu);
-	void populateLegacyMenu(KMenu* menu);
+	int m_index;
+	QSize m_minSize;
+	QSize m_maxSize;
 
-	bool m_popupUp;
-	KHelpMenu* m_help;
-	QList<KMenu*> m_screenPopups;
+	XRRScreenResources* m_resources;
+		
 };
+#endif
 
 #endif
