@@ -5,7 +5,15 @@ add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
 
-set(randrinternal_PART_SRCS ktimerdialog.cpp randr.cpp randrscreen.cpp legacyrandrscreen.cpp randrdisplay.cpp)
+set(randrinternal_PART_SRCS 
+   ktimerdialog.cpp 
+   randr.cpp 
+   randrscreen.cpp
+   randrcrtc.cpp
+   randroutput.cpp
+   randrmode.cpp
+   randrdisplay.cpp
+   legacyrandrscreen.cpp) 
 
 set(kcm_randr_PART_SRCS krandrmodule.cpp ${randrinternal_PART_SRCS})
 

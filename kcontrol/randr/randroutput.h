@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002 Hamish Rodda <rodda@kde.org>
+ * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,45 +16,46 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KRANDRTRAY_H
-#define KRANDRTRAY_H
+#ifndef __RANDROUTPUT_H__
+#define __RANDROUTPUT_H__
 
-#include <QMouseEvent>
+#include <QObject>
+#include <QString>
+#include "randr.h"
 
-#include <KSystemTrayIcon>
+#ifdef HAS_RANDR_1_2
+class RandRScreen;
+class RandRCrtc;
+typedef QList<RRCrtc> CrtcList;
 
-#include "randrdisplay.h"
-
-class KHelpMenu;
-class QMenu;
-
-class KRandRSystemTray :  public KSystemTrayIcon, public RandRDisplay
+class RandROutput : public QObject
 {
 	Q_OBJECT
 
 public:
-	KRandRSystemTray(QWidget* parent = 0);
+	RandROutput(RandRScreen *parent, RROutput id);
+	~RandROutput();
 
-	void configChanged();
+	void loadSettings();
 
-protected Q_SLOTS:
-	void slotScreenActivated();
-	void slotResolutionChanged(int parameter);
-	void slotOrientationChanged(int parameter);
-	void slotRefreshRateChanged(int parameter);
-	void slotPrefs();
-	void slotActivated(QSystemTrayIcon::ActivationReason reason);
+	QString name() const;
 
-protected:
-	void prepareMenu();
+	/**
+	 * Return the icon name according to the device type
+	 */
+	QString icon() const;
+
+	bool isConnected() const;
 
 private:
-	void populateMenu(KMenu* menu);
-	void populateLegacyMenu(KMenu* menu);
+	RROutput m_id;
+	XRROutputInfo* m_info;
+	QString m_name;
 
-	bool m_popupUp;
-	KHelpMenu* m_help;
-	QList<KMenu*> m_screenPopups;
+	CrtcList m_possibleCrtcs;
+	RRCrtc m_currentCrtc;
+	bool m_connected;
 };
+#endif
 
 #endif

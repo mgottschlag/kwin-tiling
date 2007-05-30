@@ -16,59 +16,25 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __RANDRSCREEN_H__
-#define __RANDRSCREEN_H__
+#ifndef __RANDRMODE_H__
+#define __RANDRMODE_H__
 
-#include <QObject>
-#include <QSize>
-#include <QMap>
 #include "randr.h"
 
 #ifdef HAS_RANDR_1_2
 
-class RandRCrtc;
-class RandROutput;
-class RandRMode;
-typedef QMap<RRCrtc,RandRCrtc*> CrtcMap;
-typedef QMap<RROutput,RandROutput*> OutputMap;
-typedef QMap<RRMode,RandRMode> ModeMap;
-
-class RandRScreen : public QObject
+class RandRMode
 {
-	Q_OBJECT
-
 public:
-	RandRScreen(int screenIndex);
-	~RandRScreen();
+	RandRMode(XRRModeInfo *info = 0);
+	~RandRMode();
 
-	XRRScreenResources* resources() const;
-
-	QSize minSize() const;
-	QSize maxSize() const;
-
-	void loadSettings();
-
-	CrtcMap  crtcs() const;
-	RandRCrtc *crtc(RRCrtc id) const;
-	
-	OutputMap outputs() const;
-	RandROutput *output(RROutput id) const;
-
-	ModeMap modes() const;
-	RandRMode mode(RRMode id) const;
-
+	bool isValid() const;
 private:
-	int m_index;
-	QSize m_minSize;
-	QSize m_maxSize;
-
-	XRRScreenResources* m_resources;
-
-	CrtcMap m_crtcs;
-	OutputMap m_outputs;
-	ModeMap m_modes;
-		
+	XRRModeInfo *m_info;
+	bool m_valid;
 };
-#endif
+
+#endif // HAS_RANDR_1_2
 
 #endif

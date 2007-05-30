@@ -38,6 +38,8 @@
 #include "krandrpassivepopup.h"
 #include "krandrtray.moc"
 #include "legacyrandrscreen.h"
+#include "randrscreen.h"
+#include "randroutput.h"
 
 KRandRSystemTray::KRandRSystemTray(QWidget* parent)
 	: KSystemTrayIcon(parent)
@@ -136,9 +138,20 @@ void KRandRSystemTray::configChanged()
 void KRandRSystemTray::populateMenu(KMenu* menu)
 {
 #if HAS_RANDR_1_2
-	if (RandR::has_1_2)
+	int lastIndex = 0;
+	if (RandR::has_1_2) {
 		//TODO: populate the menu with the required items
-		currentScreenIndex();
+		OutputMap outputs = currentScreen()->outputs();
+		if (outputs.count() <= 0)
+			return;
+
+		menu->addTitle(SmallIcon("view-fullscreen"), i18n("Outputs"));
+		OutputMap::const_iterator it = outputs.constBegin();
+		while (it != outputs.constEnd()) {
+			lastIndex = menu->insertItem(SmallIcon(it.value()->icon()), it.value()->name());
+			++it;
+		}
+	}
 	else
 #endif
 		populateLegacyMenu(menu);
