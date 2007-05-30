@@ -33,6 +33,7 @@ class QModelIndex;
 
 /**
  * @short The Desktop configuration widget
+ * Just add one of these to the Corona and you've got an instant config box.
  */
 class ControlBox : public QWidget
 {

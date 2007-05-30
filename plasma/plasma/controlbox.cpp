@@ -27,7 +27,6 @@
 #include <QtGui/QVBoxLayout>
 #include <QtCore/QTimeLine>
 #include <QtCore/QTimer>
-#include <QtGui/QListView>
 #include <QtGui/QStandardItemModel>
 #include <QtCore/QStringList>
 #include <KLocale>

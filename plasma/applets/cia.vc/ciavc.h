@@ -38,7 +38,7 @@
 #include <dataengine.h>
 
 class QTimer;
-class QDialog;
+class KDialog;
 class QCheckBox;
 
 namespace Plasma
@@ -59,11 +59,11 @@ class CiaVc : public Plasma::Applet
 
     public slots:
         void configureDialog();
-        void acceptedConfigDialog();
 
     private slots:
         void sourceAdded(const QString& source);
         void sourceRemoved(const QString& source);
+        void acceptedConfigDialog();
 
     private:
         Plasma::VBoxLayout* m_layout;

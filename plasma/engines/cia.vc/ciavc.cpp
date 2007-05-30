@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "ciavc.h"
+
 #include <QDateTime>
 #include <QTimer>
 
@@ -23,8 +25,6 @@
 #include <KLocale>
 
 #include <syndication/item.h>
-
-#include "ciavc.h"
 
 CiaVcEngine::CiaVcEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)

@@ -17,6 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "corona.h"
+
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QVBoxLayout>
@@ -38,8 +40,6 @@
 #include "dataengine.h"
 #include "svg.h"
 #include "widgets/vboxlayout.h"
-
-#include "corona.h"
 #include "plasmaapp.h"
 
 using namespace Plasma;
