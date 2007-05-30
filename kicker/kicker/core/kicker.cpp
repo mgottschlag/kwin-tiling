@@ -147,8 +147,8 @@ void Kicker::crashHandler(int /* signal */)
 {
     fprintf(stderr, "kicker: crashHandler called\n");
 
-    sleep(1);
-    system("kicker --nocrashhandler &"); // try to restart
+//    sleep(1);
+//    system("kicker --nocrashhandler &"); // try to restart
 }
 
 void Kicker::slotToggleShowDesktop()
