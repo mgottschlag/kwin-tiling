@@ -34,6 +34,7 @@ add_subdirectory( klipper )
 add_subdirectory( kmenuedit )
 add_subdirectory( kwin )
 add_subdirectory( plasma )
+add_subdirectory( kstartupconfig )
 
 
 add_subdirectory( khotkeys )
