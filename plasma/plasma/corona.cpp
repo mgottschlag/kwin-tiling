@@ -19,27 +19,25 @@
 
 #include "corona.h"
 
-#include <QGraphicsView>
-#include <QGraphicsScene>
-#include <QVBoxLayout>
-#include <QDesktopWidget>
 #include <QApplication>
-#include <QDebug>
-#include <QGLWidget>
+#include <QDesktopWidget>
+#include <QGraphicsSceneDragDropEvent>
+#include <QMimeData>
 #include <QProcess>
-#include <QContextMenuEvent>
-#include <KWindowSystem>
-#include <KMenu>
-#include <KLocale>
 
-#include <KLibrary>
-#include <KLibLoader>
-#include <QFile>
+#include <KLocale>
+#include <KMenu>
+#include <KWindowSystem>
 
 #include "applet.h"
 #include "dataengine.h"
-#include "svg.h"
 #include "widgets/vboxlayout.h"
+
+#ifdef ICON_DEMO
+#include "widgets/icon.h"
+#endif
+
+#include "corona.h"
 #include "plasmaapp.h"
 
 using namespace Plasma;
@@ -47,34 +45,71 @@ extern "C" {
     typedef QGraphicsItem* (*loadKaramba)(const KUrl &theme, QGraphicsView *view);
 }
 
-Corona::Corona(QWidget *parent)
-    : QGraphicsView(parent),
-      m_formFactor(Plasma::Planar),
-      m_location(Plasma::Floating),
-      m_layout(0)
+namespace Plasma
 {
-    setFrameShape(QFrame::NoFrame);
+
+class Corona::Private
+{
+public:
+    Private()
+        : formFactor(Planar),
+          location(Floating),
+          layout(0),
+          engineExplorerAction(0)
+    {
+    }
+
+    Applet::List applets;
+    FormFactor formFactor;
+    Location location;
+    Layout* layout;
+    QAction *engineExplorerAction;
+};
+
+Corona::Corona(QObject * parent)
+    : QGraphicsScene(parent),
+      d(new Private)
+{
+    init();
+}
+
+Corona::Corona(const QRectF & sceneRect, QObject * parent )
+    : QGraphicsScene(sceneRect, parent),
+      d(new Private)
+{
+    init();
+}
+
+Corona::Corona(qreal x, qreal y, qreal width, qreal height, QObject * parent)
+    : QGraphicsScene(x, y, width, height, parent),
+      d(new Private)
+{
+    init();
+}
+
+void Corona::init()
+{
 /*    setBackgroundMode(Qt::NoBackground);*/
-    setAutoFillBackground(true);
 
 /*    QPalette pal = palette();
     pal.setBrush(QPalette::Base, Qt::transparent);
     setPalette(pal);*/
     //setViewport(new QGLWidget  ( QGLFormat(QGL::StencilBuffer | QGL::AlphaChannel)   ));
 
-    m_graphicsScene = new QGraphicsScene(rect());
-    m_graphicsScene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    setScene(m_graphicsScene);
-    setDragMode(QGraphicsView::RubberBandDrag);
-    setCacheMode(QGraphicsView::CacheBackground);
-    setInteractive(true);
-    setAcceptDrops(true);
+#ifdef ICON_DEMO
+    Icon* icon = new Icon();
+    icon->setIcon("plasmagik");
+    icon->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    addItem(icon);
 
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
+    icon = new Icon();
+    icon->setIcon("user-home");
+    icon->setSize(64, 64);
+    icon->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    addItem(icon);
+#endif
     /*
-    KPluginInfo::List applets = Plasma::Applet::knownApplets();
+    KPluginInfo::List applets = Applet::knownApplets();
     kDebug() << "======= Applets =========" << endl;
     foreach (KPluginInfo* info, applets) {
         kDebug() << info->pluginName() << ": " << info->name() << endl;
@@ -99,71 +134,61 @@ Corona::Corona(QWidget *parent)
     }
     */
 
-    m_background = new Plasma::Svg("background/dialog", this);
-
-    connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayContextMenu(QPoint)));
-    m_engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
-    connect(m_engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer(bool)));
-    setContextMenuPolicy(Qt::CustomContextMenu);
+//    connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayContextMenu(QPoint)));
+    d->engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
+    connect(d->engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer(bool)));
+//    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 Corona::~Corona()
 {
-    while(!m_applets.isEmpty())
-        delete m_applets.takeFirst();
+    while (!d->applets.isEmpty()) {
+        delete d->applets.takeFirst();
+    }
 }
 
-Plasma::Location Corona::location() const
+Location Corona::location() const
 {
-    return m_location;
+    return d->location;
 }
 
-void Corona::setLocation(Plasma::Location location)
+void Corona::setLocation(Location location)
 {
-    m_location = location;
+    d->location = location;
 }
 
-Plasma::FormFactor Corona::formFactor() const
+FormFactor Corona::formFactor() const
 {
-    return m_formFactor;
+    return d->formFactor;
 }
 
-void Corona::setFormFactor(Plasma::FormFactor formFactor)
+void Corona::setFormFactor(FormFactor formFactor)
 {
-    if (m_formFactor == formFactor) {
+    if (d->formFactor == formFactor) {
         return;
     }
 
-    m_formFactor = formFactor;
-    delete m_layout;
-    m_layout = 0;
+    d->formFactor = formFactor;
+    delete d->layout;
+    d->layout = 0;
 
-    switch (m_formFactor) {
-        case Plasma::Planar:
+    switch (d->formFactor) {
+        case Planar:
             break;
-        case Plasma::Horizontal:
-            //m_layout = new Plasma::HBoxLayout;
+        case Horizontal:
+            //d->layout = new HBoxLayout;
             break;
-        case Plasma::Vertical:
-            m_layout = new Plasma::VBoxLayout;
+        case Vertical:
+            d->layout = new VBoxLayout;
             break;
-        case Plasma::MediaCenter:
+        case MediaCenter:
             break;
         default:
             kDebug() << "This can't be happening!" << endl;
             break;
     }
 
-    if (!m_layout) {
-        return;
-    }
-
-    foreach (Applet* applet, m_applets) {
-        //FIXME: the applet needs a way to query for its constraints
-        //       currently there is no framework for this!
-        //       so we tell them the constraints are updated, and they should
-        //       in turn query for what they are and do any layouting changes
-        //       they need to.....
+    foreach (Applet* applet, d->applets) {
         applet->constraintsUpdated();
     }
 }
@@ -171,30 +196,18 @@ void Corona::setFormFactor(Plasma::FormFactor formFactor)
 
 void Corona::addPlasmoid(const QString& name)
 {
-    Plasma::Applet* applet = Plasma::Applet::loadApplet(name);
+    Applet* applet = Applet::loadApplet(name);
     if (applet) {
-        m_graphicsScene->addItem(applet);
-        m_applets << applet;
+        addItem(applet);
+        d->applets << applet;
     } else {
         kDebug() << "Plasmoid " << name << " could not be loaded." << endl;
     }
 }
 
-void Corona::drawBackground(QPainter * painter, const QRectF &)
+void Corona::dragEnterEvent( QGraphicsSceneDragDropEvent *event)
 {
-    m_background->paint(painter, rect());
-}
-
-void Corona::resizeEvent(QResizeEvent* event)
-{
-    Q_UNUSED(event);
-    m_graphicsScene->setSceneRect(rect());
-    m_background->resize(width(), height());
-}
-
-void Corona::dragEnterEvent(QDragEnterEvent* event)
-{
-    kDebug() << "Corona::dragEnterEvent(QDragEnterEvent* event)" << endl;
+    kDebug() << "Corona::dragEnterEvent(QGraphicsSceneDragDropEvent* event)" << endl;
     if (event->mimeData()->hasFormat("text/x-plasmoidservicename")) {
         event->acceptProposedAction();
         //TODO Create the applet, move to mouse position then send the 
@@ -206,35 +219,37 @@ void Corona::dragEnterEvent(QDragEnterEvent* event)
     //     keeping its settings etc.
 }
 
-void Corona::dragLeaveEvent(QDragLeaveEvent* event)
+void Corona::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    kDebug() << "Corona::dragLeaveEvent(QDragLeaveEvent* event)" << endl;
+    Q_UNUSED(event);
+    kDebug() << "Corona::dragLeaveEvent(QGraphicsSceneDragDropEvent* event)" << endl;
     //TODO If an established Applet is dragged out of the Corona, remove it and
     //     create a QDrag type thing to keep the Applet's settings
 }
 
-void Corona::dragMoveEvent(QDragMoveEvent* event)
+void Corona::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
+    Q_UNUSED(event);
     kDebug() << "Corona::dragMoveEvent(QDragMoveEvent* event)" << endl;
 }
 
-void Corona::dropEvent(QDropEvent* event)
+void Corona::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     kDebug() << "Corona::dropEvent(QDropEvent* event)" << endl;
     if (event->mimeData()->hasFormat("text/x-plasmoidservicename")) {
         //TODO This will pretty much move into dragEnterEvent()
         QString plasmoidName;
         plasmoidName = event->mimeData()->data("text/x-plasmoidservicename");
-        kDebug() << acceptDrops() << endl;
         addPlasmoid(plasmoidName);
-        m_applets.last()->setPos(event->pos());
+        d->applets.last()->setPos(event->pos());
 
         event->acceptProposedAction();
     }
 }
 
-void Corona::displayContextMenu(const QPoint& point)
+void Corona::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent)
 {
+    QPointF point = contextMenuEvent->pos();
     /*
      * example for displaying the SuperKaramba context menu
     QGraphicsItem *item = itemAt(point);
@@ -248,14 +263,14 @@ void Corona::displayContextMenu(const QPoint& point)
     }
     */
 
-    Plasma::Applet* applet = qgraphicsitem_cast<Plasma::Applet*>( itemAt( point ) );
-    KMenu desktopMenu(this);
+    Applet* applet = qgraphicsitem_cast<Applet*>(itemAt(point));
+    KMenu desktopMenu;
     if(!applet) {
         desktopMenu.setTitle("Corona");
         desktopMenu.addAction("The");
         desktopMenu.addAction("desktop");
         desktopMenu.addAction("menu");
-        desktopMenu.addAction(m_engineExplorerAction);
+        desktopMenu.addAction(d->engineExplorerAction);
     } else {
         //desktopMenu.setTitle( applet->name() ); //This isn't implemented in Applet yet...
         desktopMenu.addAction("Widget");
@@ -268,13 +283,15 @@ void Corona::displayContextMenu(const QPoint& point)
                 applet, SLOT(configureDialog())); //This isn't implemented in Applet yet...
         desktopMenu.addAction(configureApplet);
     }
-    desktopMenu.exec(point);
+    desktopMenu.exec(point.toPoint());
 }
 
 void Corona::launchExplorer(bool /*param*/)
 {
     QProcess::execute("plasmaengineexplorer");
 }
+
+} // namespace Plasma
 
 #include "corona.moc"
 

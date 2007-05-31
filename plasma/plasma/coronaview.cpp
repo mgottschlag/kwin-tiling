@@ -1,0 +1,65 @@
+/*
+ *   Copyright (C) 2007 Aaron Seigo <aseigo@kde.org>
+ *   Copyright (C) 2007 Matt Broadstone <mbroadst@gmail.com>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License version 2 as
+ *   published by the Free Software Foundation
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#include "svg.h"
+#include "corona.h"
+
+#include "coronaview.h"
+
+CoronaView::CoronaView(QWidget *parent)
+    : QGraphicsView(parent)
+{
+    setFrameShape(QFrame::NoFrame);
+    setAutoFillBackground(true);
+
+    setScene(new Plasma::Corona(rect(), this));
+    scene()->setItemIndexMethod(QGraphicsScene::NoIndex);
+    setDragMode(QGraphicsView::RubberBandDrag);
+    setCacheMode(QGraphicsView::CacheBackground);
+    setInteractive(true);
+    setAcceptDrops(true);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    //TODO: make this a real background renderer
+    m_background = new Plasma::Svg("background/dialog", this);
+}
+
+CoronaView::~CoronaView()
+{
+}
+
+Plasma::Corona* CoronaView::corona()
+{
+    return static_cast<Plasma::Corona*>(scene());
+}
+
+void CoronaView::drawBackground(QPainter * painter, const QRectF &)
+{
+    m_background->paint(painter, rect());
+}
+
+void CoronaView::resizeEvent(QResizeEvent* event)
+{
+     scene()->setSceneRect(rect());
+     m_background->resize(width(), height());
+}
+
+#include "coronaview.moc"
+

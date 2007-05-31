@@ -1,6 +1,5 @@
 /*
- *   Copyright (C) 2006 Aaron Seigo <aseigo@kde.org>
- *   Copyright (C) 2007 Matt Broadstone <mbroadst@gmail.com>
+ *   Copyright (C) 2007 Aaron Seigo <aseigo@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -17,31 +16,33 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef ROOTWIDGET_H
-#define ROOTWIDGET_H
+#ifndef CORONAVIEW_H
+#define CORONAVIEW_H
 
-#include <QWidget>
+#include <QGraphicsView>
 
-class CoronaView;
-class ControlBox;
+namespace Plasma
+{
+    class Svg;
+    class Corona;
+}
 
-/**
- * @short The base widget that contains the desktop
- */
-class RootWidget : public QWidget
+class CoronaView : public QGraphicsView
 {
     Q_OBJECT
 
-    public:
-        RootWidget();
-        ~RootWidget();
+public:
+    CoronaView(QWidget *parent);
+    ~CoronaView();
 
-    protected slots:
-        void adjustSize();
+    Plasma::Corona* corona();
 
-    private:
-        CoronaView* m_view;
-        ControlBox* m_controlBox;
+protected:
+    void drawBackground(QPainter *painter, const QRectF &);
+    void resizeEvent(QResizeEvent *event);
+
+private:
+    Plasma::Svg *m_background;
 };
 
-#endif
+#endif // multiple inclusion guard

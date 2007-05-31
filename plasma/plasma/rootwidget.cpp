@@ -25,8 +25,11 @@
 
 #include <KWindowSystem>
 
-#include "svg.h"
 #include "corona.h"
+#include "plasma.h"
+#include "svg.h"
+
+#include "coronaview.h"
 #include "controlbox.h"
 
 RootWidget::RootWidget()
@@ -42,9 +45,9 @@ RootWidget::RootWidget()
     rootLayout->setMargin(0);
     rootLayout->setSpacing(0);
 
-    m_view = new Corona(this);
-    m_view->setFormFactor(Plasma::Planar);
-    m_view->setLocation(Plasma::Desktop);
+    m_view = new CoronaView(this);
+    m_view->corona()->setFormFactor(Plasma::Planar);
+    m_view->corona()->setLocation(Plasma::Desktop);
     rootLayout->addWidget(m_view);
     m_view->show();
 
@@ -52,7 +55,7 @@ RootWidget::RootWidget()
     m_controlBox = new ControlBox(this);
     m_controlBox->show();
 
-    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_view, SLOT(addPlasmoid(const QString&)));
+    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_view->corona(), SLOT(addPlasmoid(const QString&)));
 }
 
 RootWidget::~RootWidget()

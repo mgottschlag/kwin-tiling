@@ -19,29 +19,33 @@
 #ifndef CORONA_H
 #define CORONA_H
 
-#include <QGraphicsView>
+#include <QGraphicsScene>
 
 #include "plasma.h"
 #include "applet.h"
 
-class QGraphicsScene;
 namespace Plasma
 {
     class Layout;
     class Svg;
 }
 
+namespace Plasma
+{
+
 /**
  * @short The view that displays the all the desktop
  */
-class Corona : public QGraphicsView
+class Corona : public QGraphicsScene
 {
-Q_OBJECT
+    Q_OBJECT
 
 //typedef QHash<QString, QList<Plasma::Applet*> > layouts;
 
 public:
-    Corona(QWidget *parent = 0);
+    explicit Corona(QObject * parent = 0);
+    explicit Corona(const QRectF & sceneRect, QObject * parent = 0);
+    explicit Corona(qreal x, qreal y, qreal width, qreal height, QObject * parent = 0);
     ~Corona();
 
     /**
@@ -56,7 +60,7 @@ public:
      *
      * @param location the new location of this Corona
      */
-    void setLocation(Plasma::Location location);
+    void setLocation(Location location);
 
     /**
      * The current form factor for this Corona. @see Plasma::FormFactor
@@ -68,34 +72,29 @@ public:
      * the arrangement of Applets as well as the display choices of individual
      * Applets.
      */
-    void setFormFactor(Plasma::FormFactor formFactor);
+    void setFormFactor(FormFactor formFactor);
 
 public Q_SLOTS:
     void addPlasmoid(const QString& name);
 
 protected:
-    void resizeEvent(QResizeEvent* event);
-    void dragEnterEvent(QDragEnterEvent* event);
-    void dragLeaveEvent(QDragLeaveEvent* event);
-    void dragMoveEvent(QDragMoveEvent* event);
-    void dropEvent(QDropEvent* event);
-    void drawBackground(QPainter * painter, const QRectF & rect);
+    void dragEnterEvent(QGraphicsSceneDragDropEvent* event);
+    void dragLeaveEvent(QGraphicsSceneDragDropEvent* event);
+    void dragMoveEvent(QGraphicsSceneDragDropEvent* event);
+    void dropEvent(QGraphicsSceneDragDropEvent* event);
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent);
 
 protected Q_SLOTS:
-    void displayContextMenu(const QPoint& point);
     void launchExplorer(bool /*param*/);
 
 private:
-    QGraphicsScene *m_graphicsScene;
-    QAction *m_engineExplorerAction;
-    Plasma::Applet::List m_applets;
-    Plasma::FormFactor m_formFactor;
-    Plasma::Location m_location;
-    Plasma::Layout* m_layout;
+    void init();
 
-    //TODO: replace m_background with something actually useful.
-    Plasma::Svg* m_background;
+    class Private;
+    Private * const d;
 };
+
+} // namespace Plasma
 
 #endif
 
