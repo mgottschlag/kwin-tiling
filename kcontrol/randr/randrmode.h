@@ -29,10 +29,12 @@ public:
 	RandRMode(XRRModeInfo *info = 0);
 	~RandRMode();
 
+	QString name() const;
 	bool isValid() const;
 private:
 	XRRModeInfo *m_info;
 	bool m_valid;
+	QString m_name;
 };
 
 #endif // HAS_RANDR_1_2

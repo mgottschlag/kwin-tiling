@@ -27,6 +27,7 @@
 class RandRScreen;
 class RandRCrtc;
 typedef QList<RRCrtc> CrtcList;
+typedef QList<RRMode> ModeList;
 
 class RandROutput : public QObject
 {
@@ -45,6 +46,23 @@ public:
 	 */
 	QString icon() const;
 
+	CrtcList possibleCrtcs() const;
+	RRCrtc currentCrtc() const;
+
+	ModeList modes() const;
+	RRMode currentMode() const;
+
+	/**
+	 * Return all possible rotations for all CRTCs this output can be connected
+	 * to.
+	 */
+	int rotations() const;
+
+	/**
+	 * Returns the curent rotation of the CRTC this output is currently connected to
+	 */
+	int currentRotation() const;
+
 	bool isConnected() const;
 
 private:
@@ -54,7 +72,13 @@ private:
 
 	CrtcList m_possibleCrtcs;
 	RRCrtc m_currentCrtc;
+
+	ModeList m_modes;
+	RRMode m_currentMode;
+
+	int m_rotations;
 	bool m_connected;
+
 };
 #endif
 

@@ -20,6 +20,7 @@
 #include <QX11Info>
 #include "randroutput.h"
 #include "randrscreen.h"
+#include "randrcrtc.h"
 
 #ifdef HAS_RANDR_1_2
 RandROutput::RandROutput(RandRScreen *parent, RROutput id)
@@ -56,6 +57,20 @@ void RandROutput::loadSettings()
 	m_currentCrtc = m_info->crtc;
 
 	m_connected = (m_info->connection == RR_Connected);
+
+	//get modes
+	m_modes.clear();
+	for (int i = 0; i < m_info->nmode; ++i)
+		m_modes.append(m_info->modes[i]);
+
+	//get all possible rotations
+	m_rotations = 0;
+	for (int i = 0; i < m_possibleCrtcs.count(); ++i)
+	{
+		RandRCrtc *crtc = screen->crtc(m_possibleCrtcs.at(i));
+		Q_ASSERT(crtc);
+		m_rotations |= crtc->rotations();
+	}
 }
 
 QString RandROutput::name() const
@@ -73,6 +88,46 @@ QString RandROutput::icon() const
 		return "video-television";
 
 	return "screen";
+}
+
+CrtcList RandROutput::possibleCrtcs() const
+{
+	return m_possibleCrtcs;
+}
+
+RRCrtc RandROutput::currentCrtc() const
+{
+	return m_currentCrtc;
+}
+
+ModeList RandROutput::modes() const
+{
+	return m_modes;
+}
+
+RRMode RandROutput::currentMode() const
+{
+	return m_currentMode;
+}
+
+int RandROutput::rotations() const
+{
+	return m_rotations;
+}
+
+int RandROutput::currentRotation() const
+{
+	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
+	if (!screen)
+		return RandR::Rotate0;
+
+	if (!isConnected() || m_currentCrtc == None)
+		return RandR::Rotate0;
+
+	RandRCrtc *crtc = screen->crtc(m_currentCrtc);
+	Q_ASSERT(crtc);
+
+	return crtc->currentRotation();
 }
 
 bool RandROutput::isConnected() const

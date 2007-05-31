@@ -40,6 +40,7 @@
 #include "legacyrandrscreen.h"
 #include "randrscreen.h"
 #include "randroutput.h"
+#include "randrmode.h"
 
 KRandRSystemTray::KRandRSystemTray(QWidget* parent)
 	: KSystemTrayIcon(parent)
@@ -145,10 +146,53 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 		if (outputs.count() <= 0)
 			return;
 
+		RandRScreen *screen = currentScreen();
+		Q_ASSERT(screen);
+
 		menu->addTitle(SmallIcon("view-fullscreen"), i18n("Outputs"));
 		OutputMap::const_iterator it = outputs.constBegin();
 		while (it != outputs.constEnd()) {
-			lastIndex = menu->insertItem(SmallIcon(it.value()->icon()), it.value()->name());
+			if (it.value()->isConnected()) {
+				RandROutput *output = it.value();
+				Q_ASSERT(output);
+
+				KMenu *outputMenu = new KMenu(output->name());
+				outputMenu->setIcon(SmallIcon(output->icon()));
+				outputMenu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
+
+				ModeList modes = output->modes();
+				for (int i = 0; i < modes.count(); ++i) {
+					RandRMode mode = screen->mode(modes.at(i));
+					if (mode.isValid())
+						outputMenu->insertItem(mode.name());
+
+				}
+
+				// Display the rotations
+				int rotations = output->rotations(), currentRotation = output->currentRotation();
+				// Don't display the rotation options if there is no point (ie. none are supported)
+				// XFree86 4.3 does not include rotation support.
+				if (rotations != RandR::Rotate0) {
+					outputMenu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
+
+					for (int i = 0; i < 6; i++) {
+						if ((1 << i) & rotations) {
+							lastIndex = outputMenu->insertItem(QIcon(RandR::rotationIcon(1 << i, currentRotation)), 
+											   RandR::rotationName(1 << i));
+
+							if (currentRotation & (1 << i))
+								outputMenu->setItemChecked(lastIndex, true);
+
+							//menu->setItemParameter(lastIndex, 1 << i);
+							//menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
+						}
+					}
+				}
+				menu->addMenu(outputMenu);
+			} else {
+				lastIndex = menu->insertItem(SmallIcon(it.value()->icon()), it.value()->name());
+				menu->setItemEnabled(lastIndex, false);
+			}
 			++it;
 		}
 	}

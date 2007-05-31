@@ -34,6 +34,16 @@ RandRCrtc::~RandRCrtc()
 	// do nothing for now
 }
 
+int RandRCrtc::rotations() const
+{
+	return m_rotations;
+}
+
+int RandRCrtc::currentRotation() const
+{
+	return m_currentRotation;
+}
+
 void RandRCrtc::loadSettings()
 {
 	if (m_info)
@@ -53,9 +63,14 @@ void RandRCrtc::loadSettings()
 	for (int i = 0; i < m_info->noutput; ++i)
 		m_connectedOutputs.append(m_info->outputs[i]);
 
+	// get all outputs this crtc can be connected to
 	m_possibleOutputs.clear();
 	for (int i = 0; i < m_info->npossible; ++i)
 		m_possibleOutputs.append(m_info->possible[i]);
+
+	// get all rotations
+	m_rotations = m_info->rotations;
+	m_currentRotation = m_info->rotation;
 }
 
 #include "randrcrtc.moc"

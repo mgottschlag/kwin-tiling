@@ -34,6 +34,9 @@ public:
 	RandRCrtc(RandRScreen *parent, RRCrtc id);
 	~RandRCrtc();
 
+	int rotations() const;
+	int currentRotation() const;
+
 	void loadSettings();
 	
 private:
@@ -44,6 +47,8 @@ private:
 	QPoint m_pos;
 	OutputList m_connectedOutputs;
 	OutputList m_possibleOutputs;
+	int m_rotations;
+	int m_currentRotation;
 };
 #endif
 
