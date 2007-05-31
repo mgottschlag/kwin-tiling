@@ -38,7 +38,6 @@
 #endif
 
 #include "corona.h"
-#include "plasmaapp.h"
 
 using namespace Plasma;
 extern "C" {
@@ -249,7 +248,7 @@ void Corona::dropEvent(QGraphicsSceneDragDropEvent *event)
 
 void Corona::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent)
 {
-    QPointF point = contextMenuEvent->pos();
+    QPointF point = contextMenuEvent->scenePos();
     /*
      * example for displaying the SuperKaramba context menu
     QGraphicsItem *item = itemAt(point);
@@ -284,6 +283,7 @@ void Corona::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent)
         desktopMenu.addAction(configureApplet);
     }
     desktopMenu.exec(point.toPoint());
+    contextMenuEvent->accept();
 }
 
 void Corona::launchExplorer(bool /*param*/)

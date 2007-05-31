@@ -21,22 +21,20 @@
 
 #include <QGraphicsScene>
 
-#include "plasma.h"
 #include "applet.h"
+#include "plasma.h"
+#include "plasma_export.h"
 
 namespace Plasma
 {
-    class Layout;
-    class Svg;
-}
 
-namespace Plasma
-{
+class Layout;
+class Svg;
 
 /**
- * @short The view that displays the all the desktop
+ * @short A QGraphicsScene for Plasma::Applets
  */
-class Corona : public QGraphicsScene
+class PLASMA_EXPORT Corona : public QGraphicsScene
 {
     Q_OBJECT
 

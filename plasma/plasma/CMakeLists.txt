@@ -2,7 +2,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/workspace/pl
 
 set(plasma_SRCS
     controlbox.cpp
-    corona.cpp
     coronaview.cpp
     main.cpp
     plasmaapp.cpp
