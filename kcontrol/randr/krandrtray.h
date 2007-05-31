@@ -27,6 +27,7 @@
 
 class KHelpMenu;
 class QMenu;
+class QAction;
 
 class KRandRSystemTray :  public KSystemTrayIcon, public RandRDisplay
 {
@@ -39,9 +40,9 @@ public:
 
 protected Q_SLOTS:
 	void slotScreenActivated();
-	void slotResolutionChanged(int parameter);
-	void slotOrientationChanged(int parameter);
-	void slotRefreshRateChanged(int parameter);
+	void slotResolutionChanged(QAction *action);
+	void slotOrientationChanged(QAction *action);
+	void slotRefreshRateChanged(QAction *action);
 	void slotPrefs();
 	void slotActivated(QSystemTrayIcon::ActivationReason reason);
 

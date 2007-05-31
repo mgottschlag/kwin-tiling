@@ -24,10 +24,6 @@
 #include "randr.h"
 
 #ifdef HAS_RANDR_1_2
-class RandRScreen;
-class RandRCrtc;
-typedef QList<RRCrtc> CrtcList;
-typedef QList<RRMode> ModeList;
 
 class RandROutput : public QObject
 {

@@ -139,7 +139,7 @@ bool LegacyRandRScreen::confirm()
 	KTimerDialog acceptDialog(
 											15000,
 											KTimerDialog::CountDown,
-											KApplication::kApplication()->mainWidget(),
+											0,
 											"mainKTimerDialog",
 											true,
 											i18n("Confirm Display Setting Change"),

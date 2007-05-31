@@ -1,8 +1,5 @@
 include_directories( ${X11_Xrandr_INCLUDE_PATH}  )
 
-
-add_definitions (-DQT3_SUPPORT)
-
 ########### next target ###############
 
 set(randrinternal_PART_SRCS 
@@ -15,7 +12,14 @@ set(randrinternal_PART_SRCS
    randrdisplay.cpp
    legacyrandrscreen.cpp) 
 
-set(kcm_randr_PART_SRCS krandrmodule.cpp ${randrinternal_PART_SRCS})
+set(kcm_randr_PART_SRCS 
+   krandrmodule.cpp 
+   legacyrandrconfig.cpp
+   randrconfig.cpp
+   ${randrinternal_PART_SRCS})
+kde4_add_ui_files(kcm_randr_PART_SRCS
+   legacyrandrconfigbase.ui
+   randrconfigbase.ui)
 
 kde4_automoc(${kcm_randr_PART_SRCS})
 

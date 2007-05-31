@@ -18,6 +18,7 @@
  */
 
 #include <QTimer>
+#include <QVariant>
 
 //Added by qt3to4:
 #include <QMouseEvent>
@@ -61,15 +62,15 @@ void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
 
 void KRandRSystemTray::prepareMenu()
 {
-	int lastIndex = 0;
+	QAction *action;
         KMenu *menu = new KMenu(parentWidget());
         setContextMenu(menu);
 
 	menu->clear();
 
 	if (!isValid()) {
-		lastIndex = menu->insertItem(i18n("Required X Extension Not Available"));
-		menu->setItemEnabled(lastIndex, false);
+		action = menu->addAction(i18n("Required X Extension Not Available"));
+		action->setEnabled(false);
 
 	} else {
 		m_screenPopups.clear();
@@ -79,11 +80,11 @@ void KRandRSystemTray::prepareMenu()
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
 			} else {
-                            KMenu* subMenu = new KMenu(menu );
+                            KMenu* subMenu = new KMenu(i18n("Screen %1", s+1), menu );
                             subMenu->setObjectName( QString("screen%1").arg(s+1) );
                             m_screenPopups.append(subMenu);
                             populateMenu(subMenu);
-                            lastIndex = menu->insertItem(i18n("Screen %1", s+1), subMenu);
+                            action = menu->addMenu(subMenu);
                             connect(subMenu, SIGNAL(activated(int)), SLOT(slotScreenActivated()));
 			}
 		}
@@ -100,7 +101,7 @@ void KRandRSystemTray::prepareMenu()
         connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
 	menu->addAction( actPrefs );
 
-	menu->insertItem(SmallIcon("help-contents"),KStandardGuiItem::help().text(), m_help->menu());
+	menu->addMenu(/*SmallIcon("help-contents"),KStandardGuiItem::help().text(),*/ m_help->menu());
 	QAction *quitAction = actionCollection()->action(KStandardAction::name(KStandardAction::Quit));
 	menu->addAction( quitAction );
 }
@@ -139,8 +140,9 @@ void KRandRSystemTray::configChanged()
 void KRandRSystemTray::populateMenu(KMenu* menu)
 {
 #if HAS_RANDR_1_2
-	int lastIndex = 0;
 	if (RandR::has_1_2) {
+		QAction *action;
+
 		//TODO: populate the menu with the required items
 		OutputMap outputs = currentScreen()->outputs();
 		if (outputs.count() <= 0)
@@ -164,7 +166,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				for (int i = 0; i < modes.count(); ++i) {
 					RandRMode mode = screen->mode(modes.at(i));
 					if (mode.isValid())
-						outputMenu->insertItem(mode.name());
+						outputMenu->addAction(mode.name());
 
 				}
 
@@ -177,11 +179,11 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 
 					for (int i = 0; i < 6; i++) {
 						if ((1 << i) & rotations) {
-							lastIndex = outputMenu->insertItem(QIcon(RandR::rotationIcon(1 << i, currentRotation)), 
+							action = outputMenu->addAction(QIcon(RandR::rotationIcon(1 << i, currentRotation)), 
 											   RandR::rotationName(1 << i));
 
 							if (currentRotation & (1 << i))
-								outputMenu->setItemChecked(lastIndex, true);
+								action->setChecked(true);
 
 							//menu->setItemParameter(lastIndex, 1 << i);
 							//menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
@@ -190,8 +192,8 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				}
 				menu->addMenu(outputMenu);
 			} else {
-				lastIndex = menu->insertItem(SmallIcon(it.value()->icon()), it.value()->name());
-				menu->setItemEnabled(lastIndex, false);
+				action = menu->addAction(SmallIcon(it.value()->icon()), it.value()->name());
+				action->setEnabled(false);
 			}
 			++it;
 		}
@@ -203,7 +205,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 
 void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 {
-	int lastIndex = 0;
+	QAction *action;
 
 	menu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
 
@@ -217,6 +219,7 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 		sizeSort[i] = screen->pixelCount(i);
 	}
 
+	QActionGroup *screenSizeGroup = new QActionGroup(menu);
 	for (int j = 0; j < numSizes; j++) {
 		int highest = -1, highestIndex = -1;
 
@@ -229,14 +232,15 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 		sizeSort[highestIndex] = -1;
 		Q_ASSERT(highestIndex != -1);
 
-		lastIndex = menu->insertItem(i18n("%1 x %2", screen->pixelSize(highestIndex).width(), screen->pixelSize(highestIndex).height()));
+		action = menu->addAction(i18n("%1 x %2", screen->pixelSize(highestIndex).width(), screen->pixelSize(highestIndex).height()));
 
 		if (screen->proposedSize() == highestIndex)
-			menu->setItemChecked(lastIndex, true);
+			action->setChecked(true);
 
-		menu->setItemParameter(lastIndex, highestIndex);
-		menu->connectItem(lastIndex, this, SLOT(slotResolutionChanged(int)));
+		action->setData(highestIndex);
+		screenSizeGroup->addAction(action);
 	}
+	connect(screenSizeGroup, SIGNAL(triggered(QAction*)), SLOT(slotResolutionChanged(QAction*)));
 	delete [] sizeSort;
 	sizeSort = 0L;
 
@@ -245,18 +249,20 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 	if (screen->rotations() != RandR::Rotate0) {
 		menu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
 
+		QActionGroup *rotationGroup = new QActionGroup(menu);
 		for (int i = 0; i < 6; i++) {
 			if ((1 << i) & screen->rotations()) {
-				lastIndex = menu->insertItem(	QIcon(RandR::rotationIcon(1 << i, screen->currentRotation())), 
-								RandR::rotationName(1 << i));
+				action = menu->addAction(QIcon(RandR::rotationIcon(1 << i, screen->currentRotation())), 
+							  RandR::rotationName(1 << i));
 
 				if (screen->proposedRotation() & (1 << i))
-					menu->setItemChecked(lastIndex, true);
+					action->setChecked(true);
 
-				menu->setItemParameter(lastIndex, 1 << i);
-				menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
+				action->setData(1 << i);
+				rotationGroup->addAction(action);
 			}
 		}
+		connect(rotationGroup, SIGNAL(triggered(QAction*)), SLOT(slotOrientationChanged(QAction*)));
 	}
 
 	QStringList rr = screen->refreshRates(screen->proposedSize());
@@ -265,19 +271,22 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 		menu->addTitle(SmallIcon("clock"), i18n("Refresh Rate"));
 
 	int i = 0;
+	QActionGroup *rateGroup = new QActionGroup(menu);
 	for (QStringList::Iterator it = rr.begin(); it != rr.end(); ++it, i++) {
-		lastIndex = menu->insertItem(*it);
+		action = menu->addAction(*it);
 
 		if (screen->proposedRefreshRate() == i)
-			menu->setItemChecked(lastIndex, true);
+			action->setChecked(true);
 
-		menu->setItemParameter(lastIndex, i);
-		menu->connectItem(lastIndex, this, SLOT(slotRefreshRateChanged(int)));
+		action->setData(i);
+		rateGroup->addAction(action);
 	}
+	connect(rateGroup, SIGNAL(triggered(QAction*)), SLOT(slotRefreshRateChanged(QAction*)));
 }
 
-void KRandRSystemTray::slotResolutionChanged(int parameter)
+void KRandRSystemTray::slotResolutionChanged(QAction *action)
 {
+	Q_ASSERT(action);
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
 		//TODO: this will become screen size changed, but for now it is ok
@@ -285,13 +294,14 @@ void KRandRSystemTray::slotResolutionChanged(int parameter)
 	else
 #endif
 	{
+		int index = action->data().toInt();
 		LegacyRandRScreen *screen = currentLegacyScreen();
 		Q_ASSERT(screen);
 
-		if (screen->currentSize() == parameter)
+		if (screen->currentSize() == index)
 			return;
 
-		screen->proposeSize(parameter);
+		screen->proposeSize(index);
 
 		screen->proposeRefreshRate(-1);
 
@@ -303,8 +313,9 @@ void KRandRSystemTray::slotResolutionChanged(int parameter)
 	}
 }
 
-void KRandRSystemTray::slotOrientationChanged(int parameter)
+void KRandRSystemTray::slotOrientationChanged(QAction *action)
 {
+	Q_ASSERT(action);
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
 		//TODO: I guess this won't be used in randr1.2, but later we'll see
@@ -316,11 +327,12 @@ void KRandRSystemTray::slotOrientationChanged(int parameter)
 		Q_ASSERT(screen);
 		
 		int propose = screen->currentRotation();
+		int rotate = action->data().toInt();
 
-		if (parameter & RandR::RotateMask)
+		if (rotate & RandR::RotateMask)
 			propose &= RandR::ReflectMask;
 
-		propose ^= parameter;
+		propose ^= rotate;
 
 		if (screen->currentRotation() == propose)
 			return;
@@ -335,8 +347,9 @@ void KRandRSystemTray::slotOrientationChanged(int parameter)
 	}
 }
 
-void KRandRSystemTray::slotRefreshRateChanged(int parameter)
+void KRandRSystemTray::slotRefreshRateChanged(QAction *action)
 {
+	Q_ASSERT(action);
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
 		//TODO: this will probably have to change as refresh rate is differect for 
@@ -347,11 +360,13 @@ void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 	{
 		LegacyRandRScreen *screen = currentLegacyScreen();
 		Q_ASSERT(screen);
+		
+		int index = action->data().toInt();
 
-		if (screen->currentRefreshRate() == parameter)
+		if (screen->currentRefreshRate() == index)
 			return;
 
-		screen->proposeRefreshRate(parameter);
+		screen->proposeRefreshRate(index);
 
 		if (screen->applyProposedAndConfirm()) {
 			KConfig config("kcmrandrrc");

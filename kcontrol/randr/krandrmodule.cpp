@@ -17,32 +17,14 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <Qt3Support/Q3ButtonGroup>
-#include <QCheckBox>
-#include <QtGui/QDesktopWidget>
-#include <QLabel>
-#include <QLayout>
-#include <QRadioButton>
-
-
-//Added by qt3to4:
-#include <QVBoxLayout>
-#include <QtGui>
-#include <kcmodule.h>
-#include <kcombobox.h>
-#include <kdebug.h>
-#include <kdialog.h>
-#include <kgenericfactory.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <QDesktopWidget>
-
+#include <KGenericFactory>
+#include "legacyrandrconfig.h"
 #include "krandrmodule.h"
 #include "legacyrandrscreen.h"
+#include "randrdisplay.h"
+#include "randrconfig.h"
 
-#include <X11/Xlib.h>
-#include <X11/extensions/Xrandr.h>
-#include <QX11Info>
+#include "randr.h"
 
 // DLL Interface for kcontrol
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
@@ -62,14 +44,14 @@ void KRandRModule::performApplyOnStartup()
 
 KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
     : KCModule(KSSFactory::componentData(), parent)
-    , m_changed(false)
 {
-	if (!isValid()) {
+	m_display = new RandRDisplay();
+	if (!m_display->isValid()) {
 		QVBoxLayout *topLayout = new QVBoxLayout(this);
 		QLabel *label = new QLabel(i18n("Your X server does not support resizing and rotating the display. Please update to version 4.3 or greater. You need the X Resize And Rotate extension (RANDR) version 1.1 or greater to use this feature."), this);
 		label->setWordWrap(true);
 		topLayout->addWidget(label);
-		kWarning() << "Error: " << errorCode() << endl;
+		kWarning() << "Error: " << m_display->errorCode() << endl;
 		return;
 	}
 
@@ -77,322 +59,66 @@ KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
 	topLayout->setMargin(0);
 	topLayout->setSpacing(KDialog::spacingHint());
 
-	QWidget* screenBox = new QWidget(this);
-	QHBoxLayout *hboxLayout1 = new QHBoxLayout( screenBox );
-	 screenBox ->setLayout(hboxLayout1);
-	topLayout->addWidget(screenBox);
-	QLabel *screenLabel = new QLabel(i18n("Settings for screen:"));
-        hboxLayout1->addWidget(screenLabel);
-	m_screenSelector = new KComboBox;
-
-        hboxLayout1->addWidget(m_screenSelector);
-	for (int s = 0; s < numScreens(); s++) {
-		m_screenSelector->addItem(i18n("Screen %1", s+1));
+#ifdef HAS_RANDR_1_2
+	if (RandR::has_1_2) {
+		m_config = new RandRConfig(this, m_display);
+		connect(m_config, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
+		topLayout->addWidget(m_config);
 	}
-
-	m_screenSelector->setCurrentIndex(currentScreenIndex());
-        screenLabel->setBuddy( m_screenSelector );
-	m_screenSelector->setWhatsThis( i18n("The screen whose settings you would like to change can be selected using this drop-down list."));
-
-	connect(m_screenSelector, SIGNAL(activated(int)), SLOT(slotScreenChanged(int)));
-
-	if (numScreens() <= 1)
-		m_screenSelector->setEnabled(false);
-
-	QWidget* sizeBox = new QWidget(this);
-	QHBoxLayout *hboxLayout2 = new QHBoxLayout( sizeBox );
-	 sizeBox ->setLayout(hboxLayout2);
-	topLayout->addWidget(sizeBox);
-	QLabel *sizeLabel = new QLabel(i18n("Screen size:"));
-        hboxLayout2->addWidget(sizeLabel);
-	m_sizeCombo = new KComboBox;
-        hboxLayout2->addWidget(m_sizeCombo);
-	m_sizeCombo->setWhatsThis( i18n("The size, otherwise known as the resolution, of your screen can be selected from this drop-down list."));
-	connect(m_sizeCombo, SIGNAL(activated(int)), SLOT(slotSizeChanged(int)));
-        sizeLabel->setBuddy( m_sizeCombo );
-
-	QWidget* refreshBox = new QWidget(this);
-	QHBoxLayout *hboxLayout3 = new QHBoxLayout( refreshBox );
-	refreshBox->setLayout(hboxLayout3);
-	topLayout->addWidget(refreshBox);
-	QLabel *rateLabel = new QLabel(i18n("Refresh rate:"));
-        hboxLayout3->addWidget(rateLabel);
-	m_refreshRates = new KComboBox;
-        hboxLayout3->addWidget(m_refreshRates);
-	m_refreshRates->setWhatsThis( i18n("The refresh rate of your screen can be selected from this drop-down list."));
-	connect(m_refreshRates, SIGNAL(activated(int)), SLOT(slotRefreshChanged(int)));
-        rateLabel->setBuddy( m_refreshRates );
-
-	m_rotationGroup = new Q3ButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees counterclockwise)"), this);
-	topLayout->addWidget(m_rotationGroup);
-	m_rotationGroup->setRadioButtonExclusive(true);
-	m_rotationGroup->setWhatsThis( i18n("The options in this section allow you to change the rotation of your screen."));
-
-	m_applyOnStartup = new QCheckBox(i18n("Apply settings on KDE startup"), this);
-	topLayout->addWidget(m_applyOnStartup);
-	m_applyOnStartup->setWhatsThis( i18n("If this option is enabled the size and orientation settings will be used when KDE starts."));
-	connect(m_applyOnStartup, SIGNAL(clicked()), SLOT(setChanged()));
-
-	QWidget* syncBox = new QWidget(this);
-	QHBoxLayout *hboxLayout4 = new QHBoxLayout( syncBox );
-	 syncBox ->setLayout(hboxLayout4);
-	syncBox->layout()->addItem(new QSpacerItem(20, 1, QSizePolicy::Maximum));
-	m_syncTrayApp = new QCheckBox(i18n("Allow tray application to change startup settings"), syncBox);
-	topLayout->addWidget(syncBox);
-	m_syncTrayApp->setWhatsThis( i18n("If this option is enabled, options set by the system tray applet will be saved and loaded when KDE starts instead of being temporary."));
-	connect(m_syncTrayApp, SIGNAL(clicked()), SLOT(setChanged()));
+	else
+#endif
+	{
+		m_legacyConfig = new LegacyRandRConfig(this, m_display);
+		connect(m_legacyConfig, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
+		topLayout->addWidget(m_legacyConfig);
+	}
 
 	topLayout->addStretch(1);
 
-	// just set the "apply settings on startup" box
 	load();
-	m_syncTrayApp->setEnabled(m_applyOnStartup->isChecked());
-
-	slotScreenChanged(QApplication::desktop()->primaryScreen());
-
 	setButtons(KCModule::Apply);
-
 	performApplyOnStartup();
 }
 
-void KRandRModule::addRotationButton(int thisRotation, bool checkbox)
-{
-	Q_ASSERT(m_rotationGroup);
-
-	LegacyRandRScreen *screen = currentLegacyScreen();
-	Q_ASSERT(screen);
-
-	if (!checkbox) {
-		QRadioButton* thisButton = new QRadioButton(RandR::rotationName(thisRotation));
-		 m_rotationGroup->insert( thisButton );
-		thisButton->setEnabled(thisRotation & screen->rotations());
-		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
-	} else {
-		QCheckBox* thisButton = new QCheckBox(RandR::rotationName(thisRotation));
-		m_rotationGroup->insert( thisButton );
-		thisButton->setEnabled(thisRotation & screen->rotations());
-		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
-	}
-}
-
-void KRandRModule::slotScreenChanged(int screenId)
-{
-	setCurrentScreen(screenId);
-
-	// Clear resolutions
-	m_sizeCombo->clear();
-
-	LegacyRandRScreen *screen = currentLegacyScreen();
-	Q_ASSERT(screen);
-
-	// Add new resolutions
-	for (int i = 0; i < screen->numSizes(); i++) {
-		m_sizeCombo->addItem(i18n("%1 x %2", screen->pixelSize(i).width(), screen->pixelSize(i).height()));
-
-		// Aspect ratio
-		/* , aspect ratio %5)*/
-		/*.arg((double)currentScreen()->size(i).mwidth / (double)currentScreen()->size(i).mheight))*/
-	}
-
-	// Clear rotations
-	for (int i = m_rotationGroup->count() - 1; i >= 0; i--)
-		m_rotationGroup->remove(m_rotationGroup->find(i));
-
-	// Create rotations
-	for (int i = 0; i < RandR::OrientationCount; i++)
-		addRotationButton(1 << i, i > RandR::RotationCount - 1);
-
-	populateRefreshRates();
-
-	update();
-
-	setChanged();
-}
-
-void KRandRModule::slotRotationChanged()
-{
-	LegacyRandRScreen *screen = currentLegacyScreen();
-	Q_ASSERT(screen);
-
-	if (m_rotationGroup->find(0)->isChecked())
-		screen->proposeRotation(RandR::Rotate0);
-	else if (m_rotationGroup->find(1)->isChecked())
-		screen->proposeRotation(RandR::Rotate90);
-	else if (m_rotationGroup->find(2)->isChecked())
-		screen->proposeRotation(RandR::Rotate180);
-	else {
-		Q_ASSERT(m_rotationGroup->find(3)->isChecked());
-		screen->proposeRotation(RandR::Rotate270);
-	}
-
-	if (m_rotationGroup->find(4)->isChecked())
-		screen->proposeRotation(screen->proposedRotation() ^ RandR::ReflectX);
-
-	if (m_rotationGroup->find(5)->isChecked())
-		screen->proposeRotation(screen->proposedRotation() ^ RandR::ReflectY);
-
-	setChanged();
-}
-
-void KRandRModule::slotSizeChanged(int index)
-{
-	LegacyRandRScreen *screen = currentLegacyScreen();
-	Q_ASSERT(screen);
-
-	int oldProposed = screen->proposedSize();
-
-	screen->proposeSize(index);
-
-	if (screen->proposedSize() != oldProposed) {
-		screen->proposeRefreshRate(0);
-
-		populateRefreshRates();
-
-		// Item with index zero is already selected
-	}
-
-	setChanged();
-}
-
-void KRandRModule::slotRefreshChanged(int index)
-{
-	LegacyRandRScreen *screen = currentLegacyScreen();
-	Q_ASSERT(screen);
-
-	screen->proposeRefreshRate(index);
-
-	setChanged();
-}
-
-void KRandRModule::populateRefreshRates()
-{
-	LegacyRandRScreen *screen = currentLegacyScreen();
-	Q_ASSERT(screen);
-
-	m_refreshRates->clear();
-
-	QStringList rr = screen->refreshRates(screen->proposedSize());
-
-	m_refreshRates->setEnabled(rr.count());
-
-	for (QStringList::Iterator it = rr.begin(); it != rr.end(); ++it)
-		m_refreshRates->addItem(*it);
-}
-
-
 void KRandRModule::defaults()
 {
-	LegacyRandRScreen *screen = currentLegacyScreen();
-	Q_ASSERT(screen);
-
-	if (screen->changedFromOriginal()) {
-		screen->proposeOriginal();
-		screen->applyProposed();
-	} else {
-		screen->proposeOriginal();
-	}
-
-	update();
+#ifdef HAS_RANDR_1_2
+	if (RandR::has_1_2)
+		m_config->defaults();
+	else
+#endif
+		m_legacyConfig->defaults();
 }
 
 void KRandRModule::load()
 {
-	if (!isValid())
-		return;
-
-	// Don't load screen configurations:
-	// It will be correct already if they wanted to retain their settings over KDE restarts,
-	// and if it isn't correct they have changed a) their X configuration, b) the screen
-	// with another program, or c) their hardware.
-	KConfig config("kcmrandrrc");
-	m_oldApply = loadDisplay(config, false);
-	m_oldSyncTrayApp = syncTrayApp(config);
-
-	m_applyOnStartup->setChecked(m_oldApply);
-	m_syncTrayApp->setChecked(m_oldSyncTrayApp);
-
-	setChanged();
+#ifdef HAS_RANDR_1_2
+	if (RandR::has_1_2)
+		m_config->load();
+	else
+#endif
+		m_legacyConfig->load();
 }
 
 void KRandRModule::save()
 {
-	if (!isValid())
-		return;
+#ifdef HAS_RANDR_1_2
+	if (RandR::has_1_2)
+		m_config->save();
+	else
+#endif
+		m_legacyConfig->save();
 
-	apply();
-
-	m_oldApply = m_applyOnStartup->isChecked();
-	m_oldSyncTrayApp = m_syncTrayApp->isChecked();
-	KConfig config("kcmrandrrc");
-	saveDisplay(config, m_oldApply, m_oldSyncTrayApp);
-
-	setChanged();
-}
-
-void KRandRModule::setChanged()
-{
-	bool isChanged = (m_oldApply != m_applyOnStartup->isChecked()) || (m_oldSyncTrayApp != m_syncTrayApp->isChecked());
-	m_syncTrayApp->setEnabled(m_applyOnStartup->isChecked());
-
-	if (!isChanged)
-		for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
-			if (legacyScreen(screenIndex)->proposedChanged()) {
-				isChanged = true;
-				break;
-			}
-		}
-
-	if (isChanged != m_changed) {
-		m_changed = isChanged;
-		emit changed(m_changed);
-	}
 }
 
 void KRandRModule::apply()
 {
-	if (m_changed) {
-		applyProposed();
-
-		update();
-	}
-}
-
-
-void KRandRModule::update()
-{
-	LegacyRandRScreen *screen = currentLegacyScreen();
-	Q_ASSERT(screen);
-
-	m_sizeCombo->blockSignals(true);
-	m_sizeCombo->setCurrentIndex(screen->proposedSize());
-	m_sizeCombo->blockSignals(false);
-
-	m_rotationGroup->blockSignals(true);
-	switch (screen->proposedRotation() & RandR::RotateMask) {
-		case RandR::Rotate0:
-			m_rotationGroup->setButton(0);
-			break;
-		case RandR::Rotate90:
-			m_rotationGroup->setButton(1);
-			break;
-		case RandR::Rotate180:
-			m_rotationGroup->setButton(2);
-			break;
-		case RandR::Rotate270:
-			m_rotationGroup->setButton(3);
-			break;
-		default:
-			// Shouldn't hit this one
-			Q_ASSERT(screen->proposedRotation() & RandR::RotateMask);
-			break;
-	}
-	m_rotationGroup->find(4)->setDown(screen->proposedRotation() & RandR::ReflectX);
-	m_rotationGroup->find(5)->setDown(screen->proposedRotation() & RandR::ReflectY);
-	m_rotationGroup->blockSignals(false);
-
-	m_refreshRates->blockSignals(true);
-	m_refreshRates->setCurrentIndex(screen->proposedRefreshRate());
-	m_refreshRates->blockSignals(false);
+#ifdef HAS_RANDR_1_2
+	if (RandR::has_1_2)
+		m_config->apply();
+	else
+#endif
+		m_legacyConfig->apply();
 }
 
 

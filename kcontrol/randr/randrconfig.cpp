@@ -16,38 +16,64 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __RANDRCRTC_H__
-#define __RANDRCRTC_H__
-
-#include <QObject>
+#include "randrconfig.h"
+#include "randrdisplay.h"
 #include "randr.h"
 
 #ifdef HAS_RANDR_1_2
 
-class RandRCrtc : public QObject
+RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
+: QWidget(parent), Ui::RandRConfigBase()
 {
-	Q_OBJECT
+	m_display = display;
+	Q_ASSERT(m_display);
 
-public:
-	RandRCrtc(RandRScreen *parent, RRCrtc id);
-	~RandRCrtc();
+	if (!m_display->isValid())
+		return;
 
-	int rotations() const;
-	int currentRotation() const;
+	setupUi(this);
 
-	void loadSettings();
-	
-private:
-	RRCrtc m_id;
-	XRRCrtcInfo* m_info;
+	load();
+}
 
-	QSize m_size;
-	QPoint m_pos;
-	OutputList m_connectedOutputs;
-	OutputList m_possibleOutputs;
-	int m_rotations;
-	int m_currentRotation;
-};
-#endif
+RandRConfig::~RandRConfig()
+{
+}
+
+void RandRConfig::load()
+{
+	if (!m_display->isValid())
+		return;
+
+}
+
+void RandRConfig::save()
+{
+	if (!m_display->isValid())
+		return;
+
+	apply();
+}
+
+void RandRConfig::defaults()
+{
+	update();
+}
+
+void RandRConfig::apply()
+{
+	if (m_changed) {
+		m_display->applyProposed();
+
+		update();
+	}
+}
+
+void RandRConfig::update()
+{
+	// TODO: implement
+}
+
+#include "randrconfig.moc"
 
 #endif

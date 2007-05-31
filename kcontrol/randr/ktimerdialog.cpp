@@ -113,10 +113,7 @@ void KTimerDialog::setMainWidget( QWidget *widget )
 
     if ( widget->parentWidget() != mainWidget ) {
         widget->setParent( newWidget);
-    } else {
-        newWidget->insertChild( widget );
-    }
-
+    } 
     timerWidget->setParent( newWidget);
 
     delete mainWidget;

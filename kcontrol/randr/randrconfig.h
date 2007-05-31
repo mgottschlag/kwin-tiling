@@ -16,38 +16,40 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __RANDRCRTC_H__
-#define __RANDRCRTC_H__
+#ifndef __RANDRCONFIG_H__
+#define __RANDRCONFIG_H__
 
-#include <QObject>
+#include <QWidget>
+#include "ui_randrconfigbase.h"
 #include "randr.h"
 
 #ifdef HAS_RANDR_1_2
 
-class RandRCrtc : public QObject
+class RandRDisplay;
+
+
+class RandRConfig : public QWidget, public Ui::RandRConfigBase
 {
 	Q_OBJECT
-
 public:
-	RandRCrtc(RandRScreen *parent, RRCrtc id);
-	~RandRCrtc();
+	RandRConfig(QWidget *parent, RandRDisplay *display);
+	virtual ~RandRConfig();
 
-	int rotations() const;
-	int currentRotation() const;
+	void load();
+	void save();
+	void defaults();
 
-	void loadSettings();
-	
+	void apply();
+	void update();
+
+signals:
+	void changed(bool c);
+
 private:
-	RRCrtc m_id;
-	XRRCrtcInfo* m_info;
-
-	QSize m_size;
-	QPoint m_pos;
-	OutputList m_connectedOutputs;
-	OutputList m_possibleOutputs;
-	int m_rotations;
-	int m_currentRotation;
+	RandRDisplay *m_display;
+	bool m_changed;
 };
+
 #endif
 
 #endif

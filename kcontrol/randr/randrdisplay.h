@@ -20,18 +20,10 @@
 #ifndef __RANDRDISPLAY_H__
 #define __RANDRDISPLAY_H__
 
-#include <QList>
 #include <QWidget>
 #include <KConfig>
 #include "randr.h"
 
-#ifdef HAS_RANDR_1_2
-class RandRScreen;
-typedef QList<RandRScreen*> ScreenList;
-#endif
-
-class LegacyRandRScreen;
-typedef QList<LegacyRandRScreen*> LegacyScreenList;
 
 class RandRDisplay
 {

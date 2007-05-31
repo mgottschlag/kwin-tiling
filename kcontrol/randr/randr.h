@@ -38,6 +38,27 @@ extern "C"
 #endif
 }
 
+#ifdef HAS_RANDR_1_2
+class RandRScreen;
+class RandRCrtc;
+class RandROutput;
+class RandRMode;
+
+// maps
+typedef QMap<RRCrtc,RandRCrtc*> CrtcMap;
+typedef QMap<RROutput,RandROutput*> OutputMap;
+typedef QMap<RRMode,RandRMode> ModeMap;
+
+//lists
+typedef QList<RandRScreen*> ScreenList;
+typedef QList<RROutput> OutputList;
+typedef QList<RRCrtc> CrtcList;
+typedef QList<RRMode> ModeList;
+#endif
+
+class LegacyRandRScreen;
+typedef QList<LegacyRandRScreen*> LegacyScreenList;
+
 class RandR
 {
 public:

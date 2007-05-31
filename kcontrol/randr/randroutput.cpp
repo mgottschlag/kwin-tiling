@@ -53,7 +53,7 @@ void RandROutput::loadSettings()
 	for (int i = 0; i < m_info->ncrtc; ++i)
 		m_possibleCrtcs.append(m_info->crtcs[i]);
 
-	kdDebug() << "Got " << m_possibleCrtcs.count() << " CRTCS for output " << m_name << endl;
+	kDebug() << "Got " << m_possibleCrtcs.count() << " CRTCS for output " << m_name << endl;
 	m_currentCrtc = m_info->crtc;
 
 	m_connected = (m_info->connection == RR_Connected);

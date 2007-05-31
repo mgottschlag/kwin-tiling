@@ -26,13 +26,6 @@
 
 #ifdef HAS_RANDR_1_2
 
-class RandRCrtc;
-class RandROutput;
-class RandRMode;
-typedef QMap<RRCrtc,RandRCrtc*> CrtcMap;
-typedef QMap<RROutput,RandROutput*> OutputMap;
-typedef QMap<RRMode,RandRMode> ModeMap;
-
 class RandRScreen : public QObject
 {
 	Q_OBJECT

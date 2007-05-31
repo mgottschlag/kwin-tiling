@@ -17,39 +17,49 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KRANDRMODULE_H
-#define KRANDRMODULE_H
+#ifndef __LEGACYRANDRCONFIG_H__
+#define __LEGACYRANDRCONFIG_H__
 
-#include <QLabel>
-#include <QLayout>
-#include <KDialog>
-#include <KCModule>
+#include <QButtonGroup>
+#include <QWidget>
+#include "ui_legacyrandrconfigbase.h"
 
 class RandRDisplay;
-class LegacyRandRConfig;
-class RandRConfig;
 
-class KRandRModule : public KCModule
+class LegacyRandRConfig : public QWidget, public Ui::LegacyRandRConfigBase
 {
 	Q_OBJECT
-
 public:
-	KRandRModule(QWidget *parent, const QStringList& _args);
+	LegacyRandRConfig(QWidget *parent, RandRDisplay *display);
+	virtual ~LegacyRandRConfig();
 
-	virtual void load();
-	virtual void save();
-	virtual void defaults();
+	void load();
+	void save();
+	void defaults();
 
-	static void performApplyOnStartup();
-
-protected:
 	void apply();
 	void update();
 
+protected Q_SLOTS:
+	void slotScreenChanged(int screen);
+	void slotRotationChanged();
+	void slotSizeChanged(int index);
+	void slotRefreshChanged(int index);
+	void setChanged();
+
+signals:
+	void changed(bool c);
+
+protected:
+	void addRotationButton(int thisRotation, bool checkbox);
+	void populateRefreshRates();
+
 private:
-	LegacyRandRConfig *m_legacyConfig;
-	RandRConfig *m_config;
 	RandRDisplay *m_display;
+	bool m_oldApply;
+	bool m_oldSyncTrayApp;
+	bool m_changed;
+	QButtonGroup m_rotationGroup;
 };
 
 #endif
