@@ -56,23 +56,26 @@ class Clock : public Plasma::Applet
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
         void setPath(const QString&);
         QRectF boundingRect() const;
+        void constraintsUpdated();
 
     public slots:
         void updated(const QString &name, const Plasma::DataEngine::Data &data);
         void configureDialog();
 
-    protected Q_SLOTS:
+    protected slots:
         void acceptedConfigDialog();
 
     private:
-        bool boolShowTimeString;
-        int m_customSize;
+        bool m_showTimeString;
+        bool m_boundsDirty;
+        qreal m_customSize;
+        QRectF m_bounds;
         int m_pixelSize;
         QTimer *m_timer;
         Plasma::Svg* m_theme;
         QTime m_time;
         QDialog *m_dialog; //should we move this into another class?
-        QCheckBox *m_showTimeString;
+        QCheckBox *m_showTimeStringCheckBox;
 };
 
 K_EXPORT_PLASMA_APPLET(clock, Clock)

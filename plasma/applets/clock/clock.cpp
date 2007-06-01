@@ -44,12 +44,9 @@
 #include <dataenginemanager.h>
 #include <svg.h>
 
-/*Clock::Clock(QGraphicsItem * parent,
-             int appletId)
-    : Plasma::Applet(parent, "plasma-clock-default", appletId)*/
-
 Clock::Clock(QObject *parent, const QStringList &args)
-    : Plasma::Applet(parent, args) //"plasma-clock-default", appletId)
+    : Plasma::Applet(parent, args),
+      m_boundsDirty(false)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
     Plasma::DataEngine* timeEngine = Plasma::DataEngineManager::self()->loadDataEngine("time");
@@ -58,54 +55,62 @@ Clock::Clock(QObject *parent, const QStringList &args)
     }
 
     m_dialog = 0;
-    m_showTimeString = new QCheckBox("Show the time with a string over the clock.");
+    m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.");
 
     KConfigGroup cg = globalAppletConfig();
-    kDebug() << "Value: " << cg.readEntry("showTimeString") << endl;
-    if(cg.readEntry("showTimeString") == "false") {
-        m_showTimeString->setCheckState(Qt::Unchecked);
-        boolShowTimeString = false;
-    } else {
-        boolShowTimeString = true;
-        m_showTimeString->setCheckState(Qt::Checked);
-    }
+    //kDebug() << "Value: " << cg.readEntry("showTimeString") << endl;
+    m_showTimeString = cg.readEntry("showTimeString") == "false";
+    m_showTimeStringCheckBox->setCheckState(m_showTimeString ? Qt::Unchecked
+                                                             : Qt::Checked);
 
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_customSize = boundingRect().width();
     m_theme->resize();
+    constraintsUpdated();
 }
 
 QRectF Clock::boundingRect() const
 {
-    //FIXME: this needs to be settable / adjustable
-    QSize s = m_theme->size();
-    return QRectF(0, 0, s.width(), s.height());
+    return m_bounds;
+}
+
+void Clock::constraintsUpdated()
+{
+    prepareGeometryChange();
+    if (formFactor() == Plasma::Planar ||
+        formFactor() == Plasma::MediaCenter) {
+        QSize s = m_theme->size();
+        m_bounds = QRect(0, 0, s.width(), s.height());
+    } else {
+        QFontMetrics fm(QApplication::font());
+        m_bounds = QRectF(0, 0, fm.width("00:00:00") * 1.2, fm.height() * 1.5);
+    }
 }
 
 void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source);
     m_time = data[i18n("Local")].toTime();
-    QGraphicsItem::update();
+    update();
 }
 
 void Clock::configureDialog() //TODO: Make the size settable
 {
     QPushButton *closeButton = new QPushButton("Close");
     QLabel *label = new QLabel("Hello Configuration World!");
-    m_showTimeString = new QCheckBox("Show the time with a string over the clock.");
+    m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.");
 
     QVBoxLayout *lay = new QVBoxLayout;
     QHBoxLayout *buttonLay = new QHBoxLayout;
     buttonLay->addWidget(closeButton);
     lay->addWidget(label);
-    lay->addWidget(m_showTimeString);
+    lay->addWidget(m_showTimeStringCheckBox);
     lay->addLayout(buttonLay);
 
     if (m_dialog == 0) {
         m_dialog = new QDialog;
         connect(closeButton, SIGNAL(clicked()), m_dialog, SLOT(accept()));
-        connect(m_showTimeString, SIGNAL(stateChanged(int)), this, SLOT(acceptedConfigDialog()));
+        connect(m_showTimeStringCheckBox, SIGNAL(stateChanged(int)), this, SLOT(acceptedConfigDialog()));
         m_dialog->setLayout(lay);
     }
 
@@ -115,16 +120,9 @@ void Clock::configureDialog() //TODO: Make the size settable
 void Clock::acceptedConfigDialog()
 {
     KConfigGroup cg = globalAppletConfig();
-    if (m_showTimeString->checkState() == Qt::Checked) {
-        boolShowTimeString = true;
-        cg.writeEntry("showTimeString", "true");
-        QGraphicsItem::update();
-    }
-    if (m_showTimeString->checkState() == Qt::Unchecked) {
-        boolShowTimeString = false;
-        cg.writeEntry("showTimeString", "false");
-        QGraphicsItem::update();
-    }
+    m_showTimeString = m_showTimeStringCheckBox->checkState() == Qt::Checked;
+    cg.writeEntry("showTimeString", m_showTimeString);
+    update();
     cg.config()->sync(); //NOTE: This shouldn't be needed, but automatically handled from Plasma
 }
 
@@ -141,8 +139,8 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     QRectF tempRect(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
 
-    int SVGSize = boundRect.width(); //store the dimensions of the clock. Assuming it's a square
-    int scaleFactor = m_customSize / SVGSize;
+    //qreal SVGSize = boundRect.width(); //store the dimensions of the clock. Assuming it's a square
+    //qreal scaleFactor = m_customSize / SVGSize;
 
     QSizeF boundSize = boundRect.size();
     QSize elementSize;
@@ -153,6 +151,13 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     qreal minutes = 6.0 * m_time.minute() - 180;
     qreal hours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
 
+    if (formFactor() == Plasma::Horizontal ||
+        formFactor() == Plasma::Vertical) {
+        QString time = m_time.toString();
+        QFontMetrics fm(QApplication::font());
+        p->drawText(boundRect.width() * 0.1, boundRect.height() * 0.25, m_time.toString());
+        return;
+    }
     m_theme->paint(p, boundRect, "ClockFace");
 
     p->save();
@@ -190,7 +195,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     m_theme->paint(p, tempRect, "HandCenterScrew");
     p->restore();
 
-    if(boolShowTimeString) {
+    if (m_showTimeString) {
         //FIXME: temporary time output
         QString time = m_time.toString();
         QFontMetrics fm(QApplication::font());
