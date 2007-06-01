@@ -56,6 +56,10 @@ RootWidget::RootWidget()
     m_controlBox->show();
 
     connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_view->corona(), SLOT(addPlasmoid(const QString&)));
+
+    #ifdef SUPERKARAMBA_DEMO
+        m_view->corona()->addKaramba(KUrl("~/themes/aero_aio.skz"));
+    #endif
 }
 
 RootWidget::~RootWidget()
