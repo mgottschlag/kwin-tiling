@@ -32,6 +32,13 @@
 #include "coronaview.h"
 #include "controlbox.h"
 
+//#define ICON_DEMO
+//#define SUPERKARAMBA_DEMO
+
+#ifdef ICON_DEMO
+#include "widgets/icon.h"
+#endif
+
 RootWidget::RootWidget()
     : QWidget(0, Qt::FramelessWindowHint)
 {
@@ -58,9 +65,22 @@ RootWidget::RootWidget()
     connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_view->corona(), SLOT(addPlasmoid(const QString&)));
     connect(m_controlBox, SIGNAL(setFormFactor(Plasma::FormFactor)), m_view->corona(), SLOT(setFormFactor(Plasma::FormFactor)));
 
-    #ifdef SUPERKARAMBA_DEMO
-        m_view->corona()->addKaramba(KUrl("~/themes/aero_aio.skz"));
-    #endif
+#ifdef ICON_DEMO
+    Icon* icon = new Icon();
+    icon->setIcon("plasmagik");
+    icon->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    addItem(icon);
+
+    icon = new Icon();
+    icon->setIcon("user-home");
+    icon->setSize(64, 64);
+    icon->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    addItem(icon);
+#endif
+
+#ifdef SUPERKARAMBA_DEMO
+    m_view->corona()->addKaramba(KUrl("~/themes/aero_aio.skz"));
+#endif
 }
 
 RootWidget::~RootWidget()
