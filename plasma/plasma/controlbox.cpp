@@ -127,7 +127,7 @@ ControlWidget::ControlWidget(QWidget *parent)
 
     m_formFactorSelector = new KComboBox(this);
     QStringList formFactors;
-    formFactors << "Desktop (Planar)" << "Horizontal Panel" << "Vertical Panel" << "Media Center";
+    formFactors << "Desktop" << "Media Center" << "Horizontal Panel" << "Vertical Panel";
     m_formFactorSelector->addItems(formFactors);
     connect(m_formFactorSelector, SIGNAL(activated(int)), this, SLOT(switchFormFactor(int)));
 
