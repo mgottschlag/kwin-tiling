@@ -42,7 +42,7 @@
      <item>
       <widget class="QLabel" name="sizeLabel" >
        <property name="text" >
-        <string>Screen SIze:</string>
+        <string>Screen Size:</string>
        </property>
        <property name="buddy" >
         <cstring>sizeCombo</cstring>
