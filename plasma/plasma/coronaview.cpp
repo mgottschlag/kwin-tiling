@@ -57,8 +57,10 @@ void CoronaView::drawBackground(QPainter * painter, const QRectF &)
 
 void CoronaView::resizeEvent(QResizeEvent* event)
 {
-     scene()->setSceneRect(rect());
-     m_background->resize(width(), height());
+    Q_UNUSED(event)
+
+    scene()->setSceneRect(rect());
+    m_background->resize(width(), height());
 }
 
 #include "coronaview.moc"

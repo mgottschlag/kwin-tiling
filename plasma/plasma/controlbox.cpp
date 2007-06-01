@@ -18,17 +18,20 @@
 
 #include "controlbox.h"
 
+#include <QtGui/QApplication>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QListView>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
 #include <QtGui/QPushButton>
+#include <QtGui/QStandardItemModel>
 #include <QtGui/QVBoxLayout>
+#include <QtCore/QStringList>
 #include <QtCore/QTimeLine>
 #include <QtCore/QTimer>
-#include <QtGui/QStandardItemModel>
-#include <QtCore/QStringList>
+
+#include <KComboBox>
 #include <KLocale>
 #include <KDebug>
 #include <KLibrary>
@@ -95,11 +98,16 @@ QStringList PlasmoidListItemModel::mimeTypes() const
 
 QMimeData* PlasmoidListItemModel::mimeData(const QModelIndexList &indexes) const
 {
-    if (indexes.count() <= 0)
+    if (indexes.count() <= 0) {
         return 0;
+    }
+
     QStringList types = mimeTypes();
-    if (types.isEmpty())
+
+    if (types.isEmpty()) {
         return 0;
+    }
+
     QMimeData *data = new QMimeData();
     QString format = types.at(0);
     QByteArray byteArray;
@@ -114,30 +122,38 @@ QMimeData* PlasmoidListItemModel::mimeData(const QModelIndexList &indexes) const
 ControlWidget::ControlWidget(QWidget *parent)
     : QWidget(parent)
 {
-    //This is all to change of course
-    QVBoxLayout* boxLayout = new QVBoxLayout(this);
-
     QPushButton* hideBoxButton = new QPushButton(i18n("Hide Config Box"), this);
-    m_appletList = new QListView(this);
-    m_appletList->setDragEnabled(true);
-    m_label = new QLabel("Plasmoids:", this);
-    boxLayout->addWidget(hideBoxButton);
-    boxLayout->addWidget(m_label);
-    boxLayout->addWidget(m_appletList);
-
-    hideBoxButton->show();
-    m_appletList->show();
-    setLayout(boxLayout);
-
     connect(hideBoxButton, SIGNAL(pressed()), parent, SLOT(hideBox()));
 
+    m_formFactorSelector = new KComboBox(this);
+    QStringList formFactors;
+    formFactors << "Desktop (Planar)" << "Horizontal Panel" << "Vertical Panel" << "Media Center";
+    m_formFactorSelector->addItems(formFactors);
+    connect(m_formFactorSelector, SIGNAL(activated(int)), this, SLOT(switchFormFactor(int)));
+
+    //hideBoxButton->show();
+    //m_appletList->show();
+
+
+    m_appletList = new QListView(this);
+    m_appletList->setDragEnabled(true);
     m_appletListModel = new PlasmoidListItemModel(this);
     m_appletList->setModel(m_appletListModel);
     m_appletList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    connect(m_appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addPlasmoidSlot(QModelIndex)));
+    connect(m_appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addPlasmoid(QModelIndex)));
+
+    m_label = new QLabel("Plasmoids:", this);
 
     //TODO: this should be delayed until (if) the box is actually shown.
     refreshPlasmoidList();
+
+    //This is all to change of course
+    QVBoxLayout* boxLayout = new QVBoxLayout(this);
+    boxLayout->addWidget(hideBoxButton);
+    boxLayout->addWidget(m_formFactorSelector);
+    boxLayout->addWidget(m_label);
+    boxLayout->addWidget(m_appletList);
+    //setLayout(boxLayout);
 }
 
 ControlWidget::~ControlWidget() {}
@@ -158,9 +174,14 @@ void ControlWidget::refreshPlasmoidList()
     }
 }
 
-void ControlWidget::addPlasmoidSlot(const QModelIndex& plasmoidIndex)
+void ControlWidget::addPlasmoid(const QModelIndex& plasmoidIndex)
 {
     emit addPlasmoid(m_appletListModel->item(plasmoidIndex.row(), 1)->text());
+}
+
+void ControlWidget::switchFormFactor(int formFactor)
+{
+    emit setFormFactor(static_cast<Plasma::FormFactor>(formFactor));
 }
 
 //BEGIN - ControlBox
@@ -185,6 +206,7 @@ ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
     m_box->hide();
     boxIsShown = false;
     connect(m_box, SIGNAL(addPlasmoid(const QString&)), this, SIGNAL(addPlasmoid(const QString&)));
+    connect(m_box, SIGNAL(setFormFactor(Plasma::FormFactor)), this, SIGNAL(setFormFactor(Plasma::FormFactor)));
 
     //Set up the animation timeline
     m_timeLine = new QTimeLine(300, this);
@@ -208,7 +230,11 @@ bool ControlBox::eventFilter(QObject *watched, QEvent *event)
         }
     } else if (watched == m_box) {
         if (event->type() == QEvent::Leave) {
-            m_exitTimer->start();
+            QWidget* widget = qApp->activePopupWidget();
+
+            if (!widget || !m_box->m_formFactorSelector->isActiveWindow()) {
+                m_exitTimer->start();
+            }
         } else if (event->type() == QEvent::Enter) {
             m_exitTimer->stop(); //If not a leave event, stop the box from closing
         }

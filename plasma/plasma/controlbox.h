@@ -22,14 +22,19 @@
 #include <QtGui/QWidget>
 #include <QtGui/QStandardItemModel>
 
+#include <plasma.h>
+
 class QLabel;
+class QListView;
+class QModelIndex;
+class QStandardItemModel;
 class QTimeLine;
+
+class KComboBox;
+
 class DisplayLabel;
 class ControlWidget;
 class PlasmoidListItemModel;
-class QListView;
-class QStandardItemModel;
-class QModelIndex;
 
 /**
  * @short The Desktop configuration widget
@@ -47,6 +52,7 @@ class ControlBox : public QWidget
     Q_SIGNALS:
         void boxRequested();
         void addPlasmoid(const QString&);
+        void setFormFactor(Plasma::FormFactor);
 
     protected:
         //void mousePressEvent (QMouseEvent* event);
@@ -77,6 +83,7 @@ class ControlWidget : public QWidget
     public:
         ControlWidget(QWidget* parent);
         ~ControlWidget();
+        KComboBox* m_formFactorSelector;
 
     protected:
         void refreshPlasmoidList();
@@ -86,12 +93,12 @@ class ControlWidget : public QWidget
         PlasmoidListItemModel* m_appletListModel;
 
     protected Q_SLOTS:
-        void addPlasmoidSlot(const QModelIndex& plasmoidIndex);
+        void addPlasmoid(const QModelIndex& plasmoidIndex);
+        void switchFormFactor(int formFactor);
 
     Q_SIGNALS:
         void addPlasmoid(const QString&);
-
-    private:
+        void setFormFactor(Plasma::FormFactor);
 };
 
 /**
