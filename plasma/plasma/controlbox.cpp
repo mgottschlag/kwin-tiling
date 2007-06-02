@@ -172,6 +172,8 @@ void ControlWidget::refreshPlasmoidList()
         m_appletListModel->setItem(count, 1, new QStandardItem(info->pluginName()));
         ++count;
     }
+
+    m_appletListModel->sort(0);
 }
 
 void ControlWidget::addPlasmoid(const QModelIndex& plasmoidIndex)
