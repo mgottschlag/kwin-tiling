@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=Commit Log
+Name[de]=Commit-Protokoll
 Name[zh_TW]=提交紀錄
 Comment=Shows the commit log for a project using CIA.vc
+Comment[de]=Zeigt ein Commit-Protokoll eines Projekts mittels CIA.vc an
 Comment[zh_TW]=顯示使用 CIA.vc 的專案的提交紀錄
 Type=Service
 ServiceTypes=Plasma/Applet
