@@ -7,7 +7,6 @@ configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xauto
 set(krunner_KCFG_SRCS kscreensaversettings.kcfgc klaunchsettings.kcfgc)
 set(krunner_dbusXML org.kde.krunner.Interface.xml)
 set(screensaver_dbusXML org.freedesktop.ScreenSaver.xml)
-set(krunner_BGIMAGES images/background/dialog.svg)
 
 include_directories(${CMAKE_SOURCE_DIR}/workspace/plasma/lib ${CMAKE_SOURCE_DIR}/workspace/lib)
 
@@ -48,5 +47,4 @@ install(TARGETS krunner DESTINATION ${BIN_INSTALL_DIR})
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})
 install(FILES kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
-install(FILES ${krunner_BGIMAGES} DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/background)
 install(FILES ${krunner_dbusXML} ${screensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_DIR} )
