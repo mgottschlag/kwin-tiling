@@ -50,8 +50,9 @@ namespace {
 
 
 ThemePage::ThemePage( QWidget* parent, const char* name )
-	: QWidget( parent, name )
+	: QWidget( parent )
 {
+	setObjectName(name);
 	QBoxLayout *layout = new QVBoxLayout( this );
 	layout->setAutoAdd( true );
 	layout->setMargin( KDialog::marginHint() );
