@@ -55,13 +55,11 @@ CiaVc::CiaVc(QObject *parent, const QStringList &args)
     m_layout->setGeometry(QRectF(0, 0, 400, 800));
     m_layout->setMargin(12);
 
-    if (m_engine) {
-        foreach (const QString& source, m_engine->dataSources()) {
-            sourceAdded(source);
-        }
-        connect(m_engine, SIGNAL(newDataSource(QString)), this, SLOT(sourceAdded(QString)));
-        connect(m_engine, SIGNAL(dataSourceRemoved(QString)), this, SLOT(sourceRemoved(QString)));
+    foreach (const QString& source, m_engine->dataSources()) {
+        sourceAdded(source);
     }
+    connect(m_engine, SIGNAL(newDataSource(QString)), this, SLOT(sourceAdded(QString)));
+    connect(m_engine, SIGNAL(dataSourceRemoved(QString)), this, SLOT(sourceRemoved(QString)));
 }
 
 CiaVc::~CiaVc()

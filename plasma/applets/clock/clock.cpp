@@ -48,10 +48,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
       m_boundsDirty(false)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
-    Plasma::DataEngine* timeEngine = dataEngine("time");
-    if (timeEngine) {
-        timeEngine->connectSource("time", this);
-    }
+    dataEngine("time")->connectSource("time", this);
 
     m_dialog = 0;
     m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.");
