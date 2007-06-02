@@ -17,13 +17,17 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QFile>
+
 #include "svg.h"
 #include "corona.h"
 
 #include "coronaview.h"
 
 CoronaView::CoronaView(QWidget *parent)
-    : QGraphicsView(parent)
+    : QGraphicsView(parent),
+      m_background(0),
+      m_bitmapBackground(0)
 {
     setFrameShape(QFrame::NoFrame);
     setAutoFillBackground(true);
@@ -38,7 +42,14 @@ CoronaView::CoronaView(QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     //TODO: make this a real background renderer
-    m_background = new Plasma::Svg("background/dialog", this);
+    KConfigGroup config(KGlobal::config(), "General");
+    m_wallpaperPath = config.readEntry("wallpaper", QString());
+
+    //kDebug() << "wallpaperPath is " << m_wallpaperPath << " " << QFile::exists(m_wallpaperPath) << endl;
+    if (m_wallpaperPath.isEmpty() ||
+        !QFile::exists(m_wallpaperPath)) {
+        m_background = new Plasma::Svg("background/dialog", this);
+    }
 }
 
 CoronaView::~CoronaView()
@@ -50,9 +61,13 @@ Plasma::Corona* CoronaView::corona()
     return static_cast<Plasma::Corona*>(scene());
 }
 
-void CoronaView::drawBackground(QPainter * painter, const QRectF &)
+void CoronaView::drawBackground(QPainter * painter, const QRectF & rect)
 {
-    m_background->paint(painter, rect());
+    if (m_background) {
+        m_background->paint(painter, rect);
+    } else if (m_bitmapBackground) {
+        painter->drawPixmap(rect, *m_bitmapBackground, rect);
+    }
 }
 
 void CoronaView::resizeEvent(QResizeEvent* event)
@@ -60,7 +75,15 @@ void CoronaView::resizeEvent(QResizeEvent* event)
     Q_UNUSED(event)
 
     scene()->setSceneRect(rect());
-    m_background->resize(width(), height());
+
+    if (m_background) {
+        m_background->resize(width(), height());
+    } else if (!m_wallpaperPath.isEmpty() &&
+               !testAttribute(Qt::WA_PendingResizeEvent)) {
+        delete m_bitmapBackground;
+        m_bitmapBackground = new QPixmap(m_wallpaperPath);
+        (*m_bitmapBackground) = m_bitmapBackground->scaled(size());
+    }
 }
 
 #include "coronaview.moc"

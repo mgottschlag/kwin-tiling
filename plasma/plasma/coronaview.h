@@ -21,6 +21,8 @@
 
 #include <QGraphicsView>
 
+class QPixmap;
+
 namespace Plasma
 {
     class Svg;
@@ -43,6 +45,8 @@ protected:
 
 private:
     Plasma::Svg *m_background;
+    QPixmap* m_bitmapBackground;
+    QString m_wallpaperPath;
 };
 
 #endif // multiple inclusion guard
