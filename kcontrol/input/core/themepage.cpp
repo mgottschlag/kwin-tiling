@@ -54,11 +54,10 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 {
 	setObjectName(name);
 	QBoxLayout *layout = new QVBoxLayout( this );
-	layout->setAutoAdd( true );
 	layout->setMargin( KDialog::marginHint() );
 	layout->setSpacing( KDialog::spacingHint() );
 
-	new QLabel( i18n("Select the cursor theme you want to use:"), this );
+	layout->addWidget(new QLabel( i18n("Select the cursor theme you want to use:"), this ));
 
 	// Create the theme list view
 	listview = new K3ListView( this );
@@ -66,6 +65,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	listview->setAllColumnsShowFocus( true );
 	listview->addColumn( i18n("Name") );
 	listview->addColumn( i18n("Description") );
+	layout->addWidget(listview);
 
 	connect( listview, SIGNAL(selectionChanged(Q3ListViewItem*)),
 			SLOT(selectionChanged(Q3ListViewItem*)) );
@@ -94,8 +94,8 @@ void ThemePage::save()
 	bool whiteCursor = selectedTheme.right( 5 ) == "White";
 	bool largeCursor = selectedTheme.left( 5 ) == "Large";
 
-	KConfig c( "kcminputrc" );
-	c.setGroup( "Mouse" );
+	KConfig config( "kcminputrc" );
+	KConfigGroup c( &config, "Mouse" );
 	c.writeEntry( "LargeCursor", largeCursor );
 	c.writeEntry( "WhiteCursor", whiteCursor );
 
@@ -113,8 +113,8 @@ void ThemePage::load()
 {
 	bool largeCursor, whiteCursor;
 
-	KConfig c( "kcminputrc" );
-	c.setGroup( "Mouse" );
+	KConfig config( "kcminputrc" );
+	KConfigGroup c( &config, "Mouse" );
 	largeCursor = c.readEntry( "LargeCursor", false);
 	whiteCursor = c.readEntry( "WhiteCursor", false);
 
@@ -174,7 +174,7 @@ void ThemePage::fixCursorFile()
 	//
 	// Run mkfontdir to update fonts.dir in that dir.
 
-	KGlobal::dirs()->addResourceType( "font", "share/fonts/" );
+	KGlobal::dirs()->addResourceType( "font", 0, "share/fonts/" );
 	KIO::mkdir( QDir::homePath() + "/.fonts/kde-override" );
 	QString overrideDir = QDir::homePath() + "/.fonts/kde-override/";
 
