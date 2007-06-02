@@ -1,7 +1,7 @@
 
 ########### next target ###############
 
-include_directories(${CMAKE_SOURCE_DIR}/workspace/plasma/lib)
+include_directories(${CMAKE_SOURCE_DIR}/workspace/lib/plasma)
 
 set(krunner_calculatorrunner_SRCS
     calculatorrunner.cpp

@@ -37,8 +37,8 @@
 #include <KLibrary>
 //#include <KLibLoader>
 
-#include "applet.h"
-#include "svg.h"
+#include "plasma/applet.h"
+#include "plasma/svg.h"
 
 //BEGIN - DisplayLabel
 

@@ -41,16 +41,15 @@
 #include <KIcon>
 #include <KSharedConfig>
 
-#include <dataenginemanager.h>
-#include <svg.h>
-#include <widgets/vboxlayout.h>
-#include <widgets/lineedit.h>
+#include <plasma/svg.h>
+#include <plasma/widgets/vboxlayout.h>
+#include <plasma/widgets/lineedit.h>
 
 CiaVc::CiaVc(QObject *parent, const QStringList &args)
     : Plasma::Applet(parent, args) //"plasma-clock-default", appletId)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
-    m_engine = Plasma::DataEngineManager::self()->loadDataEngine("ciavc");
+    m_engine = dataEngine("ciavc");
 
     m_layout = new Plasma::VBoxLayout(0);
     m_layout->setGeometry(QRectF(0, 0, 400, 800));
@@ -67,7 +66,6 @@ CiaVc::CiaVc(QObject *parent, const QStringList &args)
 
 CiaVc::~CiaVc()
 {
-    Plasma::DataEngineManager::self()->unloadDataEngine("ciavc");
     delete m_layout;
 }
 

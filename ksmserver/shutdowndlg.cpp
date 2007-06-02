@@ -7,7 +7,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <config.h>
 
 #include "shutdowndlg.h"
-#include "../plasma/lib/svg.h"
+#include "plasma/svg.h"
 
 #include <QApplication>
 #include <QCursor>

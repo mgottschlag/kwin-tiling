@@ -25,9 +25,9 @@
 
 #include <KWindowSystem>
 
-#include "corona.h"
-#include "plasma.h"
-#include "svg.h"
+#include "plasma/corona.h"
+#include "plasma/plasma.h"
+#include "plasma/svg.h"
 
 #include "coronaview.h"
 #include "controlbox.h"

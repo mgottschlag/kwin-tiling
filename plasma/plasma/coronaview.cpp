@@ -19,8 +19,8 @@
 
 #include <QFile>
 
-#include "svg.h"
-#include "corona.h"
+#include "plasma/svg.h"
+#include "plasma/corona.h"
 
 #include "coronaview.h"
 

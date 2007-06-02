@@ -22,7 +22,7 @@
 #include <QtGui/QWidget>
 #include <QtGui/QStandardItemModel>
 
-#include <plasma.h>
+#include <plasma/plasma.h>
 
 class QLabel;
 class QListView;

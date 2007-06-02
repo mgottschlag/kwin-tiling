@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/workspace/plasma/lib)
+include_directories(${CMAKE_SOURCE_DIR}/workspace/lib)
 
 set(time_engine_SRCS
     timeengine.cpp

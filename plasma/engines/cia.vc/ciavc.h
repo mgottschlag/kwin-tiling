@@ -20,12 +20,13 @@
 #define CIAVC_DATAENGINE_H
 
 #include <QStringList>
-#include "dataengine.h"
-
-class QTimer;
 
 #include <syndication/loader.h>
 #include <syndication/feed.h>
+
+#include "plasma/dataengine.h"
+
+class QTimer;
 
 /**
  * This class evaluates the basic expressions given in the interface.

@@ -19,7 +19,7 @@
 #ifndef TIMEENGINE_H
 #define TIMEENGINE_H
 
-#include "dataengine.h"
+#include "plasma/dataengine.h"
 
 class QTimer;
 

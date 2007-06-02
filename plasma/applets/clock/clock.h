@@ -34,8 +34,8 @@
 #include <QGraphicsItem>
 #include <QColor>
 
-#include <applet.h>
-#include <dataengine.h>
+#include <plasma/applet.h>
+#include <plasma/dataengine.h>
 
 class QTimer;
 class QDialog;

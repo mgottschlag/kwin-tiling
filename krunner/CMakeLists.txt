@@ -8,7 +8,7 @@ set(krunner_KCFG_SRCS kscreensaversettings.kcfgc klaunchsettings.kcfgc)
 set(krunner_dbusXML org.kde.krunner.Interface.xml)
 set(screensaver_dbusXML org.freedesktop.ScreenSaver.xml)
 
-include_directories(${CMAKE_SOURCE_DIR}/workspace/plasma/lib ${CMAKE_SOURCE_DIR}/workspace/lib)
+include_directories(${CMAKE_SOURCE_DIR}/workspace/lib/plasma ${CMAKE_SOURCE_DIR}/workspace/lib)
 
 set(krunner_SRCS
                  krunnerdialog.cpp

@@ -24,7 +24,7 @@
 #include <KIconLoader>
 #include <KIconTheme>
 
-#include "dataenginemanager.h"
+#include "plasma/dataenginemanager.h"
 
 EngineExplorer::EngineExplorer(QWidget* parent)
     : KDialog(parent),
