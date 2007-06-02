@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=A Plasma Clock
+Name=Analog Clock
 Name[zh_TW]=電漿時鐘
-Comment=Shows the time in several fashion... and it's the first plasmoid ever!
+Comment=An SVG themable clock
 Comment[zh_TW]=以幾種不同方式呈現時間
 Type=Service
 ServiceTypes=Plasma/Applet
