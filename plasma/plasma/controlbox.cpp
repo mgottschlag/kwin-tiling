@@ -57,7 +57,7 @@ class DisplayLabel : public QLabel
 
 DisplayLabel::DisplayLabel(const QString& text, QWidget *parent)
     : QLabel(text, parent),
-      m_background("background/dialog") //FIXME: we need a proper SVG for this =)
+      m_background("widgets/toolbox-button")
 {
     setAlignment(Qt::AlignCenter);
     m_background.resize(size());
@@ -189,7 +189,7 @@ void ControlWidget::switchFormFactor(int formFactor)
 ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
 {
     //The display box label/button
-    m_displayLabel = new DisplayLabel(i18n("Configure Desktop"), this);
+    m_displayLabel = new DisplayLabel(i18n("Desktop Toolbox"), this);
     m_displayLabel->show();
     m_displayLabel->installEventFilter(this);
     resize(m_displayLabel->size());

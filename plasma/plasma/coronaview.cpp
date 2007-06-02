@@ -73,13 +73,15 @@ void CoronaView::drawBackground(QPainter * painter, const QRectF & rect)
 void CoronaView::resizeEvent(QResizeEvent* event)
 {
     Q_UNUSED(event)
+    if (testAttribute(Qt::WA_PendingResizeEvent)) {
+        return; // lets not do this more than necessary, shall we?
+    }
 
     scene()->setSceneRect(rect());
 
     if (m_background) {
         m_background->resize(width(), height());
-    } else if (!m_wallpaperPath.isEmpty() &&
-               !testAttribute(Qt::WA_PendingResizeEvent)) {
+    } else if (!m_wallpaperPath.isEmpty()) {
         delete m_bitmapBackground;
         m_bitmapBackground = new QPixmap(m_wallpaperPath);
         (*m_bitmapBackground) = m_bitmapBackground->scaled(size());
