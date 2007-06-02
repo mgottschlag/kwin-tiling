@@ -48,7 +48,7 @@ CoronaView::CoronaView(QWidget *parent)
     //kDebug() << "wallpaperPath is " << m_wallpaperPath << " " << QFile::exists(m_wallpaperPath) << endl;
     if (m_wallpaperPath.isEmpty() ||
         !QFile::exists(m_wallpaperPath)) {
-        m_background = new Plasma::Svg("background/dialog", this);
+        m_background = new Plasma::Svg("dialogs/background", this);
     }
 }
 

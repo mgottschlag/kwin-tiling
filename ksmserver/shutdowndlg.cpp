@@ -105,7 +105,7 @@ void KSMPushButton::init()
     connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
     connect( this, SIGNAL(released()), SLOT(slotReleased()) );
 
-    m_glowSvg = new Plasma::Svg( "background/shutdowndlgbuttonglow", this );
+    m_glowSvg = new Plasma::Svg( "dialogs/shutdowndlgbuttonglow", this );
     connect( m_glowSvg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
 
     m_glowTimeLine = new QTimeLine( 150, this );
@@ -277,7 +277,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
-    m_svg = new Plasma::Svg( "background/shutdowndlg", this);
+    m_svg = new Plasma::Svg( "dialogs/shutdowndlg", this);
     connect( m_svg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
     setModal( true );
     resize(420, 180);

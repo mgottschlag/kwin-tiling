@@ -30,7 +30,7 @@
 KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
     : QDialog( parent, f )
 {
-    m_background = new Plasma::Svg( "/background/dialog", this );
+    m_background = new Plasma::Svg( "dialogs/background", this );
     connect( m_background, SIGNAL(repaintNeeded()), this, SLOT(update()) );
 }
 
