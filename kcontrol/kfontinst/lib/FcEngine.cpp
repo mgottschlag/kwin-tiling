@@ -877,7 +877,7 @@ QString CFcEngine::getPunctuation()
 QString CFcEngine::getFcLangString(FcPattern *pat, const char *val, const char *valLang)
 {
     QString                    rv;
-    QStringList                kdeLangs=KGlobal::locale()->languagesTwoAlpha(),
+    QStringList                kdeLangs=KGlobal::locale()->languageList(),
                                fontLangs;
     QStringList::ConstIterator it(kdeLangs.begin()),
                                end(kdeLangs.end());
