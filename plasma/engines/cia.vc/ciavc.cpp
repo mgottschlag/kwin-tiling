@@ -74,7 +74,7 @@ void CiaVcEngine::processProject(Syndication::Loader* loader, Syndication::FeedP
 
     //TODO: implement domains in DataEngine
     QString domain = feed->title();
-    kDebug() << "recieved " << feed->items().count() << " item(s) for " << domain << endl;
+    kDebug() << "received " << feed->items().count() << " item(s) for " << domain << endl;
     foreach (const Syndication::ItemPtr& item, feed->items()) {
         //FIXME: this is ugly and should be fixed in how DataSources work
         //       is this a candidate for domains? or for a DataSource QVariant
