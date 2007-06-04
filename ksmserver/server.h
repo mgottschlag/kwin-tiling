@@ -125,7 +125,7 @@ private:
     void startProtection();
     void endProtection();
 
-    void startApplication( QStringList command,
+    void startApplication( QStringList& command,
         const QString& clientMachine = QString(),
         const QString& userId = QString() );
     void executeCommand( const QStringList& command );
