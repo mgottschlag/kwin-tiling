@@ -1,5 +1,5 @@
 
-if (X11_XFT_FOUND)
+if (X11_Xft_FOUND)
 
   include_directories(${FREETYPE_INCLUDE_DIR})
 
@@ -22,8 +22,8 @@ if (X11_XFT_FOUND)
   add_subdirectory( viewpart )
   add_subdirectory( mime )
 
-else (X11_XFT_FOUND)
+else (X11_Xft_FOUND)
 
-  message(STATUS Missing Xft - disabling font installer and font previews)
+  message(STATUS "Missing Xft - disabling font installer and font previews")
 
-endif (X11_XFT_FOUND)
+endif (X11_Xft_FOUND)
