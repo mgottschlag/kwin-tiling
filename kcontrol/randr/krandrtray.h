@@ -27,6 +27,7 @@
 
 class KHelpMenu;
 class QAction;
+class KMenu;
 
 class KRandRSystemTray :  public KSystemTrayIcon, public RandRDisplay
 {
