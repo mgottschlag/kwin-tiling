@@ -22,7 +22,6 @@ template <class QString, class T> class QMap;
 class KStandardDirs;
 class KDesktopFile;
 class QString;
-class QImage;
 
 /**
  * A class to manipulate/read/write/list KDE desktop patterns.

@@ -46,7 +46,6 @@ class QGridLayout;
 class QMenu;
 class QTimer;
 class HideButton;
-class KConfig;
 class PopupWidgetFilter;
 class PanelExtensionOpMenu;
 

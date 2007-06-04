@@ -16,9 +16,7 @@
 
 
 #include "sound.h"
-class QMouseEvent;
 class  KAudioRecordStream ;
-class KArtsServer;
 class KTemporaryFile;
 class KLibrary;
 
@@ -26,8 +24,7 @@ namespace KHotKeys
 {
 
 	class SoundRecorder;
-	class Voice_trigger;
-
+	
 class VoiceRecorder : public Voice_input_widget_ui
     {
     Q_OBJECT

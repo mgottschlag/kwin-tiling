@@ -29,7 +29,6 @@
 #include <QMap>
 #include <kstartupinfo.h>
 
-class QStyle;
 
 class StartupId
     : public QWidget

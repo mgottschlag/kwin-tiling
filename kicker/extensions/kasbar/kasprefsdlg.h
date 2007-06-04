@@ -65,7 +65,6 @@ class QCheckBox;
 class QSlider;
 class QSpinBox;
 class KColorButton;
-class KConfig;
 class KIntSpinBox;
 
 class KasTasker;

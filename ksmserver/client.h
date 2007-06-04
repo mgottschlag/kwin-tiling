@@ -21,8 +21,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include "server2.h"
 
-class KSMListener;
-class KSMConnection;
 
 class KSMClient
 {

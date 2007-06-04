@@ -75,7 +75,6 @@ typedef long			Q_LONG;		// word up to 64 bit signed
 typedef unsigned long		Q_ULONG;	// word up to 64 bit unsigned
 #endif
 
-class QPixmap;
 
 #if 0
 const QRgb  RGB_MASK    = 0x00ffffff;		// masks RGB values

@@ -25,13 +25,11 @@
 
 class QTimer;
 class QSpinBox;
-class QSlider;
 class QCheckBox;
 class QLabel;
 class Q3ListView;
 class Q3ListViewItem;
 class QPushButton;
-class KIntNumInput;
 class K3Process;
 
 //===========================================================================

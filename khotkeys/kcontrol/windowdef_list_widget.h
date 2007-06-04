@@ -22,7 +22,6 @@ namespace KHotKeys
 {
 
 class Action_data;
-class Action_data_base;
 class Windowdef_simple_widget;
 
 class Windowdef_list_item;

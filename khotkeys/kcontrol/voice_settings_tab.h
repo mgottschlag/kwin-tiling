@@ -13,7 +13,6 @@
 
 #include <voice_settings_tab_ui.h>
 
-class KShortcut;
 
 namespace KHotKeys
 {

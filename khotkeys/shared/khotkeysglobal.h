@@ -22,7 +22,6 @@
 
 #include <klocale.h>
 
-class KConfig;
 class QObject;
 
 namespace KHotKeys
@@ -30,7 +29,6 @@ namespace KHotKeys
 
 class Kbd;
 class Windows;
-class Action_data_group;
 
 extern Kbd* keyboard_handler;
 extern Windows* windows_handler;

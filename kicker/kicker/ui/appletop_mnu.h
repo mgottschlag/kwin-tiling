@@ -28,7 +28,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //Added by qt3to4:
 #include <QKeyEvent>
 
-class AppletInfo;
 
 // The button operations menu (usually right click)
 class PanelAppletOpMenu : public QMenu

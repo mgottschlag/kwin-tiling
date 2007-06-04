@@ -36,7 +36,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class KBookmarkMenu;
 class KActionCollection;
-class KBookmarkOwner;
 class Panel;
 
 class PanelKMenu : public PanelServiceMenu

@@ -26,7 +26,6 @@
 class KLineEdit;
 class Positioner;
 class QLabel;
-class QLineEdit;
 class QPushButton;
 class QRadioButton;
 

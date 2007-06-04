@@ -33,8 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class QEvent;
 class QMouseEvent;
 class QPaintEvent;
-class QTextEdit;
-class QTimer;
 
 class KDE_EXPORT KickerTip : public QWidget
 {

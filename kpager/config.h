@@ -27,7 +27,6 @@
 #include <Q3ButtonGroup>
 
 class QCheckBox;
-class QButtonGroup;
 
 class KPagerConfigDialog : public KDialog
 {

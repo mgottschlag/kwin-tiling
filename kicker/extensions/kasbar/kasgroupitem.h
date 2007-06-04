@@ -67,7 +67,6 @@
 
 class KasPopup;
 class KasTasker;
-class KPixmap;
 class Task;
 
 /**

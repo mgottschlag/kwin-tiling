@@ -39,7 +39,6 @@ class QDragLeaveEvent;
 class QDropEvent;
 class QTextStream;
 class QDomElement;
-class QPixmap;
 
 namespace KFI
 {

@@ -35,7 +35,6 @@ class KMenuBar;
 class KDesktop;
 class QMenu;
 class KNewMenu;
-class KWinModule;
 class KBookmarkMenu;
 class KHelpMenu;
 class KActionCollection;

@@ -29,8 +29,6 @@
 class KUrl;
 class QCloseEvent;
 class QDropEvent;
-class QPopupMenu;
-class KGlobalAccel;
 class KWinModule;
 class KBackgroundManager;
 class QTimer;

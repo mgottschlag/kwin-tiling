@@ -34,7 +34,6 @@ class QCheckBox;
 class QGroupBox;
 class QLabel;
 class KUrlRequester;
-class KComboBox;
 class KService;
 
 class MenuFolderInfo;

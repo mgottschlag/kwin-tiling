@@ -19,16 +19,10 @@
 #include "widgetcanvas.h"
 
 class QSlider;
-class QComboBox;
 class QPushButton;
 class QCheckBox;
-class QResizeEvent;
-class KLineEdit;
 class QPalette;
 class KListWidget;
-class KColorButton;
-class KConfig;
-class KStdDirs;
 class KColorSchemeList;
 class KColorTreeWidget;
 

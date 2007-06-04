@@ -26,7 +26,6 @@
 #include "randrdisplay.h"
 
 class KHelpMenu;
-class QMenu;
 class QAction;
 
 class KRandRSystemTray :  public KSystemTrayIcon, public RandRDisplay

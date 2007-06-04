@@ -17,10 +17,6 @@ namespace KHotKeys
 {
 
 class Action_data;
-class Trigger_list;
-class Action_data_group;
-class Windowdef_list;
-class Action_list;
 
 class General_tab
     : public General_tab_ui

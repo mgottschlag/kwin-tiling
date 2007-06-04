@@ -42,6 +42,7 @@
 #include "qshared.h"
 
 class QImageDataMisc; // internal
+class QPixmap;
 #ifndef QT_NO_IMAGE_TEXT
 class Q_EXPORT QImageTextKeyLang {
 public:

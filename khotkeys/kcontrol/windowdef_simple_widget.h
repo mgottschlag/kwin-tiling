@@ -17,7 +17,6 @@ namespace KHotKeys
 {
 
 class Windowdef_simple;
-class Windowdef_list_item;
 
 class Windowdef_simple_widget
     : public Windowdef_simple_widget_ui

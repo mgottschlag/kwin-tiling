@@ -24,7 +24,6 @@
 
 class QFrame;
 class KVirtualBGRenderer;
-class KickerConfig;
 class ExtensionInfo;
 
 class PositionTab : public PositionTabBase

@@ -15,10 +15,10 @@
 #include <kshortcut.h>
 
 class KConfig;
-
 namespace KHotKeys
 {
 
+class Action_data_group;
 enum ImportType
     {
     ImportNone, // no import is done

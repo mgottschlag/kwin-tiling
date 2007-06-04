@@ -18,7 +18,6 @@ namespace KHotKeys
 {
 
 class Action_data_group;
-class Windowdef_list;
 
 class Action_group_tab
     : public Action_group_tab_ui

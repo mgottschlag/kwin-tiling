@@ -22,7 +22,6 @@
 
 class QCheckBox;
 class QComboBox;
-class QGroupBox;
 
 class KIntNumInput;
 

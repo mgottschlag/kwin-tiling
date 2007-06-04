@@ -29,7 +29,6 @@
 #include "ActionDialog.h"
 #include "Misc.h"
 
-class QTimer;
 class QLabel;
 class QMenu;
 class QAction;

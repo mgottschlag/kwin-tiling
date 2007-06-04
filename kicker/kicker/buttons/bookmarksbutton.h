@@ -29,7 +29,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class KMenu;
 class KBookmarkMenu;
 class KActionCollection;
-class KBookmarkOwner;
 
 /**
  * Button that contains a bookmark menu

@@ -21,7 +21,6 @@
 
 #include "abstractrunner.h"
 
-class QWidget;
 class QAction;
 
 /**

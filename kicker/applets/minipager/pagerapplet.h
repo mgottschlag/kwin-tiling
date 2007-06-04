@@ -39,9 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class QButtonGroup;
 class QGridLayout;
-class QTimer;
 
-class K3Process;
 class KShadowEngine;
 class OrgKdeKdesktopBackgroundInterface;
 class KSelectionOwner;

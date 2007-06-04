@@ -27,7 +27,6 @@
 
 class KlipperPopup;
 class QWidget;
-class QptrListIterator;
 
 class History : public QObject
 {

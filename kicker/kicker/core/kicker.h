@@ -29,8 +29,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class KCMultiDialog;
 class KDirWatch;
 class KActionCollection;
-class PanelKMenu;
-class PanelPopupButton;
 
 class Kicker : public KUniqueApplication
 {

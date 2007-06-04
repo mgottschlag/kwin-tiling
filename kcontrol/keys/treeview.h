@@ -24,8 +24,6 @@
 
 #include <k3listview.h>
 
-class KActionCollection;
-class KDesktopFile;
 
 class AppTreeItem : public K3ListViewItem
 {

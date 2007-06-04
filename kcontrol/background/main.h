@@ -13,7 +13,6 @@
 #include <kcmodule.h>
 #include <kconfig.h>
 
-class KConfig;
 class BGDialog;
 
 /**

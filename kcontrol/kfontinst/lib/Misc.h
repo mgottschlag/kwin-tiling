@@ -33,7 +33,6 @@
 #include <kurl.h>
 #include "KfiConstants.h"
 
-class QWidget;
 class QTextStream;
 
 namespace KFI

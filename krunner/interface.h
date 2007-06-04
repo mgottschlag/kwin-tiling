@@ -30,7 +30,6 @@
 // local includes
 #include "krunnerdialog.h"
 
-class QFrame;
 class QLabel;
 class QListWidget;
 class QListWidgetItem;

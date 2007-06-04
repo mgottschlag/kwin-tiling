@@ -20,16 +20,12 @@
 #include <kkeysequencewidget.h>
 #include <window_trigger_widget.h>
 
-class KKeyButton;
-class KShortcut;
 
 namespace KHotKeys
 {
 
-class Windowdef_list;
 class Action_data;
 class Trigger_list_item;
-class KHotKeysShortcutList;
 
 // A listbox here would do too, but unlike QListView, QListBox now even cannot be subclassed
 // to behave sanely WRT selecting and the current item

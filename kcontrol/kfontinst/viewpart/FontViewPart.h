@@ -37,7 +37,6 @@ class QLabel;
 class QProcess;
 class QAction;
 class KIntNumInput;
-class KConfig;
 class KTempDir;
 
 namespace KFI

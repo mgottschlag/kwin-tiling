@@ -25,7 +25,6 @@
 
 #include "appletinfo.h"
 
-class AppletItemDelegate;
 
 class AppletListModel
 	: public QAbstractListModel

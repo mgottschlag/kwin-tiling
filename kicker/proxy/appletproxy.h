@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "appletinfo.h"
 
 class KPanelApplet;
-class KickerPluginManager;
 
 class AppletProxy : public QObject
 {

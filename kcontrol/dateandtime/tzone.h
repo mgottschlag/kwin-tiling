@@ -28,7 +28,6 @@
 #include <ktimezone.h>
 #include <ktimezonewidget.h>
 
-class QComboBox;
 class QLabel;
 
 class Tzone : public QGroupBox

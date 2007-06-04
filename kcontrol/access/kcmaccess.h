@@ -14,15 +14,12 @@
 
 
 class QCheckBox;
-class QComboBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
 class QRadioButton;
 class KColorButton;
 class QSlider;
-class KNumInput;
-class KAboutData;
 
 class ExtendedIntNumInput : public KIntNumInput
 {

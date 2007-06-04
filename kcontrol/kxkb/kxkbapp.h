@@ -37,7 +37,6 @@ DESCRIPTION
 #include "kxkbcore.h"
 
 class LayoutUnit;
-class QAction;
 /* This is the main Kxkb class responsible for reading options
     and switching layouts
 */

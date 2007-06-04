@@ -21,7 +21,6 @@
 
 #include <QDialog>
 
-class QSvgRenderer;
 
 namespace Plasma
 {

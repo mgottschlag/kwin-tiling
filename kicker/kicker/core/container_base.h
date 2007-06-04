@@ -33,7 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class KConfigGroup;
 class QMenu;
-class QMimeType;
 
 class BaseContainer : public QWidget
 {

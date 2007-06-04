@@ -26,7 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QResizeEvent>
 
-class AppletInfo;
 class KPanelExtension;
 
 class ExtensionContainer : public QWidget

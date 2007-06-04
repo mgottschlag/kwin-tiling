@@ -31,10 +31,8 @@
 #include <QDropEvent>
 
 class KDirLister;
-class KonqSettings;
 class KDesktopFile;
 class KShadowEngine;
-class KDesktopShadowSettings;
 
 /**
  * This class is KDesktop's icon view.

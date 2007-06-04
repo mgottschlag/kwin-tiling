@@ -37,7 +37,6 @@
 #include <kwindowsystem.h>
 
 class KSharedPixmap;
-class KMenu;
 
 class QPainter;
 class QPoint;

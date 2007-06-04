@@ -25,7 +25,6 @@
 
 class ThemeData;
 
-class QCheckBox;
 class QLabel;
 class QPushButton;
 class QTreeWidget;

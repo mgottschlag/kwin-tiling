@@ -27,7 +27,6 @@
 #include <QKeyEvent>
 
 class History;
-class KlipperWidget;
 class KHelpMenu;
 class QAction;
 class PopupProxy;

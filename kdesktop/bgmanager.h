@@ -14,10 +14,8 @@
 
 #include <QVector>
 
-class KConfig;
 class QTimer;
 class QPixmap;
-class KMenu;
 class QPixmap;
 class KVirtualBGRenderer;
 class KPixmapServer;

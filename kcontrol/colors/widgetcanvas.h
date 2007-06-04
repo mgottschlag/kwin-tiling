@@ -42,8 +42,6 @@
 
 class QPixmap;
 class QColor;
-class QPainter;
-class QEvent;
 
 class QPixmap;
 

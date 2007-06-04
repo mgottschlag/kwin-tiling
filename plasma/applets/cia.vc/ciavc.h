@@ -38,8 +38,6 @@
 #include <plasma/dataengine.h>
 
 class QTimer;
-class KDialog;
-class QCheckBox;
 
 namespace Plasma
 {

@@ -13,7 +13,6 @@
 #include <ksharedconfig.h>
 
 class BGDialog;
-class KConfig;
 class QCheckBox;
 class QLabel;
 

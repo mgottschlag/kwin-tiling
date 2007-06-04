@@ -34,7 +34,6 @@
 #include "kfontinst_export.h"
 #include <fontconfig/fontconfig.h>
 
-class QDomDocument;
 class QDomElement;
 class QTextStream;
 

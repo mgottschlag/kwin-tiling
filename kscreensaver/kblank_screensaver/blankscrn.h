@@ -12,7 +12,6 @@
 #include <kdialog.h>
 #include "kscreensaver.h"
 
-class KColorButton;
 
 
 class KBlankSaver : public KScreenSaver

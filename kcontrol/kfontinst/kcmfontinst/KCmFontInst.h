@@ -37,7 +37,6 @@
 
 class KPushButton;
 class KProgressDialog;
-class KTreeWidgetSearchLineWidget;
 class KTempDir;
 class KZip;
 class KToggleAction;
@@ -46,7 +45,6 @@ class QProcess;
 class QLabel;
 class QSplitter;
 class QComboBox;
-class QGridLayout;
 
 namespace KFI
 {

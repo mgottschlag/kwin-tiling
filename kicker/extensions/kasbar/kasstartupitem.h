@@ -62,7 +62,6 @@
 #include "kasitem.h"
 
 class Startup;
-class KasPopup;
 class QTimer;
 
 /**

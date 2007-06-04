@@ -36,9 +36,7 @@ namespace Control
     class Network;
     class NetworkInterface;
     typedef QList<NetworkInterface> NetworkInterfaceList;
-    class NetworkManagerPrivate;
-    class AuthenticationValidator;
-
+        
     /**
      * This class allow to query the underlying system to discover the available
      * network interfaces and reachable network.It has also the

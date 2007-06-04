@@ -36,7 +36,6 @@
 #define DITHER_FLAGS (Qt::DiffuseAlphaDither | Qt::ColorOnly | Qt::AvoidDither)
 
 
-class QFont;
 class KShadowEngine;
 
 /**

@@ -33,9 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class KComboBox;
 class KLineEdit;
 class KSimpleConfig;
-class QGridLayout;
 class QLabel;
-class KdmThemer;
 
 class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	Q_OBJECT

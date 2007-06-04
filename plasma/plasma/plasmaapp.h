@@ -22,8 +22,6 @@
 #include <KUniqueApplication>
 
 class RootWidget;
-class QGraphicsView;
-class QGraphicsScene;
 
 class PlasmaApp : public KUniqueApplication
 {
