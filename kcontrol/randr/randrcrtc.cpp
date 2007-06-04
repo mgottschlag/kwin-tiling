@@ -71,6 +71,21 @@ void RandRCrtc::loadSettings()
 	// get all rotations
 	m_rotations = m_info->rotations;
 	m_currentRotation = m_info->rotation;
+
+	m_currentMode = m_info->mode;
+}
+
+void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
+{
+	//TODO: implement
+	kDebug() << "[CRTC] Got event" << endl;
+
+	emit crtcChanged(m_id);
+}
+
+RRMode RandRCrtc::currentMode() const
+{
+	return m_currentMode;
 }
 
 #include "randrcrtc.moc"

@@ -21,6 +21,7 @@
 #include "randroutput.h"
 #include "randrscreen.h"
 #include "randrcrtc.h"
+#include "randrmode.h"
 
 #ifdef HAS_RANDR_1_2
 RandROutput::RandROutput(RandRScreen *parent, RROutput id)
@@ -53,7 +54,6 @@ void RandROutput::loadSettings()
 	for (int i = 0; i < m_info->ncrtc; ++i)
 		m_possibleCrtcs.append(m_info->crtcs[i]);
 
-	kDebug() << "Got " << m_possibleCrtcs.count() << " CRTCS for output " << m_name << endl;
 	m_currentCrtc = m_info->crtc;
 
 	m_connected = (m_info->connection == RR_Connected);
@@ -71,6 +71,31 @@ void RandROutput::loadSettings()
 		Q_ASSERT(crtc);
 		m_rotations |= crtc->rotations();
 	}
+}
+
+void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
+{
+	bool changed = false;
+
+	//TODO: implement
+	kDebug() << "[OUTPUT] Got event" << endl;
+	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
+	Q_ASSERT(screen);
+
+	if (event->mode != currentMode())
+	{
+		RandRMode mode = screen->mode(event->mode);
+		kdDebug()  << "[OUTPUT]      new mode: " << mode.name() << endl; 
+	}
+
+	loadSettings();
+	emit outputChanged(m_id);
+}
+
+void RandROutput::handlePropertyEvent(XRROutputPropertyNotifyEvent *event)
+{
+	//TODO: implement
+	kDebug() << "[OUTPUT] Got property event" << endl;
 }
 
 QString RandROutput::name() const
@@ -107,7 +132,15 @@ ModeList RandROutput::modes() const
 
 RRMode RandROutput::currentMode() const
 {
-	return m_currentMode;
+	if (!isConnected())
+		return None;
+
+	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
+	Q_ASSERT(screen);
+
+	RandRCrtc *crtc = screen->crtc(m_currentCrtc);
+	Q_ASSERT(crtc);
+	return crtc->currentMode();
 }
 
 int RandROutput::rotations() const

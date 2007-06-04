@@ -46,8 +46,7 @@ protected Q_SLOTS:
 	void slotPrefs();
 	void slotActivated(QSystemTrayIcon::ActivationReason reason);
 
-protected:
-	void prepareMenu();
+	void slotPrepareMenu();
 
 private:
 	void populateMenu(KMenu* menu);

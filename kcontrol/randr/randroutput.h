@@ -34,6 +34,8 @@ public:
 	~RandROutput();
 
 	void loadSettings();
+	void handleEvent(XRROutputChangeNotifyEvent *event);
+	void handlePropertyEvent(XRROutputPropertyNotifyEvent *event);
 
 	QString name() const;
 
@@ -61,6 +63,9 @@ public:
 
 	bool isConnected() const;
 
+signals:
+	void outputChanged(RROutput o);
+
 private:
 	RROutput m_id;
 	XRROutputInfo* m_info;
@@ -70,7 +75,6 @@ private:
 	RRCrtc m_currentCrtc;
 
 	ModeList m_modes;
-	RRMode m_currentMode;
 
 	int m_rotations;
 	bool m_connected;

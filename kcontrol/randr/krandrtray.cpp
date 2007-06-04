@@ -17,24 +17,18 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QTimer>
+#include <KActionCollection>
+#include <KApplication>
+#include <KCMultiDialog>
+#include <KComponentData>
+#include <KHelpMenu>
+#include <KIcon>
+#include <KIconLoader>
+#include <KLocale>
+#include <KMenu>
+#include <QMouseEvent>
 #include <QVariant>
 
-//Added by qt3to4:
-#include <QMouseEvent>
-
-#include <kactioncollection.h>
-#include <kaction.h>
-#include <kapplication.h>
-#include <kcmultidialog.h>
-#include <kdebug.h>
-#include <khelpmenu.h>
-#include <kicon.h>
-#include <kiconloader.h>
-#include <klocale.h>
-#include <kmenu.h>
-#include <kstandardaction.h>
-#include <kstandardguiitem.h>
 #include "krandrtray.h"
 #include "krandrpassivepopup.h"
 #include "krandrtray.moc"
@@ -51,7 +45,16 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent)
 	setIcon(KSystemTrayIcon::loadIcon("randr"));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 	this->setToolTip( i18n("Screen resize & rotate"));
-        prepareMenu();
+	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+		this, SLOT(slotActivated(QSystemTrayIcon::ActivationReason)));	
+
+        slotPrepareMenu();
+
+#ifdef HAS_RANDR_1_2
+	for (int i = 0; i < numScreens(); ++i)
+		connect(screen(i), SIGNAL(configChanged()), this, SLOT(slotPrepareMenu()));
+#endif
+
 }
 
 void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
@@ -60,7 +63,7 @@ void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
 		contextMenu()->show();
 }
 
-void KRandRSystemTray::prepareMenu()
+void KRandRSystemTray::slotPrepareMenu()
 {
 	QAction *action;
         KMenu *menu = new KMenu(parentWidget());
@@ -80,6 +83,11 @@ void KRandRSystemTray::prepareMenu()
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
 			} else {
+#ifdef HAS_RANDR_1_2
+			    if (RandR::has_1_2)
+				    currentScreen()->loadSettings();
+#endif
+					
                             KMenu* subMenu = new KMenu(i18n("Screen %1", s+1), menu );
                             subMenu->setObjectName( QString("screen%1").arg(s+1) );
                             m_screenPopups.append(subMenu);
@@ -90,6 +98,10 @@ void KRandRSystemTray::prepareMenu()
 		}
 
 		setCurrentScreen(screenIndexOfWidget(parentWidget()));
+#ifdef HAS_RANDR_1_2
+		if (RandR::has_1_2)
+			currentScreen()->loadSettings();
+#endif
 		populateMenu(menu);
 	}
 
@@ -139,7 +151,7 @@ void KRandRSystemTray::configChanged()
 
 void KRandRSystemTray::populateMenu(KMenu* menu)
 {
-#if HAS_RANDR_1_2
+#ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2) {
 		QAction *action;
 
@@ -166,7 +178,11 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				for (int i = 0; i < modes.count(); ++i) {
 					RandRMode mode = screen->mode(modes.at(i));
 					if (mode.isValid())
-						outputMenu->addAction(mode.name());
+					{
+						action = outputMenu->addAction(mode.name());
+						if (modes.at(i) == output->currentMode())
+							action->setChecked(true);
+					}
 
 				}
 

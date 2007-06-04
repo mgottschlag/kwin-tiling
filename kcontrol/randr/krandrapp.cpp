@@ -23,6 +23,8 @@
 
 #include "krandrtray.h"
 
+#include "randrscreen.h"
+#include "legacyrandrscreen.h"
 #include <X11/Xlib.h>
 
 KRandRApp::KRandRApp()
@@ -30,12 +32,14 @@ KRandRApp::KRandRApp()
 {
 	m_tray->show();
 	m_tray->setObjectName("RANDRTray");
+
 }
 
 bool KRandRApp::x11EventFilter(XEvent* e)
 {
-	if (e->type == m_tray->screenChangeNotifyEvent()) {
-		m_tray->configChanged();
-	}
+
+	if (m_tray->canHandle(e))
+		m_tray->handleEvent(e);
+
 	return KApplication::x11EventFilter( e );
 }

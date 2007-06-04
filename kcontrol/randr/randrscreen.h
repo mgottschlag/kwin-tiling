@@ -35,11 +35,14 @@ public:
 	~RandRScreen();
 
 	XRRScreenResources* resources() const;
+	Window rootWindow() const;
 
 	QSize minSize() const;
 	QSize maxSize() const;
 
 	void loadSettings();
+
+	void handleRandREvent(XRRNotifyEvent* event);
 
 	CrtcMap  crtcs() const;
 	RandRCrtc *crtc(RRCrtc id) const;
@@ -49,6 +52,9 @@ public:
 
 	ModeMap modes() const;
 	RandRMode mode(RRMode id) const;
+
+signals:
+	void configChanged();
 
 private:
 	int m_index;

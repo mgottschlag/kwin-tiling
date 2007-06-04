@@ -35,7 +35,6 @@ public:
 	const QString&	version() const;
 
 	int		eventBase() const;
-	int		screenChangeNotifyEvent() const;
 	int		errorBase() const;
 
 	int		screenIndexOfWidget(QWidget* widget);
@@ -66,6 +65,9 @@ public:
 	static bool		syncTrayApp(KConfig& config);
 
 	void	applyProposed(bool confirm = true);
+
+	bool 	canHandle(const XEvent *e) const;
+	void 	handleEvent(XEvent *e);
 
 private:
 	int				m_numScreens;

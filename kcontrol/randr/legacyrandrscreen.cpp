@@ -55,7 +55,7 @@ void LegacyRandRScreen::loadSettings()
 	if (m_config)
 		XRRFreeScreenConfigInfo(m_config);
 
-	m_config = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), m_screen));
+	m_config = XRRGetScreenInfo(QX11Info::display(), rootWindow());
 	Q_ASSERT(m_config);
 
 	Rotation rotation;
@@ -90,12 +90,12 @@ bool LegacyRandRScreen::applyProposed()
 	Status status;
 
 	if (proposedRefreshRate() < 0)
-		status = XRRSetScreenConfig(QX11Info::display(), m_config, DefaultRootWindow(QX11Info::display()), (SizeID)proposedSize(), (Rotation)proposedRotation(), CurrentTime);
+		status = XRRSetScreenConfig(QX11Info::display(), m_config, rootWindow(), (SizeID)proposedSize(), (Rotation)proposedRotation(), CurrentTime);
 	else {
 		if( refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) <= 0 ) {
 			m_proposedRefreshRate = 0;
 		}
-		status = XRRSetScreenConfigAndRate(QX11Info::display(), m_config, DefaultRootWindow(QX11Info::display()), (SizeID)proposedSize(), (Rotation)proposedRotation(), refreshRateIndexToHz(proposedSize(), proposedRefreshRate()), CurrentTime);
+		status = XRRSetScreenConfigAndRate(QX11Info::display(), m_config, rootWindow(), (SizeID)proposedSize(), (Rotation)proposedRotation(), refreshRateIndexToHz(proposedSize(), proposedRefreshRate()), CurrentTime);
 	}
 
 	//kDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << endl;
@@ -128,6 +128,12 @@ bool LegacyRandRScreen::applyProposedAndConfirm()
 
 	return true;
 }
+
+Window LegacyRandRScreen::rootWindow() const
+{
+	return RootWindow(QX11Info::display(), m_screen);
+}
+
 
 bool LegacyRandRScreen::confirm()
 {

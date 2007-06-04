@@ -50,6 +50,8 @@ public:
 	 */
 	bool		applyProposedAndConfirm();
 
+	Window		rootWindow() const;
+
 public Q_SLOTS:
 	bool		confirm();
 

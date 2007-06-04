@@ -36,10 +36,17 @@ public:
 	int currentRotation() const;
 
 	void loadSettings();
+	void handleEvent(XRRCrtcChangeNotifyEvent *event);
+
+	RRMode currentMode() const;
 	
+signals:
+	void crtcChanged(RRCrtc c);
+
 private:
 	RRCrtc m_id;
 	XRRCrtcInfo* m_info;
+	RRMode m_currentMode;
 
 	QSize m_size;
 	QPoint m_pos;

@@ -28,7 +28,16 @@ RandRScreen::RandRScreen(int screenIndex)
 	: m_resources(0L)
 {
 	m_index = screenIndex;
+	
 	loadSettings();
+
+	// select for input events
+	int mask = RRScreenChangeNotifyMask | 
+		   RRCrtcChangeNotifyMask | 
+		   RROutputChangeNotifyMask | 
+		   RROutputPropertyNotifyMask;
+	XRRSelectInput(QX11Info::display(), rootWindow(), 0);
+	XRRSelectInput(QX11Info::display(), rootWindow(), mask); 
 }
 
 RandRScreen::~RandRScreen()
@@ -42,11 +51,16 @@ XRRScreenResources* RandRScreen::resources() const
 	return m_resources;
 }
 
+Window RandRScreen::rootWindow() const
+{
+	return RootWindow(QX11Info::display(), m_index);
+}
+
 void RandRScreen::loadSettings()
 {
 	int minW, minH, maxW, maxH;
 
-	Status status = XRRGetScreenSizeRange(QX11Info::display(), RootWindow(QX11Info::display(), m_index),
+	Status status = XRRGetScreenSizeRange(QX11Info::display(), rootWindow(),
 					 &minW, &minH, &maxW, &maxH);
 	//FIXME: we should check the status here
 	Q_UNUSED(status);
@@ -56,7 +70,7 @@ void RandRScreen::loadSettings()
 	if (m_resources)
 		XRRFreeScreenResources(m_resources);
 
-	m_resources = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), m_index));
+	m_resources = XRRGetScreenResources(QX11Info::display(), rootWindow());
 	Q_ASSERT(m_resources);
 
 	//get all crtcs
@@ -65,7 +79,12 @@ void RandRScreen::loadSettings()
 		if (m_crtcs.contains(m_resources->crtcs[i]))
 			m_crtcs[m_resources->crtcs[i]]->loadSettings();
 		else
-			m_crtcs[m_resources->crtcs[i]] = new RandRCrtc(this, m_resources->crtcs[i]);
+		{
+			RandRCrtc *c = new RandRCrtc(this, m_resources->crtcs[i]);
+			connect(c, SIGNAL(crtcChanged(RRCrtc)), this, SIGNAL(configChanged()));
+			m_crtcs[m_resources->crtcs[i]] = c;
+		}
+
 	}
 
 	//get all outputs
@@ -74,7 +93,11 @@ void RandRScreen::loadSettings()
 		if (m_outputs.contains(m_resources->outputs[i]))
 			m_outputs[m_resources->outputs[i]]->loadSettings();
 		else
-			m_outputs[m_resources->outputs[i]] = new RandROutput(this, m_resources->outputs[i]);
+		{
+			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
+			connect(o, SIGNAL(outputChanged(RROutput)), this, SIGNAL(configChanged()));
+			m_outputs[m_resources->outputs[i]] = o;
+		}
 	}
 
 	// get all modes
@@ -84,6 +107,38 @@ void RandRScreen::loadSettings()
 			m_modes[m_resources->modes[i].id] = RandRMode(&m_resources->modes[i]);
 
 	}
+}
+
+void RandRScreen::handleRandREvent(XRRNotifyEvent* event)
+{
+	RandRCrtc *c;
+	RandROutput *o;
+	XRRCrtcChangeNotifyEvent *crtcEvent;
+	XRROutputChangeNotifyEvent *outputEvent;
+	XRROutputPropertyNotifyEvent *propertyEvent;
+
+	switch (event->subtype) {
+		case RRNotify_CrtcChange:
+			crtcEvent = (XRRCrtcChangeNotifyEvent*)event;
+			c = crtc(crtcEvent->crtc);
+			Q_ASSERT(c);
+			c->handleEvent(crtcEvent);
+			return;
+
+		case RRNotify_OutputChange:
+			outputEvent = (XRROutputChangeNotifyEvent*)event;
+			o = output(outputEvent->output);
+			Q_ASSERT(o);
+			o->handleEvent(outputEvent);
+			return;
+
+		case RRNotify_OutputProperty:
+			propertyEvent = (XRROutputPropertyNotifyEvent*)event;
+			o = output(propertyEvent->output);
+			Q_ASSERT(o);
+			o->handlePropertyEvent(propertyEvent);
+			return;
+	}	
 }
 
 QSize RandRScreen::minSize() const

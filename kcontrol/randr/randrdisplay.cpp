@@ -86,11 +86,6 @@ int RandRDisplay::eventBase() const
 	return m_eventBase;
 }
 
-int RandRDisplay::screenChangeNotifyEvent() const
-{
-	return m_eventBase + RRScreenChangeNotify;
-}
-
 int RandRDisplay::errorBase() const
 {
 	return m_errorBase;
@@ -119,18 +114,59 @@ int RandRDisplay::currentScreenIndex() const
 
 void RandRDisplay::refresh()
 {
-	for (int i = 0; i < m_legacyScreens.size(); ++i) {
 #ifdef HAS_RANDR_1_2
-		if (RandR::has_1_2)
-			//TODO: refresh screen information here
-			currentScreenIndex();
-		else
+	if (RandR::has_1_2) {
+		for (int i = 0; i < m_screens.count(); ++i) {
+			RandRScreen* s = m_screens.at(i);
+			s->loadSettings();
+		}
+	}
+	else
 #endif
-		{
+	{
+		for (int i = 0; i < m_legacyScreens.size(); ++i) {
 			LegacyRandRScreen* s = m_legacyScreens.at(i);
 			s->loadSettings();
 		}
 	}
+}
+
+bool RandRDisplay::canHandle(const XEvent *e) const 
+{
+	if (e->type == m_eventBase + RRScreenChangeNotify)
+		return true;
+#ifdef HAS_RANDR_1_2
+	else if (e->type == m_eventBase + RRNotify)
+		return true;
+#endif
+	return false;
+}
+
+
+void RandRDisplay::handleEvent(XEvent *e)
+{
+	if (e->type == m_eventBase + RRScreenChangeNotify) {
+#ifdef HAS_RANDR_1_2
+		if (RandR::has_1_2) {
+		}
+		else
+#endif
+		{
+			// handle the event
+		}
+	}
+#ifdef HAS_RANDR_1_2
+	else if (e->type == m_eventBase + RRNotify) {
+		//forward the event to the right screen
+		XRRNotifyEvent *event = (XRRNotifyEvent*)e;
+		for (int i=0; i < m_screens.count(); ++i) {
+			RandRScreen *screen = m_screens.at(i);
+			// FIXME: check which screen should receive the event
+			//        this needs a dual-head setup
+			screen->handleRandREvent(event);
+		}
+	}
+#endif
 }
 
 int RandRDisplay::numScreens() const
