@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Time Data Engine
 Name[de]=Zeitdaten-Treiber
+Name[el]=Μηχανή δεδομένων χρόνου
 Name[zh_TW]=時間資料引擎
 Comment=Time data for Plasmoids
+Comment[el]=Δεδομένα χρόνου για πλασμοειδή
 Comment[zh_TW]=電漿時鐘的時間資料
 ServiceTypes=Plasma/DataEngine
 Type=Service
