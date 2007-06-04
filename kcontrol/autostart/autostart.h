@@ -34,7 +34,6 @@
 #include "ui_autostartconfig.h"
 #include "adddialog.h"
 
-class Desktop;
 
 class Autostart: public KCModule
 {
