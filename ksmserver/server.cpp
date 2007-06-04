@@ -100,7 +100,7 @@ KSMServer* KSMServer::self()
 /*! Utility function to execute a command on the local machine. Used
  * to restart applications.
  */
-void KSMServer::startApplication( QStringList command, const QString& clientMachine,
+void KSMServer::startApplication( QStringList& command, const QString& clientMachine,
     const QString& userId )
 {
     if ( command.isEmpty() )
