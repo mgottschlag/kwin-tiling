@@ -70,6 +70,7 @@ void CiaVcEngine::processProject(Syndication::Loader* loader, Syndication::FeedP
     if (error != Syndication::Success) {
         kDebug() << "syndication did not work out" << endl;
         //TODO: should probably tell the user it failed? =)
+	return;
     }
 
     //TODO: implement domains in DataEngine
