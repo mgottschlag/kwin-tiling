@@ -64,6 +64,7 @@ RootWidget::RootWidget()
 
     connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_view->corona(), SLOT(addPlasmoid(const QString&)));
     connect(m_controlBox, SIGNAL(setFormFactor(Plasma::FormFactor)), m_view->corona(), SLOT(setFormFactor(Plasma::FormFactor)));
+    connect(m_controlBox, SIGNAL(lockInterface(bool)), m_view->corona(), SLOT(setImmutable(bool)));
 
 #ifdef ICON_DEMO
     Icon* icon = new Icon();

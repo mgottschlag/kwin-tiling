@@ -53,6 +53,7 @@ class ControlBox : public QWidget
         void boxRequested();
         void addPlasmoid(const QString&);
         void setFormFactor(Plasma::FormFactor);
+        void lockInterface(bool);
 
     protected:
         //void mousePressEvent (QMouseEvent* event);
@@ -99,6 +100,7 @@ class ControlWidget : public QWidget
     Q_SIGNALS:
         void addPlasmoid(const QString&);
         void setFormFactor(Plasma::FormFactor);
+        void lockInterface(bool);
 };
 
 /**

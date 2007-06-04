@@ -20,6 +20,7 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
 #include <QtGui/QLineEdit>
 #include <QtGui/QListView>
 #include <QtGui/QMouseEvent>
@@ -146,11 +147,15 @@ ControlWidget::ControlWidget(QWidget *parent)
 
     //TODO: this should be delayed until (if) the box is actually shown.
     refreshPlasmoidList();
+    
+    QCheckBox* lockApplets = new QCheckBox(i18n("Lock Applets"), this);
+    connect(lockApplets, SIGNAL(toggled(bool)), this, SIGNAL(lockInterface(bool)));
 
     //This is all to change of course
     QVBoxLayout* boxLayout = new QVBoxLayout(this);
     boxLayout->addWidget(hideBoxButton);
     boxLayout->addWidget(m_formFactorSelector);
+    boxLayout->addWidget(lockApplets);
     boxLayout->addWidget(m_label);
     boxLayout->addWidget(m_appletList);
     //setLayout(boxLayout);
@@ -218,6 +223,8 @@ ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
     connect(m_timeLine, SIGNAL(finished()), this, SLOT(finishBoxHiding()));
 
     connect(this, SIGNAL(boxRequested()), this, SLOT(showBox()));
+    
+    connect(m_box, SIGNAL(lockInterface(bool)), this, SIGNAL(lockInterface(bool)));
 }
 
 ControlBox::~ControlBox()
