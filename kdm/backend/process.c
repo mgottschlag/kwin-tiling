@@ -657,13 +657,13 @@ GSendArr( int len, const char *data )
 static char *
 iGRecvArr( int *rlen )
 {
-	int len;
+	unsigned len;
 	char *buf;
 
 	GRead( &len, sizeof(len) );
 	*rlen = len;
 	GDebug( " -> %d bytes\n", len );
-	if (!len)
+	if (!len || len > 0x10000)
 		return (char *)0;
 	if (!(buf = Malloc( len )))
 		GErr();
@@ -685,11 +685,11 @@ GRecvArr( int *rlen )
 static int
 iGRecvArrBuf( char *buf )
 {
-	int len;
+	unsigned len;
 
 	GRead( &len, sizeof(len) );
 	GDebug( " -> %d bytes\n", len );
-	if (len)
+	if (len && len < 0x10000)
 		GRead( buf, len );
 	return len;
 }
