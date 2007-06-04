@@ -60,10 +60,10 @@ public:
  k_dcop:
 
 
- void updateReadersState (QString readerName,
+ void updateReadersState (QString &readerName,
                           bool isCardPresent,
-                          QString atr);
- void loadReadersTab (QStringList lr);
+                          QString &atr);
+ void loadReadersTab (QStringList &lr);
 
   private Q_SLOTS:
 

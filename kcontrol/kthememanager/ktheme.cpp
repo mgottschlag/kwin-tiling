@@ -695,7 +695,7 @@ bool KTheme::remove( const QString & name )
     return KIO::NetAccess::del( KUrl(KGlobal::dirs()->saveLocation( "themes", name + '/' )), 0L );
 }
 
-void KTheme::setProperty( const QString & name, const QString & value, QDomElement parent )
+void KTheme::setProperty( const QString & name, const QString & value, QDomElement & parent )
 {
     QDomElement tmp = m_dom.createElement( name );
     tmp.setAttribute( "value", value );
@@ -714,7 +714,7 @@ QString KTheme::getProperty( const QString & name ) const
     }
 }
 
-QString KTheme::getProperty( QDomElement parent, const QString & tag,
+QString KTheme::getProperty( QDomElement & parent, const QString & tag,
                              const QString & attr ) const
 {
     QDomNodeList _list = parent.elementsByTagName( tag );
@@ -730,7 +730,7 @@ QString KTheme::getProperty( QDomElement parent, const QString & tag,
 }
 
 void KTheme::createIconElems( const KConfigGroup & group, const QString & object,
-                              QDomElement parent )
+                              QDomElement & parent )
 {
     QStringList elemNames;
     elemNames << "Animated" << "DoublePixels" << "Size"
@@ -762,7 +762,7 @@ void KTheme::createIconElems( const KConfigGroup & group, const QString & object
 }
 
 void KTheme::createColorElem( const QString & name, const QString & object,
-                              QDomElement parent, const KConfigGroup & group )
+                              QDomElement & parent, const KConfigGroup & group )
 {
     QColor color = group.readEntry( name,QColor() );
     if ( color.isValid() )
@@ -775,7 +775,7 @@ void KTheme::createColorElem( const QString & name, const QString & object,
 }
 
 void KTheme::createSoundList( const QStringList & events, const QString & object,
-                              QDomElement parent, KConfig * cfg )
+                              QDomElement & parent, KConfig * cfg )
 {
     for ( QStringList::ConstIterator it = events.begin(); it != events.end(); ++it )
     {
@@ -831,7 +831,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
     return QString();       // an error occurred or the resource doesn't exist
 }
 
-QString KTheme::unprocessFilePath( const QString & section, QString path )
+QString KTheme::unprocessFilePath( const QString & section, QString & path )
 {
     if ( path.startsWith( "theme:/" ) )
         return path.replace( QRegExp( "^theme:/" ), m_kgd->findResourceDir( "themes", m_name + '/' + m_name + ".xml") + m_name + '/' );

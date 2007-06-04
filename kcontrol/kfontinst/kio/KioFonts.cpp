@@ -111,7 +111,7 @@ int kdemain(int argc, char **argv)
 namespace KFI
 {
 
-static bool addCreateFolderCmd(const QString folder, QList<CKioFonts::TCommand> &cmd)
+static bool addCreateFolderCmd(const QString &folder, QList<CKioFonts::TCommand> &cmd)
 {
     if(!Misc::dExists(folder))
     {

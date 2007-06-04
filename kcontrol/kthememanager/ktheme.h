@@ -137,7 +137,7 @@ private:
      */
     void setProperty( const QString & name,
                       const QString & value,
-                      QDomElement parent );
+                      QDomElement & parent );
     /**
      * Get a simple property from the "general" section of the DOM tree
      */
@@ -149,7 +149,7 @@ private:
      * @param tag From the this tag
      * @param attr From this attribute
      */
-    QString getProperty( QDomElement parent, const QString & tag,
+    QString getProperty( QDomElement & parent, const QString & tag,
                          const QString & attr ) const;
 
     /**
@@ -160,7 +160,7 @@ private:
      * @param cfg The KConfig object to work with
      */
     void createIconElems( const KConfigGroup & group, const QString & object,
-                          QDomElement parent );
+                          QDomElement & parent );
 
     /**
      * Creates a color DOM element @p name, with a specifier @p object,
@@ -168,7 +168,7 @@ private:
      * @param group The KConfigGroup object to work with
      */
     void createColorElem( const QString & name, const QString & object,
-                          QDomElement parent, const KConfigGroup & group );
+                          QDomElement & parent, const KConfigGroup & group );
     /**
      * Creates a list of "event" elements based on:
      * @param events The list of events to work on
@@ -177,7 +177,7 @@ private:
      * @param cfg The KConfig object to work with
      */
     void createSoundList( const QStringList & events, const QString & object,
-                          QDomElement parent, KConfig * cfg );
+                          QDomElement & parent, KConfig * cfg );
 
     /**
      * Tries to find out absolute path to a resource and copy it to the theme's temp dir;
@@ -193,7 +193,7 @@ private:
      * Converts an internal theme:/ representation of a resource
      * to a real path
      */
-    QString unprocessFilePath( const QString & section, QString path );
+    QString unprocessFilePath( const QString & section, QString & path );
 
     /**
      * Wrapper around KIO::NetAccess::file_copy

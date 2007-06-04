@@ -167,9 +167,9 @@ void KSmartcardConfig::loadSmartCardSupportTab(){
   }
 }
 
-void KSmartcardConfig::updateReadersState (QString readerName,
+void KSmartcardConfig::updateReadersState (QString &readerName,
                                            bool isCardPresent,
-                                           QString atr) {
+                                           QString &atr) {
 
     K3ListViewItem * tID=(K3ListViewItem *) base->_readerHostsListView->findItem(readerName, 0);
     if (tID==0) return;
@@ -191,7 +191,7 @@ void KSmartcardConfig::updateReadersState (QString readerName,
 
 
 
-void KSmartcardConfig::loadReadersTab( QStringList lr){
+void KSmartcardConfig::loadReadersTab( QStringList &lr){
 
   //Prepare data for dcop calls
   QByteArray data, retval;
