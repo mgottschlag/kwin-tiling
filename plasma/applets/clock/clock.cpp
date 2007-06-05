@@ -46,29 +46,20 @@
 
 Clock::Clock(QObject *parent, const QStringList &args)
     : Plasma::Applet(parent, args),
-      m_boundsDirty(false)
+      m_dialog(0),
+      m_showTimeStringCheckBox(0),
+      m_spinSize(0)
 {
     setFlags(QGraphicsItem::ItemIsMovable);
     dataEngine("time")->connectSource("time", this);
 
-    m_dialog = 0;
-    m_showTimeStringCheckBox = new QCheckBox;
-    m_spinSize = new QSpinBox;
-
     KConfigGroup cg = globalAppletConfig();
-    if(cg.readEntry("showTimeString") == "false") {
-        m_showTimeStringCheckBox->setCheckState(Qt::Unchecked);
-        m_showTimeString = false;
-    } else {
-        m_showTimeStringCheckBox->setCheckState(Qt::Checked);
-        m_showTimeString = true;
-    }
+    m_showTimeString = cg.readEntry("showTimeString", false);
 
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize();
     constraintsUpdated();
-    m_spinSize->setValue((int)m_bounds.width());
 }
 
 QRectF Clock::boundingRect() const

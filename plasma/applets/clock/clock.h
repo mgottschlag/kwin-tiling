@@ -71,10 +71,8 @@ class Clock : public Plasma::Applet
         void drawHand(QPainter *p, int rotation, const QString &handName);
 
         bool m_showTimeString;
-        bool m_boundsDirty;
         QRectF m_bounds;
         int m_pixelSize;
-        QTimer *m_timer;
         Plasma::Svg* m_theme;
         QTime m_time;
         KDialog *m_dialog; //should we move this into another class?
