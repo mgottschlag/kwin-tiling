@@ -74,6 +74,8 @@ public:
 
 public slots:
 	void slotChangeSize(QAction *action);
+	void slotChangeRotation(QAction *action);
+	void slotDisable();
 
 signals:
 	void outputChanged(RROutput o);

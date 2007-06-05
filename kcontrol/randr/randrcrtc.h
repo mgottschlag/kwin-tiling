@@ -41,7 +41,10 @@ public:
 	RRMode currentMode() const;
 	
 	bool setMode(RRMode mode);
+	bool rotate(int rotation);
+
 	bool addOutput(RROutput output, RRMode mode);
+	bool removeOutput(RROutput output);
 
 signals:
 	void crtcChanged(RRCrtc c);

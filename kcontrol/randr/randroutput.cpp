@@ -232,6 +232,45 @@ void RandROutput::slotChangeSize(QAction *action)
 	setMode(mode.id());
 }
 
+void RandROutput::slotChangeRotation(QAction *action)
+{
+	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
+	Q_ASSERT(screen);
+
+
+	if (m_currentCrtc != None)
+	{
+		RandRCrtc *crtc = screen->crtc(m_currentCrtc);
+		crtc->rotate(action->data().toInt());
+	}
+	else
+	{
+		// try to add this output to a crtc
+		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
+		{
+			RandRCrtc *crtc = screen->crtc(m_possibleCrtcs.at(i));
+			if (crtc->addOutput(m_id, crtc->currentMode()))
+			{
+				crtc->rotate(action->data().toInt());
+				break;
+			}
+		}
+	}
+}
+
+void RandROutput::slotDisable()
+{
+	if (m_currentCrtc == None)
+		return;
+
+	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
+	Q_ASSERT(screen);
+
+	RandRCrtc *crtc = screen->crtc(m_currentCrtc);
+
+	crtc->removeOutput(m_id);
+}
+
 void RandROutput::setMode(RRMode mode)
 {
 

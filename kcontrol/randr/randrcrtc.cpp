@@ -92,6 +92,8 @@ RRMode RandRCrtc::currentMode() const
 bool RandRCrtc::setMode(RRMode mode)
 {
 	kDebug() << "[CRTC] Setting mode" << endl;
+	if (!m_connectedOutputs.count())
+		mode = None;
 	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
 	Q_ASSERT(screen);
 	for (int i = 0; i < m_connectedOutputs.count(); ++i)
@@ -116,6 +118,17 @@ bool RandRCrtc::setMode(RRMode mode)
 	return true;
 }
 
+bool RandRCrtc::rotate(int rotation)
+{
+	// check if this crtc supports the asked rotation
+	if (!rotation & m_rotations)
+		return false;
+
+	m_currentRotation = rotation;
+	setMode(m_currentMode);
+
+}
+
 bool RandRCrtc::addOutput(RROutput output, RRMode mode)
 {
 	kDebug() << "[CRTC] Adding output " << output << endl;
@@ -137,6 +150,16 @@ bool RandRCrtc::addOutput(RROutput output, RRMode mode)
 
 	return setMode(mode);
 }
+
+bool RandRCrtc::removeOutput(RROutput output)
+{
+	int index = m_connectedOutputs.indexOf(output);
+	if (index == -1)
+		return false;
+
+	m_connectedOutputs.removeAt(index);
+	return setMode(m_currentMode);
+}	
 
 #include "randrcrtc.moc"
 

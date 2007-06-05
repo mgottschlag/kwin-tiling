@@ -190,6 +190,15 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 
 				}
 				connect(sizeGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeSize(QAction*)));
+				
+				action = outputMenu->addAction(i18n("Disable"));
+				if (output->currentCrtc() == None)
+				{
+					QFont font = action->font();
+					font.setBold(true);
+					action->setFont(font);
+				}
+				connect(action, SIGNAL(triggered(bool)), output, SLOT(slotDisable()));
 
 				// Display the rotations
 				int rotations = output->rotations(), currentRotation = output->currentRotation();
@@ -198,19 +207,25 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				if (rotations != RandR::Rotate0) {
 					outputMenu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
 
+					QActionGroup *rotateGroup = new QActionGroup(outputMenu);
 					for (int i = 0; i < 6; i++) {
 						if ((1 << i) & rotations) {
 							action = outputMenu->addAction(QIcon(RandR::rotationIcon(1 << i, currentRotation)), 
 											   RandR::rotationName(1 << i));
 
+							action->setData(1 << i);
 							if (currentRotation & (1 << i))
-								action->setChecked(true);
-
-							//menu->setItemParameter(lastIndex, 1 << i);
-							//menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
+							{
+								QFont font = action->font();
+								font.setBold(true);
+								action->setFont(font);
+							}
+							rotateGroup->addAction(action);
 						}
 					}
+					connect(rotateGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRotation(QAction*)));
 				}
+				
 				menu->addMenu(outputMenu);
 			} else {
 				action = menu->addAction(SmallIcon(it.value()->icon()), it.value()->name());
