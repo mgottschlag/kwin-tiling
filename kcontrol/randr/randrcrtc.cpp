@@ -26,6 +26,9 @@
 RandRCrtc::RandRCrtc(RandRScreen *parent, RRCrtc id)
 	: QObject(parent), m_info(0L)
 {
+	m_screen = parent;
+	Q_ASSERT(m_screen);
+
 	m_id = id;
 	loadSettings();
 }
@@ -50,10 +53,7 @@ void RandRCrtc::loadSettings()
 	if (m_info)
 		XRRFreeCrtcInfo(m_info);
 
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
-
-	m_info = XRRGetCrtcInfo(QX11Info::display(), screen->resources(), m_id);
+	m_info = XRRGetCrtcInfo(QX11Info::display(), m_screen->resources(), m_id);
 	Q_ASSERT(m_info);
 
 	m_pos = QPoint(m_info->x, m_info->y);
@@ -94,13 +94,12 @@ bool RandRCrtc::setMode(RRMode mode)
 	kDebug() << "[CRTC] Setting mode" << endl;
 	if (!m_connectedOutputs.count())
 		mode = None;
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
+
 	for (int i = 0; i < m_connectedOutputs.count(); ++i)
 	{
 		// all connected outputs should support the mode
 		// FIXME: this can probably be done in a better way
-		RandROutput *o = screen->output(m_connectedOutputs.at(i));
+		RandROutput *o = m_screen->output(m_connectedOutputs.at(i));
 		if (o->modes().indexOf(mode) == -1)
 			return false;
 	}
@@ -109,7 +108,7 @@ bool RandRCrtc::setMode(RRMode mode)
 	for (int i = 0; i < m_connectedOutputs.count(); ++i)
 		outputs[i] = m_connectedOutputs.at(i);
 
-	Status s = XRRSetCrtcConfig(QX11Info::display(), screen->resources(), m_id, 
+	Status s = XRRSetCrtcConfig(QX11Info::display(), m_screen->resources(), m_id, 
 				    m_info->timestamp, m_pos.x(), m_pos.y(), mode,
 				    m_currentRotation, outputs, m_connectedOutputs.count()); 
 	//FIXME: check status
@@ -146,7 +145,6 @@ bool RandRCrtc::addOutput(RROutput output, RRMode mode)
 
 		m_connectedOutputs.append(output);
 	}
-
 
 	return setMode(mode);
 }

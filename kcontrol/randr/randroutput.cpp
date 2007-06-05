@@ -28,6 +28,9 @@
 RandROutput::RandROutput(RandRScreen *parent, RROutput id)
 	: QObject(parent), m_info(0L)
 {
+	m_screen = parent;
+	Q_ASSERT(m_screen);
+
 	m_id = id;
 	loadSettings();
 }
@@ -43,10 +46,7 @@ void RandROutput::loadSettings()
 	if (m_info)
 		XRRFreeOutputInfo(m_info);
 
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
-
-	m_info = XRRGetOutputInfo(QX11Info::display(), screen->resources(), m_id);
+	m_info = XRRGetOutputInfo(QX11Info::display(), m_screen->resources(), m_id);
 	Q_ASSERT(m_info);
 
 	m_name = m_info->name;
@@ -68,7 +68,7 @@ void RandROutput::loadSettings()
 	m_rotations = 0;
 	for (int i = 0; i < m_possibleCrtcs.count(); ++i)
 	{
-		RandRCrtc *crtc = screen->crtc(m_possibleCrtcs.at(i));
+		RandRCrtc *crtc = m_screen->crtc(m_possibleCrtcs.at(i));
 		Q_ASSERT(crtc);
 		m_rotations |= crtc->rotations();
 	}
@@ -80,12 +80,10 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 
 	//TODO: implement
 	kDebug() << "[OUTPUT] Got event" << endl;
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
 
 	if (event->mode != currentMode())
 	{
-		RandRMode mode = screen->mode(event->mode);
+		RandRMode mode = m_screen->mode(event->mode);
 		kdDebug()  << "[OUTPUT]      new mode: " << mode.name() << endl; 
 	}
 
@@ -136,10 +134,7 @@ RRMode RandROutput::currentMode() const
 	if (!isConnected())
 		return None;
 
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
-
-	RandRCrtc *crtc = screen->crtc(m_currentCrtc);
+	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 	if (!crtc)
 		return None;
 
@@ -150,12 +145,9 @@ SizeList RandROutput::sizes() const
 {
 	SizeList sizeList;
 
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
-
 	for (int i = 0; i < m_modes.count(); ++i)
 	{
-		RandRMode mode = screen->mode(m_modes.at(i));
+		RandRMode mode = m_screen->mode(m_modes.at(i));
 		if (!mode.isValid())
 			continue;
 		if (sizeList.indexOf(mode.size()) == -1)
@@ -166,10 +158,7 @@ SizeList RandROutput::sizes() const
 
 QSize RandROutput::currentSize() const
 {
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
-
-	RandRMode mode = screen->mode(currentMode());
+	RandRMode mode = m_screen->mode(currentMode());
 	if (mode.isValid())
 		return mode.size();
 
@@ -183,14 +172,10 @@ int RandROutput::rotations() const
 
 int RandROutput::currentRotation() const
 {
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	if (!screen)
-		return RandR::Rotate0;
-
 	if (!isConnected() || m_currentCrtc == None)
 		return RandR::Rotate0;
 
-	RandRCrtc *crtc = screen->crtc(m_currentCrtc);
+	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 	Q_ASSERT(crtc);
 
 	return crtc->currentRotation();
@@ -208,15 +193,12 @@ void RandROutput::slotChangeSize(QAction *action)
 	if (size == currentSize())
 		return;
 
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
-
 	RandRMode mode;
 	kDebug() << "Mode count: " << m_modes.count() << endl;
 	// find a mode that has the selected size
 	for (int i = 0; i < m_modes.count(); ++i)
 	{
-		RandRMode m = screen->mode(m_modes.at(i));
+		RandRMode m = m_screen->mode(m_modes.at(i));
 		if (!m.isValid())
 			continue;
 
@@ -234,13 +216,9 @@ void RandROutput::slotChangeSize(QAction *action)
 
 void RandROutput::slotChangeRotation(QAction *action)
 {
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
-
-
 	if (m_currentCrtc != None)
 	{
-		RandRCrtc *crtc = screen->crtc(m_currentCrtc);
+		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 		crtc->rotate(action->data().toInt());
 	}
 	else
@@ -248,7 +226,7 @@ void RandROutput::slotChangeRotation(QAction *action)
 		// try to add this output to a crtc
 		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
 		{
-			RandRCrtc *crtc = screen->crtc(m_possibleCrtcs.at(i));
+			RandRCrtc *crtc = m_screen->crtc(m_possibleCrtcs.at(i));
 			if (crtc->addOutput(m_id, crtc->currentMode()))
 			{
 				crtc->rotate(action->data().toInt());
@@ -263,11 +241,7 @@ void RandROutput::slotDisable()
 	if (m_currentCrtc == None)
 		return;
 
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
-
-	RandRCrtc *crtc = screen->crtc(m_currentCrtc);
-
+	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 	crtc->removeOutput(m_id);
 }
 
@@ -278,13 +252,10 @@ void RandROutput::setMode(RRMode mode)
 	if (m_modes.indexOf(mode) == -1)
 		return;
 
-	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
-	Q_ASSERT(screen);
 	// try to set the mode in the current crtc
 	if (m_currentCrtc != None)
 	{
-		RandRCrtc *crtc = screen->crtc(m_currentCrtc);
-
+		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 		if (crtc->setMode(mode))
 			return;
 	}
@@ -292,7 +263,7 @@ void RandROutput::setMode(RRMode mode)
 	// try to add this output to a crtc
 	for (int i = 0; i < m_possibleCrtcs.count(); ++i)
 	{
-		RandRCrtc *crtc = screen->crtc(m_possibleCrtcs.at(i));
+		RandRCrtc *crtc = m_screen->crtc(m_possibleCrtcs.at(i));
 		if (crtc->addOutput(m_id, mode))
 			break;
 	}

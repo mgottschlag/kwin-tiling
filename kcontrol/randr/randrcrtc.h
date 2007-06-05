@@ -60,6 +60,8 @@ private:
 	OutputList m_possibleOutputs;
 	int m_rotations;
 	int m_currentRotation;
+
+	RandRScreen *m_screen;
 };
 #endif
 

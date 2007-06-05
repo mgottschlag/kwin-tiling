@@ -96,6 +96,7 @@ private:
 	int m_rotations;
 	bool m_connected;
 
+	RandRScreen *m_screen;
 };
 #endif
 
