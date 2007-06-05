@@ -1,13 +1,13 @@
-project(plasma-clock)
+project(plasma-url)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/workspace/lib)
 
-set(clock_SRCS
-    clock.cpp)
+set(url_SRCS
+    url.cpp)
 
-kde4_automoc(${clock_SRCS})
-kde4_add_plugin(plasma_applet_clock ${clock_SRCS})
-target_link_libraries(plasma_applet_clock plasma ${KDE4_KIO_LIBS})
-set_target_properties(plasma_applet_clock PROPERTIES VERSION 1.0.0 SOVERSION 1)
+kde4_automoc(${url_SRCS})
+kde4_add_plugin(plasma_applet_url ${url_SRCS})
+target_link_libraries(plasma_applet_url plasma ${KDE4_KIO_LIBS})
+set_target_properties(plasma_applet_url PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
-install(TARGETS plasma_applet_clock DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-clock-default.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(TARGETS plasma_applet_url DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES plasma-applet-url.desktop DESTINATION ${SERVICES_INSTALL_DIR})
