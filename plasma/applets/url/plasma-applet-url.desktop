@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Button
+Comment=A launcher button
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_url
+X-KDE-PluginInfo-Author=The Plasma Team
+X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Name=url
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
