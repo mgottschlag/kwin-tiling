@@ -419,7 +419,8 @@ void KTheme::apply()
                                     static_cast<bool>( getProperty( desktopElem, "blending", "reverse" ).toUInt() ) );
             desktopConf.writeEntry( "Pattern", getProperty( desktopElem, "pattern", "name" ) );
             desktopConf.writeEntry( "Wallpaper",
-                                    unprocessFilePath( "desktop", getProperty( desktopElem, "wallpaper", "url" ) ) );
+                                    unprocessFilePath( QLatin1String("desktop"),
+                                                       getProperty( desktopElem, "wallpaper", "url" ) ) );
             desktopConf.writeEntry( "WallpaperMode", getProperty( desktopElem, "wallpaper", "mode" ) );
 
             if ( common )
@@ -501,13 +502,13 @@ void KTheme::apply()
             if ( object == "global" )
             {
                 soundGroup.changeGroup(eventElem.attribute("name"));
-                soundGroup.writeEntry( "soundfile", unprocessFilePath( "sounds", eventElem.attribute( "url" ) ) );
+                soundGroup.writeEntry( "soundfile", unprocessFilePath( QLatin1String("sounds"), eventElem.attribute( "url" ) ) );
                 soundGroup.writeEntry( "presentation", soundGroup.readEntry( "presentation" ,0) | 1 );
             }
             else if ( object == "kwin" )
             {
                 kwinSoundGroup.changeGroup(eventElem.attribute("name"));
-                kwinSoundGroup.writeEntry( "soundfile", unprocessFilePath( "sounds", eventElem.attribute( "url" ) ) );
+                kwinSoundGroup.writeEntry( "soundfile", unprocessFilePath( QLatin1String("sounds"), eventElem.attribute( "url" ) ) );
                 kwinSoundGroup.writeEntry( "presentation", soundGroup.readEntry( "presentation",0 ) | 1 );
             }
         }
@@ -604,7 +605,7 @@ void KTheme::apply()
     {
         KConfig _konqConf( "konquerorrc" );
         KConfigGroup konqConf(&_konqConf, "Settings" );
-        konqConf.writeEntry( "BgImage", unprocessFilePath( "konqueror", getProperty( konqElem, "wallpaper", "url" ) ) );
+        konqConf.writeEntry( "BgImage", unprocessFilePath( QLatin1String("konqueror"), getProperty( konqElem, "wallpaper", "url" ) ) );
         konqConf.writeEntry( "BgColor", QColor( getProperty( konqElem, "bgcolor", "rgb" ) ) );
 
         konqConf.sync();
@@ -625,7 +626,7 @@ void KTheme::apply()
         if ( !kickerBgUrl.isEmpty() )
         {
             kickerConf.writeEntry( "UseBackgroundTheme", true );
-            kickerConf.writeEntry( "BackgroundTheme", unprocessFilePath( "panel", kickerBgUrl ) );
+            kickerConf.writeEntry( "BackgroundTheme", unprocessFilePath( QLatin1String("panel"), kickerBgUrl ) );
             kickerConf.writeEntry( "ColorizeBackground",
                                    static_cast<bool>( getProperty( panelElem, "background", "colorize" ).toUInt() ) );
         }
