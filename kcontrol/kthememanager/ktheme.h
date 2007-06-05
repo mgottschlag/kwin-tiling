@@ -193,7 +193,7 @@ private:
      * Converts an internal theme:/ representation of a resource
      * to a real path
      */
-    QString unprocessFilePath( const QString & section, QString & path );
+    QString unprocessFilePath( QString section, QString path ); // krazy:exclude=constref
 
     /**
      * Wrapper around KIO::NetAccess::file_copy

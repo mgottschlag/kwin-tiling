@@ -832,7 +832,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
     return QString();       // an error occurred or the resource doesn't exist
 }
 
-QString KTheme::unprocessFilePath( const QString & section, QString & path )
+QString KTheme::unprocessFilePath( QString section, QString path )
 {
     if ( path.startsWith( "theme:/" ) )
         return path.replace( QRegExp( "^theme:/" ), m_kgd->findResourceDir( "themes", m_name + '/' + m_name + ".xml") + m_name + '/' );
