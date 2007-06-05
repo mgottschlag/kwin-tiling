@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005,2006,2007 by Siraj Razick                          *
- *   siraj@kdemail.net                                                     *
+ *   Copyright (C) 2005,2006,2007 by Siraj Razick <siraj@kdemail.net>      *
+ *   Copyright (C) 2007 by Riccardo Iaconelli <ruphy@fsfe.org>             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -30,16 +30,17 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QStyleOptionGraphicsItem>
-#include <QDialog>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QCheckBox>
 #include <QPushButton>
+#include <QSpinBox>
 
 #include <KDebug>
 #include <KLocale>
 #include <KIcon>
 #include <KSharedConfig>
+#include <KDialog>
 
 #include <plasma/svg.h>
 
@@ -47,17 +48,27 @@ Clock::Clock(QObject *parent, const QStringList &args)
     : Plasma::Applet(parent, args),
       m_boundsDirty(false)
 {
-    setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
+    setFlags(QGraphicsItem::ItemIsMovable);
     dataEngine("time")->connectSource("time", this);
-    KConfigGroup cg = globalAppletConfig();
-    m_showTimeString = cg.readEntry("showTimeString", false);
 
     m_dialog = 0;
+    m_showTimeStringCheckBox = new QCheckBox;
+    m_spinSize = new QSpinBox;
+
+    KConfigGroup cg = globalAppletConfig();
+    if(cg.readEntry("showTimeString") == "false") {
+        m_showTimeStringCheckBox->setCheckState(Qt::Unchecked);
+        m_showTimeString = false;
+    } else {
+        m_showTimeStringCheckBox->setCheckState(Qt::Checked);
+        m_showTimeString = true;
+    }
 
     m_theme = new Plasma::Svg("widgets/clock", this);
-    m_customSize = boundingRect().width();
+    m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize();
     constraintsUpdated();
+    m_spinSize->setValue((int)m_bounds.width());
 }
 
 QRectF Clock::boundingRect() const
@@ -87,38 +98,81 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 
 void Clock::configureDialog() //TODO: Make the size settable
 {
-    m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.");
-    m_showTimeStringCheckBox->setChecked(m_showTimeString);
-    QPushButton *closeButton = new QPushButton("Close");
-    QLabel *label = new QLabel("Hello Configuration World!");
-    QVBoxLayout *lay = new QVBoxLayout;
-    QHBoxLayout *buttonLay = new QHBoxLayout;
-    buttonLay->addWidget(closeButton);
-    lay->addWidget(label);
-    lay->addWidget(m_showTimeStringCheckBox);
-    lay->addLayout(buttonLay);
+     if (m_dialog == 0) {
+        m_dialog = new KDialog;
+        m_dialog->setCaption( "Configure Clock" );
+        m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+        connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
+        connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
+        QWidget* configWidget = new QWidget(m_dialog);
+        QLabel *label = new QLabel("Hello Configuration World!", configWidget);
+        m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.", configWidget);
+        m_spinSize = new QSpinBox;
+        QLabel *labelSize = new QLabel("Size of the clock");
 
-    if (m_dialog == 0) {
-        m_dialog = new QDialog;
-        connect(closeButton, SIGNAL(clicked()), m_dialog, SLOT(accept()));
-        connect(m_showTimeStringCheckBox, SIGNAL(toggled(bool)), this, SLOT(acceptedTimeStringState(bool)));
-        m_dialog->setLayout(lay);
+        QHBoxLayout *sizeLay = new QHBoxLayout;
+        sizeLay->addWidget(m_spinSize);
+        sizeLay->addWidget(labelSize);
+        QVBoxLayout *lay = new QVBoxLayout(configWidget);
+        lay->addWidget(label);
+        lay->addWidget(m_showTimeStringCheckBox);
+        lay->addLayout(sizeLay);
+
+        m_dialog->setMainWidget(configWidget);
     }
+
+    m_spinSize->setRange(0, 500);
+    m_spinSize->setValue((int)m_bounds.width());
+    m_showTimeStringCheckBox->setChecked(m_showTimeString ? Qt::Checked : Qt::Unchecked);
 
     m_dialog->show();
 }
 
-void Clock::acceptedTimeStringState(bool isChanged)
+void Clock::configAccepted()
 {
     KConfigGroup cg = globalAppletConfig();
-    cg.writeEntry("showTimeString", isChanged);
-    m_showTimeString = isChanged;
-    update();
-    cg.config()->sync(); //NOTE: This shouldn't be needed, but automatically handled from Plasma
+    if (m_showTimeStringCheckBox->checkState() == Qt::Checked) {
+        m_showTimeString = true;
+        cg.writeEntry("showTimeString", "true");
+        QGraphicsItem::update();
+    }
+    if (m_showTimeStringCheckBox->checkState() == Qt::Unchecked) {
+        m_showTimeString = false;
+        cg.writeEntry("showTimeString", "false");
+        QGraphicsItem::update();
+    }
+    cg.writeEntry("size", m_spinSize->value());
+    m_theme->resize(m_spinSize->value(), m_spinSize->value());
+    constraintsUpdated();
+    cg.config()->sync();
 }
 
 Clock::~Clock()
 {
+}
+
+void Clock::drawHand(QPainter *p, int rotation, const QString &handName)
+{
+    Q_UNUSED(p);
+    Q_UNUSED(rotation);
+    Q_UNUSED(handName);
+// TODO: IMPLEMENT ME!
+//     p->save();
+//     QRectF tempRect(0, 0, 0, 0);
+//     QSizeF boundSize = boundingRect().size();
+//     QSize elementSize;
+// 
+//     p->translate(boundSize.width()/2, boundSize.height()/2);
+//     p->rotate(rotation);
+//     elementSize = m_theme->elementSize(handName);
+//     if (scaleFactor != 1) {
+//         elementSize = QSize(elementSize.width()*scaleFactor, elementSize.height()*scaleFactor);
+//     }
+//     p->translate(-elementSize.width()/2, -elementSize.width());
+//     m_theme->resize(elementSize);
+//     tempRect.setSize(elementSize);
+//     m_theme->paint(p, tempRect, handName);
+//     p->restore();
 }
 
 void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -128,9 +182,6 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
 
     QRectF tempRect(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
-
-    //qreal SVGSize = boundRect.width(); //store the dimensions of the clock. Assuming it's a square
-    //qreal scaleFactor = m_customSize / SVGSize;
 
     QSizeF boundSize = boundRect.size();
     QSize elementSize;
@@ -145,7 +196,7 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
         formFactor() == Plasma::Vertical) {
         QString time = m_time.toString();
         QFontMetrics fm(QApplication::font());
-        p->drawText(boundRect.width() * 0.1, boundRect.height() * 0.25, m_time.toString());
+        p->drawText((int)(boundRect.width() * 0.1), (int)(boundRect.height() * 0.25), m_time.toString());
         return;
     }
     m_theme->paint(p, boundRect, "ClockFace");
@@ -154,15 +205,18 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(hours);
     elementSize = m_theme->elementSize("HourHand");
+
     p->translate(-elementSize.width()/2, -elementSize.width());
     tempRect.setSize(elementSize);
     m_theme->paint(p, tempRect, "HourHand");
     p->restore();
 
+//     drawHand(p, hours, "SecondHand", 1);
     p->save();
     p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(minutes);
     elementSize = m_theme->elementSize("MinuteHand");
+    elementSize = QSize(elementSize.width(), elementSize.height());
     p->translate(-elementSize.width()/2, -elementSize.width());
     tempRect.setSize(elementSize);
     m_theme->paint(p, tempRect, "MinuteHand");
@@ -173,12 +227,15 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(seconds);
     elementSize = m_theme->elementSize("SecondHand");
+    elementSize = QSize(elementSize.width(), elementSize.height());
     p->translate(-elementSize.width()/2, -elementSize.width());
     tempRect.setSize(elementSize);
     m_theme->paint(p, tempRect, "SecondHand");
     p->restore();
 
+
     p->save();
+    m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HandCenterScrew");
     tempRect.setSize(elementSize);
     p->translate(boundSize.width() / 2 - elementSize.width() / 2, boundSize.height() / 2 - elementSize.height() / 2);

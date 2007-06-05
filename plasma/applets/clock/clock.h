@@ -38,8 +38,9 @@
 #include <plasma/dataengine.h>
 
 class QTimer;
-class QDialog;
+class KDialog;
 class QCheckBox;
+class QSpinBox;
 
 namespace Plasma
 {
@@ -63,19 +64,22 @@ class Clock : public Plasma::Applet
         void configureDialog();
 
     protected slots:
-        void acceptedTimeStringState(bool);
+//         void acceptedTimeStringState(bool);
+        void configAccepted();
 
     private:
+        void drawHand(QPainter *p, int rotation, const QString &handName);
+
         bool m_showTimeString;
         bool m_boundsDirty;
-        qreal m_customSize;
         QRectF m_bounds;
         int m_pixelSize;
         QTimer *m_timer;
         Plasma::Svg* m_theme;
         QTime m_time;
-        QDialog *m_dialog; //should we move this into another class?
+        KDialog *m_dialog; //should we move this into another class?
         QCheckBox *m_showTimeStringCheckBox;
+        QSpinBox *m_spinSize;
 };
 
 K_EXPORT_PLASMA_APPLET(clock, Clock)
