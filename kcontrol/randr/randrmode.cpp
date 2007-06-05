@@ -14,6 +14,9 @@ RandRMode::RandRMode(XRRModeInfo *info)
 
 	m_name = m_info->name;
 
+	m_size.setWidth(m_info->width);
+	m_size.setHeight(m_info->height);
+
 }
 
 RandRMode::~RandRMode()
@@ -22,9 +25,19 @@ RandRMode::~RandRMode()
 	// do NOT delete m_info here, it is handle by RandRScreen
 }
 
+RRMode RandRMode::id() const
+{
+	return m_info->id;
+}
+
 QString RandRMode::name() const
 {
 	return m_name;
+}
+
+QSize RandRMode::size() const
+{
+	return m_size;
 }
 
 bool RandRMode::isValid() const

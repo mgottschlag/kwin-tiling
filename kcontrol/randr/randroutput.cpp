@@ -18,6 +18,7 @@
 
 #include <KDebug>
 #include <QX11Info>
+#include <QAction>
 #include "randroutput.h"
 #include "randrscreen.h"
 #include "randrcrtc.h"
@@ -139,8 +140,40 @@ RRMode RandROutput::currentMode() const
 	Q_ASSERT(screen);
 
 	RandRCrtc *crtc = screen->crtc(m_currentCrtc);
-	Q_ASSERT(crtc);
+	if (!crtc)
+		return None;
+
 	return crtc->currentMode();
+}
+
+SizeList RandROutput::sizes() const
+{
+	SizeList sizeList;
+
+	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
+	Q_ASSERT(screen);
+
+	for (int i = 0; i < m_modes.count(); ++i)
+	{
+		RandRMode mode = screen->mode(m_modes.at(i));
+		if (!mode.isValid())
+			continue;
+		if (sizeList.indexOf(mode.size()) == -1)
+			sizeList.append(mode.size());
+	}
+	return sizeList;
+}
+
+QSize RandROutput::currentSize() const
+{
+	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
+	Q_ASSERT(screen);
+
+	RandRMode mode = screen->mode(currentMode());
+	if (mode.isValid())
+		return mode.size();
+
+	return QSize();
 }
 
 int RandROutput::rotations() const
@@ -166,6 +199,66 @@ int RandROutput::currentRotation() const
 bool RandROutput::isConnected() const
 {
 	return m_connected;
+}
+
+void RandROutput::slotChangeSize(QAction *action)
+{
+	QSize size = action->data().toSize();
+
+	if (size == currentSize())
+		return;
+
+	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
+	Q_ASSERT(screen);
+
+	RandRMode mode;
+	kDebug() << "Mode count: " << m_modes.count() << endl;
+	// find a mode that has the selected size
+	for (int i = 0; i < m_modes.count(); ++i)
+	{
+		RandRMode m = screen->mode(m_modes.at(i));
+		if (!m.isValid())
+			continue;
+
+		if (m.size() == size)
+		{
+			mode = m;
+			break;
+		}
+	}
+	if (!mode.isValid())
+		return;
+
+	setMode(mode.id());
+}
+
+void RandROutput::setMode(RRMode mode)
+{
+
+	// check if we support this mode
+	if (m_modes.indexOf(mode) == -1)
+		return;
+
+	RandRScreen *screen = dynamic_cast<RandRScreen*>(parent());
+	Q_ASSERT(screen);
+	// try to set the mode in the current crtc
+	if (m_currentCrtc != None)
+	{
+		RandRCrtc *crtc = screen->crtc(m_currentCrtc);
+
+		if (crtc->setMode(mode))
+			return;
+	}
+
+	// try to add this output to a crtc
+	for (int i = 0; i < m_possibleCrtcs.count(); ++i)
+	{
+		RandRCrtc *crtc = screen->crtc(m_possibleCrtcs.at(i));
+		if (crtc->addOutput(m_id, mode))
+			break;
+	}
+	loadSettings();
+	emit outputChanged(m_id);
 }
 
 #include "randroutput.moc"

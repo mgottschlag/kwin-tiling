@@ -174,17 +174,22 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				outputMenu->setIcon(SmallIcon(output->icon()));
 				outputMenu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
 
-				ModeList modes = output->modes();
-				for (int i = 0; i < modes.count(); ++i) {
-					RandRMode mode = screen->mode(modes.at(i));
-					if (mode.isValid())
-					{
-						action = outputMenu->addAction(mode.name());
-						if (modes.at(i) == output->currentMode())
-							action->setChecked(true);
+				SizeList sizes = output->sizes();
+				QSize currentSize = output->currentSize();
+				QActionGroup *sizeGroup = new QActionGroup(outputMenu);
+				for (int i = 0; i < sizes.count(); ++i) {
+					QSize size = sizes[i];
+					action = outputMenu->addAction(QString("%1 x %2").arg(size.width()).arg(size.height()));
+					action->setData(size);
+					sizeGroup->addAction(action);
+					if (size == currentSize) {
+						QFont font = action->font();
+						font.setBold(true);
+						action->setFont(font);
 					}
 
 				}
+				connect(sizeGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeSize(QAction*)));
 
 				// Display the rotations
 				int rotations = output->rotations(), currentRotation = output->currentRotation();

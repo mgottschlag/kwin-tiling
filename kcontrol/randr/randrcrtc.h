@@ -40,6 +40,9 @@ public:
 
 	RRMode currentMode() const;
 	
+	bool setMode(RRMode mode);
+	bool addOutput(RROutput output, RRMode mode);
+
 signals:
 	void crtcChanged(RRCrtc c);
 

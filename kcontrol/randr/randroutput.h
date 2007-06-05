@@ -21,9 +21,12 @@
 
 #include <QObject>
 #include <QString>
+#include <QSize>
 #include "randr.h"
 
 #ifdef HAS_RANDR_1_2
+
+class QAction;
 
 class RandROutput : public QObject
 {
@@ -51,6 +54,12 @@ public:
 	RRMode currentMode() const;
 
 	/**
+	 * A text representation of the modes
+	 */
+	SizeList sizes() const;
+	QSize currentSize() const;
+
+	/**
 	 * Return all possible rotations for all CRTCs this output can be connected
 	 * to.
 	 */
@@ -63,8 +72,14 @@ public:
 
 	bool isConnected() const;
 
+public slots:
+	void slotChangeSize(QAction *action);
+
 signals:
 	void outputChanged(RROutput o);
+
+protected:
+	void setMode(RRMode m);
 
 private:
 	RROutput m_id;
