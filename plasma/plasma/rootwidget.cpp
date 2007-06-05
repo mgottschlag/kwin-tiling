@@ -36,7 +36,7 @@
 //#define SUPERKARAMBA_DEMO
 
 #ifdef ICON_DEMO
-#include "widgets/icon.h"
+#include "plasma/widgets/icon.h"
 #endif
 
 RootWidget::RootWidget()
@@ -67,16 +67,16 @@ RootWidget::RootWidget()
     connect(m_controlBox, SIGNAL(lockInterface(bool)), m_view->corona(), SLOT(setImmutable(bool)));
 
 #ifdef ICON_DEMO
-    Icon* icon = new Icon();
+    Plasma::Icon* icon = new Plasma::Icon();
     icon->setIcon("plasmagik");
     icon->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-    addItem(icon);
+    m_view->corona()->addItem(icon);
 
-    icon = new Icon();
+    icon = new Plasma::Icon();
     icon->setIcon("user-home");
     icon->setSize(64, 64);
     icon->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-    addItem(icon);
+    m_view->corona()->addItem(icon);
 #endif
 
 #ifdef SUPERKARAMBA_DEMO
