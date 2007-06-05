@@ -49,15 +49,10 @@ Clock::Clock(QObject *parent, const QStringList &args)
 {
     setFlags(QGraphicsItem::ItemIsMovable); // | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
     dataEngine("time")->connectSource("time", this);
+    KConfigGroup cg = globalAppletConfig();
+    m_showTimeString = cg.readEntry("showTimeString", false);
 
     m_dialog = 0;
-    m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.");
-
-    KConfigGroup cg = globalAppletConfig();
-    //kDebug() << "Value: " << cg.readEntry("showTimeString") << endl;
-    m_showTimeString = cg.readEntry("showTimeString") == "false";
-    m_showTimeStringCheckBox->setCheckState(m_showTimeString ? Qt::Unchecked
-                                                             : Qt::Checked);
 
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_customSize = boundingRect().width();
@@ -92,10 +87,10 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 
 void Clock::configureDialog() //TODO: Make the size settable
 {
+    m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.");
+    m_showTimeStringCheckBox->setChecked(m_showTimeString);
     QPushButton *closeButton = new QPushButton("Close");
     QLabel *label = new QLabel("Hello Configuration World!");
-    m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.");
-
     QVBoxLayout *lay = new QVBoxLayout;
     QHBoxLayout *buttonLay = new QHBoxLayout;
     buttonLay->addWidget(closeButton);
@@ -106,18 +101,18 @@ void Clock::configureDialog() //TODO: Make the size settable
     if (m_dialog == 0) {
         m_dialog = new QDialog;
         connect(closeButton, SIGNAL(clicked()), m_dialog, SLOT(accept()));
-        connect(m_showTimeStringCheckBox, SIGNAL(stateChanged(int)), this, SLOT(acceptedConfigDialog()));
+        connect(m_showTimeStringCheckBox, SIGNAL(toggled(bool)), this, SLOT(acceptedTimeStringState(bool)));
         m_dialog->setLayout(lay);
     }
 
     m_dialog->show();
 }
 
-void Clock::acceptedConfigDialog()
+void Clock::acceptedTimeStringState(bool isChanged)
 {
     KConfigGroup cg = globalAppletConfig();
-    m_showTimeString = m_showTimeStringCheckBox->checkState() == Qt::Checked;
-    cg.writeEntry("showTimeString", m_showTimeString);
+    cg.writeEntry("showTimeString", isChanged);
+    m_showTimeString = isChanged;
     update();
     cg.config()->sync(); //NOTE: This shouldn't be needed, but automatically handled from Plasma
 }

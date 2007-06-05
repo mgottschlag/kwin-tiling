@@ -63,7 +63,7 @@ class Clock : public Plasma::Applet
         void configureDialog();
 
     protected slots:
-        void acceptedConfigDialog();
+        void acceptedTimeStringState(bool);
 
     private:
         bool m_showTimeString;
