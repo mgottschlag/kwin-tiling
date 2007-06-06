@@ -173,7 +173,7 @@ GSendInt (int val)
 static void
 GSendStr (const char *buf)
 {
-    int len = buf ? strlen (buf) + 1 : 0;
+    unsigned len = buf ? strlen (buf) + 1 : 0;
     GWrite (&len, sizeof(len));
     GWrite (buf, len);
 }
@@ -197,7 +197,7 @@ GRecvInt (void)
 static char *
 GRecvStr (void)
 {
-    int len;
+    unsigned len;
     char *buf;
 
     if (!(len = GRecvInt()))
@@ -214,10 +214,10 @@ GRecvStr (void)
 static char *
 GRecvArr (void)
 {
-    int len;
+    unsigned len;
     char *arr;
 
-    if (!(len = GRecvInt()))
+    if (!(len = (unsigned) GRecvInt()))
 	return (char *)0;
     if (len > 0x10000 || !(arr = malloc (len))) {
 	message ("No memory for read buffer\n");
