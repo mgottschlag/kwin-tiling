@@ -55,10 +55,10 @@ Clock::Clock(QObject *parent, const QStringList &args)
 
     KConfigGroup cg = globalAppletConfig();
     m_showTimeString = cg.readEntry("showTimeString", false);
-
+    m_pixelSize = cg.readEntry("size", 250);
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
-    m_theme->resize();
+    m_theme->resize(m_pixelSize, m_pixelSize);
     constraintsUpdated();
 }
 
