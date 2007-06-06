@@ -29,6 +29,9 @@ RandRScreen::RandRScreen(int screenIndex)
 {
 	m_index = screenIndex;
 	
+	m_rect = QRect(0, 0, XDisplayWidth(QX11Info::display(), m_index), XDisplayHeight(QX11Info::display(), m_index));
+	kdDebug() << "[SCREEN] Current screen size: " << m_rect << endl;
+
 	loadSettings();
 
 	// select for input events
@@ -73,6 +76,9 @@ void RandRScreen::loadSettings()
 	m_resources = XRRGetScreenResources(QX11Info::display(), rootWindow());
 	Q_ASSERT(m_resources);
 
+	if (RandR::timestamp != m_resources->timestamp)
+		RandR::timestamp = m_resources->timestamp;
+
 	//get all crtcs
 	for (int i = 0; i < m_resources->ncrtc; ++i)
 	{
@@ -107,6 +113,14 @@ void RandRScreen::loadSettings()
 			m_modes[m_resources->modes[i].id] = RandRMode(&m_resources->modes[i]);
 
 	}
+}
+
+void RandRScreen::handleEvent(XRRScreenChangeNotifyEvent* event)
+{
+	m_rect.setWidth(event->width);
+	m_rect.setHeight(event->height);
+
+	emit configChanged();
 }
 
 void RandRScreen::handleRandREvent(XRRNotifyEvent* event)
@@ -189,6 +203,67 @@ RandRMode RandRScreen::mode(RRMode id) const
 
 	return RandRMode();
 }
+
+bool RandRScreen::adjustSize()
+{
+	//try to find a size in which all outputs fit
+	
+	//start with a 0x0 rect located at (0,0)
+	QRect rect = QRect(0,0,0,0);
+
+	OutputMap::const_iterator it;
+	for (it = m_outputs.constBegin(); it != m_outputs.constEnd(); ++it)
+	{
+		RandROutput *o = (*it);
+		if (!o->isActive())
+			continue;
+		rect = rect.united(o->rect());
+	}
+
+
+	if (rect.width() < m_minSize.width())
+		rect.setWidth(m_minSize.width());
+	if (rect.height() < m_minSize.height())
+		rect.setHeight(m_minSize.height());
+
+	if (rect.width() > m_maxSize.width())
+		return false;
+	if (rect.height() > m_maxSize.height())
+		return false;
+
+	return setSize(rect.size());
+}
+
+bool RandRScreen::setSize(QSize s)
+{
+	if (s == m_rect.size())
+		return true;
+
+	if (s.width() < m_minSize.width() || 
+	    s.height() < m_minSize.height() ||
+	    s.width() > m_maxSize.width() ||
+	    s.height() > m_maxSize.height())
+		return false;
+
+	int widthMM, heightMM;
+	float dpi;
+
+	/* values taken from xrandr */
+	dpi = (25.4 * DisplayHeight(QX11Info::display(), m_index)) / DisplayHeightMM(QX11Info::display(), m_index);
+	widthMM =  (int) ((25.4 * s.width()) / dpi);
+	heightMM = (int) ((25.4 * s.height()) / dpi);
+
+	XRRSetScreenSize(QX11Info::display(), rootWindow(), s.width(), s.height(), widthMM, heightMM);
+	m_rect.setSize(s);
+
+	return true;
+}
+
+QRect RandRScreen::rect() const
+{
+	return m_rect;
+}
+
 #include "randrscreen.moc"
 
 #endif

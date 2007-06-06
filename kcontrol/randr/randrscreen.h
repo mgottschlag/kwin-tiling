@@ -42,6 +42,7 @@ public:
 
 	void loadSettings();
 
+	void handleEvent(XRRScreenChangeNotifyEvent* event);
 	void handleRandREvent(XRRNotifyEvent* event);
 
 	CrtcMap  crtcs() const;
@@ -53,12 +54,18 @@ public:
 	ModeMap modes() const;
 	RandRMode mode(RRMode id) const;
 
+	bool adjustSize();
+	bool setSize(QSize s);
+
+	QRect rect() const;
+
 signals:
 	void configChanged();
 
 private:
 	int m_index;
 	QSize m_minSize;
+	QRect m_rect;
 	QSize m_maxSize;
 
 	XRRScreenResources* m_resources;

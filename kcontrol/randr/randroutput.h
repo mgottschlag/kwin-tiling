@@ -21,7 +21,7 @@
 
 #include <QObject>
 #include <QString>
-#include <QSize>
+#include <QRect>
 #include "randr.h"
 
 #ifdef HAS_RANDR_1_2
@@ -57,7 +57,7 @@ public:
 	 * A text representation of the modes
 	 */
 	SizeList sizes() const;
-	QSize currentSize() const;
+	QRect rect() const;
 
 	/**
 	 * Return all possible rotations for all CRTCs this output can be connected
@@ -71,6 +71,7 @@ public:
 	int currentRotation() const;
 
 	bool isConnected() const;
+	bool isActive() const;
 
 public slots:
 	void slotChangeSize(QAction *action);

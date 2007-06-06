@@ -39,6 +39,7 @@ public:
 	void handleEvent(XRRCrtcChangeNotifyEvent *event);
 
 	RRMode currentMode() const;
+	QPoint pos() const;
 	
 	bool setMode(RRMode mode);
 	bool rotate(int rotation);

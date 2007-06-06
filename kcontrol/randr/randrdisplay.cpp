@@ -50,6 +50,9 @@ RandRDisplay::RandRDisplay()
 
 	m_numScreens = ScreenCount(QX11Info::display());
 
+	// set the timestamp to 0
+	RandR::timestamp = 0;
+
 	// This assumption is WRONG with Xinerama
 	// Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(QX11Info::display()));
 
@@ -148,6 +151,13 @@ void RandRDisplay::handleEvent(XEvent *e)
 	if (e->type == m_eventBase + RRScreenChangeNotify) {
 #ifdef HAS_RANDR_1_2
 		if (RandR::has_1_2) {
+			XRRScreenChangeNotifyEvent *event = (XRRScreenChangeNotifyEvent*)(e);
+			for (int i=0; i < m_screens.count(); ++i) {
+				RandRScreen *screen = m_screens.at(i);
+				if (screen->rootWindow() == event->root)
+					screen->handleEvent(event);
+			}
+			
 		}
 		else
 #endif

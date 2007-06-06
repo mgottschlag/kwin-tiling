@@ -22,6 +22,7 @@
 #include "randr.h"
 
 bool RandR::has_1_2 = false;
+Time RandR::timestamp = 0;
 
 QString RandR::rotationName(int rotation, bool pastTense, bool capitalised)
 {

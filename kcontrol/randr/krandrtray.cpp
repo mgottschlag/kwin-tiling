@@ -175,7 +175,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				outputMenu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
 
 				SizeList sizes = output->sizes();
-				QSize currentSize = output->currentSize();
+				QSize currentSize = output->rect().size();
 				QActionGroup *sizeGroup = new QActionGroup(outputMenu);
 				for (int i = 0; i < sizes.count(); ++i) {
 					QSize size = sizes[i];

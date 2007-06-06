@@ -65,6 +65,7 @@ class RandR
 {
 public:
 	static bool has_1_2;
+	static Time timestamp;
 
 	enum Orientations {
 		Rotate0			= 0x1,

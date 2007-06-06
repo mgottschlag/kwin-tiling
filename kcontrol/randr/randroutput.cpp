@@ -49,6 +49,10 @@ void RandROutput::loadSettings()
 	m_info = XRRGetOutputInfo(QX11Info::display(), m_screen->resources(), m_id);
 	Q_ASSERT(m_info);
 
+
+	if (RandR::timestamp != m_info->timestamp)
+		RandR::timestamp = m_info->timestamp;
+
 	m_name = m_info->name;
 
 	m_possibleCrtcs.clear();
@@ -79,12 +83,10 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 	bool changed = false;
 
 	//TODO: implement
-	kDebug() << "[OUTPUT] Got event" << endl;
 
 	if (event->mode != currentMode())
 	{
 		RandRMode mode = m_screen->mode(event->mode);
-		kdDebug()  << "[OUTPUT]      new mode: " << mode.name() << endl; 
 	}
 
 	loadSettings();
@@ -94,7 +96,6 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 void RandROutput::handlePropertyEvent(XRROutputPropertyNotifyEvent *event)
 {
 	//TODO: implement
-	kDebug() << "[OUTPUT] Got property event" << endl;
 }
 
 QString RandROutput::name() const
@@ -156,13 +157,17 @@ SizeList RandROutput::sizes() const
 	return sizeList;
 }
 
-QSize RandROutput::currentSize() const
+QRect RandROutput::rect() const
 {
+	QRect r(0,0,0,0);
+	if (m_currentCrtc != None)
+		r.translate(m_screen->crtc(m_currentCrtc)->pos());
+
 	RandRMode mode = m_screen->mode(currentMode());
 	if (mode.isValid())
-		return mode.size();
+		r.setSize(mode.size());
 
-	return QSize();
+	return r;
 }
 
 int RandROutput::rotations() const
@@ -172,7 +177,7 @@ int RandROutput::rotations() const
 
 int RandROutput::currentRotation() const
 {
-	if (!isConnected() || m_currentCrtc == None)
+	if (!isActive())
 		return RandR::Rotate0;
 
 	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
@@ -186,15 +191,19 @@ bool RandROutput::isConnected() const
 	return m_connected;
 }
 
+bool RandROutput::isActive() const
+{
+	return (m_connected && m_currentCrtc != None);
+}
+
 void RandROutput::slotChangeSize(QAction *action)
 {
 	QSize size = action->data().toSize();
 
-	if (size == currentSize())
+	if (size == rect().size())
 		return;
 
 	RandRMode mode;
-	kDebug() << "Mode count: " << m_modes.count() << endl;
 	// find a mode that has the selected size
 	for (int i = 0; i < m_modes.count(); ++i)
 	{
@@ -208,6 +217,7 @@ void RandROutput::slotChangeSize(QAction *action)
 			break;
 		}
 	}
+
 	if (!mode.isValid())
 		return;
 
