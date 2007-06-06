@@ -160,7 +160,7 @@ bool RandRCrtc::rotate(int rotation)
 
 	m_currentRotation = rotation;
 	setMode(m_currentMode);
-
+        return true;
 }
 
 bool RandRCrtc::addOutput(RROutput output, RRMode mode)
