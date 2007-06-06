@@ -28,9 +28,7 @@ RandRScreen::RandRScreen(int screenIndex)
 	: m_resources(0L)
 {
 	m_index = screenIndex;
-	
 	m_rect = QRect(0, 0, XDisplayWidth(QX11Info::display(), m_index), XDisplayHeight(QX11Info::display(), m_index));
-	kdDebug() << "[SCREEN] Current screen size: " << m_rect << endl;
 
 	loadSettings();
 
@@ -87,7 +85,7 @@ void RandRScreen::loadSettings()
 		else
 		{
 			RandRCrtc *c = new RandRCrtc(this, m_resources->crtcs[i]);
-			connect(c, SIGNAL(crtcChanged(RRCrtc)), this, SIGNAL(configChanged()));
+			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
 			m_crtcs[m_resources->crtcs[i]] = c;
 		}
 
@@ -101,7 +99,7 @@ void RandRScreen::loadSettings()
 		else
 		{
 			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
-			connect(o, SIGNAL(outputChanged(RROutput)), this, SIGNAL(configChanged()));
+			connect(o, SIGNAL(outputChanged(RROutput, int)), this, SIGNAL(configChanged()));
 			m_outputs[m_resources->outputs[i]] = o;
 		}
 	}
@@ -204,16 +202,18 @@ RandRMode RandRScreen::mode(RRMode id) const
 	return RandRMode();
 }
 
-bool RandRScreen::adjustSize()
+bool RandRScreen::adjustSize(QRect minimumSize)
 {
 	//try to find a size in which all outputs fit
 	
 	//start with a 0x0 rect located at (0,0)
-	QRect rect = QRect(0,0,0,0);
+	QRect rect = minimumSize;
 
 	OutputMap::const_iterator it;
 	for (it = m_outputs.constBegin(); it != m_outputs.constEnd(); ++it)
 	{
+		// outputs that are not active should not be taken into account
+		// when calculating the screen size
 		RandROutput *o = (*it);
 		if (!o->isActive())
 			continue;
@@ -221,6 +221,7 @@ bool RandRScreen::adjustSize()
 	}
 
 
+	// check bounds
 	if (rect.width() < m_minSize.width())
 		rect.setWidth(m_minSize.width());
 	if (rect.height() < m_minSize.height())

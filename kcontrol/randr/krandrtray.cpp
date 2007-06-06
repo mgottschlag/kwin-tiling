@@ -176,6 +176,12 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 
 				SizeList sizes = output->sizes();
 				QSize currentSize = output->rect().size();
+
+				// if the output is rotated 90 or 270, the returned rect is inverted
+				// so we need to invert the size before comparing
+				if (output->currentRotation() & (RandR::Rotate90 | RandR::Rotate270))
+					currentSize = QSize(currentSize.height(), currentSize.width());
+
 				QActionGroup *sizeGroup = new QActionGroup(outputMenu);
 				for (int i = 0; i < sizes.count(); ++i) {
 					QSize size = sizes[i];
@@ -388,7 +394,7 @@ void KRandRSystemTray::slotRefreshRateChanged(QAction *action)
 	Q_ASSERT(action);
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
-		//TODO: this will probably have to change as refresh rate is differect for 
+		//TODO: this will probably have to change as refresh rate is different for 
 		//      each crtc
 		currentScreenIndex();
 	else

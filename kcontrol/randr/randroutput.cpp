@@ -32,6 +32,11 @@ RandROutput::RandROutput(RandRScreen *parent, RROutput id)
 	Q_ASSERT(m_screen);
 
 	m_id = id;
+	
+	// initialize members
+	m_rotations = 0;
+	m_connected = false;
+	
 	loadSettings();
 }
 
@@ -80,21 +85,36 @@ void RandROutput::loadSettings()
 
 void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 {
-	bool changed = false;
+	int changed = 0;
 
-	//TODO: implement
+	if (event->crtc != m_currentCrtc)
+	{
+		changed |= ChangeCrtc;
+		m_currentCrtc = event->crtc;
+	}
 
 	if (event->mode != currentMode())
 	{
-		RandRMode mode = m_screen->mode(event->mode);
+		changed |= ChangeMode;
+
+	}
+	if (event->rotation != currentRotation())
+	{
+		changed |= ChangeRotation;
+	}
+	if ((event->connection == RR_Connected) != m_connected)
+	{
+		changed |= ChangeConnection;
+		m_connected = !m_connected;
 	}
 
-	loadSettings();
-	emit outputChanged(m_id);
+	if (changed)
+		emit outputChanged(m_id, changed);
 }
 
 void RandROutput::handlePropertyEvent(XRROutputPropertyNotifyEvent *event)
 {
+	Q_UNUSED(event);
 	//TODO: implement
 }
 
@@ -159,13 +179,20 @@ SizeList RandROutput::sizes() const
 
 QRect RandROutput::rect() const
 {
-	QRect r(0,0,0,0);
-	if (m_currentCrtc != None)
-		r.translate(m_screen->crtc(m_currentCrtc)->pos());
+	if (m_currentCrtc == None)
+		return QRect(0,0,0,0);
 
-	RandRMode mode = m_screen->mode(currentMode());
-	if (mode.isValid())
-		r.setSize(mode.size());
+	QRect r = m_screen->crtc(m_currentCrtc)->rect();
+
+	// if the current rotation is 90 or 270, invert the rect
+	if (currentRotation() & (RandR::Rotate90 | RandR::Rotate270))
+	{
+		kDebug() << "Current ROtation: " << currentRotation() << endl;
+		QRect inverted;
+		inverted.setWidth(r.height());
+		inverted.setHeight(r.width());
+		return inverted;
+	}
 
 	return r;
 }
@@ -278,7 +305,7 @@ void RandROutput::setMode(RRMode mode)
 			break;
 	}
 	loadSettings();
-	emit outputChanged(m_id);
+	emit outputChanged(m_id, ChangeMode);
 }
 
 #include "randroutput.moc"

@@ -54,7 +54,7 @@ public:
 	ModeMap modes() const;
 	RandRMode mode(RRMode id) const;
 
-	bool adjustSize();
+	bool adjustSize(QRect minimumSize = QRect(0,0,0,0));
 	bool setSize(QSize s);
 
 	QRect rect() const;

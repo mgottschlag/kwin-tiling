@@ -33,6 +33,14 @@ class RandROutput : public QObject
 	Q_OBJECT
 
 public:
+	enum OutputChange 
+	{
+		ChangeCrtc       =  1,
+		ChangeMode       =  2,
+		ChangeRotation   =  4,
+		ChangeConnection =  8
+	};
+
 	RandROutput(RandRScreen *parent, RROutput id);
 	~RandROutput();
 
@@ -79,12 +87,14 @@ public slots:
 	void slotDisable();
 
 signals:
-	void outputChanged(RROutput o);
+	void outputChanged(RROutput o, int changes);
 
 protected:
 	void setMode(RRMode m);
 
 private:
+	
+
 	RROutput m_id;
 	XRROutputInfo* m_info;
 	QString m_name;

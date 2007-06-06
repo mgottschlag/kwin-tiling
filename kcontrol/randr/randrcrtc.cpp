@@ -60,8 +60,7 @@ void RandRCrtc::loadSettings()
 	if (RandR::timestamp != m_info->timestamp)
 		RandR::timestamp = m_info->timestamp;
 
-	m_pos = QPoint(m_info->x, m_info->y);
-	m_size = QSize(m_info->width, m_info->height);
+	m_rect = QRect(m_info->x, m_info->y, m_info->width, m_info->height);
 
 	// get all connected outputs 
 	m_connectedOutputs.clear();
@@ -82,9 +81,34 @@ void RandRCrtc::loadSettings()
 
 void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 {
-	//TODO: implement
+	int changed = 0;
 
-	emit crtcChanged(m_id);
+	if (event->mode != m_currentMode)
+	{
+		changed |= ChangeMode;
+		m_currentMode = event->mode;
+	}
+	
+	if (event->rotation != m_currentRotation)
+	{
+		changed |= ChangeRotation;
+		m_currentRotation = event->rotation;
+	}
+	if (event->x != m_rect.x() || event->y != m_rect.y())
+	{
+		changed |= ChangePosition;
+		m_rect.translate(event->x, event->y);
+	}
+
+	if ((int) event->width != m_rect.width() || (int)event->height != m_rect.height())
+	{
+		changed |= ChangeSize;
+		m_rect.setWidth(event->width);
+		m_rect.setHeight(event->height);
+	}
+
+	if (changed)
+		emit crtcChanged(m_id, changed);
 }
 
 RRMode RandRCrtc::currentMode() const
@@ -92,9 +116,9 @@ RRMode RandRCrtc::currentMode() const
 	return m_currentMode;
 }
 
-QPoint RandRCrtc::pos() const
+QRect RandRCrtc::rect() const
 {
-	return m_pos;
+	return m_rect;
 }
 
 bool RandRCrtc::setMode(RRMode mode)
@@ -119,7 +143,7 @@ bool RandRCrtc::setMode(RRMode mode)
 	RandRMode newMode = m_screen->mode(mode);
 	if (newMode.isValid())
 	{
-		QRect r(m_pos, newMode.size());
+		QRect r(m_rect.topLeft(), newMode.size());
 		r = QRect(0,0,0,0).united(r);
 		if (r.width() > m_screen->maxSize().width() || r.height() > m_screen->maxSize().height())
 			return false;
@@ -129,27 +153,30 @@ bool RandRCrtc::setMode(RRMode mode)
 		if (!m_screen->rect().contains(r))
 		{
 			// try to adjust the screen size
-			RRMode m = m_currentMode;
-			m_currentMode = mode;
-			if (!m_screen->adjustSize())
-			{
-				m_currentMode = m;
+			if (!m_screen->adjustSize(r))
 				return false;
-			}
 		}
 	}
 
 	Status s = XRRSetCrtcConfig(QX11Info::display(), m_screen->resources(), m_id, 
-				    RandR::timestamp, m_pos.x(), m_pos.y(), mode,
+				    RandR::timestamp, m_rect.x(), m_rect.y(), mode,
 				    m_currentRotation, outputs, m_connectedOutputs.count()); 
 	
+	bool ret;
+	if (s == RRSetConfigSuccess)
+	{
+		m_currentMode = mode;
+		emit crtcChanged(m_id, ChangeMode);
+		ret = true;
+	}
+	else
+	{
+		ret = false;
+		loadSettings();
+	}
 
-	//FIXME: check status
-	loadSettings();
 	m_screen->adjustSize();
-
-	emit crtcChanged(m_id);
-	return true;
+	return ret;
 }
 
 bool RandRCrtc::rotate(int rotation)
@@ -158,9 +185,25 @@ bool RandRCrtc::rotate(int rotation)
 	if (!rotation & m_rotations)
 		return false;
 
+	QRect r(m_rect.topLeft(), QSize(m_rect.height(), m_rect.width()));
+	if (!m_screen->rect().contains(r))
+	{
+		// check if the rotated rect is smaller than the max screen size
+		r = m_screen->rect().united(r);
+		if (r.width() > m_screen->maxSize().width() || r.height() > m_screen->maxSize().height())
+			return false;
+		
+		// adjust the screen size
+		r = r.united(m_rect);
+		if (!m_screen->adjustSize(r))
+			return false;
+	}
+
 	m_currentRotation = rotation;
 	setMode(m_currentMode);
-        return true;
+	m_screen->adjustSize();
+
+	return true;
 }
 
 bool RandRCrtc::addOutput(RROutput output, RRMode mode)

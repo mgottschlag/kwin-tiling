@@ -20,6 +20,7 @@
 #define __RANDRCRTC_H__
 
 #include <QObject>
+#include <QRect>
 #include "randr.h"
 
 #ifdef HAS_RANDR_1_2
@@ -29,6 +30,15 @@ class RandRCrtc : public QObject
 	Q_OBJECT
 
 public:
+
+	enum CrtcChange
+	{
+		ChangeMode     = 1,
+		ChangeRotation = 2,
+		ChangePosition = 4,
+		ChangeSize     = 8
+	};
+
 	RandRCrtc(RandRScreen *parent, RRCrtc id);
 	~RandRCrtc();
 
@@ -39,7 +49,7 @@ public:
 	void handleEvent(XRRCrtcChangeNotifyEvent *event);
 
 	RRMode currentMode() const;
-	QPoint pos() const;
+	QRect rect() const;
 	
 	bool setMode(RRMode mode);
 	bool rotate(int rotation);
@@ -48,15 +58,14 @@ public:
 	bool removeOutput(RROutput output);
 
 signals:
-	void crtcChanged(RRCrtc c);
+	void crtcChanged(RRCrtc c, int changes);
 
 private:
 	RRCrtc m_id;
 	XRRCrtcInfo* m_info;
 	RRMode m_currentMode;
 
-	QSize m_size;
-	QPoint m_pos;
+	QRect m_rect;
 	OutputList m_connectedOutputs;
 	OutputList m_possibleOutputs;
 	int m_rotations;
