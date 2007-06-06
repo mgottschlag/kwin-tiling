@@ -58,7 +58,7 @@ static QString catFile(QString fname)
   QString result;
   int fd = ::open(QFile::encodeName(fname), O_RDONLY);
   if (fd<0)
-	return QString::null;
+	return QString();
 
   if (fd >= 0)
     {

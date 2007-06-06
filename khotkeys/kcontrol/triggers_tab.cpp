@@ -55,7 +55,7 @@ Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
 
     action = popup->addAction( i18n( "Window Trigger..." ) );
     action->setData( TYPE_WINDOW_TRIGGER );
-	
+
 #ifdef HAVE_ARTS
     if( haveArts())
     {
@@ -148,7 +148,7 @@ void Triggers_tab::new_selected( QAction *action )
                 0 )); // CHECKME NULL ?
           break;
         case TYPE_VOICE_TRIGGER: // Voice trigger
-			dlg = new Voice_trigger_dialog( new Voice_trigger(NULL,QString::null,VoiceSignature(),VoiceSignature())); // CHECKME NULL ?
+			dlg = new Voice_trigger_dialog( new Voice_trigger(NULL,QString(),VoiceSignature(),VoiceSignature())); // CHECKME NULL ?
 			break;
         }
     if( dlg != NULL )
@@ -358,7 +358,7 @@ Voice_trigger_dialog::Voice_trigger_dialog( Voice_trigger* trigger_P )
 : KDialog( ),
 _trigger( trigger_P ), _page( NULL )
 {
-    setButtons( Ok | Cancel ); 
+    setButtons( Ok | Cancel );
     // CHECKME caption
 	_page = new VoiceRecordPage( _trigger ? _trigger->voicecode() : QString::null ,  this);
         _page->setObjectName("VoiceRecordPage");
@@ -373,13 +373,13 @@ Trigger* Voice_trigger_dialog::edit_trigger()
 	if( exec())
 		return new Voice_trigger(NULL, _page->getVoiceId(),
 								 (_page->isModifiedSignature(1) || !_trigger) ?  _page->getVoiceSignature(1) : _trigger->voicesignature(1) ,
-								 (_page->isModifiedSignature(2) || !_trigger) ?  _page->getVoiceSignature(2) : _trigger->voicesignature(2) ); 
+								 (_page->isModifiedSignature(2) || !_trigger) ?  _page->getVoiceSignature(2) : _trigger->voicesignature(2) );
 	else
 		return NULL;
 }
 
 
-	
+
 
 } // namespace KHotKeys
 

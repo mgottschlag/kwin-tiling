@@ -189,7 +189,7 @@ void ExtensionManager::configureMenubar(bool duringInit)
 
         if (duringInit)
         {
-            AppletInfo menubarInfo("menuapplet.desktop", QString::null, AppletInfo::Applet);
+            AppletInfo menubarInfo("menuapplet.desktop", QString(), AppletInfo::Applet);
             if (PluginManager::self()->hasInstance(menubarInfo))
             {
                 // it's already there, in the main panel!

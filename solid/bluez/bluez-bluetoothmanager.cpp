@@ -99,7 +99,7 @@ QString BluezBluetoothManager::defaultInterface() const
 {
     QDBusReply< QString > path = d->manager.call("DefaultAdapter");
     if (!path.isValid())
-        return QString::null;
+        return QString();
 
     return path.value();
 }

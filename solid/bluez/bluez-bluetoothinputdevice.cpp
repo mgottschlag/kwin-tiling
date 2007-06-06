@@ -84,7 +84,7 @@ QString BluezBluetoothInputDevice::stringReply(const QString &method) const
 {
     QDBusReply< QString > reply = device->call(method);
     if (!reply.isValid())
-        return QString::null;
+        return QString();
 
     return reply.value();
 }

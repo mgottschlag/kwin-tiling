@@ -255,7 +255,7 @@ void ContainerArea::defaultContainerConfig()
     // system tray applet
 #ifdef __GNUC__
 #warning "once qxembed is back and system tray works again, renable this"
-#endif    
+#endif
 /*    a = manager->createAppletContainer(
         "systemtrayapplet.desktop",
         true,
@@ -591,8 +591,8 @@ const QWidget* ContainerArea::addNonKDEAppButton()
         return 0;
     }
 
-    PanelExeDialog dlg( QString::null, QString::null, QString::null,
-                       QString::null, QString::null, false, 0 );
+    PanelExeDialog dlg( QString(), QString(), QString(),
+                       QString(), QString(), false, 0 );
 
     if ( dlg.exec() == QDialog::Accepted )
     {
@@ -1290,8 +1290,8 @@ void ContainerArea::dropEvent(QDropEvent *ev)
                 //                        K3Icon::DefaultState, &pixmapFile);
                 QString iconName = KMimeType::iconNameForUrl(url);
                 KIconLoader::global()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, &pixmapFile );
-                PanelExeDialog dlg(QString::null, QString::null, url.path(),
-                                   pixmapFile, QString::null, false, 0);
+                PanelExeDialog dlg(QString(), QString(), url.path(),
+                                   pixmapFile, QString(), false, 0);
                 if (dlg.exec() == QDialog::Accepted)
                 {
                     // KIconloader returns a full path, we only want the name
@@ -1640,7 +1640,7 @@ void ContainerArea::scrollTo(BaseContainer* b)
     }
 #ifdef __GNUC__
 #warning FIX THIS
-#endif    
+#endif
     //int x, y;
     //viewportToContents(b->pos().x(), b->pos().y(), x, y);
     //ensureVisible(x, y);

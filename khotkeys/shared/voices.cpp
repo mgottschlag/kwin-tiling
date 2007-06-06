@@ -273,7 +273,7 @@ QString Voice::isNewSoundFarEnough(const VoiceSignature& signature, const QStrin
 		kDebug(1217) << k_funcinfo << "**** " << trig->voicecode() << " : " << minimum << endl;
 
 	bool selected=trig &&  ((got_count==1 && minimum < REJECT_FACTOR_DIFF*0.7 ) || ( minimum < REJECT_FACTOR_DIFF   &&  trig==sec_trig  ) );
-	return selected ? trig->voicecode() : QString::null;
+	return selected ? trig->voicecode() : QString();
 }
 
 bool Voice::doesVoiceCodeExists(const QString &vc)

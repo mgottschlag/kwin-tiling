@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 2005 Olivier Goffart  < ogoffart @ kde.org >
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #include <QtGui/QWidget>
@@ -34,19 +34,19 @@ VoiceRecordPage::VoiceRecordPage( const QString &voiceid_P, QWidget *parent)
     _label->setObjectName("label");
 /*    _label->setAlignment(QLabel::AlignLeft | QLabel::WordBreak |
     QLabel::AlignVCenter);*/
-	
+
 	_lineEdit = new KLineEdit( this );
 	_lineEdit->setText(voiceid_P);
 
-	
+
 	Sound s;
-	if(voiceid_P!=QString::null)
+	if(voiceid_P!=QString())
 	{
         QString fileName = KStandardDirs::locateLocal( "data", "khotkeys/" + voiceid_P +  "1.wav"  );
 		s.load(fileName);
 	}
 	_recorder1 = new VoiceRecorder(s, voiceid_P, this, "recorder");
-	if(voiceid_P!=QString::null)
+	if(voiceid_P!=QString())
 	{
         QString fileName = KStandardDirs::locateLocal( "data", "khotkeys/" + voiceid_P +  "2.wav"  );
 		s.load(fileName);
@@ -92,10 +92,10 @@ void VoiceRecordPage::slotChanged()
 		}
 		if( voiceCodeOK )
 			_label->setText(_message);
-		
+
 		emit voiceRecorded( voiceCodeOK &&
-				( (  (_recorder1->state()==VoiceRecorder::sModified || _recorder2->state()==VoiceRecorder::sModified || _lineEdit->text() != _original_voiceId) 
-					&& !_original_voiceId.isEmpty()) 
+				( (  (_recorder1->state()==VoiceRecorder::sModified || _recorder2->state()==VoiceRecorder::sModified || _lineEdit->text() != _original_voiceId)
+					&& !_original_voiceId.isEmpty())
 				||  (_recorder1->state()==VoiceRecorder::sModified && _recorder2->state()==VoiceRecorder::sModified )   )  );
     }
 
@@ -112,7 +112,7 @@ VoiceSignature VoiceRecordPage::getVoiceSignature(int ech) const
 	   s.save(fileName);
 	   return VoiceSignature(s);
    }
-   
+
 bool VoiceRecordPage::isModifiedSignature(int ech) const
    {
 	   VoiceRecorder *recorder= (ech==1) ? _recorder1 : _recorder2 ;

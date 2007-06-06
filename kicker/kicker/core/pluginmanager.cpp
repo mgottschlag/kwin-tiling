@@ -100,7 +100,7 @@ AppletInfo::List PluginManager::plugins(const QStringList& desktopFiles,
     for (QStringList::ConstIterator it = desktopFiles.constBegin();
          it != desktopFiles.constEnd(); ++it)
     {
-        AppletInfo info(*it, QString::null, type);
+        AppletInfo info(*it, QString(), type);
 
         if (!info.isHidden())
         {

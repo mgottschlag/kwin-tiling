@@ -49,7 +49,7 @@ public:
 	{
 		setPasswordMode(true);
 	}
-	KDMPasswordEdit( int em , QWidget *parent ) : KLineEdit( parent ) 
+	KDMPasswordEdit( int em , QWidget *parent ) : KLineEdit( parent )
 	{
 		setEchoMode( (EchoMode)em );
 	}
@@ -569,7 +569,7 @@ static bool init( const QString &,
 		domains << "<local>";
 	}
 	defaultDomain = getConf( ctx, "winbind.DefaultDomain", QVariant( domains.first() ) ).toString();
-	QString sepstr = getConf( ctx, "winbind.Separator", QVariant( QString::null ) ).toString();
+	QString sepstr = getConf( ctx, "winbind.Separator", QVariant( QString() ) ).toString();
 	if (sepstr.isNull()) {
 		FILE *sepfile = popen( "wbinfo --separator 2>/dev/null", "r" );
 		if (sepfile) {

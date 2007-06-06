@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 2005 Olivier Goffgart <ogoffart @ kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #include <QtGui/QColor>
@@ -54,7 +54,7 @@ VoiceRecorder::VoiceRecorder(const Sound& sound_P, const QString &voiceId, QWidg
 
 	//if(voiceid_P.isEmpty())
 	emit recorded(false);
-	
+
 	drawSound();
 }
 
@@ -121,7 +121,7 @@ void VoiceRecorder::slotSoundRecorded(const Sound &sound)
 		if(!vm.isNull())
 		{
 			KMessageBox::sorry (this, i18n("The word you recorded is too close to the existing reference '%1'. Please record another word.", vm) );
-			//TODO: messagebox saying there are too much noise	
+			//TODO: messagebox saying there are too much noise
 			correct=false;
 		}
 	}
@@ -129,7 +129,7 @@ void VoiceRecorder::slotSoundRecorded(const Sound &sound)
 	{
 		KMessageBox::sorry (this, i18n("Unable to extract voice information from noise.\nIf this error occurs repeatedly, it suggests that there is either too much background noise, or the quality of your microphone is too poor.") );
 	}
-		
+
 	_state=correct ? sModified : sIncorrect;
 	emit recorded(correct);
 }
@@ -146,7 +146,7 @@ void VoiceRecorder::slotSoundRecorded(const Sound &sound)
 
 bool VoiceRecorder::drawSound()
 {
-	label->setText(QString::null);
+	label->setText(QString());
 	uint length=_sound.size();
 
 	if(length < 2)
@@ -161,9 +161,9 @@ bool VoiceRecorder::drawSound()
 
 	p.setPen(QPen(QColor("green"),1));
 	p.drawLine(0,height/2,width,height/2);
-	
+
 	p.setPen(QPen(QColor("red"),1));
-	
+
 	uint lx=0;
 	uint ly=height/2;
 

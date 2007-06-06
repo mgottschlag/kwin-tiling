@@ -315,7 +315,7 @@ QString BluezBluetoothInterface::stringReply(const QString &method) const
         return reply.value();
     }
 
-    return QString::null;
+    return QString();
 }
 
 bool BluezBluetoothInterface::boolReply(const QString &method) const

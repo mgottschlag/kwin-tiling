@@ -580,7 +580,7 @@ struct KfiFont
         bool operator==(const Path &p) const { return p.orig==orig; }
     };
 
-    KfiFont(const QString &n=QString::null, const QString &p=QString()) : name(n)
+    KfiFont(const QString &n=QString(), const QString &p=QString()) : name(n)
         { if(!p.isEmpty()) paths.append(Path(p)); }
 
     QString     name;

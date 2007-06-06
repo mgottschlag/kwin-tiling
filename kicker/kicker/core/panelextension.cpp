@@ -113,7 +113,7 @@ void PanelExtension::populateContainerArea()
     {
 #ifdef __GNUC__
 #warning "kde4 port it"
-#endif	    
+#endif
         //setObjId("Panel");
         _containerArea->initialize(true);
     }
@@ -257,7 +257,7 @@ void PanelExtension::addNonKDEAppButton(const QString &title,
 
 void PanelExtension::addApplet(const QString &desktopFile)
 {
-    _containerArea->addApplet(AppletInfo(desktopFile, QString::null, AppletInfo::Applet));
+    _containerArea->addApplet(AppletInfo(desktopFile, QString(), AppletInfo::Applet));
 }
 
 void PanelExtension::slotBuildOpMenu()
@@ -389,7 +389,7 @@ void MenubarExtension::populateContainerArea()
     if (!m_menubar)
     {
         m_menubar = _containerArea->addApplet(AppletInfo("menuapplet.desktop",
-                                                         QString::null,
+                                                         QString(),
                                                          AppletInfo::Applet));
     }
 

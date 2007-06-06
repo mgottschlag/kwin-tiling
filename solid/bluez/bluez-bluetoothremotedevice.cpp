@@ -200,7 +200,7 @@ QString BluezBluetoothRemoteDevice::stringReply(const QString &method) const
 {
     QDBusReply< QString > reply = device->call(method, m_address);
     if (!reply.isValid())
-        return QString::null;
+        return QString();
 
     return reply.value();
 }
