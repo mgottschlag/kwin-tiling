@@ -7,6 +7,7 @@ Comment=Bluetooth Management Backend
 Comment[de]=Backend zur Bluetooth-Verwaltung
 Comment[el]=Σύστημα διαχείρισης Bluetooth
 Comment[nds]=Hülprogramm för den Bluetooth-Pleger
+Comment[nl]=Bluetooth-beheer backend
 Comment[zh_TW]=藍芽管理後端介面
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]

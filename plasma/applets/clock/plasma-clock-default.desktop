@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Analog Clock
 Name[nds]=Analoog Klock
+Name[nl]=Analoge klok
 Comment=An SVG themable clock
 Comment[nds]=En Klock mit SVG-Mustern
+Comment[nl]=Een klok met SVG-themamogelijkheden
 Type=Service
 ServiceTypes=Plasma/Applet
 

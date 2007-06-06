@@ -8,6 +8,7 @@ Comment[de]=Backend zur Energieverwaltung
 Comment[el]=Σύστημα διαχείρισης ενέργειας
 Comment[ja]=電源管理のバックエンド
 Comment[nds]=Hülpprogramm för de Stroomkuntrull
+Comment[nl]=Energiebeheer backend
 Comment[zh_TW]=電源管理後端介面
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]

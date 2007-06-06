@@ -62,6 +62,7 @@ Comment[de]=Beendet unkontrollierte Prozesse in KDE
 Comment[el]=Έλεγχος Runaway διεργασιών για τον πίνακα του KDE
 Comment[ja]=KDE パネルのための手に負えないプロセスのキャッチャー
 Comment[nds]=Grieper för dörgahn Perzessen för dat KDE-Paneel
+Comment[nl]=Processenmonitor voor het KDE-paneel
 Comment[sv]=Fånga bortsprungna processer för KDE:s panel
 Comment[x-test]=xxRunaway process catcher for the KDE panelxx
 Comment[zh_TW]=失控程式捕捉器
