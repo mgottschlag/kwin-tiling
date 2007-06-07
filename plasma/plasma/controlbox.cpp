@@ -148,7 +148,7 @@ ControlWidget::ControlWidget(QWidget *parent)
     //TODO: this should be delayed until (if) the box is actually shown.
     refreshPlasmoidList();
     
-    QCheckBox* lockApplets = new QCheckBox(i18n("Lock Applets"), this);
+    QCheckBox* lockApplets = new QCheckBox(i18n("Lock Desktop"), this);
     connect(lockApplets, SIGNAL(toggled(bool)), this, SIGNAL(lockInterface(bool)));
 
     //This is all to change of course
