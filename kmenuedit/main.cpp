@@ -57,6 +57,7 @@ public:
               menuEdit->selectMenuEntry(QString::fromLocal8Bit(args->arg(1)));
           }
       }
+      args->clear();
       return KUniqueApplication::newInstance();
    }
 };

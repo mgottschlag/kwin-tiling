@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 		QX11Info info;
 		windowId = RootWindow(QX11Info::display(), info.screen());
 	}
-
+	args->clear();
 	KService::List lst = KServiceTypeTrader::self()->query( "ScreenSaver");
 	QStringList saverFileList;
 

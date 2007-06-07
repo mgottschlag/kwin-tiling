@@ -110,6 +110,7 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
     if (args->isSet("setup"))
     {
        QDialog *dlg = screenSaverInterface.setup();
+       args->clear();
        dlg->exec();
        delete dlg;
        exit(0);
@@ -148,7 +149,7 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
         demoWidget->setFixedSize( 600, 420 );
         demoWidget->show();
     }
-
+    args->clear();
     app.exec();
 
     delete target;

@@ -168,7 +168,7 @@ int main( int argc, char **argv )
         org::freedesktop::ScreenSaver runner("org.freedesktop.ScreenSaver", "/ScreenSaver", QDBusConnection::sessionBus());
         runner.saverLockReady();
     }
-
+    args->clear();
     return app.exec();
 }
 
