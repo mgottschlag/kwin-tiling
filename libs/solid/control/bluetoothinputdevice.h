@@ -24,6 +24,8 @@
 
 #include <QtCore/QObject>
 
+#include <solid/control/solid_control_export.h>
+
 namespace Solid
 {
 namespace Control
