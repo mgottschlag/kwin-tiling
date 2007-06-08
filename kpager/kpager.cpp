@@ -401,7 +401,8 @@ KWindowInfo* KPager::info( WId win )
     if (!info )
     {
         info = new KWindowInfo( KWindowSystem::windowInfo( win,
-            NET::WMName | NET::WMState | NET::XAWMState | NET::WMDesktop ));
+            NET::WMName | NET::WMState | NET::XAWMState | NET::WMDesktop
+            | NET::WMWindowType | NET::WMFrameExtents | NET::WMGeometry ));
         if( !info->valid() || info->desktop() == 0 )
         {
             delete info;
