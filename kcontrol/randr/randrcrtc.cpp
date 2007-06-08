@@ -236,6 +236,11 @@ bool RandRCrtc::removeOutput(RROutput output)
 	return setMode(m_currentMode);
 }	
 
+OutputList RandRCrtc::connectedOutputs() const
+{
+	return m_connectedOutputs;
+}
+
 #include "randrcrtc.moc"
 
 #endif

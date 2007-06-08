@@ -297,15 +297,38 @@ void RandROutput::setMode(RRMode mode)
 			return;
 	}
 
-	// try to add this output to a crtc
-	for (int i = 0; i < m_possibleCrtcs.count(); ++i)
+	// try to add this output to an empty crtc
+	RandRCrtc *crtc = findEmptyCrtc();
+
+	if (crtc)
+		crtc->addOutput(m_id, mode);
+	else
 	{
-		RandRCrtc *crtc = m_screen->crtc(m_possibleCrtcs.at(i));
-		if (crtc->addOutput(m_id, mode))
-			break;
+		// use any crtc available
+		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
+		{
+			RandRCrtc *crtc = m_screen->crtc(m_possibleCrtcs.at(i));
+			if (crtc->addOutput(m_id, mode))
+				break;
+		}
 	}
+
 	loadSettings();
 	emit outputChanged(m_id, ChangeMode);
+}
+
+RandRCrtc *RandROutput::findEmptyCrtc()
+{
+	RandRCrtc *crtc = 0;
+
+	for (int i = 0; i < m_possibleCrtcs.count(); ++i)
+	{
+		crtc = m_screen->crtc(m_possibleCrtcs.at(i));
+		if (crtc->connectedOutputs().count() == 0)
+			break;
+	}
+
+	return crtc;
 }
 
 #include "randroutput.moc"

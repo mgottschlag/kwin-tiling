@@ -56,6 +56,7 @@ public:
 
 	bool addOutput(RROutput output, RRMode mode);
 	bool removeOutput(RROutput output);
+	OutputList connectedOutputs() const;
 
 signals:
 	void crtcChanged(RRCrtc c, int changes);

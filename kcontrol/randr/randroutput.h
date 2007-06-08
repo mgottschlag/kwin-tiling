@@ -91,6 +91,7 @@ signals:
 
 protected:
 	void setMode(RRMode m);
+	RandRCrtc *findEmptyCrtc();
 
 private:
 	
