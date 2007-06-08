@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2002,2003 Hamish Rodda <rodda@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
