@@ -106,10 +106,7 @@ KPagerMainWindow::KPagerMainWindow(QWidget *parent, const char *name)
     // Set the wm flags to this window
     KWindowSystem::setState( winId(), NET::StaysOnTop | NET::SkipTaskbar | NET::Sticky | NET::SkipPager );
     KWindowSystem::setOnAllDesktops( winId(), true);
-    if ( KWindowSystem::windowInfo( winId(), NET::WMWindowType, 0 ).windowType(NET::Normal) == NET::Normal )
-    {
-       KWindowSystem::setType( winId(), NET::Utility );
-    }
+    KWindowSystem::setType( winId(), NET::Utility );
 
     XWMHints *hints = XGetWMHints(QX11Info::display(), winId());
     if( hints == NULL )
