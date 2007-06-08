@@ -391,7 +391,7 @@ void KPager::configureDialog()
 
         updateLayout();
         for( QList <Desktop *>::Iterator it = m_desktops.begin(); it != m_desktops.end(); ++it )
-            (*it)->repaint();
+            (*it)->update();
     }
 }
 
@@ -428,7 +428,7 @@ void KPager::slotActiveWindowChanged( WId win )
     {
         if ( (inf1 && inf1->isOnDesktop(i))
              || (inf2 && inf2->isOnDesktop(i) ) )
-            m_desktops[i-1]->repaint();
+            m_desktops[i-1]->update();
     }
 }
 
@@ -441,7 +441,7 @@ void KPager::slotWindowAdded( WId win)
     for ( int i=1; i <= (int) m_desktops.count(); ++i)
     {
         if ( inf->isOnDesktop( i ))
-            m_desktops[i-1]->repaint();
+            m_desktops[i-1]->update();
     }
 }
 
@@ -457,7 +457,7 @@ void KPager::slotWindowRemoved( WId win )
         for (int i = 1; i <= (int) m_desktops.count(); ++i)
         {
             if (onAllDesktops || desktop == i)
-                m_desktops[i-1]->repaint();
+                m_desktops[i-1]->update();
         }
     }
 }
@@ -493,7 +493,7 @@ void KPager::slotWindowChanged( WId win , unsigned int prop)
       if ((inf && (inf->isOnDesktop(i)))
 	  || onAllDesktops || desktop == i )
         {
-            m_desktops[i-1]->repaint();
+            m_desktops[i-1]->update();
         }
     }
 //	redrawDesktops();
@@ -504,9 +504,9 @@ void KPager::slotStackingOrderChanged()
     m_desktops[m_currentDesktop-1]->m_grabWindows=true;
     for ( int i=1; i <= (int) m_desktops.count(); ++i)
     {
-        m_desktops[i-1]->repaint();
+        m_desktops[i-1]->update();
     }
-//    repaint(true);
+//    update(true);
 }
 
 void KPager::slotDesktopNamesChanged()
@@ -564,8 +564,8 @@ void KPager::slotCurrentDesktopChanged(int desk)
     m_desktops[m_currentDesktop-1]->update();
     m_desktops[desk-1]->paintFrame( true );
     m_desktops[desk-1]->update();
-//    m_desktops[m_currentDesktop-1]->repaint();
-//    m_desktops[desk-1]->repaint();
+//    m_desktops[m_currentDesktop-1]->update();
+//    m_desktops[desk-1]->update();
 
     m_currentDesktop=desk;
 
@@ -666,13 +666,13 @@ void KPager::redrawDesktops()
 {
     QList <Desktop *>::Iterator it;
     for( it = m_desktops.begin(); it != m_desktops.end(); ++it )
-        (*it)->repaint();
+        (*it)->update();
 }
 
 void KPager::slotGrabWindows()
 {
     m_desktops[m_currentDesktop-1]->m_grabWindows=true;
-    m_desktops[m_currentDesktop-1]->repaint();
+    m_desktops[m_currentDesktop-1]->update();
 }
 
 QSize KPager::sizeHint() const
