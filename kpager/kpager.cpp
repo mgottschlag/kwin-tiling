@@ -188,7 +188,7 @@ void KPagerMainWindow::toggleShow(int x, int y)
 }
 
 KPager::KPager(KPagerMainWindow *parent, const char *name)
-	: QFrame (parent, Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WStyle_Tool)
+	: QFrame (parent)
     , m_layout(0)
     , m_mnu(0)
     , m_smnu(0)
