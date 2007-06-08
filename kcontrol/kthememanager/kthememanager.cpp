@@ -114,8 +114,7 @@ kthememanager::~kthememanager()
 
 void kthememanager::init()
 {
-    KGlobal::dirs()->addResourceType( "themes", KStandardDirs::kde_default("data") +
-                                      "kthememanager/themes/" );
+    KGlobal::dirs()->addResourceType( "themes", "data", "kthememanager/themes/" );
 }
 
 void kthememanager::updateButton()

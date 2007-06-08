@@ -42,8 +42,7 @@ K_EXPORT_KICKER_MENUEXT(remotemenu, RemoteMenu)
 RemoteMenu::RemoteMenu(QWidget *parent, const QStringList &/*args*/)
   : KPanelMenu(parent)
 {
-    KGlobal::dirs()->addResourceType("remote_entries",
-    KStandardDirs::kde_default("data") + "remoteview");
+    KGlobal::dirs()->addResourceType("remote_entries", "data", "remoteview");
 
     QString path = KGlobal::dirs()->saveLocation("remote_entries");
 
@@ -142,7 +141,7 @@ void RemoteMenu::slotFilesRemoved(const QStringList &fileList)
 {
     QStringList::ConstIterator it = fileList.begin();
     QStringList::ConstIterator end = fileList.end();
-    
+
     for (; it!=end; ++it)
     {
         if (KUrl(*it).protocol()=="remote")

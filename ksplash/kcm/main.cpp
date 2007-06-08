@@ -88,7 +88,7 @@ QString KSplashThemeMgr::quickHelp() const
 
 void KSplashThemeMgr::init()
 {
-  KGlobal::dirs()->addResourceType("ksplashthemes", KStandardDirs::kde_default("data") + "ksplash/Themes");
+  KGlobal::dirs()->addResourceType("ksplashthemes", "data", "ksplash/Themes");
 }
 
 void KSplashThemeMgr::save()

@@ -98,7 +98,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   : QWidget(aParent), mGui(!aInit)
 {
   setObjectName(aName);
-  KGlobal::dirs()->addResourceType("ksplashthemes", KStandardDirs::kde_default("data") + "ksplash/Themes");
+  KGlobal::dirs()->addResourceType("ksplashthemes", "data", "ksplash/Themes");
 
   if (!mGui)
     return;

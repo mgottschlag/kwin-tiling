@@ -447,7 +447,7 @@ void runRdb( uint flags )
   // Export colors to non-(KDE/Qt) apps (e.g. Motif, GTK+ apps)
   if (exportColors)
   {
-    KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
+    KGlobal::dirs()->addResourceType("appdefaults", "data", "kdisplay/app-defaults/");
     KGlobal::locale()->insertCatalog("krdb");
     createGtkrc( true, newPal, 1 );
     createGtkrc( true, newPal, 2 );

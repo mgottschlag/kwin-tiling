@@ -153,8 +153,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	m_bStyleDirty= false;
 	m_bToolbarsDirty = false;
 
-	KGlobal::dirs()->addResourceType("themes",
-		KStandardDirs::kde_default("data") + "kstyle/themes");
+	KGlobal::dirs()->addResourceType("themes", "data", "kstyle/themes");
 
 	KAboutData *about =
 		new KAboutData( I18N_NOOP("kcmstyle"),

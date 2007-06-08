@@ -73,8 +73,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
     KApplication a;
     a.disableSessionManagement();
 
-    KGlobal::dirs()->addResourceType("applets", KStandardDirs::kde_default("data") +
-				     "kicker/applets");
+    KGlobal::dirs()->addResourceType("applets", "data", "kicker/applets");
 
     // setup proxy object
     AppletProxy proxy(0, "appletproxywidget");

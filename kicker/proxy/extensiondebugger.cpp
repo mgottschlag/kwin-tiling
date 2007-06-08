@@ -91,8 +91,7 @@ int main( int argc, char ** argv )
     KApplication a;
     a.disableSessionManagement();
 
-    KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
-				     "kicker/extensions");
+    KGlobal::dirs()->addResourceType("extensions", "data", "kicker/extensions");
 
     QString df;
 
