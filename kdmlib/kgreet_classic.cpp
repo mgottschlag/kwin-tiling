@@ -85,7 +85,7 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 	if (func != ChAuthTok) {
 		if (fixedUser.isEmpty()) {
 			loginEdit = new KLineEdit( parent );
-			loginEdit->setContextMenuEnabled( false );
+			loginEdit->setContextMenuPolicy( Qt::NoContextMenu );
 			connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotLoginLostFocus()) );
 			connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotActivity()) );

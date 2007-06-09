@@ -118,7 +118,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			         SLOT(slotActivity()) );
 			// should handle loss of focus
 			loginEdit = new KLineEdit( parent );
-			loginEdit->setContextMenuEnabled( false );
+			loginEdit->setContextMenuPolicy( Qt::NoContextMenu );
 
 			if (!grid) {
 				loginEdit->setObjectName( "user-entry" );
