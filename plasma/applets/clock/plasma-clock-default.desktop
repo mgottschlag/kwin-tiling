@@ -2,9 +2,11 @@
 Name=Analog Clock
 Name[nds]=Analoog Klock
 Name[nl]=Analoge klok
+Name[zh_TW]=類比時鐘
 Comment=An SVG themable clock
 Comment[nds]=En Klock mit SVG-Mustern
 Comment[nl]=Een klok met SVG-themamogelijkheden
+Comment[zh_TW]=SVG 可調整外觀時鐘
 Type=Service
 ServiceTypes=Plasma/Applet
 

@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Button
 Name[nl]=Knop
+Name[zh_TW]=按鍵
 Comment=A launcher button
 Comment[nl]=Een opstartknop
+Comment[zh_TW]=啟動按鍵
 Type=Service
 ServiceTypes=Plasma/Applet
 
