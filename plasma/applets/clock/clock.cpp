@@ -51,7 +51,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
       m_spinSize(0)
 {
     setFlags(QGraphicsItem::ItemIsMovable);
-    dataEngine("time")->connectSource("time", this);
+    dataEngine("time")->connectSource(i18n("Local"), this);
 
     KConfigGroup cg = globalAppletConfig();
     m_showTimeString = cg.readEntry("showTimeString", false);
@@ -83,7 +83,7 @@ void Clock::constraintsUpdated()
 void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source);
-    m_time = data[i18n("Local")].toTime();
+    m_time = data[i18n("Time")].toTime();
     update();
 }
 

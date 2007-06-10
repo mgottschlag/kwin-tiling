@@ -24,6 +24,10 @@
 
 #include <KDebug>
 #include <KLocale>
+//#include <KSystemTimeZones> TODO: uncomment and remove include below on monday
+#include <ksystemtimezone.h>
+
+#include "plasma/datasource.h"
 
 TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)
@@ -34,23 +38,66 @@ TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
     m_timer = new QTimer(this);
     m_timer->setSingleShot(false);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(updateTime()));
-    m_timer->start(500);
-    updateTime();
 }
 
 TimeEngine::~TimeEngine()
 {
 }
 
-void TimeEngine::init()
+bool TimeEngine::dataSourceRequested(const QString &name)
 {
+    kDebug() << "requesting source " << name << endl;
+    if (name == i18n("Local")) {
+        setData(i18n("Local"), i18n("Time"), QTime::currentTime());
+        setData(i18n("Local"), i18n("Date"), QDate::currentDate());
+
+        if (!m_timer->isActive()) {
+            m_timer->start(500);
+        }
+        return true;
+    }
+
+    // reenable when KTimeZone/kded isn't broken
+    const KTimeZone *local = KSystemTimeZones::local();
+    const KTimeZone *newTz  = KSystemTimeZones::zone(name);
+    if (!newTz) {
+        return false;
+    }
+
+    QDateTime dt = local->convert(newTz, QDateTime::currentDateTime());
+    setData(name, i18n("Time"), dt.time());
+    setData(name, i18n("Date"), dt.date());
+
+    if (!m_timer->isActive()) {
+        m_timer->start(500);
+    }
+
+    return true;
 }
 
 void TimeEngine::updateTime()
 {
-    //TODO: should these keys be translated? probably not, methinks.
-    setData("time", i18n("Local"), QTime::currentTime());
-    setData("date", i18n("Date"), QDate::currentDate());
+    QDateTime dt = QDateTime::currentDateTime();
+    const KTimeZone *local = KSystemTimeZones::local();
+    DataEngine::SourceDict sources = sourceDict();
+    DataEngine::SourceDict::iterator it = sources.begin();
+    QString localName = i18n("Local");
+
+    while (it != sources.end()) {
+        QString tz = it.key();
+        if (tz == localName) {
+            it.value()->setData(i18n("Time"), dt.time());
+            it.value()->setData(i18n("Date"), dt.date());
+        } else {
+            const KTimeZone *newTz = KSystemTimeZones::zone(tz);
+            QDateTime localizeDt = local->convert(newTz, dt);
+            it.value()->setData(i18n("Time"), localizeDt.time());
+            it.value()->setData(i18n("Date"), localizeDt.date());
+        }
+        ++it;
+    }
+
+    checkForUpdates();
 }
 
 #include "timeengine.moc"
