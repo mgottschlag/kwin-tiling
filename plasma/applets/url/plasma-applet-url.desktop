@@ -1,8 +1,12 @@
 [Desktop Entry]
 Name=Button
+Name[de]=Knopf
+Name[nds]=Knoop
 Name[nl]=Knop
 Name[zh_TW]=按鍵
 Comment=A launcher button
+Comment[de]=Ein Start-Knopf
+Comment[nds]=En Startknoop
 Comment[nl]=Een opstartknop
 Comment[zh_TW]=啟動按鍵
 Type=Service

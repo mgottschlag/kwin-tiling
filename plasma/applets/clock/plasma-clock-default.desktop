@@ -1,9 +1,11 @@
 [Desktop Entry]
 Name=Analog Clock
+Name[de]=Analoge Uhr
 Name[nds]=Analoog Klock
 Name[nl]=Analoge klok
 Name[zh_TW]=類比時鐘
 Comment=An SVG themable clock
+Comment[de]=Eine Uhr mit SVG-fähigem Design
 Comment[nds]=En Klock mit SVG-Mustern
 Comment[nl]=Een klok met SVG-themamogelijkheden
 Comment[zh_TW]=SVG 可調整外觀時鐘
