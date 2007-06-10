@@ -40,6 +40,7 @@
 #include <KLocale>
 #include <KIcon>
 #include <KSharedConfig>
+#include <KTimeZoneWidget>
 #include <KDialog>
 
 #include <plasma/svg.h>
@@ -51,14 +52,16 @@ Clock::Clock(QObject *parent, const QStringList &args)
       m_spinSize(0)
 {
     setFlags(QGraphicsItem::ItemIsMovable);
-    dataEngine("time")->connectSource(i18n("Local"), this);
 
-    KConfigGroup cg = globalAppletConfig();
+    KConfigGroup cg = appletConfig();
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_pixelSize = cg.readEntry("size", 250);
+    m_timezone = cg.readEntry("timezone", i18n("Local"));
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(m_pixelSize, m_pixelSize);
+
+    dataEngine("time")->connectSource(m_timezone, this);
     constraintsUpdated();
 }
 
@@ -92,11 +95,17 @@ void Clock::configureDialog() //TODO: Make the size settable
      if (m_dialog == 0) {
         m_dialog = new KDialog;
         m_dialog->setCaption( "Configure Clock" );
+
+        //TODO: use a Designer layout!
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
+
         QWidget* configWidget = new QWidget(m_dialog);
-        QLabel *label = new QLabel("Hello Configuration World!", configWidget);
+
+        m_timeZones = new KTimeZoneWidget(configWidget);
+        m_swapTzs = new QCheckBox("TZ Mania!", configWidget);
+
         m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.", configWidget);
         m_spinSize = new QSpinBox;
         QLabel *labelSize = new QLabel("Size of the clock");
@@ -105,13 +114,15 @@ void Clock::configureDialog() //TODO: Make the size settable
         sizeLay->addWidget(m_spinSize);
         sizeLay->addWidget(labelSize);
         QVBoxLayout *lay = new QVBoxLayout(configWidget);
-        lay->addWidget(label);
+        lay->addWidget(m_timeZones);
+        lay->addWidget(m_swapTzs);
         lay->addWidget(m_showTimeStringCheckBox);
         lay->addLayout(sizeLay);
 
         m_dialog->setMainWidget(configWidget);
     }
 
+    m_timeZones->setSelected(m_timezone, true);
     m_spinSize->setRange(0, 500);
     m_spinSize->setValue((int)m_bounds.width());
     m_showTimeStringCheckBox->setChecked(m_showTimeString ? Qt::Checked : Qt::Unchecked);
@@ -121,19 +132,35 @@ void Clock::configureDialog() //TODO: Make the size settable
 
 void Clock::configAccepted()
 {
-    KConfigGroup cg = globalAppletConfig();
-    if (m_showTimeStringCheckBox->checkState() == Qt::Checked) {
-        m_showTimeString = true;
-        cg.writeEntry("showTimeString", "true");
-        QGraphicsItem::update();
-    }
-    if (m_showTimeStringCheckBox->checkState() == Qt::Unchecked) {
-        m_showTimeString = false;
-        cg.writeEntry("showTimeString", "false");
-        QGraphicsItem::update();
-    }
+    KConfigGroup cg = appletConfig();
+    m_showTimeString = m_showTimeStringCheckBox->checkState() == Qt::Checked;
+    cg.writeEntry("showTimeString", m_showTimeString);
+    QGraphicsItem::update();
     cg.writeEntry("size", m_spinSize->value());
     m_theme->resize(m_spinSize->value(), m_spinSize->value());
+    QStringList tzs = m_timeZones->selection();
+    /*
+    if (tzs.count() > 0) {
+        //TODO: support multiple timezones
+        QString tz = tzs.at(0);
+        if (tz != m_timezone) {
+            dataEngine("time")->disconnectSource(m_timezone, this);
+            m_timezone = tz;
+            dataEngine("time")->connectSource(m_timezone, this);
+        }
+    } else if (m_timezone != i18n("Local")) {
+        dataEngine("time")->disconnectSource(m_timezone, this);
+        m_timezone = i18n("Local");
+        dataEngine("time")->connectSource(m_timezone, this);
+    }
+    */
+        dataEngine("time")->disconnectSource(m_timezone, this);
+    if (m_swapTzs->checkState() == Qt::Checked) {
+        m_timezone = "America/Toronto";
+    } else {
+        m_timezone = i18n("Local");
+    }
+        dataEngine("time")->connectSource(m_timezone, this);
     constraintsUpdated();
     cg.config()->sync();
 }

@@ -38,9 +38,11 @@
 #include <plasma/dataengine.h>
 
 class QTimer;
-class KDialog;
 class QCheckBox;
 class QSpinBox;
+
+class KDialog;
+class KTimeZoneWidget;
 
 namespace Plasma
 {
@@ -73,11 +75,14 @@ class Clock : public Plasma::Applet
         bool m_showTimeString;
         QRectF m_bounds;
         int m_pixelSize;
+        QString m_timezone;
         Plasma::Svg* m_theme;
         QTime m_time;
         KDialog *m_dialog; //should we move this into another class?
         QCheckBox *m_showTimeStringCheckBox;
+        QCheckBox *m_swapTzs;
         QSpinBox *m_spinSize;
+        KTimeZoneWidget *m_timeZones;
 };
 
 K_EXPORT_PLASMA_APPLET(clock, Clock)
