@@ -169,7 +169,7 @@ inline QString fileSyntax(const QString &f) { return xDirSyntax(f); }
 //
 // For system, prefer the following:
 //
-//     <...>/config.d/00kde   = preferred method from FontConfig >= 2.3
+//     <...>/config.d/00kde.conf   = preferred method from FontConfig >= 2.3
 //     <...>/local.conf
 //
 // Non-system, prefer:
@@ -180,7 +180,7 @@ inline QString fileSyntax(const QString &f) { return xDirSyntax(f); }
 QString getConfigFile(bool system)
 {
 #if (FC_VERSION>=20300)
-    static const char * constKdeRootFcFile="00kde";
+    static const char * constKdeRootFcFile="00kde.conf";
 #endif
 
     FcStrList   *list=FcConfigGetConfigFiles(FcConfigGetCurrent());
