@@ -129,6 +129,14 @@ QRect RandRCrtc::rect() const
 
 bool RandRCrtc::applyProposed()
 {
+#if 0
+	kDebug() << "[CRTC] Going to apply...." << endl;
+	kDebug() << "       Current Screen rect: " << m_screen->rect() << endl;
+	kDebug() << "       Current CRTC Rect: " << m_currentRect << endl;
+	kDebug() << "       Current Rotation: " << m_currentRotation << endl;
+	kDebug() << "       Proposed rect: " << m_proposedRect << endl;
+	kDebug() << "       Proposed rotation: " << m_proposedRotation << endl;
+#endif
 	RandRMode mode;
 	if (m_proposedRect == m_currentRect)
 	{

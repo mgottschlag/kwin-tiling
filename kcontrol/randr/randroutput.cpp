@@ -182,19 +182,7 @@ QRect RandROutput::rect() const
 	if (m_currentCrtc == None)
 		return QRect(0,0,0,0);
 
-	QRect r = m_screen->crtc(m_currentCrtc)->rect();
-
-	// if the current rotation is 90 or 270, invert the rect
-	if (currentRotation() & (RandR::Rotate90 | RandR::Rotate270))
-	{
-		kDebug() << "Current Rotation: " << currentRotation() << endl;
-		QRect inverted;
-		inverted.setWidth(r.height());
-		inverted.setHeight(r.width());
-		return inverted;
-	}
-
-	return r;
+	return m_screen->crtc(m_currentCrtc)->rect();
 }
 
 int RandROutput::rotations() const
