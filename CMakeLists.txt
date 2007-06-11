@@ -1,5 +1,16 @@
-include(ConfigureChecks.cmake)
+# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
 
+#search packages used by KDE
+find_package(KDE4 REQUIRED)
+find_package(Strigi REQUIRED)
+include (KDE4Defaults)
+include (MacroLibrary)
+include (MacroOptionalFindPackage)
+include(MacroOptionalAddSubdirectory)
+
+
+include(ConfigureChecks.cmake)
 configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )
 configure_file(config-X11.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-X11.h )
 
