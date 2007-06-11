@@ -33,7 +33,8 @@
 
 #include <solid/device.h>
 #include <solid/genericinterface.h>
-#include <solid/storagevolume.h>
+#include <solid/storageaccess.h>
+#include <solid/opticaldrive.h>
 
 #include <solid/control/powermanager.h>
 
@@ -958,46 +959,47 @@ bool SolidShell::hwVolumeCall(SolidShell::VolumeCallType type, const QString &ud
 {
     Solid::Device device(udi);
 
-    if (!device.is<Solid::StorageVolume>())
+    if (!device.is<Solid::StorageAccess>() && type!=Eject)
     {
-        cerr << i18n("Error: %1 does not have the interface StorageVolume." , udi) << endl;
+        cerr << i18n("Error: %1 does not have the interface StorageAccess." , udi) << endl;
+        return false;
+    }
+    else if (!device.is<Solid::OpticalDrive>() && type==Eject)
+    {
+        cerr << i18n("Error: %1 does not have the interface OpticalDrive." , udi) << endl;
         return false;
     }
 
     switch(type)
     {
     case Mount:
-        device.as<Solid::StorageVolume>()->mount(0, 0); // FIXME
+        connect(device.as<Solid::StorageAccess>(),
+                SIGNAL(setupDone(Solid::StorageAccess::SetupResult, QVariant)),
+                this,
+                SLOT(slotSetupResult(Solid::StorageAccess::SetupResult, QVariant)));
+        device.as<Solid::StorageAccess>()->setup();
         break;
     case Unmount:
-        device.as<Solid::StorageVolume>()->unmount(0, 0); // FIXME
+        connect(device.as<Solid::StorageAccess>(),
+                SIGNAL(teardownDone(Solid::StorageAccess::TeardownResult, QVariant)),
+                this,
+                SLOT(slotTeardownResult(Solid::StorageAccess::TeardownResult, QVariant)));
+        device.as<Solid::StorageAccess>()->teardown();
         break;
     case Eject:
-        device.as<Solid::StorageVolume>()->eject(0, 0); // FIXME
+        device.as<Solid::OpticalDrive>()->eject();
         break;
     }
-#if 0
-    if (job==0)
-    {
-        cerr << i18n("Error: unsupported operation!") << endl;
-        return false;
-    }
 
-    connectJob(job);
-
-    job->start();
     m_loop.exec();
 
     if (m_error)
     {
-        cerr << i18n("Error: %1", m_errorString) << endl;
+        cerr << i18n("Error: %1" , m_errorString) << endl;
         return false;
     }
-    else
-#endif
-    {
-        return true;
-    }
+
+    return true;
 }
 
 bool SolidShell::powerQuerySuspendMethods()
@@ -1567,6 +1569,24 @@ void SolidShell::slotResult(KJob *job)
         m_errorString = job->errorString();
     }
 
+    m_loop.exit();
+}
+
+void SolidShell::slotSetupResult(Solid::StorageAccess::SetupResult result, QVariant resultData)
+{
+    if (result!=Solid::StorageAccess::SetupSucceed) {
+        m_error = 1;
+        m_errorString = resultData.toString();
+    }
+    m_loop.exit();
+}
+
+void SolidShell::slotTeardownResult(Solid::StorageAccess::TeardownResult result, QVariant resultData)
+{
+    if (result!=Solid::StorageAccess::TeardownSucceed) {
+        m_error = 1;
+        m_errorString = resultData.toString();
+    }
     m_loop.exit();
 }
 

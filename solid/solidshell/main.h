@@ -23,6 +23,8 @@
 #include <QCoreApplication>
 #include <QEventLoop>
 
+#include <solid/storageaccess.h>
+
 class KJob;
 
 namespace Solid {
@@ -35,7 +37,7 @@ class SolidShell : public QCoreApplication
 {
     Q_OBJECT
 public:
-    SolidShell(int &argc, char **argv) : QCoreApplication(argc, argv) {}
+    SolidShell(int &argc, char **argv) : QCoreApplication(argc, argv), m_error(0) {}
 
     static bool doIt();
 
@@ -96,6 +98,8 @@ private:
     int m_error;
     QString m_errorString;
 private slots:
+    void slotSetupResult(Solid::StorageAccess::SetupResult result, QVariant resultData);
+    void slotTeardownResult(Solid::StorageAccess::TeardownResult result, QVariant teardownData);
     void slotResult(KJob *job);
     void slotPercent(KJob *job, unsigned long percent);
     void slotInfoMessage(KJob *job, const QString &message);
