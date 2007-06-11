@@ -155,7 +155,6 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 	if (RandR::has_1_2) {
 		QAction *action;
 
-		//TODO: populate the menu with the required items
 		OutputMap outputs = currentScreen()->outputs();
 		if (outputs.count() <= 0)
 			return;
@@ -239,6 +238,26 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 			}
 			++it;
 		}
+		QMenu *unifiedMenu = new QMenu(i18n("Unified Outputs"));
+		bool unified = currentScreen()->outputsAreUnified();
+		SizeList sizes = currentScreen()->unifiedSizes();
+		QSize currentSize = currentScreen()->rect().size();
+		for (int i = 0; i < sizes.count(); ++i) 
+		{
+			QSize size = sizes[i];
+			action = unifiedMenu->addAction(QString("%1 x %2").arg(size.width()).arg(size.height()));
+			action->setData(size);
+			if (unified && size == currentSize)
+			{
+				QFont f = action->font();
+				f.setBold(true);
+				action->setFont(f);
+			}	
+		}
+		connect(unifiedMenu, SIGNAL(triggered(QAction*)), currentScreen(), SLOT(slotUnifyOutputs(QAction*)));
+
+		menu->addSeparator();
+		menu->addMenu(unifiedMenu);
 	}
 	else
 #endif

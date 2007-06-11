@@ -18,6 +18,7 @@
 
 #include <KDebug>
 #include <QX11Info>
+#include <QAction>
 #include "randrscreen.h"
 #include "randrcrtc.h"
 #include "randroutput.h"
@@ -260,9 +261,140 @@ bool RandRScreen::setSize(QSize s)
 	return true;
 }
 
+bool RandRScreen::outputsAreUnified() const
+{
+	bool first = true;
+	int rotation = ~0;
+	CrtcMap::const_iterator it;
+	QRect r;
+	for (it = m_crtcs.constBegin(); it != m_crtcs.constEnd(); ++it)
+	{
+		if (!(*it)->connectedOutputs().count())
+			continue;
+
+		if (first)
+		{
+			r = (*it)->rect();
+			first = false;
+		}
+		else if (r != (*it)->rect())
+			return false;
+		else
+			rotation &= (*it)->currentRotation();
+	}
+
+	if (!rotation)
+		return false;
+
+	return true;
+}
+
+int RandRScreen::unifiedRotations() const
+{
+	int rotations = ~0;
+
+	CrtcMap::const_iterator it;
+	for (it = m_crtcs.constBegin(); it != m_crtcs.constEnd(); ++it)
+	{
+		if ((*it)->connectedOutputs().count())
+			continue;
+		rotations &= (*it)->rotations();
+	}
+
+	return rotations;
+}
+
+SizeList RandRScreen::unifiedSizes() const
+{
+	SizeList sizeList;
+	bool first = true;
+	OutputMap::const_iterator it;
+
+	for (it = m_outputs.constBegin(); it != m_outputs.constEnd(); ++it)
+	{
+		if (!(*it)->isActive())
+			continue;
+
+		if (first)
+		{
+			sizeList = (*it)->sizes();
+			first = false;
+		}
+		else
+		{
+			SizeList outputSizes = (*it)->sizes();
+			SizeList::iterator s;
+			for (int i = sizeList.count() - 1; i >=0; --i)
+			{
+				if (outputSizes.indexOf(sizeList[i]) == -1)
+					sizeList.removeAt(i);
+			}
+		}
+	}
+
+	return sizeList;
+}
+
 QRect RandRScreen::rect() const
 {
 	return m_rect;
+}
+
+void RandRScreen::slotUnifyOutputs(QAction *action)
+{
+	QSize s = action->data().toSize(); 
+	
+	CrtcMap connected;
+
+	int rotation = ~0;
+	CrtcMap::iterator it;
+
+	// first set the original settings for the crts
+	// and check wheter we should rotate the displays to unify them
+	for (it = m_crtcs.begin(); it != m_crtcs.end(); ++it)
+	{
+		if (!(*it)->connectedOutputs().count())
+			continue;
+
+		connected[ (*it)->id() ] = *it;
+		(*it)->setOriginal();
+		(*it)->proposeSize(s);
+		rotation &= (*it)->currentRotation();
+	}
+
+	// now try to apply the desired settings to all connected crtcs
+	// if one fail, revert all of them
+	bool succeed = true;
+	for (it = connected.begin(); it != connected.end(); ++it)
+	{
+		// if the rotation is not the same for all outputs, unify the rotation too
+		if (!rotation)
+			(*it)->proposeRotation(RandR::Rotate0);
+
+		if (!(*it)->applyProposed())
+		{
+			succeed = false;
+			break;
+		}
+	}
+
+
+	// ask for confirmation
+	if (succeed)
+	{
+		succeed = RandR::confirm();
+	}
+
+	// revert if either the config failed, or the user didn't confirm the changes
+	if (!succeed)
+	{
+		for (it = connected.begin(); it != connected.end(); ++it)
+		{
+			(*it)->proposeOriginal();
+			(*it)->applyProposed();
+		}
+	}
+
 }
 
 #include "randrscreen.moc"

@@ -26,6 +26,9 @@
 
 #ifdef HAS_RANDR_1_2
 
+
+class QAction;
+
 class RandRScreen : public QObject
 {
 	Q_OBJECT
@@ -57,7 +60,15 @@ public:
 	bool adjustSize(QRect minimumSize = QRect(0,0,0,0));
 	bool setSize(QSize s);
 
+
+	bool outputsAreUnified() const;
+	int unifiedRotations() const;
+	SizeList unifiedSizes() const;
+
 	QRect rect() const;
+
+public slots:
+	void slotUnifyOutputs(QAction *action);
 
 signals:
 	void configChanged();

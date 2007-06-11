@@ -62,7 +62,7 @@ public:
 	RRMode currentMode() const;
 
 	/**
-	 * A text representation of the modes
+	 * The list of supported sizes
 	 */
 	SizeList sizes() const;
 	QRect rect() const;

@@ -42,6 +42,7 @@ public:
 	RandRCrtc(RandRScreen *parent, RRCrtc id);
 	~RandRCrtc();
 
+	RRCrtc id() const;
 	int rotations() const;
 	int currentRotation() const;
 

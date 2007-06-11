@@ -39,6 +39,11 @@ RandRCrtc::~RandRCrtc()
 	// do nothing for now
 }
 
+RRCrtc RandRCrtc::id() const
+{
+	return m_id;
+}
+
 int RandRCrtc::rotations() const
 {
 	return m_rotations;
