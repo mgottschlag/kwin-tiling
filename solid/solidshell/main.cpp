@@ -862,7 +862,7 @@ bool SolidShell::doIt()
                 return shell.bluetoothInputDisconnect(ubi);
             }
         }
-        else if (command == "remote")
+        else if (command == "remote" && args->count() >= 4)
         {
             QString what (args->arg(2));
             QString adapter (args->arg(3));
