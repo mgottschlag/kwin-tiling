@@ -1,3 +1,6 @@
+
+include(CheckStructMember)
+
 check_include_files(sys/sockio.h HAVE_SYS_SOCKIO_H) # nic.cpp
 check_symbol_exists(getnameinfo   "sys/socket.h;netdb.h" HAVE_GETNAMEINFO) # nic.cpp
 check_struct_member("struct sockaddr" "sa_len" "sys/socket.h" HAVE_STRUCT_SOCKADDR_SA_LEN) # nic.cpp
