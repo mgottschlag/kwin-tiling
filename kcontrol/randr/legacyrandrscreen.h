@@ -52,9 +52,6 @@ public:
 
 	Window		rootWindow() const;
 
-public Q_SLOTS:
-	bool		confirm();
-
 public:
 	QString		changedMessage() const;
 
@@ -161,9 +158,6 @@ private:
 
 	KTimerDialog*	m_shownDialog;
 
-private Q_SLOTS:
-	void		desktopResized();
-	void		shownDialogDestroyed();
 };
 
 #endif

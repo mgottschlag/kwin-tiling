@@ -85,6 +85,7 @@ public:
 	
 	static QPixmap	rotationIcon(int rotation, int currentRotation);
 
+	static bool confirm(QRect rect = QRect());
 };
 
 #endif

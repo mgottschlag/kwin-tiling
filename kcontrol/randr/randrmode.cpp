@@ -27,6 +27,9 @@ RandRMode::~RandRMode()
 
 RRMode RandRMode::id() const
 {
+	if (!m_valid)
+		return None;
+
 	return m_info->id;
 }
 

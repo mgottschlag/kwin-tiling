@@ -116,7 +116,7 @@ bool LegacyRandRScreen::applyProposedAndConfirm()
 		setOriginal();
 
 		if (applyProposed()) {
-			if (!confirm()) {
+			if (!RandR::confirm()) {
 				proposeOriginal();
 				applyProposed();
 				return false;
@@ -132,54 +132,6 @@ bool LegacyRandRScreen::applyProposedAndConfirm()
 Window LegacyRandRScreen::rootWindow() const
 {
 	return RootWindow(QX11Info::display(), m_screen);
-}
-
-
-bool LegacyRandRScreen::confirm()
-{
-	// uncomment the line below and edit out the KTimerDialog stuff to get
-	// a version which works on today's kdelibs (no accept dialog is presented)
-
-	// FIXME remember to put the dialog on the right screen
-
-	KTimerDialog acceptDialog(
-											15000,
-											KTimerDialog::CountDown,
-											0,
-											"mainKTimerDialog",
-											true,
-											i18n("Confirm Display Setting Change"),
-											KTimerDialog::Ok|KTimerDialog::Cancel,
-											KTimerDialog::Cancel);
-
-	acceptDialog.setButtonGuiItem(KDialog::Ok, KGuiItem(i18n("&Accept Configuration"), "dialog-ok"));
-	acceptDialog.setButtonGuiItem(KDialog::Cancel, KGuiItem(i18n("&Return to Previous Configuration"), "dialog-cancel"));
-
-	QLabel *label = new QLabel(i18n("Your screen orientation, size and refresh rate have been "
-                    "changed to the requested settings. Please indicate whether you wish to keep "
-                    "this configuration. In 15 seconds the display will revert to your previous "
-                    "settings."), &acceptDialog);
-        acceptDialog.setMainWidget(label);
-
-	KDialog::centerOnScreen(&acceptDialog, m_screen);
-
-	m_shownDialog = &acceptDialog;
-	connect( m_shownDialog, SIGNAL( destroyed()), this, SLOT( shownDialogDestroyed()));
-	connect( kapp->desktop(), SIGNAL( resized(int)), this, SLOT( desktopResized()));
-
-    return acceptDialog.exec();
-}
-
-void LegacyRandRScreen::shownDialogDestroyed()
-{
-    m_shownDialog = NULL;
-    disconnect( kapp->desktop(), SIGNAL( resized(int)), this, SLOT( desktopResized()));
-}
-
-void LegacyRandRScreen::desktopResized()
-{
-	if( m_shownDialog != NULL )
-		KDialog::centerOnScreen(m_shownDialog, m_screen);
 }
 
 QString LegacyRandRScreen::changedMessage() const

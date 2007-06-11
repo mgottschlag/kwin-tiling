@@ -51,12 +51,19 @@ public:
 	RRMode currentMode() const;
 	QRect rect() const;
 	
-	bool setMode(RRMode mode);
-	bool rotate(int rotation);
+	bool proposeSize(QSize s);
+	bool proposeRotation(int rotation);
+	
+	// applying stuff
+	bool applyProposed();
+	void proposeOriginal();
+	void setOriginal(); 
 
-	bool addOutput(RROutput output, RRMode mode);
+	bool addOutput(RROutput output, QSize size = QSize());
 	bool removeOutput(RROutput output);
 	OutputList connectedOutputs() const;
+
+	ModeList modes() const;
 
 signals:
 	void crtcChanged(RRCrtc c, int changes);
@@ -66,11 +73,18 @@ private:
 	XRRCrtcInfo* m_info;
 	RRMode m_currentMode;
 
-	QRect m_rect;
+	QRect m_proposedRect;
+	int m_proposedRotation;
+
+	QRect m_originalRect;
+	int m_originalRotation;
+
 	OutputList m_connectedOutputs;
 	OutputList m_possibleOutputs;
 	int m_rotations;
+
 	int m_currentRotation;
+	QRect m_currentRect;
 
 	RandRScreen *m_screen;
 };

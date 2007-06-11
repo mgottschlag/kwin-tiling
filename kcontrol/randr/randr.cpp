@@ -19,6 +19,8 @@
 
 #include <KLocale>
 #include <KIconLoader>
+#include "ktimerdialog.h"
+
 #include "randr.h"
 
 bool RandR::has_1_2 = false;
@@ -116,5 +118,39 @@ QPixmap RandR::rotationIcon(int rotation, int currentRotation)
 			return SmallIcon("process-stop");
 	}
 }
+
+bool RandR::confirm(QRect rect)
+{
+	// uncomment the line below and edit out the KTimerDialog stuff to get
+	// a version which works on today's kdelibs (no accept dialog is presented)
+
+	// FIXME remember to put the dialog on the right screen
+
+	KTimerDialog acceptDialog(
+											15000,
+											KTimerDialog::CountDown,
+											0,
+											"mainKTimerDialog",
+											true,
+											i18n("Confirm Display Setting Change"),
+											KTimerDialog::Ok|KTimerDialog::Cancel,
+											KTimerDialog::Cancel);
+
+	acceptDialog.setButtonGuiItem(KDialog::Ok, KGuiItem(i18n("&Accept Configuration"), "dialog-ok"));
+	acceptDialog.setButtonGuiItem(KDialog::Cancel, KGuiItem(i18n("&Return to Previous Configuration"), "dialog-cancel"));
+
+	QLabel *label = new QLabel(i18n("Your screen configuration has been "
+                    "changed to the requested settings. Please indicate whether you wish to keep "
+                    "this configuration. In 15 seconds the display will revert to your previous "
+                    "settings."), &acceptDialog);
+	label->setWordWrap( true );
+        acceptDialog.setMainWidget(label);
+
+	//FIXME: this should be changed to use the rect instead of centerOnScreen
+	//KDialog::centerOnScreen(&acceptDialog, m_screen);
+
+	return acceptDialog.exec();
+}
+
 
 

@@ -187,7 +187,7 @@ QRect RandROutput::rect() const
 	// if the current rotation is 90 or 270, invert the rect
 	if (currentRotation() & (RandR::Rotate90 | RandR::Rotate270))
 	{
-		kDebug() << "Current ROtation: " << currentRotation() << endl;
+		kDebug() << "Current Rotation: " << currentRotation() << endl;
 		QRect inverted;
 		inverted.setWidth(r.height());
 		inverted.setHeight(r.width());
@@ -227,28 +227,7 @@ void RandROutput::slotChangeSize(QAction *action)
 {
 	QSize size = action->data().toSize();
 
-	if (size == rect().size())
-		return;
-
-	RandRMode mode;
-	// find a mode that has the selected size
-	for (int i = 0; i < m_modes.count(); ++i)
-	{
-		RandRMode m = m_screen->mode(m_modes.at(i));
-		if (!m.isValid())
-			continue;
-
-		if (m.size() == size)
-		{
-			mode = m;
-			break;
-		}
-	}
-
-	if (!mode.isValid())
-		return;
-
-	setMode(mode.id());
+	setSize(size);
 }
 
 void RandROutput::slotChangeRotation(QAction *action)
@@ -256,7 +235,13 @@ void RandROutput::slotChangeRotation(QAction *action)
 	if (m_currentCrtc != None)
 	{
 		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
-		crtc->rotate(action->data().toInt());
+		crtc->setOriginal();
+		crtc->proposeRotation(action->data().toInt());
+		if (!applyAndConfirm(crtc))
+		{
+			crtc->proposeOriginal();
+			crtc->applyProposed();
+		}
 	}
 	else
 	{
@@ -264,9 +249,15 @@ void RandROutput::slotChangeRotation(QAction *action)
 		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
 		{
 			RandRCrtc *crtc = m_screen->crtc(m_possibleCrtcs.at(i));
-			if (crtc->addOutput(m_id, crtc->currentMode()))
+			if (crtc->addOutput(m_id))
 			{
-				crtc->rotate(action->data().toInt());
+				crtc->setOriginal();
+				crtc->proposeRotation(action->data().toInt());
+				if (!applyAndConfirm(crtc))
+				{
+					crtc->proposeOriginal();
+					crtc->applyProposed();
+				}
 				break;
 			}
 		}
@@ -282,34 +273,55 @@ void RandROutput::slotDisable()
 	crtc->removeOutput(m_id);
 }
 
-void RandROutput::setMode(RRMode mode)
+void RandROutput::setSize(QSize s)
 {
+	if (s == rect().size())
+	       return;	
 
-	// check if we support this mode
-	if (m_modes.indexOf(mode) == -1)
-		return;
 
 	// try to set the mode in the current crtc
 	if (m_currentCrtc != None)
 	{
 		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
-		if (crtc->setMode(mode))
-			return;
+		crtc->setOriginal();
+		crtc->proposeSize(s);
+		if (!applyAndConfirm(crtc))
+		{
+			crtc->proposeOriginal();
+			crtc->applyProposed();
+		}
+		return;
 	}
 
 	// try to add this output to an empty crtc
 	RandRCrtc *crtc = findEmptyCrtc();
 
 	if (crtc)
-		crtc->addOutput(m_id, mode);
+	{
+		crtc->setOriginal();
+		crtc->addOutput(m_id, s);
+		if (!applyAndConfirm(crtc))
+		{
+			crtc->removeOutput(m_id);
+			crtc->proposeOriginal();
+			crtc->applyProposed();
+		}
+	}
 	else
 	{
 		// use any crtc available
 		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
 		{
 			RandRCrtc *crtc = m_screen->crtc(m_possibleCrtcs.at(i));
-			if (crtc->addOutput(m_id, mode))
-				break;
+			crtc->setOriginal();
+			crtc->addOutput(m_id, s);
+			if (!applyAndConfirm(crtc))
+			{
+				crtc->removeOutput(m_id);
+				crtc->proposeOriginal();
+				crtc->applyProposed();
+			}
+
 		}
 	}
 
@@ -329,6 +341,20 @@ RandRCrtc *RandROutput::findEmptyCrtc()
 	}
 
 	return crtc;
+}
+
+bool RandROutput::applyAndConfirm(RandRCrtc *crtc)
+{
+	if (!crtc)
+		return false;
+
+	if (crtc->applyProposed())
+	{
+		if (RandR::confirm(crtc->rect()))
+			return true;
+	}
+
+	return false;	
 }
 
 #include "randroutput.moc"

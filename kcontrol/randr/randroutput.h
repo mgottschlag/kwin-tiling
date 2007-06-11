@@ -90,8 +90,9 @@ signals:
 	void outputChanged(RROutput o, int changes);
 
 protected:
-	void setMode(RRMode m);
+	void setSize(QSize s);
 	RandRCrtc *findEmptyCrtc();
+	bool applyAndConfirm(RandRCrtc *crtc);
 
 private:
 	

@@ -34,6 +34,10 @@ KRandRApp::KRandRApp()
 	m_tray->show();
 	m_tray->setObjectName("RANDRTray");
 
+	// do not close when the last window is closed:
+	// the system tray is not considered a window, so when the confirm dialog is
+	// closed, the application exits
+	setQuitOnLastWindowClosed(false);
 }
 
 bool KRandRApp::x11EventFilter(XEvent* e)
