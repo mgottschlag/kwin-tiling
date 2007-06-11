@@ -71,7 +71,7 @@ void SearchRunner::fillMatches( KActionCollection* matches,
 #include <KRun>
 void SearchRunner::launchKonsole()
 {
-    KRun::runCommand("konsole");
+    KRun::runCommand("konsole",NULL);
 }
 
 #include "searchrunner.moc"

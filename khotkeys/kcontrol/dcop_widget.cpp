@@ -77,8 +77,8 @@ Dcop_action* Dcop_widget::get_data( Action_data* data_P ) const
 // CHECKME later "steal" whole interfaces browsing from kdcop
 void Dcop_widget::run_kdcop_pressed()
     {
-    if( KRun::runCommand( "kdcop" ) == 0 )
-        KMessageBox::sorry( NULL, i18n( "Failed to run KDCOP" ));
+    if( KRun::runCommand( "kdcop", topLevelWidget()) == 0 )
+        KMessageBox::sorry( topLevelWidget(), i18n( "Failed to run KDCOP" ));
     }
     
 void Dcop_widget::try_pressed()

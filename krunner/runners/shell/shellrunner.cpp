@@ -87,7 +87,7 @@ bool ShellRunner::exec(const QString& command)
         return false;
     }
 
-    return ( KRun::runCommand( command ) != 0 );
+    return ( KRun::runCommand( command, NULL ) != 0 );
 }
 
 #include "shellrunner.moc"
