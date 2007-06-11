@@ -143,6 +143,8 @@ KWindowInfo *Desktop::windowAtPosition(const QPoint &p, QPoint *internalpos)
 		if (shouldPaintWindow(info))
 		{
 			r=info->geometry();
+                        if( KWindowSystem::mapViewport())
+                            r = fixViewportPosition( r );
 			convertRectS2P(r);
 			if (r.contains(p))
 			{
@@ -257,6 +259,8 @@ void Desktop::paintWindow(QPainter &p, const KWindowInfo *info, bool onDesktop)
 QPixmap *Desktop::paintNewWindow(const KWindowInfo *info)
 {
     QRect r = info->frameGeometry();
+    if( KWindowSystem::mapViewport())
+        r = fixViewportPosition( r );
     int dw = QApplication::desktop()->width();
     int dh = QApplication::desktop()->height();
     r = QRect( r.x() * width() / dw, 2 + r.y() * height() / dh,
@@ -486,6 +490,8 @@ void Desktop::paintEvent( QPaintEvent * )
 void Desktop::paintWindowPlain(QPainter &p, const KWindowInfo *info, bool onDesktop)
 {
     QRect r =  info->frameGeometry();
+    if( KWindowSystem::mapViewport())
+        r = fixViewportPosition( r );
     int dw = QApplication::desktop()->width();
     int dh = QApplication::desktop()->height();
     r = QRect( r.x() * width() / dw, 2 + r.y() * height() / dh,
@@ -520,6 +526,8 @@ void Desktop::paintWindowPlain(QPainter &p, const KWindowInfo *info, bool onDesk
 void Desktop::paintWindowIcon(QPainter &p, const KWindowInfo *info, bool onDesktop)
 {
   QRect r =  info->frameGeometry();
+    if( KWindowSystem::mapViewport())
+        r = fixViewportPosition( r );
   int dw = QApplication::desktop()->width();
   int dh = QApplication::desktop()->height();
   r = QRect( r.x() * width() / dw, 2 + r.y() * height() / dh,
@@ -547,6 +555,8 @@ void Desktop::paintWindowPixmap(QPainter &p, const KWindowInfo *info,
 	const int knDefaultPixmapWd = 100;
 	const int knDefaultPixmapHg = 75;
   QRect rSmall, r =  info->frameGeometry();
+  if( KWindowSystem::mapViewport())
+    r = fixViewportPosition( r );
 
   int dw = QApplication::desktop()->width();
   int dh = QApplication::desktop()->height();
@@ -646,6 +656,20 @@ void Desktop::backgroundLoaded(bool b)
 QSize Desktop::sizeHint() const
 {
   return QSize(67,50);
+}
+
+// KWindowSystem does not translate position when mapping viewports
+// to virtual desktops (it'd probably break more things than fix),
+// so the offscreen coordinates need to be fixed
+QRect Desktop::fixViewportPosition( const QRect& r )
+{
+  int x = r.center().x() % qApp->desktop()->width();
+  int y = r.center().y() % qApp->desktop()->height();
+  if( x < 0 )
+    x = x + qApp->desktop()->width();
+  if( y < 0 )
+    y = y + qApp->desktop()->height();
+  return QRect( x - r.width() / 2, y - r.height() / 2, r.width(), r.height());
 }
 
 QPixmap *Desktop::m_bgCommonSmallPixmap=0L;

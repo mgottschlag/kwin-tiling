@@ -101,6 +101,7 @@ protected:
   void paintEvent( QPaintEvent *ev );
 
   KWindowInfo *windowAtPosition (const QPoint &p, QPoint *internalpos);
+  QRect fixViewportPosition( const QRect& r );
 
   bool shouldPaintWindow( KWindowInfo *info );
 
