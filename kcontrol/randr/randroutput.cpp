@@ -259,6 +259,10 @@ void RandROutput::slotDisable()
 
 	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 	crtc->removeOutput(m_id);
+	crtc->applyProposed();
+	// FIXME: check when there is only one output active, and ask the user for
+	// confirmation before disabling: otherwise the user won't have any output 
+	// active
 }
 
 void RandROutput::setSize(QSize s)
