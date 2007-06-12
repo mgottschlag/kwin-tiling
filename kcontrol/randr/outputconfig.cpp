@@ -18,6 +18,7 @@
 
 #include "outputconfig.h"
 #include "randroutput.h"
+#ifdef HAS_RANDR_1_2
 
 OutputConfig::OutputConfig(QWidget *parent, RandROutput *output)
 : QWidget(parent)
@@ -44,3 +45,4 @@ OutputConfig::~OutputConfig()
 }
 
 #include "outputconfig.moc"
+#endif
