@@ -29,7 +29,7 @@ class KHelpMenu;
 class QAction;
 class KMenu;
 
-class KRandRSystemTray :  public KSystemTrayIcon, public RandRDisplay
+class KRandRSystemTray : public KSystemTrayIcon, public RandRDisplay
 {
 	Q_OBJECT
 

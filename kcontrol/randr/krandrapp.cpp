@@ -29,7 +29,7 @@
 #include <X11/Xlib.h>
 
 KRandRApp::KRandRApp()
-	: m_tray(new KRandRSystemTray(0L))
+: m_tray(new KRandRSystemTray(0L))
 {
 	m_tray->show();
 	m_tray->setObjectName("RANDRTray");
@@ -46,5 +46,5 @@ bool KRandRApp::x11EventFilter(XEvent* e)
 	if (m_tray->canHandle(e))
 		m_tray->handleEvent(e);
 
-	return KApplication::x11EventFilter( e );
+	return KApplication::x11EventFilter(e);
 }

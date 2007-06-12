@@ -38,9 +38,9 @@
 #include "randrmode.h"
 
 KRandRSystemTray::KRandRSystemTray(QWidget* parent)
-	: KSystemTrayIcon(parent)
-	, m_popupUp(false)
-	, m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection()))
+: KSystemTrayIcon(parent)
+, m_popupUp(false)
+, m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection()))
 {
 	setIcon(KSystemTrayIcon::loadIcon("randr"));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
@@ -71,18 +71,25 @@ void KRandRSystemTray::slotPrepareMenu()
 
 	menu->clear();
 
-	if (!isValid()) {
+	if (!isValid()) 
+	{
 		action = menu->addAction(i18n("Required X Extension Not Available"));
 		action->setEnabled(false);
 
-	} else {
+	} 
+	else 
+	{
 		m_screenPopups.clear();
-		for (int s = 0; s < numScreens(); s++) {
+		for (int s = 0; s < numScreens(); s++) 
+		{
 			setCurrentScreen(s);
-			if (s == screenIndexOfWidget(parentWidget())) {
+			if (s == screenIndexOfWidget(parentWidget())) 
+			{
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
-			} else {
+			} 
+			else 
+			{
 #ifdef HAS_RANDR_1_2
 			    if (RandR::has_1_2)
 				    currentScreen()->loadSettings();
@@ -152,7 +159,8 @@ void KRandRSystemTray::configChanged()
 void KRandRSystemTray::populateMenu(KMenu* menu)
 {
 #ifdef HAS_RANDR_1_2
-	if (RandR::has_1_2) {
+	if (RandR::has_1_2) 
+	{
 		QAction *action;
 
 		OutputMap outputs = currentScreen()->outputs();
@@ -164,8 +172,10 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 
 		menu->addTitle(SmallIcon("view-fullscreen"), i18n("Outputs"));
 		OutputMap::const_iterator it = outputs.constBegin();
-		while (it != outputs.constEnd()) {
-			if (it.value()->isConnected()) {
+		while (it != outputs.constEnd()) 
+		{
+			if (it.value()->isConnected()) 
+			{
 				RandROutput *output = it.value();
 				Q_ASSERT(output);
 
@@ -182,12 +192,14 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 					currentSize = QSize(currentSize.height(), currentSize.width());
 
 				QActionGroup *sizeGroup = new QActionGroup(outputMenu);
-				for (int i = 0; i < sizes.count(); ++i) {
+				for (int i = 0; i < sizes.count(); ++i) 
+				{
 					QSize size = sizes[i];
 					action = outputMenu->addAction(QString("%1 x %2").arg(size.width()).arg(size.height()));
 					action->setData(size);
 					sizeGroup->addAction(action);
-					if (size == currentSize) {
+					if (size == currentSize) 
+					{
 						QFont font = action->font();
 						font.setBold(true);
 						action->setFont(font);
@@ -209,12 +221,15 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				int rotations = output->rotations(), currentRotation = output->currentRotation();
 				// Don't display the rotation options if there is no point (ie. none are supported)
 				// XFree86 4.3 does not include rotation support.
-				if (rotations != RandR::Rotate0) {
+				if (rotations != RandR::Rotate0) 
+				{
 					outputMenu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
 
 					QActionGroup *rotateGroup = new QActionGroup(outputMenu);
-					for (int i = 0; i < 6; i++) {
-						if ((1 << i) & rotations) {
+					for (int i = 0; i < 6; i++) 
+					{
+						if ((1 << i) & rotations) 
+						{
 							action = outputMenu->addAction(QIcon(RandR::rotationIcon(1 << i, currentRotation)), 
 											   RandR::rotationName(1 << i));
 
@@ -232,7 +247,9 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				}
 				
 				menu->addMenu(outputMenu);
-			} else {
+			} 
+			else 
+			{
 				action = menu->addAction(SmallIcon(it.value()->icon()), it.value()->name());
 				action->setEnabled(false);
 			}
@@ -276,16 +293,18 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 	int numSizes = screen->numSizes();
 	int* sizeSort = new int[numSizes];
 
-	for (int i = 0; i < numSizes; i++) {
+	for (int i = 0; i < numSizes; i++) 
 		sizeSort[i] = screen->pixelCount(i);
-	}
 
 	QActionGroup *screenSizeGroup = new QActionGroup(menu);
-	for (int j = 0; j < numSizes; j++) {
+	for (int j = 0; j < numSizes; j++) 
+	{
 		int highest = -1, highestIndex = -1;
 
-		for (int i = 0; i < numSizes; i++) {
-			if (sizeSort[i] && sizeSort[i] > highest) {
+		for (int i = 0; i < numSizes; i++) 
+		{
+			if (sizeSort[i] && sizeSort[i] > highest) 
+			{
 				highest = sizeSort[i];
 				highestIndex = i;
 			}
@@ -307,12 +326,15 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 
 	// Don't display the rotation options if there is no point (ie. none are supported)
 	// XFree86 4.3 does not include rotation support.
-	if (screen->rotations() != RandR::Rotate0) {
+	if (screen->rotations() != RandR::Rotate0) 
+	{
 		menu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
 
 		QActionGroup *rotationGroup = new QActionGroup(menu);
-		for (int i = 0; i < 6; i++) {
-			if ((1 << i) & screen->rotations()) {
+		for (int i = 0; i < 6; i++) 
+		{
+			if ((1 << i) & screen->rotations()) 
+			{
 				action = menu->addAction(QIcon(RandR::rotationIcon(1 << i, screen->currentRotation())), 
 							  RandR::rotationName(1 << i));
 
@@ -333,7 +355,8 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 
 	int i = 0;
 	QActionGroup *rateGroup = new QActionGroup(menu);
-	for (QStringList::Iterator it = rr.begin(); it != rr.end(); ++it, i++) {
+	for (QStringList::Iterator it = rr.begin(); it != rr.end(); ++it, i++) 
+	{
 		action = menu->addAction(*it);
 
 		if (screen->proposedRefreshRate() == i)
@@ -366,7 +389,8 @@ void KRandRSystemTray::slotResolutionChanged(QAction *action)
 
 		screen->proposeRefreshRate(-1);
 
-		if (screen->applyProposedAndConfirm()) {
+		if (screen->applyProposedAndConfirm()) 
+		{
 			KConfig config("kcmrandrrc");
 			if (syncTrayApp(config))
 				screen->save(config);
@@ -400,7 +424,8 @@ void KRandRSystemTray::slotOrientationChanged(QAction *action)
 
 		screen->proposeRotation(propose);
 
-		if (screen->applyProposedAndConfirm()) {
+		if (screen->applyProposedAndConfirm()) 
+		{
 			KConfig config("kcmrandrrc");
 			if (syncTrayApp(config))
 				screen->save(config);
@@ -429,7 +454,8 @@ void KRandRSystemTray::slotRefreshRateChanged(QAction *action)
 
 		screen->proposeRefreshRate(index);
 
-		if (screen->applyProposedAndConfirm()) {
+		if (screen->applyProposedAndConfirm()) 
+		{
 			KConfig config("kcmrandrrc");
 			if (syncTrayApp(config))
 				screen->save(config);

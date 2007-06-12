@@ -34,7 +34,7 @@ public:
 	virtual bool x11EventFilter(XEvent * e);
 
 private:
-	KRandRSystemTray*	m_tray;
+	KRandRSystemTray *m_tray;
 };
 
 #endif
