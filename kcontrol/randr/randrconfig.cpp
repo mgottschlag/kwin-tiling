@@ -16,8 +16,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QTabWidget>
+#include "outputconfig.h"
 #include "randrconfig.h"
 #include "randrdisplay.h"
+#include "randrscreen.h"
+#include "randroutput.h"
 #include "randr.h"
 
 #ifdef HAS_RANDR_1_2
@@ -44,6 +48,22 @@ void RandRConfig::load()
 {
 	if (!m_display->isValid())
 		return;
+
+	while (outputsTab->count())
+	{
+		delete outputsTab->widget(0);
+		outputsTab->removeTab(0);
+	}
+
+
+	OutputMap outputs = m_display->currentScreen()->outputs();
+	OutputMap::iterator it;
+
+	// FIXME: adjust it to run on a multi screen system
+	for (it = outputs.begin(); it != outputs.end(); ++it)
+	{
+		int index = outputsTab->insertTab(-1, new OutputConfig(outputsTab, *it), KIcon((*it)->icon()), (*it)->name());
+	}
 
 }
 

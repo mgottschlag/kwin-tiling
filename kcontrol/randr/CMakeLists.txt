@@ -16,10 +16,12 @@ set(kcm_randr_PART_SRCS
    krandrmodule.cpp 
    legacyrandrconfig.cpp
    randrconfig.cpp
+   outputconfig.cpp
    ${randrinternal_PART_SRCS})
 kde4_add_ui_files(kcm_randr_PART_SRCS
    legacyrandrconfigbase.ui
-   randrconfigbase.ui)
+   randrconfigbase.ui
+   outputconfigbase.ui)
 
 kde4_automoc(${kcm_randr_PART_SRCS})
 

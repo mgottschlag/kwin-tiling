@@ -378,6 +378,8 @@ void RandRScreen::slotUnifyOutputs(QAction *action)
 		}
 	}
 
+	if (!succeed)
+		kDebug() << "OOps, something failed!" << endl;
 
 	// ask for confirmation
 	if (succeed)
