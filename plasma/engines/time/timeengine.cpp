@@ -44,7 +44,7 @@ TimeEngine::~TimeEngine()
 {
 }
 
-bool TimeEngine::dataSourceRequested(const QString &name)
+bool TimeEngine::sourceRequested(const QString &name)
 {
     if (name == i18n("Local")) {
         setData(i18n("Local"), i18n("Time"), QTime::currentTime());

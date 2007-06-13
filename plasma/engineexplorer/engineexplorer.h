@@ -47,7 +47,7 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
         void showEngine(const QString& engine);
         void addSource(const QString& source);
         void removeSource(const QString& source);
-        void requestDataSource();
+        void requestSource();
 
     private:
         void listEngines();

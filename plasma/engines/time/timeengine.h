@@ -35,7 +35,7 @@ class TimeEngine : public Plasma::DataEngine
         ~TimeEngine();
 
     protected:
-        bool dataSourceRequested(const QString &name);
+        bool sourceRequested(const QString &name);
 
     protected slots:
         void updateTime();

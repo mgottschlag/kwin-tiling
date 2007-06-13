@@ -55,9 +55,8 @@ CiaVc::CiaVc(QObject *parent, const QStringList &args)
     m_layout->setGeometry(QRectF(0, 0, 400, 800));
     m_layout->setMargin(12);
 
-    foreach (const QString& source, m_engine->dataSources()) {
-        sourceAdded(source);
-    }
+    //TODO: make configurable
+    sourceAdded("KDE");
     connect(m_engine, SIGNAL(newDataSource(QString)), this, SLOT(sourceAdded(QString)));
     connect(m_engine, SIGNAL(dataSourceRemoved(QString)), this, SLOT(sourceRemoved(QString)));
 }

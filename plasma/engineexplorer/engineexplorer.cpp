@@ -43,7 +43,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     int size = IconSize(K3Icon::Dialog);
     m_title->setPixmap(pix.pixmap(size, size));
     connect(m_engines, SIGNAL(activated(QString)), this, SLOT(showEngine(QString)));
-    connect(m_sourceRequesterButton, SIGNAL(clicked(bool)), this, SLOT(requestDataSource()));
+    connect(m_sourceRequesterButton, SIGNAL(clicked(bool)), this, SLOT(requestSource()));
     m_data->setModel(m_dataModel);
 
     listEngines();
@@ -106,7 +106,7 @@ void EngineExplorer::showEngine(const QString& name)
         return;
     }
 
-    QStringList sources = m_engine->dataSources();
+    QStringList sources = m_engine->sources();
 
     kDebug() << "showing engine " << m_engine->objectName() << endl;
     kDebug() << "we have " << sources.count() << " data sources" << endl;
@@ -117,8 +117,8 @@ void EngineExplorer::showEngine(const QString& name)
 
     m_sourceRequester->setEnabled(true);
     m_sourceRequesterButton->setEnabled(true);
-    connect(m_engine, SIGNAL(newDataSource(QString)), this, SLOT(addSource(QString)));
-    connect(m_engine, SIGNAL(dataSourceRemoved(QString)), this, SLOT(removeSource(QString)));
+    connect(m_engine, SIGNAL(newSource(QString)), this, SLOT(addSource(QString)));
+    connect(m_engine, SIGNAL(sourceRemoved(QString)), this, SLOT(removeSource(QString)));
 }
 
 void EngineExplorer::addSource(const QString& source)
@@ -153,7 +153,7 @@ void EngineExplorer::removeSource(const QString& source)
     updateTitle();
 }
 
-void EngineExplorer::requestDataSource()
+void EngineExplorer::requestSource()
 {
     if (!m_engine) {
         return;
