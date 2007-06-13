@@ -170,8 +170,21 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 		RandRScreen *screen = currentScreen();
 		Q_ASSERT(screen);
 
-		menu->addTitle(SmallIcon("view-fullscreen"), i18n("Outputs"));
 		OutputMap::const_iterator it = outputs.constBegin();
+
+		// if there is only one output connected, only show it
+		int connected = 0;
+		while (it != outputs.constEnd())
+		{
+		       if (it.value()->isConnected())
+			       connected++;
+		       ++it;
+		}
+
+		if (connected != 1)
+			menu->addTitle(SmallIcon("view-fullscreen"), i18n("Outputs"));
+
+		it = outputs.constBegin();
 		while (it != outputs.constEnd()) 
 		{
 			if (it.value()->isConnected()) 
@@ -179,9 +192,13 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				RandROutput *output = it.value();
 				Q_ASSERT(output);
 
-				KMenu *outputMenu = new KMenu(output->name());
+				KMenu *outputMenu;
+			       	if (connected == 1)
+					outputMenu = menu;
+				else
+					outputMenu = new KMenu(output->name());
 				outputMenu->setIcon(SmallIcon(output->icon()));
-				outputMenu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
+				outputMenu->addTitle(SmallIcon("view-fullscreen"), i18n("%1 - Screen Size", output->name()));
 
 				SizeList sizes = output->sizes();
 				QSize currentSize = output->rect().size();
@@ -246,35 +263,39 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 					connect(rotateGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRotation(QAction*)));
 				}
 				
-				menu->addMenu(outputMenu);
+				if (connected != 1)
+					menu->addMenu(outputMenu);
 			} 
-			else 
+			else if (connected != 1) 
 			{
 				action = menu->addAction(SmallIcon(it.value()->icon()), it.value()->name());
 				action->setEnabled(false);
 			}
 			++it;
 		}
-		QMenu *unifiedMenu = new QMenu(i18n("Unified Outputs"));
-		bool unified = currentScreen()->outputsAreUnified();
-		SizeList sizes = currentScreen()->unifiedSizes();
-		QSize currentSize = currentScreen()->rect().size();
-		for (int i = 0; i < sizes.count(); ++i) 
+		if (connected != 1)
 		{
-			QSize size = sizes[i];
-			action = unifiedMenu->addAction(QString("%1 x %2").arg(size.width()).arg(size.height()));
-			action->setData(size);
-			if (unified && size == currentSize)
+			QMenu *unifiedMenu = new QMenu(i18n("Unified Outputs"));
+			bool unified = currentScreen()->outputsAreUnified();
+			SizeList sizes = currentScreen()->unifiedSizes();
+			QSize currentSize = currentScreen()->rect().size();
+			for (int i = 0; i < sizes.count(); ++i) 
 			{
-				QFont f = action->font();
-				f.setBold(true);
-				action->setFont(f);
-			}	
-		}
-		connect(unifiedMenu, SIGNAL(triggered(QAction*)), currentScreen(), SLOT(slotUnifyOutputs(QAction*)));
+				QSize size = sizes[i];
+				action = unifiedMenu->addAction(QString("%1 x %2").arg(size.width()).arg(size.height()));
+				action->setData(size);
+				if (unified && size == currentSize)
+				{
+					QFont f = action->font();
+					f.setBold(true);
+					action->setFont(f);
+				}	
+			}
+			connect(unifiedMenu, SIGNAL(triggered(QAction*)), currentScreen(), SLOT(slotUnifyOutputs(QAction*)));
 
-		menu->addSeparator();
-		menu->addMenu(unifiedMenu);
+			menu->addSeparator();
+			menu->addMenu(unifiedMenu);
+		}
 	}
 	else
 #endif
