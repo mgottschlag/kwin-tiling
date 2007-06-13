@@ -69,13 +69,13 @@ RootWidget::RootWidget()
 #ifdef ICON_DEMO
     Plasma::Icon* icon = new Plasma::Icon();
     icon->setIcon("plasmagik");
-    icon->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    icon->setFlags(QGraphicsItem::ItemIsMovable);
     m_view->corona()->addItem(icon);
 
     icon = new Plasma::Icon();
     icon->setIcon("user-home");
     icon->setSize(64, 64);
-    icon->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    icon->setFlags(QGraphicsItem::ItemIsMovable);
     m_view->corona()->addItem(icon);
 #endif
 
