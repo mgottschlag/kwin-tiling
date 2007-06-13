@@ -52,7 +52,7 @@ else (LIBXKLAVIER_DEFINITIONS AND LIBXKLAVIER_LIBRARIES)
       endif (NOT LibXKlavier_FIND_QUIETLY)
     else (LIBXKLAVIER_FOUND)
       if (LibXKlavier_FIND_REQUIRED)
-        message(SEND_ERROR "Could NOT find LibXKlavier")
+        message(FATAL_ERROR "Could NOT find LibXKlavier")
       endif (LibXKlavier_FIND_REQUIRED)
     endif (LIBXKLAVIER_FOUND)
 
