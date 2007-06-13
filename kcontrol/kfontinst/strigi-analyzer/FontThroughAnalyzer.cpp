@@ -131,6 +131,7 @@ FontThroughAnalyzer::FontThroughAnalyzer(const FontThroughAnalyzerFactory *f)
 
 InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
 {
+  
     KUrl    url(analysisResult->path().c_str());
     bool    fontsProt = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
             fileProt  = "file"                 == url.protocol() || url.protocol().isEmpty();
@@ -229,7 +230,7 @@ InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
         }
     }
 
-    if(fileProt)
+    if( in != 0 && fileProt)
     {
         CFontEngine::EType type(CFontEngine::getType(analysisResult->path().c_str(), in));
 

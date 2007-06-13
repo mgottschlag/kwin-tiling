@@ -128,6 +128,9 @@ CFontEngine::EType CFontEngine::getType(const char *fileName, Strigi::InputStrea
     // AFM  : StartFontMetrics                      16
     // BDF  : STARTFONT 20                          10
     // PCF  : 01 fcp                                 4
+    
+    Q_ASSERT( in );
+    
     static const int constHeaderLen=69;
     const char * h;
     int          n=in->read(h, constHeaderLen, constHeaderLen);
