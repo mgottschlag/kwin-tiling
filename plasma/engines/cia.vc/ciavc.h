@@ -19,7 +19,6 @@
 #ifndef CIAVC_DATAENGINE_H
 #define CIAVC_DATAENGINE_H
 
-#include <QStringList>
 
 #include <syndication/loader.h>
 #include <syndication/feed.h>

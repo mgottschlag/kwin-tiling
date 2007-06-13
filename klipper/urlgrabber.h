@@ -24,7 +24,6 @@
 #include <Qt3Support/Q3IntDict>
 #include <QRegExp>
 
-#include <QStringList>
 
 #include <k3process.h>
 #include <kconfig.h>

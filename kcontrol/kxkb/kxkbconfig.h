@@ -13,7 +13,6 @@
 #define KXKBCONFIG_H
 
 
-#include <QStringList>
 #include <QQueue>
 #include <QMap>
 

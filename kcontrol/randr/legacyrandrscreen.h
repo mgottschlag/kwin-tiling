@@ -21,7 +21,6 @@
 #define __LEGACYRANDRSCREEN_H__
 
 #include <QObject>
-#include <QStringList>
 //Added by qt3to4:
 #include <QPixmap>
 

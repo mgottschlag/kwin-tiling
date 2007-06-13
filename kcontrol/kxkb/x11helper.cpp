@@ -2,7 +2,6 @@
 #include <QDir>
 
 
-#include <QStringList>
 #include <QHash>
 #include <QRegExp>
 #include <QTextStream>

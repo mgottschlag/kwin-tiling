@@ -24,7 +24,6 @@
  */
 
 
-#include <QStringList>
 #include <QSet>
 #include <QList>
 #include <QFontDatabase>

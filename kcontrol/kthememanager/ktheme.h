@@ -22,7 +22,6 @@
 #include <Qt/qdom.h>
 #include <QPointer>
 
-#include <QStringList>
 #include <QWidget>
 
 #include <kurl.h>

@@ -28,7 +28,6 @@ DESCRIPTION
 
 
 
-#include <QStringList>
 #include <QHash>
 #include <QQueue>
 

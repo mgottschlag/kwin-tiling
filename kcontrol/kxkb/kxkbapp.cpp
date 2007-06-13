@@ -26,7 +26,6 @@ DESCRIPTION
 #include <assert.h>
 
 #include <QRegExp>
-#include <QStringList>
 #include <QDesktopWidget>
 
 #include <kaboutdata.h>

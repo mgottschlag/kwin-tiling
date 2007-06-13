@@ -22,7 +22,6 @@
 #define NAUGHTY_H
 
 #include <kpanelapplet.h>
-#include <QStringList>
 
 #include "utils.h"
 

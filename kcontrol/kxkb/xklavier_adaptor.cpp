@@ -1,7 +1,6 @@
 #include <locale.h>
 
 
-#include <QStringList>
 
 #include <kglobal.h>
 #include <klocale.h>

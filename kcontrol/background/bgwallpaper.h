@@ -26,7 +26,6 @@
 #include <QListWidget>
 #include <QDragEnterEvent>
 #include <QDropEvent>
-#include <QStringList>
 
 #include <kdialog.h>
 

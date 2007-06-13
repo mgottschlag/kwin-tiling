@@ -24,7 +24,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QLabel>
 #include <QLineEdit>
 #include <QFont>
-#include <QStringList>
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QHBoxLayout>

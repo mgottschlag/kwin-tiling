@@ -12,7 +12,6 @@
 #include <assert.h>
 
 #include <QRegExp>
-#include <QStringList>
 #include <QHash>
 
 #include <ksharedconfig.h>

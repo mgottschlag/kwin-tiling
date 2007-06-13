@@ -28,7 +28,6 @@
 #endif
 #include "GroupList.h"
 #include "JobRunner.h"
-#include <QStringList>
 #include <QSet>
 #include <kcmodule.h>
 #include <kurl.h>

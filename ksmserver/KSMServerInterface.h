@@ -2,7 +2,6 @@
 #define KSMSERVER_INTERFACE_H
 
 #include <dcopobject.h>
-#include <QStringList>
 
 class KSMServerInterface : public QObject
 {

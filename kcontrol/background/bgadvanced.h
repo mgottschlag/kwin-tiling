@@ -25,7 +25,6 @@
 
 #include <Qt3Support/Q3Dict>
 #include <Qt3Support/Q3CheckListItem>
-#include <QStringList>
 
 #include <kdialog.h>
 

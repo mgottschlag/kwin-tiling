@@ -33,7 +33,6 @@
 #include <QLabel>
 #include <QValidator>
 #include <QRegExp>
-#include <QStringList>
 #include <QTimer>
 #include <QApplication>
 #include <QGroupBox>

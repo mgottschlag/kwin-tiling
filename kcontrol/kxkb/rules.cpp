@@ -1,7 +1,6 @@
 #include <QtGui/QWidgetList>
 #include <QX11Info>
 #include <QRegExp>
-#include <QStringList>
 #include <QTextStream>
 #include <QFile>
 #include <QDir>

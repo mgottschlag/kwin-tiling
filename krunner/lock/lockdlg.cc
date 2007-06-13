@@ -35,7 +35,6 @@
 #include <QMessageBox>
 #include <Qt3Support/Q3SimpleRichText>
 #include <QLabel>
-#include <QStringList>
 #include <QFontMetrics>
 #include <QStyle>
 #include <QApplication>

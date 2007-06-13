@@ -23,7 +23,6 @@
 #include <QApplication>
 #include <QDir>
 #include <QImage>
-#include <QStringList>
 #include <QCursor>
 //Added by qt3to4:
 #include <QPixmap>

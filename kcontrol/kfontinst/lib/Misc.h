@@ -28,7 +28,6 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#include <QStringList>
 #include <QDataStream>
 #include <kurl.h>
 #include "KfiConstants.h"

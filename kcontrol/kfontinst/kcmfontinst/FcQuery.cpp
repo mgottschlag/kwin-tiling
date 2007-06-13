@@ -22,7 +22,6 @@
 
 #include "FcQuery.h"
 #include "Fc.h"
-#include <QStringList>
 #include <QProcess>
 #include <stdio.h>
 

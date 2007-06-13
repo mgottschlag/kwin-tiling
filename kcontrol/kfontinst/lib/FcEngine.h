@@ -28,7 +28,6 @@
 #endif
 
 
-#include <QStringList>
 #include <QVector>
 #include <QFont>
 #include <QColor>

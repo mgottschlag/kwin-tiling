@@ -21,7 +21,6 @@
 #define __desktop_h__
 
 #include <QWidget>
-#include <QStringList>
 
 #include <QtDBus/QtDBus>
 #include <kworkspace.h>	// for logout parameters

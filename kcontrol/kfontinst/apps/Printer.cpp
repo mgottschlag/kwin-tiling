@@ -23,7 +23,6 @@
 #include "FcEngine.h"
 #include <QCoreApplication>
 #include <QPainter>
-#include <QStringList>
 #include <QFontDatabase>
 #include <QWidget>
 #include <QFile>

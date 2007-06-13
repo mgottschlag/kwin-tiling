@@ -30,7 +30,6 @@
 #include <Qt3Support/Q3Header>
 #include <QPainter>
 #include <QRegExp>
-#include <QStringList>
 //Added by qt3to4:
 #include <QPixmap>
 #include <Q3PtrList>

@@ -30,7 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtGui/QDesktopWidget>
 #include <QLayout>
 #include <QPainter>
-#include <QStringList>
 #include <Qt3Support/q3tl.h>
 #include <QWheelEvent>
 #include <QPixmap>

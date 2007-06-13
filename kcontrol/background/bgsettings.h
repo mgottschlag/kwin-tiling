@@ -12,7 +12,6 @@
 #define __BGSettings_h_Included__
 
 
-#include <QStringList>
 #include <QColor>
 #include <QMap>
 #include <QVector>

@@ -2,7 +2,6 @@
 #define X11HELPER_H_
 
 #include <QHash>
-#include <QStringList>
 
 struct XkbOptionGroup {
   QString name;

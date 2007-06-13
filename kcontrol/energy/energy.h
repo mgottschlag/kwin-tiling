@@ -16,7 +16,6 @@
 
 #include <QObject>
 #include <kcmodule.h>
-#include <QStringList>
 
 class QCheckBox;
 class KIntNumInput;

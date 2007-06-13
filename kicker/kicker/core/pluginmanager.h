@@ -26,7 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QMap>
 #include <QObject>
-#include <QStringList>
 
 #include <kdemacros.h>
 #include <kstaticdeleter.h>
