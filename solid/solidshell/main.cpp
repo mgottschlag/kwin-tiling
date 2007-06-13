@@ -987,7 +987,18 @@ bool SolidShell::hwVolumeCall(SolidShell::VolumeCallType type, const QString &ud
         device.as<Solid::StorageAccess>()->teardown();
         break;
     case Eject:
-        device.as<Solid::OpticalDrive>()->eject();
+        Solid::OpticalDrive::EjectStatus status = device.as<Solid::OpticalDrive>()->eject();
+        switch(status)
+        {
+        case Solid::OpticalDrive::EjectSuccess:
+            return true;
+        case Solid::OpticalDrive::EjectUnsupported:
+            cerr << i18n("Error: eject is unsupported by the system") << endl;
+            return false;
+        case Solid::OpticalDrive::EjectForbidden:
+            cerr << i18n("Error: eject has been forbidden by the system") << endl;
+            return false;
+        }
         break;
     }
 
