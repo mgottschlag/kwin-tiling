@@ -40,12 +40,6 @@ CiaVcEngine::CiaVcEngine(QObject* parent, const QStringList& args)
     connect(m_loader, SIGNAL(loadingComplete(Syndication::Loader*, Syndication::FeedPtr, Syndication::ErrorCode)),
             this, SLOT(processProject(Syndication::Loader*, Syndication::FeedPtr, Syndication::ErrorCode)));
 
-    //TODO: projects should be configurable
-    m_projects << "KDE";
-
-    //TODO: this should be configurable
-    m_timer->start(60000);
-    updateCiaVc();
 }
 
 CiaVcEngine::~CiaVcEngine()
@@ -64,13 +58,28 @@ void CiaVcEngine::updateCiaVc()
     }
 }
 
+bool CiaVcEngine::sourceRequested(const QString &name)
+{
+    //TODO: projects should be configurable
+    m_projects << name;
+    updateCiaVc();
+
+    if (!m_timer->isActive()) {
+        //TODO: this should be configurable
+        m_timer->start(60000);
+    }
+
+    // hm... we DID add it, but we don't have a source yet. delayed loading?
+    return false;
+}
+
 void CiaVcEngine::processProject(Syndication::Loader* loader, Syndication::FeedPtr feed, Syndication::ErrorCode error)
 {
     Q_UNUSED(loader)
     if (error != Syndication::Success) {
         kDebug() << "syndication did not work out" << endl;
         //TODO: should probably tell the user it failed? =)
-	return;
+        return;
     }
 
     //TODO: implement domains in DataEngine
@@ -80,8 +89,7 @@ void CiaVcEngine::processProject(Syndication::Loader* loader, Syndication::FeedP
         //FIXME: this is ugly and should be fixed in how DataSources work
         //       is this a candidate for domains? or for a DataSource QVariant
         //       so DataSources can be the data() of another DataSource? hm.
-        setData(item->title(), i18n("Date"), QDateTime::fromTime_t(item->datePublished()));
-        setData(item->title(), i18n("Log"), item->description());
+        setData(feed->title(), item->title(), item->description());
     }
 }
 

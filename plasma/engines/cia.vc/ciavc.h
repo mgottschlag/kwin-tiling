@@ -41,6 +41,7 @@ class CiaVcEngine : public Plasma::DataEngine
 
     protected:
         void init();
+        bool sourceRequested(const QString &name);
 
     protected slots:
         void updateCiaVc();
