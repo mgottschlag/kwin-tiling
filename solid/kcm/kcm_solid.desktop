@@ -12,11 +12,13 @@ X-KDE-ParentApp=kcontrol
 
 Name=Solid
 Name[el]=Συμπαγές
+Name[fa]=توپر
 
 Comment=Hardware Integration Configuration
 Comment[csb]=Kònfigùracëjô integracëji hard-wôrë
 Comment[de]=Einrichtung zur Hardware-Einbindung
 Comment[el]=Ρυθμίσεις ενσωμάτωσης υλικού
+Comment[fa]=پیکربندی مجتمع‌سازی سخت‌افزار
 Comment[nds]=Instellen för't Inbinnen vun Hardware
 Comment[nl]=Hardware-integratie instellen
 Comment[zh_TW]=系統整合設定

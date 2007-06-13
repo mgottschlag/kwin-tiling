@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Default Plasma Animator
 Name[nds]=Standard-Animeerkarn Plasma
+Name[nl]=Standaard Plasma-animator
 Name[zh_TW]=預設 Plasma 動畫
 ServiceTypes=Plasma/Animator
 Type=Service

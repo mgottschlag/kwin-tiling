@@ -2,6 +2,7 @@
 Name=Search Runner
 Name[de]=Suche durchführen
 Name[el]=Εκτελεστής αναζήτησης
+Name[fa]=اجراکتتدۀ جستجو
 Name[ja]=検索 Runner
 Name[nds]=Söökdreger
 Name[nl]=Zoekmachine
@@ -11,6 +12,7 @@ Name[zh_TW]=搜索執行者
 Comment=Search files
 Comment[de]=Dateien suchen
 Comment[el]=Αναζήτηση αρχείων
+Comment[fa]=پرونده‌های جستجو
 Comment[ja]=ファイルを検索
 Comment[nds]=Dateien söken
 Comment[nl]=Bestanden zoeken
