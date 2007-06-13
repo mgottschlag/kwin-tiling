@@ -13,9 +13,6 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>-1</number>
-   </property>
    <property name="leftMargin" >
     <number>0</number>
    </property>
@@ -39,36 +36,76 @@
     <widget class="QComboBox" name="m_engines" />
    </item>
    <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="KLineEdit" name="m_sourceRequester" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="clickMessage" >
+        <string>Request a datasource</string>
+       </property>
+       <property name="showClearButton" stdset="0" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="m_sourceRequesterButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="text" >
+        <string>Request</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QTreeView" name="m_data" >
      <property name="allColumnsShowFocus" >
       <bool>true</bool>
      </property>
-     <column>
-      <property name="text" >
-       <string>DataSource</string>
-      </property>
-     </column>
-     <column>
-      <property name="text" >
-       <string>Key</string>
-      </property>
-     </column>
-     <column>
-      <property name="text" >
-       <string>Value</string>
-      </property>
-     </column>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>KTitleWidget</class>
    <extends>QWidget</extends>
    <header>ktitlewidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>m_engines</tabstop>
+  <tabstop>m_sourceRequester</tabstop>
+  <tabstop>m_sourceRequesterButton</tabstop>
+  <tabstop>m_data</tabstop>
+ </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>m_sourceRequester</sender>
+   <signal>returnPressed(QString)</signal>
+   <receiver>m_sourceRequesterButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>266</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>362</x>
+     <y>90</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

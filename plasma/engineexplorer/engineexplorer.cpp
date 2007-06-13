@@ -43,6 +43,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     int size = IconSize(K3Icon::Dialog);
     m_title->setPixmap(pix.pixmap(size, size));
     connect(m_engines, SIGNAL(activated(QString)), this, SLOT(showEngine(QString)));
+    connect(m_sourceRequesterButton, SIGNAL(clicked(bool)), this, SLOT(requestDataSource()));
     m_data->setModel(m_dataModel);
 
     listEngines();
@@ -78,6 +79,8 @@ void EngineExplorer::listEngines()
 
 void EngineExplorer::showEngine(const QString& name)
 {
+    m_sourceRequester->setEnabled(false);
+    m_sourceRequesterButton->setEnabled(false);
     m_dataModel->clear();
     m_dataModel->setColumnCount(3);
     QStringList headers;
@@ -112,6 +115,8 @@ void EngineExplorer::showEngine(const QString& name)
         addSource(source);
     }
 
+    m_sourceRequester->setEnabled(true);
+    m_sourceRequesterButton->setEnabled(true);
     connect(m_engine, SIGNAL(newDataSource(QString)), this, SLOT(addSource(QString)));
     connect(m_engine, SIGNAL(dataSourceRemoved(QString)), this, SLOT(removeSource(QString)));
 }
@@ -146,6 +151,21 @@ void EngineExplorer::removeSource(const QString& source)
 
     --m_sourceCount;
     updateTitle();
+}
+
+void EngineExplorer::requestDataSource()
+{
+    if (!m_engine) {
+        return;
+    }
+
+    QString source = m_sourceRequester->text();
+
+    if (source.isEmpty()) {
+        return;
+    }
+
+    m_engine->connectSource(source, this);
 }
 
 void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data data)
