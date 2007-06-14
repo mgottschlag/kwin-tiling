@@ -33,11 +33,13 @@ public:
 	QString name() const;
 	bool isValid() const;
 	QSize size() const;
+	float refreshRate() const;
 private:
 	XRRModeInfo *m_info;
 	bool m_valid;
 	QString m_name;
 	QSize m_size;
+	float m_rate;
 };
 
 #endif // HAS_RANDR_1_2

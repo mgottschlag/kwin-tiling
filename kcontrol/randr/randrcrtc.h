@@ -54,6 +54,7 @@ public:
 	
 	bool proposeSize(QSize s);
 	bool proposeRotation(int rotation);
+	bool proposeRefreshRate(float rate);
 	
 	// applying stuff
 	bool applyProposed();
@@ -76,9 +77,11 @@ private:
 
 	QRect m_proposedRect;
 	int m_proposedRotation;
+	float m_proposedRate;
 
 	QRect m_originalRect;
 	int m_originalRotation;
+	float m_originalRate;
 
 	OutputList m_connectedOutputs;
 	OutputList m_possibleOutputs;
@@ -86,6 +89,7 @@ private:
 
 	int m_currentRotation;
 	QRect m_currentRect;
+	float m_currentRate;
 
 	RandRScreen *m_screen;
 };

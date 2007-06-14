@@ -78,6 +78,14 @@ void RandRScreen::loadSettings()
 	if (RandR::timestamp != m_resources->timestamp)
 		RandR::timestamp = m_resources->timestamp;
 
+	// get all modes
+	for (int i = 0; i < m_resources->nmode; ++i)
+	{
+		if (!m_modes.contains(m_resources->modes[i].id))
+			m_modes[m_resources->modes[i].id] = RandRMode(&m_resources->modes[i]);
+
+	}
+
 	//get all crtcs
 	for (int i = 0; i < m_resources->ncrtc; ++i)
 	{
@@ -105,13 +113,6 @@ void RandRScreen::loadSettings()
 		}
 	}
 
-	// get all modes
-	for (int i = 0; i < m_resources->nmode; ++i)
-	{
-		if (!m_modes.contains(m_resources->modes[i].id))
-			m_modes[m_resources->modes[i].id] = RandRMode(&m_resources->modes[i]);
-
-	}
 }
 
 void RandRScreen::handleEvent(XRRScreenChangeNotifyEvent* event)

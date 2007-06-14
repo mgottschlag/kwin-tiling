@@ -84,10 +84,13 @@ void RandRCrtc::loadSettings()
 	m_currentRotation = m_info->rotation;
 
 	m_currentMode = m_info->mode;
+	RandRMode m = m_screen->mode(m_currentMode);
+	m_currentRate = m.refreshRate();
 
 	// just to make sure it gets initialized
 	m_proposedRect = m_currentRect;
 	m_proposedRotation = m_currentRotation;
+	m_proposedRate = m_currentRate;
 }
 
 void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
@@ -143,7 +146,7 @@ bool RandRCrtc::applyProposed()
 	kDebug() << "       Proposed rotation: " << m_proposedRotation << endl;
 #endif
 	RandRMode mode;
-	if (m_proposedRect == m_currentRect)
+	if (m_proposedRect == m_currentRect && m_proposedRate == m_currentRate)
 	{
 		mode = m_screen->mode(m_currentMode);
 	}
@@ -156,7 +159,7 @@ bool RandRCrtc::applyProposed()
 		for (it = modeList.begin(); it != modeList.end(); ++it)
 		{
 			RandRMode m = m_screen->mode(*it);
-			if (m.size() == m_proposedRect.size())
+			if (m.size() == m_proposedRect.size() && (!m_proposedRate || m_proposedRate == m.refreshRate()))
 			{
 				mode = m;
 				break;
@@ -227,6 +230,7 @@ bool RandRCrtc::applyProposed()
 		m_currentMode = mode.id();
 		m_currentRotation = m_proposedRotation;
 		m_currentRect = m_proposedRect;
+		m_currentRate = mode.refreshRate();
 		emit crtcChanged(m_id, ChangeMode);
 		ret = true;
 	}
@@ -244,6 +248,7 @@ bool RandRCrtc::proposeSize(QSize s)
 {
 	m_proposedRect.setTopLeft(m_currentRect.topLeft());
 	m_proposedRect.setSize(s);
+	m_proposedRate = 0;
 	return true;
 }
 
@@ -258,10 +263,17 @@ bool RandRCrtc::proposeRotation(int rotation)
 
 }
 
+bool RandRCrtc::proposeRefreshRate(float rate)
+{
+	m_proposedRate = rate;
+	return true;
+}
+
 void RandRCrtc::proposeOriginal()
 {
 	m_proposedRotation = m_originalRotation;
 	m_proposedRect = m_originalRect;
+	m_proposedRate = m_originalRate;
 }
 
 void RandRCrtc::setOriginal()

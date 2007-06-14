@@ -193,6 +193,28 @@ QRect RandROutput::rect() const
 	return m_screen->crtc(m_currentCrtc)->rect();
 }
 
+RateList RandROutput::refreshRates(QSize s) const
+{
+	RateList list;
+	if (!s.isValid())
+		s = rect().size();
+
+	for (int i = 0; i < m_modes.count(); ++i)
+	{
+		RandRMode mode = m_screen->mode(m_modes.at(i));
+		if (!mode.isValid())
+			continue;
+		if (mode.size() == s)
+			list.append(mode.refreshRate());
+	}
+	return list;
+}
+
+float RandROutput::refreshRate() const
+{
+	return m_screen->mode( currentMode() ).refreshRate();
+}
+
 int RandROutput::rotations() const
 {
 	return m_rotations;
@@ -239,16 +261,78 @@ void RandROutput::slotChangeRotation(QAction *action)
 			crtc->applyProposed();
 		}
 	}
+
+	RandRCrtc *crtc = findEmptyCrtc();
+	if (crtc)
+	{
+		crtc->setOriginal();
+		crtc->proposeRotation(action->data().toInt());
+		if (!applyAndConfirm(crtc))
+		{
+			crtc->proposeOriginal();
+			crtc->applyProposed();
+		}
+
+	}
 	else
 	{
 		// try to add this output to a crtc
 		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
 		{
-			RandRCrtc *crtc = m_screen->crtc(m_possibleCrtcs.at(i));
+			crtc = m_screen->crtc(m_possibleCrtcs.at(i));
 			if (crtc->addOutput(m_id))
 			{
 				crtc->setOriginal();
 				crtc->proposeRotation(action->data().toInt());
+				if (!applyAndConfirm(crtc))
+				{
+					crtc->proposeOriginal();
+					crtc->applyProposed();
+				}
+				break;
+			}
+		}
+	}
+}
+
+void RandROutput::slotChangeRefreshRate(QAction *action)
+{
+	float rate = action->data().toDouble();
+
+	if (m_currentCrtc != None)
+	{
+		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
+		crtc->setOriginal();
+		crtc->proposeRefreshRate(rate);
+		if (!applyAndConfirm(crtc))
+		{
+			crtc->proposeOriginal();
+			crtc->applyProposed();
+		}
+	}
+
+	RandRCrtc *crtc = findEmptyCrtc();
+	if (crtc)
+	{
+		crtc->setOriginal();
+		crtc->proposeRefreshRate(rate);
+		if (!applyAndConfirm(crtc))
+		{
+			crtc->proposeOriginal();
+			crtc->applyProposed();
+		}
+
+	}
+	else
+	{
+		// try to add this output to a crtc
+		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
+		{
+			crtc = m_screen->crtc(m_possibleCrtcs.at(i));
+			if (crtc->addOutput(m_id))
+			{
+				crtc->setOriginal();
+				crtc->proposeRefreshRate(rate);
 				if (!applyAndConfirm(crtc))
 				{
 					crtc->proposeOriginal();
@@ -295,7 +379,6 @@ void RandROutput::setSize(QSize s)
 
 	// try to add this output to an empty crtc
 	RandRCrtc *crtc = findEmptyCrtc();
-
 	if (crtc)
 	{
 		crtc->setOriginal();

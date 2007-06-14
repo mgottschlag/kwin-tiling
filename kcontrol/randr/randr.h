@@ -56,6 +56,7 @@ typedef QList<RRCrtc> CrtcList;
 typedef QList<RRMode> ModeList;
 #endif
 
+typedef QList<float> RateList;
 typedef QList<QSize> SizeList;
 
 class LegacyRandRScreen;

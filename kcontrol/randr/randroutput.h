@@ -68,6 +68,17 @@ public:
 	QRect rect() const;
 
 	/**
+	 * The list of refresh rates for the given size.
+	 * If no size is specified, it will use the current size
+	 */
+	RateList refreshRates(QSize s = QSize()) const;
+
+	/**
+	 * The current refresh rate
+	 */
+	float refreshRate() const;
+
+	/**
 	 * Return all possible rotations for all CRTCs this output can be connected
 	 * to.
 	 */
@@ -84,6 +95,7 @@ public:
 public slots:
 	void slotChangeSize(QAction *action);
 	void slotChangeRotation(QAction *action);
+	void slotChangeRefreshRate(QAction *action);
 	void slotDisable();
 
 signals:

@@ -260,6 +260,29 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 					}
 					connect(rotateGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRotation(QAction*)));
 				}
+
+				// refresh rate
+				RateList rates = output->refreshRates();
+				if (rates.count() > 1)
+				{
+					float rate = output->refreshRate();
+					outputMenu->addTitle(SmallIcon("chronometer"), i18n("Refresh Rate"));
+					RateList::const_iterator it;
+					QActionGroup *rateGroup = new QActionGroup(outputMenu);
+					for (it = rates.begin(); it != rates.end(); ++it)
+					{
+						action = outputMenu->addAction(i18n("%1 Hz", QString::number(*it, 'f', 1)));
+						action->setData(*it);
+						if (*it == rate)
+						{
+							QFont f = action->font();
+							f.setBold(true);
+							action->setFont(f);
+						}
+						rateGroup->addAction(action);
+					}
+					connect(rateGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRefreshRate(QAction*)));
+				}
 				
 				if (connected != 1)
 					menu->addMenu(outputMenu);

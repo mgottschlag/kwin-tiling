@@ -16,6 +16,12 @@ RandRMode::RandRMode(XRRModeInfo *info)
 
 	m_size.setWidth(m_info->width);
 	m_size.setHeight(m_info->height);
+	
+	// calculate the refresh rate
+	if (info->hTotal && info->vTotal)
+		m_rate = ((float) info->dotClock / ((float) info->hTotal * (float) info->vTotal));
+	else
+		m_rate = 0;
 
 }
 
@@ -41,6 +47,11 @@ QString RandRMode::name() const
 QSize RandRMode::size() const
 {
 	return m_size;
+}
+
+float RandRMode::refreshRate() const
+{
+	return m_rate;
 }
 
 bool RandRMode::isValid() const
