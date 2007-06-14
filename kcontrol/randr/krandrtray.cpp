@@ -225,14 +225,17 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				}
 				connect(sizeGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeSize(QAction*)));
 				
-				action = outputMenu->addAction(i18n("Disable"));
-				if (output->currentCrtc() == None)
+				if (connected != 1)
 				{
-					QFont font = action->font();
-					font.setBold(true);
-					action->setFont(font);
+					action = outputMenu->addAction(i18n("Disable"));
+					if (output->currentCrtc() == None)
+					{
+						QFont font = action->font();
+						font.setBold(true);
+						action->setFont(font);
+					}
+					connect(action, SIGNAL(triggered(bool)), output, SLOT(slotDisable()));
 				}
-				connect(action, SIGNAL(triggered(bool)), output, SLOT(slotDisable()));
 
 				// Display the rotations
 				int rotations = output->rotations(), currentRotation = output->currentRotation();
