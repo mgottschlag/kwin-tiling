@@ -48,13 +48,10 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent)
 	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
 		this, SLOT(slotActivated(QSystemTrayIcon::ActivationReason)));	
 
-        slotPrepareMenu();
+	m_menu = new KMenu(parentWidget());
+	setContextMenu(m_menu);
 
-#ifdef HAS_RANDR_1_2
-	for (int i = 0; i < numScreens(); ++i)
-		connect(screen(i), SIGNAL(configChanged()), this, SLOT(slotPrepareMenu()));
-#endif
-
+	connect(m_menu, SIGNAL(aboutToShow()), this, SLOT(slotPrepareMenu()));
 }
 
 void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
@@ -66,14 +63,12 @@ void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
 void KRandRSystemTray::slotPrepareMenu()
 {
 	QAction *action;
-        KMenu *menu = new KMenu(parentWidget());
-        setContextMenu(menu);
 
-	menu->clear();
+	m_menu->clear();
 
 	if (!isValid()) 
 	{
-		action = menu->addAction(i18n("Required X Extension Not Available"));
+		action = m_menu->addAction(i18n("Required X Extension Not Available"));
 		action->setEnabled(false);
 
 	} 
@@ -92,14 +87,14 @@ void KRandRSystemTray::slotPrepareMenu()
 			{
 #ifdef HAS_RANDR_1_2
 			    if (RandR::has_1_2)
-				    currentScreen()->loadSettings();
+				    screen(s)->loadSettings();
 #endif
 					
-                            KMenu* subMenu = new KMenu(i18n("Screen %1", s+1), menu );
+                            KMenu* subMenu = new KMenu(i18n("Screen %1", s+1), m_menu );
                             subMenu->setObjectName( QString("screen%1").arg(s+1) );
                             m_screenPopups.append(subMenu);
                             populateMenu(subMenu);
-                            action = menu->addMenu(subMenu);
+                            action = m_menu->addMenu(subMenu);
                             connect(subMenu, SIGNAL(activated(int)), SLOT(slotScreenActivated()));
 			}
 		}
@@ -109,20 +104,20 @@ void KRandRSystemTray::slotPrepareMenu()
 		if (RandR::has_1_2)
 			currentScreen()->loadSettings();
 #endif
-		populateMenu(menu);
+		populateMenu(m_menu);
 	}
 
-	menu->addSeparator();
+	m_menu->addSeparator();
 
 	QAction *actPrefs = actionCollection()->addAction( QString() );
         actPrefs->setIcon( KIcon( "configure" ) );
         actPrefs->setText( i18n( "Configure Display..." ) );
         connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
-	menu->addAction( actPrefs );
+	m_menu->addAction( actPrefs );
 
-	menu->addMenu(/*SmallIcon("help-contents"),KStandardGuiItem::help().text(),*/ m_help->menu());
+	m_menu->addMenu(/*SmallIcon("help-contents"),KStandardGuiItem::help().text(),*/ m_help->menu());
 	QAction *quitAction = actionCollection()->action(KStandardAction::name(KStandardAction::Quit));
-	menu->addAction( quitAction );
+	m_menu->addAction( quitAction );
 }
 
 void KRandRSystemTray::slotScreenActivated()
