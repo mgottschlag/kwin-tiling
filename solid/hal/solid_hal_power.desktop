@@ -12,6 +12,7 @@ Name[sv]=HAL-strömsparfunktion
 Name[x-test]=xxHAL-Powerxx
 Name[zh_TW]=HAL 電源管理
 Comment=Hardware power management using freedesktop.org HAL daemon
+Comment[be]=Кіраванне сілкаваннем пры дапамозе сервіса freedesktop.org HAL
 Comment[de]=Energieverwaltung mit Hilfe des HAL-Dienstes von freedesktop.org
 Comment[el]=Διαχείριση ενέργειας υλικού με χρήση του δαίμονα HAL του freedesktop.org
 Comment[ja]=freedesktop.org の HAL デーモンを用いたハードウェア電源管理

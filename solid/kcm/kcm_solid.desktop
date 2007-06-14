@@ -11,10 +11,12 @@ X-KDE-FactoryName=kcm_solid
 X-KDE-ParentApp=kcontrol
 
 Name=Solid
+Name[be]=Працяглы
 Name[el]=Συμπαγές
 Name[fa]=توپر
 
 Comment=Hardware Integration Configuration
+Comment[be]=Настаўленні інтэграцыі з прыладамі
 Comment[csb]=Kònfigùracëjô integracëji hard-wôrë
 Comment[de]=Einrichtung zur Hardware-Einbindung
 Comment[el]=Ρυθμίσεις ενσωμάτωσης υλικού

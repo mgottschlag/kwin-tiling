@@ -13,6 +13,7 @@ Name[sv]=Nätverkshantering
 Name[x-test]=xxNetworkManagerxx
 Name[zh_TW]=網路管理員
 Comment=Network management using the NetworkManager daemon
+Comment[be]=Кіраванне сеткай пры дапамозе сервіса NetworkManager
 Comment[de]=Netzwerkverwaltung mit dem Netzwerkverwaltungs-Dienst
 Comment[el]=Διαχείριση δικτύου με χρήση του δαίμονα HAL του freedesktop.org
 Comment[ja]=NetworkManager デーモンを用いたネットワーク管理

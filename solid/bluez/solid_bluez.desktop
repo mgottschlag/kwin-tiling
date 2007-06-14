@@ -7,6 +7,7 @@ InitialPreference=100
 Name=BlueZ
 Name[x-test]=xxBlueZxx
 Comment=Bluetooth management using the BlueZ stack
+Comment[be]=Кіраванне Bluetooth пры дапамозе стэка BlueZ
 Comment[de]=Bluetooth-Verwaltung mit Hilfe von Bluez
 Comment[el]=Διαχείριση bluetooth με χρήση της στοίβας BlueZ
 Comment[nds]=Bluetooth-Pleeg mit BlueZ
