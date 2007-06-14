@@ -108,6 +108,14 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		m_connected = !m_connected;
 	}
 
+	// check if we are still connected, if not, release the crtc connection
+	if (!m_connected && m_currentCrtc != None)
+	{
+		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
+		crtc->removeOutput(m_id);
+		crtc->applyProposed();
+	}
+
 	if (changed)
 		emit outputChanged(m_id, changed);
 }
