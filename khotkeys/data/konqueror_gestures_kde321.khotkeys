@@ -83,6 +83,7 @@ Name[it]=Indietro
 Name[ja]=戻る
 Name[nds]=Torüch
 Name[nl]=Terug
+Name[tr]=Geri
 Name[x-test]=xxBackxx
 Name[zh_TW]=返回
 Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
