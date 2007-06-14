@@ -55,6 +55,7 @@ private:
 	bool m_popupUp;
 	KHelpMenu* m_help;
 	QList<KMenu*> m_screenPopups;
+	KMenu* m_menu;
 };
 
 #endif
