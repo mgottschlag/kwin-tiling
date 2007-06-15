@@ -157,6 +157,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 	if (RandR::has_1_2) 
 	{
 		QAction *action;
+		QActionGroup *actionGroup;
 
 		OutputMap outputs = currentScreen()->outputs();
 		if (outputs.count() <= 0)
@@ -195,7 +196,6 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				outputMenu->setIcon(SmallIcon(output->icon()));
 				outputMenu->addTitle(SmallIcon("view-fullscreen"), i18n("%1 - Screen Size", output->name()));
 
-				SizeList sizes = output->sizes();
 				QSize currentSize = output->rect().size();
 
 				// if the output is rotated 90 or 270, the returned rect is inverted
@@ -203,22 +203,8 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				if (output->currentRotation() & (RandR::Rotate90 | RandR::Rotate270))
 					currentSize = QSize(currentSize.height(), currentSize.width());
 
-				QActionGroup *sizeGroup = new QActionGroup(outputMenu);
-				for (int i = 0; i < sizes.count(); ++i) 
-				{
-					QSize size = sizes[i];
-					action = outputMenu->addAction(QString("%1 x %2").arg(size.width()).arg(size.height()));
-					action->setData(size);
-					sizeGroup->addAction(action);
-					if (size == currentSize) 
-					{
-						QFont font = action->font();
-						font.setBold(true);
-						action->setFont(font);
-					}
-
-				}
-				connect(sizeGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeSize(QAction*)));
+				actionGroup = populateSizes(outputMenu, output->sizes(), currentSize);
+				connect(actionGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeSize(QAction*)));
 				
 				if (connected != 1)
 				{
@@ -233,55 +219,23 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				}
 
 				// Display the rotations
-				int rotations = output->rotations(), currentRotation = output->currentRotation();
+				int rotations = output->rotations();
 				// Don't display the rotation options if there is no point (ie. none are supported)
 				// XFree86 4.3 does not include rotation support.
 				if (rotations != RandR::Rotate0) 
 				{
 					outputMenu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
-
-					QActionGroup *rotateGroup = new QActionGroup(outputMenu);
-					for (int i = 0; i < 6; i++) 
-					{
-						if ((1 << i) & rotations) 
-						{
-							action = outputMenu->addAction(QIcon(RandR::rotationIcon(1 << i, currentRotation)), 
-											   RandR::rotationName(1 << i));
-
-							action->setData(1 << i);
-							if (currentRotation & (1 << i))
-							{
-								QFont font = action->font();
-								font.setBold(true);
-								action->setFont(font);
-							}
-							rotateGroup->addAction(action);
-						}
-					}
-					connect(rotateGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRotation(QAction*)));
+					actionGroup = populateRotations(outputMenu, rotations, output->currentRotation());
+					connect(actionGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRotation(QAction*)));
 				}
 
 				// refresh rate
 				RateList rates = output->refreshRates();
-				if (rates.count() > 1)
+				if (rates.count())
 				{
-					float rate = output->refreshRate();
 					outputMenu->addTitle(SmallIcon("chronometer"), i18n("Refresh Rate"));
-					RateList::const_iterator it;
-					QActionGroup *rateGroup = new QActionGroup(outputMenu);
-					for (it = rates.begin(); it != rates.end(); ++it)
-					{
-						action = outputMenu->addAction(i18n("%1 Hz", QString::number(*it, 'f', 1)));
-						action->setData(*it);
-						if (*it == rate)
-						{
-							QFont f = action->font();
-							f.setBold(true);
-							action->setFont(f);
-						}
-						rateGroup->addAction(action);
-					}
-					connect(rateGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRefreshRate(QAction*)));
+					actionGroup = populateRates(outputMenu, rates, output->refreshRate());
+					connect(actionGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRefreshRate(QAction*)));
 				}
 				
 				if (connected != 1)
@@ -294,28 +248,43 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 			}
 			++it;
 		}
+		// if there is more than one output connected, give the option to unify the outputs
 		if (connected != 1)
 		{
-			QMenu *unifiedMenu = new QMenu(i18n("Unified Outputs"));
 			bool unified = currentScreen()->outputsAreUnified();
 			SizeList sizes = currentScreen()->unifiedSizes();
-			QSize currentSize = currentScreen()->rect().size();
-			for (int i = 0; i < sizes.count(); ++i) 
+			if (sizes.count())
 			{
-				QSize size = sizes[i];
-				action = unifiedMenu->addAction(QString("%1 x %2").arg(size.width()).arg(size.height()));
-				action->setData(size);
-				if (unified && size == currentSize)
-				{
-					QFont f = action->font();
-					f.setBold(true);
-					action->setFont(f);
-				}	
-			}
-			connect(unifiedMenu, SIGNAL(triggered(QAction*)), currentScreen(), SLOT(slotUnifyOutputs(QAction*)));
+				// populate unified sizes
+				QSize currentSize;
+				KMenu *unifiedMenu = new KMenu(i18n("Unified Outputs"));
+				if (unified)
+					currentSize = currentScreen()->rect().size();
 
-			menu->addSeparator();
-			menu->addMenu(unifiedMenu);
+				unifiedMenu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
+				actionGroup = populateSizes(unifiedMenu, sizes, currentSize);	
+				connect(actionGroup, SIGNAL(triggered(QAction*)), currentScreen(), SLOT(slotUnifyOutputs(QAction*)));
+
+				// if the outputs are unified, we can rotate the screen on all outputs
+				if (unified)
+				{
+					int rotations = currentScreen()->unifiedRotations();
+					if (rotations != RandR::Rotate0)
+					{
+						unifiedMenu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
+						int rotation = RandR::Rotate0;
+						if (currentScreen()->outputs().count())
+						{
+							OutputMap::const_iterator it = currentScreen()->outputs().begin();	
+							rotation = (*it)->currentRotation();
+						}
+						actionGroup = populateRotations(unifiedMenu, rotations, rotation);
+						connect(actionGroup, SIGNAL(triggered(QAction*)), currentScreen(), SLOT(slotRotateUnified(QAction*)));
+					}
+				}
+				menu->addSeparator();
+				menu->addMenu(unifiedMenu);
+			}
 		}
 	}
 	else
@@ -408,6 +377,73 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 		rateGroup->addAction(action);
 	}
 	connect(rateGroup, SIGNAL(triggered(QAction*)), SLOT(slotRefreshRateChanged(QAction*)));
+}
+
+QActionGroup *KRandRSystemTray::populateRotations(KMenu *menu, int rotations, int rotation)
+{
+	QAction *action;
+	QActionGroup *rotateGroup = new QActionGroup(menu);
+
+
+	for (int i = 0; i < 6; i++) 
+	{
+		if ((1 << i) & rotations) 
+		{
+			action = menu->addAction(QIcon(RandR::rotationIcon(1 << i, rotation)), 
+							   RandR::rotationName(1 << i));
+
+			action->setData(1 << i);
+			if (rotation & (1 << i))
+			{
+				QFont font = action->font();
+				font.setBold(true);
+				action->setFont(font);
+			}
+			rotateGroup->addAction(action);
+		}
+	}
+	return rotateGroup;
+}
+
+QActionGroup *KRandRSystemTray::populateSizes(KMenu *menu, SizeList sizes, QSize size)
+{
+	QAction *action;
+	QActionGroup *sizeGroup = new QActionGroup(menu);
+	for (int i = 0; i < sizes.count(); ++i) 
+	{
+		QSize s = sizes[i];
+		action = menu->addAction(QString("%1 x %2").arg(s.width()).arg(s.height()));
+		action->setData(s);
+		if (s == size) 
+		{
+			QFont font = action->font();
+			font.setBold(true);
+			action->setFont(font);
+		}
+		sizeGroup->addAction(action);
+	}
+	return sizeGroup;
+}
+
+QActionGroup *KRandRSystemTray::populateRates(KMenu *menu, RateList rates, float rate)
+{
+	QAction *action;
+	QActionGroup *rateGroup = new QActionGroup(menu);
+
+	RateList::const_iterator it;
+	for (it = rates.begin(); it != rates.end(); ++it)
+	{
+		action = menu->addAction(i18n("%1 Hz", QString::number(*it, 'f', 1)));
+		action->setData(*it);
+		if (*it == rate)
+		{
+			QFont f = action->font();
+			f.setBold(true);
+			action->setFont(f);
+		}
+		rateGroup->addAction(action);
+	}
+	return rateGroup;
 }
 
 void KRandRSystemTray::slotResolutionChanged(QAction *action)

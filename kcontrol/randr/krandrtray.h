@@ -27,6 +27,7 @@
 
 class KHelpMenu;
 class QAction;
+class QActionGroup;
 class KMenu;
 
 class KRandRSystemTray : public KSystemTrayIcon, public RandRDisplay
@@ -51,6 +52,11 @@ protected Q_SLOTS:
 private:
 	void populateMenu(KMenu* menu);
 	void populateLegacyMenu(KMenu* menu);
+
+	// helper functions
+	QActionGroup *populateRotations(KMenu *menu, int rotations, int rotation);
+	QActionGroup *populateSizes(KMenu *menu, SizeList sizes, QSize size);
+	QActionGroup *populateRates(KMenu *menu, RateList rates, float rate);
 
 	bool m_popupUp;
 	KHelpMenu* m_help;

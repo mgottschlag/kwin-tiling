@@ -69,6 +69,7 @@ public:
 
 public slots:
 	void slotUnifyOutputs(QAction *action);
+	void slotRotateUnified(QAction *action);
 
 signals:
 	void configChanged();

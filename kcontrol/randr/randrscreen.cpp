@@ -292,14 +292,23 @@ bool RandRScreen::outputsAreUnified() const
 
 int RandRScreen::unifiedRotations() const
 {
-	int rotations = ~0;
+
+	bool first = true;
+	int rotations = RandR::Rotate0;
 
 	CrtcMap::const_iterator it;
 	for (it = m_crtcs.constBegin(); it != m_crtcs.constEnd(); ++it)
 	{
-		if ((*it)->connectedOutputs().count())
+		if (!(*it)->connectedOutputs().count())
 			continue;
-		rotations &= (*it)->rotations();
+
+		if (first)
+		{
+			rotations = (*it)->rotations();
+			first = false;
+		}
+		else
+			rotations &= (*it)->rotations();
 	}
 
 	return rotations;
@@ -402,6 +411,57 @@ void RandRScreen::slotUnifyOutputs(QAction *action)
 
 }
 
+void RandRScreen::slotRotateUnified(QAction *action)
+{
+	if (!outputsAreUnified())
+		return;
+
+	int rotation = action->data().toInt(); 
+	
+	CrtcMap connected;
+	CrtcMap::iterator it;
+
+	// try to apply the desired settings to all connected crtcs
+	// if one fail, revert all of them
+	bool succeed = true;
+	for (it = m_crtcs.begin(); it != m_crtcs.end(); ++it)
+	{
+		if (!(*it)->connectedOutputs().count())
+			continue;
+
+		connected[ (*it)->id() ] = *it;
+		(*it)->setOriginal();
+		if (rotation != (*it)->currentRotation())
+		{
+			(*it)->proposeRotation(rotation);
+			if (!(*it)->applyProposed())
+			{
+				succeed = false;
+				break;
+			}
+		}
+	}
+
+	if (!succeed)
+		kDebug() << "OOps, something failed!" << endl;
+
+	// ask for confirmation
+	if (succeed)
+	{
+		succeed = RandR::confirm();
+	}
+
+	// revert if either the config failed, or the user didn't confirm the changes
+	if (!succeed)
+	{
+		for (it = connected.begin(); it != connected.end(); ++it)
+		{
+			(*it)->proposeOriginal();
+			(*it)->applyProposed();
+		}
+	}
+
+}
 #include "randrscreen.moc"
 
 #endif
