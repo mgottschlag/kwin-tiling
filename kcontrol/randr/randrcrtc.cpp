@@ -146,7 +146,7 @@ bool RandRCrtc::applyProposed()
 	kDebug() << "       Proposed rotation: " << m_proposedRotation << endl;
 #endif
 	RandRMode mode;
-	if (m_proposedRect == m_currentRect && m_proposedRate == m_currentRate)
+	if (m_proposedRect.size() == m_currentRect.size() && m_proposedRate == m_currentRate)
 	{
 		mode = m_screen->mode(m_currentMode);
 	}
@@ -246,9 +246,14 @@ bool RandRCrtc::applyProposed()
 
 bool RandRCrtc::proposeSize(QSize s)
 {
-	m_proposedRect.setTopLeft(m_currentRect.topLeft());
 	m_proposedRect.setSize(s);
 	m_proposedRate = 0;
+	return true;
+}
+
+bool RandRCrtc::proposePosition(QPoint p)
+{
+	m_proposedRect.moveTopLeft(p);
 	return true;
 }
 
@@ -280,6 +285,7 @@ void RandRCrtc::setOriginal()
 {
 	m_originalRotation = m_currentRotation;
 	m_originalRect = m_currentRect;
+	m_originalRate = m_currentRate;
 }
 
 bool RandRCrtc::addOutput(RROutput output, QSize s)

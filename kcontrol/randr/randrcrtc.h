@@ -53,6 +53,7 @@ public:
 	QRect rect() const;
 	
 	bool proposeSize(QSize s);
+	bool proposePosition(QPoint p);
 	bool proposeRotation(int rotation);
 	bool proposeRefreshRate(float rate);
 	

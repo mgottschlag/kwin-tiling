@@ -350,6 +350,7 @@ void RandRScreen::slotUnifyOutputs(QAction *action)
 	int rotation = ~0;
 	CrtcMap::iterator it;
 
+	QPoint p(0,0);
 	// first set the original settings for the crts
 	// and check wheter we should rotate the displays to unify them
 	for (it = m_crtcs.begin(); it != m_crtcs.end(); ++it)
@@ -360,6 +361,7 @@ void RandRScreen::slotUnifyOutputs(QAction *action)
 		connected[ (*it)->id() ] = *it;
 		(*it)->setOriginal();
 		(*it)->proposeSize(s);
+		(*it)->proposePosition(p);
 		rotation &= (*it)->currentRotation();
 	}
 

@@ -255,11 +255,12 @@ void RandROutput::slotChangeRotation(QAction *action)
 		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 		crtc->setOriginal();
 		crtc->proposeRotation(action->data().toInt());
-		if (!applyAndConfirm(crtc))
-		{
-			crtc->proposeOriginal();
-			crtc->applyProposed();
-		}
+		if (applyAndConfirm(crtc))
+			return;
+
+		crtc->proposeOriginal();
+		crtc->applyProposed();
+		return;
 	}
 
 	RandRCrtc *crtc = findEmptyCrtc();
@@ -267,12 +268,11 @@ void RandROutput::slotChangeRotation(QAction *action)
 	{
 		crtc->setOriginal();
 		crtc->proposeRotation(action->data().toInt());
-		if (!applyAndConfirm(crtc))
-		{
-			crtc->proposeOriginal();
-			crtc->applyProposed();
-		}
-
+		if (applyAndConfirm(crtc))
+			return;
+			
+		crtc->proposeOriginal();
+		crtc->applyProposed();
 	}
 	else
 	{
@@ -284,12 +284,11 @@ void RandROutput::slotChangeRotation(QAction *action)
 			{
 				crtc->setOriginal();
 				crtc->proposeRotation(action->data().toInt());
-				if (!applyAndConfirm(crtc))
-				{
-					crtc->proposeOriginal();
-					crtc->applyProposed();
-				}
-				break;
+				if (applyAndConfirm(crtc))
+					return;
+
+				crtc->proposeOriginal();
+				crtc->applyProposed();
 			}
 		}
 	}
@@ -304,11 +303,12 @@ void RandROutput::slotChangeRefreshRate(QAction *action)
 		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 		crtc->setOriginal();
 		crtc->proposeRefreshRate(rate);
-		if (!applyAndConfirm(crtc))
-		{
-			crtc->proposeOriginal();
-			crtc->applyProposed();
-		}
+		if (applyAndConfirm(crtc))
+			return;
+
+		crtc->proposeOriginal();
+		crtc->applyProposed();
+		return;
 	}
 
 	RandRCrtc *crtc = findEmptyCrtc();
@@ -316,11 +316,12 @@ void RandROutput::slotChangeRefreshRate(QAction *action)
 	{
 		crtc->setOriginal();
 		crtc->proposeRefreshRate(rate);
-		if (!applyAndConfirm(crtc))
-		{
-			crtc->proposeOriginal();
-			crtc->applyProposed();
-		}
+		if (applyAndConfirm(crtc))
+			return;
+
+		crtc->proposeOriginal();
+		crtc->applyProposed();
+		return;
 
 	}
 	else
@@ -333,12 +334,12 @@ void RandROutput::slotChangeRefreshRate(QAction *action)
 			{
 				crtc->setOriginal();
 				crtc->proposeRefreshRate(rate);
-				if (!applyAndConfirm(crtc))
-				{
-					crtc->proposeOriginal();
-					crtc->applyProposed();
-				}
-				break;
+				if (applyAndConfirm(crtc))
+					return;
+					
+				crtc->proposeOriginal();
+				crtc->applyProposed();
+				return;
 			}
 		}
 	}
@@ -369,11 +370,11 @@ void RandROutput::setSize(QSize s)
 		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 		crtc->setOriginal();
 		crtc->proposeSize(s);
-		if (!applyAndConfirm(crtc))
-		{
-			crtc->proposeOriginal();
-			crtc->applyProposed();
-		}
+		if (applyAndConfirm(crtc))
+			return;
+
+		crtc->proposeOriginal();
+		crtc->applyProposed();
 		return;
 	}
 
@@ -407,9 +408,6 @@ void RandROutput::setSize(QSize s)
 
 		}
 	}
-
-	loadSettings();
-	emit outputChanged(m_id, ChangeMode);
 }
 
 RandRCrtc *RandROutput::findEmptyCrtc()
