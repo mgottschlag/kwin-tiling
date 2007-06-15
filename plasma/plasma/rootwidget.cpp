@@ -46,6 +46,7 @@ RootWidget::RootWidget()
     setGeometry( QApplication::desktop()->geometry() );
     lower();
 
+    KWindowSystem::setOnAllDesktops(winId(), true);
     KWindowSystem::setType(winId(), NET::Desktop);
 
     QVBoxLayout* rootLayout = new QVBoxLayout(this);
