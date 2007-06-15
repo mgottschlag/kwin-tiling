@@ -152,6 +152,7 @@ class CKioFonts : public KIO::SlaveBase
     bool               configure(EFolder folder);
     void               doModified();
     QString            getRootPasswd(bool askPasswd=true);
+    void               quitHelper();
     bool               doRootCmd(QList<TCommand> &cmd, const QString &passwd);
     bool               doRootCmd(const TCommand &cmd, bool askPasswd=true);
     bool               doRootCmd(const TCommand &cmd, const QString &passwd);

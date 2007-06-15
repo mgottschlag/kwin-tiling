@@ -859,9 +859,7 @@ void CKioFonts::cleanup()
 
     KFI_DBUG << "Cleanup" << endl;
     doModified();
-
-    if(itsServer.isOpen() && itsSuProc && itsSocket)
-        doRootCmd(TCommand(KFI::CMD_QUIT), false);
+    quitHelper();
 
     delete itsSuProc;
     delete itsSocket;
@@ -2522,6 +2520,23 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
         error=proc.checkInstall(authInfo.password.local8Bit()) ? true : false;
 
     return error ? QString() : authInfo.password;
+}
+
+void CKioFonts::quitHelper()
+{
+    if(itsServer.isOpen() && itsSuProc && itsSocket && itsSuProc->isRunning())
+    {
+        KFI_DBUG << "Quit helper..." << endl;
+        if(itsSocket->write(QVariant((int)KFI::CMD_QUIT)))
+        {
+            bool res;
+            if(itsSocket->read(res, 10) && res)
+            {
+                itsSuProc->terminate();
+                itsSuProc->wait(100);
+            }
+        }
+    }
 }
 
 bool CKioFonts::doRootCmd(QList<TCommand> &cmd, const QString &passwd)
