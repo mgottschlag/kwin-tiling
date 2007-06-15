@@ -232,8 +232,8 @@ class CFontItem : public CFontModelItem
     bool                  isEnabled() const        { return itsEnabled; }
     bool                  isHidden() const         { return !itsEnabled; }
     void                  updateStatus()           { itsEnabled=!Misc::isHidden(url()); }
-    const KUrl &          url() const              { return itsItem->url(); }
-    const KIO::UDSEntry & entry() const            { return itsItem->entry(); }
+    KUrl                  url() const              { return itsItem->url(); }
+    KIO::UDSEntry         entry() const            { return itsItem->entry(); }
     const KFileItem *     item() const             { return itsItem; }
     bool                  isBitmap() const         { return itsBitmap; }
     const QString &       fileName() const         { return itsFileName; }
