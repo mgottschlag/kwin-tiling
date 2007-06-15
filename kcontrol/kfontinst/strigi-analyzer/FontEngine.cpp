@@ -37,7 +37,7 @@
 
   The above copyright notice and this permission notice shall be included in
   all copies or substantial portions of the Software.
-    
+
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
@@ -57,6 +57,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <ft2build.h>
 #include FT_SFNT_NAMES_H
 #include FT_TRUETYPE_IDS_H
@@ -65,9 +68,6 @@
 #include <QBuffer>
 #include <QTextStream>
 
-static const char *constOblique = "Oblique";
-static const char *constSlanted = "Slanted";
-
 namespace KFI
 {
 
@@ -75,7 +75,7 @@ static unsigned long ftStreamRead(FT_Stream stream, unsigned long offset, unsign
 {
     QByteArray *in((QByteArray *)stream->descriptor.pointer);
 
-    if((offset+count)<=in->size())
+    if((offset+count)<=(unsigned long)in->size())
     {
         memcpy(buffer, &(in->data()[offset]), count);
         return count;
@@ -112,61 +112,82 @@ static FT_Error openFtFace(FT_Library library, QByteArray &in, FT_Long index, FT
     return error;
 }
 
+// TTF  : 00 01 00 00 00                         5
+//      : FFIL                                   4
+//      : <65>  FFIL                            69
+// TTC  : ttcf                                   4
+// OTF  : OTTO                                   4
+// Type1: %!PS-AdobeFont-1.                     17
+//      : ?? ?? ?? ?? ?? ?? %!PS-AdobeFont-1.   23
+//      : %!FontType1-1.                        14
+//      : ?? ?? ?? ?? ?? ?? %!FontType1-1.      20
+//      : LWFN                                   4
+//      : <65> LWFN                             69
+// AFM  : StartFontMetrics                      16
+// BDF  : STARTFONT 20                          10
+// PCF  : 01 fcp                                 4
+static const int constHeaderLen=69;
+
+CFontEngine::EType CFontEngine::getType(const char *fileName)
+{
+    EType type(TYPE_UNKNOWN);
+    int   fd=::open(fileName, O_RDONLY);
+
+    if(-1!=fd)
+    {
+        unsigned char header[constHeaderLen];
+
+        if(constHeaderLen==::read(fd, header, constHeaderLen))
+            type=getType(fileName, header);
+        ::close(fd);
+    }
+
+    return type;
+}
+
 CFontEngine::EType CFontEngine::getType(const char *fileName, Strigi::InputStream *in)
 {
-    // TTF  : 00 01 00 00 00                         5
-    //      : FFIL                                   4
-    //      : <65>  FFIL                            69
-    // TTC  : ttcf                                   4
-    // OTF  : OTTO                                   4
-    // Type1: %!PS-AdobeFont-1.                     17
-    //      : ?? ?? ?? ?? ?? ?? %!PS-AdobeFont-1.   23
-    //      : %!FontType1-1.                        14
-    //      : ?? ?? ?? ?? ?? ?? %!FontType1-1.      20
-    //      : LWFN                                   4
-    //      : <65> LWFN                             69
-    // AFM  : StartFontMetrics                      16
-    // BDF  : STARTFONT 20                          10
-    // PCF  : 01 fcp                                 4
-    
     Q_ASSERT( in );
-    
+
     static const int constHeaderLen=69;
     const char * h;
     int          n=in->read(h, constHeaderLen, constHeaderLen);
 
     in->reset(0);
 
-    if(n==constHeaderLen)
-    {
-        const unsigned char *hdr=(const unsigned char *)h;
+    return getType(fileName, n==constHeaderLen ? (const unsigned char *)h : NULL);
+}
 
-        if( (0x00==hdr[0] && 0x01==hdr[1] && 0x00==hdr[2] && 0x00==hdr[3] && 0x00==hdr[4]) ||
-            ('F'==hdr[0] && 'F'==hdr[1] && 'I'==hdr[2] && 'L'==hdr[3]) ||
-            ('F'==hdr[65] && 'F'==hdr[66] && 'I'==hdr[67] && 'L'==hdr[68]))
+CFontEngine::EType CFontEngine::getType(const char *fileName, const unsigned char *header)
+{
+    if(header)
+    {
+        if( (0x00==header[0] && 0x01==header[1] && 0x00==header[2] && 0x00==header[3] && 0x00==header[4]) ||
+            ('F'==header[0] && 'F'==header[1] && 'I'==header[2] && 'L'==header[3]) ||
+            ('F'==header[65] && 'F'==header[66] && 'I'==header[67] && 'L'==header[68]))
             return TYPE_TTF;
 
-        if('t'==hdr[0] && 't'==hdr[1] && 'c'==hdr[2] && 'f'==hdr[3])
+        if('t'==header[0] && 't'==header[1] && 'c'==header[2] && 'f'==header[3])
             return TYPE_TTC;
 
-        if('O'==hdr[0] && 'T'==hdr[1] && 'T'==hdr[2] && 'O'==hdr[3])
+        if('O'==header[0] && 'T'==header[1] && 'T'==header[2] && 'O'==header[3])
             return TYPE_OTF;
 
-        if(0x01==hdr[0] && 'f'==hdr[1] && 'c'==hdr[2] && 'p'==hdr[3])
+        if(0x01==header[0] && 'f'==header[1] && 'c'==header[2] && 'p'==header[3])
             return TYPE_PCF;
 
-        if(0==memcmp(hdr, "STARTFONT", 9) && 0x20==hdr[9])
+        if(0==memcmp(header, "STARTFONT", 9) && 0x20==header[9])
             return TYPE_BDF;
 
-        if(0==memcmp(hdr, "%!PS-AdobeFont-1.", 17) ||
-           0==memcmp(&hdr[6], "%!PS-AdobeFont-1.", 17) ||
-           0==memcmp(hdr, "%!FontType1-1.", 14) ||
-           0==memcmp(&hdr[6], "%!FontType1-1.", 14) ||
-           ('L'==hdr[0] && 'W'==hdr[1] && 'F'==hdr[2] && 'N'==hdr[3]) ||
-           ('L'==hdr[65] && 'W'==hdr[66] && 'F'==hdr[67] && 'N'==hdr[68]))
+        if(0==memcmp(header, "%!PS-AdobeFont-1.", 17) ||
+           0==memcmp(&header[6], "%!PS-AdobeFont-1.", 17) ||
+           0==memcmp(header, "%!FontType1-1.", 14) ||
+           0==memcmp(&header[6], "%!FontType1-1.", 14) ||
+           ('L'==header[0] && 'W'==header[1] && 'F'==header[2] && 'N'==header[3]) ||
+           ('L'==header[65] && 'W'==header[66] && 'F'==header[67] && 'N'==header[68]))
             return TYPE_TYPE1;
 
-        if(0==memcmp(hdr, "StartFontMetrics", 16))
+        if(0==memcmp(header, "StartFontMetrics", 16))
             return TYPE_AFM;
     }
 
@@ -241,25 +262,27 @@ bool CFontEngine::openFont(EType type, QByteArray &in, const char *fileName, int
     itsItalic=FC_SLANT_ROMAN;
     itsFamily=itsFoundry=itsVersion=QString();
 
-    if(in.size()<=0)
-        ok=openFontFt(in, fileName, face);
-    else
-        switch(type)
-        {
-            default:
-                ok=openFontFt(in, fileName, face);
-                break;
+    if(in.size()<=0 && fileName && TYPE_UNKNOWN==type)
+        type=getType(fileName); // Read file header to obtain type...
+
+    switch(type)
+    {
+        default:
+            ok=openFontFt(in, fileName, face, TYPE_TYPE1==type);
+            break;
 #ifndef HAVE_FcFreeTypeQueryFace
-            case TYPE_PCF:
-                ok=openFontPcf(in);
-                break;
-            case TYPE_BDF:
-                ok=openFontBdf(in);
-                break;
+        case TYPE_PCF:
+            ok=openFontPcf(in);
+            break;
+        case TYPE_BDF:
+            ok=openFontBdf(in);
+            break;
 #endif
-            case TYPE_AFM:
-                ok=openFontAfm(in);
-        }
+        case TYPE_AFM:
+            ok=openFontAfm(in);
+        case TYPE_UNKNOWN:
+            break;
+    }
 
     return ok;
 }
@@ -339,7 +362,7 @@ static int strToWidth(const QString &str)
 
 static int checkItalic(int it, const QString &full)
 {
-    return (FC_SLANT_ITALIC==it && (-1!=full.find(constOblique) || -1!=full.find(constSlanted)))
+    return (FC_SLANT_ITALIC==it && (-1!=full.find("Oblique") || -1!=full.find("Slanted")))
            ? FC_SLANT_OBLIQUE
            : it;
 }
@@ -548,7 +571,7 @@ static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
 }
 #endif
 
-bool CFontEngine::openFontFt(QByteArray &in, const char *fileName, int face)
+bool CFontEngine::openFontFt(QByteArray &in, const char *fileName, int face, bool type1)
 {
     bool status=in.size()<=0
             ? FT_New_Face(itsFt.library, fileName, face, &itsFt.face) ? false : true
@@ -561,7 +584,8 @@ bool CFontEngine::openFontFt(QByteArray &in, const char *fileName, int face)
     {
         PS_FontInfoRec t1info;
 
-        bool type1(0==FT_Get_PS_Font_Info(itsFt.face, &t1info));
+        if(type1)
+            FT_Get_PS_Font_Info(itsFt.face, &t1info);
 
 #ifdef HAVE_FcFreeTypeQueryFace
         FcPattern *pat=FcFreeTypeQueryFace(itsFt.face, (FcChar8*) fileName, face, NULL);

@@ -33,18 +33,16 @@ class FontThroughAnalyzer : public Strigi::StreamThroughAnalyzer
 
     FontThroughAnalyzer(const FontThroughAnalyzerFactory *f);
 
-    bool         checkHeader(const char *header, int32_t headersize) const;
-    char         analyze(Strigi::AnalysisResult &idx, Strigi::InputStream *in);
-
-    void                    setIndexable(Strigi::AnalysisResult* i) { analysisResult = i; }
+    char                  analyze(Strigi::AnalysisResult &idx, Strigi::InputStream *in);
+    void                  setIndexable(Strigi::AnalysisResult *i) { analysisResult = i; }
     Strigi::InputStream * connectInputStream(Strigi::InputStream *in);
-    bool                    isReadyWithStream()                     { return true; }
+    bool                  isReadyWithStream()                     { return true; }
 
     private:
 
-    void         result(const QString &family,  const QString &foundry, const QString &weight,
-                        const QString &width,   const QString &spacing, const QString &slant,
-                        const QString &version, const QString &mime);
+    void                  result(const QString &family,  const QString &foundry, const QString &weight,
+                                 const QString &width,   const QString &spacing, const QString &slant,
+                                 const QString &version, const QString &mime);
 
     private:
 

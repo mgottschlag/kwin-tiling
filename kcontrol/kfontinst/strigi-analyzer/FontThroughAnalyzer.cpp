@@ -131,7 +131,6 @@ FontThroughAnalyzer::FontThroughAnalyzer(const FontThroughAnalyzerFactory *f)
 
 InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
 {
-  
     KUrl    url(analysisResult->path().c_str());
     bool    fontsProt = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
             fileProt  = "file"                 == url.protocol() || url.protocol().isEmpty();

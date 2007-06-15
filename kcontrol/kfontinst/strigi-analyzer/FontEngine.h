@@ -76,6 +76,8 @@ class CFontEngine
     public:
 
     static EType     getType(const char *fileName, Strigi::InputStream *in);
+    static EType     getType(const char *fileName);
+    static EType     getType(const char *fileName, const unsigned char *header);
     static double    decodeFixed(long v) { return (v>>16)+(((double)(v&0xFFFF))/0xFFFF); }
     static QString & fixFoundry(QString &foundry);
 
@@ -101,7 +103,7 @@ class CFontEngine
 
     private:
 
-    bool            openFontFt(QByteArray &in, const char *fileName, int face);
+    bool            openFontFt(QByteArray &in, const char *fileName, int face, bool type1);
     bool            openFontAfm(QByteArray &in);
 #ifndef HAVE_FcFreeTypeQueryFace
     void            parseXlfdBmp(const QString &lfd);
