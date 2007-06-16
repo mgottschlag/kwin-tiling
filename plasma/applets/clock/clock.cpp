@@ -107,9 +107,8 @@ void Clock::configureDialog() //TODO: Make the size settable
         m_timeZones = new KTimeZoneWidget(configWidget);
         m_swapTzs = new QCheckBox("TZ Mania!", configWidget);
 
-        m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.", configWidget);
-        m_showSecondHandCheckBox = new QCheckBox("Display the clock's second hand.", configWidget);
-        m_showSecondHandCheckBox->setChecked(m_showSecondHand);
+        m_showSecondHandCheckBox = new QCheckBox("Display seconds", configWidget);
+        m_showTimeStringCheckBox = new QCheckBox("Also display the time in text", configWidget);
         m_spinSize = new QSpinBox;
         QLabel *labelSize = new QLabel("Size of the clock");
 
@@ -119,8 +118,8 @@ void Clock::configureDialog() //TODO: Make the size settable
         QVBoxLayout *lay = new QVBoxLayout(configWidget);
         lay->addWidget(m_timeZones);
         lay->addWidget(m_swapTzs);
-        lay->addWidget(m_showTimeStringCheckBox);
         lay->addWidget(m_showSecondHandCheckBox);
+        lay->addWidget(m_showTimeStringCheckBox);
         lay->addLayout(sizeLay);
 
         m_dialog->setMainWidget(configWidget);
@@ -129,7 +128,8 @@ void Clock::configureDialog() //TODO: Make the size settable
     m_timeZones->setSelected(m_timezone, true);
     m_spinSize->setRange(0, 500);
     m_spinSize->setValue((int)m_bounds.width());
-    m_showTimeStringCheckBox->setChecked(m_showTimeString ? Qt::Checked : Qt::Unchecked);
+    m_showTimeStringCheckBox->setChecked(m_showTimeString);
+    m_showSecondHandCheckBox->setChecked(m_showSecondHand);
 
     m_dialog->show();
 }
