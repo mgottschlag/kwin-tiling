@@ -52,7 +52,6 @@ public slots:
     void showTaskManager();
     //void showWindowList();
 
-    void switchUser();
     void logout();
     void logoutWithoutConfirmation();
     void haltWithoutConfirmation();

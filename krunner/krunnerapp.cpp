@@ -173,7 +173,7 @@ void KRunnerApp::initialize()
     a = m_actionCollection->addAction( I18N_NOOP("Switch User") );
     a->setText( i18n( I18N_NOOP("Switch User") ) );
     qobject_cast<KAction*>( a )->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_Insert ) );
-    connect(a, SIGNAL(triggered(bool)), SLOT(switchUser()));
+    connect(a, SIGNAL(triggered(bool)), m_interface, SLOT(switchUser()));
 
     if ( KAuthorized::authorizeKAction( "lock_screen" ) ) {
         a = m_actionCollection->addAction( I18N_NOOP( "Lock Session" ) );
@@ -208,11 +208,6 @@ void KRunnerApp::initialize()
 
 } // end void KRunnerApp::initializeBindings
 
-
-void KRunnerApp::switchUser()
-{
-    //TODO: use the SessionRunner
-}
 
 /*TODO: fixme - move to kwin
 void KRunnerApp::showWindowList()

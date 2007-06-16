@@ -54,7 +54,8 @@ class Interface : public KRunnerDialog
     public Q_SLOTS:
         // DBUS interface. if you change these methods, you MUST run:
         // qdbuscpp2xml interface.h -o org.kde.krunner.Interface.xml
-        void display( const QString& term = QString() );
+        void display(const QString& term = QString());
+        void switchUser();
 
     protected Q_SLOTS:
         void match( const QString& term );

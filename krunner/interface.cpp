@@ -235,6 +235,11 @@ void Interface::display( const QString& term)
     match( term );
 }
 
+void Interface::switchUser()
+{
+    //TODO: use the SessionRunner
+}
+
 void Interface::setWidgetPalettes()
 {
     // a nice palette to use with the widgets
