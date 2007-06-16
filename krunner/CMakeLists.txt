@@ -2,6 +2,8 @@ project(krunner)
 KDE4_NO_ENABLE_FINAL(krunner)
 macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
 
+include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
+
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
 set(krunner_KCFG_SRCS kscreensaversettings.kcfgc klaunchsettings.kcfgc)
