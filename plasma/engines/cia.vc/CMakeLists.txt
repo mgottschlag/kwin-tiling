@@ -1,5 +1,5 @@
 find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/workspace/lib/)
+include_directories(${Boost_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/workspace/libs/)
 
 set(ciavc_engine_SRCS
     ciavc.cpp

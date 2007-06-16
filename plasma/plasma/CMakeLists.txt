@@ -1,3 +1,5 @@
+include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
+
 set(plasma_SRCS
     controlbox.cpp
     coronaview.cpp
