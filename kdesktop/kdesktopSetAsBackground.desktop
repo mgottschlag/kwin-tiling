@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 ServiceTypes=image/*
 Actions=setAsBackground;tileAsBackground;
 X-KDE-Submenu=Set as Background
