@@ -33,10 +33,10 @@
 #include <KActionCollection>
 #include <KMessageBox>
 #include <k3process.h>
-#include "../lib/kworkspace.h"
 #include <QObject>
 #include <QtDBus/QtDBus>
 
+#include "kworkspace.h"
 #include "interfaceadaptor.h"
 #include "interface.h"
 #include "startupid.h"

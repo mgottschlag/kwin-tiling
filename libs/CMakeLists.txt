@@ -2,6 +2,7 @@
 project(kworkspacelib)
 
 add_subdirectory(plasma)
+add_subdirectory(kdm)
 
 ########### next target ###############
 

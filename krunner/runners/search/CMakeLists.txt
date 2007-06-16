@@ -1,8 +1,6 @@
 
 ########### next target ###############
 
-include_directories(${CMAKE_SOURCE_DIR}/workspace/lib/plasma)
-
 set(krunner_searchrunner_SRCS
     searchrunner.cpp
 )

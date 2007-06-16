@@ -1,4 +1,5 @@
 add_definitions(-DQT3_SUPPORT)
+include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
 
 ########### next target ###############
 

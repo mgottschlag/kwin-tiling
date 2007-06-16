@@ -26,12 +26,11 @@ set( kcmbackgroundlib_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgwallpaper.cpp
 )
 
-include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR} )
+include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/libs ${CMAKE_CURRENT_SOURCE_DIR}/libs/plasma ${CMAKE_CURRENT_SOURCE_DIR}/kdm ${CMAKE_CURRENT_BINARY_DIR} )
 
 # libs
-add_subdirectory( cmake )
-add_subdirectory( lib )
-add_subdirectory( kdmlib )
+add_subdirectory(cmake)
+add_subdirectory(libs)
 
 
 # core apps

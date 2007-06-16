@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/krunner ${CMAKE_SOURCE_DIR}/workspace/kcheckpass ${CMAKE_SOURCE_DIR}/workspace/kdmlib )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/krunner ${CMAKE_SOURCE_DIR}/workspace/kcheckpass ${CMAKE_SOURCE_DIR}/workspace/libs/kdm )
 
 add_definitions (-DQT3_SUPPORT)
 
