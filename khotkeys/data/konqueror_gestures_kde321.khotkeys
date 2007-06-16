@@ -90,13 +90,6 @@ Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_10]
 Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
-Comment[el]=Στυλ Opera: Πιέστε, μετακινήστε πάνω, ελευθερώστε.\nΣΗΜΕΙΩΣΗ: Αυτό συγκρούεται με την 'Νέα καρτέλα', και οπότε είναι προκαθορισμένα απενεργοποιημένο.
-Comment[it]=Stile Opera: Premi, sposta in su, rilascia.\nNOTA: È in conflitto con "Nuova scheda", e quindi è normalmente disabilitato.
-Comment[ja]=Opera スタイル: マウスの中ボタンを押したまま、マウスを上に動かし、ボタンを放します。\n注意: 「新規タブ」と競合するため、デフォルトでは無効になっています。
-Comment[nds]=Opera-Stil: Drücken, na baven, looslaten.\nBeacht: Verdreegt sik nich mit "Nieg Paneel" un is dorüm standardwies utmaakt.
-Comment[nl]=Opera-stijl: indrukken, omhoog bewegen, loslaten.\nOpmerking: Botst met 'Nieuw tabblad', en is standaard uitgeschakeld.
-Comment[x-test]=xxOpera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.xx
-Comment[zh_TW]=Opera 風格：按下，往上移，再放開。\n注意：會與「新增分頁」衝突，預設為關閉。
 Enabled=false
 Name=Stop Loading
 Name[csb]=Zatrzëmôj ladowanié
@@ -139,13 +132,6 @@ Type=GESTURE
 
 [Data_1_11]
 Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
-Comment[el]=Μετάβαση προς τα πάνω στη δομή URL/καταλόγου.\nΣτυλ Mozilla: Πιέστε, μετακίνηση πάνω, μετακίνηση αριστερά, μετακίνηση πάνω, ελευθέρωση.
-Comment[it]=Risale nella struttura dell'URL o delle directory.\nStile Mozilla: Premi, sposta in su, sposta a sinistra, sposta in su, rilascia.
-Comment[ja]=URL/ディレクトリ構造の一つ上に移動します。\nMozilla スタイル: マウスの中ボタンを押したまま、マウスを上->左->上の順に動かし、ボタンを放します。
-Comment[nds]=Na överornt Orner gahn.\nMozilla-Stil: Drücken, na baven, na links, na baven, looslaten.
-Comment[nl]=Omhoog gaan in de URL- of mappenstructuur.\nMozilla-stijl: Indrukken, omhoog bewegen, naar links bewegen, omhoog bewegen, loslaten.
-Comment[x-test]=xxGoing up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.xx
-Comment[zh_TW]=往上一層的網址或目錄。\nMozilla 風格：按住，往上移，往左移，往上移，再放開。
 Enabled=true
 Name=Up
 Name[csb]=W górã
@@ -188,13 +174,6 @@ Type=GESTURE
 
 [Data_1_12]
 Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
-Comment[el]=Μετάβαση προς τα πάνω στη δομή URL/καταλόγου.\nΣτυλ Opera: Πιέστε, μετακίνηση πάνω, μετακίνηση αριστερά, μετακίνηση πάνω, ελευθέρωση.\nΣΗΜΕΙΩΣΗ: Συγκρούεται με το "Ενεργοποίηση προηγούμενης καρτέλας", οπότε είναι προκαθορισμένα απενεργοποιημένο.
-Comment[it]=Risale nella struttura dell'URL o directory.\nStile Opera: Premi, sposta in su, sposta a sinistra, sposta in su, rilascia.\nNOTA: È in conflitto con "Ativa scheda precedente", e quindi è normalmente disabilitato.
-Comment[ja]=URL/ディレクトリ構造の一つ上に移動します。\nOpera スタイル: マウスの中ボタンを押したまま、マウスを上->左->上の順に動かし、ボタンを放します。\n注意: 「前のタブをアクティブに」と競合するため、デフォルトでは無効になっています。
-Comment[nds]=Na överornt Orner gahn.\nOpera-Stil: Drücken, na baven, na links, looslaten.\nBeacht: Verdreegt sik nich mit "Verleden Paneel aktiv maken" un is dorüm standardwies utmaakt.
-Comment[nl]=Omhoog gaan in de URL- of mappenstructuur.\nOpera-stijl: Indrukken, omhoog bewegen, naar links bewegen, omhoog bewegen,loslaten.\Opmerking: Botst met "Vorige tabblad activeren", en is daarom standaard uitgeschakel
-Comment[x-test]=xxGoing up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.xx
-Comment[zh_TW]=往上一層的網址或目錄。\nOpera 風格：按住，往上移，往左移，往上移，再放開。\n注意：會與「跳到前一個分頁」衝突，預設為關閉。
 Enabled=false
 Name=Up #2
 Name[de]=Nach oben (2)
@@ -562,7 +541,6 @@ Name[ne]=गृह
 Name[nn]=Heim
 Name[pa]=ਘਰ
 Name[pl]=Katalog domowy
-Name[pt]=Pasta Pessoal
 Name[pt_BR]=Pasta do Usuário
 Name[ro]=Acasă
 Name[ru]=Домой
@@ -616,13 +594,6 @@ Type=GESTURE
 
 [Data_1_6]
 Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.
-Comment[el]=Πίεση, μετακίνηση δεξιά, μετακίνηση κάτω, μετακίνηση δεξιά, ελευθέρωση.\nΣτυλ Mozilla: Πίεση, μετακίνηση κάτω, μετακίνηση δεξιά, ελευθέρωση.
-Comment[it]=Premi, sposta a destra, sposta in giù, sposta a destra, rilascia.\nStile Mozilla: Premi, sposta in giù, sposta a destra, rilascia.
-Comment[ja]=マウスの中ボタンを押したまま、マウスを右->下->右の順に動かし、ボタンを放します。\nMozilla スタイル: マウスの中ボタンを押したまま、マウスを下->右の順に動かし、ボタンを放します。
-Comment[nds]=Drücken, na rechts, na nerrn, na rechts, looslaten.\nMozilla-Stil: Drücken, na nerrn, na rechts, looslaten.
-Comment[nl]=Indrukken, naar rechts bewegen, naar beneden bewegen, naar rechts bewegen, loslaten.\nAls in Mozilla: Indrukken, naar beneden bewegen, naar rechts bewegen, loslaten.
-Comment[x-test]=xxPress, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.xx
-Comment[zh_TW]=按住，往右移，往下移，往右移，再放開。\nMozilla 風格：按住，往下移，往右移，再放開。
 Enabled=true
 Name=Close Tab
 Name[de]=Unterfenster schließen
@@ -668,13 +639,6 @@ Type=GESTURE
 
 [Data_1_7]
 Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.
-Comment[el]=Πίεση, μετακίνηση πάνω, ελευθέρωση.\nΣύγκρουση με το στυλ Opera 'Πάνω #2', το οποίο είναι προκαθορισμένα απενεργοποιημένο.
-Comment[it]=Premi, sposta in su, rilascia.\nÈ in conflitto con il gesto in stile Opera "Su #2", che è disabilitato normalmente.
-Comment[ja]=マウスの中ボタンを押したまま、マウスを上に動かし、ボタンを放します。\nデフォルトで無効になっている Opera スタイルの「上 #2」と競合します。
-Comment[nds]=Drücken, na baven, looslaten.\nVerdreegt sik nich mit "Na baven (2)" in Opera-Stil, wat man standardwies utmaakt is.
-Comment[nl]=Indrukken, naar boven bewegen, loslaten.\nBotst met de tweede handeling omhoog gaan in Opera, staat daarom standaard uit.
-Comment[x-test]=xxPress, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.xx
-Comment[zh_TW]=按住，往上移，再放開。\n與預設為關閉的 Opera 風格「往上層（2）」衝突，
 Enabled=true
 Name=New Tab
 Name[de]=Neues Unterfenster
@@ -765,7 +729,6 @@ Name[nl]=Nieuw venster
 Name[nn]=Nytt vindauge
 Name[pa]=ਨਵਾਂ ਝਰੋਖਾ
 Name[pl]=Nowe okno
-Name[pt]=Nova Janela
 Name[pt_BR]=Nova Janela
 Name[ro]=Fereastră nouă
 Name[ru]=Новое окно
