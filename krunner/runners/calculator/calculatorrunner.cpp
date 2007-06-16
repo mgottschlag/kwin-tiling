@@ -26,7 +26,7 @@
 #include <KIcon>
 #include <KLocale>
 #include <KStandardDirs>
-#include <K3Process>
+#include <kshell.h>
 #include <KLocale>
 
 #include "calculatorrunner.h"
@@ -79,8 +79,8 @@ QString CalculatorRunner::calculate( const QString& term )
     const QString bc = KStandardDirs::findExe( "bc" );
     if ( !bc.isEmpty() ) {
         cmd = QString( "echo %1 | %2" )
-                     .arg(K3Process::quote(QString("scale=8; ") + term),
-                          K3Process::quote(bc));
+                     .arg(KShell::quoteArg(QString("scale=8; ") + term),
+                          KShell::quoteArg(bc));
     }
     else {
         cmd = QString( "echo $((%1))" ).arg(term);

@@ -45,6 +45,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <k3process.h>
+#include <kshell.h>
 #include <kcombobox.h>
 #include <klineedit.h>
 #include <kapplication.h>
@@ -923,7 +924,7 @@ QString Minicli::calculate(const QString &exp)
     QString result, cmd;
     const QString bc = KStandardDirs::findExe("bc");
     if ( !bc.isEmpty() )
-        cmd = QString("echo %1 | %2").arg(K3Process::quote(QString("scale=8; ")+exp), K3Process::quote(bc));
+        cmd = QString("echo %1 | %2").arg(KShell::quoteArg(QString("scale=8; ")+exp), KShell::quoteArg(bc));
     else
         cmd = QString("echo $((%1))").arg(exp);
     FILE *fs = popen(QFile::encodeName(cmd).data(), "r");

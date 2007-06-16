@@ -23,7 +23,7 @@
 #include <kdesktopfile.h>
 #include <kglobalsettings.h>
 #include <kapplication.h>
-#include <k3process.h>
+#include <kshell.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -102,9 +102,9 @@ static void copyDirectoryFile(const QString &fileName, const QString& dir, bool 
 {
   if (force || !QFile::exists(dir + "/.directory")) {
     QString cmd = "cp ";
-    cmd += K3Process::quote(KStandardDirs::locate("data", QString("kdesktop/") + fileName));
+    cmd += KShell::quoteArg(KStandardDirs::locate("data", QString("kdesktop/") + fileName));
     cmd += ' ';
-    cmd += K3Process::quote(dir+"/.directory");
+    cmd += KShell::quoteArg(dir+"/.directory");
     system( QFile::encodeName(cmd) );
   }
 }
@@ -112,9 +112,9 @@ static void copyDirectoryFile(const QString &fileName, const QString& dir, bool 
 static void copyFile( const QString& src, const QString& dest )
 {
     QByteArray cmd = "cp ";
-    cmd += QFile::encodeName(K3Process::quote(src));
+    cmd += QFile::encodeName(KShell::quoteArg(src));
     cmd += ' ';
-    cmd += QFile::encodeName(K3Process::quote(dest));
+    cmd += QFile::encodeName(KShell::quoteArg(dest));
     system( cmd );
 }
 

@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdesktopfile.h>
 #include <kglobal.h>
 #include <krun.h>
-#include <k3process.h>
+#include <kshell.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kiconeffect.h>
@@ -184,12 +184,12 @@ void NonKDEAppButton::dropEvent(QDropEvent *ev)
             // the URL it actually points to ...
             KDesktopFile deskFile(url.path());
             // ... and add it to the exec string
-            execStr += K3Process::quote(deskFile.readUrl()) + ' ';
+            execStr += KShell::quoteArg(deskFile.readUrl()) + ' ';
         }
         else
         {
             // it's just a URL of some sort, add it directly to the exec
-            execStr += K3Process::quote(url.path()) + ' ';
+            execStr += KShell::quoteArg(url.path()) + ' ';
         }
     }
 

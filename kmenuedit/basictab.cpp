@@ -40,7 +40,7 @@
 #include <kurlrequester.h>
 #include <kfiledialog.h>
 #include <kcombobox.h>
-#include <k3process.h>
+#include <kshell.h>
 #include <khbox.h>
 
 #include "khotkeys.h"
@@ -484,7 +484,7 @@ void BasicTab::slotExecSelected()
 {
     QString path = _execEdit->lineEdit()->text();
     if (!path.startsWith("'"))
-        _execEdit->lineEdit()->setText(K3Process::quote(path));
+        _execEdit->lineEdit()->setText(KShell::quoteArg(path));
 }
 
 void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
