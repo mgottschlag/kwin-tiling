@@ -73,6 +73,7 @@ class Clock : public Plasma::Applet
         void drawHand(QPainter *p, int rotation, const QString &handName);
 
         bool m_showTimeString;
+        bool m_showSecondHand;
         QRectF m_bounds;
         int m_pixelSize;
         QString m_timezone;
@@ -80,6 +81,7 @@ class Clock : public Plasma::Applet
         QTime m_time;
         KDialog *m_dialog; //should we move this into another class?
         QCheckBox *m_showTimeStringCheckBox;
+        QCheckBox *m_showSecondHandCheckBox;
         QCheckBox *m_swapTzs;
         QSpinBox *m_spinSize;
         KTimeZoneWidget *m_timeZones;

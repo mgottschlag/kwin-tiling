@@ -55,6 +55,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
 
     KConfigGroup cg = appletConfig();
     m_showTimeString = cg.readEntry("showTimeString", false);
+    m_showSecondHand = cg.readEntry("showSecondHand", false);
     m_pixelSize = cg.readEntry("size", 250);
     m_timezone = cg.readEntry("timezone", i18n("Local"));
     m_theme = new Plasma::Svg("widgets/clock", this);
@@ -107,6 +108,8 @@ void Clock::configureDialog() //TODO: Make the size settable
         m_swapTzs = new QCheckBox("TZ Mania!", configWidget);
 
         m_showTimeStringCheckBox = new QCheckBox("Show the time with a string over the clock.", configWidget);
+        m_showSecondHandCheckBox = new QCheckBox("Display the clock's second hand.", configWidget);
+        m_showSecondHandCheckBox->setChecked(m_showSecondHand);
         m_spinSize = new QSpinBox;
         QLabel *labelSize = new QLabel("Size of the clock");
 
@@ -117,6 +120,7 @@ void Clock::configureDialog() //TODO: Make the size settable
         lay->addWidget(m_timeZones);
         lay->addWidget(m_swapTzs);
         lay->addWidget(m_showTimeStringCheckBox);
+        lay->addWidget(m_showSecondHandCheckBox);
         lay->addLayout(sizeLay);
 
         m_dialog->setMainWidget(configWidget);
@@ -134,7 +138,9 @@ void Clock::configAccepted()
 {
     KConfigGroup cg = appletConfig();
     m_showTimeString = m_showTimeStringCheckBox->checkState() == Qt::Checked;
+    m_showSecondHand = m_showSecondHandCheckBox->checkState() == Qt::Checked;
     cg.writeEntry("showTimeString", m_showTimeString);
+    cg.writeEntry("showSecondHand", m_showSecondHand);
     QGraphicsItem::update();
     cg.writeEntry("size", m_spinSize->value());
     m_theme->resize(m_spinSize->value(), m_spinSize->value());
@@ -241,15 +247,17 @@ void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *
     p->restore();
 
     //Make sure we paint the second hand on top of the others
-    p->save();
-    p->translate(boundSize.width()/2, boundSize.height()/2);
-    p->rotate(seconds);
-    elementSize = m_theme->elementSize("SecondHand");
-    elementSize = QSize(elementSize.width(), elementSize.height());
-    p->translate(-elementSize.width()/2, -elementSize.width());
-    tempRect.setSize(elementSize);
-    m_theme->paint(p, tempRect, "SecondHand");
-    p->restore();
+    if (m_showSecondHand) {
+        p->save();
+        p->translate(boundSize.width()/2, boundSize.height()/2);
+        p->rotate(seconds);
+        elementSize = m_theme->elementSize("SecondHand");
+        elementSize = QSize(elementSize.width(), elementSize.height());
+        p->translate(-elementSize.width()/2, -elementSize.width());
+        tempRect.setSize(elementSize);
+        m_theme->paint(p, tempRect, "SecondHand");
+        p->restore();
+    }
 
 
     p->save();
