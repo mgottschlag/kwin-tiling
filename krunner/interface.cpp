@@ -343,10 +343,7 @@ void Interface::match(const QString& t)
         m_runButton->setEnabled( false );
     }
 
-    foreach ( SearchMatch* match, m_matches ) {
-        delete match;
-    }
-
+    qDeleteAll(m_matches);
     m_matches = matches;
     m_searchTimer.start( 200 );
 }
