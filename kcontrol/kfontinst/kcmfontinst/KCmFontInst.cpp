@@ -447,7 +447,7 @@ void CKCmFontInst::fontSelected(const QModelIndex &index, bool en, bool dis)
 
         if(font)
         {
-            if(itsPreview->width()>6)
+            if(itsShowPreview->isOn())
             {
                 KUrl url(font->isEnabled()
                             ? font->url()
