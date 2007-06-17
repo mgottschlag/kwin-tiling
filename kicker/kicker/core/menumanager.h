@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "panelbutton.h"
 #include <QList>
-
+#include <kdemacros.h>
 class PanelKMenu;
 class QMenu;
 
@@ -35,7 +35,7 @@ typedef QList<PanelPopupButton*> KButtonList;
 /**
  * The factory for menus created by other applications. Also the owner of these menus.
  */
-class MenuManager : public QObject
+class KDE_EXPORT MenuManager : public QObject
 {
     Q_OBJECT
 public:
