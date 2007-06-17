@@ -30,13 +30,13 @@ DESCRIPTION
 #include <QRegExp>
 #include <QImage>
 #include <QDesktopWidget>
+#include <QProcess>
 
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <kglobal.h>
 #include <kglobalaccel.h>
 #include <klocale.h>
-#include <k3process.h>
 #include <kwindowsystem.h>
 #include <ktemporaryfile.h>
 #include <kstandarddirs.h>
@@ -314,9 +314,9 @@ void KxkbCore::iconMenuTriggered(QAction* action)
     }
     else if (id == KxkbWidget::CONFIG_MENU_ID)
     {
-        K3Process p;
-        p << "kcmshell" << "keyboard_layout";
-        p.start(K3Process::DontCare);
+        QStringList lst;
+        lst<< "keyboard_layout";
+	QProcess::startDetached("kcmshell",lst);
     }
     else if (id == KxkbWidget::HELP_MENU_ID)
     {

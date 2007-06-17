@@ -32,7 +32,7 @@
 #include <klocale.h>
 #include <KActionCollection>
 #include <KMessageBox>
-#include <k3process.h>
+#include <QProcess>
 #include <QObject>
 #include <QtDBus/QtDBus>
 
@@ -219,15 +219,9 @@ void KRunnerApp::showWindowList()
 void KRunnerApp::showTaskManager()
 {
     //kDebug(1204) << "Launching KSysGuard..." << endl;
-    K3Process* p = new K3Process;
-    Q_CHECK_PTR(p);
-
-    *p << "ksysguard";
-    *p << "--showprocesses";
-
-    p->start(K3Process::DontCare);
-
-    delete p;
+    QStringList lst;
+    lst<<"--showprocesses";
+    QProcess::startDetached("ksysguard",lst);
 }
 
 void KRunnerApp::logout()
