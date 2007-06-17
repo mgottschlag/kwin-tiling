@@ -18,11 +18,14 @@
 
 #include "engineexplorer.h"
 
+#include <QApplication>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
 
+#include <KAction>
 #include <KIconLoader>
 #include <KIconTheme>
+#include <KStandardAction>
 
 #include "plasma/dataenginemanager.h"
 
@@ -49,6 +52,8 @@ EngineExplorer::EngineExplorer(QWidget* parent)
 
     listEngines();
     m_engines->setFocus();
+
+    addAction(KStandardAction::quit(qApp, SLOT(quit()), this));
 }
 
 EngineExplorer::~EngineExplorer()
@@ -110,15 +115,16 @@ void EngineExplorer::showEngine(const QString& name)
 
     QStringList sources = m_engine->sources();
 
-    kDebug() << "showing engine " << m_engine->objectName() << endl;
-    kDebug() << "we have " << sources.count() << " data sources" << endl;
+    //kDebug() << "showing engine " << m_engine->objectName() << endl;
+    //kDebug() << "we have " << sources.count() << " data sources" << endl;
     foreach (const QString& source, sources) {
-        kDebug() << "adding " << source << endl;
+        //kDebug() << "adding " << source << endl;
         addSource(source);
     }
 
-    m_sourceRequester->setEnabled(true);
     m_sourceRequesterButton->setEnabled(true);
+    m_sourceRequester->setEnabled(true);
+    m_sourceRequester->setFocus();
     connect(m_engine, SIGNAL(newSource(QString)), this, SLOT(addSource(QString)));
     connect(m_engine, SIGNAL(sourceRemoved(QString)), this, SLOT(removeSource(QString)));
 }
@@ -130,7 +136,7 @@ void EngineExplorer::addSource(const QString& source)
     parentItems.append(parent);
     m_dataModel->appendRow(parent);
 
-    kDebug() << "getting data for source " << source << endl;
+    //kDebug() << "getting data for source " << source << endl;
     Plasma::DataEngine::Data data = m_engine->query(source);
     showData(parent, data);
     m_engine->connectSource(source, this);
