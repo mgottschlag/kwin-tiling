@@ -32,6 +32,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
       m_sourceCount(0)
 {
     setButtons(KDialog::Close);
+    setDefaultButton(KDialog::NoDefault);
     setWindowTitle(i18n("Plasma Engine Explorer"));
     QWidget* mainWidget = new QWidget(this);
     setMainWidget(mainWidget);
@@ -47,6 +48,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     m_data->setModel(m_dataModel);
 
     listEngines();
+    m_engines->setFocus();
 }
 
 EngineExplorer::~EngineExplorer()
