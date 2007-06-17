@@ -304,7 +304,6 @@ void QuickButton::launch()
 {
    setDown(false);
    repaint();
-   KIconEffect::visualActivate(this, rect());
    _qurl->run();
    emit executed(_qurl->menuId());
 }

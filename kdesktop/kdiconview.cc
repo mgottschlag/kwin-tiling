@@ -679,7 +679,6 @@ void KDIconView::slotExecuted( Q3IconViewItem *item )
     KWorkSpace::propagateSessionManager();
     m_lastDeletedIconPos = QPoint(); // user action -> not renaming an icon
     if (item) {
-        visualActivate(item);
         ((KFileIVI*)item)->returnPressed();
     }
 }
