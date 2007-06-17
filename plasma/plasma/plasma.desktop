@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=plasma
 X-DBUS-StartupType=wait
 Name=Plasma
+Name[csb]=Plazma
 Name[fa]=پلاسما
 Type=Service
 X-KDE-StartupNotify=false
