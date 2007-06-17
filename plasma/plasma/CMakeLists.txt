@@ -4,6 +4,7 @@ set(plasma_SRCS
     controlbox.cpp
     coronaview.cpp
     main.cpp
+    packages.cpp
     plasmaapp.cpp
     rootwidget.cpp
 )
