@@ -48,17 +48,13 @@ install(TARGETS ksmserver DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 
-if(KDE4_BUILD_TESTS)
 set(testsh_SRCS test.cpp shutdowndlg.cpp )
 
 kde4_automoc(${testsh_SRCS})
 
-
-kde4_add_executable(testsh ${testsh_SRCS})
+kde4_add_test_executable(testsh ${testsh_SRCS})
 
 target_link_libraries(testsh plasma solidcontrol kworkspace ${KDE4_KDEUI_LIBS})
-
-endif(KDE4_BUILD_TESTS)
 
 ########### install files ###############
 
