@@ -53,7 +53,7 @@
 #include <kactioncollection.h>
 #include <kicon.h>
 #include <kmimetype.h>
-#include <kfilemetainfo.h>
+//#include <kfilemetainfo.h>
 #include <kzip.h>
 #include <ktempdir.h>
 #include <kstandarddirs.h>
@@ -80,26 +80,30 @@ CFontViewPart::CFontViewPart(QWidget *parent)
     itsFrame=new QFrame(parent);
 
     QFrame    *previewFrame=new QFrame(itsFrame);
-    QGroupBox *metaBox=new QGroupBox(i18n("Information:"), itsFrame);
+    QWidget   *controls=new QWidget(itsFrame);
+//     QGroupBox *metaBox=new QGroupBox(i18n("Information:"), controls);
 
-    itsFaceWidget=new QWidget(itsFrame);
+    itsFaceWidget=new QWidget(controls);
 
-    QGridLayout *mainLayout=new QGridLayout(itsFrame);
+    QBoxLayout *mainLayout=new QBoxLayout(QBoxLayout::TopToBottom, itsFrame);
 
     mainLayout->setMargin(KDialog::marginHint());
     mainLayout->setSpacing(KDialog::spacingHint());
 
     QBoxLayout *previewLayout=new QBoxLayout(QBoxLayout::LeftToRight, previewFrame),
+               *controlsLayout=new QBoxLayout(QBoxLayout::LeftToRight, controls),
                *faceLayout=new QBoxLayout(QBoxLayout::LeftToRight, itsFaceWidget);
-    QBoxLayout *metaLayout=new QBoxLayout(QBoxLayout::LeftToRight, metaBox);
+//    QBoxLayout *metaLayout=new QBoxLayout(QBoxLayout::LeftToRight, metaBox);
 
-    itsMetaLabel=new QLabel(metaBox);
-    itsMetaLabel->setAlignment(Qt::AlignTop);
-    metaLayout->addWidget(itsMetaLabel);
+//     itsMetaLabel=new QLabel(metaBox);
+//     itsMetaLabel->setAlignment(Qt::AlignTop);
+//     metaLayout->addWidget(itsMetaLabel);
     previewLayout->setMargin(0);
     previewLayout->setSpacing(0);
     faceLayout->setMargin(0);
     faceLayout->setSpacing(KDialog::spacingHint());
+    controlsLayout->setMargin(0);
+    previewLayout->setSpacing(0);
 
     itsFrame->setFrameShape(QFrame::NoFrame);
     itsFrame->setFocusPolicy(Qt::ClickFocus);
@@ -111,7 +115,7 @@ CFontViewPart::CFontViewPart(QWidget *parent)
     itsPreview->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFaceLabel=new QLabel(i18n("Show Face:"), itsFaceWidget);
     itsFaceSelector=new KIntNumInput(1, itsFaceWidget);
-    itsInstallButton=new QPushButton(i18n("Install..."), itsFrame);
+    itsInstallButton=new QPushButton(i18n("Install..."), controls);
     itsInstallButton->setEnabled(false);
     previewLayout->addWidget(itsPreview);
     faceLayout->addWidget(itsFaceLabel);
@@ -119,12 +123,13 @@ CFontViewPart::CFontViewPart(QWidget *parent)
     faceLayout->addItem(new QSpacerItem(KDialog::spacingHint(), 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
     itsFaceWidget->hide();
 
-    mainLayout->addWidget(previewFrame, 0, 0, 4, 1);
-    mainLayout->addWidget(metaBox, 0, 1);
-    mainLayout->addWidget(itsFaceWidget, 1, 1);
-    mainLayout->addItem(new QSpacerItem(KDialog::spacingHint(), KDialog::spacingHint(),
-                                        QSizePolicy::Fixed, QSizePolicy::MinimumExpanding), 2, 1);
-    mainLayout->addWidget(itsInstallButton, 3, 1);
+    //controlsLayout->addWidget(metaBox);
+    //controlsLayout->addStretch(2);
+    controlsLayout->addWidget(itsFaceWidget);
+    controlsLayout->addStretch(1);
+    controlsLayout->addWidget(itsInstallButton);
+    mainLayout->addWidget(previewFrame);
+    mainLayout->addWidget(controls);
     connect(itsPreview, SIGNAL(status(bool)), SLOT(previewStatus(bool)));
     connect(itsInstallButton, SIGNAL(clicked()), SLOT(install()));
     connect(itsFaceSelector, SIGNAL(valueChanged(int)), itsPreview, SLOT(showFace(int)));
@@ -157,8 +162,8 @@ bool CFontViewPart::openUrl(const KUrl &url)
     if (!url.isValid() || !closeUrl())
         return false;
 
-    itsMetaLabel->setText(QString());
-    itsMetaInfo.clear();
+//     itsMetaLabel->setText(QString());
+//     itsMetaInfo.clear();
 
     if(KFI_KIO_FONTS_PROTOCOL==url.protocol() || KIO::NetAccess::mostLocalUrl(url, itsFrame).isLocalFile())
     {
@@ -197,7 +202,7 @@ void CFontViewPart::timeout()
     QString       name;
     unsigned long styleInfo(KFI_NO_STYLE_INFO);
 
-    itsMetaUrl=url();
+//    itsMetaUrl=url();
     delete itsTempDir;
     itsTempDir=NULL;
 
@@ -241,25 +246,25 @@ void CFontViewPart::timeout()
         }
 
         // What query to pass to meta info?
-        if(path.isEmpty())
-        {
-            itsMetaUrl.removeQueryItem(KFI_NAME_QUERY);
-            itsMetaUrl.addQueryItem(KFI_NAME_QUERY, name);
-            itsMetaUrl.removeQueryItem(KFI_STYLE_QUERY);
-            if(KFI_NO_STYLE_INFO!=styleInfo)
-                itsMetaUrl.addQueryItem(KFI_STYLE_QUERY, QString().setNum(styleInfo));
-        }
-        else
-        {
-            itsMetaUrl.removeQueryItem(KFI_FILE_QUERY);
-            itsMetaUrl.addQueryItem(KFI_FILE_QUERY, path);
-            itsMetaUrl.removeQueryItem(KFI_KIO_FACE);
-            if(fileIndex>0)
-                itsMetaUrl.addQueryItem(KFI_KIO_FACE, QString().setNum(fileIndex));
-        }
-
-        itsMetaUrl.removeQueryItem(KFI_MIME_QUERY);
-        itsMetaUrl.addQueryItem(KFI_MIME_QUERY, mime);
+//         if(path.isEmpty())
+//         {
+//             itsMetaUrl.removeQueryItem(KFI_NAME_QUERY);
+//             itsMetaUrl.addQueryItem(KFI_NAME_QUERY, name);
+//             itsMetaUrl.removeQueryItem(KFI_STYLE_QUERY);
+//             if(KFI_NO_STYLE_INFO!=styleInfo)
+//                 itsMetaUrl.addQueryItem(KFI_STYLE_QUERY, QString().setNum(styleInfo));
+//         }
+//         else
+//         {
+//             itsMetaUrl.removeQueryItem(KFI_FILE_QUERY);
+//             itsMetaUrl.addQueryItem(KFI_FILE_QUERY, path);
+//             itsMetaUrl.removeQueryItem(KFI_KIO_FACE);
+//             if(fileIndex>0)
+//                 itsMetaUrl.addQueryItem(KFI_KIO_FACE, QString().setNum(fileIndex));
+//         }
+// 
+//         itsMetaUrl.removeQueryItem(KFI_MIME_QUERY);
+//         itsMetaUrl.addQueryItem(KFI_MIME_QUERY, mime);
     }
     else
     {
@@ -301,7 +306,7 @@ void CFontViewPart::timeout()
                                    mime=="application/x-font-type1")
                                 {
                                     setLocalFilePath(itsTempDir->name()+entry->name());
-                                    itsMetaUrl=KUrl::fromPath(localFilePath());
+//                                    itsMetaUrl=KUrl::fromPath(localFilePath());
                                     break;
                                 }
                                 else
@@ -356,10 +361,11 @@ void CFontViewPart::previewStatus(bool st)
 
     itsChangeTextAction->setEnabled(st);
     itsExtension->enablePrint(st && printable);
-    if(st)
-        getMetaInfo(itsFaceSelector->isVisible() && itsFaceSelector->value()>0
-                                          ? itsFaceSelector->value()-1 : 0);
-    else
+//     if(st)
+//         getMetaInfo(itsFaceSelector->isVisible() && itsFaceSelector->value()>0
+//                                           ? itsFaceSelector->value()-1 : 0);
+//     else
+    if(!st)
         KMessageBox::error(itsFrame, i18n("Could not read font."));
 }
 
@@ -458,6 +464,7 @@ void CFontViewPart::statResult(KJob *job)
     itsInstallButton->setEnabled(!exists);
 }
 
+#if 0
 void CFontViewPart::getMetaInfo(int face)
 {
     if(itsMetaInfo[face].isEmpty())
@@ -496,6 +503,7 @@ void CFontViewPart::getMetaInfo(int face)
     else
         itsMetaLabel->setText(itsMetaInfo[face]);
 }
+#endif
 
 void CFontViewPart::stat(const QString &path)
 {

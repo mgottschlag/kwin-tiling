@@ -73,17 +73,17 @@ class CFontViewPart : public KParts::ReadOnlyPart
     private:
 
     void stat(const QString &path=QString());
-    void getMetaInfo(int face);
+//    void getMetaInfo(int face);
 
     private:
 
-    QMap<int, QString> itsMetaInfo;
+//    QMap<int, QString> itsMetaInfo;
     CFontPreview       *itsPreview;
     QPushButton        *itsInstallButton;
     QWidget            *itsFaceWidget;
     QFrame             *itsFrame;
-    QLabel             *itsFaceLabel,
-                       *itsMetaLabel;
+    QLabel             *itsFaceLabel;
+//                       *itsMetaLabel;
     KIntNumInput       *itsFaceSelector;
     QAction            *itsChangeTextAction;
     int                itsFace;
@@ -91,7 +91,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     BrowserExtension   *itsExtension;
     QProcess           *itsProc;
     QString            itsStatName;
-    KUrl               itsMetaUrl;
+//    KUrl               itsMetaUrl;
     KTempDir           *itsTempDir;
 };
 
