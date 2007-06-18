@@ -127,6 +127,7 @@ void EngineExplorer::showEngine(const QString& name)
     m_sourceRequester->setFocus();
     connect(m_engine, SIGNAL(newSource(QString)), this, SLOT(addSource(QString)));
     connect(m_engine, SIGNAL(sourceRemoved(QString)), this, SLOT(removeSource(QString)));
+    updateTitle();
 }
 
 void EngineExplorer::addSource(const QString& source)
