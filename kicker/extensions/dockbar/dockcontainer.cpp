@@ -78,7 +78,7 @@ void DockContainer::embed( WId id )
 {
     if( id == _embeddedWinId || id == 0)
         return;
-    QRect geom = KWindowSystem::windowInfo(id,NET::WMKDEFrameStrut).frameGeometry();
+    QRect geom = KWindowSystem::windowInfo(id,NET::WMFrameExtents).frameGeometry();
 
     // does the same as KWindowSystem::prepareForSwallowing()
 	QX11Info info;

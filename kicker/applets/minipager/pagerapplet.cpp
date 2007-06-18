@@ -598,7 +598,7 @@ KWindowSystem::WindowInfo* KMiniPager::info( WId win )
     if (!m_windows[win] )
     {
         KWindowSystem::WindowInfo* info = new KWindowSystem::WindowInfo( win,
-            NET::WMWindowType | NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMGeometry | NET::WMKDEFrameStrut, 0 );
+            NET::WMWindowType | NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMGeometry | NET::WMFrameExtents, 0 );
 
         m_windows.insert( (long) win, info );
         return info;
