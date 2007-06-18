@@ -59,7 +59,7 @@
 #include <kconfiggroup.h>
 
 #include "configdialog.h"
-#include "toplevel.h"
+#include "klipper.h"
 #include "urlgrabber.h"
 #include "version.h"
 #include "clipboardpoll.h"
@@ -103,7 +103,7 @@ namespace {
 class KlipperSessionManager : public KSessionManager
 {
 public:
-    KlipperSessionManager( KlipperWidget* k )
+    KlipperSessionManager( Klipper* k )
         : klipper( k )
         {}
 
@@ -119,13 +119,13 @@ public:
         return true;
     }
 private:
-    KlipperWidget* klipper;
+    Klipper* klipper;
 };
 
 static void ensureGlobalSyncOff(KSharedConfigPtr config);
 
 // config == KGlobal::config for process, otherwise applet
-KlipperWidget::KlipperWidget(QWidget *parent, const KSharedConfigPtr &config)
+Klipper::Klipper(QWidget *parent, const KSharedConfigPtr &config)
     : QWidget( parent )
     , m_overflowCounter( 0 )
     , locklevel( 0 )
@@ -221,7 +221,7 @@ KlipperWidget::KlipperWidget(QWidget *parent, const KSharedConfigPtr &config)
     this->setToolTip( i18n("Klipper - clipboard tool") );
 }
 
-KlipperWidget::~KlipperWidget()
+Klipper::~Klipper()
 {
     delete session_managed;
     delete showTimer;
@@ -229,19 +229,19 @@ KlipperWidget::~KlipperWidget()
     delete myURLGrabber;
 }
 
-void KlipperWidget::adjustSize()
+void Klipper::adjustSize()
 {
     resize( m_pixmap.size() );
 }
 
 // DCOP
-QString KlipperWidget::getClipboardContents()
+QString Klipper::getClipboardContents()
 {
     return getClipboardHistoryItem(0);
 }
 
 // DCOP - don't call from Klipper itself
-void KlipperWidget::setClipboardContents(QString s)
+void Klipper::setClipboardContents(QString s)
 {
     Ignore lock( locklevel );
     updateTimestamp();
@@ -251,14 +251,14 @@ void KlipperWidget::setClipboardContents(QString s)
 }
 
 // DCOP - don't call from Klipper itself
-void KlipperWidget::clearClipboardContents()
+void Klipper::clearClipboardContents()
 {
     updateTimestamp();
     slotClearClipboard();
 }
 
 // DCOP - don't call from Klipper itself
-void KlipperWidget::clearClipboardHistory()
+void Klipper::clearClipboardHistory()
 {
     updateTimestamp();
     slotClearClipboard();
@@ -267,7 +267,7 @@ void KlipperWidget::clearClipboardHistory()
 }
 
 
-void KlipperWidget::mousePressEvent(QMouseEvent *e)
+void Klipper::mousePressEvent(QMouseEvent *e)
 {
     if ( e->button() != Qt::LeftButton && e->button() != Qt::RightButton )
         return;
@@ -280,7 +280,7 @@ void KlipperWidget::mousePressEvent(QMouseEvent *e)
     }
 }
 
-void KlipperWidget::paintEvent(QPaintEvent *)
+void Klipper::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
     int x = (width() - m_pixmap.width()) / 2;
@@ -291,17 +291,17 @@ void KlipperWidget::paintEvent(QPaintEvent *)
     p.end();
 }
 
-void KlipperWidget::slotStartHideTimer()
+void Klipper::slotStartHideTimer()
 {
     hideTimer->start();
 }
 
-void KlipperWidget::slotStartShowTimer()
+void Klipper::slotStartShowTimer()
 {
     showTimer->start();
 }
 
-void KlipperWidget::showPopupMenu( QMenu *menu )
+void Klipper::showPopupMenu( QMenu *menu )
 {
     Q_ASSERT( menu != 0L );
 
@@ -327,7 +327,7 @@ void KlipperWidget::showPopupMenu( QMenu *menu )
     }
 }
 
-bool KlipperWidget::loadHistory() {
+bool Klipper::loadHistory() {
     static const char* const failed_load_warning =
         "Failed to load history resource. Clipboard history cannot be read.";
     // don't use "appdata", klipper is also a kicker applet
@@ -401,7 +401,7 @@ bool KlipperWidget::loadHistory() {
     return true;
 }
 
-void KlipperWidget::saveHistory() {
+void Klipper::saveHistory() {
     static const char* const failed_save_warning =
         "Failed to save history. Clipboard history cannot be saved.";
     // don't use "appdata", klipper is also a kicker applet
@@ -426,7 +426,7 @@ void KlipperWidget::saveHistory() {
     ds << crc << data;
 }
 
-void KlipperWidget::readProperties(KConfig *kc)
+void Klipper::readProperties(KConfig *kc)
 {
     QStringList dataList;
 
@@ -458,7 +458,7 @@ void KlipperWidget::readProperties(KConfig *kc)
 }
 
 
-void KlipperWidget::readConfiguration( KConfig *_kc )
+void Klipper::readConfiguration( KConfig *_kc )
 {
     KConfigGroup kc( _kc, "General");
     bPopupAtMouse = kc.readEntry("PopupAtMousePosition", false);
@@ -474,7 +474,7 @@ void KlipperWidget::readConfiguration( KConfig *_kc )
     bIgnoreImages = kc.readEntry("IgnoreImages",true);
 }
 
-void KlipperWidget::writeConfiguration( KConfig *_kc )
+void Klipper::writeConfiguration( KConfig *_kc )
 {
     KConfigGroup kc( _kc, "General");
     kc.writeEntry("PopupAtMousePosition", bPopupAtMouse);
@@ -496,14 +496,14 @@ void KlipperWidget::writeConfiguration( KConfig *_kc )
 }
 
 // save session on shutdown. Don't simply use the c'tor, as that may not be called.
-void KlipperWidget::saveSession()
+void Klipper::saveSession()
 {
     if ( bKeepContents ) { // save the clipboard eventually
         saveHistory();
     }
 }
 
-void KlipperWidget::slotSettingsChanged( int category )
+void Klipper::slotSettingsChanged( int category )
 {
     if ( category == (int) KGlobalSettings::SETTINGS_SHORTCUTS ) {
         globalKeys->readSettings();
@@ -515,7 +515,7 @@ void KlipperWidget::slotSettingsChanged( int category )
     }
 }
 
-void KlipperWidget::disableURLGrabber()
+void Klipper::disableURLGrabber()
 {
     KMessageBox::information( 0L,
                               i18n( "You can enable URL actions later by right-clicking on the "
@@ -524,7 +524,7 @@ void KlipperWidget::disableURLGrabber()
     setURLGrabberEnabled( false );
 }
 
-void KlipperWidget::slotConfigure()
+void Klipper::slotConfigure()
 {
     bool haveURLGrabber = bURLGrabber;
     if ( !myURLGrabber ) { // temporary, for the config-dialog
@@ -577,7 +577,7 @@ void KlipperWidget::slotConfigure()
     delete dlg;
 }
 
-void KlipperWidget::slotQuit()
+void Klipper::slotQuit()
 {
     // If the menu was just opened, likely the user
     // selected quit by accident while attempting to
@@ -602,14 +602,14 @@ void KlipperWidget::slotQuit()
 
 }
 
-void KlipperWidget::slotPopupMenu() {
+void Klipper::slotPopupMenu() {
     KlipperPopup* popup = history()->popup();
     popup->ensureClean();
     showPopupMenu( popup );
 }
 
 
-void KlipperWidget::slotRepeatAction()
+void Klipper::slotRepeatAction()
 {
     if ( !myURLGrabber ) {
         myURLGrabber = new URLGrabber( m_config );
@@ -625,7 +625,7 @@ void KlipperWidget::slotRepeatAction()
     }
 }
 
-void KlipperWidget::setURLGrabberEnabled( bool enable )
+void Klipper::setURLGrabberEnabled( bool enable )
 {
     if (enable != bURLGrabber) {
       bURLGrabber = enable;
@@ -655,12 +655,12 @@ void KlipperWidget::setURLGrabberEnabled( bool enable )
     }
 }
 
-void KlipperWidget::toggleURLGrabber()
+void Klipper::toggleURLGrabber()
 {
     setURLGrabberEnabled( !bURLGrabber );
 }
 
-void KlipperWidget::slotHistoryTopChanged() {
+void Klipper::slotHistoryTopChanged() {
     if ( locklevel ) {
         return;
     }
@@ -675,7 +675,7 @@ void KlipperWidget::slotHistoryTopChanged() {
 
 }
 
-void KlipperWidget::slotClearClipboard()
+void Klipper::slotClearClipboard()
 {
     Ignore lock( locklevel );
 
@@ -687,7 +687,7 @@ void KlipperWidget::slotClearClipboard()
 
 
 //XXX: Should die, and the DCOP signal handled sensible.
-QString KlipperWidget::clipboardContents( bool * /*isSelection*/ )
+QString Klipper::clipboardContents( bool * /*isSelection*/ )
 {
     kWarning() << "Obsolete function called. Please fix" << endl;
 
@@ -715,7 +715,7 @@ QString KlipperWidget::clipboardContents( bool * /*isSelection*/ )
     return 0;
 }
 
-void KlipperWidget::applyClipChanges( const QMimeSource& clipData )
+void Klipper::applyClipChanges( const QMimeSource& clipData )
 {
     if ( locklevel )
         return;
@@ -724,7 +724,7 @@ void KlipperWidget::applyClipChanges( const QMimeSource& clipData )
 
 }
 
-void KlipperWidget::newClipData( bool selectionMode )
+void Klipper::newClipData( bool selectionMode )
 {
     if ( locklevel ) {
         return;
@@ -737,7 +737,7 @@ void KlipperWidget::newClipData( bool selectionMode )
 
 }
 
-void KlipperWidget::clipboardSignalArrived( bool selectionMode )
+void Klipper::clipboardSignalArrived( bool selectionMode )
 {
     if ( locklevel ) {
         return;
@@ -755,7 +755,7 @@ void KlipperWidget::clipboardSignalArrived( bool selectionMode )
 // from Lyx, so Klipper notices again, requests this data, ... you get the idea.
 const int MAX_CLIPBOARD_CHANGES = 10; // max changes per second
 
-bool KlipperWidget::blockFetchingNewData()
+bool Klipper::blockFetchingNewData()
 {
 // Hacks for #85198 and #80302.
 // #85198 - block fetching new clipboard contents if Shift is pressed and mouse is not,
@@ -779,7 +779,7 @@ bool KlipperWidget::blockFetchingNewData()
     return false;
 }
 
-void KlipperWidget::slotCheckPending()
+void Klipper::slotCheckPending()
 {
     if( !m_pendingContentsCheck )
         return;
@@ -788,7 +788,7 @@ void KlipperWidget::slotCheckPending()
     newClipData( true ); // always selection
 }
 
-void KlipperWidget::checkClipData( bool selectionMode )
+void Klipper::checkClipData( bool selectionMode )
 {
     if ( ignoreClipboardChanges() ) // internal to klipper, ignoring QSpinBox selections
     {
@@ -935,7 +935,7 @@ void KlipperWidget::checkClipData( bool selectionMode )
 #endif
 }
 
-void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
+void Klipper::setClipboard( const HistoryItem& item, int mode )
 {
     Ignore lock( locklevel );
 
@@ -962,7 +962,7 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
 
 }
 
-void KlipperWidget::slotClearOverflow()
+void Klipper::slotClearOverflow()
 {
     if( m_overflowCounter > MAX_CLIPBOARD_CHANGES ) {
         kDebug() << "App owning the clipboard/selection is lame" << endl;
@@ -972,7 +972,7 @@ void KlipperWidget::slotClearOverflow()
     m_overflowCounter = 0;
 }
 
-QStringList KlipperWidget::getClipboardHistoryMenu()
+QStringList Klipper::getClipboardHistoryMenu()
 {
     QStringList menu;
     for ( const HistoryItem* item = history()->first(); item; item = history()->next() ) {
@@ -981,7 +981,7 @@ QStringList KlipperWidget::getClipboardHistoryMenu()
     return menu;
 }
 
-QString KlipperWidget::getClipboardHistoryItem(int i)
+QString Klipper::getClipboardHistoryItem(int i)
 {
     for ( const HistoryItem* item = history()->first(); item; item = history()->next() , i-- ) {
         if ( i == 0 ) {
@@ -997,7 +997,7 @@ QString KlipperWidget::getClipboardHistoryItem(int i)
 // of the spinbox to be selected and hence the clipboard changes. But we don't
 // want all those items in klipper's history. See #41917
 //
-bool KlipperWidget::ignoreClipboardChanges() const
+bool Klipper::ignoreClipboardChanges() const
 {
     QWidget *focusWidget = qApp->focusWidget();
     if ( focusWidget )
@@ -1059,7 +1059,7 @@ static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
     return False;
 }
 
-void KlipperWidget::updateTimestamp()
+void Klipper::updateTimestamp()
 {
     Time time = QX11Info::appTime();
     static QWidget* w = 0;
@@ -1084,7 +1084,7 @@ void KlipperWidget::updateTimestamp()
 static const char * const description =
       I18N_NOOP("KDE cut & paste history utility");
 
-void KlipperWidget::createAboutData()
+void Klipper::createAboutData()
 {
   about_data = new KAboutData("klipper", I18N_NOOP("Klipper"),
     klipper_version, description, KAboutData::License_GPL,
@@ -1113,45 +1113,17 @@ void KlipperWidget::createAboutData()
                       "kde@mosehansen.dk");
 }
 
-void KlipperWidget::destroyAboutData()
+void Klipper::destroyAboutData()
 {
   delete about_data;
   about_data = NULL;
 }
 
-KAboutData* KlipperWidget::about_data;
+KAboutData* Klipper::about_data;
 
-KAboutData* KlipperWidget::aboutData()
+KAboutData* Klipper::aboutData()
 {
   return about_data;
-}
-
-Klipper::Klipper( QWidget* parent )
-    : KlipperWidget( parent, KGlobal::config())
-{
-}
-
-// this sucks ... KUniqueApplication registers itself as 'klipper'
-// for the unique-app detection calls (and it shouldn't use that name IMHO)
-// but in Klipper it's not KUniqueApplication class who handles
-// the DCOP calls, but an instance of class Klipper, registered as 'klipper'
-// this below avoids a warning when KUniqueApplication wouldn't otherwise
-// find newInstance()  (which doesn't do anything in Klipper anyway)
-int Klipper::newInstance()
-{
-#ifdef __GNUC__
-#warning replacement?
-#endif
- //   kapp->dcopClient()->setPriorityCall(false); // Allow other dcop calls
-
-    return 0;
-}
-
-// this is used for quitting klipper process, if klipper is being started as an applet
-// (AKA ugly hack)
-void Klipper::quitProcess()
-{
-    kapp->quit();
 }
 
 static void ensureGlobalSyncOff(KSharedConfigPtr config) {
@@ -1166,4 +1138,5 @@ static void ensureGlobalSyncOff(KSharedConfigPtr config) {
 
 }
 
-#include "toplevel.moc"
+
+#include "klipper.moc"

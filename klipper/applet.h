@@ -23,7 +23,7 @@
 
 #include <kpanelapplet.h>
 
-#include "toplevel.h"
+#include "klipper.h"
 //Added by qt3to4:
 #include <QResizeEvent>
 
@@ -50,7 +50,7 @@ private:
     KlipperAppletWidget* widget;
 };
 
-class KlipperAppletWidget : public KlipperWidget
+class KlipperAppletWidget : public Klipper
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.klipper.applet")

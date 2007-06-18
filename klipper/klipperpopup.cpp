@@ -33,7 +33,7 @@
 
 #include "klipperpopup.h"
 #include "history.h"
-#include "toplevel.h"
+#include "klipper.h"
 #include "popupproxy.h"
 
 namespace {
@@ -98,7 +98,7 @@ KlipperPopup::KlipperPopup( History* history, QWidget* parent )
       QSempty( i18n( "<empty clipboard>" ) ),
       QSnomatch( i18n( "<no matches>" ) ),
       m_history( history ),
-      helpmenu( new KHelpMenu( this, KlipperWidget::aboutData(), false ) ),
+      helpmenu( new KHelpMenu( this, Klipper::aboutData(), false ) ),
       m_popupProxy( 0 ),
       m_filterWidget( 0 ),
       m_filterWidgetId( 10 ),

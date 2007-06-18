@@ -35,7 +35,7 @@
 #include <X11/extensions/Xfixes.h>
 #endif
 
-#include "toplevel.h"
+#include "klipper.h"
   
 //#define NOISY_KLIPPER_
 
@@ -222,7 +222,7 @@ void ClipboardPoll::updateQtOwnership( SelectionData& data )
 
 void ClipboardPoll::timeout()
 {
-    KlipperWidget::updateTimestamp();
+    Klipper::updateTimestamp();
     if( !kapp->clipboard()->ownsSelection() && checkTimestamp( selection ) ) {
 #ifdef NOISY_KLIPPER_
         kDebug() << "SELECTION CHANGED" << endl;

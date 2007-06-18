@@ -25,7 +25,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <QtDBus>
-#include "toplevel.h"
+#include "klipper.h"
 #include "history.h"
 #include "klipperpopup.h"
 //Added by qt3to4:
@@ -46,7 +46,7 @@ KlipperApplet::KlipperApplet(const QString& configFile, Plasma::Type t, int acti
                          QWidget *parent)
     : KPanelApplet(configFile, t, actions, parent)
 {
-    KlipperWidget::createAboutData();
+    Klipper::createAboutData();
 
     widget = new KlipperAppletWidget( this );
     setCustomMenu(widget->history()->popup());
@@ -58,7 +58,7 @@ KlipperApplet::~KlipperApplet()
 {
     widget->saveSession();
     delete widget;
-    KlipperWidget::destroyAboutData();
+    Klipper::destroyAboutData();
 }
 
 int KlipperApplet::widthForHeight(int) const
@@ -102,12 +102,12 @@ void KlipperApplet::about()
 }
 
 KlipperAppletWidget::KlipperAppletWidget( QWidget* parent )
-// init() is called first, before KlipperWidget is called with ( parent, kconfig )
-    : KlipperWidget( ( init(), parent ), KSharedConfig::openConfig("klipperrc"))
+// init() is called first, before Klipper ctor is called with ( parent, kconfig )
+    : Klipper( ( init(), parent ), KSharedConfig::openConfig("klipperrc"))
 {
 }
 
-// this needs to be called before KlipperWidget ctor, because it performs already some
+// this needs to be called before Klipper ctor, because it performs already some
 // operations with the clipboard, and the other running instance could notice that
 // and request data while this instance is waiting in the DCOP call
 void KlipperAppletWidget::init()

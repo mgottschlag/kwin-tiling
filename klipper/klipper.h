@@ -18,8 +18,8 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _TOPLEVEL_H_
-#define _TOPLEVEL_H_
+#ifndef _KLIPPER_H_
+#define _KLIPPER_H_
 
 #include <kapplication.h>
 #include <kglobalaccel.h>
@@ -45,7 +45,7 @@ class QMimeSource;
 class HistoryItem;
 class KlipperSessionManager;
 
-class KlipperWidget : public QWidget
+class Klipper : public QWidget
 {
   Q_OBJECT
   Q_CLASSINFO("D-Bus Interface", "org.kde.klipper.klipper")
@@ -59,8 +59,8 @@ public Q_SLOTS:
   Q_SCRIPTABLE QString getClipboardHistoryItem(int i);
 
 public:
-    KlipperWidget(QWidget *parent, const KSharedConfigPtr &config);
-    ~KlipperWidget();
+    Klipper(QWidget *parent, const KSharedConfigPtr &config);
+    ~Klipper();
 
     virtual void adjustSize();
     KGlobalAccel *globalKeys;
@@ -209,18 +209,6 @@ private:
 
     bool blockFetchingNewData();
     KlipperSessionManager* session_managed;
-};
-
-class Klipper : public KlipperWidget
-{
-    Q_OBJECT
-
-public Q_SLOTS:
-    Q_SCRIPTABLE int newInstance();
-    Q_SCRIPTABLE void quitProcess();
-
-public:
-    Klipper( QWidget* parent = NULL );
 };
 
 #endif

@@ -1,6 +1,7 @@
 // -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
-   Copyright (C) Andrew Stanley-Jones
+   Copyright (C) by Andrew Stanley-Jones
+   Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -17,41 +18,21 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+#ifndef _TRAY_H_
+#define _TRAY_H_
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "klipper.h"
 
-#include <klocale.h>
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
-#include <kuniqueapplication.h>
-
-#include "tray.h"
-#include "version.h"
-
-extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
+class KlipperTray : public Klipper
 {
-  Klipper::createAboutData();
-  KCmdLineArgs::init( argc, argv, Klipper::aboutData());
-  KUniqueApplication::addCmdLineOptions();
+    Q_OBJECT
 
-  if (!KUniqueApplication::start()) {
-       fprintf(stderr, "Klipper is already running!\n");
-       exit(0);
-  }
-  KUniqueApplication app;
-  app.disableSessionManagement();
+public Q_SLOTS:
+    Q_SCRIPTABLE int newInstance();
+    Q_SCRIPTABLE void quitProcess();
 
-  KlipperTray *toplevel = new KlipperTray();
+public:
+    KlipperTray( QWidget* parent = NULL );
+};
 
-#ifdef __GNUC__
-#warning Port to KSystemTrayIcon
 #endif
-  toplevel->setGeometry(-100, -100, 42, 42 );
-  toplevel->show();
-
-  int ret = app.exec();
-  delete toplevel;
-  Klipper::destroyAboutData();
-  return ret;
-}

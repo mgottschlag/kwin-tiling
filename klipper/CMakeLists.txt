@@ -10,10 +10,10 @@ add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
 
-set(libklipper_common_SRCS main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp  historyimageitem.cpp historyurlitem.cpp )
+set(libklipper_common_SRCS klipper.cpp urlgrabber.cpp configdialog.cpp clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp  historyimageitem.cpp historyurlitem.cpp )
 
 
-set(klipper_KDEINIT_SRCS ${libklipper_common_SRCS})
+set(klipper_KDEINIT_SRCS ${libklipper_common_SRCS} main.cpp tray.cpp)
 
 kde4_automoc(${klipper_KDEINIT_SRCS})
 
