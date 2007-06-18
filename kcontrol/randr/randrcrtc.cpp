@@ -144,6 +144,9 @@ bool RandRCrtc::applyProposed()
 	kDebug() << "       Current Rotation: " << m_currentRotation << endl;
 	kDebug() << "       Proposed rect: " << m_proposedRect << endl;
 	kDebug() << "       Proposed rotation: " << m_proposedRotation << endl;
+	kDebug() << "       Outputs: " << endl;
+	for (int i = 0; i < m_connectedOutputs.count(); ++i)
+		kDebug() << "               - " << m_screen->output(m_connectedOutputs.at(i))->name() << endl;
 #endif
 	RandRMode mode;
 	if (m_proposedRect.size() == m_currentRect.size() && m_proposedRate == m_currentRate)
@@ -217,7 +220,6 @@ bool RandRCrtc::applyProposed()
 			}
 		}
 	}
-
 
 
 	Status s = XRRSetCrtcConfig(QX11Info::display(), m_screen->resources(), m_id, 
@@ -304,7 +306,7 @@ bool RandRCrtc::addOutput(RROutput output, QSize s)
 
 		m_connectedOutputs.append(output);
 	}
-	m_proposedRect = QRect(m_currentRect.topLeft(), s);
+	m_proposedRect = QRect(m_proposedRect.topLeft(), s);
 	return true;
 }
 

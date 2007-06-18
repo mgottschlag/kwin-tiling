@@ -90,7 +90,12 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 	if (event->crtc != m_currentCrtc)
 	{
 		changed |= ChangeCrtc;
+		// update crtc settings
+		if (m_currentCrtc != None)
+			m_screen->crtc(m_currentCrtc)->loadSettings();
 		m_currentCrtc = event->crtc;
+		if (m_currentCrtc != None)
+			m_screen->crtc(m_currentCrtc)->loadSettings();
 	}
 
 	if (event->mode != currentMode())
@@ -418,10 +423,10 @@ RandRCrtc *RandROutput::findEmptyCrtc()
 	{
 		crtc = m_screen->crtc(m_possibleCrtcs.at(i));
 		if (crtc->connectedOutputs().count() == 0)
-			break;
+			return crtc;
 	}
 
-	return crtc;
+	return 0;
 }
 
 bool RandROutput::applyAndConfirm(RandRCrtc *crtc)

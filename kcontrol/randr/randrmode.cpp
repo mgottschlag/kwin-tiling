@@ -6,6 +6,7 @@ RandRMode::RandRMode(XRRModeInfo *info)
 : m_valid(false)
 {
 	m_info = info;
+	m_rate = 0;
 	
 	if (m_info)
 		m_valid = true;
