@@ -987,18 +987,11 @@ bool SolidShell::hwVolumeCall(SolidShell::VolumeCallType type, const QString &ud
         device.as<Solid::StorageAccess>()->teardown();
         break;
     case Eject:
-        Solid::OpticalDrive::EjectStatus status = device.as<Solid::OpticalDrive>()->eject();
-        switch(status)
-        {
-        case Solid::OpticalDrive::EjectSuccess:
-            return true;
-        case Solid::OpticalDrive::EjectUnsupported:
-            cerr << i18n("Error: eject is unsupported by the system") << endl;
-            return false;
-        case Solid::OpticalDrive::EjectForbidden:
-            cerr << i18n("Error: eject has been forbidden by the system") << endl;
-            return false;
-        }
+        connect(device.as<Solid::OpticalDrive>(),
+                SIGNAL(ejectDone(Solid::OpticalDrive::EjectResult, QVariant)),
+                this,
+                SLOT(slotEjectResult(Solid::OpticalDrive::EjectResult, QVariant)));
+        device.as<Solid::OpticalDrive>()->eject();
         break;
     }
 
@@ -1595,6 +1588,15 @@ void SolidShell::slotSetupResult(Solid::StorageAccess::SetupResult result, QVari
 void SolidShell::slotTeardownResult(Solid::StorageAccess::TeardownResult result, QVariant resultData)
 {
     if (result!=Solid::StorageAccess::TeardownSucceed) {
+        m_error = 1;
+        m_errorString = resultData.toString();
+    }
+    m_loop.exit();
+}
+
+void SolidShell::slotEjectResult(Solid::OpticalDrive::EjectResult result, QVariant resultData)
+{
+    if (result!=Solid::OpticalDrive::EjectSuccess) {
         m_error = 1;
         m_errorString = resultData.toString();
     }

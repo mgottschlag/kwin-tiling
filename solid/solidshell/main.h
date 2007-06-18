@@ -24,6 +24,7 @@
 #include <QEventLoop>
 
 #include <solid/storageaccess.h>
+#include <solid/opticaldrive.h>
 
 class KJob;
 
@@ -100,6 +101,7 @@ private:
 private slots:
     void slotSetupResult(Solid::StorageAccess::SetupResult result, QVariant resultData);
     void slotTeardownResult(Solid::StorageAccess::TeardownResult result, QVariant teardownData);
+    void slotEjectResult(Solid::OpticalDrive::EjectResult result, QVariant ejectData);
     void slotResult(KJob *job);
     void slotPercent(KJob *job, unsigned long percent);
     void slotInfoMessage(KJob *job, const QString &message);
