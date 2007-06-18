@@ -127,7 +127,6 @@ Interface::Interface(QWidget* parent)
 
     m_header = new KTitleWidget(this);
     m_header->setBackgroundRole( QPalette::Base );
-    m_header->setText(i18n("Enter the name of an application, location or search term below."));
     m_layout->addWidget( m_header );
 
     m_searchTerm = new KLineEdit( this );
@@ -194,6 +193,8 @@ Interface::Interface(QWidget* parent)
     m_runners.append( new SessionRunner( this ) );
     m_runners += Plasma::AbstractRunner::loadRunners( this );
 
+    resetInterface();
+
 #ifdef FLASH_DIALOG
     QTimer* t = new QTimer(this);
     connect( t, SIGNAL(timeout()), this, SLOT(display()));
@@ -237,7 +238,41 @@ void Interface::display( const QString& term)
 
 void Interface::switchUser()
 {
-    //TODO: use the SessionRunner
+    Plasma::AbstractRunner *sessionrunner = 0;
+    foreach (Plasma::AbstractRunner* runner, m_runners) {
+        if (qstrcmp(runner->metaObject()->className(), "SessionRunner") == 0) {
+            sessionrunner = runner;
+            break;
+        }
+    }
+
+    if (!sessionrunner) {
+        kDebug() << "Could not find the Sessionrunner; not showing any sessions!" << endl;
+        return;
+    }
+
+    display();
+    m_header->setText(i18n("Switch users"));
+    m_header->setPixmap("user");
+    KActionCollection *matches = sessionrunner->matches("SESSIONS", 0, 0);
+
+    foreach (QAction *action, matches->actions()) {
+        bool makeDefault = !m_defaultMatch && action->isEnabled();
+
+        SearchMatch *match = new SearchMatch(action, sessionrunner, m_matchList);
+        m_searchMatches.append(match);
+
+        if (makeDefault) {
+            m_defaultMatch = match;
+            m_defaultMatch->setDefault(true);
+            m_runButton->setEnabled(true);
+            m_optionsButton->setEnabled(sessionrunner->hasOptions());
+        }
+    }
+
+    if (!m_defaultMatch) {
+        m_matchList->addItem(i18n("No desktop sessions available"));
+    }
 }
 
 void Interface::setWidgetPalettes()
@@ -254,6 +289,19 @@ void Interface::setWidgetPalettes()
     m_matchList->setPalette( widgetPalette );
 }
 
+void Interface::resetInterface()
+{
+    m_header->setText(i18n("Enter the name of an application, location or search term below."));
+    m_header->setPixmap("system-search");
+    m_searchTerm->clear();
+    m_matches.clear();
+    m_searchMatches.clear();
+    m_matchList->clear();
+    m_runButton->setEnabled( false );
+    m_optionsButton->setEnabled( false );
+    showOptions( false );
+}
+
 void Interface::showEvent( QShowEvent* e )
 {
     Q_UNUSED( e )
@@ -265,11 +313,7 @@ void Interface::showEvent( QShowEvent* e )
 void Interface::hideEvent( QHideEvent* e )
 {
     kDebug() << "hide event" << endl;
-    showOptions( false );
-    m_searchTerm->clear();
-    m_matchList->clear() ;
-    m_runButton->setEnabled( false );
-    m_optionsButton->setEnabled( false );
+    resetInterface();
     e->accept();
 }
 
@@ -293,12 +337,7 @@ void Interface::match(const QString& t)
     QString term = t.trimmed();
 
     if ( term.isEmpty() ) {
-        m_matches.clear();
-        m_searchMatches.clear();
-        m_matchList->clear();
-        m_runButton->setEnabled( false );
-        m_optionsButton->setEnabled( false );
-        showOptions( false );
+        resetInterface();
         return;
     }
 

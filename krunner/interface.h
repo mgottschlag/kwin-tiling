@@ -72,6 +72,8 @@ class Interface : public KRunnerDialog
         void hideEvent( QHideEvent* e );
 
     private:
+        void resetInterface();
+
         QTimer m_searchTimer;
         Plasma::AbstractRunner::List m_runners;
 
