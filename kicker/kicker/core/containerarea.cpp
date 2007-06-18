@@ -54,7 +54,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdesktopfile.h>
 #include <kiconloader.h>
 #include <kmimetype.h>
-#include <k3process.h>
 #include <klocale.h>
 #include <kio/netaccess.h>
 #include <kservice.h>
