@@ -19,6 +19,7 @@
 #include "defaultAnimator.h"
 
 #include <QGraphicsItem>
+#include <QPainter>
 
 #include <KDebug>
 
@@ -28,81 +29,78 @@ DefaultAnimator::DefaultAnimator(QObject *parent, const QStringList& list)
     Q_UNUSED(list)
 }
 
-int DefaultAnimator::appearFrames()
+int DefaultAnimator::frameCount(Plasma::Phase::Animation animation)
 {
-    kDebug() << "DefaultAnimator::appearFrames()" << endl;
-    return 12;
+    switch (animation) {
+        case Plasma::Phase::Appear:
+            return 12;
+
+        default:
+            return 0;
+    }
 }
 
-void DefaultAnimator::appear(qreal frame, QGraphicsItem* item)
+int DefaultAnimator::elementFrameCount(Plasma::Phase::ElementAnimation animation)
 {
-    kDebug() << "DefaultAnimator::appear(" << frame << ", " << item << ")" << endl;
+    switch (animation) {
+        case Plasma::Phase::ElementAppear:
+            return 12;
+        case Plasma::Phase::ElementDisappear:
+            return 12;
+
+        default:
+            return 0;
+    }
+}
+
+void DefaultAnimator::appear(qreal progress, QGraphicsItem* item)
+{
+    //kDebug() << "DefaultAnimator::appear(" << progress << ", " << item << ")" << endl;
     item->resetTransform();
-    item->scale(frame, frame);
-    Q_UNUSED(frame)
-    Q_UNUSED(item)
+    item->scale(progress, progress);
 }
 
 void DefaultAnimator::appearCompleted(QGraphicsItem* item)
 {
-    kDebug() << "DefaultAnimator::appearCompleted(" << item << ")" << endl;
+    //kDebug() << "DefaultAnimator::appearCompleted(" << item << ")" << endl;
     item->resetTransform();
 }
 
-int DefaultAnimator::disappearFrames()
+QPixmap DefaultAnimator::elementAppear(qreal progress, const QPixmap& pixmap)
 {
-    return 0;
+    QPixmap alpha(pixmap.size());
+    {
+        QPainter painter(&alpha);
+        painter.fillRect(alpha.rect(), Qt::black);
+    }
+
+    //kDebug() << "DefaultAnimator::elementAppear(" << progress <<  ")" << endl;
+    QPixmap pix(pixmap.size());
+    pix.setAlphaChannel(alpha);
+    QPainter painter(&pix);
+    painter.setOpacity(progress);
+    painter.drawPixmap(0, 0, pixmap);
+    return pix;
 }
 
-void DefaultAnimator::disappear(qreal frame, QGraphicsItem* item)
+QPixmap DefaultAnimator::elementDisappear(qreal progress, const QPixmap& pixmap)
 {
-    Q_UNUSED(frame)
-    Q_UNUSED(item)
-}
+    QPixmap alpha(pixmap.size());
+    {
+        QPainter painter(&alpha);
+        painter.fillRect(alpha.rect(), Qt::black);
+    }
 
-void DefaultAnimator::disappearCompleted(QGraphicsItem* item)
-{
-    Q_UNUSED(item)
-}
+    //kDebug() << "DefaultAnimator::elementDisappear(" << progress <<  ")" << endl;
+    QPixmap pix(pixmap.size());
+    pix.setAlphaChannel(alpha);
+    QPainter painter(&pix);
 
-int DefaultAnimator::activateFrames()
-{
-    return 0;
+    if (progress < 1) {
+        painter.setOpacity(1 - progress);
+        painter.drawPixmap(0, 0, pixmap);
+    }
+    return pix;
 }
-
-void DefaultAnimator::activate(qreal frame, QGraphicsItem* item)
-{
-    Q_UNUSED(frame)
-    Q_UNUSED(item)
-}
-
-void DefaultAnimator::activateCompleted(QGraphicsItem* item)
-{
-    Q_UNUSED(item)
-}
-
-int DefaultAnimator::frameAppearFrames()
-{
-    return 0;
-}
-
-void DefaultAnimator::frameAppear(qreal frame, QGraphicsItem* item, const QRegion& drawable)
-{
-    Q_UNUSED(frame)
-    Q_UNUSED(item)
-    Q_UNUSED(drawable)
-}
-
-void DefaultAnimator::frameAppearCompleted(QGraphicsItem* item, const QRegion& drawable)
-{
-    Q_UNUSED(item)
-    Q_UNUSED(drawable)
-}
-
-void DefaultAnimator::renderBackground(QImage& background)
-{
-    Q_UNUSED(background)
-}
-
 
 #include "defaultAnimator.moc"

@@ -19,7 +19,7 @@
 #ifndef DEFAULTANIMATOR_H
 #define DEFAULTANIMATOR_H
 
-#include "plasma/animator.h"
+#include <plasma/animator.h>
 
 class DefaultAnimator : public Plasma::Animator
 {
@@ -28,23 +28,14 @@ class DefaultAnimator : public Plasma::Animator
 public:
     explicit DefaultAnimator(QObject *parent = 0, const QStringList& list = QStringList());
 
-    int appearFrames();
+    int frameCount(Plasma::Phase::Animation animation);
+    int elementFrameCount(Plasma::Phase::ElementAnimation animation);
+
     void appear(qreal frame, QGraphicsItem* item);
     void appearCompleted(QGraphicsItem* item);
 
-    int disappearFrames();
-    void disappear(qreal frame, QGraphicsItem* item);
-    void disappearCompleted(QGraphicsItem* item);
-
-    int frameAppearFrames();
-    void frameAppear(qreal frame, QGraphicsItem* item, const QRegion& drawable);
-    void frameAppearCompleted(QGraphicsItem* item, const QRegion& drawable);
-
-    int activateFrames();
-    void activate(qreal frame, QGraphicsItem* item);
-    void activateCompleted(QGraphicsItem* item);
-
-    void renderBackground(QImage& background);
+    QPixmap elementAppear(qreal progress, const QPixmap& pixmap);
+    QPixmap elementDisappear(qreal progress, const QPixmap& pixmap);
 };
 
 K_EXPORT_PLASMA_ANIMATOR(default, DefaultAnimator)
