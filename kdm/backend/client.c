@@ -957,13 +957,16 @@ static const char *envvars[] = {
 
 
 #if defined(USE_PAM) && defined(HAVE_INITGROUPS)
-int num_saved_gids;
-gid_t saved_gids[NGROUPS];
+static int num_saved_gids;
+static gid_t *saved_gids;
 
 static int
 saveGids( void )
 {
-	if ((num_saved_gids = getgroups( as(saved_gids), saved_gids )) < 0) {
+	num_saved_gids = getgroups( 0, 0 );
+	if (!(saved_gids = Malloc( sizeof(gid_t) * num_saved_gids )))
+		return 0;
+	if (getgroups( num_saved_gids, saved_gids ) < 0) {
 		LogError( "saving groups failed: %m\n" );
 		return 0;
 	}
