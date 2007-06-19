@@ -47,9 +47,7 @@
 
 Clock::Clock(QObject *parent, const QStringList &args)
     : Plasma::Applet(parent, args),
-      m_dialog(0),
-      m_showTimeStringCheckBox(0),
-      m_spinSize(0)
+      m_dialog(0)
 {
     setFlags(QGraphicsItem::ItemIsMovable);
 
@@ -97,54 +95,30 @@ void Clock::configureDialog() //TODO: Make the size settable
         m_dialog = new KDialog;
         m_dialog->setCaption( "Configure Clock" );
 
-        //TODO: use a Designer layout!
+        ui.setupUi(m_dialog->mainWidget());
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
 
-        QWidget* configWidget = new QWidget(m_dialog);
-
-        m_timeZones = new KTimeZoneWidget(configWidget);
-        m_swapTzs = new QCheckBox("TZ Mania!", configWidget);
-
-        m_showSecondHandCheckBox = new QCheckBox("Display seconds", configWidget);
-        m_showTimeStringCheckBox = new QCheckBox("Also display the time in text", configWidget);
-        m_spinSize = new QSpinBox;
-        QLabel *labelSize = new QLabel("Size of the clock");
-
-        QHBoxLayout *sizeLay = new QHBoxLayout;
-        sizeLay->addWidget(m_spinSize);
-        sizeLay->addWidget(labelSize);
-        QVBoxLayout *lay = new QVBoxLayout(configWidget);
-        lay->addWidget(m_timeZones);
-        lay->addWidget(m_swapTzs);
-        lay->addWidget(m_showSecondHandCheckBox);
-        lay->addWidget(m_showTimeStringCheckBox);
-        lay->addLayout(sizeLay);
-
-        m_dialog->setMainWidget(configWidget);
+	ui.timeZones->setSelected(m_timezone, true);
+	ui.spinSize->setValue((int)m_bounds.width());
+	ui.showTimeStringCheckBox->setChecked(m_showTimeString);
+	ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
     }
-
-    m_timeZones->setSelected(m_timezone, true);
-    m_spinSize->setRange(0, 500);
-    m_spinSize->setValue((int)m_bounds.width());
-    m_showTimeStringCheckBox->setChecked(m_showTimeString);
-    m_showSecondHandCheckBox->setChecked(m_showSecondHand);
-
     m_dialog->show();
 }
 
 void Clock::configAccepted()
 {
     KConfigGroup cg = appletConfig();
-    m_showTimeString = m_showTimeStringCheckBox->checkState() == Qt::Checked;
-    m_showSecondHand = m_showSecondHandCheckBox->checkState() == Qt::Checked;
+    m_showTimeString = ui.showTimeStringCheckBox->checkState() == Qt::Checked;
+    m_showSecondHand = ui.showSecondHandCheckBox->checkState() == Qt::Checked;
     cg.writeEntry("showTimeString", m_showTimeString);
     cg.writeEntry("showSecondHand", m_showSecondHand);
     QGraphicsItem::update();
-    cg.writeEntry("size", m_spinSize->value());
-    m_theme->resize(m_spinSize->value(), m_spinSize->value());
-    QStringList tzs = m_timeZones->selection();
+    cg.writeEntry("size", ui.spinSize->value());
+    m_theme->resize(ui.spinSize->value(), ui.spinSize->value());
+    QStringList tzs = ui.timeZones->selection();
     /*
     if (tzs.count() > 0) {
         //TODO: support multiple timezones
@@ -160,13 +134,8 @@ void Clock::configAccepted()
         dataEngine("time")->connectSource(m_timezone, this);
     }
     */
-        dataEngine("time")->disconnectSource(m_timezone, this);
-    if (m_swapTzs->checkState() == Qt::Checked) {
-        m_timezone = "America/Toronto";
-    } else {
-        m_timezone = i18n("Local");
-    }
-        dataEngine("time")->connectSource(m_timezone, this);
+
+    dataEngine("time")->connectSource(m_timezone, this);
     constraintsUpdated();
     cg.config()->sync();
 }
