@@ -63,6 +63,7 @@
 #include <kurifilter.h>
 #include <kcompletionbox.h>
 #include <kworkspace.h>
+#include <KStartupInfo>
 
 #include "minicli.moc"
 #include "ui_minicli.h"
