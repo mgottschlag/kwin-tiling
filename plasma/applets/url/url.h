@@ -57,7 +57,6 @@ class Url : public Plasma::Applet
     private:
         Plasma::Icon* m_icon;
         KPropertiesDialog *m_dialog;
-        KUrl m_url;
         QString m_mimetype;
 };
 

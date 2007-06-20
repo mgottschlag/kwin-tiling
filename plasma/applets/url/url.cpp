@@ -48,16 +48,20 @@ Url::Url(QObject *parent, const QStringList &args)
 
     KConfigGroup cg = appletConfig();
     size = cg.readEntry("IconSize", size);
-    m_url = cg.readEntry("Url");
 
     m_icon->setSize(size, size);
-    setUrl(m_url);
+    if (args.count() > 2) {
+        setUrl(args.at(2));
+    } else {
+        setUrl(cg.readEntry("Url"));
+    }
 }
 
 Url::~Url()
 {
     KConfigGroup cg = appletConfig();
     cg.writeEntry("IconSize", m_icon->iconSize());
+    cg.writeEntry("Url", m_icon->url());
 }
 
 /*
@@ -80,23 +84,24 @@ void Url::constraintsUpdated()
 
 void Url::setUrl(const KUrl& url)
 {
-    m_url = url;
-    KMimeType::Ptr mime = KMimeType::findByUrl(m_url);
+    m_icon->setUrl(url);
+    KMimeType::Ptr mime = KMimeType::findByUrl(url);
     m_mimetype = mime->name();
     m_icon->setIcon(KMimeType::iconNameForUrl(url));
 }
 
 void Url::openUrl()
 {
-    if (m_url.isValid()) {
-        KRun::runUrl(m_url, m_mimetype, 0);
+    KUrl url = m_icon->url();
+    if (url.isValid()) {
+        KRun::runUrl(url, m_mimetype, 0);
     }
 }
 
 void Url::propertiesDialog()
 {
     if (m_dialog == 0) {
-        m_dialog = new KPropertiesDialog(m_url);
+        m_dialog = new KPropertiesDialog(m_icon->url());
         connect(m_dialog, SIGNAL(applied()), this, SLOT(acceptedPropertiesDialog()));
     }
 
