@@ -44,6 +44,34 @@ TimeEngine::~TimeEngine()
 {
 }
 
+bool TimeEngine::reportSeconds()
+{
+    return m_seconds;
+}
+
+void TimeEngine::setReportSeconds(bool seconds)
+{
+    //kDebug() << "only report seconds? " << seconds << endl;
+    if (m_seconds == seconds) {
+        return;
+    }
+
+    m_seconds = seconds;
+    if (seconds) {
+        m_timer->setInterval(500);
+        disconnect(m_timer, SIGNAL(timeout()), this, SLOT(setTimerTo60()));
+    } else {
+        connect(m_timer, SIGNAL(timeout()), this, SLOT(setTimerTo60()));
+        m_timer->setInterval(((60 - QTime::currentTime().second()) * 1000) + 500);
+    }
+}
+
+void TimeEngine::setTimerTo60()
+{
+    disconnect(m_timer, SIGNAL(timeout()), this, SLOT(setTimerTo60()));
+    m_timer->setInterval(60000);
+}
+
 bool TimeEngine::sourceRequested(const QString &name)
 {
     if (name == i18n("Local")) {
@@ -76,11 +104,22 @@ bool TimeEngine::sourceRequested(const QString &name)
 
 void TimeEngine::updateTime()
 {
+    kDebug() << "TimeEngine::updateTime()" << endl;
+
     QDateTime dt = QDateTime::currentDateTime();
     const KTimeZone *local = KSystemTimeZones::local();
     DataEngine::SourceDict sources = sourceDict();
     DataEngine::SourceDict::iterator it = sources.begin();
     QString localName = i18n("Local");
+
+    if (!m_seconds) {
+        int seconds = dt.time().second();
+        if (seconds > 2) {
+            // we've drifted more than 2s off the minute, let's reset this
+            connect(m_timer, SIGNAL(timeout()), this, SLOT(setTimerTo60()));
+            m_timer->setInterval(((60 - seconds) * 1000) + 500);
+        }
+    }
 
     while (it != sources.end()) {
         QString tz = it.key();

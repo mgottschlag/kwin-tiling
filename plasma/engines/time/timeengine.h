@@ -29,19 +29,25 @@ class QTimer;
 class TimeEngine : public Plasma::DataEngine
 {
     Q_OBJECT
+    Q_PROPERTY(bool reportSeconds READ reportSeconds WRITE setReportSeconds)
 
     public:
         TimeEngine( QObject* parent, const QStringList& args );
         ~TimeEngine();
+
+        bool reportSeconds();
+        void setReportSeconds(bool seconds);
 
     protected:
         bool sourceRequested(const QString &name);
 
     protected slots:
         void updateTime();
+        void setTimerTo60();
 
     private:
         QTimer* m_timer;
+        bool m_seconds;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(time, TimeEngine)

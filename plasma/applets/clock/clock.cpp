@@ -115,6 +115,7 @@ void Clock::configAccepted()
     m_showSecondHand = ui.showSecondHandCheckBox->checkState() == Qt::Checked;
     cg.writeEntry("showTimeString", m_showTimeString);
     cg.writeEntry("showSecondHand", m_showSecondHand);
+    dataEngine("time")->setProperty("reportSeconds", m_showSecondHand);
     QGraphicsItem::update();
     cg.writeEntry("size", ui.spinSize->value());
     m_theme->resize(ui.spinSize->value(), ui.spinSize->value());
