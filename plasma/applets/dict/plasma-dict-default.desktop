@@ -1,0 +1,30 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Dictionary
+Name[csb]=Analogòwi zédżer
+Name[de]=Analoge Uhr
+Name[el]=Αναλογικό ρολόι
+Name[es]=Reloj analógico
+Name[fa]=ساعت قیاسی
+Name[nds]=Analoog Klock
+Name[nl]=Analoge klok
+Name[zh_TW]=類比時鐘
+Comment=An SVG themable clock
+Comment[de]=Eine Uhr mit SVG-fähigem Design
+Comment[el]=Ένα ρολόι με θέματα SVG
+Comment[nds]=En Klock mit SVG-Mustern
+Comment[nl]=Een klok met SVG-themamogelijkheden
+Comment[zh_TW]=SVG 可調整外觀時鐘
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_dict
+X-KDE-PluginInfo-Author=The Plasma Team
+X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Name=dict
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
