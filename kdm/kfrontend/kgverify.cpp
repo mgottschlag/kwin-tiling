@@ -865,8 +865,8 @@ KGVerify::MsgBox( QMessageBox::Icon typ, const QString &msg )
 QVariant // public static
 KGVerify::getConf( void *, const char *key, const QVariant &dflt )
 {
-	if (!qstrcmp( key, "EchoMode" ))
-		return QVariant( _echoMode );
+	if (!qstrcmp( key, "EchoPasswd" ))
+		return QVariant( _echoPasswd );
 	else {
 		QString fkey = QString::fromLatin1( key ) + '=';
 		foreach (QString pgo, _pluginOptions)

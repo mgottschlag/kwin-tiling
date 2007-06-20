@@ -49,9 +49,9 @@ public:
 	{
 		setPasswordMode(true);
 	}
-	KDMPasswordEdit( int em , QWidget *parent ) : KLineEdit( parent )
+	KDMPasswordEdit( bool em , QWidget *parent ) : KLineEdit( parent )
 	{
-		setEchoMode( (EchoMode)em );
+		setEchoMode( em ? Password : NoEcho );
 	}
 protected:
 	virtual void contextMenuEvent( QContextMenuEvent * ) {}
@@ -151,7 +151,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 		if (echoMode == -1)
 			passwdEdit = new KDMPasswordEdit( parent );
 		else
-			passwdEdit = new KDMPasswordEdit( echoMode,
+			passwdEdit = new KDMPasswordEdit( (bool)echoMode,
 			                                  parent );
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
 		         SLOT(slotActivity()) );
@@ -547,11 +547,7 @@ static bool init( const QString &,
                   QVariant (*getConf)( void *, const char *, const QVariant & ),
                   void *ctx )
 {
-#ifdef __GNUC__
-	#warning  in KDE3 echoMode was of type KPasswordEdit::EchoModes ,  now it is the type QLineEdit::EchoMode , a conversion need to be made
-#endif
-
-	echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
+	echoMode = getConf( ctx, "EchoPasswd", QVariant( -1 ) ).toInt();
 
 	domains = getConf( ctx, "winbind.Domains", QVariant( "" ) ).toString().split( ':', QString::SkipEmptyParts );
 	if (!domains.size()) {

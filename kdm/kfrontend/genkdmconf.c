@@ -1779,6 +1779,13 @@ upd_forgingseed( Entry *ce, Section *cs ATTR_UNUSED )
 }
 
 static void
+upd_echopasswd( Entry *ce, Section *cs ATTR_UNUSED )
+{
+	if (ce->active)
+		ce->value = (char *)(!strcmp( ce->value, "NoEcho" ) ? "false" : "true");
+}
+
+static void
 upd_fifodir( Entry *ce, Section *cs ATTR_UNUSED )
 {
 	const char *dir;

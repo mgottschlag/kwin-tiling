@@ -2,6 +2,10 @@ This change log contains only changes relevant to the KDM configuration,
 startup and packaging. Bug fixes are not listed, and feature changes only
 if they affect the configuration.
 
+2007-06-20  Oswald Buddenhagen <ossi@kde.org>
+
+	* Replaced dysfunct EchoMode with working EchoPasswd.
+
 2006-10-12  Oswald Buddenhagen <ossi@kde.org>
 
 	* Removed control FiFos. Use the control sockets or kdmctl instead.

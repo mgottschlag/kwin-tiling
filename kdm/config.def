@@ -2343,18 +2343,16 @@ Comment:
 Description:
  See <option>PreselectUser</option>.
 
-Key: EchoMode
-Type: enum
- OneStar: <literal>*</literal> is shown for every typed letter
- ThreeStars: <literal>***</literal> is shown for every typed letter
- NoEcho: nothing is shown at all, the cursor does not move
-# HACK! This must be in sync with KPasswordEdit::EchoModes (kpassdlg.h)
-Default: OneStar
+Key: EchoPasswd
+Type: bool
+Default: true
 User: greeter
-Instance: #*/NoEcho
+Instance: #*/!
+Update: upd_echopasswd
 Comment: &
 Description:
- The password input fields cloak the typed in text. Specify, how to do it:
+ If this is true, the entered password is echoed as bullets. Otherwise,
+ no feedback is given at all.
 
 Key: UseBackground
 Type: bool
