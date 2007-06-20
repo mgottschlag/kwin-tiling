@@ -11,6 +11,8 @@ X-KDE-Library=ksplashthemes
 X-KDE-FactoryName=ksplashthemes
 X-KDE-ParentApp=kcontrol
 
+X-KDE-System-Settings-Parent-Category=look-and-feel
+
 Name=Splash Screen
 Name[af]=Spat Skerm
 Name[ar]=شاشة بادئة
