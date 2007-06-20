@@ -59,7 +59,7 @@ static XdmAuthRec auth[] = {
 #define NumAuth as(auth)
 
 ARRAY8Ptr
-ChooseAuthentication( ARRAYofARRAY8Ptr authenticationNames )
+chooseAuthentication( ARRAYofARRAY8Ptr authenticationNames )
 {
 	int i, j;
 
@@ -72,21 +72,20 @@ ChooseAuthentication( ARRAYofARRAY8Ptr authenticationNames )
 }
 
 int
-CheckAuthentication(
-                    struct protoDisplay *pdpy ATTR_UNUSED,
-                    ARRAY8Ptr displayID ATTR_UNUSED,
-                    ARRAY8Ptr name ATTR_UNUSED,
-                    ARRAY8Ptr data ATTR_UNUSED )
+checkAuthentication( struct protoDisplay *pdpy ATTR_UNUSED,
+                     ARRAY8Ptr displayID ATTR_UNUSED,
+                     ARRAY8Ptr name ATTR_UNUSED,
+                     ARRAY8Ptr data ATTR_UNUSED )
 {
 #ifdef HASXDMAUTH
 	if (name->length && !memcmp( (char *)name->data, "XDM-AUTHENTICATION-1", 20 ))
-		return XdmCheckAuthentication( pdpy, displayID, name, data );
+		return xdmcheckAuthentication( pdpy, displayID, name, data );
 #endif
 	return TRUE;
 }
 
 int
-SelectAuthorizationTypeIndex( ARRAY8Ptr authenticationName,
+selectAuthorizationTypeIndex( ARRAY8Ptr authenticationName,
                               ARRAYofARRAY8Ptr authorizationNames )
 {
 	int i, j;
@@ -101,7 +100,7 @@ SelectAuthorizationTypeIndex( ARRAY8Ptr authenticationName,
 			                      &auth[j].authorization ))
 				return i;
 	for (i = 0; i < (int)authorizationNames->length; i++)
-		if (ValidAuthorization( authorizationNames->data[i].length,
+		if (validAuthorization( authorizationNames->data[i].length,
 		                        (char *)authorizationNames->data[i].data ))
 			return i;
 	return -1;
@@ -116,7 +115,7 @@ SelectAuthorizationTypeIndex( ARRAY8Ptr authenticationName,
  * Wed Mar 10 1999 -- Steffen Hansen
  */
 static void
-Willing_msg( char *mbuf )
+willingMsg( char *mbuf )
 {
 #ifdef __linux__
 	int fd;
@@ -183,9 +182,9 @@ Willing_msg( char *mbuf )
 
 /*ARGSUSED*/
 int
-Willing( ARRAY8Ptr addr, CARD16 connectionType,
-         ARRAY8Ptr authenticationName ATTR_UNUSED,
-         ARRAY8Ptr status, xdmOpCode type )
+isWilling( ARRAY8Ptr addr, CARD16 connectionType,
+           ARRAY8Ptr authenticationName ATTR_UNUSED,
+           ARRAY8Ptr status, xdmOpCode type )
 {
 	int ret;
 	char statusBuf[256];
@@ -193,9 +192,9 @@ Willing( ARRAY8Ptr addr, CARD16 connectionType,
 
 	if (autoRescan && lastscan + 15 < now) {
 		lastscan = now;
-		ScanAccessDatabase( FALSE );
+		scanAccessDatabase( FALSE );
 	}
-	ret = AcceptableDisplayAddress( addr, connectionType, type );
+	ret = acceptableDisplayAddress( addr, connectionType, type );
 	if (!ret)
 		sprintf( statusBuf, "Display not authorized to connect" );
 	else {
@@ -220,7 +219,7 @@ Willing( ARRAY8Ptr addr, CARD16 connectionType,
 				         sizeof(statusBuf) - 21, willing );
 		} else
 #ifdef WILLING_INTERNAL
-			Willing_msg( statusBuf );
+			willingMsg( statusBuf );
 #else
 			strcpy( statusBuf, "Willing to manage" );
 #endif
@@ -236,15 +235,15 @@ Willing( ARRAY8Ptr addr, CARD16 connectionType,
 
 /*ARGSUSED*/
 ARRAY8Ptr
-Accept( struct sockaddr *from ATTR_UNUSED, int fromlen ATTR_UNUSED,
-        CARD16 displayNumber ATTR_UNUSED )
+isAccepting( struct sockaddr *from ATTR_UNUSED, int fromlen ATTR_UNUSED,
+             CARD16 displayNumber ATTR_UNUSED )
 {
 	return 0;
 }
 
 /*ARGSUSED*/
 int
-SelectConnectionTypeIndex( ARRAY16Ptr  connectionTypes,
+selectConnectionTypeIndex( ARRAY16Ptr  connectionTypes,
                            ARRAYofARRAY8Ptr connectionAddresses ATTR_UNUSED )
 {
 	int i;

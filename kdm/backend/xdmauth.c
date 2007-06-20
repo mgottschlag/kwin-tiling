@@ -38,16 +38,16 @@ from the copyright holder.
 #include "dm_auth.h"
 #include "dm_error.h"
 
-static char auth_name[256];
-static int auth_name_len;
+static char authName[256];
+static int authNameLen;
 
 void
-XdmInitAuth( unsigned short name_len, const char *name )
+xdmInitAuth( unsigned short name_len, const char *name )
 {
 	if (name_len > 256)
 		name_len = 256;
-	auth_name_len = name_len;
-	memmove( auth_name, name, name_len );
+	authNameLen = name_len;
+	memmove( authName, name, name_len );
 }
 
 /*
@@ -60,7 +60,7 @@ XdmInitAuth( unsigned short name_len, const char *name )
  */
 
 static Xauth *
-XdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
+xdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
 {
 	Xauth *new;
 
@@ -89,7 +89,7 @@ XdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
 	}
 	memmove( (char *)new->name, name, namelen );
 	new->name_length = namelen;
-	if (!GenerateAuthData( (char *)new->data, new->data_length )) {
+	if (!generateAuthData( (char *)new->data, new->data_length )) {
 		free( (char *)new->name );
 		free( (char *)new->data );
 		free( (char *)new );
@@ -100,20 +100,20 @@ XdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
 	 * is a DES key and only uses 56 bits
 	 */
 	((char *)new->data)[new->data_length - 8] = '\0';
-	Debug( "local server auth %02[*hhx\n", new->data_length, new->data );
+	debug( "local server auth %02[*hhx\n", new->data_length, new->data );
 	return new;
 }
 
 Xauth *
-XdmGetAuth( unsigned short namelen, const char *name )
+xdmGetAuth( unsigned short namelen, const char *name )
 {
-	return XdmGetAuthHelper( namelen, name, TRUE );
+	return xdmGetAuthHelper( namelen, name, TRUE );
 }
 
 #ifdef XDMCP
 
 void
-XdmGetXdmcpAuth( struct protoDisplay *pdpy,
+xdmGetXdmcpAuth( struct protoDisplay *pdpy,
                  unsigned short authorizationNameLen,
                  const char *authorizationName )
 {
@@ -121,7 +121,7 @@ XdmGetXdmcpAuth( struct protoDisplay *pdpy,
 
 	if (pdpy->fileAuthorization && pdpy->xdmcpAuthorization)
 		return;
-	xdmcpauth = XdmGetAuthHelper( authorizationNameLen, authorizationName,
+	xdmcpauth = xdmGetAuthHelper( authorizationNameLen, authorizationName,
 	                              FALSE );
 	if (!xdmcpauth)
 		return;
@@ -152,7 +152,7 @@ XdmGetXdmcpAuth( struct protoDisplay *pdpy,
 	memmove( fileauth->name, xdmcpauth->name, xdmcpauth->name_length );
 	memmove( fileauth->data, pdpy->authenticationData.data, 8 );
 	memmove( fileauth->data + 8, xdmcpauth->data, 8 );
-	Debug( "accept packet auth %02[*hhx\nauth file auth %02[*hhx\n",
+	debug( "accept packet auth %02[*hhx\nauth file auth %02[*hhx\n",
 	       xdmcpauth->data_length, xdmcpauth->data,
 	       fileauth->data_length, fileauth->data );
 	/* encrypt the session key for its trip back to the server */
@@ -167,7 +167,7 @@ XdmGetXdmcpAuth( struct protoDisplay *pdpy,
 				 'A' <= c && c <= 'F' ? c - 'A' + 10 : -1)
 
 static int
-HexToBinary( char *key )
+hexToBinary( char *key )
 {
 	char *out, *in;
 	int top, bottom;
@@ -196,13 +196,13 @@ HexToBinary( char *key )
  */
 
 static int
-XdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
+xdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
 {
 	FILE *keys;
 	char line[1024], id[1024], key[1024];
 	int keylen;
 
-	Debug( "lookup key for %.*s\n", displayID->length, displayID->data );
+	debug( "lookup key for %.*s\n", displayID->length, displayID->data );
 	keys = fopen( keyFile, "r" );
 	if (!keys)
 		return FALSE;
@@ -210,12 +210,12 @@ XdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
 		if (line[0] == '#' || sscanf( line, "%s %s", id, key ) != 2)
 			continue;
 		bzero( line, sizeof(line) );
-		Debug( "key entry for %\"s %d bytes\n", id, strlen( key ) );
+		debug( "key entry for %\"s %d bytes\n", id, strlen( key ) );
 		if (strlen( id ) == displayID->length &&
 		    !strncmp( id, (char *)displayID->data, displayID->length ))
 		{
 			if (!strncmp( key, "0x", 2 ) || !strncmp( key, "0X", 2 ))
-				if (!HexToBinary( key ))
+				if (!hexToBinary( key ))
 					break;
 			keylen = strlen( key );
 			while (keylen < 7)
@@ -235,20 +235,20 @@ XdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
 
 /*ARGSUSED*/
 int
-XdmCheckAuthentication( struct protoDisplay *pdpy,
+xdmcheckAuthentication( struct protoDisplay *pdpy,
                         ARRAY8Ptr displayID,
                         ARRAY8Ptr authenticationName ATTR_UNUSED,
                         ARRAY8Ptr authenticationData )
 {
 	XdmAuthKeyPtr incoming;
 
-	if (!XdmGetKey( pdpy, displayID ))
+	if (!xdmGetKey( pdpy, displayID ))
 		return FALSE;
 	if (authenticationData->length != 8)
 		return FALSE;
 	XdmcpUnwrap( authenticationData->data, (unsigned char *)&pdpy->key,
 	             authenticationData->data, 8 );
-	Debug( "request packet auth %02[*hhx\n",
+	debug( "request packet auth %02[*hhx\n",
 	       authenticationData->length, authenticationData->data );
 	if (!XdmcpCopyARRAY8( authenticationData, &pdpy->authenticationData ))
 		return FALSE;

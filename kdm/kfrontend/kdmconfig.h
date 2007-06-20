@@ -40,11 +40,11 @@ extern bool _authorized;
 
 CONF_GREET_CPP_DECLS
 
-void init_config_qapp();
+void initQAppConfig();
 
 extern "C"
 #endif
-void init_config( void );
+void initConfig( void );
 
 CONF_GREET_C_DECLS
 

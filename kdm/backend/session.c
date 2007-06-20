@@ -48,9 +48,9 @@ from the copyright holder.
 struct display *td;
 const char *td_setup = "auto";
 
-static void DeleteXloginResources( void );
-static void LoadXloginResources( void );
-static void SetupDisplay( const char *arg );
+static void deleteXloginResources( void );
+static void loadXloginResources( void );
+static void setupDisplay( const char *arg );
 
 
 static Jmp_buf pingTime;
@@ -72,7 +72,7 @@ waitAbort( int n ATTR_UNUSED )
 }
 
 static void
-AbortClient( int pid )
+abortClient( int pid )
 {
 	int sig = SIGTERM;
 	volatile int i;
@@ -82,7 +82,7 @@ AbortClient( int pid )
 		if (kill( -pid, sig ) == -1) {
 			switch (errno) {
 			case EPERM:
-				LogError( "Can't kill client\n" );
+				logError( "Can't kill client\n" );
 			case EINVAL:
 			case ESRCH:
 				return;
@@ -91,7 +91,7 @@ AbortClient( int pid )
 		if (!Setjmp( tenaciousClient )) {
 			(void)Signal( SIGALRM, waitAbort );
 			(void)alarm( (unsigned)10 );
-			retId = wait( (waitType *)0 );
+			retId = wait( 0 );
 			(void)alarm( (unsigned)0 );
 			(void)Signal( SIGALRM, SIG_DFL );
 			if (retId == pid)
@@ -113,23 +113,23 @@ conv_auto( int what, const char *prompt ATTR_UNUSED )
 	case GCONV_PASS_ND:
 		return curpass;
 	default:
-		LogError( "Unknown authentication data type requested for autologin.\n" );
+		logError( "Unknown authentication data type requested for autologin.\n" );
 		return 0;
 	}
 }
 
 static void
-DoAutoLogon( void )
+doAutoLogon( void )
 {
-	StrDup( &curuser, td->autoUser );
-	StrDup( &curpass, td->autoPass );
+	strDup( &curuser, td->autoUser );
+	strDup( &curpass, td->autoPass );
 	cursource = PWSRC_AUTOLOGIN;
 }
 
 static int
-AutoLogon( Time_t tdiff )
+autoLogon( time_t tdiff )
 {
-	Debug( "autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, nuser = %s\n",
+	debug( "autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, nuser = %s\n",
 	       tdiff, td->hstent->rLogin, td->hstent->goodExit, td->hstent->nuser );
 	if (td->hstent->rLogin == 2 ||
 	    (td->hstent->rLogin == 1 &&
@@ -152,7 +152,7 @@ AutoLogon( Time_t tdiff )
 		               &lmask );
 		if (lmask & ShiftMask)
 			return 0;
-		DoAutoLogon();
+		doAutoLogon();
 	} else {
 		cursource = PWSRC_MANUAL;
 		return 0;
@@ -178,43 +178,43 @@ conv_interact( int what, const char *prompt )
 	char *ret;
 	int tag;
 
-	GSendInt( grqs[what].vcode );
+	gSendInt( grqs[what].vcode );
 	if (what == GCONV_BINARY) {
 		unsigned const char *up = (unsigned const char *)prompt;
 		int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
-		GSendArr( len, prompt );
-		GSendInt( FALSE ); /* ndelay */
-		return GRecvArr( &len );
+		gSendArr( len, prompt );
+		gSendInt( FALSE ); /* ndelay */
+		return gRecvArr( &len );
 	} else {
-		GSendStr( prompt );
-		GSendInt( grqs[what].echo );
-		GSendInt( grqs[what].ndelay );
-		ret = GRecvStr();
+		gSendStr( prompt );
+		gSendInt( grqs[what].echo );
+		gSendInt( grqs[what].ndelay );
+		ret = gRecvStr();
 		if (ret) {
-			tag = GRecvInt();
+			tag = gRecvInt();
 			switch (what) {
 			case GCONV_USER:
-				/* assert(tag & V_IS_USER); */
+				/* assert( tag & V_IS_USER );*/
 				if (curuser)
 					free( curuser );
 				curuser = ret;
 				break;
 			case GCONV_PASS:
 			case GCONV_PASS_ND:
-				/* assert(tag & V_IS_PASSWORD); */
+				/* assert( tag & V_IS_PASSWORD );*/
 				if (curpass)
 					free( curpass );
 				curpass = ret;
 				break;
 			default:
 				if (tag & V_IS_USER)
-					ReStr( &curuser, ret );
+					reStr( &curuser, ret );
 				else if (tag & V_IS_PASSWORD)
-					ReStr( &curpass, ret );
+					reStr( &curpass, ret );
 				else if (tag & V_IS_NEWPASSWORD)
-					ReStr( &newpass, ret );
+					reStr( &newpass, ret );
 				else if (tag & V_IS_OLDPASSWORD)
-					ReStr( &ret, curpass );
+					reStr( &ret, curpass );
 			}
 		}
 		return ret;
@@ -227,7 +227,7 @@ GTalk grttalk;
 GTalk mstrtalk; /* make static; see dm.c */
 
 int
-CtrlGreeterWait( int wreply )
+ctrlGreeterWait( int wreply )
 {
 	int i, cmd, type, rootok;
 	char *name, *pass, **avptr;
@@ -236,20 +236,20 @@ CtrlGreeterWait( int wreply )
 #endif
 
 	if (Setjmp( mstrtalk.errjmp )) {
-		CloseGreeter( TRUE );
-		SessionExit( EX_UNMANAGE_DPY );
+		closeGreeter( TRUE );
+		sessionExit( EX_UNMANAGE_DPY );
 	}
 
-	while (GRecvCmd( &cmd )) {
+	while (gRecvCmd( &cmd )) {
 		switch (cmd)
 		{
 		case G_Ready:
-			Debug( "G_Ready\n" );
+			debug( "G_Ready\n" );
 			return 0;
 		case G_GetCfg:
-			/*Debug ("G_GetCfg\n");*/
-			type = GRecvInt();
-			/*Debug (" index %#x\n", type);*/
+			/*debug( "G_GetCfg\n" );*/
+			type = gRecvInt();
+			/*debug( " index %#x\n", type );*/
 			if (type == C_isLocal)
 				i = (td->displayType & d_location) == dLocal;
 			else if (type == C_hasConsole)
@@ -262,20 +262,20 @@ CtrlGreeterWait( int wreply )
 				i = td->authorizations != 0;
 			else
 				goto normal;
-			GSendInt( GE_Ok );
-			/*Debug (" -> bool %d\n", i);*/
-			GSendInt( i );
+			gSendInt( GE_Ok );
+			/*debug( " -> bool %d\n", i );*/
+			gSendInt( i );
 			break;
 		  normal:
-			if (!(avptr = FindCfgEnt( td, type ))) {
-				/*Debug (" -> not found\n");*/
-				GSendInt( GE_NoEnt );
+			if (!(avptr = findCfgEnt( td, type ))) {
+				/*debug( " -> not found\n" );*/
+				gSendInt( GE_NoEnt );
 				break;
 			}
 			switch (type & C_TYPE_MASK) {
 			default:
-				/*Debug (" -> unknown type\n");*/
-				GSendInt( GE_BadType );
+				/*debug( " -> unknown type\n" );*/
+				gSendInt( GE_BadType );
 				break;
 			case C_TYPE_INT:
 			case C_TYPE_STR:
@@ -283,26 +283,26 @@ CtrlGreeterWait( int wreply )
 #ifdef XDMCP
 			case C_TYPE_ARR:
 #endif
-				GSendInt( GE_Ok );
+				gSendInt( GE_Ok );
 				switch (type & C_TYPE_MASK) {
 				case C_TYPE_INT:
-					/*Debug (" -> int %#x (%d)\n", *(int *)avptr, *(int *)avptr);*/
-					GSendInt( *(long *)avptr );
+					/*debug( " -> int %#x (%d)\n", *(int *)avptr, *(int *)avptr );*/
+					gSendInt( *(long *)avptr );
 					break;
 				case C_TYPE_STR:
-					/*Debug (" -> string %\"s\n", *avptr);*/
-					GSendStr( *avptr );
+					/*debug( " -> string %\"s\n", *avptr );*/
+					gSendStr( *avptr );
 					break;
 				case C_TYPE_ARGV:
-					/*Debug (" -> sending argv %\"[{s\n", *(char ***)avptr);*/
-					GSendArgv( *(char ***)avptr );
+					/*debug( " -> sending argv %\"[{s\n", *(char ***)avptr );*/
+					gSendArgv( *(char ***)avptr );
 					break;
 #ifdef XDMCP
 				case C_TYPE_ARR:
 					aptr = *(ARRAY8Ptr *)avptr;
-					/*Debug (" -> sending array %02[*:hhx\n",
-					         aptr->length, aptr->data);*/
-					GSendArr( aptr->length, (char *)aptr->data );
+					/*debug( " -> sending array %02[*:hhx\n",
+					         aptr->length, aptr->data );*/
+					gSendArr( aptr->length, (char *)aptr->data );
 					break;
 #endif
 				}
@@ -310,85 +310,85 @@ CtrlGreeterWait( int wreply )
 			}
 			break;
 		case G_ReadDmrc:
-			Debug( "G_ReadDmrc\n" );
-			name = GRecvStr();
-			Debug( " user %\"s\n", name );
-			if (StrCmp( dmrcuser, name )) {
+			debug( "G_ReadDmrc\n" );
+			name = gRecvStr();
+			debug( " user %\"s\n", name );
+			if (strCmp( dmrcuser, name )) {
 				if (curdmrc) { free( curdmrc ); curdmrc = 0; }
 				if (dmrcuser)
 					free( dmrcuser );
 				dmrcuser = name;
-				i = ReadDmrc();
-				Debug( " -> status %d\n", i );
-				GSendInt( i );
-				Debug( " => %\"s\n", curdmrc );
+				i = readDmrc();
+				debug( " -> status %d\n", i );
+				gSendInt( i );
+				debug( " => %\"s\n", curdmrc );
 			} else {
 				if (name)
 					free( name );
-				Debug( " -> status " stringify( GE_Ok ) "\n" );
-				GSendInt( GE_Ok );
-				Debug( " => keeping old\n" );
+				debug( " -> status " stringify( GE_Ok ) "\n" );
+				gSendInt( GE_Ok );
+				debug( " => keeping old\n" );
 			}
 			break;
 		case G_GetDmrc:
-			Debug( "G_GetDmrc\n" );
-			name = GRecvStr();
-			Debug( " key %\"s\n", name );
+			debug( "G_GetDmrc\n" );
+			name = gRecvStr();
+			debug( " key %\"s\n", name );
 			pass = iniEntry( curdmrc, "Desktop", name, 0 );
-			Debug( " -> %\"s\n", pass );
-			GSendStr( pass );
+			debug( " -> %\"s\n", pass );
+			gSendStr( pass );
 			if (pass)
 				free( pass );
 			free( name );
 			break;
 /*		case G_ResetDmrc:
-			Debug ("G_ResetDmrc\n");
-			if (newdmrc) { free (newdmrc); newdmrc = 0; }
+			debug( "G_ResetDmrc\n" );
+			if (newdmrc) { free( newdmrc ); newdmrc = 0; }
 			break; */
 		case G_PutDmrc:
-			Debug( "G_PutDmrc\n" );
-			name = GRecvStr();
-			Debug( " key %\"s\n", name );
-			pass = GRecvStr();
-			Debug( " value %\"s\n", pass );
+			debug( "G_PutDmrc\n" );
+			name = gRecvStr();
+			debug( " key %\"s\n", name );
+			pass = gRecvStr();
+			debug( " value %\"s\n", pass );
 			newdmrc = iniEntry( newdmrc, "Desktop", name, pass );
 			free( pass );
 			free( name );
 			break;
 		case G_VerifyRootOK:
-			Debug( "G_VerifyRootOK\n" );
+			debug( "G_VerifyRootOK\n" );
 			rootok = TRUE;
 			goto doverify;
 		case G_Verify:
-			Debug( "G_Verify\n" );
+			debug( "G_Verify\n" );
 			rootok = FALSE;
 		  doverify:
 			if (curuser) { free( curuser ); curuser = 0; }
 			if (curpass) { free( curpass ); curpass = 0; }
 			if (curtype) free( curtype );
-			curtype = GRecvStr();
-			Debug( " type %\"s\n", curtype );
-			if (Verify( conv_interact, rootok )) {
-				Debug( " -> return success\n" );
-				GSendInt( V_OK );
+			curtype = gRecvStr();
+			debug( " type %\"s\n", curtype );
+			if (verify( conv_interact, rootok )) {
+				debug( " -> return success\n" );
+				gSendInt( V_OK );
 			} else
-				Debug( " -> failure returned\n" );
+				debug( " -> failure returned\n" );
 			break;
 		case G_AutoLogin:
-			Debug( "G_AutoLogin\n" );
-			DoAutoLogon();
-			StrDup( &curtype, "classic" );
-			if (Verify( conv_auto, FALSE )) {
-				Debug( " -> return success\n" );
-				GSendInt( V_OK );
+			debug( "G_AutoLogin\n" );
+			doAutoLogon();
+			strDup( &curtype, "classic" );
+			if (verify( conv_auto, FALSE )) {
+				debug( " -> return success\n" );
+				gSendInt( V_OK );
 			} else
-				Debug( " -> failure returned\n" );
+				debug( " -> failure returned\n" );
 			break;
 		case G_SetupDpy:
-			Debug( "G_SetupDpy\n" );
-			SetupDisplay( 0 );
+			debug( "G_SetupDpy\n" );
+			setupDisplay( 0 );
 			td_setup = 0;
-			GSendInt( 0 );
+			gSendInt( 0 );
 			break;
 		default:
 			return cmd;
@@ -396,25 +396,25 @@ CtrlGreeterWait( int wreply )
 		if (!wreply)
 			return -1;
 	}
-	Debug( "lost connection to greeter\n" );
+	debug( "lost connection to greeter\n" );
 	return -2;
 }
 
 void
-OpenGreeter()
+openGreeter()
 {
 	char *name, **env;
-	static Time_t lastStart;
+	static time_t lastStart;
 	int cmd;
 	Cursor xcursor;
 
-	GSet( &grttalk );
+	gSet( &grttalk );
 	if (grtproc.pid > 0)
 		return;
 	if (time( 0 ) < lastStart + 10) /* XXX should use some readiness indicator instead */
-		SessionExit( EX_UNMANAGE_DPY );
+		sessionExit( EX_UNMANAGE_DPY );
 	ASPrintf( &name, "greeter for display %s", td->name );
-	Debug( "starting %s\n", name );
+	debug( "starting %s\n", name );
 
 	/* Hourglass cursor */
 	if ((xcursor = XCreateFontCursor( dpy, XC_watch ))) {
@@ -424,46 +424,46 @@ OpenGreeter()
 	XFlush( dpy );
 
 	/* Load system default Resources (if any) */
-	LoadXloginResources();
+	loadXloginResources();
 
 	grttalk.pipe = &grtproc.pipe;
 	env = systemEnv( (char *)0 );
-	if (GOpen( &grtproc, (char **)0, "_greet", env, name, &td->gpipe ))
-		SessionExit( EX_UNMANAGE_DPY );
+	if (gOpen( &grtproc, (char **)0, "_greet", env, name, &td->gpipe ))
+		sessionExit( EX_UNMANAGE_DPY );
 	freeStrArr( env );
-	if ((cmd = CtrlGreeterWait( TRUE ))) {
+	if ((cmd = ctrlGreeterWait( TRUE ))) {
 		if (cmd != -2)
-			LogError( "Received unknown or unexpected command %d from greeter\n", cmd );
-		CloseGreeter( TRUE );
-		SessionExit( EX_UNMANAGE_DPY );
+			logError( "Received unknown or unexpected command %d from greeter\n", cmd );
+		closeGreeter( TRUE );
+		sessionExit( EX_UNMANAGE_DPY );
 	}
-	Debug( "%s ready\n", name );
+	debug( "%s ready\n", name );
 	time( &lastStart );
 }
 
 int
-CloseGreeter( int force )
+closeGreeter( int force )
 {
 	int ret;
 
 	if (grtproc.pid <= 0)
 		return EX_NORMAL;
-	ret = GClose (&grtproc, 0, force);
-	Debug( "greeter for %s stopped\n", td->name );
-	if (WaitCode( ret ) > EX_NORMAL && WaitCode( ret ) <= EX_MAX) {
-		Debug( "greeter-initiated session exit, code %d\n", WaitCode( ret ) );
-		SessionExit( WaitCode( ret ) );
+	ret = gClose (&grtproc, 0, force);
+	debug( "greeter for %s stopped\n", td->name );
+	if (wcCode( ret ) > EX_NORMAL && wcCode( ret ) <= EX_MAX) {
+		debug( "greeter-initiated session exit, code %d\n", wcCode( ret ) );
+		sessionExit( wcCode( ret ) );
 	}
 	return ret;
 }
 
 void
-PrepErrorGreet()
+prepareErrorGreet()
 {
 	if (grtproc.pid <= 0) {
-		OpenGreeter();
-		GSendInt( G_ErrorGreet );
-		GSendStr( curuser );
+		openGreeter();
+		gSendInt( G_ErrorGreet );
+		gSendStr( curuser );
 	}
 }
 
@@ -471,7 +471,7 @@ static Jmp_buf idleTOJmp;
 
 /* ARGSUSED */
 static void
-IdleTOJmp( int n ATTR_UNUSED )
+IdleTimeout( int n ATTR_UNUSED )
 {
 	Longjmp( idleTOJmp, 1 );
 }
@@ -498,7 +498,7 @@ catchTerm( int n ATTR_UNUSED )
 static int
 IOErrorHandler( Display *dspl ATTR_UNUSED )
 {
-	LogError( "Fatal X server IO error: %m\n" );
+	logError( "Fatal X server IO error: %m\n" );
 	/* The only X interaction during the session are pings, and those
 	   have an own IOErrorHandler -> not EX_AL_RESERVER_DPY */
 	Longjmp( abortSession, EX_RESERVER_DPY );
@@ -508,32 +508,32 @@ IOErrorHandler( Display *dspl ATTR_UNUSED )
 
 /*ARGSUSED*/
 static int
-ErrorHandler( Display *dspl ATTR_UNUSED, XErrorEvent *event )
+errorHandler( Display *dspl ATTR_UNUSED, XErrorEvent *event )
 {
-	LogError( "X error\n" );
+	logError( "X error\n" );
 	if (event->error_code == BadImplementation)
 		Longjmp( abortSession, EX_UNMANAGE_DPY );
 	return 0;
 }
 
 void
-ManageSession( struct display *d )
+manageSession( struct display *d )
 {
 	int ex, cmd;
 	volatile int clientPid = -1;
-	volatile Time_t tdiff;
+	volatile time_t tdiff;
 
 	td = d;
-	Debug( "ManageSession %s\n", d->name );
+	debug( "manageSession %s\n", d->name );
 	if ((ex = Setjmp( abortSession ))) {
-		CloseGreeter( TRUE );
+		closeGreeter( TRUE );
 		if (clientPid > 0)
-			AbortClient( clientPid );
-		SessionExit( ex );
+			abortClient( clientPid );
+		sessionExit( ex );
 		/* NOTREACHED */
 	}
 	(void)XSetIOErrorHandler( IOErrorHandler );
-	(void)XSetErrorHandler( ErrorHandler );
+	(void)XSetErrorHandler( errorHandler );
 	(void)Signal( SIGTERM, catchTerm );
 
 	(void)Signal( SIGHUP, SIG_IGN );
@@ -543,37 +543,37 @@ ManageSession( struct display *d )
 
 #ifdef XDMCP
 	if (d->useChooser)
-		DoChoose();
+		doChoose();
 		/* NOTREACHED */
 #endif
 
 	if (d->hstent->sdRec.how) {
-		OpenGreeter();
-		GSendInt( G_ConfShutdown );
-		GSendInt( d->hstent->sdRec.how );
-		GSendInt( d->hstent->sdRec.uid );
-		GSendStr( d->hstent->sdRec.osname );
-		if ((cmd = CtrlGreeterWait( TRUE )) != G_Ready) {
-			LogError( "Received unknown command %d from greeter\n", cmd );
-			CloseGreeter( TRUE );
+		openGreeter();
+		gSendInt( G_ConfShutdown );
+		gSendInt( d->hstent->sdRec.how );
+		gSendInt( d->hstent->sdRec.uid );
+		gSendStr( d->hstent->sdRec.osname );
+		if ((cmd = ctrlGreeterWait( TRUE )) != G_Ready) {
+			logError( "Received unknown command %d from greeter\n", cmd );
+			closeGreeter( TRUE );
 		}
 	}
 
 	tdiff = td->autoAgain ? 
 	           1 : time( 0 ) - td->hstent->lastExit - td->openDelay;
-	if (AutoLogon( tdiff )) {
-		if (!StrDup( &curtype, "classic" ) || !Verify( conv_auto, FALSE ))
+	if (autoLogon( tdiff )) {
+		if (!strDup( &curtype, "classic" ) || !verify( conv_auto, FALSE ))
 			goto gcont;
 		if (grtproc.pid > 0)
-			GSendInt( V_OK );
+			gSendInt( V_OK );
 	} else {
 	  regreet:
-		OpenGreeter();
+		openGreeter();
 		if (Setjmp( idleTOJmp )) {
-			CloseGreeter( TRUE );
-			SessionExit( EX_NORMAL );
+			closeGreeter( TRUE );
+			sessionExit( EX_NORMAL );
 		}
-		Signal( SIGALRM, IdleTOJmp );
+		Signal( SIGALRM, IdleTimeout );
 		alarm( td->idleTimeout );
 #ifdef XDMCP
 		if (((d->displayType & d_location) == dLocal) &&
@@ -581,16 +581,16 @@ ManageSession( struct display *d )
 			goto choose;
 #endif
 		for (;;) {
-			Debug( "ManageSession, greeting, tdiff = %d\n", tdiff );
-			GSendInt( *td->autoUser && td->autoDelay && tdiff > 0 ?
+			debug( "manageSession, greeting, tdiff = %d\n", tdiff );
+			gSendInt( *td->autoUser && td->autoDelay && tdiff > 0 ?
 			             G_GreetTimed : G_Greet );
 		  gcont:
-			cmd = CtrlGreeterWait( TRUE );
+			cmd = ctrlGreeterWait( TRUE );
 #ifdef XDMCP
 		  recmd:
 			if (cmd == G_DChoose) {
 			  choose:
-				cmd = DoChoose();
+				cmd = doChoose();
 				goto recmd;
 			}
 			if (cmd == G_DGreet)
@@ -600,28 +600,28 @@ ManageSession( struct display *d )
 			if (cmd == G_Ready)
 				break;
 			if (cmd == -2)
-				CloseGreeter( FALSE );
+				closeGreeter( FALSE );
 			else {
-				LogError( "Received unknown command %d from greeter\n", cmd );
-				CloseGreeter( TRUE );
+				logError( "Received unknown command %d from greeter\n", cmd );
+				closeGreeter( TRUE );
 			}
 			goto regreet;
 		}
 	}
 
-	if (CloseGreeter( FALSE ) != EX_NORMAL)
+	if (closeGreeter( FALSE ) != EX_NORMAL)
 		goto regreet;
 
-	DeleteXloginResources();
+	deleteXloginResources();
 
 	if (td_setup)
-		SetupDisplay( td_setup );
+		setupDisplay( td_setup );
 
-	if (!StartClient( &clientPid )) {
-		LogError( "Client start failed\n" );
-		SessionExit( EX_NORMAL ); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
+	if (!startClient( &clientPid )) {
+		logError( "Client start failed\n" );
+		sessionExit( EX_NORMAL ); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
 	}
-	Debug( "client Started\n" );
+	debug( "client Started\n" );
 
 	/*
 	 * Wait for session to end,
@@ -635,7 +635,7 @@ ManageSession( struct display *d )
 			break;
 		} else {
 			(void)alarm( 0 );
-			if (!PingServer( d ))
+			if (!pingServer( d ))
 				catchTerm( SIGTERM );
 		}
 	}
@@ -644,19 +644,19 @@ ManageSession( struct display *d )
 	 * a server crash is noticed - so we sleep a bit and wait
 	 * for being killed.
 	 */
-	if (!PingServer( d )) {
-		Debug( "X server dead upon session exit.\n" );
+	if (!pingServer( d )) {
+		debug( "X server dead upon session exit.\n" );
 		if ((d->displayType & d_location) == dLocal)
 			sleep( 10 );
-		SessionExit( EX_AL_RESERVER_DPY );
+		sessionExit( EX_AL_RESERVER_DPY );
 	}
-	SessionExit( EX_NORMAL ); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
+	sessionExit( EX_NORMAL ); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
 }
 
 static int xResLoaded;
 
 void
-LoadXloginResources()
+loadXloginResources()
 {
 	char **args;
 	char **env;
@@ -666,7 +666,7 @@ LoadXloginResources()
 		if ((args = parseArgs( (char **)0, td->xrdb )) &&
 		    (args = addStrArr( args, td->resources, -1 )))
 		{
-			Debug( "loading resource file: %s\n", td->resources );
+			debug( "loading resource file: %s\n", td->resources );
 			(void)runAndWait( args, env );
 			freeStrArr( args );
 		}
@@ -676,7 +676,7 @@ LoadXloginResources()
 }
 
 void
-SetupDisplay( const char *arg )
+setupDisplay( const char *arg )
 {
 	char **env;
 
@@ -686,7 +686,7 @@ SetupDisplay( const char *arg )
 }
 
 void
-DeleteXloginResources()
+deleteXloginResources()
 {
 	int i;
 	Atom prop;
@@ -710,11 +710,11 @@ source( char **env, const char *file, const char *arg )
 	int ret;
 
 	if (file && file[0]) {
-		Debug( "source %s\n", file );
+		debug( "source %s\n", file );
 		if (!(args = parseArgs( (char **)0, file )))
-			return waitCompose( 0,0,3 );
+			return wcCompose( 0,0,3 );
 		if (arg && !(args = addStrArr( args, arg, -1 )))
-			return waitCompose( 0,0,3 );
+			return wcCompose( 0,0,3 );
 		ret = runAndWait( args, env );
 		freeStrArr( args );
 		return ret;

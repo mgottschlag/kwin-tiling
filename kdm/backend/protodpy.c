@@ -41,14 +41,13 @@ from the copyright holder.
 static struct protoDisplay *protoDisplays;
 
 struct protoDisplay *
-FindProtoDisplay(
-                 XdmcpNetaddr address,
-                 int addrlen,
-                 CARD16 displayNumber )
+findProtoDisplay( XdmcpNetaddr address,
+                  int addrlen,
+                  CARD16 displayNumber )
 {
 	struct protoDisplay *pdpy;
 
-	Debug( "FindProtoDisplay\n" );
+	debug( "findProtoDisplay\n" );
 	for (pdpy = protoDisplays; pdpy; pdpy=pdpy->next) {
 		if (pdpy->displayNumber == displayNumber &&
 		    addressEqual( address, addrlen, pdpy->address, pdpy->addrlen ))
@@ -60,26 +59,26 @@ FindProtoDisplay(
 }
 
 static void
-TimeoutProtoDisplays (void)
+timeoutProtoDisplays( void )
 {
 	struct protoDisplay *pdpy, *next;
 
 	for (pdpy = protoDisplays; pdpy; pdpy = next) {
 		next = pdpy->next;
 		if (pdpy->date < (unsigned long)(now - PROTO_TIMEOUT))
-			DisposeProtoDisplay( pdpy );
+			disposeProtoDisplay( pdpy );
 	}
 }
 
 struct protoDisplay *
-NewProtoDisplay( XdmcpNetaddr address, int addrlen, CARD16 displayNumber,
+newProtoDisplay( XdmcpNetaddr address, int addrlen, CARD16 displayNumber,
                  CARD16 connectionType, ARRAY8Ptr connectionAddress,
                  CARD32 sessionID )
 {
 	struct protoDisplay *pdpy;
 
-	Debug( "NewProtoDisplay\n" );
-	TimeoutProtoDisplays ();
+	debug( "newProtoDisplay\n" );
+	timeoutProtoDisplays();
 	pdpy = (struct protoDisplay *)Malloc( sizeof(*pdpy) );
 	if (!pdpy)
 		return NULL;
@@ -107,8 +106,7 @@ NewProtoDisplay( XdmcpNetaddr address, int addrlen, CARD16 displayNumber,
 }
 
 void
-DisposeProtoDisplay( pdpy )
-	struct protoDisplay *pdpy;
+disposeProtoDisplay( struct protoDisplay *pdpy )
 {
 	struct protoDisplay *p, *prev;
 

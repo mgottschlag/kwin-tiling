@@ -66,17 +66,17 @@ KConsole::KConsole( QWidget *_parent )
 	setWordWrap( NoWrap );
 	setTextFormat( Qt::PlainText );
 
-	if (!OpenConsole())
+	if (!openConsole())
 		append( i18n("Cannot open console") );
 }
 
 KConsole::~KConsole()
 {
-	CloseConsole();
+	closeConsole();
 }
 
 int
-KConsole::OpenConsole()
+KConsole::openConsole()
 {
 #ifdef TIOCCONS
 	static const char on = 1;
@@ -85,7 +85,7 @@ KConsole::OpenConsole()
 	if (*_logSource) {
 		if ((fd = open( _logSource, O_RDONLY | O_NONBLOCK )) >= 0)
 			goto gotcon;
-		LogError( "Cannot open log source %s, "
+		logError( "Cannot open log source %s, "
 		          "falling back to /dev/console.\n", _logSource );
 	}
 
@@ -129,7 +129,7 @@ KConsole::OpenConsole()
 }
 
 void
-KConsole::CloseConsole()
+KConsole::closeConsole()
 {
 	delete notifier;
 	notifier = 0;
@@ -148,9 +148,9 @@ KConsole::slotData()
 	char buffer[1024];
 
 	if ((n = read( fd, buffer, sizeof(buffer) )) <= 0) {
-		CloseConsole();
+		closeConsole();
 		if (!n)
-			if (!OpenConsole())
+			if (!openConsole())
 				append( i18n("\n*** Cannot open console log source ***") );
 	} else {
 		bool as = !verticalScrollBar()->isVisible() ||

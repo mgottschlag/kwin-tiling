@@ -42,13 +42,13 @@ from the copyright holder.
 
 /*ARGSUSED*/
 void
-SecureRPCInitAuth( unsigned short name_len ATTR_UNUSED,
+secureRPCInitAuth( unsigned short name_len ATTR_UNUSED,
                    const char *name ATTR_UNUSED )
 {
 }
 
 Xauth *
-SecureRPCGetAuth( unsigned short namelen, const char *name )
+secureRPCGetAuth( unsigned short namelen, const char *name )
 {
 	Xauth *new;
 	char key[MAXNETNAMELEN+1];
@@ -63,7 +63,7 @@ SecureRPCGetAuth( unsigned short namelen, const char *name )
 	new->number = 0;
 
 	getnetname( key );
-	Debug( "system netname %s\n", key );
+	debug( "system netname %s\n", key );
 	new->data_length = strlen( key );
 	new->data = (char *)Malloc( new->data_length );
 	if (!new->data) {

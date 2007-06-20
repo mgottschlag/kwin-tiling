@@ -41,19 +41,19 @@ bool _isLocal;
 bool _authorized;
 
 static QString
-GetCfgQStr( int id )
+getCfgQStr( int id )
 {
-	char *tmp = GetCfgStr( id );
+	char *tmp = getCfgStr( id );
 	QString qs = QString::fromUtf8( tmp );
 	free( tmp );
 	return qs;
 }
 
 static QStringList
-GetCfgQStrList( int id )
+getCfgQStrList( int id )
 {
 	int i, len;
-	char **tmp = GetCfgStrArr( id, &len );
+	char **tmp = getCfgStrArr( id, &len );
 	QStringList qsl;
 	for (i = 0; i < len - 1; i++) {
 		qsl.append( QString::fromUtf8( tmp[i] ) );
@@ -65,7 +65,7 @@ GetCfgQStrList( int id )
 
 // Based on kconfigbase.cpp
 static QFont *
-Str2Font( const QString &aValue )
+str2Font( const QString &aValue )
 {
 	uint nFontBits;
 	QString chStr;
@@ -103,13 +103,13 @@ Str2Font( const QString &aValue )
 }
 
 extern "C"
-void init_config( void )
+void initConfig( void )
 {
 	CONF_GREET_INIT
 
-	_isLocal = GetCfgInt( C_isLocal );
-	_hasConsole = _hasConsole && _isLocal && GetCfgInt( C_hasConsole );
-	_authorized = GetCfgInt( C_isAuthorized );
+	_isLocal = getCfgInt( C_isLocal );
+	_hasConsole = _hasConsole && _isLocal && getCfgInt( C_hasConsole );
+	_authorized = getCfgInt( C_isAuthorized );
 
 	_stsFile = _dataDir + "/kdmsts";
 
@@ -147,7 +147,7 @@ void init_config( void )
 	}
 }
 
-void init_config_qapp( void )
+void initQAppConfig( void )
 {
 	CONF_GREET_INIT_QAPP
 

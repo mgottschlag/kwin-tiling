@@ -32,37 +32,37 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern "C" {
 #endif
 
-void GSet( int master );
-void GSendInt( int val );
-void GSendStr( const char *buf );
-/*void GSendNStr( const char *buf, int len );*/
-void GSendArr( int len, const char *buf );
-int GRecvInt( void );
-char *GRecvStr( void );
-char **GRecvStrArr( int *len );
-char *GRecvArr( int *len );
+void gSet( int master );
+void gSendInt( int val );
+void gSendStr( const char *buf );
+/*void gSendNStr( const char *buf, int len );*/
+void gSendArr( int len, const char *buf );
+int gRecvInt( void );
+char *gRecvStr( void );
+char **gRecvStrArr( int *len );
+char *gRecvArr( int *len );
 
-int GetCfgInt( int id );
-char *GetCfgStr( int id );
-char **GetCfgStrArr( int id, int *len );
+int getCfgInt( int id );
+char *getCfgStr( int id );
+char **getCfgStrArr( int id, int *len );
 
 void freeStrArr( char **arr );
 
 extern int debugLevel;
-void Debug( const char *fmt, ... );
-void LogInfo( const char *fmt, ... );
-void LogWarn( const char *fmt, ... );
-void LogError( const char *fmt, ... );
-void LogPanic( const char *fmt, ... ) ATTR_NORETURN;
+void debug( const char *fmt, ... );
+void logInfo( const char *fmt, ... );
+void logWarn( const char *fmt, ... );
+void logError( const char *fmt, ... );
+void logPanic( const char *fmt, ... ) ATTR_NORETURN;
 
 struct _XDisplay;
 
-void SecureDisplay( struct _XDisplay *dpy );
-void UnsecureDisplay( struct _XDisplay *dpy );
-int PingServer( struct _XDisplay *dpy );
+void secureDisplay( struct _XDisplay *dpy );
+void unsecureDisplay( struct _XDisplay *dpy );
+int pingServer( struct _XDisplay *dpy );
 
-void setup_modifiers( struct _XDisplay *mdpy, int numlock );
-void restore_modifiers( void );
+void setupModifiers( struct _XDisplay *mdpy, int numlock );
+void restoreModifiers( void );
 
 void setCursor( struct _XDisplay *mdpy, int window, int shape );
 

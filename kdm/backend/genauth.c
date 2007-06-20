@@ -97,7 +97,7 @@ getPrngdBytes( char *buf, int len,
 		} else if (*socket_path) {
 				unsigned spl = strlen( socket_path );
 				if (spl >= sizeof(addr_un.sun_path)) {
-						LogError( "get_random_prngd: "
+						logError( "get_random_prngd: "
 						          "Random pool path is too long\n" );
 						return -1;
 				}
@@ -115,16 +115,16 @@ getPrngdBytes( char *buf, int len,
 		rval = -1;
 reopen:
 		if ((fd = socket( af, SOCK_STREAM, 0 )) < 0) {
-				LogError( "Couldn't create socket: %m\n" );
+				logError( "Couldn't create socket: %m\n" );
 				goto done;
 		}
 
 		if (connect( fd, (struct sockaddr *)addr, addr_len )) {
 				if (af == AF_INET)
-						LogError( "Couldn't connect to PRNGD port %d: %m\n",
+						logError( "Couldn't connect to PRNGD port %d: %m\n",
 						          tcp_port );
 				else
-						LogError( "Couldn't connect to PRNGD socket %\"s: %m\n",
+						logError( "Couldn't connect to PRNGD socket %\"s: %m\n",
 						          socket_path );
 				goto done;
 		}
@@ -133,23 +133,23 @@ reopen:
 		msg[0] = 0x02;
 		msg[1] = len;
 
-		if (Writer( fd, msg, sizeof(msg) ) != sizeof(msg)) {
+		if (writer( fd, msg, sizeof(msg) ) != sizeof(msg)) {
 				if (errno == EPIPE && errors < 10) {
 						close( fd );
 						errors++;
 						goto reopen;
 				}
-				LogError( "Couldn't write to PRNGD socket: %m\n" );
+				logError( "Couldn't write to PRNGD socket: %m\n" );
 				goto done;
 		}
 
-		if (Reader( fd, buf, len ) != len) {
+		if (reader( fd, buf, len ) != len) {
 				if (errno == EPIPE && errors < 10) {
 						close( fd );
 						errors++;
 						goto reopen;
 				}
-				LogError( "Couldn't read from PRNGD socket: %m\n" );
+				logError( "Couldn't read from PRNGD socket: %m\n" );
 				goto done;
 		}
 
@@ -199,7 +199,7 @@ done:
 static unsigned epool[32], erotate, eadd_ptr;
 
 static void
-add_entropy( unsigned const *in, int nwords )
+addEntropy( unsigned const *in, int nwords )
 {
 		static unsigned const twist_table[8] = {
 				         0, 0x3b6e20c8, 0x76dc4190, 0x4db26158,
@@ -249,7 +249,7 @@ add_entropy( unsigned const *in, int nwords )
  * reflect the addition of 16 longwords of new data.
  */
 static void
-pmd5_hash( unsigned *out, unsigned const in[16] )
+pMD5Hash( unsigned *out, unsigned const in[16] )
 {
 	unsigned a, b, c, d;
 
@@ -342,7 +342,7 @@ sumFile( const char *name, int len, int whence, long offset )
 	unsigned char buf[0x1000];
 
 	if ((fd = open( name, O_RDONLY )) < 0) {
-		Debug( "cannot open entropy source %\"s: %m\n", name );
+		debug( "cannot open entropy source %\"s: %m\n", name );
 		return -1;
 	}
 	lseek( fd, offset, whence );
@@ -351,40 +351,40 @@ sumFile( const char *name, int len, int whence, long offset )
 			break;
 		if (cnt < 0) {
 			close( fd );
-			Debug( "cannot read entropy source %\"s: %m\n", name );
+			debug( "cannot read entropy source %\"s: %m\n", name );
 			return -1;
 		}
 		readlen += cnt;
 		if (sizeof(unsigned) == 4)
-			add_entropy( (unsigned *)buf, (cnt + 3) / 4 );
+			addEntropy( (unsigned *)buf, (cnt + 3) / 4 );
 		else {
 			unsigned buf2[sizeof(buf) / 4];
 			for (i = 0; i < cnt; i += 8) {
 				buf2[i / 4] = *(unsigned *)(buf + i) & 0xffffffff;
 				buf2[i / 4 + 1] = *(unsigned *)(buf + i) >> 32;
 			}
-			add_entropy( buf2, (cnt + 3) / 4 );
+			addEntropy( buf2, (cnt + 3) / 4 );
 		}
 	}
 	close( fd );
-	Debug( "read %d bytes from entropy source %\"s\n", readlen, name );
+	debug( "read %d bytes from entropy source %\"s\n", readlen, name );
 	return readlen;
 }
 
 void
-AddTimerEntropy( void )
+addTimerEntropy( void )
 {
 	struct timeval now;
 	gettimeofday( &now, 0 );
-	add_entropy( (unsigned *)&now, sizeof(now)/sizeof(unsigned) );
+	addEntropy( (unsigned *)&now, sizeof(now)/sizeof(unsigned) );
 }
 
 #define BSIZ 0x10000
 
 void
-AddOtherEntropy( void )
+addOtherEntropy( void )
 {
-	AddTimerEntropy();
+	addTimerEntropy();
 	/* XXX -- setup-specific ... use some common ones */
 	sumFile( "/var/log/messages", 0x1000, SEEK_END, -0x1000 );
 	sumFile( "/var/log/syslog", 0x1000, SEEK_END, -0x1000 );
@@ -397,12 +397,12 @@ AddOtherEntropy( void )
 }
 
 void
-AddPreGetEntropy( void )
+addPreGetEntropy( void )
 {
 	static long offset;
 	int readlen;
 
-	AddTimerEntropy();
+	addTimerEntropy();
 	if ((readlen = sumFile( randomFile, BSIZ, SEEK_SET, offset )) == BSIZ) {
 		offset += readlen;
 #if defined(__i386__) || defined(amiga)
@@ -418,7 +418,7 @@ AddPreGetEntropy( void )
 		if ((offset = sumFile( randomFile, BSIZ, SEEK_SET, 0 )) == BSIZ)
 			return;
 	}
-	LogError( "Cannot read randomFile %\"s; "
+	logError( "Cannot read randomFile %\"s; "
 	          "X cookies may be easily guessable\n", randomFile );
 }
 #endif
@@ -426,7 +426,7 @@ AddPreGetEntropy( void )
 /* ONLY 8 or 16 bytes! */
 /* auth MUST be sizeof(unsigned)-aligned! */
 int
-GenerateAuthData( char *auth, int len )
+generateAuthData( char *auth, int len )
 {
 #ifdef HAVE_ARC4RANDOM
 	int i;
@@ -453,9 +453,9 @@ GenerateAuthData( char *auth, int len )
 				return 1;
 			}
 			close( fd );
-			LogError( "Cannot read randomDevice %\"s: %m\n", rd );
+			logError( "Cannot read randomDevice %\"s: %m\n", rd );
 		} else
-			LogError( "Cannot open randomDevice %\"s: %m\n", rd );
+			logError( "Cannot open randomDevice %\"s: %m\n", rd );
 # ifdef DEV_RANDOM
 		return 0;
 # else
@@ -467,11 +467,11 @@ GenerateAuthData( char *auth, int len )
 	{
 		unsigned *rnd = (unsigned *)auth;
 		unsigned tmp[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
-		AddPreGetEntropy();
-		pmd5_hash( tmp, epool );
-		add_entropy( tmp, 1 );
-		pmd5_hash( tmp, epool + 16 );
-		add_entropy( tmp + 2, 1 );
+		addPreGetEntropy();
+		pMD5Hash( tmp, epool );
+		addEntropy( tmp, 1 );
+		pMD5Hash( tmp, epool + 16 );
+		addEntropy( tmp + 2, 1 );
 		if (sizeof(unsigned) == 4)
 			memcpy( auth, tmp, len );
 		else {

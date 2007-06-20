@@ -37,19 +37,19 @@ authorization.
 #include "greet.h"
 #include <stdarg.h>
 
-void GDebug( const char *fmt, ... );
-void Debug( const char *fmt, ... );
-void LogInfo( const char *fmt, ... );
-void LogWarn( const char *fmt, ... );
-void LogError( const char *fmt, ... );
-void LogPanic( const char *fmt, ... ) ATTR_NORETURN;
-void LogOutOfMem( void );
-void Panic( const char *mesg ) ATTR_NORETURN;
-void InitErrorLog( const char *errorLogFile );
+void gDebug( const char *fmt, ... );
+void debug( const char *fmt, ... );
+void logInfo( const char *fmt, ... );
+void logWarn( const char *fmt, ... );
+void logError( const char *fmt, ... );
+void logPanic( const char *fmt, ... ) ATTR_NORETURN;
+void logOutOfMem( void );
+void panic( const char *mesg ) ATTR_NORETURN;
+void initErrorLog( const char *errorLogFile );
 #ifdef USE_SYSLOG
-void ReInitErrorLog( void );
+void reInitErrorLog( void );
 #else
-# define ReInitErrorLog() while(0)
+# define reInitErrorLog() while(0)
 #endif
 int ASPrintf( char **strp, const char *fmt, ... );
 int VASPrintf( char **strp, const char *fmt, va_list args );

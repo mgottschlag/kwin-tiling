@@ -39,6 +39,6 @@ typedef struct dpySpec {
 dpySpec *fetchSessions( int flags );
 void disposeSessions( dpySpec *sess );
 
-void decodeSess( dpySpec *sess, QString &user, QString &loc );
+void decodeSession( dpySpec *sess, QString &user, QString &loc );
 
 #endif /* UTILS_H */

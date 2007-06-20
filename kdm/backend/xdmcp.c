@@ -123,20 +123,20 @@ sendForward( CARD16 connectionType, ARRAY8Ptr address, char *closure )
 }
 
 static void
-ClientAddress( struct sockaddr *from,
-               ARRAY8Ptr addr, /* return */
-               ARRAY8Ptr port, /* return */
-               CARD16 *type ) /* return */
+convertClientAddress( struct sockaddr *from,
+                      ARRAY8Ptr addr, /* return */
+                      ARRAY8Ptr port, /* return */
+                      CARD16 *type ) /* return */
 {
 	int length, family;
 	char *data;
 
-	data = NetaddrPort( (XdmcpNetaddr)from, &length );
+	data = netaddrPort( (XdmcpNetaddr)from, &length );
 	XdmcpAllocARRAY8( port, length );
 	memmove( port->data, data, length );
 	port->length = length;
 
-	family = ConvertAddr( (XdmcpNetaddr)from, &length, &data );
+	family = convertAddr( (XdmcpNetaddr)from, &length, &data );
 	XdmcpAllocARRAY8( addr, length );
 	memmove( addr->data, data, length );
 	addr->length = length;
@@ -156,21 +156,21 @@ all_query_respond( struct sockaddr *from, int fromlen,
 	int family;
 	int length;
 
-	family = ConvertAddr( (XdmcpNetaddr)from, &length, (char **)&(addr.data) );
+	family = convertAddr( (XdmcpNetaddr)from, &length, (char **)&(addr.data) );
 	addr.length = length; /* convert int to short */
-	Debug( "all_query_respond: conntype=%d, addr=%02[*:hhx\n",
+	debug( "all_query_respond: conntype=%d, addr=%02[*:hhx\n",
 	       family, addr.length, addr.data );
 	if (family < 0)
 		return;
 	connectionType = family;
 
 	if (type == INDIRECT_QUERY)
-		RememberIndirectClient( &addr, connectionType );
+		rememberIndirectClient( &addr, connectionType );
 	else
-		ForgetIndirectClient( &addr, connectionType );
+		forgetIndirectClient( &addr, connectionType );
 
-	authenticationName = ChooseAuthentication( authenticationNames );
-	if (Willing( &addr, connectionType, authenticationName, &status, type ))
+	authenticationName = chooseAuthentication( authenticationNames );
+	if (isWilling( &addr, connectionType, authenticationName, &status, type ))
 		send_willing( from, fromlen, authenticationName, &status, fd );
 	else
 		if (type == QUERY)
@@ -190,14 +190,15 @@ indirect_respond( struct sockaddr *from, int fromlen, int length, int fd )
 	XdmcpHeader header;
 	int localHostAsWell;
 
-	Debug( "<indirect> respond %d\n", length );
+	debug( "<indirect> respond %d\n", length );
 	if (!XdmcpReadARRAYofARRAY8( &buffer, &queryAuthenticationNames ))
 		return;
 	expectedLen = 1;
 	for (i = 0; i < (int)queryAuthenticationNames.length; i++)
 		expectedLen += 2 + queryAuthenticationNames.data[i].length;
 	if (length == expectedLen) {
-		ClientAddress( from, &clientAddress, &clientPort, &connectionType );
+		convertClientAddress( from,
+		                      &clientAddress, &clientPort, &connectionType );
 		/*
 		 * set up the forward query packet
 		 */
@@ -215,7 +216,7 @@ indirect_respond( struct sockaddr *from, int fromlen, int length, int fd )
 		XdmcpWriteARRAYofARRAY8( &buffer, &queryAuthenticationNames );
 
 		localHostAsWell =
-			ForEachMatchingIndirectHost( &clientAddress, connectionType,
+			forEachMatchingIndirectHost( &clientAddress, connectionType,
 			                             sendForward, (char *)fd );
 
 		XdmcpDisposeARRAY8( &clientAddress );
@@ -224,13 +225,13 @@ indirect_respond( struct sockaddr *from, int fromlen, int length, int fd )
 			all_query_respond( from, fromlen, &queryAuthenticationNames,
 			                   INDIRECT_QUERY, fd );
 	} else
-		Debug( "<indirect> length error got %d expect %d\n",
+		debug( "<indirect> length error got %d expect %d\n",
 		       length, expectedLen );
 	XdmcpDisposeARRAYofARRAY8( &queryAuthenticationNames );
 }
 
 void
-ProcessRequestSocket( int fd )
+processRequestSocket( int fd )
 {
 	XdmcpHeader header;
 #if defined(IPv6) && defined(AF_INET6)
@@ -240,22 +241,22 @@ ProcessRequestSocket( int fd )
 #endif
 	int addrlen = sizeof(addr);
 
-	Debug( "ProcessRequestSocket\n" );
+	debug( "processRequestSocket\n" );
 	bzero( (char *)&addr, sizeof(addr) );
 	if (!XdmcpFill( fd, &buffer, (XdmcpNetaddr)&addr, &addrlen )) {
-		Debug( "XdmcpFill failed\n" );
+		debug( "XdmcpFill failed\n" );
 		return;
 	}
 	if (!XdmcpReadHeader( &buffer, &header )) {
-		Debug( "XdmcpReadHeader failed\n" );
+		debug( "XdmcpReadHeader failed\n" );
 		return;
 	}
 	if (header.version != XDM_PROTOCOL_VERSION) {
-		Debug( "XDMCP header version read was %d, expected %d\n",
+		debug( "XDMCP header version read was %d, expected %d\n",
 		       header.version, XDM_PROTOCOL_VERSION );
 		return;
 	}
-	Debug( "header: %d %d %d\n", header.version, header.opcode, header.length );
+	debug( "header: %d %d %d\n", header.version, header.opcode, header.length );
 	switch (header.opcode) {
 	case BROADCAST_QUERY:
 		broadcast_respond( (struct sockaddr *)&addr, addrlen, header.length, fd );
@@ -306,7 +307,7 @@ direct_query_respond( struct sockaddr *from, int fromlen,
 static void
 query_respond( struct sockaddr *from, int fromlen, int length, int fd )
 {
-	Debug( "<query> respond %d\n", length );
+	debug( "<query> respond %d\n", length );
 	direct_query_respond( from, fromlen, length, QUERY, fd );
 }
 
@@ -319,7 +320,7 @@ broadcast_respond( struct sockaddr *from, int fromlen, int length, int fd )
 /* computes an X display name */
 
 static char *
-NetworkAddressToName( CARD16 connectionType, ARRAY8Ptr connectionAddress,
+networkAddressToName( CARD16 connectionType, ARRAY8Ptr connectionAddress,
                       struct sockaddr *originalAddress, CARD16 displayNumber )
 {
 	switch (connectionType) {
@@ -451,7 +452,7 @@ forward_respond( struct sockaddr *from, int fromlen ATTR_UNUSED,
 	int expectedLen;
 	int i;
 
-	Debug( "<forward> respond %d\n", length );
+	debug( "<forward> respond %d\n", length );
 	clientAddress.length = 0;
 	clientAddress.data = 0;
 	clientPort.length = 0;
@@ -474,7 +475,7 @@ forward_respond( struct sockaddr *from, int fromlen ATTR_UNUSED,
 			j = 0;
 			for (i = 0; i < (int)clientPort.length; i++)
 				j = j * 256 + clientPort.data[i];
-			Debug( "<forward> client address (port %d) %[*hhu\n", j,
+			debug( "<forward> client address (port %d) %[*hhu\n", j,
 			       clientAddress.length, clientAddress.data );
 			switch (from->sa_family) {
 #ifdef AF_INET
@@ -552,7 +553,7 @@ forward_respond( struct sockaddr *from, int fromlen ATTR_UNUSED,
 #endif
 			}
 		} else
-			Debug( "<forward> length error got %d expect %d\n", length, expectedLen );
+			debug( "<forward> length error got %d expect %d\n", length, expectedLen );
 	}
   badAddress:
 	XdmcpDisposeARRAY8( &clientAddress );
@@ -568,7 +569,7 @@ send_willing( struct sockaddr *from, int fromlen,
 {
 	XdmcpHeader header;
 
-	Debug( "send <willing> %.*s %.*s\n", authenticationName->length,
+	debug( "send <willing> %.*s %.*s\n", authenticationName->length,
 	       authenticationName->data,
 	       status->length,
 	       status->data );
@@ -589,7 +590,7 @@ send_unwilling( struct sockaddr *from, int fromlen,
 {
 	XdmcpHeader header;
 
-	Debug( "send <unwilling> %.*s %.*s\n", authenticationName->length,
+	debug( "send <unwilling> %.*s %.*s\n", authenticationName->length,
 	       authenticationName->data,
 	       status->length,
 	       status->data );
@@ -604,7 +605,7 @@ send_unwilling( struct sockaddr *from, int fromlen,
 
 static unsigned long globalSessionID;
 
-#define NextSessionID() (++globalSessionID)
+#define nextSessionID() (++globalSessionID)
 
 void init_session_id( void )
 {
@@ -612,7 +613,7 @@ void init_session_id( void )
 	 * incarnation so we don't say "Alive" to those displays.
 	 * Start with low digits 0 to make debugging easier.
 	 */
-	globalSessionID = (time( (Time_t *)0 ) & 0x7fff) * 16000;
+	globalSessionID = (time( (time_t *)0 ) & 0x7fff) * 16000;
 
 	Hostname.data = (unsigned char *)localHostname();
 	Hostname.length = strlen( (char *)Hostname.data );
@@ -640,7 +641,7 @@ request_respond( struct sockaddr *from, int fromlen, int length, int fd )
 	ARRAY8 authorizationName, authorizationData;
 	ARRAY8Ptr connectionAddress;
 
-	Debug( "<request> respond %d\n", length );
+	debug( "<request> respond %d\n", length );
 	connectionTypes.data = 0;
 	connectionAddresses.data = 0;
 	authenticationName.data = 0;
@@ -670,7 +671,7 @@ request_respond( struct sockaddr *from, int fromlen, int length, int fd )
 			expectlen += 2 + authorizationNames.data[i].length;
 		expectlen += 2 + manufacturerDisplayID.length; /* displayID */
 		if (expectlen != length) {
-			Debug( "<request> length error got %d expect %d\n",
+			debug( "<request> length error got %d expect %d\n",
 			       length, expectlen );
 			goto abort;
 		}
@@ -681,16 +682,16 @@ request_respond( struct sockaddr *from, int fromlen, int length, int fd )
 			pdpy = 0;
 			goto decline;
 		}
-		pdpy = FindProtoDisplay( (XdmcpNetaddr)from, fromlen, displayNumber );
+		pdpy = findProtoDisplay( (XdmcpNetaddr)from, fromlen, displayNumber );
 		if (!pdpy) {
 
 			/* Check this Display against the Manager's policy */
-			reason = Accept( from, fromlen, displayNumber );
+			reason = isAccepting( from, fromlen, displayNumber );
 			if (reason)
 				goto decline;
 
 			/* Check the Display's stream services against Manager's policy */
-			i = SelectConnectionTypeIndex( &connectionTypes,
+			i = selectConnectionTypeIndex( &connectionTypes,
 			                               &connectionAddresses );
 			if (i < 0) {
 				reason = &noValidAddr;
@@ -699,10 +700,10 @@ request_respond( struct sockaddr *from, int fromlen, int length, int fd )
 
 			/* The Manager considers this a new session */
 			connectionAddress = &connectionAddresses.data[i];
-			pdpy = NewProtoDisplay( (XdmcpNetaddr)from, fromlen, displayNumber,
+			pdpy = newProtoDisplay( (XdmcpNetaddr)from, fromlen, displayNumber,
 			                        connectionTypes.data[i], connectionAddress,
-			                        NextSessionID() );
-			Debug( "NewProtoDisplay %p\n", pdpy );
+			                        nextSessionID() );
+			debug( "newProtoDisplay %p\n", pdpy );
 			if (!pdpy) {
 				reason = &outOfMemory;
 				goto decline;
@@ -711,13 +712,13 @@ request_respond( struct sockaddr *from, int fromlen, int length, int fd )
 		if (authorizationNames.length == 0)
 			j = 0;
 		else
-			j = SelectAuthorizationTypeIndex( &authenticationName,
+			j = selectAuthorizationTypeIndex( &authenticationName,
 			                                  &authorizationNames );
 		if (j < 0) {
 			reason = &noValidAuth;
 			goto decline;
 		}
-		if (!CheckAuthentication( pdpy,
+		if (!checkAuthentication( pdpy,
 		                          &manufacturerDisplayID,
 		                          &authenticationName,
 		                          &authenticationData ))
@@ -727,7 +728,7 @@ request_respond( struct sockaddr *from, int fromlen, int length, int fd )
 		}
 		if (j < (int)authorizationNames.length) {
 			Xauth *auth;
-			SetProtoDisplayAuthorization( pdpy,
+			setProtoDisplayAuthorization( pdpy,
 			                              (unsigned short)authorizationNames.data[j].length,
 			                              (char *)authorizationNames.data[j].data );
 			auth = pdpy->xdmcpAuthorization;
@@ -752,7 +753,7 @@ request_respond( struct sockaddr *from, int fromlen, int length, int fd )
 			              &authenticationData,
 			              reason, fd );
 			if (pdpy)
-				DisposeProtoDisplay( pdpy );
+				disposeProtoDisplay( pdpy );
 		}
 	}
   abort:
@@ -772,7 +773,7 @@ send_accept( struct sockaddr *to, int tolen, CARD32 sessionID,
 {
 	XdmcpHeader header;
 
-	Debug( "<accept> session ID %ld\n", (long)sessionID );
+	debug( "<accept> session ID %ld\n", (long)sessionID );
 	header.version = XDM_PROTOCOL_VERSION;
 	header.opcode = (CARD16)ACCEPT;
 	header.length = 4; /* session ID */
@@ -796,7 +797,7 @@ send_decline( struct sockaddr *to, int tolen,
 {
 	XdmcpHeader header;
 
-	Debug( "<decline> %.*s\n", status->length, status->data );
+	debug( "<decline> %.*s\n", status->length, status->data );
 	header.version = XDM_PROTOCOL_VERSION;
 	header.opcode = (CARD16)DECLINE;
 	header.length = 0;
@@ -825,7 +826,7 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 	ARRAY8 clientAddress, clientPort;
 	CARD16 connectionType;
 
-	Debug( "<manage> %d\n", length );
+	debug( "<manage> %d\n", length );
 	displayClass.data = 0;
 	displayClass.length = 0;
 	if (XdmcpReadCARD32( &buffer, &sessionID ) &&
@@ -836,11 +837,11 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 					2 + /* displayNumber */
 					2 + displayClass.length; /* displayClass */
 		if (expectlen != length) {
-			Debug( "<manage> length error got %d expect %d\n", length, expectlen );
+			debug( "<manage> length error got %d expect %d\n", length, expectlen );
 			goto abort;
 		}
-		pdpy = FindProtoDisplay( (XdmcpNetaddr)from, fromlen, displayNumber );
-		Debug( "<manage> session ID %ld, pdpy %p\n", (long)sessionID, pdpy );
+		pdpy = findProtoDisplay( (XdmcpNetaddr)from, fromlen, displayNumber );
+		debug( "<manage> session ID %ld, pdpy %p\n", (long)sessionID, pdpy );
 		if (!pdpy || pdpy->sessionID != sessionID) {
 			/*
 			 * We may have already started a session for this display
@@ -851,35 +852,35 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 			 * can be ignored.
 			 */
 			if (!pdpy &&
-			    (d = FindDisplayByAddress( (XdmcpNetaddr)from, fromlen,
+			    (d = findDisplayByAddress( (XdmcpNetaddr)from, fromlen,
 			                               displayNumber )) &&
 			    d->sessionID == sessionID)
 			{
-					Debug( "manage: got duplicate pkt, ignoring\n" );
+					debug( "manage: got duplicate pkt, ignoring\n" );
 					goto abort;
 			}
-			Debug( "session ID %ld refused\n", (long)sessionID );
+			debug( "session ID %ld refused\n", (long)sessionID );
 			if (pdpy)
-				Debug( "existing session ID %ld\n", (long)pdpy->sessionID );
+				debug( "existing session ID %ld\n", (long)pdpy->sessionID );
 			send_refuse( from, fromlen, sessionID, fd );
 		} else {
-			name = NetworkAddressToName( pdpy->connectionType,
+			name = networkAddressToName( pdpy->connectionType,
 			                             &pdpy->connectionAddress,
 			                             from,
 			                             pdpy->displayNumber );
 			if (!name) {
-				Debug( "could not compute display name\n" );
+				debug( "could not compute display name\n" );
 				send_failed( from, fromlen, "(no name)", sessionID,
 				             "out of memory", fd );
 				goto abort;
 			}
-			Debug( "computed display name: %s\n", name );
-			if ((d = FindDisplayByName( name ))) {
-				Debug( "terminating active session for %s\n", d->name );
-				StopDisplay( d );
+			debug( "computed display name: %s\n", name );
+			if ((d = findDisplayByName( name ))) {
+				debug( "terminating active session for %s\n", d->name );
+				stopDisplay( d );
 			}
 			if (displayClass.length) {
-				if (!StrNDup( &class2, (char *)displayClass.data,
+				if (!strNDup( &class2, (char *)displayClass.data,
 				              displayClass.length ))
 				{
 					send_failed( from, fromlen, name, sessionID,
@@ -893,7 +894,7 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 				goto abort;
 			}
 			memmove( from_save, from, fromlen );
-			if (!(d = NewDisplay( name ))) {
+			if (!(d = newDisplay( name ))) {
 				free( (char *)from_save );
 				send_failed( from, fromlen, name, sessionID,
 				             "out of memory", fd );
@@ -906,16 +907,16 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 			d->from.data = (unsigned char *)from_save;
 			d->from.length = fromlen;
 			d->displayNumber = pdpy->displayNumber;
-			ClientAddress( from, &clientAddress, &clientPort,
-			               &connectionType );
+			convertClientAddress( from,
+			                      &clientAddress, &clientPort, &connectionType );
 			d->useChooser = 0;
 			d->xdmcpFd = fd;
-			if (IsIndirectClient( &clientAddress, connectionType )) {
-				Debug( "IsIndirectClient\n" );
-				ForgetIndirectClient( &clientAddress, connectionType );
-				if (UseChooser( &clientAddress, connectionType )) {
+			if (isIndirectClient( &clientAddress, connectionType )) {
+				debug( "isIndirectClient\n" );
+				forgetIndirectClient( &clientAddress, connectionType );
+				if (useChooser( &clientAddress, connectionType )) {
 					d->useChooser = 1;
-					Debug( "use chooser for %s\n", d->name );
+					debug( "use chooser for %s\n", d->name );
 				}
 			}
 			d->clientAddr = clientAddress;
@@ -934,15 +935,15 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 				d->authNum = 1;
 				pdpy->fileAuthorization = 0;
 			}
-			DisposeProtoDisplay( pdpy );
-			Debug( "starting display %s,%s\n", d->name, d->class2 );
-			if (LoadDisplayResources( d ) < 0) {
-				LogError( "Unable to read configuration for display %s; "
+			disposeProtoDisplay( pdpy );
+			debug( "starting display %s,%s\n", d->name, d->class2 );
+			if (loadDisplayResources( d ) < 0) {
+				logError( "Unable to read configuration for display %s; "
 				          "stopping it.\n", d->name );
-				StopDisplay( d );
+				stopDisplay( d );
 			} else
-				StartDisplay( d );
-			CloseGetter();
+				startDisplay( d );
+			closeGetter();
 		}
 	}
 abort:
@@ -954,9 +955,9 @@ abort:
 }
 
 void
-SendFailed( struct display *d, const char *reason )
+sendFailed( struct display *d, const char *reason )
 {
-	Debug( "display start failed, sending <failed>\n" );
+	debug( "display start failed, sending <failed>\n" );
 	send_failed( (struct sockaddr *)(d->from.data), d->from.length, d->name,
 	             d->sessionID, reason, d->xdmcpFd );
 }
@@ -971,7 +972,7 @@ send_failed( struct sockaddr *from, int fromlen,
 
 	sprintf( buf, "Session %ld failed for display %.260s: %s",
 	         (long)sessionID, name, reason );
-	Debug( "send_failed(%\"s)\n", buf );
+	debug( "send_failed(%\"s)\n", buf );
 	status.length = strlen( buf );
 	status.data = (CARD8Ptr) buf;
 	header.version = XDM_PROTOCOL_VERSION;
@@ -988,7 +989,7 @@ send_refuse( struct sockaddr *from, int fromlen, CARD32 sessionID, int fd )
 {
 	XdmcpHeader header;
 
-	Debug( "send <refuse> %ld\n", (long)sessionID );
+	debug( "send <refuse> %ld\n", (long)sessionID );
 	header.version = XDM_PROTOCOL_VERSION;
 	header.opcode = (CARD16)REFUSE;
 	header.length = 4;
@@ -1007,13 +1008,13 @@ send_alive( struct sockaddr *from, int fromlen, int length, int fd )
 	CARD8 sendRunning;
 	CARD32 sendSessionID;
 
-	Debug( "send <alive>\n" );
+	debug( "send <alive>\n" );
 	if (XdmcpReadCARD16( &buffer, &displayNumber ) &&
 	    XdmcpReadCARD32( &buffer, &sessionID ))
 	{
 		if (length == 6) {
-			if (!(d = FindDisplayBySessionID( sessionID )))
-				d = FindDisplayByAddress( (XdmcpNetaddr)from, fromlen,
+			if (!(d = findDisplayBySessionID( sessionID )))
+				d = findDisplayByAddress( (XdmcpNetaddr)from, fromlen,
 				                          displayNumber );
 			sendRunning = 0;
 			sendSessionID = 0;
@@ -1025,7 +1026,7 @@ send_alive( struct sockaddr *from, int fromlen, int length, int fd )
 			header.version = XDM_PROTOCOL_VERSION;
 			header.opcode = (CARD16)ALIVE;
 			header.length = 5;
-			Debug( "<alive>: %d %ld\n", sendRunning, (long)sendSessionID );
+			debug( "<alive>: %d %ld\n", sendRunning, (long)sendSessionID );
 			XdmcpWriteHeader( &buffer, &header );
 			XdmcpWriteCARD8( &buffer, sendRunning );
 			XdmcpWriteCARD32( &buffer, sendSessionID );
@@ -1035,7 +1036,7 @@ send_alive( struct sockaddr *from, int fromlen, int length, int fd )
 }
 
 char *
-NetworkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress )
+networkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress )
 {
 	switch (connectionType) {
 	case FamilyInternet:
@@ -1084,11 +1085,11 @@ NetworkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress )
 						             connectionAddress->data, 4 ))
 							goto oki;
 #endif
-					LogError( "DNS spoof attempt or misconfigured resolver.\n" );
+					logError( "DNS spoof attempt or misconfigured resolver.\n" );
 				}
 				goto gotnone;
 			  oki:
-				if (StrDup( &name, he->h_name ) &&
+				if (strDup( &name, he->h_name ) &&
 				    !strchr( name, '.' ) &&
 				    (myDot = strchr( localHostname(), '.' )))
 				{
@@ -1133,11 +1134,11 @@ NetworkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress )
 #if defined(IPv6) && defined(AF_INET6)
 				inet_ntop( af_type, connectionAddress->data,
 				           dotted, sizeof(dotted) );
-				StrDup( &name, dotted );
+				strDup( &name, dotted );
 #else
 				ASPrintf( &name, "%[4|'.'hhu", connectionAddress->data );
 #endif
-				LogWarn( "Cannot convert Internet address %s to host name\n",
+				logWarn( "Cannot convert Internet address %s to host name\n",
 				         name );
 			}
 			return name;

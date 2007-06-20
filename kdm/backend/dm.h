@@ -52,8 +52,7 @@ from the copyright holder.
 #endif
 
 #include <time.h>
-#define Time_t time_t
-
+#include <sys/time.h>
 #include <stdlib.h>
 #include <errno.h>
 
@@ -81,16 +80,12 @@ from the copyright holder.
 #else
 # define waitCore(w) 0 /* not in POSIX.  so what? */
 #endif
-typedef int waitType;
 
-#define waitCompose(sig,core,code) ((sig) * 256 + (core) * 128 + (code))
-#define waitVal(w) waitCompose(waitSig(w), waitCore(w), waitCode(w))
-#define WaitCode(w) ((w) & 0x7f)
-#define WaitCore(w) (((w) >> 7) & 1)
-#define WaitSig(w) (((w) >> 8) & 0xff)
-
-#include <sys/time.h>
-#define FD_TYPE fd_set
+#define wcCompose(sig,core,code) ((sig) * 256 + (core) * 128 + (code))
+#define wcFromWait(w) wcCompose(waitSig(w), waitCore(w), waitCode(w))
+#define wcCode(w) ((w) & 0x7f)
+#define wcCore(w) (((w) >> 7) & 1)
+#define wcSig(w) (((w) >> 8) & 0xff)
 
 #include <setjmp.h>
 #if defined(__EMX__) || (defined(__NetBSD__) && defined(__sparc__)) /* XXX netbsd? */
@@ -249,7 +244,7 @@ struct display {
 	struct display *follower;   /* on exit, hand VT to this display */
 #endif
 	ServerStatus serverStatus;  /* X server startup state */
-	Time_t lastStart;           /* time of last display start */
+	time_t lastStart;           /* time of last display start */
 	int startTries;             /* current start try */
 	int stillThere;             /* state during HUP processing */
 	int userSess;               /* -1=nobody, otherwise uid */
@@ -298,7 +293,7 @@ typedef struct {
 struct disphist {
 	struct disphist *next;
 	char *name;
-	Time_t lastExit;      /* time of last display exit */
+	time_t lastExit;      /* time of last display exit */
 	unsigned rLogin:2,    /* 0=nothing 1=relogin 2=login */
 	         lock:1,      /* screen locker running */
 	         goodExit:1;  /* was the last exit "peaceful"? */
@@ -346,17 +341,17 @@ extern int debugLevel;
 CONF_CORE_GLOBAL_DECLS
 
 /* in daemon.c */
-void BecomeDaemon( void );
+void becomeDaemon( void );
 
 /* in dm.c */
 extern char *prog, *progpath;
 extern time_t now;
 extern SdRec sdRec;
-void StartDisplay( struct display *d );
-void StartDisplayP2( struct display *d );
-void StopDisplay( struct display *d );
-void SetTitle( const char *name );
-void SwitchToX( struct display *d );
+void startDisplay( struct display *d );
+void startDisplayP2( struct display *d );
+void stopDisplay( struct display *d );
+void setTitle( const char *name );
+void switchToX( struct display *d );
 void setNLogin( struct display *d,
                 const char *nuser, const char *npass, char *nargs,
                 int rl );
@@ -367,45 +362,43 @@ int activateVT( int vt );
 /* in ctrl.c */
 void openCtrl( struct display *d );
 void closeCtrl( struct display *d );
-int handleCtrl( FD_TYPE *reads, struct display *d );
+int handleCtrl( fd_set *reads, struct display *d );
 void chownCtrl( CtrlRec *cr, int uid );
 void updateCtrl( void );
 
 /* in dpylist.c */
 extern struct display *displays; /* that's ugly ... */
-int AnyDisplaysLeft( void );
-void ForEachDisplay( void (*f)( struct display * ) );
+int anyDisplaysLeft( void );
+void forEachDisplay( void (*f)( struct display * ) );
 #ifdef HAVE_VTS
-void ForEachDisplayRev( void (*f)( struct display * ) );
+void forEachDisplayRev( void (*f)( struct display * ) );
 #endif
-void RemoveDisplay( struct display *old );
+void removeDisplay( struct display *old );
 struct display
-	*FindDisplayByName( const char *name ),
+	*findDisplayByName( const char *name ),
 #ifdef XDMCP
-	*FindDisplayBySessionID( CARD32 sessionID ),
-	*FindDisplayByAddress( XdmcpNetaddr addr, int addrlen, CARD16 displayNumber ),
+	*findDisplayBySessionID( CARD32 sessionID ),
+	*findDisplayByAddress( XdmcpNetaddr addr, int addrlen, CARD16 displayNumber ),
 #endif /* XDMCP */
-	*FindDisplayByPid( int pid ),
-	*FindDisplayByServerPid( int serverPid ),
-	*NewDisplay( const char *name );
-int AnyActiveDisplays( void );
-int AnyRunningDisplays( void );
-int AnyReserveDisplays( void );
+	*findDisplayByPid( int pid ),
+	*findDisplayByServerPid( int serverPid ),
+	*newDisplay( const char *name );
+int anyActiveDisplays( void );
+int anyRunningDisplays( void );
+int anyReserveDisplays( void );
 int idleReserveDisplays( void );
-int AllLocalDisplaysLocked( struct display *dp );
-int StartReserveDisplay( int lt );
-void ReapReserveDisplays( void );
+int startReserveDisplay( int lt );
 
 /* in reset.c */
 void pseudoReset( void );
 
 /* in resource.c */
-char **FindCfgEnt( struct display *d, int id );
-int InitResources( char **argv );
-int LoadDMResources( int force );
-int LoadDisplayResources( struct display *d );
-void ScanServers( void );
-void CloseGetter( void );
+char **findCfgEnt( struct display *d, int id );
+int initResources( char **argv );
+int loadDMResources( int force );
+int loadDisplayResources( struct display *d );
+void scanServers( void );
+void closeGetter( void );
 int startConfig( int what, CfgDep *dep, int force );
 RcStr *newStr( char *str );
 void delStr( RcStr *str );
@@ -418,25 +411,25 @@ char **baseEnv( const char *user );
 char **inheritEnv( char **env, const char **what );
 char **systemEnv( const char *user );
 int source( char **env, const char *file, const char *arg );
-void ManageSession( struct display *d );
+void manageSession( struct display *d );
 
 extern GTalk mstrtalk, grttalk;
 extern GProc grtproc;
-void OpenGreeter( void );
-int CloseGreeter( int force );
-int CtrlGreeterWait( int wreply );
-void PrepErrorGreet( void );
+void openGreeter( void );
+int closeGreeter( int force );
+int ctrlGreeterWait( int wreply );
+void prepareErrorGreet( void );
 char *conv_interact( int what, const char *prompt );
 
 /* process.c */
 typedef void (*SIGFUNC)( int );
-SIGFUNC Signal( int, SIGFUNC Handler );
+SIGFUNC Signal( int, SIGFUNC handler );
 
-void RegisterInput( int fd );
-void UnregisterInput( int fd );
-void RegisterCloseOnFork( int fd );
-void ClearCloseOnFork( int fd );
-void CloseNClearCloseOnFork( int fd );
+void registerInput( int fd );
+void unregisterInput( int fd );
+void registerCloseOnFork( int fd );
+void clearCloseOnFork( int fd );
+void closeNclearCloseOnFork( int fd );
 int Fork( volatile int *pid );
 int Wait4( volatile int *pid );
 void execute( char **argv, char **env );
@@ -444,32 +437,32 @@ int runAndWait( char **args, char **env );
 FILE *pOpen( char **what, char m, volatile int *pid );
 int pClose( FILE *f, volatile int *pid );
 char *locate( const char *exe );
-void TerminateProcess( int pid, int sig );
+void terminateProcess( int pid, int sig );
 
-void GSet( GTalk *talk ); /* call before GOpen! */
-int GFork( GPipe *pajp, const char *pname, char *cname,
+void gSet( GTalk *talk ); /* call before gOpen! */
+int gFork( GPipe *pajp, const char *pname, char *cname,
            GPipe *ogp, char *cgname, volatile int *pid );
-void GClosen( GPipe *pajp );
-int GOpen( GProc *proc,
+void gClosen( GPipe *pajp );
+int gOpen( GProc *proc,
            char **argv, const char *what, char **env, char *cname,
            GPipe *gp );
-int GClose( GProc *proc, GPipe *gp, int force );
+int gClose( GProc *proc, GPipe *gp, int force );
 
-void GSendInt( int val );
-int GRecvInt( void );
-int GRecvCmd( int *cmd );
-void GSendArr( int len, const char *data );
-char *GRecvArr( int *len );
-int GRecvStrBuf( char *buf );
-int GRecvArrBuf( char *buf );
-void GSendStr( const char *buf );
-void GSendNStr( const char *buf, int len ); /* exact len, buf != 0 */
-void GSendStrN( const char *buf, int len ); /* maximal len */
-char *GRecvStr( void );
-void GSendArgv( char **argv );
-void GSendStrArr( int len, char **data );
-char **GRecvStrArr( int *len );
-char **GRecvArgv( void );
+void gSendInt( int val );
+int gRecvInt( void );
+int gRecvCmd( int *cmd );
+void gSendArr( int len, const char *data );
+char *gRecvArr( int *len );
+int gRecvStrBuf( char *buf );
+int gRecvArrBuf( char *buf );
+void gSendStr( const char *buf );
+void gSendNStr( const char *buf, int len ); /* exact len, buf != 0 */
+void gSendStrN( const char *buf, int len ); /* maximal len */
+char *gRecvStr( void );
+void gSendArgv( char **argv );
+void gSendStrArr( int len, char **data );
+char **gRecvStrArr( int *len );
+char **gRecvArgv( void );
 
 /* client.c */
 #define GCONV_NORMAL  0
@@ -479,10 +472,10 @@ char **GRecvArgv( void );
 #define GCONV_PASS_ND 4
 #define GCONV_BINARY  5
 typedef char *(*GConvFunc)( int what, const char *prompt );
-int Verify( GConvFunc gconv, int rootok );
-int StartClient( volatile int *pid );
-void SessionExit( int status ) ATTR_NORETURN;
-int ReadDmrc( void );
+int verify( GConvFunc gconv, int rootok );
+int startClient( volatile int *pid );
+void sessionExit( int status ) ATTR_NORETURN;
+int readDmrc( void );
 extern char **userEnviron, **systemEnviron;
 extern char *curuser, *curpass, *curtype, *newpass,
             *dmrcuser, *curdmrc, *newdmrc;
@@ -492,41 +485,39 @@ extern int cursource;
 #define PWSRC_RELOGIN 2
 
 /* server.c */
-char **PrepServerArgv( struct display *d, const char *args );
-void StartServer( struct display *d );
-void AbortStartServer( struct display *d );
-void StartServerSuccess( void );
-void StartServerFailed( void );
-void StartServerTimeout( void );
+char **prepareServerArgv( struct display *d, const char *args );
+void startServer( struct display *d );
+void abortStartServer( struct display *d );
+void startServerSuccess( void );
+void startServerFailed( void );
+void startServerTimeout( void );
 extern struct display *startingServer;
 extern time_t serverTimeout;
 
-void WaitForServer( struct display *d );
-void ResetServer( struct display *d );
-int PingServer( struct display *d );
+void waitForServer( struct display *d );
+void resetServer( struct display *d );
+int pingServer( struct display *d );
 extern struct _XDisplay *dpy;
 
 /* in util.c */
 void *Calloc( size_t nmemb, size_t size );
 void *Malloc( size_t size );
 void *Realloc( void *ptr, size_t size );
-void WipeStr( char *str );
-int StrCmp( const char *s1, const char *s2 );
-#ifdef HAVE_STRNLEN
-# define StrNLen(s, m) strnlen(s, m)
-#else
-int StrNLen( const char *s, int max );
+void wipeStr( char *str );
+int strCmp( const char *s1, const char *s2 );
+#ifndef HAVE_STRNLEN
+int strnlen( const char *s, int max );
 #endif
-int StrNDup( char **dst, const char *src, int len );
-int StrDup( char **dst, const char *src );
+int strNDup( char **dst, const char *src, int len );
+int strDup( char **dst, const char *src );
 int arrLen( char **arr );
 void freeStrArr( char **arr );
 char **initStrArr( char **arr );
 char **xCopyStrArr( int rn, char **arr );
 /* Note: the following functions free the old data even in case of failure */
-int ReStrN( char **dst, const char *src, int len );
-int ReStr( char **dst, const char *src );
-int StrApp( char **dst, ... );
+int reStrN( char **dst, const char *src, int len );
+int reStr( char **dst, const char *src );
+int strApp( char **dst, ... );
 char **addStrArr( char **arr, const char *str, int len );
 char **parseArgs( char **argv, const char *string );
 /* End note */
@@ -534,11 +525,11 @@ char **setEnv( char **e, const char *name, const char *value );
 char **putEnv( const char *string, char **env );
 const char *getEnv( char **e, const char *name );
 const char *localHostname( void );
-int Reader( int fd, void *buf, int len );
-int Writer( int fd, const void *buf, int len );
+int reader( int fd, void *buf, int len );
+int writer( int fd, const void *buf, int len );
 int fGets( char *buf, int max, FILE *f );
 time_t mTime( const char *fn );
-void ListSessions( int flags, struct display *d, void *ctx,
+void listSessions( int flags, struct display *d, void *ctx,
                    void (*emitXSess)( struct display *, struct display *, void * ),
                    void (*emitTTYSess)( STRUCTUTMP *, struct display *, void * ) );
 
@@ -554,34 +545,34 @@ int setBootOption( const char *opt, SdRec *sdr );
 void commitBootOption( void );
 
 /* in netaddr.c */
-char *NetaddrAddress( char *netaddrp, int *lenp );
-char *NetaddrPort( char *netaddrp, int *lenp );
-int ConvertAddr( char *saddr, int *len, char **addr );
-int NetaddrFamily( char *netaddrp );
+char *netaddrAddress( char *netaddrp, int *lenp );
+char *netaddrPort( char *netaddrp, int *lenp );
+int convertAddr( char *saddr, int *len, char **addr );
+int netaddrFamily( char *netaddrp );
 int addressEqual( char *a1, int len1, char *a2, int len2 );
 
 #ifdef XDMCP
 
 /* in xdmcp.c */
-char *NetworkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress );
-void SendFailed( struct display *d, const char *reason );
+char *networkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress );
+void sendFailed( struct display *d, const char *reason );
 void init_session_id( void );
 
 /* in policy.c */
 struct sockaddr;
-ARRAY8Ptr Accept( struct sockaddr *from, int fromlen, CARD16 displayNumber );
-ARRAY8Ptr ChooseAuthentication( ARRAYofARRAY8Ptr authenticationNames );
-int CheckAuthentication( struct protoDisplay *pdpy, ARRAY8Ptr displayID, ARRAY8Ptr name, ARRAY8Ptr data );
-int SelectAuthorizationTypeIndex( ARRAY8Ptr authenticationName, ARRAYofARRAY8Ptr authorizationNames );
-int SelectConnectionTypeIndex( ARRAY16Ptr connectionTypes, ARRAYofARRAY8Ptr connectionAddresses );
-int Willing( ARRAY8Ptr addr, CARD16 connectionType, ARRAY8Ptr authenticationName, ARRAY8Ptr status, xdmOpCode type );
+ARRAY8Ptr isAccepting( struct sockaddr *from, int fromlen, CARD16 displayNumber );
+ARRAY8Ptr chooseAuthentication( ARRAYofARRAY8Ptr authenticationNames );
+int checkAuthentication( struct protoDisplay *pdpy, ARRAY8Ptr displayID, ARRAY8Ptr name, ARRAY8Ptr data );
+int selectAuthorizationTypeIndex( ARRAY8Ptr authenticationName, ARRAYofARRAY8Ptr authorizationNames );
+int selectConnectionTypeIndex( ARRAY16Ptr connectionTypes, ARRAYofARRAY8Ptr connectionAddresses );
+int isWilling( ARRAY8Ptr addr, CARD16 connectionType, ARRAY8Ptr authenticationName, ARRAY8Ptr status, xdmOpCode type );
 
 /* in protodpy.c */
-void DisposeProtoDisplay( struct protoDisplay *pdpy );
+void disposeProtoDisplay( struct protoDisplay *pdpy );
 
-struct protoDisplay *FindProtoDisplay( XdmcpNetaddr address, int addrlen,
+struct protoDisplay *findProtoDisplay( XdmcpNetaddr address, int addrlen,
                                        CARD16 displayNumber );
-struct protoDisplay *NewProtoDisplay( XdmcpNetaddr address, int addrlen,
+struct protoDisplay *newProtoDisplay( XdmcpNetaddr address, int addrlen,
                                       CARD16 displayNumber,
                                       CARD16 connectionType,
                                       ARRAY8Ptr connectionAddress,
@@ -593,28 +584,28 @@ typedef void (*ListenFunc)( ARRAY8Ptr addr, void **closure );
 
 /* in access.c */
 ARRAY8Ptr getLocalAddress( void );
-int AcceptableDisplayAddress( ARRAY8Ptr clientAddress, CARD16 connectionType, xdmOpCode type );
-int ForEachMatchingIndirectHost( ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure );
-void ScanAccessDatabase( int force );
-int UseChooser( ARRAY8Ptr clientAddress, CARD16 connectionType );
-void ForEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure );
-void ForEachListenAddr( ListenFunc listenfunction, ListenFunc mcastfcuntion, void **closure );
+int acceptableDisplayAddress( ARRAY8Ptr clientAddress, CARD16 connectionType, xdmOpCode type );
+int forEachMatchingIndirectHost( ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure );
+void scanAccessDatabase( int force );
+int useChooser( ARRAY8Ptr clientAddress, CARD16 connectionType );
+void forEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure );
+void forEachListenAddr( ListenFunc listenfunction, ListenFunc mcastfcuntion, void **closure );
 
 /* in choose.c */
-ARRAY8Ptr IndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType );
-int IsIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
-int RememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
-void ForgetIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
-int RegisterIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice );
-int DoChoose( void );
+ARRAY8Ptr indirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType );
+int isIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
+int rememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
+void forgetIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
+int registerindirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice );
+int doChoose( void );
 
 /* socket.c or streams.c */
-void UpdateListenSockets( void );
-int AnyListenSockets( void );
-int ProcessListenSockets( FD_TYPE *reads );
+void updateListenSockets( void );
+int anyListenSockets( void );
+int processListenSockets( fd_set *reads );
 
 /* in xdmcp.c */
-void ProcessRequestSocket( int fd );
+void processRequestSocket( int fd );
 
 #endif /* XDMCP */
 

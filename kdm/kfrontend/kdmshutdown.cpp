@@ -226,15 +226,15 @@ KDMShutdownBase::verifySetUser( const QString & )
 static void
 doShutdown( int type, const char *os )
 {
-	GSet( 1 );
-	GSendInt( G_Shutdown );
-	GSendInt( type );
-	GSendInt( 0 );
-	GSendInt( 0 );
-	GSendInt( SHUT_FORCE );
-	GSendInt( 0 ); /* irrelevant, will timeout immediately anyway */
-	GSendStr( os );
-	GSet( 0 );
+	gSet( 1 );
+	gSendInt( G_Shutdown );
+	gSendInt( type );
+	gSendInt( 0 );
+	gSendInt( 0 );
+	gSendInt( SHUT_FORCE );
+	gSendInt( 0 ); /* irrelevant, will timeout immediately anyway */
+	gSendStr( os );
+	gSet( 0 );
 }
 
 
@@ -265,12 +265,12 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 	connect( rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 	connect( restart_rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 
-	GSet( 1 );
-	GSendInt( G_ListBootOpts );
-	if (GRecvInt() == BO_OK) { /* XXX show dialog on failure */
-		char **tlist = GRecvStrArr( 0 );
-		int defaultTarget = GRecvInt();
-		oldTarget = GRecvInt();
+	gSet( 1 );
+	gSendInt( G_ListBootOpts );
+	if (gRecvInt() == BO_OK) { /* XXX show dialog on failure */
+		char **tlist = gRecvStrArr( 0 );
+		int defaultTarget = gRecvInt();
+		oldTarget = gRecvInt();
 		targets = new QComboBox();
 		for (int i = 0; tlist[i]; i++)
 			targets->addItem( QString::fromLocal8Bit( tlist[i] ) );
@@ -285,7 +285,7 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 		hb->addWidget( targets );
 		connect( targets, SIGNAL(activated( int )), SLOT(slotTargetChanged()) );
 	}
-	GSet( 0 );
+	gSet( 0 );
 
 	howGroup->setSizePolicy( fp );
 
@@ -329,7 +329,7 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 }
 
 static int
-get_date( const char *str )
+getDate( const char *str )
 {
 	K3ProcIO prc;
 	prc << "/bin/date" << "+%s" << "-d" << str;
@@ -347,8 +347,8 @@ KDMShutdown::accept()
 		sch_st = time( 0 );
 	else if (le_start->text()[0] == '+')
 		sch_st = time( 0 ) + le_start->text().toInt();
-	else if ((sch_st = get_date( le_start->text().toLatin1() )) < 0) {
-		MsgBox( errorbox, i18n("Entered start date is invalid.") );
+	else if ((sch_st = getDate( le_start->text().toLatin1() )) < 0) {
+		msgBox( errorbox, i18n("Entered start date is invalid.") );
 		le_start->setFocus();
 		return;
 	}
@@ -356,8 +356,8 @@ KDMShutdown::accept()
 		sch_to = TO_INF;
 	else if (le_timeout->text()[0] == '+')
 		sch_to = sch_st + le_timeout->text().toInt();
-	else if ((sch_to = get_date( le_timeout->text().toLatin1() )) < 0) {
-		MsgBox( errorbox, i18n("Entered timeout date is invalid.") );
+	else if ((sch_to = getDate( le_timeout->text().toLatin1() )) < 0) {
+		msgBox( errorbox, i18n("Entered timeout date is invalid.") );
 		le_timeout->setFocus();
 		return;
 	}
@@ -381,32 +381,32 @@ KDMShutdown::slotWhenChanged()
 void
 KDMShutdown::accepted()
 {
-	GSet( 1 );
-	GSendInt( G_Shutdown );
-	GSendInt( restart_rb->isChecked() ? SHUT_REBOOT : SHUT_HALT );
-	GSendInt( sch_st );
-	GSendInt( sch_to );
-	GSendInt( cb_force->isChecked() ? SHUT_FORCE : SHUT_CANCEL );
-	GSendInt( _allowShutdown == SHUT_ROOT ? 0 : -2 );
-	GSendStr( (restart_rb->isChecked() &&
+	gSet( 1 );
+	gSendInt( G_Shutdown );
+	gSendInt( restart_rb->isChecked() ? SHUT_REBOOT : SHUT_HALT );
+	gSendInt( sch_st );
+	gSendInt( sch_to );
+	gSendInt( cb_force->isChecked() ? SHUT_FORCE : SHUT_CANCEL );
+	gSendInt( _allowShutdown == SHUT_ROOT ? 0 : -2 );
+	gSendStr( (restart_rb->isChecked() &&
 	           targets && targets->currentIndex() != oldTarget) ?
 	          targets->currentText().toLocal8Bit().data() : 0 );
-	GSet( 0 );
+	gSet( 0 );
 	inherited::accepted();
 }
 
 void
 KDMShutdown::scheduleShutdown( QWidget *_parent )
 {
-	GSet( 1 );
-	GSendInt( G_QueryShutdown );
-	int how = GRecvInt();
-	int start = GRecvInt();
-	int timeout = GRecvInt();
-	int force = GRecvInt();
-	int uid = GRecvInt();
-	char *os = GRecvStr();
-	GSet( 0 );
+	gSet( 1 );
+	gSendInt( G_QueryShutdown );
+	int how = gRecvInt();
+	int start = gRecvInt();
+	int timeout = gRecvInt();
+	int force = gRecvInt();
+	int uid = gRecvInt();
+	char *os = gRecvStr();
+	gSet( 0 );
 	if (how) {
 		int ret =
 			KDMCancelShutdown( how, start, timeout, force, uid, os,
@@ -502,12 +502,12 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	buttonlay->addWidget( btnReboot );
 	connect( btnReboot, SIGNAL(clicked()), SLOT(slotReboot()) );
 
-	GSet( 1 );
-	GSendInt( G_ListBootOpts );
-	if (GRecvInt() == BO_OK) {
-		targetList = GRecvStrArr( 0 );
-		/*int def =*/ GRecvInt();
-		int cur = GRecvInt();
+	gSet( 1 );
+	gSendInt( G_ListBootOpts );
+	if (gRecvInt() == BO_OK) {
+		targetList = gRecvStrArr( 0 );
+		/*int def =*/ gRecvInt();
+		int cur = gRecvInt();
 		QMenu *targets = new QMenu( this );
 		for (int i = 0; targetList[i]; i++) {
 			QString t( QString::fromLocal8Bit( targetList[i] ) );
@@ -520,7 +520,7 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 		connect( targets, SIGNAL(triggered( QAction * )),
 		         SLOT(slotReboot( QAction * )) );
 	}
-	GSet( 0 );
+	gSet( 0 );
 
 	buttonlay->addStretch( 1 );
 
@@ -653,7 +653,7 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 		int ns = 0;
 		QString user, loc;
 		do {
-			decodeSess( sess, user, loc );
+			decodeSession( sess, user, loc );
 			new QTreeWidgetItem( lv, QStringList() << user << loc );
 			sess = sess->next, ns++;
 		} while (sess);

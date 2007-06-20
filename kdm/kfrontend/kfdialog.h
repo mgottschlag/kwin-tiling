@@ -44,7 +44,7 @@ class FDialog : public QDialog {
 #define errorbox QMessageBox::Critical
 #define sorrybox QMessageBox::Warning
 #define infobox QMessageBox::Information
-	void MsgBox( QMessageBox::Icon typ, const QString &msg ) { box( this, typ, msg ); }
+	void msgBox( QMessageBox::Icon typ, const QString &msg ) { box( this, typ, msg ); }
 
   protected:
 	virtual void resizeEvent( QResizeEvent *e );

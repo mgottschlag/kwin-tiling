@@ -41,8 +41,8 @@ class KConsole : public Q3TextEdit {
 	void slotData();
 
   private:
-	int OpenConsole();
-	void CloseConsole();
+	int openConsole();
+	void closeConsole();
 
 	KPty *pty;
 	QSocketNotifier *notifier;

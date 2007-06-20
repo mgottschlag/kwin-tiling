@@ -46,25 +46,25 @@ static GProc getter;
 GTalk cnftalk;
 
 static void
-OpenGetter()
+openGetter()
 {
-	GSet( &cnftalk );
+	gSet( &cnftalk );
 	if (!getter.pid) {
-		if (GOpen( &getter,
+		if (gOpen( &getter,
 		           originalArgv, "_config", 0, strdup( "config reader" ),
 		           0 ))
-			LogPanic( "Cannot run config reader\n" );
-		Debug( "getter now ready\n" );
+			logPanic( "Cannot run config reader\n" );
+		debug( "getter now ready\n" );
 	}
 }
 
 void
-CloseGetter()
+closeGetter()
 {
 	if (getter.pid) {
-		GSet( &cnftalk );
-		(void)GClose (&getter, 0, 0);
-		Debug( "getter now closed\n" );
+		gSet( &cnftalk );
+		(void)gClose (&getter, 0, 0);
+		debug( "getter now closed\n" );
 	}
 }
 
@@ -136,21 +136,21 @@ static int cfgMapT[] = {
 static int cfgMap[as(cfgMapT)];
 
 static int
-GetDeps()
+getDeps()
 {
 	int ncf, i, dep, ret;
 	CfgFile *cf;
 
-	OpenGetter();
-	GSendInt( GC_Files );
-	ncf = GRecvInt();
+	openGetter();
+	gSendInt( GC_Files );
+	ncf = gRecvInt();
 	if (!(cf = Malloc( ncf * sizeof(*cf) ))) {
-		CloseGetter();
+		closeGetter();
 		return 0;
 	}
 	for (i = 0; i < ncf; i++) {
-		cf[i].name = newStr( GRecvStr() );
-		if ((dep = cf[i].depidx = GRecvInt()) != -1)
+		cf[i].name = newStr( gRecvStr() );
+		if ((dep = cf[i].depidx = gRecvInt()) != -1)
 			cf[i].deptime = mTime( cf[dep].name->str );
 	}
 	if (cfgFiles) {
@@ -162,14 +162,14 @@ GetDeps()
 	cfgFiles = cf;
 	numCfgFiles = ncf;
 	for (i = 0; i < as(cfgMapT); i++) {
-		GSendInt( cfgMapT[i] );
-		if ((cfgMap[i] = GRecvInt()) < 0) {
-			LogError( "Config reader does not support config cathegory %#x\n",
+		gSendInt( cfgMapT[i] );
+		if ((cfgMap[i] = gRecvInt()) < 0) {
+			logError( "Config reader does not support config cathegory %#x\n",
 			          cfgMapT[i] );
 			ret = 0;
 		}
 	}
-	GSendInt( -1 );
+	gSendInt( -1 );
 	return ret;
 }
 
@@ -194,7 +194,7 @@ needsReScan( int what, CfgDep *dep )
 	for (widx = 0; cfgMapT[widx] != what; widx++);
 	idx = cfgMap[widx];
 	if (checkDep( idx )) {
-		if (!GetDeps())
+		if (!getDeps())
 			return -1;
 		idx = cfgMap[widx];
 	}
@@ -220,25 +220,25 @@ startConfig( int what, CfgDep *dep, int force )
 
 	if ((ret = needsReScan( what, dep )) < 0 || (!ret && !force))
 		return ret;
-	OpenGetter();
-	GSendInt( GC_GetConf );
-	GSendInt( what );
-	GSendStr( dep->name->str );
+	openGetter();
+	gSendInt( GC_GetConf );
+	gSendInt( what );
+	gSendStr( dep->name->str );
 	return 1;
 }
 
 static void
-LoadResources( CfgArr *conf )
+loadResources( CfgArr *conf )
 {
 	char **vptr, **pptr, *cptr;
 	long *iptr, i, id, nu, j, nptr, nint, nchr;
 
 	if (conf->data)
 		free( conf->data );
-	conf->numCfgEnt = GRecvInt();
-	nptr = GRecvInt();
-	nint = GRecvInt();
-	nchr = GRecvInt();
+	conf->numCfgEnt = gRecvInt();
+	nptr = gRecvInt();
+	nint = gRecvInt();
+	nchr = gRecvInt();
 	if (!(conf->data = Malloc( conf->numCfgEnt *
 	                             (sizeof(long) +
 	                              sizeof(char *)) +
@@ -246,7 +246,7 @@ LoadResources( CfgArr *conf )
 	                           nint * sizeof(long) +
 	                           nchr )))
 	{
-		CloseGetter();
+		closeGetter();
 		return;
 	}
 	vptr = (char **)conf->data;
@@ -255,27 +255,27 @@ LoadResources( CfgArr *conf )
 	iptr = conf->idx + conf->numCfgEnt;
 	cptr = (char *)(iptr + nint);
 	for (i = 0; i < conf->numCfgEnt; i++) {
-		id = GRecvInt();
+		id = gRecvInt();
 		conf->idx[i] = id;
 		switch (id & C_TYPE_MASK) {
 		case C_TYPE_INT:
-			vptr[i] = (char *)((unsigned long)GRecvInt());
+			vptr[i] = (char *)((unsigned long)gRecvInt());
 			break;
 		case C_TYPE_STR:
 			vptr[i] = cptr;
-			cptr += GRecvStrBuf( cptr );
+			cptr += gRecvStrBuf( cptr );
 			break;
 		case C_TYPE_ARGV:
-			nu = GRecvInt();
+			nu = gRecvInt();
 			vptr[i] = (char *)pptr;
 			for (j = 0; j < nu; j++) {
 				*pptr++ = cptr;
-				cptr += GRecvStrBuf( cptr );
+				cptr += gRecvStrBuf( cptr );
 			}
 			*pptr++ = (char *)0;
 			break;
 		default:
-			LogError( "Config reader supplied unknown data type in id %#x\n",
+			logError( "Config reader supplied unknown data type in id %#x\n",
 			          id );
 			break;
 		}
@@ -283,7 +283,7 @@ LoadResources( CfgArr *conf )
 }
 
 static void
-ApplyResource( int id, char **src, char **dst )
+applyResource( int id, char **src, char **dst )
 {
 	switch (id & C_TYPE_MASK) {
 	case C_TYPE_INT:
@@ -318,7 +318,7 @@ struct dpyEnts {
 CfgArr cfg;
 
 char **
-FindCfgEnt( struct display *d, int id )
+findCfgEnt( struct display *d, int id )
 {
 	int i;
 
@@ -340,7 +340,7 @@ FindCfgEnt( struct display *d, int id )
 			if (d->cfg.idx[i] == id)
 				return ((char **)d->cfg.data) + i;
 	}
-	Debug( "unknown config entry %#x requested\n", id );
+	debug( "unknown config entry %#x requested\n", id );
 	return (char **)0;
 }
 
@@ -355,7 +355,7 @@ CONF_CORE_GLOBALS
 };
 
 int
-LoadDMResources( int force )
+loadDMResources( int force )
 {
 	int i, ret;
 	char **ent;
@@ -364,18 +364,18 @@ LoadDMResources( int force )
 		return -1; /* may memleak, but we probably have to abort anyway */
 	if ((ret = startConfig( GC_gGlobal, &cfg.dep, force )) <= 0)
 		return ret;
-	LoadResources( &cfg );
-/*	Debug( "manager resources: %[*x\n",
+	loadResources( &cfg );
+/*	debug( "manager resources: %[*x\n",
            cfg.numCfgEnt, ((char **)cfg.data) + cfg.numCfgEnt );*/
 	ret = 1;
 	for (i = 0; i < as(globVal); i++) {
-		if (!(ent = FindCfgEnt( 0, globVal[i].id )))
+		if (!(ent = findCfgEnt( 0, globVal[i].id )))
 			ret = -1;
 		else
-			ApplyResource( globVal[i].id, ent, globVal[i].off );
+			applyResource( globVal[i].id, ent, globVal[i].off );
 	}
 	if (ret < 0)
-		LogError( "Internal error: config reader supplied incomplete data\n" );
+		logError( "Internal error: config reader supplied incomplete data\n" );
 	return ret;
 }
 
@@ -388,7 +388,7 @@ CONF_CORE_LOCALS
 };
 
 int
-LoadDisplayResources( struct display *d )
+loadDisplayResources( struct display *d )
 {
 	int i, ret;
 	char **ent;
@@ -397,32 +397,32 @@ LoadDisplayResources( struct display *d )
 		return -1; /* may memleak */
 	if ((ret = startConfig( GC_gDisplay, &d->cfg.dep, FALSE )) <= 0)
 		return ret;
-	GSendStr( d->name );
-	GSendStr( d->class2 );
-	LoadResources( &d->cfg );
-/*	Debug( "display(%s, %s) resources: %[*x\n", d->name, d->class2,
+	gSendStr( d->name );
+	gSendStr( d->class2 );
+	loadResources( &d->cfg );
+/*	debug( "display(%s, %s) resources: %[*x\n", d->name, d->class2,
            d->cfg.numCfgEnt, ((char **)d->cfg.data) + d->cfg.numCfgEnt );*/
 	ret = 1;
 	for (i = 0; i < as(dpyVal); i++) {
-		if (!(ent = FindCfgEnt( d, dpyVal[i].id )))
+		if (!(ent = findCfgEnt( d, dpyVal[i].id )))
 			ret = -1;
 		else
-			ApplyResource( dpyVal[i].id, ent,
+			applyResource( dpyVal[i].id, ent,
 			               (char **)(((char *)d) + dpyVal[i].off) );
 	}
 	if (ret < 0)
-		LogError( "Internal error: config reader supplied incomplete data\n" );
+		logError( "Internal error: config reader supplied incomplete data\n" );
 	return ret;
 }
 
 int
-InitResources( char **argv )
+initResources( char **argv )
 {
 	originalArgv = argv;
 	cnftalk.pipe = &getter.pipe;
 	if (Setjmp( cnftalk.errjmp ))
 		return 0; /* may memleak */
-	return GetDeps();
+	return getDeps();
 }
 
 static void
@@ -434,23 +434,23 @@ addServers( char **srv, int bType )
 
 	for (; *srv; srv++) {
 		if ((cls = strchr( *srv, '_' ))) {
-			if (!StrNDup( &name, *srv, cls - *srv ))
+			if (!strNDup( &name, *srv, cls - *srv ))
 				return;
-			if (!StrDup( &class2, cls )) {
+			if (!strDup( &class2, cls )) {
 				free( name );
 				return;
 			}
 		} else {
-			if (!StrDup( &name, *srv ))
+			if (!strDup( &name, *srv ))
 				return;
 			class2 = 0;
 		}
-		if ((d = FindDisplayByName( name ))) {
+		if ((d = findDisplayByName( name ))) {
 			if (d->class2)
 				free( d->class2 );
 			dtx = "existing";
 		} else {
-			if (!(d = NewDisplay( name ))) {
+			if (!(d = newDisplay( name ))) {
 				free( name );
 				if (class2)
 					free( class2 );
@@ -468,7 +468,7 @@ addServers( char **srv, int bType )
 			if (d->status == reserve)
 				d->status = notRunning;
 		}
-		Debug( "found %s %s%s display: %s %s\n", dtx,
+		debug( "found %s %s%s display: %s %s\n", dtx,
 		       ((d->displayType & d_location) == dLocal) ? "local" : "foreign",
 		       ((d->displayType & d_lifetime) == dReserve) ? " reserve" : "",
 		       d->name, d->class2 );
@@ -477,9 +477,9 @@ addServers( char **srv, int bType )
 }
 
 void
-ScanServers( void )
+scanServers( void )
 {
-	Debug( "ScanServers\n" );
+	debug( "scanServers\n" );
 	addServers( staticServers, dFromFile | dPermanent );
 	addServers( reserveServers, dFromFile | dReserve );
 }

@@ -96,7 +96,7 @@ KGVerify::KGVerify( KGVerifyHandler *_handler,
 
 KGVerify::~KGVerify()
 {
-	Debug( "delete %s\n", pName.data() );
+	debug( "delete %s\n", pName.data() );
 	delete greet;
 }
 
@@ -173,14 +173,14 @@ void // public
 KGVerify::selectPlugin( int id )
 {
 	if (pluginList.isEmpty()) {
-		MsgBox( errorbox, i18n("No greeter widget plugin loaded. Check the configuration.") );
+		msgBox( errorbox, i18n("No greeter widget plugin loaded. Check the configuration.") );
 		::exit( EX_UNMANAGE_DPY );
 	}
 	curPlugin = id;
 	if (plugMenu)
 		greetPlugins[pluginList[id]].action->setChecked( true );
 	pName = ("greet_" + pluginName()).toLatin1();
-	Debug( "new %s\n", pName.data() );
+	debug( "new %s\n", pName.data() );
 	greet = greetPlugins[pluginList[id]].info->create( this, parent, fixedEntity, func, ctx );
 	if (QWidget *pred = predecessor)
 		setTabOrder( pred, *(const QObjectList *)&greet->getWidgets() );
@@ -196,7 +196,7 @@ KGVerify::slotPluginSelected( QAction *action )
 	if (id != curPlugin) {
 		greetPlugins[pluginList[curPlugin]].action->setChecked( false );
 		parent->setUpdatesEnabled( false );
-		Debug( "delete %s\n", pName.data() );
+		debug( "delete %s\n", pName.data() );
 		delete greet;
 		selectPlugin( id );
 		handler->verifyPluginChanged( id );
@@ -209,7 +209,7 @@ KGVerify::slotPluginSelected( QAction *action )
 void // public
 KGVerify::loadUsers( const QStringList &users )
 {
-	Debug( "%s->loadUsers(...)\n", pName.data() );
+	debug( "%s->loadUsers(...)\n", pName.data() );
 	greet->loadUsers( users );
 }
 
@@ -224,7 +224,7 @@ bool // private
 KGVerify::applyPreset()
 {
 	if (!presEnt.isEmpty()) {
-		Debug( "%s->presetEntity(%\"s, %d)\n", pName.data(),
+		debug( "%s->presetEntity(%\"s, %d)\n", pName.data(),
 		       qPrintable( presEnt ), presFld );
 		greet->presetEntity( presEnt, presFld );
 		if (entitiesLocal()) {
@@ -240,7 +240,7 @@ bool // private
 KGVerify::scheduleAutoLogin( bool initial )
 {
 	if (timeable) {
-		Debug( "%s->presetEntity(%\"s, -1)\n", pName.data(),
+		debug( "%s->presetEntity(%\"s, -1)\n", pName.data(),
 		       qPrintable( _autoLoginUser ), -1 );
 		greet->presetEntity( _autoLoginUser, -1 );
 		curUser = _autoLoginUser;
@@ -265,16 +265,16 @@ void // private
 KGVerify::performAutoLogin()
 {
 //	timer.stop();
-	GSendInt( G_AutoLogin );
+	gSendInt( G_AutoLogin );
 	handleVerify();
 }
 
 QString // public
 KGVerify::getEntity() const
 {
-	Debug( "%s->getEntity()\n", pName.data() );
+	debug( "%s->getEntity()\n", pName.data() );
 	QString ent = greet->getEntity();
-	Debug( "  entity: %s\n", qPrintable( ent ) );
+	debug( "  entity: %s\n", qPrintable( ent ) );
 	return ent;
 }
 
@@ -283,7 +283,7 @@ KGVerify::setUser( const QString &user )
 {
 	// assert( fixedEntity.isEmpty() );
 	curUser = user;
-	Debug( "%s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
+	debug( "%s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
 	greet->setUser( user );
 	gplugActivity();
 }
@@ -302,7 +302,7 @@ KGVerify::start()
 			applyPreset();
 	}
 	running = true;
-	Debug( "%s->start()\n", pName.data() );
+	debug( "%s->start()\n", pName.data() );
 	greet->start();
 	if (!(func == KGreeterPlugin::Authenticate ||
 	      ctx == KGreeterPlugin::ChangeTok ||
@@ -316,7 +316,7 @@ KGVerify::start()
 void
 KGVerify::abort()
 {
-	Debug( "%s->abort()\n", pName.data() );
+	debug( "%s->abort()\n", pName.data() );
 	greet->abort();
 	running = false;
 }
@@ -326,7 +326,7 @@ KGVerify::suspend()
 {
 	// assert( !cont );
 	if (running) {
-		Debug( "%s->abort()\n", pName.data() );
+		debug( "%s->abort()\n", pName.data() );
 		greet->abort();
 	}
 	suspended = true;
@@ -341,12 +341,12 @@ KGVerify::resume()
 	suspended = false;
 	updateLockStatus();
 	if (running) {
-		Debug( "%s->start()\n", pName.data() );
+		debug( "%s->start()\n", pName.data() );
 		greet->start();
 	} else if (delayed) {
 		delayed = false;
 		running = true;
-		Debug( "%s->start()\n", pName.data() );
+		debug( "%s->start()\n", pName.data() );
 		greet->start();
 	}
 }
@@ -354,7 +354,7 @@ KGVerify::resume()
 void // not a slot - called manually by greeter
 KGVerify::accept()
 {
-	Debug( "%s->next()\n", pName.data() );
+	debug( "%s->next()\n", pName.data() );
 	greet->next();
 }
 
@@ -363,17 +363,17 @@ KGVerify::doReject( bool initial )
 {
 	// assert( !cont );
 	if (running) {
-		Debug( "%s->abort()\n", pName.data() );
+		debug( "%s->abort()\n", pName.data() );
 		greet->abort();
 	}
 	handler->verifyClear();
-	Debug( "%s->clear()\n", pName.data() );
+	debug( "%s->clear()\n", pName.data() );
 	greet->clear();
 	curUser.clear();
 	if (!scheduleAutoLogin( initial )) {
 		isClear = !(isClear && applyPreset());
 		if (running) {
-			Debug( "%s->start()\n", pName.data() );
+			debug( "%s->start()\n", pName.data() );
 			greet->start();
 		}
 		if (!failed)
@@ -390,7 +390,7 @@ KGVerify::reject()
 void
 KGVerify::setEnabled( bool on )
 {
-	Debug( "%s->setEnabled(%s)\n", pName.data(), on ? "true" : "false" );
+	debug( "%s->setEnabled(%s)\n", pName.data(), on ? "true" : "false" );
 	greet->setEnabled( on );
 	enabled = on;
 	updateStatus();
@@ -402,14 +402,14 @@ KGVerify::slotTimeout()
 	if (failed) {
 		failed = false;
 		updateStatus();
-		Debug( "%s->revive()\n", pName.data() );
+		debug( "%s->revive()\n", pName.data() );
 		greet->revive();
 		handler->verifyRetry();
 		if (suspended)
 			delayed = true;
 		else {
 			running = true;
-			Debug( "%s->start()\n", pName.data() );
+			debug( "%s->start()\n", pName.data() );
 			greet->start();
 			slotActivity();
 			gplugActivity();
@@ -434,9 +434,9 @@ void
 KGVerify::slotActivity()
 {
 	if (timedLeft) {
-		Debug( "%s->revive()\n", pName.data() );
+		debug( "%s->revive()\n", pName.data() );
 		greet->revive();
-		Debug( "%s->start()\n", pName.data() );
+		debug( "%s->start()\n", pName.data() );
 		greet->start();
 		running = true;
 		timedLeft = 0;
@@ -448,7 +448,7 @@ KGVerify::slotActivity()
 
 
 void // private static
-KGVerify::VMsgBox( QWidget *parent, const QString &user,
+KGVerify::vrfMsgBox( QWidget *parent, const QString &user,
                    QMessageBox::Icon type, const QString &mesg )
 {
 	FDialog::box( parent, type, user.isEmpty() ?
@@ -467,7 +467,7 @@ static const char *msgs[]= {
 };
 
 void // private static
-KGVerify::VErrBox( QWidget *parent, const QString &user, const char *msg )
+KGVerify::vrfErrBox( QWidget *parent, const QString &user, const char *msg )
 {
 	QMessageBox::Icon icon;
 	QString mesg;
@@ -487,11 +487,11 @@ KGVerify::VErrBox( QWidget *parent, const QString &user, const char *msg )
 			}
 		icon = sorrybox;
 	}
-	VMsgBox( parent, user, icon, mesg );
+	vrfMsgBox( parent, user, icon, mesg );
 }
 
 void // private static
-KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
+KGVerify::vrfInfoBox( QWidget *parent, const QString &user, const char *msg )
 {
 	QString mesg = QString::fromLocal8Bit( msg );
 	QRegExp rx( "^Warning: your account will expire in (\\d+) day" );
@@ -511,19 +511,19 @@ KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
 				i18n("Your password expires today.");
 		}
 	}
-	VMsgBox( parent, user, infobox, mesg );
+	vrfMsgBox( parent, user, infobox, mesg );
 }
 
 bool // public static
 KGVerify::handleFailVerify( QWidget *parent )
 {
-	Debug( "handleFailVerify ...\n" );
-	char *msg = GRecvStr();
+	debug( "handleFailVerify ...\n" );
+	char *msg = gRecvStr();
 	QString user = QString::fromLocal8Bit( msg );
 	free( msg );
 
 	for (;;) {
-		int ret = GRecvInt();
+		int ret = gRecvInt();
 
 		// non-terminal status
 		switch (ret) {
@@ -531,7 +531,7 @@ KGVerify::handleFailVerify( QWidget *parent )
 		/* case V_PRE_OK: cannot happen - not in ChTok dialog */
 		/* case V_CHTOK: cannot happen - called by non-interactive verify */
 		case V_CHTOK_AUTH:
-			Debug( " V_CHTOK_AUTH\n" );
+			debug( " V_CHTOK_AUTH\n" );
 			{
 				QStringList pgs( _pluginsLogin );
 				pgs += _pluginsShutdown;
@@ -551,18 +551,18 @@ KGVerify::handleFailVerify( QWidget *parent )
 				return chtok.exec();
 			}
 		case V_MSG_ERR:
-			Debug( " V_MSG_ERR\n" );
-			msg = GRecvStr();
-			Debug( "  message %\"s\n", msg );
-			VErrBox( parent, user, msg );
+			debug( " V_MSG_ERR\n" );
+			msg = gRecvStr();
+			debug( "  message %\"s\n", msg );
+			vrfErrBox( parent, user, msg );
 			if (msg)
 				free( msg );
 			continue;
 		case V_MSG_INFO:
-			Debug( " V_MSG_INFO\n" );
-			msg = GRecvStr();
-			Debug( "  message %\"s\n", msg );
-			VInfoBox( parent, user, msg );
+			debug( " V_MSG_INFO\n" );
+			msg = gRecvStr();
+			debug( "  message %\"s\n", msg );
+			vrfInfoBox( parent, user, msg );
 			free( msg );
 			continue;
 		}
@@ -570,17 +570,17 @@ KGVerify::handleFailVerify( QWidget *parent )
 		// terminal status
 		switch (ret) {
 		case V_OK:
-			Debug( " V_OK\n" );
+			debug( " V_OK\n" );
 			return true;
 		case V_AUTH:
-			Debug( " V_AUTH\n" );
-			VMsgBox( parent, user, sorrybox, i18n("Authentication failed") );
+			debug( " V_AUTH\n" );
+			vrfMsgBox( parent, user, sorrybox, i18n("Authentication failed") );
 			return false;
 		case V_FAIL:
-			Debug( " V_FAIL\n" );
+			debug( " V_FAIL\n" );
 			return false;
 		default:
-			LogPanic( "Unknown V_xxx code %d from core\n", ret );
+			logPanic( "Unknown V_xxx code %d from core\n", ret );
 		}
 	}
 }
@@ -590,35 +590,35 @@ KGVerify::handleVerify()
 {
 	QString user;
 
-	Debug( "handleVerify ...\n" );
+	debug( "handleVerify ...\n" );
 	for (;;) {
 		char *msg;
 		int ret, echo, ndelay;
 		KGreeterPlugin::Function nfunc;
 
-		ret = GRecvInt();
+		ret = gRecvInt();
 
 		// requests
 		coreLock = 1;
 		switch (ret) {
 		case V_GET_TEXT:
-			Debug( " V_GET_TEXT\n" );
-			msg = GRecvStr();
-			Debug( "  prompt %\"s\n", msg );
-			echo = GRecvInt();
-			Debug( "  echo = %d\n", echo );
-			ndelay = GRecvInt();
-			Debug( "  ndelay = %d\n%s->textPrompt(...)\n", ndelay, pName.data() );
+			debug( " V_GET_TEXT\n" );
+			msg = gRecvStr();
+			debug( "  prompt %\"s\n", msg );
+			echo = gRecvInt();
+			debug( "  echo = %d\n", echo );
+			ndelay = gRecvInt();
+			debug( "  ndelay = %d\n%s->textPrompt(...)\n", ndelay, pName.data() );
 			greet->textPrompt( msg, echo, ndelay );
 			if (msg)
 				free( msg );
 			return;
 		case V_GET_BINARY:
-			Debug( " V_GET_BINARY\n" );
-			msg = GRecvArr( &ret );
-			Debug( "  %d bytes prompt\n", ret );
-			ndelay = GRecvInt();
-			Debug( "  ndelay = %d\n%s->binaryPrompt(...)\n", ndelay, pName.data() );
+			debug( " V_GET_BINARY\n" );
+			msg = gRecvArr( &ret );
+			debug( "  %d bytes prompt\n", ret );
+			ndelay = gRecvInt();
+			debug( "  ndelay = %d\n%s->binaryPrompt(...)\n", ndelay, pName.data() );
 			greet->binaryPrompt( msg, ndelay );
 			if (msg)
 				free( msg );
@@ -629,41 +629,41 @@ KGVerify::handleVerify()
 		coreLock = 2;
 		switch (ret) {
 		case V_PUT_USER:
-			Debug( " V_PUT_USER\n" );
-			msg = GRecvStr();
+			debug( " V_PUT_USER\n" );
+			msg = gRecvStr();
 			curUser = user = QString::fromLocal8Bit( msg );
 			// greet needs this to be able to return something useful from
 			// getEntity(). but the backend is still unable to tell a domain ...
-			Debug( "  %s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
+			debug( "  %s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
 			greet->setUser( curUser );
 			handler->verifySetUser( curUser );
 			if (msg)
 				free( msg );
 			continue;
 		case V_PRE_OK: // this is only for func == AuthChAuthTok
-			Debug( " V_PRE_OK\n" );
+			debug( " V_PRE_OK\n" );
 			// With the "classic" method, the wrong user simply cannot be
 			// authenticated, even with the generic plugin. Other methods
 			// could do so, but this applies only to ctx == ChangeTok, which
 			// is not implemented yet.
 			authTok = true;
 			cont = true;
-			Debug( "%s->succeeded()\n", pName.data() );
+			debug( "%s->succeeded()\n", pName.data() );
 			greet->succeeded();
 			continue;
 		case V_CHTOK_AUTH:
-			Debug( " V_CHTOK_AUTH\n" );
+			debug( " V_CHTOK_AUTH\n" );
 			nfunc = KGreeterPlugin::AuthChAuthTok;
 			user = curUser;
 			goto dchtok;
 		case V_CHTOK:
-			Debug( " V_CHTOK\n" );
+			debug( " V_CHTOK\n" );
 			nfunc = KGreeterPlugin::ChAuthTok;
 			user.clear();
 		  dchtok:
 			{
 				timer.stop();
-				Debug( "%s->succeeded()\n", pName.data() );
+				debug( "%s->succeeded()\n", pName.data() );
 				greet->succeeded();
 				KGChTok chtok( parent, user, pluginList, curPlugin, nfunc, KGreeterPlugin::Login );
 				if (!chtok.exec())
@@ -672,26 +672,26 @@ KGVerify::handleVerify()
 				return;
 			}
 		case V_MSG_ERR:
-			Debug( " V_MSG_ERR\n" );
-			msg = GRecvStr();
-			Debug( "  %s->textMessage(%\"s, true)\n", pName.data(), msg );
+			debug( " V_MSG_ERR\n" );
+			msg = gRecvStr();
+			debug( "  %s->textMessage(%\"s, true)\n", pName.data(), msg );
 			if (!greet->textMessage( msg, true )) {
-				Debug( "  message passed\n" );
-				VErrBox( parent, user, msg );
+				debug( "  message passed\n" );
+				vrfErrBox( parent, user, msg );
 			} else
-				Debug( "  message swallowed\n" );
+				debug( "  message swallowed\n" );
 			if (msg)
 				free( msg );
 			continue;
 		case V_MSG_INFO:
-			Debug( " V_MSG_INFO\n" );
-			msg = GRecvStr();
-			Debug( "  %s->textMessage(%\"s, false)\n", pName.data(), msg );
+			debug( " V_MSG_INFO\n" );
+			msg = gRecvStr();
+			debug( "  %s->textMessage(%\"s, false)\n", pName.data(), msg );
 			if (!greet->textMessage( msg, false )) {
-				Debug( "  message passed\n" );
-				VInfoBox( parent, user, msg );
+				debug( "  message passed\n" );
+				vrfInfoBox( parent, user, msg );
 			} else
-				Debug( "  message swallowed\n" );
+				debug( "  message swallowed\n" );
 			free( msg );
 			continue;
 		}
@@ -702,31 +702,31 @@ KGVerify::handleVerify()
 		timer.stop();
 
 		if (ret == V_OK) {
-			Debug( " V_OK\n" );
+			debug( " V_OK\n" );
 			if (!fixedEntity.isEmpty()) {
-				Debug( "  %s->getEntity()\n", pName.data() );
+				debug( "  %s->getEntity()\n", pName.data() );
 				QString ent = greet->getEntity();
-				Debug( "  entity %\"s\n", qPrintable( ent ) );
+				debug( "  entity %\"s\n", qPrintable( ent ) );
 				if (ent != fixedEntity) {
-					Debug( "%s->failed()\n", pName.data() );
+					debug( "%s->failed()\n", pName.data() );
 					greet->failed();
-					MsgBox( sorrybox,
+					msgBox( sorrybox,
 					        i18n("Authenticated user (%1) does not match requested user (%2).\n",
 					             ent, fixedEntity ) );
 					goto retry;
 				}
 			}
-			Debug( "%s->succeeded()\n", pName.data() );
+			debug( "%s->succeeded()\n", pName.data() );
 			greet->succeeded();
 			handler->verifyOk();
 			return;
 		}
 
-		Debug( "%s->failed()\n", pName.data() );
+		debug( "%s->failed()\n", pName.data() );
 		greet->failed();
 
 		if (ret == V_AUTH) {
-			Debug( " V_AUTH\n" );
+			debug( " V_AUTH\n" );
 			failed = true;
 			updateStatus();
 			handler->verifyFailed();
@@ -734,13 +734,13 @@ KGVerify::handleVerify()
 			return;
 		}
 		if (ret != V_FAIL)
-			LogPanic( "Unknown V_xxx code %d from core\n", ret );
-		Debug( " V_FAIL\n" );
+			logPanic( "Unknown V_xxx code %d from core\n", ret );
+		debug( " V_FAIL\n" );
 	  retry:
-		Debug( "%s->revive()\n", pName.data() );
+		debug( "%s->revive()\n", pName.data() );
 		greet->revive();
 		running = true;
-		Debug( "%s->start()\n", pName.data() );
+		debug( "%s->start()\n", pName.data() );
 		greet->start();
 		if (!cont)
 			return;
@@ -751,11 +751,11 @@ KGVerify::handleVerify()
 void
 KGVerify::gplugReturnText( const char *text, int tag )
 {
-	Debug( "%s: gplugReturnText(%\"s, %d)\n", pName.data(),
+	debug( "%s: gplugReturnText(%\"s, %d)\n", pName.data(),
 	       tag & V_IS_SECRET ? "<masked>" : text, tag );
-	GSendStr( text );
+	gSendStr( text );
 	if (text) {
-		GSendInt( tag );
+		gSendInt( tag );
 		handleVerify();
 	} else
 		coreLock = 0;
@@ -767,12 +767,12 @@ KGVerify::gplugReturnBinary( const char *data )
 	if (data) {
 		unsigned const char *up = (unsigned const char *)data;
 		int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
-		Debug( "%s: gplugReturnBinary(%d bytes)\n", pName.data(), len );
-		GSendArr( len, data );
+		debug( "%s: gplugReturnBinary(%d bytes)\n", pName.data(), len );
+		gSendArr( len, data );
 		handleVerify();
 	} else {
-		Debug( "%s: gplugReturnBinary(NULL)\n", pName.data() );
-		GSendArr( 0, 0 );
+		debug( "%s: gplugReturnBinary(NULL)\n", pName.data() );
+		gSendArr( 0, 0 );
 		coreLock = 0;
 	}
 }
@@ -780,7 +780,7 @@ KGVerify::gplugReturnBinary( const char *data )
 void
 KGVerify::gplugSetUser( const QString &user )
 {
-	Debug( "%s: gplugSetUser(%\"s)\n", pName.data(), qPrintable( user ) );
+	debug( "%s: gplugSetUser(%\"s)\n", pName.data(), qPrintable( user ) );
 	curUser = user;
 	handler->verifySetUser( user );
 }
@@ -789,16 +789,16 @@ void
 KGVerify::gplugStart()
 {
 	// XXX handle func != Authenticate
-	Debug( "%s: gplugStart()\n", pName.data() );
-	GSendInt( ctx == KGreeterPlugin::Shutdown ? G_VerifyRootOK : G_Verify );
-	GSendStr( greetPlugins[pluginList[curPlugin]].info->method );
+	debug( "%s: gplugStart()\n", pName.data() );
+	gSendInt( ctx == KGreeterPlugin::Shutdown ? G_VerifyRootOK : G_Verify );
+	gSendStr( greetPlugins[pluginList[curPlugin]].info->method );
 	handleVerify();
 }
 
 void
 KGVerify::gplugActivity()
 {
-	Debug( "%s: gplugActivity()\n", pName.data() );
+	debug( "%s: gplugActivity()\n", pName.data() );
 	if (func == KGreeterPlugin::Authenticate &&
 	    ctx == KGreeterPlugin::Login)
 	{
@@ -811,8 +811,8 @@ KGVerify::gplugActivity()
 void
 KGVerify::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
-	Debug( "%s: gplugMsgBox(%d, %\"s)\n", pName.data(), type, qPrintable( text ) );
-	MsgBox( type, text );
+	debug( "%s: gplugMsgBox(%d, %\"s)\n", pName.data(), type, qPrintable( text ) );
+	msgBox( type, text );
 }
 
 bool
@@ -854,7 +854,7 @@ KGVerify::updateLockStatus()
 }
 
 void
-KGVerify::MsgBox( QMessageBox::Icon typ, const QString &msg )
+KGVerify::msgBox( QMessageBox::Icon typ, const QString &msg )
 {
 	timer.suspend();
 	FDialog::box( parent, typ, msg );
@@ -888,7 +888,7 @@ KGVerify::init( const QStringList &plugins )
 		QString path = KLibLoader::self()->findLibrary(
 			(pg[0] == '/' ? pg : "kgreet_" + pg ).toLatin1() );
 		if (path.isEmpty()) {
-                    LogError( "GreeterPlugin %s does not exist\n", qPrintable( pg ) );
+                    logError( "GreeterPlugin %s does not exist\n", qPrintable( pg ) );
 			continue;
 		}
 		uint i, np = greetPlugins.count();
@@ -896,24 +896,24 @@ KGVerify::init( const QStringList &plugins )
 			if (greetPlugins[i].library->fileName() == path)
 				goto next;
 		if (!(plugin.library = KLibLoader::self()->library( path.toLatin1() ))) {
-                    LogError( "Cannot load GreeterPlugin %s (%s)\n", qPrintable( pg ), qPrintable( path ) );
+                    logError( "Cannot load GreeterPlugin %s (%s)\n", qPrintable( pg ), qPrintable( path ) );
 			continue;
 		}
 		plugin.info = (kgreeterplugin_info*)plugin.library->resolveSymbol( "kgreeterplugin_info" );
                 if (!plugin.info) {
-			LogError( "GreeterPlugin %s (%s) is no valid greet widget plugin\n",
+			logError( "GreeterPlugin %s (%s) is no valid greet widget plugin\n",
 			          qPrintable( pg ), qPrintable( path ) );
 			plugin.library->unload();
 			continue;
 		}
 
 		if (!plugin.info->init( QString(), getConf, 0 )) {
-			LogError( "GreeterPlugin %s (%s) refuses to serve\n",
+			logError( "GreeterPlugin %s (%s) refuses to serve\n",
 			          qPrintable( pg ), qPrintable( path ) );
 			plugin.library->unload();
 			continue;
 		}
-		Debug( "GreeterPlugin %s (%s) loaded\n", qPrintable( pg ), plugin.info->name );
+		debug( "GreeterPlugin %s (%s) loaded\n", qPrintable( pg ), plugin.info->name );
 		greetPlugins.append( plugin );
 	  next:
 		pluginList.append( i );
@@ -1056,7 +1056,7 @@ KGThemedVerify::selectPlugin( int id )
 			oldTypes.remove( tn );
 			n->setWidget( w );
 		} else {
-			MsgBox( errorbox,
+			msgBox( errorbox,
 			        i18n( "Theme not usable with authentication method '%1'.",
 			              i18n( greetPlugins[pluginList[id]].info->name ) ) );
 			break;

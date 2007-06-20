@@ -205,13 +205,13 @@ sub emit_section()
 }
 
 my %th = (
-  "int" => [ "C_TYPE_INT", "", "int\t", "", "GetCfgInt", "" ],
-  "bool" => [ "C_TYPE_INT", " | C_BOOL", "int\t", "bool\t", "GetCfgInt", "GetCfgInt" ],
-  "enum" => [ "C_TYPE_INT", " | C_ENUM", "int\t", "", "GetCfgInt", "" ],
-  "group" => [ "C_TYPE_INT", " | C_GRP", "int\t", "", "GetCfgInt", "" ],
-  "string" => [ "C_TYPE_STR", "", "char\t*", "QString\t", "GetCfgStr", "GetCfgQStr" ],
-  "path" => [ "C_TYPE_STR", " | C_PATH", "char\t*", "QString\t", "GetCfgStr", "GetCfgQStr" ],
-  "list" => [ "C_TYPE_ARGV", "", "char\t**", "QStringList\t", "GetCfgStrArr", "GetCfgQStrList" ]
+  "int" => [ "C_TYPE_INT", "", "int\t", "", "getCfgInt", "" ],
+  "bool" => [ "C_TYPE_INT", " | C_BOOL", "int\t", "bool\t", "getCfgInt", "getCfgInt" ],
+  "enum" => [ "C_TYPE_INT", " | C_ENUM", "int\t", "", "getCfgInt", "" ],
+  "group" => [ "C_TYPE_INT", " | C_GRP", "int\t", "", "getCfgInt", "" ],
+  "string" => [ "C_TYPE_STR", "", "char\t*", "QString\t", "getCfgStr", "getCfgQStr" ],
+  "path" => [ "C_TYPE_STR", " | C_PATH", "char\t*", "QString\t", "getCfgStr", "getCfgQStr" ],
+  "list" => [ "C_TYPE_ARGV", "", "char\t**", "QStringList\t", "getCfgStrArr", "getCfgQStrList" ]
 );
 
 my @tl = ("QFont\t*", "QStringList\t", "QString\t", "char\t**", "char\t*", "int\t", "bool\t");
@@ -447,7 +447,7 @@ while (<INFILE>) {
               my ($typ, $gtr, $isc, $qapp);
               if ($isfn) {
                 $typ = "QFont\t*";
-                $gtr = "Str2Font( GetCfgQStr( ".$kid." ) )";
+                $gtr = "str2Font( getCfgQStr( ".$kid." ) )";
                 $isc = 0;
                 $qapp = 1;
               } elsif ($user eq "greeter" && $cppget) {

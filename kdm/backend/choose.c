@@ -71,7 +71,7 @@ typedef struct _IndirectUsers {
 static IndirectUsersPtr indirectUsers;
 
 int
-RememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
+rememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
 {
 	IndirectUsersPtr i;
 
@@ -94,7 +94,7 @@ RememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
 }
 
 void
-ForgetIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
+forgetIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
 {
 	IndirectUsersPtr *i, ni;
 
@@ -111,7 +111,7 @@ ForgetIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
 }
 
 int
-IsIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
+isIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
 {
 	IndirectUsersPtr i;
 
@@ -127,23 +127,23 @@ typedef struct _Choices {
 	ARRAY8 client;
 	CARD16 connectionType;
 	ARRAY8 choice;
-	Time_t time;
+	time_t time;
 } ChoiceRec, *ChoicePtr;
 
 static ChoicePtr choices;
 
 ARRAY8Ptr
-IndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
+indirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
 {
 	ChoicePtr c, next, prev;
 
 	prev = 0;
 	for (c = choices; c; c = next) {
 		next = c->next;
-		Debug( "choice checking timeout: %ld >? %d\n",
+		debug( "choice checking timeout: %ld >? %d\n",
 		       (long)(now - c->time), choiceTimeout );
-		if (now - c->time > (Time_t)choiceTimeout) {
-			Debug( "timeout choice %ld > %d\n",
+		if (now - c->time > (time_t)choiceTimeout) {
+			debug( "timeout choice %ld > %d\n",
 			       (long)(now - c->time), choiceTimeout );
 			if (prev)
 				prev->next = next;
@@ -163,7 +163,7 @@ IndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
 }
 
 int
-RegisterIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
+registerindirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
                         ARRAY8Ptr choice )
 {
 	ChoicePtr c;
@@ -172,7 +172,7 @@ RegisterIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 	int found = 0;
 #endif
 
-	Debug( "got indirect choice back\n" );
+	debug( "got indirect choice back\n" );
 	for (c = choices; c; c = c->next) {
 		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
 		    connectionType == c->connectionType) {
@@ -215,7 +215,7 @@ RegisterIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 
 #if 0
 static void
-RemoveIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
+removeindirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
 {
 	ChoicePtr c, prev;
 
@@ -242,8 +242,8 @@ RemoveIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
 /* ####################### */
 
 
-typedef struct _hostAddr {
-	struct _hostAddr *next;
+typedef struct _HostAddr {
+	struct _HostAddr *next;
 	struct sockaddr *addr;
 	int addrlen;
 	xdmOpCode type;
@@ -251,8 +251,8 @@ typedef struct _hostAddr {
 
 static HostAddr *hostAddrdb;
 
-typedef struct _hostName {
-	struct _hostName *next;
+typedef struct _HostName {
+	struct _HostName *next;
 	unsigned willing:1, alive:1;
 	ARRAY8 hostname, status;
 	CARD16 connectionType;
@@ -324,7 +324,7 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 			XdmcpDisposeARRAY8( &name->status );
 			XdmcpDisposeARRAY8( hostname );
 
-			GSendInt( G_Ch_ChangeHost );
+			gSendInt( G_Ch_ChangeHost );
 			goto gotold;
 		}
 	}
@@ -362,16 +362,16 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 	*names = name;
 	name->next = 0;
 
-	GSendInt( G_Ch_AddHost );
+	gSendInt( G_Ch_AddHost );
   gotold:
 	name->alive = 1;
 	name->willing = will;
 	name->status = *status;
 
-	GSendInt( (int)name ); /* just an id */
-	GSendNStr( (char *)name->hostname.data, name->hostname.length );
-	GSendNStr( (char *)name->status.data, name->status.length );
-	GSendInt( will );
+	gSendInt( (int)name ); /* just an id */
+	gSendNStr( (char *)name->hostname.data, name->hostname.length );
+	gSendNStr( (char *)name->status.data, name->status.length );
+	gSendInt( will );
 
 	return 1;
 }
@@ -460,7 +460,7 @@ addHostaddr( HostAddr **hosts, struct sockaddr *addr, int len, xdmOpCode type )
 {
 	HostAddr *host;
 
-	Debug( "adding host %[*hhu, type %d\n", len, addr, type );
+	debug( "adding host %[*hhu, type %d\n", len, addr, type );
 	for (host = *hosts; host; host = host->next)
 		if (host->type == type && host->addr->sa_family == addr->sa_family)
 			switch (addr->sa_family) {
@@ -487,7 +487,7 @@ addHostaddr( HostAddr **hosts, struct sockaddr *addr, int len, xdmOpCode type )
 			default: /* ... */
 				break;
 			}
-	Debug( " not dupe\n" );
+	debug( " not dupe\n" );
 	if (!(host = (HostAddr *)Malloc( sizeof(*host) )))
 		return;
 	if (!(host->addr = (struct sockaddr *)Malloc( len ))) {
@@ -699,7 +699,7 @@ makeSockAddrs( const char *name, HostAddr **hosts )
 static int
 registerForPing( const char *name )
 {
-	Debug( "manual host registration: %s\n", name );
+	debug( "manual host registration: %s\n", name );
 	if (!strcmp( name, "BROADCAST" ) || !strcmp( name, "*" ))
 		registerBroadcastForPing();
 	else if (!makeSockAddrs( name, &hostAddrdb ))
@@ -709,16 +709,15 @@ registerForPing( const char *name )
 
 /*ARGSUSED*/
 static void
-AddChooserHost(
-               CARD16 connectionType,
-               ARRAY8Ptr addr,
-               char *closure ATTR_UNUSED )
+addChooserHost( CARD16 connectionType,
+                ARRAY8Ptr addr,
+                char *closure ATTR_UNUSED )
 {
 	if (connectionType == FamilyBroadcast) {
 		registerBroadcastForPing();
 		return;
 	}
-	Debug( "internal host registration: %[*hhu, family %hx\n",
+	debug( "internal host registration: %[*hhu, family %hx\n",
 	       addr->length, addr->data, connectionType );
 	if (connectionType == FamilyInternet) {
 		struct sockaddr_in in_addr;
@@ -754,7 +753,8 @@ AddChooserHost(
 static ARRAYofARRAY8 AuthenticationNames;
 
 #if 0
-static void RegisterAuthenticationName( char *name, int namelen )
+static void
+registerAuthenticationName( char *name, int namelen )
 {
 	ARRAY8Ptr authName;
 	if (!XdmcpReallocARRAYofARRAY8( &AuthenticationNames,
@@ -854,9 +854,9 @@ chooseHost( int hid )
 	for (h = hostNamedb; h; h = h->next)
 		if ((int)h == hid) {
 			/* XXX error handling */
-			GSet( &mstrtalk );
+			gSet( &mstrtalk );
 			if ((td->displayType & d_location) == dLocal) {
-				GSendInt( D_RemoteHost );
+				gSendInt( D_RemoteHost );
 #if defined(IPv6) && defined(AF_INET6)
 				switch (h->connectionType) {
 				case FamilyInternet6:
@@ -866,25 +866,25 @@ chooseHost( int hid )
 					inet_ntop( AF_INET, h->hostaddr.data, addr, sizeof(addr) );
 					break;
 				}
-				GSendStr( addr );
+				gSendStr( addr );
 #else
-				GSendStr( inet_ntoa( *(struct in_addr *)h->hostaddr.data ) );
+				gSendStr( inet_ntoa( *(struct in_addr *)h->hostaddr.data ) );
 #endif
-				CloseGreeter( FALSE );
-				SessionExit( EX_REMOTE );
+				closeGreeter( FALSE );
+				sessionExit( EX_REMOTE );
 			} else {
-				GSendInt( D_ChooseHost );
-				GSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
-				GSendInt( td->connectionType );
-				GSendArr( h->hostaddr.length, (char *)h->hostaddr.data );
-				CloseGreeter( FALSE );
+				gSendInt( D_ChooseHost );
+				gSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
+				gSendInt( td->connectionType );
+				gSendArr( h->hostaddr.length, (char *)h->hostaddr.data );
+				closeGreeter( FALSE );
 				goto bout;
 			}
 			break;
 		}
-/*	LogError( "Internal error: chose unexisting host\n" ); */
+/*	logError( "Internal error: chose unexisting host\n" ); */
   bout:
-	SessionExit( EX_NORMAL );
+	sessionExit( EX_NORMAL );
 }
 
 static void
@@ -894,39 +894,39 @@ directChooseHost( const char *name )
 
 	if (!makeSockAddrs( name, &hosts ))
 		return;
-	GSendInt( G_Ch_Exit );
+	gSendInt( G_Ch_Exit );
 	/* XXX error handling */
-	GSet( &mstrtalk );
+	gSet( &mstrtalk );
 	if ((td->displayType & d_location) == dLocal) {
-		GSendInt( D_RemoteHost );
-		GSendStr( name );
-		CloseGreeter( FALSE );
-		SessionExit( EX_REMOTE );
+		gSendInt( D_RemoteHost );
+		gSendStr( name );
+		closeGreeter( FALSE );
+		sessionExit( EX_REMOTE );
 	} else {
-		GSendInt( D_ChooseHost );
-		GSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
-		GSendInt( td->connectionType );
-		GSendArr( hosts->addrlen, (char *)hosts->addr );
-		CloseGreeter( FALSE );
-		SessionExit( EX_NORMAL );
+		gSendInt( D_ChooseHost );
+		gSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
+		gSendInt( td->connectionType );
+		gSendArr( hosts->addrlen, (char *)hosts->addr );
+		closeGreeter( FALSE );
+		sessionExit( EX_NORMAL );
 	}
 }
 
 #define PING_TRIES 3
 
 int
-DoChoose()
+doChoose()
 {
 	HostName **hp, *h;
 	char *host, **hostp;
 	struct timeval *to, tnow, nextPing;
 	int pingTry, n, cmd;
-	FD_TYPE rfds;
+	fd_set rfds;
 	static int xdmcpInited;
 
-	OpenGreeter();
-	GSendInt( G_Choose );
-	switch (cmd = CtrlGreeterWait( TRUE )) {
+	openGreeter();
+	gSendInt( G_Choose );
+	switch (cmd = ctrlGreeterWait( TRUE )) {
 	case G_Ready:
 		break;
 	default: /* error */
@@ -935,19 +935,19 @@ DoChoose()
 
 	if (!xdmcpInited) {
 		if (!initXDMCP())
-			SessionExit( EX_UNMANAGE_DPY );
+			sessionExit( EX_UNMANAGE_DPY );
 		xdmcpInited = 1;
 	}
 	if ((td->displayType & d_location) == dLocal) {
 		/* XXX the config reader should do the lookup already */
 		for (hostp = td->chooserHosts; *hostp; hostp++)
 			if (!registerForPing( *hostp ))
-				LogError( "Unkown host %\"s specified for local chooser preload of display %s\n", *hostp, td->name );
+				logError( "Unkown host %\"s specified for local chooser preload of display %s\n", *hostp, td->name );
 	} else
-		ForEachChooserHost( &td->clientAddr, td->connectionType,
-		                    AddChooserHost, 0 );
+		forEachChooserHost( &td->clientAddr, td->connectionType,
+		                    addChooserHost, 0 );
 
-	GSendInt( 0 ); /* entering async mode signal */
+	gSendInt( 0 ); /* entering async mode signal */
 
   reping:
 	for (h = hostNamedb; h; h = h->next)
@@ -974,8 +974,8 @@ DoChoose()
 						if (!(*hp)->alive) {
 							h = (*hp)->next;
 							disposeHostname( *hp );
-							GSendInt( G_Ch_RemoveHost );
-							GSendInt( (int)*hp ); /* just an id */
+							gSendInt( G_Ch_RemoveHost );
+							gSendInt( (int)*hp ); /* just an id */
 							*hp = h;
 						} else
 							hp = &(*hp)->next;
@@ -1007,28 +1007,28 @@ DoChoose()
 #endif
 		if (select( n + 1, &rfds, 0, 0, to ) > 0) {
 			if (FD_ISSET( grtproc.pipe.fd.r, &rfds ))
-				switch (cmd = CtrlGreeterWait( FALSE )) {
+				switch (cmd = ctrlGreeterWait( FALSE )) {
 				case -1:
 					break;
 				case G_Ch_Refresh:
 					goto reping;
 				case G_Ch_RegisterHost:
-					host = GRecvStr();
+					host = gRecvStr();
 					if (!registerForPing( host )) {
-						GSendInt( G_Ch_BadHost );
-						GSendStr( host );
+						gSendInt( G_Ch_BadHost );
+						gSendStr( host );
 					}
 					free( host );
 					goto reping;
 				case G_Ch_DirectChoice:
-					host = GRecvStr();
+					host = gRecvStr();
 					directChooseHost( host );
-					GSendInt( G_Ch_BadHost );
-					GSendStr( host );
+					gSendInt( G_Ch_BadHost );
+					gSendStr( host );
 					free( host );
 					break;
 				case G_Ready:
-					chooseHost( GRecvInt() );
+					chooseHost( gRecvInt() );
 					/* NOTREACHED */
 				default:
 					emptyHostnames();

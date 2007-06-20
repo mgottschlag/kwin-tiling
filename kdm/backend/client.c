@@ -121,17 +121,17 @@ static char krbtkfile[MAXPATHLEN];
 
 #define V_RET_AUTH \
 		do { \
-			PrepErrorGreet (); \
-			GSendInt (V_AUTH); \
+			prepareErrorGreet(); \
+			gSendInt( V_AUTH ); \
 			return 0; \
 		} while(0)
 
 #define V_RET_FAIL(m) \
 		do { \
-			PrepErrorGreet (); \
-			GSendInt (V_MSG_ERR); \
-			GSendStr (m); \
-			GSendInt (V_FAIL); \
+			prepareErrorGreet(); \
+			gSendInt( V_MSG_ERR ); \
+			gSendStr( m ); \
+			gSendInt( V_FAIL ); \
 			return 0; \
 		} while(0)
 
@@ -164,21 +164,21 @@ PAM_conv( int num_msg,
 	if (!(reply = Calloc( num_msg, sizeof(*reply) )))
 		return PAM_CONV_ERR;
 
-	ReInitErrorLog();
-	Debug( "PAM_conv\n" );
+	reInitErrorLog();
+	debug( "PAM_conv\n" );
 	for (count = 0; count < num_msg; count++)
 		switch (msg[count]->msg_style) {
 		case PAM_TEXT_INFO:
-			Debug( " PAM_TEXT_INFO: %s\n", msg[count]->msg );
-			PrepErrorGreet();
-			GSendInt( V_MSG_INFO );
-			GSendStr( msg[count]->msg );
+			debug( " PAM_TEXT_INFO: %s\n", msg[count]->msg );
+			prepareErrorGreet();
+			gSendInt( V_MSG_INFO );
+			gSendStr( msg[count]->msg );
 			continue;
 		case PAM_ERROR_MSG:
-			Debug( " PAM_ERROR_MSG: %s\n", msg[count]->msg );
-			PrepErrorGreet();
-			GSendInt( V_MSG_ERR );
-			GSendStr( msg[count]->msg );
+			debug( " PAM_ERROR_MSG: %s\n", msg[count]->msg );
+			prepareErrorGreet();
+			gSendInt( V_MSG_ERR );
+			gSendStr( msg[count]->msg );
 			continue;
 		default:
 			/* could do better error handling here, but see below ... */
@@ -186,44 +186,44 @@ PAM_conv( int num_msg,
 				switch (msg[count]->msg_style) {
 				/* case PAM_PROMPT_ECHO_ON: cannot happen */
 				case PAM_PROMPT_ECHO_OFF:
-					Debug( " PAM_PROMPT_ECHO_OFF (usecur): %s\n", msg[count]->msg );
+					debug( " PAM_PROMPT_ECHO_OFF (usecur): %s\n", msg[count]->msg );
 					if (!curpass)
 						pd->gconv( GCONV_PASS, 0 );
-					StrDup( &reply[count].resp, curpass );
+					strDup( &reply[count].resp, curpass );
 					break;
 				default:
-					LogError( "Unknown PAM message style <%d>\n", msg[count]->msg_style );
+					logError( "Unknown PAM message style <%d>\n", msg[count]->msg_style );
 					goto conv_err;
 				}
 			} else {
 				switch (msg[count]->msg_style) {
 				case PAM_PROMPT_ECHO_ON:
-					Debug( " PAM_PROMPT_ECHO_ON: %s\n", msg[count]->msg );
+					debug( " PAM_PROMPT_ECHO_ON: %s\n", msg[count]->msg );
 					reply[count].resp = pd->gconv( GCONV_NORMAL, msg[count]->msg );
 					break;
 				case PAM_PROMPT_ECHO_OFF:
-					Debug( " PAM_PROMPT_ECHO_OFF: %s\n", msg[count]->msg );
+					debug( " PAM_PROMPT_ECHO_OFF: %s\n", msg[count]->msg );
 					reply[count].resp = pd->gconv( GCONV_HIDDEN, msg[count]->msg );
 					break;
 #ifdef PAM_BINARY_PROMPT
 				case PAM_BINARY_PROMPT:
-					Debug( " PAM_BINARY_PROMPT\n" );
+					debug( " PAM_BINARY_PROMPT\n" );
 					reply[count].resp = pd->gconv( GCONV_BINARY, msg[count]->msg );
 					break;
 #endif
 				default:
-					LogError( "Unknown PAM message style <%d>\n", msg[count]->msg_style );
+					logError( "Unknown PAM message style <%d>\n", msg[count]->msg_style );
 					goto conv_err;
 				}
 			}
 			if (!reply[count].resp) {
-				Debug( "  PAM_conv aborted\n" );
+				debug( "  PAM_conv aborted\n" );
 				pd->abort = TRUE;
 				goto conv_err;
 			}
 			reply[count].resp_retcode = PAM_SUCCESS; /* unused in linux-pam */
 		}
-	Debug( " PAM_conv success\n" );
+	debug( " PAM_conv success\n" );
 	*resp = reply;
 	return PAM_SUCCESS;
 
@@ -255,25 +255,25 @@ PAM_conv_null( int num_msg,
 	if (!(reply = Calloc( num_msg, sizeof(*reply) )))
 		return PAM_CONV_ERR;
 
-	ReInitErrorLog();
-	Debug( "PAM_conv_null\n" );
+	reInitErrorLog();
+	debug( "PAM_conv_null\n" );
 	for (count = 0; count < num_msg; count++) {
 		switch (msg[count]->msg_style) {
 		case PAM_TEXT_INFO:
-			Debug( " PAM_TEXT_INFO: %s\n", msg[count]->msg );
+			debug( " PAM_TEXT_INFO: %s\n", msg[count]->msg );
 			continue;
 		case PAM_ERROR_MSG:
-			LogError( "PAM error message: %s\n", msg[count]->msg );
+			logError( "PAM error message: %s\n", msg[count]->msg );
 			continue;
 		default:
 			/* unknown */
-			Debug( " PAM_<%d>\n", msg[count]->msg_style );
+			debug( " PAM_<%d>\n", msg[count]->msg_style );
 			free( reply );
 			return PAM_CONV_ERR;
 		}
 		reply[count].resp_retcode = PAM_SUCCESS; /* unused in linux-pam */
 	}
-	Debug( " PAM_conv_null success\n" );
+	debug( " PAM_conv_null success\n" );
 	*resp = reply;
 	return PAM_SUCCESS;
 }
@@ -295,7 +295,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 	pdata->abort = FALSE;
 	pconv.conv = PAM_conv;
 	pconv.appdata_ptr = (void *)pdata;
-	Debug( " PAM service %s\n", psrv );
+	debug( " PAM service %s\n", psrv );
 	if ((pretc = pam_start( psrv, curuser, &pconv, &pamh )) != PAM_SUCCESS)
 		goto pam_bail2;
 	if ((pretc = pam_set_item( pamh, PAM_TTY, td->name )) != PAM_SUCCESS) {
@@ -303,8 +303,8 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 		pam_end( pamh, pretc );
 		pamh = 0;
 	  pam_bail2:
-		ReInitErrorLog();
-		LogError( "PAM error: %s\n", pam_strerror( 0, pretc ) );
+		reInitErrorLog();
+		logError( "PAM error: %s\n", pam_strerror( 0, pretc ) );
 		V_RET_FAIL( 0 );
 	}
 	if ((td->displayType & d_location) == dForeign) {
@@ -322,25 +322,25 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 # ifdef PAM_FAIL_DELAY
 	pam_set_item( pamh, PAM_FAIL_DELAY, (void *)fail_delay );
 # endif
-	ReInitErrorLog();
+	reInitErrorLog();
 
-	Debug( " pam_authenticate() ...\n" );
+	debug( " pam_authenticate() ...\n" );
 	pretc = pam_authenticate( pamh,
 	                          td->allowNullPasswd ? 0 : PAM_DISALLOW_NULL_AUTHTOK );
-	ReInitErrorLog();
-	Debug( " pam_authenticate() returned: %s\n", pam_strerror( pamh, pretc ) );
+	reInitErrorLog();
+	debug( " pam_authenticate() returned: %s\n", pam_strerror( pamh, pretc ) );
 	if (pdata->abort) {
 		pam_end( pamh, PAM_SUCCESS );
 		pamh = 0;
 		return 0;
 	}
 	if (!curuser) {
-		Debug( " asking PAM for user ...\n" );
+		debug( " asking PAM for user ...\n" );
 		pam_get_item( pamh, PAM_USER, &pitem );
-		ReInitErrorLog();
-		StrDup( &curuser, (const char *)pitem );
-		GSendInt( V_PUT_USER );
-		GSendStr( curuser );
+		reInitErrorLog();
+		strDup( &curuser, (const char *)pitem );
+		gSendInt( V_PUT_USER );
+		gSendStr( curuser );
 	}
 	if (pretc != PAM_SUCCESS) {
 		switch (pretc) {
@@ -364,11 +364,11 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 
 static int
 #if defined(USE_PAM) || defined(_AIX)
-AccNoPass( const char *un )
+isNoPassAllowed( const char *un )
 {
 	struct passwd *pw = 0;
 #else
-AccNoPass( const char *un, struct passwd *pw )
+isNoPassAllowed( const char *un, struct passwd *pw )
 {
 #endif
 	struct group *gr;
@@ -426,7 +426,7 @@ AccNoPass( const char *un, struct passwd *pw )
 #endif
 
 int
-Verify( GConvFunc gconv, int rootok )
+verify( GConvFunc gconv, int rootok )
 {
 #ifdef USE_PAM
 	const char *psrv;
@@ -449,7 +449,7 @@ Verify( GConvFunc gconv, int rootok )
 # endif
 #endif
 
-	Debug( "Verify ...\n" );
+	debug( "verify ...\n" );
 
 #ifdef USE_PAM
 
@@ -457,7 +457,7 @@ Verify( GConvFunc gconv, int rootok )
 	if (!strcmp( curtype, "classic" )) {
 		if (!gconv( GCONV_USER, 0 ))
 			return 0;
-		if (AccNoPass( curuser )) {
+		if (isNoPassAllowed( curuser )) {
 			gconv( GCONV_PASS_ND, 0 );
 			if (!*curpass) {
 				pnopass = TRUE;
@@ -511,10 +511,10 @@ Verify( GConvFunc gconv, int rootok )
 	if (!strcmp( curtype, "classic" )) {
 		if (!gconv( GCONV_USER, 0 ))
 			return 0;
-		if (AccNoPass( curuser )) {
+		if (isNoPassAllowed( curuser )) {
 			gconv( GCONV_PASS_ND, 0 );
 			if (!*curpass) {
-				Debug( "accepting despite empty password\n" );
+				debug( "accepting despite empty password\n" );
 				goto done;
 			}
 		} else
@@ -523,7 +523,7 @@ Verify( GConvFunc gconv, int rootok )
 		enduserdb();
 		msg = NULL;
 		if ((i = authenticate( curuser, curpass, &reenter, &msg ))) {
-			Debug( "authenticate() failed: %s\n", msg );
+			debug( "authenticate() failed: %s\n", msg );
 			if (msg)
 				free( msg );
 			loginfailed( curuser, hostname, tty );
@@ -533,7 +533,7 @@ Verify( GConvFunc gconv, int rootok )
 				V_RET_FAIL( 0 );
 		}
 		if (reenter) {
-			LogError( "authenticate() requests more data: %s\n", msg );
+			logError( "authenticate() requests more data: %s\n", msg );
 			free( msg );
 			V_RET_FAIL( 0 );
 		}
@@ -543,7 +543,7 @@ Verify( GConvFunc gconv, int rootok )
 		for (curret = 0;;) {
 			msg = NULL;
 			if ((i = authenticate( curuser, curret, &reenter, &msg ))) {
-				Debug( "authenticate() failed: %s\n", msg );
+				debug( "authenticate() failed: %s\n", msg );
 				if (msg)
 					free( msg );
 				loginfailed( curuser, hostname, tty );
@@ -561,13 +561,13 @@ Verify( GConvFunc gconv, int rootok )
 			free( msg );
 		}
 	} else {
-		LogError( "Unsupported authentication type %\"s requested\n", curtype );
+		logError( "Unsupported authentication type %\"s requested\n", curtype );
 		V_RET_FAIL( 0 );
 	}
 	if (msg) {
-		PrepErrorGreet();
-		GSendInt( V_MSG_INFO );
-		GSendStr( msg );
+		prepareErrorGreet();
+		gSendInt( V_MSG_INFO );
+		gSendStr( msg );
 		free( msg );
 	}
 
@@ -576,7 +576,7 @@ Verify( GConvFunc gconv, int rootok )
 #else
 
 	if (strcmp( curtype, "classic" )) {
-		LogError( "Unsupported authentication type %\"s requested\n", curtype );
+		logError( "Unsupported authentication type %\"s requested\n", curtype );
 		V_RET_FAIL( 0 );
 	}
 
@@ -584,12 +584,12 @@ Verify( GConvFunc gconv, int rootok )
 		return 0;
 
 	if (!(p = getpwnam( curuser ))) {
-		Debug( "getpwnam() failed.\n" );
+		debug( "getpwnam() failed.\n" );
 		V_RET_AUTH;
 	}
 # ifdef __linux__ /* only Linux? */
 	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
-		Debug( "account is locked\n" );
+		debug( "account is locked\n" );
 		V_RET_AUTH;
 	}
 # endif
@@ -598,22 +598,22 @@ Verify( GConvFunc gconv, int rootok )
 	if ((sp = getspnam( curuser )))
 		p->pw_passwd = sp->sp_pwdp;
 	else
-		Debug( "getspnam() failed: %m. Are you root?\n" );
+		debug( "getspnam() failed: %m. Are you root?\n" );
 # endif
 
 	if (!*p->pw_passwd) {
 		if (!td->allowNullPasswd) {
-			Debug( "denying user with empty password\n" );
+			debug( "denying user with empty password\n" );
 			V_RET_AUTH;
 		}
 		goto nplogin;
 	}
 
-	if (AccNoPass( curuser, p )) {
+	if (isNoPassAllowed( curuser, p )) {
 	  nplogin:
 		gconv( GCONV_PASS_ND, 0 );
 		if (!*curpass) {
-			Debug( "accepting password-less login\n" );
+			debug( "accepting password-less login\n" );
 			goto done;
 		}
 	} else
@@ -626,7 +626,7 @@ Verify( GConvFunc gconv, int rootok )
 		char realm[REALM_SZ];
 
 		if (krb_get_lrealm( realm, 1 )) {
-			LogError( "Can't get KerberosIV realm.\n" );
+			logError( "Can't get KerberosIV realm.\n" );
 			V_RET_FAIL( 0 );
 		}
 
@@ -637,15 +637,15 @@ Verify( GConvFunc gconv, int rootok )
 		ret = krb_verify_user( curuser, "", realm, curpass, 1, "rcmd" );
 		if (ret == KSUCCESS) {
 			chown( krbtkfile, p->pw_uid, p->pw_gid );
-			Debug( "KerberosIV verify succeeded\n" );
+			debug( "KerberosIV verify succeeded\n" );
 			goto done;
 		} else if (ret != KDC_PR_UNKNOWN && ret != SKDC_CANT) {
-			LogError( "KerberosIV verification failure %\"s for %s\n",
+			logError( "KerberosIV verification failure %\"s for %s\n",
 			          krb_get_err_text( ret ), curuser );
 			krbtkfile[0] = '\0';
 			V_RET_FAIL( 0 );
 		}
-		Debug( "KerberosIV verify failed: %s\n", krb_get_err_text( ret ) );
+		debug( "KerberosIV verify failed: %s\n", krb_get_err_text( ret ) );
 	}
 	krbtkfile[0] = '\0';
 # endif	 /* KERBEROS */
@@ -658,7 +658,7 @@ Verify( GConvFunc gconv, int rootok )
 	if (strcmp( curpass, p->pw_passwd ))
 # endif
 	{
-		Debug( "password verify failed\n" );
+		debug( "password verify failed\n" );
 		V_RET_AUTH;
 	}
 
@@ -666,11 +666,11 @@ Verify( GConvFunc gconv, int rootok )
 
 #endif /* !defined(USE_PAM) && !defined(_AIX) */
 
-	Debug( "restrict %s ...\n", curuser );
+	debug( "restrict %s ...\n", curuser );
 
 #if defined(USE_PAM) || defined(_AIX)
 	if (!(p = getpwnam( curuser ))) {
-		LogError( "getpwnam(%s) failed.\n", curuser );
+		logError( "getpwnam(%s) failed.\n", curuser );
 		V_RET_FAIL( 0 );
 	}
 #endif
@@ -682,30 +682,30 @@ Verify( GConvFunc gconv, int rootok )
 
 #ifdef USE_PAM
 
-	Debug( " pam_acct_mgmt() ...\n" );
+	debug( " pam_acct_mgmt() ...\n" );
 	pretc = pam_acct_mgmt( pamh, 0 );
-	ReInitErrorLog();
-	Debug( " pam_acct_mgmt() returned: %s\n", pam_strerror( pamh, pretc ) );
+	reInitErrorLog();
+	debug( " pam_acct_mgmt() returned: %s\n", pam_strerror( pamh, pretc ) );
 	if (pretc == PAM_NEW_AUTHTOK_REQD) {
 		pdata.usecur = FALSE;
 		pdata.gconv = conv_interact;
-		/* pam will have output a message already, so no PrepErrorGreet () */
+		/* pam will have output a message already, so no prepareErrorGreet() */
 		if (gconv != conv_interact || pnopass) {
 			pam_end( pamh, PAM_SUCCESS );
 			pamh = 0;
-			GSendInt( V_CHTOK_AUTH );
+			gSendInt( V_CHTOK_AUTH );
 			/* this cannot auth the wrong user, as only classic auths get here */
 			while (!doPAMAuth( PAMService, &pdata ))
 				if (pdata.abort)
 					return 0;
-			GSendInt( V_PRE_OK );
+			gSendInt( V_PRE_OK );
 		} else
-			GSendInt( V_CHTOK );
+			gSendInt( V_CHTOK );
 		for (;;) {
-			Debug( " pam_chauthtok() ...\n" );
+			debug( " pam_chauthtok() ...\n" );
 			pretc = pam_chauthtok( pamh, PAM_CHANGE_EXPIRED_AUTHTOK );
-			ReInitErrorLog();
-			Debug( " pam_chauthtok() returned: %s\n", pam_strerror( pamh, pretc ) );
+			reInitErrorLog();
+			debug( " pam_chauthtok() returned: %s\n", pam_strerror( pamh, pretc ) );
 			if (pdata.abort) {
 				pam_end( pamh, PAM_SUCCESS );
 				pamh = 0;
@@ -714,7 +714,7 @@ Verify( GConvFunc gconv, int rootok )
 			if (pretc == PAM_SUCCESS)
 				break;
 			/* effectively there is only PAM_AUTHTOK_ERR */
-			GSendInt( V_FAIL );
+			gSendInt( V_FAIL );
 		}
 		if (curpass)
 			free( curpass );
@@ -733,14 +733,14 @@ Verify( GConvFunc gconv, int rootok )
 	                       ((td->displayType & d_location) == dForeign) ? S_RLOGIN : S_LOGIN,
 	                       tty, &msg ) == -1)
 	{
-		Debug( "loginrestrictions() - %s\n", msg ? msg : "error" );
+		debug( "loginrestrictions() - %s\n", msg ? msg : "error" );
 		loginfailed( curuser, hostname, tty );
-		PrepErrorGreet();
+		prepareErrorGreet();
 		if (msg) {
-			GSendInt( V_MSG_ERR );
-			GSendStr( msg );
+			gSendInt( V_MSG_ERR );
+			gSendStr( msg );
 		}
-		GSendInt( V_AUTH );
+		gSendInt( V_AUTH );
 		return 0;
 	}
 	if (msg)
@@ -798,20 +798,20 @@ Verify( GConvFunc gconv, int rootok )
 			expir = sp->sp_expire;
 #   endif
 			if (tim > expir) {
-				PrepErrorGreet();
-				GSendInt( V_MSG_ERR );
-				GSendStr( "Your account has expired;"
+				prepareErrorGreet();
+				gSendInt( V_MSG_ERR );
+				gSendStr( "Your account has expired;"
 				          " please contact your system administrator" );
-				GSendInt( V_FAIL );
+				gSendInt( V_FAIL );
 				LC_RET0;
 			} else if (tim > (expir - warntime) && !quietlog) {
 				ASPrintf( &buf,
 				          "Warning: your account will expire in %d day(s)",
 				          expir - tim );
 				if (buf) {
-					PrepErrorGreet();
-					GSendInt( V_MSG_INFO );
-					GSendStr( buf );
+					prepareErrorGreet();
+					gSendInt( V_MSG_INFO );
+					gSendStr( buf );
 					free( buf );
 				}
 			}
@@ -822,40 +822,40 @@ Verify( GConvFunc gconv, int rootok )
 			expir = p->pw_change / 86400L;
 #   else
 		if (!sp->sp_lstchg) {
-			PrepErrorGreet();
-			GSendInt( V_MSG_ERR );
-			GSendStr( "You are required to change your password immediately"
+			prepareErrorGreet();
+			gSendInt( V_MSG_ERR );
+			gSendStr( "You are required to change your password immediately"
 			          " (root enforced)" );
 			/* XXX todo password change */
-			GSendInt( V_FAIL );
+			gSendInt( V_FAIL );
 			LC_RET0;
 		} else if (sp->sp_max != -1) {
 			expir = sp->sp_lstchg + sp->sp_max;
 			if (sp->sp_inact != -1 && tim > expir + sp->sp_inact) {
-				PrepErrorGreet();
-				GSendInt( V_MSG_ERR );
-				GSendStr( "Your account has expired;"
+				prepareErrorGreet();
+				gSendInt( V_MSG_ERR );
+				gSendStr( "Your account has expired;"
 				          " please contact your system administrator" );
-				GSendInt( V_FAIL );
+				gSendInt( V_FAIL );
 				LC_RET0;
 			}
 #   endif
 			if (tim > expir) {
-				PrepErrorGreet();
-				GSendInt( V_MSG_ERR );
-				GSendStr( "You are required to change your password immediately"
+				prepareErrorGreet();
+				gSendInt( V_MSG_ERR );
+				gSendStr( "You are required to change your password immediately"
 				          " (password aged)" );
 				/* XXX todo password change */
-				GSendInt( V_FAIL );
+				gSendInt( V_FAIL );
 				LC_RET0;
 			} else if (tim > (expir - warntime) && !quietlog) {
 				ASPrintf( &buf,
 				          "Warning: your password will expire in %d day(s)",
 				          expir - tim );
 				if (buf) {
-					PrepErrorGreet();
-					GSendInt( V_MSG_INFO );
-					GSendStr( buf );
+					prepareErrorGreet();
+					gSendInt( V_MSG_INFO );
+					gSendStr( buf );
 					free( buf );
 				}
 			}
@@ -878,34 +878,34 @@ Verify( GConvFunc gconv, int rootok )
 #  endif
 		 !stat( (nolg = _PATH_NOLOGIN), &st )))
 	{
-		PrepErrorGreet();
-		GSendInt( V_MSG_ERR );
+		prepareErrorGreet();
+		gSendInt( V_MSG_ERR );
 		if (st.st_size && (fd = open( nolg, O_RDONLY )) >= 0) {
 			if ((buf = Malloc( st.st_size + 1 ))) {
 				if (read( fd, buf, st.st_size ) == st.st_size) {
 					buf[st.st_size] = 0;
-					GSendStr( buf );
+					gSendStr( buf );
 					free( buf );
 					close( fd );
-					GSendInt( V_FAIL );
+					gSendInt( V_FAIL );
 					LC_RET0;
 				}
 				free( buf );
 			}
 			close( fd );
 		}
-		GSendStr( "Logins are not allowed at the moment.\nTry again later" );
-		GSendInt( V_FAIL );
+		gSendStr( "Logins are not allowed at the moment.\nTry again later" );
+		gSendInt( V_FAIL );
 		LC_RET0;
 	}
 
 /* restrict_time */
 #  if defined(HAVE_SETUSERCONTEXT) && defined(HAVE_AUTH_TIMEOK)
 	if (!auth_timeok( lc, time( NULL ) )) {
-		PrepErrorGreet();
-		GSendInt( V_MSG_ERR );
-		GSendStr( "You are not allowed to login at the moment" );
-		GSendInt( V_FAIL );
+		prepareErrorGreet();
+		gSendInt( V_MSG_ERR );
+		gSendStr( "You are not allowed to login at the moment" );
+		gSendInt( V_FAIL );
 		LC_RET0;
 	}
 #  endif
@@ -913,7 +913,7 @@ Verify( GConvFunc gconv, int rootok )
 #  ifdef HAVE_GETUSERSHELL
 	for (;;) {
 		if (!(s = getusershell())) {
-			Debug( "shell not in /etc/shells\n" );
+			debug( "shell not in /etc/shells\n" );
 			endusershell();
 			V_RET_FAIL( "Your login shell is not listed in /etc/shells" );
 		}
@@ -931,10 +931,10 @@ Verify( GConvFunc gconv, int rootok )
 	if (login_getcapbool( lc, "requirehome", 0 )) {
 		struct stat st;
 		if (!*p->pw_dir || stat( p->pw_dir, &st ) || st.st_uid != p->pw_uid) {
-			PrepErrorGreet();
-			GSendInt( V_MSG_ERR );
-			GSendStr( "Home folder not available" );
-			GSendInt( V_FAIL );
+			prepareErrorGreet();
+			gSendInt( V_MSG_ERR );
+			gSendStr( "Home folder not available" );
+			gSendInt( V_FAIL );
 			LC_RET0;
 		}
 	}
@@ -967,7 +967,7 @@ saveGids( void )
 	if (!(saved_gids = Malloc( sizeof(gid_t) * num_saved_gids )))
 		return 0;
 	if (getgroups( num_saved_gids, saved_gids ) < 0) {
-		LogError( "saving groups failed: %m\n" );
+		logError( "saving groups failed: %m\n" );
 		return 0;
 	}
 	return 1;
@@ -977,11 +977,11 @@ static int
 restoreGids( void )
 {
 	if (setgroups( num_saved_gids, saved_gids ) < 0) {
-		LogError( "restoring groups failed: %m\n" );
+		logError( "restoring groups failed: %m\n" );
 		return 0;
 	}
 	if (setgid( p->pw_gid ) < 0) {
-		LogError( "restoring gid failed: %m\n" );
+		logError( "restoring gid failed: %m\n" );
 		return 0;
 	}
 	return 1;
@@ -993,27 +993,27 @@ resetGids( void )
 {
 #ifdef HAVE_INITGROUPS
 	if (setgroups( 0, &p->pw_gid /* anything */ ) < 0) {
-		LogError( "restoring groups failed: %m\n" );
+		logError( "restoring groups failed: %m\n" );
 		return 0;
 	}
 #endif
 	if (setgid( 0 ) < 0) {
-		LogError( "restoring gid failed: %m\n" );
+		logError( "restoring gid failed: %m\n" );
 		return 0;
 	}
 	return 1;
 }
 
 static int
-SetGid( const char *name, int gid )
+setGid( const char *name, int gid )
 {
 	if (setgid( gid ) < 0) {
-		LogError( "setgid(%d) (user %s) failed: %m\n", gid, name );
+		logError( "setgid(%d) (user %s) failed: %m\n", gid, name );
 		return 0;
 	}
 #ifdef HAVE_INITGROUPS
 	if (initgroups( name, gid ) < 0) {
-		LogError( "initgroups for %s failed: %m\n", name );
+		logError( "initgroups for %s failed: %m\n", name );
 		setgid( 0 );
 		return 0;
 	}
@@ -1022,20 +1022,20 @@ SetGid( const char *name, int gid )
 }
 
 static int
-SetUid( const char *name, int uid )
+setUid( const char *name, int uid )
 {
 	if (setuid( uid ) < 0) {
-		LogError( "setuid(%d) (user %s) failed: %m\n", uid, name );
+		logError( "setuid(%d) (user %s) failed: %m\n", uid, name );
 		return 0;
 	}
 	return 1;
 }
 
 static int
-SetUser( const char *name, int uid, int gid )
+setUser( const char *name, int uid, int gid )
 {
-	if (SetGid( name, gid )) {
-		if (SetUid( name, uid ))
+	if (setGid( name, gid )) {
+		if (setUid( name, uid ))
 			return 1;
 		resetGids();
 	}
@@ -1044,7 +1044,7 @@ SetUser( const char *name, int uid, int gid )
 
 #if defined(SECURE_RPC) || defined(K5AUTH)
 static void
-NukeAuth( int len, const char *name )
+nukeAuth( int len, const char *name )
 {
 	int i;
 
@@ -1069,13 +1069,13 @@ mergeSessionArgs( int cansave )
 	mfname = 0;
 	fname = ".dmrc";
 	if ((!curdmrc || newdmrc) && *dmrcDir)
-		if (StrApp( &mfname, dmrcDir, "/", curuser, fname, (char *)0 ))
+		if (strApp( &mfname, dmrcDir, "/", curuser, fname, (char *)0 ))
 			fname = mfname;
 	needsave = 0;
 	if (!curdmrc) {
 		curdmrc = iniLoad( fname );
 		if (!curdmrc) {
-			StrDup( &curdmrc, "[Desktop]\nSession=default\n" );
+			strDup( &curdmrc, "[Desktop]\nSession=default\n" );
 			needsave = 1;
 		}
 	}
@@ -1104,7 +1104,7 @@ static int removeCreds;
 #endif
 
 int
-StartClient( volatile int *pid )
+startClient( volatile int *pid )
 {
 	const char *home, *sessargs, *desksess;
 	char **env, *xma;
@@ -1129,14 +1129,14 @@ StartClient( volatile int *pid )
 	char *failsafeArgv[2], *lname;
 	int i, lfd;
 
-	if (StrCmp( dmrcuser, curuser )) {
+	if (strCmp( dmrcuser, curuser )) {
 		if (curdmrc) { free( curdmrc ); curdmrc = 0; }
 		if (dmrcuser) { free( dmrcuser ); dmrcuser = 0; }
 	}
 
 #if defined(USE_PAM) || defined(_AIX)
 	if (!(p = getpwnam( curuser ))) {
-		LogError( "getpwnam(%s) failed.\n", curuser );
+		logError( "getpwnam(%s) failed.\n", curuser );
 		return 0;
 	}
 #endif
@@ -1146,7 +1146,7 @@ StartClient( volatile int *pid )
 	msg = NULL;
 	loginsuccess( curuser, hostname, tty, &msg );
 	if (msg) {
-		Debug( "loginsuccess() - %s\n", msg );
+		debug( "loginsuccess() - %s\n", msg );
 		free( (void *)msg );
 	}
 # else /* _AIX */
@@ -1154,9 +1154,9 @@ StartClient( volatile int *pid )
 	if (krbtkfile[0] != '\0') {
 		if (k_hasafs()) {
 			if (k_setpag() == -1)
-				LogError( "setpag() for %s failed\n", curuser );
+				logError( "setpag() for %s failed\n", curuser );
 			if ((ret = k_afsklog( NULL, NULL )) != KSUCCESS)
-				LogError( "AFS Warning: %s\n", krb_get_err_text( ret ) );
+				logError( "AFS Warning: %s\n", krb_get_err_text( ret ) );
 		}
 	}
 #  endif /* KERBEROS && AFS */
@@ -1168,9 +1168,9 @@ StartClient( volatile int *pid )
 
 	env = baseEnv( curuser );
 	xma = 0;
-	StrApp( &xma, "method=", curtype, (char *)0 );
+	strApp( &xma, "method=", curtype, (char *)0 );
 	if (td_setup)
-		StrApp( &xma, ",auto", (char *)0 );
+		strApp( &xma, ",auto", (char *)0 );
 	if (xma) {
 		env = setEnv( env, "XDM_MANAGED", xma );
 		free( xma );
@@ -1187,7 +1187,7 @@ StartClient( volatile int *pid )
 	userEnviron = inheritEnv( env, envvars );
 	env = systemEnv( curuser );
 	systemEnviron = setEnv( env, "HOME", p->pw_dir );
-	Debug( "user environment:\n%[|''>'\n's"
+	debug( "user environment:\n%[|''>'\n's"
 	       "system environment:\n%[|''>'\n's"
 	       "end of environments\n",
 	       userEnviron,
@@ -1225,8 +1225,8 @@ StartClient( volatile int *pid )
 			 */
 			XauDisposeAuth( td->authorizations[i] );
 			td->authorizations[i] =
-				Krb5GetAuthFor( 14, "MIT-KERBEROS-5", td->name );
-			SaveServerAuthorizations( td, td->authorizations, td->authNum );
+				krb5GetAuthFor( 14, "MIT-KERBEROS-5", td->name );
+			saveServerAuthorizations( td, td->authorizations, td->authNum );
 		}
 #endif
 	}
@@ -1234,31 +1234,31 @@ StartClient( volatile int *pid )
 	if (*dmrcDir)
 		mergeSessionArgs( TRUE );
 
-	Debug( "now starting the session\n" );
+	debug( "now starting the session\n" );
 
 #ifdef USE_PAM
 	/* the greeter is gone by now ... */
 	pconv.conv = PAM_conv_null;
 	pconv.appdata_ptr = 0;
 	if ((pretc = pam_set_item( pamh, PAM_CONV, &pconv )) != PAM_SUCCESS) {
-		ReInitErrorLog();
-		LogError( "pam_set_item() for %s failed: %s\n",
+		reInitErrorLog();
+		logError( "pam_set_item() for %s failed: %s\n",
 		          curuser, pam_strerror( pamh, pretc ) );
 		return 0;
 	}
-	ReInitErrorLog();
+	reInitErrorLog();
 #endif
 
 #ifdef USE_PAM
 
 # ifdef HAVE_SETUSERCONTEXT
 	if (setusercontext( lc, p, p->pw_uid, LOGIN_SETGROUP )) {
-		LogError( "setusercontext(groups) for %s failed: %m\n",
+		logError( "setusercontext(groups) for %s failed: %m\n",
 		          curuser );
 		return 0;
 	}
 # else
-	if (!SetGid( curuser, curgid ))
+	if (!setGid( curuser, curgid ))
 		return 0;
 # endif
 
@@ -1272,7 +1272,7 @@ StartClient( volatile int *pid )
 # endif
 	removeCreds = 1; /* set it first - i don't trust PAM's rollback */
 	pretc = pam_setcred( pamh, 0 );
-	ReInitErrorLog();
+	reInitErrorLog();
 # ifndef HAVE_PAM_GETENVLIST
 	pam_env = environ;
 	environ = saved_env;
@@ -1287,7 +1287,7 @@ StartClient( volatile int *pid )
 		return 0;
 # endif
 	if (pretc != PAM_SUCCESS) {
-		LogError( "pam_setcred() for %s failed: %s\n",
+		logError( "pam_setcred() for %s failed: %s\n",
 		          curuser, pam_strerror( pamh, pretc ) );
 		resetGids();
 		return 0;
@@ -1295,9 +1295,9 @@ StartClient( volatile int *pid )
 
 	removeSession = 1; /* set it first - same as above */
 	pretc = pam_open_session( pamh, 0 );
-	ReInitErrorLog();
+	reInitErrorLog();
 	if (pretc != PAM_SUCCESS) {
-		LogError( "pam_open_session() for %s failed: %s\n",
+		logError( "pam_open_session() for %s failed: %s\n",
 		          curuser, pam_strerror( pamh, pretc ) );
 		resetGids();
 		return 0;
@@ -1318,20 +1318,20 @@ StartClient( volatile int *pid )
 #if !defined(USE_PAM) && defined(USESHADOW) && !defined(_AIX)
 	endspent();
 #endif
-	ClearCloseOnFork( mstrtalk.pipe->fd.w );
+	clearCloseOnFork( mstrtalk.pipe->fd.w );
 	switch (Fork( pid )) {
 	case 0:
 
 		sessreg( td, getpid(), curuser, curuid );
 
 		if (source( systemEnviron, td->startup, td_setup )) {
-			LogError( "Cannot execute startup script %\"s\n", td->startup );
+			logError( "Cannot execute startup script %\"s\n", td->startup );
 			exit( 1 );
 		}
 
 		if (Setjmp( mstrtalk.errjmp ))
 			exit( 1 );
-		GSet( &mstrtalk );
+		gSet( &mstrtalk );
 
 		setsid();
 
@@ -1343,7 +1343,7 @@ StartClient( volatile int *pid )
 		/* pass in environment variables set by libpam and modules it called */
 #  ifdef HAVE_PAM_GETENVLIST
 		pam_env = pam_getenvlist( pamh );
-		ReInitErrorLog();
+		reInitErrorLog();
 #  endif
 		if (pam_env)
 			for (; *pam_env; pam_env++)
@@ -1352,7 +1352,7 @@ StartClient( volatile int *pid )
 
 # ifdef HAVE_SETLOGIN
 		if (setlogin( curuser ) < 0) {
-			LogError( "setlogin for %s failed: %m\n", curuser );
+			logError( "setlogin for %s failed: %m\n", curuser );
 			exit( 1 );
 		}
 #  define D_LOGIN_SETLOGIN LOGIN_SETLOGIN
@@ -1368,10 +1368,10 @@ StartClient( volatile int *pid )
 # ifndef HAVE_SETUSERCONTEXT
 
 #  ifdef USE_PAM
-		if (!SetUid( curuser, curuid ))
+		if (!setUid( curuser, curuid ))
 			exit( 1 );
 #  else
-		if (!SetUser( curuser, curuid, curgid ))
+		if (!setUser( curuser, curuid, curgid ))
 			exit( 1 );
 #  endif
 
@@ -1392,7 +1392,7 @@ StartClient( volatile int *pid )
 		if (setusercontext( lc, p, p->pw_uid,
 		        LOGIN_SETALL & ~(D_LOGIN_SETGROUP|D_LOGIN_SETLOGIN) ) < 0)
 		{
-			LogError( "setusercontext for %s failed: %m\n", curuser );
+			logError( "setusercontext for %s failed: %m\n", curuser );
 			exit( 1 );
 		}
 
@@ -1407,7 +1407,7 @@ StartClient( volatile int *pid )
 		 * audit classes, user limits, and umask.
 		 */
 		if (setpcred( curuser, NULL ) == -1) {
-			LogError( "setpcred for %s failed: %m\n", curuser );
+			logError( "setpcred for %s failed: %m\n", curuser );
 			exit( 1 );
 		}
 
@@ -1419,7 +1419,7 @@ StartClient( volatile int *pid )
 		if (setpenv( curuser, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
 		             userEnviron, NULL ) != 0)
 		{
-			LogError( "Can't set %s's process environment\n", curuser );
+			logError( "Can't set %s's process environment\n", curuser );
 			exit( 1 );
 		}
 		userEnviron = newenv;
@@ -1433,7 +1433,7 @@ StartClient( volatile int *pid )
 #ifdef SECURE_RPC
 		/* do like "keylogin" program */
 		if (!curpass[0])
-			LogInfo( "No password for NIS provided.\n" );
+			logInfo( "No password for NIS provided.\n" );
 		else {
 			char netname[MAXNETNAMELEN+1], secretkey[HEXKEYBYTES+1];
 			int nameret, keyret;
@@ -1442,61 +1442,61 @@ StartClient( volatile int *pid )
 			struct key_netstarg netst;
 
 			nameret = getnetname( netname );
-			Debug( "user netname: %s\n", netname );
+			debug( "user netname: %s\n", netname );
 			len = strlen( curpass );
 			if (len > 8)
 				bzero( curpass + 8, len - 8 );
 			keyret = getsecretkey( netname, secretkey, curpass );
-			Debug( "getsecretkey returns %d, key length %d\n",
+			debug( "getsecretkey returns %d, key length %d\n",
 			       keyret, strlen( secretkey ) );
 			netst.st_netname = netname;
 			memcpy( netst.st_priv_key, secretkey, HEXKEYBYTES );
 			memset( netst.st_pub_key, 0, HEXKEYBYTES );
 			if (key_setnet( &netst ) < 0)
-				Debug( "Could not set secret key.\n" );
+				debug( "Could not set secret key.\n" );
 			/* is there a key, and do we have the right password? */
 			if (keyret == 1) {
 				if (*secretkey) {
 					keyret = key_setsecret( secretkey );
-					Debug( "key_setsecret returns %d\n", keyret );
+					debug( "key_setsecret returns %d\n", keyret );
 					if (keyret == -1)
-						LogError( "Failed to set NIS secret key\n" );
+						logError( "Failed to set NIS secret key\n" );
 					else
 						key_set_ok = 1;
 				} else {
 					/* found a key, but couldn't interpret it */
-					LogError( "Password incorrect for NIS principal %s\n",
+					logError( "Password incorrect for NIS principal %s\n",
 					          nameret ? netname : curuser );
 				}
 			}
 			if (!key_set_ok)
-				NukeAuth( 9, "SUN-DES-1" );
+				nukeAuth( 9, "SUN-DES-1" );
 			bzero( secretkey, strlen( secretkey ) );
 		}
 #endif
 #ifdef K5AUTH
 		/* do like "kinit" program */
 		if (!curpass[0])
-			LogInfo( "No password for Kerberos5 provided.\n" );
+			logInfo( "No password for Kerberos5 provided.\n" );
 		else
-			if ((str = Krb5Init( curuser, curpass, td->name )))
+			if ((str = krb5Init( curuser, curpass, td->name )))
 				userEnviron = setEnv( userEnviron, "KRB5CCNAME", str );
 			else
-				NukeAuth( 14, "MIT-KERBEROS-5" );
+				nukeAuth( 14, "MIT-KERBEROS-5" );
 #endif /* K5AUTH */
 		if (td->autoReLogin) {
-			GSendInt( D_ReLogin );
-			GSendStr( curuser );
-			GSendStr( curpass );
-			GSendStr( newdmrc );
+			gSendInt( D_ReLogin );
+			gSendStr( curuser );
+			gSendStr( curpass );
+			gSendStr( newdmrc );
 		}
 		if (curpass)
 			bzero( curpass, strlen( curpass ) );
-		SetUserAuthorization( td );
+		setUserAuthorization( td );
 		home = getEnv( userEnviron, "HOME" );
 		if (home) {
 			if (chdir( home ) < 0) {
-				LogError( "Cannot chdir to %s's home %s: %m, using /\n",
+				logError( "Cannot chdir to %s's home %s: %m, using /\n",
 				          curuser, home );
 				home = 0;
 				userEnviron = setEnv( userEnviron, "HOME", "/" );
@@ -1504,7 +1504,7 @@ StartClient( volatile int *pid )
 			}
 			ASPrintf( &lname, td->clientLogFile, td->name );
 			if ((lfd = creat( lname, 0600 )) < 0) {
-				LogWarn( "Cannot create session log file %s: %m\n", lname );
+				logWarn( "Cannot create session log file %s: %m\n", lname );
 				free( lname );
 				goto tmperr;
 			}
@@ -1515,7 +1515,7 @@ StartClient( volatile int *pid )
 			ASPrintf( &lname, "/tmp/xerr-%s-%s", curuser, td->name );
 			unlink( lname );
 			if ((lfd = open( lname, O_WRONLY|O_CREAT|O_EXCL, 0600 )) < 0) {
-				LogError( "Cannot create fallback session log file %s: %m\n",
+				logError( "Cannot create fallback session log file %s: %m\n",
 				          lname );
 				goto logerr;
 			}
@@ -1529,17 +1529,17 @@ StartClient( volatile int *pid )
 			mergeSessionArgs( home != 0 );
 		if (!(desksess = iniEntry( curdmrc, "Desktop", "Session", 0 )))
 			desksess = "failsafe"; /* only due to OOM */
-		GSendInt( D_User );
-		GSendInt( curuid );
-		GSendStr( curuser );
-		GSendStr( desksess );
+		gSendInt( D_User );
+		gSendInt( curuid );
+		gSendStr( curuser );
+		gSendStr( desksess );
 		close( mstrtalk.pipe->fd.w );
 		userEnviron = setEnv( userEnviron, "DESKTOP_SESSION", desksess );
 		for (i = 0; td->sessionsDirs[i]; i++) {
 			fname = 0;
-			if (StrApp( &fname, td->sessionsDirs[i], "/", desksess, ".desktop", (char *)0 )) {
+			if (strApp( &fname, td->sessionsDirs[i], "/", desksess, ".desktop", (char *)0 )) {
 				if ((str = iniLoad( fname ))) {
-					if (!StrCmp( iniEntry( str, "Desktop Entry", "Hidden", 0 ), "true" ) ||
+					if (!strCmp( iniEntry( str, "Desktop Entry", "Hidden", 0 ), "true" ) ||
 					    !(sessargs = iniEntry( str, "Desktop Entry", "Exec", 0 )))
 						sessargs = "";
 					free( str );
@@ -1560,30 +1560,30 @@ StartClient( volatile int *pid )
 		    !(argv = addStrArr( argv, sessargs, -1 )))
 			exit( 1 );
 		if (argv[0] && *argv[0]) {
-			Debug( "executing session %\"[s\n", argv );
+			debug( "executing session %\"[s\n", argv );
 			execute( argv, userEnviron );
-			LogError( "Session %\"s execution failed: %m\n", argv[0] );
+			logError( "Session %\"s execution failed: %m\n", argv[0] );
 		} else
-			LogError( "Session has no command/arguments\n" );
+			logError( "Session has no command/arguments\n" );
 		failsafeArgv[0] = td->failsafeClient;
 		failsafeArgv[1] = 0;
 		execute( failsafeArgv, userEnviron );
-		LogError( "Failsafe client %\"s execution failed: %m\n",
+		logError( "Failsafe client %\"s execution failed: %m\n",
 		          failsafeArgv[0] );
 		exit( 1 );
 	case -1:
-		RegisterCloseOnFork( mstrtalk.pipe->fd.w );
-		LogError( "Forking session on %s failed: %m\n", td->name );
+		registerCloseOnFork( mstrtalk.pipe->fd.w );
+		logError( "Forking session on %s failed: %m\n", td->name );
 		return 0;
 	default:
-		RegisterCloseOnFork( mstrtalk.pipe->fd.w );
-		Debug( "StartSession, fork succeeded %d\n", *pid );
+		registerCloseOnFork( mstrtalk.pipe->fd.w );
+		debug( "StartSession, fork succeeded %d\n", *pid );
 		return 1;
 	}
 }
 
 void
-SessionExit( int status )
+sessionExit( int status )
 {
 	int pid;
 #ifdef USE_PAM
@@ -1592,21 +1592,21 @@ SessionExit( int status )
 
 	if (removeAuth) {
 		if (source( systemEnviron, td->reset, td_setup ))
-			LogError( "Cannot execute reset script %\"s\n", td->reset );
+			logError( "Cannot execute reset script %\"s\n", td->reset );
 		sessreg( td, 0, 0, 0 );
 
 		switch (Fork( &pid )) {
 		case 0:
 #if defined(USE_PAM) && defined(HAVE_INITGROUPS)
-			if (restoreGids() && SetUid( curuser, curuid ))
+			if (restoreGids() && setUid( curuser, curuid ))
 #else
-			if (SetUser( curuser, curuid, curgid ))
+			if (setUser( curuser, curuid, curgid ))
 #endif
 
 			{
-				RemoveUserAuthorization( td );
+				removeUserAuthorization( td );
 #ifdef K5AUTH
-				Krb5Destroy( td->name );
+				krb5Destroy( td->name );
 #endif /* K5AUTH */
 #if !defined(USE_PAM) && !defined(_AIX)
 # ifdef KERBEROS
@@ -1622,7 +1622,7 @@ SessionExit( int status )
 			}
 			exit( 0 );
 		case -1:
-			LogError( "Cannot clean up session: fork() failed: %m" );
+			logError( "Cannot clean up session: fork() failed: %m" );
 			break;
 		default:
 			Wait4( &pid );
@@ -1637,31 +1637,31 @@ SessionExit( int status )
 # endif
 		if (removeSession)
 			if ((pretc = pam_close_session( pamh, 0 )) != PAM_SUCCESS)
-				LogError( "pam_close_session() failed: %s\n",
+				logError( "pam_close_session() failed: %s\n",
 				          pam_strerror( pamh, pretc ) );
 		if ((pretc = pam_setcred( pamh, PAM_DELETE_CRED )) != PAM_SUCCESS)
-			LogError( "pam_setcred(DELETE_CRED) failed: %s\n",
+			logError( "pam_setcred(DELETE_CRED) failed: %s\n",
 			          pam_strerror( pamh, pretc ) );
 		resetGids();
 	}
 	if (pamh) {
 		pam_end( pamh, PAM_SUCCESS );
-		ReInitErrorLog();
+		reInitErrorLog();
 	}
 #endif
 
 	/* make sure the server gets reset after the session is over */
 	if (td->serverPid >= 2) {
 		if (!td->terminateServer && td->resetSignal)
-			TerminateProcess( td->serverPid, td->resetSignal );
+			terminateProcess( td->serverPid, td->resetSignal );
 	} else
-		ResetServer( td );
-	Debug( "display %s exiting with status %d\n", td->name, status );
+		resetServer( td );
+	debug( "display %s exiting with status %d\n", td->name, status );
 	exit( status );
 }
 
 int
-ReadDmrc()
+readDmrc()
 {
 	char *data, *fname = 0;
 	int len, pid, pfd[2], err;
@@ -1670,7 +1670,7 @@ ReadDmrc()
 		return GE_NoUser;
 
 	if (*dmrcDir) {
-		if (!StrApp( &fname, dmrcDir, "/", dmrcuser, ".dmrc", (char *)0 ))
+		if (!strApp( &fname, dmrcDir, "/", dmrcuser, ".dmrc", (char *)0 ))
 			return GE_Error;
 		if (!(curdmrc = iniLoad( fname ))) {
 			free( fname );
@@ -1680,7 +1680,7 @@ ReadDmrc()
 		return GE_NoFile;
 	}
 
-	if (!StrApp( &fname, p->pw_dir, "/.dmrc", (char *)0 ))
+	if (!strApp( &fname, p->pw_dir, "/.dmrc", (char *)0 ))
 		return GE_Error;
 	if (pipe( pfd ))
 		return GE_Error;
@@ -1690,7 +1690,7 @@ ReadDmrc()
 		close( pfd[1] );
 		return GE_Error;
 	case 0:
-		if (!SetUser( p->pw_name, p->pw_uid, p->pw_gid ))
+		if (!setUser( p->pw_name, p->pw_uid, p->pw_gid ))
 			exit( 0 );
 		if (!(data = iniLoad( fname ))) {
 			static const int m1 = -1;
@@ -1705,11 +1705,11 @@ ReadDmrc()
 	close( pfd[1] );
 	free( fname );
 	err = GE_Error;
-	if (Reader( pfd[0], &len, sizeof(int) ) == sizeof(int)) {
+	if (reader( pfd[0], &len, sizeof(int) ) == sizeof(int)) {
 		if (len == -1)
 			err = GE_Denied;
 		else if ((curdmrc = Malloc( len + 1 ))) {
-			if (Reader( pfd[0], curdmrc, len + 1 ) == len + 1)
+			if (reader( pfd[0], curdmrc, len + 1 ) == len + 1)
 				err = GE_Ok;
 			else {
 				free( curdmrc );

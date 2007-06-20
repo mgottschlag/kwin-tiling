@@ -137,24 +137,24 @@ getLocalAddress( void )
 
 
 void
-ScanAccessDatabase( int force )
+scanAccessDatabase( int force )
 {
 	struct _displayAddress *da;
 	char *cptr;
 	int nChars, i;
 
-	Debug( "ScanAccessDatabase\n" );
+	debug( "scanAccessDatabase\n" );
 	if (Setjmp( cnftalk.errjmp ))
 		return; /* may memleak */
 	if (startConfig( GC_gXaccess, &accData->dep, force ) <= 0)
 		return;
 	if (accData->hostList)
 		free( accData->hostList );
-	accData->nHosts = GRecvInt();
-	accData->nListens = GRecvInt();
-	accData->nAliases = GRecvInt();
-	accData->nAcls = GRecvInt();
-	nChars = GRecvInt();
+	accData->nHosts = gRecvInt();
+	accData->nListens = gRecvInt();
+	accData->nAliases = gRecvInt();
+	accData->nAcls = gRecvInt();
+	nChars = gRecvInt();
 	if (!(accData->hostList = (HostEntry *)
 	      Malloc( accData->nHosts * sizeof(HostEntry) +
 	              accData->nListens * sizeof(ListenEntry) +
@@ -162,7 +162,7 @@ ScanAccessDatabase( int force )
 	              accData->nAcls * sizeof(AclEntry) +
 	              nChars )))
 	{
-		CloseGetter();
+		closeGetter();
 		return;
 	}
 	accData->listenList = (ListenEntry *)(accData->hostList + accData->nHosts);
@@ -170,20 +170,20 @@ ScanAccessDatabase( int force )
 	accData->acList = (AclEntry *)(accData->aliasList + accData->nAliases);
 	cptr = (char *)(accData->acList + accData->nAcls);
 	for (i = 0; i < accData->nHosts; i++) {
-		switch ((accData->hostList[i].type = GRecvInt())) {
+		switch ((accData->hostList[i].type = gRecvInt())) {
 		case HOST_ALIAS:
 			accData->hostList[i].entry.aliasPattern = cptr;
-			cptr += GRecvStrBuf( cptr );
+			cptr += gRecvStrBuf( cptr );
 			break;
 		case HOST_PATTERN:
 			accData->hostList[i].entry.hostPattern = cptr;
-			cptr += GRecvStrBuf( cptr );
+			cptr += gRecvStrBuf( cptr );
 			break;
 		case HOST_ADDRESS:
 			da = &accData->hostList[i].entry.displayAddress;
 			da->hostAddress.data = (unsigned char *)cptr;
-			cptr += (da->hostAddress.length = GRecvArrBuf( cptr ));
-			switch (GRecvInt())
+			cptr += (da->hostAddress.length = gRecvArrBuf( cptr ));
+			switch (gRecvInt())
 			{
 #ifdef AF_INET
 			case AF_INET:
@@ -211,27 +211,27 @@ ScanAccessDatabase( int force )
 		case HOST_BROADCAST:
 			break;
 		default:
-			LogError( "Received unknown host type %d from config reader\n", accData->hostList[i].type );
+			logError( "Received unknown host type %d from config reader\n", accData->hostList[i].type );
 			return;
 		}
 	}
 	for (i = 0; i < accData->nListens; i++) {
-		accData->listenList[i].iface = GRecvInt();
-		accData->listenList[i].mcasts = GRecvInt();
-		accData->listenList[i].nmcasts = GRecvInt();
+		accData->listenList[i].iface = gRecvInt();
+		accData->listenList[i].mcasts = gRecvInt();
+		accData->listenList[i].nmcasts = gRecvInt();
 	}
 	for (i = 0; i < accData->nAliases; i++) {
 		accData->aliasList[i].name = cptr;
-		cptr += GRecvStrBuf( cptr );
-		accData->aliasList[i].hosts = GRecvInt();
-		accData->aliasList[i].nhosts = GRecvInt();
+		cptr += gRecvStrBuf( cptr );
+		accData->aliasList[i].hosts = gRecvInt();
+		accData->aliasList[i].nhosts = gRecvInt();
 	}
 	for (i = 0; i < accData->nAcls; i++) {
-		accData->acList[i].entries = GRecvInt();
-		accData->acList[i].nentries = GRecvInt();
-		accData->acList[i].hosts = GRecvInt();
-		accData->acList[i].nhosts = GRecvInt();
-		accData->acList[i].flags = GRecvInt();
+		accData->acList[i].entries = gRecvInt();
+		accData->acList[i].nentries = gRecvInt();
+		accData->acList[i].hosts = gRecvInt();
+		accData->acList[i].nhosts = gRecvInt();
+		accData->acList[i].flags = gRecvInt();
 	}
 }
 
@@ -332,7 +332,7 @@ scanEntrylist( int fh, int nh,
 			break;
 		case HOST_PATTERN:
 			if (!*clientName)
-				*clientName = NetworkAddressToHostname( connectionType,
+				*clientName = networkAddressToHostname( connectionType,
 				                                        clientAddress );
 			if (patternMatch( *clientName, h->entry.hostPattern ))
 				return 1;
@@ -376,7 +376,7 @@ matchAclEntry( ARRAY8Ptr clientAddress, CARD16 connectionType, int direct )
  * the local host exists on any of the lists, else FALSE
  */
 int
-ForEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
+forEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
                              CARD16 connectionType,
                              ChooserFunc function, char *closure )
 {
@@ -388,7 +388,7 @@ ForEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
 		if (e->flags & a_useChooser) {
 			ARRAY8Ptr choice;
 
-			choice = IndirectChoice( clientAddress, connectionType );
+			choice = indirectChoice( clientAddress, connectionType );
 			if (!choice || XdmcpARRAY8Equal( getLocalAddress(), choice ))
 				haveLocalhost = 1;
 			else
@@ -401,17 +401,17 @@ ForEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
 }
 
 int
-UseChooser( ARRAY8Ptr clientAddress, CARD16 connectionType )
+useChooser( ARRAY8Ptr clientAddress, CARD16 connectionType )
 {
 	AclEntry *e;
 
 	e = matchAclEntry( clientAddress, connectionType, 0 );
 	return e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser) &&
-		!IndirectChoice( clientAddress, connectionType );
+		!indirectChoice( clientAddress, connectionType );
 }
 
 void
-ForEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType,
+forEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType,
                     ChooserFunc function, char *closure )
 {
 	AclEntry *e;
@@ -430,7 +430,7 @@ ForEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType,
  * given display client is acceptable if it occurs without a host list.
  */
 int
-AcceptableDisplayAddress( ARRAY8Ptr clientAddress, CARD16 connectionType,
+acceptableDisplayAddress( ARRAY8Ptr clientAddress, CARD16 connectionType,
                           xdmOpCode type )
 {
 	AclEntry *e;
@@ -444,7 +444,7 @@ AcceptableDisplayAddress( ARRAY8Ptr clientAddress, CARD16 connectionType,
 }
 
 void
-ForEachListenAddr( ListenFunc listenfunction, ListenFunc mcastfunction,
+forEachListenAddr( ListenFunc listenfunction, ListenFunc mcastfunction,
                    void **closure )
 {
 	int i, j, ifc, mc, nmc;

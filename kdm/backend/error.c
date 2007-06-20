@@ -50,26 +50,26 @@ from the copyright holder.
 #include "printf.c"
 
 void
-GDebug( const char *fmt, ... )
+gDebug( const char *fmt, ... )
 {
 	va_list args;
 
 	if (debugLevel & DEBUG_HLPCON) {
 		va_start( args, fmt );
-		Logger( DM_DEBUG, fmt, args );
+		logger( DM_DEBUG, fmt, args );
 		va_end( args );
 	}
 }
 
 void
-Panic( const char *mesg )
+panic( const char *mesg )
 {
 	int fd = open( "/dev/console", O_WRONLY );
 	write( fd, "xdm panic: ", 11 );
 	write( fd, mesg, strlen( mesg ) );
 	write( fd, "\n", 1 );
 #ifdef USE_SYSLOG
-	ReInitErrorLog();
+	reInitErrorLog();
 	syslog( LOG_ALERT, "%s", mesg );
 #endif
 	exit( 1 );
@@ -77,7 +77,7 @@ Panic( const char *mesg )
 
 #ifdef USE_SYSLOG
 void
-ReInitErrorLog()
+reInitErrorLog()
 {
 	if (!(debugLevel & DEBUG_NOSYSLOG))
 		InitLog();
@@ -85,13 +85,13 @@ ReInitErrorLog()
 #endif
 
 void
-InitErrorLog( const char *errorLogFile )
+initErrorLog( const char *errorLogFile )
 {
 	int fd;
 	char buf[128];
 
 #ifdef USE_SYSLOG
-	ReInitErrorLog();
+	reInitErrorLog();
 #endif
 	/* We do this independently of using syslog, as we cannot redirect
 	 * the output of external programs to syslog.
@@ -102,7 +102,7 @@ InitErrorLog( const char *errorLogFile )
 			errorLogFile = buf;
 		}
 		if ((fd = open( errorLogFile, O_CREAT | O_APPEND | O_WRONLY, 0666 )) < 0)
-			LogError( "Cannot open log file %s\n", errorLogFile );
+			logError( "Cannot open log file %s\n", errorLogFile );
 		else {
 #ifdef USE_SYSLOG
 # ifdef USE_PAM

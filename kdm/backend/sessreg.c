@@ -201,13 +201,13 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 #ifndef NO_UTMP
 # ifdef BSD_UTMP
 	if ((utmp = open( UTMP_FILE, O_RDWR )) < 0)
-		Debug( "cannot open utmp file " UTMP_FILE ": %m\n" );
+		debug( "cannot open utmp file " UTMP_FILE ": %m\n" );
 	else {
 
 		slot = 1;
 		if (pid) {
 			if (!(ttys = fopen( TTYS_FILE, "r" )))
-				LogWarn( "Cannot open tty file " TTYS_FILE ": %m\n" );
+				logWarn( "Cannot open tty file " TTYS_FILE ": %m\n" );
 			else {
 				int column0 = 1;
 				while ((c = getc( ttys )) != EOF)
@@ -236,7 +236,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 			slot++;
 		}
 		if (!pid) {
-			Debug( "utmp entry for display %s vanished\n", d->name );
+			debug( "utmp entry for display %s vanished\n", d->name );
 			goto skip;
 		}
 		if (freeslot >= 0)
@@ -249,7 +249,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 #  endif
 		lseek( utmp, slot * sizeof(ut_ent), SEEK_SET );
 		if (write( utmp, (char *)&ut_ent, sizeof(ut_ent) ) != sizeof(ut_ent))
-			LogError( "Cannot write utmp file " UTMP_FILE ": %m\n" );
+			logError( "Cannot write utmp file " UTMP_FILE ": %m\n" );
 	  skip:
 		close( utmp );
 	}
@@ -262,10 +262,10 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 #endif
 
 	if ((wtmp = open( WTMP_FILE, O_WRONLY|O_APPEND )) < 0)
-		Debug( "cannot open wtmp file " WTMP_FILE ": %m\n" );
+		debug( "cannot open wtmp file " WTMP_FILE ": %m\n" );
 	else {
 		if (write( wtmp, (char *)&ut_ent, sizeof(ut_ent) ) != sizeof(ut_ent))
-			LogError( "Cannot write wtmp file " WTMP_FILE ": %m\n" );
+			logError( "Cannot write wtmp file " WTMP_FILE ": %m\n" );
 		close( wtmp );
 	}
 
@@ -279,11 +279,11 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 		updlastlogx( LLOG_FILE, uid, &ll );
 # else
 		if ((llog = open( LLOG_FILE, O_RDWR )) < 0)
-			Debug( "cannot open lastlog file " LLOG_FILE ": %m\n" );
+			debug( "cannot open lastlog file " LLOG_FILE ": %m\n" );
 		else {
 			lseek( llog, (off_t)uid * sizeof(ll), SEEK_SET );
 			if (write( llog, (char *)&ll, sizeof(ll) ) != sizeof(ll))
-				LogError( "Cannot write llog file " WTMP_FILE ": %m\n" );
+				logError( "Cannot write llog file " WTMP_FILE ": %m\n" );
 			close( llog );
 		}
 # endif

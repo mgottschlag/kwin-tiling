@@ -57,7 +57,7 @@ Calloc( size_t nmemb, size_t size )
 	void *ret;
 
 	if (!(ret = calloc( nmemb, size )))
-		LogOutOfMem();
+		logOutOfMem();
 	return ret;
 }
 
@@ -67,7 +67,7 @@ Malloc( size_t size )
 	void *ret;
 
 	if (!(ret = malloc( size )))
-		LogOutOfMem();
+		logOutOfMem();
 	return ret;
 }
 
@@ -77,12 +77,12 @@ Realloc( void *ptr, size_t size )
 	void *ret;
 
 	if (!(ret = realloc( ptr, size )) && size)
-		LogOutOfMem();
+		logOutOfMem();
 	return ret;
 }
 
 int
-StrCmp( const char *s1, const char *s2 )
+strCmp( const char *s1, const char *s2 )
 {
 	if (s1 == s2)
 		return 0;
@@ -94,7 +94,7 @@ StrCmp( const char *s1, const char *s2 )
 }
 
 void
-WipeStr( char *str )
+wipeStr( char *str )
 {
 	if (str) {
 		bzero( str, strlen( str ) );
@@ -104,7 +104,7 @@ WipeStr( char *str )
 
 #ifndef HAVE_STRNLEN
 int
-StrNLen( const char *s, int max )
+strnlen( const char *s, int max )
 {
 	unsigned l;
 
@@ -115,7 +115,7 @@ StrNLen( const char *s, int max )
 
 /* duplicate src; wipe & free old dst string */
 int
-ReStrN( char **dst, const char *src, int len )
+reStrN( char **dst, const char *src, int len )
 {
 	char *ndst = 0;
 
@@ -125,27 +125,27 @@ ReStrN( char **dst, const char *src, int len )
 		if (*dst && !memcmp( *dst, src, len ) && !(*dst)[len])
 			return 1;
 		if (!(ndst = Malloc( len + 1 ))) {
-			WipeStr( *dst );
+			wipeStr( *dst );
 			*dst = 0;
 			return 0;
 		}
 		memcpy( ndst, src, len );
 		ndst[len] = 0;
 	}
-	WipeStr( *dst ); /* make an option, if we should become heavily used */
+	wipeStr( *dst ); /* make an option, if we should become heavily used */
 	*dst = ndst;
 	return 2;
 }
 
 int
-ReStr( char **dst, const char *src )
+reStr( char **dst, const char *src )
 {
-	return ReStrN( dst, src, -1 );
+	return reStrN( dst, src, -1 );
 }
 
 /* duplicate src */
 int
-StrNDup( char **dst, const char *src, int len )
+strNDup( char **dst, const char *src, int len )
 {
 	if (src) {
 		if (len < 0)
@@ -160,14 +160,14 @@ StrNDup( char **dst, const char *src, int len )
 }
 
 int
-StrDup( char **dst, const char *src )
+strDup( char **dst, const char *src )
 {
-	return StrNDup( dst, src, -1 );
+	return strNDup( dst, src, -1 );
 }
 
 /* append any number of strings to dst */
 int
-StrApp( char **dst, ... )
+strApp( char **dst, ... )
 {
 	int len;
 	char *bk, *pt, *dp;
@@ -253,7 +253,7 @@ addStrArr( char **arr, const char *str, int len )
 	char **strp;
 
 	if ((arr = extStrArr( arr, &strp ))) {
-		if (StrNDup( strp, str, len ))
+		if (strNDup( strp, str, len ))
 			return arr;
 		freeStrArr( arr );
 	}
@@ -374,13 +374,13 @@ setEnv( char **e, const char *name, const char *value )
 #ifdef _AIX
 	/* setpenv() depends on "SYSENVIRON:", not "SYSENVIRON:=" */
 	if (!value) {
-		if (!StrDup( &newe, name ))
+		if (!strDup( &newe, name ))
 			return e;
 	} else
 #endif
 	{
 		newe = 0;
-		if (!StrApp( &newe, name, "=", value, (char *)0 ))
+		if (!strApp( &newe, name, "=", value, (char *)0 ))
 			return e;
 	}
 	envsize = 0;
@@ -413,7 +413,7 @@ putEnv( const char *string, char **env )
 
 	if (!(b = strchr( string, '=' )))
 		return NULL;
-	if (!StrNDup( &n, string, b - string ))
+	if (!strNDup( &n, string, b - string ))
 		return NULL;
 	env = setEnv( env, n, b + 1 );
 	free( n );
@@ -421,7 +421,7 @@ putEnv( const char *string, char **env )
 }
 
 static int
-GetHostname( char *buf, int maxlen )
+getHostname( char *buf, int maxlen )
 {
 	int len;
 
@@ -453,14 +453,14 @@ localHostname( void )
 {
 	if (!gotLocalHostname)
 	{
-		GetHostname( localHostbuf, sizeof(localHostbuf) - 1 );
+		getHostname( localHostbuf, sizeof(localHostbuf) - 1 );
 		gotLocalHostname = 1;
 	}
 	return localHostbuf;
 }
 
 static int
-AtomicIO( ssize_t (*f)( int, void *, size_t ), int fd, void *buf, int count )
+atomicIO( ssize_t (*f)( int, void *, size_t ), int fd, void *buf, int count )
 {
 	int ret, rlen;
 
@@ -482,15 +482,15 @@ AtomicIO( ssize_t (*f)( int, void *, size_t ), int fd, void *buf, int count )
 }
 
 int
-Reader( int fd, void *buf, int count )
+reader( int fd, void *buf, int count )
 {
-	return AtomicIO( read, fd, buf, count );
+	return atomicIO( read, fd, buf, count );
 }
 
 int
-Writer( int fd, const void *buf, int count )
+writer( int fd, const void *buf, int count )
 {
-	return AtomicIO( (ssize_t(*)( int, void *, size_t ))write,
+	return atomicIO( (ssize_t(*)( int, void *, size_t ))write,
 	                 fd, (void *)buf, count );
 }
 
@@ -519,7 +519,7 @@ mTime( const char *fn )
 }
 
 static int
-StrNChrCnt( const char *s, int slen, char c )
+strNChrCnt( const char *s, int slen, char c )
 {
 	int i, cnt;
 
@@ -534,7 +534,7 @@ StrNChrCnt( const char *s, int slen, char c )
 */
 
 void
-ListSessions( int flags, struct display *d, void *ctx,
+listSessions( int flags, struct display *d, void *ctx,
               void (*emitXSess)( struct display *, struct display *, void * ),
               void (*emitTTYSess)( STRUCTUTMP *, struct display *, void * ) )
 {
@@ -561,7 +561,7 @@ ListSessions( int flags, struct display *d, void *ctx,
 #ifdef BSD_UTMP
 	if ((fd = open( UTMP_FILE, O_RDONLY )) < 0)
 		return;
-	while (Reader( fd, ut, sizeof(ut[0]) ) == sizeof(ut[0])) {
+	while (reader( fd, ut, sizeof(ut[0]) ) == sizeof(ut[0])) {
 		if (*ut->ut_user) {	/* no idea how to list passive TTYs on BSD */
 #else
 	SETUTENT();
@@ -584,15 +584,15 @@ ListSessions( int flags, struct display *d, void *ctx,
 				    !isdigit( ut->ut_line[3] ))
 					continue;
 			}
-			if (StrNChrCnt( ut->ut_line, sizeof(ut->ut_line), ':' ))
+			if (strNChrCnt( ut->ut_line, sizeof(ut->ut_line), ':' ))
 				continue; /* x login */
-			switch (StrNChrCnt( ut->ut_host, sizeof(ut->ut_host), ':' )) {
+			switch (strNChrCnt( ut->ut_host, sizeof(ut->ut_host), ':' )) {
 			case 1: /* x terminal */
 				continue;
 			default:
 #ifdef IP6_MAGIC
 				/* unknown - IPv6 makes things complicated */
-				le = StrNLen( ut->ut_host, sizeof(ut->ut_host) );
+				le = strnlen( ut->ut_host, sizeof(ut->ut_host) );
 				/* cut off screen number */
 				for (dot = le; ut->ut_host[--dot] != ':'; )
 					if (ut->ut_host[dot] == '.') {

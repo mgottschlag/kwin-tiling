@@ -181,9 +181,9 @@ KGDialog::slotConsole()
 	if (verify)
 		verify->abort();
 #endif
-	GSet( 1 );
-	GSendInt( G_Console );
-	GSet( 0 );
+	gSet( 1 );
+	gSendInt( G_Console );
+	gSet( 0 );
 }
 
 void
@@ -207,10 +207,10 @@ void
 KGDialog::slotDisplaySelected( QAction *action )
 {
 #ifdef HAVE_VTS
-	GSet( 1 );
-	GSendInt( G_Activate );
-	GSendInt( action->data().toInt() );
-	GSet( 0 );
+	gSet( 1 );
+	gSendInt( G_Activate );
+	gSendInt( action->data().toInt() );
+	gSet( 0 );
 #else
 	(void)action;
 #endif
@@ -224,7 +224,7 @@ KGDialog::slotPopulateDisplays()
 	dpySpec *sessions = fetchSessions( lstPassive | lstTTY );
 	QString user, loc;
 	for (dpySpec *sess = sessions; sess; sess = sess->next) {
-		decodeSess( sess, user, loc );
+		decodeSession( sess, user, loc );
 		QAction *action = dpyMenu->addAction(
 			i18nc( "session (location)", "%1 (%2)", user, loc ) );
 		action->setData( sess->vt ? sess->vt : -1 );

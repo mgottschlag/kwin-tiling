@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sys/un.h>
 
 static int
-openctl( int fd, int err, const char *ctl, const char *dpy )
+openCtl( int fd, int err, const char *ctl, const char *dpy )
 {
 	struct sockaddr_un sa;
 
@@ -50,7 +50,7 @@ openctl( int fd, int err, const char *ctl, const char *dpy )
 }
 
 static const char *
-readcfg( const char *cfg )
+readConfig( const char *cfg )
 {
 	FILE *fp;
 	const char *ctl;
@@ -214,7 +214,7 @@ main( int argc, char **argv )
 		}
 	}
 	if ((!ctl || !*ctl) && *cfg)
-		ctl = readcfg( cfg );
+		ctl = readConfig( cfg );
 	if ((fd = socket( PF_UNIX, SOCK_STREAM, 0 )) < 0) {
 		fprintf( stderr, "Cannot create UNIX socket\n" );
 		return 1;
@@ -222,11 +222,11 @@ main( int argc, char **argv )
 	if (dpy && (ptr = strchr( dpy, ':' )) && (ptr = strchr( ptr, '.' )))
 		*ptr = 0;
 	if (ctl && *ctl) {
-		if (!openctl( fd, 1, ctl, dpy ))
+		if (!openCtl( fd, 1, ctl, dpy ))
 			return 1;
 	} else {
-		if (!openctl( fd, 0, "/var/run/xdmctl", dpy ) &&
-		    !openctl( fd, 0, "/var/run", dpy ))
+		if (!openCtl( fd, 0, "/var/run/xdmctl", dpy ) &&
+		    !openCtl( fd, 0, "/var/run", dpy ))
 		{
 			fprintf( stderr, "No command socket found.\n" );
 			return 1;

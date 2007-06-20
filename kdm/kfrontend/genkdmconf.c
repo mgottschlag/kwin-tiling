@@ -127,7 +127,7 @@ typedef struct {
 } OCABuf;
 
 static void
-OutCh_OCA( void *bp, char c )
+outCh_OCA( void *bp, char c )
 {
 	OCABuf *ocabp = (OCABuf *)bp;
 
@@ -144,8 +144,8 @@ VASPrintf( char **strp, const char *fmt, va_list args )
 {
 	OCABuf ocab = { 0, 0, 0, -1 };
 
-	DoPr( OutCh_OCA, &ocab, fmt, args );
-	OutCh_OCA( &ocab, 0 );
+	doPrint( outCh_OCA, &ocab, fmt, args );
+	outCh_OCA( &ocab, 0 );
 	*strp = realloc( ocab.buf, ocab.clen );
 	if (!*strp)
 		*strp = ocab.buf;
@@ -165,7 +165,7 @@ ASPrintf( char **strp, const char *fmt, ... )
 }
 
 static void
-StrCat( char **strp, const char *fmt, ... )
+strCat( char **strp, const char *fmt, ... )
 {
 	char *str, *tstr;
 	va_list args;
@@ -380,7 +380,7 @@ static Ent *findEnt( Sect *sect, const char *key );
  */
 
 static const char *
-getfqval( const char *sect, const char *key, const char *defval )
+getFqVal( const char *sect, const char *key, const char *defval )
 {
 	Section *cs;
 	Entry *ce;
@@ -399,7 +399,7 @@ getfqval( const char *sect, const char *key, const char *defval )
 }
 
 static void
-putfqval( const char *sect, const char *key, const char *value )
+putFqVal( const char *sect, const char *key, const char *value )
 {
 	Section *cs, **csp;
 	Entry *ce, **cep;
@@ -429,24 +429,24 @@ putfqval( const char *sect, const char *key, const char *value )
 
 static const char *csect;
 
-#define setsect(se) csect = se
+#define setSect(se) csect = se
 
 static void
-putval( const char *key, const char *value )
+putVal( const char *key, const char *value )
 {
-	putfqval( csect, key, value );
+	putFqVal( csect, key, value );
 }
 
 
 static void
-wrconf( FILE *f )
+writeKdmrc( FILE *f )
 {
 	Section *cs;
 	Entry *ce;
 	StrList *sl = 0, *sp;
 	const char *cmt;
 
-	putfqval( "General", "ConfigVersion", RCVERSTR );
+	putFqVal( "General", "ConfigVersion", RCVERSTR );
 	for (cs = config; cs; cs = cs->next) {
 		fprintf( f, "%s[%s]\n",
 		         cs->comment ? cs->comment : "\n", cs->name );
@@ -723,7 +723,7 @@ prepName( const char *fn )
 }
 
 static FILE *
-Create( const char *fn, int mode )
+createFile( const char *fn, int mode )
 {
 	char *nname;
 	FILE *f;
@@ -739,7 +739,7 @@ Create( const char *fn, int mode )
 }
 
 static void
-WriteOut( const char *fn, int mode, time_t stamp, const char *buf, size_t len )
+writeOut( const char *fn, int mode, time_t stamp, const char *buf, size_t len )
 {
 	char *nname;
 	int fd;
@@ -762,7 +762,7 @@ WriteOut( const char *fn, int mode, time_t stamp, const char *buf, size_t len )
 
 /* returns static array! */
 static const char *
-resect( const char *sec, const char *name )
+reSect( const char *sec, const char *name )
 {
 	static char sname[64];
 	char *p;
@@ -840,7 +840,7 @@ linkedFile( const char *fn )
  * XXX this stuff is highly borked. it does not handle collisions at all.
  */
 static int
-copyfile( Entry *ce, const char *tname, int mode, int (*proc)( File * ) )
+copyFile( Entry *ce, const char *tname, int mode, int (*proc)( File * ) )
 {
 	const char *tptr;
 	char *nname;
@@ -869,11 +869,11 @@ copyfile( Entry *ce, const char *tname, int mode, int (*proc)( File * ) )
 			else {
 				struct stat st;
 				stat( ce->value, &st );
-				WriteOut( nname, mode, st.st_mtime, file.buf, file.eof - file.buf );
+				writeOut( nname, mode, st.st_mtime, file.buf, file.eof - file.buf );
 				copiedFile( ce->value );
 			}
 		} else {
-			WriteOut( nname, mode, 0, file.buf, file.eof - file.buf );
+			writeOut( nname, mode, 0, file.buf, file.eof - file.buf );
 			editedFile( ce->value );
 		}
 		if (strcmp( ce->value, nname ) && inNewDir( ce->value ) && !use_destdir)
@@ -887,7 +887,7 @@ copyfile( Entry *ce, const char *tname, int mode, int (*proc)( File * ) )
 }
 
 static void
-dlinkfile( const char *name )
+doLinkFile( const char *name )
 {
 	File file;
 
@@ -898,7 +898,7 @@ dlinkfile( const char *name )
 	if (inNewDir( name ) && use_destdir) {
 		struct stat st;
 		stat( name, &st );
-		WriteOut( name, st.st_mode, st.st_mtime, file.buf, file.eof - file.buf );
+		writeOut( name, st.st_mode, st.st_mtime, file.buf, file.eof - file.buf );
 		copiedFile( name );
 	} else
 		linkedFile( name );
@@ -906,16 +906,16 @@ dlinkfile( const char *name )
 }
 
 static void
-linkfile( Entry *ce )
+linkFile( Entry *ce )
 {
 	if (ce->written && *ce->value)
-		dlinkfile( ce->value );
+		doLinkFile( ce->value );
 }
 
 static void
-writefile( const char *tname, int mode, const char *cont )
+writeFile( const char *tname, int mode, const char *cont )
 {
-	WriteOut( tname, mode, 0, cont, strlen( cont ) );
+	writeOut( tname, mode, 0, cont, strlen( cont ) );
 	addedFile( tname );
 }
 
@@ -923,19 +923,19 @@ writefile( const char *tname, int mode, const char *cont )
 char *background;
 
 static void
-handBgCfg( Entry *ce, Section *cs ATTR_UNUSED )
+handleBgCfg( Entry *ce, Section *cs ATTR_UNUSED )
 {
 	if (!ce->active) /* can be only the X-*-Greeter one */
-		writefile( def_BackgroundCfg, 0644,
+		writeFile( def_BackgroundCfg, 0644,
 		           background ? background : def_background );
 #if 0 /* risk of kcontrol clobbering the original file */
 	else if (old_confs)
-		linkfile( ce );
+		linkFile( ce );
 #endif
 	else {
-		if (!copyfile( ce, ce->value, 0644, 0 )) {
+		if (!copyFile( ce, ce->value, 0644, 0 )) {
 			if (!strcmp( cs->name, "X-*-Greeter" ))
-				writefile( def_BackgroundCfg, 0644, def_background );
+				writeFile( def_BackgroundCfg, 0644, def_background );
 			ce->active = 0;
 		}
 	}
@@ -944,7 +944,7 @@ handBgCfg( Entry *ce, Section *cs ATTR_UNUSED )
 
 #ifdef HAVE_VTS
 static char *
-mem_mem( char *mem, int lmem, const char *smem, int lsmem )
+memMem( char *mem, int lmem, const char *smem, int lsmem )
 {
 	for (; lmem >= lsmem; mem++, lmem--)
 		if (!memcmp( mem, smem, lsmem ))
@@ -968,7 +968,7 @@ getInitTab( void )
 		for (p = it.buf; p < it.eof; p = eol + 1) {
 			for (eol = p; eol < it.eof && *eol != '\n'; eol++);
 			if (*p != '#') {
-				if ((ep = mem_mem( p, eol - p, " tty", 4 )) &&
+				if ((ep = memMem( p, eol - p, " tty", 4 )) &&
 				    ep < eol && isdigit( *ep ))
 				{
 					if (ep + 1 == eol || isspace( *(ep + 1) ))
@@ -997,7 +997,7 @@ getInitTab( void )
 /* TODO: handle solaris' local_uid specs */
 
 static char *
-ReadWord( File *file, int EOFatEOL )
+readWord( File *file, int EOFatEOL )
 {
 	char *wordp, *wordBuffer;
 	int quoted;
@@ -1135,7 +1135,7 @@ typedef struct serverEntry {
 } ServerEntry;
 
 static void
-absorb_xservers( const char *sect ATTR_UNUSED, char **value )
+absorbXservers( const char *sect ATTR_UNUSED, char **value )
 {
 	ServerEntry *se, *se1, *serverList, **serverPtr;
 	const char *word, *word2;
@@ -1162,26 +1162,26 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 #ifdef HAVE_VTS
   bustd:
 #endif
-	while ((word = ReadWord( &file, 0 ))) {
+	while ((word = readWord( &file, 0 ))) {
 		se = mcalloc( sizeof(*se) );
 		se->name = word;
-		if (!(word = ReadWord( &file, 1 )))
+		if (!(word = readWord( &file, 1 )))
 			continue;
 		se->type = parseDisplayType( word, &se->console );
 		if (se->type < 0) {
 			se->class2 = word;
-			if (!(word = ReadWord( &file, 1 )))
+			if (!(word = readWord( &file, 1 )))
 				continue;
 			se->type = parseDisplayType( word, &se->console );
 			if (se->type < 0) {
-				while (ReadWord( &file, 1 ));
+				while (readWord( &file, 1 ));
 				continue;
 			}
 		}
-		word = ReadWord( &file, 1 );
+		word = readWord( &file, 1 );
 		if (word && !strcmp( word, "reserve" )) {
 			se->reserve = 1;
-			word = ReadWord( &file, 1 );
+			word = readWord( &file, 1 );
 		}
 		if (((se->type & d_location) == dLocal) != (word != 0))
 			continue;
@@ -1192,7 +1192,7 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 			if (word[0] == 'v' && word[1] == 't')
 				se->vt = atoi( word + 2 );
 			else if (!strcmp( word, "-crt" )) { /* SCO style */
-				if (!(word = ReadWord( &file, 1 )) ||
+				if (!(word = readWord( &file, 1 )) ||
 				    memcmp( word, "/dev/tty", 8 ))
 					goto bustd;
 				se->vt = atoi( word + 8 );
@@ -1202,7 +1202,7 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 				ap = mmalloc( sizeof(*ap) );
 				ap->str = word;
 				if (!strcmp( word, "-nolisten" )) {
-					if (!(word2 = ReadWord( &file, 1 )))
+					if (!(word2 = readWord( &file, 1 )))
 						break;
 					ap2 = mmalloc( sizeof(*ap2) );
 					ap2->str = word2;
@@ -1219,7 +1219,7 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 					argp = &ap->next;
 				}
 			}
-			word = ReadWord( &file, 1 );
+			word = readWord( &file, 1 );
 		}
 		*argp = *arglp = 0;
 		if ((se->type & d_location) == dLocal) {
@@ -1265,32 +1265,32 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 			}
 		}
 	if (se1) {
-		putfqval( "X-:*-Core", "ServerCmd", se1->argvs );
-		putfqval( "X-:*-Core", "ServerArgsLocal", se1->arglvs );
+		putFqVal( "X-:*-Core", "ServerCmd", se1->argvs );
+		putFqVal( "X-:*-Core", "ServerArgsLocal", se1->arglvs );
 		for (se = serverList; se; se = se->next)
 			if ((se->type & d_location) == dLocal) {
 				char sec[32];
 				sprintf( sec, "X-%s-Core", se->name );
 				if (cpcmd)
-					putfqval( sec, "ServerCmd", se->argvs );
+					putFqVal( sec, "ServerCmd", se->argvs );
 				if (cpcmdl)
-					putfqval( sec, "ServerArgsLocal", se->arglvs );
+					putFqVal( sec, "ServerArgsLocal", se->arglvs );
 #ifdef HAVE_VTS
 				if (cpvt && se->vt) {
 					char vt[8];
 					sprintf( vt, "%d", se->vt );
-					putfqval( sec, "ServerVT", vt );
+					putFqVal( sec, "ServerVT", vt );
 				}
 #else
 				if (se->console)
-					putfqval( sec, "ServerTTY", se->console );
+					putFqVal( sec, "ServerTTY", se->console );
 #endif
 			}
 	}
 
 	sdpys = rdpys = 0;
 	for (se = serverList; se; se = se->next)
-		StrCat( se->reserve ? &rdpys : &sdpys,
+		strCat( se->reserve ? &rdpys : &sdpys,
 		        se->class2 ? ",%s_%s" : ",%s", se->name, se->class2 );
 
 #ifdef HAVE_VTS
@@ -1299,12 +1299,12 @@ absorb_xservers( const char *sect ATTR_UNUSED, char **value )
 		for (; nldpys < 4; nldpys++) {
 			for (dn = 0; dpymask & (1 << dn); dn++);
 			dpymask |= (1 << dn);
-			StrCat( &rdpys, ",:%d", dn );
+			strCat( &rdpys, ",:%d", dn );
 		}
 #endif
 
-	putfqval( "General", "StaticServers", sdpys ? sdpys + 1 : "" );
-	putfqval( "General", "ReserveServers", rdpys ? rdpys + 1 : "" );
+	putFqVal( "General", "StaticServers", sdpys ? sdpys + 1 : "" );
+	putFqVal( "General", "ReserveServers", rdpys ? rdpys + 1 : "" );
 
 	if (**value == '/' && inNewDir( *value ) && !use_destdir)
 		displace( *value );
@@ -1334,7 +1334,7 @@ upd_consolettys( Entry *ce, Section *cs ATTR_UNUSED )
 		getInitTab();
 		for (i = 0, buf = 0; i < 16; i++)
 			if (TTYmask & (1 << i))
-				StrCat( &buf, ",tty%d", i + 1 );
+				strCat( &buf, ",tty%d", i + 1 );
 		if (buf) {
 			ce->value = buf + 1;
 			ce->active = ce->written = 1;
@@ -1351,9 +1351,9 @@ cp_keyfile( Entry *ce, Section *cs ATTR_UNUSED )
 	if (!ce->active) /* there is only the Global one */
 		return;
 	if (old_confs)
-		linkfile( ce );
+		linkFile( ce );
 	else
-		if (!copyfile( ce, "kdmkeys", 0600, 0 ))
+		if (!copyFile( ce, "kdmkeys", 0600, 0 ))
 			ce->active = 0;
 }
 
@@ -1361,11 +1361,11 @@ static void
 mk_xaccess( Entry *ce, Section *cs ATTR_UNUSED )
 {
 	if (!ce->active) /* there is only the Global one */
-		writefile( def_Xaccess, 0644, def_xaccess );
+		writeFile( def_Xaccess, 0644, def_xaccess );
 	else if (old_confs)
-		linkfile( ce );
+		linkFile( ce );
 	else
-		copyfile( ce, "Xaccess", 0644, 0 ); /* don't handle error, it will disable Xdmcp automatically */
+		copyFile( ce, "Xaccess", 0644, 0 ); /* don't handle error, it will disable Xdmcp automatically */
 }
 
 static void
@@ -1379,12 +1379,12 @@ mk_willing( Entry *ce, Section *cs ATTR_UNUSED )
 		if (!(fname = strchr( ce->value, '/' )))
 			return; /* obviously in-line (or empty) */
 		if (old_scripts || inNewDir( fname ))
-			dlinkfile( fname );
+			doLinkFile( fname );
 		else {
 		  dflt:
 			ce->value = KDMCONF "/Xwilling";
 			ce->active = ce->written = 1;
-			writefile( ce->value, 0755, def_willing );
+			writeFile( ce->value, 0755, def_willing );
 		}
 	}
 }
@@ -1405,9 +1405,9 @@ cp_resources( Entry *ce, Section *cs ATTR_UNUSED )
 	if (!ce->active) /* the X-*-Greeter one */
 		return;
 	if (old_confs)
-		linkfile( ce );
+		linkFile( ce );
 	else
-		if (!copyfile( ce, ce->value, 0644, 0/*edit_resources*/ ))
+		if (!copyFile( ce, ce->value, 0644, 0/*edit_resources*/ ))
 			ce->active = 0;
 }
 
@@ -1502,28 +1502,28 @@ edit_setup( File *file )
 		        "kdmdesktop\t&\n" ) |
 		delstr( file, "\n"
 		        "kdmdesktop\n" );
-	putval( "UseBackground", chg ? "true" : "false" );
+	putVal( "UseBackground", chg ? "true" : "false" );
 	return chg;
 }
 
 static void
 mk_setup( Entry *ce, Section *cs )
 {
-	setsect( resect( cs->name, "Greeter" ) );
+	setSect( reSect( cs->name, "Greeter" ) );
 	if (old_scripts || mixed_scripts) {
 		if (mod_usebg && *ce->value)
-			putval( "UseBackground", "false" );
-		linkfile( ce );
+			putVal( "UseBackground", "false" );
+		linkFile( ce );
 	} else {
 		if (ce->active && inNewDir( ce->value )) {
 			if (mod_usebg)
-				copyfile( ce, ce->value, 0755, edit_setup );
+				copyFile( ce, ce->value, 0755, edit_setup );
 			else
-				linkfile( ce );
+				linkFile( ce );
 		} else {
 			ce->value = KDMCONF "/Xsetup";
 			ce->active = ce->written = 1;
-			writefile( ce->value, 0755, def_setup );
+			writeFile( ce->value, 0755, def_setup );
 		}
 	}
 }
@@ -1584,7 +1584,7 @@ edit_startup( File *file )
 " $USER\n" ) |
 			delstr( file, "\n"
 "exec sessreg -a -l $DISPLAY -u /var/run/utmp -x */Xservers $USER\n" );
-		putval( "UseSessReg", chg2 ? "true" : "false" );
+		putVal( "UseSessReg", chg2 ? "true" : "false" );
 	}
 	return chg1 | chg2;
 }
@@ -1592,19 +1592,19 @@ edit_startup( File *file )
 static void
 mk_startup( Entry *ce, Section *cs )
 {
-	setsect( cs->name );
+	setSect( cs->name );
 	if (old_scripts || mixed_scripts)
-		linkfile( ce );
+		linkFile( ce );
 	else {
 		if (ce->active && inNewDir( ce->value )) {
 			if (mod_usebg || oldver < 0x0203)
-				copyfile( ce, ce->value, 0755, edit_startup );
+				copyFile( ce, ce->value, 0755, edit_startup );
 			else
-				linkfile( ce );
+				linkFile( ce );
 		} else {
 			ce->value = KDMCONF "/Xstartup";
 			ce->active = ce->written = 1;
-			writefile( ce->value, 0755, def_startup );
+			writeFile( ce->value, 0755, def_startup );
 		}
 	}
 }
@@ -1639,17 +1639,17 @@ static void
 mk_reset( Entry *ce, Section *cs ATTR_UNUSED )
 {
 	if (old_scripts || mixed_scripts)
-		linkfile( ce );
+		linkFile( ce );
 	else {
 		if (ce->active && inNewDir( ce->value )) {
 			if (oldver < 0x0203)
-				copyfile( ce, ce->value, 0755, edit_reset );
+				copyFile( ce, ce->value, 0755, edit_reset );
 			else
-				linkfile( ce );
+				linkFile( ce );
 		} else {
 			ce->value = KDMCONF "/Xreset";
 			ce->active = ce->written = 1;
-			writefile( ce->value, 0755, def_reset );
+			writeFile( ce->value, 0755, def_reset );
 		}
 	}
 }
@@ -1662,7 +1662,7 @@ mk_session( Entry *ce, Section *cs ATTR_UNUSED )
 
 	if ((old_scripts || (ce->active && inNewDir( ce->value ))) &&
 	    oldver >= 0x202)
-		linkfile( ce );
+		linkFile( ce );
 	else {
 		tmpf = locate( "mktemp" ) ?
 		           "`mktemp /tmp/xsess-env-XXXXXX`" :
@@ -1672,7 +1672,7 @@ mk_session( Entry *ce, Section *cs ATTR_UNUSED )
 		ASPrintf( &def_session, "%s%s%s", def_session1, tmpf, def_session2 );
 		ce->value = KDMCONF "/Xsession";
 		ce->active = ce->written = 1;
-		writefile( ce->value, 0755, def_session );
+		writeFile( ce->value, 0755, def_session );
 	}
 }
 
@@ -1699,7 +1699,7 @@ upd_showusers( Entry *ce, Section *cs )
 		ce->value = (char *)"NotHidden";
 	else if (!strcmp( ce->value, "None" )) {
 		if (ce->active)
-			putfqval( cs->name, "UserList", "false" );
+			putFqVal( cs->name, "UserList", "false" );
 		ce->value = (char *)"Selected";
 		ce->active = 0;
 		ce->written = 1;
@@ -1738,9 +1738,9 @@ upd_hiddenusers( Entry *ce, Section *cs ATTR_UNUSED )
 	if (!ce->active)
 		return;
 
-	msu = getfqval( cs->name, "MinShowUID", "0" );
+	msu = getFqVal( cs->name, "MinShowUID", "0" );
 	sscanf( msu, "%u", &minuid );
-	msu = getfqval( cs->name, "MaxShowUID", "65535" );
+	msu = getFqVal( cs->name, "MaxShowUID", "65535" );
 	sscanf( msu, "%u", &maxuid );
 
 	nv = 0;
@@ -1757,7 +1757,7 @@ upd_hiddenusers( Entry *ce, Section *cs ATTR_UNUSED )
 			    (pw->pw_uid >= minuid && pw->pw_uid <= maxuid))
 			{
 				if (nv)
-					StrCat( &nv, ",%s", nbuf );
+					strCat( &nv, ",%s", nbuf );
 				else
 					nv = mstrdup( nbuf );
 			}
@@ -1815,7 +1815,7 @@ upd_datadir( Entry *ce, Section *cs ATTR_UNUSED )
 }
 
 static void
-CopyFile( const char *from, const char *to )
+copyPlainFile( const char *from, const char *to )
 {
 	File file;
 	int fd;
@@ -1863,11 +1863,11 @@ upd_facedir( Entry *ce, Section *cs ATTR_UNUSED )
 		}
 		if (defpic) {
 			ASPrintf( &oldpic, "%s/default1.png", facesrc );
-			CopyFile( oldpic, defpic );
+			copyPlainFile( oldpic, defpic );
 		}
 		if (rootpic) {
 			ASPrintf( &oldpic, "%s/root1.png", facesrc );
-			CopyFile( oldpic, rootpic );
+			copyPlainFile( oldpic, rootpic );
 		}
 	}
 }
@@ -1924,7 +1924,7 @@ typedef struct DSect {
 CONF_GEN_EXAMPLE
 
 static void
-mkdefconf( void )
+makeDefaultConfig( void )
 {
 	Section *cs, **csp;
 	Entry *ce, **cep;
@@ -1966,7 +1966,7 @@ typedef struct RSection {
 } RSection;
 
 static RSection *
-ReadConf( const char *fname )
+readConfig( const char *fname )
 {
 	char *nstr;
 	char *s, *e, *st, *en, *ek, *sl;
@@ -2105,17 +2105,17 @@ typedef struct {
 } FDefs;
 
 static void
-applydefs( FDefs *chgdef, int ndefs, const char *path )
+applyDefs( FDefs *chgdef, int ndefs, const char *path )
 {
 	char *p;
 	int i;
 
 	for (i = 0; i < ndefs; i++)
-		if (!getfqval( chgdef[i].sect, chgdef[i].key, 0 ) &&
+		if (!getFqVal( chgdef[i].sect, chgdef[i].key, 0 ) &&
 		    (!chgdef[i].cond || chgdef[i].cond()))
 		{
 			ASPrintf( &p, chgdef[i].def, path );
-			putfqval( chgdef[i].sect, chgdef[i].key, p );
+			putFqVal( chgdef[i].sect, chgdef[i].key, p );
 			free( p );
 		}
 }
@@ -2139,7 +2139,7 @@ static FDefs kdmdefs_eq_22[] = {
 static int
 if_xdmcp (void)
 {
-	return isTrue( getfqval( "Xdmcp", "Enable", "true" ) );
+	return isTrue( getFqVal( "Xdmcp", "Enable", "true" ) );
 }
 
 static FDefs kdmdefs_le_30[] = {
@@ -2158,7 +2158,7 @@ static FDefs kdmdefs_ge_30[] = {
 static int
 if_usebg (void)
 {
-	return isTrue( getfqval( "X-*-Greeter", "UseBackground", "true" ) );
+	return isTrue( getFqVal( "X-*-Greeter", "UseBackground", "true" ) );
 }
 
 static FDefs kdmdefs_ge_31[] = {
@@ -2175,7 +2175,7 @@ is22conf( const char *path )
 	sl = ASPrintf( &p, "%s/kdm/", path );
 	/* safe bet, i guess ... */
 	for (i = 0; i < 4; i++) {
-		val = getfqval( "X-*-Core", kdmdefs_ge_30[i].key, 0 );
+		val = getFqVal( "X-*-Core", kdmdefs_ge_30[i].key, 0 );
 		if (val && !memcmp( val, p, sl )) {
 			free( p );
 			return 0;
@@ -2223,7 +2223,7 @@ mergeKdmRcNewer( const char *path )
 	static char sname[64];
 
 	ASPrintf( &p, "%s/kdm/kdmrc", path );
-	if (!(rootsect = ReadConf( p ))) {
+	if (!(rootsect = readConfig( p ))) {
 		free( p );
 		return 0;
 	}
@@ -2234,7 +2234,7 @@ mergeKdmRcNewer( const char *path )
 		if (!strcmp( cs->name, "Desktop0" )) {
 			background = mstrdup( "[Desktop0]\n" );
 			for (ce = cs->ents; ce; ce = ce->next)
-				StrCat( &background, "%s=%s\n", ce->key, ce->value );
+				strCat( &background, "%s=%s\n", ce->key, ce->value );
 		} else {
 			cp = strrchr( cs->name, '-' );
 			if (!cp)
@@ -2263,7 +2263,7 @@ mergeKdmRcNewer( const char *path )
 									key = kupsects[i].ents[j].nkey;
 								if (kupsects[i].ents[j].func)
 									kupsects[i].ents[j].func( sec, &ce->value );
-								putfqval( sec, key, ce->value );
+								putFqVal( sec, key, ce->value );
 								goto gotkey;
 							}
 						printf( "Information: dropping key %s from section [%s]\n",
@@ -2279,29 +2279,29 @@ mergeKdmRcNewer( const char *path )
 	}
 
 #ifdef XDMCP
-	applydefs( kdmdefs_all, as(kdmdefs_all), path );
+	applyDefs( kdmdefs_all, as(kdmdefs_all), path );
 #endif
-	if (!*(cp = getfqval( "General", "ConfigVersion", "" ))) { /* < 3.1 */
+	if (!*(cp = getFqVal( "General", "ConfigVersion", "" ))) { /* < 3.1 */
 		mod_usebg = 1;
 		if (is22conf( path )) {
 			/* work around 2.2.x defaults borkedness */
-			applydefs( kdmdefs_eq_22, as(kdmdefs_eq_22), path );
+			applyDefs( kdmdefs_eq_22, as(kdmdefs_eq_22), path );
 			printf( "Information: old kdmrc is from kde 2.2\n" );
 		} else {
-			applydefs( kdmdefs_ge_30, as(kdmdefs_ge_30), path );
+			applyDefs( kdmdefs_ge_30, as(kdmdefs_ge_30), path );
 			printf( "Information: old kdmrc is from kde 3.0\n" );
 		}
 #ifdef XDMCP
 		/* work around minor <= 3.0.x defaults borkedness */
-		applydefs( kdmdefs_le_30, as(kdmdefs_le_30), path );
+		applyDefs( kdmdefs_le_30, as(kdmdefs_le_30), path );
 #endif
 	} else {
 		int ma, mi;
 		sscanf( cp, "%d.%d", &ma, &mi );
 		oldver = (ma << 8) | mi;
 		printf( "Information: old kdmrc is from kde >= 3.1 (config version %d.%d)\n", ma, mi );
-		applydefs( kdmdefs_ge_30, as(kdmdefs_ge_30), path );
-		applydefs( kdmdefs_ge_31, as(kdmdefs_ge_31), path );
+		applyDefs( kdmdefs_ge_30, as(kdmdefs_ge_30), path );
+		applyDefs( kdmdefs_ge_31, as(kdmdefs_ge_31), path );
 	}
 
 	return 1;
@@ -2341,13 +2341,13 @@ handleXdmVal( const char *dpy, const char *key, char *value,
 			}
 			if (ents[i].func)
 				ents[i].func( sname, &value );
-			putfqval( sname, kname, value );
+			putFqVal( sname, kname, value );
 			break;
 		}
 }
 
 static void
-P_List( const char *sect ATTR_UNUSED, char **value )
+P_list( const char *sect ATTR_UNUSED, char **value )
 {
 	int is, d, s;
 	char *st;
@@ -2395,19 +2395,19 @@ P_authDir( const char *sect ATTR_UNUSED, char **value )
 static void
 P_openDelay( const char *sect, char **value )
 {
-	putfqval( sect, "ServerTimeout", *value );
+	putFqVal( sect, "ServerTimeout", *value );
 }
 
 static void
 P_noPassUsers( const char *sect, char **value ATTR_UNUSED )
 {
-	putfqval( sect, "NoPassEnable", "true" );
+	putFqVal( sect, "NoPassEnable", "true" );
 }
 
 static void
 P_autoUser( const char *sect, char **value ATTR_UNUSED )
 {
-	putfqval( sect, "AutoLoginEnable", "true" );
+	putFqVal( sect, "AutoLoginEnable", "true" );
 }
 
 #ifdef XDMCP
@@ -2416,9 +2416,9 @@ P_requestPort( const char *sect, char **value )
 {
 	if (!strcmp( *value, "0" )) {
 		*value = 0;
-		putfqval( sect, "Enable", "false" );
+		putFqVal( sect, "Enable", "false" );
 	} else
-		putfqval( sect, "Enable", "true" );
+		putFqVal( sect, "Enable", "true" );
 }
 #endif
 
@@ -2435,7 +2435,7 @@ CONF_GEN_XMERGE
 static XrmQuark XrmQString, empty = NULLQUARK;
 
 static Bool
-DumpEntry( XrmDatabase *db ATTR_UNUSED,
+dumpEntry( XrmDatabase *db ATTR_UNUSED,
            XrmBindingList bindings,
            XrmQuarkList quarks,
            XrmRepresentation *type,
@@ -2512,8 +2512,8 @@ mergeXdmCfg( const char *path )
 		usedFile( p );
 		free( p );
 		XrmEnumerateDatabase( db, &empty, &empty, XrmEnumAllLevels,
-		                      DumpEntry, (XPointer)0 );
-		applydefs( xdmdefs, as(xdmdefs), path );
+		                      dumpEntry, (XPointer)0 );
+		applyDefs( xdmdefs, as(xdmdefs), path );
 		mod_usebg = 1;
 		return 1;
 	}
@@ -2522,7 +2522,7 @@ mergeXdmCfg( const char *path )
 }
 
 static void
-fwrapprintf( FILE *f, const char *msg, ... )
+fprintfLineWrap( FILE *f, const char *msg, ... )
 {
 	char *txt, *ftxt, *line;
 	va_list ap;
@@ -2534,7 +2534,7 @@ fwrapprintf( FILE *f, const char *msg, ... )
 	ftxt = 0;
 	for (line = txt, col = 0, lword = fspace = -1; line[col]; ) {
 		if (line[col] == '\n') {
-			StrCat( &ftxt, "%.*s", ++col, line );
+			strCat( &ftxt, "%.*s", ++col, line );
 			line += col;
 			col = 0;
 			lword = fspace = -1;
@@ -2548,7 +2548,7 @@ fwrapprintf( FILE *f, const char *msg, ... )
 			if (lword < 0)
 				lword = col;
 			if (col >= 78 && fspace >= 0) {
-				StrCat( &ftxt, "%.*s\n", fspace, line );
+				strCat( &ftxt, "%.*s\n", fspace, line );
 				line += lword;
 				col -= lword;
 				lword = 0;
@@ -2698,7 +2698,7 @@ int main( int argc, char **argv )
 	if (!mkdirp( newdir, 0755, "target", 1 ))
 		exit( 1 );
 
-	mkdefconf();
+	makeDefaultConfig();
 	newer = 0;
 	if (no_old) {
 		DIR *dir;
@@ -2830,19 +2830,19 @@ int main( int argc, char **argv )
 				if (ce->spec->func && i == ce->spec->prio)
 					ce->spec->func( ce, cs );
 	ASPrintf( &newkdmrc, "%s/kdmrc", newdir );
-	f = Create( newkdmrc, kdmrcmode );
-	wrconf( f );
+	f = createFile( newkdmrc, kdmrcmode );
+	writeKdmrc( f );
 	fclose( f );
 
 	ASPrintf( &nname, "%s/README", newdir );
-	f = Create( nname, 0644 );
+	f = createFile( nname, 0644 );
 	fprintf( f,
 "This automatically generated configuration consists of the following files:\n" );
 	fprintf( f, "- " KDMCONF "/kdmrc\n" );
 	for (fp = aflist; fp; fp = fp->next)
 		fprintf( f, "- %s\n", fp->str );
 	if (use_destdir && !no_in_notice)
-		fwrapprintf( f,
+		fprintfLineWrap( f,
 "All files destined for " KDMCONF " were actually saved in %s; "
 "this config won't be workable until moved in place.\n", newdir );
 	if (uflist || eflist || cflist || lflist) {

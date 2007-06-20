@@ -41,18 +41,18 @@ fetchSessions( int flags )
 {
 	dpySpec *sess, *sessions = 0, tsess;
 
-	GSet( 1 );
-	GSendInt( G_List );
-	GSendInt( flags );
+	gSet( 1 );
+	gSendInt( G_List );
+	gSendInt( flags );
   next:
-	while ((tsess.display = GRecvStr())) {
-		tsess.from = GRecvStr();
+	while ((tsess.display = gRecvStr())) {
+		tsess.from = gRecvStr();
 #ifdef HAVE_VTS
-		tsess.vt = GRecvInt();
+		tsess.vt = gRecvInt();
 #endif
-		tsess.user = GRecvStr();
-		tsess.session = GRecvStr();
-		tsess.flags = GRecvInt();
+		tsess.user = gRecvStr();
+		tsess.session = gRecvStr();
+		tsess.flags = gRecvInt();
 		if ((tsess.flags & isTTY) && *tsess.from)
 			for (sess = sessions; sess; sess = sess->next)
 				if (sess->user && !strcmp( sess->user, tsess.user ) &&
@@ -63,13 +63,13 @@ fetchSessions( int flags )
 					goto next;
 				}
 		if (!(sess = (dpySpec *)malloc( sizeof(*sess) )))
-			LogPanic( "Out of memory\n" );
+			logPanic( "Out of memory\n" );
 		tsess.count = 1;
 		tsess.next = sessions;
 		*sess = tsess;
 		sessions = sess;
 	}
-	GSet( 0 );
+	gSet( 0 );
 	return sessions;
 }
 
@@ -85,7 +85,7 @@ disposeSessions( dpySpec *sess )
 }
 
 void
-decodeSess( dpySpec *sess, QString &user, QString &loc )
+decodeSession( dpySpec *sess, QString &user, QString &loc )
 {
 	if (sess->flags & isTTY) {
 		user =

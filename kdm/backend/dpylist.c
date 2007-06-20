@@ -41,13 +41,13 @@ struct display *displays;
 static struct disphist *disphist;
 
 int
-AnyDisplaysLeft( void )
+anyDisplaysLeft( void )
 {
 	return displays != (struct display *)0;
 }
 
 int
-AnyActiveDisplays( void )
+anyActiveDisplays( void )
 {
 	struct display *d;
 
@@ -58,7 +58,7 @@ AnyActiveDisplays( void )
 }
 
 int
-AnyRunningDisplays( void )
+anyRunningDisplays( void )
 {
 	struct display *d;
 
@@ -75,7 +75,7 @@ AnyRunningDisplays( void )
 }
 
 int
-AnyReserveDisplays( void )
+anyReserveDisplays( void )
 {
 	struct display *d;
 
@@ -98,7 +98,7 @@ idleReserveDisplays( void )
 }
 
 int
-StartReserveDisplay( int lt )
+startReserveDisplay( int lt )
 {
 	struct display *d, *rd;
 
@@ -114,7 +114,7 @@ StartReserveDisplay( int lt )
 }
 
 void
-ForEachDisplay( void (*f)( struct display * ) )
+forEachDisplay( void (*f)( struct display * ) )
 {
 	struct display *d, *next;
 
@@ -136,14 +136,14 @@ _forEachDisplayRev( struct display *d, void (*f)( struct display * ) )
 }
 
 void
-ForEachDisplayRev( void (*f)( struct display * ) )
+forEachDisplayRev( void (*f)( struct display * ) )
 {
 	_forEachDisplayRev( displays, f );
 }
 #endif
 
 struct display *
-FindDisplayByName( const char *name )
+findDisplayByName( const char *name )
 {
 	struct display *d;
 
@@ -154,7 +154,7 @@ FindDisplayByName( const char *name )
 }
 
 struct display *
-FindDisplayByPid( int pid )
+findDisplayByPid( int pid )
 {
 	struct display *d;
 
@@ -165,7 +165,7 @@ FindDisplayByPid( int pid )
 }
 
 struct display *
-FindDisplayByServerPid( int serverPid )
+findDisplayByServerPid( int serverPid )
 {
 	struct display *d;
 
@@ -178,7 +178,7 @@ FindDisplayByServerPid( int serverPid )
 #ifdef XDMCP
 
 struct display *
-FindDisplayBySessionID( CARD32 sessionID )
+findDisplayBySessionID( CARD32 sessionID )
 {
 	struct display *d;
 
@@ -189,7 +189,7 @@ FindDisplayBySessionID( CARD32 sessionID )
 }
 
 struct display *
-FindDisplayByAddress( XdmcpNetaddr addr, int addrlen, CARD16 displayNumber )
+findDisplayByAddress( XdmcpNetaddr addr, int addrlen, CARD16 displayNumber )
 {
 	struct display *d;
 
@@ -207,14 +207,14 @@ FindDisplayByAddress( XdmcpNetaddr addr, int addrlen, CARD16 displayNumber )
 #define IfFree(x)  if (x) free( (char *)x )
 
 void
-RemoveDisplay( struct display *old )
+removeDisplay( struct display *old )
 {
 	struct display *d, **dp;
 	int i;
 
 	for (dp = &displays; (d = *dp); dp = &(*dp)->next) {
 		if (d == old) {
-			Debug( "Removing display %s\n", d->name );
+			debug( "Removing display %s\n", d->name );
 			*dp = d->next;
 			IfFree( d->class2 );
 			IfFree( d->cfg.data );
@@ -244,7 +244,7 @@ RemoveDisplay( struct display *old )
 }
 
 static struct disphist *
-FindHist( const char *name )
+findHist( const char *name )
 {
 	struct disphist *hstent;
 
@@ -255,15 +255,15 @@ FindHist( const char *name )
 }
 
 struct display *
-NewDisplay( const char *name )
+newDisplay( const char *name )
 {
 	struct display *d;
 	struct disphist *hstent;
 
-	if (!(hstent = FindHist( name ))) {
+	if (!(hstent = findHist( name ))) {
 		if (!(hstent = Calloc( 1, sizeof(*hstent) )))
 			return 0;
-		if (!StrDup( &hstent->name, name )) {
+		if (!strDup( &hstent->name, name )) {
 			free( hstent );
 			return 0;
 		}
@@ -290,6 +290,6 @@ NewDisplay( const char *name )
 	d->xdmcpFd = -1;
 #endif
 	displays = d;
-	Debug( "created new display %s\n", d->name );
+	debug( "created new display %s\n", d->name );
 	return d;
 }

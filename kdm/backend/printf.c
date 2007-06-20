@@ -285,7 +285,7 @@ fmtstr( OutCh dopr_outch, void *bp,
 }
 
 static void
-DoPr( OutCh dopr_outch, void *bp, const char *format, va_list args )
+doPrint( OutCh dopr_outch, void *bp, const char *format, va_list args )
 {
 	const char *strvalue;
 #ifdef PRINT_ARRAYS
@@ -575,7 +575,7 @@ STATIC int debugLevel;
 #define OOMSTR "Out of memory. Expect problems.\n"
 
 STATIC void
-LogOutOfMem( void )
+logOutOfMem( void )
 {
 	static time_t last;
 	time_t tnow;
@@ -613,7 +613,7 @@ typedef struct {
 } OCLBuf;
 
 static void
-OutChLFlush( OCLBuf *oclbp )
+flush_OCL( OCLBuf *oclbp )
 {
 	if (oclbp->clen) {
 #ifdef USE_SYSLOG
@@ -630,18 +630,18 @@ OutChLFlush( OCLBuf *oclbp )
 }
 
 static void
-OutChL( void *bp, char c )
+outCh_OCL( void *bp, char c )
 {
 	OCLBuf *oclbp = (OCLBuf *)bp;
 	char *nbuf;
 	int nlen;
 
 	if (c == '\n')
-		OutChLFlush( oclbp );
+		flush_OCL( oclbp );
 	else {
 		if (oclbp->clen >= oclbp->blen - 1) {
 			if (oclbp->buf == oclbp->lmbuf) {
-				OutChLFlush( oclbp );
+				flush_OCL( oclbp );
 				oclbp->buf = 0;
 				oclbp->blen = 0;
 			}
@@ -651,7 +651,7 @@ OutChL( void *bp, char c )
 				oclbp->buf = nbuf;
 				oclbp->blen = nlen;
 			} else {
-				OutChLFlush( oclbp );
+				flush_OCL( oclbp );
 				oclbp->buf = oclbp->lmbuf;
 				oclbp->blen = sizeof(oclbp->lmbuf);
 			}
@@ -676,14 +676,14 @@ OutChL( void *bp, char c )
 }
 
 static void
-Logger( int type, const char *fmt, va_list args )
+logger( int type, const char *fmt, va_list args )
 {
 	OCLBuf oclb;
 
 	oclb.buf = 0;
 	oclb.blen = oclb.clen = 0;
 	oclb.type = type;
-	DoPr( OutChL, &oclb, fmt, args );
+	doPrint( outCh_OCL, &oclb, fmt, args );
 	/* no flush, every message is supposed to be \n-terminated */
 	if (oclb.buf && oclb.buf != oclb.lmbuf)
 		free( oclb.buf );
@@ -691,13 +691,13 @@ Logger( int type, const char *fmt, va_list args )
 
 #ifdef LOG_DEBUG_MASK
 STATIC void
-Debug( const char *fmt, ... )
+debug( const char *fmt, ... )
 {
 	if (debugLevel & LOG_DEBUG_MASK) {
 		va_list args;
 		int olderrno = errno;
 		va_start( args, fmt );
-		Logger( DM_DEBUG, fmt, args );
+		logger( DM_DEBUG, fmt, args );
 		va_end( args );
 		errno = olderrno;
 	}
@@ -706,48 +706,48 @@ Debug( const char *fmt, ... )
 
 #ifndef LOG_NO_INFO
 STATIC void
-LogInfo( const char *fmt, ... )
+logInfo( const char *fmt, ... )
 {
 	va_list args;
 
 	va_start( args, fmt );
-	Logger( DM_INFO, fmt, args );
+	logger( DM_INFO, fmt, args );
 	va_end( args );
 }
 #endif
 
 #ifndef LOG_NO_WARN
 STATIC void
-LogWarn( const char *fmt, ... )
+logWarn( const char *fmt, ... )
 {
 	va_list args;
 
 	va_start( args, fmt );
-	Logger( DM_WARN, fmt, args );
+	logger( DM_WARN, fmt, args );
 	va_end( args );
 }
 #endif
 
 #ifndef LOG_NO_ERROR
 STATIC void
-LogError( const char *fmt, ... )
+logError( const char *fmt, ... )
 {
 	va_list args;
 
 	va_start( args, fmt );
-	Logger( DM_ERR, fmt, args );
+	logger( DM_ERR, fmt, args );
 	va_end( args );
 }
 #endif
 
 #ifdef LOG_PANIC_EXIT
 STATIC void
-LogPanic( const char *fmt, ... )
+logPanic( const char *fmt, ... )
 {
 	va_list args;
 
 	va_start( args, fmt );
-	Logger( DM_PANIC, fmt, args );
+	logger( DM_PANIC, fmt, args );
 	va_end( args );
 	exit( LOG_PANIC_EXIT );
 }
@@ -763,7 +763,7 @@ typedef struct {
 } OCFBuf;
 
 static void
-OutCh_OCF( void *bp, char c )
+outCh_OCF( void *bp, char c )
 {
 	OCFBuf *ocfbp = (OCFBuf *)bp;
 	char *nbuf;
@@ -795,10 +795,10 @@ FdPrintf( int fd, const char *fmt, ... )
 	OCFBuf ocfb = { 0, 0, 0, -1 };
 
 	va_start( args, fmt );
-	DoPr( OutCh_OCF, &ocfb, fmt, args );
+	doPrint( outCh_OCF, &ocfb, fmt, args );
 	va_end( args );
 	if (ocfb.buf) {
-		Debug( "FdPrintf %\".*s to %d\n", ocfb.clen, ocfb.buf, fd );
+		debug( "FdPrintf %\".*s to %d\n", ocfb.clen, ocfb.buf, fd );
 		(void)write( fd, ocfb.buf, ocfb.clen );
 		free( ocfb.buf );
 	}
@@ -815,7 +815,7 @@ typedef struct {
 } OCABuf;
 
 static void
-OutCh_OCA( void *bp, char c )
+outCh_OCA( void *bp, char c )
 {
 	OCABuf *ocabp = (OCABuf *)bp;
 	char *nbuf;
@@ -845,8 +845,8 @@ VASPrintf( char **strp, const char *fmt, va_list args )
 {
 	OCABuf ocab = { 0, 0, 0, -1 };
 
-	DoPr( OutCh_OCA, &ocab, fmt, args );
-	OutCh_OCA( &ocab, 0 );
+	doPrint( outCh_OCA, &ocab, fmt, args );
+	outCh_OCA( &ocab, 0 );
 	*strp = Realloc( ocab.buf, ocab.clen );
 	if (!*strp)
 		*strp = ocab.buf;

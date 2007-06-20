@@ -262,7 +262,7 @@ setBootOption( const char *opt, SdRec *sdr )
 	if (opt) {
 		if ((ret = bootOpts[bootManager].set( opt, sdr )) != BO_OK)
 			return ret;
-		if (!StrDup( &sdr->osname, opt ))
+		if (!strDup( &sdr->osname, opt ))
 			return BO_IO; /* BO_NOMEM */
 	}
 	return BO_OK;

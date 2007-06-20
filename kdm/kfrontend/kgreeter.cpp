@@ -260,7 +260,7 @@ KGreeter::insertUsers()
 	if (userView) {
 		if (!default_pix.load( _faceDir + "/.default.face.icon" ))
 			if (!default_pix.load( _faceDir + "/.default.face" ))
-				LogError( "Can't open default user face\n" );
+				logError( "Can't open default user face\n" );
 		QSize ns( 48, 48 );
 		if (default_pix.size() != ns)
 			default_pix =
@@ -454,13 +454,13 @@ KGreeter::slotLoadPrevWM()
 
 	prevValid = true;
 	name = curUser.toLocal8Bit();
-	GSendInt( G_ReadDmrc );
-	GSendStr( name.data() );
-	GRecvInt(); // ignore status code ...
+	gSendInt( G_ReadDmrc );
+	gSendStr( name.data() );
+	gRecvInt(); // ignore status code ...
 	if ((len = name.length())) {
-		GSendInt( G_GetDmrc );
-		GSendStr( "Session" );
-		sess = GRecvStr();
+		gSendInt( G_GetDmrc );
+		gSendStr( "Session" );
+		sess = gRecvStr();
 		if (!sess) { /* no such user */
 			if (!userView && !userList) { // don't fake if user list shown
 				prevValid = false;
@@ -492,7 +492,7 @@ KGreeter::slotLoadPrevWM()
 					return;
 				}
 			if (!curSel)
-				MsgBox( sorrybox, i18n("Your saved session type '%1' is not valid any more.\n"
+				msgBox( sorrybox, i18n("Your saved session type '%1' is not valid any more.\n"
 				                       "Please select a new one, otherwise 'default' will be used.", sess ) );
 			free( sess );
 			prevValid = false;
@@ -549,15 +549,15 @@ KGreeter::verifyOk()
 		                       dName + '_' + verify->pluginName(),
 		                     verify->getEntity() );
 	if (curSel) {
-		GSendInt( G_PutDmrc );
-		GSendStr( "Session" );
-		GSendStr( sessionTypes[curSel->data().toInt()].type.toUtf8() );
+		gSendInt( G_PutDmrc );
+		gSendStr( "Session" );
+		gSendStr( sessionTypes[curSel->data().toInt()].type.toUtf8() );
 	} else if (!prevValid) {
-		GSendInt( G_PutDmrc );
-		GSendStr( "Session" );
-		GSendStr( "default" );
+		gSendInt( G_PutDmrc );
+		gSendStr( "Session" );
+		gSendStr( "default" );
 	}
-	GSendInt( G_Ready );
+	gSendInt( G_Ready );
 	done( ex_exit );
 }
 

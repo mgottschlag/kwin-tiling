@@ -125,7 +125,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 
   protected:
 	bool eventFilter( QObject *, QEvent * );
-	void MsgBox( QMessageBox::Icon typ, const QString &msg );
+	void msgBox( QMessageBox::Icon typ, const QString &msg );
 	void setTimer();
 	void updateLockStatus();
 	virtual void updateStatus() = 0;
@@ -146,9 +146,9 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	bool enabled, running, suspended, failed, delayed, cont;
 	bool authTok, isClear, timeable;
 
-	static void VMsgBox( QWidget *parent, const QString &user, QMessageBox::Icon type, const QString &mesg );
-	static void VErrBox( QWidget *parent, const QString &user, const char *msg );
-	static void VInfoBox( QWidget *parent, const QString &user, const char *msg );
+	static void vrfMsgBox( QWidget *parent, const QString &user, QMessageBox::Icon type, const QString &mesg );
+	static void vrfErrBox( QWidget *parent, const QString &user, const char *msg );
+	static void vrfInfoBox( QWidget *parent, const QString &user, const char *msg );
 
 	static QVector<GreeterPluginHandle> greetPlugins;
 

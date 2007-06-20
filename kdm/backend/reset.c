@@ -46,7 +46,7 @@ from the copyright holder.
 static int
 ignoreErrors( Display *dspl ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED )
 {
-		Debug( "ignoring error\n" );
+		debug( "ignoring error\n" );
 		return 0;
 }
 
@@ -66,7 +66,7 @@ killWindows( Window window )
 		       && nchildren > 0)
 		{
 				for (child = 0; child < nchildren; child++) {
-						Debug( "XKillClient %p\n", children[child] );
+						debug( "XKillClient %p\n", children[child] );
 						XKillClient( dpy, children[child] );
 				}
 				XFree( (char *)children );
@@ -92,20 +92,20 @@ pseudoReset()
 		int screen;
 
 		if (Setjmp( resetJmp )) {
-				LogError( "pseudoReset timeout\n" );
+				logError( "pseudoReset timeout\n" );
 		} else {
 				(void)Signal( SIGALRM, abortReset );
 				(void)alarm( 30 );
 				XSetErrorHandler( ignoreErrors );
 				for (screen = 0; screen < ScreenCount (dpy); screen++) {
-						Debug( "pseudoReset screen %d\n", screen );
+						debug( "pseudoReset screen %d\n", screen );
 						killWindows( RootWindow( dpy, screen ) );
 				}
-				Debug( "before XSync\n" );
+				debug( "before XSync\n" );
 				XSync( dpy, False );
 				(void)alarm( 0 );
 		}
 		Signal( SIGALRM, SIG_DFL );
 		XSetErrorHandler( (XErrorHandler)0 );
-		Debug( "pseudoReset done\n" );
+		debug( "pseudoReset done\n" );
 }

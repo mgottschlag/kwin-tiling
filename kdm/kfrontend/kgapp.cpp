@@ -81,7 +81,7 @@ void
 GreeterApp::timerEvent( QTimerEvent * )
 {
 	alarm( 0 );
-	if (!PingServer( QX11Info::display() ))
+	if (!pingServer( QX11Info::display() ))
 		::exit( EX_RESERVER_DPY );
 	alarm( pingInterval * 70 ); // sic! give the "proper" pinger enough time
 }
@@ -137,7 +137,7 @@ kg_main( const char *argv0 )
 	XSetIOErrorHandler( xIOErr );
 	KComponentData inst( argv[0] );
 	GreeterApp app( 1, argv );
-	init_config_qapp();
+	initQAppConfig();
 	KGlobalSettings::self();
 
 	Display *dpy = QX11Info::display();
@@ -174,8 +174,8 @@ kg_main( const char *argv0 )
 	} else
 		themer = 0;
 
-	setup_modifiers( dpy, _numLockStatus );
-	SecureDisplay( dpy );
+	setupModifiers( dpy, _numLockStatus );
+	secureDisplay( dpy );
 	K3Process *proc = 0;
 	if (!_grabServer) {
 		if (_useBackground && !themer) {
@@ -184,11 +184,11 @@ kg_main( const char *argv0 )
 			*proc << _backgroundCfg;
 			proc->start();
 		}
-		GSendInt( G_SetupDpy );
-		GRecvInt();
+		gSendInt( G_SetupDpy );
+		gRecvInt();
 	}
 
-	GSendInt( G_Ready );
+	gSendInt( G_Ready );
 
 	if (themer) {
 		QPixmap pm( app.desktop()->screen()->size() );
@@ -204,15 +204,15 @@ kg_main( const char *argv0 )
 	setCursor( dpy, app.desktop()->winId(), XC_left_ptr );
 
 	for (;;) {
-		int rslt, cmd = GRecvInt();
+		int rslt, cmd = gRecvInt();
 
 		if (cmd == G_ConfShutdown) {
-			int how = GRecvInt(), uid = GRecvInt();
-			char *os = GRecvStr();
+			int how = gRecvInt(), uid = gRecvInt();
+			char *os = gRecvStr();
 			KDMSlimShutdown::externShutdown( how, os, uid );
 			if (os)
 				free( os );
-			GSendInt( G_Ready );
+			gSendInt( G_Ready );
 			_autoLoginDelay = 0;
 			continue;
 		}
@@ -230,8 +230,8 @@ kg_main( const char *argv0 )
 #ifdef XDMCP
 		if (cmd == G_Choose) {
 			dialog = new ChooserDlg;
-			GSendInt( G_Ready ); /* tell chooser to go into async mode */
-			GRecvInt(); /* ack */
+			gSendInt( G_Ready ); /* tell chooser to go into async mode */
+			gRecvInt(); /* ack */
 		} else
 #endif
 		{
@@ -249,18 +249,18 @@ kg_main( const char *argv0 )
 			}
 		}
 		app.restoreOverrideCursor();
-		Debug( "entering event loop\n" );
+		debug( "entering event loop\n" );
 		rslt = dialog->exec();
-		Debug( "left event loop\n" );
+		debug( "left event loop\n" );
 		delete dialog;
 		delete proc2;
 #ifdef XDMCP
 		switch (rslt) {
 		case ex_greet:
-			GSendInt( G_DGreet );
+			gSendInt( G_DGreet );
 			continue;
 		case ex_choose:
-			GSendInt( G_DChoose );
+			gSendInt( G_DChoose );
 			continue;
 		default:
 			break;
@@ -273,8 +273,8 @@ kg_main( const char *argv0 )
 
 	delete proc;
 	delete themer;
-	UnsecureDisplay( dpy );
-	restore_modifiers();
+	unsecureDisplay( dpy );
+	restoreModifiers();
 
 	XSetInputFocus( QX11Info::display(), PointerRoot, PointerRoot, CurrentTime );
 }

@@ -800,7 +800,7 @@ Comment: -
 Description: -
 
 <legacy>
-Proc: absorb_xservers
+Proc: absorbXservers
 # note: this can miss Xservers from kdm for kde 2.2 because of stupid default.
 Source: kdm:General/Xservers
 Source: xdm:servers
@@ -931,7 +931,7 @@ Type: list
 Default: ""
 User: core
 Instance: #"LD_LIBRARY_PATH,ANOTHER_IMPORTANT_VAR"
-Merge: xdm(P_List)
+Merge: xdm(P_list)
 Comment: &
 Description:
  Additional environment variables &kdm; should pass on to all programs it runs.
@@ -1072,7 +1072,7 @@ Key: Port
 Type: int
 Default: 177
 PostProc: PrequestPort
-User: core(request_port)
+User: core(requestPort)
 Instance: #
 Merge: xdm:requestPort(P_requestPort)
 Comment:
@@ -2372,7 +2372,7 @@ Type: string
 Default: *KDMCONF "/backgroundrc"
 User: greeter-c
 Instance: #*/""
-Update: handBgCfg
+Update: handleBgCfg
 Comment:
  The configuration file to be used by krootimage.
 Description:

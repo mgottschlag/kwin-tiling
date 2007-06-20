@@ -45,10 +45,10 @@ from the copyright holder.
 #include <netdb.h>
 #include <arpa/inet.h>
 
-static int c_request_port;
+static int currentRequestPort;
 
 static int
-CreateListeningSocket( struct sockaddr *sock_addr, int salen )
+createListeningSocket( struct sockaddr *sock_addr, int salen )
 {
 	int fd;
 #if defined(IPv6) && defined(IPPROTO_IPV6) && defined(IPV6_V6ONLY)
@@ -59,7 +59,7 @@ CreateListeningSocket( struct sockaddr *sock_addr, int salen )
 	char addrbuf[INET6_ADDRSTRLEN];
 #endif
 
-	if (!request_port)
+	if (!requestPort)
 		return -1;
 
 	if (debugLevel & DEBUG_CORE) {
@@ -76,12 +76,12 @@ CreateListeningSocket( struct sockaddr *sock_addr, int salen )
 		addrstring = inet_ntoa( ((struct sockaddr_in *)sock_addr)->sin_addr );
 #endif
 
-		Debug( "creating socket to listen on port %d of address %s\n",
-		       request_port, addrstring );
+		debug( "creating socket to listen on port %d of address %s\n",
+		       requestPort, addrstring );
 	}
 
 	if ((fd = socket( sock_addr->sa_family, SOCK_DGRAM, 0 )) == -1) {
-		LogError( "XDMCP socket creation failed, errno %d\n", errno );
+		logError( "XDMCP socket creation failed, errno %d\n", errno );
 		return -1;
 	}
 #if defined(IPv6) && defined(IPPROTO_IPV6) && defined(IPV6_V6ONLY)
@@ -89,13 +89,13 @@ CreateListeningSocket( struct sockaddr *sock_addr, int salen )
 #endif
 
 	if (bind( fd, sock_addr, salen ) == -1) {
-		LogError( "error %d binding socket address %d\n", errno, request_port );
+		logError( "error %d binding socket address %d\n", errno, requestPort );
 		close( fd );
 		return -1;
 	}
 
-	RegisterCloseOnFork( fd );
-	RegisterInput( fd );
+	registerCloseOnFork( fd );
+	registerInput( fd );
 	return fd;
 }
 
@@ -106,19 +106,19 @@ struct socklist {
 	int salen;
 	int addrlen;
 	int fd;
-	int ref; /* referenced bit - see UpdateListenSockets */
+	int ref; /* referenced bit - see updateListenSockets */
 };
 
 static struct socklist *listensocks;
 
 static void
-DestroyListeningSocket( struct socklist *s )
+destroyListeningSocket( struct socklist *s )
 {
 	struct socklist *g, *n;
 
 	if (s->fd >= 0) {
-		CloseNClearCloseOnFork( s->fd );
-		UnregisterInput( s->fd );
+		closeNclearCloseOnFork( s->fd );
+		unregisterInput( s->fd );
 		s->fd = -1;
 	}
 	if (s->addr) {
@@ -135,7 +135,7 @@ DestroyListeningSocket( struct socklist *s )
 }
 
 static struct socklist*
-FindInList( struct socklist *list, ARRAY8Ptr addr )
+findInList( struct socklist *list, ARRAY8Ptr addr )
 {
 	struct socklist *s;
 
@@ -166,7 +166,7 @@ FindInList( struct socklist *list, ARRAY8Ptr addr )
 }
 
 static struct socklist *
-CreateSocklistEntry( ARRAY8Ptr addr )
+createSocklistEntry( ARRAY8Ptr addr )
 {
 	struct socklist *s;
 
@@ -183,7 +183,7 @@ CreateSocklistEntry( ARRAY8Ptr addr )
 		s->salen = sizeof(struct sockaddr_in);
 		s->addrlen = sizeof(struct in_addr);
 		sin4->sin_family = AF_INET;
-		sin4->sin_port = htons( (short)request_port );
+		sin4->sin_port = htons( (short)requestPort );
 		memcpy( &sin4->sin_addr, addr->data, addr->length );
 	}
 #if defined(IPv6) && defined(AF_INET6)
@@ -197,7 +197,7 @@ CreateSocklistEntry( ARRAY8Ptr addr )
 		s->salen = sizeof(struct sockaddr_in6);
 		s->addrlen = sizeof(struct in6_addr);
 		sin6->sin6_family = AF_INET6;
-		sin6->sin6_port = htons( (short)request_port );
+		sin6->sin6_port = htons( (short)requestPort );
 		memcpy( &sin6->sin6_addr, addr->data, addr->length );
 	}
 #endif
@@ -210,7 +210,7 @@ CreateSocklistEntry( ARRAY8Ptr addr )
 }
 
 static void
-UpdateListener( ARRAY8Ptr addr, void **closure )
+updateListener( ARRAY8Ptr addr, void **closure )
 {
 	struct socklist *s;
 
@@ -223,29 +223,29 @@ UpdateListener( ARRAY8Ptr addr, void **closure )
 		struct in6_addr in6 = in6addr_any;
 		tmpaddr.length = sizeof(in6);
 		tmpaddr.data = (CARD8Ptr) &in6;
-		UpdateListener( &tmpaddr, closure );
+		updateListener( &tmpaddr, closure );
 		if (*closure)
 			return;
 #endif
 		in.s_addr = htonl( INADDR_ANY );
 		tmpaddr.length = sizeof(in);
 		tmpaddr.data = (CARD8Ptr) &in;
-		UpdateListener( &tmpaddr, closure );
+		updateListener( &tmpaddr, closure );
 		return;
 	}
 
-	if (c_request_port == request_port &&
-	    (s = FindInList( listensocks, addr )))
+	if (currentRequestPort == requestPort &&
+	    (s = findInList( listensocks, addr )))
 	{
 		*closure = (void *)s;
 		s->ref = 1;
 		return;
 	}
 
-	if (!(s = CreateSocklistEntry( addr )))
+	if (!(s = createSocklistEntry( addr )))
 		return;
 
-	if ((s->fd = CreateListeningSocket( s->addr, s->salen )) < 0) {
+	if ((s->fd = createListeningSocket( s->addr, s->salen )) < 0) {
 		free( s->addr );
 		free( s );
 		return;
@@ -260,7 +260,7 @@ UpdateListener( ARRAY8Ptr addr, void **closure )
 #define LEAVE_MCAST_GROUP 1
 
 static void
-ChangeMcastMembership( struct socklist *s, struct socklist *g, int op )
+changeMcastMembership( struct socklist *s, struct socklist *g, int op )
 {
 	int sockopt;
 
@@ -281,12 +281,12 @@ ChangeMcastMembership( struct socklist *s, struct socklist *g, int op )
 				sockopt = IP_DROP_MEMBERSHIP;
 			if (setsockopt( s->fd, IPPROTO_IP, sockopt,
 			                &mreq, sizeof(mreq) ) < 0) {
-				LogError( "XDMCP socket multicast %s to %s failed, errno %d\n",
+				logError( "XDMCP socket multicast %s to %s failed, errno %d\n",
 				          (op == JOIN_MCAST_GROUP) ? "join" : "drop",
 				          inet_ntoa( ((struct sockaddr_in *)g->addr)->sin_addr ),
 				          errno );
 			} else if (debugLevel & DEBUG_CORE) {
-				Debug( "XDMCP socket multicast %s to %s succeeded\n",
+				debug( "XDMCP socket multicast %s to %s succeeded\n",
 				       (op == JOIN_MCAST_GROUP) ? "join" : "drop",
 				       inet_ntoa( ((struct sockaddr_in *)g->addr)->sin_addr ) );
 			}
@@ -320,7 +320,7 @@ ChangeMcastMembership( struct socklist *s, struct socklist *g, int op )
 				           &((struct sockaddr_in6 *)g->addr)->sin6_addr,
 				           addrbuf, sizeof(addrbuf) );
 
-				LogError( "XDMCP socket multicast %s to %s failed, errno %d\n",
+				logError( "XDMCP socket multicast %s to %s failed, errno %d\n",
 				          (op == JOIN_MCAST_GROUP) ? "join" : "drop", addrbuf,
 				          saveerr );
 			} else if (debugLevel & DEBUG_CORE) {
@@ -330,7 +330,7 @@ ChangeMcastMembership( struct socklist *s, struct socklist *g, int op )
 				           &((struct sockaddr_in6 *)g->addr)->sin6_addr,
 				           addrbuf, sizeof(addrbuf) );
 
-				Debug( "XDMCP socket multicast %s to %s succeeded\n",
+				debug( "XDMCP socket multicast %s to %s succeeded\n",
 				       (op == JOIN_MCAST_GROUP) ? "join" : "drop", addrbuf );
 			}
 			return;
@@ -340,7 +340,7 @@ ChangeMcastMembership( struct socklist *s, struct socklist *g, int op )
 }
 
 static void
-UpdateMcastGroup( ARRAY8Ptr addr, void **closure )
+updateMcastGroup( ARRAY8Ptr addr, void **closure )
 {
 	struct socklist *s = (struct socklist *)*closure;
 	struct socklist *g;
@@ -349,23 +349,23 @@ UpdateMcastGroup( ARRAY8Ptr addr, void **closure )
 		return;
 
 	/* Already in the group, mark & continue */
-	if ((g = FindInList( s->mcastgroups, addr ))) {
+	if ((g = findInList( s->mcastgroups, addr ))) {
 		g->ref = 1;
 		return;
 	}
 
 	/* Need to join the group */
-	if (!(g = CreateSocklistEntry( addr )))
+	if (!(g = createSocklistEntry( addr )))
 		return;
 
-	ChangeMcastMembership( s, g, JOIN_MCAST_GROUP );
+	changeMcastMembership( s, g, JOIN_MCAST_GROUP );
 	free( g );
 }
 
 /* Open or close listening sockets to match the current settings read in
    from the access database. */
 void
-UpdateListenSockets( void )
+updateListenSockets( void )
 {
 	struct socklist *s, *g, **ls, **lg;
 	void *tmpPtr = NULL;
@@ -376,18 +376,18 @@ UpdateListenSockets( void )
 		for (g = s->mcastgroups; g; g = g->next)
 			g->ref = 0;
 	}
-	ForEachListenAddr( UpdateListener, UpdateMcastGroup, &tmpPtr );
-	c_request_port = request_port;
+	forEachListenAddr( updateListener, updateMcastGroup, &tmpPtr );
+	currentRequestPort = requestPort;
 	for (ls = &listensocks; (s = *ls); )
 		if (!s->ref) {
-			DestroyListeningSocket( s );
+			destroyListeningSocket( s );
 			*ls = s->next;
 			free( s );
 		} else {
 			ls = &s->next;
 			for (lg = &s->mcastgroups; (g = *lg); )
 				if (!g->ref) {
-					ChangeMcastMembership( s, g, LEAVE_MCAST_GROUP );
+					changeMcastMembership( s, g, LEAVE_MCAST_GROUP );
 					*lg = g->next;
 					free( g );
 				} else
@@ -396,20 +396,20 @@ UpdateListenSockets( void )
 }
 
 int
-AnyListenSockets( void )
+anyListenSockets( void )
 {
 	return listensocks != NULL;
 }
 
 int
-ProcessListenSockets( FD_TYPE *reads )
+processListenSockets( fd_set *reads )
 {
 	struct socklist *s;
 	int ret = 0;
 
 	for (s = listensocks; s; s = s->next)
 		if (FD_ISSET( s->fd, reads )) {
-			ProcessRequestSocket( s->fd );
+			processRequestSocket( s->fd );
 			ret = 1;
 		}
 	return ret;

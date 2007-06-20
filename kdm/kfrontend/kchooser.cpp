@@ -137,31 +137,31 @@ void ChooserDlg::slotHelp()
 void ChooserDlg::addHostname()
 {
 	if (!iline->text().isEmpty()) {
-		GSendInt( G_Ch_RegisterHost );
-		GSendStr( iline->text().toLatin1() );
+		gSendInt( G_Ch_RegisterHost );
+		gSendStr( iline->text().toLatin1() );
 		iline->clear();
 	}
 }
 
 void ChooserDlg::pingHosts()
 {
-	GSendInt( G_Ch_Refresh );
+	gSendInt( G_Ch_Refresh );
 }
 
 void ChooserDlg::accept()
 {
 	if (focusWidget() == iline) {
 		if (!iline->text().isEmpty()) {
-			GSendInt( G_Ch_DirectChoice );
-			GSendStr( iline->text().toLatin1() );
+			gSendInt( G_Ch_DirectChoice );
+			gSendStr( iline->text().toLatin1() );
 			iline->clear();
 		}
 		return;
 	} else /*if (focusWidget() == host_view)*/ {
 		QTreeWidgetItem *item = host_view->currentItem();
 		if (item) {
-			GSendInt( G_Ready );
-			GSendInt( ((ChooserListViewItem *)item)->id );
+			gSendInt( G_Ready );
+			gSendInt( ((ChooserListViewItem *)item)->id );
 			::exit( EX_NORMAL );
 		}
 	}
@@ -173,7 +173,7 @@ void ChooserDlg::reject()
 
 QString ChooserDlg::recvStr()
 {
-	char *arr = GRecvStr();
+	char *arr = gRecvStr();
 	if (arr) {
 		QString str = QString::fromLatin1( arr );
 		free( arr );
@@ -198,14 +198,14 @@ void ChooserDlg::slotReadPipe()
 	int id;
 	QString nam, sts;
 
-	int cmd = GRecvInt();
+	int cmd = gRecvInt();
 	switch (cmd) {
 	case G_Ch_AddHost:
 	case G_Ch_ChangeHost:
-		id = GRecvInt();
+		id = gRecvInt();
 		nam = recvStr();
 		sts = recvStr();
-		GRecvInt(); /* swallow willing for now */
+		gRecvInt(); /* swallow willing for now */
 		if (cmd == G_Ch_AddHost)
 			new ChooserListViewItem( host_view, id, nam, sts );
 		else {
@@ -215,7 +215,7 @@ void ChooserDlg::slotReadPipe()
 		}
 		break;
 	case G_Ch_RemoveHost:
-		delete findItem( GRecvInt() );
+		delete findItem( gRecvInt() );
 		break;
 	case G_Ch_BadHost:
 		KFMsgBox::box( this, QMessageBox::Warning, i18n("Unknown host %1", recvStr() ) );

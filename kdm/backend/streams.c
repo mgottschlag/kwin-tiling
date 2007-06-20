@@ -45,10 +45,10 @@ from the copyright holder.
 #include <netconfig.h>
 #include <netdir.h>
 
-static int xdmcpFd = -1, c_request_port;
+static int xdmcpFd = -1, currentRequestPort;
 
 void
-UpdateListenSockets( void )
+updateListenSockets( void )
 {
 	struct t_bind bind_addr;
 	struct netconfig *nconf;
@@ -57,20 +57,20 @@ UpdateListenSockets( void )
 	char bindbuf[15];
 	int it;
 
-	if (c_request_port == request_port)
+	if (currentRequestPort == requestPort)
 		return;
-	c_request_port = request_port;
+	currentRequestPort = requestPort;
 
 	if (xdmcpFd != -1) {
-		CloseNClearCloseOnFork( xdmcpFd );
-		UnregisterInput( xdmcpFd );
+		closeNclearCloseOnFork( xdmcpFd );
+		unregisterInput( xdmcpFd );
 		xdmcpFd = -1;
 	}
 
-	if (!request_port)
+	if (!requestPort)
 		return;
 
-	Debug( "creating UDP stream %d\n", request_port );
+	debug( "creating UDP stream %d\n", requestPort );
 
 	nconf = getnetconfigent( "udp" );
 	if (!nconf) {
@@ -80,13 +80,13 @@ UpdateListenSockets( void )
 
 	xdmcpFd = t_open( nconf->nc_device, O_RDWR, NULL );
 	if (xdmcpFd == -1) {
-		LogError( "XDMCP stream creation failed\n" );
+		logError( "XDMCP stream creation failed\n" );
 		t_error( "CreateWellKnownSockets(xdmcpFd): t_open failed" );
 		return;
 	}
 
 	service.h_host = HOST_SELF;
-	sprintf( bindbuf, "%d", request_port );
+	sprintf( bindbuf, "%d", requestPort );
 	service.h_serv = bindbuf;
 	netdir_getbyname( nconf, &service, &servaddrs );
 	freenetconfigent( nconf );
@@ -98,27 +98,27 @@ UpdateListenSockets( void )
 	it = t_bind( xdmcpFd, &bind_addr, &bind_addr );
 	netdir_free( (char *)servaddrs, ND_ADDRLIST );
 	if (it < 0) {
-		LogError( "Error binding UDP port %d\n", request_port );
+		logError( "Error binding UDP port %d\n", requestPort );
 		t_error( "CreateWellKnownSockets(xdmcpFd): t_bind failed" );
 		t_close( xdmcpFd );
 		xdmcpFd = -1;
 		return;
 	}
-	RegisterCloseOnFork( xdmcpFd );
-	RegisterInput( xdmcpFd );
+	registerCloseOnFork( xdmcpFd );
+	registerInput( xdmcpFd );
 }
 
 int
-AnyListenSockets( void )
+anyListenSockets( void )
 {
 	return xdmcpFd != -1;
 }
 
 int
-ProcessRequestSockets( FD_TYPE *reads )
+processListenSockets( fd_set *reads )
 {
 	if (xdmcpFd >= 0 && FD_ISSET( xdmcpFd, reads )) {
-		ProcessRequestSocket( xdmcpFd );
+		processRequestSocket( xdmcpFd );
 		return 1;
 	}
 	return 0;

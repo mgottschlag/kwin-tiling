@@ -50,7 +50,7 @@ acceptSock( CtrlRec *cr )
 
 	if ((fd = accept( cr->fd, 0, 0 )) < 0) {
 	  bust:
-		LogError( "Error accepting command connection\n" );
+		logError( "Error accepting command connection\n" );
 		return;
 	}
 	if (!(cs = Malloc( sizeof(*cs) ))) {
@@ -63,15 +63,15 @@ acceptSock( CtrlRec *cr )
 	cs->next = cr->css;
 	cr->css = cs;
 	fcntl( fd, F_SETFL, fcntl( fd, F_GETFL ) | O_NONBLOCK );
-	RegisterCloseOnFork( fd );
-	RegisterInput( fd );
+	registerCloseOnFork( fd );
+	registerInput( fd );
 }
 
 static void
 nukeSock( struct cmdsock *cs )
 {
-	UnregisterInput( cs->sock.fd );
-	CloseNClearCloseOnFork( cs->sock.fd );
+	unregisterInput( cs->sock.fd );
+	closeNclearCloseOnFork( cs->sock.fd );
 	if (cs->sock.buffer)
 		free( cs->sock.buffer );
 	free( cs );
@@ -99,30 +99,30 @@ openCtrl( struct display *d )
 	if (cr->fd < 0) {
 		if (mkdir( fifoDir, 0755 )) {
 			if (errno != EEXIST) {
-				LogError( "mkdir %\"s failed; no control FiFos will be available\n",
+				logError( "mkdir %\"s failed; no control FiFos will be available\n",
 				          fifoDir );
 				return;
 			}
 		} else
 			chmod( fifoDir, 0755 ); /* override umask */
 		sockdir = 0;
-		StrApp( &sockdir, fifoDir, dname ? "/dmctl-" : "/dmctl",
+		strApp( &sockdir, fifoDir, dname ? "/dmctl-" : "/dmctl",
 		        dname, (char *)0 );
 		if (sockdir) {
-			StrApp( &cr->path, sockdir, "/socket", (char *)0 );
+			strApp( &cr->path, sockdir, "/socket", (char *)0 );
 			if (cr->path) {
 				if (strlen( cr->path ) >= sizeof(sa.sun_path))
-					LogError( "path %\"s too long; no control sockets will be available\n",
+					logError( "path %\"s too long; no control sockets will be available\n",
 					          cr->path );
 				else if (mkdir( sockdir, 0755 ) && errno != EEXIST)
-					LogError( "mkdir %\"s failed; no control sockets will be available\n",
+					logError( "mkdir %\"s failed; no control sockets will be available\n",
 					          sockdir );
 				else {
 					if (!d)
 						chown( sockdir, -1, fifoGroup );
 					chmod( sockdir, 0750 );
 					if ((cr->fd = socket( PF_UNIX, SOCK_STREAM, 0 )) < 0)
-						LogError( "Cannot create control socket\n" );
+						logError( "Cannot create control socket\n" );
 					else {
 						unlink( cr->path );
 						sa.sun_family = AF_UNIX;
@@ -130,16 +130,16 @@ openCtrl( struct display *d )
 						if (!bind( cr->fd, (struct sockaddr *)&sa, sizeof(sa) )) {
 							if (!listen( cr->fd, 5 )) {
 								chmod( cr->path, 0666 );
-								RegisterCloseOnFork( cr->fd );
-								RegisterInput( cr->fd );
+								registerCloseOnFork( cr->fd );
+								registerInput( cr->fd );
 								free( sockdir );
 								return;
 							}
 							unlink( cr->path );
-							LogError( "Cannot listen on control socket %\"s\n",
+							logError( "Cannot listen on control socket %\"s\n",
 							          cr->path );
 						} else
-							LogError( "Cannot bind control socket %\"s\n",
+							logError( "Cannot bind control socket %\"s\n",
 							          cr->path );
 						close( cr->fd );
 						cr->fd = -1;
@@ -159,8 +159,8 @@ closeCtrl( struct display *d )
 	CtrlRec *cr = d ? &d->ctrl : &ctrl;
 
 	if (cr->fd >= 0) {
-		UnregisterInput( cr->fd );
-		CloseNClearCloseOnFork( cr->fd );
+		unregisterInput( cr->fd );
+		closeNclearCloseOnFork( cr->fd );
 		cr->fd = -1;
 		unlink( cr->path );
 		*strrchr( cr->path, '/' ) = 0;
@@ -222,16 +222,16 @@ fLog( struct display *d, int fd, const char *sts, const char *msg, ... )
 	if (fd >= 0) {
 		olen = ASPrintf( &otxt, "%s\t%\\s\n", sts, fmsg );
 		if (otxt) {
-			Writer( fd, otxt, olen );
+			writer( fd, otxt, olen );
 			free( otxt );
 		}
 		what = "socket";
 	} else
 		what = "FiFo";
 	if (d)
-		Debug( "control %s for %s: %s - %s", what, d->name, sts, fmsg );
+		debug( "control %s for %s: %s - %s", what, d->name, sts, fmsg );
 	else
-		Debug( "global control %s: %s - %s", what, sts, fmsg );
+		debug( "global control %s: %s - %s", what, sts, fmsg );
 	free( fmsg );
 }
 
@@ -259,15 +259,15 @@ unQuote( const char *str )
 }
 
 static void
-str_cat_l( char **bp, const char *str, int max )
+strCatL( char **bp, const char *str, int max )
 {
-	int dnl = StrNLen( str, max );
+	int dnl = strnlen( str, max );
 	memcpy( *bp, str, dnl );
 	*bp += dnl;
 }
 
 static void
-str_cat( char **bp, const char *str )
+strCat( char **bp, const char *str )
 {
 	int dnl = strlen( str );
 	memcpy( *bp, str, dnl );
@@ -275,28 +275,28 @@ str_cat( char **bp, const char *str )
 }
 
 static void
-sd_cat( char **bp, SdRec *sdr )
+sdCat( char **bp, SdRec *sdr )
 {
 	if (sdr->how == SHUT_HALT)
-		str_cat( bp, "halt," );
+		strCat( bp, "halt," );
 	else
-		str_cat( bp, "reboot," );
+		strCat( bp, "reboot," );
 	if (sdr->start == TO_INF)
-		str_cat( bp, "0," );
+		strCat( bp, "0," );
 	else
 		*bp += sprintf( *bp, "%d,", sdr->start );
 	if (sdr->timeout == TO_INF)
-		str_cat( bp, "-1," );
+		strCat( bp, "-1," );
 	else
 		*bp += sprintf( *bp, "%d,", sdr->timeout );
 	if (sdr->force == SHUT_ASK)
-		str_cat( bp, "ask" );
+		strCat( bp, "ask" );
 	else if (sdr->force == SHUT_FORCE)
-		str_cat( bp, "force" );
+		strCat( bp, "force" );
 	else if (sdr->force == SHUT_FORCEMY)
-		str_cat( bp, "forcemy" );
+		strCat( bp, "forcemy" );
 	else
-		str_cat( bp, "cancel" );
+		strCat( bp, "cancel" );
 	*bp += sprintf( *bp, ",%d,%s", sdr->uid, sdr->osname ? sdr->osname : "-" );
 }
 
@@ -311,7 +311,7 @@ emitXSessC( struct display *di, struct display *d, void *ctx )
 	dname = di->name;
 	if (!memcmp( dname, "localhost:", 10 ))
 		dname += 9;
-	str_cat_l( &bp, dname, sizeof(cbuf)/2 );
+	strCatL( &bp, dname, sizeof(cbuf)/2 );
 	*bp++ = ',';
 #ifdef HAVE_VTS
 	if (di->serverVT)
@@ -321,15 +321,15 @@ emitXSessC( struct display *di, struct display *d, void *ctx )
 #ifdef XDMCP
 	if (di->status == remoteLogin) {
 		*bp++ = ',';
-		str_cat_l( &bp, di->remoteHost, sizeof(cbuf)/3 );
+		strCatL( &bp, di->remoteHost, sizeof(cbuf)/3 );
 	} else
 #endif
 	{
 		if (di->userName)
-			str_cat_l( &bp, di->userName, sizeof(cbuf)/5 );
+			strCatL( &bp, di->userName, sizeof(cbuf)/5 );
 		*bp++ = ',';
 		if (di->sessName)
-			str_cat_l( &bp, di->sessName, sizeof(cbuf)/5 );
+			strCatL( &bp, di->sessName, sizeof(cbuf)/5 );
 	}
 	*bp++ = ',';
 	if (di == d)
@@ -340,7 +340,7 @@ emitXSessC( struct display *di, struct display *d, void *ctx )
 	           (d->allowNuke == SHUT_ROOT && d->userSess))) :
 	         !fifoAllowNuke))
 		*bp++ = '!';
-	Writer( (int)ctx, cbuf, bp - cbuf );
+	writer( (int)ctx, cbuf, bp - cbuf );
 }
 
 static void
@@ -358,24 +358,24 @@ emitTTYSessC( STRUCTUTMP *ut, struct display *d, void *ctx )
 	else
 #endif
 	{
-		l = StrNLen( ut->ut_user, sizeof(ut->ut_user) );
+		l = strnlen( ut->ut_user, sizeof(ut->ut_user) );
 		memcpy( user, ut->ut_user, l );
 	}
 	user[l] = 0;
 	bp = cbuf;
 	*bp++ = '\t';
-	str_cat_l( &bp, ut->ut_line, sizeof(ut->ut_line) );
+	strCatL( &bp, ut->ut_line, sizeof(ut->ut_line) );
 	*bp++ = ',';
 	if (*ut->ut_host) {
 		*bp++ = '@';
-		str_cat_l( &bp, ut->ut_host, sizeof(ut->ut_host) );
+		strCatL( &bp, ut->ut_host, sizeof(ut->ut_host) );
 	}
 #ifdef HAVE_VTS
 	else if ((vt = TTYtoVT( ut->ut_line )))
 		bp += sprintf( bp, "vt%d", vt );
 #endif
 	*bp++ = ',';
-	str_cat( &bp, user );
+	strCat( &bp, user );
 	*bp++ = ',';
 	/* blank: session type unknown */
 	*bp++ = ',';
@@ -387,13 +387,13 @@ emitTTYSessC( STRUCTUTMP *ut, struct display *d, void *ctx )
 	          (!(pw = getpwnam( user )) || d->userSess != (int)pw->pw_uid)) :
 	         !fifoAllowNuke))
 		*bp++ = '!';
-	Writer( (int)ctx, cbuf, bp - cbuf );
+	writer( (int)ctx, cbuf, bp - cbuf );
 }
 
 static void
 processCtrl( const char *string, int len, int fd, struct display *d )
 {
-#define Reply(t) Writer (fd, t, strlen (t))
+#define Reply(t) writer (fd, t, strlen (t))
 
 	struct display *di;
 	const char *word;
@@ -413,9 +413,9 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 		}
 	word = fd >= 0 ? "socket" : "FiFo";
 	if (d)
-		Debug( "control %s for %s received %'[s\n", word, d->name, ar );
+		debug( "control %s for %s received %'[s\n", word, d->name, ar );
 	else
-		Debug( "global control %s received %'[s\n", word, ar );
+		debug( "global control %s received %'[s\n", word, ar );
 	if (ar[0]) {
 		if (fd >= 0 && !strcmp( ar[0], "caps" )) {
 			if (ar[1])
@@ -444,8 +444,8 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					}
 				}
 				if ((d->displayType & d_location) == dLocal &&
-				    AnyReserveDisplays())
-					Writer( fd, cbuf, sprintf( cbuf, "reserve %d\t",
+				    anyReserveDisplays())
+					writer( fd, cbuf, sprintf( cbuf, "reserve %d\t",
 					                           idleReserveDisplays() ) );
 				Reply( "lock\tsuicide\n" );
 			} else {
@@ -454,8 +454,8 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					if (fifoAllowNuke)
 						Reply( "nuke\t" );
 				}
-				if (AnyReserveDisplays())
-					Writer( fd, cbuf, sprintf( cbuf, "reserve %d\t",
+				if (anyReserveDisplays())
+					writer( fd, cbuf, sprintf( cbuf, "reserve %d\t",
 					                           idleReserveDisplays() ) );
 #ifdef HAVE_VTS
 				Reply( "login\tactivate\n" );
@@ -479,7 +479,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					goto exce;
 			}
 			Reply( "ok" );
-			ListSessions( flags, d, (void *)fd, emitXSessC, emitTTYSessC );
+			listSessions( flags, d, (void *)fd, emitXSessC, emitTTYSessC );
 			Reply( "\n" );
 			goto bust;
 		} else if (!strcmp( ar[0], "reserve" )) {
@@ -497,7 +497,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				fLog( d, fd, "perm", "display is not local" );
 				goto bust;
 			}
-			if (!StartReserveDisplay( lt )) {
+			if (!startReserveDisplay( lt )) {
 				fLog( d, fd, "noent", "no reserve display available" );
 				goto bust;
 			}
@@ -515,7 +515,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			if (ar[1][0] != 'v' || ar[1][1] != 't' ||
 			    (vt = atoi( ar[1] + 2 )) <= 0)
 			{
-				if (!(di = FindDisplayByName( ar[1] ))) {
+				if (!(di = findDisplayByName( ar[1] ))) {
 					fLog( d, fd, "noent", "display not found" );
 					goto bust;
 				}
@@ -549,15 +549,15 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				*bp++ = 'o';
 				*bp++ = 'k';
 				if (sdRec.how) {
-					str_cat( &bp, "\tglobal," );
-					sd_cat( &bp, &sdRec );
+					strCat( &bp, "\tglobal," );
+					sdCat( &bp, &sdRec );
 				}
 				if (d && d->hstent->sdRec.how) {
-					str_cat( &bp, "\tlocal," );
-					sd_cat( &bp, &d->hstent->sdRec );
+					strCat( &bp, "\tlocal," );
+					sdCat( &bp, &d->hstent->sdRec );
 				}
 				*bp++ = '\n';
-				Writer( fd, cbuf, bp - cbuf );
+				writer( fd, cbuf, bp - cbuf );
 				goto bust;
 			} else if (!strcmp( *ap, "cancel" )) {
 				sdr.how = 0;
@@ -705,7 +705,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 							goto bust;
 						}
 					} else {
-						if (!sdr.start && !sdr.timeout && AnyActiveDisplays()) {
+						if (!sdr.start && !sdr.timeout && anyActiveDisplays()) {
 							fLog( d, fd, "busy", "user sessions running" );
 							goto bust;
 						}
@@ -741,10 +741,10 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 						*bp++ = 's';
 					} else
 						*bp++ = opts[i][j];
-				Writer( fd, cbuf, bp - cbuf );
+				writer( fd, cbuf, bp - cbuf );
 			}
 			freeStrArr( opts );
-			Writer( fd, cbuf, sprintf( cbuf, "\t%d\t%d\n", def, cur ) );
+			writer( fd, cbuf, sprintf( cbuf, "\t%d\t%d\n", def, cur ) );
 			goto bust;
 		} else if (d) {
 			if (!strcmp( ar[0], "lock" )) {
@@ -759,7 +759,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				if (ar[1])
 					goto exce;
 				if (d->status == running && d->pid != -1) {
-					TerminateProcess( d->pid, SIGTERM );
+					terminateProcess( d->pid, SIGTERM );
 					d->status = raiser;
 				}
 			} else {
@@ -774,7 +774,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					fLog( d, fd, "bad", "missing argument(s)" );
 					goto bust;
 				}
-				if (!(di = FindDisplayByName( ar[1] ))) {
+				if (!(di = findDisplayByName( ar[1] ))) {
 					fLog( d, fd, "noent", "display %s not found", ar[1] );
 					goto bust;
 				}
@@ -797,20 +797,20 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				switch (di->status) {
 				case running:
 					if (di->pid != -1 && (di->userSess < 0 || nuke)) {
-						TerminateProcess( di->pid, SIGTERM );
+						terminateProcess( di->pid, SIGTERM );
 						di->status = raiser;
 					}
 					break;
 				case remoteLogin:
 					if (di->serverPid != -1 && nuke)
-						TerminateProcess( di->serverPid, di->termSignal );
+						terminateProcess( di->serverPid, di->termSignal );
 					break;
 				case reserve:
 					di->status = notRunning;
 					break;
 				case textMode:
 #ifndef HAVE_VTS
-					SwitchToX( di );
+					switchToX( di );
 #endif
 					break;
 				default:
@@ -829,7 +829,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 }
 
 static int
-handleChan( struct display *d, struct bsock *cs, int fd, FD_TYPE *reads )
+handleChan( struct display *d, struct bsock *cs, int fd, fd_set *reads )
 {
 	char *bufp, *nbuf, *obuf, *eol;
 	int len, bl, llen;
@@ -841,7 +841,7 @@ handleChan( struct display *d, struct bsock *cs, int fd, FD_TYPE *reads )
 		FD_CLR( cs->fd, reads );
 		bl = -bl;
 		memcpy( buf, obuf, bl );
-		if ((len = Reader( cs->fd, buf + bl, sizeof(buf) - bl )) <= 0)
+		if ((len = reader( cs->fd, buf + bl, sizeof(buf) - bl )) <= 0)
 			return -1;
 		bl += len;
 		bufp = buf;
@@ -876,7 +876,7 @@ handleChan( struct display *d, struct bsock *cs, int fd, FD_TYPE *reads )
 }
 
 int
-handleCtrl( FD_TYPE *reads, struct display *d )
+handleCtrl( fd_set *reads, struct display *d )
 {
 	CtrlRec *cr = d ? &d->ctrl : &ctrl;
 	struct cmdsock *cs, **csp;

@@ -42,7 +42,7 @@ from the copyright holder.
    e.g., AF_INET */
 
 int
-NetaddrFamily( char *netaddrp )
+netaddrFamily( char *netaddrp )
 {
 #ifdef STREAMSCONN
 	short family = *(short *)netaddrp;
@@ -58,13 +58,13 @@ NetaddrFamily( char *netaddrp )
    or 0 if not using TCP or UDP. */
 
 char *
-NetaddrPort( char *netaddrp, int *lenp )
+netaddrPort( char *netaddrp, int *lenp )
 {
 #ifdef STREAMSCONN
 	*lenp = 2;
 	return netaddrp+2;
 #else
-	switch (NetaddrFamily( netaddrp ))
+	switch (netaddrFamily( netaddrp ))
 	{
 	case AF_INET:
 		*lenp = 2;
@@ -86,13 +86,13 @@ NetaddrPort( char *netaddrp, int *lenp )
    and sets *lenp to the length of the address */
 
 char *
-NetaddrAddress( char *netaddrp, int *lenp )
+netaddrAddress( char *netaddrp, int *lenp )
 {
 #ifdef STREAMSCONN
 	*lenp = 4;
 	return netaddrp+4;
 #else
-	switch (NetaddrFamily( netaddrp )) {
+	switch (netaddrFamily( netaddrp )) {
 #ifdef UNIXCONN
 	case AF_UNIX:
 		*lenp = strlen( ((struct sockaddr_un *)netaddrp)->sun_path );
@@ -137,19 +137,19 @@ NetaddrAddress( char *netaddrp, int *lenp )
    Returns the X protocol family used, e.g., FamilyInternet */
 
 int
-ConvertAddr( char *saddr, int *len, char **addr )
+convertAddr( char *saddr, int *len, char **addr )
 {
 	int retval;
 
 	if (len == NULL)
 		return -1;
-	*addr = NetaddrAddress( saddr, len );
+	*addr = netaddrAddress( saddr, len );
 #ifdef STREAMSCONN
 	/* kludge */
-	if (NetaddrFamily( saddr ) == 2)
+	if (netaddrFamily( saddr ) == 2)
 		retval = FamilyInternet;
 #else
-	switch (NetaddrFamily( saddr )) {
+	switch (netaddrFamily( saddr )) {
 #ifdef AF_UNSPEC
 	  case AF_UNSPEC:
 		retval = FamilyLocal;
@@ -190,8 +190,8 @@ ConvertAddr( char *saddr, int *len, char **addr )
 		break;
 	}
 #endif /* STREAMSCONN else */
-	Debug( "ConvertAddr returning %d for family %d\n", retval,
-	       NetaddrFamily( saddr ) );
+	debug( "convertAddr returning %d for family %d\n", retval,
+	       netaddrFamily( saddr ) );
 	return retval;
 }
 
@@ -204,14 +204,14 @@ addressEqual( char *a1, int len1, char *a2, int len2 )
 
 	if (len1 != len2)
 		return FALSE;
-	if (NetaddrFamily( a1 ) != NetaddrFamily( a2 ))
+	if (netaddrFamily( a1 ) != netaddrFamily( a2 ))
 		return FALSE;
-	part1 = NetaddrPort( a1, &partlen1 );
-	part2 = NetaddrPort( a2, &partlen2 );
+	part1 = netaddrPort( a1, &partlen1 );
+	part2 = netaddrPort( a2, &partlen2 );
 	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
 		return FALSE;
-	part1 = NetaddrAddress( a1, &partlen1 );
-	part2 = NetaddrAddress( a2, &partlen2 );
+	part1 = netaddrAddress( a1, &partlen1 );
+	part2 = netaddrAddress( a2, &partlen2 );
 	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
 		return FALSE;
 	return TRUE;

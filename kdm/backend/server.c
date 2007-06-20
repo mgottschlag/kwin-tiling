@@ -48,7 +48,7 @@ struct display *startingServer;
 time_t serverTimeout = TO_INF;
 
 char **
-PrepServerArgv( struct display *d, const char *args )
+prepareServerArgv( struct display *d, const char *args )
 {
 	char **argv;
 #ifdef HAVE_VTS
@@ -69,22 +69,22 @@ PrepServerArgv( struct display *d, const char *args )
 }
 
 static void
-StartServerOnce( void )
+startServerOnce( void )
 {
 	struct display *d = startingServer;
 	char **argv;
 
-	Debug( "StartServerOnce for %s, try %d\n", d->name, ++d->startTries );
+	debug( "startServerOnce for %s, try %d\n", d->name, ++d->startTries );
 	d->serverStatus = starting;
 	switch (Fork( &d->serverPid )) {
 	case 0:
-		argv = PrepServerArgv( d, d->serverArgsLocal );
+		argv = prepareServerArgv( d, d->serverArgsLocal );
 		if (d->authFile) {
 			if (!(argv = addStrArr( argv, "-auth", 5 )) ||
 			    !(argv = addStrArr( argv, d->authFile, -1 )))
 				exit( 47 );
 		}
-		Debug( "exec %\"[s\n", argv );
+		debug( "exec %\"[s\n", argv );
 		/*
 		 * give the server SIGUSR1 ignored,
 		 * it will notice that and send SIGUSR1
@@ -92,29 +92,29 @@ StartServerOnce( void )
 		 */
 		(void)Signal( SIGUSR1, SIG_IGN );
 		(void)execv( argv[0], argv );
-		LogError( "X server %\"s cannot be executed\n", argv[0] );
+		logError( "X server %\"s cannot be executed\n", argv[0] );
 		exit( 47 );
 	case -1:
-		LogError( "X server fork failed\n" );
-		StartServerFailed();
+		logError( "X server fork failed\n" );
+		startServerFailed();
 		break;
 	default:
-		Debug( "X server forked, pid %d\n", d->serverPid );
+		debug( "X server forked, pid %d\n", d->serverPid );
 		serverTimeout = d->serverTimeout + now;
 		break;
 	}
 }
 
 void
-StartServer( struct display *d )
+startServer( struct display *d )
 {
 	startingServer = d;
 	d->startTries = 0;
-	StartServerOnce();
+	startServerOnce();
 }
 
 void
-AbortStartServer( struct display *d )
+abortStartServer( struct display *d )
 {
 	if (startingServer == d)
 	{
@@ -122,24 +122,24 @@ AbortStartServer( struct display *d )
 		{
 			d->serverStatus = ignore;
 			serverTimeout = TO_INF;
-			Debug( "aborting X server start\n" );
+			debug( "aborting X server start\n" );
 		}
 		startingServer = 0;
 	}
 }
 
 void
-StartServerSuccess()
+startServerSuccess()
 {
 	struct display *d = startingServer;
 	d->serverStatus = ignore;
 	serverTimeout = TO_INF;
-	Debug( "X server ready, starting session\n" );
-	StartDisplayP2( d );
+	debug( "X server ready, starting session\n" );
+	startDisplayP2( d );
 }
 
 void
-StartServerFailed()
+startServerFailed()
 {
 	struct display *d = startingServer;
 	if (!d->serverAttempts || d->startTries < d->serverAttempts) {
@@ -149,14 +149,14 @@ StartServerFailed()
 		d->serverStatus = ignore;
 		serverTimeout = TO_INF;
 		startingServer = 0;
-		LogError( "X server for display %s can't be started,"
+		logError( "X server for display %s can't be started,"
 		          " session disabled\n", d->name );
-		StopDisplay( d );
+		stopDisplay( d );
 	}
 }
 
 void
-StartServerTimeout()
+startServerTimeout()
 {
 	struct display *d = startingServer;
 	switch (d->serverStatus) {
@@ -164,23 +164,23 @@ StartServerTimeout()
 	case awaiting:
 		break; /* cannot happen */
 	case starting:
-		LogError( "X server startup timeout, terminating\n" );
+		logError( "X server startup timeout, terminating\n" );
 		kill( d->serverPid, d->termSignal );
 		d->serverStatus = d->termSignal == SIGKILL ? killed : terminated;
 		serverTimeout = d->serverTimeout + now;
 		break;
 	case terminated:
-		LogInfo( "X server termination timeout, killing\n" );
+		logInfo( "X server termination timeout, killing\n" );
 		kill( d->serverPid, SIGKILL );
 		d->serverStatus = killed;
 		serverTimeout = 10 + now;
 		break;
 	case killed:
-		LogInfo( "X server is stuck in D state; leaving it alone\n" );
-		StartServerFailed();
+		logInfo( "X server is stuck in D state; leaving it alone\n" );
+		startServerFailed();
 		break;
 	case pausing:
-		StartServerOnce();
+		startServerOnce();
 		break;
 	}
 }
@@ -212,7 +212,7 @@ abortOpen( int n ATTR_UNUSED )
 #endif
 
 static void
-GetRemoteAddress( struct display *d, int fd )
+getRemoteAddress( struct display *d, int fd )
 {
 	char buf[512];
 	int len = sizeof(buf);
@@ -232,7 +232,7 @@ GetRemoteAddress( struct display *d, int fd )
 #endif
 	if (len && XdmcpAllocARRAY8( &d->peer, len ))
 		memmove( (char *)d->peer.data, buf, len );
-	Debug( "got remote address %s %d\n", d->name, d->peer.length );
+	debug( "got remote address %s %d\n", d->name, d->peer.length );
 }
 
 #endif /* XDMCP */
@@ -240,14 +240,14 @@ GetRemoteAddress( struct display *d, int fd )
 static int
 openErrorHandler( Display *dspl ATTR_UNUSED )
 {
-	LogError( "IO Error in XOpenDisplay\n" );
+	logError( "IO Error in XOpenDisplay\n" );
 	exit( EX_OPENFAILED_DPY );
 	/*NOTREACHED*/
 	return (0);
 }
 
 void
-WaitForServer( struct display *d )
+waitForServer( struct display *d )
 {
 	volatile int i;
 	/* static int i; */
@@ -257,7 +257,7 @@ WaitForServer( struct display *d )
 		(void)Signal( SIGALRM, abortOpen );
 		(void)alarm( (unsigned)d->openTimeout );
 		if (!Setjmp( openAbort )) {
-			Debug( "before XOpenDisplay(%s)\n", d->name );
+			debug( "before XOpenDisplay(%s)\n", d->name );
 			errno = 0;
 			(void)XSetIOErrorHandler( openErrorHandler );
 			dpy = XOpenDisplay( d->name );
@@ -267,7 +267,7 @@ WaitForServer( struct display *d )
 				   going to fail, so we might as well get that out
 				   of the way.	There is something broken here. */
 				Display *bogusDpy = XOpenDisplay( d->name );
-				Debug( "bogus XOpenDisplay %s\n",
+				debug( "bogus XOpenDisplay %s\n",
 				       bogusDpy ? "succeeded" : "failed" );
 				if (bogusDpy) XCloseDisplay( bogusDpy ); /* just in case */
 			}
@@ -275,30 +275,30 @@ WaitForServer( struct display *d )
 			(void)alarm( (unsigned)0 );
 			(void)Signal( SIGALRM, SIG_DFL );
 			(void)XSetIOErrorHandler( (int (*)( Display * )) 0 );
-			Debug( "after XOpenDisplay(%s)\n", d->name );
+			debug( "after XOpenDisplay(%s)\n", d->name );
 			if (dpy) {
 #ifdef XDMCP
 				if ((d->displayType & d_location) == dForeign)
-					GetRemoteAddress( d, ConnectionNumber( dpy ) );
+					getRemoteAddress( d, ConnectionNumber( dpy ) );
 #endif
-				RegisterCloseOnFork( ConnectionNumber( dpy ) );
+				registerCloseOnFork( ConnectionNumber( dpy ) );
 				return;
 			}
-			Debug( "OpenDisplay(%s) attempt %d failed: %m\n", d->name, i + 1 );
+			debug( "OpenDisplay(%s) attempt %d failed: %m\n", d->name, i + 1 );
 			sleep( (unsigned)d->openDelay );
 		} else {
-			LogError( "Hung in XOpenDisplay(%s), aborting\n", d->name );
+			logError( "Hung in XOpenDisplay(%s), aborting\n", d->name );
 			(void)Signal( SIGALRM, SIG_DFL );
 			break;
 		}
 	} while (++i < d->openRepeat);
-	LogError( "Cannot connect to %s, giving up\n", d->name );
+	logError( "Cannot connect to %s, giving up\n", d->name );
 	exit( EX_OPENFAILED_DPY );
 }
 
 
 void
-ResetServer( struct display *d )
+resetServer( struct display *d )
 {
 	if (dpy && (d->displayType & d_origin) != dFromXDMCP)
 		pseudoReset();
@@ -308,42 +308,42 @@ ResetServer( struct display *d )
 static Jmp_buf pingTime;
 
 static void
-PingLost( void )
+pingLost( void )
 {
 	Longjmp( pingTime, 1 );
 }
 
 /* ARGSUSED */
 static int
-PingLostIOErr( Display *dspl ATTR_UNUSED )
+pingLostIOErr( Display *dspl ATTR_UNUSED )
 {
-	PingLost();
+	pingLost();
 	return 0;
 }
 
 /* ARGSUSED */
 static void
-PingLostSig( int n ATTR_UNUSED )
+pingLostSig( int n ATTR_UNUSED )
 {
-	PingLost();
+	pingLost();
 }
 
 int
-PingServer( struct display *d )
+pingServer( struct display *d )
 {
 	int (*oldError)( Display * );
 	void (*oldSig)( int );
 	int oldAlarm;
 
-	oldError = XSetIOErrorHandler( PingLostIOErr );
+	oldError = XSetIOErrorHandler( pingLostIOErr );
 	oldAlarm = alarm( 0 );
-	oldSig = Signal( SIGALRM, PingLostSig );
+	oldSig = Signal( SIGALRM, pingLostSig );
 	(void)alarm( d->pingTimeout * 60 );
 	if (!Setjmp( pingTime )) {
-		Debug( "ping X server\n" );
+		debug( "ping X server\n" );
 		XSync( dpy, 0 );
 	} else {
-		Debug( "X server dead\n" );
+		debug( "X server dead\n" );
 		(void)alarm( 0 );
 		(void)Signal( SIGALRM, SIG_DFL );
 		XSetIOErrorHandler( oldError );
@@ -352,7 +352,7 @@ PingServer( struct display *d )
 	(void)alarm( 0 );
 	(void)Signal( SIGALRM, oldSig );
 	(void)alarm( oldAlarm );
-	Debug( "X server alive\n" );
+	debug( "X server alive\n" );
 	XSetIOErrorHandler( oldError );
 	return 1;
 }

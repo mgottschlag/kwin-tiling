@@ -47,10 +47,10 @@ static krb5_context ctx;
 
 /*ARGSUSED*/
 void
-Krb5InitAuth( unsigned short name_len ATTR_UNUSED, const char *name ATTR_UNUSED )
+krb5InitAuth( unsigned short name_len ATTR_UNUSED, const char *name ATTR_UNUSED )
 {
 	if (krb5_init_context( &ctx ))
-		LogError( "Error while initializing Krb5 context\n" );
+		logError( "Error while initializing Krb5 context\n" );
 }
 
 /*
@@ -58,7 +58,7 @@ Krb5InitAuth( unsigned short name_len ATTR_UNUSED, const char *name ATTR_UNUSED 
  * name should be freed by caller.
  */
 static char *
-Krb5CCacheName( const char *dname )
+krb5CCacheName( const char *dname )
 {
 	char *name;
 	const char *tmpdir;
@@ -72,12 +72,12 @@ Krb5CCacheName( const char *dname )
 	if (!name)
 		return NULL;
 	nl = sprintf( name, "FILE:%s/K5C", tmpdir );
-	CleanUpFileName( dname, name + nl, dnl + 1 );
+	cleanUpFileName( dname, name + nl, dnl + 1 );
 	return name;
 }
 
 Xauth *
-Krb5GetAuthFor( unsigned short namelen, const char *name, const char *dname )
+krb5GetAuthFor( unsigned short namelen, const char *name, const char *dname )
 {
 	Xauth *new;
 	char *filename;
@@ -91,12 +91,12 @@ Krb5GetAuthFor( unsigned short namelen, const char *name, const char *dname )
 	new->number = 0;
 
 	if (dname) {
-		if (!(filename = Krb5CCacheName( dname ))) {
+		if (!(filename = krb5CCacheName( dname ))) {
 			free( (char *)new );
 			return (Xauth *)0;
 		}
 		new->data = 0;
-		if (!StrApp( &new->data, "UU:", filename, (char *)0 )) {
+		if (!strApp( &new->data, "UU:", filename, (char *)0 )) {
 			free( filename );
 			free( (char *)new );
 			return (Xauth *)0;
@@ -120,21 +120,21 @@ Krb5GetAuthFor( unsigned short namelen, const char *name, const char *dname )
 
 
 Xauth *
-Krb5GetAuth( unsigned short namelen, const char *name )
+krb5GetAuth( unsigned short namelen, const char *name )
 {
-	return Krb5GetAuthFor( namelen, name, NULL );
+	return krb5GetAuthFor( namelen, name, NULL );
 }
 
 
 static krb5_error_code
-Krb5DisplayCCache( const char *dname, krb5_ccache *ccache_return, char **name )
+krb5DisplayCCache( const char *dname, krb5_ccache *ccache_return, char **name )
 {
 	char *ccname;
 	krb5_error_code code;
 
-	if (!(ccname = Krb5CCacheName( dname )))
+	if (!(ccname = krb5CCacheName( dname )))
 		return ENOMEM;
-	Debug( "resolving Kerberos cache %s\n", ccname );
+	debug( "resolving Kerberos cache %s\n", ccname );
 	if ((code = krb5_cc_resolve( ctx, ccname, ccache_return )) || !name)
 		free( ccname );
 	else
@@ -143,7 +143,7 @@ Krb5DisplayCCache( const char *dname, krb5_ccache *ccache_return, char **name )
 }
 
 char *
-Krb5Init( const char *user, const char *passwd, const char *dname )
+krb5Init( const char *user, const char *passwd, const char *dname )
 {
 	krb5_error_code code;
 	krb5_get_init_creds_opt options;
@@ -156,7 +156,7 @@ Krb5Init( const char *user, const char *passwd, const char *dname )
 		return 0;
 
 	if ((code = krb5_parse_name( ctx, user, &me ))) {
-		LogError( "%s while parsing Krb5 user %\"s\n",
+		logError( "%s while parsing Krb5 user %\"s\n",
 		          error_message( code ), user );
 		return 0;
 	}
@@ -176,30 +176,30 @@ Krb5Init( const char *user, const char *passwd, const char *dname )
 		char *my_name = NULL;
 		int code2 = krb5_unparse_name( ctx, me, &my_name );
 		if (code == KRB5KRB_AP_ERR_BAD_INTEGRITY)
-			LogError( "Password incorrect for Krb5 principal %\"s\n",
+			logError( "Password incorrect for Krb5 principal %\"s\n",
 			          code2 ? user : my_name );
 		else
-			LogError( "%s while getting initial Krb5 credentials for %\"s\n",
+			logError( "%s while getting initial Krb5 credentials for %\"s\n",
 			          error_message( code ), code2 ? user : my_name );
 		if (my_name)
 			free( my_name );
 		goto err3;
 	}
 
-	if ((code = Krb5DisplayCCache( dname, &ccache, &ccname ))) {
-		LogError( "%s while getting Krb5 ccache for %\"s\n",
+	if ((code = krb5DisplayCCache( dname, &ccache, &ccname ))) {
+		logError( "%s while getting Krb5 ccache for %\"s\n",
 		          error_message( code ), dname );
 		goto err2;
 	}
 
 	if ((code = krb5_cc_initialize( ctx, ccache, me ))) {
-		LogError( "%s while initializing Krb5 cache %\"s\n",
+		logError( "%s while initializing Krb5 cache %\"s\n",
 		          error_message( code ), ccname );
 		goto err1;
 	}
 
 	if ((code = krb5_cc_store_cred( ctx, ccache, &my_creds ))) {
-		LogError( "%s while storing Krb5 credentials to cache %\"s\n",
+		logError( "%s while storing Krb5 credentials to cache %\"s\n",
 		          error_message( code ), ccname );
 	  err1:
 		krb5_cc_close( ctx, ccache );
@@ -218,7 +218,7 @@ Krb5Init( const char *user, const char *passwd, const char *dname )
 }
 
 void
-Krb5Destroy( const char *dname )
+krb5Destroy( const char *dname )
 {
 	krb5_error_code code;
 	krb5_ccache ccache;
@@ -226,17 +226,17 @@ Krb5Destroy( const char *dname )
 	if (!ctx)
 		return;
 
-	if ((code = Krb5DisplayCCache( dname, &ccache, 0 )))
-		LogError( "%s while getting Krb5 ccache to destroy\n",
+	if ((code = krb5DisplayCCache( dname, &ccache, 0 )))
+		logError( "%s while getting Krb5 ccache to destroy\n",
 		          error_message( code ) );
 	else {
 		if ((code = krb5_cc_destroy( ctx, ccache ))) {
 			if (code == KRB5_FCC_NOFILE)
-				Debug( "no Kerberos ccache file found to destroy\n" );
+				debug( "no Kerberos ccache file found to destroy\n" );
 			else
-				LogError( "%s while destroying Krb5 credentials cache\n",
+				logError( "%s while destroying Krb5 credentials cache\n",
 				          error_message( code ) );
 		} else
-			Debug( "kerberos ccache destroyed\n" );
+			debug( "kerberos ccache destroyed\n" );
 	}
 }

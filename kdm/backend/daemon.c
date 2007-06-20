@@ -36,7 +36,7 @@ from the copyright holder.
 #include "dm_error.h"
 
 void
-BecomeDaemon( void )
+becomeDaemon( void )
 {
 	int pfd[2];
 
@@ -57,7 +57,7 @@ BecomeDaemon( void )
 		break;
 	case -1:
 		/* error */
-		LogError( "Daemon fork failed: %m\n" );
+		logError( "Daemon fork failed: %m\n" );
 		break;
 
 	default:

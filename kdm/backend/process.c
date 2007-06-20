@@ -72,7 +72,7 @@ SIGFUNC Signal( int sig, SIGFUNC handler )
 
 
 void
-TerminateProcess( int pid, int sig )
+terminateProcess( int pid, int sig )
 {
 	kill( pid, sig );
 #ifdef SIGCONT
@@ -81,39 +81,39 @@ TerminateProcess( int pid, int sig )
 }
 
 
-static FD_TYPE CloseMask;
+static fd_set closeMask;
 static int max = -1;
 
 void
-RegisterCloseOnFork( int fd )
+registerCloseOnFork( int fd )
 {
-	FD_SET( fd, &CloseMask );
+	FD_SET( fd, &closeMask );
 	if (fd > max)
 		max = fd;
 }
 
 void
-ClearCloseOnFork( int fd )
+clearCloseOnFork( int fd )
 {
-	FD_CLR( fd, &CloseMask );
+	FD_CLR( fd, &closeMask );
 }
 
 void
-CloseNClearCloseOnFork( int fd )
+closeNclearCloseOnFork( int fd )
 {
 	close( fd );
-	FD_CLR( fd, &CloseMask );
+	FD_CLR( fd, &closeMask );
 }
 
 static void
-CloseOnFork( void )
+closeOnFork( void )
 {
 	int fd;
 
 	for (fd = 0; fd <= max; fd++)
-		if (FD_ISSET( fd, &CloseMask ))
+		if (FD_ISSET( fd, &closeMask ))
 			close( fd );
-	FD_ZERO( &CloseMask );
+	FD_ZERO( &closeMask );
 	max = -1;
 }
 
@@ -137,7 +137,7 @@ Fork( volatile int *pidr )
 		(void)Signal( SIGHUP, SIG_DFL );
 		sigemptyset( &ss );
 		sigprocmask( SIG_SETMASK, &ss, NULL );
-		CloseOnFork();
+		closeOnFork();
 		return 0;
 	}
 	*pidr = pid;
@@ -155,7 +155,7 @@ cldCatcher( int n ATTR_UNUSED )
 int
 Wait4( volatile int *pid )
 {
-	waitType result;
+	int result;
 	sigset_t ss, oss;
 	struct sigaction osa;
 
@@ -170,7 +170,7 @@ Wait4( volatile int *pid )
 			sigsuspend( &oss );
 			break;
 		case -1:
-			Debug( "Wait4(%d) failed: %m\n", *pid );
+			debug( "Wait4(%d) failed: %m\n", *pid );
 			result = 0;
 			/* fallthrough */
 		default:
@@ -178,7 +178,7 @@ Wait4( volatile int *pid )
 			if (osa.sa_handler == SIG_DFL)
 				Signal( SIGCHLD, SIG_DFL );
 			sigprocmask( SIG_SETMASK, &oss, 0 );
-			return waitVal( result );
+			return wcFromWait( result );
 		}
 	}
 }
@@ -187,7 +187,7 @@ Wait4( volatile int *pid )
 void
 execute( char **argv, char **env )
 {
-	Debug( "execute: %[s ; %[s\n", argv, env );
+	debug( "execute: %[s ; %[s\n", argv, env );
 	execve( argv[0], argv, env );
 	/*
 	 * In case this is a shell script which hasn't been
@@ -224,7 +224,7 @@ execute( char **argv, char **env )
 		if (!(argv = xCopyStrArr( nu, argv )))
 			return;
 		memcpy( argv, newargv, sizeof(char *) * nu );
-		Debug( "shell script execution: %[s\n", argv );
+		debug( "shell script execution: %[s\n", argv );
 		execve( argv[0], argv, env );
 	}
 }
@@ -237,14 +237,14 @@ runAndWait( char **args, char **env )
 	switch (Fork( &pid )) {
 	case 0:
 		execute( args, env );
-		LogError( "Can't execute %\"s: %m\n", args[0] );
+		logError( "Can't execute %\"s: %m\n", args[0] );
 		exit( 127 );
 	case -1:
-		LogError( "Can't fork to execute %\"s: %m\n", args[0] );
+		logError( "Can't fork to execute %\"s: %m\n", args[0] );
 		return 1;
 	}
 	ret = Wait4( &pid );
-	return waitVal( ret );
+	return wcFromWait( ret );
 }
 
 FILE *
@@ -263,12 +263,12 @@ pOpen( char **what, char m, volatile int *pid )
 		close( dp[0] );
 		close( dp[1] );
 		execute( what, environ );
-		LogError( "Can't execute %\"s: %m\n", what[0] );
+		logError( "Can't execute %\"s: %m\n", what[0] );
 		exit( 127 );
 	case -1:
 		close( dp[0] );
 		close( dp[1] );
-		LogError( "Can't fork to execute %\"s: %m\n", what[0] );
+		logError( "Can't fork to execute %\"s: %m\n", what[0] );
 		return 0;
 	}
 	if (m == 'r') {
@@ -294,7 +294,7 @@ locate( const char *exe )
 	char *path, *pathe, *name, *thenam, nambuf[PATH_MAX+1];
 
 	if (!(path = getenv( "PATH" ))) {
-		LogError( "Can't execute %'s: $PATH not set.\n", exe );
+		logError( "Can't execute %'s: $PATH not set.\n", exe );
 		return 0;
 	}
 	len = strlen( exe );
@@ -310,14 +310,14 @@ locate( const char *exe )
 			if (thenam >= nambuf) {
 				memcpy( thenam, path, len );
 				if (!access( thenam, X_OK )) {
-					StrDup( &name, thenam );
+					strDup( &name, thenam );
 					return name;
 				}
 			}
 		}
 		path = pathe;
 	} while (*path++ != '\0');
-	LogError( "Can't execute %'s: not in $PATH.\n", exe );
+	logError( "Can't execute %'s: not in $PATH.\n", exe );
 	return 0;
 }
 
@@ -325,7 +325,7 @@ locate( const char *exe )
 static GTalk *curtalk;
 
 void
-GSet( GTalk *tlk )
+gSet( GTalk *tlk )
 {
 	curtalk = tlk;
 }
@@ -337,7 +337,7 @@ GSet( GTalk *tlk )
 #endif
 
 int
-GFork( GPipe *pajp, const char *pname, char *cname,
+gFork( GPipe *pajp, const char *pname, char *cname,
        GPipe *ogp, char *cgname, volatile int *pid )
 {
 	int opipe[2], ogpipe[2];
@@ -369,57 +369,57 @@ GFork( GPipe *pajp, const char *pname, char *cname,
 			close( opipe[0] );
 			close( opipe[1] );
 		  badp1:
-			LogError( "Cannot start %s, pipe() failed", cname );
+			logError( "Cannot start %s, pipe() failed", cname );
 			if (cname)
 				free( cname );
 			return -1;
 		}
 	}
-	RegisterCloseOnFork( opipe[1] );
+	registerCloseOnFork( opipe[1] );
 #ifndef SINGLE_PIPE
-	RegisterCloseOnFork( ipipe[0] );
+	registerCloseOnFork( ipipe[0] );
 #endif
 	if (ogp) {
-		RegisterCloseOnFork( ogpipe[1] );
+		registerCloseOnFork( ogpipe[1] );
 #ifndef SINGLE_PIPE
-		RegisterCloseOnFork( igpipe[0] );
+		registerCloseOnFork( igpipe[0] );
 #endif
 	}
 	switch (Fork( pid )) {
 	case -1:
 		close( opipe[0] );
-		CloseNClearCloseOnFork( opipe[1] );
+		closeNclearCloseOnFork( opipe[1] );
 #ifndef SINGLE_PIPE
 		close( ipipe[1] );
-		CloseNClearCloseOnFork( ipipe[0] );
+		closeNclearCloseOnFork( ipipe[0] );
 #endif
 		if (ogp) {
 			close( ogpipe[0] );
-			CloseNClearCloseOnFork( ogpipe[1] );
+			closeNclearCloseOnFork( ogpipe[1] );
 #ifndef SINGLE_PIPE
 			close( igpipe[1] );
-			CloseNClearCloseOnFork( igpipe[0] );
+			closeNclearCloseOnFork( igpipe[0] );
 #endif
 		}
-		LogError( "Cannot start %s, fork() failed\n", cname );
+		logError( "Cannot start %s, fork() failed\n", cname );
 		if (cname)
 			 free( cname );
 		return -1;
 	case 0:
 #ifndef SINGLE_PIPE
 		pajp->fd.w = ipipe[1];
-		RegisterCloseOnFork( ipipe[1] );
+		registerCloseOnFork( ipipe[1] );
 #endif
 		pajp->fd.r = opipe[0];
-		RegisterCloseOnFork( opipe[0] );
+		registerCloseOnFork( opipe[0] );
 		pajp->who = (char *)pname;
 		if (ogp) {
 #ifndef SINGLE_PIPE
 			ogp->fd.w = igpipe[1];
-			RegisterCloseOnFork( igpipe[1] );
+			registerCloseOnFork( igpipe[1] );
 #endif
 			ogp->fd.r = ogpipe[0];
-			RegisterCloseOnFork( ogpipe[0] );
+			registerCloseOnFork( ogpipe[0] );
 			ogp->who = (char *)pname;
 		}
 		return 0;
@@ -445,7 +445,7 @@ GFork( GPipe *pajp, const char *pname, char *cname,
 }
 
 int
-GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
+gOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
        GPipe *gp )
 {
 	int pid;
@@ -453,9 +453,9 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 	int pip[2];
 	char coninfo[32];
 
-/* ###	GSet (proc->pipe); */
+/* ###	gSet (proc->pipe); */
 	if (proc->pid > 0) {
-		LogError( "%s already running\n", cname );
+		logError( "%s already running\n", cname );
 		if (cname)
 			free( cname );
 		return -1;
@@ -465,31 +465,31 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 			free( cname );
 		return -1;
 	}
-	if (!StrApp( margv, progpath, what, (char *)0 )) {
+	if (!strApp( margv, progpath, what, (char *)0 )) {
 		free( margv );
 		if (cname)
 			free( cname );
 		return -1;
 	}
 	if (pipe( pip )) {
-		LogError( "Cannot start %s, pipe() failed\n", cname );
+		logError( "Cannot start %s, pipe() failed\n", cname );
 		if (cname)
 			free( cname );
 		goto fail;
 	}
 	if (gp) {
-		ClearCloseOnFork( gp->fd.r );
+		clearCloseOnFork( gp->fd.r );
 #ifndef SINGLE_PIPE
-		ClearCloseOnFork( gp->fd.w );
+		clearCloseOnFork( gp->fd.w );
 #endif
 	}
-	pid = GFork( &proc->pipe, 0, cname, 0, 0, &proc->pid );
+	pid = gFork( &proc->pipe, 0, cname, 0, 0, &proc->pid );
 	if (pid) {
 		close( pip[1] );
 		if (gp) {
-			RegisterCloseOnFork( gp->fd.r );
+			registerCloseOnFork( gp->fd.r );
 #ifndef SINGLE_PIPE
-			RegisterCloseOnFork( gp->fd.w );
+			registerCloseOnFork( gp->fd.w );
 #endif
 		}
 	}
@@ -526,61 +526,61 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 		exit( 1 );
 	default:
 		(void)Signal( SIGPIPE, SIG_IGN );
-		if (Reader( pip[0], coninfo, 1 )) {
+		if (reader( pip[0], coninfo, 1 )) {
 			Wait4( &proc->pid );
-			LogError( "Cannot execute %\"s (%s)\n", margv[0], cname );
-			GClosen (&proc->pipe);
+			logError( "Cannot execute %\"s (%s)\n", margv[0], cname );
+			gClosen( &proc->pipe );
 			goto fail1;
 		}
 		close( pip[0] );
-		Debug( "started %s (%\"s), pid %d\n", cname, margv[0], proc->pid );
+		debug( "started %s (%\"s), pid %d\n", cname, margv[0], proc->pid );
 		free( margv[0] );
 		free( margv );
-		GSendInt( debugLevel );
+		gSendInt( debugLevel );
 		return 0;
 	}
 }
 
 static void
-iGClosen( GPipe *pajp )
+_gClosen( GPipe *pajp )
 {
-	CloseNClearCloseOnFork( pajp->fd.r );
+	closeNclearCloseOnFork( pajp->fd.r );
 #ifndef SINGLE_PIPE
-	CloseNClearCloseOnFork( pajp->fd.w );
+	closeNclearCloseOnFork( pajp->fd.w );
 	pajp->fd.w =
 #endif
 	pajp->fd.r = -1;
 }
 
 void
-GClosen (GPipe *pajp)
+gClosen( GPipe *pajp )
 {
-	iGClosen( pajp );
+	_gClosen( pajp );
 	if (pajp->who)
 		free( pajp->who );
 	pajp->who = 0;
 }
 
 int
-GClose (GProc *proc, GPipe *gp, int force)
+gClose( GProc *proc, GPipe *gp, int force )
 {
 	int ret;
 
 	if (proc->pid <= 0) {
-		Debug( "whoops, GClose while helper not running\n" );
+		debug( "whoops, gClose while helper not running\n" );
 		return 0;
 	}
-	iGClosen( &proc->pipe );
+	_gClosen( &proc->pipe );
 	if (gp)
-		GClosen (gp);
+		gClosen( gp );
 	if (force)
-		TerminateProcess( proc->pid, SIGTERM );
+		terminateProcess( proc->pid, SIGTERM );
 	ret = Wait4( &proc->pid );
-	if (WaitSig( ret ) ? WaitSig( ret ) != SIGTERM :
-	    (WaitCode( ret ) < EX_NORMAL || WaitCode( ret ) > EX_MAX))
-		LogError( "Abnormal termination of %s, code %d, signal %d\n",
-		          proc->pipe.who, WaitCode( ret ), WaitSig( ret ) );
-	Debug( "closed %s\n", proc->pipe.who );
+	if (wcSig( ret ) ? wcSig( ret ) != SIGTERM :
+	    (wcCode( ret ) < EX_NORMAL || wcCode( ret ) > EX_MAX))
+		logError( "Abnormal termination of %s, code %d, signal %d\n",
+		          proc->pipe.who, wcCode( ret ), wcSig( ret ) );
+	debug( "closed %s\n", proc->pipe.who );
 	if (proc->pipe.who)
 		free( proc->pipe.who );
 	proc->pipe.who = 0;
@@ -588,26 +588,26 @@ GClose (GProc *proc, GPipe *gp, int force)
 }
 
 static void ATTR_NORETURN
-GErr( void )
+gErr( void )
 {
 	Longjmp( curtalk->errjmp, 1 );
 }
 
 static void
-GRead( void *buf, int len )
+gRead( void *buf, int len )
 {
-	if (Reader( curtalk->pipe->fd.r, buf, len ) != len) {
-		LogError( "Cannot read from %s\n", curtalk->pipe->who );
-		GErr();
+	if (reader( curtalk->pipe->fd.r, buf, len ) != len) {
+		logError( "Cannot read from %s\n", curtalk->pipe->who );
+		gErr();
 	}
 }
 
 static void
-GWrite( const void *buf, int len )
+gWrite( const void *buf, int len )
 {
-	if (Writer( curtalk->pipe->fd.w, buf, len ) != len) {
-		LogError( "Cannot write to %s\n", curtalk->pipe->who );
-		GErr();
+	if (writer( curtalk->pipe->fd.w, buf, len ) != len) {
+		logError( "Cannot write to %s\n", curtalk->pipe->who );
+		gErr();
 	}
 #ifdef _POSIX_PRIORITY_SCHEDULING
 	if ((debugLevel & DEBUG_HLPCON))
@@ -616,211 +616,211 @@ GWrite( const void *buf, int len )
 }
 
 void
-GSendInt( int val )
+gSendInt( int val )
 {
-	GDebug( "sending int %d (%#x) to %s\n", val, val, curtalk->pipe->who );
-	GWrite( &val, sizeof(val) );
+	gDebug( "sending int %d (%#x) to %s\n", val, val, curtalk->pipe->who );
+	gWrite( &val, sizeof(val) );
 }
 
 int
-GRecvInt()
+gRecvInt()
 {
 	int val;
 
-	GDebug( "receiving int from %s ...\n", curtalk->pipe->who );
-	GRead( &val, sizeof(val) );
-	GDebug( " -> %d (%#x)\n", val, val );
+	gDebug( "receiving int from %s ...\n", curtalk->pipe->who );
+	gRead( &val, sizeof(val) );
+	gDebug( " -> %d (%#x)\n", val, val );
 	return val;
 }
 
 int
-GRecvCmd( int *cmd )
+gRecvCmd( int *cmd )
 {
-	GDebug( "receiving command from %s ...\n", curtalk->pipe->who );
-	if (Reader( curtalk->pipe->fd.r, cmd, sizeof(*cmd) ) == sizeof(*cmd)) {
-		GDebug( " -> %d\n", *cmd );
+	gDebug( "receiving command from %s ...\n", curtalk->pipe->who );
+	if (reader( curtalk->pipe->fd.r, cmd, sizeof(*cmd) ) == sizeof(*cmd)) {
+		gDebug( " -> %d\n", *cmd );
 		return 1;
 	}
-	GDebug( " -> no data\n" );
+	gDebug( " -> no data\n" );
 	return 0;
 }
 
 void
-GSendArr( int len, const char *data )
+gSendArr( int len, const char *data )
 {
-	GDebug( "sending array[%d] %02[*{hhx to %s\n",
+	gDebug( "sending array[%d] %02[*{hhx to %s\n",
 	        len, len, data, curtalk->pipe->who );
-	GWrite( &len, sizeof(len) );
-	GWrite( data, len );
+	gWrite( &len, sizeof(len) );
+	gWrite( data, len );
 }
 
 static char *
-iGRecvArr( int *rlen )
+_gRecvArr( int *rlen )
 {
 	unsigned len;
 	char *buf;
 
-	GRead( &len, sizeof(len) );
+	gRead( &len, sizeof(len) );
 	*rlen = len;
-	GDebug( " -> %d bytes\n", len );
+	gDebug( " -> %d bytes\n", len );
 	if (!len || len > 0x10000)
 		return (char *)0;
 	if (!(buf = Malloc( len )))
-		GErr();
-	GRead( buf, len );
+		gErr();
+	gRead( buf, len );
 	return buf;
 }
 
 char *
-GRecvArr( int *rlen )
+gRecvArr( int *rlen )
 {
 	char *buf;
 
-	GDebug( "receiving array from %s ...\n", curtalk->pipe->who );
-	buf = iGRecvArr( rlen );
-	GDebug( " -> %02[*{hhx\n", *rlen, buf );
+	gDebug( "receiving array from %s ...\n", curtalk->pipe->who );
+	buf = _gRecvArr( rlen );
+	gDebug( " -> %02[*{hhx\n", *rlen, buf );
 	return buf;
 }
 
 static int
-iGRecvArrBuf( char *buf )
+_gRecvArrBuf( char *buf )
 {
 	unsigned len;
 
-	GRead( &len, sizeof(len) );
-	GDebug( " -> %d bytes\n", len );
+	gRead( &len, sizeof(len) );
+	gDebug( " -> %d bytes\n", len );
 	if (len && len < 0x10000)
-		GRead( buf, len );
+		gRead( buf, len );
 	return len;
 }
 
 int
-GRecvArrBuf( char *buf )
+gRecvArrBuf( char *buf )
 {
 	int len;
 
-	GDebug( "receiving already allocated array from %s ...\n",
+	gDebug( "receiving already allocated array from %s ...\n",
 	        curtalk->pipe->who );
-	len = iGRecvArrBuf( buf );
-	GDebug( " -> %02[*{hhx\n", len, buf );
+	len = _gRecvArrBuf( buf );
+	gDebug( " -> %02[*{hhx\n", len, buf );
 	return len;
 }
 
 int
-GRecvStrBuf( char *buf )
+gRecvStrBuf( char *buf )
 {
 	int len;
 
-	GDebug( "receiving already allocated string from %s ...\n",
+	gDebug( "receiving already allocated string from %s ...\n",
 	        curtalk->pipe->who );
-	len = iGRecvArrBuf( buf );
-	GDebug( " -> %\".*s\n", len, buf );
+	len = _gRecvArrBuf( buf );
+	gDebug( " -> %\".*s\n", len, buf );
 	return len;
 }
 
 void
-GSendStr( const char *buf )
+gSendStr( const char *buf )
 {
 	int len;
 
-	GDebug( "sending string %\"s to %s\n", buf, curtalk->pipe->who );
+	gDebug( "sending string %\"s to %s\n", buf, curtalk->pipe->who );
 	if (buf) {
 		len = strlen( buf ) + 1;
-		GWrite( &len, sizeof(len) );
-		GWrite( buf, len );
+		gWrite( &len, sizeof(len) );
+		gWrite( buf, len );
 	} else
-		GWrite( &buf, sizeof(int) );
+		gWrite( &buf, sizeof(int) );
 }
 
 void
-GSendNStr( const char *buf, int len )
+gSendNStr( const char *buf, int len )
 {
 	int tlen = len + 1;
-	GDebug( "sending string %\".*s to %s\n", len, buf, curtalk->pipe->who );
-	GWrite( &tlen, sizeof(tlen) );
-	GWrite( buf, len );
-	GWrite( "", 1 );
+	gDebug( "sending string %\".*s to %s\n", len, buf, curtalk->pipe->who );
+	gWrite( &tlen, sizeof(tlen) );
+	gWrite( buf, len );
+	gWrite( "", 1 );
 }
 
 void
-GSendStrN( const char *buf, int len )
+gSendStrN( const char *buf, int len )
 {
 	if (buf)
-		GSendNStr( buf, StrNLen( buf, len ) );
+		gSendNStr( buf, strnlen( buf, len ) );
 	else
-		GSendStr( buf );
+		gSendStr( buf );
 }
 
 char *
-GRecvStr()
+gRecvStr()
 {
 	int len;
 	char *buf;
 
-	GDebug( "receiving string from %s ...\n", curtalk->pipe->who );
-	buf = iGRecvArr( &len );
-	GDebug( " -> %\".*s\n", len, buf );
+	gDebug( "receiving string from %s ...\n", curtalk->pipe->who );
+	buf = _gRecvArr( &len );
+	gDebug( " -> %\".*s\n", len, buf );
 	return buf;
 }
 
 static void
-iGSendStrArr( int num, char **data )
+_gSendStrArr( int num, char **data )
 {
 	char **cdata;
 
-	GWrite( &num, sizeof(num) );
+	gWrite( &num, sizeof(num) );
 	for (cdata = data; --num >= 0; cdata++)
-		GSendStr( *cdata );
+		gSendStr( *cdata );
 }
 
 /*
 void
-GSendStrArr (int num, char **data)
+gSendStrArr (int num, char **data)
 {
-	GDebug( "sending string array[%d] to %s\n", num, curtalk->pipe->who );
-	iGSendStrArr( num, data );
+	gDebug( "sending string array[%d] to %s\n", num, curtalk->pipe->who );
+	_gSendStrArr( num, data );
 }
 */
 
 char **
-GRecvStrArr( int *rnum )
+gRecvStrArr( int *rnum )
 {
 	int num;
 	char **argv, **cargv;
 
-	GDebug( "receiving string array from %s ...\n", curtalk->pipe->who );
-	GRead( &num, sizeof(num) );
-	GDebug( " -> %d strings\n", num );
+	gDebug( "receiving string array from %s ...\n", curtalk->pipe->who );
+	gRead( &num, sizeof(num) );
+	gDebug( " -> %d strings\n", num );
 	*rnum = num;
 	if (!num)
 		return (char **)0;
 	if (!(argv = Malloc( num * sizeof(char *) )))
-		GErr();
+		gErr();
 	for (cargv = argv; --num >= 0; cargv++)
-		*cargv = GRecvStr();
+		*cargv = gRecvStr();
 	return argv;
 }
 
 void
-GSendArgv( char **argv )
+gSendArgv( char **argv )
 {
 	int num;
 
 	if (argv) {
 		for (num = 0; argv[num]; num++);
-		GDebug( "sending argv[%d] to %s ...\n", num, curtalk->pipe->who );
-		iGSendStrArr( num + 1, argv );
+		gDebug( "sending argv[%d] to %s ...\n", num, curtalk->pipe->who );
+		_gSendStrArr( num + 1, argv );
 	} else {
-		GDebug( "sending NULL argv to %s\n", curtalk->pipe->who );
-		GWrite( &argv, sizeof(int) );
+		gDebug( "sending NULL argv to %s\n", curtalk->pipe->who );
+		gWrite( &argv, sizeof(int) );
 	}
 }
 
 char **
-GRecvArgv()
+gRecvArgv()
 {
 	int num;
 
-	return GRecvStrArr( &num );
+	return gRecvStrArr( &num );
 }
 

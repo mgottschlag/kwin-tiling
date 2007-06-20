@@ -219,7 +219,7 @@ from the copyright holder.
 #define DM_PANIC  4
 
 /*
- * Status codes from Verify
+ * Status codes from verify
  */
 /* terminal status codes */
 #define V_OK              0

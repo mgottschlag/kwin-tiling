@@ -39,18 +39,18 @@ from the copyright holder.
 #include "dm_auth.h"
 
 #define AUTH_DATA_LEN 16 /* bytes of authorization data */
-static char auth_name[256];
+static char authName[256];
 
 void
-MitInitAuth( unsigned short name_len, const char *name )
+mitInitAuth( unsigned short name_len, const char *name )
 {
 	if (name_len > 256)
 		name_len = 256;
-	memmove( auth_name, name, name_len );
+	memmove( authName, name, name_len );
 }
 
 Xauth *
-MitGetAuth( unsigned short namelen, const char *name )
+mitGetAuth( unsigned short namelen, const char *name )
 {
 	Xauth *new;
 	new = (Xauth *)Malloc( sizeof(Xauth) );
@@ -76,7 +76,7 @@ MitGetAuth( unsigned short namelen, const char *name )
 	}
 	memmove( (char *)new->name, name, namelen );
 	new->name_length = namelen;
-	if (!GenerateAuthData( new->data, AUTH_DATA_LEN )) {
+	if (!generateAuthData( new->data, AUTH_DATA_LEN )) {
 		free( (char *)new->name );
 		free( (char *)new->data );
 		free( (char *)new );

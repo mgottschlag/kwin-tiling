@@ -50,26 +50,26 @@ from the copyright holder.
 # include <sys/vt.h>
 #endif
 
-static void SigHandler( int n );
-static int ScanConfigs( int force );
-static void StartDisplays( void );
+static void sigHandler( int n );
+static int scanConfigs( int force );
+static void startDisplays( void );
 #define XS_KEEP 0
 #define XS_RESTART 1
 #define XS_RETRY 2
-static void ExitDisplay( struct display *d, int endState, int serverCmd, int goodExit );
+static void exitDisplay( struct display *d, int endState, int serverCmd, int goodExit );
 static void rStopDisplay( struct display *d, int endState );
-static void MainLoop( void );
+static void mainLoop( void );
 
 static int signalFds[2];
 
 #if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
-static char *Title;
-static int TitleLen;
+static char *title;
+static int titleLen;
 #endif
 
-static int StorePid( void );
+static int storePid( void );
 
-static int Stopping;
+static int stopping;
 SdRec sdRec = { 0, 0, 0, TO_INF, TO_INF, 0, 0, 0 };
 
 time_t now;
@@ -97,8 +97,8 @@ main( int argc, char **argv )
 		dup2( 0, 2 );
 
 	if (argv[0][0] == '/') {
-		if (!StrDup( &progpath, argv[0] ))
-			Panic( "Out of memory" );
+		if (!strDup( &progpath, argv[0] ))
+			panic( "Out of memory" );
 	} else
 #ifdef __linux__
 	{
@@ -106,26 +106,26 @@ main( int argc, char **argv )
 		int len;
 		char fullpath[PATH_MAX];
 		if ((len = readlink( "/proc/self/exe", fullpath, sizeof(fullpath) )) < 0)
-			Panic( "Invoke with full path specification or mount /proc" );
-		if (!StrNDup( &progpath, fullpath, len ))
-			Panic( "Out of memory" );
+			panic( "Invoke with full path specification or mount /proc" );
+		if (!strNDup( &progpath, fullpath, len ))
+			panic( "Out of memory" );
 	}
 #else
 # if 0
-		Panic( "Must be invoked with full path specification" );
+		panic( "Must be invoked with full path specification" );
 # else
 	{
 		char directory[PATH_MAX+1];
 		if (!getcwd( directory, sizeof(directory) ))
-			Panic( "Can't find myself (getcwd failed)" );
+			panic( "Can't find myself (getcwd failed)" );
 		if (strchr( argv[0], '/' ))
-			StrApp( &progpath, directory, "/", argv[0], (char *)0 );
+			strApp( &progpath, directory, "/", argv[0], (char *)0 );
 		else {
 			int len;
 			char *path, *pathe, *name, *thenam, nambuf[PATH_MAX+1];
 
 			if (!(path = getenv( "PATH" )))
-				Panic( "Can't find myself (no PATH)" );
+				panic( "Can't find myself (no PATH)" );
 			len = strlen( argv[0] );
 			name = nambuf + PATH_MAX - len;
 			memcpy( name, argv[0], len + 1 );
@@ -146,10 +146,10 @@ main( int argc, char **argv )
 				}
 				path = pathe;
 			} while (*path++ != '\0');
-			Panic( "Can't find myself (not in PATH)" );
+			panic( "Can't find myself (not in PATH)" );
 		  found:
-			if (!StrDup( &progpath, thenam ))
-				Panic( "Out of memory" );
+			if (!strDup( &progpath, thenam ))
+				panic( "Out of memory" );
 		}
 	}
 # endif
@@ -157,8 +157,8 @@ main( int argc, char **argv )
 	prog = strrchr( progpath, '/' ) + 1;
 
 #if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
-	Title = argv[0];
-	TitleLen = (argv[argc - 1] + strlen( argv[argc - 1] )) - Title;
+	title = argv[0];
+	titleLen = (argv[argc - 1] + strlen( argv[argc - 1] )) - title;
 #endif
 
 	/*
@@ -203,7 +203,7 @@ main( int argc, char **argv )
 		else if (!strcmp( pt, "nodaemon" ))
 			noDaemonMode = 1;
 		else if (argv[1] && !strcmp( pt, "config" ))
-			StrDup( opts, *++argv );
+			strDup( opts, *++argv );
 		else if (argv[1] && !strcmp( pt, "xrm" ))
 			opts = addStrArr( opts, *++argv, -1 );
 		else if (argv[1] && !strcmp( pt, "debug" ))
@@ -224,29 +224,29 @@ main( int argc, char **argv )
 		exit( 1 );
 	}
 
-	InitErrorLog( errorLogFile );
+	initErrorLog( errorLogFile );
 
 	if (noDaemonMode != 1)
-		BecomeDaemon();
+		becomeDaemon();
 
 	/*
 	 * Step 1 - load configuration parameters
 	 */
-	if (!InitResources( opts ) || ScanConfigs( FALSE ) < 0)
-		LogPanic( "Config reader failed. Aborting ...\n" );
+	if (!initResources( opts ) || scanConfigs( FALSE ) < 0)
+		logPanic( "Config reader failed. Aborting ...\n" );
 
 	/* SUPPRESS 560 */
-	if ((oldpid = StorePid())) {
+	if ((oldpid = storePid())) {
 		if (oldpid == -1)
-			LogError( "Can't create/lock pid file %s\n", pidFile );
+			logError( "Can't create/lock pid file %s\n", pidFile );
 		else
-			LogError( "Can't lock pid file %s, another xdm is running (pid %d)\n",
+			logError( "Can't lock pid file %s, another xdm is running (pid %d)\n",
 			          pidFile, oldpid );
 		exit( 1 );
 	}
 
 #ifdef NEED_ENTROPY
-	AddOtherEntropy();
+	addOtherEntropy();
 #endif
 
 	/*
@@ -257,27 +257,27 @@ main( int argc, char **argv )
 #ifdef XDMCP
 	init_session_id();
 #else
-	Debug( "not compiled for XDMCP\n" );
+	debug( "not compiled for XDMCP\n" );
 #endif
 	if (pipe( signalFds ))
-		LogPanic( "Unable to create signal notification pipe.\n" );
-	RegisterInput( signalFds[0] );
-	RegisterCloseOnFork( signalFds[0] );
-	RegisterCloseOnFork( signalFds[1] );
-	(void)Signal( SIGTERM, SigHandler );
-	(void)Signal( SIGINT, SigHandler );
-	(void)Signal( SIGHUP, SigHandler );
-	(void)Signal( SIGCHLD, SigHandler );
-	(void)Signal( SIGUSR1, SigHandler );
+		logPanic( "Unable to create signal notification pipe.\n" );
+	registerInput( signalFds[0] );
+	registerCloseOnFork( signalFds[0] );
+	registerCloseOnFork( signalFds[1] );
+	(void)Signal( SIGTERM, sigHandler );
+	(void)Signal( SIGINT, sigHandler );
+	(void)Signal( SIGHUP, sigHandler );
+	(void)Signal( SIGCHLD, sigHandler );
+	(void)Signal( SIGUSR1, sigHandler );
 
 	/*
 	 * Step 2 - run a sub-daemon for each entry
 	 */
 #ifdef XDMCP
-	UpdateListenSockets();
+	updateListenSockets();
 #endif
 	openCtrl( 0 );
-	MainLoop();
+	mainLoop();
 	closeCtrl( 0 );
 	if (sdRec.how) {
 		int pid;
@@ -285,7 +285,7 @@ main( int argc, char **argv )
 		if (Fork( &pid ) <= 0) {
 			char *cmd = sdRec.how == SHUT_HALT ? cmdHalt : cmdReboot;
 			execute( parseArgs( (char **)0, cmd ), (char **)0 );
-			LogError( "Failed to execute shutdown command %\"s\n", cmd );
+			logError( "Failed to execute shutdown command %\"s\n", cmd );
 			exit( 1 );
 		} else {
 			sigset_t mask;
@@ -295,7 +295,7 @@ main( int argc, char **argv )
 			sigsuspend( &mask );
 		}
 	}
-	Debug( "nothing left to do, exiting\n" );
+	debug( "nothing left to do, exiting\n" );
 	return 0;
 }
 
@@ -322,7 +322,7 @@ activateVT( int vt )
 
 
 static void
-WakeDisplay( struct display *d )
+wakeDisplay( struct display *d )
 {
 	if (d->status == textMode)
 		d->status = (d->displayType & d_lifetime) == dReserve ? reserve : notRunning;
@@ -354,7 +354,7 @@ bombUtmp( void )
 
 	while ((utp = utmpList)) {
 #ifdef HAVE_VTS
-		ForEachDisplay( WakeDisplay );
+		forEachDisplay( wakeDisplay );
 #else
 		utp->d->status = notRunning;
 #endif
@@ -364,7 +364,7 @@ bombUtmp( void )
 }
 
 static void
-CheckUtmp( void )
+checkUtmp( void )
 {
 	static time_t modtim;
 	time_t nck;
@@ -381,21 +381,21 @@ CheckUtmp( void )
 	if (!utmpList)
 		return;
 	if (stat( UTMP_FILE, &st )) {
-		LogError( UTMP_FILE " not found - cannot use console mode\n" );
+		logError( UTMP_FILE " not found - cannot use console mode\n" );
 		bombUtmp();
 		return;
 	}
 	if (modtim != st.st_mtime) {
-		Debug( "rescanning " UTMP_FILE "\n" );
+		debug( "rescanning " UTMP_FILE "\n" );
 		for (utp = utmpList; utp; utp = utp->next)
 			utp->state = UtDead;
 #ifdef BSD_UTMP
 		if ((fd = open( UTMP_FILE, O_RDONLY )) < 0) {
-			LogError( "Cannot open " UTMP_FILE " - cannot use console mode\n" );
+			logError( "Cannot open " UTMP_FILE " - cannot use console mode\n" );
 			bombUtmp();
 			return;
 		}
-		while (Reader( fd, ut, sizeof(ut[0]) ) == sizeof(ut[0]))
+		while (reader( fd, ut, sizeof(ut[0]) ) == sizeof(ut[0]))
 #else
 		SETUTENT();
 		while ((ut = GETUTENT()))
@@ -446,11 +446,11 @@ CheckUtmp( void )
 			ends = utp->time + (utp->hadSess ? TIME_RELOG : TIME_LOG);
 			if (ends <= now) {
 #ifdef HAVE_VTS
-				ForEachDisplay( WakeDisplay );
-				Debug( "console login timed out\n" );
+				forEachDisplay( wakeDisplay );
+				debug( "console login timed out\n" );
 #else
 				utp->d->status = notRunning;
-				Debug( "console login for %s at %s timed out\n",
+				debug( "console login for %s at %s timed out\n",
 				       utp->d->name, utp->d->console );
 #endif
 				*utpp = utp->next;
@@ -468,9 +468,9 @@ CheckUtmp( void )
 
 static void
 #ifdef HAVE_VTS
-SwitchToTty( void )
+switchToTty( void )
 #else
-SwitchToTty( struct display *d )
+switchToTty( struct display *d )
 #endif
 {
 	struct utmps *utp;
@@ -480,7 +480,7 @@ SwitchToTty( struct display *d )
 
 	if (!(utp = Malloc( sizeof(*utp) ))) {
 #ifdef HAVE_VTS
-		ForEachDisplay( WakeDisplay );
+		forEachDisplay( wakeDisplay );
 #else
 		d->status = notRunning;
 #endif
@@ -494,7 +494,7 @@ SwitchToTty( struct display *d )
 	utp->hadSess = 0;
 	utp->next = utmpList;
 	utmpList = utp;
-	CheckUtmp();
+	checkUtmp();
 
 #ifdef HAVE_VTS
 	if ((vt = TTYtoVT( *consoleTTYs )))
@@ -506,7 +506,7 @@ SwitchToTty( struct display *d )
 
 #ifdef HAVE_VTS
 static void
-StopToTTY( struct display *d )
+stopToTTY( struct display *d )
 {
 	if ((d->displayType & d_location) == dLocal)
 		switch (d->status) {
@@ -519,7 +519,7 @@ StopToTTY( struct display *d )
 }
 
 static void
-CheckTTYMode( void )
+checkTTYMode( void )
 {
 	struct display *d;
 
@@ -527,13 +527,13 @@ CheckTTYMode( void )
 		if (d->status == zombie)
 			return;
 
-	SwitchToTty();
+	switchToTty();
 }
 
 #else
 
 void
-SwitchToX( struct display *d )
+switchToX( struct display *d )
 {
 	struct utmps *utp, **utpp;
 
@@ -549,31 +549,31 @@ SwitchToX( struct display *d )
 
 #ifdef XDMCP
 static void
-StartRemoteLogin( struct display *d )
+startRemoteLogin( struct display *d )
 {
 	char **argv;
 
-	Debug( "StartRemoteLogin for %s\n", d->name );
-	/* HACK: omitting LoadDisplayResources( d ) here! */
+	debug( "startRemoteLogin for %s\n", d->name );
+	/* HACK: omitting loadDisplayResources( d ) here! */
 	switch (Fork( &d->serverPid )) {
 	case 0:
-		argv = PrepServerArgv( d, d->serverArgsRemote );
+		argv = prepareServerArgv( d, d->serverArgsRemote );
 		if (!(argv = addStrArr( argv, "-once", 5 )) ||
 		    !(argv = addStrArr( argv, "-query", 6 )) ||
 		    !(argv = addStrArr( argv, d->remoteHost, -1 )))
 			exit( 1 );
-		Debug( "exec %\"[s\n", argv );
+		debug( "exec %\"[s\n", argv );
 		(void)execv( argv[0], argv );
-		LogError( "X server %\"s cannot be executed\n", argv[0] );
+		logError( "X server %\"s cannot be executed\n", argv[0] );
 		exit( 1 );
 	case -1:
-		LogError( "Forking X server for remote login failed: %m" );
+		logError( "Forking X server for remote login failed: %m" );
 		d->status = notRunning;
 		return;
 	default:
 		break;
 	}
-	Debug( "X server forked, pid %d\n", d->serverPid );
+	debug( "X server forked, pid %d\n", d->serverPid );
 
 	d->status = remoteLogin;
 }
@@ -581,24 +581,24 @@ StartRemoteLogin( struct display *d )
 
 
 static void
-StopInactiveDisplay( struct display *d )
+stopInactiveDisplay( struct display *d )
 {
 	if (d->status != remoteLogin && d->userSess < 0)
-		StopDisplay( d );
+		stopDisplay( d );
 }
 
 static void
 stoppen( int force )
 {
 #ifdef XDMCP
-	request_port = 0;
-	UpdateListenSockets();
+	requestPort = 0;
+	updateListenSockets();
 #endif
 	if (force)
-		ForEachDisplay( StopDisplay );
+		forEachDisplay( stopDisplay );
 	else
-		ForEachDisplay( StopInactiveDisplay );
-	Stopping = 1;
+		forEachDisplay( stopInactiveDisplay );
+	stopping = 1;
 }
 
 
@@ -608,10 +608,10 @@ setNLogin( struct display *d,
 {
 	struct disphist *he = d->hstent;
 	he->rLogin =
-		(ReStr( &he->nuser, nuser ) &&
-		 ReStr( &he->npass, npass ) &&
-		 ReStr( &he->nargs, nargs )) ? rl : 0;
-	Debug( "set next login for %s, level %d\n", nuser, rl );
+		(reStr( &he->nuser, nuser ) &&
+		 reStr( &he->npass, npass ) &&
+		 reStr( &he->nargs, nargs )) ? rl : 0;
+	debug( "set next login for %s, level %d\n", nuser, rl );
 }
 
 static void
@@ -627,25 +627,25 @@ processDPipe( struct display *d )
 
 	dpytalk.pipe = &d->pipe;
 	if (Setjmp( dpytalk.errjmp )) {
-		StopDisplay( d );
+		stopDisplay( d );
 		return;
 	}
-	GSet( &dpytalk );
-	if (!GRecvCmd( &cmd )) {
+	gSet( &dpytalk );
+	if (!gRecvCmd( &cmd )) {
 		/* process already exited */
-		UnregisterInput( d->pipe.fd.r );
+		unregisterInput( d->pipe.fd.r );
 		return;
 	}
 	switch (cmd) {
 	case D_User:
-		d->userSess = GRecvInt();
-		d->userName = GRecvStr();
-		d->sessName = GRecvStr();
+		d->userSess = gRecvInt();
+		d->userName = gRecvStr();
+		d->sessName = gRecvStr();
 		break;
 	case D_ReLogin:
-		user = GRecvStr();
-		pass = GRecvStr();
-		args = GRecvStr();
+		user = gRecvStr();
+		pass = gRecvStr();
+		args = gRecvStr();
 		setNLogin( d, user, pass, args, 1 );
 		free( args );
 		free( pass );
@@ -653,27 +653,27 @@ processDPipe( struct display *d )
 		break;
 #ifdef XDMCP
 	case D_ChooseHost:
-		ca.data = (unsigned char *)GRecvArr( &len );
+		ca.data = (unsigned char *)gRecvArr( &len );
 		ca.length = (CARD16)len;
-		ct = GRecvInt();
-		ha.data = (unsigned char *)GRecvArr( &len );
+		ct = gRecvInt();
+		ha.data = (unsigned char *)gRecvArr( &len );
 		ha.length = (CARD16)len;
-		RegisterIndirectChoice( &ca, ct, &ha );
+		registerindirectChoice( &ca, ct, &ha );
 		XdmcpDisposeARRAY8( &ha );
 		XdmcpDisposeARRAY8( &ca );
 		break;
 	case D_RemoteHost:
 		if (d->remoteHost)
 			free( d->remoteHost );
-		d->remoteHost = GRecvStr();
+		d->remoteHost = gRecvStr();
 		break;
 #endif
 	case D_XConnOk:
 		startingServer = 0;
 		break;
 	default:
-		LogError( "Internal error: unknown D_* command %d\n", cmd );
-		StopDisplay( d );
+		logError( "Internal error: unknown D_* command %d\n", cmd );
+		stopDisplay( d );
 		break;
 	}
 }
@@ -681,39 +681,39 @@ processDPipe( struct display *d )
 static void
 emitXSessG( struct display *di, struct display *d, void *ctx ATTR_UNUSED )
 {
-	GSendStr( di->name );
-	GSendStr( "" );
+	gSendStr( di->name );
+	gSendStr( "" );
 #ifdef HAVE_VTS
-	GSendInt( di->serverVT );
+	gSendInt( di->serverVT );
 #endif
 #ifdef XDMCP
 	if (di->status == remoteLogin) {
-		GSendStr( "" );
-		GSendStr( di->remoteHost );
+		gSendStr( "" );
+		gSendStr( di->remoteHost );
 	} else
 #endif
 	{
-		GSendStr( di->userName );
-		GSendStr( di->sessName );
+		gSendStr( di->userName );
+		gSendStr( di->sessName );
 	}
-	GSendInt( di == d ? isSelf : 0 );
+	gSendInt( di == d ? isSelf : 0 );
 }
 
 static void
 emitTTYSessG( STRUCTUTMP *ut, struct display *d ATTR_UNUSED, void *ctx ATTR_UNUSED )
 {
-	GSendStrN( ut->ut_line, sizeof(ut->ut_line) );
-	GSendStrN( ut->ut_host, sizeof(ut->ut_host) );
+	gSendStrN( ut->ut_line, sizeof(ut->ut_line) );
+	gSendStrN( ut->ut_host, sizeof(ut->ut_host) );
 #ifdef HAVE_VTS
-	GSendInt( TTYtoVT( ut->ut_line ) );
+	gSendInt( TTYtoVT( ut->ut_line ) );
 #endif
 #ifdef BSD_UTMP
-	GSendStrN( *ut->ut_user ? ut->ut_user : 0, sizeof(ut->ut_user) );
+	gSendStrN( *ut->ut_user ? ut->ut_user : 0, sizeof(ut->ut_user) );
 #else
-	GSendStrN( ut->ut_type == USER_PROCESS ? ut->ut_user : 0, sizeof(ut->ut_user) );
+	gSendStrN( ut->ut_type == USER_PROCESS ? ut->ut_user : 0, sizeof(ut->ut_user) );
 #endif
-	GSendStr( 0 ); /* session type unknown */
-	GSendInt( isTTY );
+	gSendStr( 0 ); /* session type unknown */
+	gSendInt( isTTY );
 }
 
 static void
@@ -725,59 +725,59 @@ processGPipe( struct display *d )
 
 	dpytalk.pipe = &d->gpipe;
 	if (Setjmp( dpytalk.errjmp )) {
-		StopDisplay( d );
+		stopDisplay( d );
 		return;
 	}
-	GSet( &dpytalk );
-	if (!GRecvCmd( &cmd )) {
+	gSet( &dpytalk );
+	if (!gRecvCmd( &cmd )) {
 		/* process already exited */
-		UnregisterInput( d->gpipe.fd.r );
+		unregisterInput( d->gpipe.fd.r );
 		return;
 	}
 	switch (cmd) {
 	case G_ListBootOpts:
 		ret = getBootOptions( &opts, &dflt, &curr );
-		GSendInt( ret );
+		gSendInt( ret );
 		if (ret == BO_OK) {
-			GSendArgv( opts );
+			gSendArgv( opts );
 			freeStrArr( opts );
-			GSendInt( dflt );
-			GSendInt( curr );
+			gSendInt( dflt );
+			gSendInt( curr );
 		}
 		break;
 	case G_Shutdown:
-		sdRec.how = GRecvInt();
-		sdRec.start = GRecvInt();
-		sdRec.timeout = GRecvInt();
-		sdRec.force = GRecvInt();
-		sdRec.uid = GRecvInt();
-		option = GRecvStr();
+		sdRec.how = gRecvInt();
+		sdRec.start = gRecvInt();
+		sdRec.timeout = gRecvInt();
+		sdRec.force = gRecvInt();
+		sdRec.uid = gRecvInt();
+		option = gRecvStr();
 		setBootOption( option, &sdRec );
 		if (option)
 			free( option );
 		break;
 	case G_QueryShutdown:
-		GSendInt( sdRec.how );
-		GSendInt( sdRec.start );
-		GSendInt( sdRec.timeout );
-		GSendInt( sdRec.force );
-		GSendInt( sdRec.uid );
-		GSendStr( sdRec.osname );
+		gSendInt( sdRec.how );
+		gSendInt( sdRec.start );
+		gSendInt( sdRec.timeout );
+		gSendInt( sdRec.force );
+		gSendInt( sdRec.uid );
+		gSendStr( sdRec.osname );
 		break;
 	case G_List:
-		ListSessions( GRecvInt(), d, 0, emitXSessG, emitTTYSessG );
-		GSendInt( 0 );
+		listSessions( gRecvInt(), d, 0, emitXSessG, emitTTYSessG );
+		gSendInt( 0 );
 		break;
 #ifdef HAVE_VTS
 	case G_Activate:
-		activateVT( GRecvInt() );
+		activateVT( gRecvInt() );
 		break;
 #endif
 	case G_Console:
 #ifdef HAVE_VTS
 		if (*consoleTTYs) { /* sanity check against greeter */
-			ForEachDisplay( StopToTTY );
-			CheckTTYMode();
+			forEachDisplay( stopToTTY );
+			checkTTYMode();
 		}
 #else
 		if (*d->console) /* sanity check against greeter */
@@ -785,23 +785,23 @@ processGPipe( struct display *d )
 #endif
 		break;
 	default:
-		LogError( "Internal error: unknown G_* command %d\n", cmd );
-		StopDisplay( d );
+		logError( "Internal error: unknown G_* command %d\n", cmd );
+		stopDisplay( d );
 		break;
 	}
 }
 
 
 static int
-ScanConfigs( int force )
+scanConfigs( int force )
 {
 	int ret;
 
-	if ((ret = LoadDMResources( force )) <= 0)
+	if ((ret = loadDMResources( force )) <= 0)
 		return ret;
-	ScanServers();
+	scanServers();
 #ifdef XDMCP
-	ScanAccessDatabase( force );
+	scanAccessDatabase( force );
 #endif
 	return 1;
 }
@@ -813,11 +813,11 @@ MarkDisplay( struct display *d )
 }
 
 static void
-RescanConfigs( int force )
+rescanConfigs( int force )
 {
-	if (ScanConfigs( force ) > 0) {
+	if (scanConfigs( force ) > 0) {
 #ifdef XDMCP
-		UpdateListenSockets();
+		updateListenSockets();
 #endif
 		updateCtrl();
 	}
@@ -831,106 +831,106 @@ cancelShutdown( void )
 		free( sdRec.osname );
 		sdRec.osname = 0;
 	}
-	Stopping = 0;
-	RescanConfigs( TRUE );
+	stopping = 0;
+	rescanConfigs( TRUE );
 }
 
 
 static void
-ReapChildren( void )
+reapChildren( void )
 {
 	int pid;
 	struct display *d;
-	waitType status;
+	int status;
 
 	while ((pid = waitpid( -1, &status, WNOHANG )) > 0)
 	{
-		Debug( "manager wait returns  pid %d  sig %d  core %d  code %d\n",
+		debug( "manager wait returns  pid %d  sig %d  core %d  code %d\n",
 		       pid, waitSig( status ), waitCore( status ), waitCode( status ) );
 		/* SUPPRESS 560 */
-		if ((d = FindDisplayByPid( pid ))) {
+		if ((d = findDisplayByPid( pid ))) {
 			d->pid = -1;
-			UnregisterInput( d->pipe.fd.r );
-			GClosen (&d->pipe);
-			UnregisterInput( d->gpipe.fd.r );
-			GClosen (&d->gpipe);
+			unregisterInput( d->pipe.fd.r );
+			gClosen (&d->pipe);
+			unregisterInput( d->gpipe.fd.r );
+			gClosen (&d->gpipe);
 			closeCtrl( d );
-			switch (waitVal( status )) {
+			switch (wcFromWait( status )) {
 #ifdef XDMCP
 			case EX_REMOTE:
-				Debug( "display exited with EX_REMOTE\n" );
-				ExitDisplay( d, DS_REMOTE, 0, 0 );
+				debug( "display exited with EX_REMOTE\n" );
+				exitDisplay( d, DS_REMOTE, 0, 0 );
 				break;
 #endif
 			case EX_NORMAL:
 				/* (any type of) session ended */
-				Debug( "display exited with EX_NORMAL\n" );
+				debug( "display exited with EX_NORMAL\n" );
 				if ((d->displayType & d_lifetime) == dReserve)
-					ExitDisplay( d, DS_RESERVE, 0, 0 );
+					exitDisplay( d, DS_RESERVE, 0, 0 );
 				else
-					ExitDisplay( d, DS_RESTART, XS_KEEP, TRUE );
+					exitDisplay( d, DS_RESTART, XS_KEEP, TRUE );
 				break;
 #if 0
 			case EX_REMANAGE_DPY:
 				/* user session ended */
-				Debug( "display exited with EX_REMANAGE_DPY\n" );
-				ExitDisplay( d, DS_RESTART, XS_KEEP, TRUE );
+				debug( "display exited with EX_REMANAGE_DPY\n" );
+				exitDisplay( d, DS_RESTART, XS_KEEP, TRUE );
 				break;
 #endif
 			case EX_OPENFAILED_DPY:
-				/* WaitForServer() failed */
-				LogError( "Display %s cannot be opened\n", d->name );
+				/* waitForServer() failed */
+				logError( "Display %s cannot be opened\n", d->name );
 #ifdef XDMCP
 				/*
 				 * no display connection was ever made, tell the
 				 * terminal that the open attempt failed
 				 */
 				if ((d->displayType & d_origin) == dFromXDMCP)
-					SendFailed( d, "cannot open display" );
+					sendFailed( d, "cannot open display" );
 #endif
-				ExitDisplay( d, DS_RESTART, XS_RETRY, FALSE );
+				exitDisplay( d, DS_RESTART, XS_RETRY, FALSE );
 				break;
-			case waitCompose( SIGTERM,0,0 ):
-				/* killed before/during WaitForServer()
+			case wcCompose( SIGTERM,0,0 ):
+				/* killed before/during waitForServer()
 				   - local Xserver died
 				   - display stopped (is zombie)
 				   - "login now" and "suicide" pipe commands (is raiser)
 				*/
-				Debug( "display exited on SIGTERM\n" );
-				ExitDisplay( d, DS_RESTART, XS_RETRY, FALSE );
+				debug( "display exited on SIGTERM\n" );
+				exitDisplay( d, DS_RESTART, XS_RETRY, FALSE );
 				break;
 			case EX_AL_RESERVER_DPY:
-				/* - killed after WaitForServer()
+				/* - killed after waitForServer()
 				   - Xserver dead after remote session exit
 				*/
-				Debug( "display exited with EX_AL_RESERVER_DPY\n" );
-				ExitDisplay( d, DS_RESTART, XS_RESTART, FALSE );
+				debug( "display exited with EX_AL_RESERVER_DPY\n" );
+				exitDisplay( d, DS_RESTART, XS_RESTART, FALSE );
 				break;
 			case EX_RESERVER_DPY:
 				/* induced by greeter:
 				   - could not secure display
 				   - requested by user
 				*/
-				Debug( "display exited with EX_RESERVER_DPY\n" );
-				ExitDisplay( d, DS_RESTART, XS_RESTART, TRUE );
+				debug( "display exited with EX_RESERVER_DPY\n" );
+				exitDisplay( d, DS_RESTART, XS_RESTART, TRUE );
 				break;
 			case EX_UNMANAGE_DPY:
 				/* some fatal error */
-				Debug( "display exited with EX_UNMANAGE_DPY\n" );
-				ExitDisplay( d, DS_REMOVE, 0, 0 );
+				debug( "display exited with EX_UNMANAGE_DPY\n" );
+				exitDisplay( d, DS_REMOVE, 0, 0 );
 				break;
 			default:
 				/* prolly crash */
-				LogError( "Unknown session exit code %d (sig %d) from manager process\n",
+				logError( "Unknown session exit code %d (sig %d) from manager process\n",
 				          waitCode( status ), waitSig( status ) );
-				ExitDisplay( d, DS_REMOVE, 0, 0 );
+				exitDisplay( d, DS_REMOVE, 0, 0 );
 				break;
 			}
-		} else if ((d = FindDisplayByServerPid( pid ))) {
+		} else if ((d = findDisplayByServerPid( pid ))) {
 			d->serverPid = -1;
 			switch (d->status) {
 			case zombie:
-				Debug( "zombie X server for display %s reaped\n", d->name );
+				debug( "zombie X server for display %s reaped\n", d->name );
 #ifdef HAVE_VTS
 				if (d->serverVT && d->zstatus != DS_REMOTE) {
 					if (d->follower) {
@@ -964,48 +964,48 @@ ReapChildren( void )
 				rStopDisplay( d, d->zstatus );
 				break;
 			case phoenix:
-				Debug( "phoenix X server arises, restarting display %s\n",
+				debug( "phoenix X server arises, restarting display %s\n",
 				       d->name );
 				d->status = notRunning;
 				break;
 			case remoteLogin:
-				Debug( "remote login X server for display %s exited\n",
+				debug( "remote login X server for display %s exited\n",
 				       d->name );
 				d->status = ((d->displayType & d_lifetime) == dReserve) ?
 				            reserve : notRunning;
 				break;
 			case raiser:
-				LogError( "X server for display %s terminated unexpectedly\n",
+				logError( "X server for display %s terminated unexpectedly\n",
 				          d->name );
 				/* don't kill again */
 				break;
 			case running:
 				if (startingServer == d && d->serverStatus != ignore) {
 					if (d->serverStatus == starting && waitCode( status ) != 47)
-						LogError( "X server died during startup\n" );
-					StartServerFailed();
+						logError( "X server died during startup\n" );
+					startServerFailed();
 					break;
 				}
-				LogError( "X server for display %s terminated unexpectedly\n",
+				logError( "X server for display %s terminated unexpectedly\n",
 				          d->name );
 				if (d->pid != -1) {
-					Debug( "terminating session pid %d\n", d->pid );
-					TerminateProcess( d->pid, SIGTERM );
+					debug( "terminating session pid %d\n", d->pid );
+					terminateProcess( d->pid, SIGTERM );
 				}
 				break;
 			case notRunning:
 			case textMode:
 			case reserve:
 				/* this cannot happen */
-				Debug( "X server exited for passive (%d) session on display %s\n",
+				debug( "X server exited for passive (%d) session on display %s\n",
 				       (int)d->status, d->name );
 				break;
 			}
 		} else
-			Debug( "unknown child termination\n" );
+			debug( "unknown child termination\n" );
 	}
 #ifdef NEED_ENTROPY
-	AddOtherEntropy();
+	addOtherEntropy();
 #endif
 }
 
@@ -1022,72 +1022,72 @@ wouldShutdown( void )
 					return 0;
 		return 1;
 	}
-	return !AnyActiveDisplays();
+	return !anyActiveDisplays();
 }
 
-FD_TYPE WellKnownSocketsMask;
-int WellKnownSocketsMax;
-int WellKnownSocketsCount;
+fd_set wellKnownSocketsMask;
+int wellKnownSocketsMax;
+int wellKnownSocketsCount;
 
 void
-RegisterInput( int fd )
+registerInput( int fd )
 {
 	/* can be omited, as it is always called right after opening a socket
-	if (!FD_ISSET (fd, &WellKnownSocketsMask))
+	if (!FD_ISSET( fd, &wellKnownSocketsMask ))
 	*/
 	{
-		FD_SET( fd, &WellKnownSocketsMask );
-		if (fd > WellKnownSocketsMax)
-			WellKnownSocketsMax = fd;
-		WellKnownSocketsCount++;
+		FD_SET( fd, &wellKnownSocketsMask );
+		if (fd > wellKnownSocketsMax)
+			wellKnownSocketsMax = fd;
+		wellKnownSocketsCount++;
 	}
 }
 
 void
-UnregisterInput( int fd )
+unregisterInput( int fd )
 {
 	/* the check _is_ necessary, as some handles are unregistered before
 	   the regular close sequence.
 	*/
-	if (FD_ISSET( fd, &WellKnownSocketsMask )) {
-		FD_CLR( fd, &WellKnownSocketsMask );
-		WellKnownSocketsCount--;
+	if (FD_ISSET( fd, &wellKnownSocketsMask )) {
+		FD_CLR( fd, &wellKnownSocketsMask );
+		wellKnownSocketsCount--;
 	}
 }
 
 static void
-SigHandler( int n )
+sigHandler( int n )
 {
 	int olderrno = errno;
 	char buf = (char)n;
-	/* Debug( "caught signal %d\n", n ); this hangs in syslog() */
+	/* debug( "caught signal %d\n", n ); this hangs in syslog() */
 	write( signalFds[1], &buf, 1 );
 #ifdef __EMX__
-	(void)Signal( n, SigHandler );
+	(void)Signal( n, sigHandler );
 #endif
 	errno = olderrno;
 }
 
 static void
-MainLoop( void )
+mainLoop( void )
 {
 	struct display *d;
 	struct timeval *tvp, tv;
 	time_t to;
 	int nready;
 	char buf;
-	FD_TYPE reads;
+	fd_set reads;
 
-	Debug( "MainLoop\n" );
+	debug( "mainLoop\n" );
 	time( &now );
 	while (
 #ifdef XDMCP
-	       AnyListenSockets() ||
+	       anyListenSockets() ||
 #endif
-		   (Stopping ? AnyRunningDisplays() : AnyDisplaysLeft()))
+		   (stopping ? anyRunningDisplays() : anyDisplaysLeft()))
 	{
-		if (!Stopping)
-			StartDisplays();
+		if (!stopping)
+			startDisplays();
 		to = TO_INF;
 		if (sdRec.how) {
 			if (sdRec.start != TO_INF && now < sdRec.start) {
@@ -1122,20 +1122,20 @@ MainLoop( void )
 			tv.tv_usec = 0;
 			tvp = &tv;
 		}
-		reads = WellKnownSocketsMask;
-		nready = select( WellKnownSocketsMax + 1, &reads, 0, 0, tvp );
-		Debug( "select returns %d\n", nready );
+		reads = wellKnownSocketsMask;
+		nready = select( wellKnownSocketsMax + 1, &reads, 0, 0, tvp );
+		debug( "select returns %d\n", nready );
 		time( &now );
 #ifdef NEED_ENTROPY
-		AddTimerEntropy();
+		addTimerEntropy();
 #endif
 		if (now >= serverTimeout) {
 			serverTimeout = TO_INF;
-			StartServerTimeout();
+			startServerTimeout();
 		}
 		if (now >= utmpTimeout) {
 			utmpTimeout = TO_INF;
-			CheckUtmp();
+			checkUtmp();
 		}
 		if (nready > 0) {
 			/*
@@ -1147,33 +1147,33 @@ MainLoop( void )
 			/* XXX a cleaner solution would be a callback mechanism */
 			if (FD_ISSET( signalFds[0], &reads )) {
 				if (read( signalFds[0], &buf, 1 ) != 1)
-					LogPanic( "Signal notification pipe broken.\n" );
+					logPanic( "Signal notification pipe broken.\n" );
 				switch (buf) {
 				case SIGTERM:
 				case SIGINT:
-					Debug( "shutting down entire manager\n" );
+					debug( "shutting down entire manager\n" );
 					stoppen( TRUE );
 					break;
 				case SIGHUP:
-					LogInfo( "Rescanning all config files\n" );
-					ForEachDisplay( MarkDisplay );
-					RescanConfigs( TRUE );
+					logInfo( "Rescanning all config files\n" );
+					forEachDisplay( MarkDisplay );
+					rescanConfigs( TRUE );
 					break;
 				case SIGCHLD:
-					ReapChildren();
-					if (!Stopping && autoRescan)
-						RescanConfigs( FALSE );
+					reapChildren();
+					if (!stopping && autoRescan)
+						rescanConfigs( FALSE );
 					break;
 				case SIGUSR1:
 					if (startingServer &&
 					    startingServer->serverStatus == starting)
-						StartServerSuccess();
+						startServerSuccess();
 					break;
 				}
 				continue;
 			}
 #ifdef XDMCP
-			if (ProcessListenSockets( &reads ))
+			if (processListenSockets( &reads ))
 				continue;
 #endif	/* XDMCP */
 			if (handleCtrl( &reads, 0 ))
@@ -1197,53 +1197,53 @@ MainLoop( void )
 }
 
 static void
-CheckDisplayStatus( struct display *d )
+checkDisplayStatus( struct display *d )
 {
 	if ((d->displayType & d_origin) == dFromFile && !d->stillThere)
-		StopDisplay( d );
+		stopDisplay( d );
 	else if ((d->displayType & d_lifetime) == dReserve &&
 	         d->status == running && d->userSess < 0 && !d->idleTimeout)
 		rStopDisplay( d, DS_RESERVE );
 	else if (d->status == notRunning)
-		if (LoadDisplayResources( d ) < 0) {
-			LogError( "Unable to read configuration for display %s; "
+		if (loadDisplayResources( d ) < 0) {
+			logError( "Unable to read configuration for display %s; "
 			          "stopping it.\n", d->name );
-			StopDisplay( d );
+			stopDisplay( d );
 			return;
 		}
 }
 
 static void
-KickDisplay( struct display *d )
+kickDisplay( struct display *d )
 {
 	if (d->status == notRunning)
-		StartDisplay( d );
+		startDisplay( d );
 	if (d->serverStatus == awaiting && !startingServer)
-		StartServer( d );
+		startServer( d );
 }
 
 #ifdef HAVE_VTS
-static int active_vts;
+static int activeVTs;
 
 static int
-GetBusyVTs( void )
+getBusyVTs( void )
 {
 	struct vt_stat vtstat;
 	int con;
 
-	if (active_vts == -1) {
+	if (activeVTs == -1) {
 		vtstat.v_state = 0;
 		if ((con = open( "/dev/console", O_RDONLY )) >= 0) {
 			ioctl( con, VT_GETSTATE, &vtstat );
 			close( con );
 		}
-		active_vts = vtstat.v_state;
+		activeVTs = vtstat.v_state;
 	}
-	return active_vts;
+	return activeVTs;
 }
 
 static void
-AllocateVT( struct display *d )
+allocateVT( struct display *d )
 {
 	struct display *cd;
 	int i, tvt, volun;
@@ -1283,7 +1283,7 @@ AllocateVT( struct display *d )
 						}
 					}
 				}
-				if (!volun || !((1 << tvt) & GetBusyVTs())) {
+				if (!volun || !((1 << tvt) & getBusyVTs())) {
 					d->serverVT = tvt;
 					return;
 				}
@@ -1295,23 +1295,23 @@ AllocateVT( struct display *d )
 #endif
 
 static void
-StartDisplays( void )
+startDisplays( void )
 {
-	ForEachDisplay( CheckDisplayStatus );
-	CloseGetter();
+	forEachDisplay( checkDisplayStatus );
+	closeGetter();
 #ifdef HAVE_VTS
-	active_vts = -1;
-	ForEachDisplayRev( AllocateVT );
+	activeVTs = -1;
+	forEachDisplayRev( allocateVT );
 #endif
-	ForEachDisplay( KickDisplay );
+	forEachDisplay( kickDisplay );
 }
 
 void
-StartDisplay( struct display *d )
+startDisplay( struct display *d )
 {
-	if (Stopping) {
-		Debug( "stopping display %s because shutdown is scheduled\n", d->name );
-		StopDisplay( d );
+	if (stopping) {
+		debug( "stopping display %s because shutdown is scheduled\n", d->name );
+		stopDisplay( d );
 		return;
 	}
 
@@ -1322,13 +1322,13 @@ StartDisplay( struct display *d )
 
 	d->status = running;
 	if ((d->displayType & d_location) == dLocal) {
-		Debug( "StartDisplay %s\n", d->name );
+		debug( "startDisplay %s\n", d->name );
 		/* don't bother pinging local displays; we'll
 		 * certainly notice when they exit
 		 */
 		d->pingInterval = 0;
 		if (d->authorize) {
-			SetLocalAuthorization( d );
+			setLocalAuthorization( d );
 			/*
 			 * reset the server after writing the authorization information
 			 * to make it read the file (for compatibility with old
@@ -1343,51 +1343,51 @@ StartDisplay( struct display *d )
 			return;
 		}
 	} else {
-		Debug( "StartDisplay %s, try %d\n", d->name, d->startTries + 1 );
+		debug( "startDisplay %s, try %d\n", d->name, d->startTries + 1 );
 		/* this will only happen when using XDMCP */
 		if (d->authorizations)
-			SaveServerAuthorizations( d, d->authorizations, d->authNum );
+			saveServerAuthorizations( d, d->authorizations, d->authNum );
 	}
-	StartDisplayP2( d );
+	startDisplayP2( d );
 }
 
 void
-StartDisplayP2( struct display *d )
+startDisplayP2( struct display *d )
 {
 	char *cname, *cgname;
 
 	openCtrl( d );
-	Debug( "forking session\n" );
+	debug( "forking session\n" );
 	ASPrintf( &cname, "sub-daemon for display %s", d->name );
 	ASPrintf( &cgname, "greeter for display %s", d->name );
-	switch (GFork( &d->pipe, "master daemon", cname,
+	switch (gFork( &d->pipe, "master daemon", cname,
 	               &d->gpipe, cgname, &d->pid ))
 	{
 	case 0:
-		SetTitle( d->name );
+		setTitle( d->name );
 		if (debugLevel & DEBUG_WSESS)
 			sleep( 100 );
 		mstrtalk.pipe = &d->pipe;
 		(void)Signal( SIGPIPE, SIG_IGN );
-		SetAuthorization( d );
-		WaitForServer( d );
+		setAuthorization( d );
+		waitForServer( d );
 		if ((d->displayType & d_location) == dLocal) {
-			GSet( &mstrtalk );
-			GSendInt( D_XConnOk );
+			gSet( &mstrtalk );
+			gSendInt( D_XConnOk );
 		}
-		ManageSession( d );
+		manageSession( d );
 		/* NOTREACHED */
 	case -1:
 		closeCtrl( d );
 		d->status = notRunning;
 		break;
 	default:
-		Debug( "forked session, pid %d\n", d->pid );
+		debug( "forked session, pid %d\n", d->pid );
 
 		/* (void) fcntl (d->pipe.fd.r, F_SETFL, O_NONBLOCK); */
 		/* (void) fcntl (d->gpipe.fd.r, F_SETFL, O_NONBLOCK); */
-		RegisterInput( d->pipe.fd.r );
-		RegisterInput( d->gpipe.fd.r );
+		registerInput( d->pipe.fd.r );
+		registerInput( d->gpipe.fd.r );
 
 		d->hstent->lock = d->hstent->rLogin = d->hstent->goodExit =
 			d->hstent->sdRec.how = 0;
@@ -1403,52 +1403,51 @@ StartDisplayP2( struct display *d )
 static void
 rStopDisplay( struct display *d, int endState )
 {
-	Debug( "stopping display %s to state %d\n", d->name, endState );
-	AbortStartServer( d );
+	debug( "stopping display %s to state %d\n", d->name, endState );
+	abortStartServer( d );
 	d->idleTimeout = 0;
 	if (d->serverPid != -1 || d->pid != -1) {
 		if (d->pid != -1)
-			TerminateProcess( d->pid, SIGTERM );
+			terminateProcess( d->pid, SIGTERM );
 		if (d->serverPid != -1)
-			TerminateProcess( d->serverPid, d->termSignal );
+			terminateProcess( d->serverPid, d->termSignal );
 		d->status = zombie;
 		d->zstatus = endState & 0xff;
-		Debug( " zombiefied\n" );
+		debug( " zombiefied\n" );
 	} else if (endState == DS_TEXTMODE) {
 #ifdef HAVE_VTS
 		d->status = textMode;
-		CheckTTYMode();
+		checkTTYMode();
 	} else if (endState == (DS_TEXTMODE | 0x100)) {
 		d->status = textMode;
 #else
-		SwitchToTty( d );
+		switchToTty( d );
 #endif
 	} else if (endState == DS_RESERVE)
 		d->status = reserve;
 #ifdef XDMCP
 	else if (endState == DS_REMOTE)
-		StartRemoteLogin( d );
+		startRemoteLogin( d );
 #endif
 	else {
 #ifndef HAVE_VTS
-		SwitchToX( d );
+		switchToX( d );
 #endif
-		RemoveDisplay( d );
+		removeDisplay( d );
 	}
 }
 
 void
-StopDisplay( struct display *d )
+stopDisplay( struct display *d )
 {
 	rStopDisplay( d, DS_REMOVE );
 }
 
 static void
-ExitDisplay(
-            struct display *d,
-            int endState,
-            int serverCmd,
-            int goodExit )
+exitDisplay( struct display *d,
+             int endState,
+             int serverCmd,
+             int goodExit )
 {
 	struct disphist *he;
 
@@ -1457,7 +1456,7 @@ ExitDisplay(
 		goodExit = TRUE;
 	}
 
-	Debug( "ExitDisplay %s, "
+	debug( "exitDisplay %s, "
 	       "endState = %d, serverCmd = %d, GoodExit = %d\n",
 	       d->name, endState, serverCmd, goodExit );
 
@@ -1473,7 +1472,7 @@ ExitDisplay(
 	he->goodExit = goodExit;
 	if (he->sdRec.how) {
 		if (he->sdRec.force == SHUT_ASK &&
-		    (AnyActiveDisplays() || d->allowShutdown == SHUT_ROOT))
+		    (anyActiveDisplays() || d->allowShutdown == SHUT_ROOT))
 		{
 			endState = DS_RESTART;
 		} else {
@@ -1495,8 +1494,8 @@ ExitDisplay(
 	if (d->status == zombie)
 		rStopDisplay( d, d->zstatus );
 	else {
-		if (Stopping) {
-			StopDisplay( d );
+		if (stopping) {
+			stopDisplay( d );
 			return;
 		}
 		if (endState != DS_RESTART ||
@@ -1507,16 +1506,16 @@ ExitDisplay(
 			if (serverCmd == XS_RETRY) {
 				if ((d->displayType & d_location) == dLocal) {
 					if (he->lastExit - d->lastStart < 120) {
-						LogError( "Unable to fire up local display %s;"
+						logError( "Unable to fire up local display %s;"
 						          " disabling.\n", d->name );
-						StopDisplay( d );
+						stopDisplay( d );
 						return;
 					}
 				} else {
 					if (++d->startTries > d->startAttempts) {
-						LogError( "Disabling foreign display %s"
+						logError( "Disabling foreign display %s"
 						          " (too many attempts)\n", d->name );
-						StopDisplay( d );
+						stopDisplay( d );
 						return;
 					}
 				}
@@ -1525,8 +1524,8 @@ ExitDisplay(
 			if (d->serverPid != -1 &&
 			    (serverCmd != XS_KEEP || d->terminateServer))
 			{
-				Debug( "killing X server for %s\n", d->name );
-				TerminateProcess( d->serverPid, d->termSignal );
+				debug( "killing X server for %s\n", d->name );
+				terminateProcess( d->serverPid, d->termSignal );
 				d->status = phoenix;
 			} else
 				d->status = notRunning;
@@ -1539,7 +1538,7 @@ static int pidFd;
 static FILE *pidFilePtr;
 
 static int
-StorePid( void )
+storePid( void )
 {
 	int oldpid;
 
@@ -1548,7 +1547,7 @@ StorePid( void )
 		if (pidFd == -1 && errno == ENOENT)
 			pidFd = open( pidFile, O_RDWR|O_CREAT, 0666 );
 		if (pidFd == -1 || !(pidFilePtr = fdopen( pidFd, "r+" ))) {
-			LogError( "process-id file %s cannot be opened\n",
+			logError( "process-id file %s cannot be opened\n",
 			          pidFile );
 			return -1;
 		}
@@ -1590,7 +1589,7 @@ StorePid( void )
 		}
 		fprintf( pidFilePtr, "%ld\n", (long)getpid() );
 		(void)fflush( pidFilePtr );
-		RegisterCloseOnFork( pidFd );
+		registerCloseOnFork( pidFd );
 	}
 	return 0;
 }
@@ -1621,7 +1620,7 @@ UnlockPidFile( void )
 #endif
 
 void
-SetTitle( const char *name )
+setTitle( const char *name )
 {
 #if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
 	char *p;
@@ -1629,12 +1628,12 @@ SetTitle( const char *name )
 #endif
 
 	ASPrintf( &prog, "%s: %s", prog, name );
-	ReInitErrorLog();
+	reInitErrorLog();
 #ifdef HAVE_SETPROCTITLE
 	setproctitle( "%s", name );
 #elif !defined(NOXDMTITLE)
-	p = Title;
-	left = TitleLen;
+	p = title;
+	left = titleLen;
 
 	*p++ = '-';
 	--left;

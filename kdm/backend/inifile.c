@@ -49,7 +49,7 @@ iniLoad( const char *fname )
 	int fd, len;
 
 	if ((fd = open( fname, O_RDONLY | O_NONBLOCK )) < 0) {
-		Debug( "cannot open ini-file %\"s: %m", fname );
+		debug( "cannot open ini-file %\"s: %m", fname );
 		return 0;
 	}
 	len = lseek( fd, 0, SEEK_END );
@@ -59,7 +59,7 @@ iniLoad( const char *fname )
 	}
 	lseek( fd, 0, SEEK_SET );
 	if (read( fd, data, len ) != len) {
-		Debug( "cannot read ini-file %\"s: %m", fname );
+		debug( "cannot read ini-file %\"s: %m", fname );
 		free( data );
 		close( fd );
 		return 0;
@@ -77,7 +77,7 @@ iniSave( const char *data, const char *fname )
 	int fd, cnt, len;
 
 	if ((fd = open( fname, O_WRONLY | O_CREAT | O_TRUNC | O_NONBLOCK, 0600 )) < 0) {
-		Debug( "cannot create ini-file %\"s: %m", fname );
+		debug( "cannot create ini-file %\"s: %m", fname );
 		return 0;
 	}
 	len = strlen( data );
@@ -86,9 +86,9 @@ iniSave( const char *data, const char *fname )
 		return 1;
 	}
 	if (cnt == -1)
-		Debug( "cannot write ini-file %\"s: %m", fname );
+		debug( "cannot write ini-file %\"s: %m", fname );
 	else
-		Debug( "cannot write ini-file %\"s: partial write", fname );
+		debug( "cannot write ini-file %\"s: partial write", fname );
 	close( fd );
 	return 0;
 }
@@ -127,7 +127,7 @@ iniEntry( char *data, const char *section, const char *key, const char *value )
 						goto insert;
 					} else {
 						for (ce--; ce != cb && (*(ce - 1) == ' ' || *(ce - 1) == '\t'); ce--);
-						if (!StrNDup( &p, cb, ce - cb ))
+						if (!strNDup( &p, cb, ce - cb ))
 							return 0;
 						return p;
 					}
@@ -214,7 +214,7 @@ iniMerge( char *data, const char *newdata )
 			for (; *p != ']'; p++)
 				if (!*p || *p == '\n') /* missing ] */
 					goto bail;
-			if (!ReStrN( &section, cb, p - cb ))
+			if (!reStrN( &section, cb, p - cb ))
 				break;
 			p++;
 		} else {
@@ -223,13 +223,13 @@ iniMerge( char *data, const char *newdata )
 				if (!*p || *p == '\n') /* missing = */
 					goto bail;
 			for (ce = p; ce != cb && (*(ce - 1) == ' ' || *(ce - 1) == '\t'); ce--);
-			if (!StrNDup( &key, cb, ce - cb ))
+			if (!strNDup( &key, cb, ce - cb ))
 				break;
 			for (p++; *p == ' ' || *p == '\t'; p++);
 			cb = p;
 			for (; *p && *p != '\n'; p++);
 			for (ce = p; ce != cb && (*(ce - 1) == ' ' || *(ce - 1) == '\t'); ce--);
-			if (!StrNDup( &value, cb, ce - cb ))
+			if (!strNDup( &value, cb, ce - cb ))
 				break;
 			if (section)
 				data = iniEntry( data, section, key, value );

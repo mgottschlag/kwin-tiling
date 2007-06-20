@@ -130,7 +130,7 @@ Malloc( size_t size )
 	void *ret;
 
 	if (!(ret = malloc( size )))
-		LogOutOfMem();
+		logOutOfMem();
 	return ret;
 }
 
@@ -140,13 +140,13 @@ Realloc( void *ptr, size_t size )
 	void *ret;
 
 	if (!(ret = realloc( ptr, size )) && size)
-		LogOutOfMem();
+		logOutOfMem();
 	return ret;
 }
 
 
 static void
-MkDSpec( DSpec *spec, const char *dname, const char *dclass )
+mkDSpec( DSpec *spec, const char *dname, const char *dclass )
 {
 	spec->dhost = dname;
 	for (spec->dhostl = 0; dname[spec->dhostl] != ':'; spec->dhostl++);
@@ -160,7 +160,7 @@ MkDSpec( DSpec *spec, const char *dname, const char *dclass )
 static int rfd, wfd;
 
 static int
-Reader( void *buf, int count )
+reader( void *buf, int count )
 {
 	int ret, rlen;
 
@@ -182,17 +182,17 @@ Reader( void *buf, int count )
 }
 
 static void
-GRead( void *buf, int count )
+gRead( void *buf, int count )
 {
-	if (Reader( buf, count ) != count)
-		LogPanic( "Can't read from core\n" );
+	if (reader( buf, count ) != count)
+		logPanic( "Can't read from core\n" );
 }
 
 static void
-GWrite( const void *buf, int count )
+gWrite( const void *buf, int count )
 {
 	if (write( wfd, buf, count ) != count)
-		LogPanic( "Can't write to core\n" );
+		logPanic( "Can't write to core\n" );
 #ifdef _POSIX_PRIORITY_SCHEDULING
 	if ((debugLevel & DEBUG_HLPCON))
 		sched_yield();
@@ -200,69 +200,69 @@ GWrite( const void *buf, int count )
 }
 
 static void
-GSendInt( int val )
+gSendInt( int val )
 {
-	GWrite( &val, sizeof(val) );
+	gWrite( &val, sizeof(val) );
 }
 
 static void
-GSendStr( const char *buf )
+gSendStr( const char *buf )
 {
 	if (buf) {
 		int len = strlen( buf ) + 1;
-		GWrite( &len, sizeof(len) );
-		GWrite( buf, len );
+		gWrite( &len, sizeof(len) );
+		gWrite( buf, len );
 	} else
-		GWrite( &buf, sizeof(int) );
+		gWrite( &buf, sizeof(int) );
 }
 
 static void
-GSendNStr( const char *buf, int len )
+gSendNStr( const char *buf, int len )
 {
 	int tlen = len + 1;
-	GWrite( &tlen, sizeof(tlen) );
-	GWrite( buf, len );
-	GWrite( "", 1 );
+	gWrite( &tlen, sizeof(tlen) );
+	gWrite( buf, len );
+	gWrite( "", 1 );
 }
 
 #ifdef XDMCP
 static void
-GSendArr( int len, const char *data )
+gSendArr( int len, const char *data )
 {
-	GWrite( &len, sizeof(len) );
-	GWrite( data, len );
+	gWrite( &len, sizeof(len) );
+	gWrite( data, len );
 }
 #endif
 
 static int
-GRecvCmd( int *val )
+gRecvCmd( int *val )
 {
-	if (Reader( val, sizeof(*val) ) != sizeof(*val))
+	if (reader( val, sizeof(*val) ) != sizeof(*val))
 		return 0;
 	return 1;
 }
 
 static int
-GRecvInt()
+gRecvInt()
 {
 	int val;
 
-	GRead( &val, sizeof(val) );
+	gRead( &val, sizeof(val) );
 	return val;
 }
 
 static char *
-GRecvStr()
+gRecvStr()
 {
 	int len;
 	char *buf;
 
-	len = GRecvInt();
+	len = gRecvInt();
 	if (!len)
 		return 0;
 	if (!(buf = malloc( len )))
-		LogPanic( "No memory for read buffer" );
-	GRead( buf, len );
+		logPanic( "No memory for read buffer" );
+	gRead( buf, len );
 	return buf;
 }
 
@@ -283,7 +283,7 @@ readFile( File *file, const char *fn, const char *what )
 	off_t flen;
 
 	if ((fd = open( fn, O_RDONLY )) < 0) {
-		LogInfo( "Cannot open %s file %s\n", what, fn );
+		logInfo( "Cannot open %s file %s\n", what, fn );
 		return 0;
 	}
 
@@ -309,7 +309,7 @@ readFile( File *file, const char *fn, const char *what )
 		lseek( fd, 0, SEEK_SET );
 		if (read( fd, file->buf, flen ) != flen) {
 			free( file->buf );
-			LogError( "Cannot read %s file %s\n", what, fn );
+			logError( "Cannot read %s file %s\n", what, fn );
 			close( fd );
 			return 0;
 		}
@@ -386,7 +386,7 @@ static const char *kdmrc = KDMCONF "/kdmrc";
 static Section *rootsec;
 
 static void
-ReadConf()
+readConfig()
 {
 	const char *nstr, *dstr, *cstr, *dhost, *dnum, *dclass;
 	char *s, *e, *st, *en, *ek, *sl, *pt;
@@ -402,7 +402,7 @@ ReadConf()
 		return;
 	confread = 1;
 
-	Debug( "reading config %s ...\n", kdmrc );
+	debug( "reading config %s ...\n", kdmrc );
 	if (!readFile( &file, kdmrc, "master configuration" ))
 		return;
 
@@ -429,7 +429,7 @@ ReadConf()
 				e--;
 			if (*e != ']') {
 				cursec = 0;
-				LogError( "Invalid section header at %s:%d\n", kdmrc, line );
+				logError( "Invalid section header at %s:%d\n", kdmrc, line );
 				continue;
 			}
 			nstr = sl + 1;
@@ -438,7 +438,7 @@ ReadConf()
 				if (nlen == cursec->nlen &&
 				    !memcmp( nstr, cursec->name, nlen ))
 				{
-					LogInfo( "Multiple occurrences of section [%.*s] in %s. "
+					logInfo( "Multiple occurrences of section [%.*s] in %s. "
 					         "Consider merging them.\n", nlen, nstr, kdmrc );
 					goto secfnd;
 				}
@@ -494,7 +494,7 @@ ReadConf()
 					goto newsec;
 		  illsec:
 			cursec = 0;
-			LogError( "Unrecognized section name [%.*s] at %s:%d\n",
+			logError( "Unrecognized section name [%.*s] at %s:%d\n",
 			          nlen, nstr, kdmrc, line );
 			continue;
 		  newsec:
@@ -514,7 +514,7 @@ ReadConf()
 			cursec->entries = 0;
 			cursec->next = rootsec;
 			rootsec = cursec;
-			/*Debug( "now in section [%.*s], dpy '%.*s', core '%.*s'\n",
+			/*debug( "now in section [%.*s], dpy '%.*s', core '%.*s'\n",
 			       nlen, nstr, dlen, dstr, clen, cstr );*/
 		  secfnd:
 			continue;
@@ -523,7 +523,7 @@ ReadConf()
 		if (!cursec) {
 			if (sectmoan) {
 				sectmoan = 0;
-				LogError( "Entry outside any section at %s:%d", kdmrc, line );
+				logError( "Entry outside any section at %s:%d", kdmrc, line );
 			}
 			goto sktoeol;
 		}
@@ -531,13 +531,13 @@ ReadConf()
 		for (; (s < file.eof) && (*s != '\n'); s++)
 			if (*s == '=')
 				goto haveeq;
-		LogError( "Invalid entry (missing '=') at %s:%d\n", kdmrc, line );
+		logError( "Invalid entry (missing '=') at %s:%d\n", kdmrc, line );
 		continue;
 
 	  haveeq:
 		for (ek = s - 1; ; ek--) {
 			if (ek < sl) {
-				LogError( "Invalid entry (empty key) at %s:%d\n", kdmrc, line );
+				logError( "Invalid entry (empty key) at %s:%d\n", kdmrc, line );
 				goto sktoeol;
 			}
 			if (!isspace( *ek ))
@@ -551,7 +551,7 @@ ReadConf()
 			if (*s == '\\') {
 				s++;
 				if (s >= file.eof || *s == '\n') {
-					LogError( "Trailing backslash at %s:%d\n", kdmrc, line );
+					logError( "Trailing backslash at %s:%d\n", kdmrc, line );
 					break;
 				}
 				switch (*s) {
@@ -572,20 +572,20 @@ ReadConf()
 
 		nstr = sl;
 		nlen = ek - sl + 1;
-		/*Debug( "read entry '%.*s'='%.*s'\n", nlen, nstr, en - st, st );*/
+		/*debug( "read entry '%.*s'='%.*s'\n", nlen, nstr, en - st, st );*/
 		for (i = 0; i < cursec->sect->numents; i++) {
 			ce = cursec->sect->ents + i;
 			if ((int)strlen( ce->name ) == nlen &&
 			    !memcmp( ce->name, nstr, nlen ))
 				goto keyok;
 		}
-		LogError( "Unrecognized key '%.*s' in section [%.*s] at %s:%d\n",
+		logError( "Unrecognized key '%.*s' in section [%.*s] at %s:%d\n",
 		          nlen, nstr, cursec->nlen, cursec->name, kdmrc, line );
 		continue;
 	  keyok:
 		for (curent = cursec->entries; curent; curent = curent->next)
 			if (ce == curent->ent) {
-				LogError( "Multiple occurrences of key '%s' in section [%.*s]"
+				logError( "Multiple occurrences of key '%s' in section [%.*s]"
 				          " of %s\n",
 				          ce->name, cursec->nlen, cursec->name, kdmrc );
 				goto keyfnd;
@@ -604,7 +604,7 @@ ReadConf()
 }
 
 static Entry *
-FindGEnt( int id )
+findGEnt( int id )
 {
 	Section *cursec;
 	Entry *curent;
@@ -613,7 +613,7 @@ FindGEnt( int id )
 		if (!cursec->dname)
 			for (curent = cursec->entries; curent; curent = curent->next)
 				if (curent->ent->id == id) {
-					Debug( "line %d: %s = %'.*s\n",
+					debug( "line %d: %s = %'.*s\n",
 					       curent->line, curent->ent->name,
 					       curent->vallen, curent->val );
 					return curent;
@@ -627,7 +627,7 @@ FindGEnt( int id )
  * - host (any/nonempty/trail/exact) -> 0/4/8/12
  */
 static Entry *
-FindDEnt( int id, DSpec *dspec )
+findDEnt( int id, DSpec *dspec )
 {
 	Section *cursec, *bestsec = 0;
 	Entry *curent, *bestent;
@@ -684,7 +684,7 @@ FindDEnt( int id, DSpec *dspec )
 			}
 		}
 	if (bestent)
-		Debug( "line %d: %.*s:%.*s_%.*s/%s = %'.*s\n", bestent->line,
+		debug( "line %d: %.*s:%.*s_%.*s/%s = %'.*s\n", bestent->line,
 		       bestsec->dhostl, bestsec->dhost,
 		       bestsec->dnuml, bestsec->dnum,
 		       bestsec->dclassl, bestsec->dclass,
@@ -693,7 +693,7 @@ FindDEnt( int id, DSpec *dspec )
 }
 
 static const char *
-CvtValue( Ent *et, Value *retval, int vallen, const char *val, char **eopts )
+convertValue( Ent *et, Value *retval, int vallen, const char *val, char **eopts )
 {
 	Value *ents;
 	int i, b, e, tlen, nents, esiz;
@@ -769,40 +769,40 @@ CvtValue( Ent *et, Value *retval, int vallen, const char *val, char **eopts )
 			retval->len = tlen;
 			return 0;
 		default:
-			LogError( "Internal error: unknown value type in id %#x\n", et->id );
+			logError( "Internal error: unknown value type in id %#x\n", et->id );
 			return 0;
 	}
 }
 
 static void
-GetValue( Ent *et, DSpec *dspec, Value *retval, char **eopts )
+getValue( Ent *et, DSpec *dspec, Value *retval, char **eopts )
 {
 	Entry *ent;
 	const char *errs;
 
-/*	Debug( "Getting value %#x\n", et->id );*/
+/*	debug( "Getting value %#x\n", et->id );*/
 	if (dspec)
-		ent = FindDEnt( et->id, dspec );
+		ent = findDEnt( et->id, dspec );
 	else
-		ent = FindGEnt( et->id );
+		ent = findGEnt( et->id );
 	if (ent) {
-		if (!(errs = CvtValue( et, retval, ent->vallen, ent->val, eopts )))
+		if (!(errs = convertValue( et, retval, ent->vallen, ent->val, eopts )))
 			return;
-		LogError( "Invalid %s value '%.*s' at %s:%d\n",
+		logError( "Invalid %s value '%.*s' at %s:%d\n",
 		          errs, ent->vallen, ent->val, kdmrc, ent->line );
 	}
-	Debug( "default: %s = %'s\n", et->name, et->def );
-	if ((errs = CvtValue( et, retval, strlen( et->def ), et->def, eopts )))
-		LogError( "Internal error: invalid default %s value '%s' for key %s\n",
+	debug( "default: %s = %'s\n", et->name, et->def );
+	if ((errs = convertValue( et, retval, strlen( et->def ), et->def, eopts )))
+		logError( "Internal error: invalid default %s value '%s' for key %s\n",
 		          errs, et->def, et->name );
 }
 
 static int
-AddValue( ValArr *va, int id, Value *val )
+addValue( ValArr *va, int id, Value *val )
 {
 	int nu;
 
-/*	Debug( "Addig value %#x\n", id );*/
+/*	debug( "Addig value %#x\n", id );*/
 	if (va->nents == va->esiz) {
 		va->ents = Realloc( va->ents, sizeof(Val) * (va->esiz += 50) );
 		if (!va->ents)
@@ -827,26 +827,26 @@ AddValue( ValArr *va, int id, Value *val )
 }
 
 static void
-CopyValues( ValArr *va, Sect *sec, DSpec *dspec, int isconfig )
+copyValues( ValArr *va, Sect *sec, DSpec *dspec, int isconfig )
 {
 	Value val;
 	int i;
 
-	Debug( "getting values for section class [%s]\n", sec->name );
+	debug( "getting values for section class [%s]\n", sec->name );
 	for (i = 0; i < sec->numents; i++) {
-/*Debug ("value %#x\n", sec->ents[i].id);*/
+/*debug ("value %#x\n", sec->ents[i].id);*/
 		if ((sec->ents[i].id & (int)C_CONFIG) != isconfig)
 			;
 		else if (sec->ents[i].id & C_INTERNAL) {
-			GetValue( sec->ents + i, dspec, ((Value *)sec->ents[i].ptr), 0 );
+			getValue( sec->ents + i, dspec, ((Value *)sec->ents[i].ptr), 0 );
 		} else {
 			if (((sec->ents[i].id & C_MTYPE_MASK) == C_ENUM) ||
 			    !sec->ents[i].ptr ||
 			    !((int (*)( Value * ))sec->ents[i].ptr)(&val)) {
-				GetValue( sec->ents + i, dspec, &val,
+				getValue( sec->ents + i, dspec, &val,
 				          (char **)sec->ents[i].ptr );
 			}
-			if (!AddValue( va, sec->ents[i].id, &val ))
+			if (!addValue( va, sec->ents[i].id, &val ))
 				break;
 		}
 	}
@@ -854,30 +854,30 @@ CopyValues( ValArr *va, Sect *sec, DSpec *dspec, int isconfig )
 }
 
 static void
-SendValues( ValArr *va )
+sendValues( ValArr *va )
 {
 	Value *cst;
 	int i, nu;
 
-	GSendInt( va->nents );
-	GSendInt( va->nptrs );
-	GSendInt( 0/*va->nints*/ );
-	GSendInt( va->nchars );
+	gSendInt( va->nents );
+	gSendInt( va->nptrs );
+	gSendInt( 0/*va->nints*/ );
+	gSendInt( va->nchars );
 	for (i = 0; i < va->nents; i++) {
-		GSendInt( va->ents[i].id & ~C_PRIVATE );
+		gSendInt( va->ents[i].id & ~C_PRIVATE );
 		switch (va->ents[i].id & C_TYPE_MASK) {
 		case C_TYPE_INT:
-			GSendInt( (int)va->ents[i].val.ptr );
+			gSendInt( (int)va->ents[i].val.ptr );
 			break;
 		case C_TYPE_STR:
-			GSendNStr( va->ents[i].val.ptr, va->ents[i].val.len - 1 );
+			gSendNStr( va->ents[i].val.ptr, va->ents[i].val.len - 1 );
 			break;
 		case C_TYPE_ARGV:
 			cst = (Value *)va->ents[i].val.ptr;
 			for (nu = 0; cst[nu].ptr; nu++);
-			GSendInt( nu );
+			gSendInt( nu );
 			for (; cst->ptr; cst++)
-				GSendNStr( cst->ptr, cst->len );
+				gSendNStr( cst->ptr, cst->len );
 			break;
 		}
 	}
@@ -886,7 +886,7 @@ SendValues( ValArr *va )
 
 #ifdef XDMCP
 static char *
-ReadWord( File *file, int *len, int EOFatEOL )
+readWord( File *file, int *len, int EOFatEOL )
 {
 	char *wordp, *wordBuffer;
 	int quoted;
@@ -952,8 +952,8 @@ ReadWord( File *file, int *len, int EOFatEOL )
 #define LISTEN_STRING       "LISTEN"
 #define WILDCARD_STRING     "*"
 
-typedef struct hostEntry {
-	struct hostEntry *next;
+typedef struct _HostEntry {
+	struct _HostEntry *next;
 	int type;
 	union _hostOrAlias {
 		char *aliasPattern;
@@ -966,15 +966,15 @@ typedef struct hostEntry {
 	} entry;
 } HostEntry;
 
-typedef struct listenEntry {
-	struct listenEntry *next;
+typedef struct _ListenEntry {
+	struct _ListenEntry *next;
 	int iface;
 	int mcasts;
 	int nmcasts;
 } ListenEntry;
 
-typedef struct aliasEntry {
-	struct aliasEntry *next;
+typedef struct _AliasEntry {
+	struct _AliasEntry *next;
 	char *name;
 	HostEntry **pHosts;
 	int hosts;
@@ -982,8 +982,8 @@ typedef struct aliasEntry {
 	int hasBad;
 } AliasEntry;
 
-typedef struct aclEntry {
-	struct aclEntry *next;
+typedef struct _AclEntry {
+	struct _AclEntry *next;
 	HostEntry **pEntries;
 	int entries;
 	int nentries;
@@ -995,7 +995,7 @@ typedef struct aclEntry {
 
 
 static int
-HasGlobCharacters( char *s )
+hasGlobCharacters( char *s )
 {
 	for (;;)
 		switch (*s++) {
@@ -1013,7 +1013,7 @@ HasGlobCharacters( char *s )
 #define PARSE_NO_ALIAS  4
 
 static int
-ParseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
+parseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
            char *hostOrAlias, int len, int parse )
 {
 #if defined(IPv6) && defined(AF_INET6)
@@ -1036,7 +1036,7 @@ ParseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 		(**hostPtr)->entry.aliasPattern = hostOrAlias + 1;
 		*nChars += len;
 	}
-	else if (!(parse & PARSE_NO_PAT) && HasGlobCharacters( hostOrAlias ))
+	else if (!(parse & PARSE_NO_PAT) && hasGlobCharacters( hostOrAlias ))
 	{
 		(**hostPtr)->type = HOST_PATTERN;
 		(**hostPtr)->entry.hostPattern = hostOrAlias;
@@ -1051,7 +1051,7 @@ ParseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 		if (!(hostent = gethostbyname( hostOrAlias )))
 #endif
 		{
-			LogWarn( "XDMCP ACL: unresolved host %'s\n", hostOrAlias );
+			logWarn( "XDMCP ACL: unresolved host %'s\n", hostOrAlias );
 			free( (char *)(**hostPtr) );
 			return 0;
 		}
@@ -1139,7 +1139,7 @@ checkHostlist( HostEntry **hosts, int nh, AliasEntry *aliases, int na,
 	for (h = *hosts, hn = 0; hn < nh; hn++, h = h->next)
 		if (h->type == HOST_ALIAS) {
 			if (depth == MAX_DEPTH) {
-				LogError( "XDMCP ACL: alias recursion involving %%%s\n",
+				logError( "XDMCP ACL: alias recursion involving %%%s\n",
 				          h->entry.aliasPattern );
 				return 1;
 			}
@@ -1147,7 +1147,7 @@ checkHostlist( HostEntry **hosts, int nh, AliasEntry *aliases, int na,
 				if (patternMatch( a->name, h->entry.aliasPattern )) {
 					am = 1;
 					if ((flags & CHECK_NOT) && a->hasBad) {
-						LogError( "XDMCP ACL: alias %%%s with unresolved hosts "
+						logError( "XDMCP ACL: alias %%%s with unresolved hosts "
 						          "in denying rule\n", a->name );
 						return 1;
 					}
@@ -1157,21 +1157,21 @@ checkHostlist( HostEntry **hosts, int nh, AliasEntry *aliases, int na,
 				}
 			if (!am) {
 				if (flags & CHECK_NOT) {
-					LogError( "XDMCP ACL: unresolved alias pattern %%%s "
+					logError( "XDMCP ACL: unresolved alias pattern %%%s "
 					          "in denying rule\n", h->entry.aliasPattern );
 					return 1;
 				} else
-					LogWarn( "XDMCP ACL: unresolved alias pattern %%%s\n",
+					logWarn( "XDMCP ACL: unresolved alias pattern %%%s\n",
 					         h->entry.aliasPattern );
 			}
 		} else if (h->type == HOST_PATTERN && (flags & CHECK_NO_PAT))
-			LogWarn( "XDMCP ACL: wildcarded pattern %'* in host-only context\n",
+			logWarn( "XDMCP ACL: wildcarded pattern %'* in host-only context\n",
 			         h->entry.hostPattern );
 	return 0;
 }
 
 static void
-ReadAccessFile( const char *fname )
+readAccessFile( const char *fname )
 {
 	HostEntry *hostList, **hostPtr = &hostList;
 	AliasEntry *aliasList, **aliasPtr = &aliasList;
@@ -1185,7 +1185,7 @@ ReadAccessFile( const char *fname )
 	nHosts = nAliases = nAcls = nListens = nChars = error = 0;
 	if (!readFile( &file, fname, "XDMCP access control" ))
 		goto sendacl;
-	while ((displayOrAlias = ReadWord( &file, &len, FALSE ))) {
+	while ((displayOrAlias = readWord( &file, &len, FALSE ))) {
 		if (*displayOrAlias == ALIAS_CHARACTER)
 		{
 			if (!(*aliasPtr = (AliasEntry *)Malloc( sizeof(AliasEntry) ))) {
@@ -1198,8 +1198,8 @@ ReadAccessFile( const char *fname )
 			(*aliasPtr)->pHosts = hostPtr;
 			(*aliasPtr)->nhosts = 0;
 			(*aliasPtr)->hasBad = 0;
-			while ((hostOrAlias = ReadWord( &file, &len, TRUE ))) {
-				if (ParseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
+			while ((hostOrAlias = readWord( &file, &len, TRUE ))) {
+				if (parseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
 				               PARSE_NO_BCAST ))
 					(*aliasPtr)->nhosts++;
 				else
@@ -1215,17 +1215,17 @@ ReadAccessFile( const char *fname )
 				break;
 			}
 			(*listenPtr)->iface = nHosts;
-			if (!(hostOrAlias = ReadWord( &file, &len, TRUE )) ||
+			if (!(hostOrAlias = readWord( &file, &len, TRUE )) ||
 			    !strcmp( hostOrAlias, WILDCARD_STRING ) ||
-			    !ParseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
+			    !parseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
 			                PARSE_NO_BCAST|PARSE_NO_PAT|PARSE_NO_ALIAS ))
 			{
 				(*listenPtr)->iface = -1;
 			}
 			(*listenPtr)->mcasts = nHosts;
 			(*listenPtr)->nmcasts = 0;
-			while ((hostOrAlias = ReadWord( &file, &len, TRUE ))) {
-				if (ParseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
+			while ((hostOrAlias = readWord( &file, &len, TRUE ))) {
+				if (parseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
 				               PARSE_NO_BCAST|PARSE_NO_PAT|PARSE_NO_ALIAS ))
 					(*listenPtr)->nmcasts++;
 			}
@@ -1247,12 +1247,12 @@ ReadAccessFile( const char *fname )
 			(*acPtr)->entries = nHosts;
 			(*acPtr)->pEntries = hostPtr;
 			(*acPtr)->nentries = 1;
-			if (!ParseHost( &nHosts, &hostPtr, &nChars, displayOrAlias, len,
+			if (!parseHost( &nHosts, &hostPtr, &nChars, displayOrAlias, len,
 			                PARSE_NO_BCAST ))
 			{
 				bad = 1;
 				if ((*acPtr)->flags & a_notAllowed) {
-					LogError( "XDMCP ACL: unresolved host in denying rule\n" );
+					logError( "XDMCP ACL: unresolved host in denying rule\n" );
 					error = 1;
 				}
 			} else
@@ -1260,13 +1260,13 @@ ReadAccessFile( const char *fname )
 			(*acPtr)->hosts = nHosts;
 			(*acPtr)->pHosts = hostPtr;
 			(*acPtr)->nhosts = 0;
-			while ((hostOrAlias = ReadWord( &file, &len, TRUE ))) {
+			while ((hostOrAlias = readWord( &file, &len, TRUE ))) {
 				if (!strcmp( hostOrAlias, CHOOSER_STRING ))
 					(*acPtr)->flags |= a_useChooser;
 				else if (!strcmp( hostOrAlias, NOBROADCAST_STRING ))
 					(*acPtr)->flags |= a_notBroadcast;
 				else {
-					if (ParseHost( &nHosts, &hostPtr, &nChars,
+					if (parseHost( &nHosts, &hostPtr, &nChars,
 					               hostOrAlias, len, PARSE_NO_PAT ))
 						(*acPtr)->nhosts++;
 				}
@@ -1286,7 +1286,7 @@ ReadAccessFile( const char *fname )
 			(*listenPtr)->mcasts = nHosts;
 			(*listenPtr)->nmcasts = 0;
 #if defined(IPv6) && defined(AF_INET6) && defined(XDM_DEFAULT_MCAST_ADDR6)
-			if (ParseHost( &nHosts, &hostPtr, &nChars,
+			if (parseHost( &nHosts, &hostPtr, &nChars,
 			               XDM_DEFAULT_MCAST_ADDR6,
 			               sizeof(XDM_DEFAULT_MCAST_ADDR6)-1,
 			               PARSE_ALL ))
@@ -1306,45 +1306,45 @@ ReadAccessFile( const char *fname )
 	if (error) {
 		nHosts = nAliases = nAcls = nListens = nChars = 0;
 	  sendacl:
-		LogError( "No XDMCP requests will be granted\n" );
+		logError( "No XDMCP requests will be granted\n" );
 	}
-	GSendInt( nHosts );
-	GSendInt( nListens );
-	GSendInt( nAliases );
-	GSendInt( nAcls );
-	GSendInt( nChars );
+	gSendInt( nHosts );
+	gSendInt( nListens );
+	gSendInt( nAliases );
+	gSendInt( nAcls );
+	gSendInt( nChars );
 	for (i = 0; i < nHosts; i++, hostList = hostList->next) {
-		GSendInt( hostList->type );
+		gSendInt( hostList->type );
 		switch (hostList->type) {
 		case HOST_ALIAS:
-			GSendStr( hostList->entry.aliasPattern );
+			gSendStr( hostList->entry.aliasPattern );
 			break;
 		case HOST_PATTERN:
-			GSendStr( hostList->entry.hostPattern );
+			gSendStr( hostList->entry.hostPattern );
 			break;
 		case HOST_ADDRESS:
-			GSendArr( hostList->entry.displayAddress.hostAddrLen,
+			gSendArr( hostList->entry.displayAddress.hostAddrLen,
 			          hostList->entry.displayAddress.hostAddress );
-			GSendInt( hostList->entry.displayAddress.connectionType );
+			gSendInt( hostList->entry.displayAddress.connectionType );
 			break;
 		}
 	}
 	for (i = 0; i < nListens; i++, listenList = listenList->next) {
-		GSendInt( listenList->iface );
-		GSendInt( listenList->mcasts );
-		GSendInt( listenList->nmcasts );
+		gSendInt( listenList->iface );
+		gSendInt( listenList->mcasts );
+		gSendInt( listenList->nmcasts );
 	}
 	for (i = 0; i < nAliases; i++, aliasList = aliasList->next) {
-		GSendStr( aliasList->name );
-		GSendInt( aliasList->hosts );
-		GSendInt( aliasList->nhosts );
+		gSendStr( aliasList->name );
+		gSendInt( aliasList->hosts );
+		gSendInt( aliasList->nhosts );
 	}
 	for (i = 0; i < nAcls; i++, acList = acList->next) {
-		GSendInt( acList->entries );
-		GSendInt( acList->nentries );
-		GSendInt( acList->hosts );
-		GSendInt( acList->nhosts );
-		GSendInt( acList->flags );
+		gSendInt( acList->entries );
+		gSendInt( acList->nentries );
+		gSendInt( acList->hosts );
+		gSendInt( acList->nhosts );
+		gSendInt( acList->flags );
 	}
 }
 #endif
@@ -1366,10 +1366,10 @@ int main( int argc ATTR_UNUSED, char **argv )
 
 	InitLog();
 
-	if ((debugLevel = GRecvInt()) & DEBUG_WCONFIG)
+	if ((debugLevel = gRecvInt()) & DEBUG_WCONFIG)
 		sleep( 100 );
 
-/*	Debug ("parsing command line\n");*/
+/*	debug ("parsing command line\n");*/
 	if (**++argv)
 		kdmrc = *argv;
 /*
@@ -1378,90 +1378,90 @@ int main( int argc ATTR_UNUSED, char **argv )
 */
 
 	for (;;) {
-/*		Debug ("Awaiting command ...\n");*/
-		if (!GRecvCmd( &what ))
+/*		debug ("Awaiting command ...\n");*/
+		if (!gRecvCmd( &what ))
 			break;
 		switch (what) {
 		case GC_Files:
-/*			Debug ("GC_Files\n");*/
-			ReadConf();
-			CopyValues( 0, &secGeneral, 0, C_CONFIG );
+/*			debug ("GC_Files\n");*/
+			readConfig();
+			copyValues( 0, &secGeneral, 0, C_CONFIG );
 #ifdef XDMCP
-			CopyValues( 0, &secXdmcp, 0, C_CONFIG );
-			GSendInt( 2 );
+			copyValues( 0, &secXdmcp, 0, C_CONFIG );
+			gSendInt( 2 );
 #else
-			GSendInt( 1 );
+			gSendInt( 1 );
 #endif
-			GSendStr( kdmrc );
-				GSendInt( -1 );
+			gSendStr( kdmrc );
+				gSendInt( -1 );
 #ifdef XDMCP
-			GSendNStr( VXaccess.ptr, VXaccess.len - 1 );
-				GSendInt( 0 );
+			gSendNStr( VXaccess.ptr, VXaccess.len - 1 );
+				gSendInt( 0 );
 #endif
-			for (; (what = GRecvInt()) != -1; )
+			for (; (what = gRecvInt()) != -1; )
 				switch (what) {
 				case GC_gGlobal:
 				case GC_gDisplay:
-					GSendInt( 0 );
+					gSendInt( 0 );
 					break;
 #ifdef XDMCP
 				case GC_gXaccess:
-					GSendInt( 1 );
+					gSendInt( 1 );
 					break;
 #endif
 				default:
-					GSendInt( -1 );
+					gSendInt( -1 );
 					break;
 				}
 			break;
 		case GC_GetConf:
-/*		Debug( "GC_GetConf\n" );*/
+/*			debug( "GC_GetConf\n" );*/
 			memset( &va, 0, sizeof(va) );
-			what = GRecvInt();
-			cfgfile = GRecvStr();
+			what = gRecvInt();
+			cfgfile = gRecvStr();
 			switch (what) {
 			case GC_gGlobal:
-/*		Debug( "GC_gGlobal\n" );*/
-				Debug( "getting global config\n" );
-				ReadConf();
-				CopyValues( &va, &secGeneral, 0, 0 );
+/*			debug( "GC_gGlobal\n" );*/
+				debug( "getting global config\n" );
+				readConfig();
+				copyValues( &va, &secGeneral, 0, 0 );
 #ifdef XDMCP
-				CopyValues( &va, &secXdmcp, 0, 0 );
+				copyValues( &va, &secXdmcp, 0, 0 );
 #endif
-				CopyValues( &va, &secShutdown, 0, 0 );
-				SendValues( &va );
+				copyValues( &va, &secShutdown, 0, 0 );
+				sendValues( &va );
 				break;
 			case GC_gDisplay:
-/*		Debug( "GC_gDisplay\n" );*/
-				disp = GRecvStr();
-/*		Debug( " Display %s\n", disp );*/
-				dcls = GRecvStr();
-/*		Debug( " Class %s\n", dcls );*/
-				Debug( "getting config for display %s, class %s\n", disp, dcls );
-				MkDSpec( &dspec, disp, dcls ? dcls : "" );
-				ReadConf();
-				CopyValues( &va, &sec_Core, &dspec, 0 );
-				CopyValues( &va, &sec_Greeter, &dspec, 0 );
+/*				debug( "GC_gDisplay\n" );*/
+				disp = gRecvStr();
+/*				debug( " Display %s\n", disp );*/
+				dcls = gRecvStr();
+/*				debug( " Class %s\n", dcls );*/
+				debug( "getting config for display %s, class %s\n", disp, dcls );
+				mkDSpec( &dspec, disp, dcls ? dcls : "" );
+				readConfig();
+				copyValues( &va, &sec_Core, &dspec, 0 );
+				copyValues( &va, &sec_Greeter, &dspec, 0 );
 				free( disp );
 				if (dcls)
 					free( dcls );
-				SendValues( &va );
+				sendValues( &va );
 				break;
 #ifdef XDMCP
 			case GC_gXaccess:
-				ReadAccessFile( cfgfile );
+				readAccessFile( cfgfile );
 				break;
 #endif
 			default:
-				Debug( "Unsupported config cathegory %#x\n", what );
+				debug( "Unsupported config cathegory %#x\n", what );
 			}
 			free( cfgfile );
 			break;
 		default:
-			Debug( "Unknown config command %#x\n", what );
+			debug( "Unknown config command %#x\n", what );
 		}
 	}
 
-/*	Debug( "Config reader exiting ..." );*/
+/*	debug( "Config reader exiting ..." );*/
 	return EX_NORMAL;
 }

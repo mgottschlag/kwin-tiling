@@ -59,7 +59,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <X11/XKBlib.h>
 #endif
 
-extern void LogOutOfMem( void );
+extern void logOutOfMem( void );
 
 static void *
 Realloc( void *ptr, size_t size )
@@ -67,7 +67,7 @@ Realloc( void *ptr, size_t size )
 	void *ret;
 
 	if (!(ret = realloc( ptr, size )) && size)
-		LogOutOfMem();
+		logOutOfMem();
 	return ret;
 }
 
@@ -80,13 +80,13 @@ Realloc( void *ptr, size_t size )
 #include <printf.c>
 
 static void
-GDebug( const char *fmt, ... )
+gDebug( const char *fmt, ... )
 {
 	va_list args;
 
 	if (debugLevel & DEBUG_HLPCON) {
 		va_start( args, fmt );
-		Logger( DM_DEBUG, fmt, args );
+		logger( DM_DEBUG, fmt, args );
 		va_end( args );
 	}
 }
@@ -99,7 +99,7 @@ static int wfd, mrfd, mwfd, srfd, swfd;
 static const char *who;
 
 void
-GSet( int master )
+gSet( int master )
 {
 	if (master)
 		rfd = mrfd, wfd = mwfd, who = "core (master)";
@@ -109,7 +109,7 @@ GSet( int master )
 }
 
 static int
-Reader( void *buf, int count )
+reader( void *buf, int count )
 {
 	int ret, rlen;
 
@@ -131,17 +131,17 @@ Reader( void *buf, int count )
 }
 
 static void
-GRead( void *buf, int count )
+gRead( void *buf, int count )
 {
-	if (Reader( buf, count ) != count)
-		LogPanic( "Can't read from %s\n", who );
+	if (reader( buf, count ) != count)
+		logPanic( "Can't read from %s\n", who );
 }
 
 static void
-GWrite( const void *buf, int count )
+gWrite( const void *buf, int count )
 {
 	if (write( wfd, buf, count ) != count)
-		LogPanic( "Can't write to %s\n", who );
+		logPanic( "Can't write to %s\n", who );
 #ifdef _POSIX_PRIORITY_SCHEDULING
 	if ((debugLevel & DEBUG_HLPCON))
 		sched_yield();
@@ -149,150 +149,150 @@ GWrite( const void *buf, int count )
 }
 
 void
-GSendInt( int val )
+gSendInt( int val )
 {
-	GDebug( "Sending int %d (%#x) to %s\n", val, val, who );
-	GWrite( &val, sizeof(val) );
+	gDebug( "Sending int %d (%#x) to %s\n", val, val, who );
+	gWrite( &val, sizeof(val) );
 }
 
 void
-GSendStr( const char *buf )
+gSendStr( const char *buf )
 {
 	int len = buf ? strlen( buf ) + 1 : 0;
-	GDebug( "Sending string %'s to %s\n", buf, who );
-	GWrite( &len, sizeof(len) );
-	GWrite( buf, len );
+	gDebug( "Sending string %'s to %s\n", buf, who );
+	gWrite( &len, sizeof(len) );
+	gWrite( buf, len );
 }
 
 /*
 static void
-GSendNStr( const char *buf, int len )
+gSendNStr( const char *buf, int len )
 {
 	int tlen = len + 1;
-	GDebug( "Sending string %'.*s to %s\n", len, buf, who );
-	GWrite( &tlen, sizeof(tlen) );
-	GWrite( buf, len );
-	GWrite( "", 1 );
+	gDebug( "Sending string %'.*s to %s\n", len, buf, who );
+	gWrite( &tlen, sizeof(tlen) );
+	gWrite( buf, len );
+	gWrite( "", 1 );
 }
 */
 
 void
-GSendArr( int len, const char *buf )
+gSendArr( int len, const char *buf )
 {
-	GDebug( "Sending array %02[:*hhx to %s\n", len, buf, who );
-	GWrite( &len, sizeof(len) );
-	GWrite( buf, len );
+	gDebug( "Sending array %02[:*hhx to %s\n", len, buf, who );
+	gWrite( &len, sizeof(len) );
+	gWrite( buf, len );
 }
 
 int
-GRecvInt()
+gRecvInt()
 {
 	int val;
 
-	GDebug( "Receiving int from %s ...\n", who );
-	GRead( &val, sizeof(val) );
-	GDebug( " -> %d (%#x)\n", val, val );
+	gDebug( "Receiving int from %s ...\n", who );
+	gRead( &val, sizeof(val) );
+	gDebug( " -> %d (%#x)\n", val, val );
 	return val;
 }
 
 static char *
-iGRecvArr( int *rlen )
+igRecvArr( int *rlen )
 {
 	int len;
 	char *buf;
 
-	GRead( &len, sizeof(len) );
+	gRead( &len, sizeof(len) );
 	*rlen = len;
-	GDebug( " -> %d bytes\n", len );
+	gDebug( " -> %d bytes\n", len );
 	if (!len)
 		return (char *)0;
 	if (!(buf = malloc( len )))
-		LogPanic( "No memory for read buffer\n" );
-	GRead( buf, len );
+		logPanic( "No memory for read buffer\n" );
+	gRead( buf, len );
 	return buf;
 }
 
 char *
-GRecvStr()
+gRecvStr()
 {
 	int len;
 	char *buf;
 
-	GDebug( "Receiving string from %s ...\n", who );
-	buf = iGRecvArr( &len );
-	GDebug( " -> %'.*s\n", len, buf );
+	gDebug( "Receiving string from %s ...\n", who );
+	buf = igRecvArr( &len );
+	gDebug( " -> %'.*s\n", len, buf );
 	return buf;
 }
 
 char **
-GRecvStrArr( int *rnum )
+gRecvStrArr( int *rnum )
 {
 	int num;
 	char **argv, **cargv;
 
-	GDebug( "Receiving string array from %s ...\n", who );
-	GRead( &num, sizeof(num) );
-	GDebug( " -> %d strings\n", num );
+	gDebug( "Receiving string array from %s ...\n", who );
+	gRead( &num, sizeof(num) );
+	gDebug( " -> %d strings\n", num );
 	if (rnum)
 		*rnum = num;
 	if (!num)
 		return (char **)0;
 	if (!(argv = malloc( num * sizeof(char *) )))
-		LogPanic( "No memory for read buffer\n" );
+		logPanic( "No memory for read buffer\n" );
 	for (cargv = argv; --num >= 0; cargv++)
-		*cargv = GRecvStr();
+		*cargv = gRecvStr();
 	return argv;
 }
 
 char *
-GRecvArr( int *num )
+gRecvArr( int *num )
 {
 	char *arr;
 
-	GDebug( "Receiving array from %s ...\n", who );
-	GRead( num, sizeof(*num) );
-	GDebug( " -> %d bytes\n", *num );
+	gDebug( "Receiving array from %s ...\n", who );
+	gRead( num, sizeof(*num) );
+	gDebug( " -> %d bytes\n", *num );
 	if (!*num)
 		return (char *)0;
 	if (!(arr = malloc( *num )))
-		LogPanic( "No memory for read buffer\n" );
-	GRead( arr, *num );
-	GDebug( " -> %02[*hhx\n", *num, arr );
+		logPanic( "No memory for read buffer\n" );
+	gRead( arr, *num );
+	gDebug( " -> %02[*hhx\n", *num, arr );
 	return arr;
 }
 
 static void
-ReqCfg( int id )
+reqCfg( int id )
 {
-	GSendInt( G_GetCfg );
-	GSendInt( id );
-	switch (GRecvInt()) {
+	gSendInt( G_GetCfg );
+	gSendInt( id );
+	switch (gRecvInt()) {
 	case GE_NoEnt:
-		LogPanic( "Config value %#x not available\n", id );
+		logPanic( "Config value %#x not available\n", id );
 	case GE_BadType:
-		LogPanic( "Core does not know type of config value %#x\n", id );
+		logPanic( "Core does not know type of config value %#x\n", id );
 	}
 }
 
 int
-GetCfgInt( int id )
+getCfgInt( int id )
 {
-	ReqCfg( id );
-	return GRecvInt();
+	reqCfg( id );
+	return gRecvInt();
 }
 
 char *
-GetCfgStr( int id )
+getCfgStr( int id )
 {
-	ReqCfg( id );
-	return GRecvStr();
+	reqCfg( id );
+	return gRecvStr();
 }
 
 char **
-GetCfgStrArr( int id, int *len )
+getCfgStrArr( int id, int *len )
 {
-	ReqCfg( id );
-	return GRecvStrArr( len );
+	reqCfg( id );
+	return gRecvStrArr( len );
 }
 
 void
@@ -311,7 +311,7 @@ freeStrArr( char **arr )
 static int
 ignoreErrors( Display *dpy ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED )
 {
-	Debug( "ignoring X error\n" );
+	debug( "ignoring X error\n" );
 	return 0;
 }
 
@@ -331,7 +331,7 @@ killWindows( Display *dpy, Window window )
 	       && nchildren > 0)
 	{
 		for (child = 0; child < nchildren; child++) {
-			Debug( "XKillClient 0x%lx\n", (unsigned long)children[child] );
+			debug( "XKillClient 0x%lx\n", (unsigned long)children[child] );
 			XKillClient( dpy, children[child] );
 		}
 		XFree( (char *)children );
@@ -356,22 +356,22 @@ pseudoReset( Display *dpy )
 	int screen;
 
 	if (setjmp( resetJmp )) {
-		LogError( "pseudoReset timeout\n" );
+		logError( "pseudoReset timeout\n" );
 	} else {
 		(void)signal( SIGALRM, abortReset );
 		(void)alarm( 30 );
 		XSetErrorHandler( ignoreErrors );
 		for (screen = 0; screen < ScreenCount( dpy ); screen++) {
-			Debug( "pseudoReset screen %d\n", screen );
+			debug( "pseudoReset screen %d\n", screen );
 			killWindows( dpy, RootWindow( dpy, screen ) );
 		}
-		Debug( "before XSync\n" );
+		debug( "before XSync\n" );
 		XSync( dpy, False );
 		(void)alarm( 0 );
 	}
 	signal( SIGALRM, SIG_DFL );
 	XSetErrorHandler( (XErrorHandler)0 );
-	Debug( "pseudoReset done\n" );
+	debug( "pseudoReset done\n" );
 }
 
 
@@ -384,24 +384,24 @@ syncTimeout( int n ATTR_UNUSED )
 }
 
 void
-SecureDisplay( Display *dpy )
+secureDisplay( Display *dpy )
 {
-	Debug( "SecureDisplay %s\n", dname );
+	debug( "secureDisplay %s\n", dname );
 	(void)signal( SIGALRM, syncTimeout );
 	if (setjmp( syncJump )) {
-		LogError( "Display %s could not be secured\n", dname );
+		logError( "Display %s could not be secured\n", dname );
 		exit( EX_RESERVER_DPY );
 	}
 	(void)alarm( (unsigned)_grabTimeout );
-	Debug( "Before XGrabServer %s\n", dname );
+	debug( "Before XGrabServer %s\n", dname );
 	XGrabServer( dpy );
-	Debug( "XGrabServer succeeded %s\n", dname );
+	debug( "XGrabServer succeeded %s\n", dname );
 	if (XGrabKeyboard( dpy, DefaultRootWindow( dpy ), True, GrabModeAsync,
 	                   GrabModeAsync, CurrentTime ) != GrabSuccess)
 	{
 		(void)alarm( 0 );
 		(void)signal( SIGALRM, SIG_DFL );
-		LogError( "Keyboard on display %s could not be secured\n", dname );
+		logError( "Keyboard on display %s could not be secured\n", dname );
 		sleep( 10 );
 		exit( EX_RESERVER_DPY );
 	}
@@ -413,7 +413,7 @@ SecureDisplay( Display *dpy )
 		XUngrabServer( dpy );
 		XSync( dpy, 0 );
 	}
-	Debug( "done secure %s\n", dname );
+	debug( "done secure %s\n", dname );
 #if defined(HAVE_XKB) && defined(HAVE_XKBSETPERCLIENTCONTROLS)
 	/*
 	 * Activate the correct mapping for modifiers in XKB extension as
@@ -430,9 +430,9 @@ SecureDisplay( Display *dpy )
 }
 
 void
-UnsecureDisplay( Display *dpy )
+unsecureDisplay( Display *dpy )
 {
-	Debug( "Unsecure display %s\n", dname );
+	debug( "Unsecure display %s\n", dname );
 	if (_grabServer) {
 		XUngrabServer( dpy );
 		XSync( dpy, 0 );
@@ -442,33 +442,33 @@ UnsecureDisplay( Display *dpy )
 static jmp_buf pingTime;
 
 static int
-PingLostIOErr( Display *dpy ATTR_UNUSED )
+pingLostIOErr( Display *dpy ATTR_UNUSED )
 {
 	longjmp( pingTime, 1 );
 }
 
 static void
-PingLostSig( int n ATTR_UNUSED )
+pingLostSig( int n ATTR_UNUSED )
 {
 	longjmp( pingTime, 1 );
 }
 
 int
-PingServer( Display *dpy )
+pingServer( Display *dpy )
 {
 	int (*oldError)( Display * );
 	void (*oldSig)( int );
 	int oldAlarm;
 
-	oldError = XSetIOErrorHandler( PingLostIOErr );
+	oldError = XSetIOErrorHandler( pingLostIOErr );
 	oldAlarm = alarm( 0 );
-	oldSig = signal( SIGALRM, PingLostSig );
+	oldSig = signal( SIGALRM, pingLostSig );
 	(void)alarm( _pingTimeout * 60 );
 	if (!setjmp( pingTime )) {
-		Debug( "Ping server\n" );
+		debug( "Ping server\n" );
 		XSync( dpy, 0 );
 	} else {
-		Debug( "Server dead\n" );
+		debug( "Server dead\n" );
 		(void)alarm( 0 );
 		(void)signal( SIGALRM, SIG_DFL );
 		XSetIOErrorHandler( oldError );
@@ -477,7 +477,7 @@ PingServer( Display *dpy )
 	(void)alarm( 0 );
 	(void)signal( SIGALRM, oldSig );
 	(void)alarm( oldAlarm );
-	Debug( "Server alive\n" );
+	debug( "Server alive\n" );
 	XSetIOErrorHandler( oldError );
 	return 1;
 }
@@ -492,7 +492,7 @@ PingServer( Display *dpy )
 
 #ifdef HAVE_XKB
 static int
-xkb_init( Display *dpy )
+xkbInit( Display *dpy )
 {
 	int xkb_opcode, xkb_event, xkb_error;
 	int xkb_lmaj = XkbMajorVersion;
@@ -503,7 +503,7 @@ xkb_init( Display *dpy )
 }
 
 static unsigned int
-xkb_modifier_mask_work( XkbDescPtr xkb, const char *name )
+xkbModifierMaskWorker( XkbDescPtr xkb, const char *name )
 {
 	int i;
 
@@ -521,12 +521,12 @@ xkb_modifier_mask_work( XkbDescPtr xkb, const char *name )
 }
 
 static unsigned int
-xkb_modifier_mask( Display *dpy, const char *name )
+xkbModifierMask( Display *dpy, const char *name )
 {
 	XkbDescPtr xkb;
 
 	if ((xkb = XkbGetKeyboard( dpy, XkbAllComponentsMask, XkbUseCoreKbd ))) {
-		unsigned int mask = xkb_modifier_mask_work( xkb, name );
+		unsigned int mask = xkbModifierMaskWorker( xkb, name );
 		XkbFreeKeyboard( xkb, 0, True );
 		return mask;
 	}
@@ -534,23 +534,23 @@ xkb_modifier_mask( Display *dpy, const char *name )
 }
 
 static int
-xkb_get_modifier_state( Display *dpy, const char *name )
+xkbGetModifierState( Display *dpy, const char *name )
 {
 	unsigned int mask;
 	XkbStateRec state;
 
-	if (!(mask = xkb_modifier_mask( dpy, name )))
+	if (!(mask = xkbModifierMask( dpy, name )))
 		return 0;
 	XkbGetState( dpy, XkbUseCoreKbd, &state );
 	return (mask & state.locked_mods) != 0;
 }
 
 static int
-xkb_set_modifier( Display *dpy, const char *name, int sts )
+xkbSetModifier( Display *dpy, const char *name, int sts )
 {
 	unsigned int mask;
 
-	if (!(mask = xkb_modifier_mask( dpy, name )))
+	if (!(mask = xkbModifierMask( dpy, name )))
 		return 0;
 	XkbLockModifiers( dpy, XkbUseCoreKbd, mask, sts ? mask : 0 );
 	return 1;
@@ -559,7 +559,7 @@ xkb_set_modifier( Display *dpy, const char *name, int sts )
 
 #ifdef HAVE_XTEST
 static int
-xtest_get_modifier_state( Display *dpy, int key )
+xtestGetModifierState( Display *dpy, int key )
 {
 	XModifierKeymap *map;
 	KeyCode modifier_keycode;
@@ -583,7 +583,7 @@ xtest_get_modifier_state( Display *dpy, int key )
 }
 
 static void
-xtest_fake_keypress( Display *dpy, int key )
+xtestFakeKeypress( Display *dpy, int key )
 {
 	XTestFakeKeyEvent( dpy, XKeysymToKeycode( dpy, key ), True, CurrentTime );
 	XTestFakeKeyEvent( dpy, XKeysymToKeycode( dpy, key ), False, CurrentTime );
@@ -597,7 +597,7 @@ static int nummodified, oldnumstate, newnumstate;
 static Display *dpy;
 
 void
-setup_modifiers( Display *mdpy, int numlock )
+setupModifiers( Display *mdpy, int numlock )
 {
 	if (numlock == 2)
 		return;
@@ -605,22 +605,22 @@ setup_modifiers( Display *mdpy, int numlock )
 	nummodified = 1;
 	dpy = mdpy;
 #ifdef HAVE_XKB
-	if (xkb_init( mdpy )) {
+	if (xkbInit( mdpy )) {
 		havexkb = 1;
-		oldnumstate = xkb_get_modifier_state( mdpy, "NumLock" );
-		xkb_set_modifier( mdpy, "NumLock", numlock );
+		oldnumstate = xkbGetModifierState( mdpy, "NumLock" );
+		xkbSetModifier( mdpy, "NumLock", numlock );
 		return;
 	}
 #endif
 #ifdef HAVE_XTEST
-	oldnumstate = xtest_get_modifier_state( mdpy, XK_Num_Lock );
+	oldnumstate = xtestGetModifierState( mdpy, XK_Num_Lock );
 	if (oldnumstate != numlock)
-		xtest_fake_keypress( mdpy, XK_Num_Lock );
+		xtestFakeKeypress( mdpy, XK_Num_Lock );
 #endif
 }
 
 void
-restore_modifiers( void )
+restoreModifiers( void )
 {
 #ifdef HAVE_XTEST
 	int numstat;
@@ -630,15 +630,15 @@ restore_modifiers( void )
 		return;
 #ifdef HAVE_XKB
 	if (havexkb) {
-		if (xkb_get_modifier_state( dpy, "NumLock" ) == newnumstate)
-			xkb_set_modifier( dpy, "NumLock", oldnumstate );
+		if (xkbGetModifierState( dpy, "NumLock" ) == newnumstate)
+			xkbSetModifier( dpy, "NumLock", oldnumstate );
 		return;
 	}
 #endif
 #ifdef HAVE_XTEST
-	numstat = xtest_get_modifier_state( dpy, XK_Num_Lock );
+	numstat = xtestGetModifierState( dpy, XK_Num_Lock );
 	if (numstat == newnumstate && newnumstate != oldnumstate)
-		xtest_fake_keypress( dpy, XK_Num_Lock );
+		xtestFakeKeypress( dpy, XK_Num_Lock );
 #endif
 }
 
@@ -668,7 +668,7 @@ cleanup( void )
 	char buf[128];
 
 	if (strcmp( savhome, getenv( "HOME" ) ) || memcmp( savhome, "/tmp/", 5 ))
-		LogError( "Internal error: memory corruption detected\n" ); /* no panic: recursion */
+		logError( "Internal error: memory corruption detected\n" ); /* no panic: recursion */
 	else {
 		sprintf( buf, "rm -rf %s", savhome );
 		system( buf );
@@ -694,18 +694,18 @@ main( int argc ATTR_UNUSED, char **argv )
 	fcntl( swfd, F_SETFD, FD_CLOEXEC );
 	fcntl( mrfd, F_SETFD, FD_CLOEXEC );
 	fcntl( mwfd, F_SETFD, FD_CLOEXEC );
-	GSet( 0 );
+	gSet( 0 );
 
 	InitLog();
 
-	if ((debugLevel = GRecvInt()) & DEBUG_WGREET)
+	if ((debugLevel = gRecvInt()) & DEBUG_WGREET)
 		sleep( 100 );
 
 	signal( SIGTERM, sigterm );
 
 	dname = getenv( "DISPLAY" );
 
-	init_config();
+	initConfig();
 
 	/* for QSettings */
 	srand( time( 0 ) );
@@ -714,12 +714,12 @@ main( int argc ATTR_UNUSED, char **argv )
 		if (!mkdir( qtrc, 0700 ))
 			goto okay;
 	}
-	LogPanic( "Cannot create $HOME\n" );
+	logPanic( "Cannot create $HOME\n" );
   okay:
 	if (setenv( "HOME", qtrc, 1 ))
-		LogPanic( "Cannot set $HOME\n" );
+		logPanic( "Cannot set $HOME\n" );
 	if (!(savhome = strdup( qtrc )))
-		LogPanic( "Cannot save $HOME\n" );
+		logPanic( "Cannot save $HOME\n" );
 	atexit( cleanup );
 
 	setenv( "LC_ALL", _language, 1 );
