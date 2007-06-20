@@ -468,9 +468,9 @@ checkUtmp( void )
 
 static void
 #ifdef HAVE_VTS
-switchToTty( void )
+switchToTTY( void )
 #else
-switchToTty( struct display *d )
+switchToTTY( struct display *d )
 #endif
 {
 	struct utmps *utp;
@@ -527,7 +527,7 @@ checkTTYMode( void )
 		if (d->status == zombie)
 			return;
 
-	switchToTty();
+	switchToTTY();
 }
 
 #else
@@ -807,7 +807,7 @@ scanConfigs( int force )
 }
 
 static void
-MarkDisplay( struct display *d )
+markDisplay( struct display *d )
 {
 	d->stillThere = 0;
 }
@@ -1156,7 +1156,7 @@ mainLoop( void )
 					break;
 				case SIGHUP:
 					logInfo( "Rescanning all config files\n" );
-					forEachDisplay( MarkDisplay );
+					forEachDisplay( markDisplay );
 					rescanConfigs( TRUE );
 					break;
 				case SIGCHLD:
@@ -1421,7 +1421,7 @@ rStopDisplay( struct display *d, int endState )
 	} else if (endState == (DS_TEXTMODE | 0x100)) {
 		d->status = textMode;
 #else
-		switchToTty( d );
+		switchToTTY( d );
 #endif
 	} else if (endState == DS_RESERVE)
 		d->status = reserve;
