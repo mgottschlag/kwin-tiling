@@ -90,6 +90,7 @@ Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_10]
 Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
+Comment[de]=Opera-Stil: Drücken, nach oben, loslassen.\nHinweis: Dies steht in Konflikt mit der Aktion "Neues Unterfenster" und ist daher in der Voreinstellung nicht aktiviert.
 Comment[el]=Στυλ Opera: Πιέστε, μετακινήστε πάνω, ελευθερώστε.\nΣΗΜΕΙΩΣΗ: Αυτό συγκρούεται με την 'Νέα καρτέλα', και οπότε είναι προκαθορισμένα απενεργοποιημένο.
 Comment[it]=Stile Opera: Premi, sposta in su, rilascia.\nNOTA: È in conflitto con "Nuova scheda", e quindi è normalmente disabilitato.
 Comment[ja]=Opera スタイル: マウスの中ボタンを押したまま、マウスを上に動かし、ボタンを放します。\n注意: 「新規タブ」と競合するため、デフォルトでは無効になっています。
@@ -139,6 +140,7 @@ Type=GESTURE
 
 [Data_1_11]
 Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
+Comment[de]=Geht in der Adress-/Ordnerstruktur eine Ebene höher.\nMozilla-Stil: Drücken, nach oben, nach links, nach oben, loslassen.
 Comment[el]=Μετάβαση προς τα πάνω στη δομή URL/καταλόγου.\nΣτυλ Mozilla: Πιέστε, μετακίνηση πάνω, μετακίνηση αριστερά, μετακίνηση πάνω, ελευθέρωση.
 Comment[it]=Risale nella struttura dell'URL o delle directory.\nStile Mozilla: Premi, sposta in su, sposta a sinistra, sposta in su, rilascia.
 Comment[ja]=URL/ディレクトリ構造の一つ上に移動します。\nMozilla スタイル: マウスの中ボタンを押したまま、マウスを上->左->上の順に動かし、ボタンを放します。
@@ -188,6 +190,7 @@ Type=GESTURE
 
 [Data_1_12]
 Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
+Comment[de]=Geht in der Adress-/Ordnerstruktur eine Ebene höher.\nOpera-Stil: Drücken, nach oben, nach links, nach oben, loslassen.\nHinweis: Dies steht in Konflikt mit der Aktion "Vorheriges Unterfenster aktivieren und ist daher in der Voreinstellung nicht aktiviert.
 Comment[el]=Μετάβαση προς τα πάνω στη δομή URL/καταλόγου.\nΣτυλ Opera: Πιέστε, μετακίνηση πάνω, μετακίνηση αριστερά, μετακίνηση πάνω, ελευθέρωση.\nΣΗΜΕΙΩΣΗ: Συγκρούεται με το "Ενεργοποίηση προηγούμενης καρτέλας", οπότε είναι προκαθορισμένα απενεργοποιημένο.
 Comment[it]=Risale nella struttura dell'URL o directory.\nStile Opera: Premi, sposta in su, sposta a sinistra, sposta in su, rilascia.\nNOTA: È in conflitto con "Ativa scheda precedente", e quindi è normalmente disabilitato.
 Comment[ja]=URL/ディレクトリ構造の一つ上に移動します。\nOpera スタイル: マウスの中ボタンを押したまま、マウスを上->左->上の順に動かし、ボタンを放します。\n注意: 「前のタブをアクティブに」と競合するため、デフォルトでは無効になっています。
@@ -616,6 +619,7 @@ Type=GESTURE
 
 [Data_1_6]
 Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.
+Comment[de]=Drücken, nach rechts, nach unten, nach rechts, loslassen.\nMozilla-Stil: Drücken, nach unten, nach rechts, loslassen.
 Comment[el]=Πίεση, μετακίνηση δεξιά, μετακίνηση κάτω, μετακίνηση δεξιά, ελευθέρωση.\nΣτυλ Mozilla: Πίεση, μετακίνηση κάτω, μετακίνηση δεξιά, ελευθέρωση.
 Comment[it]=Premi, sposta a destra, sposta in giù, sposta a destra, rilascia.\nStile Mozilla: Premi, sposta in giù, sposta a destra, rilascia.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを右->下->右の順に動かし、ボタンを放します。\nMozilla スタイル: マウスの中ボタンを押したまま、マウスを下->右の順に動かし、ボタンを放します。
@@ -669,6 +673,7 @@ Type=GESTURE
 
 [Data_1_7]
 Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.
+Comment[de]=Drücken, nach oben, loslassen.\nSteht in Konflikt mit dem Opera-Stil von "Nach oben (2)", der aber in der Voreinstellung nicht aktiviert ist.
 Comment[el]=Πίεση, μετακίνηση πάνω, ελευθέρωση.\nΣύγκρουση με το στυλ Opera 'Πάνω #2', το οποίο είναι προκαθορισμένα απενεργοποιημένο.
 Comment[it]=Premi, sposta in su, rilascia.\nÈ in conflitto con il gesto in stile Opera "Su #2", che è disabilitato normalmente.
 Comment[ja]=マウスの中ボタンを押したまま、マウスを上に動かし、ボタンを放します。\nデフォルトで無効になっている Opera スタイルの「上 #2」と競合します。
