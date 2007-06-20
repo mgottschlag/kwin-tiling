@@ -78,6 +78,7 @@ class Clock : public Plasma::Applet
         Plasma::Svg* m_theme;
         QTime m_time;
         KDialog *m_dialog; //should we move this into another class?
+        QTime m_lastTimeSeen;
 	/// Designer Config file
 	Ui::clockConfig ui;
 };

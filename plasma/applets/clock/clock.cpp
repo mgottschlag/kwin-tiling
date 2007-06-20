@@ -60,7 +60,9 @@ Clock::Clock(QObject *parent, const QStringList &args)
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(m_pixelSize, m_pixelSize);
 
-    dataEngine("time")->connectSource(m_timezone, this);
+    Plasma::DataEngine* timeEngine = dataEngine("time");
+    timeEngine->connectSource(m_timezone, this);
+    timeEngine->setProperty("reportSeconds", m_showSecondHand);
     constraintsUpdated();
 }
 
@@ -86,6 +88,15 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source);
     m_time = data[i18n("Time")].toTime();
+
+    if (m_time.minute() == m_lastTimeSeen.minute() &&
+        m_time.second() == m_lastTimeSeen.second()) {
+        // avoid unnecessary repaints
+        kDebug() << "avoided unecessary update!" << endl;
+        return;
+    }
+
+    m_lastTimeSeen = m_time;
     update();
 }
 
