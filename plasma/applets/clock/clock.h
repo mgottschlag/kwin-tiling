@@ -79,8 +79,8 @@ class Clock : public Plasma::Applet
         QTime m_time;
         KDialog *m_dialog; //should we move this into another class?
         QTime m_lastTimeSeen;
-	/// Designer Config file
-	Ui::clockConfig ui;
+        /// Designer Config file
+        Ui::clockConfig ui;
 };
 
 K_EXPORT_PLASMA_APPLET(clock, Clock)

@@ -104,7 +104,7 @@ bool TimeEngine::sourceRequested(const QString &name)
 
 void TimeEngine::updateTime()
 {
-    kDebug() << "TimeEngine::updateTime()" << endl;
+    //kDebug() << "TimeEngine::updateTime()" << endl;
 
     QDateTime dt = QDateTime::currentDateTime();
     const KTimeZone *local = KSystemTimeZones::local();

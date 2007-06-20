@@ -92,7 +92,7 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
     if (m_time.minute() == m_lastTimeSeen.minute() &&
         m_time.second() == m_lastTimeSeen.second()) {
         // avoid unnecessary repaints
-        kDebug() << "avoided unecessary update!" << endl;
+        //kDebug() << "avoided unecessary update!" << endl;
         return;
     }
 
@@ -111,10 +111,10 @@ void Clock::configureDialog() //TODO: Make the size settable
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
 
-	ui.timeZones->setSelected(m_timezone, true);
-	ui.spinSize->setValue((int)m_bounds.width());
-	ui.showTimeStringCheckBox->setChecked(m_showTimeString);
-	ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
+        ui.timeZones->setSelected(m_timezone, true);
+        ui.spinSize->setValue((int)m_bounds.width());
+        ui.showTimeStringCheckBox->setChecked(m_showTimeString);
+        ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
     }
     m_dialog->show();
 }
