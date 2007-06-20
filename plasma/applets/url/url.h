@@ -49,7 +49,7 @@ class Url : public Plasma::Applet
 
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);
-//        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+        //void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
     protected slots:
         void acceptedPropertiesDialog();

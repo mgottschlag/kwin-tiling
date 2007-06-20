@@ -37,12 +37,9 @@ Url::Url(QObject *parent, const QStringList &args)
       m_dialog(0)
 {
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-//    setHandlesChildEvents(true);
     setAcceptDrops(true);
 
     m_icon = new Plasma::Icon(this);
-    m_icon->setFlags(QGraphicsItem::ItemIsMovable);
-//    setParentItem(m_icon);
     connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
 
     KConfigGroup globalConfig = globalAppletConfig();
@@ -62,12 +59,15 @@ Url::~Url()
     KConfigGroup cg = appletConfig();
     cg.writeEntry("IconSize", m_icon->iconSize());
 }
-/*#include <QPainter>
+
+/*
+#include <QPainter>
 void Url::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    painter->fillRect(boundingRect(), Qt::transparent);
+    painter->fillRect(boundingRect(), Qt::white);
 }
 */
+
 QRectF Url::boundingRect() const
 {
 //    kDebug() << "boundingRect is " << m_icon->boundingRect() << endl;
