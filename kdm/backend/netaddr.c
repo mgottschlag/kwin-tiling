@@ -151,23 +151,23 @@ convertAddr( char *saddr, int *len, char **addr )
 #else
 	switch (netaddrFamily( saddr )) {
 #ifdef AF_UNSPEC
-	  case AF_UNSPEC:
+	case AF_UNSPEC:
 		retval = FamilyLocal;
 		break;
 #endif
 #ifdef AF_UNIX
 #ifndef __hpux
-	  case AF_UNIX:
+	case AF_UNIX:
 		retval = FamilyLocal;
 		break;
 #endif
 #endif
 #ifdef TCPCONN
-	  case AF_INET:
+	case AF_INET:
 		retval = FamilyInternet;
 		break;
 #if defined(IPv6) && defined(AF_INET6)
-	  case AF_INET6:
+	case AF_INET6:
 		if (*len == sizeof(struct in_addr))
 			retval = FamilyInternet;
 		else
@@ -176,7 +176,7 @@ convertAddr( char *saddr, int *len, char **addr )
 #endif
 #endif
 #ifdef DNETCONN
-	  case AF_DECnet:
+	case AF_DECnet:
 		retval = FamilyDECnet;
 		break;
 #endif
@@ -185,7 +185,7 @@ convertAddr( char *saddr, int *len, char **addr )
 		retval = FamilyChaos;
 		break;
 #endif
-	  default:
+	default:
 		retval = -1;
 		break;
 	}

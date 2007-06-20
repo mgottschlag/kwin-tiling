@@ -79,86 +79,86 @@ static int
 getPrngdBytes( char *buf, int len,
                unsigned short tcp_port, const char *socket_path )
 {
-		int fd, addr_len, rval, errors;
-		char msg[2];
-		struct sockaddr *addr;
-		struct sockaddr_in addr_in;
-		struct sockaddr_un addr_un;
-		int af;
-		SIGFUNC old_sigpipe;
+	int fd, addr_len, rval, errors;
+	char msg[2];
+	struct sockaddr *addr;
+	struct sockaddr_in addr_in;
+	struct sockaddr_un addr_un;
+	int af;
+	SIGFUNC old_sigpipe;
 
-		if (tcp_port) {
-				memset( &addr_in, 0, sizeof(addr_in) );
-				af = addr_in.sin_family = AF_INET;
-				addr_in.sin_addr.s_addr = htonl( INADDR_LOOPBACK );
-				addr_in.sin_port = htons( tcp_port );
-				addr_len = sizeof(addr_in);
-				addr = (struct sockaddr *)&addr_in;
-		} else if (*socket_path) {
-				unsigned spl = strlen( socket_path );
-				if (spl >= sizeof(addr_un.sun_path)) {
-						logError( "get_random_prngd: "
-						          "Random pool path is too long\n" );
-						return -1;
-				}
-				af = addr_un.sun_family = AF_UNIX;
-				strncpy( addr_un.sun_path, socket_path,
-				         sizeof(addr_un.sun_path) );
-				addr_len = offsetof(struct sockaddr_un, sun_path) + spl + 1;
-				addr = (struct sockaddr *)&addr_un;
-		} else
-				return -1;
-
-		old_sigpipe = Signal( SIGPIPE, SIG_IGN );
-
-		errors = 0;
-		rval = -1;
-reopen:
-		if ((fd = socket( af, SOCK_STREAM, 0 )) < 0) {
-				logError( "Couldn't create socket: %m\n" );
-				goto done;
+	if (tcp_port) {
+		memset( &addr_in, 0, sizeof(addr_in) );
+		af = addr_in.sin_family = AF_INET;
+		addr_in.sin_addr.s_addr = htonl( INADDR_LOOPBACK );
+		addr_in.sin_port = htons( tcp_port );
+		addr_len = sizeof(addr_in);
+		addr = (struct sockaddr *)&addr_in;
+	} else if (*socket_path) {
+		unsigned spl = strlen( socket_path );
+		if (spl >= sizeof(addr_un.sun_path)) {
+			logError( "get_random_prngd: "
+			          "Random pool path is too long\n" );
+			return -1;
 		}
+		af = addr_un.sun_family = AF_UNIX;
+		strncpy( addr_un.sun_path, socket_path,
+		         sizeof(addr_un.sun_path) );
+		addr_len = offsetof(struct sockaddr_un, sun_path) + spl + 1;
+		addr = (struct sockaddr *)&addr_un;
+	} else
+		return -1;
 
-		if (connect( fd, (struct sockaddr *)addr, addr_len )) {
-				if (af == AF_INET)
-						logError( "Couldn't connect to PRNGD port %d: %m\n",
-						          tcp_port );
-				else
-						logError( "Couldn't connect to PRNGD socket %\"s: %m\n",
-						          socket_path );
-				goto done;
+	old_sigpipe = Signal( SIGPIPE, SIG_IGN );
+
+	errors = 0;
+	rval = -1;
+  reopen:
+	if ((fd = socket( af, SOCK_STREAM, 0 )) < 0) {
+		logError( "Couldn't create socket: %m\n" );
+		goto done;
+	}
+
+	if (connect( fd, (struct sockaddr *)addr, addr_len )) {
+		if (af == AF_INET)
+			logError( "Couldn't connect to PRNGD port %d: %m\n",
+			          tcp_port );
+		else
+			logError( "Couldn't connect to PRNGD socket %\"s: %m\n",
+			          socket_path );
+		goto done;
+	}
+
+	/* Send blocking read request to PRNGD */
+	msg[0] = 0x02;
+	msg[1] = len;
+
+	if (writer( fd, msg, sizeof(msg) ) != sizeof(msg)) {
+		if (errno == EPIPE && errors < 10) {
+			close( fd );
+			errors++;
+			goto reopen;
 		}
+		logError( "Couldn't write to PRNGD socket: %m\n" );
+		goto done;
+	}
 
-		/* Send blocking read request to PRNGD */
-		msg[0] = 0x02;
-		msg[1] = len;
-
-		if (writer( fd, msg, sizeof(msg) ) != sizeof(msg)) {
-				if (errno == EPIPE && errors < 10) {
-						close( fd );
-						errors++;
-						goto reopen;
-				}
-				logError( "Couldn't write to PRNGD socket: %m\n" );
-				goto done;
+	if (reader( fd, buf, len ) != len) {
+		if (errno == EPIPE && errors < 10) {
+			close( fd );
+			errors++;
+			goto reopen;
 		}
+		logError( "Couldn't read from PRNGD socket: %m\n" );
+		goto done;
+	}
 
-		if (reader( fd, buf, len ) != len) {
-				if (errno == EPIPE && errors < 10) {
-						close( fd );
-						errors++;
-						goto reopen;
-				}
-				logError( "Couldn't read from PRNGD socket: %m\n" );
-				goto done;
-		}
-
-		rval = 0;
-done:
-		Signal( SIGPIPE, old_sigpipe );
-		if (fd != -1)
-				close( fd );
-		return rval;
+	rval = 0;
+  done:
+	Signal( SIGPIPE, old_sigpipe );
+	if (fd != -1)
+			close( fd );
+	return rval;
 }
 
 /* ####################################################################### */
@@ -201,28 +201,28 @@ static unsigned epool[32], erotate, eadd_ptr;
 static void
 addEntropy( unsigned const *in, int nwords )
 {
-		static unsigned const twist_table[8] = {
-				         0, 0x3b6e20c8, 0x76dc4190, 0x4db26158,
-				0xedb88320, 0xd6d6a3e8, 0x9b64c2b0, 0xa00ae278 };
-		unsigned i, w;
-		int new_rotate;
+	static unsigned const twist_table[8] = {
+		         0, 0x3b6e20c8, 0x76dc4190, 0x4db26158,
+		0xedb88320, 0xd6d6a3e8, 0x9b64c2b0, 0xa00ae278 };
+	unsigned i, w;
+	int new_rotate;
 
-		while (nwords--) {
-				w = *in++;
-				w = (w<<erotate | w>>(32-erotate)) & 0xffffffff;
-				i = eadd_ptr = (eadd_ptr - 1) & 31;
-				new_rotate = erotate + 14;
-				if (i)
-						new_rotate = erotate + 7;
-				erotate = new_rotate & 31;
-				w ^= epool[(i + 26) & 31];
-				w ^= epool[(i + 20) & 31];
-				w ^= epool[(i + 14) & 31];
-				w ^= epool[(i + 7) & 31];
-				w ^= epool[(i + 1) & 31];
-				w ^= epool[i];
-				epool[i] = (w >> 3) ^ twist_table[w & 7];
-		}
+	while (nwords--) {
+		w = *in++;
+		w = (w<<erotate | w>>(32-erotate)) & 0xffffffff;
+		i = eadd_ptr = (eadd_ptr - 1) & 31;
+		new_rotate = erotate + 14;
+		if (i)
+			new_rotate = erotate + 7;
+		erotate = new_rotate & 31;
+		w ^= epool[(i + 26) & 31];
+		w ^= epool[(i + 20) & 31];
+		w ^= epool[(i + 14) & 31];
+		w ^= epool[(i + 7) & 31];
+		w ^= epool[(i + 1) & 31];
+		w ^= epool[i];
+		epool[i] = (w >> 3) ^ twist_table[w & 7];
+	}
 }
 
 /* ####################################################################### */

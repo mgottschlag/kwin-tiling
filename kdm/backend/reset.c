@@ -46,8 +46,8 @@ from the copyright holder.
 static int
 ignoreErrors( Display *dspl ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED )
 {
-		debug( "ignoring error\n" );
-		return 0;
+	debug( "ignoring error\n" );
+	return 0;
 }
 
 /*
@@ -59,18 +59,18 @@ ignoreErrors( Display *dspl ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED )
 static void
 killWindows( Window window )
 {
-		Window root, parent, *children;
-		unsigned int child, nchildren = 0;
+	Window root, parent, *children;
+	unsigned int child, nchildren = 0;
 
-		while (XQueryTree( dpy, window, &root, &parent, &children, &nchildren )
-		       && nchildren > 0)
-		{
-				for (child = 0; child < nchildren; child++) {
-						debug( "XKillClient %p\n", children[child] );
-						XKillClient( dpy, children[child] );
-				}
-				XFree( (char *)children );
+	while (XQueryTree( dpy, window, &root, &parent, &children, &nchildren ) &&
+	       nchildren > 0)
+	{
+		for (child = 0; child < nchildren; child++) {
+			debug( "XKillClient %p\n", children[child] );
+			XKillClient( dpy, children[child] );
 		}
+		XFree( (char *)children );
+	}
 }
 
 static Jmp_buf resetJmp;
@@ -79,7 +79,7 @@ static Jmp_buf resetJmp;
 static void
 abortReset( int n ATTR_UNUSED )
 {
-		Longjmp( resetJmp, 1 );
+	Longjmp( resetJmp, 1 );
 }
 
 /*
@@ -89,23 +89,23 @@ abortReset( int n ATTR_UNUSED )
 void
 pseudoReset()
 {
-		int screen;
+	int screen;
 
-		if (Setjmp( resetJmp )) {
-				logError( "pseudoReset timeout\n" );
-		} else {
-				(void)Signal( SIGALRM, abortReset );
-				(void)alarm( 30 );
-				XSetErrorHandler( ignoreErrors );
-				for (screen = 0; screen < ScreenCount (dpy); screen++) {
-						debug( "pseudoReset screen %d\n", screen );
-						killWindows( RootWindow( dpy, screen ) );
-				}
-				debug( "before XSync\n" );
-				XSync( dpy, False );
-				(void)alarm( 0 );
+	if (Setjmp( resetJmp )) {
+		logError( "pseudoReset timeout\n" );
+	} else {
+		(void)Signal( SIGALRM, abortReset );
+		(void)alarm( 30 );
+		XSetErrorHandler( ignoreErrors );
+		for (screen = 0; screen < ScreenCount (dpy); screen++) {
+			debug( "pseudoReset screen %d\n", screen );
+			killWindows( RootWindow( dpy, screen ) );
 		}
-		Signal( SIGALRM, SIG_DFL );
-		XSetErrorHandler( (XErrorHandler)0 );
-		debug( "pseudoReset done\n" );
+		debug( "before XSync\n" );
+		XSync( dpy, False );
+		(void)alarm( 0 );
+	}
+	Signal( SIGALRM, SIG_DFL );
+	XSetErrorHandler( (XErrorHandler)0 );
+	debug( "pseudoReset done\n" );
 }
