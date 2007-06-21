@@ -6,10 +6,11 @@ Type=Service
 ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/keys/index.html
 
-
 X-KDE-Library=keys
 X-KDE-Init-Symbol=keys
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 
 Name=Keyboard Shortcuts
 Name[af]=Sleutelbord Kortpaaie

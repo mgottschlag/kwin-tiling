@@ -10,6 +10,8 @@ X-KDE-Library=kcm_style
 X-KDE-Init-Symbol=kcminit_style
 X-KDE-ParentApp=kcontrol
 
+X-KDE-System-Settings-Parent-Category=appearance
+
 Name=Style
 Name[af]=Styl
 Name[ar]=المظهر العام

@@ -6,10 +6,11 @@ Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/colors/index.html
 
-
 X-KDE-Library=colors
 X-KDE-FactoryName=colors
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Colors
 Name[af]=Kleure

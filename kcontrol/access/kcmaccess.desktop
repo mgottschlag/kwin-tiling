@@ -10,6 +10,8 @@ X-KDE-Library=kcm_access
 X-KDE-Init-Symbol=kcminit_access
 X-KDE-ParentApp=kcontrol
 
+X-KDE-System-Settings-Parent-Category=accessibility
+
 Name=Accessibility
 Name[af]=Toeganklikheid
 Name[ar]=تسهيل الوصول

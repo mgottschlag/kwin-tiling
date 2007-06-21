@@ -10,8 +10,9 @@ X-KDE-SubstituteUID=true
 
 X-KDE-Library=kdm
 X-KDE-RootOnly=true
-
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=system
 
 Name=Login Manager
 Name[af]=Aanteken Bestuurder

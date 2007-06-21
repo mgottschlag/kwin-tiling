@@ -6,10 +6,11 @@ ServiceTypes=KCModule
 DocPath=kcontrol/kcmsmserver/index.html
 Exec=kcmshell kcmsmserver
 
-
 X-KDE-Library=smserver
 X-KDE-FactoryName=smserver
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Session Manager
 Name[af]=Sessie Bestuurder

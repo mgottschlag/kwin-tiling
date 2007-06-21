@@ -8,6 +8,9 @@ Hidden[$e]=$(if test_kcm_xinerama; then echo "false"; else echo "true"; fi)
 
 X-KDE-ParentApp=kcontrol
 X-KDE-Library=xinerama
+
+X-KDE-System-Settings-Parent-Category=computer-administration
+
 Name=Multiple Monitors
 Name[af]=Veelvuldige Skerms
 Name[ar]=شاشات متعددة

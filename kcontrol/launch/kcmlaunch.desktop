@@ -6,10 +6,11 @@ ServiceTypes=KCModule
 DocPath=kcontrol/kcmlaunch/index.html
 Exec=kcmshell kcmlaunch
 
-
 X-KDE-Library=launch
 X-KDE-FactoryName=launch
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=desktop
 
 Name=Launch Feedback
 Name[af]=Lanseer Terugvoer

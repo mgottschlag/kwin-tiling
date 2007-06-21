@@ -6,10 +6,11 @@ Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/background/index.html
 
-
 X-KDE-Library=background
 X-KDE-FactoryName=background
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=background
 
 Name=Background
 Name[af]=Agtergrond

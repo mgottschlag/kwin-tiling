@@ -6,10 +6,11 @@ Type=Service
 ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/arts/index.html
 
-
 X-KDE-Library=arts
 X-KDE-Init-Symbol=arts
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Sound System
 Name[af]=Klank Stelsel

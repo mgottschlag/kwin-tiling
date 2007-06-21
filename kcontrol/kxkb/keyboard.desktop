@@ -11,6 +11,8 @@ X-KDE-FactoryName=keyboard
 X-KDE-Init-Symbol=keyboard
 X-KDE-ParentApp=kcontrol
 
+X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+
 Name=Keyboard
 Name[af]=Sleutelbord
 Name[ar]=لوحة المفاتيح

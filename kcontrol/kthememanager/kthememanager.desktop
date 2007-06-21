@@ -8,6 +8,8 @@ ServiceTypes=KCModule
 X-KDE-Library=kcm_kthememanager
 X-KDE-ParentApp=kcontrol
 
+X-KDE-System-Settings-Parent-Category=appearance
+
 Name=Theme Manager
 Name[af]=Tema Bestuurder
 Name[ar]=مسيير السمات

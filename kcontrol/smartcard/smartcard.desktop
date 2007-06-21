@@ -9,6 +9,9 @@ DocPath=kcontrol/smartcard.html
 X-KDE-Library=smartcard
 X-KDE-Init-Symbol=smartcard
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+
 Name=Smartcards
 Name[af]=Smartkaarte
 Name[ar]=البطاقات الذكية

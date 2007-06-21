@@ -6,10 +6,11 @@ Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/screensaver/index.html
 
-
 X-KDE-Library=screensaver
 X-KDE-FactoryName=screensaver
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=desktop
 
 Name=Screen Saver
 Name[af]=Skerm Bewaarder

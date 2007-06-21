@@ -7,10 +7,11 @@ ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/bell/index.html
 Categories=Qt;KDE;X-KDE-settings-sound;
 
-
 X-KDE-Library=bell
 X-KDE-Init-Symbol=bell
 X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=notifications
 
 Name=System Bell
 Name[af]=Stelsel Klok
