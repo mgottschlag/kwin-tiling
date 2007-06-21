@@ -235,7 +235,7 @@ void KRunnerApp::showTaskManager()
         //                 wait shouldn't be too long =)
 
         m_tasks = new KDialog(0);
-        m_tasks->setWindowTitle(i18n("Show System Activity"));
+        m_tasks->setWindowTitle(i18n("System Activity"));
         connect(m_tasks, SIGNAL(finished()),
                 this, SLOT(taskDialogFinished()));
         m_tasks->setButtons(KDialog::Close);
