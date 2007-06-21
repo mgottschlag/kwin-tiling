@@ -68,38 +68,39 @@ void DefaultAnimator::appearCompleted(QGraphicsItem* item)
 
 QPixmap DefaultAnimator::elementAppear(qreal progress, const QPixmap& pixmap)
 {
-    QPixmap alpha(pixmap.size());
-    {
-        QPainter painter(&alpha);
-        painter.fillRect(alpha.rect(), Qt::black);
+    //kDebug() << "DefaultAnimator::elementAppear(" << progress <<  ")" << endl;
+    QPixmap pix = pixmap;
+
+    if (progress < 1) {
+        QColor alpha;
+        alpha.setAlphaF(progress);
+
+        QPainter painter;
+        painter.begin(&pix);
+        painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        painter.fillRect(pix.rect(), alpha);
+        painter.end();
     }
 
-    //kDebug() << "DefaultAnimator::elementAppear(" << progress <<  ")" << endl;
-    QPixmap pix(pixmap.size());
-    pix.setAlphaChannel(alpha);
-    QPainter painter(&pix);
-    painter.setOpacity(progress);
-    painter.drawPixmap(0, 0, pixmap);
     return pix;
 }
 
 QPixmap DefaultAnimator::elementDisappear(qreal progress, const QPixmap& pixmap)
 {
-    QPixmap alpha(pixmap.size());
-    {
-        QPainter painter(&alpha);
-        painter.fillRect(alpha.rect(), Qt::black);
-    }
-
     //kDebug() << "DefaultAnimator::elementDisappear(" << progress <<  ")" << endl;
-    QPixmap pix(pixmap.size());
-    pix.setAlphaChannel(alpha);
-    QPainter painter(&pix);
+    QPixmap pix = pixmap;
 
-    if (progress < 1) {
-        painter.setOpacity(1 - progress);
-        painter.drawPixmap(0, 0, pixmap);
+    if (progress > 0) {
+        QColor alpha;
+        alpha.setAlphaF(1 - progress);
+
+        QPainter painter;
+        painter.begin(&pix);
+        painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        painter.fillRect(pix.rect(), alpha);
+        painter.end();
     }
+
     return pix;
 }
 
