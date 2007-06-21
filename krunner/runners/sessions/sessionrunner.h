@@ -19,7 +19,7 @@
 #ifndef SESSIONRUNNER_H
 #define SESSIONRUNNER_H
 
-#include "abstractrunner.h"
+#include <plasma/abstractrunner.h>
 
 class QAction;
 

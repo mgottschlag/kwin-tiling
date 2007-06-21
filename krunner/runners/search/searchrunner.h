@@ -21,7 +21,7 @@
 
 #include <KGenericFactory>
 
-#include "abstractrunner.h"
+#include <plasma/abstractrunner.h>
 
 /**
  * This class runs the entered text through a search engine and returns the set

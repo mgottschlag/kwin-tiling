@@ -19,7 +19,7 @@
 #ifndef SHELLRUNNER_H
 #define SHELLRUNNER_H
 
-#include "abstractrunner.h"
+#include <plasma/abstractrunner.h>
 
 class QWidget;
 class QAction;

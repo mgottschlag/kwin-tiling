@@ -21,7 +21,7 @@
 
 #include <KService>
 
-#include "abstractrunner.h"
+#include <plasma/abstractrunner.h>
 
 class QWidget;
 class QAction;

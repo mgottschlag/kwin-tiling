@@ -25,7 +25,7 @@
 #include <KSelectionWatcher>
 
 // libplasma includes
-#include "abstractrunner.h"
+#include <plasma/abstractrunner.h>
 
 // local includes
 #include "krunnerdialog.h"

@@ -37,7 +37,7 @@
 #include <KTitleWidget>
 #include <KWindowSystem>
 
-#include "abstractrunner.h"
+#include <plasma/abstractrunner.h>
 
 #include "runners/services/servicerunner.h"
 #include "runners/sessions/sessionrunner.h"
