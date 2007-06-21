@@ -23,6 +23,7 @@ Comment[el]=Ρυθμίσεις ενσωμάτωσης υλικού
 Comment[fa]=پیکربندی مجتمع‌سازی سخت‌افزار
 Comment[nds]=Instellen för't Inbinnen vun Hardware
 Comment[nl]=Hardware-integratie instellen
+Comment[sv]=Inställning av hårdvaruintegrering
 Comment[zh_TW]=系統整合設定
 
 Keywords=Solid,Hardware,Power,Network,Discovery,Management
@@ -30,4 +31,5 @@ Keywords[de]=Solid,Hardware,Energie,Netzwerk,Discovery,Management,Verwaltung,Erk
 Keywords[el]=Solid,Υλικό,Hardware,Ενέργεια,Power,Δίκτυο,Network,Εντοπισμός,Discovery,Διαχείριση,Management
 Keywords[nds]=Solid,Hardware,Stroom,Nettwark,Opdecken,Pleeg,Pleger
 Keywords[nl]=Solid,Hardware,Energie,Netwerk,Discovery,Management,Beheer
+Keywords[sv]=Solid,hårdvara,ström,nätverk,upptäcka,hantering
 
