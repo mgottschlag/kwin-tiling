@@ -25,6 +25,7 @@
 #include "saverengine.h"
 
 class KActionCollection;
+class KDialog;
 class Interface;
 
 class KRunnerApp : public RestartingApplication
@@ -48,7 +49,7 @@ public:
     static bool s_haveCompositeManager;
 
 public slots:
-    /** Show taskmanager (calls KSysGuard with --showprocesses option) */
+    /** Show taskmanager */
     void showTaskManager();
     //void showWindowList();
 
@@ -57,12 +58,19 @@ public slots:
     void haltWithoutConfirmation();
     void rebootWithoutConfirmation();
 
+private slots:
+    /**
+     * Called when the task dialog emits its finished() signal
+     */
+    void taskDialogFinished();
+
 private:
     void initialize();
 
     KActionCollection *m_actionCollection;
     SaverEngine m_saver;
     Interface* m_interface;
+    KDialog* m_tasks;
 };
 
 #endif /* KRUNNERAPP_H */

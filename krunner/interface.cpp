@@ -45,7 +45,6 @@
 #include "collapsiblewidget.h"
 #include "interface.h"
 #include "interfaceadaptor.h"
-#include "krunnerapp.h"
 
 //#define FLASH_DIALOG 0
 
@@ -156,6 +155,14 @@ Interface::Interface(QWidget* parent)
     m_optionsButton->setCheckable( true );
     connect( m_optionsButton, SIGNAL(toggled(bool)), SLOT(showOptions(bool)) );
     bottomLayout->addWidget( m_optionsButton );
+
+    KPushButton *activityButton = new KPushButton(this);
+    activityButton->setText(i18n("Show System Activity"));
+    activityButton->setIcon(KIcon("ksysguard"));
+    activityButton->setFlat(true);
+    connect(activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
+    connect(activityButton, SIGNAL(clicked()), this, SLOT(hide()));
+    bottomLayout->addWidget(activityButton);
 
     bottomLayout->addStretch();
 

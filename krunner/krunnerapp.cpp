@@ -22,19 +22,22 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <QTimer>
-
-#include <kaction.h>
-#include <kglobalaccel.h>
-#include <kauthorized.h>
-#include <kglobalsettings.h>
-#include <kapplication.h>
-#include <klocale.h>
-#include <KActionCollection>
-#include <KMessageBox>
 #include <QProcess>
 #include <QObject>
+#include <QTimer>
 #include <QtDBus/QtDBus>
+
+#include <KAction>
+#include <KActionCollection>
+#include <KDialog>
+#include <KAuthorized>
+#include <KGlobalAccel>
+#include <KGlobalSettings>
+#include <KLocale>
+#include <KMessageBox>
+#include <KWindowSystem>
+
+#include "processui/ksysguardprocesslist.h"
 
 #include "kworkspace.h"
 #include "interfaceadaptor.h"
@@ -113,7 +116,8 @@ KRunnerApp::KRunnerApp(Display *display,
 
 KRunnerApp::KRunnerApp()
     : RestartingApplication(checkComposite() ? dpy : dpy, dpy ? Qt::HANDLE(visual) : 0, dpy ? Qt::HANDLE(colormap) : 0),
-      m_interface( 0 )
+      m_interface(0),
+      m_tasks(0)
 {
     kDebug() << "new simple krunner app " << dpy << " " << argbVisual << endl;
     initialize();
@@ -126,6 +130,8 @@ KRunnerApp::~KRunnerApp()
 
 void KRunnerApp::initialize()
 {
+    setQuitOnLastWindowClosed(false);
+
     // Startup notification
     KLaunchSettings::self()->readConfig();
     StartupId *startup_id( NULL );
@@ -219,9 +225,43 @@ void KRunnerApp::showWindowList()
 void KRunnerApp::showTaskManager()
 {
     //kDebug(1204) << "Launching KSysGuard..." << endl;
-    QStringList lst;
-    lst<<"--showprocesses";
-    QProcess::startDetached("ksysguard",lst);
+    if (!m_tasks) {
+        //TODO: move this dialog into its own KDialog subclass
+        //      add an expander widget (as seen in the main
+        //      krunner window when options get shown)
+        //      and put some basic feedback plasmoids there
+        //      BLOCKEDBY: said plasmoids and the dataengine
+        //                 currently being worked on, so the
+        //                 wait shouldn't be too long =)
+
+        m_tasks = new KDialog(0);
+        m_tasks->setWindowTitle(i18n("Show System Activity"));
+        connect(m_tasks, SIGNAL(finished()),
+                this, SLOT(taskDialogFinished()));
+        m_tasks->setButtons(KDialog::Close);
+        QWidget* w = new KSysGuardProcessList(m_tasks);
+        m_tasks->setMainWidget(w);
+
+        m_tasks->setInitialSize(QSize(650, 420));
+        KConfigGroup cg = KGlobal::config()->group("TaskDialog");
+        m_tasks->restoreDialogSize(cg);
+    }
+
+    m_tasks->show();
+    m_tasks->raise();
+    KWindowSystem::setOnDesktop(m_tasks->winId(), KWindowSystem::currentDesktop());
+    KWindowSystem::forceActiveWindow(m_tasks->winId());
+}
+
+void KRunnerApp::taskDialogFinished()
+{
+    kDebug() << "task dialog finis" << endl;
+    KConfigGroup cg = KGlobal::config()->group("TaskDialog");
+    m_tasks->saveDialogSize(cg);
+    KGlobal::config()->sync();
+    m_tasks->deleteLater();
+    m_tasks = 0;
+    kDebug() << "task dialog finis finis" << endl;
 }
 
 void KRunnerApp::logout()

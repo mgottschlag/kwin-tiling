@@ -2,7 +2,7 @@ project(krunner)
 KDE4_NO_ENABLE_FINAL(krunner)
 macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
 
-include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
+include_directories(${CMAKE_SOURCE_DIR}/workspace/ksysguard/libksysguard)
 
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
@@ -35,7 +35,7 @@ kde4_automoc(${krunner_SRCS})
 kde4_add_ui_files(krunner_SRCS runners/shell/shellOptions.ui)
 kde4_add_executable(krunner ${krunner_SRCS})
 # needs qt3support for Q3ListView in lockdlg
-target_link_libraries(krunner plasma kworkspace ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(krunner plasma kworkspace processui ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 if(X11_Xss_LIB)
   target_link_libraries(krunner ${X11_Xss_LIB})
 endif(X11_Xss_LIB)
