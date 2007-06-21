@@ -22,7 +22,7 @@
 
 #include <KDebug>
 
-#include "svg.h"
+#include <plasma/svg.h>
 
 #include "krunnerdialog.h"
 #include "krunnerapp.h"
