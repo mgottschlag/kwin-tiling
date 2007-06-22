@@ -124,6 +124,8 @@ ControlWidget::ControlWidget(QWidget *parent)
     : QWidget(parent)
 {
     QPushButton* hideBoxButton = new QPushButton(i18n("Hide Config Box"), this);
+    zoomInButton = new QPushButton(i18n("Zoom In"), this);
+    zoomOutButton = new QPushButton(i18n("Zoom Out"), this);
     connect(hideBoxButton, SIGNAL(pressed()), parent, SLOT(hideBox()));
 
     m_formFactorSelector = new KComboBox(this);
@@ -156,6 +158,8 @@ ControlWidget::ControlWidget(QWidget *parent)
     boxLayout->addWidget(hideBoxButton);
     boxLayout->addWidget(m_formFactorSelector);
     boxLayout->addWidget(lockApplets);
+    boxLayout->addWidget(zoomInButton);
+    boxLayout->addWidget(zoomOutButton);
     boxLayout->addWidget(m_label);
     boxLayout->addWidget(m_appletList);
     //setLayout(boxLayout);
@@ -225,6 +229,9 @@ ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
     connect(this, SIGNAL(boxRequested()), this, SLOT(showBox()));
     
     connect(m_box, SIGNAL(lockInterface(bool)), this, SIGNAL(lockInterface(bool)));
+    
+    connect(m_box->zoomInButton, SIGNAL(pressed()), this, SIGNAL(zoomIn()));
+    connect(m_box->zoomOutButton, SIGNAL(pressed()), this, SIGNAL(zoomOut()));
 }
 
 ControlBox::~ControlBox()

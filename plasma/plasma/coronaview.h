@@ -38,10 +38,15 @@ public:
     ~CoronaView();
 
     Plasma::Corona* corona();
+    
+public slots:
+    void zoomIn();
+    void zoomOut();
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &);
     void resizeEvent(QResizeEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
 private:
     Plasma::Svg *m_background;

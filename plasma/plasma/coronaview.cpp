@@ -18,6 +18,7 @@
  */
 
 #include <QFile>
+#include <QWheelEvent>
 
 #include "plasma/svg.h"
 #include "plasma/corona.h"
@@ -34,7 +35,9 @@ CoronaView::CoronaView(QWidget *parent)
 
     setScene(new Plasma::Corona(rect(), this));
     scene()->setItemIndexMethod(QGraphicsScene::NoIndex);
+    //TODO: Figure out a way to use rubberband and ScrollHandDrag
     setDragMode(QGraphicsView::RubberBandDrag);
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse); // Why isn't this working???
     setCacheMode(QGraphicsView::CacheBackground);
     setInteractive(true);
     setAcceptDrops(true);
@@ -54,6 +57,19 @@ CoronaView::CoronaView(QWidget *parent)
 
 CoronaView::~CoronaView()
 {
+}
+
+void CoronaView::zoomIn()
+{
+    //TODO: Change level of detail when zooming
+    // 10/8 == 1.25
+    scale(1.25, 1.25);
+}
+
+void CoronaView::zoomOut()
+{
+    // 8/10 == .8
+    scale(.8, .8);
 }
 
 Plasma::Corona* CoronaView::corona()
@@ -85,6 +101,17 @@ void CoronaView::resizeEvent(QResizeEvent* event)
         delete m_bitmapBackground;
         m_bitmapBackground = new QPixmap(m_wallpaperPath);
         (*m_bitmapBackground) = m_bitmapBackground->scaled(size());
+    }
+}
+
+void CoronaView::wheelEvent(QWheelEvent* event)
+{
+    if (event->modifiers() & Qt::ControlModifier) {
+        if (event->delta() < 0) {
+            zoomOut();
+        } else {
+            zoomIn();
+        }
     }
 }
 

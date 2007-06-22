@@ -25,6 +25,7 @@
 #include <plasma/plasma.h>
 
 class QLabel;
+class QPushButton;
 class QListView;
 class QModelIndex;
 class QStandardItemModel;
@@ -51,6 +52,8 @@ class ControlBox : public QWidget
 
     Q_SIGNALS:
         void boxRequested();
+        void zoomIn();
+        void zoomOut();
         void addPlasmoid(const QString&);
         void setFormFactor(Plasma::FormFactor);
         void lockInterface(bool);
@@ -85,6 +88,8 @@ class ControlWidget : public QWidget
         ControlWidget(QWidget* parent);
         ~ControlWidget();
         KComboBox* m_formFactorSelector;
+        QPushButton* zoomInButton;
+        QPushButton* zoomOutButton;
 
     protected:
         void refreshPlasmoidList();
