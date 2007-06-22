@@ -62,6 +62,7 @@ is also known as the <quote>Login Manager</quote>.</para>
 <keyword>kdm</keyword>
 <keyword>xdm</keyword>
 <keyword>display manager</keyword>
+<keyword>desktop manager</keyword>
 <keyword>login manager</keyword>
 </keywordset>
 </bookinfo>
@@ -86,7 +87,6 @@ Display Manager, in a number of ways.</para>
      * XDMCP by query
      * XDMCP by broadcast
      * Sound transparency (if Ade can tell me how!)
-     * Document all Keys in the Config File
      * Pull in all options from the KControl Module
      * More resources
 -->
@@ -164,10 +164,15 @@ through the rest of this manual to find out how to do these things.</para>
 <chapter id="login"> 
 <title>The Login Window</title> 
 
-<para> The user interface to &kdm; consists of two dialog boxes.  The main
-dialog box has these controls:</para>
+<para> The user interface to &kdm; consists of dialog boxes.  The main
+dialog box contains:</para>
+<itemizedlist>
 
-<itemizedlist> 
+<listitem>
+<para>Widgets allowing you to authenticate. When the "classic" authentication
+method is chosen, these are:</para>
+<itemizedlist>
+
 <listitem>
 <para>A <guilabel>Username:</guilabel> field for you to enter your
 username.</para>
@@ -178,24 +183,20 @@ username.</para>
 password.</para>
 </listitem>
 
-<listitem>
-<para>(Optionally) a graphical image of each user (for example, a digitized
-photograph). Clicking on an image is equivalent to typing the associated
-username into the <guilabel>Username:</guilabel> field. (This feature is an
-imitation of the login box on &IRIX;).</para> 
+</itemizedlist>
 </listitem>
 
 <listitem>
-<para>A <guilabel>Menu</guilabel> drop down box that allows &kdm; to be used
-to start sessions with various different window managers or desktop
-environments installed on the system.</para>
+<para>(Optionally) a list containing entries with the name and graphical
+image of each user (for example, a digitized photograph).
+Clicking a list entry is equivalent to typing the associated username
+into the <guilabel>Username:</guilabel> field.</para>
 </listitem>
 
 <listitem>
-<para>(Optionally) a region to the right of the
-<guilabel>Username:</guilabel>, <guilabel>Password:</guilabel> and
-<guilabel>Session Type:</guilabel> fields which can be used to display
-either a static image or an analog clock.</para>
+<para>(Optionally) a region to the right of or above the
+authentication area which can be used to display either a static image or an
+analog clock.</para>
 </listitem>
 
 <listitem>
@@ -205,25 +206,43 @@ selected type.</para>
 </listitem>
 
 <listitem>
-<para>A <guibutton>Clear</guibutton> button that clears the text from
-the <guilabel>Login</guilabel> and <guilabel>Pass</guilabel>
-fields.</para>
-</listitem> 
-
-<listitem>
 <para>A <guibutton>Menu</guibutton> button that opens an action menu
 with the following items:</para>
- 
 <itemizedlist>
+
 <listitem>
-<para>(On local displays) A <guimenuitem>Restart X Server</guimenuitem> item
+<para>(Optionally) A <guimenuitem>Session Type</guimenuitem> item
+to choose the type of session (desktop environment, window manager) to start.
+See <xref linkend="different-window-managers-with-kdm"/> to find out
+how to configure different session types.</para>
+</listitem>
+
+<listitem>
+<para>(Optionally) A <guimenuitem>Authentication Method</guimenuitem> item
+to switch between different authentication methods like the classical
+username+password, smartcard, biometry, etc.  The actual authenticators
+are combinations of <acronym>PAM</acronym> modules and matching frontend
+modules (<quote>conversation plugins</quote>). See
+<xref linkend="option-pluginslogin"/>.</para>
+</listitem>
+
+<listitem>
+<para>(Optionally on local displays) A
+<guimenuitem>Switch User...</guimenuitem> item to switch between local
+sessions running on different virtual terminals of this computer.</para>
+</listitem>
+
+<listitem>
+<para>(Optionally on local displays) A
+<guimenuitem>Restart X Server</guimenuitem> item
 that terminates the currently running &X-Server;, starts a new one and
 displays the login dialog again. You can use this if the display content
 seems to be broken somehow.</para>
 </listitem>
 
 <listitem>
-<para>(On remote displays) A <guimenuitem>Close Connection</guimenuitem>
+<para>(Optionally on remote displays) A
+<guimenuitem>Close Connection</guimenuitem>
 item that closes the connection to the &XDMCP; server you are currently
 connected to. If you got to this server through a host chooser, this will
 bring you back to the chooser, otherwise it will only reset the &X-Server;
@@ -231,60 +250,58 @@ and bring up the login dialog again.</para>
 </listitem>
 
 <listitem>
-<para>(Optionally on local displays) A <guimenuitem>Console
-Mode</guimenuitem> item that terminates the currently running &X-Server; and
-leaves you alone with a console login. &kdm; will resume the graphical login
-if nobody is logged in at the console for some time.</para>
-</listitem>
-</itemizedlist>
+<para>(Optionally on local displays) A
+<guimenuitem>Remote Login</guimenuitem> item that displays a host chooser
+dialog with &XDMCP; servers one can log into remotely.</para>
 </listitem>
 
 <listitem>
-<para>(Optionally) A <guibutton>Shutdown</guibutton> button that displays
+<para>(Optionally on local displays) A <guimenuitem>Console Mode</guimenuitem>
+item that terminates graphical login and leaves you at the console. See
+<xref linkend="option-consolettys"/> and
+<xref linkend="option-servertty"/>.</para>
+</listitem>
+
+<listitem>
+<para>(Optionally) A <guimenuitem>Shutdown...</guimenuitem> item that displays
 the <guilabel>Shutdown</guilabel> dialog box.</para>
 </listitem>
+
+</itemizedlist>
+</listitem>
+
 </itemizedlist>
 
 <para>The <guilabel>Shutdown</guilabel> dialog box presents a set of
-radio buttons that allow one of these options to be selected:</para>
+buttons that allow one of these actions to be executed:</para>
 
 <variablelist>
 <varlistentry>
-<term>Shutdown</term> 
+<term>Turn Off Computer</term> 
 <listitem>
 <para>Shut the system down in a controlled manner, ready for
 power-down.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term>Restart</term>
+<term>Restart Computer</term>
 <listitem>
 <para>Shut the system down and reboot. For systems that use
-<application>Lilo</application>, an optional drop down box allows you to
-select a particular operating-system kernel to be used for the
-reboot.</para>
+<application>Lilo</application> or <application>Grub</application>,
+an optional drop down box allows you to select a particular operating system
+to be used for the reboot.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
-<term>Restart X Server</term> 
+<term>Schedule...</term> 
 <listitem>
-<para>Stop and then restart the X-server. Typically, you might need to use
-this option if you have changed your X11 configuration in some way.</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term>Console Mode</term>
-<listitem>
-<para>Stop the &X-Server; and return the system to console mode. This is
-achieved by bringing the system down to runlevel 3. Typically, the system
-manager might need to use this option before upgrading or re-configuring X11
-software.</para> 
+<para>If this option is enabled, you may use it to enter a more complex
+shutdown dialog. See <xref linkend="option-scheduledsd"/> for details.</para>
 </listitem>
 </varlistentry>
 </variablelist>
 
-<para>Pressing the <guibutton>OK</guibutton> button initiates the selected
-action; pressing the <guibutton>Cancel</guibutton> button returns to the
+<para>Pressing the <guibutton>Cancel</guibutton> button returns to the
 main &kdm; dialog box. </para>
 
 </chapter>
@@ -297,8 +314,9 @@ main &kdm; dialog box. </para>
 system, and that you simply want to change its behavior in some way.</para>
 
 <para>When &kdm; starts up, it reads its configuration from the folder
-<filename class="directory">$KDEDIR/share/config/kdm/</filename> (this may
-be <filename class="directory">/etc/kde3/kdm/</filename> or something else
+<filename class="directory">$<envar>KDEDIR</envar>/share/config/kdm/</filename>
+(this may
+be <filename class="directory">/etc/kde4/kdm/</filename> or something else
 on your system).</para>
 
 <para>The main configuration file is &kdmrc;; all other files are
@@ -322,8 +340,7 @@ class="username">root</systemitem>).</para>
 can configure &kdm; by editing this file. Alternatively, you can use the
 graphical configuration tool provided by the &kcontrolcenter; (under
 <menuchoice><guisubmenu>System Administration</guisubmenu><guimenuitem>Login
-Manager</guimenuitem></menuchoice>), which is described in <ulink
-url="help:/kcontrol/login-manager.html">the &kcontrolcenter; help files</ulink>.
+Manager</guimenuitem></menuchoice>).
 </para>
 
 <para>The remainder of this chapter describes configuration of &kdm;
@@ -360,6 +377,8 @@ in <xref linkend="kdm-files"/>.</para>
 their equivalents in &kdmrc;. All options available in the &kcontrol;
 module are also available directly in &kdmrc; but the reverse is not
 true.</para></note>
+
+<!-- XXX Totally outdated stuff starts here. XXX -->
 
 <para>In order to organize all of these options, this module is
 divided into several sections: <link
@@ -478,144 +497,14 @@ fonts</guilabel> if you want smoothed fonts in the login dialog.</para>
 <title>Background</title>
 
 <para>Here you can change the desktop background which will be displayed
-before a user logs in. You can have a single color or an image as a
-background. If you have an image as the background and select center, the
-selected background color will be used around the image if it is not
-large enough to cover the entire desktop.</para>
-
-<para>The background colors and effects are controlled by the options on
-the tab labeled <guilabel>Background</guilabel> and you select a
-background image and its placement from the options on the tab labeled
-<guilabel>Wallpaper</guilabel>.</para>
-
-<para>To change the default background color(s) simply click either of
-the color buttons and select a new color.</para>
-
-<para>The drop down box above the color buttons provides you with several
-different blend effects.  Choose one from the list, and it will be
-previewed on the small monitor at the top of the window.  Your choices
-are:</para>
-
-<variablelist>
-<varlistentry>
-<term>Flat</term>
-<listitem><para>By choosing this mode, you select one color (using the color
-button labeled <guibutton>Color 1</guibutton>), and the entire background is
-covered with this one color.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Pattern</term>
-<listitem><para>By choosing this mode, you select two colors (using both color
-buttons). </para> <para>You then select a pattern by clicking
-<guilabel>Setup</guilabel>.  This opens a new dialog window, which gives you
-the opportunity to select a pattern.  Simply click once on the pattern of your
-choice, then click on <guilabel>OK</guilabel>, and &kde; will render the pattern
-you selected using the two colors you selected.  For more on patterns, see the
-section <ulink url="help:/kcontrol/background/index.html#bkgnd-patterns">Background: Adding, Removing and Modifying
-Patterns</ulink>.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Background Program</term>
-<listitem><para>By selecting this option, you can have &kde; use an external
-program to determine the background.  This can be any program of your choosing.
-For more information on this option, see the section entitled <ulink
-url="help:/kcontrol/background/index.html#bkgnd-programs">Background: Using an external program</ulink>.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Horizontal Gradient</term>
-<listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by <guilabel>Color
-1</guilabel> on the left edge of the screen, and slowly transform into the
-color selected by <guilabel>Color 2</guilabel> by the time it gets to the
-right edge of the screen.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Vertical Gradient</term>
-<listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by <guilabel>Color
-1</guilabel> on the top edge of the screen, and slowly transform into the color
-selected by <guilabel>Color 2</guilabel> as it moves to the bottom of the
-screen.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Pyramid Gradient</term>
-<listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by <guilabel>Color
-1</guilabel> in each corner of the screen, and slowly transform into the color
-selected by <guilabel>Color 2</guilabel> as it moves to the center of the
-screen.</para></listitem> 
-</varlistentry>
-<varlistentry>
-<term>Pipecross Gradient</term>
-<listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by <guilabel>Color
-1</guilabel> in each corner of the screen, and slowly transform into the color
-selected by <guilabel>Color 2</guilabel> as it moves to the center of the
-screen. The <quote>shape</quote> of this gradient is  different then the pyramid
-gradient.</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>Elliptic Gradient</term>
-<listitem><para>By choosing this mode, you select two colors (using both color
-buttons).  &kde; will then start with the color selected by <guilabel>Color
-2</guilabel> in the center of the screen, and slowly transform into the color
-selected by <guilabel>Color 1</guilabel> as it moves to the edges, in an
-elliptical pattern.</para></listitem> 
-</varlistentry>
-</variablelist>
-
-<para>The setup button is only needed for if you select <guilabel>Background
-program</guilabel> or <guilabel>Patterns</guilabel>.  In these instances,
-another window will appear to configure the specifics.</para>
-<para><emphasis>Wallpaper</emphasis></para>
-<para>To select a new background image first, click on the
-<guilabel>Wallpapers</guilabel> tab, then  you can either select an image from the
-
-drop-down list labeled <guilabel>Wallpaper</guilabel> or select
-<guibutton>Browse...</guibutton> and select an image file from a file
-selector.</para>
-
-<para>The image can be displayed in six different ways:</para>
-<variablelist>
-<varlistentry>
-<term>No wallpaper</term> 
-<listitem><para>No image is displayed.  Just the background colors.</para>
-</listitem></varlistentry>
-<varlistentry>
-<term>Centered</term> 
-<listitem><para>The image will be centered on the screen.  The background colors
-will be present anywhere the image does not cover.</para> </listitem>
-</varlistentry>
-<varlistentry>
-<term>Tiled</term>
-<listitem><para>The image will be duplicated until it fills the entire
-desktop. The first image will be placed in the upper left corner of the screen,
-and duplicated downward and to the right.</para> </listitem>
-</varlistentry>
-<varlistentry>
-<term>Center Tiled</term>
-<listitem><para>The image will be duplicated until it fills the entire
-desktop. The first image will be placed in the center of the screen, and
-duplicated upward, downward to the right, and to the left.</para> </listitem>
-</varlistentry>
-<varlistentry>
-<term>Centered Maxpect</term>
-<listitem><para>The image will be placed in the center of the screen.  It will
-be scaled to fit the desktop, but it will not change the aspect ratio of the
-original image.  This will provide you with an image that is not distorted.
-</para> </listitem>
-</varlistentry>
-<varlistentry>
-<term>Scaled</term>
-<listitem><para>The image will be scaled to fit the desktop.  It will be
-stretched to fit all four corners.</para> </listitem>
-</varlistentry>
-</variablelist>
+before a user logs in. The options are identical to those described in the
+<ulink url="help:/kcontrol/background/index.html">background settings</ulink>,
+save some that are not applicable to the &kdm; context.</para>
 
 </sect2>
 
 <sect2 id="kdmconfig-shutdown">
-<title><guilabel>Shutdown</guilabel></title>
+<title>Shutdown</title>
 
 <para><guilabel>Allow Shutdown</guilabel></para>
 <para>Use this drop down box to choose who is allowed to shut down:</para>
@@ -739,6 +628,10 @@ the option <guilabel>Enable Auto-login</guilabel>.</para>
 <para>You can choose the account to be used for automatic login from
 the list labeled <guilabel>User:</guilabel>.</para>
 
+<para>Automatic login can be suppressed by pressing the Shift key immediately
+after the &X-Server; switches to graphics mode and releasing it when &kdm;'s
+hourglass cursor appears.</para>
+
 </sect3>
 
 <sect3 id="loginmanager-convenience-nopasswd">
@@ -775,6 +668,8 @@ server accidentally crashed.</para>
 </sect3>
 
 </sect2>
+
+<!-- XXX Totally outdated stuff ends here. XXX -->
 
 </sect1>
 
@@ -874,7 +769,7 @@ libraries.</para>
 <screen><command>export 
 <option>KDEDIR=<replaceable>/opt/kde</replaceable></option></command>
 <command>export 
-<option>QTDIR=<replaceable>/usr/lib/qt2</replaceable></option></command>
+<option>QTDIR=<replaceable>/usr/lib/qt4</replaceable></option></command>
 <command>export 
 <option>PATH=<replaceable>$KDEDIR/bin:$QTDIR/bin:$PATH</replaceable></option></command>
 <command>export 
@@ -896,7 +791,7 @@ replace &xdm; by &kdm;. Again, this is distribution-dependent.</para>
 <para>and replace with:</para>
 <screen>x:5:respawn:/opt/kde/bin/kdm</screen>
 <para>This tells <command>init</command>(8) to respawn &kdm; when the
-system is in run level  5. Note that &kdm; does not need the
+system is in run level 5. Note that &kdm; does not need the
  <option>-nodaemon</option> option.</para>
 </listitem>
 <listitem>
@@ -918,7 +813,7 @@ export DISPLAYMANAGER</screen>
 the line like this:</para>
 <screen>ttyv8   "/usr/X11R6/bin/xdm -nodaemon"  xterm   off secure</screen>
 <para>and edit it to this:</para>
-<screen>ttyv8   "/usr/local/bin/kdm"  xterm   on secure</screen>
+<screen>ttyv8   "/opt/kde/bin/kdm"  xterm   on secure</screen>
 </listitem>
 
 <listitem><para>Most other distributions are a variation of one of
@@ -971,7 +866,7 @@ some way.</para>
 
 <para>&kdm; detects most available window manager and desktop environments when
 it is run.  Installing a new one should make it automatically available in
-the &kdm; main dialog <guilabel>Session Type:</guilabel>.</para>
+the &kdm; main dialog's <guimenuitem>Session Type</guimenuitem> submenu.</para>
 
 <para>If you have a very new window manager, or something that &kdm; does
 not support, the first thing you should check is that the application to be
@@ -999,7 +894,7 @@ TryExec=<replaceable>executable name</replaceable> <lineannotation>Supported
 but not required</lineannotation>
 Name=<replaceable>name to show in the &kdm; session list</replaceable></programlisting>
 
-<para>There are also three <quote>magic</quote>:</para>
+<para>There are also three <quote>magic</quote> types:</para>
 
 <variablelist>
 <varlistentry>
@@ -1015,7 +910,7 @@ system administrator.
 <term>custom</term>
 <listitem>
 <para>
-The Custom session will run the users ~/.xsession if it exists.
+The Custom session will run the user's ~/.xsession if it exists.
 </para>
 </listitem>
 </varlistentry>
@@ -1256,9 +1151,20 @@ socket.</para>
 <term><command>listbootoptions</command></term>
 <listitem>
 <para>List available boot options.</para>
-<!--FIXME: "ok" list default current
-    default and current are indices into the list and are -1 if unset or
-    undeterminable. -->
+<para>The return value contains these tokens:</para>
+<itemizedlist>
+<listitem>
+<para>A list of boot options (as shown in &kdm; itself).</para>
+</listitem>
+<listitem>
+<para>The default boot option.</para>
+</listitem>
+<listitem>
+<para>The current boot option.</para>
+</listitem>
+</itemizedlist>
+<para>The default and current option are zero-based indices into the list
+of boot options. If either one is unset or not determinable, it is -1.</para>
 </listitem>
 </varlistentry>
 
@@ -1274,7 +1180,7 @@ socket.</para>
 <para>An OS choice for the next boot may be specified from the list returned
 by <command>listbootoptions</command></para>
 <para>Shutdowns requested from per-display sockets are executed when the
-current sessino on that display exits.  Such a request may pop up a dialog
+current session on that display exits.  Such a request may pop up a dialog
 asking for confirmation and/or authentication</para>
 <para><parameter>start</parameter> is the time for which the shutdown is
 scheduled.  If it starts with a plus-sign, the current time is added.  Zero
@@ -1290,7 +1196,8 @@ shutdown</para></listitem>
 <listitem><para><parameter>force</parameter> - shut down
 nonetheless</para></listitem>
 <listitem><para><parameter>forcemy</parameter> - shut down nonetheless if
-all active sessions belong to the requesting user.  Only for per-display sockets.</para></listitem>
+all active sessions belong to the requesting user.
+Only for per-display sockets.</para></listitem>
 </itemizedlist>
 <para><parameter>start</parameter> and <parameter>end</parameter> are
 specified in seconds since the &UNIX; epoch.</para>
@@ -1360,12 +1267,12 @@ more.</para>
   IFS=$'\t'
   set -- `kdmctl listbootoptions`
   if [ "$1" = ok ]; then
-        fbsd=$(echo "$2" | tr ' ' '\n' | sed -ne 's,\\s, ,g;/freebsd/I{p;q}')
-        if [ -n "$fbsd" ]; then
+    fbsd=$(echo "$2" | tr ' ' '\n' | sed -ne 's,\\s, ,g;/freebsd/I{p;q}')
+    if [ -n "$fbsd" ]; then
       kdmctl shutdown reboot "=$fbsd" ask &gt; /dev/null
-        else
-          echo "FreeBSD boot unavailable."
-        fi
+    else
+      echo "FreeBSD boot unavailable."
+    fi
   else
     echo "Boot options unavailable."
   fi
@@ -1462,8 +1369,8 @@ which the user sees.</para>
 <glossentry>
 <glossterm id="gloss-entropy">entropy</glossterm>
 <glossdef><para>The entropy of a system is the measure of its
-unpredictability.  This is used during the generation of random numbers.
-Truly r</para></glossdef>
+unpredictability.  This is used during the generation of random numbers.</para>
+</glossdef>
 </glossentry>
 
 </glossary>
