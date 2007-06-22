@@ -1072,6 +1072,9 @@ parseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 		if (!((**hostPtr)->entry.displayAddress.hostAddress =
 		      Malloc( addr_len )))
 		{
+#if defined(IPv6) && defined(AF_INET6)
+			freeaddrinfo( ai );
+#endif
 			free( (char *)(**hostPtr) );
 			return 0;
 		}
@@ -1165,7 +1168,7 @@ checkHostlist( HostEntry **hosts, int nh, AliasEntry *aliases, int na,
 					         h->entry.aliasPattern );
 			}
 		} else if (h->type == HOST_PATTERN && (flags & CHECK_NO_PAT))
-			logWarn( "XDMCP ACL: wildcarded pattern %'* in host-only context\n",
+			logWarn( "XDMCP ACL: wildcarded pattern %'s in host-only context\n",
 			         h->entry.hostPattern );
 	return 0;
 }
@@ -1453,7 +1456,7 @@ int main( int argc ATTR_UNUSED, char **argv )
 				break;
 #endif
 			default:
-				debug( "Unsupported config cathegory %#x\n", what );
+				debug( "Unsupported config category %#x\n", what );
 			}
 			free( cfgfile );
 			break;
