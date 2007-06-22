@@ -187,10 +187,6 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	QVBoxLayout *top = new QVBoxLayout( this );
 	tab = new QTabWidget( this );
 
-	// *****
-	// _don't_ add a theme configurator until the theming engine is _really_ done!!
-	// *****
-
 	general = new KDMGeneralWidget( this );
 	tab->addTab( general, i18n("General (&1)") );
 	connect( general, SIGNAL(changed()), SLOT(changed()) );
