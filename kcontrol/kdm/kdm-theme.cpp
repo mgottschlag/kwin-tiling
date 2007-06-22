@@ -158,6 +158,7 @@ void KDMThemeWidget::makeReadOnly()
 	themeWidget->setEnabled( false );
 	bInstallTheme->setEnabled( false );
 	bRemoveTheme->setEnabled( false );
+	bGetNewThemes->setEnabled( false );
 }
 
 void KDMThemeWidget::insertTheme( const QString &_theme )
