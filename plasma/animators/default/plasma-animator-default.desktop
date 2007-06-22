@@ -6,6 +6,7 @@ Name[de]=Plasma Animations-Treiber
 Name[el]=Προκαθορισμένη κίνηση Plasma
 Name[nds]=Standard-Animeerkarn Plasma
 Name[nl]=Standaard Plasma-animator
+Name[sv]=Plasma standardanimering
 Name[zh_TW]=預設 Plasma 動畫
 ServiceTypes=Plasma/Animator
 Type=Service

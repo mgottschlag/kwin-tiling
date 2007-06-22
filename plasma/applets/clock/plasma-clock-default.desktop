@@ -15,6 +15,7 @@ Comment[de]=Eine Uhr mit SVG-fähigem Design
 Comment[el]=Ένα ρολόι με θέματα SVG
 Comment[nds]=En Klock mit SVG-Mustern
 Comment[nl]=Een klok met SVG-themamogelijkheden
+Comment[sv]=En SVG-temabaserad klocka
 Comment[zh_TW]=SVG 可調整外觀時鐘
 Type=Service
 ServiceTypes=Plasma/Applet

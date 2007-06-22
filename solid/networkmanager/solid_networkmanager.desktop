@@ -17,6 +17,7 @@ Comment[be]=Кіраванне сеткай пры дапамозе сервіс
 Comment[csb]=Sprôwianié sécë ùżëwające ùsłëżnotã menadżera sécë
 Comment[de]=Netzwerkverwaltung mit dem Netzwerkverwaltungs-Dienst
 Comment[el]=Διαχείριση δικτύου με χρήση του δαίμονα HAL του freedesktop.org
+Comment[es]=Gestión de red usando el daemon NetworkManager
 Comment[ja]=NetworkManager デーモンを用いたネットワーク管理
 Comment[nds]=Nettwarkpleeg mit den NetworkManager-Dämoon
 Comment[nl]=Netwerkbeheer via de NetworkManager-daemon

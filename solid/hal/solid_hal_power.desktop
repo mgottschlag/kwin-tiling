@@ -15,6 +15,7 @@ Comment=Hardware power management using freedesktop.org HAL daemon
 Comment[be]=Кіраванне сілкаваннем пры дапамозе сервіса freedesktop.org HAL
 Comment[de]=Energieverwaltung mit Hilfe des HAL-Dienstes von freedesktop.org
 Comment[el]=Διαχείριση ενέργειας υλικού με χρήση του δαίμονα HAL του freedesktop.org
+Comment[es]=Gestión de energía del hardware usando el daemon HAL de freedesktop.org
 Comment[ja]=freedesktop.org の HAL デーモンを用いたハードウェア電源管理
 Comment[nds]=Stroompleeg för de Hardware mit den HAL-Dämoon vun freedesktop.org
 Comment[nl]=Hardware-energiebeheer via de HAL-daemon van freedesktop.org
