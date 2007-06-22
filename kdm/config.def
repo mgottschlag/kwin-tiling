@@ -371,18 +371,19 @@ information which &kdm; uses to control access from displays requesting service
 via &XDMCP;.
 The file contains four types of entries: entries which control the response
 to <quote>Direct</quote> and <quote>Broadcast</quote> queries, entries which
-control the response to <quote>Indirect</quote> queries, macro definitions for
-<quote>Indirect</quote> entries, and entries which control on which network
-interfaces &kdm; listens for &XDMCP; queries.
+control the response to <quote>Indirect</quote> queries, macro definitions,
+and entries which control on which network interfaces &kdm; listens for &XDMCP;
+queries.
 Blank lines are ignored, <literal>#</literal> is treated as a comment
 delimiter causing the rest of that line to be ignored, and <literal>\</literal>
-causes an immediately following newline to be ignored, allowing indirect host
-lists to span multiple lines.
+causes an immediately following newline to be ignored, allowing host lists
+to span multiple lines.
 </para>
 
 <para>The format of the <quote>Direct</quote> entries is simple, either a
 host name or a pattern, which is compared against the host name of the display
-device.
+device. Alternatively, a macro may be used to make the entry match everything
+the macro expands to.
 Patterns are distinguished from host names by the inclusion of one or more
 meta characters; <literal>*</literal> matches any sequence of 0 or more
 characters, and <literal>?</literal> matches any single character.
@@ -395,14 +396,16 @@ Host names from &XDMCP; queries always contain the local domain name
 even if the reverse lookup returns a short name, so you can use
 patterns for the local domain.
 Preceding the entry with a <literal>!</literal> character causes hosts which
-match that entry to be excluded.
+match that entry to be excluded. Preceding it with an <literal>=</literal> has
+no effect but is required when specifying a macro to distinguish the entry
+from a macro definition.
 To only respond to <quote>Direct</quote> queries for a host or pattern,
 it can be followed by the optional <literal>NOBROADCAST</literal> keyword.
 This can be used to prevent a &kdm; server from appearing on menus based on
 <quote>Broadcast</quote> queries.</para>
 
-<para>An <quote>Indirect</quote> entry also contains a host name or pattern,
-but follows it with a list of host names or macros to which the queries
+<para>An <quote>Indirect</quote> entry also contains a host name, pattern or
+macro, but follows it with a list of host names or macros to which the queries
 should be forwarded. <quote>Indirect</quote> entries can be excluding as well,
 in which case a (valid) dummy host name must be supplied to make the entry
 distinguishable from a <quote>Direct</quote> entry.
