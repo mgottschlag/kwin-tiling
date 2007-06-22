@@ -28,13 +28,12 @@ set( kcmbackgroundlib_SRCS
 
 include_directories(
     ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker
-    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/workspace
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/plasma
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/kdm
-    ${CMAKE_CURRENT_BINARY_DIR} )
-
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/workspace
+)
 # libs
 add_subdirectory(cmake)
 add_subdirectory(libs)
