@@ -1,4 +1,4 @@
-<!-- generated from ../../kdm/config.def - DO NOT EDIT! -->
+<!-- generated from ../../workspace/kdm/config.def - DO NOT EDIT! -->
 
 <chapter id="kdm-files">
 <title>The Files &kdm; Uses for Configuration</title>
@@ -327,7 +327,7 @@ function instead.
 <term id="option-fifodir"><option>FifoDir</option></term>
 <listitem>
 <para>
-The directory in which the command <acronym>FiFo</acronym>s should
+The directory in which the command sockets should
 be created; make it empty to disable them.
 </para>
 <para>The default is <quote>/var/run/xdmctl</quote>.</para>
@@ -338,7 +338,7 @@ be created; make it empty to disable them.
 <term id="option-fifogroup"><option>FifoGroup</option></term>
 <listitem>
 <para>
-The group to which the global command <acronym>FiFo</acronym> should belong;
+The group to which the global command socket should belong;
 can be either a name or a numerical ID.
 </para>
 </listitem>
@@ -526,7 +526,7 @@ The default is something reasonable for the system &kdm; on which was built, lik
 <term id="option-allowfifo"><option>AllowFifo</option></term>
 <listitem>
 <para>
-Whether it is allowed to shut down the system via the global command <acronym>FiFo</acronym>.
+Whether it is allowed to shut down the system via the global command socket.
 </para>
 <para>The default is <quote>false</quote>.</para>
 </listitem>
@@ -537,7 +537,7 @@ Whether it is allowed to shut down the system via the global command <acronym>Fi
 <listitem>
 <para>
 Whether it is allowed to abort active sessions when shutting down the
-system via the global command <acronym>FiFo</acronym>.
+system via the global command socket.
 </para><para>
 This will have no effect unless <option>AllowFifo</option> is enabled.
 </para>
@@ -878,7 +878,7 @@ It specifies a program which is run (as
 greeter window. This may be used to change the appearance of the screen
 around the greeter window or to put up other windows (e.g., you may want
 to run <command>xconsole</command> here).
-The conventional name for a program used here is <command>Xsetup</command>.
+The conventional name for a file used here is <command>Xsetup</command>.
 See <xref linkend="kdmrc-xsetup"/>.
 </para>
 <para>Empty by default.</para>
@@ -893,7 +893,7 @@ This string is subject to word splitting.
 It specifies a program which is run (as
 <systemitem class="username">root</systemitem>) after the user
 authentication process succeeds.
-The conventional name for a program used here is <command>Xstartup</command>.
+The conventional name for a file used here is <command>Xstartup</command>.
 See <xref linkend="kdmrc-xstartup"/>.
 </para>
 <para>Empty by default.</para>
@@ -908,7 +908,7 @@ This string is subject to word splitting.
 It specifies a program which is run (as
 <systemitem class="username">root</systemitem>) after the session
 terminates.
-The conventional name for a program used here is <command>Xreset</command>.
+The conventional name for a file used here is <command>Xreset</command>.
 See <xref linkend="kdmrc-xreset"/>.
 </para>
 <para>Empty by default.</para>
@@ -922,7 +922,7 @@ See <xref linkend="kdmrc-xreset"/>.
 This string is subject to word splitting.
 It specifies the session program to be executed (as the user owning
 the session).
-The conventional name for a program used here is <command>Xsession</command>.
+The conventional name for a file used here is <command>Xsession</command>.
 See <xref linkend="kdmrc-xsession"/>.
 </para>
 <para>The default is <quote>${<envar>x_bindir</envar>}/xterm -ls -T</quote>.</para>
@@ -1031,7 +1031,7 @@ If disabled, only users that have passwords assigned can log in.
 <listitem>
 <para>
 Who is allowed to shut down the system. This applies both to the
-greeter and to the command <acronym>FiFo</acronym>.
+greeter and to the command sockets.
 </para>
 <variablelist>
 <varlistentry>
@@ -1495,7 +1495,7 @@ This option controls which users will be shown in the user view
 (<option>UserCompletion</option>).
 If it is <literal>Selected</literal>, <option>SelectedUsers</option> contains
 the final list of users.
-If it is <literal>NotHidden</literal>, the initial user list contains all users
+If it is <literal>NotHidden</literal>, the initial user list are all users
 found on the system. Users contained in <option>HiddenUsers</option> are
 removed from the list, just like all users with a UID greater than specified
 in <option>MaxShowUID</option> and users with a non-zero UID less than
@@ -1663,28 +1663,13 @@ See <option>PreselectUser</option>.
 </varlistentry>
 
 <varlistentry>
-<term id="option-echomode"><option>EchoMode</option></term>
+<term id="option-echopasswd"><option>EchoPasswd</option></term>
 <listitem>
 <para>
-The password input fields cloak the typed in text. Specify, how to do it:
+If this is true, the entered password is echoed as bullets. Otherwise,
+no feedback is given at all.
 </para>
-<variablelist>
-<varlistentry>
-<term><parameter>OneStar</parameter></term>
-<listitem><para><literal>*</literal> is shown for every typed
-character</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><parameter>ThreeStars</parameter></term>
-<listitem><para><literal>***</literal> is shown for every typed
-character</para></listitem>
-</varlistentry>
-<varlistentry>
-<term><parameter>NoEcho</parameter></term>
-<listitem><para>nothing is shown at all, the cursor does not move</para></listitem>
-</varlistentry>
-</variablelist>
-<para>The default is <quote>OneStar</quote>.</para>
+<para>The default is <quote>true</quote>.</para>
 </listitem>
 </varlistentry>
 
@@ -1988,7 +1973,7 @@ mode and <command>grep</command> the log for <quote>class</quote>.</para>
 
 <para>The displays specified in <option>ReserveServers</option> will not be
 started when &kdm; starts up, but when it is explicitly requested via
-the command socket (or <acronym>FiFo</acronym>).
+the command socket.
 If reserve displays are specified, the &kde; menu will have a
 <guilabel>Start New Session</guilabel> item near the bottom; use that to
 activate a reserve display with a new login session. The monitor will switch
@@ -2012,18 +1997,19 @@ information which &kdm; uses to control access from displays requesting service
 via &XDMCP;.
 The file contains four types of entries: entries which control the response
 to <quote>Direct</quote> and <quote>Broadcast</quote> queries, entries which
-control the response to <quote>Indirect</quote> queries, macro definitions for
-<quote>Indirect</quote> entries, and entries which control on which network
-interfaces &kdm; listens for &XDMCP; queries.
+control the response to <quote>Indirect</quote> queries, macro definitions,
+and entries which control on which network interfaces &kdm; listens for &XDMCP;
+queries.
 Blank lines are ignored, <literal>#</literal> is treated as a comment
 delimiter causing the rest of that line to be ignored, and <literal>\</literal>
-causes an immediately following newline to be ignored, allowing indirect host
-lists to span multiple lines.
+causes an immediately following newline to be ignored, allowing host lists
+to span multiple lines.
 </para>
 
 <para>The format of the <quote>Direct</quote> entries is simple, either a
 host name or a pattern, which is compared against the host name of the display
-device.
+device. Alternatively, a macro may be used to make the entry match everything
+the macro expands to.
 Patterns are distinguished from host names by the inclusion of one or more
 meta characters; <literal>*</literal> matches any sequence of 0 or more
 characters, and <literal>?</literal> matches any single character.
@@ -2036,14 +2022,16 @@ Host names from &XDMCP; queries always contain the local domain name
 even if the reverse lookup returns a short name, so you can use
 patterns for the local domain.
 Preceding the entry with a <literal>!</literal> character causes hosts which
-match that entry to be excluded.
+match that entry to be excluded. Preceding it with an <literal>=</literal> has
+no effect but is required when specifying a macro to distinguish the entry
+from a macro definition.
 To only respond to <quote>Direct</quote> queries for a host or pattern,
 it can be followed by the optional <literal>NOBROADCAST</literal> keyword.
 This can be used to prevent a &kdm; server from appearing on menus based on
 <quote>Broadcast</quote> queries.</para>
 
-<para>An <quote>Indirect</quote> entry also contains a host name or pattern,
-but follows it with a list of host names or macros to which the queries
+<para>An <quote>Indirect</quote> entry also contains a host name, pattern or
+macro, but follows it with a list of host names or macros to which the queries
 should be forwarded. <quote>Indirect</quote> entries can be excluding as well,
 in which case a (valid) dummy host name must be supplied to make the entry
 distinguishable from a <quote>Direct</quote> entry.
@@ -2281,8 +2269,7 @@ the following environment variables are passed:</para>
  <varlistentry>
   <term>XDM_MANAGED</term>
   <listitem><para>will contain a comma-separated list of parameters the
-   session might find interesting, like the location of the command
-   <acronym>FiFo</acronym> and its capabilities, and which conversation
+   session might find interesting, like which conversation
    plugin was used for the login</para>
   </listitem>
  </varlistentry>
