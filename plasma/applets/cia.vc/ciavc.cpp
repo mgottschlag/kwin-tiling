@@ -55,6 +55,8 @@ CiaVc::CiaVc(QObject *parent, const QStringList &args)
     m_layout->setGeometry(QRectF(0, 0, 400, 800));
     m_layout->setMargin(12);
 
+    setDrawStandardBackground(true);
+
     //TODO: make configurable
     sourceAdded("KDE");
     connect(m_engine, SIGNAL(newDataSource(QString)), this, SLOT(sourceAdded(QString)));
@@ -106,11 +108,10 @@ void CiaVc::acceptedConfigDialog()
     //TODO: implement configuration of projects
 }
 
-void CiaVc::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void CiaVc::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
-    Applet::paint(p, option, widget);
 }
 
 #include "ciavc.moc"

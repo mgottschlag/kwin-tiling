@@ -180,11 +180,8 @@ void Clock::drawHand(QPainter *p, int rotation, const QString &handName)
 //     p->restore();
 }
 
-void Clock::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
     QRectF tempRect(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
 

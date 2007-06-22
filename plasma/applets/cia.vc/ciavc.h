@@ -53,7 +53,7 @@ class CiaVc : public Plasma::Applet
         ~CiaVc();
 
         QRectF boundingRect() const;
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
+        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
 
     public slots:
         void configureDialog();

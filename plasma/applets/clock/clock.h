@@ -54,7 +54,7 @@ class Clock : public Plasma::Applet
         Clock(QObject *parent, const QStringList &args);
         ~Clock();
 
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
+        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
         void setPath(const QString&);
         QRectF boundingRect() const;
         void constraintsUpdated();
