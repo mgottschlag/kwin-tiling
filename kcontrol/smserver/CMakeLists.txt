@@ -1,6 +1,4 @@
 add_definitions(-DQT3_SUPPORT)
-include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
-
 ########### next target ###############
 
 set(kcm_smserver_PART_SRCS kcmsmserver.cpp smserverconfigimpl.cpp )

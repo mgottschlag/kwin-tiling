@@ -1,7 +1,4 @@
-include_directories(
-    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/
-    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/
-     )
+include_directories(${KDE_WORKSPACE_DIR}/kcontrol/fonts)
 
 set(kio_fonts_PART_SRCS KioFonts.cpp Server.cpp Socket.cpp SuProc.cpp ${libkxftconfig_SRCS} )
 kde4_automoc(${kio_fonts_PART_SRCS})

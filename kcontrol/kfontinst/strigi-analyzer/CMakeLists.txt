@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ )
+include_directories( ${KDE_WORKSPACE_DIR}/kcontrol/kfontinst/lib/ )
 include_directories(${FREETYPE_INCLUDE_DIR})
 include_directories(${STRIGI_INCLUDE_DIR})
 kde4_add_library(font MODULE FontThroughAnalyzer.cpp FontEngine.cpp )

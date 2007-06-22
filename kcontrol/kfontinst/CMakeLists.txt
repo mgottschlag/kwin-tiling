@@ -1,7 +1,10 @@
 
 if (X11_Xft_FOUND)
 
-  include_directories(${FREETYPE_INCLUDE_DIR})
+  include_directories(
+      ${FREETYPE_INCLUDE_DIR}
+      ${FONTCONFIG_INCLUDE_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
   add_definitions (-DQT3_SUPPORT)
 
@@ -10,8 +13,6 @@ if (X11_Xft_FOUND)
                             ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/CharTip.cpp )
   set(libkfontinstjobrunner_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/JobRunner.cpp
                                  ${CMAKE_CURRENT_SOURCE_DIR}/kcmfontinst/ActionDialog.cpp )
-
-  include_directories(${FONTCONFIG_INCLUDE_DIR})
 
   add_subdirectory( lib ) 
   add_subdirectory( kcmfontinst ) 

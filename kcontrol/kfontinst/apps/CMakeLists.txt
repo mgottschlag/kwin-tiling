@@ -1,6 +1,4 @@
 include_directories(
-	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/
-	${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/kcmfontinst/
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/
 	)
