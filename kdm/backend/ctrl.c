@@ -393,7 +393,7 @@ emitTTYSessC( STRUCTUTMP *ut, struct display *d, void *ctx )
 static void
 processCtrl( const char *string, int len, int fd, struct display *d )
 {
-#define Reply(t) writer (fd, t, strlen (t))
+#define Reply(t) writer( fd, t, strlen( t ) )
 
 	struct display *di;
 	const char *word;
@@ -411,13 +411,12 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				break;
 			word = string + 1;
 		}
-	word = fd >= 0 ? "socket" : "FiFo";
 	if (d)
-		debug( "control %s for %s received %'[s\n", word, d->name, ar );
+		debug( "control socket for %s received %'[s\n", d->name, ar );
 	else
-		debug( "global control %s received %'[s\n", word, ar );
+		debug( "global control socket received %'[s\n", ar );
 	if (ar[0]) {
-		if (fd >= 0 && !strcmp( ar[0], "caps" )) {
+		if (!strcmp( ar[0], "caps" )) {
 			if (ar[1])
 				goto exce;
 			Reply( "ok\tkdm\tlist\t" );
@@ -464,7 +463,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 #endif
 			}
 			goto bust;
-		} else if (fd >= 0 && !strcmp( ar[0], "list" )) {
+		} else if (!strcmp( ar[0], "list" )) {
 			int flags = lstRemote | lstTTY;
 			if (ar[1]) {
 				if (!strcmp( ar[1], "all" ))
@@ -541,8 +540,6 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			sdr.force = SHUT_CANCEL;
 			sdr.osname = 0;
 			if (!strcmp( *ap, "status" )) {
-				if (fd < 0)
-					goto bust;
 				if (*++ap)
 					goto exce;
 				bp = cbuf;
@@ -716,7 +713,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					sdRec = sdr;
 				}
 			}
-		} else if (fd >= 0 && !strcmp( ar[0], "listbootoptions" )) {
+		} else if (!strcmp( ar[0], "listbootoptions" )) {
 			char **opts;
 			int def, cur, i, j;
 
@@ -821,8 +818,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				goto bust;
 			}
 		}
-		if (fd >= 0)
-			Reply( "ok\n" );
+		Reply( "ok\n" );
 	}
   bust:
 	freeStrArr( ar );
