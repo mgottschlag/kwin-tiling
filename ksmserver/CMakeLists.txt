@@ -1,5 +1,8 @@
 
 project(ksmserver)
+
+add_subdirectory( tests )
+
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/workspace/libs ${CMAKE_SOURCE_DIR}/runtime/solid/control )
 
 configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
@@ -45,16 +48,6 @@ install(TARGETS kdeinit_ksmserver  DESTINATION ${LIB_INSTALL_DIR})
 
 target_link_libraries( ksmserver kdeinit_ksmserver )
 install(TARGETS ksmserver DESTINATION ${BIN_INSTALL_DIR})
-
-########### next target ###############
-
-set(testsh_SRCS test.cpp shutdowndlg.cpp )
-
-kde4_automoc(${testsh_SRCS})
-
-kde4_add_test_executable(testsh ${testsh_SRCS})
-
-target_link_libraries(testsh plasma solidcontrol kworkspace ${KDE4_KDEUI_LIBS})
 
 ########### install files ###############
 
