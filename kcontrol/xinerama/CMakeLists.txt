@@ -6,7 +6,7 @@ add_definitions (-DQT3_SUPPORT)
 set(kcm_xinerama_kwin_SRCS)
 
 
-set(kwin_xml  ${CMAKE_SOURCE_DIR}/workspace/kwin/org.kde.KWin.xml)
+set(kwin_xml  ${KDE_WORKSPACE_DIR}/kwin/org.kde.KWin.xml)
 
 QT4_ADD_DBUS_INTERFACE( kcm_xinerama_kwin_SRCS ${kwin_xml} kwin_interface )
 

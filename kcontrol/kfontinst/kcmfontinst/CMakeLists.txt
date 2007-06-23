@@ -1,5 +1,5 @@
 include_directories( 
-	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/ 
+	${KDE_WORKSPACE_DIR}/kcontrol/kfontinst/viewpart/ 
 	 )
 
 set(kcm_fontinst_PART_SRCS ${libkfontinstview_SRCS} ${libkfontinstjobrunner_SRCS}

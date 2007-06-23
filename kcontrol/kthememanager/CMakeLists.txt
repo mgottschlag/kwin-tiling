@@ -6,10 +6,10 @@ add_definitions (-DQT3_SUPPORT)
 
 set(kcm_kthememanager_PART_SRCS knewthemedlg.cpp ktheme.cpp kthememanager.cpp )
 
-set(kwin_xml  ${CMAKE_SOURCE_DIR}/workspace/kwin/org.kde.KWin.xml)
+set(kwin_xml  ${KDE_WORKSPACE_DIR}/kwin/org.kde.KWin.xml)
 QT4_ADD_DBUS_INTERFACE( kcm_kthememanager_PART_SRCS ${kwin_xml} kwin_interface )
 
-set(kdesktop_xml  ${CMAKE_SOURCE_DIR}/workspace/kdesktop/org.kde.kdesktop.Background.xml)
+set(kdesktop_xml  ${KDE_WORKSPACE_DIR}/kdesktop/org.kde.kdesktop.Background.xml)
 QT4_ADD_DBUS_INTERFACE( kcm_kthememanager_PART_SRCS ${kdesktop_xml} kdesktop_background )
 
 

@@ -1,11 +1,10 @@
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kxkb )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../ )
 
 include_directories(
-   ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker/ )
+	#   ${KDE_WORKSPACE_DIR}/kicker/libkicker/ 
+	)
 
 link_directories(lib)
-
-########### next target ###############
 
 #set(kcm_keyboard_test_SRCS kcm_keyboard_test.cpp )
 
