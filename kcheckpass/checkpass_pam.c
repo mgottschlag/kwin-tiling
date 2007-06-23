@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <syslog.h>
 
 #ifdef HAVE_PAM_PAM_APPL_H
 #include <pam/pam_appl.h>
@@ -135,6 +136,8 @@ AuthReturn Authenticate(const char *caller, const char *method,
   const char	*pam_service;
   char		pservb[64];
   int		pam_error;
+
+  openlog("kcheckpass", LOG_PID, LOG_AUTH);
 
   PAM_data.conv = conv;
   if (strcmp(method, "classic")) {
