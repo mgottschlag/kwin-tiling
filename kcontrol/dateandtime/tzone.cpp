@@ -42,7 +42,7 @@
 #include <kmessagebox.h>
 #include <kdialog.h>
 #include <kio/netaccess.h>
-#include <QProcess>
+#include <KProcess>
 #include <kstandarddirs.h>
 #include <ksystemtimezone.h>
 
@@ -177,11 +177,7 @@ void Tzone::save()
 
         if( !KStandardDirs::findExe( "zic" ).isEmpty())
         {
-            QProcess proc;
-	    QStringList arguments;
-	    arguments<<"-l"<<selectedzone;
-	    proc.start("zic",arguments);
-	    proc.waitForStarted();
+            KProcess::execute("zic", QStringList() << "-l" << selectedzone);
         }
         else
         {
