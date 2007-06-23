@@ -1,5 +1,4 @@
 project(plasma-url)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/workspace/libs)
 
 set(url_SRCS
     url.cpp)

@@ -1,5 +1,4 @@
 project(plasma-clock)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/workspace/libs)
 
 set(clock_SRCS
     clock.cpp)

@@ -1,6 +1,3 @@
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/plasma/lib/ )
-
-
 ########### next target ###############
 
 set(sidebar_panelextension_PART_SRCS sidebarextension.cpp )

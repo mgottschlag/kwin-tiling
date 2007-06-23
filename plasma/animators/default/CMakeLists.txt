@@ -1,5 +1,3 @@
-include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
-
 set(default_animator_SRCS
     defaultAnimator.cpp
 )

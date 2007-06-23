@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskbar ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager/   )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../taskbar ${CMAKE_CURRENT_SOURCE_DIR}/../taskmanager/   )
 
 
 ########### next target ###############
