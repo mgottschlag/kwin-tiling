@@ -5,7 +5,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/libkonq )
 
 add_definitions (-DQT3_SUPPORT)
 
-kde4_add_ui3_files(kcmbackgroundlib_SRCS ${KDE_WORKSPACE_DIR}/kcontrol/background/bgdialog_ui.ui ${KDE_WORKSPACE_DIR}/kcontrol/background/bgwallpaper_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgadvanced_ui.ui)
+kde4_add_ui3_files(kcmbackgroundlib_SRCS ${KDE_WORKSPACE_DIR}/kcontrol/background/bgdialog_ui.ui ${KDE_WORKSPACE_DIR}/kcontrol/background/bgwallpaper_ui.ui ${KDE_WORKSPACE_DIR}/kcontrol/background/bgadvanced_ui.ui)
 
 
 set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
