@@ -133,6 +133,7 @@ Comment[zh_TW]=安裝並預覽字型
 
 Keywords=font,fonts,installer,truetype,type1,bitmap
 Keywords[el]=γραμματοσειρά,γραμματοσειρές,εγκαταστάτης,εγκατάσταση,truetype,type1,bitmap
+Keywords[ja]=フォント,インストーラ,truetype,type1,bitmap,ビットマップ
 Keywords[sv]=teckensnitt,installation,truetype,type1,bitmap
 Keywords[zh_TW]=font,fonts,installer,truetype,type1,bitmap,字型,安裝程式,點陣
 
