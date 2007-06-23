@@ -34,6 +34,8 @@ int DefaultAnimator::frameCount(Plasma::Phase::Animation animation)
     switch (animation) {
         case Plasma::Phase::Appear:
             return 12;
+        case Plasma::Phase::Disappear:
+	    return 12;
 
         default:
             return 0;
@@ -63,6 +65,17 @@ void DefaultAnimator::appear(qreal progress, QGraphicsItem* item)
 void DefaultAnimator::appearCompleted(QGraphicsItem* item)
 {
     //kDebug() << "DefaultAnimator::appearCompleted(" << item << ")" << endl;
+    item->resetTransform();
+}
+
+void DefaultAnimator::disappear(qreal progress, QGraphicsItem* item)
+{
+    item->resetTransform();
+    item->scale(1-progress,1-progress);
+}
+
+void DefaultAnimator::disappearCompleted(QGraphicsItem* item)
+{
     item->resetTransform();
 }
 
