@@ -58,25 +58,22 @@ int DefaultAnimator::elementFrameCount(Plasma::Phase::ElementAnimation animation
 void DefaultAnimator::appear(qreal progress, QGraphicsItem* item)
 {
     //kDebug() << "DefaultAnimator::appear(" << progress << ", " << item << ")" << endl;
+    if (progress >= 1) {
+        item->resetTransform();
+        return;
+    }
     item->resetTransform();
     item->scale(progress, progress);
 }
 
-void DefaultAnimator::appearCompleted(QGraphicsItem* item)
-{
-    //kDebug() << "DefaultAnimator::appearCompleted(" << item << ")" << endl;
-    item->resetTransform();
-}
-
 void DefaultAnimator::disappear(qreal progress, QGraphicsItem* item)
 {
+    if (progress >= 1) {
+        item->resetTransform();
+        return;
+    }
     item->resetTransform();
     item->scale(1-progress,1-progress);
-}
-
-void DefaultAnimator::disappearCompleted(QGraphicsItem* item)
-{
-    item->resetTransform();
 }
 
 QPixmap DefaultAnimator::elementAppear(qreal progress, const QPixmap& pixmap)

@@ -32,9 +32,7 @@ public:
     int elementFrameCount(Plasma::Phase::ElementAnimation animation);
 
     void appear(qreal progress, QGraphicsItem* item);
-    void appearCompleted(QGraphicsItem* item);
     void disappear(qreal progress, QGraphicsItem* item);
-    void disappearCompleted(QGraphicsItem* item);
 
 
     QPixmap elementAppear(qreal progress, const QPixmap& pixmap);
