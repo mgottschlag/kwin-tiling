@@ -27,6 +27,7 @@
 
 #include <solid/devicenotifier.h>
 #include <solid/device.h>
+#include <solid/button.h>
 
 #include <solid/control/ifaces/powermanager.h>
 
@@ -64,7 +65,7 @@ private:
 private slots:
     void updateBatteryStats();
     void slotPlugStateChanged(bool newState);
-    void slotButtonPressed(int type);
+    void slotButtonPressed(Solid::Button::ButtonType type);
     void slotNewDeviceInterface(const QString &udi, int type);
     void slotDeviceRemoved(const QString &udi);
 

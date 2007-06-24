@@ -387,8 +387,8 @@ void HalPower::computeButtons()
     foreach (Solid::Device button, buttons)
     {
         m_buttons[button.udi()] = new Solid::Device(button);
-        connect(m_buttons[button.udi()]->as<Solid::Button>(), SIGNAL(pressed(int)),
-                 this, SLOT(slotButtonPressed(int)));
+        connect(m_buttons[button.udi()]->as<Solid::Button>(), SIGNAL(pressed(Solid::Button::ButtonType)),
+                 this, SLOT(slotButtonPressed(Solid::Button::ButtonType)));
     }
 }
 
@@ -427,7 +427,7 @@ void HalPower::slotPlugStateChanged(bool newState)
     }
 }
 
-void HalPower::slotButtonPressed(int type)
+void HalPower::slotButtonPressed(Solid::Button::ButtonType type)
 {
     Solid::Button *button = qobject_cast<Solid::Button *>(sender());
 
