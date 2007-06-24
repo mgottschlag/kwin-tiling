@@ -29,7 +29,7 @@ DefaultAnimator::DefaultAnimator(QObject *parent, const QStringList& list)
     Q_UNUSED(list)
 }
 
-int DefaultAnimator::frameCount(Plasma::Phase::Animation animation)
+int DefaultAnimator::framesPerSecond(Plasma::Phase::Animation animation)
 {
     switch (animation) {
         case Plasma::Phase::Appear:
@@ -42,7 +42,7 @@ int DefaultAnimator::frameCount(Plasma::Phase::Animation animation)
     }
 }
 
-int DefaultAnimator::elementFrameCount(Plasma::Phase::ElementAnimation animation)
+int DefaultAnimator::framesPerSecond(Plasma::Phase::ElementAnimation animation)
 {
     switch (animation) {
         case Plasma::Phase::ElementAppear:
