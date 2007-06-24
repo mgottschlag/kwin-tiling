@@ -186,8 +186,16 @@ void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data da
     while (it.hasNext()) {
         it.next();
         parent->setChild(rowCount, 1, new QStandardItem(it.key()));
-        parent->setChild(rowCount, 2, new QStandardItem(it.value().toString()));
-        ++rowCount;
+        if(it.value().canConvert(QVariant::List)) {
+            foreach(QVariant var, it.value().toList()) {
+                parent->setChild(rowCount, 2, new QStandardItem(var.toString()));
+                ++rowCount;
+            }
+        }
+        else {
+            parent->setChild(rowCount, 2, new QStandardItem(it.value().toString()));
+            ++rowCount;
+        }
     }
 }
 
