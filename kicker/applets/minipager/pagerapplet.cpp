@@ -81,13 +81,13 @@ extern "C"
     KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
     {
       KGlobal::locale()->insertCatalog("kminipagerapplet");
-      return new KMiniPager(configFile, Plasma::Normal, 0, parent, "kminipagerapplet");
+      return new KMiniPager(configFile, Plasma::Normal, 0, parent);
     }
 }
 
 KMiniPager::KMiniPager(const QString& configFile, Plasma::Type type, int actions,
-                       QWidget *parent, const char *name)
-    : KPanelApplet( configFile, type, actions, parent, name ),
+                       QWidget *parent)
+    : KPanelApplet( configFile, type, actions, parent),
       m_layout(0),
       m_desktopLayoutOwner( NULL ),
       m_shadowEngine(0),
@@ -98,7 +98,7 @@ KMiniPager::KMiniPager(const QString& configFile, Plasma::Type type, int actions
     QRect desk = QApplication::desktop()->screenGeometry(scnum);
     if (desk.width() <= 800)
     {
-        KConfigSkeleton::ItemInt* item = dynamic_cast<KConfigSkeleton::ItemBool*>(m_settings->findItem("Preview"));
+        KConfigSkeleton::ItemBool* item = dynamic_cast<KConfigSkeleton::ItemBool*>(m_settings->findItem("Preview"));
         if (item)
         {
             item->setDefaultValue(false);
@@ -475,8 +475,8 @@ void KMiniPager::slotActiveWindowChanged( WId win )
 {
     if (desktopPreview())
     {
-        KWindowSystem::WindowInfo* inf1 = m_activeWindow ? info( m_activeWindow ) : NULL;
-        KWindowSystem::WindowInfo* inf2 = win ? info( win ) : NULL;
+        KWindowInfo* inf1 = m_activeWindow ? info( m_activeWindow ) : NULL;
+        KWindowInfo* inf2 = win ? info( win ) : NULL;
         m_activeWindow = win;
 
         QList<KMiniPagerButton*>::ConstIterator it;
@@ -496,7 +496,7 @@ void KMiniPager::slotWindowAdded( WId win)
 {
     if (desktopPreview())
     {
-        KWindowSystem::WindowInfo* inf = info( win );
+        KWindowInfo* inf = info( win );
 
         if (inf->state() & NET::SkipPager)
         {
@@ -519,7 +519,7 @@ void KMiniPager::slotWindowRemoved(WId win)
 {
     if (desktopPreview())
     {
-        KWindowSystem::WindowInfo* inf = info(win);
+        KWindowInfo* inf = info(win);
         bool onAllDesktops = inf->onAllDesktops();
         bool skipPager = inf->state() & NET::SkipPager;
         int desktop = inf->desktop();
@@ -564,7 +564,7 @@ void KMiniPager::slotWindowChanged( WId win , unsigned int properties )
 
     if (desktopPreview())
     {
-        KWindowSystem::WindowInfo* inf = m_windows[win];
+        KWindowInfo* inf = m_windows[win];
         bool onAllDesktops = inf ? inf->onAllDesktops() : false;
         bool skipPager = inf ? inf->state() & NET::SkipPager : false;
         int desktop = inf ? inf->desktop() : 0;
@@ -593,11 +593,11 @@ void KMiniPager::slotWindowChanged( WId win , unsigned int properties )
     }
 }
 
-KWindowSystem::WindowInfo* KMiniPager::info( WId win )
+KWindowInfo* KMiniPager::info( WId win )
 {
     if (!m_windows[win] )
     {
-        KWindowSystem::WindowInfo* info = new KWindowSystem::WindowInfo( win,
+        KWindowInfo* info = new KWindowInfo( win,
             NET::WMWindowType | NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMGeometry | NET::WMFrameExtents, 0 );
 
         m_windows.insert( (long) win, info );
@@ -640,7 +640,7 @@ void KMiniPager::aboutToShowContextMenu()
     m_contextMenu->addSeparator();
 
     m_contextMenu->insertItem(i18n("&Rename Desktop \"%1\"",
-                                    kwin()->desktopName(m_rmbDesk)), RenameDesktop);
+                                    KWindowSystem::desktopName(m_rmbDesk)), RenameDesktop);
     m_contextMenu->addSeparator();
 
     KMenu* showMenu = new KMenu(m_contextMenu);

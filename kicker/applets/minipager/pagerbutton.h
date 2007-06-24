@@ -84,7 +84,7 @@ private Q_SLOTS:
     void backgroundLoaded( bool loaded );
 
 private:
-    bool shouldPaintWindow( KWindowSystem::WindowInfo *info );
+    bool shouldPaintWindow( KWindowInfo *info );
     void loadBgPixmap();
 
     KMiniPager* m_pager;

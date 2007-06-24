@@ -52,14 +52,14 @@ class KMiniPager : public KPanelApplet
 
 public:
     KMiniPager(const QString& configFile, Plasma::Type t = Plasma::Normal, int actions = 0,
-               QWidget *parent = 0, const char *name = 0);
+               QWidget *parent = 0);
 
     virtual ~KMiniPager();
 
     int widthForHeight(int height) const;
     int heightForWidth(int width) const;
 
-    KWindowSystem::WindowInfo* info( WId win );
+    KWindowInfo* info( WId win );
     KShadowEngine* shadowEngine();
 
     void setActive( WId active ) { m_activeWindow = active; }
@@ -116,7 +116,7 @@ private:
     int m_curDesk;
     int m_rmbDesk;
 
-    QHash< int, KWindowSystem::WindowInfo* > m_windows;
+    QHash< int, KWindowInfo* > m_windows;
     WId m_activeWindow;
 
     QButtonGroup *m_group;
