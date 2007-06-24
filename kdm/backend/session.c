@@ -763,6 +763,15 @@ baseEnv( const char *user )
 	              memcmp( td->name, "localhost:", 10 ) ?
 	              td->name : td->name + 9 );
 
+#ifdef HAVE_VTS
+	/* Support for assistive technologies. */
+	if (td->serverVT > 0) {
+		char vtstr[4];
+		sprintf( vtstr, "%d", td->serverVT );
+		env = setEnv( env, "WINDOWPATH", vtstr );
+	}
+#endif
+
 	if (td->ctrl.path)
 		env = setEnv( env, "DM_CONTROL", fifoDir );
 
