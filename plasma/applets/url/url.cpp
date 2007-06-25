@@ -59,7 +59,7 @@ Url::Url(QObject *parent, const QStringList &args)
 Url::~Url()
 {
     KConfigGroup cg = appletConfig();
-    cg.writeEntry("IconSize", m_icon->iconSize());
+    cg.writeEntry("IconSize", m_icon->iconSize().toSize());
     cg.writeEntry("Url", m_icon->url());
 }
 
