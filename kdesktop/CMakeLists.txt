@@ -12,8 +12,8 @@ set( kdesktop_KCFG_SRCS
 
 kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
 include_directories(
-	${CMAKE_SOURCE_DIR}/workspace/lib
-	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background
+	${KDEBASE_WORKSPACE_SOURCE_DIR}/lib
+	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/background
 	${CMAKE_SOURCE_DIR}/libkonq
 	 )
 
@@ -51,9 +51,9 @@ set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${backgroundlib_SRCS}
    kfileividesktop.cpp
 )
 
-set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
+set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE( kdesktop_SRCS ${ksmserver_xml} ksmserver_interface )
-set(kwin_xml  ${CMAKE_SOURCE_DIR}/workspace/kwin/org.kde.KWin.xml)
+set(kwin_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kwin/org.kde.KWin.xml)
 QT4_ADD_DBUS_INTERFACE( kdesktop_SRCS ${kwin_xml} kwin_interface )
 
 qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Background.xml bgmanager.h KBackgroundManager )

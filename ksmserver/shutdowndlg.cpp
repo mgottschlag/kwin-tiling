@@ -4,7 +4,7 @@ ksmserver - the KDE session management server
 Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 ******************************************************************/
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include "shutdowndlg.h"
 #include "plasma/svg.h"

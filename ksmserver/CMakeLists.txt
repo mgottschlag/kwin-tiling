@@ -1,9 +1,6 @@
-
-project(ksmserver)
-
 add_subdirectory( tests )
 
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/workspace/libs ${CMAKE_SOURCE_DIR}/runtime/solid/control )
+include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${CMAKE_SOURCE_DIR}/runtime/solid/control )
 
 configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
 
@@ -28,7 +25,7 @@ ADD_CUSTOM_COMMAND(OUTPUT ${kcminit_xml}
 QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kcminit_xml} kcminit_interface )
 
 
-#set(kdesktop_xml  ${CMAKE_SOURCE_DIR}/workspace/kdesktop/org.kde.kdesktop.Desktop.xml)
+#set(kdesktop_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdesktop/org.kde.kdesktop.Desktop.xml)
 #QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kdesktop_xml} kdesktop_interface )
 
 set(klauncher_xml  ${DBUS_INTERFACES_DIR}/org.kde.KLauncher.xml)

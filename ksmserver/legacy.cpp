@@ -29,9 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-workspace.h>
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>

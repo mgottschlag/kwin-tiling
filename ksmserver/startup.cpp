@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <config.h>
+#include <config-workspace.h>
 #include <config-unix.h> // HAVE_LIMITS_H
 
 #include <pwd.h>
