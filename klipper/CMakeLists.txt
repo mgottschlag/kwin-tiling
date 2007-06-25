@@ -2,7 +2,7 @@
 project(klipper)
 KDE4_NO_ENABLE_FINAL(klipper)
 include_directories(
-   ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker/ )
+   ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/libkicker/ )
 
 ########### next target ###############
 
@@ -31,6 +31,7 @@ install(TARGETS klipper DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 
+if (BUILD_KICKER)
 set(klipper_panelapplet_PART_SRCS applet.cpp ${libklipper_common_SRCS})
 
 kde4_automoc(${klipper_panelapplet_PART_SRCS})
@@ -45,6 +46,7 @@ if (X11_Xfixes_FOUND)
 endif (X11_Xfixes_FOUND)
 
 install(TARGETS klipper_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
+endif (BUILD_KICKER)
 
 
 ########### install files ###############
