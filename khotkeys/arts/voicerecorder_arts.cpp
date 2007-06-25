@@ -11,9 +11,7 @@
 #include <QtGui/QColor>
 #include <QtGui/QActionEvent>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-workspace.h>
 
 #include "voicerecorder.h"
 

@@ -1,4 +1,4 @@
-include_directories(  ${CMAKE_SOURCE_DIR}/workspace/khotkeys/shared/  )
+include_directories(  ${KDEBASE_WORKSPACE_SOURCE_DIR}/khotkeys/shared/  )
 
 
 ########### next target ###############

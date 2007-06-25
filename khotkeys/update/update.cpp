@@ -10,9 +10,7 @@
 
 #define _UPDATE_CPP_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-workspace.h>
 
 #include <kapplication.h>
 #include <kcmdlineargs.h>

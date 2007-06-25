@@ -76,7 +76,6 @@
 </forwards>
 <includes>
     <include location="global" impldecl="in declaration">kdialog.h</include>
-    <include location="global" impldecl="in declaration">config.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
