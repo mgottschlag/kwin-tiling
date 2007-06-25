@@ -1,5 +1,3 @@
-include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
-
 set(time_engine_SRCS
     timeengine.cpp
 )
