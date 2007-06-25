@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMessageBox>
 
 class QFrame;
-class QResizeEvent;
 
 class FDialog : public QDialog {
 	typedef QDialog inherited;
@@ -48,10 +47,14 @@ class FDialog : public QDialog {
 
   protected:
 	virtual void resizeEvent( QResizeEvent *e );
+	virtual void mousePressEvent( QMouseEvent *e );
+	virtual void mouseReleaseEvent( QMouseEvent *e );
+	virtual void mouseMoveEvent( QMouseEvent *e );
 	void adjustGeometry();
 
   private:
 	QFrame *winFrame;
+	QPoint mouseStartPos, dialogStartPos;
 };
 
 class KFMsgBox : public FDialog {

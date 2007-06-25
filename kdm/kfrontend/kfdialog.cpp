@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFrame>
 #include <QGridLayout>
 #include <QLabel>
+#include <QMouseEvent>
 
 #include <stdio.h>
 
@@ -54,6 +55,20 @@ FDialog::resizeEvent( QResizeEvent *e )
 	inherited::resizeEvent( e );
 	if (winFrame)
 		winFrame->resize( size() );
+}
+
+static void
+fitInto(const QRect &scr, QRect &grt)
+{
+	int di;
+	if ((di = scr.right() - grt.right()) < 0)
+		grt.translate( di, 0 );
+	if ((di = scr.left() - grt.left()) > 0)
+		grt.translate( di, 0 );
+	if ((di = scr.bottom() - grt.bottom()) < 0)
+		grt.translate( 0, di );
+	if ((di = scr.top() - grt.top()) > 0)
+		grt.translate( 0, di );
 }
 
 void
@@ -83,20 +98,38 @@ FDialog::adjustGeometry()
 		sscanf( _greeterPos, "%u,%u", &x, &y );
 		grt.moveCenter( QPoint( scr.x() + scr.width() * x / 100,
 		                        scr.y() + scr.height() * y / 100 ) );
-		int di;
-		if ((di = scr.right() - grt.right()) < 0)
-			grt.translate( di, 0 );
-		if ((di = scr.left() - grt.left()) > 0)
-			grt.translate( di, 0 );
-		if ((di = scr.bottom() - grt.bottom()) < 0)
-			grt.translate( 0, di );
-		if ((di = scr.top() - grt.top()) > 0)
-			grt.translate( 0, di );
+		fitInto( scr, grt );
 		setGeometry( grt );
 	}
 
 	if (dsk->screenNumber( QCursor::pos() ) != _greeterScreen)
 		QCursor::setPos( grt.center() );
+}
+
+void
+FDialog::mousePressEvent( QMouseEvent *event )
+{
+	if (winFrame) {
+		dialogStartPos = geometry().center();
+		mouseStartPos = mapToGlobal( event->pos() );
+	}
+}
+
+void
+FDialog::mouseReleaseEvent( QMouseEvent * )
+{
+	dialogStartPos.setX( 0 );
+}
+
+void
+FDialog::mouseMoveEvent( QMouseEvent *event )
+{
+	if (dialogStartPos.x() > 0) {
+		QRect grt( rect() );
+		grt.moveCenter( dialogStartPos + mapToGlobal( event->pos() ) - mouseStartPos );
+		fitInto( qApp->desktop()->screenGeometry( _greeterScreen ), grt );
+		setGeometry( grt );
+	}
 }
 
 struct WinList {
