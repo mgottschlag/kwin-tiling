@@ -20,7 +20,7 @@
 #ifndef MEDIAAPPLET_H
 #define MEDIAAPPLET_H
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include <QLinkedList>
 

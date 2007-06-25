@@ -1,5 +1,5 @@
 
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager  )
+include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/taskmanager  )
 
 
 ########### next target ###############

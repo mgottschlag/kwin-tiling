@@ -41,7 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kwindowsystem.h>
 #include <netwm.h>
 
-#include <config.h>
+#include <config-workspace.h>
 #include <config-X11.h>
 
 #if defined(HAVE_XCOMPOSITE) && \

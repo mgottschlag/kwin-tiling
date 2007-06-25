@@ -1,3 +1,5 @@
+include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/lib/ )
+
 ########### next target ###############
 
 set(sidebar_panelextension_PART_SRCS sidebarextension.cpp )

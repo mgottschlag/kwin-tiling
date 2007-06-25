@@ -65,6 +65,8 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/libkicker
    ${CMAKE_CURRENT_BINARY_DIR}/libkicker
    ${CMAKE_CURRENT_BINARY_DIR}/kicker
+   ${KDEBASE_WORKSPACE_SOURCE_DIR}/lib
+   ${CMAKE_BINARY_DIR}/workspace/lib
 )
 
 add_subdirectory( libkicker ) 

@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core ${CMAKE_SOURCE_DIR}/kicker/kicker/ui  ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui ${CMAKE_BINARY_DIR}/workspace/kicker/kicker  )
+include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/kicker/buttons ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/kicker/core ${CMAKE_SOURCE_DIR}/kicker/kicker/ui  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/kicker/ui ${CMAKE_BINARY_DIR}/workspace/kicker/kicker  )
 
 
 ########### next target ###############
@@ -17,8 +17,8 @@ qt4_add_dbus_interface(launcher_panelapplet_PART_SRCS ../../../kdesktop/org.kde.
 qt4_add_dbus_interface(launcher_panelapplet_PART_SRCS ../../../krunner/org.kde.krunner.Interface.xml krunner_interface )
 
 kde4_add_ui3_files(launcher_panelapplet_PART_SRCS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../kicker/ui/appletview.ui
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../kicker/ui/nonKDEButtonSettings.ui
+    ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/kicker/ui/appletview.ui
+    ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/kicker/ui/nonKDEButtonSettings.ui
     )
 
 kde4_automoc(${launcher_panelapplet_PART_SRCS})

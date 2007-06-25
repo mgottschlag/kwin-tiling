@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include <config.h>
+#include <config-workspace.h>
 #ifdef HAVE_SYS_LOADAVG_H
 #include <sys/loadavg.h> // e.g. Solaris
 #endif

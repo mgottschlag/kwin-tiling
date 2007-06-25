@@ -20,7 +20,7 @@
 #ifndef TRASHAPPLET_H
 #define TRASHAPPLET_H
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include <kpanelapplet.h>
 
