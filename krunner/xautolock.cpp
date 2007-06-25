@@ -8,7 +8,7 @@
 // KDE screensaver engine
 //
 
-#include <config.h>
+#include <config-workspace.h>
 #include <config-xautolock.h>
 #include "xautolock.h"
 #include "xautolock.moc"

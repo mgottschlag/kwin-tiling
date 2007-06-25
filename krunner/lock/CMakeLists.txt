@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/krunner ${CMAKE_SOURCE_DIR}/workspace/kcheckpass ${CMAKE_SOURCE_DIR}/workspace/libs/kdm )
+include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcheckpass ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kdm )
 
 add_definitions (-DQT3_SUPPORT)
 
@@ -14,12 +14,12 @@ set(krunner_lock_SRCS
    autologout.cc
    main.cc )
 
-set(ksmserver_xml  ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
+set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE(krunner_lock_SRCS ${ksmserver_xml} ksmserver_interface)
-set(krunner_xml  ${CMAKE_SOURCE_DIR}/workspace/krunner/org.freedesktop.ScreenSaver.xml)
+set(krunner_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.freedesktop.ScreenSaver.xml)
 QT4_ADD_DBUS_INTERFACE(krunner_lock_SRCS ${krunner_xml} krunner_interface)
 
-set(kxkb_adaptor ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kxkb/kxkb_adaptor.h)
+set(kxkb_adaptor ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kxkb/kxkb_adaptor.h)
 set(kxkb_xml ${CMAKE_CURRENT_BINARY_DIR}/org.kde.KXKB.xml)
 ADD_CUSTOM_COMMAND(OUTPUT ${kxkb_xml}
        COMMAND ${QT_DBUSCPP2XML_EXECUTABLE} ${kxkb_adaptor} > ${kxkb_xml}

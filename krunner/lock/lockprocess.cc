@@ -14,7 +14,7 @@
 //It's done this way to prevent screen unlocking when krunner
 //crashes
 
-#include <config.h>
+#include <config-workspace.h>
 #include <config-X11.h>
 #include <config-krunner-lock.h>
 #include "lockprocess.h"
