@@ -37,7 +37,7 @@
 #ifndef KCHECKPASS_H_
 #define KCHECKPASS_H_
 
-#include <config.h>
+#include <config-workspace.h>
 #include <config-unix.h>
 #include <config-kcheckpass.h>
 
