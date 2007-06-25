@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs)
 
 set(plasma_SRCS
     controlbox.cpp
@@ -9,7 +9,7 @@ set(plasma_SRCS
     rootwidget.cpp
 )
 
-set(ksmserver_xml ${CMAKE_SOURCE_DIR}/workspace/ksmserver/org.kde.KSMServerInterface.xml)
+set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE(plasma_SRCS ${ksmserver_xml} ksmserver_interface)
 
 kde4_automoc(${plasma_SRCS})

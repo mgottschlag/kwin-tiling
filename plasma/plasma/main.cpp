@@ -21,7 +21,7 @@
 #include <KCmdLineArgs>
 #include <KLocale>
 
-#include "config.h"
+#include <config-workspace.h>
 #include "plasmaapp.h"
 
 static const char description[] = I18N_NOOP( "The KDE desktop, panels and widgets workspace application." );
