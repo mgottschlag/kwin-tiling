@@ -36,7 +36,7 @@ from the copyright holder.
 #ifndef GREET_H
 #define GREET_H
 
-#include <config.h>
+#include <config-workspace.h>
 #include <config-unix.h>
 #include <config-kdm.h>
 

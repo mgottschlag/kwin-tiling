@@ -6,8 +6,8 @@ add_subdirectory( pics )
 add_subdirectory( sessions )
 
 include_directories(
-	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background
-	${CMAKE_SOURCE_DIR}/workspace/libs/kdm
+	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/background
+	${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kdm
 	${CMAKE_SOURCE_DIR}/libkonq
 )
 
