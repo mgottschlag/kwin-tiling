@@ -44,6 +44,8 @@ include_directories(
 add_subdirectory(cmake)
 add_subdirectory(libs)
 
+# system settings (kcontrol replacement)
+add_subdirectory( systemsettings )
 
 # core apps
 add_subdirectory( kcheckpass )
