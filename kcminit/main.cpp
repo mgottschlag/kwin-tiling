@@ -17,7 +17,7 @@
 
 */
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include "main.h"
 

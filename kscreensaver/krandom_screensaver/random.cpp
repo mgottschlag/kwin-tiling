@@ -7,7 +7,7 @@
 // This is an extremely simple program that starts a random screensaver.
 //
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include <stdlib.h>
 #include <stdio.h>

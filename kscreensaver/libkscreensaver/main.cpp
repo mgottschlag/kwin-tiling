@@ -20,7 +20,7 @@
 #include "kscreensaver.h"
 #include "kscreensaver_vroot.h"
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include <stdlib.h>
 #include <stdio.h>
