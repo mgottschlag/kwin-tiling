@@ -1,0 +1,10 @@
+Fix up NetworkStatus so it works as desired in KDE 4
+What are the changes in the networkstatus branch vs 3.5 branch that need to be adapted to kde 4?
+
+Implement the org.kde.Solid.Networking dbus interface.
+
+Move to kdebase/runtime/solid.
+
+Add ConnectionManager class and widgets to kdelibs/solid/solid
+
+Port -ns branch changes to KDE 4 apps.

@@ -1,0 +1,154 @@
+<ui version="4.0" >
+ <class>TestServiceView</class>
+ <widget class="QWidget" name="TestServiceView" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>372</width>
+    <height>154</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form1</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QLabel" name="textLabel4" >
+     <property name="text" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:x-large; font-weight:600;">Service for KDE 4 Offline Mode&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QLabel" name="textLabel1" >
+       <property name="text" >
+        <string>Status:</string>
+       </property>
+       <property name="wordWrap" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="statusLabel" >
+       <property name="frameShape" >
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="text" >
+        <string>STATUS</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QLabel" name="textLabel3" >
+       <property name="text" >
+        <string>Change to:</string>
+       </property>
+       <property name="wordWrap" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="changeCombo" >
+       <item>
+        <property name="text" >
+         <string>Unknown</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Unconnected</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Disconnecting</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Connecting</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Connected</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>51</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="changeButton" >
+       <property name="text" >
+        <string>Perform change</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>41</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <resources/>
+ <connections/>
+</ui>

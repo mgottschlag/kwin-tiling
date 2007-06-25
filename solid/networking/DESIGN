@@ -1,0 +1,34 @@
+The system consists of 3 classes of components:
+
+1) Network service applications
+  Responsible for reporting the status of the system's network connection(s).  May be a KDE app or
+anything (including a system networking script) that can talk DBus.  These are responsible for registering networks with, and updating their status at
+
+2) KDED Module - networkstatus
+  Hub of the system.  Implements two DBus interfaces at /modules/networkstatus,
+  org.kde.Solid.Networking.Service (for use by service applications, above) and
+  org.kde.Solid.Networking.Client (for client apps, below) networkstatus knows of the status of any networks registered with it, which it aggregates and reports the most connected status onwards, to
+
+3) Network client applications {
+  Regular KDE applications which need to use the network.  These either listen directly to
+org.kde.kded /modules/networkstatus' signals, or use the KConnectionManager object to react to
+network status changes.
+
+UI Components
+The kconnectionmanager library also contains a widget, NetworkStatusConnectionIndicator, which is
+intended for use in application toolbars.  This widget shows itself when the system is offline, and
+hides itself when the system is connected.
+
+KConnectionManager
+As well as signalling status changes, KConnectionManager can easily call registered slots on
+connected and disconnected events.  These are controlled by ConnectionPolicy, which describes the
+circumstances when KConnectionManager should manage a connection.
+
+Layout
+networkstatus/
+  networkstatus KDED Module implementation.  Final destination: kdebase/runtime/solid
+networkstatus/libs
+  Client library libkconnectionmanager for client applications to use.  Final destination: kdelibs somewhere.
+networkstatus/tests
+  Test service and client GUI applications which make it easy to simulate network events and observe their effect on a client (which has a queued/autoconnect function with its simulated network usage).  Final destination: kdebase/runtime/solid
+

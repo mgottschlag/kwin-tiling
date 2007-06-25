@@ -1,0 +1,20 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.Solid.Networking.Service">
+    <method name="networks">
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="setNetworkStatus">
+      <arg name="networkName" type="s" direction="in"/>
+      <arg name="status" type="i" direction="in"/>
+    </method>
+    <method name="registerNetwork">
+      <arg name="networkName" type="s" direction="in"/>
+      <arg name="status" type="i" direction="in"/>
+      <arg name="serviceName" type="s" direction="in"/>
+    </method>
+    <method name="unregisterNetwork">
+      <arg name="networkName" type="s" direction="in"/>
+    </method>
+  </interface>
+</node>

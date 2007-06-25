@@ -1,0 +1,29 @@
+This table defines the actions to be taken on state transition.
+
+TODO: potentially add extra states OnlineReading and OnlineWriting
+
+                       NEW
+       |Offline         |        Online |
+---+---+----------------+---------------+
+   |   |                |N|set online   |
+   |   |                |L|reload       |
+   | O |                |C|resources    |
+   | F |                +---------------+ 
+   | F |                |L|set online   | 
+O  |   |                |C|reload res.  |
+L  |   |                | |write res.   |
+D  +---+----------------+---------------+
+   |   |N|set offline   |               |
+   |   |C|              |               |
+   |   | |              |               |
+   | O +---------------+|               |
+   | N |U|set offline   |               |
+   |   |W|write locally |               |
+   |   |C|(subject to   |               |
+   |   | |  save policy)|               |
+---+---+----------------+---------------+
+LC = Local changes exist
+NLC = No local changes exist
+UWC = Unsaved changes exist
+NC = no changes exist
+
