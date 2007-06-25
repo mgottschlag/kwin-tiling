@@ -73,9 +73,12 @@ add_subdirectory( krunner )
 add_subdirectory( wallpapers )
 add_subdirectory( menu )
 
+set(BUILD_KICKER FALSE)
 # apps on the chopping block
-add_subdirectory( kdesktop )
-add_subdirectory( kicker)
+if(BUILD_KICKER)
+  add_subdirectory( kdesktop )
+  add_subdirectory( kicker)
+endif(BUILD_KICKER)
 add_subdirectory( kpager )
 
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)

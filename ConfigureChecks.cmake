@@ -39,6 +39,7 @@ check_function_exists(getpassphrase HAVE_GETPASSPHRASE)
 check_function_exists(vsyslog HAVE_VSYSLOG)
 
 check_include_files(limits.h HAVE_LIMITS_H)
+check_include_files(sys/time.h HAVE_SYS_TIME_H)     # ksmserver, ksplashml, sftp
 
 macro_bool_to_01(FONTCONFIG_FOUND HAVE_FONTCONFIG) # kcontrol/{fonts,kfontinst}
 macro_bool_to_01(OPENGL_FOUND HAVE_OPENGL) # kwin
