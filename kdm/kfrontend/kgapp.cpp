@@ -145,7 +145,7 @@ kg_main( const char *argv0 )
 	_colorScheme = KStandardDirs::locate( "data", "kdisplay/color-schemes/" + _colorScheme + ".kcsrc" );
 	if (!_colorScheme.isEmpty()) {
 		KConfig config(  _colorScheme, KConfig::OnlyLocal);
-		app.setPalette( KGlobalSettings::createApplicationPalette( config.group( "Color Scheme" ), 7 ) );
+		app.setPalette( KGlobalSettings::createApplicationPalette( &config ) );
 	}
 
 	KdmThemer *themer;
