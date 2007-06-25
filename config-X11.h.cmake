@@ -33,3 +33,6 @@
 
 /* Define if you have OpenGL */
 #cmakedefine HAVE_OPENGL 1
+
+/* Define if you have the XSync extension */
+#cmakedefine HAVE_XSYNC 1
