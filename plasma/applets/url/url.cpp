@@ -36,7 +36,6 @@ Url::Url(QObject *parent, const QStringList &args)
     : Plasma::Applet(parent, args),
       m_dialog(0)
 {
-    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
     setAcceptDrops(true);
 
     m_icon = new Plasma::Icon(this);
