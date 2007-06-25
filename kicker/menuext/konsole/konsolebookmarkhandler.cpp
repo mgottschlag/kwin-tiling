@@ -38,7 +38,7 @@ KonsoleBookmarkHandler::KonsoleBookmarkHandler( KonsoleMenu *konsole, bool )
             importOldBookmarks( oldFile, file );
     }
 
-    KBookmarkManager *manager = KBookmarkManager::managerForFile( file, "kfile", false);
+    KBookmarkManager *manager = KBookmarkManager::managerForFile( file, "kfile" );
     manager->setUpdate( true );
 
     m_bookmarkMenu = new KBookmarkMenu( manager, this, m_menu, 0 );
