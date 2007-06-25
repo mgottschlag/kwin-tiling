@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=System Monitor Engine
+Name[ja]=システム　モニタリング　エンジン
+Comment=System information for Plasmoids
+Comment[ja]=Plasmoidsのシステム・インフォメーション
+ServiceTypes=Plasma/DataEngine
+Type=Service
+X-KDE-Library=plasma_engine_systemmonitor
+X-EngineName=systemmonitor
