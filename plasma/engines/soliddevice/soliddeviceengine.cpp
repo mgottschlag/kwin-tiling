@@ -28,15 +28,23 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QStringList& args)
 {
 	Q_UNUSED(args)
 	devicelist = QStringList();
-	
-	//used to reference device type
-	typelist = QStringList();
-	typelist << "Unknown" << "GenericInterface" << "Processor"
-			<< "Block" << "StorageAccess" << "StorageDrive"
-			<< "OpticalDrive" << "StorageVolume" << "OpticalDisc"
-			<< "Camera" << "PortableMediaPlayer" << "NetworkInterface"
-			<< "AcAdapter" << "Battery" << "Button" << "AudioInterface"
-			<< "DvbInterface";
+	//setup lists for devicetypes
+	processorlist = QStringList();
+	blocklist = QStringList();
+	storageaccesslist = QStringList();
+	storagedrivelist = QStringList();
+	opticaldrivelist = QStringList();
+	storagevolumelist = QStringList();
+	opticaldisclist = QStringList();
+	cameralist = QStringList();
+	portablemediaplayerlist = QStringList();
+	networkinterfacelist = QStringList();
+	acadapterlist = QStringList();
+	batterylist = QStringList();
+	buttonlist = QStringList();
+	audiointerfacelist = QStringList();
+	dvbinterfacelist = QStringList();
+	unknownlist = QStringList();
 }
 
 SolidDeviceEngine::~SolidDeviceEngine()
@@ -53,13 +61,135 @@ bool SolidDeviceEngine::sourceRequested(const QString &name)
 		//if the devicelist is already populated, return
 		if(!devicelist.isEmpty()){ return true; }
 		
-		//get list of devices already detected
-		QList<Solid::Device> devices =  Solid::Device::allDevices();
-		foreach(Solid::Device device, devices)
-		{
-			devicelist << device.udi();
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Processor)) {
+			processorlist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
 		}
-		kDebug() << "Device list:" << devicelist << endl;
+		setData(name, "ProccessorList", processorlist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Block)) {
+			blocklist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "BlockList", blocklist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::StorageAccess)) {
+			storageaccesslist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "StorageAccessList", storageaccesslist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::StorageDrive)) {
+			storagedrivelist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "StorageDriveList", storagedrivelist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDrive)) {
+			opticaldrivelist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "OpticalDriveList", opticaldrivelist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::StorageVolume)) {
+			storagevolumelist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "StorageVolumeList", storagevolumelist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc)) {
+			opticaldisclist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "OpticalDiscList", opticaldisclist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Camera)) {
+			cameralist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "CameraList", cameralist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::PortableMediaPlayer)) {
+			portablemediaplayerlist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "PortableMediaPlayerList", portablemediaplayerlist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::NetworkInterface)) {
+			networkinterfacelist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "NetworkInterfaceList", networkinterfacelist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::AcAdapter)) {
+			acadapterlist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "AcAdapterList", acadapterlist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Battery)) {
+			batterylist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "BatteryList", batterylist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Button)) {
+			buttonlist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "ButtonList", buttonlist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface)) {
+			audiointerfacelist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "AudioInterfaceList", audiointerfacelist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::DvbInterface)) {
+			dvbinterfacelist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "DvbInterfaceList", dvbinterfacelist);
+		foreach(Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Unknown)) {
+			unknownlist << device.udi();
+			if(!devicelist.contains(device.udi())) {
+				devicelist << device.udi();
+				devicemap[device.udi()] = device;
+			}
+		}
+		setData(name, "UnknownList", unknownlist);
+		
 		if(devicelist.isEmpty() ){ return false; }
 		setData(name, "DeviceList", devicelist);
 		
@@ -76,7 +206,6 @@ bool SolidDeviceEngine::sourceRequested(const QString &name)
 	{
 		if(devicelist.contains(name) )
 		{
-			kDebug() << "Requesting " << name << endl;
 			return populateDeviceData(name);
 		}
 		else {return false; }
@@ -85,7 +214,7 @@ bool SolidDeviceEngine::sourceRequested(const QString &name)
 
 bool SolidDeviceEngine::populateDeviceData(const QString &name)
 {
-	Solid::Device device(name);
+	Solid::Device device = devicemap[name];
 	if(!device.isValid()) { return false; }
 	
 	QStringList devicetypes = QStringList();
@@ -94,7 +223,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 	setData(name, "Product", device.product());
 	setData(name, "Icon", device.icon());
 	
-	if(device.is<Solid::Processor>())
+	if(processorlist.contains(name))
 	{
 		Solid::Processor *processor = device.as<Solid::Processor>();
 		if(processor == 0){ return false; }
@@ -104,7 +233,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "MaxSpeed", processor->maxSpeed());
 		setData(name, "CanChangeFrequency", processor->canChangeFrequency());
 	}
-	if(device.is<Solid::Block>())
+	if(blocklist.contains(name))
 	{
 		Solid::Block *block = device.as<Solid::Block>();
 		if(block == 0){ return false; }
@@ -114,7 +243,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "Minor", block->deviceMajor());
 		setData(name, "Device", block->device());
 	}
-	if(device.is<Solid::StorageAccess>())
+	if(storageaccesslist.contains(name))
 	{
 		Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
 		if(storageaccess == 0) return false;
@@ -123,7 +252,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "Accessible",storageaccess->isAccessible());
 		setData(name, "FilePath", storageaccess->filePath());
 	}
-	if(device.is<Solid::StorageDrive>())
+	if(storagedrivelist.contains(name))
 	{
 		Solid::StorageDrive *storagedrive = device.as<Solid::StorageDrive>();
 		if(storagedrive == 0){ return false; }
@@ -138,13 +267,9 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "Bus", bus.at((int)storagedrive->bus()));
 		setData(name, "DriveType", drivetype.at((int)storagedrive->driveType()));
 		setData(name, "Removable", storagedrive->isRemovable());
-		setData(name, "EjectRequired", storagedrive->isEjectRequired());
 		setData(name, "Hotpluggable", storagedrive->isHotpluggable());
-		setData(name, "MediaCheckEnabled", storagedrive->isMediaCheckEnabled());
-		setData(name, "Vendor", storagedrive->vendor());
-		setData(name, "Product", storagedrive->product());
 	}
-	if(device.is<Solid::OpticalDrive>())
+	if(opticaldrivelist.contains(name))
 	{
 		Solid::OpticalDrive *opticaldrive = device.as<Solid::OpticalDrive>();
 		if(opticaldrive == 0){ return false; }
@@ -184,7 +309,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "WriteSpeeds", variantlist);
 		
 	}
-	if(device.is<Solid::StorageVolume>())
+	if(storagevolumelist.contains(name))
 	{
 		Solid::StorageVolume *storagevolume = device.as<Solid::StorageVolume>();
 		if(storagevolume == 0){ return false; }
@@ -201,7 +326,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "Uuid", storagevolume->uuid());
 		setData(name, "Size", storagevolume->size());
 	}
-	if(device.is<Solid::OpticalDisc>())
+	if(opticaldisclist.contains(name))
 	{
 		Solid::OpticalDisc *opticaldisc = device.as<Solid::OpticalDisc>();
 		if(opticaldisc == 0){ return false; }
@@ -232,7 +357,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "Rewritable", opticaldisc->isRewritable());
 		setData(name, "Capacity", opticaldisc->capacity());
 	}
-	if(device.is<Solid::Camera>())
+	if(cameralist.contains(name))
 	{
 		Solid::Camera *camera = device.as<Solid::Camera>();
 		if(camera == 0){ return false; }
@@ -242,7 +367,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "SupportedProtocols", camera->supportedProtocols());
 		setData(name, "SupportedDrivers", camera->supportedDrivers());
 	}
-	if(device.is<Solid::PortableMediaPlayer>())
+	if(portablemediaplayerlist.contains(name))
 	{
 		Solid::PortableMediaPlayer *mediaplayer = device.as<Solid::PortableMediaPlayer>();
 		if(mediaplayer == 0){ return false; }
@@ -252,7 +377,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "SupportedProtocols", mediaplayer->supportedProtocols());
 		setData(name, "SupportedDrivers", mediaplayer->supportedDrivers());
 	}
-	if(device.is<Solid::NetworkInterface>())
+	if(networkinterfacelist.contains(name))
 	{
 		Solid::NetworkInterface *networkinterface = device.as<Solid::NetworkInterface>();
 		if(networkinterface == 0){ return false;}
@@ -264,7 +389,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "HwAddress", networkinterface->hwAddress());
 		setData(name, "MacAddress", networkinterface->macAddress());
 	}
-	if(device.is<Solid::AcAdapter>())
+	if(acadapterlist.contains(name))
 	{
 		Solid::AcAdapter *ac = device.as<Solid::AcAdapter>();
 		if(ac == 0){ return false; }
@@ -273,7 +398,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		
 		setData(name, "Plugged", ac->isPlugged());
 	}
-	if(device.is<Solid::Battery>())
+	if(batterylist.contains(name))
 	{
 		Solid::Battery *battery = device.as<Solid::Battery>();
 		if(battery == 0){ return false; }
@@ -298,7 +423,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "Rechargeable", battery->isRechargeable());
 		setData(name, "ChargeState", chargestate.at((int)battery->chargeState()));
 	}
-	if(device.is<Solid::Button>())
+	if(buttonlist.contains(name))
 	{
 		Solid::Button *button = device.as<Solid::Button>();
 		if(button == 0){ return false; }
@@ -312,7 +437,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		setData(name, "HasState", button->hasState());
 		setData(name, "StateValue", button->stateValue());
 	}
-	if(device.is<Solid::AudioInterface>())
+	if(audiointerfacelist.contains(name))
 	{
 		Solid::AudioInterface *audiointerface = device.as<Solid::AudioInterface>();
 		if(audiointerface == 0){ return false; }
@@ -340,7 +465,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 		soundcardtype << "InternalSoundcard" << "UsbSoundcard" << "FirewireSoundcard" << "Headset" << "Modem";
 		setData(name, "SoundcardType", soundcardtype.at((int)audiointerface->soundcardType()));
 	}
-	if(device.is<Solid::DvbInterface>())
+	if(dvbinterfacelist.contains(name))
 	{
 		Solid::DvbInterface *dvbinterface = device.as<Solid::DvbInterface>();
 		if(dvbinterface == 0){ return false; }
@@ -366,7 +491,86 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 void SolidDeviceEngine::deviceAdded(const QString& udi)
 {
 	devicelist << udi;
-	setData(i18n("Devices"), "DeviceList", devicelist);
+	QString name = i18n("Devices");
+	setData(name, "DeviceList", devicelist);
+	
+	//add to device specific lists
+	Solid::Device device(udi);
+	if(device.is<Solid::Processor>()) {
+		processorlist << udi;
+		setData(name, "ProccessorList", processorlist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::Block>()) {
+		blocklist << udi;
+		setData(name, "BlockList", blocklist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::StorageAccess>()) {
+		storageaccesslist << udi;
+		setData(name, "StorageAccessList", storageaccesslist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::StorageDrive>()) {
+		storagedrivelist << udi;
+		setData(name, "StorageDriveList", storagedrivelist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::OpticalDrive>()) {
+		opticaldrivelist << udi;
+		setData(name, "OpticalDriveList", opticaldrivelist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::StorageVolume>()) {
+		storagevolumelist << udi;
+		setData(name, "StorageVolumeList", storagevolumelist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::OpticalDisc>()) {
+		opticaldisclist << udi;
+		setData(name, "OpticalDiscList", opticaldisclist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::Camera>()) {
+		cameralist << udi;
+		setData(name, "CameraList", cameralist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::PortableMediaPlayer>()) {
+		portablemediaplayerlist << udi;
+		setData(name, "PortableMediaPlayerList", portablemediaplayerlist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::NetworkInterface>()) {
+		networkinterfacelist << udi;
+		setData(name, "NetworkInterfaceList", networkinterfacelist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::AcAdapter>()) {
+		acadapterlist << udi;
+		setData(name, "AcAdapterList", acadapterlist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::Battery>()) {
+		batterylist << udi;
+		setData(name, "BatteryList", batterylist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::Button>()) {
+		buttonlist << udi;
+		setData(name, "ButtonList", buttonlist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::AudioInterface>()) {
+		audiointerfacelist << udi;
+		setData(name, "AudioInterfaceList", audiointerfacelist);
+		devicemap[udi] = device;
+	}
+	if(device.is<Solid::DvbInterface>()) {
+		dvbinterfacelist << udi;
+		setData(name, "DvbInterfaceList", dvbinterfacelist);
+		devicemap[udi] = device;
+	}
 
 	checkForUpdates();
 }
@@ -377,6 +581,7 @@ void SolidDeviceEngine::deviceRemoved(const QString& udi)
 	if(pos > -1)
 	{
 		devicelist.removeAt(pos);
+		devicemap.remove(udi);
 		removeSource(udi);
 		setData(i18n("Devices"), "DeviceList", devicelist);
 	}

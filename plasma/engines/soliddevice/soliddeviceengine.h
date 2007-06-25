@@ -60,8 +60,24 @@ class SolidDeviceEngine : public Plasma::DataEngine
     private:
 		bool populateDeviceData(const QString &name);
         QStringList devicelist;
-		QMap<QString,QString> typemap;
-		QStringList typelist;
+		//setup lists for devicetypes
+		QStringList processorlist;
+		QStringList blocklist;
+		QStringList storageaccesslist;
+		QStringList storagedrivelist;
+		QStringList opticaldrivelist;
+		QStringList storagevolumelist;
+		QStringList opticaldisclist;
+		QStringList cameralist;
+		QStringList portablemediaplayerlist;
+		QStringList networkinterfacelist;
+		QStringList acadapterlist;
+		QStringList batterylist;
+		QStringList buttonlist;
+		QStringList audiointerfacelist;
+		QStringList dvbinterfacelist;
+		QStringList unknownlist;
+		QMap<QString, Solid::Device> devicemap;
 
 	private slots:
 		void deviceAdded(const QString &udi);
