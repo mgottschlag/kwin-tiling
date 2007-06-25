@@ -64,7 +64,7 @@
 #include <kdebug.h>
 #include <kaboutdata.h>
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include "mouse.h"
 

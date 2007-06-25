@@ -8,7 +8,7 @@
 //
 
 
-#include <config.h>
+#include <config-workspace.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>

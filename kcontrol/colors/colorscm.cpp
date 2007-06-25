@@ -8,7 +8,7 @@
 // Made maintainable by Waldo Bastian 2000
 
 #include <assert.h>
-#include <config.h>
+#include <config-workspace.h>
 #include <stdlib.h>
 #include <unistd.h>
 

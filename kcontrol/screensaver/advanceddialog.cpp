@@ -7,7 +7,7 @@
 
 
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include "advanceddialog.h"
 #include "stdlib.h"

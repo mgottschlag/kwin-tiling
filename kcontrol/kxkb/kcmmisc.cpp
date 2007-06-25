@@ -25,7 +25,7 @@
  */
 
 
-#include <config.h>
+#include <config-workspace.h>
 #include <config-X11.h>
 #include <math.h>
 

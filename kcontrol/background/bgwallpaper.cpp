@@ -20,7 +20,7 @@
    Boston, MA 02110-1301, USA.
  */
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include <QCheckBox>
 #include <QEvent>

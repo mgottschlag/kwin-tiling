@@ -25,7 +25,7 @@
 #include <QFile>
 #include <kshell.h>
 #include <unistd.h>
-#include <config.h>
+#include <config-workspace.h>
 
 namespace KFI
 {

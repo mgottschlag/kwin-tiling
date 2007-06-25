@@ -47,7 +47,7 @@ using namespace std;
 #define KDE_lstat          ::lstat
 #define k_lineinfo         "[" << __FILE__ << ":" << __LINE__ << "] "
 #else
-#include <config.h>
+#include <config-workspace.h>
 #include <kdebug.h>
 #define KFI_WARNING_STREAM kWarning()
 #endif

@@ -8,7 +8,7 @@
  * Public License. See the file "COPYING.LIB" for the exact licensing terms.
  */
 #include <fixx11h.h>
-#include <config.h>
+#include <config-workspace.h>
 
 #include <time.h>
 #include <stdlib.h>

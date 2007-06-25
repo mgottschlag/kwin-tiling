@@ -23,9 +23,7 @@
 #ifndef __FC_H__
 #define __FC_H__
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-workspace.h>
 #include <fontconfig/fontconfig.h>
 #include "kfontinst_export.h"
 #include "KfiConstants.h"

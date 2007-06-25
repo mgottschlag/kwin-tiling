@@ -48,7 +48,7 @@
 #include "FcEngine.h"
 #include "Misc.h"
 #include "KfiConstants.h"
-#include <config.h>
+#include <config-workspace.h>
 
 namespace KFI
 {

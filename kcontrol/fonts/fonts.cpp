@@ -6,7 +6,7 @@
 //
 // Ported to kcontrol2 by Geert Jansen.
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include <QCheckBox>
 #include <QComboBox>

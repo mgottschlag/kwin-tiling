@@ -1,6 +1,6 @@
 include_directories(
-	${KDE_WORKSPACE_DIR}/kcontrol/kfontinst/kcmfontinst/
-	${KDE_WORKSPACE_DIR}/kcontrol/kfontinst/viewpart/
+	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kfontinst/kcmfontinst/
+	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kfontinst/viewpart/
 	)
 
 set(kfontinst_bin_SRCS ${libkfontinstjobrunner_SRCS} Installer.cpp )

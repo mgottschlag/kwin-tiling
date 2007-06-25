@@ -9,7 +9,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <config.h>
+#include <config-workspace.h>
 
 #include "x11helper.h"
 #include "rules.h"

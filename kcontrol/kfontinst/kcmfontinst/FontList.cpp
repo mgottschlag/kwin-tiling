@@ -52,7 +52,7 @@
 #include "FcEngine.h"
 #include "KfiConstants.h"
 #include "GroupList.h"
-#include <config.h>
+#include <config-workspace.h>
 
 //#define KFI_FONTLIST_DEBUG
 

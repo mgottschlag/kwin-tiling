@@ -38,7 +38,7 @@
 #include <QFile>
 #include <QDir>
 #include <QFileInfo>
-#include <config.h>
+#include <config-workspace.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
 #include "Server.h"

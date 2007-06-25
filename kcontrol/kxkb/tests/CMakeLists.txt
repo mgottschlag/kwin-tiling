@@ -1,8 +1,7 @@
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../ )
+include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kxkb )
 
 include_directories(
-	#   ${KDE_WORKSPACE_DIR}/kicker/libkicker/ 
-	)
+   ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/libkicker/ )
 
 link_directories(lib)
 

@@ -6,7 +6,7 @@
 // Converted to generic key configuration module, Duncan Haldane 1998.
 // Layout fixes copyright (c) 2000 Preston Brown <pbrown@kde.org>
 
-#include <config.h>
+#include <config-workspace.h>
 #include <stdlib.h>
 
 #include <unistd.h>

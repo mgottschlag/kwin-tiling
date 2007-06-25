@@ -45,7 +45,7 @@
 
 #include "kthememanager.h"
 #include "knewthemedlg.h"
-#include "config.h"
+#include <config-workspace.h>
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<kthememanager> kthememanagerFactory;

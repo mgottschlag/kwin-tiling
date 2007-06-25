@@ -21,9 +21,7 @@
 #ifndef _KCM_SMARTCARD_H
 #define _KCM_SMARTCARD_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <config-workspace.h>
 
 #include <dcopobject.h>
 

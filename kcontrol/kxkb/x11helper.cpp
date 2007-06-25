@@ -16,7 +16,7 @@
 #include <X11/extensions/XKBrules.h>
 
 #include "x11helper.h"
-#include "config.h"
+#include <config-workspace.h>
 
 #ifndef HAVE_XKLAVIER
 

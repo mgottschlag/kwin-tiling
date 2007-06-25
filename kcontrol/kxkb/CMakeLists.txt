@@ -89,6 +89,7 @@ install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### KXKB Applet ###############
 
+if(BUILD_KICKER)
 set(kxkb_panelapplet_PART_SRCS
 	kxkb_applet.cpp
 	kxkbwidget.cpp
@@ -110,6 +111,7 @@ endif(X11_XTest_FOUND)
 install(TARGETS kxkb_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install(FILES kxkb.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets)
+endif(BUILD_KICKER)
 
 ########### install files ###############
 

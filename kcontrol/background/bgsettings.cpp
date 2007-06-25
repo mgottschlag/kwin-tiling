@@ -28,11 +28,13 @@
 #include <kdesktopfile.h>
 #include <kstandarddirs.h>
 #include <krandomsequence.h>
-#include <konq_defaults.h>
 
 #include "bgdefaults.h"
 #include "bgsettings.h"
 #include <QX11Info>
+
+#define DEFAULT_TEXTWIDTH 0
+#define DEFAULT_TEXTHEIGHT 2
 
 
 /*

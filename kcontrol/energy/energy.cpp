@@ -16,7 +16,7 @@
  * KDE Energy setup module.
  */
 
-#include <config.h>
+#include <config-workspace.h>
 
 #if !defined(QT_CLEAN_NAMESPACE)
 #define QT_CLEAN_NAMESPACE

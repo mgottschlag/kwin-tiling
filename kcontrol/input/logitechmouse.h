@@ -30,7 +30,7 @@
 
 #include <kconfig.h>
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include "ui_logitechmouse_base.h"
 

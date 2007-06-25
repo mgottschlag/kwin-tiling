@@ -21,7 +21,7 @@
 #include <sys/stat.h>
 #include <linux/kernel.h>
 #include <ctype.h>
-#include <config.h>
+#include <config-workspace.h>
 
 #ifdef HAVE_FSTAB_H	/* some Linux-versions don't have fstab.h */
 #  include <fstab.h>
