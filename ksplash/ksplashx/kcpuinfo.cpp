@@ -27,7 +27,7 @@
 #include <csignal>
 #include <csetjmp>
 
-#include <config.h>
+#include <config-workspace.h>
 #include "kcpuinfo.h"
 
 

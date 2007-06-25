@@ -8,7 +8,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <config.h>
+#include <config-workspace.h>
 
 #include <QLayout>
 #include <QTabWidget>
