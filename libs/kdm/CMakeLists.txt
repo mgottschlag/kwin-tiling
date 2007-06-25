@@ -1,6 +1,6 @@
 
 project(kdmlib)
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend  )
+include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdm/kfrontend  )
 
 ########### next target ###############
 
