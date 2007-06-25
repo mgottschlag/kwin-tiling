@@ -75,8 +75,12 @@ add_subdirectory( krunner )
 add_subdirectory( wallpapers )
 add_subdirectory( menu )
 
-set(BUILD_KICKER FALSE)
-# apps on the chopping block
+if(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
+    set(BUILD_KICKER TRUE)
+else(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
+    set(BUILD_KICKER FALSE)
+endif(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
+
 if(BUILD_KICKER)
   add_subdirectory( kdesktop )
   add_subdirectory( kicker)
