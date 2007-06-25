@@ -99,9 +99,7 @@ private:
     int m_error;
     QString m_errorString;
 private slots:
-    void slotSetupResult(Solid::StorageAccess::SetupResult result, QVariant resultData);
-    void slotTeardownResult(Solid::StorageAccess::TeardownResult result, QVariant teardownData);
-    void slotEjectResult(Solid::OpticalDrive::EjectResult result, QVariant ejectData);
+    void slotStorageResult(Solid::ErrorType error, QVariant errorData);
     void slotResult(KJob *job);
     void slotPercent(KJob *job, unsigned long percent);
     void slotInfoMessage(KJob *job, const QString &message);

@@ -974,23 +974,23 @@ bool SolidShell::hwVolumeCall(SolidShell::VolumeCallType type, const QString &ud
     {
     case Mount:
         connect(device.as<Solid::StorageAccess>(),
-                SIGNAL(setupDone(Solid::StorageAccess::SetupResult, QVariant)),
+                SIGNAL(setupDone(Solid::ErrorType, QVariant)),
                 this,
-                SLOT(slotSetupResult(Solid::StorageAccess::SetupResult, QVariant)));
+                SLOT(slotStorageResult(Solid::ErrorType, QVariant)));
         device.as<Solid::StorageAccess>()->setup();
         break;
     case Unmount:
         connect(device.as<Solid::StorageAccess>(),
-                SIGNAL(teardownDone(Solid::StorageAccess::TeardownResult, QVariant)),
+                SIGNAL(teardownDone(Solid::ErrorType, QVariant)),
                 this,
-                SLOT(slotTeardownResult(Solid::StorageAccess::TeardownResult, QVariant)));
+                SLOT(slotStorageResult(Solid::ErrorType, QVariant)));
         device.as<Solid::StorageAccess>()->teardown();
         break;
     case Eject:
         connect(device.as<Solid::OpticalDrive>(),
-                SIGNAL(ejectDone(Solid::OpticalDrive::EjectResult, QVariant)),
+                SIGNAL(ejectDone(Solid::ErrorType, QVariant)),
                 this,
-                SLOT(slotEjectResult(Solid::OpticalDrive::EjectResult, QVariant)));
+                SLOT(slotStorageResult(Solid::ErrorType, QVariant)));
         device.as<Solid::OpticalDrive>()->eject();
         break;
     }
@@ -1576,29 +1576,11 @@ void SolidShell::slotResult(KJob *job)
     m_loop.exit();
 }
 
-void SolidShell::slotSetupResult(Solid::StorageAccess::SetupResult result, QVariant resultData)
+void SolidShell::slotStorageResult(Solid::ErrorType error, QVariant errorData)
 {
-    if (result!=Solid::StorageAccess::SetupSucceed) {
+    if (error) {
         m_error = 1;
-        m_errorString = resultData.toString();
-    }
-    m_loop.exit();
-}
-
-void SolidShell::slotTeardownResult(Solid::StorageAccess::TeardownResult result, QVariant resultData)
-{
-    if (result!=Solid::StorageAccess::TeardownSucceed) {
-        m_error = 1;
-        m_errorString = resultData.toString();
-    }
-    m_loop.exit();
-}
-
-void SolidShell::slotEjectResult(Solid::OpticalDrive::EjectResult result, QVariant resultData)
-{
-    if (result!=Solid::OpticalDrive::EjectSuccess) {
-        m_error = 1;
-        m_errorString = resultData.toString();
+        m_errorString = errorData.toString();
     }
     m_loop.exit();
 }
