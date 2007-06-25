@@ -6,10 +6,10 @@ set(kworkspace_LIB_SRCS dmctl.cpp
                         kwindowlistmenu.cpp
    )
 
-set(ksmserver_xml  ${KDE_WORKSPACE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
+set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface )
 
-set(kwin_xml  ${KDE_WORKSPACE_DIR}/kwin/org.kde.KWin.xml)
+set(kwin_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kwin/org.kde.KWin.xml)
 QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
 
 kde4_automoc(${kworkspace_LIB_SRCS})
