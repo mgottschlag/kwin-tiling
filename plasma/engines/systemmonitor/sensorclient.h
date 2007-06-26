@@ -75,16 +75,16 @@ class SensorTokenizer
             ++i;
           }
           else if ( info[i] == separator ) {
-            mTokens.append( unEscapeString( info.mid( lastTokenAt + 1, i - lastTokenAt - 1 ) ) );
+            m_tokens.append( unEscapeString( info.mid( lastTokenAt + 1, i - lastTokenAt - 1 ) ) );
             lastTokenAt = i;
           }
         }
 
         //Add everything after the last token
-        mTokens.append( unEscapeString( info.mid( lastTokenAt + 1, i - lastTokenAt - 1 ) ) );
+        m_tokens.append( unEscapeString( info.mid( lastTokenAt + 1, i - lastTokenAt - 1 ) ) );
       }
       else {
-        mTokens = info.split( separator );
+        m_tokens = info.split( separator );
       }
     }
 
@@ -92,17 +92,17 @@ class SensorTokenizer
 
     const QByteArray& operator[]( unsigned idx )
     {
-      Q_ASSERT(idx < (unsigned)(mTokens.count()));
-      return mTokens[ idx ];
+      Q_ASSERT(idx < (unsigned)(m_tokens.count()));
+      return m_tokens[ idx ];
     }
 
     uint count()
     {
-      return mTokens.count();
+      return m_tokens.count();
     }
 
   private:
-    QList<QByteArray> mTokens;
+    QList<QByteArray> m_tokens;
 
     QByteArray unEscapeString( QByteArray string ) {
 

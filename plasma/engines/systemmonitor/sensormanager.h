@@ -54,7 +54,7 @@ class SensorManager : public QObject
         QString message() const;
 
       private:
-        QString mMessage;
+        QString m_message;
     };
 
     explicit SensorManager();
@@ -101,23 +101,22 @@ class SensorManager : public QObject
     void hostConnectionLost( const QString &hostName );
 
   protected:
-    QHash<QString, SensorAgent*> mAgents;
+    QHash<QString, SensorAgent*> m_agents;
 
   private:
     /**
       These dictionary stores the localized versions of the sensor
       descriptions and units.
      */
-    QHash<QString, QString> mDescriptions;
-    QHash<QString, QString> mUnits;
-    QHash<QString, QString> mDict;
-    QHash<QString, QString> mTypes;
+    QHash<QString, QString> m_units;
+    QHash<QString, QString> m_dict;
+    QHash<QString, QString> m_types;
 
     /** Store the data from the config file to pass to the MostConnector dialog box*/
-    QStringList mHostList;
-    QStringList mCommandList;
+    QStringList m_hostList;
+    QStringList m_commandList;
 
-    QWidget* mBroadcaster;
+    QWidget* m_broadcaster;
 };
 
 extern SensorManager* SensorMgr;
@@ -126,7 +125,7 @@ class SensorManagerIterator : public QHashIterator<QString, SensorAgent*>
 {
   public:
     explicit SensorManagerIterator( const SensorManager *sm )
-      : QHashIterator<QString, SensorAgent*>( sm->mAgents ) { }
+      : QHashIterator<QString, SensorAgent*>( sm->m_agents ) { }
 
     ~SensorManagerIterator() { }
 };

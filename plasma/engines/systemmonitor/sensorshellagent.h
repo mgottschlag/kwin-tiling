@@ -63,10 +63,10 @@ class SensorShellAgent : public SensorAgent
   private:
     bool writeMsg( const char *msg, int len );
     bool txReady();
-    int mRetryCount;
-    QPointer<K3Process> mDaemon;
-    QString mShell;
-    QString mCommand;
+    int m_retryCount;
+    QPointer<K3Process> m_daemon;
+    QString m_shell;
+    QString m_command;
 };
 
 }

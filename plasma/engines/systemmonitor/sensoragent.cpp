@@ -37,11 +37,11 @@
 using namespace KSGRD;
 
 SensorAgent::SensorAgent( SensorManager *sm )
-  : mSensorManager( sm )
+  : m_sensorManager( sm )
 {
-  mDaemonOnLine = false;
-  mTransmitting = false;
-  mFoundError = false;
+  m_daemonOnLine = false;
+  m_transmitting = false;
+  m_foundError = false;
 }
 
 SensorAgent::~SensorAgent()
@@ -51,26 +51,26 @@ SensorAgent::~SensorAgent()
 void SensorAgent::sendRequest( const QString &req, SensorClient *client)
 {
   SensorRequest *sensorreq = 0;
-  for(int i =0; i < mInputFIFO.size(); ++i) {
-    sensorreq = mInputFIFO.at(i);
+  for(int i =0; i < m_inputFIFO.size(); ++i) {
+    sensorreq = m_inputFIFO.at(i);
     if(client == sensorreq->client() && req == sensorreq->request()) {
       executeCommand();
       return; //don't bother to resend the same request if we already have it in our queue to send
     }
   }
-  for(int i =0; i < mProcessingFIFO.size(); ++i) {
-    sensorreq = mProcessingFIFO.at(i);
+  for(int i =0; i < m_processingFIFO.size(); ++i) {
+    sensorreq = m_processingFIFO.at(i);
     if(client == sensorreq->client() && req == sensorreq->request())
       return; //don't bother to resend the same request if we have already sent the request to client and just waiting for an answer
   }
 
   /* The request is registered with the FIFO so that the answer can be
    * routed back to the requesting client. */
-  mInputFIFO.enqueue( new SensorRequest( req, client ) );
+  m_inputFIFO.enqueue( new SensorRequest( req, client ) );
 
 #if SA_TRACE
-  kDebug(1215) << "-> " << req << "(" << mInputFIFO.count() << "/"
-                << mProcessingFIFO.count() << ")" << endl;
+  kDebug(1215) << "-> " << req << "(" << m_inputFIFO.count() << "/"
+                << m_processingFIFO.count() << ")" << endl;
 #endif
   executeCommand();
 }
@@ -79,12 +79,12 @@ void SensorAgent::processAnswer( const char *buf, int buflen )
 {
   //It is possible for an answer/error message  to be split across multiple processAnswer calls.  This makes our life more difficult
   //We have to keep track of the state we are in.  Any characters that we have not parsed yet we put in
-  //mLeftOverBuffer
+  //m_leftOverBuffer
   QByteArray buffer = QByteArray::fromRawData(buf, buflen);
   
-  if(!mLeftOverBuffer.isEmpty()) {
-	buffer = mLeftOverBuffer + buffer; //If we have data left over from a previous processAnswer, then we have to prepend this on
-	mLeftOverBuffer.clear();
+  if(!m_leftOverBuffer.isEmpty()) {
+	buffer = m_leftOverBuffer + buffer; //If we have data left over from a previous processAnswer, then we have to prepend this on
+	m_leftOverBuffer.clear();
   }
   
 #if SA_TRACE
@@ -93,11 +93,11 @@ void SensorAgent::processAnswer( const char *buf, int buflen )
   int startOfAnswer = 0;  //This can become >= buffer.size(), so check before using!
   for ( int i = 0; i < buffer.size(); i++ ) {
     if ( buffer.at(i) == '\033' ) {  // 033 in octal is the escape character.  The signifies the start of an error
-      //The first time we see 033 we simply set mFoundError to true
+      //The first time we see 033 we simply set m_foundError to true
       //Then the error message will come, and then we will receive another escape character.
       
-      mFoundError = !mFoundError;
-      if ( !mFoundError ) {  //We found the end of the error
+      m_foundError = !m_foundError;
+      if ( !m_foundError ) {  //We found the end of the error
 	//Piece together the error from what we read now, and what we read last time processAnswer was called
 	QString error = QString::fromUtf8(buffer.constData() + startOfAnswer, i-startOfAnswer);
         if ( error == "RECONFIGURE" )
@@ -106,11 +106,11 @@ void SensorAgent::processAnswer( const char *buf, int buflen )
           /* We just received the end of an error message, so we
            * can display it. */
           SensorMgr->notify( i18n( "Message from %1:\n%2" ,
-                             mHostName ,
+                             m_hostName ,
                              error ) );
         }
       }
-      mAnswerBuffer.clear();
+      m_answerBuffer.clear();
       startOfAnswer = i+1;
       continue;
     }
@@ -121,11 +121,11 @@ void SensorAgent::processAnswer( const char *buf, int buflen )
 
 	QByteArray answer(buffer.constData()+startOfAnswer, i-startOfAnswer);
 	if(!answer.isEmpty())
-		mAnswerBuffer << answer;
+		m_answerBuffer << answer;
 #if SA_TRACE
-	kDebug(1215) << "<= " << mAnswerBuffer
-		<< "(" << mInputFIFO.count() << "/"
-		<< mProcessingFIFO.count() << ")" << endl;
+	kDebug(1215) << "<= " << m_answerBuffer
+		<< "(" << m_inputFIFO.count() << "/"
+		<< m_processingFIFO.count() << ")" << endl;
 #endif
 	if(buffer.at(i) == '\n')
 		i++;
@@ -134,54 +134,54 @@ void SensorAgent::processAnswer( const char *buf, int buflen )
 	startOfAnswer = i+1;
 
 	//We have found the end of one reply
-	if ( !mDaemonOnLine ) {
+	if ( !m_daemonOnLine ) {
 		/* First '\nksysguardd> ' signals that the daemon is
 	  	 * ready to serve requests now. */
-		mDaemonOnLine = true;
+		m_daemonOnLine = true;
 #if SA_TRACE
 		kDebug(1215) << "Daemon now online!" << endl;
 #endif
-		mAnswerBuffer.clear();
+		m_answerBuffer.clear();
 		continue;
 	}
 
 	//Deal with the answer we have now read in
 
 	// remove pending request from FIFO
-	if ( mProcessingFIFO.isEmpty() ) {
+	if ( m_processingFIFO.isEmpty() ) {
 		kDebug(1215)	<< "ERROR: Received answer but have no pending "
 				<< "request!" << endl;
-		mAnswerBuffer.clear();
+		m_answerBuffer.clear();
 		continue;
 	}
 		
-	SensorRequest *req = mProcessingFIFO.dequeue();
+	SensorRequest *req = m_processingFIFO.dequeue();
 	// we are now responsible for the memory of req - we must delete it!
 	if ( !req->client() ) {
 		/* The client has disappeared before receiving the answer
 		 * to his request. */
 		delete req;
-		mAnswerBuffer.clear();
+		m_answerBuffer.clear();
 		continue;
 	}
 		
-	if(!mAnswerBuffer.isEmpty() && mAnswerBuffer[0] == "UNKNOWN COMMAND") {
+	if(!m_answerBuffer.isEmpty() && m_answerBuffer[0] == "UNKNOWN COMMAND") {
 		/* Notify client that the sensor seems to be no longer available. */
         kDebug() << "Received UNKNOWN COMMAND for: " << req->request() << endl; 
 		req->client()->sensorLost( req->request() );
 	} else {
 		// Notify client of newly arrived answer.
-		req->client()->answerReceived( req->request(), mAnswerBuffer );
+		req->client()->answerReceived( req->request(), m_answerBuffer );
 	}
 	delete req;
-	mAnswerBuffer.clear();
+	m_answerBuffer.clear();
     } else if(buffer.at(i) == '\n'){
-	mAnswerBuffer << QByteArray(buffer.constData()+startOfAnswer, i-startOfAnswer);
+	m_answerBuffer << QByteArray(buffer.constData()+startOfAnswer, i-startOfAnswer);
 	startOfAnswer = i+1;
     }
   }
 
-  mLeftOverBuffer += QByteArray(buffer.constData()+startOfAnswer, buffer.size()-startOfAnswer);
+  m_leftOverBuffer += QByteArray(buffer.constData()+startOfAnswer, buffer.size()-startOfAnswer);
   executeCommand();
 }
 
@@ -191,75 +191,75 @@ void SensorAgent::executeCommand()
    * command to pass to the daemon. But the command may only be sent
    * if the daemon is online and there is no other command currently
    * being sent. */
-  if ( mDaemonOnLine && txReady() && !mInputFIFO.isEmpty() ) {
-    SensorRequest *req = mInputFIFO.dequeue();
+  if ( m_daemonOnLine && txReady() && !m_inputFIFO.isEmpty() ) {
+    SensorRequest *req = m_inputFIFO.dequeue();
 
 #if SA_TRACE
-    kDebug(1215) << ">> " << req->request().toAscii() << "(" << mInputFIFO.count()
-                  << "/" << mProcessingFIFO.count() << ")" << endl;
+    kDebug(1215) << ">> " << req->request().toAscii() << "(" << m_inputFIFO.count()
+                  << "/" << m_processingFIFO.count() << ")" << endl;
 #endif
     // send request to daemon
     QString cmdWithNL = req->request() + '\n';
     if ( writeMsg( cmdWithNL.toLatin1(), cmdWithNL.length() ) )
-      mTransmitting = true;
+      m_transmitting = true;
     else
       kDebug(1215) << "SensorAgent::writeMsg() failed" << endl;
 
     // add request to processing FIFO.
-    // Note that this means that mProcessingFIFO is now responsible for managing the memory for it.
-    mProcessingFIFO.enqueue( req );
+    // Note that this means that m_processingFIFO is now responsible for managing the memory for it.
+    m_processingFIFO.enqueue( req );
   }
 }
 
 void SensorAgent::disconnectClient( SensorClient *client )
 {
-  for (int i = 0; i < mInputFIFO.size(); ++i)
-    if ( mInputFIFO[i]->client() == client )
-      mInputFIFO[i]->setClient(0);
-  for (int i = 0; i < mProcessingFIFO.size(); ++i)
-    if ( mProcessingFIFO[i]->client() == client )
-      mProcessingFIFO[i]->setClient( 0 );
+  for (int i = 0; i < m_inputFIFO.size(); ++i)
+    if ( m_inputFIFO[i]->client() == client )
+      m_inputFIFO[i]->setClient(0);
+  for (int i = 0; i < m_processingFIFO.size(); ++i)
+    if ( m_processingFIFO[i]->client() == client )
+      m_processingFIFO[i]->setClient( 0 );
   
 }
 
 SensorManager *SensorAgent::sensorManager()
 {
-  return mSensorManager;
+  return m_sensorManager;
 }
 
 void SensorAgent::setDaemonOnLine( bool value )
 {
-  mDaemonOnLine = value;
+  m_daemonOnLine = value;
 }
 
 bool SensorAgent::daemonOnLine() const
 {
-  return mDaemonOnLine;
+  return m_daemonOnLine;
 }
 
 void SensorAgent::setTransmitting( bool value )
 {
-  mTransmitting = value;
+  m_transmitting = value;
 }
 
 bool SensorAgent::transmitting() const
 {
-  return mTransmitting;
+  return m_transmitting;
 }
 
 void SensorAgent::setHostName( const QString &hostName )
 {
-  mHostName = hostName;
+  m_hostName = hostName;
 }
 
 const QString &SensorAgent::hostName() const
 {
-  return mHostName;
+  return m_hostName;
 }
 
 
 SensorRequest::SensorRequest( const QString &request, SensorClient *client )
-  : mRequest( request ), mClient( client )
+  : m_request( request ), m_client( client )
 {
 }
 
@@ -269,22 +269,22 @@ SensorRequest::~SensorRequest()
 
 void SensorRequest::setRequest( const QString &request )
 {
-  mRequest = request;
+  m_request = request;
 }
 
 QString SensorRequest::request() const
 {
-  return mRequest;
+  return m_request;
 }
 
 void SensorRequest::setClient( SensorClient *client )
 {
-  mClient = client;
+  m_client = client;
 }
 
 SensorClient *SensorRequest::client()
 {
-  return mClient;
+  return m_client;
 }
 
 #include "sensoragent.moc"

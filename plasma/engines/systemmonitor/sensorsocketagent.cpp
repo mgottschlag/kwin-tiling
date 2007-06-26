@@ -33,16 +33,16 @@ using namespace KSGRD;
 SensorSocketAgent::SensorSocketAgent( SensorManager *sm )
   : SensorAgent( sm )
 {
-  connect( &mSocket, SIGNAL( error( QAbstractSocket::SocketError ) ), SLOT( error( QAbstractSocket::SocketError ) ) );
-  connect( &mSocket, SIGNAL( bytesWritten( qint64 ) ), SLOT( msgSent( ) ) );
-  connect( &mSocket, SIGNAL( readyRead() ), SLOT( msgRcvd() ) );
-  connect( &mSocket, SIGNAL( disconnected() ), SLOT( disconnected() ) );
+  connect( &m_socket, SIGNAL( error( QAbstractSocket::SocketError ) ), SLOT( error( QAbstractSocket::SocketError ) ) );
+  connect( &m_socket, SIGNAL( bytesWritten( qint64 ) ), SLOT( msgSent( ) ) );
+  connect( &m_socket, SIGNAL( readyRead() ), SLOT( msgRcvd() ) );
+  connect( &m_socket, SIGNAL( disconnected() ), SLOT( disconnected() ) );
 }
 
 SensorSocketAgent::~SensorSocketAgent()
 {
-  mSocket.write( "quit\n", sizeof( "quit\n" ) );
-  mSocket.flush();
+  m_socket.write( "quit\n", sizeof( "quit\n" ) );
+  m_socket.flush();
 }
 	
 bool SensorSocketAgent::start( const QString &host, const QString&,
@@ -52,9 +52,9 @@ bool SensorSocketAgent::start( const QString &host, const QString&,
     kDebug(1215) << "SensorSocketAgent::start: Invalid port " << port << endl;
 
   setHostName( host );
-  mPort = port;
+  m_port = port;
 
-  mSocket.connectToHost( hostName(), mPort );
+  m_socket.connectToHost( hostName(), m_port );
 
   return true;
 }
@@ -63,12 +63,12 @@ void SensorSocketAgent::hostInfo( QString &shell, QString &command, int &port ) 
 {
   shell.clear();
   command.clear();
-  port = mPort;
+  port = m_port;
 }
 
 void SensorSocketAgent::msgSent( )
 {
-  if ( mSocket.bytesToWrite() != 0 )
+  if ( m_socket.bytesToWrite() != 0 )
     return;
 
   setTransmitting( false );
@@ -79,10 +79,10 @@ void SensorSocketAgent::msgSent( )
 
 void SensorSocketAgent::msgRcvd()
 {
-  int buflen = mSocket.bytesAvailable();
+  int buflen = m_socket.bytesAvailable();
   char* buffer = new char[ buflen ];
 
-  mSocket.read( buffer, buflen );
+  m_socket.read( buffer, buflen );
 
   processAnswer( buffer, buflen ); 
   delete [] buffer;
@@ -112,7 +112,7 @@ void SensorSocketAgent::error( QAbstractSocket::SocketError id )
       break;
     default:
       SensorMgr->notify( i18n( "Error for host %1: %2",
-                           hostName(), mSocket.errorString() ) );
+                           hostName(), m_socket.errorString() ) );
   }
 
   setDaemonOnLine( false );
@@ -121,7 +121,7 @@ void SensorSocketAgent::error( QAbstractSocket::SocketError id )
 
 bool SensorSocketAgent::writeMsg( const char *msg, int len )
 {
-  return ( mSocket.write( msg, len ) == len );
+  return ( m_socket.write( msg, len ) == len );
 }
 
 bool SensorSocketAgent::txReady()

@@ -94,18 +94,17 @@ class SensorAgent : public QObject
     virtual bool writeMsg( const char *msg, int len ) = 0;
     virtual bool txReady() = 0;
 
-    bool mFoundError;
-    QQueue< SensorRequest* > mInputFIFO;
-    QQueue< SensorRequest* > mProcessingFIFO;
-    QList<QByteArray> mAnswerBuffer;  ///A single reply can be on multiple lines.  
-    QString mErrorBuffer;
-    QByteArray mLeftOverBuffer; ///Any data read in but not terminated is copied into here, awaiting the next load of data
+    bool m_foundError;
+    QQueue< SensorRequest* > m_inputFIFO;
+    QQueue< SensorRequest* > m_processingFIFO;
+    QList<QByteArray> m_answerBuffer;  ///A single reply can be on multiple lines.  
+    QByteArray m_leftOverBuffer; ///Any data read in but not terminated is copied into here, awaiting the next load of data
 
-    SensorManager *mSensorManager;
+    SensorManager *m_sensorManager;
 
-    bool mDaemonOnLine;
-    bool mTransmitting;
-    QString mHostName;
+    bool m_daemonOnLine;
+    bool m_transmitting;
+    QString m_hostName;
 };
 
 /**
@@ -124,8 +123,8 @@ class SensorRequest
     SensorClient *client();
 
   private:
-    QString mRequest;
-    SensorClient *mClient;
+    QString m_request;
+    SensorClient *m_client;
 };
 
 }
