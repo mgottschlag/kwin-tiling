@@ -469,7 +469,7 @@ void KRandRSystemTray::slotResolutionChanged(QAction *action)
 
 		if (screen->applyProposedAndConfirm()) 
 		{
-			KConfig config("kcmrandrrc");
+			KConfig config("krandrrc");
 			if (syncTrayApp(config))
 				screen->save(config);
 		}
@@ -504,7 +504,7 @@ void KRandRSystemTray::slotOrientationChanged(QAction *action)
 
 		if (screen->applyProposedAndConfirm()) 
 		{
-			KConfig config("kcmrandrrc");
+			KConfig config("krandrrc");
 			if (syncTrayApp(config))
 				screen->save(config);
 		}
@@ -534,7 +534,7 @@ void KRandRSystemTray::slotRefreshRateChanged(QAction *action)
 
 		if (screen->applyProposedAndConfirm()) 
 		{
-			KConfig config("kcmrandrrc");
+			KConfig config("krandrrc");
 			if (syncTrayApp(config))
 				screen->save(config);
 		}

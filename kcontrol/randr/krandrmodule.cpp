@@ -32,7 +32,7 @@ K_EXPORT_COMPONENT_FACTORY (randr, KSSFactory("krandr") )
 
 void KRandRModule::performApplyOnStartup()
 {
-	KConfig config("kcmrandrrc");
+	KConfig config("krandrrc");
 	if (RandRDisplay::applyOnStartup(config))
 	{
 		// Load settings and apply appropriate config

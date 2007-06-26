@@ -95,33 +95,42 @@ void RandRCrtc::loadSettings()
 
 void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 {
+	kDebug() << "[CRTC] Event..." << endl;
 	int changed = 0;
-
+	loadSettings();
+//I have disable this because in my machine the width and height informed in 
+//the event are wrong, this will be re-enabled later.
+#if 0
 	if (event->mode != m_currentMode)
 	{
+		kDebug() << "   Changed mode" << endl;
 		changed |= ChangeMode;
 		m_currentMode = event->mode;
 	}
 	
 	if (event->rotation != m_currentRotation)
 	{
+		kDebug() << "   Changed rotation: " << event->rotation << endl;
 		changed |= ChangeRotation;
 		m_currentRotation = event->rotation;
 	}
 	if (event->x != m_currentRect.x() || event->y != m_currentRect.y())
 	{
+		kDebug() << "   Changed position: " << event->x << "," << event->y << endl;
 		changed |= ChangePosition;
 		m_currentRect.translate(event->x, event->y);
 	}
 
 	if ((int) event->width != m_currentRect.width() || (int)event->height != m_currentRect.height())
 	{
+		kDebug() << "   Changed size: " << event->width << "x" << event->height << endl;
 		changed |= ChangeSize;
 		m_currentRect.setWidth(event->width);
 		m_currentRect.setHeight(event->height);
 	}
 
 	if (changed)
+#endif
 		emit crtcChanged(m_id, changed);
 }
 
@@ -132,12 +141,18 @@ RRMode RandRCrtc::currentMode() const
 
 QRect RandRCrtc::rect() const
 {
+	kDebug() << "[CRTC] Returning rect " << m_currentRect << endl;
 	return m_currentRect;
+}
+
+float RandRCrtc::currentRefreshRate() const
+{
+	return m_currentRate;
 }
 
 bool RandRCrtc::applyProposed()
 {
-#if 0
+#if 1
 	kDebug() << "[CRTC] Going to apply...." << endl;
 	kDebug() << "       Current Screen rect: " << m_screen->rect() << endl;
 	kDebug() << "       Current CRTC Rect: " << m_currentRect << endl;
@@ -288,6 +303,13 @@ void RandRCrtc::setOriginal()
 	m_originalRotation = m_currentRotation;
 	m_originalRect = m_currentRect;
 	m_originalRate = m_currentRate;
+}
+
+bool RandRCrtc::proposedChanged()
+{
+	return (m_proposedRotation != m_currentRotation ||
+		m_proposedRect != m_currentRect ||
+		m_proposedRate != m_currentRate);
 }
 
 bool RandRCrtc::addOutput(RROutput output, QSize s)

@@ -28,6 +28,7 @@
 
 
 class QAction;
+class KConfig;
 
 class RandRScreen : public QObject
 {
@@ -36,6 +37,8 @@ class RandRScreen : public QObject
 public:
 	RandRScreen(int screenIndex);
 	~RandRScreen();
+
+	int index() const;
 
 	XRRScreenResources* resources() const;
 	Window rootWindow() const;
@@ -66,6 +69,11 @@ public:
 	SizeList unifiedSizes() const;
 
 	QRect rect() const;
+
+	void load(KConfig &config);
+	void save(KConfig &config);
+
+	bool applyProposed(bool confirm);
 
 public slots:
 	void slotUnifyOutputs(QAction *action);

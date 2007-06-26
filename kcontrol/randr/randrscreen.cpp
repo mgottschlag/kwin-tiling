@@ -17,6 +17,7 @@
  */
 
 #include <KDebug>
+#include <KConfig>
 #include <QX11Info>
 #include <QAction>
 #include "randrscreen.h"
@@ -46,6 +47,11 @@ RandRScreen::~RandRScreen()
 {
 	if (m_resources)
 		XRRFreeScreenResources(m_resources);
+}
+
+int RandRScreen::index() const
+{
+	return m_index;
 }
 
 XRRScreenResources* RandRScreen::resources() const
@@ -348,6 +354,65 @@ SizeList RandRScreen::unifiedSizes() const
 QRect RandRScreen::rect() const
 {
 	return m_rect;
+}
+
+void RandRScreen::load(KConfig &config)
+{
+	foreach(RandROutput *o, m_outputs)
+	{
+		if (o->isConnected())
+			o->load(config);
+	}
+	//TODO check if there are any screen specific config we need to load
+}
+
+void RandRScreen::save(KConfig &config)
+{
+	foreach(RandROutput *o, m_outputs)
+	{
+		if (o->isConnected())
+			o->save(config);
+	}
+	//TODO check if there are any screen specific config we need to save
+}
+
+bool RandRScreen::applyProposed(bool confirm)
+{
+	bool succeed = false;
+	QRect r;
+	foreach(RandROutput *o, m_outputs)
+	{
+		if (o->proposedChanged())
+		{
+			r = o->rect();
+			succeed = true;
+			if (!o->applyProposed())
+			{
+				succeed = false;
+				break;
+			}
+		}
+
+	}
+
+	// if we could apply the config clean, ask for confirmation
+	// otherwise just revert to the original changes
+	if (succeed && confirm)
+		succeed = RandR::confirm(r);
+
+	if (!succeed)
+	{
+		foreach(RandROutput *o, m_outputs)
+		{
+			if (o->isConnected())
+			{
+				o->proposeOriginal();
+				o->applyProposed();
+			}
+		}
+	}
+	
+	return false;
 }
 
 void RandRScreen::slotUnifyOutputs(QAction *action)

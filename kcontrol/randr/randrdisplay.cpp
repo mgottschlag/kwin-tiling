@@ -210,17 +210,18 @@ bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
 {
 	if (loadScreens)
 	{
-		for (int i = 0; i < m_legacyScreens.size(); ++i) {
 #ifdef HAS_RANDR_1_2
-			if (RandR::has_1_2)
-				//TODO: load screen settings here
-				currentScreenIndex();
-			else
+		if (RandR::has_1_2)
+		{
+			foreach(RandRScreen *s, m_screens)
+				s->load(config);
+
+		}
+		else
 #endif
-			{
-        			LegacyRandRScreen* s = m_legacyScreens.at(i);
-        			s->load(config);
-			}
+		{
+			foreach(LegacyRandRScreen* s, m_legacyScreens)
+				s->load(config);
 		}
 	}
 	return applyOnStartup(config);
@@ -242,17 +243,17 @@ void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTr
 	group.writeEntry("ApplyOnStartup", applyOnStartup);
 	group.writeEntry("SyncTrayApp", syncTrayApp);
 
-	for (int i = 0; i < m_legacyScreens.size(); ++i) {
 #ifdef HAS_RANDR_1_2
-		if (RandR::has_1_2)
-			//TODO: save screen settings here
-			currentScreenIndex();
-		else
+	if (RandR::has_1_2)
+	{
+		foreach(RandRScreen *s, m_screens)
+			s->save(config);
+	}
+	else
 #endif
-		{
-			LegacyRandRScreen* s = m_legacyScreens.at(i);
-        		s->save(config);
-		}
+	{
+		foreach(LegacyRandRScreen *s, m_legacyScreens)
+			s->save(config);
 	}
 }
 
@@ -261,17 +262,18 @@ void RandRDisplay::applyProposed(bool confirm)
 
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
-		//TODO: apply display settings here
-		currentScreenIndex();
+		foreach(RandRScreen *s, m_screens)
+			s->applyProposed(confirm);
 	else
 #endif
 	{
-		for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
-			if (legacyScreen(screenIndex)->proposedChanged()) {
+		foreach(LegacyRandRScreen *s, m_legacyScreens)
+		{
+			if (s->proposedChanged()) {
 				if (confirm)
-						legacyScreen(screenIndex)->applyProposedAndConfirm();
+						s->applyProposedAndConfirm();
 				else
-						legacyScreen(screenIndex)->applyProposed();
+						s->applyProposed();
 			}
 		}
 	}

@@ -71,7 +71,7 @@ void LegacyRandRConfig::load()
 	// and if it isn't correct they have changed a) their X configuration, b) the screen
 	// with another program, or c) their hardware.
 
-	KConfig config("kcmrandrrc");
+	KConfig config("krandrrc");
 	m_oldApply = m_display->loadDisplay(config, false);
 	m_oldSyncTrayApp = m_display->syncTrayApp(config);
 	applyOnStartup->setChecked(m_oldApply);
@@ -89,7 +89,7 @@ void LegacyRandRConfig::save()
 
 	m_oldApply = applyOnStartup->isChecked();
 	m_oldSyncTrayApp = syncTrayApp->isChecked();
-	KConfig config("kcmrandrrc");
+	KConfig config("krandrrc");
 	m_display->saveDisplay(config, m_oldApply, m_oldSyncTrayApp);
 
 	setChanged();

@@ -17,6 +17,7 @@
  */
 
 #include <KDebug>
+#include <KConfig>
 #include <QX11Info>
 #include <QAction>
 #include "randroutput.h"
@@ -246,6 +247,99 @@ bool RandROutput::isActive() const
 	return (m_connected && m_currentCrtc != None);
 }
 
+bool RandROutput::proposedChanged()
+{
+	if (!m_connected)
+		return false;
+
+	//TODO: add a config option for activating/deactivating outputs
+	return true;
+}
+
+bool RandROutput::applyProposed()
+{
+	if (m_currentCrtc == None)
+		return true;
+
+	return m_screen->crtc(m_currentCrtc)->applyProposed();
+}
+
+void RandROutput::proposeOriginal()
+{
+	if (m_originalCrtc != m_currentCrtc)
+	{
+		if (m_currentCrtc != None)
+			m_screen->crtc(m_currentCrtc)->removeOutput(m_id);
+
+		if (m_originalCrtc != None)
+			m_screen->crtc(m_originalCrtc)->addOutput(m_id);
+	}
+
+	m_currentCrtc = m_originalCrtc;
+	
+	if (m_currentCrtc != None)
+		m_screen->crtc(m_currentCrtc)->proposeOriginal();
+}
+
+void RandROutput::load(KConfig &config)
+{
+	m_originalCrtc = m_currentCrtc;
+
+	if (!m_connected)
+		return;
+
+	KConfigGroup cg = config.group("Screen_" + QString::number(m_screen->index()) + "_Output_" + m_name);
+	bool active = cg.readEntry("Active", true);
+
+	if (!active && m_currentCrtc != None)
+	{
+		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
+		crtc->removeOutput(m_id);
+	}
+	else if (active && m_currentCrtc == None)
+	{
+		//FIXME: not handling the case where there is no empty CRTC to use
+		RandRCrtc *crtc = findEmptyCrtc();
+		if (crtc->addOutput(m_id))
+			m_currentCrtc = crtc->id();
+
+	}
+
+	// if the output is not going to be active, stop loading the config
+	if (!active)
+		return;
+
+	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
+	QRect r = cg.readEntry("Rect", QRect());
+	if (r.isValid())
+	{
+		crtc->proposePosition(r.topLeft());
+		crtc->proposeSize(r.size());
+	}
+	crtc->proposeRotation(cg.readEntry("Rotation", (int) RandR::Rotate0));
+	crtc->proposeRefreshRate(cg.readEntry("Rate", 0));
+}
+
+void RandROutput::save(KConfig &config)
+{
+	KConfigGroup cg = config.group("Screen_" + QString::number(m_screen->index()) + "_Output_" + m_name);
+	if (!m_connected)
+		return;
+
+	if (m_currentCrtc == None)
+	{
+		cg.writeEntry("Active", false);
+	       	return;	
+	}
+
+	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
+	cg.writeEntry("Active", true);
+	cg.writeEntry("Rect", crtc->rect());
+	kDebug() << "[OUTPUT] Saving rect " << crtc->rect() << endl;
+	cg.writeEntry("Rotation", crtc->currentRotation());
+	cg.writeEntry("RefreshRate", (double) crtc->currentRefreshRate());
+}
+
 void RandROutput::slotChangeSize(QAction *action)
 {
 	QSize size = action->data().toSize();
@@ -431,13 +525,18 @@ RandRCrtc *RandROutput::findEmptyCrtc()
 
 bool RandROutput::applyAndConfirm(RandRCrtc *crtc)
 {
+	KConfig cfg("krandrrc");
 	if (!crtc)
 		return false;
 
 	if (crtc->applyProposed())
 	{
+		kDebug() << "[OUTPUT] Saving rect " << crtc->rect() << endl;
 		if (RandR::confirm(crtc->rect()))
+		{
+			save(cfg);
 			return true;
+		}
 	}
 
 	return false;	

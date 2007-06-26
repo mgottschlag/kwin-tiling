@@ -27,6 +27,7 @@
 #ifdef HAS_RANDR_1_2
 
 class QAction;
+class KConfig;
 
 class RandROutput : public QObject
 {
@@ -92,6 +93,19 @@ public:
 	bool isConnected() const;
 	bool isActive() const;
 
+	/**
+	 * This function will check if the proposed config for the CRTC this output
+	 * is connected to has changed from the original settings
+	 *
+	 * If this output is not connected to any CRTC, it will return false
+	 */
+	bool proposedChanged();
+	bool applyProposed();
+	void proposeOriginal();
+
+	void load(KConfig &config);
+	void save(KConfig &config);
+
 public slots:
 	void slotChangeSize(QAction *action);
 	void slotChangeRotation(QAction *action);
@@ -115,6 +129,13 @@ private:
 
 	CrtcList m_possibleCrtcs;
 	RRCrtc m_currentCrtc;
+
+	RRCrtc m_originalCrtc;
+
+	//proposed stuff (mostly to read from the configuration
+	QRect m_proposedRect;
+	int m_proposedRotation;
+	float m_proposedRate;
 
 	ModeList m_modes;
 

@@ -51,6 +51,7 @@ public:
 
 	RRMode currentMode() const;
 	QRect rect() const;
+	float currentRefreshRate() const;
 	
 	bool proposeSize(QSize s);
 	bool proposePosition(QPoint p);
@@ -61,6 +62,7 @@ public:
 	bool applyProposed();
 	void proposeOriginal();
 	void setOriginal(); 
+	bool proposedChanged();
 
 	bool addOutput(RROutput output, QSize size = QSize());
 	bool removeOutput(RROutput output);
