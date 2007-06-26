@@ -23,6 +23,16 @@
 #include "Fc.h"
 #include <QTextStream>
 
+//
+// KDE font chooser always seems to use Italic - for both Oblique, and Italic. So I guees
+// the fonts:/ should do too - so as to appear more unified.
+//
+// ditto with respect to Medium/Regular
+#define KFI_HAVE_OBLIQUE         // Do we differentiate between Italic and Oblique when comparing slants?
+//#define KFI_DISPLAY_OBLIQUE      // Do we want to list "Oblique"? Or always use Italic?
+#define KFI_HAVE_MEDIUM_WEIGHT   // Do we differentiate between Medium and Regular weights when comparing weights?
+//#define KFI_DISPLAY_MEDIUM      // Do we want to list "Medium"? Or always use Regular?
+
 namespace KFI
 {
 
