@@ -531,7 +531,6 @@ bool RandROutput::applyAndConfirm(RandRCrtc *crtc)
 
 	if (crtc->applyProposed())
 	{
-		kDebug() << "[OUTPUT] Saving rect " << crtc->rect() << endl;
 		if (RandR::confirm(crtc->rect()))
 		{
 			save(cfg);

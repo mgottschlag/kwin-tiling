@@ -97,10 +97,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 {
 	kDebug() << "[CRTC] Event..." << endl;
 	int changed = 0;
-	loadSettings();
-//I have disable this because in my machine the width and height informed in 
-//the event are wrong, this will be re-enabled later.
-#if 0
+
 	if (event->mode != m_currentMode)
 	{
 		kDebug() << "   Changed mode" << endl;
@@ -121,16 +118,16 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 		m_currentRect.translate(event->x, event->y);
 	}
 
-	if ((int) event->width != m_currentRect.width() || (int)event->height != m_currentRect.height())
+	RandRMode mode = m_screen->mode(event->mode);
+	if (mode.size() != m_currentRect.size())
 	{
-		kDebug() << "   Changed size: " << event->width << "x" << event->height << endl;
+		kDebug() << "   Changed size: " << mode.size() << endl;
 		changed |= ChangeSize;
-		m_currentRect.setWidth(event->width);
-		m_currentRect.setHeight(event->height);
+		m_currentRect.setSize(mode.size());
+		//Do NOT use event->width and event->height here, as it is being returned wrongly
 	}
 
 	if (changed)
-#endif
 		emit crtcChanged(m_id, changed);
 }
 
@@ -141,7 +138,6 @@ RRMode RandRCrtc::currentMode() const
 
 QRect RandRCrtc::rect() const
 {
-	kDebug() << "[CRTC] Returning rect " << m_currentRect << endl;
 	return m_currentRect;
 }
 
@@ -152,7 +148,7 @@ float RandRCrtc::currentRefreshRate() const
 
 bool RandRCrtc::applyProposed()
 {
-#if 1
+#if 0
 	kDebug() << "[CRTC] Going to apply...." << endl;
 	kDebug() << "       Current Screen rect: " << m_screen->rect() << endl;
 	kDebug() << "       Current CRTC Rect: " << m_currentRect << endl;
