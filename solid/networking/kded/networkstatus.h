@@ -27,8 +27,6 @@
 
 #include <KDEDModule>
 
-#include <networkstatuscommon.h>
-
 #include "network.h"
 
 class NetworkStatusModule : public KDEDModule
