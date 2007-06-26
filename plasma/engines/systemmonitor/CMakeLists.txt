@@ -1,10 +1,10 @@
 
 set(systemmonitor_engine_SRCS
    systemmonitor.cpp
-   SensorAgent.cc 
-   SensorManager.cc 
-   SensorShellAgent.cc 
-   SensorSocketAgent.cc 
+   sensoragent.cpp
+   sensormanager.cpp
+   sensorshellagent.cpp
+   sensorsocketagent.cpp
 )
 
 kde4_automoc(${systemmonitor_engine_SRCS})

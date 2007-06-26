@@ -27,7 +27,7 @@
 
 #include "plasma/datasource.h"
 
-#include "SensorManager.h"
+#include "sensormanager.h"
 
 SystemMonitorEngine::SystemMonitorEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)
