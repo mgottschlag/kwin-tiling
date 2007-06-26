@@ -23,6 +23,8 @@
 
 #include "SensorClient.h"
 
+#include <QStringList>
+
 class QTimer;
 
 /**
@@ -33,6 +35,8 @@ class SystemMonitorEngine : public Plasma::DataEngine, public KSGRD::SensorClien
     Q_OBJECT
 
     public:
+	/** Inherited from Plasma::DataEngine.  Returns a list of all the sensors that ksysguardd knows about. */
+        virtual QStringList sources() const;
         SystemMonitorEngine( QObject* parent, const QStringList& args );
         ~SystemMonitorEngine();
 
@@ -47,6 +51,7 @@ class SystemMonitorEngine : public Plasma::DataEngine, public KSGRD::SensorClien
         void updateSensors();
 
     private:
+        QStringList m_sensors;
         QTimer* m_timer;
 	int m_waitingFor;
 };
@@ -54,3 +59,4 @@ class SystemMonitorEngine : public Plasma::DataEngine, public KSGRD::SensorClien
 K_EXPORT_PLASMA_DATAENGINE(systemmonitor, SystemMonitorEngine)
 
 #endif
+

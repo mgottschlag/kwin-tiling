@@ -42,14 +42,16 @@ SystemMonitorEngine::SystemMonitorEngine(QObject* parent, const QStringList& arg
     KSGRD::SensorMgr->engage( "localhost", "", "ksysguardd" );
 
     m_waitingFor= 0;
-
+    KSGRD::SensorMgr->sendRequest( "localhost", "monitors", (KSGRD::SensorClient*)this);
 }
 
 SystemMonitorEngine::~SystemMonitorEngine()
 {
 }
 
-
+QStringList SystemMonitorEngine::sources() const { 
+	return m_sensors; 
+}
 bool SystemMonitorEngine::sourceRequested(const QString &name)
 {
     return true;
@@ -71,6 +73,19 @@ void SystemMonitorEngine::updateSensors()
 }
 
 void SystemMonitorEngine::answerReceived( const QString &sensor, const QList<QByteArray>&answer ) {
+    kDebug() << "ANSWER RECIEVED" << endl;
+    if(sensor=="monitors") {
+        QStringList sensors;
+	foreach(QByteArray sens, answer) { 
+		QStringList newSensorInfo = QString::fromUtf8(sens).split('\t');
+		QString newSensor = newSensorInfo[0];
+		sensors.append(newSensor);
+	}
+	emit newSource("hello");
+	m_sensors = sensors;
+	return;
+    }
+
     m_waitingFor--;
     QString reply;
     if(!answer.isEmpty())
