@@ -14,7 +14,7 @@ kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
 include_directories(
 	${KDEBASE_WORKSPACE_SOURCE_DIR}/lib
 	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/background
-	${CMAKE_SOURCE_DIR}/libkonq
+	${CMAKE_SOURCE_DIR}/apps/lib/konq
 	 )
 
 
