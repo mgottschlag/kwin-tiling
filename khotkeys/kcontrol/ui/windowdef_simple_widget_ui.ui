@@ -443,7 +443,7 @@
                         <cstring>type_dock_checkbox</cstring>
                     </property>
                     <property name="text">
-                        <string>Qt::ToolBarDock</string>
+                        <string>Dock</string>
                     </property>
                 </widget>
             </grid>
