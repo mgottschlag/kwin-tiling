@@ -13,6 +13,7 @@ Name[zh_TW]=CIA.vc 資料引擎
 Comment=F/OSS Project Commits Data Engine
 Comment[de]=Commit-Daten-Treiber für F/OSS-Projekte
 Comment[el]=Μηχανή δεδομένων υποβολής έργου F/OSS
+Comment[ja]=F/OSS プロジェクトのコミットデータエンジン
 Comment[nds]=Projekt-Inspeeldatendriever F/OSS
 Comment[nl]=F/OSS Project Commits Data-engine
 Comment[sv]=Datagränssnitt för arkivering i projekt med fri och öppen källkod
