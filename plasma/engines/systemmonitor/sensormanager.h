@@ -27,7 +27,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QObject>
 
-#include "SensorAgent.h"
+#include "sensoragent.h"
 
 namespace KSGRD {
 

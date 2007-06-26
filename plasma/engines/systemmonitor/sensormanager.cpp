@@ -24,10 +24,10 @@
 #include <QWidget>
 #include <QEvent>
 
-#include "SensorShellAgent.h"
-#include "SensorSocketAgent.h"
+#include "sensorshellagent.h"
+#include "sensorsocketagent.h"
 
-#include "SensorManager.h"
+#include "sensormanager.h"
 
 using namespace KSGRD;
 
@@ -391,4 +391,4 @@ void SensorManager::disconnectClient( SensorClient *client )
     it.next().value()->disconnectClient( client );
 }
 
-#include "SensorManager.moc"
+#include "sensormanager.moc"

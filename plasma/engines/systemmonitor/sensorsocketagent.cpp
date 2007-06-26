@@ -23,10 +23,10 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include "SensorClient.h"
-#include "SensorManager.h"
+#include "sensorclient.h"
+#include "sensormanager.h"
 
-#include "SensorSocketAgent.h"
+#include "sensorsocketagent.h"
 
 using namespace KSGRD;
 
@@ -129,4 +129,4 @@ bool SensorSocketAgent::txReady()
   return !transmitting();
 }
 
-#include "SensorSocketAgent.moc"
+#include "sensorsocketagent.moc"

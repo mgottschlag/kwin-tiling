@@ -23,7 +23,7 @@
 
 #include <QtNetwork/QTcpSocket>
 
-#include "SensorAgent.h"
+#include "sensoragent.h"
 
 class QString;
 

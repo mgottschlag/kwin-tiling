@@ -21,10 +21,10 @@
 #include <kdebug.h>
 #include <k3process.h>
 
-//#include "SensorClient.h"
-#include "SensorManager.h"
+//#include "sensorclient.h"
+#include "sensormanager.h"
 
-#include "SensorShellAgent.h"
+#include "sensorshellagent.h"
 
 using namespace KSGRD;
 
@@ -131,4 +131,4 @@ bool SensorShellAgent::txReady()
   return !transmitting();
 }
 
-#include "SensorShellAgent.moc"
+#include "sensorshellagent.moc"

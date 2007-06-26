@@ -23,10 +23,10 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include "SensorClient.h"
-#include "SensorManager.h"
+#include "sensorclient.h"
+#include "sensormanager.h"
 
-#include "SensorAgent.h"
+#include "sensoragent.h"
 
 /**
   This can be used to debug communication problems with the daemon.
@@ -287,4 +287,4 @@ SensorClient *SensorRequest::client()
   return mClient;
 }
 
-#include "SensorAgent.moc"
+#include "sensoragent.moc"

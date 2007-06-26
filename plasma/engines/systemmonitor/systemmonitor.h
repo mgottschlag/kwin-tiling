@@ -21,7 +21,7 @@
 
 #include "plasma/dataengine.h"
 
-#include "SensorClient.h"
+#include "sensorclient.h"
 
 #include <QStringList>
 

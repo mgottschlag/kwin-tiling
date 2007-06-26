@@ -24,7 +24,7 @@
 #include <QObject>
 #include <QPointer>
 
-#include "SensorAgent.h"
+#include "sensoragent.h"
 
 class QString;
 
