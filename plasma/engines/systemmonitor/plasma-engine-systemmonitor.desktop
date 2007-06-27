@@ -1,7 +1,17 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor Engine
+Name[es]=Motor del monitor del sistema
+Name[ja]=システムモニタエンジン
+Name[sv]=Gränssnitt för systemövervakning
+Name[zh_TW]=系統監視器引擎
 Comment=System information for Plasmoids
+Comment[es]=Datos del sistema para los plasmoides
+Comment[ja]=Plasmoids のためのシステム情報
+Comment[pt]=Informação do sistema para os Plasmóides
+Comment[pt_BR]=Informação do sistema para os Plasmóides
+Comment[sv]=Systeminformation för Plasmoider
+Comment[zh_TW]=電漿時鐘的系統資訊
 ServiceTypes=Plasma/DataEngine
 Type=Service
 X-KDE-Library=plasma_engine_systemmonitor

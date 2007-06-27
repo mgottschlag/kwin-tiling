@@ -1,10 +1,14 @@
 [Desktop Entry]
 Name=SolidDevice Data Engine
 Name[el]=Μηχανή δεδομένων SolidDevice
+Name[es]=Motor de datos de SolidDevice
 Name[sv]=Datagränssnitt för Solid-enhet
 Name[zh_TW]=固體裝置資料引擎
 Comment=SolidDevice data for Plasmoids
 Comment[el]=Δεδομένα SolidDevice για πλασμοειδή
+Comment[es]=Datos de SolidDevice para los plasmoides
+Comment[pt]=Dados do SolidDevice para os Plasmóides
+Comment[pt_BR]=Dados do SolidDevice para os Plasmóides
 Comment[sv]=Data från Solid-enhet för Plasmoider
 Comment[zh_TW]=電漿時鐘的固體裝置時間資料
 ServiceTypes=Plasma/DataEngine

@@ -1,7 +1,17 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Network Status Daemon
+Name[ja]=ネットワーク状態デーモン
+Name[pt]=Servidor de Estado da Rede
+Name[pt_BR]=Servidor de Estado da Rede
+Name[sv]=Nätverksstatusdemon
+Name[zh_TW]=網路狀態伺服程式
 Comment=Tracks status of network interfaces and provides notification to applications using the network.
+Comment[ja]=ネットワークインターフェースの状態を追跡し、ネットワークを使うアプリケーションに情報を提供します。
+Comment[pt]=Regista o estado das interfaces de rede e notifica as aplicações que necessitem da rede.
+Comment[pt_BR]=Regista o estado das interfaces de rede e notifica as aplicações que necessitem da rede.
+Comment[sv]=Följer status hos nätverksgränssnitt och tillhandahåller underrättelser till program som använder nätverket.
+Comment[zh_TW]=追蹤網路介面的狀態，提供通知給使用網路的應用程式
 Type=Service
 ServiceTypes=KDEDModule
 X-KDE-ModuleType=Library
