@@ -9,9 +9,8 @@
 #define FONTS_H
 
 #include <QObject>
-//Added by qt3to4:
 #include <QLabel>
-#include <Q3PtrList>
+#include <QList>
 
 #include <kcmodule.h>
 #include <kdialog.h>
@@ -56,6 +55,7 @@ class FontAASettings : public KDialog
 
 public:
 
+#ifdef HAVE_FONTCONFIG
     FontAASettings(QWidget *parent);
 
     bool save( bool useAA );
@@ -63,17 +63,17 @@ public:
     void defaults();
     int getIndex(KXftConfig::SubPixel::Type spType);
     KXftConfig::SubPixel::Type getSubPixelType();
-#ifdef HAVE_FONTCONFIG
     int getIndex(KXftConfig::Hint::Style hStyle);
     KXftConfig::Hint::Style getHintStyle();
-#endif
     void enableWidgets();
     int exec();
+#endif
 
 protected Q_SLOTS:
 
     void changed();
 
+#ifdef HAVE_FONTCONFIG
 private:
 
     QCheckBox *excludeRange;
@@ -81,11 +81,10 @@ private:
     KDoubleNumInput *excludeFrom;
     KDoubleNumInput *excludeTo;
     QComboBox *subPixelType;
-#ifdef HAVE_FONTCONFIG
     QComboBox *hintingStyle;
-#endif
     QLabel    *excludeToLabel;
     bool      changesMade;
+#endif
 };
 
 /**
@@ -110,15 +109,18 @@ protected Q_SLOTS:
     void slotCfgAa();
 
 private:
+#ifdef HAVE_FONTCONFIG
     enum AASetting { AAEnabled, AASystem, AADisabled };
-    enum DPISetting { DPINone, DPI96, DPI120 };
     AASetting useAA, useAA_original;
-    DPISetting dpi_original;
     QComboBox *cbAA;
-    QComboBox* comboForceDpi;
     QPushButton *aaSettingsButton;
-    Q3PtrList <FontUseItem> fontUseList;
     FontAASettings *aaSettings;
+#endif
+
+    enum DPISetting { DPINone, DPI96, DPI120 };
+    DPISetting dpi_original;
+    QComboBox* comboForceDpi;
+    QList<FontUseItem *> fontUseList;
 };
 
 #endif

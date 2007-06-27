@@ -18,6 +18,8 @@
 */
 
 #include "kxftconfig.h"
+#ifdef HAVE_FONTCONFIG
+
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
@@ -27,19 +29,16 @@
 #include <QFile>
 #include <QX11Info>
 #include <QByteArray>
-#include <Q3PtrList>
 #include <klocale.h>
 #include <kde_file.h>
 #include <QDir>
 #include <QSettings>
 #include <QFont>
 
-#ifdef HAVE_FONTCONFIG
 #include <stdarg.h>
 #include <stdio.h>
 #include <fontconfig/fontconfig.h>
 #include <kdebug.h>
-#endif
 
 using namespace std;
 
@@ -160,8 +159,6 @@ static time_t getTimeStamp(const QString &item)
 
     return !item.isNull() && 0==KDE_lstat(QFile::encodeName(item), &info) ? info.st_mtime : 0;
 }
-
-#ifdef HAVE_FONTCONFIG
 
 inline QString fileSyntax(const QString &f) { return xDirSyntax(f); }
 //
@@ -285,182 +282,19 @@ static KXftConfig::Hint::Style strToStyle(const char *str)
         return KXftConfig::Hint::None;
 }
 
-#else
-static bool strToType(const char *str, KXftConfig::SubPixel::Type &type)
-{   
-    if(0==memcmp(str, "rgb", 3))
-        type=KXftConfig::SubPixel::Rgb;
-    else if(0==memcmp(str, "bgr", 3))
-        type=KXftConfig::SubPixel::Bgr;
-    else if(0==memcmp(str, "vrgb", 4))
-        type=KXftConfig::SubPixel::Vrgb;
-    else if(0==memcmp(str, "vbgr", 4))
-        type=KXftConfig::SubPixel::Vbgr;
-    else if(0==memcmp(str, "none", 4))
-        type=KXftConfig::SubPixel::None;
-    else
-        return false;
-    return true;
-}
-
-static inline bool isWhiteSpace(char c)
-{
-    return c==' ' || c=='\n' || c== '\t';
-}
-
-static bool ok(char *data, char *entry)
-{
-    char *e=entry;
-
-    for(;;)
-    {
-        e--;
-        if(e==data || *e=='\n')
-            return true;
-        else
-            if(!isWhiteSpace(*e))
-                return false;
-    }
-    return false;
-}
-
-static char * getKey(char *data, const char *key)
-{
-    char *entry,
-         *start=data;
-
-    while(start &&start &&  (entry=strstr(start, key)))
-        if(entry==data || ok(data, entry) && isWhiteSpace(entry[strlen(key)]))
-            return entry;
-        else
-            start=entry+strlen(key);
-
-    return NULL;
-}
-
-static bool skipToken(char **ptr, const char *token)
-{
-    while(isWhiteSpace(**ptr))
-        (*ptr)++;
-    if(0!=memcmp(*ptr, token, strlen(token)))
-        return false;
-    (*ptr)+=strlen(token);
-    return true;
-}
-
-static bool readNum(char **ptr, double *num)
-{
-    static const int constMaxNumLen=64;
-
-    char n[constMaxNumLen+1];
-    bool foundNum=false,
-         foundPoint=false,
-         foundE=false;
-    int  numChars=0;
-
-    while(isWhiteSpace(**ptr))
-        (*ptr)++;
-
-    while(numChars<constMaxNumLen && (isdigit(**ptr) ||
-          ('.'==**ptr && foundNum && !foundPoint && !foundE) || ('e'==**ptr && foundNum && !foundE)))
-    {
-        n[numChars++]=**ptr;
-        if('.'==**ptr)
-            foundPoint=true;
-        else if('e'==**ptr)
-            foundE=true;
-        else
-            foundNum=true;
-        (*ptr)++;
-    }
-
-    if(numChars)
-    {
-        n[numChars]='\0';
-        *num=atof(n);
-        return true;
-    }
-
-    return false;
-}
-
-static KXftConfig::ListItem * getFirstItem(Q3PtrList<KXftConfig::ListItem> &list)
-{
-    KXftConfig::ListItem *cur;
-
-    for(cur=list.first(); cur; cur=list.next())
-        if(!cur->added())
-            return cur;
-    return NULL;
-}
-#endif
-
-static KXftConfig::ListItem * getLastItem(Q3PtrList<KXftConfig::ListItem> &list)
-{
-    KXftConfig::ListItem *cur;
-
-    for(cur=list.last(); cur; cur=list.prev())
-        if(!cur->added())
-            return cur;
-    return NULL;
-}
-
-#ifndef HAVE_FONTCONFIG
-static const QString defaultPath("/usr/X11R6/lib/X11/XftConfig");
-static const QString defaultUserFile(".xftconfig");
-static const char *  constSymEnc="\"glyphs-fontspecific\"";
-
-static const QString constConfigFiles[]=
-{
-    defaultPath,
-
-    "/etc/X11/XftConfig",
-    QString()
-};
-#endif
-
 KXftConfig::KXftConfig(int required, bool system)
-          : m_required(required),
-#ifdef HAVE_FONTCONFIG
-            m_doc("fontconfig"),
-#else
-            m_size(0),
-            m_data(NULL),
-#endif
+          : m_doc("fontconfig"),
+            m_required(required),
             m_system(system)
 {
-#ifdef HAVE_FONTCONFIG
     m_file=getConfigFile(system);
     kDebug(1208) << "Using fontconfig file:" << m_file << endl;
     m_antiAliasing = aliasingEnabled();
-#else
-    if(system) 
-    {
-        int f;
-
-        for(f=0; !constConfigFiles[f].isNull(); ++f)
-            if(fExists(constConfigFiles[f]))
-                m_file=constConfigFiles[f];
-
-        if(m_file.isNull())
-            m_file=defaultPath;
-    }
-    else
-        m_file= QString(QDir::homePath()+'/'+defaultUserFile);
-#endif
-#ifndef HAVE_FONTCONFIG
-    m_symbolFamilies.setAutoDelete(true);
-#endif
-    m_dirs.setAutoDelete(true);
     reset();
 }
 
 KXftConfig::~KXftConfig()
 {
-#ifndef HAVE_FONTCONFIG
-    delete [] m_data;
-    m_data=NULL;
-#endif
 }
 
 bool KXftConfig::reset()
@@ -468,18 +302,13 @@ bool KXftConfig::reset()
     bool ok=false;
 
     m_madeChanges=false;
-#ifdef HAVE_FONTCONFIG
     m_hint.reset();
     m_hinting.reset();
-#else
-    m_symbolFamilies.clear();
-#endif
     m_dirs.clear();
     m_excludeRange.reset();
     m_excludePixelRange.reset();
     m_subPixel.reset();
 
-#ifdef HAVE_FONTCONFIG
     QFile f(m_file);
 
     if(f.open(QIODevice::ReadOnly))
@@ -497,42 +326,13 @@ bool KXftConfig::reset()
 
     if(m_doc.documentElement().isNull())
         m_doc.appendChild(m_doc.createElement("fontconfig"));
-#else
-    QFile f(m_file);
-
-    m_size=0;
-    delete [] m_data;
-    m_data=NULL;
-
-    if(f.open(QIODevice::Unbuffered|QIODevice::ReadOnly))
-    {
-        m_time=getTimeStamp(m_file);
-        m_size=f.size();
-        ok=true;
-
-        if(m_size>0)
-        {
-            m_data=new char [m_size+1];
-
-            if(m_data)
-            {
-                f.read(m_data, m_size);
-                m_data[m_size]='\0';
-                readContents();
-            }
-        }
-        f.close();
-    }
-    else
-        ok=!fExists(m_file) && dWritable(getDir(m_file));
-#endif
 
     if(ok && m_required&ExcludeRange)
     {
         //
         // Check exclude range values - i.e. size and pixel size...
         // If "size" range is set, ensure "pixelsize" matches...
-        if(!equal(0, m_excludeRange.from) || !equal(0, m_excludeRange.to))    
+        if(!equal(0, m_excludeRange.from) || !equal(0, m_excludeRange.to))
         {
             double pFrom=(double)point2Pixel(m_excludeRange.from),
                    pTo=(double)point2Pixel(m_excludeRange.to);
@@ -569,13 +369,14 @@ bool KXftConfig::apply()
         // of our changes...
         if(fExists(m_file) && getTimeStamp(m_file)!=m_time)
         {
-            KXftConfig            newConfig(m_required, m_system);
-            QStringList           list;
-            QStringList::Iterator it;
+            KXftConfig newConfig(m_required, m_system);
 
             if(m_required&Dirs)
             {
-                list=getDirs();
+                QStringList           list(getDirList());
+                QStringList::Iterator it(list.begin()),
+                                      end(list.end());
+
                 for(it=list.begin(); it!=list.end(); ++it)
                     newConfig.addDir(*it);
             }
@@ -584,19 +385,10 @@ bool KXftConfig::apply()
                 newConfig.setExcludeRange(m_excludeRange.from, m_excludeRange.to);
             if(m_required&SubPixelType)
                 newConfig.setSubPixelType(m_subPixel.type);
-#ifdef HAVE_FONTCONFIG
             if(m_required&HintStyle)
                 newConfig.setHintStyle(m_hint.style);
             if(m_required&AntiAlias)
                 newConfig.setAntiAliasing(m_antiAliasing.set);
-#else
-            if(m_required&SymbolFamilies)
-            {
-                list=getSymbolFamilies();
-                for(it=list.begin(); it!=list.end(); ++it)
-                    newConfig.addSymbolFamily(*it);
-            }
-#endif
 
             ok=newConfig.changed() ? newConfig.apply() : true;
             if(ok)
@@ -612,23 +404,22 @@ bool KXftConfig::apply()
                 m_excludePixelRange.from=(int)point2Pixel(m_excludeRange.from);
                 m_excludePixelRange.to=(int)point2Pixel(m_excludeRange.to);
             }
-    
-#ifdef HAVE_FONTCONFIG
+
             FcAtomic *atomic=FcAtomicCreate((const unsigned char *)(QFile::encodeName(m_file).data()));
-    
+
             ok=false;
             if(atomic)
             {
                 if(FcAtomicLock(atomic))
                 {
                     FILE *f=fopen((char *)FcAtomicNewFile(atomic), "w");
-    
+
                     if(f)
                     {
                         if(m_required&Dirs)
                         {
                             applyDirs();
-                            removeItems(m_dirs);
+                            removeDirs();
                         }
                         if(m_required&SubPixelType)
                             applySubPixelType();
@@ -641,7 +432,7 @@ bool KXftConfig::apply()
                             applyExcludeRange(false);
                             applyExcludeRange(true);
                         }
-    
+
                         //
                         // Check document syntax...
                         static const char * qtXmlHeader   = "<?xml version = '1.0'?>";
@@ -649,23 +440,23 @@ bool KXftConfig::apply()
                         static const char * qtDocTypeLine = "<!DOCTYPE fontconfig>";
                         static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM "
                                                             "\"fonts.dtd\">";
-    
+
                         QString str(m_doc.toString());
                         int     idx;
-    
+
                         if(0!=str.indexOf("<?xml"))
                             str.insert(0, xmlHeader);
                         else if(0==str.indexOf(qtXmlHeader))
                             str.replace(0, strlen(qtXmlHeader), xmlHeader);
-    
+
                         if(-1!=(idx=str.indexOf(qtDocTypeLine)))
                             str.replace(idx, strlen(qtDocTypeLine), docTypeLine);
-    
+
                         //
                         // Write to file...
                         fputs(str.toUtf8(), f);
                         fclose(f);
-    
+
                         if(FcAtomicReplaceOrig(atomic))
                         {
                             ok=true;
@@ -678,110 +469,6 @@ bool KXftConfig::apply()
                 }
                 FcAtomicDestroy(atomic);
             }
-#else
-            std::ofstream f(QFile::encodeName(m_file));
-    
-            if(f)
-            {
-                ListItem *ldi=m_required&Dirs ? getLastItem(m_dirs) : NULL,
-                         *lfi=m_required&SymbolFamilies ? getLastItem(m_symbolFamilies) : NULL;
-                char     *pos=m_data;
-                bool     finished=false,
-                         pixel=false;
-    
-                while(!finished)
-                {
-                    int      type=0;
-                    ListItem *fdi=NULL,
-                            *ffi=NULL;
-                    Item     *first=NULL;
-    
-                    if(m_required&Dirs && NULL!=(fdi=getFirstItem(m_dirs)) &&
-                       (NULL==first || fdi->start < first->start))
-                    {
-                        first=fdi;
-                        type=Dirs;
-                    }
-                    if(m_required&SymbolFamilies && NULL!=(ffi=getFirstItem(m_symbolFamilies)) &&
-                       (NULL==first || ffi->start < first->start))
-                    {
-                        first=ffi;
-                        type=SymbolFamilies;
-                    }
-                    if(m_required&SubPixelType && NULL!=m_subPixel.start &&
-                       (NULL==first || m_subPixel.start < first->start))
-                    {
-                        first=&m_subPixel;
-                        type=SubPixelType;
-                    }
-                    if(m_required&ExcludeRange)
-                        if(NULL!=m_excludeRange.start &&
-                           (NULL==first || m_excludeRange.start < first->start))
-                        {
-                            first=&m_excludeRange;
-                            type=ExcludeRange;
-                            pixel=false;
-                        }
-                        else if(NULL!=m_excludePixelRange.start &&
-                                (NULL==first || m_excludePixelRange.start < first->start))
-                        {
-                            first=&m_excludePixelRange;
-                            type=ExcludeRange;
-                            pixel=true;
-                        }
-    
-                    if(first && first->start!=pos)
-                        f.write(pos, first->start-pos);
-    
-                    if(0!=type)
-                        pos=first->end+1;
-    
-                    switch(type)
-                    {
-                        case Dirs:
-                            if(!first->toBeRemoved)
-                                outputDir(f, fdi->str);
-                            m_dirs.remove(fdi);
-                            if(fdi==ldi)
-                                outputNewDirs(f);
-                            break;
-                        case SymbolFamilies:
-                            if(!first->toBeRemoved)
-                                outputSymbolFamily(f, ffi->str);
-                            m_symbolFamilies.remove(ffi);
-                            if(ffi==lfi)
-                                outputNewSymbolFamilies(f);
-                            break;
-                        case SubPixelType:
-                            if(!first->toBeRemoved)
-                                outputSubPixelType(f, false);
-                            m_subPixel.start=NULL;
-                            break;
-                        case ExcludeRange:
-                            if(!first->toBeRemoved)
-                                outputExcludeRange(f, false, pixel);
-                            m_excludeRange.start=NULL;
-                            break;
-                        case 0: // 0 => All read in entries written...
-                            if(m_size && (pos < m_data+m_size))
-                                f.write(pos, (m_data+m_size)-pos);
-                        default:
-                            finished=true;
-                            break;
-                    }
-                };
-    
-                outputNewDirs(f);
-                outputNewSymbolFamilies(f);
-                outputSubPixelType(f, true);
-                outputExcludeRange(f, true, false);
-                outputExcludeRange(f, true, true);
-                f.close();
-                reset(); // Re-read contents...
-            }
-            else
-                ok=false;
-#endif
         }
     }
 
@@ -803,7 +490,6 @@ void KXftConfig::setSubPixelType(SubPixel::Type type)
     }
 }
 
-#ifdef HAVE_FONTCONFIG
 bool KXftConfig::getHintStyle(Hint::Style &style)
 {
     if(Hint::NotSet!=m_hint.style && !m_hint.toBeRemoved)
@@ -837,7 +523,6 @@ void KXftConfig::setHinting(bool set)
         m_madeChanges=true;
     }
 }
-#endif
 
 bool KXftConfig::getExcludeRange(double &from, double &to)
 {
@@ -870,14 +555,30 @@ void KXftConfig::addDir(const QString &d)
     QString dir(dirSyntax(d));
 
     if(dExists(dir) && !hasDir(dir))
-        addItem(m_dirs, dir);
+    {
+        m_dirs.append(ListItem(d));
+        m_madeChanges=true;
+    }
 }
 
 void KXftConfig::removeDir(const QString &d)
 {
-    QString dir(dirSyntax(d));
+    QList<ListItem>::Iterator it(m_dirs.begin()),
+                              end(m_dirs.end());
 
-    removeItem(m_dirs, dir);
+    for(; it!=end; )
+        if((*it).str==d)
+        {
+            QList<ListItem>::Iterator dir=it;
+            ++it;
+
+            if((*dir).added())
+                m_dirs.erase(dir);
+            else
+                (*dir).toBeRemoved=true;
+            m_madeChanges=true;
+            break;
+        }
 }
 
 QString KXftConfig::description(SubPixel::Type t)
@@ -916,7 +617,6 @@ const char * KXftConfig::toStr(SubPixel::Type t)
     }
 }
 
-#ifdef HAVE_FONTCONFIG
 QString KXftConfig::description(Hint::Style s)
 {
     switch(s)
@@ -950,88 +650,36 @@ const char * KXftConfig::toStr(Hint::Style s)
             return "hintfull";
     }
 }
-#endif
 
 bool KXftConfig::hasDir(const QString &d)
 {
     QString dir(dirSyntax(d));
 
-#ifdef HAVE_FONTCONFIG
-    ListItem *item;
+    QList<ListItem>::Iterator it(m_dirs.begin()),
+                              end(m_dirs.end());
 
-    for(item=m_dirs.first(); item; item=m_dirs.next())
-        if(0==dir.indexOf(item->str))
+    for(; it!=end; ++it)
+        if(0==dir.indexOf((*it).str))
             return true;
 
     return false;
-#else
-    return NULL!=findItem(m_dirs, dir);
-#endif
 }
 
-KXftConfig::ListItem * KXftConfig::findItem(Q3PtrList<ListItem> &list, const QString &i)
-{   
-    ListItem *item;
-
-    for(item=list.first(); item; item=list.next())
-        if(item->str==i)
-            break;
-
-    return item;
-}
-
-void KXftConfig::clearList(Q3PtrList<ListItem> &list)
+QStringList KXftConfig::getDirList()
 {
-    ListItem *item;
+    QStringList               res;
+    QList<ListItem>::Iterator it(m_dirs.begin()),
+                              end(m_dirs.end());
 
-    for(item=list.first(); item; item=list.next())
-        removeItem(list, item);
-}
-
-QStringList KXftConfig::getList(Q3PtrList<ListItem> &list)
-{
-    QStringList res;
-    ListItem    *item;
-
-    for(item=list.first(); item; item=list.next())
-        if(!item->toBeRemoved)
-            res.append(item->str);
+    for(; it!=end; ++it)
+        if(!(*it).toBeRemoved)
+            res.append((*it).str);
 
     return res;
 }
 
-void KXftConfig::addItem(Q3PtrList<ListItem> &list, const QString &i)
-{
-    ListItem *item=findItem(list, i);
-
-    if(!item)
-    {
-        list.append(new ListItem(i
-#ifndef HAVE_FONTCONFIG
-                                 , NULL, NULL
-#endif
-                                ));
-        m_madeChanges=true;
-    }
-    else
-        item->toBeRemoved=false;
-}
-
-void KXftConfig::removeItem(Q3PtrList<ListItem> &list, ListItem *item)
-{
-    if(item)
-    {
-        if(item->added())
-            list.remove(item);
-        else
-            item->toBeRemoved=true;
-        m_madeChanges=true;
-    }
-}
-
 void KXftConfig::readContents()
 {
-#ifdef HAVE_FONTCONFIG
     QDomNode n = m_doc.documentElement().firstChild();
 
     while(!n.isNull())
@@ -1042,7 +690,7 @@ void KXftConfig::readContents()
             if("dir"==e.tagName())
             {
                 if(m_required&Dirs)
-                    m_dirs.append(new ListItem(expandHome(dirSyntax(e.text())), n));
+                    m_dirs.append(ListItem(expandHome(dirSyntax(e.text())), n));
             }
             else if("match"==e.tagName())
             {
@@ -1158,157 +806,21 @@ void KXftConfig::readContents()
             }
         n=n.nextSibling();
     }
-#else
-    static const int constMaxDataLen=2048;
-
-    char *from=NULL,
-         *ptr=m_data,
-         *eostr=NULL,
-         data[constMaxDataLen];
-
-    if(m_required&Dirs)
-        while((ptr=getKey(ptr, "dir")))
-        {
-            from=ptr;
-            ptr+=4;
-            while(isWhiteSpace(*ptr))
-                ptr++;
-
-            if(*ptr=='\"')
-            {
-                ptr++;
-                if(NULL!=(eostr=strchr(ptr, '\"')) && eostr-ptr<constMaxDataLen)
-                {
-                    memcpy(data, ptr, eostr-ptr);
-                    data[eostr-ptr]='\0';
-                    if(NULL==strchr(data, '\n'))
-                    {
-                        ptr=eostr+1;
-
-                        while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
-                            ptr++;
-                        m_dirs.append(new ListItem(expandHome(dirSyntax(data)), from, ptr));
-                    }
-               }
-            }
-        }
-
-    if(m_required&SymbolFamilies || m_required&SubPixelType || m_required&ExcludeRange)
-    {
-        double efrom,
-               eto;
-
-        ptr=m_data;
-
-        while((ptr=getKey(ptr, "match")))
-        {
-            from=ptr;
-            ptr+=6;
-            if((m_required&SymbolFamilies || m_required&ExcludeRange) && skipToken(&ptr, "any"))
-            {
-                if(m_required&SymbolFamilies && skipToken(&ptr, "family") && skipToken(&ptr, "=="))
-                {
-                    while(isWhiteSpace(*ptr))
-                        ptr++;
-                    if(*ptr=='\"')
-                    {
-                        ptr++;
-                        if(NULL!=(eostr=strchr(ptr, '\"')) && eostr-ptr<constMaxDataLen)
-                        {
-                            memcpy(data, ptr, eostr-ptr);
-                            data[eostr-ptr]='\0';
-                            if(NULL==strchr(data, '\n'))
-                            {
-                                ptr=eostr+1;
-
-                                if(skipToken(&ptr, "edit") && skipToken(&ptr, "encoding") &&
-                                   skipToken(&ptr, "=") && skipToken(&ptr, constSymEnc) &&
-                                   skipToken(&ptr, ";"))
-                                {
-                                    while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
-                                        ptr++;
-
-                                    m_symbolFamilies.append(new ListItem(data, from, ptr));
-                                }
-                            }
-                        }
-                    }
-                }
-                else if(m_required&ExcludeRange && skipToken(&ptr, "size") &&
-                        (skipToken(&ptr, ">")||skipToken(&ptr, "<")) && 
-                        readNum(&ptr, &efrom) && skipToken(&ptr, "any") && skipToken(&ptr, "size") &&
-                        (skipToken(&ptr, "<")||skipToken(&ptr, ">")) && readNum(&ptr, &eto) &&
-                        skipToken(&ptr, "edit") && skipToken(&ptr, "antialias") &&
-                        skipToken(&ptr, "=") && skipToken(&ptr, "false") && skipToken(&ptr, ";"))
-                {
-                    while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
-                        ptr++;
-                    m_excludeRange.from=efrom<eto ? efrom : eto;
-                    m_excludeRange.to=efrom<eto ?   eto   : efrom;
-                    m_excludeRange.start=from;
-                    m_excludeRange.end=ptr;
-                }
-                else if(m_required&ExcludeRange && skipToken(&ptr, "pixelsize") &&
-                        (skipToken(&ptr, ">")||skipToken(&ptr, "<")) && 
-                        readNum(&ptr, &efrom) && skipToken(&ptr, "any") &&
-                        skipToken(&ptr, "pixelsize") &&
-                        (skipToken(&ptr, "<")||skipToken(&ptr, ">")) && readNum(&ptr, &eto) &&
-                        skipToken(&ptr, "edit") && skipToken(&ptr, "antialias") &&
-                        skipToken(&ptr, "=") && skipToken(&ptr, "false") && skipToken(&ptr, ";"))
-                {
-                    while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
-                        ptr++;
-                    m_excludePixelRange.from=efrom<eto ? efrom : eto;
-                    m_excludePixelRange.to=efrom<eto ?   eto   : efrom;
-                    m_excludePixelRange.start=from;
-                    m_excludePixelRange.end=ptr;
-                }
-            }
-            else if(m_required&SubPixelType && skipToken(&ptr, "edit") && skipToken(&ptr, "rgba") &&
-                    skipToken(&ptr, "="))
-            {
-                SubPixel::Type type=SubPixel::None;
-
-                while(isWhiteSpace(*ptr))
-                    ptr++;
-
-                if(!strToType(ptr, type))
-                    continue;
-
-                ptr+=SubPixel::Rgb==type || SubPixel::Bgr==type ? 3 : 4;
-
-                if(skipToken(&ptr, ";"))
-                {
-                    while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
-                        ptr++;
-                    m_subPixel.type=type;
-                    m_subPixel.start=from;
-                    m_subPixel.end=ptr;
-                }
-            }
-        }
-    }
-#endif
 }
 
-#ifdef HAVE_FONTCONFIG
 void KXftConfig::applyDirs()
 {
-    ListItem *item,
-             *last=getLastItem(m_dirs);
+    QList<ListItem>::Iterator it(m_dirs.begin()),
+                              end(m_dirs.end());
 
-    for(item=m_dirs.first(); item; item=m_dirs.next())
-        if(!item->toBeRemoved && item->node.isNull())
+    for(; it!=end; ++it)
+        if(!(*it).toBeRemoved && (*it).node.isNull())
         {
             QDomElement newNode = m_doc.createElement("dir");
-            QDomText    text    = m_doc.createTextNode(contractHome(xDirSyntax(item->str)));
+            QDomText    text    = m_doc.createTextNode(contractHome(xDirSyntax((*it).str)));
 
             newNode.appendChild(text);
-
-            if(last)
-                m_doc.documentElement().insertAfter(newNode, last->node);
-            else
-                m_doc.documentElement().appendChild(newNode);
+            m_doc.documentElement().appendChild(newNode);
         }
 }
 
@@ -1442,77 +954,17 @@ void KXftConfig::applyExcludeRange(bool pixel)
     }
 }
 
-void KXftConfig::removeItems(Q3PtrList<ListItem> &list)
+void KXftConfig::removeDirs()
 {
-    ListItem    *item;
-    QDomElement docElem = m_doc.documentElement();
+    QDomElement               docElem = m_doc.documentElement();
+    QList<ListItem>::Iterator it(m_dirs.begin()),
+                              end(m_dirs.end());
 
-    for(item=list.first(); item; item=list.next())
-        if(item->toBeRemoved && !item->node.isNull())
-            docElem.removeChild(item->node);
-}
-#else
-void KXftConfig::outputDir(std::ofstream &f, const QString &str)
-{
-    f << "dir \"" << contractHome(xDirSyntax(str)).toLocal8Bit().data() << "\"" << endl;
+    for(; it!=end; ++it)
+        if((*it).toBeRemoved && !(*it).node.isNull())
+            docElem.removeChild((*it).node);
 }
 
-void KXftConfig::outputNewDirs(std::ofstream &f)
-{
-    ListItem *item;
-
-    for(item=m_dirs.first(); item; item=m_dirs.next())
-        if(!item->toBeRemoved && NULL==item->start)
-            outputDir(f, item->str);
-    m_dirs.clear();
-}
-
-void KXftConfig::outputSymbolFamily(std::ofstream &f, const QString &str)
-{
-    f << "match any family == \"" << str.toLocal8Bit().data() << "\" edit encoding = " << constSymEnc
-      << ';' << endl;
-}
-
-void KXftConfig::outputNewSymbolFamilies(std::ofstream &f)
-{
-    ListItem *item;
-
-    for(item=m_symbolFamilies.first(); item; item=m_symbolFamilies.next())
-        if(!item->toBeRemoved && NULL==item->start)
-            outputSymbolFamily(f, item->str);
-    m_symbolFamilies.clear();
-}
-
-void KXftConfig::outputSubPixelType(std::ofstream &f, bool ifNew)
-{
-    if((ifNew && NULL==m_subPixel.end) || (!ifNew && NULL!=m_subPixel.end))
-        f << "match edit rgba = " << toStr(m_subPixel.type) << ';' << endl;
-}
-
-void KXftConfig::outputExcludeRange(std::ofstream &f, bool ifNew, bool pixel)
-{
-    Exclude &range=pixel ? m_excludePixelRange : m_excludeRange;
-
-    if(((ifNew && NULL==range.end) || (!ifNew && NULL!=range.end)) &&
-       (!equal(range.from,0) || !equal(range.to,0)))
-    {
-        if(pixel)
-            f << "match any pixelsize > ";
-        else
-            f << "match any size > ";
-
-        f << range.from;
-        if(pixel)
-            f << " any pixelsize < ";
-        else
-            f << " any size < ";
-        f << range.to << " edit antialias = false;" << endl;
-}
-}
-
-#endif
-
-#ifdef HAVE_FONTCONFIG
 bool KXftConfig::getAntiAliasing() const
 {
     return m_antiAliasing.set;
@@ -1564,19 +1016,5 @@ bool KXftConfig::aliasingEnabled()
     return antialiased == FcTrue;
 }
 
-#else
-
-void KXftConfig::setAntiAliasing( bool set )
-{
-  QSettings().writeEntry("/qt/useXft", set);
-  if (set)
-    QSettings().writeEntry("/qt/enableXft", set);
-}
-
-bool KXftConfig::getAntiAliasing() const
-{
-  return QSettings().value("/qt/useXft", QVariant(false)).toBool();
-}
-
-
 #endif
+
