@@ -170,10 +170,13 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 
 		// if there is only one output connected, only show it
 		int connected = 0;
+		int active = 0;
 		while (it != outputs.constEnd())
 		{
 		       if (it.value()->isConnected())
 			       connected++;
+		       if (it.value()->isActive())
+			       active++;
 		       ++it;
 		}
 
@@ -206,7 +209,9 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				actionGroup = populateSizes(outputMenu, output->sizes(), currentSize);
 				connect(actionGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeSize(QAction*)));
 				
-				if (connected != 1)
+				// if there is only one output active, do not show the disable option
+				// this prevents the user from doing wrong things ;)
+				if (active != 1)
 				{
 					action = outputMenu->addAction(i18n("Disable"));
 					if (output->currentCrtc() == None)
