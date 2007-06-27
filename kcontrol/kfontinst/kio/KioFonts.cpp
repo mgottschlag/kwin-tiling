@@ -874,7 +874,7 @@ void CKioFonts::listDir(const KUrl &url)
     {
         KIO::UDSEntry entry;
         int           size=0,
-                      sections=QStringList::split('/', url.path(), false).count();
+                      sections=url.path().split('/', QString::SkipEmptyParts).count();
         if(itsRoot || sections!=0)
         {
             if(!itsRoot && isAllFolder(getSect(url.path())))
@@ -1123,7 +1123,7 @@ void CKioFonts::get(const KUrl &url)
         if(thumb)
         {
             QByteArray         array;
-            QTextOStream       stream(&array);
+            QTextStream        stream(&array, QIODevice::WriteOnly);
             EFolder            folder(getFolder(url));
             TFontMap::Iterator it(getMap(url)),
                                end(itsFolders[folder].fontMap.end());
@@ -1204,7 +1204,7 @@ void CKioFonts::get(const KUrl &url)
 
             if(tmpFile.open())
             {
-                KZip zip(tmpFile.name());
+                KZip zip(tmpFile.fileName());
 
                 tmpFile.setAutoRemove(false);
                 realPath=tmpFile.fileName();
@@ -1349,9 +1349,9 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
 
     tmpFile.setAutoRemove(true);
 
-    if(putReal(tmpFile.name(), tmpFileC, destExists, mode, resume))
+    if(putReal(tmpFile.fileName(), tmpFileC, destExists, mode, resume))
     {
-        EFileType type(checkFile(tmpFile.name(), u));  // error logged in checkFile
+        EFileType type(checkFile(tmpFile.fileName(), u));  // error logged in checkFile
 
         if(FILE_UNKNOWN==type)
             return;
@@ -1577,10 +1577,7 @@ bool CKioFonts::createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name,
         entry.insert(KIO::UDS_USER, getUserName(buff.st_uid));
         entry.insert(KIO::UDS_GROUP, getGroupName(buff.st_gid));
         entry.insert(KIO::UDS_ACCESS_TIME, buff.st_atime);
-        entry.insert(KIO::UDS_MIME_TYPE,
-                     QString::fromLatin1(sys
-                                             ? KFI_KIO_FONTS_PROTOCOL"/system-folder"
-                                             : KFI_KIO_FONTS_PROTOCOL"/folder"));
+        entry.insert(KIO::UDS_MIME_TYPE, QString::fromLatin1("inode/directory"));
         return true;
     }
     else if (sys && !Misc::root())   // Default system fonts folder does not actually exist yet!
@@ -1592,8 +1589,7 @@ bool CKioFonts::createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name,
         entry.insert(KIO::UDS_ACCESS, 0744);
         entry.insert(KIO::UDS_USER, QString::fromLatin1("root"));
         entry.insert(KIO::UDS_GROUP, QString::fromLatin1("root"));
-        entry.insert(KIO::UDS_MIME_TYPE,
-                     QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL"/system-folder"));
+        entry.insert(KIO::UDS_MIME_TYPE, QString::fromLatin1("inode/directory"));
         return true;
     }
 
@@ -2505,7 +2501,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
 
     if(askPasswd)
     {
-        while(!error && 0!=proc.checkInstall(authInfo.password.local8Bit()))
+        while(!error && 0!=proc.checkInstall(authInfo.password.toLocal8Bit()))
         {
             KFI_DBUG << "ATTEMPT : " << attempts << endl;
             if(1==attempts++)
@@ -2517,7 +2513,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
             cacheAuthentication(authInfo);
     }
     else
-        error=proc.checkInstall(authInfo.password.local8Bit()) ? true : false;
+        error=proc.checkInstall(authInfo.password.toLocal8Bit()) ? true : false;
 
     return error ? QString() : authInfo.password;
 }

@@ -700,7 +700,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                         if(itsScalable && !used.isEmpty())
                         {
-                            used.addCoords(-1*offset, -1*offset, offset, offset);
+                            used.adjust(-1*offset, -1*offset, offset, offset);
 
                             if(used.width()<pix.width() && used.height()<pix.height())
                                 pix=pix.copy(used);
@@ -1010,7 +1010,7 @@ KFI_DBUG << "isHidden:" << hidden << endl;
         QFile file(url.path());
         bool  isThumbnailUrl=false;
 
-        if(file.size()<2048 && file.open(IO_ReadOnly)) // Data should be less than 2k, and fonts usually above!
+        if(file.size()<2048 && file.open(QIODevice::ReadOnly)) // Data should be less than 2k, and fonts usually above!
         {
             QTextStream stream(&file);
             QString     line1(stream.readLine()),

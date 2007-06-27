@@ -133,7 +133,7 @@ CCharTip::CCharTip(CFontPreview *parent)
     itsLabel = new QLabel(this);
     itsTimer = new QTimer(this);
 
-    QBoxLayout* layout = new QBoxLayout(this, QBoxLayout::LeftToRight);
+    QBoxLayout* layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
     layout->setMargin(8);
     layout->setSpacing(0);
     layout->addWidget(itsPixmapLabel);

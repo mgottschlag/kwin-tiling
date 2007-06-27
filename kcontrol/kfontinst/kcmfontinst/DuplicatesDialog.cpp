@@ -338,7 +338,7 @@ QSet<QString> CDuplicatesDialog::deleteSysFiles(const QStringList &files)
         SuProcess proc(KFI_SYS_USER);
 
         proc.setCommand(cmd);
-        proc.exec(itsRunner->adminPasswd().local8Bit());
+        proc.exec(itsRunner->adminPasswd().toLocal8Bit());
 
         for(it=files.begin(); it!=end; ++it)
             if(!Misc::fExists(*it))

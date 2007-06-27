@@ -24,6 +24,7 @@
 #include <QDir>
 #include <QFile>
 #include <QByteArray>
+#include <QTextCodec>
 #include <QTextStream>
 #include <QProcess>
 #include <kstandarddirs.h>

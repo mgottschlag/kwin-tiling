@@ -135,7 +135,7 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
             }
 #endif
             painter.setFont(sans);
-            QCoreApplication::processEvents(QEventLoop::ExcludeUserInput, 0);
+            QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, 0);
 
             if(!firstFont && !sufficientSpace(y, painter.fontMetrics().height(), sizes, pageHeight, size))
             {

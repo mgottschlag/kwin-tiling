@@ -447,7 +447,7 @@ void CKCmFontInst::fontSelected(const QModelIndex &index, bool en, bool dis)
 
         if(font)
         {
-            if(itsShowPreview->isOn())
+            if(itsShowPreview->isChecked())
             {
                 KUrl url(font->isEnabled()
                             ? font->url()
@@ -777,7 +777,7 @@ void CKCmFontInst::changeText()
 void CKCmFontInst::showPreview(bool s)
 {
     itsPreviewWidget->setVisible(s);
-    itsPreviewControl->setVisible(itsMgtMode->isOn() && s);
+    itsPreviewControl->setVisible(itsMgtMode->isChecked() && s);
 }
 
 void CKCmFontInst::duplicateFonts()
@@ -1017,7 +1017,7 @@ void CKCmFontInst::toggleFontManagement(bool on)
     {
         if(!on)
             itsPreviewControl->setStd();
-        itsPreviewControl->setVisible(on && itsShowPreview->isOn());
+        itsPreviewControl->setVisible(on && itsShowPreview->isChecked());
         itsToolsMenu->setVisible(on);
         itsFontListView->setMgtMode(on);
         itsFilter->setMgtMode(on);
@@ -1214,10 +1214,10 @@ KUrl CKCmFontInst::baseUrl(bool sys)
 
 void CKCmFontInst::selectMainGroup()
 {
-    selectGroup(Misc::root() || itsMgtMode->isOn()
+    selectGroup(Misc::root() || itsMgtMode->isChecked()
                     ? CGroupListItem::ALL : CGroupListItem::PERSONAL);
     if(itsModeControl)
-        itsModeControl->setCurrentItem(grpToMode(Misc::root()
+        itsModeControl->setCurrentIndex(grpToMode(Misc::root()
                                                     ? CGroupListItem::ALL
                                                     : CGroupListItem::PERSONAL));
 }
@@ -1236,10 +1236,10 @@ void CKCmFontInst::doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &u
 
 CGroupListItem::EType CKCmFontInst::getCurrentGroupType()
 {
-    if(itsMgtMode->isOn())
+    if(itsMgtMode->isChecked())
         return itsGroupListView->getType();
     else if(itsModeControl)
-        return modeToGrp(itsModeControl->currentItem());
+        return modeToGrp(itsModeControl->currentIndex());
 
     return CGroupListItem::ALL;
 }

@@ -115,7 +115,7 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
             KUrl      toU(to);
 
             item->setUrl(toU);
-            itsItems.remove(it);
+            itsItems.erase(it);
             if(itsItems.contains(toU))
             {
                 KFileItemList items;
@@ -176,7 +176,7 @@ void CFontLister::filesRemoved(const QStringList &files)
                 kDebug() << "Delete : " << item->url().prettyUrl() << endl;
 #endif
                 itemsToRemove.append(item);
-                itsItems.remove(it);
+                itsItems.erase(it);
             }
         }
 
@@ -215,7 +215,7 @@ void CFontLister::result(KJob *job)
 
                 itemsToRemove.append(item);
                 ++it;
-                itsItems.remove(remove);
+                itsItems.erase(remove);
             }
 
         removeItems(itemsToRemove);

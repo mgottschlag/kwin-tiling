@@ -427,7 +427,7 @@ bool CGroupList::load(const QString &file)
     QFile f(file);
     bool  rv(false);
 
-    if(f.open(IO_ReadOnly))
+    if(f.open(QIODevice::ReadOnly))
     {
         QDomDocument doc;
 
@@ -578,7 +578,7 @@ bool CGroupList::removeGroup(const QModelIndex &idx)
                                           i18n("Remove group"))))
         {
             itsModified=true;
-            itsGroups.remove(grp);
+            itsGroups.removeAll(grp);
             delete grp;
             save();
             sort(0, itsSortOrder);

@@ -39,7 +39,7 @@ CSuProc::CSuProc(QByteArray &sock, QString &passwd)
     cmd+=' ';
     cmd+=QFile::encodeName(KShell::quoteArg(sock));
     cmd+=' ';
-    cmd+=QString().setNum(getuid()).latin1();
+    cmd+=QString().setNum(getuid()).toLatin1();
     itsProc.setCommand(cmd);
 }
 

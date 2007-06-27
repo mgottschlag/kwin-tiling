@@ -303,7 +303,7 @@ QPixmap * CPreviewCache::getPixmap(const QString &family, const QString &name, c
             thumb.save(&pngFile, constFileType);
             pngFile.close();
 #endif
-            itsMap[thumbName]=QPixmap(thumb);
+            itsMap[thumbName]=QPixmap::fromImage(thumb);
             return &(itsMap[thumbName]);
 #ifdef KFI_SAVE_PIXMAPS
         }
@@ -486,7 +486,7 @@ void CFamilyItem::addFont(CFontItem *font)
 
 void CFamilyItem::removeFont(CFontItem *font)
 {
-    itsFonts.remove(font);
+    itsFonts.removeAll(font);
     updateStatus();
     if(itsRegularFont==font)
     {
@@ -954,7 +954,7 @@ void CFontList::deleteItems(const KFileItemList &items)
             CFamilyItem *fam=static_cast<CFamilyItem *>(font->parent());
 
             if(1==fam->fonts().count())
-                itsFamilies.remove(fam);
+                itsFamilies.removeAll(fam);
             else
                 fam->removeFont(font);
             itsFonts.remove(*it);

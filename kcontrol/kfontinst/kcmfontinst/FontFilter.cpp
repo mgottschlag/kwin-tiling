@@ -187,7 +187,7 @@ void CFontFilter::paintEvent(QPaintEvent *ev)
         // probably requires fixes to Qt itself to do this cleanly
         QRect cr(contentsRect());
 
-        cr.addCoords(itsMenuButton->width()+4, 0, -(itsMenuButton->width()+4), 0);
+        cr.adjust(itsMenuButton->width()+4, 0, -(itsMenuButton->width()+4), 0);
         p.drawText(cr, Qt::AlignLeft|Qt::AlignVCenter, clickMessage());
         p.setPen(oldPen);
     }

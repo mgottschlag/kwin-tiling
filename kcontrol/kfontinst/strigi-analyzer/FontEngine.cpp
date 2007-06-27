@@ -362,7 +362,7 @@ static int strToWidth(const QString &str)
 
 static int checkItalic(int it, const QString &full)
 {
-    return (FC_SLANT_ITALIC==it && (-1!=full.find("Oblique") || -1!=full.find("Slanted")))
+    return (FC_SLANT_ITALIC==it && (-1!=full.indexOf("Oblique") || -1!=full.indexOf("Slanted")))
            ? FC_SLANT_OBLIQUE
            : it;
 }

@@ -6,8 +6,6 @@ if (X11_Xft_FOUND)
       ${FONTCONFIG_INCLUDE_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
-  add_definitions (-DQT3_SUPPORT)
-
   set(libkfontinstview_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/FontPreview.cpp 
                             ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/PreviewSelectAction.cpp
                             ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/CharTip.cpp )
@@ -21,7 +19,6 @@ if (X11_Xft_FOUND)
   add_subdirectory( kio ) 
   add_subdirectory( thumbnail )
   add_subdirectory( viewpart )
-  add_subdirectory( mime )
 
 else (X11_Xft_FOUND)
 

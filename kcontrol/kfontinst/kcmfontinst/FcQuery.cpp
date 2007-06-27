@@ -36,7 +36,7 @@ static int getInt(const QString &str)
         end=str.lastIndexOf("(i)(s)");
 
     if(end>start)
-        rv=str.mid(start, end-start).stripWhiteSpace().toInt();
+        rv=str.mid(start, end-start).trimmed().toInt();
 
     return rv;
 }

@@ -65,11 +65,11 @@ CActionDialog::CActionDialog(QWidget *parent)
 
     if(0==theUsageCount++)
     {
-        QImage img(KIconLoader::global()->loadIcon("font-truetype", K3Icon::NoGroup, 32));
+        QImage img(KIconLoader::global()->loadIcon("font-truetype", K3Icon::NoGroup, 32).toImage());
         double increment=360.0/constNumIcons;
 
         for(int i=0; i<constNumIcons; ++i)
-            theIcons[i]=new QPixmap(0==i ? img : img.transformed(rotateMatrix(img.width(), img.height(), increment*i)));
+            theIcons[i]=new QPixmap(QPixmap::fromImage(0==i ? img : img.transformed(rotateMatrix(img.width(), img.height(), increment*i))));
     }
 
     itsPixmapLabel->setPixmap(*theIcons[0]);

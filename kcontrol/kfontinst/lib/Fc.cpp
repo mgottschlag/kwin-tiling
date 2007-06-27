@@ -327,7 +327,7 @@ unsigned long styleValFromStr(const QString &style)
     {
         unsigned long val;
 
-        QTextIStream(&style)>>val;
+        QTextStream(const_cast<QString *>(&style), QIODevice::ReadOnly) >> val;
         return val;
     }
 }
