@@ -36,21 +36,8 @@
 #include <sys/un.h>
 #include <sys/stat.h>
 #include <QByteArray>
-
-#define KFI_TEST
-
-#ifdef KFI_TEST
-#include <iostream>
-using namespace std;
-#define KFI_WARNING_STREAM cout
-#define KDE_struct_stat    struct stat
-#define KDE_lstat          ::lstat
-#define k_lineinfo         "[" << __FILE__ << ":" << __LINE__ << "] "
-#else
 #include <config-workspace.h>
 #include <kdebug.h>
-#define KFI_WARNING_STREAM kWarning()
-#endif
 
 #ifndef SUN_LEN
 #define SUN_LEN(ptr) ((socklen_t) (((struct sockaddr_un *) 0)->sun_path) \
@@ -244,7 +231,7 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     itsFd =::socket(PF_UNIX, SOCK_STREAM, 0);
     if (itsFd < 0)
     {
-        KFI_WARNING_STREAM << k_lineinfo << "socket(): " << errno << endl;
+        kWarning() << k_lineinfo << "socket(): " << errno << endl;
         return false;
     }
     struct sockaddr_un addr;
@@ -253,7 +240,7 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
 
     if (::connect(itsFd, (struct sockaddr *) &addr, SUN_LEN(&addr)) < 0)
     {
-        KFI_WARNING_STREAM << k_lineinfo << "connect():" << errno << endl;
+        kWarning() << k_lineinfo << "connect():" << errno << endl;
         ::close(itsFd);
         itsFd = -1;
         return false;
@@ -266,7 +253,7 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     // Security: if socket exists, we must own it
     if (getpeereid(itsFd, &euid, &egid) == 0 && euid != getuid())
     {
-        KFI_WARNING_STREAM << "socket not owned by me! socket uid = " << euid << endl;
+        kWarning() << "socket not owned by me! socket uid = " << euid << endl;
         ::close(itsFd);
         itsFd = -1;
         return false;
@@ -282,21 +269,21 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     KDE_struct_stat s;
     if (KDE_lstat(sock, &s)!=0)
     {
-        KFI_WARNING_STREAM << "stat failed (" << sock.data() << ")" << endl;
+        kWarning() << "stat failed (" << sock.data() << ")" << endl;
         ::close(itsFd);
         itsFd = -1;
         return false;
     }
     if (s.st_uid != socketUid)
     {
-        KFI_WARNING_STREAM << "socket not owned by " << socketUid << "! socket uid = " << s.st_uid << endl;
+        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << s.st_uid << endl;
         ::close(itsFd);
         itsFd = -1;
         return false;
     }
     if (!S_ISSOCK(s.st_mode))
     {
-        KFI_WARNING_STREAM << "socket is not a socket (" << sock.data() << ")" << endl;
+        kWarning() << "socket is not a socket (" << sock.data() << ")" << endl;
         ::close(itsFd);
         itsFd = -1;
         return false;
@@ -309,7 +296,7 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     // Security: if socket exists, we must own it
     if (getsockopt(itsFd, SOL_SOCKET, SO_PEERCRED, &cred, &siz) == 0 && cred.uid != socketUid)
     {
-        KFI_WARNING_STREAM << "socket not owned by " << socketUid << "! socket uid = " << cred.uid << endl;
+        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << cred.uid << endl;
         ::close(itsFd);
         itsFd = -1;
         return false;
