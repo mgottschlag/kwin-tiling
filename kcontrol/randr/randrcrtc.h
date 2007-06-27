@@ -30,15 +30,6 @@ class RandRCrtc : public QObject
 	Q_OBJECT
 
 public:
-
-	enum CrtcChange
-	{
-		ChangeMode     = 1,
-		ChangeRotation = 2,
-		ChangePosition = 4,
-		ChangeSize     = 8
-	};
-
 	RandRCrtc(RandRScreen *parent, RRCrtc id);
 	~RandRCrtc();
 

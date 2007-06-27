@@ -90,7 +90,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 
 	if (event->crtc != m_currentCrtc)
 	{
-		changed |= ChangeCrtc;
+		changed |= RandR::ChangeCrtc;
 		// update crtc settings
 		if (m_currentCrtc != None)
 			m_screen->crtc(m_currentCrtc)->loadSettings();
@@ -101,16 +101,16 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 
 	if (event->mode != currentMode())
 	{
-		changed |= ChangeMode;
+		changed |= RandR::ChangeMode;
 
 	}
 	if (event->rotation != currentRotation())
 	{
-		changed |= ChangeRotation;
+		changed |= RandR::ChangeRotation;
 	}
 	if ((event->connection == RR_Connected) != m_connected)
 	{
-		changed |= ChangeConnection;
+		changed |= RandR::ChangeConnection;
 		m_connected = !m_connected;
 	}
 
@@ -256,29 +256,10 @@ bool RandROutput::proposedChanged()
 	return true;
 }
 
-bool RandROutput::applyProposed()
-{
-	if (m_currentCrtc == None)
-		return true;
-
-	return m_screen->crtc(m_currentCrtc)->applyProposed();
-}
-
 void RandROutput::proposeOriginal()
 {
-	if (m_originalCrtc != m_currentCrtc)
-	{
-		if (m_currentCrtc != None)
-			m_screen->crtc(m_currentCrtc)->removeOutput(m_id);
-
-		if (m_originalCrtc != None)
-			m_screen->crtc(m_originalCrtc)->addOutput(m_id);
-	}
-
+	// this is just what we need to do here
 	m_currentCrtc = m_originalCrtc;
-	
-	if (m_currentCrtc != None)
-		m_screen->crtc(m_currentCrtc)->proposeOriginal();
 }
 
 void RandROutput::load(KConfig &config)
@@ -291,33 +272,25 @@ void RandROutput::load(KConfig &config)
 	KConfigGroup cg = config.group("Screen_" + QString::number(m_screen->index()) + "_Output_" + m_name);
 	bool active = cg.readEntry("Active", true);
 
-	if (!active && m_currentCrtc != None)
+	if (!active)
+		m_proposedCrtc = None;
+	else
 	{
-		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
-		crtc->removeOutput(m_id);
-	}
-	else if (active && m_currentCrtc == None)
-	{
-		//FIXME: not handling the case where there is no empty CRTC to use
 		RandRCrtc *crtc = findEmptyCrtc();
-		if (crtc->addOutput(m_id))
-			m_currentCrtc = crtc->id();
+		if (crtc)
+			m_proposedCrtc = crtc->id();
+		else
+			m_proposedCrtc = None;
 
 	}
 
 	// if the output is not going to be active, stop loading the config
-	if (!active)
+	if (m_proposedCrtc == None)
 		return;
 
-	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
-	QRect r = cg.readEntry("Rect", QRect());
-	if (r.isValid())
-	{
-		crtc->proposePosition(r.topLeft());
-		crtc->proposeSize(r.size());
-	}
-	crtc->proposeRotation(cg.readEntry("Rotation", (int) RandR::Rotate0));
-	crtc->proposeRefreshRate(cg.readEntry("Rate", 0));
+	m_proposedRect = cg.readEntry("Rect", QRect());
+	m_proposedRotation = cg.readEntry("Rotation", (int) RandR::Rotate0);
+	m_proposedRate = cg.readEntry("Rate", 0);
 }
 
 void RandROutput::save(KConfig &config)
@@ -343,105 +316,22 @@ void RandROutput::save(KConfig &config)
 void RandROutput::slotChangeSize(QAction *action)
 {
 	QSize size = action->data().toSize();
-
-	setSize(size);
+	m_proposedRect.setSize(size);
+	applyProposed(RandR::ChangeSize, true);
 }
 
 void RandROutput::slotChangeRotation(QAction *action)
 {
-	if (m_currentCrtc != None)
-	{
-		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
-		crtc->setOriginal();
-		crtc->proposeRotation(action->data().toInt());
-		if (applyAndConfirm(crtc))
-			return;
-
-		crtc->proposeOriginal();
-		crtc->applyProposed();
-		return;
-	}
-
-	RandRCrtc *crtc = findEmptyCrtc();
-	if (crtc)
-	{
-		crtc->setOriginal();
-		crtc->proposeRotation(action->data().toInt());
-		if (applyAndConfirm(crtc))
-			return;
-			
-		crtc->proposeOriginal();
-		crtc->applyProposed();
-	}
-	else
-	{
-		// try to add this output to a crtc
-		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
-		{
-			crtc = m_screen->crtc(m_possibleCrtcs.at(i));
-			if (crtc->addOutput(m_id))
-			{
-				crtc->setOriginal();
-				crtc->proposeRotation(action->data().toInt());
-				if (applyAndConfirm(crtc))
-					return;
-
-				crtc->proposeOriginal();
-				crtc->applyProposed();
-			}
-		}
-	}
+	m_proposedRotation = action->data().toInt();
+	applyProposed(RandR::ChangeRotation, true);
 }
 
 void RandROutput::slotChangeRefreshRate(QAction *action)
 {
 	float rate = action->data().toDouble();
 
-	if (m_currentCrtc != None)
-	{
-		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
-		crtc->setOriginal();
-		crtc->proposeRefreshRate(rate);
-		if (applyAndConfirm(crtc))
-			return;
-
-		crtc->proposeOriginal();
-		crtc->applyProposed();
-		return;
-	}
-
-	RandRCrtc *crtc = findEmptyCrtc();
-	if (crtc)
-	{
-		crtc->setOriginal();
-		crtc->proposeRefreshRate(rate);
-		if (applyAndConfirm(crtc))
-			return;
-
-		crtc->proposeOriginal();
-		crtc->applyProposed();
-		return;
-
-	}
-	else
-	{
-		// try to add this output to a crtc
-		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
-		{
-			crtc = m_screen->crtc(m_possibleCrtcs.at(i));
-			if (crtc->addOutput(m_id))
-			{
-				crtc->setOriginal();
-				crtc->proposeRefreshRate(rate);
-				if (applyAndConfirm(crtc))
-					return;
-					
-				crtc->proposeOriginal();
-				crtc->applyProposed();
-				return;
-			}
-		}
-	}
+	m_proposedRate = rate;
+	applyProposed(RandR::ChangeRate, true);
 }
 
 void RandROutput::slotDisable()
@@ -452,62 +342,8 @@ void RandROutput::slotDisable()
 	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 	crtc->removeOutput(m_id);
 	crtc->applyProposed();
-	// FIXME: check when there is only one output active, and ask the user for
-	// confirmation before disabling: otherwise the user won't have any output 
-	// active
 }
 
-void RandROutput::setSize(QSize s)
-{
-	if (s == rect().size())
-	       return;	
-
-
-	// try to set the mode in the current crtc
-	if (m_currentCrtc != None)
-	{
-		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
-		crtc->setOriginal();
-		crtc->proposeSize(s);
-		if (applyAndConfirm(crtc))
-			return;
-
-		crtc->proposeOriginal();
-		crtc->applyProposed();
-		return;
-	}
-
-	// try to add this output to an empty crtc
-	RandRCrtc *crtc = findEmptyCrtc();
-	if (crtc)
-	{
-		crtc->setOriginal();
-		crtc->addOutput(m_id, s);
-		if (!applyAndConfirm(crtc))
-		{
-			crtc->removeOutput(m_id);
-			crtc->proposeOriginal();
-			crtc->applyProposed();
-		}
-	}
-	else
-	{
-		// use any crtc available
-		for (int i = 0; i < m_possibleCrtcs.count(); ++i)
-		{
-			RandRCrtc *crtc = m_screen->crtc(m_possibleCrtcs.at(i));
-			crtc->setOriginal();
-			crtc->addOutput(m_id, s);
-			if (!applyAndConfirm(crtc))
-			{
-				crtc->removeOutput(m_id);
-				crtc->proposeOriginal();
-				crtc->applyProposed();
-			}
-
-		}
-	}
-}
 
 RandRCrtc *RandROutput::findEmptyCrtc()
 {
@@ -523,22 +359,118 @@ RandRCrtc *RandROutput::findEmptyCrtc()
 	return 0;
 }
 
-bool RandROutput::applyAndConfirm(RandRCrtc *crtc)
+bool RandROutput::tryCrtc(RandRCrtc *crtc, int changes)
 {
-	KConfig cfg("krandrrc");
-	if (!crtc)
-		return false;
+	crtc->setOriginal();
+
+	if (changes & RandR::ChangeSize)
+		crtc->proposeSize(m_proposedRect.size());
+	if (changes & RandR::ChangePosition)
+		crtc->proposePosition(m_proposedRect.topLeft());
+	if (changes & RandR::ChangeRotation)
+		crtc->proposeRotation(m_proposedRotation);
+	if (changes & RandR::ChangeRate)
+		crtc->proposeRefreshRate(m_proposedRate);
 
 	if (crtc->applyProposed())
+		return true;
+
+	// revert changes if we didn't succeed
+	crtc->proposeOriginal();
+	crtc->applyProposed();
+	return false;
+}
+
+bool RandROutput::applyProposed(int changes, bool confirm)
+{
+	KConfig cfg("krandrrc");
+	RandRCrtc *crtc;
+
+	QRect r;
+
+	if (changes & RandR::ChangeSize)
+		r.setSize(m_proposedRect.size());
+
+	// check if we should apply changes to the crtc
+	if (changes & RandR::ChangeCrtc)
 	{
-		if (RandR::confirm(crtc->rect()))
+		if (m_proposedCrtc != m_currentCrtc)
 		{
-			save(cfg);
-			return true;
+			// if we are currently attached to a crtc that is different from the proposed
+			// one, we need to detach
+			if (m_currentCrtc != None)
+				m_screen->crtc(m_currentCrtc)->removeOutput(m_id);
+
+			// if the proposed CRTC is None, then we should stop processing here
+			if (m_proposedCrtc == None)
+			{
+				m_currentCrtc = None;
+				return true;
+			}
+
+			// if we were asked to attach to another crtc, try it
+			if (m_screen->crtc(m_proposedCrtc)->addOutput(m_id, r.size()))
+				m_currentCrtc = m_proposedCrtc;
+			else
+			{
+				m_currentCrtc = None;
+				return false;
+			}
 		}
 	}
 
-	return false;	
+	// first try to apply to the already attached crtc if any
+	if (m_currentCrtc != None)
+	{
+		crtc = m_screen->crtc(m_currentCrtc);
+		if (tryCrtc(crtc, changes))
+			if (!confirm || confirm && RandR::confirm(crtc->rect()))
+			{
+				save(cfg);
+				return true;
+			}
+			else
+			{
+				crtc->proposeOriginal();
+				crtc->applyProposed();
+			}
+		return false;
+	}
+
+	//then try an empty crtc
+	crtc = findEmptyCrtc();
+	if (crtc)
+	{
+		if (crtc->addOutput(m_id, r.size()))
+		{
+			// try the crtc, and if no confirmation is needed or the user confirm, save the new settings
+			if (tryCrtc(crtc, changes)) 
+			{
+				if (!confirm || confirm && RandR::confirm(crtc->rect()))
+				{
+					m_currentCrtc = crtc->id();
+					save(cfg);
+					return true;
+				}
+				else
+				{
+					crtc->proposeOriginal();
+					crtc->applyProposed();
+					return false;
+				}
+			}
+			else
+			{
+				m_currentCrtc = None;
+				crtc->removeOutput(m_id);
+				return false;
+			}
+		}
+	}
+
+	// TODO: check if we can add this output to a CRTC which already has an output 
+	// connection
+	return false;
 }
 
 #include "randroutput.moc"

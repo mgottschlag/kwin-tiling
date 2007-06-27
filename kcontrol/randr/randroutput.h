@@ -34,14 +34,6 @@ class RandROutput : public QObject
 	Q_OBJECT
 
 public:
-	enum OutputChange 
-	{
-		ChangeCrtc       =  1,
-		ChangeMode       =  2,
-		ChangeRotation   =  4,
-		ChangeConnection =  8
-	};
-
 	RandROutput(RandRScreen *parent, RROutput id);
 	~RandROutput();
 
@@ -100,7 +92,7 @@ public:
 	 * If this output is not connected to any CRTC, it will return false
 	 */
 	bool proposedChanged();
-	bool applyProposed();
+	bool applyProposed(int changes = 0xffffff, bool confirm = false);
 	void proposeOriginal();
 
 	void load(KConfig &config);
@@ -116,9 +108,8 @@ signals:
 	void outputChanged(RROutput o, int changes);
 
 protected:
-	void setSize(QSize s);
 	RandRCrtc *findEmptyCrtc();
-	bool applyAndConfirm(RandRCrtc *crtc);
+	bool tryCrtc(RandRCrtc *crtc, int changes);
 
 private:
 	
@@ -131,6 +122,7 @@ private:
 	RRCrtc m_currentCrtc;
 
 	RRCrtc m_originalCrtc;
+	RRCrtc m_proposedCrtc;
 
 	//proposed stuff (mostly to read from the configuration
 	QRect m_proposedRect;

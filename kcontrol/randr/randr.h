@@ -68,7 +68,8 @@ public:
 	static bool has_1_2;
 	static Time timestamp;
 
-	enum Orientations {
+	enum Orientations 
+	{
 		Rotate0			= 0x1,
 		Rotate90		= 0x2,
 		Rotate180		= 0x4,
@@ -80,6 +81,17 @@ public:
 		ReflectMask		= 48,
 		OrientationMask	= 63,
 		OrientationCount = 6
+	};
+
+	enum Changes 
+	{
+		ChangeCrtc       =  1,
+		ChangeMode       =  2,
+		ChangeRotation   =  4,
+		ChangeConnection =  8,
+		ChangePosition   = 16,
+		ChangeSize       = 32,
+		ChangeRate       = 64
 	};
 
 	static QString	rotationName(int rotation, bool pastTense = false, bool capitalised = true);

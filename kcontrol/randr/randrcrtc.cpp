@@ -101,20 +101,20 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 	if (event->mode != m_currentMode)
 	{
 		kDebug() << "   Changed mode" << endl;
-		changed |= ChangeMode;
+		changed |= RandR::ChangeMode;
 		m_currentMode = event->mode;
 	}
 	
 	if (event->rotation != m_currentRotation)
 	{
 		kDebug() << "   Changed rotation: " << event->rotation << endl;
-		changed |= ChangeRotation;
+		changed |= RandR::ChangeRotation;
 		m_currentRotation = event->rotation;
 	}
 	if (event->x != m_currentRect.x() || event->y != m_currentRect.y())
 	{
 		kDebug() << "   Changed position: " << event->x << "," << event->y << endl;
-		changed |= ChangePosition;
+		changed |= RandR::ChangePosition;
 		m_currentRect.translate(event->x, event->y);
 	}
 
@@ -122,7 +122,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 	if (mode.size() != m_currentRect.size())
 	{
 		kDebug() << "   Changed size: " << mode.size() << endl;
-		changed |= ChangeSize;
+		changed |= RandR::ChangeSize;
 		m_currentRect.setSize(mode.size());
 		//Do NOT use event->width and event->height here, as it is being returned wrongly
 	}
@@ -244,7 +244,7 @@ bool RandRCrtc::applyProposed()
 		m_currentRotation = m_proposedRotation;
 		m_currentRect = m_proposedRect;
 		m_currentRate = mode.refreshRate();
-		emit crtcChanged(m_id, ChangeMode);
+		emit crtcChanged(m_id, RandR::ChangeMode);
 		ret = true;
 	}
 	else
