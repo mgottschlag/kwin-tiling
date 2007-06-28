@@ -75,7 +75,7 @@ void TimeEngine::setTimerTo60()
 bool TimeEngine::sourceRequested(const QString &name)
 {
     if (name == "Local") {
-        setData(I18N_NOOP("Local"), II8N_NOOP("Time"), QTime::currentTime());
+        setData(I18N_NOOP("Local"), I18N_NOOP("Time"), QTime::currentTime());
         setData(I18N_NOOP("Local"), I18N_NOOP("Date"), QDate::currentDate());
 
         if (!m_timer->isActive()) {
