@@ -55,7 +55,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);
     m_pixelSize = cg.readEntry("size", 250);
-    m_timezone = cg.readEntry("timezone", i18n("Local"));
+    m_timezone = cg.readEntry("timezone", "Local");
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(m_pixelSize, m_pixelSize);
@@ -87,7 +87,7 @@ void Clock::constraintsUpdated()
 void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source);
-    m_time = data[i18n("Time")].toTime();
+    m_time = data["Time"].toTime();
 
     if (m_time.minute() == m_lastTimeSeen.minute() &&
         m_time.second() == m_lastTimeSeen.second()) {
@@ -140,9 +140,9 @@ void Clock::configAccepted()
             m_timezone = tz;
             dataEngine("time")->connectSource(m_timezone, this);
         }
-    } else if (m_timezone != i18n("Local")) {
+    } else if (m_timezone != "Local") {
         dataEngine("time")->disconnectSource(m_timezone, this);
-        m_timezone = i18n("Local");
+        m_timezone = "Local";
         dataEngine("time")->connectSource(m_timezone, this);
     }
     */

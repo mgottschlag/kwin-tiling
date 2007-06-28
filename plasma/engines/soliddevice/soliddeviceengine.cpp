@@ -56,7 +56,7 @@ bool SolidDeviceEngine::sourceRequested(const QString &name)
 	/* This creates a list of all available devices.  This must be called first before any other sources
 	 * will be available.
 	 */
-	if(name == i18n("Devices"))
+	if(name == "Devices")
 	{
 		//if the devicelist is already populated, return
 		if(!devicelist.isEmpty()){ return true; }
@@ -491,7 +491,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 void SolidDeviceEngine::deviceAdded(const QString& udi)
 {
 	devicelist << udi;
-	QString name = i18n("Devices");
+	QString name = I18N_NOOP("Devices");
 	setData(name, "DeviceList", devicelist);
 	
 	//add to device specific lists
@@ -583,7 +583,7 @@ void SolidDeviceEngine::deviceRemoved(const QString& udi)
 		devicelist.removeAt(pos);
 		devicemap.remove(udi);
 		removeSource(udi);
-		setData(i18n("Devices"), "DeviceList", devicelist);
+		setData(I18N_NOOP("Devices"), "DeviceList", devicelist);
 	}
 	checkForUpdates();
 }

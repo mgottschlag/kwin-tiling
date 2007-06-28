@@ -74,9 +74,9 @@ void TimeEngine::setTimerTo60()
 
 bool TimeEngine::sourceRequested(const QString &name)
 {
-    if (name == i18n("Local")) {
-        setData(i18n("Local"), i18n("Time"), QTime::currentTime());
-        setData(i18n("Local"), i18n("Date"), QDate::currentDate());
+    if (name == "Local") {
+        setData(I18N_NOOP("Local"), II8N_NOOP("Time"), QTime::currentTime());
+        setData(I18N_NOOP("Local"), I18N_NOOP("Date"), QDate::currentDate());
 
         if (!m_timer->isActive()) {
             m_timer->start(500);
@@ -92,8 +92,8 @@ bool TimeEngine::sourceRequested(const QString &name)
     }
 
     QDateTime dt = local->convert(newTz, QDateTime::currentDateTime());
-    setData(name, i18n("Time"), dt.time());
-    setData(name, i18n("Date"), dt.date());
+    setData(name, I18N_NOOP("Time"), dt.time());
+    setData(name, I18N_NOOP("Date"), dt.date());
 
     if (!m_timer->isActive()) {
         m_timer->start(500);
@@ -110,7 +110,7 @@ void TimeEngine::updateTime()
     const KTimeZone *local = KSystemTimeZones::local();
     DataEngine::SourceDict sources = sourceDict();
     DataEngine::SourceDict::iterator it = sources.begin();
-    QString localName = i18n("Local");
+    QString localName = I18N_NOOP("Local");
 
     if (!m_seconds) {
         int seconds = dt.time().second();
@@ -124,13 +124,13 @@ void TimeEngine::updateTime()
     while (it != sources.end()) {
         QString tz = it.key();
         if (tz == localName) {
-            it.value()->setData(i18n("Time"), dt.time());
-            it.value()->setData(i18n("Date"), dt.date());
+            it.value()->setData(I18N_NOOP("Time"), dt.time());
+            it.value()->setData(I18N_NOOP("Date"), dt.date());
         } else {
             const KTimeZone *newTz = KSystemTimeZones::zone(tz);
             QDateTime localizeDt = local->convert(newTz, dt);
-            it.value()->setData(i18n("Time"), localizeDt.time());
-            it.value()->setData(i18n("Date"), localizeDt.date());
+            it.value()->setData(I18N_NOOP("Time"), localizeDt.time());
+            it.value()->setData(I18N_NOOP("Date"), localizeDt.date());
         }
         ++it;
     }
