@@ -907,7 +907,7 @@ void CFontEngine::parseXlfdBmp(const QString &xlfd)
 
     // XLFD:
     //     -foundry-family-weight-slant-width-?-pixelSize-pointSize-resX-resY-spacing-avWidth-csReg-csEnc
-    for(entry=XLFD_FOUNDRY; -1!=(pos=xlfd.find('-', pos+1)) && entry<XLFD_END; ++entry)
+    for(entry=XLFD_FOUNDRY; -1!=(pos=xlfd.indexOf('-', pos+1)) && entry<XLFD_END; ++entry)
     {
         switch(entry)
         {
@@ -920,11 +920,11 @@ void CFontEngine::parseXlfdBmp(const QString &xlfd)
                 itsFamily=xlfd.mid(oldPos, pos-oldPos);
                 break;
             case XLFD_WEIGHT:
-                itsWeight=strToWeight(xlfd.mid(oldPos, pos-oldPos).local8Bit());
+                itsWeight=strToWeight(xlfd.mid(oldPos, pos-oldPos).toLocal8Bit());
                 break;
             case XLFD_SLANT:
                 if(pos>0)
-                    itsItalic=charToItalic(xlfd[pos-1].latin1());
+                    itsItalic=charToItalic(xlfd[pos-1].toLatin1());
                 break;
             case XLFD_WIDTH:
                 itsWidth=strToWidth(xlfd.mid(oldPos, pos-oldPos));
@@ -937,7 +937,7 @@ void CFontEngine::parseXlfdBmp(const QString &xlfd)
                 break;
             case XLFD_SPACING:
                 if(pos>0)
-                    itsSpacing=charToSpacing(xlfd[pos-1].latin1());
+                    itsSpacing=charToSpacing(xlfd[pos-1].toLatin1());
                 break;
             case XLFD_AV_WIDTH:
             case XLFD_ENCODING:
