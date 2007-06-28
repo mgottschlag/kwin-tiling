@@ -365,7 +365,6 @@ echo 'startkde: Shutting down...'  1>&2
 
 # Clean up
 kdeinit4_shutdown
-#dcopserver_shutdown --wait
 
 echo 'startkde: Running shutdown scripts...'  1>&2
 
