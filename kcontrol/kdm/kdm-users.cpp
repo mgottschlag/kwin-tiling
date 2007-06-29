@@ -22,8 +22,8 @@
 #include <K3ListView>
 #include <K3URLDrag>
 #include <KComboBox>
-#include <KFileDialog>
 #include <KGlobal>
+#include <KIconDialog>
 #include <KImageFilePreview>
 #include <KImageIO>
 #include <KIO/NetAccess>
@@ -87,7 +87,6 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	// We assume that $kde_datadir/kdm exists, but better check for pics/ and pics/users,
 	// and create them if necessary.
 	m_userPixDir = config->group("X-*-Greeter").readEntry( "FaceDir", KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/faces" ) + '/';
-	m_notFirst = false;
 	QDir testDir( m_userPixDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
 		KMessageBox::sorry( this, i18n("Unable to create folder %1", testDir.absolutePath() ) );
@@ -339,21 +338,13 @@ void KDMUsersWidget::changeUserPix( const QString &pix )
 
 void KDMUsersWidget::slotUserButtonClicked()
 {
-	KFileDialog dlg( m_notFirst ? QString() :
-	                 KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/pics/users",
-	                 KImageIO::pattern( KImageIO::Reading ),
-	                 this );
-	dlg.setOperationMode( KFileDialog::Opening );
-	dlg.setCaption( i18n("Choose Image") );
-	dlg.setMode( KFile::File | KFile::LocalOnly );
-
-	KImageFilePreview *ip = new KImageFilePreview( &dlg );
-	dlg.setPreviewWidget( ip );
-	if (dlg.exec() != QDialog::Accepted)
+	KIconDialog dlg;
+	dlg.setCustomLocation( KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/pics/users" );
+	dlg.setup( K3Icon::NoGroup, K3Icon::Any, false, 48, true, true, false );
+	QString ic = dlg.openDialog();
+	if (ic.isEmpty())
 		return;
-	m_notFirst = true;
-
-	changeUserPix( dlg.selectedFile() );
+	changeUserPix( ic );
 }
 
 void KDMUsersWidget::slotUnsetUserPix()
