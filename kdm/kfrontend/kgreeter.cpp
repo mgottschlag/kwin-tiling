@@ -603,8 +603,8 @@ KStdGreeter::KStdGreeter()
 	{
 		main_box = new QHBoxLayout( this );
 	}
-	int rs = main_box->spacing();
-	main_box->setSpacing( main_box->margin() );
+	int rs = layout()->spacing();
+	main_box->setSpacing( layout()->margin() );
 
 	if (userView) {
 		userView->setAlternatingRowColors( true );
