@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kpty.h>
 
 #include <QSocketNotifier>
+#include <QScrollBar>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -63,8 +64,7 @@ KConsole::KConsole( QWidget *_parent )
 	, fd( -1 )
 {
 	setReadOnly( true );
-	setWordWrap( NoWrap );
-	setTextFormat( Qt::PlainText );
+	setLineWrapMode( NoWrap );
 
 	if (!openConsole())
 		append( i18n("Cannot open console") );
@@ -153,14 +153,14 @@ KConsole::slotData()
 			if (!openConsole())
 				append( i18n("\n*** Cannot open console log source ***") );
 	} else {
-		bool as = !verticalScrollBar()->isVisible() ||
-		          (verticalScrollBar()->value() ==
-		           verticalScrollBar()->maxValue());
 		QString str( QString::fromLocal8Bit( buffer, n ).remove( '\r' ) );
 		int pos, opos;
-		for (opos = 0; (pos = str.find( '\n', opos )) >= 0; opos = pos + 1) {
-			if (paragraphs() == 100)
-				removeParagraph( 0 );
+		for (opos = 0; (pos = str.indexOf( '\n', opos )) >= 0; opos = pos + 1) {
+			if (document()->blockCount() == 100) {
+				QTextCursor cur( document() );
+				cur.movePosition( QTextCursor::NextBlock, QTextCursor::KeepAnchor );
+				cur.removeSelectedText();
+			}
 			if (!leftover.isEmpty()) {
 				append( leftover + str.mid( opos, pos - opos ) );
 				leftover.clear();
@@ -168,8 +168,6 @@ KConsole::slotData()
 				append( str.mid( opos, pos - opos ) );
 		}
 		leftover += str.mid( opos );
-		if (as)
-			scrollToBottom();
 	}
 }
 
