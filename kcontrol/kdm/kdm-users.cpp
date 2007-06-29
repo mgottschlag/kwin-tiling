@@ -55,6 +55,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <pwd.h>
 
 extern KConfig *config;
 
@@ -90,6 +91,10 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	QDir testDir( m_userPixDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
 		KMessageBox::sorry( this, i18n("Unable to create folder %1", testDir.absolutePath() ) );
+	if (!getpwnam( "nobody" ) && !geteuid())
+		KMessageBox::sorry( this,
+			i18n("User 'nobody' does not exist. "
+			     "Displaying user images will not work in KDM.") );
 
 	m_defaultText = i18n("<default>");
 
