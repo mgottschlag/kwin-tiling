@@ -12,7 +12,6 @@ X-KDE-ParentApp=kicker
 
 Name=Menus
 Name[af]=Kieslyste
-Name[ar]=القوائم
 Name[br]=Meuziadoù
 Name[ca]=Menús
 Name[cs]=Nabídky
@@ -64,7 +63,6 @@ Name[x-test]=xxMenusxx
 Name[zh_TW]=選單
 Comment=You can configure the menus of the panel here
 Comment[af]=Jy kan die kieslyste van die paneel hier opstel
-Comment[ar]=هنا يمكنك إعداد قوائم اللوح
 Comment[ca]=Aquí podeu configurar els menús del plafó
 Comment[cs]=Zde je možné nastavit nabídky panelu
 Comment[csb]=Tuwò je mòżno nastôwic menu panelu

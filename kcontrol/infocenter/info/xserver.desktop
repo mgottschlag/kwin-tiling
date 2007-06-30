@@ -13,7 +13,6 @@ X-KDE-ParentApp=kinfocenter
 
 Name=X-Server
 Name[af]=X-bediener
-Name[ar]=خادم X
 Name[br]=Servijer X
 Name[ca]=Servidor X
 Name[csb]=X-Serwer
@@ -68,7 +67,6 @@ Name[zh_TW]=X 伺服器
 
 Comment=X-Server information
 Comment[af]=X-bediener informasie
-Comment[ar]=معلومات عن خادم X
 Comment[br]=Titouroù diwar-benn ar servijer X
 Comment[ca]=Informació del servidor X
 Comment[cs]=Informace o X-Serveru

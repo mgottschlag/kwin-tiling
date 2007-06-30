@@ -13,7 +13,6 @@ X-KDE-ParentApp=kcontrol
 
 Name=Font Installer
 Name[af]=Skrif tipe Installeerder
-Name[ar]=مثبت المحارف
 Name[br]=Stalianer an nodrezhoù
 Name[ca]=Instal·lador de lletres
 Name[cs]=Instalátor písem
@@ -74,7 +73,6 @@ Name[zh_TW]=字型安裝程式
 
 Comment=Install & preview fonts
 Comment[af]=Installeer & voorskou skriftipes
-Comment[ar]=تثبيت و معاينة المحارف
 Comment[br]=Staliañ ha rakgwel an nodrezhoù
 Comment[ca]=Instal·la i previsualitza lletres
 Comment[cs]=Instalace a náhled písem
@@ -135,6 +133,7 @@ Comment[zh_TW]=安裝並預覽字型
 
 Keywords=font,fonts,installer,truetype,type1,bitmap
 Keywords[el]=γραμματοσειρά,γραμματοσειρές,εγκαταστάτης,εγκατάσταση,truetype,type1,bitmap
+Keywords[ga]=cló,clónna,clófhoirne,suiteálaí,truetype,type1,mapa giotán,giotánmhapach
 Keywords[ja]=フォント,インストーラ,truetype,type1,bitmap,ビットマップ
 Keywords[pt]=tipo de letra,tipos de letra,instalador,truetype,type1,speedo,bitmap
 Keywords[pt_BR]=tipo de letra,tipos de letra,instalador,truetype,type1,speedo,bitmap

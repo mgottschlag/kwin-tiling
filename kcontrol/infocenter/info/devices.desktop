@@ -14,7 +14,6 @@ X-KDE-ParentApp=kinfocenter
 
 Name=Devices
 Name[af]=Toestelle
-Name[ar]=الأجهزة
 Name[br]=Trobarzhelloù
 Name[ca]=Dispositius
 Name[cs]=Zařízení
@@ -76,7 +75,6 @@ Name[zh_TW]=設備
 
 Comment=Attached devices information
 Comment[af]=Gekoppelde toestelle informasie
-Comment[ar]=معلومات الأجهزة المرتبطة
 Comment[br]=Titouroù diwar-benn an trobarzhelloù luget
 Comment[ca]=Informació dels dispositius connectats
 Comment[cs]=Informace o připojených zařízeních
@@ -93,6 +91,7 @@ Comment[fa]=اطلاعات دستگاههای پیوست‌شده
 Comment[fi]=Tietoja liitetyistä laitteista
 Comment[fr]=Informations sur les périphériques montés
 Comment[fy]=Ynformaasje oer oansletten apparaten
+Comment[ga]=Eolas faoi ghléis ceangailte
 Comment[gl]=Información dos dispositivos conectados
 Comment[he]=מידע על ההתקנים המחוברים
 Comment[hr]=Podaci o priključenim uređajima
@@ -135,7 +134,6 @@ Comment[xh]=Ulwazi lwamacebo afakelweyo
 Comment[zh_TW]=附加的設備資訊
 
 Keywords=dev,Devices,System Information,Information
-Keywords[ar]=dev,Devices,System Information,Information,أجهزة,معلومات النظام,معلومات
 Keywords[br]=trobarzhell,titouroù reizhiad,titouroù
 Keywords[ca]=dev,dispositius,Informació del sistema,Informació
 Keywords[cs]=dev,Zařízení,Systémové informace,Informace

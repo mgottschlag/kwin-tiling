@@ -11,7 +11,6 @@ X-KDE-ParentApp=kinfocenter
 
 Name=USB Devices
 Name[af]=USB Toestelle
-Name[ar]=أجهزة USB
 Name[br]=Trobarzhelloù USB
 Name[ca]=Dispositius USB
 Name[cs]=USB zařízení
@@ -73,7 +72,6 @@ Name[zh_TW]=USB 裝置
 
 Comment=View the USB devices attached to this computer
 Comment[af]=Besigtig die Usb toestelle gekoppelde na hierdie rekenaar
-Comment[ar]=أعرض أجهزة USB الموصولة في جهازك
 Comment[br]=Sellout ouzh trobarzhelloù USB kevreet ouzh an urzhiataer-mañ
 Comment[ca]=Veure els dispositius USB connectats a aquest ordinador
 Comment[cs]=Zobrazení USB zařízení připojených k tomuto počítači
@@ -133,7 +131,6 @@ Comment[xh]=Bonisela amacebo e USB afakelwe kule khompyutha
 Comment[zh_TW]=查看連接到這台電腦的 USB 裝置
 
 Keywords=USB,devices,viewer,control
-Keywords[ar]=USB,أجهزة,عارض,متحكم
 Keywords[br]=USB,trobarzhelloù,gweller,ren
 Keywords[ca]=USB,dispositius,visor,control
 Keywords[cs]=USB,zařízení,prohlížeč,ovládání

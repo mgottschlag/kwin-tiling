@@ -14,7 +14,6 @@ X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Power Control
 Name[af]=Krag Beheer
-Name[ar]=التحكّم بالطّاقة
 Name[be]=Сілкаванне
 Name[br]=Renadur ar gremm
 Name[ca]=Control d'energia
@@ -77,7 +76,6 @@ Name[zh_TW]=電源控制
 
 Comment=Settings for display power management
 Comment[af]=Instellings vir die vertoon van die krag bestuurder
-Comment[ar]=تعيينات إدخار الطاقة للشاشة
 Comment[br]=Kefluniadur renadur gremm an diskwell
 Comment[ca]=Arranjaments per al control d'energia a la pantalla
 Comment[cs]=Nastavení pro správu šetření napájení

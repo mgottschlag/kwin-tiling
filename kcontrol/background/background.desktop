@@ -14,7 +14,6 @@ X-KDE-System-Settings-Parent-Category=background
 
 Name=Background
 Name[af]=Agtergrond
-Name[ar]=الخلفية
 Name[be]=Фон
 Name[br]=Drekleur
 Name[ca]=Fons
@@ -76,7 +75,6 @@ Name[zh_TW]=背景
 
 Comment=Change the background settings
 Comment[af]=Verander die agtergrond instellings
-Comment[ar]=تغيير تعيينات الخلفية
 Comment[be]=Змяняе настаўленні фону
 Comment[br]=Kemmañ kefluniadur an drekleur
 Comment[ca]=Canvia l'arranjament de la configuració del fons

@@ -2,7 +2,6 @@
 Encoding=UTF-8
 Name=K Menu
 Name[af]=K-Kieslys
-Name[ar]=قائمة K
 Name[br]=Meuziad K
 Name[ca]=Menú K
 Name[cs]=Nabídka KDE
@@ -54,7 +53,6 @@ Name[x-test]=xxK Menuxx
 Name[zh_TW]=K 選單
 Comment=Applications and common actions
 Comment[af]=Programme en algemene aksies
-Comment[ar]=تطبيقات و أعمال شائعة
 Comment[ca]=Aplicacions i accions comunes
 Comment[cs]=Aplikace a časté činnosti
 Comment[csb]=Programë ë pòpùlarné dzejania

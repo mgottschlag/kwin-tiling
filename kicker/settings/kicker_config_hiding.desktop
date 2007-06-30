@@ -11,7 +11,6 @@ X-KDE-ParentApp=kicker
 
 Name=Hiding
 Name[af]=Wegsteking
-Name[ar]=الإخفاء
 Name[br]=K&uzhat
 Name[ca]=Ocultació
 Name[cs]=Skrývání
@@ -67,7 +66,6 @@ Name[x-test]=xxHidingxx
 Name[zh_TW]=隱藏
 Comment=You can configure the hiding of the panel here
 Comment[af]=Jy kan die wegsteek van die paneel hier opstel
-Comment[ar]=هنا يمكنك إعداد إخفاء اللوح
 Comment[ca]=Aquí podeu configurar l'ocultació del plafó
 Comment[cs]=Zde je možné nastavit skrývání panelu
 Comment[csb]=Tuwò mòże nastôwic tacenié panelu

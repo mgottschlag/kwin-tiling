@@ -20,7 +20,6 @@ Type=Application
 MimeType=application/x-font-ttf;application/x-font-type1;application/x-font-otf;application/x-font-pcf;application/x-font-bdf;fonts/package;
 GenericName=Font Viewer
 GenericName[af]=Skriftipe Besigter
-GenericName[ar]=معاين المحرف
 GenericName[br]=Gweler Nodrezhoù
 GenericName[ca]=Visor de lletres
 GenericName[cs]=Prohlížeč písem

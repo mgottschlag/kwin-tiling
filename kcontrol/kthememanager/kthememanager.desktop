@@ -12,7 +12,6 @@ X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Theme Manager
 Name[af]=Tema Bestuurder
-Name[ar]=مسيير السمات
 Name[br]=Merour gwiskadoù
 Name[ca]=Gestor de temes
 Name[cs]=Správce motivů
@@ -124,7 +123,6 @@ Comment[zh_TW]=管理全域 KDE 視覺佈景
 
 Keywords=themes,look and feel
 Keywords[af]=themes,look and feel,temas
-Keywords[ar]=سمات,المظهر و الإحساس
 Keywords[br]=gizioù,Neuz ha feson
 Keywords[ca]=temes,aspecte i efecte
 Keywords[cs]=motivy,vzhled a chování

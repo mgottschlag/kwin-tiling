@@ -2,7 +2,6 @@
 Encoding=UTF-8
 Name=Panel
 Name[af]=Paneel
-Name[ar]=اللوح
 Name[br]=Panell
 Name[ca]=Plafó
 Name[de]=Kontrollleiste
@@ -46,7 +45,6 @@ Name[xh]=Iqela lenjongo ethile
 Name[zh_TW]=面板
 Comment=Child panel extension.
 Comment[af]=Kind paneel uitbreiding.
-Comment[ar]=إمتداد لوح المهام الإبن.
 Comment[ca]=Una extensió del plafó petitet.
 Comment[cs]=Rozšíření závislého panelu.
 Comment[csb]=Rozszérzenié òtrokòwégò panelu.

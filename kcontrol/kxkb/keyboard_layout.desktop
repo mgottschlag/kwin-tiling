@@ -14,7 +14,6 @@ X-KDE-System-Settings-Parent-Category=regional-and-language
 
 Name=Keyboard Layout
 Name[af]=Sleutelbord Uitleg
-Name[ar]=تصميم لوحة المفاتيح
 Name[br]=Reizhadur ar stokellaoueg
 Name[ca]=Disposició del teclat
 Name[cs]=Rozvržení klávesnice
@@ -74,7 +73,6 @@ Name[zh_TW]=鍵盤配置
 
 Comment=Keyboard Layout
 Comment[af]=Sleutelbord Uitleg
-Comment[ar]=تصميم لوحة المفاتيح
 Comment[br]=Reizhadur ar stokellaoueg
 Comment[ca]=Disposició del teclat
 Comment[cs]=Rozvržení klávesnice
@@ -133,7 +131,6 @@ Comment[xh]=Ubeko Lwebhodi yezitshixo
 Comment[zh_TW]=鍵盤配置
 
 Keywords=Keyboard,Layout,International
-Keywords[ar]=لوحة المحاتيح,تصميم,عالمي
 Keywords[ca]=Teclat,Disposició,Internacional
 Keywords[cs]=Klávesnice,Rozvržení klávesnice,Mezinárodní
 Keywords[csb]=klawiatura,ùstôw klawiaturë,midzënôrodné

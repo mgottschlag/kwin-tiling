@@ -5,7 +5,6 @@
 Encoding=UTF-8
 Greeter=circles.xml
 Name=Circles
-Name[ar]=الدوائر
 Name[br]=Kelc'hioù
 Name[ca]=Cercles
 Name[cs]=Kruhy
@@ -57,7 +56,6 @@ Name[uz]=Айланалар
 Name[x-test]=xxCirclesxx
 Description=Theme with blue circles
 Description[af]=Tema met blou sirkels
-Description[ar]=سمة بلدوائر الزرقاء
 Description[ca]=Tema amb cercles blaus
 Description[cs]=Motiv s modrými kruhy
 Description[csb]=Téma z mòdrima kółkama

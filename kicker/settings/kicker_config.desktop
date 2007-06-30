@@ -13,7 +13,6 @@ X-KDE-ParentApp=kicker
 
 Name=Layout
 Name[af]=Uitleg
-Name[ar]=التصميم
 Name[br]=Doare
 Name[ca]=Disposició
 Name[cs]=Rozvržení
@@ -69,7 +68,6 @@ Name[zh_TW]=配置
 
 Comment=You can configure the arrangement of the panel here
 Comment[af]=Jy kan die rangskikking van die paneel hier opstel
-Comment[ar]=يمكنك إعداد ترتيب اللوحة هنا
 Comment[br]=Amañ e c'hellit kefluniañ doare ar banell
 Comment[ca]=Aquí podeu configurar l'arranjament del plafó
 Comment[cs]=Zde je možné nastavit uspořádání panelu

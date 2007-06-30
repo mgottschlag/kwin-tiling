@@ -14,7 +14,6 @@ X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Sound System
 Name[af]=Klank Stelsel
-Name[ar]=نظام الصوت
 Name[be]=Гукавая сістэма
 Name[br]=Reizhiad Son
 Name[ca]=Sistema de so
@@ -75,7 +74,6 @@ Name[zh_TW]=聲音系統
 
 Comment=Sound System Configuration
 Comment[af]=Klank Stelsel Opstelling
-Comment[ar]=إعداد نظام الصوت
 Comment[be]=Настаўленні гукавай сістэмы
 Comment[br]=Kefluniañ reizhiad ar  son
 Comment[ca]=Configuració del sistema de so

@@ -11,7 +11,6 @@ X-KDE-ParentApp=kcontrol
 
 Name=Panels
 Name[af]=Panele
-Name[ar]=اللوحات
 Name[br]=Panelloù
 Name[ca]=Plafons
 Name[cs]=Panely
@@ -71,7 +70,6 @@ Name[zh_TW]=面板
 
 Comment=Configure the arrangement of the panel
 Comment[af]=Stel die rangskikking van die paneel hier op
-Comment[ar]=هنا تستطيع إعداد ترتيب اللوح
 Comment[br]=Kefluniañ doare ar banell
 Comment[ca]=Configura l'arranjament del plafó
 Comment[cs]=Zde je možné nastavit uspořádání panelu

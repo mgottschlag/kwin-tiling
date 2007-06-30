@@ -12,7 +12,6 @@ X-KDE-ParentApp=kicker
 
 Name=Arrangement
 Name[af]=Rangskikking
-Name[ar]=الترتيب
 Name[br]=Doare
 Name[ca]=Arranjament
 Name[cs]=Uspořádání
@@ -66,7 +65,6 @@ Name[x-test]=xxArrangementxx
 Name[zh_TW]=對齊方式
 Comment=You can configure the arrangement of the panel here
 Comment[af]=Jy kan die rangskikking van die paneel hier opstel
-Comment[ar]=يمكنك إعداد ترتيب اللوحة هنا
 Comment[br]=Amañ e c'hellit kefluniañ doare ar banell
 Comment[ca]=Aquí podeu configurar l'arranjament del plafó
 Comment[cs]=Zde je možné nastavit uspořádání panelu

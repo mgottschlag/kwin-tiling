@@ -14,7 +14,6 @@ X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Fonts
 Name[af]=Skriftipes
-Name[ar]=المحارف
 Name[be]=Шрыфты
 Name[br]=Fontoù
 Name[ca]=Lletres
@@ -76,7 +75,6 @@ Name[zh_TW]=字型
 
 Comment=Font settings
 Comment[af]=Skrif tipe instellings
-Comment[ar]=تعيينات المحرف
 Comment[br]=Kefluniañ ar fontoù
 Comment[ca]=Arranjament de les lletres
 Comment[cs]=Nastavení písem
@@ -136,7 +134,6 @@ Comment[xh]=Izicwangciso zohlobo lwamagama
 Comment[zh_TW]=字型設定
 
 Keywords=fonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title
-Keywords[ar]=fonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,خطوط,حجم الخط,لوحة التحكم,محارف,المحارف,أسطح المكتب,مدير الملفات,أشرطة الأدوات,قائمة,عنوان النافذة,عنوان
 Keywords[ca]=lletres,mida de lletra,estils,jocs de caràcters,plafó,kicker,plafó de control,escriptoris,Gestor de fitxers,Barres d'eines,Menú,Títol de finestra,Títol
 Keywords[cs]=Písma,Velikost písem,Styly,Znaková sada,Panel,Kicker,Ovládací centrum,Plocha,Správce souborů,Nástrojová lišta,Nabídka,Titulek okna,Titulek
 Keywords[csb]=fòntë,miara fòntu,sztél,zestôw znaków,panel,kicker,panel sterowaniô,pùltë,biurka,menedżera lopków,lëstwë nôrzãdzów,menu,titel òkna,titel

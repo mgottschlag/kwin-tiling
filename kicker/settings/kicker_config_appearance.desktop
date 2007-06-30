@@ -13,7 +13,6 @@ X-KDE-ParentApp=kicker
 
 Name=Appearance
 Name[af]=Voorkoms
-Name[ar]=المظهر
 Name[be]=Вонкавы выгляд
 Name[br]=Neuziadur
 Name[ca]=Aparença
@@ -73,7 +72,6 @@ Name[xh]=Inkangeleko
 Name[zh_TW]=外觀
 Comment=You can configure the appearance of the panel here
 Comment[af]=Jy kan die voorkoms van die paneel hier opstel
-Comment[ar]=تستطيع تغيير اعدادات لوحة المهام هنا
 Comment[br]=Amañ e c'hellit kefluniañ neuziadur ar banell
 Comment[ca]=Aquí podeu configurar l'aspecte del plafó
 Comment[cs]=Zde je možné nastavit vzhled panelu

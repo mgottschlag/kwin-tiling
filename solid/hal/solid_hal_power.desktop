@@ -6,6 +6,7 @@ X-KDE-Library=solid_hal_power
 InitialPreference=100
 Name=HAL-Power
 Name[de]=HAL-Energieverwaltung
+Name[ga]=Cumhacht HAL
 Name[nds]=HAL-Stroompleeg
 Name[nl]=HAL-energiebeheer
 Name[sv]=HAL-strömsparfunktion

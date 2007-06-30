@@ -2,7 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Multimedia
-Name[ar]=الوسائط المتعددة
 Name[br]=Liesvedia
 Name[ca]=Multimèdia
 Name[cs]=Multimédia
@@ -29,6 +28,7 @@ Name[lv]=Multimēdija
 Name[mk]=Мултимедија
 Name[ne]=मल्टिमिडिया
 Name[pa]=ਮਲਟੀਮੀਡਿਆ
+Name[pt]=Multimédia
 Name[pt_BR]=Multimídia
 Name[ru]=Мультимедиа
 Name[sl]=Večpredstavnost

@@ -14,7 +14,6 @@ X-KDE-ParentApp=kinfocenter
 
 Name=IO-Ports
 Name[af]=Io-poorte
-Name[ar]=منافذ الإدخال و الإخراج
 Name[br]=Porzhioù ED
 Name[ca]=Ports E/S
 Name[cs]=Vstupně/výstupní-porty
@@ -75,7 +74,6 @@ Name[xh]=IO-Ufako
 
 Comment=IO-port information
 Comment[af]=Io-poort informasie
-Comment[ar]=معلومات منافذ الإدخال و الإخارج
 Comment[br]=Titouroù diwar-benn ar porzhioù ED
 Comment[ca]=Informació dels ports E/S
 Comment[cs]=Informace o vstupně/výstupních-portech
@@ -153,6 +151,7 @@ Keywords[fa]=ورودی خروجی، ورودی/خروجی، درگاههای و
 Keywords[fi]=IO,I/O,IO-Portit,I/O-Portit,Portit,I/O-alue,Järjestelmätiedot
 Keywords[fr]=io,i/o,entrées-sorties,ports,ports d'entrée-sortie,informations système,plage d'entrées-sorties
 Keywords[fy]=IO,I/O,IO-Ports,I/O-Ports,ports,IO-Range,I/O-Range,systeemynformaasje,IO-poarten
+Keywords[ga]=IA,I/A,Poirt IA,Poirt I/A,Poirt,Raon IA,Raon I/A,Eolas faoin Chórais
 Keywords[gl]=IO,I/O,E/S,Portos IO,Portos E/S,Rango IO,Rango E/S,Información do Sistema
 Keywords[he]=קלט־פלט,יציאות קלט־פלט,יציאות,טווח קלט־פלט,מידע,מערכת,IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Information
 Keywords[hr]=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Information,IO portovi,IO raspon,Podaci o sustavu

@@ -14,7 +14,6 @@ X-KDE-System-Settings-Parent-Category=accessibility
 
 Name=Accessibility
 Name[af]=Toeganklikheid
-Name[ar]=تسهيل الوصول
 Name[be]=Даступнасць
 Name[br]=Haezadusted
 Name[ca]=Accessibilitat
@@ -77,7 +76,6 @@ Name[zh_TW]=無障礙輔助
 
 Comment=Improve accessibility for disabled persons
 Comment[af]=Verbeter toeganklikheid vir gestremde persone
-Comment[ar]=تسهيل الاستخدام لذوي الاحتياجات الخاصة
 Comment[be]=Павялічвае даступнасць для людзей з фізічнымі адхіленнямі
 Comment[ca]=Accessibilitat millorada per a persones discapacitades
 Comment[cs]=Zlepšení přístupnosti pro osoby s postižením

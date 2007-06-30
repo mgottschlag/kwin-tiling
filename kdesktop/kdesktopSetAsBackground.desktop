@@ -18,6 +18,7 @@ X-KDE-Submenu[fa]=تنظیم به عنوان زمینه
 X-KDE-Submenu[fi]=Aseta taustakuvaksi
 X-KDE-Submenu[fr]=Définir comme arrière-plan
 X-KDE-Submenu[fy]=As eftergrûn brûke
+X-KDE-Submenu[ga]=Socraigh mar Chúlra
 X-KDE-Submenu[gl]=Pór como Fondo de Escritório
 X-KDE-Submenu[he]=קבע כרקע
 X-KDE-Submenu[hr]=Postavi kao pozadinu
@@ -54,7 +55,6 @@ X-KDE-Submenu[zh_TW]=設為背景
 [Desktop Action setAsBackground]
 Name=Centered
 Name[af]=Gesentreer
-Name[ar]=مركز
 Name[br]=Kreizennet
 Name[ca]=Centrat
 Name[cs]=Na střed
@@ -117,7 +117,6 @@ Exec=qdbus org.kde.kdesktop  /Background setWallpaper %u 6
 [Desktop Action tileAsBackground]
 Name=Tiled
 Name[af]=Geteël
-Name[ar]=مبلّط
 Name[br]=Teolet
 Name[ca]=Repetit
 Name[cs]=Dlaždice
