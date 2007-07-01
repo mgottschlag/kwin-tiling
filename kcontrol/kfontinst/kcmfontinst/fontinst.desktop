@@ -133,8 +133,10 @@ Comment[zh_TW]=安裝並預覽字型
 
 Keywords=font,fonts,installer,truetype,type1,bitmap
 Keywords[el]=γραμματοσειρά,γραμματοσειρές,εγκαταστάτης,εγκατάσταση,truetype,type1,bitmap
+Keywords[fa]=قلم، قلمها، نصب‌کننده، قلم حقیقی، نوع۱، نگاشت بیت
 Keywords[ga]=cló,clónna,clófhoirne,suiteálaí,truetype,type1,mapa giotán,giotánmhapach
 Keywords[ja]=フォント,インストーラ,truetype,type1,bitmap,ビットマップ
+Keywords[nds]=Schriftoort,Schriftoorden,Installeren,TrueType,Type1,Bitmap
 Keywords[pt]=tipo de letra,tipos de letra,instalador,truetype,type1,speedo,bitmap
 Keywords[pt_BR]=tipo de letra,tipos de letra,instalador,truetype,type1,speedo,bitmap
 Keywords[sv]=teckensnitt,installation,truetype,type1,bitmap
