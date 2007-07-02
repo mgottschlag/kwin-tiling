@@ -54,4 +54,4 @@ macro_bool_to_01(X11_Xrandr_FOUND HAVE_XRANDR) # kwin
 macro_bool_to_01(X11_Xrender_FOUND HAVE_XRENDER) # kcontrol/style, kicker
 macro_bool_to_01(X11_Xxf86misc_FOUND HAVE_XF86MISC) # kdesktop and kcontrol/lock
 macro_bool_to_01(X11_dpms_FOUND HAVE_DPMS) # kdesktop
-macro_bool_to_01(X11_XSync_FOUND HAVE_XSHM) # kwin
+macro_bool_to_01(X11_XSync_FOUND HAVE_XSYNC) # kwin
