@@ -39,7 +39,7 @@ class BGAdvancedDialog : public KDialog
 {
    Q_OBJECT
 public:
-   BGAdvancedDialog(KBackgroundRenderer *_r, QWidget *parent, bool m_multidesktop);
+   BGAdvancedDialog(KBackgroundRenderer *_r, QWidget *parent, bool _kdmMode);
 
    void setCacheSize(int s);
    int cacheSize();

@@ -64,15 +64,15 @@
 
 #define NR_PREDEF_PATTERNS 6
 
-BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _multidesktop)
+BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _kdmMode)
   : BGDialog_UI(parent, "BGDialog")
 {
    m_pGlobals = new KGlobalBackgroundSettings(_config);
    m_pDirs = KGlobal::dirs();
-   m_multidesktop = _multidesktop;
+   m_kdmMode = _kdmMode;
    m_previewUpdates = true;
 
-   m_numDesks = m_multidesktop ? KWindowSystem::numberOfDesktops() : 1;
+   m_numDesks = !m_kdmMode ? KWindowSystem::numberOfDesktops() : 1;
    m_numScreens = QApplication::desktop()->numScreens();
 
    QString multiHead = getenv("KDE_MULTIHEAD");
@@ -81,7 +81,7 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _multi
       m_numScreens = 1;
    }
 
-   m_desk = m_multidesktop ? KWindowSystem::currentDesktop() : 1;
+   m_desk = !m_kdmMode ? KWindowSystem::currentDesktop() : 1;
    m_screen = QApplication::desktop()->screenNumber(this);
    if (m_screen >= (int)m_numScreens)
       m_screen = m_numScreens-1;
@@ -91,7 +91,7 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _multi
    m_copyAllDesktops = true;
    m_copyAllScreens = true;
 
-   if (!m_multidesktop)
+   if (m_kdmMode)
    {
       m_pDesktopLabel->hide();
       m_comboDesktop->hide();
@@ -111,7 +111,7 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _multi
    m_pMonitorArrangement = new BGMonitorArrangement(m_screenArrangement);
    m_pMonitorArrangement->setObjectName("monitor arrangement");
    connect(m_pMonitorArrangement, SIGNAL(imageDropped(const QString &)), SLOT(slotImageDropped(const QString &)));
-   if( m_multidesktop)
+   if( !m_kdmMode)
      {
        // desktop
        connect(m_comboDesktop, SIGNAL(activated(int)),
@@ -1179,7 +1179,7 @@ void BGDialog::slotAdvanced()
     KBackgroundRenderer *r = eRenderer();
 
     m_previewUpdates = false;
-    BGAdvancedDialog dlg(r, topLevelWidget(), m_multidesktop);
+    BGAdvancedDialog dlg(r, topLevelWidget(), m_kdmMode);
 
     if (!m_pMonitorArrangement->isEnabled()) {
        dlg.makeReadOnly();

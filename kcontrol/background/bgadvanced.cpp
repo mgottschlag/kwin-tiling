@@ -65,7 +65,7 @@ static QString desktopConfigname()
 
 BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
                                    QWidget *parent,
-                                   bool m_multidesktop)
+                                   bool _kdmMode)
     : KDialog( parent ),
       r(_r)
 {
@@ -90,7 +90,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    for (it=lst.begin(); it != lst.end(); ++it)
       addProgram(*it);
 
-   if (m_multidesktop)
+   if (!_kdmMode)
    {
       KConfig cfg(desktopConfigname( ), KConfig::NoGlobals );
       KConfigGroup group = cfg.group("General");

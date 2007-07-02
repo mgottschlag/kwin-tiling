@@ -16,7 +16,6 @@
  */
 
 #include <QLayout>
-//Added by qt3to4:
 #include <QVBoxLayout>
 #include <QByteArray>
 #include <kapplication.h>
@@ -57,7 +56,7 @@ KBackground::KBackground(QWidget *parent, const QStringList &args)
     m_pConfig = KSharedConfig::openConfig(configname, KConfig::NoGlobals);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
-    m_base = new BGDialog(this, m_pConfig);
+    m_base = new BGDialog(this, m_pConfig, false);
     setQuickHelp( m_base->quickHelp());
     layout->addWidget(m_base);
     layout->addStretch();
