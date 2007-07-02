@@ -51,7 +51,6 @@ class ControlBox : public QWidget
         bool eventFilter(QObject *watched, QEvent *event);
 
     Q_SIGNALS:
-        void boxRequested();
         void zoomIn();
         void zoomOut();
         void addPlasmoid(const QString&);
@@ -74,7 +73,7 @@ class ControlBox : public QWidget
         QTimeLine* m_timeLine;
         QTimer* m_exitTimer;
 
-        bool boxIsShown;
+        bool m_boxIsShown;
 };
 
 /**

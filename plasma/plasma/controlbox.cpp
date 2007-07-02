@@ -149,7 +149,7 @@ ControlWidget::ControlWidget(QWidget *parent)
 
     //TODO: this should be delayed until (if) the box is actually shown.
     refreshPlasmoidList();
-    
+
     QCheckBox* lockApplets = new QCheckBox(i18n("Lock Desktop"), this);
     connect(lockApplets, SIGNAL(toggled(bool)), this, SIGNAL(lockInterface(bool)));
 
@@ -197,7 +197,10 @@ void ControlWidget::switchFormFactor(int formFactor)
 
 //BEGIN - ControlBox
 
-ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
+ControlBox::ControlBox(QWidget* parent)
+    : QWidget(parent),
+      m_box(0),
+      m_boxIsShown(false)
 {
     //The display box label/button
     m_displayLabel = new DisplayLabel(i18n("Desktop Toolbox"), this);
@@ -211,27 +214,12 @@ ControlBox::ControlBox(QWidget* parent) : QWidget(parent)
     m_exitTimer->setSingleShot(true);
     connect(m_exitTimer, SIGNAL(timeout()), this, SLOT(hideBox()));
 
-    //the config box
-    m_box = new ControlWidget(this);
-    m_box->installEventFilter(this);
-    m_box->hide();
-    boxIsShown = false;
-    connect(m_box, SIGNAL(addPlasmoid(const QString&)), this, SIGNAL(addPlasmoid(const QString&)));
-    connect(m_box, SIGNAL(setFormFactor(Plasma::FormFactor)), this, SIGNAL(setFormFactor(Plasma::FormFactor)));
-
     //Set up the animation timeline
     m_timeLine = new QTimeLine(300, this);
     m_timeLine->setFrameRange(0, 25); //25 step anumation
     m_timeLine->setCurveShape(QTimeLine::EaseInOutCurve);
     connect(m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(animateBox(int)));
     connect(m_timeLine, SIGNAL(finished()), this, SLOT(finishBoxHiding()));
-
-    connect(this, SIGNAL(boxRequested()), this, SLOT(showBox()));
-    
-    connect(m_box, SIGNAL(lockInterface(bool)), this, SIGNAL(lockInterface(bool)));
-    
-    connect(m_box->zoomInButton, SIGNAL(pressed()), this, SIGNAL(zoomIn()));
-    connect(m_box->zoomOutButton, SIGNAL(pressed()), this, SIGNAL(zoomOut()));
 }
 
 ControlBox::~ControlBox()
@@ -261,10 +249,21 @@ bool ControlBox::eventFilter(QObject *watched, QEvent *event)
 
 void ControlBox::showBox()
 {
-    if(boxIsShown) {
+    if (m_boxIsShown) {
         return;
     }
-    boxIsShown = true;
+
+    // set up the actual widget here on first show
+    if (!m_box) {
+        m_box = new ControlWidget(this);
+        m_box->installEventFilter(this);
+        //m_box->hide();
+        connect(m_box, SIGNAL(addPlasmoid(const QString&)), this, SIGNAL(addPlasmoid(const QString&)));
+        connect(m_box, SIGNAL(setFormFactor(Plasma::FormFactor)), this, SIGNAL(setFormFactor(Plasma::FormFactor)));
+        connect(m_box, SIGNAL(lockInterface(bool)), this, SIGNAL(lockInterface(bool)));
+    }
+
+    m_boxIsShown = true;
     m_box->move(-m_box->size().width(),-m_box->size().height());
     resize(m_box->sizeHint()); //resize this widget so the full contents of m_box can be seen.
     m_box->show();
@@ -274,10 +273,11 @@ void ControlBox::showBox()
 
 void ControlBox::hideBox()
 {
-    if(!boxIsShown) {
+    if (!m_boxIsShown) {
         return;
     }
-    boxIsShown = false;
+
+    m_boxIsShown = false;
     m_timeLine->setDirection(QTimeLine::Backward);
     m_timeLine->start();
 }
@@ -309,7 +309,7 @@ void ControlBox::finishBoxHiding()
 {
     QWidget::mousePressEvent(event);
     if (event->button() == Qt::LeftButton) {
-        emit boxRequested();
+        showBox();
     }
 }*/
 
