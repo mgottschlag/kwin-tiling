@@ -106,6 +106,11 @@ void CoronaView::resizeEvent(QResizeEvent* event)
 
 void CoronaView::wheelEvent(QWheelEvent* event)
 {
+    if (scene() && scene()->itemAt(event->pos())) {
+        QGraphicsView::wheelEvent(event);
+        return;
+    }
+
     if (event->modifiers() & Qt::ControlModifier) {
         if (event->delta() < 0) {
             zoomOut();
