@@ -25,6 +25,8 @@
 #include <kdemacros.h>
 
 #include <solid/control/ifaces/bluetoothremotedevice.h>
+#include <QtDBus>
+#include "bluez-serviceparser.h"
 
 class KDE_EXPORT BluezBluetoothRemoteDevice : public Solid::Control::Ifaces::BluetoothRemoteDevice
 {
@@ -59,6 +61,7 @@ public Q_SLOTS:
     void disconnect();
     void cancelBondingProcess();
     void removeBonding();
+    void findServices(const QString &filter);
 
 Q_SIGNALS:
     void classChanged(uint deviceClass);
@@ -71,12 +74,16 @@ Q_SIGNALS:
     void disconnected();
     void bondingCreated();
     void bondingRemoved();
+    void serviceDiscoveryStarted(const QString &ubi);
+    void remoteServiceFound(const QString &ubi, const Solid::Control::BluetoothServiceRecord &service);
+    void serviceDiscoveryFinished(const QString &ubi);
 
 private:
     QString m_objectPath;
     QDBusInterface *device;
     QString m_address;
     QString m_adapter;
+    ServiceParser *serviceParser;
 
     QStringList listReply(const QString &method) const;
     QString stringReply(const QString &method) const;

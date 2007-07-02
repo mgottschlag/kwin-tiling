@@ -126,6 +126,7 @@ private:
     bool mBonded;
     int mPinCodeLength;
     int mEncryptionKeySize;
+    bool servicesFound;
 
 public Q_SLOTS:
     void setAlias(const QString &alias)
@@ -146,6 +147,9 @@ public Q_SLOTS:
     {
         mBonded = false;
     }
+    void findServices(const QString &filter)
+    {
+    }
 
 Q_SIGNALS:
     void classChanged(uint devClass);
@@ -158,6 +162,9 @@ Q_SIGNALS:
     void disconnected();
     void bondingCreated();
     void bondingRemoved();
+    void serviceDiscoveryStarted(const QString &ubi);
+    void remoteServiceFound(const QString &ubi, const Solid::Control::BluetoothServiceRecord &service);
+    void serviceDiscoveryFinished(const QString &ubi);
 
 protected:
     QMap<QString, QVariant> mPropertyMap;
