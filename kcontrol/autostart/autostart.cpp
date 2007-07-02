@@ -78,11 +78,11 @@ Autostart::Autostart( QWidget* parent, const QStringList& )
 
     load();
 
-	KAboutData* about = new KAboutData("Autostart", I18N_NOOP("KDE Autostart Manager"), "1.0",
-		I18N_NOOP("KDE Autostart Manager Control Panel Module"),
+	KAboutData* about = new KAboutData("Autostart", 0, ki18n("KDE Autostart Manager"), "1.0",
+		ki18n("KDE Autostart Manager Control Panel Module"),
 		KAboutData::License_GPL,
-		I18N_NOOP("(c) 2006-2007 Stephen Leaf"), 0, 0);
-	about->addAuthor("Stephen Leaf", 0, "smileaf@smileaf.org");
+		ki18n("(c) 2006-2007 Stephen Leaf"));
+	about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@smileaf.org");
 	setAboutData( about );
 }
 
