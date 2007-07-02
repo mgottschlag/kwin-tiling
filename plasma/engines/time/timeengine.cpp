@@ -102,6 +102,11 @@ bool TimeEngine::sourceRequested(const QString &name)
     return true;
 }
 
+void TimeEngine::init()
+{
+    kDebug() << "init() called" << endl;
+}
+
 void TimeEngine::updateTime()
 {
     //kDebug() << "TimeEngine::updateTime()" << endl;
