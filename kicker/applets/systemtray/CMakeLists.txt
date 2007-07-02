@@ -11,7 +11,7 @@ kde4_automoc(${systemtray_panelapplet_PART_SRCS})
 kde4_add_plugin(systemtray_panelapplet ${systemtray_panelapplet_PART_SRCS})
 
 
-target_link_libraries(systemtray_panelapplet  ${KDE4_KDECORE_LIBS} kickermain ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} )
+target_link_libraries(systemtray_panelapplet kickermain ${KDE4_KIO_LIBS} )
 
 install(TARGETS systemtray_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
