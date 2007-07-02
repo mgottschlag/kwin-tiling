@@ -61,7 +61,7 @@ class Clock : public Plasma::Applet
 
     public slots:
         void updated(const QString &name, const Plasma::DataEngine::Data &data);
-        void configureDialog();
+        void showConfigurationInterface();
 
     protected slots:
 //         void acceptedTimeStringState(bool);

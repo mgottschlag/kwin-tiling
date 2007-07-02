@@ -49,7 +49,6 @@ Clock::Clock(QObject *parent, const QStringList &args)
     : Plasma::Applet(parent, args),
       m_dialog(0)
 {
-    setFlags(QGraphicsItem::ItemIsMovable);
     setHasConfigurationInterface(true);
 
     KConfigGroup cg = appletConfig();
@@ -101,7 +100,7 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
     update();
 }
 
-void Clock::configureDialog() //TODO: Make the size settable
+void Clock::showConfigurationInterface() //TODO: Make the size settable
 {
      if (m_dialog == 0) {
         m_dialog = new KDialog;
