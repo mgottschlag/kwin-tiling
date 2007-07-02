@@ -50,6 +50,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
       m_dialog(0)
 {
     setFlags(QGraphicsItem::ItemIsMovable);
+    setHasConfigurationInterface(true);
 
     KConfigGroup cg = appletConfig();
     m_showTimeString = cg.readEntry("showTimeString", false);
