@@ -63,16 +63,16 @@ KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const QStringList &args)
 #endif
   connect( mInstaller, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
   KAboutData *about = new KAboutData( "kcmksplash"
-                                      ,I18N_NOOP("KDE splash screen theme manager")
+                                      , 0,ki18n("KDE splash screen theme manager")
                                       ,"0.1"
-                                      ,0
+                                      ,KLocalizedString()
                                       ,KAboutData::License_GPL
-                                      ,I18N_NOOP("(c) 2003 KDE developers") );
-  about->addAuthor("Ravikiran Rajagopal", 0, "ravi@ee.eng.ohio-state.edu");
-  about->addCredit("Brian Ledbetter", I18N_NOOP("Original KSplash/ML author"), "brian@shadowcom.net");
-  about->addCredit(I18N_NOOP("KDE Theme Manager authors" ), I18N_NOOP("Original installer code") );
+                                      ,ki18n("(c) 2003 KDE developers") );
+  about->addAuthor(ki18n("Ravikiran Rajagopal"), KLocalizedString(), "ravi@ee.eng.ohio-state.edu");
+  about->addCredit(ki18n("Brian Ledbetter"), ki18n("Original KSplash/ML author"), "brian@shadowcom.net");
+  about->addCredit(ki18n("KDE Theme Manager authors" ), ki18n("Original installer code") );
   // Once string freeze is over, replace second argument with "Icon"
-  about->addCredit("Hans Karlsson", 0, "karlsson.h@home.se" );
+  about->addCredit(ki18n("Hans Karlsson"), KLocalizedString(), "karlsson.h@home.se" );
   setAboutData(about);
 }
 

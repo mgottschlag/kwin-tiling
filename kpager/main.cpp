@@ -32,12 +32,6 @@
 
 #include "kpager.h"
 
-static KCmdLineOptions pagerOpts[] =
-{
-    { "hidden", I18N_NOOP("Create pager but keep the window hidden"), 0 },
-    KCmdLineLastOption
-};
-
 bool closed_by_sm = false;
 
 class KPagerApplication : public KUniqueApplication
@@ -65,20 +59,23 @@ public:
 
 int main(int argc, char **argv)
 {
-    KAboutData *aboutdata = new KAboutData("kpager", "KPager", "1.5",
-					   I18N_NOOP("Desktop Overview"), KAboutData::License_GPL,
-					   "(C) 1998-2002, Antonio Larrosa Jimenez","",
+    KAboutData *aboutdata = new KAboutData("kpager", 0, ki18n("KPager"), "1.5",
+					   ki18n("Desktop Overview"), KAboutData::License_GPL,
+					   ki18n("(C) 1998-2002, Antonio Larrosa Jimenez"),KLocalizedString(),
 					   "http://developer.kde.org/~larrosa/kpager.html");
 
-    aboutdata->addAuthor("Antonio Larrosa Jimenez",
-			 I18N_NOOP("Original Developer/Maintainer"),"larrosa@kde.org",
+    aboutdata->addAuthor(ki18n("Antonio Larrosa Jimenez"),
+			 ki18n("Original Developer/Maintainer"),"larrosa@kde.org",
 			 "http://developer.kde.org/~larrosa/index.html");
-    aboutdata->addAuthor("Matthias Elter",
-			 I18N_NOOP("Developer"),"elter@kde.org", "");
-    aboutdata->addAuthor("Matthias Ettrich",
-			 I18N_NOOP("Developer"),"ettrich@kde.org", "");
+    aboutdata->addAuthor(ki18n("Matthias Elter"),
+			 ki18n("Developer"),"elter@kde.org");
+    aboutdata->addAuthor(ki18n("Matthias Ettrich"),
+			 ki18n("Developer"),"ettrich@kde.org");
 
     KCmdLineArgs::init(argc, argv, aboutdata);
+
+    KCmdLineOptions pagerOpts;
+    pagerOpts.add("hidden", ki18n("Create pager but keep the window hidden"));
     KCmdLineArgs::addCmdLineOptions(pagerOpts);
     KUniqueApplication::addCmdLineOptions();
 

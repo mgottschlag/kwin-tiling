@@ -30,16 +30,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 static const char version[] = "0.4";
 static const char description[] = I18N_NOOP( "The reliable KDE session manager that talks the standard X11R6 \nsession management protocol (XSMP)." );
 
-static const KCmdLineOptions options[] =
-{
-   { "r", 0, 0 },
-   { "restore", I18N_NOOP("Restores the saved user session if available"), 0},
-   { "w", 0, 0 },
-   { "windowmanager <wm>", I18N_NOOP("Starts 'wm' in case no other window manager is \nparticipating in the session. Default is 'kwin'"), 0},
-   { "nolocal", I18N_NOOP("Also allow remote connections"), 0},
-   KCmdLineLastOption
-};
-
 extern KSMServer* the_server;
 
 void IoErrorHandler ( IceConn iceConn)
@@ -185,13 +175,20 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 {
     sanity_check(argc, argv);
 
-    KAboutData aboutData( "ksmserver", I18N_NOOP("The KDE Session Manager"),
-       version, description, KAboutData::License_BSD,
-       "(C) 2000, The KDE Developers");
-    aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
-    aboutData.addAuthor("Luboš Luňák", I18N_NOOP( "Maintainer" ), "l.lunak@kde.org" );
+    KAboutData aboutData( "ksmserver", 0, ki18n("The KDE Session Manager"),
+       version, ki18n(description), KAboutData::License_BSD,
+       ki18n("(C) 2000, The KDE Developers"));
+    aboutData.addAuthor(ki18n("Matthias Ettrich"),KLocalizedString(), "ettrich@kde.org");
+    aboutData.addAuthor(ki18n("Luboš Luňák"), ki18n( "Maintainer" ), "l.lunak@kde.org" );
 
     KCmdLineArgs::init(argc, argv, &aboutData);
+
+    KCmdLineOptions options;
+    options.add("r");
+    options.add("restore", ki18n("Restores the saved user session if available"));
+    options.add("w");
+    options.add("windowmanager <wm>", ki18n("Starts 'wm' in case no other window manager is \nparticipating in the session. Default is 'kwin'"));
+    options.add("nolocal", ki18n("Also allow remote connections"));
     KCmdLineArgs::addCmdLineOptions( options );
 
     putenv((char*)"SESSION_MANAGER=");
@@ -206,7 +203,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
         return 1;
     }
 
-    QByteArray wm = args->getOption("windowmanager");
+    QString wm = args->getOption("windowmanager");
     if ( wm.isEmpty() )
         wm = "kwin";
 
@@ -222,7 +219,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     only_local = false;
 #endif
 
-    KSMServer *server = new KSMServer( QLatin1String(wm), only_local);
+    KSMServer *server = new KSMServer( wm, only_local);
 
     IceSetIOErrorHandler( IoErrorHandler );
 

@@ -45,12 +45,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 
-static KCmdLineOptions options[] =
-{
-  { "+desktopfile", I18N_NOOP("The extensions desktop file"), 0 },
-  KCmdLineLastOption
-};
-
 KPanelExtension* loadExtension(const AppletInfo& info)
 {
     KLibLoader* loader = KLibLoader::self();
@@ -77,15 +71,18 @@ KPanelExtension* loadExtension(const AppletInfo& info)
 
 int main( int argc, char ** argv )
 {
-    KAboutData aboutData( "extensionproxy", I18N_NOOP("Panel extension proxy.")
+    KAboutData aboutData( "extensionproxy", 0, ki18n("Panel extension proxy.")
                           , "v0.1.0"
-                          ,I18N_NOOP("Panel extension proxy.")
+                          ,ki18n("Panel extension proxy.")
                           , KAboutData::License_BSD
-                          , "(c) 2000, The KDE Developers");
+                          , ki18n("(c) 2000, The KDE Developers"));
     KCmdLineArgs::init(argc, argv, &aboutData );
-    aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
-    aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
+    aboutData.addAuthor(ki18n("Matthias Elter"),KLocalizedString(), "elter@kde.org");
+    aboutData.addAuthor(ki18n("Matthias Ettrich"),KLocalizedString(), "ettrich@kde.org");
     KCmdLineArgs::addStdCmdLineOptions();
+
+    KCmdLineOptions options;
+    options.add("+desktopfile", ki18n("The extensions desktop file"));
     KCmdLineArgs::addCmdLineOptions(options); // Add our own options.
 
     KApplication a;
@@ -100,7 +97,7 @@ int main( int argc, char ** argv )
 
     // sanity check
     if ( args->count() == 0 )
-        KCmdLineArgs::usage(i18n("No desktop file specified") );
+        KCmdLineArgs::usageError(i18n("No desktop file specified") );
 
 
     QString desktopFile = QString( args->arg(0) );

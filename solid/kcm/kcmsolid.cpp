@@ -38,10 +38,10 @@ KcmSolid::KcmSolid(QWidget *parent, const QStringList &args)
       m_changedChooser(0)
 {
     KAboutData *about = new KAboutData(
-        "kcm_solid", I18N_NOOP("Solid Configuration Module"),
-        KDE_VERSION_STRING, 0, KAboutData::License_GPL,
-        I18N_NOOP("Copyright 2006 Kevin Ottens"));
-    about->addAuthor("Kevin Ottens", 0, "ervin@kde.org");
+        "kcm_solid", 0, ki18n("Solid Configuration Module"),
+        KDE_VERSION_STRING, KLocalizedString(), KAboutData::License_GPL,
+        ki18n("Copyright 2006 Kevin Ottens"));
+    about->addAuthor(ki18n("Kevin Ottens"), KLocalizedString(), "ervin@kde.org");
     setAboutData(about);
 
     setLayout(new QVBoxLayout);

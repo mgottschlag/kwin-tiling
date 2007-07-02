@@ -32,9 +32,9 @@ static const char description[] = I18N_NOOP("Useful tips");
 
 int main(int argc, char *argv[])
 {
-	KAboutData aboutData("ktip", I18N_NOOP("KTip"),
-				"0.3", description, KAboutData::License_GPL,
-				"(c) 1998-2002, KDE Developers");
+	KAboutData aboutData("ktip", 0, ki18n("KTip"),
+				"0.3", ki18n(description), KAboutData::License_GPL,
+				ki18n("(c) 1998-2002, KDE Developers"));
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KUniqueApplication::addCmdLineOptions();
 

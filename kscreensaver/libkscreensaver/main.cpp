@@ -40,15 +40,6 @@
 
 #include <QtGui/QX11Info>
 
-static const KCmdLineOptions options[] =
-{
-  { "setup", I18N_NOOP("Setup screen saver"), 0 },
-  { "window-id wid", I18N_NOOP("Run in the specified XWindow"), 0 },
-  { "root", I18N_NOOP("Run in the root XWindow"), 0 },
-  { "demo", I18N_NOOP("Start screen saver in demo mode"), "default"},
-  KCmdLineLastOption
-};
-
 static void crashHandler( int  )
 {
 #ifdef SIGABRT
@@ -93,6 +84,17 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
     KLocale::setMainCatalog("libkscreensaver");
     KCmdLineArgs::init(argc, argv, screenSaverInterface.aboutData());
 
+
+    KCmdLineOptions options;
+
+    options.add("setup", ki18n("Setup screen saver"));
+
+    options.add("window-id wid", ki18n("Run in the specified XWindow"));
+
+    options.add("root", ki18n("Run in the root XWindow"));
+
+    options.add("demo", ki18n("Start screen saver in demo mode"), "default");
+
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
@@ -118,7 +120,7 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
 
     if (args->isSet("window-id"))
     {
-        saveWin = atol(args->getOption("window-id"));
+        saveWin = args->getOption("window-id").toInt();
     }
 
 #ifdef Q_WS_X11 //FIXME

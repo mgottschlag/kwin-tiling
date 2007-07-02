@@ -143,14 +143,14 @@ KBellConfig::KBellConfig(QWidget *parent, const QStringList &args):
   connect(m_duration, SIGNAL(valueChanged(int)), SLOT(changed()));
 
   KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmbell"), I18N_NOOP("KDE Bell Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1997 - 2001 Christian Czezatke, Matthias Elter"));
+    new KAboutData(I18N_NOOP("kcmbell"), 0, ki18n("KDE Bell Control Module"),
+                  0, KLocalizedString(), KAboutData::License_GPL,
+                  ki18n("(c) 1997 - 2001 Christian Czezatke, Matthias Elter"));
 
-  about->addAuthor("Christian Czezatke", I18N_NOOP("Original author"), "e9025461@student.tuwien.ac.at");
-  about->addAuthor("Bernd Wuebben", 0, "wuebben@kde.org");
-  about->addAuthor("Matthias Elter", I18N_NOOP("Current maintainer"), "elter@kde.org");
-  about->addAuthor("Carsten Pfeiffer", 0, "pfeiffer@kde.org");
+  about->addAuthor(ki18n("Christian Czezatke"), ki18n("Original author"), "e9025461@student.tuwien.ac.at");
+  about->addAuthor(ki18n("Bernd Wuebben"), KLocalizedString(), "wuebben@kde.org");
+  about->addAuthor(ki18n("Matthias Elter"), ki18n("Current maintainer"), "elter@kde.org");
+  about->addAuthor(ki18n("Carsten Pfeiffer"), KLocalizedString(), "pfeiffer@kde.org");
   setAboutData(about);
 
   load();

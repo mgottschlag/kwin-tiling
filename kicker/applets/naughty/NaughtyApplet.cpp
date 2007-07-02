@@ -160,12 +160,12 @@ NaughtyApplet::about()
 {
   KAboutData about
     (
-     "naughtyapplet",
-     I18N_NOOP("Naughty applet"),
+     "naughtyapplet", 0,
+     ki18n("Naughty applet"),
      "1.0",
-     I18N_NOOP("Runaway process catcher"),
+     ki18n("Runaway process catcher"),
      KAboutData::License_GPL_V2,
-     "(C) 2000 Rik Hemsley (rikkus) <rik@kde.org>"
+     ki18n("(C) 2000 Rik Hemsley (rikkus) <rik@kde.org>")
    );
 
   KAboutApplicationDialog a(&about, this);

@@ -34,13 +34,12 @@ static const char version[] = "1.0";
 
 extern "C" int KDE_EXPORT kdemain( int argc, char **argv )
 {
-    KLocale::setMainCatalog("kmenuedit");
-    KAboutData aboutData("kcontroledit", I18N_NOOP("KDE Control Center Editor"),
-			 version, description, KAboutData::License_GPL,
-			 "(C) 2000-2004, Waldo Bastian, Raffaele Sandrini, Matthias Elter");
-    aboutData.addAuthor("Waldo Bastian", I18N_NOOP("Maintainer"), "bastian@kde.org");
-    aboutData.addAuthor("Raffaele Sandrini", I18N_NOOP("Previous Maintainer"), "sandrini@kde.org");
-    aboutData.addAuthor("Matthias Elter", I18N_NOOP("Original Author"), "elter@kde.org");
+    KAboutData aboutData("kcontroledit", "kmenuedit", ki18n("KDE Control Center Editor"),
+			 version, ki18n(description), KAboutData::License_GPL,
+			 ki18n("(C) 2000-2004, Waldo Bastian, Raffaele Sandrini, Matthias Elter"));
+    aboutData.addAuthor(ki18n("Waldo Bastian"), ki18n("Maintainer"), "bastian@kde.org");
+    aboutData.addAuthor(ki18n("Raffaele Sandrini"), ki18n("Previous Maintainer"), "sandrini@kde.org");
+    aboutData.addAuthor(ki18n("Matthias Elter"), ki18n("Original Author"), "elter@kde.org");
 
     KCmdLineArgs::init( argc, argv, &aboutData );
     KUniqueApplication::addCmdLineOptions();

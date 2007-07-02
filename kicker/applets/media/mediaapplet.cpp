@@ -87,20 +87,20 @@ MediaApplet::~MediaApplet()
 
 void MediaApplet::about()
 {
-	KAboutData data("mediaapplet",
-	                I18N_NOOP("Media Applet"),
+	KAboutData data("mediaapplet", 0,
+	                ki18n("Media Applet"),
 	                "1.0",
-	                I18N_NOOP("\"media:/\" ioslave frontend applet"),
+	                ki18n("\"media:/\" ioslave frontend applet"),
 	                KAboutData::License_GPL_V2,
-	                "(c) 2004, Kevin Ottens");
+	                ki18n("(c) 2004, Kevin Ottens"));
 
-	data.addAuthor("Kevin \'ervin\' Ottens",
-	               I18N_NOOP("Maintainer"),
+	data.addAuthor(ki18n("Kevin \'ervin\' Ottens"),
+	               ki18n("Maintainer"),
 	               "ervin ipsquad net",
 	               "http://ervin.ipsquad.net");
 
-	data.addCredit("Joseph Wenninger",
-	               I18N_NOOP("Good mentor, patient and helpful. Thanks for all!"),
+	data.addCredit(ki18n("Joseph Wenninger"),
+	               ki18n("Good mentor, patient and helpful. Thanks for all!"),
 	               "jowenn@kde.org");
 
 	KAboutApplicationDialog dialog(&data);

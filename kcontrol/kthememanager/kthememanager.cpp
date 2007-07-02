@@ -55,10 +55,10 @@ kthememanager::kthememanager( QWidget *parent, const QStringList & )
     : KCModule( kthememanagerFactory::componentData(), parent ), m_theme( 0 ), m_origTheme( 0 )
 {
 
-    KAboutData *about = new KAboutData("kthememanager", I18N_NOOP("KDE Theme Manager"),
-                                       "0.4", I18N_NOOP("This control module handles installing, removing and "
+    KAboutData *about = new KAboutData("kthememanager", 0, ki18n("KDE Theme Manager"),
+                                       "0.4", ki18n("This control module handles installing, removing and "
                                                         "creating visual KDE themes."),
-                                       KAboutData::License_GPL, "(c) 2003, 2004 Lukáš Tinkl", 0,
+                                       KAboutData::License_GPL, ki18n("(c) 2003, 2004 Lukáš Tinkl"), KLocalizedString(),
                                        "http://developer.kde.org/~lukas/kthememanager");
     setAboutData( about );
 

@@ -250,14 +250,14 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
 
     load();
 
-    KAboutData* about = new KAboutData("kcmcolors", I18N_NOOP("Colors"), 0, 0,
+    KAboutData* about = new KAboutData("kcmcolors", 0, ki18n("Colors"), 0, KLocalizedString(),
         KAboutData::License_GPL,
-        I18N_NOOP("(c) 1997-2005 Colors Developers"), 0, 0);
-    about->addAuthor("Mark Donohoe", 0, 0);
-    about->addAuthor("Matthias Hoelzer", 0, 0);
-    about->addAuthor("Matthias Ettrich", 0, 0);
-    about->addAuthor("Geert Jansen", 0, 0);
-    about->addAuthor("Waldo Bastian", 0, 0);
+        ki18n("(c) 1997-2005 Colors Developers"));
+    about->addAuthor(ki18n("Mark Donohoe"));
+    about->addAuthor(ki18n("Matthias Hoelzer"));
+    about->addAuthor(ki18n("Matthias Ettrich"));
+    about->addAuthor(ki18n("Geert Jansen"));
+    about->addAuthor(ki18n("Waldo Bastian"));
     setAboutData( about );
 }
 

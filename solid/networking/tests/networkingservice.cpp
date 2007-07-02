@@ -209,16 +209,13 @@ static const char description[] =
 
 static const char version[] = "v0.1";
 
-static KCmdLineOptions options[] =
-{
-    KCmdLineLastOption
-};
-
 int main( int argc, char** argv )
 {
-    KAboutData about("KNetworkStatusTestService", I18N_NOOP("knetworkstatustestservice"), version, description, KAboutData::License_GPL, "(C) 2007 Will Stephenson", 0, 0, "wstephenson@kde.org");
-    about.addAuthor( "Will Stephenson", 0, "wstephenson@kde.org" );
+    KAboutData about("KNetworkStatusTestService", 0, ki18n("knetworkstatustestservice"), version, ki18n(description), KAboutData::License_GPL, ki18n("(C) 2007 Will Stephenson"), KLocalizedString(), 0, "wstephenson@kde.org");
+    about.addAuthor( ki18n("Will Stephenson"), KLocalizedString(), "wstephenson@kde.org" );
     KCmdLineArgs::init(argc, argv, &about);
+
+    KCmdLineOptions options;
     KCmdLineArgs::addCmdLineOptions(options);
     KApplication app;
 

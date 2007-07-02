@@ -33,12 +33,12 @@ LookAndFeelConfig::LookAndFeelConfig(QWidget *parent, const char *name)
 {
 
     KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmkicker"), I18N_NOOP("KDE Panel Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter\n(c) 2002 Aaron J. Seigo"));
+    new KAboutData(I18N_NOOP("kcmkicker"), 0, ki18n("KDE Panel Control Module"),
+                  0, KLocalizedString(), KAboutData::License_GPL,
+                  ki18n("(c) 1999 - 2001 Matthias Elter\n(c) 2002 Aaron J. Seigo"));
 
-    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
-    about->addAuthor("Aaron J. Seigo", 0, "aseigo@olympusproject.org");
+    about->addAuthor(ki18n("Matthias Elter"), KLocalizedString(), "elter@kde.org");
+    about->addAuthor(ki18n("Aaron J. Seigo"), KLocalizedString(), "aseigo@olympusproject.org");
     setAboutData( about );
 
     KickerConfig::initScreenNumber();

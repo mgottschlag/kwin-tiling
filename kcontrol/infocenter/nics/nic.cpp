@@ -114,12 +114,12 @@ KCMNic::KCMNic(QWidget *parent, const QStringList &)
    connect(timer,SIGNAL(timeout()),this,SLOT(update()));
    update();
    KAboutData *about =
-   new KAboutData(I18N_NOOP("kcminfo"),
-	I18N_NOOP("KDE Panel System Information Control Module"),
-	0, 0, KAboutData::License_GPL,
-	I18N_NOOP("(c) 2001 - 2002 Alexander Neundorf"));
+   new KAboutData(I18N_NOOP("kcminfo"), 0,
+	ki18n("KDE Panel System Information Control Module"),
+	0, KLocalizedString(), KAboutData::License_GPL,
+	ki18n("(c) 2001 - 2002 Alexander Neundorf"));
 
-   about->addAuthor("Alexander Neundorf", 0, "neundorf@kde.org");
+   about->addAuthor(ki18n("Alexander Neundorf"), KLocalizedString(), "neundorf@kde.org");
    setAboutData( about );
 
 }

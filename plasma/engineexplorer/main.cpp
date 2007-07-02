@@ -28,11 +28,11 @@ static const char version[] = "0.0";
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData("plasmaengineexplorer", I18N_NOOP("Plasma Engine Explorer"),
-                         version, description, KAboutData::License_GPL,
-                         "(c) 2006, The KDE Team");
-    aboutData.addAuthor("Aaron J. Seigo",
-                        I18N_NOOP( "Author and maintainer" ),
+    KAboutData aboutData("plasmaengineexplorer", 0, ki18n("Plasma Engine Explorer"),
+                         version, ki18n(description), KAboutData::License_GPL,
+                         ki18n("(c) 2006, The KDE Team"));
+    aboutData.addAuthor(ki18n("Aaron J. Seigo"),
+                        ki18n( "Author and maintainer" ),
                         "aseigo@kde.org");
 
 

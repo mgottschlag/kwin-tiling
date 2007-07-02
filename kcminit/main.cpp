@@ -44,13 +44,6 @@
 
 #include <kservicetypetrader.h>
 
-static KCmdLineOptions options[] =
-{
-    { "list", I18N_NOOP("List modules that are run at startup"), 0 },
-    { "+module", I18N_NOOP("Configuration module to run"), 0 },
-    KCmdLineLastOption
-};
-
 static int ready[ 2 ];
 static bool startup = false;
 
@@ -155,7 +148,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
 {
   QDBusConnection::sessionBus().registerObject("/kcminit", this,
       QDBusConnection::ExportScriptableSlots|QDBusConnection::ExportScriptableSignals);
-  QByteArray arg;
+  QString arg;
   if (args->count() == 1) {
     arg = args->arg(0);
   }
@@ -178,7 +171,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
 
   if (!arg.isEmpty()) {
 
-    QString module = QFile::decodeName(arg);
+    QString module = arg;
     if (!module.endsWith(".desktop"))
        module += ".desktop";
 
@@ -262,12 +255,15 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
   startup = ( strcmp( argv[ 0 ], "kcminit_startup" ) == 0 ); // started from startkde?
 
-  KLocale::setMainCatalog("kcontrol");
-  KAboutData aboutData( "kcminit", I18N_NOOP("KCMInit"),
+  KAboutData aboutData( "kcminit", "kcontrol", ki18n("KCMInit"),
 	"",
-	I18N_NOOP("KCMInit - runs startups initialization for Control Modules."));
+	ki18n("KCMInit - runs startups initialization for Control Modules."));
 
   KCmdLineArgs::init(argc, argv, &aboutData);
+
+  KCmdLineOptions options;
+  options.add("list", ki18n("List modules that are run at startup"));
+  options.add("+module", ki18n("Configuration module to run"));
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
   KApplication app;

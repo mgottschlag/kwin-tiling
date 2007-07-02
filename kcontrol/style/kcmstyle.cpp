@@ -156,14 +156,14 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	KGlobal::dirs()->addResourceType("themes", "data", "kstyle/themes");
 
 	KAboutData *about =
-		new KAboutData( I18N_NOOP("kcmstyle"),
-						I18N_NOOP("KDE Style Module"),
-						0, 0, KAboutData::License_GPL,
-						I18N_NOOP("(c) 2002 Karol Szwed, Daniel Molkentin"));
+		new KAboutData( I18N_NOOP("kcmstyle"), 0,
+						ki18n("KDE Style Module"),
+						0, KLocalizedString(), KAboutData::License_GPL,
+						ki18n("(c) 2002 Karol Szwed, Daniel Molkentin"));
 
-	about->addAuthor("Karol Szwed", 0, "gallium@kde.org");
-	about->addAuthor("Daniel Molkentin", 0, "molkentin@kde.org");
-	about->addAuthor("Ralf Nolden", 0, "nolden@kde.org");
+	about->addAuthor(ki18n("Karol Szwed"), KLocalizedString(), "gallium@kde.org");
+	about->addAuthor(ki18n("Daniel Molkentin"), KLocalizedString(), "molkentin@kde.org");
+	about->addAuthor(ki18n("Ralf Nolden"), KLocalizedString(), "nolden@kde.org");
 	setAboutData( about );
 
 	// Setup pages and mainLayout

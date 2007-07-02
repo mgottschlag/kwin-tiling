@@ -104,11 +104,11 @@ Module::Module( QWidget* parent_P, const QStringList & )
     connect( buttons_widget, SIGNAL( global_settings_pressed()), SLOT( global_settings()));
 //    listview_current_action_changed(); // init
 
-		KAboutData* about = new KAboutData("kcmkhotkeys", I18N_NOOP("KHotKeys"), KHOTKEYS_VERSION,
-      0,
+		KAboutData* about = new KAboutData("kcmkhotkeys", 0, ki18n("KHotKeys"), KHOTKEYS_VERSION,
+      KLocalizedString(),
       KAboutData::License_GPL,
-      I18N_NOOP("(c) 1999-2005 Lubos Lunak"), 0, 0);
-    about->addAuthor("Lubos Lunak", I18N_NOOP("Maintainer"), "l.lunak@kde.org");
+      ki18n("(c) 1999-2005 Lubos Lunak"));
+    about->addAuthor(ki18n("Lubos Lunak"), ki18n("Maintainer"), "l.lunak@kde.org");
     setAboutData( about );
 
 		}

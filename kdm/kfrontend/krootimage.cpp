@@ -39,11 +39,6 @@ static const char description[] =
 
 static const char version[] = "v2.0";
 
-static KCmdLineOptions options[] = {
-	{ "+config", I18N_NOOP( "Name of the configuration file" ), 0 },
-	KCmdLineLastOption
-};
-
 
 MyApplication::MyApplication( const char *conf, int argc, char **argv )
 	: QApplication( argc, argv )
@@ -101,15 +96,17 @@ MyApplication::slotTimeout()
 int
 main( int argc, char *argv[] )
 {
-	KLocale::setMainCatalog( "kdesktop" );
-	KCmdLineArgs::init( argc, argv, "krootimage", I18N_NOOP( "KRootImage" ), description, version );
+	KCmdLineArgs::init( argc, argv, "krootimage", "kdesktop", ki18n( "KRootImage" ), version , ki18n(description));
+
+	KCmdLineOptions options;
+	options.add("+config", ki18n( "Name of the configuration file" ));
 	KCmdLineArgs::addCmdLineOptions( options );
 
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 	if (!args->count())
 		args->usage();
 	KComponentData inst(KCmdLineArgs::aboutData());
-	MyApplication app( args->arg( 0 ), KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv() );
+	MyApplication app( args->arg( 0 ).toLocal8Bit(), KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv() );
 	args->clear();
 
 	app.exec();

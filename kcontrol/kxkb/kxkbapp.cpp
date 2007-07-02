@@ -109,9 +109,9 @@ const char * DESCRIPTION =
 
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
-    KAboutData about("kxkb", I18N_NOOP("KDE Keyboard Layout Switcher"), "2.0",
-                     DESCRIPTION, KAboutData::License_GPL,
-                     "Copyright (C) 2006-2007 Andriy Rysin");
+    KAboutData about("kxkb", 0, ki18n("KDE Keyboard Layout Switcher"), "2.0",
+                     ki18n(DESCRIPTION), KAboutData::License_GPL,
+                     ki18n("Copyright (C) 2006-2007 Andriy Rysin"));
     KCmdLineArgs::init(argc, argv, &about);
     KXKBApp::addCmdLineOptions();
 

@@ -23,7 +23,7 @@ typedef QMap<QString, AppletInfo> AppletInfoMap;
 int main(int argc, char** argv)
 {
     // We must disguise as Kicker in order to obtain the correct reverseLayout setting.
-    KCmdLineArgs::init(argc, argv, "kicker", "", "", "", false);
+    KCmdLineArgs::init(argc, argv, "kicker", 0, KLocalizedString(), "", KLocalizedString(), false);
     KApplication app(false);
 
     QStringList stretchableApplets;

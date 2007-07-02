@@ -152,13 +152,13 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
     KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
     KIconLoader::global()->addAppDir(KFI_NAME);
-    KAboutData* about = new KAboutData("fontinst",
-         I18N_NOOP("KDE Font Installer"),
-         0, 0,
+    KAboutData* about = new KAboutData("fontinst", 0,
+         ki18n("KDE Font Installer"),
+         0, KLocalizedString(),
          KAboutData::License_GPL,
-         I18N_NOOP("GUI front end to the fonts:/ ioslave.\n"
+         ki18n("GUI front end to the fonts:/ ioslave.\n"
          "(c) Craig Drummond, 2000 - 2006"));
-    about->addAuthor("Craig Drummond", I18N_NOOP("Developer and maintainer"), "craig@kde.org");
+    about->addAuthor(ki18n("Craig Drummond"), ki18n("Developer and maintainer"), "craig@kde.org");
     setAboutData(about);
 
     KConfigGroup cg(&itsConfig, CFG_GROUP);

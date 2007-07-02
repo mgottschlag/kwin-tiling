@@ -21,42 +21,39 @@ const int XFocusIn = FocusIn;
 #undef KeyRelease
 
 
-static KCmdLineOptions options[] =
-{
-  { "!+command", I18N_NOOP("Command to execute"), 0 },
-  // "!" means: all options after command are treated as arguments to the command
-  { "window <regexp>", I18N_NOOP("A regular expression matching the window title\n"
-                  "If you do not specify one, then the very first window\n"
-				 "to appear will be taken - not recommended."), 0 },
-  { "wid <int>", I18N_NOOP("The window id of the target window\n"
-                  "Specifies the id of the window to use. If the id starts with 0x\n"
-			   "it is assumed to be in hex."), 0 },
-  { "hidden", I18N_NOOP( "Hide the window to the tray on startup" ), 0 },
-  { "startonshow", I18N_NOOP( "Wait until we are told to show the window before\n"
-			      "executing the command" ), 0 },
-  { "tooltip <text>", I18N_NOOP( "Sets the initial tooltip for the tray icon" ), 0 },
-  { "keeprunning", I18N_NOOP( "Keep the tray icon even if the client exits. This option\n"
-			 "has no effect unless startonshow is specified." ), 0 },
-  { "ownicon", I18N_NOOP( "Do not use window's icon in systray, but ksystraycmd one's\n"
-             "(should be used with --icon to specify ksystraycmd icon)" ), 0 },
-  { "ontop", I18N_NOOP( "Try to keep the window above other windows"), 0 },
-  { "quitonhide", I18N_NOOP( "Quit the client when we are told to hide the window.\n"
-             "This has no effect unless startonshow is specified and implies keeprunning." ), 0 },
-  /*  { "menuitem <item>", I18N_NOOP( "Adds a custom entry to the tray icon menu\n"
-      "The item should have the form text:command." ), 0 },*/
-  KCmdLineLastOption
-};
-
 int main( int argc, char *argv[] )
 {
-  KAboutData aboutData( "ksystraycmd", I18N_NOOP( "KSysTrayCmd" ),
+  KAboutData aboutData( "ksystraycmd", 0, ki18n( "KSysTrayCmd" ),
 			"KSysTrayCmd 0.1",
-			I18N_NOOP( "Allows any application to be kept in the system tray" ),
+			ki18n( "Allows any application to be kept in the system tray" ),
 			KAboutData::License_GPL,
-			"(C) 2001-2002 Richard Moore (rich@kde.org)" );
-  aboutData.addAuthor( "Richard Moore", 0, "rich@kde.org" );
+			ki18n("(C) 2001-2002 Richard Moore (rich@kde.org)") );
+  aboutData.addAuthor( ki18n("Richard Moore"), KLocalizedString(), "rich@kde.org" );
 
   KCmdLineArgs::init( argc, argv, &aboutData );
+
+  KCmdLineOptions options;
+  options.add("!+command", ki18n("Command to execute"));
+  // "!" means: all options after command are treated as arguments to the command
+  options.add("window <regexp>", ki18n("A regular expression matching the window title\n"
+                  "If you do not specify one, then the very first window\n"
+				 "to appear will be taken - not recommended."));
+  options.add("wid <int>", ki18n("The window id of the target window\n"
+                  "Specifies the id of the window to use. If the id starts with 0x\n"
+			   "it is assumed to be in hex."));
+  options.add("hidden", ki18n( "Hide the window to the tray on startup" ));
+  options.add("startonshow", ki18n( "Wait until we are told to show the window before\n"
+			      "executing the command" ));
+  options.add("tooltip <text>", ki18n( "Sets the initial tooltip for the tray icon" ));
+  options.add("keeprunning", ki18n( "Keep the tray icon even if the client exits. This option\n"
+			 "has no effect unless startonshow is specified." ));
+  options.add("ownicon", ki18n( "Do not use window's icon in systray, but ksystraycmd one's\n"
+             "(should be used with --icon to specify ksystraycmd icon)" ));
+  options.add("ontop", ki18n( "Try to keep the window above other windows"));
+  options.add("quitonhide", ki18n( "Quit the client when we are told to hide the window.\n"
+             "This has no effect unless startonshow is specified and implies keeprunning." ));
+  /*options.add("menuitem <item>", ki18n( "Adds a custom entry to the tray icon menu\n"
+      "The item should have the form text:command." ));*/
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
   KApplication app;
@@ -93,12 +90,12 @@ int main( int argc, char *argv[] )
 #warning !QString? did that meant title.isEmpty?
 #endif  
   if ( title.isEmpty() && wid.isEmpty() && (args->count() == 0) )
-    KCmdLineArgs::usage(i18n("No command or window specified"));
+    KCmdLineArgs::usageError(i18n("No command or window specified"));
 
   // Read the command
   QString command;
   for ( int i = 0; i < args->count(); i++ )
-    command += KShell::quoteArg(QString::fromLocal8Bit( args->arg(i) )) + ' ';
+    command += KShell::quoteArg(args->arg(i)) + ' ';
   if ( !command.isEmpty() )
       cmd.setCommand( command );
 

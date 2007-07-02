@@ -29,8 +29,8 @@ class KBlankSaverInterface : public KScreenSaverInterface
 public:
     virtual KAboutData* aboutData()
     {
-        return new KAboutData( "kblankscrn.kss", I18N_NOOP( "KBlankScreen" ),
-                               "4.0.0", I18N_NOOP( "Blank Screen Saver" ) );
+        return new KAboutData( "kblankscrn.kss", 0, ki18n( "KBlankScreen" ),
+                               "4.0.0", ki18n( "Blank Screen Saver" ) );
     }
 
     virtual KScreenSaver* create( WId id )

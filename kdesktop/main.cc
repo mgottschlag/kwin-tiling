@@ -47,14 +47,6 @@
 static const char description[] =
         I18N_NOOP("The KDE desktop");
 
-static KCmdLineOptions options[] =
-{
-   { "x-root", I18N_NOOP("Use this if the desktop window appears as a real window"), 0 },
-   { "noautostart", I18N_NOOP("Obsolete"), 0 },
-   { "waitforkded", I18N_NOOP("Wait for kded to finish building database"), 0 },
-   KCmdLineLastOption
-};
-
 // -----------------------------------------------------------------------------
 
 int kdesktop_screen_number = 0;
@@ -145,20 +137,25 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
 
     QDBusConnection::sessionBus().interface()->registerService( "org.kde." + appname, QDBusConnectionInterface::DontQueueService );
 
-    KAboutData aboutData( appname.data(), I18N_NOOP("KDesktop"),
-			  KDE_VERSION_STRING, description, KAboutData::License_GPL,
-			  "(c) 1998-2000, The KDesktop Authors");
-    aboutData.addAuthor("David Faure", I18N_NOOP("Current maintainer"), "faure@kde.org");
-    aboutData.addAuthor("Martin Koller", 0, "m.koller@surfeu.at");
-    aboutData.addAuthor("Waldo Bastian", 0, "bastian@kde.org");
-    aboutData.addAuthor("Luboš Luňák", 0, "l.lunak@kde.org");
-    aboutData.addAuthor("Joseph Wenninger", 0, "kde@jowenn.at");
-    aboutData.addAuthor("Tim Jansen", 0, "tim@tjansen.de");
-    aboutData.addAuthor("Benoit Walter", 0, "b.walter@free.fr");
-    aboutData.addAuthor("Torben Weis", 0, "weis@kde.org");
-    aboutData.addAuthor("Matthias Ettrich", 0, "ettrich@kde.org");
+    KAboutData aboutData( appname.data(), 0, ki18n("KDesktop"),
+			  KDE_VERSION_STRING, ki18n(description), KAboutData::License_GPL,
+			  ki18n("(c) 1998-2000, The KDesktop Authors"));
+    aboutData.addAuthor(ki18n("David Faure"), ki18n("Current maintainer"), "faure@kde.org");
+    aboutData.addAuthor(ki18n("Martin Koller"), KLocalizedString(), "m.koller@surfeu.at");
+    aboutData.addAuthor(ki18n("Waldo Bastian"), KLocalizedString(), "bastian@kde.org");
+    aboutData.addAuthor(ki18n("Luboš Luňák"), KLocalizedString(), "l.lunak@kde.org");
+    aboutData.addAuthor(ki18n("Joseph Wenninger"), KLocalizedString(), "kde@jowenn.at");
+    aboutData.addAuthor(ki18n("Tim Jansen"), KLocalizedString(), "tim@tjansen.de");
+    aboutData.addAuthor(ki18n("Benoit Walter"), KLocalizedString(), "b.walter@free.fr");
+    aboutData.addAuthor(ki18n("Torben Weis"), KLocalizedString(), "weis@kde.org");
+    aboutData.addAuthor(ki18n("Matthias Ettrich"), KLocalizedString(), "ettrich@kde.org");
 
     KCmdLineArgs::init( argc, argv, &aboutData );
+
+    KCmdLineOptions options;
+    options.add("x-root", ki18n("Use this if the desktop window appears as a real window"));
+    options.add("noautostart", ki18n("Obsolete"));
+    options.add("waitforkded", ki18n("Wait for kded to finish building database"));
     KCmdLineArgs::addCmdLineOptions( options );
 
     if (!KUniqueApplication::start()) {

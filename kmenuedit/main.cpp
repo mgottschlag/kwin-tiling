@@ -31,13 +31,6 @@
 static const char description[] = I18N_NOOP("KDE menu editor");
 static const char version[] = "0.7";
 
-static const KCmdLineOptions options[] =
-{
-	{ "+[menu]", I18N_NOOP("Sub menu to pre-select"), 0 },
-	{ "+[menu-id]", I18N_NOOP("Menu entry to pre-select"), 0 },
-	KCmdLineLastOption
-};
-
 static KMenuEdit *menuEdit = 0;
 
 class KMenuApplication : public KUniqueApplication
@@ -51,10 +44,10 @@ public:
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
       if (args->count() > 0)
       {
-          menuEdit->selectMenu(QString::fromLocal8Bit(args->arg(0)));
+          menuEdit->selectMenu(args->arg(0));
           if (args->count() > 1)
           {
-              menuEdit->selectMenuEntry(QString::fromLocal8Bit(args->arg(1)));
+              menuEdit->selectMenuEntry(args->arg(1));
           }
       }
       args->clear();
@@ -65,15 +58,19 @@ public:
 
 extern "C" int KDE_EXPORT kdemain( int argc, char **argv )
 {
-    KAboutData aboutData("kmenuedit", I18N_NOOP("KDE Menu Editor"),
-			 version, description, KAboutData::License_GPL,
-			 "(C) 2000-2003, Waldo Bastian, Raffaele Sandrini, Matthias Elter");
-    aboutData.addAuthor("Waldo Bastian", I18N_NOOP("Maintainer"), "bastian@kde.org");
-    aboutData.addAuthor("Raffaele Sandrini", I18N_NOOP("Previous Maintainer"), "sandrini@kde.org");
-    aboutData.addAuthor("Matthias Elter", I18N_NOOP("Original Author"), "elter@kde.org");
+    KAboutData aboutData("kmenuedit", 0, ki18n("KDE Menu Editor"),
+			 version, ki18n(description), KAboutData::License_GPL,
+			 ki18n("(C) 2000-2003, Waldo Bastian, Raffaele Sandrini, Matthias Elter"));
+    aboutData.addAuthor(ki18n("Waldo Bastian"), ki18n("Maintainer"), "bastian@kde.org");
+    aboutData.addAuthor(ki18n("Raffaele Sandrini"), ki18n("Previous Maintainer"), "sandrini@kde.org");
+    aboutData.addAuthor(ki18n("Matthias Elter"), ki18n("Original Author"), "elter@kde.org");
 
     KCmdLineArgs::init( argc, argv, &aboutData );
     KUniqueApplication::addCmdLineOptions();
+
+    KCmdLineOptions options;
+    options.add("+[menu]", ki18n("Sub menu to pre-select"));
+    options.add("+[menu-id]", ki18n("Menu entry to pre-select"));
     KCmdLineArgs::addCmdLineOptions( options );
 
     if (!KUniqueApplication::start()) 

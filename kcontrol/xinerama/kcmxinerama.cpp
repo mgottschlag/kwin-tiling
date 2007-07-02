@@ -50,12 +50,12 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QStringList &)
   : KCModule(KCMXineramaFactory::componentData(), parent) {
 
 	KAboutData *about =
-	new KAboutData(I18N_NOOP("kcmxinerama"),
-			I18N_NOOP("KDE Multiple Monitor Configurator"),
-			0, 0, KAboutData::License_GPL,
-			I18N_NOOP("(c) 2002-2003 George Staikos"));
+	new KAboutData(I18N_NOOP("kcmxinerama"), 0,
+			ki18n("KDE Multiple Monitor Configurator"),
+			0, KLocalizedString(), KAboutData::License_GPL,
+			ki18n("(c) 2002-2003 George Staikos"));
 
-	about->addAuthor("George Staikos", 0, "staikos@kde.org");
+	about->addAuthor(ki18n("George Staikos"), KLocalizedString(), "staikos@kde.org");
 	setAboutData( about );
 
 	setQuickHelp( i18n("<h1>Multiple Monitors</h1> This module allows you to configure KDE support"

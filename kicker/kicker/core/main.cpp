@@ -117,22 +117,22 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
         appname = "kicker-screen-" + QByteArray::number(kicker_screen_number);
     }
 
-    KAboutData aboutData( appname.data(), I18N_NOOP("KDE Panel"),
-                          KDE_VERSION_STRING, description, KAboutData::License_BSD,
-                          I18N_NOOP("(c) 1999-2004, The KDE Team") );
+    KAboutData aboutData( appname.data(), 0, ki18n("KDE Panel"),
+                          KDE_VERSION_STRING, ki18n(description), KAboutData::License_BSD,
+                          ki18n("(c) 1999-2004, The KDE Team") );
 
-    aboutData.addAuthor("Aaron J. Seigo", I18N_NOOP("Current maintainer"), "aseigo@kde.org");
-    aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
-    aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
-    aboutData.addAuthor("Wilco Greven",0, "greven@kde.org");
-    aboutData.addAuthor("Rik Hemsley",0, "rik@kde.org");
-    aboutData.addAuthor("Daniel M. Duley",0, "mosfet@kde.org");
-    aboutData.addAuthor("Preston Brown",0, "pbrown@kde.org");
-    aboutData.addAuthor("John Firebaugh",0, "jfirebaugh@kde.org");
-    aboutData.addAuthor("Waldo Bastian", I18N_NOOP("Kiosk mode"), "bastian@kde.org");
+    aboutData.addAuthor(ki18n("Aaron J. Seigo"), ki18n("Current maintainer"), "aseigo@kde.org");
+    aboutData.addAuthor(ki18n("Matthias Elter"),KLocalizedString(), "elter@kde.org");
+    aboutData.addAuthor(ki18n("Matthias Ettrich"),KLocalizedString(), "ettrich@kde.org");
+    aboutData.addAuthor(ki18n("Wilco Greven"),KLocalizedString(), "greven@kde.org");
+    aboutData.addAuthor(ki18n("Rik Hemsley"),KLocalizedString(), "rik@kde.org");
+    aboutData.addAuthor(ki18n("Daniel M. Duley"),KLocalizedString(), "mosfet@kde.org");
+    aboutData.addAuthor(ki18n("Preston Brown"),KLocalizedString(), "pbrown@kde.org");
+    aboutData.addAuthor(ki18n("John Firebaugh"),KLocalizedString(), "jfirebaugh@kde.org");
+    aboutData.addAuthor(ki18n("Waldo Bastian"), ki18n("Kiosk mode"), "bastian@kde.org");
 
-    aboutData.addCredit("Jessica Hall", /* I18N_NOOP("KConfigXT") */ 0, "jes.hall@kdemail.net");
-    aboutData.addCredit("Stefan Nikolaus", /* I18N_NOOP("Bug fixes") */ 0, "stefan.nikolaus@kdemail.net");
+    aboutData.addCredit(ki18n("Jessica Hall"), /* ki18n("KConfigXT") */ KLocalizedString(), "jes.hall@kdemail.net");
+    aboutData.addCredit(ki18n("Stefan Nikolaus"), /* ki18n("Bug fixes") */ KLocalizedString(), "stefan.nikolaus@kdemail.net");
     KCmdLineArgs::init(argc, argv, &aboutData);
 
     if (!Kicker::start())

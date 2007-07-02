@@ -103,23 +103,19 @@ void CViewer::enableAction(const char *name, bool enable)
 
 }
 
-static KCmdLineOptions options[] =
-{
-    { "+[URL]", I18N_NOOP("URL to open"), 0 },
-    KCmdLineLastOption
-};
-
-static KAboutData aboutData("kfontview", I18N_NOOP("Font Viewer"), "1.1", I18N_NOOP("Simple font viewer"),
-                            KAboutData::License_GPL, I18N_NOOP("(C) Craig Drummond, 2004-2007"));
+static KAboutData aboutData("kfontview", KFI_CATALOGUE, ki18n("Font Viewer"), "1.1", ki18n("Simple font viewer"),
+                            KAboutData::License_GPL, ki18n("(C) Craig Drummond, 2004-2007"));
 
 int main(int argc, char **argv)
 {
     KCmdLineArgs::init(argc, argv, &aboutData);
+
+    KCmdLineOptions options;
+    options.add("+[URL]", ki18n("URL to open"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
 
-    KLocale::setMainCatalog(KFI_CATALOGUE);
     KFI::CViewer *viewer=new KFI::CViewer;
 
     viewer->show();

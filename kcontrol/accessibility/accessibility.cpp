@@ -61,12 +61,12 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QStringList &arg
 
    widget = new AccessibilityConfigWidget(parent, 0L);
    KAboutData *about =
-   new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
+   new KAboutData(I18N_NOOP("kcmaccessiblity"), 0, ki18n("KDE Accessibility Tool"),
+                  0, KLocalizedString(), KAboutData::License_GPL,
+                  ki18n("(c) 2000, Matthias Hoelzer-Kluepfel"));
 
-   about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
-   about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
+   about->addAuthor(ki18n("Matthias Hoelzer-Kluepfel"), ki18n("Author") , "hoelzer@kde.org");
+   about->addAuthor(ki18n("José Pablo Ezequiel Fernández"), ki18n("Author") , "pupeno@kde.org");
    setAboutData( about );
 
    kDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)" << endl;

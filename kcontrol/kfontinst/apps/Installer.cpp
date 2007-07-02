@@ -167,17 +167,8 @@ CInstaller::~CInstaller()
 
 }
 
-static KCmdLineOptions options[] =
-{
-    { "x <folder>",    I18N_NOOP("Configure folder for X11 - create fonts.dir and fonts.scale, plus remove hidden entries."
-                                 " (NOTE: Use this option on its own)"), 0},
-    { "embed <winid>", I18N_NOOP("Makes the dialog transient for an X app specified by winid"), 0 },
-    { "+[URL]",        I18N_NOOP("URL to install"), 0 },
-    KCmdLineLastOption
-};
-
-static KAboutData aboutData("kfontinst", I18N_NOOP("Font Installer"), "1.0", I18N_NOOP("Simple font installer"),
-                            KAboutData::License_GPL, I18N_NOOP("(C) Craig Drummond, 2007"));
+static KAboutData aboutData("kfontinst", 0, ki18n("Font Installer"), "1.0", ki18n("Simple font installer"),
+                            KAboutData::License_GPL, ki18n("(C) Craig Drummond, 2007"));
 
 int main(int argc, char **argv)
 {
@@ -192,6 +183,12 @@ int main(int argc, char **argv)
     else
     {
         KCmdLineArgs::init(argc, argv, &aboutData);
+
+        KCmdLineOptions options;
+        options.add("x <folder>", ki18n("Configure folder for X11 - create fonts.dir and fonts.scale, plus remove hidden entries."
+                                 " (NOTE: Use this option on its own)"));
+        options.add("embed <winid>", ki18n("Makes the dialog transient for an X app specified by winid"));
+        options.add("+[URL]", ki18n("URL to install"));
         KCmdLineArgs::addCmdLineOptions(options);
 
         QSet<KUrl>   urls;
@@ -205,8 +202,8 @@ int main(int argc, char **argv)
             KLocale::setMainCatalog(KFI_CATALOGUE);
 
             KApplication    app;
-            QByteArray      opt(args->getOption("embed"));
-            KFI::CInstaller inst(createParent(opt.size() ? strtol(opt.constData(), NULL, 16) : 0));
+            QString         opt(args->getOption("embed"));
+            KFI::CInstaller inst(createParent(opt.size() ? opt.toInt(0, 16) : 0));
 
             return inst.install(urls);
         }

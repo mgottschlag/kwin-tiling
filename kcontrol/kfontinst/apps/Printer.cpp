@@ -223,36 +223,33 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
 #endif
 }
 
-static KCmdLineOptions options[] =
-{
-    { "embed <winid>",   I18N_NOOP("Makes the dialog transient for an X app specified by winid"), 0 },
-    { "size <index>",    I18N_NOOP("Size index to print fonts"), 0 },
-    { "pfont <font>",    I18N_NOOP("Font to print, specified as \"Family,Style\" where Style is a 24-bit decimal number composed as: <weight><width><slant>"), 0},
-    { "listfile <file>", I18N_NOOP("File containing list of fonts to print"), 0 },
-    { "deletefile",      I18N_NOOP("Remove file containing list of fonts to print"), 0},
-    KCmdLineLastOption
-};
-
-static KAboutData aboutData("kfontprint", I18N_NOOP("Font Printer"), "1.0", I18N_NOOP("Simple font printer"),
-                            KAboutData::License_GPL, I18N_NOOP("(C) Craig Drummond, 2007"));
+static KAboutData aboutData("kfontprint", 0, ki18n("Font Printer"), "1.0", ki18n("Simple font printer"),
+                            KAboutData::License_GPL, ki18n("(C) Craig Drummond, 2007"));
 
 int main(int argc, char **argv)
 {
     KCmdLineArgs::init(argc, argv, &aboutData);
+
+    KCmdLineOptions options;
+    options.add("embed <winid>", ki18n("Makes the dialog transient for an X app specified by winid"));
+    options.add("size <index>", ki18n("Size index to print fonts"));
+    options.add("pfont <font>", ki18n("Font to print, specified as \"Family,Style\" where Style is a 24-bit decimal number composed as: <weight><width><slant>"));
+    options.add("listfile <file>", ki18n("File containing list of fonts to print"));
+    options.add("deletefile", ki18n("Remove file containing list of fonts to print"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication       app;
     KCmdLineArgs       *args(KCmdLineArgs::parsedArgs());
     QList<Misc::TFont> fonts;
-    int                size(atoi(args->getOption("size").constData()));
+    int                size(args->getOption("size").toInt());
 
     if(size>-1 && size<256)
     {
-        QByteArray listFile(args->getOption("listfile"));
+        QString listFile(args->getOption("listfile"));
 
         if(listFile.size())
         {
-            QFile f(QFile::decodeName(listFile));
+            QFile f(listFile);
 
             if(f.open(QIODevice::ReadOnly))
             {
@@ -272,17 +269,17 @@ int main(int argc, char **argv)
             }
 
             if(args->isSet("deletefile"))
-                ::unlink(listFile.constData());
+                ::unlink(listFile.toLocal8Bit().constData());
         }
         else
         {
-            QByteArrayList                fl(args->getOptionList("pfont"));
-            QByteArrayList::ConstIterator it(fl.begin()),
-                                            end(fl.end());
+            QStringList                fl(args->getOptionList("pfont"));
+            QStringList::ConstIterator it(fl.begin()),
+                                          end(fl.end());
 
             for(; it!=end; ++it)
             {
-                QString f(QString::fromUtf8(*it));
+                QString f(*it);
 
                 int commaPos=f.lastIndexOf(',');
 
@@ -294,7 +291,7 @@ int main(int argc, char **argv)
         if(fonts.count())
         {
             KLocale::setMainCatalog(KFI_CATALOGUE);
-            printItems(fonts, size, createParent(strtol(args->getOption("embed").constData(), NULL, 16)));
+            printItems(fonts, size, createParent(args->getOption("embed").toInt(0, 16)));
 
             return 0;
         }

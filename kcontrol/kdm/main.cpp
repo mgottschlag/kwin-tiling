@@ -92,14 +92,14 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	, updateOK( false )
 {
 	KAboutData *about =
-		new KAboutData( I18N_NOOP( "kcmkdm" ), I18N_NOOP( "KDE Login Manager Config Module" ),
-		                0, 0, KAboutData::License_GPL,
-		                I18N_NOOP( "(c) 1996 - 2006 The KDM Authors" ) );
+		new KAboutData( I18N_NOOP( "kcmkdm" ), 0, ki18n( "KDE Login Manager Config Module" ),
+		                0, KLocalizedString(), KAboutData::License_GPL,
+		                ki18n( "(c) 1996 - 2006 The KDM Authors" ) );
 
-	about->addAuthor( "Thomas Tanghus", I18N_NOOP( "Original author" ), "tanghus@earthling.net" );
-	about->addAuthor( "Steffen Hansen", 0, "hansen@kde.org" );
-	about->addAuthor( "Oswald Buddenhagen", I18N_NOOP( "Current maintainer" ), "ossi@kde.org" );
-	about->addAuthor( "Stephen Leaf", 0, "smileaf@smileaf.org" );
+	about->addAuthor( ki18n("Thomas Tanghus"), ki18n( "Original author" ), "tanghus@earthling.net" );
+	about->addAuthor( ki18n("Steffen Hansen"), KLocalizedString(), "hansen@kde.org" );
+	about->addAuthor( ki18n("Oswald Buddenhagen"), ki18n( "Current maintainer" ), "ossi@kde.org" );
+	about->addAuthor( ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@smileaf.org" );
 
 	setQuickHelp( i18n( "<h1>Login Manager</h1> In this module you can configure the "
 	                    "various aspects of the KDE Login Manager. This includes "

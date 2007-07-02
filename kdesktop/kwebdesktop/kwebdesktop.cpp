@@ -40,15 +40,6 @@
 
 #include "kwebdesktop.moc"
 
-static KCmdLineOptions options[] =
-{
-  { "+width", I18N_NOOP("Width of the image to create"), 0 },
-  { "+height", I18N_NOOP("Height of the image to create"), 0 },
-  { "+file", I18N_NOOP("File sname where to dump the output in png format"), 0 },
-  { "+[URL]", I18N_NOOP("URL to open (if not specified, it is read from kwebdesktoprc)"), 0 },
-  KCmdLineLastOption
-};
-
 KWebDesktopRun::KWebDesktopRun( KWebDesktop* webDesktop, const KUrl & url )
     : m_webDesktop(webDesktop), m_url(url)
 {
@@ -88,14 +79,25 @@ void KWebDesktopRun::slotFinished( KJob * job )
 
 int main( int argc, char **argv )
 {
-    KAboutData data( "kwebdesktop", I18N_NOOP("KDE Web Desktop"),
+    KAboutData data( "kwebdesktop", 0, ki18n("KDE Web Desktop"),
                      KDE_VERSION_STRING,
-                     I18N_NOOP("Displays an HTML page as the background of the desktop"),
+                     ki18n("Displays an HTML page as the background of the desktop"),
                      KAboutData::License_GPL,
-                     "(c) 2000, David Faure <faure@kde.org>" );
-    data.addAuthor( "David Faure", I18N_NOOP("developer and maintainer"), "faure@kde.org" );
+                     ki18n("(c) 2000, David Faure <faure@kde.org>") );
+    data.addAuthor( ki18n("David Faure"), ki18n("developer and maintainer"), "faure@kde.org" );
 
     KCmdLineArgs::init( argc, argv, &data );
+
+
+    KCmdLineOptions options;
+
+    options.add("+width", ki18n("Width of the image to create"));
+
+    options.add("+height", ki18n("Height of the image to create"));
+
+    options.add("+file", ki18n("File sname where to dump the output in png format"));
+
+    options.add("+[URL]", ki18n("URL to open (if not specified, it is read from kwebdesktoprc)"));
 
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
@@ -107,14 +109,14 @@ int main( int argc, char **argv )
        args->usage();
        return 1;
     }
-    const int width      = QByteArray(args->arg(0)).toInt();
-    const int height     = QByteArray(args->arg(1)).toInt();
-    QByteArray imageFile = args->arg(2);
+    const int width      = args->arg(0).toInt();
+    const int height     = args->arg(1).toInt();
+    QString imageFile    = args->arg(2);
     QString url;
     if (args->count() == 4)
-        url = QString::fromLocal8Bit(args->arg(3));
+        url = args->arg(3);
 
-    KWebDesktop *webDesktop = new KWebDesktop( 0, imageFile, width, height );
+    KWebDesktop *webDesktop = new KWebDesktop( 0, imageFile.toLocal8Bit(), width, height );
 
     if (url.isEmpty())
       url = KWebDesktopSettings::uRL();

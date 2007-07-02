@@ -71,7 +71,7 @@ Kicker::Kicker()
       m_canAddContainers(true)
 {
     // initialize the configuration object
-    KickerSettings::instance(QByteArray(KGlobal::mainComponent().componentName() + QByteArray("rc")).constData());
+    KickerSettings::instance((KGlobal::mainComponent().componentName() + "rc").toLocal8Bit().constData());
 
     if (KCrash::crashHandler() == 0 )
     {

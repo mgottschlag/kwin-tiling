@@ -45,13 +45,13 @@ KclockModule::KclockModule(QWidget *parent, const QStringList &)
   : KCModule(KlockModuleFactory::componentData(), parent/*, name*/)
 {
   KAboutData *about =
-  new KAboutData(I18N_NOOP("kcmclock"), I18N_NOOP("KDE Clock Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  "(c) 1996 - 2001 Luca Montecchiani");
+  new KAboutData(I18N_NOOP("kcmclock"), 0, ki18n("KDE Clock Control Module"),
+                  0, KLocalizedString(), KAboutData::License_GPL,
+                  ki18n("(c) 1996 - 2001 Luca Montecchiani"));
 
-  about->addAuthor("Luca Montecchiani", I18N_NOOP("Original author"), "m.luca@usa.net");
-  about->addAuthor("Paul Campbell", I18N_NOOP("Current Maintainer"), "paul@taniwha.com");
-  about->addAuthor("Benjamin Meyer", I18N_NOOP("Added NTP support"), "ben+kcmclock@meyerhome.net");
+  about->addAuthor(ki18n("Luca Montecchiani"), ki18n("Original author"), "m.luca@usa.net");
+  about->addAuthor(ki18n("Paul Campbell"), ki18n("Current Maintainer"), "paul@taniwha.com");
+  about->addAuthor(ki18n("Benjamin Meyer"), ki18n("Added NTP support"), "ben+kcmclock@meyerhome.net");
   setAboutData( about );
   setQuickHelp( i18n("<h1>Date & Time</h1> This control module can be used to set the system date and"
     " time. As these settings do not only affect you as a user, but rather the whole system, you"

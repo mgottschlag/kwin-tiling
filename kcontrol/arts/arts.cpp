@@ -249,11 +249,11 @@ KArtsModule::KArtsModule(const KComponentData &inst, QWidget *parent)
 	connect(hardware->midiMapper, SIGNAL( textChanged( const QString& ) ),
 			this, SLOT( slotChanged() ) );
 
-	KAboutData *about =  new KAboutData(I18N_NOOP("kcmarts"),
-                  I18N_NOOP("The Sound Server Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1999 - 2001, Stefan Westerfeld"));
-	about->addAuthor("Stefan Westerfeld",I18N_NOOP("aRts Author") , "stw@kde.org");
+	KAboutData *about =  new KAboutData(I18N_NOOP("kcmarts"), 0,
+                  ki18n("The Sound Server Control Module"),
+                  0, KLocalizedString(), KAboutData::License_GPL,
+                  ki18n("(c) 1999 - 2001, Stefan Westerfeld"));
+	about->addAuthor(ki18n("Stefan Westerfeld"),ki18n("aRts Author") , "stw@kde.org");
 	setAboutData(about);
 }
 

@@ -71,10 +71,10 @@ extern "C"
 Joystick::Joystick(QWidget *parent, const QStringList &)
   : KCModule(JoystickFactory::componentData(), parent)
 {
-  setAboutData(new KAboutData("kcmjoystick", I18N_NOOP("KDE Joystick Control Module"), "1.0",
-                               I18N_NOOP("KDE Control Center Module to test Joysticks"),
-                               KAboutData::License_GPL, "(c) 2004, Martin Koller",
-                               0, "m.koller@surfeu.at"));
+  setAboutData(new KAboutData("kcmjoystick", 0, ki18n("KDE Joystick Control Module"), "1.0",
+                               ki18n("KDE Control Center Module to test Joysticks"),
+                               KAboutData::License_GPL, ki18n("(c) 2004, Martin Koller"),
+                               KLocalizedString(), "m.koller@surfeu.at"));
 
   setQuickHelp( i18n("<h1>Joystick</h1>"
               "This module helps to check if your joystick is working correctly.<br>"

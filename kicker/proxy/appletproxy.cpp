@@ -50,24 +50,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xlib.h>
 #include <QX11Info>
 
-static KCmdLineOptions options[] =
-{
-  { "+desktopfile", I18N_NOOP("The applet's desktop file"), 0 },
-  { "configfile <file>", I18N_NOOP("The config file to be used"), 0 },
-  KCmdLineLastOption
-};
-
 extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
 {
-    KAboutData aboutData( "kicker", I18N_NOOP("Panel applet proxy.")
+    KAboutData aboutData( "kicker", 0, ki18n("Panel applet proxy.")
                           , "v0.1.0"
-                          ,I18N_NOOP("Panel applet proxy.")
+                          ,ki18n("Panel applet proxy.")
                           , KAboutData::License_BSD
-                          , "(c) 2000, The KDE Developers");
+                          , ki18n("(c) 2000, The KDE Developers"));
     KCmdLineArgs::init(argc, argv, &aboutData );
-    aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
-    aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
+    aboutData.addAuthor(ki18n("Matthias Elter"),KLocalizedString(), "elter@kde.org");
+    aboutData.addAuthor(ki18n("Matthias Ettrich"),KLocalizedString(), "ettrich@kde.org");
     KCmdLineArgs::addStdCmdLineOptions();
+
+    KCmdLineOptions options;
+    options.add("+desktopfile", ki18n("The applet's desktop file"));
+    options.add("configfile <file>", ki18n("The config file to be used"));
     KCmdLineArgs::addCmdLineOptions(options); // Add our own options.
 
     KApplication a;
@@ -82,7 +79,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     if ( args->count() == 0 )
-        KCmdLineArgs::usage(i18n("No desktop file specified") );
+        KCmdLineArgs::usageError(i18n("No desktop file specified") );
 
     // Perhaps we should use a konsole-like solution here (shell, list of args...)
     QString desktopfile( args->arg(0) );

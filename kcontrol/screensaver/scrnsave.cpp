@@ -289,12 +289,12 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
     emit changed(false);
 
     KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmscreensaver"), I18N_NOOP("KDE Screen Saver Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1997-2002 Martin R. Jones\n"
+    new KAboutData(I18N_NOOP("kcmscreensaver"), 0, ki18n("KDE Screen Saver Control Module"),
+                  0, KLocalizedString(), KAboutData::License_GPL,
+                  ki18n("(c) 1997-2002 Martin R. Jones\n"
                   "(c) 2003-2004 Chris Howells"));
-    about->addAuthor("Chris Howells", 0, "howells@kde.org");
-    about->addAuthor("Martin R. Jones", 0, "jones@kde.org");
+    about->addAuthor(ki18n("Chris Howells"), KLocalizedString(), "howells@kde.org");
+    about->addAuthor(ki18n("Martin R. Jones"), KLocalizedString(), "jones@kde.org");
 
     setAboutData( about );
 

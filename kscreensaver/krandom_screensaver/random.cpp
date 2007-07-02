@@ -52,21 +52,20 @@ static const char description[] = I18N_NOOP("Start a random KDE screen saver");
 
 static const char version[] = "2.0.0";
 
-static const KCmdLineOptions options[] =
-{
-	{ "setup", I18N_NOOP("Setup screen saver"), 0 },
-	{ "window-id wid", I18N_NOOP("Run in the specified XWindow"), 0 },
-	{ "root", I18N_NOOP("Run in the root XWindow"), 0 },
-	//  { "+-- [options]", I18N_NOOP("Options to pass to the screen saver"), 0 }
-	KCmdLineLastOption
-};
-
 //----------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
 {
-	KLocale::setMainCatalog("kscreensaver");
-	KCmdLineArgs::init(argc, argv, appName, I18N_NOOP("Random screen saver"), description, version);
+	KCmdLineArgs::init(argc, argv, appName, "kscreensaver", ki18n("Random screen saver"), version, ki18n(description));
+
+
+	KCmdLineOptions options;
+
+	options.add("setup", ki18n("Setup screen saver"));
+
+	options.add("window-id wid", ki18n("Run in the specified XWindow"));
+
+	options.add("root", ki18n("Run in the root XWindow"));
 
 	KCmdLineArgs::addCmdLineOptions(options);
 
@@ -85,7 +84,7 @@ int main(int argc, char *argv[])
 
 	if (args->isSet("window-id"))
 	{
-		windowId = atol(args->getOption("window-id"));
+		windowId = args->getOption("window-id").toInt();
 	}
 
 	if (args->isSet("root"))

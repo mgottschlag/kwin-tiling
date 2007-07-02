@@ -68,17 +68,17 @@ KBackground::KBackground(QWidget *parent, const QStringList &args)
     connect(m_base, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 
     KAboutData *about =
-    new KAboutData(I18N_NOOP("kcmbackground"), I18N_NOOP("KDE Background Control Module"),
-                  0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1997-2002 Martin R. Jones"));
+    new KAboutData(I18N_NOOP("kcmbackground"), 0, ki18n("KDE Background Control Module"),
+                  0, KLocalizedString(), KAboutData::License_GPL,
+                  ki18n("(c) 1997-2002 Martin R. Jones"));
 
-    about->addAuthor("Waldo Bastian", 0, "bastian@kde.org");
-    about->addAuthor("George Staikos", 0, "staikos@kde.org");
-    about->addAuthor("Martin R. Jones", 0, "jones@kde.org");
-    about->addAuthor("Matthias Hoelzer-Kluepfel", 0, "mhk@kde.org");
-    about->addAuthor("Stephan Kulow", 0, "coolo@kde.org");
-    about->addAuthor("Mark Donohoe", 0, 0);
-    about->addAuthor("Matej Koss", 0 , 0);
+    about->addAuthor(ki18n("Waldo Bastian"), KLocalizedString(), "bastian@kde.org");
+    about->addAuthor(ki18n("George Staikos"), KLocalizedString(), "staikos@kde.org");
+    about->addAuthor(ki18n("Martin R. Jones"), KLocalizedString(), "jones@kde.org");
+    about->addAuthor(ki18n("Matthias Hoelzer-Kluepfel"), KLocalizedString(), "mhk@kde.org");
+    about->addAuthor(ki18n("Stephan Kulow"), KLocalizedString(), "coolo@kde.org");
+    about->addAuthor(ki18n("Mark Donohoe"));
+    about->addAuthor(ki18n("Matej Koss"));
 
     setAboutData( about );
 }

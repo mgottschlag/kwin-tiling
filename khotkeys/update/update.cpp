@@ -22,21 +22,17 @@
 
 using namespace KHotKeys;
 
-static const KCmdLineOptions options[] =
-    {
-    // no need for I18N_NOOP(), this is not supposed to be used directly
-        { "id <id>", "Id of the script to add to khotkeysrc.", 0 },
-        KCmdLineLastOption
-    };
-
 int main( int argc, char* argv[] )
     {
-    KCmdLineArgs::init( argc, argv, "khotkeys_update", "KHotKeys Update",
-	"KHotKeys update utility", "1.0" );
+    KCmdLineArgs::init( argc, argv, "khotkeys_update", 0, ki18n("KHotKeys Update"), "1.0" ,
+	ki18n("KHotKeys update utility"));
+
+    KCmdLineOptions options;
+    options.add("id <id>", ki18n("Id of the script to add to khotkeysrc."));
     KCmdLineArgs::addCmdLineOptions( options );
     KApplication app( true ); // X11 connection is necessary for KKey* stuff :-/
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
-    QByteArray id = args->getOption( "id" );
+    QString id = args->getOption( "id" );
     QString file = KStandardDirs::locate( "data", "khotkeys/" + id + ".khotkeys" );
     if( file.isEmpty())
         {

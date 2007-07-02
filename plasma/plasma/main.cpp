@@ -29,14 +29,14 @@ static const char version[] = "0.0";
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData("plasma", I18N_NOOP("Plasma Workspace"),
-                         version, description, KAboutData::License_GPL,
-                         "(c) 2006, The KDE Team");
-    aboutData.addAuthor("Aaron J. Seigo",
-                        I18N_NOOP("Author and maintainer"),
+    KAboutData aboutData("plasma", 0, ki18n("Plasma Workspace"),
+                         version, ki18n(description), KAboutData::License_GPL,
+                         ki18n("(c) 2006, The KDE Team"));
+    aboutData.addAuthor(ki18n("Aaron J. Seigo"),
+                        ki18n("Author and maintainer"),
                         "aseigo@kde.org");
-    aboutData.addCredit("John Lions",
-                        I18N_NOOP("In memory of his contributions, 1937-1998."),
+    aboutData.addCredit(ki18n("John Lions"),
+                        ki18n("In memory of his contributions, 1937-1998."),
                         0, "http://en.wikipedia.org/wiki/John_Lions");
 
     KCmdLineArgs::init(argc, argv, &aboutData);

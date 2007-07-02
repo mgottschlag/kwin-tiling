@@ -53,21 +53,16 @@ bool MyApp::x11EventFilter( XEvent *ev )
 }
 
 
-static KCmdLineOptions options[] =
-{
-   { "forcelock", I18N_NOOP("Force session locking"), 0 },
-   { "dontlock", I18N_NOOP("Only start screensaver"), 0 },
-   { "blank", I18N_NOOP("Only use the blank screensaver"), 0 },
-   KCmdLineLastOption
-};
-
 // -----------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-    KLocale::setMainCatalog("krunner");
+    KCmdLineArgs::init( argc, argv, "krunner_lock", "krunner", ki18n("KRunner Locker"), "2.0" , ki18n("Session Locker for KRunner"));
 
-    KCmdLineArgs::init( argc, argv, "krunner_lock", I18N_NOOP("KRunner Locker"), I18N_NOOP("Session Locker for KRunner"), "2.0" );
+    KCmdLineOptions options;
+    options.add("forcelock", ki18n("Force session locking"));
+    options.add("dontlock", ki18n("Only start screensaver"));
+    options.add("blank", ki18n("Only use the blank screensaver"));
     KCmdLineArgs::addCmdLineOptions( options );
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 

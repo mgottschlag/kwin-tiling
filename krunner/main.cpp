@@ -37,11 +37,11 @@ bool KRunnerApp::s_haveCompositeManager = false;
 
 int main(int argc, char* argv[])
 {
-    KAboutData aboutData( "krunner", I18N_NOOP( "Run Command Interface" ),
-                          version, description, KAboutData::License_GPL,
-                          I18N_NOOP("(c) 2006, Aaron Seigo") );
-    aboutData.addAuthor( "Aaron J. Seigo",
-                         I18N_NOOP( "Author and maintainer" ),
+    KAboutData aboutData( "krunner", 0, ki18n( "Run Command Interface" ),
+                          version, ki18n(description), KAboutData::License_GPL,
+                          ki18n("(c) 2006, Aaron Seigo") );
+    aboutData.addAuthor( ki18n("Aaron J. Seigo"),
+                         ki18n( "Author and maintainer" ),
                          "aseigo@kde.org" );
 
     KCmdLineArgs::init(argc, argv, &aboutData);

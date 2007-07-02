@@ -407,12 +407,12 @@ KInfoListWidget::KInfoListWidget(const KComponentData &inst,const QString &_titl
       title(_title)
 {
     KAboutData *about =
-    new KAboutData(I18N_NOOP("kcminfo"),
-		I18N_NOOP("KDE Panel System Information Control Module"),
-		0, 0, KAboutData::License_GPL,
-		I18N_NOOP("(c) 1998 - 2002 Helge Deller"));
+    new KAboutData(I18N_NOOP("kcminfo"), 0,
+		ki18n("KDE Panel System Information Control Module"),
+		0, KLocalizedString(), KAboutData::License_GPL,
+		ki18n("(c) 1998 - 2002 Helge Deller"));
 
-    about->addAuthor("Helge Deller", 0, "deller@kde.org");
+    about->addAuthor(ki18n("Helge Deller"), KLocalizedString(), "deller@kde.org");
     setAboutData( about );
 
     setButtons(KCModule::Help);

@@ -1086,30 +1086,30 @@ static const char * const description =
 
 void Klipper::createAboutData()
 {
-  about_data = new KAboutData("klipper", I18N_NOOP("Klipper"),
-    klipper_version, description, KAboutData::License_GPL,
-		       "(c) 1998, Andrew Stanley-Jones\n"
+  about_data = new KAboutData("klipper", 0, ki18n("Klipper"),
+    klipper_version, ki18n(description), KAboutData::License_GPL,
+		       ki18n("(c) 1998, Andrew Stanley-Jones\n"
 		       "1998-2002, Carsten Pfeiffer\n"
-		       "2001, Patrick Dubroy");
+		       "2001, Patrick Dubroy"));
 
-  about_data->addAuthor("Carsten Pfeiffer",
-                      I18N_NOOP("Author"),
+  about_data->addAuthor(ki18n("Carsten Pfeiffer"),
+                      ki18n("Author"),
                       "pfeiffer@kde.org");
 
-  about_data->addAuthor("Andrew Stanley-Jones",
-                      I18N_NOOP( "Original Author" ),
+  about_data->addAuthor(ki18n("Andrew Stanley-Jones"),
+                      ki18n( "Original Author" ),
                       "asj@cban.com");
 
-  about_data->addAuthor("Patrick Dubroy",
-                      I18N_NOOP("Contributor"),
+  about_data->addAuthor(ki18n("Patrick Dubroy"),
+                      ki18n("Contributor"),
                       "patrickdu@corel.com");
 
-  about_data->addAuthor( "Luboš Luňák",
-                      I18N_NOOP("Bugfixes and optimizations"),
+  about_data->addAuthor( ki18n("Luboš Luňák"),
+                      ki18n("Bugfixes and optimizations"),
                       "l.lunak@kde.org");
 
-  about_data->addAuthor( "Esben Mose Hansen",
-                      I18N_NOOP("Maintainer"),
+  about_data->addAuthor( ki18n("Esben Mose Hansen"),
+                      ki18n("Maintainer"),
                       "kde@mosehansen.dk");
 }
 

@@ -69,7 +69,7 @@ const KComponentData &CFontViewPartFactory::componentData()
 {
     if(!theirInstance)
     {
-        theirAbout = new KAboutData("fontviewpart", I18N_NOOP("CFontViewPart"), "0.1");
+        theirAbout = new KAboutData("fontviewpart", 0, ki18n("CFontViewPart"), "0.1");
         theirInstance = new KComponentData(theirAbout);
     }
     return *theirInstance;

@@ -141,8 +141,8 @@ int KDE_EXPORT kdemain( int argc, char** argv )
 	appname = "khotkeys-screen-" + QByteArray::number(khotkeys_screen_number);
 
                              // no need to i18n these, no GUI
-    KCmdLineArgs::init( argc, argv, appname, I18N_NOOP( "KHotKeys" ),
-        I18N_NOOP( "KHotKeys daemon" ), KHOTKEYS_VERSION );
+    KCmdLineArgs::init( argc, argv, appname, 0, ki18n( "KHotKeys" ), KHOTKEYS_VERSION ,
+        ki18n( "KHotKeys daemon" ));
     KUniqueApplication::addCmdLineOptions();
     if( !KHotKeysApp::start()) // already running
         return 0;

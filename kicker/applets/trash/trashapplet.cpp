@@ -77,15 +77,15 @@ TrashApplet::~TrashApplet()
 
 void TrashApplet::about()
 {
-	KAboutData data("trashapplet",
-	                I18N_NOOP("Trash Applet"),
+	KAboutData data("trashapplet", 0,
+	                ki18n("Trash Applet"),
 	                "1.0",
-	                I18N_NOOP("\"trash:/\" ioslave frontend applet"),
+	                ki18n("\"trash:/\" ioslave frontend applet"),
 	                KAboutData::License_GPL_V2,
-	                "(c) 2004, Kevin Ottens");
+	                ki18n("(c) 2004, Kevin Ottens"));
 
-	data.addAuthor("Kevin \'ervin\' Ottens",
-	               I18N_NOOP("Maintainer"),
+	data.addAuthor(ki18n("Kevin \'ervin\' Ottens"),
+	               ki18n("Maintainer"),
 	               "ervin ipsquad net",
 	               "http://ervin.ipsquad.net");
 

@@ -170,13 +170,13 @@ TaskbarConfig::TaskbarConfig(QWidget *parent, const char* name, const QStringLis
         m_widget->kcfg_ShowCurrentScreenOnly->hide();
     }
 
-    KAboutData *about = new KAboutData(I18N_NOOP("kcmtaskbar"),
-                                       I18N_NOOP("KDE Taskbar Control Module"),
-                                       0, 0, KAboutData::License_GPL,
-                                       I18N_NOOP("(c) 2000 - 2001 Matthias Elter"));
+    KAboutData *about = new KAboutData(I18N_NOOP("kcmtaskbar"), 0,
+                                       ki18n("KDE Taskbar Control Module"),
+                                       0, KLocalizedString(), KAboutData::License_GPL,
+                                       ki18n("(c) 2000 - 2001 Matthias Elter"));
 
-    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
-    about->addCredit("Stefan Nikolaus", I18N_NOOP("KConfigXT conversion"),
+    about->addAuthor(ki18n("Matthias Elter"), KLocalizedString(), "elter@kde.org");
+    about->addCredit(ki18n("Stefan Nikolaus"), ki18n("KConfigXT conversion"),
                      "stefan.nikolaus@kdemail.net");
     setAboutData(about);
 

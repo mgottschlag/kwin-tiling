@@ -67,17 +67,13 @@
 
 #include "version.h"
 
-static KCmdLineOptions options[] =
-{
-   { "test", "Test the basic kasbar code", 0 },
-   KCmdLineLastOption
-};
-
 int main( int argc, char **argv )
 {
-  KCmdLineArgs::init( argc, argv, "kasbar", "KasBar", I18N_NOOP( "An alternative task manager" ), VERSION_STRING );
+  KCmdLineArgs::init( argc, argv, "kasbar", "kasbarextension", ki18n("KasBar"), VERSION_STRING , ki18n( "An alternative task manager" ));
+
+  KCmdLineOptions options;
+  options.add("test", ki18n("Test the basic kasbar code"));
   KCmdLineArgs::addCmdLineOptions( options );
-  KGlobal::locale()->setMainCatalog( "kasbarextension" );
   KApplication app;
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 

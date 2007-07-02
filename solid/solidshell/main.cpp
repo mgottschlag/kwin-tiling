@@ -62,15 +62,6 @@ static const char description[] = I18N_NOOP("KDE tool for querying and controlli
 
 static const char version[] = "0.1";
 
-static const KCmdLineOptions options[] =
-{
-   { "commands", I18N_NOOP("Show available commands by domains"), 0},
-   { "+domain", I18N_NOOP("Domain (see --commands)"), 0},
-   { "+command", I18N_NOOP("Command (see --commands)"), 0},
-   { "+[arg(s)]", I18N_NOOP("Arguments for command"), 0},
-   KCmdLineLastOption
-};
-
 std::ostream &operator<<(std::ostream &out, const QString &msg)
 {
     return (out << msg.toLocal8Bit().constData());
@@ -299,7 +290,18 @@ void checkArgumentCount(int min, int max)
 
 int main(int argc, char **argv)
 {
-  KCmdLineArgs::init(argc, argv, appName, programName, description, version, false);
+  KCmdLineArgs::init(argc, argv, appName, 0, ki18n(programName), version, ki18n(description), false);
+
+
+  KCmdLineOptions options;
+
+  options.add("commands", ki18n("Show available commands by domains"));
+
+  options.add("+domain", ki18n("Domain (see --commands)"));
+
+  options.add("+command", ki18n("Command (see --commands)"));
+
+  options.add("+[arg(s)]", ki18n("Arguments for command"));
 
   KCmdLineArgs::addCmdLineOptions(options);
   KCmdLineArgs::addTempFileOption();
@@ -458,7 +460,7 @@ bool SolidShell::doIt()
         if (command == "list")
         {
             checkArgumentCount(2, 3);
-            QByteArray extra(args->count()==3 ? args->arg(2) : "");
+            QByteArray extra(args->count()==3 ? args->arg(2).toLocal8Bit() : "");
             return shell.hwList(extra=="details", extra=="nonportableinfo");
         }
         else if (command == "details")
