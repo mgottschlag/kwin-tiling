@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+ * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,21 +16,30 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "outputconfig.h"
+#include "outputgraphicsitem.h"
+
+#include <QPen>
+#include <QBrush>
+#include <QFont>
 #include "randroutput.h"
-#ifdef HAS_RANDR_1_2
 
-OutputConfig::OutputConfig(QWidget *parent, RandROutput *output)
-: QWidget(parent)
+OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
+: QGraphicsRectItem(output->rect())
 {
-	m_output = output;
-	Q_ASSERT(output);
-	setupUi(this);
+	setPen(QPen(Qt::black));
+	setBrush(QColor(0,255,0,128));
+	setFlag(QGraphicsItem::ItemIsMovable, true);
+	setFlag(QGraphicsItem::ItemIsSelectable, true);
+	m_text = new QGraphicsTextItem(output->name(), this);
+
+	QFont f = m_text->font();
+	f.setPixelSize(72);
+	m_text->setFont(f);
+
+	QRect r = output->rect();
+	m_text->setPos(r.width()/2,r.height()/2);
 }
 
-OutputConfig::~OutputConfig()
+OutputGraphicsItem::~OutputGraphicsItem()
 {
 }
-
-#include "outputconfig.moc"
-#endif

@@ -16,8 +16,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QTabWidget>
+#include "collapsiblewidget.h"
 #include "outputconfig.h"
+#include "outputgraphicsitem.h"
 #include "randrconfig.h"
 #include "randrdisplay.h"
 #include "randrscreen.h"
@@ -31,13 +32,25 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 {
 	m_display = display;
 	Q_ASSERT(m_display);
+	m_changed = false;
 
 	if (!m_display->isValid())
 		return;
 
 	setupUi(this);
 
-	load();
+	// create the container for the settings widget
+	QHBoxLayout *l = new QHBoxLayout(outputList);
+	l->setSpacing(0);
+	l->setContentsMargins(0,0,0,0);
+	m_container = new SettingsContainer(outputList);
+	l->addWidget(m_container);
+
+
+	// create the scene
+	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
+	screenView->setScene(m_scene);
+	screenView->scale(0.2, 0.2);
 }
 
 RandRConfig::~RandRConfig()
@@ -46,24 +59,33 @@ RandRConfig::~RandRConfig()
 
 void RandRConfig::load()
 {
+	kDebug() << "LOAD" << endl;
 	if (!m_display->isValid())
 		return;
 
-	while (outputsTab->count())
-	{
-		delete outputsTab->widget(0);
-		outputsTab->removeTab(0);
-	}
+	qDeleteAll(m_outputList);
+	m_outputList.clear();
 
+	QList<QGraphicsItem*> items = m_scene->items();
+	foreach(QGraphicsItem *i, items)
+		m_scene->removeItem(i);
 
 	OutputMap outputs = m_display->currentScreen()->outputs();
 	OutputMap::iterator it;
 
 	// FIXME: adjust it to run on a multi screen system
+	CollapsibleWidget *w;
+	OutputGraphicsItem *o;
 	for (it = outputs.begin(); it != outputs.end(); ++it)
 	{
-		int index = outputsTab->insertTab(-1, new OutputConfig(outputsTab, *it), KIcon((*it)->icon()), (*it)->name());
+		w = m_container->insertWidget(new OutputConfig(0, *it), (*it)->name());
+		m_outputList.append(w);
+		kDebug() << "Rect: " << (*it)->rect() << endl;
+
+		o = new OutputGraphicsItem(*it);
+		m_scene->addItem(o);
 	}
+
 
 }
 

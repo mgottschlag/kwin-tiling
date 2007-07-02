@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+ * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,21 +16,26 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "outputconfig.h"
-#include "randroutput.h"
-#ifdef HAS_RANDR_1_2
+#ifndef OUTPUTGRAPHICSITEM_H
+#define OUTPUTGRAPHICSITEM_H
 
-OutputConfig::OutputConfig(QWidget *parent, RandROutput *output)
-: QWidget(parent)
+#include <QGraphicsRectItem>
+#include <QGraphicsTextItem>
+
+class RandROutput;
+
+class OutputGraphicsItem : public QGraphicsRectItem
 {
-	m_output = output;
-	Q_ASSERT(output);
-	setupUi(this);
-}
+public:
+	OutputGraphicsItem(RandROutput *output);
+	~OutputGraphicsItem();
 
-OutputConfig::~OutputConfig()
-{
-}
+private:
+	RandROutput *m_output;
+	QGraphicsTextItem *m_text;
 
-#include "outputconfig.moc"
+
+};
+
 #endif
+

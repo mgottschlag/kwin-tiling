@@ -17,6 +17,8 @@ set(kcm_randr_PART_SRCS
    legacyrandrconfig.cpp
    randrconfig.cpp
    outputconfig.cpp
+   outputgraphicsitem.cpp
+   collapsiblewidget.cpp
    ${randrinternal_PART_SRCS})
 kde4_add_ui_files(kcm_randr_PART_SRCS
    legacyrandrconfigbase.ui

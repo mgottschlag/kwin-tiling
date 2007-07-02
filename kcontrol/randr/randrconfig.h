@@ -26,6 +26,9 @@
 #ifdef HAS_RANDR_1_2
 
 class RandRDisplay;
+class SettingsContainer;
+class CollapsibleWidget;
+class QGraphicsScene;
 
 
 class RandRConfig : public QWidget, public Ui::RandRConfigBase
@@ -48,6 +51,9 @@ signals:
 private:
 	RandRDisplay *m_display;
 	bool m_changed;
+	SettingsContainer *m_container;
+	QList<CollapsibleWidget*> m_outputList;
+	QGraphicsScene *m_scene;
 };
 
 #endif

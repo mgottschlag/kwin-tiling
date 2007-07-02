@@ -5,49 +5,32 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>449</width>
-    <height>395</height>
+    <width>417</width>
+    <height>425</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Screen Resize and Rotate Configuration</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+  <layout class="QHBoxLayout" >
+   <item>
+    <widget class="QWidget" native="1" name="outputList" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="sizeHint" >
+     <property name="minimumSize" >
       <size>
-       <width>40</width>
-       <height>20</height>
+       <width>150</width>
+       <height>0</height>
       </size>
      </property>
-    </spacer>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QGraphicsView" name="screenView" />
-   </item>
-   <item row="1" column="0" colspan="2" >
-    <widget class="QTabWidget" name="outputsTab" >
-     <property name="tabPosition" >
-      <enum>QTabWidget::North</enum>
-     </property>
-     <property name="currentIndex" >
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
-       <string>Tab 1</string>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="tab_2" >
-      <attribute name="title" >
-       <string>Tab 2</string>
-      </attribute>
-     </widget>
     </widget>
+   </item>
+   <item>
+    <widget class="QGraphicsView" name="screenView" />
    </item>
   </layout>
  </widget>
