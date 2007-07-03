@@ -46,6 +46,7 @@
 #include <kdialog.h>
 #include <klineedit.h>
 #include <kmessagebox.h>
+#include <kprocess.h>
 #include <k3process.h>
 #include <krichtextlabel.h>
 #include <ksimpleconfig.h>
@@ -436,10 +437,10 @@ void KArtsModule::slotTestSound()
 	if (configChanged && (userSavedChanges() == KMessageBox::Yes) || !artsdIsRunning() )
 		restartServer();
 
-	K3Process test;
+	KProcess test;
 	test << "artsplay";
 	test << locate("sound", "KDE_Startup_1.ogg");
-	test.start(K3Process::DontCare);
+	test.startDetached();
 }
 
 void KArtsModule::slotTestMIDI()
@@ -447,10 +448,10 @@ void KArtsModule::slotTestMIDI()
 	if (configChanged && (userSavedChanges() == KMessageBox::Yes) || !artsdIsRunning() )
 		restartServer();
 
-	//K3Process test;
+	//KProcess test;
 	//test << "artsplay";
 	//test << locate("sound", "KDE_Startup_1.ogg");
-	//test.start(K3Process::DontCare);
+	//test.startDetached();
 }
 
 
@@ -604,10 +605,10 @@ void KArtsModule::restartServer()
 	DCOPRef("knotify", "qt/knotify").send("quit");
 
 	// Shut down artsd
-	K3Process terminateArts;
+	KProcess terminateArts;
 	terminateArts << "artsshell";
 	terminateArts << "terminate";
-	terminateArts.start(K3Process::Block);
+	terminateArts.execute();
 
 	if (starting)
 	{
@@ -624,12 +625,10 @@ void KArtsModule::restartServer()
 
 bool KArtsModule::artsdIsRunning()
 {
-	K3Process check;
+	KProcess check;
 	check << "artsshell";
 	check << "status";
-	check.start(K3Process::Block);
-
-	return (check.exitStatus() == 0);
+	return check.execute() == 0;
 }
 
 

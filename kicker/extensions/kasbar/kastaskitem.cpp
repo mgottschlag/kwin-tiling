@@ -75,7 +75,7 @@
 #include <klocale.h>
 #include <kpassivepopup.h>
 #include <kmenu.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <dcopclient.h>
 #include <kapplication.h>
 #include <kvbox.h>
@@ -346,21 +346,18 @@ void KasTaskItem::sendToTray()
     QString s;
     s.setNum( task_->window() );
 
-    K3Process proc;
+    KProcess proc;
     proc << "ksystraycmd";
     proc << "--wid" << s << "--hidden";
 
-    bool ok = proc.start( K3Process::DontCare );
-    if ( !ok ) {
+    if ( !proc.startDetached() ) {
 	kWarning(1345) << "Unable to launch ksystraycmd" << endl;
 	KPassivePopup::message( i18n("Could Not Send to Tray"),
-				i18n("%1", strerror(errno)),
+				i18n("%1", strerror(errno)), // XXX this is probably bogus
 				Icon("error"),
 				kasbar() );
 	return;
     }
-
-    proc.detach();
 }
 
 void KasTaskItem::showPropertiesDialog()

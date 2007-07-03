@@ -30,6 +30,7 @@
 #include <ktextedit.h>
 #include <klocale.h>
 #include <kmenu.h>
+#include <kprocess.h>
 #include <kservice.h>
 #include <kiconloader.h>
 #include <kdebug.h>
@@ -247,14 +248,14 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
         if ( cmdLine.isEmpty() )
             return;
 
-        K3Process proc;
+        // XXX The shell magic is most likely bogus - KMacroExpander works
+        // only with Bourne-compatible shells.
         const char *shell = getenv("KLIPPER_SHELL");
         if (shell==NULL) shell = getenv("SHELL");
-        proc.setUseShell(true,shell);
 
-        proc << cmdLine.trimmed();
-
-        if ( !proc.start(K3Process::DontCare, K3Process::NoCommunication ))
+        KProcess proc;
+        proc.setShellCommand(cmdLine.trimmed(), shell);
+        if (!proc.startDetached())
             qWarning("Klipper: Couldn't start process!");
     }
 }

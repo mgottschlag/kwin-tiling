@@ -44,7 +44,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kmimetype.h>
 #include <kmenu.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <krun.h>
 #include <kservicegroup.h>
 #include <ksycoca.h>
@@ -540,7 +540,6 @@ void PanelServiceMenu::mouseReleaseEvent(QMouseEvent * ev)
 
 void PanelServiceMenu::slotContextMenu(int selected)
 {
-    K3Process *proc;
     KService::Ptr service;
     KServiceGroup::Ptr g;
 
@@ -568,10 +567,12 @@ void PanelServiceMenu::slotContextMenu(int selected)
             break;
 		}
 	case EditItem:
-            proc = new K3Process(this);
-            *proc << KStandardDirs::findExe(QString::fromLatin1("kmenuedit"));
-            *proc << '/'+relPath_ << KService::Ptr::staticCast(contextKSycocaEntry_)->menuId();
-            proc->start();
+            {
+            KProcess proc;
+            proc << QString::fromLatin1("kmenuedit");
+            proc << '/'+relPath_ << KService::Ptr::staticCast(contextKSycocaEntry_)->menuId();
+            proc.startDetached();
+            }
 	    break;
 
         case PutIntoRunDialog:
@@ -606,10 +607,12 @@ void PanelServiceMenu::slotContextMenu(int selected)
             break;
 		}
         case EditMenu:
-            proc = new K3Process(this);
-            *proc << KStandardDirs::findExe(QString::fromLatin1("kmenuedit"));
-            *proc << '/'+KServiceGroup::Ptr::staticCast(contextKSycocaEntry_)->relPath();
-            proc->start();
+            {
+            KProcess proc;
+            proc << QString::fromLatin1("kmenuedit");
+            proc << '/'+KServiceGroup::Ptr::staticCast(contextKSycocaEntry_)->relPath();
+            proc.startDetached();
+            }
             break;
 
 	default:

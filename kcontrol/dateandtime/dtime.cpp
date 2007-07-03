@@ -33,17 +33,16 @@
 
 #include <QCheckBox>
 #include <QRegExp>
-//Added by qt3to4:
 #include <QPaintEvent>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-//Added by qt3to4:
 #include <QApplication>
 #include <QPolygon>
 #include <kdebug.h>
 #include <klocale.h>
-#include <k3process.h>
+#include <kprocess.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kdialog.h>
 #include <kconfig.h>
@@ -224,20 +223,14 @@ void Dtime::serverTimeCheck() {
 }
 
 void Dtime::findNTPutility(){
-  K3Process proc;
-  proc << "which" << "ntpdate";
-  proc.start(K3Process::Block);
-  if(proc.exitStatus() == 0) {
+  if(!KStandardDirs::findExe("ntpdate").isEmpty()) {
     ntpUtility = "ntpdate";
-    kDebug() << "ntpUtility = " << ntpUtility.toLatin1() << endl;
+    kDebug() << "ntpUtility = " << ntpUtility << endl;
     return;
   }
-  proc.clearArguments();
-  proc << "which" << "rdate";
-  proc.start(K3Process::Block);
-  if(proc.exitStatus() == 0) {
+  if(!KStandardDirs::findExe("rdate").isEmpty()) {
     ntpUtility = "rdate";
-    kDebug() << "ntpUtility = " << ntpUtility.toLatin1() << endl;
+    kDebug() << "ntpUtility = " << ntpUtility << endl;
     return;
   }
   privateLayoutWidget->hide();
@@ -318,10 +311,9 @@ void Dtime::save()
       timeServer.replace( QRegExp("\\).*"), "" );
       // Would this be better?: s/^.*\(([^)]*)\).*$/\1/
     }
-    K3Process proc;
+    KProcess proc;
     proc << ntpUtility << timeServer;
-    proc.start( K3Process::Block );
-    if( proc.exitStatus() != 0 ){
+    if( proc.execute() != 0 ){
       KMessageBox::error( this, i18n("Unable to contact time server: %1.", timeServer) );
       setDateTimeAuto->setChecked( false );
     }
@@ -332,7 +324,7 @@ void Dtime::save()
   }
   else {
     // User time setting
-    K3Process c_proc;
+    KProcess c_proc;
 
   // BSD systems reverse year compared to Susv3
 #if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
@@ -350,8 +342,7 @@ void Dtime::save()
     kDebug() << "Set date " << BufS << endl;
 
     c_proc << "date" << BufS;
-    c_proc.start( K3Process::Block );
-    int result = c_proc.exitStatus();
+    int result = c_proc.execute();
     if (result != 0
 #if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
   	  && result != 2	// can only set local date, which is okay
@@ -362,9 +353,9 @@ void Dtime::save()
     }
 
     // try to set hardware clock. We do not care if it fails
-    K3Process hwc_proc;
+    KProcess hwc_proc;
     hwc_proc << "hwclock" << "--systohc";
-    hwc_proc.start(K3Process::Block);
+    hwc_proc.execute();
   }
 
   // restart time

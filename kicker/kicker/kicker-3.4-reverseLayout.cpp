@@ -8,7 +8,7 @@
 #include <kcmdlineargs.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <kstandarddirs.h>
 #include <ktemporaryfile.h>
 
@@ -146,8 +146,8 @@ int main(int argc, char** argv)
         upd.flush();
 
         // Run kconf_update on the childpanel config files.
-        K3Process kconf_update;
+        KProcess kconf_update;
         kconf_update << KStandardDirs::findExe("kconf_update") << tempFile.fileName();
-        kconf_update.start(K3Process::Block);
+        kconf_update.execute();
     }
 }

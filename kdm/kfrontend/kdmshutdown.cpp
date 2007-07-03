@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <kdialog.h>
 #include <klocale.h>
-#include <k3procio.h>
+#include <kprocess.h>
 #include <kseparator.h>
 #include <kstandarddirs.h>
 #include <KStandardGuiItem>
@@ -331,13 +331,12 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 static int
 getDate( const char *str )
 {
-	K3ProcIO prc;
+	KProcess prc;
+	prc.setOutputChannelMode( KProcess::OnlyStdoutChannel );
 	prc << "/bin/date" << "+%s" << "-d" << str;
-	prc.start( K3Process::Block, false );
-	QString dstr;
-	if (prc.readln( dstr, false, 0 ) < 0)
+	if (prc.execute())
 		return -1;
-	return dstr.toInt();
+	return prc.readAll().simplified().toInt();
 }
 
 void

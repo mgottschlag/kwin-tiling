@@ -39,7 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <k3process.h>
+//#include <kprocess.h>
 #include <kmenu.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
@@ -809,10 +809,10 @@ void KMiniPager::showPager()
         QString strAppPath(locate("exe", "kpager"));
         if (!strAppPath.isEmpty())
         {
-            K3Process process;
+            KProcess process;
             process << strAppPath;
             process << "--hidden";
-            process.start(K3Process::DontCare);
+            process.startDetached();
         }
     }
 #endif
