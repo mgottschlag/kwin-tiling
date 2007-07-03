@@ -32,9 +32,18 @@
 KRandRApp::KRandRApp()
 {
 	m_display = new RandRDisplay();
-	m_widget = new RandRConfig(0, m_display);
-	m_widget->load();
-	m_tray = new KRandRSystemTray(m_display, m_widget);
+	m_widget = 0;
+#ifdef HAS_RANDR_1_2
+	if (RandR::has_1_2)
+	{
+		m_widget = new RandRConfig(0, m_display);
+		m_widget->load();
+		m_tray = new KRandRSystemTray(m_display, m_widget);
+	}
+	else
+#endif
+		m_tray = new KRandRSystemTray(m_display, 0L);
+
 	m_tray->show();
 	m_tray->setObjectName("RANDRTray");
 
