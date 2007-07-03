@@ -23,6 +23,8 @@
 #include <QFont>
 #include "randroutput.h"
 
+#ifdef HAS_RANDR_1_2
+
 OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
 : QGraphicsRectItem(output->rect())
 {
@@ -43,3 +45,5 @@ OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
 OutputGraphicsItem::~OutputGraphicsItem()
 {
 }
+
+#endif
