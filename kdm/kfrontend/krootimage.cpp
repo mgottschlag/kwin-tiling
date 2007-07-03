@@ -42,7 +42,7 @@ static const char version[] = "v2.0";
 
 MyApplication::MyApplication( const char *conf, int argc, char **argv )
 	: QApplication( argc, argv )
-	, renderer(0, KSharedConfig::openConfig(QFile::decodeName(conf)))
+	, renderer( 0, KSharedConfig::openConfig( QFile::decodeName( conf ) ), true )
 {
 	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
 	connect( &renderer, SIGNAL(imageDone( int )), this, SLOT(renderDone()) );

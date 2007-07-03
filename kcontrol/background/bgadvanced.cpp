@@ -67,7 +67,8 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
                                    QWidget *parent,
                                    bool _kdmMode)
     : KDialog( parent ),
-      r(_r)
+      r(_r),
+      m_kdmMode(_kdmMode)
 {
    setObjectName( "BGAdvancedDialog" );
    setModal( true );
@@ -255,7 +256,7 @@ void BGAdvancedDialog::addProgram(const QString &name)
 {
    removeProgram(name);
 
-   KBackgroundProgram prog(name);
+   KBackgroundProgram prog(m_kdmMode, name);
    if (prog.command().isEmpty() || (prog.isGlobal() && !prog.isAvailable()))
       return;
 
@@ -280,7 +281,7 @@ void BGAdvancedDialog::selectProgram(const QString &name)
 
 void BGAdvancedDialog::slotAdd()
 {
-   KProgramEditDialog dlg;
+   KProgramEditDialog dlg(m_kdmMode);
    dlg.exec();
    if (dlg.result() == QDialog::Accepted)
    {
@@ -295,7 +296,7 @@ void BGAdvancedDialog::slotRemove()
    if (m_selectedProgram.isEmpty())
       return;
 
-   KBackgroundProgram prog(m_selectedProgram);
+   KBackgroundProgram prog(m_kdmMode, m_selectedProgram);
    if (prog.isGlobal())
    {
       KMessageBox::sorry(this,
@@ -324,14 +325,14 @@ void BGAdvancedDialog::slotModify()
    if (m_selectedProgram.isEmpty())
       return;
 
-   KProgramEditDialog dlg(m_selectedProgram);
+   KProgramEditDialog dlg(m_kdmMode, m_selectedProgram);
    dlg.exec();
    if (dlg.result() == QDialog::Accepted)
    {
       QString program = dlg.program();
       if (program != m_selectedProgram)
       {
-         KBackgroundProgram prog(m_selectedProgram);
+         KBackgroundProgram prog(m_kdmMode, m_selectedProgram);
          prog.remove();
 	 removeProgram(m_selectedProgram);
       }
@@ -387,8 +388,9 @@ void BGAdvancedDialog::slotEnableProgram(bool b)
 
 /**** KProgramEditDialog ****/
 
-KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, char *name)
-    : KDialog( parent )
+KProgramEditDialog::KProgramEditDialog(bool kdmMode, const QString &program, QWidget *parent, char *name)
+    : KDialog( parent ),
+      m_kdmMode( kdmMode )
 {
     setObjectName( name );
     setModal( true );
@@ -446,7 +448,7 @@ KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, 
 
     m_Program = program;
     if (m_Program.isEmpty()) {
-	KBackgroundProgram prog(i18n("New Command"));
+	KBackgroundProgram prog(m_kdmMode, i18n("New Command"));
 	int i = 1;
 	while (!prog.command().isEmpty())
 	    prog.load(i18n("New Command <%1>", i++));
@@ -458,7 +460,7 @@ KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, 
 
     // Fill in the fields
     m_NameEdit->setText(m_Program);
-    KBackgroundProgram prog(m_Program);
+    KBackgroundProgram prog(m_kdmMode, m_Program);
     m_CommentEdit->setText(prog.comment());
     m_ExecEdit->setText(prog.executable());
     m_CommandEdit->setText(prog.command());
@@ -481,7 +483,7 @@ void KProgramEditDialog::accept()
 	return;
     }
 
-    KBackgroundProgram prog(s);
+    KBackgroundProgram prog(m_kdmMode, s);
     if ((s != m_Program) && !prog.command().isEmpty()) {
 	int ret = KMessageBox::warningContinueCancel(this,
 	    i18n("There is already a program with the name `%1'.\n"

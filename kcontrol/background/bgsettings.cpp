@@ -58,10 +58,11 @@ static int BGHash(const QString &key)
 /**** KBackgroundPattern ****/
 
 
-KBackgroundPattern::KBackgroundPattern(const QString &name)
+KBackgroundPattern::KBackgroundPattern(bool _kdmMode, const QString &name)
 {
     dirty = false;
     hashdirty = true;
+    m_kdmMode = _kdmMode;
 
     m_pDirs = KGlobal::dirs();
     m_pDirs->addResourceType("dtop_pattern", "data", "kdesktop/patterns");
@@ -139,7 +140,7 @@ void KBackgroundPattern::readSettings()
 
     const KConfigGroup group = m_pConfig->group("KDE Desktop Pattern");
 
-    m_Pattern = group.readPathEntry("File");
+    m_Pattern = m_kdmMode ? group.readEntry("File") : group.readPathEntry("File");
     m_Comment = group.readEntry("Comment");
     if (m_Comment.isEmpty())
        m_Comment = m_File.mid(m_File.lastIndexOf('/')+1);
@@ -157,7 +158,10 @@ void KBackgroundPattern::writeSettings()
         return; // better safe than sorry
 
     KConfigGroup group = m_pConfig->group("KDE Desktop Pattern");
-    group.writePathEntry("File", m_Pattern);
+    if (m_kdmMode)
+        group.writeEntry("File", m_Pattern);
+    else
+        group.writePathEntry("File", m_Pattern);
     group.writeEntry("Comment", m_Comment);
     m_pConfig->sync();
     dirty = false;
@@ -224,10 +228,11 @@ QStringList KBackgroundPattern::list()
 /**** KBackgroundProgram ****/
 
 
-KBackgroundProgram::KBackgroundProgram(const QString &name)
+KBackgroundProgram::KBackgroundProgram(bool _kdmMode, const QString &name)
 {
     dirty = false;
     hashdirty = true;
+    m_kdmMode = _kdmMode;
 
     m_pDirs = KGlobal::dirs();
     m_pDirs->addResourceType("dtop_program", "data", "kdesktop/programs");
@@ -340,9 +345,15 @@ void KBackgroundProgram::readSettings()
 
     const KConfigGroup group = m_pConfig->group("KDE Desktop Program");
     m_Comment = group.readEntry("Comment");
-    m_Executable = group.readPathEntry("Executable");
-    m_Command = group.readPathEntry("Command");
-    m_PreviewCommand = group.readPathEntry("PreviewCommand", m_Command);
+    if (m_kdmMode) {
+        m_Executable = group.readEntry("Executable");
+        m_Command = group.readEntry("Command");
+        m_PreviewCommand = group.readEntry("PreviewCommand", m_Command);
+    } else {
+        m_Executable = group.readPathEntry("Executable");
+        m_Command = group.readPathEntry("Command");
+        m_PreviewCommand = group.readPathEntry("PreviewCommand", m_Command);
+    }
     m_Refresh = group.readEntry("Refresh", 300);
 }
 
@@ -359,9 +370,15 @@ void KBackgroundProgram::writeSettings()
 
     KConfigGroup group = m_pConfig->group("KDE Desktop Program");
     group.writeEntry("Comment", m_Comment);
-    group.writePathEntry("Executable", m_Executable);
-    group.writePathEntry("Command", m_Command);
-    group.writeEntry("PreviewCommand", m_PreviewCommand);
+    if (m_kdmMode) {
+        group.writeEntry("Executable", m_Executable);
+        group.writeEntry("Command", m_Command);
+        group.writeEntry("PreviewCommand", m_PreviewCommand);
+    } else {
+        group.writePathEntry("Executable", m_Executable);
+        group.writePathEntry("Command", m_Command);
+        group.writePathEntry("PreviewCommand", m_PreviewCommand);
+    }
     group.writeEntry("Refresh", m_Refresh);
     m_pConfig->sync();
     dirty = false;
@@ -434,15 +451,16 @@ QStringList KBackgroundProgram::list()
 /**** KBackgroundSettings ****/
 
 
-KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config)
-    : KBackgroundPattern(),
-      KBackgroundProgram()
+KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config, bool _kdmMode)
+    : KBackgroundPattern(_kdmMode),
+      KBackgroundProgram(_kdmMode)
 {
     dirty = false; hashdirty = true;
 	m_bDrawBackgroundPerScreen = drawBackgroundPerScreen;
     m_Desk = desk;
     m_Screen = screen;
     m_bEnabled = true;
+    m_kdmMode = _kdmMode;
 
     // Default values.
     defColorA = _defColorA;
@@ -757,11 +775,11 @@ void KBackgroundSettings::readSettings(bool reparse)
     m_ColorA = cg.readEntry("Color1", defColorA);
     m_ColorB = cg.readEntry("Color2", defColorB);
 
-    QString s = cg.readPathEntry("Pattern");
+    QString s = m_kdmMode ? cg.readEntry("Pattern") : cg.readPathEntry("Pattern");
     if (!s.isEmpty())
         KBackgroundPattern::load(s);
 
-    s = cg.readPathEntry("Program");
+    s = m_kdmMode ? cg.readEntry("Program") : cg.readPathEntry("Program");
     if (!s.isEmpty())
         KBackgroundProgram::load(s);
 
@@ -814,7 +832,7 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
-    m_Wallpaper = cg.readPathEntry("Wallpaper");
+    m_Wallpaper = m_kdmMode ? cg.readEntry("Wallpaper") : cg.readPathEntry("Wallpaper");
     s = cg.readEntry("WallpaperMode", "invalid");
     if (m_WMMap.contains(s)) {
         int mode = m_WMMap[s];
@@ -842,10 +860,8 @@ void KBackgroundSettings::writeSettings()
     KConfigGroup conf(m_pConfig, configGroupName());
     conf.writeEntry("Color1", m_ColorA);
     conf.writeEntry("Color2", m_ColorB);
-    conf.writePathEntry("Pattern", KBackgroundPattern::name());
     conf.writeEntry("Program", KBackgroundProgram::name());
     conf.writeEntry("BackgroundMode", QString(m_BMRevMap[m_BackgroundMode]));
-    conf.writePathEntry("Wallpaper", m_Wallpaper);
     conf.writeEntry("WallpaperMode", QString(m_WMRevMap[m_WallpaperMode]));
     conf.writeEntry("MultiWallpaperMode", QString(m_MMRevMap[m_MultiMode]));
     conf.writeEntry("BlendMode", QString(m_BlMRevMap[m_BlendMode]));
@@ -853,8 +869,15 @@ void KBackgroundSettings::writeSettings()
     conf.writeEntry("ReverseBlending", m_ReverseBlending);
     conf.writeEntry("MinOptimizationDepth", m_MinOptimizationDepth);
     conf.writeEntry("UseSHM", m_bShm);
-
-    conf.writePathEntry("WallpaperList", m_WallpaperList);
+    if (m_kdmMode) {
+        conf.writeEntry("Pattern", KBackgroundPattern::name());
+        conf.writeEntry("Wallpaper", m_Wallpaper);
+        conf.writeEntry("WallpaperList", m_WallpaperList);
+    } else {
+        conf.writePathEntry("Pattern", KBackgroundPattern::name());
+        conf.writePathEntry("Wallpaper", m_Wallpaper);
+        conf.writePathEntry("WallpaperList", m_WallpaperList);
+    }
     conf.writeEntry("ChangeInterval", m_Interval);
     conf.writeEntry("LastChange", m_LastChange);
     conf.deleteEntry("CurrentWallpaper"); // obsolete, remember name

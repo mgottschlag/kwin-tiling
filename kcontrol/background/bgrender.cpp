@@ -47,8 +47,8 @@
 /**** KBackgroundRenderer ****/
 
 
-KBackgroundRenderer::KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config)
-    : KBackgroundSettings(desk, screen, drawBackgroundPerScreen, config)
+KBackgroundRenderer::KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config, bool kdmMode)
+    : KBackgroundSettings(desk, screen, drawBackgroundPerScreen, config, kdmMode)
 {
     m_State = 0;
     m_isBusyCursor = false;
@@ -1007,13 +1007,14 @@ void KBackgroundRenderer::saveCacheFile()
 }
 
 //BEGIN class KVirtualBGRenderer
-KVirtualBGRenderer::KVirtualBGRenderer(int desk, const KSharedConfigPtr &config)
+KVirtualBGRenderer::KVirtualBGRenderer(int desk, const KSharedConfigPtr &config, bool kdmMode)
 {
     m_pPixmap = 0l;
     m_desk = desk;
     m_numRenderers = 0;
     m_scaleX = 1;
     m_scaleY = 1;
+    m_kdmMode = kdmMode;
 
     // The following code is borrowed from KBackgroundSettings::KBackgroundSettings
     if (!config) {
@@ -1206,7 +1207,7 @@ void KVirtualBGRenderer::initRenderers()
     for (unsigned i=0; i<m_numRenderers; ++i)
     {
         int eScreen = m_bCommonScreen ? 0 : i;
-        KBackgroundRenderer * r = new KBackgroundRenderer( m_desk, eScreen, m_bDrawBackgroundPerScreen, m_pConfig );
+        KBackgroundRenderer * r = new KBackgroundRenderer( m_desk, eScreen, m_bDrawBackgroundPerScreen, m_pConfig, m_kdmMode );
         m_renderer.insert( i, r );
         r->setSize(renderSize(i));
         connect( r, SIGNAL(imageDone(int,int)), this, SLOT(screenDone(int,int)) );

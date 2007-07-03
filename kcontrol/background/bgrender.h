@@ -43,7 +43,7 @@ class KBackgroundRenderer:
     Q_OBJECT
 
 public:
-    KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config = KSharedConfigPtr());
+    KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config = KSharedConfigPtr(), bool kdmMode = false);
     ~KBackgroundRenderer();
 
     void load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig=true);
@@ -124,7 +124,7 @@ class KVirtualBGRenderer : public QObject
 {
     Q_OBJECT
 public:
-    KVirtualBGRenderer(int desk, const KSharedConfigPtr &config = KSharedConfigPtr());
+    KVirtualBGRenderer(int desk, const KSharedConfigPtr &config = KSharedConfigPtr(), bool kdmMode = false);
     ~KVirtualBGRenderer();
 
     KBackgroundRenderer * renderer(unsigned screen);
@@ -169,6 +169,7 @@ private:
     unsigned m_numRenderers;
     bool m_bDrawBackgroundPerScreen;
     bool m_bCommonScreen;
+    bool m_kdmMode;
     QSize m_size;
 
     QVector<bool> m_bFinished;

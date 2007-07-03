@@ -83,6 +83,7 @@ private:
    Q3Dict<Q3ListViewItem> m_programItems;
    QString m_selectedProgram;
    int m_oldBackgroundMode;
+   bool m_kdmMode;
 };
 
 /**
@@ -93,7 +94,7 @@ class KProgramEditDialog: public KDialog
     Q_OBJECT
 
 public:
-    KProgramEditDialog(const QString &program=QString(), QWidget *parent=0L,
+    KProgramEditDialog(bool kdmMode, const QString &program=QString(), QWidget *parent=0L,
 	    char *name=0L);
 
     /** The program name is here in case the user changed it */
@@ -109,6 +110,7 @@ private:
     QLineEdit *m_PreviewEdit;
     QSpinBox *m_RefreshEdit;
     KBackgroundProgram *m_Prog;
+    bool m_kdmMode;
 };
 
 

@@ -176,19 +176,19 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _kdmMo
          int eDesk = i>0 ? i-1 : 0;
 
          // Setup the merged-screen renderer
-         KBackgroundRenderer * r = new KBackgroundRenderer(eDesk, 0, false, _config);
+         KBackgroundRenderer * r = new KBackgroundRenderer(eDesk, 0, false, _config, _kdmMode);
          m_renderer[i].insert( 0, r );
          connect( r, SIGNAL(imageDone(int,int)), SLOT(slotPreviewDone(int,int)) );
 
          // Setup the common-screen renderer
-         r = new KBackgroundRenderer(eDesk, 0, true, _config);
+         r = new KBackgroundRenderer(eDesk, 0, true, _config, _kdmMode);
          m_renderer[i].insert( 1, r );
          connect( r, SIGNAL(imageDone(int,int)), SLOT(slotPreviewDone(int,int)) );
 
          // Setup the remaining renderers for each screen
          for (unsigned j=0; j < m_numScreens; ++j )
          {
-            r = new KBackgroundRenderer(eDesk, j, true, _config);
+            r = new KBackgroundRenderer(eDesk, j, true, _config, _kdmMode);
             m_renderer[i].insert( j+2, r );
             connect( r, SIGNAL(imageDone(int,int)), SLOT(slotPreviewDone(int,int)) );
          }
@@ -203,14 +203,14 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _kdmMo
       }
 
       // set up the common desktop renderer
-      KBackgroundRenderer * r = new KBackgroundRenderer(0, 0, false, _config);
+      KBackgroundRenderer * r = new KBackgroundRenderer(0, 0, false, _config, _kdmMode);
       m_renderer[0].insert(0, r);
       connect(r, SIGNAL(imageDone(int,int)), SLOT(slotPreviewDone(int,int)));
 
       // set up all the other desktop renderers
       for (unsigned i = 0; i < m_numDesks; ++i)
       {
-         r = new KBackgroundRenderer(i, 0, false, _config);
+         r = new KBackgroundRenderer(i, 0, false, _config, _kdmMode);
          m_renderer[i+1].insert(0, r);
          connect(r, SIGNAL(imageDone(int,int)), SLOT(slotPreviewDone(int,int)));
       }
@@ -478,7 +478,7 @@ void BGDialog::initUI()
    QStringList::Iterator it;
    for (it=m_patterns.begin(); it != m_patterns.end(); ++it)
    {
-      KBackgroundPattern pat(*it);
+      KBackgroundPattern pat(m_kdmMode, *it);
       if (pat.isAvailable())
          m_comboPattern->addItem(pat.comment());
    }

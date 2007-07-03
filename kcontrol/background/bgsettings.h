@@ -31,7 +31,7 @@ class QString;
 class KBackgroundPattern
 {
 public:
-    KBackgroundPattern(const QString &name=QString());
+    KBackgroundPattern(bool _kdmMode, const QString &name = QString());
     ~KBackgroundPattern();
 
     void copyConfig(const KBackgroundPattern*);
@@ -62,6 +62,7 @@ private:
 
     bool dirty, hashdirty;
     bool m_bReadOnly;
+    bool m_kdmMode;
     int m_Hash;
     QString m_Name, m_Comment;
     QString m_Pattern, m_File;
@@ -89,7 +90,7 @@ private:
 class KBackgroundProgram
 {
 public:
-    KBackgroundProgram(const QString &name=QString());
+    KBackgroundProgram(bool _kdmMode, const QString &name = QString());
     ~KBackgroundProgram();
 
     void copyConfig(const KBackgroundProgram*);
@@ -132,6 +133,7 @@ private:
 
     bool dirty, hashdirty;
     bool m_bReadOnly;
+    bool m_kdmMode;
     int m_Refresh, m_Hash, m_LastChange;
     QString m_Name, m_Command;
     QString m_PreviewCommand, m_Comment;
@@ -155,7 +157,7 @@ public:
      * mode) will be treated as one big display, and the "screen" paramater
      * will be ignored.
      */
-    KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config);
+    KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config, bool _kdmMode);
     ~KBackgroundSettings();
 
     void copyConfig(const KBackgroundSettings*);
@@ -260,6 +262,7 @@ private:
 
     bool dirty;
     bool hashdirty;
+    bool m_kdmMode;
     int m_Screen, m_Desk, m_Hash;
 
     QColor m_ColorA, defColorA;
