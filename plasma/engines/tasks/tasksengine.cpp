@@ -27,3 +27,5 @@ TasksEngine::TasksEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)
 {
 }
+
+#include "tasksengine.moc"

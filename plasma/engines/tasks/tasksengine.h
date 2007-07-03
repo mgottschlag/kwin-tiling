@@ -34,7 +34,6 @@ class TasksEngine : public Plasma::DataEngine
 
     public:
 		TasksEngine( QObject* parent, const QStringList& args);
-        ~TasksEngine();
 };
 
 K_EXPORT_PLASMA_DATAENGINE(tasks, TasksEngine)
