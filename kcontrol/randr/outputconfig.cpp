@@ -17,19 +17,84 @@
  */
 
 #include "outputconfig.h"
+#include "outputgraphicsitem.h"
 #include "randroutput.h"
 #ifdef HAS_RANDR_1_2
 
-OutputConfig::OutputConfig(QWidget *parent, RandROutput *output)
+OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item)
 : QWidget(parent)
 {
 	m_output = output;
 	Q_ASSERT(output);
+
+	m_item = item;
+	Q_ASSERT(item);
+
 	setupUi(this);
+
+	load();
+
+	connect(m_output, SIGNAL(outputChanged(RROutput, int)), this, SLOT(load()));
 }
 
 OutputConfig::~OutputConfig()
 {
+}
+
+void OutputConfig::load()
+{
+
+	kDebug() << "Output Load......" << endl;
+	setEnabled( m_output->isConnected() );
+	activeCheck->setChecked(m_output->isActive());
+
+	sizeCombo->clear();
+	refreshCombo->clear();
+	orientationCombo->clear();
+
+	// load sizes
+	SizeList sizes = m_output->sizes();
+	foreach (QSize s, sizes)
+	{
+		sizeCombo->addItem( QString("%1x%2").arg(s.width()).arg(s.height()) );
+	}
+
+	m_item->setVisible(m_output->isActive());	
+	if (!m_output->isActive())
+		return;
+		
+	int index = sizeCombo->findData( m_output->rect().size() );
+	if (index != -1)
+	{
+		sizeCombo->setCurrentIndex( index );
+		RateList rates = m_output->refreshRates();
+		foreach(float rate, rates)
+		{
+			refreshCombo->addItem(i18n("%1 Hz", QString::number(rate, 'f', 1)), rate);
+		}
+		index = refreshCombo->findData(m_output->refreshRate());
+		if (index != -1)
+			refreshCombo->setCurrentIndex(index);
+	}
+
+	int rotations = m_output->rotations();
+	for(int i =0; i < 6; ++i)
+	{
+		if ((1 << i) & rotations)
+		{
+			orientationCombo->addItem(QIcon(RandR::rotationIcon(1 << i, RandR::Rotate0)), 
+						  RandR::rotationName(1 << i), (1 << i));
+		}
+	}
+	index = orientationCombo->findData(m_output->currentRotation());
+	if (index != -1)
+		orientationCombo->setCurrentIndex( index );
+
+
+	// update the item
+	m_item->setRect( 0, 0, m_output->rect().width(), m_output->rect().height());
+	kDebug() << "      --> setting pos " << m_output->rect().topLeft() << endl;
+	m_item->setPos( m_output->rect().topLeft() );
 }
 
 #include "outputconfig.moc"

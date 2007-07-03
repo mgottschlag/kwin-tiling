@@ -30,12 +30,12 @@ class QAction;
 class QActionGroup;
 class KMenu;
 
-class KRandRSystemTray : public KSystemTrayIcon, public RandRDisplay
+class KRandRSystemTray : public KSystemTrayIcon
 {
 	Q_OBJECT
 
 public:
-	KRandRSystemTray(QWidget* parent = 0);
+	KRandRSystemTray(RandRDisplay *dpy, QWidget* parent = 0);
 
 	void configChanged();
 
@@ -45,7 +45,6 @@ protected Q_SLOTS:
 	void slotOrientationChanged(QAction *action);
 	void slotRefreshRateChanged(QAction *action);
 	void slotPrefs();
-	void slotActivated(QSystemTrayIcon::ActivationReason reason);
 
 	void slotPrepareMenu();
 
@@ -62,6 +61,7 @@ private:
 	KHelpMenu* m_help;
 	QList<KMenu*> m_screenPopups;
 	KMenu* m_menu;
+	RandRDisplay *m_display;
 };
 
 #endif

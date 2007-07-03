@@ -37,6 +37,7 @@ RandROutput::RandROutput(RandRScreen *parent, RROutput id)
 	// initialize members
 	m_rotations = 0;
 	m_connected = false;
+	m_currentCrtc = None;
 	
 	loadSettings();
 }
@@ -65,7 +66,7 @@ void RandROutput::loadSettings()
 	for (int i = 0; i < m_info->ncrtc; ++i)
 		m_possibleCrtcs.append(m_info->crtcs[i]);
 
-	m_currentCrtc = m_info->crtc;
+	setCurrentCrtc(m_info->crtc);
 
 	m_connected = (m_info->connection == RR_Connected);
 
@@ -94,7 +95,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		// update crtc settings
 		if (m_currentCrtc != None)
 			m_screen->crtc(m_currentCrtc)->loadSettings();
-		m_currentCrtc = event->crtc;
+		setCurrentCrtc(event->crtc);
 		if (m_currentCrtc != None)
 			m_screen->crtc(m_currentCrtc)->loadSettings();
 	}
@@ -259,7 +260,7 @@ bool RandROutput::proposedChanged()
 void RandROutput::proposeOriginal()
 {
 	// this is just what we need to do here
-	m_currentCrtc = m_originalCrtc;
+	setCurrentCrtc(m_originalCrtc);
 }
 
 void RandROutput::load(KConfig &config)
@@ -404,16 +405,16 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 			// if the proposed CRTC is None, then we should stop processing here
 			if (m_proposedCrtc == None)
 			{
-				m_currentCrtc = None;
+				setCurrentCrtc(None);
 				return true;
 			}
 
 			// if we were asked to attach to another crtc, try it
 			if (m_screen->crtc(m_proposedCrtc)->addOutput(m_id, r.size()))
-				m_currentCrtc = m_proposedCrtc;
+				setCurrentCrtc(m_proposedCrtc);
 			else
 			{
-				m_currentCrtc = None;
+				setCurrentCrtc(None);
 				return false;
 			}
 		}
@@ -448,7 +449,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 			{
 				if (!confirm || confirm && RandR::confirm(crtc->rect()))
 				{
-					m_currentCrtc = crtc->id();
+					setCurrentCrtc(crtc->id());
 					save(cfg);
 					return true;
 				}
@@ -461,7 +462,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 			}
 			else
 			{
-				m_currentCrtc = None;
+				setCurrentCrtc(None);
 				crtc->removeOutput(m_id);
 				return false;
 			}
@@ -471,6 +472,31 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 	// TODO: check if we can add this output to a CRTC which already has an output 
 	// connection
 	return false;
+}
+
+void RandROutput::setCurrentCrtc(RRCrtc c)
+{
+	RandRCrtc *crtc;
+	if (m_currentCrtc != None)
+	{
+		crtc = m_screen->crtc(m_currentCrtc);
+		disconnect(crtc, SIGNAL(crtcChanged(RRCrtc, int)), 
+			   this, SLOT(slotCrtcChanged(RRCrtc, int)));
+	}
+	if (c == None)
+		return;
+
+	crtc = m_screen->crtc(c);
+	connect(crtc, SIGNAL(crtcChanged(RRCrtc, int)),
+		this, SLOT(slotCrtcChanged(RRCrtc, int)));
+	m_currentCrtc = c;
+}
+
+void RandROutput::slotCrtcChanged(RRCrtc c, int changes)
+{
+	kDebug() << "CRTC changed" << endl;
+	//FIXME select which changes we should notify
+	emit outputChanged(m_id, changes);
 }
 
 #include "randroutput.moc"

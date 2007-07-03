@@ -104,6 +104,9 @@ public slots:
 	void slotChangeRefreshRate(QAction *action);
 	void slotDisable();
 
+private slots:
+	void slotCrtcChanged(RRCrtc c, int changes);
+
 signals:
 	void outputChanged(RROutput o, int changes);
 
@@ -111,9 +114,13 @@ protected:
 	RandRCrtc *findEmptyCrtc();
 	bool tryCrtc(RandRCrtc *crtc, int changes);
 
-private:
-	
+	/**
+	 * The current crtc should never be set directly, it should be added through 
+	 * this function to get the signals connected/disconnected correctly
+	 */
+	void setCurrentCrtc(RRCrtc c);
 
+private:
 	RROutput m_id;
 	XRROutputInfo* m_info;
 	QString m_name;

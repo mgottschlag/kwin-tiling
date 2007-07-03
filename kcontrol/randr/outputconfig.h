@@ -26,16 +26,21 @@
 #ifdef HAS_RANDR_1_2
 
 class RandROutput;
+class OutputGraphicsItem;
 
 class OutputConfig : public QWidget, public Ui::OutputConfigBase 
 {
 	Q_OBJECT
 public:
-	OutputConfig(QWidget *parent, RandROutput *output);
+	OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item);
 	~OutputConfig();
+
+public slots:
+	void load();
 
 private:
 	RandROutput *m_output;
+	OutputGraphicsItem *m_item;
 };
 
 #endif

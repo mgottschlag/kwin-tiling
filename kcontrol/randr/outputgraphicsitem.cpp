@@ -22,7 +22,7 @@
 #include <QBrush>
 #include <QFont>
 #include "randroutput.h"
-
+#include "randr.h"
 #ifdef HAS_RANDR_1_2
 
 OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)

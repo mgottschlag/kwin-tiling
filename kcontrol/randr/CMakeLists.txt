@@ -10,6 +10,10 @@ set(randrinternal_PART_SRCS
    randroutput.cpp
    randrmode.cpp
    randrdisplay.cpp
+   randrconfig.cpp
+   outputconfig.cpp
+   outputgraphicsitem.cpp
+   collapsiblewidget.cpp
    legacyrandrscreen.cpp) 
 
 set(kcm_randr_PART_SRCS 

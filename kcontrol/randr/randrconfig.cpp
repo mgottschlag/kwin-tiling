@@ -78,12 +78,12 @@ void RandRConfig::load()
 	OutputGraphicsItem *o;
 	for (it = outputs.begin(); it != outputs.end(); ++it)
 	{
-		w = m_container->insertWidget(new OutputConfig(0, *it), (*it)->name());
-		m_outputList.append(w);
-		kDebug() << "Rect: " << (*it)->rect() << endl;
-
 		o = new OutputGraphicsItem(*it);
 		m_scene->addItem(o);
+
+		w = m_container->insertWidget(new OutputConfig(0, *it, o), (*it)->name());
+		m_outputList.append(w);
+		kDebug() << "Rect: " << (*it)->rect() << endl;
 	}
 
 

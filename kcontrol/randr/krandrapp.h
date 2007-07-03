@@ -23,6 +23,8 @@
 #include <kuniqueapplication.h>
 
 class KRandRSystemTray;
+class RandRConfig;
+class RandRDisplay;
 
 class KRandRApp : public KUniqueApplication
 {
@@ -35,6 +37,8 @@ public:
 
 private:
 	KRandRSystemTray *m_tray;
+	RandRConfig *m_widget;
+	RandRDisplay *m_display;
 };
 
 #endif

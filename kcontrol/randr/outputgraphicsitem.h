@@ -22,6 +22,9 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsTextItem>
 
+#include "randr.h"
+
+#ifdef HAS_RANDR_1_2
 class RandROutput;
 
 class OutputGraphicsItem : public QGraphicsRectItem
@@ -37,5 +40,6 @@ private:
 
 };
 
+#endif
 #endif
 

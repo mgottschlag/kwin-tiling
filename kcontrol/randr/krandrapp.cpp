@@ -22,6 +22,7 @@
 #include "krandrapp.h"
 #include "krandrapp.moc"
 
+#include "randrconfig.h"
 #include "krandrtray.h"
 
 #include "randrscreen.h"
@@ -29,8 +30,11 @@
 #include <X11/Xlib.h>
 
 KRandRApp::KRandRApp()
-: m_tray(new KRandRSystemTray(0L))
 {
+	m_display = new RandRDisplay();
+	m_widget = new RandRConfig(0, m_display);
+	m_widget->load();
+	m_tray = new KRandRSystemTray(m_display, m_widget);
 	m_tray->show();
 	m_tray->setObjectName("RANDRTray");
 
@@ -43,8 +47,8 @@ KRandRApp::KRandRApp()
 bool KRandRApp::x11EventFilter(XEvent* e)
 {
 
-	if (m_tray->canHandle(e))
-		m_tray->handleEvent(e);
+	if (m_display->canHandle(e))
+		m_display->handleEvent(e);
 
 	return KApplication::x11EventFilter(e);
 }

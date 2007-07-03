@@ -37,27 +37,19 @@
 #include "randroutput.h"
 #include "randrmode.h"
 
-KRandRSystemTray::KRandRSystemTray(QWidget* parent)
-: KSystemTrayIcon(parent)
-, m_popupUp(false)
+KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
+: KSystemTrayIcon("randr", parent)
+, m_popupUp(false), m_display(dpy)
 , m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection()))
 {
 	setIcon(KSystemTrayIcon::loadIcon("randr"));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 	this->setToolTip( i18n("Screen resize & rotate"));
-	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-		this, SLOT(slotActivated(QSystemTrayIcon::ActivationReason)));	
 
 	m_menu = new KMenu(parentWidget());
 	setContextMenu(m_menu);
 
 	connect(m_menu, SIGNAL(aboutToShow()), this, SLOT(slotPrepareMenu()));
-}
-
-void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
-{
-	if (reason == QSystemTrayIcon::Trigger)
-		contextMenu()->show();
 }
 
 void KRandRSystemTray::slotPrepareMenu()
@@ -66,7 +58,7 @@ void KRandRSystemTray::slotPrepareMenu()
 
 	m_menu->clear();
 
-	if (!isValid()) 
+	if (!m_display->isValid()) 
 	{
 		action = m_menu->addAction(i18n("Required X Extension Not Available"));
 		action->setEnabled(false);
@@ -75,10 +67,10 @@ void KRandRSystemTray::slotPrepareMenu()
 	else 
 	{
 		m_screenPopups.clear();
-		for (int s = 0; s < numScreens(); s++) 
+		for (int s = 0; s < m_display->numScreens(); s++) 
 		{
-			setCurrentScreen(s);
-			if (s == screenIndexOfWidget(parentWidget())) 
+			m_display->setCurrentScreen(s);
+			if (s == m_display->screenIndexOfWidget(parentWidget())) 
 			{
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
@@ -87,7 +79,7 @@ void KRandRSystemTray::slotPrepareMenu()
 			{
 #ifdef HAS_RANDR_1_2
 			    if (RandR::has_1_2)
-				    screen(s)->loadSettings();
+				    m_display->screen(s)->loadSettings();
 #endif
 					
                             KMenu* subMenu = new KMenu(i18n("Screen %1", s+1), m_menu );
@@ -99,10 +91,10 @@ void KRandRSystemTray::slotPrepareMenu()
 			}
 		}
 
-		setCurrentScreen(screenIndexOfWidget(parentWidget()));
+		m_display->setCurrentScreen(m_display->screenIndexOfWidget(parentWidget()));
 #ifdef HAS_RANDR_1_2
 		if (RandR::has_1_2)
-			currentScreen()->loadSettings();
+			m_display->currentScreen()->loadSettings();
 #endif
 		populateMenu(m_menu);
 	}
@@ -122,12 +114,12 @@ void KRandRSystemTray::slotPrepareMenu()
 
 void KRandRSystemTray::slotScreenActivated()
 {
-	setCurrentScreen(m_screenPopups.indexOf(static_cast<KMenu*>(sender())));
+	m_display->setCurrentScreen(m_screenPopups.indexOf(static_cast<KMenu*>(sender())));
 }
 
 void KRandRSystemTray::configChanged()
 {
-	refresh();
+	m_display->refresh();
 
 	static bool first = true;
 
@@ -140,7 +132,7 @@ void KRandRSystemTray::configChanged()
 			message = "Screen config changed";
 		else
 #endif
-			message = currentLegacyScreen()->changedMessage();
+			message = m_display->currentLegacyScreen()->changedMessage();
 
 		KRandrPassivePopup::message(
 		i18n("Screen configuration has changed"),
@@ -159,11 +151,11 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 		QAction *action;
 		QActionGroup *actionGroup;
 
-		OutputMap outputs = currentScreen()->outputs();
+		OutputMap outputs = m_display->currentScreen()->outputs();
 		if (outputs.count() <= 0)
 			return;
 
-		RandRScreen *screen = currentScreen();
+		RandRScreen *screen = m_display->currentScreen();
 		Q_ASSERT(screen);
 
 		OutputMap::const_iterator it = outputs.constBegin();
@@ -256,35 +248,36 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 		// if there is more than one output connected, give the option to unify the outputs
 		if (connected != 1)
 		{
-			bool unified = currentScreen()->outputsAreUnified();
-			SizeList sizes = currentScreen()->unifiedSizes();
+			RandRScreen *screen = m_display->currentScreen();
+			bool unified = screen->outputsAreUnified();
+			SizeList sizes = screen->unifiedSizes();
 			if (sizes.count())
 			{
 				// populate unified sizes
 				QSize currentSize;
 				KMenu *unifiedMenu = new KMenu(i18n("Unified Outputs"));
 				if (unified)
-					currentSize = currentScreen()->rect().size();
+					currentSize = screen->rect().size();
 
 				unifiedMenu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
 				actionGroup = populateSizes(unifiedMenu, sizes, currentSize);	
-				connect(actionGroup, SIGNAL(triggered(QAction*)), currentScreen(), SLOT(slotUnifyOutputs(QAction*)));
+				connect(actionGroup, SIGNAL(triggered(QAction*)), screen, SLOT(slotUnifyOutputs(QAction*)));
 
 				// if the outputs are unified, we can rotate the screen on all outputs
 				if (unified)
 				{
-					int rotations = currentScreen()->unifiedRotations();
+					int rotations = screen->unifiedRotations();
 					if (rotations != RandR::Rotate0)
 					{
 						unifiedMenu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
 						int rotation = RandR::Rotate0;
-						if (currentScreen()->outputs().count())
+						if (screen->outputs().count())
 						{
-							OutputMap::const_iterator it = currentScreen()->outputs().begin();	
+							OutputMap::const_iterator it = screen->outputs().begin();	
 							rotation = (*it)->currentRotation();
 						}
 						actionGroup = populateRotations(unifiedMenu, rotations, rotation);
-						connect(actionGroup, SIGNAL(triggered(QAction*)), currentScreen(), SLOT(slotRotateUnified(QAction*)));
+						connect(actionGroup, SIGNAL(triggered(QAction*)), screen, SLOT(slotRotateUnified(QAction*)));
 					}
 				}
 				menu->addSeparator();
@@ -303,7 +296,7 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 
 	menu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
 
-	LegacyRandRScreen *screen = currentLegacyScreen();
+	LegacyRandRScreen *screen = m_display->currentLegacyScreen();
 	Q_ASSERT(screen);
 
 	int numSizes = screen->numSizes();
@@ -453,96 +446,68 @@ QActionGroup *KRandRSystemTray::populateRates(KMenu *menu, RateList rates, float
 
 void KRandRSystemTray::slotResolutionChanged(QAction *action)
 {
-	Q_ASSERT(action);
-#ifdef HAS_RANDR_1_2
-	if (RandR::has_1_2)
-		//TODO: this will become screen size changed, but for now it is ok
-		currentScreenIndex();
-	else
-#endif
+	int index = action->data().toInt();
+	LegacyRandRScreen *screen = m_display->currentLegacyScreen();
+	Q_ASSERT(screen);
+
+	if (screen->currentSize() == index)
+		return;
+
+	screen->proposeSize(index);
+
+	screen->proposeRefreshRate(-1);
+
+	if (screen->applyProposedAndConfirm()) 
 	{
-		int index = action->data().toInt();
-		LegacyRandRScreen *screen = currentLegacyScreen();
-		Q_ASSERT(screen);
-
-		if (screen->currentSize() == index)
-			return;
-
-		screen->proposeSize(index);
-
-		screen->proposeRefreshRate(-1);
-
-		if (screen->applyProposedAndConfirm()) 
-		{
-			KConfig config("krandrrc");
-			if (syncTrayApp(config))
-				screen->save(config);
-		}
+		KConfig config("krandrrc");
+		if (m_display->syncTrayApp(config))
+			screen->save(config);
 	}
 }
 
 void KRandRSystemTray::slotOrientationChanged(QAction *action)
 {
-	Q_ASSERT(action);
-#ifdef HAS_RANDR_1_2
-	if (RandR::has_1_2)
-		//TODO: I guess this won't be used in randr1.2, but later we'll see
-		currentScreenIndex();
-	else
-#endif
+	LegacyRandRScreen *screen = m_display->currentLegacyScreen();
+	Q_ASSERT(screen);
+	
+	int propose = screen->currentRotation();
+	int rotate = action->data().toInt();
+
+	if (rotate & RandR::RotateMask)
+		propose &= RandR::ReflectMask;
+
+	propose ^= rotate;
+
+	if (screen->currentRotation() == propose)
+		return;
+
+	screen->proposeRotation(propose);
+
+	if (screen->applyProposedAndConfirm()) 
 	{
-		LegacyRandRScreen *screen = currentLegacyScreen();
-		Q_ASSERT(screen);
-		
-		int propose = screen->currentRotation();
-		int rotate = action->data().toInt();
-
-		if (rotate & RandR::RotateMask)
-			propose &= RandR::ReflectMask;
-
-		propose ^= rotate;
-
-		if (screen->currentRotation() == propose)
-			return;
-
-		screen->proposeRotation(propose);
-
-		if (screen->applyProposedAndConfirm()) 
-		{
-			KConfig config("krandrrc");
-			if (syncTrayApp(config))
-				screen->save(config);
-		}
+		KConfig config("krandrrc");
+		if (m_display->syncTrayApp(config))
+			screen->save(config);
 	}
 }
 
 void KRandRSystemTray::slotRefreshRateChanged(QAction *action)
 {
-	Q_ASSERT(action);
-#ifdef HAS_RANDR_1_2
-	if (RandR::has_1_2)
-		//TODO: this will probably have to change as refresh rate is different for 
-		//      each crtc
-		currentScreenIndex();
-	else
-#endif
+	LegacyRandRScreen *screen = m_display->currentLegacyScreen();
+	Q_ASSERT(screen);
+	
+	int index = action->data().toInt();
+
+	if (screen->currentRefreshRate() == index)
+		return;
+
+	screen->proposeRefreshRate(index);
+
+	if (screen->applyProposedAndConfirm()) 
 	{
-		LegacyRandRScreen *screen = currentLegacyScreen();
-		Q_ASSERT(screen);
-		
-		int index = action->data().toInt();
-
-		if (screen->currentRefreshRate() == index)
-			return;
-
-		screen->proposeRefreshRate(index);
-
-		if (screen->applyProposedAndConfirm()) 
-		{
-			KConfig config("krandrrc");
-			if (syncTrayApp(config))
-				screen->save(config);
-		}
+		KConfig config("krandrrc");
+		if (m_display->syncTrayApp(config))
+			screen->save(config);
 	}
 }
 
