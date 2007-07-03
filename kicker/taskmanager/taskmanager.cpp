@@ -117,7 +117,7 @@ void TaskManager::configure_startup()
 #ifdef THUMBNAILING_POSSIBLE
 void TaskManager::setXCompositeEnabled(bool state)
 {
-    Display *dpy = QPaintDevice::x11AppDisplay();
+    Display *dpy = QX11Info::display();
 
     if (!state)
     {
@@ -201,7 +201,7 @@ void TaskManager::setXCompositeEnabled(bool state)
     Task::Dict::iterator itEnd = m_tasksByWId.end();
     for (Task::Dict::iterator it = m_tasksByWId.begin(); it != itEnd; ++it)
     {
-        it.data()->updateWindowPixmap();
+        it.value()->updateWindowPixmap();
     }
 }
 #else // THUMBNAILING_POSSIBLE
@@ -663,7 +663,7 @@ Task::~Task()
 #ifdef THUMBNAILING_POSSIBLE
     if (m_windowPixmap)
     {
-        XFreePixmap(QPaintDevice::x11AppDisplay(), m_windowPixmap);
+        XFreePixmap(QX11Info::display(), m_windowPixmap);
     }
 #endif // THUMBNAILING_POSSIBLE
 }
@@ -682,7 +682,7 @@ void Task::findWindowFrameId()
     target_win = _win;
     for (;;)
     {
-        if (!XQueryTree(QPaintDevice::x11AppDisplay(), target_win, &root,
+        if (!XQueryTree(QX11Info::display(), target_win, &root,
                         &parent, &children, &nchildren))
         {
             break;
@@ -1349,7 +1349,7 @@ QPixmap Task::thumbnail(int maxDimension)
         return QPixmap();
     }
 
-    Display *dpy = QPaintDevice::x11AppDisplay();
+    Display *dpy = QX11Info::display();
 
     XWindowAttributes winAttr;
     XGetWindowAttributes(dpy, m_frameId, &winAttr);
@@ -1380,7 +1380,7 @@ QPixmap Task::thumbnail(int maxDimension)
     int thumbnailHeight = (int)(winAttr.height * factor);
 
     QPixmap thumbnail(thumbnailWidth, thumbnailHeight);
-    thumbnail.fill(QApplication::palette().active().background());
+    thumbnail.fill(QApplication::palette().color(QPalette::Active,QPalette::Background));
 
 #if 0 // QImage::smoothScale() scaling
     QPixmap full(winAttr.width, winAttr.height);
@@ -1413,7 +1413,7 @@ QPixmap Task::thumbnail(int maxDimension)
     XRenderSetPictureTransform(dpy, picture, &transformation);
     XRenderSetPictureFilter(dpy, picture, FilterBest, 0, 0);
 
-    XRenderComposite(QPaintDevice::x11AppDisplay(),
+    XRenderComposite(QX11Info::display(),
                      PictOpOver, // we're filtering, alpha values are probable
                      picture, // src
                      None, // mask
@@ -1443,7 +1443,7 @@ void Task::updateWindowPixmap()
         return;
     }
 
-    Display *dpy = QPaintDevice::x11AppDisplay();
+    Display *dpy = QX11Info::display();
 
     if (m_windowPixmap)
     {
