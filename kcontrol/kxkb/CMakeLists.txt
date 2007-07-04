@@ -116,7 +116,6 @@ endif(BUILD_KICKER)
 ########### install files ###############
 
 install( FILES keyboard.desktop keyboard_layout.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-install( FILES kxkb.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
