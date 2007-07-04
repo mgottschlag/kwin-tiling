@@ -26,7 +26,7 @@
 #include <QtCore/QObject>
 
 #include <solid/control/singletondefs.h>
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 #include <solid/control/bluetoothinterface.h>
 #include <solid/control/bluetoothinputdevice.h>
@@ -55,7 +55,7 @@ class BluetoothManagerPrivate;
  * A bluetooth manager allow to query the underlying platform to discover the
  * available bluetooth interfaces.
  */
-class SOLID_EXPORT BluetoothManager : public QObject
+class SOLIDCONTROL_EXPORT BluetoothManager : public QObject
 {
     Q_OBJECT
     SOLID_SINGLETON(BluetoothManager)

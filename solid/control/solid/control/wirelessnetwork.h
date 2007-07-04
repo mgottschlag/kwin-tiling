@@ -36,7 +36,7 @@ namespace Control
     /**
      * This type of networks is used by wifi network interfaces.
      */
-    class SOLID_EXPORT WirelessNetwork : public Network
+    class SOLIDCONTROL_EXPORT WirelessNetwork : public Network
     {
         Q_OBJECT
         Q_ENUMS(OperationMode DeviceInterface)

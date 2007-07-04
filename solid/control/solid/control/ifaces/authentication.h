@@ -24,7 +24,7 @@
 #include <QMap>
 #include <QString>
 
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 namespace Solid
 {
@@ -39,7 +39,7 @@ namespace Ifaces
      * Specifies a backend specific validator class to validate authentication
      * Can be used for example to authenticate user input as they type
      */
-    class SOLIDIFACES_EXPORT AuthenticationValidator
+    class SOLIDCONTROLIFACES_EXPORT AuthenticationValidator
     {
         public:
             virtual ~AuthenticationValidator();

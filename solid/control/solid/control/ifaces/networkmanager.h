@@ -21,7 +21,7 @@
 #define SOLID_IFACES_NETWORKMANAGER
 
 #include <QObject>
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 namespace Solid
 {
@@ -37,7 +37,7 @@ namespace Ifaces
      * available network interfaces and reachable network. It has also the
      * responsibility to notify when a network interface or a network appear or disappear.
      */
-    class SOLIDIFACES_EXPORT NetworkManager : public QObject
+    class SOLIDCONTROLIFACES_EXPORT NetworkManager : public QObject
     {
         Q_OBJECT
     public:

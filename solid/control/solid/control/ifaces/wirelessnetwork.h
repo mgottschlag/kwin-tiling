@@ -20,7 +20,7 @@
 #ifndef SOLID_IFACES_WIRELESSNETWORK_H
 #define SOLID_IFACES_WIRELESSNETWORK_H
 
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 #include <QStringList>
 
@@ -40,7 +40,7 @@ namespace Ifaces
     /**
      * This type of networks is used by wifi network interfaces.
      */
-    class SOLIDIFACES_EXPORT WirelessNetwork : virtual public Network
+    class SOLIDCONTROLIFACES_EXPORT WirelessNetwork : virtual public Network
     {
     public:
         /**

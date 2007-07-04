@@ -70,6 +70,11 @@ Solid::Control::BluetoothRemoteDevice &Solid::Control::BluetoothRemoteDevice::op
     return *this;
 }
 
+bool Solid::Control::BluetoothRemoteDevice::operator==(const BluetoothRemoteDevice  & other) const
+{
+	return ubi() == other.ubi();
+}
+
 QString Solid::Control::BluetoothRemoteDevice::ubi() const
 {
     Q_D(const BluetoothRemoteDevice);
@@ -207,6 +212,11 @@ void Solid::Control::BluetoothRemoteDevice::removeBonding()
     Q_D(const BluetoothRemoteDevice);
     SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), removeBonding());
 }
+void Solid::Control::BluetoothRemoteDevice::findServices(const QString &filter)
+{
+    Q_D(BluetoothRemoteDevice);
+    SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), findServices(filter));
+}
 
 void Solid::Control::BluetoothRemoteDevicePrivate::setBackendObject(QObject *object)
 {
@@ -233,7 +243,12 @@ void Solid::Control::BluetoothRemoteDevicePrivate::setBackendObject(QObject *obj
                          parent(), SIGNAL(bondingCreated()));
         QObject::connect(object, SIGNAL(bondingRemoved()),
                          parent(), SIGNAL(bondingRemoved()));
-
+        QObject::connect(object, SIGNAL(serviceDiscoveryStarted(const QString&)),
+			 parent(), SIGNAL(serviceDiscoveryStarted(const QString&)));
+        QObject::connect(object, SIGNAL(remoteServiceFound(const QString &, const Solid::Control::BluetoothServiceRecord &)),
+			 parent(), SIGNAL(remoteServiceFound(const QString &, const Solid::Control::BluetoothServiceRecord &)));
+	QObject::connect(object, SIGNAL(serviceDiscoveryFinished(const QString&)),
+			 parent(), SIGNAL(serviceDiscoveryFinished(const QString&)));
     }
 }
 

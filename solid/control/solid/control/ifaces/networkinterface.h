@@ -21,7 +21,7 @@
 #define SOLID_IFACES_NETWORKINTERFACE_H
 
 #include <QList>
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 #include <solid/control/networkinterface.h>
 
@@ -39,7 +39,7 @@ namespace Ifaces
      * For non network specific hardware details,
      * @see Solid::Control::Ifaces::NetworkHw
      */
-    class SOLIDIFACES_EXPORT NetworkInterface : public QObject
+    class SOLIDCONTROLIFACES_EXPORT NetworkInterface : public QObject
     {
         Q_OBJECT
     public:

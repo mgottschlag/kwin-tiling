@@ -23,7 +23,7 @@
 #define SOLID_IFACES_BLUETOOTHINPUTDEVICE
 
 #include <QObject>
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 namespace Solid
 {
@@ -34,7 +34,7 @@ namespace Ifaces
 /**
  * A BluetoothInputDevice object allows to manage the connection of a bluetooth input device.
  */
-class SOLIDIFACES_EXPORT BluetoothInputDevice : public QObject
+class SOLIDCONTROLIFACES_EXPORT BluetoothInputDevice : public QObject
 {
     Q_OBJECT
 public:

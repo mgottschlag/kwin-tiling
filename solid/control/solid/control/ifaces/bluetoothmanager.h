@@ -23,7 +23,7 @@
 #define SOLID_IFACES_BLUETOOTHMANAGER
 
 #include <QObject>
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 class KJob;
 
@@ -40,7 +40,7 @@ namespace Ifaces
  * A bluetooth manager allow to query the underlying platform to discover the
  * available bluetooth interfaces.
  */
-class SOLIDIFACES_EXPORT BluetoothManager : public QObject
+class SOLIDCONTROLIFACES_EXPORT BluetoothManager : public QObject
 {
     Q_OBJECT
 public:

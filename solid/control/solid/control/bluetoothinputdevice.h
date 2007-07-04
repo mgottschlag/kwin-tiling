@@ -24,6 +24,8 @@
 
 #include <QtCore/QObject>
 
+#include <solid/control/solid_control_export.h>
+
 namespace Solid
 {
 namespace Control
@@ -33,7 +35,7 @@ class BluetoothInputDevicePrivate;
 /**
  * Represents a bluetooth remote device as seen by the bluetoothing subsystem.
  */
-class SOLID_EXPORT BluetoothInputDevice : public QObject
+class SOLIDCONTROL_EXPORT BluetoothInputDevice : public QObject
 {
     Q_OBJECT
 

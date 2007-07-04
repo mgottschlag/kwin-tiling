@@ -25,7 +25,7 @@
 #include <QtCore/QStringList>
 #include <QtNetwork/QNetworkAddressEntry>
 
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 namespace Solid
 {
@@ -38,7 +38,7 @@ namespace Control
     /**
      * This interface represents a generic Internet Protocol (IP) network which we may be connected to.
      */
-    class SOLID_EXPORT Network : public QObject
+    class SOLIDCONTROL_EXPORT Network : public QObject
     {
         Q_OBJECT
         Q_DECLARE_PRIVATE(Network)

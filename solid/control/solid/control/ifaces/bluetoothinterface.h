@@ -23,7 +23,7 @@
 #define SOLID_IFACES_BLUETOOTHINTERFACE_H
 
 #include <QList>
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 #include <solid/control/bluetoothinterface.h>
 #include <solid/control/ifaces/bluetoothremotedevice.h>
@@ -39,7 +39,7 @@ namespace Ifaces
 /**
  * Represents a bluetooth interface as seen by the bluetooth subsystem.
  */
-class SOLIDIFACES_EXPORT BluetoothInterface : public QObject
+class SOLIDCONTROLIFACES_EXPORT BluetoothInterface : public QObject
 {
     Q_OBJECT
 public:
@@ -208,7 +208,7 @@ public:
     virtual QStringList listRemoteDevices() const = 0;
 
     /**
-     * List the Universal Bluetooth Identifier (UBI) of all known remote devices since a specifc
+     * List the Universal Bluetooth Identifier (UBI) of all known remote devices since a specific
      * datestamp. Known remote  devices means remote bluetooth which are seen, used or
      * paired/bonded.
      *

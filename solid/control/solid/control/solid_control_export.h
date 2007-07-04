@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef SOLID_EXPORT_H
-#define SOLID_EXPORT_H
+#ifndef SOLID_CONTROL_EXPORT_H
+#define SOLID_CONTROL_EXPORT_H
 
 /* needed for KDE_EXPORT and KDE_IMPORT macros */
 #include <kdemacros.h>
@@ -26,30 +26,30 @@
 /* We use _WIN32/_WIN64 instead of Q_OS_WIN so that this header can be used from C files too */
 #if defined _WIN32 || defined _WIN64
 
-#ifndef SOLID_EXPORT
-# if defined(MAKE_SOLID_LIB)
-   /* We are building this library */ 
-#  define SOLID_EXPORT KDE_EXPORT
+#ifndef SOLIDCONTROL_EXPORT
+# if defined(MAKE_SOLIDCONTROL_LIB)
+   /* We are building this library */
+#  define SOLIDCONTROL_EXPORT KDE_EXPORT
 # else
-   /* We are using this library */ 
-#  define SOLID_EXPORT KDE_IMPORT
+   /* We are using this library */
+#  define SOLIDCONTROL_EXPORT KDE_IMPORT
 # endif
 #endif
 
-#ifndef SOLIDIFACES_EXPORT
-# if defined(MAKE_SOLIDIFACES_LIB)
+#ifndef SOLIDCONTROLIFACES_EXPORT
+# if defined(MAKE_SOLIDCONTROLIFACES_LIB)
    /* We are building this library */
-#  define SOLIDIFACES_EXPORT KDE_EXPORT
+#  define SOLIDCONTROLIFACES_EXPORT KDE_EXPORT
 # else
    /* We are using this library */
-#  define SOLIDIFACES_EXPORT KDE_IMPORT
+#  define SOLIDCONTROLIFACES_EXPORT KDE_IMPORT
 # endif
 #endif
 
 #else /* UNIX */
 
-#define SOLID_EXPORT KDE_EXPORT
-#define SOLIDIFACES_EXPORT KDE_EXPORT
+#define SOLIDCONTROL_EXPORT KDE_EXPORT
+#define SOLIDCONTROLIFACES_EXPORT KDE_EXPORT
 
 #endif
 

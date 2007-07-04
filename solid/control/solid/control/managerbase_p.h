@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QString>
 
-#include "solid/solid_export.h"
+#include "solid/control/solid_control_export.h"
 
 namespace Solid
 {
@@ -36,7 +36,7 @@ namespace Control
         virtual ~ManagerBasePrivate();
         void loadBackend(const QString &description, const char *serviceName, const char *backendClassName);
 
-        SOLID_EXPORT static void _k_forcePreloadedBackend(const char *backendClassName, QObject *backend);
+        SOLIDCONTROL_EXPORT static void _k_forcePreloadedBackend(const char *backendClassName, QObject *backend);
 
         QObject *managerBackend() const;
         QString errorText() const;

@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QStringList>
 
-#include <solid/solid_export.h>
+#include <solid/control/solid_control_export.h>
 
 #include <solid/control/powermanager.h>
 
@@ -42,7 +42,7 @@ namespace Ifaces
      * A power manager allows to control or query the power management features
      * or the underlying platform.
      */
-    class SOLIDIFACES_EXPORT PowerManager : public QObject
+    class SOLIDCONTROLIFACES_EXPORT PowerManager : public QObject
     {
         Q_OBJECT
 

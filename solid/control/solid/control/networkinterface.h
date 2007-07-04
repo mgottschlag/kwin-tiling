@@ -36,7 +36,7 @@ namespace Control
      * For non-networking specific hardware details,
      * @see Solid::Control::NetworkHw
      */
-    class SOLID_EXPORT NetworkInterface : public QObject
+    class SOLIDCONTROL_EXPORT NetworkInterface : public QObject
     {
         Q_OBJECT
         Q_ENUMS(ConnectionState Capability Type)
