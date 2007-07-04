@@ -22,7 +22,7 @@
 #define __BLUEZ_SERVICE_PARSER
 
 #include <QThread>
-#include <QMutex>
+#include <QReadWriteLock>
 #include <QQueue>
 #include <QMap>
 #include <QXmlSimpleReader>
@@ -51,20 +51,22 @@ class ServiceParser : public QThread
 {
 	Q_OBJECT
 	public: 
-		ServiceParser(QDBusInterface *device,QObject *parent = 0);
+		ServiceParser(const QString &adapter,QObject *parent = 0);
 		~ServiceParser(){};
 	public slots:
 		void run();
+		void finish();
 		void findServices(const QString &ubi,const QString &filter ="");
 	signals:
 		void serviceDiscoveryStarted(const QString &ubi);
 		void remoteServiceFound(const QString &ubi, const Solid::Control::BluetoothServiceRecord &service);
 		void serviceDiscoveryFinished(const QString &ubi);
 	private:
-		QMutex queueMutex;
-		QDBusInterface *device;
+		bool finished;
+		QReadWriteLock queueMutex;		
 		QQueue<QString> requestQueue;
 		QMap<QString,QString> filters;
+		QString m_adapter;
 };
 
 #endif

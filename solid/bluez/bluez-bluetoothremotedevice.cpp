@@ -41,7 +41,7 @@ BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath
 	device = new QDBusInterface("org.bluez", m_adapter,
 				    "org.bluez.Adapter", QDBusConnection::systemBus());
 	
-	serviceParser = new ServiceParser(device,this);
+	serviceParser = new ServiceParser(m_adapter,this);
 	QObject::connect(serviceParser,SIGNAL(serviceDiscoveryStarted(const QString &)),
 			 this,SIGNAL(serviceDiscoveryStarted(const QString &)));
 	QObject::connect(serviceParser,SIGNAL(remoteServiceFound(const QString &, const Solid::Control::BluetoothServiceRecord &)),
@@ -53,6 +53,9 @@ BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath
 
 BluezBluetoothRemoteDevice::~BluezBluetoothRemoteDevice()
 {
+	serviceParser->finish();
+	serviceParser->wait();
+	serviceParser->deleteLater();
 	delete device;
 }
 

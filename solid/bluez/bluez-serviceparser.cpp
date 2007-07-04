@@ -81,19 +81,22 @@ bool SdpXmlHandler::startDocument()
 	return true;
 }
 
-ServiceParser::ServiceParser(QDBusInterface *device,QObject *parent)
-	: QThread(parent),device(device)
+ServiceParser::ServiceParser(const QString &adapter,QObject *parent)
+	: QThread(parent),finished(false),m_adapter(adapter)
 {	
 }
 void ServiceParser::findServices(const QString &ubi,const QString &filter)
 {
-	queueMutex.lock();
+	queueMutex.lockForWrite();
 	requestQueue << ubi;
 	filters[ubi] = filter;
 	queueMutex.unlock();
 }
 void ServiceParser::run()
 {
+	QDBusInterface device("org.bluez", m_adapter,
+		       "org.bluez.Adapter", QDBusConnection::systemBus());
+	
 	qDBusRegisterMetaType<QListUint>();
 	qRegisterMetaType<Solid::Control::BluetoothServiceRecord>("Solid::Control::BluetoothServiceRecord");
 	
@@ -104,10 +107,10 @@ void ServiceParser::run()
 	xmlReader.setContentHandler(&handler);
 	xmlReader.setErrorHandler(&handler);
 	
-	while(true)
+	while(!finished)
 	{
 		QString ubi;
-		queueMutex.lock();
+		queueMutex.lockForRead();
 		if(!requestQueue.isEmpty())
 		{
 			ubi = requestQueue.dequeue();
@@ -120,15 +123,15 @@ void ServiceParser::run()
 		{	
 			const QString n_ubi = ubi;
 			emit serviceDiscoveryStarted(n_ubi);
-			QDBusReply<QListUint>  reply = device->call("GetRemoteServiceHandles",ubi,filters[ubi]);
+			QDBusReply<QListUint>  reply = device.call("GetRemoteServiceHandles",ubi,filters[ubi]);
 			QListUint args = reply.value();
 			for(int i = 0; i < args.size(); i++)
 			{
-				QDBusReply<QString> record = device->call("GetRemoteServiceRecordAsXML",ubi.split("/").last(),args[i]);
+				QDBusReply<QString> record = device.call("GetRemoteServiceRecordAsXML",ubi.split("/").last(),args[i]);
 				input.setData(record.value());
 				xmlReader.parse(input);
 				const Solid::Control::BluetoothServiceRecord n_record = handler.record;
-				kDebug() << "In bluez, for ubi " << n_ubi << " adding " << n_record.name << endl;
+// 				kDebug() << "In bluez, for ubi " << n_ubi << " adding " << n_record.name << endl;
 				emit remoteServiceFound(n_ubi,n_record);
 			}
 			emit serviceDiscoveryFinished(n_ubi);
@@ -136,5 +139,9 @@ void ServiceParser::run()
 	}
 }
 
+void ServiceParser::finish()
+{
+	finished = true;
+}
 #include "bluez-serviceparser.moc"
 
