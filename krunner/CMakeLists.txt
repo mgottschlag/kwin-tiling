@@ -1,4 +1,3 @@
-project(krunner)
 KDE4_NO_ENABLE_FINAL(krunner)
 macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
 

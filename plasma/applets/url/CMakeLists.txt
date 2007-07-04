@@ -1,4 +1,3 @@
-project(plasma-url)
 
 set(url_SRCS
     url.cpp)

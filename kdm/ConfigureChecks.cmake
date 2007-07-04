@@ -8,6 +8,7 @@ check_include_files(termio.h HAVE_TERMIO_H)
 check_include_files(termios.h HAVE_TERMIOS_H)
 
 check_symbol_exists(sysinfo "sys/sysinfo.h" HAVE_SYSINFO)
+check_symbol_exists(systeminfo "sys/systeminfo.h" HAVE_SYS_SYSTEMINFO)
 check_symbol_exists(getdomainname   "unistd.h"    HAVE_GETDOMAINNAME)
 
 check_function_exists(initgroups HAVE_INITGROUPS)

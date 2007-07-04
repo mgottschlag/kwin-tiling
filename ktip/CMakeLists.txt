@@ -1,5 +1,4 @@
 
-project(ktip)
 
 add_subdirectory( pics ) 
 

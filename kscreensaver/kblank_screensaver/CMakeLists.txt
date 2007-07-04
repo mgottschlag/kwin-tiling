@@ -1,5 +1,4 @@
 
-project(kblankscrn)
 include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/kscreensaver/libkscreensaver   )
 
 

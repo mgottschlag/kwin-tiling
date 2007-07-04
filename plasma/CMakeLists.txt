@@ -1,4 +1,3 @@
-project(plasma)
 
 add_subdirectory(animators)
 add_subdirectory(applets)

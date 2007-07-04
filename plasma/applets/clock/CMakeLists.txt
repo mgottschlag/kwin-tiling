@@ -1,4 +1,3 @@
-project(plasma-clock)
 
 set(clock_SRCS
     clock.cpp)

@@ -1,4 +1,3 @@
-project(khotkeys)
 
 
 check_cxx_source_compiles("

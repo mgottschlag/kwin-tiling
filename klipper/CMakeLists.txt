@@ -1,5 +1,4 @@
 
-project(klipper)
 KDE4_NO_ENABLE_FINAL(klipper)
 include_directories(
    ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/libkicker/ )

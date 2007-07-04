@@ -1,5 +1,4 @@
 
-project(kpager)
 
 add_definitions (-DQT3_SUPPORT)
 

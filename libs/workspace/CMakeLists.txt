@@ -1,5 +1,4 @@
 
-project(kworkspacelib)
 
 set(kworkspace_LIB_SRCS dmctl.cpp
                         kworkspace.cpp

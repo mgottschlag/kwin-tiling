@@ -1,5 +1,4 @@
 
-project(kdesktop)
 
 configure_file(config-kdesktop.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdesktop.h)
 

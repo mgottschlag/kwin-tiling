@@ -1,5 +1,4 @@
 
-project(kmenuedit)
 
 add_subdirectory( pixmaps ) 
 
