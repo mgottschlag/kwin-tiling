@@ -23,4 +23,6 @@ endif (X11_Xcomposite_FOUND)
 set_target_properties(taskmanager PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS taskmanager  DESTINATION ${LIB_INSTALL_DIR} )
 
+install( FILES taskmanager.h DESTINATION ${INCLUDE_INSTALL_DIR}/plasma )
+
 

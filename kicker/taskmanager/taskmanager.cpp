@@ -21,6 +21,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
+#include "taskmanager.h"
+
 #include <QApplication>
 #include <QCursor>
 #include <QImage>
@@ -41,8 +43,24 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kwindowsystem.h>
 #include <netwm.h>
 
-#include "taskmanager.h"
-#include "taskmanager.moc"
+#include <config-workspace.h>
+#include <config-X11.h>
+
+#if defined(HAVE_XCOMPOSITE) && \
+    defined(HAVE_XRENDER) && \
+    defined(HAVE_XFIXES)
+#include <X11/Xlib.h>
+#include <X11/extensions/Xcomposite.h>
+#include <X11/extensions/Xfixes.h>
+#include <X11/extensions/Xrender.h>
+#include <fixx11h.h>
+#if XCOMPOSITE_VERSION >= 00200 && \
+    XFIXES_VERSION >= 20000 && \
+    (RENDER_MAJOR > 0 || RENDER_MINOR >= 6)
+#define THUMBNAILING_POSSIBLE
+#endif
+#endif
+
 
 TaskManager* TaskManager::m_self = 0;
 static KStaticDeleter<TaskManager> staticTaskManagerDeleter;
@@ -1526,3 +1544,4 @@ Task::List TaskDrag::decode( const QMimeData* e )
     return tasks;
 }
 
+#include "taskmanager.moc"

@@ -41,23 +41,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kwindowsystem.h>
 #include <netwm.h>
 
-#include <config-workspace.h>
-#include <config-X11.h>
-
-#if defined(HAVE_XCOMPOSITE) && \
-    defined(HAVE_XRENDER) && \
-    defined(HAVE_XFIXES)
-#include <X11/Xlib.h>
-#include <X11/extensions/Xcomposite.h>
-#include <X11/extensions/Xfixes.h>
-#include <X11/extensions/Xrender.h>
-#include <fixx11h.h>
-#if XCOMPOSITE_VERSION >= 00200 && \
-    XFIXES_VERSION >= 20000 && \
-    (RENDER_MAJOR > 0 || RENDER_MINOR >= 6)
-#define THUMBNAILING_POSSIBLE
-#endif
-#endif
 
 class TaskManager;
 
@@ -457,9 +440,8 @@ private:
     QPixmap _thumb;
     QPixmap _grab;
     QRect m_iconGeometry;
-#ifdef THUMBNAILING_POSSIBLE
+
     Pixmap              m_windowPixmap;
-#endif // THUMBNAILING_POSSIBLE
 };
 
 
