@@ -116,3 +116,13 @@
 
 /* Define to 1 if you have the <termios.h> header file. */
 #cmakedefine HAVE_TERMIOS_H 1
+
+/* X binaries */
+#cmakedefine PROGRAM_X "${PROGRAM_X}"
+#cmakedefine PROGRAM_XTERM "${PROGRAM_XTERM}"
+#cmakedefine PROGRAM_XRDB "${PROGRAM_XRDB}"
+
+/* $PATH defaults set by KDM */
+#cmakedefine KDM_DEF_USER_PATH "${KDM_DEF_USER_PATH}"
+#cmakedefine KDM_DEF_SYSTEM_PATH "${KDM_DEF_SYSTEM_PATH}"
+

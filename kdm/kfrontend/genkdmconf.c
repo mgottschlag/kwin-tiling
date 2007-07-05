@@ -2152,7 +2152,7 @@ static FDefs kdmdefs_ge_30[] = {
 { "X-*-Core", "Setup", "", 0 },
 { "X-*-Core", "Startup", "", 0 },
 { "X-*-Core", "Reset", "", 0 },
-{ "X-*-Core", "Session", XBINDIR "/xterm -ls -T", 0 },
+{ "X-*-Core", "Session", PROGRAM_XTERM " -ls -T", 0 },
 };
 
 static int
