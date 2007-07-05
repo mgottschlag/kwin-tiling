@@ -21,7 +21,7 @@ kde4_add_ui3_files(kcm_kthememanager_PART_SRCS kthemedlg.ui )
 kde4_add_plugin(kcm_kthememanager ${kcm_kthememanager_PART_SRCS})
 
 
-target_link_libraries(kcm_kthememanager  ${KDE4_KIO_LIBS} ${KDE4_KDE3SUPPORT_LIBS}  ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTXML_LIBRARY})
+target_link_libraries(kcm_kthememanager   ${KDE4_KDE3SUPPORT_LIBS}  ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTXML_LIBRARY})
 
 install(TARGETS kcm_kthememanager  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
