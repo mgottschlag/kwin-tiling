@@ -13,7 +13,7 @@ kde4_add_ui_files(kcm_smartcard_PART_SRCS smartcardbase.ui nosmartcardbase.ui )
 kde4_add_plugin(kcm_smartcard ${kcm_smartcard_PART_SRCS})
 
 
-target_link_libraries(kcm_smartcard  ${KDE4_KDEUI_LIBS} ksmartcard ${KDE4_KIO_LIBS} )
+target_link_libraries(kcm_smartcard   ksmartcard ${KDE4_KIO_LIBS} )
 
 install(TARGETS kcm_smartcard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

@@ -15,7 +15,7 @@ QT4_ADD_DBUS_INTERFACE(plasma_SRCS ${ksmserver_xml} ksmserver_interface)
 kde4_automoc(${plasma_SRCS})
 kde4_add_executable(plasma-qgv ${plasma_SRCS})
 
-target_link_libraries(plasma-qgv plasma kworkspace ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})
+target_link_libraries(plasma-qgv plasma kworkspace  ${KDE4_KIO_LIBS})
 set_target_properties(plasma-qgv PROPERTIES OUTPUT_NAME plasma)
 
 install(TARGETS plasma-qgv DESTINATION ${BIN_INSTALL_DIR})
