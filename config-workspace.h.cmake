@@ -102,9 +102,6 @@
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #cmakedefine TIME_WITH_SYS_TIME 1
 
-/* Define the file for utmp entries */
-#define UTMP "${UTMP_FILE}"
-
 /* X libraries directory */
 #cmakedefine XLIBDIR "${XLIBDIR}"
 
