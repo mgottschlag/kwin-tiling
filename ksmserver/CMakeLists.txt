@@ -1,6 +1,9 @@
 add_subdirectory( tests )
 
-include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${CMAKE_SOURCE_DIR}/runtime/solid/control )
+include_directories(
+   ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs
+   ${KDEBASE_WORKSPACE_SOURCE_DIR}/solid/control
+)
 
 configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
 
