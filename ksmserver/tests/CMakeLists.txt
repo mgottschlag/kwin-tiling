@@ -1,5 +1,5 @@
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/workspace/libs ${CMAKE_SOURCE_DIR}/runtime/solid/control )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/workspace/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/solid/control/ )
 
 add_definitions (-DQT3_SUPPORT)
 
