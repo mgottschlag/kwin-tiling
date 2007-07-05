@@ -35,11 +35,11 @@ else (PAM_FOUND)
 
 endif (PAM_FOUND)
 
-find_program(PROGRAM_XRDB xrdb)
-GET_FILENAME_COMPONENT(XBINDIR ${PROGRAM_XRDB} PATH)
-GET_FILENAME_COMPONENT(ABSXBINDIR ${XBINDIR} ABSOLUTE)
-GET_FILENAME_COMPONENT(XROOTDIR ${ABSXBINDIR} PATH)
-set(XLIBDIR "${XROOTDIR}/lib/X11")
+find_program(some_x_program X xrdb xterm)
+GET_FILENAME_COMPONENT(proto_xbindir ${some_x_program} PATH)
+GET_FILENAME_COMPONENT(XBINDIR ${proto_xbindir} ABSOLUTE)
+GET_FILENAME_COMPONENT(xrootdir ${XBINDIR} PATH)
+set(XLIBDIR "${xrootdir}/lib/X11")
 
 check_function_exists(getpassphrase HAVE_GETPASSPHRASE)
 check_function_exists(vsyslog HAVE_VSYSLOG)

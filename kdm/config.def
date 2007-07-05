@@ -70,12 +70,12 @@
 #endif
 
 #ifdef _AIX
-# define DEF_SERVER_CMD PROGRAM_X " -T -force"
+# define DEF_SERVER_CMD XBINDIR "/X -T -force"
 #elif defined(__linux__) || defined(__GNU__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
 /* we just assume that any free *nix installation has a recent xfree86/xorg */
-# define DEF_SERVER_CMD PROGRAM_X " -br"
+# define DEF_SERVER_CMD XBINDIR "/X -br"
 #else
-# define DEF_SERVER_CMD PROGRAM_X
+# define DEF_SERVER_CMD XBINDIR "/X"
 #endif
 </code>
 
@@ -1568,7 +1568,7 @@ Description:
 
 Key: Xrdb
 Type: string
-Default: PROGRAM_XRDB
+Default: XBINDIR "/xrdb"
 User: core
 Instance: #*/""
 Merge: xdm
@@ -1639,7 +1639,7 @@ Description:
 
 Key: Session
 Type: string
-Default: PROGRAM_XTERM " -ls -T"
+Default: XBINDIR "/xterm -ls -T"
 #Merge: xdm - incompatible!
 User: core
 # will be overwritten
@@ -1658,7 +1658,7 @@ Description:
 
 Key: FailsafeClient
 Type: string
-Default: PROGRAM_XTERM
+Default: XBINDIR "/xterm"
 User: core
 Instance: #*/""
 Merge: xdm

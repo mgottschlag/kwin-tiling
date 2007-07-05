@@ -166,12 +166,6 @@ check_function_exists(strnlen     HAVE_STRNLEN)
 check_struct_member("struct sockaddr_in" "sin_len" "sys/socket.h;netinet/in.h" HAVE_STRUCT_SOCKADDR_IN_SIN_LEN)
 check_struct_member("struct sockaddr_in6" "sin6_len" "sys/socket.h;netinet/in.h" HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN)
 
-find_program(PROGRAM_X X)
-find_program(PROGRAM_XTERM xterm)
-find_program(PROGRAM_XRDB xrdb)
-
-GET_FILENAME_COMPONENT(XBINDIR ${PROGRAM_XRDB} PATH)
-
 FOREACH(path /usr/local/bin /usr/bin /bin)
 	if (XBINDIR STREQUAL ${path})
 		set(dont_add_xbin 1)
