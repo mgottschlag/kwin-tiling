@@ -2,6 +2,8 @@ include_directories(${CMAKE_SOURCE_DIR}/workspace/libs)
 
 set(soliddevice_engine_SRCS
     soliddeviceengine.cpp
+    devicesignalmapper.cpp
+    devicesignalmapmanager.cpp
 )
 
 kde4_automoc(${soliddevice_engine_SRCS})

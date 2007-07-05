@@ -22,26 +22,11 @@
 #include <QObject>
 #include <QString>
 #include <QList>
-
-#include <solid/devicenotifier.h>
-#include <solid/device.h>
-#include <solid/processor.h>
-#include <solid/block.h>
-#include <solid/storageaccess.h>
-#include <solid/storagedrive.h>
-#include <solid/opticaldrive.h>
-#include <solid/storagevolume.h>
-#include <solid/opticaldisc.h>
-#include <solid/camera.h>
-#include <solid/portablemediaplayer.h>
-#include <solid/networkinterface.h>
-#include <solid/acadapter.h>
-#include <solid/battery.h>
-#include <solid/button.h>
-#include <solid/audiointerface.h>
-#include <solid/dvbinterface.h>
+#include <QMap>
 
 #include "plasma/dataengine.h"
+#include "devicesignalmapmanager.h"
+#include "devicesignalmapper.h"
 
 /**
  * This class evaluates the basic expressions given in the interface.
@@ -50,38 +35,41 @@ class SolidDeviceEngine : public Plasma::DataEngine
 {
     Q_OBJECT
 
-    public:
-		SolidDeviceEngine( QObject* parent, const QStringList& args);
-        ~SolidDeviceEngine();
+public:
+    SolidDeviceEngine( QObject* parent, const QStringList& args);
+    ~SolidDeviceEngine();
 
-    protected:
-        bool sourceRequested(const QString &name);
+protected:
+    bool sourceRequested(const QString &name);
 
-    private:
-		bool populateDeviceData(const QString &name);
-        QStringList devicelist;
-		//setup lists for devicetypes
-		QStringList processorlist;
-		QStringList blocklist;
-		QStringList storageaccesslist;
-		QStringList storagedrivelist;
-		QStringList opticaldrivelist;
-		QStringList storagevolumelist;
-		QStringList opticaldisclist;
-		QStringList cameralist;
-		QStringList portablemediaplayerlist;
-		QStringList networkinterfacelist;
-		QStringList acadapterlist;
-		QStringList batterylist;
-		QStringList buttonlist;
-		QStringList audiointerfacelist;
-		QStringList dvbinterfacelist;
-		QStringList unknownlist;
-		QMap<QString, Solid::Device> devicemap;
+private:
+    bool populateDeviceData(const QString &name);
+    QStringList devicelist;
+    //setup lists for devicetypes
+    QStringList processorlist;
+    QStringList blocklist;
+    QStringList storageaccesslist;
+    QStringList storagedrivelist;
+    QStringList opticaldrivelist;
+    QStringList storagevolumelist;
+    QStringList opticaldisclist;
+    QStringList cameralist;
+    QStringList portablemediaplayerlist;
+    QStringList networkinterfacelist;
+    QStringList acadapterlist;
+    QStringList batterylist;
+    QStringList buttonlist;
+    QStringList audiointerfacelist;
+    QStringList dvbinterfacelist;
+    QStringList unknownlist;
+    
+    QMap<QString, Solid::Device> devicemap;
+    DeviceSignalMapManager *signalmanager;
 
-	private slots:
-		void deviceAdded(const QString &udi);
-		void deviceRemoved(const QString &udi);
+private Q_SLOTS:
+    void deviceAdded(const QString &udi);
+    void deviceRemoved(const QString &udi);
+    void deviceChanged(const QString& udi, const QString &property, QVariant value);
 };
 
 K_EXPORT_PLASMA_DATAENGINE(soliddevice, SolidDeviceEngine)
