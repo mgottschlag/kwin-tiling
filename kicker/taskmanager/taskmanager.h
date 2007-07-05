@@ -56,6 +56,7 @@ class KDE_EXPORT Task: public QObject, public KShared
     Q_OBJECT
     Q_PROPERTY( QString visibleName READ visibleName )
     Q_PROPERTY( QString name READ name )
+    Q_PROPERTY( QString className READ className )
     Q_PROPERTY( QString visibleNameWithState READ visibleNameWithState )
     Q_PROPERTY( QPixmap pixmap READ pixmap )
     Q_PROPERTY( bool maximized READ isMaximized )
