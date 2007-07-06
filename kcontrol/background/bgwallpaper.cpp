@@ -129,7 +129,7 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
    connect(dlg->m_buttonRemove, SIGNAL(clicked()), SLOT(slotRemove()));
    connect(dlg->m_buttonMoveUp, SIGNAL(clicked()), SLOT(slotMoveUp()));
    connect(dlg->m_buttonMoveDown, SIGNAL(clicked()), SLOT(slotMoveDown()));
-   connect(dlg->m_listImages, SIGNAL(clicked ( QListWidgetItem * )), SLOT(slotItemSelected( QListWidgetItem *)));
+   connect(dlg->m_listImages, SIGNAL(itemClicked ( QListWidgetItem * )), SLOT(slotItemSelected( QListWidgetItem *)));
    connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
    dlg->m_buttonRemove->setEnabled( false );
    dlg->m_buttonMoveUp->setEnabled( false );
@@ -159,7 +159,8 @@ void BGMultiWallpaperDialog::slotAdd()
     QStringList mimeTypes = KImageIO::mimeTypes( KImageIO::Reading );
     mimeTypes += "image/svg+xml";
 
-    KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(),
+    QStringList lstWallpaper = KGlobal::dirs()->findDirs("wallpaper", "");
+    KFileDialog fileDialog((lstWallpaper.count()>0) ? lstWallpaper.first() : QString(),
 			   mimeTypes.join( " " ), this);
 
     fileDialog.setCaption(i18n("Select Image"));

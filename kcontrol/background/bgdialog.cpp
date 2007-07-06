@@ -607,11 +607,13 @@ void BGDialog::loadWallpaperFilesList() {
 void BGDialog::setWallpaper(const QString &s)
 {
    KComboBox *comboWallpaper = m_urlWallpaperBox;
+   int i = comboWallpaper->count();
+   if( i==0)
+     return;
    comboWallpaper->blockSignals(true);
 
    if (m_wallpaper.find(s) == m_wallpaper.end())
    {
-      int i = comboWallpaper->count();
       QString imageCaption;
       int slash = s.lastIndexOf('/') + 1;
       int endDot = s.lastIndexOf('.');
