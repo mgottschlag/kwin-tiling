@@ -1,9 +1,5 @@
 /*
  *   Copyright (C) 2007 Menard Alexis <darktears31@gmail.com>
- *
- * This file is part of the KDE libraries
- * Copyright (c) 2001 Hans Petter Bieker <bieker@kde.org>
- *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
