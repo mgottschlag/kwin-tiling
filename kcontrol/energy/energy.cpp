@@ -232,7 +232,6 @@ KEnergy::KEnergy(QWidget *parent, const QStringList &args)
        setButtons( KCModule::Help );
 
     m_pConfig = new KConfig("kcmdisplayrc", KConfig::NoGlobals);
-    m_pConfig->setGroup("DisplayEnergy");
 
     load();
 }
@@ -281,10 +280,11 @@ void KEnergy::defaults()
 
 void KEnergy::readSettings()
 {
-    m_bEnabled = m_pConfig->readEntry("displayEnergySaving", false);
-    m_Standby = m_pConfig->readEntry("displayStandby", DFLT_STANDBY);
-    m_Suspend = m_pConfig->readEntry("displaySuspend", DFLT_SUSPEND);
-    m_Off = m_pConfig->readEntry("displayPowerOff", DFLT_OFF);
+    KConfigGroup group = m_pConfig->group("DisplayEnergy");
+    m_bEnabled = group.readEntry("displayEnergySaving", false);
+    m_Standby = group.readEntry("displayStandby", DFLT_STANDBY);
+    m_Suspend = group.readEntry("displaySuspend", DFLT_SUSPEND);
+    m_Off = group.readEntry("displayPowerOff", DFLT_OFF);
 
     m_StandbyDesired = m_Standby;
     m_SuspendDesired = m_Suspend;
@@ -299,12 +299,13 @@ void KEnergy::writeSettings()
     if (!m_bChanged)
      return;
 
-    m_pConfig->writeEntry( "displayEnergySaving", m_bEnabled);
-    m_pConfig->writeEntry("displayStandby", m_Standby);
-    m_pConfig->writeEntry("displaySuspend", m_Suspend);
-    m_pConfig->writeEntry("displayPowerOff", m_Off);
+    KConfigGroup group = m_pConfig->group("DisplayEnergy");
+    group.writeEntry( "displayEnergySaving", m_bEnabled);
+    group.writeEntry("displayStandby", m_Standby);
+    group.writeEntry("displaySuspend", m_Suspend);
+    group.writeEntry("displayPowerOff", m_Off);
 
-    m_pConfig->sync();
+    group.sync();
     m_bChanged = false;
 }
 
