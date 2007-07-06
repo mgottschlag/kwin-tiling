@@ -25,7 +25,7 @@
 
 #ifdef HAS_RANDR_1_2
 RandRCrtc::RandRCrtc(RandRScreen *parent, RRCrtc id)
-	: QObject(parent), m_info(0L)
+: QObject(parent)
 {
 	m_screen = parent;
 	Q_ASSERT(m_screen);
@@ -56,34 +56,32 @@ int RandRCrtc::currentRotation() const
 
 void RandRCrtc::loadSettings()
 {
-	if (m_info)
-		XRRFreeCrtcInfo(m_info);
 
-	m_info = XRRGetCrtcInfo(QX11Info::display(), m_screen->resources(), m_id);
-	Q_ASSERT(m_info);
+	XRRCrtcInfo *info = XRRGetCrtcInfo(QX11Info::display(), m_screen->resources(), m_id);
+	Q_ASSERT(info);
 
-	if (RandR::timestamp != m_info->timestamp)
-		RandR::timestamp = m_info->timestamp;
+	if (RandR::timestamp != info->timestamp)
+		RandR::timestamp = info->timestamp;
 
-	m_currentRect = QRect(m_info->x, m_info->y, m_info->width, m_info->height);
+	m_currentRect = QRect(info->x, info->y, info->width, info->height);
 
 	// get all connected outputs 
 	// and create a list of modes that are available in all connected outputs
 	m_connectedOutputs.clear();
 
-	for (int i = 0; i < m_info->noutput; ++i)
-		m_connectedOutputs.append(m_info->outputs[i]);
+	for (int i = 0; i < info->noutput; ++i)
+		m_connectedOutputs.append(info->outputs[i]);
 
 	// get all outputs this crtc can be connected to
 	m_possibleOutputs.clear();
-	for (int i = 0; i < m_info->npossible; ++i)
-		m_possibleOutputs.append(m_info->possible[i]);
+	for (int i = 0; i < info->npossible; ++i)
+		m_possibleOutputs.append(info->possible[i]);
 
 	// get all rotations
-	m_rotations = m_info->rotations;
-	m_currentRotation = m_info->rotation;
+	m_rotations = info->rotations;
+	m_currentRotation = info->rotation;
 
-	m_currentMode = m_info->mode;
+	m_currentMode = info->mode;
 	RandRMode m = m_screen->mode(m_currentMode);
 	m_currentRate = m.refreshRate();
 
@@ -91,6 +89,9 @@ void RandRCrtc::loadSettings()
 	m_proposedRect = m_currentRect;
 	m_proposedRotation = m_currentRotation;
 	m_proposedRate = m_currentRate;
+		
+	// free the info
+	XRRFreeCrtcInfo(info);
 }
 
 void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
@@ -149,7 +150,7 @@ float RandRCrtc::currentRefreshRate() const
 
 bool RandRCrtc::applyProposed()
 {
-#if 0
+#if 1
 	kDebug() << "[CRTC] Going to apply...." << endl;
 	kDebug() << "       Current Screen rect: " << m_screen->rect() << endl;
 	kDebug() << "       Current CRTC Rect: " << m_currentRect << endl;

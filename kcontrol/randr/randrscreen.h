@@ -70,14 +70,16 @@ public:
 
 	QRect rect() const;
 
+	bool applyProposed(bool confirm);
+
 	void load(KConfig &config);
 	void save(KConfig &config);
-
-	bool applyProposed(bool confirm);
 
 public slots:
 	void slotUnifyOutputs(QAction *action);
 	void slotRotateUnified(QAction *action);
+
+	void save();
 
 signals:
 	void configChanged();

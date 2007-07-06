@@ -209,7 +209,7 @@ RandRMode RandRScreen::mode(RRMode id) const
 	if (m_modes.contains(id))
 		return m_modes[id];
 
-	return RandRMode();
+	return RandRMode(0);
 }
 
 bool RandRScreen::adjustSize(QRect minimumSize)
@@ -376,6 +376,11 @@ void RandRScreen::save(KConfig &config)
 			o->save(config);
 	}
 	//TODO check if there are any screen specific config we need to save
+}
+
+void RandRScreen::save()
+{
+	save(*KGlobal::config());
 }
 
 bool RandRScreen::applyProposed(bool confirm)

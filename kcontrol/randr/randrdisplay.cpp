@@ -48,6 +48,7 @@ RandRDisplay::RandRDisplay()
 	else
 		RandR::has_1_2 = false;
 
+	kDebug() << "Error base: " << m_errorBase << endl;
 	m_numScreens = ScreenCount(QX11Info::display());
 
 	// set the timestamp to 0

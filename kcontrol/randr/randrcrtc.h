@@ -66,7 +66,6 @@ signals:
 
 private:
 	RRCrtc m_id;
-	XRRCrtcInfo* m_info;
 	RRMode m_currentMode;
 
 	QRect m_proposedRect;

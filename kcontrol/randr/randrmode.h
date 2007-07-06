@@ -35,11 +35,11 @@ public:
 	QSize size() const;
 	float refreshRate() const;
 private:
-	XRRModeInfo *m_info;
 	bool m_valid;
 	QString m_name;
 	QSize m_size;
 	float m_rate;
+	RRMode m_id;
 };
 
 #endif // HAS_RANDR_1_2

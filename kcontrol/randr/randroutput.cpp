@@ -27,7 +27,7 @@
 
 #ifdef HAS_RANDR_1_2
 RandROutput::RandROutput(RandRScreen *parent, RROutput id)
-	: QObject(parent), m_info(0L)
+: QObject(parent)
 {
 	m_screen = parent;
 	Q_ASSERT(m_screen);
@@ -44,36 +44,32 @@ RandROutput::RandROutput(RandRScreen *parent, RROutput id)
 
 RandROutput::~RandROutput()
 {
-	if (m_info)
-		XRRFreeOutputInfo(m_info);
 }
 
 void RandROutput::loadSettings()
 {
-	if (m_info)
-		XRRFreeOutputInfo(m_info);
 
-	m_info = XRRGetOutputInfo(QX11Info::display(), m_screen->resources(), m_id);
-	Q_ASSERT(m_info);
+	XRROutputInfo *info = XRRGetOutputInfo(QX11Info::display(), m_screen->resources(), m_id);
+	Q_ASSERT(info);
 
 
-	if (RandR::timestamp != m_info->timestamp)
-		RandR::timestamp = m_info->timestamp;
+	if (RandR::timestamp != info->timestamp)
+		RandR::timestamp = info->timestamp;
 
-	m_name = m_info->name;
+	m_name = info->name;
 
 	m_possibleCrtcs.clear();
-	for (int i = 0; i < m_info->ncrtc; ++i)
-		m_possibleCrtcs.append(m_info->crtcs[i]);
+	for (int i = 0; i < info->ncrtc; ++i)
+		m_possibleCrtcs.append(info->crtcs[i]);
 
-	setCurrentCrtc(m_info->crtc);
+	setCurrentCrtc(info->crtc);
 
-	m_connected = (m_info->connection == RR_Connected);
+	m_connected = (info->connection == RR_Connected);
 
 	//get modes
 	m_modes.clear();
-	for (int i = 0; i < m_info->nmode; ++i)
-		m_modes.append(m_info->modes[i]);
+	for (int i = 0; i < info->nmode; ++i)
+		m_modes.append(info->modes[i]);
 
 	//get all possible rotations
 	m_rotations = 0;
@@ -83,6 +79,9 @@ void RandROutput::loadSettings()
 		Q_ASSERT(crtc);
 		m_rotations |= crtc->rotations();
 	}
+
+	// free the info
+	XRRFreeOutputInfo(info);
 }
 
 void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
@@ -309,7 +308,6 @@ void RandROutput::save(KConfig &config)
 	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 	cg.writeEntry("Active", true);
 	cg.writeEntry("Rect", crtc->rect());
-	kDebug() << "[OUTPUT] Saving rect " << crtc->rect() << endl;
 	cg.writeEntry("Rotation", crtc->currentRotation());
 	cg.writeEntry("RefreshRate", (double) crtc->currentRefreshRate());
 }
@@ -494,7 +492,6 @@ void RandROutput::setCurrentCrtc(RRCrtc c)
 
 void RandROutput::slotCrtcChanged(RRCrtc c, int changes)
 {
-	kDebug() << "CRTC changed" << endl;
 	//FIXME select which changes we should notify
 	emit outputChanged(m_id, changes);
 }
