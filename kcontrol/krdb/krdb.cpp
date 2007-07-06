@@ -484,7 +484,7 @@ void runRdb( uint flags )
       }
     }
 
-    for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
+    for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
       copyFile(tmpFile, KStandardDirs::locate("appdefaults", *it ), true);
   }
 

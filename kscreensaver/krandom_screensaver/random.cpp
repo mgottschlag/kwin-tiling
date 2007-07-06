@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 	bool manipulatescreen = configGroup.readEntry("ManipulateScreen", false);
         bool fortune = !KStandardDirs::findExe("fortune").isEmpty();
         for( KService::List::const_iterator it = lst.begin();
-            it != lst.end(); it++)
+            it != lst.end(); ++it)
 	{
 		QString file = KStandardDirs::locate("services", (*it)->desktopEntryPath());
 		kDebug() << "Looking at " << file << endl;

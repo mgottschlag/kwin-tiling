@@ -89,7 +89,7 @@ bool XKBExtension::init()
 
 void XKBExtension::reset()
 {
-// 	for(QMap<QString, FILE*>::ConstIterator it = fileCache.begin(); it != fileCache.end(); it++) {
+// 	for(QMap<QString, FILE*>::ConstIterator it = fileCache.begin(); it != fileCache.end(); ++it) {
 // 		fclose(*it);
 // //		remove( QFile::encodeName(getPrecompiledLayoutFileName(*it)) );
 // 	}

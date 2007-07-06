@@ -141,7 +141,7 @@ void PanelExeDialog::fillCompletion()
     KCompletion *comp = ui->m_exec->completionObject();
     QStringList exePaths = KStandardDirs::systemPaths();
 
-    for (QStringList::ConstIterator it = exePaths.begin(); it != exePaths.end(); it++)
+    for (QStringList::ConstIterator it = exePaths.begin(); it != exePaths.end(); ++it)
     {
         QDir d( (*it) );
         d.setFilter( QDir::Files | QDir::Executable );

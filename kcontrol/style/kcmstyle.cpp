@@ -811,7 +811,7 @@ void KCMStyle::loadStyle( KConfig& config )
 	// Get translated names, remove all hidden style entries.
 	QStringList styles;
 	StyleEntry* entry;
-	for (QStringList::iterator it = allStyles.begin(); it != allStyles.end(); it++)
+	for (QStringList::iterator it = allStyles.begin(); it != allStyles.end(); ++it)
 	{
 		QString id = (*it).toLower();
 		// Find the entry.
