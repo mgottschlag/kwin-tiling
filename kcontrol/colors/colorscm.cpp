@@ -138,7 +138,7 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
 
     sList = new KListWidget( group );
     mSchemeList = new KColorSchemeList();
-    connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
+    connect(sList, SIGNAL(currentRowChanged(int)), SLOT(slotPreviewScheme(int)));
 
     sList->setWhatsThis( i18n("This is a list of predefined color schemes,"
        " including any that you may have created. You can preview an existing"
@@ -516,7 +516,7 @@ void KColorScheme::slotAdd()
             valid = true;
     }
 
-    disconnect(sList, SIGNAL(highlighted(int)), this,
+    disconnect(sList, SIGNAL(currentRowChanged(int)), this,
                SLOT(slotPreviewScheme(int)));
 
     if (exists != -1)
@@ -538,7 +538,7 @@ void KColorScheme::slotAdd()
     QPixmap preview = mkColorPreview(cs);
     int current = sList->currentRow();
     sList->item(current)->setIcon(preview);
-    connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
+    connect(sList, SIGNAL(currentRowChanged(int)), SLOT(slotPreviewScheme(int)));
     slotPreviewScheme(current);
 }
 
@@ -566,7 +566,7 @@ void KColorScheme::slotImport()
 		QPixmap preview = mkColorPreview(cs);
 		int current = sList->currentRow();
 		sList->item(current)->setIcon(preview);
-		connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
+		connect(sList, SIGNAL(currentRowChanged(int)), SLOT(slotPreviewScheme(int)));
 		slotPreviewScheme(current);
 	}
 }
