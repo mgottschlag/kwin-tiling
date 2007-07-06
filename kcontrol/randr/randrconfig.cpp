@@ -50,7 +50,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	// create the scene
 	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
 	screenView->setScene(m_scene);
-	screenView->scale(0.2, 0.2);
 }
 
 RandRConfig::~RandRConfig()
@@ -81,11 +80,14 @@ void RandRConfig::load()
 		o = new OutputGraphicsItem(*it);
 		m_scene->addItem(o);
 
-		w = m_container->insertWidget(new OutputConfig(0, *it, o), (*it)->name());
+		OutputConfig *c = new OutputConfig(0, *it, o);
+		w = m_container->insertWidget(c, (*it)->name());
 		m_outputList.append(w);
 		kDebug() << "Rect: " << (*it)->rect() << endl;
+		connect(c, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
 	}
 
+	slotUpdateView();
 
 }
 
@@ -116,6 +118,27 @@ void RandRConfig::update()
 	// TODO: implement
 }
 
+void RandRConfig::slotUpdateView()
+{
+	QRect r;
+	// updates the graphics view so that all outputs fit inside of it
+	OutputMap outputs = m_display->currentScreen()->outputs();
+	OutputMap::iterator it = outputs.begin();
+	r = it.value()->rect();
+	for (++it; it != outputs.end(); ++it)
+	{
+		r = r.united(it.value()->rect());
+	}
+
+	float scaleX = (float)screenView->width() / r.width();
+	float scaleY = (float)screenView->height() / r.height();
+	float scale = (scaleX < scaleY)? scaleX : scaleY;
+	kDebug() << "Scaling by " << scale << endl;
+	kDebug() << "ScreenView rect = " << screenView->rect() << " visible rect: " << r << endl;
+	screenView->resetMatrix();
+	screenView->scale(scale,scale);
+	screenView->ensureVisible(r);
+}
 #include "randrconfig.moc"
 
 #endif

@@ -115,7 +115,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 	{
 		kDebug() << "   Changed position: " << event->x << "," << event->y << endl;
 		changed |= RandR::ChangePosition;
-		m_currentRect.translate(event->x, event->y);
+		m_currentRect.moveTopLeft(QPoint(event->x, event->y));
 	}
 
 	RandRMode mode = m_screen->mode(event->mode);

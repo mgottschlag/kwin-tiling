@@ -45,6 +45,9 @@ public:
 	void apply();
 	void update();
 
+public slots:
+	void slotUpdateView();
+
 signals:
 	void changed(bool c);
 

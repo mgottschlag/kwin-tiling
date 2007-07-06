@@ -95,6 +95,8 @@ void OutputConfig::load()
 	m_item->setRect( 0, 0, m_output->rect().width(), m_output->rect().height());
 	kDebug() << "      --> setting pos " << m_output->rect().topLeft() << endl;
 	m_item->setPos( m_output->rect().topLeft() );
+
+	emit updateView();
 }
 
 #include "outputconfig.moc"

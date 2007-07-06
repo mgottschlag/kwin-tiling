@@ -5,37 +5,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>213</width>
-    <height>87</height>
+    <width>244</width>
+    <height>119</height>
    </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle" >
    <string>Output Config</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>10</number>
-   </property>
-   <property name="leftMargin" >
-    <number>0</number>
-   </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <item>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
     <widget class="QCheckBox" name="activeCheck" >
      <property name="text" >
       <string>Active</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0" >
     <layout class="QHBoxLayout" >
      <item>
       <widget class="QLabel" name="label_2" >
@@ -75,10 +66,16 @@
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QHBoxLayout" >
+   <item row="2" column="0" >
+    <layout class="QVBoxLayout" >
      <item>
       <widget class="QLabel" name="orientationLabel" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text" >
         <string>Orientation:</string>
        </property>

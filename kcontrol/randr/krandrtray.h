@@ -57,8 +57,8 @@ private:
 	QActionGroup *populateSizes(KMenu *menu, SizeList sizes, QSize size);
 	QActionGroup *populateRates(KMenu *menu, RateList rates, float rate);
 
-	bool m_popupUp;
 	KHelpMenu* m_help;
+	bool m_popupUp;
 	QList<KMenu*> m_screenPopups;
 	KMenu* m_menu;
 	RandRDisplay *m_display;

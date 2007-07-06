@@ -39,8 +39,8 @@
 
 KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 : KSystemTrayIcon("randr", parent)
-, m_popupUp(false), m_display(dpy)
 , m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection()))
+, m_popupUp(false), m_display(dpy)
 {
 	setIcon(KSystemTrayIcon::loadIcon("randr"));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));

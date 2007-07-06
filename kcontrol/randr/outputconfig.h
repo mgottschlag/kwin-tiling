@@ -38,6 +38,9 @@ public:
 public slots:
 	void load();
 
+signals:
+	void updateView();
+
 private:
 	RandROutput *m_output;
 	OutputGraphicsItem *m_item;

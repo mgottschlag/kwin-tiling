@@ -101,6 +101,7 @@ void RandRScreen::loadSettings()
 		{
 			RandRCrtc *c = new RandRCrtc(this, m_resources->crtcs[i]);
 			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
+			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SLOT(save()));
 			m_crtcs[m_resources->crtcs[i]] = c;
 		}
 
@@ -115,6 +116,7 @@ void RandRScreen::loadSettings()
 		{
 			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
 			connect(o, SIGNAL(outputChanged(RROutput, int)), this, SIGNAL(configChanged()));
+			connect(o, SIGNAL(outputChanged(RROutput, int)), this, SLOT(save()));
 			m_outputs[m_resources->outputs[i]] = o;
 		}
 	}
