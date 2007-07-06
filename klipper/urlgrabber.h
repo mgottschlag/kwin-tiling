@@ -25,7 +25,6 @@
 #include <QRegExp>
 
 
-#include <k3process.h>
 #include <kconfig.h>
 
 

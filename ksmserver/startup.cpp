@@ -70,7 +70,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kapplication.h>
 #include <kstaticdeleter.h>
 #include <ktemporaryfile.h>
-#include <k3process.h>
 #include <knotification.h>
 
 #include "global.h"
