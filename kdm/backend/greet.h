@@ -257,27 +257,6 @@ from the copyright holder.
 #define C_hasConsole    (C_TYPE_INT | 0x201)
 #define C_isAuthorized  (C_TYPE_INT | 0x202)
 
-/**
- ** for struct display
- **/
-
-#define d_location   1
-#define dLocal          1	/* server runs on local host */
-#define dForeign        0	/* server runs on remote host */
-
-#define d_lifetime   6
-#define dPermanent      4	/* display restarted when session exits */
-#define dReserve        2	/* display not restarted when session exits */
-#define dTransient      0	/* display removed when session exits */
-
-#ifdef XDMCP
-#define d_origin     8
-#else
-#define d_origin     0 /* clever, huh? :) */
-#endif
-#define dFromXDMCP      8	/* started with XDMCP */
-#define dFromFile       0	/* started via entry in servers file */
-
 #ifdef XDMCP
 /**
  ** for xdmcp acls
