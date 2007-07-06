@@ -1237,7 +1237,7 @@ void BGDialog::slotGetNewStuff()
    // might affect both kcmshell and kcontrol
 
    KNS::Engine *engine = new KNS::Engine();
-   engine->init("wallpaper.knsrc");
+   engine->init("background.knsrc");
    //FIXME (KNS2): monday change
    //engine->setTitle(i18n("Get New Wallpapers"));
    engine->downloadDialogModal();
