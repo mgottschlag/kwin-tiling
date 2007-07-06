@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=Directory
 Name=Education
+Name[pt]=Educação
+Name[pt_BR]=Educação
+Name[sv]=Utbildning
 Icon=package_edutainment
 
