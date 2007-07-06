@@ -35,10 +35,10 @@ else (PAM_FOUND)
 
 endif (PAM_FOUND)
 
-find_program(some_x_program NAMES X xrdb xterm)
-GET_FILENAME_COMPONENT(proto_xbindir ${some_x_program} PATH)
-GET_FILENAME_COMPONENT(XBINDIR ${proto_xbindir} ABSOLUTE)
-GET_FILENAME_COMPONENT(xrootdir ${XBINDIR} PATH)
+find_program(some_x_program NAMES iceauth xrdb xterm)
+get_filename_component(proto_xbindir "${some_x_program}" PATH)
+get_filename_component(XBINDIR "${proto_xbindir}" ABSOLUTE)
+get_filename_component(xrootdir "${XBINDIR}" PATH)
 set(XLIBDIR "${xrootdir}/lib/X11")
 
 check_function_exists(getpassphrase HAVE_GETPASSPHRASE)
