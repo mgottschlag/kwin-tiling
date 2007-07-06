@@ -129,7 +129,8 @@ public:
      * @returns list of service classes of the remote device.
      */
     virtual QStringList serviceClasses() const = 0;
-
+    virtual QList<uint> serviceHandles(const QString &filter) const = 0;
+    virtual Solid::Control::BluetoothServiceRecord serviceRecord(uint handle) const = 0;
     /**
      * Retrieves the real name of the remote device. See also alias().
      * Example: "Daniel's mobile"
@@ -221,11 +222,6 @@ public Q_SLOTS:
      * Remove bonding bonding of remote device.
      */
     virtual void removeBonding() = 0;
-
-    /**
-     * Initiates a new SDP search to discover services available in this devices
-     */
-    virtual void findServices(const QString &filter=QString()) = 0;
 Q_SIGNALS:
     /**
      * Class has been changed of remote device.
@@ -282,20 +278,6 @@ Q_SIGNALS:
      * Bonding has been removed of remote device.
      */
     virtual void bondingRemoved() = 0;
-    /**
-     * Service discovery has started
-     */
-    virtual void serviceDiscoveryStarted(const QString &ubi) = 0;
-
-    /**
-     * A new service has been found
-     */
-    virtual void remoteServiceFound(const QString &ubi, const Solid::Control::BluetoothServiceRecord &service) = 0;
-
-    /**
-     * Service discovery has finished
-     */
-    virtual void serviceDiscoveryFinished(const QString &ubi) = 0;
 };
 
 } // Ifaces

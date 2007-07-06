@@ -171,6 +171,9 @@ public:
      * @returns list of service classes of the remote device.
      */
     QStringList serviceClasses() const;
+    
+    QList<uint> serviceHandles(const QString &filter ="") const;
+    BluetoothServiceRecord serviceRecord(uint handle) const;
 
     /**
      * Retrieves the real name of the remote device. See also alias().
@@ -262,9 +265,6 @@ public Q_SLOTS:
      * Remove bonding bonding of remote device.
      */
     void removeBonding();
-
-    void findServices(const QString &filter = QString());
-
 Q_SIGNALS:
     /**
      * Class has been changed of remote device.
@@ -321,21 +321,6 @@ Q_SIGNALS:
      * Bonding has been removed of remote device.
      */
     void bondingRemoved();
-
-    /**
-     * Service discovery has started
-     */
-    void serviceDiscoveryStarted(const QString &ubi);
-
-    /**
-     * A new service has been found
-     */
-    void remoteServiceFound(const QString &ubi, const Solid::Control::BluetoothServiceRecord &service);
-
-    /**
-     * Service discovery has finished
-     */
-    void serviceDiscoveryFinished(const QString &ubi);
 protected:
     BluetoothRemoteDevicePrivate *d_ptr;
 

@@ -8,7 +8,6 @@ set(solid_bluez_PART_SRCS
 	bluez-bluetoothinterface.cpp
 	bluez-bluetoothinputdevice.cpp
 	bluez-bluetoothremotedevice.cpp
-	bluez-serviceparser.cpp
 )
 
 kde4_automoc(${solid_bluez_PART_SRCS})

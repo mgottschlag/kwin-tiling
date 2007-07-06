@@ -24,9 +24,82 @@
 #include <kdebug.h>
 
 #include <solid/control/bluetoothremotedevice.h>
+#include <QXmlDefaultHandler>
 
 #include "bluezcalljob.h"
 #include "bluez-bluetoothremotedevice.h"
+
+Q_DECLARE_METATYPE(QList<uint>);
+class SdpXmlHandler: public QXmlDefaultHandler
+{
+	private:
+		QString lastAttribute;
+	public:
+		bool startDocument();
+		bool endDocument ();
+		bool startElement ( const QString & namespaceURI, const QString & localName, const QString & qName, const QXmlAttributes & atts );
+		bool endElement ( const QString & namespaceURI, const QString & localName, const QString & qName );
+		
+		Solid::Control::BluetoothServiceRecord record;
+};
+bool SdpXmlHandler::startElement(const QString & , const QString & localName, const QString & , const QXmlAttributes & atts)
+{
+	//TODO: Should also parse:
+	//	BluetoothServiceRecordState 0x0002 32-bit unsigned integer
+	//	ServiceID 0x0003 UUID
+	//	BrowseGroupList 0x0005 Data Element Sequence
+	//	ServiceInfoTimeToLive 0x0007 32-bit unsigned integer
+	//	ServiceAvailability 0x0008 8-bit unsigned intege
+	//	DocumentationURL 0x000A URL
+	//	ClientExecutableURL 0x000B URL
+	//	IconURL 0x000C URL
+	if(localName=="attribute" && atts.count()==1)
+		lastAttribute = atts.value("id");
+	if(lastAttribute=="0x0000" && localName == "uint32")//Mandatory
+		record.handle = atts.value("value");
+	else if(lastAttribute=="0x0001" && localName == "uuid")//Mandatory
+		record.serviceClasses << atts.value("value");	
+	else if(lastAttribute=="0x0004")
+	{
+		if(localName == "uuid")
+			record.protocolDescriptors << atts.value("value");
+		else if(localName == "uint8")
+			record.protocolChannels[record.protocolDescriptors.last()] = atts.value("value");
+	} 
+	else if(lastAttribute=="0x0006" && localName == "uint16")
+		record.langBaseAttributes << atts.value("value");
+	else if(lastAttribute=="0x0009")
+	{
+		if(localName == "uuid")
+			record.profileDescriptors << atts.value("value");
+		else if(localName == "uint16")
+			record.profileVersions[record.profileDescriptors.last()] = atts.value("value");
+	}
+	else if(lastAttribute=="0x0100" && localName == "text")
+		record.name = atts.value("value");
+	return true;
+}
+
+bool SdpXmlHandler::endElement(const QString & , const QString & localName, const QString & )
+{
+	if(localName=="attribute")
+		lastAttribute = "";
+	return true;
+}
+
+bool SdpXmlHandler::endDocument()
+{
+	lastAttribute="";	
+	return true;
+}
+
+bool SdpXmlHandler::startDocument()
+{
+	record = Solid::Control::BluetoothServiceRecord();
+	return true;
+}
+
+/********************************************************************************/
 
 BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath)
 	: BluetoothRemoteDevice(0), m_objectPath(objectPath)
@@ -40,22 +113,10 @@ BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath
 
 	device = new QDBusInterface("org.bluez", m_adapter,
 				    "org.bluez.Adapter", QDBusConnection::systemBus());
-	
-	serviceParser = new ServiceParser(m_adapter,this);
-	QObject::connect(serviceParser,SIGNAL(serviceDiscoveryStarted(const QString &)),
-			 this,SIGNAL(serviceDiscoveryStarted(const QString &)));
-	QObject::connect(serviceParser,SIGNAL(remoteServiceFound(const QString &, const Solid::Control::BluetoothServiceRecord &)),
-			 this,SIGNAL(remoteServiceFound(const QString &, const Solid::Control::BluetoothServiceRecord &)));
-	QObject::connect(serviceParser,SIGNAL(serviceDiscoveryFinished(const QString &)),
-			 this,SIGNAL(serviceDiscoveryFinished(const QString &)));
-	serviceParser->start();
 }
 
 BluezBluetoothRemoteDevice::~BluezBluetoothRemoteDevice()
 {
-	serviceParser->finish();
-	serviceParser->wait();
-	serviceParser->deleteLater();
 	delete device;
 }
 
@@ -112,6 +173,43 @@ QString BluezBluetoothRemoteDevice::minorClass() const
 QStringList BluezBluetoothRemoteDevice::serviceClasses() const
 {
 	return listReply("GetRemoteServiceClasses");
+}
+
+QList<uint> BluezBluetoothRemoteDevice::serviceHandles(const QString &filter) const
+{
+	kDebug() << k_funcinfo << endl;
+
+	QDBusReply<QList<uint> > path = device->call("GetRemoteServiceHandles", m_address,filter);
+	if (!path.isValid())
+	{
+		kDebug() << k_funcinfo << "Request failed: " << path.error().message() << endl;
+		return QList<uint>();
+	}
+	return path.value();
+
+}
+Solid::Control::BluetoothServiceRecord BluezBluetoothRemoteDevice::serviceRecord(uint handle) const
+{
+	kDebug() << k_funcinfo << endl;
+
+	QDBusReply<QString> path = device->call("GetRemoteServiceRecordAsXML",m_address,handle);
+	if (!path.isValid())
+	{
+		kDebug() << k_funcinfo << "Request failed: " << path.error().message() << endl;
+		return Solid::Control::BluetoothServiceRecord();
+	}
+		
+	SdpXmlHandler handler;
+	QXmlSimpleReader xmlReader;
+	QXmlInputSource input;
+	xmlReader.setContentHandler(&handler);
+	xmlReader.setErrorHandler(&handler);
+	
+	input.setData(path.value());
+	xmlReader.parse(input); //Result will be available on handler.record
+	kDebug() << "In bluez, for ubi " << ubi() << " adding " << handler.record.name << endl;
+
+	return handler.record;
 }
 
 QString BluezBluetoothRemoteDevice::alias() const
@@ -194,12 +292,6 @@ void BluezBluetoothRemoteDevice::removeBonding()
 {
 	kDebug() << k_funcinfo << endl;
 	device->call("RemoveBonding", m_address);
-}
-
-void BluezBluetoothRemoteDevice::findServices(const QString &filter)
-{
-	kDebug() << k_funcinfo << endl;
-	serviceParser->findServices(ubi(),filter);
 }
 /******************************/
 
