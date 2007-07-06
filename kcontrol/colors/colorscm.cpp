@@ -31,7 +31,6 @@
 #include <kinputdialog.h>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
-#include <k3process.h>
 #include <kstandarddirs.h>
 #include <kaboutdata.h>
 #include <klistwidget.h>
@@ -700,63 +699,64 @@ void KColorScheme::readScheme( int index )
       return;
     }
 
-    KConfigBase *config;
+    KConfig *config;
+    KConfigGroup group;
     if (index == 0) {
       // Current scheme
       config = KGlobal::config().data();
-      config->setGroup("General");
+      group = config->group("General");
     } else {
       // Open scheme file
       KColorSchemeEntry *entry = mSchemeList->at(sList->currentRow()-nSysSchemes);
       if (!entry) return;
       sCurrentScheme = entry->path;
       config = new KConfig(sCurrentScheme, KConfig::OnlyLocal);
-      config->setGroup("Color Scheme");
+      group = config->group("Color Scheme");
       int i = sCurrentScheme.lastIndexOf('/');
       if (i >= 0)
         sCurrentScheme = sCurrentScheme.mid(i+1);
     }
 
-    cs->shadeSortColumn = config->readEntry( "shadeSortColumn", KDE_DEFAULT_SHADE_SORT_COLUMN );
+    cs->shadeSortColumn = group.readEntry( "shadeSortColumn", KDE_DEFAULT_SHADE_SORT_COLUMN );
 
     // note: defaults should be the same as the KDE default
     QColor auxBlack, auxWhite;
     auxBlack = Qt::black;
     auxWhite = Qt::white;
-    cs->txt = config->readEntry( "foreground", auxBlack );
-    cs->back = config->readEntry( "background", widget );
-    cs->select = config->readEntry( "selectBackground", kde34Blue );
-    cs->selectTxt = config->readEntry( "selectForeground", auxWhite );
-    cs->window = config->readEntry( "windowBackground", auxWhite );
-    cs->windowTxt = config->readEntry( "windowForeground", auxBlack );
-    cs->button = config->readEntry( "buttonBackground", button );
-    cs->buttonTxt = config->readEntry( "buttonForeground", auxBlack );
-    cs->link = config->readEntry( "linkColor", link );
-    cs->visitedLink = config->readEntry( "visitedLinkColor", visitedLink );
+    cs->txt = group.readEntry( "foreground", auxBlack );
+    cs->back = group.readEntry( "background", widget );
+    cs->select = group.readEntry( "selectBackground", kde34Blue );
+    cs->selectTxt = group.readEntry( "selectForeground", auxWhite );
+    cs->window = group.readEntry( "windowBackground", auxWhite );
+    cs->windowTxt = group.readEntry( "windowForeground", auxBlack );
+    cs->button = group.readEntry( "buttonBackground", button );
+    cs->buttonTxt = group.readEntry( "buttonForeground", auxBlack );
+    cs->link = group.readEntry( "linkColor", link );
+    cs->visitedLink = group.readEntry( "visitedLinkColor", visitedLink );
     QColor alternate = KGlobalSettings::calculateAlternateBackgroundColor(cs->window);
-    cs->alternateBackground = config->readEntry( "alternateBackground", alternate );
+    cs->alternateBackground = group.readEntry( "alternateBackground", alternate );
 
     if (index == 0)
-      config->setGroup( "WM" );
+      group = config->group( "WM" );
 
-    cs->iaTitle = config->readEntry("inactiveBackground", inactiveBackground);
-    cs->iaTxt = config->readEntry("inactiveForeground", inactiveForeground);
-    cs->iaBlend = config->readEntry("inactiveBlend", inactiveBackground);
-    cs->iaFrame = config->readEntry("inactiveFrame", cs->back);
-    cs->iaHandle = config->readEntry("inactiveHandle", cs->back);
-    cs->aTitle = config->readEntry("activeBackground", activeBackground);
-    cs->aTxt = config->readEntry("activeForeground", auxWhite);
-    cs->aBlend = config->readEntry("activeBlend", activeBlend);
-    cs->aFrame = config->readEntry("frame", cs->back);
-    cs->aHandle = config->readEntry("handle", cs->back);
+    cs->iaTitle = group.readEntry("inactiveBackground", inactiveBackground);
+    cs->iaTxt = group.readEntry("inactiveForeground", inactiveForeground);
+    cs->iaBlend = group.readEntry("inactiveBlend", inactiveBackground);
+    cs->iaFrame = group.readEntry("inactiveFrame", cs->back);
+    cs->iaHandle = group.readEntry("inactiveHandle", cs->back);
+    cs->aTitle = group.readEntry("activeBackground", activeBackground);
+    cs->aTxt = group.readEntry("activeForeground", auxWhite);
+    cs->aBlend = group.readEntry("activeBlend", activeBlend);
+    cs->aFrame = group.readEntry("frame", cs->back);
+    cs->aHandle = group.readEntry("handle", cs->back);
     // hack - this is all going away. For now just set all to button bg
-    cs->aTitleBtn = config->readEntry("activeTitleBtnBg", activeTitleBtnBg);
-    cs->iTitleBtn = config->readEntry("inactiveTitleBtnBg", inactiveTitleBtnBg);
+    cs->aTitleBtn = group.readEntry("activeTitleBtnBg", activeTitleBtnBg);
+    cs->iTitleBtn = group.readEntry("inactiveTitleBtnBg", inactiveTitleBtnBg);
 
     if (index == 0)
-      config->setGroup( "KDE" );
+      group = config->group( "KDE" );
 
-    cs->contrast = config->readEntry( "contrast", 7 );
+    cs->contrast = group.readEntry( "contrast", 7 );
     if (index != 0)
       delete config;
 
