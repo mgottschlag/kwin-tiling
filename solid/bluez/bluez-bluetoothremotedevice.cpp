@@ -29,7 +29,7 @@
 #include "bluezcalljob.h"
 #include "bluez-bluetoothremotedevice.h"
 
-Q_DECLARE_METATYPE(QList<uint>);
+Q_DECLARE_METATYPE(QList<uint>)
 class SdpXmlHandler: public QXmlDefaultHandler
 {
 	private:
