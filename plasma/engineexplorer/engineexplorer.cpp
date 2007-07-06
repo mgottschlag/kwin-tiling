@@ -212,8 +212,8 @@ void EngineExplorer::updateTitle()
     if (m_engine->icon().isEmpty()) {
         m_title->setPixmap(KIcon("plasma").pixmap(IconSize(K3Icon::Dialog)));
     } else {
-        m_title->setPixmap(KIcon("alarmclock").pixmap(IconSize(K3Icon::Dialog)));
-        //m_title->setPixmap(KIcon(m_engine->icon()).pixmap(IconSize(K3Icon::Dialog)));
+        //m_title->setPixmap(KIcon("alarmclock").pixmap(IconSize(K3Icon::Dialog)));
+        m_title->setPixmap(KIcon(m_engine->icon()).pixmap(IconSize(K3Icon::Dialog)));
     }
 }
 
