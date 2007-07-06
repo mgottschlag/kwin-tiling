@@ -24,14 +24,36 @@
 
 #include "plasma/datasource.h"
 
+//solid specific includes
+#include <solid/devicenotifier.h>
+#include <solid/device.h>
+#include <solid/deviceinterface.h>
+#include <solid/predicate.h>
+
+
+
 SolidNotifierEngine::SolidNotifierEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)
 {
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
+            this, SLOT(onDeviceAdded(const QString &)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
+            this, SLOT(onDeviceRemoved(const QString &)));
 }
 
 SolidNotifierEngine::~SolidNotifierEngine()
 {
 
+}
+
+void SolidNotifierEngine::onDeviceAdded(const QString &udi)
+{
+    kDebug() << "add hardware solid : " << udi<<endl;
+}
+
+void SolidNotifierEngine::onDeviceRemoved(const QString &udi)
+{
+    kDebug() << "remove hardware solid : " << udi<<endl;
 }
 
 #include "solidnotifierengine.moc"
