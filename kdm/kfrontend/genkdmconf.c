@@ -1103,10 +1103,10 @@ joinArgs( StrList *argv )
 
 static struct displayMatch {
 	const char *name;
-	int len, type;
+	int len, local;
 } displayTypes[] = {
-	{ "local", 5, dLocal },
-	{ "foreign", 7, dForeign },
+	{ "local", 5, 1 },
+	{ "foreign", 7, 0 },
 };
 
 static int
@@ -1121,7 +1121,7 @@ parseDisplayType( const char *string, const char **atPos )
 		{
 			if (string[d->len] == '@' && string[d->len + 1])
 				*atPos = string + d->len + 1;
-			return d->type;
+			return d->local;
 		}
 	}
 	return -1;
@@ -1131,7 +1131,7 @@ typedef struct serverEntry {
 	struct serverEntry *next;
 	const char *name, *class2, *console, *argvs, *arglvs;
 	StrList *argv, *arglv;
-	int type, reserve, vt;
+	int local, reserve, vt;
 } ServerEntry;
 
 static void
@@ -1167,13 +1167,13 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 		se->name = word;
 		if (!(word = readWord( &file, 1 )))
 			continue;
-		se->type = parseDisplayType( word, &se->console );
-		if (se->type < 0) {
+		se->local = parseDisplayType( word, &se->console );
+		if (se->local < 0) {
 			se->class2 = word;
 			if (!(word = readWord( &file, 1 )))
 				continue;
-			se->type = parseDisplayType( word, &se->console );
-			if (se->type < 0) {
+			se->local = parseDisplayType( word, &se->console );
+			if (se->local < 0) {
 				while (readWord( &file, 1 ));
 				continue;
 			}
@@ -1183,7 +1183,7 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 			se->reserve = 1;
 			word = readWord( &file, 1 );
 		}
-		if (((se->type & d_location) == dLocal) != (word != 0))
+		if (se->local != (word != 0))
 			continue;
 		argp = &se->argv;
 		arglp = &se->arglv;
@@ -1222,7 +1222,7 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 			word = readWord( &file, 1 );
 		}
 		*argp = *arglp = 0;
-		if ((se->type & d_location) == dLocal) {
+		if (se->local) {
 			nldpys++;
 			dpymask |= 1 << atoi( se->name + 1 );
 			if (se->reserve)
@@ -1238,7 +1238,7 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 	cpvt = 0;
 	getInitTab();
 	for (se = serverList, mtty = maxTTY; se; se = se->next)
-		if ((se->type & d_location) == dLocal) {
+		if (se->local) {
 			mtty++;
 			if (se->vt != mtty) {
 				cpvt = 1;
@@ -1254,7 +1254,7 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 
 	se1 = 0, cpcmd = cpcmdl = 0;
 	for (se = serverList; se; se = se->next)
-		if ((se->type & d_location) == dLocal) {
+		if (se->local) {
 			if (!se1)
 				se1 = se;
 			else {
@@ -1268,7 +1268,7 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 		putFqVal( "X-:*-Core", "ServerCmd", se1->argvs );
 		putFqVal( "X-:*-Core", "ServerArgsLocal", se1->arglvs );
 		for (se = serverList; se; se = se->next)
-			if ((se->type & d_location) == dLocal) {
+			if (se->local) {
 				char sec[32];
 				sprintf( sec, "X-%s-Core", se->name );
 				if (cpcmd)
