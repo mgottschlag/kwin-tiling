@@ -590,7 +590,7 @@ const QWidget* ContainerArea::addNonKDEAppButton()
         return 0;
     }
 
-    PanelExeDialog dlg( QString(), QString(), QString(),
+    PanelExeDialog dlg( QString::null, QString(), QString(),
 			QString(), QString(), false, 0 );
 
     if ( dlg.exec() == QDialog::Accepted )
@@ -1289,7 +1289,7 @@ void ContainerArea::dropEvent(QDropEvent *ev)
                 //                        K3Icon::DefaultState, &pixmapFile);
                 QString iconName = KMimeType::iconNameForUrl(url);
                 KIconLoader::global()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, &pixmapFile );
-                PanelExeDialog dlg(QString(), QString(), url.path(),
+                PanelExeDialog dlg(QString::null, QString(), url.path(),
                                    pixmapFile, QString(), false, 0);
                 if (dlg.exec() == QDialog::Accepted)
                 {
