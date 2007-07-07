@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Education
+Name[ga]=Oideachas
 Name[pt]=Educação
 Name[pt_BR]=Educação
 Name[sv]=Utbildning
