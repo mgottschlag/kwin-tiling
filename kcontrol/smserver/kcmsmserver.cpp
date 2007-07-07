@@ -126,7 +126,7 @@ void SMServerConfig::defaults()
   dialog->offerShutdownCheck->setChecked(true);
   dialog->sdGroup->setEnabled(true);
   dialog->logoutRadio->setChecked(true);
-  dialog->excludeLineedit->setText("");
+  dialog->excludeLineedit->clear();
 
 }
 
