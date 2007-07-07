@@ -1133,6 +1133,8 @@ setUserAuthorization( struct display *d )
 	debug( "setUserAuthorization\n" );
 	auths = d->authorizations;
 	if (auths) {
+		if (d->forceUserAuthDir)
+			goto fallback;
 		startUserAuth( name_buf, new_name, &old, &new );
 		if (new) {
 			envname = 0;

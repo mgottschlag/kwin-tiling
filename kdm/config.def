@@ -1729,6 +1729,15 @@ Description:
  directory and points the environment variable <envar>XAUTHORITY</envar>
  at the created file.
 
+Key: ForceUserAuthDir
+Type: bool
+Default: false
+User: core
+Instance: #*/!
+Comment: &
+Description:
+ If true, <option>UserAuthDir</option> will be used unconditionally.
+
 Key: AutoReLogin
 Type: bool
 Default: false
