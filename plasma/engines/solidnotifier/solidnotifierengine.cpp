@@ -39,6 +39,7 @@ SolidNotifierEngine::SolidNotifierEngine(QObject* parent, const QStringList& arg
             this, SLOT(onDeviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
             this, SLOT(onDeviceRemoved(const QString &)));
+    
 }
 
 SolidNotifierEngine::~SolidNotifierEngine()
@@ -48,12 +49,22 @@ SolidNotifierEngine::~SolidNotifierEngine()
 
 void SolidNotifierEngine::onDeviceAdded(const QString &udi)
 {
-    kDebug() << "add hardware solid : " << udi<<endl;
+    Solid::Device device(udi);
+    //temporary predicate in order to filter
+    Solid::Predicate predicate=Solid::Predicate::fromString("[[ StorageVolume.ignored == false AND StorageVolume.usage == 'FileSystem' ] OR [ IS StorageAccess AND StorageDrive.driveType == 'Floppy' ]]");
+    if(predicate.matches(device))
+    {
+        setData(udi,i18n("Clef usb"), udi);
+        kDebug() << "add hardware solid : " << udi<<endl;
+        checkForUpdates();
+    }
 }
 
 void SolidNotifierEngine::onDeviceRemoved(const QString &udi)
 {
+    removeSource(udi);
     kDebug() << "remove hardware solid : " << udi<<endl;
+    checkForUpdates();
 }
 
 #include "solidnotifierengine.moc"

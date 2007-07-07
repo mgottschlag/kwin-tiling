@@ -40,13 +40,17 @@ SolidNotifier::SolidNotifier(QObject *parent, const QStringList &args)
     m_theme = new Plasma::Svg("widgets/connection-established", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(m_pixelSize, m_pixelSize);
-    Plasma::DataEngine* SolidEngine = dataEngine("solidnotifierengine");
+    SolidEngine = dataEngine("solidnotifierengine");
     x=450;
     y=300;
-	t=new QTimer(this);
-	connect(t, SIGNAL(timeout()), this, SLOT(moveMyself()));
-    t->start(1000);
-    up_down=true;
+    t=new QTimer(this);
+    m_udi="";
+    //connect the timer to MoveDown Animation
+    connect(t, SIGNAL(timeout()), this, SLOT(moveDown()));
+
+    //connect to engine when a device is plug
+    connect(SolidEngine, SIGNAL(newSource(const QString&)),
+            this, SLOT(updated(const QString&)));
     constraintsUpdated();
 }
 
@@ -65,13 +69,6 @@ void SolidNotifier::constraintsUpdated()
     }
 }
 
-void SolidNotifier::updated(const QString& source, const Plasma::DataEngine::Data &data)
-{
-    Q_UNUSED(source);
-    Q_UNUSED(data);
-    update();
-}
-
 SolidNotifier::~SolidNotifier()
 {
 }
@@ -82,20 +79,28 @@ void SolidNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
     Q_UNUSED(option);
     QRectF boundRect = boundingRect();
     p->setRenderHint(QPainter::SmoothPixmapTransform);
+
     m_theme->paint(p, boundRect, "layer1");
 }
 
-void SolidNotifier::moveMyself()
+void SolidNotifier::updated(const QString& source)
 {
-    if(!up_down)
-    {
-        Phase::self()->moveItem(this, Phase::SlideIn,QPoint(0,100));
-        up_down=true;
-    }
-    else
-    {
-        Phase::self()->moveItem(this, Phase::SlideOut,QPoint(0,100));
-        up_down=false;
-    }
+    DataEngine::Data temp=SolidEngine->query(source);
+    m_udi = source;
+    kDebug()<<"SolidNotifier:: "<<m_udi<<endl;
+    update();
+    moveUp();
 }
+
+void SolidNotifier::moveUp()
+{
+    t->start(2000);
+    Phase::self()->moveItem(this, Phase::SlideIn,QPoint(0,50));
+}
+void SolidNotifier::moveDown()
+{
+    t->stop();
+    Phase::self()->moveItem(this, Phase::SlideOut,QPoint(0,50));
+}
+
 #include "solidnotifier.moc"

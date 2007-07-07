@@ -46,12 +46,11 @@ class SolidNotifier : public Plasma::Applet
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
         QRectF boundingRect() const;
         void constraintsUpdated();
+        void moveUp();
 
     public slots:
-        void updated(const QString &name, const Plasma::DataEngine::Data &data);
-
-    protected slots:
-        void moveMyself();
+        void updated(const QString &name);
+        void moveDown();
 
     private :
 
@@ -59,10 +58,11 @@ class SolidNotifier : public Plasma::Applet
         int m_pixelSize;
         QString m_timezone;
         Plasma::Svg* m_theme;
-        bool up_down;
+        QString m_udi;
         int x;
         int y;
         QTimer *t;
+        Plasma::DataEngine* SolidEngine;
 };
 
 K_EXPORT_PLASMA_APPLET(solidnotifier, SolidNotifier)
