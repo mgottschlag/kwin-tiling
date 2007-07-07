@@ -68,8 +68,10 @@ KGDialog::completeMenu()
 	}
 #endif
 
-	if (_allowClose)
-		inserten( _isLocal ? i18n("R&estart X Server") : i18n("Clos&e Connection"),
+	if (_allowClose || _isReserve)
+		inserten( _isReserve ? i18n("Abort S&ession") :
+		          _isLocal ? i18n("R&estart X Server") :
+		                     i18n("Clos&e Connection"),
 		          Qt::ALT+Qt::Key_E, SLOT(slotExit()) );
 
 #ifdef XDMCP
@@ -151,7 +153,7 @@ KGDialog::slotExit()
 {
 	if (verify)
 		verify->abort();
-	::exit( EX_RESERVER_DPY );
+	::exit( _isReserve ? EX_RESERVE : EX_RESERVER_DPY );
 }
 
 void

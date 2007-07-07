@@ -252,6 +252,8 @@ ctrlGreeterWait( int wreply )
 			/*debug( " index %#x\n", type );*/
 			if (type == C_isLocal)
 				i = (td->displayType & d_location) == dLocal;
+			else if (type == C_isReserve)
+				i = (td->displayType & d_lifetime) == dReserve;
 			else if (type == C_hasConsole)
 #ifdef HAVE_VTS
 				i = *consoleTTYs != 0;
@@ -432,8 +434,7 @@ openGreeter()
 		sessionExit( EX_UNMANAGE_DPY );
 	freeStrArr( env );
 	if ((cmd = ctrlGreeterWait( TRUE ))) {
-		if (cmd != -2)
-			logError( "Received unknown or unexpected command %d from greeter\n", cmd );
+		logError( "Received unknown or unexpected command %d from greeter\n", cmd );
 		closeGreeter( TRUE );
 		sessionExit( EX_UNMANAGE_DPY );
 	}
@@ -448,7 +449,7 @@ closeGreeter( int force )
 
 	if (grtproc.pid <= 0)
 		return EX_NORMAL;
-	ret = gClose (&grtproc, 0, force);
+	ret = gClose( &grtproc, 0, force );
 	debug( "greeter for %s stopped\n", td->name );
 	if (wcCode( ret ) > EX_NORMAL && wcCode( ret ) <= EX_MAX) {
 		debug( "greeter-initiated session exit, code %d\n", wcCode( ret ) );

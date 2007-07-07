@@ -256,6 +256,7 @@ from the copyright holder.
 #define C_isLocal       (C_TYPE_INT | 0x200)
 #define C_hasConsole    (C_TYPE_INT | 0x201)
 #define C_isAuthorized  (C_TYPE_INT | 0x202)
+#define C_isReserve     (C_TYPE_INT | 0x203)
 
 #ifdef XDMCP
 /**

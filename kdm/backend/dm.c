@@ -870,6 +870,10 @@ reapChildren( void )
 				else
 					exitDisplay( d, DS_RESTART, XS_KEEP, TRUE );
 				break;
+			case EX_RESERVE:
+				debug( "display exited with EX_RESERVE\n" );
+				exitDisplay( d, DS_RESERVE, 0, 0 );
+				break;
 #if 0
 			case EX_REMANAGE_DPY:
 				/* user session ended */

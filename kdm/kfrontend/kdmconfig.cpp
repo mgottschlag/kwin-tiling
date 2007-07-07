@@ -38,6 +38,7 @@ CONF_GREET_DEFS
 
 QString _stsFile;
 bool _isLocal;
+bool _isReserve;
 bool _authorized;
 
 static QString
@@ -108,6 +109,7 @@ void initConfig( void )
 	CONF_GREET_INIT
 
 	_isLocal = getCfgInt( C_isLocal );
+	_isReserve = _isLocal && getCfgInt( C_isReserve );
 	_hasConsole = _hasConsole && _isLocal && getCfgInt( C_hasConsole );
 	_authorized = getCfgInt( C_isAuthorized );
 

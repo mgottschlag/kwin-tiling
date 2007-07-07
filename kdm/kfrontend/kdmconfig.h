@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern QString _stsFile;
 extern bool _isLocal;
+extern bool _isReserve;
 extern bool _authorized;
 
 CONF_GREET_CPP_DECLS
