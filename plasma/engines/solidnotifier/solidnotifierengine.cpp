@@ -22,6 +22,7 @@
 #include <KDebug>
 #include <KLocale>
 #include <KStandardDirs>
+#include <KDesktopFile>
 #include "plasma/datasource.h"
 
 //solid specific includes
@@ -39,8 +40,9 @@ SolidNotifierEngine::SolidNotifierEngine(QObject* parent, const QStringList& arg
             this, SLOT(onDeviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
             this, SLOT(onDeviceRemoved(const QString &)));
-    QStringList files = KGlobal::dirs()->findAllResources("data", "solid/actions/*.desktop");
+    files = KGlobal::dirs()->findAllResources("data", "solid/actions/*.desktop");
     //kDebug() <<files.size()<<endl;
+    new_device=false;
 }
 
 SolidNotifierEngine::~SolidNotifierEngine()
@@ -51,14 +53,38 @@ SolidNotifierEngine::~SolidNotifierEngine()
 void SolidNotifierEngine::onDeviceAdded(const QString &udi)
 {
     Solid::Device device(udi);
-    //temporary predicate in order to filter
-    Solid::Predicate predicate=Solid::Predicate::fromString("[[ StorageVolume.ignored == false AND StorageVolume.usage == 'FileSystem' ] OR [ IS StorageAccess AND StorageDrive.driveType == 'Floppy' ]]");
-    if(predicate.matches(device))
+    QStringList interessting_desktop_files;
+    //search in all desktop configuration file if the device inserted is a correct device
+    foreach (QString path, files) {
+        KDesktopFile cfg(path);
+        QString string_predicate = cfg.desktopGroup().readEntry( "X-KDE-Solid-Predicate" );
+        //kDebug()<<string_predicate<<endl;
+        Solid::Predicate predicate=Solid::Predicate::fromString(string_predicate);
+        if(predicate.matches(device))
+        {
+            new_device=true;
+            interessting_desktop_files<<path;
+        }
+    }
+    if(new_device)
     {
-        setData(udi,i18n("Clef usb"), udi);
-        kDebug() << "add hardware solid : " << udi<<endl;
+        //kDebug()<<device.product()<<endl;
+        //kDebug()<<device.vendor()<<endl;
+        //kDebug()<<"number of interesting desktop file : "<<interessting_desktop_files.size()<<endl;
+        if(device.vendor().length()==0)
+        {
+            setData(udi,device.product(), udi);
+        }
+        else
+        {
+            setData(udi,device.vendor()+" "+device.product(), udi);
+        }
+        setData(udi,"icon", device.icon());
+        setData(udi,"desktoplist", interessting_desktop_files);
+        kDebug() << "add hardware solid : " <<udi<<endl;
         checkForUpdates();
     }
+    new_device=false;
 }
 
 void SolidNotifierEngine::onDeviceRemoved(const QString &udi)

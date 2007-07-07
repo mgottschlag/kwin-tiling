@@ -40,6 +40,9 @@ class SolidNotifierEngine : public Plasma::DataEngine
     protected slots :
         void onDeviceAdded(const QString &udi);
         void onDeviceRemoved(const QString &udi);
+    private :
+        QStringList files;
+        bool new_device;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(solidnotifier, SolidNotifierEngine)
