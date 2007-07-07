@@ -184,7 +184,8 @@ void FontUseItem::writeFont()
   KConfigBase *config;
 
   if (_rcfile.isEmpty()) {
-    KConfigGroup(KGlobal::config().data(), _rcgroup).writeEntry(_rckey, font(), KConfigBase::Normal|KConfigBase::Global);
+    config = KGlobal::config().data();
+    KConfigGroup(config, _rcgroup).writeEntry(_rckey, font(), KConfigBase::Normal|KConfigBase::Global);
   } else {
     config = new KConfig(KStandardDirs::locateLocal("config", _rcfile));
     KConfigGroup(config, _rcgroup).writeEntry(_rckey, font());
