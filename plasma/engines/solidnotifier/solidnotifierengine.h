@@ -28,7 +28,7 @@
 #include "plasma/dataengine.h"
 
 /**
- * This class evaluates the basic expressions given in the interface.
+ * This class is connected with solid, filter devices and provide signal with source for applet in Plasma
  */
 class SolidNotifierEngine : public Plasma::DataEngine
 {

@@ -21,7 +21,7 @@
 
 #include <KDebug>
 #include <KLocale>
-
+#include <KStandardDirs>
 #include "plasma/datasource.h"
 
 //solid specific includes
@@ -39,7 +39,8 @@ SolidNotifierEngine::SolidNotifierEngine(QObject* parent, const QStringList& arg
             this, SLOT(onDeviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
             this, SLOT(onDeviceRemoved(const QString &)));
-    
+    QStringList files = KGlobal::dirs()->findAllResources("data", "solid/actions/*.desktop");
+    //kDebug() <<files.size()<<endl;
 }
 
 SolidNotifierEngine::~SolidNotifierEngine()
