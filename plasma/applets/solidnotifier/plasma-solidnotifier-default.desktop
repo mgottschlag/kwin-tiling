@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Solid Notifier
+Name[nds]=Solid-Bescheden
 Type=Service
 ServiceTypes=Plasma/Applet
 
