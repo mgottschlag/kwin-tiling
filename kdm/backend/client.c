@@ -1097,6 +1097,41 @@ mergeSessionArgs( int cansave )
 		free( mfname );
 }
 
+static int
+createClientLog( const char *log )
+{
+	char randstr[32], *randstrp = 0, *lname;
+	int lfd;
+
+	for (;;) {
+		struct expando macros[] = {
+			{ 'd', 0, td->name },
+			{ 'u', 0, curuser },
+			{ 'r', 0, randstrp },
+			{ 0, 0, 0 }
+		};
+		if (!(lname = expandMacros( log, macros )))
+			exit( 1 );
+		unlink( lname );
+		if ((lfd = open( lname, O_WRONLY|O_CREAT|O_EXCL, 0600 )) >= 0) {
+			dup2( lfd, 1 );
+			dup2( lfd, 2 );
+			close( lfd );
+			free( lname );
+			return TRUE;
+		}
+		if (errno != EEXIST || !macros[2].uses) {
+			free( lname );
+			return FALSE;
+		}
+		logInfo( "Session log file %s not usable, trying another one.\n",
+		         lname );
+		free( lname );
+		sprintf( randstr, "%d", secureRandom() );
+		randstrp = randstr;
+	}
+}
+
 static int removeAuth;
 #ifdef USE_PAM
 static int removeSession;
@@ -1126,8 +1161,8 @@ startClient( volatile int *pid )
 #ifdef HAVE_SETUSERCONTEXT
 	extern char **environ;
 #endif
-	char *failsafeArgv[2], *lname;
-	int i, lfd;
+	char *failsafeArgv[2];
+	int i;
 
 	if (strCmp( dmrcuser, curuser )) {
 		if (curdmrc) { free( curdmrc ); curdmrc = 0; }
@@ -1494,37 +1529,25 @@ startClient( volatile int *pid )
 			bzero( curpass, strlen( curpass ) );
 		setUserAuthorization( td );
 		home = getEnv( userEnviron, "HOME" );
-		if (home) {
-			if (chdir( home ) < 0) {
-				logError( "Cannot chdir to %s's home %s: %m, using /\n",
-				          curuser, home );
-				home = 0;
-				userEnviron = setEnv( userEnviron, "HOME", "/" );
-				goto cdroot;
-			}
-			ASPrintf( &lname, td->clientLogFile, td->name );
-			if ((lfd = creat( lname, 0600 )) < 0) {
-				logWarn( "Cannot create session log file %s: %m\n", lname );
-				free( lname );
+		if (home && chdir( home ) < 0) {
+			logError( "Cannot chdir to %s's home %s: %m, using /\n",
+			          curuser, home );
+			chdir( "/" );
+			userEnviron = setEnv( userEnviron, "HOME", "/" );
+			home = 0;
+		}
+		if (home || td->clientLogFile[0] == '/') {
+			if (!createClientLog( td->clientLogFile )) {
+				logWarn( "Session log file according to %s cannot be created: %m\n",
+				         td->clientLogFile );
 				goto tmperr;
 			}
 		} else {
-		  cdroot:
-			chdir( "/" );
 		  tmperr:
-			ASPrintf( &lname, "/tmp/xerr-%s-%s", curuser, td->name );
-			unlink( lname );
-			if ((lfd = open( lname, O_WRONLY|O_CREAT|O_EXCL, 0600 )) < 0) {
-				logError( "Cannot create fallback session log file %s: %m\n",
-				          lname );
-				goto logerr;
-			}
+			if (!createClientLog( td->clientLogFallback ))
+				logError( "Fallback session log file according to %s cannot be created: %m\n",
+				          td->clientLogFallback );
 		}
-		dup2( lfd, 1 );
-		dup2( lfd, 2 );
-		close( lfd );
-	  logerr:
-		free( lname );
 		if (!*dmrcDir)
 			mergeSessionArgs( home != 0 );
 		if (!(desksess = iniEntry( curdmrc, "Desktop", "Session", 0 )))

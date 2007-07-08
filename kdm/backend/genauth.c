@@ -423,7 +423,7 @@ addPreGetEntropy( void )
 }
 #endif
 
-/* ONLY 8 or 16 bytes! */
+/* len MUST be multiple of sizeof(unsigned) and not more than 16! */
 /* auth MUST be sizeof(unsigned)-aligned! */
 int
 generateAuthData( char *auth, int len )
@@ -484,3 +484,13 @@ generateAuthData( char *auth, int len )
 # endif
 #endif
 }
+
+#ifndef HAVE_ARC4RANDOM
+int
+secureRandom( void )
+{
+	int rslt;
+	generateAuthData( (char *)&rslt, sizeof(int) );
+	return rslt & 0x7fffffff;
+}
+#endif

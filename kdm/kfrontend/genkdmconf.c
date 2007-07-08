@@ -1815,6 +1815,15 @@ upd_datadir( Entry *ce, Section *cs ATTR_UNUSED )
 }
 
 static void
+upd_userlogfile( Entry *ce, Section *cs ATTR_UNUSED )
+{
+	char *p;
+
+	if ((p = strstr( ce->value, "%s" )))
+		ASPrintf( (char **)&ce->value, "%.*s%%d%s", p - ce->value, ce->value, p + 2 );
+}
+
+static void
 copyPlainFile( const char *from, const char *to )
 {
 	File file;

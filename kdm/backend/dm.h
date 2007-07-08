@@ -550,6 +550,13 @@ void listSessions( int flags, struct display *d, void *ctx,
                    void (*emitXSess)( struct display *, struct display *, void * ),
                    void (*emitTTYSess)( STRUCTUTMP *, struct display *, void * ) );
 
+struct expando {
+	char key;
+	int uses;
+	const char *val;
+};
+char *expandMacros( const char *str, struct expando *expandos );
+
 /* in inifile.c */
 char *iniLoad( const char *fname );
 int iniSave( const char *data, const char *fname );

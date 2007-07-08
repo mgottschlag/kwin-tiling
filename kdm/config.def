@@ -1945,16 +1945,58 @@ Key: ClientLogFile
 Type: string
 Default: ".xsession-errors"
 User: core
-Instance: */".xsession-errors-%s"
+Instance: */".xsession-errors-%d"
 Instance: :0/".xsession-errors"
+Update: upd_userlogfile
 Comment:
- The file (relative to $HOME) to redirect the session output to. This is
- a printf format string; one %s will be replaced with the display name.
+ The file (relative to $HOME) to redirect the session output to. The
+ following character pairs are replaced:
+ - %d -> current display
+ - %u -> current user
+ - %r -> empty at first. See below.
+ - %% -> a single %
+ When the constructed filename cannot be used safely and the specification
+ contains %<stuff>r, other names will be tried - this time expanding %<stuff>r
+ to <stuff> followed by a random number.
 Description:
  The file (relative to the user's home directory) to redirect the session
- output to. One occurrence of <parameter>%s</parameter> in this string will be
- substituted with the display name. Use <parameter>%%</parameter> to obtain a
- literal <literal>%</literal>.
+ output to.
+ </para><para>
+ The following character pairs are replaced by their value:
+ <variablelist>
+ <varlistentry>
+ <term><parameter>%d</parameter></term>
+ <listitem><para>name of the current display</para></listitem>
+ </varlistentry>
+ <varlistentry>
+ <term><parameter>%u</parameter></term>
+ <listitem><para>login name of the current user</para></listitem>
+ </varlistentry>
+ <varlistentry>
+ <term><parameter>%r</parameter></term>
+ <listitem><para>empty at first. See below.</para></listitem>
+ </varlistentry>
+ <varlistentry>
+ <term><parameter>%%</parameter></term>
+ <listitem><para>a single <literal>%</literal></para></listitem>
+ </varlistentry>
+ </variablelist>
+ When the constructed filename cannot be used safely and the specification
+ contains
+ <literal>%</literal><replaceable>stuff</replaceable><literal>r</literal>,
+ other names will be tried - this time expanding
+ <literal>%</literal><replaceable>stuff</replaceable><literal>r</literal>
+ to <replaceable>stuff</replaceable> followed by a random number.
+
+Key: ClientLogFallback
+Type: string
+Default: "/tmp/xerr-%u-%d%-r"
+User: core
+Instance: #*/"/var/log/xsession-errors/%u-%d%-r"
+Comment: &
+Description:
+ Fallback when <option>ClientLogFile</option> cannot be used. The same expansions are
+ supported. <emphasis>Do not</emphasis> use relative paths here.
 
 Key: UseSessReg
 Type: bool
