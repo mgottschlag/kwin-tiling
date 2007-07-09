@@ -310,7 +310,7 @@ void KDMThemeWidget::getNewStuff()
 {
 	KNS::Engine engine;
 	engine.init("kdm.knsrc");
-	KNS::Entry::List entries = engine.downloadDialogModal();
+	KNS::Entry::List entries = engine.downloadDialogModal(this);
 }
 
 #include "kdm-theme.moc"
