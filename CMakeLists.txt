@@ -83,7 +83,7 @@ else(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
 endif(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
 
 if(BUILD_KICKER)
-  add_subdirectory( kdesktop )
+   #add_subdirectory( kdesktop )
   add_subdirectory( kicker)
 endif(BUILD_KICKER)
 add_subdirectory( kpager )
