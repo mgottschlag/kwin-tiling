@@ -73,11 +73,11 @@ void SolidNotifierEngine::onDeviceAdded(const QString &udi)
         //kDebug()<<"number of interesting desktop file : "<<interessting_desktop_files.size()<<endl;
         if(device.vendor().length()==0)
         {
-            setData(udi,device.product(), udi);
+            setData(udi,udi,device.product());
         }
         else
         {
-            setData(udi,device.vendor()+" "+device.product(), udi);
+            setData(udi,udi,device.vendor()+" "+device.product());
         }
         setData(udi,"icon", device.icon());
         setData(udi,"desktoplist", interessting_desktop_files);

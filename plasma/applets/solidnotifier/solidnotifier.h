@@ -49,7 +49,8 @@ class SolidNotifier : public Plasma::Applet
         void moveUp();
 
     public slots:
-        void updated(const QString &name);
+        void SourceAdded(const QString &name);
+        void updated(QString source,Plasma::DataEngine::Data data);
         void moveDown();
 
     private :

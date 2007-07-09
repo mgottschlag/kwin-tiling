@@ -50,7 +50,7 @@ SolidNotifier::SolidNotifier(QObject *parent, const QStringList &args)
 
     //connect to engine when a device is plug
     connect(SolidEngine, SIGNAL(newSource(const QString&)),
-            this, SLOT(updated(const QString&)));
+            this, SLOT(SourceAdded(const QString&)));
     constraintsUpdated();
 }
 
@@ -83,15 +83,22 @@ void SolidNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
     m_theme->paint(p, boundRect, "layer1");
 }
 
-void SolidNotifier::updated(const QString& source)
+void SolidNotifier::SourceAdded(const QString& source)
 {
-    DataEngine::Data temp=SolidEngine->query(source);
+    //kDebug()<<data_source.size()<<endl;
     m_udi = source;
-    kDebug()<<"SolidNotifier:: "<<m_udi<<endl;
+    SolidEngine->connectSource(source, this);
+}
+
+void SolidNotifier::updated(QString source,Plasma::DataEngine::Data data)
+{
+    kDebug()<<"SolidNotifier:: "<<source<<endl;
+    QStringList desktop_files=data["desktoplist"].toStringList();
+    //kDebug()<<data["icon"].toString()<<endl;
+    QString icon=data["icon"].toString();
     update();
     moveUp();
 }
-
 void SolidNotifier::moveUp()
 {
     t->start(2000);
