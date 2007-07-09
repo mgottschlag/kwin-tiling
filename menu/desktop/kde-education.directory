@@ -2,10 +2,12 @@
 Encoding=UTF-8
 Type=Directory
 Name=Education
+Name[fa]=آموزش
 Name[ga]=Oideachas
 Name[nds]=Lexen
 Name[pt]=Educação
 Name[pt_BR]=Educação
 Name[sv]=Utbildning
+Name[zh_TW]=教育
 Icon=package_edutainment
 

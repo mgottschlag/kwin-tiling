@@ -2,6 +2,10 @@
 Encoding=UTF-8
 Name=Solid Notifier
 Name[nds]=Solid-Bescheden
+Name[pt]=Notificação do Solid
+Name[pt_BR]=Notificação do Solid
+Name[sv]=Solid-underrättelser
+Name[zh_TW]=立體通知器
 Type=Service
 ServiceTypes=Plasma/Applet
 
