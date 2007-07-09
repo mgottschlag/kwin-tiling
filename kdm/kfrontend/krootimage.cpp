@@ -47,6 +47,7 @@ MyApplication::MyApplication( const char *conf, int argc, char **argv )
 	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
 	connect( &renderer, SIGNAL(imageDone( int )), this, SLOT(renderDone()) );
 	renderer.enableTiling( true ); // optimize
+	renderer.changeWallpaper(); // cannot do it when we're killed, so do it now
 	timer.start( 60000 );
 	renderer.start();
 }
