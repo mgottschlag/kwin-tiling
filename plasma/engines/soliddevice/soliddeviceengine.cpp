@@ -498,7 +498,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         audiodriver << "Alsa" << "OpenSoundSystem" << "UnknownAudioDriver";
 
         setData(name, "Driver", audiodriver.at((int)audiointerface->driver()));
-        setData(name, "DriverHandles", audiointerface->driverHandles());
+        setData(name, "DriverHandle", audiointerface->driverHandle());
         setData(name, "Name", audiointerface->name());
 
         //get AudioInterfaceTypes
