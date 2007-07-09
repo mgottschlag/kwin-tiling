@@ -28,6 +28,7 @@
 #include <solid/acadapter.h>
 #include <solid/battery.h>
 #include <solid/button.h>
+#include <solid/genericinterface.h>
 
 HalPower::HalPower(QObject *parent, const QStringList  & /*args */)
     : PowerManager(parent),
@@ -402,14 +403,14 @@ void HalPower::updateBatteryStats()
 
     foreach (Solid::Device *d, m_batteries.values())
     {
-        Solid::Battery *battery = d->as<Solid::Battery>();
+        Solid::GenericInterface *interface = d->as<Solid::GenericInterface>();
 
-        if (battery == 0) continue;
+        if (interface == 0) continue;
 
-        m_currentBatteryCharge+= battery->chargeValue(Solid::Battery::CurrentLevel);
-        m_maxBatteryCharge+= battery->chargeValue(Solid::Battery::LastFullLevel);
-        m_warningBatteryCharge+= battery->chargeValue(Solid::Battery::WarningLevel);
-        m_lowBatteryCharge+= battery->chargeValue(Solid::Battery::LowLevel);
+        m_currentBatteryCharge+= interface->property("battery.charge_level.current").toInt();
+        m_maxBatteryCharge+= interface->property("battery.charge_level.last_full").toInt();
+        m_warningBatteryCharge+= interface->property("battery.charge_level.warning").toInt();
+        m_lowBatteryCharge+= interface->property("battery.charge_level.low").toInt();
     }
 
     m_criticalBatteryCharge = m_lowBatteryCharge/2;

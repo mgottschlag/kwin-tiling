@@ -458,14 +458,10 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
 
         setData(name, "Plugged In", battery->isPlugged());
         setData(name, "Type", batterytype.at((int)battery->type()));
-        setData(name, "Charge Value Unit", battery->chargeValueUnit());
-        setData(name, "Charge Value", battery->chargeValue());
         setData(name, "Charge Percent", battery->chargePercent());
-        setData(name, "Voltage Unit", battery->voltageUnit());
-        setData(name, "Voltage", battery->voltage());
         setData(name, "Rechargeable", battery->isRechargeable());
         setData(name, "Charge State", chargestate.at((int)battery->chargeState()));
-        
+
         signalmanager->mapDevice(battery, device.udi());
     }
     if(buttonlist.contains(name)) {
@@ -483,7 +479,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, "HasState", button->hasState());
         setData(name, "StateValue", button->stateValue());
         setData(name, "Pressed", false);  //this is an extra value that is tracked by the button signals
-        
+
         signalmanager->mapDevice(button, device.udi());
     }
     if(audiointerfacelist.contains(name)) {
