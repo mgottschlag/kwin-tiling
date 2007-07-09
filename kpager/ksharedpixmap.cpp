@@ -11,8 +11,6 @@
  *
  * Shared pixmap client for KDE.
  */
-#include "config.h"
-
 #include <QtCore/QRect>
 #include <QtCore/QSize>
 #include <QtCore/QCharRef>

@@ -33,7 +33,6 @@
  *
  */
 
-#include "config.h"
 #include "kpager.h"
 
 #include <QLayout>
