@@ -5,7 +5,6 @@ set(krunner_calculatorrunner_SRCS
     calculatorrunner.cpp
 )
 
-kde4_automoc(${krunner_calculatorrunner_SRCS})
 kde4_add_plugin(krunner_calculatorrunner ${krunner_calculatorrunner_SRCS})
 target_link_libraries(krunner_calculatorrunner ${KDE4_KDECORE_LIBS} plasma)
 

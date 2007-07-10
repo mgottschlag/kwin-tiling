@@ -2,7 +2,6 @@ set(default_animator_SRCS
     defaultAnimator.cpp
 )
 
-kde4_automoc(${default_animator_SRCS})
 kde4_add_plugin(plasma_animator_default ${default_animator_SRCS})
 target_link_libraries(plasma_animator_default ${KDE4_KDECORE_LIBS} plasma)
 

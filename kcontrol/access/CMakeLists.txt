@@ -5,7 +5,6 @@
 
 set(kcm_access_PART_SRCS kcmaccess.cpp )
 
-kde4_automoc(${kcm_access_PART_SRCS})
 
 kde4_add_plugin(kcm_access ${kcm_access_PART_SRCS})
 
@@ -19,7 +18,6 @@ install(TARGETS kcm_access  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 set(kaccess_KDEINIT_SRCS kaccess.cpp main.cpp )
 
-kde4_automoc(${kaccess_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kaccess ${kaccess_KDEINIT_SRCS})
 

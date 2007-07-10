@@ -38,7 +38,6 @@ if( X86_MMX_FOUND2 )
     ADD_DEFINITIONS( -DHAVE_X86_MMX )
 endif( X86_MMX_FOUND2 )
 
-kde4_automoc( ksplashx ${ksplashx_SRCS})
 add_executable( ksplashx ${ksplashx_SRCS} ${ksplashx_EXTRA_SRCS} )
 target_link_libraries( ksplashx ${X11_LIBRARIES} ${PNG_LIBRARIES})
 if( X11_Xinerama_FOUND )

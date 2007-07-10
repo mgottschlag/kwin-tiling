@@ -7,7 +7,6 @@ add_definitions (-DQT3_SUPPORT)
 
 set(testsh_SRCS test.cpp ${CMAKE_CURRENT_SOURCE_DIR}/../shutdowndlg.cpp )
 
-kde4_automoc(${testsh_SRCS})
 
 kde4_add_test_executable(testsh ${testsh_SRCS})
 

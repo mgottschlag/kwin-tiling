@@ -12,7 +12,6 @@ set(plasma_SRCS
 set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE(plasma_SRCS ${ksmserver_xml} ksmserver_interface)
 
-kde4_automoc(${plasma_SRCS})
 kde4_add_executable(plasma-qgv ${plasma_SRCS})
 
 target_link_libraries(plasma-qgv plasma kworkspace  ${KDE4_KIO_LIBS})

@@ -13,7 +13,6 @@ set(kdesktop_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdesktop/org.kde.kdesktop.Back
 QT4_ADD_DBUS_INTERFACE( kcm_kthememanager_PART_SRCS ${kdesktop_xml} kdesktop_background )
 
 
-kde4_automoc(${kcm_kthememanager_PART_SRCS})
 
 kde4_add_ui_files(kcm_kthememanager_PART_SRCS newthemewidget.ui)
 kde4_add_ui3_files(kcm_kthememanager_PART_SRCS kthemedlg.ui )

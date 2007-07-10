@@ -50,7 +50,6 @@ set(kxkb_KDEINIT_SRCS
   kxkb_adaptor.cpp
 )
 
-kde4_automoc(${kxkb_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
 
@@ -69,7 +68,6 @@ set(kcm_keyboard_PART_SRCS
   ${kxkb_COMMON_SRCS}
 )
 
-kde4_automoc(${kcm_keyboard_PART_SRCS})
 
 kde4_add_ui_files(kcm_keyboard_PART_SRCS kcmlayoutwidget.ui kcmmiscwidget.ui )
 
@@ -96,7 +94,6 @@ set(kxkb_panelapplet_PART_SRCS
 	kxkbcore.cpp
 	${kxkb_COMMON_SRCS})
 
-kde4_automoc(${kxkb_panelapplet_PART_SRCS})
 
 kde4_add_plugin(kxkb_panelapplet ${kxkb_panelapplet_PART_SRCS})
 

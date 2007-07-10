@@ -20,7 +20,6 @@ set(solidcontrol_LIB_SRCS
 
 qt4_add_dbus_interface(solidcontrol_LIB_SRCS org.kde.Solid.Networking.xml org_kde_solid_networking)
 
-kde4_automoc(${solidcontrol_LIB_SRCS})
 
 kde4_add_library(solidcontrol SHARED ${solidcontrol_LIB_SRCS})
 

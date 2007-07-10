@@ -6,7 +6,6 @@ include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/kscreensaver/libkscreensave
 
 set(kblankscrn.kss_SRCS blankscrn.cpp )
 
-kde4_automoc(${kblankscrn.kss_SRCS})
 
 kde4_add_executable(kblankscrn.kss ${kblankscrn.kss_SRCS})
 

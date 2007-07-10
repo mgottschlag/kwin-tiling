@@ -4,7 +4,6 @@ set(plasmaengineexplorer_SRCS
 )
 
 kde4_add_ui_files(plasmaengineexplorer_SRCS engineexplorer.ui)
-kde4_automoc(${plasmaengineexplorer_SRCS})
 kde4_add_executable(plasmaengineexplorer ${plasmaengineexplorer_SRCS})
 
 target_link_libraries(plasmaengineexplorer plasma kworkspace  ${KDE4_KIO_LIBS})

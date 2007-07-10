@@ -5,7 +5,6 @@ include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/libkonq ${CMAKE_SOURCE
 
 set(media_panelapplet_PART_SRCS preferencesdialog.cpp mediumbutton.cpp mediaapplet.cpp )
 
-kde4_automoc(${media_panelapplet_PART_SRCS})
 
 kde4_add_plugin(media_panelapplet ${media_panelapplet_PART_SRCS})
 

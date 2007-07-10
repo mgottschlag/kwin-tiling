@@ -5,7 +5,6 @@
 
 set(kcm_arts_PART_SRCS arts.cpp krichtextlabel.cpp )
 
-kde4_automoc(${kcm_arts_PART_SRCS})
 
 kde4_add_ui3_files(kcm_arts_PART_SRCS generaltab.ui hardwaretab.ui )
 

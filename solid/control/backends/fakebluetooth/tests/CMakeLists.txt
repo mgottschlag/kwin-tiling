@@ -5,7 +5,6 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. )
 
 set(fakebluetoothtest_SRCS fakebluetoothtest.cpp )
 
-kde4_automoc(${fakebluetoothtest_SRCS})
 
 kde4_add_unit_test(fakebluetoothtest ${fakebluetoothtest_SRCS})
 

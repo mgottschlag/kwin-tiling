@@ -7,7 +7,6 @@ include_directories(${FREETYPE_INCLUDE_DIR})
 
 set(kcm_fonts_PART_SRCS ../krdb/krdb.cpp fonts.cpp ${libkxftconfig_SRCS} )
 
-kde4_automoc(${kcm_fonts_PART_SRCS})
 
 kde4_add_plugin(kcm_fonts ${kcm_fonts_PART_SRCS})
 

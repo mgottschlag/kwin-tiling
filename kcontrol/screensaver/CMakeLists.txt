@@ -17,7 +17,6 @@ set(screensaver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.freedesktop.Scr
 QT4_ADD_DBUS_INTERFACE( kcm_screensaver_PART_SRCS ${screensaver_xml} screensaver_interface )
 
 
-kde4_automoc(${kcm_screensaver_PART_SRCS})
 
 kde4_add_ui_files(kcm_screensaver_PART_SRCS advanceddialogimpl.ui )
 

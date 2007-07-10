@@ -4,7 +4,6 @@ kde4_add_ui_files(networkingservice_SRCS networkingserviceview.ui)
 
 qt4_add_dbus_interface(networkingservice_SRCS ../org.kde.Solid.Networking.Service.xml serviceinterface)
 
-kde4_automoc(${networkingservice_SRCS})
 
 kde4_add_executable(networkingservice ${networkingservice_SRCS})
 

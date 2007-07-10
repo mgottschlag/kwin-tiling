@@ -10,7 +10,6 @@ set(solid_fakenet_PART_SRCS
    fakenetworkmanager.cpp
 )
 
-kde4_automoc(${solid_fakenet_PART_SRCS})
 
 kde4_add_library(solid_fakenet_static STATIC ${solid_fakenet_PART_SRCS} )
 target_link_libraries(solid_fakenet_static solidcontrolifaces ${KDE4_KDECORE_LIBS} ${QT_QTXML_LIBRARY} )

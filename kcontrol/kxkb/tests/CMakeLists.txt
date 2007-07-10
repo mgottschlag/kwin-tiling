@@ -7,7 +7,6 @@ link_directories(lib)
 
 #set(kcm_keyboard_test_SRCS kcm_keyboard_test.cpp )
 
-#kde4_automoc(${kcm_keyboard_test_SRCS})
 
 #kde4_add_executable(kcm_keyboard_test ${kcm_keyboard_test_SRCS})
 
@@ -27,7 +26,6 @@ link_directories(lib)
 # 
 # ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 ${LIBXKLAVIER_DEFINITIONS} ${_LibGLIB2Cflags})
 # 
-# kde4_automoc(${kxkb_aplt_KDEINIT_SRCS})
 # 
 # kde4_add_kdeinit_executable(kxkb_aplt ${kxkb_aplt_KDEINIT_SRCS})
 # 
@@ -42,7 +40,6 @@ link_directories(lib)
 
 # set(kxkb_panelapplet_PART_SRCS kxkb_applet.cpp ${kxkb_applt_SRCS_COMMON})
 # 
-# kde4_automoc(${kxkb_panelapplet_PART_SRCS})
 # 
 # kde4_add_plugin(kxkb_panelapplet ${kxkb_panelapplet_PART_SRCS})
 # 

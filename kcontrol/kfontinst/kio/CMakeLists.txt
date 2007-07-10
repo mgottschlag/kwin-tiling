@@ -1,7 +1,6 @@
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/fonts)
 
 set(kio_fonts_PART_SRCS KioFonts.cpp Server.cpp Socket.cpp SuProc.cpp ${libkxftconfig_SRCS} )
-kde4_automoc(${kio_fonts_PART_SRCS})
 kde4_add_plugin(kio_fonts ${kio_fonts_PART_SRCS})
 target_link_libraries(kio_fonts ${KDE4_KIO_LIBS} ${KDE4_KDESU_LIBS} ${QT_QTNETWORK_LIBRARY} kfontinst )
 install(TARGETS kio_fonts  DESTINATION ${PLUGIN_INSTALL_DIR} )

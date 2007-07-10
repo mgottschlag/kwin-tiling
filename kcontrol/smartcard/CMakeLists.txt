@@ -5,7 +5,6 @@
 
 set(kcm_smartcard_PART_SRCS smartcard.cpp )
 
-kde4_automoc(${kcm_smartcard_PART_SRCS})
 
 kde4_add_ui_files(kcm_smartcard_PART_SRCS smartcardbase.ui nosmartcardbase.ui )
 

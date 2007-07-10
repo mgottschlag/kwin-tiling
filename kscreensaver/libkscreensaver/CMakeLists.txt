@@ -6,7 +6,6 @@
 
 set(kscreensaver_LIB_SRCS main.cpp kscreensaver.cpp)
 
-kde4_automoc(${kscreensaver_LIB_SRCS})
 
 kde4_add_library(kscreensaver SHARED ${kscreensaver_LIB_SRCS})
 

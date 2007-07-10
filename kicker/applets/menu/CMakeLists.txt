@@ -5,7 +5,6 @@
 
 set(menu_panelapplet_PART_SRCS menuapplet.cpp )
 
-kde4_automoc(${menu_panelapplet_PART_SRCS})
 
 
 kde4_add_plugin(menu_panelapplet ${menu_panelapplet_PART_SRCS})

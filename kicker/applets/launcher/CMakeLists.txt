@@ -21,7 +21,6 @@ kde4_add_ui3_files(launcher_panelapplet_PART_SRCS
     ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/kicker/ui/nonKDEButtonSettings.ui
     )
 
-kde4_automoc(${launcher_panelapplet_PART_SRCS})
 
 kde4_add_ui3_files(launcher_panelapplet_PART_SRCS configdlgbase.ui )
 

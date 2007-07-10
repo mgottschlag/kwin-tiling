@@ -14,7 +14,6 @@ configure_file (config-nic.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-nic.h )
 
 set(kcm_nic_PART_SRCS nic.cpp )
 
-kde4_automoc(${kcm_nic_PART_SRCS})
 
 kde4_add_plugin(kcm_nic ${kcm_nic_PART_SRCS})
 

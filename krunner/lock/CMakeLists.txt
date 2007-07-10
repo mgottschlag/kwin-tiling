@@ -31,7 +31,6 @@ QT4_ADD_DBUS_INTERFACE( krunner_lock_SRCS ${kxkb_xml} kxkb_interface )
 kde4_add_kcfg_files(krunner_lock_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../kscreensaversettings.kcfgc)
 
 
-kde4_automoc(${krunner_lock_SRCS})
 
 kde4_add_executable(krunner_lock ${krunner_lock_SRCS} )
 

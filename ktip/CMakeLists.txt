@@ -8,7 +8,6 @@ add_subdirectory( pics )
 
 set(ktip_SRCS ktipwindow.cpp )
 
-kde4_automoc(${ktip_SRCS})
 
 kde4_add_executable(ktip ${ktip_SRCS})
 

@@ -7,7 +7,6 @@ add_definitions (-DQT3_SUPPORT)
 
 set(kcm_accessibility_PART_SRCS accessibility.cpp )
 
-kde4_automoc(${kcm_accessibility_PART_SRCS})
 
 kde4_add_ui3_files(kcm_accessibility_PART_SRCS accessibilityconfigwidget.ui )
 

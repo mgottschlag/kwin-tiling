@@ -65,7 +65,6 @@ if (WITH_KDM_XCONSOLE)
 	)
 endif (WITH_KDM_XCONSOLE)
 macro_add_file_dependencies(kdm_greet.h ${confci})
-kde4_automoc(${kdm_greet_SRCS})
 kde4_add_executable(kdm_greet ${kdm_greet_SRCS})
 target_link_libraries(kdm_greet ${KDE4_KDEUI_LIBS} ${POSIX4_LIBRARIES})
 if(X11_XTest_FOUND)
@@ -82,7 +81,6 @@ target_link_libraries(kdm_config ${SOCKET_LIBRARIES} ${RESOLV_LIBRARIES} ${POSIX
 install(TARGETS kdm_config DESTINATION ${BIN_INSTALL_DIR})
 
 set(krootimage_SRCS krootimage.cpp krootimage.h ${backgroundlib_SRCS})
-kde4_automoc(${krootimage_SRCS})
 kde4_add_executable(krootimage ${krootimage_SRCS})
 # needs qt3support for q3ptrvector in background/bgrender.cpp
 target_link_libraries(krootimage ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY})

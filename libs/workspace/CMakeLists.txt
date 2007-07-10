@@ -11,7 +11,6 @@ QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface
 set(kwin_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kwin/org.kde.KWin.xml)
 QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
 
-kde4_automoc(${kworkspace_LIB_SRCS})
 
 kde4_add_library(kworkspace SHARED ${kworkspace_LIB_SRCS})
 

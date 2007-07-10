@@ -13,7 +13,6 @@ QT4_ADD_DBUS_INTERFACE( kcm_xinerama_kwin_SRCS ${kwin_xml} kwin_interface )
 set(kcm_xinerama_PART_SRCS kcmxinerama.cpp xineramawidget.cpp ${kcm_xinerama_kwin_SRCS})
 
 
-kde4_automoc(${kcm_xinerama_PART_SRCS})
 
 kde4_add_ui_files(kcm_xinerama_PART_SRCS xineramawidget.ui )
 

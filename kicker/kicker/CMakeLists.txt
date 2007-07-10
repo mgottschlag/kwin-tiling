@@ -20,7 +20,6 @@ qt4_add_dbus_interface(libkicker_ui_SRCS ../../krunner/org.freedesktop.ScreenSav
 
 set(kicker_KDEINIT_SRCS ${libkicker_buttons_SRCS} ${libkicker_ui_SRCS} ${libkicker_core_SRCS} )
 
-kde4_automoc(${kicker_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kicker ${kicker_KDEINIT_SRCS})
 
@@ -35,7 +34,6 @@ install(TARGETS kicker DESTINATION ${BIN_INSTALL_DIR})
 
 set(kicker_reverseLayout_SRCS kicker-3.4-reverseLayout.cpp)
 
-kde4_automoc(${kicker_reverseLayout_SRCS})
 
 kde4_add_executable( kicker-3.4-reverseLayout ${kicker_reverseLayout_SRCS})
 

@@ -6,7 +6,6 @@ set(kcm_fontinst_PART_SRCS ${libkfontinstview_SRCS} ${libkfontinstjobrunner_SRCS
     FontList.cpp GroupList.cpp KCmFontInst.cpp PrintDialog.cpp FontLister.cpp
     DuplicatesDialog.cpp FontFilter.cpp FcQuery.cpp )
 
-kde4_automoc(${kcm_fontinst_PART_SRCS})
 
 kde4_add_plugin(kcm_fontinst ${kcm_fontinst_PART_SRCS})
 

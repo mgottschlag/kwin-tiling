@@ -5,7 +5,6 @@ add_subdirectory( keramik )
 
 set(kcm_style_PART_SRCS ../krdb/krdb.cpp menupreview.cpp styleconfdialog.cpp kcmstyle.cpp)
 
-kde4_automoc(${kcm_style_PART_SRCS})
 
 kde4_add_ui_files(kcm_style_PART_SRCS stylepreview.ui)
 

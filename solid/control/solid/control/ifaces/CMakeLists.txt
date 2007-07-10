@@ -14,7 +14,6 @@ set(solidcontrolifaces_LIB_SRCS
    bluetoothinterface.cpp
    bluetoothmanager.cpp )
 
-kde4_automoc(${solidcontrolifaces_LIB_SRCS})
 
 kde4_add_library(solidcontrolifaces SHARED ${solidcontrolifaces_LIB_SRCS})
 

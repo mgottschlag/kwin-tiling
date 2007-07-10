@@ -6,7 +6,6 @@ include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/kscreensaver/libkscreensave
 
 set(krandom.kss_SRCS random.cpp )
 
-kde4_automoc(${krandom.kss_SRCS})
 
 kde4_add_executable(krandom.kss ${krandom.kss_SRCS})
 

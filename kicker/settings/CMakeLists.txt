@@ -16,7 +16,6 @@ set(kcm_kicker_PART_SRCS
    menuconfig.cpp 
    lookandfeelconfig.cpp )
 
-kde4_automoc(${kcm_kicker_PART_SRCS})
 
 kde4_add_ui3_files(kcm_kicker_PART_SRCS 
    positiontab.ui 

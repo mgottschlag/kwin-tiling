@@ -10,7 +10,6 @@ set(solid_bluez_PART_SRCS
 	bluez-bluetoothremotedevice.cpp
 )
 
-kde4_automoc(${solid_bluez_PART_SRCS})
 
 kde4_add_library(solid_bluez_static STATIC ${solid_bluez_PART_SRCS})
 target_link_libraries(solid_bluez_static ${KDE4_KDECORE_LIBS} QtXml solidcontrolifaces)

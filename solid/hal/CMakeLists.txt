@@ -7,7 +7,6 @@ set(solid_hal_power_PART_SRCS
    halpower.cpp 
    halsuspendjob.cpp )
 
-kde4_automoc(${solid_hal_power_PART_SRCS})
 
 kde4_add_library(solid_hal_power_static STATIC ${solid_hal_power_PART_SRCS})
 target_link_libraries(solid_hal_power_static ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrolifaces)

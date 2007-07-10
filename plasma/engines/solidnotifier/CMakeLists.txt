@@ -4,7 +4,6 @@ set(solidnotifier_engine_SRCS
     solidnotifierengine.cpp
 )
 
-kde4_automoc(${solidnotifier_engine_SRCS})
 kde4_add_plugin(plasma_engine_solidnotifier ${solidnotifier_engine_SRCS})
 target_link_libraries(plasma_engine_solidnotifier ${KDE4_KDECORE_LIBS} plasma )
 

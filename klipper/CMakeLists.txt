@@ -14,7 +14,6 @@ set(libklipper_common_SRCS klipper.cpp urlgrabber.cpp configdialog.cpp clipboard
 
 set(klipper_KDEINIT_SRCS ${libklipper_common_SRCS} main.cpp tray.cpp)
 
-kde4_automoc(${klipper_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( klipper ${klipper_KDEINIT_SRCS})
 
@@ -33,7 +32,6 @@ install(TARGETS klipper DESTINATION ${BIN_INSTALL_DIR})
 if (BUILD_KICKER)
 set(klipper_panelapplet_PART_SRCS applet.cpp ${libklipper_common_SRCS})
 
-kde4_automoc(${klipper_panelapplet_PART_SRCS})
 
 
 kde4_add_plugin(klipper_panelapplet ${klipper_panelapplet_PART_SRCS})

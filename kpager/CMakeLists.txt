@@ -13,7 +13,6 @@ set(kpager_SRCS
    main.cpp )
 qt4_add_dbus_adaptor( kpager_SRCS org.kde.KPager.xml kpager.h KPagerMainWindow )
 qt4_add_dbus_interface( kpager_SRCS ../kdesktop/org.kde.kdesktop.Background.xml kdesktop_background_interface )
-kde4_automoc(${kpager_SRCS})
 
 kde4_add_executable(kpager ${kpager_SRCS})
 

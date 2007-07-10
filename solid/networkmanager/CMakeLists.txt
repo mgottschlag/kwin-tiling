@@ -10,7 +10,6 @@ set(solid_networkmanager_PART_SRCS
 	NetworkManager-dbushelper.cpp
 )
 
-kde4_automoc(${solid_networkmanager_PART_SRCS})
 
 kde4_add_library(solid_networkmanager_static STATIC ${solid_networkmanager_PART_SRCS})
 target_link_libraries(solid_networkmanager_static ${KDE4_KDECORE_LIBS} solidcontrolifaces)

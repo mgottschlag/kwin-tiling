@@ -30,7 +30,6 @@ kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusXML} interface.h Interface)
 qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
 
-kde4_automoc(${krunner_SRCS})
 kde4_add_ui_files(krunner_SRCS runners/shell/shellOptions.ui)
 kde4_add_executable(krunner ${krunner_SRCS})
 # needs qt3support for Q3ListView in lockdlg

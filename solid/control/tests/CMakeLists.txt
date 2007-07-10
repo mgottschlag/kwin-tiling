@@ -5,7 +5,6 @@
 set(solidnettest_SRCS
    solidnettest.cpp )
 
-kde4_automoc(${solidnettest_SRCS})
 
 kde4_add_unit_test(solidnettest ${solidnettest_SRCS})
 add_definitions(-DFAKE_NETWORKING_XML="\\"${CMAKE_CURRENT_SOURCE_DIR}/../backends/fakenet/fakenetworking.xml\\"")
@@ -19,7 +18,6 @@ target_link_libraries(solidnettest ${KDE4_KDECORE_LIBS} ${QT_QTTEST_LIBRARY} sol
 set(solidbluetoothtest_SRCS
    solidbluetoothtest.cpp )
 
-kde4_automoc(${solidbluetoothtest_SRCS})
 
 kde4_add_unit_test(solidbluetoothtest ${solidbluetoothtest_SRCS})
 add_definitions(-DFAKE_BLUETOOTH_XML="\\"${CMAKE_CURRENT_SOURCE_DIR}/../backends/fakebluetooth/fakebluetooth.xml\\"")

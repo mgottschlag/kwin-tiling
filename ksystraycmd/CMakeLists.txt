@@ -8,7 +8,6 @@ add_definitions (-DQT3_SUPPORT)
 
 set(ksystraycmd_SRCS ksystraycmd.cpp main.cpp )
 
-kde4_automoc(${ksystraycmd_SRCS})
 
 kde4_add_executable(ksystraycmd ${ksystraycmd_SRCS})
 

@@ -5,7 +5,6 @@ include_directories(
 
 set(kfontviewpart_PART_SRCS ${libkfontinstview_SRCS} FontViewPart.cpp FontViewPartFactory.cpp )
 
-kde4_automoc(${kfontviewpart_PART_SRCS})
 kde4_add_plugin(kfontviewpart WITH_PREFIX ${kfontviewpart_PART_SRCS})
 
 target_link_libraries(kfontviewpart  ${KDE4_KPARTS_LIBS} kfontinstui kfontinst )

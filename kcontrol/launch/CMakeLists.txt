@@ -9,7 +9,6 @@ set(kdesktop_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdesktop/org.kde.kdesktop.Desk
 QT4_ADD_DBUS_INTERFACE( kcm_launch_PART_SRCS ${kdesktop_xml} kdesktop_interface )
 
 
-kde4_automoc(${kcm_launch_PART_SRCS})
 
 kde4_add_plugin(kcm_launch ${kcm_launch_PART_SRCS})
 

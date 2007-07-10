@@ -4,7 +4,6 @@ include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/lib/ )
 
 set(sidebar_panelextension_PART_SRCS sidebarextension.cpp )
 
-kde4_automoc(${sidebar_panelextension_PART_SRCS})
 
 kde4_add_plugin(sidebar_panelextension ${sidebar_panelextension_PART_SRCS})
 

@@ -4,7 +4,6 @@ include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/taskbar ${KDEBASE_WO
 
 set(taskbar_panelextension_PART_SRCS taskbarextension.cpp )
 
-kde4_automoc(${taskbar_panelextension_PART_SRCS})
 
 
 kde4_add_plugin(taskbar_panelextension ${taskbar_panelextension_PART_SRCS})

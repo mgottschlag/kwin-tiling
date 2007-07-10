@@ -13,7 +13,6 @@ qt4_add_dbus_adaptor(kded_networkstatus_PART_SRCS
         ${DBUS_INTERFACES_DIR}/org.kde.Solid.Networking.Client.xml
         networkstatus.h NetworkStatusModule)
 
-kde4_automoc(${kded_networkstatus_PART_SRCS})
 
 kde4_add_plugin(kded_networkstatus ${kded_networkstatus_PART_SRCS})
 

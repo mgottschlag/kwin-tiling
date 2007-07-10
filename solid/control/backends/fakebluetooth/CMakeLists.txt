@@ -10,7 +10,6 @@ set(solid_fakebluetooth_PART_SRCS
    fakebluetoothinputdevice.cpp
 )
 
-kde4_automoc(${solid_fakebluetooth_PART_SRCS})
 
 kde4_add_library(solid_fakebluetooth_static STATIC ${solid_fakebluetooth_PART_SRCS} )
 target_link_libraries(solid_fakebluetooth_static solidcontrolifaces ${KDE4_KDECORE_LIBS} ${QT_QTXML_LIBRARY} )

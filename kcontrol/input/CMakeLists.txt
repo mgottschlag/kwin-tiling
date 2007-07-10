@@ -28,7 +28,6 @@ endif(X11_Xcursor_FOUND)
 
 set(kapplymousetheme_SRCS kapplymousetheme.cpp )
 
-kde4_automoc(${kapplymousetheme_SRCS})
 
 kde4_add_executable(kapplymousetheme ${kapplymousetheme_SRCS})
 
@@ -44,7 +43,6 @@ install(TARGETS kapplymousetheme DESTINATION ${BIN_INSTALL_DIR})
 
 set(kcm_input_PART_SRCS mouse.cpp main.cpp logitechmouse.cpp ${libnoinst_SRCS})
 
-kde4_automoc(${kcm_input_PART_SRCS})
 
 kde4_add_ui_files(kcm_input_PART_SRCS kmousedlg.ui logitechmouse_base.ui )
 

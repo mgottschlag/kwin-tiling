@@ -5,7 +5,6 @@ include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdm/kfrontend  )
 
 set(kgreet_classic_PART_SRCS kgreet_classic.cpp )
 
-kde4_automoc(${kgreet_classic_PART_SRCS})
 
 kde4_add_plugin(kgreet_classic ${kgreet_classic_PART_SRCS})
 
@@ -19,7 +18,6 @@ install(TARGETS kgreet_classic  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 set(kgreet_winbind_PART_SRCS kgreet_winbind.cpp )
 
-kde4_automoc(${kgreet_winbind_PART_SRCS})
 
 kde4_add_plugin(kgreet_winbind ${kgreet_winbind_PART_SRCS})
 

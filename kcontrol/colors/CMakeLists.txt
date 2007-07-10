@@ -6,7 +6,6 @@ KDE4_NO_ENABLE_FINAL(colors)
 
 set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp kcolortreewidget.cpp ../krdb/krdb.cpp)
 
-kde4_automoc(${kcm_colors_PART_SRCS})
 
 kde4_add_plugin(kcm_colors ${kcm_colors_PART_SRCS})
 

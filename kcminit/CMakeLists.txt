@@ -6,7 +6,6 @@
 
 set(kcminit_KDEINIT_SRCS main.cpp)
 
-kde4_automoc(${kcminit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcminit ${kcminit_KDEINIT_SRCS})
 
@@ -23,7 +22,6 @@ install(TARGETS kcminit DESTINATION ${BIN_INSTALL_DIR})
 
 set(kcminit_startup_KDEINIT_SRCS main.cpp)
 
-kde4_automoc(${kcminit_startup_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcminit_startup ${kcminit_startup_KDEINIT_SRCS})
 

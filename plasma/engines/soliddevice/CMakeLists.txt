@@ -6,7 +6,6 @@ set(soliddevice_engine_SRCS
     devicesignalmapmanager.cpp
 )
 
-kde4_automoc(${soliddevice_engine_SRCS})
 kde4_add_plugin(plasma_engine_soliddevice ${soliddevice_engine_SRCS})
 target_link_libraries(plasma_engine_soliddevice ${KDE4_KDECORE_LIBS} plasma)
 

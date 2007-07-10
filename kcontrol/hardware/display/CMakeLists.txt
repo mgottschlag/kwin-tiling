@@ -5,7 +5,6 @@
 
 set(kcm_display_PART_SRCS display.cpp )
 
-kde4_automoc(${kcm_display_PART_SRCS})
 
 kde4_add_plugin(kcm_display ${kcm_display_PART_SRCS})
 

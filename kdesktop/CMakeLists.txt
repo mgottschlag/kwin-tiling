@@ -58,7 +58,6 @@ QT4_ADD_DBUS_INTERFACE( kdesktop_SRCS ${kwin_xml} kwin_interface )
 qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Background.xml bgmanager.h KBackgroundManager )
 qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Desktop.xml desktop.h KDesktop )
 
-kde4_automoc(${kdesktop_SRCS})
 
 kde4_add_ui_files(kdesktop_SRCS minicli.ui )
 
