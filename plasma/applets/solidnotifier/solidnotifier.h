@@ -23,7 +23,7 @@
 
 #include <QTimer>
 #include <QPainter>
-
+#include <KIcon>
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
 
@@ -60,8 +60,11 @@ class SolidNotifier : public Plasma::Applet
         QString m_timezone;
         Plasma::Svg* m_theme;
         QString m_udi;
+        QString device_name;
+        KIcon * k_icon;
         int x;
         int y;
+        bool icon;
         QTimer *t;
         Plasma::DataEngine* SolidEngine;
 };

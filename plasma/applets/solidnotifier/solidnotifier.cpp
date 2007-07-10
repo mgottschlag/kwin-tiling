@@ -36,7 +36,7 @@ SolidNotifier::SolidNotifier(QObject *parent, const QStringList &args)
     setHasConfigurationInterface(false);
 
     KConfigGroup cg = appletConfig();
-    m_pixelSize = cg.readEntry("size", 100);
+    m_pixelSize = cg.readEntry("size", 200);
     m_theme = new Plasma::Svg("widgets/connection-established", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(m_pixelSize, m_pixelSize);
@@ -45,6 +45,7 @@ SolidNotifier::SolidNotifier(QObject *parent, const QStringList &args)
     y=300;
     t=new QTimer(this);
     m_udi="";
+    icon = false;
     //connect the timer to MoveDown Animation
     connect(t, SIGNAL(timeout()), this, SLOT(moveDown()));
 
@@ -79,8 +80,12 @@ void SolidNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
     Q_UNUSED(option);
     QRectF boundRect = boundingRect();
     p->setRenderHint(QPainter::SmoothPixmapTransform);
-
-    m_theme->paint(p, boundRect, "layer1");
+    if(icon)
+    {
+        k_icon->paint(p,450,300,70,70);
+        p->drawText(525,325,device_name);
+    }
+    //clean the icon from the screen, see it later
 }
 
 void SolidNotifier::SourceAdded(const QString& source)
@@ -92,10 +97,13 @@ void SolidNotifier::SourceAdded(const QString& source)
 
 void SolidNotifier::updated(QString source,Plasma::DataEngine::Data data)
 {
-    kDebug()<<"SolidNotifier:: "<<source<<endl;
+    kDebug()<<"SolidNotifier:: "<<data[source].toString()<<endl;
     QStringList desktop_files=data["desktoplist"].toStringList();
     //kDebug()<<data["icon"].toString()<<endl;
-    QString icon=data["icon"].toString();
+    QString icon_temp=data["icon"].toString();
+    k_icon=new KIcon(icon_temp);
+    icon = true;
+    device_name=data[source].toString();
     update();
     moveUp();
 }
@@ -108,6 +116,7 @@ void SolidNotifier::moveDown()
 {
     t->stop();
     Phase::self()->moveItem(this, Phase::SlideOut,QPoint(0,50));
+    //icon=false;
 }
 
 #include "solidnotifier.moc"
