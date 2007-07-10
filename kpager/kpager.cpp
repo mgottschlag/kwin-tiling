@@ -34,6 +34,7 @@
  */
 
 #include "kpager.h"
+#include "config.h"
 
 #include <QLayout>
 

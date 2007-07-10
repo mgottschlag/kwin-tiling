@@ -48,6 +48,7 @@
 #include <QApplication>
 
 #include "desktop.h"
+#include "config.h"
 #include "windowdrag.h"
 #include <QX11Info>
 #include <kdesktop_background_interface.h>
