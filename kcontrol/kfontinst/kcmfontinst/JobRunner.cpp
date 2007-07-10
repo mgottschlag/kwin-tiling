@@ -225,6 +225,12 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)
         case CMD_ENABLE:
             setCaption(i18n("Enabling"));
             break;
+        case CMD_COPY:
+            setCaption(i18n("Copying"));
+            break;
+        case CMD_MOVE:
+            setCaption(i18n("Moving"));
+            break;
         default:
         case CMD_DISABLE:
             setCaption(i18n("Disabling"));
@@ -282,13 +288,15 @@ void CJobRunner::doNext()
 
         switch(itsCmd)
         {
+            case CMD_COPY:
             case CMD_INSTALL:
             {
                 KUrl dest(itsDest);
 
                 dest.setFileName(Misc::getFile((*itsIt).path()));
-                itsStatusLabel->setText(i18n("Installing %1", (*itsIt).displayName()));
-                job=KIO::file_copy(*itsIt, dest, false);
+                itsStatusLabel->setText(CMD_INSTALL==itsCmd ? i18n("Installing %1", (*itsIt).displayName())
+                                                            : i18n("Copying %1", (*itsIt).displayName()) );
+                job=KIO::file_copy(*itsIt, dest, -1, false, false, false);
                 break;
             }
             case CMD_DELETE:
@@ -302,6 +310,16 @@ void CJobRunner::doNext()
             case CMD_DISABLE:
                 itsStatusLabel->setText(i18n("Disabling %1", (*itsIt).displayName()));
                 job=KIO::rename(*itsIt, toggle(*itsIt, false), false);
+                break;
+            case CMD_MOVE:
+            {
+                KUrl dest(itsDest);
+
+                dest.setFileName(Misc::getFile((*itsIt).path()));
+                itsStatusLabel->setText(i18n("Moving %1", (*itsIt).displayName()));
+                job=KIO::file_move(*itsIt, dest, -1, false, false, false);
+                break;
+            }
             default:
                 break;
         }

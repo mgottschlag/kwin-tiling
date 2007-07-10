@@ -332,8 +332,19 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
                         return grp->name();
                     case Qt::DecorationRole:
                         if(grp->highlighted())
-                            return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection()
-                                       ? "arrow-right" : "arrow-left");
+                            switch(grp->type())
+                            {
+                                case CGroupListItem::ALL:      // Removing from a group
+                                    return SmallIcon("list-remove");
+                                case CGroupListItem::PERSONAL: // Copying/moving
+                                case CGroupListItem::SYSTEM:   // Copying/moving
+                                    return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection()
+                                                        ? "arrow-right" : "arrow-left");
+                                case CGroupListItem::CUSTOM:   // Addint to a group
+                                    return SmallIcon("list-add");
+                                default:
+                                    break;
+                            }
                     default:
                         break;
                 }
@@ -769,6 +780,12 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
     itsPrintAct=itsMenu->addAction(KIcon("document-print"), i18n("Print..."),
                                    this, SIGNAL(print()));
 
+    itsActionMenu=new QMenu(this);
+    itsActionMenu->addAction(KIcon("goto-page"), i18n("Move Here"), this, SIGNAL(moveFonts()));
+    itsActionMenu->addAction(KIcon("edit-copy"), i18n("Copy Here"), this, SIGNAL(copyFonts()));
+    itsActionMenu->addSeparator();
+    itsActionMenu->addAction(KIcon("process-stop"), i18n("Cancel"));
+
     setWhatsThis(model->whatsThis());
     header()->setWhatsThis(whatsThis());
     connect(this, SIGNAL(addFamilies(const QModelIndex &,  const QSet<QString> &)),
@@ -861,29 +878,48 @@ void CGroupListView::dragMoveEvent(QDragMoveEvent *event)
             if(COL_GROUP_NAME!=index.column())
                 index=((CGroupList *)model())->createIdx(index.row(), COL_GROUP_NAME, index.internalPointer());
 
-            CGroupListItem *dest=static_cast<CGroupListItem *>(index.internalPointer());
+            CGroupListItem        *dest=static_cast<CGroupListItem *>(index.internalPointer());
+            CGroupListItem::EType type=getType();
 
-            if(dest &&
-               (dest->isCustom() || (isCustom() && dest->isAll())) &&
-               !selectedIndexes().contains(index))
-            {
-                drawHighlighter(index);
-                event->acceptProposedAction();
-                return;
-            }
+            if(dest)
+                if(!selectedIndexes().contains(index))
+                {
+                    bool ok(true);
+
+                    if(dest->isCustom())
+                        emit info(i18n("Drop here to add the selected fonts to \"%1\".", dest->name()));
+                    else if(CGroupListItem::CUSTOM==type && dest->isAll())
+                        emit info(i18n("Drop here to remove the selected fonts from the current group."));
+                    else if(!Misc::root() && dest->isPersonal() && CGroupListItem::SYSTEM==type)
+                        emit info(i18n("Drop here to copy, or move, the selected fonts to your peronal folder."));
+                    else if(!Misc::root() && dest->isSystem() && CGroupListItem::PERSONAL==type)
+                        emit info(i18n("Drop here to copy, or move, the selected fonts to the system folder."));
+                    else
+                        ok=false;
+
+                    if(ok)
+                    {
+                        drawHighlighter(index);
+                        event->acceptProposedAction();
+                        return;
+                    }
+                }
         }
         event->ignore();
         drawHighlighter(QModelIndex());
+        emit info(QString());
     }
 }
 
 void CGroupListView::dragLeaveEvent(QDragLeaveEvent *)
 {
     drawHighlighter(QModelIndex());
+    emit info(QString());
 }
 
 void CGroupListView::dropEvent(QDropEvent *event)
 {
+    emit info(QString());
     drawHighlighter(QModelIndex());
     if(event->provides(KFI_FONT_DRAG_MIME))
     {
@@ -896,13 +932,18 @@ void CGroupListView::dropEvent(QDropEvent *event)
                       to(indexAt(event->pos()));
 
         ds >> families;
-        // Are we removing a font from the current group?
-        if(to.isValid() && from.isValid() &&
-           (static_cast<CGroupListItem *>(from.internalPointer()))->isCustom() &&
-           !(static_cast<CGroupListItem *>(to.internalPointer()))->isCustom())
-            emit removeFamilies(from, families);
-        else
-            emit addFamilies(to, families);
+        // Are we mvoeing/copying, removing a font from the current group?
+        if(to.isValid() && from.isValid())
+            if( ((static_cast<CGroupListItem *>(from.internalPointer()))->isSystem() &&
+                 (static_cast<CGroupListItem *>(to.internalPointer()))->isPersonal()) ||
+                ((static_cast<CGroupListItem *>(from.internalPointer()))->isPersonal() &&
+                 (static_cast<CGroupListItem *>(to.internalPointer()))->isSystem()))
+                itsActionMenu->popup(QCursor::pos());
+            else if((static_cast<CGroupListItem *>(from.internalPointer()))->isCustom() &&
+                    !(static_cast<CGroupListItem *>(to.internalPointer()))->isCustom())
+                emit removeFamilies(from, families);
+            else
+                emit addFamilies(to, families);
 
         if(isUnclassified())
             emit unclassifiedChanged();

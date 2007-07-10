@@ -190,6 +190,8 @@ class CGroupListView : public QTreeView
 
     bool                  isCustom()       { return CGroupListItem::CUSTOM==getType(); }
     bool                  isUnclassified() { return CGroupListItem::UNCLASSIFIED==getType(); }
+    bool                  isSystem()       { return CGroupListItem::SYSTEM==getType(); }
+    bool                  isPersonal()     { return CGroupListItem::PERSONAL==getType(); }
     CGroupListItem::EType getType();
     void                  controlMenu(bool del, bool en, bool dis, bool p);
 
@@ -199,6 +201,9 @@ class CGroupListView : public QTreeView
     void                  print();
     void                  enable();
     void                  disable();
+    void                  copyFonts();
+    void                  moveFonts();
+    void                  info(const QString &str);
     void                  addFamilies(const QModelIndex &group, const QSet<QString> &);
     void                  removeFamilies(const QModelIndex &group, const QSet<QString> &);
     void                  itemSelected(const QModelIndex &);
@@ -221,7 +226,8 @@ class CGroupListView : public QTreeView
 
     private:
 
-    QMenu       *itsMenu;
+    QMenu       *itsMenu,
+                *itsActionMenu;
     QAction     *itsDeleteAct,
                 *itsEnableAct,
                 *itsDisableAct,

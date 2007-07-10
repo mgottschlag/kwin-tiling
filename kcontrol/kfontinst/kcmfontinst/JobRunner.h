@@ -54,7 +54,9 @@ class CJobRunner : public CActionDialog
         CMD_DELETE,
         CMD_ENABLE,
         CMD_DISABLE,
-        CMD_UPDATE
+        CMD_UPDATE,
+        CMD_COPY,
+        CMD_MOVE
     };
 
     CJobRunner(QWidget *parent, int xid=0);

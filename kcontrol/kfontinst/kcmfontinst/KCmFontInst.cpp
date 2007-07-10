@@ -351,8 +351,12 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     connect(itsGroupListView, SIGNAL(print()), SLOT(printGroup()));
     connect(itsGroupListView, SIGNAL(enable()), SLOT(enableGroup()));
     connect(itsGroupListView, SIGNAL(disable()), SLOT(disableGroup()));
+    connect(itsGroupListView, SIGNAL(copyFonts()), SLOT(copyFonts()));
+    connect(itsGroupListView, SIGNAL(moveFonts()), SLOT(moveFonts()));
     connect(itsGroupListView, SIGNAL(itemSelected(const QModelIndex &)),
            SLOT(groupSelected(const QModelIndex &)));
+    connect(itsGroupListView, SIGNAL(info(const QString &)),
+           SLOT(showInfo(const QString &)));
     connect(itsGroupList, SIGNAL(refresh()), SLOT(refreshFontList()));
     connect(itsFontList, SIGNAL(finished()), SLOT(listingCompleted()));
     connect(itsFontList, SIGNAL(percent(int)), itsListingProgress, SLOT(setValue(int)));
@@ -692,26 +696,141 @@ void CKCmFontInst::print(bool all)
 
 void CKCmFontInst::deleteFonts()
 {
-    CJobRunner::ItemList urls;
-    QStringList          fontNames;
-    QSet<Misc::TFont>    fonts;
-    bool                 hasSys(false);
-
-    itsDeletedFonts.clear();
-    itsFontListView->getFonts(urls, fontNames, &fonts, &hasSys, true);
-
-    if(urls.isEmpty())
-        KMessageBox::information(this, i18n("You did not select anything to delete."),
-                                       i18n("Nothing to Delete"));
-    else
+    if(!working())
     {
-        QSet<Misc::TFont>::ConstIterator it(fonts.begin()),
-                                         end(fonts.end());
+        CJobRunner::ItemList urls;
+        QStringList          fontNames;
+        QSet<Misc::TFont>    fonts;
+        bool                 hasSys(false);
 
-        for(; it!=end; ++it)
-            itsDeletedFonts.insert((*it).family);
+        itsDeletedFonts.clear();
+        itsFontListView->getFonts(urls, fontNames, &fonts, &hasSys, true);
 
-        deleteFonts(urls, fontNames, hasSys);
+        if(urls.isEmpty())
+            KMessageBox::information(this, i18n("You did not select anything to delete."),
+                                     i18n("Nothing to Delete"));
+        else
+        {
+            QSet<Misc::TFont>::ConstIterator it(fonts.begin()),
+                                             end(fonts.end());
+            bool                             doIt=false;
+
+            for(; it!=end; ++it)
+                itsDeletedFonts.insert((*it).family);
+
+            switch(fontNames.count())
+            {
+                case 0:
+                    break;
+                case 1:
+                    doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
+                            i18n("<p>Do you really want to "
+                                    "delete</p><p>\'<b>%1</b>\'?</p>", fontNames.first()),
+                            i18n("Delete Font"), KStandardGuiItem::del());
+                break;
+                default:
+                    doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
+                            i18np("Do you really want to delete this font?",
+                                  "Do you really want to delete these %1 fonts?",
+                                    fontNames.count()),
+                            fontNames, i18n("Delete Fonts"), KStandardGuiItem::del());
+            }
+
+            if(doIt && (!hasSys || itsRunner->getAdminPasswd(this)))
+            {
+                itsStatusLabel->setText(i18n("Deleting font(s)..."));
+                doCmd(CJobRunner::CMD_DELETE, urls, KUrl());
+            }
+        }
+    }
+}
+
+void CKCmFontInst::copyFonts()
+{
+    if(!working())
+    {
+        CJobRunner::ItemList urls;
+        QStringList          fontNames;
+        bool                 fromSys(itsGroupListView->isSystem());
+
+        itsDeletedFonts.clear();
+        itsFontListView->getFonts(urls, fontNames, NULL, NULL, true);
+
+        if(urls.isEmpty())
+            KMessageBox::information(this, i18n("You did not select anything to copy."),
+                                     i18n("Nothing to Copy"));
+        else
+        {
+            bool doIt=false;
+
+            switch(fontNames.count())
+            {
+                case 0:
+                    break;
+                case 1:
+                    doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
+                            i18n("<p>Do you really want to "
+                                    "copy</p><p>\'<b>%1</b>\'?</p>", fontNames.first()),
+                            i18n("Copy Font"), KGuiItem(i18n("Copy")));
+                break;
+                default:
+                    doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
+                            i18np("Do you really want to copy this font?",
+                                  "Do you really want to copy these %1 fonts?",
+                                    fontNames.count()),
+                            fontNames, i18n("Copy Fonts"), KGuiItem(i18n("Copy")));
+            }
+
+            if(doIt && (fromSys || itsRunner->getAdminPasswd(this)))
+            {
+                itsStatusLabel->setText(i18n("Copying font(s)..."));
+                doCmd(CJobRunner::CMD_COPY, urls, baseUrl(!fromSys));
+            }
+        }
+    }
+}
+
+void CKCmFontInst::moveFonts()
+{
+    if(!working())
+    {
+        CJobRunner::ItemList urls;
+        QStringList          fontNames;
+
+        itsDeletedFonts.clear();
+        itsFontListView->getFonts(urls, fontNames, NULL, NULL, true);
+
+        if(urls.isEmpty())
+            KMessageBox::information(this, i18n("You did not select anything to move."),
+                                     i18n("Nothing to Move"));
+        else
+        {
+            bool doIt=false;
+
+            switch(fontNames.count())
+            {
+                case 0:
+                    break;
+                case 1:
+                    doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
+                            i18n("<p>Do you really want to "
+                                    "move</p><p>\'<b>%1</b>\'?</p>", fontNames.first()),
+                            i18n("Move Font"), KGuiItem(i18n("Move")));
+                break;
+                default:
+                    doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
+                            i18np("Do you really want to move this font?",
+                                  "Do you really want to move these %1 fonts?",
+                                    fontNames.count()),
+                            fontNames, i18n("Move Fonts"), KGuiItem(i18n("Move")));
+            }
+
+            if(doIt && itsRunner->getAdminPasswd(this))
+            {
+                itsStatusLabel->setText(i18n("Moving font(s)..."));
+                doCmd(CJobRunner::CMD_MOVE, urls, baseUrl(!itsGroupListView->isSystem()));
+            }
+        }
     }
 }
 
@@ -848,6 +967,24 @@ void CKCmFontInst::refreshFamilies()
     itsFontList->getFamilyStats(enabledFamilies, disabledFamilies, partialFamilies);
     itsGroupList->updateStatus(enabledFamilies, disabledFamilies, partialFamilies);
     setStatusBar();
+}
+
+void CKCmFontInst::showInfo(const QString &info)
+{
+    if(info.isEmpty())
+        if(itsLastStatusBarMsg.isEmpty())
+            setStatusBar();
+        else
+        {
+            itsStatusLabel->setText(itsLastStatusBarMsg);
+            itsLastStatusBarMsg=QString();
+        }
+    else
+    {
+        if(itsLastStatusBarMsg.isEmpty())
+            itsLastStatusBarMsg=itsStatusLabel->text();
+        itsStatusLabel->setText(info);
+    }
 }
 
 void CKCmFontInst::setStatusBar()
@@ -1058,38 +1195,6 @@ void CKCmFontInst::selectGroup(CGroupListItem::EType grp)
     groupSelected(idx);
     itsFontListView->refreshFilter();
     setStatusBar();
-}
-
-void CKCmFontInst::deleteFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool hasSys)
-{
-    if(!working() && urls.count())
-    {
-        bool doIt=false;
-
-        switch(fonts.count())
-        {
-            case 0:
-                break;
-            case 1:
-                doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
-                           i18n("<p>Do you really want to "
-                                "delete</p><p>\'<b>%1</b>\'?</p>", fonts.first()),
-                           i18n("Delete Font"), KStandardGuiItem::del());
-            break;
-            default:
-                doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
-                           i18np("Do you really want to delete this font?",
-                                 "Do you really want to delete these %1 fonts?",
-                                 fonts.count()),
-                           fonts, i18n("Delete Fonts"), KStandardGuiItem::del());
-        }
-
-        if(doIt && (!hasSys || itsRunner->getAdminPasswd(this)))
-        {
-            itsStatusLabel->setText(i18n("Deleting font(s)..."));
-            doCmd(CJobRunner::CMD_DELETE, urls, KUrl());
-        }
-    }
 }
 
 void CKCmFontInst::toggleGroup(bool enable)

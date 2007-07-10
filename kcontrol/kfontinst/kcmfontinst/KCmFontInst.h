@@ -71,6 +71,8 @@ class CKCmFontInst : public KCModule
     void    reload();
     void    addFonts();
     void    deleteFonts();
+    void    copyFonts();
+    void    moveFonts();
     void    enableFonts();
     void    disableFonts();
     void    addGroup();
@@ -85,6 +87,7 @@ class CKCmFontInst : public KCModule
     void    listingCompleted();
     void    refreshFontList();
     void    refreshFamilies();
+    void    showInfo(const QString &info);
     void    setStatusBar();
     void    addFonts(const QSet<KUrl> &src);
     void    toggleFontManagement(bool on);
@@ -94,7 +97,6 @@ class CKCmFontInst : public KCModule
 
     void    selectGroup(CGroupListItem::EType grp);
     void    print(bool all);
-    void    deleteFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool hasSys);
     void    toggleGroup(bool enable);
     void    toggleFonts(bool enable, const QString &grp=QString());
     void    toggleFonts(CJobRunner::ItemList &urls, const QStringList &fonts, bool enable, const QString &grp,
