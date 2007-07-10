@@ -304,7 +304,6 @@ int main(int argc, char **argv)
   options.add("+[arg(s)]", ki18n("Arguments for command"));
 
   KCmdLineArgs::addCmdLineOptions(options);
-  KCmdLineArgs::addTempFileOption();
 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
