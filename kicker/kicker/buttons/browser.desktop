@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Quick File Browser
 Name[af]=Vinnige Lêer Blaaier
+Name[be]=Хуткі агляд файлаў
 Name[ca]=Fullejador de fitxers ràpid
 Name[cs]=Rychlý prohlížeč souborů
 Name[csb]=Chùtczé przezéranié lopków
@@ -50,6 +51,7 @@ Name[x-test]=xxQuick File Browserxx
 Name[zh_TW]=快速檔案瀏覽器
 Comment=A menu that lists files in a given folder
 Comment[af]='n Kieslys wat die lêers in 'n spesifieke gids vertoon
+Comment[be]=Меню, якое паказвае файлы ў вызначанай тэчцы
 Comment[ca]=Un menú que llista els fitxers d'una carpeta
 Comment[cs]=Nabídka vypisující soubory v dané složce
 Comment[csb]=Menu pokazëwôjące lopczi w pòdónym katalogù

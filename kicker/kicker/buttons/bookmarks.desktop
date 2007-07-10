@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Bookmarks Menu
 Name[af]=Boekmerke Kieslys
+Name[be]=Меню закладак
 Name[br]=Meuziad ar sinedoù
 Name[ca]=Menú de punts
 Name[cs]=Nabídka záložek
@@ -53,6 +54,7 @@ Name[x-test]=xxBookmarks Menuxx
 Name[zh_TW]=書籤選單
 Comment=Your Konqueror bookmarks
 Comment[af]=Jou Konqueror boekmerke
+Comment[be]=Закладкі Konqueror
 Comment[ca]=Els vostres punts Konqueror
 Comment[cs]=Vaše záložky Konqueroru
 Comment[csb]=Załóżczi Konquerora

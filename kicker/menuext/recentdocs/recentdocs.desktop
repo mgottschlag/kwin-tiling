@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Recent Documents
 Name[af]=Onlangse Dokumente
+Name[be]=Нядаўнія дакументы
 Name[br]=Teulioù nevez
 Name[ca]=Documents recents
 Name[cs]=Nedávné dokumenty
@@ -58,6 +59,7 @@ Name[x-test]=xxRecent Documentsxx
 Name[xh]=Uxwebhu Olusandukusebenziswa
 Name[zh_TW]=最近的文件
 Comment=Recent documents you have used
+Comment[be]=Меню раней выкарыстаных дакументаў
 Comment[csb]=Menu slédno òtemkłëch dokùmentów
 Comment[de]=Menü mit Dokumenten, die Sie zuletzt geöffnet waren
 Comment[el]=Έγγραφα που χρησιμοποιήθηκαν πρόσφατα

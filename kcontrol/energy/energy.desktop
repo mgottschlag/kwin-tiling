@@ -76,6 +76,7 @@ Name[zh_TW]=電源控制
 
 Comment=Settings for display power management
 Comment[af]=Instellings vir die vertoon van die krag bestuurder
+Comment[be]=Кіраванне сілкаваннем манітора
 Comment[br]=Kefluniadur renadur gremm an diskwell
 Comment[ca]=Arranjaments per al control d'energia a la pantalla
 Comment[cs]=Nastavení pro správu šetření napájení
@@ -132,6 +133,7 @@ Comment[xh]=Izicwangciso zoboniso lophatho lwamandla
 Comment[zh_TW]=顯示器電源管理的設定值
 
 Keywords=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power
+Keywords[be]=энергія,зберагальнік,збераганне,тэрмін чакання,ачышчэнне,выключэнне,сілкаванне,сон,energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power
 Keywords[ca]=energia,salva,apm,acpi,dpms,expiració,en blanc,en espera, suspès,corrent
 Keywords[cs]=Energie,Úspora,APM,ACPI,Časový limit,Vypnutí,Napájení,Šetřič,Spořič
 Keywords[csb]=sëła,energijô,zachòwëwanié,apm,acpi,dpms,limit czasu,zaczôrnienié,wëłączanié, ùspienié,zasëlanié

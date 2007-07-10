@@ -12,6 +12,7 @@ X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Theme Manager
 Name[af]=Tema Bestuurder
+Name[be]=Кіраванне тэмамі
 Name[br]=Merour gwiskadoù
 Name[ca]=Gestor de temes
 Name[cs]=Správce motivů
@@ -70,6 +71,7 @@ Name[zh_TW]=佈景管理程式
 
 Comment=Manage global KDE visual themes
 Comment[af]=Bestuurder KDE se globale visuele temas
+Comment[be]=Кіраванне глабальнымі візуальнымі тэмамі KDE
 Comment[ca]=Gestiona els temes visuals globals del KDE
 Comment[cs]=Správce motivů pracovní plochy
 Comment[csb]=Sprôwiôj témą KDE
@@ -123,6 +125,7 @@ Comment[zh_TW]=管理全域 KDE 視覺佈景
 
 Keywords=themes,look and feel
 Keywords[af]=themes,look and feel,temas
+Keywords[be]=Тэмы,Вонкавы выгляд,themes,look and feel
 Keywords[br]=gizioù,Neuz ha feson
 Keywords[ca]=temes,aspecte i efecte
 Keywords[cs]=motivy,vzhled a chování

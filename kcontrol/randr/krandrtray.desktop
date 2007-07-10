@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KRandRTray
+Name[be]=Змена параметраў манітора
 Name[hu]=Képernyőfelbontás
 Name[ne]=KRandR ट्रे
 Name[pt_BR]=Ícone do KRandR
@@ -8,6 +9,7 @@ Name[sv]=Krandrtray
 Name[x-test]=xxKRandRTrayxx
 GenericName=Screen Resize & Rotate
 GenericName[af]=Skerm Hervergroot & Roteer
+GenericName[be]=Змена памераў экрана і перагортванне
 GenericName[br]=Adventañ ha treiñ ar skramm
 GenericName[ca]=Amida i gira la pantalla
 GenericName[cs]=Změna velikosti a rotace obrazovky
@@ -64,6 +66,7 @@ Comment[csb]=Panel apletu do zmianë miarë ë pòłóżenia ekranów X
 Comment[de]=Ein Werkzeug zum Ändern der Bildschirmgröße und -ausrichtung
 Comment[el]=Ένα εφαρμογίδιο αλλαγής μεγέθους και προσανατολισμού οθονών Χ.
 Comment[es]=Una miniaplicación del panel para redimensionar y reorientar pantallas X.
+Comment[fa]=برنامک تابلویی برای تغییر اندازه و تغییر جهت پرده‌های X.
 Comment[ja]=スクリーンのサイズや向きを変更するためのアプレット
 Comment[nds]=En Paneel-Lüttprogramm för't Ännern vun Grött un Utrichten vun X-Schirmen
 Comment[nl]=Een paneelapplet voor het wijzigen van de grootte en oriëntatie van de schermweergave.

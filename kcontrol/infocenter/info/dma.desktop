@@ -14,6 +14,7 @@ X-KDE-ParentApp=kinfocenter
 
 Name=DMA-Channels
 Name[af]=Dma-kanale
+Name[be]=Каналы DMA
 Name[br]=Kanolioù DMA
 Name[ca]=Canals DMA
 Name[cs]=DMA kanály
@@ -75,6 +76,7 @@ Name[zh_TW]=DMA 通道
 
 Comment=DMA information
 Comment[af]=Dma informasie
+Comment[be]=Звесткі аб DMA
 Comment[br]=Titouroù diwar-benn an DMA
 Comment[ca]=Informació de la DMA
 Comment[cs]=Informace o DMA
@@ -136,6 +138,7 @@ Comment[zh_TW]=DMA 資訊
 
 Keywords=dma,DMA-Channels,System Information
 Keywords[af]=dma,DMA-Channels,System Informasie
+Keywords[be]=каналы DMA,сістэмная інфармацыя,dma,DMA-Channels,System Information
 Keywords[br]=dma,kanolioù DMA,titoutoù reizhoad
 Keywords[ca]=dma,Canals DMA,informació del sistema
 Keywords[cs]=dma,DMA kanály,Informace o systému

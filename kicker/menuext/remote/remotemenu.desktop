@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Network Folders
 Name[af]=Netwerk Gidse
+Name[be]=Сеткавыя тэчкі
 Name[br]=Renkelloù rouedad
 Name[ca]=Carpetes de xarxa
 Name[cs]=Síťové složky
@@ -56,6 +57,7 @@ Name[uz]=Тармоқ жилдлари
 Name[x-test]=xxNetwork Foldersxx
 Name[zh_TW]=網路資料夾
 Comment=Easy access to network folders
+Comment[be]=Меню сеткавых тэчак
 Comment[csb]=Menu sécowëch katalogów
 Comment[de]=Einfacher Zugriff auf Netzwerkordner
 Comment[el]=Εύκολη πρόσβαση σε δικτυακούς φακέλους

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Show Desktop
 Name[af]=Vertoon Werkskerm
+Name[be]=Паказаць працоўны стол
 Name[ca]=Mostra l'escriptori
 Name[cs]=Zobrazit plochu
 Name[csb]=Pòkôże pùlt
@@ -53,6 +54,7 @@ Name[x-test]=xxShow Desktopxx
 Name[zh_TW]=顯示桌面
 Comment=A button that gives quick access to the desktop when pressed
 Comment[af]='n Knoppie wat vinnige toegang tot die werkskerm gee wanneer dit gedruk word
+Comment[be]=Кнопка, якая дае хуткі доступ да працоўнага стала
 Comment[ca]=Un botó que dóna accés ràpid a l'escriptori en prémer-hi
 Comment[cs]=Tlačítko s rychlým přístupem k pracovní ploše
 Comment[csb]=Knąpa chùtczégò przëstãpù do pùltu

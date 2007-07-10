@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Plugin
 Comment=Displays the trashbin and allows dropping files on it
+Comment[be]=Паказвае сметнік і дазваляе кідаць файлы ў яго
 Comment[csb]=Wëskrzëniwô zamkłosc kòsza ë zezwôlô przecygac do niegò lopczi
 Comment[de]=Mülleimerfunktion in der Kontrollleiste
 Comment[el]=Εμφανίζει τον κάδο απορριμμάτων και επιτρέπει την απόθεση αρχείων σε αυτόν

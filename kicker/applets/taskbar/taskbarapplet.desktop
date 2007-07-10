@@ -3,6 +3,7 @@ Type=Plugin
 Encoding=UTF-8
 Name=Taskbar
 Name[af]=Kasbar
+Name[be]=Панель заданняў
 Name[br]=Barrenn dleadoù
 Name[ca]=Barra de tasques
 Name[cs]=Pruh úloh
@@ -60,6 +61,7 @@ Name[xh]=Ibar yomsebenzi
 Name[zh_TW]=工作列
 
 Comment=The default taskbar panel applet
+Comment[be]=Панель заданняў па змаўчанні
 Comment[csb]=Alternatiwnô lëstew dzejaniów dlô panelu.
 Comment[de]=Die Standard-Fensterleiste
 Comment[el]=Το προκαθορισμένο εφαρμογίδιο γραμμής εργασιών για τον πίνακα

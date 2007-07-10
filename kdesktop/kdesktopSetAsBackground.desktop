@@ -4,6 +4,7 @@ ServiceTypes=image/*
 Actions=setAsBackground;tileAsBackground;
 X-KDE-Submenu=Set as Background
 X-KDE-Submenu[af]=Stel as agtergrond
+X-KDE-Submenu[be]=Зрабіць фонавым малюнкам
 X-KDE-Submenu[ca]=Estableix com a fons
 X-KDE-Submenu[cs]=Nastavit jako pozadí
 X-KDE-Submenu[csb]=Ùstôwi jakno spòdlé
@@ -55,6 +56,7 @@ X-KDE-Submenu[zh_TW]=設為背景
 [Desktop Action setAsBackground]
 Name=Centered
 Name[af]=Gesentreer
+Name[be]=Пасярэдзіне
 Name[br]=Kreizennet
 Name[ca]=Centrat
 Name[cs]=Na střed
@@ -117,6 +119,7 @@ Exec=qdbus org.kde.kdesktop  /Background setWallpaper %u 6
 [Desktop Action tileAsBackground]
 Name=Tiled
 Name[af]=Geteël
+Name[be]=Брукаванкай
 Name[br]=Teolet
 Name[ca]=Repetit
 Name[cs]=Dlaždice

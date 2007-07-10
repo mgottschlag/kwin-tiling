@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Window List Menu
 Name[af]=Venster Lys Kieslys
+Name[be]=Меню спісу вокнаў
 Name[br]=Meuziad listenn ar prenester
 Name[ca]=Menú de la llista de finestres
 Name[cs]=Nabídka seznamu oken
@@ -53,6 +54,7 @@ Name[x-test]=xxWindow List Menuxx
 Name[zh_TW]=視窗列表選單
 Comment=A menu that lists all open windows
 Comment[af]='n Kieslys wat al die oop vensters vertoon
+Comment[be]=Меню, якое паказвае усе адкрытыя вокны
 Comment[ca]=Un menú que llista totes les finestres obertes
 Comment[cs]=Nabídka se seznamem otevřených oken
 Comment[csb]=Menu pòkazëwôjącé wszëtczé òtemkłé òkna

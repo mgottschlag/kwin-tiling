@@ -2,6 +2,7 @@
 Type=Plugin
 Encoding=UTF-8
 Name=Lock/Logout Applet
+Name[be]=Кнопкі блакавання/выхаду
 Name[csb]=Knąpë blokòwaniô ekranu/wëlogòwaniô
 Name[de]=Bildschirmsperre und Abmeldung aus KDE
 Name[el]=Εφαρμογίδιο κλειδώματος/αποσύνδεσης
@@ -17,6 +18,7 @@ Name[x-test]=xxLock/Logout Appletxx
 Name[zh_TW]=「螢幕鎖定/登出」小程式
 Comment=Adds buttons for locking screen and session logout
 Comment[af]=Voeg skerm sluit en afteken knoppies by
+Comment[be]=Дадае кнопкі для блакіроўкі экрана і заканчэння сесіі
 Comment[ca]=Afegeix botons per bloquejar la pantalla i sortir de la sessió
 Comment[cs]=Přidá tlačítka pro uzamčení obrazovky a odhlášení z relace
 Comment[csb]=Dodôwô knapë blokòwaniô ekranu ë wëlogòwaniô

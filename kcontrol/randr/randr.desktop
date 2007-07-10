@@ -10,6 +10,7 @@ X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Size & Orientation
 Name[af]=Grootte & Ooriëntasie
+Name[be]=Памеры і арыентацыя
 Name[br]=Ment ha reteradur
 Name[ca]=Mida i orientació
 Name[cs]=Velikost a orientace
@@ -68,6 +69,7 @@ Name[zh_TW]=尺寸及定位
 
 Comment=Resize and Rotate your display
 Comment[af]=Hervergroot en Roteer jou skerm
+Comment[be]=Змяняе памеры і перагортвае ваш экран
 Comment[br]=Adventañ ha treiñ ho skramm
 Comment[ca]=Amida i gira la vostra pantalla
 Comment[cs]=Změna velikosti a rotace obrazovky
@@ -124,6 +126,7 @@ Comment[x-test]=xxResize and Rotate your displayxx
 Comment[zh_TW]=調整大小及旋轉你的螢幕
 
 Keywords=resize,rotate,display,color,depth,size,horizontal,vertical
+Keywords[be]=Змена памеру,Перагортванне,Дысплей,Экран,Колер,Глыбіня,Памер,Гарызантальны,Вертыкальны,resize,rotate,display,color,depth,size,horizontal,vertical
 Keywords[ca]=amida,gira,pantalla,color,profunditat,mida,horitzontal,vertical
 Keywords[cs]=velikost,rotace,obrazovka,barva,hloubka,horizontální,vertikální
 Keywords[csb]=zmiana miarë,òbrócenié,pòłożenié,miara,ekran,farwa,farwë,głãbòkòsc farwów,wielëna farwów,knôdno,hòrizontalno

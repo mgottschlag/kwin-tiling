@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=External Taskbar
 Name[af]=Eksterne Taakbalk
+Name[be]=Вонкавая панель заданняў
 Name[br]=Barrenn dleadoù diavaez
 Name[ca]=Barra de tasques externa
 Name[cs]=Externí pruh úloh
@@ -59,6 +60,7 @@ Name[x-test]=xxExternal Taskbarxx
 Name[xh]=Ibar yomsebenzi Wangaphandle
 Name[zh_TW]=外部工作列
 Comment=External taskbar panel extension.
+Comment[be]=Вонкавае пашырэнне панелі заданняў
 Comment[csb]=Rozszérzenié panelu z bùtnową listwą dzejaniów
 Comment[de]=Eine alternative Fensterleiste
 Comment[el]=Εξωτερική επέκταση γραμμής εργασιών του πίνακα.

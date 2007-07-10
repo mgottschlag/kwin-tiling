@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Calculator Runner
+Name[be]=Калькулятар
 Name[csb]=Kalkùlator
 Name[de]=Rechner-Starter
 Name[el]=Εκτελεστής υπολογισμών
@@ -16,6 +17,7 @@ Name[zh_TW]=計算機執行者
 Comment=Calculate expressions
 Comment[de]=Berechnungen durchführen
 Comment[el]=Υπολογισμός εκφράσεων
+Comment[fa]=محاسبه عبارات
 Comment[ja]=数式を計算
 Comment[nds]=Utdrück utreken
 Comment[nl]=Expressies berekenen

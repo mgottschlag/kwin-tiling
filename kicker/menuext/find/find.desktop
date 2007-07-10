@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Find
 Name[af]=Soek
+Name[be]=Знайсці
 Name[br]=Klask
 Name[ca]=Cerca
 Name[cs]=Najít
@@ -58,6 +59,7 @@ Name[wa]=Trover
 Name[x-test]=xxFindxx
 Name[zh_TW]=尋找
 Comment=Quickly start a file or web search
+Comment[be]=Меню для запуску пошуку файлаў ці ў Сеціве
 Comment[csb]=Menu naczãca szëkbë w sécë abò lopków
 Comment[de]=Menü zur Datei- oder Websuche
 Comment[el]=Γρήγορη εκκίνηση ενός αρχείου ή αναζήτηση στον ιστό

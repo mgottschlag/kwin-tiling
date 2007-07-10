@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Print System
 Name[af]=Drukker Stelsel
+Name[be]=Сістэма друку
 Name[br]=Reizhiad moulañ
 Name[ca]=Sistema d'impressió
 Name[cs]=Tiskový systém
@@ -61,6 +62,7 @@ Name[x-test]=xxPrint Systemxx
 Name[xh]=Indlela Yoshicilelo
 Name[zh_TW]=列印系統
 Comment=Easy access to the print system
+Comment[be]=Меню для сістэмы друку
 Comment[csb]=Menu systemë drëkù
 Comment[de]=Einfacher Zugriff auf das Drucksystem
 Comment[el]=Εύκολη πρόσβαση στο σύστημα εκτύπωσης

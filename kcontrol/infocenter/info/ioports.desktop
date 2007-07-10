@@ -14,6 +14,7 @@ X-KDE-ParentApp=kinfocenter
 
 Name=IO-Ports
 Name[af]=Io-poorte
+Name[be]=Парты ўводу/вываду
 Name[br]=Porzhioù ED
 Name[ca]=Ports E/S
 Name[cs]=Vstupně/výstupní-porty
@@ -74,6 +75,7 @@ Name[xh]=IO-Ufako
 
 Comment=IO-port information
 Comment[af]=Io-poort informasie
+Comment[be]=Звесткі аб партах уводу/вываду
 Comment[br]=Titouroù diwar-benn ar porzhioù ED
 Comment[ca]=Informació dels ports E/S
 Comment[cs]=Informace o vstupně/výstupních-portech
@@ -135,6 +137,7 @@ Comment[zh_TW]=IO-Port 資訊
 
 Keywords=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Information
 Keywords[af]=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Informasie
+Keywords[be]=Увод'вывад,парты ўводу/вываду,парты,сістэмная інфармацыя,IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Information
 Keywords[br]=ED,E/D,porzhioù E/D,porzhioù,rummad ED,rummadE/D,titouroù ar reizhiad
 Keywords[ca]=ES,E/S,Ports d'ES,Ports d'E/S,Ports,Rang d'ES,Rang d'E/S,Informació del sistema
 Keywords[cs]=IO,I/O,IO-porty,I/O-porty,Porty,Rozsah IO,Rozsah I/O,Informace o systému

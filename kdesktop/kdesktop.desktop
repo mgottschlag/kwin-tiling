@@ -4,6 +4,7 @@ Exec=kdesktop
 X-DBUS-StartupType=wait
 Name=KDE Desktop
 Name[af]=KDE Werkskerm
+Name[be]=Працоўны стол KDE
 Name[br]=Burev KDE
 Name[ca]=Escriptori KDE
 Name[cs]=Pracovní plocha KDE
