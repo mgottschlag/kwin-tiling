@@ -9,7 +9,7 @@ set(taskbar_panelextension_PART_SRCS taskbarextension.cpp )
 kde4_add_plugin(taskbar_panelextension ${taskbar_panelextension_PART_SRCS})
 
 
-target_link_libraries(taskbar_panelextension  ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS} kickermain taskmanager taskbar )
+target_link_libraries(taskbar_panelextension  ${KDE4_KPARTS_LIBS} kickermain taskmanager taskbar )
 
 install(TARGETS taskbar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

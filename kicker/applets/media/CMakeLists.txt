@@ -9,7 +9,7 @@ set(media_panelapplet_PART_SRCS preferencesdialog.cpp mediumbutton.cpp mediaappl
 kde4_add_plugin(media_panelapplet ${media_panelapplet_PART_SRCS})
 
 
-target_link_libraries(media_panelapplet  konq kickermain  ${KDE4_KIO_LIBS} ${KDE4_KUTILS_LIBS} )
+target_link_libraries(media_panelapplet  konq kickermain  ${KDE4_KUTILS_LIBS} )
 
 install(TARGETS media_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

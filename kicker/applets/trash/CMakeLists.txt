@@ -9,7 +9,7 @@ set(trash_panelapplet_PART_SRCS trashbutton.cpp trashapplet.cpp )
 kde4_add_plugin(trash_panelapplet ${trash_panelapplet_PART_SRCS})
 
 
-target_link_libraries(trash_panelapplet  kickermain konq  ${KDE4_KIO_LIBS} ${KDE4_KUTILS_LIBS} )
+target_link_libraries(trash_panelapplet  kickermain konq  ${KDE4_KUTILS_LIBS} )
 
 install(TARGETS trash_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

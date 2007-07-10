@@ -9,7 +9,7 @@ set(kcminit_KDEINIT_SRCS main.cpp)
 
 kde4_add_kdeinit_executable( kcminit ${kcminit_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kcminit  ${KDE4_KIO_LIBS} ${KDE4_KUTILS_LIBS} )
+target_link_libraries(kdeinit_kcminit  ${KDE4_KUTILS_LIBS} )
 
 install(TARGETS kdeinit_kcminit  DESTINATION ${LIB_INSTALL_DIR} )
 
@@ -25,7 +25,7 @@ set(kcminit_startup_KDEINIT_SRCS main.cpp)
 
 kde4_add_kdeinit_executable( kcminit_startup ${kcminit_startup_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kcminit_startup  ${KDE4_KIO_LIBS} ${KDE4_KUTILS_LIBS} )
+target_link_libraries(kdeinit_kcminit_startup  ${KDE4_KUTILS_LIBS} )
 
 install(TARGETS kdeinit_kcminit_startup  DESTINATION ${LIB_INSTALL_DIR} )
 
