@@ -472,6 +472,21 @@ prepareErrorGreet()
 	}
 }
 
+void
+finishGreet()
+{
+	int ret;
+
+	if (grtproc.pid > 0) {
+		gSendInt( V_OK );
+		if ((ret = closeGreeter( FALSE )) != EX_NORMAL) {
+			logError( "Abnormal greeter termination, code %d, sig %d\n",
+					wcCode( ret ), wcSig( ret ) );
+			sessionExit( EX_RESERVER_DPY );
+		}
+	}
+}
+
 static Jmp_buf idleTOJmp;
 
 /* ARGSUSED */
@@ -569,8 +584,6 @@ manageSession( struct display *d )
 	if (autoLogon( tdiff )) {
 		if (!strDup( &curtype, "classic" ) || !verify( conv_auto, FALSE ))
 			goto gcont;
-		if (grtproc.pid > 0)
-			gSendInt( V_OK );
 	} else {
 	  regreet:
 		openGreeter();
@@ -613,9 +626,6 @@ manageSession( struct display *d )
 			goto regreet;
 		}
 	}
-
-	if (closeGreeter( FALSE ) != EX_NORMAL)
-		goto regreet;
 
 	if (td_setup)
 		setupDisplay( td_setup );

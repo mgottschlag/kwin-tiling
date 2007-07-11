@@ -452,7 +452,7 @@ KGVerify::vrfMsgBox( QWidget *parent, const QString &user,
                    QMessageBox::Icon type, const QString &mesg )
 {
 	FDialog::box( parent, type, user.isEmpty() ?
-	              mesg : i18n("Authenticating %1 ...\n\n", user ) + mesg );
+	              mesg : i18n("Logging in %1 ...\n\n", user ) + mesg );
 }
 
 static const char *msgs[]= {
@@ -515,12 +515,18 @@ KGVerify::vrfInfoBox( QWidget *parent, const QString &user, const char *msg )
 }
 
 bool // public static
-KGVerify::handleFailVerify( QWidget *parent )
+KGVerify::handleFailVerify( QWidget *parent, bool showUser )
 {
+	char *msg;
+	QString user;
+
 	debug( "handleFailVerify ...\n" );
-	char *msg = gRecvStr();
-	QString user = QString::fromLocal8Bit( msg );
-	free( msg );
+
+	if (showUser) {
+		msg = gRecvStr();
+		user = QString::fromLocal8Bit( msg );
+		free( msg );
+	}
 
 	for (;;) {
 		int ret = gRecvInt();

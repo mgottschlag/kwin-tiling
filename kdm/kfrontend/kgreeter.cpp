@@ -558,6 +558,7 @@ KGreeter::verifyOk()
 		gSendStr( "default" );
 	}
 	gSendInt( G_Ready );
+	KGVerify::handleFailVerify( this, false );
 	done( ex_exit );
 }
 

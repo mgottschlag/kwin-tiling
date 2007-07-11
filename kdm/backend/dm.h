@@ -436,6 +436,7 @@ void openGreeter( void );
 int closeGreeter( int force );
 int ctrlGreeterWait( int wreply );
 void prepareErrorGreet( void );
+void finishGreet( void );
 char *conv_interact( int what, const char *prompt );
 
 /* process.c */

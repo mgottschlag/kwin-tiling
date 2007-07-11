@@ -243,41 +243,6 @@ PAM_conv( int num_msg,
 	return PAM_CONV_ERR;
 }
 
-static int
-PAM_conv_null( int num_msg,
-               pam_message_type **msg,
-               struct pam_response **resp,
-               void *appdata_ptr ATTR_UNUSED )
-{
-	int count;
-	struct pam_response *reply;
-
-	if (!(reply = Calloc( num_msg, sizeof(*reply) )))
-		return PAM_CONV_ERR;
-
-	reInitErrorLog();
-	debug( "PAM_conv_null\n" );
-	for (count = 0; count < num_msg; count++) {
-		switch (msg[count]->msg_style) {
-		case PAM_TEXT_INFO:
-			debug( " PAM_TEXT_INFO: %s\n", msg[count]->msg );
-			continue;
-		case PAM_ERROR_MSG:
-			logError( "PAM error message: %s\n", msg[count]->msg );
-			continue;
-		default:
-			/* unknown */
-			debug( " PAM_<%d>\n", msg[count]->msg_style );
-			free( reply );
-			return PAM_CONV_ERR;
-		}
-		reply[count].resp_retcode = PAM_SUCCESS; /* unused in linux-pam */
-	}
-	debug( " PAM_conv_null success\n" );
-	*resp = reply;
-	return PAM_SUCCESS;
-}
-
 # ifdef PAM_FAIL_DELAY
 static void
 fail_delay( int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED,
@@ -1149,7 +1114,6 @@ startClient( volatile int *pid )
 # ifndef HAVE_PAM_GETENVLIST
 	char **saved_env;
 # endif
-	struct pam_conv pconv;
 	int pretc;
 #else
 # ifdef _AIX
@@ -1272,19 +1236,6 @@ startClient( volatile int *pid )
 	debug( "now starting the session\n" );
 
 #ifdef USE_PAM
-	/* the greeter is gone by now ... */
-	pconv.conv = PAM_conv_null;
-	pconv.appdata_ptr = 0;
-	if ((pretc = pam_set_item( pamh, PAM_CONV, &pconv )) != PAM_SUCCESS) {
-		reInitErrorLog();
-		logError( "pam_set_item() for %s failed: %s\n",
-		          curuser, pam_strerror( pamh, pretc ) );
-		return 0;
-	}
-	reInitErrorLog();
-#endif
-
-#ifdef USE_PAM
 
 # ifdef HAVE_SETUSERCONTEXT
 	if (setusercontext( lc, p, p->pw_uid, LOGIN_SETGROUP )) {
@@ -1346,6 +1297,8 @@ startClient( volatile int *pid )
 #else /* USE_PAM */
 # define D_LOGIN_SETGROUP 0
 #endif /* USE_PAM */
+
+	finishGreet();
 
 	removeAuth = 1;
 	chownCtrl( &td->ctrl, curuid );
@@ -1672,6 +1625,8 @@ sessionExit( int status )
 		reInitErrorLog();
 	}
 #endif
+
+	finishGreet();
 
 	/* make sure the server gets reset after the session is over */
 	if (td->serverPid >= 2) {

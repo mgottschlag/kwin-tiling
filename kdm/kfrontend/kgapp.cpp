@@ -218,7 +218,7 @@ kg_main( const char *argv0 )
 		}
 
 		if (cmd == G_ErrorGreet) {
-			if (KGVerify::handleFailVerify( qApp->desktop()->screen( _greeterScreen ) ))
+			if (KGVerify::handleFailVerify( qApp->desktop()->screen( _greeterScreen ), true ))
 				break;
 			_autoLoginDelay = 0;
 			cmd = G_Greet;
