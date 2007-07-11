@@ -449,12 +449,16 @@ closeGreeter( int force )
 
 	if (grtproc.pid <= 0)
 		return EX_NORMAL;
+
 	ret = gClose( &grtproc, 0, force );
 	debug( "greeter for %s stopped\n", td->name );
 	if (wcCode( ret ) > EX_NORMAL && wcCode( ret ) <= EX_MAX) {
 		debug( "greeter-initiated session exit, code %d\n", wcCode( ret ) );
 		sessionExit( wcCode( ret ) );
 	}
+
+	deleteXloginResources();
+
 	return ret;
 }
 
@@ -612,8 +616,6 @@ manageSession( struct display *d )
 
 	if (closeGreeter( FALSE ) != EX_NORMAL)
 		goto regreet;
-
-	deleteXloginResources();
 
 	if (td_setup)
 		setupDisplay( td_setup );
