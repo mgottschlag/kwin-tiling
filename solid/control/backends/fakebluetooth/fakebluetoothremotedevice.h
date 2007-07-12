@@ -78,14 +78,6 @@ public:
     {
         return mServiceClass;
     }
-    QList<uint> serviceHandles(const QString &filter) const
-    {
-	    return QList<uint>();
-    }
-    Solid::Control::BluetoothServiceRecord serviceRecord(uint handle) const
-    {
-	    return Solid::Control::BluetoothServiceRecord();
-    }
     QString name() const
     {
         return mName;
@@ -155,6 +147,13 @@ public Q_SLOTS:
     {
         mBonded = false;
     }
+    void serviceHandles(const QString &) const
+    {
+	    
+    }
+    void serviceRecordAsXml(uint ) const
+    {
+    }
 Q_SIGNALS:
     void classChanged(uint devClass);
     void nameChanged(const QString &name);
@@ -166,6 +165,8 @@ Q_SIGNALS:
     void disconnected();
     void bondingCreated();
     void bondingRemoved();
+    void serviceRecordXmlAvailable(const QString &ubi, const QString &record);
+    void serviceHandlesAvailable(const QString &ubi, const QList<uint> &handles);
 protected:
     QMap<QString, QVariant> mPropertyMap;
 

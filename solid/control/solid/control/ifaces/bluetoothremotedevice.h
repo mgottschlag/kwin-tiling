@@ -32,7 +32,6 @@ namespace Solid
 {
 namespace Control
 {
-class BluetoothServiceRecord;
 namespace Ifaces
 {
 /**
@@ -129,8 +128,6 @@ public:
      * @returns list of service classes of the remote device.
      */
     virtual QStringList serviceClasses() const = 0;
-    virtual QList<uint> serviceHandles(const QString &filter) const = 0;
-    virtual Solid::Control::BluetoothServiceRecord serviceRecord(uint handle) const = 0;
     /**
      * Retrieves the real name of the remote device. See also alias().
      * Example: "Daniel's mobile"
@@ -222,6 +219,26 @@ public Q_SLOTS:
      * Remove bonding bonding of remote device.
      */
     virtual void removeBonding() = 0;
+    /**
+     * Obtains a list of unique identifiers to each service provided by this remote device.
+     * As this is a slow operation, this method only queues the message
+     * in the dbus and returns the list of handles using the serviceHandlesAvailable signal
+     * 
+     * NOTE: Most local adapters won't support more than one search at a time, so serialize your requests
+     * 
+     * @param filter A filter to apply to the search (look at http://wiki.bluez.org/wiki/HOWTO/DiscoveringServices#Searchpatterns)
+     */
+    virtual void serviceHandles(const QString &filter) const = 0;
+    /**
+     * Requests the service record associated with the given handle.
+     * As this is a slow operation, this method only queues the message
+     * in the dbus and returns the XML record using the serviceRecordXmlAvailable signal.
+     * 
+     * NOTE: Most local adapters won't support more than one search at a time, so serialize your requests
+     * 
+     * @param handle The handle that uniquely identifies the service record requested.
+       */
+    virtual void serviceRecordAsXml(uint handle) const = 0;
 Q_SIGNALS:
     /**
      * Class has been changed of remote device.
@@ -278,6 +295,14 @@ Q_SIGNALS:
      * Bonding has been removed of remote device.
      */
     virtual void bondingRemoved() = 0;
+    /**
+     * A new service record is available
+     */
+    virtual void serviceRecordXmlAvailable(const QString &ubi, const QString &record) = 0;
+    /**
+     * Search for service handles is done
+     */
+    virtual void serviceHandlesAvailable(const QString &ubi, const QList<uint> &handles) = 0;
 };
 
 } // Ifaces

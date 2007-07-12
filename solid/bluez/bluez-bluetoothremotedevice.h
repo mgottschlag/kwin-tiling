@@ -27,6 +27,7 @@
 #include <solid/control/ifaces/bluetoothremotedevice.h>
 #include <QtDBus>
 
+
 class KDE_EXPORT BluezBluetoothRemoteDevice : public Solid::Control::Ifaces::BluetoothRemoteDevice
 {
     Q_OBJECT
@@ -44,8 +45,6 @@ public:
     QString majorClass() const;
     QString minorClass() const;
     QStringList serviceClasses() const;
-    QList<uint> serviceHandles(const QString &filter ="") const;
-    Solid::Control::BluetoothServiceRecord serviceRecord(uint handle) const;
     QString name() const;
     QString alias() const;
     QString lastSeen() const;
@@ -55,14 +54,20 @@ public:
     int encryptionKeySize() const;
 
     KJob *createBonding();
-
+private Q_SLOTS:
+    void slotServiceHandles(const QList<uint> &handles);
+    void dbusErrorHandles(const QDBusError &error);
+    void slotServiceRecordAsXml(const QString &record);
+    void dbusErrorRecordAsXml(const QDBusError &error);
+    
 public Q_SLOTS:
     void setAlias(const QString &alias);
     void clearAlias();
     void disconnect();
     void cancelBondingProcess();
     void removeBonding();
-
+    void serviceHandles(const QString &filter ="") const;
+    void serviceRecordAsXml(uint handle) const;
 Q_SIGNALS:
     void classChanged(uint deviceClass);
     void nameChanged(const QString &name);
@@ -74,6 +79,8 @@ Q_SIGNALS:
     void disconnected();
     void bondingCreated();
     void bondingRemoved();
+    void serviceRecordXmlAvailable(const QString &ubi, const QString &record);
+    void serviceHandlesAvailable(const QString &ubi, const QList<uint> &handles);
 
 private:
     QString m_objectPath;

@@ -134,16 +134,6 @@ QStringList Solid::Control::BluetoothRemoteDevice::serviceClasses() const
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), QStringList(), serviceClasses());
 }
-QList<uint> Solid::Control::BluetoothRemoteDevice::serviceHandles(const QString &filter) const
-{
-    Q_D(const BluetoothRemoteDevice);
-    return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), QList<uint>(), serviceHandles(filter));
-}
-Solid::Control::BluetoothServiceRecord Solid::Control::BluetoothRemoteDevice::serviceRecord(uint handle) const
-{
-	Q_D(const BluetoothRemoteDevice);
-	return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), Solid::Control::BluetoothServiceRecord(), serviceRecord(handle));
-}
 QString Solid::Control::BluetoothRemoteDevice::name() const
 {
     Q_D(const BluetoothRemoteDevice);
@@ -221,6 +211,17 @@ void Solid::Control::BluetoothRemoteDevice::removeBonding()
     Q_D(const BluetoothRemoteDevice);
     SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), removeBonding());
 }
+void Solid::Control::BluetoothRemoteDevice::serviceHandles(const QString &filter) const
+{
+    Q_D(const BluetoothRemoteDevice);
+    SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), serviceHandles(filter));
+}
+
+void Solid::Control::BluetoothRemoteDevice::serviceRecordAsXml(uint handle) const
+{
+    Q_D(const BluetoothRemoteDevice);
+    SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), serviceRecordAsXml(handle));
+}
 
 void Solid::Control::BluetoothRemoteDevicePrivate::setBackendObject(QObject *object)
 {
@@ -247,6 +248,11 @@ void Solid::Control::BluetoothRemoteDevicePrivate::setBackendObject(QObject *obj
                          parent(), SIGNAL(bondingCreated()));
         QObject::connect(object, SIGNAL(bondingRemoved()),
                          parent(), SIGNAL(bondingRemoved()));
+	QObject::connect(object, SIGNAL(serviceHandlesAvailable(const QString &, const QList<uint> &)),
+			 parent(), SIGNAL(serviceHandlesAvailable(const QString &, const QList<uint> &)));
+	QObject::connect(object, SIGNAL(serviceRecordXmlAvailable(const QString &, const QString &)),
+			 parent(), SIGNAL(serviceRecordXmlAvailable(const QString &, const QString &)));
+	
     }
 }
 
