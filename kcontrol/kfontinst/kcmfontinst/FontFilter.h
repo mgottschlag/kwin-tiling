@@ -58,6 +58,7 @@ class CFontFilter : public KLineEdit
     virtual ~CFontFilter() { }
 
     void setMgtMode(bool m);
+    void setFoundries(const QSet<QString> &foundries);
 
     Q_SIGNALS:
 
@@ -67,6 +68,7 @@ class CFontFilter : public KLineEdit
 
     void filterChanged();
     void wsChanged();
+    void foundryChanged(const QString &foundry);
 
     private:
 
@@ -85,8 +87,7 @@ class CFontFilter : public KLineEdit
     QFontDatabase::WritingSystem itsCurrentWs;
     QPixmap                      itsPixmaps[NUM_CRIT];
     KAction                      *itsActions[NUM_CRIT];
-    QActionGroup                 *itsActionGroup,
-                                 *itsWsGroup;
+    QActionGroup                 *itsActionGroup;
 };
 
 }

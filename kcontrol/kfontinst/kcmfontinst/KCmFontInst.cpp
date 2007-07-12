@@ -947,6 +947,7 @@ void CKCmFontInst::listingCompleted()
         itsDeletedFonts.clear();
     }
 
+    itsFilter->setFoundries(itsFontList->getFoundries());
     refreshFamilies();
     itsListingProgress->hide();
     itsFontListView->selectFirstFont();

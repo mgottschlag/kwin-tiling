@@ -24,7 +24,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <ktoggleaction.h>
-#include <kactionmenu.h>
+#include <kselectaction.h>
 #include <kicon.h>
 #include <QLabel>
 #include <QPen>
@@ -61,15 +61,21 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsPixmaps[CRIT_WS]=SmallIcon("pencil");
 
     itsActionGroup=new QActionGroup(this);
-    itsWsGroup=new QActionGroup(this);
     addAction(CRIT_FAMILY, i18n("Family"), true, true);
     addAction(CRIT_STYLE, i18n("Style"), false, true);
-    addAction(CRIT_FOUNDRY, i18n("Foundry"), false, true);
+
+    KSelectAction *foundryMenu=new KSelectAction(KIcon(itsPixmaps[CRIT_FOUNDRY]), i18n("Foundry"), this);
+    itsActions[CRIT_FOUNDRY]=foundryMenu;
+    itsMenu->addAction(itsActions[CRIT_FOUNDRY]);
+    foundryMenu->setData((int)CRIT_FOUNDRY);
+    foundryMenu->setVisible(false);
+    connect(foundryMenu, SIGNAL(triggered(const QString &)), SLOT(foundryChanged(const QString &)));
+
     addAction(CRIT_FONTCONFIG, i18n("FontConfig Match"), false, true);
     addAction(CRIT_FILENAME, i18n("File"), false, false);
     addAction(CRIT_LOCATION, i18n("File Location"), false, false);
 
-    KActionMenu *wsMenu=new KActionMenu(KIcon(itsPixmaps[CRIT_WS]), i18n("Writing System"), this);
+    KSelectAction *wsMenu=new KSelectAction(KIcon(itsPixmaps[CRIT_WS]), i18n("Writing System"), this);
     itsActions[CRIT_WS]=wsMenu;
     itsMenu->addAction(itsActions[CRIT_WS]);
     wsMenu->setData((int)CRIT_WS);
@@ -83,11 +89,10 @@ CFontFilter::CFontFilter(QWidget *parent)
                                                 : QFontDatabase::writingSystemName((QFontDatabase::WritingSystem)i), this);
 
         wsMenu->addAction(wsAct);
-        itsWsGroup->addAction(wsAct);
         wsAct->setChecked(false);
         wsAct->setData(i);
-        connect(wsAct, SIGNAL(toggled(bool)), SLOT(wsChanged()));
     }
+    connect(wsMenu, SIGNAL(triggered(const QString &)), SLOT(wsChanged()));
 
     setCriteria(CRIT_FAMILY);
 }
@@ -101,10 +106,29 @@ void CFontFilter::setMgtMode(bool m)
         itsActions[CRIT_FAMILY]->setChecked(true);
         setText(QString());
     }
+    itsActions[CRIT_FOUNDRY]->setVisible(m);
     itsActions[CRIT_FONTCONFIG]->setVisible(m);
     itsActions[CRIT_FILENAME]->setVisible(m);
     itsActions[CRIT_LOCATION]->setVisible(m);
     itsActions[CRIT_WS]->setVisible(m);
+}
+
+void CFontFilter::setFoundries(const QSet<QString> &foundries)
+{
+    QAction *act(((KSelectAction *)itsActions[CRIT_FOUNDRY])->currentAction());
+
+    QString prev(act ? act->text() : QString());
+    ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setItems(foundries.toList());
+//     if(prev.isEmpty())
+//         ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentItem(0);
+//     else
+//     {
+//         act=((KSelectAction *)itsActions[CRIT_FOUNDRY])->action(prev);
+//         if(act)
+//             ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentAction(act);
+//         else
+//             ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentItem(0);
+//     }
 }
 
 void CFontFilter::filterChanged()
@@ -117,15 +141,20 @@ void CFontFilter::filterChanged()
 
         if(itsCurrentCriteria!=crit)
         {
+            QAction *prev(((KSelectAction *)itsActions[CRIT_FOUNDRY])->currentAction());
+            if(prev)
+                prev->setChecked(false);
+
+            setText(QString());
             if(itsCurrentWs!=QFontDatabase::Any)
             {
-                QAction *prev(itsWsGroup->checkedAction());
+                prev=((KSelectAction *)itsActions[CRIT_WS])->currentAction();
                 if(prev)
                     prev->setChecked(false);
 
-                setText(QString());
                 itsCurrentWs=QFontDatabase::Any;
             }
+
             setCriteria(crit);
             setClickMessage(i18n("Type here to filter on %1", act->text()));
             setReadOnly(false);
@@ -136,11 +165,14 @@ void CFontFilter::filterChanged()
 
 void CFontFilter::wsChanged()
 {
-    QAction *act(itsWsGroup->checkedAction());
+    QAction *act(((KSelectAction *)itsActions[CRIT_WS])->currentAction());
 
     if(act)
     {
         QFontDatabase::WritingSystem ws((QFontDatabase::WritingSystem)act->data().toInt());
+
+        if(CRIT_FOUNDRY==itsCurrentCriteria)
+            ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentAction(NULL);
 
         if(itsCurrentWs!=ws)
         {
@@ -156,6 +188,23 @@ void CFontFilter::wsChanged()
             setClickMessage(text());
         }
     }
+}
+
+void CFontFilter::foundryChanged(const QString &foundry)
+{
+    QAction *prev(itsActionGroup->checkedAction());
+    if(prev)
+        prev->setChecked(false);
+
+    if(CRIT_WS==itsCurrentCriteria)
+        ((KSelectAction *)itsActions[CRIT_WS])->setCurrentAction(NULL);
+
+    itsCurrentCriteria=CRIT_FOUNDRY;
+    setReadOnly(true);
+    modifyPadding();
+    setText(foundry);
+    setClickMessage(text());
+    setCriteria(itsCurrentCriteria);
 }
 
 void CFontFilter::addAction(ECriteria crit, const QString &text, bool on, bool visible)

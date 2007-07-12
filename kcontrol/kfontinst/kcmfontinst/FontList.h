@@ -111,6 +111,7 @@ class CFontList : public QAbstractItemModel
     bool            allowUser() const     { return itsAllowUser; }
     bool            allowDisabled() const { return itsAllowDisabled; }
     void            getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, QSet<QString> &partial);
+    QSet<QString>   getFoundries() const;
     QString         whatsThis() const;
 
     Q_SIGNALS:
@@ -198,6 +199,7 @@ class CFamilyItem : public CFontModelItem
     EStatus              realStatus() const               { return itsRealStatus; }
     CFontItem *          regularFont()                    { return itsRegularFont; }
     int                  fontCount() const                { return itsFontCount; }
+    QSet<QString>        getFoundries() const;
 
     private:
 

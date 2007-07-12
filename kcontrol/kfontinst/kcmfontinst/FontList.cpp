@@ -469,6 +469,24 @@ CFontItem * CFamilyItem::findFont(const KFileItem *i)
     return NULL;
 }
 
+QSet<QString> CFamilyItem::getFoundries() const
+{
+    QSet<QString>                     foundries;
+    QList<CFontItem *>::ConstIterator it(itsFonts.begin()),
+                                      end(itsFonts.end());
+
+    for(; it!=end; ++it)
+    {
+        CDisabledFonts::TFileList::ConstIterator fIt((*it)->files().begin()),
+                                                 fEnd((*it)->files().end());
+
+        for(; fIt!=fEnd; ++fIt)
+            foundries.insert((*fIt).foundry);
+    }
+
+    return foundries;
+}
+
 bool CFamilyItem::usable(const CFontItem *font, bool root)
 {
     return (!font->isHidden() || itsParent.allowDisabled()) &&
@@ -833,6 +851,7 @@ void CFontList::getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, 
                                         end(itsFamilies.end());
 
     for(; it!=end; ++it)
+    {
         switch((*it)->realStatus())
         {
             case CFamilyItem::ENABLED:
@@ -845,6 +864,18 @@ void CFontList::getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, 
                 disabled.insert((*it)->name());
                 break;
         }
+    }
+}
+
+QSet<QString> CFontList::getFoundries() const
+{
+    QSet<QString>                       foundries;
+    QList<CFamilyItem *>::ConstIterator it(itsFamilies.begin()),
+                                        end(itsFamilies.end());
+
+    for(; it!=end; ++it)
+        foundries+=(*it)->getFoundries();
+    return foundries;
 }
 
 QString CFontList::whatsThis() const
