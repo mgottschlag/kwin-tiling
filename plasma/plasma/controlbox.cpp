@@ -177,10 +177,17 @@ void ControlWidget::refreshPlasmoidList()
 
     int count = 0;
     foreach (KPluginInfo* info, applets) {
-        m_appletListModel->setItem(count, 0, new QStandardItem(info->name()));
+        QString category = Plasma::Applet::category(info);
+        if (category.isEmpty()) {
+            m_appletListModel->setItem(count, 0, new QStandardItem(info->name()));
+        } else {
+            m_appletListModel->setItem(count, 0, new QStandardItem(info->name() + " (" + category + ")"));
+        }
         m_appletListModel->setItem(count, 1, new QStandardItem(info->pluginName()));
         ++count;
     }
+
+    kDebug() << "Known categories: " << Plasma::Applet::knownCategories() << endl;
 
     m_appletListModel->sort(0);
 }
