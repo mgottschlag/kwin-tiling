@@ -213,13 +213,13 @@ void BluezBluetoothRemoteDevice::serviceRecordAsXml(uint handle) const
 }
 void BluezBluetoothRemoteDevice::slotServiceHandles(const QList< uint > & handles)
 {
-	kDebug() << k_funcinfo << endl;
+// 	kDebug() << k_funcinfo << endl;
 	emit serviceHandlesAvailable(ubi(),handles);
 }
 
 void BluezBluetoothRemoteDevice::slotServiceRecordAsXml(const QString & record)
 {
-	kDebug() << k_funcinfo << endl;
+// 	kDebug() << k_funcinfo << endl;
 	emit serviceRecordXmlAvailable(ubi(),record);
 }
 /******************************/
