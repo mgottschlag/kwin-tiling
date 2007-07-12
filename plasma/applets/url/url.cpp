@@ -41,11 +41,10 @@ Url::Url(QObject *parent, const QStringList &args)
     m_icon = new Plasma::Icon(this);
     connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
 
-    KConfigGroup globalConfig = globalAppletConfig();
     int size = Plasma::Icon::boundsForIconSize(IconSize(K3Icon::Desktop));
-    size = globalAppletConfig().readEntry("IconSize", size);
+    size = globalConfig().readEntry("IconSize", size);
 
-    KConfigGroup cg = appletConfig();
+    KConfigGroup cg = config();
     size = cg.readEntry("IconSize", size);
 
     m_icon->setSize(size, size);
@@ -58,7 +57,7 @@ Url::Url(QObject *parent, const QStringList &args)
 
 Url::~Url()
 {
-    KConfigGroup cg = appletConfig();
+    KConfigGroup cg = config();
     cg.writeEntry("IconSize", m_icon->iconSize().toSize());
     cg.writeEntry("Url", m_icon->url());
 }
@@ -109,7 +108,7 @@ void Url::propertiesDialog()
 
 void Url::acceptedPropertiesDialog()
 {
-    KConfigGroup cg = appletConfig();
+    KConfigGroup cg = config();
     cg.writeEntry("Url", m_dialog->kurl());
     setUrl(m_dialog->kurl());
     update();

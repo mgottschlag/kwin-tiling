@@ -35,7 +35,7 @@ SolidNotifier::SolidNotifier(QObject *parent, const QStringList &args)
 {
     setHasConfigurationInterface(false);
 
-    KConfigGroup cg = appletConfig();
+    KConfigGroup cg = config();
     m_pixelSize = cg.readEntry("size", 200);
     m_theme = new Plasma::Svg("widgets/connection-established", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);

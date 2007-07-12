@@ -51,7 +51,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
 {
     setHasConfigurationInterface(true);
 
-    KConfigGroup cg = appletConfig();
+    KConfigGroup cg = config();
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);
     m_pixelSize = cg.readEntry("size", 250);
@@ -121,7 +121,7 @@ void Clock::showConfigurationInterface() //TODO: Make the size settable
 
 void Clock::configAccepted()
 {
-    KConfigGroup cg = appletConfig();
+    KConfigGroup cg = config();
     m_showTimeString = ui.showTimeStringCheckBox->checkState() == Qt::Checked;
     m_showSecondHand = ui.showSecondHandCheckBox->checkState() == Qt::Checked;
     cg.writeEntry("showTimeString", m_showTimeString);
@@ -182,6 +182,9 @@ void Clock::drawHand(QPainter *p, int rotation, const QString &handName)
 
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+
     QRectF tempRect(0, 0, 0, 0);
     QRectF boundRect = boundingRect();
 
