@@ -63,10 +63,9 @@ RootWidget::RootWidget()
     m_controlBox = new ControlBox(this);
     m_controlBox->show();
 
-    
     connect(m_controlBox, SIGNAL(zoomIn()), m_view, SLOT(zoomIn()));
     connect(m_controlBox, SIGNAL(zoomOut()), m_view, SLOT(zoomOut()));
-    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_view->corona(), SLOT(addPlasmoid(const QString&)));
+    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_view->corona(), SLOT(addApplet(const QString&)));
     connect(m_controlBox, SIGNAL(setFormFactor(Plasma::FormFactor)), m_view->corona(), SLOT(setFormFactor(Plasma::FormFactor)));
     connect(m_controlBox, SIGNAL(lockInterface(bool)), m_view->corona(), SLOT(setImmutable(bool)));
 
