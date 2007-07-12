@@ -563,6 +563,7 @@ KGVerify::handleFailVerify( QWidget *parent, bool showUser )
 			vrfErrBox( parent, user, msg );
 			if (msg)
 				free( msg );
+			gSendInt( 0 );
 			continue;
 		case V_MSG_INFO:
 			debug( " V_MSG_INFO\n" );
@@ -570,6 +571,7 @@ KGVerify::handleFailVerify( QWidget *parent, bool showUser )
 			debug( "  message %\"s\n", msg );
 			vrfInfoBox( parent, user, msg );
 			free( msg );
+			gSendInt( 0 );
 			continue;
 		}
 
@@ -688,6 +690,7 @@ KGVerify::handleVerify()
 				debug( "  message swallowed\n" );
 			if (msg)
 				free( msg );
+			gSendInt( 0 );
 			continue;
 		case V_MSG_INFO:
 			debug( " V_MSG_INFO\n" );
@@ -699,6 +702,7 @@ KGVerify::handleVerify()
 			} else
 				debug( "  message swallowed\n" );
 			free( msg );
+			gSendInt( 0 );
 			continue;
 		}
 

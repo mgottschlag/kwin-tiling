@@ -226,8 +226,8 @@ from the copyright holder.
 #define V_FAIL           10	/* whatever, already reported with V_MSG_* */
 #define V_AUTH           11	/* authentication failed */
 /* non-terminal status codes */
-#define V_MSG_INFO      110 /* info message attached */
-#define V_MSG_ERR       111 /* error message attached (null for generic) */
+#define V_MSG_INFO      110 /* info message attached; 0 return */
+#define V_MSG_ERR       111 /* error message attached (null for generic); 0 return */
 #define V_PUT_USER      112 /* user name attached; only with pam & no user send */
 #define V_CHTOK         113 /* password expired; change now */
 #define V_CHTOK_AUTH    114 /* password expired; change now, but authenticate first */

@@ -125,6 +125,7 @@ displayStr( int lv, const char *msg )
 	prepareErrorGreet();
 	gSendInt( lv );
 	gSendStr( msg );
+	gRecvInt();
 }
 
 #if !defined(USE_PAM) && (defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || defined(USESHADOW))
