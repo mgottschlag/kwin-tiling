@@ -1308,6 +1308,12 @@ startClient( volatile int *pid )
 	switch (Fork( pid )) {
 	case 0:
 
+#ifndef NOXDMTITLE
+		setproctitle( "%s'", td->name );
+#endif
+		strApp( &prog, " '", (char *)0 );
+		reInitErrorLog();
+
 		sessreg( td, getpid(), curuser, curuid );
 
 		if (source( systemEnviron, td->startup, td_setup )) {

@@ -1368,7 +1368,11 @@ startDisplayP2( struct display *d )
 	               &d->gpipe, cgname, &d->pid ))
 	{
 	case 0:
-		setTitle( d->name );
+#ifndef NOXDMTITLE
+		setproctitle( "%s", d->name );
+#endif
+		ASPrintf( &prog, "%s: %s", prog, d->name );
+		reInitErrorLog();
 		if (debugLevel & DEBUG_WSESS)
 			sleep( 100 );
 		mstrtalk.pipe = &d->pipe;
@@ -1623,31 +1627,33 @@ UnlockPidFile( void )
 }
 #endif
 
-void
-setTitle( const char *name )
-{
 #if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
-	char *p;
-	int left;
-#endif
+void
+setproctitle( const char *fmt, ... )
+{
+	const char *name;
+	char *oname;
+	char *p = title;
+	int left = titleLen;
+	va_list args;
 
-	ASPrintf( &prog, "%s: %s", prog, name );
-	reInitErrorLog();
-#ifdef HAVE_SETPROCTITLE
-	setproctitle( "%s", name );
-#elif !defined(NOXDMTITLE)
-	p = title;
-	left = titleLen;
+	va_start( args, fmt );
+	VASPrintf( &oname, fmt, args );
+	va_end( args );
 
-	*p++ = '-';
-	--left;
-	while (*name && left > 0) {
-		*p++ = *name++;
+	if ((name = oname)) {
+		*p++ = '-';
 		--left;
+		while (*name && left > 0) {
+			*p++ = *name++;
+			--left;
+		}
+		while (left > 0) {
+			*p++ = '\0';
+			--left;
+		}
+
+		free( oname );
 	}
-	while (left > 0) {
-		*p++ = '\0';
-		--left;
-	}
-#endif
 }
+#endif

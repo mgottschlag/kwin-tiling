@@ -367,7 +367,9 @@ extern SdRec sdRec;
 void startDisplay( struct display *d );
 void startDisplayP2( struct display *d );
 void stopDisplay( struct display *d );
-void setTitle( const char *name );
+#if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
+void setproctitle( const char *fmt, ... );
+#endif
 void switchToX( struct display *d );
 void setNLogin( struct display *d,
                 const char *nuser, const char *npass, char *nargs,
