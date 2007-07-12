@@ -24,8 +24,7 @@
 
 #include <KDebug>
 #include <KLocale>
-//#include <KSystemTimeZones> TODO: uncomment and remove include below on monday
-#include <ksystemtimezone.h>
+#include <KSystemTimeZones>
 
 #include "plasma/datasource.h"
 
@@ -33,8 +32,6 @@ TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)
 {
     Q_UNUSED(args)
-    //TODO: we need to add the ability to configure this so that can limit
-    //      it to minutes only as well as set which TZs to publish
     m_timer = new QTimer(this);
     m_timer->setSingleShot(false);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(updateTime()));
@@ -74,6 +71,7 @@ void TimeEngine::setTimerTo60()
 
 bool TimeEngine::sourceRequested(const QString &name)
 {
+    //kDebug() << "TimeEngine::sourceRequested " << name << endl;
     if (name == "Local") {
         setData(I18N_NOOP("Local"), I18N_NOOP("Time"), QTime::currentTime());
         setData(I18N_NOOP("Local"), I18N_NOOP("Date"), QDate::currentDate());
@@ -84,7 +82,6 @@ bool TimeEngine::sourceRequested(const QString &name)
         return true;
     }
 
-    // reenable when KTimeZone/kded isn't broken
     const KTimeZone *local = KSystemTimeZones::local();
     const KTimeZone *newTz  = KSystemTimeZones::zone(name);
     if (!newTz) {
