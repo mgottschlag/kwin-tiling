@@ -119,6 +119,31 @@ static char krbtkfile[MAXPATHLEN];
 # endif
 #endif
 
+static void
+displayStr( int lv, const char *msg )
+{
+	prepareErrorGreet();
+	gSendInt( lv );
+	gSendStr( msg );
+}
+
+#if !defined(USE_PAM) && (defined(HAVE_STRUCT_PASSWD_PW_EXPIRE) || defined(USESHADOW))
+static void
+displayMsg( int lv, const char *msg, ... )
+{
+	char *ae;
+	va_list args;
+
+	va_start( args, msg );
+	VASPrintf( &ae, msg, args );
+	va_end( args );
+	if (ae) {
+		displayStr( lv, ae );
+		free( ae );
+	}
+}
+#endif
+
 #define V_RET_AUTH \
 		do { \
 			prepareErrorGreet(); \
@@ -128,9 +153,7 @@ static char krbtkfile[MAXPATHLEN];
 
 #define V_RET_FAIL(m) \
 		do { \
-			prepareErrorGreet(); \
-			gSendInt( V_MSG_ERR ); \
-			gSendStr( m ); \
+			displayStr( V_MSG_ERR, m ); \
 			gSendInt( V_FAIL ); \
 			return 0; \
 		} while(0)
@@ -170,15 +193,11 @@ PAM_conv( int num_msg,
 		switch (msg[count]->msg_style) {
 		case PAM_TEXT_INFO:
 			debug( " PAM_TEXT_INFO: %s\n", msg[count]->msg );
-			prepareErrorGreet();
-			gSendInt( V_MSG_INFO );
-			gSendStr( msg[count]->msg );
+			displayStr( V_MSG_INFO, msg[count]->msg );
 			continue;
 		case PAM_ERROR_MSG:
 			debug( " PAM_ERROR_MSG: %s\n", msg[count]->msg );
-			prepareErrorGreet();
-			gSendInt( V_MSG_ERR );
-			gSendStr( msg[count]->msg );
+			displayStr( V_MSG_ERR, msg[count]->msg );
 			continue;
 		default:
 			/* could do better error handling here, but see below ... */
@@ -530,9 +549,7 @@ verify( GConvFunc gconv, int rootok )
 		V_RET_FAIL( 0 );
 	}
 	if (msg) {
-		prepareErrorGreet();
-		gSendInt( V_MSG_INFO );
-		gSendStr( msg );
+		displayStr( V_MSG_INFO, msg );
 		free( msg );
 	}
 
@@ -702,8 +719,8 @@ verify( GConvFunc gconv, int rootok )
 		loginfailed( curuser, hostname, tty );
 		prepareErrorGreet();
 		if (msg) {
-			gSendInt( V_MSG_ERR );
-			gSendStr( msg );
+			displayStr( V_MSG_ERR, msg );
+			free( msg );
 		}
 		gSendInt( V_AUTH );
 		return 0;
@@ -763,22 +780,15 @@ verify( GConvFunc gconv, int rootok )
 			expir = sp->sp_expire;
 #   endif
 			if (tim > expir) {
-				prepareErrorGreet();
-				gSendInt( V_MSG_ERR );
-				gSendStr( "Your account has expired;"
-				          " please contact your system administrator" );
+				displayStr( V_MSG_ERR,
+				            "Your account has expired;"
+				            " please contact your system administrator" );
 				gSendInt( V_FAIL );
 				LC_RET0;
 			} else if (tim > (expir - warntime) && !quietlog) {
-				ASPrintf( &buf,
-				          "Warning: your account will expire in %d day(s)",
-				          expir - tim );
-				if (buf) {
-					prepareErrorGreet();
-					gSendInt( V_MSG_INFO );
-					gSendStr( buf );
-					free( buf );
-				}
+				displayMsg( V_MSG_INFO,
+				            "Warning: your account will expire in %d day(s)",
+				            expir - tim );
 			}
 		}
 
@@ -787,42 +797,33 @@ verify( GConvFunc gconv, int rootok )
 			expir = p->pw_change / 86400L;
 #   else
 		if (!sp->sp_lstchg) {
-			prepareErrorGreet();
-			gSendInt( V_MSG_ERR );
-			gSendStr( "You are required to change your password immediately"
-			          " (root enforced)" );
+			displayStr( V_MSG_ERR,
+			            "You are required to change your password immediately"
+			            " (root enforced)" );
 			/* XXX todo password change */
 			gSendInt( V_FAIL );
 			LC_RET0;
 		} else if (sp->sp_max != -1) {
 			expir = sp->sp_lstchg + sp->sp_max;
 			if (sp->sp_inact != -1 && tim > expir + sp->sp_inact) {
-				prepareErrorGreet();
-				gSendInt( V_MSG_ERR );
-				gSendStr( "Your account has expired;"
-				          " please contact your system administrator" );
+				displayStr( V_MSG_ERR,
+				            "Your account has expired;"
+				            " please contact your system administrator" );
 				gSendInt( V_FAIL );
 				LC_RET0;
 			}
 #   endif
 			if (tim > expir) {
-				prepareErrorGreet();
-				gSendInt( V_MSG_ERR );
-				gSendStr( "You are required to change your password immediately"
-				          " (password aged)" );
+				displayStr( V_MSG_ERR,
+				            "You are required to change your password immediately"
+				            " (password aged)" );
 				/* XXX todo password change */
 				gSendInt( V_FAIL );
 				LC_RET0;
 			} else if (tim > (expir - warntime) && !quietlog) {
-				ASPrintf( &buf,
-				          "Warning: your password will expire in %d day(s)",
-				          expir - tim );
-				if (buf) {
-					prepareErrorGreet();
-					gSendInt( V_MSG_INFO );
-					gSendStr( buf );
-					free( buf );
-				}
+				displayMsg( V_MSG_INFO,
+				            "Warning: your password will expire in %d day(s)",
+				            expir - tim );
 			}
 		}
 
@@ -843,15 +844,13 @@ verify( GConvFunc gconv, int rootok )
 #  endif
 		 !stat( (nolg = _PATH_NOLOGIN), &st )))
 	{
-		prepareErrorGreet();
-		gSendInt( V_MSG_ERR );
 		if (st.st_size && (fd = open( nolg, O_RDONLY )) >= 0) {
 			if ((buf = Malloc( st.st_size + 1 ))) {
 				if (read( fd, buf, st.st_size ) == st.st_size) {
-					buf[st.st_size] = 0;
-					gSendStr( buf );
-					free( buf );
 					close( fd );
+					buf[st.st_size] = 0;
+					displayStr( V_MSG_ERR, buf );
+					free( buf );
 					gSendInt( V_FAIL );
 					LC_RET0;
 				}
@@ -859,7 +858,8 @@ verify( GConvFunc gconv, int rootok )
 			}
 			close( fd );
 		}
-		gSendStr( "Logins are not allowed at the moment.\nTry again later" );
+		displayStr( V_MSG_ERR,
+		            "Logins are not allowed at the moment.\nTry again later" );
 		gSendInt( V_FAIL );
 		LC_RET0;
 	}
@@ -867,9 +867,8 @@ verify( GConvFunc gconv, int rootok )
 /* restrict_time */
 #  if defined(HAVE_SETUSERCONTEXT) && defined(HAVE_AUTH_TIMEOK)
 	if (!auth_timeok( lc, time( NULL ) )) {
-		prepareErrorGreet();
-		gSendInt( V_MSG_ERR );
-		gSendStr( "You are not allowed to login at the moment" );
+		displayStr( V_MSG_ERR,
+		            "You are not allowed to login at the moment" );
 		gSendInt( V_FAIL );
 		LC_RET0;
 	}
@@ -896,9 +895,7 @@ verify( GConvFunc gconv, int rootok )
 	if (login_getcapbool( lc, "requirehome", 0 )) {
 		struct stat st;
 		if (!*p->pw_dir || stat( p->pw_dir, &st ) || st.st_uid != p->pw_uid) {
-			prepareErrorGreet();
-			gSendInt( V_MSG_ERR );
-			gSendStr( "Home folder not available" );
+			displayStr( V_MSG_ERR, "Home folder not available" );
 			gSendInt( V_FAIL );
 			LC_RET0;
 		}
