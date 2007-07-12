@@ -53,21 +53,25 @@ class KFONTINST_EXPORT CDisabledFonts
 
     struct TFile
     {
-        TFile(const QString &p=QString(), int f=0) : path(p), face(f) { }
+        TFile(const QString &p=QString(), int f=0, const QString &fnd=QString()) : path(p), foundry(fnd), face(f) { }
 
         bool operator==(const TFile &o) const { return face==o.face && path==o.path; } 
         bool load(QDomElement &elem);
 
         operator QString() const { return path; }
 
-        QString path;
+        QString path,
+                foundry;
         int     face;  // This is only really required for TTC fonts -> where a file will belong
     };                 // to more than one font.
 
-    struct TFileList : public QList<TFile>
+    struct KFONTINST_EXPORT TFileList : public QList<TFile>
     {
         Iterator locate(const TFile &t) { int i = indexOf(t); return (-1==i ? end() : (begin()+i)); }
         void     add(const TFile &t) const { (const_cast<TFileList *>(this))->append(t); }
+
+        QString  toString() const;
+        void     fromString(QString &s);
     };
 
     struct KFONTINST_EXPORT TFont : public Misc::TFont

@@ -41,6 +41,7 @@
 #include "JobRunner.h"
 #include "FontFilter.h"
 #include "FcQuery.h"
+#include "DisabledFonts.h"
 
 class KConfigGroup;
 class KFileItem;
@@ -76,7 +77,7 @@ class CFontList : public QAbstractItemModel
 
     static const int constDefaultPreviewSize=25;
 
-    static QStringList compact(const QStringList &files);
+    static QStringList compact(const QStringList &fonts);
     static void        setPreviewSize(int s)         { theirPreviewSize=s; }
     static int         previewSize()                 { return theirPreviewSize; }
 
@@ -226,43 +227,43 @@ class CFontItem : public CFontModelItem
     CFontItem(CFontModelItem *p, const KFileItem *item, const QString &style=QString());
     virtual ~CFontItem() { }
 
-    void                  touchThumbnail();
-    const QString &       name() const             { return itsName; }
-    QString               mimetype() const         { return itsItem->mimetype(); }
-    bool                  isEnabled() const        { return itsEnabled; }
-    bool                  isHidden() const         { return !itsEnabled; }
-    void                  updateStatus()           { itsEnabled=!Misc::isHidden(url()); }
-    KUrl                  url() const              { return itsItem->url(); }
-    KIO::UDSEntry         entry() const            { return itsItem->entry(); }
-    const KFileItem *     item() const             { return itsItem; }
-    bool                  isBitmap() const         { return itsBitmap; }
-    const QString &       fileName() const         { return itsFileName; }
-    const QString &       style() const            { return itsStyle; }
-    unsigned long         styleInfo() const        { return itsStyleInfo; }
-    unsigned long         displayStyleInfo() const { return itsDisplayStyleInfo; }
-    int                   index() const            { return itsIndex; }
-    const QString &       family() const           { return (static_cast<CFamilyItem *>(parent()))->name(); }
-    const QPixmap *       pixmap(bool force=false);
-    void                  clearPixmap()            { itsPixmap=NULL; }
-    int                   rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
-    const QStringList &   files() const            { return itsFiles; }
-    KIO::filesize_t       size() const             { return itsItem ? itsItem->size() : 0; }
-    qulonglong            writingSystems() const   { return itsWritingSystems; }
+    void                              touchThumbnail();
+    const QString &                   name() const             { return itsName; }
+    QString                           mimetype() const         { return itsItem->mimetype(); }
+    bool                              isEnabled() const        { return itsEnabled; }
+    bool                              isHidden() const         { return !itsEnabled; }
+    void                              updateStatus()           { itsEnabled=!Misc::isHidden(url()); }
+    KUrl                              url() const              { return itsItem->url(); }
+    KIO::UDSEntry                     entry() const            { return itsItem->entry(); }
+    const KFileItem *                 item() const             { return itsItem; }
+    bool                              isBitmap() const         { return itsBitmap; }
+    const QString &                   fileName() const         { return itsFileName; }
+    const QString &                   style() const            { return itsStyle; }
+    unsigned long                     styleInfo() const        { return itsStyleInfo; }
+    unsigned long                     displayStyleInfo() const { return itsDisplayStyleInfo; }
+    int                               index() const            { return itsIndex; }
+    const QString &                   family() const           { return (static_cast<CFamilyItem *>(parent()))->name(); }
+    const QPixmap *                   pixmap(bool force=false);
+    void                              clearPixmap()            { itsPixmap=NULL; }
+    int                               rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
+    const CDisabledFonts::TFileList & files() const            { return itsFiles; }
+    KIO::filesize_t                   size() const             { return itsItem ? itsItem->size() : 0; }
+    qulonglong                        writingSystems() const   { return itsWritingSystems; }
 
     private:
 
-    const KFileItem *itsItem;
-    QString         itsName,
-                    itsFileName,
-                    itsStyle;
-    int             itsIndex;
-    QPixmap         *itsPixmap;
-    unsigned long   itsStyleInfo,
-                    itsDisplayStyleInfo;
-    bool            itsBitmap,
-                    itsEnabled;
-    QStringList     itsFiles;
-    qulonglong      itsWritingSystems;
+    const KFileItem           *itsItem;
+    QString                   itsName,
+                              itsFileName,
+                              itsStyle;
+    int                       itsIndex;
+    QPixmap                   *itsPixmap;
+    unsigned long             itsStyleInfo,
+                              itsDisplayStyleInfo;
+    bool                      itsBitmap,
+                              itsEnabled;
+    CDisabledFonts::TFileList itsFiles;
+    qulonglong                itsWritingSystems;
 };
 
 class CFontListSortFilterProxy : public QSortFilterProxyModel

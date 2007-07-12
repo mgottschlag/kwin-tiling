@@ -54,6 +54,7 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsMenu=new QMenu(this);
     itsPixmaps[CRIT_FAMILY]=SmallIcon("text");
     itsPixmaps[CRIT_STYLE]=SmallIcon("format-text-bold");
+    itsPixmaps[CRIT_FOUNDRY]=SmallIcon("user");
     itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("file-find");
     itsPixmaps[CRIT_FILENAME]=SmallIcon("font-type1");
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
@@ -63,6 +64,7 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsWsGroup=new QActionGroup(this);
     addAction(CRIT_FAMILY, i18n("Family"), true, true);
     addAction(CRIT_STYLE, i18n("Style"), false, true);
+    addAction(CRIT_FOUNDRY, i18n("Foundry"), false, true);
     addAction(CRIT_FONTCONFIG, i18n("FontConfig Match"), false, true);
     addAction(CRIT_FILENAME, i18n("File"), false, false);
     addAction(CRIT_LOCATION, i18n("File Location"), false, false);

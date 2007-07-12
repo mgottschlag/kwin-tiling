@@ -160,12 +160,13 @@ bool CHelper::getFile(CDisabledFonts::TFont &font)
 {
     kDebug() << "getFile" << endl;
 
-    QString file;
+    QString file,
+            foundry;
 
-    if(read(file))
+    if(read(file) && read(foundry))
     {
-        kDebug() << "file:" << file << endl;
-        font.files.append(CDisabledFonts::TFile(file, 0));
+        kDebug() << "file:" << file << " foundry:" << foundry << endl;
+        font.files.append(CDisabledFonts::TFile(file, 0, foundry));
         return true;
     }
 

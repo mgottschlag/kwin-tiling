@@ -140,12 +140,12 @@ static QString replaceEnvVar(const QString &text)
 //    Arial (Regular, Bold)
 //    Coutier
 //    Times (Regular, Italic)
-QStringList CFontList::compact(const QStringList &files)
+QStringList CFontList::compact(const QStringList &fonts)
 {
     QString                    lastFamily,
                                entry;
-    QStringList::ConstIterator it(files.begin()),
-                               end(files.end());
+    QStringList::ConstIterator it(fonts.begin()),
+                               end(fonts.end());
     QStringList                compacted;
     QSet<QString>              usedStyles;
 
@@ -405,12 +405,12 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &st
     if(!Misc::root())
         setIsSystem(isSysFolder(url().path().section('/', 1, 1)));
 
-    QString fileList=udsEntry.stringValue((uint)UDS_EXTRA_FILE_LIST);
+    QString files=udsEntry.stringValue((uint)UDS_EXTRA_FILE_LIST);
 
-    if(fileList.isEmpty())
-        itsFiles.append(itsFileName);
+    if(files.isEmpty())
+        itsFiles.append(CDisabledFonts::TFile(itsFileName));
     else
-        itsFiles=fileList.split(KFI_FILE_LIST_SEPARATOR);
+        itsFiles.fromString(files);
 }
 
 void CFontItem::touchThumbnail()
@@ -1073,7 +1073,7 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                     CFamilyItem *fam=static_cast<CFamilyItem *>(index.internalPointer());
                     QList<CFontItem *>::ConstIterator it(fam->fonts().begin()),
                                                       end(fam->fonts().end());
-                    QStringList                       allFiles;
+                    CDisabledFonts::TFileList         allFiles;
                     QString                           tip("<b>"+fam->name()+"</b>");
                     int                               size(0);
                     bool                              markMatch(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria);
@@ -1085,9 +1085,9 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                         size+=(*it)->size();
                     }
 
-                    qSort(allFiles);
-                    QStringList::ConstIterator fit(allFiles.begin()),
-                                               fend(allFiles.end());
+                    //qSort(allFiles);
+                    CDisabledFonts::TFileList::ConstIterator fit(allFiles.begin()),
+                                                             fend(allFiles.end());
 
                     for(int i=0; fit!=fend && i<constMaxFiles; ++fit, ++i)
                         if(markMatch && itsFcQuery && (*fit)==itsFcQuery->file())
@@ -1102,16 +1102,16 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                 }
                 else
                 {
-                    CFontItem   *font=static_cast<CFontItem *>(index.internalPointer());
-                    QString     tip("<b>"+font->name()+"</b>");
-                    QStringList files(font->files());
-                    bool        markMatch(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria);
+                    CFontItem                       *font=static_cast<CFontItem *>(index.internalPointer());
+                    QString                         tip("<b>"+font->name()+"</b>");
+                    const CDisabledFonts::TFileList &files(font->files());
+                    bool                            markMatch(CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria);
 
                     tip+="<p style='white-space:pre'><table>";
 
-                    qSort(files);
-                    QStringList::ConstIterator fit(files.begin()),
-                                               fend(files.end());
+                    //qSort(files);
+                    CDisabledFonts::TFileList::ConstIterator fit(files.begin()),
+                                                             fend(files.end());
 
                     for(int i=0; fit!=fend && i<constMaxFiles; ++fit, ++i)
                         if(markMatch && itsFcQuery && (*fit)==itsFcQuery->file())
@@ -1211,10 +1211,19 @@ bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkFontText) co
                 case CFontFilter::CRIT_STYLE:
                     fontMatch=matchString(fnt->style(), itsFilterText);
                     break;
+                case CFontFilter::CRIT_FOUNDRY:
+                {
+                    CDisabledFonts::TFileList::ConstIterator it(fnt->files().begin()),
+                                                             end(fnt->files().end());
+
+                    for(; it!=end && !fontMatch; ++it)
+                        fontMatch=-1!=(*it).foundry.indexOf(itsFilterText, 0, Qt::CaseInsensitive);
+                    break;
+                }
                 case CFontFilter::CRIT_FILENAME:
                 {
-                    QStringList::ConstIterator it(fnt->files().begin()),
-                                               end(fnt->files().end());
+                    CDisabledFonts::TFileList::ConstIterator it(fnt->files().begin()),
+                                                             end(fnt->files().end());
 
                     for(; it!=end && !fontMatch; ++it)
                     {
@@ -1228,8 +1237,8 @@ bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkFontText) co
                 }
                 case CFontFilter::CRIT_LOCATION:
                 {
-                    QStringList::ConstIterator it(fnt->files().begin()),
-                                               end(fnt->files().end());
+                    CDisabledFonts::TFileList::ConstIterator it(fnt->files().begin()),
+                                                             end(fnt->files().end());
 
                     for(; it!=end && !fontMatch; ++it)
                         if(0==Misc::getDir(*it).indexOf(itsFilterText, 0, Qt::CaseInsensitive))
@@ -1941,9 +1950,9 @@ void CFontListView::view()
             else
             {
                 // For a disalbed font, we need to find the first scalable font entry in its file list...
-                QStringList::ConstIterator fit((*it)->files().begin()),
-                                           fend((*it)->files().end());
-                bool                       done(false);
+                CDisabledFonts::TFileList::ConstIterator fit((*it)->files().begin()),
+                                                         fend((*it)->files().end());
+                bool                                     done(false);
 
                 for(; fit!=fend; ++fit)
                     if(isScalable(*fit))

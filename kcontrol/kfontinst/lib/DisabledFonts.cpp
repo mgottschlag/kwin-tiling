@@ -44,6 +44,7 @@ namespace KFI
 #define FONT_TAG      "font"
 #define FILE_TAG      "file"
 #define PATH_ATTR     "path"
+#define FOUNDRY_ATTR  "foundry"
 #define FAMILY_ATTR   "family"
 #define WEIGHT_ATTR   "weight"
 #define WIDTH_ATTR    "width"
@@ -355,6 +356,7 @@ bool CDisabledFonts::TFile::load(QDomElement &elem)
         bool ok(false);
 
         path=expandHome(elem.attribute(PATH_ATTR));
+        foundry=elem.attribute(FOUNDRY_ATTR);
 
         if(elem.hasAttribute(FACE_ATTR))
             face=elem.attribute(FACE_ATTR).toInt(&ok);
@@ -365,6 +367,39 @@ bool CDisabledFonts::TFile::load(QDomElement &elem)
     }
 
     return false;
+}
+
+QString CDisabledFonts::TFileList::toString() const
+{
+    QString       s;
+    QTextStream   str(&s, QIODevice::WriteOnly);
+    ConstIterator it(begin()),
+                  e(end());
+
+    for(; it!=e; ++it)
+        str << (*it).path << endl
+            << (*it).foundry << endl
+            << (*it).face << endl;
+
+    return s;
+}
+
+void CDisabledFonts::TFileList::fromString(QString &s)
+{
+    clear();
+    QTextStream str(&s, QIODevice::ReadOnly);
+
+    while(!str.atEnd())
+    {
+        QString path(str.readLine()),
+                foundry(str.readLine()),
+                face(str.readLine());
+
+        if(face.isEmpty())
+            break;
+        else
+            append(TFile(path, face.toInt(), foundry));
+    }
 }
 
 bool CDisabledFonts::TFont::load(QDomElement &elem)
@@ -475,7 +510,7 @@ bool CDisabledFonts::disable(const TFont &font)
                                      end(font.files.end());
 
             for(; it!=end; ++it)
-                newFont.files.add(TFile(changeName((*it).path, false), (*it).face));
+                newFont.files.add(TFile(changeName((*it).path, false), (*it).face, (*it).foundry));
 
             itsFonts.add(newFont);
             itsModified=true;
@@ -493,7 +528,7 @@ bool CDisabledFonts::disable(const TFont &font)
             {
                 QString modName(changeName((*it).path, false));
                 if(Misc::fExists(modName))
-                    newFont.files.add(TFile(modName, (*it).face));
+                    newFont.files.add(TFile(modName, (*it).face, (*it).foundry));
                 else
                     break;
             }
@@ -624,7 +659,8 @@ void CDisabledFonts::merge(const CDisabledFonts &other)
 
 QTextStream & operator<<(QTextStream &s, const KFI::CDisabledFonts::TFile &f)
 {
-    s << PATH_ATTR"=\"" << KFI::Misc::encodeText(KFI::Misc::contractHome(f.path), s) << "\" ";
+    s << PATH_ATTR"=\"" << KFI::Misc::encodeText(KFI::Misc::contractHome(f.path), s) << "\" "
+      << FOUNDRY_ATTR"=\"" << KFI::Misc::encodeText(f.foundry, s) << "\" ";
 
     if(f.face>0)
         s << FACE_ATTR"=\"" << f.face << "\" ";

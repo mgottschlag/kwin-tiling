@@ -75,8 +75,6 @@
 
 #define KFI_NULL_SETTING             0xFF
 
-#define KFI_FILE_LIST_SEPARATOR      ";"
-
 namespace KFI
 {
 

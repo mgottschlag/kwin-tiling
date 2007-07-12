@@ -1459,16 +1459,12 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
     CDisabledFonts::TFileList                files;
     CDisabledFonts::TFileList::ConstIterator it,
                                              end(unSortedFiles.end());
-    QStringList                              filePaths;
 
     for(it=unSortedFiles.begin(); it!=end; ++it)
-    {
         if(isScalable(*it))
             files.prepend(*it);
         else
             files.append(*it);
-        filePaths.append((*it).path);
-    }
 
     entry.clear();
     entry.insert(KIO::UDS_SIZE, getSize(files));
@@ -1500,8 +1496,7 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
             if(hidden)
                 entry.insert(KIO::UDS_HIDDEN, 1);
             entry.insert(UDS_EXTRA_FILE_NAME, (*it).path);
-            if(filePaths.count()>1)
-                entry.insert(UDS_EXTRA_FILE_LIST, filePaths.join(KFI_FILE_LIST_SEPARATOR));
+            entry.insert(UDS_EXTRA_FILE_LIST, files.toString());
 
             QString url(KFI_KIO_FONTS_PROTOCOL+QString::fromLatin1(":/"));
 
@@ -2052,7 +2047,10 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                             c.args.append((int)(nameIt.key()));
                             c.args.append((*enabledIt).files.count());
                             for(it=(*enabledIt).files.begin(); it!=end; ++it)
+                            {
                                 c.args.append((*it).path);
+                                c.args.append((*it).foundry);
+                            }
                             ok=doRootCmd(c);
                         }
                         else
@@ -2726,7 +2724,7 @@ bool CKioFonts::updateFontList()
 #ifndef KFI_FC_NO_WIDTHS
                                             FC_WIDTH,
 #endif
-                                            FC_SLANT, FC_INDEX, (void*)0);
+                                            FC_SLANT, FC_INDEX, FC_FOUNDRY, (void*)0);
 
         itsFontList=FcFontList(0, pat, os);
 
@@ -2750,7 +2748,8 @@ bool CKioFonts::updateFontList()
 
                 if(!fileName.isEmpty() && 0!=fileName.indexOf(constDefomaLocation))
                 {
-                    QString name;
+                    QString name,
+                            foundry(FC::getFcString(itsFontList->fonts[i], FC_FOUNDRY));
                     int     styleVal,
                             index;
 
@@ -2775,7 +2774,7 @@ bool CKioFonts::updateFontList()
                                 use=false;
                     }
                     if(use)
-                        details.files.append(CDisabledFonts::TFile(fileName, index));
+                        details.files.append(CDisabledFonts::TFile(fileName, index, foundry));
                 }
             }
         }

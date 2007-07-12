@@ -407,9 +407,9 @@ void CFontFileList::run()
         for(; fontIt!=fontEnd; ++fontIt)
             if(!(*fontIt)->isBitmap())
             {
-                Misc::TFont                font((*fontIt)->family(), (*fontIt)->styleInfo());
-                QStringList::ConstIterator fileIt((*fontIt)->files().begin()),
-                                           fileEnd((*fontIt)->files().end());
+                Misc::TFont                              font((*fontIt)->family(), (*fontIt)->styleInfo());
+                CDisabledFonts::TFileList::ConstIterator fileIt((*fontIt)->files().begin()),
+                                                         fileEnd((*fontIt)->files().end());
 
                 for(; fileIt!=fileEnd; ++fileIt)
                     if(!Misc::isMetrics(*fileIt))
