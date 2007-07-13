@@ -52,18 +52,21 @@ set(kdm_greet_SRCS
 	utils.h
 	${kdmthemer_SRCS}
 )
+
 if (XDMCP)
 	set(kdm_greet_SRCS ${kdm_greet_SRCS}
 		kchooser.cpp
 		kchooser.h
 	)
 endif (XDMCP)
+
 if (WITH_KDM_XCONSOLE)
 	set(kdm_greet_SRCS ${kdm_greet_SRCS}
 		kconsole.cpp
 		kconsole.h
 	)
 endif (WITH_KDM_XCONSOLE)
+
 macro_add_file_dependencies(kdm_greet.h ${confci})
 kde4_add_executable(kdm_greet ${kdm_greet_SRCS})
 target_link_libraries(kdm_greet ${KDE4_KDEUI_LIBS} ${POSIX4_LIBRARIES})
@@ -103,5 +106,5 @@ build_confci()
 
 ## use 'GENKDMCONF_FLAGS=... make install' to override
 install(CODE "
-exec_program(${CMAKE_CURRENT_BINARY_DIR}/genkdmconf ARGS --in ${CONFIG_INSTALL_DIR}/kdm --face-src ${CMAKE_CURRENT_SOURCE_DIR}/pics \$GENKDMCONF_FLAGS)
+exec_program(${CMAKE_CURRENT_BINARY_DIR}/genkdmconf ARGS --in \$DESTDIR${CONFIG_INSTALL_DIR}/kdm --face-src ${CMAKE_CURRENT_SOURCE_DIR}/pics \$GENKDMCONF_FLAGS)
 ")
