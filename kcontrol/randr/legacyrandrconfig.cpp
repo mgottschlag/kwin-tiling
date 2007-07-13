@@ -133,7 +133,7 @@ void LegacyRandRConfig::slotScreenChanged(int screenId)
 	for (int i = 0; i < RandR::OrientationCount; i++)
 		m_rotationGroup.button(1 << i)->setEnabled( (1 << i) & screen->rotations());
 
-	m_rotationGroup.button(screen->currentRotation())->setChecked(true);
+	m_rotationGroup.button(screen->rotation())->setChecked(true);
 	populateRefreshRates();
 
 	update();

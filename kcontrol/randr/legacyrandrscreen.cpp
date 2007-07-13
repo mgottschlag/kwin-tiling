@@ -136,7 +136,7 @@ Window LegacyRandRScreen::rootWindow() const
 
 QString LegacyRandRScreen::changedMessage() const
 {
-	if (currentRefreshRate() == -1)
+	if (refreshRate() == -1)
 		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3",
 			 currentPixelWidth(),
 			 currentPixelHeight(),
@@ -270,7 +270,7 @@ bool LegacyRandRScreen::proposeRefreshRate(int index)
 	return false;
 }
 
-int LegacyRandRScreen::currentRefreshRate() const
+int LegacyRandRScreen::refreshRate() const
 {
 	return m_currentRefreshRate;
 }
@@ -345,12 +345,12 @@ int LegacyRandRScreen::rotations() const
 	return m_rotations;
 }
 
-int LegacyRandRScreen::currentRotation() const
+int LegacyRandRScreen::rotation() const
 {
 	return m_currentRotation;
 }
 
-int LegacyRandRScreen::currentSize() const
+int LegacyRandRScreen::size() const
 {
 	return m_currentSize;
 }
@@ -385,7 +385,7 @@ void LegacyRandRScreen::load(KConfig& config)
 	KConfigGroup group = config.group(QString("Screen%1").arg(m_screen));
 
 	if (proposeSize(sizeIndex(QSize(group.readEntry("width", currentPixelWidth()), group.readEntry("height", currentPixelHeight())))))
-		proposeRefreshRate(refreshRateHzToIndex(proposedSize(), group.readEntry("refresh", currentRefreshRate())));
+		proposeRefreshRate(refreshRateHzToIndex(proposedSize(), group.readEntry("refresh", refreshRate())));
 
 	proposeRotation(rotationDegreeToIndex(	group.readEntry("rotation", 0)) + 
 						(group.readEntry("reflectX", false) ? RandR::ReflectX : 0) + 
@@ -397,10 +397,10 @@ void LegacyRandRScreen::save(KConfig& config) const
 	KConfigGroup group = config.group(QString("Screen%1").arg(m_screen));
 	group.writeEntry("width", currentPixelWidth());
 	group.writeEntry("height", currentPixelHeight());
-	group.writeEntry("refresh", refreshRateIndexToHz(currentSize(), currentRefreshRate()));
-	group.writeEntry("rotation", rotationIndexToDegree(currentRotation()));
-	group.writeEntry("reflectX", (bool)(currentRotation() & RandR::ReflectMask) == RandR::ReflectX);
-	group.writeEntry("reflectY", (bool)(currentRotation() & RandR::ReflectMask) == RandR::ReflectY);
+	group.writeEntry("refresh", refreshRateIndexToHz(size(), refreshRate()));
+	group.writeEntry("rotation", rotationIndexToDegree(rotation()));
+	group.writeEntry("reflectX", (bool)(rotation() & RandR::ReflectMask) == RandR::ReflectX);
+	group.writeEntry("reflectY", (bool)(rotation() & RandR::ReflectMask) == RandR::ReflectY);
 }
 
 int LegacyRandRScreen::pixelCount( int index ) const

@@ -49,10 +49,10 @@ public:
 	QString icon() const;
 
 	CrtcList possibleCrtcs() const;
-	RRCrtc currentCrtc() const;
+	RRCrtc crtc() const;
 
 	ModeList modes() const;
-	RRMode currentMode() const;
+	RRMode mode() const;
 
 	/**
 	 * The list of supported sizes
@@ -80,20 +80,17 @@ public:
 	/**
 	 * Returns the curent rotation of the CRTC this output is currently connected to
 	 */
-	int currentRotation() const;
+	int rotation() const;
 
 	bool isConnected() const;
 	bool isActive() const;
 
-	/**
-	 * This function will check if the proposed config for the CRTC this output
-	 * is connected to has changed from the original settings
-	 *
-	 * If this output is not connected to any CRTC, it will return false
-	 */
-	bool proposedChanged();
 	bool applyProposed(int changes = 0xffffff, bool confirm = false);
 	void proposeOriginal();
+
+	// proposal functions
+	void proposeRect(QRect r);
+	void proposeRotation(int rotation);
 
 	void load(KConfig &config);
 	void save(KConfig &config);
@@ -118,7 +115,7 @@ protected:
 	 * The current crtc should never be set directly, it should be added through 
 	 * this function to get the signals connected/disconnected correctly
 	 */
-	void setCurrentCrtc(RRCrtc c);
+	void setCrtc(RRCrtc c);
 
 private:
 	RROutput m_id;
@@ -128,13 +125,14 @@ private:
 	CrtcList m_possibleCrtcs;
 	RRCrtc m_currentCrtc;
 
-	RRCrtc m_originalCrtc;
-	RRCrtc m_proposedCrtc;
-
 	//proposed stuff (mostly to read from the configuration
 	QRect m_proposedRect;
 	int m_proposedRotation;
 	float m_proposedRate;
+
+	QRect m_originalRect;
+	int m_originalRotation;
+	float m_originalRate;
 
 	ModeList m_modes;
 

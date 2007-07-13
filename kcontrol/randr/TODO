@@ -12,3 +12,10 @@ Kwin
 
 RandR programs
 	Support configuring different sized virtual desktops
+
+
+---------------
+
+RandR1.2 TODO
+
+--> port the legacy interface to share the populate* functions

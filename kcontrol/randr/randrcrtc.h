@@ -35,15 +35,15 @@ public:
 
 	RRCrtc id() const;
 	int rotations() const;
-	int currentRotation() const;
+	int rotation() const;
 
 	void loadSettings();
 	void handleEvent(XRRCrtcChangeNotifyEvent *event);
 
-	RRMode currentMode() const;
+	RRMode mode() const;
 	QRect rect() const;
-	float currentRefreshRate() const;
-	
+	float refreshRate() const;
+
 	bool proposeSize(QSize s);
 	bool proposePosition(QPoint p);
 	bool proposeRotation(int rotation);

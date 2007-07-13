@@ -158,131 +158,130 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 		RandRScreen *screen = m_display->currentScreen();
 		Q_ASSERT(screen);
 
-		OutputMap::const_iterator it = outputs.constBegin();
-
 		// if there is only one output connected, only show it
 		int connected = 0;
 		int active = 0;
-		while (it != outputs.constEnd())
+		foreach(RandROutput *output, outputs)
 		{
-		       if (it.value()->isConnected())
-			       connected++;
-		       if (it.value()->isActive())
+		       if (output->isConnected())
+			    connected++;
+		       if (output->isActive())
 			       active++;
-		       ++it;
 		}
 
-		if (connected != 1)
-			menu->addTitle(SmallIcon("view-fullscreen"), i18n("Outputs"));
-
-		it = outputs.constBegin();
-		while (it != outputs.constEnd()) 
+		// if the outputs are unified, do not show output-specific size 
+		// changing options in the tray.
+		if (screen->outputsUnified() && connected > 1)
 		{
-			if (it.value()->isConnected()) 
-			{
-				RandROutput *output = it.value();
-				Q_ASSERT(output);
-
-				KMenu *outputMenu;
-			       	if (connected == 1)
-					outputMenu = menu;
-				else
-					outputMenu = new KMenu(output->name());
-				outputMenu->setIcon(SmallIcon(output->icon()));
-				outputMenu->addTitle(SmallIcon("view-fullscreen"), i18n("%1 - Screen Size", output->name()));
-
-				QSize currentSize = output->rect().size();
-
-				// if the output is rotated 90 or 270, the returned rect is inverted
-				// so we need to invert the size before comparing
-				if (output->currentRotation() & (RandR::Rotate90 | RandR::Rotate270))
-					currentSize = QSize(currentSize.height(), currentSize.width());
-
-				actionGroup = populateSizes(outputMenu, output->sizes(), currentSize);
-				connect(actionGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeSize(QAction*)));
-				
-				// if there is only one output active, do not show the disable option
-				// this prevents the user from doing wrong things ;)
-				if (active != 1)
-				{
-					action = outputMenu->addAction(i18n("Disable"));
-					if (output->currentCrtc() == None)
-					{
-						QFont font = action->font();
-						font.setBold(true);
-						action->setFont(font);
-					}
-					connect(action, SIGNAL(triggered(bool)), output, SLOT(slotDisable()));
-				}
-
-				// Display the rotations
-				int rotations = output->rotations();
-				// Don't display the rotation options if there is no point (ie. none are supported)
-				// XFree86 4.3 does not include rotation support.
-				if (rotations != RandR::Rotate0) 
-				{
-					outputMenu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
-					actionGroup = populateRotations(outputMenu, rotations, output->currentRotation());
-					connect(actionGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRotation(QAction*)));
-				}
-
-				// refresh rate
-				RateList rates = output->refreshRates();
-				if (rates.count())
-				{
-					outputMenu->addTitle(SmallIcon("chronometer"), i18n("Refresh Rate"));
-					actionGroup = populateRates(outputMenu, rates, output->refreshRate());
-					connect(actionGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeRefreshRate(QAction*)));
-				}
-				
-				if (connected != 1)
-					menu->addMenu(outputMenu);
-			} 
-			else if (connected != 1) 
-			{
-				action = menu->addAction(SmallIcon(it.value()->icon()), it.value()->name());
-				action->setEnabled(false);
-			}
-			++it;
-		}
-		// if there is more than one output connected, give the option to unify the outputs
-		if (connected != 1)
-		{
-			RandRScreen *screen = m_display->currentScreen();
-			bool unified = screen->outputsAreUnified();
 			SizeList sizes = screen->unifiedSizes();
 			if (sizes.count())
 			{
 				// populate unified sizes
 				QSize currentSize;
-				KMenu *unifiedMenu = new KMenu(i18n("Unified Outputs"));
-				if (unified)
-					currentSize = screen->rect().size();
+				currentSize = screen->rect().size();
 
-				unifiedMenu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
-				actionGroup = populateSizes(unifiedMenu, sizes, currentSize);	
-				connect(actionGroup, SIGNAL(triggered(QAction*)), screen, SLOT(slotUnifyOutputs(QAction*)));
+				menu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
+				actionGroup = populateSizes(menu, sizes, currentSize);	
+				connect(actionGroup, SIGNAL(triggered(QAction*)), screen, SLOT(slotResizeUnified(QAction*)));
 
 				// if the outputs are unified, we can rotate the screen on all outputs
-				if (unified)
+				int rotations = screen->unifiedRotations();
+				if (rotations != RandR::Rotate0)
 				{
-					int rotations = screen->unifiedRotations();
-					if (rotations != RandR::Rotate0)
+					menu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
+					int rotation = RandR::Rotate0;
+					if (screen->outputs().count())
 					{
-						unifiedMenu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
-						int rotation = RandR::Rotate0;
-						if (screen->outputs().count())
-						{
-							OutputMap::const_iterator it = screen->outputs().begin();	
-							rotation = (*it)->currentRotation();
-						}
-						actionGroup = populateRotations(unifiedMenu, rotations, rotation);
-						connect(actionGroup, SIGNAL(triggered(QAction*)), screen, SLOT(slotRotateUnified(QAction*)));
+						OutputMap::const_iterator it = screen->outputs().begin();	
+						rotation = (*it)->rotation();
 					}
+					actionGroup = populateRotations(menu, rotations, rotation);
+					connect(actionGroup, SIGNAL(triggered(QAction*)), screen, SLOT(slotRotateUnified(QAction*)));
 				}
-				menu->addSeparator();
-				menu->addMenu(unifiedMenu);
 			}
+		}
+		else
+		{
+			if (connected != 1)
+				menu->addTitle(SmallIcon("view-fullscreen"), i18n("Outputs"));
+
+			foreach(RandROutput *output, outputs)
+			{
+				if (output->isConnected()) 
+				{
+					Q_ASSERT(output);
+
+					KMenu *outputMenu;
+					if (connected == 1)
+						outputMenu = menu;
+					else
+						outputMenu = new KMenu(output->name());
+					outputMenu->setIcon(SmallIcon(output->icon()));
+					outputMenu->addTitle(SmallIcon("view-fullscreen"), i18n("%1 - Screen Size", output->name()));
+
+					QSize currentSize = output->rect().size();
+
+					// if the output is rotated 90 or 270, the returned rect is inverted
+					// so we need to invert the size before comparing
+					if (output->rotation() & (RandR::Rotate90 | RandR::Rotate270))
+						currentSize = QSize(currentSize.height(), currentSize.width());
+
+					actionGroup = populateSizes(outputMenu, output->sizes(), currentSize);
+					connect(actionGroup, SIGNAL(triggered(QAction*)), output, SLOT(slotChangeSize(QAction*)));
+					
+					// if there is only one output active, do not show the disable option
+					// this prevents the user from doing wrong things ;)
+					if (active != 1)
+					{
+						action = outputMenu->addAction(i18n("Disable"));
+						if (output->crtc() == None)
+						{
+							QFont font = action->font();
+							font.setBold(true);
+							action->setFont(font);
+						}
+						connect(action, SIGNAL(triggered(bool)), output, SLOT(slotDisable()));
+					}
+
+					// Display the rotations
+					int rotations = output->rotations();
+					// Don't display the rotation options if there is no point (ie. none are supported)
+					// XFree86 4.3 does not include rotation support.
+					if (rotations != RandR::Rotate0) 
+					{
+						outputMenu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
+						actionGroup = populateRotations(outputMenu, rotations, output->rotation());
+						connect(actionGroup, SIGNAL(triggered(QAction*)), 
+							output, SLOT(slotChangeRotation(QAction*)));
+					}
+
+					// refresh rate
+					RateList rates = output->refreshRates();
+					if (rates.count())
+					{
+						outputMenu->addTitle(SmallIcon("chronometer"), i18n("Refresh Rate"));
+						actionGroup = populateRates(outputMenu, rates, output->refreshRate());
+						connect(actionGroup, SIGNAL(triggered(QAction*)), 
+							output, SLOT(slotChangeRefreshRate(QAction*)));
+					}
+					
+					if (connected != 1)
+						menu->addMenu(outputMenu);
+				} 
+				else if (connected != 1) 
+				{
+					action = menu->addAction(SmallIcon(output->icon()), output->name());
+					action->setEnabled(false);
+				}
+			}
+		}
+		// if there is more than one output connected, give the option to unify the outputs
+		if (connected != 1)
+		{
+			menu->addSeparator();
+			action = menu->addAction( i18n("Unify Outputs"), screen, SLOT(slotUnifyOutputs(bool)) );
+			action->setCheckable(true);
+			action->setChecked(screen->outputsUnified());
 		}
 	}
 	else
@@ -344,7 +343,7 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 		{
 			if ((1 << i) & screen->rotations()) 
 			{
-				action = menu->addAction(QIcon(RandR::rotationIcon(1 << i, screen->currentRotation())), 
+				action = menu->addAction(QIcon(RandR::rotationIcon(1 << i, screen->rotation())), 
 							  RandR::rotationName(1 << i));
 
 				if (screen->proposedRotation() & (1 << i))
@@ -450,7 +449,7 @@ void KRandRSystemTray::slotResolutionChanged(QAction *action)
 	LegacyRandRScreen *screen = m_display->currentLegacyScreen();
 	Q_ASSERT(screen);
 
-	if (screen->currentSize() == index)
+	if (screen->size() == index)
 		return;
 
 	screen->proposeSize(index);
@@ -470,7 +469,7 @@ void KRandRSystemTray::slotOrientationChanged(QAction *action)
 	LegacyRandRScreen *screen = m_display->currentLegacyScreen();
 	Q_ASSERT(screen);
 	
-	int propose = screen->currentRotation();
+	int propose = screen->rotation();
 	int rotate = action->data().toInt();
 
 	if (rotate & RandR::RotateMask)
@@ -478,7 +477,7 @@ void KRandRSystemTray::slotOrientationChanged(QAction *action)
 
 	propose ^= rotate;
 
-	if (screen->currentRotation() == propose)
+	if (screen->rotation() == propose)
 		return;
 
 	screen->proposeRotation(propose);
@@ -498,7 +497,7 @@ void KRandRSystemTray::slotRefreshRateChanged(QAction *action)
 	
 	int index = action->data().toInt();
 
-	if (screen->currentRefreshRate() == index)
+	if (screen->refreshRate() == index)
 		return;
 
 	screen->proposeRefreshRate(index);

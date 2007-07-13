@@ -64,7 +64,9 @@ public:
 	bool setSize(QSize s);
 
 
-	bool outputsAreUnified() const;
+	bool outputsUnified() const;
+	void setOutputsUnified(bool unified);
+
 	int unifiedRotations() const;
 	SizeList unifiedSizes() const;
 
@@ -76,19 +78,30 @@ public:
 	void save(KConfig &config);
 
 public slots:
-	void slotUnifyOutputs(QAction *action);
+	void slotUnifyOutputs(bool unify);
+	void slotResizeUnified(QAction *action);
 	void slotRotateUnified(QAction *action);
 
+	void slotOutputChanged(RROutput id, int changes);
+
 	void save();
+	void load();
 
 signals:
 	void configChanged();
+
+protected:
+	void unifyOutputs();
 
 private:
 	int m_index;
 	QSize m_minSize;
 	QRect m_rect;
 	QSize m_maxSize;
+
+	bool m_outputsUnified;
+	QRect m_unifiedRect;
+	int m_unifiedRotation;
 
 	XRRScreenResources* m_resources;
 

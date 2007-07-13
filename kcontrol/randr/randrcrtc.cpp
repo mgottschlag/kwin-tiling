@@ -49,7 +49,7 @@ int RandRCrtc::rotations() const
 	return m_rotations;
 }
 
-int RandRCrtc::currentRotation() const
+int RandRCrtc::rotation() const
 {
 	return m_currentRotation;
 }
@@ -133,7 +133,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 		emit crtcChanged(m_id, changed);
 }
 
-RRMode RandRCrtc::currentMode() const
+RRMode RandRCrtc::mode() const
 {
 	return m_currentMode;
 }
@@ -143,7 +143,7 @@ QRect RandRCrtc::rect() const
 	return m_currentRect;
 }
 
-float RandRCrtc::currentRefreshRate() const
+float RandRCrtc::refreshRate() const
 {
 	return m_currentRate;
 }

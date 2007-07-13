@@ -86,7 +86,7 @@ void OutputConfig::load()
 						  RandR::rotationName(1 << i), (1 << i));
 		}
 	}
-	index = orientationCombo->findData(m_output->currentRotation());
+	index = orientationCombo->findData(m_output->rotation());
 	if (index != -1)
 		orientationCombo->setCurrentIndex( index );
 

@@ -73,7 +73,7 @@ public:
 	QString		refreshRateIndirectDescription(int size, int index) const;
 	QString		refreshRateDescription(int size, int index) const;
 
-	int			currentRefreshRate() const;
+	int			refreshRate() const;
 	QString		currentRefreshRateDescription() const;
 
 	// Refresh rate hz <==> index conversion
@@ -106,8 +106,8 @@ public:
 	int			currentMMWidth() const;
 	int			currentMMHeight() const;
 
-	int			currentRotation() const;
-	int			currentSize() const;
+	int			rotation() const;
+	int			size() const;
 
 	/**
 	 * Proposed setting functions.
