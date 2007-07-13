@@ -50,6 +50,7 @@ class CFontLister : public QObject
     void newItems(const KFileItemList &items);
     void deleteItems(const KFileItemList &items);
     void refreshItems(const KFileItemList &items);
+    void started();
     void completed();
     void percent(int);
     void message(const QString &msg);

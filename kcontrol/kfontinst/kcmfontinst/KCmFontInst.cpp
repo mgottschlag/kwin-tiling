@@ -356,6 +356,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     connect(itsGroupListView, SIGNAL(info(const QString &)),
            SLOT(showInfo(const QString &)));
     connect(itsGroupList, SIGNAL(refresh()), SLOT(refreshFontList()));
+    connect(itsFontList, SIGNAL(started()), SLOT(listingStarted()));
     connect(itsFontList, SIGNAL(finished()), SLOT(listingCompleted()));
     connect(itsFontList, SIGNAL(percent(int)), itsListingProgress, SLOT(setValue(int)));
     connect(itsFontList, SIGNAL(status(const QString &)), itsStatusLabel,
@@ -468,7 +469,7 @@ void CKCmFontInst::reload()
 {
     if(!working(false))
     {
-        itsListingProgress->show();
+        listingStarted();
         itsFontList->scan();
         itsGroupList->rescan();
     }
@@ -929,6 +930,12 @@ void CKCmFontInst::print()
 void CKCmFontInst::printGroup()
 {
     print(true);
+}
+
+void CKCmFontInst::listingStarted()
+{
+    showInfo(i18n("Scanning font list..."));
+    itsListingProgress->show();
 }
 
 void CKCmFontInst::listingCompleted()

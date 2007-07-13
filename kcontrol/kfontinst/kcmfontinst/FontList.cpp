@@ -636,6 +636,7 @@ CFontList::CFontList(QWidget *parent)
 
     setPreviewSize(pixelSize+12);
     itsLister=new CFontLister(this);
+    connect(itsLister, SIGNAL(started()), SIGNAL(started()));
     connect(itsLister, SIGNAL(completed()), SLOT(listingCompleted()));
     connect(itsLister, SIGNAL(newItems(const KFileItemList &)),
             SLOT(newItems(const KFileItemList &)));

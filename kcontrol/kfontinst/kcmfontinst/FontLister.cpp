@@ -67,7 +67,7 @@ void CFontLister::scan(const KUrl &url)
         else
             itsJob=KIO::listDir(url, false);
 
-        emit message(i18n("Scanning font list..."));
+        emit started();
         connect(itsJob, SIGNAL(entries(KIO::Job *, const KIO::UDSEntryList &)), this,
                 SLOT(entries(KIO::Job *, const KIO::UDSEntryList &)));
         connect(itsJob, SIGNAL(infoMessage(KJob *, const QString&, const QString& )),

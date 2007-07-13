@@ -118,6 +118,7 @@ class CFontList : public QAbstractItemModel
 
     void            status(const QString &str);
     void            percent(int p);
+    void            started();
     void            finished();
 
     private Q_SLOTS:

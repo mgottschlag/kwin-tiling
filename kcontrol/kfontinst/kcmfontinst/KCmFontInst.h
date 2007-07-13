@@ -84,6 +84,7 @@ class CKCmFontInst : public KCModule
     void    duplicateFonts();
     void    print();
     void    printGroup();
+    void    listingStarted();
     void    listingCompleted();
     void    refreshFontList();
     void    refreshFamilies();
