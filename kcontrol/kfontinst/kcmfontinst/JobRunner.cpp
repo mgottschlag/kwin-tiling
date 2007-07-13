@@ -231,6 +231,8 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)
         case CMD_MOVE:
             setCaption(i18n("Moving"));
             break;
+        case CMD_UPDATE:
+            setCaption(i18n("Updating"));
         default:
         case CMD_DISABLE:
             setCaption(i18n("Disabling"));

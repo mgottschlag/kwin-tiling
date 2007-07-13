@@ -115,20 +115,21 @@ void CFontFilter::setMgtMode(bool m)
 
 void CFontFilter::setFoundries(const QSet<QString> &foundries)
 {
-    QAction *act(((KSelectAction *)itsActions[CRIT_FOUNDRY])->currentAction());
+    QAction     *act(((KSelectAction *)itsActions[CRIT_FOUNDRY])->currentAction());
+    QString     prev(act && act->isChecked() ? act->text() : QString());
+    QStringList list(foundries.toList());
 
-    QString prev(act ? act->text() : QString());
-    ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setItems(foundries.toList());
-//     if(prev.isEmpty())
-//         ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentItem(0);
-//     else
-//     {
-//         act=((KSelectAction *)itsActions[CRIT_FOUNDRY])->action(prev);
-//         if(act)
-//             ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentAction(act);
-//         else
-//             ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentItem(0);
-//     }
+    list.sort();
+    ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setItems(list);
+
+    if(!prev.isEmpty())
+    {
+        act=((KSelectAction *)itsActions[CRIT_FOUNDRY])->action(prev);
+        if(act)
+            ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentAction(act);
+        else
+            ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentItem(0);
+    }
 }
 
 void CFontFilter::filterChanged()
@@ -172,7 +173,11 @@ void CFontFilter::wsChanged()
         QFontDatabase::WritingSystem ws((QFontDatabase::WritingSystem)act->data().toInt());
 
         if(CRIT_FOUNDRY==itsCurrentCriteria)
-            ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setCurrentAction(NULL);
+        {
+            QAction *prev(((KSelectAction *)itsActions[CRIT_FOUNDRY])->currentAction());
+            if(prev)
+                prev->setChecked(false);
+        }
 
         if(itsCurrentWs!=ws)
         {
@@ -197,7 +202,11 @@ void CFontFilter::foundryChanged(const QString &foundry)
         prev->setChecked(false);
 
     if(CRIT_WS==itsCurrentCriteria)
-        ((KSelectAction *)itsActions[CRIT_WS])->setCurrentAction(NULL);
+    {
+        prev=((KSelectAction *)itsActions[CRIT_WS])->currentAction();
+        if(prev)
+            prev->setChecked(false);
+    }
 
     itsCurrentCriteria=CRIT_FOUNDRY;
     setReadOnly(true);

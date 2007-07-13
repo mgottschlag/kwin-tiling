@@ -481,7 +481,8 @@ QSet<QString> CFamilyItem::getFoundries() const
                                                  fEnd((*it)->files().end());
 
         for(; fIt!=fEnd; ++fIt)
-            foundries.insert((*fIt).foundry);
+            if(!(*fIt).foundry.isEmpty())
+                foundries.insert((*fIt).foundry);
     }
 
     return foundries;
@@ -1098,7 +1099,8 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
     switch(role)
     {
         case Qt::ToolTipRole:
-            if(itsMgtMode)
+            if(itsMgtMode && (CFontFilter::CRIT_FILENAME==itsFilterCriteria || CFontFilter::CRIT_LOCATION==itsFilterCriteria ||
+                              CFontFilter::CRIT_FONTCONFIG==itsFilterCriteria))
                 if(mi->isFamily())
                 {
                     CFamilyItem *fam=static_cast<CFamilyItem *>(index.internalPointer());
@@ -1122,11 +1124,11 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
 
                     for(int i=0; fit!=fend && i<constMaxFiles; ++fit, ++i)
                         if(markMatch && itsFcQuery && (*fit)==itsFcQuery->file())
-                            tip+="<tr><td><b>"+Misc::contractHome(*fit)+"</b></tr></td>";
+                            tip+="<tr><td><b>"+Misc::contractHome(*fit)+"</b></td></tr>";
                         else
-                            tip+="<tr><td>"+Misc::contractHome(*fit)+"</tr></td>";
+                            tip+="<tr><td>"+Misc::contractHome(*fit)+"</td></tr>";
                     if(allFiles.count()>constMaxFiles)
-                        tip+="<tr><td><i>"+i18n("...plus %1 more", allFiles.count()-constMaxFiles)+"</tr></td>";
+                        tip+="<tr><td><i>"+i18n("...plus %1 more", allFiles.count()-constMaxFiles)+"</td></tr>";
 
                     tip+="</table></p>";
                     return tip;
@@ -1146,11 +1148,11 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
 
                     for(int i=0; fit!=fend && i<constMaxFiles; ++fit, ++i)
                         if(markMatch && itsFcQuery && (*fit)==itsFcQuery->file())
-                            tip+="<tr><td><b>"+Misc::contractHome(*fit)+"</b></tr></td>";
+                            tip+="<tr><td><b>"+Misc::contractHome(*fit)+"</b></td></tr>";
                         else
-                            tip+="<tr><td>"+Misc::contractHome(*fit)+"</tr></td>";
+                            tip+="<tr><td>"+Misc::contractHome(*fit)+"</td></tr>";
                     if(files.count()>constMaxFiles)
-                        tip+="<tr><td><i>"+i18n("...plus %1 more", files.count()-constMaxFiles)+"</tr></td></li>";
+                        tip+="<tr><td><i>"+i18n("...plus %1 more", files.count()-constMaxFiles)+"</td></tr></li>";
 
                     tip+="</table></p>";
                     return tip;

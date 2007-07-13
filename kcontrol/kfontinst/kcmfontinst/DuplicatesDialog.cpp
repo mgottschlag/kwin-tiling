@@ -264,7 +264,7 @@ int CDuplicatesDialog::deleteFiles()
             QString                      home(Misc::dirSyntax(QDir::homePath()));
 
             for(; it!=end; ++it)
-                if(0==(*it).indexOf(home))
+                if(Misc::root() || 0==(*it).indexOf(home))
                     user.insert(*it);
                 else
                     sys.insert(*it);
