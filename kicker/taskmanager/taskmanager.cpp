@@ -581,8 +581,9 @@ bool TaskManager::isOnTop(const Task* task)
         return false;
     }
 
-    QList<WId>::const_iterator begin(KWindowSystem::stackingOrder().constBegin());
-    QList<WId>::const_iterator it = KWindowSystem::stackingOrder().begin() + (KWindowSystem::stackingOrder().size() - 1);
+    QList<WId> list = KWindowSystem::stackingOrder();
+    QList<WId>::const_iterator begin(list.constBegin());
+    QList<WId>::const_iterator it = list.begin() + (list.size() - 1);
     do
     {
         Task::Dict::iterator taskItEnd = m_tasksByWId.end();

@@ -133,7 +133,7 @@ void Desktop::mouseReleaseEvent( QMouseEvent *ev )
 KWindowInfo *Desktop::windowAtPosition(const QPoint &p, QPoint *internalpos)
 {
 	QRect r;
-	const QList<WId> &list(KWindowSystem::stackingOrder());
+	QList<WId> list(KWindowSystem::stackingOrder());
 	if (list.count() <= 0)
 		return 0L;
 
@@ -464,12 +464,8 @@ void Desktop::paintEvent( QPaintEvent * )
 
     // paint windows
     if ( KPagerConfigDialog::m_showWindows ) {
-	QList<WId>::ConstIterator it;
-	for ( it = KWindowSystem::stackingOrder().begin();
-	      it != KWindowSystem::stackingOrder().end(); ++it ) {
-
-	    KWindowInfo* info = pager()->info( *it );
-
+        foreach( WId w, KWindowSystem::stackingOrder()) {
+	    KWindowInfo* info = pager()->info( w );
 	    if (shouldPaintWindow(info))
 		paintWindow(p,info);
 	}
