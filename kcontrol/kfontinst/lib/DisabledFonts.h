@@ -80,7 +80,7 @@ class KFONTINST_EXPORT CDisabledFonts
         TFont(const Misc::TFont &f) : Misc::TFont(f), writingSystems(0) { }
 
         bool operator==(const TFont &o) const { return styleInfo==o.styleInfo && family==o.family; }
-        bool load(QDomElement &elem);
+        bool load(QDomElement &elem, bool &modified);
 
         const QString & getName() const;
 
@@ -104,6 +104,7 @@ class KFONTINST_EXPORT CDisabledFonts
     //
     // Refresh checks the timestamp of the file to determine if changes have been
     // made elsewhere.
+    void reload();
     bool refresh();
     void load(bool lock=true);
     bool save();

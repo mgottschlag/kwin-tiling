@@ -231,6 +231,16 @@ CDisabledFonts::CDisabledFonts(const QString &path, bool sys)
     itsModifiable=Misc::fWritable(itsFileName) ||
                   (!Misc::fExists(itsFileName) && Misc::dWritable(Misc::getDir(itsFileName)));
     load();
+    if(itsModified)
+        save();
+}
+
+void CDisabledFonts::reload()
+{
+    save();
+    itsTimeStamp=0;
+    load();
+    save(); // This will only do a second save, if the 'load' set the modfified flag...
 }
 
 bool CDisabledFonts::refresh()
@@ -268,6 +278,7 @@ void CDisabledFonts::load(bool lock)
 
             if(f.open(QIODevice::ReadOnly))
             {
+                itsFonts.clear();
                 itsModified=false;
 
                 QDomDocument doc;
@@ -281,8 +292,10 @@ void CDisabledFonts::load(bool lock)
                         {
                             TFont font;
 
-                            if(font.load(e))
+                            if(font.load(e, itsModified))
                                 itsFonts.add(font);
+                            else
+                                itsModified=true;
                         }
                     }
 
@@ -402,7 +415,7 @@ void CDisabledFonts::TFileList::fromString(QString &s)
     }
 }
 
-bool CDisabledFonts::TFont::load(QDomElement &elem)
+bool CDisabledFonts::TFont::load(QDomElement &elem, bool &modified)
 {
     if(elem.hasAttribute(FAMILY_ATTR))
     {
@@ -451,6 +464,8 @@ bool CDisabledFonts::TFont::load(QDomElement &elem)
 
             if(file.load(elem))
                 files.add(file);
+            else
+                modified=true;
         }
         else
             for(QDomNode n=elem.firstChild(); !n.isNull(); n=n.nextSibling())
@@ -463,6 +478,8 @@ bool CDisabledFonts::TFont::load(QDomElement &elem)
 
                     if(file.load(ent))
                         files.add(file);
+                    else
+                        modified=true;
                 }
             }
 

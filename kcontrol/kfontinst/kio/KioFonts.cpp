@@ -2354,6 +2354,12 @@ void CKioFonts::special(const QByteArray &a)
             {
                 if(itsRoot)
                 {
+                    KUrl url;
+
+                    stream >> url;
+
+                    if(url.isValid())
+                        itsFolders[FOLDER_SYS].disabled->reload();
                     if(0==itsFolders[FOLDER_SYS].modified.count())
                         configure(FOLDER_SYS);
                 }
@@ -2369,10 +2375,18 @@ void CKioFonts::special(const QByteArray &a)
 
                         QString sect(getSect(url.path()));
 
-                        if(isSysFolder(sect) && 0==itsFolders[FOLDER_SYS].modified.count())
+                        if(isSysFolder(sect))
+                        {
+                            itsFolders[FOLDER_SYS].disabled->reload();
+                            if(0==itsFolders[FOLDER_SYS].modified.count())
                                 configure(FOLDER_SYS);
-                        else if(isUserFolder(sect) && 0==itsFolders[FOLDER_USER].modified.count())
-                            configure(FOLDER_USER);
+                        }
+                        else if(isUserFolder(sect))
+                        {
+                            itsFolders[FOLDER_USER].disabled->reload();
+                            if(0==itsFolders[FOLDER_USER].modified.count())
+                                configure(FOLDER_USER);
+                        }
                     }
                 doModified();
                 clearFontList();
