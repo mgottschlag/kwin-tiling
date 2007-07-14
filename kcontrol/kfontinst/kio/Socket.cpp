@@ -38,6 +38,7 @@
 #include <QByteArray>
 #include <config-workspace.h>
 #include <kdebug.h>
+#include <kde_file.h>
 
 #ifndef SUN_LEN
 #define SUN_LEN(ptr) ((socklen_t) (((struct sockaddr_un *) 0)->sun_path) \
