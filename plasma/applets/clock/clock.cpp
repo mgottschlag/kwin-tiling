@@ -78,6 +78,7 @@ void Clock::constraintsUpdated()
         formFactor() == Plasma::MediaCenter) {
         QSize s = m_theme->size();
         m_bounds = QRect(0, 0, s.width(), s.height());
+        update();
     } else {
         QFontMetrics fm(QApplication::font());
         m_bounds = QRectF(0, 0, fm.width("00:00:00") * 1.2, fm.height() * 1.5);
