@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __kpanelextension_h__
 #define __kpanelextension_h__
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 #include <kdemacros.h>
 #include "utils.h"

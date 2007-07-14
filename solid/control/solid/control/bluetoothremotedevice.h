@@ -23,8 +23,8 @@
 #define SOLID_BLUETOOTHREMOTEDEVICE_H
 
 #include <QtCore/QObject>
-#include <QStringList>
-#include <QMap>
+#include <QtCore/QStringList>
+#include <QtCore/QMap>
 
 #include <solid/control/bluetoothmanager.h>
 #include <solid/control/bluetoothinterface.h>

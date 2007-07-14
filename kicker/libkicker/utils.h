@@ -24,11 +24,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef _plasmautils_h__
 #define _plasmautils_h__
 
-#include <Qt>
-#include <QMap>
-#include <QMenu>
+#include <QtCore/QString>
+#include <QtGui/QColor>
+#include <QtGui/QIcon>
 
 #include <kurl.h>
+
+class QMenu;
 
 namespace Plasma
 {

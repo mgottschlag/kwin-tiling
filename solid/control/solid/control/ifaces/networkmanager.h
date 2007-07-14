@@ -20,7 +20,7 @@
 #ifndef SOLID_IFACES_NETWORKMANAGER
 #define SOLID_IFACES_NETWORKMANAGER
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <solid/control/solid_control_export.h>
 
 namespace Solid

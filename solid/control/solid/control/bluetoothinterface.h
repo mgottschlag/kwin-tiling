@@ -22,8 +22,8 @@
 #ifndef SOLID_BLUETOOTHINTERFACE_H
 #define SOLID_BLUETOOTHINTERFACE_H
 
-#include <QDateTime>
-#include <QPair>
+#include <QtCore/QDateTime>
+#include <QtCore/QPair>
 #include <QtCore/QObject>
 
 #include <solid/control/bluetoothremotedevice.h>

@@ -22,13 +22,13 @@
 #ifndef SOLID_IFACES_BLUETOOTHINTERFACE_H
 #define SOLID_IFACES_BLUETOOTHINTERFACE_H
 
-#include <QList>
+#include <QtCore/QList>
 #include <solid/control/solid_control_export.h>
 
 #include <solid/control/bluetoothinterface.h>
 #include <solid/control/ifaces/bluetoothremotedevice.h>
 
-#include <QObject>
+#include <QtCore/QObject>
 
 namespace Solid
 {

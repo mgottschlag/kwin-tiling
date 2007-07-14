@@ -22,7 +22,7 @@
 
 #include <solid/control/solid_control_export.h>
 
-#include <QStringList>
+#include <QtCore/QStringList>
 
 #include <solid/control/wirelessnetwork.h>
 #include <solid/control/ifaces/network.h>

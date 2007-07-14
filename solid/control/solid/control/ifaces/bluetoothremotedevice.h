@@ -22,8 +22,8 @@
 #ifndef SOLID_IFACES_BLUETOOTHREMOTEDEVICE
 #define SOLID_IFACES_BLUETOOTHREMOTEDEVICE
 
-#include <QObject>
-#include <QStringList>
+#include <QtCore/QObject>
+#include <QtCore/QStringList>
 #include <solid/control/solid_control_export.h>
 
 class KJob;

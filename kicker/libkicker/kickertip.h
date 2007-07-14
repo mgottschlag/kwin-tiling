@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef KICKER_TIP_H
 #define KICKER_TIP_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 #include "kpanelapplet.h"
 

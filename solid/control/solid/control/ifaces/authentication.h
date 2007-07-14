@@ -20,9 +20,9 @@
 #ifndef SOLID_IFACES_AUTHENTICATION_H
 #define SOLID_IFACES_AUTHENTICATION_H
 
-#include <QObject>
-#include <QMap>
-#include <QString>
+#include <QtCore/QObject>
+#include <QtCore/QMap>
+#include <QtCore/QString>
 
 #include <solid/control/solid_control_export.h>
 

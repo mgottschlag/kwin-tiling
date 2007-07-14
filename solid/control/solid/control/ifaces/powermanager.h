@@ -20,8 +20,8 @@
 #ifndef SOLID_IFACES_POWERMANAGER_H
 #define SOLID_IFACES_POWERMANAGER_H
 
-#include <QObject>
-#include <QStringList>
+#include <QtCore/QObject>
+#include <QtCore/QStringList>
 
 #include <solid/control/solid_control_export.h>
 

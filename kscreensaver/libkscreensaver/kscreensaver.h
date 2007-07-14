@@ -22,7 +22,7 @@
 #ifndef KSCREENSAVER_H
 #define KSCREENSAVER_H
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 #include <kdemacros.h>
 #include <kaboutdata.h> // needed by all users of this header, so no point in a forward declaration

@@ -27,14 +27,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <sys/types.h>
 
-#include <QObject>
-#include <QPixmap>
-#include <QPoint>
-#include <QMimeData>
-#include <QMap>
-#include <QDrag>
-#include <QRect>
-#include <QVector>
+#include <QtCore/QObject>
+#include <QtGui/QPixmap>
+#include <QtCore/QPoint>
+#include <QtCore/QMimeData>
+#include <QtCore/QMap>
+#include <QtGui/QDrag>
+#include <QtCore/QRect>
+#include <QtCore/QVector>
 
 #include <ksharedptr.h>
 #include <kstartupinfo.h>

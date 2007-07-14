@@ -26,6 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QRegExp>
 #include <QDesktopWidget>
 #include <QMenuItem>
+#include <QMenu>
 
 #include <kiconeffect.h>
 #include <kiconloader.h>

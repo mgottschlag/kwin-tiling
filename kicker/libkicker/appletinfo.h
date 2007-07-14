@@ -24,9 +24,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __appletinfo_h__
 #define __appletinfo_h__
 
-#include <QMap>
-#include <QVector>
-#include <QString>
+#include <QtCore/QMap>
+#include <QtCore/QVector>
+#include <QtCore/QString>
 
 #include <kdemacros.h>
 

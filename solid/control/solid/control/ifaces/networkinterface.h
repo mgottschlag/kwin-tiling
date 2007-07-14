@@ -20,12 +20,12 @@
 #ifndef SOLID_IFACES_NETWORKINTERFACE_H
 #define SOLID_IFACES_NETWORKINTERFACE_H
 
-#include <QList>
+#include <QtCore/QList>
 #include <solid/control/solid_control_export.h>
 
 #include <solid/control/networkinterface.h>
 
-#include <QObject>
+#include <QtCore/QObject>
 
 namespace Solid
 {
