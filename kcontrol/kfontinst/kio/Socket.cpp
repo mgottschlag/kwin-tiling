@@ -247,7 +247,6 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
         return false;
     }
 
-#if !defined(SO_PEERCRED) || !defined(HAVE_STRUCT_UCRED)
 # if defined(HAVE_GETPEEREID)
     uid_t euid;
     gid_t egid;
@@ -259,7 +258,19 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
         itsFd = -1;
         return false;
     }
-# else
+#elif defined(SO_PEERCRED) && defined(HAVE_STRUCT_UCRED)
+    struct ucred cred;
+    socklen_t siz = sizeof(cred);
+
+    // Security: if socket exists, we must own it
+    if (getsockopt(itsFd, SOL_SOCKET, SO_PEERCRED, &cred, &siz) == 0 && cred.uid != socketUid)
+    {
+        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << cred.uid << endl;
+        ::close(itsFd);
+        itsFd = -1;
+        return false;
+    }
+#else
 #  ifdef __GNUC__
 #   warning "Using sloppy security checks"
 #  endif
@@ -285,19 +296,6 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     if (!S_ISSOCK(s.st_mode))
     {
         kWarning() << "socket is not a socket (" << sock.data() << ")" << endl;
-        ::close(itsFd);
-        itsFd = -1;
-        return false;
-    }
-# endif
-#else
-    struct ucred cred;
-    socklen_t siz = sizeof(cred);
-
-    // Security: if socket exists, we must own it
-    if (getsockopt(itsFd, SOL_SOCKET, SO_PEERCRED, &cred, &siz) == 0 && cred.uid != socketUid)
-    {
-        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << cred.uid << endl;
         ::close(itsFd);
         itsFd = -1;
         return false;
