@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "kickerSettings.h"
 
-#include "config.h"
+#include "config-workspace.h"
 
 #include "menumanager.h"
 #include "k_mnu.h"
