@@ -124,14 +124,14 @@ xIOErr( Display * )
 void
 kg_main( const char *argv0 )
 {
-	static char *argv[] = { (char *)"kdmgreet", 0 };
+	static char *argv[] = { (char *)"kdmgreet", (char *)"-nograb", 0 };
 
 	KCrash::setFlags( KCrash::KeepFDs | KCrash::SaferDialog | KCrash::AlwaysDirectly );
 	KCrash::setApplicationName( QLatin1String( argv[0] ) );
 	KCrash::setCrashHandler( KCrash::defaultCrashHandler );
 	XSetIOErrorHandler( xIOErr );
 	KComponentData inst( argv[0] );
-	GreeterApp app( 1, argv );
+	GreeterApp app( as(argv) - 1, argv );
 	initQAppConfig();
 	KGlobalSettings::self();
 
