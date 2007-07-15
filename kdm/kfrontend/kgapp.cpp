@@ -92,11 +92,6 @@ GreeterApp::x11EventFilter( XEvent * ev )
 	KeySym sym;
 
 	switch (ev->type) {
-	case FocusIn:
-	case FocusOut:
-		// Hack to tell dialogs to take focus when the keyboard is grabbed
-		ev->xfocus.mode = NotifyNormal;
-		break;
 	case KeyPress:
 		sym = XLookupKeysym( &ev->xkey, 0 );
 		if (sym != XK_Return && !IsModifierKey( sym ))
@@ -275,8 +270,6 @@ kg_main( const char *argv0 )
 	delete themer;
 	unsecureDisplay( dpy );
 	restoreModifiers();
-
-	XSetInputFocus( QX11Info::display(), PointerRoot, PointerRoot, CurrentTime );
 }
 
 } // extern "C"
