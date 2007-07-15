@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=SolidDevice Data Engine
+Name[de]=Solid-Geräte Daten-Treiber
 Name[el]=Μηχανή δεδομένων SolidDevice
 Name[es]=Motor de datos de SolidDevice
 Name[fa]=موتور دادۀ SolidDevice
@@ -12,6 +13,7 @@ Name[pt_BR]=Motor de Dados do SolidDevice
 Name[sv]=Datagränssnitt för Solid-enhet
 Name[zh_TW]=固體裝置資料引擎
 Comment=SolidDevice data for Plasmoids
+Comment[de]=Solid-Geräte-Daten für Plasmoide
 Comment[el]=Δεδομένα SolidDevice για πλασμοειδή
 Comment[es]=Datos de SolidDevice para los plasmoides
 Comment[ja]=Plasmoid のための Solid デバイスデータ

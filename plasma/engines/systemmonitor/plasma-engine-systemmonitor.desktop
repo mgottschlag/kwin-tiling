@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor Engine
+Name[de]=Systemmonitor
 Name[el]=Μηχανή εποπτείας συστήματος
 Name[es]=Motor del monitor del sistema
 Name[fa]=موتور نمایشگر سیستم
@@ -12,6 +13,7 @@ Name[pt_BR]=Motor de Monitorização do Sistema
 Name[sv]=Gränssnitt för systemövervakning
 Name[zh_TW]=系統監視器引擎
 Comment=System information for Plasmoids
+Comment[de]=Systeminformationen für Plasmoide
 Comment[el]=Πληροφορίες συστήματος για τα πλασμοειδή
 Comment[es]=Datos del sistema para los plasmoides
 Comment[ja]=Plasmoids のためのシステム情報
