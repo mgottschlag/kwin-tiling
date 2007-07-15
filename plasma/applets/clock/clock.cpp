@@ -202,7 +202,11 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         formFactor() == Plasma::Vertical) {
         QString time = m_time.toString();
         QFontMetrics fm(QApplication::font());
-        p->drawText((int)(boundRect.width() * 0.1), (int)(boundRect.height() * 0.25), m_time.toString());
+        if (m_showSecondHand) {
+            p->drawText((int)(boundRect.width() * 0.1), (int)(boundRect.height() * 0.25), m_time.toString());
+        } else {
+            p->drawText((int)(boundRect.width() * 0.1), (int)(boundRect.height() * 0.25), m_time.toString("hh:mm"));
+        }
         return;
     }
     m_theme->paint(p, boundRect, "ClockFace");
@@ -251,11 +255,18 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     p->restore();
 
     if (m_showTimeString) {
-        //FIXME: temporary time output
-        QString time = m_time.toString();
-        QFontMetrics fm(QApplication::font());
-        p->drawText((int)(boundRect.width()/2 - fm.width(time) / 2),
-                    (int)((boundRect.height()/2) - fm.xHeight()*3), m_time.toString());
+        if (m_showSecondHand) {
+            //FIXME: temporary time output
+            QString time = m_time.toString();
+            QFontMetrics fm(QApplication::font());
+            p->drawText((int)(boundRect.width()/2 - fm.width(time) / 2),
+                        (int)((boundRect.height()/2) - fm.xHeight()*3), m_time.toString());
+        } else {
+            QString time = m_time.toString("hh:mm");
+            QFontMetrics fm(QApplication::font());
+            p->drawText((int)(boundRect.width()/2 - fm.width(time) / 2),
+                        (int)((boundRect.height()/2) - fm.xHeight()*3), m_time.toString("hh:mm"));
+        }
     }
 
     m_theme->paint(p, boundRect, "Glass");
