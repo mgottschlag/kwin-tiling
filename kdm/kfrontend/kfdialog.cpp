@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kfdialog.h"
 #include "kdmconfig.h"
+#include "kdm_greet.h"
 
 #include <kguiitem.h>
 #include <kpushbutton.h>
@@ -135,11 +136,6 @@ FDialog::mouseMoveEvent( QMouseEvent *event )
 	}
 }
 
-struct WinList {
-	struct WinList *next;
-	QWidget *win;
-};
-
 static void
 fakeFocusIn( WId window )
 {
@@ -160,19 +156,19 @@ fakeFocusIn( WId window )
 int
 FDialog::exec()
 {
-	static WinList *wins;
-	WinList *win;
+	static QWidget *current;
 
-	win = new WinList;
-	win->win = this;
-	win->next = wins;
-	wins = win;
+	if (!current)
+		secureKeyboard( QX11Info::display() );
 	fakeFocusIn( winId() );
+	QWidget *previous = current;
+	current = this;
 	inherited::exec();
-	wins = win->next;
-	delete win;
-	if (wins)
-		fakeFocusIn( wins->win->winId() );
+	current = previous;
+	if (current)
+		fakeFocusIn( current->winId() );
+	else
+		unsecureKeyboard( QX11Info::display() );
 	return result();
 }
 

@@ -387,24 +387,16 @@ void
 secureDisplay( Display *dpy )
 {
 	debug( "secureDisplay %s\n", dname );
+	(void)alarm( (unsigned)_grabTimeout );
 	(void)signal( SIGALRM, syncTimeout );
 	if (setjmp( syncJump )) {
 		logError( "Display %s could not be secured\n", dname );
-		exit( EX_RESERVER_DPY );
-	}
-	(void)alarm( (unsigned)_grabTimeout );
-	debug( "Before XGrabServer %s\n", dname );
-	XGrabServer( dpy );
-	debug( "XGrabServer succeeded %s\n", dname );
-	if (XGrabKeyboard( dpy, DefaultRootWindow( dpy ), True, GrabModeAsync,
-	                   GrabModeAsync, CurrentTime ) != GrabSuccess)
-	{
-		(void)alarm( 0 );
-		(void)signal( SIGALRM, SIG_DFL );
-		logError( "Keyboard on display %s could not be secured\n", dname );
 		sleep( 10 );
 		exit( EX_RESERVER_DPY );
 	}
+	debug( "Before XGrabServer %s\n", dname );
+	XGrabServer( dpy );
+	debug( "XGrabServer succeeded %s\n", dname );
 	(void)alarm( 0 );
 	(void)signal( SIGALRM, SIG_DFL );
 	pseudoReset( dpy );
@@ -413,7 +405,7 @@ secureDisplay( Display *dpy )
 		XUngrabServer( dpy );
 		XSync( dpy, 0 );
 	}
-	debug( "done secure %s\n", dname );
+	debug( "secureDisplay %s done\n", dname );
 #if defined(HAVE_XKB) && defined(HAVE_XKBSETPERCLIENTCONTROLS)
 	/*
 	 * Activate the correct mapping for modifiers in XKB extension as
@@ -437,6 +429,37 @@ unsecureDisplay( Display *dpy )
 		XUngrabServer( dpy );
 		XSync( dpy, 0 );
 	}
+}
+
+void
+secureKeyboard( Display *dpy )
+{
+	debug( "secureKeyboard %s\n", dname );
+	(void)alarm( (unsigned)_grabTimeout );
+	(void)signal( SIGALRM, syncTimeout );
+	if (setjmp( syncJump ) ||
+	    XGrabKeyboard( dpy, DefaultRootWindow( dpy ), True, GrabModeAsync,
+	                   GrabModeAsync, CurrentTime ) != GrabSuccess)
+	{
+		(void)alarm( 0 );
+		(void)signal( SIGALRM, SIG_DFL );
+		logError( "Keyboard on display %s could not be secured\n", dname );
+		sleep( 10 );
+		exit( EX_RESERVER_DPY );
+	}
+	(void)alarm( 0 );
+	(void)signal( SIGALRM, SIG_DFL );
+	XSetInputFocus( dpy, None, None, CurrentTime );
+	debug( "secureKeyboard %s done\n", dname );
+}
+
+void
+unsecureKeyboard( Display *dpy )
+{
+	debug( "Unsecure keyboard %s\n", dname );
+	XSetInputFocus( dpy, PointerRoot, PointerRoot, CurrentTime );
+	XUngrabKeyboard( dpy, CurrentTime );
+	XSync( dpy, 0 );
 }
 
 static jmp_buf pingTime;
