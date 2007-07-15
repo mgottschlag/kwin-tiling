@@ -1349,7 +1349,7 @@ CGroupListItem::EType CKCmFontInst::getCurrentGroupType()
 {
     if(itsMgtMode->isChecked())
         return itsGroupListView->getType();
-    else if(itsModeControl)
+    else if(itsModeControl && itsModeControl->currentIndex() >= 0)
         return modeToGrp(itsModeControl->currentIndex());
 
     return CGroupListItem::ALL;
