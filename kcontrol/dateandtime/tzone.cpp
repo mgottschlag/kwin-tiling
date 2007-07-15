@@ -81,7 +81,7 @@ void Tzone::load()
     currentZone();
 
     // read the currently set time zone
-    tzonelist->setSelected(KSystemTimeZones::local()->name(), true);
+    tzonelist->setSelected(KSystemTimeZones::local().name(), true);
 }
 
 void Tzone::currentZone()

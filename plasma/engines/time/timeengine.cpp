@@ -25,6 +25,7 @@
 #include <KDebug>
 #include <KLocale>
 #include <KSystemTimeZones>
+#include <KDateTime>
 
 #include "plasma/datasource.h"
 
@@ -82,13 +83,12 @@ bool TimeEngine::sourceRequested(const QString &name)
         return true;
     }
 
-    const KTimeZone *local = KSystemTimeZones::local();
-    const KTimeZone *newTz  = KSystemTimeZones::zone(name);
-    if (!newTz) {
+    KTimeZone newTz  = KSystemTimeZones::zone(name);
+    if (!newTz.isValid()) {
         return false;
     }
 
-    QDateTime dt = local->convert(newTz, QDateTime::currentDateTime());
+    KDateTime dt = KDateTime::currentDateTime(newTz);
     setData(name, I18N_NOOP("Time"), dt.time());
     setData(name, I18N_NOOP("Date"), dt.date());
 
@@ -109,7 +109,7 @@ void TimeEngine::updateTime()
     //kDebug() << "TimeEngine::updateTime()" << endl;
 
     QDateTime dt = QDateTime::currentDateTime();
-    const KTimeZone *local = KSystemTimeZones::local();
+    KTimeZone local = KSystemTimeZones::local();
     DataEngine::SourceDict sources = sourceDict();
     DataEngine::SourceDict::iterator it = sources.begin();
     QString localName = I18N_NOOP("Local");
@@ -129,8 +129,8 @@ void TimeEngine::updateTime()
             it.value()->setData(I18N_NOOP("Time"), dt.time());
             it.value()->setData(I18N_NOOP("Date"), dt.date());
         } else {
-            const KTimeZone *newTz = KSystemTimeZones::zone(tz);
-            QDateTime localizeDt = local->convert(newTz, dt);
+            KTimeZone newTz = KSystemTimeZones::zone(tz);
+            QDateTime localizeDt = local.convert(newTz, dt);
             it.value()->setData(I18N_NOOP("Time"), localizeDt.time());
             it.value()->setData(I18N_NOOP("Date"), localizeDt.date());
         }
