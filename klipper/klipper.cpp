@@ -194,13 +194,13 @@ Klipper::Klipper(QWidget *parent, const KSharedConfigPtr &config)
     globalKeys = KGlobalAccel::self();
     KActionCollection* actionCollection = collection;
     QAction* a = 0L;
-#include "klipperbindings.cpp"
-    // the keys need to be read from kdeglobals, not kickerrc --ellis, 22/9/02
-    globalKeys->readSettings();
-    //globalKeys->updateConnections();
 #ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
 #endif
+#include "klipperbindings.cpp"
+    // the keys need to be read from kdeglobals, not kickerrc --ellis, 22/9/02
+    //globalKeys->readSettings();
+    //globalKeys->updateConnections();
     //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )),
@@ -506,11 +506,11 @@ void Klipper::saveSession()
 void Klipper::slotSettingsChanged( int category )
 {
     if ( category == (int) KGlobalSettings::SETTINGS_SHORTCUTS ) {
-        globalKeys->readSettings();
-        //globalKeys->updateConnections();
 #ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
 #endif
+        //globalKeys->readSettings();
+        //globalKeys->updateConnections();
         //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
     }
 }
@@ -555,12 +555,12 @@ void Klipper::slotConfigure()
         bSynchronize = dlg->synchronize();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         dlg->commitShortcuts();
-        globalKeys->writeSettings();
-        //globalKeys->updateConnections();
 #ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
 #endif
-//        toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
+        //globalKeys->writeSettings();
+        //globalKeys->updateConnections();
+        //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );

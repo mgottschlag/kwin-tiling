@@ -143,13 +143,19 @@ extern "C"
 	    kDebug(125) << "KeyModule::init() - Read Config Bindings\n";
 	    // Check for old group,
 	    if( KGlobal::config()->hasGroup( "Global Keys" ) ) {
-		KGlobalAccel::self()->readSettings();
+#ifdef __GNUC__
+#warning TODO PORT ME (KGlobalAccel related)
+#endif
+//		KGlobalAccel::self()->readSettings();
 		KGlobal::config()->deleteGroup( "Global Keys", KConfigBase::Global);
 	    }
             KGlobal::config()->deleteGroup( "Global Shortcuts", KConfigBase::Global);
 
 	    kDebug(125) << "KeyModule::init() - Write Config Bindings\n";
-            KGlobalAccel::self()->writeSettings();
+#ifdef __GNUC__
+#warning TODO PORT ME (KGlobalAccel related)
+#endif
+        //KGlobalAccel::self()->writeSettings();
             group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, KConfigBase::Normal|KConfigBase::Global);
         }
 	delete actionCollection;

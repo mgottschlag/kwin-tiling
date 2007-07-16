@@ -85,8 +85,10 @@ void ShortcutsModule::save()
 	//m_pkcGeneral->commitChanges();
 	//m_pkcSequence->commitChanges();
 	m_pseApplication->save();
-
-	KGlobalAccel::self()->writeSettings();
+#ifdef __GNUC__
+#warning TODO PORT ME (KGlobalAccel related)
+#endif
+	//KGlobalAccel::self()->writeSettings();
 
 	KGlobalSettings::self()->emitChange( KGlobalSettings::SettingsChanged, KGlobalSettings::SETTINGS_SHORTCUTS );
 }
@@ -302,7 +304,10 @@ void ShortcutsModule::slotSelectScheme( int )
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentIndex() ];
 
 	if( sFilename == "cur" ) {
-		KGlobalAccel::self()->readSettings();
+#ifdef __GNUC__
+#warning TODO PORT ME (KGlobalAccel related)
+#endif
+		//KGlobalAccel::self()->readSettings();
 	} else {
 		KConfig _config( sFilename, KConfig::OnlyLocal );
 		KConfigGroup config(&_config, "Settings" );
@@ -320,8 +325,10 @@ void ShortcutsModule::slotSelectScheme( int )
 			if( ret == KMessageBox::Cancel )
 				return;
 		}
-
-		KGlobalAccel::self()->writeSettings();
+#ifdef __GNUC__
+#warning TODO PORT ME (KGlobalAccel related)
+#endif
+		//KGlobalAccel::self()->writeSettings();
 	}
 
 	m_prbPre->setChecked( true );
@@ -425,8 +432,10 @@ void ShortcutsModule::saveScheme()
 	/*m_pkcGeneral->commitChanges();
 	m_pkcSequence->commitChanges();
 	m_pkcApplication->commitChanges();*/
-
-	KGlobalAccel::self()->writeSettings();
+#ifdef __GNUC__
+#warning TODO PORT ME (KGlobalAccel related)
+#endif
+//	KGlobalAccel::self()->writeSettings();
 }
 
 void ShortcutsModule::slotRemoveScheme()
