@@ -24,6 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #undef Bool // For enable-final
 
 #include <QMouseEvent>
+#include <QFile>
 
 #include <klocale.h>
 #include <kwindowsystem.h>
@@ -91,6 +92,19 @@ void DockBarExtension::resizeEvent(QResizeEvent*)
 }
 
 
+static QString joinArgs( const char * const *args, int nargs )
+{
+    if (!args)
+        return QString(); // well, QString::empty, in fact. qt sucks ;)
+    QString ret;
+    for (const char * const *argp = args; nargs && *argp; argp++, nargs--) {
+        if (!ret.isEmpty())
+            ret += QLatin1Char(' ');
+        ret += KShell::quoteArg( QFile::decodeName( *argp ) );
+    }
+    return ret;
+}
+
 void DockBarExtension::windowAdded(WId win)
 {
     // try to read WM_COMMAND
@@ -98,7 +112,7 @@ void DockBarExtension::windowAdded(WId win)
     char **argv;
     QString command;
     if (XGetCommand(QX11Info::display(), win, &argv, &argc)) {
-        command = KShell::joinArgs(argv, argc);
+        command = joinArgs(argv, argc);
         XFreeStringList(argv);
     }
 
