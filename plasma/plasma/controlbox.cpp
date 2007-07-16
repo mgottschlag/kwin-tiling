@@ -61,6 +61,7 @@ DisplayLabel::DisplayLabel(const QString& text, QWidget *parent)
       m_background("widgets/toolbox-button")
 {
     setAlignment(Qt::AlignCenter);
+    resize(100, 100);
     m_background.resize(size());
 }
 
