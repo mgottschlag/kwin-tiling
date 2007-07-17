@@ -33,9 +33,7 @@ X-KDE-PluginInfo-Email=panel-devel@kde.org
 X-KDE-PluginInfo-Name=clock
 X-KDE-PluginInfo-Version=pre0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
-X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Category=Date and Time
 X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
-
-X-PlasmoidCategory=Date and Time
