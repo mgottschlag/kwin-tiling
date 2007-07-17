@@ -38,20 +38,25 @@ public:
     ~CoronaView();
 
     Plasma::Corona* corona();
-    
+
 public slots:
     void zoomIn();
     void zoomOut();
+    void launchExplorer();
+    void runCommand();
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &);
     void resizeEvent(QResizeEvent *event);
     void wheelEvent(QWheelEvent *event);
+    void contextMenuEvent(QContextMenuEvent *event);
 
 private:
     Plasma::Svg *m_background;
     QPixmap* m_bitmapBackground;
     QString m_wallpaperPath;
+    QAction *engineExplorerAction;
+    QAction *runCommandAction;
 };
 
 #endif // multiple inclusion guard

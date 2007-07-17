@@ -9,6 +9,9 @@ set(plasma_SRCS
     rootwidget.cpp
 )
 
+set(krunner_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.kde.krunner.Interface.xml)
+QT4_ADD_DBUS_INTERFACE(plasma_SRCS ${krunner_xml} krunner_interface)
+
 set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE(plasma_SRCS ${ksmserver_xml} ksmserver_interface)
 

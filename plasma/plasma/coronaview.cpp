@@ -17,13 +17,21 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "coronaview.h"
+
+#include <QAction>
 #include <QFile>
 #include <QWheelEvent>
 
+#include <KAuthorized>
+#include <KMenu>
+#include <KRun>
+
+#include "plasma/applet.h"
 #include "plasma/svg.h"
 #include "plasma/corona.h"
 
-#include "coronaview.h"
+#include "krunner_interface.h"
 
 CoronaView::CoronaView(QWidget *parent)
     : QGraphicsView(parent),
@@ -53,6 +61,12 @@ CoronaView::CoronaView(QWidget *parent)
         !QFile::exists(m_wallpaperPath)) {
         m_background = new Plasma::Svg("widgets/wallpaper", this);
     }
+
+    //TODO: should we delay the init of the actions until we actually need them?
+    engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
+    connect(engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer()));
+    runCommandAction = new QAction(i18n("Run Command..."), this);
+    connect(runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
 }
 
 CoronaView::~CoronaView()
@@ -70,6 +84,23 @@ void CoronaView::zoomOut()
 {
     // 8/10 == .8
     scale(.8, .8);
+}
+
+void CoronaView::launchExplorer()
+{
+    KRun::run("plasmaengineexplorer", KUrl::List(), 0);
+}
+
+void CoronaView::runCommand()
+{
+    if (!KAuthorized::authorizeKAction("run_command")) {
+        return;
+    }
+
+    QString interface("org.kde.krunner");
+    org::kde::krunner::Interface krunner(interface, "/Interface",
+                                         QDBusConnection::sessionBus());
+    krunner.display();
 }
 
 Plasma::Corona* CoronaView::corona()
@@ -118,6 +149,85 @@ void CoronaView::wheelEvent(QWheelEvent* event)
             zoomIn();
         }
     }
+}
+
+void CoronaView::contextMenuEvent(QContextMenuEvent *event)
+{
+    if (!scene() || !KAuthorized::authorizeKAction("desktop_contextmenu")) {
+        QGraphicsView::contextMenuEvent(event);
+        return;
+    }
+
+    QPointF point = event->pos();
+    /*
+    * example for displaying the SuperKaramba context menu
+    QGraphicsItem *item = itemAt(point);
+    if(item) {
+    QObject *object = dynamic_cast<QObject*>(item->parentItem());
+    if(object && object->objectName().startsWith("karamba")) {
+    QContextMenuEvent event(QContextMenuEvent::Mouse, point);
+    contextMenuEvent(&event);
+    return;
+}
+}
+    */
+    QGraphicsItem* item = scene()->itemAt(point);
+    Plasma::Applet* applet = 0;
+
+    while (item) {
+        applet = qgraphicsitem_cast<Plasma::Applet*>(item);
+        if (applet) {
+            break;
+        }
+
+        item = item->parentItem();
+    }
+
+    KMenu desktopMenu;
+    //kDebug() << "context menu event " << immutable << endl;
+    if (!applet) {
+        if (corona() && corona()->immutable()) {
+            QGraphicsView::contextMenuEvent(event);
+            return;
+        }
+
+        //FIXME: change this to show this only in debug mode (or not at all?)
+        //       before final release
+        desktopMenu.addAction(engineExplorerAction);
+
+        if (KAuthorized::authorizeKAction("run_command")) {
+            desktopMenu.addAction(runCommandAction);
+        }
+    } else if (applet->immutable()) {
+        QGraphicsView::contextMenuEvent(event);
+        return;
+    } else {
+        //desktopMenu.addSeparator();
+        bool hasEntries = false;
+        if (applet->hasConfigurationInterface()) {
+            QAction* configureApplet = new QAction(i18n("%1 Settings...", applet->name()), this);
+            connect(configureApplet, SIGNAL(triggered(bool)),
+                    applet, SLOT(showConfigurationInterface()));
+            desktopMenu.addAction(configureApplet);
+            hasEntries = true;
+        }
+
+        if (!corona() || !corona()->immutable()) {
+            QAction* closeApplet = new QAction(i18n("Close this %1", applet->name()), this);
+            connect(closeApplet, SIGNAL(triggered(bool)),
+                    applet, SLOT(deleteLater()));
+            desktopMenu.addAction(closeApplet);
+            hasEntries = true;
+        }
+
+        if (!hasEntries) {
+            QGraphicsView::contextMenuEvent(event);
+            return;
+        }
+    }
+
+    event->accept();
+    desktopMenu.exec(point.toPoint());
 }
 
 #include "coronaview.moc"
