@@ -26,6 +26,7 @@
 #include <KIcon>
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
+#include <plasma/phase.h>
 
 class QTimer;
 
@@ -52,6 +53,7 @@ class SolidNotifier : public Plasma::Applet
         void SourceAdded(const QString &name);
         void updated(QString source,Plasma::DataEngine::Data data);
         void moveDown();
+        void hideNotifier(QGraphicsItem * item);
 
     private :
 

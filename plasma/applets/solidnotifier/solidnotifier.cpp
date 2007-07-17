@@ -25,8 +25,6 @@
 #include <plasma/svg.h>
 #include <plasma/animator.h>
 #include <plasma/corona.h>
-#include <plasma/phase.h>
-
 
 using namespace Plasma;
 
@@ -109,14 +107,23 @@ void SolidNotifier::updated(QString source,Plasma::DataEngine::Data data)
 }
 void SolidNotifier::moveUp()
 {
-    t->start(2000);
+    t->start(5000);
+    disconnect(Phase::self(),SIGNAL(movementComplete(QGraphicsItem *)),
+               this, SLOT(hideNotifier(QGraphicsItem *)));
+    show();
     Phase::self()->moveItem(this, Phase::SlideIn,QPoint(0,50));
 }
 void SolidNotifier::moveDown()
 {
     t->stop();
     Phase::self()->moveItem(this, Phase::SlideOut,QPoint(0,50));
-    //icon=false;
+    connect(Phase::self(),SIGNAL(movementComplete(QGraphicsItem *)),
+            this, SLOT(hideNotifier(QGraphicsItem *)));
+}
+
+void SolidNotifier::hideNotifier(QGraphicsItem * item)
+{
+    item->hide();
 }
 
 #include "solidnotifier.moc"
