@@ -46,7 +46,7 @@ public:
 	QSize minSize() const;
 	QSize maxSize() const;
 
-	void loadSettings();
+	void loadSettings(bool notify = false);
 
 	void handleEvent(XRRScreenChangeNotifyEvent* event);
 	void handleRandREvent(XRRNotifyEvent* event);

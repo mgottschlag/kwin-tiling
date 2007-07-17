@@ -37,7 +37,7 @@ public:
 	int rotations() const;
 	int rotation() const;
 
-	void loadSettings();
+	void loadSettings(bool notify = false);
 	void handleEvent(XRRCrtcChangeNotifyEvent *event);
 
 	RRMode mode() const;

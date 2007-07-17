@@ -65,16 +65,24 @@ Window RandRScreen::rootWindow() const
 	return RootWindow(QX11Info::display(), m_index);
 }
 
-void RandRScreen::loadSettings()
+void RandRScreen::loadSettings(bool notify)
 {
+	bool changed = false;
 	int minW, minH, maxW, maxH;
 
 	Status status = XRRGetScreenSizeRange(QX11Info::display(), rootWindow(),
 					 &minW, &minH, &maxW, &maxH);
 	//FIXME: we should check the status here
 	Q_UNUSED(status);
-	m_minSize = QSize(minW, minH);
-	m_maxSize = QSize(maxW, maxH);
+	QSize minSize = QSize(minW, minH);
+	QSize maxSize = QSize(maxW, maxH);
+
+	if (minSize != m_minSize || maxSize != m_maxSize)
+	{
+		m_minSize = minSize;
+		m_maxSize = maxSize;
+		changed = true;
+	}
 
 	if (m_resources)
 		XRRFreeScreenResources(m_resources);
@@ -89,7 +97,10 @@ void RandRScreen::loadSettings()
 	for (int i = 0; i < m_resources->nmode; ++i)
 	{
 		if (!m_modes.contains(m_resources->modes[i].id))
+		{
 			m_modes[m_resources->modes[i].id] = RandRMode(&m_resources->modes[i]);
+			changed = true;
+		}
 
 	}
 
@@ -97,13 +108,14 @@ void RandRScreen::loadSettings()
 	for (int i = 0; i < m_resources->ncrtc; ++i)
 	{
 		if (m_crtcs.contains(m_resources->crtcs[i]))
-			m_crtcs[m_resources->crtcs[i]]->loadSettings();
+			m_crtcs[m_resources->crtcs[i]]->loadSettings(notify);
 		else
 		{
 			RandRCrtc *c = new RandRCrtc(this, m_resources->crtcs[i]);
 			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
 			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SLOT(save()));
 			m_crtcs[m_resources->crtcs[i]] = c;
+			changed = true;
 		}
 
 	}
@@ -112,14 +124,18 @@ void RandRScreen::loadSettings()
 	for (int i = 0; i < m_resources->noutput; ++i)
 	{
 		if (m_outputs.contains(m_resources->outputs[i]))
-			m_outputs[m_resources->outputs[i]]->loadSettings();
+			m_outputs[m_resources->outputs[i]]->loadSettings(notify);
 		else
 		{
 			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
 			connect(o, SIGNAL(outputChanged(RROutput, int)), this, SLOT(slotOutputChanged(RROutput, int)));
 			m_outputs[m_resources->outputs[i]] = o;
+			changed = true;
 		}
 	}
+
+	if (notify && changed)
+		emit configChanged();
 
 }
 
@@ -417,6 +433,15 @@ bool RandRScreen::applyProposed(bool confirm)
 
 void RandRScreen::unifyOutputs()
 {
+	SizeList sizes = unifiedSizes();
+
+	//FIXME: better handle this
+	if (!sizes.count())
+		return;
+
+	if (sizes.indexOf(m_unifiedRect.size()) == -1)
+		m_unifiedRect.setSize(sizes.first());
+
 	// iterate over all outputs and make sure all connected outputs get activated
 	// and use the right size
 	foreach(RandROutput *o, m_outputs)
@@ -433,8 +458,7 @@ void RandRScreen::unifyOutputs()
 
 		o->proposeRect(m_unifiedRect);
 		o->proposeRotation(m_unifiedRotation);
-		o->applyProposed(RandR::ChangeSize | 
-				 RandR::ChangePosition | 
+		o->applyProposed(RandR::ChangeRect | 
 				 RandR::ChangeRotation, false);
 	}
 
@@ -493,10 +517,21 @@ void RandRScreen::slotRotateUnified(QAction *action)
 
 void RandRScreen::slotOutputChanged(RROutput id, int changes)
 {
+	kDebug() << "[SCREEN] Got output change " << changes << endl;
 	Q_UNUSED(id);
-	Q_UNUSED(changes);
 
-	if (changes & RandR::ChangeSize || changes & RandR::ChangePosition)
+	int connected = 0;
+	foreach(RandROutput *output, m_outputs)
+	{
+		if (output->isConnected())
+			connected++;
+	}
+
+	// if there is less than 2 outputs connected, there is no need to unify
+	if (connected <= 1)
+		return;
+
+	if (changes & RandR::ChangeRect || changes & RandR::ChangeConnection || changes & RandR::ChangeMode)
 	{
 
 		RandROutput *o = m_outputs[id];
@@ -507,7 +542,7 @@ void RandRScreen::slotOutputChanged(RROutput id, int changes)
 		// size.
 		if (m_outputsUnified)
 		{
-			if (o->isConnected() && o->rect() != m_unifiedRect)
+			if (o->isConnected() && (o->rect() != m_unifiedRect || !o->isActive()))
 				unifyOutputs();
 		}
 		// TODO: handle the changes not to allow overlapping on non-unified 

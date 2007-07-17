@@ -121,9 +121,6 @@ QPixmap RandR::rotationIcon(int rotation, int currentRotation)
 
 bool RandR::confirm(QRect rect)
 {
-	// uncomment the line below and edit out the KTimerDialog stuff to get
-	// a version which works on today's kdelibs (no accept dialog is presented)
-
 	// FIXME remember to put the dialog on the right screen
 
 	KTimerDialog acceptDialog(

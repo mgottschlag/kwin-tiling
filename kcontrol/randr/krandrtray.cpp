@@ -79,7 +79,7 @@ void KRandRSystemTray::slotPrepareMenu()
 			{
 #ifdef HAS_RANDR_1_2
 			    if (RandR::has_1_2)
-				    m_display->screen(s)->loadSettings();
+				    m_display->screen(s)->loadSettings(true);
 #endif
 					
                             KMenu* subMenu = new KMenu(i18n("Screen %1", s+1), m_menu );
@@ -94,7 +94,7 @@ void KRandRSystemTray::slotPrepareMenu()
 		m_display->setCurrentScreen(m_display->screenIndexOfWidget(parentWidget()));
 #ifdef HAS_RANDR_1_2
 		if (RandR::has_1_2)
-			m_display->currentScreen()->loadSettings();
+			m_display->currentScreen()->loadSettings(true);
 #endif
 		populateMenu(m_menu);
 	}

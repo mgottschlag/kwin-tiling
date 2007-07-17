@@ -46,12 +46,9 @@ RandROutput::~RandROutput()
 {
 }
 
-void RandROutput::loadSettings()
+void RandROutput::loadSettings(bool notify)
 {
-	// FIXME: if it is not the first time we load the configuration, we should 
-	// check for changes that were not notified by the server (like a monitor 
-	// being plugged on an output for example
-
+	int changes = 0;
 	XRROutputInfo *info = XRRGetOutputInfo(QX11Info::display(), m_screen->resources(), m_id);
 	Q_ASSERT(info);
 
@@ -59,16 +56,30 @@ void RandROutput::loadSettings()
 	if (RandR::timestamp != info->timestamp)
 		RandR::timestamp = info->timestamp;
 
+	// this information shouldn't change, so
 	m_name = info->name;
 
 	m_possibleCrtcs.clear();
 	for (int i = 0; i < info->ncrtc; ++i)
 		m_possibleCrtcs.append(info->crtcs[i]);
 
-	setCrtc(info->crtc);
+	//check if the crtc changed
+	if (info->crtc != m_currentCrtc)
+	{
+		setCrtc(info->crtc);
+		changes |= RandR::ChangeCrtc;
+	}
 
-	m_connected = (info->connection == RR_Connected);
+			
 
+	bool connected = (info->connection == RR_Connected);
+	if (connected != m_connected)
+	{
+		m_connected = connected;
+		changes |= RandR::ChangeConnection;
+	}
+
+	//CHECK: is it worth notifying changes on mode list changing?
 	//get modes
 	m_modes.clear();
 	for (int i = 0; i < info->nmode; ++i)
@@ -85,6 +96,9 @@ void RandROutput::loadSettings()
 
 	// free the info
 	XRRFreeOutputInfo(info);
+
+	if (changes && notify)
+		emit outputChanged(m_id, changes);
 }
 
 void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
@@ -96,10 +110,10 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		changed |= RandR::ChangeCrtc;
 		// update crtc settings
 		if (m_currentCrtc != None)
-			m_screen->crtc(m_currentCrtc)->loadSettings();
+			m_screen->crtc(m_currentCrtc)->loadSettings(true);
 		setCrtc(event->crtc);
 		if (m_currentCrtc != None)
-			m_screen->crtc(m_currentCrtc)->loadSettings();
+			m_screen->crtc(m_currentCrtc)->loadSettings(true);
 	}
 
 	if (event->mode != mode())
@@ -326,7 +340,7 @@ void RandROutput::slotChangeSize(QAction *action)
 {
 	QSize size = action->data().toSize();
 	m_proposedRect.setSize(size);
-	applyProposed(RandR::ChangeSize, true);
+	applyProposed(RandR::ChangeRect, true);
 }
 
 void RandROutput::slotChangeRotation(QAction *action)
@@ -373,10 +387,11 @@ bool RandROutput::tryCrtc(RandRCrtc *crtc, int changes)
 
 	crtc->setOriginal();
 
-	if (changes & RandR::ChangeSize)
+	if (changes & RandR::ChangeRect)
+	{
 		crtc->proposeSize(m_proposedRect.size());
-	if (changes & RandR::ChangePosition)
 		crtc->proposePosition(m_proposedRect.topLeft());
+	}
 	if (changes & RandR::ChangeRotation)
 		crtc->proposeRotation(m_proposedRotation);
 	if (changes & RandR::ChangeRate)
@@ -401,7 +416,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 
 	QRect r;
 
-	if (changes & RandR::ChangeSize)
+	if (changes & RandR::ChangeRect)
 		r.setSize(m_proposedRect.size());
 
 

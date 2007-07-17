@@ -54,36 +54,68 @@ int RandRCrtc::rotation() const
 	return m_currentRotation;
 }
 
-void RandRCrtc::loadSettings()
+void RandRCrtc::loadSettings(bool notify)
 {
-
+	int changes = 0;
 	XRRCrtcInfo *info = XRRGetCrtcInfo(QX11Info::display(), m_screen->resources(), m_id);
 	Q_ASSERT(info);
 
 	if (RandR::timestamp != info->timestamp)
 		RandR::timestamp = info->timestamp;
 
-	m_currentRect = QRect(info->x, info->y, info->width, info->height);
+	QRect rect = QRect(info->x, info->y, info->width, info->height);
+	if (rect != m_currentRect)
+	{
+		m_currentRect = rect;
+		changes |= RandR::ChangeRect;
+	}
 
 	// get all connected outputs 
 	// and create a list of modes that are available in all connected outputs
-	m_connectedOutputs.clear();
+	OutputList outputs;
 
 	for (int i = 0; i < info->noutput; ++i)
-		m_connectedOutputs.append(info->outputs[i]);
+		outputs.append(info->outputs[i]);
 
+	// check if the list changed from the original one
+	if (outputs != m_connectedOutputs)
+	{
+		changes |= RandR::ChangeOutputs;
+		m_connectedOutputs = outputs;	
+	}
+	
 	// get all outputs this crtc can be connected to
-	m_possibleOutputs.clear();
+	outputs.clear();
 	for (int i = 0; i < info->npossible; ++i)
-		m_possibleOutputs.append(info->possible[i]);
+		outputs.append(info->possible[i]);
+
+	if (outputs != m_possibleOutputs)
+	{
+		changes |= RandR::ChangeOutputs;
+		m_possibleOutputs = outputs;
+	}
 
 	// get all rotations
 	m_rotations = info->rotations;
-	m_currentRotation = info->rotation;
+	if (m_currentRotation != info->rotation)
+	{
+		m_currentRotation = info->rotation;
+		changes |= RandR::ChangeRotation;
+	}
 
-	m_currentMode = info->mode;
+	// check if the current mode has changed
+	if (m_currentMode != info->mode)
+	{
+		m_currentMode = info->mode;
+		changes |= RandR::ChangeMode;
+	}
+
 	RandRMode m = m_screen->mode(m_currentMode);
-	m_currentRate = m.refreshRate();
+	if (m_currentRate != m.refreshRate())
+	{
+		m_currentRate = m.refreshRate();
+		changes |= RandR::ChangeRate;
+	}
 
 	// just to make sure it gets initialized
 	m_proposedRect = m_currentRect;
@@ -92,6 +124,9 @@ void RandRCrtc::loadSettings()
 		
 	// free the info
 	XRRFreeCrtcInfo(info);
+
+	if (changes && notify)
+		emit crtcChanged(m_id, changes);
 }
 
 void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
@@ -115,7 +150,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 	if (event->x != m_currentRect.x() || event->y != m_currentRect.y())
 	{
 		kDebug() << "   Changed position: " << event->x << "," << event->y << endl;
-		changed |= RandR::ChangePosition;
+		changed |= RandR::ChangeRect;
 		m_currentRect.moveTopLeft(QPoint(event->x, event->y));
 	}
 
@@ -124,7 +159,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 	{
 		kDebug() << "   Changed size: " << mode.size() << endl;
 		kDebug() << "    size given in the event: " << event->width << "x" << event->height << endl;
-		changed |= RandR::ChangeSize;
+		changed |= RandR::ChangeRect;
 		m_currentRect.setSize(mode.size());
 		//Do NOT use event->width and event->height here, as it is being returned wrongly
 	}
@@ -252,7 +287,7 @@ bool RandRCrtc::applyProposed()
 	else
 	{
 		ret = false;
-		loadSettings();
+		loadSettings(true);
 	}
 
 	m_screen->adjustSize();

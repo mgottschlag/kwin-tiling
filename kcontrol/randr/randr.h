@@ -86,11 +86,11 @@ public:
 	enum Changes 
 	{
 		ChangeCrtc       =  1,
-		ChangeMode       =  2,
-		ChangeRotation   =  4,
-		ChangeConnection =  8,
-		ChangePosition   = 16,
-		ChangeSize       = 32,
+		ChangeOutputs    =  2,
+		ChangeMode       =  4,
+		ChangeRotation   =  8,
+		ChangeConnection = 16,
+		ChangeRect       = 32,
 		ChangeRate       = 64
 	};
 

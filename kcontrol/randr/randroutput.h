@@ -37,7 +37,7 @@ public:
 	RandROutput(RandRScreen *parent, RROutput id);
 	~RandROutput();
 
-	void loadSettings();
+	void loadSettings(bool notify = false);
 	void handleEvent(XRROutputChangeNotifyEvent *event);
 	void handlePropertyEvent(XRROutputPropertyNotifyEvent *event);
 
