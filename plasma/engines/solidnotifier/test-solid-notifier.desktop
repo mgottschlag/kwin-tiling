@@ -2,3 +2,9 @@
 Encoding=UTF-8
 X-KDE-Solid-Predicate=[[ StorageVolume.ignored == false AND StorageVolume.usage == 'FileSystem' ] OR [ IS StorageAccess AND StorageDrive.driveType == 'Floppy' ]]
 Actions=OpenInWindow;
+
+[Desktop Action OpenInWindow]
+Name=Open in New Window
+Icon=window-new
+Exec=kfmclient openURL %f
+
