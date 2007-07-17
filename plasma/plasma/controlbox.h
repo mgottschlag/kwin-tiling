@@ -26,7 +26,7 @@
 
 class QLabel;
 class QPushButton;
-class QListView;
+class QTreeView;
 class QModelIndex;
 class QStandardItemModel;
 class QTimeLine;
@@ -94,7 +94,7 @@ class ControlWidget : public QWidget
         void refreshPlasmoidList();
 
         QLabel* m_label;
-        QListView* m_appletList;
+        QTreeView *m_appletList;
         PlasmoidListItemModel* m_appletListModel;
 
     protected Q_SLOTS:

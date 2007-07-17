@@ -22,19 +22,20 @@
 #include <QtGui/QLabel>
 #include <QtGui/QCheckBox>
 #include <QtGui/QLineEdit>
-#include <QtGui/QListView>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
 #include <QtGui/QPushButton>
 #include <QtGui/QStandardItemModel>
-#include <QtGui/QVBoxLayout>
 #include <QtCore/QStringList>
 #include <QtCore/QTimeLine>
 #include <QtCore/QTimer>
+#include <QtGui/QTreeView>
+#include <QtGui/QVBoxLayout>
 
 #include <KComboBox>
 #include <KLocale>
 #include <KDebug>
+#include <KIcon>
 #include <KLibrary>
 //#include <KLibLoader>
 
@@ -135,11 +136,7 @@ ControlWidget::ControlWidget(QWidget *parent)
     m_formFactorSelector->addItems(formFactors);
     connect(m_formFactorSelector, SIGNAL(activated(int)), this, SLOT(switchFormFactor(int)));
 
-    //hideBoxButton->show();
-    //m_appletList->show();
-
-
-    m_appletList = new QListView(this);
+    m_appletList = new QTreeView(this);
     m_appletList->setDragEnabled(true);
     m_appletListModel = new PlasmoidListItemModel(this);
     m_appletList->setModel(m_appletListModel);
@@ -170,32 +167,48 @@ ControlWidget::~ControlWidget() {}
 
 void ControlWidget::refreshPlasmoidList()
 {
-    KPluginInfo::List applets = Plasma::Applet::knownApplets();
-
     m_appletListModel->clear();
-    m_appletListModel->setColumnCount(2);
-    m_appletListModel->setRowCount(applets.count());
+    m_appletListModel->setColumnCount(1);
 
-    int count = 0;
-    foreach (KPluginInfo* info, applets) {
-        QString category = Plasma::Applet::category(info);
-        if (category.isEmpty()) {
-            m_appletListModel->setItem(count, 0, new QStandardItem(info->name()));
-        } else {
-            m_appletListModel->setItem(count, 0, new QStandardItem(info->name() + " (" + category + ")"));
+    foreach (const QString &category, Plasma::Applet::knownCategories()) {
+        KPluginInfo::List applets = Plasma::Applet::knownApplets(category);
+
+        if (applets.count() < 1) {
+            continue;
         }
-        m_appletListModel->setItem(count, 1, new QStandardItem(info->pluginName()));
-        ++count;
+
+        QStandardItem* parent = new QStandardItem(category);
+        m_appletListModel->appendRow(parent);
+        int rowCount = 0;
+
+        foreach (KPluginInfo* info, applets) {
+            QString category = Plasma::Applet::category(info);
+//            QStandardItem *item = new PlasmoidItem(info);
+            QStandardItem *item = new QStandardItem(info->name());
+            item->setData(info->pluginName(), Qt::UserRole);
+            parent->setChild(rowCount, 0, item);
+            ++rowCount;
+        }
+        qDeleteAll(applets);
     }
 
+#ifndef NDEBUG
     kDebug() << "Known categories: " << Plasma::Applet::knownCategories() << endl;
+#endif
 
     m_appletListModel->sort(0);
+    m_appletList->expandAll();
 }
 
 void ControlWidget::addPlasmoid(const QModelIndex& plasmoidIndex)
 {
-    emit addPlasmoid(m_appletListModel->item(plasmoidIndex.row(), 1)->text());
+    QStandardItem* item = m_appletListModel->itemFromIndex(plasmoidIndex);
+    if (!item) {
+        kDebug() << "ControlWidget::addPlasmoid no item at " << plasmoidIndex << endl;
+        return;
+    }
+
+    emit addPlasmoid(item->data(Qt::UserRole).toString());
 }
 
 void ControlWidget::switchFormFactor(int formFactor)
