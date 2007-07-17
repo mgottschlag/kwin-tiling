@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "coronaview.h"
+#include "desktopview.h"
 
 #include <QAction>
 #include <QFile>
@@ -33,7 +33,7 @@
 
 #include "krunner_interface.h"
 
-CoronaView::CoronaView(QWidget *parent)
+DesktopView::DesktopView(QWidget *parent)
     : QGraphicsView(parent),
       m_background(0),
       m_bitmapBackground(0)
@@ -69,29 +69,29 @@ CoronaView::CoronaView(QWidget *parent)
     connect(runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
 }
 
-CoronaView::~CoronaView()
+DesktopView::~DesktopView()
 {
 }
 
-void CoronaView::zoomIn()
+void DesktopView::zoomIn()
 {
     //TODO: Change level of detail when zooming
     // 10/8 == 1.25
     scale(1.25, 1.25);
 }
 
-void CoronaView::zoomOut()
+void DesktopView::zoomOut()
 {
     // 8/10 == .8
     scale(.8, .8);
 }
 
-void CoronaView::launchExplorer()
+void DesktopView::launchExplorer()
 {
     KRun::run("plasmaengineexplorer", KUrl::List(), 0);
 }
 
-void CoronaView::runCommand()
+void DesktopView::runCommand()
 {
     if (!KAuthorized::authorizeKAction("run_command")) {
         return;
@@ -103,12 +103,12 @@ void CoronaView::runCommand()
     krunner.display();
 }
 
-Plasma::Corona* CoronaView::corona()
+Plasma::Corona* DesktopView::corona()
 {
     return static_cast<Plasma::Corona*>(scene());
 }
 
-void CoronaView::drawBackground(QPainter * painter, const QRectF & rect)
+void DesktopView::drawBackground(QPainter * painter, const QRectF & rect)
 {
     if (m_background) {
         m_background->paint(painter, rect);
@@ -117,7 +117,7 @@ void CoronaView::drawBackground(QPainter * painter, const QRectF & rect)
     }
 }
 
-void CoronaView::resizeEvent(QResizeEvent* event)
+void DesktopView::resizeEvent(QResizeEvent* event)
 {
     Q_UNUSED(event)
     if (testAttribute(Qt::WA_PendingResizeEvent)) {
@@ -135,7 +135,7 @@ void CoronaView::resizeEvent(QResizeEvent* event)
     }
 }
 
-void CoronaView::wheelEvent(QWheelEvent* event)
+void DesktopView::wheelEvent(QWheelEvent* event)
 {
     if (scene() && scene()->itemAt(event->pos())) {
         QGraphicsView::wheelEvent(event);
@@ -151,7 +151,7 @@ void CoronaView::wheelEvent(QWheelEvent* event)
     }
 }
 
-void CoronaView::contextMenuEvent(QContextMenuEvent *event)
+void DesktopView::contextMenuEvent(QContextMenuEvent *event)
 {
     if (!scene() || !KAuthorized::authorizeKAction("desktop_contextmenu")) {
         QGraphicsView::contextMenuEvent(event);
@@ -230,5 +230,5 @@ void CoronaView::contextMenuEvent(QContextMenuEvent *event)
     desktopMenu.exec(point.toPoint());
 }
 
-#include "coronaview.moc"
+#include "desktopview.moc"
 

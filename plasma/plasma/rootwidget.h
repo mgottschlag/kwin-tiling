@@ -22,7 +22,7 @@
 
 #include <QWidget>
 
-class CoronaView;
+class DesktopView;
 class ControlBox;
 
 /**
@@ -40,7 +40,7 @@ class RootWidget : public QWidget
         void adjustSize();
 
     private:
-        CoronaView* m_view;
+        DesktopView* m_desktop;
         ControlBox* m_controlBox;
 };
 

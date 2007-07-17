@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CORONAVIEW_H
-#define CORONAVIEW_H
+#ifndef DESKTOPVIEW_H
+#define DESKTOPVIEW_H
 
 #include <QGraphicsView>
 
@@ -29,13 +29,13 @@ namespace Plasma
     class Corona;
 }
 
-class CoronaView : public QGraphicsView
+class DesktopView : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    CoronaView(QWidget *parent);
-    ~CoronaView();
+    DesktopView(QWidget *parent);
+    ~DesktopView();
 
     Plasma::Corona* corona();
 

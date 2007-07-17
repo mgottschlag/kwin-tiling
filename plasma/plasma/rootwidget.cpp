@@ -29,8 +29,8 @@
 #include "plasma/plasma.h"
 #include "plasma/svg.h"
 
-#include "coronaview.h"
 #include "controlbox.h"
+#include "desktopview.h"
 
 //#define ICON_DEMO
 //#define SUPERKARAMBA_DEMO
@@ -53,37 +53,37 @@ RootWidget::RootWidget()
     rootLayout->setMargin(0);
     rootLayout->setSpacing(0);
 
-    m_view = new CoronaView(this);
-    m_view->corona()->setFormFactor(Plasma::Planar);
-    m_view->corona()->setLocation(Plasma::Desktop);
-    rootLayout->addWidget(m_view);
-    m_view->show();
+    m_desktop = new DesktopView(this);
+    m_desktop->corona()->setFormFactor(Plasma::Planar);
+    m_desktop->corona()->setLocation(Plasma::Desktop);
+    rootLayout->addWidget(m_desktop);
+    m_desktop->show();
 
     connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize()));
     m_controlBox = new ControlBox(this);
     m_controlBox->show();
 
-    connect(m_controlBox, SIGNAL(zoomIn()), m_view, SLOT(zoomIn()));
-    connect(m_controlBox, SIGNAL(zoomOut()), m_view, SLOT(zoomOut()));
-    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_view->corona(), SLOT(addApplet(const QString&)));
-    connect(m_controlBox, SIGNAL(setFormFactor(Plasma::FormFactor)), m_view->corona(), SLOT(setFormFactor(Plasma::FormFactor)));
-    connect(m_controlBox, SIGNAL(lockInterface(bool)), m_view->corona(), SLOT(setImmutable(bool)));
+    connect(m_controlBox, SIGNAL(zoomIn()), m_desktop, SLOT(zoomIn()));
+    connect(m_controlBox, SIGNAL(zoomOut()), m_desktop, SLOT(zoomOut()));
+    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_desktop->corona(), SLOT(addApplet(const QString&)));
+    connect(m_controlBox, SIGNAL(setFormFactor(Plasma::FormFactor)), m_desktop->corona(), SLOT(setFormFactor(Plasma::FormFactor)));
+    connect(m_controlBox, SIGNAL(lockInterface(bool)), m_desktop->corona(), SLOT(setImmutable(bool)));
 
 #ifdef ICON_DEMO
     Plasma::Icon* icon = new Plasma::Icon();
     icon->setIcon("plasmagik");
     icon->setFlags(QGraphicsItem::ItemIsMovable);
-    m_view->corona()->addItem(icon);
+    m_desktop->corona()->addItem(icon);
 
     icon = new Plasma::Icon();
     icon->setIcon("user-home");
     icon->setSize(64, 64);
     icon->setFlags(QGraphicsItem::ItemIsMovable);
-    m_view->corona()->addItem(icon);
+    m_desktop->corona()->addItem(icon);
 #endif
 
 #ifdef SUPERKARAMBA_DEMO
-    m_view->corona()->addKaramba(KUrl("~/themes/aero_aio.skz"));
+    m_desktop->corona()->addKaramba(KUrl("~/themes/aero_aio.skz"));
 #endif
 }
 
