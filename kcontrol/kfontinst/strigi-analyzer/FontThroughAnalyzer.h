@@ -43,6 +43,7 @@ class FontThroughAnalyzer : public Strigi::StreamThroughAnalyzer
     void                  result(const QString &family,  const QString &foundry, const QString &weight,
                                  const QString &width,   const QString &spacing, const QString &slant,
                                  const QString &version, const QString &mime);
+    const char * name() const { return "FontThroughAnalyzer"; }
 
     private:
 
