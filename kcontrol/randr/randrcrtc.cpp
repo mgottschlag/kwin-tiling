@@ -158,7 +158,6 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 	if (mode.size() != m_currentRect.size())
 	{
 		kDebug() << "   Changed size: " << mode.size() << endl;
-		kDebug() << "    size given in the event: " << event->width << "x" << event->height << endl;
 		changed |= RandR::ChangeRect;
 		m_currentRect.setSize(mode.size());
 		//Do NOT use event->width and event->height here, as it is being returned wrongly
@@ -192,6 +191,7 @@ bool RandRCrtc::applyProposed()
 	kDebug() << "       Current Rotation: " << m_currentRotation << endl;
 	kDebug() << "       Proposed rect: " << m_proposedRect << endl;
 	kDebug() << "       Proposed rotation: " << m_proposedRotation << endl;
+	kDebug() << "       Proposed refresh rate: " << m_proposedRate << endl;
 	kDebug() << "       Outputs: " << endl;
 	for (int i = 0; i < m_connectedOutputs.count(); ++i)
 		kDebug() << "               - " << m_screen->output(m_connectedOutputs.at(i))->name() << endl;
@@ -206,16 +206,34 @@ bool RandRCrtc::applyProposed()
 		// find a mode that has the desired size and is supported
 		// by all connected outputs
 		ModeList modeList = modes();
-		ModeList::iterator it;
-		for (it = modeList.begin(); it != modeList.end(); ++it)
+		ModeList matchModes;
+
+		foreach(RRMode m, modeList)
 		{
-			RandRMode m = m_screen->mode(*it);
-			if (m.size() == m_proposedRect.size() && (!m_proposedRate || m_proposedRate == m.refreshRate()))
+			RandRMode mode = m_screen->mode(m);
+			if (mode.size() == m_proposedRect.size())
+				matchModes.append(m);
+		}
+
+		// if no matching modes were found, disable output
+		// else set the mode to the first mode in the list. If no refresh rate was given
+		// or no mode was found matching the given refresh rate, the first mode of the
+		// list will be used
+		if (!matchModes.count())
+			mode = RandRMode();
+		else
+			mode = m_screen->mode(matchModes.first());
+
+		foreach(RRMode m, matchModes)
+		{
+			RandRMode testMode = m_screen->mode(m);
+			if (testMode.refreshRate() == m_proposedRate)
 			{
-				mode = m;
+				mode = testMode;
 				break;
 			}
 		}
+
 	}
 	
 	// if no output was connected, set the mode to None
@@ -382,31 +400,29 @@ OutputList RandRCrtc::connectedOutputs() const
 
 ModeList RandRCrtc::modes() const
 {	
-	ModeList m;
+	ModeList modeList;
 
 	bool first = true;
-	OutputList::iterator out;
 
-	for (int i = 0; i < m_connectedOutputs.count(); ++i)
+	foreach(RROutput o, m_connectedOutputs)
 	{
-		RandROutput *output = m_screen->output(m_connectedOutputs.at(i));
+		RandROutput *output = m_screen->output(o);
 		if (first)
 		{
-			m = output->modes();
+			modeList = output->modes();
 			first = false;
 		}
 		else
 		{
-			ModeList::iterator it;
-			for (it = m.begin(); it != m.end(); ++it)
+			foreach(RRMode m, modeList)
 			{
-				if (output->modes().indexOf(*it) == -1)
-					it = m.erase(it);
+				if (output->modes().indexOf(m) == -1)
+					modeList.removeAll(m);
 			}
 		}
 	}
 
-	return m;
+	return modeList;
 }
 
 #include "randrcrtc.moc"

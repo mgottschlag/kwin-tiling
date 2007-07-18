@@ -32,8 +32,11 @@ RandRScreen::RandRScreen(int screenIndex)
 	m_index = screenIndex;
 	m_rect = QRect(0, 0, XDisplayWidth(QX11Info::display(), m_index), XDisplayHeight(QX11Info::display(), m_index));
 
-	load();
+	m_connectedCount = 0;
+	m_activeCount = 0;
+
 	loadSettings();
+	load();
 
 	// select for randr input events
 	int mask = RRScreenChangeNotifyMask | 
@@ -130,6 +133,11 @@ void RandRScreen::loadSettings(bool notify)
 			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
 			connect(o, SIGNAL(outputChanged(RROutput, int)), this, SLOT(slotOutputChanged(RROutput, int)));
 			m_outputs[m_resources->outputs[i]] = o;
+			if (o->isConnected())
+				m_connectedCount++;
+			if (o->isActive())
+				m_activeCount++;
+
 			changed = true;
 		}
 	}
@@ -234,17 +242,15 @@ bool RandRScreen::adjustSize(QRect minimumSize)
 	//try to find a size in which all outputs fit
 	
 	//start with a given minimum rect
-	QRect rect = minimumSize;
+	QRect rect = QRect(0,0,0,0).united(minimumSize);
 
-	OutputMap::const_iterator it;
-	for (it = m_outputs.constBegin(); it != m_outputs.constEnd(); ++it)
+	foreach(RandROutput *output, m_outputs)
 	{
 		// outputs that are not active should not be taken into account
 		// when calculating the screen size
-		RandROutput *o = (*it);
-		if (!o->isActive())
+		if (!output->isActive())
 			continue;
-		rect = rect.united(o->rect());
+		rect = rect.united(output->rect());
 	}
 
 
@@ -287,6 +293,16 @@ bool RandRScreen::setSize(QSize s)
 	return true;
 }
 
+int RandRScreen::connectedCount() const
+{
+	return m_connectedCount;
+}
+
+int RandRScreen::activeCount() const
+{
+	return m_activeCount;
+}
+
 bool RandRScreen::outputsUnified() const
 {
 	return m_outputsUnified;
@@ -298,19 +314,18 @@ int RandRScreen::unifiedRotations() const
 	bool first = true;
 	int rotations = RandR::Rotate0;
 
-	CrtcMap::const_iterator it;
-	for (it = m_crtcs.constBegin(); it != m_crtcs.constEnd(); ++it)
+	foreach(RandRCrtc *crtc, m_crtcs)
 	{
-		if (!(*it)->connectedOutputs().count())
+		if (!crtc->connectedOutputs().count())
 			continue;
 
 		if (first)
 		{
-			rotations = (*it)->rotations();
+			rotations = crtc->rotations();
 			first = false;
 		}
 		else
-			rotations &= (*it)->rotations();
+			rotations &= crtc->rotations();
 	}
 
 	return rotations;
@@ -320,7 +335,6 @@ SizeList RandRScreen::unifiedSizes() const
 {
 	SizeList sizeList;
 	bool first = true;
-	OutputMap::const_iterator it;
 
 	foreach(RandROutput *output, m_outputs)
 	{
@@ -388,12 +402,14 @@ void RandRScreen::save(KConfig &config)
 
 void RandRScreen::save()
 {
-	save(*KGlobal::config());
+	KConfig cfg("krandrrc");
+	save(cfg);
 }
 
 void RandRScreen::load()
 {
-	load(*KGlobal::config());
+	KConfig cfg("krandrrc");
+	load(cfg);
 }
 
 bool RandRScreen::applyProposed(bool confirm)
@@ -464,6 +480,8 @@ void RandRScreen::unifyOutputs()
 
 	// FIXME: if by any reason we were not able to unify the outputs, we should 
 	// do something
+	
+	save();
 }
 
 void RandRScreen::slotResizeUnified(QAction *action)
@@ -475,16 +493,16 @@ void RandRScreen::slotResizeUnified(QAction *action)
 void RandRScreen::slotUnifyOutputs(bool unified)
 {
 	m_outputsUnified = unified;
+	KConfig cfg("krandrrc");
 
-	if (!unified)
-	{
-		foreach(RandROutput *o, m_outputs)
+	foreach(RandROutput *output, m_outputs)
+		if (output->isConnected())
 		{
-			if (o->isConnected())
-				o->load(*KGlobal::config());
+			output->load(cfg);
+			output->applyProposed();
 		}
-	}
-	else
+
+	if (unified && m_connectedCount > 1)
 	{
 		SizeList sizes = unifiedSizes();
 
@@ -518,36 +536,34 @@ void RandRScreen::slotRotateUnified(QAction *action)
 void RandRScreen::slotOutputChanged(RROutput id, int changes)
 {
 	kDebug() << "[SCREEN] Got output change " << changes << endl;
-	Q_UNUSED(id);
 
-	int connected = 0;
+	int connected = 0, active = 0;
 	foreach(RandROutput *output, m_outputs)
 	{
 		if (output->isConnected())
 			connected++;
+		if (output->isActive())
+			active++;
 	}
+
+	m_connectedCount = connected;
+	m_activeCount = active;
 
 	// if there is less than 2 outputs connected, there is no need to unify
 	if (connected <= 1)
 		return;
 
-	if (changes & RandR::ChangeRect || changes & RandR::ChangeConnection || changes & RandR::ChangeMode)
-	{
+	RandROutput *o = m_outputs[id];
+	Q_ASSERT(o);
 
-		RandROutput *o = m_outputs[id];
-		Q_ASSERT(o);
+	// if we are using a unified layout, we should not allow an output
+	// to use another position or size. So ask it to come back to the unified 
+	// size.
+	if (m_outputsUnified)
+		unifyOutputs();
 
-		// if we are using a unified layout, we should not allow an output
-		// to use another position or size. So ask it to come back to the unified 
-		// size.
-		if (m_outputsUnified)
-		{
-			if (o->isConnected() && (o->rect() != m_unifiedRect || !o->isActive()))
-				unifyOutputs();
-		}
-		// TODO: handle the changes not to allow overlapping on non-unified 
-		// setups
-	}
+	// TODO: handle the changes not to allow overlapping on non-unified 
+	// setups
 
 	save();
 	emit configChanged();

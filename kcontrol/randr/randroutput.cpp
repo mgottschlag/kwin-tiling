@@ -133,11 +133,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 
 	// check if we are still connected, if not, release the crtc connection
 	if (!m_connected && m_currentCrtc != None)
-	{
-		RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
-		crtc->removeOutput(m_id);
-		crtc->applyProposed();
-	}
+		setCrtc(None);
 
 	if (changed)
 		emit outputChanged(m_id, changed);
@@ -280,7 +276,7 @@ void RandROutput::load(KConfig &config)
 	KConfigGroup cg = config.group("Screen_" + QString::number(m_screen->index()) + "_Output_" + m_name);
 	bool active = cg.readEntry("Active", true);
 
-	if (!active)
+	if (!active && !m_screen->outputsUnified())
 	{
 		setCrtc(None);
 		return;
@@ -300,9 +296,13 @@ void RandROutput::load(KConfig &config)
 
 	setCrtc(crtc->id());
 
-	m_proposedRect = cg.readEntry("Rect", QRect());
-	m_proposedRotation = cg.readEntry("Rotation", (int) RandR::Rotate0);
-	m_proposedRate = cg.readEntry("Rate", 0);
+	// if the outputs are unified, the screen will handle size changing
+	if (!m_screen->outputsUnified() || m_screen->connectedCount() <=1)
+	{
+		m_proposedRect = cg.readEntry("Rect", QRect());
+		m_proposedRotation = cg.readEntry("Rotation", (int) RandR::Rotate0);
+	}
+	m_proposedRate = cg.readEntry("RefreshRate", 0);
 }
 
 void RandROutput::save(KConfig &config)
@@ -319,8 +319,15 @@ void RandROutput::save(KConfig &config)
 
 	RandRCrtc *crtc = m_screen->crtc(m_currentCrtc);
 	cg.writeEntry("Active", true);
-	cg.writeEntry("Rect", crtc->rect());
-	cg.writeEntry("Rotation", crtc->rotation());
+
+	// if the outputs are unified, do not save size and rotation
+	// this allow us to set back the size and rotation being used
+	// when the outputs are not unified.
+	if (!m_screen->outputsUnified() || m_screen->connectedCount() <=1)
+	{
+		cg.writeEntry("Rect", crtc->rect());
+		cg.writeEntry("Rotation", crtc->rotation());
+	}
 	cg.writeEntry("RefreshRate", (double) crtc->refreshRate());
 }
 
@@ -417,7 +424,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 	QRect r;
 
 	if (changes & RandR::ChangeRect)
-		r.setSize(m_proposedRect.size());
+		r = m_proposedRect;
 
 
 	// first try to apply to the already attached crtc if any
@@ -478,6 +485,7 @@ void RandROutput::setCrtc(RRCrtc c)
 		disconnect(crtc, SIGNAL(crtcChanged(RRCrtc, int)), 
 			   this, SLOT(slotCrtcChanged(RRCrtc, int)));
 		crtc->removeOutput(m_id);
+		crtc->applyProposed();
 	}
 	m_currentCrtc = c;
 	if (c == None)

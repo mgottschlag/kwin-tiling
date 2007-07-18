@@ -158,22 +158,12 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 		RandRScreen *screen = m_display->currentScreen();
 		Q_ASSERT(screen);
 
-		// if there is only one output connected, only show it
-		int connected = 0;
-		int active = 0;
-		foreach(RandROutput *output, outputs)
-		{
-		       if (output->isConnected())
-			    connected++;
-		       if (output->isActive())
-			       active++;
-		}
-
 		// if the outputs are unified, do not show output-specific size 
 		// changing options in the tray.
-		if (screen->outputsUnified() && connected > 1)
+		if (screen->outputsUnified() && screen->connectedCount() > 1)
 		{
 			SizeList sizes = screen->unifiedSizes();
+			
 			if (sizes.count())
 			{
 				// populate unified sizes
@@ -190,11 +180,13 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 				{
 					menu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
 					int rotation = RandR::Rotate0;
-					if (screen->outputs().count())
-					{
-						OutputMap::const_iterator it = screen->outputs().begin();	
-						rotation = (*it)->rotation();
-					}
+					foreach(RandROutput *output, screen->outputs())
+						if (output->isActive())
+						{
+							rotation = output->rotation();
+							break;
+						}
+
 					actionGroup = populateRotations(menu, rotations, rotation);
 					connect(actionGroup, SIGNAL(triggered(QAction*)), screen, SLOT(slotRotateUnified(QAction*)));
 				}
@@ -202,7 +194,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 		}
 		else
 		{
-			if (connected != 1)
+			if (screen->connectedCount() != 1)
 				menu->addTitle(SmallIcon("view-fullscreen"), i18n("Outputs"));
 
 			foreach(RandROutput *output, outputs)
@@ -212,7 +204,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 					Q_ASSERT(output);
 
 					KMenu *outputMenu;
-					if (connected == 1)
+					if (screen->connectedCount() == 1)
 						outputMenu = menu;
 					else
 						outputMenu = new KMenu(output->name());
@@ -231,7 +223,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 					
 					// if there is only one output active, do not show the disable option
 					// this prevents the user from doing wrong things ;)
-					if (active != 1)
+					if (screen->activeCount() != 1)
 					{
 						action = outputMenu->addAction(i18n("Disable"));
 						if (output->crtc() == None)
@@ -265,10 +257,10 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 							output, SLOT(slotChangeRefreshRate(QAction*)));
 					}
 					
-					if (connected != 1)
+					if (screen->connectedCount() != 1)
 						menu->addMenu(outputMenu);
 				} 
-				else if (connected != 1) 
+				else if (screen->connectedCount() != 1) 
 				{
 					action = menu->addAction(SmallIcon(output->icon()), output->name());
 					action->setEnabled(false);
@@ -276,7 +268,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 			}
 		}
 		// if there is more than one output connected, give the option to unify the outputs
-		if (connected != 1)
+		if (screen->connectedCount() != 1)
 		{
 			menu->addSeparator();
 			action = menu->addAction( i18n("Unify Outputs"), screen, SLOT(slotUnifyOutputs(bool)) );
@@ -427,12 +419,11 @@ QActionGroup *KRandRSystemTray::populateRates(KMenu *menu, RateList rates, float
 	QAction *action;
 	QActionGroup *rateGroup = new QActionGroup(menu);
 
-	RateList::const_iterator it;
-	for (it = rates.begin(); it != rates.end(); ++it)
+	foreach(float r, rates)
 	{
-		action = menu->addAction(i18n("%1 Hz", QString::number(*it, 'f', 1)));
-		action->setData(*it);
-		if (*it == rate)
+		action = menu->addAction(i18n("%1 Hz", QString::number(r, 'f', 1)));
+		action->setData(r);
+		if (r == rate)
 		{
 			QFont f = action->font();
 			f.setBold(true);

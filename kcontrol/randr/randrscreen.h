@@ -63,6 +63,15 @@ public:
 	bool adjustSize(QRect minimumSize = QRect(0,0,0,0));
 	bool setSize(QSize s);
 
+	/**
+	 * Return the number of connected outputs
+	 */
+	int connectedCount() const;
+
+	/**
+	 * Return the number of active outputs
+	 */
+	int activeCount() const;
 
 	bool outputsUnified() const;
 	void setOutputsUnified(bool unified);
@@ -102,6 +111,9 @@ private:
 	bool m_outputsUnified;
 	QRect m_unifiedRect;
 	int m_unifiedRotation;
+
+	int m_connectedCount;
+	int m_activeCount;
 
 	XRRScreenResources* m_resources;
 
