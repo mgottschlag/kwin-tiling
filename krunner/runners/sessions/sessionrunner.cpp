@@ -47,8 +47,9 @@ QAction* SessionRunner::accepts(const QString& term)
     return 0;
 }
 
-bool SessionRunner::exec(const QString& command)
+bool SessionRunner::exec(QAction* action, const QString& command)
 {
+    Q_UNUSED(action);
     Q_UNUSED(command);
     return true;
 }

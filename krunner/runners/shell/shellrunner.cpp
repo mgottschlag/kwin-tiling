@@ -81,13 +81,13 @@ QWidget* ShellRunner::options()
     return m_options;
 }
 
-bool ShellRunner::exec(const QString& command)
+bool ShellRunner::exec(QAction* action, const QString& command)
 {
-    if ( !m_enabled ) {
+    if (!m_enabled) {
         return false;
     }
 
-    return ( KRun::runCommand( command, NULL ) != 0 );
+    return (KRun::runCommand(command, NULL) != 0);
 }
 
 #include "shellrunner.moc"

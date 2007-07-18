@@ -45,10 +45,10 @@ QAction* SearchRunner::accepts( const QString& term )
     return 0;
 }
 
-bool SearchRunner::exec( const QString& command )
+bool SearchRunner::exec(QAction* action, const QString& command)
 {
-    Q_UNUSED( command )
-
+    Q_UNUSED(action)
+    Q_UNUSED(command)
     return true;
 }
 

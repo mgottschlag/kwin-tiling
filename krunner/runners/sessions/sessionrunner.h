@@ -37,7 +37,7 @@ class SessionRunner : public Plasma::AbstractRunner
 
     protected:
         QAction* accepts(const QString& term);
-        bool exec(const QString& command);
+        bool exec(QAction* action, const QString& command);
         void fillMatches(KActionCollection* actions, const QString& term, int max, int offset);
 
     private slots:

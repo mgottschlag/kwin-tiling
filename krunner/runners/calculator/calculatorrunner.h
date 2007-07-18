@@ -37,7 +37,7 @@ class CalculatorRunner : public Plasma::AbstractRunner
         ~CalculatorRunner();
 
         QAction* accepts( const QString& term );
-        bool exec( const QString& term );
+        bool exec(QAction* action, const QString& term);
 
     private:
         QString calculate( const QString& term );

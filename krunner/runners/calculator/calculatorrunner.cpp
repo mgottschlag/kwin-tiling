@@ -66,7 +66,7 @@ QAction* CalculatorRunner::accepts( const QString& term )
     return action;
 }
 
-bool CalculatorRunner::exec( const QString& term )
+bool CalculatorRunner::exec(QAction* action, const QString& term)
 {
     Q_UNUSED(term)
     return true;

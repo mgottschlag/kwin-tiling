@@ -36,7 +36,7 @@ class SearchRunner : public Plasma::AbstractRunner
         ~SearchRunner();
 
         QAction* accepts( const QString& term );
-        bool exec( const QString& command );
+        bool exec(QAction* action, const QString& command);
 
     protected:
         virtual void fillMatches( KActionCollection* matches,
