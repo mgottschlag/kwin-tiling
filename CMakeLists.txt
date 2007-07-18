@@ -58,6 +58,7 @@ add_subdirectory( ksysguard )
 add_subdirectory( ktip )
 add_subdirectory( klipper )
 add_subdirectory( kmenuedit )
+add_subdirectory( krunner )
 add_subdirectory( kwin )
 add_subdirectory( plasma )
 add_subdirectory( kstartupconfig )
@@ -68,9 +69,6 @@ add_subdirectory( khotkeys )
 # apps we need to figure out what to do with
 add_subdirectory( kcontrol )
 add_subdirectory( ksystraycmd )
-
-# new apps that need approval
-#add_subdirectory( krunner )
 
 # data
 add_subdirectory( wallpapers )
