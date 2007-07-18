@@ -34,6 +34,13 @@
 
 //#define ICON_DEMO
 //#define SUPERKARAMBA_DEMO
+//#define CONFIGXML_DEMO
+
+#ifdef CONFIGXML_DEMO
+#include <QFile>
+#include <KStandardDirs>
+#include "plasma/configxml.h"
+#endif
 
 #ifdef ICON_DEMO
 #include "plasma/widgets/icon.h"
@@ -84,6 +91,14 @@ RootWidget::RootWidget()
 
 #ifdef SUPERKARAMBA_DEMO
     m_desktop->corona()->addKaramba(KUrl("~/themes/aero_aio.skz"));
+#endif
+
+#ifdef CONFIGXML_DEMO
+    QFile file(KStandardDirs::locate("kcfg", "kickerSettings.kcfg"));
+    Plasma::ConfigXml appletConfig(KStandardDirs::locateLocal("config", "kickerrc"), &file);
+    foreach (KConfigSkeletonItem* item, appletConfig.items()) {
+        kDebug() << "item " << item->name() << " in " <<  item->group() << endl;
+    }
 #endif
 }
 
