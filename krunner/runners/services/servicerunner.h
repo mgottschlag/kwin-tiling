@@ -32,6 +32,7 @@ class QAction;
  * appications menu and have it start the appropriate app. Essentially anything
  * that KService knows about, this runner can launch
  */
+
 class ServiceRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
@@ -40,19 +41,25 @@ class ServiceRunner : public Plasma::AbstractRunner
         explicit ServiceRunner(QObject* parent = 0);
         ~ServiceRunner();
 
-        bool hasOptions();
-        QWidget* options();
-
     protected:
         QAction* accepts(const QString& term);
-        void fillMatches( KActionCollection* matches,
+        void fillMatches(KActionCollection* matches,
                           const QString& term,
-                          int max, int offset );
-        bool exec(const QString& command);
+                          int max, int offset);
+        bool exec(QAction* action, const QString& command);
 
-    private:
-        QString formattedName( KService::Ptr );
-        QWidget* m_options;
+    protected slots:
+        void launchService();
 };
+
+class ServiceAction : public QAction
+{
+    Q_OBJECT
+
+public:
+    ServiceAction(KService::Ptr service, QObject* parent);
+    KService::Ptr m_service;
+};
+
 
 #endif

@@ -29,16 +29,33 @@
 
 #include "servicerunner.h"
 
+QString formattedName( KService::Ptr service )
+{
+    QString name = service->name();
+
+    if ( !service->genericName().isEmpty() ) {
+        name = i18n( "%1 - %2", name, service->genericName() );
+    } else if ( !service->comment().isEmpty() ) {
+        name = i18n( "%1 - %2", name, service->comment() );
+    }
+
+    return name;
+}
+
+ServiceAction::ServiceAction(KService::Ptr service, QObject* parent)
+    : QAction(KIcon(service->icon()), formattedName(service), parent),
+      m_service(service)
+{
+}
+
 ServiceRunner::ServiceRunner( QObject* parent )
-    : Plasma::AbstractRunner( parent ),
-      m_options( 0 )
+    : Plasma::AbstractRunner( parent )
 {
     setObjectName( i18n( "Application" ) );
 }
 
 ServiceRunner::~ServiceRunner()
 {
-    delete m_options;
 }
 
 QAction* ServiceRunner::accepts(const QString& term)
@@ -47,9 +64,7 @@ QAction* ServiceRunner::accepts(const QString& term)
     QAction* action = 0;
 
     if ( service && !service->exec().isEmpty() ) {
-        action = new QAction( KIcon( service->icon() ),
-                              formattedName( service ),
-                              this );
+        action = new ServiceAction(service, this);
     }
 
     return action;
@@ -62,61 +77,49 @@ void ServiceRunner::fillMatches( KActionCollection* matches,
     Q_UNUSED( max )
     Q_UNUSED( offset )
 
-    //TODO: this is horifically inneficient and doesn't really return very good matches anyways
-    //      this is more of a proof-of-concept than anything
-    QString query = QString( "exist Exec and '%1' in Keywords and Name != '%2')" ).arg( term, term );
+    QString query = QString( "exist Exec and '%1' ~in Keywords and Name != '%2')" ).arg( term, term );
     KServiceType::List serviceTypes = KServiceType::allServiceTypes();
 
     foreach ( const KServiceType::Ptr serviceType, serviceTypes ) {
         KService::List services = KServiceTypeTrader::self()->query( serviceType->name(),
                                                                      query );
 
-        kDebug() << "got " << services.count() << " services from " << query << endl;
+        //kDebug() << "got " << services.count() << " services from " << query << endl;
 
         foreach ( const KService::Ptr service, services ) {
-            QAction* action = matches->addAction( service->name() );
-            action->setIcon( KIcon( service->icon() ) );
-            action->setText( formattedName( service ) );
-            // TODO: connect the actions to ... something =)
-            //connect( action, SIGNAL(triggered()), SLOT(launchKonsole()) );
+            ServiceAction* action = new ServiceAction(service, matches);
+            matches->addAction(service->name(), action);
+            connect(action, SIGNAL(triggered()), SLOT(launchService()));
         }
     }
 }
 
-bool ServiceRunner::hasOptions()
+bool ServiceRunner::exec(QAction* action, const QString& term)
 {
-    return true;
-}
+    KService::Ptr service;
+    ServiceAction* serviceAction = qobject_cast<ServiceAction*>(action);
 
-QWidget* ServiceRunner::options()
-{
-    if (!m_options)
-    {
-        // create options here
-        m_options = new QWidget;
+    if (serviceAction) {
+        service = serviceAction->m_service;
     }
 
-    return m_options;
-}
+    if (!service && !term.isEmpty()) {
+        service = KService::serviceByName(term);
+    }
 
-bool ServiceRunner::exec(const QString& term)
-{
-    KService::Ptr service = KService::serviceByName(term);
     return service &&
            KRun::run(*service, KUrl::List(), 0) != 0;
 }
 
-QString ServiceRunner::formattedName( KService::Ptr service )
+void ServiceRunner::launchService()
 {
-    QString name = service->name();
+    ServiceAction* action = qobject_cast<ServiceAction*>(sender());
 
-    if ( !service->genericName().isEmpty() ) {
-        name = i18n( "%1 - %2", name, service->genericName() );
-    } else if ( !service->comment().isEmpty() ) {
-        name = i18n( "%1 - %2", name, service->comment() );
+    if (!action) {
+        return;
     }
 
-    return name;
+    KRun::run(*action->m_service, KUrl::List(), 0);
 }
 
 #include "servicerunner.moc"
