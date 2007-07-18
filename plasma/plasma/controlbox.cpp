@@ -205,7 +205,7 @@ void ControlWidget::refreshPlasmoidList()
 void ControlWidget::addApplet(const QModelIndex& plasmoidIndex)
 {
     QStandardItem* item = m_appletListModel->itemFromIndex(plasmoidIndex);
-    if (!item) {
+    if (!item || !item->data(Qt::UserRole).isValid()) {
         kDebug() << "ControlWidget::addApplet no item at " << plasmoidIndex << endl;
         return;
     }
