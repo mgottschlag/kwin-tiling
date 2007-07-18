@@ -114,6 +114,9 @@ class ControlWidget : public QWidget
 class PlasmoidListItemModel : public QStandardItemModel
 {
     public:
+        enum ItemDataRole {
+            AppletNameRole = Qt::UserRole
+        };
         PlasmoidListItemModel(QWidget* parent = 0);
 
         QStringList mimeTypes() const;

@@ -106,6 +106,13 @@ QMimeData* PlasmoidListItemModel::mimeData(const QModelIndexList &indexes) const
         return 0;
     }
 
+    QModelIndex parent = indexes[0].parent();
+    if (!parent.isValid()) {
+        //tried to grab a category
+        return 0;
+    }
+    QStandardItem* category = item(parent.row(), 0);
+
     QStringList types = mimeTypes();
 
     if (types.isEmpty()) {
@@ -113,11 +120,14 @@ QMimeData* PlasmoidListItemModel::mimeData(const QModelIndexList &indexes) const
     }
 
     QMimeData *data = new QMimeData();
+
     QString format = types.at(0);
-    QByteArray byteArray;
-    QStandardItem* selectedItem = item(indexes[0].row(), 1);
-    byteArray.append(selectedItem->data(Qt::DisplayRole).toByteArray());
-    data->setData(format, byteArray);
+
+    QStandardItem* selectedItem = category->child(indexes[0].row(), 0);
+    QByteArray appletName(selectedItem->data(AppletNameRole).toByteArray());
+
+    data->setData(format, appletName);
+
     return data;
 }
 
@@ -187,7 +197,7 @@ void ControlWidget::refreshPlasmoidList()
             QString category = Plasma::Applet::category(info);
 //            QStandardItem *item = new PlasmoidItem(info);
             QStandardItem *item = new QStandardItem(info->name());
-            item->setData(info->pluginName(), Qt::UserRole);
+            item->setData(info->pluginName(), PlasmoidListItemModel::AppletNameRole);
             parent->setChild(rowCount, 0, item);
             ++rowCount;
         }
@@ -205,12 +215,12 @@ void ControlWidget::refreshPlasmoidList()
 void ControlWidget::addApplet(const QModelIndex& plasmoidIndex)
 {
     QStandardItem* item = m_appletListModel->itemFromIndex(plasmoidIndex);
-    if (!item || !item->data(Qt::UserRole).isValid()) {
+    if (!item || !item->data(PlasmoidListItemModel::AppletNameRole).isValid()) {
         kDebug() << "ControlWidget::addApplet no item at " << plasmoidIndex << endl;
         return;
     }
 
-    emit addApplet(item->data(Qt::UserRole).toString());
+    emit addApplet(item->data(PlasmoidListItemModel::AppletNameRole).toString());
 }
 
 void ControlWidget::switchFormFactor(int formFactor)
