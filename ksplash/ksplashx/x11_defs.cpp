@@ -43,10 +43,26 @@ void detectScreenGeometry()
         {
         int screenCount;
 	xinerama_screeninfo = XineramaQueryScreens( dpy, &screenCount );
-        sx = xinerama_screeninfo[ 0 ].x_org;
-        sy = xinerama_screeninfo[ 0 ].y_org;
-        sw = xinerama_screeninfo[ 0 ].width;
-        sh = xinerama_screeninfo[ 0 ].height;
+        QRect sg(xinerama_screeninfo[ 0 ].x_org,
+                 xinerama_screeninfo[ 0 ].y_org,
+                 xinerama_screeninfo[ 0 ].width,
+                 xinerama_screeninfo[ 0 ].height);
+
+        for (int s = 1; s < screenCount; ++s)
+        {
+            QRect cs(xinerama_screeninfo[s].x_org,
+                    xinerama_screeninfo[s].y_org,
+                    xinerama_screeninfo[s].width,
+                    xinerama_screeninfo[s].height);
+
+            if (sg.intersects(cs))
+                sg = sg.unite(cs);
+        }
+
+        sx = sg.x();
+        sy = sg.y();
+        sw = sg.width();
+        sh = sg.height();
         }
     else
 #endif
