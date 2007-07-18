@@ -101,7 +101,7 @@ void SolidNotifier::updated(QString source,Plasma::DataEngine::Data data)
     QString icon_temp=data["icon"].toString();
     k_icon=new KIcon(icon_temp);
     icon = true;
-    device_name=data[source].toString();
+    device_name=data["text"].toString();
     update();
     moveUp();
 }
