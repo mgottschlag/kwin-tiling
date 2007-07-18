@@ -18,19 +18,20 @@
 
 #include "controlbox.h"
 
-#include <QtGui/QApplication>
-#include <QtGui/QLabel>
-#include <QtGui/QCheckBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QPainter>
-#include <QtGui/QPushButton>
-#include <QtGui/QStandardItemModel>
-#include <QtCore/QStringList>
-#include <QtCore/QTimeLine>
-#include <QtCore/QTimer>
-#include <QtGui/QTreeView>
-#include <QtGui/QVBoxLayout>
+#include <QApplication>
+#include <QCheckBox>
+#include <QHeaderView>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPushButton>
+#include <QStandardItemModel>
+#include <QStringList>
+#include <QTimeLine>
+#include <QTimer>
+#include <QTreeView>
+#include <QVBoxLayout>
 
 #include <KComboBox>
 #include <KLocale>
@@ -137,6 +138,7 @@ ControlWidget::ControlWidget(QWidget *parent)
     connect(m_formFactorSelector, SIGNAL(activated(int)), this, SLOT(switchFormFactor(int)));
 
     m_appletList = new QTreeView(this);
+    m_appletList->header()->hide();
     m_appletList->setDragEnabled(true);
     m_appletListModel = new PlasmoidListItemModel(this);
     m_appletList->setModel(m_appletListModel);
