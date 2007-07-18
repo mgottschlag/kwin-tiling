@@ -104,7 +104,6 @@ void RandRScreen::loadSettings(bool notify)
 			m_modes[m_resources->modes[i].id] = RandRMode(&m_resources->modes[i]);
 			changed = true;
 		}
-
 	}
 
 	//get all crtcs
@@ -120,7 +119,6 @@ void RandRScreen::loadSettings(bool notify)
 			m_crtcs[m_resources->crtcs[i]] = c;
 			changed = true;
 		}
-
 	}
 
 	//get all outputs
@@ -364,7 +362,6 @@ SizeList RandRScreen::unifiedSizes() const
 }
 
 QRect RandRScreen::rect() const
-
 {
 	return m_rect;
 }
@@ -383,7 +380,6 @@ void RandRScreen::load(KConfig &config)
 		if (output->isConnected())
 			output->load(config);
 	}
-
 }
 
 void RandRScreen::save(KConfig &config)
@@ -527,8 +523,7 @@ void RandRScreen::slotUnifyOutputs(bool unified)
 
 void RandRScreen::slotRotateUnified(QAction *action)
 {
-	int rotation = action->data().toInt(); 
-	m_unifiedRotation = rotation;
+	m_unifiedRotation = action->data().toInt(); 
 	
 	unifyOutputs();
 }

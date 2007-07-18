@@ -233,7 +233,6 @@ bool RandRCrtc::applyProposed()
 				break;
 			}
 		}
-
 	}
 	
 	// if no output was connected, set the mode to None

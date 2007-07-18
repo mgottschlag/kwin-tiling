@@ -432,6 +432,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 	{
 		crtc = m_screen->crtc(m_currentCrtc);
 		if (tryCrtc(crtc, changes))
+		{
 			if (!confirm || confirm && RandR::confirm(crtc->rect()))
 			{
 				save(cfg);
@@ -442,6 +443,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 				crtc->proposeOriginal();
 				crtc->applyProposed();
 			}
+		}
 		return false;
 	}
 
@@ -458,7 +460,6 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 	{
 		if (!confirm || confirm && RandR::confirm(crtc->rect()))
 		{
-			setCrtc(crtc->id());
 			save(cfg);
 			return true;
 		}

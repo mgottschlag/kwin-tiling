@@ -201,8 +201,6 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 			{
 				if (output->isConnected()) 
 				{
-					Q_ASSERT(output);
-
 					KMenu *outputMenu;
 					if (screen->connectedCount() == 1)
 						outputMenu = menu;
@@ -260,11 +258,6 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 					if (screen->connectedCount() != 1)
 						menu->addMenu(outputMenu);
 				} 
-				else if (screen->connectedCount() != 1) 
-				{
-					action = menu->addAction(SmallIcon(output->icon()), output->name());
-					action->setEnabled(false);
-				}
 			}
 		}
 		// if there is more than one output connected, give the option to unify the outputs
