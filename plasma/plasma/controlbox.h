@@ -53,7 +53,7 @@ class ControlBox : public QWidget
     Q_SIGNALS:
         void zoomIn();
         void zoomOut();
-        void addPlasmoid(const QString&);
+        void addApplet(const QString&);
         void setFormFactor(Plasma::FormFactor);
         void lockInterface(bool);
 
@@ -98,11 +98,11 @@ class ControlWidget : public QWidget
         PlasmoidListItemModel* m_appletListModel;
 
     protected Q_SLOTS:
-        void addPlasmoid(const QModelIndex& plasmoidIndex);
+        void addApplet(const QModelIndex& plasmoidIndex);
         void switchFormFactor(int formFactor);
 
     Q_SIGNALS:
-        void addPlasmoid(const QString&);
+        void addApplet(const QString&);
         void setFormFactor(Plasma::FormFactor);
         void lockInterface(bool);
 };

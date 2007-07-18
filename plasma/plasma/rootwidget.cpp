@@ -72,7 +72,7 @@ RootWidget::RootWidget()
 
     connect(m_controlBox, SIGNAL(zoomIn()), m_desktop, SLOT(zoomIn()));
     connect(m_controlBox, SIGNAL(zoomOut()), m_desktop, SLOT(zoomOut()));
-    connect(m_controlBox, SIGNAL(addPlasmoid(const QString&)), m_desktop->corona(), SLOT(addApplet(const QString&)));
+    connect(m_controlBox, SIGNAL(addApplet(const QString&)), m_desktop->corona(), SLOT(addApplet(const QString&)));
     connect(m_controlBox, SIGNAL(setFormFactor(Plasma::FormFactor)), m_desktop->corona(), SLOT(setFormFactor(Plasma::FormFactor)));
     connect(m_controlBox, SIGNAL(lockInterface(bool)), m_desktop->corona(), SLOT(setImmutable(bool)));
 

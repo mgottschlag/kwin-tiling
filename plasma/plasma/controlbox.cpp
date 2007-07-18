@@ -143,7 +143,7 @@ ControlWidget::ControlWidget(QWidget *parent)
     m_appletListModel = new PlasmoidListItemModel(this);
     m_appletList->setModel(m_appletListModel);
     m_appletList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    connect(m_appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addPlasmoid(QModelIndex)));
+    connect(m_appletList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(addApplet(QModelIndex)));
 
     m_label = new QLabel("Plasmoids:", this);
 
@@ -202,15 +202,15 @@ void ControlWidget::refreshPlasmoidList()
     m_appletList->expandAll();
 }
 
-void ControlWidget::addPlasmoid(const QModelIndex& plasmoidIndex)
+void ControlWidget::addApplet(const QModelIndex& plasmoidIndex)
 {
     QStandardItem* item = m_appletListModel->itemFromIndex(plasmoidIndex);
     if (!item) {
-        kDebug() << "ControlWidget::addPlasmoid no item at " << plasmoidIndex << endl;
+        kDebug() << "ControlWidget::addApplet no item at " << plasmoidIndex << endl;
         return;
     }
 
-    emit addPlasmoid(item->data(Qt::UserRole).toString());
+    emit addApplet(item->data(Qt::UserRole).toString());
 }
 
 void ControlWidget::switchFormFactor(int formFactor)
@@ -281,7 +281,7 @@ void ControlBox::showBox()
         m_box = new ControlWidget(this);
         m_box->installEventFilter(this);
         //m_box->hide();
-        connect(m_box, SIGNAL(addPlasmoid(const QString&)), this, SIGNAL(addPlasmoid(const QString&)));
+        connect(m_box, SIGNAL(addApplet(const QString&)), this, SIGNAL(addApplet(const QString&)));
         connect(m_box, SIGNAL(setFormFactor(Plasma::FormFactor)), this, SIGNAL(setFormFactor(Plasma::FormFactor)));
         connect(m_box, SIGNAL(lockInterface(bool)), this, SIGNAL(lockInterface(bool)));
     }
