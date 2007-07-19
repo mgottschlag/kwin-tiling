@@ -185,7 +185,7 @@ float RandRCrtc::refreshRate() const
 bool RandRCrtc::applyProposed()
 {
 #if 1
-	kDebug() << "[CRTC] Going to apply...." << endl;
+	kDebug() << "[CRTC] Going to apply (" << m_id << ") ...." << endl;
 	kDebug() << "       Current Screen rect: " << m_screen->rect() << endl;
 	kDebug() << "       Current CRTC Rect: " << m_currentRect << endl;
 	kDebug() << "       Current Rotation: " << m_currentRotation << endl;

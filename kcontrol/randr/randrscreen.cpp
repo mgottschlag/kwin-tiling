@@ -445,6 +445,7 @@ bool RandRScreen::applyProposed(bool confirm)
 
 void RandRScreen::unifyOutputs()
 {
+	KConfig cfg("krandrrc");
 	SizeList sizes = unifiedSizes();
 
 	//FIXME: better handle this
@@ -454,6 +455,7 @@ void RandRScreen::unifyOutputs()
 	if (sizes.indexOf(m_unifiedRect.size()) == -1)
 		m_unifiedRect.setSize(sizes.first());
 
+	kDebug() << "Unifying outputs using rect " << m_unifiedRect << endl;
 	// iterate over all outputs and make sure all connected outputs get activated
 	// and use the right size
 	foreach(RandROutput *o, m_outputs)
@@ -468,6 +470,8 @@ void RandRScreen::unifyOutputs()
 				  && o->rotation() == m_unifiedRotation)
 			continue;
 
+		// this is to get the refresh rate to use
+		//o->load(cfg);
 		o->proposeRect(m_unifiedRect);
 		o->proposeRotation(m_unifiedRotation);
 		o->applyProposed(RandR::ChangeRect | 
@@ -476,7 +480,6 @@ void RandRScreen::unifyOutputs()
 
 	// FIXME: if by any reason we were not able to unify the outputs, we should 
 	// do something
-	
 	save();
 }
 
@@ -491,14 +494,16 @@ void RandRScreen::slotUnifyOutputs(bool unified)
 	m_outputsUnified = unified;
 	KConfig cfg("krandrrc");
 
-	foreach(RandROutput *output, m_outputs)
-		if (output->isConnected())
-		{
-			output->load(cfg);
-			output->applyProposed();
-		}
-
-	if (unified && m_connectedCount > 1)
+	if (!unified || m_connectedCount <= 1)
+	{
+		foreach(RandROutput *output, m_outputs)
+			if (output->isConnected())
+			{
+				output->load(cfg);
+				output->applyProposed();
+			}
+	}
+	else
 	{
 		SizeList sizes = unifiedSizes();
 
@@ -530,7 +535,6 @@ void RandRScreen::slotRotateUnified(QAction *action)
 
 void RandRScreen::slotOutputChanged(RROutput id, int changes)
 {
-	kDebug() << "[SCREEN] Got output change " << changes << endl;
 
 	int connected = 0, active = 0;
 	foreach(RandROutput *output, m_outputs)
@@ -555,7 +559,10 @@ void RandRScreen::slotOutputChanged(RROutput id, int changes)
 	// to use another position or size. So ask it to come back to the unified 
 	// size.
 	if (m_outputsUnified)
-		unifyOutputs();
+	{
+		if (o->rect() != m_unifiedRect || o->rotation() != m_unifiedRotation)
+			unifyOutputs();
+	}
 
 	// TODO: handle the changes not to allow overlapping on non-unified 
 	// setups
