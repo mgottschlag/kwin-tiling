@@ -132,9 +132,7 @@ void EngineExplorer::showEngine(const QString& name)
 
 void EngineExplorer::addSource(const QString& source)
 {
-    QList<QStandardItem*> parentItems;
     QStandardItem* parent = new QStandardItem(source);
-    parentItems.append(parent);
     m_dataModel->appendRow(parent);
 
     //kDebug() << "getting data for source " << source << endl;
