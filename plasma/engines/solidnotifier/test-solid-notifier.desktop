@@ -9,6 +9,7 @@ Name[fa]=باز کردن در پنجرۀ جدید
 Name[pt]=Abrir numa Janela Nova
 Name[pt_BR]=Abrir numa Janela Nova
 Name[sv]=Öppna i nytt fönster
+Name[zh_TW]=在新視窗開啟
 Icon=window-new
 Exec=kfmclient openURL %f
 
