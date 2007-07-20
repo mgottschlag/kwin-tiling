@@ -21,6 +21,9 @@
 
 #include "packages.h"
 
+namespace Plasma
+{
+
 PlasmoidStructure::PlasmoidStructure()
     : Plasma::PackageStructure(QString("Plasmoid"))
 {
@@ -70,3 +73,7 @@ ThemePackageStructure::ThemePackageStructure()
     mimetypes << "image/svg+xml";
     setDefaultMimetypes(mimetypes);
 }
+
+} // namespace Plasma
+
+

@@ -22,16 +22,20 @@
 
 #include <plasma/packagestructure.h>
 
-class PlasmoidStructure : Plasma::PackageStructure
+namespace Plasma
+{
+
+class PlasmoidStructure : public PackageStructure
 {
 public:
     PlasmoidStructure();
 };
 
-class ThemePackageStructure : Plasma::PackageStructure
+class ThemePackageStructure : public PackageStructure
 {
 public:
     ThemePackageStructure();
 };
 
+} // namespace Plasma
 #endif
