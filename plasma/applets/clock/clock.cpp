@@ -93,7 +93,7 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
     if (m_time.minute() == m_lastTimeSeen.minute() &&
         m_time.second() == m_lastTimeSeen.second()) {
         // avoid unnecessary repaints
-        //kDebug() << "avoided unecessary update!" << endl;
+        //kDebug() << "avoided unnecessary update!" << endl;
         return;
     }
 

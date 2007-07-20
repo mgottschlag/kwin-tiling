@@ -18,6 +18,8 @@
 
 */
 
+#include "sensormanager.h"
+
 #include <QApplication>
 #include <kdebug.h>
 #include <klocale.h>
@@ -26,8 +28,6 @@
 
 #include "sensorshellagent.h"
 #include "sensorsocketagent.h"
-
-#include "sensormanager.h"
 
 using namespace KSGRD;
 

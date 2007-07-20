@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SOLIDENGINE_H
-#define SOLIDENGINE_H
+#ifndef SOLIDDEVICEENGINE_H
+#define SOLIDDEVICEENGINE_H
 
 #include <QObject>
 #include <QString>
@@ -69,7 +69,7 @@ private:
 private Q_SLOTS:
     void deviceAdded(const QString &udi);
     void deviceRemoved(const QString &udi);
-    void deviceChanged(const QString& udi, const QString &property, QVariant value);
+    void deviceChanged(const QString& udi, const QString &property, const QVariant &value);
 };
 
 K_EXPORT_PLASMA_DATAENGINE(soliddevice, SolidDeviceEngine)

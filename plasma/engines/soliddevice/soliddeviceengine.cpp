@@ -642,7 +642,7 @@ void SolidDeviceEngine::deviceRemoved(const QString& udi)
     checkForUpdates();
 }
 
-void SolidDeviceEngine::deviceChanged(const QString& udi, const QString &property, QVariant value)
+void SolidDeviceEngine::deviceChanged(const QString& udi, const QString &property, const QVariant &value)
 {
     setData(udi, property, value);
     checkForUpdates();

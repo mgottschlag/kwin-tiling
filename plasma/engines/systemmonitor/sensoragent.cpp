@@ -20,13 +20,13 @@
 
 //#include <stdlib.h>
 
+#include "sensoragent.h"
+
 #include <kdebug.h>
 #include <klocale.h>
 
 #include "sensorclient.h"
 #include "sensormanager.h"
-
-#include "sensoragent.h"
 
 /**
   This can be used to debug communication problems with the daemon.

@@ -53,35 +53,31 @@ SolidNotifierEngine::~SolidNotifierEngine()
 void SolidNotifierEngine::onDeviceAdded(const QString &udi)
 {
     Solid::Device device(udi);
-    QStringList interessting_desktop_files;
+    QStringList interestingDesktopFiles;
     //search in all desktop configuration file if the device inserted is a correct device
     foreach (QString path, files) {
         KDesktopFile cfg(path);
-        QString string_predicate = cfg.desktopGroup().readEntry( "X-KDE-Solid-Predicate" );
+        QString string_predicate = cfg.desktopGroup().readEntry("X-KDE-Solid-Predicate");
         //kDebug()<<string_predicate<<endl;
         Solid::Predicate predicate=Solid::Predicate::fromString(string_predicate);
-        if(predicate.matches(device))
-        {
+        if (predicate.matches(device)) {
             new_device=true;
-            interessting_desktop_files<<path;
+            interestingDesktopFiles<<path;
         }
     }
-    if(new_device)
-    {
+
+    if (new_device) {
         //kDebug()<<device.product()<<endl;
         //kDebug()<<device.vendor()<<endl;
-        //kDebug()<<"number of interesting desktop file : "<<interessting_desktop_files.size()<<endl;
-        if(device.vendor().length()==0)
-        {
+        //kDebug()<< "number of interesting desktop file : " << interestingDesktopFiles.size() << endl;
+        if (device.vendor().length()==0) {
             setData(udi, "text", device.product());
+        } else {
+            setData(udi, "text", device.vendor() + ' ' + device.product());
         }
-        else
-        {
-            setData(udi, "text", device.vendor()+" "+device.product());
-        }
-        setData(udi,"icon", device.icon());
-        setData(udi,"desktoplist", interessting_desktop_files);
-        kDebug() << "add hardware solid : " <<udi<<endl;
+        setData(udi, "icon", device.icon());
+        setData(udi, "desktoplist", interestingDesktopFiles);
+        kDebug() << "add hardware solid : " << udi << endl;
         checkForUpdates();
     }
     new_device=false;

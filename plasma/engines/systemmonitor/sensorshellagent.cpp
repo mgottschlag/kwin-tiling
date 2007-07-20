@@ -18,13 +18,13 @@
 
 */
 
+#include "sensorshellagent.h"
+
 #include <kdebug.h>
 #include <k3process.h>
 
 //#include "sensorclient.h"
 #include "sensormanager.h"
-
-#include "sensorshellagent.h"
 
 using namespace KSGRD;
 

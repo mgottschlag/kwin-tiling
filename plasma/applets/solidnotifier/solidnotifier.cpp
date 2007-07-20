@@ -93,13 +93,13 @@ void SolidNotifier::SourceAdded(const QString& source)
     SolidEngine->connectSource(source, this);
 }
 
-void SolidNotifier::updated(QString source,Plasma::DataEngine::Data data)
+void SolidNotifier::updated(const QString &source, Plasma::DataEngine::Data data)
 {
     kDebug()<<"SolidNotifier:: "<<data[source].toString()<<endl;
     QStringList desktop_files=data["desktoplist"].toStringList();
     //kDebug()<<data["icon"].toString()<<endl;
-    QString icon_temp=data["icon"].toString();
-    k_icon=new KIcon(icon_temp);
+    QString icon_temp = data["icon"].toString();
+    k_icon = new KIcon(icon_temp);
     icon = true;
     device_name=data["text"].toString();
     update();

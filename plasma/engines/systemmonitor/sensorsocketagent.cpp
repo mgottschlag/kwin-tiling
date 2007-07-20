@@ -20,13 +20,13 @@
 
 //#include <stdlib.h>
 
+#include "sensorsocketagent.h"
+
 #include <kdebug.h>
 #include <klocale.h>
 
 #include "sensorclient.h"
 #include "sensormanager.h"
-
-#include "sensorsocketagent.h"
 
 using namespace KSGRD;
 

@@ -51,7 +51,7 @@ class SolidNotifier : public Plasma::Applet
 
     public slots:
         void SourceAdded(const QString &name);
-        void updated(QString source,Plasma::DataEngine::Data data);
+        void updated(const QString &source, Plasma::DataEngine::Data data);
         void moveDown();
         void hideNotifier(QGraphicsItem * item);
 

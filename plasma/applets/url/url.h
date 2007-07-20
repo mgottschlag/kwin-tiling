@@ -18,8 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef CLOCK_H
-#define CLOCK_H
+#ifndef URL_H
+#define URL_H
 
 #include <KUrl>
 
