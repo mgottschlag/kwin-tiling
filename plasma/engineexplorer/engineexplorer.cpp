@@ -175,6 +175,25 @@ void EngineExplorer::requestSource()
     m_engine->connectSource(source, this);
 }
 
+QString EngineExplorer::convertToString(const QVariant &value) const
+{
+    if (value.canConvert(QVariant::String)) {
+        return value.toString();
+    }
+
+    switch (value.type())
+    {
+        case QVariant::Point: {
+           QPoint point = value.toPoint();
+           return QString("(%1, %2)").arg(point.x()).arg(point.y());
+        }
+
+        default: {
+            return "<unkown>";
+        }
+    }
+}
+
 void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data data)
 {
     int rowCount = 0;
@@ -186,12 +205,12 @@ void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data da
         parent->setChild(rowCount, 1, new QStandardItem(it.key()));
         if(it.value().canConvert(QVariant::List)) {
             foreach(QVariant var, it.value().toList()) {
-                parent->setChild(rowCount, 2, new QStandardItem(var.toString()));
+                parent->setChild(rowCount, 2, new QStandardItem(convertToString(var)));
                 ++rowCount;
             }
         }
         else {
-            parent->setChild(rowCount, 2, new QStandardItem(it.value().toString()));
+            parent->setChild(rowCount, 2, new QStandardItem(convertToString(it.value())));
             ++rowCount;
         }
     }
