@@ -41,13 +41,12 @@ Url::Url(QObject *parent, const QStringList &args)
     m_icon = new Plasma::Icon(this);
     connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
 
-    int size = Plasma::Icon::boundsForIconSize(IconSize(K3Icon::Desktop));
-    size = globalConfig().readEntry("IconSize", size);
-
     KConfigGroup cg = config();
+
+    int size = globalConfig().readEntry("IconSize", IconSize(K3Icon::Desktop));
     size = cg.readEntry("IconSize", size);
 
-    m_icon->setSize(size, size);
+    m_icon->setIconSize(size, size);
     if (args.count() > 2) {
         setUrl(args.at(2));
     } else {
@@ -59,16 +58,8 @@ Url::~Url()
 {
     KConfigGroup cg = config();
     cg.writeEntry("IconSize", m_icon->iconSize().toSize());
-    cg.writeEntry("Url", m_icon->url());
+    cg.writeEntry("Url", m_url);
 }
-
-/*
-#include <QPainter>
-void Url::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
-{
-    painter->fillRect(boundingRect(), Qt::white);
-}
-*/
 
 QRectF Url::boundingRect() const
 {
@@ -82,7 +73,7 @@ void Url::constraintsUpdated()
 
 void Url::setUrl(const KUrl& url)
 {
-    m_icon->setUrl(url);
+    m_url = url;
     KMimeType::Ptr mime = KMimeType::findByUrl(url);
     m_mimetype = mime->name();
     m_icon->setIcon(KMimeType::iconNameForUrl(url));
@@ -90,16 +81,15 @@ void Url::setUrl(const KUrl& url)
 
 void Url::openUrl()
 {
-    KUrl url = m_icon->url();
-    if (url.isValid()) {
-        KRun::runUrl(url, m_mimetype, 0);
+    if (m_url.isValid()) {
+        KRun::runUrl(m_url, m_mimetype, 0);
     }
 }
 
 void Url::propertiesDialog()
 {
     if (m_dialog == 0) {
-        m_dialog = new KPropertiesDialog(m_icon->url());
+        m_dialog = new KPropertiesDialog(m_url);
         connect(m_dialog, SIGNAL(applied()), this, SLOT(acceptedPropertiesDialog()));
     }
 
@@ -109,8 +99,8 @@ void Url::propertiesDialog()
 void Url::acceptedPropertiesDialog()
 {
     KConfigGroup cg = config();
-    cg.writeEntry("Url", m_dialog->kurl());
-    setUrl(m_dialog->kurl());
+    m_url = m_dialog->kurl();
+    cg.writeEntry("Url", m_url);
     update();
     delete m_dialog;
     m_dialog = 0;
