@@ -69,6 +69,7 @@ class SolidNotifier : public Plasma::Applet
         bool icon;
         QTimer *t;
         Plasma::DataEngine* SolidEngine;
+        QStringList desktop_files;
 };
 
 K_EXPORT_PLASMA_APPLET(solidnotifier, SolidNotifier)

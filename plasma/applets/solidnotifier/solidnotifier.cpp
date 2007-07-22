@@ -21,7 +21,8 @@
 
 #include <KDebug>
 #include <KLocale>
-
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
 #include <plasma/svg.h>
 #include <plasma/animator.h>
 #include <plasma/corona.h>
@@ -83,7 +84,6 @@ void SolidNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
         k_icon->paint(p,450,300,70,70);
         p->drawText(525,325,device_name);
     }
-    //clean the icon from the screen, see it later
 }
 
 void SolidNotifier::SourceAdded(const QString& source)
@@ -96,7 +96,7 @@ void SolidNotifier::SourceAdded(const QString& source)
 void SolidNotifier::updated(const QString &source, Plasma::DataEngine::Data data)
 {
     kDebug()<<"SolidNotifier:: "<<data[source].toString()<<endl;
-    QStringList desktop_files=data["desktoplist"].toStringList();
+    desktop_files=data["desktoplist"].toStringList();
     //kDebug()<<data["icon"].toString()<<endl;
     QString icon_temp = data["icon"].toString();
     k_icon = new KIcon(icon_temp);
@@ -119,6 +119,8 @@ void SolidNotifier::moveDown()
     Phase::self()->moveItem(this, Phase::SlideOut,QPoint(0,50));
     connect(Phase::self(),SIGNAL(movementComplete(QGraphicsItem *)),
             this, SLOT(hideNotifier(QGraphicsItem *)));
+    QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.kded.SolidUiServer");
+    QDBusReply<void> reply = soliduiserver.call("showActionsDialog", m_udi,desktop_files);
 }
 
 void SolidNotifier::hideNotifier(QGraphicsItem * item)
