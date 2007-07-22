@@ -193,15 +193,14 @@ void ControlWidget::refreshPlasmoidList()
         m_appletListModel->appendRow(parent);
         int rowCount = 0;
 
-        foreach (KPluginInfo* info, applets) {
+        foreach (const KPluginInfo &info, applets) {
             QString category = Plasma::Applet::category(info);
 //            QStandardItem *item = new PlasmoidItem(info);
-            QStandardItem *item = new QStandardItem(info->name());
-            item->setData(info->pluginName(), PlasmoidListItemModel::AppletNameRole);
+            QStandardItem *item = new QStandardItem(info.name());
+            item->setData(info.pluginName(), PlasmoidListItemModel::AppletNameRole);
             parent->setChild(rowCount, 0, item);
             ++rowCount;
         }
-        qDeleteAll(applets);
     }
 
 #ifndef NDEBUG
