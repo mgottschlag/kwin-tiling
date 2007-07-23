@@ -1,5 +1,51 @@
-/**
-* @mainpage KDE Workspace
-*
-* Applications composing the KDE desktop.
+/** @mainpage The KDE Workspace
+
+This is where the components that are only used when KDE is providing
+a complete desktop environment live.
+
+Of particular importance are <a href="../kwin/html/index.html">KWin</a>, the
+KDE window manager, and <a href="../plasma/html/index.html">Plasma</a>, which
+provides the workspace interface.
+
+If you are developing Plasma plugins (Plasmoids), you are probably interested
+in the <a href="../lib/plasma/html/index.html">libplasma documentation</a>.
+
+Other components that reside here are:
+- KCheckPass, a simple program for checking whether a password is correct
+- KCMInit, which allows KDE control modules to do initialization at the
+  start of a KDE session, for example setting the keyboard repeat rate
+- KDM, the login manager for KDE
+- KHotKeys, a daemon that allows actions to be performed when certain
+  combinations of keys are pressed
+- Klipper, the KDE clipboard manager
+- KMenuEdit, the manager for the desktop menu (the K menu)
+- KRunner, which provides the launch ("run command") dialog, screensaver
+  activation and screen locking and control of application startup notification
+- KScreenSaver, which provides pretty screensavers and is launched by
+  KRunner
+- KSMServer, the KDE session manager
+- KSplash, the KDE splashscreen program
+- KStartupConfig, which allows configuration files to be used in startkde
+  without linking to KDE libraries
+- KTip, that little window that pops up when you start KDE with the Tip of
+  the Day
+- SystemSettings, the KDE configuration program
+- <a href="../solid/html/index.html">Various Solid components</a> useful in a
+  KDE session
+- StartKDE, the script that starts a KDE session
+- Some wallpapers, and a basic K menu setup
+
+@warning The applications and libraries in Workspace are only required to work
+with X11.  They will not be used on Windows or MacOS, or in other desktop
+environments (such as GNOME).  Applications should not depend on Workspace
+unless they are a desktop component, such as a screensaver or a plasmoid.
+
+
+@licenses
+@gpl
+
+
 */
+
+// DOXYGEN_SET_PROJECT_NAME = Workspace
+// vim:ts=4:sw=4:expandtab:filetype=doxygen
