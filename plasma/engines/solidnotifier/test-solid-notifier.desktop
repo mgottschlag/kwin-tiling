@@ -6,6 +6,7 @@ Actions=OpenInWindow;
 [Desktop Action OpenInWindow]
 Name=Open in New Window
 Name[fa]=باز کردن در پنجرۀ جدید
+Name[ga]=Oscail i bhFuinneog Nua
 Name[ja]=新規ウィンドウで開く
 Name[pt]=Abrir numa Janela Nova
 Name[pt_BR]=Abrir numa Janela Nova
