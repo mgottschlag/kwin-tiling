@@ -23,8 +23,8 @@ install(TARGETS kpager DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 
-install( FILES kpager.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kpager.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 
-install( FILES org.kde.KPager.xml DESTINATION ${DBUS_INTERFACES_DIR} )
+install( FILES org.kde.KPager.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
 

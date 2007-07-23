@@ -38,4 +38,4 @@
    kde-utilities-peripherals.directory
    kde-utilities-pim.directory
    kde-utilities-xutils.directory
-DESTINATION  ${XDG_DIRECTORY_DIR} )
+DESTINATION  ${XDG_DIRECTORY_INSTALL_DIR} )

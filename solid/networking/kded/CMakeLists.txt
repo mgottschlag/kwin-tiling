@@ -10,7 +10,7 @@ qt4_add_dbus_adaptor(kded_networkstatus_PART_SRCS ../org.kde.Solid.Networking.Se
         networkstatus.h NetworkStatusModule)
 
 qt4_add_dbus_adaptor(kded_networkstatus_PART_SRCS
-        ${DBUS_INTERFACES_DIR}/org.kde.Solid.Networking.Client.xml
+        ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.Solid.Networking.Client.xml
         networkstatus.h NetworkStatusModule)
 
 

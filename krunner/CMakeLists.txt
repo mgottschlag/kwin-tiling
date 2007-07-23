@@ -1,4 +1,4 @@
-KDE4_NO_ENABLE_FINAL(krunner)
+#KDE4_NO_ENABLE_FINAL(krunner)
 macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
 
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/ksysguard/libksysguard)
@@ -45,4 +45,4 @@ install(TARGETS krunner DESTINATION ${BIN_INSTALL_DIR})
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})
 install(FILES kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
-install(FILES ${krunner_dbusXML} ${screensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_DIR} )
+install(FILES ${krunner_dbusXML} ${screensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

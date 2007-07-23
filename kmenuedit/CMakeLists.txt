@@ -41,7 +41,7 @@ install(TARGETS kcontroledit DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 
-install( FILES kmenuedit.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kmenuedit.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 install( FILES kcontroleditui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kcontroledit )
 install( FILES kmenueditui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmenuedit )
 
