@@ -1267,7 +1267,7 @@ void CKioFonts::get(const KUrl &url)
                             continue;
 
                         error(KIO::ERR_COULD_NOT_READ, url.prettyUrl());
-                        close(fd);
+                        ::close(fd);
                         if(multiple)
                             ::unlink(realPathC);
                         return;
@@ -1284,7 +1284,7 @@ void CKioFonts::get(const KUrl &url)
                 }
 
                 data(QByteArray());
-                close(fd);
+                ::close(fd);
                 processedSize(buff.st_size);
                 finished();
             }
@@ -1681,7 +1681,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
 
     if (result<0)
     {
-        close(fd);
+        ::close(fd);
         if (-1==result)
            ::remove(destC.constData());
         else if (markPartial)
@@ -1701,7 +1701,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
         return false;
     }
 
-    if (close(fd))
+    if (::close(fd))
     {
         error(KIO::ERR_COULD_NOT_WRITE, destOrig);
         return false;
@@ -1861,7 +1861,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
                             error(EACCES==errno
                                       ? KIO::ERR_WRITE_ACCESS_DENIED
                                       : KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
-                            close(srcFd);
+                            ::close(srcFd);
                             return;
                         }
 
@@ -1878,8 +1878,8 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
                             if(-1==n)
                             {
                                 error(KIO::ERR_COULD_NOT_READ, src.prettyUrl());
-                                close(srcFd);
-                                close(destFd);
+                                ::close(srcFd);
+                                ::close(destFd);
                                 return;
                             }
                             if(0==n)
@@ -1887,8 +1887,8 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
                            if(!writeAll(destFd, buffer, n))
                            {
-                                close(srcFd);
-                                close(destFd);
+                                ::close(srcFd);
+                                ::close(destFd);
                                 if (ENOSPC==errno) // disk full
                                 {
                                     error(KIO::ERR_DISK_FULL, dest.prettyUrl());
@@ -1903,9 +1903,9 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
                             processedSize(processed);
                         }
 
-                        close(srcFd);
+                        ::close(srcFd);
 
-                        if(close(destFd))
+                        if(::close(destFd))
                         {
                             error(KIO::ERR_COULD_NOT_WRITE, dest.prettyUrl());
                             return;
