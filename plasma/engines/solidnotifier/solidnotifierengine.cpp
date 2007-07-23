@@ -23,7 +23,7 @@
 #include <KLocale>
 #include <KStandardDirs>
 #include <KDesktopFile>
-#include "plasma/datasource.h"
+#include "plasma/datacontainer.h"
 
 //solid specific includes
 #include <solid/devicenotifier.h>

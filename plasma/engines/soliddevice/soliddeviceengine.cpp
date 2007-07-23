@@ -21,7 +21,7 @@
 #include <KDebug>
 #include <KLocale>
 
-#include "plasma/datasource.h"
+#include "plasma/datacontainer.h"
 
 SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QStringList& args)
         : Plasma::DataEngine(parent)

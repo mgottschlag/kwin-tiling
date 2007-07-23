@@ -27,7 +27,7 @@
 #include <KSystemTimeZones>
 #include <KDateTime>
 
-#include "plasma/datasource.h"
+#include "plasma/datacontainer.h"
 
 TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
     : Plasma::DataEngine(parent)

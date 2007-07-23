@@ -25,7 +25,7 @@
 #include <KDebug>
 #include <KLocale>
 
-#include "plasma/datasource.h"
+#include "plasma/datacontainer.h"
 
 #include "sensormanager.h"
 

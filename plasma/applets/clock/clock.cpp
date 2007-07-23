@@ -63,6 +63,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
     Plasma::DataEngine* timeEngine = dataEngine("time");
     timeEngine->connectSource(m_timezone, this);
     timeEngine->setProperty("reportSeconds", m_showSecondHand);
+    updated(m_timezone, timeEngine->query(m_timezone));
     constraintsUpdated();
 }
 

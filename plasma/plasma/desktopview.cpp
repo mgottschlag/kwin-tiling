@@ -186,7 +186,7 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
     KMenu desktopMenu;
     //kDebug() << "context menu event " << immutable << endl;
     if (!applet) {
-        if (corona() && corona()->immutable()) {
+        if (corona() && corona()->isImmutable()) {
             QGraphicsView::contextMenuEvent(event);
             return;
         }
@@ -198,7 +198,7 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
         if (KAuthorized::authorizeKAction("run_command")) {
             desktopMenu.addAction(runCommandAction);
         }
-    } else if (applet->immutable()) {
+    } else if (applet->isImmutable()) {
         QGraphicsView::contextMenuEvent(event);
         return;
     } else {
@@ -212,7 +212,7 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
             hasEntries = true;
         }
 
-        if (!corona() || !corona()->immutable()) {
+        if (!corona() || !corona()->isImmutable()) {
             QAction* closeApplet = new QAction(i18n("Close this %1", applet->name()), this);
             connect(closeApplet, SIGNAL(triggered(bool)),
                     applet, SLOT(deleteLater()));
