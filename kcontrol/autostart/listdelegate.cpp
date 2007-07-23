@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006-2007 by Stephen Leaf                               *
+ *   Copyright (C) 2007 by Stephen Leaf                                    *
  *   smileaf@smileaf.org                                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,51 +18,56 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-
-#ifndef _AUTOSTART_H_
-#define _AUTOSTART_H_
-
-#include <KCModule>
-#include <KAboutData>
-#include <KGlobalSettings>
-#include <KFileItem>
-
-#include <QComboBox>
-#include <QPushButton>
-#include <QTreeWidget>
-
-#include "ui_autostartconfig.h"
-#include "adddialog.h"
 #include "listdelegate.h"
 
+#include <QtGui>
 
-class Autostart: public KCModule
+ListDelegate::ListDelegate(QObject *parent)
+	: QItemDelegate(parent)
 {
-    Q_OBJECT
+}
 
-public:
-    Autostart( QWidget* parent, const QStringList&  );
-    ~Autostart();
+QWidget *ListDelegate::createEditor(QWidget *parent,
+									const QStyleOptionViewItem & /* option */,
+									const QModelIndex &index) const
+{
+	QComboBox *comboBox = new QComboBox(parent);
+	if (index.column() == 1) {
+		comboBox->addItem(tr("Normal"));
+		comboBox->addItem(tr("Not Normal..."));
+	} else if (index.column() == 2) {
+		comboBox->addItem(tr("Off"));
+		comboBox->addItem(tr("On"));
+	}
 
-    void load();
-    void save();
-    void defaults();
-    QStringList paths;
-    QStringList pathName;
+	connect(comboBox, SIGNAL(activated(int)), this, SLOT(emitCommitData()));
 
-public slots:
-	void addCMD();
-	void removeCMD();
-	void editCMD(QTreeWidgetItem*);
-	bool editCMD(KFileItem);
-	void editCMD();
-	void setStartOn(int);
-	void selectionChanged();
+	return comboBox;
+}
 
-private:
-	Ui_AutostartConfig *widget;
-	KAboutData *myAboutData;
-	KGlobalSettings *kgs;
-};
+void ListDelegate::setEditorData(QWidget *editor,
+								const QModelIndex &index) const
+{
+	QComboBox *comboBox = qobject_cast<QComboBox *>(editor);
+	if (!comboBox)
+		return;
 
-#endif
+	int pos = comboBox->findText(index.model()->data(index).toString(),
+								Qt::MatchExactly);
+	comboBox->setCurrentIndex(pos);
+}
+
+void ListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+								const QModelIndex &index) const
+{
+	QComboBox *comboBox = qobject_cast<QComboBox *>(editor);
+	if (!comboBox)
+		return;
+
+	model->setData(index, comboBox->currentText());
+}
+
+void ListDelegate::emitCommitData()
+{
+	emit commitData(qobject_cast<QWidget *>(sender()));
+}

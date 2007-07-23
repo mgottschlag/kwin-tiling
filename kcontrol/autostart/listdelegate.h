@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006-2007 by Stephen Leaf                               *
+ *   Copyright (C) 2007 by Stephen Leaf                                    *
  *   smileaf@smileaf.org                                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,52 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
+#ifndef _LISTDELEGATE_H_
+#define _LISTDELEGATE_H_
 
+#include <QItemDelegate>
+#include <QObject>
+#include <QModelIndex>
 
-#ifndef _AUTOSTART_H_
-#define _AUTOSTART_H_
-
-#include <KCModule>
-#include <KAboutData>
-#include <KGlobalSettings>
-#include <KFileItem>
-
-#include <QComboBox>
-#include <QPushButton>
-#include <QTreeWidget>
-
-#include "ui_autostartconfig.h"
-#include "adddialog.h"
-#include "listdelegate.h"
-
-
-class Autostart: public KCModule
+class ListDelegate : public QItemDelegate
 {
-    Q_OBJECT
 
 public:
-    Autostart( QWidget* parent, const QStringList&  );
-    ~Autostart();
+	ListDelegate(QObject *parent=0);
 
-    void load();
-    void save();
-    void defaults();
-    QStringList paths;
-    QStringList pathName;
-
-public slots:
-	void addCMD();
-	void removeCMD();
-	void editCMD(QTreeWidgetItem*);
-	bool editCMD(KFileItem);
-	void editCMD();
-	void setStartOn(int);
-	void selectionChanged();
-
-private:
-	Ui_AutostartConfig *widget;
-	KAboutData *myAboutData;
-	KGlobalSettings *kgs;
+	QWidget *createEditor(QWidget *parent,
+										const QStyleOptionViewItem & /* option */,
+										const QModelIndex &index) const;
+	void setEditorData(QWidget *editor,
+									const QModelIndex &index) const;
+	void setModelData(QWidget *editor, QAbstractItemModel *model,
+									const QModelIndex &index) const;
+	void emitCommitData();
 };
 
 #endif

@@ -2,6 +2,7 @@
 
 set(kcm_autostart_PART_SRCS
    adddialog.cpp
+   listdelegate.cpp
    autostart.cpp )
 
 kde4_add_ui_files(kcm_autostart_PART_SRCS autostartconfig.ui addDialog.ui )

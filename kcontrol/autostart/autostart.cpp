@@ -36,9 +36,11 @@
 
 #include <QDir>
 #include <QHeaderView>
+#include <QItemDelegate>
 #include <QTreeWidget>
 #include <QGridLayout>
 #include <QStringList>
+#include <QStandardItemModel>
 
 class Desktop : public QTreeWidgetItem {
 public:
@@ -69,12 +71,14 @@ Autostart::Autostart( QWidget* parent, const QStringList& )
 
 	connect( widget->btnAdd, SIGNAL(clicked()), SLOT(addCMD()) );
 	connect( widget->btnRemove, SIGNAL(clicked()), SLOT(removeCMD()) );
-	connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(editCMD(QTreeWidgetItem*)) );
+	//connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(editCMD(QTreeWidgetItem*)) );
 	connect( widget->btnProperties, SIGNAL(clicked()), SLOT(editCMD()) );
 	connect( widget->cmbStartOn, SIGNAL(activated(int)), SLOT(setStartOn(int)) );
 	connect( widget->listCMD, SIGNAL(itemSelectionChanged()), SLOT(selectionChanged()) );
 
 	widget->listCMD->setFocus();
+
+	widget->listCMD->setItemDelegate(new ListDelegate(this));
 
     load();
 
@@ -138,6 +142,7 @@ void Autostart::load()
 				item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 				item->setText( 2, service->exec() );
 			}
+			widget->listCMD->openPersistentEditor(item);
 		}
 	}
 }
