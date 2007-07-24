@@ -1287,7 +1287,7 @@ void ContainerArea::dropEvent(QDropEvent *ev)
                 //KMimeType::pixmapForURL(url, 0, K3Icon::Panel, 0,
                 //                        K3Icon::DefaultState, &pixmapFile);
                 QString iconName = KMimeType::iconNameForUrl(url);
-                KIconLoader::global()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, &pixmapFile );
+                KIconLoader::global()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, QStringList(), &pixmapFile );
                 PanelExeDialog dlg(QString::null, QString(), url.path(), //krazy:exclude=nullstrassign for gcc-3.3.3
                                    pixmapFile, QString(), false, 0);
                 if (dlg.exec() == QDialog::Accepted)

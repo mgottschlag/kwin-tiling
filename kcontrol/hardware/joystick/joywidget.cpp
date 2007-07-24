@@ -58,7 +58,7 @@ JoyWidget::JoyWidget(QWidget *parent)
     messageBox->setSpacing(KDialog::spacingHint());
     QLabel *icon = new QLabel(messageBox);
     icon->setPixmap(KIconLoader::global()->loadIcon("dialog-warning", K3Icon::NoGroup,
-                                                    K3Icon::SizeMedium, K3Icon::DefaultState, 0, true));
+                                                    K3Icon::SizeMedium, K3Icon::DefaultState, QStringList(), 0, true));
     icon->setFixedSize(icon->sizeHint());
     message = new QLabel(messageBox);
     messageBox->hide();

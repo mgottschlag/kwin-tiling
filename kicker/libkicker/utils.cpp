@@ -357,14 +357,14 @@ QIcon menuIconSet(const QString& icon)
                                                          K3Icon::Small,
                                                          0,
                                                          K3Icon::DefaultState,
-                                                         0,
+                                                         QStringList(), 0,
                                                          true);
 
         QPixmap active = KIconLoader::global()->loadIcon(icon,
                                                          K3Icon::Small,
                                                          0,
                                                          K3Icon::ActiveState,
-                                                         0,
+                                                         QStringList(), 0,
                                                          true);
         // make sure they are not larger than 20x20
         if (normal.width() > 20 || normal.height() > 20)

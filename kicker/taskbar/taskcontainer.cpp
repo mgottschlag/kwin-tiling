@@ -1497,7 +1497,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
                                                     K3Icon::Small,
                                                     K3Icon::SizeMedium,
                                                     K3Icon::DefaultState,
-                                                    0, true);
+                                                    QStringList(), 0, true);
         return;
     }
 

@@ -657,7 +657,7 @@ Task::Task(WId win, QObject *parent, const char *name)
                                                     K3Icon::Small,
                                                     K3Icon::Small,
                                                     K3Icon::DefaultState,
-                                                    0, true);
+                                                    QStringList(), 0, true);
     }
 
     // load xapp icon
@@ -738,7 +738,7 @@ void Task::refreshIcon()
                                                     K3Icon::Small,
                                                     K3Icon::Small,
                                                     K3Icon::DefaultState,
-                                                    0, true);
+                                                    QStringList(), 0, true);
     }
 
     // load xapp icon
@@ -982,7 +982,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
                             K3Icon::NoGroup,
                             size,
                             K3Icon::DefaultState,
-                            0L,
+                            QStringList(), 0L,
                             true );
         isStaticIcon = true;
       }

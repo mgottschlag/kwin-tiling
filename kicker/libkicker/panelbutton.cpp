@@ -761,7 +761,7 @@ void PanelButton::loadIcons()
     QString nm = d->iconName;
     K3Icon::States defaultState = isEnabled() ? K3Icon::DefaultState :
                                                K3Icon::DisabledState;
-    d->icon = ldr->loadIcon(nm, K3Icon::Panel, d->size, defaultState, 0L, true);
+    d->icon = ldr->loadIcon(nm, K3Icon::Panel, d->size, defaultState, QStringList(), 0L, true);
 
     if (d->icon.isNull())
     {
@@ -776,11 +776,11 @@ void PanelButton::loadIcons()
     else
     {
         d->iconh = ldr->loadIcon(nm, K3Icon::Panel, d->size,
-                                K3Icon::ActiveState, 0L, true);
+                                K3Icon::ActiveState, QStringList(), 0L, true);
     }
 
     d->iconz = ldr->loadIcon(nm, K3Icon::Panel, K3Icon::SizeHuge,
-                            defaultState, 0L, true );
+                            defaultState, QStringList(), 0L, true );
 }
 
 // (re)calculates the icon sizes and report true if they have changed.
