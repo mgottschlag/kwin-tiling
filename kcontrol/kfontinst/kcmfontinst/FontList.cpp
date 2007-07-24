@@ -99,7 +99,7 @@ static void addFont(CFontItem *font, CJobRunner::ItemList &urls, QStringList &fo
 static QString getName(const KFileItem *item)
 {
     return item
-        ? item->entry().stringValue(KIO::UDS_NAME)
+        ? item->entry().stringValue(KIO::UDSEntry::UDS_NAME)
         : QString();
 }
 
@@ -388,12 +388,12 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &st
                         slant;
 
     updateStatus();
-    itsName=udsEntry.stringValue(KIO::UDS_NAME);
+    itsName=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
     FC::decomposeStyleVal(FC::createStyleVal(itsName), weight, width, slant);
     itsDisplayStyleInfo=(weight<<16)+(slant<<8)+(width);
     itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
     itsStyleInfo=udsEntry.numberValue((uint)UDS_EXTRA_FC_STYLE);
-    itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDS_URL)),
+    itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDSEntry::UDS_URL)),
                                   KFI_KIO_FACE, 0);
     itsWritingSystems=udsEntry.numberValue((uint)UDS_EXTRA_WRITING_SYSTEMS);
     QString mime(mimetype());

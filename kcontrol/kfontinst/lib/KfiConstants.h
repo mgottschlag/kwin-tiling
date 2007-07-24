@@ -27,6 +27,7 @@
 
 #include <klocale.h>
 #include <kio/global.h>
+#include <kio/udsentry.h>
 
 #define KFI_NAME                     "kfontinst"
 #define KFI_CATALOGUE                KFI_NAME
@@ -88,10 +89,10 @@ enum ESpecial
 // UDS_EXTRA entries...
 enum EUdsExtraEntries
 {
-    UDS_EXTRA_FC_STYLE        = (((KIO::UDS_EXTRA|KIO::UDS_STRING)^KIO::UDS_STRING)|KIO::UDS_NUMBER)+1,
-    UDS_EXTRA_FILE_NAME       = KIO::UDS_EXTRA+2,
-    UDS_EXTRA_FILE_LIST       = KIO::UDS_EXTRA+3,
-    UDS_EXTRA_WRITING_SYSTEMS = (((KIO::UDS_EXTRA|KIO::UDS_STRING)^KIO::UDS_STRING)|KIO::UDS_NUMBER)+4
+    UDS_EXTRA_FC_STYLE        = (((KIO::UDSEntry::UDS_EXTRA|KIO::UDSEntry::UDS_STRING)^KIO::UDSEntry::UDS_STRING)|KIO::UDSEntry::UDS_NUMBER)+1,
+    UDS_EXTRA_FILE_NAME       = KIO::UDSEntry::UDS_EXTRA+2,
+    UDS_EXTRA_FILE_LIST       = KIO::UDSEntry::UDS_EXTRA+3,
+    UDS_EXTRA_WRITING_SYSTEMS = (((KIO::UDSEntry::UDS_EXTRA|KIO::UDSEntry::UDS_STRING)^KIO::UDSEntry::UDS_STRING)|KIO::UDSEntry::UDS_NUMBER)+4
 };
 
 }

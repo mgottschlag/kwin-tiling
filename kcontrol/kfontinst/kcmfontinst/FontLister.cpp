@@ -243,11 +243,11 @@ void CFontLister::entries(KIO::Job *, const KIO::UDSEntryList &entries)
 
     for(; it!=end; ++it)
     {
-        const QString name((*it).stringValue(KIO::UDS_NAME));
+        const QString name((*it).stringValue(KIO::UDSEntry::UDS_NAME));
 
         if(!name.isEmpty() && name!="." && name!="..")
         {
-            KUrl url((*it).stringValue(KIO::UDS_URL));
+            KUrl url((*it).stringValue(KIO::UDSEntry::UDS_URL));
 
             if(!itsItems.contains(url))
             {

@@ -153,17 +153,17 @@ InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
 
             if(KIO::NetAccess::stat(url, udsEntry, NULL))
             {
-                if(udsEntry.numberValue(KIO::UDS_HIDDEN, 0))
+                if(udsEntry.numberValue(KIO::UDSEntry::UDS_HIDDEN, 0))
                 {
                     path=udsEntry.stringValue(UDS_EXTRA_FILE_NAME);
                     face=Misc::getIntQueryVal(url, KFI_KIO_FACE, 0);
                 }
                 else
                 {
-                    name=udsEntry.stringValue(KIO::UDS_NAME);
+                    name=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
                     styleInfo=udsEntry.numberValue(UDS_EXTRA_FC_STYLE);
                 }
-                mime=udsEntry.stringValue(KIO::UDS_MIME_TYPE);
+                mime=udsEntry.stringValue(KIO::UDSEntry::UDS_MIME_TYPE);
             }
         }
 

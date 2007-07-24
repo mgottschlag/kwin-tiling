@@ -226,10 +226,10 @@ void CFontViewPart::timeout()
 
             if(KIO::NetAccess::stat(url(), udsEntry, NULL))
             {
-                name=udsEntry.stringValue(KIO::UDS_NAME);
+                name=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
                 styleInfo=udsEntry.numberValue(UDS_EXTRA_FC_STYLE);
-                isDisabled=udsEntry.numberValue(KIO::UDS_HIDDEN, 0) ? true : false;
-                mime=udsEntry.stringValue(KIO::UDS_MIME_TYPE);
+                isDisabled=udsEntry.numberValue(KIO::UDSEntry::UDS_HIDDEN, 0) ? true : false;
+                mime=udsEntry.stringValue(KIO::UDSEntry::UDS_MIME_TYPE);
             }
         }
         else if(!path.isEmpty())

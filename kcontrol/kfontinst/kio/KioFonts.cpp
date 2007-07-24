@@ -218,7 +218,7 @@ static bool checkFiles(const CDisabledFonts::TFileList &files)
 
 inline int getSize(KIO::UDSEntry &entry)
 {
-    return entry.numberValue(KIO::UDS_SIZE, 0);
+    return entry.numberValue(KIO::UDSEntry::UDS_SIZE, 0);
 }
 
 static int getSize(const QByteArray &file)
@@ -1467,7 +1467,7 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
             files.append(*it);
 
     entry.clear();
-    entry.insert(KIO::UDS_SIZE, getSize(files));
+    entry.insert(KIO::UDSEntry::UDS_SIZE, getSize(files));
 
     it=files.begin();
     end=files.end();
@@ -1482,19 +1482,19 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
             if(0==writingSystems)
                 writingSystems=toBit(QFontDatabase::Other);
 
-            entry.insert(KIO::UDS_NAME, name);
-            entry.insert(KIO::UDS_FILE_TYPE, buff.st_mode&S_IFMT);
-            entry.insert(KIO::UDS_ACCESS, buff.st_mode&07777);
-            entry.insert(KIO::UDS_MODIFICATION_TIME, buff.st_mtime);
-            entry.insert(KIO::UDS_USER, getUserName(buff.st_uid));
-            entry.insert(KIO::UDS_GROUP, getGroupName(buff.st_gid));
-            entry.insert(KIO::UDS_ACCESS_TIME, buff.st_atime);
-            entry.insert(KIO::UDS_MIME_TYPE, obtainMimeType(*it));
+            entry.insert(KIO::UDSEntry::UDS_NAME, name);
+            entry.insert(KIO::UDSEntry::UDS_FILE_TYPE, buff.st_mode&S_IFMT);
+            entry.insert(KIO::UDSEntry::UDS_ACCESS, buff.st_mode&07777);
+            entry.insert(KIO::UDSEntry::UDS_MODIFICATION_TIME, buff.st_mtime);
+            entry.insert(KIO::UDSEntry::UDS_USER, getUserName(buff.st_uid));
+            entry.insert(KIO::UDSEntry::UDS_GROUP, getGroupName(buff.st_gid));
+            entry.insert(KIO::UDSEntry::UDS_ACCESS_TIME, buff.st_atime);
+            entry.insert(KIO::UDSEntry::UDS_MIME_TYPE, obtainMimeType(*it));
             entry.insert(UDS_EXTRA_FC_STYLE, styleVal);
             entry.insert(UDS_EXTRA_WRITING_SYSTEMS, writingSystems);
 
             if(hidden)
-                entry.insert(KIO::UDS_HIDDEN, 1);
+                entry.insert(KIO::UDSEntry::UDS_HIDDEN, 1);
             entry.insert(UDS_EXTRA_FILE_NAME, (*it).path);
             entry.insert(UDS_EXTRA_FILE_LIST, files.toString());
 
@@ -1521,7 +1521,7 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
             if(files.count()==1 && (*it).face>0)
                 url+='?'+KFI_KIO_FACE+'='+QString::number((*it).face);
 
-            entry.insert(KIO::UDS_URL, url);
+            entry.insert(KIO::UDSEntry::UDS_URL, url);
 
             return true;  // This file was OK, so use its values...
         }
@@ -1541,7 +1541,7 @@ bool CKioFonts::createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name,
 
     if(-1!=KDE_lstat(cPath, &buff))
     {
-        entry.insert(KIO::UDS_NAME, name);
+        entry.insert(KIO::UDSEntry::UDS_NAME, name);
 
         if (S_ISLNK(buff.st_mode))
         {
@@ -1555,36 +1555,36 @@ bool CKioFonts::createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name,
             if(-1==KDE_stat(cPath, &buff))
             {
                 // It is a link pointing to nowhere
-                entry.insert(KIO::UDS_FILE_TYPE, S_IFMT - 1);
-                entry.insert(KIO::UDS_ACCESS, S_IRWXU | S_IRWXG | S_IRWXO);
-                entry.insert(KIO::UDS_SIZE, 0);
+                entry.insert(KIO::UDSEntry::UDS_FILE_TYPE, S_IFMT - 1);
+                entry.insert(KIO::UDSEntry::UDS_ACCESS, S_IRWXU | S_IRWXG | S_IRWXO);
+                entry.insert(KIO::UDSEntry::UDS_SIZE, 0);
                 goto notype;
             }
-            entry.insert(KIO::UDS_FILE_TYPE, S_IFDIR); // CPD Treat links as regular folder...
+            entry.insert(KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR); // CPD Treat links as regular folder...
         }
         else
-            entry.insert(KIO::UDS_FILE_TYPE, buff.st_mode&S_IFMT);
-        entry.insert(KIO::UDS_ACCESS, buff.st_mode&07777);
-        entry.insert(KIO::UDS_SIZE, buff.st_size);
+            entry.insert(KIO::UDSEntry::UDS_FILE_TYPE, buff.st_mode&S_IFMT);
+        entry.insert(KIO::UDSEntry::UDS_ACCESS, buff.st_mode&07777);
+        entry.insert(KIO::UDSEntry::UDS_SIZE, buff.st_size);
 
         notype:
-        entry.insert(KIO::UDS_MODIFICATION_TIME, buff.st_mtime);
-        entry.insert(KIO::UDS_USER, getUserName(buff.st_uid));
-        entry.insert(KIO::UDS_GROUP, getGroupName(buff.st_gid));
-        entry.insert(KIO::UDS_ACCESS_TIME, buff.st_atime);
-        entry.insert(KIO::UDS_MIME_TYPE, QString::fromLatin1("inode/directory"));
+        entry.insert(KIO::UDSEntry::UDS_MODIFICATION_TIME, buff.st_mtime);
+        entry.insert(KIO::UDSEntry::UDS_USER, getUserName(buff.st_uid));
+        entry.insert(KIO::UDSEntry::UDS_GROUP, getGroupName(buff.st_gid));
+        entry.insert(KIO::UDSEntry::UDS_ACCESS_TIME, buff.st_atime);
+        entry.insert(KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1("inode/directory"));
         return true;
     }
     else if (sys && !Misc::root())   // Default system fonts folder does not actually exist yet!
     {
         KFI_DBUG << "Default system folder (" << path
                  << ") does not yet exist, so create dummy entry" << endl;
-        entry.insert(KIO::UDS_NAME, name);
-        entry.insert(KIO::UDS_FILE_TYPE, S_IFDIR);
-        entry.insert(KIO::UDS_ACCESS, 0744);
-        entry.insert(KIO::UDS_USER, QString::fromLatin1("root"));
-        entry.insert(KIO::UDS_GROUP, QString::fromLatin1("root"));
-        entry.insert(KIO::UDS_MIME_TYPE, QString::fromLatin1("inode/directory"));
+        entry.insert(KIO::UDSEntry::UDS_NAME, name);
+        entry.insert(KIO::UDSEntry::UDS_FILE_TYPE, S_IFDIR);
+        entry.insert(KIO::UDSEntry::UDS_ACCESS, 0744);
+        entry.insert(KIO::UDSEntry::UDS_USER, QString::fromLatin1("root"));
+        entry.insert(KIO::UDSEntry::UDS_GROUP, QString::fromLatin1("root"));
+        entry.insert(KIO::UDSEntry::UDS_MIME_TYPE, QString::fromLatin1("inode/directory"));
         return true;
     }
 

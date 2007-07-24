@@ -970,10 +970,10 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
 
         if(KIO::NetAccess::stat(url, udsEntry, NULL))  // Need to stat the url to get its font name...
         {
-            name=udsEntry.stringValue((uint)KIO::UDS_NAME);
+            name=udsEntry.stringValue((uint)KIO::UDSEntry::UDS_NAME);
             itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
             style=udsEntry.numberValue((uint)UDS_EXTRA_FC_STYLE);
-            itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDS_URL)),
+            itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDSEntry::UDS_URL)),
                                           KFI_KIO_FACE, 0);
 #ifdef KFI_FC_DEBUG
             KFI_DBUG << "Stated fonts:/ url, name:" << name << " itsFileName:" << itsFileName
