@@ -30,7 +30,6 @@
 #include <QPainter>
 #include <QTime>
 #include <QX11Info>
-#include <QWidget>
 #include <QGraphicsItem>
 #include <QColor>
 
@@ -54,7 +53,7 @@ class Clock : public Plasma::Applet
         Clock(QObject *parent, const QStringList &args);
         ~Clock();
 
-        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
+        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void setPath(const QString&);
         QRectF boundingRect() const;
         void constraintsUpdated();

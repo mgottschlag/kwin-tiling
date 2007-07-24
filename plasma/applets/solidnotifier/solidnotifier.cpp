@@ -73,14 +73,14 @@ SolidNotifier::~SolidNotifier()
 {
 }
 
-void SolidNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void SolidNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
-    Q_UNUSED(widget);
     Q_UNUSED(option);
     QRectF boundRect = boundingRect();
     p->setRenderHint(QPainter::SmoothPixmapTransform);
-    if(icon)
+    if (icon)
     {
+        //FIXME: get rid of these hardcoded values!
         k_icon->paint(p,450,300,70,70);
         p->drawText(525,325,device_name);
     }

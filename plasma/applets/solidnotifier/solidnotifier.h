@@ -44,7 +44,7 @@ class SolidNotifier : public Plasma::Applet
         SolidNotifier(QObject *parent, const QStringList &args);
         ~SolidNotifier();
 
-        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget =0);
+        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         QRectF boundingRect() const;
         void constraintsUpdated();
         void moveUp();
