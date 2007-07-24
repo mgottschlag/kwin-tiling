@@ -53,7 +53,7 @@ Desktop( const QString &service, QTreeWidget *parent ): QTreeWidgetItem( parent 
 }
 bool isDesktop() { return bisDesktop; }
 void setPath(const QString &path) {
-	KIO::NetAccess::file_move(fileName, KUrl( path + '/' + fileName.fileName() ));
+	KIO::move(fileName, KUrl( path + '/' + fileName.fileName() ));
 	fileName = KUrl(path + fileName.fileName());
 }
 ~Desktop() {
