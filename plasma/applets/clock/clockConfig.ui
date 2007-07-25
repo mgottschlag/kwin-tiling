@@ -5,18 +5,36 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>276</width>
-    <height>295</height>
+    <width>320</width>
+    <height>203</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
   <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
    <item row="0" column="0" >
     <layout class="QVBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
      <item>
       <widget class="KTimeZoneWidget" name="timeZones" >
+       <property name="minimumSize" >
+        <size>
+         <width>300</width>
+         <height>0</height>
+        </size>
+       </property>
        <column>
         <property name="text" >
          <string>Area</string>
@@ -74,6 +92,12 @@ p, li { white-space: pre-wrap; }
      </item>
      <item>
       <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
        <item>
         <widget class="QLabel" name="labelSize" >
          <property name="text" >
