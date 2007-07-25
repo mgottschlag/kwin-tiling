@@ -52,11 +52,21 @@ protected:
     void contextMenuEvent(QContextMenuEvent *event);
 
 private:
+    
+    enum zoom {
+        DESKTOP, // Only see applets
+        GROUPS, // See applets and groups
+        OVERVIEW // Only see groups
+    };
+    
     Plasma::Svg *m_background;
     QPixmap* m_bitmapBackground;
     QString m_wallpaperPath;
     QAction *engineExplorerAction;
     QAction *runCommandAction;
+    QAction *zoomInAction;
+    QAction *zoomOutAction;
+    zoom zoomLevel;
 };
 
 #endif // multiple inclusion guard

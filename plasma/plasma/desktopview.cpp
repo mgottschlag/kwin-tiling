@@ -45,7 +45,6 @@ DesktopView::DesktopView(QWidget *parent)
     scene()->setItemIndexMethod(QGraphicsScene::NoIndex);
     //TODO: Figure out a way to use rubberband and ScrollHandDrag
     setDragMode(QGraphicsView::RubberBandDrag);
-    setTransformationAnchor(QGraphicsView::AnchorUnderMouse); // Why isn't this working???
     setCacheMode(QGraphicsView::CacheBackground);
     setInteractive(true);
     setAcceptDrops(true);
@@ -67,6 +66,14 @@ DesktopView::DesktopView(QWidget *parent)
     connect(engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer()));
     runCommandAction = new QAction(i18n("Run Command..."), this);
     connect(runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
+    
+    zoomLevel = DESKTOP;
+    
+    zoomInAction = new QAction(i18n("Zoom In"), this);
+    connect(zoomInAction, SIGNAL(triggered(bool)), this, SLOT(zoomIn()));
+    zoomInAction->setEnabled(false);
+    zoomOutAction = new QAction(i18n("Zoom Out"), this);
+    connect(zoomOutAction, SIGNAL(triggered(bool)), this, SLOT(zoomOut()));
 }
 
 DesktopView::~DesktopView()
@@ -75,15 +82,32 @@ DesktopView::~DesktopView()
 
 void DesktopView::zoomIn()
 {
-    //TODO: Change level of detail when zooming
-    // 10/8 == 1.25
-    scale(1.25, 1.25);
+    if (zoomLevel == GROUPS) {
+        scale(2, 2); // zoom in to DESKTOP
+        zoomLevel = DESKTOP;
+        zoomInAction->setEnabled(false);
+        zoomOutAction->setEnabled(true);
+    } else if (zoomLevel == OVERVIEW) {
+        scale(5, 5); // zoom in to GROUPS
+        zoomLevel = GROUPS;
+        zoomInAction->setEnabled(true);
+        zoomOutAction->setEnabled(true);
+    }
 }
 
 void DesktopView::zoomOut()
 {
-    // 8/10 == .8
-    scale(.8, .8);
+    if (zoomLevel == DESKTOP) {
+        scale(.5, .5); // zoom out to GROUPS
+        zoomLevel = GROUPS;
+        zoomInAction->setEnabled(true);
+        zoomOutAction->setEnabled(true);
+    } else if (zoomLevel == GROUPS) {
+        scale(.2, .2); // zoom out to OVERVIEW
+        zoomLevel = OVERVIEW;
+        zoomInAction->setEnabled(true);
+        zoomOutAction->setEnabled(false);
+    }
 }
 
 void DesktopView::launchExplorer()
@@ -185,7 +209,11 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
 
     KMenu desktopMenu;
     //kDebug() << "context menu event " << immutable << endl;
-    if (!applet) {
+    if (zoomLevel != DESKTOP) {
+        desktopMenu.addAction(zoomInAction);
+        desktopMenu.addAction(zoomOutAction);
+    }
+    else if (!applet) {
         if (corona() && corona()->isImmutable()) {
             QGraphicsView::contextMenuEvent(event);
             return;
@@ -198,6 +226,11 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
         if (KAuthorized::authorizeKAction("run_command")) {
             desktopMenu.addAction(runCommandAction);
         }
+        
+        desktopMenu.addSeparator();
+        desktopMenu.addAction(zoomInAction);
+        desktopMenu.addAction(zoomOutAction);
+        
     } else if (applet->isImmutable()) {
         QGraphicsView::contextMenuEvent(event);
         return;
