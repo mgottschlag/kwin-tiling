@@ -92,7 +92,8 @@ void DesktopView::zoomIn()
         m_zoomOutAction->setEnabled(true);
     }
 
-    scale(Plasma::scalingFactor(m_zoomLevel) * 10, Plasma::scalingFactor(m_zoomLevel) * 10);
+    qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
+    scale(s, s);
 }
 
 void DesktopView::zoomOut()
@@ -107,7 +108,8 @@ void DesktopView::zoomOut()
         m_zoomOutAction->setEnabled(false);
     }
 
-    scale(Plasma::scalingFactor(m_zoomLevel), Plasma::scalingFactor(m_zoomLevel));
+    qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
+    scale(s, s);
 }
 
 void DesktopView::launchExplorer()
@@ -230,7 +232,6 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
         desktopMenu.addSeparator();
         desktopMenu.addAction(m_zoomInAction);
         desktopMenu.addAction(m_zoomOutAction);
-        
     } else if (applet->isImmutable()) {
         QGraphicsView::contextMenuEvent(event);
         return;

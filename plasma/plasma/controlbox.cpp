@@ -293,6 +293,8 @@ void ControlBox::showBox()
         connect(m_box, SIGNAL(addApplet(const QString&)), this, SIGNAL(addApplet(const QString&)));
         connect(m_box, SIGNAL(setFormFactor(Plasma::FormFactor)), this, SIGNAL(setFormFactor(Plasma::FormFactor)));
         connect(m_box, SIGNAL(lockInterface(bool)), this, SIGNAL(lockInterface(bool)));
+        connect(m_box->zoomInButton, SIGNAL(clicked()), this, SIGNAL(zoomIn()));
+        connect(m_box->zoomOutButton, SIGNAL(clicked()), this, SIGNAL(zoomOut()));
     }
 
     m_boxIsShown = true;
