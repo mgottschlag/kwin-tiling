@@ -344,7 +344,7 @@ static QImage loadAnimImage( const char* file, int frames )
 #endif
         int framewnew = round( framew / ratiox );
         int framehnew = round( frameh / ratioy );
-        QImage imgnew( framewnew * QMIN( frames, ANIM_IMAGES_ROW ),
+        QImage imgnew( framewnew * qMin( frames, ANIM_IMAGES_ROW ),
             framehnew * (( frames + ANIM_IMAGES_ROW - 1 ) / ANIM_IMAGES_ROW ), img.depth());
         if( img.hasAlphaBuffer())
             imgnew.setAlphaBuffer( true );
@@ -425,9 +425,9 @@ static void doPaint( const QRect& area )
             && area.intersects( QRect( anim->x, anim->y, frame->w, frame->h )))
             {
             XCopyArea( qt_xdisplay(), frame->hd, pixmap, gc,
-                QMAX( 0, area.x() - anim->x ), QMAX( 0, area.y() - anim->y ),
+                qMax( 0, area.x() - anim->x ), qMax( 0, area.y() - anim->y ),
                 area.x() - anim->x + area.width(), area.y() - anim->y + area.height(),
-                QMAX( 0, anim->x - area.x()), QMAX( 0, anim->y - area.y()));
+                qMax( 0, anim->x - area.x()), qMax( 0, anim->y - area.y()));
             }
         }
     XCopyArea( qt_xdisplay(), pixmap, window, gc, 0, 0, area.width(), area.height(), area.x(), area.y());

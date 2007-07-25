@@ -1597,7 +1597,7 @@ static bool convert_32_to_8( const QImage *src, QImage *dst, int conversion_flag
 		    // Bi-directional error diffusion
 		    if ( y&1 ) {
 			for (x=0; x<sw; x++) {
-			    int pix = QMAX(QMIN(5, (l1[x] * 5 + 128)/ 255), 0);
+			    int pix = qMax(qMin(5, (l1[x] * 5 + 128)/ 255), 0);
 			    int err = l1[x] - pix * 255 / 5;
 			    pv[chan][x] = pix;
 
@@ -1612,7 +1612,7 @@ static bool convert_32_to_8( const QImage *src, QImage *dst, int conversion_flag
 			}
 		    } else {
 			for (x=sw; x-->0; ) {
-			    int pix = QMAX(QMIN(5, (l1[x] * 5 + 128)/ 255), 0);
+			    int pix = qMax(qMin(5, (l1[x] * 5 + 128)/ 255), 0);
 			    int err = l1[x] - pix * 255 / 5;
 			    pv[chan][x] = pix;
 
@@ -3550,7 +3550,7 @@ bool QImage::doImageIO( QImageIO* io, int quality ) const
 	qWarning( "QPixmap::save: quality out of range [-1,100]" );
 #endif
     if ( quality >= 0 )
-	io->setQuality( QMIN(quality,100) );
+	io->setQuality( qMin(quality,100) );
     return io->write();
 }
 #endif //QT_NO_IMAGEIO
@@ -6169,7 +6169,7 @@ void bitBlt( QImage* dst, int dx, int dy, const QImage* src,
 			unsigned char r = ((qRed(*s)-qRed(*d)) * a) / 256 + qRed(*d);
 			unsigned char g = ((qGreen(*s)-qGreen(*d)) * a) / 256 + qGreen(*d);
 			unsigned char b = ((qBlue(*s)-qBlue(*d)) * a) / 256 + qBlue(*d);
-			a = QMAX(qAlpha(*d),a); // alternatives...
+			a = qMax(qAlpha(*d),a); // alternatives...
 			*d++ = qRgba(r,g,b,a);
 			++s;
 		    }

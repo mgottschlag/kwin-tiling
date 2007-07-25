@@ -223,12 +223,12 @@ inline const QSize operator/( const QSize &s, double c )
 
 inline QSize QSize::expandedTo( const QSize & otherSize ) const
 {
-    return QSize( QMAX(wd,otherSize.wd), QMAX(ht,otherSize.ht) );
+    return QSize( qMax(wd,otherSize.wd), qMax(ht,otherSize.ht) );
 }
 
 inline QSize QSize::boundedTo( const QSize & otherSize ) const
 {
-    return QSize( QMIN(wd,otherSize.wd), QMIN(ht,otherSize.ht) );
+    return QSize( qMin(wd,otherSize.wd), qMin(ht,otherSize.ht) );
 }
 
 

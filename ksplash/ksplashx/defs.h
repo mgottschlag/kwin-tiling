@@ -43,8 +43,8 @@ const QCOORD QCOORD_MIN = -QCOORD_MAX - 1;
 
 typedef unsigned int QRgb;			// RGB triplet
 
-#define QMAX(a, b)	((b) < (a) ? (a) : (b))
-#define QMIN(a, b)	((a) < (b) ? (a) : (b))
+#define qMax(a, b)	((b) < (a) ? (a) : (b))
+#define qMin(a, b)	((a) < (b) ? (a) : (b))
 #define QABS(a)	((a) >= 0  ? (a) : -(a))
 
 #define Q_UNUSED(x) (void)x;
