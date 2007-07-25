@@ -21,6 +21,8 @@
 
 #include <QGraphicsView>
 
+#include "plasma/plasma.h"
+
 class QPixmap;
 
 namespace Plasma
@@ -52,21 +54,14 @@ protected:
     void contextMenuEvent(QContextMenuEvent *event);
 
 private:
-    
-    enum zoom {
-        DESKTOP, // Only see applets
-        GROUPS, // See applets and groups
-        OVERVIEW // Only see groups
-    };
-    
     Plasma::Svg *m_background;
     QPixmap* m_bitmapBackground;
     QString m_wallpaperPath;
-    QAction *engineExplorerAction;
-    QAction *runCommandAction;
-    QAction *zoomInAction;
-    QAction *zoomOutAction;
-    zoom zoomLevel;
+    QAction *m_engineExplorerAction;
+    QAction *m_runCommandAction;
+    QAction *m_zoomInAction;
+    QAction *m_zoomOutAction;
+    Plasma::ZoomLevel m_zoomLevel;
 };
 
 #endif // multiple inclusion guard

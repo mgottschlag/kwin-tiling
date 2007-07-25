@@ -28,15 +28,16 @@
 #include <KRun>
 
 #include "plasma/applet.h"
-#include "plasma/svg.h"
 #include "plasma/corona.h"
+#include "plasma/svg.h"
 
 #include "krunner_interface.h"
 
 DesktopView::DesktopView(QWidget *parent)
     : QGraphicsView(parent),
       m_background(0),
-      m_bitmapBackground(0)
+      m_bitmapBackground(0),
+      m_zoomLevel(Plasma::DesktopZoom)
 {
     setFrameShape(QFrame::NoFrame);
     setAutoFillBackground(true);
@@ -62,18 +63,17 @@ DesktopView::DesktopView(QWidget *parent)
     }
 
     //TODO: should we delay the init of the actions until we actually need them?
-    engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
-    connect(engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer()));
-    runCommandAction = new QAction(i18n("Run Command..."), this);
-    connect(runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
-    
-    zoomLevel = DESKTOP;
-    
-    zoomInAction = new QAction(i18n("Zoom In"), this);
-    connect(zoomInAction, SIGNAL(triggered(bool)), this, SLOT(zoomIn()));
-    zoomInAction->setEnabled(false);
-    zoomOutAction = new QAction(i18n("Zoom Out"), this);
-    connect(zoomOutAction, SIGNAL(triggered(bool)), this, SLOT(zoomOut()));
+    m_engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
+    connect(m_engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer()));
+    m_runCommandAction = new QAction(i18n("Run Command..."), this);
+    connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
+
+
+    m_zoomInAction = new QAction(i18n("Zoom In"), this);
+    connect(m_zoomInAction, SIGNAL(triggered(bool)), this, SLOT(zoomIn()));
+    m_zoomInAction->setEnabled(false);
+    m_zoomOutAction = new QAction(i18n("Zoom Out"), this);
+    connect(m_zoomOutAction, SIGNAL(triggered(bool)), this, SLOT(zoomOut()));
 }
 
 DesktopView::~DesktopView()
@@ -82,32 +82,32 @@ DesktopView::~DesktopView()
 
 void DesktopView::zoomIn()
 {
-    if (zoomLevel == GROUPS) {
-        scale(2, 2); // zoom in to DESKTOP
-        zoomLevel = DESKTOP;
-        zoomInAction->setEnabled(false);
-        zoomOutAction->setEnabled(true);
-    } else if (zoomLevel == OVERVIEW) {
-        scale(5, 5); // zoom in to GROUPS
-        zoomLevel = GROUPS;
-        zoomInAction->setEnabled(true);
-        zoomOutAction->setEnabled(true);
+    if (m_zoomLevel == Plasma::GroupZoom) {
+        m_zoomLevel = Plasma::DesktopZoom;
+        m_zoomInAction->setEnabled(false);
+        m_zoomOutAction->setEnabled(true);
+    } else if (m_zoomLevel == Plasma::OverviewZoom) {
+        m_zoomLevel = Plasma::GroupZoom;
+        m_zoomInAction->setEnabled(true);
+        m_zoomOutAction->setEnabled(true);
     }
+
+    scale(Plasma::scalingFactor(m_zoomLevel) * 10, Plasma::scalingFactor(m_zoomLevel) * 10);
 }
 
 void DesktopView::zoomOut()
 {
-    if (zoomLevel == DESKTOP) {
-        scale(.5, .5); // zoom out to GROUPS
-        zoomLevel = GROUPS;
-        zoomInAction->setEnabled(true);
-        zoomOutAction->setEnabled(true);
-    } else if (zoomLevel == GROUPS) {
-        scale(.2, .2); // zoom out to OVERVIEW
-        zoomLevel = OVERVIEW;
-        zoomInAction->setEnabled(true);
-        zoomOutAction->setEnabled(false);
+    if (m_zoomLevel == Plasma::DesktopZoom) {
+        m_zoomLevel = Plasma::GroupZoom;
+        m_zoomInAction->setEnabled(true);
+        m_zoomOutAction->setEnabled(true);
+    } else if (m_zoomLevel == Plasma::GroupZoom) {
+        m_zoomLevel = Plasma::OverviewZoom;
+        m_zoomInAction->setEnabled(true);
+        m_zoomOutAction->setEnabled(false);
     }
+
+    scale(Plasma::scalingFactor(m_zoomLevel), Plasma::scalingFactor(m_zoomLevel));
 }
 
 void DesktopView::launchExplorer()
@@ -209,9 +209,9 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
 
     KMenu desktopMenu;
     //kDebug() << "context menu event " << immutable << endl;
-    if (zoomLevel != DESKTOP) {
-        desktopMenu.addAction(zoomInAction);
-        desktopMenu.addAction(zoomOutAction);
+    if (m_zoomLevel != Plasma::DesktopZoom) {
+        desktopMenu.addAction(m_zoomInAction);
+        desktopMenu.addAction(m_zoomOutAction);
     }
     else if (!applet) {
         if (corona() && corona()->isImmutable()) {
@@ -221,15 +221,15 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
 
         //FIXME: change this to show this only in debug mode (or not at all?)
         //       before final release
-        desktopMenu.addAction(engineExplorerAction);
+        desktopMenu.addAction(m_engineExplorerAction);
 
         if (KAuthorized::authorizeKAction("run_command")) {
-            desktopMenu.addAction(runCommandAction);
+            desktopMenu.addAction(m_runCommandAction);
         }
-        
+
         desktopMenu.addSeparator();
-        desktopMenu.addAction(zoomInAction);
-        desktopMenu.addAction(zoomOutAction);
+        desktopMenu.addAction(m_zoomInAction);
+        desktopMenu.addAction(m_zoomOutAction);
         
     } else if (applet->isImmutable()) {
         QGraphicsView::contextMenuEvent(event);
