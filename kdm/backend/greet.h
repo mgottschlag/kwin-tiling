@@ -72,8 +72,8 @@ from the copyright holder.
 #define DEBUG_STRACE   0x800
 
 #ifndef TRUE //krazy:exclude=captruefalse
-# define TRUE  1 //krazy:exclude=captruefalse
-# define FALSE 0 //krazy:exclude=captruefalse
+# define TRUE  1
+# define FALSE 0
 #endif
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)

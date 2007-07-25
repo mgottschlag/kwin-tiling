@@ -60,7 +60,7 @@ static bool testDir( const QString &_name )
   if ( dp == NULL )
   {
     QString m = _name;
-    if ( m.endsWith( "/" ) )
+    if ( m.endsWith( '/' ) )
       m.truncate( m.length() - 1 );
     QByteArray path = QFile::encodeName(m);
 

@@ -66,7 +66,7 @@ QuickURL::QuickURL(const QString &u)
       // this ensures that desktop entries are referenced by desktop name instead of by file name
       _menuId=KUrl(_menuId).path();
    }
-   if (_menuId.startsWith("/")) {
+   if (_menuId.startsWith('/')) {
       // Absolute path
       _kurl.setPath(_menuId);
 

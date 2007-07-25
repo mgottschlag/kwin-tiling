@@ -193,7 +193,7 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
   for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
   {
     QString path = *it;
-    if (path.endsWith("/"))
+    if (path.endsWith('/'))
       path.truncate(path.length()-1);
 
     pathDb[path]=false;
@@ -204,7 +204,7 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
   {
     //Normalize..
     QString path = *it;
-    if (path.endsWith("/"))
+    if (path.endsWith('/'))
       path.truncate(path.length()-1);
 
     //Remove..
@@ -219,7 +219,7 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
   for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
   {
     QString path = *it;
-    if (path.endsWith("/"))
+    if (path.endsWith('/'))
       path.truncate(path.length()-1);
 
     pathDb[path]=true;
@@ -242,7 +242,7 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
 
     if (fromKDE)
     {
-      if (!path.endsWith("/"))
+      if (!path.endsWith('/'))
         path += '/';
       kdeAdded.push_back(path); //Add for the new list -- do it here to have it in the right form..
     }

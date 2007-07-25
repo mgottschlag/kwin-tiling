@@ -190,14 +190,14 @@ static QString entryToDirId(const QString &path)
 {
    // See also KDesktopFile::locateLocal
    QString local;
-   if (path.startsWith("/"))
+   if (path.startsWith('/'))
    {
       // XDG Desktop menu items come with absolute paths, we need to
       // extract their relative path and then build a local path.
       local = KGlobal::dirs()->relativeLocation("xdgdata-dirs", path);
    }
 
-   if (local.isEmpty() || local.startsWith("/"))
+   if (local.isEmpty() || local.startsWith('/'))
    {
       // What now? Use filename only and hope for the best.
       local = path.mid(path.lastIndexOf('/')+1);
@@ -334,7 +334,7 @@ void MenuFile::setLayout(const QString &menuName, const QStringList &layout)
          mergeNode.setAttribute("type", "all");
          layoutNode.appendChild(mergeNode);
       }
-      else if (li.endsWith("/"))
+      else if (li.endsWith('/'))
       {
          li.truncate(li.length()-1);
          QDomElement menuNode = m_doc.createElement(MF_MENUNAME);
@@ -456,7 +456,7 @@ QString MenuFile::uniqueMenuName(const QString &menuName, const QString &newMenu
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, false);
 
    QString result = newMenu;
-   if (result.endsWith("/"))
+   if (result.endsWith('/'))
        result.truncate(result.length()-1);
 
    QRegExp r("(.*)(?=-\\d+)");

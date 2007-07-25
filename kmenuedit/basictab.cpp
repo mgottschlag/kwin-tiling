@@ -483,7 +483,7 @@ void BasicTab::uidcb_clicked()
 void BasicTab::slotExecSelected()
 {
     QString path = _execEdit->lineEdit()->text();
-    if (!path.startsWith("'"))
+    if (!path.startsWith('\''))
         _execEdit->lineEdit()->setText(KShell::quoteArg(path));
 }
 

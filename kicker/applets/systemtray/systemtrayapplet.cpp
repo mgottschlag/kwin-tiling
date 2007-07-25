@@ -566,7 +566,7 @@ void SystemTrayApplet::updateVisibleWins()
         for( TrayEmbedList::iterator it2 = m_shownWins.begin();
              it2 != m_shownWins.end();
              ) {
-            if( (*it1).startsWith("!") ? classes[ *it2 ] == *it1 : names[ *it2 ] == *it1 ) {
+            if( (*it1).startsWith('!') ? classes[ *it2 ] == *it1 : names[ *it2 ] == *it1 ) {
                 newList.append( *it2 ); // don't bail out, there may be multiple ones
                 it2 = m_shownWins.erase( it2 );
             } else

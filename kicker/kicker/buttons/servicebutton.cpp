@@ -59,10 +59,10 @@ ServiceButton::ServiceButton(const KService::Ptr &service, QWidget* parent)
     _id(service->storageId())
 {
     setObjectName("ServiceButton");
-    if (_id.startsWith("/"))
+    if (_id.startsWith('/'))
     {
        QString tmp = KGlobal::dirs()->relativeLocation("appdata", _id);
-       if (!tmp.startsWith("/"))
+       if (!tmp.startsWith('/'))
           _id = ':'+tmp;
     }
     initialize();
@@ -95,7 +95,7 @@ void ServiceButton::loadServiceFromId(const QString &id)
     */
     _service = 0;
 
-    if (_id.startsWith(":"))
+    if (_id.startsWith('/'))
     {
        _id = KStandardDirs::locate("appdata", id.mid(1));
        if (!_id.isEmpty())
@@ -118,10 +118,10 @@ void ServiceButton::loadServiceFromId(const QString &id)
         backedByFile(_service->desktopEntryPath());
     }
 
-    if (_id.startsWith("/"))
+    if (_id.startsWith('/'))
     {
        QString tmp = KGlobal::dirs()->relativeLocation("appdata", _id);
-       if (!tmp.startsWith("/"))
+       if (!tmp.startsWith('/'))
           _id = ':'+tmp;
     }
 }
