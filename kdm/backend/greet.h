@@ -71,7 +71,7 @@ from the copyright holder.
 #define DEBUG_VALGRIND 0x400
 #define DEBUG_STRACE   0x800
 
-#ifndef TRUE //krazy:exclude=captruefalse
+#ifndef TRUE
 # define TRUE  1
 # define FALSE 0
 #endif
