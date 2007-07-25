@@ -426,7 +426,7 @@ bool RandRScreen::applyProposed(bool confirm)
 	if (succeed && confirm)
 		succeed = RandR::confirm(r);
 
-	// if we succeded applying and the user confirmer the changes,
+	// if we succeeded applying and the user confirmer the changes,
 	// just return from here 
 	if (succeed)
 		return true;

@@ -39,36 +39,3 @@
  * </ul>
  */
 
-
-
-class QObject
-{
-};
-
-class QWidget : public QObject
-{
-};
-
-class QDialog : public QWidget
-{
-};
-
-class QFrame : public QWidget
-{
-};
-
-class KHBox : public QFrame
-{
-};
-
-class QLCDNumber : public QFrame
-{
-};
-
-class KDialog : public QDialog
-{
-};
-
-class KPanelExtension : public QWidget
-{
-};
