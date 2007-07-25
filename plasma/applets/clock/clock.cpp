@@ -67,9 +67,9 @@ Clock::Clock(QObject *parent, const QStringList &args)
     constraintsUpdated();
 }
 
-QRectF Clock::boundingRect() const
+QSizeF Clock::contentSize() const
 {
-    return m_bounds;
+    return m_size;
 }
 
 void Clock::constraintsUpdated()
@@ -77,12 +77,11 @@ void Clock::constraintsUpdated()
     prepareGeometryChange();
     if (formFactor() == Plasma::Planar ||
         formFactor() == Plasma::MediaCenter) {
-        QSize s = m_theme->size();
-        m_bounds = QRect(0, 0, s.width(), s.height());
+        m_size = m_theme->size();
         update();
     } else {
         QFontMetrics fm(QApplication::font());
-        m_bounds = QRectF(0, 0, fm.width("00:00:00") * 1.2, fm.height() * 1.5);
+        m_size = QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5);
     }
 }
 
@@ -114,7 +113,7 @@ void Clock::showConfigurationInterface() //TODO: Make the size settable
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
 
         ui.timeZones->setSelected(m_timezone, true);
-        ui.spinSize->setValue((int)m_bounds.width());
+        ui.spinSize->setValue((int)m_size.width());
         ui.showTimeStringCheckBox->setChecked(m_showTimeString);
         ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
     }
@@ -188,9 +187,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(rect)
 
     QRectF tempRect(0, 0, 0, 0);
-    QRectF boundRect = boundingRect();
 
-    QSizeF boundSize = boundRect.size();
+    QSizeF boundSize = rect.size();
     QSize elementSize;
 
     p->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -204,13 +202,13 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         QString time = m_time.toString();
         QFontMetrics fm(QApplication::font());
         if (m_showSecondHand) {
-            p->drawText((int)(boundRect.width() * 0.1), (int)(boundRect.height() * 0.25), m_time.toString());
+            p->drawText((int)(rect.width() * 0.1), (int)(rect.height() * 0.25), m_time.toString());
         } else {
-            p->drawText((int)(boundRect.width() * 0.1), (int)(boundRect.height() * 0.25), m_time.toString("hh:mm"));
+            p->drawText((int)(rect.width() * 0.1), (int)(rect.height() * 0.25), m_time.toString("hh:mm"));
         }
         return;
     }
-    m_theme->paint(p, boundRect, "ClockFace");
+    m_theme->paint(p, rect, "ClockFace");
 
     p->save();
     p->translate(boundSize.width()/2, boundSize.height()/2);
@@ -260,17 +258,17 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             //FIXME: temporary time output
             QString time = m_time.toString();
             QFontMetrics fm(QApplication::font());
-            p->drawText((int)(boundRect.width()/2 - fm.width(time) / 2),
-                        (int)((boundRect.height()/2) - fm.xHeight()*3), m_time.toString());
+            p->drawText((int)(rect.width()/2 - fm.width(time) / 2),
+                        (int)((rect.height()/2) - fm.xHeight()*3), m_time.toString());
         } else {
             QString time = m_time.toString("hh:mm");
             QFontMetrics fm(QApplication::font());
-            p->drawText((int)(boundRect.width()/2 - fm.width(time) / 2),
-                        (int)((boundRect.height()/2) - fm.xHeight()*3), m_time.toString("hh:mm"));
+            p->drawText((int)(rect.width()/2 - fm.width(time) / 2),
+                        (int)((rect.height()/2) - fm.xHeight()*3), m_time.toString("hh:mm"));
         }
     }
 
-    m_theme->paint(p, boundRect, "Glass");
+    m_theme->paint(p, rect, "Glass");
 }
 
 #include "clock.moc"

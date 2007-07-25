@@ -54,9 +54,9 @@ SolidNotifier::SolidNotifier(QObject *parent, const QStringList &args)
     constraintsUpdated();
 }
 
-QRectF SolidNotifier::boundingRect() const
+QSizeF SolidNotifier::contentSize() const
 {
-    return m_bounds;
+    return m_size;
 }
 
 void SolidNotifier::constraintsUpdated()
@@ -64,8 +64,7 @@ void SolidNotifier::constraintsUpdated()
     prepareGeometryChange();
     if (formFactor() == Plasma::Planar ||
         formFactor() == Plasma::MediaCenter) {
-        QSize s = m_theme->size();
-        m_bounds = QRect(x,y, s.width(), s.height());
+        m_size = m_theme->size();
     }
 }
 

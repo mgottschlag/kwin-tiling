@@ -45,7 +45,7 @@ class SolidNotifier : public Plasma::Applet
         ~SolidNotifier();
 
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
-        QRectF boundingRect() const;
+        QSizeF contentSize() const;
         void constraintsUpdated();
         void moveUp();
 
@@ -57,7 +57,7 @@ class SolidNotifier : public Plasma::Applet
 
     private :
 
-        QRectF m_bounds;
+        QSizeF m_size;
         int m_pixelSize;
         QString m_timezone;
         Plasma::Svg* m_theme;

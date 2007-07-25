@@ -39,7 +39,7 @@ class Url : public Plasma::Applet
         Url(QObject *parent, const QStringList &args);
         ~Url();
 
-        QRectF boundingRect() const;
+        QSizeF contentSize() const;
         void constraintsUpdated();
         void setUrl(const KUrl& url);
 

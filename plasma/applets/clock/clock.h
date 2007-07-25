@@ -55,7 +55,7 @@ class Clock : public Plasma::Applet
 
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void setPath(const QString&);
-        QRectF boundingRect() const;
+        QSizeF contentSize() const;
         void constraintsUpdated();
 
     public slots:
@@ -71,7 +71,7 @@ class Clock : public Plasma::Applet
 
         bool m_showTimeString;
         bool m_showSecondHand;
-        QRectF m_bounds;
+        QSizeF m_size;
         int m_pixelSize;
         QString m_timezone;
         Plasma::Svg* m_theme;

@@ -61,10 +61,10 @@ Url::~Url()
     cg.writeEntry("Url", m_url);
 }
 
-QRectF Url::boundingRect() const
+QSizeF Url::contentSize() const
 {
-//    kDebug() << "boundingRect is " << m_icon->boundingRect() << endl;
-    return m_icon->boundingRect();
+//    kDebug() << "contentSize is " << m_icon->boundingRect().size() << endl;
+    return m_icon->boundingRect().size();
 }
 
 void Url::constraintsUpdated()
