@@ -131,7 +131,7 @@ QString Solid::Control::BluetoothManager::defaultInterface() const
     return_SOLID_CALL(Ifaces::BluetoothManager *, d->managerBackend(), QString(), defaultInterface());
 }
 
-const Solid::Control::BluetoothInterface &Solid::Control::BluetoothManager::findBluetoothInterface(const QString &ubi) const
+Solid::Control::BluetoothInterface Solid::Control::BluetoothManager::findBluetoothInterface(const QString &ubi) const
 {
     Ifaces::BluetoothManager *backend = qobject_cast<Ifaces::BluetoothManager *>(d->managerBackend());
 
@@ -146,7 +146,7 @@ const Solid::Control::BluetoothInterface &Solid::Control::BluetoothManager::find
     }
 }
 
-const Solid::Control::BluetoothInputDevice &Solid::Control::BluetoothManager::findBluetoothInputDevice(const QString &ubi) const
+Solid::Control::BluetoothInputDevice Solid::Control::BluetoothManager::findBluetoothInputDevice(const QString &ubi) const
 {
     Ifaces::BluetoothManager *backend = qobject_cast<Ifaces::BluetoothManager *>(d->managerBackend());
 

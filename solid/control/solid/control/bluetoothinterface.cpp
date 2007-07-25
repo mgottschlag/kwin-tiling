@@ -101,7 +101,7 @@ QString Solid::Control::BluetoothInterface::ubi() const
     return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), ubi());
 }
 
-const Solid::Control::BluetoothRemoteDevice &Solid::Control::BluetoothInterface::findBluetoothRemoteDevice(const QString &ubi) const
+Solid::Control::BluetoothRemoteDevice Solid::Control::BluetoothInterface::findBluetoothRemoteDevice(const QString &ubi) const
 {
     QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> pair = d->findRegisteredBluetoothRemoteDevice(ubi);
 

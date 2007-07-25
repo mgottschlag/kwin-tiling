@@ -83,7 +83,7 @@ public:
      * @param ubi the identifier of the bluetooth interface to find
      * @returns a valid BlueoothInterface object if there's a device having the given UBI, an invalid one otherwise
      */
-    const BluetoothInterface &findBluetoothInterface(const QString  & ubi) const;
+    BluetoothInterface findBluetoothInterface(const QString  & ubi) const;
 
 
     /**
@@ -92,7 +92,7 @@ public:
      * @param ubi the identifier of the bluetooth input device to find
      * @returns a valid BlueoothInputDevice object if there's a device having the given UBI, an invalid one otherwise
      */
-    const BluetoothInputDevice &findBluetoothInputDevice(const QString  & ubi) const;
+    BluetoothInputDevice findBluetoothInputDevice(const QString  & ubi) const;
 
     /**
      * Retrieves the list of Universal Bluetooth Identifiers (UBIs) of bluetooth input devices

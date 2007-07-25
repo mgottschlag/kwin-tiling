@@ -117,7 +117,7 @@ public:
      * @param ubi the identifier of the bluetooth remote device to find from this bluetooth interface
      * @returns a valid BluetoothRemoteDevice object if a remote device having the given UBI for this interface exists, an invalid BluetoothRemoteDevice object otherwise.
      */
-    const BluetoothRemoteDevice &findBluetoothRemoteDevice(const QString &ubi) const;
+    BluetoothRemoteDevice findBluetoothRemoteDevice(const QString &ubi) const;
 
     /**
      * Retrieves the MAC address of the bluetooth interface/adapter.
