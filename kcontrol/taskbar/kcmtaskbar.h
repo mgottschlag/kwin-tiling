@@ -52,7 +52,7 @@ class TaskbarConfig : public KCModule
     Q_OBJECT
 
 public:
-    TaskbarConfig(QWidget *parent = 0, const char* name = 0,
+    explicit TaskbarConfig(QWidget *parent = 0, const char* name = 0,
                   const QStringList &list = QStringList());
 
 public Q_SLOTS:

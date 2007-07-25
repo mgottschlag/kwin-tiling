@@ -124,7 +124,7 @@ class KVirtualBGRenderer : public QObject
 {
     Q_OBJECT
 public:
-    KVirtualBGRenderer(int desk, const KSharedConfigPtr &config = KSharedConfigPtr(), bool kdmMode = false);
+    explicit KVirtualBGRenderer(int desk, const KSharedConfigPtr &config = KSharedConfigPtr(), bool kdmMode = false);
     ~KVirtualBGRenderer();
 
     KBackgroundRenderer * renderer(unsigned screen);

@@ -457,7 +457,7 @@ public:
     /**
      * Constructs a task drag object for a task list.
      */
-    TaskDrag(const Task::List& tasks, QWidget* source = 0);
+    explicit TaskDrag(const Task::List& tasks, QWidget* source = 0);
     ~TaskDrag();
 
     /**

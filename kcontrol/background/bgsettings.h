@@ -31,7 +31,7 @@ class QString;
 class KBackgroundPattern
 {
 public:
-    KBackgroundPattern(bool _kdmMode, const QString &name = QString());
+    explicit KBackgroundPattern(bool _kdmMode, const QString &name = QString());
     ~KBackgroundPattern();
 
     void copyConfig(const KBackgroundPattern*);
@@ -90,7 +90,7 @@ private:
 class KBackgroundProgram
 {
 public:
-    KBackgroundProgram(bool _kdmMode, const QString &name = QString());
+    explicit KBackgroundProgram(bool _kdmMode, const QString &name = QString());
     ~KBackgroundProgram();
 
     void copyConfig(const KBackgroundProgram*);

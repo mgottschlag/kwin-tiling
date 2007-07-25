@@ -35,7 +35,7 @@ class CPreviewSelectAction : public KSelectAction
 
     public:
 
-    CPreviewSelectAction(QObject *parent, bool all=false);
+    explicit CPreviewSelectAction(QObject *parent, bool all=false);
     virtual ~CPreviewSelectAction() { }
 
     void setStd();

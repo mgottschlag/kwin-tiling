@@ -66,7 +66,7 @@ class Q_GUI_EXPORT CollapsibleWidget : public QWidget
     Q_OBJECT
   public:
     CollapsibleWidget(QWidget *parent = 0);
-    CollapsibleWidget(const QString& caption, QWidget *parent = 0);
+    explicit CollapsibleWidget(const QString& caption, QWidget *parent = 0);
     ~CollapsibleWidget();
     
     QString caption() const;

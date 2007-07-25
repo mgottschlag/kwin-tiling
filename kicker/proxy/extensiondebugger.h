@@ -33,7 +33,7 @@ class ExtensionContainer : public QWidget
     Q_OBJECT
 
 public:
-    ExtensionContainer( KPanelExtension *extension, QWidget* parent = 0 );
+    explicit ExtensionContainer( KPanelExtension *extension, QWidget* parent = 0 );
 
 protected:
     void resizeEvent( QResizeEvent *ev );

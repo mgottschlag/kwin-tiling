@@ -34,8 +34,8 @@ class KxkbApplet : public KPanelApplet
 {
   Q_OBJECT
 public:
-    KxkbApplet(const QString& configFile, Plasma::Type t = Plasma::Normal,
-                 int actions = 0, QWidget *parent = 0, Qt::WFlags f = 0);
+    explicit KxkbApplet(const QString& configFile, Plasma::Type t = Plasma::Normal,
+                        int actions = 0, QWidget *parent = 0, Qt::WFlags f = 0);
     ~KxkbApplet();
     
     virtual int widthForHeight(int height) const;

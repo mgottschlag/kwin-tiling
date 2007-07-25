@@ -77,7 +77,7 @@ protected:
 class BGMonitorLabel : public QLabel
 {
 public:
-    BGMonitorLabel(QWidget *parent, const char *name=0L);
+    explicit BGMonitorLabel(QWidget *parent, const char *name=0L);
 
     BGMonitor * monitor() const { return m_pBGMonitor; }
     void updateMonitorGeometry();
@@ -99,7 +99,7 @@ class BGMonitor : public QLabel
     Q_OBJECT
 public:
 
-    BGMonitor(QWidget *parent, const char *name=0L);
+    explicit BGMonitor(QWidget *parent, const char *name=0L);
 
 Q_SIGNALS:
     void imageDropped(const QString &);

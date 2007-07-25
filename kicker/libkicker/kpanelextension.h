@@ -109,7 +109,7 @@ public:
      * @param parent The pointer to the parent widget handed over in the factory function.
      * @param name A Qt object name for your extension.
      **/
-    KPanelExtension(const QString& configFile, int actions = 0, QWidget *parent = 0);
+    explicit KPanelExtension(const QString& configFile, int actions = 0, QWidget *parent = 0);
 
     /**
      * Destructor.

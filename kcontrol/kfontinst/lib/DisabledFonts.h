@@ -96,7 +96,7 @@ class KFONTINST_EXPORT CDisabledFonts
         void     add(const TFont &t) const;
     };
 
-    CDisabledFonts(const QString &path=QString(), bool sys=false);
+    explicit CDisabledFonts(const QString &path=QString(), bool sys=false);
     ~CDisabledFonts()          { save(); }
 
     static const LangWritingSystemMap * languageForWritingSystemMap() { return theirLanguageForWritingSystem; }

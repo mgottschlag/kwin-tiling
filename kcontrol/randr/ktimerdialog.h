@@ -70,14 +70,14 @@ class KTimerDialog : public KDialog
      *
      * For the rest of the arguments, See @see KDialog .
      */
-    KTimerDialog( int msec, TimerStyle style=CountDown, QWidget *parent=0,
-                 const char *name=0, bool modal=true,
-                 const QString &caption=QString(),
-                 int buttonMask=Ok|Apply|Cancel, ButtonCode defaultButton=Ok,
-                 bool separator=false,
-                 const KGuiItem &user1=KGuiItem(),
-                 const KGuiItem &user2=KGuiItem(),
-                 const KGuiItem &user3=KGuiItem() );
+    explicit KTimerDialog( int msec, TimerStyle style=CountDown, QWidget *parent=0,
+                           const char *name=0, bool modal=true,
+                           const QString &caption=QString(),
+                           int buttonMask=Ok|Apply|Cancel, ButtonCode defaultButton=Ok,
+                           bool separator=false,
+                           const KGuiItem &user1=KGuiItem(),
+                           const KGuiItem &user2=KGuiItem(),
+                           const KGuiItem &user3=KGuiItem() );
 
     /**
      * Destructor.

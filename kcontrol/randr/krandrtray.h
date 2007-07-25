@@ -35,7 +35,7 @@ class KRandRSystemTray : public KSystemTrayIcon
 	Q_OBJECT
 
 public:
-	KRandRSystemTray(RandRDisplay *dpy, QWidget* parent = 0);
+	explicit KRandRSystemTray(RandRDisplay *dpy, QWidget* parent = 0);
 
 	void configChanged();
 

@@ -49,7 +49,7 @@ class KSMPushButton : public QPushButton
     Q_OBJECT
 
 public:
-    KSMPushButton( const QString &text, QWidget *parent = 0 );
+    explicit KSMPushButton( const QString &text, QWidget *parent = 0 );
 
     void setPixmap( const QPixmap & );
     void setPopupMenu( QMenu * );

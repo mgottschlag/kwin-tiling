@@ -36,9 +36,9 @@ class KDE_EXPORT ExtensionInfo
         typedef QMap<QObject*, ExtensionInfo*> Dict;
         enum ExtensionType { Undefined, Panel, Desktop };
 
-        ExtensionInfo(const QString& desktopFile = QString(),
-                      const QString& configFile = QString(),
-                      const ExtensionType type = Undefined);
+        explicit ExtensionInfo(const QString& desktopFile = QString(),
+                               const QString& configFile = QString(),
+                               const ExtensionType type = Undefined);
 
         virtual ~ExtensionInfo();
         ExtensionInfo(const ExtensionInfo& copy);

@@ -42,7 +42,7 @@ class KNewThemeDlg: public KDialog
 {
     Q_OBJECT
 public:
-    KNewThemeDlg( QWidget * parent = 0, const char * name = 0);
+    explicit KNewThemeDlg( QWidget * parent = 0, const char * name = 0);
     ~KNewThemeDlg();
 
     QString getName() const;

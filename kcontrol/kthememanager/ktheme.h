@@ -54,7 +54,7 @@ public:
      * #createYourself()
      * @param create Whether to start the DOM tree
      */
-    KTheme( QWidget *parent, bool create = false );
+    explicit KTheme( QWidget *parent, bool create = false );
 
     /**
      * Destructor

@@ -109,8 +109,8 @@ public:
      * @param parent The pointer to the parent widget handed over in the factory function.
      * @param f Window control flags
      **/
-    KPanelApplet(const QString& configFile, Plasma::Type t = Plasma::Normal,
-                 int actions = 0, QWidget *parent = 0, Qt::WFlags f = 0);
+    explicit KPanelApplet(const QString& configFile, Plasma::Type t = Plasma::Normal,
+                          int actions = 0, QWidget *parent = 0, Qt::WFlags f = 0);
 
     /**
      * Destructor.

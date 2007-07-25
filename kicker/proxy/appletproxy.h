@@ -38,7 +38,7 @@ class AppletProxy : public QObject
     Q_OBJECT
 
 public:
-    AppletProxy(QObject* parent, const char* name = 0);
+    explicit AppletProxy(QObject* parent, const char* name = 0);
     ~AppletProxy();
 
     void loadApplet(const QString& desktopFile, const QString& configFile);

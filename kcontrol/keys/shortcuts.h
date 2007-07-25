@@ -33,7 +33,7 @@ class ShortcutsModule : public QWidget
 {
 	Q_OBJECT
  public:
-	ShortcutsModule( QWidget *parent = 0, const char *name = 0 );
+	explicit ShortcutsModule( QWidget *parent = 0, const char *name = 0 );
 	~ShortcutsModule();
 
 	void load();

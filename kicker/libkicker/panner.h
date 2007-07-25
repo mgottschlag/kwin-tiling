@@ -34,7 +34,7 @@ class KDE_EXPORT Panner : public QScrollArea
     Q_OBJECT
 
 public:
-    Panner( QWidget* parent, const char* name = 0 );
+    explicit Panner( QWidget* parent, const char* name = 0 );
     ~Panner();
 
     QSize minimumSizeHint() const { return QWidget::minimumSizeHint(); }

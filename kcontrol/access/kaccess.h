@@ -29,7 +29,7 @@ class KAccessApp : public KUniqueApplication
 
 public:
 
-  KAccessApp(bool allowStyles=true, bool GUIenabled=true);
+  explicit KAccessApp(bool allowStyles=true, bool GUIenabled=true);
 
   bool x11EventFilter(XEvent *event);
 

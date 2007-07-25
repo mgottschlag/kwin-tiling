@@ -150,7 +150,7 @@ class KXftConfig
     //    system   - Indicates if the system-wide config file, or the users ~/.xftconfig file
     //               should be used. Only the font-installer should access the system file (and then
     //               only if run as root.
-    KXftConfig(int required, bool system=false);
+    explicit KXftConfig(int required, bool system=false);
 
     virtual ~KXftConfig();
 

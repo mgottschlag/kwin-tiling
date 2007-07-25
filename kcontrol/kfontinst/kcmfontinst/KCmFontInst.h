@@ -60,7 +60,7 @@ class CKCmFontInst : public KCModule
 
     public:
 
-    CKCmFontInst(QWidget *parent=NULL, const QStringList &list=QStringList());
+    explicit CKCmFontInst(QWidget *parent=NULL, const QStringList &list=QStringList());
     virtual ~CKCmFontInst();
 
     public Q_SLOTS:

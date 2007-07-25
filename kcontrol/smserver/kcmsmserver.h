@@ -31,7 +31,7 @@ class SMServerConfig : public KCModule
   Q_OBJECT
 
 public:
-  SMServerConfig( QWidget *parent=0, const QStringList &list=QStringList() );
+  explicit SMServerConfig( QWidget *parent=0, const QStringList &list=QStringList() );
 
   void load();
   void save();

@@ -384,7 +384,7 @@ public:
     * @param parent the parent widget
     * @param name the widget's name
     */
-    PanelPopupButton(QWidget *parent=0, const char *name=0);
+    explicit PanelPopupButton(QWidget *parent=0, const char *name=0);
 
     virtual ~PanelPopupButton();
 

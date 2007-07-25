@@ -46,7 +46,7 @@ class KXKBApp : public KUniqueApplication
 //     K_DCOP
 
 public:
-	KXKBApp(bool allowStyles=true, bool GUIenabled=true);
+	explicit KXKBApp(bool allowStyles=true, bool GUIenabled=true);
 	~KXKBApp();
 
 	virtual int newInstance();

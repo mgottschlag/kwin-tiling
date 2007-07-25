@@ -33,7 +33,7 @@ class AccessibilityConfig : public KCModule {
       /**
        * Constructor
        */   
-      AccessibilityConfig(QWidget *parent, const QStringList &foo = QStringList());
+      explicit AccessibilityConfig(QWidget *parent, const QStringList &foo = QStringList());
 
       /**
        * Destructor

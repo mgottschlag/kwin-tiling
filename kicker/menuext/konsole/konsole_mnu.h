@@ -63,7 +63,7 @@ private:
 class KonsoleMenuFactory : public KLibFactory
 {
 public:
-    KonsoleMenuFactory(QObject *parent = 0, const char *name = 0);
+    explicit KonsoleMenuFactory(QObject *parent = 0, const char *name = 0);
 
 protected:
     QObject* createObject(QObject *parent = 0, const char *classname = "QObject", const QStringList& args = QStringList());

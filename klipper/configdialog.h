@@ -69,7 +69,7 @@ class AdvancedWidget : public KVBox
     Q_OBJECT
 
 public:
-    AdvancedWidget( QWidget *parent = 0L, const char *name = 0L );
+    explicit AdvancedWidget( QWidget *parent = 0L, const char *name = 0L );
     ~AdvancedWidget();
 
     void setWMClasses( const QStringList& items );

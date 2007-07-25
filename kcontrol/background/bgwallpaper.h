@@ -35,7 +35,7 @@ class KBackgroundSettings;
 class BGMultiWallpaperList : public QListWidget
 {
 public:
-   BGMultiWallpaperList(QWidget *parent, const char *name = 0);
+   explicit BGMultiWallpaperList(QWidget *parent, const char *name = 0);
 
    void dragEnterEvent(QDragEnterEvent *ev);
    void dropEvent(QDropEvent *ev);

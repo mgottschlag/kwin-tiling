@@ -46,9 +46,9 @@ class KDE_EXPORT AppletInfo
                           Extension = 8,
                           Button = BuiltinButton | SpecialButton };
 
-        AppletInfo(const QString& desktopFile = QString(),
-                   const QString& configFile = QString(),
-                   const AppletType type = Undefined);
+        explicit AppletInfo(const QString& desktopFile = QString(),
+                            const QString& configFile = QString(),
+                            const AppletType type = Undefined);
 
         virtual ~AppletInfo();
         AppletInfo(const AppletInfo& copy);

@@ -59,7 +59,7 @@ class CJobRunner : public CActionDialog
         CMD_MOVE
     };
 
-    CJobRunner(QWidget *parent, int xid=0);
+    explicit CJobRunner(QWidget *parent, int xid=0);
     ~CJobRunner();
 
     bool            getAdminPasswd(QWidget *parent);
