@@ -279,7 +279,7 @@ public:
      * Returns the thumbnail for this task (or a null image if there is
      * none).
      */
-    const QPixmap &thumbnail() const { return _thumb; }
+    QPixmap thumbnail() const { return _thumb; }
 
     QPixmap thumbnail(int maxDimension);
 
@@ -508,7 +508,7 @@ public:
      */
     QString icon() const { return _data.findIcon(); }
     void update( const KStartupInfoData& data );
-    const KStartupInfoId& id() const { return _id; }
+    KStartupInfoId id() const { return _id; }
 
 Q_SIGNALS:
     /**
