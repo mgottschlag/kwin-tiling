@@ -120,10 +120,10 @@ public:
     QRect&  operator|=(const QRect &r);
     QRect&  operator&=(const QRect &r);
 
-    bool   contains( const QPoint &p, bool proper=FALSE ) const;
+    bool   contains( const QPoint &p, bool proper=false ) const;
     bool   contains( int x, int y ) const; // inline methods, _don't_ merge these
     bool   contains( int x, int y, bool proper ) const;
-    bool   contains( const QRect &r, bool proper=FALSE ) const;
+    bool   contains( const QRect &r, bool proper=false ) const;
     QRect  unite( const QRect &r ) const;
     QRect  intersect( const QRect &r ) const;
     bool   intersects( const QRect &r ) const;

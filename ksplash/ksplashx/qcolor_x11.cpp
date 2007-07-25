@@ -79,13 +79,13 @@ public:
     QColorScreenData()
     {
 //#	colorDict = 0;
-	colors_avail = TRUE;
+	colors_avail = true;
 	g_vis = 0;
 	g_carr = 0;
-	g_carr_fetch = TRUE;
+	g_carr_fetch = true;
 	g_cells = 0;
 	g_our_alloc = 0;
-	color_reduce = FALSE;
+	color_reduce = false;
     }
 
 //#    QColorDict *colorDict;		// dict of allocated colors
@@ -121,8 +121,8 @@ void qt_reset_color_avail()
 {
     int i;
     for ( i = 0; i < screencount; i++ ) {
-	screendata[i]->colors_avail = TRUE;
-	screendata[i]->g_carr_fetch = TRUE;	// do XQueryColors if !colors_avail
+	screendata[i]->colors_avail = true;
+	screendata[i]->g_carr_fetch = true;	// do XQueryColors if !colors_avail
     }
 }
 
@@ -217,7 +217,7 @@ void QColor::initialize()
 
     if ( color_init )				// already initialized
 	return;
-    color_init = TRUE;
+    color_init = true;
 
     Display *dpy  = QPaintDevice::x11AppDisplay();
     int	     spec = QApplication::colorSpec();
@@ -245,10 +245,10 @@ void QColor::initialize()
 	    Q_CHECK_PTR( screendata[scr]->g_carr );
 	    memset( screendata[scr]->g_carr, 0,
 		    screendata[scr]->g_cells*sizeof(XColor) );
-	    screendata[scr]->g_carr_fetch = TRUE;	// run XQueryColors on demand
+	    screendata[scr]->g_carr_fetch = true;	// run XQueryColors on demand
 	    screendata[scr]->g_our_alloc = new bool[screendata[scr]->g_cells];
 	    Q_CHECK_PTR( screendata[scr]->g_our_alloc );
-	    memset( screendata[scr]->g_our_alloc, FALSE,
+	    memset( screendata[scr]->g_our_alloc, false,
 		    screendata[scr]->g_cells*sizeof(bool) );
 	    XColor *xc = &screendata[scr]->g_carr[0];
 	    for ( int i=0; i<screendata[scr]->g_cells; i++ ) {
@@ -278,7 +278,7 @@ void QColor::initialize()
 #endif
 
 	if ( spec == (int)QApplication::ManyColor ) {
-	    screendata[scr]->color_reduce = TRUE;
+	    screendata[scr]->color_reduce = true;
 
 	    switch ( qt_ncols_option ) {
 	    case 216:
@@ -324,7 +324,7 @@ void QColor::initialize()
     }
 
 #if 0 /* 0 == allocate colors on demand */
-    setLazyAlloc( FALSE );			// allocate global colors
+    setLazyAlloc( false );			// allocate global colors
     ((QColor*)(&darkGray))->	alloc();
     ((QColor*)(&gray))->	alloc();
     ((QColor*)(&lightGray))->	alloc();
@@ -340,7 +340,7 @@ void QColor::initialize()
     ((QColor*)(&darkCyan))->	alloc();
     ((QColor*)(&darkMagenta))-> alloc();
     ((QColor*)(&darkYellow))->	alloc();
-    setLazyAlloc( TRUE );
+    setLazyAlloc( true );
 #endif
 }
 
@@ -355,7 +355,7 @@ void QColor::cleanup()
 {
     if ( !color_init )
 	return;
-    color_init = FALSE;
+    color_init = false;
     int scr;
     for ( scr = 0; scr < screencount; scr++ ) {
 	if ( screendata[scr]->g_carr ) {
@@ -368,7 +368,7 @@ void QColor::cleanup()
 	}
 #if 0
 	if ( screendata[scr]->colorDict ) {
-	    screendata[scr]->colorDict->setAutoDelete( TRUE );
+	    screendata[scr]->colorDict->setAutoDelete( true );
 	    screendata[scr]->colorDict->clear();
 	    delete screendata[scr]->colorDict;
 	    screendata[scr]->colorDict = 0;
@@ -420,12 +420,12 @@ uint QColor::alloc( int screen )
     if ( c ) {					// found color in dictionary
 	pix = c->pix;
 	if ( screen == QPaintDevice::x11AppScreen() ) {
-	    d.d8.invalid = FALSE;		// color ok
-	    d.d8.dirty = FALSE;
+	    d.d8.invalid = false;		// color ok
+	    d.d8.dirty = false;
 	    d.d8.pix = pix;			// use same pixel value
 	    if ( c->context != current_alloc_context ) {
 		c->context = 0;			// convert to default context
-		sd->g_our_alloc[pix] = TRUE;	// reuse without XAllocColor
+		sd->g_our_alloc[pix] = true;	// reuse without XAllocColor
 	    }
 	}
 	return pix;
@@ -437,7 +437,7 @@ uint QColor::alloc( int screen )
     col.green = g << 8;
     col.blue  = b << 8;
 
-    bool try_again = FALSE;
+    bool try_again = false;
     bool try_alloc = !sd->color_reduce;
     int  try_count = 0;
 
@@ -445,7 +445,7 @@ uint QColor::alloc( int screen )
 	// This loop is run until we manage to either allocate or
 	// find an approximate color, it stops after a few iterations.
 
-	try_again = FALSE;
+	try_again = false;
 
 	if ( try_alloc && sd->colors_avail &&
 	     XAllocColor(dpy, QPaintDevice::x11AppColormap( screen ),&col) ) {
@@ -453,18 +453,18 @@ uint QColor::alloc( int screen )
 	    pix = (uint) col.pixel;
 	    if ( screen == QPaintDevice::x11AppScreen() ) {
 		d.d8.pix = pix;
-		d.d8.invalid = FALSE;
-		d.d8.dirty = FALSE;
+		d.d8.invalid = false;
+		d.d8.dirty = false;
 		sd->g_carr[d.d8.pix] = col;		// update color array
 		if ( current_alloc_context == 0 )
-		    sd->g_our_alloc[d.d8.pix] = TRUE;	// reuse without XAllocColor
+		    sd->g_our_alloc[d.d8.pix] = true;	// reuse without XAllocColor
 	    }
 	} else {
 	    // No available colors, or we did not want to allocate one
 	    int i;
-	    sd->colors_avail = FALSE;		// no more available colors
+	    sd->colors_avail = false;		// no more available colors
 	    if ( sd->g_carr_fetch ) {		// refetch color array
-		sd->g_carr_fetch = FALSE;
+		sd->g_carr_fetch = false;
 		XQueryColors( dpy, QPaintDevice::x11AppColormap( screen ), sd->g_carr,
 			      sd->g_cells );
 	    }
@@ -488,9 +488,9 @@ uint QColor::alloc( int screen )
 		    col.red   = r << 8;
 		    col.green = g << 8;
 		    col.blue  = b << 8;
-		    try_alloc = TRUE;
-		    try_again = TRUE;
-		    sd->colors_avail = TRUE;
+		    try_alloc = true;
+		    try_again = true;
+		    sd->colors_avail = true;
 		    continue; // Try alloc reduced color
 		}
 	    }
@@ -502,16 +502,16 @@ uint QColor::alloc( int screen )
 		    d.argb = qRgb(0,0,0);
 		    pix = (uint)BlackPixel( dpy, screen );
 		    if ( screen == QPaintDevice::x11AppScreen() ) {
-			d.d8.invalid = FALSE;
-			d.d8.dirty = FALSE;
+			d.d8.invalid = false;
+			d.d8.dirty = false;
 			d.d8.pix = pix;
 		    }
 		} else { // light, use white
 		    d.argb = qRgb(0xff,0xff,0xff);
 		    pix = (uint)WhitePixel( dpy, screen );
 		    if ( screen == QPaintDevice::x11AppScreen() ) {
-			d.d8.invalid = FALSE;
-			d.d8.dirty = FALSE;
+			d.d8.invalid = false;
+			d.d8.dirty = false;
 			d.d8.pix = pix;
 		    }
 		}
@@ -527,21 +527,21 @@ uint QColor::alloc( int screen )
 		    sd->g_carr[i] = col;		// update color array
 		    if ( screen == QPaintDevice::x11AppScreen() ) {
 			if ( current_alloc_context == 0 )
-			    sd->g_our_alloc[i] = TRUE;	// only in the default context
+			    sd->g_our_alloc[i] = true;	// only in the default context
 		    }
 		} else {
 		    // Oops, it's gone again
 		    try_count++;
-		    try_again    = TRUE;
-		    sd->colors_avail = TRUE;
-		    sd->g_carr_fetch = TRUE;
+		    try_again    = true;
+		    sd->colors_avail = true;
+		    sd->g_carr_fetch = true;
 		}
 	    }
 	    if ( !try_again ) {				// got it
 		pix = (uint)sd->g_carr[i].pixel;
 		if ( screen == QPaintDevice::x11AppScreen() ) {
-		    d.d8.invalid = FALSE;
-		    d.d8.dirty = FALSE;
+		    d.d8.invalid = false;
+		    d.d8.dirty = false;
 		    d.d8.pix = pix;			// allocated X11 color
 		}
 	    }
@@ -556,16 +556,16 @@ uint QColor::alloc( int screen )
 	    d.argb = qRgb(0,0,0);
 	    pix = (uint)BlackPixel( dpy, screen );
 	    if ( screen == QPaintDevice::x11AppScreen() ) {
-		d.d8.invalid = FALSE;
-		d.d8.dirty = FALSE;
+		d.d8.invalid = false;
+		d.d8.dirty = false;
 		d.d8.pix = pix;
 	    }
 	} else { // light, use white
 	    d.argb = qRgb(0xff,0xff,0xff);
 	    pix = (uint)WhitePixel( dpy, screen );
 	    if ( screen == QPaintDevice::x11AppScreen() ) {
-		d.d8.invalid = FALSE;
-		d.d8.dirty = FALSE;
+		d.d8.invalid = false;
+		d.d8.dirty = false;
 		d.d8.pix = pix;
 	    }
        	}
@@ -651,8 +651,8 @@ void QColor::setSystemNamedColor( const char* name )
 #endif
 	setRgb( qRed(rgb), qGreen(rgb), qBlue(rgb) );
 	if ( colormodel == d8 ) {
-	    d.d8.invalid = FALSE;
-	    d.d8.dirty = TRUE;
+	    d.d8.invalid = false;
+	    d.d8.dirty = true;
 	    d.d8.pix = 0;
 	} else {
 	    alloc();
@@ -687,9 +687,9 @@ static int  context_ptr = 0;
 
 static void init_context_stack()
 {
-    static bool did_init = FALSE;
+    static bool did_init = false;
     if ( !did_init ) {
-	did_init = TRUE;
+	did_init = true;
 	context_stack[0] = current_alloc_context = 0;
     }
 }
@@ -833,7 +833,7 @@ void QColor::destroyAllocContext( int context )
 #else
 	ulong pixels[256];
 	bool freeing[256];
-	memset( freeing, FALSE, screendata[screen]->g_cells*sizeof(bool) );
+	memset( freeing, false, screendata[screen]->g_cells*sizeof(bool) );
 	QColorData   *d;
 	QColorDictIt it( *screendata[screen]->colorDict );
 	int i = 0;
@@ -845,7 +845,7 @@ void QColor::destroyAllocContext( int context )
 		if ( !screendata[screen]->g_our_alloc[d->pix] && !freeing[d->pix] ) {
 		    // will free this color
 		    pixels[i++] = d->pix;
-		    freeing[d->pix] = TRUE;
+		    freeing[d->pix] = true;
 		}
 		// remove from dict
 		screendata[screen]->colorDict->remove( (long)rgbv );

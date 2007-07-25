@@ -53,11 +53,6 @@ typedef unsigned int QRgb;			// RGB triplet
 
 #define Q_ASSERT(x)
 
-#ifndef TRUE
-const bool FALSE = 0;
-const bool TRUE = !0;
-#endif
-
 typedef unsigned char   uchar;
 typedef unsigned	uint;
 

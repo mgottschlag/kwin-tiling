@@ -194,13 +194,13 @@ GC qt_xget_readonly_gc( int scrn, bool monochrome )	// get read-only GC
 	if ( !app_gc_ro_m )			// create GC for bitmap
 	    memset( (app_gc_ro_m = new GC[appScreenCount]), 0, appScreenCount * sizeof( GC ) );
 	if ( !app_gc_ro_m[scrn] )
-	    app_gc_ro_m[scrn] = create_gc( scrn, TRUE );
+	    app_gc_ro_m[scrn] = create_gc( scrn, true );
 	gc = app_gc_ro_m[scrn];
     } else {					// create standard GC
 	if ( !app_gc_ro )
 	    memset( (app_gc_ro = new GC[appScreenCount]), 0, appScreenCount * sizeof( GC ) );
 	if ( !app_gc_ro[scrn] )
-	    app_gc_ro[scrn] = create_gc( scrn, FALSE );
+	    app_gc_ro[scrn] = create_gc( scrn, false );
 	gc = app_gc_ro[scrn];
     }
     return gc;
@@ -220,13 +220,13 @@ GC qt_xget_temp_gc( int scrn, bool monochrome )		// get temporary GC
 	if ( !app_gc_tmp_m )			// create GC for bitmap
 	    memset( (app_gc_tmp_m = new GC[appScreenCount]), 0, appScreenCount * sizeof( GC ) );
 	if ( !app_gc_tmp_m[scrn] )
-	    app_gc_tmp_m[scrn] = create_gc( scrn, TRUE );
+	    app_gc_tmp_m[scrn] = create_gc( scrn, true );
 	gc = app_gc_tmp_m[scrn];
     } else {					// create standard GC
 	if ( !app_gc_tmp )
 	    memset( (app_gc_tmp = new GC[appScreenCount]), 0, appScreenCount * sizeof( GC ) );
 	if ( !app_gc_tmp[scrn] )
-	    app_gc_tmp[scrn] = create_gc( scrn, FALSE );
+	    app_gc_tmp[scrn] = create_gc( scrn, false );
 	gc = app_gc_tmp[scrn];
     }
     return gc;

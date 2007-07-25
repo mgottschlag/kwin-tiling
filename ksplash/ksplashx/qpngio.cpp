@@ -121,7 +121,7 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 
 	    if (!image.create(width, height, 32))
 		return;
-	    image.setAlphaBuffer(TRUE);
+	    image.setAlphaBuffer(true);
 
 	    if (QImage::systemByteOrder() == QImage::BigEndian)
 		png_set_swap_alpha(png_ptr);
@@ -143,7 +143,7 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 	    if ( png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS) ) {
 		const int g = info_ptr->trans_values.gray;
 		if (g < ncols) {
-		    image.setAlphaBuffer(TRUE);
+		    image.setAlphaBuffer(true);
 		    image.setColor(g, image.color(g) & RGB_MASK);
 		}
 	    }
@@ -163,7 +163,7 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 	    return;
 	int i = 0;
 	if ( png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS) ) {
-	    image.setAlphaBuffer( TRUE );
+	    image.setAlphaBuffer( true );
 	    while ( i < info_ptr->num_trans ) {
 		image.setColor(i, qRgba(
 		    info_ptr->palette[i].red,
@@ -206,7 +206,7 @@ void setup_qt( QImage& image, png_structp png_ptr, png_infop info_ptr, float scr
 		    PNG_FILLER_BEFORE : PNG_FILLER_AFTER);
 	    // We want 4 bytes, but it isn't an alpha channel
 	} else {
-	    image.setAlphaBuffer(TRUE);
+	    image.setAlphaBuffer(true);
 	}
 
 	if ( QImage::systemByteOrder() == QImage::BigEndian ) {
@@ -341,7 +341,7 @@ png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)
 	while ( n-- && qAlpha(*c++)==0xff )
 	    ;
 	if ( n<0 ) // LIAR!
-	    image.setAlphaBuffer(FALSE);
+	    image.setAlphaBuffer(false);
     }
 
     png_read_end(png_ptr, end_info);

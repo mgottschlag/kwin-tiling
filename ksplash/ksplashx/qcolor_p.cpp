@@ -767,9 +767,9 @@ bool qt_get_named_rgb( const char *name, QRgb* rgb )
     free(name_no_space);
     if ( r ) {
 	*rgb = r->value;
-	return TRUE;
+	return true;
     } else {
-	return FALSE;
+	return false;
     }
 }
 
@@ -794,7 +794,7 @@ QStringList QColor::colorNames()
 
 bool qt_get_named_rgb( const char *, QRgb* )
 {
-    return FALSE;
+    return false;
 }
 
 uint qt_get_rgb_val( const char * )

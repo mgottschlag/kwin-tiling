@@ -135,7 +135,7 @@ public:
     void	reset();
 
     void	fill( uint pixel );
-    void	invertPixels( bool invertAlpha = TRUE );
+    void	invertPixels( bool invertAlpha = true );
 
     QImage	convertDepth( int ) const;
 #ifndef QT_NO_IMAGE_TRUECOLOR
@@ -165,7 +165,7 @@ public:
     QImage	createAlphaMask( int conversion_flags=0 ) const;
 #endif
 #ifndef QT_NO_IMAGE_HEURISTIC_MASK
-    QImage	createHeuristicMask( bool clipTight=TRUE ) const;
+    QImage	createHeuristicMask( bool clipTight=true ) const;
 #endif
 #ifndef QT_NO_IMAGE_MIRROR
     QImage	mirror() const;

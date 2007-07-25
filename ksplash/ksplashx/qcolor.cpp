@@ -193,8 +193,8 @@ QT_STATIC_CONST_IMPL QColor & Qt::darkYellow = stdcol[18];
   QColor member functions
  *****************************************************************************/
 
-bool QColor::color_init   = FALSE;		// color system not initialized
-bool QColor::globals_init = FALSE;		// global color not initialized
+bool QColor::color_init   = false;		// color system not initialized
+bool QColor::globals_init = false;		// global color not initialized
 QColor::ColorModel QColor::colormodel = d32;
 
 
@@ -222,7 +222,7 @@ QColor* QColor::globalColors()
 
 void QColor::initGlobalColors()
 {
-    globals_init = TRUE;
+    globals_init = true;
 
     #ifdef Q_WS_X11
     // HACK: we need a way to recognize color0 and color1 uniquely, so
@@ -330,9 +330,9 @@ void QColor::setPixel( uint pixel )
 {
     switch ( colormodel ) {
     case d8:
-	d.d8.direct = TRUE;
-	d.d8.invalid = FALSE;
-	d.d8.dirty = FALSE;
+	d.d8.direct = true;
+	d.d8.invalid = false;
+	d.d8.dirty = false;
 	d.d8.pix = pixel;
 	break;
     case d32:
@@ -434,8 +434,8 @@ QColor &QColor::operator=( const QColor &c )
 /*!
     \fn bool QColor::isValid() const
 
-    Returns FALSE if the color is invalid, i.e. it was constructed using the
-    default constructor; otherwise returns TRUE.
+    Returns false if the color is invalid, i.e. it was constructed using the
+    default constructor; otherwise returns true.
 */
 
 /*!
@@ -531,7 +531,7 @@ void QColor::setNamedColor( const char* name )
 #endif
 	d.argb = 0;
 	if ( colormodel == d8 ) {
-	    d.d8.invalid = TRUE;
+	    d.d8.invalid = true;
 	} else {
 	    d.d32.argb = Invalid;
 	}
@@ -753,9 +753,9 @@ void QColor::setRgb( int r, int g, int b )
     }
     d.argb = qRgb( r, g, b );
     if ( colormodel == d8 ) {
-	d.d8.invalid = FALSE;
-	d.d8.direct = FALSE;
-	d.d8.dirty = TRUE;
+	d.d8.invalid = false;
+	d.d8.direct = false;
+	d.d8.dirty = true;
     } else {
 	d.d32.pix = Dirt;
     }
@@ -775,9 +775,9 @@ void QColor::setRgb( QRgb rgb )
 {
     d.argb = rgb;
     if ( colormodel == d8 ) {
-	d.d8.invalid = FALSE;
-	d.d8.direct = FALSE;
-	d.d8.dirty = TRUE;
+	d.d8.invalid = false;
+	d.d8.direct = false;
+	d.d8.dirty = true;
     } else {
 	d.d32.pix = Dirt;
     }
@@ -878,14 +878,14 @@ QColor QColor::dark( int factor ) const
 /*!
     \fn bool QColor::operator==( const QColor &c ) const
 
-    Returns TRUE if this color has the same RGB value as \a c;
-    otherwise returns FALSE.
+    Returns true if this color has the same RGB value as \a c;
+    otherwise returns false.
 */
 
 /*!
     \fn bool QColor::operator!=( const QColor &c ) const
-    Returns TRUE if this color has a different RGB value from \a c;
-    otherwise returns FALSE.
+    Returns true if this color has a different RGB value from \a c;
+    otherwise returns false.
 */
 
 /*!

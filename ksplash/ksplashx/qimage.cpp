@@ -492,11 +492,11 @@ QImage::QImage( uchar* yourdata, int w, int h, int depth,
     data->nbytes = bpl*h;
     if ( colortable || !data->ncols ) {
 	data->ctbl = colortable;
-	data->ctbl_mine = FALSE;
+	data->ctbl_mine = false;
     } else {
 	// calloc since we realloc, etc. later (ick)
 	data->ctbl = (QRgb*)calloc( data->ncols*sizeof(QRgb), data->ncols );
-	data->ctbl_mine = TRUE;
+	data->ctbl_mine = true;
     }
     uchar** jt = (uchar**)malloc(h*sizeof(uchar*));
     for (int j=0; j<h; j++) {
@@ -537,11 +537,11 @@ QImage::QImage( uchar* yourdata, int w, int h, int depth,
     data->nbytes = bpl * h;
     if ( colortable || !numColors ) {
 	data->ctbl = colortable;
-	data->ctbl_mine = FALSE;
+	data->ctbl_mine = false;
     } else {
 	// calloc since we realloc, etc. later (ick)
 	data->ctbl = (QRgb*)calloc( numColors*sizeof(QRgb), numColors );
-	data->ctbl_mine = TRUE;
+	data->ctbl_mine = true;
     }
     uchar** jt = (uchar**)malloc(h*sizeof(uchar*));
     for (int j=0; j<h; j++) {
@@ -727,14 +727,14 @@ QImage QImage::copy(int x, int y, int w, int h, int conversion_flags) const
 	// alpha channel should be only copied, not used by bitBlt(), and
 	// this is mutable, we will restore the image state before returning
 	QImage *that = (QImage *) this;
-	that->setAlphaBuffer( FALSE );
+	that->setAlphaBuffer( false );
     }
     memcpy( image.colorTable(), colorTable(), numColors()*sizeof(QRgb) );
     bitBlt( &image, dx, dy, this, x, y, -1, -1, conversion_flags );
     if ( has_alpha ) {
 	// restore image state
 	QImage *that = (QImage *) this;
-	that->setAlphaBuffer( TRUE );
+	that->setAlphaBuffer( true );
     }
     image.setAlphaBuffer(hasAlphaBuffer());
     image.data->dpmx = dotsPerMeterX();
@@ -762,7 +762,7 @@ QImage QImage::copy(int x, int y, int w, int h, int conversion_flags) const
 /*!
     \fn bool QImage::isNull() const
 
-    Returns TRUE if it is a null image; otherwise returns FALSE.
+    Returns true if it is a null image; otherwise returns FALSE.
 
     A null image has all parameters set to zero and no allocated data.
 */
@@ -1040,7 +1040,7 @@ void QImage::fill( uint pixel )
 /*!
     Inverts all pixel values in the image.
 
-    If the depth is 32: if \a invertAlpha is TRUE, the alpha bits are
+    If the depth is 32: if \a invertAlpha is true, the alpha bits are
     also inverted, otherwise they are left unchanged.
 
     If the depth is not 32, the argument \a invertAlpha has no
@@ -1148,7 +1148,7 @@ void QImage::setNumColors( int numColors )
 	    if ( data->ctbl_mine )
 		free( data->ctbl );
 	    else
-		data->ctbl_mine = TRUE;
+		data->ctbl_mine = true;
 	    data->ctbl = 0;
 	}
 	data->ncols = 0;
@@ -1161,7 +1161,7 @@ void QImage::setNumColors( int numColors )
 		    (numColors-data->ncols)*sizeof(QRgb) );
     } else {					// create new color table
 	data->ctbl = (QRgb*)calloc( numColors*sizeof(QRgb), 1 );
-	data->ctbl_mine = TRUE;
+	data->ctbl_mine = true;
     }
     data->ncols = data->ctbl == 0 ? 0 : numColors;
 }
@@ -1170,14 +1170,14 @@ void QImage::setNumColors( int numColors )
 /*!
     \fn bool QImage::hasAlphaBuffer() const
 
-    Returns TRUE if alpha buffer mode is enabled; otherwise returns
+    Returns true if alpha buffer mode is enabled; otherwise returns
     FALSE.
 
     \sa setAlphaBuffer()
 */
 
 /*!
-    Enables alpha buffer mode if \a enable is TRUE, otherwise disables
+    Enables alpha buffer mode if \a enable is true, otherwise disables
     it. The default setting is disabled.
 
     An 8-bpp image has 8-bit pixels. A pixel is an index into the
@@ -1206,7 +1206,7 @@ void QImage::setAlphaBuffer( bool enable )
 
 /*!
     Sets the image \a width, \a height, \a depth, its number of colors
-    (in \a numColors), and bit order. Returns TRUE if successful, or
+    (in \a numColors), and bit order. Returns true if successful, or
     FALSE if the parameters are incorrect or if memory cannot be
     allocated.
 
@@ -1231,12 +1231,12 @@ bool QImage::create( int width, int height, int depth, int numColors,
 {
     reset();					// reset old data
     if ( width <= 0 || height <= 0 || depth <= 0 || numColors < 0 )
-	return FALSE;				// invalid parameter(s)
+	return false;				// invalid parameter(s)
     if ( depth == 1 && bitOrder == IgnoreEndian ) {
 #if defined(QT_CHECK_RANGE)
 	qWarning( "QImage::create: Bit order is required for 1 bpp images" );
 #endif
-	return FALSE;
+	return false;
     }
     if ( depth != 1 )
 	bitOrder = IgnoreEndian;
@@ -1257,18 +1257,18 @@ bool QImage::create( int width, int height, int depth, int numColors,
 #endif
 	break;
     default:				// invalid depth
-	return FALSE;
+	return false;
     }
 
     if ( depth == 32 )
 	numColors = 0;
     setNumColors( numColors );
     if ( data->ncols != numColors )		// could not alloc color table
-	return FALSE;
+	return false;
 
     if ( INT_MAX / depth < width) { // sanity check for potential overflow
 	setNumColors( 0 );
-	return FALSE;
+	return false;
     }
 // Qt/Embedded doesn't waste memory on unnecessary padding.
 #ifdef Q_WS_QWS
@@ -1281,7 +1281,7 @@ bool QImage::create( int width, int height, int depth, int numColors,
 #endif
     if (INT_MAX / bpl < height) { // sanity check for potential overflow
 	setNumColors( 0 );
-	return FALSE;
+	return false;
     }
     int nbytes = bpl*height;			// image size
     int ptbl   = height*sizeof(uchar*);		// pointer table size
@@ -1290,7 +1290,7 @@ bool QImage::create( int width, int height, int depth, int numColors,
     Q_CHECK_PTR(p);
     if ( !p ) {					// no memory
 	setNumColors( 0 );
-	return FALSE;
+	return false;
     }
     data->w = width;
     data->h = height;
@@ -1306,7 +1306,7 @@ bool QImage::create( int width, int height, int depth, int numColors,
 	    memset( d+bpl-pad, 0, pad );
 	d += bpl;
     }
-    return TRUE;
+    return true;
 }
 
 /*!
@@ -1337,7 +1337,7 @@ void QImage::reinit()
     data->ctbl = 0;
     data->bits = 0;
     data->bitordr = QImage::IgnoreEndian;
-    data->alpha = FALSE;
+    data->alpha = false;
 #ifndef QT_NO_IMAGE_TEXT
     data->misc = 0;
 #endif
@@ -1384,18 +1384,18 @@ static bool convert_32_to_8( const QImage *src, QImage *dst, int conversion_flag
 {
     register QRgb *p;
     uchar  *b;
-    bool    do_quant = FALSE;
+    bool    do_quant = false;
     int	    y, x;
 
     if ( !dst->create(src->width(), src->height(), 8, 256) )
-	return FALSE;
+	return false;
 
     const int tablesize = 997; // prime
     QRgbMap table[tablesize];
     int   pix=0;
     QRgb amask = src->hasAlphaBuffer() ? 0xffffffff : 0x00ffffff;
     if ( src->hasAlphaBuffer() )
-	dst->setAlphaBuffer(TRUE);
+	dst->setAlphaBuffer(true);
 
     if ( palette ) {
 	// Preload palette into table.
@@ -1429,7 +1429,7 @@ static bool convert_32_to_8( const QImage *src, QImage *dst, int conversion_flag
     }
 
     if ( (conversion_flags & Qt::DitherMode_Mask) == Qt::PreferDither ) {
-	do_quant = TRUE;
+	do_quant = true;
     } else {
 	for ( y=0; y<src->height(); y++ ) {	// check if <= 256 colors
 	    p = (QRgb *)src->scanLine(y);
@@ -1450,7 +1450,7 @@ static bool convert_32_to_8( const QImage *src, QImage *dst, int conversion_flag
 		    } else {
 			// Cannot be in table
 			if ( pix == 256 ) {	// too many colors
-			    do_quant = TRUE;
+			    do_quant = true;
 			    // Break right out
 			    x = 0;
 			    y = src->height();
@@ -1682,14 +1682,14 @@ static bool convert_32_to_8( const QImage *src, QImage *dst, int conversion_flag
 
     }
 
-    return TRUE;
+    return true;
 }
 
 
 static bool convert_8_to_32( const QImage *src, QImage *dst )
 {
     if ( !dst->create(src->width(), src->height(), 32) )
-	return FALSE;				// create failed
+	return false;				// create failed
     dst->setAlphaBuffer( src->hasAlphaBuffer() );
     for ( int y=0; y<dst->height(); y++ ) {	// for each scan line...
 	register uint *p = (uint *)dst->scanLine(y);
@@ -1698,14 +1698,14 @@ static bool convert_8_to_32( const QImage *src, QImage *dst )
 	while ( p < end )
 	    *p++ = src->color(*b++);
     }
-    return TRUE;
+    return true;
 }
 
 
 static bool convert_1_to_32( const QImage *src, QImage *dst )
 {
     if ( !dst->create(src->width(), src->height(), 32) )
-	return FALSE;				// could not create
+	return false;				// could not create
     dst->setAlphaBuffer( src->hasAlphaBuffer() );
     for ( int y=0; y<dst->height(); y++ ) {	// for each scan line...
 	register uint *p = (uint *)dst->scanLine(y);
@@ -1725,14 +1725,14 @@ static bool convert_1_to_32( const QImage *src, QImage *dst )
 	    }
 	}
     }
-    return TRUE;
+    return true;
 }
 #endif // QT_NO_IMAGE_TRUECOLOR
 
 static bool convert_1_to_8( const QImage *src, QImage *dst )
 {
     if ( !dst->create(src->width(), src->height(), 8, 2) )
-	return FALSE;				// something failed
+	return false;				// something failed
     dst->setAlphaBuffer( src->hasAlphaBuffer() );
     if (src->numColors() >= 2) {
 	dst->setColor( 0, src->color(0) );	// copy color table
@@ -1763,7 +1763,7 @@ static bool convert_1_to_8( const QImage *src, QImage *dst )
 	    }
 	}
     }
-    return TRUE;
+    return true;
 }
 
 #ifndef QT_NO_IMAGE_DITHER_TO_1
@@ -1775,7 +1775,7 @@ static bool dither_to_1( const QImage *src, QImage *dst,
 			 int conversion_flags, bool fromalpha )
 {
     if ( !dst->create(src->width(), src->height(), 1, 2, QImage::BigEndian) )
-	return FALSE;				// something failed
+	return false;				// something failed
 
     enum { Threshold, Ordered, Diffuse } dithermode;
 
@@ -1822,7 +1822,7 @@ static bool dither_to_1( const QImage *src, QImage *dst,
 	int *line2 = new int[w];
 	int bmwidth = (w+7)/8;
 	if ( !(line1 && line2) )
-	    return FALSE;
+	    return false;
 	register uchar *p;
 	uchar *end;
 	int *b1, *b2;
@@ -2052,7 +2052,7 @@ static bool dither_to_1( const QImage *src, QImage *dst,
 	}
       }
     }
-    return TRUE;
+    return true;
 }
 #endif
 
@@ -2070,7 +2070,7 @@ static inline bool is16BitGray( ushort c )
 static bool convert_16_to_32( const QImage *src, QImage *dst )
 {
     if ( !dst->create(src->width(), src->height(), 32) )
-	return FALSE;				// create failed
+	return false;				// create failed
     dst->setAlphaBuffer( src->hasAlphaBuffer() );
     for ( int y=0; y<dst->height(); y++ ) {	// for each scan line...
 	register uint *p = (uint *)dst->scanLine(y);
@@ -2079,14 +2079,14 @@ static bool convert_16_to_32( const QImage *src, QImage *dst )
 	while ( p < end )
 	    *p++ = qt_conv16ToRgb( *s++ );
     }
-    return TRUE;
+    return true;
 }
 
 
 static bool convert_32_to_16( const QImage *src, QImage *dst )
 {
     if ( !dst->create(src->width(), src->height(), 16) )
-	return FALSE;				// create failed
+	return false;				// create failed
     dst->setAlphaBuffer( src->hasAlphaBuffer() );
     for ( int y=0; y<dst->height(); y++ ) {	// for each scan line...
 	register ushort *p = (ushort *)dst->scanLine(y);
@@ -2095,7 +2095,7 @@ static bool convert_32_to_16( const QImage *src, QImage *dst )
 	while ( p < end )
 	    *p++ = qt_convRgbTo16( *s++ );
     }
-    return TRUE;
+    return true;
 }
 
 
@@ -2125,7 +2125,7 @@ QImage QImage::convertDepth( int depth, int conversion_flags ) const
 	image = *this;				// no conversion
 #ifndef QT_NO_IMAGE_DITHER_TO_1
     else if ( (data->d == 8 || data->d == 32) && depth == 1 ) // dither
-	dither_to_1( this, &image, conversion_flags, FALSE );
+	dither_to_1( this, &image, conversion_flags, false );
 #endif
 #ifndef QT_NO_IMAGE_TRUECOLOR
     else if ( data->d == 32 && depth == 8 )	// 32 -> 8
@@ -2388,24 +2388,24 @@ bool QImage::allGray() const
 	QRgb* b = (QRgb*)bits();
 	while (p--)
 	    if (!isGray(*b++))
-		return FALSE;
+		return false;
 #ifndef QT_NO_IMAGE_16_BIT
     } else if (depth()==16) {
 	int p = width()*height();
 	ushort* b = (ushort*)bits();
 	while (p--)
 	    if (!is16BitGray(*b++))
-		return FALSE;
+		return false;
 #endif
     } else
 #endif //QT_NO_IMAGE_TRUECOLOR
 	{
-	if (!data->ctbl) return TRUE;
+	if (!data->ctbl) return true;
 	for (int i=0; i<numColors(); i++)
 	    if (!isGray(data->ctbl[i]))
-		return FALSE;
+		return false;
     }
-    return TRUE;
+    return false;
 }
 
 /*!
@@ -2431,11 +2431,11 @@ bool QImage::isGrayscale() const
     case 8: {
 	for (int i=0; i<numColors(); i++)
 	    if (data->ctbl[i] != qRgb(i,i,i))
-		return FALSE;
-	return TRUE;
+		return false;
+	return true;
 	}
     }
-    return FALSE;
+    return false;
 }
 
 #ifndef QT_NO_IMAGE_SMOOTHSCALE
@@ -2494,7 +2494,7 @@ void pnmscale(const QImage& src, QImage& dst)
 	tempxelrow = new QRgb[cols];
 
     if ( src.hasAlphaBuffer() ) {
-	dst.setAlphaBuffer(TRUE);
+	dst.setAlphaBuffer(true);
 	as = new long[cols];
 	for ( col = 0; col < cols; ++col )
 	    as[col] = HALFSCALE;
@@ -3058,7 +3058,7 @@ QImage QImage::createAlphaMask( int conversion_flags ) const
     }
 
     QImage mask1;
-    dither_to_1( this, &mask1, conversion_flags, TRUE );
+    dither_to_1( this, &mask1, conversion_flags, true );
     return mask1;
 }
 #endif
@@ -3118,10 +3118,10 @@ QImage QImage::createHeuristicMask( bool clipTight ) const
     }
 
     int x,y;
-    bool done = FALSE;
+    bool done = false;
     uchar *ypp, *ypc, *ypn;
     while( !done ) {
-	done = TRUE;
+	done = true;
 	ypn = m.scanLine(0);
 	ypc = 0;
 	for ( y = 0; y < h; y++ ) {
@@ -3139,7 +3139,7 @@ QImage QImage::createHeuristicMask( bool clipTight ) const
 		       !(*(ypn + (x     >> 3)) & (1 << (x     & 7))) ) &&
 		     (	(*(ypc + (x     >> 3)) & (1 << (x     & 7))) ) &&
 		     ( (*p & 0x00ffffff) == background ) ) {
-		    done = FALSE;
+		    done = true;
 		    *(ypc + (x >> 3)) &= ~(1 << (x & 7));
 		}
 		p++;
@@ -3292,7 +3292,7 @@ QImage QImage::mirror(bool horizontal, bool vertical) const
 
 QImage QImage::mirror() const
 {
-    return mirror(FALSE,TRUE);
+    return mirror(false,true);
 }
 #endif //QT_NO_IMAGE_MIRROR
 
@@ -3509,7 +3509,7 @@ bool QImage::loadFromData( QByteArray buf, const char *format )
 bool QImage::save( const QString &fileName, const char* format, int quality ) const
 {
     if ( isNull() )
-	return FALSE;				// nothing to save
+	return false;				// nothing to save
     QImageIO io( fileName, format );
     return doImageIO( &io, quality );
 }
@@ -3532,7 +3532,7 @@ bool QImage::save( const QString &fileName, const char* format, int quality ) co
 bool QImage::save( QIODevice* device, const char* format, int quality ) const
 {
     if ( isNull() )
-	return FALSE;				// nothing to save
+	return false;				// nothing to save
     QImageIO io( device, format );
     return doImageIO( &io, quality );
 }
@@ -3543,7 +3543,7 @@ bool QImage::save( QIODevice* device, const char* format, int quality ) const
 bool QImage::doImageIO( QImageIO* io, int quality ) const
 {
     if ( !io )
-	return FALSE;
+	return false;
     io->setImage( *this );
 #if defined(QT_CHECK_RANGE)
     if ( quality > 100  || quality < -1 )
@@ -3883,7 +3883,7 @@ void qt_init_image_handlers()		// initialize image handlers
     if ( !imageHandlers ) {
 	imageHandlers = new QIHList;
 	Q_CHECK_PTR( imageHandlers );
-	imageHandlers->setAutoDelete( TRUE );
+	imageHandlers->setAutoDelete( true );
 	qAddPostRoutine( cleanup );
 #ifndef QT_NO_IMAGEIO_BMP
 	QImageIO::defineIOHandler( "BMP", "^BM", 0,
@@ -4400,10 +4400,10 @@ bool QImageIO::read()
     } else if ( !fname.isEmpty() ) {		// read from file
 	file.setName( fname );
 	if ( !file.open(IO_ReadOnly) )
-	    return FALSE;			// cannot open file
+	    return false;			// cannot open file
 	iodev = &file;
     } else {					// no file name or io device
-	return FALSE;
+	return false;
     }
     if (frmt.isEmpty()) {
 	// Try to guess format
@@ -4413,7 +4413,7 @@ bool QImageIO::read()
 		file.close();
 		iodev = 0;
 	    }
-	    return FALSE;
+	    return false;
 	}
     } else {
 	image_format = frmt;
@@ -4478,7 +4478,7 @@ bool QImageIO::read()
 bool QImageIO::write()
 {
     if ( frmt.isEmpty() )
-	return FALSE;
+	return false;
     QImageHandler *h = get_image_handler( frmt );
     if ( !h && !plugin_manager) {
 	qt_init_image_plugins();
@@ -4489,7 +4489,7 @@ bool QImageIO::write()
 	qWarning( "QImageIO::write: No such image format handler: %s",
 		 format() );
 #endif
-	return FALSE;
+	return false;
     }
     QFile file;
     if ( !iodev && !fname.isEmpty() ) {
@@ -4497,7 +4497,7 @@ bool QImageIO::write()
 	bool translate = h->text_mode==QImageHandler::TranslateInOut;
 	int fmode = translate ? IO_WriteOnly|IO_Translate : IO_WriteOnly;
 	if ( !file.open(fmode) )		// couldn't create file
-	    return FALSE;
+	    return false;
 	iodev = &file;
     }
     iostat = 1;
@@ -4619,7 +4619,7 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 
     s >> bi;					// read BMP info header
     if ( d->atEnd() )				// end of stream/file
-	return FALSE;
+	return false;
 #if 0
     qDebug( "offset...........%d", offset );
     qDebug( "startpos.........%d", startpos );
@@ -4647,10 +4647,10 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 
     if ( !(nbits == 1 || nbits == 4 || nbits == 8 || nbits == 16 || nbits == 24 || nbits == 32) ||
 	bi.biPlanes != 1 || comp > BMP_BITFIELDS )
-	return FALSE;					// weird BMP image
+	return false;					// weird BMP image
     if ( !(comp == BMP_RGB || (nbits == 4 && comp == BMP_RLE4) ||
 	(nbits == 8 && comp == BMP_RLE8) || ((nbits == 16 || nbits == 32) && comp == BMP_BITFIELDS)) )
-	 return FALSE;				// weird compression type
+	 return false;				// weird compression type
 
     int ncols;
     int depth;
@@ -4675,7 +4675,7 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
     image.create( w, h, depth, ncols, nbits == 1 ?
 		  QImage::BigEndian : QImage::IgnoreEndian );
     if ( image.isNull() )			// could not create image
-	return FALSE;
+	return false;
 
     image.setDotsPerMeterX( bi.biXPelsPerMeter );
     image.setDotsPerMeterY( bi.biYPelsPerMeter );
@@ -4687,18 +4687,18 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 	int   rgb_len = t == BMP_OLD ? 3 : 4;
 	for ( int i=0; i<ncols; i++ ) {
 	    if ( d->readBlock( (char *)rgb, rgb_len ) != rgb_len )
-		return FALSE;
+		return false;
 	    image.setColor( i, qRgb(rgb[2],rgb[1],rgb[0]) );
 	    if ( d->atEnd() )			// truncated file
-		return FALSE;
+		return false;
 	}
     } else if (comp == BMP_BITFIELDS && (nbits == 16 || nbits == 32)) {
 	if ( (Q_ULONG)d->readBlock( (char *)&red_mask, sizeof(red_mask) ) != sizeof(red_mask) )
-	    return FALSE;
+	    return false;
 	if ( (Q_ULONG)d->readBlock( (char *)&green_mask, sizeof(green_mask) ) != sizeof(green_mask) )
-	    return FALSE;
+	    return false;
 	if ( (Q_ULONG)d->readBlock( (char *)&blue_mask, sizeof(blue_mask) ) != sizeof(blue_mask) )
-	    return FALSE;
+	    return false;
 	red_shift = calc_shift(red_mask);
 	red_scale = 256 / ((red_mask >> red_shift) + 1);
 	green_shift = calc_shift(green_mask);
@@ -4714,7 +4714,7 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 	red_shift = 16;
 	blue_scale = green_scale = red_scale = 1;
     } else if (comp == BMP_RGB && nbits == 16)  // don't support RGB values for 15/16 bpp
-	return FALSE;
+	return false;
 
     // offset can be bogus, be careful
     if (offset>=0 && startpos + offset > (Q_LONG)d->at() )
@@ -4867,7 +4867,7 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 				b = endp-p;
 
 			    if ( d->readBlock( (char *)p, b ) != b )
-				return FALSE;
+				return false;
 			    if ( (b & 1) == 1 )
 				d->getch();	// align on word boundary
 			    x += b;
@@ -4922,7 +4922,7 @@ bool read_dib( QDataStream& s, int offset, int startpos, QImage& image )
 	delete[] buf24;
     }
 
-    return TRUE;
+    return true;
 }
 
 bool qt_read_dib( QDataStream& s, QImage& image )
@@ -5022,7 +5022,7 @@ bool qt_write_dib( QDataStream& s, QImage image )
 	    d->writeBlock( padding, pad );
 #endif
 	}
-	return TRUE;
+	return true;
     }
 
     uchar *buf	= new uchar[bpl_bmp];
@@ -5054,11 +5054,11 @@ bool qt_write_dib( QDataStream& s, QImage image )
 	}
 	if ( bpl_bmp != d->writeBlock( (char*)buf, bpl_bmp ) ) {
 	    delete[] buf;
-	    return FALSE;
+	    return false;
 	}
     }
     delete[] buf;
-    return TRUE;
+    return true;
 }
 
 
@@ -5643,7 +5643,7 @@ static bool read_xpm_string( QCString &buf, QIODevice *d,
 {
     if ( source ) {
 	buf = source[index++];
-	return TRUE;
+	return true;
     }
 
     if ( buf.size() < 69 )	    //# just an approximation
@@ -5654,7 +5654,7 @@ static bool read_xpm_string( QCString &buf, QIODevice *d,
     int i;
     while ( (c=d->getch()) != EOF && c != '"' ) { }
     if ( c == EOF ) {
-	return FALSE;
+	return false;
     }
     i = 0;
     while ( (c=d->getch()) != EOF && c != '"' ) {
@@ -5663,13 +5663,13 @@ static bool read_xpm_string( QCString &buf, QIODevice *d,
 	buf[i++] = c;
     }
     if ( c == EOF ) {
-	return FALSE;
+	return false;
     }
 
     if ( i == (int)buf.size() ) // always use a 0 terminator
 	buf.resize( i+1 );
     buf[i] = '\0';
-    return TRUE;
+    return true;
 }
 
 
@@ -5758,7 +5758,7 @@ static void read_xpm_image_or_array( QImageIO * iio, const char * const * source
 	    buf.truncate(end);
 	buf = buf.stripWhiteSpace();
 	if ( buf == "none" ) {
-	    image.setAlphaBuffer( TRUE );
+	    image.setAlphaBuffer( true );
 	    int transparentColor = currentColor;
 	    if ( image.depth() == 8 ) {
 		image.setColor( transparentColor,
@@ -6007,14 +6007,14 @@ static
 bool
 haveSamePalette(const QImage& a, const QImage& b)
 {
-    if (a.depth() != b.depth()) return FALSE;
-    if (a.numColors() != b.numColors()) return FALSE;
+    if (a.depth() != b.depth()) return false;
+    if (a.numColors() != b.numColors()) return false;
     QRgb* ca = a.colorTable();
     QRgb* cb = b.colorTable();
     for (int i=a.numColors(); i--; ) {
-	if (*ca++ != *cb++) return FALSE;
+	if (*ca++ != *cb++) return false;
     }
-    return TRUE;
+    return true;
 }
 
 /*!
@@ -6221,19 +6221,19 @@ bool QImage::operator==( const QImage & i ) const
 {
     // same object, or shared?
     if ( i.data == data )
-	return TRUE;
+	return true;
     // obviously different stuff?
     if ( i.data->h != data->h ||
 	 i.data->w != data->w )
-	return FALSE;
+	return false;
     // that was the fast bit...
     QImage i1 = convertDepth( 32 );
     QImage i2 = i.convertDepth( 32 );
     int l;
     for( l=0; l < data->h; l++ )
 	if ( memcmp( i1.scanLine( l ), i2.scanLine( l ), 4*data->w ) )
-	    return FALSE;
-    return TRUE;
+	    return false;
+    return true;
 }
 
 

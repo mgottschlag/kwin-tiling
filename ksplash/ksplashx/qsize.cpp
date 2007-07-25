@@ -179,7 +179,7 @@ void QSize::scale( int w, int h, ScaleMode mode )
 	wd = (QCOORD)w;
 	ht = (QCOORD)h;
     } else {
-	bool useHeight = TRUE;
+	bool useHeight = true;
 	int w0 = width();
 	int h0 = height();
 	int rw = h * w0 / h0;

@@ -177,12 +177,12 @@ PixmapData PP::convertFromImage( const QImage &img, int conversion_flags )
 	    d = 1;
 	}
     } else {					// can be both
-	bool conv8 = FALSE;
+	bool conv8 = false;
 	if ( d > 8 && dd <= 8 ) {		// convert to 8 bit
 	    if ( (conversion_flags & DitherMode_Mask) == AutoDither )
 		conversion_flags = (conversion_flags & ~DitherMode_Mask)
 				   | PreferDither;
-	    conv8 = TRUE;
+	    conv8 = true;
 	} else if ( (conversion_flags & ColorMode_Mask) == ColorOnly ) {
 	    conv8 = d == 1;			// native depth wanted
 	} else if ( d == 1 ) {
@@ -192,7 +192,7 @@ PixmapData PP::convertFromImage( const QImage &img, int conversion_flags )
 		conv8 = QMIN(c0,c1) != qRgb(0,0,0) || QMAX(c0,c1) != qRgb(255,255,255);
 	    } else {
 		// eg. 1-color monochrome images (they do exist).
-		conv8 = TRUE;
+		conv8 = true;
 	    }
 	}
 	if ( conv8 ) {
@@ -281,7 +281,7 @@ PixmapData PP::convertFromImage( const QImage &img, int conversion_flags )
 	    m = image.createAlphaMask( conversion_flags );
 	    setMask( m );
 	}
-	return TRUE;
+	return true;
 #endif
     }
 
@@ -353,7 +353,7 @@ PixmapData PP::convertFromImage( const QImage &img, int conversion_flags )
 	    // Can do it? (Contiguous bits?)
 	    contig_bits;
 
-	static bool init=FALSE;
+	static bool init=false;
 	static int D[16][16];
 	if ( dither_tc && !init ) {
 	    // I also contributed this code to XV - WWA.
@@ -387,7 +387,7 @@ PixmapData PP::convertFromImage( const QImage &img, int conversion_flags )
 		    }
 		}
 	    }
-	    init=TRUE;
+	    init=true;
 	}
         
         enum { BPP8, 
@@ -859,11 +859,11 @@ PixmapData PP::convertFromImage( const QImage &img, int conversion_flags )
 
 #ifdef QT_MITSHM_CONVERSIONS
     if( mitshm_ximage )
-        XShmPutImage( dpy, hd, qt_xget_readonly_gc( x11Screen(), FALSE ),
+        XShmPutImage( dpy, hd, qt_xget_readonly_gc( x11Screen(), false ),
                       xi, 0, 0, 0, 0, w, h, False );
     else
 #endif
-        XPutImage( dpy, hd, qt_xget_readonly_gc( x11Screen(), FALSE  ),
+        XPutImage( dpy, hd, qt_xget_readonly_gc( x11Screen(), false  ),
                    xi, 0, 0, 0, 0, w, h );
 
     data->w = w;
