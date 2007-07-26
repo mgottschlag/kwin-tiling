@@ -39,6 +39,7 @@
 
 #include "processui/ksysguardprocesslist.h"
 
+#include "appadaptor.h"
 #include "kworkspace.h"
 #include "interfaceadaptor.h"
 #include "interface.h"
@@ -132,19 +133,7 @@ void KRunnerApp::initialize()
 {
     setQuitOnLastWindowClosed(false);
 
-    // Startup notification
-    KLaunchSettings::self()->readConfig();
-    StartupId *startup_id( NULL );
-    if( !KLaunchSettings::busyCursor() ) {
-        delete startup_id;
-        startup_id = NULL;
-    } else {
-        if( startup_id == NULL ) {
-            startup_id = new StartupId;
-        }
-
-        startup_id->configure();
-    }
+    initializeStartupNotification();
 
     kDebug() << "initliaze!()" << endl;
     m_interface = new Interface;
@@ -212,8 +201,26 @@ void KRunnerApp::initialize()
 
     m_actionCollection->readSettings();
 
+    new AppAdaptor(this);
+    QDBusConnection::sessionBus().registerObject( "/App", this );
 } // end void KRunnerApp::initializeBindings
 
+void KRunnerApp::initializeStartupNotification()
+{
+    // Startup notification
+    KLaunchSettings::self()->readConfig();
+    StartupId *startup_id( NULL );
+    if( !KLaunchSettings::busyCursor() ) {
+        delete startup_id;
+        startup_id = NULL;
+    } else {
+        if( startup_id == NULL ) {
+            startup_id = new StartupId;
+        }
+
+        startup_id->configure();
+    }
+}
 
 /*TODO: fixme - move to kwin
 void KRunnerApp::showWindowList()

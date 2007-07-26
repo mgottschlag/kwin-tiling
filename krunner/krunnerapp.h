@@ -31,6 +31,8 @@ class Interface;
 class KRunnerApp : public RestartingApplication
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.krunner.App")
+
 public:
 /*    KRunnerApp(Display *display,
                           Qt::HANDLE visual = 0,
@@ -45,6 +47,7 @@ public:
     virtual int newInstance();
     SaverEngine& screensaver() { return m_saver; }
 
+
     //UGLY
     static bool s_haveCompositeManager;
 
@@ -57,6 +60,10 @@ public slots:
     void logoutWithoutConfirmation();
     void haltWithoutConfirmation();
     void rebootWithoutConfirmation();
+
+    // DBUS interface. if you change these methods, you MUST run:
+    // qdbuscpp2xml -s krunnerapp.h -o org.kde.krunner.App.xml
+    Q_SCRIPTABLE void initializeStartupNotification();
 
 private slots:
     /**
