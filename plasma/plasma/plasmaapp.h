@@ -26,12 +26,19 @@ class RootWidget;
 class PlasmaApp : public KUniqueApplication
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.plasma.App")
+
 public:
     PlasmaApp();
     ~PlasmaApp();
 
     static PlasmaApp* self();
     void notifyStartup(bool completed);
+
+public Q_SLOTS:
+    // DBUS interface. if you change these methods, you MUST run:
+    // qdbuscpp2xml plasmaapp.h -o org.kde.plasma.App.xml
+    void initializeWallpaper();
 
 private slots:
     void setCrashHandler();

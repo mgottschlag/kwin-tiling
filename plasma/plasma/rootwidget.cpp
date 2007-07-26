@@ -106,6 +106,11 @@ RootWidget::~RootWidget()
 {
 }
 
+DesktopView* RootWidget::desktop()
+{
+    return m_desktop;
+}
+
 void RootWidget::adjustSize()
 {
     setGeometry( QApplication::desktop()->geometry() );

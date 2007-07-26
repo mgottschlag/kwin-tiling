@@ -33,7 +33,7 @@
 #include <knuminput.h>
 
 #include "kcmlaunch.h"
-#include "kdesktop_interface.h"
+#include "krunner_interface.h"
 
 typedef KGenericFactory<LaunchConfig, QWidget> LaunchFactory;
 K_EXPORT_COMPONENT_FACTORY( launch, LaunchFactory("kcmlaunch") )
@@ -214,10 +214,12 @@ LaunchConfig::save()
 
   emit changed( false );
 
-  org::kde::kdesktop::Desktop desktop("org.kde.kdesktop", "/Desktop", QDBusConnection::sessionBus());
-  desktop.configure();
-  QDBusInterface kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
-  kicker.call("restart");
+  org::kde::krunner::App desktop("org.kde.krunner", "/App", QDBusConnection::sessionBus());
+  desktop.initializeStartupNotification();
+  //TODO: do we need to replace this with a call to plasma to kick over the taskbar? needs
+  //investigating
+  //QDBusInterface kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
+  //kicker.call("restart");
 }
 
   void

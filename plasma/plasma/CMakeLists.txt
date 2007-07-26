@@ -8,6 +8,9 @@ set(plasma_SRCS
     rootwidget.cpp
 )
 
+set(plasmaapp_dbusXML org.kde.plasma.App.xml)
+qt4_add_dbus_adaptor(plasma_SRCS ${plasmaapp_dbusXML} plasmaapp.h PlasmaApp)
+
 set(krunner_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.kde.krunner.Interface.xml)
 QT4_ADD_DBUS_INTERFACE(plasma_SRCS ${krunner_xml} krunner_interface)
 

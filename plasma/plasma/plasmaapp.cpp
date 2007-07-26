@@ -30,8 +30,11 @@
 
 #include <KCrash>
 #include <KCmdLineArgs>
+
 #include <ksmserver_interface.h>
+
 #include "rootwidget.h"
+#include "desktopview.h"
 
 PlasmaApp* PlasmaApp::self()
 {
@@ -69,6 +72,15 @@ PlasmaApp::PlasmaApp()
 PlasmaApp::~PlasmaApp()
 {
     delete m_root;
+}
+
+void PlasmaApp::initializeWallpaper()
+{
+    if (!m_root) {
+        return;
+    }
+
+    m_root->desktop()->initializeWallpaper();
 }
 
 void PlasmaApp::setCrashHandler()

@@ -46,6 +46,7 @@ public slots:
     void zoomOut();
     void launchExplorer();
     void runCommand();
+    void initializeWallpaper();
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &);

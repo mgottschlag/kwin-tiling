@@ -194,11 +194,11 @@ QPixmap fastScalePixmap(const QPixmap &pixmap, int width, int height)
 void Desktop::loadBgPixmap(void)
 {
 //  if (!m_bgDirty) return;
+/*
   org::kde::kdesktop::Background kdesktop( "org.kde.kdesktop", "/Background", QDBusConnection::sessionBus() ); 
   QDBusReply<bool> reply = kdesktop.isCommon();
   m_isCommon = reply;
   if  ( m_isCommon && m_desk!=1 ) return;
-/*
   QDataStream args2( data2, QIODevice::WriteOnly );
   args2 << m_desk-1 << 0 << 0 << -1 << -1 << 200 << 150 ;
   if (client->call("kdesktop", "KBackgroundIface",
@@ -234,7 +234,6 @@ void Desktop::loadBgPixmap(void)
     }
   }
   kDebug() << "getting whole bg through shpixmap\n";
- */
   kdesktop.setExport(1);
 
   if (!m_bgPixmap)
@@ -244,6 +243,7 @@ void Desktop::loadBgPixmap(void)
   }
 
   m_bgPixmap->loadFromShared(QString("DESKTOP%1").arg(m_isCommon?1:m_desk));
+ */
 }
 
 void Desktop::paintWindow(QPainter &p, const KWindowInfo *info, bool onDesktop)

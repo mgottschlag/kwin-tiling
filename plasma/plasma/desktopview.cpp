@@ -42,6 +42,7 @@ DesktopView::DesktopView(QWidget *parent)
 {
     setFrameShape(QFrame::NoFrame);
     setAutoFillBackground(true);
+    initializeWallpaper();
 
     setScene(new Plasma::Corona(rect(), this));
     scene()->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -53,22 +54,11 @@ DesktopView::DesktopView(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    //TODO: make this a real background renderer
-    KConfigGroup config(KGlobal::config(), "General");
-    m_wallpaperPath = config.readEntry("wallpaper", QString());
-
-    //kDebug() << "wallpaperPath is " << m_wallpaperPath << " " << QFile::exists(m_wallpaperPath) << endl;
-    if (m_wallpaperPath.isEmpty() ||
-        !QFile::exists(m_wallpaperPath)) {
-        m_background = new Plasma::Svg("widgets/wallpaper", this);
-    }
-
     //TODO: should we delay the init of the actions until we actually need them?
     m_engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
     connect(m_engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer()));
     m_runCommandAction = new QAction(i18n("Run Command..."), this);
     connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
-
 
     m_zoomInAction = new QAction(i18n("Zoom In"), this);
     connect(m_zoomInAction, SIGNAL(triggered(bool)), this, SLOT(zoomIn()));
@@ -128,6 +118,21 @@ void DesktopView::runCommand()
     org::kde::krunner::Interface krunner(interface, "/Interface",
                                          QDBusConnection::sessionBus());
     krunner.display();
+}
+
+void DesktopView::initializeWallpaper()
+{
+    //TODO: make this a real background renderer
+    KConfigGroup config(KGlobal::config(), "General");
+    m_wallpaperPath = config.readEntry("wallpaper", QString());
+
+    //kDebug() << "wallpaperPath is " << m_wallpaperPath << " " << QFile::exists(m_wallpaperPath) << endl;
+    if (m_wallpaperPath.isEmpty() ||
+        !QFile::exists(m_wallpaperPath)) {
+        m_background = new Plasma::Svg("widgets/wallpaper", this);
+    }
+
+    //FIXME: this probably doesn't give us an immediate update when called after construction!
 }
 
 Plasma::Corona* DesktopView::corona()

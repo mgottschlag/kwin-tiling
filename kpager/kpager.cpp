@@ -236,10 +236,6 @@ KPager::KPager(KPagerMainWindow *parent, const char *name)
     connect( KWindowSystem::self(), SIGNAL( currentDesktopChanged(int)),
              SLOT( slotCurrentDesktopChanged(int) ) );
 
-    m_backgroundInterface = new org::kde::kdesktop::Background( "org.kde.kdesktop", "/Background", QDBusConnection::sessionBus() );
-    connect( m_backgroundInterface, SIGNAL(backgroundChanged(int)),
-             SLOT(slotBackgroundChanged(int)) );
-
     QFont defFont(KGlobalSettings::generalFont().family(), 10, QFont::Bold);
     KConfigGroup cfg(KGlobal::config(), "KPager");
     defFont = cfg.readEntry("Font", defFont);

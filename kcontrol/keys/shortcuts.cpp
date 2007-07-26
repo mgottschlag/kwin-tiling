@@ -118,11 +118,11 @@ void ShortcutsModule::initGUI()
 // see also KShortcutsModule::init() below !!!
 	QAction* a = 0L;
 #define NOSLOTS
-#define KICKER_ALL_BINDINGS
+//#define KICKER_ALL_BINDINGS
 #include "../../kwin/kwinbindings.cpp"
-#include "../../kicker/kicker/core/kickerbindings.cpp"
-#include "../../kicker/taskbar/taskbarbindings.cpp"
-#include "../../kdesktop/kdesktopbindings.cpp"
+//#include "../../kicker/kicker/core/kickerbindings.cpp"
+//#include "../../kicker/taskbar/taskbarbindings.cpp"
+//#include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 

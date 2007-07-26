@@ -36,6 +36,8 @@ class RootWidget : public QWidget
         RootWidget();
         ~RootWidget();
 
+        DesktopView* desktop();
+
     protected slots:
         void adjustSize();
 

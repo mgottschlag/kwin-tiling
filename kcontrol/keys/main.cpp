@@ -128,10 +128,10 @@ extern "C"
 #define NOSLOTS
 #include "../..//klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
-#define KICKER_ALL_BINDINGS
-#include "../../kicker/kicker/core/kickerbindings.cpp"
-#include "../../kicker/taskbar/taskbarbindings.cpp"
-#include "../../kdesktop/kdesktopbindings.cpp"
+//#define KICKER_ALL_BINDINGS
+//#include "../../kicker/kicker/core/kickerbindings.cpp"
+//#include "../../kicker/taskbar/taskbarbindings.cpp"
+//#include "../../kdesktop/kdesktopbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 
   // Write all the global keys to kdeglobals.

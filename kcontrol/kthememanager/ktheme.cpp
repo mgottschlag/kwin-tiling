@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QtDBus/QtDBus>
 #include <kglobalsettings.h>
 #include "kwin_interface.h"
-#include "kdesktop_background.h"
+#include "plasma_interface.h"
 
 KTheme::KTheme( QWidget *parent, const QString & xmlFile )
     : m_parent(parent)
@@ -439,8 +439,8 @@ void KTheme::apply()
 
     desktopConf.sync();         // TODO sync and signal only if <desktop> elem present
     // reconfigure kdesktop. kdesktop will notify all clients
-    org::kde::kdesktop::Background desktop("org.kde.kdesktop", "/Background", QDBusConnection::sessionBus());
-    desktop.configure();
+    org::kde::plasma::App desktop("org.kde.plasma", "/App", QDBusConnection::sessionBus());
+    desktop.initializeWallpaper();
 
     // FIXME Xinerama
 

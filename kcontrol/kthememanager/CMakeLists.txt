@@ -9,8 +9,8 @@ set(kcm_kthememanager_PART_SRCS knewthemedlg.cpp ktheme.cpp kthememanager.cpp )
 set(kwin_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kwin/org.kde.KWin.xml)
 QT4_ADD_DBUS_INTERFACE( kcm_kthememanager_PART_SRCS ${kwin_xml} kwin_interface )
 
-set(kdesktop_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdesktop/org.kde.kdesktop.Background.xml)
-QT4_ADD_DBUS_INTERFACE( kcm_kthememanager_PART_SRCS ${kdesktop_xml} kdesktop_background )
+set(plasma_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/plasma/org.kde.plasma.App.xml)
+QT4_ADD_DBUS_INTERFACE( kcm_kthememanager_PART_SRCS ${plasma_xml} plasma_interface )
 
 
 

@@ -37,7 +37,6 @@
 
 class KPager;
 class QMenu;
-class OrgKdeKdesktopBackgroundInterface;
 
 class KPagerMainWindow : public KXmlGuiWindow
 {
@@ -139,7 +138,6 @@ protected:
 
     QTimer *m_grabWinTimer;
     int     m_currentDesktop;
-    OrgKdeKdesktopBackgroundInterface* m_backgroundInterface;
 
 public:
     static const LayoutTypes c_defLayout;
