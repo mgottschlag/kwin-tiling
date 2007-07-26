@@ -3,7 +3,7 @@
 /*
  * KFontInst - KDE Font Installer
  *
- * (c) 2007 Craig Drummond <craig@kde.org>
+ * Copyright 2007 Craig Drummond <craig@kde.org>
  *
  * ----
  *
