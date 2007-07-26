@@ -625,7 +625,7 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 #endif
 	                                  i18n("Restart Computer") )
 	                            .arg( os ?
-	                                  i18n("<br>(Next boot: %1)",
+	                                  i18n("<br/>(Next boot: %1)",
 	                                    QString::fromLocal8Bit( os ) ) :
 	                                  QString() ),
 	                            this ) );

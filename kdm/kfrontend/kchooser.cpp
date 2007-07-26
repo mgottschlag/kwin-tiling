@@ -179,7 +179,7 @@ QString ChooserDlg::recvStr()
 		free( arr );
 		return str;
 	} else
-		return i18n("<unknown>");
+		return i18n("<unknown>"); //krazy:exclude=i18ncheckarg
 }
 
 ChooserListViewItem *ChooserDlg::findItem( int id )

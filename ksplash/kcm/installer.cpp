@@ -374,15 +374,15 @@ void SplashInstaller::slotSetTheme(int id)
         // Get theme information.
         infoTxt = "<qt>";
         if ( cnf.hasKey( "Name" ) )
-          infoTxt += i18n( "<b>Name:</b> %1<br>", cnf.readEntry( "Name", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Name:</b> %1<br/>", cnf.readEntry( "Name", i18n( "Unknown" ) ) );
         if ( cnf.hasKey( "Description" ) )
-          infoTxt += i18n( "<b>Description:</b> %1<br>", cnf.readEntry( "Description", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Description:</b> %1<br/>", cnf.readEntry( "Description", i18n( "Unknown" ) ) );
         if ( cnf.hasKey( "Version" ) )
-          infoTxt += i18n( "<b>Version:</b> %1<br>", cnf.readEntry( "Version", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Version:</b> %1<br/>", cnf.readEntry( "Version", i18n( "Unknown" ) ) );
         if ( cnf.hasKey( "Author" ) )
-          infoTxt += i18n( "<b>Author:</b> %1<br>", cnf.readEntry( "Author", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Author:</b> %1<br/>", cnf.readEntry( "Author", i18n( "Unknown" ) ) );
         if ( cnf.hasKey( "Homepage" ) )
-          infoTxt += i18n( "<b>Homepage:</b> %1<br>", cnf.readEntry( "Homepage", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Homepage:</b> %1<br/>", cnf.readEntry( "Homepage", i18n( "Unknown" ) ) );
         infoTxt += "</qt>";
 
         QString pluginName( cnf.readEntry( "Engine", "KSplashX" ) );
