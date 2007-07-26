@@ -1,0 +1,19 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Network Engine
+Name[es]=Motor de red
+Name[nl]=Netwerkengine
+Name[pt]=Motor de Rede
+Name[pt_BR]=Motor de Rede
+Name[sv]=Nätverksgränssnitt
+Comment=Network information for Plasmoids
+Comment[es]=Información de red para Plasmoids
+Comment[nl]=Netwerkinformatie voor Plasmoids
+Comment[pt]=Informação de rede para os Plasmóides
+Comment[pt_BR]=Informação de rede para os Plasmóides
+Comment[sv]=Nätverksinformation för Plasmoider
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=network
+X-KDE-Library=plasma_engine_network
+X-EngineName=network

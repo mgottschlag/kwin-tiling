@@ -1,0 +1,18 @@
+[Desktop Entry]
+Name=Weather Data Engine
+Name[es]=Motor de datos de tiempo
+Name[nl]=Weer-gegevensengine
+Name[pt]=Motor de Dados Meteorológicos
+Name[pt_BR]=Motor de Dados Meteorológicos
+Name[sv]=Datagränssnitt för väderrapport
+Comment=Weather data for Plasmoids
+Comment[es]=Datos de tiempo para Plasmoids
+Comment[nl]=Weergegevens voor Plasmoids
+Comment[pt]=Dados meteorológicos para os Plasmóides
+Comment[pt_BR]=Dados meteorológicos para os Plasmóides
+Comment[sv]=Väderrapport för Plasmoider
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=
+X-KDE-Library=plasma_engine_weather
+X-EngineName=weather

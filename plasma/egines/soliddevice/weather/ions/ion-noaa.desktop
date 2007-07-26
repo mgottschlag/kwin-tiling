@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=NOAA Ion
+Name[sv]=Jon för NOAA
+Comment=XML Data from NOAA's National Weather Service
+Comment[pt]=Dados em XML do National Weather Service da NOAA
+Comment[pt_BR]=Dados em XML do National Weather Service da NOAA
+Comment[sv]=XML-data från NOAA:s nationella vädertjänst
+ServiceTypes=WeatherEngine/Ion
+Type=Service
+Icon=noneyet
+X-KDE-Library=ion_noaa
+X-IonName=noaa

@@ -1,0 +1,19 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Dictionary Data Engine
+Name[es]=Motor de datos del diccionario
+Name[nl]=Woordenboek-gegevensengine
+Name[pt]=Motor de Dados do Dicionário
+Name[pt_BR]=Motor de Dados do Dicionário
+Name[sv]=Datagränssnitt för ordlista
+Comment=Look up word meanings
+Comment[es]=Buscar significados
+Comment[nl]=Zoek de betekenis van woorden op
+Comment[pt]=Procurar significados das palavras
+Comment[pt_BR]=Procurar significados das palavras
+Comment[sv]=Slå upp ords betydelse
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=dictionary
+X-KDE-Library=plasma_engine_dict
+X-EngineName=dict
