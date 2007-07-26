@@ -101,6 +101,7 @@ Solid::Control::Authentication::SecretMap Solid::Control::Authentication::secret
 /******************************************************************************/
 
 Solid::Control::AuthenticationNone::AuthenticationNone()
+    : d(0)
 {
 
 }
@@ -201,6 +202,7 @@ Solid::Control::AuthenticationWpa::WpaKeyManagement Solid::Control::Authenticati
 /******************************************************************************/
 
 Solid::Control::AuthenticationWpaPersonal::AuthenticationWpaPersonal()
+    : d(0)
 {
 
 }

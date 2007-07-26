@@ -50,7 +50,7 @@ namespace Control
 
     private:
         class Private;
-        Private *d;
+        Private * const d;
     };
 
     /**
@@ -61,6 +61,10 @@ namespace Control
     public:
         AuthenticationNone();
         virtual ~AuthenticationNone();
+
+    private:
+        class Private;
+        Private * const d;
     };
 
     /**
@@ -118,7 +122,7 @@ namespace Control
 
     private:
         class Private;
-        Private *d;
+        Private * const d;
     };
 
     /**
@@ -176,7 +180,7 @@ namespace Control
 
     private:
         class Private;
-        Private *d;
+        Private * const d;
     };
 
     /**
@@ -187,6 +191,10 @@ namespace Control
     public:
         AuthenticationWpaPersonal();
         virtual ~AuthenticationWpaPersonal();
+
+    private:
+        class Private;
+        Private * const d;
     };
 
     /**
@@ -273,7 +281,7 @@ namespace Control
 
     private:
         class Private;
-        Private *d;
+        Private * const d;
     };
 
     /**
@@ -293,7 +301,7 @@ namespace Control
             bool validate(const Authentication *);
         private:
             class Private;
-            Private * d;
+            Private * const d;
     };
 }
 }
