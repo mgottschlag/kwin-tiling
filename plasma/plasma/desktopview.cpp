@@ -26,6 +26,7 @@
 #include <KAuthorized>
 #include <KMenu>
 #include <KRun>
+#include <KToggleAction>
 
 #include "plasma/applet.h"
 #include "plasma/corona.h"
@@ -251,6 +252,11 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
             connect(closeApplet, SIGNAL(triggered(bool)),
                     applet, SLOT(deleteLater()));
             desktopMenu.addAction(closeApplet);
+	    KToggleAction* lockApplet = new KToggleAction(i18n("Lock this %1", applet->name()), this);
+	    lockApplet->setChecked(applet->lockApplet());
+	    connect(lockApplet, SIGNAL(triggered(bool)),
+		    applet, SLOT(slotLockApplet(bool)));
+	    desktopMenu.addAction(lockApplet);
             hasEntries = true;
         }
 
