@@ -99,6 +99,15 @@ bool KScreenSaver::eventFilter( QObject *o, QEvent *e )
     return QWidget::eventFilter( o, e );
 }
 
+KScreenSaverInterface::~KScreenSaverInterface()
+{
+}
+
+QDialog* KScreenSaverInterface::setup()
+{
+    return 0;
+}
+
 //============================================================================
 
 class KBlankEffectPrivate

@@ -90,7 +90,7 @@ public:
     /**
      * Destructor
      */
-    virtual ~KScreenSaverInterface() {}
+    virtual ~KScreenSaverInterface();
     /**
      * Reimplement this method to return the KAboutData instance describing your screensaver
      */
@@ -102,7 +102,7 @@ public:
     /**
      * Reimplement this method to return your modal setup dialog
      */
-    virtual QDialog* setup() { return 0; }
+    virtual QDialog* setup();
 };
 
 /**
