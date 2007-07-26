@@ -858,7 +858,7 @@ QString CFcEngine::getLowercaseLetters()
 
 QString CFcEngine::getPunctuation()
 {
-    return i18nc("Numbers and characters", "0123456789.:,;(*!?'/\\\")£$€%^&-+@~#<>{}[]");
+    return i18nc("Numbers and characters", "0123456789.:,;(*!?'/\\\")£$€%^&-+@~#<>{}[]"); //krazy:exclude=i18ncheckarg
 }
 
 #ifdef KFI_USE_TRANSLATED_FAMILY_NAME

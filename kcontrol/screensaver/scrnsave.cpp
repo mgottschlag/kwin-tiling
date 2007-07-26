@@ -92,15 +92,15 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
     mMonitor = 0;
     mTesting = false;
 
-    setQuickHelp( i18n("<h1>Screen Saver</h1> This module allows you to enable and"
+    setQuickHelp( i18n("<h1>Screen Saver</h1> <p>This module allows you to enable and"
        " configure a screen saver. Note that you can enable a screen saver"
-       " even if you have power saving features enabled for your display.<p>"
-       " Besides providing an endless variety of entertainment and"
+       " even if you have power saving features enabled for your display.</p>"
+       " <p>Besides providing an endless variety of entertainment and"
        " preventing monitor burn-in, a screen saver also gives you a simple"
        " way to lock your display if you are going to leave it unattended"
        " for a while. If you want the screen saver to lock the session, make sure you enable"
        " the \"Require password\" feature of the screen saver; if you do not, you can still"
-       " explicitly lock the session using the desktop's \"Lock Session\" action."));
+       " explicitly lock the session using the desktop's \"Lock Session\" action.</p>"));
 
     setButtons( KCModule::Help | KCModule::Default | KCModule::Apply );
 

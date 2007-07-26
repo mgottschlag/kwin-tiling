@@ -233,7 +233,7 @@ int main(int argc, char **argv)
     KCmdLineOptions options;
     options.add("embed <winid>", ki18n("Makes the dialog transient for an X app specified by winid"));
     options.add("size <index>", ki18n("Size index to print fonts"));
-    options.add("pfont <font>", ki18n("Font to print, specified as \"Family,Style\" where Style is a 24-bit decimal number composed as: <weight><width><slant>"));
+    options.add("pfont <font>", ki18n("Font to print, specified as \"Family,Style\" where Style is a 24-bit decimal number composed as: <weight><width><slant>")); //krazy:exclude=i18ncheckarg
     options.add("listfile <file>", ki18n("File containing list of fonts to print"));
     options.add("deletefile", ki18n("Remove file containing list of fonts to print"));
     KCmdLineArgs::addCmdLineOptions(options);

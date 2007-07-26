@@ -893,7 +893,7 @@ QString CFontList::whatsThis() const
                             "<li>Italic</li>"
                         "</ul>"
                     "</li>"
-                    "<ul>");
+                    "</ul>");
 }
 
 void CFontList::listingCompleted()

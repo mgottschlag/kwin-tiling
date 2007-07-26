@@ -86,8 +86,8 @@ class CPasswordDialog : public KPasswordDialog
             case 0:
                 return true;
             case SuProcess::SuNotFound:
-                showErrorMessage(i18n("Could not launch '%1'.<br>"
-                                      "Make sure your PATH is set correctly.",
+                showErrorMessage(i18n("<p>Could not launch '%1'.</p>"
+                                      "<p>Make sure your PATH is set correctly.</p>",
                                       itsSuProc.useUsersOwnPassword() ? "sudo" : "su"), FatalError);
                 return false;
             case SuProcess::SuNotAllowed:
