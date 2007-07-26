@@ -75,11 +75,27 @@ TaskManager* TaskManager::self()
     return m_self;
 }
 
+class TaskManager::Private
+{
+public:
+    Private()
+        : active(0),
+          startupInfo(0),
+          trackGeometry(false)
+    {
+    }
+
+    Task::TaskPtr active;
+    KStartupInfo* startupInfo;
+    Task::Dict tasksByWId;
+    Startup::List startups;
+    WindowList skiptaskbarWindows;
+    bool trackGeometry;
+};
+
 TaskManager::TaskManager()
     : QObject(),
-      _active(0),
-      _startup_info(0),
-      m_trackGeometry(false)
+      d(new Private)
 {
     KGlobal::locale()->insertCatalog("libtaskmanager");
     connect(KWindowSystem::self(), SIGNAL(windowAdded(WId)),
@@ -118,18 +134,18 @@ void TaskManager::configure_startup()
     KConfigGroup c(&_c, "FeedbackStyle");
     if (!c.readEntry("TaskbarButton", true))
         return;
-    _startup_info = new KStartupInfo( KStartupInfo::CleanOnCantDetect, this );
-    connect( _startup_info,
+    d->startupInfo = new KStartupInfo( KStartupInfo::CleanOnCantDetect, this );
+    connect( d->startupInfo,
         SIGNAL( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )));
-    connect( _startup_info,
+    connect( d->startupInfo,
         SIGNAL( gotStartupChange( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( gotStartupChange( const KStartupInfoId&, const KStartupInfoData& )));
-    connect( _startup_info,
+    connect( d->startupInfo,
         SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( killStartup( const KStartupInfoId& )));
     c.changeGroup( "TaskbarButtonSettings" );
-    _startup_info->setTimeout( c.readEntry( "Timeout", 30 ));
+    d->startupInfo->setTimeout( c.readEntry( "Timeout", 30 ));
 }
 
 #ifdef THUMBNAILING_POSSIBLE
@@ -216,8 +232,8 @@ void TaskManager::setXCompositeEnabled(bool state)
                                      CompositeRedirectAutomatic);
     }
 
-    Task::Dict::iterator itEnd = m_tasksByWId.end();
-    for (Task::Dict::iterator it = m_tasksByWId.begin(); it != itEnd; ++it)
+    Task::Dict::iterator itEnd = d->tasksByWId.end();
+    for (Task::Dict::iterator it = d->tasksByWId.begin(); it != itEnd; ++it)
     {
         it.value()->updateWindowPixmap();
     }
@@ -234,8 +250,8 @@ Task::TaskPtr TaskManager::findTask(WId w)
     // we check to see if w is a transient first?
     // profiling would say whether this is worth the effort
 
-    Task::Dict::iterator it = m_tasksByWId.begin();
-    Task::Dict::iterator itEnd = m_tasksByWId.end();
+    Task::Dict::iterator it = d->tasksByWId.begin();
+    Task::Dict::iterator itEnd = d->tasksByWId.end();
 
     for (; it != itEnd; ++it)
     {
@@ -254,8 +270,8 @@ Task::TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
 
     Task::TaskPtr task;
     int currentIndex = -1;
-    Task::Dict::iterator itEnd = m_tasksByWId.end();
-    for (Task::Dict::iterator it = m_tasksByWId.begin(); it != itEnd; ++it)
+    Task::Dict::iterator itEnd = d->tasksByWId.end();
+    for (Task::Dict::iterator it = d->tasksByWId.begin(); it != itEnd; ++it)
     {
         Task::TaskPtr t = it.value();
         if (!t->isOnAllDesktops() && t->desktop() != desktop)
@@ -306,7 +322,7 @@ void TaskManager::windowAdded(WId w )
     // ignore windows that want to be ignored by the taskbar
     if ((info.state() & NET::SkipTaskbar) != 0)
     {
-        _skiptaskbar_windows.push_front( w ); // remember them though
+        d->skiptaskbarWindows.push_front( w ); // remember them though
         return;
     }
 
@@ -316,7 +332,7 @@ void TaskManager::windowAdded(WId w )
         WId transient_for = (WId) transient_for_tmp;
 
         // check if it's transient for a skiptaskbar window
-        if( _skiptaskbar_windows.contains( transient_for ))
+        if( d->skiptaskbarWindows.contains( transient_for ))
             return;
 
         // lets see if this is a transient for an existing task
@@ -338,7 +354,7 @@ void TaskManager::windowAdded(WId w )
     }
 
     Task::TaskPtr t( new Task( w, this ) );
-    m_tasksByWId[w] = t;
+    d->tasksByWId[w] = t;
 
     // kDebug() << "TM: Task added for WId: " << w << endl;
 
@@ -347,7 +363,7 @@ void TaskManager::windowAdded(WId w )
 
 void TaskManager::windowRemoved(WId w)
 {
-    _skiptaskbar_windows.removeAll(w);
+    d->skiptaskbarWindows.removeAll(w);
 
     // find task
     Task::TaskPtr t = findTask(w);
@@ -358,12 +374,12 @@ void TaskManager::windowRemoved(WId w)
 
     if (t->window() == w)
     {
-        m_tasksByWId.remove(w);
+        d->tasksByWId.remove(w);
         emit taskRemoved(t);
 
-        if (t == _active)
+        if (t == d->active)
         {
-            _active = 0;
+            d->active = 0;
         }
 
         //kDebug() << "TM: Task for WId " << w << " removed." << endl;
@@ -384,12 +400,12 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         if (info.state() & NET::SkipTaskbar)
         {
             windowRemoved(w);
-            _skiptaskbar_windows.push_front(w);
+            d->skiptaskbarWindows.push_front(w);
             return;
         }
         else
         {
-            _skiptaskbar_windows.removeAll(w);
+            d->skiptaskbarWindows.removeAll(w);
             if (info.mappingState() != NET::Withdrawn && !findTask(w))
             {
                 // skipTaskBar state was removed and the window is still
@@ -403,7 +419,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     if (!(dirty & (NET::WMVisibleName |NET::WMName |
                    NET::WMState | NET::WMIcon |
                    NET::XAWMState | NET::WMDesktop) ||
-          (m_trackGeometry && dirty & NET::WMGeometry)))
+          (d->trackGeometry && dirty & NET::WMGeometry)))
     {
         return;
     }
@@ -480,17 +496,17 @@ void TaskManager::activeWindowChanged(WId w )
 
     Task::TaskPtr t = findTask( w );
     if (!t) {
-        if (_active) {
-            _active->setActive(false);
-            _active = 0;
+        if (d->active) {
+            d->active->setActive(false);
+            d->active = 0;
         }
     }
     else {
-        if (_active)
-            _active->setActive(false);
+        if (d->active)
+            d->active->setActive(false);
 
-        _active = t;
-        _active->setActive(true);
+        d->active = t;
+        d->active->setActive(true);
     }
 }
 
@@ -502,15 +518,15 @@ void TaskManager::currentDesktopChanged(int desktop)
 void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data )
 {
     Startup::StartupPtr s( new Startup( id, data, this ) );
-    _startups.append(s);
+    d->startups.append(s);
 
     emit startupAdded(s);
 }
 
 void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfoData& data )
 {
-    Startup::List::iterator itEnd = _startups.end();
-    for (Startup::List::iterator sIt = _startups.begin(); sIt != itEnd; ++sIt)
+    Startup::List::iterator itEnd = d->startups.end();
+    for (Startup::List::iterator sIt = d->startups.begin(); sIt != itEnd; ++sIt)
     {
         if ((*sIt)->id() == id)
         {
@@ -522,8 +538,8 @@ void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfo
 
 void TaskManager::killStartup( const KStartupInfoId& id )
 {
-    Startup::List::iterator sIt = _startups.begin();
-    Startup::List::iterator itEnd = _startups.end();
+    Startup::List::iterator sIt = d->startups.begin();
+    Startup::List::iterator itEnd = d->startups.end();
     Startup::StartupPtr s;
     for (; sIt != itEnd; ++sIt)
     {
@@ -539,7 +555,7 @@ void TaskManager::killStartup( const KStartupInfoId& id )
         return;
     }
 
-    _startups.erase(sIt);
+    d->startups.erase(sIt);
     emit startupRemoved(s);
 }
 
@@ -550,13 +566,13 @@ void TaskManager::killStartup(Startup::StartupPtr s)
         return;
     }
 
-    Startup::List::iterator sIt = _startups.begin();
-    Startup::List::iterator itEnd = _startups.end();
+    Startup::List::iterator sIt = d->startups.begin();
+    Startup::List::iterator itEnd = d->startups.end();
     for (; sIt != itEnd; ++sIt)
     {
         if ((*sIt) == s)
         {
-            _startups.erase(sIt);
+            d->startups.erase(sIt);
             break;
         }
     }
@@ -567,6 +583,16 @@ void TaskManager::killStartup(Startup::StartupPtr s)
 QString TaskManager::desktopName(int desk) const
 {
     return KWindowSystem::desktopName(desk);
+}
+
+Task::Dict TaskManager::tasks() const
+{
+    return d->tasksByWId;
+}
+
+Startup::List TaskManager::startups() const
+{
+    return d->startups;
 }
 
 int TaskManager::numberOfDesktops() const
@@ -586,8 +612,8 @@ bool TaskManager::isOnTop(const Task* task)
     QList<WId>::const_iterator it = list.begin() + (list.size() - 1);
     do
     {
-        Task::Dict::iterator taskItEnd = m_tasksByWId.end();
-        for (Task::Dict::iterator taskIt = m_tasksByWId.begin();
+        Task::Dict::iterator taskItEnd = d->tasksByWId.end();
+        for (Task::Dict::iterator taskIt = d->tasksByWId.begin();
              taskIt != taskItEnd; ++taskIt)
         {
             Task::TaskPtr t = taskIt.value();
@@ -612,6 +638,11 @@ bool TaskManager::isOnTop(const Task* task)
     return false;
 }
 
+void TaskManager::trackGeometry()
+{
+    d->trackGeometry = true;
+}
+
 bool TaskManager::isOnScreen(int screen, const WId wid)
 {
     if (screen == -1)
@@ -629,29 +660,64 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
     return window.intersects(desktop);
 }
 
-Task::Task(WId win, QObject *parent, const char *name)
+bool TaskManager::xCompositeEnabled()
+{
+    return m_xCompositeEnabled != 0;
+}
+
+class Task::Private
+{
+public:
+    Private(WId w)
+     : active(false),
+       win(w),
+       frameId(w),
+       info(KWindowSystem::windowInfo(w,
+            NET::WMState | NET::XAWMState | NET::WMDesktop |
+            NET::WMVisibleName | NET::WMGeometry,
+            NET::WM2AllowedActions)),
+       lastWidth(0),
+       lastHeight(0),
+       lastResize(false),
+       lastIcon(),
+       thumbSize(0.2),
+       thumb(),
+       grab()
+    {
+    }
+
+    bool active;
+    WId win;
+    WId frameId;
+    QPixmap pixmap;
+    KWindowInfo info;
+    WindowList transients;
+    WindowList transientsDemandingAttention;
+
+    int lastWidth;
+    int lastHeight;
+    bool lastResize;
+    QPixmap lastIcon;
+
+    double thumbSize;
+    QPixmap thumb;
+    QPixmap grab;
+    QRect iconGeometry;
+
+    Pixmap windowPixmap;
+};
+
+Task::Task(WId w, QObject *parent, const char *name)
   : QObject(parent),
-    _active(false),
-    _win(win),
-    m_frameId(win),
-    _info(KWindowSystem::windowInfo(_win,
-        NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry,
-        NET::WM2AllowedActions)),
-    _lastWidth(0),
-    _lastHeight(0),
-    _lastResize(false),
-    _lastIcon(),
-    _thumbSize(0.2),
-    _thumb(),
-    _grab()
+    d(new Private(w))
 {
     setObjectName( name );
 
     // try to load icon via net_wm
-    _pixmap = KWindowSystem::icon(_win, 16, 16, true);
+    d->pixmap = KWindowSystem::icon(d->win, 16, 16, true);
 
     // try to guess the icon from the classhint
-    if(_pixmap.isNull())
+    if (d->pixmap.isNull())
     {
         KIconLoader::global()->loadIcon(className().toLower(),
                                                     K3Icon::Small,
@@ -661,13 +727,13 @@ Task::Task(WId win, QObject *parent, const char *name)
     }
 
     // load xapp icon
-    if (_pixmap.isNull())
+    if (d->pixmap.isNull())
     {
-        _pixmap = SmallIcon("kcmx");
+        d->pixmap = SmallIcon("kcmx");
     }
 
 #ifdef THUMBNAILING_POSSIBLE
-    m_windowPixmap = 0;
+    d->windowPixmap = 0;
     findWindowFrameId();
 
     if (TaskManager::xCompositeEnabled())
@@ -680,9 +746,9 @@ Task::Task(WId win, QObject *parent, const char *name)
 Task::~Task()
 {
 #ifdef THUMBNAILING_POSSIBLE
-    if (m_windowPixmap)
+    if (d->windowPixmap)
     {
-        XFreePixmap(QX11Info::display(), m_windowPixmap);
+        XFreePixmap(QX11Info::display(), d->windowPixmap);
     }
 #endif // THUMBNAILING_POSSIBLE
 }
@@ -694,14 +760,14 @@ Task::~Task()
 void Task::findWindowFrameId()
 {
 #ifdef THUMBNAILING_POSSIBLE
-    Window target_win, parent, root;
+    Window targetWin, parent, root;
     Window *children;
     uint nchildren;
 
-    target_win = _win;
+    targetWin = d->win;
     for (;;)
     {
-        if (!XQueryTree(QX11Info::display(), target_win, &root,
+        if (!XQueryTree(QX11Info::display(), targetWin, &root,
                         &parent, &children, &nchildren))
         {
             break;
@@ -718,21 +784,21 @@ void Task::findWindowFrameId()
         }
         else
         {
-            target_win = parent;
+            targetWin = parent;
         }
     }
 
-    m_frameId = target_win;
+    d->frameId = targetWin;
 #endif // THUMBNAILING_POSSIBLE
 }
 
 void Task::refreshIcon()
 {
     // try to load icon via net_wm
-    _pixmap = KWindowSystem::icon(_win, 16, 16, true);
+    d->pixmap = KWindowSystem::icon(d->win, 16, 16, true);
 
     // try to guess the icon from the classhint
-    if(_pixmap.isNull())
+    if(d->pixmap.isNull())
     {
         KIconLoader::global()->loadIcon(className().toLower(),
                                                     K3Icon::Small,
@@ -742,19 +808,19 @@ void Task::refreshIcon()
     }
 
     // load xapp icon
-    if (_pixmap.isNull())
+    if (d->pixmap.isNull())
     {
-        _pixmap = SmallIcon("kcmx");
+        d->pixmap = SmallIcon("kcmx");
     }
 
-    _lastIcon = QPixmap();
+    d->lastIcon = QPixmap();
     emit iconChanged();
 }
 
 void Task::refresh(unsigned int dirty)
 {
     QString name = visibleName();
-    _info = KWindowSystem::windowInfo(_win,
+    d->info = KWindowSystem::windowInfo(d->win,
         NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry,
         NET::WM2AllowedActions);
 
@@ -766,7 +832,7 @@ void Task::refresh(unsigned int dirty)
 
 void Task::setActive(bool a)
 {
-    _active = a;
+    d->active = a;
     emit changed();
     if ( a )
       emit activated();
@@ -774,54 +840,72 @@ void Task::setActive(bool a)
       emit deactivated();
 }
 
+double Task::thumbnailSize() const { return d->thumbSize; }
+
+
+void Task::setThumbnailSize( double size )
+{
+    d->thumbSize = size;
+}
+
+bool Task::hasThumbnail() const
+{
+    return !d->thumb.isNull();
+}
+
+QPixmap Task::thumbnail() const
+{
+    return d->thumb;
+}
+
 bool Task::isMaximized() const
 {
-    return _info.valid() && (_info.state() & NET::Max);
+    return d->info.valid() && (d->info.state() & NET::Max);
 }
 
 bool Task::isMinimized() const
 {
-    return _info.valid() && _info.isMinimized();
+    return d->info.valid() && d->info.isMinimized();
 }
 
 bool Task::isIconified() const
 {
-    return _info.valid() && _info.isMinimized();
+    return d->info.valid() && d->info.isMinimized();
 }
 
 bool Task::isAlwaysOnTop() const
 {
-    return _info.valid() && (_info.state() & NET::StaysOnTop);
+    return d->info.valid() && (d->info.state() & NET::StaysOnTop);
 }
 
 bool Task::isKeptBelowOthers() const
 {
-    return _info.valid() && (_info.state() & NET::KeepBelow);
+    return d->info.valid() && (d->info.state() & NET::KeepBelow);
 }
 
 bool Task::isFullScreen() const
 {
-    return _info.valid() && (_info.state() & NET::FullScreen);
+    return d->info.valid() && (d->info.state() & NET::FullScreen);
 }
 
 bool Task::isShaded() const
 {
-    return _info.valid() && (_info.state() & NET::Shaded);
+    return d->info.valid() && (d->info.state() & NET::Shaded);
 }
 
 bool Task::isOnCurrentDesktop() const
 {
-    return _info.valid() && _info.isOnCurrentDesktop();
+    return d->info.valid() && d->info.isOnCurrentDesktop();
 }
 
 bool Task::isOnAllDesktops() const
 {
-    return _info.valid() && _info.onAllDesktops();
+    return d->info.valid() && d->info.onAllDesktops();
 }
 
 bool Task::isActive() const
 {
-    return _active;
+    return d->active;
 }
 
 bool Task::isOnTop() const
@@ -834,20 +918,40 @@ bool Task::isModified() const
   static QString modStr = QString::fromUtf8("[") +
                           i18n("modified") +
                           QString::fromUtf8("]");
-  int modStrPos = _info.visibleName().indexOf(modStr);
+  int modStrPos = d->info.visibleName().indexOf(modStr);
 
   return ( modStrPos != -1 );
 }
 
+int Task::desktop() const
+{
+    return d->info.desktop();
+}
+
 bool Task::demandsAttention() const
 {
-    return (_info.valid() && (_info.state() & NET::DemandsAttention)) ||
-           _transients_demanding_attention.count() > 0;
+    return (d->info.valid() && (d->info.state() & NET::DemandsAttention)) ||
+            d->transientsDemandingAttention.count() > 0;
 }
 
 bool Task::isOnScreen( int screen ) const
 {
-    return TaskManager::isOnScreen( screen, _win );
+    return TaskManager::isOnScreen( screen, d->win );
+}
+
+bool Task::showInTaskbar() const
+{
+    return d->info.state() ^ NET::SkipTaskbar;
+}
+
+bool Task::showInPager() const
+{
+    return d->info.state() ^ NET::SkipPager;
+}
+
+QRect Task::geometry() const
+{
+    return d->info.geometry();
 }
 
 void Task::updateDemandsAttentionState( WId w )
@@ -858,38 +962,68 @@ void Task::updateDemandsAttentionState( WId w )
         NETWinInfo i( QX11Info::display(), w, QX11Info::appRootWindow(), NET::WMState );
         if(i.state() & NET::DemandsAttention)
         {
-            if (!_transients_demanding_attention.contains(w))
+            if (!d->transientsDemandingAttention.contains(w))
             {
-                _transients_demanding_attention.append(w);
+                d->transientsDemandingAttention.append(w);
             }
         }
         else
         {
-            _transients_demanding_attention.removeAll( w );
+            d->transientsDemandingAttention.removeAll( w );
         }
     }
 }
 
 void Task::addTransient( WId w, const NETWinInfo& info )
 {
-    _transients.append(w);
+    d->transients.append(w);
     if (info.state() & NET::DemandsAttention)
     {
-        _transients_demanding_attention.append(w);
+        d->transientsDemandingAttention.append(w);
         emit changed();
     }
 }
 
 void Task::removeTransient(WId w)
 {
-    _transients.removeAll(w);
-    _transients_demanding_attention.removeAll(w);
+    d->transients.removeAll(w);
+    d->transientsDemandingAttention.removeAll(w);
+}
+
+bool Task::hasTransient(WId w) const
+{
+    return d->transients.indexOf(w) != -1;
+}
+
+WId Task::window() const
+{
+    return d->win;
+}
+
+KWindowInfo Task::info() const
+{
+    return d->info;
+}
+
+QString Task::visibleName() const
+{
+    return d->info.visibleName();
+}
+
+QString Task::visibleNameWithState() const
+{
+    return d->info.visibleNameWithState();
+}
+
+QString Task::name() const
+{
+    return d->info.name();
 }
 
 QString Task::className()
 {
     XClassHint hint;
-    if(XGetClassHint(QX11Info::display(), _win, &hint)) {
+    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
         QString nh( hint.res_name );
         XFree( hint.res_name );
         XFree( hint.res_class );
@@ -901,7 +1035,7 @@ QString Task::className()
 QString Task::classClass()
 {
     XClassHint hint;
-    if(XGetClassHint(QX11Info::display(), _win, &hint)) {
+    if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
         QString ch( hint.res_class );
         XFree( hint.res_name );
         XFree( hint.res_class );
@@ -912,21 +1046,31 @@ QString Task::classClass()
 
 QPixmap Task::icon( int width, int height, bool allowResize )
 {
-  if ( (width == _lastWidth)
-       && (height == _lastHeight)
-       && (allowResize == _lastResize )
-       && (!_lastIcon.isNull()) )
-    return _lastIcon;
+  if ( (width == d->lastWidth)
+       && (height == d->lastHeight)
+       && (allowResize == d->lastResize )
+       && (!d->lastIcon.isNull()) )
+    return d->lastIcon;
 
-  QPixmap newIcon = KWindowSystem::icon( _win, width, height, allowResize );
+  QPixmap newIcon = KWindowSystem::icon( d->win, width, height, allowResize );
   if ( !newIcon.isNull() ) {
-    _lastIcon = newIcon;
-    _lastWidth = width;
-    _lastHeight = height;
-    _lastResize = allowResize;
+    d->lastIcon = newIcon;
+    d->lastWidth = width;
+    d->lastHeight = height;
+    d->lastResize = allowResize;
   }
 
   return newIcon;
+}
+
+WindowList Task::transients() const
+{
+    return d->transients;
+}
+
+QPixmap Task::pixmap() const
+{
+    return d->pixmap;
 }
 
 QPixmap Task::bestIcon( int size, bool &isStaticIcon )
@@ -1020,56 +1164,55 @@ bool Task::idMatch( const QString& id1, const QString& id2 )
   return false;
 }
 
-
 void Task::move()
 {
-    bool on_current = _info.isOnCurrentDesktop();
+    bool on_current = d->info.isOnCurrentDesktop();
 
     if (!on_current)
     {
-        KWindowSystem::setCurrentDesktop(_info.desktop());
-        KWindowSystem::forceActiveWindow(_win);
+        KWindowSystem::setCurrentDesktop(d->info.desktop());
+        KWindowSystem::forceActiveWindow(d->win);
     }
 
-    if (_info.isMinimized())
+    if (d->info.isMinimized())
     {
-        KWindowSystem::unminimizeWindow(_win);
+        KWindowSystem::unminimizeWindow(d->win);
     }
 
-    QRect geom = _info.geometry();
+    QRect geom = d->info.geometry();
     QCursor::setPos(geom.center());
 
     NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
-    ri.moveResizeRequest(_win, geom.center().x(),
+    ri.moveResizeRequest(d->win, geom.center().x(),
                          geom.center().y(), NET::Move);
 }
 
 void Task::resize()
 {
-    bool on_current = _info.isOnCurrentDesktop();
+    bool on_current = d->info.isOnCurrentDesktop();
 
     if (!on_current)
     {
-        KWindowSystem::setCurrentDesktop(_info.desktop());
-        KWindowSystem::forceActiveWindow(_win);
+        KWindowSystem::setCurrentDesktop(d->info.desktop());
+        KWindowSystem::forceActiveWindow(d->win);
     }
 
-    if (_info.isMinimized())
+    if (d->info.isMinimized())
     {
-        KWindowSystem::unminimizeWindow(_win);
+        KWindowSystem::unminimizeWindow(d->win);
     }
 
-    QRect geom = _info.geometry();
+    QRect geom = d->info.geometry();
     QCursor::setPos(geom.bottomRight());
 
     NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
-    ri.moveResizeRequest(_win, geom.bottomRight().x(),
+    ri.moveResizeRequest(d->win, geom.bottomRight().x(),
                          geom.bottomRight().y(), NET::BottomRight);
 }
 
 void Task::setMaximized(bool maximize)
 {
-    KWindowInfo info = KWindowSystem::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
+    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
 
     if (!on_current)
@@ -1079,10 +1222,10 @@ void Task::setMaximized(bool maximize)
 
     if (info.isMinimized())
     {
-        KWindowSystem::unminimizeWindow(_win);
+        KWindowSystem::unminimizeWindow(d->win);
     }
 
-    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
+    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
 
     if (maximize)
     {
@@ -1095,7 +1238,7 @@ void Task::setMaximized(bool maximize)
 
     if (!on_current)
     {
-        KWindowSystem::forceActiveWindow(_win);
+        KWindowSystem::forceActiveWindow(d->win);
     }
 }
 
@@ -1106,7 +1249,7 @@ void Task::toggleMaximized()
 
 void Task::restore()
 {
-    KWindowInfo info = KWindowSystem::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
+    KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
 
     if (!on_current)
@@ -1116,15 +1259,15 @@ void Task::restore()
 
     if( info.isMinimized())
     {
-        KWindowSystem::unminimizeWindow(_win);
+        KWindowSystem::unminimizeWindow(d->win);
     }
 
-    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
+    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
     ni.setState(0, NET::Max);
 
     if (!on_current)
     {
-        KWindowSystem::forceActiveWindow( _win );
+        KWindowSystem::forceActiveWindow( d->win );
     }
 }
 
@@ -1132,11 +1275,11 @@ void Task::setIconified(bool iconify)
 {
     if (iconify)
     {
-        KWindowSystem::minimizeWindow(_win);
+        KWindowSystem::minimizeWindow(d->win);
     }
     else
     {
-        KWindowInfo info = KWindowSystem::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
+        KWindowInfo info = KWindowSystem::windowInfo(d->win, NET::WMState | NET::XAWMState | NET::WMDesktop);
         bool on_current = info.isOnCurrentDesktop();
 
         if (!on_current)
@@ -1144,11 +1287,11 @@ void Task::setIconified(bool iconify)
             KWindowSystem::setCurrentDesktop(info.desktop());
         }
 
-        KWindowSystem::unminimizeWindow(_win);
+        KWindowSystem::unminimizeWindow(d->win);
 
         if (!on_current)
         {
-            KWindowSystem::forceActiveWindow(_win);
+            KWindowSystem::forceActiveWindow(d->win);
         }
     }
 }
@@ -1161,28 +1304,28 @@ void Task::toggleIconified()
 void Task::close()
 {
     NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
-    ri.closeWindowRequest( _win );
+    ri.closeWindowRequest( d->win );
 }
 
 void Task::raise()
 {
 //    kDebug(1210) << "Task::raise(): " << name() << endl;
-    KWindowSystem::raiseWindow( _win );
+    KWindowSystem::raiseWindow( d->win );
 }
 
 void Task::lower()
 {
 //    kDebug(1210) << "Task::lower(): " << name() << endl;
-    KWindowSystem::lowerWindow( _win );
+    KWindowSystem::lowerWindow( d->win );
 }
 
 void Task::activate()
 {
 //    kDebug(1210) << "Task::activate():" << name() << endl;
-    WId w = _win;
-    if (_transients_demanding_attention.count() > 0)
+    WId w = d->win;
+    if (d->transientsDemandingAttention.count() > 0)
     {
-        w = _transients_demanding_attention.last();
+        w = d->transientsDemandingAttention.last();
     }
     KWindowSystem::forceActiveWindow( w );
 }
@@ -1205,13 +1348,13 @@ void Task::activateRaiseOrIconify()
 
 void Task::toDesktop(int desk)
 {
-    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMDesktop);
+    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMDesktop);
     if (desk == 0)
     {
-        if (_info.valid() && _info.onAllDesktops())
+        if (d->info.valid() && d->info.onAllDesktops())
         {
             ni.setDesktop(KWindowSystem::currentDesktop());
-            KWindowSystem::forceActiveWindow(_win);
+            KWindowSystem::forceActiveWindow(d->win);
         }
         else
         {
@@ -1222,7 +1365,7 @@ void Task::toDesktop(int desk)
     }
     ni.setDesktop(desk);
     if(desk == KWindowSystem::currentDesktop())
-        KWindowSystem::forceActiveWindow(_win);
+        KWindowSystem::forceActiveWindow(d->win);
 }
 
 void Task::toCurrentDesktop()
@@ -1232,7 +1375,7 @@ void Task::toCurrentDesktop()
 
 void Task::setAlwaysOnTop(bool stay)
 {
-    NETWinInfo ni( QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
+    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
     if(stay)
         ni.setState( NET::StaysOnTop, NET::StaysOnTop );
     else
@@ -1246,7 +1389,7 @@ void Task::toggleAlwaysOnTop()
 
 void Task::setKeptBelowOthers(bool below)
 {
-    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
+    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
 
     if (below)
     {
@@ -1265,7 +1408,7 @@ void Task::toggleKeptBelowOthers()
 
 void Task::setFullScreen(bool fullscreen)
 {
-    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
+    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
 
     if (fullscreen)
     {
@@ -1284,7 +1427,7 @@ void Task::toggleFullScreen()
 
 void Task::setShaded(bool shade)
 {
-    NETWinInfo ni( QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
+    NETWinInfo ni( QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMState);
     if(shade)
         ni.setState( NET::Shaded, NET::Shaded );
     else
@@ -1298,13 +1441,13 @@ void Task::toggleShaded()
 
 void Task::publishIconGeometry(QRect rect)
 {
-    if (rect == m_iconGeometry)
+    if (rect == d->iconGeometry)
     {
         return;
     }
 
-    m_iconGeometry = rect;
-    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), 0);
+    d->iconGeometry = rect;
+    NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), 0);
     NETRect r;
 
     if (rect.isValid())
@@ -1319,10 +1462,10 @@ void Task::publishIconGeometry(QRect rect)
 
 void Task::updateThumbnail()
 {
-    if ( !_info.valid() ||
+    if ( !d->info.valid() ||
             !isOnCurrentDesktop() ||
             !isActive() ||
-            !_grab.isNull() ) // We're already processing one...
+            !d->grab.isNull() ) // We're already processing one...
     {
         return;
     }
@@ -1333,12 +1476,12 @@ void Task::updateThumbnail()
     // on slower machines.
     //
     QWidget *rootWin = qApp->desktop();
-    QRect geom = _info.geometry();
-    _grab = QPixmap::grabWindow(rootWin->winId(),
+    QRect geom = d->info.geometry();
+    d->grab = QPixmap::grabWindow(rootWin->winId(),
                                 geom.x(), geom.y(),
                                 geom.width(), geom.height());
 
-    if (!_grab.isNull())
+    if (!d->grab.isNull())
     {
        QTimer::singleShot(200, this, SLOT(generateThumbnail()));
     }
@@ -1346,16 +1489,16 @@ void Task::updateThumbnail()
 
 void Task::generateThumbnail()
 {
-   if ( _grab.isNull() )
+   if ( d->grab.isNull() )
       return;
 
-   double width = _grab.width();
-   double height = _grab.height();
-   width = width * _thumbSize;
-   height = height * _thumbSize;
+   double width = d->grab.width();
+   double height = d->grab.height();
+   width = width * d->thumbSize;
+   height = height * d->thumbSize;
 
-   _thumb = _grab.scaled( qRound(width), qRound(height), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
-   _grab = QPixmap(); // Makes grab a null image.
+   d->thumb = d->grab.scaled( qRound(width), qRound(height), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+   d->grab = QPixmap(); // Makes grab a null image.
 
    emit thumbnailChanged();
 }
@@ -1363,7 +1506,7 @@ void Task::generateThumbnail()
 #ifdef THUMBNAILING_POSSIBLE
 QPixmap Task::thumbnail(int maxDimension)
 {
-    if (!TaskManager::xCompositeEnabled() || !m_windowPixmap)
+    if (!TaskManager::xCompositeEnabled() || !d->windowPixmap)
     {
         return QPixmap();
     }
@@ -1371,17 +1514,17 @@ QPixmap Task::thumbnail(int maxDimension)
     Display *dpy = QX11Info::display();
 
     XWindowAttributes winAttr;
-    XGetWindowAttributes(dpy, m_frameId, &winAttr);
+    XGetWindowAttributes(dpy, d->frameId, &winAttr);
     XRenderPictFormat *format = XRenderFindVisualFormat(dpy, winAttr.visual);
 
     XRenderPictureAttributes picAttr;
     picAttr.subwindow_mode = IncludeInferiors; // Don't clip child widgets
 
-    Picture picture = XRenderCreatePicture(dpy, m_windowPixmap, format,
+    Picture picture = XRenderCreatePicture(dpy, d->windowPixmap, format,
                                            CPSubwindowMode, &picAttr);
 
     // Get shaped windows handled correctly.
-    XserverRegion region = XFixesCreateRegionFromWindow(dpy, m_frameId,
+    XserverRegion region = XFixesCreateRegionFromWindow(dpy, d->frameId,
                                                         WindowRegionBounding);
     XFixesSetPictureClipRegion(dpy, picture, 0, 0, region);
     XFixesDestroyRegion(dpy, region);
@@ -1464,18 +1607,31 @@ void Task::updateWindowPixmap()
 
     Display *dpy = QX11Info::display();
 
-    if (m_windowPixmap)
+    if (d->windowPixmap)
     {
-        XFreePixmap(dpy, m_windowPixmap);
+        XFreePixmap(dpy, d->windowPixmap);
     }
 
-    m_windowPixmap = XCompositeNameWindowPixmap(dpy, m_frameId);
+    d->windowPixmap = XCompositeNameWindowPixmap(dpy, d->frameId);
 #endif // THUMBNAILING_POSSIBLE
 }
 
+class Startup::Private
+{
+public:
+    Private(const KStartupInfoId& id, const KStartupInfoData& data)
+        : id(id), data(data)
+    {
+    }
+
+    KStartupInfoId id;
+    KStartupInfoData data;
+};
+
 Startup::Startup(const KStartupInfoId& id, const KStartupInfoData& data,
                  QObject * parent, const char *name)
-    : QObject(parent), _id(id), _data(data)
+    : QObject(parent),
+      d(new Private(id, data))
 {
     setObjectName( name );
 }
@@ -1484,10 +1640,30 @@ Startup::~Startup()
 {
 }
 
+QString Startup::text() const
+{
+    return d->data.findName();
+}
+
+QString Startup::bin() const
+{
+    return d->data.bin();
+}
+
+QString Startup::icon() const
+{
+    return d->data.findIcon();
+}
+
 void Startup::update(const KStartupInfoData& data)
 {
-    _data.update(data);
+    d->data.update(data);
     emit changed();
+}
+
+KStartupInfoId Startup::id() const
+{
+    return d->id;
 }
 
 int TaskManager::currentDesktop() const
@@ -1496,7 +1672,8 @@ int TaskManager::currentDesktop() const
 }
 
 TaskDrag::TaskDrag(const Task::List& tasks, QWidget* source)
-  : QDrag(source)
+  : QDrag(source),
+    d(0)
 {
     QByteArray data;
     QDataStream stream(&data, QIODevice::WriteOnly);
