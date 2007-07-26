@@ -16,14 +16,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "searchrunner.h"
+
 #include <QWidget>
 #include <QAction>
 
 #include <KActionCollection>
 #include <KIcon>
 #include <KLocale>
-
-#include "searchrunner.h"
 
 SearchRunner::SearchRunner( QObject* parent, const QStringList& args )
     : Plasma::AbstractRunner( parent )

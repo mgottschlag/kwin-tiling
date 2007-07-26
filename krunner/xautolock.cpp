@@ -2,15 +2,16 @@
 //
 // This file is part of the KDE project
 //
-// Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
-// Copyright (c) 2003 Lubos Lunak <l.lunak@kde.org>
+// Copyright 1999 Martin R. Jones <mjones@kde.org>
+// Copyright 2003 Lubos Lunak <l.lunak@kde.org>
 //
 // KDE screensaver engine
 //
 
+#include "xautolock.h"
+
 #include <config-workspace.h>
 #include <config-xautolock.h>
-#include "xautolock.h"
 #include "xautolock.moc"
 
 #include <X11/Xlib.h>

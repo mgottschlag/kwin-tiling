@@ -2,12 +2,12 @@
 //
 // This file is part of the KDE project
 //
-// Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
-// Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
+// Copyright 1999 Martin R. Jones <mjones@kde.org>
+// Copyright 2003 Oswald Buddenhagen <ossi@kde.org>
 //
 
-#ifndef __LOCKENG_H__
-#define __LOCKENG_H__
+#ifndef LOCKPROCESS_H
+#define LOCKPROCESS_H
 
 #include <kgreeterplugin.h>
 
@@ -40,7 +40,7 @@ class LockProcess
 {
     Q_OBJECT
 public:
-    LockProcess(bool child_saver = false, bool useBlankOnly = false);
+    explicit LockProcess(bool child_saver = false, bool useBlankOnly = false);
     ~LockProcess();
 
     bool lock();

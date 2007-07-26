@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "interface.h"
+
 #include <QAction>
 #include <QApplication>
 #include <QLabel>
@@ -43,7 +45,6 @@
 #include "runners/sessions/sessionrunner.h"
 #include "runners/shell/shellrunner.h"
 #include "collapsiblewidget.h"
-#include "interface.h"
 #include "interfaceadaptor.h"
 
 //#define FLASH_DIALOG 0

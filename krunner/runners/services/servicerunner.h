@@ -19,12 +19,13 @@
 #ifndef SERVICERUNNER_H
 #define SERVICERUNNER_H
 
+#include <QAction>
+
 #include <KService>
 
 #include <plasma/abstractrunner.h>
 
 class QWidget;
-class QAction;
 
 /**
  * This class looks for matches in the set of .desktop files installed by

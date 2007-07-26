@@ -30,7 +30,7 @@ namespace Control
     class NetworkPrivate : public FrontendObjectPrivate
     {
     public:
-        NetworkPrivate(QObject *parent)
+        explicit NetworkPrivate(QObject *parent)
             : FrontendObjectPrivate(parent) { }
 
         void setBackendObject(QObject *object);

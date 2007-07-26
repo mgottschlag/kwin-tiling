@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "sessionrunner.h"
+
 #include <QWidget>
 #include <QAction>
 
@@ -29,7 +31,6 @@
 
 #include "krunnerapp.h"
 #include "saverengine.h"
-#include "sessionrunner.h"
 
 SessionRunner::SessionRunner( QObject* parent )
     : Plasma::AbstractRunner( parent )

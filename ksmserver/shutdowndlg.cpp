@@ -151,9 +151,9 @@ void KSMPushButton::init()
 #ifdef __GNUC__
 #warning "Which one of the following two is correct?"
 #endif
-        w = QMAX( QFontMetrics(fnt).width( upper ) + 6, QFontMetrics(fnt).width( lower ) + 6 );
-        w = QMAX( w, width() );
-        h = QMAX( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 + GLOW_WIDTH );
+        w = qMax( QFontMetrics(fnt).width( upper ) + 6, QFontMetrics(fnt).width( lower ) + 6 );
+        w = qMax( w, width() );
+        h = qMax( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 + GLOW_WIDTH );
         if( w > width() || h > height()) {
             setMinimumSize( w, h );
             updateGeometry();

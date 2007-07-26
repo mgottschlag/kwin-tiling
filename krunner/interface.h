@@ -19,6 +19,7 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
+#include <QMap>
 #include <QTimer>
 
 // pulls in definition for Window

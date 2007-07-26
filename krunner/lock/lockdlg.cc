@@ -2,9 +2,9 @@
 //
 // This file is part of the KDE project
 //
-// Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
-// Copyright (c) 2003 Chris Howells <howells@kde.org>
-// Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
+// Copyright 1999 Martin R. Jones <mjones@kde.org>
+// Copyright 2003 Chris Howells <howells@kde.org>
+// Copyright 2003 Oswald Buddenhagen <ossi@kde.org>
 
 #include <config-unix.h> // HAVE_PAM
 

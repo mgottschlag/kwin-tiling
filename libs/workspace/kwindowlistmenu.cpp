@@ -22,6 +22,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
+#include "kwindowlistmenu.h"
+
 #include <QtCore/QBool>
 
 #ifdef Q_WS_X11
@@ -39,7 +41,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <netwm.h>
 
 #undef Bool
-#include "kwindowlistmenu.h"
 #include "kwindowlistmenu.moc"
 #include "kwin_interface.h"
 

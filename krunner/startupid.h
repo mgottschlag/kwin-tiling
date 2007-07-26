@@ -35,7 +35,7 @@ class StartupId
     {
     Q_OBJECT
     public:
-        StartupId( QWidget* parent = 0, const char* name = 0 );
+        explicit StartupId( QWidget* parent = 0, const char* name = 0 );
         virtual ~StartupId();
         void configure();
     protected:

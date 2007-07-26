@@ -17,9 +17,10 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include "startupid.h"
+
 #include <config-X11.h>
 
-#include "startupid.h"
 #include "klaunchsettings.h"
 
 #include <kiconloader.h>

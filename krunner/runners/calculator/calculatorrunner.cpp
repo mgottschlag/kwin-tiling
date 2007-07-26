@@ -17,19 +17,18 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QWidget>
+#include "calculatorrunner.h"
+
 #include <QAction>
 #include <QFile>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QWidget>
 
 #include <KIcon>
 #include <KLocale>
+#include <kshell.h> //TODO: replace with KShell after 31/7/2007
 #include <KStandardDirs>
-#include <kshell.h>
-#include <KLocale>
-
-#include "calculatorrunner.h"
 
 CalculatorRunner::CalculatorRunner( QObject* parent, const QStringList& args )
     : Plasma::AbstractRunner( parent ),

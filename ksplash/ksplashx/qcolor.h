@@ -78,11 +78,11 @@ public:
     QColor();
     QColor( int r, int g, int b );
     QColor( int x, int y, int z, Spec );
-    QColor( QRgb rgb, uint pixel=0xffffffff);
+    explicit QColor( QRgb rgb, uint pixel=0xffffffff);
 #if 0
     QColor( const QString& name );
 #endif
-    QColor( const char *name );
+    explicit QColor( const char *name );
     QColor( const QColor & );
     QColor &operator=( const QColor & );
 

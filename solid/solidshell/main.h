@@ -99,7 +99,7 @@ private:
     int m_error;
     QString m_errorString;
 private slots:
-    void slotStorageResult(Solid::ErrorType error, QVariant errorData);
+    void slotStorageResult(Solid::ErrorType error, const QVariant &errorData);
     void slotResult(KJob *job);
     void slotPercent(KJob *job, unsigned long percent);
     void slotInfoMessage(KJob *job, const QString &message);

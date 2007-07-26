@@ -16,8 +16,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "servicerunner.h"
+
 #include <QWidget>
-#include <QAction>
 #include <KIcon>
 
 #include <KLocale>
@@ -26,8 +27,6 @@
 #include <KService>
 #include <KServiceType>
 #include <KServiceTypeTrader>
-
-#include "servicerunner.h"
 
 QString formattedName( KService::Ptr service )
 {

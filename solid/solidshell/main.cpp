@@ -1577,7 +1577,7 @@ void SolidShell::slotResult(KJob *job)
     m_loop.exit();
 }
 
-void SolidShell::slotStorageResult(Solid::ErrorType error, QVariant errorData)
+void SolidShell::slotStorageResult(Solid::ErrorType error, const QVariant &errorData)
 {
     if (error) {
         m_error = 1;

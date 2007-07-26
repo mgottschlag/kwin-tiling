@@ -7,6 +7,8 @@
  * You can Freely distribute this program under the GNU Library General
  * Public License. See the file "COPYING.LIB" for the exact licensing terms.
  */
+#include "bgrender.h"
+
 #include <fixx11h.h>
 #include <config-workspace.h>
 
@@ -37,12 +39,10 @@
 #include <ksvgrenderer.h>
 
 #include "bgdefaults.h"
-#include "bgrender.h"
 
 #include <X11/Xlib.h>
 
 #include <QX11Info>
-#include <QDesktopWidget>
 
 /**** KBackgroundRenderer ****/
 

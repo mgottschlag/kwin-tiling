@@ -1,5 +1,5 @@
 /* This file is part of the KDE project
-   Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
+   Copyright 2003 Oswald Buddenhagen <ossi@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public

@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "krunnerdialog.h"
+
 #include <QPainter>
 #include <QSvgRenderer>
 #include <QResizeEvent>
@@ -24,7 +26,6 @@
 
 #include <plasma/svg.h>
 
-#include "krunnerdialog.h"
 #include "krunnerapp.h"
 
 KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )

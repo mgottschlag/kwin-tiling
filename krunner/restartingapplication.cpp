@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <restartingapplication.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -23,8 +25,6 @@
 #include <QTimer>
 
 #include <KCrash>
-
-#include <restartingapplication.h>
 
 RestartingApplication::RestartingApplication(Display *display,
                                              Qt::HANDLE visual,

@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "shellrunner.h"
+
 #include <QWidget>
 #include <QAction>
 #include <QPushButton>
@@ -26,7 +28,6 @@
 #include <KRun>
 #include <KStandardDirs>
 
-#include "shellrunner.h"
 #include "ui_shellOptions.h"
 
 ShellRunner::ShellRunner( QObject* parent )
