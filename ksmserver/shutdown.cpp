@@ -1,13 +1,13 @@
 /*****************************************************************
 ksmserver - the KDE session management server
 
-Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
+Copyright 2000 Matthias Ettrich <ettrich@kde.org>
 
 relatively small extensions by Oswald Buddenhagen <ob6@inf.tu-dresden.de>
 
 some code taken from the dcopserver (part of the KDE libraries), which is
-Copyright (c) 1999 Matthias Ettrich <ettrich@kde.org>
-Copyright (c) 1999 Preston Brown <pbrown@kde.org>
+Copyright 1999 Matthias Ettrich <ettrich@kde.org>
+Copyright 1999 Preston Brown <pbrown@kde.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
