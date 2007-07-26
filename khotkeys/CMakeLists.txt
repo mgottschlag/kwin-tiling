@@ -5,15 +5,15 @@ check_cxx_source_compiles("
   class X { public: int x; virtual void ff() {}; };
   class B : public X, public A { public: virtual B* me(); };
   int foo( A* a )
-    {·
+    {
     A* aa = a->me();
     return a == aa;
-    }·
+    }
   int main()
-    {·
+    {
     B* b = new B;
     return foo( b ) == 0;
-    }·
+    }
   A* A::me() { return this; }
   B* B::me() { return this; }
 " HAVE_COVARIANT_RETURN )
