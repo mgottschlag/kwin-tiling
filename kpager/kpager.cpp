@@ -64,7 +64,6 @@
 #include <assert.h>
 
 #include "kpageradaptor.h"
-#include "kdesktop_background_interface.h"
 #include <QtDBus/QtDBus>
 
 KPagerMainWindow::KPagerMainWindow(QWidget *parent, const char *name)
