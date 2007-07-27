@@ -23,6 +23,7 @@
 
 #include "plasmaapp.h"
 
+#include "appadaptor.h"
 #include <unistd.h>
 
 #include <QTimer>
@@ -44,7 +45,10 @@ PlasmaApp* PlasmaApp::self()
 PlasmaApp::PlasmaApp()
     : m_root(0)
 {
+    new AppAdaptor(this); 
+    QDBusConnection::sessionBus().registerObject( "/App", this );
     notifyStartup(false);
+
 
     // this same pattern is in KRunner (see workspace/krunner/restartingapplication.h)
     // would be interesting to see if this could be shared.

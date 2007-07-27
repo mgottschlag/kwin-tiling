@@ -26,8 +26,6 @@ class RootWidget;
 class PlasmaApp : public KUniqueApplication
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.plasma.App")
-
 public:
     PlasmaApp();
     ~PlasmaApp();
