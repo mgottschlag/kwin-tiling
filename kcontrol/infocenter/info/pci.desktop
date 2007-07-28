@@ -25,6 +25,7 @@ Name[x-test]=xxPCIxx
 Comment=PCI information
 Comment[af]=PCI informasie
 Comment[be]=Звесткі аб PCI
+Comment[bg]=Информация за шината PCI
 Comment[br]=Titouroù diwar-benn ar PCI
 Comment[ca]=Informació de PCI
 Comment[cs]=Informace o PCI
@@ -86,6 +87,7 @@ Comment[zh_TW]=PCI 資訊
 Keywords=PCI,PCI-Devices,PCI-Bus,System Information
 Keywords[af]=PCI,PCI-Devices,PCI-Bus,System Informasie
 Keywords[be]=Прылады PCI,Сістэмная інфармацыя,PCI,PCI-Devices,PCI-Bus,System Information
+Keywords[bg]=Keywords=информация, система, системна, шина, PCI, PCI-Devices, PCI-Bus, System Information
 Keywords[br]=PCI,trobarzhelloù PCI,bus PCI,titouroù reizhiad
 Keywords[ca]=PCI,Dispositius PCI,Bus PCI,Informació del sistema
 Keywords[cs]=PCI,PCI-zařízení,PCI-sběrnice,Informace o systému

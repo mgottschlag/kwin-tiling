@@ -15,6 +15,7 @@ X-KDE-System-Settings-Parent-Category=computer-administration
 Name=Power Control
 Name[af]=Krag Beheer
 Name[be]=Сілкаванне
+Name[bg]=Електрозахранване
 Name[br]=Renadur ar gremm
 Name[ca]=Control d'energia
 Name[cs]=Správa napájení
@@ -77,6 +78,7 @@ Name[zh_TW]=電源控制
 Comment=Settings for display power management
 Comment[af]=Instellings vir die vertoon van die krag bestuurder
 Comment[be]=Кіраванне сілкаваннем манітора
+Comment[bg]=Настройване и контрол на електрозахранването
 Comment[br]=Kefluniadur renadur gremm an diskwell
 Comment[ca]=Arranjaments per al control d'energia a la pantalla
 Comment[cs]=Nastavení pro správu šetření napájení
@@ -134,6 +136,7 @@ Comment[zh_TW]=顯示器電源管理的設定值
 
 Keywords=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power
 Keywords[be]=энергія,зберагальнік,збераганне,тэрмін чакання,ачышчэнне,выключэнне,сілкаванне,сон,energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power
+Keywords[bg]=Keywords=ток, захранване, прекъсване, батерия, батерии, контакт, energy, saver, apm, acpi, dpms, timeout, blanking, stand by, suspend, power
 Keywords[ca]=energia,salva,apm,acpi,dpms,expiració,en blanc,en espera, suspès,corrent
 Keywords[cs]=Energie,Úspora,APM,ACPI,Časový limit,Vypnutí,Napájení,Šetřič,Spořič
 Keywords[csb]=sëła,energijô,zachòwëwanié,apm,acpi,dpms,limit czasu,zaczôrnienié,wëłączanié, ùspienié,zasëlanié

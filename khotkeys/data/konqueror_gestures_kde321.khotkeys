@@ -4,6 +4,7 @@ DataCount=1
 [Data_1]
 Comment=Basic Konqueror gestures.
 Comment[be]=Базавые жэсты Konqueror
+Comment[bg]=Основни жестове в Konqueror.
 Comment[csb]=Pòdspòdlowé gestë Konquerora
 Comment[de]=Grundlegende Gesten für Konqueror
 Comment[el]=Βασικές χειρονομίες Konqueror.
@@ -22,6 +23,7 @@ DataCount=14
 Enabled=true
 Name=Konqueror Gestures
 Name[be]=Жэсты Konqueror
+Name[bg]=Жестове в Konqueror
 Name[csb]=Gestë Konquerora
 Name[de]=Konqueror-Gesten
 Name[el]=Χειρονομίες Konqueror
@@ -42,6 +44,7 @@ Type=ACTION_DATA_GROUP
 [Data_1Conditions]
 Comment=Konqueror window
 Comment[be]=Акно Konqueror
+Comment[bg]=Прозорец на Konqueror
 Comment[csb]=Òkno Konquerora
 Comment[de]=Konqueror-Fenster
 Comment[el]=Παράθυρο του Konqueror
@@ -81,6 +84,7 @@ WindowTypes=1
 
 [Data_1_1]
 Comment=Press, move left, release.
+Comment[bg]=Натискане, движение наляво, пускане.
 Comment[de]=Drücken, nach links, loslassen.
 Comment[el]=Πιέστε, μετακινηθείτε αριστερά, ελευθερώστε.
 Comment[fa]=فشار، حرکت به چپ، رها کردن
@@ -96,6 +100,7 @@ Comment[zh_TW]=按下，往左移，再放開。
 Enabled=true
 Name=Back
 Name[be]=Назад
+Name[bg]=Black
 Name[csb]=Nazôd
 Name[de]=Zurück
 Name[el]=Πίσω
@@ -116,6 +121,7 @@ Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 
 [Data_1_10]
 Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
+Comment[bg]=Стил Opera: натискане, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Нов подпрозорец" и затова е изключено по подразбиране.
 Comment[de]=Opera-Stil: Drücken, nach oben, loslassen.\nHinweis: Dies steht in Konflikt mit der Aktion "Neues Unterfenster" und ist daher in der Voreinstellung nicht aktiviert.
 Comment[el]=Στυλ Opera: Πιέστε, μετακινήστε πάνω, ελευθερώστε.\nΣΗΜΕΙΩΣΗ: Αυτό συγκρούεται με την 'Νέα καρτέλα', και οπότε είναι προκαθορισμένα απενεργοποιημένο.
 Comment[fa]=سبک اَپرا: فشار، حرکت به بالا، رها کردن.\nنکته: ناسازگار با »تب جدید«، و به طور پیش‌فرض غیر فعال.
@@ -131,6 +137,7 @@ Comment[zh_TW]=Opera 風格：按下，往上移，再放開。\n注意：會與
 Enabled=false
 Name=Stop Loading
 Name[be]=Спыніць загрузку
+Name[bg]=Спиране на зареждането
 Name[csb]=Zatrzëmôj ladowanié
 Name[de]=Ladevorgang abbrechen
 Name[el]=Σταμάτημα φόρτωσης
@@ -161,6 +168,7 @@ ConditionsCount=0
 
 [Data_1_10Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -179,6 +187,7 @@ Type=GESTURE
 
 [Data_1_11]
 Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
+Comment[bg]=Едно ниво нагоре в директорията..\nСтил Мозила: натискане, движение нагоре, движение наляво, движение нагоре, пускане.
 Comment[de]=Geht in der Adress-/Ordnerstruktur eine Ebene höher.\nMozilla-Stil: Drücken, nach oben, nach links, nach oben, loslassen.
 Comment[el]=Μετάβαση προς τα πάνω στη δομή URL/καταλόγου.\nΣτυλ Mozilla: Πιέστε, μετακίνηση πάνω, μετακίνηση αριστερά, μετακίνηση πάνω, ελευθέρωση.
 Comment[fa]=بالا رفتن در ساختار نشانی وب/فهرست راهنما. \nسبک موزیلا: فشار، حرکت به بالا، حرکت به چپ، حرکت به بالا، رها کردن.
@@ -225,6 +234,7 @@ ConditionsCount=0
 
 [Data_1_11Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -243,6 +253,7 @@ Type=GESTURE
 
 [Data_1_12]
 Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
+Comment[bg]=Едно ниво нагоре.\nСтил Opera: натискане, движение нагоре, движение наляво, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Активиране на предишен подпрозорец" и затова е изключено по подразбиране.
 Comment[de]=Geht in der Adress-/Ordnerstruktur eine Ebene höher.\nOpera-Stil: Drücken, nach oben, nach links, nach oben, loslassen.\nHinweis: Dies steht in Konflikt mit der Aktion "Vorheriges Unterfenster aktivieren und ist daher in der Voreinstellung nicht aktiviert.
 Comment[el]=Μετάβαση προς τα πάνω στη δομή URL/καταλόγου.\nΣτυλ Opera: Πιέστε, μετακίνηση πάνω, μετακίνηση αριστερά, μετακίνηση πάνω, ελευθέρωση.\nΣΗΜΕΙΩΣΗ: Συγκρούεται με το "Ενεργοποίηση προηγούμενης καρτέλας", οπότε είναι προκαθορισμένα απενεργοποιημένο.
 Comment[fa]=بالا رفتن در ساختار نشانی وب/فهرست راهنما.\nسبک اَپرا: فشار، حرکت به بالا، حرکت به چپ، حرکت به بالا، رها کردن.\nنکته: ناسازگار با  »تب فعال قبلی«، و به طور پیش‌فرض غیر فعال است.
@@ -257,6 +268,7 @@ Comment[x-test]=xxGoing up in URL/directory structure.\nOpera-style: Press, move
 Comment[zh_TW]=往上一層的網址或目錄。\nOpera 風格：按住，往上移，往左移，往上移，再放開。\n注意：會與「跳到前一個分頁」衝突，預設為關閉。
 Enabled=false
 Name=Up #2
+Name[bg]=Нагоре #2
 Name[de]=Nach oben (2)
 Name[el]=Πάνω #2
 Name[it]=Su #2
@@ -284,6 +296,7 @@ ConditionsCount=0
 
 [Data_1_12Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -302,6 +315,7 @@ Type=GESTURE
 
 [Data_1_13]
 Comment=Press, move up, move right, release.
+Comment[bg]=Натискане, движение нагоре, движение надясно, пускане.
 Comment[de]=Drücken, nach oben, nach rechts, loslassen.
 Comment[el]=Πίεση, μετακίνηση πάνω, μετακίνηση δεξιά, ελευθέρωση.
 Comment[fa]=فشار، حرکت به بالا، حرکت به راست، رها کردن.
@@ -317,6 +331,7 @@ Comment[zh_TW]=按住，往上移，往右移，再放開。
 Enabled=true
 Name=Activate Next Tab
 Name[be]=Актывізаваць наступную картку
+Name[bg]=Активиране на следващ подпрозорец
 Name[de]=Nächstes Unterfenster aktivieren
 Name[el]=Ενεργοποίηση επόμενης καρτέλας
 Name[es]=Activar la siguiente solapa
@@ -347,6 +362,7 @@ ConditionsCount=0
 
 [Data_1_13Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -365,6 +381,7 @@ Type=GESTURE
 
 [Data_1_14]
 Comment=Press, move up, move left, release.
+Comment[bg]=Натискане, движение нагоре, движение наляво, пускане.
 Comment[de]=Drücken, nach oben, nach links, loslassen.
 Comment[el]=Πίεση, μετακίνηση πάνω, μετακίνηση αριστερά, ελευθέρωση.
 Comment[fa]=فشار، حرکت به بالا، حرکت به چپ، رها کردن.
@@ -380,6 +397,7 @@ Comment[zh_TW]=按住，往上移，往左移，再放開。
 Enabled=true
 Name=Activate Previous Tab
 Name[be]=Актывізаваць папярэднюю картку
+Name[bg]=Активиране на предишен подпрозорец
 Name[de]=Vorheriges Unterfenster aktivieren
 Name[el]=Ενεργοποίηση προηγούμενης καρτέλας
 Name[es]=Activar la solapa anterior
@@ -410,6 +428,7 @@ ConditionsCount=0
 
 [Data_1_14Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -440,6 +459,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -458,6 +478,7 @@ Type=GESTURE
 
 [Data_1_2]
 Comment=Press, move down, move up, move down, release.
+Comment[bg]=Натискане, движение надолу, движение нагоре, движение надолу, пускане.
 Comment[de]=Drücken, nach unten, nach oben, nach unten, loslassen.
 Comment[el]=Πίεση, μετακίνηση κάτω, μετακίνηση πάνω, μετακίνηση κάτω, ελευθέρωση.
 Comment[fa]=فشار، حرکت به پایین، حرکت به بالا، حرکت به پایین، رها کردن.
@@ -472,6 +493,7 @@ Comment[x-test]=xxPress, move down, move up, move down, release.xx
 Comment[zh_TW]=按住，往下移，往上移，往下移，再放開。
 Enabled=true
 Name=Duplicate Tab
+Name[bg]=Дублиране на подпрозорец
 Name[de]=Unterfenster duplizieren
 Name[el]=Αντίγραφο καρτέλας
 Name[es]=Duplicar la solapa
@@ -501,6 +523,7 @@ ConditionsCount=0
 
 [Data_1_2Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -519,6 +542,7 @@ Type=GESTURE
 
 [Data_1_3]
 Comment=Press, move down, move up, release.
+Comment[bg]=Натискане, движение надолу, движение нагоре, пускане.
 Comment[de]=Drücken, nach unten, nach oben, loslassen.
 Comment[el]=Πίεση, μετακίνηση κάτω, μετακίνηση πάνω, ελευθέρωση.
 Comment[fa]=فشار، حرکت به پایین، حرکت به بالا، رها کردن.
@@ -534,6 +558,7 @@ Comment[zh_TW]=按住，往下移，往上移，再放開。
 Enabled=true
 Name=Duplicate Window
 Name[be]=Зрабіць копію акна
+Name[bg]=Дублиране на прозореца
 Name[csb]=Duplikùjë òkno
 Name[de]=Fenster duplizieren
 Name[el]=Αντίγραφο παραθύρου
@@ -564,6 +589,7 @@ ConditionsCount=0
 
 [Data_1_3Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -582,6 +608,7 @@ Type=GESTURE
 
 [Data_1_4]
 Comment=Press, move right, release.
+Comment[bg]=Натискане, движение надясно, пускане.
 Comment[de]=Drücken, nach rechts, loslassen
 Comment[el]=Πίεση, μετακίνηση δεξιά, ελευθέρωση.
 Comment[fa]=فشار، حرکت به راست، رها کردن.
@@ -597,6 +624,7 @@ Comment[zh_TW]=按住，往右移，再放開。
 Enabled=true
 Name=Forward
 Name[be]=Наперад
+Name[bg]=Напред
 Name[csb]=W przódk
 Name[de]=Nach vorne
 Name[el]=Εμπρός
@@ -628,6 +656,7 @@ ConditionsCount=0
 
 [Data_1_4Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -646,6 +675,7 @@ Type=GESTURE
 
 [Data_1_5]
 Comment=Press, move down, move half up, move right, move down, release.\n(Drawing a lowercase 'h'.)
+Comment[bg]=Натискане, движение надясно, полудвижение нагоре, движение надясно, движение надолу, пускане.\n(Пише се малка буква "h".)
 Comment[de]=Drücken, nach unten, halb nach oben, nach rechts, nach unten, loslassen. (ein kleines "h" zeichnen")
 Comment[el]=Πίεση, μετακίνηση κάτω, μετακίνηση κατά το ήμισυ πάνω, μετακίνηση δεξιά, μετακίνηση κάτω,ελευθέρωση.\n(Σχεδίαση ενός μικρού 'h'.)
 Comment[fa]=فشار، حرکت به پایین، نیم حرکت به بالا، حرکت به راست، حرکت به پایین، رها کردن.\n)ترسیم حرف کوچک »h«.(
@@ -662,6 +692,7 @@ Enabled=true
 Name=Home
 Name[af]=Tuiste
 Name[be]=Хатняя тэчка
+Name[bg]=Домашна директория
 Name[br]=Er-gêr
 Name[ca]=Inici
 Name[cs]=Můj adresář
@@ -734,6 +765,7 @@ ConditionsCount=0
 
 [Data_1_5Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -756,6 +788,7 @@ Type=GESTURE
 
 [Data_1_6]
 Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.
+Comment[bg]=Натискане, движение надолу, движение нагоре, движение надолу, пускане.
 Comment[de]=Drücken, nach rechts, nach unten, nach rechts, loslassen.\nMozilla-Stil: Drücken, nach unten, nach rechts, loslassen.
 Comment[el]=Πίεση, μετακίνηση δεξιά, μετακίνηση κάτω, μετακίνηση δεξιά, ελευθέρωση.\nΣτυλ Mozilla: Πίεση, μετακίνηση κάτω, μετακίνηση δεξιά, ελευθέρωση.
 Comment[fa]=فشار، حرکت به راست، حرکت به پایین، حرکت به راست، رها کردن.\nسبک موزیلا: فشار، حرکت به پایین، حرکت به راست، رها کردن.
@@ -771,6 +804,7 @@ Comment[zh_TW]=按住，往右移，往下移，往右移，再放開。\nMozill
 Enabled=true
 Name=Close Tab
 Name[be]=Закрыць картку
+Name[bg]=Затваряне на подпрозореца
 Name[csb]=Zamkni kôrtã
 Name[de]=Unterfenster schließen
 Name[el]=Κλείσιμο καρτέλας
@@ -802,6 +836,7 @@ ConditionsCount=0
 
 [Data_1_6Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -824,6 +859,7 @@ Type=GESTURE
 
 [Data_1_7]
 Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.
+Comment[bg]=Натискане, движение нагоре, пускане.\nИма конфликт със стила на Opera "Нагоре 2", който е по подразбиране.
 Comment[de]=Drücken, nach oben, loslassen.\nSteht in Konflikt mit dem Opera-Stil von "Nach oben (2)", der aber in der Voreinstellung nicht aktiviert ist.
 Comment[el]=Πίεση, μετακίνηση πάνω, ελευθέρωση.\nΣύγκρουση με το στυλ Opera 'Πάνω #2', το οποίο είναι προκαθορισμένα απενεργοποιημένο.
 Comment[fa]=فشار، حرکت به بالا، رها کردن\nمتناقض با سبک اَپرا »بالا #۲«، که به طور پیش‌فرض غیرفعال است.
@@ -839,6 +875,7 @@ Comment[zh_TW]=按住，往上移，再放開。\n與預設為關閉的 Opera �
 Enabled=true
 Name=New Tab
 Name[be]=Новая картка
+Name[bg]=Нов подпрозорец
 Name[csb]=Nowô kôrta
 Name[de]=Neues Unterfenster
 Name[el]=Νέα καρτέλα
@@ -870,6 +907,7 @@ ConditionsCount=0
 
 [Data_1_7Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -888,6 +926,7 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=Press, move down, release.
+Comment[bg]=Натискане, движение надолу, пускане.
 Comment[de]=Drücken, nach unten, loslassen.
 Comment[el]=Πίεση, μετακίνηση κάτω, ελευθέρωση.
 Comment[fa]=فشار، حرکت به پایین، رها کردن.
@@ -904,6 +943,7 @@ Enabled=true
 Name=New Window
 Name[af]=Nuwe Venster
 Name[be]=Новае акно
+Name[bg]=Нов прозорец
 Name[br]=Prenestr nevez
 Name[ca]=Nova finestra
 Name[cs]=Nové okno
@@ -976,6 +1016,7 @@ ConditionsCount=0
 
 [Data_1_8Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti
@@ -994,6 +1035,7 @@ Type=GESTURE
 
 [Data_1_9]
 Comment=Press, move up, move down, release.
+Comment[bg]=Натискане, движение нагоре, движение надолу, пускане.
 Comment[de]=Drücken, nach oben, nach unten, loslassen.
 Comment[el]=Πίεση, μετακίνηση πάνω, μετακίνηση κάτω, ελευθέρωση.
 Comment[fa]=فشار، حرکت به بالا، حرکت به پایین، رها کردن.
@@ -1009,6 +1051,7 @@ Comment[zh_TW]=按住，往上移，往下移，再放開。
 Enabled=true
 Name=Reload
 Name[be]=Абнавіць
+Name[bg]=Презареждане
 Name[csb]=Zladëjë znowa
 Name[de]=Dokument erneut laden
 Name[el]=Επαναφόρτωση
@@ -1040,6 +1083,7 @@ ConditionsCount=0
 
 [Data_1_9Triggers]
 Comment=Gesture_triggers
+Comment[bg]=Жестове
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[it]=Interruttori_gesti

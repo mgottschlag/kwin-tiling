@@ -16,6 +16,7 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 Name=Keyboard
 Name[af]=Sleutelbord
 Name[be]=Клавіятура
+Name[bg]=Клавиатура
 Name[br]=Stokellaoueg
 Name[ca]=Teclat
 Name[cs]=Klávesnice
@@ -77,6 +78,7 @@ Name[zh_TW]=鍵盤
 Comment=Keyboard settings
 Comment[af]=Sleutelbord instellings
 Comment[be]=Настаўленні клавіятуры
+Comment[bg]=Настройване на клавиатурата
 Comment[br]=Kefluniañ ar stokellaoueg
 Comment[ca]=Arranjament del teclat
 Comment[cs]=Nastavení klávesnice
@@ -137,6 +139,7 @@ Comment[zh_TW]=鍵盤設定
 
 Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
 Keywords[be]=Клавіятура,Паўтор клавішаў,Гучнасць націску,Прылады ўводу,Паўтор,Гучнасць,Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
+Keywords[bg]=Keywords=клавиатура, настройки, повторение, клавиши, задържане, Keyboard, Keyboard repeat, Click volume, Input Devices, repeat, volume
 Keywords[ca]=Teclat,Repetició del teclat,Volum del clic,dispositius d'entrada,repetició,volum
 Keywords[cs]=Klávesnice,Opakování klávesy,Hlasitost stisknutí,Vstupní zařízení,Opakování,Hlasitost
 Keywords[csb]=Klawiatura,powtórzenié klawiaturë,głosnosc klëkniãcô,ùrządzenia wéńdzeniowé,powtórzenié,głosnosc

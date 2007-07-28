@@ -3,6 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=This group contains actions that are set up by default.
+Comment[bg]=Тази група съдържа действия, които са зададени по подразбирани.
 Comment[de]=Diese Gruppe enthält einige voreingestellte Aktionen.
 Comment[el]=Η ομάδα αυτή περιέχει ενέργειες που είναι προκαθορισμένα καθορισμένες.
 Comment[fa]=این گروه شامل کنشهایی است که به طور پیش‌فرض برپا می‌شوند.
@@ -19,6 +20,7 @@ DataCount=1
 Enabled=true
 Name=Preset Actions
 Name[be]=Існуючыя дзеянні
+Name[bg]=Фиксирани действия
 Name[csb]=Ùstawioné akcëje
 Name[de]=Voreingestellte Aktionen
 Name[el]=Προκαθορισμένες ενέργειες
@@ -44,6 +46,7 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Launches KSnapShot when PrintScrn is pressed.
+Comment[bg]=Стартиране на KSnapShot при натискане на клавиша "PrintScrn"
 Comment[de]=Startet KSnapShot wenn "Bildschirm Drucken" gedrückt wurde.
 Comment[el]=Εκτέλεση του KSnapShot όταν πατηθεί το PrintScrn.
 Comment[fa]=وقتی PrintScrn فشار داده می‌شود، KSnapShot را راه می‌اندازد.
@@ -58,6 +61,7 @@ Comment[x-test]=xxLaunches KSnapShot when PrintScrn is pressed.xx
 Comment[zh_TW]=按下 PrintScreen 鍵時叫出 KSnapShot。
 Enabled=true
 Name=PrintScreen
+Name[bg]=Печат на екрана
 Name[de]=Bildschirm Drucken
 Name[it]=Stamp
 Name[nds]=Schirmfoto
@@ -80,6 +84,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Simple_action
+Comment[bg]=Обикновено_действие
 Comment[csb]=Prosté_dzejanié
 Comment[de]=Einfache_Aktion
 Comment[el]=Απλή_ενέργεια

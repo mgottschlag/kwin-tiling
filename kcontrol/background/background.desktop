@@ -15,6 +15,7 @@ X-KDE-System-Settings-Parent-Category=background
 Name=Background
 Name[af]=Agtergrond
 Name[be]=Фон
+Name[bg]=Фон на екрана
 Name[br]=Drekleur
 Name[ca]=Fons
 Name[cs]=Pozadí
@@ -76,6 +77,7 @@ Name[zh_TW]=背景
 Comment=Change the background settings
 Comment[af]=Verander die agtergrond instellings
 Comment[be]=Змяняе настаўленні фону
+Comment[bg]=Настройване фона на работния плот
 Comment[br]=Kemmañ kefluniadur an drekleur
 Comment[ca]=Canvia l'arranjament de la configuració del fons
 Comment[cs]=Změna nastavení pozadí
@@ -135,6 +137,7 @@ Comment[zh_TW]=改變背景設定
 
 Keywords=background,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmap
 Keywords[be]=фон,працоўныя сталы,колеры,відарысы,малюнкі,шпалеры,баланс,кэш,некалькі шпалераў,background,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmap
+Keywords[bg]=Keywords=фон, изображение, работен, плот, работен плот, background, desktops, colors, colours, images, wallpapers, blending, balance, cache, multiple wallpapers, pixmap
 Keywords[ca]=fons,escriptoris,colors,colors,imatges,paper pintat,barreja,balanç,cau,múltiples papers pintats,mapa de píxels
 Keywords[cs]=Pozadí,Plochy,Barvy,Obrázky,Tapety,Směšování,Vyvážení,Cache,Pixmapa
 Keywords[csb]=spódk,spòdlé,pùltë,biurka,farwë,òbrôzczi,tapetë,mieszanié,pòdrãcznô pamiãc,wielorazowé tapetë,bitmapa

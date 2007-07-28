@@ -4,6 +4,7 @@ Encoding=UTF-8
 Name=Taskbar
 Name[af]=Kasbar
 Name[be]=Панель заданняў
+Name[bg]=Панел за задачи
 Name[br]=Barrenn dleadoù
 Name[ca]=Barra de tasques
 Name[cs]=Pruh úloh
@@ -62,6 +63,7 @@ Name[zh_TW]=工作列
 
 Comment=The default taskbar panel applet
 Comment[be]=Панель заданняў па змаўчанні
+Comment[bg]=Алтернативен аплет за лентата със задачите
 Comment[ca]=La miniaplicació per al plafó de la barra de tasques predeterminada
 Comment[csb]=Alternatiwnô lëstew dzejaniów dlô panelu.
 Comment[de]=Die Standard-Fensterleiste

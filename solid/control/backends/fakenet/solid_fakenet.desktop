@@ -19,6 +19,7 @@ Name[sv]=Testnät
 Name[zh_TW]=Fake 網路
 Comment=Fake Network Management
 Comment[be]=Кіраванне падробная сеткай
+Comment[bg]=File Management
 Comment[csb]=Sprôwianié falszëwą sécą
 Comment[de]=Netzwerkverwaltung (Dummy)
 Comment[el]=Διαχειριστής πλαστού δικτύου

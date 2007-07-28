@@ -15,6 +15,7 @@ X-KDE-System-Settings-Parent-Category=desktop
 Name=Screen Saver
 Name[af]=Skerm Bewaarder
 Name[be]=Зберагальнік экрана
+Name[bg]=Екранен предпазител
 Name[br]=Damanter Skramm
 Name[ca]=Salvapantalles
 Name[cs]=Šetřič obrazovky
@@ -74,6 +75,7 @@ Name[zh_TW]=螢幕保護程式
 Comment=Screen Saver Settings
 Comment[af]=Skerm Bewaarder Instellings
 Comment[be]=Настаўленні зберагальніка экрана
+Comment[bg]=Настройване предпазителя на екрана
 Comment[br]=Kefluniadur an Damanter Skramm
 Comment[ca]=Arranjament del salvapantalles
 Comment[cs]=Nastavení šetřiče obrazovky
@@ -135,6 +137,7 @@ Comment[zh_TW]=螢幕保護程式設定
 
 Keywords=screensavers,Priority
 Keywords[be]=Зберагальнік экрану.Прыярытэт,screensavers,Priority
+Keywords[bg]=Keywords=предпазител, екран, приоритет, screensavers, Priority
 Keywords[ca]=salvapantalles,Prioritat
 Keywords[cs]=Šetřiče obrazovky,Priorita
 Keywords[csb]=wëgaszaczë ekranu,prioritet

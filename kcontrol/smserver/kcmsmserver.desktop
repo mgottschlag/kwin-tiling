@@ -15,6 +15,7 @@ X-KDE-System-Settings-Parent-Category=advanced-user-settings
 Name=Session Manager
 Name[af]=Sessie Bestuurder
 Name[be]=Кіраўнік сеансаў
+Name[bg]=Системни сесии
 Name[br]=Merour an dalc'hioù
 Name[ca]=Gestor de la sessió
 Name[cs]=Správce relace
@@ -76,6 +77,7 @@ Name[zh_TW]=工作階段管理程式
 Comment=Configure the session manager and logout settings
 Comment[af]=Konfigureer die sessie bestuurder en teken af instellings
 Comment[be]=Настаўленні кіраўніка сеансаў і параметраў выхаду
+Comment[bg]=Настройване сесиите на системата и поведението при изход
 Comment[br]=Kefluniañ ar merour an dalc'hioù hag an doare mont kuit
 Comment[ca]=Aquí podeu configurar el gestor de la sessió i la sortida
 Comment[cs]=Nastavení správce relace a odhlašování
@@ -134,6 +136,7 @@ Comment[zh_TW]=設定工作階段管理程式與登出設定值
 
 Keywords=ksmserver,session,logout,confirmation,save,restore
 Keywords[be]=Сесія,Выхад,Канец сесіі,Пацверджанне,Захаванне,Захаваць,Аднавіць,Аднаўленне,ksmserver,session,logout,confirmation,save,restore
+Keywords[bg]=Keywords=сесия, сесии, изход, запис, възстановяване, ksmserver, session, logout, confirmation, save, restore
 Keywords[ca]=ksmserver,sessió,sortida,confirmació,desa,restaura
 Keywords[cs]=Správce relace,Relace,Odhlášení,Potvrzení,Uložení,Obnovení
 Keywords[csb]=ksmserver,sesëjô,wëlogòwanié,pòcwierdzenié,zachòwanié stónu,òdtwòrzenié,kùńc robòtë,kùńc pracë

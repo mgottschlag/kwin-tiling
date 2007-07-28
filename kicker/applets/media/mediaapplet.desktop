@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Plugin
 Comment=A panel applet that displays your storage media
+Comment[bg]=Директен достъп до съхраняващите устройства
 Comment[csb]=Prosti przëstãp do Twòjëch zôpisownëch mediów
 Comment[de]=Zugriff auf Speichermedien
 Comment[el]=Ένα εφαρμογίδιο που εμφανίζει τις συσκευές αποθήκευσής σας
@@ -17,6 +18,7 @@ Comment[zh_TW]=直接存取您的儲存媒體的面板小程式
 Name=Storage Media
 Name[af]=Stoor Media
 Name[be]=Носьбіт
+Name[bg]=Съхраняващи устройства
 Name[ca]=Suports d'emmagatzematge
 Name[cs]=Úložná zařízení
 Name[csb]=Zôpisowné media

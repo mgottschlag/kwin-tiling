@@ -14,6 +14,7 @@ X-KDE-ParentApp=kcontrol
 Name=Taskbar
 Name[af]=Kasbar
 Name[be]=Панель заданняў
+Name[bg]=Панел за задачи
 Name[br]=Barrenn dleadoù
 Name[ca]=Barra de tasques
 Name[cs]=Pruh úloh
@@ -73,6 +74,7 @@ Name[zh_TW]=工作列
 Comment=Configure the panel taskbar
 Comment[af]=Stel die paneel taakbalk op
 Comment[be]=Настаўленні панелі заданняў
+Comment[bg]=Настройване на панела за задачите
 Comment[br]=Kefluniañ barrenn dleadoù ar panell
 Comment[ca]=Configura el plafó barra de tasques
 Comment[cs]=Zde je možné nastavit pruh úloh panelu
@@ -130,6 +132,7 @@ Comment[zh_TW]=您可以在這裡設定面板工作列
 
 Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar,windows
 Keywords[be]=Панель,Панель заданняў,Панель стартавання,Вокны,Акно,kicker,panel,kpanel,taskbar,startbar,launchbar,windows
+Keywords[bg]=Keywords=системен, панел, задачи, задача, прозорец, kicker, panel, kpanel, taskbar, startbar, launchbar, windows
 Keywords[ca]=kicker,plafó,kpanel,barra de tasques,barra d'inici,barra d'engegar,finestres
 Keywords[cs]=Kicker,Panel,Pruh úloh,Startovací lišta,Spouštěcí lišta,Okna
 Keywords[csb]=kicker,panel,kpanel,lëstew dzejaniów,sztartowô lëstew,zrëszanié,òkna

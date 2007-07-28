@@ -19,6 +19,7 @@ Name[sv]=Blåtandstest
 Name[zh_TW]=Fake 藍芽
 Comment=Fake Bluetooth Management
 Comment[be]=Кіраванне падробным Buletooth
+Comment[bg]=File Management
 Comment[csb]=Sprôwianié falszëwim Bluetoothã
 Comment[de]=Bluetooth-Verwaltung (Dummy)
 Comment[el]=Διαχείριση πλαστού Bluetooth

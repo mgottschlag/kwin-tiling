@@ -16,6 +16,7 @@ X-KDE-System-Settings-Parent-Category=notifications
 Name=System Bell
 Name[af]=Stelsel Klok
 Name[be]=Сістэмны званок
+Name[bg]=Системен звук
 Name[br]=Kloc'h ar reizhiad
 Name[ca]=Timbre del sistema
 Name[cs]=Systémový zvonek
@@ -78,6 +79,7 @@ Name[zh_TW]=系統鈴聲
 Comment=System Bell Configuration
 Comment[af]=Stelsel Klok Opstelling
 Comment[be]=Настаўленне сістэмнага званка
+Comment[bg]=Настройване звуковия сигнал на системата
 Comment[br]=Kefluniañ kloc'h ar reizhiad
 Comment[ca]=Configuració del timbre del sistema
 Comment[cs]=Nastavení systémového zvonku
@@ -138,6 +140,7 @@ Comment[zh_TW]=系統鈴聲組態
 
 Keywords=Bell,Audio,Sound,Volume,Pitch,Duration
 Keywords[be]=Званок,аўдыё,гук,гучнасць,Bell,Audio,Sound,Volume,Pitch,Duration
+Keywords[bg]=Keywords=звук, системен, говорител, сила, Bell, Audio, Sound, Volume, Pitch, Duration
 Keywords[ca]=Timbre,Àudio,So,Volum,To,Durada
 Keywords[cs]=Systémový zvonek,Audio,Zvuk,Hlasitost,Trvání
 Keywords[csb]=brzãczk,audio,zwãk,głosnosc,tonacëjô,dérowanié

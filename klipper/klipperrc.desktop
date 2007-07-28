@@ -2,6 +2,7 @@
 Description=Jpeg-Image
 Description[af]=Jpeg Beeld
 Description[be]=Відарыс JPEG
+Description[bg]=Description=Изображение Jpeg
 Description[br]=Skeudenn Jpeg
 Description[ca]=Imatge jpeg
 Description[cs]=Obrázek JPEG
@@ -67,6 +68,7 @@ Commandline=kview %s
 Description=Launch K&View
 Description[af]=Lanseer K-bekyk
 Description[be]=Запусціць K&View
+Description[bg]=Description=&Стартиране на KView
 Description[br]=Lañsañ K&View
 Description[ca]=Engega el K&View
 Description[cs]=Spustit K&View
@@ -183,6 +185,7 @@ Commandline=kfmclient exec %s
 Description=Open with &Konqueror
 Description[af]=Maak oop met Konqueror
 Description[be]=Адкрыць у &Konqueror
+Description[bg]=Description=&Отваряне с Konqueror
 Description[br]=Digeriñ gant &Konqueror
 Description[ca]=Obre amb el &Konqueror
 Description[cs]=Otevřít pomocí &Konqueroru
@@ -248,6 +251,7 @@ Icon=mozilla
 Description=Open with &Mozilla
 Description[af]=Maak oop met Mozilla
 Description[be]=Адкрыць у &Mozilla
+Description[bg]=Description=От&варяне с Mozilla
 Description[br]=Digeriñ gant &Mozilla
 Description[ca]=Obre amb el &Mozilla
 Description[cs]=Otevřít pomocí &Mozilla
@@ -312,6 +316,7 @@ Commandline=kmail --body  %s
 Description=Send &URL
 Description[af]=Stuur URL
 Description[be]=Даслаць &URL
+Description[bg]=Description=&Изпращане на адрес
 Description[br]=Kas an &URL
 Description[ca]=Envia la &URL
 Description[cs]=Poslat &URL
@@ -375,6 +380,7 @@ Icon=firefox
 Description=Open with &Firefox
 Description[af]=Maak oop met Firefox
 Description[be]=Адкрыць у &Firefox
+Description[bg]=Description=Отв&аряне с Firefox
 Description[br]=Digeriñ gant &Firefox
 Description[ca]=Obre amb el &Firefox
 Description[cs]=Otevřít pomocí &Firefox
@@ -432,6 +438,7 @@ Commandline=kmail  --attach %s
 Description=Send &Page
 Description[af]=Stuur Bladsy
 Description[be]=Даслаць &старонку
+Description[bg]=Description=И&зпращане на страница
 Description[br]=Kas ar &pajenn
 Description[ca]=Envia la &pàgina
 Description[cs]=&Poslat stránku
@@ -553,6 +560,7 @@ Commandline=kmail --composer `echo %s | sed 's/mailto://g'`
 Description=Launch &Kmail
 Description[af]=Lanseer Kpos
 Description[be]=Запусціць &KMail
+Description[bg]=Description=Ст&артиране на Kmail
 Description[br]=Lañsañ &Kmail
 Description[ca]=Engega el &Kmail
 Description[cs]=Spustit &Kmail
@@ -616,6 +624,7 @@ Commandline=konsole -e mutt `echo %s | sed 's/mailto://g'`
 Description=Launch &mutt
 Description[af]=Lanseer mutt
 Description[be]=Запусціць &mutt
+Description[bg]=Description=Ста&ртиране на mutt
 Description[br]=Lañsañ &mutt
 Description[ca]=Engega el &mutt
 Description[cs]=Spustit &mutt
@@ -678,6 +687,7 @@ Enabled=true
 Description=Text File
 Description[af]=Teks Lêer
 Description[be]=Тэкставыя файлы
+Description[bg]=Текстови файлове
 Description[br]=Restr testenn
 Description[ca]=Fitxer de text
 Description[cs]=Textový soubor
@@ -743,6 +753,7 @@ Commandline=kedit %s
 Description=Launch K&Edit
 Description[af]=Lanseer Kredigeer
 Description[be]=Запусціць K&Edit
+Description[bg]=Description=&Стартиране на KEdit
 Description[br]=Lañsañ K&Edit
 Description[ca]=Engega el K&Edit
 Description[cs]=Spustit K&Edit
@@ -805,6 +816,7 @@ Commandline=kwrite %s
 Description=Launch K&Write
 Description[af]=Lanseer Kskryf
 Description[be]=Запусціць K&Write
+Description[bg]=Description=С&тартиране на KWrite
 Description[br]=Lañsañ K&Write
 Description[ca]=Engega el K&Write
 Description[cs]=Spustit K&Write
@@ -866,6 +878,7 @@ Enabled=true
 Description=Local file URL
 Description[af]=Plaaslike lêer Url
 Description[be]=URL мясцовага файла
+Description[bg]=Description=Локален файл/адрес
 Description[br]=URL ur restr lec'hel
 Description[ca]=URL d'un fitxer local
 Description[cs]=Místní URL
@@ -930,6 +943,7 @@ Commandline=kmail --body  %s
 Description=Send &URL
 Description[af]=Stuur URL
 Description[be]=Даслаць &URL
+Description[bg]=Description=&Изпращане на адрес
 Description[br]=Kas an &URL
 Description[ca]=Envia la &URL
 Description[cs]=Poslat &URL
@@ -992,6 +1006,7 @@ Commandline=kmail  --attach %s
 Description=Send &File
 Description[af]=Stuur Lêer
 Description[be]=Даслаць файл
+Description[bg]=Търсене на файлове
 Description[br]=Kas ar &restr
 Description[ca]=Envia &fitxer
 Description[cs]=Posl&at soubor
@@ -1054,6 +1069,7 @@ Enabled=true
 [Action_5]
 Description=Gopher URL
 Description[af]=Gopher Url
+Description[bg]=Description=Адрес Gopher
 Description[br]=URL Gopher
 Description[ca]=URL de Gopher
 Description[csb]=Adresa Gophera
@@ -1104,6 +1120,7 @@ Commandline=kmail --body %s
 Description=Send &URL
 Description[af]=Stuur URL
 Description[be]=Даслаць &URL
+Description[bg]=Description=&Изпращане на адрес
 Description[br]=Kas an &URL
 Description[ca]=Envia la &URL
 Description[cs]=Poslat &URL
@@ -1166,6 +1183,7 @@ Commandline=kmail  --attach %s
 Description=Send &File
 Description[af]=Stuur Lêer
 Description[be]=Даслаць файл
+Description[bg]=Търсене на файлове
 Description[br]=Kas ar &restr
 Description[ca]=Envia &fitxer
 Description[cs]=Posl&at soubor
@@ -1280,6 +1298,7 @@ Commandline=kfmclient exec %s
 Description=Open with &Konqueror
 Description[af]=Maak oop met Konqueror
 Description[be]=Адкрыць у &Konqueror
+Description[bg]=Description=&Отваряне с Konqueror
 Description[br]=Digeriñ gant &Konqueror
 Description[ca]=Obre amb el &Konqueror
 Description[cs]=Otevřít pomocí &Konqueroru
@@ -1344,6 +1363,7 @@ Commandline=netscape -no-about-splash -remote openURL\(%s, new-window\)
 Description=Open with &Netscape
 Description[af]=Open met Netscape
 Description[be]=Адкрыць у &Netscape
+Description[bg]=Description=О&тваряне с Netscape
 Description[br]=Digeriñ gant &Netscape
 Description[ca]=Obre amb el &Netscape
 Description[cs]=Otevřít pomocí &Netscape
@@ -1408,6 +1428,7 @@ Commandline=mozilla -remote openURL\(%s, new-window\)
 Description=Open with &Mozilla
 Description[af]=Maak oop met Mozilla
 Description[be]=Адкрыць у &Mozilla
+Description[bg]=Description=От&варяне с Mozilla
 Description[br]=Digeriñ gant &Mozilla
 Description[ca]=Obre amb el &Mozilla
 Description[cs]=Otevřít pomocí &Mozilla
@@ -1472,6 +1493,7 @@ Commandline=kmail --body  %s
 Description=Send &URL
 Description[af]=Stuur URL
 Description[be]=Даслаць &URL
+Description[bg]=Description=&Изпращане на адрес
 Description[br]=Kas an &URL
 Description[ca]=Envia la &URL
 Description[cs]=Poslat &URL
@@ -1534,6 +1556,7 @@ Commandline=kmail  --attach %s
 Description=Send &File
 Description[af]=Stuur Lêer
 Description[be]=Даслаць файл
+Description[bg]=Търсене на файлове
 Description[br]=Kas ar &restr
 Description[ca]=Envia &fitxer
 Description[cs]=Posl&at soubor

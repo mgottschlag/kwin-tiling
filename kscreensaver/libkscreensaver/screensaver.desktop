@@ -4,6 +4,7 @@ Type=ServiceType
 X-KDE-ServiceType=ScreenSaver
 Comment=ScreenSaver
 Comment[be]=Зберагальнік экрана
+Comment[bg]=Екранен предпазител
 Comment[csb]=Wëgaszôcz ekranu
 Comment[de]=Bildschirmschoner
 Comment[el]=Προφύλαξη οθόνης
