@@ -1,0 +1,46 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Button
+Name[be]=Кнопка
+Name[csb]=Knąpa
+Name[de]=Knopf
+Name[el]=Κουμπί
+Name[es]=Botón
+Name[fa]=بوتان
+Name[ga]=Cnaipe
+Name[ja]=ボタン
+Name[nds]=Knoop
+Name[nl]=Knop
+Name[pt]=Botão
+Name[pt_BR]=Botão
+Name[sv]=Knapp
+Name[uk]=Кнопка
+Name[zh_TW]=按鍵
+Comment=A launcher button
+Comment[de]=Ein Start-Knopf
+Comment[el]=Ένα κουμπί εκκίνησης
+Comment[es]=Un botón lanzador
+Comment[fa]=دکمۀ راه‌اندازی
+Comment[ga]=Cnaipe tosaitheora
+Comment[ja]=起動ボタン
+Comment[nds]=En Startknoop
+Comment[nl]=Een opstartknop
+Comment[pt]=Um botão de lançamento
+Comment[pt_BR]=Um botão de lançamento
+Comment[sv]=En startknapp
+Comment[uk]=Кнопка запуску
+Comment[zh_TW]=啟動按鍵
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_url
+X-KDE-PluginInfo-Author=The Plasma Team
+X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Name=url
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=File System
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+
