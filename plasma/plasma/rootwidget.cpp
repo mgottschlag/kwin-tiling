@@ -84,7 +84,7 @@ RootWidget::RootWidget()
 
     icon = new Plasma::Icon();
     icon->setIcon("user-home");
-    icon->setSize(64, 64);
+    icon->setIconSize(64, 64);
     icon->setFlags(QGraphicsItem::ItemIsMovable);
     m_desktop->corona()->addItem(icon);
 #endif
