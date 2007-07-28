@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell kthememanager
-Icon=kthememgr
+Icon=preferences-desktop-theme-manager
 Type=Service
 ServiceTypes=KCModule
 

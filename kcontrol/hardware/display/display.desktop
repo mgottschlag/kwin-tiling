@@ -1,9 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=kscreensaver
+Exec=kcmshell display
+Icon=preferences-desktop-display
 Type=Service
 ServiceTypes=KCModule
-Exec=kcmshell display
 DocPath=kcontrol/kcmdisplay/index.html
 
 X-KDE-Library=display

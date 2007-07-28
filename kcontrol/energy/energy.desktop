@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell energy
-Icon=energy_star
+Icon=preferences-system-power-management
 DocPath=kcontrol/energy/index.html
 Type=Service
 ServiceTypes=KCModule,KCModuleInit

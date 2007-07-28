@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell colors
-Icon=colorscm
+Icon=preferences-desktop-color
 Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/colors/index.html

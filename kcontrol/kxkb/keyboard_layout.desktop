@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell keyboard_layout
-Icon=keyboard
+Icon=preferences-desktop-keyboard-layout
 Type=Service
 ServiceTypes=KCModule
 DocPath=kxkb/index.html

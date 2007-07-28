@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell style
-Icon=style
+Icon=preferences-desktop-theme-style
 Type=Service
 ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/kcmstyle/index.html

@@ -1,9 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=access
+Exec=kcmshell kcmaccess
+Icon=preferences-desktop-accessibility
 Type=Service
 ServiceTypes=KCModule,KCModuleInit
-Exec=kcmshell kcmaccess
 DocPath=kcontrol/kcmaccess/index.html
 
 X-KDE-Library=kcm_access

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell khotkeys
-Icon=khotkeys
+Icon=preferences-desktop-keyboard-khotkeys
 Type=Service
 ServiceTypes=KCModule
 X-KDE-Library=kcm_khotkeys

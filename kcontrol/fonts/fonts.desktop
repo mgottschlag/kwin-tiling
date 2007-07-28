@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell fonts
-Icon=fonts
+Icon=preferences-desktop-font
 Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/fonts/index.html

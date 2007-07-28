@@ -1,10 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=exit
+Exec=kcmshell kcmsmserver
+Icon=preferences-system-session
 Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/kcmsmserver/index.html
-Exec=kcmshell kcmsmserver
 
 X-KDE-Library=smserver
 X-KDE-FactoryName=smserver

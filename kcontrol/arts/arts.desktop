@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell arts
-Icon=arts
+Icon=preferences-desktop-sound
 Type=Service
 ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/arts/index.html

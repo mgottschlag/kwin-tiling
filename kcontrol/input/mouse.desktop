@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell mouse
-Icon=mouse
+Icon=preferences-desktop-mouse
 Type=Service
 ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/mouse/index.html

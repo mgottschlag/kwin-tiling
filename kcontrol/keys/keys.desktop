@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell keys
-Icon=key_bindings
+Icon=preferences-desktop-keyboard-shortcut
 Type=Service
 ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/keys/index.html

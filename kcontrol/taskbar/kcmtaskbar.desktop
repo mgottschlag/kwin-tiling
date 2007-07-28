@@ -1,10 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=kmenu
+Exec=kcmshell kcmtaskbar
+Icon=preferences-desktop-panel-taskbar
 Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/kcmtaskbar/index.html
-Exec=kcmshell kcmtaskbar
 
 
 X-KDE-Library=taskbar

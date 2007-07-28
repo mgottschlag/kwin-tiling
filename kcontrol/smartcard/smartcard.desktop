@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=identity
+Icon=preferences-desktop-user-smartcard
 Type=Service
 ServiceTypes=KCModule,KCModuleInit
 Exec=kcmshell smartcard

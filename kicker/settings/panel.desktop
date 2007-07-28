@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=kcmkicker
+Icon=preferences-desktop-panel
 Type=Application
 DocPath=kcontrol/panel/index.html
 Exec=kcmshell panel

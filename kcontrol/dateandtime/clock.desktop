@@ -1,9 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
+Exec=kcmshell kde-clock.desktop
+Icon=preferences-system-time
 Type=Service
 ServiceTypes=KCModule
-Exec=kcmshell kde-clock.desktop
-Icon=date
 DocPath=kcontrol/clock/index.html
 
 X-KDE-Library=clock

@@ -1,8 +1,9 @@
 [Desktop Entry]
-Icon=randr
+Encoding=UTF-8
+Exec=kcmshell randr
+Icon=preferences-desktop-display-randr
 Type=Service
 ServiceTypes=KCModule
-Exec=kcmshell randr
 X-KDE-Library=randr
 Hidden[$e]=$(if xdpyinfo|grep RANDR > /dev/null; then echo "false"; else echo "true"; fi)
 
@@ -181,4 +182,3 @@ Keywords[uz]=ўлчамини ўзгартириш,буриш,экран,ран�
 Keywords[wa]=candjî l' grandeu,tourner,håynaedje,coleur,parfondeu,grandeu,di coûtchî,d' astampé
 Keywords[x-test]=xxresize,rotate,display,color,depth,size,horizontal,verticalxx
 Keywords[zh_TW]=resize,rotate,display,color,depth,size,horizontal,vertical,調整大小,旋轉,螢幕,顏色,深度,尺寸,垂直,水平
-Encoding=UTF-8

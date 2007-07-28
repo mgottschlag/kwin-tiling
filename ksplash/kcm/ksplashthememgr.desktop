@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=ksplash
+Icon=preferences-system-splash
 Exec=kcmshell ksplashthememgr
 DocPath=ksplashml/themes.html
 
