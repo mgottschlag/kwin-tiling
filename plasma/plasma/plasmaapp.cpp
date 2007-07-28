@@ -52,7 +52,7 @@ PlasmaApp::PlasmaApp()
 
     // this same pattern is in KRunner (see workspace/krunner/restartingapplication.h)
     // would be interesting to see if this could be shared.
-    if (KCrash::crashHandler() == 0)
+    if (!KCrash::crashHandler())
     {
         // this means we've most likely crashed once. so let's see if we
         // stay up for more than 2 minutes time, and if so reset the
@@ -98,7 +98,6 @@ void PlasmaApp::crashHandler(int signal)
 
     fprintf(stderr, "Plasma crashed, attempting to automatically recover\n");
 
-//    DCOPClient::emergencyClose();
     sleep(1);
     system("plasma --nocrashhandler &"); // try to restart
 }

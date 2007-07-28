@@ -253,15 +253,6 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
         }
 
         if (!corona() || !corona()->isImmutable()) {
-	    if( applet->canBeMoved())
-	    { 
-              KToggleAction* lockApplet = new KToggleAction(i18n("Lock this %1", applet->name()), this);
-              lockApplet->setChecked(applet->lockApplet());
-              connect(lockApplet, SIGNAL(triggered(bool)),
-                      applet, SLOT(slotLockApplet(bool)));
-              desktopMenu.addAction(lockApplet);
-            }
-
             QAction* closeApplet = new QAction(i18n("Close this %1", applet->name()), this);
             connect(closeApplet, SIGNAL(triggered(bool)),
                     applet, SLOT(deleteLater()));
