@@ -29,7 +29,7 @@
 #include "krunnerapp.h"
 
 KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
-    : QDialog( parent, f )
+    : KDialog( parent, f )
 {
     m_background = new Plasma::Svg( "dialogs/background", this );
     connect( m_background, SIGNAL(repaintNeeded()), this, SLOT(update()) );
@@ -58,7 +58,7 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
 void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
     m_background->resize( e->size() );
-    QDialog::resizeEvent( e );
+    KDialog::resizeEvent( e );
 }
 
 #include "krunnerdialog.moc"

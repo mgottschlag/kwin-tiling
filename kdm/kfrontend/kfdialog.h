@@ -26,13 +26,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef FDIALOG_H
 #define FDIALOG_H
 
-#include <QDialog>
+#include <KDialog>
 #include <QMessageBox>
 
 class QFrame;
 
-class FDialog : public QDialog {
-	typedef QDialog inherited;
+class FDialog : public KDialog {
+	typedef KDialog inherited;
 
   public:
 	FDialog( QWidget *parent = 0, bool framed = true );

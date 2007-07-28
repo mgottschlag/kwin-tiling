@@ -14,25 +14,25 @@
 #include <kcheckpass-enums.h>
 #include <dmctl.h>
 
-#include <kapplication.h>
-#include <klocale.h>
-#include <kpushbutton.h>
-#include <kseparator.h>
-#include <kstandarddirs.h>
-#include <kglobalsettings.h>
-#include <kconfig.h>
-#include <kiconloader.h>
+#include <KApplication>
+#include <KLocale>
+#include <KPushButton>
+#include <KSeparator>
+#include <KStandardDirs>
+#include <KGlobalSettings>
+#include <KConfig>
+#include <KIconLoader>
 #include <kdesu/defaults.h>
-#include <kpassworddialog.h>
-#include <kdebug.h>
-#include <kuser.h>
-#include <kmessagebox.h>
+#include <KPasswordDialog>
+#include <KDebug>
+#include <KUser>
+#include <KMessageBox>
 
 #include <QtDBus/QtDBus>
 
 #include <QLayout>
 #include <QPushButton>
-#include <QMessageBox>
+// #include <QMessageBox>
 #include <Qt3Support/Q3SimpleRichText>
 #include <QLabel>
 #include <QFontMetrics>
@@ -78,7 +78,7 @@
 // Simple dialog for entering a password.
 //
 PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
-    : QDialog(parent, Qt::X11BypassWindowManagerHint),
+    : KDialog(parent, Qt::X11BypassWindowManagerHint),
       mPlugin( plugin ),
       mCapsLocked(-1),
       mUnlockingFailed(false)
@@ -107,7 +107,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     cancel = new KPushButton( KStandardGuiItem::cancel(), frame );
     mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), frame );
 
-    mLayoutButton = new QPushButton( frame );
+    mLayoutButton = new KPushButton( frame );
     mLayoutButton->setFlat( true );
 
     QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this );

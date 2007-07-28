@@ -8,17 +8,17 @@
 #include <QLabel>
 #include <QtGui/QDesktopWidget>
 
-#include <kdialog.h>
-#include <kmessagebox.h>
-#include <kcombobox.h>
-#include <kiconloader.h>
-#include <kdebug.h>
-#include <knotification.h>
-#include <kconfig.h>
-#include <kglobal.h>
-#include <klocale.h>
+#include <KDialog>
+#include <KMessageBox>
+#include <KComboBox>
+#include <KIconLoader>
+#include <KDebug>
+#include <KNotification>
+#include <KConfig>
+#include <KGlobal>
+#include <KLocale>
 #include <netwm.h>
-#include <kshortcut.h>
+#include <KShortcut>
 #include <kwindowsystem.h>
 #include <kkeyserver.h>
 

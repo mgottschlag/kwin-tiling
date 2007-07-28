@@ -23,7 +23,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <kdialog.h>
+#include <KDialog>
 #include <QComboBox>
 
 namespace KFI

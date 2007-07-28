@@ -11,7 +11,7 @@
 
 #include <kgreeterplugin.h>
 
-#include <k3process.h>
+#include <K3Process>
 
 #include <QWidget>
 #include <QTimer>

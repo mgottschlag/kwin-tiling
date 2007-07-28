@@ -11,7 +11,7 @@
 
 #include <kgreeterplugin.h>
 
-#include <QDialog>
+#include <KDialog>
 //Added by qt3to4:
 #include <QLabel>
 #include <QTimerEvent>
@@ -32,7 +32,7 @@ class Q3ListView;
 // Simple dialog for entering a password.
 // It does not handle password validation.
 //
-class PasswordDlg : public QDialog, public KGreeterPluginHandler
+class PasswordDlg : public KDialog, public KGreeterPluginHandler
 {
     Q_OBJECT
 
@@ -83,7 +83,7 @@ private:
     QGridLayout *frameLayout;
     QLabel      *mStatusLabel;
     KPushButton *mNewSessButton, *ok, *cancel;
-    QPushButton *mLayoutButton;
+    KPushButton *mLayoutButton;
     int         mFailedTimerId;
     int         mTimeoutTimerId;
     int         mCapsLocked;

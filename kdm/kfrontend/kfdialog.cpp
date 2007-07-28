@@ -26,8 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kdmconfig.h"
 #include "kdm_greet.h"
 
-#include <kguiitem.h>
-#include <kpushbutton.h>
+#include <KGuiItem>
+#include <KPushButton>
 
 #include <QApplication>
 #include <QDesktopWidget>

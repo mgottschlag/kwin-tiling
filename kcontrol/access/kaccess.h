@@ -9,8 +9,8 @@
 #include <QPaintEvent>
 
 
-#include <kuniqueapplication.h>
-#include <kurl.h>
+#include <KUniqueApplication>
+#include <KUrl>
 
 #include <phonon/audioplayer.h>
 

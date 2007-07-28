@@ -291,7 +291,7 @@ bool KSMPushButton::event( QEvent *e )
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KWorkSpace::ShutdownType sdtype )
-  : QDialog( parent, Qt::Popup )
+  : KDialog( parent, Qt::Popup )
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {

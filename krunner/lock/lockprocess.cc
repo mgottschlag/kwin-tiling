@@ -25,18 +25,18 @@
 
 #include <dmctl.h>
 
-#include <kstandarddirs.h>
-#include <kapplication.h>
-#include <kservicegroup.h>
-#include <kdebug.h>
-#include <kmessagebox.h>
-#include <kglobalsettings.h>
-#include <klocale.h>
-#include <klibloader.h>
-#include <kpushbutton.h>
+#include <KStandardDirs>
+#include <KApplication>
+#include <KServiceGroup>
+#include <KDebug>
+#include <KMessageBox>
+#include <KGlobalSettings>
+#include <KLocale>
+#include <KLibLoader>
+#include <KPushButton>
 #include <KStandardGuiItem>
-#include <kauthorized.h>
-#include <kdesktopfile.h>
+#include <KAuthorized>
+#include <KDesktopFile>
 #include <kservicetypetrader.h>
 
 #include <QtGui/QFrame>

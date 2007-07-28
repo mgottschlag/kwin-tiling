@@ -62,7 +62,7 @@ CPrintDialog::CPrintDialog(QWidget *parent)
 bool CPrintDialog::exec(int size)
 {
     itsSize->setCurrentIndex(size);
-    return QDialog::Accepted==QDialog::exec();
+    return KDialog::Accepted==KDialog::exec();
 }
 
 }

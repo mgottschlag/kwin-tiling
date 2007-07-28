@@ -19,7 +19,7 @@
 #ifndef KRUNNERDIALOG_H
 #define KRUNNERDIALOG_H
 
-#include <QDialog>
+#include <KDialog>
 
 
 namespace Plasma
@@ -27,7 +27,7 @@ namespace Plasma
     class Svg;
 }
 
-class KRunnerDialog : public QDialog
+class KRunnerDialog : public KDialog
 {
     Q_OBJECT
 
