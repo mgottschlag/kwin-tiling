@@ -16,6 +16,7 @@ include(ConfigureChecks.cmake)
 configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )
 configure_file(config-X11.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-X11.h )
 configure_file (config-workspace.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-workspace.h )
+configure_file (startkde.cmake ${CMAKE_CURRENT_BINARY_DIR}/startkde  @ONLY)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
@@ -94,4 +95,4 @@ endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 SET(krunner_DEPENDS "plasma")
 
 ########### install files ###############
-install(PROGRAMS startkde DESTINATION ${BIN_INSTALL_DIR})
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/startkde DESTINATION ${BIN_INSTALL_DIR})
