@@ -726,10 +726,10 @@ Task::Task(WId w, QObject *parent, const char *name)
                                                     QStringList(), 0, true);
     }
 
-    // load xapp icon
+    // load the icon for X applications
     if (d->pixmap.isNull())
     {
-        d->pixmap = SmallIcon("kcmx");
+        d->pixmap = SmallIcon("x");
     }
 
 #ifdef THUMBNAILING_POSSIBLE
@@ -807,10 +807,10 @@ void Task::refreshIcon()
                                                     QStringList(), 0, true);
     }
 
-    // load xapp icon
+    // load the icon for X applications
     if (d->pixmap.isNull())
     {
-        d->pixmap = SmallIcon("kcmx");
+        d->pixmap = SmallIcon("x");
     }
 
     d->lastIcon = QPixmap();
