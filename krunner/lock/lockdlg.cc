@@ -83,7 +83,8 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
       mCapsLocked(-1),
       mUnlockingFailed(false)
 {
-    frame = new QFrame( this );
+    QWidget* w = mainWidget();
+    frame = new QFrame(w);
     frame->setFrameStyle( QFrame::Panel | QFrame::Raised );
     frame->setLineWidth( 2 );
 
@@ -98,8 +99,9 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     mStatusLabel = new QLabel( "<b> </b>", frame );
     mStatusLabel->setAlignment( Qt::AlignCenter );
 
-    greet = plugin->info->create( this, this, QString(),
-              KGreeterPlugin::Authenticate, KGreeterPlugin::ExUnlock );
+    greet = plugin->info->create(this, w, QString(),
+                                 KGreeterPlugin::Authenticate,
+                                 KGreeterPlugin::ExUnlock);
 
     KSeparator *sep = new KSeparator( Qt::Horizontal, frame );
 
@@ -110,7 +112,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     mLayoutButton = new KPushButton( frame );
     mLayoutButton->setFlat( true );
 
-    QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this );
+    QVBoxLayout *unlockDialogLayout = new QVBoxLayout(w);
     unlockDialogLayout->addWidget( frame );
 
     QHBoxLayout *layStatus = new QHBoxLayout();

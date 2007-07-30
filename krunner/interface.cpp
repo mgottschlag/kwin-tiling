@@ -123,13 +123,15 @@ Interface::Interface(QWidget* parent)
     connect( &m_searchTimer, SIGNAL(timeout()),
              this, SLOT(fuzzySearch()) );
 
-    m_layout = new QVBoxLayout(this);
+    QWidget* w = mainWidget();
+    m_layout = new QVBoxLayout(w);
+    m_layout->setMargin(0);
 
-    m_header = new KTitleWidget(this);
+    m_header = new KTitleWidget(w);
     m_header->setBackgroundRole( QPalette::Base );
     m_layout->addWidget( m_header );
 
-    m_searchTerm = new KLineEdit( this );
+    m_searchTerm = new KLineEdit(w);
     m_header->setBuddy(m_searchTerm);
     m_searchTerm->clear();
     m_searchTerm->setClearButtonShown( true );
@@ -140,7 +142,7 @@ Interface::Interface(QWidget* parent)
              this, SLOT(exec()) );
 
     //TODO: temporary feedback, change later with the "icon parade" :)
-    m_matchList = new QListWidget(this);
+    m_matchList = new QListWidget(w);
     connect( m_matchList, SIGNAL(itemActivated(QListWidgetItem*)),
              SLOT(matchActivated(QListWidgetItem*)) );
     connect( m_matchList, SIGNAL(itemClicked(QListWidgetItem*)),
@@ -148,8 +150,8 @@ Interface::Interface(QWidget* parent)
     m_layout->addWidget(m_matchList);
 
     // buttons at the bottom
-    QHBoxLayout* bottomLayout = new QHBoxLayout(this);
-    m_optionsButton = new KPushButton( KStandardGuiItem::configure(), this );
+    QHBoxLayout* bottomLayout = new QHBoxLayout(w);
+    m_optionsButton = new KPushButton(KStandardGuiItem::configure(), this);
     m_optionsButton->setText( i18n( "Show Options" ) );
     m_optionsButton->setFlat( true );
     m_optionsButton->setEnabled( false );
@@ -157,7 +159,7 @@ Interface::Interface(QWidget* parent)
     connect( m_optionsButton, SIGNAL(toggled(bool)), SLOT(showOptions(bool)) );
     bottomLayout->addWidget( m_optionsButton );
 
-    KPushButton *activityButton = new KPushButton(this);
+    KPushButton *activityButton = new KPushButton(w);
     activityButton->setText(i18n("Show System Activity"));
     activityButton->setIcon(KIcon("ksysguard"));
     activityButton->setFlat(true);
@@ -168,15 +170,15 @@ Interface::Interface(QWidget* parent)
     bottomLayout->addStretch();
 
     QString runButtonWhatsThis = i18n( "Click to execute the selected item above" );
-    m_runButton = new KPushButton( KGuiItem( i18n( "Launch" ), "launch",
-                                             QString(), runButtonWhatsThis ),
-                                   this );
+    m_runButton = new KPushButton(KGuiItem(i18n( "Launch" ), "launch",
+                                           QString(), runButtonWhatsThis),
+                                  w);
     m_runButton->setFlat( true );
     m_runButton->setEnabled( false );
     connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(exec()) );
     bottomLayout->addWidget( m_runButton );
 
-    m_cancelButton = new KPushButton( KStandardGuiItem::cancel(), this );
+    m_cancelButton = new KPushButton(KStandardGuiItem::cancel(), w);
     m_cancelButton->setFlat( true );
     connect( m_cancelButton, SIGNAL(clicked(bool)), SLOT(hide()) );
     bottomLayout->addWidget( m_cancelButton );
