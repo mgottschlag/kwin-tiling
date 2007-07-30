@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef __KDMSESS_H__
-#define __KDMSESS_H__
+#ifndef __KDMSHUT_H__
+#define __KDMSHUT_H__
 
 #include <KConfigGroup>
 

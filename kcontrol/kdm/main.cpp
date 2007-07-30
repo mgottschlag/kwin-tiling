@@ -21,9 +21,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "main.h"
+
 #include <config-workspace.h>
 
-#include "main.h"
 #include "background.h"
 #include "kdm-gen.h"
 #include "kdm-dlg.h"
@@ -123,7 +124,7 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 	                    "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
 	                    "will offer you for logging in."
 	                    "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
-	                    "users not needing to provide a password to log in, and other convenience features.<br>"
+	                    "users not needing to provide a password to log in, and other convenience features.<br/>"
 	                    "Note, that these settings are security holes by their nature, so use them very carefully.") );
 
 	setAboutData( about );

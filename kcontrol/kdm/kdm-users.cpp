@@ -96,7 +96,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 			i18n("User 'nobody' does not exist. "
 			     "Displaying user images will not work in KDM.") );
 
-	m_defaultText = i18n("<default>");
+	m_defaultText = i18n("<default>");	// krazy:exclude=i18ncheckarg
 
 	QString wtstr;
 

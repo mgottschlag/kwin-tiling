@@ -18,8 +18,8 @@
 */
 
 
-#ifndef __KDMAPPEAR_H__
-#define __KDMAPPEAR_H__
+#ifndef __KDMDLG_H__
+#define __KDMDLG_H__
 
 #include <QWidget>
 
@@ -49,7 +49,7 @@ class KDMDialogWidget : public QWidget {
   protected:
 	void iconLoaderDragEnterEvent( QDragEnterEvent *event );
 	void iconLoaderDropEvent( QDropEvent *event );
-	bool setLogo( QString logo );
+	bool setLogo( const QString &logo );
 
   private Q_SLOTS:
 	void slotAreaRadioClicked( int id );

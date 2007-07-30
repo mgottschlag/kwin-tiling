@@ -73,7 +73,7 @@ KDMDialogWidget::KDMDialogWidget( QWidget *parent )
 	wtstr = i18n("This is the \"headline\" for KDM's login window. You may want to "
 	             "put some nice greeting or information about the operating system here.<p>"
 	             "KDM will substitute the following character pairs with the "
-	             "respective contents:<br><ul>"
+	             "respective contents:<br/><ul>"
 	             "<li>%d -> current display</li>"
 	             "<li>%h -> host name, possibly with domain name</li>"
 	             "<li>%n -> node name, most probably the host name without domain name</li>"
@@ -158,7 +158,7 @@ void KDMDialogWidget::makeReadOnly()
 	positioner->makeReadOnly();
 }
 
-bool KDMDialogWidget::setLogo(QString logo)
+bool KDMDialogWidget::setLogo(const QString &logo)
 {
 	QString flogo = logo.isEmpty() ?
 		KStandardDirs::locate( "data", QLatin1String("kdm/pics/kdelogo.png") ) :

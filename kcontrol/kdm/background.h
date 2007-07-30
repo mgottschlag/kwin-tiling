@@ -6,8 +6,8 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
-#ifndef __Bgnd_h_Included__
-#define __Bgnd_h_Included__
+#ifndef __BACKGROUND__
+#define __BACKGROUND__
 
 #include <QWidget>
 #include <ksharedconfig.h>

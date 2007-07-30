@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef __KDMFONT_H__
-#define __KDMFONT_H__
+#ifndef __KDMGEN_H__
+#define __KDMGEN_H__
 
 #include <QWidget>
 

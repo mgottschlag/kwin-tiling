@@ -60,7 +60,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	grid->addWidget( useThemeCheck, 0, 0, 1, 2 );
 
 	guicombo = new KBackedComboBox( box );
-	guicombo->insertItem( "", i18n("<default>") );
+	guicombo->insertItem( "", i18n("<default>") );	// krazy:exclude=i18ncheckarg
 	loadGuiStyles( guicombo );
 	QLabel *label = new QLabel( i18n("GUI s&tyle:"), box );
 	label->setBuddy( guicombo );
@@ -73,7 +73,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	guicombo->setWhatsThis( wtstr );
 
 	colcombo = new KBackedComboBox( box );
-	colcombo->insertItem( "", i18n("<default>") );
+	colcombo->insertItem( "", i18n("<default>") );	// krazy:exclude=i18ncheckarg
 	loadColorSchemes( colcombo );
 	label = new QLabel( i18n("Color sche&me:"), box );
 	label->setBuddy( colcombo );
