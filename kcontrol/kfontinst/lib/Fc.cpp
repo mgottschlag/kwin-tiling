@@ -586,23 +586,30 @@ bool bitmapsEnabled()
     // On some systems, such as KUbuntu, fontconfig is configured to ignore all bitmap fonts.
     // The following check tries to get a list of installed bitmaps, if it an empty list is returned
     // it is assumed that bitmaps are disabled.
-    bool        rv(false);
-    FcObjectSet *os  = FcObjectSetBuild(FC_FAMILY, (void *)0);
-    FcPattern   *pat = FcPatternBuild(NULL, FC_SCALABLE, FcTypeBool, FcFalse, NULL);
-    FcFontSet   *set = FcFontList(0, pat, os);
 
-    FcPatternDestroy(pat);
-    FcObjectSetDestroy(os);
+    static bool enabled(false);
+    static bool checked(false); // Dont keep on checking!
 
-    if (set)
+    if(!checked)
     {
-        if(set->nfont)
-            rv=true;
+        FcObjectSet *os  = FcObjectSetBuild(FC_FAMILY, (void *)0);
+        FcPattern   *pat = FcPatternBuild(NULL, FC_SCALABLE, FcTypeBool, FcFalse, NULL);
+        FcFontSet   *set = FcFontList(0, pat, os);
 
-        FcFontSetDestroy(set);
+        FcPatternDestroy(pat);
+        FcObjectSetDestroy(os);
+
+        if (set)
+        {
+            if(set->nfont)
+                enabled=true;
+
+            FcFontSetDestroy(set);
+        }
+        checked=true;
     }
 
-    return rv;
+    return enabled;
 }
 
 }
