@@ -218,18 +218,6 @@ Interface::~Interface()
 
 void Interface::display( const QString& term)
 {
-#ifdef FLASH_DIALOG
-    static bool s_in = false;
-
-    if (s_in) {
-        s_in = false;
-        hide();
-        return;
-    }
-    s_in = true;
-#endif
-
-    kDebug() << "display() called, are we visible? " << isVisible() << endl;
     m_searchTerm->setFocus();
 
     if ( !term.isEmpty() ) {
@@ -240,8 +228,6 @@ void Interface::display( const QString& term)
     KDialog::centerOnScreen( this );
     show();
     KWindowSystem::forceActiveWindow( winId() );
-
-    kDebug() << "about to match now that we've shown " << isVisible() << endl;
 
     match( term );
 }
@@ -312,17 +298,8 @@ void Interface::resetInterface()
     showOptions( false );
 }
 
-void Interface::showEvent( QShowEvent* e )
-{
-    Q_UNUSED( e )
-
-    kDebug() << "show event" << endl;
-    KRunnerDialog::showEvent( e );
-}
-
 void Interface::hideEvent( QHideEvent* e )
 {
-    kDebug() << "hide event" << endl;
     resetInterface();
     e->accept();
 }

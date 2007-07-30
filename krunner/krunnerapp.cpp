@@ -104,23 +104,12 @@ bool checkComposite()
     kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager << endl;
     return true;
 }
-/*
-KRunnerApp::KRunnerApp(Display *display,
-                       Qt::HANDLE visual,
-                       Qt::HANDLE colormap)
-    : RestartingApplication(display, visual, colormap ),
-      m_interface( 0 )
-{
-    kDebug() << "new krunner app" << endl;
-    initialize();
-}*/
 
 KRunnerApp::KRunnerApp()
     : RestartingApplication(checkComposite() ? dpy : dpy, dpy ? Qt::HANDLE(visual) : 0, dpy ? Qt::HANDLE(colormap) : 0),
       m_interface(0),
       m_tasks(0)
 {
-    kDebug() << "new simple krunner app " << dpy << " " << argbVisual << endl;
     initialize();
 }
 
@@ -132,10 +121,7 @@ KRunnerApp::~KRunnerApp()
 void KRunnerApp::initialize()
 {
     setQuitOnLastWindowClosed(false);
-
     initializeStartupNotification();
-
-    kDebug() << "initliaze!()" << endl;
     m_interface = new Interface;
 
     // Global keys
@@ -147,10 +133,6 @@ void KRunnerApp::initialize()
         a->setText( i18n( I18N_NOOP( "Run Command" ) ) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
         connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(display()) );
-/*
-        QDialog* test = new QDialog;
-        connect( a, SIGNAL(triggered(bool)), test, SLOT(show()) );
-*/
     }
 
     a = m_actionCollection->addAction( I18N_NOOP( "Show Taskmanager" ) );
@@ -262,13 +244,11 @@ void KRunnerApp::showTaskManager()
 
 void KRunnerApp::taskDialogFinished()
 {
-    kDebug() << "task dialog finis" << endl;
     KConfigGroup cg = KGlobal::config()->group("TaskDialog");
     m_tasks->saveDialogSize(cg);
     KGlobal::config()->sync();
     m_tasks->deleteLater();
     m_tasks = 0;
-    kDebug() << "task dialog finis finis" << endl;
 }
 
 void KRunnerApp::logout()
@@ -307,17 +287,13 @@ void KRunnerApp::logout( KWorkSpace::ShutdownConfirm confirm,
     }
 }
 
-#include <KStartupInfo>
 int KRunnerApp::newInstance()
 {
     static bool firstTime = true;
     if ( firstTime ) {
-        // App startup: do nothing
         firstTime = false;
     } else {
-        //KStartupInfo::setNewStartupId( m_interface, KStartupInfo::createNewStartupId() );
         m_interface->display();
-        //kDebug() << "startup id is " << startupId() << endl;
     }
 
     return RestartingApplication::newInstance();
