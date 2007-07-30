@@ -78,15 +78,16 @@ RootWidget::RootWidget()
 
 #ifdef ICON_DEMO
     Plasma::Icon* icon = new Plasma::Icon();
-    icon->setIcon("plasmagik");
-    icon->setFlags(QGraphicsItem::ItemIsMovable);
-    m_desktop->corona()->addItem(icon);
-
-    icon = new Plasma::Icon();
     icon->setIcon("user-home");
     icon->setIconSize(64, 64);
-    icon->setFlags(QGraphicsItem::ItemIsMovable);
+//    icon->setFlags(QGraphicsItem::ItemIsMovable);
     m_desktop->corona()->addItem(icon);
+
+    icon = new Plasma::Icon(icon);
+    icon->setIcon("plasmagik");
+//    icon->setFlags(QGraphicsItem::ItemIsMovable);
+    m_desktop->corona()->addItem(icon);
+
 #endif
 
 #ifdef SUPERKARAMBA_DEMO
