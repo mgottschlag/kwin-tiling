@@ -276,28 +276,28 @@ setWidgetAttribs( QWidget *widget, const StyleType &style )
 static QString prefix;
 static QStack<QString> prefixes;
 
-# define dbgs() kdbgstream( 0, 0, (debugLevel & DEBUG_THEMING) != 0 )
+# define dbgs ((debugLevel & DEBUG_THEMING) != 0 ? kDebug() : kDebugDevNull())
 
-kdbgstream
+QDebug
 enter( const char *fct )
 {
 	prefixes.push( prefix );
 	prefix.replace( '-', ' ' ).append( "|- " );
-	return dbgs() << prefixes.top() << fct << " ";
+	return dbgs << prefixes.top() << fct << " ";
 }
 
-kdbgstream
+QDebug
 debug()
 {
-	return dbgs() << prefix;
+	return dbgs << prefix;
 }
 
-kdbgstream
+QDebug
 leave()
 {
 	prefix[prefix.length() - 3] = '\\';
 	QString nprefix( prefix );
 	prefix = prefixes.pop();
-	return dbgs() << nprefix;
+	return dbgs << nprefix;
 }
 #endif

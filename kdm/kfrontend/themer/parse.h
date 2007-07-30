@@ -61,14 +61,10 @@ void parseStyle( const QDomElement &, StyleType & );
 
 void setWidgetAttribs( QWidget *, const StyleType & );
 
-#ifdef NDEBUG
-kndbgstream enter( const char * ) { return kndbgstream(); }
-kndbgstream debug() { return kndbgstream(); }
-kndbgstream leave() { return kndbgstream(); }
-#else
-kdbgstream enter( const char *fct );
-kdbgstream debug();
-kdbgstream leave();
+#ifndef QT_NO_DEBUG_STREAM
+QDebug enter( const char *fct );
+QDebug debug();
+QDebug leave();
 #endif
 
 #endif
