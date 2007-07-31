@@ -36,7 +36,7 @@
 #define INFO_XSERVER_AVAILABLE
 
 
-bool GetInfo_CPU( QListView *lBox ) {
+bool GetInfo_CPU( Q3ListView *lBox ) {
 
 	kstat_ctl_t	*kctl;
 	kstat_t		*ksp;
@@ -130,7 +130,7 @@ bool GetInfo_CPU( QListView *lBox ) {
 			}
 		}
 
-		new QListViewItem( lBox, inst, cputype, fputype, mhz, state );
+		new Q3ListViewItem( lBox, inst, cputype, fputype, mhz, state );
 	}
 
 	// sorting_allowed = true;
@@ -139,31 +139,31 @@ bool GetInfo_CPU( QListView *lBox ) {
 	return true;
 }
 
-bool GetInfo_IRQ( QListView * ) {
+bool GetInfo_IRQ( Q3ListView * ) {
 	return false;
 }
 
-bool GetInfo_DMA( QListView * ) {
+bool GetInfo_DMA( Q3ListView * ) {
 	return false;
 }
 
-bool GetInfo_PCI( QListView * ) {
+bool GetInfo_PCI( Q3ListView * ) {
 	return false;
 }
 
-bool GetInfo_IO_Ports( QListView * ) {
+bool GetInfo_IO_Ports( Q3ListView * ) {
 	return false;
 }
 
-bool GetInfo_Sound( QListView * ) {
+bool GetInfo_Sound( Q3ListView * ) {
 	return false;
 }
 
-bool GetInfo_SCSI( QListView * ) {
+bool GetInfo_SCSI( Q3ListView * ) {
 	return false;
 }
 
-bool GetInfo_Partitions( QListView *lBox ) {
+bool GetInfo_Partitions( Q3ListView *lBox ) {
 
 	FILE		*mnttab;
 	struct mnttab	mnt;
@@ -262,7 +262,7 @@ bool GetInfo_Partitions( QListView *lBox ) {
 		}
 		/*
 		 *  ctime() adds a '\n' which we have to remove
-		 *  so that we get a one-line output for the QListViewItem
+		 *  so that we get a one-line output for the Q3ListViewItem
 		 */
 		mnttime = (time_t) atol( mnt.mnt_time );
 		if( (timetxt = ctime( &mnttime )) != NULL ) {
@@ -270,7 +270,7 @@ bool GetInfo_Partitions( QListView *lBox ) {
 			*ptr = '\0';
 		}
 
-		new QListViewItem(
+		new Q3ListViewItem(
 			lBox,
 			mnt.mnt_special,
 			mnt.mnt_mountp,
@@ -289,7 +289,7 @@ bool GetInfo_Partitions( QListView *lBox ) {
 	return true;
 }
 
-bool GetInfo_XServer_and_Video( QListView *lBox ) {
+bool GetInfo_XServer_and_Video( Q3ListView *lBox ) {
 	return GetInfo_XServer_Generic( lBox );
 }
 
@@ -315,9 +315,9 @@ bool GetInfo_XServer_and_Video( QListView *lBox ) {
  *  mktree() -- break up the device path and place its components
  *		into the tree widget
  */
-QListViewItem *mktree( QListViewItem *top, const char *path ) {
+Q3ListViewItem *mktree( Q3ListViewItem *top, const char *path ) {
 
-	QListViewItem	*parent,
+	Q3ListViewItem	*parent,
 			*previous,
 			*result;
 	char		*str = strdup( path ),
@@ -350,7 +350,7 @@ QListViewItem *mktree( QListViewItem *top, const char *path ) {
 			/*
 			 *  we haven't found the node, create a new one
 			 */
-			result = new QListViewItem( parent,
+			result = new Q3ListViewItem( parent,
 					previous,
 					token );
 		} else {
@@ -450,26 +450,26 @@ int prop_type_guess( uchar_t *data, int len ) {
  */
 int dump_minor_node( di_node_t node, di_minor_t minor, void *arg ) {
 
-	QListViewItem	*item;
+	Q3ListViewItem	*item;
 	QString		majmin;
 	char		*type;
 	dev_t		dev;
 
-	item = new QListViewItem( (QListViewItem *) arg,
+	item = new Q3ListViewItem( (Q3ListViewItem *) arg,
 			di_minor_name( minor ));
 	item->setExpandable( true );
 	item->setOpen( false );
-	new QListViewItem( item, i18n( "Spectype:" ),
+	new Q3ListViewItem( item, i18n( "Spectype:" ),
 		(di_minor_spectype( minor ) == S_IFCHR)
 			? i18n( "character special" )
 			: i18n( "block special" ));
 	type = di_minor_nodetype( minor );
-	new QListViewItem( item, i18n( "Nodetype:" ),
+	new Q3ListViewItem( item, i18n( "Nodetype:" ),
 		(type == NULL) ? "NULL" : type );
 
 	if( (dev = di_minor_devt( minor )) != DDI_DEV_T_NONE ) {
 		majmin.sprintf( "%ld/%ld", major( dev ), minor( dev ));
-		new QListViewItem( item, i18n( "Major/Minor:" ), majmin );
+		new Q3ListViewItem( item, i18n( "Major/Minor:" ), majmin );
 	}
 
 	if( di_minor_next( node, minor ) == DI_MINOR_NIL )
@@ -564,7 +564,7 @@ QString propvalue( di_prop_t prop ) {
  */
 int dump_node( di_node_t node, void *arg ) {
 
-	QListViewItem	*top = (QListViewItem *) arg,
+	Q3ListViewItem	*top = (Q3ListViewItem *) arg,
 			*parent,
 			*previous;
 	char		*path;
@@ -607,12 +607,12 @@ int dump_node( di_node_t node, void *arg ) {
 	 *  node name and physical device path
 	 */
 	drivername = di_driver_name( node );
-	previous = new QListViewItem( parent,
+	previous = new Q3ListViewItem( parent,
 		i18n( "Driver Name:" ),
 		(drivername == NULL)
 			? i18n( "(driver not attached)" )
 			: drivername );
-	previous = new QListViewItem( parent, previous,
+	previous = new Q3ListViewItem( parent, previous,
 		i18n( "Binding Name:" ), di_binding_name( node ));
 
 	n = di_compatible_names( node, &names );
@@ -626,31 +626,31 @@ int dump_node( di_node_t node, void *arg ) {
 		}
 	}
 
-	previous = new QListViewItem( parent, previous,
+	previous = new Q3ListViewItem( parent, previous,
 		i18n( "Compatible Names:" ), compatnames );
 
-	previous = new QListViewItem( parent, previous,
+	previous = new Q3ListViewItem( parent, previous,
 		i18n( "Physical Path:" ), QString( path ));
 
 	/*
 	 *  dump the node's property list (if any)
 	 */
 	if( (prop = di_prop_next( node, DI_PROP_NIL )) != DI_PROP_NIL ) {
-		previous = new QListViewItem( parent, previous, i18n( "Properties" ));
+		previous = new Q3ListViewItem( parent, previous, i18n( "Properties" ));
 		previous->setExpandable( true );
 		previous->setOpen( false );
 		do {
 			/*
 			 *  property type & value
 			 */
-			QListViewItem	*tmp,
+			Q3ListViewItem	*tmp,
 					*prev;
-			tmp = new QListViewItem( previous, di_prop_name( prop ));
+			tmp = new Q3ListViewItem( previous, di_prop_name( prop ));
 			tmp->setExpandable( true );
 			tmp->setOpen( false );
-			prev = new QListViewItem( tmp, i18n( "Type:" ),
+			prev = new Q3ListViewItem( tmp, i18n( "Type:" ),
 				prop_type_str( prop ));
-			new QListViewItem( tmp, prev, i18n( "Value:" ),
+			new Q3ListViewItem( tmp, prev, i18n( "Value:" ),
 				propvalue( prop ));
 		} while( (prop = di_prop_next( node, prop )) != DI_PROP_NIL );
 	}
@@ -659,7 +659,7 @@ int dump_node( di_node_t node, void *arg ) {
 	 *  if there are minor nodes, expand the tree appropriately
 	 */
 	if( di_minor_next( node, DI_MINOR_NIL ) != DI_MINOR_NIL ) {
-		previous = new QListViewItem( parent, previous, i18n( "Minor Nodes" ));
+		previous = new Q3ListViewItem( parent, previous, i18n( "Minor Nodes" ));
 		previous->setExpandable( true );
 		previous->setOpen( false );
 		di_walk_minor( node, NULL, 0, previous, dump_minor_node );
@@ -668,9 +668,9 @@ int dump_node( di_node_t node, void *arg ) {
 	return( DI_WALK_CONTINUE );
 }
 
-bool GetInfo_Devices( QListView *lBox ) {
+bool GetInfo_Devices( Q3ListView *lBox ) {
 
-	QListViewItem		*top;
+	Q3ListViewItem		*top;
 	di_node_t		root_node;
 
 	/*
@@ -687,7 +687,7 @@ bool GetInfo_Devices( QListView *lBox ) {
 	lBox->addColumn( i18n( "Device Information" ));
 	lBox->addColumn( i18n( "Value" ));
 
-	top = new QListViewItem( lBox );
+	top = new Q3ListViewItem( lBox );
 
 	/*
 	 *  traverse the device tree
@@ -701,7 +701,7 @@ bool GetInfo_Devices( QListView *lBox ) {
 }
 
 #else /* ! HAVE_LIBDEVINFO_H */
-bool GetInfo_Devices( QListView * ) {
+bool GetInfo_Devices( Q3ListView * ) {
 	return false;
 }
 #endif /* ! HAVE_LIBDEVINFO_H */
