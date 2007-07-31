@@ -29,7 +29,6 @@
 #include <QLineEdit>
 #include <QStack>
 #include <QWidget>
-#include <kdebug.h>
 
 void
 parseSize( const QString &s, DataPoint &pt )
@@ -273,11 +272,11 @@ setWidgetAttribs( QWidget *widget, const StyleType &style )
 }
 
 
-#ifndef NDEBUG
+#ifndef KDE_NO_DEBUG_OUTPUT
 static QString prefix;
 static QStack<QString> prefixes;
 
-# define dbgs ((debugLevel & DEBUG_THEMING) != 0 ? kDebug() : kDebugDevNull())
+# define dbgs kDebug( (debugLevel & DEBUG_THEMING) != 0 )
 
 QDebug
 enter( const char *fct )

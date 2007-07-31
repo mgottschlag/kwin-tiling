@@ -61,7 +61,11 @@ void parseStyle( const QDomElement &, StyleType & );
 
 void setWidgetAttribs( QWidget *, const StyleType & );
 
-#ifndef QT_NO_DEBUG_STREAM
+#ifdef KDE_NO_DEBUG_OUTPUT
+static inline QDebug enter( const char * ) { return kDebugDevNull(); }
+static inline QDebug debug() { return kDebugDevNull(); }
+static inline QDebug leave() { return kDebugDevNull(); }
+#else
 QDebug enter( const char *fct );
 QDebug debug();
 QDebug leave();
