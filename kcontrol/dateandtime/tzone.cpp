@@ -45,6 +45,7 @@
 #include <KProcess>
 #include <kstandarddirs.h>
 #include <ksystemtimezone.h>
+#include <kdefakes.h>
 
 //#include "xpm/world.xpm"
 #include "tzone.moc"
