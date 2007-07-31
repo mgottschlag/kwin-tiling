@@ -22,6 +22,7 @@
 #include <QAction>
 #include <QFile>
 #include <QWheelEvent>
+#include <QCoreApplication>
 
 #include <KAuthorized>
 #include <KMenu>
@@ -242,7 +243,6 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
         QGraphicsView::contextMenuEvent(event);
         return;
     } else {
-        //desktopMenu.addSeparator();
         bool hasEntries = false;
         if (applet->hasConfigurationInterface()) {
             QAction* configureApplet = new QAction(i18n("%1 Settings...", applet->name()), this);
@@ -258,6 +258,15 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
                     applet, SLOT(deleteLater()));
             desktopMenu.addAction(closeApplet);
             hasEntries = true;
+        }
+
+        QList<QAction*> actions = applet->contextActions();
+        if (!actions.isEmpty()) {
+            desktopMenu.addSeparator();
+            foreach(QAction* action, actions) {
+                desktopMenu.addAction(action);
+                hasEntries = true;
+            }
         }
 
         if (!hasEntries) {
