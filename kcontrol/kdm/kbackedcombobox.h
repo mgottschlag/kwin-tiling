@@ -20,7 +20,7 @@
 #ifndef KBACKEDCOMBOBOX_H
 #define KBACKEDCOMBOBOX_H
 
-#include <kcombobox.h>
+#include <KComboBox>
 
 class KBackedComboBox : public KComboBox {
 

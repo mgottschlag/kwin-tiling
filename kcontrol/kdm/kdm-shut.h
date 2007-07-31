@@ -20,6 +20,7 @@
 #ifndef __KDMSHUT_H__
 #define __KDMSHUT_H__
 
+#include <KComboBox>
 #include <KConfigGroup>
 
 #include <QWidget>
@@ -46,10 +47,10 @@ class KDMSessionsWidget : public QWidget {
 	void changed();
 
   private:
-	void readSD( QComboBox *, const QString &, KConfigGroup group );
-	void writeSD( QComboBox *, KConfigGroup group );
+	void readSD( KComboBox *, const QString &, KConfigGroup group );
+	void writeSD( KComboBox *, KConfigGroup group );
 
-	QComboBox *sdlcombo, *sdrcombo;
+	KComboBox *sdlcombo, *sdrcombo;
 	QLabel *sdllabel, *sdrlabel;
 	KUrlRequester *restart_lined, *shutdown_lined;
 	KBackedComboBox *bm_combo;

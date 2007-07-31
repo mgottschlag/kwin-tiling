@@ -42,7 +42,7 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 
 	QGroupBox *group0 = new QGroupBox( i18n("Allow Shutdown"), this );
 
-	sdlcombo = new QComboBox( group0 );
+	sdlcombo = new KComboBox( group0 );
 	sdlcombo->setEditable( false );
 	sdllabel = new QLabel( i18n ("&Local:"), group0 );
 	sdllabel->setBuddy( sdlcombo );
@@ -50,7 +50,7 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	sdlcombo->insertItem( SdRoot, i18n("Only Root") );
 	sdlcombo->insertItem( SdNone, i18n("Nobody") );
 	connect( sdlcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
-	sdrcombo = new QComboBox( group0 );
+	sdrcombo = new KComboBox( group0 );
 	sdrcombo->setEditable( false );
 	sdrlabel = new QLabel( i18n ("&Remote:"), group0 );
 	sdrlabel->setBuddy( sdrcombo );
@@ -153,7 +153,7 @@ void KDMSessionsWidget::makeReadOnly()
 	bm_combo->setEnabled( false );
 }
 
-void KDMSessionsWidget::writeSD( QComboBox *combo, KConfigGroup group )
+void KDMSessionsWidget::writeSD( KComboBox *combo, KConfigGroup group )
 {
 	QString what;
 	switch (combo->currentIndex()) {
@@ -177,7 +177,7 @@ void KDMSessionsWidget::save()
 	configGrp.writeEntry( "BootManager", bm_combo->currentId() );
 }
 
-void KDMSessionsWidget::readSD( QComboBox *combo, const QString &def, KConfigGroup group )
+void KDMSessionsWidget::readSD( KComboBox *combo, const QString &def, KConfigGroup group )
 {
 	QString str = group.readEntry( "AllowShutdown", def );
 	SdModes sdMode;

@@ -45,8 +45,8 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	QString wtstr;
 
 	QLabel *paranoia = new QLabel(
-		i18n("<qt><center><font color=red><big><b>Attention<br/>"
-		     "Read help</b></big></font></center></qt>"), this );
+		i18n("<big style='color:red;text-align:center;font-weight:bold;'>Attention<br/>"
+		     "Read help</big>"), this );
 
 	QSizePolicy vpref( QSizePolicy::Minimum, QSizePolicy::Fixed );
 
