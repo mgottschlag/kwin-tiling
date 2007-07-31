@@ -30,6 +30,7 @@
 #include <QtDBus/QtDBus>
 #include <stdlib.h> // getenv()
 #include <ksmserver_interface.h>
+#include <kdefakes.h>
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
