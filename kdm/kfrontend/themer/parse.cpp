@@ -29,6 +29,7 @@
 #include <QLineEdit>
 #include <QStack>
 #include <QWidget>
+#include <kdebug.h>
 
 void
 parseSize( const QString &s, DataPoint &pt )
