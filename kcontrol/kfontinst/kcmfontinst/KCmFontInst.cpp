@@ -145,7 +145,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
               itsPrintProc(NULL),
               itsExportFile(NULL)
 {
-    setButtons(0);
+    setButtons(Help);
 
     CFcEngine::instance()->readConfig(itsConfig);
     CFcEngine::setBgndCol(QApplication::palette().color(QPalette::Active, QPalette::Base));
