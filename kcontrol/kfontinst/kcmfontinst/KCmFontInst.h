@@ -115,7 +115,8 @@ class CKCmFontInst : public KCModule
                          *itsPreviewWidget;
     QComboBox            *itsModeControl;
     QAction              *itsModeAct;
-    QSplitter            *itsSplitter;
+    QSplitter            *itsGroupSplitter,
+                         *itsPreviewSplitter;
     CFontPreview         *itsPreview;
     KConfig              itsConfig;
     QLabel               *itsStatusLabel;

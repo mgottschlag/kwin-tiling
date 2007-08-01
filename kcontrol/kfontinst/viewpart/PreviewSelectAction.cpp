@@ -28,28 +28,11 @@
 namespace KFI
 {
 
-CPreviewSelectAction::CPreviewSelectAction(QObject *parent, bool all)
+CPreviewSelectAction::CPreviewSelectAction(QObject *parent, Mode mode)
                     : KSelectAction(KIcon("character-set"), i18n("Preview Type"), parent),
                       itsNumUnicodeBlocks(0)
 {
-    QStringList items;
-    items.append(i18n("Standard Preview"));
-    items.append(i18n("All Characters"));
-
-    if(all)
-    {
-        for(itsNumUnicodeBlocks=0; constUnicodeBlocks[itsNumUnicodeBlocks].blockName; ++itsNumUnicodeBlocks)
-            items.append(i18n("Unicode Block: %1", i18n(constUnicodeBlocks[itsNumUnicodeBlocks].blockName)));
-
-        for(int i=0; constUnicodeScriptList[i]; ++i)
-            items.append(i18n("Unicode Script: %1", i18n(constUnicodeScriptList[i])));
-    }
-    else
-        for(int i=0; constUnicodeScriptList[i]; ++i)
-            items.append(i18n(constUnicodeScriptList[i]));
-
-    setItems(items);
-    setCurrentItem(0);
+    setMode(mode);
 
     connect(this, SIGNAL(triggered(int)), SLOT(selected(int)));
 }
@@ -58,6 +41,34 @@ void CPreviewSelectAction::setStd()
 {
     setCurrentItem(0);
     selected(0);
+}
+
+void CPreviewSelectAction::setMode(Mode mode)
+{
+    QStringList items;
+
+    items.append(i18n("Standard Preview"));
+    items.append(i18n("All Characters"));
+
+    switch(mode)
+    {
+        default:
+        case Basic:
+            break;
+        case BlocksAndScripts:
+            for(itsNumUnicodeBlocks=0; constUnicodeBlocks[itsNumUnicodeBlocks].blockName; ++itsNumUnicodeBlocks)
+                items.append(i18n("Unicode Block: %1", i18n(constUnicodeBlocks[itsNumUnicodeBlocks].blockName)));
+
+            for(int i=0; constUnicodeScriptList[i]; ++i)
+                items.append(i18n("Unicode Script: %1", i18n(constUnicodeScriptList[i])));
+            break;
+        case ScriptsOnly:
+            for(int i=0; constUnicodeScriptList[i]; ++i)
+                items.append(i18n(constUnicodeScriptList[i]));
+    }
+
+    setItems(items);
+    setStd();
 }
 
 void CPreviewSelectAction::selected(int index)

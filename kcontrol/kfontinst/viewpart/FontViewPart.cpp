@@ -141,7 +141,7 @@ CFontViewPart::CFontViewPart(QWidget *parent)
 
     KToolBarLabelAction *toolbarLabelAction = new KToolBarLabelAction(i18n("Display:"), this);
     actionCollection()->addAction("displayLabel", toolbarLabelAction);
-    CPreviewSelectAction *displayTypeAction=new CPreviewSelectAction(this, true);
+    CPreviewSelectAction *displayTypeAction=new CPreviewSelectAction(this, CPreviewSelectAction::BlocksAndScripts);
     actionCollection()->addAction("displayType", displayTypeAction);
     connect(displayTypeAction, SIGNAL(range(const QList<CFcEngine::TRange> &)),
             SLOT(displayType(const QList<CFcEngine::TRange> &)));

@@ -61,11 +61,12 @@
 #include <kstandarddirs.h>
 #include <kmenu.h>
 
-#define CFG_GROUP          "Main Settings"
-#define CFG_SPLITTER_SIZES "SplitterSizes"
-#define CFG_FONT_SIZE      "FontSize"
-#define CFG_FONT_MGT_MODE  "MgtMode"
-#define CFG_SHOW_PREVIEW   "ShowPreview"
+#define CFG_GROUP                  "Main Settings"
+#define CFG_PREVIEW_SPLITTER_SIZES "PreviewSplitterSizes"
+#define CFG_GROUP_SPLITTER_SIZES   "GroupSplitterSizes"
+#define CFG_FONT_SIZE              "FontSize"
+#define CFG_FONT_MGT_MODE          "MgtMode"
+#define CFG_SHOW_PREVIEW           "ShowPreview"
 
 typedef KGenericFactory<KFI::CKCmFontInst, QWidget> FontInstallFactory;
 K_EXPORT_COMPONENT_FACTORY(fontinst, FontInstallFactory("fontinst"))
@@ -115,6 +116,45 @@ class CPushButton : public KPushButton
     static int theirHeight;
 };
 
+class CToolBar : public KToolBar
+{
+    public:
+
+    CToolBar(QWidget *parent)
+        : KToolBar(parent)
+    {
+        theirHeight=qMax(theirHeight, height());
+    }
+
+    void link(CToolBar *l)
+    {
+        itsLinked=l;
+    }
+
+    QSize sizeHint() const
+    {
+        QSize sh(KToolBar::sizeHint());
+
+        sh.setHeight(theirHeight);
+        return sh;
+    }
+
+    void resizeEvent(QResizeEvent *ev)
+    {
+        KToolBar::resizeEvent(ev);
+        if(height()>theirHeight)
+        {
+            theirHeight=height();
+            itsLinked->resize(itsLinked->width(), height());
+        }
+    }
+
+    private:
+
+    CToolBar  *itsLinked;
+    static int theirHeight;
+};
+
 class CProgressBar : public QProgressBar
 {
     public:
@@ -133,6 +173,7 @@ class CProgressBar : public QProgressBar
 };
 
 int CPushButton::theirHeight=0;
+int CToolBar::theirHeight=0;
 
 CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
             : KCModule(FontInstallFactory::componentData(), parent),
@@ -163,21 +204,30 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
 
     itsRunner=new CJobRunner(this);
 
-    itsSplitter=new QSplitter(this);
-    itsSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    itsPreviewSplitter=new QSplitter(this);
+    itsPreviewSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+    QWidget     *controls=new QWidget(itsPreviewSplitter);
+
+    itsGroupSplitter=new QSplitter(controls);
+    itsGroupSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     QStringList items;
-    QBoxLayout  *mainLayout=new QBoxLayout(QBoxLayout::TopToBottom, this);
-    KToolBar    *toolbar=new KToolBar(this);
+    QBoxLayout  *mainLayout=new QBoxLayout(QBoxLayout::TopToBottom, this),
+                *controlLayout=new QBoxLayout(QBoxLayout::TopToBottom, controls);
 
-    itsGroupsWidget=new QWidget(itsSplitter);
-    itsFontsWidget=new QWidget(itsSplitter);
-    itsPreviewWidget=new QWidget(itsSplitter);
+    itsGroupsWidget=new QWidget(itsGroupSplitter);
+    itsFontsWidget=new QWidget(itsGroupSplitter);
+    itsPreviewWidget=new QWidget(itsPreviewSplitter);
 
+    CToolBar    *toolbar=new CToolBar(this),
+                *previewToolbar=new CToolBar(itsPreviewWidget);
     QGridLayout *groupsLayout=new QGridLayout(itsGroupsWidget),
                 *fontsLayout=new QGridLayout(itsFontsWidget);
     QBoxLayout  *previewLayout=new QBoxLayout(QBoxLayout::TopToBottom, itsPreviewWidget);
 
+    controlLayout->setMargin(0);
+    controlLayout->setSpacing(KDialog::spacingHint());
     mainLayout->setMargin(0);
     mainLayout->setSpacing(KDialog::spacingHint());
     groupsLayout->setMargin(0);
@@ -186,6 +236,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     fontsLayout->setSpacing(KDialog::spacingHint());
 
     // Preview...
+    itsPreviewControl=new CPreviewSelectAction(itsPreviewWidget);
+
+    previewToolbar->addAction(itsPreviewControl);
+    previewToolbar->setMovable(false);
+
     previewLayout->setMargin(0);
     previewLayout->setSpacing(KDialog::spacingHint());
 
@@ -234,13 +289,12 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     {
         itsModeControl=new QComboBox(toolbar);
         itsModeAct=toolbar->addWidget(itsModeControl);
+        toolbar->addSeparator();
     }
 
     itsFilter=new CFontFilter(toolbar);
     toolbar->addWidget(itsFilter);
 
-    itsPreviewControl=new CPreviewSelectAction(this);
-    toolbar->addAction(itsPreviewControl);
     // Details - Groups...
     itsGroupList=new CGroupList(itsGroupsWidget);
     itsGroupListView=new CGroupListView(itsGroupsWidget, itsGroupList);
@@ -317,30 +371,45 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     statusLayout->addWidget(itsListingProgress);
 
     // Layout widgets...
-    mainLayout->addWidget(toolbar);
-    mainLayout->addWidget(itsSplitter);
+    controlLayout->addWidget(toolbar);
+    controlLayout->addWidget(itsGroupSplitter);
+    mainLayout->addWidget(itsPreviewSplitter);
     mainLayout->addWidget(statusWidget);
+    previewLayout->addWidget(previewToolbar);
     previewLayout->addWidget(previewFrame);
 
     // Set size of widgets...
-    itsSplitter->setChildrenCollapsible(false);
-    itsSplitter->setStretchFactor(0, 0);
-    itsSplitter->setStretchFactor(1, 1);
-    itsSplitter->setStretchFactor(2, 0);
+    itsPreviewSplitter->setChildrenCollapsible(false);
+    itsGroupSplitter->setChildrenCollapsible(false);
+    itsGroupSplitter->setStretchFactor(0, 0);
+    itsGroupSplitter->setStretchFactor(1, 1);
+    itsPreviewSplitter->setStretchFactor(0, 1);
+    itsPreviewSplitter->setStretchFactor(1, 0);
+
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
+    // Set sizes for 3 views...
     QList<int> defaultSizes;
 
-    defaultSizes+=100;
-    defaultSizes+=350;
+    defaultSizes+=450;
     defaultSizes+=150;
 
-    QList<int> sizes(cg.readEntry(CFG_SPLITTER_SIZES, defaultSizes));
+    QList<int> sizes(cg.readEntry(CFG_PREVIEW_SPLITTER_SIZES, defaultSizes));
 
-    if(3!=sizes.count())
+    if(2!=sizes.count())
         sizes=defaultSizes;
 
-    itsSplitter->setSizes(sizes);
+    itsPreviewSplitter->setSizes(sizes);
+
+    defaultSizes=QList<int>();
+    defaultSizes+=100;
+    defaultSizes+=350;
+    sizes=cg.readEntry(CFG_GROUP_SPLITTER_SIZES, defaultSizes);
+
+    if(2!=sizes.count())
+        sizes=defaultSizes;
+
+    itsGroupSplitter->setSizes(sizes);
 
     // Connect signals...
     connect(itsFilter, SIGNAL(textChanged(const QString &)), itsFontListView, SLOT(filterText(const QString &)));
@@ -398,13 +467,17 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     toggleFontManagement(itsMgtMode->isChecked());
     selectMainGroup();
     itsFontList->scan();
+
+    toolbar->link(previewToolbar);
+    previewToolbar->link(toolbar);
 }
 
 CKCmFontInst::~CKCmFontInst()
 {
     KConfigGroup cg(&itsConfig, CFG_GROUP);
 
-    cg.writeEntry(CFG_SPLITTER_SIZES, itsSplitter->sizes());
+    cg.writeEntry(CFG_PREVIEW_SPLITTER_SIZES, itsPreviewSplitter->sizes());
+    cg.writeEntry(CFG_GROUP_SPLITTER_SIZES, itsGroupSplitter->sizes());
     cg.writeEntry(CFG_FONT_MGT_MODE, itsMgtMode->isChecked());
     cg.writeEntry(CFG_SHOW_PREVIEW, itsShowPreview->isChecked());
     itsFontListView->writeConfig(cg);
@@ -895,7 +968,6 @@ void CKCmFontInst::changeText()
 void CKCmFontInst::showPreview(bool s)
 {
     itsPreviewWidget->setVisible(s);
-    itsPreviewControl->setVisible(itsMgtMode->isChecked() && s);
 }
 
 void CKCmFontInst::duplicateFonts()
@@ -1160,7 +1232,7 @@ void CKCmFontInst::toggleFontManagement(bool on)
     {
         if(!on)
             itsPreviewControl->setStd();
-        itsPreviewControl->setVisible(on && itsShowPreview->isChecked());
+        itsPreviewControl->setMode(on ? CPreviewSelectAction::ScriptsOnly : CPreviewSelectAction::Basic);
         itsToolsMenu->setVisible(on);
         itsFontListView->setMgtMode(on);
         itsFilter->setMgtMode(on);

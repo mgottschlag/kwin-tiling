@@ -35,10 +35,18 @@ class CPreviewSelectAction : public KSelectAction
 
     public:
 
-    explicit CPreviewSelectAction(QObject *parent, bool all=false);
+    enum Mode
+    {
+        Basic,
+        BlocksAndScripts,
+        ScriptsOnly
+    };
+
+    explicit CPreviewSelectAction(QObject *parent, Mode mode=Basic);
     virtual ~CPreviewSelectAction() { }
 
     void setStd();
+    void setMode(Mode mode);
 
     Q_SIGNALS:
 
