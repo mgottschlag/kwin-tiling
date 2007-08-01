@@ -520,7 +520,7 @@ void CFontViewPart::stat(const QString &path)
 
     KIO::StatJob * job = KIO::stat(statUrl, !statUrl.isLocalFile());
     job->ui()->setWindow(itsFrame->parentWidget());
-    job->setSide(true);
+    job->setSide(KIO::StatJob::SourceSide);
     connect(job, SIGNAL(result (KJob *)), this, SLOT(statResult(KJob *)));
 }
 
