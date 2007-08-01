@@ -26,8 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtCore/QBool>
 
-#ifdef Q_WS_X11
-
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QPainter>
@@ -227,6 +225,4 @@ void KWindowListMenu::slotCascadeWindows()
     org::kde::KWin kwin("org.kde.kwin", "/KWin", QDBusConnection::sessionBus());
     kwin.cascadeDesktop();
 }
-
-#endif // Q_WS_X11
 

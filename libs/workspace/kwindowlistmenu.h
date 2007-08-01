@@ -30,8 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QtCore/QBool> // can be removed when the ifdef Q_WS_X11 will be removed
 
-#ifdef Q_WS_X11 // not yet available for non-X11
-
 /**
  * This class provides a menu which contains actions
  * to manage a window. It is used by the window manager
@@ -79,7 +77,5 @@ class KDE_EXPORT KWindowListMenu : public KMenu
     class Private;
     Private* const d;
 };
-
-#endif // Q_WS_X11
 
 #endif
