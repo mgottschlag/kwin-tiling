@@ -87,7 +87,7 @@ endif(BUILD_KICKER)
 add_subdirectory( kpager )
 
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-	add_subdirectory( kdm )
+   #	add_subdirectory( kdm )
 else(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 	MESSAGE(STATUS "Xau lib or Xdmcp lib was missing. kdm will not compile")
 endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)

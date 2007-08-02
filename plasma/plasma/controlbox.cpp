@@ -204,7 +204,7 @@ void ControlWidget::refreshPlasmoidList()
     }
 
 #ifndef NDEBUG
-    kDebug() << "Known categories: " << Plasma::Applet::knownCategories() << endl;
+    kDebug() << "Known categories: " << Plasma::Applet::knownCategories();
 #endif
 
     m_appletListModel->sort(0);
@@ -215,7 +215,7 @@ void ControlWidget::addApplet(const QModelIndex& plasmoidIndex)
 {
     QStandardItem* item = m_appletListModel->itemFromIndex(plasmoidIndex);
     if (!item || !item->data(PlasmoidListItemModel::AppletNameRole).isValid()) {
-        kDebug() << "ControlWidget::addApplet no item at " << plasmoidIndex << endl;
+        kDebug() << "ControlWidget::addApplet no item at " << plasmoidIndex;
         return;
     }
 

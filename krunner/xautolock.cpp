@@ -203,7 +203,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
 
     bool activate = false;
 
-    // kDebug() << now << " " << mTrigger << endl;
+    // kDebug() << now << mTrigger;
     if (now >= mTrigger)
     {
         resetTrigger();
@@ -215,7 +215,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     CARD16 state;
     DPMSInfo( QX11Info::display(), &state, &on );
 
-    // kDebug() << "DPMSInfo " << state << " " << on << endl;
+    // kDebug() << "DPMSInfo " << state << on;
     // If DPMS is active, it makes XScreenSaverQueryInfo() report idle time
     // that is always smaller than DPMS timeout (X bug I guess). So if DPMS
     // saving is active, simply always activate our saving too, otherwise
@@ -232,7 +232,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     static XScreenSaverInfo* mitInfo = 0;
     if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
     if (XScreenSaverQueryInfo (QX11Info::display(), QX11Info::appRootWindow(), mitInfo)) {
-        // kDebug() << "XScreenSaverQueryInfo " << mitInfo->state << " " << ScreenSaverDisabled << endl;
+        // kDebug() << "XScreenSaverQueryInfo " << mitInfo->state << ScreenSaverDisabled;
         if (mitInfo->state == ScreenSaverDisabled)
 	    activate = false;
     }

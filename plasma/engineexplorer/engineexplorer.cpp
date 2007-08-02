@@ -115,10 +115,10 @@ void EngineExplorer::showEngine(const QString& name)
 
     QStringList sources = m_engine->sources();
 
-    //kDebug() << "showing engine " << m_engine->objectName() << endl;
-    //kDebug() << "we have " << sources.count() << " data sources" << endl;
+    //kDebug() << "showing engine " << m_engine->objectName();
+    //kDebug() << "we have " << sources.count() << " data sources";
     foreach (const QString& source, sources) {
-        //kDebug() << "adding " << source << endl;
+        //kDebug() << "adding " << source;
         addSource(source);
     }
 
@@ -135,7 +135,7 @@ void EngineExplorer::addSource(const QString& source)
     QStandardItem* parent = new QStandardItem(source);
     m_dataModel->appendRow(parent);
 
-    //kDebug() << "getting data for source " << source << endl;
+    //kDebug() << "getting data for source " << source;
     Plasma::DataEngine::Data data = m_engine->query(source);
     showData(parent, data);
     m_engine->connectSource(source, this);

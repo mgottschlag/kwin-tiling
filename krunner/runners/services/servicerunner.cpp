@@ -83,7 +83,7 @@ void ServiceRunner::fillMatches( KActionCollection* matches,
         KService::List services = KServiceTypeTrader::self()->query( serviceType->name(),
                                                                      query );
 
-        //kDebug() << "got " << services.count() << " services from " << query << endl;
+        //kDebug() << "got " << services.count() << " services from " << query;
 
         foreach ( const KService::Ptr service, services ) {
             ServiceAction* action = new ServiceAction(service, matches);

@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
 //         KRunnerApp::s_haveCompositeManager = argbVisual;
 //     }
 // 
-//     kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager << endl;
+//     kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager;
 
     KRunnerApp app;
 

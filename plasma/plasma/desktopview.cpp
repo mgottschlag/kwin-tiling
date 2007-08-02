@@ -127,7 +127,7 @@ void DesktopView::initializeWallpaper()
     KConfigGroup config(KGlobal::config(), "General");
     m_wallpaperPath = config.readEntry("wallpaper", QString());
 
-    //kDebug() << "wallpaperPath is " << m_wallpaperPath << " " << QFile::exists(m_wallpaperPath) << endl;
+    //kDebug() << "wallpaperPath is " << m_wallpaperPath << QFile::exists(m_wallpaperPath);
     if (m_wallpaperPath.isEmpty() ||
         !QFile::exists(m_wallpaperPath)) {
         m_background = new Plasma::Svg("widgets/wallpaper", this);
@@ -217,7 +217,7 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
     }
 
     KMenu desktopMenu;
-    //kDebug() << "context menu event " << immutable << endl;
+    //kDebug() << "context menu event " << immutable;
     if (m_zoomLevel != Plasma::DesktopZoom) {
         desktopMenu.addAction(m_zoomInAction);
         desktopMenu.addAction(m_zoomOutAction);

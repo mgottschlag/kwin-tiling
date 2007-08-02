@@ -98,7 +98,7 @@ RootWidget::RootWidget()
     QFile file(KStandardDirs::locate("kcfg", "kickerSettings.kcfg"));
     Plasma::ConfigXml appletConfig(KStandardDirs::locateLocal("config", "kickerrc"), &file);
     foreach (KConfigSkeletonItem* item, appletConfig.items()) {
-        kDebug() << "item " << item->name() << " in " <<  item->group() << endl;
+        kDebug() << "item " << item->name() << " in " <<  item->group();
     }
 #endif
 }

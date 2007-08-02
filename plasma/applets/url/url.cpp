@@ -63,7 +63,7 @@ Url::~Url()
 
 QSizeF Url::contentSize() const
 {
-//    kDebug() << "contentSize is " << m_icon->boundingRect().size() << endl;
+//    kDebug() << "contentSize is " << m_icon->boundingRect().size();
     return m_icon->boundingRect().size();
 }
 

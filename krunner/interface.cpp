@@ -243,7 +243,7 @@ void Interface::switchUser()
     }
 
     if (!sessionrunner) {
-        kDebug() << "Could not find the Sessionrunner; not showing any sessions!" << endl;
+        kDebug() << "Could not find the Sessionrunner; not showing any sessions!";
         return;
     }
 
@@ -310,7 +310,7 @@ void Interface::matchActivated(QListWidgetItem* item)
     m_optionsButton->setEnabled( match && match->runner()->hasOptions() );
 
     if ( match && match->actionEnabled() ) {
-        //kDebug() << "match activated! " << match->text() << endl;
+        //kDebug() << "match activated! " << match->text();
         match->activate();
         hide();
     }
@@ -334,7 +334,7 @@ void Interface::match(const QString& t)
 
     // get the exact matches
     foreach ( Plasma::AbstractRunner* runner, m_runners ) {
-        //kDebug() << "\trunner: " << runner->objectName() << endl;
+        //kDebug() << "\trunner: " << runner->objectName();
         QAction* exactMatch = runner->exactMatch( term ) ;
 
         if ( exactMatch ) {
@@ -391,10 +391,10 @@ void Interface::fuzzySearch()
     // get the inexact matches
     foreach ( Plasma::AbstractRunner* runner, m_runners ) {
         KActionCollection* matches = runner->matches( term, 10, 0 );
-        //kDebug() << "\t\tturned up " << matches->actions().count() << " matches " << endl;
+        //kDebug() << "\t\tturned up " << matches->actions().count() << " matches ";
         foreach ( QAction* action, matches->actions() ) {
             bool makeDefault = !m_defaultMatch && action->isEnabled();
-            //kDebug() << "\t\t " << action << ": " << action->text() << " " << !m_defaultMatch << " " << action->isEnabled() << endl;
+            //kDebug() << "\t\t " << action << ": " << action->text() << !m_defaultMatch << action->isEnabled();
             SearchMatch* match = new SearchMatch( action, runner, m_matchList );
             m_searchMatches.append( match );
 
@@ -435,14 +435,14 @@ void Interface::showOptions(bool show)
         }
 
         if ( !m_expander ) {
-            //kDebug() << "creating m_expander" << endl;
+            //kDebug() << "creating m_expander";
             m_expander = new CollapsibleWidget( this );
             connect( m_expander, SIGNAL( collapseCompleted() ),
                      m_expander, SLOT( hide() ) );
             m_layout->insertWidget( 3, m_expander );
         }
 
-        //kDebug() << "set inner widget to " << m_defaultMatch->runner()->options() << endl;
+        //kDebug() << "set inner widget to " << m_defaultMatch->runner()->options();
         m_expander->setInnerWidget( m_defaultMatch->runner()->options() );
         m_expander->show();
         m_optionsButton->setText( i18n( "Hide Options" ) );

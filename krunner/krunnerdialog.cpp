@@ -45,10 +45,10 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     p.setClipRect(e->rect());
-    //kDebug() << "clip rect set to: " << e->rect() << endl;
+    //kDebug() << "clip rect set to: " << e->rect();
 
     if ( KRunnerApp::s_haveCompositeManager ) {
-        //kDebug() << "gots us a compmgr!" << m_haveCompositionManager << endl;
+        //kDebug() << "gots us a compmgr!" << m_haveCompositionManager;
         p.setCompositionMode( QPainter::CompositionMode_Source );
         p.fillRect( rect(), Qt::transparent );
     }

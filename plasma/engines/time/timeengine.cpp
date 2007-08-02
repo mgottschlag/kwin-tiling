@@ -49,7 +49,7 @@ bool TimeEngine::reportSeconds()
 
 void TimeEngine::setReportSeconds(bool seconds)
 {
-    //kDebug() << "only report seconds? " << seconds << endl;
+    //kDebug() << "only report seconds? " << seconds;
     if (m_seconds == seconds) {
         return;
     }
@@ -72,7 +72,7 @@ void TimeEngine::setTimerTo60()
 
 bool TimeEngine::sourceRequested(const QString &name)
 {
-    //kDebug() << "TimeEngine::sourceRequested " << name << endl;
+    //kDebug() << "TimeEngine::sourceRequested " << name;
     if (name == "Local") {
         setData(I18N_NOOP("Local"), I18N_NOOP("Time"), QTime::currentTime());
         setData(I18N_NOOP("Local"), I18N_NOOP("Date"), QDate::currentDate());
@@ -101,12 +101,12 @@ bool TimeEngine::sourceRequested(const QString &name)
 
 void TimeEngine::init()
 {
-    kDebug() << "init() called" << endl;
+    kDebug() << "init() called";
 }
 
 void TimeEngine::updateTime()
 {
-    //kDebug() << "TimeEngine::updateTime()" << endl;
+    //kDebug() << "TimeEngine::updateTime()";
 
     QDateTime dt = QDateTime::currentDateTime();
     KTimeZone local = KSystemTimeZones::local();

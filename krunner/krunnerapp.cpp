@@ -101,7 +101,7 @@ bool checkComposite()
         KRunnerApp::s_haveCompositeManager = argbVisual;
     }
 
-    kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager << endl;
+    kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager;
     return true;
 }
 
@@ -213,7 +213,7 @@ void KRunnerApp::showWindowList()
 
 void KRunnerApp::showTaskManager()
 {
-    //kDebug(1204) << "Launching KSysGuard..." << endl;
+    //kDebug(1204) << "Launching KSysGuard...";
     if (!m_tasks) {
         //TODO: move this dialog into its own KDialog subclass
         //      add an expander widget (as seen in the main
