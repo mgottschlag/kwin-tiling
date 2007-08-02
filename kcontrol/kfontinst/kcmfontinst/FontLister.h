@@ -29,6 +29,7 @@ class QString;
 #include <kio/job.h>
 #include <kfileitem.h>
 #include <QObject>
+#include <QHash>
 
 namespace KFI
 {
@@ -72,12 +73,14 @@ class CFontLister : public QObject
 
     private:
 
-    QMap<KUrl, KFileItem *> itsItems;
-    bool                    itsAutoUpdate,
-                            itsUpdateRequired;
-    KIO::Job                *itsJob;
-    qulonglong              itsJobSize;
-    KFileItemList           itsItemsToRefresh;
+    typedef QHash<KUrl, KFileItem *> ItemCont;
+
+    ItemCont      itsItems;
+    bool          itsAutoUpdate,
+                  itsUpdateRequired;
+    KIO::Job      *itsJob;
+    qulonglong    itsJobSize;
+    KFileItemList itsItemsToRefresh;
 };
 
 }

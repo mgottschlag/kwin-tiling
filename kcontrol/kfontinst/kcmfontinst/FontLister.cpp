@@ -107,7 +107,7 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
 
     if(KFI_KIO_FONTS_PROTOCOL==fromU.protocol())
     {
-        QMap<KUrl, KFileItem *>::Iterator it(itsItems.find(fromU));
+        ItemCont::Iterator it(itsItems.find(fromU));
 
         if(it!=itsItems.end())
         {
@@ -167,7 +167,7 @@ void CFontLister::filesRemoved(const QStringList &files)
 
         if(KFI_KIO_FONTS_PROTOCOL==url.protocol())
         {
-            QMap<KUrl, KFileItem *>::Iterator it(itsItems.find(url));
+            ItemCont::Iterator it(itsItems.find(url));
 
             if(it!=itsItems.end())
             {
@@ -192,8 +192,8 @@ void CFontLister::result(KJob *job)
 #endif
     if(job && !job->error())
     {
-        KFileItemList                     itemsToRemove;
-        QMap<KUrl, KFileItem *>::Iterator it(itsItems.begin());
+        KFileItemList      itemsToRemove;
+        ItemCont::Iterator it(itsItems.begin());
 
         while(it!=itsItems.end())
             if((*it)->isMarked())
@@ -206,8 +206,8 @@ void CFontLister::result(KJob *job)
             }
             else
             {
-                QMap<KUrl, KFileItem *>::Iterator remove(it);
-                KFileItem                         *item(*it);
+                ItemCont::Iterator remove(it);
+                KFileItem          *item(*it);
 
 #ifdef KFI_FONTLISTER_DEBUG
                 kDebug() << (*it)->url().prettyUrl() << " IS **NOT** MARKED" << endl;
@@ -225,8 +225,8 @@ void CFontLister::result(KJob *job)
 #ifdef KFI_FONTLISTER_DEBUG
         kDebug() << "Error :-(" << endl;
 #endif
-        QMap<KUrl, KFileItem *>::Iterator it(itsItems.begin()),
-                                          end(itsItems.end());
+        ItemCont::Iterator it(itsItems.begin()),
+                           end(itsItems.end());
 
         for(; it!=end; ++it)
             (*it)->unmark();
