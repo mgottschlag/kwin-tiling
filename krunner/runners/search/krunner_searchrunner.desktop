@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Search Runner
+Name[be]=Запуск пошуку
 Name[de]=Suche durchführen
 Name[el]=Εκτελεστής αναζήτησης
 Name[fa]=اجراکتتدۀ جستجو
@@ -14,6 +15,7 @@ Name[sv]=Söktjänst
 Name[x-test]=xxSearch Runnerxx
 Name[zh_TW]=搜索執行者
 Comment=Search files
+Comment[be]=Пошук файлаў
 Comment[csb]=Szëkba lopków
 Comment[de]=Dateien suchen
 Comment[el]=Αναζήτηση αρχείων

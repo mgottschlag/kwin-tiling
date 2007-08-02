@@ -3,6 +3,7 @@ Encoding=UTF-8
 Type=Directory
 Icon=edu_mathematics
 Name=Mathematics
+Name[be]=Матэматыка
 Name[csb]=Matematika
 Name[de]=Mathematik
 Name[el]=Μαθηματικά

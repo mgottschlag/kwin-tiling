@@ -3,6 +3,7 @@ Encoding=UTF-8
 Icon=package
 Type=Directory
 Name=Teaching Tools
+Name[be]=Праграмы для навучання
 Name[csb]=Nôrzãdza ùczbë
 Name[de]=Unterrichts-Anwendungen
 Name[el]=Εργαλείο διδασκαλίας
