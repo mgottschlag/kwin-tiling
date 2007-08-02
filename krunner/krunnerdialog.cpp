@@ -31,6 +31,7 @@
 KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
     : KDialog( parent, f )
 {
+    setButtons(0);
     m_background = new Plasma::Svg( "dialogs/background", this );
     connect( m_background, SIGNAL(repaintNeeded()), this, SLOT(update()) );
 }
