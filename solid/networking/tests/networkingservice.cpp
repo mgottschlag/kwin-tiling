@@ -95,7 +95,7 @@ void TestService::serviceOwnerChanged( const QString& service,const QString& old
 {
     Q_UNUSED( oldOwner );
     if ( !newOwner.isEmpty() && service == "org.kde.kded" ) {
-        kDebug() << "KDED restarted, trying to re-register service with it" << endl;
+        kDebug() << "KDED restarted, trying to re-register service with it";
         registerService();
     }
 }
@@ -125,7 +125,7 @@ void TestService::changeComboActivated( int index )
       m_nextStatus = Solid::Networking::Connected;
       break;
     default:
-      kDebug() << "Unrecognised status!" << endl;
+      kDebug() << "Unrecognised status!";
       Q_ASSERT( false );
   }
   ui.changeButton->setEnabled( true );

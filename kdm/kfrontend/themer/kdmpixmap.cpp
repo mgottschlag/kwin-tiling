@@ -88,7 +88,7 @@ KdmPixmap::loadPixmap( PixmapStruct::PixmapClass &pClass )
 			goto gotit;
 	}
 	if (!pClass.image.load( pClass.fullpath )) {
-		kWarning() << "failed to load " << pClass.fullpath << endl;
+		kWarning() << "failed to load " << pClass.fullpath ;
 		pClass.fullpath.clear();
 		return false;
 	}
@@ -160,7 +160,7 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 						svg.render( &pa );
 						scaledImage = pClass->image;
 					} else {
-						kWarning() << "failed to load " << pClass->fullpath << endl;
+						kWarning() << "failed to load " << pClass->fullpath ;
 						pClass->fullpath.clear();
 					}
 				} else if (loadPixmap( *pClass ))
@@ -201,7 +201,7 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 
 		pClass->readyPixmap = QPixmap::fromImage( scaledImage );
 	}
-	// kDebug() << "Pixmap::drawContents " << pClass->readyPixmap.size() << " " << px << " " << py << " " << sx << " " << sy << " " << sw << " " << sh << endl;
+	// kDebug() << "Pixmap::drawContents " << pClass->readyPixmap.size() << " " << px << " " << py << " " << sx << " " << sy << " " << sw << " " << sh;
 	p->drawPixmap( px, py, pClass->readyPixmap, sx, sy, sw, sh );
 }
 

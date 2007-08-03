@@ -349,7 +349,7 @@ void KSMServer::handlePendingInteractions()
 
 void KSMServer::cancelShutdown( KSMClient* c )
 {
-    kDebug( 1218 ) << "Client " << c->program() << " (" << c->clientId() << ") canceled shutdown." << endl;
+    kDebug( 1218 ) << "Client " << c->program() << " (" << c->clientId() << ") canceled shutdown.";
     KNotification::event( "cancellogout" , i18n( "Logout canceled by '%1'", c->program()),
         QPixmap() , 0l , KNotification::DefaultEvent  );
     clientInteracting = 0;
@@ -387,7 +387,7 @@ void KSMServer::protectionTimeout()
 
     foreach( KSMClient* c, clients ) {
         if ( !c->saveYourselfDone && !c->waitForPhase2 ) {
-            kDebug( 1218 ) << "protectionTimeout: client " << c->program() << "(" << c->clientId() << ")" << endl;
+            kDebug( 1218 ) << "protectionTimeout: client " << c->program() << "(" << c->clientId() << ")";
             c->saveYourselfDone = true;
         }
     }
@@ -431,7 +431,7 @@ void KSMServer::completeShutdownOrCheckpoint()
         knotifySignals = QDBus::sessionBus().findInterface("org.kde.knotify",
             "/knotify", "org.kde.KNotify" );
         if( !knotifySignals->isValid())
-            kWarning() << "knotify not running?" << endl;
+            kWarning() << "knotify not running?" ;
 	*/
 
         KNotification *n = KNotification::event( "exitkde" , QString() , QPixmap() , 0l ,  KNotification::DefaultEvent  ); // KDE says good bye
@@ -453,7 +453,7 @@ void KSMServer::startKilling()
     foreach( KSMClient* c, clients ) {
         if( isWM( c )) // kill the WM as the last one in order to reduce flicker
             continue;
-        kDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
+        kDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")";
         SmsDie( c->connection() );
     }
 
@@ -487,7 +487,7 @@ void KSMServer::killWM()
     foreach( KSMClient* c, clients ) {
         if( isWM( c )) {
             iswm = true;
-            kDebug( 1218 ) << "killWM: client " << c->program() << "(" << c->clientId() << ")" << endl;
+            kDebug( 1218 ) << "killWM: client " << c->program() << "(" << c->clientId() << ")";
             SmsDie( c->connection() );
         }
     }
@@ -525,7 +525,7 @@ void KSMServer::logoutSoundFinished(  )
 void KSMServer::timeoutQuit()
 {
     foreach( KSMClient* c, clients ) {
-        kWarning( 1218 ) << "SmsDie timeout, client " << c->program() << "(" << c->clientId() << ")" << endl;
+        kWarning( 1218 ) << "SmsDie timeout, client " << c->program() << "(" << c->clientId() << ")" ;
     }
     killWM();
 }
@@ -533,7 +533,7 @@ void KSMServer::timeoutQuit()
 void KSMServer::timeoutWMQuit()
 {
     if( state == KillingWM ) {
-        kWarning( 1218 ) << "SmsDie WM timeout" << endl;
+        kWarning( 1218 ) << "SmsDie WM timeout" ;
     }
     killingCompleted();
 }

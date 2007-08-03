@@ -178,7 +178,7 @@ KdmThemer::widgetEvent( QEvent *e )
 		}
 		{
 			QRect paintRect = static_cast<QPaintEvent *>(e)->rect();
-			//kDebug() << "paint on: " << paintRect << endl;
+			//kDebug() << "paint on: " << paintRect;
 
 			QPainter p( widget() );
 			rootItem->paint( &p, paintRect );
@@ -285,7 +285,7 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 void
 KdmThemer::showStructure()
 {
-	kDebug() << "======= item tree =======" << endl;
+	kDebug() << "======= item tree =======";
 	rootItem->showStructure( QString() );
 }
 

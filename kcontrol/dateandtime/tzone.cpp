@@ -174,7 +174,7 @@ void Tzone::save()
 #else
         QString tz = "/usr/share/zoneinfo/" + selectedzone;
 
-        kDebug() << "Set time zone " << tz << endl;
+        kDebug() << "Set time zone " << tz;
 
         if( !KStandardDirs::findExe( "zic" ).isEmpty())
         {

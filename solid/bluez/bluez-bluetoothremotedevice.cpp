@@ -39,7 +39,7 @@ BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath
 	m_adapter = m_objectPath.left(objectPath.size() - 18);
 	m_address = m_objectPath.right(17);
 
-	kDebug() << k_funcinfo << " path: " << m_adapter << " address: " << m_address << endl;
+	kDebug() << k_funcinfo << " path: " << m_adapter << " address: " << m_address;
 
 	device = new QDBusInterface("org.bluez", m_adapter,
 				    "org.bluez.Adapter", QDBusConnection::systemBus());
@@ -128,7 +128,7 @@ bool BluezBluetoothRemoteDevice::hasBonding() const
 
 int BluezBluetoothRemoteDevice::pinCodeLength() const
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 
 	QDBusReply< int > path = device->call("PinCodeLength", m_address);
 	if (!path.isValid())
@@ -139,7 +139,7 @@ int BluezBluetoothRemoteDevice::pinCodeLength() const
 
 int BluezBluetoothRemoteDevice::encryptionKeySize() const
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 
 	QDBusReply< int > path = device->call("EncryptionKeySize", m_address);
 	if (!path.isValid())
@@ -159,37 +159,37 @@ KJob *BluezBluetoothRemoteDevice::createBonding()
 
 void BluezBluetoothRemoteDevice::setAlias(const QString &alias)
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 	device->call("SetRemoteAlias", m_address, alias);
 }
 
 void BluezBluetoothRemoteDevice::clearAlias()
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 	device->call("ClearRemoteAlias", m_address);
 }
 
 void BluezBluetoothRemoteDevice::disconnect()
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 	device->call("DisconnectRemoteDevice", m_address);
 }
 
 void BluezBluetoothRemoteDevice::cancelBondingProcess()
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 	device->call("CancelBondingProcess", m_address);
 }
 
 void BluezBluetoothRemoteDevice::removeBonding()
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 	device->call("RemoveBonding", m_address);
 }
 
 void BluezBluetoothRemoteDevice::serviceHandles(const QString &filter) const
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 	QList<QVariant> args;
 	args << m_address << filter;
 	device->callWithCallback("GetRemoteServiceHandles",
@@ -202,7 +202,7 @@ void BluezBluetoothRemoteDevice::serviceHandles(const QString &filter) const
 
 void BluezBluetoothRemoteDevice::serviceRecordAsXml(uint handle) const
 {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo;
 	QList<QVariant> args;
 	args << m_address << handle;
 	device->callWithCallback("GetRemoteServiceRecordAsXML",
@@ -213,13 +213,13 @@ void BluezBluetoothRemoteDevice::serviceRecordAsXml(uint handle) const
 }
 void BluezBluetoothRemoteDevice::slotServiceHandles(const QList< uint > & handles)
 {
-// 	kDebug() << k_funcinfo << endl;
+// 	kDebug() << k_funcinfo;
 	emit serviceHandlesAvailable(ubi(),handles);
 }
 
 void BluezBluetoothRemoteDevice::slotServiceRecordAsXml(const QString & record)
 {
-// 	kDebug() << k_funcinfo << endl;
+// 	kDebug() << k_funcinfo;
 	emit serviceRecordXmlAvailable(ubi(),record);
 }
 /******************************/
@@ -253,13 +253,13 @@ bool BluezBluetoothRemoteDevice::boolReply(const QString &method) const
 
 void BluezBluetoothRemoteDevice::dbusErrorHandles(const QDBusError &error)
 {
-	kDebug() << "Error on dbus call for handles: " << error.message() << endl;
+	kDebug() << "Error on dbus call for handles: " << error.message();
 	emit serviceHandlesAvailable("failed",QList<uint>());
 }
 
 void BluezBluetoothRemoteDevice::dbusErrorRecordAsXml(const QDBusError & error)
 {
-	kDebug() << "Error on dbus call for record as xml: " << error.message() << endl;
+	kDebug() << "Error on dbus call for record as xml: " << error.message();
 	emit serviceRecordXmlAvailable("failed","");
 }
 

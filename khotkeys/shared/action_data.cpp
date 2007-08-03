@@ -46,7 +46,7 @@ Action_data_base::Action_data_base( KConfigGroup& cfg_P, Action_data_group* pare
     
 Action_data_base::~Action_data_base()
     {
-//    kDebug( 1217 ) << "~Action_data_base() :" << this << endl;
+//    kDebug( 1217 ) << "~Action_data_base() :" << this;
     if( parent())
         parent()->remove_child( this );
     delete _conditions;
@@ -169,7 +169,7 @@ Action_data::Action_data( KConfigGroup& cfg_P, Action_data_group* parent_P )
 
 Action_data::~Action_data()
     {
-//    kDebug( 1217 ) << "~Action_data" << this << endl;
+//    kDebug( 1217 ) << "~Action_data" << this;
     delete _triggers;
     delete _actions;
     // CHECKME jeste remove z parenta ?
@@ -257,7 +257,7 @@ void Action_data::set_actions( Action_list* actions_P )
 void Action_data::update_triggers()
     {
     bool activate = conditions_match() && enabled( false );
-    kDebug( 1217 ) << "Update triggers: " << name() << ":" << activate << endl;
+    kDebug( 1217 ) << "Update triggers: " << name() << ":" << activate;
     for( Trigger_list::Iterator it = ( *triggers());
          it;
          ++it )

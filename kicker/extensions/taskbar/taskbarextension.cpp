@@ -118,9 +118,9 @@ QSize TaskBarExtension::sizeHint(Plasma::Position p, QSize maxSize) const
     else
         maxSize.setHeight(sizeInPixels());
 
-//    kDebug(1210) << "TaskBarExtension::sizeHint( Position, QSize )" << endl;
-//    kDebug(1210) << " width: " << size.width() << endl;
-//    kDebug(1210) << "height: " << size.height() << endl;
+//    kDebug(1210) << "TaskBarExtension::sizeHint( Position, QSize )";
+//    kDebug(1210) << " width: " << size.width();
+//    kDebug(1210) << "height: " << size.height();
     return m_container->sizeHint(p, maxSize);
 }
 

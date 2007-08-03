@@ -116,11 +116,11 @@ QObject * FakeNetworkInterface::createNetwork(const QString  & uni)
 {
     if (mNetworks.contains(uni))
     {
-        kDebug() << k_funcinfo << "found " << uni << endl;
+        kDebug() << k_funcinfo << "found " << uni;
         return mNetworks[uni];
     }
     else
-        kDebug() << k_funcinfo << "NOT found " << uni << endl;
+        kDebug() << k_funcinfo << "NOT found " << uni;
         return 0;
 }
 

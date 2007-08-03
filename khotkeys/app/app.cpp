@@ -56,7 +56,7 @@ KHotKeysApp::~KHotKeysApp()
 
 void KHotKeysApp::reread_configuration()
     { // TODO
-    kDebug( 1217 ) << "reading configuration" << endl;
+    kDebug( 1217 ) << "reading configuration";
     delete actions_root;
     khotkeys_set_active( false );
     Settings settings;

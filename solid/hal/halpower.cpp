@@ -193,7 +193,7 @@ Solid::Control::PowerManager::SuspendMethods HalPower::supportedSuspendMethods()
     }
     else
     {
-        kDebug() << reply.error().name() << ": " << reply.error().message() << endl;
+        kDebug() << reply.error().name() << ": " << reply.error().message();
     }
 
     reply = m_halComputer.call("GetPropertyBoolean", "power_management.can_hibernate");
@@ -208,7 +208,7 @@ Solid::Control::PowerManager::SuspendMethods HalPower::supportedSuspendMethods()
     }
     else
     {
-        kDebug() << reply.error().name() << ": " << reply.error().message() << endl;
+        kDebug() << reply.error().name() << ": " << reply.error().message();
     }
 
     return supported;
@@ -253,7 +253,7 @@ Solid::Control::PowerManager::CpuFreqPolicies HalPower::supportedCpuFreqPolicies
             }
             else
             {
-                kWarning() << "Unknown governor: " << governor << endl;
+                kWarning() << "Unknown governor: " << governor ;
             }
         }
 
@@ -453,7 +453,7 @@ void HalPower::slotButtonPressed(Solid::Button::ButtonType type)
         }
         break;
     default:
-        kWarning() << "Unknown button type" << endl;
+        kWarning() << "Unknown button type" ;
         break;
     }
 }

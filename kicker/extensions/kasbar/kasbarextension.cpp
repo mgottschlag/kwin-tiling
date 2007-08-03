@@ -93,7 +93,7 @@ KasBarExtension::KasBarExtension( const QString& configFile,
     : KPanelExtension( configFile, type, actions, parent, name ),
       detached_( false )
 {
-    kDebug(1345) << "KasBarExtension: Created '" << name << "', '" << configFile << "'" << endl;
+    kDebug(1345) << "KasBarExtension: Created '" << name << "', '" << configFile << "'";
 //    KApplication::kApplication()->dcopClient()->registerAs( "kasbar" );
 
 //    setBackgroundMode( NoBackground );

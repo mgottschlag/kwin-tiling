@@ -55,7 +55,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 
   bSeriesOnly = _bSeriesOnly;
 
-  kDebug(125) << "KKeyModule::init() - Get default key bindings." << endl;
+  kDebug(125) << "KKeyModule::init() - Get default key bindings.";
   if ( KeyType == "global" ) {
     KAccelActions* keys = &actions;
 // see also KKeyModule::init() below !!!
@@ -74,7 +74,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
     if( bSeriesOnly || bSeriesNone ) {
 	for( uint i = 0; i < actions.size(); i++ ) {
 		QString sConfigKey = actions[i].m_sName;
-		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
+		//kDebug(125) << "sConfigKey: " << sConfigKey;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
@@ -104,7 +104,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
     KeySet    = "Keys";
   }
 
-  //kDebug(125) << "KKeyModule::init() - Read current key bindings from config." << endl;
+  //kDebug(125) << "KKeyModule::init() - Read current key bindings from config.";
   //actions.readActions( KeySet );
 
   sFileList = new QStringList();
@@ -175,7 +175,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 }
 
 KKeyModule::~KKeyModule (){
-  //kDebug() << "KKeyModule destructor" << endl;
+  //kDebug() << "KKeyModule destructor";
     delete kc;
     delete sFileList;
 }

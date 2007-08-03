@@ -47,7 +47,7 @@ void FakeBluetooth_Test::testFakeBluetooth()
 
     // Bluetooth Remote Devices
     QCOMPARE(interface->bluetoothRemoteDevices().count(), 4);
-    kDebug() << "REMOTE DEVICES: " << interface->bluetoothRemoteDevices() << endl;
+    kDebug() << "REMOTE DEVICES: " << interface->bluetoothRemoteDevices();
     FakeBluetoothRemoteDevice *device =
         static_cast<FakeBluetoothRemoteDevice *>(interface->createBluetoothRemoteDevice("/org/kde/solid/fakebluetooth/hci0/EE:EE:EE:EE:EE:EE"));
 

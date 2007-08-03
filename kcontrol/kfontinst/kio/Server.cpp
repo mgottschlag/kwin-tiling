@@ -105,20 +105,20 @@ bool CServer::open()
     int stat_err=lstat(itsName, &s);
     if(!stat_err && S_ISLNK(s.st_mode))
     {
-        kWarning() << "Someone is running a symlink attack on you" << endl;
+        kWarning() << "Someone is running a symlink attack on you" ;
         if(unlink(itsName))
         {
-            kWarning() << "Could not delete symlink" << endl;
+            kWarning() << "Could not delete symlink" ;
             return false;
         }
     }
 
     if (!access(itsName, R_OK|W_OK))
     {
-        kWarning() << "stale socket exists" << endl;
+        kWarning() << "stale socket exists" ;
         if (unlink(itsName))
         {
-            kWarning() << "Could not delete stale socket" << endl;
+            kWarning() << "Could not delete stale socket" ;
             return false;
         }
     }

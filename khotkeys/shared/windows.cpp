@@ -318,7 +318,7 @@ bool Windowdef_simple::match( const Window_data& window_P )
         return false;
     if( !is_substr_match( window_P.role, role(), role_type ))
         return false;
-    kDebug( 1217 ) << "window match:" << window_P.title << ":OK" << endl;
+    kDebug( 1217 ) << "window match:" << window_P.title << ":OK";
     return true;
     }
 

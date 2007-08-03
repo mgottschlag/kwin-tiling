@@ -174,7 +174,7 @@ KDModule::KDModule( QWidget *parent, const QStringList & )
 				if (!(*umapi).second.contains( gn ))
 					(*umapi).second.append( gn );
 			} else
-				kWarning() << "group '" << gn << "' contains unknown user '" << un << "'" << endl;
+				kWarning() << "group '" << gn << "' contains unknown user '" << un << "'" ;
 		} while (*++grp->gr_mem);
 	}
 	endgrent();

@@ -66,14 +66,14 @@ ShortcutsModule::~ShortcutsModule()
 // Called when [Reset] is pressed
 void ShortcutsModule::load()
 {
-	kDebug(125) << "ShortcutsModule::load()" << endl;
+	kDebug(125) << "ShortcutsModule::load()";
 	slotSchemeCur();
 }
 
 // When [Apply] or [OK] are clicked.
 void ShortcutsModule::save()
 {
-	kDebug(125) << "ShortcutsModule::save()" << endl;
+	kDebug(125) << "ShortcutsModule::save()";
 
 	// FIXME: This isn't working.  Why? -- ellis, 2002/01/27
 	// Check for old group,
@@ -113,7 +113,7 @@ QString ShortcutsModule::quickHelp() const
 
 void ShortcutsModule::initGUI()
 {
-	kDebug(125) << "A-----------" << endl;
+	kDebug(125) << "A-----------";
 	KActionCollection* actionCollection = m_actionsGeneral;
 // see also KShortcutsModule::init() below !!!
 	QAction* a = 0L;
@@ -126,15 +126,15 @@ void ShortcutsModule::initGUI()
 #include "../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 
-	kDebug(125) << "B-----------" << endl;
+	kDebug(125) << "B-----------";
 
-	kDebug(125) << "C-----------" << endl;
+	kDebug(125) << "C-----------";
 	createActionsGeneral();
-	kDebug(125) << "D-----------" << endl;
+	kDebug(125) << "D-----------";
 	createActionsSequence();
-	kDebug(125) << "E-----------" << endl;
+	kDebug(125) << "E-----------";
 
-	kDebug(125) << "F-----------" << endl;
+	kDebug(125) << "F-----------";
 	QVBoxLayout* pVLayout = new QVBoxLayout( this );
 	pVLayout->addSpacing( KDialog::marginHint() );
 
@@ -199,20 +199,20 @@ void ShortcutsModule::initGUI()
 	m_pTab->addTab( m_pseApplication, i18n("App&lication Shortcuts") );
 	//connect( m_pseApplication, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
-	kDebug(125) << "G-----------" << endl;
+	kDebug(125) << "G-----------";
 	readSchemeNames();
 
-	kDebug(125) << "I-----------" << endl;
+	kDebug(125) << "I-----------";
 	slotSchemeCur();
 
-	kDebug(125) << "J-----------" << endl;
+	kDebug(125) << "J-----------";
 }
 
 void ShortcutsModule::createActionsGeneral()
 {
 	foreach (QAction* action, m_actionsGeneral->actions()) {
 		QString sConfigKey = action->objectName();
-		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
+		//kDebug(125) << "sConfigKey: " << sConfigKey;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
@@ -232,7 +232,7 @@ void ShortcutsModule::createActionsSequence()
 {
 	foreach (QAction* action, m_actionsSequence->actions()) {
 		QString sConfigKey = action->objectName();
-		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
+		//kDebug(125) << "sConfigKey: " << sConfigKey;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
@@ -283,14 +283,14 @@ void ShortcutsModule::resizeEvent( QResizeEvent * )
 
 void ShortcutsModule::slotSchemeCur()
 {
-	kDebug(125) << "ShortcutsModule::slotSchemeCur()" << endl;
+	kDebug(125) << "ShortcutsModule::slotSchemeCur()";
 	//m_pcbSchemes->setCurrentIndex( 0 );
 	slotSelectScheme();
 }
 
 void ShortcutsModule::slotKeyChange()
 {
-	kDebug(125) << "ShortcutsModule::slotKeyChange()" << endl;
+	kDebug(125) << "ShortcutsModule::slotKeyChange()";
 	m_prbNew->setEnabled( true );
 	m_prbNew->setChecked( true );
 	m_pbtnSave->setEnabled( true );
@@ -300,7 +300,7 @@ void ShortcutsModule::slotKeyChange()
 void ShortcutsModule::slotSelectScheme( int )
 {
 	i18n("Your current changes will be lost if you load another scheme before saving this one.");
-	kDebug(125) << "ShortcutsModule::slotSelectScheme( " << m_pcbSchemes->currentIndex() << " )" << endl;
+	kDebug(125) << "ShortcutsModule::slotSelectScheme( " << m_pcbSchemes->currentIndex() << " )";
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentIndex() ];
 
 	if( sFilename == "cur" ) {

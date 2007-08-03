@@ -100,7 +100,7 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const QStringList &)
 			    "loadReadersTab(QStringList)",
 			    false))
 
-       kDebug()<<"Error connecting to DCOP server" <<endl;
+       kDebug()<<"Error connecting to DCOP server";
 
 
      if (!connectDCOPSignal("",
@@ -109,7 +109,7 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const QStringList &)
 			    "updateReadersState (QString,bool,QString) ",
 			    false))
 
-       kDebug()<<"Error connecting to DCOP server" <<endl;
+       kDebug()<<"Error connecting to DCOP server";
      _cardDB= new KCardDB();
      load();
   } else {

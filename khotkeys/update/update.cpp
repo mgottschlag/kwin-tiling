@@ -36,7 +36,7 @@ int main( int argc, char* argv[] )
     QString file = KStandardDirs::locate( "data", "khotkeys/" + id + ".khotkeys" );
     if( file.isEmpty())
         {
-        kWarning() << "File " << id << " not found!" << endl;
+        kWarning() << "File " << id << " not found!" ;
         return 1;
         }
     init_global_data( false, &app );
@@ -45,7 +45,7 @@ int main( int argc, char* argv[] )
     KConfig cfg(  file );
     if( !settings.import( cfg, false ))
         {
-        kWarning() << "Import of " << id << " failed!" << endl;
+        kWarning() << "Import of " << id << " failed!" ;
         return 2;
         }
     settings.write_settings();

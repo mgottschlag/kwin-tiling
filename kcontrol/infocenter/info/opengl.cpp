@@ -622,7 +622,7 @@ static bool GetInfo_OpenGL_Generic( Q3ListView *lBox )
 
    dpy = XOpenDisplay(displayName);
    if (!dpy) {
-//      kDebug() << "Error: unable to open display " << displayName << endl;
+//      kDebug() << "Error: unable to open display " << displayName;
       return false;
    }
 

@@ -54,7 +54,7 @@ public:
 
     QString address() const
     {
-        kDebug() << k_funcinfo << endl; return mAddress;
+        kDebug() << k_funcinfo; return mAddress;
     }
     QString version() const
     {

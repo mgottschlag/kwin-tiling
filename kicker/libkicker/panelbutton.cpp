@@ -706,7 +706,7 @@ int PanelButton::preferredIconSize(int proposed_size) const
         upperLimit = Plasma::maxButtonDim();
     }
 
-    //kDebug()<<endl<<endl<<flush;
+    //kDebug()<<endl<<flush;
     QList<int>::const_iterator it = sizes.constBegin();
     QList<int>::const_iterator itEnd = sizes.constEnd();
     while (it != itEnd)
@@ -719,7 +719,7 @@ int PanelButton::preferredIconSize(int proposed_size) const
         ++it;
     }
 
-    //kDebug()<<"Using icon sizes: "<<sz<<"  "<<zood->sz<<endl<<flush;
+    //kDebug()<<"Using icon sizes: "<<sz<<"  "<<zood->sz<<flush;
     return sz;
 }
 

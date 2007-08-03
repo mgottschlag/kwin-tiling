@@ -198,7 +198,7 @@ KPanelApplet* AppletProxy::loadApplet(const AppletInfo& info)
 
     if (!init_ptr)
     {
-        kWarning() << info.library() << " is not a kicker plugin!" << endl;
+        kWarning() << info.library() << " is not a kicker plugin!" ;
         return 0;
     }
 

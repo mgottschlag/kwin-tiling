@@ -184,7 +184,7 @@ static QVector<double> fft(const Sound& sound, unsigned int start, unsigned int 
 			samples[indice1]=a+W*b;
 			samples[indice2]=a-W*b;
 
-//			kDebug() << k_funcinfo << "PAPILLON   s_" << indice1 << " s_" << indice2 <<  "     W_" << (2<<level) << "^" << coefW << endl;
+//			kDebug() << k_funcinfo << "PAPILLON   s_" << indice1 << " s_" << indice2 <<  "     W_" << (2<<level) << "^" << coefW;
 		}
 	}
 
@@ -282,7 +282,7 @@ VoiceSignature::VoiceSignature(const Sound& sound)
 	unsigned int start , stop;
 	if(!window(sound,&start,&stop))
 	{
-		kWarning( 1217 ) << k_funcinfo << "No voice found in the sound" << endl	;
+		kWarning( 1217 ) << k_funcinfo << "No voice found in the sound" 	;
 		return;
 	}
 	
@@ -327,7 +327,7 @@ VoiceSignature::VoiceSignature(const Sound& sound)
 
 	}
 	
-//	kDebug( 1217 ) << k_funcinfo << "wind: "<< temp_wind << "  - fft: " << temp_fft << "  - moy: " << temp_moy << endl;
+//	kDebug( 1217 ) << k_funcinfo << "wind: "<< temp_wind << "  - fft: " << temp_fft << "  - moy: " << temp_moy;
 }
 
 

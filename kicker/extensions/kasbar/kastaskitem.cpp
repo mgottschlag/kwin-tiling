@@ -351,7 +351,7 @@ void KasTaskItem::sendToTray()
     proc << "--wid" << s << "--hidden";
 
     if ( !proc.startDetached() ) {
-	kWarning(1345) << "Unable to launch ksystraycmd" << endl;
+	kWarning(1345) << "Unable to launch ksystraycmd" ;
 	KPassivePopup::message( i18n("Could Not Send to Tray"),
 				i18n("%1", strerror(errno)), // XXX this is probably bogus
 				Icon("error"),

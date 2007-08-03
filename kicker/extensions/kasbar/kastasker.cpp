@@ -564,12 +564,12 @@ void KasTasker::writeConfig()
 void KasTasker::readConfig( KConfig *conf )
 {
     if ( !conf ) {
-	kWarning() << "KasTasker::readConfig() got a null KConfig" << endl;
+	kWarning() << "KasTasker::readConfig() got a null KConfig" ;
 	return;
     }
 
     if ( master() ) {
-	kWarning() << "KasTasker::readConfig() for child bar" << endl;
+	kWarning() << "KasTasker::readConfig() for child bar" ;
 	return;
     }
 
@@ -668,12 +668,12 @@ void KasTasker::readConfig( KConfig *conf )
 void KasTasker::writeConfig( KConfig *conf )
 {
     if ( !conf ) {
-	kWarning() << "KasTasker::writeConfig() got a null KConfig" << endl;
+	kWarning() << "KasTasker::writeConfig() got a null KConfig" ;
 	return;
     }
 
     if ( master() ) {
-	kWarning() << "KasTasker::writeConfig() for child bar" << endl;
+	kWarning() << "KasTasker::writeConfig() for child bar" ;
 	return;
     }
 

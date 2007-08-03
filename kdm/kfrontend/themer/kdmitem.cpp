@@ -504,7 +504,7 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QPoint &offset )
 void
 KdmItem::showStructure( const QString &pfx )
 {
-	kDebug() << pfx << objectName() << ": " << itemType << " " << area << endl;
+	kDebug() << pfx << objectName() << ": " << itemType << " " << area;
 	if (!m_children.isEmpty()) {
 		QString npfx( pfx );
 		npfx.replace( '\\', ' ' ).replace( '-', ' ' );

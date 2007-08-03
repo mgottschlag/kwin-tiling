@@ -82,7 +82,7 @@ KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
 {
     m_extension = new XKBExtension();
     if( !m_extension->init() ) {
-        kDebug() << "xkb initialization failed, exiting..." << endl;
+        kDebug() << "xkb initialization failed, exiting...";
         ::exit(1);
     }
 
@@ -139,9 +139,9 @@ bool KxkbCore::settingsRead()
 	kxkbConfig.load( KxkbConfig::LOAD_ACTIVE_OPTIONS );
 
     if( kxkbConfig.m_enableXkbOptions ) {
-		kDebug() << "Setting XKB options " << kxkbConfig.m_options << endl;
+		kDebug() << "Setting XKB options " << kxkbConfig.m_options;
 		if( !m_extension->setXkbOptions(kxkbConfig.m_options, kxkbConfig.m_resetOldOptions) ) {
-            kDebug() << "Setting XKB options failed!" << endl;
+            kDebug() << "Setting XKB options failed!";
         }
     }
 
@@ -158,14 +158,14 @@ bool KxkbCore::settingsRead()
 	else {
 		QDesktopWidget desktopWidget;
 		if( desktopWidget.numScreens() > 1 && desktopWidget.isVirtualDesktop() == false ) {
-			kWarning() << "With non-virtual desktop only global switching policy supported on non-primary screens" << endl;
+			kWarning() << "With non-virtual desktop only global switching policy supported on non-primary screens" ;
 			//TODO: find out how to handle that
 		}
 
 		disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 		connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 /*		int m_prevWinId = kWinModule->activeWindow();
-		kDebug() << "Active window " << m_prevWinId << endl;*/
+		kDebug() << "Active window " << m_prevWinId;*/
 	}
 
 	m_layoutOwnerMap->reset();
@@ -177,7 +177,7 @@ bool KxkbCore::settingsRead()
 //	for(int ii=0; ii<(int)kxkbConfig.m_layouts.count(); ii++) {
 //		LayoutUnit& layoutUnit = kxkbConfig.m_layouts[ii];
 //		layoutUnit.defaultGroup = m_rules->getDefaultGroup(layoutUnit.layout, layoutUnit.includeGroup);
-//		kDebug() << "default group for " << layoutUnit.toPair() << " is " << layoutUnit.defaultGroup << endl;
+//		kDebug() << "default group for " << layoutUnit.toPair() << " is " << layoutUnit.defaultGroup;
 //	}
 
 	m_currentLayout = kxkbConfig.getDefaultLayout();
@@ -192,7 +192,7 @@ bool KxkbCore::settingsRead()
 /*		if( !m_extension->setLayout(kxkbConfig.m_model, layoutName, variantName, includeName, false)
 				   || !m_extension->setGroup( group ) ) {*/
 		if( ! m_extension->setLayout(layoutName, variantName) ) {
-			kDebug() << "Error switching to single layout " << currentLayout.toPair() << endl;
+			kDebug() << "Error switching to single layout " << currentLayout.toPair();
 			// TODO: alert user
 		}
 
@@ -213,7 +213,7 @@ bool KxkbCore::settingsRead()
 				variants += ',';
 			}
 		}
-		kDebug() << "initing " << "-layout " << layouts << " - variants " << variants << endl;
+		kDebug() << "initing " << "-layout " << layouts << " - variants " << variants;
 //		initPrecompiledLayouts();
 		m_extension->setLayout(layouts, variants);
 	}
@@ -230,12 +230,12 @@ bool KxkbCore::settingsRead()
 
 void KxkbCore::initTray()
 {
-    kDebug() << "initing tray" << endl;
+    kDebug() << "initing tray";
 
 	m_kxkbWidget->setShowFlag(kxkbConfig.m_showFlag);
 	m_kxkbWidget->initLayoutList(kxkbConfig.m_layouts, *m_rules);
 	m_kxkbWidget->setCurrentLayout(kxkbConfig.m_layouts[m_currentLayout]);
-    kDebug() << "inited tray" << endl;
+    kDebug() << "inited tray";
 }
 
 // This function activates the keyboard layout specified by the
@@ -332,16 +332,16 @@ void KxkbCore::iconMenuTriggered(QAction* action)
 void KxkbCore::windowChanged(WId winId)
 {
 	if( kxkbConfig.m_switchingPolicy == SWITCH_POLICY_GLOBAL ) { // should not happen actually
-		kDebug() << "windowChanged() signal in GLOBAL switching policy" << endl;
+		kDebug() << "windowChanged() signal in GLOBAL switching policy";
 		return;
 	}
 
 // 	int group = m_extension->getGroup();
 
-// 	kDebug() << "old WinId: " << m_prevWinId << ", new WinId: " << winId << endl;
+// 	kDebug() << "old WinId: " << m_prevWinId << ", new WinId: " << winId;
 
 //  	if( m_prevWinId != X11Helper::UNKNOWN_WINDOW_ID ) {	// saving layout/group from previous window
-//  		kDebug() << "storing " << m_currentLayout.toPair() << ":" << group << " for " << m_prevWinId << endl;
+//  		kDebug() << "storing " << m_currentLayout.toPair() << ":" << group << " for " << m_prevWinId;
 //  		m_layoutOwnerMap->setCurrentWindow(m_prevWinId);
 // // 		m_layoutOwnerMap->setCurrentLayout(m_currentLayout);
 // 		m_layoutOwnerMap->setCurrentGroup(group);
@@ -374,11 +374,11 @@ void KxkbCore::slotSettingsChanged(int category)
 
 bool KxkbCore::x11EventFilter ( XEvent * event )
 {
-//kDebug() << "Ev" << endl;
+//kDebug() << "Ev";
   if( (event->type == m_extension->xkb_opcode) ) {
     int group = m_extension->getGroup();
 	if( group != m_currentLayout ) {
-	  kDebug() << " group ev: " << group << endl;
+	  kDebug() << " group ev: " << group;
 	  updateIndicator(group, 1);
 	}
   }

@@ -131,25 +131,25 @@ void RandRCrtc::loadSettings(bool notify)
 
 void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 {
-	kDebug() << "[CRTC] Event..." << endl;
+	kDebug() << "[CRTC] Event...";
 	int changed = 0;
 
 	if (event->mode != m_currentMode)
 	{
-		kDebug() << "   Changed mode" << endl;
+		kDebug() << "   Changed mode";
 		changed |= RandR::ChangeMode;
 		m_currentMode = event->mode;
 	}
 	
 	if (event->rotation != m_currentRotation)
 	{
-		kDebug() << "   Changed rotation: " << event->rotation << endl;
+		kDebug() << "   Changed rotation: " << event->rotation;
 		changed |= RandR::ChangeRotation;
 		m_currentRotation = event->rotation;
 	}
 	if (event->x != m_currentRect.x() || event->y != m_currentRect.y())
 	{
-		kDebug() << "   Changed position: " << event->x << "," << event->y << endl;
+		kDebug() << "   Changed position: " << event->x << "," << event->y;
 		changed |= RandR::ChangeRect;
 		m_currentRect.moveTopLeft(QPoint(event->x, event->y));
 	}
@@ -157,7 +157,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 	RandRMode mode = m_screen->mode(event->mode);
 	if (mode.size() != m_currentRect.size())
 	{
-		kDebug() << "   Changed size: " << mode.size() << endl;
+		kDebug() << "   Changed size: " << mode.size();
 		changed |= RandR::ChangeRect;
 		m_currentRect.setSize(mode.size());
 		//Do NOT use event->width and event->height here, as it is being returned wrongly
@@ -185,16 +185,16 @@ float RandRCrtc::refreshRate() const
 bool RandRCrtc::applyProposed()
 {
 #if 1
-	kDebug() << "[CRTC] Going to apply (" << m_id << ") ...." << endl;
-	kDebug() << "       Current Screen rect: " << m_screen->rect() << endl;
-	kDebug() << "       Current CRTC Rect: " << m_currentRect << endl;
-	kDebug() << "       Current Rotation: " << m_currentRotation << endl;
-	kDebug() << "       Proposed rect: " << m_proposedRect << endl;
-	kDebug() << "       Proposed rotation: " << m_proposedRotation << endl;
-	kDebug() << "       Proposed refresh rate: " << m_proposedRate << endl;
-	kDebug() << "       Outputs: " << endl;
+	kDebug() << "[CRTC] Going to apply (" << m_id << ") ....";
+	kDebug() << "       Current Screen rect: " << m_screen->rect();
+	kDebug() << "       Current CRTC Rect: " << m_currentRect;
+	kDebug() << "       Current Rotation: " << m_currentRotation;
+	kDebug() << "       Proposed rect: " << m_proposedRect;
+	kDebug() << "       Proposed rotation: " << m_proposedRotation;
+	kDebug() << "       Proposed refresh rate: " << m_proposedRate;
+	kDebug() << "       Outputs: ";
 	for (int i = 0; i < m_connectedOutputs.count(); ++i)
-		kDebug() << "               - " << m_screen->output(m_connectedOutputs.at(i))->name() << endl;
+		kDebug() << "               - " << m_screen->output(m_connectedOutputs.at(i))->name();
 #endif
 	RandRMode mode;
 	if (m_proposedRect.size() == m_currentRect.size() && m_proposedRate == m_currentRate)

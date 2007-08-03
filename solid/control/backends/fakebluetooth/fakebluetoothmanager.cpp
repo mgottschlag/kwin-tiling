@@ -28,7 +28,7 @@
 
 FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &) : Solid::Control::Ifaces::BluetoothManager(parent)
 {
-    kDebug() << k_funcinfo << endl;
+    kDebug() << k_funcinfo;
 
     mXmlFile = KStandardDirs::locate("data", "solidfakebackend/fakebluetooth.xml");
 
@@ -39,10 +39,10 @@ FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &
 
 FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &, const QString &xmlFile) : Solid::Control::Ifaces::BluetoothManager(parent)
 {
-    kDebug() << k_funcinfo << endl;
+    kDebug() << k_funcinfo;
     mXmlFile = xmlFile;
     if (mXmlFile.isEmpty()) {
-        kDebug() << "Falling back to installed bluetoothing xml" << endl;
+        kDebug() << "Falling back to installed bluetoothing xml";
         mXmlFile = KStandardDirs::locate("data", "solidfakebackend/fakebluetooth.xml");
     }
     parseBluetoothFile();
@@ -79,7 +79,7 @@ void FakeBluetoothManager::parseBluetoothFile()
 {
     QFile machineFile(mXmlFile);
     if (!machineFile.open(QIODevice::ReadOnly)) {
-        kDebug() << k_funcinfo << "Error while opening " << mXmlFile << endl;
+        kDebug() << k_funcinfo << "Error while opening " << mXmlFile;
         return;
     }
 
@@ -94,7 +94,7 @@ void FakeBluetoothManager::parseBluetoothFile()
     }
     machineFile.close();
 
-    kDebug() << k_funcinfo << "Parsing fake computer XML: " << mXmlFile << endl;
+    kDebug() << k_funcinfo << "Parsing fake computer XML: " << mXmlFile;
     QDomElement mainElement = fakeDocument.documentElement();
     QDomNode node = mainElement.firstChild();
     while (!node.isNull()) {
@@ -117,37 +117,37 @@ FakeBluetoothInterface *FakeBluetoothManager::parseDeviceElement(const QDomEleme
     QMap<QString, QVariant> propertyMap;
     QString ubi = deviceElement.attribute("ubi");
     propertyMap.insert("ubi", ubi);
-    kDebug() << k_funcinfo << "Listing device: " << ubi << endl;
+    kDebug() << k_funcinfo << "Listing device: " << ubi;
     propertyMap.insert("ubi", QVariant(ubi));
 
     QDomNode childNode = deviceElement.firstChild();
     while (!childNode.isNull()) {
         QDomElement childElement = childNode.toElement();
-        //kDebug() << "found child=" << childElement.tagName() << endl;
+        //kDebug() << "found child=" << childElement.tagName();
         if (!childElement.isNull() && childElement.tagName() == QLatin1String("property")) {
             QString propertyKey;
             QVariant propertyValue;
 
             propertyKey = childElement.attribute("key");
             propertyValue = QVariant(childElement.text());
-            //    kDebug() << "Got property key=" << propertyKey << ", value=" << propertyValue.toString() << endl;
+            //    kDebug() << "Got property key=" << propertyKey << ", value=" << propertyValue.toString();
             propertyMap.insert(propertyKey, propertyValue);
         } else if (!childElement.isNull() && childElement.tagName() == QLatin1String("device")) {
             QString ubi = childElement.attribute("ubi");
-            kDebug() << k_funcinfo << "Listing properties: " << ubi << endl;
+            kDebug() << k_funcinfo << "Listing properties: " << ubi;
             FakeBluetoothRemoteDevice * remoteDevice = new FakeBluetoothRemoteDevice(parseBluetoothElement(childElement));
             mBluetoothRemoteDevices.insert(ubi, remoteDevice);
         }
         childNode = childNode.nextSibling();
     }
-    //kDebug() << "Done listing. " << endl;
+    //kDebug() << "Done listing. ";
 
-    kDebug() << k_funcinfo << "Creating FakeBluetoothInterface for " << ubi << endl;
+    kDebug() << k_funcinfo << "Creating FakeBluetoothInterface for " << ubi;
     interface = new FakeBluetoothInterface(propertyMap);
 
     // Inject Remote devices....
     foreach (FakeBluetoothRemoteDevice *device, mBluetoothRemoteDevices) {
-        kDebug() << "Injecting " << device->name() << endl;
+        kDebug() << "Injecting " << device->name();
         interface->injectDevice(device->ubi(), device);
     }
 
@@ -172,7 +172,7 @@ QMap<QString, QVariant> FakeBluetoothManager::parseBluetoothElement(const QDomEl
 
             propertyKey = propertyElement.attribute("key");
             propertyValue = QVariant(propertyElement.text());
-//            kDebug() << "Got property key=" << propertyKey << ", value=" << propertyValue.toString() << endl;
+//            kDebug() << "Got property key=" << propertyKey << ", value=" << propertyValue.toString();
             propertyMap.insert(propertyKey, propertyValue);
         }
 

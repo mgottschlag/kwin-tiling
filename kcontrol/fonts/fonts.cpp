@@ -769,7 +769,7 @@ void KFonts::save()
   for(it=fontUseList.begin(); it!=end; ++it) {
       if("font"==(*it)->rcKey())
           QSettings().setValue("/qt/font", (*it)->font().toString());
-      kDebug(1208) << "write entry " <<  (*it)->rcKey() << endl;
+      kDebug(1208) << "write entry " <<  (*it)->rcKey();
       grp.writeEntry( (*it)->rcKey(), (*it)->font() );
   }
   config.sync();

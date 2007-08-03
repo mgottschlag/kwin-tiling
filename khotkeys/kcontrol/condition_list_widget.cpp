@@ -103,7 +103,7 @@ void Condition_list_widget::set_data( const Condition_list* data_P )
     conditions_listview->clear();
     insert_listview_items( data_P, conditions_listview, NULL );
 #ifdef KHOTKEYS_DEBUG
-    kDebug( 1217 ) << "Condition_list_widget::set_data():" << endl;
+    kDebug( 1217 ) << "Condition_list_widget::set_data():";
     Condition::debug_list( conditions );
 #endif
     }
@@ -125,7 +125,7 @@ void Condition_list_widget::insert_listview_items( const Condition_list_base* pa
 Condition_list* Condition_list_widget::get_data( Action_data_base* data_P ) const
     {
 #ifdef KHOTKEYS_DEBUG
-    kDebug( 1217 ) << "Condition_list_widget::get_data():" << endl;
+    kDebug( 1217 ) << "Condition_list_widget::get_data():";
     Condition::debug_list( conditions );
 #endif
 // CHECKME TODO hmm, tady to bude chtit asi i children :(
@@ -263,9 +263,9 @@ Condition_list_item* Condition_list_widget::create_listview_item( Condition* con
     Q3ListView* parent1_P, Condition_list_item* parent2_P, Q3ListViewItem* after_P, bool copy_P )
     {
 #ifdef KHOTKEYS_DEBUG
-    kDebug( 1217 ) << "Condition_list_widget::create_listview_item():" << endl;
+    kDebug( 1217 ) << "Condition_list_widget::create_listview_item():";
     Condition::debug_list( conditions );
-    kDebug( 1217 ) << kBacktrace() << endl;
+    kDebug( 1217 ) << kBacktrace();
 #endif
     Condition* new_cond = copy_P ? condition_P->copy( parent2_P
         ? static_cast< Condition_list_base* >( parent2_P->condition()) : NULL ) : condition_P;
@@ -328,7 +328,7 @@ void Condition_list_widget::edit_listview_item( Condition_list_item* item_P )
         conditions_listview->repaintItem( item_P );
         }
 #ifdef KHOTKEYS_DEBUG
-    kDebug( 1217 ) << "Condition_list_widget::edit_listview_item():" << endl;
+    kDebug( 1217 ) << "Condition_list_widget::edit_listview_item():";
     Condition::debug_list( conditions );
 #endif
     delete dlg;

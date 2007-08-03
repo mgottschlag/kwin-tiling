@@ -549,7 +549,7 @@ void KMiniPagerButton::mouseMoveEvent(QMouseEvent* e)
 
 void KMiniPagerButton::dragEnterEvent(QDragEnterEvent* e)
 {
-    kDebug() << "received drag " << e->format() << endl;
+    kDebug() << "received drag " << e->format();
     if (TaskDrag::canDecode(e->mimeData()))
     {
         // if it's a task drag don't switch the desktop, just accept it

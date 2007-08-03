@@ -455,7 +455,7 @@ void RandRScreen::unifyOutputs()
 	if (sizes.indexOf(m_unifiedRect.size()) == -1)
 		m_unifiedRect.setSize(sizes.first());
 
-	kDebug() << "Unifying outputs using rect " << m_unifiedRect << endl;
+	kDebug() << "Unifying outputs using rect " << m_unifiedRect;
 	// iterate over all outputs and make sure all connected outputs get activated
 	// and use the right size
 	foreach(RandROutput *o, m_outputs)

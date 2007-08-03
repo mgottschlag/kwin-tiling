@@ -23,7 +23,7 @@ void dump(const NMDevice  & device)
 
 void deserialize(const QDBusMessage &message, NMDevice  & device)
 {
-    kDebug() << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature() << endl;
+    kDebug() << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature();
     QList<QVariant> args = message.arguments();
     device.path.setPath(args.takeFirst().toString());
     device.interface = args.takeFirst().toString();
@@ -46,7 +46,7 @@ void deserialize(const QDBusMessage &message, NMDevice  & device)
     device.capabilitiesType = args.takeFirst().toUInt();
     device.activeNetPath = args.takeFirst().toString();
     device.networks = args.takeFirst().toStringList();
-    kDebug() << "deserialize: objpath is " << device.path.path() << "'," << device.interface << endl;
+    kDebug() << "deserialize: objpath is " << device.path.path() << "'," << device.interface;
 }
 
 NMObject::NMObject(int argc, char ** argv) : QCoreApplication(argc, argv)
@@ -66,15 +66,15 @@ NMObject::~NMObject()
 
 void NMObject::showDevices()
 {
-    kDebug() << "Hello, world!" << endl;
+    kDebug() << "Hello, world!";
     QDBusConnection bus = QDBusConnection::systemBus();
     QDBusReply<uint> state = nmIface->call("state");
     if (state.isValid())
-        kDebug() << "State: " << state.value() << endl;
+        kDebug() << "State: " << state.value();
     else
     {
         QDBusError err = state.error();
-        kDebug() << "error: " << err.name() << "msg: " << err.message() <<endl;
+        kDebug() << "error: " << err.name() << "msg: " << err.message();
     }
 
     QDBusInterface * deviceIface = new QDBusInterface("org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager", "org.freedesktop.NetworkManager.Devices", bus);
@@ -85,14 +85,14 @@ void NMObject::showDevices()
     QDBusReply< QList <QDBusObjectPath> > deviceList = deviceIface->call("getDevices");
     if (true)
     {
-        kDebug() << "NMObject::showDevices() Got device list" << endl; //Signature: " << deviceList.signature() << endl;
+        kDebug() << "NMObject::showDevices() Got device list"; //Signature: " << deviceList.signature() ;
         QList <QDBusObjectPath> devices = deviceList.value();
         foreach (QDBusObjectPath op, devices)
         {
-            kDebug() << "  " << op.path() << endl;
+            kDebug() << "  " << op.path();
             QDBusInterface * deviceIface2 = new QDBusInterface("org.freedesktop.NetworkManager", op.path(), "org.freedesktop.NetworkManager.Devices", bus);
             QDBusMessage reply = deviceIface2->call("getProperties");
-            //kDebug() << "  getProperties call" << (reply.isValid() ? "is" : "is not") << " valid." << endl;
+            //kDebug() << "  getProperties call" << (reply.isValid() ? "is" : "is not") << " valid.";
             NMDevice dev;
             deserialize(reply, dev);
             dump(dev);
@@ -102,23 +102,23 @@ void NMObject::showDevices()
 
 void NMObject::netStrengthChanged(QDBusObjectPath devPath, QDBusObjectPath netPath, int strength)
 {
-    kDebug() << "netStrengthChanged() device: " << devPath.path() << " net: " << netPath.path() << " strength: " << strength << endl;
+    kDebug() << "netStrengthChanged() device: " << devPath.path() << " net: " << netPath.path() << " strength: " << strength;
 }
 void NMObject::deviceStrengthChanged(QDBusObjectPath objPath, int strength)
 {
-    kDebug() << "deviceStrengthChanged() obj: " << objPath.path() << " strength: " << strength << endl;
+    kDebug() << "deviceStrengthChanged() obj: " << objPath.path() << " strength: " << strength;
 }
 void NMObject::updateNetwork(QDBusObjectPath objPath, QDBusObjectPath netPath)
 {
-    kDebug() << "updateNetwork() obj: " << objPath.path() << " net: " << netPath.path() << endl;
+    kDebug() << "updateNetwork() obj: " << objPath.path() << " net: " << netPath.path();
 }
 void NMObject::wirelessNetworkAppeared(QDBusObjectPath objPath, QDBusObjectPath netPath)
 {
-    kDebug() << "wirelessNetworkAppeared() obj: " << objPath.path() << " net: " << netPath.path() << endl;
+    kDebug() << "wirelessNetworkAppeared() obj: " << objPath.path() << " net: " << netPath.path();
 }
 void NMObject::wirelessNetworkDisappeared(QDBusObjectPath objPath, QDBusObjectPath netPath)
 {
-    kDebug() << "wirelessNetworkDisappeared() obj: " << objPath.path() << " net: " << netPath.path() << endl;
+    kDebug() << "wirelessNetworkDisappeared() obj: " << objPath.path() << " net: " << netPath.path();
 }
 
 #include "nmobject.moc"

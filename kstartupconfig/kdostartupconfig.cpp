@@ -70,7 +70,7 @@ static QString get_entry( QString* ll )
 int main()
     {
     KComponentData inst( "kdostartupconfig" );
-    kDebug() << "Running kdostartupconfig." << endl;
+    kDebug() << "Running kdostartupconfig.";
     QString keysname = KStandardDirs::locateLocal( "config", "startupconfigkeys" );
     QFile keys( keysname );
     if( !keys.open( QIODevice::ReadOnly ))

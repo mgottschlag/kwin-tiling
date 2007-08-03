@@ -236,7 +236,7 @@ void MediaApplet::arrangeButtons()
 
 void MediaApplet::slotClear()
 {
-	kDebug()<<"MediaApplet::slotClear"<<endl;
+	kDebug()<<"MediaApplet::slotClear";
 
 	if (!mButtonList.isEmpty())
 	{
@@ -258,11 +258,11 @@ void MediaApplet::slotCompleted()
 
 void MediaApplet::slotNewItems(const KFileItemList &entries)
 {
-	kDebug()<<"MediaApplet::slotNewItems"<<endl;
+	kDebug()<<"MediaApplet::slotNewItems";
 
 	foreach(KFileItem *item, entries)
 	{
-		kDebug() << "item: " << item->url() << endl;
+		kDebug() << "item: " << item->url();
 
 		bool found = false;
 		MediumButtonList::iterator it2;
@@ -292,7 +292,7 @@ void MediaApplet::slotNewItems(const KFileItemList &entries)
 
 void MediaApplet::slotDeleteItem(KFileItem *fileItem)
 {
-	kDebug()<<"MediumApplet::slotDeleteItem:"<< fileItem->url() << endl;
+	kDebug()<<"MediumApplet::slotDeleteItem:"<< fileItem->url();
 
 	MediumButtonList::iterator it;
 	MediumButtonList::iterator end = mButtonList.end();
@@ -315,12 +315,12 @@ void MediaApplet::slotRefreshItems(const KFileItemList &entries)
 {
 	foreach(KFileItem *item, entries)
 	{
-		kDebug()<<"MediaApplet::slotRefreshItems:"<<(*item).url().url()<<endl;
+		kDebug()<<"MediaApplet::slotRefreshItems:"<<(*item).url().url();
 
 		QString mimetype = (*item).mimetype();
 		bool found = false;
 
-		kDebug()<<"mimetype="<<mimetype<<endl;
+		kDebug()<<"mimetype="<<mimetype;
 
 		MediumButtonList::iterator it2;
 		MediumButtonList::iterator end = mButtonList.end();

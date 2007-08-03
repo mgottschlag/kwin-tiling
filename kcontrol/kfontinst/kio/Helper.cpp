@@ -77,7 +77,7 @@ int CHelper::run()
             QVariant cmd;
             bool     res(false);
 
-            kDebug() << "Waiting for cmd..." << endl;
+            kDebug() << "Waiting for cmd...";
             if(!read(cmd, -1))
                 break;
 
@@ -96,7 +96,7 @@ int CHelper::run()
                             res=deleteDisabledFont();
                             break;
                         case KFI::CMD_RELOAD_DISABLED_LIST:
-                            kDebug() << "reloadDisabled" << endl;
+                            kDebug() << "reloadDisabled";
                             res=itsDisabledFonts.save();
                             itsDisabledFonts.load();
                             break;
@@ -116,7 +116,7 @@ int CHelper::run()
                             res=createAfm();
                             break;
                         case KFI::CMD_FC_CACHE:
-                            kDebug() << "fc-cache" << endl;
+                            kDebug() << "fc-cache";
                             Misc::doCmd("fc-cache");
                             res=true;
                             break;
@@ -136,7 +136,7 @@ int CHelper::run()
                     }
                     break;
                 case QVariant::Invalid:
-                    kDebug() << "Finished" << endl;
+                    kDebug() << "Finished";
                     return 0; // finished!
                 default:
                     kError() << "Invalid type received when expecting command int, " << cmd.type() << endl;
@@ -158,14 +158,14 @@ int CHelper::run()
 
 bool CHelper::getFile(CDisabledFonts::TFont &font)
 {
-    kDebug() << "getFile" << endl;
+    kDebug() << "getFile";
 
     QString file,
             foundry;
 
     if(read(file) && read(foundry))
     {
-        kDebug() << "file:" << file << " foundry:" << foundry << endl;
+        kDebug() << "file:" << file << " foundry:" << foundry;
         font.files.append(CDisabledFonts::TFile(file, 0, foundry));
         return true;
     }
@@ -177,7 +177,7 @@ bool CHelper::getFile(CDisabledFonts::TFont &font)
 
 bool CHelper::disableFont()
 {
-    kDebug() << "disableFont" << endl;
+    kDebug() << "disableFont";
 
     QString    family;
     int        style,
@@ -212,14 +212,14 @@ bool CHelper::disableFont()
 
 bool CHelper::enableFont()
 {
-    kDebug() << "enableFont" << endl;
+    kDebug() << "enableFont";
 
     QString family;
     int     style;
 
     if(read(family) && read(style))
     {
-        kDebug() << "family:" << family << " style:" << style << endl;
+        kDebug() << "family:" << family << " style:" << style;
 
         return itsDisabledFonts.enable(family, style);
     }
@@ -230,14 +230,14 @@ bool CHelper::enableFont()
 
 bool CHelper::deleteDisabledFont()
 {
-    kDebug() << "deleteDisabledFont" << endl;
+    kDebug() << "deleteDisabledFont";
 
     QString family;
     int     style;
 
     if(read(family) && read(style))
     {
-        kDebug() << "family:" << family << " style:" << style << endl;
+        kDebug() << "family:" << family << " style:" << style;
 
         CDisabledFonts::TFont               font(family, style);
         CDisabledFonts::TFontList::Iterator it(itsDisabledFonts.items().find(font));
@@ -265,13 +265,13 @@ bool CHelper::deleteDisabledFont()
 
 bool CHelper::addToFc()
 {
-    kDebug() << "addToFc" << endl;
+    kDebug() << "addToFc";
 
     QString dir;
 
     if(read(dir))
     {
-        kDebug() << "dir:" << dir << endl;
+        kDebug() << "dir:" << dir;
 
         KXftConfig xft(KXftConfig::Dirs, KFI::Misc::root());
 
@@ -285,13 +285,13 @@ bool CHelper::addToFc()
 
 bool CHelper::configureX()
 {
-    kDebug() << "configureX" << endl;
+    kDebug() << "configureX";
 
     QString dir;
 
     if(read(dir))
     {
-        kDebug() << "dir:" << dir << endl;
+        kDebug() << "dir:" << dir;
         return Misc::configureForX11(dir);
     }
 
@@ -301,14 +301,14 @@ bool CHelper::configureX()
 
 bool CHelper::copyFile()
 {
-    kDebug() << "copyFile" << endl;
+    kDebug() << "copyFile";
 
     QString from,
             to;
 
     if(read(from) && read(to))
     {
-        kDebug() << "from:" << from << " to:" << to << endl;
+        kDebug() << "from:" << from << " to:" << to;
 
         bool rv=QFile::copy(from, to);
         if(rv)
@@ -322,7 +322,7 @@ bool CHelper::copyFile()
 
 bool CHelper::moveFile()
 {
-    kDebug() << "moveFile" << endl;
+    kDebug() << "moveFile";
 
     QString from,
             to;
@@ -331,7 +331,7 @@ bool CHelper::moveFile()
 
     if(read(from) && read(to) && read(user) && read(group))
     {
-        kDebug() << "from:" << from << " to:" << to << " user:" << user << " group:" << group << endl;
+        kDebug() << "from:" << from << " to:" << to << " user:" << user << " group:" << group;
 
         QByteArray toC(QFile::encodeName(to));
 
@@ -352,13 +352,13 @@ bool CHelper::moveFile()
 
 bool CHelper::deleteFile()
 {
-    kDebug() << "deleteFile" << endl;
+    kDebug() << "deleteFile";
 
     QString file;
 
     if(read(file))
     {
-        kDebug() << "file:" << file << endl;
+        kDebug() << "file:" << file;
         return 0==::unlink(QFile::encodeName(file).constData());
     }
 
@@ -368,13 +368,13 @@ bool CHelper::deleteFile()
 
 bool CHelper::createDir()
 {
-    kDebug() << "createDir" << endl;
+    kDebug() << "createDir";
 
     QString dir;
 
     if(read(dir))
     {
-        kDebug() << "dir:" << dir << endl;
+        kDebug() << "dir:" << dir;
 
         return KFI::Misc::createDir(dir);
     }
@@ -385,13 +385,13 @@ bool CHelper::createDir()
 
 bool CHelper::createAfm()
 {
-    kDebug() << "createAfm" << endl;
+    kDebug() << "createAfm";
 
     QString font;
 
     if(read(font))
     {
-        kDebug() << "font:" << font << endl;
+        kDebug() << "font:" << font;
 
         return Misc::doCmd("pf2afm", QFile::encodeName(font));
     }

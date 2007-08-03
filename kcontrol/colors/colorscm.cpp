@@ -550,7 +550,7 @@ void KColorScheme::slotImport()
 	if ( file.isEmpty() )
 		return;
 
-	//kDebug() << "Location: " << location << endl;
+	//kDebug() << "Location: " << location;
 	if (!KIO::NetAccess::file_copy(file, KUrl( location+file.fileName( KUrl::ObeyTrailingSlash ) ) ) )
 	{
 		KMessageBox::error(this, KIO::NetAccess::lastErrorString(),i18n("Import failed."));

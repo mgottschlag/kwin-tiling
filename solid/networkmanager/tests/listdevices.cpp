@@ -42,12 +42,12 @@ int main(int argc, char ** argv)
     NMNetworkInterface * wifiIface = qobject_cast<NMNetworkInterface *>(mgr.createNetworkInterface("/org/freedesktop/NetworkManager/Devices/eth1"));
     Solid::Control::Ifaces::NetworkInterface * solidIface;
     const QMetaObject * parentMo = wifiIface->metaObject()->superClass();
-    kDebug() << parentMo->className() << endl;
+    kDebug() << parentMo->className();
     QStringList networks = wifiIface->networks();
 
     foreach (QString netPath, networks)
     {
-        kDebug() << "Creating network: " << netPath << endl;
+        kDebug() << "Creating network: " << netPath;
         NMNetwork * network = qobject_cast<NMNetwork *>(wifiIface->createNetwork(netPath));
         if (netPath == "/org/freedesktop/NetworkManager/Devices/eth1/Networks/testnet")
             network->setActivated(true);
@@ -71,9 +71,9 @@ int main(int argc, char ** argv)
     QList<QVariant> inArgs, outArgs;
     bool error;
     outArgs = NMDBusHelper::serialize(&auth, "nursery", inArgs, &error);
-    kDebug() << "Serialized arguments:" << outArgs << endl;
-    kDebug() << "Error?" << error << endl;
-    //kDebug() << "Interface: " <<  netIface->uni() << ", " << netIface->signalStrength() << endl;
+    kDebug() << "Serialized arguments:" << outArgs;
+    kDebug() << "Error?" << error;
+    //kDebug() << "Interface: " <<  netIface->uni() << ", " << netIface->signalStrength();
     //mgr.setWirelessEnabled(true);
     return app.exec();
 #else

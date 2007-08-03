@@ -52,18 +52,18 @@ bool KxkbConfig::load(int loadMode)
 	if( m_enableXkbOptions == true || loadMode == LOAD_ALL ) {
 		m_resetOldOptions = config.readEntry("ResetOldOptions", false);
 		m_options = config.readEntry("Options", "");
-		kDebug() << "Xkb options (enabled=" << m_enableXkbOptions << "): " << m_options << endl;
+		kDebug() << "Xkb options (enabled=" << m_enableXkbOptions << "): " << m_options;
 	}
 
 	m_useKxkb = config.readEntry("Use", false);
-	kDebug() << "Use kxkb " << m_useKxkb << endl;
+	kDebug() << "Use kxkb " << m_useKxkb;
 
 	if( (m_useKxkb == false && loadMode == LOAD_ACTIVE_OPTIONS )
 	  		|| loadMode == LOAD_INIT_OPTIONS )
 		return true;
 
 	m_model = config.readEntry("Model", DEFAULT_MODEL);
-	kDebug() << "Model: " << m_model << endl;
+	kDebug() << "Model: " << m_model;
 
 	QStringList layoutList;
 	if( config.hasKey("LayoutList") ) {
@@ -81,10 +81,10 @@ bool KxkbConfig::load(int loadMode)
 	for(QStringList::ConstIterator it = layoutList.begin(); it != layoutList.end() ; ++it) {
 		LayoutUnit layoutUnit(*it);
 		m_layouts.append( layoutUnit );
-		kDebug() << " added layout " << layoutUnit.toPair() << endl;
+		kDebug() << " added layout " << layoutUnit.toPair();
 	}
 
-	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << m_layouts[getDefaultLayout()].toPair() << endl;
+	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << m_layouts[getDefaultLayout()].toPair();
 
 	QStringList displayNamesList;
 	displayNamesList = config.readEntry("DisplayNames", displayNamesList, ',');
@@ -109,23 +109,23 @@ bool KxkbConfig::load(int loadMode)
 // 					LayoutUnit layoutUnit( includePair[0] );
 // 					if( m_layouts.contains( layoutUnit ) ) {
 // 						m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = includePair[1];
-// 						kDebug() << "Got inc group: " << includePair[0] << ": " << includePair[1] << endl;
+// 						kDebug() << "Got inc group: " << includePair[0] << ": " << includePair[1];
 // 					}
 // 				}
 // 			}
 // 		}
 // 		else { //old includes format
-// 			kDebug() << "Old includes..." << endl;
+// 			kDebug() << "Old includes...";
 // 			QStringList includeList;
 // 			includeList = config.readEntry("Includes", includeList);
 // 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
 // 				QString layoutName = LayoutUnit::parseLayout( *it );
 // 				LayoutUnit layoutUnit( layoutName, "" );
-// 				kDebug() << "old layout for inc: " << layoutUnit.toPair() << " included " << m_layouts.contains( layoutUnit ) << endl;
+// 				kDebug() << "old layout for inc: " << layoutUnit.toPair() << " included " << m_layouts.contains( layoutUnit );
 // 				if( m_layouts.contains( layoutUnit ) ) {
 // 					QString variantName = LayoutUnit::parseVariant(*it);
 // 					m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = variantName;
-// 					kDebug() << "Got inc group: " << layoutUnit.toPair() << ": " <<  variantName << endl;
+// 					kDebug() << "Got inc group: " << layoutUnit.toPair() << ": " <<  variantName;
 // 				}
 // 			}
 // 		}
@@ -147,11 +147,11 @@ bool KxkbConfig::load(int loadMode)
 	}
 
 	if( m_layouts.count() < 2 && m_switchingPolicy != SWITCH_POLICY_GLOBAL ) {
-		kWarning() << "Layout count is less than 2, using Global switching policy" << endl;
+		kWarning() << "Layout count is less than 2, using Global switching policy" ;
 		m_switchingPolicy = SWITCH_POLICY_GLOBAL;
 	}
 
-	kDebug() << "Layout owner mode " << layoutOwner << endl;
+	kDebug() << "Layout owner mode " << layoutOwner;
 
 	m_stickySwitching = config.readEntry("StickySwitching", false);
 	m_stickySwitchingDepth = config.readEntry("StickySwitchingDepth", "2").toInt();
@@ -160,12 +160,12 @@ bool KxkbConfig::load(int loadMode)
 
 	if( m_stickySwitching == true ) {
 		if( m_layouts.count() < 3 ) {
-			kWarning() << "Layout count is less than 3, sticky switching will be off" << endl;
+			kWarning() << "Layout count is less than 3, sticky switching will be off" ;
 			m_stickySwitching = false;
 		}
 		else
 		if( (int)m_layouts.count() - 1 < m_stickySwitchingDepth ) {
-			kWarning() << "Sticky switching depth is more than layout count -1, adjusting..." << endl;
+			kWarning() << "Sticky switching depth is more than layout count -1, adjusting..." ;
 			m_stickySwitchingDepth = m_layouts.count() - 1;
 		}
 	}
@@ -199,7 +199,7 @@ void KxkbConfig::save()
 // 		}
 
 		QString displayName( layoutUnit.displayName );
-		kDebug() << " displayName " << layoutUnit.toPair() << " : " << displayName << endl;
+		kDebug() << " displayName " << layoutUnit.toPair() << " : " << displayName;
 		if( displayName.isEmpty() == false && displayName != layoutUnit.layout ) {
 			displayName = QString("%1:%2").arg(layoutUnit.toPair(), displayName);
 			displayNamesList.append( displayName );
@@ -207,10 +207,10 @@ void KxkbConfig::save()
 	}
 
 	config.writeEntry("LayoutList", layoutList);
-	kDebug() << "Saving Layouts: " << layoutList << endl;
+	kDebug() << "Saving Layouts: " << layoutList;
 
 	config.writeEntry("IncludeGroups", includeList);
- 	kDebug() << "Saving includeGroups: " << includeList << endl;
+ 	kDebug() << "Saving includeGroups: " << includeList;
 
 //	if( displayNamesList.empty() == false )
 		config.writeEntry("DisplayNames", displayNamesList);
@@ -318,7 +318,7 @@ const QString LayoutUnit::parseLayout(const QString &layvar)
   // check for errors
 	if( pos < 0 || len < 2 )
 		return "";
-//	kDebug() << "getLayout: " << varLine.mid(pos, len) << endl;
+//	kDebug() << "getLayout: " << varLine.mid(pos, len);
 	return varLine.mid(pos, len);
 }
 

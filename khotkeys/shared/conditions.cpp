@@ -94,7 +94,7 @@ void Condition::debug( int depth_P )
          ++i )
         tmp[ i ] = ' ';
     tmp[ i ] = '\0';
-    kDebug( 1217 ) << tmp << description() << ":(" << this << ")" << endl;
+    kDebug( 1217 ) << tmp << description() << ":(" << this << ")";
     }
 
 void Condition::debug_list( const Q3PtrList< Condition >& list_P, int depth_P )
@@ -167,7 +167,7 @@ void Condition_list_base::debug( int depth_P )
          ++i )
         tmp[ i ] = ' ';
     tmp[ i ] = '\0';
-    kDebug( 1217 ) << tmp << typeid( *this ).name() << ":(" << this << ")" << endl;
+    kDebug( 1217 ) << tmp << typeid( *this ).name() << ":(" << this << ")";
     debug_list( *this, depth_P + 1 );
     }
 #endif
@@ -261,7 +261,7 @@ bool Active_window_condition::match() const
 void Active_window_condition::set_match()
     {
     is_match = window()->match( Window_data( windows_handler->active_window()));
-    kDebug( 1217 ) << "Active_window_condition::set_match :" << is_match << endl;
+    kDebug( 1217 ) << "Active_window_condition::set_match :" << is_match;
     updated();
     }
 
@@ -326,7 +326,7 @@ void Existing_window_condition::set_match( WId w_P )
         is_match = window()->match( Window_data( w_P ));
     else
         is_match = windows_handler->find_window( window()) != None;
-    kDebug( 1217 ) << "Existing_window_condition::set_match :" << is_match << endl;
+    kDebug( 1217 ) << "Existing_window_condition::set_match :" << is_match;
     updated();
     }
 

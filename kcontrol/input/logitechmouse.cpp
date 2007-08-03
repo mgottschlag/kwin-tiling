@@ -54,7 +54,7 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
     m_usbDeviceHandle = usb_open( usbDev );
 
     if ( !m_usbDeviceHandle ) {
-        kWarning() << "Error opening usbfs file: " << usb_strerror() << endl;
+        kWarning() << "Error opening usbfs file: " << usb_strerror() ;
         return;
     }
 
@@ -145,7 +145,7 @@ void LogitechMouse::updateCordlessStatus()
         cordlessNameLabel->hide();
         permissionProblemText->show();
     } else {
-        // kDebug() << "P6 (connect status): " << (status[0] & 0xFF) << endl;
+        // kDebug() << "P6 (connect status): " << (status[0] & 0xFF);
         if ( status[0] & 0x20 ) { // mouse is talking
             m_connectStatus = ( status[0] & 0x80 );
             m_mousePowerup = ( status[0] & 0x40 );
@@ -153,7 +153,7 @@ void LogitechMouse::updateCordlessStatus()
             m_waitLock = ( status[0] & 0x08 );
         }
 
-        // kDebug() << "P0 (receiver type): " << (status[1] & 0xFF) << endl;
+        // kDebug() << "P0 (receiver type): " << (status[1] & 0xFF);
         /*
          0x38 = pid C501
          0x39 = pid C502
@@ -176,7 +176,7 @@ void LogitechMouse::updateCordlessStatus()
 
         m_caseShape = ( status[6] & 0x7F );
 
-        // kDebug() << "PB1 (device Capabilities): " << (status[7] & 0xFF) << endl;
+        // kDebug() << "PB1 (device Capabilities): " << (status[7] & 0xFF);
         m_numberOfButtons = 2 + ( status[7] & 0x07 ); // 9 means something more than 8
         m_twoChannelCapable = ( status[7] & 0x40 );
         m_verticalRoller = ( status[7] & 0x08 );
@@ -235,12 +235,12 @@ void LogitechMouse::applyChanges()
 
 void LogitechMouse::save(KConfig * /*config*/)
 {
-    kDebug() << "Logitech mouse settings not saved - not implemented yet" << endl;
+    kDebug() << "Logitech mouse settings not saved - not implemented yet";
 }
 
 quint8 LogitechMouse::resolution()
 {
-    // kDebug() << "resolution: " << m_resolution << endl;
+    // kDebug() << "resolution: " << m_resolution;
     if ( 0 == m_resolution ) {
         updateResolution();
     }
@@ -260,9 +260,9 @@ void LogitechMouse::updateResolution()
                                    0x0001,
                                    100);
 
-    // kDebug() << "resolution is: " << resolution << endl;
+    // kDebug() << "resolution is: " << resolution;
     if (0 > result) {
-        kWarning() << "Error getting resolution from device : " << usb_strerror() << endl;
+        kWarning() << "Error getting resolution from device : " << usb_strerror() ;
         m_resolution = 0;
     } else {
         m_resolution = resolution;
@@ -280,7 +280,7 @@ void LogitechMouse::setLogitechTo800()
                                   0x0000,
                                   100);
     if (0 > result) {
-        kWarning() << "Error setting resolution on device: " << usb_strerror() << endl;
+        kWarning() << "Error setting resolution on device: " << usb_strerror() ;
     }
 }
 
@@ -295,7 +295,7 @@ void LogitechMouse::setLogitechTo400()
                                   0x0000,
                                   100);
     if (0 > result) {
-        kWarning() << "Error setting resolution on device: " << usb_strerror() << endl;
+        kWarning() << "Error setting resolution on device: " << usb_strerror() ;
     }
 }
 
@@ -327,7 +327,7 @@ void LogitechMouse::setChannel1()
                                    1000);
 
     if (0 > result) {
-        kWarning() << "Error setting mouse to channel 1 : " << usb_strerror() << endl;
+        kWarning() << "Error setting mouse to channel 1 : " << usb_strerror() ;
     }
 
 }
@@ -344,7 +344,7 @@ void LogitechMouse::setChannel2()
                                    1000);
 
     if (0 > result) {
-        kWarning() << "Error setting mouse to channel 2 : " << usb_strerror() << endl;
+        kWarning() << "Error setting mouse to channel 2 : " << usb_strerror() ;
     }
 
 }

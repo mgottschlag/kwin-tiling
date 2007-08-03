@@ -75,10 +75,10 @@ bool GetInfo_CPU (QListView *lBox)
         ret=host_info(mach_host_self(), HOST_BASIC_INFO, 
                 (host_info_t)&basic_info, &count);
         if (ret != KERN_SUCCESS) {
-		kDebug() << "unable to get host information from mach" << endl;
+		kDebug() << "unable to get host information from mach";
 		return false;
         } else {
-		kDebug() << "got Host Info: (" << basic_info.avail_cpus << ") CPUs available" << endl;
+		kDebug() << "got Host Info: (" << basic_info.avail_cpus << ") CPUs available";
         	const NXArchInfo *archinfo;
         	archinfo=NXGetArchInfoFromCpuType(basic_info.cpu_type, basic_info.cpu_subtype);
 		new QListViewItem(lBox, i18n("Kernel is configured for %1 CPUs", basic_info.max_cpus));
@@ -123,7 +123,7 @@ bool GetInfo_Sound (QListView *lBox)
 	propertySize = sizeof(gOutputDeviceID);
 	status = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice, &propertySize, &gOutputDeviceID);
 	if (status) {
-		kDebug() << "get default output device failed, status = " << (int)status << endl;
+		kDebug() << "get default output device failed, status = " << (int)status;
 		return false;
 	}
 
@@ -134,7 +134,7 @@ bool GetInfo_Sound (QListView *lBox)
 		/* Device Name */
 		status = AudioDeviceGetProperty(gOutputDeviceID, 1, 0, kAudioDevicePropertyDeviceName, &propertySize, deviceName);
 		if (status) {
-			kDebug() << "get device name failed, status = " << (int)status << endl;
+			kDebug() << "get device name failed, status = " << (int)status;
 			return false;
 		}
 		new QListViewItem(lBox, i18n("Device Name: %1", deviceName));
@@ -142,7 +142,7 @@ bool GetInfo_Sound (QListView *lBox)
 		/* Manufacturer */
 		status = AudioDeviceGetProperty(gOutputDeviceID, 1, 0, kAudioDevicePropertyDeviceManufacturer, &propertySize, manufacturer);
 		if (status) {
-			kDebug() << "get manufacturer failed, status = " << (int)status << endl;
+			kDebug() << "get manufacturer failed, status = " << (int)status;
 			return false;
 		}
 		new QListViewItem(lBox, i18n("Manufacturer: %1", manufacturer));

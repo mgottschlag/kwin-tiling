@@ -127,7 +127,7 @@ bool DockContainer::x11Event( XEvent *e )
 	break;
     case UnmapNotify:
         if ( e->xunmap.window == _embeddedWinId ) {
-            kDebug() << "Unmap Notify !!! I hate smart dockapps as wmpinboard " << command() << endl;
+            kDebug() << "Unmap Notify !!! I hate smart dockapps as wmpinboard " << command();
             _embeddedWinId = 0;
         }
         break;

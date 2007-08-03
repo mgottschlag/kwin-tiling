@@ -189,7 +189,7 @@ void khotkeys_send_reread_config()
     QByteArray data;
     if( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
         {
-        kDebug( 1217 ) << "launching new khotkeys daemon" << endl;
+        kDebug( 1217 ) << "launching new khotkeys daemon";
         KToolInvocation::kdeinitExec( "khotkeys" );
         }
     else
@@ -199,7 +199,7 @@ void khotkeys_send_reread_config()
 #endif
 
         //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
-        kDebug( 1217 ) << "telling khotkeys daemon to reread configuration" << endl;
+        kDebug( 1217 ) << "telling khotkeys daemon to reread configuration";
         }
     }
 

@@ -85,7 +85,7 @@ bool KCMInit::runModule(const QString &libName, KLibLoader *loader, KService::Pt
         KLibrary::void_function_ptr init = lib->resolveFunction(kcminit.toUtf8());
 	if (init) {
 	    // initialize the module
-	    kDebug(1208) << "Initializing " << libName << ": " << kcminit << endl;
+	    kDebug(1208) << "Initializing " << libName << ": " << kcminit;
 
 	    void (*func)() = (void(*)())init;
 	    func();

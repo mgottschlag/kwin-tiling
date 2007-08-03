@@ -36,9 +36,9 @@ void KxkbWidget::setCurrentLayout(const LayoutUnit& layoutUnit)
 {
 	setToolTip(m_descriptionMap[layoutUnit.toPair()]);
 	const QPixmap& icon = LayoutIcon::getInstance().findPixmap(layoutUnit.layout, m_showFlag, layoutUnit.displayName);
-//	kDebug() << "setting pixmap: " << icon.width() << endl;
+//	kDebug() << "setting pixmap: " << icon.width();
 	setPixmap( icon );
-	kDebug() << "setting text: " << layoutUnit.layout << endl;
+	kDebug() << "setting text: " << layoutUnit.layout;
 	setText(layoutUnit.layout);
 }
 
@@ -138,7 +138,7 @@ void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
 
 void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 {
-	kDebug() << "setting icon to tray" << endl;
+	kDebug() << "setting icon to tray";
 	m_tray->setIcon( pixmap );
 // 	if( ! m_tray->isVisible() )
 		m_tray->show();
@@ -174,7 +174,7 @@ void KxkbLabel::rightClick() {
 
 void KxkbLabel::setPixmap(const QPixmap& pixmap)
 {
-//	kDebug() << "setting pixmap to label, width: " << pixmap.width() << endl;
+//	kDebug() << "setting pixmap to label, width: " << pixmap.width();
 	m_tray->setIcon( pixmap );
 	if( ! m_tray->isVisible() )
 		m_tray->show();

@@ -53,7 +53,7 @@ KTheme::KTheme( QWidget *parent, const QString & xmlFile )
     m_dom.setContent( file.readAll() );
     file.close();
 
-    //kDebug() << m_dom.toString( 2 ) << endl;
+    //kDebug() << m_dom.toString( 2 );
 
     setName( QFileInfo( file ).baseName() );
     m_kgd = KGlobal::dirs();
@@ -88,13 +88,13 @@ void KTheme::setName( const QString & name )
 
 bool KTheme::load( const KUrl & url )
 {
-    kDebug() << "Loading theme from URL: " << url << endl;
+    kDebug() << "Loading theme from URL: " << url;
 
     QString tmpFile;
     if ( !KIO::NetAccess::download( url, tmpFile, 0L ) )
         return false;
 
-    kDebug() << "Theme is in temp file: " << tmpFile << endl;
+    kDebug() << "Theme is in temp file: " << tmpFile;
 
     // set theme's name
     setName( QFileInfo( url.fileName() ).baseName() );
@@ -373,7 +373,7 @@ QString KTheme::createYourself( bool pack )
         KTar tar( m_kgd->saveLocation( "themes" ) + m_name + ".kth", "application/x-gzip" );
         tar.open( QIODevice::WriteOnly );
 
-        kDebug() << "Packing everything under: " << m_kgd->saveLocation( "themes", m_name + '/' ) << endl;
+        kDebug() << "Packing everything under: " << m_kgd->saveLocation( "themes", m_name + '/' );
 
         if ( tar.addLocalDirectory( m_kgd->saveLocation( "themes", m_name + '/' ), QString() ) )
             result = tar.fileName();
@@ -381,17 +381,17 @@ QString KTheme::createYourself( bool pack )
         tar.close();
     }
 
-    //kDebug() << m_dom.toString( 2 ) << endl;
+    //kDebug() << m_dom.toString( 2 );
 
     return result;
 }
 
 void KTheme::apply()
 {
-    kDebug() << "Going to apply theme: " << m_name << endl;
+    kDebug() << "Going to apply theme: " << m_name;
 
     QString themeDir = m_kgd->findResourceDir( "themes", m_name + '/' + m_name + ".xml") + m_name + '/';
-    kDebug() << "Theme dir: " << themeDir << endl;
+    kDebug() << "Theme dir: " << themeDir;
 
     // 2. Background theme
 
@@ -692,7 +692,7 @@ void KTheme::apply()
 
 bool KTheme::remove( const QString & name )
 {
-    kDebug() << "Going to remove theme: " << name << endl;
+    kDebug() << "Going to remove theme: " << name;
     return KIO::NetAccess::del( KUrl(KGlobal::dirs()->saveLocation( "themes", name + '/' )), 0L );
 }
 
@@ -710,7 +710,7 @@ QString KTheme::getProperty( const QString & name ) const
         return _list.item( 0 ).toElement().attribute( "value" );
     else
     {
-        kWarning() << "Found no such property: " << name << endl;
+        kWarning() << "Found no such property: " << name ;
         return QString();
     }
 }
@@ -804,7 +804,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
     if ( fi.isRelative() )
         fi.setFile( findResource( section, path ) );
 
-    kDebug() << "Processing file: " << fi.absoluteFilePath() << ", " << fi.fileName() << endl;
+    kDebug() << "Processing file: " << fi.absoluteFilePath() << ", " << fi.fileName();
 
     if ( section == "desktop" )
     {
@@ -827,7 +827,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
             return "theme:/wallpapers/panel/" + fi.fileName();
     }
     else
-        kWarning() << "Unsupported theme resource type" << endl;
+        kWarning() << "Unsupported theme resource type" ;
 
     return QString();       // an error occurred or the resource doesn't exist
 }
@@ -871,7 +871,7 @@ void KTheme::setVersion( const QString & version )
 void KTheme::addPreview()
 {
     QString file = m_kgd->saveLocation( "themes", m_name + '/' ) + m_name + ".preview.png";
-    kDebug() << "Adding preview: " << file << endl;
+    kDebug() << "Adding preview: " << file;
     QPixmap snapshot = QPixmap::grabWindow( QX11Info::appRootWindow() );
     snapshot.save( file, "PNG" );
 }
@@ -894,7 +894,7 @@ QString KTheme::findResource( const QString & section, const QString & path )
         return m_kgd->findResource( "data", "kicker/wallpapers/" + path );
     else
     {
-        kWarning() << "Requested unknown resource: " << section << endl;
+        kWarning() << "Requested unknown resource: " << section ;
         return QString();
     }
 }

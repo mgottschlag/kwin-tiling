@@ -77,7 +77,7 @@ int main( int argc, char **argv )
   KApplication app;
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-  kDebug(1345) << "Kasbar starting..." << endl;
+  kDebug(1345) << "Kasbar starting...";
 
   int wflags = Qt::WStyle_Customize | Qt::WX11BypassWM | Qt::WStyle_DialogBorder | Qt::WStyle_StaysOnTop;
   KasBar *kasbar;
@@ -104,13 +104,13 @@ int main( int argc, char **argv )
       kastasker->refreshAll();
   }
 
-  kDebug(1345) << "Kasbar about to show" << endl;
+  kDebug(1345) << "Kasbar about to show";
   app.setMainWidget( kasbar );
   kasbar->show();
 
   kasbar->setDetached( true );
   KWindowSystem::setOnAllDesktops( kasbar->winId(), true );
-  kDebug() << "kasbar: Window id is " << kasbar->winId() << endl;
+  kDebug() << "kasbar: Window id is " << kasbar->winId();
 
   KApplication::kApplication()->dcopClient()->registerAs( "kasbar" );
 

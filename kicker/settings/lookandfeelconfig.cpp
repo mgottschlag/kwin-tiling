@@ -63,7 +63,7 @@ void LookAndFeelConfig::load()
 
 void LookAndFeelConfig::aboutToNotifyKicker()
 {
-    kDebug() << "LookAndFeelConfig::aboutToNotifyKicker()" << endl;
+    kDebug() << "LookAndFeelConfig::aboutToNotifyKicker()";
 
     // This slot is triggered by the signal,
     // which is send before Kicker is notified.

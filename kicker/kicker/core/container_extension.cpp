@@ -303,7 +303,7 @@ void ExtensionContainer::readConfig()
 
 void ExtensionContainer::writeConfig()
 {
-//    kDebug(1210) << "ExtensionContainer::writeConfig()" << endl;
+//    kDebug(1210) << "ExtensionContainer::writeConfig()";
     KSharedConfig::Ptr config = KGlobal::config();
     config->setGroup(extensionId());
 
@@ -518,7 +518,7 @@ void ExtensionContainer::updateLayout()
 
 void ExtensionContainer::actuallyUpdateLayout()
 {
-//    kDebug(1210) << "PanelContainer::updateLayout()" << endl;
+//    kDebug(1210) << "PanelContainer::updateLayout()";
     resetLayout();
     updateWindowManager();
 }
@@ -671,14 +671,14 @@ void ExtensionContainer::unhideTriggered(Plasma::ScreenEdge tr, int XineramaScre
 
 void ExtensionContainer::autoHideTimeout()
 {
-//    kDebug(1210) << "PanelContainer::autoHideTimeout() " << name() << endl;
+//    kDebug(1210) << "PanelContainer::autoHideTimeout() " << name();
     // Hack: If there is a popup open, don't autohide until it closes.
     QWidget* popup = QApplication::activePopupWidget();
     ExtensionSettings* s = m_extension->settings();
     if (popup)
     {
 
-    //    kDebug(1210) << "popup detected" << endl;
+    //    kDebug(1210) << "popup detected";
 
         // Remove it first in case it was already installed.
         // Does nothing if it wasn't installed.
@@ -726,14 +726,14 @@ void ExtensionContainer::hideRight()
 
 void ExtensionContainer::autoHide(bool hide)
 {
-//   kDebug(1210) << "PanelContainer::autoHide( " << hide << " )" << endl;
+//   kDebug(1210) << "PanelContainer::autoHide( " << hide << " )";
 
     if (_in_autohide || hide == _autoHidden)
     {
         return;
     }
 
-    //    kDebug(1210) << "entering autohide for real" << endl;
+    //    kDebug(1210) << "entering autohide for real";
 
     blockUserInput(true);
 
@@ -831,7 +831,7 @@ void ExtensionContainer::autoHide(bool hide)
 
 void ExtensionContainer::animatedHide(bool left)
 {
-//    kDebug(1210) << "PanelContainer::animatedHide()" << endl;
+//    kDebug(1210) << "PanelContainer::animatedHide()";
     KickerTip::enableTipping(false);
     blockUserInput(true);
 
@@ -950,7 +950,7 @@ void ExtensionContainer::updateWindowManager()
 
     if (reserveStrut())
     {
-        //    kDebug(1210) << "PanelContainer::updateWindowManager()" << endl;
+        //    kDebug(1210) << "PanelContainer::updateWindowManager()";
         // Set the relevant properties on the window.
         int w = 0;
         int h = 0;
@@ -1011,9 +1011,9 @@ void ExtensionContainer::updateWindowManager()
         strut.bottom_start != _strut.bottom_start ||
         strut.bottom_end != _strut.bottom_end)
     {
-        /*kDebug(1210) << " === Panel sets new strut for pos " << position() << " ===" << endl;
+        /*kDebug(1210) << " === Panel sets new strut for pos " << position() << " ===";
 
-       kDebug(1210) << "strut for " << winId() << ": " << endl <<
+       kDebug(1210) << "strut for " << winId() << ": "<<
             "\tleft  : " << strut.left_width << " " << strut.left_start << " " << strut.left_end << endl <<
             "\tright : " << strut.right_width << " " << strut.right_start << " " << strut.right_end << endl <<
             "\ttop   : " << strut.top_width << " " << strut.top_start << " " << strut.top_end << endl <<
@@ -1029,13 +1029,13 @@ void ExtensionContainer::updateWindowManager()
     }
     /*else
     {
-        kDebug(1210) << "Panel strut did NOT change!" << endl;
+        kDebug(1210) << "Panel strut did NOT change!";
     }*/
 }
 
 void ExtensionContainer::currentDesktopChanged(int)
 {
-    //    kDebug(1210) << "PanelContainer::currentDesktopChanged" << endl;
+    //    kDebug(1210) << "PanelContainer::currentDesktopChanged";
     if (m_extension->settings()->autoHideSwitch())
     {
         if (m_hideMode == AutomaticHide)
@@ -1056,7 +1056,7 @@ void ExtensionContainer::currentDesktopChanged(int)
 
 void ExtensionContainer::strutChanged()
 {
-    //kDebug(1210) << "PanelContainer::strutChanged()" << endl;
+    //kDebug(1210) << "PanelContainer::strutChanged()";
     QRect ig = currentGeometry();
 
     if (ig != geometry())
@@ -1094,7 +1094,7 @@ void ExtensionContainer::maybeStartAutoHideTimer()
         !_autoHidden &&
         !_userHidden)
     {
-        // kDebug(1210) << "starting auto hide timer for " << name() << endl;
+        // kDebug(1210) << "starting auto hide timer for " << name();
         ExtensionSettings* s = m_extension->settings();
         if (s->autoHideDelay() == 0)
         {
@@ -1111,7 +1111,7 @@ void ExtensionContainer::stopAutoHideTimer()
 {
     if (_autohideTimer->isActive())
     {
-        //kDebug(1210) << "stopping auto hide timer for " << name() << endl;
+        //kDebug(1210) << "stopping auto hide timer for " << name();
         _autohideTimer->stop();
     }
 }
@@ -1890,8 +1890,8 @@ QRect ExtensionContainer::initialGeometry(Plasma::Position p,
                                    size, workArea,
                                    autoHidden, userHidden);
 
-    //kDebug(1210) << "Size: " << size.width() << " x " << size.height() << endl;
-    //kDebug(1210) << "Pos: (" << point.x() << ", " << point.y() << ")" << endl;
+    //kDebug(1210) << "Size: " << size.width() << " x " << size.height();
+    //kDebug(1210) << "Pos: (" << point.x() << ", " << point.y() << ")";
 
     return QRect(point, size);
 }

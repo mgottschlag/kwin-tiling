@@ -161,7 +161,7 @@ void PrefMenu::mouseMoveEvent(QMouseEvent * ev)
 
     if (!m_entryMap.contains(id))
     {
-        kDebug(1210) << "Cannot find service with menu id " << id << endl;
+        kDebug(1210) << "Cannot find service with menu id " << id;
         return;
     }
 

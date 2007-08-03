@@ -1424,7 +1424,7 @@ void SolidShell::slotBluetoothDeviceFound(const QString &ubi, int deviceClass, i
 
 void SolidShell::slotBluetoothDiscoveryCompleted()
 {
-    kDebug() << k_funcinfo << endl;
+    kDebug() << k_funcinfo;
     m_loop.exit();
 }
 

@@ -191,7 +191,7 @@ void kthememanager::listThemes()
             ( void ) new Q3ListViewItem( dlg->lvThemes, name, theme.comment() );
     }
 
-    kDebug() << "Available themes: " << themes << endl;
+    kDebug() << "Available themes: " << themes;
 }
 
 float kthememanager::getThemeVersion( const QString & themeName )
@@ -322,7 +322,7 @@ void kthememanager::slotThemeChanged( Q3ListViewItem * item )
     if ( item )
     {
         QString themeName = item->text(0);
-        kDebug() << "Activated theme: " << themeName  << endl;
+        kDebug() << "Activated theme: " << themeName ;
 
         QString themeDir = KGlobal::dirs()->findResourceDir( "themes", themeName + '/' + themeName + ".xml") + themeName + '/';
 
@@ -400,7 +400,7 @@ void kthememanager::queryLNFModules()
 
 void kthememanager::updatePreview( const QString & pixFile )
 {
-     kDebug() << "Preview is in file: " << pixFile << endl;
+     kDebug() << "Preview is in file: " << pixFile;
      QImage preview( pixFile, "PNG" );
      if (preview.width()>dlg->lbPreview->contentsRect().width() ||
          preview.height()>dlg->lbPreview->contentsRect().height() )

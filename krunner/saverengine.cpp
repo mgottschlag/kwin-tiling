@@ -324,7 +324,7 @@ void SaverEngine::stopLockProcess()
     m_actived_time = -1;
     if (mState == Waiting)
     {
-        kWarning() << "SaverEngine::stopSaver() saver not active" << endl;
+        kWarning() << "SaverEngine::stopSaver() saver not active" ;
         return;
     }
     kDebug() << "SaverEngine: stopping lock";

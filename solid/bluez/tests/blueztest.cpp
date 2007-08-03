@@ -12,10 +12,10 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     BluezBluetoothManager mgr(0, QStringList());
 
-    kDebug() << "Interfaces: " << mgr.bluetoothInterfaces() << endl;
-    kDebug() << "Default Interface: " << mgr.defaultInterface() << endl;
+    kDebug() << "Interfaces: " << mgr.bluetoothInterfaces();
+    kDebug() << "Default Interface: " << mgr.defaultInterface();
 
-    kDebug() << "Bluetooth Input Devices: " << mgr.bluetoothInputDevices() << endl;
+    kDebug() << "Bluetooth Input Devices: " << mgr.bluetoothInputDevices();
 
     BluezBluetoothInterface iface(mgr.defaultInterface());
 
@@ -26,11 +26,11 @@ int main(int argc, char **argv)
 #if 0
     BluezBluetoothRemoteDevice remote("/org/bluez/hci0/00:16:BC:15:A3:FF");
 
-    kDebug() << "Name: " << remote.name() << endl;
-    kDebug() << "Company: " << remote.company() << endl;
-    kDebug() << "Services: " << remote.serviceClasses() << endl;
-    kDebug() << "Major Class: " << remote.majorClass() << endl;
-    kDebug() << "Minor Class: " << remote.minorClass() << endl;
+    kDebug() << "Name: " << remote.name();
+    kDebug() << "Company: " << remote.company();
+    kDebug() << "Services: " << remote.serviceClasses();
+    kDebug() << "Major Class: " << remote.majorClass();
+    kDebug() << "Minor Class: " << remote.minorClass();
 
     if (remote.hasBonding()) {
         remote.removeBonding();
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     remote.createBonding();
 
 
-    kDebug() << mgr.setupInputDevice("/org/bluez/hci0/00:04:61:81:75:FF") << endl;
+    kDebug() << mgr.setupInputDevice("/org/bluez/hci0/00:04:61:81:75:FF");
 #endif
 
     return app.exec();

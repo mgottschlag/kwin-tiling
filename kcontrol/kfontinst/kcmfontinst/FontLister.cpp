@@ -158,7 +158,7 @@ void CFontLister::filesRemoved(const QStringList &files)
                                end(files.end());
 
 #ifdef KFI_FONTLISTER_DEBUG
-    kDebug() << "Files removed : " << files.count() << endl;
+    kDebug() << "Files removed : " << files.count();
 #endif
     for(; it!=end; ++it)
     {
@@ -173,7 +173,7 @@ void CFontLister::filesRemoved(const QStringList &files)
             {
                 KFileItem *item(*it);
 #ifdef KFI_FONTLISTER_DEBUG
-                kDebug() << "Delete : " << item->url().prettyUrl() << endl;
+                kDebug() << "Delete : " << item->url().prettyUrl();
 #endif
                 itemsToRemove.append(item);
                 itsItems.erase(it);
@@ -188,7 +188,7 @@ void CFontLister::result(KJob *job)
 {
     itsJob=NULL;
 #ifdef KFI_FONTLISTER_DEBUG
-    kDebug() << "Got result" << endl;
+    kDebug() << "Got result";
 #endif
     if(job && !job->error())
     {
@@ -199,7 +199,7 @@ void CFontLister::result(KJob *job)
             if((*it)->isMarked())
             {
 #ifdef KFI_FONTLISTER_DEBUG
-                kDebug() << (*it)->url().prettyUrl() << " IS MARKED" << endl;
+                kDebug() << (*it)->url().prettyUrl() << " IS MARKED";
 #endif
                 (*it)->unmark();
                 ++it;
@@ -210,7 +210,7 @@ void CFontLister::result(KJob *job)
                 KFileItem          *item(*it);
 
 #ifdef KFI_FONTLISTER_DEBUG
-                kDebug() << (*it)->url().prettyUrl() << " IS **NOT** MARKED" << endl;
+                kDebug() << (*it)->url().prettyUrl() << " IS **NOT** MARKED";
 #endif
 
                 itemsToRemove.append(item);
@@ -223,7 +223,7 @@ void CFontLister::result(KJob *job)
     else
     {
 #ifdef KFI_FONTLISTER_DEBUG
-        kDebug() << "Error :-(" << endl;
+        kDebug() << "Error :-(";
 #endif
         ItemCont::Iterator it(itsItems.begin()),
                            end(itsItems.end());
@@ -254,14 +254,14 @@ void CFontLister::entries(KIO::Job *, const KIO::UDSEntryList &entries)
                 KFileItem *item(new KFileItem(*it, url));
 
 #ifdef KFI_FONTLISTER_DEBUG
-                kDebug() << "New item:" << item->url().prettyUrl() << endl;
+                kDebug() << "New item:" << item->url().prettyUrl();
 #endif
                 itsItems[url]=item;
                 newFonts.append(item);
             }
             itsItems[url]->mark();
 #ifdef KFI_FONTLISTER_DEBUG
-            kDebug() << "Marking:" << itsItems[url]->url().prettyUrl() << endl;
+            kDebug() << "Marking:" << itsItems[url]->url().prettyUrl();
 #endif
         }
     }
@@ -269,7 +269,7 @@ void CFontLister::entries(KIO::Job *, const KIO::UDSEntryList &entries)
     if(newFonts.count())
     {
 #ifdef KFI_FONTLISTER_DEBUG
-        kDebug() << "Have " << newFonts.count() << " new fonts" << endl;
+        kDebug() << "Have " << newFonts.count() << " new fonts";
 #endif
         emit newItems(newFonts);
     }

@@ -58,7 +58,7 @@ RandRConfig::~RandRConfig()
 
 void RandRConfig::load()
 {
-	kDebug() << "LOAD" << endl;
+	kDebug() << "LOAD";
 	if (!m_display->isValid())
 		return;
 
@@ -83,7 +83,7 @@ void RandRConfig::load()
 		OutputConfig *c = new OutputConfig(0, *it, o);
 		w = m_container->insertWidget(c, (*it)->name());
 		m_outputList.append(w);
-		kDebug() << "Rect: " << (*it)->rect() << endl;
+		kDebug() << "Rect: " << (*it)->rect();
 		connect(c, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
 	}
 
@@ -133,8 +133,8 @@ void RandRConfig::slotUpdateView()
 	float scaleX = (float)screenView->width() / r.width();
 	float scaleY = (float)screenView->height() / r.height();
 	float scale = (scaleX < scaleY)? scaleX : scaleY;
-	kDebug() << "Scaling by " << scale << endl;
-	kDebug() << "ScreenView rect = " << screenView->rect() << " visible rect: " << r << endl;
+	kDebug() << "Scaling by " << scale;
+	kDebug() << "ScreenView rect = " << screenView->rect() << " visible rect: " << r;
 	screenView->resetMatrix();
 	screenView->scale(scale,scale);
 	screenView->ensureVisible(r);

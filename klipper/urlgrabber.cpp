@@ -135,7 +135,7 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
 
 bool URLGrabber::checkNewData( const QString& clipData )
 {
-    // kDebug() << "** checking new data: " << clipData << endl;
+    // kDebug() << "** checking new data: " << clipData;
     myClipData = clipData;
     if ( m_trimmed )
         myClipData = myClipData.trimmed();

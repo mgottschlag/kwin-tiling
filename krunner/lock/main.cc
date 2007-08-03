@@ -92,7 +92,7 @@ int main( int argc, char **argv )
         int pos;
         QByteArray display_name = XDisplayString(dpy);
         XCloseDisplay(dpy);
-        kDebug() << "screen " << number_of_screens << " " << kdesktop_screen_number << " " << display_name << " " << starting_screen << endl;
+        kDebug() << "screen " << number_of_screens << " " << kdesktop_screen_number << " " << display_name << " " << starting_screen;
         dpy = 0;
 
         if ((pos = display_name.lastIndexOf('.')) != -1)
@@ -122,7 +122,7 @@ int main( int argc, char **argv )
 
             env.sprintf("DISPLAY=%s.%d", display_name.data(),
                         kdesktop_screen_number);
-            kDebug() << "env " << env << endl;
+            kDebug() << "env " << env;
 
             if (putenv(strdup(env.toLatin1().data()))) {
                 fprintf(stderr,
@@ -134,7 +134,7 @@ int main( int argc, char **argv )
     }
 
     MyApp app;
-    kDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
+    kDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection;
     app.disableSessionManagement();
     KGlobal::locale()->insertCatalog("libworkspace");
 

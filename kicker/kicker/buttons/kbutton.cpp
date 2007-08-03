@@ -68,7 +68,7 @@ void KButton::properties()
 
 void KButton::initPopup()
 {
-//    kDebug(1210) << "KButton::initPopup()" << endl;
+//    kDebug(1210) << "KButton::initPopup()";
 
     // this hack is required to ensure the correct popup position
     // when the size of the recent application part of the menu changes

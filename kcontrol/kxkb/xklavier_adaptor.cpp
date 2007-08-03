@@ -53,7 +53,7 @@ static void processModel(XklConfigRegistry*, const XklConfigItem* configItem, gp
 	QString desc = configItem->description;
 
 #if VERBOSE == 1
-	  kDebug() << "model: " << model << " - " << desc << endl;
+	  kDebug() << "model: " << model << " - " << desc;
 #endif
 
 	((XKlavierAdaptorPriv*)userData)->m_models.insert(model, desc);
@@ -66,7 +66,7 @@ static void processVariants(XklConfigRegistry*, const XklConfigItem* configItem,
 	QString layout = ((XKlavierAdaptorPriv*)userData)->currLayout;
 
 #if VERBOSE == 1
-	  kDebug() << "\tvariant: " << variant << " (parent: " << layout << ")" << endl;
+	  kDebug() << "\tvariant: " << variant << " (parent: " << layout << ")";
 #endif
 
 	QStringList* vars = ((XKlavierAdaptorPriv*)userData)->m_variants[layout];
@@ -79,7 +79,7 @@ static void processLayout(XklConfigRegistry*, const XklConfigItem* configItem, g
 	QString layout = configItem->name;
 	QString desc = configItem->description;
 
-	kDebug() << "layout: " << layout << " - " << desc << endl;
+	kDebug() << "layout: " << layout << " - " << desc;
 	((XKlavierAdaptorPriv*)userData)->m_layouts.insert(layout, desc);
 	((XKlavierAdaptorPriv*)userData)->m_variants.insert(layout, new QStringList());
 	
@@ -98,7 +98,7 @@ static void processOptions(XklConfigRegistry*, const XklConfigItem* configItem, 
 	option.group = ((XKlavierAdaptorPriv*)userData)->currGroup;
 
 #if VERBOSE == 1
-	  kDebug() << "\toptions: " << option.name << endl;
+	  kDebug() << "\toptions: " << option.name;
 #endif
 
 	((XKlavierAdaptorPriv*)userData)->m_options.insert(option.name, option);
@@ -114,7 +114,7 @@ static void processOptionGroup(XklConfigRegistry*, const XklConfigItem* configIt
 	                                                          XCI_PROP_ALLOW_MULTIPLE_SELECTION));
 	
 #if VERBOSE == 1
-	  kDebug() << "group: " << group.name << " - " << group.description << endl;
+	  kDebug() << "group: " << group.name << " - " << group.description;
 #endif
 
 	((XKlavierAdaptorPriv*)userData)->m_optionGroups.insert(group.name, group);
@@ -133,7 +133,7 @@ void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
 //		locale += KGlobal::_locale->country();
 //		locale += "UTF-8";
 	}
-	kDebug() << "Setting LC_MESSAGES for libxklavier: " << locale << endl;
+	kDebug() << "Setting LC_MESSAGES for libxklavier: " << locale;
 //	setlocale(LC_ALL, locale.toLatin1());
 	setlocale(LC_MESSAGES, locale.toLatin1());
 
@@ -144,7 +144,7 @@ void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
 		return; // throw
 	}
 	
-	kDebug() << "Xklavier initialized" << endl;
+	kDebug() << "Xklavier initialized";
 	priv->config = xkl_config_registry_get_instance(engine);
 
 	xkl_config_registry_load(priv->config);
@@ -168,5 +168,5 @@ void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
 XKlavierAdaptor::~XKlavierAdaptor()
 {
 //	delete priv;
-//	kDebug() << "Finalizer" << endl;
+//	kDebug() << "Finalizer";
 }

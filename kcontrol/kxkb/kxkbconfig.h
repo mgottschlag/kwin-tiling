@@ -70,7 +70,7 @@ struct LayoutUnit {
 	}
 	
 	bool operator==(const LayoutUnit& lu) const {
-// 		kDebug() << layout << "==" << lu.layout << "&&" << variant << "==" << lu.variant << endl;
+// 		kDebug() << layout << "==" << lu.layout << "&&" << variant << "==" << lu.variant;
 		return layout==lu.layout && variant==lu.variant;
 	}
 	

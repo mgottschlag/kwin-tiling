@@ -165,7 +165,7 @@ void DockBarExtension::windowAdded(WId win)
         resClass = hint.res_class;
     }
     else {
-        kDebug() << "Could not read XClassHint of window " << win << endl;
+        kDebug() << "Could not read XClassHint of window " << win;
         return;
     }
     /* withdrawing the window prevents kwin from managing the window,

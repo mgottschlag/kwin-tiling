@@ -78,11 +78,11 @@ bool XKBExtension::init()
 
 	int eventMask = XkbNewKeyboardNotifyMask | XkbStateNotifyMask;
     if (!XkbSelectEvents(m_dpy, XkbUseCoreKbd, eventMask, eventMask)) {
-	   kDebug() << "Couldn't select desired XKB events" << endl;
+	   kDebug() << "Couldn't select desired XKB events";
 	   return false;
 	}
 
-	kDebug() << "XKB inited" << endl;
+	kDebug() << "XKB inited";
 
     return true;
 }
@@ -133,14 +133,14 @@ bool XKBExtension::setLayout(const QString& model,
 	bool res;
 /*	if( fileCache.contains(layoutKey) ) {
 		res = setCompiledLayout( layoutKey );
-		kDebug() << "setCompiledLayout " << layoutKey << ": " << res << endl;
+		kDebug() << "setCompiledLayout " << layoutKey << ": " << res;
 
 		if( res )
 			return res;
 	}*/
 //	else {
 		res = setLayoutInternal( model, layout, variant, includeGroup );
-		kDebug() << "setRawLayout " << layoutKey << ": " << res << endl;
+		kDebug() << "setRawLayout " << layoutKey << ": " << res;
 // /*		if( res )
 // 			compileCurrentLayout( layoutKey );*/
 		
@@ -152,7 +152,7 @@ bool XKBExtension::setLayout(const QString& model,
 bool XKBExtension::setLayout(const QString& layouts, const QString& variants)
 {
 	bool res = setLayoutInternal( "", layouts, variants, "" );
-	kDebug() << "setRawLayout " << layouts << ": " << variants << " res: " << res << endl;
+	kDebug() << "setRawLayout " << layouts << ": " << variants << " res: " << res;
 	return res;
 }
 
@@ -191,14 +191,14 @@ bool XKBExtension::setLayoutInternal(const QString& model,
     if( !fullVariant.isNull() && !fullVariant.isEmpty() )
         p << "-variant" << fullVariant;
 
-	kDebug() << "Ext: setting " << fullLayout << ", " << fullVariant << endl;
+	kDebug() << "Ext: setting " << fullLayout << ", " << fullVariant;
 	
     return p.execute() == 0;
 }
 
 bool XKBExtension::setGroup(unsigned int group)
 {
-	kDebug() << "Setting group " << group << endl;
+	kDebug() << "Setting group " << group;
 	return XkbLockGroup( m_dpy, XkbUseCoreKbd, group );
 }
 
@@ -224,9 +224,9 @@ unsigned int XKBExtension::getGroup() const
 // 	 
 // 	const QString fileName = getPrecompiledLayoutFilename(layoutKey);
 // 
-// 	kDebug() << "compiling layout " << this << " cache size: " << fileCache.count() << endl;
+// 	kDebug() << "compiling layout " << this << " cache size: " << fileCache.count();
 // 	if( fileCache.contains(layoutKey) ) {
-// 		kDebug() << "trashing old compiled layout for " << fileName << endl;
+// 		kDebug() << "trashing old compiled layout for " << fileName;
 // 		if( fileCache[ layoutKey ] != NULL )
 // 			fclose( fileCache[ layoutKey ] );	// recompiling - trash the old file
 // 		fileCache.remove(fileName);
@@ -236,13 +236,13 @@ unsigned int XKBExtension::getGroup() const
 // 		
 //     if ( output == NULL )
 //     {
-// 		kWarning() << "Could not open " << fileName << " to precompile: " << strerror(errno) << endl;
+// 		kWarning() << "Could not open " << fileName << " to precompile: " << strerror(errno) ;
 //         XkbFreeKeyboard(result.xkb, XkbAllControlsMask, True);
 //         return false;
 //     }
 // 
 // 	if( !XkbWriteXKMFile(output, &result) ) {
-// 		kWarning() << "Could not write compiled layout to " << fileName << endl;
+// 		kWarning() << "Could not write compiled layout to " << fileName ;
 // 		fclose(output);
 //         return false;
 // 	}
@@ -269,12 +269,12 @@ unsigned int XKBExtension::getGroup() const
 //     }
 // 
 //     if( input == NULL ) {
-//         kWarning() << "setCompiledLayout trying to reopen xkb file" << endl;	// should never happen
+//         kWarning() << "setCompiledLayout trying to reopen xkb file" ;	// should never happen
 //         const QString fileName = getPrecompiledLayoutFilename(layoutKey);
 //         input = fopen(QFile::encodeName(fileName), "r");
 // 
 //         if ( input == NULL ) {
-//             kDebug() << "Unable to open " << fileName << ": " << strerror(errno) << endl;
+//             kDebug() << "Unable to open " << fileName << ": " << strerror(errno);
 //             fileCache.remove(layoutKey);
 //             return false;
 //         }
@@ -286,7 +286,7 @@ unsigned int XKBExtension::getGroup() const
 //     XkbFileInfo result;
 //     memset(&result, 0, sizeof(result));
 //     if ((result.xkb = XkbAllocKeyboard())==NULL) {
-//         kWarning() << "Unable to allocate memory for keyboard description" << endl;
+//         kWarning() << "Unable to allocate memory for keyboard description" ;
 //         fclose(input);
 //         //		fileCache.remove(layoutKey);
 //         return false;
@@ -296,7 +296,7 @@ unsigned int XKBExtension::getGroup() const
 //     if (retVal == XkmKeymapLegal)
 //     {
 //         // this means reading the Xkm didn't manage to read any section
-//         kWarning() << "Unable to load map from file" << endl;
+//         kWarning() << "Unable to load map from file" ;
 //         XkbFreeKeyboard(result.xkb, XkbAllControlsMask, True);
 //         fclose(input);
 //         fileCache.remove(layoutKey);
@@ -309,14 +309,14 @@ unsigned int XKBExtension::getGroup() const
 //     {
 //         if (!XkbWriteToServer(&result))
 //         {
-//             kWarning() << "Unable to write the keyboard layout to X display" << endl;
+//             kWarning() << "Unable to write the keyboard layout to X display" ;
 //             XkbFreeKeyboard(result.xkb, XkbAllControlsMask, True);
 //             return false;
 //         }
 //     }
 //     else
 //     {
-//         kWarning() << "Unable prepare the keyboard layout for X display" << endl;
+//         kWarning() << "Unable prepare the keyboard layout for X display" ;
 //     }
 // 
 //     XkbFreeKeyboard(result.xkb, XkbAllControlsMask, True);

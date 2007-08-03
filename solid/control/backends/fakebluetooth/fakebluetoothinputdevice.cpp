@@ -30,7 +30,7 @@ FakeBluetoothInputDevice::FakeBluetoothInputDevice(const QMap<QString, QVariant>
 
     mUbi = mPropertyMap["ubi"].toString();
 
-    kDebug() << "UBI: " << mUbi << endl;
+    kDebug() << "UBI: " << mUbi;
 
     mAddress = mPropertyMap["address"].toString();
     mConnected = mPropertyMap["connected"].toBool();

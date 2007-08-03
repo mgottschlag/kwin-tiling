@@ -90,20 +90,20 @@ void KeyModule::initGUI()
 // Called when [Reset] is pressed
 void KeyModule::load()
 {
-	kDebug(125) << "KeyModule::load()" << endl;
+	kDebug(125) << "KeyModule::load()";
 	m_pShortcuts->load();
 }
 
 // When [Apply] or [OK] are clicked.
 void KeyModule::save()
 {
-	kDebug(125) << "KeyModule::save()" << endl;
+	kDebug(125) << "KeyModule::save()";
 	m_pShortcuts->save();
 }
 
 void KeyModule::defaults()
 {
-	kDebug(125) << "KeyModule::defaults()" << endl;
+	kDebug(125) << "KeyModule::defaults()";
 	m_pShortcuts->defaults();
 }
 

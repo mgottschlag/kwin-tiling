@@ -80,16 +80,16 @@ X11Helper::findXkbRulesFile(const QString &x11Dir, Display *dpy)
 	char *tmp = NULL;
 
 	if (XkbRF_GetNamesProp(dpy, &tmp, &vd) && tmp != NULL ) {
-// 			kDebug() << "namesprop " << tmp  << endl;
+// 			kDebug() << "namesprop " << tmp ;
 	  	rulesFile = x11Dir + QString("xkb/rules/%1").arg(tmp);
-// 			kDebug() << "rulesF " << rulesFile  << endl;
+// 			kDebug() << "rulesF " << rulesFile ;
 	}
 	else {
     // old way
     	for(int ii=0; ii<X11_RULES_COUNT; ii++) {
     		const char* ruleFile = rulesFileList[ii];
      		QString xruleFilePath = x11Dir + ruleFile;
-  			kDebug() << "trying xrules path " << xruleFilePath << endl;
+  			kDebug() << "trying xrules path " << xruleFilePath;
 		    if( QFile(xruleFilePath).exists() ) {
 				rulesFile = xruleFilePath;
 			break;
@@ -133,11 +133,11 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 
 
 	  if( colonPos != -1 ) {
-kDebug() << " option: " << optionName << endl;
+kDebug() << " option: " << optionName;
 
 		if( ! rulesInfo->optionGroups.contains( groupName ) ) {
 		  rulesInfo->optionGroups.insert(groupName, createMissingGroup(groupName));
-kDebug() << " added missing option group: " << groupName << endl;
+kDebug() << " added missing option group: " << groupName;
 		}
 
 		XkbOption option;
@@ -153,7 +153,7 @@ kDebug() << " added missing option group: " << groupName << endl;
 		optionGroup.description = xkbRules->options.desc[i].desc;
 		optionGroup.exclusive = isGroupExclusive( groupName );
 
-kDebug() << " option group: " << groupName << endl;
+kDebug() << " option group: " << groupName;
 		rulesInfo->optionGroups.insert(groupName, optionGroup);
 	  }
   }
@@ -171,7 +171,7 @@ kDebug() << " option group: " << groupName << endl;
 		  QString group = option.mid(0, columnPos);
 		  if( !rulesInfo->options.contains(group) ) {
 			  rulesInfo->options.insert(group, group);
-			  kDebug() << "Added missing option group: " << group << endl;
+			  kDebug() << "Added missing option group: " << group;
 		  }
 	  }
   }
@@ -225,7 +225,7 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir)
 
   file += layout;
 
-//  kDebug() << "reading variants from " << file << endl;
+//  kDebug() << "reading variants from " << file;
 
   QFile f(file);
   if (f.open(IO_ReadOnly))
@@ -260,7 +260,7 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir)
 		continue;
 
 	    result->append(line.mid(pos, pos2-pos));
-//  kDebug() << "adding variant " << line.mid(pos, pos2-pos) << endl;
+//  kDebug() << "adding variant " << line.mid(pos, pos2-pos);
       }
 
       f.close();
@@ -285,11 +285,11 @@ X11Helper::getWindowClass(WId winId, Display* dpy)
   QString  property;
 
   if( winId == X11Helper::UNKNOWN_WINDOW_ID ) {
-	  kDebug() << "Got window class for " << winId << ": '" << X11_WIN_CLASS_ROOT << "'" << endl;
+	  kDebug() << "Got window class for " << winId << ": '" << X11_WIN_CLASS_ROOT << "'";
 	  return X11_WIN_CLASS_ROOT;
   }
 
-//  kDebug() << "Getting window class for " << winId << endl;
+//  kDebug() << "Getting window class for " << winId;
   if((XGetWindowProperty(dpy, w, XA_WM_CLASS, 0L, 256L, 0, XA_STRING,
 			&type_ret, &format_ret, &nitems_ret,
 			&bytes_after_ret, &prop_ret) == Success) && (type_ret != None)) {
@@ -299,7 +299,7 @@ X11Helper::getWindowClass(WId winId, Display* dpy)
   else {
 	  property = X11_WIN_CLASS_UNKNOWN;
   }
-  kDebug() << "Got window class for " << winId << ": '" << property << "'" << endl;
+  kDebug() << "Got window class for " << winId << ": '" << property << "'";
 
   return property;
 }

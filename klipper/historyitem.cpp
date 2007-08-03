@@ -44,7 +44,7 @@ HistoryItem* HistoryItem::create( const QMimeSource& aSource )
 #if 0
     int i=0;
     while ( const char* f = aSource.format( i++ ) ) {
-        kDebug() << "format(" << i <<"): " << f << endl;
+        kDebug() << "format(" << i <<"): " << f;
     }
 #endif
     if( K3URLDrag::canDecode( &aSource )) {
@@ -95,7 +95,7 @@ HistoryItem* HistoryItem::create( QDataStream& aSource ) {
         aSource >> image;
         return new HistoryImageItem( image );
     }
-    kWarning() << "Failed to restore history item: Unknown type \"" << type << "\"" << endl;
+    kWarning() << "Failed to restore history item: Unknown type \"" << type << "\"" ;
     return 0;
 }
 

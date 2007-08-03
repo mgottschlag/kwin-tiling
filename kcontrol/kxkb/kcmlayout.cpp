@@ -246,7 +246,7 @@ void LayoutConfig::initUI()
 	{
 		QString optionName = it.next();
 		if( optionName.trimmed().isEmpty() ) {
-			kWarning() << "skipping empty option name" << endl;
+			kWarning() << "skipping empty option name" ;
   			continue;
 		}
 
@@ -259,10 +259,10 @@ void LayoutConfig::initUI()
 			if ( child )
 				child->setState( Q3CheckListItem::On );
 			else
-				kDebug() << "load: Unknown option: " << optionName << endl;
+				kDebug() << "load: Unknown option: " << optionName;
 		}
 		else {
-			kDebug() << "load: Unknown option group: " << option.group->name << " of " << optionName << endl;
+			kDebug() << "load: Unknown option group: " << option.group->name << " of " << optionName;
 		}
 	}
 
@@ -468,7 +468,7 @@ void LayoutConfig::displayNameChanged(const QString& newDisplayName)
 		oldName = KxkbConfig::getDefaultDisplayName( layoutUnit );
 
 	if( oldName != newDisplayName ) {
-		kDebug() << "setting label for " << layoutUnit.toPair() << " : " << newDisplayName << endl;
+		kDebug() << "setting label for " << layoutUnit.toPair() << " : " << newDisplayName;
 		selLayout->setText(LAYOUT_COLUMN_DISPLAY_NAME, newDisplayName);
 		updateIndicator(selLayout);
 		changed();
@@ -494,7 +494,7 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
 	QString kbdLayout = layoutUnitKey.layout;
 
 	QStringList vars = m_rules->getAvailableVariants(kbdLayout);
-	kDebug() << "layout " << kbdLayout << " has " << vars.count() << " variants" << endl;
+	kDebug() << "layout " << kbdLayout << " has " << vars.count() << " variants";
 
 	if( vars.count() > 0 ) {
 		vars.prepend(DEFAULT_VARIANT_NAME);
@@ -549,7 +549,7 @@ QWidget* LayoutConfig::makeOptionsTab()
 
       parent->setOpen(true);
       m_optionGroups.insert( optionGroup.name, parent);
-	  kDebug() << "optionGroup insert: " << optionGroup.name << endl;
+	  kDebug() << "optionGroup insert: " << optionGroup.name;
   }
 
 
@@ -572,7 +572,7 @@ QWidget* LayoutConfig::makeOptionsTab()
 	 	new OptionListItem(parent, i18n( option.description ),
             Q3CheckListItem::CheckBox, option.name);
 
-//	  kDebug() << "option insert: " << option.name << endl;
+//	  kDebug() << "option insert: " << option.name;
   }
 
   //scroll->setMinimumSize(450, 330);
@@ -633,7 +633,7 @@ void LayoutConfig::updateDisplayName()
 	Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
 
 	QString layoutDisplayName;
-		kDebug() << "sel: '" << sel << "'" << endl;
+		kDebug() << "sel: '" << sel << "'";
 	if( sel != NULL ) {
 		LayoutUnit layoutUnitKey = getLayoutUnitKey(sel);
 		QString kbdLayout = layoutUnitKey.layout;
@@ -652,7 +652,7 @@ void LayoutConfig::updateDisplayName()
 			bool single = count < 2;
 			layoutDisplayName = m_kxkbConfig.getDefaultDisplayName(LayoutUnit(kbdLayout, variant), single);
 		}
-		kDebug() << "disp: '" << layoutDisplayName << "'" << endl;
+		kDebug() << "disp: '" << layoutDisplayName << "'";
 	}
 
 	widget->editDisplayName->setEnabled( sel != NULL );
@@ -733,7 +733,7 @@ QString LayoutConfig::createOptionString()
         }
       }
       else
-        kDebug() << "Empty option button for group " << it.key() << endl;
+        kDebug() << "Empty option button for group " << it.key();
   }
   return options;
 }
@@ -793,7 +793,7 @@ extern "C"
 		// user can always switch them off now in the "Options" tab
 			if( m_kxkbConfig.m_enableXkbOptions ) {
 				if( !XKBExtension::setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
-					kDebug() << "Setting XKB options failed!" << endl;
+					kDebug() << "Setting XKB options failed!";
 				}
 			}
 		}

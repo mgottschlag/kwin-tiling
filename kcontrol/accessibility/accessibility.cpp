@@ -69,7 +69,7 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QStringList &arg
    about->addAuthor(ki18n("José Pablo Ezequiel Fernández"), ki18n("Author") , "pupeno@kde.org");
    setAboutData( about );
 
-   kDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)" << endl;
+   kDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)";
    // TODO: set the KUrl Dialog to open just audio files
    connect( widget->mainTab, SIGNAL(currentChanged(QWidget*)), this, SIGNAL(quickHelpChanged()) );
    load();
@@ -77,11 +77,11 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QStringList &arg
 
 
 AccessibilityConfig::~AccessibilityConfig(){
-   kDebug() << "Running: AccessibilityConfig::~AccessibilityConfig()" << endl;
+   kDebug() << "Running: AccessibilityConfig::~AccessibilityConfig()";
 }
 
 void AccessibilityConfig::load(){
-   kDebug() << "Running: AccessibilityConfig::load()" << endl;
+   kDebug() << "Running: AccessibilityConfig::load()";
 
    KConfig bell("bellrc");
    KConfigGroup general( &bell, "General" );
@@ -134,7 +134,7 @@ void AccessibilityConfig::load(){
 
 
 void AccessibilityConfig::save(){
-   kDebug() << "Running: AccessibilityConfig::save()" << endl;
+   kDebug() << "Running: AccessibilityConfig::save()";
 
    KConfig bell("bellrc");
 
@@ -192,7 +192,7 @@ void AccessibilityConfig::save(){
 
 
 void AccessibilityConfig::defaults(){
-   kDebug() << "Running: AccessibilityConfig::defaults()" << endl;
+   kDebug() << "Running: AccessibilityConfig::defaults()";
 
    // Bell
    // Audibe Bell

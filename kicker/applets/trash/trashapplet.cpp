@@ -140,7 +140,7 @@ void TrashApplet::resizeEvent( QResizeEvent * )
 
 void TrashApplet::slotClear()
 {
-	kDebug()<<"MediaApplet::slotClear"<<endl;
+	kDebug()<<"MediaApplet::slotClear";
 
 	mButton->setItemCount(0);
 }

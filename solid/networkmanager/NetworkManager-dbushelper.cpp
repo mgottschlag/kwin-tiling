@@ -120,7 +120,7 @@ QList<QVariant> NMDBusHelper::doSerialize(Solid::Control::AuthenticationWep * au
             args << QVariant(IW_AUTH_ALG_SHARED_KEY);
     }
     if (cipher)
-        kDebug(1441) << "FIXME: delete cipher object" << endl;
+        kDebug(1441) << "FIXME: delete cipher object";
 
     return args;
 }
@@ -161,12 +161,12 @@ QList<QVariant> NMDBusHelper::doSerialize(Solid::Control::AuthenticationWpaPerso
     // now try both ciphers on the raw key
     if (ieee_802_11_cipher_validate(hexCipher, essid.toUtf8(), rawKey.toUtf8()) == 0)
     {
-        kDebug() << "HEX" << endl;
+        kDebug() << "HEX";
         cipher = hexCipher;
     }
     else if (ieee_802_11_cipher_validate(ppCipher, essid.toUtf8(), rawKey.toUtf8()) == 0)
     {
-        kDebug() << "PP" << endl;
+        kDebug() << "PP";
         cipher = ppCipher;
     }
     else
@@ -193,7 +193,7 @@ QList<QVariant> NMDBusHelper::doSerialize(Solid::Control::AuthenticationWpaPerso
             args << QVariant(IW_AUTH_KEY_MGMT_PSK);
         else
             args << QVariant(IW_AUTH_KEY_MGMT_802_1X);
-        kDebug(1411) << "Outbound args are: " << args << endl;
+        kDebug(1411) << "Outbound args are: " << args;
     }
     return args;
 }
@@ -202,7 +202,7 @@ QList<QVariant> NMDBusHelper::doSerialize(Solid::Control::AuthenticationWpaEnter
 {
     Q_UNUSED(essid)
     Q_UNUSED(error)
-    kDebug() << k_funcinfo << "Implement me!" << endl;
+    kDebug() << k_funcinfo << "Implement me!";
     // int32 cipher, always NM_AUTH_TYPE_WPA_EAP
     args << NM_AUTH_TYPE_WPA_EAP;
     switch (auth->method())

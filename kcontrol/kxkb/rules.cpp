@@ -73,7 +73,7 @@ void XkbRules::loadRules(const QString &file, bool layoutsOnly)
 	RulesInfo* rules = X11Helper::loadRules(file, layoutsOnly);
 
 	if (rules == NULL) {
-		kDebug() << "Unable to load rules" << endl;
+		kDebug() << "Unable to load rules";
 		return;
 	}
 

@@ -87,7 +87,7 @@ void MenuManager::showKMenu()
 
 void MenuManager::popupKMenu(const QPoint &p)
 {
-//    kDebug(1210) << "popupKMenu()" << endl;
+//    kDebug(1210) << "popupKMenu()";
     if (m_kmenu->isVisible())
     {
         m_kmenu->hide();

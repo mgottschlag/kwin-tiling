@@ -347,12 +347,12 @@ bool Klipper::loadHistory() {
         }
     }
     if ( !history_file.open( QIODevice::ReadOnly ) ) {
-        kWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
+        kWarning() << failed_load_warning << ": " << history_file.errorString() ;
         return false;
     }
     QDataStream file_stream( &history_file );
     if( file_stream.atEnd()) {
-        kWarning() << failed_load_warning << endl;
+        kWarning() << failed_load_warning ;
         return false;
     }
     QDataStream* history_stream = &file_stream;
@@ -361,7 +361,7 @@ bool Klipper::loadHistory() {
         quint32 crc;
         file_stream >> crc >> data;
         if( crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() ) != crc ) {
-            kWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
+            kWarning() << failed_load_warning << ": " << history_file.errorString() ;
             return false;
         }
         history_stream = new QDataStream( &data, QIODevice::ReadOnly );
@@ -407,12 +407,12 @@ void Klipper::saveHistory() {
     // don't use "appdata", klipper is also a kicker applet
     QString history_file_name( KStandardDirs::locateLocal( "data", "klipper/history2.lst" ) );
     if ( history_file_name.isNull() || history_file_name.isEmpty() ) {
-        kWarning() << failed_save_warning << endl;
+        kWarning() << failed_save_warning ;
         return;
     }
     KSaveFile history_file( history_file_name );
     if ( !history_file.open() ) {
-        kWarning() << failed_save_warning << endl;
+        kWarning() << failed_save_warning ;
         return;
     }
     QByteArray data;
@@ -689,7 +689,7 @@ void Klipper::slotClearClipboard()
 //XXX: Should die, and the DCOP signal handled sensible.
 QString Klipper::clipboardContents( bool * /*isSelection*/ )
 {
-    kWarning() << "Obsolete function called. Please fix" << endl;
+    kWarning() << "Obsolete function called. Please fix" ;
 
 #if 0
     bool selection = true;
@@ -805,7 +805,7 @@ void Klipper::checkClipData( bool selectionMode )
 
 // debug code
 #ifdef NOISY_KLIPPER
-    kDebug() << "Checking clip data" << endl;
+    kDebug() << "Checking clip data";
 #endif
 #if 0
     kDebug() << "====== c h e c k C l i p D a t a ============================"
@@ -815,9 +815,9 @@ void Klipper::checkClipData( bool selectionMode )
 #endif
 #if 0
     if ( sender() ) {
-        kDebug() << "sender=" << sender()->name() << endl;
+        kDebug() << "sender=" << sender()->name();
     } else {
-        kDebug() << "no sender" << endl;
+        kDebug() << "no sender";
     }
 #endif
 #if 0
@@ -851,7 +851,7 @@ void Klipper::checkClipData( bool selectionMode )
         if ( top ) {
             // keep old clipboard after someone set it to null
 #ifdef NOISY_KLIPPER
-            kDebug() << "Resetting clipboard (Prevent empty clipboard)" << endl;
+            kDebug() << "Resetting clipboard (Prevent empty clipboard)";
 #endif
             setClipboard( *top, selectionMode ? Selection : Clipboard );
         }
@@ -923,7 +923,7 @@ void Klipper::checkClipData( bool selectionMode )
     if (changed) {
         applyClipChanges( *data );
 #ifdef NOISY_KLIPPER
-        kDebug() << "Synchronize?" << ( bSynchronize ? "yes" : "no" ) << endl;
+        kDebug() << "Synchronize?" << ( bSynchronize ? "yes" : "no" );
 #endif
         if ( bSynchronize ) {
             const HistoryItem* topItem = history()->first();
@@ -943,7 +943,7 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
 
     if ( mode & Selection ) {
 #ifdef NOSIY_KLIPPER
-        kDebug() << "Setting selection to <" << item.text() << ">" << endl;
+        kDebug() << "Setting selection to <" << item.text() << ">";
 #endif
         clip->setData( item.mimeSource(), QClipboard::Selection );
 #if 0
@@ -952,7 +952,7 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
     }
     if ( mode & Clipboard ) {
 #ifdef NOSIY_KLIPPER
-        kDebug() << "Setting clipboard to <" << item.text() << ">" << endl;
+        kDebug() << "Setting clipboard to <" << item.text() << ">";
 #endif
         clip->setData( item.mimeSource(), QClipboard::Clipboard );
 #if 0
@@ -965,7 +965,7 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
 void Klipper::slotClearOverflow()
 {
     if( m_overflowCounter > MAX_CLIPBOARD_CHANGES ) {
-        kDebug() << "App owning the clipboard/selection is lame" << endl;
+        kDebug() << "App owning the clipboard/selection is lame";
         // update to the latest data - this unfortunately may trigger the problem again
         newClipData( true ); // Always the selection.
     }
@@ -1129,7 +1129,7 @@ KAboutData* Klipper::aboutData()
 static void ensureGlobalSyncOff(KSharedConfigPtr config) {
     KConfigGroup cg(config, "General");
     if ( cg.readEntry( "SynchronizeClipboardAndSelection" , false) ) {
-        kDebug() << "Shutting off global synchronization" << endl;
+        kDebug() << "Shutting off global synchronization";
         cg.writeEntry("SynchronizeClipboardAndSelection", false, KConfig::Normal | KConfig::Global );
         cg.sync();
         kapp->setSynchronizeClipboard(false);

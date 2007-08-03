@@ -55,7 +55,7 @@ FakeBluetoothInterface::FakeBluetoothInterface(const QMap<QString, QVariant>  & 
 FakeBluetoothInterface::~FakeBluetoothInterface()
 {
     foreach (FakeBluetoothRemoteDevice *device, mBluetoothRemoteDevices) {
-        kDebug() << "DEVICE: " << device->ubi() << endl;
+        kDebug() << "DEVICE: " << device->ubi();
         delete device;
     }
 
@@ -65,23 +65,23 @@ FakeBluetoothInterface::~FakeBluetoothInterface()
 QObject * FakeBluetoothInterface::createBluetoothRemoteDevice(const QString  & ubi)
 {
     if (mBluetoothRemoteDevices.contains(ubi)) {
-        kDebug() << k_funcinfo << "found " << ubi << endl;
+        kDebug() << k_funcinfo << "found " << ubi;
         return mBluetoothRemoteDevices[ubi];
     } else {
-        kDebug() << k_funcinfo << "NOT found " << ubi << endl;
+        kDebug() << k_funcinfo << "NOT found " << ubi;
         return 0;
     }
 }
 
 QStringList FakeBluetoothInterface::bluetoothRemoteDevices() const
 {
-    kDebug() << k_funcinfo << endl;
+    kDebug() << k_funcinfo;
     return mBluetoothRemoteDevices.keys();
 }
 
 void FakeBluetoothInterface::discoverDevices()
 {
-    kDebug() << k_funcinfo << endl;
+    kDebug() << k_funcinfo;
     QTimer::singleShot(1000, this,
                        SIGNAL(remoteDeviceFound(QString("/org/kde/solid/fakebluetooth/hci0/EE:EE:EE:EE:EE:EE"),
                                                 0, 99)));

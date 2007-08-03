@@ -81,12 +81,12 @@ PanelBrowserMenu::PanelBrowserMenu(QString path, QWidget *parent, int startid)
     connect( &_dirWatch, SIGNAL(deleted(const QString&)),
              this, SLOT(slotClear()) );
 
-    kDebug() << "PanelBrowserMenu Constructor " << path << endl;
+    kDebug() << "PanelBrowserMenu Constructor " << path;
 }
 
 PanelBrowserMenu::~PanelBrowserMenu()
 {
-    kDebug() << "PanelBrowserMenu Destructor " << path() << endl;
+    kDebug() << "PanelBrowserMenu Destructor " << path();
 }
 
 void PanelBrowserMenu::slotClearIfNeeded(const QString& p)
@@ -495,7 +495,7 @@ void PanelBrowserMenu::slotMimeCheck()
 //    KMimeType::Ptr mt = KMimeType::findByURL(url, 0, true, false);
 //    QString icon(mt->icon(url, true));
     QString icon = KMimeType::iconNameForUrl( url );
-//    kDebug() << url.url() << ": " << icon << endl;
+//    kDebug() << url.url() << ": " << icon;
 
     file = fontMetrics().elidedText( file, Qt::ElideMiddle, fontMetrics().maxWidth() * 20  );
     file.replace("&", "&&");
@@ -543,7 +543,7 @@ void PanelBrowserMenu::initIconMap()
 {
     if(_icons) return;
 
-//    kDebug() << "PanelBrowserMenu::initIconMap" << endl;
+//    kDebug() << "PanelBrowserMenu::initIconMap";
 
     _icons = new QMap<QString, QPixmap>;
 

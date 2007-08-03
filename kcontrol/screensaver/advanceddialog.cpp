@@ -61,15 +61,15 @@ void KScreenSaverAdvancedDialog::readSettings()
 	{
 		case 19: // Low
 			dialog->qcbPriority->setCurrentIndex(0);
-			kDebug() << "setting low" << endl;
+			kDebug() << "setting low";
 			break;
 		case 10: // Medium
 			dialog->qcbPriority->setCurrentIndex(1);
-			kDebug() << "setting medium" << endl;
+			kDebug() << "setting medium";
 			break;
 		case 0: // High
 			dialog->qcbPriority->setCurrentIndex(2);
-			kDebug() << "setting high" << endl;
+			kDebug() << "setting high";
 			break;
 	}
 
@@ -82,15 +82,15 @@ void KScreenSaverAdvancedDialog::slotPriorityChanged(int val)
 	{
 		case 0: // Low
 			mPriority = 19;
-			kDebug() << "low priority" << endl;
+			kDebug() << "low priority";
 			break;
 		case 1: // Medium
 			mPriority = 10;
-			kDebug() << "medium priority" << endl;
+			kDebug() << "medium priority";
 			break;
 		case 2: // High
 			mPriority = 0;
-			kDebug() << "high priority" << endl;
+			kDebug() << "high priority";
 			break;
 	}
 	mChanged = true;

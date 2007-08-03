@@ -62,7 +62,7 @@ KPanelExtension* loadExtension(const AppletInfo& info)
 
     if (!init_ptr)
     {
-        kWarning() << info.library() << " is not a kicker extension!" << endl;
+        kWarning() << info.library() << " is not a kicker extension!" ;
         return 0;
     }
 

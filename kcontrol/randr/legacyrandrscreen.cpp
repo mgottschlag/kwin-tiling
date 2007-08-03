@@ -85,7 +85,7 @@ void LegacyRandRScreen::setOriginal()
 
 bool LegacyRandRScreen::applyProposed()
 {
-	//kDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) << endl;
+	//kDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate());
 
 	Status status;
 
@@ -98,7 +98,7 @@ bool LegacyRandRScreen::applyProposed()
 		status = XRRSetScreenConfigAndRate(QX11Info::display(), m_config, rootWindow(), (SizeID)proposedSize(), (Rotation)proposedRotation(), refreshRateIndexToHz(proposedSize(), proposedRefreshRate()), CurrentTime);
 	}
 
-	//kDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << endl;
+	//kDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen));
 
 	if (status == RRSetConfigSuccess) {
 		m_currentSize = m_proposedSize;

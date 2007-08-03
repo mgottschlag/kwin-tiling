@@ -63,7 +63,7 @@ void MenuConfig::load()
 
 void MenuConfig::aboutToNotifyKicker()
 {
-    kDebug() << "MenuConfig::aboutToNotifyKicker()" << endl;
+    kDebug() << "MenuConfig::aboutToNotifyKicker()";
 
     // This slot is triggered by the signal,
     // which is send before Kicker is notified.

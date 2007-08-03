@@ -24,7 +24,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char * argv[] )
       kError() << "Xlib XKB extension does not match" << endl;
       return 1;
     }
-  kDebug() << "Xlib XKB extension major=" << major << " minor=" << minor << endl;
+  kDebug() << "Xlib XKB extension major=" << major << " minor=" << minor;
 
   // we need an application object for QX11Info
   KAccessApp app;
@@ -40,7 +40,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char * argv[] )
       kError() << "X server has not matching XKB extension" << endl;
       return 1;
     }
-  kDebug() << "X server XKB extension major=" << major << " minor=" << minor << endl;
+  kDebug() << "X server XKB extension major=" << major << " minor=" << minor;
 
   app.setXkbOpcode(xkb_opcode);
   app.disableSessionManagement();

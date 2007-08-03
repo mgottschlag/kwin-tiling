@@ -105,9 +105,9 @@ int main(int argc, char *argv[])
             it != lst.end(); ++it)
 	{
 		QString file = KStandardDirs::locate("services", (*it)->desktopEntryPath());
-		kDebug() << "Looking at " << file << endl;
+		kDebug() << "Looking at " << file;
 		KDesktopFile saver( file );
-		kDebug() << "read X-KDE-Type" << endl;
+		kDebug() << "read X-KDE-Type";
 		QString saverType = saver.desktopGroup().readEntry("X-KDE-Type");
 		if (saverType.isEmpty()) // no X-KDE-Type defined so must be OK
 		{
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 			QStringList saverTypes = saverType.split( ";");
 			for (QStringList::ConstIterator it =  saverTypes.begin(); it != saverTypes.end(); ++it )
 			{
-				kDebug() << "saverTypes is "<< *it << endl;
+				kDebug() << "saverTypes is "<< *it;
 				if (*it == "ManipulateScreen")
 				{
 					if (manipulatescreen)
@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 
 			sargs[i] = new char [strlen(word.toAscii())+1];
 			strcpy(sargs[i], word.toAscii());
-			kDebug() << "word is " << word.toAscii() << endl;
+			kDebug() << "word is " << word.toAscii();
 
 			i++;
 		}

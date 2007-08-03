@@ -63,7 +63,7 @@ void PositionConfig::load()
 
 void PositionConfig::aboutToNotifyKicker()
 {
-    kDebug() << "PositionConfig::aboutToNotifyKicker()" << endl;
+    kDebug() << "PositionConfig::aboutToNotifyKicker()";
 
     // This slot is triggered by the signal,
     // which is send before Kicker is notified.

@@ -470,7 +470,7 @@ void PanelServiceMenu::mouseReleaseEvent(QMouseEvent * ev)
 
         if (!entryMap_.contains(id))
         {
-            kDebug(1210) << "Cannot find service with menu id " << id << endl;
+            kDebug(1210) << "Cannot find service with menu id " << id;
             return;
         }
 
@@ -645,7 +645,7 @@ void PanelServiceMenu::mouseMoveEvent(QMouseEvent * ev)
         return;
 
     if (!entryMap_.contains(id)) {
-        kDebug(1210) << "Cannot find service with menu id " << id << endl;
+        kDebug(1210) << "Cannot find service with menu id " << id;
         return;
     }
 

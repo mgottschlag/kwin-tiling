@@ -63,7 +63,7 @@ void HidingConfig::load()
 
 void HidingConfig::aboutToNotifyKicker()
 {
-    kDebug() << "HidingConfig::aboutToNotifyKicker()" << endl;
+    kDebug() << "HidingConfig::aboutToNotifyKicker()";
 
     // This slot is triggered by the signal,
     // which is send before Kicker is notified.

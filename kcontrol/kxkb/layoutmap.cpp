@@ -74,7 +74,7 @@ QQueue<int>& LayoutMap::getCurrentLayoutQueue(WId winId)
 	QQueue<int>& layoutQueue = getCurrentLayoutQueueInternal(winId);
 	if( layoutQueue.count() == 0 ) {
 		initLayoutQueue(layoutQueue);
-		kDebug() << "map: Created queue for " << winId << " size: " << layoutQueue.count() << endl;
+		kDebug() << "map: Created queue for " << winId << " size: " << layoutQueue.count();
 	}
 	
 	return layoutQueue;

@@ -225,16 +225,16 @@ void Dtime::serverTimeCheck() {
 void Dtime::findNTPutility(){
   if(!KStandardDirs::findExe("ntpdate").isEmpty()) {
     ntpUtility = "ntpdate";
-    kDebug() << "ntpUtility = " << ntpUtility << endl;
+    kDebug() << "ntpUtility = " << ntpUtility;
     return;
   }
   if(!KStandardDirs::findExe("rdate").isEmpty()) {
     ntpUtility = "rdate";
-    kDebug() << "ntpUtility = " << ntpUtility << endl;
+    kDebug() << "ntpUtility = " << ntpUtility;
     return;
   }
   privateLayoutWidget->hide();
-  kDebug() << "ntpUtility not found!" << endl;
+  kDebug() << "ntpUtility not found!";
 }
 
 void Dtime::set_time()
@@ -319,7 +319,7 @@ void Dtime::save()
     }
     else {
         // success
-        kDebug() << "Set date from time server " << timeServer.toLatin1() << " success!" << endl;
+        kDebug() << "Set date from time server " << timeServer.toLatin1() << " success!";
     }
   }
   else {
@@ -339,7 +339,7 @@ void Dtime::save()
                date.year(), second->value());
 #endif
 
-    kDebug() << "Set date " << BufS << endl;
+    kDebug() << "Set date " << BufS;
 
     c_proc << "date" << BufS;
     int result = c_proc.execute();

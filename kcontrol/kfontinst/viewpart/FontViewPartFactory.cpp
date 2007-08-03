@@ -58,7 +58,7 @@ QObject * CFontViewPartFactory::createObject(QObject *parent, const char *, cons
 {
     if(parent && !parent->isWidgetType())
     {
-        kDebug() << "CFontViewPartFactory: parent does not inherit QWidget" << endl;
+        kDebug() << "CFontViewPartFactory: parent does not inherit QWidget";
         return 0L;
     }
 

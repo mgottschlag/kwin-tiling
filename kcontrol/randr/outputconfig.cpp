@@ -44,7 +44,7 @@ OutputConfig::~OutputConfig()
 void OutputConfig::load()
 {
 
-	kDebug() << "Output Load......" << endl;
+	kDebug() << "Output Load......";
 	setEnabled( m_output->isConnected() );
 	activeCheck->setChecked(m_output->isActive());
 
@@ -93,7 +93,7 @@ void OutputConfig::load()
 
 	// update the item
 	m_item->setRect( 0, 0, m_output->rect().width(), m_output->rect().height());
-	kDebug() << "      --> setting pos " << m_output->rect().topLeft() << endl;
+	kDebug() << "      --> setting pos " << m_output->rect().topLeft();
 	m_item->setPos( m_output->rect().topLeft() );
 
 	emit updateView();

@@ -440,7 +440,7 @@ void runRdb( uint flags )
   KTemporaryFile tmpFile;
   if (!tmpFile.open())
   {
-    kDebug() << "Couldn't open temp file" << endl;
+    kDebug() << "Couldn't open temp file";
     exit(0);
   }
 

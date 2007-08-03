@@ -219,10 +219,10 @@ void KasBar::setTransparent( bool enable )
    transparent_ = enable;
 
    if ( transparent_ ) {
-       kDebug(1345) << "KasBar: Enabling transparency" << endl;
+       kDebug(1345) << "KasBar: Enabling transparency";
   }
    else {
-       kDebug(1345) << "KasBar: Disabling transparency" << endl;
+       kDebug(1345) << "KasBar: Disabling transparency";
    }
 
    emit configChanged();
@@ -332,7 +332,7 @@ void KasBar::toggleOrientation()
 	    setDirection( QBoxLayout::LeftToRight );
 	    break;
 	default:
-	    kWarning() << "toggleOrientation got an odd direction: " << (uint) direction_ << endl;
+	    kWarning() << "toggleOrientation got an odd direction: " << (uint) direction_ ;
 	    setDirection( QBoxLayout::LeftToRight );
 	    break;
     }
@@ -388,7 +388,7 @@ QSize KasBar::sizeHint( Qt::Orientation o, QSize sz )
 
 void KasBar::updateLayout()
 {
-//    kDebug(1345) << "KasBar: updateLayout(), count is " << items.count() << endl;
+//    kDebug(1345) << "KasBar: updateLayout(), count is " << items.count();
     if ( !isUpdatesEnabled() )
 	return;
     bool updates = isUpdatesEnabled();

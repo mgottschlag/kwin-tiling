@@ -134,7 +134,7 @@ void KickerConfig::init()
 
 void KickerConfig::notifyKicker()
 {
-    kDebug() << "KickerConfig::notifyKicker()" << endl;
+    kDebug() << "KickerConfig::notifyKicker()";
 
     emit aboutToNotifyKicker();
 
@@ -305,7 +305,7 @@ void KickerConfig::jumpToPanel(const QString& panelConfig)
         return;
     }
 
-    kDebug() << "KickerConfig::jumpToPanel: index=" << index << endl;
+    kDebug() << "KickerConfig::jumpToPanel: index=" << index;
 
     emit hidingPanelChanged(index);
     emit positionPanelChanged(index);

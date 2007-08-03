@@ -360,7 +360,7 @@ void LockProcess::readSaver()
             "DesktopEntryName == '" + entryName.toLower() + '\'' );
         if( offers.count() == 0 )
         {
-            kDebug(1204) << "Cannot find screesaver: " << mSaver << endl;
+            kDebug(1204) << "Cannot find screesaver: " << mSaver;
             return;
         }
         QString file = KStandardDirs::locate("services", offers.first()->desktopEntryPath());
@@ -377,12 +377,12 @@ void LockProcess::readSaver()
             {
                 if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
                 {
-                    kDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden" << endl;
+                    kDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden";
                     mForbidden = true;
                 }
                 if ((saverTypes[i] == "OpenGL") && !opengl)
                 {
-                    kDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden" << endl;
+                    kDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden";
                     mForbidden = true;
                 }
                 if (saverTypes[i] == "OpenGL")
@@ -392,7 +392,7 @@ void LockProcess::readSaver()
             }
         }
 
-        kDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false") << endl;
+        kDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false");
 
         if (config.hasActionGroup("Root"))
         {
@@ -481,7 +481,7 @@ void LockProcess::createSaverWindow()
     setGeometry(0, 0, mRootWidth, mRootHeight);
     hide();
 
-    kDebug(1204) << "Saver window Id: " << winId() << endl;
+    kDebug(1204) << "Saver window Id: " << winId();
 }
 
 //---------------------------------------------------------------------------
@@ -675,7 +675,7 @@ bool LockProcess::startSaver()
 {
     if (!child_saver && !grabInput())
     {
-        kWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" << endl;
+        kWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" ;
         return false;
     }
     mBusy = false;
@@ -705,7 +705,7 @@ bool LockProcess::startSaver()
 //
 void LockProcess::stopSaver()
 {
-    kDebug(1204) << "LockProcess: stopping saver" << endl;
+    kDebug(1204) << "LockProcess: stopping saver";
     resume( true );
     stopHack();
     hideSaverWindow();
@@ -753,30 +753,30 @@ bool LockProcess::startLock()
         QString path = KLibLoader::self()->findLibrary(
                     ((*it)[0] == '/' ? *it : "kgreet_" + *it ).toLatin1() );
         if (path.isEmpty()) {
-            kWarning(1204) << "GreeterPlugin " << *it << " does not exist" << endl;
+            kWarning(1204) << "GreeterPlugin " << *it << " does not exist" ;
             continue;
         }
         if (!(plugin.library = KLibLoader::self()->library( path.toLatin1() ))) {
-            kWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" << endl;
+            kWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" ;
             continue;
         }
         plugin.info = (kgreeterplugin_info*)plugin.library->resolveSymbol( "kgreeterplugin_info" );
         if (!plugin.info ) {
-            kWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") is no valid greet widget plugin" << endl;
+            kWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") is no valid greet widget plugin" ;
             plugin.library->unload();
             continue;
         }
         if (plugin.info->method && !mMethod.isEmpty() && mMethod != plugin.info->method) {
-            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") serves " << plugin.info->method << ", not " << mMethod << endl;
+            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") serves " << plugin.info->method << ", not " << mMethod;
             plugin.library->unload();
             continue;
         }
         if (!plugin.info->init( mMethod, getConf, this )) {
-            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve " << mMethod << endl;
+            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve " << mMethod;
             plugin.library->unload();
             continue;
         }
-        kDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded" << endl;
+        kDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded";
         greetPlugin = plugin;
 	mLocked = true;
 	DM().setLock( true );
@@ -813,7 +813,7 @@ bool LockProcess::startHack()
     {
         mHackProc << path;
 
-        kDebug(1204) << "Starting hack: " << path << endl;
+        kDebug(1204) << "Starting hack: " << path;
 
         while (!ts.atEnd())
         {
@@ -915,7 +915,7 @@ bool LockProcess::checkPass()
     XGetWindowAttributes(QX11Info::display(), QX11Info::appRootWindow(), &rootAttr);
     if(( rootAttr.your_event_mask & SubstructureNotifyMask ) == 0 )
     {
-        kWarning() << "ERROR: Something removed SubstructureNotifyMask from the root window!!!" << endl;
+        kWarning() << "ERROR: Something removed SubstructureNotifyMask from the root window!!!" ;
         XSelectInput( QX11Info::display(), QX11Info::appRootWindow(),
             SubstructureNotifyMask | rootAttr.your_event_mask );
     }
@@ -1089,7 +1089,7 @@ void LockProcess::checkDPMSActive()
     BOOL on;
     CARD16 state;
     DPMSInfo(QX11Info::display(), &state, &on);
-    //kDebug() << "checkDPMSActive " << on << " " << state << endl;
+    //kDebug() << "checkDPMSActive " << on << " " << state;
     if (state == DPMSModeStandby || state == DPMSModeSuspend || state == DPMSModeOff)
     {
        suspend();

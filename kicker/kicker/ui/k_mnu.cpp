@@ -125,7 +125,7 @@ bool PanelKMenu::loadSidePixmap()
 
     if (image.isNull())
     {
-        kDebug(1210) << "Can't find a side pixmap" << endl;
+        kDebug(1210) << "Can't find a side pixmap";
         return false;
     }
 
@@ -136,7 +136,7 @@ bool PanelKMenu::loadSidePixmap()
 
     if (image.isNull())
     {
-        kDebug(1210) << "Can't find a side tile pixmap" << endl;
+        kDebug(1210) << "Can't find a side tile pixmap";
         return false;
     }
 
@@ -145,7 +145,7 @@ bool PanelKMenu::loadSidePixmap()
 
     if (sidePixmap.width() != sideTilePixmap.width())
     {
-        kDebug(1210) << "Pixmaps have to be the same size" << endl;
+        kDebug(1210) << "Pixmaps have to be the same size";
         return false;
     }
 
@@ -173,7 +173,7 @@ void PanelKMenu::paletteChanged()
 
 void PanelKMenu::initialize()
 {
-//    kDebug(1210) << "PanelKMenu::initialize()" << endl;
+//    kDebug(1210) << "PanelKMenu::initialize()";
     updateRecent();
 
     if (initialized())
@@ -446,8 +446,8 @@ QRect PanelKMenu::sideImageRect()
 
 void PanelKMenu::resizeEvent(QResizeEvent * e)
 {
-//    kDebug(1210) << "PanelKMenu::resizeEvent():" << endl;
-//    kDebug(1210) << geometry().width() << ", " << geometry().height() << endl;
+//    kDebug(1210) << "PanelKMenu::resizeEvent():";
+//    kDebug(1210) << geometry().width() << ", " << geometry().height();
 
     PanelServiceMenu::resizeEvent(e);
 #ifdef __GNUC__
@@ -467,8 +467,8 @@ void PanelKMenu::resize(int width, int height)
 QSize PanelKMenu::sizeHint() const
 {
     QSize s = PanelServiceMenu::sizeHint();
-//    kDebug(1210) << "PanelKMenu::sizeHint()" << endl;
-//    kDebug(1210) << s.width() << ", " << s.height() << endl;
+//    kDebug(1210) << "PanelKMenu::sizeHint()";
+//    kDebug(1210) << s.width() << ", " << s.height();
     return s;
 }
 

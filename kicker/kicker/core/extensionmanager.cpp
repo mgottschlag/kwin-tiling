@@ -91,7 +91,7 @@ ExtensionManager::~ExtensionManager()
 
 void ExtensionManager::initialize()
 {
-//    kDebug(1210) << "ExtensionManager::loadContainerConfig()" << endl;
+//    kDebug(1210) << "ExtensionManager::loadContainerConfig()";
     KSharedConfig::Ptr config = KGlobal::config();
     PluginManager* pm = PluginManager::self();
 
@@ -311,7 +311,7 @@ void ExtensionManager::migrateMenubar()
 
 void ExtensionManager::saveContainerConfig()
 {
-//    kDebug(1210) << "ExtensionManager::saveContainerConfig()" << endl;
+//    kDebug(1210) << "ExtensionManager::saveContainerConfig()";
 
     KSharedConfig::Ptr config = KGlobal::config();
 
@@ -377,12 +377,12 @@ void ExtensionManager::addExtension( const QString& desktopFile )
                                                          QString(), // no config
                                                          uniqueId());
 
-    kDebug(1210) << "ExtensionManager::addExtension" << endl;
+    kDebug(1210) << "ExtensionManager::addExtension";
 
     if (e)
     {
         e->readConfig();
-        kDebug(1210)<<"after e->readConfig(): pos="<<e->position()<<endl;
+        kDebug(1210)<<"after e->readConfig(): pos="<<e->position();
         addContainer(e);
         e->show();
         e->writeConfig();

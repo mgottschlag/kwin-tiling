@@ -49,12 +49,12 @@ Sound::~Sound()
 
 void Sound::load(const QString& filename)
 {
-	kDebug() << k_funcinfo << filename << endl;
+	kDebug() << k_funcinfo << filename;
 	data=QVector<Q_INT32>();
 	QFile file(filename);
 	if(!file.open(IO_ReadOnly))
 	{
-		kWarning() << k_funcinfo <<"unable to open file" << endl;
+		kWarning() << k_funcinfo <<"unable to open file" ;
 		return;
 	}
 	QDataStream stream(&file);
@@ -85,7 +85,7 @@ void Sound::load(const QString& filename)
 
 	data.resize(NumberOfSamples);
 
-//	kDebug() << k_funcinfo << NumberOfSamples << " samples" << endl;
+//	kDebug() << k_funcinfo << NumberOfSamples << " samples";
 
 	max=0;
 	for(unsigned long int f=0;f<NumberOfSamples;f++)
@@ -118,7 +118,7 @@ void Sound::save(const QString& filename) const
 	QFile file(filename);
 	if(!file.open(IO_WriteOnly))
 	{
-		kWarning() << k_funcinfo <<"unable to open file" << endl;
+		kWarning() << k_funcinfo <<"unable to open file" ;
 		return;
 	}
 	QDataStream stream(&file);

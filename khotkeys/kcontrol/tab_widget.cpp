@@ -250,7 +250,7 @@ void Tab_widget::load_current_action()
         switch( current_data_type )
             {
             case TYPE_GENERIC:
-                kDebug( 1217 ) << "loading unknown" << endl;
+                kDebug( 1217 ) << "loading unknown";
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( tmp );
                 static_cast< Condition_list_tab* >( pages[ TAB_CONDITIONS ] )
                     ->set_data( tmp->conditions());
@@ -260,7 +260,7 @@ void Tab_widget::load_current_action()
               break;
             case TYPE_COMMAND_URL_SHORTCUT:
                 {
-                kDebug( 1217 ) << "loading command_url_shortcut" << endl;
+                kDebug( 1217 ) << "loading command_url_shortcut";
                 Command_url_shortcut_action_data* item
                     = static_cast< Command_url_shortcut_action_data* >( tmp );
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
@@ -272,7 +272,7 @@ void Tab_widget::load_current_action()
                 }
             case TYPE_MENUENTRY_SHORTCUT:
                 {
-                kDebug( 1217 ) << "loading menuentry_shortcut" << endl;
+                kDebug( 1217 ) << "loading menuentry_shortcut";
                 Menuentry_shortcut_action_data* item
                     = static_cast< Menuentry_shortcut_action_data* >( tmp );
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
@@ -284,7 +284,7 @@ void Tab_widget::load_current_action()
                 }
             case TYPE_DCOP_SHORTCUT:
                 {
-                kDebug( 1217 ) << "loading dcop_shortcut" << endl;
+                kDebug( 1217 ) << "loading dcop_shortcut";
                 Dcop_shortcut_action_data* item
                     = static_cast< Dcop_shortcut_action_data* >( tmp );
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
@@ -296,7 +296,7 @@ void Tab_widget::load_current_action()
                 }
             case TYPE_KEYBOARD_INPUT_SHORTCUT:
                 {
-                kDebug( 1217 ) << "loading keyboard_input_shortcut" << endl;
+                kDebug( 1217 ) << "loading keyboard_input_shortcut";
                 Keyboard_input_shortcut_action_data* item
                     = static_cast< Keyboard_input_shortcut_action_data* >( tmp );
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
@@ -308,7 +308,7 @@ void Tab_widget::load_current_action()
                 }
             case TYPE_KEYBOARD_INPUT_GESTURE:
                 {
-                kDebug( 1217 ) << "loading keyboard_input_gesture" << endl;
+                kDebug( 1217 ) << "loading keyboard_input_gesture";
                 Keyboard_input_gesture_action_data* item
                     = static_cast< Keyboard_input_gesture_action_data* >( tmp );
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
@@ -320,7 +320,7 @@ void Tab_widget::load_current_action()
                 }
             case TYPE_ACTIVATE_WINDOW_SHORTCUT:
                 {
-                kDebug( 1217 ) << "loading activate_window_shortcut" << endl;
+                kDebug( 1217 ) << "loading activate_window_shortcut";
                 Activate_window_shortcut_action_data* item
                     = static_cast< Activate_window_shortcut_action_data* >( tmp );
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
@@ -340,7 +340,7 @@ void Tab_widget::check_action_type()
     {
     if( module->current_action_data() == NULL )
         {
-        kDebug( 1217 ) << "setting none" << endl;
+        kDebug( 1217 ) << "setting none";
         if( current_type == NONE )
             return;
 #ifdef HAVE_ARTS
@@ -354,7 +354,7 @@ void Tab_widget::check_action_type()
         }
     if( dynamic_cast< Action_data_group* >( module->current_action_data()) != NULL )
         {  // Action_data_group
-        kDebug( 1217 ) << "setting group" << endl;
+        kDebug( 1217 ) << "setting group";
         if( current_type == GROUP )
             return;
         show_pages(( TAB_GROUP_GENERAL, TAB_CONDITIONS ));
@@ -365,7 +365,7 @@ void Tab_widget::check_action_type()
         {
         action_type_t is_type =
             type( static_cast< Action_data* >( module->current_action_data()));
-        kDebug( 1217 ) << "setting data " << is_type << endl;
+        kDebug( 1217 ) << "setting data " << is_type;
         if( current_type == DATA && is_type == current_data_type )
             return;
         current_type = DATA;

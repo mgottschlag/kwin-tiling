@@ -32,7 +32,7 @@ FakeBluetoothRemoteDevice::FakeBluetoothRemoteDevice(const QMap<QString, QVarian
 
     mUbi = mPropertyMap["ubi"].toString();
 
-    kDebug() << "UBI: " << mUbi << endl;
+    kDebug() << "UBI: " << mUbi;
 
     mAddress = mPropertyMap["address"].toString();
     mConnected = mPropertyMap["connected"].toBool();

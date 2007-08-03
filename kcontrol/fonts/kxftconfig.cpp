@@ -288,7 +288,7 @@ KXftConfig::KXftConfig(int required, bool system)
             m_system(system)
 {
     m_file=getConfigFile(system);
-    kDebug(1208) << "Using fontconfig file:" << m_file << endl;
+    kDebug(1208) << "Using fontconfig file:" << m_file;
     m_antiAliasing = aliasingEnabled();
     reset();
 }

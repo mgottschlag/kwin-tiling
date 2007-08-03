@@ -40,7 +40,7 @@ void KMemoryWidget::update()
 
 	info_count = HOST_VM_INFO_COUNT;
 	if (host_statistics(mach_host_self (), HOST_VM_INFO, (host_info_t)&vm_info, &info_count)) {
-		kDebug() << "could not get memory statistics" << endl;
+		kDebug() << "could not get memory statistics";
 		return;
 	}
 
@@ -53,7 +53,7 @@ void KMemoryWidget::update()
 
 	dirp = opendir("/private/var/vm");
 	if (!dirp) {
-		kDebug() << "unable to open /private/var/vm" << endl;
+		kDebug() << "unable to open /private/var/vm";
 		return;
 	}
 
@@ -78,7 +78,7 @@ void KMemoryWidget::update()
 	info_count = HOST_VM_INFO_COUNT;
 	if (host_statistics (mach_host_self (), HOST_VM_INFO,
 		(host_info_t) &vm_info, &info_count)) {
-			kDebug() << "unable to get VM info" << endl;
+			kDebug() << "unable to get VM info";
 	}
 
 	Memory_Info[SWAP_MEM]     = total;

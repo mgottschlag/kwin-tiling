@@ -51,7 +51,7 @@ void dump(const NMDBusNetworkProperties  & network)
 
 void deserialize(const QDBusMessage &message, NMDBusDeviceProperties  & device, NMDBusNetworkProperties  & network)
 {
-    //kDebug(1441) << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature() << endl;
+    //kDebug(1441) << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature();
     QList<QVariant> args = message.arguments();
     device.path.setPath(args.takeFirst().toString());
     device.interface = args.takeFirst().toString();
@@ -174,7 +174,7 @@ Solid::Control::NetworkInterface::Capabilities NMNetworkInterface::capabilities(
 
 QObject * NMNetworkInterface::createNetwork(const QString  & uni)
 {
-    kDebug(1441) << "NMNetworkInterface::createNetwork() - " << uni << endl;
+    kDebug(1441) << "NMNetworkInterface::createNetwork() - " << uni;
     NMNetwork * net = 0;
     if (d->networks.contains(uni) && d->networks[uni] != 0)
         net = d->networks[uni];

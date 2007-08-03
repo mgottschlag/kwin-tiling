@@ -141,7 +141,7 @@ bool KPagerMainWindow::queryClose()
     cfg.writeEntry("yPos",y());
     cfg.sync();
 
-    kDebug() << "queryCLose " << m_reallyClose << " " << closed_by_sm << endl;
+    kDebug() << "queryCLose " << m_reallyClose << " " << closed_by_sm;
     if (m_reallyClose || closed_by_sm) return true;
 
     hide();

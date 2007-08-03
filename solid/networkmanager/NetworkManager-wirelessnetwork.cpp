@@ -37,18 +37,18 @@
 
 void dump(const Solid::Control::WirelessNetwork::Capabilities  & cap)
 {
-    kDebug(1441) << "WEP      " << (cap  & Solid::Control::WirelessNetwork::Wep ? "X " : " O") << endl;
-    kDebug(1441) << "WPA      " << (cap  & Solid::Control::WirelessNetwork::Wpa ? "X " : " O") << endl;
-    kDebug(1441) << "WPA2     " << (cap  & Solid::Control::WirelessNetwork::Wpa2 ? "X " : " O") << endl;
-    kDebug(1441) << "PSK      " << (cap  & Solid::Control::WirelessNetwork::Psk ? "X " : " O") << endl;
-    kDebug(1441) << "Ieee8021x" << (cap  & Solid::Control::WirelessNetwork::Ieee8021x ? "X " : " O") << endl;
-    kDebug(1441) << "Wep40    " << (cap  & Solid::Control::WirelessNetwork::Wep40 ? "X " : " O") << endl;
-    kDebug(1441) << "Wep104   " << (cap  & Solid::Control::WirelessNetwork::Wep104 ? "X " : " O") << endl;
-    kDebug(1441) << "Wep192   " << (cap  & Solid::Control::WirelessNetwork::Wep192 ? "X " : " O") << endl;
-    kDebug(1441) << "Wep256   " << (cap  & Solid::Control::WirelessNetwork::Wep256 ? "X " : " O") << endl;
-    kDebug(1441) << "WepOther " << (cap  & Solid::Control::WirelessNetwork::WepOther ? "X " : " O") << endl;
-    kDebug(1441) << "TKIP     " << (cap  & Solid::Control::WirelessNetwork::Tkip ? "X " : " O") << endl;
-    kDebug(1441) << "CCMP     " << (cap  & Solid::Control::WirelessNetwork::Ccmp ? "X " : " O") << endl;
+    kDebug(1441) << "WEP      " << (cap  & Solid::Control::WirelessNetwork::Wep ? "X " : " O");
+    kDebug(1441) << "WPA      " << (cap  & Solid::Control::WirelessNetwork::Wpa ? "X " : " O");
+    kDebug(1441) << "WPA2     " << (cap  & Solid::Control::WirelessNetwork::Wpa2 ? "X " : " O");
+    kDebug(1441) << "PSK      " << (cap  & Solid::Control::WirelessNetwork::Psk ? "X " : " O");
+    kDebug(1441) << "Ieee8021x" << (cap  & Solid::Control::WirelessNetwork::Ieee8021x ? "X " : " O");
+    kDebug(1441) << "Wep40    " << (cap  & Solid::Control::WirelessNetwork::Wep40 ? "X " : " O");
+    kDebug(1441) << "Wep104   " << (cap  & Solid::Control::WirelessNetwork::Wep104 ? "X " : " O");
+    kDebug(1441) << "Wep192   " << (cap  & Solid::Control::WirelessNetwork::Wep192 ? "X " : " O");
+    kDebug(1441) << "Wep256   " << (cap  & Solid::Control::WirelessNetwork::Wep256 ? "X " : " O");
+    kDebug(1441) << "WepOther " << (cap  & Solid::Control::WirelessNetwork::WepOther ? "X " : " O");
+    kDebug(1441) << "TKIP     " << (cap  & Solid::Control::WirelessNetwork::Tkip ? "X " : " O");
+    kDebug(1441) << "CCMP     " << (cap  & Solid::Control::WirelessNetwork::Ccmp ? "X " : " O");
 }
 
 void dump(const NMDBusWirelessNetworkProperties  & network)
@@ -149,7 +149,7 @@ public:
 NMWirelessNetwork::NMWirelessNetwork(const QString  & networkPath)
  : NMNetwork(networkPath), d(new NMWirelessNetworkPrivate(networkPath))
 {
-    //kDebug(1441) << "NMWirelessNetwork::NMWirelessNetwork() - " << networkPath << endl;
+    //kDebug(1441) << "NMWirelessNetwork::NMWirelessNetwork() - " << networkPath;
     QDBusMessage reply = d->iface.call("getProperties");
     NMDBusWirelessNetworkProperties wlan;
     deserialize(reply, wlan);
@@ -207,7 +207,7 @@ Solid::Control::WirelessNetwork::OperationMode NMWirelessNetwork::mode() const
 bool NMWirelessNetwork::isAssociated() const
 {
 #warning NMWirelessNetwork::isAssociated() is unimplemented
-    kDebug(1441) << "Fixme: implement NMWirelessNetwork::isAssociated()" << endl;
+    kDebug(1441) << "Fixme: implement NMWirelessNetwork::isAssociated()";
     return true;
 }
 
@@ -219,7 +219,7 @@ bool NMWirelessNetwork::isEncrypted() const
 bool NMWirelessNetwork::isHidden() const
 {
 #warning NMWirelessNetwork::isHidden() is unimplemented
-    kDebug(1441) << "Fixme: implement NMWirelessNetwork::isHidden()" << endl;
+    kDebug(1441) << "Fixme: implement NMWirelessNetwork::isHidden()";
     return true;
 }
 
@@ -257,20 +257,20 @@ void NMWirelessNetwork::setActivated(bool activated)
             "org.freedesktop.NetworkManager",
             QDBusConnection::systemBus());
     QString devicePath = uni().left(uni().indexOf("/Networks"));
-    kDebug(1441) << k_funcinfo << devicePath << " - " << d->essid << endl;
+    kDebug(1441) << k_funcinfo << devicePath << " - " << d->essid;
     QDBusObjectPath op(devicePath);
 #warning fixme hardcoded false fallback bool in setActiveDevice
     QList<QVariant> args;
     args << qVariantFromValue(op) << d->essid << false;
     bool error;
     args = NMDBusHelper::serialize(d->authentication, d->essid, args, &error);
-    kDebug(1441) << " " << args << endl;
+    kDebug(1441) << " " << args;
     if (error)
-        kDebug(1411) << "Error whilst serializing authentication." << endl;
+        kDebug(1411) << "Error whilst serializing authentication.";
     else
         manager.callWithArgumentList(QDBus::Block, "setActiveDevice", args);
     if (manager.lastError().isValid())
-        kDebug(1441) << "setActiveDevice returned error: " << manager.lastError().name() << ": " << manager.lastError().message() << endl;
+        kDebug(1441) << "setActiveDevice returned error: " << manager.lastError().name() << ": " << manager.lastError().message();
 
     emit activationStateChanged(activated);
 }

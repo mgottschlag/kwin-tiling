@@ -146,7 +146,7 @@ bool SidebarExtension::eventFilter( QObject *, QEvent *e ) {
 }
 
 Plasma::Position SidebarExtension::preferedPosition() const {
-	kDebug()<<"SidebarExtension::preferedPosition()***************"<<endl;
+	kDebug()<<"SidebarExtension::preferedPosition()***************";
 	return Plasma::Left;
 }
 

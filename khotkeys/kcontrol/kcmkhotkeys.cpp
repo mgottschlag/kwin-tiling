@@ -69,7 +69,7 @@ extern "C"
 		QDBusReply<bool> reply = kded.call("loadModule",QString( "khotkeys" ) );
         if( !reply.isValid())
             {
-            kWarning( 1217 ) << "Loading of khotkeys module failed." << endl;
+            kWarning( 1217 ) << "Loading of khotkeys module failed." ;
             KToolInvocation::kdeinitExec( "khotkeys" );
             }
         }
@@ -129,7 +129,7 @@ void Module::load()
     _current_action_data = NULL;
     settings.read_settings( true );
     _actions_root = settings.actions;
-    kDebug( 1217 ) << "actions_root:" << _actions_root << endl;
+    kDebug( 1217 ) << "actions_root:" << _actions_root;
     actions_listview_widget->build_up();
     tab_widget->load_current_action();
     emit KCModule::changed( false ); // HACK otherwise the module would be changed from the very beginning
@@ -147,13 +147,13 @@ void Module::save()
 #endif
 
         //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "quit()", data );
-        kDebug( 1217 ) << "disabling khotkeys daemon" << endl;
+        kDebug( 1217 ) << "disabling khotkeys daemon";
         }
     else
         {
         if( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
             {
-            kDebug( 1217 ) << "launching new khotkeys daemon" << endl;
+            kDebug( 1217 ) << "launching new khotkeys daemon";
             KToolInvocation::kdeinitExec( "khotkeys" );
             }
         else
@@ -162,7 +162,7 @@ void Module::save()
 #warning port to DBUS signal reread_configuration
 #endif
             //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
-            kDebug( 1217 ) << "telling khotkeys daemon to reread configuration" << endl;
+            kDebug( 1217 ) << "telling khotkeys daemon to reread configuration";
             }
         }
     emit KCModule::changed( false );
@@ -195,7 +195,7 @@ void Module::set_new_current_action( bool save_old_P )
     if( save_old_P )
         tab_widget->save_current_action_changes();
     _current_action_data = actions_listview_widget->current_action_data();
-    kDebug( 1217 ) << "set_new_current_action : " << _current_action_data << endl;
+    kDebug( 1217 ) << "set_new_current_action : " << _current_action_data;
     tab_widget->load_current_action();
     buttons_widget->enable_delete( current_action_data() != NULL );
     }
@@ -326,7 +326,7 @@ void Module::init_arts()
         {
         KLibrary* arts = KLibLoader::self()->library( QLatin1String("khotkeys_arts") );
         if( arts == NULL )
-            kDebug( 1217 ) << "Couldn't load khotkeys_arts:" << KLibLoader::self()->lastErrorMessage() << endl;
+            kDebug( 1217 ) << "Couldn't load khotkeys_arts:" << KLibLoader::self()->lastErrorMessage();
         if( arts != NULL && VoiceRecorder::init( arts ))
             ; // ok
         else

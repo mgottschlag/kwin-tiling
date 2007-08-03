@@ -285,7 +285,7 @@ void Dcop_action::execute()
             args_str = nxt_pos >= 0 ? args_str.mid( nxt_pos ) : "";
             }
         }
-    kDebug( 1217 ) << "DCOP call:" << app << ":" << obj << ":" << call << ":" << args_list << endl;
+    kDebug( 1217 ) << "DCOP call:" << app << ":" << obj << ":" << call << ":" << args_list;
     KProcess proc;
     proc << "dcop" << app << obj << call << args_list;
     proc.startDetached();

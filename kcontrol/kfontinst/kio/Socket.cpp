@@ -232,7 +232,7 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     itsFd =::socket(PF_UNIX, SOCK_STREAM, 0);
     if (itsFd < 0)
     {
-        kWarning() << k_lineinfo << "socket(): " << errno << endl;
+        kWarning() << k_lineinfo << "socket(): " << errno ;
         return false;
     }
     struct sockaddr_un addr;
@@ -241,7 +241,7 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
 
     if (::connect(itsFd, (struct sockaddr *) &addr, SUN_LEN(&addr)) < 0)
     {
-        kWarning() << k_lineinfo << "connect():" << errno << endl;
+        kWarning() << k_lineinfo << "connect():" << errno ;
         ::close(itsFd);
         itsFd = -1;
         return false;
@@ -253,7 +253,7 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     // Security: if socket exists, we must own it
     if (getpeereid(itsFd, &euid, &egid) == 0 && euid != getuid())
     {
-        kWarning() << "socket not owned by me! socket uid = " << euid << endl;
+        kWarning() << "socket not owned by me! socket uid = " << euid ;
         ::close(itsFd);
         itsFd = -1;
         return false;
@@ -265,7 +265,7 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     // Security: if socket exists, we must own it
     if (getsockopt(itsFd, SOL_SOCKET, SO_PEERCRED, &cred, &siz) == 0 && cred.uid != socketUid)
     {
-        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << cred.uid << endl;
+        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << cred.uid ;
         ::close(itsFd);
         itsFd = -1;
         return false;
@@ -281,21 +281,21 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     KDE_struct_stat s;
     if (KDE_lstat(sock, &s)!=0)
     {
-        kWarning() << "stat failed (" << sock.data() << ")" << endl;
+        kWarning() << "stat failed (" << sock.data() << ")" ;
         ::close(itsFd);
         itsFd = -1;
         return false;
     }
     if (s.st_uid != socketUid)
     {
-        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << s.st_uid << endl;
+        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << s.st_uid ;
         ::close(itsFd);
         itsFd = -1;
         return false;
     }
     if (!S_ISSOCK(s.st_mode))
     {
-        kWarning() << "socket is not a socket (" << sock.data() << ")" << endl;
+        kWarning() << "socket is not a socket (" << sock.data() << ")" ;
         ::close(itsFd);
         itsFd = -1;
         return false;

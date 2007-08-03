@@ -68,9 +68,9 @@ void ExtensionInfo::load()
 	QStringList allowedPos=
             df.readEntry("X-KDE-PanelExt-Positions","Left,Top,Right,Bottom").toUpper().split(",", QString::SkipEmptyParts );
 	for (int i=0;i<4;i++) _allowedPosition[i]=false;
-	kDebug()<<"BEFORE X-KDE-PanelExt-Positions parsing"<<endl;
+	kDebug()<<"BEFORE X-KDE-PanelExt-Positions parsing";
 	for (unsigned int i=0;i<allowedPos.count();i++) {
-		kDebug()<<allowedPos[i]<<endl;
+		kDebug()<<allowedPos[i];
 		if (allowedPos[i]=="LEFT") _allowedPosition[KPanelExtension::Left]=true;
 		if (allowedPos[i]=="RIGHT") _allowedPosition[KPanelExtension::Right]=true;
 		if (allowedPos[i]=="TOP") _allowedPosition[KPanelExtension::Top]=true;

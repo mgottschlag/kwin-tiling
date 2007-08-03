@@ -56,13 +56,13 @@ void Solid::Control::ManagerBasePrivate::loadBackend(const QString &description,
 
         if(m_backend!=0) {
             if (m_backend->inherits(backendClassName)) {
-                kDebug() << "Backend loaded: " << ptr->name() << endl;
+                kDebug() << "Backend loaded: " << ptr->name();
                 break;
             } else {
                 QString error_string = i18n("Backend loaded but wrong type obtained, expected %1",
                                              backendClassName);
 
-                kDebug() << "Error loading '" << ptr->name() << "': " << error_string << endl;
+                kDebug() << "Error loading '" << ptr->name() << "': " << error_string;
                 error_msg.append(error_string);
 
                 delete m_backend;
@@ -70,7 +70,7 @@ void Solid::Control::ManagerBasePrivate::loadBackend(const QString &description,
             }
         } else {
             QString error_string = KLibLoader::errorString(error);
-            kDebug() << "Error loading '" << ptr->name() << "', KLibLoader said: " << error_string << endl;
+            kDebug() << "Error loading '" << ptr->name() << "', KLibLoader said: " << error_string;
             error_msg.append(error_string);
         }
     }

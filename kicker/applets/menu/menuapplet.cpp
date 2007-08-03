@@ -112,7 +112,7 @@ void Applet::windowAdded( WId w_P )
     NETWinInfo info( QX11Info::display(), w_P, QX11Info::appRootWindow(), NET::WMWindowType );
     if( info.windowType( SUPPORTED_WINDOW_TYPES ) != NET::TopMenu )
 	return;
-//    kDebug() << "embedding:" << w_P << endl;
+//    kDebug() << "embedding:" << w_P;
     Window transient_for = KWindowSystem::transientFor( w_P );
     if( transient_for == None )
 	return;
@@ -147,7 +147,7 @@ void Applet::windowAdded( WId w_P )
 //   - otherwise show nothing
 void Applet::activeWindowChanged( WId w_P )
     {
-//    kDebug() << "active:" << w_P << endl;
+//    kDebug() << "active:" << w_P;
     for( WId window = w_P;
 	 window != None;
 	 window = tryTransientFor( window ))
@@ -163,7 +163,7 @@ void Applet::activeWindowChanged( WId w_P )
 		}
 	    }
 	}
-//    kDebug() << "no active" << endl;
+//    kDebug() << "no active";
     // No menu for active window found - if desktop menu
     // (in kdesktoprc) is enabled, use kdesktop's menu instead of none.
     bool try_desktop = desktop_menu;
@@ -193,7 +193,7 @@ void Applet::activateMenu( MenuEmbed* embed_P )
     {
     if( embed_P != active_menu )
 	{
-//        kDebug() << "activate:" << embed_P << endl;
+//        kDebug() << "activate:" << embed_P;
 	if( active_menu != NULL )
 	    active_menu->hide();
 	active_menu = embed_P;
@@ -239,7 +239,7 @@ void Applet::menuLost( MenuEmbed* embed )
 	    {
 	    menus.erase( it );
 	    embed->deleteLater();
-//	    kDebug() << "deleting:" << (*it)->mainWindow() << endl;
+//	    kDebug() << "deleting:" << (*it)->mainWindow();
 	    if( embed == active_menu )
 		{
 		active_menu = NULL;
@@ -310,7 +310,7 @@ void Applet::lostSelection()
     {
     if( selection == NULL )
         return;
-//    kDebug() << "lost selection" << endl;
+//    kDebug() << "lost selection";
     for( QList< MenuEmbed* >::ConstIterator it = menus.begin();
 	 it != menus.end();
 	 ++it )
@@ -413,7 +413,7 @@ bool MenuEmbed::x11Event( XEvent* ev_P )
         if( ev.value_mask & CWHeight )
             new_size.setHeight( ev.height );
 	// resize when the embedded window resizes (still obey min size)
-//	kDebug() << "RES:" << embeddedWinId() << ":" << ev.width << ":" << ev.height << endl;
+//	kDebug() << "RES:" << embeddedWinId() << ":" << ev.width << ":" << ev.height;
 	if( ev.width != width() || ev.height != height())
             {
             resize( ev.width, ev.height );
@@ -424,7 +424,7 @@ bool MenuEmbed::x11Event( XEvent* ev_P )
 //        unsigned int w, h, d, b;
 //        Window root;
 //        XGetGeometry( QX11Info::display(), embeddedWinId(), &root, &x, &y, &w, &h, &b, &d );
-//        kDebug() << "RES3:" << width() << ":" << height() << ":" << w << ":" << h << endl;
+//        kDebug() << "RES3:" << width() << ":" << height() << ":" << w << ":" << h;
 	return true;
 	}
     return QX11EmbedWidget::x11Event( ev_P );
@@ -459,7 +459,7 @@ void MenuEmbed::setMinimumSize( int w, int h )
     // the applet won't allow resizing to smaller size
     if( containerWinId() != None )
         {
-//        kDebug() << "RES2:" << width() << ":" << height() << ":" << minimumWidth() << ":" << minimumHeight() << endl;
+//        kDebug() << "RES2:" << width() << ":" << height() << ":" << minimumWidth() << ":" << minimumHeight();
         XEvent ev;
         ev.xclient.display = QX11Info::display();
         ev.xclient.type = ClientMessage;

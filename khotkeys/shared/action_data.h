@@ -264,7 +264,7 @@ Action_data_group::Action_data_group( Action_data_group* parent_P, const QString
 inline
 Action_data_group::~Action_data_group()
     {
-//    kDebug( 1217 ) << "~Action_data_group() :" << list.count() << endl;
+//    kDebug( 1217 ) << "~Action_data_group() :" << list.count();
     while( list.first())
         delete list.first();
     }

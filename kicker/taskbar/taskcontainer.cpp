@@ -1015,7 +1015,7 @@ void TaskContainer::performAction(int action)
         m_filteredTasks.first()->toCurrentDesktop();
     break;
     default:
-        kWarning(1210) << "Unknown taskbar action!" << endl;
+        kWarning(1210) << "Unknown taskbar action!" ;
         break;
     }
 }
@@ -1131,7 +1131,7 @@ void TaskContainer::popupMenu(int action)
 
 void TaskContainer::mouseMoveEvent( QMouseEvent* e )
 {
-    kDebug() << "regular move" << endl;
+    kDebug() << "regular move";
     if (!m_dragStartPos.isNull())
     {
         startDrag(e->pos());
@@ -1160,7 +1160,7 @@ bool TaskContainer::startDrag(const QPoint& pos)
 
         if (!m_filteredTasks.isEmpty())
         {
-            kDebug() << m_filteredTasks.first()->name() << endl;
+            kDebug() << m_filteredTasks.first()->name();
             drag->setPixmap(m_filteredTasks.first()->pixmap());
         }
 
@@ -1213,7 +1213,7 @@ bool TaskContainer::eventFilter(QObject *o, QEvent *e)
                 if (me->buttons() & Qt::LeftButton &&
                     QApplication::widgetAt(p) == this)
                 {
-                    kDebug() << "event move" << endl;
+                    kDebug() << "event move";
                     if (startDrag(mapFromGlobal(p)))
                     {
                         QMenu* menu = dynamic_cast<QMenu*>(o);
