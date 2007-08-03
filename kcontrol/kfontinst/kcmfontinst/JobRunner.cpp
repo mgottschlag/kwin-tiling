@@ -26,6 +26,8 @@
 #include <kio/jobuidelegate.h>
 #include <kio/skipdialog.h>
 #include <kio/netaccess.h>
+#include <kio/copyjob.h>
+#include <kio/deletejob.h>
 #include <kmessagebox.h>
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -298,12 +300,12 @@ void CJobRunner::doNext()
                 dest.setFileName(Misc::getFile((*itsIt).path()));
                 itsStatusLabel->setText(CMD_INSTALL==itsCmd ? i18n("Installing %1", (*itsIt).displayName())
                                                             : i18n("Copying %1", (*itsIt).displayName()) );
-                job=KIO::file_copy(*itsIt, dest, -1, false, false, false);
+                job=KIO::copy(*itsIt, dest, false);
                 break;
             }
             case CMD_DELETE:
                 itsStatusLabel->setText(i18n("Deleting %1", (*itsIt).displayName()));
-                job=KIO::file_delete(*itsIt, false);
+                job=KIO::del(*itsIt, false, false);
                 break;
             case CMD_ENABLE:
                 itsStatusLabel->setText(i18n("Enabling %1", (*itsIt).displayName()));
@@ -319,7 +321,7 @@ void CJobRunner::doNext()
 
                 dest.setFileName(Misc::getFile((*itsIt).path()));
                 itsStatusLabel->setText(i18n("Moving %1", (*itsIt).displayName()));
-                job=KIO::file_move(*itsIt, dest, -1, false, false, false);
+                job=KIO::move(*itsIt, dest, false);
                 break;
             }
             default:

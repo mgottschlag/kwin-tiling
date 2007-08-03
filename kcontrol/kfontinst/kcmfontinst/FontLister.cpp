@@ -24,6 +24,8 @@
 #include "Misc.h"
 #include "KfiConstants.h"
 #include <kdirnotify.h>
+#include <QApplication>
+#include <QCursor>
 
 //#define KFI_FONTLISTER_DEBUG
 
@@ -59,6 +61,7 @@ void CFontLister::scan(const KUrl &url)
             itsItemsToRefresh.clear();
         }
 
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
         itsUpdateRequired=false;
         if(Misc::root())
             itsJob=KIO::listDir(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), false);
@@ -143,6 +146,9 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
 
 void CFontLister::filesAdded(const QString &dir)
 {
+#ifdef KFI_FONTLISTER_DEBUG
+    kDebug() << "Files added : " << dir;
+#endif
     KUrl url(dir);
 
     if(KFI_KIO_FONTS_PROTOCOL==url.protocol())
@@ -232,6 +238,7 @@ void CFontLister::result(KJob *job)
             (*it)->unmark();
     }
 
+    QApplication::restoreOverrideCursor();
     emit completed();
 }
 

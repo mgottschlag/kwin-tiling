@@ -102,7 +102,10 @@ void CDuplicatesDialog::scanFinished()
     stopAnimation();
 
     if(itsFontFileList->wasTerminated())
+    {
+        itsFontFileList->wait();
         reject();
+    }
     else
     {
         CFontFileList::TFontMap duplicates;
