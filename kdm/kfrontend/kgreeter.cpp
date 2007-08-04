@@ -557,9 +557,7 @@ KGreeter::verifyOk()
 		gSendStr( "Session" );
 		gSendStr( "default" );
 	}
-	gSendInt( G_Ready );
-	KGVerify::handleFailVerify( this, false );
-	done( ex_exit );
+	done( ex_login );
 }
 
 void

@@ -241,7 +241,7 @@ runAndWait( char **args, char **env )
 		exit( 127 );
 	case -1:
 		logError( "Can't fork to execute %\"s: %m\n", args[0] );
-		return 1;
+		return wcCompose( 0, 0, 127 );
 	}
 	ret = Wait4( &pid );
 	return wcFromWait( ret );
@@ -330,6 +330,15 @@ gSet( GTalk *tlk )
 	curtalk = tlk;
 }
 
+void
+gCloseOnExec( GPipe *pajp )
+{
+	fcntl( pajp->fd.r, F_SETFD, FD_CLOEXEC );
+#ifndef SINGLE_PIPE
+	fcntl( pajp->fd.w, F_SETFD, FD_CLOEXEC );
+#endif
+}
+
 #if !defined(SINGLE_PIPE) || defined(__FreeBSD__)
 # define make_pipe(h) pipe( h )
 #else
@@ -338,12 +347,15 @@ gSet( GTalk *tlk )
 
 int
 gFork( GPipe *pajp, const char *pname, char *cname,
-       GPipe *ogp, char *cgname, volatile int *pid )
+       GPipe *ogp, char *cgname,
+       GPipe *gp,
+       volatile int *pidr )
 {
 	int opipe[2], ogpipe[2];
 #ifndef SINGLE_PIPE
 	int ipipe[2], igpipe[2];
 #endif
+	int pid;
 
 	if (make_pipe( opipe ))
 		goto badp1;
@@ -385,19 +397,39 @@ gFork( GPipe *pajp, const char *pname, char *cname,
 		registerCloseOnFork( igpipe[0] );
 #endif
 	}
-	switch (Fork( pid )) {
-	case -1:
+	if (gp) {
+		clearCloseOnFork( gp->fd.r );
+#ifndef SINGLE_PIPE
+		clearCloseOnFork( gp->fd.w );
+#endif
+	}
+	if ((pid = Fork( pidr ))) {
+		if (gp) {
+			registerCloseOnFork( gp->fd.r );
+#ifndef SINGLE_PIPE
+			registerCloseOnFork( gp->fd.w );
+#endif
+		}
+		if (ogp) {
+			close( ogpipe[0] );
+#ifndef SINGLE_PIPE
+			close( igpipe[1] );
+#endif
+		}
 		close( opipe[0] );
-		closeNclearCloseOnFork( opipe[1] );
 #ifndef SINGLE_PIPE
 		close( ipipe[1] );
+#endif
+	}
+	switch ( pid ) {
+	case -1:
+		closeNclearCloseOnFork( opipe[1] );
+#ifndef SINGLE_PIPE
 		closeNclearCloseOnFork( ipipe[0] );
 #endif
 		if (ogp) {
-			close( ogpipe[0] );
 			closeNclearCloseOnFork( ogpipe[1] );
 #ifndef SINGLE_PIPE
-			close( igpipe[1] );
 			closeNclearCloseOnFork( igpipe[0] );
 #endif
 		}
@@ -422,25 +454,23 @@ gFork( GPipe *pajp, const char *pname, char *cname,
 			registerCloseOnFork( ogpipe[0] );
 			ogp->who = (char *)pname;
 		}
+		if (cname)
+			 free( cname );
 		return 0;
 	default:
-		close( opipe[0] );
 		pajp->fd.w = opipe[1];
 #ifndef SINGLE_PIPE
-		close( ipipe[1] );
 		pajp->fd.r = ipipe[0];
 #endif
 		pajp->who = cname;
 		if (ogp) {
-			close( ogpipe[0] );
 			ogp->fd.w = ogpipe[1];
 #ifndef SINGLE_PIPE
-			close( igpipe[1] );
 			ogp->fd.r = igpipe[0];
 #endif
 			ogp->who = cgname;
 		}
-		return *pid;
+		return pid;
 	}
 }
 
@@ -448,12 +478,10 @@ int
 gOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
        GPipe *gp )
 {
-	int pid;
 	char **margv;
 	int pip[2];
 	char coninfo[32];
 
-/* ###	gSet (proc->pipe); */
 	if (proc->pid > 0) {
 		logError( "%s already running\n", cname );
 		if (cname)
@@ -477,24 +505,9 @@ gOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 			free( cname );
 		goto fail;
 	}
-	if (gp) {
-		clearCloseOnFork( gp->fd.r );
-#ifndef SINGLE_PIPE
-		clearCloseOnFork( gp->fd.w );
-#endif
-	}
-	pid = gFork( &proc->pipe, 0, cname, 0, 0, &proc->pid );
-	if (pid) {
-		close( pip[1] );
-		if (gp) {
-			registerCloseOnFork( gp->fd.r );
-#ifndef SINGLE_PIPE
-			registerCloseOnFork( gp->fd.w );
-#endif
-		}
-	}
-	switch (pid) {
+	switch (gFork( &proc->pipe, 0, cname, 0, 0, gp, &proc->pid )) {
 	case -1:
+		close( pip[1] );
 	  fail1:
 		close( pip[0] );
 	  fail:
@@ -526,6 +539,7 @@ gOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 		exit( 1 );
 	default:
 		(void)Signal( SIGPIPE, SIG_IGN );
+		close( pip[1] );
 		if (reader( pip[0], coninfo, 1 )) {
 			Wait4( &proc->pid );
 			logError( "Cannot execute %\"s (%s)\n", margv[0], cname );

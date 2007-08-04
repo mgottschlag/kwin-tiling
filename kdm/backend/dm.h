@@ -460,12 +460,13 @@ char *locate( const char *exe );
 void terminateProcess( int pid, int sig );
 
 void gSet( GTalk *talk ); /* call before gOpen! */
+void gCloseOnExec( GPipe *pajp );
 int gFork( GPipe *pajp, const char *pname, char *cname,
-           GPipe *ogp, char *cgname, volatile int *pid );
+           GPipe *ogp, char *cgname, GPipe *igp, volatile int *pid );
 void gClosen( GPipe *pajp );
 int gOpen( GProc *proc,
            char **argv, const char *what, char **env, char *cname,
-           GPipe *gp );
+           GPipe *igp );
 int gClose( GProc *proc, GPipe *gp, int force );
 
 void gSendInt( int val );

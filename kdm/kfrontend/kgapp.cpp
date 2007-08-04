@@ -198,8 +198,9 @@ kg_main( const char *argv0 )
 
 	setCursor( dpy, app.desktop()->winId(), XC_left_ptr );
 
+	int rslt = ex_exit;
 	for (;;) {
-		int rslt, cmd = gRecvInt();
+		int cmd = gRecvInt();
 
 		if (cmd == G_ConfShutdown) {
 			int how = gRecvInt(), uid = gRecvInt();
@@ -268,8 +269,14 @@ kg_main( const char *argv0 )
 
 	delete proc;
 	delete themer;
+
 	unsecureDisplay( dpy );
 	restoreModifiers();
+
+	if (rslt == ex_login) {
+		gSendInt( G_Ready );
+		KGVerify::handleFailVerify( qApp->desktop()->screen( _greeterScreen ), false );
+	}
 }
 
 } // extern "C"

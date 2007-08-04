@@ -1101,6 +1101,35 @@ static int removeSession;
 static int removeCreds;
 #endif
 
+static GPipe ctlpipe;
+static GTalk ctltalk;
+
+static void
+sendStr( int lv, const char *msg )
+{
+	gSet( &ctltalk );
+	gSendInt( lv );
+	gSendStr( msg );
+	gRecvInt();
+}
+
+/*
+static void
+sendMsg( int lv, const char *msg, ... )
+{
+	char *ae;
+	va_list args;
+
+	va_start( args, msg );
+	VASPrintf( &ae, msg, args );
+	va_end( args );
+	if (ae) {
+		sendStr( lv, ae );
+		free( ae );
+	}
+}
+*/
+
 int
 startClient( volatile int *pid )
 {
@@ -1124,6 +1153,7 @@ startClient( volatile int *pid )
 	extern char **environ;
 #endif
 	char *failsafeArgv[2];
+	char *buf, *buf2;
 	int i;
 
 	if (strCmp( dmrcuser, curuser )) {
@@ -1134,6 +1164,8 @@ startClient( volatile int *pid )
 #if defined(USE_PAM) || defined(_AIX)
 	if (!(p = getpwnam( curuser ))) {
 		logError( "getpwnam(%s) failed.\n", curuser );
+	  pError:
+		displayStr( V_MSG_ERR, 0 );
 		return 0;
 	}
 #endif
@@ -1150,10 +1182,18 @@ startClient( volatile int *pid )
 #  if defined(KERBEROS) && defined(AFS)
 	if (krbtkfile[0] != '\0') {
 		if (k_hasafs()) {
-			if (k_setpag() == -1)
+			int fail = 0;
+			if (k_setpag() == -1) {
 				logError( "setpag() for %s failed\n", curuser );
-			if ((ret = k_afsklog( NULL, NULL )) != KSUCCESS)
+				fail = 1;
+			}
+			if ((ret = k_afsklog( NULL, NULL )) != KSUCCESS) {
 				logError( "AFS Warning: %s\n", krb_get_err_text( ret ) );
+				fail = 1;
+			}
+			if (fail)
+				displayMsg( V_MSG_ERR,
+				            "Warning: Problems during Kerberos4/AFS setup." );
 		}
 	}
 #  endif /* KERBEROS && AFS */
@@ -1239,17 +1279,17 @@ startClient( volatile int *pid )
 	if (setusercontext( lc, p, p->pw_uid, LOGIN_SETGROUP )) {
 		logError( "setusercontext(groups) for %s failed: %m\n",
 		          curuser );
-		return 0;
+		goto pError;
 	}
 # else
 	if (!setGid( curuser, curgid ))
-		return 0;
+		goto pError;
 # endif
 
 # ifndef HAVE_PAM_GETENVLIST
 	if (!(pam_env = initStrArr( 0 ))) {
 		resetGids();
-		return 0;
+		goto pError;
 	}
 	saved_env = environ;
 	environ = pam_env;
@@ -1268,7 +1308,7 @@ startClient( volatile int *pid )
 	   - before pam_setcred(DELETE_CRED) might need it
 	 */
 	if (!saveGids())
-		return 0;
+		goto pError;
 # endif
 	if (pretc != PAM_SUCCESS) {
 		logError( "pam_setcred() for %s failed: %s\n",
@@ -1296,17 +1336,25 @@ startClient( volatile int *pid )
 # define D_LOGIN_SETGROUP 0
 #endif /* USE_PAM */
 
-	finishGreet();
-
 	removeAuth = 1;
 	chownCtrl( &td->ctrl, curuid );
 	endpwent();
 #if !defined(USE_PAM) && defined(USESHADOW) && !defined(_AIX)
 	endspent();
 #endif
-	clearCloseOnFork( mstrtalk.pipe->fd.w );
-	switch (Fork( pid )) {
+	ctltalk.pipe = &ctlpipe;
+	ASPrintf( &buf, "sub-daemon for display %s", td->name );
+	ASPrintf( &buf2, "client for display %s", td->name );
+	switch (gFork( &ctlpipe, buf, buf2, 0, 0, mstrtalk.pipe, pid )) {
 	case 0:
+
+		gCloseOnExec( ctltalk.pipe );
+		if (Setjmp( ctltalk.errjmp ))
+			exit( 1 );
+
+		gCloseOnExec( mstrtalk.pipe );
+		if (Setjmp( mstrtalk.errjmp ))
+			goto cError;
 
 #ifndef NOXDMTITLE
 		setproctitle( "%s'", td->name );
@@ -1314,18 +1362,20 @@ startClient( volatile int *pid )
 		strApp( &prog, " '", (char *)0 );
 		reInitErrorLog();
 
+		setsid();
+
 		sessreg( td, getpid(), curuser, curuid );
 
-		if (source( systemEnviron, td->startup, td_setup )) {
-			logError( "Cannot execute startup script %\"s\n", td->startup );
+		/* We do this here, as we want to have the session as parent. */
+		switch (source( systemEnviron, td->startup, td_setup )) {
+		case 0:
+			break;
+		case wcCompose( 0, 0, 127 ):
+			goto cError;
+		default: /* Explicit failure => message already displayed. */
+			logError( "Startup script returned non-zero exit code\n" );
 			exit( 1 );
 		}
-
-		if (Setjmp( mstrtalk.errjmp ))
-			exit( 1 );
-		gSet( &mstrtalk );
-
-		setsid();
 
 	/* Memory leaks are ok here as we exec() soon. */
 
@@ -1345,7 +1395,7 @@ startClient( volatile int *pid )
 # ifdef HAVE_SETLOGIN
 		if (setlogin( curuser ) < 0) {
 			logError( "setlogin for %s failed: %m\n", curuser );
-			exit( 1 );
+			goto cError;
 		}
 #  define D_LOGIN_SETLOGIN LOGIN_SETLOGIN
 # else
@@ -1354,17 +1404,17 @@ startClient( volatile int *pid )
 
 # if defined(USE_PAM) && defined(HAVE_INITGROUPS)
 		if (!restoreGids())
-			exit( 1 );
+			goto cError;
 # endif
 
 # ifndef HAVE_SETUSERCONTEXT
 
 #  ifdef USE_PAM
 		if (!setUid( curuser, curuid ))
-			exit( 1 );
+			goto cError;
 #  else
 		if (!setUser( curuser, curuid, curgid ))
-			exit( 1 );
+			goto cError;
 #  endif
 
 # else /* !HAVE_SETUSERCONTEXT */
@@ -1375,7 +1425,7 @@ startClient( volatile int *pid )
 		 * set or reset some environment variables.
 		 */
 		if (!(environ = initStrArr( 0 )))
-			exit( 1 );
+			goto cError;
 
 		/*
 		 * Set the user's credentials: uid, gid, groups,
@@ -1385,7 +1435,7 @@ startClient( volatile int *pid )
 		        LOGIN_SETALL & ~(D_LOGIN_SETGROUP|D_LOGIN_SETLOGIN) ) < 0)
 		{
 			logError( "setusercontext for %s failed: %m\n", curuser );
-			exit( 1 );
+			goto cError;
 		}
 
 		for (i = 0; environ[i]; i++)
@@ -1400,7 +1450,7 @@ startClient( volatile int *pid )
 		 */
 		if (setpcred( curuser, NULL ) == -1) {
 			logError( "setpcred for %s failed: %m\n", curuser );
-			exit( 1 );
+			goto cError;
 		}
 
 		/*
@@ -1412,7 +1462,7 @@ startClient( volatile int *pid )
 		             userEnviron, NULL ) != 0)
 		{
 			logError( "Can't set %s's process environment\n", curuser );
-			exit( 1 );
+			goto cError;
 		}
 		userEnviron = newenv;
 
@@ -1477,6 +1527,7 @@ startClient( volatile int *pid )
 				nukeAuth( 14, "MIT-KERBEROS-5" );
 #endif /* K5AUTH */
 		if (td->autoReLogin) {
+			gSet( &mstrtalk );
 			gSendInt( D_ReLogin );
 			gSendStr( curuser );
 			gSendStr( curpass );
@@ -1487,8 +1538,8 @@ startClient( volatile int *pid )
 		setUserAuthorization( td );
 		home = getEnv( userEnviron, "HOME" );
 		if (home && chdir( home ) < 0) {
-			logError( "Cannot chdir to %s's home %s: %m, using /\n",
-			          curuser, home );
+			logError( "Cannot chdir to %s's home %s: %m\n", curuser, home );
+			sendStr( V_MSG_ERR, "Cannot enter home directory. Using /.\n" );
 			chdir( "/" );
 			userEnviron = setEnv( userEnviron, "HOME", "/" );
 			home = 0;
@@ -1504,11 +1555,13 @@ startClient( volatile int *pid )
 			if (!createClientLog( td->clientLogFallback ))
 				logError( "Fallback session log file according to %s cannot be created: %m\n",
 				          td->clientLogFallback );
+			/* Could inform the user, but I guess this is only confusing. */
 		}
 		if (!*dmrcDir)
 			mergeSessionArgs( home != 0 );
 		if (!(desksess = iniEntry( curdmrc, "Desktop", "Session", 0 )))
 			desksess = "failsafe"; /* only due to OOM */
+		gSet( &mstrtalk );
 		gSendInt( D_User );
 		gSendInt( curuid );
 		gSendStr( curuser );
@@ -1550,16 +1603,29 @@ startClient( volatile int *pid )
 		execute( failsafeArgv, userEnviron );
 		logError( "Failsafe client %\"s execution failed: %m\n",
 		          failsafeArgv[0] );
+	  cError:
+		sendStr( V_MSG_ERR, 0 );
 		exit( 1 );
 	case -1:
-		registerCloseOnFork( mstrtalk.pipe->fd.w );
-		logError( "Forking session on %s failed: %m\n", td->name );
+		free( buf );
 		return 0;
-	default:
-		registerCloseOnFork( mstrtalk.pipe->fd.w );
-		debug( "StartSession, fork succeeded %d\n", *pid );
-		return 1;
 	}
+	debug( "StartSession, fork succeeded %d\n", *pid );
+	free( buf );
+
+	gSet( &ctltalk );
+	if (!Setjmp( ctltalk.errjmp ))
+		while (gRecvCmd( &i )) {
+			buf = gRecvStr();
+			displayStr( i, buf );
+			free( buf );
+			gSet( &ctltalk );
+			gSendInt( 0 );
+		}
+	gClosen( ctltalk.pipe );
+	finishGreet();
+
+	return 1;
 }
 
 void
@@ -1571,8 +1637,14 @@ sessionExit( int status )
 #endif
 
 	if (removeAuth) {
-		if (source( systemEnviron, td->reset, td_setup ))
-			logError( "Cannot execute reset script %\"s\n", td->reset );
+		switch (source( systemEnviron, td->reset, td_setup )) {
+		case 0:
+		case wcCompose( 0, 0, 127 ):
+			break;
+		default:
+			logError( "Reset script returned non-zero exit code\n" );
+			break;
+		}
 		sessreg( td, 0, 0, 0 );
 
 		switch (Fork( &pid )) {

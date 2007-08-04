@@ -1365,7 +1365,7 @@ startDisplayP2( struct display *d )
 	ASPrintf( &cname, "sub-daemon for display %s", d->name );
 	ASPrintf( &cgname, "greeter for display %s", d->name );
 	switch (gFork( &d->pipe, "master daemon", cname,
-	               &d->gpipe, cgname, &d->pid ))
+	               &d->gpipe, cgname, 0, &d->pid ))
 	{
 	case 0:
 #ifndef NOXDMTITLE

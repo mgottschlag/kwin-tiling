@@ -40,6 +40,7 @@ class QMenu;
 #define ex_exit    1
 #define ex_greet   2
 #define ex_choose  3
+#define ex_login   4
 
 class KGDialog : public FDialog {
 	Q_OBJECT

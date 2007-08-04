@@ -470,6 +470,7 @@ prepareErrorGreet()
 		gSendInt( G_ErrorGreet );
 		gSendStr( curuser );
 	}
+	gSet( &grttalk );
 }
 
 void
@@ -478,6 +479,7 @@ finishGreet()
 	int ret;
 
 	if (grtproc.pid > 0) {
+		gSet( &grttalk );
 		gSendInt( V_OK );
 		if ((ret = closeGreeter( FALSE )) != EX_NORMAL) {
 			logError( "Abnormal greeter termination, code %d, sig %d\n",
@@ -725,9 +727,9 @@ source( char **env, const char *file, const char *arg )
 	if (file && file[0]) {
 		debug( "source %s\n", file );
 		if (!(args = parseArgs( (char **)0, file )))
-			return wcCompose( 0,0,3 );
+			return wcCompose( 0, 0, 127 );
 		if (arg && !(args = addStrArr( args, arg, -1 )))
-			return wcCompose( 0,0,3 );
+			return wcCompose( 0, 0, 127 );
 		ret = runAndWait( args, env );
 		freeStrArr( args );
 		return ret;
