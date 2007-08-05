@@ -31,6 +31,7 @@
 
 #include "controlbox.h"
 #include "desktopview.h"
+#include "plasmaapp.h"
 
 //#define ICON_DEMO
 //#define SUPERKARAMBA_DEMO
@@ -61,8 +62,11 @@ RootWidget::RootWidget()
     rootLayout->setSpacing(0);
 
     m_desktop = new DesktopView(this);
-    m_desktop->corona()->setFormFactor(Plasma::Planar);
-    m_desktop->corona()->setLocation(Plasma::Desktop);
+    Plasma::Corona* corona = PlasmaApp::self()->corona();
+    //FIXME: form factors need to move out of Corona
+
+    corona->setFormFactor(Plasma::Planar);
+    corona->setLocation(Plasma::Desktop);
     rootLayout->addWidget(m_desktop);
     m_desktop->show();
 
@@ -72,26 +76,26 @@ RootWidget::RootWidget()
 
     connect(m_controlBox, SIGNAL(zoomIn()), m_desktop, SLOT(zoomIn()));
     connect(m_controlBox, SIGNAL(zoomOut()), m_desktop, SLOT(zoomOut()));
-    connect(m_controlBox, SIGNAL(addApplet(const QString&)), m_desktop->corona(), SLOT(addApplet(const QString&)));
-    connect(m_controlBox, SIGNAL(setFormFactor(Plasma::FormFactor)), m_desktop->corona(), SLOT(setFormFactor(Plasma::FormFactor)));
-    connect(m_controlBox, SIGNAL(lockInterface(bool)), m_desktop->corona(), SLOT(setImmutable(bool)));
+    connect(m_controlBox, SIGNAL(addApplet(const QString&)), corona, SLOT(addApplet(const QString&)));
+    connect(m_controlBox, SIGNAL(setFormFactor(Plasma::FormFactor)), corona, SLOT(setFormFactor(Plasma::FormFactor)));
+    connect(m_controlBox, SIGNAL(lockInterface(bool)), corona, SLOT(setImmutable(bool)));
 
 #ifdef ICON_DEMO
     Plasma::Icon* icon = new Plasma::Icon();
     icon->setIcon("user-home");
     icon->setIconSize(64, 64);
 //    icon->setFlags(QGraphicsItem::ItemIsMovable);
-    m_desktop->corona()->addItem(icon);
+    corona->addItem(icon);
 
     icon = new Plasma::Icon(icon);
     icon->setIcon("plasmagik");
 //    icon->setFlags(QGraphicsItem::ItemIsMovable);
-    m_desktop->corona()->addItem(icon);
+    corona->addItem(icon);
 
 #endif
 
 #ifdef SUPERKARAMBA_DEMO
-    m_desktop->corona()->addKaramba(KUrl("~/themes/aero_aio.skz"));
+    corona->addKaramba(KUrl("~/themes/aero_aio.skz"));
 #endif
 
 #ifdef CONFIGXML_DEMO

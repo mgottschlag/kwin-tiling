@@ -21,6 +21,10 @@
 
 #include <KUniqueApplication>
 
+namespace Plasma
+{
+    class Corona;
+} // namespace Plasma
 class RootWidget;
 
 class PlasmaApp : public KUniqueApplication
@@ -32,6 +36,7 @@ public:
 
     static PlasmaApp* self();
     void notifyStartup(bool completed);
+    Plasma::Corona* corona();
 
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
@@ -45,6 +50,7 @@ private:
     static void crashHandler(int signal);
 
     RootWidget *m_root;
+    Plasma::Corona *m_corona;
 };
 
 #endif // multiple inclusion guard

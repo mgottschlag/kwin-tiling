@@ -34,6 +34,7 @@
 #include "plasma/svg.h"
 
 #include "krunner_interface.h"
+#include "plasmaapp.h"
 
 DesktopView::DesktopView(QWidget *parent)
     : QGraphicsView(parent),
@@ -44,16 +45,14 @@ DesktopView::DesktopView(QWidget *parent)
     setFrameShape(QFrame::NoFrame);
     setAutoFillBackground(true);
     initializeWallpaper();
-
-    setScene(new Plasma::Corona(rect(), this));
-    scene()->setItemIndexMethod(QGraphicsScene::NoIndex);
-    //TODO: Figure out a way to use rubberband and ScrollHandDrag
     setDragMode(QGraphicsView::RubberBandDrag);
     setCacheMode(QGraphicsView::CacheBackground);
     setInteractive(true);
     setAcceptDrops(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    setScene(PlasmaApp::self()->corona());
 
     //TODO: should we delay the init of the actions until we actually need them?
     m_engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
@@ -134,11 +133,6 @@ void DesktopView::initializeWallpaper()
     }
 
     //FIXME: this probably doesn't give us an immediate update when called after construction!
-}
-
-Plasma::Corona* DesktopView::corona()
-{
-    return static_cast<Plasma::Corona*>(scene());
 }
 
 void DesktopView::drawBackground(QPainter * painter, const QRectF & rect)
@@ -223,7 +217,7 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
         desktopMenu.addAction(m_zoomOutAction);
     }
     else if (!applet) {
-        if (corona() && corona()->isImmutable()) {
+        if (PlasmaApp::self()->corona()->isImmutable()) {
             QGraphicsView::contextMenuEvent(event);
             return;
         }
@@ -252,7 +246,7 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
             hasEntries = true;
         }
 
-        if (!corona() || !corona()->isImmutable()) {
+        if (!PlasmaApp::self()->corona()->isImmutable()) {
             QAction* closeApplet = new QAction(i18n("Remove this %1", applet->name()), this);
             connect(closeApplet, SIGNAL(triggered(bool)),
                     applet, SLOT(destroy()));

@@ -39,8 +39,6 @@ public:
     DesktopView(QWidget *parent);
     ~DesktopView();
 
-    Plasma::Corona* corona();
-
 public slots:
     void zoomIn();
     void zoomOut();

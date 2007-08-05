@@ -30,9 +30,12 @@
 #include <QtDBus/QtDBus>
 
 #include <KCrash>
+#include <KDebug>
 #include <KCmdLineArgs>
 
 #include <ksmserver_interface.h>
+
+#include "plasma/corona.h"
 
 #include "rootwidget.h"
 #include "desktopview.h"
@@ -43,7 +46,8 @@ PlasmaApp* PlasmaApp::self()
 }
 
 PlasmaApp::PlasmaApp()
-    : m_root(0)
+    : m_root(0),
+      m_corona(0)
 {
     new AppAdaptor(this); 
     QDBusConnection::sessionBus().registerObject( "/App", this );
@@ -69,6 +73,7 @@ PlasmaApp::PlasmaApp()
 
     m_root = new RootWidget();
     m_root->show();
+    connect(this, SIGNAL(aboutToQuit()), corona(), SLOT(saveApplets()));
 
     notifyStartup(true);
 }
@@ -100,6 +105,18 @@ void PlasmaApp::crashHandler(int signal)
 
     sleep(1);
     system("plasma --nocrashhandler &"); // try to restart
+}
+
+Plasma::Corona* PlasmaApp::corona()
+{
+    if (!m_corona) {
+        m_corona = new Plasma::Corona(this);
+        m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
+        //TODO: Figure out a way to use rubberband and ScrollHandDrag
+        m_corona->loadApplets();
+    }
+
+    return m_corona;
 }
 
 void PlasmaApp::notifyStartup(bool completed)
