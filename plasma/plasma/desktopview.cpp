@@ -253,7 +253,7 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
         }
 
         if (!corona() || !corona()->isImmutable()) {
-            QAction* closeApplet = new QAction(i18n("Close this %1", applet->name()), this);
+            QAction* closeApplet = new QAction(i18n("Remove this %1", applet->name()), this);
             connect(closeApplet, SIGNAL(triggered(bool)),
                     applet, SLOT(deleteLater()));
             desktopMenu.addAction(closeApplet);

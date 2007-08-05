@@ -204,7 +204,7 @@ void ControlWidget::refreshPlasmoidList()
     }
 
 #ifndef NDEBUG
-    kDebug() << "Known categories: " << Plasma::Applet::knownCategories();
+    //kDebug() << "Known categories: " << Plasma::Applet::knownCategories();
 #endif
 
     m_appletListModel->sort(0);
