@@ -1,34 +1,29 @@
-This is the K Display Manager (KDM) for KDE 3.4,
-the KDE replacement for the X Display Manager (XDM).
+This is the KDE Display Manager (KDM), a replacement for the
+X Display Manager (XDM).
 
-Semi-official home page: http://devel-home.kde.org/~ossi/sw/kdm.html
+Enter help:kdm into Konqueror's location bar to view the manual.
+
+Semi-official home page: http://developer.kde.org/~ossi/sw/kdm.html
 
 
-configure options that affect KDM
----------------------------------
+cmake options that affect KDM
+-----------------------------
 
---with-pam[=service]
-  Compile KDM (and other parts of kdebase) with PAM support. The default
-  service is "kde". PAM is automatically used if found.
+-DKDE4_COMMON_PAM_SERVICE:STRING=service
+-DKDE4_KDM_PAM_SERVICE:STRING=service
+  Set the PAM service used by all of kdebase resp. specifically by KDM.
+  Whether PAM should be used in the first place is auto-detected.
 
---with-kdm-pam=service
-  Override the PAM service used specifically by KDM. Depends on --with-pam.
-
---with-shadow
-  Compile KDM (and other parts of kdebase) with shadow password support.
-  Shadow passwords are automatically used if found. This affects KDM only
-  if PAM is not used.
-
---with-krb4[=path]
+-DKDE4_KERBEROS4:BOOL=ON
   Compile KDM (and the LDAP KIO slave) with KTH Kerberos 4 support. Note
   that this does not work with the Kerberos 4 compatibility layer found in
   MIT Kerberos 5. This affects KDM only if PAM is not used.
 
---with-afs
-  Compile KDM with AFS support. Depends on --with-krb4.
+-DKDE4_AFS:BOOL=ON
+  Compile KDM with AFS support. Depends on KDE4_KERBEROS4.
 
---with-krb5auth[=path]
---with-rpcauth
+-DKDE4_KRB5AUTH:BOOL=ON
+-DKDE4_RPCAUTH:BOOL=ON
   Compile KDM with Kerberos 5 resp. secure RPC support for X authorization
   cookies. It's pretty pointless to enable this if you don't use an X server
   that supports it.
@@ -36,10 +31,10 @@ configure options that affect KDM
   If you want user authentication against a Kerberos realm, compile KDM with
   PAM support and use the appropriate module.
 
---without-xdmcp
+-DKDE4_XDMCP:BOOL=OFF
   Compile KDM without XDMCP support.
 
---with-kdm-xconsole
+-DKDE4_KDM_XCONSOLE:BOOL=ON
   Compile KDM with a builtin "xconsole" replacement in the greeter. I don't
   consider this too useful, but SuSE wanted it, so it's there. ;)
 
@@ -82,43 +77,6 @@ Have a look at README.pam in the kdebase top level directory if your
 system uses PAM.
 
 
-Configuring session types
--------------------------
-
-The way session types are configured changed drastically in KDE 3.2.
-Session types are now represented by .desktop files in appropriate locations.
-The format of the .desktop files is (not yet) defined in the FreeDesktop.org
-desktop entry spec. Differences to "standard" .desktop files are:
-- the Type is fixed to XSession and can be omitted
-- the Encoding is fixed to UTF-8 and can be omitted
-- the Exec field will be passed to "eval exec" in a bourne shell; no macro
-  expansion is performed on it. "default", "custom" and "failsafe" are magic
-  constants that cause special actions.
-- Name, Comment, TryExec and Hidden are supported
-- the remaining keys have no meaning currently
-Session types are internally identified by filename (without extension);
-that's what will be saved to ~/.dmrc and what DESKTOP_SESSION will be set to.
-For every magic Exec constant a session type of the same name exists.
-
-Unless your system is configured differently already, you should create a
-directory ${kde_confdir}/kdm/sessions and add this to kdmrc:
-
-[X-*-Core]
-SessionsDirs=${kde_confdir}/kdm/sessions,${kde_datadir}/kdm/sessions
-
-(Note that you must use actual paths instead of variables, see the section
-about KDM's file system layout.)
-Do any changes only in the config directory - any changes in the data
-directory will be lost after the next KDE update.
-
-To override a session type, copy the .desktop file from the data dir to the
-config dir and edit it at will. Removing the shipped session types can be
-accomplished by "shadowing" them with .desktop files containing Hidden=true.
-For the magic session types no .desktop files exist by default, but KDM
-pretends they would, so you can override them like any other type.
-I guess you already know how to add a new session type by now. ;-)
-
-
 Running KDM from init
 ---------------------
 
@@ -157,176 +115,6 @@ modifying the XDM init script shipped by your distribution.
    presenting you the exceedingly cute KDE login screen.
 
 
-The command sockets
--------------------
-
-This is a feature you can use to remote-control KDM. It's mostly intended
-for use by ksmserver and kdesktop from a running session, but other
-applications are possible as well.
-
-The sockets are UNIX domain sockets which live in subdirectories of the
-directory specified by FifoDir=. The subdir is the key to addressing and
-security; the sockets all have the file name "socket" and file permissions
-rw-rw-rw- (0666). This is because some systems don't care for the file
-permissions of the socket files.
-There are two types of sockets: the global one (dmctl) and the per-display
-ones (dmctl-<display>).
-The global one's subdir is owned by root, the subdirs of the per-display
-ones' are owned by the user currently owning the session (root or the
-logged in user). Group ownership of the subdirs can be set via FifoGroup=,
-otherwise it's root. The file permissions of the subdirs are rwxr-x--- (0750).
-
-The fields of a command are separated by tabs (\t), the fields of a list
-are separated by spaces, literal spaces in list fields are denoted by "\s".
-The command is terminated by a newline (\n).
-The same applies to replies. The reply on success is "ok", possibly followed
-by the requested information. The reply on error is an errno-style word (e.g.,
-"perm", "noent", etc.) followed by a longer explanation.
-
-Global commands:
-
-"login" display ("now"|"schedule") user password [session_arguments]
- - login user at specified display. if "now" is specified, a possibly
-   running session is killed, otherwise the login is done after the
-   session exits.
-   session_arguments are printf-like escaped contents for .dmrc. Unlisted
-   keys will default to previously saved values.
-
-Per-display commands:
-
-"lock"
- - The display is marked as locked. If the X-Server crashes in this state,
-   no auto-relogin will be performed even if the option is on.
-
-"unlock"
- - Reverse the effect of "lock": re-enable auto-relogin.
-
-"suicide"
- - The currently running session is forcibly terminated. No auto-relogin is
-   attempted, but a scheduled "login" command will be executed.
-
-Commands for all sockets:
-
-"caps"
- - Returns a list this socket's capabilities:
-   "kdm" - identifies kdm, in case some other DM implements this protocol, too.
-   "list", "activate", "lock", "suicide", "login" - the respective command
-     is supported.
-   "bootoptions" - the "listbootoptions" command and the "=" option to
-     "shutdown" are supported.
-   "shutdown <list>" - "shutdown" is supported and allowed to the listed users
-     (comma-separated). "*" means all authenticated users.
-   "shutdown" - "shutdown" is supported and allowed to everybody.
-   "nuke <list>" - forced shutdown is allowed to the listed users.
-   "nuke" - forced shutdown is allowed to everybody.
-   "reserve <number>" - reserve displays are configured and <number> are
-     available at this time.
-
-"list" ["all"|"alllocal"]
- - Return a list of running sessions. By default all active sessions are
-   listed. If "all" is specified, passive sessions are listed as well. If
-   "alllocal" is specified, passive sessions are listed as well, but all
-   incoming remote sessions are skipped.
-   Each session entry is a comma-separated tuple of:
-   - Display or TTY name
-   - VT name for local sessions
-   - Logged in user's name, empty for passive sessions and outgoing remote
-     sessions (local chooser mode)
-   - Session type or remote host for outgoing remote sessions, empty for
-     passive sessions
-   - A flag field:
-     - "t" for tty sessions
-     - "*" for the display belonging to the requesting socket
-     - "!" for sessions that cannot be killed by the requesting socket
-     - New flags might be added later
-   - New fields might be added later
-
-"reserve" [timeout in seconds]
- - Start a reserve login screen. If nobody logs in within the specified amount
-   of time (one minute by default), the display is removed again. When the
-   session on the display exits, the display is removed, too.
- - Permitted only on sockets of local displays and the global socket.
-
-"activate" (vt|display)
- - Switch to a particular VT (virtual terminal). The VT may be specified
-   either directly (e.g., vt3) or by a display using it (e.g., :2).
- - Permitted only on sockets of local displays and the global socket.
-
-"listbootoptions"
- - List available boot options.
- => "ok" list default current
-    default and current are indices into the list and are -1 if unset or
-    undeterminable.
-
-"shutdown" ("reboot"|"halt") ["="bootchoice] \
-  ("ask"|"trynow"|"forcenow"|"schedule"|\
-   start ("-1"|end ("force"|"forcemy"|"cancel")))
- - Request a system shutdown, either a reboot or a halt/poweroff.
- - An OS choice for the next boot may be specified from the list returned by
-   "listbootoptions".
- - Shutdowns requested from per-display sockets are executed when the current
-   session on that display exits. Such a request may pop up a dialog asking
-   for confirmation and/or authentication.
- - start is the time for which the shutdown is scheduled. If it starts with
-   a plus-sign, the current time is added. Zero means immediately.
- - end is the latest time at which the shutdown should be performed if active
-   sessions are still running. If it starts with a plus-sign, the start time
-   is added. Minus one means wait infinitely. If end is through and active
-   sessions are still running, KDM can do one of the following:
-   * "cancel" - give up the shutdown.
-   * "force" - shut down nonetheless.
-   * "forcemy" - shut down nonetheless if all active sessions belong to the
-                 requesting user. Only for per-display sockets.
- - start and end are specified in seconds since the UNIX epoch.
- - "trynow" is a synonym for "0 0 cancel", "forcenow" for "0 0 force" and
-   "schedule" for "0 -1".
- - "ask" attempts an immediate shutdown and interacts with the user if active
-    sessions are still running. Only for per-display sockets.
-
-"shutdown" "cancel" ["local"|"global"]
- - Cancel a scheduled shutdown. The global socket always cancels the currently
-   pending shutdown, while per-display sockets default to cancelling their
-   queued request.
-
-"shutdown" "status"
- - Return a list with information about shutdowns.
-   The entries are comma-separated tuples of:
-   - ("global"|"local") - pending vs. queued shutdown. A local entry can be
-     returned only by a per-display socket.
-   - ("halt"|"reboot")
-   - start
-   - end
-   - ("ask"|"force"|"forcemy"|"cancel")
-   - Numeric user ID of the requesting user, -1 for the global socket.
-   - The next boot OS choice or "-" for none.
-   - New fields might be added later.
- 
-There are two ways of using the sockets:
-- Connecting them directly. FifoDir is exported as $DM_CONTROL; the name
-  of per-display sockets can be derived from $DISPLAY.
-- By using the kdmctl command (e.g., from within a shell script).
-  Try "kdmctl -h" to find out more.
-
-Here is an example bash script "reboot into FreeBSD":
-
-if kdmctl | grep -q shutdown; then
-  IFS=$'\t'
-  set -- `kdmctl listbootoptions`
-  if [ "$1" = ok ]; then
-    fbsd=$(echo "$2" | tr ' ' '\n' | sed -ne 's,\\s, ,g;/freebsd/I{p;q}')
-    if [ -n "$fbsd" ]; then
-      kdmctl shutdown reboot "=$fbsd" ask > /dev/null
-    else
-      echo "FreeBSD boot unavailable."
-    fi
-  else
-    echo "Boot options unavailable."
-  fi
-else
-  echo "Cannot reboot system."
-fi
-
-
 "It doesn't work!!"
 -------------------
 
@@ -342,18 +130,18 @@ KDM accepts two command line options related to logging:
     2 (0x2) - config reader debugging.
     4 (0x4) - greeter debugging.
     8 (0x8) - IPC debugging. This logs _all_ communication between the
-	      core, the config reader and the greeter - including the
-	      passwords you type, so edit the log before showing it to
-	      somebody.
-	      This attempts to synchronize the processes to interleave the
-	      log messages optimally, but will probably fail unless you use
-	      -debug 0x80 as well.
+              core, the config reader and the greeter - including the
+              passwords you type, so edit the log before showing it to
+              somebody.
+              This attempts to synchronize the processes to interleave the
+              log messages optimally, but will probably fail unless you use
+              -debug 0x80 as well.
     16 (0x10) - wait after forking session sub-daemon.
     32 (0x20) - wait after starting config reader.
     64 (0x40) - wait after starting greeter.
-	The wait options are only useful if you need to attach a debugger
-	to a process, but it crashes before you are able to do so without
-	the delay. See below.
+        The wait options are only useful if you need to attach a debugger
+        to a process, but it crashes before you are able to do so without
+        the delay. See below.
     128 (0x80) - don't use syslog for internally generated messages.
     256 (0x100) - core Xauth debugging.
     1024 (0x400) - run config reader and greeter through valgrind.
@@ -375,12 +163,14 @@ KDM accepts two command line options related to logging:
     probable on modern systems), the "auth" and "authpriv" syslog facilities
     are interesting, too.
 
+Before reproducing the problem for log submission, truncate the old logs -
+I'm really not interested in a month's worth of your system's history.
 Send me all the logs together with a detailed description of what you did
 and what happened. If your problem is related to a specific configuration,
 you should also attach a tar.gz archive of your KDM config directory.
 
 If I request a backtrace from you and KDM didn't create one yet via the
-usual drkonqi procedure, you'll have to do that yourself. The keyphrase
+usual DrKonqi procedure, you'll need to do that yourself. The keyphrase
 is "attaching gdb". How exactly this is done depends on the part that
 crashes:
 - master daemon. Actually you should never need to attach to it, as
@@ -394,7 +184,7 @@ crashes:
   (gdb) cont
   If the subdaemon crashes before you can attach, add 16 to the debug flags
   when you start KDM.
-- config reader. You will have to add 32 to the debug flags almost certainly.
+- config reader. You will need to add 32 to the debug flags almost certainly.
   The PPID will be the master daemon as well.
   # gdb kdm_config $(pidof kdm_config)
   (gdb) cont
@@ -402,25 +192,26 @@ crashes:
   # gdb kdm_greet $(pidof kdm_greet)
   (gdb) cont
   The simplification with "pidof" works only if you have only one display,
-  otherwise you have to find the PID manually (by using ps -fx).
+  otherwise you need to find the PID manually (by using ps -fx).
 Once you got gdb attached to the offending process, do whatever is needed
 to make it crash (probably nothing, if you had to use a delay parameter).
 Once it crashed, gdb will tell you a signal name, like SIGSEGV - that's the
-first interesting part for me. Then you have to create the actual backtrace:
-  (gdb) bt
-The output of this command is interesting for me.
+first interesting part for me. Then you need to create the actual backtrace:
+  (gdb) where full
+The output of this command is interesting for me. If it fails, use "bt"
+instead.
 I might request a backtrace even if nothing crashes, but instead hangs. In
 this case don't use "cont" after attaching, but use "bt" right away. If the
 process is already running, interrupt it with ctrl-c.
-For obvious reasons you have to run gdb on a different virtual terminal than
+For obvious reasons you need to run gdb on a different virtual terminal than
 the X server. To get there, press alt-ctrl-f1 and log in as root. To
-switch to the X server's vt, press alt-ctrl-f7 (the exact function key may
+switch to the X server's VT, press alt-ctrl-f7 (the exact function key may
 be different on your system). You may also use a remote login from a
 second machine. In any case it is advantageous to have mouse support on the
 debugging console for copying the backtrace.
 Note that a backtrace is usually _much_ more useful if the binary contains
-debugging info, so you should install from source with the --enable-debug
-configure flag if at all possible.
+debugging info, so you should install from source with the
+-DCMAKE_BUILD_TYPE:STRING=debugfull cmake flag if at all possible.
 
 
 Random rambings and license information
@@ -431,7 +222,7 @@ Version 0.1 of KDM is copyright
 All later versions copyright:
 	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
 Since version 0.90 (KDE 2.1) copyright:
-	(C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
+	(C) 2000-2007 Oswald Buddenhagen <ossi@kde.org>
 
 The files in the backend directory are licensed under the X licence
 (see http://www.x.org/Downloads_terms.html for more info).
