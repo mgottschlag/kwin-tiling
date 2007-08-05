@@ -79,7 +79,6 @@ void Clock::constraintsUpdated()
     if (formFactor() == Plasma::Planar ||
         formFactor() == Plasma::MediaCenter) {
         m_size = m_theme->size();
-        update();
     } else {
         QFontMetrics fm(QApplication::font());
         m_size = QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5);
@@ -161,7 +160,6 @@ void Clock::configAccepted()
 
     dataEngine("time")->connectSource(m_timezone, this);
     constraintsUpdated();
-    cg.config()->sync();
 }
 
 Clock::~Clock()
