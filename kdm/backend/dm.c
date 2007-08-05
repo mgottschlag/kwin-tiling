@@ -851,9 +851,9 @@ reapChildren( void )
 		if ((d = findDisplayByPid( pid ))) {
 			d->pid = -1;
 			unregisterInput( d->pipe.fd.r );
-			gClosen (&d->pipe);
+			gClosen( &d->pipe );
 			unregisterInput( d->gpipe.fd.r );
-			gClosen (&d->gpipe);
+			gClosen( &d->gpipe );
 			closeCtrl( d );
 			switch (wcFromWait( status )) {
 #ifdef XDMCP

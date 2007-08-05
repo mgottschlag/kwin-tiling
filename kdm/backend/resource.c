@@ -63,7 +63,7 @@ closeGetter()
 {
 	if (getter.pid) {
 		gSet( &cnftalk );
-		(void)gClose (&getter, 0, 0);
+		(void)gClose( &getter, 0, 0 );
 		debug( "getter now closed\n" );
 	}
 }

@@ -55,7 +55,7 @@ protected:
 	virtual void statusChanged( bool descend );
 
 	virtual void doPlugActions( bool plug );
-	
+
 	struct LabelStruct {
 		QString text;
 		bool isTimer;
@@ -80,7 +80,7 @@ private:
 	QString lookupText( const QString &t );
 
 	void setCText( const QString &txt );
-	
+
 	QString cText, pText;
 	int pAccelOff;
 

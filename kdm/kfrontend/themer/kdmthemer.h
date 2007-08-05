@@ -55,7 +55,7 @@ public:
 	~KdmThemer();
 
 	bool isOK() { return rootItem != 0; }
-	
+
 	const QString &baseDir() const { return basedir; }
 
 	KdmItem *findNode( const QString & ) const;

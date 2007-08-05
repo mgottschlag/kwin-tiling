@@ -58,7 +58,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode,
 	QString filename = _filename;
 	if (!::access( QFile::encodeName( filename + "/KdmGreeterTheme.desktop" ), R_OK )) {
 		KConfig _cfg( filename + "/KdmGreeterTheme.desktop", KConfig::OnlyLocal );
-		KConfigGroup cfg(&_cfg, "KdmGreeterTheme" );
+		KConfigGroup cfg( &_cfg, "KdmGreeterTheme" );
 		filename += '/' + cfg.readEntry( "Greeter" );
 	}
 	QFile opmlFile( filename );
@@ -233,7 +233,7 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 
 				showType = sel.attribute( "type" );
 				if (!showType.isNull()) {
-					if (showType[0] == '!' ) {
+					if (showType[0] == '!') {
 						showType.remove( 0, 1 );
 						showTypeInvert = true;
 					}

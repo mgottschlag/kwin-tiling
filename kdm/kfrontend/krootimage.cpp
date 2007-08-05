@@ -97,17 +97,19 @@ MyApplication::slotTimeout()
 int
 main( int argc, char *argv[] )
 {
-	KCmdLineArgs::init( argc, argv, "krootimage", "kdesktop", ki18n( "KRootImage" ), version , ki18n(description));
+	KCmdLineArgs::init( argc, argv, "krootimage", "kdesktop",
+	                    ki18n("KRootImage"), version, ki18n(description) );
 
 	KCmdLineOptions options;
-	options.add("+config", ki18n( "Name of the configuration file" ));
+	options.add( "+config", ki18n("Name of the configuration file") );
 	KCmdLineArgs::addCmdLineOptions( options );
 
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 	if (!args->count())
 		args->usage();
-	KComponentData inst(KCmdLineArgs::aboutData());
-	MyApplication app( args->arg( 0 ).toLocal8Bit(), KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv() );
+	KComponentData inst( KCmdLineArgs::aboutData() );
+	MyApplication app( args->arg( 0 ).toLocal8Bit(),
+	                   KCmdLineArgs::qtArgc(), KCmdLineArgs::qtArgv() );
 	args->clear();
 
 	app.exec();

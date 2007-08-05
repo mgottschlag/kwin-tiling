@@ -356,7 +356,7 @@ KdmItem::ensureHintedSize( QSize &hintedSize )
 		hintedSize = sizeHint();
 		debug() << "hintedSize " << hintedSize << endl;
 	}
-	return hintedSize;	
+	return hintedSize;
 }
 
 const QSize &
@@ -369,7 +369,7 @@ KdmItem::ensureBoxHint( QSize &boxHint, QStack<QSize> &parentSizes, QSize &hinte
 			boxHint = boxManager->sizeHint( parentSizes );
 		debug() << "boxHint " << boxHint << endl;
 	}
-	return boxHint;	
+	return boxHint;
 }
 
 static const QSize &

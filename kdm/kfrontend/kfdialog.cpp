@@ -62,7 +62,7 @@ FDialog::resizeEvent( QResizeEvent *e )
 }
 
 static void
-fitInto(const QRect &scr, QRect &grt)
+fitInto( const QRect &scr, QRect &grt )
 {
 	int di;
 	if ((di = scr.right() - grt.right()) < 0)
@@ -139,18 +139,18 @@ FDialog::mouseMoveEvent( QMouseEvent *event )
 static void
 fakeFocusIn( WId window )
 {
-    // We have keyboard grab, so this application will
-    // get keyboard events even without having focus.
-    // Fake FocusIn to make Qt realize it has the active
-    // window, so that it will correctly show cursor in the dialog.
-    XEvent ev;
-    memset( &ev, 0, sizeof(ev) );
-    ev.xfocus.display = QX11Info::display();
-    ev.xfocus.type = FocusIn;
-    ev.xfocus.window = window;
-    ev.xfocus.mode = NotifyNormal;
-    ev.xfocus.detail = NotifyAncestor;
-    XSendEvent( QX11Info::display(), window, FALSE, NoEventMask, &ev ); // krazy:exclude=captruefalse
+	// We have keyboard grab, so this application will
+	// get keyboard events even without having focus.
+	// Fake FocusIn to make Qt realize it has the active
+	// window, so that it will correctly show cursor in the dialog.
+	XEvent ev;
+	memset( &ev, 0, sizeof(ev) );
+	ev.xfocus.display = QX11Info::display();
+	ev.xfocus.type = FocusIn;
+	ev.xfocus.window = window;
+	ev.xfocus.mode = NotifyNormal;
+	ev.xfocus.detail = NotifyAncestor;
+	XSendEvent( QX11Info::display(), window, FALSE, NoEventMask, &ev ); // krazy:exclude=captruefalse
 }
 
 int

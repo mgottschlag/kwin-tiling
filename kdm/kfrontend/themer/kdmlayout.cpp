@@ -237,7 +237,7 @@ KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 		else
 			bounds.rwidth() = sum.width();
 	}
-	
+
 	// Add padding and items spacing
 	int totspc = box.spacing * (ccnt - 1);
 	if (box.isVertical)
@@ -247,7 +247,7 @@ KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 	bounds += QSize( 2 * box.xpadding, 2 * box.ypadding );
 
 	leave() << "bounds " << bounds << endl;
-	
+
 	// Make hint at least equal to minimum size (if set)
 	return bounds.expandedTo( QSize( box.minwidth, box.minheight ) );
 }

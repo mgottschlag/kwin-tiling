@@ -62,7 +62,7 @@ sigAlarm( int )
 
 }
 
-GreeterApp::GreeterApp(int argc, char **argv) :
+GreeterApp::GreeterApp( int argc, char **argv ) :
 	inherited( argc, argv )
 {
 	pingInterval = _isLocal ? 0 : _pingInterval;

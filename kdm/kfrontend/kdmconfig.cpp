@@ -153,7 +153,7 @@ void initQAppConfig( void )
 {
 	CONF_GREET_INIT_QAPP
 
-	KConfigGroup cfg(KGlobal::config(), "General");
+	KConfigGroup cfg( KGlobal::config(), "General" );
 	cfg.writeEntry( "nopaletteChange", true );
 	cfg.writeEntry( "font", *_normalFont );
 	if (!_GUIStyle.isEmpty())

@@ -421,7 +421,7 @@ gFork( GPipe *pajp, const char *pname, char *cname,
 		close( ipipe[1] );
 #endif
 	}
-	switch ( pid ) {
+	switch (pid) {
 	case -1:
 		closeNclearCloseOnFork( opipe[1] );
 #ifndef SINGLE_PIPE

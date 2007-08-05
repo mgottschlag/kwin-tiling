@@ -92,7 +92,7 @@ getGrub( char ***opts, int *def, int *cur )
 	if (!(f = fopen( GRUB_MENU, "r" )))
 		return errno == ENOENT ? BO_NOMAN : BO_IO;
 	while ((len = fGets( line, sizeof(line), f )) != -1) {
-		for (linp = line; isspace(*linp); linp++, len--);
+		for (linp = line; isspace( *linp ); linp++, len--);
 		if ((ptr = match( linp, &len, "default", 7 )))
 			*def = atoi( ptr );
 		else if ((ptr = match( linp, &len, "title", 5 ))) {

@@ -135,11 +135,11 @@ parseFont( const QString &is, FontType &ft )
 			else if (ss == "ultra-expanded")
 				ft.font.setStretch( QFont::UltraExpanded );
 			else if (ss == "normal" || // no-op
-					ss == "small-caps" || // this and following ignored
-					ss == "not-rotated" || ss == "south" || ss == "upside-down" ||
-					ss == "north" ||
-					ss == "rotated-left" || ss == "east" ||
-					ss == "rotated-right" || ss == "west")
+			         ss == "small-caps" || // this and following ignored
+			         ss == "not-rotated" || ss == "south" || ss == "upside-down" ||
+			         ss == "north" ||
+			         ss == "rotated-left" || ss == "east" ||
+			         ss == "rotated-right" || ss == "west")
 			{
 			} else
 				break;

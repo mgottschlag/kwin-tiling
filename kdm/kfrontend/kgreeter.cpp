@@ -99,7 +99,7 @@ class UserListView : public QListWidget {
 		case Qt::Key_Enter:
 		case Qt::Key_Return:
 			if (currentIndex().isValid())
-				emit activated(currentIndex());
+				emit activated( currentIndex() );
 			event->accept();
 			break;
 		default:
@@ -140,7 +140,8 @@ KGreeter::KGreeter( bool framed )
   , prevValid( true )
   , needLoad( false )
 {
-	stsGroup = new KConfigGroup(KSharedConfig::openConfig(_stsFile), "PrevUser");
+	stsGroup = new KConfigGroup( KSharedConfig::openConfig( _stsFile ),
+	                             "PrevUser" );
 
 	if (_userList) {
 		userView = new UserListView( this );
@@ -343,13 +344,15 @@ KGreeter::insertSessions()
 		foreach (QString ent, QDir( *dit ).entryList())
 			if (ent.endsWith( ".desktop" )) {
 				KConfigGroup dsk(
-				    KSharedConfig::openConfig(QString( *dit ).append( '/' ).append( ent )),
-				    "Desktop Entry");
+				    KSharedConfig::openConfig(
+				        QString( *dit ).append( '/' ).append( ent ) ),
+				    "Desktop Entry" );
 				putSession( ent.left( ent.length() - 8 ),
 				            dsk.readEntry( "Name" ),
 				            (dsk.readEntry( "Hidden", false ) ||
 				             (dsk.hasKey( "TryExec" ) &&
-				              KStandardDirs::findExe( dsk.readEntry( "TryExec" ) ).isEmpty())),
+				              KStandardDirs::findExe(
+				                  dsk.readEntry( "TryExec" ) ).isEmpty())),
 				            dsk.readEntry( "Exec" ).toLatin1() );
 			}
 	putSession( "default", i18n("Default"), false, "default" );
@@ -544,10 +547,11 @@ KGreeter::verifyClear()
 void
 KGreeter::verifyOk()
 {
-	if (_preselUser == PRESEL_PREV && verify->entityPresettable()) stsGroup->writeEntry( verify->entitiesLocal() ?
-		                       dName :
-		                       dName + '_' + verify->pluginName(),
-		                     verify->getEntity() );
+	if (_preselUser == PRESEL_PREV && verify->entityPresettable())
+		stsGroup->writeEntry( verify->entitiesLocal() ?
+		                         dName :
+		                         dName + '_' + verify->pluginName(),
+		                      verify->getEntity() );
 	if (curSel) {
 		gSendInt( G_PutDmrc );
 		gSendStr( "Session" );
@@ -894,8 +898,8 @@ void
 KThemedGreeter::verifyFailed()
 {
 //	goButton->setEnabled( false );
-        if (userView)
-		userView->setEnabled(false);
+	if (userView)
+		userView->setEnabled( false );
 	inherited::verifyFailed();
 }
 

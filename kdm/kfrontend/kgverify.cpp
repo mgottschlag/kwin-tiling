@@ -157,7 +157,7 @@ KGVerify::pluginName() const
 }
 
 static void
-setTabOrder( QWidget *&pred, const QObjectList &list)
+setTabOrder( QWidget *&pred, const QObjectList &list )
 {
 	foreach (QObject *o, list)
 		if (QWidget *w = qobject_cast<QWidget *>(o)) {
@@ -449,7 +449,7 @@ KGVerify::slotActivity()
 
 void // private static
 KGVerify::vrfMsgBox( QWidget *parent, const QString &user,
-                   QMessageBox::Icon type, const QString &mesg )
+                     QMessageBox::Icon type, const QString &mesg )
 {
 	FDialog::box( parent, type, user.isEmpty() ?
 	              mesg : i18n("Logging in %1 ...\n\n", user ) + mesg );
@@ -898,7 +898,7 @@ KGVerify::init( const QStringList &plugins )
 		QString path = KLibLoader::self()->findLibrary(
 			(pg[0] == '/' ? pg : "kgreet_" + pg ).toLatin1() );
 		if (path.isEmpty()) {
-                    logError( "GreeterPlugin %s does not exist\n", qPrintable( pg ) );
+			logError( "GreeterPlugin %s does not exist\n", qPrintable( pg ) );
 			continue;
 		}
 		uint i, np = greetPlugins.count();
@@ -906,11 +906,12 @@ KGVerify::init( const QStringList &plugins )
 			if (greetPlugins[i].library->fileName() == path)
 				goto next;
 		if (!(plugin.library = KLibLoader::self()->library( path.toLatin1() ))) {
-                    logError( "Cannot load GreeterPlugin %s (%s)\n", qPrintable( pg ), qPrintable( path ) );
+			logError( "Cannot load GreeterPlugin %s (%s)\n",
+			          qPrintable( pg ), qPrintable( path ) );
 			continue;
 		}
 		plugin.info = (kgreeterplugin_info*)plugin.library->resolveSymbol( "kgreeterplugin_info" );
-                if (!plugin.info) {
+		if (!plugin.info) {
 			logError( "GreeterPlugin %s (%s) is no valid greet widget plugin\n",
 			          qPrintable( pg ), qPrintable( path ) );
 			plugin.library->unload();
@@ -1033,7 +1034,7 @@ KGThemedVerify::KGThemedVerify( KGVerifyHandler *_handler,
                                 KGreeterPlugin::Function _func,
                                 KGreeterPlugin::Context _ctx )
 	: inherited( _handler, _parent, _predecessor, _fixedUser,
-	             _pluginList, _func, _ctx  )
+	             _pluginList, _func, _ctx )
 	, themer( _themer )
 {
 	updateLockStatus();

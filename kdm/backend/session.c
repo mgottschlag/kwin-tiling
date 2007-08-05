@@ -483,7 +483,7 @@ finishGreet()
 		gSendInt( V_OK );
 		if ((ret = closeGreeter( FALSE )) != EX_NORMAL) {
 			logError( "Abnormal greeter termination, code %d, sig %d\n",
-					wcCode( ret ), wcSig( ret ) );
+			          wcCode( ret ), wcSig( ret ) );
 			sessionExit( EX_RESERVER_DPY );
 		}
 	}

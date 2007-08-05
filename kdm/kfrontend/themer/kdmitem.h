@@ -197,7 +197,7 @@ protected:
 	virtual void statusChanged( bool descend );
 
 	virtual void doPlugActions( bool plug );
-	
+
 	/**
 	 * emits needUpdate( int, int, int, int ) with the full widget area.
 	 */
@@ -226,10 +226,9 @@ protected:
 
 	const QSize &ensureHintedSize( QSize & );
 	const QSize &ensureBoxHint( QSize &, QStack<QSize> &, QSize & );
-	void calcSize(
-		const DataPair &,
-		QStack<QSize> &, QSize &, QSize &,
-		QSize & );
+	void calcSize( const DataPair &,
+	               QStack<QSize> &, QSize &, QSize &,
+	               QSize & );
 
 	StyleType style;
 
