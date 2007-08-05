@@ -57,6 +57,7 @@ class Clock : public Plasma::Applet
         void setPath(const QString&);
         QSizeF contentSize() const;
         void constraintsUpdated();
+        QPainterPath shape() const;
 
     public slots:
         void updated(const QString &name, const Plasma::DataEngine::Data &data);

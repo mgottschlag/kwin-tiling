@@ -28,6 +28,7 @@
 #include <QMatrix>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <QPixmap>
 #include <QStyleOptionGraphicsItem>
 #include <QVBoxLayout>
@@ -54,7 +55,7 @@ Clock::Clock(QObject *parent, const QStringList &args)
     KConfigGroup cg = config();
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);
-    m_pixelSize = cg.readEntry("size", 250);
+    m_pixelSize = cg.readEntry("size", 125);
     m_timezone = cg.readEntry("timezone", "Local");
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
@@ -83,6 +84,15 @@ void Clock::constraintsUpdated()
         QFontMetrics fm(QApplication::font());
         m_size = QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5);
     }
+}
+
+QPainterPath Clock::shape() const
+{
+    QPainterPath path;
+    // we adjust by 2px all around to allow for smoothing the jaggies
+    // if the ellipse is too small, we'll get a nastily jagged edge around the clock
+    path.addEllipse(boundingRect().adjusted(-2, -2, 2, 2));
+    return path;
 }
 
 void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
@@ -130,7 +140,8 @@ void Clock::configAccepted()
     dataEngine("time")->setProperty("reportSeconds", m_showSecondHand);
     QGraphicsItem::update();
     cg.writeEntry("size", ui.spinSize->value());
-    m_theme->resize(ui.spinSize->value(), ui.spinSize->value());
+    m_size = QSize(ui.spinSize->value(), ui.spinSize->value());
+    m_theme->resize(m_size);
     QStringList tzs = ui.timeZones->selection();
     /*
     if (tzs.count() > 0) {
