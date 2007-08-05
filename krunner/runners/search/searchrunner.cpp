@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2006 Aaron Seigo <aseigo@kde.org>
+ *                 2007 Jos van den Oever <jos@vandenoever.info>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -18,12 +19,17 @@
 
 #include "searchrunner.h"
 
-#include <QWidget>
 #include <QAction>
-
 #include <KActionCollection>
 #include <KIcon>
 #include <KLocale>
+#include <KRun>
+
+SearchAction::SearchAction(const QString& f, const QString& iconname,
+        const QString& mt, QObject* parent)
+    : QAction(KIcon(iconname), f, parent), file(f), mimetype(mt)
+{
+}
 
 SearchRunner::SearchRunner( QObject* parent, const QStringList& args )
     : Plasma::AbstractRunner( parent )
@@ -38,11 +44,10 @@ SearchRunner::~SearchRunner()
 
 QAction* SearchRunner::accepts( const QString& term )
 {
-    Q_UNUSED( term )
-
-    // this should probably always turn down the term
-    // and only act on actions provided via fillMatches
-    return 0;
+    // return an action that opens a search GUI with this term
+    QAction* action = new QAction(i18n("search for %1", term), this);
+    connect(action, SIGNAL("triggered"), this, SLOT("launchSearch"));
+    return action;
 }
 
 bool SearchRunner::exec(QAction* action, const QString& command)
@@ -52,26 +57,57 @@ bool SearchRunner::exec(QAction* action, const QString& command)
     return true;
 }
 
+QString formatUri(const QString& uri, const QString& term) {
+    Q_UNUSED( term );
+    QString highlighted;
+    QString path;
+    int l = uri.lastIndexOf("/");
+    if (l >= 0) {
+        highlighted = uri.mid(l+1);
+        path = uri.left(l);
+    } else {
+        highlighted = uri;
+    }
+    // it would be nice to be able to make the matching part of the string
+    // stand out
+    //highlighted.replace(term, "<b>"+term+"</b>");
+    highlighted = highlighted + " ("+path+")";
+    return highlighted;
+}
+
 void SearchRunner::fillMatches( KActionCollection* matches,
                                 const QString& term,
                                 int max, int offset )
 {
-    Q_UNUSED( term )
-    Q_UNUSED( max )
-    Q_UNUSED( offset )
 
-    //TODO: actually ask strigi for results. for now, we just return a static set
-    //      in reality, we probably want to make this async and use matchesUpdated
-    QAction* action = matches->addAction( i18n( "Konsole" ) );
-    action->setIcon( KIcon( "konsole" ) );
-    action->setText( i18n( "Konsole" ) );
-    connect( action, SIGNAL(triggered()), SLOT(launchKonsole()) );
+    //TODO: in reality, we probably want to make this async and use matchesUpdated
+
+    QString query = "system.file_name:'" + term + "*'";
+    QList<StrigiHit> hits = strigiclient.getHits(query, max, offset);
+    foreach(const StrigiHit& hit, hits) {
+        QString iconname = hit.mimetype;
+        iconname.replace('/', '-');
+        QString formatted  = formatUri(hit.uri, term);
+        QAction* action = new SearchAction(hit.uri, iconname, hit.mimetype,
+            this);
+        connect(action, SIGNAL(triggered()), this, SLOT(openFile()));
+        matches->addAction(formatted, action);
+    }
+}
+void SearchRunner::launchSearch()
+{
+    // TODO this does not work yet and it be better to open a nicer search
+    // client e.g. kerry or strigi://
+    KRun::runCommand("strigiclient", NULL);
 }
 
-#include <KRun>
-void SearchRunner::launchKonsole()
+void SearchRunner::openFile()
 {
-    KRun::runCommand("konsole",NULL);
+    SearchAction* action = qobject_cast<SearchAction*>(sender());
+    qDebug() << "openFile " << action;
+    if (action) {
+        KRun::runUrl(action->file, action->mimetype, NULL);
+    }
 }
 
 #include "searchrunner.moc"

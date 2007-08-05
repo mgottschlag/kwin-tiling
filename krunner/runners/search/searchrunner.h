@@ -22,6 +22,8 @@
 #include <KGenericFactory>
 
 #include <plasma/abstractrunner.h>
+#include <strigi/qtdbus/strigiclient.h>
+#include <QtGui/QAction>
 
 /**
  * This class runs the entered text through a search engine and returns the set
@@ -30,6 +32,10 @@
 class SearchRunner : public Plasma::AbstractRunner
 {
     Q_OBJECT
+
+    private:
+        StrigiClient strigiclient;
+        QString lastTerm;
 
     public:
         SearchRunner( QObject* parent, const QStringList& args );
@@ -44,8 +50,20 @@ class SearchRunner : public Plasma::AbstractRunner
                                   int max, int offset );
 
     protected slots:
-        // this is just a dummy slot for testing purposes
-        void launchKonsole();
+        // open the search gui
+        void launchSearch();
+        // open the file
+        void openFile();
+};
+
+class SearchAction : public QAction
+{
+    Q_OBJECT
+public:
+    const QString file;
+    const QString mimetype;
+    SearchAction(const QString& file, const QString& iconname,
+        const QString& mimetype, QObject* parent);
 };
 
 K_EXPORT_KRUNNER_RUNNER( searchrunner, SearchRunner )
