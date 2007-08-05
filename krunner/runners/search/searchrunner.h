@@ -63,7 +63,7 @@ public:
     const QString file;
     const QString mimetype;
     SearchAction(const QString& file, const QString& iconname,
-        const QString& mimetype, QObject* parent);
+        const QString& mimetype, const QString& name, QObject* parent);
 };
 
 K_EXPORT_KRUNNER_RUNNER( searchrunner, SearchRunner )

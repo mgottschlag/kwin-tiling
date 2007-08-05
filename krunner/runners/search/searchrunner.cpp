@@ -26,8 +26,8 @@
 #include <KRun>
 
 SearchAction::SearchAction(const QString& f, const QString& iconname,
-        const QString& mt, QObject* parent)
-    : QAction(KIcon(iconname), f, parent), file(f), mimetype(mt)
+        const QString& mt, const QString& name, QObject* parent)
+    : QAction(KIcon(iconname), name, parent), file(f), mimetype(mt)
 {
 }
 
@@ -70,7 +70,7 @@ QString formatUri(const QString& uri, const QString& term) {
     }
     // it would be nice to be able to make the matching part of the string
     // stand out
-    //highlighted.replace(term, "<b>"+term+"</b>");
+    highlighted.replace(term, "<b>"+term+"</b>");
     highlighted = highlighted + " ("+path+")";
     return highlighted;
 }
@@ -89,7 +89,7 @@ void SearchRunner::fillMatches( KActionCollection* matches,
         iconname.replace('/', '-');
         QString formatted  = formatUri(hit.uri, term);
         QAction* action = new SearchAction(hit.uri, iconname, hit.mimetype,
-            this);
+            formatted, this);
         connect(action, SIGNAL(triggered()), this, SLOT(openFile()));
         matches->addAction(formatted, action);
     }
