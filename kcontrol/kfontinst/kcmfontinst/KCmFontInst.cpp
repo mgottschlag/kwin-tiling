@@ -332,7 +332,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsFontListView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFontListView->readConfig(cg);
 
-    itsAddFontControl=new CPushButton(KGuiItem(i18n("Add..."), "newfont",
+    itsAddFontControl=new CPushButton(KGuiItem(i18n("Add..."), "addfont",
                                                i18n("Install fonts")),
                                       itsFontsWidget);
 
