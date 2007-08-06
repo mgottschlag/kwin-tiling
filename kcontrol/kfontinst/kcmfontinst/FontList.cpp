@@ -737,7 +737,7 @@ QVariant CFontList::headerData(int section, Qt::Orientation orientation,
                 break;
             case Qt::DecorationRole:
                 if(COL_STATUS==section)
-                    return SmallIcon("enablefont");
+                    return SmallIcon("fontstatus");
                 break;
             case Qt::TextAlignmentRole:
                 return Qt::AlignLeft;
