@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005,2006,2007 by Siraj Razick                          *
+ *   Copyright 2005,2006,2007 by Siraj Razick                          *
  *   siraj@kdemail.net                                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
