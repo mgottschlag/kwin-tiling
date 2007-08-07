@@ -64,8 +64,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 #include "../../kwin/kwinbindings.cpp"
 #include "../../kicker/kicker/core/kickerbindings.cpp"
 #include "../../kicker/taskbar/taskbarbindings.cpp"
-#include "../../kdesktop/kdesktopbindings.cpp"
-#include "../../../workspace/klipper/klipperbindings.cpp"
+#include "../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 #undef KShortcuts
     KeyScheme = "Global Key Scheme";
