@@ -5,16 +5,9 @@
 #  SENSORS_INCLUDE_DIR - the SENSORS include directory
 #  SENSORS_LIBRARIES - The libraries needed to use SENSORS
 
-FIND_PATH(SENSORS_INCLUDE_DIR sensors/sensors.h
-   /usr/include
-   /usr/local/include
-)
+FIND_PATH(SENSORS_INCLUDE_DIR sensors/sensors.h)
 
-FIND_LIBRARY(SENSORS_LIBRARIES NAMES sensors
-   PATHS
-   /usr/lib
-   /usr/local/lib
-)
+FIND_LIBRARY(SENSORS_LIBRARIES NAMES sensors)
 
 
 if(SENSORS_INCLUDE_DIR AND SENSORS_LIBRARIES)
