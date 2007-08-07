@@ -19,6 +19,7 @@ Comment[fa]=وضعیت واسطهای شبکه را ردیابی کرده و ب�
 Comment[ja]=ネットワークインターフェースの状態を追跡し、ネットワークを使うアプリケーションに情報を提供します。
 Comment[nds]=Beluert den Tostand vun de Nettwarkkoppelsteden un gifft Programmen Bescheed, de dat Nettwark bruukt
 Comment[nl]=Volgt de status van netwerkinterfaces en levert notificatie aan programma's die het netwerk gebruiken.
+Comment[pa]=ਨੈੱਟਵਰਕ ਇੰਟਰਫੇਸ ਦੀ ਹਾਲਤ ਦੀ ਜਾਂਚ ਕਰਦਾ ਹੈ ਅਤੇ ਨੈੱਟਵਰਕ ਵਰਤਣ ਵਾਲੇ ਕਾਰਜਾਂ ਲਈ ਨੋਟੀਫਿਕੇਸ਼ਨ ਦਿੰਦਾ ਹੈ।
 Comment[pt]=Regista o estado das interfaces de rede e notifica as aplicações que necessitem da rede.
 Comment[pt_BR]=Regista o estado das interfaces de rede e notifica as aplicações que necessitem da rede.
 Comment[sv]=Följer status hos nätverksgränssnitt och tillhandahåller underrättelser till program som använder nätverket.
