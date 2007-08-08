@@ -105,6 +105,9 @@ KlipperAppletWidget::KlipperAppletWidget( QWidget* parent )
 // init() is called first, before Klipper ctor is called with ( parent, kconfig )
     : Klipper( ( init(), parent ), KSharedConfig::openConfig("klipperrc"))
 {
+    // register ourselves, so if klipper process is started,
+    // it will quit immediately (KUniqueApplication)
+	QDBusConnection::sessionBus().registerObject("/klipper/applet", this, QDBusConnection::ExportScriptableSlots);
 }
 
 // this needs to be called before Klipper ctor, because it performs already some
@@ -122,9 +125,6 @@ void KlipperAppletWidget::init()
 #warning " kde4 need to test it"	
 #endif	
     //kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
-    // register ourselves, so if klipper process is started,
-    // it will quit immediately (KUniqueApplication)
-	QDBusConnection::sessionBus().registerObject("/klipper/applet", this, QDBusConnection::ExportScriptableSlots);
 }
 
 KlipperAppletWidget::~KlipperAppletWidget()

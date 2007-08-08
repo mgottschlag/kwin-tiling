@@ -60,7 +60,7 @@ public:
     KlipperAppletWidget( QWidget* parent = NULL );
     virtual ~KlipperAppletWidget();
 private:
-    void init();
+    static void init();
 };
 
 #endif
