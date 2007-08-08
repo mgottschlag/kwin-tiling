@@ -36,6 +36,23 @@ class RootWidget : public QWidget
         RootWidget();
         ~RootWidget();
 
+        /**
+         * Sets this RootWidget as a desktop window if @p asDesktop is
+         * true or an ordinary window otherwise.
+         *
+         * Desktop windows are displayed beneath all other windows, have
+         * no window decoration and occupy the full size of the desktop.
+         *
+         * RootWidget instances are automatically set as desktop windows
+         * when they are created.  
+         */
+        void setAsDesktop(bool asDesktop);
+        /** 
+         * Returns true if this widget is currently a desktop window.
+         * See setAsDesktop()
+         */
+        bool isDesktop() const;
+
         DesktopView* desktop();
 
     protected slots:

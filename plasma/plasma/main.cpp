@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 {
     KAboutData aboutData("plasma", 0, ki18n("Plasma Workspace"),
                          version, ki18n(description), KAboutData::License_GPL,
-                         ki18n("(c) 2006, The KDE Team"));
+                         ki18n("Copyright 2006-7, The KDE Team"));
     aboutData.addAuthor(ki18n("Aaron J. Seigo"),
                         ki18n("Author and maintainer"),
                         "aseigo@kde.org");
@@ -41,6 +41,10 @@ int main(int argc, char **argv)
                         0, "http://en.wikipedia.org/wiki/John_Lions");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
+
+    KCmdLineOptions options;
+    options.add("nodesktop",ki18n("Starts plasma as an ordinary window rather than as the desktop."));
+    KCmdLineArgs::addCmdLineOptions(options);
 
     PlasmaApp app;
     return app.exec();

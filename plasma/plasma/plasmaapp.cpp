@@ -40,6 +40,7 @@
 #include "rootwidget.h"
 #include "desktopview.h"
 
+
 PlasmaApp* PlasmaApp::self()
 {
     return qobject_cast<PlasmaApp*>(kapp);
@@ -71,7 +72,15 @@ PlasmaApp::PlasmaApp()
         setCrashHandler();
     }
 
+    KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
+
     m_root = new RootWidget();
+
+    // change the root widget back to an ordinary window if --nodesktop
+    // was passed to Plasma
+    if ( !args->isSet("desktop") )
+        m_root->setAsDesktop(false);
+
     m_root->show();
     connect(this, SIGNAL(aboutToQuit()), corona(), SLOT(saveApplets()));
 

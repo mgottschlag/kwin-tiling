@@ -48,14 +48,11 @@
 #endif
 
 RootWidget::RootWidget()
-    : QWidget(0, Qt::FramelessWindowHint)
+    : QWidget(0)
 {
     setFocusPolicy( Qt::NoFocus );
-    setGeometry( QApplication::desktop()->geometry() );
-    lower();
 
-    KWindowSystem::setOnAllDesktops(winId(), true);
-    KWindowSystem::setType(winId(), NET::Desktop);
+    setAsDesktop(true);
 
     QVBoxLayout* rootLayout = new QVBoxLayout(this);
     rootLayout->setMargin(0);
@@ -68,11 +65,8 @@ RootWidget::RootWidget()
     corona->setFormFactor(Plasma::Planar);
     corona->setLocation(Plasma::Desktop);
     rootLayout->addWidget(m_desktop);
-    m_desktop->show();
 
-    connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize()));
     m_controlBox = new ControlBox(this);
-    m_controlBox->show();
 
     connect(m_controlBox, SIGNAL(zoomIn()), m_desktop, SLOT(zoomIn()));
     connect(m_controlBox, SIGNAL(zoomOut()), m_desktop, SLOT(zoomOut()));
@@ -105,6 +99,39 @@ RootWidget::RootWidget()
         kDebug() << "item " << item->name() << " in " <<  item->group();
     }
 #endif
+}
+
+void RootWidget::setAsDesktop(bool setAsDesktop)
+{
+    if ( setAsDesktop )
+    {
+        setWindowFlags( windowFlags() | Qt::FramelessWindowHint );
+
+        KWindowSystem::setOnAllDesktops(winId(), true);
+        KWindowSystem::setType(winId(), NET::Desktop);
+        lower();
+    
+        QRect desktopGeometry = QApplication::desktop()->geometry();
+
+        if ( geometry() != desktopGeometry )
+            setGeometry( desktopGeometry ); 
+    
+        connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize()));
+    }
+    else
+    {
+        setWindowFlags( windowFlags() & ~Qt::FramelessWindowHint );
+
+        KWindowSystem::setOnAllDesktops(winId(),false);
+        KWindowSystem::setType(winId() , NET::Normal); 
+    
+        disconnect(QApplication::desktop(),SIGNAL(resized(int)),this,SLOT(adjustSize()));
+    }
+}
+
+bool RootWidget::isDesktop() const
+{
+    return KWindowInfo(winId(),NET::WMWindowType).windowType(NET::Desktop);
 }
 
 RootWidget::~RootWidget()
