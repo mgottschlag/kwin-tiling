@@ -52,8 +52,6 @@ RootWidget::RootWidget()
 {
     setFocusPolicy( Qt::NoFocus );
 
-    setAsDesktop(true);
-
     QVBoxLayout* rootLayout = new QVBoxLayout(this);
     rootLayout->setMargin(0);
     rootLayout->setSpacing(0);
@@ -103,28 +101,26 @@ RootWidget::RootWidget()
 
 void RootWidget::setAsDesktop(bool setAsDesktop)
 {
-    if ( setAsDesktop )
-    {
-        setWindowFlags( windowFlags() | Qt::FramelessWindowHint );
+    if (setAsDesktop) {
+        setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 
         KWindowSystem::setOnAllDesktops(winId(), true);
         KWindowSystem::setType(winId(), NET::Desktop);
         lower();
-    
+
         QRect desktopGeometry = QApplication::desktop()->geometry();
 
-        if ( geometry() != desktopGeometry )
-            setGeometry( desktopGeometry ); 
-    
+        if (geometry() != desktopGeometry) {
+            setGeometry(desktopGeometry);
+        }
+
         connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize()));
-    }
-    else
-    {
-        setWindowFlags( windowFlags() & ~Qt::FramelessWindowHint );
+    } else {
+        setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
 
         KWindowSystem::setOnAllDesktops(winId(),false);
         KWindowSystem::setType(winId() , NET::Normal); 
-    
+
         disconnect(QApplication::desktop(),SIGNAL(resized(int)),this,SLOT(adjustSize()));
     }
 }
@@ -145,7 +141,7 @@ DesktopView* RootWidget::desktop()
 
 void RootWidget::adjustSize()
 {
-    setGeometry( QApplication::desktop()->geometry() );
+    setGeometry(QApplication::desktop()->geometry());
 }
 
 #include "rootwidget.moc"
