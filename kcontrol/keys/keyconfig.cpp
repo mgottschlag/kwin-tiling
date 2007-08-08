@@ -479,7 +479,6 @@ void KKeyModule::init()
 #include "../../kwin/kwinbindings.cpp"
 #include "../../kicker/kicker/core/kickerbindings.cpp"
 #include "../../kicker/taskbar/taskbarbindings.cpp"
-#include "../../kdesktop/kdesktopbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 #undef KShortcuts
 
