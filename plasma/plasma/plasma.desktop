@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=plasma
 X-DBUS-StartupType=wait
 Name=Plasma
+Name[ar]=بنما
 Name[be]=Плазма
 Name[bg]=Панама
 Name[csb]=Plazma

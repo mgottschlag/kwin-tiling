@@ -5,6 +5,7 @@ ServiceTypes=SolidBluetoothManager
 X-KDE-Library=solid_bluez
 InitialPreference=100
 Name=BlueZ
+Name[ar]=BlueFish
 Name[x-test]=xxBlueZxx
 Comment=Bluetooth management using the BlueZ stack
 Comment[be]=Кіраванне Bluetooth пры дапамозе стэка BlueZ

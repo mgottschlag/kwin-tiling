@@ -6,6 +6,7 @@ X-KDE-Library=solid_fakebluetooth
 InitialPreference=10
 Icon=system
 Name=Fake Bluetooth
+Name[ar]=أزرق غامق
 Name[be]=Падробка пад Bluetooth
 Name[csb]=Falszëwi Bluetooth
 Name[de]=Bluetooth (Dummy)

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Button
+Name[ar]=بوتان
 Name[be]=Кнопка
 Name[bg]=Бутон
 Name[de]=Knopf
@@ -18,6 +19,7 @@ Name[sv]=Knapp
 Name[uk]=Кнопка
 Name[zh_TW]=按鍵
 Comment=A launcher button
+Comment[ar]=تشغيل &Mutt
 Comment[be]=Кнопка-запускальнік
 Comment[bg]=Бутон "Старт"
 Comment[de]=Ein Start-Knopf

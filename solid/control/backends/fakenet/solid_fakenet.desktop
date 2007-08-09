@@ -6,6 +6,7 @@ X-KDE-Library=solid_fakenet
 InitialPreference=10
 Icon=system
 Name=Fake Net
+Name[ar]=Fish Net
 Name[be]=Падробка пад сетку
 Name[csb]=Falszëwô séc
 Name[de]=Netzwerk (Dummy)
