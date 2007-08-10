@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Fredrik H�lund <fredrik@kde.org>
+ * Copyright © 2003-2007 Fredrik Höglund <fredrik@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -16,113 +16,70 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#  include <config-workspace.h>
+#include <KConfig>
+#include <KLocale>
+#include <KAboutData>
+#include <KStandardDirs>
 
-#include <klocale.h>
-#include <kaboutdata.h>
-#include <kstandarddirs.h>
-#include <k3listview.h>
-#include <kconfig.h>
-#include <kglobalsettings.h>
-#include <kdialog.h>
-#include <kmessagebox.h>
-#include <kurlrequesterdialog.h>
-#include <kio/job.h>
-#include <kio/deletejob.h>
-#include <kio/netaccess.h>
-#include <ktar.h>
+#include <KGlobalSettings>
+#include <KToolInvocation>
+#include <KDialog>
+#include <KMessageBox>
+#include <KUrlRequesterDialog>
 
-#include <QLayout>
-#include <QDir>
-#include <QPixmap>
-#include <QImage>
-#include <QLabel>
+#include <KIO/Job>
+#include <KIO/DeleteJob>
+#include <KIO/NetAccess>
+#include <KTar>
 
-#include <QPainter>
-#include <QFileInfo>
+#include <QWidget>
 #include <QPushButton>
+#include <QDir>
 #include <QX11Info>
-
-#include <cstdlib> // for getenv()
 
 #include "themepage.h"
 #include "themepage.moc"
 
-#include "previewwidget.h"
+#include "thememodel.h"
+#include "itemdelegate.h"
+#include "sortproxymodel.h"
+#include "cursortheme.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xcursor/Xcursor.h>
-#include <kvbox.h>
-
-// Check for older version
-#if !defined(XCURSOR_LIB_MAJOR) && defined(XCURSOR_MAJOR)
-# define XCURSOR_LIB_MAJOR	XCURSOR_MAJOR
-# define XCURSOR_LIB_MINOR	XCURSOR_MINOR
-#endif
-
-namespace {
-	// Listview icon size
-	const int iconSize = 24;
-
-	// Listview columns
-	enum Columns { NameColumn = 0, DescColumn, /* hidden */ DirColumn };
-}
-
-struct ThemeInfo {
-	QString path;           // Path to the cursor theme
-	bool writable;          // Theme directory is writable
-};
 
 
-ThemePage::ThemePage( QWidget* parent )
-	: QWidget( parent ), selectedTheme( NULL ), currentTheme( NULL )
+
+ThemePage::ThemePage(QWidget *parent)
+    : QWidget(parent)
 {
-	QBoxLayout *layout = new QVBoxLayout( this );
-	layout->setMargin( KDialog::marginHint() );
-	layout->setSpacing( KDialog::spacingHint() );
+    setupUi(this);
 
-	new QLabel( i18n("Select the cursor theme you want to use (hover preview to test cursor):"), this );
+    model = new CursorThemeModel(this);
 
-	// Create the preview widget
-        KHBox* hbox = new KHBox(this);
-        layout->addWidget(hbox);
-	preview = new PreviewWidget( hbox );
+    proxy = new SortProxyModel(this);
+    proxy->setSourceModel(model);
+    proxy->setFilterCaseSensitivity(Qt::CaseSensitive);
+    proxy->sort(NameColumn, Qt::AscendingOrder);
 
-	// Create the theme list view
-	listview = new K3ListView( this );
-        layout->addWidget(listview);
-	listview->setFullWidth( true );
-	listview->setAllColumnsShowFocus( true );
-	listview->addColumn( i18n("Name") );
-	listview->addColumn( i18n("Description") );
+    int size = style()->pixelMetric(QStyle::PM_LargeIconSize);
 
-	connect( listview, SIGNAL(selectionChanged(Q3ListViewItem*)),
-			SLOT(selectionChanged(Q3ListViewItem*)) );
+    view->setModel(proxy);
+    view->setItemDelegate(new ItemDelegate(this));	
+    view->setIconSize(QSize(size, size));
 
-	themeDirs = getThemeBaseDirs();
-	insertThemes();
+    // Make sure we find out about selection changes
+    connect(view->selectionModel(),
+            SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
+            SLOT(currentChanged(const QModelIndex &, const QModelIndex &)));
 
-	hbox = new KHBox( this );
-        layout->addWidget(hbox);
-	hbox->setSpacing( KDialog::spacingHint() );
-	installButton = new QPushButton( i18n("Install New Theme..."), hbox );
-	removeButton = new QPushButton( i18n("Remove Theme"), hbox );
+    // Disable the install button if we can't install new themes to ~/.icons,
+    // or Xcursor isn't set up to look for cursor themes there.
+    if (!model->searchPaths().contains(QDir::homePath() + "/.icons") || !iconsIsWritable())
+        installButton->setEnabled(false);
 
-	connect( installButton, SIGNAL( clicked() ), SLOT( installClicked() ) );
-	connect( removeButton, SIGNAL( clicked() ), SLOT( removeClicked() ) );
-
-	// Disable the install button if ~/.icons isn't writable
-	QString path = QDir::homePath() + "/.icons";
-	QFileInfo icons = QFileInfo( path );
-
-	if ( ( icons.exists() && !icons.isWritable() ) ||
-		( !icons.exists() && !QFileInfo( QDir::homePath() ).isWritable() ) )
-		installButton->setEnabled( false );
-
-	if ( !themeDirs.contains( path ) )
-		installButton->setEnabled( false );
-
-	selectionChanged( listview->currentItem() );
+    connect(installButton, SIGNAL(clicked()), SLOT(installClicked()));
+    connect(removeButton,  SIGNAL(clicked()), SLOT(removeClicked()));
 }
 
 
@@ -131,51 +88,78 @@ ThemePage::~ThemePage()
 }
 
 
+bool ThemePage::iconsIsWritable() const
+{
+    const QFileInfo icons = QFileInfo(QDir::homePath() + "/.icons");
+    const QFileInfo home  = QFileInfo(QDir::homePath());
+
+    return ((icons.exists() && icons.isDir() && icons.isWritable()) ||
+            (!icons.exists() && home.isWritable()));
+}
+
+
+bool ThemePage::applyTheme(const CursorTheme *theme)
+{
+    Q_UNUSED(theme)
+    return false;
+}
+
+
 void ThemePage::save()
 {
-	if ( currentTheme == selectedTheme )
-		return;
+    if (appliedIndex == view->currentIndex())
+        return;
 
-	KConfig _c( "kcminputrc" );
-	KConfigGroup c(&_c, "Mouse" );
-	c.writeEntry( "cursorTheme", selectedTheme != "system" ? selectedTheme : QString() );
+    const CursorTheme *theme = proxy->theme(view->currentIndex());
 
-	KMessageBox::information( this, i18n("You have to restart KDE for these "
-				"changes to take effect."), i18n("Cursor Settings Changed"),
-				"CursorSettingsChanged" );
+    KConfig config("kcminputrc");
+    KConfigGroup c(&config, "Mouse");
+    c.writeEntry("cursorTheme", theme->name());
 
-	currentTheme = selectedTheme;
+    if (!applyTheme(theme))
+    {
+        KMessageBox::information(this,
+                                 i18n("You have to restart KDE for these changes to take effect."),
+                                 i18n("Cursor Settings Changed"), "CursorSettingsChanged");
+    }
+
+    appliedIndex = view->currentIndex();
 }
 
 
 void ThemePage::load()
 {
-	// Get the name of the theme libXcursor currently uses
-	const char *theme = XcursorGetTheme( x11Info().display() );
-	currentTheme = theme;
+    // Get the name of the theme libXcursor currently uses
+    QString currentTheme = XcursorGetTheme(x11Info().display());
 
-	// Get the name of the theme KDE is configured to use
-	KConfig _c( "kcminputrc" );
-	KConfigGroup c(&_c, "Mouse" );
-	currentTheme = c.readEntry( "cursorTheme", currentTheme );
-        if( currentTheme.isEmpty())
-            currentTheme = "system";
+    // Get the name of the theme KDE is configured to use
+    KConfig c("kcminputrc");
+    KConfigGroup cg(&c, "Mouse");
+    currentTheme = cg.readEntry("cursorTheme", currentTheme);
 
-	// Find the theme in the listview and select it
-	Q3ListViewItem *item = listview->findItem( currentTheme, DirColumn );
-        if( !item )
-                item = listview->findItem( "system", DirColumn );
-	selectedTheme = item->text( DirColumn );
-	listview->setSelected( item, true );
-	listview->ensureItemVisible( item );
+    // Find the theme in the listview and select it
+    if (!currentTheme.isEmpty())
+        appliedIndex = proxy->findIndex(currentTheme);
+    else
+        appliedIndex = proxy->defaultIndex();
 
-	// Update the preview widget as well
-	if ( preview )
-		preview->setTheme( selectedTheme );
+    selectRow(appliedIndex);
+    view->scrollTo(appliedIndex, QListView::PositionAtCenter);
 
-	// Disable the listview if we're in kiosk mode
-	if ( c.entryIsImmutable( "cursorTheme" ) )
-		listview->setEnabled( false );
+    // Update the preview widget as well
+    const CursorTheme *theme = proxy->theme(appliedIndex);
+    preview->setTheme(theme);
+
+    // Disable the listview and the buttons if we're in kiosk mode
+    if (cg.entryIsImmutable("cursorTheme"))
+    {
+        view->setEnabled(false);
+        installButton->setEnabled(false);
+        removeButton->setEnabled(false);
+    }
+
+    if (!theme->isWritable())
+        removeButton->setEnabled(false);
 }
 
 
@@ -184,451 +168,171 @@ void ThemePage::defaults()
 }
 
 
-void ThemePage::selectionChanged( Q3ListViewItem *item )
+void ThemePage::selectRow(int row) const
 {
-	if ( !item )
-	{
-		removeButton->setEnabled( false );
-		return;
-	}
+    // Create a selection that stretches across all columns
+    QModelIndex from = proxy->index(row, 0);
+    QModelIndex to   = proxy->index(row, model->columnCount() - 1);
+    QItemSelection selection(from, to);
 
-	selectedTheme = item->text( DirColumn );
+    view->selectionModel()->select(selection, QItemSelectionModel::Select);
+}
 
-	// Update the preview widget
-	if ( preview )
-		preview->setTheme( selectedTheme );
 
-	removeButton->setEnabled( themeInfo[ selectedTheme ] && themeInfo[ selectedTheme ]->writable );
+void ThemePage::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    Q_UNUSED(previous)
 
-	emit changed( currentTheme != selectedTheme );
+    if (current.isValid())
+    {
+        const CursorTheme *theme = proxy->theme(current);
+        preview->setTheme(theme);
+        removeButton->setEnabled(theme->isWritable());
+    } else
+        preview->setTheme(NULL);
+
+    emit changed(appliedIndex != current);
 }
 
 
 void ThemePage::installClicked()
 {
-	// Get the URL for the theme we're going to install
-	KUrl url = KUrlRequesterDialog::getUrl( QString(), this, i18n( "Drag or Type Theme URL" ) );
-	if ( url.isEmpty() )
-		return;
+    // Get the URL for the theme we're going to install
+    KUrl url = KUrlRequesterDialog::getUrl(QString(), this, i18n("Drag or Type Theme URL"));
 
-	QString tmpFile;
-	if ( !KIO::NetAccess::download( url, tmpFile, this ) ) {
-		QString text;
+    if (url.isEmpty())
+        return;
 
-		if ( url.isLocalFile() )
-			text = i18n( "Unable to find the cursor theme archive %1.",
-                                     url.prettyUrl() );
-		else
-			text = i18n( "Unable to download the cursor theme archive; "
-			             "please check that the address %1 is correct.",
-                                     url.prettyUrl() );
+    QString tempFile;
+    if (!KIO::NetAccess::download(url, tempFile, this))
+    {
+        QString text;
 
-		KMessageBox::sorry( this, text );
-		return;
-	}
+        if (url.isLocalFile())
+            text = i18n("Unable to find the cursor theme archive %1.",
+                        url.prettyUrl());
+        else
+            text = i18n("Unable to download the cursor theme archive; "
+                        "please check that the address %1 is correct.",
+                        url.prettyUrl());
 
-	if ( !installThemes( tmpFile ) )
-		KMessageBox::error( this, i18n( "The file %1 does not appear to be a valid "
-				"cursor theme archive.", url.fileName() ) );
+        KMessageBox::sorry(this, text);
+        return;
+    }
 
-	KIO::NetAccess::removeTempFile( tmpFile );
+    if (!installThemes(tempFile))
+        KMessageBox::error(this, i18n("The file %1 does not appear to be a valid "
+                                      "cursor theme archive.", url.fileName()));
+
+    KIO::NetAccess::removeTempFile(tempFile);
 }
 
 
 void ThemePage::removeClicked()
 {
-	QString question = i18n( "<qt>Are you sure you want to remove the "
-		"<strong>%1</strong> cursor theme?<br>"
-		"This will delete all the files installed by this theme.</qt>",
-		  listview->currentItem()->text( NameColumn ) );
+    // We don't have to check if the current index is valid, since
+    // the remove button will be disabled when there's no selection.
+    const CursorTheme *theme = model->theme(view->currentIndex());
 
-	// Get confirmation from the user
-	int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Confirmation" ), KStandardGuiItem::del() );
-	if ( answer != KMessageBox::Continue )
-		return;
+    // Don't let the user delete the currently configured theme
+    if (view->currentIndex() == appliedIndex) {
+        KMessageBox::sorry(this, i18n("<qt>You can't delete the theme you're currently "
+                "using.<br>You have to switch to another theme first.</qt>"));
+        return;
+    }
 
-	// Delete the theme from the harddrive
-	KUrl u( themeInfo[ selectedTheme ]->path );
-	KIO::del( u ); // async
+    // Get confirmation from the user
+    QString question = i18n("<qt>Are you sure you want to remove the "
+            "<i>%1</i> cursor theme?<br>"
+            "This will delete all the files installed by this theme.</qt>",
+            theme->title());
 
-	// Remove the theme from the listview and from the themeinfo dict
-	delete listview->findItem( selectedTheme, DirColumn );
-	themeInfo.remove( selectedTheme );
-	listview->setSelected( listview->currentItem(), true );
+    int answer = KMessageBox::warningContinueCancel(this, question,
+            i18n("Confirmation"), KStandardGuiItem::del());
 
-	// TODO:
-	//  Since it's possible to substitute cursors in a system theme by adding a local
-	//  theme with the same name, we shouldn't remove the theme from the list if it's
-	//  still available elsewhere. This could be solved by calling insertThemes() here,
-	//  but since KIO::del() is an asynchronos operation, the theme we're deleting will
-	//  be readded to the list again before KIO has removed it.
+    if (answer != KMessageBox::Continue)
+        return;
+
+    // Delete the theme from the harddrive
+    KIO::del(KUrl(theme->path())); // async
+
+    // Remove the theme from the model
+    proxy->removeTheme(view->currentIndex());
+
+    // TODO:
+    //  Since it's possible to substitute cursors in a system theme by adding a local
+    //  theme with the same name, we shouldn't remove the theme from the list if it's
+    //  still available elsewhere. We could add a
+    //  bool CursorThemeModel::tryAddTheme(const QString &name), and call that, but
+    //  since KIO::del() is an asynchronos operation, the theme we're deleting will be
+    //  readded to the list again before KIO has removed it.
 }
 
 
-bool ThemePage::installThemes( const QString &file )
+bool ThemePage::installThemes(const QString &file)
 {
-	KTar archive( file );
+    KTar archive(file);
 
-	if ( !archive.open( QIODevice::ReadOnly ) )
-		return false;
+    if (!archive.open(QIODevice::ReadOnly))
+        return false;
 
-	const KArchiveDirectory *archiveDir = archive.directory();
-	QStringList themeDirs;
+    const KArchiveDirectory *archiveDir = archive.directory();
+    QStringList themeDirs;
 
-	const QStringList entries = archiveDir->entries();
-	for ( QStringList::ConstIterator it = entries.begin(); it != entries.end(); ++it )
-	{
-		const KArchiveEntry *entry = archiveDir->entry( *it );
-		if ( entry->isDirectory() && entry->name().toLower() != "default" ) {
-			const KArchiveDirectory *dir = static_cast< const KArchiveDirectory* >( entry );
-			if ( dir->entry( "index.theme" ) && dir->entry( "cursors" ) )
-				themeDirs << dir->name();
-		}
-	}
+    // Extract the dir names of the cursor themes in the archive, and
+    // append them to themeDirs
+    foreach(const QString &name, archiveDir->entries())
+    {
+        const KArchiveEntry *entry = archiveDir->entry(name);
+        if (entry->isDirectory() && entry->name().toLower() != "default")
+        {
+            const KArchiveDirectory *dir = static_cast<const KArchiveDirectory *>(entry);
+            if (dir->entry("index.theme") && dir->entry("cursors"))
+                themeDirs << dir->name();
+        }
+    }
 
-	if ( themeDirs.count() < 1 )
-		return false;
+    if (themeDirs.isEmpty())
+        return false;
 
-	const QString destDir = QDir::homePath() + "/.icons/";
-	KStandardDirs::makeDir( destDir ); // Make sure the directory exists
+    // The directory we'll install the themes to
+    QString destDir = QDir::homePath() + "/.icons/";
+    KStandardDirs::makeDir(destDir); // Make sure the directory exists
 
-	for ( QStringList::ConstIterator it = themeDirs.begin(); it != themeDirs.end(); ++it )
-	{
-		// Check if a theme with that name already exists
-		if ( QDir( destDir ).exists( *it ) ) {
-			const QString question = i18n( "A theme named %1 already exists in your icon "
-					"theme folder. Do you want replace it with this one?", *it );
-			int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Overwrite Theme?"), KGuiItem(i18n("Replace")) );
-			if ( answer != KMessageBox::Continue )
-				continue;
+    // Process each cursor theme in the archive
+    foreach (const QString &dirName, themeDirs)
+    {
+        QDir dest(destDir + dirName);
+        if (dest.exists())
+        {
+            QString question = i18n("A theme named %1 already exists in your icon "
+                    "theme folder. Do you want replace it with this one?", dirName);
 
-			// ### If the theme that's being replaced is the current theme, it
-			//     will cause cursor inconsistencies in newly started apps.
-		}
+            int answer = KMessageBox::warningContinueCancel(this, question,
+                                i18n("Overwrite Theme?"),
+                                KStandardGuiItem::overwrite());
 
-		// ### Should we check if a theme with the same name exists in a global theme dir?
-		//     If that's the case it will effectively replace it, even though the global theme
-		//     won't be deleted. Checking for this situation is easy, since the global theme
-		//     will be in the listview. Maybe this should never be allowed since it might
-		//     result in strange side effects (from the average users point of view). OTOH
-		//     a user might want to do this 'upgrade' a global theme.
+            if (answer != KMessageBox::Continue)
+                continue;
 
-		const QString dest = destDir + *it;
-		const KArchiveDirectory *dir = static_cast< const KArchiveDirectory* >( archiveDir->entry( *it ) );
-		dir->copyTo( dest );
-		insertTheme( dest );
-	}
+            // ### If the theme that's being replaced is the current theme, it
+            //     will cause cursor inconsistencies in newly started apps.
+        }
 
-	listview->sort();
+        // ### Should we check if a theme with the same name exists in a global theme dir?
+        //     If that's the case it will effectively replace it, even though the global theme
+        //     won't be deleted. Checking for this situation is easy, since the global theme
+        //     will be in the listview. Maybe this should never be allowed since it might
+        //     result in strange side effects (from the average users point of view). OTOH
+        //     a user might want to do this 'upgrade' a global theme.
 
-	archive.close();
-	return true;
+        const KArchiveDirectory *dir = static_cast<const KArchiveDirectory*>
+                        (archiveDir->entry(dirName));
+        dir->copyTo(dest.path());
+        model->addTheme(dest);
+    }
+
+    archive.close();
+    return true;
 }
 
-
-void ThemePage::insertTheme( const QString &path )
-{
-	QString dirName = QDir( path ).dirName();
-
-	// Defaults in case there's no name or comment field.
-	QString name   = dirName;
-	QString desc   = i18n( "No description available" );
-	QString sample = "left_ptr";
-
-	KConfig _c( path + "/index.theme"  );
-	KConfigGroup c(&_c, "Icon Theme" );
-
-	// Don't insert the theme if it's hidden.
-	if ( c.readEntry( "Hidden", false) )
-		return;
-
-	// ### If the theme is hidden, the user will probably find it strange that it
-	//     doesn't appear in the list view. There also won't be a way for the user
-	//     to delete the theme using the KCM. Perhaps a warning about this should
-	//     be issued, and the user given a chance to undo the installation.
-
-	// Read the name, description and sample cursor
-	name   = c.readEntry( "Name", name );
-	desc   = c.readEntry( "Comment", desc );
-	sample = c.readEntry( "Example", sample );
-
-	// Create a ThemeInfo object if one doesn't already exist, and fill in the members
-	ThemeInfo *info = themeInfo[ dirName ];
-	if ( !info ) {
-		info = new ThemeInfo;
-		themeInfo.insert( dirName, info );
-	}
-
-	info->path     = path;
-	info->writable = true;
-
-	// If an item with the same name already exists, remove it
-	delete listview->findItem( dirName, DirColumn );
-
-	// Create the listview item and insert it into the list.
-	K3ListViewItem *item = new K3ListViewItem( listview, name, desc, /*hidden*/ dirName );
-	item->setPixmap( NameColumn, createIcon( dirName, sample ) );
-	listview->insertItem( item );
-}
-
-
-const QStringList ThemePage::getThemeBaseDirs() const
-{
-#if XCURSOR_LIB_MAJOR == 1 && XCURSOR_LIB_MINOR < 1
-	// These are the default paths Xcursor will scan for cursor themes
-	QString path( "~/.icons:/usr/share/icons:/usr/share/pixmaps:/usr/X11R6/lib/X11/icons" );
-
-	// If XCURSOR_PATH is set, use that instead of the default path
-	char *xcursorPath = std::getenv( "XCURSOR_PATH" );
-	if ( xcursorPath )
-		path = xcursorPath;
-#else
-	// Get the search patch from Xcursor
-	QString path = XcursorLibraryPath();
-#endif
-	// Expand all occurrences of ~ to the home dir
-	path.replace( "~/", QDir::homePath() + '/' );
-	return path.split( ':');
-}
-
-
-bool ThemePage::isCursorTheme( const QString &theme, const int depth ) const
-{
-	// Prevent infinate recursion
-	if ( depth > 10 )
-		return false;
-
-	// Search each icon theme directory for 'theme'
-	for ( QStringList::ConstIterator it = themeDirs.begin(); it != themeDirs.end(); ++it )
-	{
-		QDir dir( *it  );
-		if ( !dir.exists() )
-			continue;
-
-		const QStringList subdirs( dir.entryList( QDir::Dirs ) );
-		if ( subdirs.contains( theme ) )
-		{
-			const QString path       = *it + '/' + theme;
-			const QString indexfile  = path + "/index.theme";
-			const bool haveIndexFile = dir.exists( indexfile );
-			const bool haveCursors   = dir.exists( path + "/cursors" );
-			QStringList inherit;
-
-			// Return true if we have a cursors subdirectory
-			if ( haveCursors )
-				return true;
-
-			// Parse the index.theme file if one exists
-			if ( haveIndexFile )
-			{
-                                KConfig _c( indexfile, KConfig::OnlyLocal );
-                                KConfigGroup c(&_c, "Icon Theme" );
-				inherit = c.readEntry( "Inherits", QStringList() );
-			}
-
-			// Recurse through the list of inherited themes
-			for ( QStringList::ConstIterator it2 = inherit.begin(); it2 != inherit.end(); ++it2 )
-			{
-				if ( *it2 == theme ) // Avoid possible DoS
-					continue;
-
-				if ( isCursorTheme( *it2, depth + 1 ) )
-					return true;
-			}
-		}
-	}
-
-	return false;
-}
-
-
-void ThemePage::insertThemes()
-{
-	// Scan each base dir for cursor themes and add them to the listview.
-	// An icon theme is considered to be a cursor theme if it contains
-	// a cursors subdirectory or if it inherits a cursor theme.
-	for ( QStringList::ConstIterator it = themeDirs.begin(); it != themeDirs.end(); ++it )
-	{
-		QDir dir( *it );
-		if ( !dir.exists() )
-			continue;
-
-		QStringList subdirs( dir.entryList( QDir::Dirs ) );
-		subdirs.removeAll( "." );
-		subdirs.removeAll( ".." );
-
-		for ( QStringList::ConstIterator it = subdirs.begin(); it != subdirs.end(); ++it )
-		{
-			// Only add the theme if we don't already have a theme with that name
-			// in the list. Xcursor will use the first theme it finds in that
-			// case, and since we use the same search order that should also be
-			// the theme we end up adding to the list.
-			if ( listview->findItem( *it, DirColumn ) )
-				continue;
-
-			const QString path       = dir.path() + '/' + *it;
-			const QString indexfile  = path + "/index.theme";
-			const bool haveIndexFile = dir.exists( *it + "/index.theme" );
-			const bool haveCursors   = dir.exists( *it + "/cursors" );
-
-			// If the directory doesn't have a cursors subdir and lack an
-			// index.theme file it's definately not a cursor theme
-			if ( !haveIndexFile && !haveCursors )
-				continue;
-
-			// Defaults in case there's no index.theme file or it lacks
-			// a name and a comment field.
-			QString name   = *it;
-			QString desc   = i18n( "No description available" );
-			QString sample = "left_ptr";
-
-			// Parse the index.theme file if the theme has one.
-			if ( haveIndexFile )
-			{
-				KConfig _c( indexfile, KConfig::OnlyLocal );
-				KConfigGroup c(&_c, "Icon Theme" );
-
-				// Skip this theme if it's hidden.
-				if ( c.readEntry( "Hidden", false) )
-					continue;
-
-				// If there's no cursors subdirectory we'll do a recursive scan
-				// to check if the theme inherits a theme with one.
-				if ( !haveCursors )
-				{
-					bool result = false;
-					QStringList inherit = c.readEntry( "Inherits", QStringList() );
-					for ( QStringList::ConstIterator it2 = inherit.begin(); it2 != inherit.end(); ++it2 )
-						if ( result = isCursorTheme( *it2 ) )
-							break;
-
-					// If this theme doesn't inherit a cursor theme, proceed
-					// to the next theme in the list.
-					if ( !result )
-						continue;
-				}
-
-				// Read the name, description and sample cursor
-				name   = c.readEntry( "Name", name );
-				desc   = c.readEntry( "Comment", desc );
-				sample = c.readEntry( "Example", sample );
-			}
-
-			// Create a ThemeInfo object, and fill in the members
-			ThemeInfo *info = new ThemeInfo;
-			info->path     = path;
-			info->writable = QFileInfo( path ).isWritable();
-			themeInfo.insert( *it, info );
-
-			// Create the listview item and insert it into the list.
-			K3ListViewItem *item = new K3ListViewItem( listview, name, desc, /*hidden*/ *it );
-			item->setPixmap( NameColumn, createIcon( *it, sample ) );
-			listview->insertItem( item );
-		}
-	}
-
-	// Note: If a default theme dir wasn't found in the above search, Xcursor will
-	//       default to using the cursor font.
-
-	// Sort the theme list
-	listview->sort();
-
-	K3ListViewItem *item = new K3ListViewItem( listview, ' ' + i18n( "No theme" ), i18n( "The old classic X cursors") , /*hidden*/ "none" );
-	listview->insertItem( item );
-	item = new K3ListViewItem( listview, ' ' + i18n( "System theme" ), i18n( "Do not change cursor theme") , /*hidden*/ "system" );
-	listview->insertItem( item );
-        // no ThemeInfo object for this one
-}
-
-
-QPixmap ThemePage::createIcon( const QString &theme, const QString &sample ) const
-{
-	XcursorImage *xcur;
-	QPixmap pix;
-
-	xcur = XcursorLibraryLoadImage( sample.toLatin1(), theme.toLatin1(), iconSize );
-	if ( !xcur ) xcur = XcursorLibraryLoadImage( "left_ptr", theme.toLatin1(), iconSize );
-
-	if ( xcur ) {
-		// Calculate an auto-crop rectangle for the cursor image
-		// (helps with cursors converted from windows .cur or .ani files)
-		QRect r( QPoint( xcur->width, xcur->height ), QPoint() );
-		XcursorPixel *src = xcur->pixels;
-
-		for ( int y = 0; y < int( xcur->height ); y++ ) {
-			for ( int x = 0; x < int( xcur->width ); x++ ) {
-				if ( *(src++) >> 24 ) {
-					if ( x < r.left() )   r.setLeft( x );
-					if ( x > r.right() )  r.setRight( x );
-					if ( y < r.top() )    r.setTop( y );
-					if ( y > r.bottom() ) r.setBottom( y );
-				}
-			}
-		}
-
-		// Normalize the rectangle
-		r = r.normalized();
-
-		// Calculate the image size
-		int size = qMax( iconSize, qMax( r.width(), r.height() ) );
-
-		// Create the intermediate QImage
-		QImage image( size, size, QImage::Format_ARGB32 );
-
-		// Clear the image
-		quint32 *dst = reinterpret_cast<quint32*>( image.bits() );
-		for ( int i = 0; i < image.width() * image.height(); i++ )
-			dst[i] = 0;
-
-		// Compute the source and destination offsets
-		QPoint dstOffset( (image.width() - r.width()) / 2, (image.height() - r.height()) / 2 );
-		QPoint srcOffset( r.topLeft() );
-
-		dst = reinterpret_cast<quint32*>( image.scanLine(dstOffset.y()) ) + dstOffset.x();
-		src = reinterpret_cast<quint32*>( xcur->pixels ) + srcOffset.y() * xcur->width + srcOffset.x();
-
-		// Copy the XcursorImage into the QImage, converting it from premultiplied
-		// to non-premultiplied alpha and cropping it if needed.
-		for ( int y = 0; y < r.height(); y++ )
-		{
-			for ( int x = 0; x < r.width(); x++, dst++, src++ ) {
-				const quint32 pixel = *src;
-
-				const quint8 a = qAlpha( pixel );
-				const quint8 r = qRed( pixel );
-				const quint8 g = qGreen( pixel );
-				const quint8 b = qBlue( pixel );
-
-				if ( !a || a == 255 ) {
-					*dst = pixel;
-				} else {
-					float alpha = a / 255.0;
-					*dst = qRgba( int(r / alpha), int(g / alpha), int(b / alpha), a );
-				}
-			}
-			dst += ( image.width() - r.width() );
-			src += ( xcur->width - r.width() );
-		}
-
-		// Scale down the image if we need to
-		if ( image.width() > iconSize || image.height() > iconSize )
-			image = image.scaled( iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
-
-		pix = QPixmap::fromImage( image );
-		XcursorImageDestroy( xcur );
-	} else {
-
-		QImage image( iconSize, iconSize, QImage::Format_ARGB32 );
-
-		quint32 *data = reinterpret_cast< quint32* >( image.bits() );
-		for ( int i = 0; i < image.width() * image.height(); i++ )
-			data[ i ] = 0;
-
-		pix = QPixmap::fromImage( image );
-	}
-
-	return pix;
-}
-
-
-// vim: set noet ts=4 sw=4:

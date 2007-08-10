@@ -15,11 +15,20 @@ else( LIBUSB_FOUND)
 endif (LIBUSB_FOUND)
 
 if(X11_Xcursor_FOUND)
-	set( libnoinst_SRCS xcursor/themepage.cpp xcursor/previewwidget.cpp )
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ )
+  set( libnoinst_SRCS
+    xcursor/themepage.cpp
+    xcursor/thememodel.cpp
+    xcursor/cursortheme.cpp
+    xcursor/legacytheme.cpp
+    xcursor/xcursortheme.cpp
+    xcursor/previewwidget.cpp
+    xcursor/itemdelegate.cpp
+    xcursor/sortproxymodel.cpp )
+  kde4_add_ui_files( libnoinst_SRCS xcursor/themepage.ui )
+  include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ )
 else(X11_Xcursor_FOUND)
-	set( libnoinst_SRCS core/themepage.cpp )
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/core/ )
+  set( libnoinst_SRCS core/themepage.cpp )
+  include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/core/ )
 endif(X11_Xcursor_FOUND)
 
 
@@ -56,9 +65,6 @@ endif (LIBUSB_FOUND)
 if (X11_Xcursor_FOUND)
    target_link_libraries(kcm_input ${X11_Xcursor_LIB})
 endif (X11_Xcursor_FOUND)
-if (X11_Xrender_FOUND)
-   target_link_libraries(kcm_input ${X11_Xrender_LIB})
-endif (X11_Xrender_FOUND)
 
 install(TARGETS kcm_input  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
