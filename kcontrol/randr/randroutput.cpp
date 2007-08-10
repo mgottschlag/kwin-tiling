@@ -105,6 +105,13 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 {
 	int changed = 0;
 
+#if 1
+	kDebug() << "[OUTPUT] Got event for " << m_name;
+	kDebug() << "       crtc: " << event->crtc;
+	kDebug() << "       mode: " << event->mode;
+	kDebug() << "       rotation: " << event->rotation;
+	kDebug() << "       connection: " << event->connection;
+#endif
 	if (event->crtc != m_currentCrtc)
 	{
 		changed |= RandR::ChangeCrtc;
@@ -129,6 +136,8 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 	{
 		changed |= RandR::ChangeConnection;
 		m_connected = !m_connected;
+		if (!m_connected && m_currentCrtc != None)
+			setCrtc(None);
 	}
 
 	// check if we are still connected, if not, release the crtc connection
@@ -214,18 +223,19 @@ QRect RandROutput::rect() const
 	return m_screen->crtc(m_currentCrtc)->rect();
 }
 
-RateList RandROutput::refreshRates(QSize s) const
+RateList RandROutput::refreshRates(const QSize &s) const
 {
 	RateList list;
-	if (!s.isValid())
-		s = rect().size();
+	QSize size = s;
+	if (!size.isValid())
+		size = rect().size();
 
 	foreach(RRMode m, m_modes)
 	{
 		RandRMode mode = m_screen->mode(m);
 		if (!mode.isValid())
 			continue;
-		if (mode.size() == s)
+		if (mode.size() == size)
 			list.append(mode.refreshRate());
 	}
 	return list;
@@ -331,7 +341,7 @@ void RandROutput::save(KConfig &config)
 	cg.writeEntry("RefreshRate", (double) crtc->refreshRate());
 }
 
-void RandROutput::proposeRect(QRect r)
+void RandROutput::proposeRect(const QRect &r)
 {
 	m_originalRect = rect();
 	m_proposedRect = r;

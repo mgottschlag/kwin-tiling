@@ -27,7 +27,7 @@
 #include "legacyrandrscreen.h"
 
 RandRDisplay::RandRDisplay()
-	: m_valid(true)
+: m_valid(true)
 {
 	// Check extension
 	Status s = XRRQueryExtension(QX11Info::display(), &m_eventBase, &m_errorBase);

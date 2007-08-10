@@ -426,7 +426,7 @@ bool RandRScreen::applyProposed(bool confirm)
 	if (succeed && confirm)
 		succeed = RandR::confirm(r);
 
-	// if we succeeded applying and the user confirmer the changes,
+	// if we succeeded applying and the user confirmed the changes,
 	// just return from here 
 	if (succeed)
 		return true;
@@ -450,6 +450,10 @@ void RandRScreen::unifyOutputs()
 
 	//FIXME: better handle this
 	if (!sizes.count())
+		return;
+
+	// if there is only one output connected, there is no way to unify it
+	if (m_connectedCount <= 1)
 		return;
 
 	if (sizes.indexOf(m_unifiedRect.size()) == -1)
@@ -481,6 +485,7 @@ void RandRScreen::unifyOutputs()
 	// FIXME: if by any reason we were not able to unify the outputs, we should 
 	// do something
 	save();
+	emit configChanged();
 }
 
 void RandRScreen::slotResizeUnified(QAction *action)
@@ -552,23 +557,9 @@ void RandRScreen::slotOutputChanged(RROutput id, int changes)
 	if (connected <= 1)
 		return;
 
-	RandROutput *o = m_outputs[id];
-	Q_ASSERT(o);
-
-	// if we are using a unified layout, we should not allow an output
-	// to use another position or size. So ask it to come back to the unified 
-	// size.
-	if (m_outputsUnified)
-	{
-		if (o->rect() != m_unifiedRect || o->rotation() != m_unifiedRotation)
-			unifyOutputs();
-	}
-
-	// TODO: handle the changes not to allow overlapping on non-unified 
-	// setups
-
-	save();
-	emit configChanged();
+	// wait some time before checking the output configuration as some randr 
+	// clients do operations in more than one step
+	unifyOutputs();
 }
 
 #include "randrscreen.moc"

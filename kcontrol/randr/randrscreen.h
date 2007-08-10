@@ -99,7 +99,7 @@ public slots:
 signals:
 	void configChanged();
 
-protected:
+protected slots:
 	void unifyOutputs();
 
 private:

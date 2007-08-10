@@ -387,7 +387,7 @@ QActionGroup *KRandRSystemTray::populateRotations(KMenu *menu, int rotations, in
 	return rotateGroup;
 }
 
-QActionGroup *KRandRSystemTray::populateSizes(KMenu *menu, SizeList sizes, QSize size)
+QActionGroup *KRandRSystemTray::populateSizes(KMenu *menu, const SizeList &sizes, const QSize &size)
 {
 	QAction *action;
 	QActionGroup *sizeGroup = new QActionGroup(menu);
@@ -407,7 +407,7 @@ QActionGroup *KRandRSystemTray::populateSizes(KMenu *menu, SizeList sizes, QSize
 	return sizeGroup;
 }
 
-QActionGroup *KRandRSystemTray::populateRates(KMenu *menu, RateList rates, float rate)
+QActionGroup *KRandRSystemTray::populateRates(KMenu *menu, const RateList &rates, float rate)
 {
 	QAction *action;
 	QActionGroup *rateGroup = new QActionGroup(menu);

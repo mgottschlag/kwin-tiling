@@ -154,7 +154,7 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 		m_currentRect.moveTopLeft(QPoint(event->x, event->y));
 	}
 
-	RandRMode mode = m_screen->mode(event->mode);
+	RandRMode mode = m_screen->mode(m_currentMode);
 	if (mode.size() != m_currentRect.size())
 	{
 		kDebug() << "   Changed size: " << mode.size();
@@ -311,14 +311,14 @@ bool RandRCrtc::applyProposed()
 	return ret;
 }
 
-bool RandRCrtc::proposeSize(QSize s)
+bool RandRCrtc::proposeSize(const QSize &s)
 {
 	m_proposedRect.setSize(s);
 	m_proposedRate = 0;
 	return true;
 }
 
-bool RandRCrtc::proposePosition(QPoint p)
+bool RandRCrtc::proposePosition(const QPoint &p)
 {
 	m_proposedRect.moveTopLeft(p);
 	return true;
@@ -362,11 +362,12 @@ bool RandRCrtc::proposedChanged()
 		m_proposedRate != m_currentRate);
 }
 
-bool RandRCrtc::addOutput(RROutput output, QSize s)
+bool RandRCrtc::addOutput(RROutput output, const QSize &s)
 {
+	QSize size = s;
 	// if no mode was given, use the current one
-	if (!s.isValid())
-		s = m_currentRect.size();
+	if (!size.isValid())
+		size = m_currentRect.size();
 
 	// check if this output is not already on this crtc
 	// if not, add it

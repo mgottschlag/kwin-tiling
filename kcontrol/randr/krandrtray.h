@@ -54,8 +54,8 @@ private:
 
 	// helper functions
 	QActionGroup *populateRotations(KMenu *menu, int rotations, int rotation);
-	QActionGroup *populateSizes(KMenu *menu, SizeList sizes, QSize size);
-	QActionGroup *populateRates(KMenu *menu, RateList rates, float rate);
+	QActionGroup *populateSizes(KMenu *menu, const SizeList &sizes, const QSize &size);
+	QActionGroup *populateRates(KMenu *menu, const RateList &rates, float rate);
 
 	KHelpMenu* m_help;
 	bool m_popupUp;

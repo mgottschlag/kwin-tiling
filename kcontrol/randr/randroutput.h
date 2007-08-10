@@ -64,7 +64,7 @@ public:
 	 * The list of refresh rates for the given size.
 	 * If no size is specified, it will use the current size
 	 */
-	RateList refreshRates(QSize s = QSize()) const;
+	RateList refreshRates(const QSize &s = QSize()) const;
 
 	/**
 	 * The current refresh rate
@@ -89,7 +89,7 @@ public:
 	void proposeOriginal();
 
 	// proposal functions
-	void proposeRect(QRect r);
+	void proposeRect(const QRect &r);
 	void proposeRotation(int rotation);
 
 	void load(KConfig &config);

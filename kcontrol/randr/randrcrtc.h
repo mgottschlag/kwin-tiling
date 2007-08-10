@@ -44,8 +44,8 @@ public:
 	QRect rect() const;
 	float refreshRate() const;
 
-	bool proposeSize(QSize s);
-	bool proposePosition(QPoint p);
+	bool proposeSize(const QSize &s);
+	bool proposePosition(const QPoint &p);
 	bool proposeRotation(int rotation);
 	bool proposeRefreshRate(float rate);
 	
@@ -55,7 +55,7 @@ public:
 	void setOriginal(); 
 	bool proposedChanged();
 
-	bool addOutput(RROutput output, QSize size = QSize());
+	bool addOutput(RROutput output, const QSize &size = QSize());
 	bool removeOutput(RROutput output);
 	OutputList connectedOutputs() const;
 

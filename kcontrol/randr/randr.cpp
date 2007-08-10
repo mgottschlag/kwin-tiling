@@ -119,7 +119,7 @@ QPixmap RandR::rotationIcon(int rotation, int currentRotation)
 	}
 }
 
-bool RandR::confirm(QRect rect)
+bool RandR::confirm(const QRect &rect)
 {
 	// FIXME remember to put the dialog on the right screen
 

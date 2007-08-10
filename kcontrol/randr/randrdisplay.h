@@ -30,26 +30,27 @@ class RandRDisplay
 public:
 	RandRDisplay();
 	~RandRDisplay();
-	bool			isValid() const;
-	const QString&	errorCode() const;
-	const QString&	version() const;
 
-	int		eventBase() const;
-	int		errorBase() const;
+	bool isValid() const;
+	const QString& errorCode() const;
+	const QString& version() const;
 
-	int		screenIndexOfWidget(QWidget* widget);
+	int eventBase() const;
+	int	errorBase() const;
 
-	int				numScreens() const;
-	LegacyRandRScreen*	legacyScreen(int index);
-	LegacyRandRScreen*	currentLegacyScreen();
+	int	screenIndexOfWidget(QWidget* widget);
+
+	int	numScreens() const;
+	LegacyRandRScreen* legacyScreen(int index);
+	LegacyRandRScreen* currentLegacyScreen();
 #ifdef HAS_RANDR_1_2
-	RandRScreen*		screen(int index);
-	RandRScreen*		currentScreen();
+	RandRScreen* screen(int index);
+	RandRScreen* currentScreen();
 #endif
-	void			setCurrentScreen(int index);
-	int				currentScreenIndex() const;
+	void setCurrentScreen(int index);
+	int	currentScreenIndex() const;
 
-	void	refresh();
+	void refresh();
 
 	/**
 	 * Loads saved settings.
@@ -58,31 +59,31 @@ public:
 	 * @param loadScreens whether to call LegacyRandRScreen::load() for each screen
 	 * @retuns true if the settings should be applied on KDE startup.
 	 */
-	bool	loadDisplay(KConfig& config, bool loadScreens = true);
-	void	saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp);
+	bool loadDisplay(KConfig& config, bool loadScreens = true);
+	void saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp);
 
-	static bool		applyOnStartup(KConfig& config);
-	static bool		syncTrayApp(KConfig& config);
+	static bool applyOnStartup(KConfig& config);
+	static bool	syncTrayApp(KConfig& config);
 
-	void	applyProposed(bool confirm = true);
+	void applyProposed(bool confirm = true);
 
-	bool 	canHandle(const XEvent *e) const;
-	void 	handleEvent(XEvent *e);
+	bool canHandle(const XEvent *e) const;
+	void handleEvent(XEvent *e);
 
 private:
-	int				m_numScreens;
-	int				m_currentScreenIndex;
-	LegacyScreenList		m_legacyScreens;
+	int	m_numScreens;
+	int	m_currentScreenIndex;
+	LegacyScreenList m_legacyScreens;
 #ifdef HAS_RANDR_1_2
-	ScreenList			m_screens;
+	ScreenList m_screens;
 #endif
 
-	bool			m_valid;
-	QString			m_errorCode;
-	QString			m_version;
+	bool m_valid;
+	QString	m_errorCode;
+	QString	m_version;
 
-	int				m_eventBase;
-	int				m_errorBase;
+	int	m_eventBase;
+	int m_errorBase;
 };
 
 #endif
