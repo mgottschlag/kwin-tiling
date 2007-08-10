@@ -3,7 +3,8 @@ include_directories( ${X11_Xrandr_INCLUDE_PATH}  )
 ########### next target ###############
 
 set(randrinternal_PART_SRCS 
-   ktimerdialog.cpp 
+   ktimerdialog.cpp
+   layoutmanager.cpp 
    randr.cpp 
    randrscreen.cpp
    randrcrtc.cpp

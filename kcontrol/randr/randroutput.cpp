@@ -46,6 +46,11 @@ RandROutput::~RandROutput()
 {
 }
 
+RROutput RandROutput::id() const
+{
+	return m_id;
+}
+
 void RandROutput::loadSettings(bool notify)
 {
 	int changes = 0;
@@ -347,6 +352,11 @@ void RandROutput::proposeRect(const QRect &r)
 	m_proposedRect = r;
 }
 
+void RandROutput::proposePosition(const QPoint &p)
+{
+	proposeRect(QRect(p, rect().size()));
+}
+
 void RandROutput::proposeRotation(int r)
 {
 	m_originalRotation = rotation();
@@ -510,6 +520,8 @@ void RandROutput::setCrtc(RRCrtc c)
 
 void RandROutput::slotCrtcChanged(RRCrtc c, int changes)
 {
+	Q_UNUSED(c);
+
 	//FIXME select which changes we should notify
 	emit outputChanged(m_id, changes);
 }

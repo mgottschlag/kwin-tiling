@@ -24,13 +24,15 @@
 #include "randrcrtc.h"
 #include "randroutput.h"
 #include "randrmode.h"
+#include "layoutmanager.h"
 
 #ifdef HAS_RANDR_1_2
 RandRScreen::RandRScreen(int screenIndex)
-	: m_resources(0L)
+: m_resources(0L)
 {
 	m_index = screenIndex;
 	m_rect = QRect(0, 0, XDisplayWidth(QX11Info::display(), m_index), XDisplayHeight(QX11Info::display(), m_index));
+	m_layoutManager = new LayoutManager(this);
 
 	m_connectedCount = 0;
 	m_activeCount = 0;
@@ -51,6 +53,7 @@ RandRScreen::~RandRScreen()
 {
 	if (m_resources)
 		XRRFreeScreenResources(m_resources);
+
 }
 
 int RandRScreen::index() const
@@ -540,6 +543,8 @@ void RandRScreen::slotRotateUnified(QAction *action)
 
 void RandRScreen::slotOutputChanged(RROutput id, int changes)
 {
+	Q_UNUSED(id);
+	Q_UNUSED(changes);
 
 	int connected = 0, active = 0;
 	foreach(RandROutput *output, m_outputs)

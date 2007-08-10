@@ -37,6 +37,7 @@ public:
 	RandROutput(RandRScreen *parent, RROutput id);
 	~RandROutput();
 
+	RROutput id() const;
 	void loadSettings(bool notify = false);
 	void handleEvent(XRROutputChangeNotifyEvent *event);
 	void handlePropertyEvent(XRROutputPropertyNotifyEvent *event);
@@ -90,6 +91,7 @@ public:
 
 	// proposal functions
 	void proposeRect(const QRect &r);
+	void proposePosition(const QPoint &p);
 	void proposeRotation(int rotation);
 
 	void load(KConfig &config);
