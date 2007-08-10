@@ -95,12 +95,13 @@ static ModifierKey modifierKeys[] = {
 
 KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   : KUniqueApplication(allowStyles, GUIenabled),
-  overlay(0), _player(Phonon::AccessibilityCategory)
+  overlay(0), _player(Phonon::createPlayer(Phonon::AccessibilityCategory))
 {
+  _player->setParent(this);
   _activeWindow = KWindowSystem::activeWindow();
   connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
 
-  connect( &_player, SIGNAL( finished() ), SLOT( slotBellFinished() ));
+  connect(_player, SIGNAL(finished()), SLOT(slotBellFinished()));
 
   features = 0;
   requestedFeatures = 0;
@@ -129,7 +130,7 @@ void KAccessApp::readSettings()
   // bell ---------------------------------------------------------------
   _systemBell = cg.readEntry("SystemBell", true);
   _artsBell = cg.readEntry("ArtsBell", false);
-  _player.load( cg.readPathEntry("ArtsBellFile") );
+  _player->setCurrentSource(cg.readPathEntry("ArtsBellFile"));
   _visibleBell = cg.readEntry("VisibleBell", false);
   _visibleBellInvert = cg.readEntry("VisibleBellInvert", false);
   _visibleBellColor = cg.readEntry("VisibleBellColor", QColor(Qt::red));
@@ -467,9 +468,9 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
       flush();
     }
 
-  // ask artsd to ring a nice bell
-  if (_artsBell && !_player.isPlaying() )
-    _player.play();
+  // ask Phonon to ring a nice bell
+  if (_artsBell)
+    _player->play();
 }
 
 QString mouseKeysShortcut (Display *display) {

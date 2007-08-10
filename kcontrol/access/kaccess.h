@@ -12,7 +12,7 @@
 #include <KUniqueApplication>
 #include <KUrl>
 
-#include <phonon/audioplayer.h>
+#include <Phonon/MediaObject>
 
 #include <X11/Xlib.h>
 #define explicit int_explicit        // avoid compiler name clash in XKBlib.h
@@ -73,7 +73,7 @@ private:
 
   QWidget *overlay;
 
-  Phonon::AudioPlayer _player;
+  Phonon::MediaObject *_player;
 
   WId _activeWindow;
 
