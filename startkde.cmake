@@ -274,20 +274,13 @@ done
 
 echo 'startkde: Starting up...'  1>&2
 
-# Make sure that D-Bus is running
+# Make sure that D-Bus is running, running qdbus will auto-launch it
+# if it is not
 if qdbus >/dev/null 2>/dev/null; then
     : # ok
 else
-  # Remove the next two lines after D-Bus 1.0 is released.
-  # It comes with auto-starting, so running dbus-launch won't be necessary
-  eval `dbus-launch --sh-syntax --exit-with-session < /dev/null`
-  if qdbus >/dev/null 2>/dev/null; then
-      : # ok
-  else
-    # Startup error
     echo 'startkde: Could not start D-Bus. Check your installation.'  1>&2
     xmessage -geometry 500x100 "Could not start D-Bus. Check your installation."
-  fi
 fi
 
 
