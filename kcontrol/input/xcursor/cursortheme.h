@@ -98,6 +98,9 @@ class CursorTheme
         /// Convenience function for cropping an image.
         QImage autoCropImage( const QImage &image ) const;
 
+        // Convenience function that uses Xfixes to tag a cursor with a name
+        void setCursorName(QCursor &cursor, const QString &name) const;
+
         QString m_title;
         QString m_description;
         QString m_path;

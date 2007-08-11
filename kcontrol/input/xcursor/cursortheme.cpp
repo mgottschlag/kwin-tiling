@@ -22,8 +22,17 @@
 #include <QImage>
 #include <QPainter>
 #include <QFile>
+#include <QX11Info>
 
+#include "themepage.h"
 #include "cursortheme.h"
+
+#include <config-X11.h>
+
+#ifdef HAVE_XFIXES
+#  include <X11/Xlib.h>
+#  include <X11/extensions/Xfixes.h>
+#endif
 
 
 CursorTheme::CursorTheme(const QString &title, const QString &description)
@@ -117,5 +126,18 @@ QPixmap CursorTheme::createIcon() const
     }
 
     return pixmap;
+}
+
+void CursorTheme::setCursorName(QCursor &cursor, const QString &name) const
+{
+#ifdef HAVE_XFIXES
+    static bool haveXfixes = ThemePage::haveXfixes();
+
+    if (haveXfixes)
+    {
+        XFixesSetCursorName(QX11Info::display(), cursor.handle(),
+                            QFile::encodeName(name));
+    }
+#endif
 }
 

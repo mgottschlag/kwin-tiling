@@ -41,6 +41,8 @@ class ThemePage : public QWidget, private Ui::ThemePage
         void load();
         void defaults();
 
+        static bool haveXfixes();
+
     signals:
         void changed(bool);
 

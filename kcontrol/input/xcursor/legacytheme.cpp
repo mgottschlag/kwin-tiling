@@ -369,6 +369,7 @@ QCursor LegacyTheme::loadCursor(const QString &name, int) const
     QPixmap pixmap = QPixmap::fromImage(image);
     QCursor cursor(pixmap, xhot, yhot);
 
+    setCursorName(cursor, name);
     return cursor;
 }
 

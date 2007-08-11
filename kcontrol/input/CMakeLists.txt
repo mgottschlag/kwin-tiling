@@ -23,7 +23,8 @@ if(X11_Xcursor_FOUND)
     xcursor/xcursortheme.cpp
     xcursor/previewwidget.cpp
     xcursor/itemdelegate.cpp
-    xcursor/sortproxymodel.cpp )
+    xcursor/sortproxymodel.cpp
+    ../krdb/krdb.cpp )
   kde4_add_ui_files( libnoinst_SRCS xcursor/themepage.ui )
   include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ )
 else(X11_Xcursor_FOUND)
@@ -65,6 +66,9 @@ endif (LIBUSB_FOUND)
 if (X11_Xcursor_FOUND)
    target_link_libraries(kcm_input ${X11_Xcursor_LIB})
 endif (X11_Xcursor_FOUND)
+if (X11_Xfixes_FOUND)
+   target_link_libraries(kcm_input ${X11_Xfixes_LIB})
+endif (X11_Xfixes_FOUND)
 
 install(TARGETS kcm_input  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
