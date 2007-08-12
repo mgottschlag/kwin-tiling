@@ -1061,7 +1061,6 @@ static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
 
 void Klipper::updateTimestamp()
 {
-    Time time = QX11Info::appTime();
     static QWidget* w = 0;
     if ( !w )
         w = new QWidget;
@@ -1076,7 +1075,7 @@ void Klipper::updateTimestamp()
         XCheckIfEvent( QX11Info::display(), &dummy, update_x_time_predicate, NULL );
         }
     Q_ASSERT( next_x_time != CurrentTime );
-    time = next_x_time;
+    QX11Info::setAppTime( next_x_time );
     XEvent ev; // remove the PropertyNotify event from the events queue
     XWindowEvent( QX11Info::display(), w->winId(), PropertyChangeMask, &ev );
 }
