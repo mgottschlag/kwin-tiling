@@ -6,7 +6,7 @@ ServiceTypes=KCModule,KCModuleInit
 Exec=kcmshell smartcard
 DocPath=kcontrol/smartcard.html
 
-X-KDE-Library=smartcard
+X-KDE-Library=kcm_smartcard
 X-KDE-Init-Symbol=smartcard
 X-KDE-ParentApp=kcontrol
 

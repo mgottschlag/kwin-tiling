@@ -7,7 +7,7 @@ ServiceTypes=KCModule
 DocPath=kinfocenter/opengl/index.html
 
 
-X-KDE-Library=info
+X-KDE-Library=kcm_info
 X-KDE-FactoryName=opengl
 X-KDE-ParentApp=kinfocenter
 

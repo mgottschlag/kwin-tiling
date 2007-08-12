@@ -6,7 +6,7 @@ Type=Service
 ServiceTypes=KCModule
 
 
-X-KDE-Library=accessibility
+X-KDE-Library=kcm_accessibility
 X-KDE-Factoryname=accessibility
 X-KDE-ParentApp=kcontrol
 

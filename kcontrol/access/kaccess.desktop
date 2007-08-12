@@ -61,5 +61,6 @@ Name[x-test]=xxKDE Accessibility Toolxx
 Name[zh_TW]=KDE 無障礙工具
 Exec=kaccess
 X-DBUS-StartupType=None
+X-KDE-Library=kcm_access
 X-KDE-ParentApp=kcontrol
 DocPath=kcontrol/kcmaccess/index.html

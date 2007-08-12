@@ -7,7 +7,7 @@ DocPath=kcontrol/panel/index.html
 Exec=kcmshell panel
 
 
-X-KDE-Library=kicker
+X-KDE-Library=kcm_kicker
 X-KDE-FactoryName=kicker
 X-KDE-ParentApp=kicker
 

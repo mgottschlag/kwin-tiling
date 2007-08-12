@@ -6,7 +6,7 @@ Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/kcmsmserver/index.html
 
-X-KDE-Library=smserver
+X-KDE-Library=kcm_smserver
 X-KDE-FactoryName=smserver
 X-KDE-ParentApp=kcontrol
 

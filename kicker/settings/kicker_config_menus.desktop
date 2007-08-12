@@ -6,7 +6,7 @@ ServiceTypes=KCModule
 DocPath=kcontrol/panel/index.html#panel-menus
 Exec=kcmshell kicker_menus
 
-X-KDE-Library=kicker
+X-KDE-Library=kcm_kicker
 X-KDE-FactoryName=kicker_menus
 X-KDE-ParentApp=kicker
 

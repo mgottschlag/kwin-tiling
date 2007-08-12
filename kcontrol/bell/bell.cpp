@@ -46,7 +46,7 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<KBellConfig> KBellConfigFactory;
-K_EXPORT_COMPONENT_FACTORY(bell, KBellConfigFactory("kcmbell"))
+K_EXPORT_COMPONENT_FACTORY(kcm_bell, KBellConfigFactory("kcmbell"))
 
 extern "C"
 {

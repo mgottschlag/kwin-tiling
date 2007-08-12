@@ -91,7 +91,7 @@ static const int DFLT_OFF   = 60;
 /**** DLL Interface ****/
 
 typedef KGenericFactory<KEnergy> KEnergyFactory;
-K_EXPORT_COMPONENT_FACTORY(energy, KEnergyFactory("kcmenergy"))
+K_EXPORT_COMPONENT_FACTORY(kcm_energy, KEnergyFactory("kcmenergy"))
 
 extern "C" {
 

@@ -115,8 +115,6 @@ void KCMInit::runModules( int phase )
       else
       {
           library = service->library();
-          if( !library.startsWith( QLatin1String( "kcm_" ) ) )
-              library = QLatin1String( "kcm_" ) + library;
       }
 
       if (library.isEmpty())

@@ -7,7 +7,7 @@ DocPath=ksplashml/themes.html
 Type=Service
 ServiceTypes=KCModule
 
-X-KDE-Library=ksplashthemes
+X-KDE-Library=kcm_ksplashthemes
 X-KDE-FactoryName=ksplashthemes
 X-KDE-ParentApp=kcontrol
 

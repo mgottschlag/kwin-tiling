@@ -6,7 +6,7 @@ ServiceTypes=KCModule
 DocPath=kinfocenter/usb/index.html
 Exec=kcmshell kcmusb
 
-X-KDE-Library=usb
+X-KDE-Library=kcm_usb
 X-KDE-ParentApp=kinfocenter
 
 Name=USB Devices

@@ -7,7 +7,7 @@ ServiceTypes=KCModule
 DocPath=kinfocenter/processor/index.html
 
 
-X-KDE-Library=info
+X-KDE-Library=kcm_info
 X-KDE-FactoryName=cpu
 X-KDE-ParentApp=kinfocenter
 

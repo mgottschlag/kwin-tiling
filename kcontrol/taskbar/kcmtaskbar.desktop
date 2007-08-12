@@ -7,7 +7,7 @@ ServiceTypes=KCModule
 DocPath=kcontrol/kcmtaskbar/index.html
 
 
-X-KDE-Library=taskbar
+X-KDE-Library=kcm_taskbar
 X-KDE-FactoryName=taskbar
 X-KDE-ParentApp=kcontrol
 

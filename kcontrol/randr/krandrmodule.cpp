@@ -28,7 +28,7 @@
 
 // DLL Interface for kcontrol
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
-K_EXPORT_COMPONENT_FACTORY (randr, KSSFactory("krandr") )
+K_EXPORT_COMPONENT_FACTORY (kcm_randr, KSSFactory("krandr") )
 
 void KRandRModule::performApplyOnStartup()
 {
@@ -46,7 +46,7 @@ KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
     : KCModule(KSSFactory::componentData(), parent)
 {
 	m_display = new RandRDisplay();
-	if (!m_display->isValid()) 
+	if (!m_display->isValid())
 	{
 		QVBoxLayout *topLayout = new QVBoxLayout(this);
 		QLabel *label = new QLabel(i18n("Your X server does not support resizing and rotating the display. Please update to version 4.3 or greater. You need the X Resize And Rotate extension (RANDR) version 1.1 or greater to use this feature."), this);
@@ -61,7 +61,7 @@ KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
 	topLayout->setSpacing(KDialog::spacingHint());
 
 #ifdef HAS_RANDR_1_2
-	if (RandR::has_1_2) 
+	if (RandR::has_1_2)
 	{
 		m_config = new RandRConfig(this, m_display);
 		connect(m_config, SIGNAL(changed(bool)), SIGNAL(changed(bool)));

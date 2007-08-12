@@ -6,7 +6,7 @@ ServiceTypes=KCModule
 DocPath=kcontrol/kcmlaunch/index.html
 Exec=kcmshell kcmlaunch
 
-X-KDE-Library=launch
+X-KDE-Library=kcm_launch
 X-KDE-FactoryName=launch
 X-KDE-ParentApp=kcontrol
 

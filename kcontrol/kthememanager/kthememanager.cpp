@@ -49,7 +49,7 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<kthememanager> kthememanagerFactory;
-K_EXPORT_COMPONENT_FACTORY(kthememanager, kthememanagerFactory("kthememanager"))
+K_EXPORT_COMPONENT_FACTORY(kcm_kthememanager, kthememanagerFactory("kthememanager"))
 
 kthememanager::kthememanager( QWidget *parent, const QStringList & )
     : KCModule( kthememanagerFactory::componentData(), parent ), m_theme( 0 ), m_origTheme( 0 )

@@ -8,7 +8,7 @@ DocPath=kinfocenter/interrupts/index.html
 Categories=Qt;KDE;X-KDE-information;
 
 
-X-KDE-Library=info
+X-KDE-Library=kcm_info
 X-KDE-FactoryName=irq
 X-KDE-ParentApp=kinfocenter
 

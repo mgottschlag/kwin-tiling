@@ -6,7 +6,7 @@ Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/fontinst/index.html
 
-X-KDE-Library=fontinst
+X-KDE-Library=kcm_fontinst
 X-KDE-FactoryName=fontinst
 
 X-KDE-ParentApp=kcontrol

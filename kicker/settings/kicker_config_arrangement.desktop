@@ -6,7 +6,7 @@ Exec=kcmshell kicker_arrangement
 ServiceTypes=KCModule
 Exec=kcmshell randr
 
-X-KDE-Library=kicker
+X-KDE-Library=kcm_kicker
 X-KDE-FactoryName=kicker_arrangement
 X-KDE-ParentApp=kicker
 

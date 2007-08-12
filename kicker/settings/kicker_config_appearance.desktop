@@ -7,7 +7,7 @@ DocPath=kcontrol/panel/index.html#panel-looknfeel
 Exec=kcmshell kicker_appearance
 
 
-X-KDE-Library=kicker
+X-KDE-Library=kcm_kicker
 X-KDE-FactoryName=kicker_appearance
 X-KDE-ParentApp=kicker
 

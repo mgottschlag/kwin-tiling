@@ -44,7 +44,7 @@
 #include "kwin_interface.h"
 
 typedef KGenericFactory<KCMXinerama> KCMXineramaFactory;
-K_EXPORT_COMPONENT_FACTORY(xinerama, KCMXineramaFactory("kcmxinerama"))
+K_EXPORT_COMPONENT_FACTORY(kcm_xinerama, KCMXineramaFactory("kcmxinerama"))
 
 KCMXinerama::KCMXinerama(QWidget *parent, const QStringList &)
   : KCModule(KCMXineramaFactory::componentData(), parent) {
@@ -173,7 +173,7 @@ void KCMXinerama::save() {
 		int item = xw->_unmanagedDisplay->currentIndex();
 		group.writeEntry("Unmanaged", item == _displays ? -3 : item);
 		group.sync();
-                
+
                 org::kde::KWin kwin("org.kde.kwin", "/KWin", QDBusConnection::sessionBus());
                 kwin.reconfigure();
 

@@ -8,7 +8,7 @@ DocPath=kinfocenter/dma/index.html
 Categories=Qt;KDE;X-KDE-information;
 
 
-X-KDE-Library=info
+X-KDE-Library=kcm_info
 X-KDE-FactoryName=dma
 X-KDE-ParentApp=kinfocenter
 

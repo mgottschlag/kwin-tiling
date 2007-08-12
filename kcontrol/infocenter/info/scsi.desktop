@@ -7,7 +7,7 @@ ServiceTypes=KCModule
 DocPath=kinfocenter/scsi/index.html
 
 
-X-KDE-Library=info
+X-KDE-Library=kcm_info
 X-KDE-FactoryName=scsi
 X-KDE-ParentApp=kinfocenter
 

@@ -6,7 +6,7 @@ Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/kcmdisplay/index.html
 
-X-KDE-Library=display
+X-KDE-Library=kcm_display
 X-KDE-FactoryName=display
 X-KDE-ParentApp=kcontrol
 Name=Display

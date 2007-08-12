@@ -39,7 +39,7 @@
 #include "khotkeys.h"
 
 typedef KGenericFactory<KeyModule> KeyModuleFactory;
-K_EXPORT_COMPONENT_FACTORY(keys, KeyModuleFactory("kcmkeys"))
+K_EXPORT_COMPONENT_FACTORY(kcm_keys, KeyModuleFactory("kcmkeys"))
 
 /*
 | Shortcut Schemes | Modifier Keys |

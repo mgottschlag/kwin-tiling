@@ -7,7 +7,7 @@ DocPath=kcontrol/multiplemonitors.html
 Hidden[$e]=$(if test_kcm_xinerama; then echo "false"; else echo "true"; fi)
 
 X-KDE-ParentApp=kcontrol
-X-KDE-Library=xinerama
+X-KDE-Library=kcm_xinerama
 
 X-KDE-System-Settings-Parent-Category=computer-administration
 

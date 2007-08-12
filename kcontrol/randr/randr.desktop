@@ -4,7 +4,7 @@ Exec=kcmshell randr
 Icon=preferences-desktop-display-randr
 Type=Service
 ServiceTypes=KCModule
-X-KDE-Library=randr
+X-KDE-Library=kcm_randr
 Hidden[$e]=$(if xdpyinfo|grep RANDR > /dev/null; then echo "false"; else echo "true"; fi)
 
 X-KDE-System-Settings-Parent-Category=computer-administration

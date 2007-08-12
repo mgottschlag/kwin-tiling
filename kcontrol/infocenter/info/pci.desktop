@@ -7,7 +7,7 @@ ServiceTypes=KCModule
 DocPath=kinfocenter/pci/index.html
 
 
-X-KDE-Library=info
+X-KDE-Library=kcm_info
 X-KDE-FactoryName=pci
 X-KDE-ParentApp=kinfocenter
 

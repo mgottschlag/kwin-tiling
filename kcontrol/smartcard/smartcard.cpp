@@ -45,7 +45,7 @@
 #include "smartcard.h"
 
 typedef KGenericFactory<KSmartcardConfig> KSmartcardConfigFactory;
-K_EXPORT_COMPONENT_FACTORY(smartcard, KSmartcardConfigFactory("kcmsmartcard"))
+K_EXPORT_COMPONENT_FACTORY(kcm_smartcard, KSmartcardConfigFactory("kcmsmartcard"))
 
 KSmartcardConfig::KSmartcardConfig(QWidget *parent, const QStringList &)
   : KCModule(KSmartcardConfig::componentData(), parent)

@@ -8,7 +8,7 @@ DocPath=kdm/index.html#configuring-kdm
 
 X-KDE-SubstituteUID=true
 
-X-KDE-Library=kdm
+X-KDE-Library=kcm_kdm
 X-KDE-RootOnly=true
 X-KDE-ParentApp=kcontrol
 

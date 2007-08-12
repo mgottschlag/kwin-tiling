@@ -6,7 +6,7 @@ Type=Service
 ServiceTypes=KCModule
 DocPath=kcontrol/clock/index.html
 
-X-KDE-Library=clock
+X-KDE-Library=kcm_clock
 X-KDE-RootOnly=true
 X-KDE-SubstituteUID=true
 X-KDE-ParentApp=kcontrol

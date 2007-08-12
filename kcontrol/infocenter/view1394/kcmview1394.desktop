@@ -6,7 +6,7 @@ ServiceTypes=KCModule
 DocPath=kinfocenter/view1394/index.html
 Exec=kcmshell kcmview1394
 
-X-KDE-Library=view1394
+X-KDE-Library=kcm_view1394
 X-KDE-ParentApp=kinfocenter
 
 Name=IEEE 1394 Devices
