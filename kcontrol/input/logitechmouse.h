@@ -43,10 +43,10 @@
 #define HAS_SSR  0x08  /* mouse supports smart scroll reporting */
 #define USE_CH2  0x10  /* mouse needs to use the second channel */
 
-class LogitechMouseBase : public QDialog, public Ui::LogitechMouseBase
+class LogitechMouseBase : public QWidget, public Ui::LogitechMouseBase
 {
 public:
-  LogitechMouseBase( QWidget *parent ) : QDialog( parent ) {
+  LogitechMouseBase( QWidget *parent ) : QWidget( parent ) {
     setupUi( this );
   }
 };
