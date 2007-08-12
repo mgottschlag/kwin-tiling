@@ -20,8 +20,7 @@
 KonsoleBookmarkHandler::KonsoleBookmarkHandler( KonsoleMenu *konsole, bool )
     : QObject( konsole ),
       KBookmarkOwner(),
-      m_konsole( konsole ),
-      m_importStream( 0L )
+      m_konsole( konsole )
 {
     setObjectName( "KonsoleBookmarkHandler" );
     m_menu = new KMenu(konsole);
@@ -30,13 +29,6 @@ KonsoleBookmarkHandler::KonsoleBookmarkHandler( KonsoleMenu *konsole, bool )
     QString file = KStandardDirs::locate( "data", "kfile/bookmarks.xml" );
     if ( file.isEmpty() )
         file = KStandardDirs::locateLocal( "data", "kfile/bookmarks.xml" );
-
-    // import old bookmarks
-    if ( !KStandardDirs::exists( file ) ) {
-        QString oldFile = KStandardDirs::locate( "data", "kfile/bookmarks.html" );
-        if ( !oldFile.isEmpty() )
-            importOldBookmarks( oldFile, file );
-    }
 
     KBookmarkManager *manager = KBookmarkManager::managerForFile( file, "kfile" );
     manager->setUpdate( true );
@@ -52,62 +44,6 @@ void KonsoleBookmarkHandler::openBookmark(const KBookmark & bm, Qt::MouseButtons
 QString KonsoleBookmarkHandler::currentUrl() const
 {
     return m_konsole->baseURL().url();
-}
-
-void KonsoleBookmarkHandler::importOldBookmarks( const QString& path,
-                                                 const QString& destinationPath )
-{
-    KSaveFile file( destinationPath );
-    if ( !file.open() )
-        return;
-
-    m_importStream = new QTextStream ( &file );
-    *m_importStream << "<!DOCTYPE xbel>\n<xbel>\n";
-
-    KNSBookmarkImporter importer( path );
-    connect( &importer,
-             SIGNAL( newBookmark( const QString&, const QByteArray&, const QString& )),
-             SLOT( slotNewBookmark( const QString&, const QByteArray&, const QString& )));
-    connect( &importer,
-             SIGNAL( newFolder( const QString&, bool, const QString& )),
-             SLOT( slotNewFolder( const QString&, bool, const QString& )));
-    connect( &importer, SIGNAL( newSeparator() ), SLOT( newSeparator() ));
-    connect( &importer, SIGNAL( endMenu() ), SLOT( endMenu() ));
-
-    importer.parseNSBookmarks( false );
-
-    *m_importStream << "</xbel>";
-    m_importStream->flush();
-
-    file.finalize();
-    delete m_importStream;
-    m_importStream = 0L;
-}
-
-void KonsoleBookmarkHandler::slotNewBookmark( const QString& /*text*/,
-                                            const QByteArray& url,
-                                            const QString& additionalInfo )
-{
-    *m_importStream << "<bookmark icon=\"" << KMimeType::iconNameForUrl( KUrl( url ) );
-    *m_importStream << "\" href=\"" << QString::fromUtf8(url) << "\">\n";
-    *m_importStream << "<title>" << (additionalInfo.isEmpty() ? QString::fromUtf8(url) : additionalInfo) << "</title>\n</bookmark>\n";
-}
-
-void KonsoleBookmarkHandler::slotNewFolder( const QString& text, bool /*open*/,
-                                          const QString& /*additionalInfo*/ )
-{
-    *m_importStream << "<folder icon=\"bookmark_folder\">\n<title=\"";
-    *m_importStream << text << "\">\n";
-}
-
-void KonsoleBookmarkHandler::newSeparator()
-{
-    *m_importStream << "<separator/>\n";
-}
-
-void KonsoleBookmarkHandler::endFolder()
-{
-    *m_importStream << "</folder>\n";
 }
 
 #include "konsolebookmarkhandler.moc"

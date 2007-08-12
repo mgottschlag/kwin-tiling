@@ -28,22 +28,13 @@ Q_SIGNALS:
     void openUrl( const QString& url, const QString& title );
 
 private Q_SLOTS:
-    // for importing
     void openBookmark( const KBookmark &, Qt::MouseButtons, Qt::KeyboardModifiers );
-    void slotNewBookmark( const QString& text, const QByteArray& url,
-                          const QString& additionalInfo );
-    void slotNewFolder( const QString& text, bool open,
-                        const QString& additionalInfo );
-    void newSeparator();
-    void endFolder();
 
 private:
-    void importOldBookmarks( const QString& path, const QString& destinationPath );
 
     KonsoleMenu *m_konsole;
     KMenu *m_menu;
     KBookmarkMenu *m_bookmarkMenu;
-    QTextStream *m_importStream;
 
 private:
     class KonsoleBookmarkHandlerPrivate;
