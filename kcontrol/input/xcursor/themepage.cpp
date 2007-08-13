@@ -309,7 +309,7 @@ void ThemePage::removeClicked()
 
     // Don't let the user delete the currently configured theme
     if (view->currentIndex() == appliedIndex) {
-        KMessageBox::sorry(this, i18n("<qt>You can't delete the theme you're currently "
+        KMessageBox::sorry(this, i18n("<qt>You cannot delete the theme you are currently "
                 "using.<br>You have to switch to another theme first.</qt>"));
         return;
     }
