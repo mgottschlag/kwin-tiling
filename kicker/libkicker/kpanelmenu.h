@@ -167,7 +167,7 @@ protected:
 private:
     void internalInitialize();
     class Private;
-    Private *d;
+    Private *const d;
 };
 
 #define K_EXPORT_KICKER_MENUEXT( libname, classname )                       \

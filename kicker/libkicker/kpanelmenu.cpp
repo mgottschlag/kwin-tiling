@@ -34,6 +34,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class KPanelMenu::Private
 {
 public:
+    Private()
+        : init(0), clearDelay(0), startPath(), t()
+    {}
     bool init;
     int clearDelay;
     QString startPath;
@@ -41,21 +44,21 @@ public:
 };
 
 KPanelMenu::KPanelMenu(const QString &startDir, QWidget *parent)
-  : KMenu(parent)
+  : KMenu(parent),
+    d()
 {
     init(startDir);
 }
 
 KPanelMenu::KPanelMenu(QWidget *parent)
-  : KMenu(parent)
+  : KMenu(parent),
+    d()
 {
     init();
 }
 
 void KPanelMenu::init(const QString& path)
 {
-    d = new Private;
-
     setInitialized( false );
     d->startPath = path;
 
