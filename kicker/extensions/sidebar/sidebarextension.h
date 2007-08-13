@@ -47,7 +47,7 @@ protected:
     virtual void preferences();
     virtual bool eventFilter( QObject *o, QEvent *e );
 protected Q_SLOTS:
-    void openUrlRequest( const KUrl &, const KParts::URLArgs &);
+    void openUrlRequest( const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & );
     void needLayoutUpdate(bool);
 
 private:
