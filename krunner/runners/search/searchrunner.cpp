@@ -71,7 +71,7 @@ QString formatUri(const QString& uri, const QString& term) {
     // it would be nice to be able to make the matching part of the string
     // stand out
     //highlighted.replace(term, "<b>"+term+"</b>");
-    highlighted = highlighted + " ("+path+")";
+    highlighted = highlighted + " ("+path+')';
     return highlighted;
 }
 
