@@ -248,13 +248,8 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
         if ( cmdLine.isEmpty() )
             return;
 
-        // XXX The shell magic is most likely bogus - KMacroExpander works
-        // only with Bourne-compatible shells.
-        const char *shell = getenv("KLIPPER_SHELL");
-        if (shell==NULL) shell = getenv("SHELL");
-
         KProcess proc;
-        proc.setShellCommand(cmdLine.trimmed(), shell);
+        proc.setShellCommand(cmdLine.trimmed());
         if (!proc.startDetached())
             qWarning("Klipper: Couldn't start process!");
     }
