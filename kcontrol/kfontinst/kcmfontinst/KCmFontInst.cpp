@@ -266,7 +266,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
                 //*downloadFontsAct=new KAction(KIcon("go-down"), i18n("Download Fonts..."), this);
 
     itsToolsMenu=new KActionMenu(KIcon("tool2"), i18n("Tools"), this);
-    itsMgtMode=new KToggleAction(KIcon("fonts"),
+    itsMgtMode=new KToggleAction(KIcon("preferences-desktop-font-installer"),
                                  i18n("Font Management Mode"), this),
     itsShowPreview=new KToggleAction(KIcon("thumbnail-show"), i18n("Show Large Preview"), this);
     settingsMenu->addAction(itsMgtMode);

@@ -20,6 +20,8 @@ if (X11_Xft_FOUND)
   add_subdirectory( thumbnail )
   add_subdirectory( viewpart )
 
+  kde4_install_icons( ${ICON_INSTALL_DIR} )
+
 else (X11_Xft_FOUND)
 
   message(STATUS "Missing Xft - disabling font installer and font previews")
