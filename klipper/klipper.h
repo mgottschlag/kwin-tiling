@@ -167,7 +167,6 @@ private:
     QTime *hideTimer;
     QTime *showTimer;
 
-    QMimeData* m_lastClipdata;
     int m_lastClipboard;
     int m_lastSelection;
     History* m_history;
