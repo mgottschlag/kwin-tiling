@@ -715,7 +715,7 @@ QString Klipper::clipboardContents( bool * /*isSelection*/ )
     return 0;
 }
 
-void Klipper::applyClipChanges( const QMimeSource& clipData )
+void Klipper::applyClipChanges( const QMimeData* clipData )
 {
     if ( locklevel )
         return;
@@ -835,16 +835,16 @@ void Klipper::checkClipData( bool selectionMode )
         qDebug( "    format: %s", format);
     }
 #endif
-    QMimeSource* data = clip->data( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
+    const QMimeData* data = clip->mimeData( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
     if ( !data ) {
         kWarning("No data in clipboard. This not not supposed to happen." );
         return;
     }
     // TODO: Rewrite to Qt4 !!!
-#if 0
-    int lastSerialNo = selectionMode ? m_lastSelection : m_lastClipboard;
-    bool changed = data->serialNumber() != lastSerialNo;
-    bool clipEmpty = ( data->format() == 0L );
+    //int lastSerialNo = selectionMode ? m_lastSelection : m_lastClipboard;
+    //bool changed = data->serialNumber() != lastSerialNo;
+    bool changed = true; // ### FIXME
+    bool clipEmpty = data->formats().isEmpty();
 
     if ( changed && clipEmpty && bNoNullClipboard ) {
         const HistoryItem* top = history()->first();
@@ -857,24 +857,24 @@ void Klipper::checkClipData( bool selectionMode )
         }
         return;
     }
-#endif
+ 
     // this must be below the "bNoNullClipboard" handling code!
     // XXX: I want a better handling of selection/clipboard in general.
     // XXX: Order sensitive code. Must die.
     if ( selectionMode && bIgnoreSelection )
         return;
 
-    if( selectionMode && bSelectionTextOnly && !Q3TextDrag::canDecode( data ))
+    if( selectionMode && bSelectionTextOnly && data->hasText())
         return;
 
 #ifdef __GNUC__
 #warning This should be maybe extended for KDE4 or at least get a checkbox somewhere in UI
 #endif
-    if( K3URLDrag::canDecode( data ))
+    if( KUrl::List::canDecode( data ) )
         ; // ok
-    else if( Q3TextDrag::canDecode( data ))
+    else if( data->hasText() )
         ; // ok
-    else if( Q3ImageDrag::canDecode( data ))
+    else if( data->hasImage() )
     {
 // Limit mimetypes that are tracked by Klipper (this is basically a workaround
 // for #109032). Can't add UI in 3.5 because of string freeze, and I'm not sure
@@ -895,12 +895,12 @@ void Klipper::checkClipData( bool selectionMode )
 
     QString& lastURLGrabberText = selectionMode
         ? m_lastURLGrabberTextSelection : m_lastURLGrabberTextClipboard;
-    if( Q3TextDrag::canDecode( data ))
+    if( data->hasText() )
     {
         if ( bURLGrabber && myURLGrabber )
         {
-            QString text;
-            Q3TextDrag::decode( data, text );
+            QString text = data->text();
+
             // Make sure URLGrabber doesn't repeat all the time if klipper reads the same
             // text all the time (e.g. because XFixes is not available and the application
             // has broken TIMESTAMP target). Using most recent history item may not always
@@ -919,9 +919,9 @@ void Klipper::checkClipData( bool selectionMode )
     }
     else
         lastURLGrabberText = QString();
-#if 0
+
     if (changed) {
-        applyClipChanges( *data );
+        applyClipChanges( data );
 #ifdef NOISY_KLIPPER
         kDebug() << "Synchronize?" << ( bSynchronize ? "yes" : "no" );
 #endif
@@ -932,7 +932,6 @@ void Klipper::checkClipData( bool selectionMode )
             }
         }
     }
-#endif
 }
 
 void Klipper::setClipboard( const HistoryItem& item, int mode )
@@ -945,7 +944,7 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
 #ifdef NOSIY_KLIPPER
         kDebug() << "Setting selection to <" << item.text() << ">";
 #endif
-        clip->setData( item.mimeSource(), QClipboard::Selection );
+        clip->setMimeData( item.mimeData(), QClipboard::Selection );
 #if 0
         m_lastSelection = clip->data()->serialNumber();<
 #endif
@@ -954,7 +953,7 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
 #ifdef NOSIY_KLIPPER
         kDebug() << "Setting clipboard to <" << item.text() << ">";
 #endif
-        clip->setData( item.mimeSource(), QClipboard::Clipboard );
+        clip->setMimeData( item.mimeData(), QClipboard::Clipboard );
 #if 0
         m_lastClipboard = clip->data()->serialNumber();
 #endif

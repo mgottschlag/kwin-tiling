@@ -41,7 +41,7 @@ class ClipboardPoll;
 class QTime;
 class History;
 class QAction;
-class QMimeSource;
+class QMimeData;
 class HistoryItem;
 class KlipperSessionManager;
 
@@ -126,7 +126,7 @@ protected:
     /**
      * Enter clipboard data in the history.
      */
-    void applyClipChanges( const QMimeSource& data );
+    void applyClipChanges( const QMimeData* data );
 
     void setClipboard( const HistoryItem& item, int mode );
     bool ignoreClipboardChanges() const;
@@ -167,7 +167,7 @@ private:
     QTime *hideTimer;
     QTime *showTimer;
 
-    QMimeSource* m_lastClipdata;
+    QMimeData* m_lastClipdata;
     int m_lastClipboard;
     int m_lastSelection;
     History* m_history;

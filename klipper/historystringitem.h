@@ -40,7 +40,7 @@ public:
         }
         return false;
     }
-    virtual QMimeSource* mimeSource() const { return new Q3TextDrag( m_data ) ; }
+    virtual QMimeData* mimeData() const;
 
     /**
      * Write object on datastream
@@ -52,6 +52,5 @@ private:
 };
 
 inline QString HistoryStringItem::text() const { return m_data; }
-
 
 #endif

@@ -22,7 +22,7 @@
 #include <QPixmap>
 
 class QString;
-class QMimeSource;
+class QMimeData;
 class QDataStream;
 
 /**
@@ -49,9 +49,9 @@ public:
     inline virtual const QPixmap& image() const;
 
     /**
-     * Returns QMimeSource suitable for QClipboard::setData().
+     * Returns a pointer to a QMimeData suitable for QClipboard::setMimeData().
      */
-    virtual QMimeSource* mimeSource() const = 0;
+    virtual QMimeData* mimeData() const = 0;
 
     /**
      * Write object on datastream
@@ -67,7 +67,7 @@ public:
      * Create an HistoryItem from MimeSources (i.e., clipboard data)
      * returns null if create fails (e.g, unsupported mimetype)
      */
-    static HistoryItem* create( const QMimeSource& aSource );
+    static HistoryItem* create( const QMimeData* data );
 
     /**
      * Create an HistoryItem from MimeSources (i.e., clipboard data)

@@ -39,7 +39,7 @@ HistoryItem::~HistoryItem() {
 
 }
 
-HistoryItem* HistoryItem::create( const QMimeSource& aSource )
+HistoryItem* HistoryItem::create( const QMimeData* data )
 {
 #if 0
     int i=0;
@@ -47,26 +47,24 @@ HistoryItem* HistoryItem::create( const QMimeSource& aSource )
         kDebug() << "format(" << i <<"): " << f;
     }
 #endif
-    if( K3URLDrag::canDecode( &aSource )) {
-        KUrl::List urls;
-        QMap<QString,QString> metaData;
-        if( K3URLDrag::decode( &aSource, urls, metaData )) {
-            // this is from KonqDrag (libkonq)
-            QByteArray a = aSource.encodedData( "application/x-kde-cutselection" );
-            bool cut = !a.isEmpty() && (a.at(0) == '1'); // true if 1
-            return new HistoryURLItem( urls, metaData, cut );
-        }
+    if (KUrl::List::canDecode(data))
+    {
+        KUrl::MetaDataMap metaData;
+        KUrl::List urls = KUrl::List::fromMimeData(data, &metaData);
+        QByteArray a = data->data("application/x-kde-cutselection");
+        bool cut = !a.isEmpty() && (a.at(0) == '1'); // true if 1
+        return new HistoryURLItem(urls, metaData, cut);
     }
-    if ( Q3TextDrag::canDecode( &aSource ) ) {
-        QString text;
-        if( Q3TextDrag::decode( &aSource, text ))
-            return text.isNull() ? 0 : new HistoryStringItem( text );
+    if (data->hasText())
+    {
+        return new HistoryStringItem(data->text());
     }
-    if ( Q3ImageDrag::canDecode( &aSource ) ) {
-        QPixmap image;
-        if( Q3ImageDrag::decode( &aSource, image ))
-            return image.isNull() ? 0 : new HistoryImageItem( image );
+    if (data->hasImage())
+    {
+        QImage image = qvariant_cast<QImage>(data->imageData());
+        return new HistoryImageItem(QPixmap::fromImage(image));
     }
+
     return 0; // Failed.
 }
 

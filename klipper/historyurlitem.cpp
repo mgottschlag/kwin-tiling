@@ -23,7 +23,7 @@
 #include <k3urldrag.h>
 #include <Qt3Support/Q3CString>
 
-HistoryURLItem::HistoryURLItem( const KUrl::List &_urls, QMap<QString, QString> _metaData, bool _cut )
+HistoryURLItem::HistoryURLItem( const KUrl::List &_urls, KUrl::MetaDataMap _metaData, bool _cut )
     : urls( _urls ), metaData( _metaData ), cut( _cut )
 {
 }
@@ -38,18 +38,11 @@ QString HistoryURLItem::text() const {
     return urls.toStringList().join( " " );
 }
 
-QMimeSource* HistoryURLItem::mimeSource() const {
-    K3MultipleDrag* drag = new K3MultipleDrag;
-    drag->addDragObject( new K3URLDrag( urls, metaData ));
-    // from KonqDrag (libkonq)
-    Q3StoredDrag* cutdrag = new Q3StoredDrag( "application/x-kde-cutselection" );
-    QByteArray a;
-    Q3CString s ( cut ? "1" : "0" );
-    a.resize( s.length() + 1 ); // trailing zero
-    memcpy( a.data(), s.data(), s.length() + 1 );
-    cutdrag->setEncodedData( a );
-    drag->addDragObject( cutdrag );
-    return drag;
+QMimeData* HistoryURLItem::mimeData() const {
+    QMimeData *data = new QMimeData();
+    urls.populateMimeData(data, metaData);
+    data->setData("application/x-kde-cutselection", QByteArray(cut ? "1" : "0"));
+    return data;
 }
 
 bool HistoryURLItem::operator==( const HistoryItem& rhs) const

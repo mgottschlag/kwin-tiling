@@ -29,3 +29,11 @@ HistoryStringItem::HistoryStringItem( const QString& data )
 void HistoryStringItem::write( QDataStream& stream ) const {
     stream << QString( "string" ) << m_data;
 }
+
+QMimeData* HistoryStringItem::mimeData() const
+{
+    QMimeData *data = new QMimeData();
+    data->setText(m_data);
+    return data;
+}
+

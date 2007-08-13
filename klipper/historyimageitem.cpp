@@ -46,3 +46,11 @@ QString HistoryImageItem::text() const {
 void HistoryImageItem::write( QDataStream& stream ) const {
     stream << QString( "image" ) << m_data;
 }
+
+QMimeData* HistoryImageItem::mimeData() const
+{
+    QMimeData *data = new QMimeData();
+    data->setImageData(m_data.toImage());
+    return data;
+}
+
