@@ -759,18 +759,13 @@ QModelIndex CFontList::index(int row, int column, const QModelIndex &parent) con
     if(parent.isValid()) // Then font...
     {
         CFamilyItem *fam=static_cast<CFamilyItem*>(parent.internalPointer());
-        CFontItem   *font=fam->fonts().value(row);
 
-        if(font)
-            return createIndex(row, column, font);
+        if(row<fam->fonts().count())
+            return createIndex(row, column, fam->fonts().at(row));
     }
     else // Family....
-    {
-        CFamilyItem *fam=itsFamilies.value(row);
-
-        if(fam)
-            return createIndex(row, column, fam);
-    }
+        if(row<itsFamilies.count())
+            return createIndex(row, column, itsFamilies.at(row));
 
     return QModelIndex();
 }

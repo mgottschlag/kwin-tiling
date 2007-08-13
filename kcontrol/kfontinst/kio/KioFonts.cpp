@@ -1449,29 +1449,33 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
 
     //
     // First of all get list of real files - i.e. remove any duplicates due to symlinks
-    CDisabledFonts::TFileList unSortedFiles;
+    CDisabledFonts::TFileList files;
 
-    getFontFiles(patterns, unSortedFiles);
+    getFontFiles(patterns, files);
 
-    //
-    // Sort list of files - placing scalable ones first. This is because, when determening the
-    // mimetype, the 1st valid file will be chosen. In case of mixed bitmap/scalable - prefer
-    // scalable
-    CDisabledFonts::TFileList                files;
-    CDisabledFonts::TFileList::ConstIterator it,
-                                             end(unSortedFiles.end());
+    CDisabledFonts::TFileList::ConstIterator it(files.begin()),
+                                             end(files.end());
 
-    for(it=unSortedFiles.begin(); it!=end; ++it)
-        if(isScalable(*it))
-            files.prepend(*it);
-        else
-            files.append(*it);
+    if(files.count()>1)
+    {
+        //
+        // Sort list of files - placing scalable ones first. This is because, when determening the
+        // mimetype, the 1st valid file will be chosen. In case of mixed bitmap/scalable - prefer
+        // scalable
+        CDisabledFonts::TFileList sorted;
+
+        for(; it!=end; ++it)
+            if(isScalable(*it))
+                sorted.prepend(*it);
+            else
+                sorted.append(*it);
+        files=sorted;
+        it=files.begin();
+        end=files.end();
+    }
 
     entry.clear();
     entry.insert(KIO::UDSEntry::UDS_SIZE, getSize(files));
-
-    it=files.begin();
-    end=files.end();
 
     for(; it!=end; ++it)
     {
