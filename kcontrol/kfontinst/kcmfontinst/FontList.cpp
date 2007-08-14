@@ -56,11 +56,6 @@
 
 //#define KFI_FONTLIST_DEBUG
 
-#ifdef KFI_FONTLIST_DEBUG
-#include <kdebug.h>
-#define KFI_DBUG kDebug() << "[" << (int)(getpid()) << "] CFontList "
-#endif
-
 // #define to control whether generated inline preview thumbs should be
 // cached to disk.
 #define KFI_SAVE_PIXMAPS
@@ -900,10 +895,10 @@ void CFontList::listingCompleted()
 void CFontList::newItems(const KFileItemList &items)
 {
 #ifdef KFI_FONTLIST_DEBUG
-    KFI_DBUG << "************** newItems " << items.count() << endl;
+    kDebug() << "************** newItems " << items.count();
 
     for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
-        KFI_DBUG << "               " << (int)(*it) << endl;
+        kDebug() << "               " << (int)(*it);
 #endif
 
     for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
@@ -915,7 +910,7 @@ void CFontList::newItems(const KFileItemList &items)
 void CFontList::clearItems()
 {
 #ifdef KFI_FONTLIST_DEBUG
-    KFI_DBUG << "************** clearItems" << endl;
+    kDebug() << "************** clearItems";
 #endif
 
     beginRemoveRows(QModelIndex(), 0, itsFamilies.count());
@@ -928,10 +923,10 @@ void CFontList::clearItems()
 void CFontList::refreshItems(const KFileItemList &items)
 {
 #ifdef KFI_FONTLIST_DEBUG
-    KFI_DBUG << "************** refreshItems " << items.count() << endl;
+    kDebug() << "************** refreshItems " << items.count();
 
     for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
-        KFI_DBUG << "               " << (int)(*it) << endl;
+        kDebug() << "               " << (int)(*it);
 #endif
 
     QSet<CFamilyItem *> families;
@@ -944,14 +939,14 @@ void CFontList::refreshItems(const KFileItemList &items)
         {
             font->updateStatus();
 #ifdef KFI_FONTLIST_DEBUG
-            KFI_DBUG << "               Found font, status now:" << font->isEnabled()
-                     << " url" << (*it)->url().prettyUrl() << endl;
+            kDebug() << "               Found font, status now:" << font->isEnabled()
+                     << " url" << (*it)->url().prettyUrl();
 #endif
             families.insert(static_cast<CFamilyItem *>(font->parent()));
         }
 #ifdef KFI_FONTLIST_DEBUG
         else
-            KFI_DBUG << "               Could not locate font :-( " << (int)(*it) << endl;
+            kDebug() << "               Could not locate font :-( " << (int)(*it);
 #endif
     }
 
@@ -967,7 +962,7 @@ void CFontList::refreshItems(const KFileItemList &items)
 void CFontList::deleteItems(const KFileItemList &items)
 {
 #ifdef KFI_FONTLIST_DEBUG
-    KFI_DBUG << "************** deleteItems " << items.count() << endl;
+    kDebug() << "************** deleteItems " << items.count();
 #endif
 
     KFileItemList::ConstIterator it(items.begin()),
@@ -1014,12 +1009,12 @@ void CFontList::addItem(const KFileItem *item)
         }
 #ifdef KFI_FONTLIST_DEBUG
         else
-            KFI_DBUG << "                  Could not locate family!" << endl;
+            kDebug() << "                  Could not locate family!";
 #endif
     }
 #ifdef KFI_FONTLIST_DEBUG
     else
-        KFI_DBUG << "                  Font already exists!" << endl;
+        kDebug() << "                  Font already exists!";
 #endif
 }
 

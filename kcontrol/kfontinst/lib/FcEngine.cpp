@@ -41,10 +41,6 @@
 
 //#define KFI_FC_DEBUG
 
-#ifdef KFI_FC_DEBUG
-#define KFI_DBUG kDebug() << "[" << (int)(getpid()) << "] CFcEngine - "
-#endif
-
 #define KFI_PREVIEW_GROUP      "KFontInst Preview Settings"
 #define KFI_PREVIEW_STRING_KEY "String"
 
@@ -484,7 +480,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
 /*
                         {
 #ifdef KFI_FC_DEBUG
-                            KFI_DBUG << "use size:" << bSize+8 << endl;
+                            kDebug() << "use size:" << bSize+8;
 #endif
                             pix=QPixmap(constInitialWidth, bSize+8);
                             offset=4;
@@ -944,7 +940,7 @@ QFont CFcEngine::getQFont(const QString &family, unsigned long style, int size)
 bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
 {
 #ifdef KFI_FC_DEBUG
-    KFI_DBUG << "parseUrl(" << url.prettyUrl() << ", " << faceNo << ")" << endl;
+    kDebug() << "parseUrl(" << url.prettyUrl() << ", " << faceNo << ")";
 #endif
     if(faceNo<0)
         faceNo=0;
@@ -954,7 +950,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
 
     reinit();
 
-    //KFI_DBUG << "parseUrl:" << url.prettyUrl() << endl;
+    //kDebug() << "parseUrl:" << url.prettyUrl();
     // Possible urls:
     //
     //    fonts:/times.ttf
@@ -976,12 +972,12 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
             itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDSEntry::UDS_URL)),
                                           KFI_KIO_FACE, 0);
 #ifdef KFI_FC_DEBUG
-            KFI_DBUG << "Stated fonts:/ url, name:" << name << " itsFileName:" << itsFileName
-                         << " style:" << style << " itsIndex:" << itsIndex << endl;
+            kDebug() << "Stated fonts:/ url, name:" << name << " itsFileName:" << itsFileName
+                         << " style:" << style << " itsIndex:" << itsIndex;
 #endif
         }
 #ifdef KFI_FC_DEBUG
-KFI_DBUG << "isHidden:" << hidden << endl;
+kDebug() << "isHidden:" << hidden;
 #endif
         if(hidden)
             name=itsFileName;
@@ -1159,7 +1155,7 @@ XftFont * CFcEngine::queryFont()
     static const int constQuerySize=8;
 
 #ifdef KFI_FC_DEBUG
-    KFI_DBUG << "queryFont" << endl;
+    kDebug() << "queryFont";
 #endif
 
     XftFont *f=getFont(constQuerySize);
@@ -1187,7 +1183,7 @@ XftFont * CFcEngine::queryFont()
         }
     }
 #ifdef KFI_FC_DEBUG
-    KFI_DBUG << "queryFont - ret" << (int)f << endl;
+    kDebug() << "queryFont - ret" << (int)f;
 #endif
     return f;
 }
@@ -1197,7 +1193,7 @@ XftFont * CFcEngine::getFont(int size)
     XftFont *f=NULL;
 
 #ifdef KFI_FC_DEBUG
-    KFI_DBUG << "getFont:" << QString(itsInstalled ? itsName : itsFileName) << ' ' << size << endl;
+    kDebug() << "getFont:" << QString(itsInstalled ? itsName : itsFileName) << ' ' << size;
 #endif
 
     if(itsInstalled)
@@ -1232,7 +1228,7 @@ XftFont * CFcEngine::getFont(int size)
     }
 
 #ifdef KFI_FC_DEBUG
-    KFI_DBUG << "getFont, ret: " << (int)f << endl;
+    kDebug() << "getFont, ret: " << (int)f;
 #endif
 
     return f;
@@ -1282,7 +1278,7 @@ bool CFcEngine::isCorrect(XftFont *f, bool checkFamily)
     }
     else
         s << "No font!!!  ";
-    KFI_DBUG << "isCorrect? " << xxx << endl;
+    kDebug() << "isCorrect? " << xxx;
 #endif
 
     return
@@ -1309,7 +1305,7 @@ bool CFcEngine::isCorrect(XftFont *f, bool checkFamily)
 void CFcEngine::getSizes()
 {
 #ifdef KFI_FC_DEBUG
-    KFI_DBUG << "getSizes" << endl;
+    kDebug() << "getSizes";
 #endif
 
     XftFont *f=queryFont();
@@ -1359,7 +1355,7 @@ void CFcEngine::getSizes()
                 if (set)
                 {
 #ifdef KFI_FC_DEBUG
-                    KFI_DBUG << "got fixed sizes: " << set->nfont << endl;
+                    kDebug() << "got fixed sizes: " << set->nfont;
 #endif
                     itsSizes.reserve(set->nfont);
                     for (int i = 0; i < set->nfont; i++)
@@ -1369,7 +1365,7 @@ void CFcEngine::getSizes()
                             itsSizes.push_back((int)px);
 
 #ifdef KFI_FC_DEBUG
-                            KFI_DBUG << "got fixed: " << px << endl;
+                            kDebug() << "got fixed: " << px;
 #endif
                             if (px<=constDefaultAlphaSize)
                                 itsAlphaSize=(int)px;
@@ -1395,7 +1391,7 @@ void CFcEngine::getSizes()
                     itsSizes.reserve(numSizes);
 
 #ifdef KFI_FC_DEBUG
-                    KFI_DBUG << "numSizes fixed: " << numSizes << endl;
+                    kDebug() << "numSizes fixed: " << numSizes;
 #endif
                     for (size=0; size<numSizes; size++)
                     {
@@ -1405,7 +1401,7 @@ void CFcEngine::getSizes()
                         double px=face->available_sizes[size].width;
 #endif
 #ifdef KFI_FC_DEBUG
-                        KFI_DBUG << "px: " << px << endl;
+                        kDebug() << "px: " << px;
 #endif
                         itsSizes.push_back((int)px);
 
@@ -1432,7 +1428,7 @@ void CFcEngine::getSizes()
     if(0==itsAlphaSize && itsSizes.count())
         itsAlphaSize=itsSizes[0];
 #ifdef KFI_FC_DEBUG
-    KFI_DBUG << "getSizes, end" << endl;
+    kDebug() << "getSizes, end";
 #endif
 }
 

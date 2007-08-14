@@ -31,7 +31,6 @@
 
 #ifdef KFI_FONTLISTER_DEBUG
 #include <kdebug.h>
-#define KFI_DBUG kDebug() << "[" << (int)(getpid()) << "] CFontLister "
 #endif
 
 namespace KFI

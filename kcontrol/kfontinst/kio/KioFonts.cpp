@@ -65,7 +65,7 @@
 // Not enabled - as it messes things up a little with fonts/group files.
 //#define KFI_KIO_ALL_URLS_HAVE_NAME
 
-#define KFI_DBUG kDebug(7000) << '[' << (int)(getpid()) << "] " << " (" << time(NULL) << ") "
+#define KFI_DBUG kDebug(7000) << " (" << time(NULL) << ") "
 
 #define MAX_IPC_SIZE    (1024*32)
 #define DEFAULT_TIMEOUT 2         // Time between last mod and writing files...
