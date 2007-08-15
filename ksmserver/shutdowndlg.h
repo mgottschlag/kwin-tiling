@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef SHUTDOWNDLG_H
 #define SHUTDOWNDLG_H
 
-#include <KDialog>
+#include <QDialog>
 #include <QPushButton>
 #include <kworkspace.h>
 
@@ -95,7 +95,7 @@ private:
 };
 
 // The confirmation dialog
-class KSMShutdownDlg : public KDialog
+class KSMShutdownDlg : public QDialog
 {
     Q_OBJECT
 
