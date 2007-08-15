@@ -88,7 +88,7 @@ class CKioFonts : public KIO::SlaveBase
         TFontDetails() : writingSystems(0) { }
 
         CDisabledFonts::TFileList files;
-        unsigned long             styleVal;
+        quint32                   styleVal;
         qulonglong                writingSystems;
     };
 
@@ -140,7 +140,7 @@ class CKioFonts : public KIO::SlaveBase
     QString            getGroupName(gid_t gid);
     bool               createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
                                           const CDisabledFonts::TFileList &patterns,
-                                          unsigned long styleVal, qulonglong writingSystems,
+                                          quint32 styleVal, qulonglong writingSystems,
                                           bool sys, bool hidden=false);
     bool               createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, const QString &path,
                                             bool sys);

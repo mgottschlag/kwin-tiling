@@ -1441,7 +1441,7 @@ QString CKioFonts::getGroupName(gid_t gid)
 
 bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
                                    const CDisabledFonts::TFileList &patterns,
-                                   unsigned long styleVal, qulonglong writingSystems,
+                                   quint32 styleVal, qulonglong writingSystems,
                                    bool sys, bool hidden)
 {
     //KFI_DBUG << "createFontUDSEntry name:" << name << " style:" << styleVal << " #"
@@ -2769,8 +2769,8 @@ bool CKioFonts::updateFontList()
                 {
                     QString name,
                             foundry(FC::getFcString(itsFontList->fonts[i], FC_FOUNDRY));
-                    int     styleVal,
-                            index;
+                    quint32 styleVal;
+                    int     index;
 
                     if(!itsRoot && 0==fileName.indexOf(home))
                         folder=FOLDER_USER;

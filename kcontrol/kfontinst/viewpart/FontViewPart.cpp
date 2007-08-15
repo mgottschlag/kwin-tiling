@@ -193,14 +193,14 @@ void CFontViewPart::timeout()
     if(!itsInstallButton)
         return;
 
-    bool          isFonts(KFI_KIO_FONTS_PROTOCOL==url().protocol()),
-                  isDisabled(false),
-                  showFs(false);
-    KUrl          displayUrl(url()),
-                  fileUrl;
-    int           fileIndex(-1);
-    QString       name;
-    unsigned long styleInfo(KFI_NO_STYLE_INFO);
+    bool    isFonts(KFI_KIO_FONTS_PROTOCOL==url().protocol()),
+            isDisabled(false),
+            showFs(false);
+    KUrl    displayUrl(url()),
+            fileUrl;
+    int     fileIndex(-1);
+    QString name;
+    quint32 styleInfo(KFI_NO_STYLE_INFO);
 
 //    itsMetaUrl=url();
     delete itsTempDir;

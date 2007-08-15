@@ -47,12 +47,12 @@ namespace Misc
 
     struct TFont
     {
-        TFont(const QString &f=QString(), unsigned int s=KFI_NO_STYLE_INFO) : family(f), styleInfo(s) { }
+        TFont(const QString &f=QString(), quint32 s=KFI_NO_STYLE_INFO) : family(f), styleInfo(s) { }
 
         bool operator==(const TFont &o) const { return o.styleInfo==styleInfo && o.family==family; }
 
-        QString      family;
-        unsigned int styleInfo;
+        QString family;
+        quint32 styleInfo;
     };
 
     extern KDE_EXPORT QString prettyUrl(const KUrl &url);

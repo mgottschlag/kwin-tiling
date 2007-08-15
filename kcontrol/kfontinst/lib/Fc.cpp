@@ -276,7 +276,7 @@ int strToSlant(const QString &str)
     return FC_SLANT_ROMAN;
 }
 
-unsigned long createStyleVal(const QString &name)
+quint32 createStyleVal(const QString &name)
 {
     int pos;
 
@@ -302,7 +302,7 @@ unsigned long createStyleVal(const QString &name)
     }
 }
 
-QString styleValToStr(unsigned long style)
+QString styleValToStr(quint32 style)
 {
     QString str;
     int     weight, width, slant;
@@ -312,20 +312,20 @@ QString styleValToStr(unsigned long style)
     return str;
 }
 
-void decomposeStyleVal(int styleInfo, int &weight, int &width, int &slant)
+void decomposeStyleVal(quint32 styleInfo, int &weight, int &width, int &slant)
 {
     weight=(styleInfo&0xFF0000)>>16;
     width=(styleInfo&0x00FF00)>>8;
     slant=(styleInfo&0x0000FF);
 }
 
-unsigned long styleValFromStr(const QString &style)
+quint32 styleValFromStr(const QString &style)
 {
     if(style.isEmpty())
         return KFI_NO_STYLE_INFO;
     else
     {
-        unsigned long val;
+        quint32 val;
 
         QTextStream(const_cast<QString *>(&style), QIODevice::ReadOnly) >> val;
         return val;
@@ -394,7 +394,7 @@ int getFcInt(FcPattern *pat, const char *val, int index, int def)
     return def;
 }
 
-void getDetails(FcPattern *pat, QString &name, int &styleVal, int &index)
+void getDetails(FcPattern *pat, QString &name, quint32 &styleVal, int &index)
 {
     int weight=getFcInt(pat,  FC_WEIGHT, 0, KFI_NULL_SETTING),
         width=
@@ -432,7 +432,7 @@ QString createName(FcPattern *pat, int weight, int width, int slant)
     return createName(family, weight, width, slant);
 }
 
-QString createName(const QString &family, int styleInfo)
+QString createName(const QString &family, quint32 styleInfo)
 {
     int weight, width, slant;
 
@@ -467,12 +467,14 @@ QString createName(const QString &family, int weight, int width, int slant)
     //
     // If weight is "Regular", we only want to display it if slant and width are empty.
     if(KFI_NULL_SETTING!=weight)
+    {
         weightString=weightStr(weight, !slantString.isEmpty() || !widthString.isEmpty());
 
-    if(!weightString.isEmpty())
-    {
-        name+=QString(", ")+weightString;
-        comma=true;
+        if(!weightString.isEmpty())
+        {
+            name+=QString(", ")+weightString;
+            comma=true;
+        }
     }
 
 #ifndef KFI_FC_NO_WIDTHS

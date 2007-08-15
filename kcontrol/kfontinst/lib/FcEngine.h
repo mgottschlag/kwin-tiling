@@ -76,19 +76,19 @@ class KDE_EXPORT CFcEngine
 
     void                  setDirty() { itsFcDirty=true; }
     bool                  drawPreview(const QString &item, QPixmap &pix, int h,
-                                      unsigned long style=KFI_NO_STYLE_INFO, int face=0);
+                                      quint32 style=KFI_NO_STYLE_INFO, int face=0);
     bool                  draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb,
                                const QList<TRange> &range=QList<TRange>(), QList<TChar> *chars=NULL,
-                               const QString &name=QString(), unsigned long style=KFI_NO_STYLE_INFO);
+                               const QString &name=QString(), quint32 style=KFI_NO_STYLE_INFO);
     int                   getNumIndexes() { return itsIndexCount; } // Only valid after draw has been called!
     const QString &       getName(const KUrl &url, int faceNo=0);
     bool                  getInfo(const KUrl &url, int faceNo, Misc::TFont &info);
-    static QFont          getQFont(const QString &family, unsigned long style, int size);
+    static QFont          getQFont(const QString &family, quint32 style, int size);
 
     const QVector<int> &  sizes() const { return itsSizes; }
     int                   alphaSize() const { return itsAlphaSize; }
 
-    unsigned long         styleVal() { return FC::createStyleVal(itsWeight, itsWidth, itsSlant); }
+    quint32               styleVal() { return FC::createStyleVal(itsWeight, itsWidth, itsSlant); }
 
     const QString &       getPreviewString()                  { return itsPreviewString; }
     static QString        getDefaultPreviewString();
@@ -111,7 +111,7 @@ class KDE_EXPORT CFcEngine
     CFcEngine();
 
     bool                  parseUrl(const KUrl &url, int faceNo);
-    bool                  parseName(const QString &name, unsigned long style=KFI_NO_STYLE_INFO, const KUrl &url=KUrl());
+    bool                  parseName(const QString &name, quint32 style=KFI_NO_STYLE_INFO, const KUrl &url=KUrl());
     XftFont *             queryFont();
     XftFont *             getFont(int size);
     bool                  isCorrect(XftFont *f, bool checkFamily);

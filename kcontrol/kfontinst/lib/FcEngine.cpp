@@ -160,8 +160,7 @@ inline bool equalSlant(int a, int b)
     return a==b || FC::slant(a)==FC::slant(b);
 }
 
-static bool drawChar32Centre(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, quint32 ch,
-                             int w, int h)
+static bool drawChar32Centre(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, quint32 ch, int w, int h)
 {
     if(XftCharExists(QX11Info::display(), xftFont, ch))
     {
@@ -377,8 +376,7 @@ const QString & CFcEngine::getName(const KUrl &url, int faceNo)
     return itsDescriptiveName;
 }
 
-bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned long style,
-                            int face)
+bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 style, int face)
 {
     bool rv=false;
 
@@ -559,7 +557,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, unsigned l
 }
 
 bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb,
-                     const QList<TRange> &range, QList<TChar> *chars, const QString &name, unsigned long style)
+                     const QList<TRange> &range, QList<TChar> *chars, const QString &name, quint32 style)
 {
     bool rv=false;
 
@@ -921,7 +919,7 @@ bool CFcEngine::getInfo(const KUrl &url, int faceNo, Misc::TFont &info)
     return false;
 }
 
-QFont CFcEngine::getQFont(const QString &family, unsigned long style, int size)
+QFont CFcEngine::getQFont(const QString &family, quint32 style, int size)
 {
     int weight,
         width,
@@ -962,7 +960,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
         bool          hidden=Misc::isHidden(url);
         KIO::UDSEntry udsEntry;
         QString       name;
-        unsigned long style=KFI_NO_STYLE_INFO;
+        quint32       style=KFI_NO_STYLE_INFO;
 
         if(KIO::NetAccess::stat(url, udsEntry, NULL))  // Need to stat the url to get its font name...
         {
@@ -1036,8 +1034,8 @@ kDebug() << "isHidden:" << hidden;
 
                 if(!line1.isEmpty() && !line2.isEmpty())
                 {
-                    bool          ok=false;
-                    unsigned long style=line2.toULong(&ok);
+                    bool    ok=false;
+                    quint32 style=line2.toULong(&ok);
 
                     itsInstalled=isThumbnailUrl=ok && parseName(line1, style);
 
@@ -1108,7 +1106,7 @@ kDebug() << "isHidden:" << hidden;
     return true;
 }
 
-bool CFcEngine::parseName(const QString &name, unsigned long style, const KUrl &url)
+bool CFcEngine::parseName(const QString &name, quint32 style, const KUrl &url)
 {
     int pos;
 

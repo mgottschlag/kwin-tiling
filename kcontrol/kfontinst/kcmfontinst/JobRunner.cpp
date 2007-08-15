@@ -370,7 +370,7 @@ void CJobRunner::jobResult(KJob *job)
 
             if(1==itsUrls.count() || next==itsEnd)
             {
-                if(!itsAutoSkip)
+                if(!itsAutoSkip && !job->errorString().isEmpty())
                     KMessageBox::error(this, job->errorString());
             }
             else

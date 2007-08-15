@@ -82,35 +82,35 @@ namespace FC
 #define KFI_FC_WIDTH_ULTRAEXPANDED      FC_WIDTH_ULTRAEXPANDED
 #endif
 
-    extern KDE_EXPORT int           weight(int w); // round w to nearest fc weight
-    extern KDE_EXPORT int           width(int w); // round w to nearest fc width
-    extern KDE_EXPORT int           slant(int s); // round s to nearest fc slant
-    extern KDE_EXPORT int           spacing(int s); // round s to nearest fc spacing
-    extern KDE_EXPORT int           strToWeight(const QString &str, QString &newStr);
-    extern KDE_EXPORT int           strToWidth(const QString &str, QString &newStr);
-    extern KDE_EXPORT int           strToSlant(const QString &str);
-    extern KDE_EXPORT unsigned long createStyleVal(const QString &name);
-    inline KDE_EXPORT unsigned long createStyleVal(int weight, int width, int slant)
+    extern KDE_EXPORT int     weight(int w); // round w to nearest fc weight
+    extern KDE_EXPORT int     width(int w); // round w to nearest fc width
+    extern KDE_EXPORT int     slant(int s); // round s to nearest fc slant
+    extern KDE_EXPORT int     spacing(int s); // round s to nearest fc spacing
+    extern KDE_EXPORT int     strToWeight(const QString &str, QString &newStr);
+    extern KDE_EXPORT int     strToWidth(const QString &str, QString &newStr);
+    extern KDE_EXPORT int     strToSlant(const QString &str);
+    extern KDE_EXPORT quint32 createStyleVal(const QString &name);
+    inline KDE_EXPORT quint32 createStyleVal(int weight, int width, int slant)
                             { return ((weight&0xFF)<<16)+((width&0xFF)<<8)+(slant&0xFF); }
-    extern KDE_EXPORT QString       styleValToStr(unsigned long style);
-    extern KDE_EXPORT void          decomposeStyleVal(int styleInfo, int &weight, int &width, int &slant);
-    extern KDE_EXPORT unsigned long styleValFromStr(const QString &style);
+    extern KDE_EXPORT QString styleValToStr(quint32 style);
+    extern KDE_EXPORT void    decomposeStyleVal(quint32 styleInfo, int &weight, int &width, int &slant);
+    extern KDE_EXPORT quint32 styleValFromStr(const QString &style);
 
-    extern KDE_EXPORT QString       getFcString(FcPattern *pat, const char *val, int index=0);
+    extern KDE_EXPORT QString getFcString(FcPattern *pat, const char *val, int index=0);
 #ifdef KFI_USE_TRANSLATED_FAMILY_NAME
-    extern KDE_EXPORT QString       getFcLangString(FcPattern *pat, const char *val, const char *valLang);
+    extern KDE_EXPORT QString getFcLangString(FcPattern *pat, const char *val, const char *valLang);
 #endif
-    extern KDE_EXPORT int           getFcInt(FcPattern *pat, const char *val, int index=0, int def=-1);
-    extern KDE_EXPORT void          getDetails(FcPattern *pat, QString &name, int &styleVal, int &index);
-    extern KDE_EXPORT QString       createName(FcPattern *pat);
-    extern KDE_EXPORT QString       createName(FcPattern *pat, int weight, int width, int slant);
-    extern KDE_EXPORT QString       createName(const QString &family, int styleInfo);
-    extern KDE_EXPORT QString       createName(const QString &family, int weight, int width, int slant);
-    extern KDE_EXPORT QString       weightStr(int w, bool emptyNormal=true);
-    extern KDE_EXPORT QString       widthStr(int w, bool emptyNormal=true);
-    extern KDE_EXPORT QString       slantStr(int s, bool emptyNormal=true);
-    extern KDE_EXPORT QString       spacingStr(int s);
-    extern KDE_EXPORT bool          bitmapsEnabled();
+    extern KDE_EXPORT int     getFcInt(FcPattern *pat, const char *val, int index=0, int def=-1);
+    extern KDE_EXPORT void    getDetails(FcPattern *pat, QString &name, quint32 &styleVal, int &index);
+    extern KDE_EXPORT QString createName(FcPattern *pat);
+    extern KDE_EXPORT QString createName(FcPattern *pat, int weight, int width, int slant);
+    extern KDE_EXPORT QString createName(const QString &family, quint32 styleInfo);
+    extern KDE_EXPORT QString createName(const QString &family, int weight, int width, int slant);
+    extern KDE_EXPORT QString weightStr(int w, bool emptyNormal=true);
+    extern KDE_EXPORT QString widthStr(int w, bool emptyNormal=true);
+    extern KDE_EXPORT QString slantStr(int s, bool emptyNormal=true);
+    extern KDE_EXPORT QString spacingStr(int s);
+    extern KDE_EXPORT bool    bitmapsEnabled();
 }
 }
 

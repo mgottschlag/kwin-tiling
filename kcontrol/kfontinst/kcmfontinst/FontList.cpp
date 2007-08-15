@@ -190,9 +190,9 @@ class CPreviewCache
     ~CPreviewCache() { clearOld(); }
 #endif
 
-    static QString thumbKey(const QString &family, unsigned long style, int height);
+    static QString thumbKey(const QString &family, quint32 style, int height);
     QPixmap * getPixmap(const QString &family, const QString &name, const QString &fileName,
-                        int height, unsigned long stlye, bool force=false);
+                        int height, quint32 stlye, bool force=false);
 #ifdef KFI_SAVE_PIXMAPS
     void clearOld();
 #endif
@@ -254,16 +254,16 @@ static void setTimeStamp(const QString &f)
     }
 }
 #endif
-QString CPreviewCache::thumbKey(const QString &name, unsigned long style, int height)
+QString CPreviewCache::thumbKey(const QString &name, quint32 style, int height)
 {
     return replaceChars(name)+
-           QString().sprintf("-%06lX%02d%02X%02X%02X%02X%02X%02X.png", style, height,
+           QString().sprintf("-%06lX%02d%02X%02X%02X%02X%02X%02X.png", (long unsigned int)style, height,
                              CFcEngine::bgndCol().red(), CFcEngine::bgndCol().green(), CFcEngine::bgndCol().blue(),
                              CFcEngine::textCol().red(), CFcEngine::textCol().green(), CFcEngine::textCol().blue());
 }
 
 QPixmap * CPreviewCache::getPixmap(const QString &family, const QString &name, const QString &fileName,
-                                   int height, unsigned long style, bool force)
+                                   int height, quint32 style, bool force)
 {
 #ifdef KFI_SAVE_PIXMAPS
     static const char *constFileType="PNG";
@@ -464,9 +464,8 @@ CFontItem * CFamilyItem::findFont(const KFileItem *i)
     return NULL;
 }
 
-QSet<QString> CFamilyItem::getFoundries() const
+void CFamilyItem::getFoundries(QSet<QString> &foundries) const
 {
-    QSet<QString>                     foundries;
     QList<CFontItem *>::ConstIterator it(itsFonts.begin()),
                                       end(itsFonts.end());
 
@@ -479,8 +478,6 @@ QSet<QString> CFamilyItem::getFoundries() const
             if(!(*fIt).foundry.isEmpty())
                 foundries.insert((*fIt).foundry);
     }
-
-    return foundries;
 }
 
 bool CFamilyItem::usable(const CFontItem *font, bool root)
@@ -859,15 +856,13 @@ void CFontList::getFamilyStats(QSet<QString> &enabled, QSet<QString> &disabled, 
     }
 }
 
-QSet<QString> CFontList::getFoundries() const
+void CFontList::getFoundries(QSet<QString> &foundries) const
 {
-    QSet<QString>                       foundries;
     QList<CFamilyItem *>::ConstIterator it(itsFamilies.begin()),
                                         end(itsFamilies.end());
 
     for(; it!=end; ++it)
-        foundries+=(*it)->getFoundries();
-    return foundries;
+        (*it)->getFoundries(foundries);
 }
 
 QString CFontList::whatsThis() const

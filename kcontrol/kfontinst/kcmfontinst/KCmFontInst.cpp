@@ -1024,7 +1024,10 @@ void CKCmFontInst::listingCompleted()
         itsDeletedFonts.clear();
     }
 
-    itsFilter->setFoundries(itsFontList->getFoundries());
+    QSet<QString> foundries;
+
+    itsFontList->getFoundries(foundries);
+    itsFilter->setFoundries(foundries);
     refreshFamilies();
     itsListingProgress->hide();
     itsFontListView->selectFirstFont();
@@ -1397,12 +1400,12 @@ KUrl CKCmFontInst::baseUrl(bool sys)
 
 void CKCmFontInst::selectMainGroup()
 {
-    selectGroup(Misc::root() || itsMgtMode->isChecked()
-                    ? CGroupListItem::ALL : CGroupListItem::PERSONAL);
+    selectGroup(/*Misc::root() || itsMgtMode->isChecked()
+                    ? */CGroupListItem::ALL/* : CGroupListItem::PERSONAL*/);
     if(itsModeControl)
-        itsModeControl->setCurrentIndex(grpToMode(Misc::root()
-                                                    ? CGroupListItem::ALL
-                                                    : CGroupListItem::PERSONAL));
+        itsModeControl->setCurrentIndex(grpToMode(/*Misc::root()
+                                                    ? */CGroupListItem::ALL
+                                                    /*: CGroupListItem::PERSONAL*/));
 }
 
 void CKCmFontInst::doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &urls, const KUrl &dest)
