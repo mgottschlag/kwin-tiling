@@ -1,3 +1,3 @@
 ########### install files ###############
 kde4_create_handbook(index.docbook)
-kde4_install_handbook(kcontrol)
+kde4_install_handbook(en kcontrol)
