@@ -5,12 +5,14 @@ X-KDE-ServiceType=KRunner/Runner
 
 Comment=KRunner plugin
 Comment[be]=Утулка Krunner
+Comment[bg]=Приставка за KRunner
 Comment[csb]=Wtëkôcze zrëszôcza KRunner
 Comment[de]=Programmstarter-Modul
 Comment[el]=Πρόσθετο του KRunner
 Comment[es]=Complementos de Konqueror
 Comment[fa]=وصلۀ KRunner
 Comment[ga]=Breiseáin KRunner
+Comment[he]=תוסף של KRunner
 Comment[ja]=KRunner プラグイン
 Comment[km]=កម្មវិធី​ជំនួយ KRunner 
 Comment[nds]=KRunner-Moduul

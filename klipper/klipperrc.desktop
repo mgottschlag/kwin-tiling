@@ -129,6 +129,7 @@ Enabled=true
 [Action_1]
 Description=Web-URL
 Description[ar]=عنوان مورد نظامي على الشبكة
+Description[bg]=Уеб URL
 Description[br]=URL-gwiad
 Description[ca]=URL de web
 Description[cs]=Webové URL
@@ -501,6 +502,7 @@ Enabled=true
 [Action_2]
 Description=Mail-URL
 Description[ar]=رابط بريد
+Description[bg]=Пощенски URL
 Description[br]=URL postel
 Description[ca]=URL de correu
 Description[cs]=Poštovní URL
