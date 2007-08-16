@@ -43,7 +43,7 @@ class KDE_EXPORT Voice  : public QObject
 		void set_shortcut( const KShortcut &k);
 		
 		/**
-		 * return QString::null is a new signature is far enough from others signature
+		 * return QString() is a new signature is far enough from others signature
 		 * otherwise, return the stringn which match.
 		 */
 		QString isNewSoundFarEnough(const VoiceSignature& s, const QString& currentTrigger);

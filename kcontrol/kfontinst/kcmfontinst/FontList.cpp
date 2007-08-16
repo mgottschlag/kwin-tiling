@@ -423,7 +423,7 @@ const QPixmap * CFontItem::pixmap(bool force)
        (!itsPixmap || itsPixmap->isNull() || force ||
         itsPixmap->height()!=CFontList::previewSize()))
         itsPixmap=theCache->getPixmap(family(), name(), isEnabled()
-                                                            ? QString::null
+                                                            ? QString::null	//krazy:exclude=nullstrassign for old broken gcc
                                                             : itsFileName,
                                       CFontList::previewSize(), itsStyleInfo, force);
 
