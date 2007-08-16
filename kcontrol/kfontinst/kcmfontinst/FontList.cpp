@@ -239,6 +239,16 @@ static QString replaceChars(const QString &in)
     return rv;
 }
 
+static void toggle(QString &file, bool enable)
+{
+    QString newFile(enable
+                        ? Misc::getDir(file)+Misc::unhide(Misc::getFile(file))
+                        : Misc::getDir(file)+QChar('.')+Misc::unhide(Misc::getFile(file)));
+
+    if(!Misc::fExists(file) && Misc::fExists(newFile))
+        file=newFile;
+}
+
 #ifdef KFI_SAVE_PIXMAPS
 static void setTimeStamp(const QString &f)
 {
@@ -415,6 +425,22 @@ void CFontItem::touchThumbnail()
     if(itsParent)
         setTimeStamp(CPreviewCache::thumbKey(family(), itsStyleInfo, CFontList::previewSize()));
 #endif
+}
+
+void CFontItem::updateStatus()
+{
+    itsEnabled=!Misc::isHidden(url());
+
+    if(!itsFiles.isEmpty()) // Then we changed state, so need to alter filename list...
+    {
+        toggle(itsFileName, itsEnabled);
+
+        CDisabledFonts::TFileList::Iterator it(itsFiles.begin()),
+                                            end(itsFiles.end());
+
+        for(; it!=end; ++it)
+            toggle((*it).path, itsEnabled);
+    }
 }
 
 const QPixmap * CFontItem::pixmap(bool force)
@@ -986,6 +1012,9 @@ void CFontList::addItem(const KFileItem *item)
 {
     CFontItem *font=findFont(item);
 
+#ifdef KFI_FONTLIST_DEBUG
+    kDebug() << "************** addItem " << item->url();
+#endif
     if(!font)
     {
         QString family,

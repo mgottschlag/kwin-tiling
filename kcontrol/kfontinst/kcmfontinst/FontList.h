@@ -235,7 +235,7 @@ class CFontItem : public CFontModelItem
     QString                           mimetype() const         { return itsItem->mimetype(); }
     bool                              isEnabled() const        { return itsEnabled; }
     bool                              isHidden() const         { return !itsEnabled; }
-    void                              updateStatus()           { itsEnabled=!Misc::isHidden(url()); }
+    void                              updateStatus();
     KUrl                              url() const              { return itsItem->url(); }
     KIO::UDSEntry                     entry() const            { return itsItem->entry(); }
     const KFileItem *                 item() const             { return itsItem; }
