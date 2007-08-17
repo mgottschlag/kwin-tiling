@@ -360,7 +360,7 @@ _trigger( trigger_P ), _page( NULL )
 {
     setButtons( Ok | Cancel );
     // CHECKME caption
-	_page = new VoiceRecordPage( _trigger ? _trigger->voicecode() : QString::null ,  this);	//krazy:exclude=nullstrassign for old broken gcc
+	_page = new VoiceRecordPage( _trigger ? _trigger->voicecode() : QString() ,  this);
         _page->setObjectName("VoiceRecordPage");
 
 	connect(_page, SIGNAL(voiceRecorded(bool)), this, SLOT(enableButtonOK(bool)));
