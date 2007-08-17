@@ -26,6 +26,7 @@
 #include "appadaptor.h"
 #include <unistd.h>
 
+#include <QPixmapCache>
 #include <QTimer>
 #include <QtDBus/QtDBus>
 
@@ -71,6 +72,12 @@ PlasmaApp::PlasmaApp()
         // check that directly. If it wasn't, don't install our handler either.
         setCrashHandler();
     }
+
+    // enlarge application pixmap cache (TODO: make this dependand on system
+    // memory and screen resolution. 8MB is ok for caching the background up
+    // to 1600x1200 resolution)
+    if (QPixmapCache::cacheLimit() < 8192)
+      QPixmapCache::setCacheLimit(8192);
 
     m_root = new RootWidget();
     m_root->setAsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));

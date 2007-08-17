@@ -137,11 +137,29 @@ void DesktopView::initializeWallpaper()
 
 void DesktopView::drawBackground(QPainter * painter, const QRectF & rect)
 {
+    // avoid expensive operations to the painter if there is nothing to paint
+    if (!m_background && !m_bitmapBackground)
+        return;
+
+    // draw the background untransformed (saves lots of per-pixel-math)
+    painter->save();
+    painter->resetTransform();
+    // blit the background (saves all the per-pixel-products that blending does)
+    painter->setCompositionMode(QPainter::CompositionMode_Source);
+
     if (m_background) {
-        m_background->paint(painter, rect);
+        // Plasma::Svg doesn't support drawing only part of the image (it only
+        // supports drawing the whole image to a rect), so we blit to 0,0-w,h
+        m_background->paint(painter, 0, 0);
     } else if (m_bitmapBackground) {
-        painter->drawPixmap(rect, *m_bitmapBackground, rect);
+        // for pixmaps we draw only the exposed part (untransformed since the
+        // bitmapBackground already has the size of the viewport)
+        QRect exposedRect = mapFromScene(rect).boundingRect();
+        painter->drawPixmap(exposedRect, *m_bitmapBackground, exposedRect);
     }
+
+    // restore transformation and composition mode
+    painter->restore();
 }
 
 void DesktopView::resizeEvent(QResizeEvent* event)
