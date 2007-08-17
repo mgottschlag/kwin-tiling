@@ -20,13 +20,18 @@
 #ifndef PLASMA_APP_H
 #define PLASMA_APP_H
 
+#include <QList>
+
 #include <KUniqueApplication>
 
 namespace Plasma
 {
     class Corona;
+    class Panel;
 } // namespace Plasma
+
 class RootWidget;
+class Panel;
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -50,8 +55,12 @@ private slots:
 private:
     static void crashHandler(int signal);
 
+    // for testing purposes
+    void createDefaultPanels();
+
     RootWidget *m_root;
     Plasma::Corona *m_corona;
+    QList<Plasma::Panel*> m_panels;
 };
 
 #endif // multiple inclusion guard

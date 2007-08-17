@@ -23,7 +23,6 @@
 
 #include "plasmaapp.h"
 
-#include "appadaptor.h"
 #include <unistd.h>
 
 #include <QPixmapCache>
@@ -36,11 +35,13 @@
 
 #include <ksmserver_interface.h>
 
-#include "plasma/corona.h"
+#include <plasma/corona.h>
+#include <plasma/widgets/layout.h>
 
+#include "appadaptor.h"
 #include "rootwidget.h"
 #include "desktopview.h"
-
+#include "panel.h"
 
 PlasmaApp* PlasmaApp::self()
 {
@@ -86,11 +87,14 @@ PlasmaApp::PlasmaApp()
     connect(this, SIGNAL(aboutToQuit()), corona(), SLOT(saveApplets()));
 
     notifyStartup(true);
+
+    createDefaultPanels();
 }
 
 PlasmaApp::~PlasmaApp()
 {
     delete m_root;
+    qDeleteAll(m_panels);
 }
 
 void PlasmaApp::initializeWallpaper()
@@ -139,6 +143,29 @@ void PlasmaApp::notifyStartup(bool completed)
     } else {
         ksmserver.suspendStartup(startupID);
     }
+}
+
+// for testing purposes
+void PlasmaApp::createDefaultPanels()
+{
+    Plasma::Panel *defaultPanel = new Plasma::Panel;
+    Plasma::Corona *panelScene = new Plasma::Corona;
+    defaultPanel->setCorona(panelScene);
+
+    Plasma::Applet *tasksApplet = panelScene->addApplet("tasks");
+    Plasma::Applet *clockApplet = panelScene->addApplet("digital-clock");
+
+    if ( tasksApplet ) {
+        defaultPanel->layout()->addItem(tasksApplet);
+    }
+    if ( clockApplet ) {
+        defaultPanel->layout()->addItem(clockApplet);
+    }
+
+    defaultPanel->setLocation(Plasma::BottomEdge);
+    panelScene->setFormFactor(Plasma::Horizontal); // Because it's bottom edge
+    defaultPanel->show();
+    m_panels << defaultPanel;
 }
 
 #include "plasmaapp.moc"

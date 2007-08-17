@@ -4,6 +4,7 @@ set(plasma_SRCS
     controlbox.cpp
     desktopview.cpp
     main.cpp
+    panel.cpp
     plasmaapp.cpp
     rootwidget.cpp
 )
