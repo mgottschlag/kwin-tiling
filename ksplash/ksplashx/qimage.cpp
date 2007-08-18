@@ -2969,8 +2969,8 @@ QImage QImage::xForm( const QWMatrix &matrix ) const
 	    return copy();
 	hd = qRound( mat.m22() * hs );
 	wd = qRound( mat.m11() * ws );
-	hd = QABS( hd );
-	wd = QABS( wd );
+	hd = qAbs( hd );
+	wd = qAbs( wd );
     } else {					// rotation or shearing
 	QPointArray a( QRect(0, 0, ws, hs) );
 	a = mat.map( a );
