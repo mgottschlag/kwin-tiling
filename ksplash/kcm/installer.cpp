@@ -187,7 +187,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   url.setPath(KStandardDirs::locateLocal("tmp",filename));
 
   // Remove file from temporary directory if it aleady exists - usually the result of a failed install.
-  if ( KIO::NetAccess::exists( url, true, 0 ) )
+  if ( KIO::NetAccess::exists( url, KIO::NetAccess::SourceSide, 0 ) )
     KIO::NetAccess::del( url, 0 );
 
   bool rc = KIO::NetAccess::file_copy(srcURL, url, 0);
@@ -356,17 +356,17 @@ void SplashInstaller::slotSetTheme(int id)
       if (i >= 0)
         themeName = path.mid(i+1);
       url.setPath( path + "/Theme.rc" );
-      if (!KIO::NetAccess::exists(url, true, 0))
+      if (!KIO::NetAccess::exists(url, KIO::NetAccess::SourceSide, 0))
       {
         url.setPath( path + "/Theme.RC" );
-        if (!KIO::NetAccess::exists(url, true, 0))
+        if (!KIO::NetAccess::exists(url, KIO::NetAccess::SourceSide, 0))
         {
           url.setPath( path + "/theme.rc" );
-          if (!KIO::NetAccess::exists(url, true, 0))
+          if (!KIO::NetAccess::exists(url, KIO::NetAccess::SourceSide, 0))
             url.setPath( path + '/' + themeName + ".rc" );
         }
       }
-      if (KIO::NetAccess::exists(url, true, 0))
+      if (KIO::NetAccess::exists(url, KIO::NetAccess::SourceSide, 0))
       {
         KConfig _cnf(url.path());
 	KConfigGroup cnf(&_cnf, QString("KSplash Theme: %1").arg(themeName) );
@@ -407,7 +407,7 @@ void SplashInstaller::slotSetTheme(int id)
     if (!enabled)
     {
       url.setPath( path + '/' + "Preview.png" );
-      if (KIO::NetAccess::exists(url, true, 0))
+      if (KIO::NetAccess::exists(url, KIO::NetAccess::SourceSide, 0))
         mPreview->setPixmap(QPixmap(url.path()));
       else
         mPreview->setText(i18n("(Could not load theme)"));
@@ -416,7 +416,7 @@ void SplashInstaller::slotSetTheme(int id)
     else
     {
       url.setPath( path + '/' + "Preview.png" );
-      if (KIO::NetAccess::exists(url, true, 0))
+      if (KIO::NetAccess::exists(url, KIO::NetAccess::SourceSide, 0))
         mPreview->setPixmap(QPixmap(url.path()));
       else
         mPreview->setText(i18n("No preview available."));
