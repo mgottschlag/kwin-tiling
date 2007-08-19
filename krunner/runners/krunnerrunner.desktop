@@ -22,5 +22,7 @@ Comment[pt]='Plugin' do KRunner
 Comment[pt_BR]='Plugin' do KRunner
 Comment[sl]=Vstavek za KRunner
 Comment[sv]=Krunner-insticksprogram
+Comment[vi]=Bổ sung KRunner
 Comment[x-test]=xxKRunner pluginxx
+Comment[zh_CN]=KRunner 插件
 Comment[zh_TW]=KRunner 外掛程式

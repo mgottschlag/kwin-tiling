@@ -60,5 +60,6 @@ Comment[sv]=Utökningsbar fönsterhanterare som kan styras med ett Emacs Lisp-li
 Comment[ta]=Emacs Lisp-like மொழியுடனான விரிவாக்ககூடிய சாளர மேலாளர் எழுத்தாக்கம்
 Comment[tr]=Eklenti destekli Emacs Lisp benzeri bir kodlama dili kullanan kodlanabilir bir pencere yöneticisi
 Comment[uk]=Менеджер вікон, що можна розширювати мовою скриптів на кшталт Emacs Lisp
+Comment[vi]=Trình quản lý cửa sổ có khả năng sửa đổi bằng văn lệnh được viết bằng ngôn ngữ giống Emacs Lisp
 Comment[x-test]=xxAn extensible window manager scriptable with an Emacs Lisp-like languagexx
 Comment[zh_TW]=一個可用類似 Emacs Lisp 語言延伸的視窗管理程式

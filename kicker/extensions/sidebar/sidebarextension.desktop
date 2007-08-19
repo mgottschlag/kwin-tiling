@@ -54,7 +54,9 @@ Name[ta]=பொது வரலாற்றுப் பக்கப்பட்
 Name[tr]=Genel Yan Çubuk
 Name[uk]=Універсальна бічна панель
 Name[uz]=Универсал ён панели
+Name[vi]=Thanh bên chung
 Name[x-test]=xxUniversal Sidebarxx
+Name[zh_CN]=通用侧边栏
 Name[zh_TW]=整體的邊列
 
 Comment=Wrapper around Konqueror's navigation panel
@@ -107,7 +109,9 @@ Comment[sv]=Omgivning för Konquerors navigeringspanel
 Comment[ta]=கான்கொரர் நவிகேஷன் பலகத்தை சுற்றப்பட்டுள்ளது.
 Comment[tr]=Konqueror'un yönlendirme paneli çevresindeki satır atlatıcı
 Comment[uk]=Обгортка навколо навігаційної панелі Konqueror
+Comment[vi]=Bao bọc xung quanh bảng duyệt của Konqueror
 Comment[x-test]=xxWrapper around Konqueror's navigation panelxx
+Comment[zh_CN]=Konqueror 导航面板的转换器
 Comment[zh_TW]=包裝於 konqueror 的導覽面板
 
 Icon=view_sidetree

@@ -17,6 +17,7 @@ Name[el]=Συμπαγές
 Name[fa]=توپر
 Name[km]=តាន់
 Name[pa]=ਸਾਲਡ
+Name[vi]=Đặc
 
 Comment=Hardware Integration Configuration
 Comment[be]=Настаўленні інтэграцыі з прыладамі
@@ -35,6 +36,8 @@ Comment[pt]=Configuração da Integração do Hardware
 Comment[pt_BR]=Configuração da Integração do Hardware
 Comment[sv]=Inställning av hårdvaruintegrering
 Comment[uk]=Налаштування інтеграції обладнання
+Comment[vi]=Cấu hình Hợp nhất Phần cứng
+Comment[zh_CN]=硬件集成配置
 Comment[zh_TW]=系統整合設定
 
 Keywords=Solid,Hardware,Power,Network,Discovery,Management
@@ -53,4 +56,6 @@ Keywords[pa]=ਸਾਲਡ,ਹਾਰਡਵੇਅਰ,ਪਾਵਰ,ਨੈੱਟਵ�
 Keywords[pt]=Solid,Hardware,Energia,Rede,Descoberta,Gestão
 Keywords[pt_BR]=Solid,Hardware,Energia,Rede,Descoberta,Gestão
 Keywords[sv]=Solid,hårdvara,ström,nätverk,upptäcka,hantering
+Keywords[vi]=Đặc,Phần cứng,Điện,Mạng,Phát hiện,Quản lý
+Keywords[zh_CN]=Solid,Hardware,Power,Network,Discovery,Management,硬件,电源,网络,发现,管理
 

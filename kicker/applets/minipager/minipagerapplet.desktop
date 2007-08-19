@@ -51,7 +51,9 @@ Name[te]=రంగస్థల ముందు వీక్షణం & పెజ
 Name[tr]=Masaüstü Önizleyici ve Sayfalayıcı
 Name[uk]=Перегляд стільниці і пейджер
 Name[uz]=Иш столининг пейжери
+Name[vi]=Chuyển/xem thử màn hình nền
 Name[x-test]=xxDesktop Preview & Pagerxx
+Name[zh_CN]=桌面预览器和页面切换器
 Name[zh_TW]=桌面預覽與縮圖
 
 Comment=A virtual desktop switching panel applet
@@ -68,7 +70,9 @@ Comment[pa]=ਇੱਕ ਵੁਰਚੁਅਲ ਡੈਸਕਟਾਪ ਬਦਲਣ �
 Comment[pt]=Uma 'applet' do painel para mudar de ecrã virtual
 Comment[pt_BR]=Uma 'applet' do painel para mudar de ecrã virtual
 Comment[sv]=Ett miniprogram för att byta virtuellt skrivbord
+Comment[vi]=Tiểu dụng trên bảng điều khiển để chuyển đổi màn hình nền ảo
 Comment[x-test]=xxA virtual desktop switching panel appletxx
+Comment[zh_CN]=虚拟桌面切换面板小程序
 Comment[zh_TW]=虛擬桌面切換面板小程式
 
 Icon=kpager

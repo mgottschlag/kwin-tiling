@@ -73,6 +73,7 @@ Comment[tg]=КушоданGL ахбор
 Comment[tr]=OpenGL Bilgisi
 Comment[uk]=Інформація про OpenGL
 Comment[uz]=OpenGL ҳақида маълумот
+Comment[vi]=Thông tin về OpenGL
 Comment[x-test]=xxOpenGL informationxx
 Comment[zh_TW]=OpenGL 資訊
 
@@ -119,6 +120,7 @@ Keywords[sv]=OpenGL,DRI,GLX,3D,videokort,hårdvaruacceleration,grafik,X,X11,Xser
 Keywords[ta]=ஓபன் ஜிஎல்,டிஆரை,ஜிஎல்X,முப்பரிமாணம்,வீடியோஅட்டை,வன்பொருள் முடுக்கம்,சித்திரங்கள்,X,X11,Xசேவகன்,X-சேவகன்,XFree86,காட்டு
 Keywords[tr]=OpenGL,DRI,GLX,3D,VideoCard,Video kartı,Donanım Hızlandırma,Grafik,X,X11,Xserver,X-Server,X-Sunucu,Xsunucu,XFree86,Görüntü
 Keywords[uk]=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display,відео карта,3D акселерація,графіка,X сервер,монітор
+Keywords[vi]=OpenGL,DRI,GLX,3D,Thẻ ảnh động,Tăng tốc Phần cứng,Đồ hoạ,X,X11,Trình phục vụ Xserver,Trình phục vụ - X,XFree86,Hiển thị
 Keywords[x-test]=xxOpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Displayxx
 Keywords[zh_TW]=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display,顯示卡,硬體加速,圖形,顯示
 

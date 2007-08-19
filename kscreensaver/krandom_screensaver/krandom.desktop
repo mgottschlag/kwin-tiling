@@ -62,9 +62,11 @@ Name[tg]=Тассодуфӣ
 Name[tr]=Rastgele
 Name[uk]=Випадковий
 Name[uz]=Тасодифий
+Name[vi]=Ngẫu nhiên
 Name[wa]=A l' astcheyance
 Name[x-test]=xxRandomxx
 Name[xh]=Ngaphandle kwenjongo
+Name[zh_CN]=随机
 Name[zh_TW]=隨機
 
 [Desktop Action Setup]
@@ -126,9 +128,11 @@ Name[tg]=Танзимот...
 Name[tr]=Kurulum...
 Name[uk]=Встановити...
 Name[uz]=Ўрнатиш
+Name[vi]=Thiết lập...
 Name[wa]=Apontyî...
 Name[x-test]=xxSetup...xx
 Name[xh]=Iyacwangciswa...
+Name[zh_CN]=设置...
 Name[zh_TW]=設定...
 Icon=kscreensaver
 
@@ -189,8 +193,10 @@ Name[ta]=குறிப்பிடப்பட்ட சாளரத்தி�
 Name[tr]=Belirtilen Pencerede Göster
 Name[uk]=Відобразити у вказаному вікні
 Name[uz]=Кўрсатилган ойнада кўрсатиш
+Name[vi]=Hiển thị trong cửa sổ đã xác định
 Name[wa]=Håyner dins l' purnea specifyî
 Name[x-test]=xxDisplay in Specified Windowxx
+Name[zh_CN]=在指定窗口中显示
 Name[zh_TW]=在指定的視窗中顯示
 NoDisplay=true
 
@@ -251,7 +257,9 @@ Name[ta]=மூல சாளரத்தில் காட்டு
 Name[tr]=Kök Pencerede Göster
 Name[uk]=Відобразити на тлі екрана
 Name[uz]=Туб ойнада кўрсатиш
+Name[vi]=Hiển thị trong cửa sổ gốc
 Name[wa]=Håyner e purnea raecene (li fond do scribanne)
 Name[x-test]=xxDisplay in Root Windowxx
+Name[zh_CN]=在 Root 窗口中显示
 Name[zh_TW]=在 Root 視窗中顯示
 NoDisplay=true

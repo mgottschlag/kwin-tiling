@@ -20,7 +20,9 @@ Comment[pt]=Protector de Ecrã
 Comment[pt_BR]=Protector de Ecrã
 Comment[sl]=Ohranjevalnik zaslona
 Comment[sv]=Skärmsläckare
+Comment[vi]=Bảo vệ Màn hình
 Comment[x-test]=xxScreenSaverxx
+Comment[zh_CN]=屏幕保护程序
 Comment[zh_TW]=螢幕保護程式
 [PropertyDef::X-KDE-Type]
 Type=QString

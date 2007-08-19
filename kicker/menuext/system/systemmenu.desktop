@@ -53,6 +53,7 @@ Name[th]=ระบบ
 Name[tr]=Sistem
 Name[uk]=Система
 Name[uz]=Тизим
+Name[vi]=Hệ thống
 Name[wa]=Sistinme
 Name[x-test]=xxSystemxx
 Name[xh]=Indlela esestyenziswayo
@@ -73,7 +74,9 @@ Comment[pa]=ਸਿਸਟਮ ਥਾਵਾਂ ਲਈ ਸੌਖੀ ਪਹੁੰਚ
 Comment[pt]=Acesso simples aos locais do sistema
 Comment[pt_BR]=Acesso simples aos locais do sistema
 Comment[sv]=Enkel åtkomst av systemplatser
+Comment[vi]=Truy cập dễ vào các nơi hệ thống
 Comment[x-test]=xxEasy access to system placesxx
+Comment[zh_CN]=轻松访问系统位置
 Comment[zh_TW]=系統選單
 Icon=system
 

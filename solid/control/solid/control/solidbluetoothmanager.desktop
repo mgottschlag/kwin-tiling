@@ -19,6 +19,8 @@ Comment[pa]=ਬਲਿਊਟੁੱਥ ਪਰਬੰਧ ਬੈਕਐਂਡ
 Comment[pt]=Infra-Estrutura de Gestão do Bluetooth
 Comment[pt_BR]=Infra-Estrutura de Gestão do Bluetooth
 Comment[sv]=Blåtandshanteringsgränssnitt
+Comment[vi]=Hậu phương quản lý kỹ thuật Bluetooth
+Comment[zh_CN]=蓝牙管理后端
 Comment[zh_TW]=藍芽管理後端介面
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]
