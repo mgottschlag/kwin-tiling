@@ -23,6 +23,7 @@
 #include "randrdisplay.h"
 #include "randrscreen.h"
 #include "randroutput.h"
+#include "layoutmanager.h"
 #include "randr.h"
 
 #ifdef HAS_RANDR_1_2
@@ -50,6 +51,8 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	// create the scene
 	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
 	screenView->setScene(m_scene);
+
+	m_layoutManager = new LayoutManager(m_display->currentScreen(), m_scene);
 }
 
 RandRConfig::~RandRConfig()
@@ -75,15 +78,18 @@ void RandRConfig::load()
 	// FIXME: adjust it to run on a multi screen system
 	CollapsibleWidget *w;
 	OutputGraphicsItem *o;
-	for (it = outputs.begin(); it != outputs.end(); ++it)
+	foreach(RandROutput *output, outputs)
 	{
-		o = new OutputGraphicsItem(*it);
+		o = new OutputGraphicsItem(output);
 		m_scene->addItem(o);
 
-		OutputConfig *c = new OutputConfig(0, *it, o);
-		w = m_container->insertWidget(c, (*it)->name());
+		connect(o, SIGNAL(itemChanged(OutputGraphicsItem*)), 
+				this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
+
+		OutputConfig *c = new OutputConfig(0, output, o);
+		w = m_container->insertWidget(c, output->name());
 		m_outputList.append(w);
-		kDebug() << "Rect: " << (*it)->rect();
+		kDebug() << "Rect: " << output->rect();
 		connect(c, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
 	}
 

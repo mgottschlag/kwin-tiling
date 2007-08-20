@@ -29,6 +29,7 @@ class RandRDisplay;
 class SettingsContainer;
 class CollapsibleWidget;
 class QGraphicsScene;
+class LayoutManager;
 
 
 class RandRConfig : public QWidget, public Ui::RandRConfigBase
@@ -57,6 +58,7 @@ private:
 	SettingsContainer *m_container;
 	QList<CollapsibleWidget*> m_outputList;
 	QGraphicsScene *m_scene;
+	LayoutManager *m_layoutManager;
 };
 
 #endif

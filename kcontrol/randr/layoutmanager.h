@@ -24,18 +24,25 @@
 #ifdef HAS_RANDR_1_2
 
 class RandRScreen;
+class QGraphicsScene;
+class OutputGraphicsItem;
 
 class LayoutManager : public QObject
 {
 	Q_OBJECT
 public:
-		LayoutManager(RandRScreen *screen);
-		~LayoutManager();
+	LayoutManager(RandRScreen *screen, QGraphicsScene *scene);
+	~LayoutManager();
 
-		void adjustOutputs();
+public slots:
+	void slotAdjustOutput(OutputGraphicsItem *output);
+
+protected:
+	void adjustScene(OutputGraphicsItem *current, QList<OutputGraphicsItem*> &visited);
 
 private:
-		RandRScreen *m_screen;
+	RandRScreen *m_screen;
+	QGraphicsScene *m_scene;
 };
 
 #endif // HAS_RANDR_1_2

@@ -29,7 +29,6 @@
 
 class QAction;
 class KConfig;
-class LayoutManager;
 
 class RandRScreen : public QObject
 {
@@ -117,7 +116,6 @@ private:
 	int m_activeCount;
 
 	XRRScreenResources* m_resources;
-	LayoutManager *m_layoutManager;
 
 	CrtcMap m_crtcs;
 	OutputMap m_outputs;

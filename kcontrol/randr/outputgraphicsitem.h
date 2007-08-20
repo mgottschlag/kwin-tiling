@@ -27,13 +27,39 @@
 #ifdef HAS_RANDR_1_2
 class RandROutput;
 
-class OutputGraphicsItem : public QGraphicsRectItem
+class OutputGraphicsItem : public QObject, public QGraphicsRectItem
 {
+	Q_OBJECT
 public:
 	OutputGraphicsItem(RandROutput *output);
 	~OutputGraphicsItem();
 
+	OutputGraphicsItem *left() const;
+	OutputGraphicsItem *right() const;
+	OutputGraphicsItem *top() const;
+	OutputGraphicsItem *bottom() const;
+
+	void setLeft(OutputGraphicsItem *output);
+	void setRight(OutputGraphicsItem *output);
+	void setTop(OutputGraphicsItem *output);
+	void setBottom(OutputGraphicsItem *output);
+
+	bool isConnected();
+
+protected:
+	void disconnect();
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
+signals:
+	void itemChanged(OutputGraphicsItem *item);
+
 private:
+	OutputGraphicsItem *m_left;
+	OutputGraphicsItem *m_right;
+	OutputGraphicsItem *m_top;
+	OutputGraphicsItem *m_bottom;
+
 	RandROutput *m_output;
 	QGraphicsTextItem *m_text;
 

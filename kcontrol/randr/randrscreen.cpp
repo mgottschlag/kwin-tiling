@@ -24,7 +24,6 @@
 #include "randrcrtc.h"
 #include "randroutput.h"
 #include "randrmode.h"
-#include "layoutmanager.h"
 
 #ifdef HAS_RANDR_1_2
 RandRScreen::RandRScreen(int screenIndex)
@@ -32,7 +31,6 @@ RandRScreen::RandRScreen(int screenIndex)
 {
 	m_index = screenIndex;
 	m_rect = QRect(0, 0, XDisplayWidth(QX11Info::display(), m_index), XDisplayHeight(QX11Info::display(), m_index));
-	m_layoutManager = new LayoutManager(this);
 
 	m_connectedCount = 0;
 	m_activeCount = 0;
