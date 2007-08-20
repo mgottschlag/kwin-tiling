@@ -257,7 +257,7 @@ void NMWirelessNetwork::setActivated(bool activated)
             "org.freedesktop.NetworkManager",
             QDBusConnection::systemBus());
     QString devicePath = uni().left(uni().indexOf("/Networks"));
-    kDebug(1441) << k_funcinfo << devicePath << " - " << d->essid;
+    kDebug(1441) << devicePath << " - " << d->essid;
     QDBusObjectPath op(devicePath);
 #warning fixme hardcoded false fallback bool in setActiveDevice
     QList<QVariant> args;

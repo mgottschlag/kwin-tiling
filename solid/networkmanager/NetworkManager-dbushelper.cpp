@@ -202,7 +202,7 @@ QList<QVariant> NMDBusHelper::doSerialize(Solid::Control::AuthenticationWpaEnter
 {
     Q_UNUSED(essid)
     Q_UNUSED(error)
-    kDebug() << k_funcinfo << "Implement me!";
+    kDebug() << "Implement me!";
     // int32 cipher, always NM_AUTH_TYPE_WPA_EAP
     args << NM_AUTH_TYPE_WPA_EAP;
     switch (auth->method())

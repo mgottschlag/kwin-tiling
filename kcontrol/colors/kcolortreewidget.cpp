@@ -195,7 +195,7 @@ void KColorTreeWidget::addRole( int idx_f , int idx_g , const QString & role )
 
 void KColorTreeWidget::setColor( int idx, const QColor & color )
 {
-//    kDebug() << k_funcinfo << idx;
+//    kDebug() << idx;
     if(m_bgItems.contains(idx))
     {
         m_bgItems[idx]->setBgColor( color );

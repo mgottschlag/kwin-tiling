@@ -41,7 +41,7 @@ Sound::~Sound()
    stream >> magic;  \
    if( magic != ( (CH)[0] | (CH)[1]<<8 | (CH)[2]<< 16 | (CH)[3] << 24 ) ) \
    {  \
-      kWarning() << k_funcinfo << "bad format " << magic << " != " << CH "\n";\
+      kWarning() << "bad format " << magic << " != " << CH "\n";\
       return;\
    } }   
 
@@ -49,12 +49,12 @@ Sound::~Sound()
 
 void Sound::load(const QString& filename)
 {
-	kDebug() << k_funcinfo << filename;
+	kDebug() << filename;
 	data=QVector<Q_INT32>();
 	QFile file(filename);
 	if(!file.open(IO_ReadOnly))
 	{
-		kWarning() << k_funcinfo <<"unable to open file" ;
+		kWarning() <<"unable to open file" ;
 		return;
 	}
 	QDataStream stream(&file);
@@ -85,7 +85,7 @@ void Sound::load(const QString& filename)
 
 	data.resize(NumberOfSamples);
 
-//	kDebug() << k_funcinfo << NumberOfSamples << " samples";
+//	kDebug() << NumberOfSamples << " samples";
 
 	max=0;
 	for(unsigned long int f=0;f<NumberOfSamples;f++)
@@ -114,11 +114,11 @@ void Sound::load(const QString& filename)
 
 void Sound::save(const QString& filename) const
 {
-	kDebug( 1217 ) << k_funcinfo << filename << " - " << data.size() <<  endl;
+	kDebug( 1217 ) << filename << " - " << data.size() <<  endl;
 	QFile file(filename);
 	if(!file.open(IO_WriteOnly))
 	{
-		kWarning() << k_funcinfo <<"unable to open file" ;
+		kWarning() <<"unable to open file" ;
 		return;
 	}
 	QDataStream stream(&file);
@@ -133,7 +133,7 @@ void Sound::save(const QString& filename) const
         SoundData[ (uint)(2*f) ]=   val & 0x00FF;
         SoundData[(uint)(2*f+1)]=  (val & 0xFF00) >> 8;
 		
-//		kDebug( 1217 ) << k_funcinfo << data.at(f) << " / " << max << " = " << val << "  |  " <<   SoundData[ 2*f ] << " "<< SoundData[ 2*f+1 ] <<  endl;
+//		kDebug( 1217 ) << data.at(f) << " / " << max << " = " << val << "  |  " <<   SoundData[ 2*f ] << " "<< SoundData[ 2*f+1 ] <<  endl;
 	}
 
 	Q_UINT16 NumberOfChannels=2;

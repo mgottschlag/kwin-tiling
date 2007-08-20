@@ -83,7 +83,7 @@ NetworkStatusModule::~NetworkStatusModule()
 
 int NetworkStatusModule::status()
 {
-    kDebug( 1222 ) << k_funcinfo << " status: " << (int)d->status;
+    kDebug( 1222 ) << " status: " << (int)d->status;
     return (int)d->status;
 }
 
@@ -138,7 +138,7 @@ QStringList NetworkStatusModule::networks()
 
 void NetworkStatusModule::setNetworkStatus( const QString & networkName, int st )
 {
-    kDebug( 1222 ) << k_funcinfo << networkName << ", " << st;
+    kDebug( 1222 ) << networkName << ", " << st;
     Solid::Networking::Status changedStatus = (Solid::Networking::Status)st;
     if ( d->networks.contains( networkName ) ) {
       Network * net = d->networks[ networkName ];
@@ -155,7 +155,7 @@ void NetworkStatusModule::registerNetwork( const QString & networkName, int stat
     QDBusConnectionInterface * sessionBus = dbus.interface();
     QString uniqueOwner = sessionBus->serviceOwner( serviceName ).value();
 
-    kDebug( 1222 ) << k_funcinfo << networkName << ", with status " << status << " is owned by " << uniqueOwner;
+    kDebug( 1222 ) << networkName << ", with status " << status << " is owned by " << uniqueOwner;
 
     d->networks.insert( networkName, new Network( networkName, status, uniqueOwner ) );
     updateStatus();
@@ -163,7 +163,7 @@ void NetworkStatusModule::registerNetwork( const QString & networkName, int stat
 
 void NetworkStatusModule::unregisterNetwork( const QString & networkName )
 {
-    kDebug( 1222 ) << k_funcinfo << networkName << " unregistered.";
+    kDebug( 1222 ) << networkName << " unregistered.";
 
     d->networks.remove( networkName );
     updateStatus();

@@ -173,20 +173,20 @@ void FakeNetworkManager::parseNetworkingFile()
     QFile machineFile(mXmlFile);
     if (!machineFile.open(QIODevice::ReadOnly))
     {
-        kDebug() << k_funcinfo << "Error while opening " << mXmlFile;
+        kDebug() << "Error while opening " << mXmlFile;
         return;
     }
 
     QDomDocument fakeDocument;
     if (!fakeDocument.setContent(&machineFile))
     {
-        kDebug() << k_funcinfo << "Error while creating the QDomDocument.";
+        kDebug() << "Error while creating the QDomDocument.";
         machineFile.close();
         return;
     }
     machineFile.close();
 
-    kDebug() << k_funcinfo << "Parsing fake computer XML: " << mXmlFile;
+    kDebug() << "Parsing fake computer XML: " << mXmlFile;
     QDomElement mainElement = fakeDocument.documentElement();
     QDomNode node = mainElement.firstChild();
     while (!node.isNull())
@@ -212,7 +212,7 @@ FakeNetworkInterface *FakeNetworkManager::parseDeviceElement(const QDomElement &
     QMap<QString,QVariant> propertyMap;
     QString uni = deviceElement.attribute("uni");
     propertyMap.insert("uni", uni);
-    kDebug() << k_funcinfo << "Listing device: " << uni;
+    kDebug() << "Listing device: " << uni;
     propertyMap.insert("uni", QVariant(uni));
     QList< FakeNetwork * > networks;
 
@@ -234,14 +234,14 @@ FakeNetworkInterface *FakeNetworkManager::parseDeviceElement(const QDomElement &
         else if (!childElement.isNull() && childElement.tagName() == QLatin1String("network"))
         {
             QString uni = childElement.attribute("uni");
-            kDebug() << k_funcinfo << "Listing properties: " << uni;
+            kDebug() << "Listing properties: " << uni;
             FakeNetwork * net = new FakeNetwork(uni, parseNetworkElement(childElement));
             networks.append(net);
         }
         else if (!childElement.isNull() && childElement.tagName() == QLatin1String("wireless"))
         {
             QString uni = childElement.attribute("uni");
-            kDebug() << k_funcinfo << "Listing properties: " << uni;
+            kDebug() << "Listing properties: " << uni;
             FakeNetwork * wifi = new FakeWirelessNetwork(uni, parseNetworkElement(childElement));
             networks.append(wifi);
         }
@@ -251,7 +251,7 @@ FakeNetworkInterface *FakeNetworkManager::parseDeviceElement(const QDomElement &
 
 /*    if (!propertyMap.isEmpty())
     { */
-        kDebug() << k_funcinfo << "Creating FakeNetworkDevice for " << uni;
+        kDebug() << "Creating FakeNetworkDevice for " << uni;
         device = new FakeNetworkInterface(propertyMap);
         QListIterator< FakeNetwork * > it (networks);
         while (it.hasNext())

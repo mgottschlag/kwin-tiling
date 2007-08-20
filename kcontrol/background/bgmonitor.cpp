@@ -175,7 +175,7 @@ void BGMonitorLabel::updateMonitorGeometry()
     double scaleX = double(width()) / double(sizeHint().width());
     double scaleY = double(height()) / double(sizeHint().height());
 
-    kDebug() << k_funcinfo << " Setting geometry to " << QRect( int(23*scaleX), int(14*scaleY), int(151*scaleX), int(115*scaleY) );
+    kDebug() << " Setting geometry to " << QRect( int(23*scaleX), int(14*scaleY), int(151*scaleX), int(115*scaleY) );
     m_pBGMonitor->setGeometry( int(23*scaleX), int(14*scaleY), int(151*scaleX), int(115*scaleY) );
 }
 

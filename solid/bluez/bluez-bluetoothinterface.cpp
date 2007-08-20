@@ -119,7 +119,7 @@ Solid::Control::BluetoothInterface::Mode BluezBluetoothInterface::mode() const
 
 int BluezBluetoothInterface::discoverableTimeout() const
 {
-    kDebug() << k_funcinfo;
+    kDebug() ;
 
     QDBusReply< int > timeout = d->iface.call("GetDiscoverableTimeout");
     if (timeout.isValid()) {
@@ -271,7 +271,7 @@ void BluezBluetoothInterface::slotDiscoveryCompleted()
 
 void BluezBluetoothInterface::slotRemoteDeviceFound(const QString &address, uint deviceClass, short rssi)
 {
-    kDebug() << k_funcinfo << "address: " << address << " class: " << deviceClass << " RSSI: " << rssi;
+    kDebug() << "address: " << address << " class: " << deviceClass << " RSSI: " << rssi;
 
     QString remoteubi = QString("%1/%2").arg(ubi()).arg(address);
     emit remoteDeviceFound(remoteubi, deviceClass, rssi);
@@ -279,7 +279,7 @@ void BluezBluetoothInterface::slotRemoteDeviceFound(const QString &address, uint
 
 void BluezBluetoothInterface::slotRemoteDeviceDisappeared(const QString &address)
 {
-    kDebug() << k_funcinfo << "address: " << address;
+    kDebug() << "address: " << address;
     QString remoteubi = QString("%1/%2").arg(ubi()).arg(address);
     emit remoteDeviceDisappeared(remoteubi);
 }

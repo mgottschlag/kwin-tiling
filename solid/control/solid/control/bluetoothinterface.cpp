@@ -248,7 +248,7 @@ void Solid::Control::BluetoothInterface::setName(const QString &name)
 
 void Solid::Control::BluetoothInterface::discoverDevices()
 {
-    kDebug() << k_funcinfo;
+    kDebug() ;
     SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), discoverDevices());
 }
 

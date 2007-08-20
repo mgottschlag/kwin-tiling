@@ -85,7 +85,7 @@ void LegacyRandRScreen::setOriginal()
 
 bool LegacyRandRScreen::applyProposed()
 {
-	//kDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate());
+	//kDebug() << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate());
 
 	Status status;
 

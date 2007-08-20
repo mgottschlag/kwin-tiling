@@ -28,7 +28,7 @@
 
 FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &) : Solid::Control::Ifaces::BluetoothManager(parent)
 {
-    kDebug() << k_funcinfo;
+    kDebug() ;
 
     mXmlFile = KStandardDirs::locate("data", "solidfakebackend/fakebluetooth.xml");
 
@@ -39,7 +39,7 @@ FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &
 
 FakeBluetoothManager::FakeBluetoothManager(QObject * parent, const QStringList &, const QString &xmlFile) : Solid::Control::Ifaces::BluetoothManager(parent)
 {
-    kDebug() << k_funcinfo;
+    kDebug() ;
     mXmlFile = xmlFile;
     if (mXmlFile.isEmpty()) {
         kDebug() << "Falling back to installed bluetoothing xml";
@@ -79,7 +79,7 @@ void FakeBluetoothManager::parseBluetoothFile()
 {
     QFile machineFile(mXmlFile);
     if (!machineFile.open(QIODevice::ReadOnly)) {
-        kDebug() << k_funcinfo << "Error while opening " << mXmlFile;
+        kDebug() << "Error while opening " << mXmlFile;
         return;
     }
 
@@ -87,14 +87,14 @@ void FakeBluetoothManager::parseBluetoothFile()
     QString error;
     int line;
     if (!fakeDocument.setContent(&machineFile, &error, &line)) {
-        kDebug() << k_funcinfo << "Error while creating the QDomDocument: " << error << " line: " <<
+        kDebug() << "Error while creating the QDomDocument: " << error << " line: " <<
         line <<  endl;
         machineFile.close();
         return;
     }
     machineFile.close();
 
-    kDebug() << k_funcinfo << "Parsing fake computer XML: " << mXmlFile;
+    kDebug() << "Parsing fake computer XML: " << mXmlFile;
     QDomElement mainElement = fakeDocument.documentElement();
     QDomNode node = mainElement.firstChild();
     while (!node.isNull()) {
@@ -117,7 +117,7 @@ FakeBluetoothInterface *FakeBluetoothManager::parseDeviceElement(const QDomEleme
     QMap<QString, QVariant> propertyMap;
     QString ubi = deviceElement.attribute("ubi");
     propertyMap.insert("ubi", ubi);
-    kDebug() << k_funcinfo << "Listing device: " << ubi;
+    kDebug() << "Listing device: " << ubi;
     propertyMap.insert("ubi", QVariant(ubi));
 
     QDomNode childNode = deviceElement.firstChild();
@@ -134,7 +134,7 @@ FakeBluetoothInterface *FakeBluetoothManager::parseDeviceElement(const QDomEleme
             propertyMap.insert(propertyKey, propertyValue);
         } else if (!childElement.isNull() && childElement.tagName() == QLatin1String("device")) {
             QString ubi = childElement.attribute("ubi");
-            kDebug() << k_funcinfo << "Listing properties: " << ubi;
+            kDebug() << "Listing properties: " << ubi;
             FakeBluetoothRemoteDevice * remoteDevice = new FakeBluetoothRemoteDevice(parseBluetoothElement(childElement));
             mBluetoothRemoteDevices.insert(ubi, remoteDevice);
         }
@@ -142,7 +142,7 @@ FakeBluetoothInterface *FakeBluetoothManager::parseDeviceElement(const QDomEleme
     }
     //kDebug() << "Done listing. ";
 
-    kDebug() << k_funcinfo << "Creating FakeBluetoothInterface for " << ubi;
+    kDebug() << "Creating FakeBluetoothInterface for " << ubi;
     interface = new FakeBluetoothInterface(propertyMap);
 
     // Inject Remote devices....

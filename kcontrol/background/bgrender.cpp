@@ -349,7 +349,7 @@ wp_load:
                     break;
                 case NoWallpaper:
                 default:
-                    kWarning() << k_funcinfo << "unknown diagram type" ;
+                    kWarning() << "unknown diagram type" ;
                     svgHeight = m_Size.height();
                     svgWidth = svgHeight;
                     break;
@@ -1113,7 +1113,7 @@ int KVirtualBGRenderer::hash()
         fp += m_renderer[i]->fingerprint();
     }
     int h = qHash(fp);
-    kDebug() << k_funcinfo << " fp=\""<<fp<<"\" h="<<h;
+    kDebug() << " fp=\""<<fp<<"\" h="<<h;
     return qHash(fp);
 }
 

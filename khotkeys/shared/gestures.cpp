@@ -125,7 +125,7 @@ void Gesture::unregister_handler( QObject* receiver_P, const char* slot_P )
 
 bool Gesture::x11Event( XEvent* ev_P )
     {
-/*		kDebug(1217) << k_funcinfo  << "   ( type = " << ev_P->type << " )" << KeyRelease << " " << KeyPress ;
+/*		kDebug(1217) << "   ( type = " << ev_P->type << " )" << KeyRelease << " " << KeyPress ;
 		if( ev_P->type == XKeyPress || ev_P->type == XKeyRelease )
 		{
 			return voice_handler->x11Event( ev_P );
