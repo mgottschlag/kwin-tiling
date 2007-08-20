@@ -5,6 +5,7 @@
 Encoding=UTF-8
 Greeter=circles.xml
 Name=Circles
+Name[ar]=الدوائر
 Name[br]=Kelc'hioù
 Name[ca]=Cercles
 Name[cs]=Kruhy
@@ -88,7 +89,7 @@ Description[mk]=Тема со сини кругови
 Description[ms]=Tema dengan bulatan biru
 Description[nb]=Tema med blå sirkler
 Description[nds]=Muster mit blage Krinken
-Description[ne]=निलो वृत्तसँग विषयवस्तु
+Description[ne]=नीलो वृत्तसँग विषयवस्तु
 Description[nl]=Thema met blauwe cirkels
 Description[nn]=Tema med blåe sirklar
 Description[pa]=ਨੀਲੇ ਚੱਕਰਾਂ ਵਾਲਾ ਸਰੂਪ

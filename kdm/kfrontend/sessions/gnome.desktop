@@ -4,6 +4,7 @@ Type=XSession
 Exec=gnome-session
 TryExec=gnome-session
 Name=GNOME
+Name[ar]=جنوم
 Name[eo]=Gnomikuo
 Name[ne]=जिनोम
 Name[sv]=Gnome

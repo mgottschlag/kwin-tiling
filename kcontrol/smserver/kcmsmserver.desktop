@@ -14,6 +14,7 @@ X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Session Manager
 Name[af]=Sessie Bestuurder
+Name[ar]=مدير الجلسات
 Name[be]=Кіраўнік сеансаў
 Name[bg]=Системни сесии
 Name[br]=Merour an dalc'hioù
@@ -77,6 +78,7 @@ Name[zh_TW]=工作階段管理程式
 
 Comment=Configure the session manager and logout settings
 Comment[af]=Konfigureer die sessie bestuurder en teken af instellings
+Comment[ar]=إعداد مدير الجلسات و تعيينات تسجيل الخروج
 Comment[be]=Настаўленні кіраўніка сеансаў і параметраў выхаду
 Comment[bg]=Настройване сесиите на системата и поведението при изход
 Comment[br]=Kefluniañ ar merour an dalc'hioù hag an doare mont kuit

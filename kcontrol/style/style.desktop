@@ -14,6 +14,7 @@ X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Style
 Name[af]=Styl
+Name[ar]=المظهر العام
 Name[be]=Стыль
 Name[bg]=Теми и стилове
 Name[br]=Giz
@@ -109,7 +110,7 @@ Comment[mk]=Дозволува манипулација со однесувањ�
 Comment[ms]=Membolehkan manipulasi kelakuan widget dan mengubah Gaya untuk KDE
 Comment[nb]=Her kan du endre oppførsel til skjermelementer, og endre stiler i KDE
 Comment[nds]=Hier kann dat Bedregen vun Bedeen-Elementen un ehr KDE-Stil ännert warrn
-Comment[ne]=KDE का लागि परिवर्तन शैली र विजेट व्यवहारको परिचालन गर्न अनुमति दिन्छ
+Comment[ne]=केडीईका लागि परिवर्तन शैली र विजेट व्यवहारको परिचालन गर्न अनुमति दिन्छ
 Comment[nl]=Hiermee kunt u het gedrag van de widgets aanpassen en de stijl van KDE wijzigen
 Comment[nn]=Let deg endra KDE-stilen og åtferda til skjermelementa
 Comment[pa]=KDE ਲਈ ਵਿਦਗਿਟ ਵਿਵਹਾਰ ਅਤੇ ਸ਼ੈਲੀ ਤਬਦੀਲ ਲਈ ਸਹਾਈ ਹੈ

@@ -14,6 +14,7 @@ X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Colors
 Name[af]=Kleure
+Name[ar]=الألوان
 Name[be]=Колеры
 Name[bg]=Цветове
 Name[br]=Livioù
@@ -78,6 +79,7 @@ Name[zh_TW]=顏色
 
 Comment=Color settings
 Comment[af]=Kleur instellings
+Comment[ar]=إعدادات الألوان
 Comment[be]=Настаўленне колераў
 Comment[bg]=Настройване цветовете на системата
 Comment[br]=Kefluniañ al livioù

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Panel
 Name[af]=Paneel
+Name[ar]=اللوحة
 Name[be]=Панель
 Name[bg]=Системен панел
 Name[br]=Panell
@@ -83,7 +84,7 @@ Comment[mk]=Екстензија - дете панел.
 Comment[ms]=Lanjutan panel anak.
 Comment[nb]=Barnepanelutvidelse
 Comment[nds]=Verwiedern för en ünnerornt Paneel.
-Comment[ne]=शाखा प्यानल विस्तार
+Comment[ne]=शाखा प्यानल विस्तार ।
 Comment[nl]=Dochterpaneelextensie.
 Comment[nn]=Barnepanelutviding
 Comment[pa]=ਅੱਗੇ ਪੈਨਲ ਵਧਾਰਾ ਹੈ।

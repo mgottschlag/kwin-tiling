@@ -14,6 +14,7 @@ X-KDE-ParentApp=kinfocenter
 
 Name=Partitions
 Name[af]=Partisies
+Name[ar]=أقسام القرص الصلب
 Name[be]=Дыскавыя раздзелы
 Name[bg]=Дялове
 Name[br]=Parzhadurioù
@@ -77,6 +78,7 @@ Name[zh_TW]=磁碟分割區
 
 Comment=Partition information
 Comment[af]=Partisie informasie
+Comment[ar]=معلومات أقسام القرص الصلب
 Comment[be]=Звесткі аб раздзелах
 Comment[bg]=Информация за дяловете и дисковете
 Comment[br]=Titouroù diwar-benn ar parzhadur

@@ -15,6 +15,7 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 
 Name=Keyboard
 Name[af]=Sleutelbord
+Name[ar]=لوحة المفاتيح
 Name[be]=Клавіятура
 Name[bg]=Клавиатура
 Name[br]=Stokellaoueg
@@ -79,6 +80,7 @@ Name[zh_TW]=鍵盤
 
 Comment=Keyboard settings
 Comment[af]=Sleutelbord instellings
+Comment[ar]=إعدادات لوحة المفاتيح
 Comment[be]=Настаўленні клавіятуры
 Comment[bg]=Настройване на клавиатурата
 Comment[br]=Kefluniañ ar stokellaoueg
@@ -172,7 +174,7 @@ Keywords[lv]=Tastatūra,Tastatūras atkārtošanās,Klikšķu līmenis,Ievades I
 Keywords[mk]=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume,Тастатура,Повторување на копчиња,Гласност на кликот,Влезни уреди,повтори,гласност
 Keywords[nb]=Tastatur,Tastaturgjentagelse,Klikkevolum,Innenheter,gjentagelse,volum
 Keywords[nds]=Tastatuur,Tastwedderhalen,Klick-Luutstärk,Ingaavreedschappen,wedderhalen,Luutstärk
-Keywords[ne]=कुञ्जीपाटी, कुञ्जीपाटी दोहोर्याउनुहोस्, भोल्युम क्लिक गर्नुहोस्, आगत यन्त्रहरू, दोहोर्याउनुहोस्, भोल्युम
+Keywords[ne]=कुञ्जीपाटी, कुञ्जीपाटी दोहोर्याउनुहोस्, भोल्युम क्लिक गर्नुहोस्, आगत यन्त्र, दोहोर्याउनुहोस्, भोल्युम
 Keywords[nl]=keyboard,keyboard repeat,klikvolume,input devices,invoerapparaten,toetsenbord,toetsenbordherhaling,herhaling,volume,randapparatuur,internationaal,randapparaten
 Keywords[nn]=tastatur,tastaturrepetisjon,tasterepetisjon,inneiningar,tasteklikk,repetisjon,lydstyrke,volum
 Keywords[pa]=ਕੀ-ਬੋਰਡ,ਕੀ-ਬੋਰਡ repeat,Click volume,Input ਜੰਤਰ,repeat,ਆਵਾਜ਼

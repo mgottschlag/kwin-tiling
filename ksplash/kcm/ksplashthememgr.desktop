@@ -15,6 +15,7 @@ X-KDE-System-Settings-Parent-Category=look-and-feel
 
 Name=Splash Screen
 Name[af]=Spat Skerm
+Name[ar]=شاشة البداية
 Name[be]=Застаўка загрузкі
 Name[bg]=Начален екран
 Name[br]=Skramm-degemer
@@ -75,6 +76,7 @@ Name[zh_CN]=飞溅屏幕
 Name[zh_TW]=啟動畫面
 Comment=Manager for Splash Screen Themes
 Comment[af]=Bestuurder vir Spat Skerm Temas
+Comment[ar]=مدير سمات شاشة البداية
 Comment[be]=Кіраўнік заставак загрузкі
 Comment[bg]=Настройване на началния екран
 Comment[br]=Merour evit gwiskadoù ar skramm degemer
@@ -133,6 +135,7 @@ Comment[x-test]=xxManager for Splash Screen Themesxx
 Comment[zh_CN]=飞溅屏幕主题管理器
 Comment[zh_TW]=啟動畫面佈景管理程式
 Keywords=splash screen,splash theme,startup
+Keywords[ar]=شاشة البداية، سمات شاشة البداية، بدء التشغيل
 Keywords[be]=Застаўка,Загрузка,Запуск,Тэма загрузкі,splash screen,splash theme,startup
 Keywords[bg]=Keywords=стартиране, начален, екран, splash screen, splash theme, startup
 Keywords[ca]=pantalla d'inici,tema d'inici,iniciació

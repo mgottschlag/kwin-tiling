@@ -72,6 +72,7 @@ Name[zh_TW]=中斷
 
 Comment=Interrupt information
 Comment[af]=Interrupt informasie
+Comment[ar]=معلومات الإنقطاع
 Comment[be]=Звесткі аб перапыненнях
 Comment[bg]=Информация за прекъсванията в системата
 Comment[br]=Titouroù diwar-benn ar spanoù
@@ -169,7 +170,7 @@ Keywords[lv]=Pārtraukumi,IRQ,Sistēmas Informācija
 Keywords[mk]=Interrupts,IRQ,System Information,Прекини,Информации за системот
 Keywords[nb]=Avbrudd,IRQ,Systeminformasjon
 Keywords[nds]=Interrupts,IRQ,Systeeminformatschoon
-Keywords[ne]=रोकावट, IRQ, प्रणाली सूचना
+Keywords[ne]=रोकावट, आईआरक्यू, प्रणाली सूचना
 Keywords[nl]=interrupts,IRQ,systeeminformatie
 Keywords[nn]=avbrot,IRQ,systeminformasjon
 Keywords[pa]=Interrupts,IRQ,ਸਿਸਟਮ ਜਾਣਕਾਰੀ,ਰੁਕਾਵਟ

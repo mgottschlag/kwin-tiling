@@ -16,6 +16,7 @@ X-KDE-System-Settings-Parent-Category=date-and-time
 
 Name=Date & Time
 Name[af]=Datum & Tyd
+Name[ar]=التاريخ و الوقت
 Name[be]=Дата і час
 Name[bg]=Дата и час
 Name[br]=Deiziad hag eur
@@ -80,6 +81,7 @@ Name[zh_TW]=日期和時間
 
 Comment=Date and time settings
 Comment[af]=Datum en tyd instellings
+Comment[ar]=تعيينات التاريخ و الوقت
 Comment[be]=Настаўленне даты і часу
 Comment[bg]=Настройване на датата и часа
 Comment[br]=Kefluniañ an deiziad hag an eur
@@ -144,6 +146,7 @@ Comment[zh_TW]=日期和時間設定值
 
 Keywords=clock,date,time,time zone
 Keywords[af]=horlosie,date,time,time zone,datum,tyd,tyd sone
+Keywords[ar]=الساعة,التاريخ,الوقت,المنطقة الزمنية
 Keywords[be]=гадзіннік,дата,час,часавая зона,часавы пояс,clock,date,time,time zone
 Keywords[bg]=Keywords=дата, час, време, часови, пояс, clock, date, time, time zone
 Keywords[br]=eurier,deiziad,amzer,takad-eur

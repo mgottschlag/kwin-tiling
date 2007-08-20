@@ -14,6 +14,7 @@ X-KDE-ParentApp=kinfocenter
 
 Name=Devices
 Name[af]=Toestelle
+Name[ar]=الأجهزة
 Name[be]=Прылады
 Name[bg]=Устройства
 Name[br]=Trobarzhelloù
@@ -78,6 +79,7 @@ Name[zh_TW]=設備
 
 Comment=Attached devices information
 Comment[af]=Gekoppelde toestelle informasie
+Comment[ar]=معلومات الأجهزة الموصولة
 Comment[be]=Звесткі аб далучаных прыладах
 Comment[bg]=Информация за системните устройства
 Comment[br]=Titouroù diwar-benn an trobarzhelloù luget
@@ -114,7 +116,7 @@ Comment[mk]=Информации за прикачени уреди
 Comment[ms]=Maklumat Peranti Terlampir
 Comment[nb]=Informasjon om tilkoblede enheter
 Comment[nds]=Informatschoon över de tokoppelten Reedschappen
-Comment[ne]=सङ्लग्न गरिएका यन्त्रहरू सूचना
+Comment[ne]=सङ्लग्न गरिएका यन्त्र सूचना
 Comment[nl]=Informatie over aangesloten apparaten
 Comment[nn]=Informasjon om tilkopla einingar
 Comment[pa]=ਜੁੜੇ ਜੰਤਰਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ

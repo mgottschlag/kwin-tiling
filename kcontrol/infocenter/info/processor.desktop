@@ -13,6 +13,7 @@ X-KDE-ParentApp=kinfocenter
 
 Name=Processor
 Name[af]=Verwerker
+Name[ar]=المعالج
 Name[be]=Працэсар
 Name[bg]=Процесор
 Name[br]=Kewerier
@@ -73,6 +74,7 @@ Name[zh_TW]=處理器
 
 Comment=Processor information
 Comment[af]=Verwerker informasie
+Comment[ar]=معلومات المعالج
 Comment[be]=Звесткі аб працэсары
 Comment[bg]=Информация за процесора(ите) на системата
 Comment[br]=Titouroù diwar-benn ar c'hewerier
@@ -171,7 +173,7 @@ Keywords[mk]=Processor,CPU,FPU,MHz,System Information,Процесор,Инфо�
 Keywords[ms]=Pemproses,CPU,FPU,MHz,Maklumat Sistem
 Keywords[nb]=Prosessor,CPU,FPU,Sentralenhet,MHz,Systeminformasjon
 Keywords[nds]=Perzesser,CPU,FPU,MHz,Systeeminformatschoon
-Keywords[ne]=प्रोसेसर, सीपीयू, एफपीयू, एमएचजेड, प्रणाली सूचना
+Keywords[ne]=प्रोसेसर, सीपीयू, एफपीयू, एमएचजेट, प्रणाली सूचना
 Keywords[nl]=processor,CPU,FPU,MHz,systeeminformatie
 Keywords[nn]=prosessor,CPU,FPU,MHz,systeminformasjon
 Keywords[pa]=ਪਰੋਸੈਸਰ,CPU,FPU,MHz,ਸਿਸਟਮ ਜਾਣਕਾਰੀ

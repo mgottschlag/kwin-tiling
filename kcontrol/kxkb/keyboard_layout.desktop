@@ -14,6 +14,7 @@ X-KDE-System-Settings-Parent-Category=regional-and-language
 
 Name=Keyboard Layout
 Name[af]=Sleutelbord Uitleg
+Name[ar]=تصميم لوحة المفاتيح
 Name[be]=Раскладка клавіятуры
 Name[bg]=Клавиатурни подредби
 Name[br]=Reizhadur ar stokellaoueg
@@ -77,6 +78,7 @@ Name[zh_TW]=鍵盤配置
 
 Comment=Keyboard Layout
 Comment[af]=Sleutelbord Uitleg
+Comment[ar]=تصميم لوحة المفاتيح
 Comment[be]=Раскладка клавіятуры
 Comment[bg]=Клавиатурни подредби
 Comment[br]=Reizhadur ar stokellaoueg

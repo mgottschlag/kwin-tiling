@@ -13,6 +13,7 @@ X-KDE-ParentApp=kinfocenter
 
 Name=Memory
 Name[af]=Geheue
+Name[ar]=الذاكرة
 Name[be]=Памяць
 Name[bg]=Памет
 Name[br]=Memor
@@ -77,6 +78,7 @@ Name[zh_TW]=記憶體
 
 Comment=Memory information
 Comment[af]=Geheue informasie
+Comment[ar]=معلومات الذاكرة
 Comment[be]=Звесткі аб памяці
 Comment[bg]=Информация за системната памет
 Comment[br]=Titouroù diwar-benn ar memor
@@ -174,7 +176,7 @@ Keywords[lv]=Atmiņa,RAM,Virtuālā atmiņa,Fiziskā atmiņa,Koplietošanas atmi
 Keywords[mk]=Memory,RAM,Virtual memory,Physical memory,Shared memory,Swap,System Information,Меморија,Виртуелна меморија,Физичка меморија,Заедничка меморија,Информации за системот
 Keywords[nb]=Minne,RAM,Kunstig minne,Fysisk minne,Delt minne,Vekselsminne,Systeminformasjon
 Keywords[nds]=Spieker,RAM,Virtuell Spieker,Physikaalsch Spieker,Deelt Spieker,Swap,Utlager-Spieker,utlagern,Systeeminformatschoon
-Keywords[ne]=स्मृति, RAM, अवास्तविक स्मृति, भौतीक स्मृति, साझेदारी स्मृति, स्वाप, प्रणाली सूचना
+Keywords[ne]=स्मृति, र्याम, अवास्तविक स्मृति, भौतीक स्मृति, साझेदारी स्मृति, स्वाप, प्रणाली सूचना
 Keywords[nl]=memory,RAM,virtual memory,physical memory,shared memory,swap,systeeminformatie,geheugen,wisselgeheugen,virtueel geheugen,fysiek geheugen,gedeeld geheugen
 Keywords[nn]=minne,RAM,virtuelt minne,fysisk minne,delt minne,veksleminne,systeminformasjon
 Keywords[pa]=Memory,RAM,Virtual memory,Physical memory,Shared memory,Swap,System Information,ਮੈਮੋਰੀ,ਭੌਤਿਕ ਮੈਮੋਰੀ,ਸਾਂਝੀ ਮੈਮੋਰੀ,ਸਵੈਪ,ਸਿਸਟਮ ਜਾਣਕਾਰੀ,ਰੈਮ

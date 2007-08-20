@@ -3,6 +3,7 @@ Type=Plugin
 Encoding=UTF-8
 Name=System Tray
 Name[af]=Stelsel Laai
+Name[ar]=صينية النظام
 Name[be]=Сістэмны трэй
 Name[bg]=Системен панел
 Name[br]=Barlenn ar reizhiad
@@ -66,6 +67,7 @@ Name[zh_TW]=系統匣
 
 Comment=The system tray panel applet
 Comment[af]=Die stelsel laai paneel miniprogram
+Comment[ar]=بريمج لوحة صينية النظام
 Comment[be]=Аплет сістэмнага трэя
 Comment[bg]=Системен аплет за регистрация на програми и поддържане на иконите им
 Comment[br]=Arloadig banell barlenn ar reizhiad

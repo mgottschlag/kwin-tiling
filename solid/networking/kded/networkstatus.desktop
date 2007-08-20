@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Network Status Daemon
+Name[ar]=مراقب حالة الشبكة
 Name[bg]=Демон за състоянието на мрежата
 Name[de]=Netzwerkstatus-Dienst
 Name[el]=Δαίμονας κατάστασης δικτύου
@@ -10,6 +11,7 @@ Name[he]=צג מצב הרשת
 Name[ja]=ネットワーク状態デーモン
 Name[km]=ដេមិន​ស្ថានភាព​បណ្តាញ
 Name[nds]=Nettwarktostand-Dämoon
+Name[ne]=सञ्जाल वस्तुस्थिति डेइमोन
 Name[nl]=Netwerkstatus-daemon
 Name[pa]=ਨੈੱਟਵਰਕ ਹਾਲਤ ਡੈਮਨ
 Name[pt]=Servidor de Estado da Rede
@@ -26,6 +28,7 @@ Comment[he]=עוקב אחר מצב ממשקי רשת ומספק עידכונים
 Comment[ja]=ネットワークインターフェースの状態を追跡し、ネットワークを使うアプリケーションに情報を提供します。
 Comment[km]=តាម​ដាន​ស្ថានភាព​ចំណុច​ប្រទាក់​បណ្តាញ និង​ផ្តល់​នូវ​សេចក្តី​ជូន​ដំណឹង​ទៅ​កម្មវិធី​ដោយ​ប្រើ ​បណ្តាញ ។
 Comment[nds]=Beluert den Tostand vun de Nettwarkkoppelsteden un gifft Programmen Bescheed, de dat Nettwark bruukt
+Comment[ne]=सञ्जाल इन्टरफेसहरूको वस्तुस्थिति ट्रयाक गर्दछ र सञ्जाल प्रयोग गरिरहेको अनुप्रयोगमा सूचना उपलब्ध गर्दछ ।
 Comment[nl]=Volgt de status van netwerkinterfaces en levert notificatie aan programma's die het netwerk gebruiken.
 Comment[pa]=ਨੈੱਟਵਰਕ ਇੰਟਰਫੇਸ ਦੀ ਹਾਲਤ ਦੀ ਜਾਂਚ ਕਰਦਾ ਹੈ ਅਤੇ ਨੈੱਟਵਰਕ ਵਰਤਣ ਵਾਲੇ ਕਾਰਜਾਂ ਲਈ ਨੋਟੀਫਿਕੇਸ਼ਨ ਦਿੰਦਾ ਹੈ।
 Comment[pt]=Regista o estado das interfaces de rede e notifica as aplicações que necessitem da rede.

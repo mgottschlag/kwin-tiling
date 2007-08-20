@@ -13,6 +13,7 @@ X-KDE-ParentApp=kinfocenter
 
 Name=Network Interfaces
 Name[af]=Netwerk Koppelvlakke
+Name[ar]=واجهات الشبكة
 Name[be]=Сеткавыя інтэрфейсы
 Name[bg]=Мрежа
 Name[br]=Etrefasoù Rouedad
@@ -76,6 +77,7 @@ Name[zh_TW]=網路界面
 
 Comment=Network interface information
 Comment[af]=Netwerk koppelvlak informasie
+Comment[ar]=معلومات حول واجهة الشبكة
 Comment[be]=Звесткі аб сеткавых інтэрфейсах
 Comment[bg]=Информация за мрежовите интерфейси
 Comment[br]=Titouroù diwar-benn an etrefasoù rouedad

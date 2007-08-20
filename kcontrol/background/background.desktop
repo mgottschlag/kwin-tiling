@@ -14,6 +14,7 @@ X-KDE-System-Settings-Parent-Category=background
 
 Name=Background
 Name[af]=Agtergrond
+Name[ar]=الخلفية
 Name[be]=Фон
 Name[bg]=Фон на екрана
 Name[br]=Drekleur
@@ -77,6 +78,7 @@ Name[zh_TW]=背景
 
 Comment=Change the background settings
 Comment[af]=Verander die agtergrond instellings
+Comment[ar]=غيير إعدادات الخلفية
 Comment[be]=Змяняе настаўленні фону
 Comment[bg]=Настройване фона на работния плот
 Comment[br]=Kemmañ kefluniadur an drekleur
@@ -171,7 +173,7 @@ Keywords[lv]=fons,darbvirsmas,krāsu,krāsas,attēli,tapetes,saplūstošas,balan
 Keywords[mk]=background,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmap,подлога,позадина,површини,бои,слики,позадини,мешање,рамнотежа,кеш,повеќе подлоги,повеќе позадини
 Keywords[nb]=bakgrunn,skrivebord,farger,bilder,bakgrunnsbilder,flere bakgrunnsbilder
 Keywords[nds]=Achtergrund,Schriefdischen,Klören,Biller,wallpapers,blending,balance,Twischenspieker,multiple wallpapers,pixmap
-Keywords[ne]=पृष्ठभूमि,डेस्कटप,रङ,रङ,छवि, क्यास,छवि,बहुविध वालपेपर,सन्तुलन,ब्लेन्डिङ पिक्सम्याप
+Keywords[ne]=पृष्ठभूमि,डेस्कटप,रङ,रङ,छवि, क्यास,छवि,बहुँविध वालपेपर,सन्तुलन,ब्लेन्डिङ पिक्सम्याप
 Keywords[nl]=achtergrond,desktops,bureaubladen,kleur,kleuren,afbeeldingen,behang,wallpapers,gradiënt,vermenging,balans,cache,meerdere afbeeldingen,pixmap,graphics
 Keywords[nn]=bakgrunn,skrivebord,fargar,bilete,bakgrunnsbilete,overgang,balanse,fleire bakgrunnsbilete
 Keywords[pa]=background,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmap, ਵਾਲਪੇਪਰ, ਰੰਗ, ਚਿੱਤਰ, ਬੈਕਗਰਾਊਂਡ

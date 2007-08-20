@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Time Data Engine
-Name[ar]=محرك البحث
+Name[ar]=محرك بيانات الوقت
 Name[be]=Рухавік дадзеных Time
 Name[de]=Zeitdaten-Treiber
 Name[el]=Μηχανή δεδομένων χρόνου
@@ -11,6 +11,7 @@ Name[he]=מנוע נתוני זמן
 Name[ja]=時間データエンジン
 Name[km]=ម៉ាស៊ីន​ទិន្នន័យ​ពេលវេលា​
 Name[nds]=Tiet-Datendriever
+Name[ne]=समय डेटा इन्जिन
 Name[nl]=Tijdgegevens-engine
 Name[pa]=ਸਮਾਂ ਡਾਟਾ ਇੰਜਣ
 Name[pt]=Motor de Dados Horários
@@ -29,6 +30,7 @@ Comment[he]=נתוני זמן עבור פלסמואידים
 Comment[ja]=Plasmoids のための時間データ
 Comment[km]=ទិន្នន័យ​ពេលវេលា​សម្រាប់ Plasmoids
 Comment[nds]=Tietdaten för Plasmoiden
+Comment[ne]=प्लासमोइड्सका लागि समय डेटा
 Comment[nl]=Tijdgegevens voor Plasmoids
 Comment[pa]=ਪਲਾਜਮੋਡੀਸ ਲਈ ਟਾਈਮ ਡਾਟਾ
 Comment[pt]=Dados de data/hora para os Plasmóides

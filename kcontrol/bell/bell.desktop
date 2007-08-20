@@ -15,6 +15,7 @@ X-KDE-System-Settings-Parent-Category=notifications
 
 Name=System Bell
 Name[af]=Stelsel Klok
+Name[ar]=جرس النظام
 Name[be]=Сістэмны званок
 Name[bg]=Системен звук
 Name[br]=Kloc'h ar reizhiad
@@ -79,6 +80,7 @@ Name[zh_TW]=系統鈴聲
 
 Comment=System Bell Configuration
 Comment[af]=Stelsel Klok Opstelling
+Comment[ar]=إعداد جرس النظام
 Comment[be]=Настаўленне сістэмнага званка
 Comment[bg]=Настройване звуковия сигнал на системата
 Comment[br]=Kefluniañ kloc'h ar reizhiad

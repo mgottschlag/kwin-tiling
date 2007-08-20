@@ -14,6 +14,7 @@ X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Fonts
 Name[af]=Skriftipes
+Name[ar]=الخطوط
 Name[be]=Шрыфты
 Name[bg]=Шрифтове
 Name[br]=Fontoù
@@ -78,6 +79,7 @@ Name[zh_TW]=字型
 
 Comment=Font settings
 Comment[af]=Skrif tipe instellings
+Comment[ar]=إعدادات الخط
 Comment[be]=Настаўленні шрыфтоў
 Comment[bg]=Настройване шрифтовете на системата
 Comment[br]=Kefluniañ ar fontoù
@@ -173,6 +175,7 @@ Keywords[lv]=fonti,fonta izmērs,stili,čārseti,simbolu komplekti,panelis,kiker
 Keywords[mk]=fonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,фонтови,големина на фонтови,стилови,знаковно множество,знаковни множества,панел,контролен панел,површини,лентасо алатки,алатки,Мени,Наслов на прозорец,Наслов
 Keywords[nb]=skrift,skrifttyper,skriftstørrelse,stil,tegnsett,panel,kicker,kontrollpanel,skrivebord,filbehandler,verktøylinjer,meny,vindustittel,tittel
 Keywords[nds]=Schriftoorden,Schriftgrött,Stilen,Tekensetten,Paneel,kicker,Kuntrullbalken,Schriefdischen,Dateimanager,Dateipleger,Warktüüchbalken,Menü,Finstertitel,Titel
+Keywords[ne]=फन्ट,फन्ट साइज,शैली,क्यारेक्टर सेट,क्यारेक्टर सेट,प्यानल,किकर,नियन्त्रण प्यानल,डेस्कटप,फाइल प्रबन्धक,उपकरणपट्टी,मेनु,सञ्झ्याल शीर्षक,शीर्षक
 Keywords[nl]=fonts,font,letters,lettertypen,lettertypes,tekenset,tekenverzamelingen,paneel,kicker,configuratiecentrum,stijl,bestandsbeheerder,werkbalk,menu,venster,titel,venstertitel,desktops,bureaubladen
 Keywords[nn]=skrift,skrift,skriftstorleik,stil,teiknsett,panel,kicker,kontrollpanel,skrivebord,filhandsamar,verktøylinjer,meny,vindaugstittel,tittel
 Keywords[pa]=fonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,ਫੋਂਟ,ਫੋਂਟ ਅਕਾਰ,ਕੰਟਰੋਲ ਪੈਨਲ,ਡੈਸਕਟਾਪ,ਫਾਇਲ ਮੈਨੇਜਰ,ਮੇਨੂ,ਟਾਇਟਲ

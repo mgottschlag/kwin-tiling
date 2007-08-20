@@ -14,6 +14,7 @@ X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Power Control
 Name[af]=Krag Beheer
+Name[ar]=التحكّم بالطّاقة
 Name[be]=Сілкаванне
 Name[bg]=Електрозахранване
 Name[br]=Renadur ar gremm
@@ -79,6 +80,7 @@ Name[zh_TW]=電源控制
 
 Comment=Settings for display power management
 Comment[af]=Instellings vir die vertoon van die krag bestuurder
+Comment[ar]=إعدادات إدخار الطاقة للشاشة
 Comment[be]=Кіраванне сілкаваннем манітора
 Comment[bg]=Настройване и контрол на електрозахранването
 Comment[br]=Kefluniadur renadur gremm an diskwell
@@ -170,7 +172,7 @@ Keywords[lv]=enerģija,glabātājs,apm,acpi,dpms,taimauts,tukšs,gaidīt,izslēg
 Keywords[mk]=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power,енергија,штедач,истек на време
 Keywords[nb]=energi,sparing,apm,acpi,dpms,tidsgrense,tom skjerm,ventemodus,hvilemodus,dvalemodus,strøm
 Keywords[nds]=Energie,sporen,apm,acpi,dpms,timeout,blanking,stand by,suspend,Energie
-Keywords[ne]=शक्ति, बचतकर्ता, apm, acpi, dpms, समय समाप्त, रिक्त, उभिनु, निलम्बन, सामर्थ्य
+Keywords[ne]=शक्ति, बचतकर्ता, apm, acpi, dpms, समय समाप्त, खाली, उभिनु, निलम्बन, सामर्थ्य
 Keywords[nl]=energie,besparing,apm,acpi,tijdslimiet,slaapstand,stand-by,suspend,power,wachtstand,laptop,beeldscherm,monitor,display,timeout
 Keywords[nn]=energi,sparing,apm,acpi,dpms,tidsgrense,tom skjerm,standby,suspend,straum,dvale
 Keywords[pa]=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,ਊਰਜਾ,ਸਸਪੈਂਡ

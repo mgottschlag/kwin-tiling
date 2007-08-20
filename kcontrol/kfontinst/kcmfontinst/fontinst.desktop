@@ -13,6 +13,7 @@ X-KDE-ParentApp=kcontrol
 
 Name=Font Installer
 Name[af]=Skrif tipe Installeerder
+Name[ar]=مثبت الخطوط
 Name[be]=Устаноўка шрыфтоў
 Name[bg]=Шрифтове
 Name[br]=Stalianer an nodrezhoù
@@ -76,6 +77,7 @@ Name[zh_TW]=字型安裝程式
 
 Comment=Install & preview fonts
 Comment[af]=Installeer & voorskou skriftipes
+Comment[ar]=تثبيت و معاينة الخطوط
 Comment[be]=Устаноўка і прагляд шрыфтоў
 Comment[bg]=Инсталиране и преглед на шрифтове
 Comment[br]=Staliañ ha rakgwel an nodrezhoù
@@ -149,6 +151,7 @@ Keywords[he]=גופן,גופנים,מתקין,התקנה,מפת סיביות,fon
 Keywords[ja]=フォント,インストーラ,truetype,type1,bitmap,ビットマップ
 Keywords[km]=ពុម្ពអក្សរ កម្មវិធី​ដំឡើង truetype type1 speedo រូបភាព​
 Keywords[nds]=Schriftoort,Schriftoorden,Installeren,TrueType,Type1,Bitmap
+Keywords[ne]=फन्ट, फन्टहरू, स्थापक, ट्रु टाइप, टाइप १,बिटम्याप
 Keywords[nl]=letters,lettertypen,fonts,installatie,truetype,type1,speedo,bitmap,lettertype-installatie
 Keywords[pt]=tipo de letra,tipos de letra,instalador,truetype,type1,speedo,bitmap
 Keywords[pt_BR]=fonte,fontes,instalador,truetype,type1,bitmap

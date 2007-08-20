@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Settings
 Name[af]=Instellings
+Name[ar]=إعدادات
 Name[be]=Настаўленні
 Name[bg]=Настройки
 Name[br]=Dibarzhoù
@@ -75,6 +76,7 @@ Comment[he]=גישה מהירה למודולי מרכז הבקרה
 Comment[ja]=コントロールセンターの設定モジュールに素早くアクセス
 Comment[km]=ងាយស្រួល​ចូល​ដំណើរការ​ទៅ​កាន់​ម៉ូឌុលមជ្ឈមណ្ឌល​បញ្ជា​
 Comment[nds]=Eenfach Togriep op de Kuntrullzentrum-Modulen
+Comment[ne]=नियन्त्रण केन्द्र मोड्युलमा सजिलो पहुँच
 Comment[nl]=Snelle toegang tot de configuratiemodules
 Comment[pa]=ਕੰਟਰੋਲ ਕੇਂਦਰ ਮੋਡੀਊਲਾਂ ਲਈ ਸੌਖੀ ਪਹੁੰਚ
 Comment[pt]=Um acesso simples aos módulos do Centro de Controlo

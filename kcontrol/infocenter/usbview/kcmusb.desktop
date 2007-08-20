@@ -11,6 +11,7 @@ X-KDE-ParentApp=kinfocenter
 
 Name=USB Devices
 Name[af]=USB Toestelle
+Name[ar]=أجهزة USB
 Name[be]=USB прылады
 Name[bg]=USB
 Name[br]=Trobarzhelloù USB
@@ -47,7 +48,7 @@ Name[mk]=USB-уреди
 Name[ms]=Peranti USB
 Name[nb]=USB-enheter
 Name[nds]=USB-Reedschappen
-Name[ne]=USB यन्त्र
+Name[ne]=यूएसबी यन्त्र
 Name[nl]=USB-apparaten
 Name[nn]=USB-einingar
 Name[pa]=USB ਜੰਤਰ
@@ -75,6 +76,7 @@ Name[zh_TW]=USB 裝置
 
 Comment=View the USB devices attached to this computer
 Comment[af]=Besigtig die Usb toestelle gekoppelde na hierdie rekenaar
+Comment[ar]=أعرض أجهزة USB الموصولة في حاسوبك
 Comment[be]=Паказвае прылады USB, далучаныя да гэтага камп'ютэра
 Comment[bg]=Информация за устройствата USB
 Comment[br]=Sellout ouzh trobarzhelloù USB kevreet ouzh an urzhiataer-mañ

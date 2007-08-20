@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Bookmarks Menu
 Name[af]=Boekmerke Kieslys
+Name[ar]=قائمة علامات المواقع
 Name[be]=Меню закладак
 Name[bg]=Отметки
 Name[br]=Meuziad ar sinedoù
@@ -57,6 +58,7 @@ Name[zh_CN]=书签菜单
 Name[zh_TW]=書籤選單
 Comment=Your Konqueror bookmarks
 Comment[af]=Jou Konqueror boekmerke
+Comment[ar]=علامات مواقعك في كونكيورر
 Comment[be]=Закладкі Konqueror
 Comment[bg]=Отметки на браузъра
 Comment[ca]=Els vostres punts Konqueror

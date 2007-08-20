@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Analog Clock
-Name[ar]=ساعة X
+Name[ar]=ساعة عادية
 Name[be]=Аналагавы гадзіннік
 Name[bg]=Аналогов часовник
 Name[csb]=Analogòwi zédżer
@@ -14,6 +14,7 @@ Name[he]=שעון אנלוגי
 Name[ja]=アナログ時計
 Name[km]=នាឡិកា​អាណាឡូក
 Name[nds]=Analoog Klock
+Name[ne]=एनालग घडी
 Name[nl]=Analoge klok
 Name[pa]=ਐਨਾਲਾਗ ਘੜੀ
 Name[pt]=Relógio Analógico
@@ -33,6 +34,7 @@ Comment[he]=שעון SVG הניתן להתאמה על ידי ערכות נושא
 Comment[ja]=SVG のテーマを適用できる時計
 Comment[km]=នា​ឡិកា​ដែល​មាន​ស្បែកជា SVG 
 Comment[nds]=En Klock mit SVG-Mustern
+Comment[ne]=एउटा एसभीजी थेमेबल घडी
 Comment[nl]=Een klok met SVG-themamogelijkheden
 Comment[pt]=Um relógio com temas em SVG
 Comment[pt_BR]=Um relógio com temas em SVG
