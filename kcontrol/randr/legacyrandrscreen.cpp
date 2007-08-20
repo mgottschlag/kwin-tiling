@@ -138,13 +138,13 @@ QString LegacyRandRScreen::changedMessage() const
 {
 	if (refreshRate() == -1)
 		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3",
-			 currentPixelWidth(),
-			 currentPixelHeight(),
+			 currentPixelSize().width(),
+			 currentPixelSize().height(),
 			 currentRotationDescription());
 	else
 		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3\nRefresh rate: %4",
-			 currentPixelWidth(),
-			 currentPixelHeight(),
+			 currentPixelSize().width(),
+			 currentPixelSize().height(),
 			 currentRotationDescription(),
 			 currentRefreshRateDescription());
 }
@@ -213,36 +213,21 @@ int LegacyRandRScreen::rotationDegreeToIndex(int degree) const
 	}
 }
 
-int LegacyRandRScreen::currentPixelWidth() const
+const QSize& LegacyRandRScreen::currentPixelSize() const
 {
-	return m_pixelSizes[m_currentSize].width();
+	return m_pixelSizes[m_currentSize];
 }
 
-int LegacyRandRScreen::currentPixelHeight() const
-{
-	return m_pixelSizes[m_currentSize].height();
-}
-
-int LegacyRandRScreen::currentMMWidth() const
-{
-	return m_pixelSizes[m_currentSize].width();
-}
-
-int LegacyRandRScreen::currentMMHeight() const
-{
-	return m_pixelSizes[m_currentSize].height();
-}
-
-QStringList LegacyRandRScreen::refreshRates(int size) const
+RateList LegacyRandRScreen::refreshRates(int size) const
 {
 	int nrates;
-	short* rates = XRRRates(QX11Info::display(), m_screen, (SizeID)size, &nrates);
+	short* rrates = XRRRates(QX11Info::display(), m_screen, (SizeID)size, &nrates);
 
-	QStringList ret;
+	RateList rateList;
 	for (int i = 0; i < nrates; i++)
-		ret << refreshRateDirectDescription(rates[i]);
+		rateList.append(rrates[i]);
 
-	return ret;
+	return rateList;
 }
 
 QString LegacyRandRScreen::refreshRateDirectDescription(int rate) const
@@ -257,7 +242,7 @@ QString LegacyRandRScreen::refreshRateIndirectDescription(int size, int index) c
 
 QString LegacyRandRScreen::refreshRateDescription(int size, int index) const
 {
-	return refreshRates(size)[index];
+	return i18n("%1 Hz", QString::number(refreshRates(size)[index], 'f', 1));
 }
 
 bool LegacyRandRScreen::proposeRefreshRate(int index)
@@ -384,7 +369,7 @@ void LegacyRandRScreen::load(KConfig& config)
 {
 	KConfigGroup group = config.group(QString("Screen%1").arg(m_screen));
 
-	if (proposeSize(sizeIndex(QSize(group.readEntry("width", currentPixelWidth()), group.readEntry("height", currentPixelHeight())))))
+	if (proposeSize(sizeIndex(group.readEntry("size", currentPixelSize()))))
 		proposeRefreshRate(refreshRateHzToIndex(proposedSize(), group.readEntry("refresh", refreshRate())));
 
 	proposeRotation(rotationDegreeToIndex(	group.readEntry("rotation", 0)) + 
@@ -395,8 +380,7 @@ void LegacyRandRScreen::load(KConfig& config)
 void LegacyRandRScreen::save(KConfig& config) const
 {
 	KConfigGroup group = config.group(QString("Screen%1").arg(m_screen));
-	group.writeEntry("width", currentPixelWidth());
-	group.writeEntry("height", currentPixelHeight());
+	group.writeEntry("size", currentPixelSize());
 	group.writeEntry("refresh", refreshRateIndexToHz(size(), refreshRate()));
 	group.writeEntry("rotation", rotationIndexToDegree(rotation()));
 	group.writeEntry("reflectX", (bool)(rotation() & RandR::ReflectMask) == RandR::ReflectX);
@@ -407,6 +391,11 @@ int LegacyRandRScreen::pixelCount( int index ) const
 {
 	QSize sz = pixelSize(index);
 	return sz.width() * sz.height();
+}
+
+SizeList LegacyRandRScreen::pixelSizes() const
+{
+	return m_pixelSizes;
 }
 
 #include "legacyrandrscreen.moc"

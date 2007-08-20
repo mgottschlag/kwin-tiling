@@ -32,9 +32,12 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsI
 
 	setupUi(this);
 
-	load();
-
+	// connect signals
+	connect(sizeCombo, SIGNAL(currentIndexChanged(int)), 
+			this, SLOT(loadRefreshRates()));
 	connect(m_output, SIGNAL(outputChanged(RROutput, int)), this, SLOT(load()));
+	
+	load();
 }
 
 OutputConfig::~OutputConfig()
@@ -43,39 +46,33 @@ OutputConfig::~OutputConfig()
 
 void OutputConfig::load()
 {
+	int index;
 
 	kDebug() << "Output Load......";
 	setEnabled( m_output->isConnected() );
 	activeCheck->setChecked(m_output->isActive());
 
 	sizeCombo->clear();
-	refreshCombo->clear();
 	orientationCombo->clear();
+
+	m_item->setVisible(m_output->isActive());	
+	if (!m_output->isActive())
+		return;
 
 	// load sizes
 	SizeList sizes = m_output->sizes();
 	foreach (QSize s, sizes)
 	{
-		sizeCombo->addItem( QString("%1x%2").arg(s.width()).arg(s.height()) );
+		sizeCombo->addItem( QString("%1x%2").arg(s.width()).arg(s.height()), s );
 	}
-
-	m_item->setVisible(m_output->isActive());	
-	if (!m_output->isActive())
-		return;
 		
-	int index = sizeCombo->findData( m_output->rect().size() );
+	index = sizeCombo->findData( m_output->rect().size() );
 	if (index != -1)
-	{
 		sizeCombo->setCurrentIndex( index );
-		RateList rates = m_output->refreshRates();
-		foreach(float rate, rates)
-		{
-			refreshCombo->addItem(i18n("%1 Hz", QString::number(rate, 'f', 1)), rate);
-		}
-		index = refreshCombo->findData(m_output->refreshRate());
-		if (index != -1)
-			refreshCombo->setCurrentIndex(index);
-	}
+
+	index = refreshCombo->findData(m_output->refreshRate());
+	if (index != -1)
+		refreshCombo->setCurrentIndex(index);
 
 	int rotations = m_output->rotations();
 	for(int i =0; i < 6; ++i)
@@ -90,13 +87,27 @@ void OutputConfig::load()
 	if (index != -1)
 		orientationCombo->setCurrentIndex( index );
 
-
 	// update the item
 	m_item->setRect( 0, 0, m_output->rect().width(), m_output->rect().height());
 	kDebug() << "      --> setting pos " << m_output->rect().topLeft();
 	m_item->setPos( m_output->rect().topLeft() );
 
 	emit updateView();
+}
+
+void OutputConfig::loadRefreshRates()
+{
+	refreshCombo->clear();
+	if (sizeCombo->currentIndex() == -1)
+		return;
+
+	RateList rates = m_output->refreshRates();
+	foreach(float rate, rates)
+	{
+		refreshCombo->addItem(i18n("%1 Hz", QString::number(rate, 'f', 1)), rate);
+	}
+	// select the first item
+	refreshCombo->setCurrentIndex( 0 );
 }
 
 #include "outputconfig.moc"

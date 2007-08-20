@@ -38,6 +38,9 @@ public:
 public slots:
 	void load();
 
+protected slots:
+	void loadRefreshRates();
+
 signals:
 	void updateView();
 

@@ -120,17 +120,32 @@ void RandRConfig::update()
 
 void RandRConfig::slotUpdateView()
 {
-	QRect r(0,0,0,0);
+	QRect r;
+	bool first = true;
+
 	// updates the graphics view so that all outputs fit inside of it
 	OutputMap outputs = m_display->currentScreen()->outputs();
 	foreach(RandROutput *output, outputs)
 	{
-		r.setWidth(output->rect().width() + r.width());
-		r.setHeight(output->rect().height() + r.height());
+		if (first)
+		{
+			first = false;
+			r = output->rect();
+		}
+		else
+			r = r.united(output->rect());
 	}
-
+	float scaleX = (float)screenView->width() / r.width();
+	float scaleY = (float)screenView->height() / r.height();
+	float scale = (scaleX < scaleY)? scaleX : scaleY;
+	kDebug() << "Scaling by " << scale;
+	kDebug() << "ScreenView rect = " << screenView->rect() << " visible rect: " << r;
+	screenView->resetMatrix();
+	screenView->scale(scale,scale);
+	screenView->ensureVisible(r);
 	screenView->setSceneRect(r);
 }
+
 #include "randrconfig.moc"
 
 #endif

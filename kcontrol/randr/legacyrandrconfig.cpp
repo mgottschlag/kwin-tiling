@@ -259,12 +259,14 @@ void LegacyRandRConfig::populateRefreshRates()
 
 	rateCombo->clear();
 
-	QStringList rr = screen->refreshRates(screen->proposedSize());
+	RateList rr = screen->refreshRates(screen->proposedSize());
 
 	rateCombo->setEnabled(rr.count());
 
-	for (QStringList::Iterator it = rr.begin(); it != rr.end(); ++it)
-		rateCombo->addItem(*it);
+	foreach(float rate, rr)
+	{
+		rateCombo->addItem(i18n("%1 Hz", QString::number(rate, 'f', 1)), rate);
+	}
 }
 
 #include "legacyrandrconfig.moc"

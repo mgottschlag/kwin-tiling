@@ -283,39 +283,9 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 	LegacyRandRScreen *screen = m_display->currentLegacyScreen();
 	Q_ASSERT(screen);
 
-	int numSizes = screen->numSizes();
-	int* sizeSort = new int[numSizes];
-
-	for (int i = 0; i < numSizes; i++) 
-		sizeSort[i] = screen->pixelCount(i);
-
-	QActionGroup *screenSizeGroup = new QActionGroup(menu);
-	for (int j = 0; j < numSizes; j++) 
-	{
-		int highest = -1, highestIndex = -1;
-
-		for (int i = 0; i < numSizes; i++) 
-		{
-			if (sizeSort[i] && sizeSort[i] > highest) 
-			{
-				highest = sizeSort[i];
-				highestIndex = i;
-			}
-		}
-		sizeSort[highestIndex] = -1;
-		Q_ASSERT(highestIndex != -1);
-
-		action = menu->addAction(i18n("%1 x %2", screen->pixelSize(highestIndex).width(), screen->pixelSize(highestIndex).height()));
-
-		if (screen->proposedSize() == highestIndex)
-			action->setChecked(true);
-
-		action->setData(highestIndex);
-		screenSizeGroup->addAction(action);
-	}
+	// add sizes
+	QActionGroup *screenSizeGroup = populateSizes(menu, RandR::sortSizes(screen->pixelSizes()), screen->currentPixelSize());
 	connect(screenSizeGroup, SIGNAL(triggered(QAction*)), SLOT(slotResolutionChanged(QAction*)));
-	delete [] sizeSort;
-	sizeSort = 0L;
 
 	// Don't display the rotation options if there is no point (ie. none are supported)
 	// XFree86 4.3 does not include rotation support.
@@ -323,42 +293,18 @@ void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 	{
 		menu->addTitle(SmallIcon("view-refresh"), i18n("Orientation"));
 
-		QActionGroup *rotationGroup = new QActionGroup(menu);
-		for (int i = 0; i < 6; i++) 
-		{
-			if ((1 << i) & screen->rotations()) 
-			{
-				action = menu->addAction(QIcon(RandR::rotationIcon(1 << i, screen->rotation())), 
-							  RandR::rotationName(1 << i));
-
-				if (screen->proposedRotation() & (1 << i))
-					action->setChecked(true);
-
-				action->setData(1 << i);
-				rotationGroup->addAction(action);
-			}
-		}
+		QActionGroup *rotationGroup = populateRotations(menu, screen->rotations(), screen->rotation());
 		connect(rotationGroup, SIGNAL(triggered(QAction*)), SLOT(slotOrientationChanged(QAction*)));
 	}
 
-	QStringList rr = screen->refreshRates(screen->proposedSize());
-
+	RateList rr = screen->refreshRates(screen->proposedSize());
 	if (rr.count())
+	{
 		menu->addTitle(SmallIcon("clock"), i18n("Refresh Rate"));
 
-	int i = 0;
-	QActionGroup *rateGroup = new QActionGroup(menu);
-	for (QStringList::Iterator it = rr.begin(); it != rr.end(); ++it, i++) 
-	{
-		action = menu->addAction(*it);
-
-		if (screen->proposedRefreshRate() == i)
-			action->setChecked(true);
-
-		action->setData(i);
-		rateGroup->addAction(action);
+		QActionGroup *rateGroup = populateRates(menu, rr, screen->refreshRate());
+		connect(rateGroup, SIGNAL(triggered(QAction*)), SLOT(slotRefreshRateChanged(QAction*)));
 	}
-	connect(rateGroup, SIGNAL(triggered(QAction*)), SLOT(slotRefreshRateChanged(QAction*)));
 }
 
 QActionGroup *KRandRSystemTray::populateRotations(KMenu *menu, int rotations, int rotation)
@@ -429,9 +375,18 @@ QActionGroup *KRandRSystemTray::populateRates(KMenu *menu, const RateList &rates
 
 void KRandRSystemTray::slotResolutionChanged(QAction *action)
 {
-	int index = action->data().toInt();
 	LegacyRandRScreen *screen = m_display->currentLegacyScreen();
 	Q_ASSERT(screen);
+
+	QSize s = action->data().toSize();
+	int index = 0;
+	SizeList pixelSizes = screen->pixelSizes();
+	for (int i = 0; i < pixelSizes.count(); ++i)
+		if (pixelSizes[i] == s)
+		{
+			index = i;
+			break;
+		}
 
 	if (screen->size() == index)
 		return;

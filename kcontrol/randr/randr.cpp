@@ -149,5 +149,38 @@ bool RandR::confirm(const QRect &rect)
 	return acceptDialog.exec();
 }
 
+SizeList RandR::sortSizes(const SizeList &sizes)
+{
+	int *sizeSort = new int[sizes.count()];
+	int numSizes = sizes.count();
+	SizeList sorted;
+
+	int i = 0;
+	foreach(QSize size, sizes)
+		sizeSort[i++] = size.width() * size.height();
+
+	for (int j = 0; j < numSizes; j++) 
+	{
+		int highest = -1, highestIndex = -1;
+
+		for (int i = 0; i < numSizes; i++) 
+		{
+			if (sizeSort[i] && sizeSort[i] > highest) 
+			{
+				highest = sizeSort[i];
+				highestIndex = i;
+			}
+		}
+		sizeSort[highestIndex] = -1;
+		Q_ASSERT(highestIndex != -1);
+
+		sorted.append(sizes[highestIndex]);
+	}
+	delete [] sizeSort;
+    sizeSort = 0L;
+
+	return sorted;
+}
+
 
 
