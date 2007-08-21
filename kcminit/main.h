@@ -17,8 +17,8 @@
 
 */
 
-#ifndef KCMINIT_H
-#define KCMINIT_H
+#ifndef MAIN_H
+#define MAIN_H
 
 #include <kservice.h>
 
@@ -45,4 +45,4 @@ class KCMInit : public QObject
         QStringList alreadyInitialized;
 };
 
-#endif
+#endif // MAIN_H

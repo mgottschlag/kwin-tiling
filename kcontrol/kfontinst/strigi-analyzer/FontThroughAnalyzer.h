@@ -1,5 +1,3 @@
-#ifndef __FONT_THROUGHT_ANALYZER_H__
-#define __FONT_THROUGHT_ANALYZER_H__
 /*
  * KFontInst - KDE Font Installer
  *
@@ -21,6 +19,9 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
+#ifndef FONTTHROUGHTANALYZER_H
+#define FONTTHROUGHTANALYZER_H
 
 #include <strigi/streamthroughanalyzer.h>
 
@@ -51,4 +52,4 @@ class FontThroughAnalyzer : public Strigi::StreamThroughAnalyzer
     Strigi::AnalysisResult           *analysisResult;
 };
 
-#endif
+#endif // FONTTHROUGHTANALYZER_H

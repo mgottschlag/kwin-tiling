@@ -406,11 +406,11 @@ void BGDialog::defaults()
 
 QString BGDialog::quickHelp() const
 {
-   return i18n("<h1>Background</h1> <p>This module allows you to control the"
+   return i18n("<p><h1>Background</h1> This module allows you to control the"
       " appearance of the virtual desktops. KDE offers a variety of options"
       " for customization, including the ability to specify different settings"
-      " for each virtual desktop, or a common background for all of them.<p>"
-      " The appearance of the desktop results from the combination of its"
+      " for each virtual desktop, or a common background for all of them.</p>"
+      " <p>The appearance of the desktop results from the combination of its"
       " background colors and patterns, and optionally, wallpaper, which is"
       " based on the image from a graphic file.</p>"
       " <p>The background can be made up of a single color, or a pair of colors"

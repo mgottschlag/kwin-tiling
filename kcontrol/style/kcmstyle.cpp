@@ -542,10 +542,10 @@ void KCMStyle::save()
 	//### KDE4: not at all clear whether this will come back
 	allowMenuTransparency = false;
 
-	QString warn_string( i18n("<qt>Selected style: <b>%1</b><br><br>"
+	QString warn_string( i18n("<qt>Selected style: <b>%1</b><br /><br />"
 		"One or more effects that you have chosen could not be applied because the selected "
-		"style does not support them; they have therefore been disabled.<br>"
-		"<br>", cbStyle->currentText()) );
+		"style does not support them; they have therefore been disabled.<br />"
+		"<br /></qt>", cbStyle->currentText()) );
 	bool show_warning = false;
 
 	// Warn the user if they're applying a style that doesn't support
@@ -554,7 +554,7 @@ void KCMStyle::save()
 		(cbEnableEffects->isChecked()) &&
 		(comboMenuEffect->currentIndex() == 3) )	// Make Translucent
     {
-		warn_string += i18n("Menu translucency is not available.<br>");
+		warn_string += i18n("Menu translucency is not available.<br />");
 		comboMenuEffect->setCurrentIndex(0);    // Disable menu effect.
 		show_warning = true;
 	}
@@ -1106,7 +1106,7 @@ void KCMStyle::addWhatsThis()
 							"effect enabled.") );
 	comboMenuEffectType->setWhatsThis( i18n( "<p><b>Software Tint: </b>Alpha-blend using a flat color.</p>\n"
 							"<p><b>Software Blend: </b>Alpha-blend using an image.</p>\n"
-							"<b>XRender Blend: </b>Use the XFree RENDER extension for image blending (if available). "
+							"<p><b>XRender Blend: </b>Use the XFree RENDER extension for image blending (if available). "
 							"This method may be slower than the Software routines on non-accelerated displays, "
 							"but may however improve performance on remote displays.</p>\n") );
 	slOpacity->setWhatsThis( i18n("By adjusting this slider you can control the menu effect opacity.") );

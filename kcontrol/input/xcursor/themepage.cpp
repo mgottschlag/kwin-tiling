@@ -310,13 +310,13 @@ void ThemePage::removeClicked()
     // Don't let the user delete the currently configured theme
     if (view->currentIndex() == appliedIndex) {
         KMessageBox::sorry(this, i18n("<qt>You cannot delete the theme you are currently "
-                "using.<br>You have to switch to another theme first.</qt>"));
+                "using.<br />You have to switch to another theme first.</qt>"));
         return;
     }
 
     // Get confirmation from the user
     QString question = i18n("<qt>Are you sure you want to remove the "
-            "<i>%1</i> cursor theme?<br>"
+            "<i>%1</i> cursor theme?<br />"
             "This will delete all the files installed by this theme.</qt>",
             theme->title());
 

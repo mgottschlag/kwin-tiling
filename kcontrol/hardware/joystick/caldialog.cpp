@@ -93,8 +93,8 @@ void CalDialog::calibrate()
       hint = "";
 
     // minimum position
-    text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
-                       "Please move <b>axis %1 %2</b> on your device to the <b>minimum</b> position.<br><br>"
+    text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br /><br />"
+                       "Please move <b>axis %1 %2</b> on your device to the <b>minimum</b> position.<br /><br />"
                        "Press any button on the device or click on the 'Next' button "
                        "to continue with the next step.</qt>", i+1, hint));
     waitButton(i, true, lastVal);
@@ -107,8 +107,8 @@ void CalDialog::calibrate()
     if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
 
     // center position
-    text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
-                       "Please move <b>axis %1 %2</b> on your device to the <b>center</b> position.<br><br>"
+    text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br /><br />"
+                       "Please move <b>axis %1 %2</b> on your device to the <b>center</b> position.<br /><br />"
                        "Press any button on the device or click on the 'Next' button "
                        "to continue with the next step.</qt>", i+1, hint));
     waitButton(i, true, lastVal);
@@ -121,8 +121,8 @@ void CalDialog::calibrate()
     if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
 
     // maximum position
-    text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
-                       "Please move <b>axis %1 %2</b> on your device to the <b>maximum</b> position.<br><br>"
+    text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br /><br />"
+                       "Please move <b>axis %1 %2</b> on your device to the <b>maximum</b> position.<br /><br />"
                        "Press any button on the device or click on the 'Next' button "
                        "to continue with the next step.</qt>", i+1, hint));
     waitButton(i, true, lastVal);

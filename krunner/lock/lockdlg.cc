@@ -93,8 +93,8 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
 
     KUser user;
     QLabel *greetLabel = new QLabel( user.fullName().isEmpty() ?
-            i18n("<nobr><b>The session is locked</b><br>") :
-            i18n("<nobr><b>The session was locked by %1</b><br>",  user.fullName() ), frame );
+            i18n("<nobr><b>The session is locked</b></nobr><br />") :
+            i18n("<nobr><b>The session was locked by %1</b></nobr><br />",  user.fullName() ), frame );
 
     mStatusLabel = new QLabel( "<b> </b>", frame );
     mStatusLabel->setAlignment( Qt::AlignCenter );
@@ -560,9 +560,9 @@ void PasswordDlg::slotStartNewSession()
     label1->setPixmap( QMessageBox::standardIcon( QMessageBox::Warning ) );
     QString qt_text =
           i18n("You have chosen to open another desktop session "
-               "instead of resuming the current one.<br>"
+               "instead of resuming the current one.<br />"
                "The current session will be hidden "
-               "and a new login screen will be displayed.<br>"
+               "and a new login screen will be displayed.<br />"
                "An F-key is assigned to each session; "
                "F%1 is usually assigned to the first session, "
                "F%2 to the second session and so on. "

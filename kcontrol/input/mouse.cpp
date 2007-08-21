@@ -203,16 +203,16 @@ MouseConfig::MouseConfig(QWidget *parent, const QStringList &args)
     lay->addWidget(accel);
     connect(accel, SIGNAL(valueChanged(double)), this, SLOT(changed()));
 
-    wtstr = i18n("This option allows you to change the relationship"
+    wtstr = i18n("<p>This option allows you to change the relationship"
          " between the distance that the mouse pointer moves on the"
          " screen and the relative movement of the physical device"
          " itself (which may be a mouse, trackball, or some other"
-         " pointing device.)<p>"
+         " pointing device.)</p><p>"
          " A high value for the acceleration will lead to large"
          " movements of the mouse pointer on the screen even when"
          " you only make a small movement with the physical device."
          " Selecting very high values may result in the mouse pointer"
-         " flying across the screen, making it hard to control.");
+         " flying across the screen, making it hard to control.</p>");
     accel->setWhatsThis( wtstr );
 
     thresh = new KIntNumInput(accel, 20, tab2);
@@ -224,15 +224,15 @@ MouseConfig::MouseConfig(QWidget *parent, const QStringList &args)
     connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(slotThreshChanged(int)));
     slotThreshChanged(thresh->value());
 
-    wtstr = i18n("The threshold is the smallest distance that the"
+    wtstr = i18n("<p>The threshold is the smallest distance that the"
          " mouse pointer must move on the screen before acceleration"
          " has any effect. If the movement is smaller than the threshold,"
-         " the mouse pointer moves as if the acceleration was set to 1X;<p>"
+         " the mouse pointer moves as if the acceleration was set to 1X;</p><p>"
          " thus, when you make small movements with the physical device,"
          " there is no acceleration at all, giving you a greater degree"
          " of control over the mouse pointer. With larger movements of"
          " the physical device, you can move the mouse pointer"
-         " rapidly to different areas on the screen.");
+         " rapidly to different areas on the screen.</p>");
     thresh->setWhatsThis( wtstr );
 
     // It would be nice if the user had a test field.

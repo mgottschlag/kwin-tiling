@@ -22,6 +22,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
+#ifndef SERVER2_H
+#define SERVER2_H
+
 // This is in a separate file only because dcopidl doesn't handle
 // the extern "C" { ... } construct.
 
@@ -38,3 +41,5 @@ extern "C" {
 }
 
 #include <fixx11h.h>
+
+#endif // SERVER2_H

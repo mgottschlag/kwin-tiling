@@ -339,7 +339,7 @@ void kthememanager::slotThemeChanged( Q3ListViewItem * item )
         }
 
         KTheme theme( this, themeDir + themeName + ".xml" );
-        dlg->lbPreview->setToolTip( "<qt>" + i18n( "Author: %1<br>Email: %2<br>Version: %3<br>Homepage: %4" ,
+        dlg->lbPreview->setToolTip( "<qt>" + i18n( "Author: %1<br />Email: %2<br />Version: %3<br />Homepage: %4" ,
                          theme.author(), theme.email() ,
                          theme.version(), theme.homepage() ) + "</qt>");
 

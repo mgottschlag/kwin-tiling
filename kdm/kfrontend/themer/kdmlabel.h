@@ -19,8 +19,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KDELABEL_H
-#define KDELABEL_H
+#ifndef KDMLABEL_H
+#define KDMLABEL_H
 
 #include "kdmitem.h"
 
@@ -88,4 +88,4 @@ private Q_SLOTS:
 	void activate();
 };
 
-#endif
+#endif // KDMLABEL_H

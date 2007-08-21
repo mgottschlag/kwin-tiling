@@ -7,8 +7,8 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
-#ifndef __Bgnd_h_Included__
-#define __Bgnd_h_Included__
+#ifndef MAIN_H
+#define MAIN_H
 
 #include <kcmodule.h>
 #include <kconfig.h>
@@ -35,5 +35,4 @@ private:
     KSharedConfigPtr m_pConfig;
 };
 
-
-#endif // __Bgnd_h_Included__
+#endif // MAIN_H

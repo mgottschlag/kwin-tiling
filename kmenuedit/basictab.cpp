@@ -510,12 +510,12 @@ void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
              service = KHotKeys::findMenuEntry(cut.toString());
           if (service)
           {
-             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already used to activate <b>%2</b>.", cut.toString(), service->name()));
+             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already used to activate <b>%2</b>.</qt>", cut.toString(), service->name()));
              return;
           }
           else
           {
-             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already in use.", cut.toString()));
+             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already in use.</qt>", cut.toString()));
              return;
           }
        }

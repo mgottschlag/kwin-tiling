@@ -225,18 +225,18 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const QStringList &)
 			"<p>Most operating systems (including Linux) "
 			"will use as much of the available physical "
 			"memory as possible as disk cache, "
-			"to speed up the system performance. "
+			"to speed up the system performance.</p>"
 			"<p>This means that if you have a small amount "
 			"of <b>Free Physical Memory</b> and a large amount of "
 			"<b>Disk Cache Memory</b>, your system is well "
-			"configured.");
+			"configured.</p>");
 	    break;
 	case MEM_HDD:
 	    title = i18n("Swap Space");
 	    hint = i18n("The swap space is the <b>virtual memory</b> "
 			"available to the system. "
 			"<p>It will be used on demand and is provided "
-			"through one or more swap partitions and/or swap files.");
+			"through one or more swap partitions and/or swap files.</p>");
 	    break;
 	default:
 	    hint = title = QString();

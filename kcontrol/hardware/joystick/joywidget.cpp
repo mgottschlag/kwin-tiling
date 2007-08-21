@@ -193,8 +193,8 @@ void JoyWidget::init()
   {
     messageBox->show();
     message->setText(QString("<qt><b>%1</b></qt>").arg(
-      i18n("No joystick device automatically found on this computer.<br>"
-           "Checks were done in /dev/js[0-4] and /dev/input/js[0-4]<br>"
+      i18n("No joystick device automatically found on this computer.<br />"
+           "Checks were done in /dev/js[0-4] and /dev/input/js[0-4]<br />"
            "If you know that there is one attached, please enter the correct device file.")));
   }
 }
@@ -349,9 +349,9 @@ void JoyWidget::calibrateDevice()
   }
 
   if ( KMessageBox::messageBox(this, KMessageBox::Information,
-        i18n("<qt>Calibration is about to check the precision.<br><br>"
+        i18n("<qt>Calibration is about to check the precision.<br /><br />"
              "<b>Please move all axes to their center position and then "
-             "do not touch the joystick anymore.</b><br><br>"
+             "do not touch the joystick anymore.</b><br /><br />"
              "Click OK to start the calibration.</qt>"),
         i18n("Calibration"),
         KStandardGuiItem::ok(), KStandardGuiItem::cancel()) != KMessageBox::Ok )

@@ -98,18 +98,18 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
 {
     nSysSchemes = 2;
 
-    setQuickHelp( i18n("<h1>Colors</h1> This module allows you to choose"
+    setQuickHelp( i18n("<p><h1>Colors</h1> This module allows you to choose"
        " the color scheme used for the KDE desktop. The different"
        " elements of the desktop, such as title bars, menu text, etc.,"
        " are called \"widgets\". You can choose the widget whose"
        " color you want to change by selecting it from a list, or by"
-       " clicking on a graphical representation of the desktop.<p>"
+       " clicking on a graphical representation of the desktop.</p><p>"
        " You can save color settings as complete color schemes,"
        " which can also be modified or deleted. KDE comes with several"
-       " predefined color schemes on which you can base your own.<p>"
+       " predefined color schemes on which you can base your own.</p><p>"
        " All KDE applications will obey the selected color scheme."
        " Non-KDE applications may also obey some or all of the color"
-       " settings, if this option is enabled."));
+       " settings, if this option is enabled.</p>"));
 
     KConfigGroup cfg(KSharedConfig::openConfig("kcmdisplayrc"), "X11");
     useRM = cfg.readEntry("useResourceManager", true);
@@ -140,13 +140,13 @@ KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     mSchemeList = new KColorSchemeList();
     connect(sList, SIGNAL(currentRowChanged(int)), SLOT(slotPreviewScheme(int)));
 
-    sList->setWhatsThis( i18n("This is a list of predefined color schemes,"
+    sList->setWhatsThis( i18n("<p>This is a list of predefined color schemes,"
        " including any that you may have created. You can preview an existing"
        " color scheme by selecting it from the list. The current scheme will"
-       " be replaced by the selected color scheme.<p>"
+       " be replaced by the selected color scheme.</p><p>"
        " Warning: if you have not yet applied any changes you may have made"
        " to the current scheme, those changes will be lost if you select"
-       " another color scheme.") );
+       " another color scheme.</p>") );
 
     addBt = new QPushButton(i18n("&Save Scheme..."), group);
     connect(addBt, SIGNAL(clicked()), SLOT(slotAdd()));

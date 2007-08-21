@@ -243,13 +243,13 @@ FontAASettings::FontAASettings(QWidget *parent)
 
   QString subPixelWhatsThis = i18n("<p>If you have a TFT or LCD screen you"
        " can further improve the quality of displayed fonts by selecting"
-       " this option.<br>Sub-pixel rendering is also known as ClearType(tm).<br>"
+       " this option.<br />Sub-pixel rendering is also known as ClearType(tm).<br />"
        " In order for sub-pixel rendering to"
        " work correctly you need to know how the sub-pixels of your display"
        " are aligned.</p>"
        " <p>On TFT or LCD displays a single pixel is actually composed of"
        " three sub-pixels, red, green and blue. Most displays"
-       " have a linear ordering of RGB sub-pixel, some have BGR.<br>"
+       " have a linear ordering of RGB sub-pixel, some have BGR.<br />"
        " This feature does not work with CRT monitors.</p>" );
 
   useSubPixel=new QCheckBox(i18n("&Use sub-pixel rendering:"), mw);

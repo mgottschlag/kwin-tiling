@@ -8,8 +8,8 @@
  
 ****************************************************************************/
 
-#ifndef _CONDITIONS_LIST_WIDGET_H_
-#define _CONDITIONS_LIST_WIDGET_H_
+#ifndef CONDITION_LIST_WIDGET_H
+#define CONDITION_LIST_WIDGET_H
 
 #include <Qt3Support/Q3CheckListItem>
 #include <Qt3Support/Q3PtrList>
@@ -162,4 +162,4 @@ Condition_dialog::~Condition_dialog()
 
 } // namespace KHotKeys
 
-#endif
+#endif // CONDITION_LIST_WIDGET_H

@@ -34,6 +34,9 @@
  *      Other parts were taken from kscreensaver's passwd.cpp
  *****************************************************************/
 
+#ifndef KCHECKPASS-ENUMS_H
+#define KCHECKPASS-ENUMS_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -63,3 +66,5 @@ typedef enum {
 #ifdef __cplusplus
 }
 #endif
+
+#endif // KCHECKPASS-ENUMS_H

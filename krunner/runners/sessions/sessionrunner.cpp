@@ -98,9 +98,9 @@ void SessionRunner::newSession()
     //TODO: this message is too verbose and too technical.
     int result = KMessageBox::warningContinueCancel(
             0,
-            i18n("<p>You have chosen to open another desktop session.<br>"
+            i18n("<p>You have chosen to open another desktop session.<br />"
                 "The current session will be hidden "
-                "and a new login screen will be displayed.<br>"
+                "and a new login screen will be displayed.<br />"
                 "An F-key is assigned to each session; "
                 "F%1 is usually assigned to the first session, "
                 "F%2 to the second session and so on. "

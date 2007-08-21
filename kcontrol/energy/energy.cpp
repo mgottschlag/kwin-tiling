@@ -147,8 +147,8 @@ KEnergy::KEnergy(QWidget *parent, const QStringList &args)
     m_bMaintainSanity = true;
 
     setQuickHelp( i18n("<h1>Display Power Control</h1> <p>If your display supports"
-      " power saving features, you can configure them using this module.<p>"
-      " There are three levels of power saving: standby, suspend, and off."
+      " power saving features, you can configure them using this module.</p>"
+      " <p>There are three levels of power saving: standby, suspend, and off."
       " The greater the level of power saving, the longer it takes for the"
       " display to return to an active state.</p>"
       " <p>To wake up the display from a power saving mode, you can make a small"

@@ -26,7 +26,6 @@
 #include <QDir>
 #include <QSettings>
 #include <QX11Info>
-#include <QList>
 
 #include "thememodel.h"
 #include "thememodel.moc"

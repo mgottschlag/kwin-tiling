@@ -59,13 +59,13 @@ Global Shortcuts
 KeyModule::KeyModule(QWidget *parent, const QStringList& args)
     : KCModule(KeyModuleFactory::componentData(), parent, args)
 {
-    setQuickHelp( i18n("<h1>Keyboard Shortcuts</h1> Using shortcuts you can configure certain actions to be"
+    setQuickHelp( i18n("<p><h1>Keyboard Shortcuts</h1> Using shortcuts you can configure certain actions to be"
     " triggered when you press a key or a combination of keys, e.g. Ctrl+C is normally bound to"
     " 'Copy'. KDE allows you to store more than one 'scheme' of shortcuts, so you might want"
     " to experiment a little setting up your own scheme, although you can still change back to the"
-    " KDE defaults.<p> In the 'Global Shortcuts' tab you can configure non-application-specific"
+    " KDE defaults.</p><p> In the 'Global Shortcuts' tab you can configure non-application-specific"
     " bindings, like how to switch desktops or maximize a window; in the 'Application Shortcuts' tab"
-    " you will find bindings typically used in applications, such as copy and paste."));
+    " you will find bindings typically used in applications, such as copy and paste.</p>"));
 
 	initGUI();
 }

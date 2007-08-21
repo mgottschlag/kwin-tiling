@@ -6,9 +6,8 @@
 // Copyright 2003 Oswald Buddenhagen <ossi@kde.org>
 // Coypright (c) 2004 Chris Howells <howells@kde.org>
 
-#ifndef __TIMEOUT_H__
-#define __TIMEOUT_H__
-
+#ifndef AUTOLOGOUT_H
+#define AUTOLOGOUT_H
 
 #include <QLayout>
 
@@ -46,5 +45,4 @@ private:
     void logout();
 };
 
-#endif
-
+#endif // AUTOLOGOUT_H

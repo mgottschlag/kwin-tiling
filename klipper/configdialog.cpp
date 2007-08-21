@@ -134,13 +134,13 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     group->setExclusive( true );
 
     group->setWhatsThis(
-     i18n("<qt>There are two different clipboard buffers available:<br><br>"
+     i18n("<qt>There are two different clipboard buffers available:<br /><br />"
           "<b>Clipboard</b> is filled by selecting something "
           "and pressing Ctrl+C, or by clicking \"Copy\" in a toolbar or "
-          "menubar.<br><br>"
+          "menubar.<br /><br />"
           "<b>Selection</b> is available immediately after "
           "selecting some text. The only way to access the selection "
-          "is to press the middle mouse button.<br><br>"
+          "is to press the middle mouse button.<br /><br />"
           "You can configure the relationship between Clipboard and Selection."
           "</qt>" ));
 
@@ -441,8 +441,8 @@ AdvancedWidget::AdvancedWidget( QWidget *parent, const char *name )
 
     editListBox->setWhatsThis(
           i18n("<qt>This lets you specify windows in which Klipper should "
-	       "not invoke \"actions\". Use<br><br>"
-	       "<center><b>xprop | grep WM_CLASS</b></center><br>"
+	       "not invoke \"actions\". Use<br /><br />"
+	       "<center><b>xprop | grep WM_CLASS</b></center><br />"
 	       "in a terminal to find out the WM_CLASS of a window. "
 	       "Next, click on the window you want to examine. The "
 	       "first string it outputs after the equal sign is the one "

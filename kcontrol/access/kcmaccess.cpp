@@ -272,9 +272,9 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   systemBell->setWhatsThis( i18n("If this option is checked, the default system bell will be used. See the"
     " \"System Bell\" control module for how to customize the system bell."
     " Normally, this is just a \"beep\".") );
-  customBell->setWhatsThis( i18n("Check this option if you want to use a customized bell, playing"
-    " a sound file. If you do this, you will probably want to turn off the system bell.<p> Please note"
-    " that on slow machines this may cause a \"lag\" between the event causing the bell and the sound being played.") );
+  customBell->setWhatsThis( i18n("<p>Check this option if you want to use a customized bell, playing"
+    " a sound file. If you do this, you will probably want to turn off the system bell.</p><p> Please note"
+    " that on slow machines this may cause a \"lag\" between the event causing the bell and the sound being played.</p>") );
 
   QHBoxLayout *hbox = new QHBoxLayout();
   vvbox->addItem( hbox );
