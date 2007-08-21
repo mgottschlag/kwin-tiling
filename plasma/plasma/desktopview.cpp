@@ -117,7 +117,8 @@ void DesktopView::runCommand()
     QString interface("org.kde.krunner");
     org::kde::krunner::Interface krunner(interface, "/Interface",
                                          QDBusConnection::sessionBus());
-    krunner.display();
+    if( krunner.isValid() )
+       krunner.display();
 }
 
 void DesktopView::initializeWallpaper()
