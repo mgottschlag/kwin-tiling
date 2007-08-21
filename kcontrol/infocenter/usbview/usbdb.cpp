@@ -26,7 +26,9 @@
 
 USBDB::USBDB()
 {
-  QString db = KStandardDirs::locate("data", "kcmusb/usb.ids");
+  QString db = "/usr/share/hwdata/usb.ids"; /* on Fedora */
+  if (!QFile::exists(db))
+        db = KStandardDirs::locate("data", "kcmusb/usb.ids");
   if (db.isEmpty())
     return;
 
