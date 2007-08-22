@@ -39,10 +39,11 @@ namespace Control
 {
 namespace Ifaces
 {
-class BluetoothManager;
+    class BluetoothManager;
 }
 
 class BluetoothInterface;
+class BluetoothSecurity;
 
 typedef QList<BluetoothInterface> BluetoothInterfaceList;
 typedef QList<BluetoothInputDevice> BluetoothInputDeviceList;
@@ -117,6 +118,11 @@ public:
      * @returns the job handling of the operation.
      */
     KJob *setupInputDevice(const QString &ubi);
+
+    /**
+     * Gets an instance of BluetoothSecurity to handle pairing/authorization requests
+     */
+    BluetoothSecurity *security(const QString &interface = QString());
 
 public Q_SLOTS:
     /**

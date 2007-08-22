@@ -29,6 +29,7 @@
 #include <solid/control/ifaces/bluetoothmanager.h>
 #include "fakebluetoothinterface.h"
 #include "fakebluetoothinputdevice.h"
+#include "fakebluetoothsecurity.h"
 
 class QDomElement;
 
@@ -47,7 +48,7 @@ public:
     QStringList bluetoothInputDevices() const;
     FakeBluetoothInputDevice *createBluetoothInputDevice(const QString &ubi);
     KJob *setupInputDevice(const QString &ubi);
-
+    Solid::Control::Ifaces::BluetoothSecurity * security(const QString &interface);
 public Q_SLOTS:
     void removeInputDevice(const QString  & ubi);
 

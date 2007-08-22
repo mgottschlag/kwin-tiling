@@ -27,12 +27,16 @@
 #include "ifaces/bluetoothmanager.h"
 #include "ifaces/bluetoothinterface.h"
 #include "ifaces/bluetoothinputdevice.h"
+#include "ifaces/bluetoothsecurity.h"
 
 #include "../soliddefs_p.h"
 #include "managerbase_p.h"
 
 #include "bluetoothinterface.h"
 #include "bluetoothmanager.h"
+#include "bluetoothsecurity.h"
+
+#include <kdebug.h>
 
 namespace Solid
 {
@@ -187,6 +191,16 @@ Solid::Control::BluetoothInputDeviceList Solid::Control::BluetoothManager::bluet
     return list;
 }
 
+Solid::Control::BluetoothSecurity *Solid::Control::BluetoothManager::security(const QString &interface)
+{
+    Ifaces::BluetoothManager *backendManager = qobject_cast<Ifaces::BluetoothManager*>(d->managerBackend());
+    if (backendManager!=0) {
+        Ifaces::BluetoothSecurity *backendSecurity = backendManager->security(interface);
+        return new Solid::Control::BluetoothSecurity(backendSecurity);
+    }
+    return 0;
+}
+
 void Solid::Control::BluetoothManager::removeInputDevice(const QString &ubi)
 {
     SOLID_CALL(Ifaces::BluetoothManager *, d->managerBackend(), removeInputDevice(ubi));
@@ -334,5 +348,6 @@ QPair<Solid::Control::BluetoothInputDevice *, Solid::Control::Ifaces::BluetoothI
         }
     }
 }
+
 
 #include "bluetoothmanager.moc"

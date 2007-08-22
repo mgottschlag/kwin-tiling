@@ -8,6 +8,7 @@ set(solid_fakebluetooth_PART_SRCS
    fakebluetoothmanager.cpp
    fakebluetoothremotedevice.cpp
    fakebluetoothinputdevice.cpp
+   fakebluetoothsecurity.cpp
 )
 
 

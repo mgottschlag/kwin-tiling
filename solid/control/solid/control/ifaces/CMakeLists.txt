@@ -12,7 +12,8 @@ set(solidcontrolifaces_LIB_SRCS
    bluetoothremotedevice.cpp
    bluetoothinputdevice.cpp
    bluetoothinterface.cpp
-   bluetoothmanager.cpp )
+   bluetoothmanager.cpp
+   bluetoothsecurity.cpp )
 
 
 kde4_add_library(solidcontrolifaces SHARED ${solidcontrolifaces_LIB_SRCS})

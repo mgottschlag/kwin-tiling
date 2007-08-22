@@ -26,6 +26,8 @@
 #include "bluez-bluetoothinterface.h"
 #include "bluez-bluetoothinputdevice.h"
 #include "bluez-bluetoothmanager.h"
+#include "bluez-bluetoothsecurity.h"
+#include "bluez-bluetoothsecurityadaptor.h"
 #include "bluezcalljob.h"
 
 class BluezBluetoothManagerPrivate
@@ -185,5 +187,18 @@ void BluezBluetoothManager::slotInputDeviceRemoved(const QString &path)
     emit inputDeviceRemoved(path);
 }
 
+Solid::Control::Ifaces::BluetoothSecurity *BluezBluetoothManager::security(const QString &interface)
+{
+    BluezBluetoothSecurity *out;
+    if (interface.isEmpty()) {
+        out = new BluezBluetoothSecurity(this);
+    } else {
+        out = new BluezBluetoothSecurity(interface,this);
+    }
+    new BluezBluetoothSecurityAdaptor(out);
+    return out;
+}
 
 #include "bluez-bluetoothmanager.moc"
+
+

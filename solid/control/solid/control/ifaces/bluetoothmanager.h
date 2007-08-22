@@ -33,6 +33,7 @@ namespace Control
 {
 namespace Ifaces
 {
+class BluetoothSecurity;
 /**
  * This class specifies the interface a backend will have to implement in
  * order to be used in the system.
@@ -102,7 +103,11 @@ public:
      * @returns job handling of the operation.
      */
     virtual KJob *setupInputDevice(const QString &ubi) = 0;
-
+    
+    /**
+     * Gets an instance of BluetoothSecurity to handle pairing/authorization requests
+     */
+    virtual Solid::Control::Ifaces::BluetoothSecurity* security(const QString &interface) = 0;
 
 public Q_SLOTS:
     /**

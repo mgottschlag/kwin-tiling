@@ -31,6 +31,7 @@
 
 #include <solid/control/ifaces/bluetoothmanager.h>
 
+class BluezBluetoothSecurity;
 class BluezBluetoothManagerPrivate;
 class KDE_EXPORT BluezBluetoothManager : public Solid::Control::Ifaces::BluetoothManager
 {
@@ -46,7 +47,7 @@ public:
 
     QObject * createBluetoothInputDevice(const QString &);
     KJob *setupInputDevice(const QString &);
-
+    Solid::Control::Ifaces::BluetoothSecurity* security(const QString &interface);
 public Q_SLOTS:
     void removeInputDevice(const QString &);
 

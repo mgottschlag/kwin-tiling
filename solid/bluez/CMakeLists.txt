@@ -8,6 +8,8 @@ set(solid_bluez_PART_SRCS
 	bluez-bluetoothinterface.cpp
 	bluez-bluetoothinputdevice.cpp
 	bluez-bluetoothremotedevice.cpp
+	bluez-bluetoothsecurity.cpp
+	bluez-bluetoothsecurityadaptor.cpp
 )
 
 

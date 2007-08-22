@@ -15,6 +15,7 @@ set(solidcontrol_LIB_SRCS
    bluetoothmanager.cpp
    bluetoothremotedevice.cpp
    bluetoothinputdevice.cpp
+   bluetoothsecurity.cpp
    networking.cpp
 )
 
@@ -34,6 +35,6 @@ install(TARGETS solidcontrol DESTINATION ${LIB_INSTALL_DIR} )
 install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidbluetoothmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
 install( FILES powermanager.h networkmanager.h networkinterface.h network.h wirelessnetwork.h
     authentication.h bluetoothmanager.h bluetoothinterface.h bluetoothremotedevice.h
-    bluetoothinputdevice.h singletondefs.h networking.h solid_control_export.h DESTINATION 
+    bluetoothinputdevice.h bluetoothsecurity.h singletondefs.h networking.h solid_control_export.h DESTINATION 
 ${INCLUDE_INSTALL_DIR}/solid/control)
 

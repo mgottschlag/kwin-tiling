@@ -207,6 +207,10 @@ KJob *FakeBluetoothManager::setupInputDevice(const QString  & /*ubi */)
     // TODO
     return NULL;
 }
+Solid::Control::Ifaces::BluetoothSecurity *FakeBluetoothManager::security(const QString &/*interface*/)
+{
+    return NULL;
+}
 
 void FakeBluetoothManager::removeInputDevice(const QString  & /*ubi */)
 {

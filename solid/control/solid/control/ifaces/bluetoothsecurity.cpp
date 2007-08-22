@@ -1,7 +1,7 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
+    Copyright (C) 2006 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
-
+    Copyright (C) 2007 Juan González <jaguilera@opsiland.info>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -19,13 +19,20 @@
 
 */
 
-#include "bluetoothmanager.h"
 #include "bluetoothsecurity.h"
 
-Solid::Control::Ifaces::BluetoothManager::BluetoothManager(QObject * parent) : QObject(parent)
+Solid::Control::Ifaces::BluetoothSecurity::BluetoothSecurity(QObject *parent)
+        : QObject(parent)
 {}
 
-Solid::Control::Ifaces::BluetoothManager::~BluetoothManager()
+Solid::Control::Ifaces::BluetoothSecurity::BluetoothSecurity(const QString & interface, QObject * parent)
+    : QObject(parent)
+{
+    Q_UNUSED(interface)
+}
+
+Solid::Control::Ifaces::BluetoothSecurity::~BluetoothSecurity()
 {}
 
-#include "bluetoothmanager.moc"
+
+#include "bluetoothsecurity.moc"
