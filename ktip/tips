@@ -592,8 +592,12 @@ Some people open many terminal windows just to enter <em>one single</em>
 command.</p>
 <ul>
 <li>Use <strong>Alt+F2</strong> for just firing up programs (Alt+F2 "kword") or
-<li>use Konsole sessions ("New" in toolbar) if you need text output.
+<li>use Konsole tabs (Ctrl+Shift+n) if you need text output.
 </ul>
+<p>On the topic of konsole tabs, if you want to keep track of what
+task you are doing in each tab, you can rename the active tab
+by typing Ctrl+Alt+s. So now you can have a shell that you are logged
+in as root named "root".</p>
 </html>
 </tip>
 
