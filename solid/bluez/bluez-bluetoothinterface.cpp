@@ -121,7 +121,7 @@ int BluezBluetoothInterface::discoverableTimeout() const
 {
     kDebug() ;
 
-    QDBusReply< int > timeout = d->iface.call("GetDiscoverableTimeout");
+    QDBusReply< uint > timeout = d->iface.call("GetDiscoverableTimeout");
     if (timeout.isValid()) {
         return timeout.value();
     }
@@ -136,7 +136,11 @@ bool BluezBluetoothInterface::isDiscoverable() const
 
 QStringList BluezBluetoothInterface::listConnections() const
 {
-    return listReply("ListConnections");
+    QStringList list = listReply("ListConnections");
+    for (int i = 0; i < list.size(); i++) {
+        list[i] = ubi() + "/" + list[i];
+    }
+    return list;
 }
 
 QString BluezBluetoothInterface::majorClass() const
@@ -181,7 +185,11 @@ bool BluezBluetoothInterface::isPeriodicDiscoveryNameResolvingActive() const
 
 QStringList BluezBluetoothInterface::listRemoteDevices() const
 {
-    return listReply("ListRemoteDevces");
+    QStringList list = listReply("ListRemoteDevices");
+    for (int i = 0; i < list.size(); i++) {
+        list[i] = ubi() + "/" + list[i];
+    }
+    return list;
 }
 
 QStringList BluezBluetoothInterface::listRecentRemoteDevices(const QDateTime &) const
@@ -191,12 +199,25 @@ QStringList BluezBluetoothInterface::listRecentRemoteDevices(const QDateTime &) 
 
 void BluezBluetoothInterface::setMode(const Solid::Control::BluetoothInterface::Mode mode)
 {
-    d->iface.call("SetMode", mode);
+    QString modeString;
+    switch(mode)
+    {
+    case Solid::Control::BluetoothInterface::Off:
+        modeString = "off";
+        break;
+    case Solid::Control::BluetoothInterface::Discoverable:
+        modeString = "discoverable";
+        break;
+    case Solid::Control::BluetoothInterface::Connectable:
+        modeString = "connectable";
+        break;
+    }
+    d->iface.call("SetMode", modeString);
 }
 
 void BluezBluetoothInterface::setDiscoverableTimeout(int timeout)
 {
-    d->iface.call("SetDiscoverableTimeout", timeout);
+    d->iface.call("SetDiscoverableTimeout", (uint)timeout);
 }
 
 void BluezBluetoothInterface::setMinorClass(const QString &minorClass)

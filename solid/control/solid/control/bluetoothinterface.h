@@ -62,7 +62,7 @@ public:
 
     /**
      * Constructs a bluetooth interface for a given Unique Bluetooth Identifier (UBI).
-     *
+     * This object will be auto deleted, DON'T delete it.
      * @param ubi the ubi of the bluetooth interface to create
      */
     explicit BluetoothInterface(const QString &ubi);

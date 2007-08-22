@@ -36,6 +36,7 @@ BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath
 {
 
     // size("/FF:FF:FF:FF:FF:FF") == 18
+	Q_ASSERT(objectPath.startsWith("/"));
 	m_adapter = m_objectPath.left(objectPath.size() - 18);
 	m_address = m_objectPath.right(17);
 
@@ -97,7 +98,7 @@ QString BluezBluetoothRemoteDevice::majorClass() const
 
 QString BluezBluetoothRemoteDevice::minorClass() const
 {
-	return stringReply("GetRemoteMajorClass");
+	return stringReply("GetRemoteMinorClass");
 }
 
 QStringList BluezBluetoothRemoteDevice::serviceClasses() const

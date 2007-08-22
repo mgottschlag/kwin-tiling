@@ -112,6 +112,12 @@ Solid::Control::BluetoothRemoteDevice Solid::Control::BluetoothInterface::findBl
     }
 }
 
+Solid::Control::BluetoothRemoteDevice * Solid::Control::BluetoothInterface::createBluetoothRemoteDevice(const QString & ubi)
+{
+    QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> pair = d->findRegisteredBluetoothRemoteDevice(ubi);
+    return pair.first;
+
+}
 QString Solid::Control::BluetoothInterface::address() const
 {
     return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), address());
@@ -282,8 +288,8 @@ void Solid::Control::BluetoothInterfacePrivate::setBackendObject(QObject *object
     FrontendObjectPrivate::setBackendObject(object);
 
     if (object) {
-        QObject::connect(object, SIGNAL(modeChanged(const QString &)),
-                         parent(), SIGNAL(modeChanged(const QString &)));
+        QObject::connect(object, SIGNAL(modeChanged(Solid::Control::BluetoothInterface::Mode)),
+                         parent(), SIGNAL(modeChanged(Solid::Control::BluetoothInterface::Mode)));
         QObject::connect(object, SIGNAL(discoverableTimeoutChanged(int)),
                          parent(), SIGNAL(discoverableTimeoutChanged(int)));
         QObject::connect(object, SIGNAL(minorClassChanged(const QString &)),
