@@ -5,5 +5,9 @@ Name[te]=బిఓఎస్
 Name[tg]=Системаи омили Be
 Name[x-test]=xxBeOSxx
 Comment=Unthemed BeOS-like style
+Comment[nds]=En Stil liek to BeOS ahn Muster
+Comment[pt]=Estilo sem tema semelhante ao BeOS
+Comment[pt_BR]=Estilo sem tema semelhante ao BeOS
+Comment[zh_TW]=類似 BeOS 的樣式
 [KDE]
 widgetStyle=beosstyle.la

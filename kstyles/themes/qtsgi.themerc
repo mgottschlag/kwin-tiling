@@ -1,5 +1,9 @@
 [Misc]
 Name=SGI
 Comment=Built-in SGI style
+Comment[nds]=Inbuut Stil "SGI"
+Comment[pt]=O estilo incorporado sem tema da SGI
+Comment[pt_BR]=O estilo incorporado sem tema da SGI
+Comment[zh_TW]=內建的 SGI 樣式
 [KDE]
 WidgetStyle=SGI

@@ -1,5 +1,9 @@
 [Misc]
 Name=Platinum
 Comment=Built-in unthemed Platinum style
+Comment[nds]=Inbuut Stil "Platinum" ahn Muster
+Comment[pt]=O estilo incorporado sem tema do Platinum
+Comment[pt_BR]=O estilo incorporado sem tema do Platinum
+Comment[zh_TW]=內建的 Platinum 樣式
 [KDE]
 WidgetStyle=Platinum

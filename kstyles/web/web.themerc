@@ -1,5 +1,14 @@
 [Misc]
 Name=Web style
+Name[ga]=Stíl Ghréasáin
+Name[nds]=Web-Stil
+Name[pt]=Estilo Web
+Name[pt_BR]=Estilo Web
+Name[zh_TW]=網頁樣式
 Comment=Web widget style
+Comment[nds]=Knoopstil "Web"
+Comment[pt]=Estilo gráfico Web
+Comment[pt_BR]=Estilo gráfico Web
+Comment[zh_TW]=網頁元件樣式
 [KDE]
 widgetStyle=webstyle.la

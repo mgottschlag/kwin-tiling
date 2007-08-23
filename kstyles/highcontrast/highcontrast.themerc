@@ -1,6 +1,15 @@
 [Misc]
 Name=HighContrast
+Name[ga]=Ardchodarsnacht
+Name[nds]=Hooch Kontrast
+Name[pt]=Alto Contraste
+Name[pt_BR]=Alto Contraste
+Name[zh_TW]=高對比
 ConfigPage=kstyle_highcontrast_config
 Comment=A style that works well with high contrast color schemes
+Comment[nds]=En Stil, de goot to Mustern mit hogen Kontrast passt.
+Comment[pt]=Um estilo que funciona bem com esquemas de cores de alto contraste
+Comment[pt_BR]=Um estilo que funciona bem com esquemas de cores de alto contraste
+Comment[zh_TW]=適用於高對比顏色機制的樣式
 [KDE]
 WidgetStyle=HighContrast

@@ -229,6 +229,10 @@ ShadeStyle=Motif
 ScrollBarExtent=20
 Name=RISC OS
 Comment=RISC OS-like theme
+Comment[nds]=En Muster liek to RISC OS
+Comment[pt]=Um tema do estilo do RISC OS
+Comment[pt_BR]=Um tema do estilo do RISC OS
+Comment[zh_TW]=類似 RISC OS 的主題
 SButtonPosition=Opposite
 FrameWidth=1
 

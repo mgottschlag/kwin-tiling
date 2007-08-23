@@ -1,6 +1,10 @@
 [Misc]
 Name=Motif Plus
 Comment=Built-in enhanced Motif style
+Comment[nds]=Inbuut verbetert "Motif"-Stil
+Comment[pt]=O estilo incorporado e melhorado do Motif
+Comment[pt_BR]=O estilo incorporado e melhorado do Motif
+Comment[zh_TW]=內建的 Motif 樣式加強版
 [KDE]
 WidgetStyle=MotifPlus
 [Desktop Entry]
