@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>KeyboardConfigWidget</class>
  <widget class="QWidget" name="KeyboardConfigWidget" >
   <property name="geometry" >
@@ -9,76 +6,33 @@
     <x>0</x>
     <y>0</y>
     <width>599</width>
-    <height>299</height>
+    <height>381</height>
    </rect>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>0</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item row="1" column="0" colspan="2" >
-    <widget class="Q3ButtonGroup" name="numlockGroup" >
-     <property name="whatsThis" >
-      <string>If supported, this option allows you to setup the state of NumLock after KDE startup.&lt;p>You can configure NumLock to be turned on or off, or configure KDE not to set NumLock state.</string>
-     </property>
-     <property name="title" >
-      <string>NumLock on KDE Startup</string>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>11</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="1" column="0" >
-       <widget class="QRadioButton" name="RadioButton1_2" >
-        <property name="text" >
-         <string>Turn o&amp;ff</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QRadioButton" name="RadioButton1_3" >
-        <property name="text" >
-         <string>Leave unchan&amp;ged</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QRadioButton" name="RadioButton1" >
-        <property name="text" >
-         <string>T&amp;urn on</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="2" >
+  <layout class="QVBoxLayout" >
+   <item>
     <widget class="QGroupBox" name="groupBox1" >
      <property name="title" >
       <string>Keyboard Repeat</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>11</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
+      <item row="0" column="0" colspan="2" >
+       <widget class="QCheckBox" name="repeatBox" >
+        <property name="whatsThis" >
+         <string>If you check this option, pressing and holding down a key emits the same character over and over again. For example, pressing and holding down the Tab key will have the same effect as that of pressing that key several times in succession: Tab characters continue to be emitted until you release the key.</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Enable keyboard repeat</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="lblDelay" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>0</hsizetype>
-          <vsizetype>5</vsizetype>
+         <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -129,9 +83,7 @@
       <item row="2" column="0" >
        <widget class="QLabel" name="lblRate" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>0</hsizetype>
-          <vsizetype>5</vsizetype>
+         <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -179,39 +131,47 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0" colspan="2" >
-       <widget class="QCheckBox" name="repeatBox" >
-        <property name="whatsThis" >
-         <string>If you check this option, pressing and holding down a key emits the same character over and over again. For example, pressing and holding down the Tab key will have the same effect as that of pressing that key several times in succession: Tab characters continue to be emitted until you release the key.</string>
-        </property>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Q3ButtonGroup" name="numlockGroup" >
+     <property name="whatsThis" >
+      <string>If supported, this option allows you to setup the state of NumLock after KDE startup.&lt;p>You can configure NumLock to be turned on or off, or configure KDE not to set NumLock state.</string>
+     </property>
+     <property name="title" >
+      <string>NumLock on KDE Startup</string>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="RadioButton1_2" >
         <property name="text" >
-         <string>&amp;Enable keyboard repeat</string>
+         <string>Turn o&amp;ff</string>
         </property>
-        <property name="checked" >
-         <bool>true</bool>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QRadioButton" name="RadioButton1_3" >
+        <property name="text" >
+         <string>Leave unchan&amp;ged</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="RadioButton1" >
+        <property name="text" >
+         <string>T&amp;urn on</string>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="2" column="1" >
-    <widget class="KIntNumInput" name="click" >
-     <property name="whatsThis" >
-      <string>If supported, this option allows you to hear audible clicks from your computer's speakers when you press the keys on your keyboard. This might be useful if your keyboard does not have mechanical keys, or if the sound that the keys make is very soft.&lt;p>You can change the loudness of the key click feedback by dragging the slider button or by clicking the up/down arrows on the spin box. Setting the volume to 0% turns off the key click.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" >
+   <item>
     <widget class="QLabel" name="TextLabel1" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>0</hsizetype>
-       <vsizetype>5</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
      <property name="whatsThis" >
       <string>If supported, this option allows you to hear audible clicks from your computer's speakers when you press the keys on your keyboard. This might be useful if your keyboard does not have mechanical keys, or if the sound that the keys make is very soft.&lt;p>You can change the loudness of the key click feedback by dragging the slider button or by clicking the up/down arrows on the spin box. Setting the volume to 0% turns off the key click.</string>
      </property>
@@ -223,6 +183,26 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="KIntNumInput" name="click" >
+     <property name="whatsThis" >
+      <string>If supported, this option allows you to hear audible clicks from your computer's speakers when you press the keys on your keyboard. This might be useful if your keyboard does not have mechanical keys, or if the sound that the keys make is very soft.&lt;p>You can change the loudness of the key click feedback by dragging the slider button or by clicking the up/down arrows on the spin box. Setting the volume to 0% turns off the key click.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
@@ -230,25 +210,22 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>Q3ButtonGroup</class>
+   <extends>Q3GroupBox</extends>
+   <header>Qt3Support/Q3ButtonGroup</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>KDoubleNumInput</class>
    <extends>QWidget</extends>
    <header>knuminput.h</header>
    <container>1</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KIntNumInput</class>
    <extends>QWidget</extends>
    <header>knuminput.h</header>
    <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
