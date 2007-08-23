@@ -34,7 +34,7 @@ CSuProc::CSuProc(QByteArray &sock, QString &passwd)
        : itsProc(KFI_SYS_USER),
          itsPasswd(passwd)
 {
-    QByteArray cmd(KDE_DATADIR"/"KFI_NAME"/bin/kio_fonts_helper");
+    QByteArray cmd(KDE_BINDIR"/kio_fonts_helper");
 
     cmd+=' ';
     cmd+=QFile::encodeName(KShell::quoteArg(sock));

@@ -11,6 +11,6 @@ install( FILES fonts.protocol  DESTINATION  ${SERVICES_INSTALL_DIR} )
 set(kio_fonts_helper_SRCS Helper.cpp Socket.cpp ${libkxftconfig_SRCS})
 kde4_add_executable(kio_fonts_helper ${kio_fonts_helper_SRCS} )
 target_link_libraries(kio_fonts_helper ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} kfontinst )
-install(TARGETS kio_fonts_helper DESTINATION ${DATA_INSTALL_DIR}/kfontinst/bin )
+install(TARGETS kio_fonts_helper DESTINATION ${BIN_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
