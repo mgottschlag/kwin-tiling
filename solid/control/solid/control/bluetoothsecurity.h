@@ -22,7 +22,8 @@
 #ifndef SOLID_BLUETOOTHSECURITY_H
 #define SOLID_BLUETOOTHSECURITY_H
 
-#include <QPair>
+#include <QtCore/QObject>
+#include <QtCore/QPair>
 
 #include <solid/control/singletondefs.h>
 #include <solid/control/solid_control_export.h>
