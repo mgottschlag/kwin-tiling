@@ -168,8 +168,8 @@ void ExtensionContainer::init()
 
     // if we were hidden when kicker quit, let's start out hidden as well!
     KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup(extensionId());
-    int tmp = config->readEntry("UserHidden", int(Unhidden));
+	KConfigGroup cg(config, extensionId());
+    int tmp = cg.readEntry("UserHidden", int(Unhidden));
     if (tmp > Unhidden && tmp <= RightBottom)
     {
         _userHidden = static_cast<UserHidden>(tmp);
@@ -305,11 +305,11 @@ void ExtensionContainer::writeConfig()
 {
 //    kDebug(1210) << "ExtensionContainer::writeConfig()";
     KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup(extensionId());
+	KConfigGroup cg(config, extensionId());
 
-    config->writePathEntry("ConfigFile", _info.configFile());
-    config->writePathEntry("DesktopFile", _info.desktopFile());
-    config->writeEntry("UserHidden", int(userHidden()));
+    cg.writePathEntry("ConfigFile", _info.configFile());
+    cg.writePathEntry("DesktopFile", _info.desktopFile());
+    cg.writeEntry("UserHidden", int(userHidden()));
 
     if(m_extension)
         m_extension->settings()->writeConfig();
@@ -926,8 +926,8 @@ void ExtensionContainer::animatedHide(bool left)
     // save our hidden status so that when kicker starts up again
     // we'll come back in the same state
     KSharedConfig::Ptr config = KGlobal::config();
-    config->setGroup(extensionId());
-    config->writeEntry("UserHidden", int(userHidden()));
+	KConfigGroup cg(config ,extensionId());
+    cg.writeEntry("UserHidden", int(userHidden()));
 
     QTimer::singleShot(100, this, SLOT(enableMouseOverEffects()));
 }

@@ -127,7 +127,7 @@ void ContainerArea::initialize(bool useDefaultConfig)
     removeAllContainers();
 
     // restore applet layout or load a default panel layout
-    _config->setGroup("General");
+	KConfigGroup cg(_config, "General");
     if (_config->hasKey("Applets2"))
     {
         if (_config->groupIsImmutable("General"))
@@ -137,7 +137,7 @@ void ContainerArea::initialize(bool useDefaultConfig)
 
         m_canAddContainers = !m_immutable &&
                              !_config->entryIsImmutable("Applets2");
-        loadContainers(_config->readEntry("Applets2", QStringList() ));
+        loadContainers(cg.readEntry("Applets2", QStringList() ));
     }
     else if (useDefaultConfig)
     {

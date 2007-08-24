@@ -128,7 +128,7 @@ NaughtyApplet::slotWarn(ulong pid, const QString & name)
     if (KMessageBox::Yes == retval)
     {
       ignoreList_.append(name);
-      config()->writeEntry("IgnoreList", ignoreList_);
+      config()->group("").writeEntry("IgnoreList", ignoreList_);
       config()->sync();
     }
   }
@@ -203,9 +203,9 @@ NaughtyApplet::preferences()
   void
 NaughtyApplet::loadSettings()
 {
-  ignoreList_ = config()->readEntry("IgnoreList", QStringList() );
-  monitor_->setInterval(config()->readEntry("UpdateInterval", 2));
-  monitor_->setTriggerLevel(config()->readEntry("Threshold", 20));
+  ignoreList_ = config()->group("").readEntry("IgnoreList", QStringList() );
+  monitor_->setInterval(config()->group("").readEntry("UpdateInterval", 2));
+  monitor_->setTriggerLevel(config()->group("").readEntry("Threshold", 20));
 
   // Add 'X' as a default.
   if (ignoreList_.isEmpty() && !config()->hasKey("IgnoreList"))
@@ -215,9 +215,9 @@ NaughtyApplet::loadSettings()
   void
 NaughtyApplet::saveSettings()
 {
-  config()->writeEntry("IgnoreList",     ignoreList_);
-  config()->writeEntry("UpdateInterval", monitor_->interval());
-  config()->writeEntry("Threshold",      monitor_->triggerLevel());
+  config()->group("").writeEntry("IgnoreList",     ignoreList_);
+  config()->group("").writeEntry("UpdateInterval", monitor_->interval());
+  config()->group("").writeEntry("Threshold",      monitor_->triggerLevel());
   config()->sync();
 }
 

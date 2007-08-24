@@ -84,13 +84,13 @@ AppletInfo::AppletInfo( const QString& deskFile, const QString& configFile, cons
     setIcon(df.readIcon());
 
     // library
-    setLibrary(df.readEntry("X-KDE-Library"));
+    setLibrary(df.desktopGroup().readEntry("X-KDE-Library"));
 
     // is it a unique applet?
-    setIsUnique(df.readEntry("X-KDE-UniqueApplet", false));
+    setIsUnique(df.desktopGroup().readEntry("X-KDE-UniqueApplet", false));
 
     // should it be shown in the gui?
-    d->hidden = df.readEntry("Hidden", false);
+    d->hidden = df.desktopGroup().readEntry("Hidden", false);
 
     if (configFile.isEmpty())
     {

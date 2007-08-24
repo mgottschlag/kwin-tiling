@@ -48,9 +48,9 @@ MenuInfo::MenuInfo(const QString& desktopFile)
 {
     d = new Private;
     KConfig df(KStandardDirs::locate("data", QString::fromLatin1("kicker/menuext/%1").arg(desktopFile)));
-    df.setGroup("Desktop Entry");
+	KConfigGroup dfg(&df, "Desktop Entry");
 
-    QStringList list = df.readEntry("X-KDE-AuthorizeAction", QStringList() );
+    QStringList list = dfg.readEntry("X-KDE-AuthorizeAction", QStringList() );
     if (kapp && !list.isEmpty())
     {
        for(QStringList::ConstIterator it = list.begin();
@@ -62,10 +62,10 @@ MenuInfo::MenuInfo(const QString& desktopFile)
        }
     }
 
-    d->name = df.readEntry("Name");
-    d->comment = df.readEntry("Comment");
-    d->icon = df.readEntry("Icon");
-    d->library = df.readEntry("X-KDE-Library");
+    d->name = dfg.readEntry("Name");
+    d->comment = dfg.readEntry("Comment");
+    d->icon = dfg.readEntry("Icon");
+    d->library = dfg.readEntry("X-KDE-Library");
     d->desktopfile = desktopFile;
 }
 

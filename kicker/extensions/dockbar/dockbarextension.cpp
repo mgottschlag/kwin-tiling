@@ -300,17 +300,17 @@ void DockBarExtension::saveContainerConfig()
         {
             QString applet_gid = QString("Applet_%1").arg(QString::number(count));
             applet_list.append(applet_gid);
-            conf->setGroup(applet_gid);
-            conf->writePathEntry("Command", c->command());
-            conf->writePathEntry("resName", c->resName());
-            conf->writeEntry("resClass", c->resClass());
+			KConfigGroup cg(conf, applet_gid);
+            cg.writePathEntry("Command", c->command());
+            cg.writePathEntry("resName", c->resName());
+            cg.writeEntry("resClass", c->resClass());
             ++count;
         }
     }
-    conf->setGroup("General");
-    conf->writeEntry("Applets", applet_list);
-    conf->deleteEntry("Commands"); // cleanup old config
-    conf->sync();
+	KConfigGroup cg2(conf, "General");
+    cg2.writeEntry("Applets", applet_list);
+    cg2.deleteEntry("Commands"); // cleanup old config
+    cg2.sync();
 }
 
 void DockBarExtension::loadContainerConfig()

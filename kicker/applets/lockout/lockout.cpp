@@ -217,7 +217,7 @@ bool Lockout::eventFilter( QObject *o, QEvent *e )
     if( e->type() == QEvent::MouseButtonPress )
     {
         KConfig *conf = config();
-        conf->setGroup("lockout");
+		KConfigGroup cg(conf, "lockout");
 
         QMouseEvent *me = static_cast<QMouseEvent *>( e );
         if( me->button() == Qt::RightButton )
@@ -284,9 +284,9 @@ void Lockout::slotTransparent()
     logoutButton->setAutoRaise( bTransparent );
 
     KConfig* conf = config();
-    conf->setGroup("lockout");
-    conf->writeEntry( "Transparent", bTransparent );
-    conf->sync();
+	KConfigGroup cg(conf,"lockout");
+    cg.writeEntry( "Transparent", bTransparent );
+    cg.sync();
 }
 
 void Lockout::slotLogoutPrefs()

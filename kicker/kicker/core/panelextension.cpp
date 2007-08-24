@@ -196,9 +196,9 @@ void PanelExtension::setPanelSize(int size)
     setSize(static_cast<Plasma::Size>(size), customSize());
 
     // save the size setting here if it isn't a custom setting
-    config()->setGroup("General");
-    config()->writeEntry("Size", size);
-    config()->sync();
+	KConfigGroup cg(config(), "General");
+    cg.writeEntry("Size", size);
+    cg.sync();
 }
 
 void PanelExtension::addKMenuButton()

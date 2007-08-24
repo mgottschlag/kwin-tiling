@@ -590,10 +590,10 @@ void PanelServiceMenu::slotContextMenu(int selected)
 	    dest.setFileName( g->caption() );
 
 	    df = new KDesktopFile( dest.path() );
-            df->writeEntry( "Icon", g->icon() );
-            df->writePathEntry( "URL", "programs:/"+g->name() );
-	    df->writeEntry( "Name", g->caption() );
-	    df->writeEntry( "Type", "Link" );
+            df->desktopGroup().writeEntry( "Icon", g->icon() );
+            df->desktopGroup().writePathEntry( "URL", "programs:/"+g->name() );
+	    df->desktopGroup().writeEntry( "Name", g->caption() );
+	    df->desktopGroup().writeEntry( "Type", "Link" );
             df->sync();
 	    delete df;
 

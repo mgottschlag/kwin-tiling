@@ -69,9 +69,9 @@ void KonquerorProfilesMenu::initialize()
       KConfig cfg( *pIt, KConfig::OnlyLocal);
       if ( cfg.hasGroup( "Profile" ) )
       {
-         cfg.setGroup( "Profile" );
-         if ( cfg.hasKey( "Name" ) )
-            niceName = cfg.readEntry( "Name" );
+		 KConfigGroup cg(&cfg, "Profile" );
+         if ( cg.hasKey( "Name" ) )
+            niceName = cg.readEntry( "Name" );
 
          insertItem(niceName, id);
          m_profiles[id-1]=profileName;

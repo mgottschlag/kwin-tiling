@@ -74,19 +74,19 @@ void URLButton::initialize( const QString& _url )
     {
        QString file = Plasma::newDesktopFile(url);
        KDesktopFile df(file);
-       df.writeEntry("Encoding", "UTF-8");
-       df.writeEntry("Type","Link");
-       df.writeEntry("Name", url.prettyUrl());
+       df.desktopGroup().writeEntry("Encoding", "UTF-8");
+       df.desktopGroup().writeEntry("Type","Link");
+       df.desktopGroup().writeEntry("Name", url.prettyUrl());
        if (url.isLocalFile())
        {
           KFileItem item( KFileItem::Unknown, KFileItem::Unknown, url );
-          df.writeEntry("Icon", item.iconName() );
+          df.desktopGroup().writeEntry("Icon", item.iconName() );
        }
        else
        {
-          df.writeEntry("Icon", KMimeType::favIconForUrl(url));
+          df.desktopGroup().writeEntry("Icon", KMimeType::favIconForUrl(url));
        }
-       df.writeEntry("URL", url.url());
+       df.desktopGroup().writeEntry("URL", url.url());
        url = KUrl();
        url.setPath(file);
     }

@@ -98,11 +98,11 @@ void ExtensionManager::initialize()
     // set up the "main" panel
     if (config->hasGroup("Main Panel"))
     {
-        config->setGroup("Main Panel");
-        if (config->hasKey("DesktopFile"))
+		KConfigGroup cg(config,"Main Panel");
+        if (cg.hasKey("DesktopFile"))
         {
-            m_mainPanel = pm->createExtensionContainer(config->readPathEntry("DesktopFile"),
-                                                       true, config->readPathEntry("ConfigFile"),
+            m_mainPanel = pm->createExtensionContainer(cg.readPathEntry("DesktopFile"),
+                                                       true, cg.readPathEntry("ConfigFile"),
                                                        "Main Panel");
         }
     }
@@ -132,8 +132,8 @@ void ExtensionManager::initialize()
     kapp->processEvents();
 
     // read extension list
-    config->setGroup("General");
-    QStringList elist = config->readEntry("Extensions2", QStringList() );
+	KConfigGroup cg2(config, "General");
+    QStringList elist = cg2.readEntry("Extensions2", QStringList() );
 
     // now restore the extensions
     foreach (QString extensionId, elist)
@@ -151,12 +151,12 @@ void ExtensionManager::initialize()
         }
 
         // set config group
-        config->setGroup(extensionId);
+		KConfigGroup cg3(config, extensionId);
 
         ExtensionContainer* e =
-            pm->createExtensionContainer(config->readPathEntry("DesktopFile"),
+            pm->createExtensionContainer(cg3.readPathEntry("DesktopFile"),
                                          true, // is startup
-                                         config->readPathEntry("ConfigFile"),
+                                         cg3.readPathEntry("ConfigFile"),
                                          extensionId);
 
         if (e)
@@ -268,11 +268,11 @@ void ExtensionManager::migrateMenubar()
 
         QString extension = config.readPathEntry("ConfigFile");
         KConfig extensionConfig(KStandardDirs::locate("config", extension));
-        extensionConfig.setGroup("General");
+		KConfigGroup eg (&extensionConfig, "General");
 
-        if (extensionConfig.hasKey("Applets2"))
+        if (eg.hasKey("Applets2"))
         {
-            QStringList containers = extensionConfig.readEntry("Applets2", QStringList() );
+            QStringList containers = eg.readEntry("Applets2", QStringList() );
             foreach (QString appletId, containers)
             {
                 // is there a config group for this applet?
@@ -323,10 +323,10 @@ void ExtensionManager::saveContainerConfig()
     }
 
     // write extension list
-    config->setGroup("General");
-    config->writeEntry("Extensions2", elist);
+	KConfigGroup cg(config, "General");
+    cg.writeEntry("Extensions2", elist);
 
-    config->sync();
+    cg.sync();
 }
 
 void ExtensionManager::configurationChanged()

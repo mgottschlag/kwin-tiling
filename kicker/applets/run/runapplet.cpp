@@ -104,15 +104,15 @@ RunApplet::RunApplet(const QString& configFile, Plasma::Type type, int actions,
 RunApplet::~RunApplet()
 {
     KConfig *c = config();
-    c->setGroup("General");
+	KConfigGroup cg(c, "General");
 
     // save history and completion list
     QStringList list = _input->completionObject()->items();
-    c->writeEntry("Completion list", list);
+    cg.writeEntry("Completion list", list);
     list = _input->historyItems();
-    c->writeEntry("History list", list);
-    c->writeEntry( "CompletionMode", (int) _input->completionMode() );
-    c->sync();
+    cg.writeEntry("History list", list);
+    cg.writeEntry( "CompletionMode", (int) _input->completionMode() );
+    cg.sync();
 
     delete _filterData;
     KGlobal::locale()->removeCatalog("krunapplet");
