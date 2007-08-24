@@ -67,7 +67,7 @@ Desktop::Desktop( int desk, const QString &desktopName, QWidget *parent): QWidge
   if (m_desk==1) Desktop::m_windowPixmaps.setAutoDelete(true);
   KSharedConfig::Ptr cfg = KGlobal::config();
   m_transparentMode=static_cast<WindowTransparentMode>
-      (cfg->readEntry("windowTransparentMode", int(c_defWindowTransparentMode)));
+      (cfg->group("KPager").readEntry("windowTransparentMode", int(c_defWindowTransparentMode)));
   resize(67, 50);
 }
 

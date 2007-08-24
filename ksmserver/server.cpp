@@ -851,7 +851,7 @@ void KSMServer::storeSession()
         executeCommand( discardCommand );
     }
     config->deleteGroup( sessionGroup ); //### does not work with global config object...
-    config->setGroup( sessionGroup );
+	KConfigGroup cg( config, sessionGroup);
     count =  0;
 
     if ( !wm.isEmpty() ) {
@@ -877,17 +877,17 @@ void KSMServer::storeSession()
 
         count++;
         QString n = QString::number(count);
-        config->writeEntry( QString("program")+n, program );
-        config->writeEntry( QString("clientId")+n, c->clientId() );
-        config->writeEntry( QString("restartCommand")+n, restartCommand );
-        config->writePathEntry( QString("discardCommand")+n, c->discardCommand() );
-        config->writeEntry( QString("restartStyleHint")+n, restartHint );
-        config->writeEntry( QString("userId")+n, c->userId() );
+        cg.writeEntry( QString("program")+n, program );
+        cg.writeEntry( QString("clientId")+n, c->clientId() );
+        cg.writeEntry( QString("restartCommand")+n, restartCommand );
+        cg.writePathEntry( QString("discardCommand")+n, c->discardCommand() );
+        cg.writeEntry( QString("restartStyleHint")+n, restartHint );
+        cg.writeEntry( QString("userId")+n, c->userId() );
     }
-    config->writeEntry( "count", count );
+    cg.writeEntry( "count", count );
 
-    config->setGroup("General");
-    config->writeEntry( "screenCount", ScreenCount(QX11Info::display()));
+	KConfigGroup cg2( config, "General");
+    cg2.writeEntry( "screenCount", ScreenCount(QX11Info::display()));
 
     storeLegacySession(config.data());
     config->sync();

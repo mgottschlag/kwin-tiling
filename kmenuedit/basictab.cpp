@@ -375,7 +375,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
         //_keyEdit->setShortcut( entryInfo->shortcut() );
     }
 
-    QString temp = df->readPathEntry("Exec");
+    QString temp = df->desktopGroup().readPathEntry("Exec");
     if (temp.left(12) == "ksystraycmd ")
     {
       _execEdit->lineEdit()->setText(temp.right(temp.length()-12));
@@ -388,20 +388,20 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     }
 
     _pathEdit->lineEdit()->setText(df->readPath());
-    _termOptEdit->setText(df->readEntry("TerminalOptions"));
-    _uidEdit->setText(df->readEntry("X-KDE-Username"));
+    _termOptEdit->setText(df->desktopGroup().readEntry("TerminalOptions"));
+    _uidEdit->setText(df->desktopGroup().readEntry("X-KDE-Username"));
 
-    if( df->hasKey( "StartupNotify" ))
-        _launchCB->setChecked(df->readEntry("StartupNotify", true));
+    if( df->desktopGroup().hasKey( "StartupNotify" ))
+        _launchCB->setChecked(df->desktopGroup().readEntry("StartupNotify", true));
     else // backwards comp.
-        _launchCB->setChecked(df->readEntry("X-KDE-StartupNotify", true));
+        _launchCB->setChecked(df->desktopGroup().readEntry("X-KDE-StartupNotify", true));
 
-    if(df->readEntry("Terminal", 0) == 1)
+    if(df->desktopGroup().readEntry("Terminal", 0) == 1)
         _terminalCB->setChecked(true);
     else
         _terminalCB->setChecked(false);
 
-    _uidCB->setChecked(df->readEntry("X-KDE-SubstituteUID", false));
+    _uidCB->setChecked(df->desktopGroup().readEntry("X-KDE-SubstituteUID", false));
 
     enableWidgets(true, entryInfo->hidden);
     blockSignals(false);

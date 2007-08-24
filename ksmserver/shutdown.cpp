@@ -114,14 +114,14 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     KSharedConfig::Ptr config = KGlobal::config();
     config->reparseConfiguration(); // config may have changed in the KControl module
 
-    config->setGroup("General" );
+	KConfigGroup cg( config, "General");
 
     bool logoutConfirmed =
         (confirm == KWorkSpace::ShutdownConfirmYes) ? false :
     (confirm == KWorkSpace::ShutdownConfirmNo) ? true :
-                !config->readEntry( "confirmLogout", true );
+                !cg.readEntry( "confirmLogout", true );
     bool maysd = false;
-    if (config->readEntry( "offerShutdown", true ) && DM().canShutdown())
+    if (cg.readEntry( "offerShutdown", true ) && DM().canShutdown())
         maysd = true;
     if (!maysd) {
         if (sdtype != KWorkSpace::ShutdownTypeNone &&
@@ -131,7 +131,7 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
         sdtype = KWorkSpace::ShutdownTypeNone;
     } else if (sdtype == KWorkSpace::ShutdownTypeDefault)
         sdtype = (KWorkSpace::ShutdownType)
-                config->readEntry( "shutdownType", (int)KWorkSpace::ShutdownTypeNone );
+                cg.readEntry( "shutdownType", (int)KWorkSpace::ShutdownTypeNone );
     if (sdmode == KWorkSpace::ShutdownModeDefault)
         sdmode = KWorkSpace::ShutdownModeInteractive;
 
@@ -155,7 +155,7 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
         bootOption = bopt;
 
         // shall we save the session on logout?
-        saveSession = ( config->readEntry( "loginMode", "restorePreviousLogout" ) == "restorePreviousLogout" );
+        saveSession = ( cg.readEntry( "loginMode", "restorePreviousLogout" ) == "restorePreviousLogout" );
 
         if ( saveSession )
             sessionGroup = QString("Session: ") + SESSION_PREVIOUS_LOGOUT;

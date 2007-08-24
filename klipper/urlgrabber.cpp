@@ -146,7 +146,7 @@ bool URLGrabber::checkNewData( const QString& clipData )
     actionMenu( true ); // also creates myMatches
 
     return ( !myMatches.isEmpty() &&
-             (!m_config->readEntry("Put Matching URLs in history", true)));
+             (!m_config->group("General").readEntry("Put Matching URLs in history", true))); //XXX i am not sure this entry exists anymore
 }
 
 
