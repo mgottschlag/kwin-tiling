@@ -1,14 +1,18 @@
 [Misc]
 Name=KDE Classic
 Name[ga]=KDE Clasaiceach
+Name[ja]=KDE クラシック
 Name[nds]=KDE Klass'sch
 Name[pt]=Clássico do KDE
 Name[pt_BR]=Clássico do KDE
+Name[sv]=KDE klassisk
 Name[zh_TW]=KDE 經典
 Comment=Classic KDE style
+Comment[ja]=クラシック KDE スタイル
 Comment[nds]=Klass'sch KDE-Stil
 Comment[pt]=Estilo clássico do KDE
 Comment[pt_BR]=Estilo clássico do KDE
+Comment[sv]=Klassisk KDE-stil
 Comment[zh_TW]=經典 KDE 樣式
 Highcolor=hcstyle.la
 InactiveShading=true

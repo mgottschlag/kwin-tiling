@@ -1,9 +1,11 @@
 [Misc]
 Name=B3/KDE
 Comment=B3/Modification of B2
+Comment[ja]=B3 / B2 の改良版
 Comment[nds]=B3-Variant vun B2
 Comment[pt]=B3/Modificação do B2
 Comment[pt_BR]=B3/Modificação do B2
+Comment[sv]=B3/Modifierad B2
 Comment[zh_TW]=B3/B2 的變種
 [KDE]
 WidgetStyle=B3

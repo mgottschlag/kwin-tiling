@@ -1,13 +1,17 @@
 [Misc]
 Name=Light Style, 2nd revision
+Name[ja]=Light スタイル、第 2 版
 Name[nds]=Light-Stil, 2. Överarbeiden
 Name[pt]=Estilo Leve, 2a versão
 Name[pt_BR]=Estilo Leve, 2a versão
+Name[sv]=Lätt stil, andra revisionen
 Name[zh_TW]=Light 樣式，第二版
 Comment=Second revision of the simple and elegant 'Light' widget style.
+Comment[ja]=シンプルでエレガントな Light ウィジェットスタイルの第 2 版。
 Comment[nds]=Tweet Överarbeiden vun den eenfachen un smucken Stil "Light"
 Comment[pt]=A segunda versão do estilo gráfico simples e elegante Leve.
 Comment[pt_BR]=A segunda versão do estilo gráfico simples e elegante Leve.
+Comment[sv]=Andra revisionen av den enkla och eleganta komponentstilen 'Lätt'.
 Comment[zh_TW]=Light 樣式第二版，簡單而優雅
 [KDE]
 WidgetStyle=Light, 2nd revision

@@ -1,9 +1,12 @@
 [Misc]
 Name=KDE Step
+Name[sv]=KDE step
 Comment=Unthemed Next-like style
+Comment[ja]=Next 風のスタイル (テーマなし)
 Comment[nds]=Stil liek to Next ahn Muster
 Comment[pt]=Estilo sem tema semelhante ao Next
 Comment[pt_BR]=Estilo sem tema semelhante ao Next
+Comment[sv]=Otemad Next-liknande stil
 Comment[zh_TW]=類似 Next Step 的樣式
 [KDE]
 widgetStyle=kstepstyle.la

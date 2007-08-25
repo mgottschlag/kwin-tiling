@@ -1,9 +1,11 @@
 [Misc]
 Name=MS Windows 9x
 Comment=Built-in unthemed Windows 9x style
+Comment[ja]=ビルトイン Windows 9x スタイル (テーマなし)
 Comment[nds]=Inbuut Stil "Windows 9x" ahn Muster
 Comment[pt]=O estilo incorporado sem tema do Windows 9x
 Comment[pt_BR]=O estilo incorporado sem tema do Windows 9x
+Comment[sv]=Inbyggd otemad Windows 9x-stil
 Comment[zh_TW]=內建的 Windows 9x 樣式
 [KDE]
 WidgetStyle=Windows

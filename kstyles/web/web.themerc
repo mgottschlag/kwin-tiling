@@ -1,14 +1,18 @@
 [Misc]
 Name=Web style
 Name[ga]=Stíl Ghréasáin
+Name[ja]=ウェブスタイル
 Name[nds]=Web-Stil
 Name[pt]=Estilo Web
 Name[pt_BR]=Estilo Web
+Name[sv]=Webbstil
 Name[zh_TW]=網頁樣式
 Comment=Web widget style
+Comment[ja]=ウェブウィジェットスタイル
 Comment[nds]=Knoopstil "Web"
 Comment[pt]=Estilo gráfico Web
 Comment[pt_BR]=Estilo gráfico Web
+Comment[sv]=Grafisk webbkomponentstil
 Comment[zh_TW]=網頁元件樣式
 [KDE]
 widgetStyle=webstyle.la

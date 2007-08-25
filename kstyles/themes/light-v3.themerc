@@ -1,13 +1,17 @@
 [Misc]
 Name=Light Style, 3rd revision
+Name[ja]=Light スタイル、第 3 版
 Name[nds]=Light-Stil, 3. Överarbeiden
 Name[pt]=Estilo Leve, 3a versão
 Name[pt_BR]=Estilo Leve, 3a versão
+Name[sv]=Lätt stil, tredje revisionen
 Name[zh_TW]=Light 樣式，第三版
 Comment=Third revision of the simple and elegant 'Light' widget style.
+Comment[ja]=シンプルでエレガントな Light ウィジェットスタイルの第 3 版。
 Comment[nds]=Drütt Överarbeiden vun den eenfachen un smucken Knoopstil "Light"
 Comment[pt]=A terceira versão do estilo gráfico simples e elegante Leve.
 Comment[pt_BR]=A terceira versão do estilo gráfico simples e elegante Leve.
+Comment[sv]=Tredje revisionen av den enkla och eleganta komponentstilen 'Lätt'.
 Comment[zh_TW]=Light 樣式第三版，簡單而優雅
 [KDE]
 WidgetStyle=Light, 3rd revision

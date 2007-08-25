@@ -30,9 +30,11 @@ Name[vi]=Chất dẻo
 Name[x-test]=xxPlastikxx
 ConfigPage=kstyle_plastik_config
 Comment=A simple and clean style
+Comment[ja]=シンプルできれいなスタイル
 Comment[nds]=En eenfach un reen Stil
 Comment[pt]=Um estilo simples e limpo
 Comment[pt_BR]=Um estilo simples e limpo
+Comment[sv]=En enkel och ren stil
 Comment[zh_TW]=簡單乾淨的樣式
 [KDE]
 WidgetStyle=Plastik

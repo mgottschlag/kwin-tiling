@@ -22,9 +22,11 @@ Name[vi]=Gốm
 Name[x-test]=xxKeramikxx
 ConfigPage=kstyle_keramik_config
 Comment=A style using alphablending
+Comment[ja]=アルファブレンディングを使用したスタイル
 Comment[nds]=En Stil mit Alpha-Överblennen
 Comment[pt]=Um estilo que usa transparências
 Comment[pt_BR]=Um estilo que usa transparências
+Comment[sv]=En stil som använder alfablandning
 Comment[zh_TW]=使用 alphablending 的樣式
 
 [KDE]

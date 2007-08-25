@@ -1,9 +1,11 @@
 [Misc]
 Name=Motif
 Comment=Built-in unthemed Motif style
+Comment[ja]=ビルトイン Motif スタイル (テーマなし)
 Comment[nds]=Inbuut Stil "Motif" ahn Muster
 Comment[pt]=O estilo incorporado sem tema do Motif
 Comment[pt_BR]=O estilo incorporado sem tema do Motif
+Comment[sv]=Inbyggd otemad Motif-stil
 Comment[zh_TW]=內建的 Motif 樣式
 [KDE]
 WidgetStyle=Motif

@@ -1,8 +1,10 @@
 [Misc]
 Name=MegaGradient highcolor style
+Name[ja]=MegaGradient ハイカラースタイル
 Name[nds]=MegaGradient-Veelklörenstil
 Name[pt]=Estilo com muitas cores Mega-Gradiente
 Name[pt_BR]=Estilo com muitas cores Mega-Gradiente
+Name[sv]=Megagradient färgrik stil
 Name[zh_TW]=MegaGradient 高彩樣式
 [KDE]
 widgetStyle=mega.la
