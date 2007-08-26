@@ -41,7 +41,7 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, Qt::X11BypassWindo
     pixLabel->setObjectName( "pixlabel" );
     pixLabel->setPixmap(DesktopIcon("application-exit"));
 
-    QLabel *greetLabel = new QLabel(i18n("<nobr><qt><b>Automatic Log Out</b></qt></nobr>"), frame);
+    QLabel *greetLabel = new QLabel(i18n("<qt><nobr><b>Automatic Log Out</b></nobr></qt>"), frame);
     QLabel *infoLabel = new QLabel(i18n("<qt>To prevent being logged out, resume using this session by moving the mouse or pressing a key.</qt>"), frame);
 
     mStatusLabel = new QLabel("<b> </b>", frame);
@@ -83,8 +83,8 @@ AutoLogout::~AutoLogout()
 
 void AutoLogout::updateInfo(int timeout)
 {
-    mStatusLabel->setText(i18np("<nobr><qt>You will be automatically logged out in 1 second</qt></nobr>",
-                               "<nobr><qt>You will be automatically logged out in %1 seconds</qt></nobr>",
+    mStatusLabel->setText(i18np("<qt><nobr>You will be automatically logged out in 1 second</nobr></qt>",
+                               "<qt><nobr>You will be automatically logged out in %1 seconds</nobr></qt>",
                                timeout / 25) );
     mProgressRemaining->setValue(timeout);
 }
