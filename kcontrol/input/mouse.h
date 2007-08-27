@@ -49,7 +49,9 @@
 #include "logitechmouse.h"
 #endif
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include "ui_kmousedlg.h"
 #include "themepage.h"
 

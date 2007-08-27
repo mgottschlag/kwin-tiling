@@ -11,7 +11,9 @@
 #ifndef _KCMKHOTKEYS_H_
 #define _KCMKHOTKEYS_H_
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kshortcut.h>
 
 #include <actions.h>

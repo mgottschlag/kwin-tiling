@@ -6,7 +6,9 @@
 #include <QPushButton>
 #include <QTimer>
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kaboutdata.h>
 class QStringList;
 

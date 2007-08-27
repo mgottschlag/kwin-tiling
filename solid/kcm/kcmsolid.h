@@ -20,7 +20,9 @@
 #ifndef KCMSOLID_H
 #define KCMSOLID_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 class BackendChooser;
 

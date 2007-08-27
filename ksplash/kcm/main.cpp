@@ -16,7 +16,9 @@
 #include <QHBoxLayout>
 
 #include <kaboutdata.h>
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kstandarddirs.h>

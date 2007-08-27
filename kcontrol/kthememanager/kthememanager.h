@@ -19,7 +19,9 @@
 #ifndef KTHEMEMANAGER_H
 #define KTHEMEMANAGER_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <krun.h>
 #include <kservice.h>
 #include <kurl.h>

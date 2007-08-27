@@ -27,7 +27,9 @@
 #include "GroupList.h"
 #include "JobRunner.h"
 #include <QSet>
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kurl.h>
 #include <kconfig.h>
 #include <kio/job.h>

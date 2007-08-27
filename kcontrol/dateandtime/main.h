@@ -21,7 +21,9 @@
 #ifndef main_included
 #define main_included
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 class Dtime;
 class Tzone;

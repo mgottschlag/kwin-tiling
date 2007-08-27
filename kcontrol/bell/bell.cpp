@@ -30,6 +30,9 @@
 #include <QGridLayout>
 #include <QBoxLayout>
 
+#define KDE3_SUPPORT
+#include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kconfig.h>

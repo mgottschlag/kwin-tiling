@@ -12,7 +12,9 @@
 #include <QObject>
 
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kdialog.h>
 
 #include "widgetcanvas.h"

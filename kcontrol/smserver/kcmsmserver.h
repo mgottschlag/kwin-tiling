@@ -21,7 +21,9 @@
 #ifndef __kcmsmserver_h__
 #define __kcmsmserver_h__
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 class SMServerConfigImpl;
 

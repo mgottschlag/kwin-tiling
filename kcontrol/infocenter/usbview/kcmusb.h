@@ -14,7 +14,9 @@
 
 #include <Qt3Support/Q3IntDict>
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 class Q3ListView;
 class Q3ListViewItem;

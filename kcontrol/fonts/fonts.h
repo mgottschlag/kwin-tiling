@@ -12,7 +12,9 @@
 #include <QLabel>
 #include <QList>
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kdialog.h>
 #include <kfontdialog.h>
 #include <kfontrequester.h>

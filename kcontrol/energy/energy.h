@@ -15,7 +15,9 @@
 #define __Energy_h_Included__
 
 #include <QObject>
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 class QCheckBox;
 class KIntNumInput;

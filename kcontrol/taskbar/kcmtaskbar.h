@@ -21,7 +21,9 @@
 
 #include <Q3ValueList>
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 class TaskbarConfigUI;
 

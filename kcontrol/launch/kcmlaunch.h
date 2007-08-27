@@ -18,7 +18,9 @@
 #ifndef __kcmlaunch_h__
 #define __kcmlaunch_h__
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 class QCheckBox;
 class QComboBox;

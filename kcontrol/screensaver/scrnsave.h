@@ -15,7 +15,9 @@
 #include <QLabel>
 #include <QResizeEvent>
 #include <QKeyEvent>
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 #include "kssmonitor.h"
 #include "saverconfig.h"

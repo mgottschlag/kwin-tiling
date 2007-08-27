@@ -20,7 +20,9 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 class QTabWidget;
 

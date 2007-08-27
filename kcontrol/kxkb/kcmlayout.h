@@ -2,7 +2,9 @@
 #define __KCM_LAYOUT_H__
 
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 #include <QHash>
 

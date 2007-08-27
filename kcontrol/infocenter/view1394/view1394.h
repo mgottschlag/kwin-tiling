@@ -21,7 +21,9 @@
 #ifndef VIEW1394_H_
 #define VIEW1394_H_
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 
 #include <QMap>
 #include <QSocketNotifier>

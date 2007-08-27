@@ -32,7 +32,9 @@
 #include <QLayout>
 #include <QMap>
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <kvbox.h>
 
 #include "menupreview.h"

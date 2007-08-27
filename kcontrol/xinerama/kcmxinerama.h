@@ -21,7 +21,9 @@
 #ifndef _KCM_XINERAMA_H
 #define _KCM_XINERAMA_H
 
+#define KDE3_SUPPORT
 #include <kcmodule.h>
+#undef KDE3_SUPPORT
 #include <Qt3Support/Q3PtrList>
 #include <QTimer>
 
