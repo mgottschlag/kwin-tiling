@@ -19,7 +19,7 @@
 #ifndef KTHEME_H
 #define KTHEME_H
 
-#include <Qt/qdom.h>
+#include <QtXml/qdom.h>
 #include <QPointer>
 
 #include <QWidget>

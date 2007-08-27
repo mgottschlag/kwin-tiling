@@ -83,7 +83,7 @@ void OutputGraphicsItem::setTop(OutputGraphicsItem *output)
    if (oldTop)
 	   oldTop->setBottom(output);
 
-   // check wheter we have a left->top or a right->top to update the pointers
+   // check whether we have a left->top or a right->top to update the pointers
    if (m_left && m_left->top())
    {
 	   OutputGraphicsItem *item = m_left->top();
@@ -118,7 +118,7 @@ void OutputGraphicsItem::setBottom(OutputGraphicsItem *output)
    if (oldBottom)
 	oldBottom->setTop(output);
 
-   // check wheter we have a left->bottom or a right->bottom to update the pointers
+   // check whether we have a left->bottom or a right->bottom to update the pointers
    if (m_left && m_left->bottom())
    {
 	   OutputGraphicsItem *item = m_left->bottom();
@@ -153,7 +153,7 @@ void OutputGraphicsItem::setLeft(OutputGraphicsItem *output)
    if (oldLeft)
 	oldLeft->setRight(output);
 
-   // check wheter we have a top->left or a bottom->left to update the pointers
+   // check whether we have a top->left or a bottom->left to update the pointers
    if (m_top && m_top->left())
    {
 	   OutputGraphicsItem *item = m_top->left();
@@ -188,7 +188,7 @@ void OutputGraphicsItem::setRight(OutputGraphicsItem *output)
    if (oldRight)
 	oldRight->setLeft(output);
 
-   // check wheter we have a top->right or a bottom->right to update the pointers
+   // check whether we have a top->right or a bottom->right to update the pointers
    if (m_top && m_top->right())
    {
 	   OutputGraphicsItem *item = m_top->right();

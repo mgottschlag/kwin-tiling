@@ -20,8 +20,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FONTTHROUGHTANALYZER_H
-#define FONTTHROUGHTANALYZER_H
+#ifndef FONTTHROUGHANALYZER_H
+#define FONTTHROUGHANALYZER_H
 
 #include <strigi/streamthroughanalyzer.h>
 
@@ -52,4 +52,4 @@ class FontThroughAnalyzer : public Strigi::StreamThroughAnalyzer
     Strigi::AnalysisResult           *analysisResult;
 };
 
-#endif // FONTTHROUGHTANALYZER_H
+#endif // FONTTHROUGHANALYZER_H

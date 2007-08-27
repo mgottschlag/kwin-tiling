@@ -17,8 +17,8 @@
 
 */
 
-#ifndef SOLID_NM_DBUS_HELPER
-#define SOLID_NM_DBUS_HELPER
+#ifndef SOLID_NETWORKMANAGER_DBUSHELPER_H
+#define SOLID_NETWORKMANAGER_DBUSHELPER_H
 
 #include <QList>
 #include <QVariant>
@@ -38,5 +38,4 @@ private:
     static QList<QVariant> doSerialize(Solid::Control::AuthenticationWpaEnterprise *, const QString  & essid, QList<QVariant>  & args, bool * error);
 };
 
-#endif
-
+#endif // SOLID_NETWORKMANAGER_DBUSHELPER_H

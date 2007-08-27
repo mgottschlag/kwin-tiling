@@ -18,8 +18,9 @@
     Boston, MA 02110-1301, USA.
 
 */
-#ifndef __BLUEZ_SECURITY_ADAPTOR
-#define __BLUEZ_SECURITY_ADAPTOR
+
+#ifndef __BLUEZ_BLUETOOTHSECURITYADAPTOR_H
+#define __BLUEZ_BLUETOOTHSECURITYADAPTOR_H
 
 #include "bluez-bluetoothsecurity.h"
 
@@ -60,5 +61,5 @@ class BluezBluetoothSecurityAdaptor: public QDBusAbstractAdaptor
         QDBusInterface *manager;
         QDBusConnection conn;
 };
-#endif
 
+#endif // __BLUEZ_BLUETOOTHSECURITYADAPTOR_H

@@ -19,15 +19,13 @@ Boston, MA 02110-1301, USA.
 
 */
 
-#ifndef __KDMDESKTOP_H__
-#define __KDMDESKTOP_H__
-
+#ifndef __KDM_KROOTIMAGE_H__
+#define __KDM_KROOTIMAGE_H__
 
 #include <bgrender.h>
 
 #include <QApplication>
 #include <QTimer>
-
 
 class MyApplication : public QApplication
 {
@@ -45,4 +43,4 @@ class MyApplication : public QApplication
 	QTimer timer;
 };
 
-#endif
+#endif // __KDM_KROOTIMAGE_H__
