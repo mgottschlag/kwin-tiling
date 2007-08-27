@@ -50,7 +50,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "extensionmanager.h"
 #include <kconfiggroup.h>
 
-static KStaticDeleter<ExtensionManager> extensionManagerDeleter;
+static K3StaticDeleter<ExtensionManager> extensionManagerDeleter;
 ExtensionManager* ExtensionManager::m_self = 0;
 
 ExtensionManager* ExtensionManager::self()

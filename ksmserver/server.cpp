@@ -71,7 +71,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kapplication.h>
-#include <kstaticdeleter.h>
+#include <k3staticdeleter.h>
 #include <ktemporaryfile.h>
 #include <kprocess.h>
 

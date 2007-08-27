@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QObject>
 
-#include <kstaticdeleter.h>
+#include <k3staticdeleter.h>
 
 #include "utils.h"
 #include "container_extension.h"
@@ -57,7 +57,7 @@ public Q_SLOTS:
     void initialize();
 
 protected:
-    friend class KStaticDeleter<ExtensionManager>;
+    friend class K3StaticDeleter<ExtensionManager>;
 
     ExtensionManager();
 

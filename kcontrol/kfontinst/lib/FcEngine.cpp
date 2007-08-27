@@ -31,7 +31,7 @@
 #include <kconfig.h>
 #include <kglobalsettings.h>
 #include <kio/netaccess.h>
-#include <kstaticdeleter.h>
+#include <k3staticdeleter.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <math.h>
@@ -47,7 +47,7 @@
 namespace KFI
 {
 
-static KStaticDeleter<CFcEngine> staticDel;
+static K3StaticDeleter<CFcEngine> staticDel;
 static CFcEngine                 *theInstance=NULL;
 
 const int CFcEngine::constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0 };

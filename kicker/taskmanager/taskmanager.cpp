@@ -39,7 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kiconloader.h>
 #include <klocale.h>
 // #include <kpixmapio.h>
-#include <kstaticdeleter.h>
+#include <k3staticdeleter.h>
 #include <kwindowsystem.h>
 #include <netwm.h>
 
@@ -63,7 +63,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 TaskManager* TaskManager::m_self = 0;
-static KStaticDeleter<TaskManager> staticTaskManagerDeleter;
+static K3StaticDeleter<TaskManager> staticTaskManagerDeleter;
 uint TaskManager::m_xCompositeEnabled = 0;
 
 TaskManager* TaskManager::self()

@@ -40,7 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 #include <time.h>
 
-#include <kstaticdeleter.h>
+#include <k3staticdeleter.h>
 #include <krandom.h>
 #include "server.h"
 
@@ -82,7 +82,7 @@ void KSMClient::resetState()
  * In this case SmsGenerateClientID() returns NULL, but we really want a
  * client ID, so we fake one.
  */
-static KStaticDeleter<QString> smy_addr;
+static K3StaticDeleter<QString> smy_addr;
 char * safeSmsGenerateClientID( SmsConn /*c*/ )
 {
 //  Causes delays with misconfigured network :-/.

@@ -38,9 +38,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "menumanager.h"
 #include "menumanager.moc"
 
-// Why MenuManager doesn't use KStaticDeleter
+// Why MenuManager doesn't use K3StaticDeleter
 // MenuManager gets created before the ExtensionManager
-// So using KStaticDeleter results in MenuManager getting
+// So using K3StaticDeleter results in MenuManager getting
 // deleted before ExtensionManager, which means also the panels
 // which means also the K Menu buttons. K Menu buttons call
 // MenuManager in their dtor, so if MenuManager is already gone

@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QObject>
 
 #include <kdemacros.h>
-#include <kstaticdeleter.h>
+#include <k3staticdeleter.h>
 
 #include "appletinfo.h"
 
@@ -83,7 +83,7 @@ private Q_SLOTS:
     void slotPluginDestroyed(QObject* plugin);
 
 private:
-    friend class KStaticDeleter<PluginManager>;
+    friend class K3StaticDeleter<PluginManager>;
     PluginManager();
     virtual ~PluginManager();
 

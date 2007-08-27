@@ -27,7 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //Added by qt3to4:
 #include <QMenu>
 
-#include <kstaticdeleter.h>
+#include <k3staticdeleter.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -44,7 +44,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "pluginmanager.h"
 #include <kconfiggroup.h>
 
-static KStaticDeleter<PluginManager> pluginManagerDeleter;
+static K3StaticDeleter<PluginManager> pluginManagerDeleter;
 PluginManager* PluginManager::m_self = 0;
 
 PluginManager* PluginManager::self()

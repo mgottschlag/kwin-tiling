@@ -23,7 +23,7 @@
 #include <kcmodulecontainer.h>
 #include <kdirwatch.h>
 #include <k3listview.h>
-#include <kstaticdeleter.h>
+#include <k3staticdeleter.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
 
@@ -40,7 +40,7 @@
 #include <QX11Info>
 
 KickerConfig *KickerConfig::m_self = 0;
-static KStaticDeleter<KickerConfig> staticKickerConfigDeleter;
+static K3StaticDeleter<KickerConfig> staticKickerConfigDeleter;
 
 KickerConfig *KickerConfig::self()
 {
