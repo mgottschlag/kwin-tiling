@@ -22,6 +22,7 @@ Name[zh_TW]=網路管理員
 Comment=Network management using the NetworkManager daemon
 Comment[be]=Кіраванне сеткай пры дапамозе сервіса NetworkManager
 Comment[bg]=Управление на мрежата с демона NetworkManager
+Comment[cs]=Správa sítě pomocí Networkmanager démona
 Comment[csb]=Sprôwianié sécë ùżëwające ùsłëżnotã menadżera sécë
 Comment[de]=Netzwerkverwaltung mit dem Netzwerkverwaltungs-Dienst
 Comment[el]=Διαχείριση δικτύου με χρήση του δαίμονα HAL του freedesktop.org

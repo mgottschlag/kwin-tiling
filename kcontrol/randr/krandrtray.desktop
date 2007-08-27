@@ -67,6 +67,7 @@ GenericName[x-test]=xxScreen Resize & Rotatexx
 GenericName[zh_TW]=螢幕調整大小及旋轉
 Comment=A panel applet for resizing and reorientating X screens.
 Comment[bg]=Аплет за преоразмеряване и ориентация на X.
+Comment[cs]=Applet pro změnu velikosti a orientace obrazovky
 Comment[csb]=Panel apletu do zmianë miarë ë pòłóżenia ekranów X
 Comment[de]=Ein Werkzeug zum Ändern der Bildschirmgröße und -ausrichtung
 Comment[el]=Ένα εφαρμογίδιο αλλαγής μεγέθους και προσανατολισμού οθονών Χ.
