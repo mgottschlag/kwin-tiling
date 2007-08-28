@@ -20,9 +20,7 @@
 #ifndef KCMSOLID_H
 #define KCMSOLID_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 class BackendChooser;
 
@@ -30,7 +28,7 @@ class KcmSolid : public KCModule
 {
     Q_OBJECT
 public:
-    KcmSolid(QWidget *parent, const QStringList &);
+    KcmSolid(QWidget *parent, const QVariantList &);
 
     virtual void load();
     virtual void save();

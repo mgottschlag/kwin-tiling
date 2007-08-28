@@ -19,7 +19,6 @@
 
 #include "kcmsolid.h"
 
-#include <kgenericfactory.h>
 
 #include <kaboutdata.h>
 #include <kdeversion.h>
@@ -27,13 +26,17 @@
 #include <QVBoxLayout>
 
 #include "backendchooser.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 
-typedef KGenericFactory<KcmSolid, QWidget> KcmSolidFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_solid, KcmSolidFactory("kcm_solid"))
+K_PLUGIN_FACTORY(KcmSolidFactory,
+        registerPlugin<KcmSolid>();
+        )
+K_EXPORT_PLUGIN(KcmSolidFactory("kcm_solid"))
 
 
-KcmSolid::KcmSolid(QWidget *parent, const QStringList &args)
+KcmSolid::KcmSolid(QWidget *parent, const QVariantList &args)
     : KCModule(KcmSolidFactory::componentData(), parent, args),
       m_changedChooser(0)
 {
