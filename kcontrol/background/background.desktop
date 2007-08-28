@@ -7,7 +7,6 @@ ServiceTypes=KCModule
 DocPath=kcontrol/background/index.html
 
 X-KDE-Library=kcm_background
-X-KDE-FactoryName=background
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=background

@@ -7,8 +7,8 @@ ServiceTypes=KCModule
 DocPath=kcontrol/kcmdisplay/index.html
 
 X-KDE-Library=kcm_display
-X-KDE-FactoryName=display
 X-KDE-ParentApp=kcontrol
+
 Name=Display
 Name[af]=Skerm
 Name[ar]=العرض

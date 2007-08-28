@@ -2,9 +2,7 @@
 #define __KCM_LAYOUT_H__
 
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 #include <QHash>
 
@@ -24,7 +22,7 @@ class LayoutConfig : public KCModule
   Q_OBJECT
 
 public:
-  LayoutConfig(QWidget *parent, const QStringList &args);
+  LayoutConfig(QWidget *parent, const QVariantList &args);
   virtual ~LayoutConfig();
 
   void load();

@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 #include <kaboutdata.h>
-#include <kgenericfactory.h>
 #include <kglobal.h>
 #include <klocale.h>
 
@@ -29,11 +28,15 @@
 #include "joydevice.h"
 
 #include <stdio.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 //---------------------------------------------------------------------------------------------
 
-typedef KGenericFactory<Joystick, QWidget> JoystickFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_joystick, JoystickFactory("joystick"))
+K_PLUGIN_FACTORY(JoystickFactory,
+        registerPlugin<Joystick>();
+        )
+K_EXPORT_PLUGIN(JoystickFactory("joystick"))
 
 extern "C"
 {
@@ -68,7 +71,7 @@ extern "C"
 
 //---------------------------------------------------------------------------------------------
 
-Joystick::Joystick(QWidget *parent, const QStringList &)
+Joystick::Joystick(QWidget *parent, const QVariantList &)
   : KCModule(JoystickFactory::componentData(), parent)
 {
   setAboutData(new KAboutData("kcmjoystick", 0, ki18n("KDE Joystick Control Module"), "1.0",

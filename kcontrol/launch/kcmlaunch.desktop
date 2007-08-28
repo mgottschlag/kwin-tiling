@@ -7,7 +7,6 @@ DocPath=kcontrol/kcmlaunch/index.html
 Exec=kcmshell kcmlaunch
 
 X-KDE-Library=kcm_launch
-X-KDE-FactoryName=launch
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=desktop

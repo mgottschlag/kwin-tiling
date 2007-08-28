@@ -63,6 +63,8 @@
 #include <kstandarddirs.h>
 #include <kdebug.h>
 #include <kaboutdata.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 #include <config-workspace.h>
 
@@ -76,12 +78,13 @@
 
 #undef Below
 
-#include <kgenericfactory.h>
 
-typedef KGenericFactory<MouseConfig> MouseConfigFactory;
-K_EXPORT_COMPONENT_FACTORY(mouse, MouseConfigFactory("kcminput"))
+K_PLUGIN_FACTORY(MouseConfigFactory,
+        registerPlugin<MouseConfig>(); // mouse
+        )
+K_EXPORT_PLUGIN(MouseConfigFactory("kcminput"))
 
-MouseConfig::MouseConfig(QWidget *parent, const QStringList &args)
+MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
   : KCModule(MouseConfigFactory::componentData(), parent, args)
 {
 

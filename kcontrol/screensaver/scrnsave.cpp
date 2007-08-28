@@ -45,7 +45,6 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <knuminput.h>
 #include <k3process.h>
@@ -58,6 +57,8 @@
 #include <QX11Info>
 #include <QDesktopWidget>
 #include <screensaver_interface.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 template class QList<SaverConfig*>;
 
@@ -70,8 +71,10 @@ const uint widgetEventMask =                 // X event mask
 
 //===========================================================================
 // DLL Interface for kcontrol
-typedef KGenericFactory<KScreenSaver, QWidget > KSSFactory;
-K_EXPORT_COMPONENT_FACTORY (screensaver, KSSFactory("kcmscreensaver") )
+K_PLUGIN_FACTORY(KSSFactory,
+        registerPlugin<KScreenSaver>(); // K_EXPORT_COMPONENT_FACTORY (screensaver
+)
+K_EXPORT_PLUGIN(KSSFactory("kcmscreensaver"))
 
 
 static QString findExe(const QString &exe) {
@@ -81,7 +84,7 @@ static QString findExe(const QString &exe) {
     return result;
 }
 
-KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
+KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     : KCModule(KSSFactory::componentData(), parent)
 {
     mSetupProc = 0;

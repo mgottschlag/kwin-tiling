@@ -7,7 +7,7 @@ ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/keyboard/index.html
 
 X-KDE-Library=kcm_keyboard
-X-KDE-FactoryName=keyboard
+X-KDE-PluginKeyword=keyboard
 X-KDE-Init-Symbol=keyboard
 X-KDE-ParentApp=kcontrol
 

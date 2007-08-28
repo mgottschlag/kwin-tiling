@@ -26,18 +26,15 @@
 
 
 #include <kapplication.h>
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 class Ui_KeyboardConfigWidget;
-class QStringList;
 
 class KeyboardConfig : public KCModule
 {
   Q_OBJECT
 public:
-  KeyboardConfig(QWidget *parent, const QStringList &args);
+  KeyboardConfig(QWidget *parent, const QVariantList &args);
 
   void save();
   void load();

@@ -20,9 +20,7 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 class QTabWidget;
 
@@ -31,7 +29,7 @@ class KCMDisplay : public KCModule
   Q_OBJECT
 
   public:
-    KCMDisplay( QWidget *parent, const QStringList& );
+    KCMDisplay( QWidget *parent, const QVariantList & );
     void load();
     void save();
 

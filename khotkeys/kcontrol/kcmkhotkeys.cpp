@@ -32,7 +32,6 @@
 #include <kglobal.h>
 #include <kfiledialog.h>
 #include <ktoolinvocation.h>
-#include <kgenericfactory.h>
 #include <klibloader.h>
 
 #include <input.h>
@@ -46,8 +45,10 @@
 #include "main_buttons_widget.h"
 #include "voicerecorder.h"
 
-typedef KGenericFactory<KHotKeys::Module> KHotKeysFactory;
-K_EXPORT_COMPONENT_FACTORY(khotkeys, KHotKeysFactory("khotkeys"))
+K_PLUGIN_FACTORY(KHotKeysFactory,
+        registerPlugin<KHotKeys::Module>();
+        )
+K_EXPORT_PLUGIN(KHotKeysFactory("khotkeys"))
 
 extern "C"
 {
@@ -79,7 +80,7 @@ extern "C"
 namespace KHotKeys
 {
 
-Module::Module( QWidget* parent_P, const QStringList & )
+Module::Module( QWidget* parent_P, const QVariantList & )
     : KCModule( KHotKeysFactory::componentData(), parent_P ), _actions_root( NULL ), _current_action_data( NULL ),
         listview_is_changed( false ), deleting_action( false )
     {
@@ -214,6 +215,8 @@ void Module::set_current_action_data( Action_data_base* data_P )
 }
 #include <iostream>
 #include <iomanip>
+#include <KPluginFactory>
+#include <KPluginLoader>
 namespace KHotKeys {
 
 void check_tree( Action_data_group* b, int lev_P = 0 )

@@ -15,9 +15,7 @@
 #include <QLabel>
 #include <QResizeEvent>
 #include <QKeyEvent>
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 #include "kssmonitor.h"
 #include "saverconfig.h"
@@ -39,7 +37,7 @@ class KScreenSaver : public KCModule
 {
     Q_OBJECT
 public:
-    KScreenSaver(QWidget *parent, const QStringList &);
+    KScreenSaver(QWidget *parent, const QVariantList &);
     ~KScreenSaver();
 
     virtual void load();

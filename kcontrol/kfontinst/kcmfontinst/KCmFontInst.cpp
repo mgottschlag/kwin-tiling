@@ -41,7 +41,6 @@
 #include <QComboBox>
 #include <QProcess>
 #include <kaboutdata.h>
-#include <kgenericfactory.h>
 #include <ktoolbar.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
@@ -60,6 +59,8 @@
 #include <ktoggleaction.h>
 #include <kstandarddirs.h>
 #include <kmenu.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 #define CFG_GROUP                  "Main Settings"
 #define CFG_PREVIEW_SPLITTER_SIZES "PreviewSplitterSizes"
@@ -68,8 +69,10 @@
 #define CFG_FONT_MGT_MODE          "MgtMode"
 #define CFG_SHOW_PREVIEW           "ShowPreview"
 
-typedef KGenericFactory<KFI::CKCmFontInst, QWidget> FontInstallFactory;
-K_EXPORT_COMPONENT_FACTORY(fontinst, FontInstallFactory("fontinst"))
+K_PLUGIN_FACTORY(FontInstallFactory,
+        registerPlugin<KFI::CKCmFontInst>();
+        )
+K_EXPORT_PLUGIN(FontInstallFactory("fontinst"))
 
 namespace KFI
 {
@@ -175,7 +178,7 @@ class CProgressBar : public QProgressBar
 int CPushButton::theirHeight=0;
 int CToolBar::theirHeight=0;
 
-CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
+CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
             : KCModule(FontInstallFactory::componentData(), parent),
               itsPreview(NULL),
               itsConfig(KFI_UI_CFG_FILE),

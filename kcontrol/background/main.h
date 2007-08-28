@@ -10,9 +10,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <kconfig.h>
 
 class BGDialog;
@@ -25,7 +23,7 @@ class KBackground: public KCModule
     Q_OBJECT
 
 public:
-    KBackground(QWidget *parent, const QStringList &);
+    KBackground(QWidget *parent, const QVariantList &);
     ~KBackground();
 
     virtual void load();

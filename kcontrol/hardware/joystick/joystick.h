@@ -34,7 +34,7 @@ class Joystick: public KCModule
   Q_OBJECT
 
   public:
-    explicit Joystick(QWidget *parent = 0, const QStringList &list = QStringList());
+    explicit Joystick(QWidget *parent = 0, const QVariantList &list = QVariantList());
 
     virtual void load();
     virtual void defaults();

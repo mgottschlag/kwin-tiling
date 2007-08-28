@@ -27,19 +27,23 @@
 
 #include <QtDBus/QtDBus>
 #include <kapplication.h>
+#include <klocale.h>
 #include <kconfig.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <knuminput.h>
 
 #include "kcmlaunch.h"
 #include "krunner_interface.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
 
-typedef KGenericFactory<LaunchConfig, QWidget> LaunchFactory;
-K_EXPORT_COMPONENT_FACTORY( launch, LaunchFactory("kcmlaunch") )
+K_PLUGIN_FACTORY(LaunchFactory,
+        registerPlugin<LaunchConfig>();
+        )
+K_EXPORT_PLUGIN(LaunchFactory("kcmlaunch"))
 
 
-LaunchConfig::LaunchConfig(QWidget * parent, const QStringList &)
+LaunchConfig::LaunchConfig(QWidget * parent, const QVariantList &)
   : KCModule(LaunchFactory::componentData(), parent)
 {
     QVBoxLayout* Form1Layout = new QVBoxLayout( this );

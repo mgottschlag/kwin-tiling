@@ -21,11 +21,8 @@
 #ifndef KCONTROL_NIC_H
 #define KCONTROL_NIC_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
-class QStringList;
 class QPushButton;
 class Q3ListView;
 
@@ -33,7 +30,7 @@ class KCMNic:public KCModule
 {
    Q_OBJECT
    public:
-      explicit KCMNic(QWidget *parent=0, const QStringList &list = QStringList( ));
+      explicit KCMNic(QWidget *parent=0, const QVariantList &list = QVariantList( ));
 
    protected Q_SLOTS:
       void update();

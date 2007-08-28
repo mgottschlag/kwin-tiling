@@ -22,7 +22,6 @@
 #include <kapplication.h>
 #include <kiconloader.h>
 #include <ktoolinvocation.h>
-#include <kgenericfactory.h>
 
 #include "extension.h"
 #include "kxkbconfig.h"
@@ -32,6 +31,8 @@
 #include "ui_kcmlayoutwidget.h"
 
 #include "kcmlayout.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
 #include "kcmlayout.moc"
 
 
@@ -97,11 +98,10 @@ static Q3ListViewItem* copyLVI(const Q3ListViewItem* src, Q3ListView* parent)
     return ret;
 }
 
-typedef KGenericFactory<LayoutConfig> LayoutConfigFactory;
-K_EXPORT_COMPONENT_FACTORY(keyboard_layout, LayoutConfigFactory("kcmlayout"))
+K_PLUGIN_FACTORY_DECLARATION(KeyboardConfigFactory)
 
-LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
-  : KCModule(LayoutConfigFactory::componentData(), parent),
+LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
+  : KCModule(KeyboardConfigFactory::componentData(), parent),
     m_rules(NULL)
 {
  // QVBoxLayout *main = new QVBoxLayout(this, 0, KDialog::spacingHint());

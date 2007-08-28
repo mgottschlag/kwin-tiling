@@ -46,16 +46,21 @@
 #include <kstandarddirs.h>
 #include <kprocess.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 #include "kcmmisc.h"
 #include "ui_kcmmiscwidget.h"
+#include "kcmlayout.h"
 #include <X11/Xlib.h>
 
-typedef KGenericFactory<KeyboardConfig> KeyboardConfigFactory;
-K_EXPORT_COMPONENT_FACTORY(keyboard, KeyboardConfigFactory("kcmmisc"))
+K_PLUGIN_FACTORY(KeyboardConfigFactory,
+        registerPlugin<KeyboardConfig>("keyboard");
+        registerPlugin<LayoutConfig>("keyboard_layout");
+        )
+K_EXPORT_PLUGIN(KeyboardConfigFactory("kcmmisc", "kxkb")) // Messages.sh extracts into kxkb.pot
 
-KeyboardConfig::KeyboardConfig(QWidget *parent, const QStringList &)
+KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
 	: KCModule(KeyboardConfigFactory::componentData(), parent)
 {
   QString wtstr;

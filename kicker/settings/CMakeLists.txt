@@ -4,6 +4,7 @@
 ########### next target ###############
 
 set(kcm_kicker_PART_SRCS 
+   kcmodulecontainer.cpp
    positiontab_impl.cpp 
    hidingtab_impl.cpp 
    lookandfeeltab_impl.cpp 

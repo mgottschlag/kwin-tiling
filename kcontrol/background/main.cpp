@@ -22,7 +22,6 @@
 #include <kaboutdata.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kgenericfactory.h>
 #include <kdialog.h>
 #include "bgdialog.h"
 
@@ -32,17 +31,21 @@
 /* as late as possible, as it includes some X headers without protecting them */
 #include <X11/Xlib.h>
 #include <QX11Info>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 /**** DLL Interface ****/
-typedef KGenericFactory<KBackground, QWidget> KBackGndFactory;
-K_EXPORT_COMPONENT_FACTORY( background, KBackGndFactory("kcmbackground"))
+K_PLUGIN_FACTORY(KBackGndFactory,
+        registerPlugin<KBackground>();
+        )
+K_EXPORT_PLUGIN(KBackGndFactory("kcmbackground"))
 
 /**** KBackground ****/
 KBackground::~KBackground( )
 {
 }
 
-KBackground::KBackground(QWidget *parent, const QStringList &args)
+KBackground::KBackground(QWidget *parent, const QVariantList &args)
     : KCModule(KBackGndFactory::componentData(), parent, args)
 {
     int screen_number = 0;

@@ -24,15 +24,19 @@
 #include <QDesktopWidget>
 
 #include <kcmoduleloader.h>
+#include <klocale.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 
 #include "display.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
 
-typedef KGenericFactory<KCMDisplay, QWidget> DisplayFactory;
-K_EXPORT_COMPONENT_FACTORY ( display, DisplayFactory( "display" ) )
+K_PLUGIN_FACTORY(DisplayFactory,
+        registerPlugin<KCMDisplay>();
+        )
+K_EXPORT_PLUGIN(DisplayFactory("display"))
 
-KCMDisplay::KCMDisplay( QWidget *parent, const QStringList& )
+KCMDisplay::KCMDisplay( QWidget *parent, const QVariantList & )
     : KCModule( DisplayFactory::componentData(), parent )
     , m_changed(false)
 {

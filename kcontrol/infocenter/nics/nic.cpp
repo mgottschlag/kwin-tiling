@@ -33,7 +33,6 @@
 
 #include <kaboutdata.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <kglobal.h>
 
 #include <QLayout>
@@ -58,6 +57,8 @@
 #endif
 
 #include <sys/ioctl.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 #ifndef	HAVE_STRUCT_SOCKADDR_SA_LEN
 	#undef HAVE_GETNAMEINFO
@@ -71,8 +72,10 @@
 	QString flags_tos (unsigned int flags);
 #endif
 
-typedef KGenericFactory<KCMNic, QWidget> KCMNicFactory;
-K_EXPORT_COMPONENT_FACTORY (nic, KCMNicFactory("kcmnic"))
+K_PLUGIN_FACTORY(KCMNicFactory,
+        registerPlugin<KCMNic>();
+)
+K_EXPORT_PLUGIN(KCMNicFactory("kcmnic"))
 
 struct MyNIC
 {
@@ -88,7 +91,7 @@ typedef Q3PtrList<MyNIC> NICList;
 
 NICList* findNICs();
 
-KCMNic::KCMNic(QWidget *parent, const QStringList &)
+KCMNic::KCMNic(QWidget *parent, const QVariantList &)
    :KCModule(KCMNicFactory::componentData(), parent)
 {
    QVBoxLayout *box=new QVBoxLayout(this);

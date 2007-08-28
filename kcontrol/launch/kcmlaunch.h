@@ -18,9 +18,7 @@
 #ifndef __kcmlaunch_h__
 #define __kcmlaunch_h__
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 class QCheckBox;
 class QComboBox;
@@ -33,7 +31,7 @@ class LaunchConfig : public KCModule
 
   public:
 
-    explicit LaunchConfig(QWidget * parent = 0, const QStringList &list = QStringList() );
+    explicit LaunchConfig(QWidget * parent = 0, const QVariantList &list = QVariantList() );
 
     virtual ~LaunchConfig();
 
