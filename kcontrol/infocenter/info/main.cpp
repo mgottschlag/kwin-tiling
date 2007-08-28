@@ -25,57 +25,94 @@
 
 #include "memory.h"
 #include <kcomponentdata.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
  
 /* we have to include the info.cpp-file, to get the DEFINES about possible properties.
    example: we need the "define INFO_CPU_AVAILABLE" */
 #include "info.cpp"
-#include <kgenericfactory.h>
-class QStringList;
 
-#define CREATE_FACTORY(type, name, symbol) \
-class K##type##InfoWidget; \
-typedef KGenericFactory<K##type##InfoWidget> K##type##InfoWidgetFactory; \
+K_PLUGIN_FACTORY_DECLARATION(KInfoModulesFactory)
+
+#define CREATE_FACTORY(type, name) \
 class K##type##InfoWidget : public KInfoListWidget \
 { \
     public: \
-        K##type##InfoWidget(QWidget *parent, const QStringList &) \
-            : KInfoListWidget(K##type##InfoWidgetFactory::componentData(), \
+        K##type##InfoWidget(QWidget *parent, const QVariantList &) \
+            : KInfoListWidget(KInfoModulesFactory::componentData(), \
                     name, parent, GetInfo_##type) \
         { \
         } \
 }; \
-K_EXPORT_COMPONENT_FACTORY(symbol, K##type##InfoWidgetFactory("kcminfo"))
 
 #ifdef INFO_CPU_AVAILABLE
-CREATE_FACTORY(CPU, i18n("Processor(s)"), cpu)
+CREATE_FACTORY(CPU, i18n("Processor(s)"))
 #endif
 #ifdef INFO_IRQ_AVAILABLE
-CREATE_FACTORY(IRQ, i18n("Interrupt"), irq)
+CREATE_FACTORY(IRQ, i18n("Interrupt"))
 #endif
 #ifdef INFO_PCI_AVAILABLE
-CREATE_FACTORY(PCI, i18n("PCI"), pci)
+CREATE_FACTORY(PCI, i18n("PCI"))
 #endif
 #ifdef INFO_DMA_AVAILABLE
-CREATE_FACTORY(DMA, i18n("DMA-Channel"), dma)
+CREATE_FACTORY(DMA, i18n("DMA-Channel"))
 #endif
 #ifdef INFO_IOPORTS_AVAILABLE
-CREATE_FACTORY(IO_Ports, i18n("I/O-Port"), ioports)
+CREATE_FACTORY(IO_Ports, i18n("I/O-Port"))
 #endif
 #ifdef INFO_SOUND_AVAILABLE
-CREATE_FACTORY(Sound, i18n("Soundcard"), sound)
+CREATE_FACTORY(Sound, i18n("Soundcard"))
 #endif
 #ifdef INFO_SCSI_AVAILABLE
-CREATE_FACTORY(SCSI, i18n("SCSI"), scsi)
+CREATE_FACTORY(SCSI, i18n("SCSI"))
 #endif
 #ifdef INFO_DEVICES_AVAILABLE
-CREATE_FACTORY(Devices, i18n("Devices"), devices)
+CREATE_FACTORY(Devices, i18n("Devices"))
 #endif
 #ifdef INFO_PARTITIONS_AVAILABLE
-CREATE_FACTORY(Partitions, i18n("Partitions"), partitions)
+CREATE_FACTORY(Partitions, i18n("Partitions"))
 #endif
 #ifdef INFO_XSERVER_AVAILABLE
-CREATE_FACTORY(XServer_and_Video, i18n("X-Server"), xserver)
+CREATE_FACTORY(XServer_and_Video, i18n("X-Server"))
 #endif
 #ifdef INFO_OPENGL_AVAILABLE
-CREATE_FACTORY(OpenGL, i18n("OpenGL"), opengl)
+CREATE_FACTORY(OpenGL, i18n("OpenGL"))
 #endif
+
+K_PLUGIN_FACTORY_DEFINITION(KInfoModulesFactory,
+        registerPlugin<KMemoryWidget>("memory");
+#ifdef INFO_CPU_AVAILABLE
+        registerPlugin<KCPUInfoWidget>("cpu");
+#endif
+#ifdef INFO_IRQ_AVAILABLE
+        registerPlugin<KIRQInfoWidget>("irq");
+#endif
+#ifdef INFO_PCI_AVAILABLE
+        registerPlugin<KPCIInfoWidget>("pci");
+#endif
+#ifdef INFO_DMA_AVAILABLE
+        registerPlugin<KDMAInfoWidget>("dma");
+#endif
+#ifdef INFO_IOPORTS_AVAILABLE
+        registerPlugin<KIO_PortsInfoWidget>("ioports");
+#endif
+#ifdef INFO_SOUND_AVAILABLE
+        registerPlugin<KSoundInfoWidget>("sound");
+#endif
+#ifdef INFO_SCSI_AVAILABLE
+        registerPlugin<KSCSIInfoWidget>("scsi");
+#endif
+#ifdef INFO_DEVICES_AVAILABLE
+        registerPlugin<KDevicesInfoWidget>("devices");
+#endif
+#ifdef INFO_PARTITIONS_AVAILABLE
+        registerPlugin<KPartitionsInfoWidget>("partitions");
+#endif
+#ifdef INFO_XSERVER_AVAILABLE
+        registerPlugin<KXServer_and_VideoInfoWidget>("xserver");
+#endif
+#ifdef INFO_OPENGL_AVAILABLE
+        registerPlugin<KOpenGLInfoWidget>("opengl");
+#endif
+        )
+K_EXPORT_PLUGIN(KInfoModulesFactory("kcminfo"))

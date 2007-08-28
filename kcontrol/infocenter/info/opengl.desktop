@@ -8,7 +8,7 @@ DocPath=kinfocenter/opengl/index.html
 
 
 X-KDE-Library=kcm_info
-X-KDE-FactoryName=opengl
+X-KDE-PluginKeyword=opengl
 X-KDE-ParentApp=kinfocenter
 
 Name=OpenGL

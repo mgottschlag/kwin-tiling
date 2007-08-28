@@ -9,7 +9,7 @@ Categories=Qt;KDE;X-KDE-information;
 
 
 X-KDE-Library=kcm_info
-X-KDE-FactoryName=ioports
+X-KDE-PluginKeyword=ioports
 X-KDE-ParentApp=kinfocenter
 
 Name=IO-Ports

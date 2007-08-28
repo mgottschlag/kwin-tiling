@@ -8,7 +8,7 @@ DocPath=kinfocenter/pci/index.html
 
 
 X-KDE-Library=kcm_info
-X-KDE-FactoryName=pci
+X-KDE-PluginKeyword=pci
 X-KDE-ParentApp=kinfocenter
 
 Name=PCI

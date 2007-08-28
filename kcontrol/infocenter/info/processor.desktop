@@ -8,7 +8,7 @@ DocPath=kinfocenter/processor/index.html
 
 
 X-KDE-Library=kcm_info
-X-KDE-FactoryName=cpu
+X-KDE-PluginKeyword=cpu
 X-KDE-ParentApp=kinfocenter
 
 Name=Processor

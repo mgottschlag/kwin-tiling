@@ -9,7 +9,7 @@ Categories=Qt;KDE;X-KDE-information;
 
 
 X-KDE-Library=kcm_info
-X-KDE-FactoryName=dma
+X-KDE-PluginKeyword=dma
 X-KDE-ParentApp=kinfocenter
 
 Name=DMA-Channels

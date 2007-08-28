@@ -8,7 +8,7 @@ DocPath=kinfocenter/partitions/index.html
 
 
 X-KDE-Library=kcm_info
-X-KDE-FactoryName=partitions
+X-KDE-PluginKeyword=partitions
 X-KDE-ParentApp=kinfocenter
 
 

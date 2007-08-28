@@ -6,9 +6,7 @@
 #include <QPushButton>
 #include <QTimer>
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <kaboutdata.h>
 class QStringList;
 
@@ -24,7 +22,7 @@ class KMemoryWidget:public KCModule {
   Q_OBJECT
 
   public:
-    KMemoryWidget(QWidget *parent, const QStringList &);
+    KMemoryWidget(QWidget *parent, const QVariantList &);
     ~KMemoryWidget();
 
     QString quickHelp() const;
