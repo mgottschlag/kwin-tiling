@@ -70,8 +70,9 @@ namespace KFI
 K_PLUGIN_FACTORY(CFontViewPartFactory, registerPlugin<CFontViewPart>();)
 K_EXPORT_PLUGIN(CFontViewPartFactory("kfontview"))
 
-CFontViewPart::CFontViewPart(QObject *parent, const QList<QVariant> &args)
-             : itsConfig(KGlobal::config()),
+CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList<QVariant> &args)
+             : KParts::ReadOnlyPart(parent),
+               itsConfig(KGlobal::config()),
                itsProc(NULL),
                itsTempDir(NULL)
 {
@@ -82,7 +83,7 @@ CFontViewPart::CFontViewPart(QObject *parent, const QList<QVariant> &args)
     // create browser extension (for printing when embedded into browser)
     itsExtension = new BrowserExtension(this);
 
-    itsFrame=new QFrame(::qobject_cast<QWidget *>(parent));
+    itsFrame=new QFrame(parentWidget);
 
     QFrame    *previewFrame=new QFrame(itsFrame);
     QWidget   *controls=new QWidget(itsFrame);

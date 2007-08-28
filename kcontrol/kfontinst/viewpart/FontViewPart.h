@@ -50,7 +50,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
 
     public:
 
-    CFontViewPart(QObject *parent=0, const QList<QVariant> &args=QList<QVariant>());
+    CFontViewPart(QWidget *parentWidget, QObject *parent, const QList<QVariant> &args);
     virtual ~CFontViewPart();
 
     bool openUrl(const KUrl &url);
