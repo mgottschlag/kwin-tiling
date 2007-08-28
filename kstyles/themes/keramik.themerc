@@ -23,6 +23,7 @@ Name[x-test]=xxKeramikxx
 ConfigPage=kstyle_keramik_config
 Comment=A style using alphablending
 Comment[ja]=アルファブレンディングを使用したスタイル
+Comment[km]=រចនាប័ទ្ម​ប្រើតាម​អក្សរ​ក្រម
 Comment[nds]=En Stil mit Alpha-Överblennen
 Comment[pt]=Um estilo que usa transparências
 Comment[pt_BR]=Um estilo que usa transparências

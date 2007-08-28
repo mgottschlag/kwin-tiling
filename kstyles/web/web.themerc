@@ -2,6 +2,7 @@
 Name=Web style
 Name[ga]=Stíl Ghréasáin
 Name[ja]=ウェブスタイル
+Name[km]=រចនាប័ទ្ម​បណ្តាញ​
 Name[nds]=Web-Stil
 Name[pt]=Estilo Web
 Name[pt_BR]=Estilo Web
@@ -9,6 +10,7 @@ Name[sv]=Webbstil
 Name[zh_TW]=網頁樣式
 Comment=Web widget style
 Comment[ja]=ウェブウィジェットスタイル
+Comment[km]=រចនាប័ទ្ម​ធាតុក្រាហ្វិក​បណ្តាល​
 Comment[nds]=Knoopstil "Web"
 Comment[pt]=Estilo gráfico Web
 Comment[pt_BR]=Estilo gráfico Web

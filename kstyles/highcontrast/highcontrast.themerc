@@ -2,6 +2,7 @@
 Name=HighContrast
 Name[ga]=Ardchodarsnacht
 Name[ja]=高コントラスト
+Name[km]=កម្រិត​ពណ៌​ខ្ពស់​
 Name[nds]=Hooch Kontrast
 Name[pt]=Alto Contraste
 Name[pt_BR]=Alto Contraste
@@ -10,6 +11,7 @@ Name[zh_TW]=高對比
 ConfigPage=kstyle_highcontrast_config
 Comment=A style that works well with high contrast color schemes
 Comment[ja]=高コントラストの色スキームにふさわしいスタイル
+Comment[km]=រចនាប័ទ្ម​ដែល​ធ្វើ​ការ​បាន​ល្អ​ជាមួយ​កម្រិត​ពណ៌​ចម្រុះខ្ពស់​
 Comment[nds]=En Stil, de goot to Mustern mit hogen Kontrast passt.
 Comment[pt]=Um estilo que funciona bem com esquemas de cores de alto contraste
 Comment[pt_BR]=Um estilo que funciona bem com esquemas de cores de alto contraste
