@@ -53,6 +53,8 @@
 #include <X11/Xlib.h>
 #include <QX11Info>
 
+#include <KPluginFactory>
+
 // X11 headers
 #undef Bool
 #undef Unsorted
@@ -130,8 +132,8 @@ static const char *aa_vbgr_xpm[]={
 static QPixmap aaPixmaps[]={ QPixmap(aa_rgb_xpm), QPixmap(aa_bgr_xpm), QPixmap(aa_vrgb_xpm), QPixmap(aa_vbgr_xpm) };
 
 /**** DLL Interface ****/
-typedef KGenericFactory<KFonts, QWidget> FontFactory;
-K_EXPORT_COMPONENT_FACTORY( fonts, FontFactory("kcmfonts") )
+K_PLUGIN_FACTORY(FontFactory, registerPlugin<KFonts>(); )
+K_EXPORT_PLUGIN(FontFactory("kcmfonts"))
 
 /**** FontUseItem ****/
 
@@ -507,7 +509,7 @@ static QString desktopConfigName()
   return name;
 }
 
-KFonts::KFonts(QWidget *parent, const QStringList &args)
+KFonts::KFonts(QWidget *parent, const QVariantList &args)
     :   KCModule(FontFactory::componentData(), parent, args)
 {
   QStringList nameGroupKeyRc;
