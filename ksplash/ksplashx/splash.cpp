@@ -166,7 +166,7 @@ static const char* findFileWithDepth( const char* name, int* w, int* h, bool loc
         fprintf( stderr, "FINDFILE2: %s %s\n", name, tmp );
 #endif
         struct stat stat_buf;
-        if( stat( tmp, &stat_buf ) != 0 || stat_buf.st_mtime < timestamp )
+        if( stat( tmp, &stat_buf ) != 0 || stat_buf.st_mtime != timestamp )
             {
             tmp[ 0 ] = '\0';
 #ifdef DEBUG
@@ -235,7 +235,7 @@ static void pregeneratePixmap( const char* file, const char* real_file, int widt
         nice( 10 );
         sleep( 30 );
         char* args[ 20 ];
-        args[ 0 ] = "ksplashx_scale";
+        args[ 0 ] = const_cast< char* >( "ksplashx_scale" );
         args[ 1 ] = theme_name;
         args[ 2 ] = ( char* ) file;
         args[ 3 ] = ( char* ) real_file;
