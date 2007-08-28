@@ -21,15 +21,18 @@
 
 #include <kaboutdata.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 
 #include "usbdevices.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
 #include "kcmusb.moc"
 
-typedef KGenericFactory<USBViewer, QWidget > USBFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_usb, USBFactory("kcmusb") )
+K_PLUGIN_FACTORY(USBFactory,
+        registerPlugin<USBViewer>();
+        )
+K_EXPORT_PLUGIN(USBFactory("kcmusb"))
 
-USBViewer::USBViewer(QWidget *parent, const QStringList &)
+USBViewer::USBViewer(QWidget *parent, const QVariantList &)
   : KCModule(USBFactory::componentData(), parent)
 {
   setButtons(Help);

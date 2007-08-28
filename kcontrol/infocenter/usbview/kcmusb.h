@@ -29,7 +29,7 @@ class USBViewer : public KCModule
 
 public:
 
-  explicit USBViewer(QWidget *parent = 0L, const QStringList &list=QStringList() );
+  explicit USBViewer(QWidget *parent = 0L, const QVariantList &list=QVariantList() );
 
   void load();
 
