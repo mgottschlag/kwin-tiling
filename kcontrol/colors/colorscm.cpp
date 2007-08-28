@@ -46,9 +46,10 @@
 #include <X11/Xatom.h>
 #endif
 
-/**** DLL Interface ****/
-typedef KGenericFactory<KColorScheme , QWidget> KolorFactory;
-K_EXPORT_COMPONENT_FACTORY( colors, KolorFactory("kcmcolors") )
+K_PLUGIN_FACTORY(KolorFactory,
+        registerPlugin<KColorScheme>();
+        )
+K_EXPORT_PLUGIN(KolorFactory("kcmcolors"))
 
 class KColorSchemeEntry {
 public:
@@ -93,7 +94,7 @@ QPixmap mkColorPreview(const WidgetCanvas *cs)
 
 /**** KColorScheme ****/
 
-KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
+KColorScheme::KColorScheme(QWidget *parent, const QVariantList &)
     : KCModule(KolorFactory::componentData(), parent)
 {
     nSysSchemes = 2;

@@ -12,9 +12,7 @@
 #include <QObject>
 
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <kdialog.h>
 
 #include "widgetcanvas.h"
@@ -35,7 +33,7 @@ class KColorScheme: public KCModule
     Q_OBJECT
 
 public:
-    KColorScheme(QWidget *parent, const QStringList &);
+    KColorScheme(QWidget *parent, const QVariantList &);
     ~KColorScheme();
 
     virtual void load();
