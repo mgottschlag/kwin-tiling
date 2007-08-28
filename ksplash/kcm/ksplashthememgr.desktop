@@ -8,7 +8,6 @@ Type=Service
 ServiceTypes=KCModule
 
 X-KDE-Library=kcm_ksplashthemes
-X-KDE-FactoryName=ksplashthemes
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=look-and-feel

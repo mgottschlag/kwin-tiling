@@ -20,15 +20,17 @@
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
 #include <kdebug.h>
-#include <kgenericfactory.h>
 #include <kstandarddirs.h>
 
 #include "installer.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 class KSplashThemeMgr : public KCModule
 {
+    Q_OBJECT
 public:
-  KSplashThemeMgr( QWidget *parent, const QStringList &/*unused*/);
+  KSplashThemeMgr( QWidget *parent, const QVariantList &/*unused*/);
   ~KSplashThemeMgr();
 
   QString quickHelp() const;
@@ -42,12 +44,14 @@ private:
   SplashInstaller *mInstaller;
 };
 
-typedef KGenericFactory< KSplashThemeMgr, QWidget > KSplashThemeMgrFactory;
-K_EXPORT_COMPONENT_FACTORY( ksplashthemes, KSplashThemeMgrFactory("ksplashthemes") )
+K_PLUGIN_FACTORY(KSplashThemeMgrFactory,
+        registerPlugin< KSplashThemeMgr>();
+        )
+K_EXPORT_PLUGIN(KSplashThemeMgrFactory("ksplashthemes"))
 
 // -----------------------------------------------------------------------------------------
 
-KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const QStringList &args)
+KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const QVariantList &args)
   : KCModule( KSplashThemeMgrFactory::componentData(), parent, args ), mInstaller(new SplashInstaller(this))
 {
   init();
@@ -107,3 +111,5 @@ void KSplashThemeMgr::defaults()
 {
   mInstaller->defaults();
 }
+
+#include "main.moc"
