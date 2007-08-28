@@ -28,18 +28,21 @@
 
 #include <kapplication.h>
 #include <kconfig.h>
-#include <kgenericfactory.h>
 #include <klineedit.h>
 #include <kworkspace.h>
 #include <QtDBus/QtDBus>
 
 #include "kcmsmserver.h"
 #include "smserverconfigimpl.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
 
-typedef KGenericFactory<SMServerConfig, QWidget > SMSFactory;
-K_EXPORT_COMPONENT_FACTORY (smserver, SMSFactory("kcmsmserver") )
+K_PLUGIN_FACTORY(SMSFactory,
+        registerPlugin<SMServerConfig>();
+        )
+K_EXPORT_PLUGIN(SMSFactory("kcmsmserver"))
 
-SMServerConfig::SMServerConfig( QWidget *parent, const QStringList & )
+SMServerConfig::SMServerConfig( QWidget *parent, const QVariantList & )
   : KCModule (SMSFactory::componentData(), parent)
 {
     setQuickHelp( i18n("<h1>Session Manager</h1>"
