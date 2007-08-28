@@ -42,11 +42,11 @@ namespace KFI
 
 CViewer::CViewer()
 {
-    KLibFactory *factory=KLibLoader::self()->factory("libkfontviewpart");
+    KPluginFactory *factory=KLibLoader::self()->factory("libkfontviewpart");
 
     if(factory)
     {
-        itsPreview=(KParts::ReadOnlyPart *)factory->create(this, "KParts::ReadOnlyPart");
+        itsPreview=factory->create<KParts::ReadOnlyPart>(this);
 
         actionCollection()->addAction(KStandardAction::Open, this, SLOT(fileOpen()));
         actionCollection()->addAction(KStandardAction::Quit, kapp, SLOT(quit()));

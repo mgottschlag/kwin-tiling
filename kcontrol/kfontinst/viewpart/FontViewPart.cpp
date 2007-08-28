@@ -57,6 +57,8 @@
 #include <kzip.h>
 #include <ktempdir.h>
 #include <kstandarddirs.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
 #include <fontconfig/fontconfig.h>
 
 // Enable the following to allow printing of non-installed fonts. Doesnt seem to work :-(
@@ -65,7 +67,10 @@
 namespace KFI
 {
 
-CFontViewPart::CFontViewPart(QWidget *parent)
+K_PLUGIN_FACTORY(CFontViewPartFactory, registerPlugin<CFontViewPart>();)
+K_EXPORT_PLUGIN(CFontViewPartFactory("kfontview"))
+
+CFontViewPart::CFontViewPart(QObject *parent, const QList<QVariant> &args)
              : itsConfig(KGlobal::config()),
                itsProc(NULL),
                itsTempDir(NULL)
@@ -77,7 +82,7 @@ CFontViewPart::CFontViewPart(QWidget *parent)
     // create browser extension (for printing when embedded into browser)
     itsExtension = new BrowserExtension(this);
 
-    itsFrame=new QFrame(parent);
+    itsFrame=new QFrame(::qobject_cast<QWidget *>(parent));
 
     QFrame    *previewFrame=new QFrame(itsFrame);
     QWidget   *controls=new QWidget(itsFrame);

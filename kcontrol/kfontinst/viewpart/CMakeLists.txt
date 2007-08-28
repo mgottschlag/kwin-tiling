@@ -3,7 +3,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/
      )
 
-set(kfontviewpart_PART_SRCS ${libkfontinstview_SRCS} FontViewPart.cpp FontViewPartFactory.cpp )
+set(kfontviewpart_PART_SRCS ${libkfontinstview_SRCS} FontViewPart.cpp )
 
 kde4_add_plugin(kfontviewpart WITH_PREFIX ${kfontviewpart_PART_SRCS})
 
