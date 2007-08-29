@@ -33,7 +33,7 @@ class TimeEngine : public Plasma::DataEngine
     Q_PROPERTY(bool reportSeconds READ reportSeconds WRITE setReportSeconds)
 
     public:
-        TimeEngine( QObject* parent, const QStringList& args );
+        TimeEngine(QObject* parent, const QVariantList& args);
         ~TimeEngine();
 
         bool reportSeconds();

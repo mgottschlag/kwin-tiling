@@ -30,7 +30,7 @@
 
 #include "plasma/datacontainer.h"
 
-TimeEngine::TimeEngine(QObject* parent, const QStringList& args)
+TimeEngine::TimeEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent)
 {
     Q_UNUSED(args)
