@@ -72,6 +72,7 @@ add_subdirectory( kcontrol )
 add_subdirectory( ksystraycmd )
 
 # data
+add_subdirectory( doc )
 add_subdirectory( wallpapers )
 add_subdirectory( menu )
 

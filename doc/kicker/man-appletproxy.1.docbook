@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<!DOCTYPE refentry PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
+<!ENTITY % English "INCLUDE">
+]>
+
+<refentry lang="&language;">
+<refentryinfo>
+<title>KDE User's Manual</title>
+<author><personname>
+<firstname>Lauri</firstname>
+<surname>Watts</surname>
+</personname>
+&Lauri.Watts.mail;</author>
+<date>Feb 25, 2005</date>
+<productname>K Desktop Environment</productname>
+</refentryinfo>
+
+<refmeta>
+<refentrytitle><command>appletproxy</command></refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname><command>appletproxy</command></refname>
+<refpurpose>&kde; panel applet proxy</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>appletproxy</command>
+<arg choice="req">desktopfile</arg>
+<arg choice="opt">--configfile <replaceable>file</replaceable></arg>
+<arg choice="opt">--callbackid <replaceable>id</replaceable></arg>
+<arg choice="opt">KDE Generic Options</arg>
+<arg choice="opt">Qt Generic Options</arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+<para><application>appletproxy</application> is a small application that
+allows you to run a &kicker; (&kde; panel) applet outside of &kicker;
+itself.  The applet will appear in its own window, making this a convenient
+way to debug panel applets.</para>
+</refsect1>
+
+<refsect1>
+<title>Options</title>
+
+<variablelist>
+<varlistentry>
+<term><option>desktopfile</option></term>
+<listitem><para>The applet's desktop file</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--configfile
+<replaceable>file</replaceable></option></term>
+<listitem><para>The config file to be used</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--callback <replaceable>id</replaceable></option></term>
+<listitem>
+<para>&DCOP; callback id of the applet container.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</refsect1>
+
+
+<refsect1>
+<title>See Also</title>
+
+<para>kicker(1)</para>
+
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+
+<variablelist>
+<varlistentry>
+<term><userinput><command>appletproxy</command> <parameter>knewsticker</parameter></userinput></term>
+<listitem>
+<para>Run &knewsticker; in a standalone window.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+<title>Authors</title>
+<para>&kappname; was written by &Matthias.Elter; and &Matthias.Ettrich; and
+is maintained by &Aaron.J.Seigo; &Aaron.J.Seigo.mail;</para>
+
+<para>This man page was written for &kde; 3.4 by &Lauri.Watts;
+&Lauri.Watts.mail;</para>
+</refsect1>
+
+</refentry>

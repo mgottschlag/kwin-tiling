@@ -1,5 +1,5 @@
-set(confproc ${CMAKE_SOURCE_DIR}/workspace/kdm/confproc.pl)
-set(confdef ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def)
+set(confproc ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdm/confproc.pl)
+set(confdef ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdm/config.def)
 set(confdoc ${CMAKE_CURRENT_SOURCE_DIR}/kdmrc-ref.docbook)
 add_custom_command(
 	OUTPUT ${confdoc}

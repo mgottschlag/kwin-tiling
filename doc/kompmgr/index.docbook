@@ -1,0 +1,433 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
+ <!ENTITY kappname "kompmgr">
+ <!ENTITY package "kwin">
+ <!ENTITY % English "INCLUDE">
+ <!ENTITY % addindex "IGNORE">
+]>
+
+<book lang="&language;">
+<bookinfo>
+<title>&kappname; Information</title>
+
+<authorgroup>
+<author>
+<personname><firstname>Thomas</firstname><surname>Luebking</surname></personname>
+<email>thomas.luebking@web.de</email>
+</author>
+
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<copyright>
+<year>2005</year>
+<holder>Thomas Luebking</holder>
+</copyright>
+
+<legalnotice>&FDLNotice;</legalnotice>
+
+<date>2005-01-15</date>
+<releaseinfo>2.0.1</releaseinfo>
+
+<abstract>
+<para>&kappname; is a composite rendering engine to be used by &kwin;.</para>
+<para>This document is rather a general explanation of what it does, 
+how it works and what the restrictions are than a documentation how to use
+it (as it works in the background automatically).</para> 
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>kwin</keyword>
+<keyword>render engine</keyword>
+</keywordset>
+</bookinfo>
+
+<chapter id="introduction">
+<title>Introduction</title>
+
+<para>&kappname; is based upon <application>xcompmgr</application>, Keith
+Packards reference composing implementation for the use of the new X
+features.</para>
+
+<para>A composite manager catches the output of the X windows and renders
+them into a single picture that will be displayed on the screen. The advantage
+of doing so is that you can do basically anything with the windows contents,
+including blending them together (translucency) or attaching shadows. You
+could also tint them, add a nasty advertise on any window, squeeze them,
+fract them, add scanlines, or anything else you can imagine, limited by
+your hardware.</para>
+
+</chapter>
+
+<chapter id="xorg">
+<title>Xorg</title>
+
+<para>You necessarily need <emphasis>X.org 6.8 or later</emphasis> to have
+&kappname; work. X.org 6.7 or older or XFree86 won't work.</para>
+
+<sect1 id="xsetup">
+<title>Setup</title>
+<para>You need to explicitly enable the Composite extension. Add a
+new Section to your X.org configuration file:</para>
+
+<programlisting>
+Section "Extensions"
+    Option "Composite" "Enable"
+EndSection
+</programlisting>
+
+<para>If supported by your <acronym>GPU</acronym> (the complex chip that
+powers a modern graphics card), activate the Render acceleration.  This is
+best supported by <trademark>NVIDIA</trademark>, and less completely by ATI
+cards.</para>
+
+<programlisting>
+Section "Device"
+....
+....
+    Option     "RenderAccel" "true"
+....
+....
+EndSection</programlisting>
+
+<para>&kappname; should be available now. For more information, please see
+the <link linkend="problems">FAQ</link>.</para>
+
+</sect1>
+
+</chapter>
+
+<chapter id="settings">
+<title>Settings</title>
+
+<para>This chapter describes which parameters you can tweak, how they will
+result visually and their performance impact.</para>
+
+<sect1 id="translucency">
+<title>Translucency</title>
+
+<para>A translucent object is one that allows light to pass through it.  In
+terms of windows on your desktop, that means that the contents of windows
+can be seen through the one on the top.</para>
+
+<para>Translucency allows you to emphasize special windows, have a 3
+dimensional view on your desktop, keep track of covered windows, and just
+looks cute. The price is, that blending things together costs some system
+capacity.</para>
+
+<para>You can independently configure translucency for the following
+items:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Active windows</guilabel></term>
+<listitem><para>It is suggested you deactivate translucency for the active
+window.  The main reason is for perfomance, and secondly because to scan the
+content of a translucent window means your brain has to strip the irritating
+throughshining information, which is tiring.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Inactive windows</guilabel></term>
+<listitem><para>If you set inactive windows translucent, active windows will
+appear emphasized and are easier to focus. However, if you choose a lower
+value, you may have trouble to find an inactive window. If you choose very
+low values (&lt; 20&percnt;) you may not be able to distinguish 
+windows in their stack order - so you may accidently click the
+<guibutton>OK</guibutton> button of a dialog when you just wanted to
+activate a window. Optimal values are between 60&percnt; and
+80&percnt;.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Moving windows</guilabel></term>
+<listitem><para>Though it's a nice effect to have heavily translucent
+(opacity &lt; 20&percnt;) moving windows, there is a heavy price to pay in
+performance, especially if you do not deactivate shadows (see below). Just
+try out and if you feel your system is too slow, keep moving windows
+opaque. This value also applies to windows in resize state.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Dock windows</guilabel></term>
+<listitem><para>As docks like kicker are seldom if ever moved and usually of
+limited size, this is purely visual and won't detrimentally affect your
+system's performance.</para>  
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Treat "keep above" windows as active ones</guilabel></term>
+<listitem><para>If you set a window to keep above others, you usually want
+to keep focus on it, so it can make sense to give it the same
+emphasis.</para> 
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Disable ARGB windows</guilabel></term>
+<listitem><para>XRender supports windows with an alpha mask, &ie;
+translucent sections. Currently there are no or only very few applications
+that would make use of this feature, as it doesn't make any sense without
+using a composite manager. This may change in the future.</para>
+<para>On the other side, most gtk 1.x applications (&eg;
+<application>xmms</application>) set such an alpha mask, resulting in
+almost unusable windows (as long as the sublying windows are not black), so
+you can disable the support for ARGB windows here to make use of gtk
+applications.  There will hopefully be a patch for gtk in the near future to
+fix this.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="shadows">
+<title>Shadows</title>
+<para>Why should anyone want his windows to throw shadows? Well, maybe just
+because it looks cute, or because it allows a better window separation,
+or... because it looks cute!</para> 
+<variablelist>
+<varlistentry>
+<term><guilabel>Use shadows</guilabel></term>
+<listitem><para>As shadows cost some additional cpu/gpu power, they can be
+deactivated, while keeping a general alpha channel capability.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Active window size</guilabel></term>
+<term><guilabel>Inactive window size</guilabel></term>
+<term><guilabel>Dock window size</guilabel></term>
+<listitem><para>You may select different shadow sizes for different window
+states/types. The values are not absolute, but will apply to your screen
+resolution.</para>
+<para>In principle, you can set every value you want (if you edit the config
+file with a text editor, far beyond the offered <quote>32</quote>), but
+bigger shadows cost more cpu/gpu power.</para> 
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Vertical offset</guilabel></term>
+<term><guilabel>Horizontal offset</guilabel></term>
+<listitem><para>By default, the window would throw a <quote>all around
+equal</quote> shadow, implying a frontal light source. Users familiar with
+&MacOS; may like a vertical offset, &Windows; users may prefer a
+slighter offset to the southeast.  Experiment with the values until you are
+happy.</para> 
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Shadow color</guilabel></term>
+<listitem><para>Usually shadows as the absence of light appear in shades of
+grey (so the maximum shadow color is black, or no light at all). But hey,
+this is a virtual world, and if you'd like to have even pink shadows, why
+not?</para> 
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Remove shadows on move</guilabel></term>
+<listitem><para>Check this if you need more performance (especially when
+using translucent moving windows).</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Remove shadows on resize</guilabel></term>
+<listitem><para>It's a good idea to check this item whether using
+translucent resizing (moving) windows, or not. The windows shadow pixmap has
+to be permanently recreated on resizes what has a deep impact on the system
+performance.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="effects">
+<title>Effects</title>
+<variablelist>
+<varlistentry>
+<term><guilabel>Fade-in windows</guilabel></term>
+<term><guilabel>Fade between opacity changes</guilabel></term>
+<listitem><para>Instead of just popping up a new window, you might want to
+slowly fade it in. While this looks impressive, there is an equally
+impressive price to pay in performance speed, and it is difficult to interact
+meaningfully with windows that are in the process of fading.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Fade-in speed</guilabel></term>
+<term><guilabel>Fade-out speed</guilabel></term>
+<listitem><para>For the usability reasons mentioned under <guilabel>Fade-in
+windows</guilabel>, it is most practical to use a fast fade in speed and
+(for more eye candy) a slow fade out speed. This will provide you nice
+effects and a smooth feeling system as well as low latency before 
+information appears.</para> 
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+</chapter>
+
+<chapter id="problems">
+<title>Problems</title>
+
+<para>The whole Composite extension is quite new. It may cause several
+problems and even crash X, so <emphasis>it is strongly suggested to not even
+enable the Composite extension in Xorg.conf on mission critical production
+systems</emphasis>. If you however can risk a slightly more unstable system,
+it's certainly nice to have some eye candy around.</para>
+
+<para>
+In this case you may notice some glitches.
+Here are some common problems - and workarounds:
+</para>
+
+<qandaset>
+<qandaentry>
+<question>
+<para>I have X.org 6.8.x, but &kappname; fails to start</para>
+</question>
+<answer>
+<para>You need to explicitly enable the Composite extension, add a new Section to /etc/X11/XorgConfig:</para>
+<programlisting>Section "Extensions"
+   Option "Composite" "Enable"
+EndSection</programlisting>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>Ok, &kappname; works, but it's horribly slow</para>
+</question>
+<answer>
+<para>If supported by your <acronym>GPU</acronym> (mainly
+<trademark>NVIDIA</trademark>, and somewhat by ATI cards), first make sure
+you activated the Render acceleration</para>
+<programlisting>
+Section "Device"
+....
+....
+Option     "RenderAccel" "true"
+....
+....
+EndSection
+</programlisting>
+
+<para>If it's still slow, you can try to adjust your memory usage.  Either 
+decrease you screen depth (&eg; from 24 to 16) or lower your resolution
+(&eg; from 1280x1024 to 1024x768).</para> 
+
+<para>Please notice that the currently limiting factor for the Composite
+extension seems to be the CPU cache size.</para>
+
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>After enabling the Composite extension, I cannot run any
+<acronym>GLX</acronym> applications anymore. I've got an
+<trademark>NVIDIA</trademark> card.</para>
+</question>
+<answer>
+<para>To prevent some problems, <trademark>NVIDIA</trademark> deactivated the
+GLX support when Coposite is active. Reactivating is possible, but may cause
+problems on some kernel/driver/GPU combinations.</para> 
+<programlisting>
+Section "Device"
+....
+....
+Option  "AllowGLXWithComposite" "true"
+....
+....
+EndSection
+</programlisting>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>I wanted to play a game using <acronym>SDL</acronym> (but not
+<acronym>GL</acronym>), say <application>scummvm</application>, but when the
+compmgr is active, all I can see is a shadow!</para>
+</question>
+<answer>
+<para>This is a problem with the PictType reported by SDL.</para>
+
+<para>Workaround:</para>
+<screen>
+Instead of calling <command>scummvm</command> directly, call
+<command>SDL_VIDEO_X11_VISUALID=0x24 scummvm</command> This will tell SDL to
+use a supported format and you can play as ever. </screen>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>    Application XXX refuses to start after enabling the Composite
+extension.</para>
+<para>Application YYY breaks X after enabling the Composite
+extension.</para>
+<para>Application ZZZ looks weird after activating the composite
+manager.</para>
+</question>
+<answer>
+<para>The Composite extension is still experimental.</para>
+<para>Workaround:</para>
+<para>Instead of calling <command>appName</command> directly, call <command>XLIB_SKIP_ARGB_VISUALS=1 appName</command></para>
+<para>Applications that are known to cause problems:</para>
+<itemizedlist>
+<listitem><para>All gtk1 applications (&eg; <application>gmplayer</application>,
+<application>xmms</application>, <application>gaim</application>) - failing
+startup or look unusable weird or crash X</para></listitem>
+<listitem><para>&kuickshow; - displays only a black frame</para></listitem>
+<listitem><para>&Qt; <application>Designer</application> - crashes
+X</para></listitem>
+<listitem><para>&kopete; - crashes X</para></listitem>
+<listitem><para>&kolf; - crashes X</para></listitem>
+</itemizedlist>
+</answer>
+</qandaentry>
+
+<qandaentry>
+<question>
+<para>I try to watch a video, but only see artefacts in the Video
+Window.</para>
+</question>
+<answer>
+<para>You're using <quote>xv</quote> as video backend. This is the overlay
+mode, where the video content is written directly into the video card
+memory, bypassing  X. Therefore the window seems to be static (colored
+background) and is not  updated by the damage extension.</para>
+<para> There will hopefully be a fix for this in the future. Currently I had
+the best results using <application>Xine</application> but displaying
+translucent videos isn't fast anyway.</para>
+</answer>
+</qandaentry>
+
+</qandaset>
+</chapter>
+
+<chapter id="credits-and-licenses">
+<title>Credits and Licenses</title>
+
+<sect1 id="authors">
+<title>Authors</title>
+<para>Thomas Luebking <email>baghira-style@gmx.net</email> - Editor</para>
+
+&underFDL;
+&underGPL;
+</sect1>
+
+
+</chapter>
+
+</book>
+<!--
+Local Variables:
+mode: sgml
+sgml-omittag: nil
+sgml-shorttag: t
+End:
+-->
+
