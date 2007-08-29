@@ -32,7 +32,16 @@
    example: we need the "define INFO_CPU_AVAILABLE" */
 #include "info.cpp"
 
-K_PLUGIN_FACTORY_DECLARATION(KInfoModulesFactory)
+class KInfoModulesFactory : public KPluginFactory
+{
+    public:
+        KInfoModulesFactory(const char *componentName);
+        static KComponentData componentData();
+
+    private:
+        static KPluginFactory *s_instance;
+};
+KPluginFactory *KInfoModulesFactory::s_instance = 0;
 
 #define CREATE_FACTORY(type, name) \
 class K##type##InfoWidget : public KInfoListWidget \
@@ -79,40 +88,50 @@ CREATE_FACTORY(XServer_and_Video, i18n("X-Server"))
 CREATE_FACTORY(OpenGL, i18n("OpenGL"))
 #endif
 
-K_PLUGIN_FACTORY_DEFINITION(KInfoModulesFactory,
-        registerPlugin<KMemoryWidget>("memory");
+KInfoModulesFactory::KInfoModulesFactory(const char *componentName)
+    : KPluginFactory(componentName)
+{
+    s_instance = this;
+    registerPlugin<KMemoryWidget>("memory");
 #ifdef INFO_CPU_AVAILABLE
-        registerPlugin<KCPUInfoWidget>("cpu");
+    registerPlugin<KCPUInfoWidget>("cpu");
 #endif
 #ifdef INFO_IRQ_AVAILABLE
-        registerPlugin<KIRQInfoWidget>("irq");
+    registerPlugin<KIRQInfoWidget>("irq");
 #endif
 #ifdef INFO_PCI_AVAILABLE
-        registerPlugin<KPCIInfoWidget>("pci");
+    registerPlugin<KPCIInfoWidget>("pci");
 #endif
 #ifdef INFO_DMA_AVAILABLE
-        registerPlugin<KDMAInfoWidget>("dma");
+    registerPlugin<KDMAInfoWidget>("dma");
 #endif
 #ifdef INFO_IOPORTS_AVAILABLE
-        registerPlugin<KIO_PortsInfoWidget>("ioports");
+    registerPlugin<KIO_PortsInfoWidget>("ioports");
 #endif
 #ifdef INFO_SOUND_AVAILABLE
-        registerPlugin<KSoundInfoWidget>("sound");
+    registerPlugin<KSoundInfoWidget>("sound");
 #endif
 #ifdef INFO_SCSI_AVAILABLE
-        registerPlugin<KSCSIInfoWidget>("scsi");
+    registerPlugin<KSCSIInfoWidget>("scsi");
 #endif
 #ifdef INFO_DEVICES_AVAILABLE
-        registerPlugin<KDevicesInfoWidget>("devices");
+    registerPlugin<KDevicesInfoWidget>("devices");
 #endif
 #ifdef INFO_PARTITIONS_AVAILABLE
-        registerPlugin<KPartitionsInfoWidget>("partitions");
+    registerPlugin<KPartitionsInfoWidget>("partitions");
 #endif
 #ifdef INFO_XSERVER_AVAILABLE
-        registerPlugin<KXServer_and_VideoInfoWidget>("xserver");
+    registerPlugin<KXServer_and_VideoInfoWidget>("xserver");
 #endif
 #ifdef INFO_OPENGL_AVAILABLE
-        registerPlugin<KOpenGLInfoWidget>("opengl");
+    registerPlugin<KOpenGLInfoWidget>("opengl");
 #endif
-        )
+}
+
+KComponentData KInfoModulesFactory::componentData()
+{
+    Q_ASSERT(s_instance);
+    return s_instance->componentData();
+}
+
 K_EXPORT_PLUGIN(KInfoModulesFactory("kcminfo"))
