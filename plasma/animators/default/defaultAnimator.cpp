@@ -24,8 +24,8 @@
 
 #include <KDebug>
 
-DefaultAnimator::DefaultAnimator(QObject *parent, const QStringList& list)
-    : Plasma::Animator(parent, list)
+DefaultAnimator::DefaultAnimator(QObject *parent, const QVariantList& list)
+    : Plasma::Animator(parent)
 {
     Q_UNUSED(list)
 }
@@ -36,7 +36,7 @@ int DefaultAnimator::framesPerSecond(Plasma::Phase::Animation animation)
         case Plasma::Phase::Appear:
             return 12;
         case Plasma::Phase::Disappear:
-	    return 12;
+            return 12;
 
         default:
             return 0;
