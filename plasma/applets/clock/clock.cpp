@@ -46,7 +46,7 @@
 
 #include <plasma/svg.h>
 
-Clock::Clock(QObject *parent, const QStringList &args)
+Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_dialog(0)
 {

@@ -36,7 +36,7 @@ class Url : public Plasma::Applet
 {
     Q_OBJECT
     public:
-        Url(QObject *parent, const QStringList &args);
+        Url(QObject *parent, const QVariantList &args);
         ~Url();
 
         QSizeF contentSize() const;

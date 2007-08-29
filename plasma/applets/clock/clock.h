@@ -50,7 +50,7 @@ class Clock : public Plasma::Applet
 {
     Q_OBJECT
     public:
-        Clock(QObject *parent, const QStringList &args);
+        Clock(QObject *parent, const QVariantList &args);
         ~Clock();
 
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);

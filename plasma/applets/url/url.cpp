@@ -32,7 +32,7 @@
 
 #include <plasma/widgets/icon.h>
 
-Url::Url(QObject *parent, const QStringList &args)
+Url::Url(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_dialog(0)
 {
@@ -48,7 +48,7 @@ Url::Url(QObject *parent, const QStringList &args)
 
     m_icon->setIconSize(size, size);
     if (args.count() > 2) {
-        setUrl(args.at(2));
+        setUrl(args.at(2).toString());
     } else {
         setUrl(cg.readEntry("Url"));
     }
