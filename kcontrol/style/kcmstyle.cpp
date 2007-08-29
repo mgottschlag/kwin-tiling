@@ -739,7 +739,7 @@ void KCMStyle::defaults()
 	cbTransparentToolbars->setChecked(true);
 	cbEnableTooltips->setChecked(true);
 	comboToolbarIcons->setCurrentIndex(0);
-	cbIconsOnButtons->setChecked(false);
+	cbIconsOnButtons->setChecked(true);
 	cbTearOffHandles->setChecked(false);
 }
 
