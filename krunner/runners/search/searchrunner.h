@@ -38,7 +38,7 @@ class SearchRunner : public Plasma::AbstractRunner
         QString lastTerm;
 
     public:
-        SearchRunner( QObject* parent, const QStringList& args );
+        SearchRunner( QObject* parent, const QVariantList &args );
         ~SearchRunner();
 
         QAction* accepts( const QString& term );

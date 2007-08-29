@@ -33,7 +33,7 @@ class CalculatorRunner : public Plasma::AbstractRunner
     Q_OBJECT
 
     public:
-        CalculatorRunner( QObject* parent, const QStringList& args );
+        CalculatorRunner( QObject* parent, const QVariantList &args );
         ~CalculatorRunner();
 
         QAction* accepts( const QString& term );

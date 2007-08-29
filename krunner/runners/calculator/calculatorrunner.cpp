@@ -30,7 +30,7 @@
 #include <kshell.h> //TODO: replace with KShell after 31/7/2007
 #include <KStandardDirs>
 
-CalculatorRunner::CalculatorRunner( QObject* parent, const QStringList& args )
+CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner( parent ),
       m_options( 0 )
 {

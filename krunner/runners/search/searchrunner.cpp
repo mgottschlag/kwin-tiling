@@ -31,7 +31,7 @@ SearchAction::SearchAction(const QString& f, const QString& iconname,
 {
 }
 
-SearchRunner::SearchRunner( QObject* parent, const QStringList& args )
+SearchRunner::SearchRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner( parent )
 {
     Q_UNUSED( args );
