@@ -85,7 +85,6 @@ endif(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
 if(BUILD_KICKER)
   add_subdirectory( kicker)
 endif(BUILD_KICKER)
-add_subdirectory( kpager )
 
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
   	add_subdirectory( kdm )
