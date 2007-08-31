@@ -43,6 +43,10 @@
 #include "desktopview.h"
 #include "panel.h"
 
+// testing
+#include <KIcon>
+#include <plasma/widgets/icon.h>
+
 PlasmaApp* PlasmaApp::self()
 {
     return qobject_cast<PlasmaApp*>(kapp);
@@ -146,24 +150,33 @@ void PlasmaApp::notifyStartup(bool completed)
 }
 
 // for testing purposes
+// this layout should be saved and loaded to a config source
+// soon
 void PlasmaApp::createDefaultPanels()
 {
     Plasma::Panel *defaultPanel = new Plasma::Panel;
     Plasma::Corona *panelScene = new Plasma::Corona;
     defaultPanel->setCorona(panelScene);
 
+    // place-holder for the launcher menu
+    Plasma::Icon *launcherPlaceholder = new Plasma::Icon(KIcon("kmenu"),QString());
+    panelScene->addItem(launcherPlaceholder);
+    defaultPanel->layout()->addItem(launcherPlaceholder);
+
+    // some default applets to get a usable UI
+    QList<Plasma::Applet*> applets;
     Plasma::Applet *tasksApplet = panelScene->addApplet("tasks");
+    Plasma::Applet *systemTrayApplet = panelScene->addApplet("systemtray");
     Plasma::Applet *clockApplet = panelScene->addApplet("digital-clock");
+ 
+    applets << tasksApplet << systemTrayApplet << clockApplet;
 
-    if ( tasksApplet ) {
-        defaultPanel->layout()->addItem(tasksApplet);
+    foreach( Plasma::Applet* applet , applets ) {
+        applet->setDrawStandardBackground(false);
+        defaultPanel->layout()->addItem(applet);
     }
-    if ( clockApplet ) {
-        defaultPanel->layout()->addItem(clockApplet);
-    }
-
     defaultPanel->setLocation(Plasma::BottomEdge);
-    panelScene->setFormFactor(Plasma::Horizontal); // Because it's bottom edge
+    panelScene->setFormFactor(Plasma::Horizontal); 
     defaultPanel->show();
     m_panels << defaultPanel;
 }
