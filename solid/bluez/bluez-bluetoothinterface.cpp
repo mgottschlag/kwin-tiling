@@ -20,7 +20,6 @@
 */
 
 #include <QtDBus>
-#include <kdebug.h>
 
 #include <solid/control/bluetoothinterface.h>
 
@@ -119,8 +118,6 @@ Solid::Control::BluetoothInterface::Mode BluezBluetoothInterface::mode() const
 
 int BluezBluetoothInterface::discoverableTimeout() const
 {
-    kDebug() ;
-
     QDBusReply< uint > timeout = d->iface.call("GetDiscoverableTimeout");
     if (timeout.isValid()) {
         return timeout.value();
@@ -292,15 +289,12 @@ void BluezBluetoothInterface::slotDiscoveryCompleted()
 
 void BluezBluetoothInterface::slotRemoteDeviceFound(const QString &address, uint deviceClass, short rssi)
 {
-    kDebug() << "address: " << address << " class: " << deviceClass << " RSSI: " << rssi;
-
     QString remoteubi = QString("%1/%2").arg(ubi()).arg(address);
     emit remoteDeviceFound(remoteubi, deviceClass, rssi);
 }
 
 void BluezBluetoothInterface::slotRemoteDeviceDisappeared(const QString &address)
 {
-    kDebug() << "address: " << address;
     QString remoteubi = QString("%1/%2").arg(ubi()).arg(address);
     emit remoteDeviceDisappeared(remoteubi);
 }
