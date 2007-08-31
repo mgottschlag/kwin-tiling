@@ -4,11 +4,13 @@ Name[te]=సిడిఈ
 Name[tg]=Муҳити графикии муштарак (CDE)
 Name[x-test]=xxCDExx
 Comment=Built-in unthemed CDE style
+Comment[be]=Убудаваны стыль CDE
+Comment[bg]=Вграден CDE стил
 Comment[ja]=ビルトイン CDE スタイル (テーマなし)
 Comment[km]=រចនាប័ទ្ម​ជាប់​ជាមួយ CDE ដែលគ្មាន​ស្បែក​
 Comment[nds]=Inbuut Stil "CDE" ahn Muster
 Comment[pt]=O estilo incorporado sem tema do CDE
-Comment[pt_BR]=O estilo incorporado sem tema do CDE
+Comment[pt_BR]=Estilo predefinido CDE sem temas
 Comment[sv]=Inbyggd otemad CDE-stil
 Comment[zh_TW]=內建的 CDE 樣式
 [KDE]

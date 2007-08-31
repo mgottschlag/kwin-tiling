@@ -1,11 +1,13 @@
 [Misc]
 Name=Motif
 Comment=Built-in unthemed Motif style
+Comment[be]=Убудаваны стыль Motif
+Comment[bg]=Вграден стил Motif
 Comment[ja]=ビルトイン Motif スタイル (テーマなし)
 Comment[km]=រចនា​ប័ទ្ម​ជាប់ Motif ដែល​គ្មាន​ស្បែក​
 Comment[nds]=Inbuut Stil "Motif" ahn Muster
 Comment[pt]=O estilo incorporado sem tema do Motif
-Comment[pt_BR]=O estilo incorporado sem tema do Motif
+Comment[pt_BR]=Estilo predefinido Motif sem temas
 Comment[sv]=Inbyggd otemad Motif-stil
 Comment[zh_TW]=內建的 Motif 樣式
 [KDE]

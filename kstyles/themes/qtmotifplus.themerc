@@ -1,11 +1,13 @@
 [Misc]
 Name=Motif Plus
 Comment=Built-in enhanced Motif style
+Comment[be]=Убудаваны палепшаны стыль Motif
+Comment[bg]=Вграден подобрен стил Motif
 Comment[ja]=ビルトイン Motif スタイル 改良版
 Comment[km]=រចនាប័ទ្ម​ជាប់​ដែល​បាន​ពង្រីក Motif
 Comment[nds]=Inbuut verbetert "Motif"-Stil
 Comment[pt]=O estilo incorporado e melhorado do Motif
-Comment[pt_BR]=O estilo incorporado e melhorado do Motif
+Comment[pt_BR]=Estilo predefinido Motif melhorado
 Comment[sv]=Inbyggd utökad Motif-stil
 Comment[zh_TW]=內建的 Motif 樣式加強版
 [KDE]

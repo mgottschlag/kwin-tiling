@@ -3,11 +3,13 @@ Name=KDE Step
 Name[km]=ជំហាន​របស់ KDE
 Name[sv]=KDE step
 Comment=Unthemed Next-like style
+Comment[be]=Стыль Next
+Comment[bg]=Стил "Next"
 Comment[ja]=Next 風のスタイル (テーマなし)
 Comment[km]=មិន​បាន​ដាក់​រចនាប័ទ្ម​បន្ទាប់
 Comment[nds]=Stil liek to Next ahn Muster
 Comment[pt]=Estilo sem tema semelhante ao Next
-Comment[pt_BR]=Estilo sem tema semelhante ao Next
+Comment[pt_BR]=Estilo semelhante ao Next sem temas
 Comment[sv]=Otemad Next-liknande stil
 Comment[zh_TW]=類似 Next Step 的樣式
 [KDE]
