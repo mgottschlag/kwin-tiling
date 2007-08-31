@@ -55,11 +55,22 @@ public:
 
     KJob *createBonding();
 private Q_SLOTS:
+    void slotClassChanged(const QString &address, uint newClass);
+    void slotNameUpdated(const QString &address,const QString &newName);
+    void slotNameResolvingFailed(const QString &address);
+    void slotAliasChanged(const QString &address,const QString &newAlias);
+    void slotAliasCleared(const QString &address);
+    void slotConnected(const QString &address);
+    void slotRequestDisconnection(const QString &address);
+    void slotDisconnected(const QString &address);
+    void slotBonded(const QString &address);
+    void slotUnbonded(const QString &address);
+    
     void slotServiceHandles(const QList<uint> &handles);
     void dbusErrorHandles(const QDBusError &error);
     void slotServiceRecordAsXml(const QString &record);
     void dbusErrorRecordAsXml(const QDBusError &error);
-    
+
 public Q_SLOTS:
     void setAlias(const QString &alias);
     void clearAlias();

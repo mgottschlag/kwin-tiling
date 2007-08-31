@@ -44,6 +44,21 @@ BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath
 
 	device = new QDBusInterface("org.bluez", m_adapter,
 				    "org.bluez.Adapter", QDBusConnection::systemBus());
+	#define connectAdapterToThis(signal, slot) \
+		device->connection().connect("org.bluez", \
+			m_adapter, \
+			"org.bluez.Adapter", \
+			signal, this, SLOT(slot))
+	connectAdapterToThis("RemoteClassUpdated",slotClassChanged(const QString&, uint));
+	connectAdapterToThis("RemoteNameUpdated",slotNameUpdated(const QString &,const QString &));
+	connectAdapterToThis("RemoteNameFailed",slotNameResolvingFailed(const QString &));
+	connectAdapterToThis("RemoteAliasChanged",slotAliasChanged(const QString &,const QString &));
+	connectAdapterToThis("RemoteAliasCleared",slotAliasCleared(const QString &));
+	connectAdapterToThis("RemoteDeviceConnected",slotConnected(const QString &));
+	connectAdapterToThis("RemoteDeviceDisconnectRequested",slotRequestDisconnection(const QString &));
+	connectAdapterToThis("RemoteDeviceDisconnected",slotDisconnected(const QString &));
+	connectAdapterToThis("BondingCreated",slotBonded(const QString &));
+	connectAdapterToThis("BondingRemoved",slotUnbonded(const QString &));
 }
 
 BluezBluetoothRemoteDevice::~BluezBluetoothRemoteDevice()
@@ -262,6 +277,76 @@ void BluezBluetoothRemoteDevice::dbusErrorRecordAsXml(const QDBusError & error)
 {
 	kDebug() << "Error on dbus call for record as xml: " << error.message();
 	emit serviceRecordXmlAvailable("failed","");
+}
+
+void BluezBluetoothRemoteDevice::slotClassChanged(const QString & address, uint newClass)
+{
+	if (address == this->address()) {
+		emit classChanged(newClass);
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotNameResolvingFailed(const QString & address)
+{
+	if (address == this->address()) {
+		emit nameResolvingFailed();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotNameUpdated(const QString & address, const QString & newName)
+{
+	if (address == this->address()) {
+		emit nameChanged(newName);
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotAliasChanged(const QString & address, const QString & newAlias)
+{
+	if (address == this->address()) {
+		emit aliasChanged(newAlias);
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotAliasCleared(const QString & address)
+{
+	if (address == this->address()) {
+		emit aliasCleared();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotConnected(const QString & address)
+{
+	if (address == this->address()) {
+		emit connected();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotRequestDisconnection(const QString & address)
+{
+	if (address == this->address()) {
+		emit requestDisconnection();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotDisconnected(const QString & address)
+{
+	if (address == this->address()) {
+		emit disconnected();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotBonded(const QString & address)
+{
+	if (address == this->address()) {
+		emit bondingCreated();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotUnbonded(const QString & address)
+{
+	if (address == this->address()) {
+		emit bondingRemoved();
+	}
 }
 
 #include "bluez-bluetoothremotedevice.moc"
