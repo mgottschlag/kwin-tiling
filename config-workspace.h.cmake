@@ -72,6 +72,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H 1
 
+/* Define to 1 if you have the <stdint.h> header file. */
+#cmakedefine HAVE_STDINT_H 1
+
 /* Define if you have unsetenv */
 #cmakedefine HAVE_UNSETENV 1
 

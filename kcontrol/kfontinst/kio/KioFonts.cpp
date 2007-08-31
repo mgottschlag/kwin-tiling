@@ -20,9 +20,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <config-workspace.h>
 #include "KioFonts.h"
 #include <stdlib.h>
+#ifdef HAVE_STDINT_H
 #include <stdint.h>
+#endif
 #include <pwd.h>
 #include <grp.h>
 #include <sys/types.h>
@@ -2132,25 +2135,17 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
             EFolder                destFolder(getFolder(dest));
             QMap<QString, QString> map;
 
-            if(confirmMultiple(src, srcFiles, FOLDER_SYS==destFolder ? FOLDER_USER : FOLDER_SYS,
-                               OP_MOVE) &&
-               getFontList(srcFiles, map) &&
-               checkDestFiles(src, map, dest, destFolder, overwrite))
+            if(confirmMultiple(src, srcFiles, FOLDER_SYS==destFolder ? FOLDER_USER : FOLDER_SYS, OP_MOVE) &&
+               getFontList(srcFiles, map) && checkDestFiles(src, map, dest, destFolder, overwrite))
             {
                 QMap<QString, QString>::Iterator fIt(map.begin()),
                                                  fEnd(map.end());
                 bool                             askPasswd=true,
                                                  toSys=FOLDER_SYS==destFolder;
-                QByteArray                       userId,
-                                                 groupId;
-
-                userId.setNum(toSys ? 0 : getuid());
-                groupId.setNum(toSys ? 0 : getgid());
 
                 for(; fIt!=fEnd; ++fIt)
                 {
-                    QString    destFolderReal(getDestFolder(itsFolders[destFolder].location,
-                                                            fIt.value()));
+                    QString         destFolderReal(getDestFolder(itsFolders[destFolder].location, fIt.value()));
                     QList<TCommand> cmd;
                     TCommand        c(KFI::CMD_MOVE_FILE);
 
