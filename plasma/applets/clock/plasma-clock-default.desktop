@@ -42,6 +42,7 @@ Comment[sv]=En SVG-temabaserad klocka
 Comment[vi]=Một đồng hồ chấp nhận sắc thái SVG
 Comment[zh_CN]=SVG 主题的时钟
 Comment[zh_TW]=SVG 可調整外觀時鐘
+Icon=chronometer
 Type=Service
 ServiceTypes=Plasma/Applet
 
