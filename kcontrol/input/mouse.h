@@ -120,6 +120,7 @@ private Q_SLOTS:
   void slotThreshChanged(int value);
   void slotDragStartDistChanged(int value);
   void slotWheelScrollLinesChanged(int value);
+  void slotSmartSliderEnabling();
 
 private:
 

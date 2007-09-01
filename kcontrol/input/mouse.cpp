@@ -167,9 +167,12 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
 
     connect(tab1->singleClick, SIGNAL(clicked()), this, SLOT(changed()));
     connect(tab1->singleClick, SIGNAL(clicked()), this, SLOT(slotClick()));
+    connect(tab1->singleClick, SIGNAL(clicked()), this, SLOT(slotSmartSliderEnabling()));
 
     connect( tab1->doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
     connect( tab1->cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+    connect(tab1->cbAutoSelect, SIGNAL(clicked()), this, SLOT(slotSmartSliderEnabling()));
+
 
     // Only allow setting reversing scroll polarity if we have scroll buttons
     unsigned char map[20];
@@ -874,6 +877,15 @@ void MouseSettings::save(KConfig *config)
 void MouseConfig::slotScrollPolarityChanged()
 {
   settings->m_handedNeedsApply = true;
+}
+
+void MouseConfig::slotSmartSliderEnabling()
+{
+  bool enabled = tab1->singleClick->isChecked() ? tab1->cbAutoSelect->isChecked() : false;
+  tab1->lDelay->setEnabled(enabled);
+  tab1->slAutoSelect->setEnabled(enabled);
+  tab1->lb_short->setEnabled(enabled);
+  tab1->lb_long->setEnabled(enabled);
 }
 
 #include "mouse.moc"
