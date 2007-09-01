@@ -74,8 +74,7 @@ include_directories(
 )
 
 add_subdirectory( libkicker ) 
-add_subdirectory( taskmanager ) 
-add_subdirectory( taskbar ) 
+#add_subdirectory( taskbar ) 
 add_subdirectory( kicker ) 
 add_subdirectory( extensions ) 
 add_subdirectory( applets ) 
