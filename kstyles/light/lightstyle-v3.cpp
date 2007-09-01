@@ -51,7 +51,7 @@ LightStyleV3::LightStyleV3()
     if ( ! basestyle )
 	basestyle = QStyleFactory::create( QStyleFactory::keys().first() );
     if ( ! basestyle )
-	qFatal( "LightStyle: couldn't find a basestyle!" );
+	qFatal( "LightStyle: could not find a basestyle!" );
 }
 
 LightStyleV3::~LightStyleV3()

@@ -2237,7 +2237,7 @@ void PlastikStyle::renderRadioButton(QPainter *p, const QRect &r, const QPalette
         p->setPen(alphaBlendColors(contentColor, getColor(pal,MouseOverHighlight), 150) );
         p->drawPixmap(x, y, bmp);
     }
-            // anti-alias inside, "above" the higlighting!
+            // anti-alias inside, "above" the highlighting!
     bmp = QBitmap::fromData(QSize( 13, 13 ), radiobutton_aa_inside_bits);
     bmp.setMask(bmp);
     if(mouseOver) {
