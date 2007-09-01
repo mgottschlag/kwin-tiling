@@ -238,9 +238,9 @@ main( int argc, char **argv )
 	/* SUPPRESS 560 */
 	if ((oldpid = storePid())) {
 		if (oldpid == -1)
-			logError( "Can not create/lock pid file %s\n", pidFile );
+			logError( "Cannot create/lock pid file %s\n", pidFile );
 		else
-			logError( "Can not lock pid file %s, another xdm is running (pid %d)\n",
+			logError( "Cannot lock pid file %s, another xdm is running (pid %d)\n",
 			          pidFile, oldpid );
 		exit( 1 );
 	}

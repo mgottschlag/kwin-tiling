@@ -185,14 +185,14 @@ static void
 gRead( void *buf, int count )
 {
 	if (reader( buf, count ) != count)
-		logPanic( "Can not read from core\n" );
+		logPanic( "Cannot read from core\n" );
 }
 
 static void
 gWrite( const void *buf, int count )
 {
 	if (write( wfd, buf, count ) != count)
-		logPanic( "Can not write to core\n" );
+		logPanic( "Cannot write to core\n" );
 #ifdef _POSIX_PRIORITY_SCHEDULING
 	if ((debugLevel & DEBUG_HLPCON))
 		sched_yield();

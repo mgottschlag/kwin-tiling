@@ -231,7 +231,7 @@ void URLGrabber::slotItemSelected( int id )
     default:
         ClipCommand *command = myCommandMapper.find( id );
         if ( !command )
-            qWarning("Klipper: can not find associated action");
+            qWarning("Klipper: cannot find associated action");
         else
             execute( command );
     }

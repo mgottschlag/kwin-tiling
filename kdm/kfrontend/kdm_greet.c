@@ -134,14 +134,14 @@ static void
 gRead( void *buf, int count )
 {
 	if (reader( buf, count ) != count)
-		logPanic( "Can not read from %s\n", who );
+		logPanic( "Cannot read from %s\n", who );
 }
 
 static void
 gWrite( const void *buf, int count )
 {
 	if (write( wfd, buf, count ) != count)
-		logPanic( "Can not write to %s\n", who );
+		logPanic( "Cannot write to %s\n", who );
 #ifdef _POSIX_PRIORITY_SCHEDULING
 	if ((debugLevel & DEBUG_HLPCON))
 		sched_yield();

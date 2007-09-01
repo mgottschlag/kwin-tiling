@@ -261,7 +261,7 @@ KGreeter::insertUsers()
 	if (userView) {
 		if (!default_pix.load( _faceDir + "/.default.face.icon" ))
 			if (!default_pix.load( _faceDir + "/.default.face" ))
-				logError( "Can not open default user face\n" );
+				logError( "Cannot open default user face\n" );
 		QSize ns( 48, 48 );
 		if (default_pix.size() != ns)
 			default_pix =

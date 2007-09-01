@@ -643,7 +643,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         f = ::fopen(fName.data(), "w+");
         if (!f)
         {
-            qWarning("KSMServer: can not open %s: %s", fName.data(), strerror(errno));
+            qWarning("KSMServer: cannot open %s: %s", fName.data(), strerror(errno));
             qWarning("KSMServer: Aborting.");
             exit(1);
         }

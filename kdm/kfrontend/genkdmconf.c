@@ -530,7 +530,7 @@ static const char def_xaccess[] =
 "#\n"
 "# The nicest way to run the chooser is to just ask it to broadcast\n"
 "# requests to the network - that way new hosts show up automatically.\n"
-"# Sometimes, however, the chooser can not figure out how to broadcast,\n"
+"# Sometimes, however, the chooser cannot figure out how to broadcast,\n"
 "# so this may not work in all environments.\n"
 "#\n"
 "\n"
@@ -581,7 +581,7 @@ static const char def_startup[] =
 "\n"
 #ifdef _AIX
 "# We create a pseudodevice for finger.  (host:0 becomes xdm/host_0)\n"
-"# Without it, finger errors out with \"Can not stat /dev/host:0\".\n"
+"# Without it, finger errors out with \"Cannot stat /dev/host:0\".\n"
 "#\n"
 "#devname=`echo $DISPLAY | cut -c1-8`\n"
 "#if [ ! -d /dev/xdm ]; then\n"
@@ -1548,7 +1548,7 @@ edit_startup( File *file )
 #ifdef _AIX
 			delstr( file, "\n"
 "# We create a pseudodevice for finger.  (host:0 becomes [kx]dm/host_0)\n" );
-"# Without it, finger errors out with \"Can not stat /dev/host:0\".\n"
+"# Without it, finger errors out with \"Cannot stat /dev/host:0\".\n"
 "#\n"
 "if [[] -f /usr/lib/X11/xdm/sessreg ]; then\n"
 "  devname=`echo $DISPLAY | /usr/bin/sed -e 's/[[]:\\.]/_/g' | /usr/bin/cut -c1-8`\n"

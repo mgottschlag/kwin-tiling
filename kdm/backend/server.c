@@ -149,7 +149,7 @@ startServerFailed()
 		d->serverStatus = ignore;
 		serverTimeout = TO_INF;
 		startingServer = 0;
-		logError( "X server for display %s can not be started,"
+		logError( "X server for display %s cannot be started,"
 		          " session disabled\n", d->name );
 		stopDisplay( d );
 	}

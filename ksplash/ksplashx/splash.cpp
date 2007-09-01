@@ -720,7 +720,7 @@ void runSplash( const char* them, bool t, int p )
     struct stat stat_buf;
     if( datafile == NULL || fstat( fileno( datafile ), &stat_buf ) != 0 )
         {
-        fprintf( stderr, "Can not read description.txt file.\n" );
+        fprintf( stderr, "Cannot read description.txt file.\n" );
         exit( 2 );
         }
     timestamp = stat_buf.st_mtime;
