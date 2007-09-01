@@ -66,6 +66,9 @@ public:
      */
     Plasma::Layout *layout() const;
 
+protected:
+    virtual void drawBackground(QPainter *painter, const QRectF& rect);
+
 private:
     class Private;
     Private *const d;

@@ -18,15 +18,17 @@
 */
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QTimeLine>
 
 #include <KWindowSystem>
 #include <KDebug>
 
 #include <plasma/corona.h>
 #include <plasma/plasma.h>
+#include <plasma/svg.h>
 #include <plasma/widgets/layoutitem.h>
-#include <plasma/widgets/hboxlayout.h>
-#include <plasma/widgets/vboxlayout.h>
+#include <plasma/widgets/boxlayout.h>
+#include <plasma/widgets/layoutanimator.h>
 
 #include "panel.h"
 #include "panel.moc"
@@ -69,7 +71,8 @@ public:
           location(Plasma::BottomEdge),
           layout(0),
           scene(0),
-          layoutItem(0)
+          layoutItem(0),
+          background(0)
     {}
 
     void createApplets();
@@ -80,6 +83,7 @@ public:
     Plasma::BoxLayout *layout;
     Plasma::Corona *scene;
     PanelLayoutItem *layoutItem;
+    Plasma::Svg *background;
 };
 
 Panel::Panel(QWidget *parent)
@@ -89,7 +93,7 @@ Panel::Panel(QWidget *parent)
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
     setAutoFillBackground(true);
-    setDragMode(QGraphicsView::RubberBandDrag);
+   // setDragMode(QGraphicsView::RubberBandDrag);
     setCacheMode(QGraphicsView::CacheBackground);
     setInteractive(true);
     setAcceptDrops(true);
@@ -99,11 +103,19 @@ Panel::Panel(QWidget *parent)
     // Create layout to arrange applets
     d->layoutItem = new PanelLayoutItem(this);
     if (d->location == Plasma::BottomEdge || d->location == Plasma::TopEdge) {
-        d->layout = new Plasma::HBoxLayout(d->layoutItem);
+        d->layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight,d->layoutItem);
     }
     else {
-        d->layout = new Plasma::VBoxLayout(d->layoutItem);
+        d->layout = new Plasma::BoxLayout(Plasma::BoxLayout::TopToBottom,d->layoutItem);
     }
+    d->layout->setMargin(0);
+    d->layout->setSpacing(0);
+
+        // testing
+        Plasma::LayoutAnimator *animator = new Plasma::LayoutAnimator(this);
+        animator->setTimeLine( new QTimeLine(300,this) );
+        animator->setEffect( Plasma::LayoutAnimator::StandardState , Plasma::LayoutAnimator::MoveEffect );
+        d->layout->setAnimator(animator);
 
     // KWin setup
     KWindowSystem::setType(winId(), NET::Dock);
@@ -154,14 +166,14 @@ void Panel::Private::updatePanelGeometry()
     switch (location) {
     case Plasma::TopEdge:
     case Plasma::BottomEdge:
-        height = 60;
+        height = 48;
         width = desktop->screenGeometry().width();
         break;
 
     case Plasma::LeftEdge:
     case Plasma::RightEdge:
     default:
-        width = 60;
+        width = 48;
         height = desktop->screenGeometry().height();
         break;
     }
@@ -185,17 +197,24 @@ void Panel::Private::updatePanelGeometry()
         break;
     }
 
-    panel->setGeometry(x, y, width, height);
-    layout->update();
+    const QRectF newGeometry(0,0,width,height);
+    panel->setGeometry(x,y,width,height);
+    panel->setSceneRect(newGeometry);
+    layout->setGeometry(newGeometry);
+}
 
-    // NOTE: Figure out how to constrain the space to the visible area.
-    // Plus this is just ugly.
-    // panel->scene()->setSceneRect(0, 0, width, height);
+void Panel::drawBackground( QPainter *painter , const QRectF& rect )
+{
+    if (!d->background) {
+        d->background = new Plasma::Svg("widgets/panel-background",this); 
+    } 
 
-    qDebug() << "Panel view: New scene geometry = " << layoutItem->geometry();
-    for ( int i = 0 ; i < layout->count() ; i++ ) {
-        qDebug() << "Panel view: Child" << i << "geometry" << layout->itemAt(i)->geometry();
+    if (d->background->size() != rect.size().toSize()) {
+        d->background->resize((int)rect.width(),(int)rect.height());
     }
+
+    painter->setCompositionMode(QPainter::CompositionMode_Source);
+    d->background->paint(painter,0,0);
 }
 
 } // Namespace
