@@ -23,7 +23,7 @@
 #include <kurl.h>
 
 class QLabel;
-class Q3TextEdit;
+class QTextEdit;
 class QPushButton;
 class ThemeListBox;
 
@@ -61,7 +61,7 @@ private:
   ThemeListBox *mThemesList;
   QString mEngineOfSelected;
   QPushButton *mBtnAdd, *mBtnRemove, *mBtnTest;
-  Q3TextEdit *mText;
+  QTextEdit *mText;
   QLabel *mPreview;
 };
 

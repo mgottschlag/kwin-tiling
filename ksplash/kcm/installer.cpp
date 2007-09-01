@@ -15,7 +15,7 @@
 #include <QDir>
 #include <QLabel>
 #include <QLayout>
-#include <Qt3Support/Q3TextEdit>
+#include <QTextEdit>
 #include <QPixmap>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -143,7 +143,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   rightbox->addWidget(mPreview);
   rightbox->setStretchFactor( mPreview, 3 );
 
-  mText = new Q3TextEdit(this);
+  mText = new QTextEdit(this);
   mText->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred );
   mText->setMinimumSize(mText->sizeHint());
   mText->setReadOnly(true);
@@ -374,15 +374,15 @@ void SplashInstaller::slotSetTheme(int id)
         // Get theme information.
         infoTxt = "<qt>";
         if ( cnf.hasKey( "Name" ) )
-          infoTxt += i18n( "<b>Name:</b> %1<br/>", cnf.readEntry( "Name", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Name:</b> %1", cnf.readEntry( "Name", i18n( "Unknown" ) ) ) + "<br />";
         if ( cnf.hasKey( "Description" ) )
-          infoTxt += i18n( "<b>Description:</b> %1<br/>", cnf.readEntry( "Description", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Description:</b> %1", cnf.readEntry( "Description", i18n( "Unknown" ) ) ) + "<br />";
         if ( cnf.hasKey( "Version" ) )
-          infoTxt += i18n( "<b>Version:</b> %1<br/>", cnf.readEntry( "Version", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Version:</b> %1", cnf.readEntry( "Version", i18n( "Unknown" ) ) ) + "<br />";
         if ( cnf.hasKey( "Author" ) )
-          infoTxt += i18n( "<b>Author:</b> %1<br/>", cnf.readEntry( "Author", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Author:</b> %1", cnf.readEntry( "Author", i18n( "Unknown" ) ) ) + "<br />";
         if ( cnf.hasKey( "Homepage" ) )
-          infoTxt += i18n( "<b>Homepage:</b> %1<br/>", cnf.readEntry( "Homepage", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Homepage:</b> %1", cnf.readEntry( "Homepage", i18n( "Unknown" ) ) ) + "<br />";
         infoTxt += "</qt>";
 
         QString pluginName( cnf.readEntry( "Engine", "KSplashX" ) );
@@ -403,7 +403,7 @@ void SplashInstaller::slotSetTheme(int id)
       }
     }
     mBtnTest->setEnabled(enabled && themeName != "None" );
-    mText->setText(infoTxt);
+    mText->setHtml(infoTxt);
     if (!enabled)
     {
       url.setPath( path + '/' + "Preview.png" );
