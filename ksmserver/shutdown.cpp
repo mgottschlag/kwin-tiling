@@ -426,7 +426,7 @@ void KSMServer::completeShutdownOrCheckpoint()
 #ifdef __GNUC__
 #warning KNotify TODO
 #endif
-	/*  How to check if the deamon is still running.    We will not start the knotify daemon just for playing a sound before shutdown.  or do wa want that ?
+	/*  How to check if the daemon is still running.    We will not start the knotify daemon just for playing a sound before shutdown.  or do wa want that ?
 
         knotifySignals = QDBus::sessionBus().findInterface("org.kde.knotify",
             "/knotify", "org.kde.KNotify" );

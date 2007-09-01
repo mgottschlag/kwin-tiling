@@ -543,7 +543,7 @@ defineLocal( FILE *file, Xauth *auth, int *ok )
 
 	/*
 	 * For HP-UX, HP's Xlib expects a fully-qualified domain name, which
-	 * is achieved by using gethostname().  For compatability, we must
+	 * is achieved by using gethostname().  For compatibility, we must
 	 * also still create the entry using uname() above.
 	 */
 	displayname[0] = 0;

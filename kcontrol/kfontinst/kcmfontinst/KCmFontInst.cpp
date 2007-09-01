@@ -573,7 +573,7 @@ void CKCmFontInst::addFonts()
 
             for(; it!=end; ++it)
             {
-                if(KFI_KIO_FONTS_PROTOCOL!=(*it).protocol()) // Dont try to install from fonts:/ !!!
+                if(KFI_KIO_FONTS_PROTOCOL!=(*it).protocol()) // Do not try to install from fonts:/ !!!
                 {
                     KUrl url(KIO::NetAccess::mostLocalUrl(*it, this));
 

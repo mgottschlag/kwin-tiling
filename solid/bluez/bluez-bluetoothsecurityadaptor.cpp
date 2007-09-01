@@ -57,7 +57,7 @@ BluezBluetoothSecurityAdaptor::~ BluezBluetoothSecurityAdaptor()
             kDebug() << "UnregisterDefaultPasskeyAgent failed :" << iface.lastError().name() << " : " << iface.lastError().message();
             serviceName = "";
         } else {
-            kDebug() << "UnregisterDefaultPasskeyAgent Successfull!:" << iface.lastError().name() << " : " << iface.lastError().message();
+            kDebug() << "UnregisterDefaultPasskeyAgent Successful!:" << iface.lastError().name() << " : " << iface.lastError().message();
         }
     }
 }

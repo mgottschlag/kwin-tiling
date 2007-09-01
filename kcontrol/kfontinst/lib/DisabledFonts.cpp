@@ -257,7 +257,7 @@ bool CDisabledFonts::refresh()
 }
 
 //
-// Dont always lock during a load, as we may be trying to read global file (but not as root),
+// Do not always lock during a load, as we may be trying to read global file (but not as root),
 // or this load might be being called within the save() - so cant lock as is already!
 void CDisabledFonts::load(bool lock)
 {

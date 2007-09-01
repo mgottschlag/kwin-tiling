@@ -942,7 +942,7 @@ doChoose()
 		/* XXX the config reader should do the lookup already */
 		for (hostp = td->chooserHosts; *hostp; hostp++)
 			if (!registerForPing( *hostp ))
-				logError( "Unkown host %\"s specified for local chooser preload of display %s\n", *hostp, td->name );
+				logError( "Unknown host %\"s specified for local chooser preload of display %s\n", *hostp, td->name );
 	} else
 		forEachChooserHost( &td->clientAddr, td->connectionType,
 		                    addChooserHost, 0 );

@@ -61,7 +61,7 @@
 #include <KPluginLoader>
 #include <fontconfig/fontconfig.h>
 
-// Enable the following to allow printing of non-installed fonts. Doesnt seem to work :-(
+// Enable the following to allow printing of non-installed fonts. Does not seem to work :-(
 //#define KFI_PRINT_APP_FONTS
 
 namespace KFI

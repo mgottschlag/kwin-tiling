@@ -590,7 +590,7 @@ bool bitmapsEnabled()
     // it is assumed that bitmaps are disabled.
 
     static bool enabled(false);
-    static bool checked(false); // Dont keep on checking!
+    static bool checked(false); // Do not keep on checking!
 
     if(!checked)
     {

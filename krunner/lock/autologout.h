@@ -4,7 +4,7 @@
 //
 // Copyright 1999 Martin R. Jones <mjones@kde.org>
 // Copyright 2003 Oswald Buddenhagen <ossi@kde.org>
-// Coypright (c) 2004 Chris Howells <howells@kde.org>
+// Copyright 2004 Chris Howells <howells@kde.org>
 
 #ifndef AUTOLOGOUT_H
 #define AUTOLOGOUT_H

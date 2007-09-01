@@ -35,7 +35,7 @@
 #endif
 #include "CreateParent.h"
 
-// Enable the following to allow printing of non-installed fonts. Doesnt seem to work :-(
+// Enable the following to allow printing of non-installed fonts. Does not seem to work :-(
 //#define KFI_PRINT_APP_FONTS
 
 using namespace KFI;

@@ -49,7 +49,7 @@ void History::insert( const HistoryItem* item ) {
 
     m_topIsUserSelected = false;
 
-    // Optimisation: Compare with top item.
+    // Optimization: Compare with top item.
     if ( !itemList.isEmpty() && *itemList.first() == *item ) {
         delete item;
         return;

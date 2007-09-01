@@ -759,7 +759,7 @@ bool qt_get_named_rgb( const char *name, QRgb* rgb )
 
     RGBData x;
     x.name = name_no_space;
-    // Funtion bsearch() is supposed to be
+    // Function bsearch() is supposed to be
     // void *bsearch(const void *key, const void *base, ...
     // So why (char*)? Are there broken bsearch() declarations out there?
     RGBData *r = (RGBData*)bsearch((char*)&x, (char*)rgbTbl, rgbTblSize,

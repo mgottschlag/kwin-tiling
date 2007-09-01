@@ -205,7 +205,7 @@ CFontEngine::EType CFontEngine::getType(const char *fileName, const unsigned cha
         return TYPE_TYPE1;
 
     //
-    // NOTE: Dont accept .gz extension - strigi will decompress for us.
+    // NOTE: Do not accept .gz extension - strigi will decompress for us.
     if(Misc::checkExt(fileName, "pcf"))
         return TYPE_PCF;
 
