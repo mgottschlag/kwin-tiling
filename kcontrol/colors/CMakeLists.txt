@@ -1,23 +1,11 @@
-
-
-add_definitions (-DQT3_SUPPORT)
 KDE4_NO_ENABLE_FINAL(colors)
-########### next target ###############
 
-set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp kcolortreewidget.cpp ../krdb/krdb.cpp)
-
+set(kcm_colors_PART_SRCS colorscm.cpp)
 
 kde4_add_plugin(kcm_colors ${kcm_colors_PART_SRCS})
-
-
 target_link_libraries(kcm_colors ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDEFX_LIBS})
 
 install(TARGETS kcm_colors  DESTINATION ${PLUGIN_INSTALL_DIR})
-
-
-########### install files ###############
-
 install( FILES colors.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
-
