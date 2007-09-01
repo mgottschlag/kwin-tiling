@@ -68,7 +68,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     constraintsUpdated();
 }
 
-QSizeF Clock::contentSize() const
+QSizeF Clock::contentSizeHint() const
 {
     return m_size;
 }
