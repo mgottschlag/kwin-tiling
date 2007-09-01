@@ -82,7 +82,7 @@ int main( int argc, char **argv )
         Display *dpy = XOpenDisplay(NULL);
         if (! dpy) {
             fprintf(stderr,
-                    "%s: FATAL ERROR: couldn't open display '%s'\n",
+                    "%s: FATAL ERROR: could not open display '%s'\n",
                     argv[0], XDisplayName(NULL));
             exit(1);
         }

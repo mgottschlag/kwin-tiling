@@ -179,7 +179,7 @@ main( int argc, char **argv )
 		if (!strcmp( pt, "help" ) || !strcmp( pt, "h" )) {
 			printf( "Usage: %s [options] [tty]\n"
 "  -daemon\t  - Daemonize even when started by init\n"
-"  -nodaemon\t  - Don't daemonize even when started from command line\n"
+"  -nodaemon\t  - Do not daemonize even when started from command line\n"
 "  -config <file>  - Use alternative master configuration file\n"
 "  -xrm <res>\t  - Override frontend-specific resource\n"
 "  -error <file>\t  - Use alternative log file\n"
@@ -191,7 +191,7 @@ main( int argc, char **argv )
 "\t\t\t0x10 - session sub-daemon post-fork delay\n"
 "\t\t\t0x20 - config reader post-start delay\n"
 "\t\t\t0x40 - greeter post-start delay\n"
-"\t\t\t0x80 - don't use syslog\n"
+"\t\t\t0x80 - do not use syslog\n"
 "\t\t\t0x100 - core Xauth log\n"
 "\t\t\t0x200 - debug greeter theming\n"
 "\t\t\t0x400 - valgrind config reader and greeter\n"
@@ -238,9 +238,9 @@ main( int argc, char **argv )
 	/* SUPPRESS 560 */
 	if ((oldpid = storePid())) {
 		if (oldpid == -1)
-			logError( "Can't create/lock pid file %s\n", pidFile );
+			logError( "Can not create/lock pid file %s\n", pidFile );
 		else
-			logError( "Can't lock pid file %s, another xdm is running (pid %d)\n",
+			logError( "Can not lock pid file %s, another xdm is running (pid %d)\n",
 			          pidFile, oldpid );
 		exit( 1 );
 	}

@@ -299,7 +299,7 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 #ifdef __OpenBSD__
 	/* Give read capability to group _x11 */
 	if (!(x11 = getpwnam( "_x11" )))
-		logError( "Can't find _x11 user\n" );
+		logError( "Can not find _x11 user\n" );
 	else
 		fchown( fileno( auth_file ), x11->pw_uid, x11->pw_gid );
 #endif
@@ -404,7 +404,7 @@ openFiles( const char *name, char *new_name, FILE **oldp, FILE **newp )
 	strcat( strcpy( new_name, name ), "-n" );
 	if (!(*newp =
 	      fdOpenW( creat( new_name, 0600 ) ))) {
-		debug( "can't open new file %s\n", new_name );
+		debug( "can not open new file %s\n", new_name );
 		return 0;
 	}
 	*oldp = fopen( name, "r" );
@@ -1065,7 +1065,7 @@ startUserAuth( char *buf, char *nbuf, FILE **old, FILE **new )
 				XauUnlockAuth( buf );
 	}
 	if (!*new)
-		logWarn( "Can't update authorization file in home dir %s\n", home );
+		logWarn( "Can not update authorization file in home dir %s\n", home );
 }
 
 static int
@@ -1096,7 +1096,7 @@ endUserAuth( FILE *old, FILE *new, const char *nname, int ok )
 static void
 undoUserAuth( const char *name, const char *new_name )
 {
-	logWarn( "Can't save user authorization in home dir\n" );
+	logWarn( "Can not save user authorization in home dir\n" );
 	unlink( new_name );
 	XauUnlockAuth( name );
 }
@@ -1108,7 +1108,7 @@ moveUserAuth( const char *name, char *new_name, char *envname )
 		debug( "unlink %s failed\n", name );
 	if (link( new_name, name )) {
 		debug( "link failed %s %s\n", new_name, name );
-		logError( "Can't move user authorization into place\n" );
+		logError( "Can not move user authorization into place\n" );
 		envname = new_name;
 	} else {
 		debug( "new authorization moved into place\n" );
@@ -1164,7 +1164,7 @@ setUserAuthorization( struct display *d )
 			}
 #endif
 			if (!new) {
-				logError( "Can't create authorization file in %s\n",
+				logError( "Can not create authorization file in %s\n",
 				          d->userAuthDir );
 				return;
 			}
@@ -1217,7 +1217,7 @@ setUserAuthorization( struct display *d )
 		}
 		if (!endUserAuth( old, new, new_name, ok )) {
 			if (!name) {
-				logError( "Can't save user authorization\n" );
+				logError( "Can not save user authorization\n" );
 				return;
 			}
 			undoUserAuth( name, new_name );

@@ -609,7 +609,7 @@ verify( GConvFunc gconv, int rootok )
 		char realm[REALM_SZ];
 
 		if (krb_get_lrealm( realm, 1 )) {
-			logError( "Can't get KerberosIV realm.\n" );
+			logError( "Can not get KerberosIV realm.\n" );
 			V_RET_FAIL( 0 );
 		}
 
@@ -1461,7 +1461,7 @@ startClient( volatile int *pid )
 		if (setpenv( curuser, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
 		             userEnviron, NULL ) != 0)
 		{
-			logError( "Can't set %s's process environment\n", curuser );
+			logError( "Can not set %s's process environment\n", curuser );
 			goto cError;
 		}
 		userEnviron = newenv;

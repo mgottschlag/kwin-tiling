@@ -530,14 +530,14 @@ static const char def_xaccess[] =
 "#\n"
 "# The nicest way to run the chooser is to just ask it to broadcast\n"
 "# requests to the network - that way new hosts show up automatically.\n"
-"# Sometimes, however, the chooser can't figure out how to broadcast,\n"
+"# Sometimes, however, the chooser can not figure out how to broadcast,\n"
 "# so this may not work in all environments.\n"
 "#\n"
 "\n"
 "*		CHOOSER BROADCAST	#any indirect host can get a chooser\n"
 "\n"
 "#\n"
-"# If you'd prefer to configure the set of hosts each terminal sees,\n"
+"# If you would prefer to configure the set of hosts each terminal sees,\n"
 "# then just uncomment these lines (and comment the CHOOSER line above)\n"
 "# and edit the %hostlist line as appropriate\n"
 "#\n"
@@ -581,7 +581,7 @@ static const char def_startup[] =
 "\n"
 #ifdef _AIX
 "# We create a pseudodevice for finger.  (host:0 becomes xdm/host_0)\n"
-"# Without it, finger errors out with \"Can't stat /dev/host:0\".\n"
+"# Without it, finger errors out with \"Can not stat /dev/host:0\".\n"
 "#\n"
 "#devname=`echo $DISPLAY | cut -c1-8`\n"
 "#if [ ! -d /dev/xdm ]; then\n"
@@ -662,7 +662,7 @@ static const char def_session2[] =
 "    . $xsess_tmp\n"
 "    rm -f $xsess_tmp\n"
 "    ;;\n"
-"  *) # Plain sh, ksh, and anything we don't know.\n"
+"  *) # Plain sh, ksh, and anything we do not know.\n"
 "    [ -f /etc/profile ] && . /etc/profile\n"
 "    [ -f $HOME/.profile ] && . $HOME/.profile\n"
 "    ;;\n"
@@ -1548,7 +1548,7 @@ edit_startup( File *file )
 #ifdef _AIX
 			delstr( file, "\n"
 "# We create a pseudodevice for finger.  (host:0 becomes [kx]dm/host_0)\n" );
-"# Without it, finger errors out with \"Can't stat /dev/host:0\".\n"
+"# Without it, finger errors out with \"Can not stat /dev/host:0\".\n"
 "#\n"
 "if [[] -f /usr/lib/X11/xdm/sessreg ]; then\n"
 "  devname=`echo $DISPLAY | /usr/bin/sed -e 's/[[]:\\.]/_/g' | /usr/bin/cut -c1-8`\n"
@@ -2630,15 +2630,15 @@ int main( int argc, char **argv )
 "    Default is to scan " KDE_CONFDIR " and\n"
 "    {/usr,/usr/local,{/opt,/usr/local}/{kde3,kde,kde2,kde1}}/share/config.\n"
 "  --no-old\n"
-"    Don't look at older xdm/kdm configurations, just create default config.\n"
+"    Do not look at older xdm/kdm configurations, just create default config.\n"
 "  --no-old-xdm\n"
-"    Don't look at older xdm configurations.\n"
+"    Do not look at older xdm configurations.\n"
 "  --no-old-kde\n"
-"    Don't look at older kdm configurations.\n"
+"    Do not look at older kdm configurations.\n"
 "  --old-scripts\n"
 "    Directly use all scripts from the older xdm/kdm configuration.\n"
 "  --no-old-scripts\n"
-"    Don't use scripts from the older xdm/kdm configuration even if it lives\n"
+"    Do not use scripts from the older xdm/kdm configuration even if it lives\n"
 "    in the new target directory.\n"
 "  --old-confs\n"
 "    Directly use all ancillary config files from the older xdm/kdm\n"
@@ -2646,7 +2646,7 @@ int main( int argc, char **argv )
 "  --no-backup\n"
 "    Overwrite/delete old config files instead of backing them up.\n"
 "  --no-in-notice\n"
-"    Don't put the notice about --in being used into the generated README.\n"
+"    Do not put the notice about --in being used into the generated README.\n"
 );
 			exit( 0 );
 		}
@@ -2780,7 +2780,7 @@ int main( int argc, char **argv )
 			if (locals) {
 				fprintf( stderr,
 				         "Warning: both local and foreign scripts referenced. "
-				         "Won't touch any.\n" );
+				         "Will not touch any.\n" );
 				mixed_scripts = 1;
 			} else {
 			  no_old_s:
@@ -2853,7 +2853,7 @@ int main( int argc, char **argv )
 	if (use_destdir && !no_in_notice)
 		fprintfLineWrap( f,
 "All files destined for " KDMCONF " were actually saved in %s; "
-"this config won't be workable until moved in place.\n", newdir );
+"this config will not be workable until moved in place.\n", newdir );
 	if (uflist || eflist || cflist || lflist) {
 		fprintf( f,
 "\n"

@@ -1538,7 +1538,7 @@ bool SolidShell::bluetoothRemoteHasBonding(const QString &adapterUbi, const QStr
     {
         cout << "'" << deviceUbi << "' is bonded/paired." << endl;
     } else {
-        cout << "'" << deviceUbi << "' isn't bonded/paired." << endl;
+        cout << "'" << deviceUbi << "' is not bonded/paired." << endl;
     }
 
     return true;

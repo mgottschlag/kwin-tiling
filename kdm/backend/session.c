@@ -82,7 +82,7 @@ abortClient( int pid )
 		if (kill( -pid, sig ) == -1) {
 			switch (errno) {
 			case EPERM:
-				logError( "Can't kill client\n" );
+				logError( "Can not kill client\n" );
 			case EINVAL:
 			case ESRCH:
 				return;

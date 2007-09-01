@@ -237,10 +237,10 @@ runAndWait( char **args, char **env )
 	switch (Fork( &pid )) {
 	case 0:
 		execute( args, env );
-		logError( "Can't execute %\"s: %m\n", args[0] );
+		logError( "Can not execute %\"s: %m\n", args[0] );
 		exit( 127 );
 	case -1:
-		logError( "Can't fork to execute %\"s: %m\n", args[0] );
+		logError( "Can not fork to execute %\"s: %m\n", args[0] );
 		return wcCompose( 0, 0, 127 );
 	}
 	ret = Wait4( &pid );
@@ -263,12 +263,12 @@ pOpen( char **what, char m, volatile int *pid )
 		close( dp[0] );
 		close( dp[1] );
 		execute( what, environ );
-		logError( "Can't execute %\"s: %m\n", what[0] );
+		logError( "Can not execute %\"s: %m\n", what[0] );
 		exit( 127 );
 	case -1:
 		close( dp[0] );
 		close( dp[1] );
-		logError( "Can't fork to execute %\"s: %m\n", what[0] );
+		logError( "Can not fork to execute %\"s: %m\n", what[0] );
 		return 0;
 	}
 	if (m == 'r') {
@@ -294,7 +294,7 @@ locate( const char *exe )
 	char *path, *pathe, *name, *thenam, nambuf[PATH_MAX+1];
 
 	if (!(path = getenv( "PATH" ))) {
-		logError( "Can't execute %'s: $PATH not set.\n", exe );
+		logError( "Can not execute %'s: $PATH not set.\n", exe );
 		return 0;
 	}
 	len = strlen( exe );
@@ -317,7 +317,7 @@ locate( const char *exe )
 		}
 		path = pathe;
 	} while (*path++ != '\0');
-	logError( "Can't execute %'s: not in $PATH.\n", exe );
+	logError( "Can not execute %'s: not in $PATH.\n", exe );
 	return 0;
 }
 

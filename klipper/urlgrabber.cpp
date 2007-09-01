@@ -231,7 +231,7 @@ void URLGrabber::slotItemSelected( int id )
     default:
         ClipCommand *command = myCommandMapper.find( id );
         if ( !command )
-            qWarning("Klipper: can't find associated action");
+            qWarning("Klipper: can not find associated action");
         else
             execute( command );
     }
@@ -251,7 +251,7 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
         KProcess proc;
         proc.setShellCommand(cmdLine.trimmed());
         if (!proc.startDetached())
-            qWarning("Klipper: Couldn't start process!");
+            qWarning("Klipper: Could not start process!");
     }
 }
 
