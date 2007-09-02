@@ -170,6 +170,7 @@ KJob *BluezBluetoothRemoteDevice::createBonding()
 
 void BluezBluetoothRemoteDevice::setAlias(const QString &alias)
 {
+	device->call("SetRemoteAlias",m_address,alias);
 }
 
 void BluezBluetoothRemoteDevice::clearAlias()
