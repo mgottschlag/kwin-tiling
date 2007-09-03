@@ -1,0 +1,21 @@
+[Desktop Entry]
+Name=Task Manager
+Name[es]=Administración de tareas
+Name[ja]=タスクマネージャ
+Name[nl]=Taakbeheer
+Name[pt]=Gestor de Tarefas
+Name[pt_BR]=Gestor de Tarefas
+Name[sv]=Uppgiftshantering
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_tasks
+X-KDE-PluginInfo-Author=Robert Knight
+X-KDE-PluginInfo-Email=robertknight@gmail.com
+X-KDE-PluginInfo-Name=tasks
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Windows and Tasks
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL v2+
+X-KDE-PluginInfo-EnabledByDefault=true

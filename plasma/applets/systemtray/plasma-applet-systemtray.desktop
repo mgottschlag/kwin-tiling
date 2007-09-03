@@ -1,0 +1,22 @@
+[Desktop Entry]
+
+Name=System tray
+Name[es]=Bandeja del sistema
+Name[ja]=システムトレイ
+Name[pt]=Bandeja do sistema
+Name[pt_BR]=Bandeja do sistema
+Name[sv]=Systembricka
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_systemtray
+X-KDE-PluginInfo-Author=Alexander Rodin
+X-KDE-PluginInfo-Email=rodin.alexander@gmail.com
+X-KDE-PluginInfo-Name=systemtray
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org
+X-KDE-PluginInfo-Category=Windows and Tasks
+X-KDE-PluginInfo-Depeneds=
+X-KDE-PluginInfo-License=GPL v2+
+X-KDE-PluginInfo-EnabledByDefault=true
+
