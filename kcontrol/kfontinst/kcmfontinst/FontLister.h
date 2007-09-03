@@ -38,6 +38,15 @@ class CFontLister : public QObject
 {
     Q_OBJECT
 
+    private:
+
+    enum EListing
+    {
+        LIST_ALL,
+        LIST_USER,
+        LIST_SYS
+    };
+
     public:
 
     CFontLister(QObject *parent);
@@ -70,11 +79,15 @@ class CFontLister : public QObject
     private:
 
     void removeItems(KFileItemList &items);
+    bool inScope(const KUrl &url);
+
+    static EListing listing(const KUrl &url);
 
     private:
 
     typedef QHash<KUrl, KFileItem *> ItemCont;
 
+    EListing      itsListing;
     ItemCont      itsItems;
     bool          itsAutoUpdate,
                   itsUpdateRequired;

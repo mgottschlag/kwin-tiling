@@ -38,6 +38,7 @@ namespace KFI
 
 CFontLister::CFontLister(QObject *parent)
            : QObject(parent),
+             itsListing(LIST_ALL),
              itsAutoUpdate(true),
              itsUpdateRequired(false),
              itsJob(NULL),
@@ -62,12 +63,17 @@ void CFontLister::scan(const KUrl &url)
 
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
         itsUpdateRequired=false;
+
+        itsListing=LIST_ALL;
         if(Misc::root())
             itsJob=KIO::listDir(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), false);
         else if(url.isEmpty())
             itsJob=KIO::listDir(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_ALL), false);
         else
+        {
+            itsListing=listing(url);
             itsJob=KIO::listDir(url, false);
+        }
 
         emit started();
         connect(itsJob, SIGNAL(entries(KIO::Job *, const KIO::UDSEntryList &)), this,
@@ -209,7 +215,7 @@ void CFontLister::result(KJob *job)
                 (*it)->unmark();
                 ++it;
             }
-            else
+            else if(inScope((*it)->url()))
             {
                 ItemCont::Iterator remove(it);
                 KFileItem          *item(*it);
@@ -221,6 +227,13 @@ void CFontLister::result(KJob *job)
                 itemsToRemove.append(item);
                 ++it;
                 itsItems.erase(remove);
+            }
+            else
+            {
+#ifdef KFI_FONTLISTER_DEBUG
+                kDebug() << (*it)->url().prettyUrl() << " IS NOT IN SCOPE";
+#endif
+                ++it;
             }
 
         removeItems(itemsToRemove);
@@ -312,6 +325,41 @@ void CFontLister::removeItems(KFileItemList &items)
 
     for(; it!=end; ++it)
         delete *it;
+}
+
+inline bool isSysFolder(const QString &sect)
+{
+    return i18n(KFI_KIO_FONTS_SYS)==sect || KFI_KIO_FONTS_SYS==sect;
+}
+
+inline bool isUserFolder(const QString &sect)
+{
+    return i18n(KFI_KIO_FONTS_USER)==sect || KFI_KIO_FONTS_USER==sect;
+}
+
+CFontLister::EListing CFontLister::listing(const KUrl &url)
+{
+    QString path(url.path(KUrl::RemoveTrailingSlash).section('/', 1, 1));
+
+    if(isSysFolder(path))
+        return LIST_SYS;
+    else if(isUserFolder(path))
+        return LIST_USER;
+    return LIST_ALL;
+}
+
+bool CFontLister::inScope(const KUrl &url)
+{
+    switch(itsListing)
+    {
+        default:
+        case LIST_ALL:
+            return true;
+        case LIST_SYS:
+            return isSysFolder(url.path(KUrl::RemoveTrailingSlash).section('/', 1, 1));
+        case LIST_USER:
+            return isUserFolder(url.path(KUrl::RemoveTrailingSlash).section('/', 1, 1));
+    }
 }
 
 }
