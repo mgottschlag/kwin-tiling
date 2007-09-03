@@ -64,7 +64,7 @@ Tzone::Tzone(QWidget * parent)
 
     QVBoxLayout *lay = new QVBoxLayout(this);
 
-    tzonelist = new KTimeZoneWidget(this, &m_zoneDb);
+    tzonelist = new KTimeZoneWidget(this);
     connect( tzonelist, SIGNAL(itemSelectionChanged()), SLOT(handleZoneChange()) );
 
     m_local = new QLabel(this);
