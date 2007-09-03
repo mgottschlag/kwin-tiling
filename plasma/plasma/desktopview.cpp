@@ -234,8 +234,7 @@ void DesktopView::contextMenuEvent(QContextMenuEvent *event)
     if (m_zoomLevel != Plasma::DesktopZoom) {
         desktopMenu.addAction(m_zoomInAction);
         desktopMenu.addAction(m_zoomOutAction);
-    }
-    else if (!applet) {
+    } else if (!applet) {
         if (PlasmaApp::self()->corona()->isImmutable()) {
             QGraphicsView::contextMenuEvent(event);
             return;
