@@ -127,15 +127,15 @@ void Command_url_action::execute()
         cmd = uri.uri().url();
     switch( uri.uriType())
         {
-        case KUriFilterData::LOCAL_FILE:
-        case KUriFilterData::LOCAL_DIR:
-        case KUriFilterData::NET_PROTOCOL:
-        case KUriFilterData::HELP:
+        case KUriFilterData::LocalFile:
+        case KUriFilterData::LocalDir:
+        case KUriFilterData::NetProtocol:
+        case KUriFilterData::Help:
             {
             ( void ) new KRun( uri.uri(),0L);
           break;
             }
-        case KUriFilterData::EXECUTABLE:
+        case KUriFilterData::Executable:
             {
             if (!KAuthorized::authorizeKAction("shell_access"))
 		return;
@@ -150,7 +150,7 @@ void Command_url_action::execute()
                 }
             // fall though
             }
-        case KUriFilterData::SHELL:
+        case KUriFilterData::Shell:
             {
             if (!KAuthorized::authorizeKAction("shell_access"))
 		return;

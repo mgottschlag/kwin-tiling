@@ -253,24 +253,24 @@ void RunApplet::run_command(const QString& command)
 	{
 	    switch( _filterData->uriType() )
 		{
-		case KUriFilterData::LOCAL_FILE:
-		case KUriFilterData::LOCAL_DIR:
-		case KUriFilterData::NET_PROTOCOL:
-		case KUriFilterData::HELP:
+		case KUriFilterData::LocalFile:
+		case KUriFilterData::LocalDir:
+		case KUriFilterData::NetProtocol:
+		case KUriFilterData::Help:
 		    {
 		        (void) new KRun( _filterData->uri(), this );
 			goto hide;
 		    }
-		case KUriFilterData::EXECUTABLE:
-		case KUriFilterData::SHELL:
+		case KUriFilterData::Executable:
+		case KUriFilterData::Shell:
 		    {
 		        exec = cmd;
 			if( _filterData->hasArgsAndOptions() )
 			  cmd += _filterData->argsAndOptions();
 			break;
 		    }
-		case KUriFilterData::UNKNOWN:
-		case KUriFilterData::ERROR:
+		case KUriFilterData::Unknown:
+		case KUriFilterData::Error:
 		default:
 		    KMessageBox::sorry( 0, i18n("<qt>The program name or command <b>%1</b>\n"
 						"cannot be found. Please correct the command\n"
