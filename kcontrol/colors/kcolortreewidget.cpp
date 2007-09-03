@@ -17,8 +17,7 @@
 #include <QColor>
 #include <QItemDelegate>
 #include <QPainter>
-#include <kglobalsettings.h>
-
+#include <kcolorscheme.h>
 
 //BEGIN KColorTreeWidgetItem
 /*
@@ -154,7 +153,7 @@ void KColorTreeDelegate::paint( QPainter* painter, const QStyleOptionViewItem& o
     }
     else
     {
-        painter->fillRect(option.rect,QBrush(KGlobalSettings::textColor(), Qt::FDiagPattern) );
+        painter->fillRect(option.rect,QBrush(KColorScheme(QPalette::Active, KColorScheme::View).foreground().color(), Qt::FDiagPattern) );
     }
 
 //     if (!set) {
