@@ -221,7 +221,7 @@ void AbstractTaskItem::drawBackground(QPainter* painter, const QStyleOptionGraph
 {
     // FIXME  Check the usage of KColorScheme here with various color schemes
 
-    KColorScheme colorScheme;
+    KColorScheme colorScheme(QPalette::Active);
 
     if ( option->state & QStyle::State_MouseOver 
          || _fadeTimer->state() == QTimeLine::Running 
