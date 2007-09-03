@@ -23,7 +23,7 @@
 #define SYSTEMTRAY_H
 
 // Plasma
-#include <Plasma/Applet>
+#include <plasma/applet.h>
 
 class SystemTrayWidget;
 
