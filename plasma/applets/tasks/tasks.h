@@ -27,7 +27,7 @@
 
 // Plasma
 #include <plasma/applet.h>
-#include <plasma/taskmanager.h>
+#include <taskmanager/taskmanager.h>
 
 class QGraphicsSceneDragDropEvent;
 class QTimeLine;
