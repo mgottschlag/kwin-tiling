@@ -1,11 +1,5 @@
 [Desktop Entry]
 Name=Task Manager
-Name[es]=Administración de tareas
-Name[ja]=タスクマネージャ
-Name[nl]=Taakbeheer
-Name[pt]=Gestor de Tarefas
-Name[pt_BR]=Gestor de Tarefas
-Name[sv]=Uppgiftshantering
 Type=Service
 ServiceTypes=Plasma/Applet
 
