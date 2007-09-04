@@ -156,6 +156,9 @@ QString KBackgroundRenderer::buildCommand()
             cmd.replace(pos, 2, "%");
             pos--;
             break;
+        default:
+            ++pos; // avoid infinite loop
+            break;
         }
 
     }
