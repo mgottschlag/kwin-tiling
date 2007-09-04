@@ -31,7 +31,6 @@
 #include <kconfig.h>
 #include <kglobalsettings.h>
 #include <kio/netaccess.h>
-#include <k3staticdeleter.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <math.h>
@@ -47,8 +46,7 @@
 namespace KFI
 {
 
-static K3StaticDeleter<CFcEngine> staticDel;
-static CFcEngine                 *theInstance=NULL;
+K_GLOBAL_STATIC(CFcEngine, theInstance)
 
 const int CFcEngine::constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0 };
 const int CFcEngine::constDefaultAlphaSize=24;
@@ -337,9 +335,6 @@ static QString usableStr(XftFont *font, QString &str)
 
 CFcEngine * CFcEngine::instance()
 {
-    if(!theInstance)
-        staticDel.setObject(theInstance, new CFcEngine);
-
     return theInstance;
 }
 

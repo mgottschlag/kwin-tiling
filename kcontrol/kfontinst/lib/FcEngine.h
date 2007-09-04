@@ -69,6 +69,7 @@ class KDE_EXPORT CFcEngine
 
     static CFcEngine * instance();
 
+    CFcEngine();
     ~CFcEngine();
 
     void                  readConfig(KConfig &cfg);
@@ -107,8 +108,6 @@ class KDE_EXPORT CFcEngine
     static const int      constDefaultAlphaSize;
 
     private:
-
-    CFcEngine();
 
     bool                  parseUrl(const KUrl &url, int faceNo);
     bool                  parseName(const QString &name, quint32 style=KFI_NO_STYLE_INFO, const KUrl &url=KUrl());
