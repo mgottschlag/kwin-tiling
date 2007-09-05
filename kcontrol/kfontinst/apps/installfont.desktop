@@ -4,7 +4,7 @@ ServiceTypes=application/x-font-ttf,application/x-font-type1,application/x-font-
 Actions=installFont;
 
 [Desktop Action installFont]
-Name=Install
+Name=Install...
 Name[af]=Installeer
 Name[ar]=ثبّت
 Name[be]=Устанавіць
@@ -67,5 +67,5 @@ Name[vi]=Cài đặt
 Name[x-test]=xxInstallxx
 Name[zh_CN]=安装
 Name[zh_TW]=安裝
-Icon=fonts
-Exec=kfontinst %U
+Icon=preferences-desktop-font-installer
+Exec=kfontinst --icon preferences-desktop-font-installer %U 
