@@ -2,6 +2,7 @@
 Name=Web style
 Name[be]=Стыль Сеціва
 Name[bg]=Уеб стил
+Name[el]=Στυλ Web
 Name[ga]=Stíl Ghréasáin
 Name[ja]=ウェブスタイル
 Name[km]=រចនាប័ទ្ម​បណ្តាញ​
@@ -13,6 +14,7 @@ Name[zh_TW]=網頁樣式
 Comment=Web widget style
 Comment[be]=Стыль Сеціва
 Comment[bg]=Стил "уеб"
+Comment[el]=Στυλ Web
 Comment[ja]=ウェブウィジェットスタイル
 Comment[km]=រចនាប័ទ្ម​ធាតុក្រាហ្វិក​បណ្តាល​
 Comment[nds]=Knoopstil "Web"

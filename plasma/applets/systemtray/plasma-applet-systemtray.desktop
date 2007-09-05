@@ -1,6 +1,12 @@
 [Desktop Entry]
 
 Name=System tray
+Name[el]=Πλαίσιο συστήματος
+Name[ga]=Tráidire an chórais
+Name[ja]=システムトレイ
+Name[nds]=Systeemafsnitt vun't Paneel
+Name[pt]=Bandeja do sistema
+Name[pt_BR]=Bandeja do sistema
 Type=Service
 ServiceTypes=Plasma/Applet
 

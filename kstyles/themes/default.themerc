@@ -1,6 +1,7 @@
 [Misc]
 Name=KDE Classic
 Name[be]=Класічны KDE
+Name[el]=KDE κλασικό
 Name[ga]=KDE Clasaiceach
 Name[ja]=KDE クラシック
 Name[km]=ASClassic
@@ -13,6 +14,7 @@ Comment=Classic KDE style
 Comment[be]=Класічны стыль KDE
 Comment[bg]=Класически стил на KDE
 Comment[cs]=Klasický styl KDE
+Comment[el]=Κλασικό στυλ του KDE
 Comment[ja]=クラシック KDE スタイル
 Comment[km]=រចនាប័ទ្ម​ KDE ជំនាន់​ចាស់ៗ
 Comment[nds]=Klass'sch KDE-Stil

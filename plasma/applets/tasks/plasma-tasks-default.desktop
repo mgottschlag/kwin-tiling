@@ -1,5 +1,11 @@
 [Desktop Entry]
 Name=Task Manager
+Name[el]=Διαχειριστής εργασιών
+Name[ga]=Bainisteoir na dTascanna
+Name[ja]=タスクマネージャ
+Name[nds]=Opgavenpleger
+Name[pt]=Gestor de Tarefas
+Name[pt_BR]=Gestor de Tarefas
 Type=Service
 ServiceTypes=Plasma/Applet
 
