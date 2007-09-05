@@ -108,7 +108,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 
     // effects page
     QWidget *effectsPage = new QWidget;
-    QHBoxLayout *effectsPageLayout = new QHBoxLayout( effectsPage );
+    QVBoxLayout *effectsPageLayout = new QVBoxLayout( effectsPage );
     // TODO
     QGroupBox *inactiveBox = new QGroupBox( i18n( "Inactive" ) );
     QGridLayout *inactiveLayout = new QGridLayout(inactiveBox);
@@ -120,7 +120,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     QSlider *intensitySlider = new QSlider( Qt::Horizontal );
     inactiveLayout->addWidget(intensityLabel, 0, 0);
     inactiveLayout->addWidget(intensityComboBox, 0, 1);
-    inactiveLayout->addWidget(intensitySlider, 1, 0, 1, 3);
+    inactiveLayout->addWidget(intensitySlider, 0, 2);
     QLabel *colorLabel = new QLabel( i18n( "Color" ) );
     QComboBox *colorComboBox = new QComboBox;
     colorComboBox->addItem( i18n( "Desaturate" ) );
@@ -129,21 +129,21 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     colorComboBox->addItem( i18n( "Tint out" ) );
     KColorButton *colorButton = new KColorButton;
     QSlider *colorSlider = new QSlider( Qt::Horizontal );
-    inactiveLayout->addWidget(colorLabel, 2, 0);
-    inactiveLayout->addWidget(colorComboBox, 2, 1);
-    inactiveLayout->addWidget(colorButton, 2, 2);
-    inactiveLayout->addWidget(colorSlider, 3, 0, 1, 3);
+    inactiveLayout->addWidget(colorLabel, 1, 0);
+    inactiveLayout->addWidget(colorComboBox, 1, 1);
+    inactiveLayout->addWidget(colorSlider, 1, 2);
+    inactiveLayout->addWidget(colorButton, 1, 3);
     QLabel *inactiveContrastLabel = new QLabel( i18n( "Contrast" ) );
     QComboBox *inactiveContrastComboBox = new QComboBox;
     inactiveContrastComboBox->addItem( i18n( "Fade" ) );
     inactiveContrastComboBox->addItem( i18n( "Tint in" ) );
     inactiveContrastComboBox->addItem( i18n( "Tint out" ) );
     QSlider *inactiveContrastSlider = new QSlider( Qt::Horizontal );
-    inactiveLayout->addWidget(inactiveContrastLabel, 4, 0);
-    inactiveLayout->addWidget(inactiveContrastComboBox, 4, 1);
-    inactiveLayout->addWidget(inactiveContrastSlider, 5, 0, 1, 3);
+    inactiveLayout->addWidget(inactiveContrastLabel, 2, 0);
+    inactiveLayout->addWidget(inactiveContrastComboBox, 2, 1);
+    inactiveLayout->addWidget(inactiveContrastSlider, 2, 2);
     QFrame *inactivePreview = new QFrame;
-    inactiveLayout->addWidget(inactivePreview, 6, 0, 1, 3);
+    inactiveLayout->addWidget(inactivePreview, 3, 0, 1, 4);
 
     QGroupBox *disabledBox = new QGroupBox( i18n( "Disabled" ) );
     QGridLayout *disabledLayout = new QGridLayout(disabledBox);
@@ -155,7 +155,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     QSlider *intensitySlider2 = new QSlider( Qt::Horizontal );
     disabledLayout->addWidget(intensityLabel2, 0, 0);
     disabledLayout->addWidget(intensityComboBox2, 0, 1);
-    disabledLayout->addWidget(intensitySlider2, 1, 0, 1, 3);
+    disabledLayout->addWidget(intensitySlider2, 0, 2);
     QLabel *colorLabel2 = new QLabel( i18n( "Color" ) );
     QComboBox *colorComboBox2 = new QComboBox;
     colorComboBox2->addItem( i18n( "Desaturate" ) );
@@ -164,21 +164,21 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     colorComboBox2->addItem( i18n( "Tint out" ) );
     KColorButton *colorButton2 = new KColorButton;
     QSlider *colorSlider2 = new QSlider( Qt::Horizontal );
-    disabledLayout->addWidget(colorLabel2, 2, 0);
-    disabledLayout->addWidget(colorComboBox2, 2, 1);
-    disabledLayout->addWidget(colorButton2, 2, 2);
-    disabledLayout->addWidget(colorSlider2, 3, 0, 1, 3);
+    disabledLayout->addWidget(colorLabel2, 1, 0);
+    disabledLayout->addWidget(colorComboBox2, 1, 1);
+    disabledLayout->addWidget(colorSlider2, 1, 2);
+    disabledLayout->addWidget(colorButton2, 1, 3);
     QLabel *inactiveContrastLabel2 = new QLabel( i18n( "Contrast" ) );
     QComboBox *inactiveContrastComboBox2 = new QComboBox;
     inactiveContrastComboBox2->addItem( i18n( "Fade" ) );
     inactiveContrastComboBox2->addItem( i18n( "Tint in" ) );
     inactiveContrastComboBox2->addItem( i18n( "Tint out" ) );
     QSlider *inactiveContrastSlider2 = new QSlider( Qt::Horizontal );
-    disabledLayout->addWidget(inactiveContrastLabel2, 4, 0);
-    disabledLayout->addWidget(inactiveContrastComboBox2, 4, 1);
-    disabledLayout->addWidget(inactiveContrastSlider2, 5, 0, 1, 3);
+    disabledLayout->addWidget(inactiveContrastLabel2, 2, 0);
+    disabledLayout->addWidget(inactiveContrastComboBox2, 2, 1);
+    disabledLayout->addWidget(inactiveContrastSlider2, 2, 2);
     QFrame *inactivePreview2 = new QFrame;
-    disabledLayout->addWidget(inactivePreview2, 6, 0, 1, 3);
+    disabledLayout->addWidget(inactivePreview2, 3, 0, 1, 4);
 
     effectsPageLayout->addWidget(inactiveBox);
     effectsPageLayout->addWidget(disabledBox);
