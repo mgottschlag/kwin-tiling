@@ -75,7 +75,16 @@ add_subdirectory( ksystraycmd )
 add_subdirectory( doc )
 add_subdirectory( wallpapers )
 add_subdirectory( menu )
-add_subdirectory( kicker)
+
+if(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
+    set(BUILD_KICKER TRUE)
+else(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
+    set(BUILD_KICKER FALSE)
+endif(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
+
+if(BUILD_KICKER)
+  add_subdirectory( kicker)
+endif(BUILD_KICKER)
 
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
   	add_subdirectory( kdm )
