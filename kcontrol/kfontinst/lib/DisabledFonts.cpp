@@ -382,12 +382,15 @@ bool CDisabledFonts::TFile::load(QDomElement &elem)
     return false;
 }
 
-QString CDisabledFonts::TFileList::toString() const
+QString CDisabledFonts::TFileList::toString(bool skipFirst) const
 {
     QString       s;
     QTextStream   str(&s, QIODevice::WriteOnly);
     ConstIterator it(begin()),
                   e(end());
+
+    if(skipFirst && it!=e)
+        ++it;
 
     for(; it!=e; ++it)
         str << (*it).path << endl

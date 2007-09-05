@@ -26,7 +26,6 @@
 #include <kurl.h>
 #include <kfileitem.h>
 #include <kio/job.h>
-#include <kdirlister.h>
 #include <QList>
 #include <QSet>
 #include <QHash>
@@ -140,7 +139,6 @@ class CFontList : public QAbstractItemModel
 
     QList<CFamilyItem *>                  itsFamilies;
     QHash<const KFileItem *, CFontItem *> itsFonts;   // Use for quick searching...
-    KDirLister                            *itsDirLister;
     CFontLister                           *itsLister;
     bool                                  itsAllowSys,
                                           itsAllowUser,
@@ -218,11 +216,6 @@ class CFamilyItem : public CFontModelItem
     CFontList          &itsParent;
 };
 
-//
-// NOTE: CFontItem has 2 StyleInfo entries.
-//          itsStyleInfo is the real one, and comes from the io-slave - this is mainly used to
-//              ensure correct previews.
-//          itsDisplayStyleInfo is created from itsName and is used for sorting, etc.
 class CFontItem : public CFontModelItem
 {
     public:
@@ -242,8 +235,7 @@ class CFontItem : public CFontModelItem
     bool                              isBitmap() const         { return itsBitmap; }
     const QString &                   fileName() const         { return itsFileName; }
     const QString &                   style() const            { return itsStyle; }
-    unsigned long                     styleInfo() const        { return itsStyleInfo; }
-    unsigned long                     displayStyleInfo() const { return itsDisplayStyleInfo; }
+    quint32                           styleInfo() const        { return itsStyleInfo; }
     int                               index() const            { return itsIndex; }
     const QString &                   family() const           { return (static_cast<CFamilyItem *>(parent()))->name(); }
     const QPixmap *                   pixmap(bool force=false);
@@ -261,8 +253,7 @@ class CFontItem : public CFontModelItem
                               itsStyle;
     int                       itsIndex;
     QPixmap                   *itsPixmap;
-    unsigned long             itsStyleInfo,
-                              itsDisplayStyleInfo;
+    quint32                   itsStyleInfo;
     bool                      itsBitmap,
                               itsEnabled;
     CDisabledFonts::TFileList itsFiles;

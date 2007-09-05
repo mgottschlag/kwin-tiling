@@ -388,14 +388,9 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &st
            itsPixmap(NULL)
 {
     const KIO::UDSEntry &udsEntry(entry());
-    int                 weight,
-                        width,
-                        slant;
 
     updateStatus();
     itsName=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
-    FC::decomposeStyleVal(FC::createStyleVal(itsName), weight, width, slant);
-    itsDisplayStyleInfo=(weight<<16)+(slant<<8)+(width);
     itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
     itsStyleInfo=udsEntry.numberValue((uint)UDS_EXTRA_FC_STYLE);
     itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDSEntry::UDS_URL)),
@@ -403,19 +398,18 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &st
     itsWritingSystems=udsEntry.numberValue((uint)UDS_EXTRA_WRITING_SYSTEMS);
     QString mime(mimetype());
 
-//    itsBitmap="application/x-font-pcf"==mime || "application/x-font-bdf"==mime;
-    itsBitmap="application/x-font-ttf"!=mime && "application/x-font-otf"!=mime &&
-              "application/x-font-type1"!=mime;
+    itsBitmap="application/x-font-pcf"==mime || "application/x-font-bdf"==mime;
 
     if(!Misc::root())
         setIsSystem(isSysFolder(url().path().section('/', 1, 1)));
 
     QString files=udsEntry.stringValue((uint)UDS_EXTRA_FILE_LIST);
 
-    if(files.isEmpty())
-        itsFiles.append(CDisabledFonts::TFile(itsFileName));
-    else
+    if(!files.isEmpty())
         itsFiles.fromString(files);
+
+    itsFiles.prepend(CDisabledFonts::TFile(itsFileName, itsIndex,
+                                           udsEntry.stringValue((uint)UDS_EXTRA_FOUNDRY)));
 }
 
 void CFontItem::touchThumbnail()
@@ -602,7 +596,7 @@ bool CFamilyItem::updateStatus()
 
 bool CFamilyItem::updateRegularFont(CFontItem *font)
 {
-    static const int constRegular=(FC_WEIGHT_REGULAR<<16)+(FC_SLANT_ROMAN<<8)+KFI_FC_WIDTH_NORMAL;
+    static const quint32 constRegular=FC::createStyleVal(FC_WEIGHT_REGULAR, KFI_FC_WIDTH_NORMAL, FC_SLANT_ROMAN);
 
     CFontItem *oldFont(itsRegularFont);
     bool       root(Misc::root());
@@ -611,8 +605,8 @@ bool CFamilyItem::updateRegularFont(CFontItem *font)
     {
         if(itsRegularFont)
         {
-            int regDiff=abs(itsRegularFont->displayStyleInfo()-constRegular),
-                fontDiff=abs(font->displayStyleInfo()-constRegular);
+            int regDiff=abs(itsRegularFont->styleInfo()-constRegular),
+                fontDiff=abs(font->styleInfo()-constRegular);
 
             if(fontDiff<regDiff)
                 itsRegularFont=font;
@@ -624,12 +618,13 @@ bool CFamilyItem::updateRegularFont(CFontItem *font)
     {
         QList<CFontItem *>::ConstIterator it(itsFonts.begin()),
                                           end(itsFonts.end());
-        int                               current=0x0FFFFFFF;
+        quint32                           current=0x0FFFFFFF;
 
         for(; it!=end; ++it)
             if(usable(*it, root))
             {
-                int diff=abs((*it)->displayStyleInfo()-constRegular);
+                quint32 diff=abs((*it)->styleInfo()-constRegular);
+
                 if(diff<current)
                 {
                     itsRegularFont=(*it);
@@ -1095,7 +1090,7 @@ CFontListSortFilterProxy::CFontListSortFilterProxy(QObject *parent, QAbstractIte
     setSourceModel(model);
     setSortCaseSensitivity(Qt::CaseInsensitive);
     setFilterKeyColumn(0);
-    setDynamicSortFilter(true);
+    setDynamicSortFilter(false);
     itsTimer=new QTimer(this);
     connect(itsTimer, SIGNAL(timeout()), SLOT(timeout()));
     itsTimer->setSingleShot(true);
@@ -1363,11 +1358,11 @@ bool CFontListSortFilterProxy::lessThan(const QModelIndex &left, const QModelInd
             {
                 if(lfi->isEnabled()<rfi->isEnabled() ||
                   (lfi->isEnabled()==rfi->isEnabled() &&
-                   lfi->displayStyleInfo()<rfi->displayStyleInfo()))
+                   lfi->styleInfo()<rfi->styleInfo()))
                     return true;
             }
             else
-                if(lfi->displayStyleInfo()<rfi->displayStyleInfo())
+                if(lfi->styleInfo()<rfi->styleInfo())
                     return true;
         }
         else

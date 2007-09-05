@@ -70,7 +70,7 @@ class KFONTINST_EXPORT CDisabledFonts
         Iterator locate(const TFile &t) { int i = indexOf(t); return (-1==i ? end() : (begin()+i)); }
         void     add(const TFile &t) const { (const_cast<TFileList *>(this))->append(t); }
 
-        QString  toString() const;
+        QString  toString(bool skipFirst=false) const;
         void     fromString(QString &s);
     };
 

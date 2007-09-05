@@ -1503,8 +1503,11 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
 
             if(hidden)
                 entry.insert(KIO::UDSEntry::UDS_HIDDEN, 1);
+
             entry.insert(UDS_EXTRA_FILE_NAME, (*it).path);
-            entry.insert(UDS_EXTRA_FILE_LIST, files.toString());
+            entry.insert(UDS_EXTRA_FOUNDRY, (*it).foundry);
+            if(files.count()>1)
+                entry.insert(UDS_EXTRA_FILE_LIST, files.toString(true));
 
             QString url(KFI_KIO_FONTS_PROTOCOL+QString::fromLatin1(":/"));
 
