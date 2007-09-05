@@ -24,7 +24,7 @@
 
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kglobalsettings.h>
+#include <KColorScheme>
 #include <kdesktopfile.h>
 #include <kstandarddirs.h>
 #include <krandomsequence.h>
@@ -1257,7 +1257,9 @@ void KGlobalBackgroundSettings::readSettings()
     for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
         m_bDrawBackgroundPerScreen[i] = common.readEntry( QString("DrawBackgroundPerScreen_%1").arg(i), _defDrawBackgroundPerScreen );
 
-    m_TextColor = KGlobalSettings::textColor();
+    // OK to use explicit QPalette::Active here, desktop icons can ignore state
+    // ### But, aren't desktop icons gone in KDE4?
+    m_TextColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color();
     const KConfigGroup fmSettings = m_pConfig->group("FMSettings");
     m_TextColor = fmSettings.readEntry("NormalTextColor", m_TextColor);
     m_TextBackgroundColor = fmSettings.readEntry("ItemTextBackground");
