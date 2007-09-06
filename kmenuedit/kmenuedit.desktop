@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Exec=kmenuedit
 Icon=kmenuedit
-DocPath=kmenuedit/index.html
+X-DocPath=kmenuedit/index.html
 Type=Application
 X-KDE-StartupNotify=true
 OnlyShowIn=KDE;
