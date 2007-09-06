@@ -543,7 +543,7 @@ manageSession( struct display *d )
 {
 	int ex, cmd;
 	volatile int clientPid = -1;
-	volatile time_t tdiff;
+	volatile time_t tdiff = 0;
 
 	td = d;
 	debug( "manageSession %s\n", d->name );
@@ -582,8 +582,7 @@ manageSession( struct display *d )
 		goto regreet;
 	}
 
-	tdiff = td->autoAgain ?
-	           1 : time( 0 ) - td->hstent->lastExit - td->openDelay;
+	tdiff = time( 0 ) - td->hstent->lastExit - td->openDelay;
 	if (autoLogon( tdiff )) {
 		if (!strDup( &curtype, "classic" ) || !verify( conv_auto, FALSE ))
 			goto gcont;
@@ -603,8 +602,9 @@ manageSession( struct display *d )
 #endif
 		for (;;) {
 			debug( "manageSession, greeting, tdiff = %d\n", tdiff );
-			gSendInt( *td->autoUser && td->autoDelay && tdiff > 0 ?
-			             G_GreetTimed : G_Greet );
+			gSendInt( (*td->autoUser && td->autoDelay &&
+			           (tdiff > 0 || td->autoAgain)) ?
+			              G_GreetTimed : G_Greet );
 		  gcont:
 			cmd = ctrlGreeterWait( TRUE );
 #ifdef XDMCP
