@@ -579,9 +579,10 @@ manageSession( struct display *d )
 			logError( "Received unknown command %d from greeter\n", cmd );
 			closeGreeter( TRUE );
 		}
+		goto regreet;
 	}
 
-	tdiff = td->autoAgain ? 
+	tdiff = td->autoAgain ?
 	           1 : time( 0 ) - td->hstent->lastExit - td->openDelay;
 	if (autoLogon( tdiff )) {
 		if (!strDup( &curtype, "classic" ) || !verify( conv_auto, FALSE ))
