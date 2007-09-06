@@ -147,7 +147,7 @@
       <attribute name="title" >
        <string>&amp;Effects</string>
       </attribute>
-      <layout class="QHBoxLayout" >
+      <layout class="QVBoxLayout" >
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
