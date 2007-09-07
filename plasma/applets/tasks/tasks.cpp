@@ -203,13 +203,19 @@ void AbstractTaskItem::hoverLeaveEvent( QGraphicsSceneHoverEvent* )
 }
 QSizeF AbstractTaskItem::maximumSize() const
 {
+    // A fixed maximum size is used instead of calculating the content size
+    // because overly-long task items make navigating around the task bar 
+    // more difficult
+    QSizeF size(200,200);
+#if 0
     //FIXME HARDCODE
     QSizeF sz = QSizeF(MaxTaskIconSize + QFontMetricsF(QApplication::font()).width(text() + IconTextSpacing),
                   200);
+#endif
 
    // qDebug() << "Task max size hint:" << sz;
 
-    return sz;
+    return size;
 }
 void AbstractTaskItem::setIcon(const QIcon& icon)
 {
