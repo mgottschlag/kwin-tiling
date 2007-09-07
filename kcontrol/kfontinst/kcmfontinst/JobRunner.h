@@ -41,9 +41,20 @@ class CJobRunner : public CActionDialog
 
     struct Item : public KUrl
     {
-        Item(const KUrl &u=KUrl(), const QString &n=QString()) : KUrl(u), name(n) { }
+        enum EType
+        {
+            TYPE1_FONT,
+            TYPE1_METRICS,
+            OTHER_FONT
+        };
+
+        Item(const KUrl &u=KUrl(), const QString &n=QString());
         QString displayName() const { return name.isEmpty() ? prettyUrl() : name; }
-        QString name;
+        QString name,
+                fileName;  // Only required so that we can sort an ItemList so that afm/pfms follow after pfa/pfbs
+        EType   type;
+
+        bool operator<(const Item &o) const;
     };
 
     typedef QList<Item> ItemList;
@@ -89,7 +100,8 @@ class CJobRunner : public CActionDialog
     QLabel                  *itsStatusLabel;
     QProgressBar            *itsProgress;
     bool                    itsAutoSkip,
-                            itsCancelClicked;
+                            itsCancelClicked,
+                            itsModified;
 };
 
 }

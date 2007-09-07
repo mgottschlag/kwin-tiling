@@ -114,7 +114,8 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
              itsIt(itsUrls.end()),
              itsEnd(itsIt),
              itsAutoSkip(false),
-             itsCancelClicked(false)
+             itsCancelClicked(false),
+             itsModified(false)
 {
     // Set core dump size to 0 because we will have root's password in memory.
     struct rlimit rlim;
@@ -242,6 +243,8 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)
 
     itsDest=dest;
     itsUrls=urls;
+    if(CMD_INSTALL==cmd)
+        qSort(itsUrls.begin(), itsUrls.end());  // Sort list of fonts so that we have type1 fonts followed by their metrics...
     itsIt=itsUrls.begin();
     itsEnd=itsUrls.end();
     itsProgress->setValue(0);
@@ -249,7 +252,7 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)
     itsProgress->show();
     itsCmd=cmd;
     itsStatusLabel->setText(QString());
-    itsAutoSkip=itsCancelClicked=false;
+    itsAutoSkip=itsCancelClicked=itsModified=false;
     QTimer::singleShot(0, this, SLOT(doNext()));
     return CActionDialog::exec();
 }
@@ -258,33 +261,38 @@ void CJobRunner::doNext()
 {
     if(itsIt==itsEnd || CMD_UPDATE==itsCmd)
     {
-        //
-        // Installation, deletion, enabling, disabling, completed - so now reconfigure...
-        QByteArray  packedArgs;
-        QDataStream stream(&packedArgs, QIODevice::WriteOnly);
-
-        itsStatusLabel->setText(i18n("Updating font configuration. Please wait..."));
-
-        stream << KFI::SPECIAL_CONFIGURE;
-
-        if(CMD_UPDATE==itsCmd)
+        if(itsModified || CMD_UPDATE==itsCmd)
         {
-            itsProgress->hide();
-            for(; itsIt!=itsEnd; ++itsIt)
-                stream << (*itsIt);
+            //
+            // Installation, deletion, enabling, disabling, completed - so now reconfigure...
+            QByteArray  packedArgs;
+            QDataStream stream(&packedArgs, QIODevice::WriteOnly);
+
+            itsStatusLabel->setText(i18n("Updating font configuration. Please wait..."));
+
+            stream << KFI::SPECIAL_CONFIGURE;
+
+            if(CMD_UPDATE==itsCmd)
+            {
+                itsProgress->hide();
+                for(; itsIt!=itsEnd; ++itsIt)
+                    stream << (*itsIt);
+            }
+            else
+                itsProgress->setValue(itsProgress->maximum());
+
+            itsUrls.empty();
+            itsIt=itsEnd=itsUrls.end();
+
+            KIO::Job *job=KIO::special(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), packedArgs, false);
+            setMetaData(job);
+            connect(job, SIGNAL(result(KJob *)), SLOT(cfgResult(KJob *)));
+            job->ui()->setWindow(this);
+            job->ui()->setAutoErrorHandlingEnabled(false);
+            job->ui()->setAutoWarningHandlingEnabled(false);
         }
         else
-            itsProgress->setValue(itsProgress->maximum());
-
-        itsUrls.empty();
-        itsIt=itsEnd=itsUrls.end();
-
-        KIO::Job *job=KIO::special(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), packedArgs, false);
-        setMetaData(job);
-        connect(job, SIGNAL(result(KJob *)), SLOT(cfgResult(KJob *)));
-        job->ui()->setWindow(this);
-        job->ui()->setAutoErrorHandlingEnabled(false);
-        job->ui()->setAutoWarningHandlingEnabled(false);
+            cfgResult(0L);
     }
     else
     {
@@ -328,10 +336,7 @@ void CJobRunner::doNext()
                 break;
         }
         itsProgress->setValue(itsProgress->value()+1);
-        //KIO::Scheduler::assignJobToSlave(slave(), job);
-        job->ui()->setWindow(this);
-        job->ui()->setAutoErrorHandlingEnabled(false);
-        job->ui()->setAutoWarningHandlingEnabled(false);
+        job->setUiDelegate(0L);  // Remove the ui-delegate, so that we can handle all error messages...
         setMetaData(job);
         connect(job, SIGNAL(result(KJob *)), SLOT(jobResult(KJob *)));
     }
@@ -355,6 +360,7 @@ void CJobRunner::jobResult(KJob *job)
         doNext();
     else if (!job->error())
     {
+        itsModified=true;
         ++itsIt;
         doNext();
     }
@@ -393,7 +399,22 @@ void CJobRunner::jobResult(KJob *job)
 
         startAnimation();
         if(cont)
-            ++itsIt;
+        {
+            if(CMD_INSTALL==itsCmd && Item::TYPE1_FONT==(*itsIt).type) // Did we error on a pfa/pfb? if so, exclude the afm/pfm...
+            {
+                QString oldFile((*itsIt).fileName);
+                ++itsIt;
+
+                // Skip afm/pfm
+                if(itsIt!=itsEnd && (*itsIt).fileName==oldFile && Item::TYPE1_METRICS==(*itsIt).type)
+                    ++itsIt;
+                // Skip pfm/afm
+                if(itsIt!=itsEnd && (*itsIt).fileName==oldFile && Item::TYPE1_METRICS==(*itsIt).type)
+                    ++itsIt;
+            }
+            else
+                ++itsIt;
+        }
         else
         {
             itsUrls.empty();
@@ -437,6 +458,35 @@ void CJobRunner::setMetaData(KIO::Job *job)
 
     if(!Misc::root() && !itsPasswd.isEmpty())
         job->addMetaData(KFI_KIO_PASS, itsPasswd);
+}
+
+CJobRunner::Item::Item(const KUrl &u, const QString &n)
+                : KUrl(u), name(n), fileName(Misc::getFile(u.path()))
+{
+    type=Misc::checkExt(fileName, "pfa") || Misc::checkExt(fileName, "pfb")
+            ? TYPE1_FONT
+            : Misc::checkExt(fileName, "afm") || Misc::checkExt(fileName, "pfm")
+                ? TYPE1_METRICS
+                : OTHER_FONT;
+
+    if(OTHER_FONT!=type)
+    {
+        int pos(fileName.lastIndexOf('.'));
+
+        if(-1!=pos)
+            fileName=fileName.left(pos);
+    }
+}
+
+bool CJobRunner::Item::operator<(const Item &o) const
+{
+    // Dont care about the order of non type1 fonts/metrics...
+    if(OTHER_FONT==type)
+        return true;
+
+    int nameComp(fileName.compare(o.fileName));
+
+    return nameComp<0 || (0==nameComp && type<o.type);
 }
 
 }
