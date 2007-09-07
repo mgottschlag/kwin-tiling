@@ -40,7 +40,6 @@ Port version 0.9.7
 #include "kthemebase.h"
 #include <QtGui/QStylePlugin>
 #include <QtGui/QStyleFactory>
-#include <kimageeffect.h>
 
 #include <QtGui/QBitmap>
 #include <QtGui/QCheckBox>

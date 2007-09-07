@@ -48,7 +48,6 @@
 #include <QtCore/QSettings>
 
 #include <kdrawutil.h>
-#include <kpixmapeffect.h>
 
 // -- Style Plugin Interface -------------------------
 class HighContrastStylePlugin : public QStylePlugin

@@ -31,7 +31,6 @@
 #include <kmessagebox.h>
 #include <kinputdialog.h>
 #include <ksavefile.h>
-#include <kimageeffect.h>
 #include <QFont>
 #include <QFontDatabase>
 #include <QDropEvent>
