@@ -57,6 +57,7 @@ macro_add_compile_flags(kdm -U_REENTRANT)
 target_link_libraries( kdm
 	${X11_LIBRARIES}
 	${UNIXAUTH_LIBRARIES}
+	${SHADOW_LIBRARIES}
 	${S_LIBRARIES}
 	${KRB4_LIBRARIES}
 	${KRB5_LIBRARIES}

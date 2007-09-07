@@ -64,9 +64,6 @@ extern int loginrestrictions( const char *Name, const int Mode, const char *Tty,
 extern int loginfailed( const char *User, const char *Host, const char *Tty );
 extern int loginsuccess( const char *User, const char *Host, const char *Tty, char **Msg );
 #else /* USE_PAM || _AIX */
-# ifdef USESHADOW
-#  include <shadow.h>
-# endif
 # ifdef KERBEROS
 #  include <sys/param.h>
 #  include <krb.h>
@@ -80,6 +77,9 @@ extern int loginsuccess( const char *User, const char *Host, const char *Tty, ch
 /* for expiration */
 # include <time.h>
 #endif /* USE_PAM || _AIX */
+#ifdef HAVE_GETSPNAM
+# include <shadow.h>
+#endif
 
 /*
  * Session data, mostly what struct verify_info was for
@@ -352,6 +352,9 @@ static int
 isNoPassAllowed( const char *un )
 {
 	struct passwd *pw = 0;
+# ifdef HAVE_GETSPNAM /* (sic!) - not USESHADOW */
+	struct spwd *spw;
+# endif
 #else
 isNoPassAllowed( const char *un, struct passwd *pw )
 {
@@ -375,6 +378,13 @@ isNoPassAllowed( const char *un, struct passwd *pw )
 #if defined(USE_PAM) || defined(_AIX)
 			if (!(pw = getpwnam( un )))
 				return 0;
+			if (pw->pw_passwd[0] == '!' || pw->pw_passwd[0] == '*')
+				continue;
+# ifdef HAVE_GETSPNAM /* (sic!) - not USESHADOW */
+			if ((spw = getspnam( un )) &&
+			    (spw->sp_pwdp[0] == '!' || spw->sp_pwdp[0] == '*'))
+					continue;
+# endif
 #endif
 			if (pw->pw_uid)
 				return 1;
