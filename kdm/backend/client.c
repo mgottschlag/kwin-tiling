@@ -571,18 +571,21 @@ verify( GConvFunc gconv, int rootok )
 		gconv( GCONV_PASS, 0 );
 		V_RET_AUTH;
 	}
-# ifdef __linux__ /* only Linux? */
 	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
 		debug( "account is locked\n" );
 		gconv( GCONV_PASS, 0 );
 		V_RET_AUTH;
 	}
-# endif
 
 # ifdef USESHADOW
-	if ((sp = getspnam( curuser )))
+	if ((sp = getspnam( curuser ))) {
 		p->pw_passwd = sp->sp_pwdp;
-	else
+		if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
+			debug( "account is locked\n" );
+			gconv( GCONV_PASS, 0 );
+			V_RET_AUTH;
+		}
+	} else
 		debug( "getspnam() failed: %m. Are you root?\n" );
 # endif
 
