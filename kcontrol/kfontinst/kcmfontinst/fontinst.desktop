@@ -74,6 +74,10 @@ Name[xh]=Umfaki Wohlobo lwegama
 Name[zh_TW]=字型安裝程式
 
 Comment=Install, manage, and preview fonts
+Comment[ga]=Suiteáil, bainisteoireacht, agus réamhamharc na gclónna
+Comment[nds]=Schriftoorden installeren, plegen un ankieken
+Comment[pt]=Instalar, gerir e antever tipos de letra
+Comment[pt_BR]=Instalar, gerir e antever tipos de letra
 
 Keywords=font,fonts,installer,truetype,type1,bitmap
 Keywords[be]=Шрыфт,Шрыфты,Устаноўка,font,fonts,installer,truetype,type1,speedo,bitmap
