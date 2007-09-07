@@ -568,11 +568,13 @@ verify( GConvFunc gconv, int rootok )
 
 	if (!(p = getpwnam( curuser ))) {
 		debug( "getpwnam() failed.\n" );
+		gconv( GCONV_PASS, 0 );
 		V_RET_AUTH;
 	}
 # ifdef __linux__ /* only Linux? */
 	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
 		debug( "account is locked\n" );
+		gconv( GCONV_PASS, 0 );
 		V_RET_AUTH;
 	}
 # endif
@@ -587,6 +589,7 @@ verify( GConvFunc gconv, int rootok )
 	if (!*p->pw_passwd) {
 		if (!td->allowNullPasswd) {
 			debug( "denying user with empty password\n" );
+			gconv( GCONV_PASS, 0 );
 			V_RET_AUTH;
 		}
 		goto nplogin;
