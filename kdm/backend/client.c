@@ -641,6 +641,8 @@ verify( GConvFunc gconv, int rootok )
 
 # if defined(ultrix) || defined(__ultrix__)
 	if (authenticate_user( p, curpass, NULL ) < 0)
+# elif defined(HAVE_PW_ENCRYPT)
+	if (strcmp( pw_encrypt( curpass, p->pw_passwd ), p->pw_passwd ))
 # elif defined(HAVE_CRYPT)
 	if (strcmp( crypt( curpass, p->pw_passwd ), p->pw_passwd ))
 # else
