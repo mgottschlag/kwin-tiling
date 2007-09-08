@@ -90,8 +90,12 @@ static const int DFLT_OFF   = 60;
 
 /**** DLL Interface ****/
 
-typedef KGenericFactory<KEnergy> KEnergyFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_energy, KEnergyFactory("kcmenergy"))
+
+K_PLUGIN_FACTORY(KEnergyFactory,
+        registerPlugin<KEnergy>();
+        )
+K_EXPORT_PLUGIN(KEnergyFactory("kcmenergy"))
+
 
 extern "C" {
 
@@ -127,7 +131,7 @@ extern "C" {
 	    suspend = DFLT_SUSPEND;
 	    off = DFLT_OFF;
 	}
-
+        delete _cfg;
         KEnergy::applySettings(enabled, standby, suspend, off);
 #endif
     }
@@ -135,7 +139,7 @@ extern "C" {
 
 /**** KEnergy ****/
 
-KEnergy::KEnergy(QWidget *parent, const QStringList &args)
+KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
     : KCModule(KEnergyFactory::componentData(), parent, args)
 {
     m_bChanged = false;
