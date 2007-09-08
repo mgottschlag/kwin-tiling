@@ -168,7 +168,7 @@
         </widget>
        </item>
        <item row="0" column="0" colspan="2" >
-        <widget class="SchemePreview" native="1" name="schemePreview" >
+        <widget class="PreviewWidget" native="1" name="schemePreview" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
            <horstretch>0</horstretch>
@@ -348,24 +348,12 @@
            </spacer>
           </item>
           <item row="3" column="0" colspan="4" >
-           <widget class="QLabel" name="inactivePreview" >
+           <widget class="PreviewWidget" native="1" name="inactivePreview" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="frameShape" >
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow" >
-             <enum>QFrame::Sunken</enum>
-            </property>
-            <property name="text" >
-             <string>-- placeholder for preview --</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -536,24 +524,12 @@
            </spacer>
           </item>
           <item row="3" column="0" colspan="4" >
-           <widget class="QLabel" name="disabledPreview" >
+           <widget class="PreviewWidget" native="1" name="disabledPreview" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="frameShape" >
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow" >
-             <enum>QFrame::Sunken</enum>
-            </property>
-            <property name="text" >
-             <string>-- placeholder for preview --</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -591,9 +567,9 @@
    <header>klistwidget.h</header>
   </customwidget>
   <customwidget>
-   <class>SchemePreview</class>
+   <class>PreviewWidget</class>
    <extends>QWidget</extends>
-   <header>schemepreview.h</header>
+   <header>previewwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

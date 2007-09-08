@@ -1,4 +1,4 @@
-/* Scheme preview for KDE Display color scheme setup module
+/* Preview widget for KDE Display color scheme setup module
  * Copyright (C) 2007 Matthew Woehlke <mw_triad@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,13 +25,13 @@
 /**
  * The Desktop/Colors tab in kcontrol.
  */
-class SchemePreview : public QFrame
+class PreviewWidget : public QFrame
 {
     Q_OBJECT
 
 public:
-    SchemePreview(QWidget *parent);
-    ~SchemePreview();
+    PreviewWidget(QWidget *parent);
+    ~PreviewWidget();
 };
 
 #endif

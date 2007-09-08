@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>schemePreview</class>
- <widget class="QFrame" name="schemePreview" >
+ <class>preview</class>
+ <widget class="QFrame" name="preview" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -25,6 +25,9 @@
    </item>
    <item rowspan="3" row="0" column="2" >
     <widget class="QFrame" name="frame" >
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
      <property name="frameShape" >
       <enum>QFrame::StyledPanel</enum>
      </property>

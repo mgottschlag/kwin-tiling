@@ -1,4 +1,4 @@
-/* Scheme preview for KDE Display color scheme setup module
+/* Preview widget for KDE Display color scheme setup module
  * Copyright (C) 2007 Matthew Woehlke <mw_triad@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,18 +17,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "schemepreview.h"
+#include "previewwidget.h"
 
-#include "ui_schemepreview.h"
+#include "ui_preview.h"
 
-SchemePreview::SchemePreview(QWidget *parent) : QFrame(parent)
+PreviewWidget::PreviewWidget(QWidget *parent) : QFrame(parent)
 {
-    Ui::schemePreview ui;
+    Ui::preview ui;
     ui.setupUi(this);
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
     // set correct colors on... lots of things
+    ui.frame->setBackgroundRole(QPalette::Base);
     ui.viewWidget->setBackgroundRole(QPalette::Base);
     ui.labelView0->setBackgroundRole(QPalette::Base);
     ui.labelView3->setBackgroundRole(QPalette::Base);
@@ -54,8 +55,8 @@ SchemePreview::SchemePreview(QWidget *parent) : QFrame(parent)
     // finally, add UI's to tab widget
 }
 
-SchemePreview::~SchemePreview()
+PreviewWidget::~PreviewWidget()
 {
 }
 
-#include "schemepreview.moc"
+#include "previewwidget.moc"
