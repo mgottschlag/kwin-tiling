@@ -28,6 +28,26 @@ SchemePreview::SchemePreview(QWidget *parent) : QFrame(parent)
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
+    // set correct colors on... lots of things
+    ui.viewWidget->setBackgroundRole(QPalette::Base);
+    ui.labelView0->setBackgroundRole(QPalette::Base);
+    ui.labelView3->setBackgroundRole(QPalette::Base);
+    ui.labelView4->setBackgroundRole(QPalette::Base);
+    ui.labelView2->setBackgroundRole(QPalette::Base);
+    ui.labelView1->setBackgroundRole(QPalette::Base);
+    ui.labelView5->setBackgroundRole(QPalette::Base);
+    ui.labelView6->setBackgroundRole(QPalette::Base);
+    ui.labelView7->setBackgroundRole(QPalette::Base);
+    ui.selectionWidget->setBackgroundRole(QPalette::Highlight);
+    ui.labelSelection0->setBackgroundRole(QPalette::Highlight);
+    ui.labelSelection3->setBackgroundRole(QPalette::Highlight);
+    ui.labelSelection4->setBackgroundRole(QPalette::Highlight);
+    ui.labelSelection2->setBackgroundRole(QPalette::Highlight);
+    ui.labelSelection1->setBackgroundRole(QPalette::Highlight);
+    ui.labelSelection5->setBackgroundRole(QPalette::Highlight);
+    ui.labelSelection6->setBackgroundRole(QPalette::Highlight);
+    ui.labelSelection7->setBackgroundRole(QPalette::Highlight);
+
     // connect signals/slots
     // TODO
 

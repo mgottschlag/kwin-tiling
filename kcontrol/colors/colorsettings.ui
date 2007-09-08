@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>539</width>
-    <height>406</height>
+    <height>412</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -25,12 +25,25 @@
       <layout class="QGridLayout" >
        <item rowspan="3" row="1" column="0" >
         <widget class="QGroupBox" name="groupBox_3" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title" >
           <string>Color Scheme</string>
          </property>
          <layout class="QGridLayout" >
           <item row="0" column="0" colspan="3" >
-           <widget class="KListWidget" name="schemeList" />
+           <widget class="KListWidget" name="schemeList" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0" >
            <widget class="QPushButton" name="schemeSaveButton" >
@@ -58,6 +71,12 @@
        </item>
        <item row="1" column="1" >
         <widget class="QGroupBox" name="groupBox_4" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title" >
           <string>Colors</string>
          </property>
@@ -97,7 +116,14 @@
            </widget>
           </item>
           <item>
-           <widget class="KListWidget" name="colorList" />
+           <widget class="KListWidget" name="colorList" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -142,7 +168,14 @@
         </widget>
        </item>
        <item row="0" column="0" colspan="2" >
-        <widget class="SchemePreview" native="1" name="schemePreview" />
+        <widget class="SchemePreview" native="1" name="schemePreview" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -317,7 +350,7 @@
           <item row="3" column="0" colspan="4" >
            <widget class="QLabel" name="inactivePreview" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -505,7 +538,7 @@
           <item row="3" column="0" colspan="4" >
            <widget class="QLabel" name="disabledPreview" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -526,6 +559,19 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
