@@ -75,6 +75,7 @@ Name[zh_TW]=字型安裝程式
 
 Comment=Install, manage, and preview fonts
 Comment[ga]=Suiteáil, bainisteoireacht, agus réamhamharc na gclónna
+Comment[km]=ដំឡើង, គ្រប់គ្រង, និង​មើល​ពុម្ពអក្សរ​ជា​មុន
 Comment[nds]=Schriftoorden installeren, plegen un ankieken
 Comment[pt]=Instalar, gerir e antever tipos de letra
 Comment[pt_BR]=Instalar, gerir e antever tipos de letra
@@ -89,7 +90,7 @@ Keywords[fa]=قلم، قلمها، نصب‌کننده، قلم حقیقی، ن�
 Keywords[ga]=cló,clónna,clófhoirne,suiteálaí,truetype,type1,mapa giotán,giotánmhapach
 Keywords[he]=גופן,גופנים,מתקין,התקנה,מפת סיביות,font,fonts,installer,truetype,type1,bitmap
 Keywords[ja]=フォント,インストーラ,truetype,type1,bitmap,ビットマップ
-Keywords[km]=ពុម្ពអក្សរ កម្មវិធី​ដំឡើង truetype type1 speedo រូបភាព​
+Keywords[km]=ពុម្ពអក្សរ,ពុម្ពអក្សរ,កម្មវិធី​ដំឡើង,truetype,ប្រភេទ ១,រូបភាព
 Keywords[nds]=Schriftoort,Schriftoorden,Installeren,TrueType,Type1,Bitmap
 Keywords[ne]=फन्ट, फन्टहरू, स्थापक, ट्रु टाइप, टाइप १,बिटम्याप
 Keywords[nl]=letters,lettertypen,fonts,installatie,truetype,type1,speedo,bitmap,lettertype-installatie
