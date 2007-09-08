@@ -142,7 +142,7 @@ void Clock::configAccepted()
     m_size = QSize(ui.spinSize->value(), ui.spinSize->value());
     m_theme->resize(m_size);
     QStringList tzs = ui.timeZones->selection();
-    /*
+    
     if (tzs.count() > 0) {
         //TODO: support multiple timezones
         QString tz = tzs.at(0);
@@ -156,7 +156,6 @@ void Clock::configAccepted()
         m_timezone = "Local";
         dataEngine("time")->connectSource(m_timezone, this);
     }
-    */
 
     dataEngine("time")->connectSource(m_timezone, this);
     constraintsUpdated();
