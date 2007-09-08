@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>539</width>
-    <height>394</height>
+    <height>406</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -142,20 +142,7 @@
         </widget>
        </item>
        <item row="0" column="0" colspan="2" >
-        <widget class="QLabel" name="schemePreview" >
-         <property name="frameShape" >
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow" >
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <property name="text" >
-          <string>-- placeholder for preview --</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
+        <widget class="SchemePreview" native="1" name="schemePreview" />
        </item>
       </layout>
      </widget>
@@ -556,6 +543,12 @@
    <class>KListWidget</class>
    <extends>QListWidget</extends>
    <header>klistwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SchemePreview</class>
+   <extends>QWidget</extends>
+   <header>schemepreview.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -1,8 +1,8 @@
 KDE4_NO_ENABLE_FINAL(colors)
 
-set(kcm_colors_PART_SRCS colorscm.cpp)
+set(kcm_colors_PART_SRCS colorscm.cpp schemepreview.cpp)
 
-kde4_add_ui_files(kcm_colors_PART_SRCS colorsettings.ui)
+kde4_add_ui_files(kcm_colors_PART_SRCS colorsettings.ui schemepreview.ui)
 
 kde4_add_plugin(kcm_colors ${kcm_colors_PART_SRCS})
 target_link_libraries(kcm_colors ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDEFX_LIBS})
