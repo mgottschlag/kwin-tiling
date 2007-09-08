@@ -16,6 +16,8 @@
 #include <QQueue>
 #include <QMap>
 
+const int GROUP_LIMIT = 4;
+
 
 /* Utility classes for per-window/per-application layout implementation
 */
@@ -89,13 +91,14 @@ public:
 	enum { LOAD_INIT_OPTIONS, LOAD_ACTIVE_OPTIONS, LOAD_ALL };
 	
 	bool m_useKxkb;
+	bool m_indicatorOnly;
 	bool m_showSingle;
 	bool m_showFlag;
 	bool m_enableXkbOptions;
 	bool m_resetOldOptions;
-	SwitchingPolicy m_switchingPolicy;
 	bool m_stickySwitching;
 	int m_stickySwitchingDepth;
+	SwitchingPolicy m_switchingPolicy;
 	
 	QString m_model;
 	QString m_options;
@@ -105,6 +108,7 @@ public:
 	int getDefaultLayout();
 	
 	bool load(int loadMode);
+	bool setConfiguredLayouts(QList<LayoutUnit> layoutUnits);
 	void save();
 	void setDefaults();
 	
@@ -113,6 +117,7 @@ public:
 	static QString getDefaultDisplayName(const LayoutUnit& layoutUnit, bool single=false);
 
 private:	
+	void updateDisplayNames();
 	static const QMap<QString, QString> parseIncludesMap(const QStringList& pairList);
 };
 

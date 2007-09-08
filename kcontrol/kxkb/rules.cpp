@@ -18,6 +18,8 @@
 #include "xklavier_adaptor.h"
 #endif
 
+#include "kxkbconfig.h"
+
 
 static const QRegExp NON_CLEAN_LAYOUT_REGEXP("[^a-z]");
 
@@ -54,16 +56,18 @@ XkbRules::XkbRules(bool layoutsOnly)
 
 void XkbRules::loadNewRules(bool layoutsOnly)
 {
-	XKlavierAdaptor xklAdaptor;
-	xklAdaptor.loadXkbConfig(QX11Info::display(), layoutsOnly);
+	XKlavierAdaptor* xklAdaptor = XKlavierAdaptor::getInstance(QX11Info::display());
+	xklAdaptor->loadXkbConfig(layoutsOnly);
 
-	m_layouts = xklAdaptor.getLayouts();
+	m_layouts = xklAdaptor->getLayouts();
 	if( layoutsOnly == false ) {
-	  m_models = xklAdaptor.getModels();
-	  m_optionGroups = xklAdaptor.getOptionGroups();
-	  m_options = xklAdaptor.getOptions();
-	  m_varLists = xklAdaptor.getVariants();
+	  m_models = xklAdaptor->getModels();
+	  m_optionGroups = xklAdaptor->getOptionGroups();
+	  m_options = xklAdaptor->getOptions();
+	  m_varLists = xklAdaptor->getVariants();
 	}
+    kDebug() << "test -- test";	
+	xklAdaptor->getGroupNames();
 }
 
 #else

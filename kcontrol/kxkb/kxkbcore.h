@@ -62,7 +62,7 @@ public:
  public slots:
 // 	bool setLayout(const QString& layoutPair);
 // 	QString getCurrentLayout() { return m_kxkbConfig.m_layouts[m_currentLayout].toPair(); }
- 	QStringList getLayoutsList() { return kxkbConfig.getLayoutStringList(); }
+ 	QStringList getLayoutsList() { return m_kxkbConfig.getLayoutStringList(); }
 
 protected slots:
     void iconMenuTriggered(QAction*);
@@ -84,7 +84,7 @@ signals:
 	void quit();
 		
 private:
-	KxkbConfig kxkbConfig;
+	KxkbConfig m_kxkbConfig;
 
 //     WId m_prevWinId;	// for tricky part of saving xkb group
     LayoutMap* m_layoutOwnerMap;
@@ -94,7 +94,7 @@ private:
     XKBExtension *m_extension;
     XkbRules *m_rules;
     KxkbWidget *m_kxkbWidget;
-    KActionCollection *keys;
+    KActionCollection *m_keys;
 };
 
 #endif

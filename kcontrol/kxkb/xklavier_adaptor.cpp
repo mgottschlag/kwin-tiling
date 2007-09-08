@@ -1,7 +1,6 @@
 #include <locale.h>
 
 
-
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -9,6 +8,7 @@
 #include <libxklavier/xklavier.h>
 
 #include "rules.h"
+#include "kxkbconfig.h"
 #include "xklavier_adaptor.h"
 
 
@@ -26,17 +26,34 @@ public:
 	
 	QString currLayout;
 	XkbOptionGroup* currGroup;
+	XklEngine *engine;
 };
 
 XklConfigRegistry *XKlavierAdaptorPriv::config;
 
 
 
-XKlavierAdaptor::XKlavierAdaptor()
+XKlavierAdaptor::XKlavierAdaptor(Display* dpy)
 {
   priv = new XKlavierAdaptorPriv();
   
   g_type_init();
+
+	QString locale = KGlobal::locale()->language();
+	if( ! KGlobal::locale()->country().isEmpty() ) {
+//		locale += KGlobal::_locale->country();
+//		locale += "UTF-8";
+	}
+	kDebug() << "Setting LC_MESSAGES for libxklavier: " << locale;
+//	setlocale(LC_ALL, locale.toLatin1());
+	setlocale(LC_MESSAGES, locale.toLatin1());
+
+
+	priv->engine = xkl_engine_get_instance(dpy);
+	if (priv->engine == NULL) {
+		kError() << "XKlavier engine cannot be initialized!" << endl;
+		return; // throw
+	}
 }
 
 QHash<QString, QString> XKlavierAdaptor::getModels() { return priv->m_models; }
@@ -126,26 +143,13 @@ static void processOptionGroup(XklConfigRegistry*, const XklConfigItem* configIt
 }
 
 
-void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
+void XKlavierAdaptor::loadXkbConfig(bool layoutsOnly)
 {
-	QString locale = KGlobal::locale()->language();
-	if( ! KGlobal::locale()->country().isEmpty() ) {
-//		locale += KGlobal::_locale->country();
-//		locale += "UTF-8";
-	}
-	kDebug() << "Setting LC_MESSAGES for libxklavier: " << locale;
-//	setlocale(LC_ALL, locale.toLatin1());
-	setlocale(LC_MESSAGES, locale.toLatin1());
+	if( priv->engine == NULL )
+	    return;
 
-
-	XklEngine *engine = xkl_engine_get_instance(dpy);
-	if (engine == NULL) {
-		kError() << "XKlavier engine cannot be initialized!" << endl;
-		return; // throw
-	}
-	
 	kDebug() << "Xklavier initialized";
-	priv->config = xkl_config_registry_get_instance(engine);
+	priv->config = xkl_config_registry_get_instance(priv->engine);
 
 	xkl_config_registry_load(priv->config);
 	
@@ -162,11 +166,40 @@ void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
 	}
 
 	g_object_unref(priv->config);
-	g_object_unref(engine);
 }
 
 XKlavierAdaptor::~XKlavierAdaptor()
 {
+	g_object_unref(priv->engine);
 //	delete priv;
 //	kDebug() << "Finalizer";
+}
+
+QList<LayoutUnit> 
+XKlavierAdaptor::getGroupNames()
+{
+    QList<LayoutUnit> list;
+
+    XklConfigRec configRec;
+    xkl_config_rec_get_from_server(&configRec, priv->engine);
+
+    for(int ii=0; configRec.layouts[ii] != NULL; ii++) {
+	LayoutUnit lu;
+	lu.layout = configRec.layouts[ii];
+	lu.variant = configRec.variants[ii];
+	list << lu;
+	kDebug() << "layout nm:" << lu.layout << "variant:" << lu.variant;
+    }
+    return list;
+}
+
+static XKlavierAdaptor* instance = NULL;
+
+XKlavierAdaptor*
+XKlavierAdaptor::getInstance(Display* dpy)
+{
+    if( instance == NULL ) {
+	instance = new XKlavierAdaptor(dpy);
+    }
+    return instance;
 }

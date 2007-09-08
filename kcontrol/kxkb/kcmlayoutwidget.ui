@@ -25,7 +25,7 @@
       </size>
      </property>
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabLayout" >
       <attribute name="title" >
@@ -317,22 +317,6 @@
        <string>Switching Options</string>
       </attribute>
       <layout class="QGridLayout" >
-       <item row="1" column="0" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="0" column="0" >
         <widget class="QFrame" name="optionsFrame" >
          <property name="frameShape" >
@@ -344,148 +328,196 @@
          <property name="lineWidth" >
           <number>0</number>
          </property>
-         <layout class="QGridLayout" >
-          <item row="2" column="0" >
-           <widget class="Q3ButtonGroup" name="grpSwitching" >
-            <property name="whatsThis" >
-             <string>If you select "Application" or "Window" switching policy, changing the keyboard layout will only affect the current application or window.</string>
-            </property>
-            <property name="title" >
-             <string>Switching Policy</string>
-            </property>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="exclusive" >
-             <bool>true</bool>
-            </property>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>6</number>
+         <widget class="Q3ButtonGroup" name="grpSwitching" >
+          <property name="geometry" >
+           <rect>
+            <x>11</x>
+            <y>120</y>
+            <width>273</width>
+            <height>120</height>
+           </rect>
+          </property>
+          <property name="whatsThis" >
+           <string>If you select "Application" or "Window" switching policy, changing the keyboard layout will only affect the current application or window.</string>
+          </property>
+          <property name="title" >
+           <string>Switching Policy</string>
+          </property>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="exclusive" >
+           <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <property name="leftMargin" >
+            <number>11</number>
+           </property>
+           <property name="topMargin" >
+            <number>11</number>
+           </property>
+           <property name="rightMargin" >
+            <number>11</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>11</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="radioButton1" >
+             <property name="text" >
+              <string>&amp;Global</string>
              </property>
-             <property name="leftMargin" >
-              <number>11</number>
+             <property name="checked" >
+              <bool>true</bool>
              </property>
-             <property name="topMargin" >
-              <number>11</number>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton1_3" >
+             <property name="text" >
+              <string>Application</string>
              </property>
-             <property name="rightMargin" >
-              <number>11</number>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton1_2" >
+             <property name="text" >
+              <string>&amp;Window</string>
              </property>
-             <property name="bottomMargin" >
-              <number>11</number>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QGroupBox" name="grpBoxStickySwitching" >
+          <property name="geometry" >
+           <rect>
+            <x>295</x>
+            <y>120</y>
+            <width>272</width>
+            <height>120</height>
+           </rect>
+          </property>
+          <property name="title" >
+           <string>Sticky Switching</string>
+          </property>
+          <layout class="QGridLayout" >
+           <property name="leftMargin" >
+            <number>11</number>
+           </property>
+           <property name="topMargin" >
+            <number>11</number>
+           </property>
+           <property name="rightMargin" >
+            <number>11</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>11</number>
+           </property>
+           <property name="horizontalSpacing" >
+            <number>6</number>
+           </property>
+           <property name="verticalSpacing" >
+            <number>6</number>
+           </property>
+           <item row="0" column="0" colspan="2" >
+            <widget class="QCheckBox" name="chkEnableSticky" >
+             <property name="whatsThis" >
+              <string>If you have more than two layouts and turn this option on, switching with the keyboard shortcut or clicking on the kxkb indicator will only cycle through the last few layouts. You can specify the number of layouts to rotate below. You can still access all layouts by right-clicking on the kxkb indicator.</string>
              </property>
-             <item>
-              <widget class="QRadioButton" name="radioButton1" >
-               <property name="text" >
-                <string>&amp;Global</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="radioButton1_3" >
-               <property name="text" >
-                <string>Application</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="radioButton1_2" >
-               <property name="text" >
-                <string>&amp;Window</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2" >
-           <widget class="QCheckBox" name="chkShowFlag" >
-            <property name="whatsThis" >
-             <string>Shows country flag on background of layout name in tray icon</string>
-            </property>
-            <property name="text" >
-             <string>Show country flag</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <widget class="QGroupBox" name="grpBoxStickySwitching" >
-            <property name="title" >
-             <string>Sticky Switching</string>
-            </property>
-            <layout class="QGridLayout" >
-             <property name="leftMargin" >
-              <number>11</number>
+             <property name="text" >
+              <string>Enable sticky switching</string>
              </property>
-             <property name="topMargin" >
-              <number>11</number>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="textLabel1_5" >
+             <property name="enabled" >
+              <bool>false</bool>
              </property>
-             <property name="rightMargin" >
-              <number>11</number>
+             <property name="text" >
+              <string>Number of layouts to rotate:</string>
              </property>
-             <property name="bottomMargin" >
-              <number>11</number>
+             <property name="buddy" >
+              <cstring>spinBox1</cstring>
              </property>
-             <property name="horizontalSpacing" >
-              <number>6</number>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QSpinBox" name="spinStickyDepth" >
+             <property name="enabled" >
+              <bool>false</bool>
              </property>
-             <property name="verticalSpacing" >
-              <number>6</number>
+             <property name="minimum" >
+              <number>2</number>
              </property>
-             <item row="0" column="0" colspan="2" >
-              <widget class="QCheckBox" name="chkEnableSticky" >
-               <property name="whatsThis" >
-                <string>If you have more than two layouts and turn this option on, switching with the keyboard shortcut or clicking on the kxkb indicator will only cycle through the last few layouts. You can specify the number of layouts to rotate below. You can still access all layouts by right-clicking on the kxkb indicator.</string>
-               </property>
-               <property name="text" >
-                <string>Enable sticky switching</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0" >
-              <widget class="QLabel" name="textLabel1_5" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Number of layouts to rotate:</string>
-               </property>
-               <property name="buddy" >
-                <cstring>spinBox1</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" >
-              <widget class="QSpinBox" name="spinStickyDepth" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="minimum" >
-                <number>2</number>
-               </property>
-               <property name="maximum" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2" >
-           <widget class="QCheckBox" name="chkShowSingle" >
-            <property name="text" >
-             <string>Show indicator for single layout</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+             <property name="maximum" >
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QGroupBox" name="grpOptions" >
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>421</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="title" >
+           <string>Options</string>
+          </property>
+          <widget class="QCheckBox" name="chkShowFlag" >
+           <property name="geometry" >
+            <rect>
+             <x>10</x>
+             <y>70</y>
+             <width>556</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="whatsThis" >
+            <string>Shows country flag on background of layout name in tray icon</string>
+           </property>
+           <property name="text" >
+            <string>Show country flag</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="chkIndicatorOnly" >
+           <property name="geometry" >
+            <rect>
+             <x>9</x>
+             <y>16</y>
+             <width>341</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text" >
+            <string>Indicator only</string>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="chkShowSingle" >
+           <property name="geometry" >
+            <rect>
+             <x>10</x>
+             <y>46</y>
+             <width>556</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text" >
+            <string>Show indicator for single layout</string>
+           </property>
+          </widget>
+         </widget>
         </widget>
        </item>
       </layout>

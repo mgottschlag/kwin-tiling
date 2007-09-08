@@ -15,7 +15,7 @@
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
 #include <X11/extensions/XKBfile.h>
-#include <X11/extensions/XKBgeom.h>
+//#include <X11/extensions/XKBgeom.h>
 #include <X11/extensions/XKM.h>
 
 #include "extension.h"
@@ -208,6 +208,23 @@ unsigned int XKBExtension::getGroup() const
 	XkbGetState( m_dpy, XkbUseCoreKbd, &xkbState );
 	return xkbState.group;
 }
+
+bool XKBExtension::isGroupSwitchEvent(XEvent* event)
+{
+    XkbEvent *xkbEvent = (XkbEvent*) event;
+
+    return xkbEvent->any.xkb_type == XkbStateNotify;
+}
+
+bool XKBExtension::isLayoutSwitchEvent(XEvent* event)
+{
+    XkbEvent *xkbEvent = (XkbEvent*) event;
+
+    return ( (xkbEvent->any.xkb_type == XkbMapNotify) && (xkbEvent->map.changed & XkbKeySymsMask) )
+    	  || ( (xkbEvent->any.xkb_type == XkbNamesNotify) && (xkbEvent->names.changed & XkbGroupNamesMask) )
+    	  || (xkbEvent->any.xkb_type == XkbNewKeyboardNotify);
+}
+
 
 /**
  * @brief Gets the current layout in its binary compiled form

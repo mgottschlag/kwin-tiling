@@ -1,7 +1,7 @@
 #ifndef __EXTENSION_H__
 #define __EXTENSION_H__
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <X11/Xlib.h>
 
 
@@ -20,6 +20,9 @@ public:
 	bool setLayout(const QString& layouts, const QString& variants);
 	bool setGroup(unsigned int group);
 	unsigned int getGroup() const;
+
+	static bool isGroupSwitchEvent(XEvent* event);
+	static bool isLayoutSwitchEvent(XEvent* event);	
 
     int xkb_opcode;
 

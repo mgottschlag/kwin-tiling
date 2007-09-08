@@ -58,8 +58,17 @@ bool KxkbConfig::load(int loadMode)
 	m_useKxkb = config.readEntry("Use", false);
 	kDebug() << "Use kxkb " << m_useKxkb;
 
+	m_indicatorOnly = config.readEntry("IndicatorOnly", false);
+	kDebug() << "Indicator only " << m_indicatorOnly << endl;
+
 	if( (m_useKxkb == false && loadMode == LOAD_ACTIVE_OPTIONS )
 	  		|| loadMode == LOAD_INIT_OPTIONS )
+		return true;
+
+	m_showSingle = config.readEntry("ShowSingle", false);
+	m_showFlag = config.readEntry("ShowFlag", true);
+
+	if( (m_indicatorOnly == true && loadMode == LOAD_ACTIVE_OPTIONS ) )
 		return true;
 
 	m_model = config.readEntry("Model", DEFAULT_MODEL);
@@ -98,41 +107,8 @@ bool KxkbConfig::load(int loadMode)
 		}
 	}
 
-// 	m_includes.clear();
-// 	if( X11Helper::areSingleGroupsSupported() ) {
-// 		if( config.hasKey("IncludeGroups") ) {
-// 			QStringList includeList;
-// 			includeList = config.readEntry("IncludeGroups", includeList, ',');
-// 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
-// 				QStringList includePair = (*it).split(':');
-// 				if( includePair.count() == 2 ) {
-// 					LayoutUnit layoutUnit( includePair[0] );
-// 					if( m_layouts.contains( layoutUnit ) ) {
-// 						m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = includePair[1];
-// 						kDebug() << "Got inc group: " << includePair[0] << ": " << includePair[1];
-// 					}
-// 				}
-// 			}
-// 		}
-// 		else { //old includes format
-// 			kDebug() << "Old includes...";
-// 			QStringList includeList;
-// 			includeList = config.readEntry("Includes", includeList);
-// 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
-// 				QString layoutName = LayoutUnit::parseLayout( *it );
-// 				LayoutUnit layoutUnit( layoutName, "" );
-// 				kDebug() << "old layout for inc: " << layoutUnit.toPair() << " included " << m_layouts.contains( layoutUnit );
-// 				if( m_layouts.contains( layoutUnit ) ) {
-// 					QString variantName = LayoutUnit::parseVariant(*it);
-// 					m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = variantName;
-// 					kDebug() << "Got inc group: " << layoutUnit.toPair() << ": " <<  variantName;
-// 				}
-// 			}
-// 		}
-// 	}
-
-	m_showSingle = config.readEntry("ShowSingle", false);
-	m_showFlag = config.readEntry("ShowFlag", true);
+//	m_showSingle = config.readEntry("ShowSingle", false);
+//	m_showFlag = config.readEntry("ShowFlag", true);
 
 	QString layoutOwner = config.readEntry("SwitchMode", "Global");
 
@@ -173,6 +149,36 @@ bool KxkbConfig::load(int loadMode)
 	return true;
 }
 
+static QString addNum(QString& str, int n)
+{
+  if( str.length() >= 3 ) return str.left(2) + n;
+  return str + n;
+}
+
+void KxkbConfig::updateDisplayNames()
+{
+  for(int i=0; i<m_layouts.count(); i++) {
+	LayoutUnit& lu = m_layouts[i];
+	int cnt = 1;
+	for(int j=i; j<m_layouts.count(); j++) {
+	  LayoutUnit& lu2 = m_layouts[i];
+	  if( lu.layout == lu2.layout ) {
+		++cnt;
+		lu.displayName = addNum(lu.layout, 1);
+		lu2.displayName = addNum(lu2.layout, cnt);
+	  }
+	}
+  }
+}
+
+bool KxkbConfig::setConfiguredLayouts(QList<LayoutUnit> layoutUnits)
+{
+  kDebug() << "resetting layouts to " << layoutUnits.count() << " active in X server" << endl;
+//  m_layouts = layoutUnits;
+//  updateDisplayNames();
+  return true; //TODO ?
+}
+
 void KxkbConfig::save()
 {
 	KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
@@ -180,6 +186,7 @@ void KxkbConfig::save()
 	config.writeEntry("Model", m_model);
 
 	config.writeEntry("EnableXkbOptions", m_enableXkbOptions );
+	config.writeEntry("IndicatorOnly", m_indicatorOnly );
 	config.writeEntry("ResetOldOptions", m_resetOldOptions);
 	config.writeEntry("Options", m_options );
 
@@ -249,6 +256,7 @@ void KxkbConfig::setDefaults()
 	m_layouts.append( DEFAULT_LAYOUT_UNIT );
 
 	m_useKxkb = false;
+	m_indicatorOnly = false;
 	m_showSingle = false;
 	m_showFlag = true;
 

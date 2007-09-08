@@ -48,8 +48,6 @@ enum {
  DST_LAYOUT_COLUMN_COUNT = 5
 };
 
-static const int GROUP_LIMIT = 4;
-
 static const QString DEFAULT_VARIANT_NAME("<default>");
 
 
@@ -111,6 +109,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 //  main->addWidget(widget);
 
   connect( widget->chkEnable, SIGNAL( toggled( bool )), this, SLOT(changed()));
+  connect( widget->chkIndicatorOnly, SIGNAL( toggled( bool )), this, SLOT(changed()));
   connect( widget->chkShowSingle, SIGNAL( toggled( bool )), this, SLOT(changed()));
   connect( widget->chkShowFlag, SIGNAL( toggled( bool )), this, SLOT(changed()));
   connect( widget->comboModel, SIGNAL(activated(int)), this, SLOT(changed()));
@@ -125,7 +124,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
   connect( widget->listLayoutsDst, SIGNAL(selectionChanged(Q3ListViewItem *)),
 		this, SLOT(layoutSelChanged(Q3ListViewItem *)));
 
-  connect( widget->editDisplayName, SIGNAL(textChanged(const QString&)), this, SLOT(displayNameChanged(const QString&)));
+//  connect( widget->editDisplayName, SIGNAL(textChanged(const QString&)), this, SLOT(displayNameChanged(const QString&)));
 
   widget->btnUp->setIconSet(KIcon("arrow-up"));
 //  connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(changed()));
@@ -238,7 +237,7 @@ void LayoutConfig::initUI()
 
 	widget->chkEnable->setChecked( m_kxkbConfig.m_useKxkb );
 	widget->grpLayouts->setEnabled( m_kxkbConfig.m_useKxkb );
-	widget->optionsFrame->setEnabled( m_kxkbConfig.m_useKxkb );
+	widget->grpOptions->setEnabled( m_kxkbConfig.m_useKxkb );
 
 	// display xkb options
 	QStringList options = m_kxkbConfig.m_options.split(',');
@@ -304,6 +303,7 @@ void LayoutConfig::save()
  	}
 
 	m_kxkbConfig.m_useKxkb = widget->chkEnable->isChecked();
+	m_kxkbConfig.m_indicatorOnly = widget->chkIndicatorOnly->isChecked();
 	m_kxkbConfig.m_showSingle = widget->chkShowSingle->isChecked();
 	m_kxkbConfig.m_showFlag = widget->chkShowFlag->isChecked();
 
@@ -508,7 +508,7 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
 			widget->comboVariant->setCurrentIndex(0);
 		}
 	}
-	updateDisplayName();
+//	updateDisplayName();
 }
 
 QWidget* LayoutConfig::makeOptionsTab()
@@ -628,6 +628,7 @@ void LayoutConfig::updateLayoutCommand()
 	widget->editCmdLine->setText(setxkbmap);
 }
 
+/*
 void LayoutConfig::updateDisplayName()
 {
 	Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
@@ -658,9 +659,23 @@ void LayoutConfig::updateDisplayName()
 	widget->editDisplayName->setEnabled( sel != NULL );
 	widget->editDisplayName->setText(layoutDisplayName);
 }
+*/
 
 void LayoutConfig::changed()
 {
+  bool enabled = widget->chkEnable->isChecked();
+
+  widget->chkIndicatorOnly->setEnabled(enabled);
+  if( ! enabled )
+	widget->chkIndicatorOnly->setChecked(false);
+
+  widget->grpLayouts->setEnabled(enabled);
+  widget->grpSwitching->setEnabled(enabled);
+//  widget->grpStickySwitching->setEnabled(enabled);
+
+//  bool indicatorOnly = widget->chkIndicatorOnly->isChecked();
+//  widget->grpIndicator->setEnabled(indicatorOnly);
+  
   emit KCModule::changed( true );
 }
 
