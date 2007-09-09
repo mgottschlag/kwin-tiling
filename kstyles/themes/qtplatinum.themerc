@@ -1,6 +1,7 @@
 [Misc]
 Name=Platinum
 Name[be]=Платына
+Name[fa]=پلاتینیوم
 Name[km]=ប្លាទីន
 Name[sv]=Platina
 Comment=Built-in unthemed Platinum style
@@ -8,8 +9,10 @@ Comment[be]=Убудаваны стыль Платына
 Comment[bg]=Вграден платинен стил
 Comment[el]=Ενσωματωμένο στυλ Platinum
 Comment[ja]=ビルトイン Platinum スタイル (テーマなし)
+Comment[kk]=Құрамындағы нақыштарсыз Platinum стилі
 Comment[km]=រចនាប័ទ្ម​ជាប់​ជា​មួយ​ប្លាទីន​ដែល​គ្មាន​ស្បែក​
 Comment[nds]=Inbuut Stil "Platinum" ahn Muster
+Comment[nl]=Ingebouwde themaloze Platinum-stijl
 Comment[pt]=O estilo incorporado sem tema do Platinum
 Comment[pt_BR]=Estilo predefinido Platinum sem temas
 Comment[sv]=Inbyggd otemad platinastil

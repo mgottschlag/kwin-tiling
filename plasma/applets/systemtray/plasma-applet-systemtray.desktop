@@ -1,12 +1,16 @@
 [Desktop Entry]
 
 Name=System tray
+Name[bg]=Системен панел
 Name[el]=Πλαίσιο συστήματος
 Name[ga]=Tráidire an chórais
 Name[ja]=システムトレイ
+Name[kk]=Жүйелік сөре
 Name[nds]=Systeemafsnitt vun't Paneel
+Name[nl]=Systeemvak
 Name[pt]=Bandeja do sistema
 Name[pt_BR]=Bandeja do sistema
+Name[sv]=Systembricka
 Type=Service
 ServiceTypes=Plasma/Applet
 
