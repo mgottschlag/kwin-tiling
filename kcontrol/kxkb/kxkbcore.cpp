@@ -54,7 +54,9 @@ DESCRIPTION
 #include "x11helper.h"
 #include "extension.h"
 #include "rules.h"
+#ifdef HAVE_XKLAVIER
 #include "xklavier_adaptor.h"
+#endif
 #include "kxkbconfig.h"
 #include "layoutmap.h"
 #include "kxkbwidget.h"
@@ -387,12 +389,14 @@ bool KxkbCore::x11EventFilter ( XEvent * event )
     else
 	if( XKBExtension::isLayoutSwitchEvent(event) ) {
       // layout changed
+#ifdef HAVE_XKLAVIER
 	  QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
 	  if( lus.count() > 0 )
 		m_kxkbConfig.setConfiguredLayouts(lus);
 		// TODO: update menu
 	  else
 	    kDebug() << "error updating layout map"; //TODO set error
+#endif
 
   	  int group = m_extension->getGroup();
 	  updateIndicator(group, 1);
