@@ -2,6 +2,7 @@
 Name=HighContrast
 Name[be]=Высокі кантраст
 Name[bg]=High Contrast
+Name[de]=Hoher Kontrast
 Name[el]=Υψηλή αντίθεση
 Name[fa]=سایه روشن بالا
 Name[ga]=Ardchodarsnacht
@@ -19,6 +20,7 @@ ConfigPage=kstyle_highcontrast_config
 Comment=A style that works well with high contrast color schemes
 Comment[be]=Стыль, які створаны для працы з высокакантрастнымі колернымі схемамі
 Comment[bg]=Стил за работа с високо контрастни схеми
+Comment[de]=Ein Design für Farbschemata mit hohem Kontrast
 Comment[el]=Ένα στυλ που δουλεύει καλά με σχήματα υψηλής αντίθεσης
 Comment[ja]=高コントラストの色スキームにふさわしいスタイル
 Comment[kk]=Түстер контрастығы жоғары сұлбалармен істейтін стилі

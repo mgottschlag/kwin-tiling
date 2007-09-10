@@ -1,5 +1,6 @@
 [Misc]
 Name=KDE Step
+Name[de]=KDE-Step
 Name[fa]=گام KDE
 Name[kk]=KDE степ
 Name[km]=ជំហាន​របស់ KDE
@@ -7,6 +8,7 @@ Name[sv]=KDE step
 Comment=Unthemed Next-like style
 Comment[be]=Стыль Next
 Comment[bg]=Стил "Next"
+Comment[de]=Next-ähnliches Design
 Comment[el]=Στυλ παρόμοιο με το Next
 Comment[ja]=Next 風のスタイル (テーマなし)
 Comment[kk]=Нақыштарсыз Next-секілді стиль
