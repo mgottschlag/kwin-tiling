@@ -955,7 +955,7 @@ Q3DragObject *TreeView::dragObject()
        m_dragInfo = 0;
        m_dragItem = item;
        QString menuId = item->menuId();
-       m_dragPath = item->entryInfo()->service->desktopEntryPath();
+       m_dragPath = item->entryInfo()->service->entryPath();
        if (!m_dragPath.isEmpty())
           m_dragPath = KStandardDirs::locate("apps", m_dragPath);
        if (!m_dragPath.isEmpty())

@@ -491,7 +491,7 @@ void KScreenSaver::findSavers()
         it != mSaverServices.end(); it++,mNumLoaded++)
     {
       SaverConfig *saver = new SaverConfig;
-      QString file = KStandardDirs::locate("services", (*it)->desktopEntryPath());
+      QString file = KStandardDirs::locate("services", (*it)->entryPath());
       if (saver->read(file)) {
 	      mSaverList.append(saver);
         } else

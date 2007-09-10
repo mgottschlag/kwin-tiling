@@ -114,7 +114,7 @@ void RemoteMenu::startWizard()
 
     if (service && service->isValid())
     {
-        url.setPath(KStandardDirs::locate("apps", service->desktopEntryPath()));
+        url.setPath(KStandardDirs::locate("apps", service->entryPath()));
         new KRun(url, 0, true); // will delete itself
     }
 }

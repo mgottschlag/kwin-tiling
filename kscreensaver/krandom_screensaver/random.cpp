@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
         for( KService::List::const_iterator it = lst.begin();
             it != lst.end(); ++it)
 	{
-		QString file = KStandardDirs::locate("services", (*it)->desktopEntryPath());
+		QString file = KStandardDirs::locate("services", (*it)->entryPath());
 		kDebug() << "Looking at " << file;
 		KDesktopFile saver( file );
 		kDebug() << "read X-KDE-Type";

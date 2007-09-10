@@ -160,7 +160,7 @@ public:
 
     QString menuId() const { return service->menuId(); }
 
-    QString file() const { return service->desktopEntryPath(); }
+    QString file() const { return service->entryPath(); }
 
     KShortcut shortcut();
     void setShortcut(const KShortcut &_shortcut);

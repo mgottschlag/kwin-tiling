@@ -139,7 +139,7 @@ void RecentlyLaunchedApps::appLaunched(const QString& strApp)
 
 void RecentlyLaunchedApps::updateRecentlyUsedApps(KService::Ptr &service)
 {
-	QString strItem(service->desktopEntryPath());
+	QString strItem(service->entryPath());
 
     // don't add an item from root kmenu level
 	if (!strItem.contains('/'))

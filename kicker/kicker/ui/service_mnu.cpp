@@ -444,7 +444,7 @@ void PanelServiceMenu::slotExec(int id)
     KWorkSpace::propagateSessionManager();
 
     KService::Ptr service = KService::Ptr::staticCast(e);
-    KToolInvocation::startServiceByDesktopPath(service->desktopEntryPath(),
+    KToolInvocation::startServiceByDesktopPath(service->entryPath(),
                                                QStringList(), 0, 0, 0, "", true);
 
     RecentlyLaunchedApps::self().updateRecentlyUsedApps(service);
@@ -551,7 +551,7 @@ void PanelServiceMenu::slotContextMenu(int selected)
         case AddItemToDesktop:
 	    service = KService::Ptr::staticCast(contextKSycocaEntry_);
 
-	    src.setPath( KGlobal::dirs()->findResource( "apps", service->desktopEntryPath() ) );
+	    src.setPath( KGlobal::dirs()->findResource( "apps", service->entryPath() ) );
 	    dest.setPath( KGlobalSettings::desktopPath() );
 	    dest.setFileName( src.fileName() );
 
@@ -563,7 +563,7 @@ void PanelServiceMenu::slotContextMenu(int selected)
 		{
             service = KService::Ptr::staticCast(contextKSycocaEntry_);
             QDBusInterface kickerInterface("org.kde.kicker", "/Panel");
-            kickerInterface.call("addServiceButton", service->desktopEntryPath());
+            kickerInterface.call("addServiceButton", service->entryPath());
             break;
 		}
 	case EditItem:
@@ -603,7 +603,7 @@ void PanelServiceMenu::slotContextMenu(int selected)
 		{
             g = KServiceGroup::Ptr::staticCast(contextKSycocaEntry_);
             QDBusInterface kickerInterface("org.kde.kicker", "/Panel");
-            kickerInterface.call("addServiceMenuButton", service->desktopEntryPath());
+            kickerInterface.call("addServiceMenuButton", service->entryPath());
             break;
 		}
         case EditMenu:
@@ -659,7 +659,7 @@ void PanelServiceMenu::mouseMoveEvent(QMouseEvent * ev)
         case KST_KService:
         {
             icon = SmallIcon(KService::Ptr::staticCast(e)->icon());
-            QString filePath = KService::Ptr::staticCast(e)->desktopEntryPath();
+            QString filePath = KService::Ptr::staticCast(e)->entryPath();
             if (filePath[0] != '/')
             {
                 filePath = KStandardDirs::locate("apps", filePath);

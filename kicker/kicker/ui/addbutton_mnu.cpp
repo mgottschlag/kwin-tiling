@@ -56,7 +56,7 @@ void PanelAddButtonMenu::slotExec(int id)
 	containerArea->addServiceMenuButton(g->relPath());
     } else if (e->isType(KST_KService)) {
 	const KService::Ptr service = KService::Ptr::staticCast(e);
-	containerArea->addServiceButton( service->desktopEntryPath() );
+	containerArea->addServiceButton( service->entryPath() );
     }
 }
 

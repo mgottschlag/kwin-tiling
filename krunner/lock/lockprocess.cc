@@ -363,7 +363,7 @@ void LockProcess::readSaver()
             kDebug(1204) << "Cannot find screesaver: " << mSaver;
             return;
         }
-        QString file = KStandardDirs::locate("services", offers.first()->desktopEntryPath());
+        QString file = KStandardDirs::locate("services", offers.first()->entryPath());
 
         bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
         bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");

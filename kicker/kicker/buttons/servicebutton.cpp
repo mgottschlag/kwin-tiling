@@ -115,7 +115,7 @@ void ServiceButton::loadServiceFromId(const QString &id)
 
     if (_service)
     {
-        backedByFile(_service->desktopEntryPath());
+        backedByFile(_service->entryPath());
     }
 
     if (_id.startsWith('/'))
@@ -161,7 +161,7 @@ void ServiceButton::saveConfig( KConfigGroup& config ) const
 {
     config.writePathEntry("StorageId", _id );
     if (!config.hasKey("DesktopFile") && _service)
-       config.writePathEntry("DesktopFile", _service->desktopEntryPath());
+       config.writePathEntry("DesktopFile", _service->entryPath());
 }
 
 void ServiceButton::dragEnterEvent(QDragEnterEvent *ev)
@@ -190,7 +190,7 @@ void ServiceButton::dropEvent( QDropEvent* ev )
 
 void ServiceButton::startDrag()
 {
-    QString path = _service->desktopEntryPath();
+    QString path = _service->entryPath();
 
     // If the path to the desktop file is relative, try to get the full
     // path from KStdDirs.
@@ -224,7 +224,7 @@ void ServiceButton::properties()
         return;
     }
 
-    QString path = _service->desktopEntryPath();
+    QString path = _service->entryPath();
 
     // If the path to the desktop file is relative, try to get the full
     // path from KStdDirs.

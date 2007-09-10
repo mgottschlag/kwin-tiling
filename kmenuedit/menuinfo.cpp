@@ -309,7 +309,7 @@ KDesktopFile *MenuEntryInfo::desktopFile()
 {
    if (!m_desktopFile)
    {
-      m_desktopFile = new KDesktopFile(service->desktopEntryPath());
+      m_desktopFile = new KDesktopFile(service->entryPath());
    }
    return m_desktopFile;
 }
@@ -321,7 +321,7 @@ void MenuEntryInfo::setDirty()
    dirty = true;
 
    QString local = KStandardDirs::locateLocal("xdgdata-apps", service->menuId());
-   if (local != service->desktopEntryPath())
+   if (local != service->entryPath())
    {
       KDesktopFile *oldDf = desktopFile();
       m_desktopFile = oldDf->copyTo(local);
@@ -332,7 +332,7 @@ void MenuEntryInfo::setDirty()
 bool MenuEntryInfo::needInsertion()
 {
    // If entry is dirty and previously stored under applnk, then we need to be added explicitly
-   return dirty && !service->desktopEntryPath().startsWith('/');
+   return dirty && !service->entryPath().startsWith('/');
 }
 
 void MenuEntryInfo::save()

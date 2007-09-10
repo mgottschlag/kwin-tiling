@@ -176,7 +176,7 @@ void PrefMenu::mouseMoveEvent(QMouseEvent * ev)
         {
             KService::Ptr service(KService::Ptr::staticCast(e));
             icon = SmallIcon(service->icon());
-            QString filePath = service->desktopEntryPath();
+            QString filePath = service->entryPath();
             if (filePath[0] != '/')
             {
                 filePath = KStandardDirs::locate("apps", filePath);
@@ -308,7 +308,7 @@ void PrefMenu::slotExec(int id)
 
     KWorkSpace::propagateSessionManager();
     KService::Ptr service(KService::Ptr::staticCast(m_entryMap[id]));
-    KToolInvocation::startServiceByDesktopPath(service->desktopEntryPath(),
+    KToolInvocation::startServiceByDesktopPath(service->entryPath(),
                                             QStringList(), 0, 0, 0, "", true);
     m_dragStartPos = QPoint(-1,-1);
 }
