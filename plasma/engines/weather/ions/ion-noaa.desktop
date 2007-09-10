@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=NOAA's National Weather Service
+Name[es]=Servicio Meteorológico Nacional del NOAA
+Name[pt]=National Weather Service da NOAA
+Name[pt_BR]=National Weather Service da NOAA
+Name[sv]=NOAA:s nationella vädertjänst
+Comment=XML Data from NOAA's National Weather Service
+Comment[es]=Datos XML del Servicio Nacional de Salud del NOAA
+Comment[pt]=Dados em XML do National Weather Service da NOAA
+Comment[pt_BR]=Dados em XML do National Weather Service da NOAA
+Comment[sv]=XML-data från NOAA:s nationella vädertjänst
+ServiceTypes=WeatherEngine/Ion
+Type=Service
+Icon=noneyet
+X-KDE-Library=ion_noaa
+X-IonName=noaa
