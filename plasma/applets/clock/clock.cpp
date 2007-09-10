@@ -51,6 +51,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_dialog(0)
 {
     setHasConfigurationInterface(true);
+    setCachePaintMode(DeviceCoordinateCacheMode);
 
     KConfigGroup cg = config();
     m_showTimeString = cg.readEntry("showTimeString", false);
@@ -107,7 +108,7 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
     }
 
     m_lastTimeSeen = m_time;
-    update();
+    invalidate();
 }
 
 void Clock::showConfigurationInterface() //TODO: Make the size settable
@@ -137,7 +138,7 @@ void Clock::configAccepted()
     cg.writeEntry("showTimeString", m_showTimeString);
     cg.writeEntry("showSecondHand", m_showSecondHand);
     dataEngine("time")->setProperty("reportSeconds", m_showSecondHand);
-    QGraphicsItem::update();
+    invalidate();
     cg.writeEntry("size", ui.spinSize->value());
     m_size = QSize(ui.spinSize->value(), ui.spinSize->value());
     m_theme->resize(m_size);
