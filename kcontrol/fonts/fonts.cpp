@@ -600,7 +600,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
     fontUseList.append(i);
     connect(i, SIGNAL(fontSelected(const QFont &)), SLOT(fontSelected()));
 
-    QLabel * fontUse = new QLabel(name+':', this);
+    QLabel * fontUse = new QLabel(i18nc("Font role", "%1: ", name), this);
     fontUse->setWhatsThis( *quickHelpIt++);
 
     fontUseLayout->addWidget(fontUse, count, 0);
@@ -629,9 +629,9 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    label = new QLabel( i18n( "Use a&nti-aliasing:" ), this );
    lay->addWidget( label, 0, 0 );
    cbAA = new QComboBox( this );
-   cbAA->insertItem( AAEnabled, i18n( "Enabled" )); // change AASetting type if order changes
-   cbAA->insertItem( AASystem, i18n( "System settings" ));
-   cbAA->insertItem( AADisabled, i18n( "Disabled" ));
+   cbAA->insertItem( AAEnabled, i18nc( "Use anti-aliasing", "Enabled" )); // change AASetting type if order changes
+   cbAA->insertItem( AASystem, i18nc( "Use anti-aliasing", "System settings" ));
+   cbAA->insertItem( AADisabled, i18nc( "Use annti-aliasing", "Disabled" ));
    cbAA->setWhatsThis( i18n("If this option is selected, KDE will smooth the edges of curves in "
                               "fonts."));
    aaSettingsButton = new QPushButton( i18n( "Configure..." ), this);
@@ -645,7 +645,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    lay->addWidget( label, 1, 0 );
    comboForceDpi = new QComboBox( this );
    label->setBuddy( comboForceDpi );
-   comboForceDpi->insertItem( DPINone, i18n( "Disabled" )); // change DPISetti ng type if order changes
+   comboForceDpi->insertItem( DPINone, i18nc("Force fonts DPI", "Disabled" )); // change DPISetti ng type if order changes
    comboForceDpi->insertItem( DPI96, i18n( "96 DPI" ));
    comboForceDpi->insertItem( DPI120, i18n( "120 DPI" ));
    QString whatsthis = i18n(
