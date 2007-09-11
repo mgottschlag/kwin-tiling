@@ -1,14 +1,6 @@
 [Desktop Entry]
 Name=BBC Weather from UK MET Office
-Name[es]=El tiempo de la BBC de la Oficina Meteorológica del Reino Unido
-Name[pt]=Meteorologia da BBC do UK MET Office
-Name[pt_BR]=Meteorologia da BBC do UK MET Office
-Name[sv]=BBC-väder från brittiska meteorologiska departementet
 Comment=XML Data from the UK MET Office
-Comment[es]=Datos XML de la de predicción meteorológica del Reino Unido
-Comment[pt]=Dados em XML do UK MET Office
-Comment[pt_BR]=Dados em XML do UK MET Office
-Comment[sv]=XML-data från brittiska meteorologiska departementet
 ServiceTypes=WeatherEngine/Ion
 Type=Service
 Icon=noneyet

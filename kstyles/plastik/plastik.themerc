@@ -24,6 +24,7 @@ Name[sr]=Пластика
 Name[sr@latin]=Plastika
 Name[ta]=திட்டம்
 Name[te]=ప్లాస్టిక్
+Name[th]=พลาสติก
 Name[uk]=Пластик
 Name[uz]=Пластик
 Name[vi]=Chất dẻo
@@ -42,6 +43,7 @@ Comment[nl]=Een eenvoudige en schone stijl
 Comment[pt]=Um estilo simples e limpo
 Comment[pt_BR]=Um estilo simples e limpo
 Comment[sv]=En enkel och ren stil
+Comment[th]=รูปแบบเรียบง่ายสะอาดตา
 Comment[zh_TW]=簡單乾淨的樣式
 [KDE]
 WidgetStyle=Plastik

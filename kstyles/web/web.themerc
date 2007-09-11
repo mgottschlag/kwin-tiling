@@ -14,6 +14,7 @@ Name[nl]=Webstijl
 Name[pt]=Estilo Web
 Name[pt_BR]=Estilo Web
 Name[sv]=Webbstil
+Name[th]=รูปแบบแบบเว็บ
 Name[zh_TW]=網頁樣式
 Comment=Web widget style
 Comment[be]=Стыль Сеціва
@@ -28,6 +29,7 @@ Comment[nl]=Webstijl
 Comment[pt]=Estilo gráfico Web
 Comment[pt_BR]=Estilo do widget web
 Comment[sv]=Grafisk webbkomponentstil
+Comment[th]=รูปแบบวิดเจ็ตแบบเว็บ
 Comment[zh_TW]=網頁元件樣式
 [KDE]
 widgetStyle=webstyle.la
