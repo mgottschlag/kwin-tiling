@@ -153,7 +153,8 @@ void UKMETIon::cachedLocation(QString key)
 }
  
 void UKMETIon::parseSearchLocations(QString key, QXmlStreamReader& xml)
-{  
+{ 
+    Q_UNUSED(key) 
     int flag = 0;
     QString url;
     QString place;
