@@ -862,6 +862,7 @@ void CKioFonts::cleanup()
     slaveInstance=NULL;
 
     KFI_DBUG << "Cleanup";
+    itsFolders[FOLDER_USER].disabled->save();
     doModified();
     quitHelper();
 
@@ -2391,6 +2392,9 @@ void CKioFonts::special(const QByteArray &a)
                                 configure(FOLDER_USER);
                         }
                     }
+
+                if(itsFolders[FOLDER_USER].disabled->modified())
+                    itsFolders[FOLDER_USER].disabled->reload();
                 doModified();
                 clearFontList();
                 updateFontList();
