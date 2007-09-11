@@ -23,7 +23,7 @@
 #include <QObject>
 #include <kdemacros.h>
 #include <KGenericFactory>
-#include <Plasma/DataEngine>
+#include <plasma/dataengine.h>
 
 /**
 * This is the base class to be used to implement new ions for the WeatherEngine.

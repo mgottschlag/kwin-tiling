@@ -29,7 +29,7 @@
 #include <kio/job.h>
 #include <kio/scheduler.h>
 #include <kdemacros.h>
-#include <Plasma/DataEngine>
+#include <plasma/dataengine.h>
 #include "ion.h"
 #include "weather_formula.h"
 

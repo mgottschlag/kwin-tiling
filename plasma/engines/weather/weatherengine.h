@@ -21,7 +21,7 @@
 #define _WEATHER_ENGINE_H_
 
 #include <KGenericFactory>
-//#include <Plasma/DataEngine>
+#include <plasma/dataengine.h>
 #include "ions/ion.h"
 
 class QTimer;
