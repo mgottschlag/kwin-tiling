@@ -34,13 +34,13 @@
 
 TrashButton::TrashButton(QWidget *parent)
 	: PanelPopupButton(parent), mActions(this),
-	  mFileItem(KFileItem::Unknown, KFileItem::Unknown, KUrl("trash:/"))
+	  mFileItem()
 {
 	mActions.setAssociatedWidget(this);
 
 	KIO::UDSEntry entry;
 	KIO::NetAccess::stat(KUrl("trash:/"), entry, 0L);
-	mFileItem.assign(KFileItem(entry, KUrl("trash:/")));
+	mFileItem = KFileItem(entry, KUrl("trash:/"));
 
 	QAction *a = KStandardAction::paste(this, SLOT(slotPaste()), this);
         mActions.addAction("paste", a);

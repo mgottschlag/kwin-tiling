@@ -89,7 +89,7 @@ const KFileItem &MediumButton::fileItem() const
 
 void MediumButton::setFileItem(const KFileItem &fileItem)
 {
-	mFileItem.assign(fileItem);
+	mFileItem = fileItem;
 	setAcceptDrops(mFileItem.isWritable());
 	setTitle(mFileItem.text());
 	refreshType();
