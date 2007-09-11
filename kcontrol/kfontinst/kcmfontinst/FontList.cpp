@@ -910,6 +910,8 @@ void CFontList::listingCompleted()
 
 void CFontList::newItems(const KFileItemList &items)
 {
+    emit layoutAboutToBeChanged();
+
 #ifdef KFI_FONTLIST_DEBUG
     kDebug() << "************** newItems " << items.count();
 
@@ -938,6 +940,8 @@ void CFontList::clearItems()
 
 void CFontList::refreshItems(const KFileItemList &items)
 {
+    emit layoutAboutToBeChanged();
+
 #ifdef KFI_FONTLIST_DEBUG
     kDebug() << "************** refreshItems " << items.count();
 
@@ -977,6 +981,8 @@ void CFontList::refreshItems(const KFileItemList &items)
 
 void CFontList::deleteItems(const KFileItemList &items)
 {
+    emit layoutAboutToBeChanged();
+
 #ifdef KFI_FONTLIST_DEBUG
     kDebug() << "************** deleteItems " << items.count();
 #endif
