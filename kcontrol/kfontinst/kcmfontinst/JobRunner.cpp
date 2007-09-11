@@ -431,7 +431,7 @@ void CJobRunner::cfgResult(KJob *job)
 
     // KIO::file_xxxx() dont seem to emit kdirnotify signals, so do this now...
     if(itsModified && (CMD_COPY==itsCmd || CMD_INSTALL==itsCmd))
-        org::kde::KDirNotify::emitFilesAdded(itsDest.path());
+        org::kde::KDirNotify::emitFilesAdded(itsDest.url());
 
     if(job && 0==job->error())
     {
