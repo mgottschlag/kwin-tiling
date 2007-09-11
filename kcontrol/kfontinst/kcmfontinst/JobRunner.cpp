@@ -34,6 +34,7 @@
 #include <klocale.h>
 #include <kpassworddialog.h>
 #include <kdesu/su.h>
+#include <kdirnotify.h>
 #include <QGridLayout>
 #include <QProgressBar>
 #include <QLabel>
@@ -308,12 +309,12 @@ void CJobRunner::doNext()
                 dest.setFileName(Misc::getFile((*itsIt).path()));
                 itsStatusLabel->setText(CMD_INSTALL==itsCmd ? i18n("Installing %1", (*itsIt).displayName())
                                                             : i18n("Copying %1", (*itsIt).displayName()) );
-                job=KIO::copy(*itsIt, dest, false);
+                job=KIO::file_copy(*itsIt, dest, -1, false, false, false);
                 break;
             }
             case CMD_DELETE:
                 itsStatusLabel->setText(i18n("Deleting %1", (*itsIt).displayName()));
-                job=KIO::del(*itsIt, false, false);
+                job=KIO::file_delete(*itsIt, false);
                 break;
             case CMD_ENABLE:
                 itsStatusLabel->setText(i18n("Enabling %1", (*itsIt).displayName()));
@@ -329,7 +330,7 @@ void CJobRunner::doNext()
 
                 dest.setFileName(Misc::getFile((*itsIt).path()));
                 itsStatusLabel->setText(i18n("Moving %1", (*itsIt).displayName()));
-                job=KIO::move(*itsIt, dest, false);
+                job=KIO::file_move(*itsIt, dest, -1, false, false, false);
                 break;
             }
             default:
@@ -427,6 +428,10 @@ void CJobRunner::jobResult(KJob *job)
 void CJobRunner::cfgResult(KJob *job)
 {
     stopAnimation();
+
+    // KIO::file_xxxx() dont seem to emit kdirnotify signals, so do this now...
+    if(itsModified && (CMD_COPY==itsCmd || CMD_INSTALL==itsCmd))
+        org::kde::KDirNotify::emitFilesAdded(itsDest.path());
 
     if(job && 0==job->error())
     {
