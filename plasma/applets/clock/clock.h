@@ -69,6 +69,7 @@ class Clock : public Plasma::Applet
 
     private:
         void drawHand(QPainter *p, int rotation, const QString &handName);
+        void connectToEngine();
 
         bool m_showTimeString;
         bool m_showSecondHand;

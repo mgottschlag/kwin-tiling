@@ -61,11 +61,18 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(m_pixelSize, m_pixelSize);
 
-    Plasma::DataEngine* timeEngine = dataEngine("time");
-    timeEngine->connectSource(m_timezone, this);
-    timeEngine->setProperty("reportSeconds", m_showSecondHand);
-    updated(m_timezone, timeEngine->query(m_timezone));
+    connectToEngine();
     constraintsUpdated();
+}
+
+void Clock::connectToEngine()
+{
+    Plasma::DataEngine* timeEngine = dataEngine("time");
+    if (m_showSecondHand) {
+        timeEngine->connectSource(m_timezone, this, 500);
+    } else {
+        timeEngine->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
+    }
 }
 
 QSizeF Clock::contentSizeHint() const
@@ -106,6 +113,7 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
         return;
     }
 
+    kDebug() << (void*)this << " update!";
     m_lastTimeSeen = m_time;
     update();
 }
@@ -132,32 +140,30 @@ void Clock::showConfigurationInterface() //TODO: Make the size settable
 void Clock::configAccepted()
 {
     KConfigGroup cg = config();
-    m_showTimeString = ui.showTimeStringCheckBox->checkState() == Qt::Checked;
-    m_showSecondHand = ui.showSecondHandCheckBox->checkState() == Qt::Checked;
+    m_showTimeString = ui.showTimeStringCheckBox->isChecked();
+    m_showSecondHand = ui.showSecondHandCheckBox->isChecked();
+
     cg.writeEntry("showTimeString", m_showTimeString);
     cg.writeEntry("showSecondHand", m_showSecondHand);
-    dataEngine("time")->setProperty("reportSeconds", m_showSecondHand);
     update();
     cg.writeEntry("size", ui.spinSize->value());
     m_size = QSize(ui.spinSize->value(), ui.spinSize->value());
     m_theme->resize(m_size);
     QStringList tzs = ui.timeZones->selection();
-    
+
     if (tzs.count() > 0) {
         //TODO: support multiple timezones
         QString tz = tzs.at(0);
         if (tz != m_timezone) {
             dataEngine("time")->disconnectSource(m_timezone, this);
             m_timezone = tz;
-            dataEngine("time")->connectSource(m_timezone, this);
         }
     } else if (m_timezone != "Local") {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
-        dataEngine("time")->connectSource(m_timezone, this);
     }
 
-    dataEngine("time")->connectSource(m_timezone, this);
+    connectToEngine();
     constraintsUpdated();
 }
 
