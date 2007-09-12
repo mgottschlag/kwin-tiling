@@ -1,6 +1,14 @@
 [Desktop Entry]
 Name=NOAA's National Weather Service
+Name[nds]=Wederdeenst vun't US-Ozeaankunn- un Wederamt
+Name[nl]=NOAA's nationale weerdienst
+Name[pt]=Serviço Meteorológico Nacional da NOAA
+Name[pt_BR]=Serviço Meteorológico Nacional da NOAA
 Comment=XML Data from NOAA's National Weather Service
+Comment[nds]=XML-Daten vun't US-Ozeaankunn- un Wederamt
+Comment[nl]=XML Data van NOAA's nationale weerdienst
+Comment[pt]=Dados em XML do Serviço Meteorológico Nacional da NOAA
+Comment[pt_BR]=Dados em XML do Serviço Meteorológico Nacional da NOAA
 ServiceTypes=WeatherEngine/Ion
 Type=Service
 Icon=noneyet

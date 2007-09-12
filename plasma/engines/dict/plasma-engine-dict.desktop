@@ -1,7 +1,16 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Dictionary Data Engine
+Name[ga]=Inneall Sonraí Foclóra
+Name[nds]=Wöörbook-Datendriever
+Name[nl]=Woordenboek-gegevensengine
+Name[pt]=Motor de Dados do Dicionário
+Name[pt_BR]=Motor de Dados do Dicionário
 Comment=Look up word meanings
+Comment[nds]=Woortbedüden naslaan
+Comment[nl]=Zoek de betekenis van woorden op
+Comment[pt]=Procurar os significados das palavras
+Comment[pt_BR]=Procurar os significados das palavras
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=accessories-dictionary

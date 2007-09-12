@@ -1,6 +1,16 @@
 [Desktop Entry]
 Name=BBC Weather from UK MET Office
+Name[ga]=Aimsir BBC ó Oifig UK MET
+Name[nds]=BBC-Weder vun't engelsche Wederkunn-Kontoor
+Name[nl]=BBC Weather van UK MET Office
+Name[pt]=Meteorologia da BBC do Escritório MET na GB
+Name[pt_BR]=Meteorologia da BBC do Escritório MET na GB
 Comment=XML Data from the UK MET Office
+Comment[ga]=Sonraí XML ó Oifig UK MET
+Comment[nds]=XML-Daten vun't engelsche Wederkunn-Kontoor
+Comment[nl]=XML-gegevens van UK MET Office
+Comment[pt]=Dados em XML do Escritório MET na GB
+Comment[pt_BR]=Dados em XML do Escritório MET na GB
 ServiceTypes=WeatherEngine/Ion
 Type=Service
 Icon=noneyet

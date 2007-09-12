@@ -1,6 +1,16 @@
 [Desktop Entry]
 Name=Weather Data Engine
+Name[ga]=Inneall Sonraí Aimsire
+Name[nds]=Weder-Datendriever
+Name[nl]=Weer-gegevensengine
+Name[pt]=Motor de Dados Meteorológicos
+Name[pt_BR]=Motor de Dados Meteorológicos
 Comment=Weather data for Plasmoids
+Comment[ga]=Sonraí aimsire le haghaidh Plasmoids
+Comment[nds]=Wederdaten för Plasmoiden
+Comment[nl]=Weergegevens voor Plasmoids
+Comment[pt]=Dados meteorológicos para os Plasmóides
+Comment[pt_BR]=Dados meteorológicos para os Plasmóides
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=
