@@ -105,7 +105,7 @@ public:
     /**
     * Reimplement to set the wanted options for the ion such as unit and time formats.
     */
-    virtual void option(int option, QVariant option) = 0;
+    virtual void option(int option, QVariant value) = 0;
 
 private:
     class Private;
