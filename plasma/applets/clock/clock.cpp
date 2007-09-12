@@ -113,7 +113,7 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
         return;
     }
 
-    kDebug() << (void*)this << " update!";
+    //kDebug() << (void*)this << " update!";
     m_lastTimeSeen = m_time;
     update();
 }
