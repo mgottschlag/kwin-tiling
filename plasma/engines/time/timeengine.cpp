@@ -34,7 +34,7 @@ TimeEngine::TimeEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent)
 {
     Q_UNUSED(args)
-    setMinimumUpdateInterval(500);
+    setMinimumUpdateInterval(333);
 }
 
 TimeEngine::~TimeEngine()
