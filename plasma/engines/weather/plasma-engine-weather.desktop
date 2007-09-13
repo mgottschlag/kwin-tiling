@@ -1,16 +1,22 @@
 [Desktop Entry]
 Name=Weather Data Engine
 Name[ga]=Inneall Sonraí Aimsire
+Name[nb]=Værdata-motor
 Name[nds]=Weder-Datendriever
 Name[nl]=Weer-gegevensengine
 Name[pt]=Motor de Dados Meteorológicos
 Name[pt_BR]=Motor de Dados Meteorológicos
+Name[sv]=Datagränssnitt för väder
+Name[zh_TW]=天氣資料引擎
 Comment=Weather data for Plasmoids
 Comment[ga]=Sonraí aimsire le haghaidh Plasmoids
+Comment[nb]=Værdata for Plasmoids
 Comment[nds]=Wederdaten för Plasmoiden
 Comment[nl]=Weergegevens voor Plasmoids
 Comment[pt]=Dados meteorológicos para os Plasmóides
 Comment[pt_BR]=Dados meteorológicos para os Plasmóides
+Comment[sv]=Väderdata för Plasmoider
+Comment[zh_TW]=Plasmoid 的天氣資料
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=

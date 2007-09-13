@@ -7,11 +7,13 @@ Name[el]=Πλαίσιο συστήματος
 Name[ga]=Tráidire an chórais
 Name[ja]=システムトレイ
 Name[kk]=Жүйелік сөре
+Name[nb]=Systemkurv
 Name[nds]=Systeemafsnitt vun't Paneel
 Name[nl]=Systeemvak
 Name[pt]=Bandeja do sistema
 Name[pt_BR]=Bandeja do sistema
 Name[sv]=Systembricka
+Name[zh_TW]=系統匣
 Type=Service
 ServiceTypes=Plasma/Applet
 

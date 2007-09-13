@@ -58,6 +58,7 @@ Comment[sr]=Проширив менаџер прозора који се мож�
 Comment[sr@latin]=Proširiv menadžer prozora koji se može skriptovati pomoću jezika nalik na Emacs-ov Lisp
 Comment[sv]=Utökningsbar fönsterhanterare som kan styras med ett Emacs Lisp-liknande skriptspråk
 Comment[ta]=Emacs Lisp-like மொழியுடனான விரிவாக்ககூடிய சாளர மேலாளர் எழுத்தாக்கம்
+Comment[th]=ระบบจัดการหน้าต่างที่สามารถเพิ่มขยายได้ และควบคุมด้วยการเขียนสคริปต์โดยใช้ภาษาแบบ Emacs Lisp
 Comment[tr]=Eklenti destekli Emacs Lisp benzeri bir kodlama dili kullanan kodlanabilir bir pencere yöneticisi
 Comment[uk]=Менеджер вікон, що можна розширювати мовою скриптів на кшталт Emacs Lisp
 Comment[vi]=Trình quản lý cửa sổ có khả năng sửa đổi bằng văn lệnh được viết bằng ngôn ngữ giống Emacs Lisp

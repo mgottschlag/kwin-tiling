@@ -4,10 +4,13 @@ Type=ServiceType
 X-KDE-ServiceType=WeatherEngine/Ion
 
 Comment=WeatherEngine Ion
+Comment[nb]=Værmotor Ion
 Comment[nds]=Wederdriever Ion
 Comment[nl]=Weer-engine Ion
 Comment[pt]=Motor Meteorológico Ion
 Comment[pt_BR]=Motor Meteorológico Ion
+Comment[sv]=Vädergränssnittsjon
+Comment[zh_TW]=天氣引擎 Ion
 
 [PropertyDef::X-IonName]
 Type=QString

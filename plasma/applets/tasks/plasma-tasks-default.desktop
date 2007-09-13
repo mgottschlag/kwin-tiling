@@ -6,11 +6,13 @@ Name[el]=Διαχειριστής εργασιών
 Name[ga]=Bainisteoir na dTascanna
 Name[ja]=タスクマネージャ
 Name[kk]=Тапсырмалар менеджері
+Name[nb]=Oppgavebehandler
 Name[nds]=Opgavenpleger
 Name[nl]=Takenbeheer
 Name[pt]=Gestor de Tarefas
 Name[pt_BR]=Gerenciador de Tarefas
 Name[sv]=Aktivitetshanterare
+Name[zh_TW]=工作管理員
 Type=Service
 ServiceTypes=Plasma/Applet
 

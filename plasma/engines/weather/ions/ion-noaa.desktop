@@ -1,14 +1,20 @@
 [Desktop Entry]
 Name=NOAA's National Weather Service
+Name[nb]=NOAAs nasjonale værtjeneste
 Name[nds]=Wederdeenst vun't US-Ozeaankunn- un Wederamt
 Name[nl]=NOAA's nationale weerdienst
 Name[pt]=Serviço Meteorológico Nacional da NOAA
 Name[pt_BR]=Serviço Meteorológico Nacional da NOAA
+Name[sv]=NOAA:s nationella vädertjänst
+Name[zh_TW]=NOAA 的國家天氣服務
 Comment=XML Data from NOAA's National Weather Service
+Comment[nb]=XML-data fra NOAAs nasjonale værtjeneste
 Comment[nds]=XML-Daten vun't US-Ozeaankunn- un Wederamt
 Comment[nl]=XML Data van NOAA's nationale weerdienst
 Comment[pt]=Dados em XML do Serviço Meteorológico Nacional da NOAA
 Comment[pt_BR]=Dados em XML do Serviço Meteorológico Nacional da NOAA
+Comment[sv]=XML-data från NOAA:s nationella vädertjänst
+Comment[zh_TW]=從 NOAA 的國家天氣服務來的 XML 資料
 ServiceTypes=WeatherEngine/Ion
 Type=Service
 Icon=noneyet
