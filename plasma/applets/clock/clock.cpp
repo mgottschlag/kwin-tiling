@@ -63,6 +63,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 
     connectToEngine();
     constraintsUpdated();
+    setCachePaintMode(NoCacheMode);
 }
 
 void Clock::connectToEngine()
