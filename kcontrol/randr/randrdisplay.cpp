@@ -66,6 +66,27 @@ RandRDisplay::RandRDisplay()
 			m_legacyScreens.append(new LegacyRandRScreen(i));
 	}
 
+#ifdef HAS_RANDR_1_2
+	// check if we have more than one output, if no, revert to the legacy behavior
+	if (RandR::has_1_2)
+	{
+		int count = 0;
+		foreach(RandRScreen *screen, m_screens)
+			count += screen->outputs().count();
+
+		if (count < 2)
+		{
+			RandR::has_1_2 = false;
+			for (int i = 0; i < m_numScreens; ++i)
+			{
+				delete m_screens[i];
+				m_legacyScreens.append(new LegacyRandRScreen(i));
+			}
+			m_screens.clear();
+		}
+	}
+#endif
+
 	setCurrentScreen(QApplication::desktop()->primaryScreen());
 }
 
