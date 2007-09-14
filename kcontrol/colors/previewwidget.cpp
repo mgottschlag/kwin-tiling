@@ -48,6 +48,13 @@ PreviewWidget::PreviewWidget(QWidget *parent) : QFrame(parent)
     ui.labelSelection5->setBackgroundRole(QPalette::Highlight);
     ui.labelSelection6->setBackgroundRole(QPalette::Highlight);
     ui.labelSelection7->setBackgroundRole(QPalette::Highlight);
+    
+    QList<QWidget*> widgets = findChildren<QWidget*>();
+    foreach (QWidget* widget, widgets)
+    {
+        widget->installEventFilter(this);
+        widget->setFocusPolicy(Qt::NoFocus);
+    }
 
     // connect signals/slots
     // TODO
@@ -57,6 +64,27 @@ PreviewWidget::PreviewWidget(QWidget *parent) : QFrame(parent)
 
 PreviewWidget::~PreviewWidget()
 {
+}
+
+bool PreviewWidget::eventFilter(QObject *, QEvent *ev)
+{
+    switch (ev->type())
+    {
+        case QEvent::MouseButtonPress:
+        case QEvent::MouseButtonRelease:
+        case QEvent::MouseButtonDblClick:
+        case QEvent::MouseMove:
+        case QEvent::KeyPress:
+        case QEvent::KeyRelease:
+        case QEvent::Enter:
+        case QEvent::Leave:
+        case QEvent::Wheel:
+        case QEvent::ContextMenu:
+            return true; // ignore
+        default:
+            break;
+    }
+    return false;
 }
 
 #include "previewwidget.moc"

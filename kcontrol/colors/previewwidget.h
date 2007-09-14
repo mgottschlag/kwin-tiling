@@ -32,6 +32,9 @@ class PreviewWidget : public QFrame
 public:
     PreviewWidget(QWidget *parent);
     ~PreviewWidget();
+    
+protected:
+    bool eventFilter(QObject *, QEvent *);
 };
 
 #endif
