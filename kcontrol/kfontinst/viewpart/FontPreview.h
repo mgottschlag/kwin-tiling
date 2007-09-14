@@ -53,14 +53,13 @@ class CFontPreview : public QWidget
     QSize       minimumSizeHint() const;
 
     void        showFont(const KUrl &url, const QString &name=QString(),
-                         unsigned long styleInfo=KFI_NO_STYLE_INFO, int face=1);
+                         unsigned long styleInfo=KFI_NO_STYLE_INFO, int face=0);
     void        showFont();
-
+    void        showFace(int face);
 
     public Q_SLOTS:
 
     void        setUnicodeRange(const QList<CFcEngine::TRange> &r);
-    void        showFace(int face);
 
     Q_SIGNALS:
 

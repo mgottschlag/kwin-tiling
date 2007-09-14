@@ -69,6 +69,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void print();
     void displayType(const QList<CFcEngine::TRange> &range);
     void statResult(KJob *job);
+    void showFace(int face);
 
     private:
 

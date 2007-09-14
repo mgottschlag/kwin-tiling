@@ -1530,10 +1530,16 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
             else
                 url+=Misc::getFile(*it);
 #endif
-            if(files.count()==1 && (*it).face>0)
-                url+='?'+KFI_KIO_FACE+'='+QString::number((*it).face);
 
-            entry.insert(KIO::UDSEntry::UDS_URL, url);
+            if(files.count()==1 && (*it).face>0)
+            {
+                KUrl kUrl(url);
+
+                kUrl.setQuery("?"KFI_KIO_FACE"="+QString::number((*it).face));
+                entry.insert(KIO::UDSEntry::UDS_URL, kUrl.url());
+            }
+            else
+                entry.insert(KIO::UDSEntry::UDS_URL, url);
 
             return true;  // This file was OK, so use its values...
         }

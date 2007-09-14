@@ -75,7 +75,7 @@ void CFontPreview::showFont()
 
     if(!itsCurrentUrl.isEmpty() &&
        CFcEngine::instance()->draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap,
-                                   itsCurrentFace-1, false, itsRange, &itsChars, itsFontName,
+                                   itsCurrentFace, false, itsRange, &itsChars, itsFontName,
                                    itsStyleInfo))
     {
         setMouseTracking(itsChars.count()>0);

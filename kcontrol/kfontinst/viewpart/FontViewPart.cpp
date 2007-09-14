@@ -138,7 +138,7 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
     mainLayout->addWidget(controls);
     connect(itsPreview, SIGNAL(status(bool)), SLOT(previewStatus(bool)));
     connect(itsInstallButton, SIGNAL(clicked()), SLOT(install()));
-    connect(itsFaceSelector, SIGNAL(valueChanged(int)), itsPreview, SLOT(showFace(int)));
+    connect(itsFaceSelector, SIGNAL(valueChanged(int)), SLOT(showFace(int)));
 
     itsChangeTextAction=actionCollection()->addAction("changeText");
     itsChangeTextAction->setIcon(KIcon("text"));
@@ -218,8 +218,8 @@ void CFontViewPart::timeout()
 
         //
         // This is a fonts:/Url. Check to see whether we were passed any details in the query...
-        QString path=url().queryItem(KFI_FILE_QUERY),
-                mime=url().queryItem(KFI_MIME_QUERY);
+        QString path=url().queryItem(KFI_FILE_QUERY)/*,
+                mime=url().queryItem(KFI_MIME_QUERY)*/;
 
         name=url().queryItem(KFI_NAME_QUERY);
         styleInfo=Misc::getIntQueryVal(url(), KFI_STYLE_QUERY, KFI_NO_STYLE_INFO);
@@ -235,7 +235,7 @@ void CFontViewPart::timeout()
                 name=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
                 styleInfo=udsEntry.numberValue(UDS_EXTRA_FC_STYLE);
                 isDisabled=udsEntry.numberValue(KIO::UDSEntry::UDS_HIDDEN, 0) ? true : false;
-                mime=udsEntry.stringValue(KIO::UDSEntry::UDS_MIME_TYPE);
+                //mime=udsEntry.stringValue(KIO::UDSEntry::UDS_MIME_TYPE);
             }
         }
         else if(!path.isEmpty())
@@ -468,6 +468,11 @@ void CFontViewPart::statResult(KJob *job)
     }
 
     itsInstallButton->setEnabled(!exists);
+}
+
+void CFontViewPart::showFace(int face)
+{
+    itsPreview->showFace(face-1);
 }
 
 #if 0
