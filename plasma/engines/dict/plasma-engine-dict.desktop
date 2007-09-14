@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Dictionary Data Engine
+Name[el]=Μηχανή δεδομένων λεξικού
 Name[ga]=Inneall Sonraí Foclóra
 Name[nb]=Ordboksdata-motor
 Name[nds]=Wöörbook-Datendriever
@@ -10,6 +11,7 @@ Name[pt_BR]=Motor de Dados do Dicionário
 Name[sv]=Datagränssnitt för ordlista
 Name[zh_TW]=字典資料引擎
 Comment=Look up word meanings
+Comment[el]=Αναζήτηση σημασίας λέξεων
 Comment[nb]=Slåopp betydningen av ord
 Comment[nds]=Woortbedüden naslaan
 Comment[nl]=Zoek de betekenis van woorden op

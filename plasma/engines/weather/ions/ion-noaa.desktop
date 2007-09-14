@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=NOAA's National Weather Service
+Name[el]=Υπηρεσία καιρού NOAA
 Name[nb]=NOAAs nasjonale værtjeneste
 Name[nds]=Wederdeenst vun't US-Ozeaankunn- un Wederamt
 Name[nl]=NOAA's nationale weerdienst
@@ -8,6 +9,8 @@ Name[pt_BR]=Serviço Meteorológico Nacional da NOAA
 Name[sv]=NOAA:s nationella vädertjänst
 Name[zh_TW]=NOAA 的國家天氣服務
 Comment=XML Data from NOAA's National Weather Service
+Comment[el]=Δεδομένα XML από την υπηρεσία καιρού NOAA
+Comment[it]=Dati XML dal NOAA (National Weather Service)
 Comment[nb]=XML-data fra NOAAs nasjonale værtjeneste
 Comment[nds]=XML-Daten vun't US-Ozeaankunn- un Wederamt
 Comment[nl]=XML Data van NOAA's nationale weerdienst

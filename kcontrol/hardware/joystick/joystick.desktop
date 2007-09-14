@@ -55,6 +55,7 @@ Comment[tr]=oyun kumandası - oyun kumandalarını denemek için bir kcontrol mo
 Comment[uk]=Джойстик - модуль центру керування для тестування джойстиків
 Comment[uz]=Жойстик учун бошқарув модули
 Comment[vi]=cần điều khiển - một mô-đun điều khiển KDE để kiểm tra cần lái
+Comment[wa]=on module di controle po sayî et calibrer les djîsses di djeu
 Comment[x-test]=xxjoystick - a kcontrol module to test joysticksxx
 Comment[zh_TW]=搖桿 - 用來測試搖桿的 kcontrol 模組
 Exec=kcmshell joystick

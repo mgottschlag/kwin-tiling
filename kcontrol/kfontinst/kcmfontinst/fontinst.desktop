@@ -77,7 +77,9 @@ Name[zh_TW]=字型安裝程式
 Comment=Install, manage, and preview fonts
 Comment[bg]=Инсталиране и преглед на шрифтове
 Comment[de]=Schriftarten installieren, verwalten und betrachten
+Comment[el]=Εγκατάσταση, διαχείριση και προεπισκόπηση γραμματοσειρών
 Comment[ga]=Suiteáil, bainisteoireacht, agus réamhamharc na gclónna
+Comment[it]=Installa, gestisce e mostra anteprime dei caratteri
 Comment[kk]=Қаріптерді орнату, басқару және қарау
 Comment[km]=ដំឡើង, គ្រប់គ្រង, និង​មើល​ពុម្ពអក្សរ​ជា​មុន
 Comment[nb]=Installer, styr og forhåndsvis skrifttyper
@@ -90,21 +92,22 @@ Comment[th]=ติดตั้ง, จัดการและแสดงตั
 Comment[zh_TW]=安裝、管理並預覽字型
 
 Keywords=font,fonts,installer,truetype,type1,bitmap
-Keywords[be]=Шрыфт,Шрыфты,Устаноўка,font,fonts,installer,truetype,type1,bitmap
-Keywords[bg]=Keywords=шрифт, шрифтове, преглед, печат, font, fonts, installer, truetype, type1, bitmap
-Keywords[de]=Schrift,Fonts,Schriftarten,Installation,TrueType,Type1,Bitmapschriften
+Keywords[be]=Шрыфт,Шрыфты,Устаноўка,font,fonts,installer,truetype,type1,speedo,bitmap
+Keywords[bg]=Keywords=шрифт, шрифтове, преглед, печат, font, fonts, installer, truetype, type1, speedo, bitmap
+Keywords[de]=Schrift,Fonts,Schriftarten,Installation,TrueType,Type1,Speedo,Bitmapschriften
 Keywords[el]=γραμματοσειρά,γραμματοσειρές,εγκαταστάτης,εγκατάσταση,truetype,type1,bitmap
 Keywords[es]=tipo de letra,tipos de letra,instalador,truetype,type1,mapa de bits
 Keywords[fa]=قلم، قلمها، نصب‌کننده، قلم حقیقی، نوع۱، نگاشت بیت
 Keywords[ga]=cló,clónna,clófhoirne,suiteálaí,truetype,type1,mapa giotán,giotánmhapach
 Keywords[he]=גופן,גופנים,מתקין,התקנה,מפת סיביות,font,fonts,installer,truetype,type1,bitmap
+Keywords[it]=font,caratteri,installatore,truetype,type1,bitmap,tipi di carattere
 Keywords[ja]=フォント,インストーラ,truetype,type1,bitmap,ビットマップ
 Keywords[km]=ពុម្ពអក្សរ,ពុម្ពអក្សរ,កម្មវិធី​ដំឡើង,truetype,ប្រភេទ ១,រូបភាព
 Keywords[nb]=skrift,skrifter,skrifttype,skrifttyper,installer,truetype,type1,bitmap
 Keywords[nds]=Schriftoort,Schriftoorden,Installeren,TrueType,Type1,Bitmap
 Keywords[ne]=फन्ट, फन्टहरू, स्थापक, ट्रु टाइप, टाइप १,बिटम्याप
-Keywords[nl]=letters,lettertypen,fonts,installatie,truetype,type1,bitmap,lettertype-installatie
-Keywords[pt]=tipo de letra,tipos de letra,instalador,truetype,type1,bitmap
+Keywords[nl]=letters,lettertypen,fonts,installatie,truetype,type1,speedo,bitmap,lettertype-installatie
+Keywords[pt]=tipo de letra,tipos de letra,instalador,truetype,type1,speedo,bitmap
 Keywords[pt_BR]=fonte,fontes,instalador,truetype,type1,bitmap
 Keywords[sv]=teckensnitt,installation,truetype,type1,bitmap
 Keywords[th]=แบบอักษร,ตัวติดตั้ง,ทรูไทป์,ไทป์1,บิตแมป

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=BBC Weather from UK MET Office
+Name[el]=Καιρός του BBC από το γραφείο UK MET
 Name[ga]=Aimsir BBC ó Oifig UK MET
 Name[nb]=BBC vær fra det britiske meteorologi-kontoret
 Name[nds]=BBC-Weder vun't engelsche Wederkunn-Kontoor
@@ -9,6 +10,7 @@ Name[pt_BR]=Meteorologia da BBC do Escritório MET na GB
 Name[sv]=BBC-väder från brittiska meteorologiska departementet
 Name[zh_TW]=BBC 天氣報告，從 UK MET 辦公室來
 Comment=XML Data from the UK MET Office
+Comment[el]=Δεδομένα XML από το γραφείο UK MET
 Comment[ga]=Sonraí XML ó Oifig UK MET
 Comment[nb]=XML-data fra det britiske meteorologi-kontoret
 Comment[nds]=XML-Daten vun't engelsche Wederkunn-Kontoor

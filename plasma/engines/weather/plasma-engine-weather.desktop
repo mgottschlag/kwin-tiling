@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Weather Data Engine
+Name[el]=Μηχανή δεδομένων καιρού
 Name[ga]=Inneall Sonraí Aimsire
 Name[nb]=Værdata-motor
 Name[nds]=Weder-Datendriever
@@ -9,6 +10,7 @@ Name[pt_BR]=Motor de Dados Meteorológicos
 Name[sv]=Datagränssnitt för väder
 Name[zh_TW]=天氣資料引擎
 Comment=Weather data for Plasmoids
+Comment[el]=Δεδομένα καιρού για πλασμοειδή
 Comment[ga]=Sonraí aimsire le haghaidh Plasmoids
 Comment[nb]=Værdata for Plasmoids
 Comment[nds]=Wederdaten för Plasmoiden
