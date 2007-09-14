@@ -41,6 +41,15 @@ public:
     KColorCm(QWidget *parent, const QVariantList &);
     ~KColorCm();
     
+private:
+
+    /** setup the colortable with its buttons and labels */
+    void setupColorTable();
+    
+    // these are lists of QPushButtons so they can be KColorButtons, or KPushButtons when
+    // they say "Varies"
+    QList<QPushButton *> m_backgroundButtons;
+    QList<QPushButton *> m_foregroundButtons;
 };
 
 #endif

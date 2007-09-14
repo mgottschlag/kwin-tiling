@@ -19,13 +19,7 @@
 
 // FIXME QFrame included only for placeholders
 
-#include <QtGui/QLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QComboBox>
-#include <QtGui/QCheckBox>
-#include <QtGui/QSlider>
-#include <QtGui/QLabel>
+#include <QtGui/QHeaderView>
 
 #include <KColorButton>
 #include <KGenericFactory>
@@ -51,6 +45,8 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     setAboutData( about );
 
     setupUi(this);
+    
+    setupColorTable();
 
     // connect signals/slots
     // TODO
@@ -60,6 +56,104 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 
 KColorCm::~KColorCm()
 {
+}
+
+void KColorCm::setupColorTable()
+{
+    colorTable->verticalHeader()->hide();
+    colorTable->horizontalHeader()->hide();
+    QTableWidgetItem *label = new QTableWidgetItem(i18n("Normal Background"));
+    colorTable->setItem(0, 0, label);
+    KColorButton *button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(0, 1, button);
+    
+    label = new QTableWidgetItem(i18n("Alternate Background"));
+    colorTable->setItem(1, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(1, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Active Background"));
+    colorTable->setItem(2, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(2, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Link Background"));
+    colorTable->setItem(3, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(3, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Visited Background"));
+    colorTable->setItem(4, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(4, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Negative Background"));
+    colorTable->setItem(5, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(5, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Neutral Background"));
+    colorTable->setItem(6, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(6, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Positive Background"));
+    colorTable->setItem(7, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(7, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Normal Text"));
+    colorTable->setItem(8, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(8, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Inactive Text"));
+    colorTable->setItem(9, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(9, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Active Text"));
+    colorTable->setItem(10, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(10, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Link Text"));
+    colorTable->setItem(11, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(11, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Negative Text"));
+    colorTable->setItem(12, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(12, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Neutral Text"));
+    colorTable->setItem(13, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(13, 1, button);    
+    
+    label = new QTableWidgetItem(i18n("Positive Text"));
+    colorTable->setItem(14, 0, label);
+    button = new KColorButton(this);
+    m_backgroundButtons.append(button);
+    colorTable->setCellWidget(14, 1, button);    
+
+    colorTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
+    colorTable->horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
 }
 
 #include "colorscm.moc"
