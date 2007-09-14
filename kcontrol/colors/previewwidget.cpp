@@ -1,5 +1,6 @@
 /* Preview widget for KDE Display color scheme setup module
  * Copyright (C) 2007 Matthew Woehlke <mw_triad@users.sourceforge.net>
+ * eventFilter code Copyright (C) 2007 Urs Wolfer <uwolfer @ kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
