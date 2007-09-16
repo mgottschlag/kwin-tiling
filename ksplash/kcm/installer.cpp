@@ -42,11 +42,14 @@ ThemeListBox::ThemeListBox(QWidget *parent)
   : KListWidget(parent)
 {
    setAcceptDrops(true);
-   connect(this, SIGNAL(mouseButtonPressed(int, QListWidgetItem *, const QPoint &)),
-           this, SLOT(slotMouseButtonPressed(int, QListWidgetItem *, const QPoint &)));
 }
 
 void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
+{
+   event->setAccepted((event->source() != this) && KUrl::List::canDecode(event->mimeData()));
+}
+
+void ThemeListBox::dragMoveEvent(QDragMoveEvent* event)
 {
    event->setAccepted((event->source() != this) && KUrl::List::canDecode(event->mimeData()));
 }
@@ -60,14 +63,17 @@ void ThemeListBox::dropEvent(QDropEvent* event)
    }
 }
 
-void ThemeListBox::slotMouseButtonPressed(int button, QListWidgetItem *listItem, const QPoint &p)
+void ThemeListBox::mousePressEvent(QMouseEvent *e)
 {
-   if ((button & Qt::LeftButton) == 0) return;
-   mOldPos = p;
-   mDragFile.clear();
-   int cur = row(listItem);
-   if (cur >= 0)
-      mDragFile = text2path[item(cur)->text()];
+   if ((e->buttons() & Qt::LeftButton) != 0)
+   {
+      mOldPos = e->globalPos();;
+      mDragFile.clear();
+      int cur = row(itemAt(e->pos()));
+      if (cur >= 0)
+         mDragFile = text2path[item(cur)->text()];
+   }
+   KListWidget::mousePressEvent(e);
 }
 
 void ThemeListBox::mouseMoveEvent(QMouseEvent *e)

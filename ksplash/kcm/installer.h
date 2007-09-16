@@ -77,11 +77,10 @@ Q_SIGNALS:
 
 protected:
   void dragEnterEvent(QDragEnterEvent* event);
+  void dragMoveEvent(QDragMoveEvent* event);
   void dropEvent(QDropEvent* event);
   void mouseMoveEvent(QMouseEvent *e);
-
-protected Q_SLOTS:
-  void slotMouseButtonPressed(int button, QListWidgetItem *item, const QPoint &p);
+  void mousePressEvent(QMouseEvent *e);
 
 private:
   QString mDragFile;
