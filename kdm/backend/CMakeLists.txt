@@ -63,9 +63,12 @@ target_link_libraries( kdm
 	${KRB5_LIBRARIES}
 	${SOCKET_LIBRARIES}
 	${RESOLV_LIBRARIES}
-	${UTIL_LIBRARIES}
-	${POSIX4_LIBRARIES}
 )
+if(UTIL_LIBRARIES)
+	target_link_libraries( kdm ${UTIL_LIBRARIES} )
+endif(UTIL_LIBRARIES)
+target_link_libraries( kdm ${POSIX4_LIBRARIES} )
+
 if(KDE4_ENABLE_FINAL)
         macro_add_file_dependencies(${CMAKE_CURRENT_BINARY_DIR}/kdm_final_cpp.cpp ${confci})
 endif(KDE4_ENABLE_FINAL)

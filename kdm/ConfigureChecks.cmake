@@ -46,6 +46,7 @@ if (PAM_FOUND)
 endif (PAM_FOUND)
 macro_pop_required_vars()
 
+
 macro(define_library LIB FN)
 	set(varname ${FN}_in_${LIB})
 	string(TOUPPER ${LIB}_LIBRARIES libname)
