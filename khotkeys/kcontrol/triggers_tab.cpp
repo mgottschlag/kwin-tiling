@@ -240,7 +240,7 @@ Shortcut_trigger_widget::Shortcut_trigger_widget( QWidget* parent_P, const char*
     lay->addWidget( ksw, 0 , Qt::AlignHCenter );
     lay->addStretch();
     clear_data();
-    connect( ksw, SIGNAL( capturedKeySequence( const QKeySequence& )),
+    connect( ksw, SIGNAL( keySequenceChanged( const QKeySequence& )),
         this, SLOT( capturedShortcut( const QKeySequence& )));
     }
 
