@@ -140,7 +140,7 @@ void KSMServer::executeCommand( const QStringList& command )
 
 IceAuthDataEntry *authDataEntries = 0;
 
-static KTemporaryFile *remTempFile;
+static KTemporaryFile *remTempFile = 0;
 
 static IceListenObj *listenObjs = 0;
 int numTransports = 0;
@@ -392,7 +392,7 @@ Status SetAuthentication (int count, IceListenObj *listenObjs,
                           IceAuthDataEntry **authDataEntries)
 {
     KTemporaryFile addTempFile;
-    KTemporaryFile *remTempFile = new KTemporaryFile;
+    remTempFile = new KTemporaryFile;
 
     if (!addTempFile.open() || !remTempFile->open())
         return 0;
@@ -470,9 +470,12 @@ void FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
         return;
     }
 
-    KProcess p;
-    p << iceAuth << "source" << remTempFile->fileName();
-    p.execute();
+    if (remTempFile)
+    {
+        KProcess p;
+        p << iceAuth << "source" << remTempFile->fileName();
+        p.execute();
+    }
 
     delete remTempFile;
     remTempFile = 0;
