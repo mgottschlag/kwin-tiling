@@ -88,7 +88,6 @@ public:
  int dragStartDist;
  bool singleClick;
  int autoSelectDelay;
- int visualActivate;
  bool changeCursor;
  int wheelScrollLines;
  bool reverseScrollPolarity;

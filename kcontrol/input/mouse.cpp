@@ -157,11 +157,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " must be paused over the icon before it is selected.");
     tab1->slAutoSelect->setWhatsThis( wtstr );
 
-    wtstr = i18n("Show feedback when clicking an icon");
-    tab1->cbVisualActivate->setWhatsThis( wtstr );
-
     connect(tab1->slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-    connect(tab1->cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
 
     connect(tab1->cb_pointershape, SIGNAL(clicked()), this, SLOT(changed()));
 
@@ -533,7 +529,6 @@ void MouseConfig::load()
      tab1->slAutoSelect->setValue( 0 );
   else
      tab1->slAutoSelect->setValue( settings->autoSelectDelay );
-  tab1->cbVisualActivate->setChecked( settings->visualActivate );
   slotClick();
 
 
@@ -581,7 +576,6 @@ void MouseConfig::save()
   settings->wheelScrollLines = wheelScrollLines->value();
   settings->singleClick = !tab1->doubleClick->isChecked();
   settings->autoSelectDelay = tab1->cbAutoSelect->isChecked()? tab1->slAutoSelect->value():-1;
-  settings->visualActivate = tab1->cbVisualActivate->isChecked();
 //  settings->changeCursor = tab1->singleClick->isChecked();
   settings->changeCursor = tab1->cb_pointershape->isChecked();
   settings->reverseScrollPolarity = tab1->cbScrollPolarity->isChecked();
@@ -631,7 +625,6 @@ void MouseConfig::defaults()
     tab1->cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
     tab1->slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
     tab1->singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
-    tab1->cbVisualActivate->setChecked( KDE_DEFAULT_VISUAL_ACTIVATE );
     tab1->cb_pointershape->setChecked(KDE_DEFAULT_CHANGECURSOR);
     slotClick();
 
@@ -749,7 +742,6 @@ void MouseSettings::load(KConfig *config)
 
   singleClick = group.readEntry("SingleClick", KDE_DEFAULT_SINGLECLICK);
   autoSelectDelay = group.readEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
-  visualActivate = group.readEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
   changeCursor = group.readEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
 }
 
@@ -861,7 +853,6 @@ void MouseSettings::save(KConfig *config)
   group.writeEntry("WheelScrollLines", wheelScrollLines, KConfigBase::Persistent|KConfigBase::Global);
   group.writeEntry("SingleClick", singleClick, KConfigBase::Persistent|KConfigBase::Global);
   group.writeEntry("AutoSelectDelay", autoSelectDelay, KConfigBase::Persistent|KConfigBase::Global);
-  group.writeEntry("VisualActivate", visualActivate, KConfigBase::Persistent|KConfigBase::Global);
   group.writeEntry("ChangeCursor", changeCursor,KConfigBase::Persistent|KConfigBase::Global);
   // This iterates through the various Logitech mice, if we have support.
 #ifdef HAVE_LIBUSB

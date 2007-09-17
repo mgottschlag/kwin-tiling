@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
-    <height>387</height>
+    <width>631</width>
+    <height>393</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -286,23 +286,6 @@
         </item>
        </layout>
       </item>
-      <item>
-       <widget class="Line" name="Line1" >
-        <property name="frameShape" >
-         <enum>QFrame::HLine</enum>
-        </property>
-        <property name="frameShadow" >
-         <enum>QFrame::Sunken</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="cbVisualActivate" >
-        <property name="text" >
-         <string>Visual f&amp;eedback on activation</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -343,7 +326,6 @@
   <tabstop>cbAutoSelect</tabstop>
   <tabstop>slAutoSelect</tabstop>
   <tabstop>doubleClick</tabstop>
-  <tabstop>cbVisualActivate</tabstop>
  </tabstops>
  <includes>
   <include location="global" >kdialog.h</include>
