@@ -1,3 +1,4 @@
 add_subdirectory(time)
 add_subdirectory(weather)
 add_subdirectory(dict)
+add_subdirectory(filebrowser)
