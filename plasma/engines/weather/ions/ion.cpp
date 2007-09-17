@@ -26,7 +26,7 @@ public:
     Private(IonInterface *i)
             : ion(i) {}
 
-    QAtomic ref;             // Reference counter
+    int ref;
     IonInterface *ion;
     bool valid;
     QVector<QString> ionSource;  // Array of this ions sources
@@ -41,13 +41,13 @@ IonInterface::IonInterface(QObject *parent)
 // Increment reference counter
 void IonInterface::ref()
 {
-    d->ref.ref();
+    ++d->ref;
 }
 
 // Decrement reference counter
 void IonInterface::deref()
 {
-    d->ref.deref();
+    --d->ref;
 }
 
 // Check if Ion is used
