@@ -89,6 +89,7 @@ Comment[pt]=Instalar, gerir e antever tipos de letra
 Comment[pt_BR]=Instalar, gerenciar, e visualizar fontes
 Comment[sv]=Installera, hantera och förhandsgranska teckensnitt
 Comment[th]=ติดตั้ง, จัดการและแสดงตัวอย่างแบบอักษร
+Comment[wa]=Astaler, manaedjî et håyner des fontes
 Comment[zh_TW]=安裝、管理並預覽字型
 
 Keywords=font,fonts,installer,truetype,type1,bitmap
@@ -112,6 +113,7 @@ Keywords[pt_BR]=fonte,fontes,instalador,truetype,type1,bitmap
 Keywords[sv]=teckensnitt,installation,truetype,type1,bitmap
 Keywords[th]=แบบอักษร,ตัวติดตั้ง,ทรูไทป์,ไทป์1,บิตแมป
 Keywords[vi]=phông,phông chữ,trình cài đặt,truetype,kiểu 1,mảng ảnh, ảnh mảnh
+Keywords[wa]=fonte,fontes,astaler,truetype,type1,bitmap
 Keywords[zh_TW]=font,fonts,installer,truetype,type1,bitmap,字型,安裝程式,點陣
 
 Categories=Qt;KDE;X-KDE-settings-system;
