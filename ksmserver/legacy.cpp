@@ -330,6 +330,8 @@ QStringList KSMServer::windowWmCommand(WId w)
             return QStringList() << "firefox";
         if( command.endsWith( "thunderbird-bin" ))
             return QStringList() << "thunderbird";
+        if( command.endsWith( "sunbird-bin" ))
+            return QStringList() << "sunbird";
     }
     return ret;
 }
