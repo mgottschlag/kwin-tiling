@@ -31,17 +31,19 @@
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include "main.moc"
 
 #include "tzone.h"
 #include "dtime.h"
 
-typedef KGenericFactory<KclockModule, QWidget> KlockModuleFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_clock, KlockModuleFactory("kcmkclock"))
+K_PLUGIN_FACTORY(KlockModuleFactory, registerPlugin<KclockModule>();)
+K_EXPORT_PLUGIN(KlockModuleFactory("kcmkclock"))
 
-KclockModule::KclockModule(QWidget *parent, const QStringList &)
+
+KclockModule::KclockModule(QWidget *parent, const QVariantList &)
   : KCModule(KlockModuleFactory::componentData(), parent/*, name*/)
 {
   KAboutData *about =

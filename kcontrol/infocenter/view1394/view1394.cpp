@@ -30,7 +30,8 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include "view1394.h"
 
@@ -56,10 +57,11 @@ int my_reset_handler(raw1394handle_t handle, unsigned int )
    return 0;
 }
 
-typedef KGenericFactory<View1394> View1394Factory;
-K_EXPORT_COMPONENT_FACTORY(view1394, View1394Factory("kcmview1394"))
+K_PLUGIN_FACTORY(View1394Factory, registerPlugin<View1394>();)
+K_EXPORT_PLUGIN(View1394Factory("kcmview1394"))
 
-View1394::View1394(QWidget *parent, const QStringList &)
+
+View1394::View1394(QWidget *parent, const QVariantList &)
 :KCModule(View1394Factory::componentData(), parent)
 ,m_insideRescanBus(false)
 {

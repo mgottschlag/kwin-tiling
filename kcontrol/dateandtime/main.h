@@ -21,9 +21,7 @@
 #ifndef main_included
 #define main_included
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 class Dtime;
 class Tzone;
@@ -35,7 +33,7 @@ class KclockModule : public KCModule
   Q_OBJECT
 
 public:
-  KclockModule(QWidget *parent, const QStringList &);
+  KclockModule(QWidget *parent, const QVariantList &);
   
   void	save();
   void	load();

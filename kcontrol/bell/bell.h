@@ -33,7 +33,7 @@ class KBellConfig : public KCModule
   Q_OBJECT
 
  public:
-  KBellConfig(QWidget *parent, const QStringList &args);
+  KBellConfig(QWidget *parent, const QVariantList &args);
 
   void load();
   void save();

@@ -30,9 +30,7 @@
 #include <QGridLayout>
 #include <QBoxLayout>
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kconfig.h>
@@ -46,10 +44,15 @@
 
 #include <X11/Xlib.h>
 #include <QX11Info>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
-typedef KGenericFactory<KBellConfig> KBellConfigFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_bell, KBellConfigFactory("kcmbell"))
+
+
+K_PLUGIN_FACTORY(KBellConfigFactory, registerPlugin<KBellConfig>();)
+K_EXPORT_PLUGIN(KBellConfigFactory("kcmbell"))
+
+
 
 extern "C"
 {
@@ -72,7 +75,7 @@ extern "C"
   }
 }
 
-KBellConfig::KBellConfig(QWidget *parent, const QStringList &args):
+KBellConfig::KBellConfig(QWidget *parent, const QVariantList &args):
     KCModule(KBellConfigFactory::componentData(), parent, args)
 {
   QBoxLayout *layout = new QVBoxLayout(this);
