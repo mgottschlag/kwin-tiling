@@ -20,8 +20,8 @@
 #ifndef __COLORSCM_H__
 #define __COLORSCM_H__
 
-#include <kcmodule.h>
-#include <kcolorscheme.h>
+#include <KCModule>
+#include <KColorScheme>
 
 #include "ui_colorsettings.h"
 
