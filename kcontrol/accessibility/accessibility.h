@@ -22,9 +22,7 @@
 #define _ACCESSIBILITY_H_
 
 #include <kdebug.h>
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <kcomponentdata.h>
 #include "accessibilityconfigwidget.h"
 
@@ -35,7 +33,7 @@ class AccessibilityConfig : public KCModule {
       /**
        * Constructor
        */   
-      explicit AccessibilityConfig(QWidget *parent, const QStringList &foo = QStringList());
+      explicit AccessibilityConfig(QWidget *parent, const QVariantList &foo = QVariantList());
 
       /**
        * Destructor

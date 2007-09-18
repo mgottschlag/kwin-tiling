@@ -23,9 +23,7 @@
 #define keys_main_h
 
 #include <QTabWidget>
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 class ShortcutsModule;
 class QStringList;
@@ -34,7 +32,7 @@ class KeyModule : public KCModule
 {
 	Q_OBJECT
  public:
-	KeyModule(QWidget *parent, const QStringList &args);
+	KeyModule(QWidget *parent, const QVariantList &args);
         ~KeyModule();
 
 	void load();

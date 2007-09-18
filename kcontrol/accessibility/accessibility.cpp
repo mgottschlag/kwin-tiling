@@ -25,15 +25,18 @@
 #include <kaboutdata.h>
 #include <kcolorbutton.h>
 #include <kconfig.h>
-#include <kgenericfactory.h>
 #include <knuminput.h>
 #include <kurlrequester.h>
 #include <ktoolinvocation.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
 
 #include "accessibility.moc"
 
-typedef KGenericFactory<AccessibilityConfig, QWidget> AccessibilityFactory;
-K_EXPORT_COMPONENT_FACTORY( accessibility, AccessibilityFactory("kcmaccessibility") )
+K_PLUGIN_FACTORY(AccessibilityFactory, registerPlugin<AccessibilityConfig>();)
+K_EXPORT_PLUGIN(AccessibilityFactory("kcmaccessibility"))
+
 
 /**
  * This function checks if the kaccess daemon needs to be run
@@ -54,7 +57,7 @@ K_EXPORT_COMPONENT_FACTORY( accessibility, AccessibilityFactory("kcmaccessibilit
 //    return false; // don't need it
 // }
 
-AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QStringList &args)
+AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QVariantList &args)
   : KCModule( AccessibilityFactory::componentData(), parent)
 {
    Q_UNUSED( args )

@@ -46,12 +46,15 @@
 #include "kthememanager.h"
 #include "knewthemedlg.h"
 #include <config-workspace.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
-typedef KGenericFactory<kthememanager> kthememanagerFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_kthememanager, kthememanagerFactory("kthememanager"))
 
-kthememanager::kthememanager( QWidget *parent, const QStringList & )
+K_PLUGIN_FACTORY(kthememanagerFactory, registerPlugin<kthememanager>();)
+K_EXPORT_PLUGIN(kthememanagerFactory("kthememanager"))
+
+
+kthememanager::kthememanager( QWidget *parent, const QVariantList & )
     : KCModule( kthememanagerFactory::componentData(), parent ), m_theme( 0 ), m_origTheme( 0 )
 {
 

@@ -31,15 +31,18 @@
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kglobalaccel.h>
-#include <kgenericfactory.h>
 #include <kconfiggroup.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include "main.h"
 #include "shortcuts.h"
 #include "khotkeys.h"
 
-typedef KGenericFactory<KeyModule> KeyModuleFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_keys, KeyModuleFactory("kcmkeys"))
+
+K_PLUGIN_FACTORY(KeyModuleFactory, registerPlugin<KeyModule>();)
+K_EXPORT_PLUGIN(KeyModuleFactory("kcmkeys"))
+
 
 /*
 | Shortcut Schemes | Modifier Keys |
@@ -56,7 +59,7 @@ o Pre-set scheme   <Remove Scheme>
 
 Global Shortcuts
 */
-KeyModule::KeyModule(QWidget *parent, const QStringList& args)
+KeyModule::KeyModule(QWidget *parent, const QVariantList& args)
     : KCModule(KeyModuleFactory::componentData(), parent, args)
 {
     setQuickHelp( i18n("<p><h1>Keyboard Shortcuts</h1> Using shortcuts you can configure certain actions to be"
