@@ -60,11 +60,13 @@
 
 /**** DLL Interface for kcontrol ****/
 
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+#include <KLibLoader>
 
-#include <kgenericfactory.h>
+K_PLUGIN_FACTORY(KCMStyleFactory, registerPlugin<KCMStyle>();)
+K_EXPORT_PLUGIN(KCMStyleFactory("kcmstyle"))
 
-typedef KGenericFactory<KCMStyle, QWidget> KCMStyleFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_style, KCMStyleFactory("kcmstyle") )
 
 extern "C"
 {
@@ -141,7 +143,7 @@ public:
 };
 
 
-KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
+KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	: KCModule( KCMStyleFactory::componentData(), parent ), appliedStyle(NULL)
 {
     setQuickHelp( i18n("<h1>Style</h1>"

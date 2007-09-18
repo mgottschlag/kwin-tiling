@@ -21,9 +21,7 @@
 #ifndef _KCM_XINERAMA_H
 #define _KCM_XINERAMA_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <Qt3Support/Q3PtrList>
 #include <QTimer>
 
@@ -36,7 +34,7 @@ class QStringList;
 class KCMXinerama : public KCModule {
 	Q_OBJECT
 public:
-	KCMXinerama(QWidget *parent, const QStringList &args);
+	KCMXinerama(QWidget *parent, const QVariantList &args);
 	virtual ~KCMXinerama();
 
 	void load();

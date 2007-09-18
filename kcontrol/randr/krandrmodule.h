@@ -34,7 +34,7 @@ class KRandRModule : public KCModule
 	Q_OBJECT
 
 public:
-	KRandRModule(QWidget *parent, const QStringList& _args);
+	KRandRModule(QWidget *parent, const QVariantList& _args);
 
 	virtual void load();
 	virtual void save();

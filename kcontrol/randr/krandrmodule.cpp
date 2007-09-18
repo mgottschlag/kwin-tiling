@@ -17,18 +17,20 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <KGenericFactory>
 #include "legacyrandrconfig.h"
 #include "krandrmodule.h"
 #include "legacyrandrscreen.h"
 #include "randrdisplay.h"
 #include "randrconfig.h"
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include "randr.h"
 
 // DLL Interface for kcontrol
-typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_randr, KSSFactory("krandr") )
+K_PLUGIN_FACTORY(KSSFactory, registerPlugin<KRandRModule>();)
+K_EXPORT_PLUGIN(KSSFactory("krandr"))
+
 
 void KRandRModule::performApplyOnStartup()
 {
@@ -42,7 +44,7 @@ void KRandRModule::performApplyOnStartup()
 	}
 }
 
-KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
+KRandRModule::KRandRModule(QWidget *parent, const QVariantList&)
     : KCModule(KSSFactory::componentData(), parent)
 {
 	m_display = new RandRDisplay();

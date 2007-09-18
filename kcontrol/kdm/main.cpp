@@ -35,12 +35,13 @@
 
 #include <k3urldrag.h>
 #include <kaboutdata.h>
-#include <kgenericfactory.h>
 #include <kimageio.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmimetype.h>
 #include <kconfig.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include <QDropEvent>
 #include <QFile>
@@ -55,8 +56,9 @@
 #include <pwd.h>
 #include <grp.h>
 
-typedef KGenericFactory<KDModule, QWidget> KDMFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kdm, KDMFactory( "kdmconfig" ) )
+
+K_PLUGIN_FACTORY(KDMFactory, registerPlugin<KDModule>();)
+K_EXPORT_PLUGIN(KDMFactory( "kdmconfig" ))
 
 KUrl *decodeImgDrop( QDropEvent *e, QWidget *wdg )
 {
@@ -86,7 +88,7 @@ KUrl *decodeImgDrop( QDropEvent *e, QWidget *wdg )
 
 KConfig *config;
 
-KDModule::KDModule( QWidget *parent, const QStringList & )
+KDModule::KDModule( QWidget *parent, const QVariantList & )
 	: KCModule( KDMFactory::componentData(), parent )
 	, minshowuid( 0 )
 	, maxshowuid( 0 )

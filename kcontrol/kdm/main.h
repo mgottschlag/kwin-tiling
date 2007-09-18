@@ -24,9 +24,7 @@
 #ifndef __kdm_main_h
 #define __kdm_main_h
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 #include <QMap>
 
@@ -45,7 +43,7 @@ class KDModule : public KCModule {
 	Q_OBJECT
 
   public:
-	KDModule( QWidget *parent, const QStringList & );
+	KDModule( QWidget *parent, const QVariantList & );
 	~KDModule();
 
 	void load();

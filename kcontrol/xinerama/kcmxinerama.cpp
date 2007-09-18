@@ -28,7 +28,8 @@
 #include <kglobalsettings.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 #include <QtDBus/QtDBus>
 
 #include <QCheckBox>
@@ -43,10 +44,11 @@
 #include <QGridLayout>
 #include "kwin_interface.h"
 
-typedef KGenericFactory<KCMXinerama> KCMXineramaFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_xinerama, KCMXineramaFactory("kcmxinerama"))
+K_PLUGIN_FACTORY(KCMXineramaFactory, registerPlugin<KCMXinerama>();)
+K_EXPORT_PLUGIN(KCMXineramaFactory("kcmxinerama"))
 
-KCMXinerama::KCMXinerama(QWidget *parent, const QStringList &)
+
+KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
   : KCModule(KCMXineramaFactory::componentData(), parent) {
 
 	KAboutData *about =

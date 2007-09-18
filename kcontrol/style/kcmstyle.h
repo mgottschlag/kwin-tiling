@@ -32,9 +32,7 @@
 #include <QLayout>
 #include <QMap>
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <kvbox.h>
 
 #include "menupreview.h"
@@ -62,7 +60,7 @@ class KCMStyle : public KCModule
 	Q_OBJECT
 
 public:
-	KCMStyle( QWidget* parent, const QStringList& );
+	KCMStyle( QWidget* parent, const QVariantList& );
 	~KCMStyle();
 
 	virtual void load();
