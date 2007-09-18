@@ -23,35 +23,31 @@
 #include <KGlobalSettings>
 #include <KColorScheme>
 
-#include "ui_preview.h"
-
 PreviewWidget::PreviewWidget(QWidget *parent) : QFrame(parent)
 {
-    Ui::preview ui;
-    ui.setupUi(this);
-
-    setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+    setupUi(this);
 
     // set correct colors on... lots of things
-    ui.frame->setBackgroundRole(QPalette::Base);
-    ui.viewWidget->setBackgroundRole(QPalette::Base);
-    ui.labelView0->setBackgroundRole(QPalette::Base);
-    ui.labelView3->setBackgroundRole(QPalette::Base);
-    ui.labelView4->setBackgroundRole(QPalette::Base);
-    ui.labelView2->setBackgroundRole(QPalette::Base);
-    ui.labelView1->setBackgroundRole(QPalette::Base);
-    ui.labelView5->setBackgroundRole(QPalette::Base);
-    ui.labelView6->setBackgroundRole(QPalette::Base);
-    ui.labelView7->setBackgroundRole(QPalette::Base);
-    ui.selectionWidget->setBackgroundRole(QPalette::Highlight);
-    ui.labelSelection0->setBackgroundRole(QPalette::Highlight);
-    ui.labelSelection3->setBackgroundRole(QPalette::Highlight);
-    ui.labelSelection4->setBackgroundRole(QPalette::Highlight);
-    ui.labelSelection2->setBackgroundRole(QPalette::Highlight);
-    ui.labelSelection1->setBackgroundRole(QPalette::Highlight);
-    ui.labelSelection5->setBackgroundRole(QPalette::Highlight);
-    ui.labelSelection6->setBackgroundRole(QPalette::Highlight);
-    ui.labelSelection7->setBackgroundRole(QPalette::Highlight);
+    setAutoFillBackground(true);
+    frame->setBackgroundRole(QPalette::Base);
+    viewWidget->setBackgroundRole(QPalette::Base);
+    labelView0->setBackgroundRole(QPalette::Base);
+    labelView3->setBackgroundRole(QPalette::Base);
+    labelView4->setBackgroundRole(QPalette::Base);
+    labelView2->setBackgroundRole(QPalette::Base);
+    labelView1->setBackgroundRole(QPalette::Base);
+    labelView5->setBackgroundRole(QPalette::Base);
+    labelView6->setBackgroundRole(QPalette::Base);
+    labelView7->setBackgroundRole(QPalette::Base);
+    selectionWidget->setBackgroundRole(QPalette::Highlight);
+    labelSelection0->setBackgroundRole(QPalette::Highlight);
+    labelSelection3->setBackgroundRole(QPalette::Highlight);
+    labelSelection4->setBackgroundRole(QPalette::Highlight);
+    labelSelection2->setBackgroundRole(QPalette::Highlight);
+    labelSelection1->setBackgroundRole(QPalette::Highlight);
+    labelSelection5->setBackgroundRole(QPalette::Highlight);
+    labelSelection6->setBackgroundRole(QPalette::Highlight);
+    labelSelection7->setBackgroundRole(QPalette::Highlight);
 
     QList<QWidget*> widgets = findChildren<QWidget*>();
     foreach (QWidget* widget, widgets)
@@ -59,11 +55,6 @@ PreviewWidget::PreviewWidget(QWidget *parent) : QFrame(parent)
         widget->installEventFilter(this);
         widget->setFocusPolicy(Qt::NoFocus);
     }
-
-    // connect signals/slots
-    // TODO
-
-    // finally, add UI's to tab widget
 }
 
 PreviewWidget::~PreviewWidget()
@@ -109,6 +100,17 @@ void PreviewWidget::setPaletteRecursive(QWidget *widget,
     }
 }
 
+inline void adjustWidgetForeground(QWidget *widget, QPalette::ColorGroup state,
+                                   const KSharedConfigPtr &config,
+                                   KColorScheme::ColorSet set,
+                                   KColorScheme::ForegroundRole role)
+{
+    QPalette palette = widget->palette();
+    KColorScheme::adjustForeground(palette, role, QPalette::Text, set, config);
+    copyPaletteBrush(palette, state, QPalette::Text);
+    widget->setPalette(palette);
+}
+
 void PreviewWidget::setPalette(const KSharedConfigPtr &config,
                                QPalette::ColorGroup state)
 {
@@ -134,7 +136,22 @@ void PreviewWidget::setPalette(const KSharedConfigPtr &config,
     }
 
     setPaletteRecursive(this, palette);
-    // TODO set colors for "special" labels
+
+    adjustWidgetForeground(labelView1, state, config, KColorScheme::View, KColorScheme::InactiveText);
+    adjustWidgetForeground(labelView2, state, config, KColorScheme::View, KColorScheme::ActiveText);
+    adjustWidgetForeground(labelView3, state, config, KColorScheme::View, KColorScheme::LinkText);
+    adjustWidgetForeground(labelView4, state, config, KColorScheme::View, KColorScheme::VisitedText);
+    adjustWidgetForeground(labelView5, state, config, KColorScheme::View, KColorScheme::NegativeText);
+    adjustWidgetForeground(labelView6, state, config, KColorScheme::View, KColorScheme::NeutralText);
+    adjustWidgetForeground(labelView7, state, config, KColorScheme::View, KColorScheme::PositiveText);
+
+    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::InactiveText);
+    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::ActiveText);
+    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::LinkText);
+    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::VisitedText);
+    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::NegativeText);
+    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::NeutralText);
+    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::PositiveText);
 }
 
 #include "previewwidget.moc"

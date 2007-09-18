@@ -25,16 +25,18 @@
 
 #include <KSharedConfig>
 
+#include "ui_preview.h"
+
 /**
  * The Desktop/Colors tab in kcontrol.
  */
-class PreviewWidget : public QFrame
+class PreviewWidget : public QFrame, Ui::preview
 {
     Q_OBJECT
 
 public:
     PreviewWidget(QWidget *parent);
-    ~PreviewWidget();
+    virtual ~PreviewWidget();
 
     void setPalette(const KSharedConfigPtr &config,
                     QPalette::ColorGroup state = QPalette::Active);
