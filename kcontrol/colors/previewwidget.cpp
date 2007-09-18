@@ -102,12 +102,13 @@ void PreviewWidget::setPaletteRecursive(QWidget *widget,
 
 inline void adjustWidgetForeground(QWidget *widget, QPalette::ColorGroup state,
                                    const KSharedConfigPtr &config,
+                                   QPalette::ColorRole color,
                                    KColorScheme::ColorSet set,
                                    KColorScheme::ForegroundRole role)
 {
     QPalette palette = widget->palette();
-    KColorScheme::adjustForeground(palette, role, QPalette::Text, set, config);
-    copyPaletteBrush(palette, state, QPalette::Text);
+    KColorScheme::adjustForeground(palette, role, color, set, config);
+    copyPaletteBrush(palette, state, color);
     widget->setPalette(palette);
 }
 
@@ -137,21 +138,24 @@ void PreviewWidget::setPalette(const KSharedConfigPtr &config,
 
     setPaletteRecursive(this, palette);
 
-    adjustWidgetForeground(labelView1, state, config, KColorScheme::View, KColorScheme::InactiveText);
-    adjustWidgetForeground(labelView2, state, config, KColorScheme::View, KColorScheme::ActiveText);
-    adjustWidgetForeground(labelView3, state, config, KColorScheme::View, KColorScheme::LinkText);
-    adjustWidgetForeground(labelView4, state, config, KColorScheme::View, KColorScheme::VisitedText);
-    adjustWidgetForeground(labelView5, state, config, KColorScheme::View, KColorScheme::NegativeText);
-    adjustWidgetForeground(labelView6, state, config, KColorScheme::View, KColorScheme::NeutralText);
-    adjustWidgetForeground(labelView7, state, config, KColorScheme::View, KColorScheme::PositiveText);
+#define ADJUST_WIDGET_FOREGROUND(w,c,s,r) \
+    adjustWidgetForeground(w, state, config, QPalette::c, KColorScheme::s, KColorScheme::r);
 
-    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::InactiveText);
-    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::ActiveText);
-    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::LinkText);
-    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::VisitedText);
-    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::NegativeText);
-    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::NeutralText);
-    adjustWidgetForeground(labelSelection1, state, config, KColorScheme::Selection, KColorScheme::PositiveText);
+    ADJUST_WIDGET_FOREGROUND(labelView1, Text, View, InactiveText);
+    ADJUST_WIDGET_FOREGROUND(labelView2, Text, View, ActiveText);
+    ADJUST_WIDGET_FOREGROUND(labelView3, Text, View, LinkText);
+    ADJUST_WIDGET_FOREGROUND(labelView4, Text, View, VisitedText);
+    ADJUST_WIDGET_FOREGROUND(labelView5, Text, View, NegativeText);
+    ADJUST_WIDGET_FOREGROUND(labelView6, Text, View, NeutralText);
+    ADJUST_WIDGET_FOREGROUND(labelView7, Text, View, PositiveText);
+
+    ADJUST_WIDGET_FOREGROUND(labelSelection1, HighlightedText, Selection, InactiveText);
+    ADJUST_WIDGET_FOREGROUND(labelSelection2, HighlightedText, Selection, ActiveText);
+    ADJUST_WIDGET_FOREGROUND(labelSelection3, HighlightedText, Selection, LinkText);
+    ADJUST_WIDGET_FOREGROUND(labelSelection4, HighlightedText, Selection, VisitedText);
+    ADJUST_WIDGET_FOREGROUND(labelSelection5, HighlightedText, Selection, NegativeText);
+    ADJUST_WIDGET_FOREGROUND(labelSelection6, HighlightedText, Selection, NeutralText);
+    ADJUST_WIDGET_FOREGROUND(labelSelection7, HighlightedText, Selection, PositiveText);
 }
 
 #include "previewwidget.moc"
