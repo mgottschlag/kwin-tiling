@@ -141,12 +141,6 @@ ControlWidget::ControlWidget(QWidget *parent)
     zoomOutButton = new QPushButton(i18n("Zoom Out"), this);
     connect(hideBoxButton, SIGNAL(pressed()), parent, SLOT(hideBox()));
 
-    m_formFactorSelector = new KComboBox(this);
-    QStringList formFactors;
-    formFactors << "Desktop" << "Media Center" << "Horizontal Panel" << "Vertical Panel";
-    m_formFactorSelector->addItems(formFactors);
-    connect(m_formFactorSelector, SIGNAL(activated(int)), this, SLOT(switchFormFactor(int)));
-
     m_appletList = new QTreeView(this);
     m_appletList->header()->hide();
     m_appletList->setDragEnabled(true);
@@ -166,7 +160,6 @@ ControlWidget::ControlWidget(QWidget *parent)
     //This is all to change of course
     QVBoxLayout* boxLayout = new QVBoxLayout(this);
     boxLayout->addWidget(hideBoxButton);
-    boxLayout->addWidget(m_formFactorSelector);
     boxLayout->addWidget(lockApplets);
     boxLayout->addWidget(zoomInButton);
     boxLayout->addWidget(zoomOutButton);
@@ -222,11 +215,6 @@ void ControlWidget::addApplet(const QModelIndex& plasmoidIndex)
     emit addApplet(item->data(PlasmoidListItemModel::AppletNameRole).toString());
 }
 
-void ControlWidget::switchFormFactor(int formFactor)
-{
-    emit setFormFactor(static_cast<Plasma::FormFactor>(formFactor));
-}
-
 //BEGIN - ControlBox
 
 ControlBox::ControlBox(QWidget* parent)
@@ -268,7 +256,7 @@ bool ControlBox::eventFilter(QObject *watched, QEvent *event)
         if (event->type() == QEvent::Leave) {
             QWidget* widget = qApp->activePopupWidget();
 
-            if (!widget || !m_box->m_formFactorSelector->isActiveWindow()) {
+            if (!widget) {
                 m_exitTimer->start();
             }
         } else if (event->type() == QEvent::Enter) {
@@ -291,7 +279,6 @@ void ControlBox::showBox()
         m_box->installEventFilter(this);
         //m_box->hide();
         connect(m_box, SIGNAL(addApplet(const QString&)), this, SIGNAL(addApplet(const QString&)));
-        connect(m_box, SIGNAL(setFormFactor(Plasma::FormFactor)), this, SIGNAL(setFormFactor(Plasma::FormFactor)));
         connect(m_box, SIGNAL(lockInterface(bool)), this, SIGNAL(lockInterface(bool)));
         connect(m_box->zoomInButton, SIGNAL(clicked()), this, SIGNAL(zoomIn()));
         connect(m_box->zoomOutButton, SIGNAL(clicked()), this, SIGNAL(zoomOut()));

@@ -57,7 +57,7 @@ PlasmaApp::PlasmaApp()
       m_corona(0)
 {
     new AppAdaptor(this); 
-    QDBusConnection::sessionBus().registerObject( "/App", this );
+    QDBusConnection::sessionBus().registerObject("/App", this);
     notifyStartup(false);
 
 
@@ -78,13 +78,16 @@ PlasmaApp::PlasmaApp()
         setCrashHandler();
     }
 
-    // enlarge application pixmap cache (TODO: make this dependand on system
+    // enlarge application pixmap cache
+    // TODO: make this dependand on system
     // memory and screen resolution. 8MB is ok for caching the background up
-    // to 1600x1200 resolution)
-    if (QPixmapCache::cacheLimit() < 8192)
-      QPixmapCache::setCacheLimit(8192);
+    // to 1600x1200 resolution
+    if (QPixmapCache::cacheLimit() < 8192) {
+        QPixmapCache::setCacheLimit(8192);
+    }
 
     m_root = new RootWidget();
+    //TODO: the line below is just inane. get rid of it before release. seriously.
     m_root->setAsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
 
     m_root->show();
@@ -107,7 +110,8 @@ void PlasmaApp::initializeWallpaper()
         return;
     }
 
-    m_root->desktop()->initializeWallpaper();
+    //FIXME this has moved to Containment, so .....
+    //m_root->desktop()->initializeWallpaper();
 }
 
 void PlasmaApp::setCrashHandler()
@@ -154,6 +158,7 @@ void PlasmaApp::notifyStartup(bool completed)
 // soon
 void PlasmaApp::createDefaultPanels()
 {
+    return;
     Plasma::Panel *defaultPanel = new Plasma::Panel;
     Plasma::Corona *panelScene = new Plasma::Corona;
     defaultPanel->setCorona(panelScene);
@@ -168,15 +173,15 @@ void PlasmaApp::createDefaultPanels()
     Plasma::Applet *tasksApplet = panelScene->addApplet("tasks");
     Plasma::Applet *systemTrayApplet = panelScene->addApplet("systemtray");
     Plasma::Applet *clockApplet = panelScene->addApplet("digital-clock");
- 
+
     applets << tasksApplet << systemTrayApplet << clockApplet;
 
-    foreach( Plasma::Applet* applet , applets ) {
+    foreach (Plasma::Applet* applet , applets) {
         applet->setDrawStandardBackground(false);
         defaultPanel->layout()->addItem(applet);
     }
+
     defaultPanel->setLocation(Plasma::BottomEdge);
-    panelScene->setFormFactor(Plasma::Horizontal); 
     defaultPanel->show();
     m_panels << defaultPanel;
 }

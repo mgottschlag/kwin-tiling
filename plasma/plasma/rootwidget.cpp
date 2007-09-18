@@ -33,70 +33,27 @@
 #include "desktopview.h"
 #include "plasmaapp.h"
 
-//#define ICON_DEMO
-//#define SUPERKARAMBA_DEMO
-//#define CONFIGXML_DEMO
-
-#ifdef CONFIGXML_DEMO
-#include <QFile>
-#include <KStandardDirs>
-#include "plasma/configxml.h"
-#endif
-
-#ifdef ICON_DEMO
-#include "plasma/widgets/icon.h"
-#endif
-
 RootWidget::RootWidget()
     : QWidget(0)
 {
     setFocusPolicy( Qt::NoFocus );
 
-    QVBoxLayout* rootLayout = new QVBoxLayout(this);
-    rootLayout->setMargin(0);
-    rootLayout->setSpacing(0);
-
-    m_desktop = new DesktopView(this);
+    QDesktopWidget desktop;
+    int numScreens = desktop.numScreens();
+    // create a containment for each screen
+    //FIXME: we need to respond to randr changes
+    for (int i = 0; i < numScreens; ++i) {
+        m_desktop = new DesktopView(this, i);
+        m_desktop->setGeometry(desktop.screenGeometry(i));
+    }
     Plasma::Corona* corona = PlasmaApp::self()->corona();
-    //FIXME: form factors need to move out of Corona
-
-    corona->setFormFactor(Plasma::Planar);
-    corona->setLocation(Plasma::Desktop);
-    rootLayout->addWidget(m_desktop);
 
     m_controlBox = new ControlBox(this);
 
     connect(m_controlBox, SIGNAL(zoomIn()), m_desktop, SLOT(zoomIn()));
     connect(m_controlBox, SIGNAL(zoomOut()), m_desktop, SLOT(zoomOut()));
     connect(m_controlBox, SIGNAL(addApplet(const QString&)), corona, SLOT(addApplet(const QString&)));
-    connect(m_controlBox, SIGNAL(setFormFactor(Plasma::FormFactor)), corona, SLOT(setFormFactor(Plasma::FormFactor)));
     connect(m_controlBox, SIGNAL(lockInterface(bool)), corona, SLOT(setImmutable(bool)));
-
-#ifdef ICON_DEMO
-    Plasma::Icon* icon = new Plasma::Icon();
-    icon->setIcon("user-home");
-    icon->setIconSize(64, 64);
-//    icon->setFlags(QGraphicsItem::ItemIsMovable);
-    corona->addItem(icon);
-
-    icon = new Plasma::Icon(icon);
-    icon->setIcon("plasmagik");
-//    icon->setFlags(QGraphicsItem::ItemIsMovable);
-    corona->addItem(icon);
-
-#endif
-
-#ifdef SUPERKARAMBA_DEMO
-    corona->addKaramba(KUrl("~/themes/aero_aio.skz"));
-#endif
-
-#ifdef CONFIGXML_DEMO
-    QFile file(KStandardDirs::locate("kcfg", "kickerSettings.kcfg"));
-    Plasma::ConfigXml appletConfig(KStandardDirs::locateLocal("config", "kickerrc"), &file);
-    foreach (KConfigSkeletonItem* item, appletConfig.items()) {
-        kDebug() << "item " << item->name() << " in " <<  item->group();
-    }
-#endif
 }
 
 void RootWidget::setAsDesktop(bool setAsDesktop)

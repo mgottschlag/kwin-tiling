@@ -54,7 +54,6 @@ class ControlBox : public QWidget
         void zoomIn();
         void zoomOut();
         void addApplet(const QString&);
-        void setFormFactor(Plasma::FormFactor);
         void lockInterface(bool);
 
     protected:
@@ -86,7 +85,6 @@ class ControlWidget : public QWidget
     public:
         ControlWidget(QWidget* parent);
         ~ControlWidget();
-        KComboBox* m_formFactorSelector;
         QPushButton* zoomInButton;
         QPushButton* zoomOutButton;
 
@@ -99,11 +97,9 @@ class ControlWidget : public QWidget
 
     protected Q_SLOTS:
         void addApplet(const QModelIndex& plasmoidIndex);
-        void switchFormFactor(int formFactor);
 
     Q_SIGNALS:
         void addApplet(const QString&);
-        void setFormFactor(Plasma::FormFactor);
         void lockInterface(bool);
 };
 
