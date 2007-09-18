@@ -9,9 +9,6 @@
     <height>455</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" >
    <item>
     <widget class="QTabWidget" name="tabWidget" >
@@ -126,30 +123,9 @@
             <property name="wordWrap" >
              <bool>true</bool>
             </property>
-            <property name="rowCount" >
-             <number>16</number>
-            </property>
             <property name="columnCount" >
              <number>2</number>
             </property>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <row/>
-            <column/>
-            <column/>
            </widget>
           </item>
          </layout>

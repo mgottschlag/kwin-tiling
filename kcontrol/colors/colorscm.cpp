@@ -59,6 +59,19 @@ KColorCm::~KColorCm()
 {
 }
 
+void KColorCm::createColorEntry(QString text, QList<KColorButton *> &list, int index)
+{
+    QTableWidgetItem *label = new QTableWidgetItem(text);
+
+    KColorButton *button = new KColorButton(this);
+    button->setObjectName(QString::number(index));
+    connect(button, SIGNAL(colorChanged(const QColor &)), this, SLOT(colorChanged(const QColor &)));
+    list.append(button);
+
+    colorTable->setItem(index, 0, label);
+    colorTable->setCellWidget(index, 1, button);
+}
+
 void KColorCm::setupColorTable()
 {
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::View));
@@ -69,62 +82,26 @@ void KColorCm::setupColorTable()
 
     colorTable->verticalHeader()->hide();
     colorTable->horizontalHeader()->hide();
-    QTableWidgetItem *label = new QTableWidgetItem(i18n("Normal Background"));
-    colorTable->setItem(0, 0, label);
-    label = new QTableWidgetItem(i18n("Alternate Background"));
-    colorTable->setItem(1, 0, label);
-    label = new QTableWidgetItem(i18n("Active Background"));
-    colorTable->setItem(2, 0, label);
-    label = new QTableWidgetItem(i18n("Link Background"));
-    colorTable->setItem(3, 0, label);
-    label = new QTableWidgetItem(i18n("Visited Background"));
-    colorTable->setItem(4, 0, label);
-    label = new QTableWidgetItem(i18n("Negative Background"));
-    colorTable->setItem(5, 0, label);
-    label = new QTableWidgetItem(i18n("Neutral Background"));
-    colorTable->setItem(6, 0, label);
-    label = new QTableWidgetItem(i18n("Positive Background"));
-    colorTable->setItem(7, 0, label);
+    colorTable->setShowGrid(false);
+    colorTable->setRowCount(12);
 
-    label = new QTableWidgetItem(i18n("Normal Text"));
-    colorTable->setItem(8, 0, label);
-    label = new QTableWidgetItem(i18n("Inactive Text"));
-    colorTable->setItem(9, 0, label);
-    label = new QTableWidgetItem(i18n("Active Text"));
-    colorTable->setItem(10, 0, label);
-    label = new QTableWidgetItem(i18n("Link Text"));
-    colorTable->setItem(11, 0, label);
-    label = new QTableWidgetItem(i18n("Visited Text"));
-    colorTable->setItem(12, 0, label);
-    label = new QTableWidgetItem(i18n("Negative Text"));
-    colorTable->setItem(13, 0, label);
-    label = new QTableWidgetItem(i18n("Neutral Text"));
-    colorTable->setItem(14, 0, label);
-    label = new QTableWidgetItem(i18n("Positive Text"));
-    colorTable->setItem(15, 0, label);
-
-    KColorButton *button;
-
-    for (int i = KColorScheme::NormalBackground; i <= KColorScheme::PositiveBackground; ++i)
-    {
-        button = new KColorButton(this);
-        button->setObjectName(QString::number(i));
-        colorTable->setCellWidget(i, 1, button);
-        connect(button, SIGNAL(colorChanged(const QColor &)), this, SLOT(colorChanged(const QColor &)));
-        m_backgroundButtons.append(button);
-    }
-
-    for (int i = KColorScheme::NormalText; i <= KColorScheme::PositiveText; ++i)
-    {
-        button = new KColorButton(this);
-        button->setObjectName(QString::number(i + m_backgroundButtons.size()));
-        colorTable->setCellWidget(i + m_backgroundButtons.size(), 1, button);
-        connect(button, SIGNAL(colorChanged(const QColor &)), this, SLOT(colorChanged(const QColor &)));
-        m_foregroundButtons.append(button);
-    }
+    createColorEntry(i18n("Normal Background"),    m_backgroundButtons, 0);
+    createColorEntry(i18n("Alternate Background"), m_backgroundButtons, 1);
+    createColorEntry(i18n("Normal Text"),          m_foregroundButtons, 2);
+    createColorEntry(i18n("Inactive Text"),        m_foregroundButtons, 3);
+    createColorEntry(i18n("Active Text"),          m_foregroundButtons, 4);
+    createColorEntry(i18n("Link Text"),            m_foregroundButtons, 5);
+    createColorEntry(i18n("Visited Text"),         m_foregroundButtons, 6);
+    createColorEntry(i18n("Negative Text"),        m_foregroundButtons, 7);
+    createColorEntry(i18n("Neutral Text"),         m_foregroundButtons, 8);
+    createColorEntry(i18n("Positive Text"),        m_foregroundButtons, 9);
+    createColorEntry(i18n("Hover Decoration"),     m_decorationButtons, 10);
+    createColorEntry(i18n("Focus Decoration"),     m_decorationButtons, 11);
 
     colorTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
-    colorTable->horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
+    // TODO make wide enough for "varies" button, at least for "Common Colors"
+    colorTable->horizontalHeader()->setMinimumSectionSize(24);
+    colorTable->horizontalHeader()->setResizeMode(1, QHeaderView::ResizeToContents);
 
     updateColorTable();
 }
@@ -141,7 +118,7 @@ void KColorCm::updateColorTable()
     else
     {
         // a real color set is selected
-        for (int i = KColorScheme::NormalBackground; i <= KColorScheme::PositiveBackground; ++i)
+        for (int i = KColorScheme::NormalBackground; i <= KColorScheme::AlternateBackground; ++i)
         {
             m_backgroundButtons[i]->blockSignals(true);
             m_backgroundButtons[i]->setColor(m_colorSchemes[currentSet].background(KColorScheme::BackgroundRole(i)).color());
@@ -153,6 +130,13 @@ void KColorCm::updateColorTable()
             m_foregroundButtons[i]->blockSignals(true);
             m_foregroundButtons[i]->setColor(m_colorSchemes[currentSet].foreground(KColorScheme::ForegroundRole(i)).color());
             m_foregroundButtons[i]->blockSignals(false);
+        }
+
+        for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
+        {
+            m_decorationButtons[i]->blockSignals(true);
+            m_decorationButtons[i]->setColor(m_colorSchemes[currentSet].decoration(KColorScheme::DecorationRole(i)).color());
+            m_decorationButtons[i]->blockSignals(false);
         }
     }
 }
@@ -172,15 +156,21 @@ void KColorCm::colorChanged( const QColor &newColor )
     {
         // NOTE: this is dependent upon the background color buttons all being before
         // any text color buttons
-        if (row <= KColorScheme::PositiveBackground)
+        if (row <= KColorScheme::AlternateBackground)
         {
             // TODO: need a way to modify this colorscheme
             m_colorSchemes[currentSet].background(KColorScheme::BackgroundRole(row));
         }
         else
         {
-            row -= KColorScheme::PositiveBackground;
-            m_colorSchemes[currentSet].foreground(KColorScheme::ForegroundRole(row));
+            row -= KColorScheme::AlternateBackground;
+            if (row <= KColorScheme::PositiveForeground) {
+                m_colorSchemes[currentSet].foreground(KColorScheme::ForegroundRole(row));
+            }
+            else {
+                row -= KColorScheme::PositiveForeground;
+                m_colorSchemes[currentSet].decoration(KColorScheme::DecorationRole(row));
+            }
         }
     }
 }

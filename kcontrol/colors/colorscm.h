@@ -41,30 +41,34 @@ class KColorCm : public KCModule, public Ui::colorSettings
 public:
     KColorCm(QWidget *parent, const QVariantList &);
     ~KColorCm();
-    
+
 public Q_SLOTS:
 
     // save the current settings
     virtual void save();
 
 private slots:
-    
+
     /** set the colortable color buttons up according to the current colorset */
     void updateColorTable();
-    
+
     /** slot called when color on a KColorButton changes */
     void colorChanged( const QColor &newColor );
-    
+
 private:
 
     /** setup the colortable with its buttons and labels */
     void setupColorTable();
-    
+
+    /** helper to create color entries */
+    void createColorEntry(QString text, QList<KColorButton *> &list, int index);
+
     // these are lists of QPushButtons so they can be KColorButtons, or KPushButtons when
     // they say "Varies"
     QList<KColorButton *> m_backgroundButtons;
     QList<KColorButton *> m_foregroundButtons;
-    
+    QList<KColorButton *> m_decorationButtons;
+
     QList<KColorScheme> m_colorSchemes;
 };
 
