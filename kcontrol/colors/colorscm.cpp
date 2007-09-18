@@ -18,15 +18,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "colorscm.h"
+
 #include <QtGui/QHeaderView>
 
 #include <KColorButton>
 #include <KGenericFactory>
+#include <KGlobal>
 #include <KGlobalSettings>
 #include <KAboutData>
 #include <KListWidget>
-
-#include "colorscm.h"
 
 K_PLUGIN_FACTORY( KolorFactory, registerPlugin<KColorCm>(); )
 K_EXPORT_PLUGIN( KolorFactory("kcmcolors") )
@@ -46,6 +47,9 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     setupUi(this);
 
     setupColorTable();
+
+    inactivePreview->setPalette(KGlobal::config(), QPalette::Inactive);
+    disabledPreview->setPalette(KGlobal::config(), QPalette::Disabled);
 
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
 

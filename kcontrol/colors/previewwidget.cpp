@@ -20,6 +20,9 @@
 
 #include "previewwidget.h"
 
+#include <KGlobalSettings>
+#include <KColorScheme>
+
 #include "ui_preview.h"
 
 PreviewWidget::PreviewWidget(QWidget *parent) : QFrame(parent)
@@ -49,7 +52,7 @@ PreviewWidget::PreviewWidget(QWidget *parent) : QFrame(parent)
     ui.labelSelection5->setBackgroundRole(QPalette::Highlight);
     ui.labelSelection6->setBackgroundRole(QPalette::Highlight);
     ui.labelSelection7->setBackgroundRole(QPalette::Highlight);
-    
+
     QList<QWidget*> widgets = findChildren<QWidget*>();
     foreach (QWidget* widget, widgets)
     {
@@ -86,6 +89,52 @@ bool PreviewWidget::eventFilter(QObject *, QEvent *ev)
             break;
     }
     return false;
+}
+
+inline void copyPaletteBrush(QPalette &palette, QPalette::ColorGroup state,
+                             QPalette::ColorRole role)
+{
+    palette.setBrush(QPalette::Active, role, palette.brush(state, role));
+}
+
+void PreviewWidget::setPaletteRecursive(QWidget *widget,
+                                        const QPalette &palette)
+{
+    widget->setPalette(palette);
+
+    const QObjectList children = widget->children();
+    foreach (QObject *child, children) {
+        if (child->isWidgetType())
+            setPaletteRecursive((QWidget*)child, palette);
+    }
+}
+
+void PreviewWidget::setPalette(const KSharedConfigPtr &config,
+                               QPalette::ColorGroup state)
+{
+    QPalette palette = KGlobalSettings::createApplicationPalette(config);
+
+    if (state != QPalette::Active) {
+        copyPaletteBrush(palette, state, QPalette::Base);
+        copyPaletteBrush(palette, state, QPalette::Text);
+        copyPaletteBrush(palette, state, QPalette::Window);
+        copyPaletteBrush(palette, state, QPalette::WindowText);
+        copyPaletteBrush(palette, state, QPalette::Button);
+        copyPaletteBrush(palette, state, QPalette::ButtonText);
+        copyPaletteBrush(palette, state, QPalette::Highlight);
+        copyPaletteBrush(palette, state, QPalette::HighlightedText);
+        copyPaletteBrush(palette, state, QPalette::AlternateBase);
+        copyPaletteBrush(palette, state, QPalette::Link);
+        copyPaletteBrush(palette, state, QPalette::LinkVisited);
+        copyPaletteBrush(palette, state, QPalette::Light);
+        copyPaletteBrush(palette, state, QPalette::Midlight);
+        copyPaletteBrush(palette, state, QPalette::Mid);
+        copyPaletteBrush(palette, state, QPalette::Dark);
+        copyPaletteBrush(palette, state, QPalette::Shadow);
+    }
+
+    setPaletteRecursive(this, palette);
+    // TODO set colors for "special" labels
 }
 
 #include "previewwidget.moc"

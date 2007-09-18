@@ -21,6 +21,9 @@
 #define __SCHEMEPREVIEW_H__
 
 #include <QtGui/QFrame>
+#include <QtGui/QPalette>
+
+#include <KSharedConfig>
 
 /**
  * The Desktop/Colors tab in kcontrol.
@@ -32,8 +35,12 @@ class PreviewWidget : public QFrame
 public:
     PreviewWidget(QWidget *parent);
     ~PreviewWidget();
-    
+
+    void setPalette(const KSharedConfigPtr &config,
+                    QPalette::ColorGroup state = QPalette::Active);
+
 protected:
+    void setPaletteRecursive(QWidget*, const QPalette&);
     bool eventFilter(QObject *, QEvent *);
 };
 
