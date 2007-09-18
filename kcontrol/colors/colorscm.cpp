@@ -48,6 +48,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 
     setupColorTable();
 
+    schemePreview->setPalette(KGlobal::config());
     inactivePreview->setPalette(KGlobal::config(), QPalette::Inactive);
     disabledPreview->setPalette(KGlobal::config(), QPalette::Disabled);
 
