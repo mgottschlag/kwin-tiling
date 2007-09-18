@@ -18,8 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// FIXME QFrame included only for placeholders
-
 #include <QtGui/QHeaderView>
 
 #include <KColorButton>
@@ -46,9 +44,9 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     setAboutData( about );
 
     setupUi(this);
-    
+
     setupColorTable();
-    
+
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
 
     // connect signals/slots
@@ -68,7 +66,7 @@ void KColorCm::setupColorTable()
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Button));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Selection));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Tooltip));
-    
+
     colorTable->verticalHeader()->hide();
     colorTable->horizontalHeader()->hide();
     QTableWidgetItem *label = new QTableWidgetItem(i18n("Normal Background"));
@@ -106,7 +104,7 @@ void KColorCm::setupColorTable()
     colorTable->setItem(15, 0, label);
 
     KColorButton *button;
-    
+
     for (int i = KColorScheme::NormalBackground; i <= KColorScheme::PositiveBackground; ++i)
     {
         button = new KColorButton(this);
@@ -127,7 +125,7 @@ void KColorCm::setupColorTable()
 
     colorTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
     colorTable->horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
-    
+
     updateColorTable();
 }
 
@@ -149,7 +147,7 @@ void KColorCm::updateColorTable()
             m_backgroundButtons[i]->setColor(m_colorSchemes[currentSet].background(KColorScheme::BackgroundRole(i)).color());
             m_backgroundButtons[i]->blockSignals(false);
         }
-        
+
         for (int i = KColorScheme::NormalText; i <= KColorScheme::PositiveText; ++i)
         {
             m_foregroundButtons[i]->blockSignals(true);
@@ -179,7 +177,7 @@ void KColorCm::colorChanged( const QColor &newColor )
             // TODO: need a way to modify this colorscheme
             m_colorSchemes[currentSet].background(KColorScheme::BackgroundRole(row));
         }
-        else 
+        else
         {
             row -= KColorScheme::PositiveBackground;
             m_colorSchemes[currentSet].foreground(KColorScheme::ForegroundRole(row));
@@ -189,7 +187,7 @@ void KColorCm::colorChanged( const QColor &newColor )
 
 void KColorCm::save()
 {
-    
+
 }
 
 #include "colorscm.moc"
