@@ -164,11 +164,11 @@ void KColorCm::colorChanged( const QColor &newColor )
         else
         {
             row -= KColorScheme::AlternateBackground;
-            if (row <= KColorScheme::PositiveForeground) {
+            if (row <= KColorScheme::PositiveText) {
                 m_colorSchemes[currentSet].foreground(KColorScheme::ForegroundRole(row));
             }
             else {
-                row -= KColorScheme::PositiveForeground;
+                row -= KColorScheme::PositiveText;
                 m_colorSchemes[currentSet].decoration(KColorScheme::DecorationRole(row));
             }
         }
