@@ -2,6 +2,7 @@
 Name=Weather Data Engine
 Name[el]=Μηχανή δεδομένων καιρού
 Name[ga]=Inneall Sonraí Aimsire
+Name[ja]=気象データエンジン
 Name[kk]=Ауа райы қызметі
 Name[nb]=Værdata-motor
 Name[nds]=Weder-Datendriever
@@ -13,6 +14,7 @@ Name[zh_TW]=天氣資料引擎
 Comment=Weather data for Plasmoids
 Comment[el]=Δεδομένα καιρού για πλασμοειδή
 Comment[ga]=Sonraí aimsire le haghaidh Plasmoids
+Comment[ja]=Plasmoids のための気象データ
 Comment[kk]=Плазмоидтер үшін ауа райы деректері
 Comment[nb]=Værdata for Plasmoids
 Comment[nds]=Wederdaten för Plasmoiden

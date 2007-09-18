@@ -5,6 +5,7 @@ X-KDE-ServiceType=WeatherEngine/Ion
 
 Comment=WeatherEngine Ion
 Comment[el]=Μηχανή καιρού Ion
+Comment[ja]=WeatherEngine イオン
 Comment[kk]=Ауа райы болжау қызметтер
 Comment[nb]=Værmotor Ion
 Comment[nds]=Wederdriever Ion
