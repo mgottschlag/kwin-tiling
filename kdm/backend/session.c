@@ -121,8 +121,9 @@ conv_auto( int what, const char *prompt ATTR_UNUSED )
 static void
 doAutoLogon( void )
 {
-	strDup( &curuser, td->autoUser );
-	strDup( &curpass, td->autoPass );
+	reStr( &curuser, td->autoUser );
+	reStr( &curpass, td->autoPass );
+	reStr( &curtype, "classic" );
 	cursource = PWSRC_AUTOLOGIN;
 }
 
@@ -141,7 +142,9 @@ autoLogon( time_t tdiff )
 		td->hstent->npass = 0;
 		newdmrc = td->hstent->nargs;
 		td->hstent->nargs = 0;
+		reStr( &curtype, "classic" );
 		cursource = (td->hstent->rLogin == 1) ? PWSRC_RELOGIN : PWSRC_MANUAL;
+		return 1;
 	} else if (*td->autoUser && !td->autoDelay && (tdiff > 0 || td->autoAgain))
 	{
 		unsigned int lmask;
@@ -153,11 +156,9 @@ autoLogon( time_t tdiff )
 		if (lmask & ShiftMask)
 			return 0;
 		doAutoLogon();
-	} else {
-		cursource = PWSRC_MANUAL;
-		return 0;
+		return 1;
 	}
-	return 1;
+	return 0;
 }
 
 
@@ -370,6 +371,7 @@ ctrlGreeterWait( int wreply )
 			if (curtype) free( curtype );
 			curtype = gRecvStr();
 			debug( " type %\"s\n", curtype );
+			cursource = PWSRC_MANUAL;
 			if (verify( conv_interact, rootok )) {
 				debug( " -> return success\n" );
 				gSendInt( V_OK );
@@ -379,7 +381,6 @@ ctrlGreeterWait( int wreply )
 		case G_AutoLogin:
 			debug( "G_AutoLogin\n" );
 			doAutoLogon();
-			strDup( &curtype, "classic" );
 			if (verify( conv_auto, FALSE )) {
 				debug( " -> return success\n" );
 				gSendInt( V_OK );
@@ -584,7 +585,7 @@ manageSession( struct display *d )
 
 	tdiff = time( 0 ) - td->hstent->lastExit - td->openDelay;
 	if (autoLogon( tdiff )) {
-		if (!strDup( &curtype, "classic" ) || !verify( conv_auto, FALSE ))
+		if (!verify( conv_auto, FALSE ))
 			goto gcont;
 	} else {
 	  regreet:
