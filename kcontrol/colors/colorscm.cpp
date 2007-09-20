@@ -21,6 +21,7 @@
 #include "colorscm.h"
 
 #include <QtGui/QHeaderView>
+#include <QtDBus/QtDBus>
 
 #include <KColorButton>
 #include <KGenericFactory>
@@ -44,13 +45,15 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
                      "mw_triad@users.sourceforge.net" );
     setAboutData( about );
 
+    m_config = KGlobal::config();
+
     setupUi(this);
 
     setupColorTable();
 
-    schemePreview->setPalette(KGlobal::config());
-    inactivePreview->setPalette(KGlobal::config(), QPalette::Inactive);
-    disabledPreview->setPalette(KGlobal::config(), QPalette::Disabled);
+    schemePreview->setPalette(m_config);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
 
@@ -64,44 +67,45 @@ KColorCm::~KColorCm()
 {
 }
 
-void KColorCm::createColorEntry(QString text, QList<KColorButton *> &list, int index)
+void KColorCm::createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index)
 {
     QTableWidgetItem *label = new QTableWidgetItem(text);
 
     KColorButton *button = new KColorButton(this);
     button->setObjectName(QString::number(index));
-    connect(button, SIGNAL(colorChanged(const QColor &)), this, SLOT(colorChanged(const QColor &)));
+    connect(button, SIGNAL(changed(const QColor &)), this, SLOT(colorChanged(const QColor &)));
     list.append(button);
 
     colorTable->setItem(index, 0, label);
     colorTable->setCellWidget(index, 1, button);
+    m_colorKeys.insert(index, key);
 }
 
 void KColorCm::setupColorTable()
 {
-    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::View));
-    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Window));
-    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Button));
-    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Selection));
-    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Tooltip));
+    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::View, m_config));
+    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Window, m_config));
+    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Button, m_config));
+    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Selection, m_config));
+    m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Tooltip, m_config));
 
     colorTable->verticalHeader()->hide();
     colorTable->horizontalHeader()->hide();
     colorTable->setShowGrid(false);
     colorTable->setRowCount(12);
 
-    createColorEntry(i18n("Normal Background"),    m_backgroundButtons, 0);
-    createColorEntry(i18n("Alternate Background"), m_backgroundButtons, 1);
-    createColorEntry(i18n("Normal Text"),          m_foregroundButtons, 2);
-    createColorEntry(i18n("Inactive Text"),        m_foregroundButtons, 3);
-    createColorEntry(i18n("Active Text"),          m_foregroundButtons, 4);
-    createColorEntry(i18n("Link Text"),            m_foregroundButtons, 5);
-    createColorEntry(i18n("Visited Text"),         m_foregroundButtons, 6);
-    createColorEntry(i18n("Negative Text"),        m_foregroundButtons, 7);
-    createColorEntry(i18n("Neutral Text"),         m_foregroundButtons, 8);
-    createColorEntry(i18n("Positive Text"),        m_foregroundButtons, 9);
-    createColorEntry(i18n("Hover Decoration"),     m_decorationButtons, 10);
-    createColorEntry(i18n("Focus Decoration"),     m_decorationButtons, 11);
+    createColorEntry(i18n("Normal Background"),    "BackgroundNormal",    m_backgroundButtons, 0);
+    createColorEntry(i18n("Alternate Background"), "BackgroundAlternate", m_backgroundButtons, 1);
+    createColorEntry(i18n("Normal Text"),          "ForegroundNormal",    m_foregroundButtons, 2);
+    createColorEntry(i18n("Inactive Text"),        "ForegroundInactive",  m_foregroundButtons, 3);
+    createColorEntry(i18n("Active Text"),          "ForegroundActive",    m_foregroundButtons, 4);
+    createColorEntry(i18n("Link Text"),            "ForegroundLink",      m_foregroundButtons, 5);
+    createColorEntry(i18n("Visited Text"),         "ForegroundVisited",   m_foregroundButtons, 6);
+    createColorEntry(i18n("Negative Text"),        "ForegroundNegative",  m_foregroundButtons, 7);
+    createColorEntry(i18n("Neutral Text"),         "ForegroundNeutral",   m_foregroundButtons, 8);
+    createColorEntry(i18n("Positive Text"),        "ForegroundPositive",  m_foregroundButtons, 9);
+    createColorEntry(i18n("Hover Decoration"),     "DecorationHover",     m_decorationButtons, 10);
+    createColorEntry(i18n("Focus Decoration"),     "DecorationFocus",     m_decorationButtons, 11);
 
     colorTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
     // TODO make wide enough for "varies" button, at least for "Common Colors"
@@ -111,6 +115,19 @@ void KColorCm::setupColorTable()
     updateColorTable();
 }
 
+/*QColor KColorCm::commonBackground(int index)
+{
+    QColor retval;
+
+    QColor temp = m_colorSchemes[i].background(KColorScheme::;
+    for (int i = KColorScheme::View; i < KColorScheme::Tooltip; ++i)
+    {
+        if (m_colorSchemes[i].background(KColorScheme::BackgroundRole(index).color() == 
+    }
+
+    return retval;
+} */
+
 void KColorCm::updateColorTable()
 {
     // subtract one here since the 0 item  is "Common Colors"
@@ -119,6 +136,11 @@ void KColorCm::updateColorTable()
     if (currentSet < 0)
     {
         // common colors is selected
+        // iterate over all the colorSets looking for common colors
+        for (int i = KColorScheme::View; i <= KColorScheme::Tooltip; ++i)
+        {
+
+        }
     }
     else
     {
@@ -156,33 +178,72 @@ void KColorCm::colorChanged( const QColor &newColor )
     if (currentSet < 0)
     {
         // common colors is selected
-    }
-    else
-    {
         // NOTE: this is dependent upon the background color buttons all being before
         // any text color buttons
         if (row <= KColorScheme::AlternateBackground)
         {
             // TODO: need a way to modify this colorscheme
+            // make this iterate over all the colorSets since common colors is selected
             m_colorSchemes[currentSet].background(KColorScheme::BackgroundRole(row));
         }
         else
         {
             row -= KColorScheme::AlternateBackground;
             if (row <= KColorScheme::PositiveText) {
+                // make this iterate over all the colorSets since common colors is selected
                 m_colorSchemes[currentSet].foreground(KColorScheme::ForegroundRole(row));
             }
             else {
+                // make this iterate over all the colorSets since common colors is selected
                 row -= KColorScheme::PositiveText;
                 m_colorSchemes[currentSet].decoration(KColorScheme::DecorationRole(row));
             }
         }
     }
+    else
+    {
+        KConfigGroup * cfg;
+        switch (currentSet) {
+            case KColorScheme::View:
+                cfg = new KConfigGroup(m_config, "Colors:View");
+                break;
+            case KColorScheme::Window:
+                cfg = new KConfigGroup(m_config, "Colors:Window");
+                break;
+            case KColorScheme::Button:
+                cfg = new KConfigGroup(m_config, "Colors:Button");
+                break;
+            case KColorScheme::Selection:
+                cfg = new KConfigGroup(m_config, "Colors:Selection");
+                break;
+            case KColorScheme::Tooltip:
+                cfg = new KConfigGroup(m_config, "Colors:Tooltip");
+                break;
+        }
+
+        cfg->writeEntry(m_colorKeys[row], newColor);
+        delete cfg;
+    }
+    
+    emit changed(true);
+}
+
+void KColorCm::load()
+{
+    emit changed(false);
 }
 
 void KColorCm::save()
 {
+    KGlobalSettings::self()->emitChange(KGlobalSettings::PaletteChanged);
+#ifdef Q_WS_X11
+    // Send signal to all kwin instances
+    QDBusMessage message =
+       QDBusMessage::createSignal("/KWin", "org.kde.KWin", "reloadConfig");
+    QDBusConnection::sessionBus().send(message);
+#endif
 
+    emit changed(false);
 }
 
 #include "colorscm.moc"

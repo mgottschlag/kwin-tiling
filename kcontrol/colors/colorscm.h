@@ -44,6 +44,9 @@ public:
 
 public Q_SLOTS:
 
+    // load the settings from the config
+    virtual void load();
+
     // save the current settings
     virtual void save();
 
@@ -61,15 +64,18 @@ private:
     void setupColorTable();
 
     /** helper to create color entries */
-    void createColorEntry(QString text, QList<KColorButton *> &list, int index);
+    void createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index);
 
     // these are lists of QPushButtons so they can be KColorButtons, or KPushButtons when
     // they say "Varies"
     QList<KColorButton *> m_backgroundButtons;
     QList<KColorButton *> m_foregroundButtons;
     QList<KColorButton *> m_decorationButtons;
+    QStringList m_colorKeys;
 
     QList<KColorScheme> m_colorSchemes;
+
+	KSharedConfigPtr m_config;
 };
 
 #endif
