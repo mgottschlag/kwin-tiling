@@ -45,7 +45,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
                      "mw_triad@users.sourceforge.net" );
     setAboutData( about );
 
-    m_config = KGlobal::config();
+    m_config = KSharedConfig::openConfig("kdeglobals");
 
     setupUi(this);
 
@@ -219,6 +219,10 @@ void KColorCm::colorChanged( const QColor &newColor )
         KConfigGroup(m_config, group).writeEntry(m_colorKeys[row], newColor);
     }
 
+    schemePreview->setPalette(m_config);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
+
     emit changed(true);
 }
 
@@ -230,6 +234,7 @@ void KColorCm::load()
 
 void KColorCm::save()
 {
+    m_config->sync();
     KGlobalSettings::self()->emitChange(KGlobalSettings::PaletteChanged);
 #ifdef Q_WS_X11
     // Send signal to all kwin instances
