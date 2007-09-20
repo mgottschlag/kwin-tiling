@@ -56,11 +56,6 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
-
-    // connect signals/slots
-    // TODO
-
-    // finally, add UI's to tab widget
 }
 
 KColorCm::~KColorCm()
@@ -115,18 +110,20 @@ void KColorCm::setupColorTable()
     updateColorTable();
 }
 
-/*QColor KColorCm::commonBackground(int index)
+/* TODO
+QColor KColorCm::commonBackground(int index)
 {
     QColor retval;
 
     QColor temp = m_colorSchemes[i].background(KColorScheme::;
     for (int i = KColorScheme::View; i < KColorScheme::Tooltip; ++i)
     {
-        if (m_colorSchemes[i].background(KColorScheme::BackgroundRole(index).color() == 
+        if (m_colorSchemes[i].background(KColorScheme::BackgroundRole(index).color() ==
     }
 
     return retval;
-} */
+}
+*/
 
 void KColorCm::updateColorTable()
 {
@@ -139,7 +136,7 @@ void KColorCm::updateColorTable()
         // iterate over all the colorSets looking for common colors
         for (int i = KColorScheme::View; i <= KColorScheme::Tooltip; ++i)
         {
-
+            // TODO
         }
     }
     else
@@ -202,7 +199,7 @@ void KColorCm::colorChanged( const QColor &newColor )
     }
     else
     {
-        KConfigGroup * cfg;
+        KConfigGroup *cfg;
         switch (currentSet) {
             case KColorScheme::View:
                 cfg = new KConfigGroup(m_config, "Colors:View");
@@ -224,12 +221,13 @@ void KColorCm::colorChanged( const QColor &newColor )
         cfg->writeEntry(m_colorKeys[row], newColor);
         delete cfg;
     }
-    
+
     emit changed(true);
 }
 
 void KColorCm::load()
 {
+    // TODO
     emit changed(false);
 }
 
