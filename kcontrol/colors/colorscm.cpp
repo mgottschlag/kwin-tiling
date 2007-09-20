@@ -199,27 +199,24 @@ void KColorCm::colorChanged( const QColor &newColor )
     }
     else
     {
-        KConfigGroup *cfg;
+        const char *group;
         switch (currentSet) {
-            case KColorScheme::View:
-                cfg = new KConfigGroup(m_config, "Colors:View");
-                break;
             case KColorScheme::Window:
-                cfg = new KConfigGroup(m_config, "Colors:Window");
+                group = "Colors:Window";
                 break;
             case KColorScheme::Button:
-                cfg = new KConfigGroup(m_config, "Colors:Button");
+                group = "Colors:Button";
                 break;
             case KColorScheme::Selection:
-                cfg = new KConfigGroup(m_config, "Colors:Selection");
+                group = "Colors:Selection";
                 break;
             case KColorScheme::Tooltip:
-                cfg = new KConfigGroup(m_config, "Colors:Tooltip");
+                group = "Colors:Tooltip";
                 break;
+            default:
+                group = "Colors:View";
         }
-
-        cfg->writeEntry(m_colorKeys[row], newColor);
-        delete cfg;
+        KConfigGroup(m_config, group).writeEntry(m_colorKeys[row], newColor);
     }
 
     emit changed(true);
