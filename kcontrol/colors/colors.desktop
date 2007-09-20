@@ -1,0 +1,61 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kcmshell colors
+Icon=preferences-desktop-color
+Type=Service
+ServiceTypes=KCModule
+DocPath=kcontrol/colors/index.html
+
+X-KDE-Library=kcm_colors
+X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=appearance
+
+Name=Colors
+Name[bg]=Цветове
+Name[br]=Livioù
+Name[de]=Farben
+Name[el]=Χρώματα
+Name[es]=Colores
+Name[et]=Värvid
+Name[fr]=Couleurs
+Name[it]=Colori
+Name[ja]=色
+Name[nl]=Kleuren
+Name[pt]=Cores
+Name[pt_BR]=Cores
+Name[sv]=Färger
+Name[xx]=xxColorsxx
+
+Comment=Color settings
+Comment[bg]=Настройки на цветовете
+Comment[br]=Kefluniañ al livioù
+Comment[de]=Farbeinstellungen
+Comment[el]=Ρυθμίσεις χρωμάτων
+Comment[es]=Preferencias de color
+Comment[et]=Värviseadistused.
+Comment[fr]=Paramètres des couleurs
+Comment[it]=Impostazioni colore
+Comment[ja]=色の設定
+Comment[nl]=Kleurinstellingen
+Comment[pt]=Configuração das cores
+Comment[pt_BR]=Configuração das cores
+Comment[sv]=Färginställningar
+Comment[xx]=xxColor settingsxx
+
+Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme
+Keywords[bg]=colors,colours,scheme,contrast,Widget colors,Color Scheme,цветове,схема,контраст,цветова схема
+Keywords[de]=Farben,Schema,Kontrast,Widget-Farbe,Farbschema
+Keywords[el]=χρώματα,χρώματα,θέμα,αντίθεση,χρώματα γραφικού συστατικού,θέμα χρώματος
+Keywords[es]=color,colores,esquema,contraste,color del elemento gráfico,esquema de color
+Keywords[et]=värv,värvid,skeem,kontrast,vidinate värvid,värviskeem
+Keywords[fr]=couleurs,arrangement,contraste,couleurs des composants,arrangement des couleurs
+Keywords[it]=colori,schema,contrasto,colori elemento,Schema colori
+Keywords[ja]=色,スキーム,コントラスト,ウィジェット色,色スキーム
+Keywords[nl]=colors,colours,scheme,contrast,Widget colors,Color Scheme,kleuren,kleur,schema,beeldschermkleuren,kleurenschema,widgetkleuren
+Keywords[pt]=cores,esquema,esquema,contraste,cores dos elementos,esquema de cor
+Keywords[pt_BR]=cores,esquema,esquema,contraste,cores dos elementos,esquema de cor
+Keywords[sv]=färger,schema,kontrast,komponentfärger,färgschema
+Keywords[xx]=xxcolors,colours,scheme,contrast,Widget colors,Color Schemexx
+
+Categories=Qt;KDE;X-KDE-settings-looknfeel;
