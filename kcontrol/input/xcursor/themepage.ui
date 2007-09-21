@@ -1,9 +1,6 @@
 <ui version="4.0" >
  <class>ThemePage</class>
  <widget class="QWidget" name="ThemePage" >
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <layout class="QGridLayout" >
    <item row="3" column="0" >
     <spacer>
