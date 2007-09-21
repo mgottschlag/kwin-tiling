@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Education
+Name[ar]=التربية
 Name[be]=Адукацыя
 Name[bg]=Обучение
 Name[de]=Lernprogramme
@@ -14,6 +15,7 @@ Name[it]=Educazione
 Name[ja]=教育
 Name[kk]=Оқу-ағарту
 Name[km]=ការ​អប់រំ
+Name[ko]=교육
 Name[nb]=Opplæring
 Name[nds]=Lexen
 Name[ne]=शिक्षा

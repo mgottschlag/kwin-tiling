@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Calculator Runner
+Name[ar]=منفذ الحاسبة
 Name[be]=Калькулятар
 Name[bg]=Калкулатор
 Name[csb]=Kalkùlator
@@ -26,6 +27,7 @@ Name[x-test]=xxCalculator Runnerxx
 Name[zh_CN]=计算机运行器
 Name[zh_TW]=計算機執行者
 Comment=Calculate expressions
+Comment[ar]=تعابير الحاسبة
 Comment[bg]=Калкулатор
 Comment[cs]=Výpočet vzorců
 Comment[de]=Berechnungen durchführen

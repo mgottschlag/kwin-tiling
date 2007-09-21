@@ -82,7 +82,7 @@ Name[zh_TW]=日期和時間
 
 Comment=Date and time settings
 Comment[af]=Datum en tyd instellings
-Comment[ar]=تعيينات التاريخ و الوقت
+Comment[ar]=إعدادات التاريخ و الوقت
 Comment[be]=Настаўленне даты і часу
 Comment[bg]=Настройване на датата и часа
 Comment[br]=Kefluniañ an deiziad hag an eur
@@ -112,7 +112,7 @@ Comment[ja]=日付と時間の設定
 Comment[ka]=თარიღისა და დროის კონფიგურაცია
 Comment[kk]=Күн мен уақытты орнату
 Comment[km]=ការ​កំណត់​កាលបរិច្ឆេទ និង​ពេលវេលា
-Comment[ko]=날짜와 시간을 설정합니다
+Comment[ko]=날짜와 시간 설정
 Comment[lt]=Datos ir laiko parametrai
 Comment[lv]=Datuma un laika parametri
 Comment[mk]=Поставувања на датум и време
@@ -148,7 +148,7 @@ Comment[zh_TW]=日期和時間設定值
 
 Keywords=clock,date,time,time zone
 Keywords[af]=horlosie,date,time,time zone,datum,tyd,tyd sone
-Keywords[ar]=الساعة,التاريخ,الوقت,المنطقة الزمنية
+Keywords[ar]=الساعة,التاريخ,الوقت,النطاق الزمني
 Keywords[be]=гадзіннік,дата,час,часавая зона,часавы пояс,clock,date,time,time zone
 Keywords[bg]=Keywords=дата, час, време, часови, пояс, clock, date, time, time zone
 Keywords[br]=eurier,deiziad,amzer,takad-eur
@@ -177,6 +177,7 @@ Keywords[it]=data,ora,fuso orario,orologio
 Keywords[ja]=時刻,日付,時間,タイムゾーン
 Keywords[ka]=საათი, თარიღი, დრო, დროიტი სარტყელი
 Keywords[km]=នាឡិកា,កាលបរិច្ឆេទ,ពេលវេលា,តំបន់​ពេលវេលា
+Keywords[ko]=날짜,시간,지역 시간대,시간대
 Keywords[lt]=laikrodis,data,laikas,laiko juosta
 Keywords[lv]=pulkstenis,datums,laiks,laika zona
 Keywords[mk]=часовник,датум,време,временска зона

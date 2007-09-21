@@ -13,6 +13,7 @@ X-KDE-PluginKeyword=irq
 X-KDE-ParentApp=kinfocenter
 
 Name=Interrupts
+Name[ar]=الإنقطاعات
 Name[be]=Перапыненні
 Name[bg]=Прекъсвания
 Name[br]=Spanoù
@@ -166,7 +167,7 @@ Keywords[it]=interrupt,IRQ,informazioni sul sistema
 Keywords[ja]=割り込み,IRQ,システムの情報
 Keywords[ka]=წყვიტავს,IRQ,ინფორმაცია სისტემის შესახებ
 Keywords[km]=ផ្អាក,IRQ,ព័ត៌មាន​ប្រព័ន្ធ
-Keywords[ko]=Interrupts,IRQ,System Information,인터럽트,가로채기,시스템 정보
+Keywords[ko]=인터럽트,IRQ,시스템 정보
 Keywords[lt]=Pertrauktys,IRQ,Sistemos Informacija
 Keywords[lv]=Pārtraukumi,IRQ,Sistēmas Informācija
 Keywords[mk]=Interrupts,IRQ,System Information,Прекини,Информации за системот

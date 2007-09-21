@@ -2,6 +2,7 @@
 Name=NOAA's National Weather Service
 Name[el]=Υπηρεσία καιρού NOAA
 Name[kk]=NOAA Ұлттық ауа райы қызметі
+Name[ko]=NOAA 미국 기상 서비스
 Name[nb]=NOAAs nasjonale værtjeneste
 Name[nds]=Wederdeenst vun't US-Ozeaankunn- un Wederamt
 Name[nl]=NOAA's nationale weerdienst
@@ -13,6 +14,7 @@ Comment=XML Data from NOAA's National Weather Service
 Comment[el]=Δεδομένα XML από την υπηρεσία καιρού NOAA
 Comment[it]=Dati XML dal NOAA (National Weather Service)
 Comment[kk]=NOAA Ұлттық ауа райы қызметінің XML дерегі
+Comment[ko]=NOAA 미국 기상 서비스의 XML 데이터
 Comment[nb]=XML-data fra NOAAs nasjonale værtjeneste
 Comment[nds]=XML-Daten vun't US-Ozeaankunn- un Wederamt
 Comment[nl]=XML Data van NOAA's nationale weerdienst
