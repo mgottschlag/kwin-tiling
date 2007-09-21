@@ -172,7 +172,7 @@ void KColorCm::colorChanged( const QColor &newColor )
     // update the m_colorSchemes for the selected colorSet
     int currentSet = colorSet->currentIndex() - 1;
 
-    if (currentSet < 0)
+    if (currentSet >= 0)
     {
         // common colors is selected
         // NOTE: this is dependent upon the background color buttons all being before
