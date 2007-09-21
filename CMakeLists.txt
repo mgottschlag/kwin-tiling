@@ -76,11 +76,11 @@ add_subdirectory( doc )
 add_subdirectory( wallpapers )
 add_subdirectory( menu )
 
-if(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
-    set(BUILD_KICKER TRUE)
-else(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
-    set(BUILD_KICKER FALSE)
-endif(EXISTS ${CMAKE_SOURCE_DIR}/workspace/kicker)
+# let it rest in peace for now. do not enable as it
+# is not enabled anymore in the release tarballs and
+# anything that depends on it would have to be fixed
+# anyway
+set(BUILD_KICKER FALSE)
 
 if(BUILD_KICKER)
   add_subdirectory( kicker)
