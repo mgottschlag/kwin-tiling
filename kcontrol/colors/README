@@ -1,3 +1,0 @@
-This code is meant to be built from within kdebase/workspace/kcontrol. Check it
-out somewhere in that tree and modify kdebase/workspace/kcontrol/CMakeLists.txt
-to build this instead of the old kcm.
