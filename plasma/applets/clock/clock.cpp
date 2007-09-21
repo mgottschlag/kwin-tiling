@@ -91,6 +91,7 @@ void Clock::constraintsUpdated()
         QFontMetrics fm(QApplication::font());
         m_size = QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5);
     }
+    updateGeometry();
 }
 
 QPainterPath Clock::shape() const
@@ -110,11 +111,8 @@ void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
     if (m_time.minute() == m_lastTimeSeen.minute() &&
         m_time.second() == m_lastTimeSeen.second()) {
         // avoid unnecessary repaints
-        //kDebug() << "avoided unnecessary update!";
         return;
     }
-
-    //kDebug() << (void*)this << " update!";
     m_lastTimeSeen = m_time;
     update();
 }
@@ -166,6 +164,7 @@ void Clock::configAccepted()
 
     connectToEngine();
     constraintsUpdated();
+    cg.config()->sync();
 }
 
 Clock::~Clock()
@@ -235,7 +234,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     m_theme->paint(p, tempRect, "HourHand");
     p->restore();
 
-//     drawHand(p, hours, "SecondHand", 1);
     p->save();
     p->translate(boundSize.width()/2, boundSize.height()/2);
     p->rotate(minutes);
@@ -258,7 +256,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         m_theme->paint(p, tempRect, "SecondHand");
         p->restore();
     }
-
 
     p->save();
     m_theme->resize(boundSize);
