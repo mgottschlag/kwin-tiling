@@ -172,30 +172,9 @@ void KColorCm::colorChanged( const QColor &newColor )
     // update the m_colorSchemes for the selected colorSet
     int currentSet = colorSet->currentIndex() - 1;
 
-    if (currentSet >= 0)
+    if (currentSet < 0)
     {
         // common colors is selected
-        // NOTE: this is dependent upon the background color buttons all being before
-        // any text color buttons
-        if (row <= KColorScheme::AlternateBackground)
-        {
-            // TODO: need a way to modify this colorscheme
-            // make this iterate over all the colorSets since common colors is selected
-            m_colorSchemes[currentSet].background(KColorScheme::BackgroundRole(row));
-        }
-        else
-        {
-            row -= KColorScheme::AlternateBackground;
-            if (row <= KColorScheme::PositiveText) {
-                // make this iterate over all the colorSets since common colors is selected
-                m_colorSchemes[currentSet].foreground(KColorScheme::ForegroundRole(row));
-            }
-            else {
-                // make this iterate over all the colorSets since common colors is selected
-                row -= KColorScheme::PositiveText;
-                m_colorSchemes[currentSet].decoration(KColorScheme::DecorationRole(row));
-            }
-        }
     }
     else
     {
