@@ -62,10 +62,7 @@ bool checkComposite()
         return true;
     }
 
-    KRunnerApp::s_haveCompositeManager = XGetSelectionOwner(dpy,
-                                                            XInternAtom(dpy,
-                                                                        "_NET_WM_CM_S0",
-                                                                        false));
+    KRunnerApp::s_haveCompositeManager = KWindowSystem::compositingActive();
 
     if (KRunnerApp::s_haveCompositeManager)
     {
