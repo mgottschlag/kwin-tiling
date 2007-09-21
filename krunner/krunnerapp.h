@@ -27,6 +27,7 @@
 class KActionCollection;
 class KDialog;
 class Interface;
+class StartupId;
 
 class KRunnerApp : public RestartingApplication
 {
@@ -78,6 +79,7 @@ private:
     SaverEngine m_saver;
     Interface* m_interface;
     KDialog* m_tasks;
+    StartupId* m_startupId;
 };
 
 #endif /* KRUNNERAPP_H */

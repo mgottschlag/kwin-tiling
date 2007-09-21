@@ -108,7 +108,8 @@ bool checkComposite()
 KRunnerApp::KRunnerApp()
     : RestartingApplication(checkComposite() ? dpy : dpy, dpy ? Qt::HANDLE(visual) : 0, dpy ? Qt::HANDLE(colormap) : 0),
       m_interface(0),
-      m_tasks(0)
+      m_tasks(0),
+      m_startupId( NULL )
 {
     initialize();
 }
@@ -191,16 +192,15 @@ void KRunnerApp::initializeStartupNotification()
 {
     // Startup notification
     KLaunchSettings::self()->readConfig();
-    StartupId *startup_id( NULL );
     if( !KLaunchSettings::busyCursor() ) {
-        delete startup_id;
-        startup_id = NULL;
+        delete m_startupId;
+        m_startupId = NULL;
     } else {
-        if( startup_id == NULL ) {
-            startup_id = new StartupId;
+        if( m_startupId == NULL ) {
+            m_startupId = new StartupId;
         }
 
-        startup_id->configure();
+        m_startupId->configure();
     }
 }
 
