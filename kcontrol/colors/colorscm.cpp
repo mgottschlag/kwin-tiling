@@ -43,6 +43,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     );
     about->addAuthor( ki18n("Matthew Woehlke"), KLocalizedString(),
                      "mw_triad@users.sourceforge.net" );
+    about->addAuthor( ki18n("Jeremy Whiting"), KLocalizedString(), "jeremy@scitools.com");
     setAboutData( about );
 
     m_config = KSharedConfig::openConfig("kdeglobals");
@@ -197,6 +198,18 @@ void KColorCm::colorChanged( const QColor &newColor )
         }
         KConfigGroup(m_config, group).writeEntry(m_colorKeys[row], newColor);
     }
+
+    schemePreview->setPalette(m_config);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
+
+    emit changed(true);
+}
+
+void KColorCm::on_contrastSlider_valueChanged(int value)
+{
+    KConfigGroup group(m_config, "KDE");
+    group.writeEntry("contrast", value);
 
     schemePreview->setPalette(m_config);
     inactivePreview->setPalette(m_config, QPalette::Inactive);

@@ -57,6 +57,9 @@ private slots:
 
     /** slot called when color on a KColorButton changes */
     void colorChanged( const QColor &newColor );
+    
+    /** slot called when the contrast slider on the main page changes */
+    void on_contrastSlider_valueChanged(int value);
 
 private:
 
