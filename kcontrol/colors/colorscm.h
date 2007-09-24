@@ -68,6 +68,10 @@ private:
 
     /** helper to create color entries */
     void createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index);
+    
+    QColor commonBackground(KColorScheme::BackgroundRole index);
+    
+    QColor commonForeground(KColorScheme::ForegroundRole index);
 
     // these are lists of QPushButtons so they can be KColorButtons, or KPushButtons when
     // they say "Varies"

@@ -51,6 +51,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     setupUi(this);
 
     setupColorTable();
+    contrastSlider->setValue(KGlobalSettings::contrast());
 
     schemePreview->setPalette(m_config);
     inactivePreview->setPalette(m_config, QPalette::Inactive);
@@ -111,20 +112,35 @@ void KColorCm::setupColorTable()
     updateColorTable();
 }
 
-/* TODO
-QColor KColorCm::commonBackground(int index)
+QColor KColorCm::commonBackground(KColorScheme::BackgroundRole index)
 {
-    QColor retval;
-
-    QColor temp = m_colorSchemes[i].background(KColorScheme::;
-    for (int i = KColorScheme::View; i < KColorScheme::Tooltip; ++i)
+    QColor temp = m_colorSchemes[KColorScheme::View].background(index).color();
+    for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
     {
-        if (m_colorSchemes[i].background(KColorScheme::BackgroundRole(index).color() ==
+        if (m_colorSchemes[i].background(index).color() != temp)
+        {
+            temp = QColor(); // make it an invalid color
+            break;
+        }
     }
 
-    return retval;
+    return temp;
 }
-*/
+
+QColor KColorCm::commonForeground(KColorScheme::ForegroundRole index)
+{
+    QColor temp = m_colorSchemes[KColorScheme::View].foreground(index).color();
+    for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
+    {
+        if (m_colorSchemes[i].foreground(index).color() != temp)
+        {
+            temp = QColor(); // make it an invalid color
+            break;
+        }
+    }
+
+    return temp;
+}
 
 void KColorCm::updateColorTable()
 {
@@ -134,10 +150,38 @@ void KColorCm::updateColorTable()
     if (currentSet < 0)
     {
         // common colors is selected
-        // iterate over all the colorSets looking for common colors
-        for (int i = KColorScheme::View; i <= KColorScheme::Tooltip; ++i)
+        for (int i = KColorScheme::NormalBackground; i <= KColorScheme::AlternateBackground; ++i)
         {
-            // TODO
+            QColor backgroundColor = commonBackground(KColorScheme::BackgroundRole(i));
+            if (backgroundColor.isValid())
+            {
+                m_backgroundButtons[i]->blockSignals(true);
+                m_backgroundButtons[i]->setColor(backgroundColor);
+                m_backgroundButtons[i]->blockSignals(false);
+            }
+            else
+            {
+                // replace background button 0 with a KPushButton with text "Varies"
+            }
+        }
+
+        for (int i = KColorScheme::NormalText; i <= KColorScheme::PositiveText; ++i)
+        {
+            QColor foregroundColor = commonForeground(KColorScheme::ForegroundRole(i));
+            if (foregroundColor.isValid())
+            {
+                m_foregroundButtons[i]->blockSignals(true);
+                m_foregroundButtons[i]->setColor(foregroundColor);
+                m_foregroundButtons[i]->blockSignals(false);
+            }
+            else
+            {
+                // replace background button 0 with a KPushButton with text "Varies"
+            }
+        }
+        
+        for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
+        {
         }
     }
     else
@@ -176,6 +220,11 @@ void KColorCm::colorChanged( const QColor &newColor )
     if (currentSet < 0)
     {
         // common colors is selected
+        KConfigGroup(m_config, "Colors:Window").writeEntry(m_colorKeys[row], newColor);
+        KConfigGroup(m_config, "Colors:Button").writeEntry(m_colorKeys[row], newColor);
+        KConfigGroup(m_config, "Colors:Selection").writeEntry(m_colorKeys[row], newColor);
+        KConfigGroup(m_config, "Colors:Tooltip").writeEntry(m_colorKeys[row], newColor);
+        KConfigGroup(m_config, "Colors:View").writeEntry(m_colorKeys[row], newColor);
     }
     else
     {
