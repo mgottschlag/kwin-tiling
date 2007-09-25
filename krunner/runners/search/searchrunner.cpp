@@ -46,7 +46,7 @@ QAction* SearchRunner::accepts( const QString& term )
 {
     // return an action that opens a search GUI with this term
     QAction* action = new QAction(i18n("search for %1", term), this);
-    connect(action, SIGNAL("triggered"), this, SLOT("launchSearch"));
+    connect(action, SIGNAL(triggered()), this, SLOT(launchSearch()));
     return action;
 }
 
