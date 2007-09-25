@@ -141,7 +141,7 @@ extern "C"
   // This is needed to be able to check for conflicts with global keys in app's keyconfig
   // dialogs, kdeglobals is empty as long as you don't apply any change in controlcenter/keys.
   // However, avoid writing at every KDE startup, just update them after every rebuild of this file.
-        KConfigGroup group( KGlobal::config(), "Global Shortcuts" );
+        KConfigGroup group( KGlobal::config(), "deprecated Global Shortcuts from kcontrol/keys" );
         if( group.readEntry( "Defaults timestamp" ) != __DATE__ __TIME__ ) {
 	    kDebug(125) << "KeyModule::init() - Read Config Bindings\n";
 	    // Check for old group,
@@ -152,18 +152,14 @@ extern "C"
 //		KGlobalAccel::self()->readSettings();
 		KGlobal::config()->deleteGroup( "Global Keys", KConfigBase::Global);
 	    }
-            KGlobal::config()->deleteGroup( "Global Shortcuts", KConfigBase::Global);
+            KGlobal::config()->deleteGroup( "deprecated Global Shortcuts from kcontrol/keys", KConfigBase::Global);
 
 	    kDebug(125) << "KeyModule::init() - Write Config Bindings\n";
 #ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
 #endif
         //KGlobalAccel::self()->writeSettings();
-
-#if 0 //we have a new system, and writing this to the config file can cause biiig problems
-
             group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, KConfigBase::Normal|KConfigBase::Global);
-#endif
         }
 	delete actionCollection;
   }
