@@ -77,19 +77,15 @@ void ServiceRunner::fillMatches( KActionCollection* matches,
     Q_UNUSED( offset )
 
     QString query = QString("exist Exec and '%1' ~in Keywords and Name != '%2'").arg(term, term);
-    KServiceType::List serviceTypes = KServiceType::allServiceTypes();
 
-    foreach ( const KServiceType::Ptr serviceType, serviceTypes ) {
-        KService::List services = KServiceTypeTrader::self()->query( serviceType->name(),
-                                                                     query );
+    const KService::List services = KServiceTypeTrader::self()->query( "Application", query );
 
-        //kDebug() << "got " << services.count() << " services from " << query;
+    //kDebug() << "got " << services.count() << " services from " << query;
 
-        foreach ( const KService::Ptr service, services ) {
-            ServiceAction* action = new ServiceAction(service, matches);
-            matches->addAction(service->name(), action);
-            connect(action, SIGNAL(triggered()), SLOT(launchService()));
-        }
+    foreach ( const KService::Ptr service, services ) {
+        ServiceAction* action = new ServiceAction(service, matches);
+        matches->addAction(service->name(), action);
+        connect(action, SIGNAL(triggered()), SLOT(launchService()));
     }
 }
 
