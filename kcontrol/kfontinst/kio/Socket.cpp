@@ -247,30 +247,22 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
         return false;
     }
 
+#if !defined(SO_PEERCRED) || !defined(HAVE_STRUCT_UCRED)
 # if defined(HAVE_GETPEEREID)
     uid_t euid;
     gid_t egid;
     // Security: if socket exists, we must own it
-    if (getpeereid(itsFd, &euid, &egid) == 0 && euid != getuid())
+    if (getpeereid(itsFd, &euid, &egid) == 0)
     {
-        kWarning() << "socket not owned by me! socket uid = " << euid ;
-        ::close(itsFd);
-        itsFd = -1;
-        return false;
+       if (euid != socketUid)
+       {
+            kWarning(900) << "socket not owned by me! socket uid = " << euid;
+            ::close(itsFd);
+            itsFd = -1;
+            return -1;
+       }
     }
-#elif defined(SO_PEERCRED) && defined(HAVE_STRUCT_UCRED)
-    struct ucred cred;
-    socklen_t siz = sizeof(cred);
-
-    // Security: if socket exists, we must own it
-    if (getsockopt(itsFd, SOL_SOCKET, SO_PEERCRED, &cred, &siz) == 0 && cred.uid != socketUid)
-    {
-        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << cred.uid ;
-        ::close(itsFd);
-        itsFd = -1;
-        return false;
-    }
-#else
+# else
 #  ifdef __GNUC__
 #   warning "Using sloppy security checks"
 #  endif
@@ -281,24 +273,40 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     KDE_struct_stat s;
     if (KDE_lstat(sock, &s)!=0)
     {
-        kWarning() << "stat failed (" << sock.data() << ")" ;
+        kWarning(900) << "stat failed (" << sock << ")";
         ::close(itsFd);
         itsFd = -1;
         return false;
     }
     if (s.st_uid != socketUid)
     {
-        kWarning() << "socket not owned by " << socketUid << "! socket uid = " << s.st_uid ;
+        kWarning(900) << "socket not owned by me! socket uid = " << s.st_uid;
         ::close(itsFd);
         itsFd = -1;
         return false;
     }
     if (!S_ISSOCK(s.st_mode))
     {
-        kWarning() << "socket is not a socket (" << sock.data() << ")" ;
+        kWarning(900) << "socket is not a socket (" << sock << ")";
         ::close(itsFd);
         itsFd = -1;
         return false;
+    }
+# endif
+#else
+    struct ucred cred;
+    socklen_t    siz = sizeof(cred);
+
+    // Security: if socket exists, we must own it
+    if (0==getsockopt(itsFd, SOL_SOCKET, SO_PEERCRED, &cred, &siz) == 0)
+    {
+        if (cred.uid != socketUid)
+        {
+            kWarning(900) << "socket not owned by me! socket uid = " << cred.uid;
+            ::close(itsFd);
+            itsFd = -1;
+            return false;
+        }
     }
 #endif
 
