@@ -73,7 +73,7 @@ ThemePage::ThemePage(QWidget *parent)
     int size = style()->pixelMetric(QStyle::PM_LargeIconSize);
 
     view->setModel(proxy);
-    view->setItemDelegate(new ItemDelegate(this));	
+    view->setItemDelegate(new ItemDelegate(this));
     view->setIconSize(QSize(size, size));
 
     // Make sure we find out about selection changes
@@ -180,7 +180,7 @@ bool ThemePage::applyTheme(const CursorTheme *theme)
 
 void ThemePage::save()
 {
-    if (appliedIndex == view->currentIndex())
+    if (appliedIndex == view->currentIndex() || !view->currentIndex().isValid())
         return;
 
     const CursorTheme *theme = proxy->theme(view->currentIndex());
