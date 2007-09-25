@@ -1,5 +1,6 @@
 /* KDE Display color scheme setup module
  * Copyright (C) 2007 Matthew Woehlke <mw_triad@users.sourceforge.net>
+ * Copyright (C) 2007 Jeremy Whiting <jeremy@scitools.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
