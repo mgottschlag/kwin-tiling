@@ -159,7 +159,11 @@ extern "C"
 #warning TODO PORT ME (KGlobalAccel related)
 #endif
         //KGlobalAccel::self()->writeSettings();
+
+#if 0 //we have a new system, and writing this to the config file can cause biiig problems
+
             group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, KConfigBase::Normal|KConfigBase::Global);
+#endif
         }
 	delete actionCollection;
   }
