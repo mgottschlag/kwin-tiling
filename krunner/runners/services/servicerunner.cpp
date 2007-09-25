@@ -76,7 +76,7 @@ void ServiceRunner::fillMatches( KActionCollection* matches,
     Q_UNUSED( max )
     Q_UNUSED( offset )
 
-    QString query = QString( "exist Exec and '%1' ~in Keywords and Name != '%2')" ).arg( term, term );
+    QString query = QString("exist Exec and '%1' ~in Keywords and Name != '%2'").arg(term, term);
     KServiceType::List serviceTypes = KServiceType::allServiceTypes();
 
     foreach ( const KServiceType::Ptr serviceType, serviceTypes ) {
