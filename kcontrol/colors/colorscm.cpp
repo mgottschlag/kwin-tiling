@@ -50,14 +50,9 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 
     setupUi(this);
 
-    setupColorTable();
-    contrastSlider->setValue(KGlobalSettings::contrast());
-
-    schemePreview->setPalette(m_config);
-    inactivePreview->setPalette(m_config, QPalette::Inactive);
-    disabledPreview->setPalette(m_config, QPalette::Disabled);
-
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
+    
+    load();
 }
 
 KColorCm::~KColorCm()
@@ -117,7 +112,7 @@ QColor KColorCm::commonBackground(KColorScheme::BackgroundRole index)
     QColor temp = m_colorSchemes[KColorScheme::View].background(index).color();
     for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
     {
-        if (m_colorSchemes[i].background(index).color() != temp)
+        if (i != KColorScheme::Selection && m_colorSchemes[i].background(index).color() != temp)
         {
             temp = QColor(); // make it an invalid color
             break;
@@ -132,7 +127,22 @@ QColor KColorCm::commonForeground(KColorScheme::ForegroundRole index)
     QColor temp = m_colorSchemes[KColorScheme::View].foreground(index).color();
     for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
     {
-        if (m_colorSchemes[i].foreground(index).color() != temp)
+        if (i != KColorScheme::Selection && m_colorSchemes[i].foreground(index).color() != temp)
+        {
+            temp = QColor(); // make it an invalid color
+            break;
+        }
+    }
+
+    return temp;
+}
+
+QColor KColorCm::commonDecoration(KColorScheme::DecorationRole index)
+{
+    QColor temp = m_colorSchemes[KColorScheme::View].decoration(index).color();
+    for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
+    {
+        if (i != KColorScheme::Selection && m_colorSchemes[i].decoration(index).color() != temp)
         {
             temp = QColor(); // make it an invalid color
             break;
@@ -161,7 +171,7 @@ void KColorCm::updateColorTable()
             }
             else
             {
-                // replace background button 0 with a KPushButton with text "Varies"
+                // replace background button i with a KPushButton with text "Varies"
             }
         }
 
@@ -176,12 +186,23 @@ void KColorCm::updateColorTable()
             }
             else
             {
-                // replace background button 0 with a KPushButton with text "Varies"
+                // replace foreground button i with a KPushButton with text "Varies"
             }
         }
 
         for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
         {
+            QColor decorationColor = commonDecoration(KColorScheme::DecorationRole(i));
+            if (decorationColor.isValid())
+            {
+                m_decorationButtons[i]->blockSignals(true);
+                m_decorationButtons[i]->setColor(decorationColor);
+                m_decorationButtons[i]->blockSignals(false);
+            }
+            else
+            {
+                // replace decoration button i with a KPushButton with text "Varies"
+            }
         }
     }
     else
@@ -222,7 +243,7 @@ void KColorCm::colorChanged( const QColor &newColor )
         // common colors is selected
         KConfigGroup(m_config, "Colors:Window").writeEntry(m_colorKeys[row], newColor);
         KConfigGroup(m_config, "Colors:Button").writeEntry(m_colorKeys[row], newColor);
-        KConfigGroup(m_config, "Colors:Selection").writeEntry(m_colorKeys[row], newColor);
+        //KConfigGroup(m_config, "Colors:Selection").writeEntry(m_colorKeys[row], newColor);
         KConfigGroup(m_config, "Colors:Tooltip").writeEntry(m_colorKeys[row], newColor);
         KConfigGroup(m_config, "Colors:View").writeEntry(m_colorKeys[row], newColor);
     }
@@ -267,9 +288,28 @@ void KColorCm::on_contrastSlider_valueChanged(int value)
     emit changed(true);
 }
 
+void KColorCm::on_shadeSortedColumn_stateChanged(int state)
+{
+    KConfigGroup group(m_config, "General");
+    group.writeEntry("shadeSortColumn", (bool)state);
+    
+    emit changed(true);
+}
+
 void KColorCm::load()
 {
-    // TODO
+    // get the config again, in case we have changed the in-memory kconfig
+    m_config = KSharedConfig::openConfig("kdeglobals");
+
+    setupColorTable();
+    contrastSlider->setValue(KGlobalSettings::contrast());
+    shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ? 
+        Qt::Checked : Qt::Unchecked);
+
+    schemePreview->setPalette(m_config);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
+
     emit changed(false);
 }
 

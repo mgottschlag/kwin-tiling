@@ -60,11 +60,17 @@ private slots:
     
     /** slot called when the contrast slider on the main page changes */
     void on_contrastSlider_valueChanged(int value);
+    
+    /** slot called when the shadeSortedColumn checkbox is checked/unchecked */
+    void on_shadeSortedColumn_stateChanged(int state);
 
 private:
 
     /** setup the colortable with its buttons and labels */
     void setupColorTable();
+    
+    /** setup the effects page */
+    void setupEffectsPage();
 
     /** helper to create color entries */
     void createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index);
@@ -72,6 +78,8 @@ private:
     QColor commonBackground(KColorScheme::BackgroundRole index);
     
     QColor commonForeground(KColorScheme::ForegroundRole index);
+    
+    QColor commonDecoration(KColorScheme::DecorationRole index);
 
     // these are lists of QPushButtons so they can be KColorButtons, or KPushButtons when
     // they say "Varies"
