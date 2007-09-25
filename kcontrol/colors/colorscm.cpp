@@ -105,8 +105,8 @@ void KColorCm::setupColorTable()
     createColorEntry(i18n("Focus Decoration"),     "DecorationFocus",     m_decorationButtons, 11);
 
     colorTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
-    // TODO make wide enough for "varies" button, at least for "Common Colors"
-    colorTable->horizontalHeader()->setMinimumSectionSize(24);
+    int minWidth = QPushButton(i18n("Varies")).minimumSizeHint().width();
+    colorTable->horizontalHeader()->setMinimumSectionSize(minWidth);
     colorTable->horizontalHeader()->setResizeMode(1, QHeaderView::ResizeToContents);
 
     updateColorTable();
@@ -179,7 +179,7 @@ void KColorCm::updateColorTable()
                 // replace background button 0 with a KPushButton with text "Varies"
             }
         }
-        
+
         for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
         {
         }
