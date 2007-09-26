@@ -190,7 +190,7 @@ void KColorCm::updateColorTable()
             }
         }
 
-        for (int i = KColorScheme::FocusColor; i <= KColorScheme::FocusColor; ++i)
+        for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
         {
             QColor decorationColor = commonDecoration(KColorScheme::DecorationRole(i));
             if (decorationColor.isValid())
@@ -222,7 +222,7 @@ void KColorCm::updateColorTable()
             m_foregroundButtons[i]->blockSignals(false);
         }
 
-        for (int i = KColorScheme::FocusColor; i <= KColorScheme::FocusColor; ++i)
+        for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
         {
             m_decorationButtons[i]->blockSignals(true);
             m_decorationButtons[i]->setColor(m_colorSchemes[currentSet].decoration(KColorScheme::DecorationRole(i)).color());
