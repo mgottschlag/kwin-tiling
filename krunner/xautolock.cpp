@@ -224,6 +224,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
         activate = true;
     if(!on && mDPMS) {
         activate = false;
+        XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
         resetTrigger();
     }
 #endif
