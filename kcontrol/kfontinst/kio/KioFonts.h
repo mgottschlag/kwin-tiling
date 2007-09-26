@@ -151,13 +151,10 @@ class CKioFonts : public KIO::SlaveBase
     void               special(const QByteArray &a);
     bool               configure(EFolder folder);
     void               doModified();
-    QString            getRootPasswd(bool askPasswd=true);
+    bool               getRootPasswd(bool askPasswd=true);
     void               quitHelper();
-    bool               doRootCmd(QList<TCommand> &cmd, const QString &passwd);
     bool               doRootCmd(const TCommand &cmd, bool askPasswd=true);
-    bool               doRootCmd(const TCommand &cmd, const QString &passwd);
-    bool               doRootCmd(QList<TCommand> &cmd, bool askPasswd=true)
-                           { return doRootCmd(cmd, getRootPasswd(askPasswd)); }
+    bool               doRootCmd(QList<TCommand> &cmd, bool askPasswd=true);
     void               correctUrl(KUrl &url);
     void               clearFontList();
     bool               updateFontList();
@@ -181,8 +178,7 @@ class CKioFonts : public KIO::SlaveBase
                                        EFolder folder, EOp op);
     bool               checkUrl(const KUrl &u, bool rootOk=false, bool logError=true);
     bool               checkAllowed(const KUrl &u);
-    void               createAfm(const QString &file, bool nrs=false,
-                                 const QString &passwd=QString());
+    void               createAfm(const QString &file, bool nrs=false);
     int                reconfigTimeout();
 
     private:

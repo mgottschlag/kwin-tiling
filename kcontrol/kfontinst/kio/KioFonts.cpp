@@ -1323,8 +1323,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
                     clearList(!hasMetaData(KFI_KIO_NO_CLEAR));
     EFolder         destFolder(getFolder(url));
     QString         destFolderReal(getDestFolder(itsFolders[destFolder].location, url.fileName())),
-                    dest(destFolderReal+modifyName(url.fileName())),
-                    passwd;
+                    dest(destFolderReal+modifyName(url.fileName()));
     QByteArray      destC(QFile::encodeName(dest));
     KDE_struct_stat buffDest;
     bool            destExists(KDE_lstat(destC.constData(), &buffDest)!= -1);
@@ -1335,12 +1334,10 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
         return;
     }
 
-    if(nrs) // Need to check can get root passwd before start download...
+    if(nrs && !getRootPasswd()) // Need to check can get root passwd before start download...
     {
-        passwd=getRootPasswd();
-
-        if(passwd.isEmpty())
-            return;
+        error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+        return;
     }
 
     //
@@ -1380,12 +1377,12 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
             cmd.append(c);
 
             // Get root to move this to fonts folder...
-            if(doRootCmd(cmd, passwd))
+            if(doRootCmd(cmd, false)) // Already asked for passwd...
             {
                 tmpFile.setAutoRemove(false);
                 if(FILE_FONT==type)
                     modified(timeout, FOLDER_SYS, clearList, destFolderReal);
-                createAfm(dest, true, passwd);
+                createAfm(dest, true);
             }
             else
             {
@@ -1818,16 +1815,13 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
                     totalSize(size);
 
-                    QString passwd=getRootPasswd();
-
-                    if(doRootCmd(cmd, passwd))
+                    if(doRootCmd(cmd, true))
                     {
                         if(!metrics)
                             modified(timeout, destFolder, clearList, addedFolders);
                         processedSize(size);
                         if(src.isLocalFile() && 1==srcFiles.count())
-                            createAfm(itsFolders[destFolder].location+modifyName(map.begin().value()),
-                                      true, passwd);
+                            createAfm(itsFolders[destFolder].location+modifyName(map.begin().value()), true);
                     }
                     else
                     {
@@ -2496,12 +2490,18 @@ void CKioFonts::doModified()
     KFI_DBUG << "finished ModifiedDirs";
 }
 
-QString CKioFonts::getRootPasswd(bool askPasswd)
+bool CKioFonts::getRootPasswd(bool askPasswd)
 {
     KFI_DBUG << "getRootPasswd";
 
     if(hasMetaData(KFI_KIO_PASS))
-        return metaData(KFI_KIO_PASS);
+    {
+        itsPasswd=metaData(KFI_KIO_PASS);
+        return !itsPasswd.isEmpty();
+    }
+
+    if(!askPasswd)
+        return !itsPasswd.isEmpty();
 
     KIO::AuthInfo authInfo;
     SuProcess     proc(KFI_SYS_USER);
@@ -2540,7 +2540,8 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
     else
         error=proc.checkInstall(authInfo.password.toLocal8Bit()) ? true : false;
 
-    return error ? QString() : authInfo.password;
+    itsPasswd= error ? QString() : authInfo.password;
+    return !itsPasswd.isEmpty();
 }
 
 void CKioFonts::quitHelper()
@@ -2560,11 +2561,11 @@ void CKioFonts::quitHelper()
     }
 }
 
-bool CKioFonts::doRootCmd(QList<TCommand> &cmd, const QString &passwd)
+bool CKioFonts::doRootCmd(QList<TCommand> &cmd, bool askPasswd)
 {
     KFI_DBUG << "doRootCmd ";
 
-    if(!passwd.isEmpty() && cmd.count())
+    if(cmd.count() && getRootPasswd(askPasswd))
     {
         if(!itsServer.isOpen())
         {
@@ -2672,14 +2673,6 @@ bool CKioFonts::doRootCmd(const TCommand &cmd, bool askPasswd)
 
     cmds.append(cmd);
     return doRootCmd(cmds, askPasswd);
-}
-
-bool CKioFonts::doRootCmd(const TCommand &cmd, const QString &passwd)
-{
-    QList<TCommand> cmds;
-
-    cmds.append(cmd);
-    return doRootCmd(cmds, passwd);
 }
 
 void CKioFonts::correctUrl(KUrl &url)
@@ -3358,9 +3351,9 @@ bool CKioFonts::checkAllowed(const KUrl &u)
 
 //
 // Create an AFM from a Type 1 (pfa/pfb) font and its PFM file...
-void CKioFonts::createAfm(const QString &file, bool nrs, const QString &passwd)
+void CKioFonts::createAfm(const QString &file, bool nrs)
 {
-    if(nrs && passwd.isEmpty())
+    if(nrs && itsPasswd.isEmpty())
         return;
 
     bool type1=isAType1(file),
@@ -3395,7 +3388,7 @@ void CKioFonts::createAfm(const QString &file, bool nrs, const QString &passwd)
                 QString name(t1.left(t1.length()-4));   // pf2afm wants name without extension...
 
                 if(nrs)
-                    doRootCmd(TCommand(KFI::CMD_CREATE_AFM, name), passwd);
+                    doRootCmd(TCommand(KFI::CMD_CREATE_AFM, name));
                 else
                     Misc::doCmd("pf2afm", QFile::encodeName(name));
             }
