@@ -51,7 +51,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     setupUi(this);
 
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
-    
+
     load();
 }
 
@@ -96,8 +96,8 @@ void KColorCm::setupColorTable()
     createColorEntry(i18n("Negative Text"),        "ForegroundNegative",  m_foregroundButtons, 7);
     createColorEntry(i18n("Neutral Text"),         "ForegroundNeutral",   m_foregroundButtons, 8);
     createColorEntry(i18n("Positive Text"),        "ForegroundPositive",  m_foregroundButtons, 9);
-    createColorEntry(i18n("Hover Decoration"),     "DecorationHover",     m_decorationButtons, 10);
-    createColorEntry(i18n("Focus Decoration"),     "DecorationFocus",     m_decorationButtons, 11);
+    createColorEntry(i18n("Focus Decoration"),     "DecorationFocus",     m_decorationButtons, 10);
+    createColorEntry(i18n("Hover Decoration"),     "DecorationHover",     m_decorationButtons, 11);
 
     colorTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
     int minWidth = QPushButton(i18n("Varies")).minimumSizeHint().width();
@@ -190,7 +190,7 @@ void KColorCm::updateColorTable()
             }
         }
 
-        for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
+        for (int i = KColorScheme::FocusColor; i <= KColorScheme::FocusColor; ++i)
         {
             QColor decorationColor = commonDecoration(KColorScheme::DecorationRole(i));
             if (decorationColor.isValid())
@@ -222,7 +222,7 @@ void KColorCm::updateColorTable()
             m_foregroundButtons[i]->blockSignals(false);
         }
 
-        for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
+        for (int i = KColorScheme::FocusColor; i <= KColorScheme::FocusColor; ++i)
         {
             m_decorationButtons[i]->blockSignals(true);
             m_decorationButtons[i]->setColor(m_colorSchemes[currentSet].decoration(KColorScheme::DecorationRole(i)).color());
@@ -292,7 +292,7 @@ void KColorCm::on_shadeSortedColumn_stateChanged(int state)
 {
     KConfigGroup group(m_config, "General");
     group.writeEntry("shadeSortColumn", (bool)state);
-    
+
     emit changed(true);
 }
 
@@ -303,7 +303,7 @@ void KColorCm::load()
 
     setupColorTable();
     contrastSlider->setValue(KGlobalSettings::contrast());
-    shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ? 
+    shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ?
         Qt::Checked : Qt::Unchecked);
 
     schemePreview->setPalette(m_config);
