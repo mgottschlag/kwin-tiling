@@ -284,7 +284,7 @@ void CFontFilter::setCriteria(ECriteria crit)
 
     p.drawPixmap(0, 0, itsPixmaps[crit]);
     QStyleOption opt;
-    opt.state = QStyle::State_None;
+    opt.state = QStyle::State_Enabled;
     opt.rect = QRect(arrowmap.width()-(constArrowPad+1), arrowmap.height()-constArrowPad, constArrowPad+1, constArrowPad);
     style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &opt, &p, itsMenuButton);
     p.end();
