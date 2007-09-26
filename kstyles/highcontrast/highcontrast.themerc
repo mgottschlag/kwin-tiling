@@ -17,6 +17,7 @@ Name[pt]=Alto Contraste
 Name[pt_BR]=AltoContraste
 Name[sv]=Hög kontrast
 Name[th]=คอนทราสสูง
+Name[wa]=Hôt contrasse
 Name[zh_TW]=高對比
 ConfigPage=kstyle_highcontrast_config
 Comment=A style that works well with high contrast color schemes
@@ -35,6 +36,7 @@ Comment[pt]=Um estilo que funciona bem com esquemas de cores de alto contraste
 Comment[pt_BR]=Um estilo que funciona bem com esquemas de cor de alto contraste
 Comment[sv]=En stil som fungerar bra med färgscheman för hög kontrast
 Comment[th]=รูปแบบที่ใช้งานได้ดีกับรูปแบบสีตัดกัน
+Comment[wa]=On stîle ki va bén avou des djeus d' coleur di hôt contrasse
 Comment[zh_TW]=適用於高對比顏色機制的樣式
 [KDE]
 WidgetStyle=HighContrast
