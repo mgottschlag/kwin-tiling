@@ -1,4 +1,5 @@
 
+check_library_exists(GL glXChooseVisual "" HAVE_GLXCHOOSEVISUAL)
 configure_file (config-screensaver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-screensaver.h )
 
 add_definitions (-DQT3_SUPPORT)
@@ -26,7 +27,7 @@ kde4_add_plugin(kcm_screensaver ${kcm_screensaver_PART_SRCS})
 target_link_libraries(kcm_screensaver  ${KDE4_KDE3SUPPORT_LIBS})
 
 if(HAVE_GLXCHOOSEVISUAL)
-   target_link_libraries(kcm_screensaver GL)
+   target_link_libraries(kcm_screensaver ${OPENGL_gl_LIBRARY})
 endif(HAVE_GLXCHOOSEVISUAL)
 
 
