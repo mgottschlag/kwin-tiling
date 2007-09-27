@@ -13,6 +13,7 @@ if (STRIGIQTDBUSCLIENT_LIBRARY)
 
   set(krunner_searchrunner_SRCS searchrunner.cpp)
   kde4_add_plugin(krunner_searchrunner ${krunner_searchrunner_SRCS})
+  include_directories(${STRIGI_INCLUDE_DIR})
   target_link_libraries(krunner_searchrunner ${KDE4_KDECORE_LIBS} plasma ${STRIGIQTDBUSCLIENT_LIBRARY})
 
   install(TARGETS krunner_searchrunner DESTINATION ${PLUGIN_INSTALL_DIR} )
