@@ -64,6 +64,8 @@ target_link_libraries( kdm
 	${SOCKET_LIBRARIES}
 	${RESOLV_LIBRARIES}
 	${BLITZ_LIBRARIES}
+        ${QT_QTCORE_LIBRARY}
+        ${QT_QTGUI_LIBRARY}
 )
 if(UTIL_LIBRARIES)
 	target_link_libraries( kdm ${UTIL_LIBRARIES} )

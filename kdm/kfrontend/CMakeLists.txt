@@ -87,7 +87,8 @@ install(TARGETS kdm_config DESTINATION ${BIN_INSTALL_DIR})
 set(krootimage_SRCS krootimage.cpp krootimage.h ${backgroundlib_SRCS})
 kde4_add_executable(krootimage ${krootimage_SRCS})
 # needs qt3support for q3ptrvector in background/bgrender.cpp
-target_link_libraries(krootimage ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${BLITZ_LIBRARIES})
+target_link_libraries(krootimage ${KDE4_KIO_LIBS} ${QT_QTCORE_LIBRARY}
+${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${BLITZ_LIBRARIES})
 install(TARGETS krootimage DESTINATION ${BIN_INSTALL_DIR})
 
 set(genkdmconf_SRCS genkdmconf.c)
