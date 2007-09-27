@@ -30,7 +30,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <kimageeffect.h>
+#include <qimageblitz.h>
 #include <k3process.h>
 #include <ktemporaryfile.h>
 #include <kcursor.h>
@@ -226,7 +226,7 @@ int KBackgroundRenderer::doBackground(bool quit)
             h = qMin(h, m_Size.height());
             m_Background = m_Background.copy(0, 0, w, h);
         }
-        KImageEffect::flatten(m_Background, colorA(), colorB(), 0);
+        Blitz::flatten(m_Background, colorA(), colorB());
         break;
     }
     case Program:
@@ -254,8 +254,8 @@ int KBackgroundRenderer::doBackground(bool quit)
         // on <16bpp displays the gradient sucks when tiled because of dithering
         if( canTile())
             size.setHeight( tileHeight );
-        m_Background = KImageEffect::gradient(size, colorA(), colorB(),
-        KImageEffect::HorizontalGradient, 0);
+        m_Background = Blitz::gradient(size, colorA(), colorB(),
+        Blitz::HorizontalGradient);
         break;
     }
     case VerticalGradient:
@@ -264,23 +264,23 @@ int KBackgroundRenderer::doBackground(bool quit)
         // on <16bpp displays the gradient sucks when tiled because of dithering
         if( canTile())
             size.setWidth( tileWidth );
-        m_Background = KImageEffect::gradient(size, colorA(), colorB(),
-        KImageEffect::VerticalGradient, 0);
+        m_Background = Blitz::gradient(size, colorA(), colorB(),
+        Blitz::VerticalGradient);
         break;
     }
     case PyramidGradient:
-        m_Background = KImageEffect::gradient(m_Size, colorA(), colorB(),
-        KImageEffect::PyramidGradient, 0);
+        m_Background = Blitz::gradient(m_Size, colorA(), colorB(),
+        Blitz::PyramidGradient);
         break;
 
     case PipeCrossGradient:
-        m_Background = KImageEffect::gradient(m_Size, colorA(), colorB(),
-        KImageEffect::PipeCrossGradient, 0);
+        m_Background = Blitz::gradient(m_Size, colorA(), colorB(),
+        Blitz::PipeCrossGradient);
         break;
 
     case EllipticGradient:
-        m_Background = KImageEffect::gradient(m_Size, colorA(), colorB(),
-        KImageEffect::EllipticGradient, 0);
+        m_Background = Blitz::gradient(m_Size, colorA(), colorB(),
+        Blitz::EllipticGradient);
         break;
     }
 
@@ -409,7 +409,7 @@ wp_load:
                         break;
                     case 3:
                         // Rotated 180 degrees
-                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate180);
+                        m_Wallpaper = m_Wallpaper.transformed(QMatrix().rotate(180));
                         break;
                     case 4:
                         // Flipped vertically
@@ -417,19 +417,19 @@ wp_load:
                         break;
                     case 5:
                         // Rotated 90 degrees & flipped horizontally
-                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate90).mirrored(true, false);
+                        m_Wallpaper = m_Wallpaper.transformed(QMatrix().rotate(90)).mirrored(true, false);
                         break;
                     case 6:
                         // Rotated 90 degrees
-                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate90);
+                        m_Wallpaper = m_Wallpaper.transformed(QMatrix().rotate(90));
                         break;
                     case 7:
                         // Rotated 90 degrees & flipped vertically
-                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate90).mirrored(false, true);
+                        m_Wallpaper = m_Wallpaper.transformed(QMatrix().rotate(90)).mirrored(false, true);
                         break;
                     case 8:
                         // Rotated 270 degrees
-                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate270);
+                        m_Wallpaper = m_Wallpaper.transformed(QMatrix().rotate(270));
                         break;
                     case 1:
                     default:
@@ -649,54 +649,56 @@ void KBackgroundRenderer::fullWallpaperBlend()
       int bal = blendBalance();
 
       switch( blendMode() ) {
+          /* TODO disabled for now
       case HorizontalBlending:
-        KImageEffect::blend( m_Image, m_Background,
-                             KImageEffect::HorizontalGradient,
+        Blitz::blend( m_Image, m_Background,
+                      Blitz::HorizontalGradient,
                              bal, 100 );
         break;
 
       case VerticalBlending:
-        KImageEffect::blend( m_Image, m_Background,
-                             KImageEffect::VerticalGradient,
+        Blitz::blend( m_Image, m_Background,
+                      Blitz::VerticalGradient,
                              100, bal );
         break;
 
       case PyramidBlending:
-        KImageEffect::blend( m_Image, m_Background,
-                             KImageEffect::PyramidGradient,
+        Blitz::blend( m_Image, m_Background,
+                      Blitz::PyramidGradient,
                              bal, bal );
         break;
 
       case PipeCrossBlending:
-        KImageEffect::blend( m_Image, m_Background,
-                             KImageEffect::PipeCrossGradient,
+        Blitz::blend( m_Image, m_Background,
+                      Blitz::PipeCrossGradient,
                              bal, bal );
         break;
 
       case EllipticBlending:
-        KImageEffect::blend( m_Image, m_Background,
-                             KImageEffect::EllipticGradient,
+        Blitz::blend( m_Image, m_Background,
+                      Blitz::EllipticGradient,
                              bal, bal );
         break;
+          */
 
       case IntensityBlending:
-        KImageEffect::modulate( m_Image, m_Background, reverseBlending(),
-                    KImageEffect::Intensity, bal, KImageEffect::All );
+        Blitz::modulate( m_Image, m_Background, reverseBlending(),
+                         Blitz::Intensity, bal, Blitz::All );
         break;
 
       case SaturateBlending:
-        KImageEffect::modulate( m_Image, m_Background, reverseBlending(),
-                    KImageEffect::Saturation, bal, KImageEffect::Gray );
+        Blitz::modulate( m_Image, m_Background, reverseBlending(),
+                         Blitz::Saturation, bal, Blitz::Brightness );
         break;
 
       case ContrastBlending:
-        KImageEffect::modulate( m_Image, m_Background, reverseBlending(),
-                    KImageEffect::Contrast, bal, KImageEffect::All );
+        Blitz::modulate( m_Image, m_Background, reverseBlending(),
+                         Blitz::Contrast, bal, Blitz::All );
         break;
 
       case HueShiftBlending:
-        KImageEffect::modulate( m_Image, m_Background, reverseBlending(),
-                    KImageEffect::HueShift, bal, KImageEffect::Gray );
+        Blitz::modulate( m_Image, m_Background, reverseBlending(),
+                         Blitz::HueShift, bal, Blitz::Brightness );
         break;
 
       case FlatBlending:

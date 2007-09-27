@@ -25,9 +25,8 @@
 #include <QPaintEvent>
 
 #include <KApplication>
-#include <kpixmapeffect.h>
+#include <qimageblitz.h>
 #include <klocale.h>
-#include <kimageeffect.h>
 #include <kiconloader.h>
 
 
@@ -89,9 +88,12 @@ void MenuPreview::createPixmaps()
 	}
 
 	if (pixOverlay) {
-                c1 = palette().color(QPalette::Button).light(110);
-		c2 = palette().color(QPalette::Button).dark(110);
-		KPixmapEffect::gradient( *pixOverlay, c1, c2, KPixmapEffect::VerticalGradient );
+		QPainter p(pixOverlay);
+		QLinearGradient g(0, 0, 0, pixOverlay->height());
+		g.setColorAt(0.0, palette().color(QPalette::Button).light(110));
+		g.setColorAt(1.0, palette().color(QPalette::Button).dark(110));
+		p.setBrush(g);
+		p.drawRect(0, 0, pixOverlay->width(), pixOverlay->height());
 	}
 }
 
@@ -101,15 +103,18 @@ void MenuPreview::blendPixmaps()
 	if (pixBlended && pixBackground)
 	{
 		if (mode == Blend && pixOverlay) {
-			QImage src = pixOverlay->toImage();
-			QImage dst = pixBackground->toImage();
-			KImageEffect::blend(src, dst, menuOpacity);
-			*pixBlended = QPixmap::fromImage( dst );
+			*pixBlended = pixBackground->copy();
+			QPixmap a( pixBlended->size() ), b = pixOverlay->copy();
+			a.fill( QColor( menuOpacity*255, menuOpacity*255, menuOpacity*255 ) );
+			b.setAlphaChannel( a );
+			QPainter p( pixBlended );
+			p.drawPixmap( 0, 0, b );
 		} else if (mode == Tint) {
+			*pixBlended = pixBackground->copy();
+			QPainter p( pixBlended );
                         QColor clr = palette().color( QPalette::Button );
-			QImage dst = pixBackground->toImage();
-			KImageEffect::blend(clr, dst, menuOpacity);
-			*pixBlended = QPixmap::fromImage( dst );
+			clr.setAlphaF( menuOpacity );
+			p.fillRect( pixBlended->rect(), clr );
 		}
 	}
 }
