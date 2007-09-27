@@ -1,6 +1,8 @@
 
 project(kstyle-keramik)
 
+find_package(Blitz REQUIRED)
+
 add_definitions(-DQT_PLUGIN)
 
 include_directories( ${BLITZ_INCLUDES} )
