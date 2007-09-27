@@ -621,13 +621,13 @@ void KCMStyle::save()
 	QString tbIcon;
 	switch( comboToolbarIcons->currentIndex() )
 	{
+		case 0: tbIcon = "IconOnly"; break;
 		case 1: tbIcon = "TextOnly"; break;
-		case 2: tbIcon = "IconTextRight"; break;
-		case 3: tbIcon = "IconTextBottom"; break;
-		case 0:
-		default: tbIcon = "IconOnly"; break;
+		case 2: tbIcon = "TextBesideIcon"; break;
+		default: 
+		case 3: tbIcon = "TextUnderIcon"; break;
 	}
-	config.writeEntry( "IconText", tbIcon, KConfigBase::Normal|KConfigBase::Global);
+	config.writeEntry( "ToolButtonStyle", tbIcon, KConfigBase::Normal|KConfigBase::Global);
 	config.sync();
 
 	// Export the changes we made to qtrc, and update all qt-only
@@ -1061,12 +1061,12 @@ void KCMStyle::loadMisc( KConfig& config )
 	cbHoverButtons->setChecked(configGroup.readEntry("Highlighting", true));
 	cbTransparentToolbars->setChecked(configGroup.readEntry("TransparentMoving", true));
 
-	QString tbIcon = configGroup.readEntry("IconText", "IconOnly");
+	QString tbIcon = configGroup.readEntry("ToolButtonStyle", "TextUnderIcon");
 	if (tbIcon == "TextOnly")
 		comboToolbarIcons->setCurrentIndex(1);
-	else if (tbIcon == "IconTextRight")
+	else if (tbIcon == "TextBesideIcon")
 		comboToolbarIcons->setCurrentIndex(2);
-	else if (tbIcon == "IconTextBottom")
+	else if (tbIcon == "TextUnderIcon")
 		comboToolbarIcons->setCurrentIndex(3);
 	else
 		comboToolbarIcons->setCurrentIndex(0);
