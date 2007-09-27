@@ -409,7 +409,7 @@ void LockProcess::createSaverWindow()
 {
     Visual* visual = CopyFromParent;
     XSetWindowAttributes attrs;
-    int flags = 0;
+    int flags = CWOverrideRedirect;
 #ifdef HAVE_GLXCHOOSEVISUAL
     if( mOpenGLVisual )
     {
@@ -453,6 +453,8 @@ void LockProcess::createSaverWindow()
         }
     }
 #endif
+    attrs.override_redirect = 1;
+    hide();
     Window w = XCreateWindow( x11Info().display(), RootWindow( x11Info().display(), x11Info().screen()),
         x(), y(), width(), height(), 0, x11Info().depth(), InputOutput, visual, flags, &attrs );
 
@@ -479,7 +481,6 @@ void LockProcess::createSaverWindow()
 
     setCursor( Qt::BlankCursor );
     setGeometry(0, 0, mRootWidth, mRootHeight);
-    hide();
 
     kDebug(1204) << "Saver window Id: " << winId();
 }
