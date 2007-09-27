@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=File and Directory Browser Engine
+Name[el]=Μηχανή περιήγησης αρχείων και φακέλων
 Name[ko]=파일 및 디렉터리 탐색 엔진
 Name[nds]=Karn för den Datei- un Ornerkieker
 Name[pt]=Motor de Navegação em Ficheiros e Pastas
@@ -8,6 +9,7 @@ Name[pt_BR]=Mecanismo de Navegação em Arquivos e Pastas
 Name[sv]=Gränssnitt för fil- och katalogbläddring
 Name[zh_TW]=檔案與目錄瀏覽器引擎
 Comment=Info about files and directories for Plasmoids
+Comment[el]=Πληροφορίες για αρχεία και καταλόγους για πλασμοειδή
 Comment[ko]=Plasmoid를 위한 파일과 디렉터리 정보
 Comment[nds]=Infos över Dateien un Ornern för Plasmoiden
 Comment[pt]=Informação sobre os ficheiros e pastas nos Plasmóides
