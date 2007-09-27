@@ -43,7 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobalsettings.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kpixmapeffect.h>
+#include <qimageblitz.h>
 #include <QPixmap>
 #include <kseparator.h>
 #include <kstandardguiitem.h>
@@ -83,13 +83,12 @@ void KSMShutdownFeedback::paintEvent( QPaintEvent* )
     if ( m_currentY >= height() )
         return;
 
-    QPixmap pixmap;
-    pixmap = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, 0, width(), height() );
-    pixmap = KPixmapEffect::fade( pixmap, 0.4, Qt::black );
-    pixmap = KPixmapEffect::toGray( pixmap, true );
+    QImage image = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, 0, width(), height() ).toImage();
+    Blitz::intensity( image, -0.4 );
+    Blitz::grayscale( image );
 
     QPainter painter( this );
-    painter.drawPixmap( 0, 0, pixmap );
+    painter.drawImage( 0, 0, image );
 }
 
 
@@ -109,7 +108,7 @@ void KSMShutdownFeedback::slotPaintEffect()
 ////////////
 
 KSMPushButton::KSMPushButton( const QString &text, QWidget *parent )
- : QPushButton( parent ),  m_highlight( false ), m_text( text ), m_popupMenu(0), m_popupTimer(0), 
+ : QPushButton( parent ),  m_highlight( false ), m_text( text ), m_popupMenu(0), m_popupTimer(0),
    m_glowOpacity( 0.0 )
 {
     setAttribute(Qt::WA_Hover, true);
