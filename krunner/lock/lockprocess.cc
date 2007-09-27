@@ -102,7 +102,7 @@ static Atom   gXA_SCREENSAVER_VERSION;
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
     : QWidget(0L, Qt::X11BypassWindowManagerHint),
-      mOpenGLVisual(0),
+      mOpenGLVisual(false),
       child_saver(child),
       mParent(0),
       mUseBlankOnly(useBlankOnly),

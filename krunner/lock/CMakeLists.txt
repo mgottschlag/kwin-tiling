@@ -5,6 +5,7 @@ add_definitions (-DQT3_SUPPORT)
 ########### next target ###############
 
 check_library_exists(Xxf86misc XF86MiscSetGrabKeysState "" HAVE_XF86MISCSETGRABKEYSSTATE)
+check_library_exists(GL glXChooseVisual "" HAVE_GLXCHOOSEVISUAL)
 
 configure_file(config-krunner-lock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-krunner-lock.h)
 
