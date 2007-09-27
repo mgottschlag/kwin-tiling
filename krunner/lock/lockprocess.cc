@@ -408,9 +408,11 @@ void LockProcess::readSaver()
 void LockProcess::createSaverWindow()
 {
     Visual* visual = CopyFromParent;
+    int depth = CopyFromParent;
     XSetWindowAttributes attrs;
     int flags = CWOverrideRedirect;
 #ifdef HAVE_GLXCHOOSEVISUAL
+// this code is (partially) duplicated in kdebase/workspace/kcontrol/screensaver
     if( mOpenGLVisual )
     {
         static int attribs[][ 15 ] =
@@ -441,6 +443,7 @@ void LockProcess::createSaverWindow()
             if( XVisualInfo* info = glXChooseVisual( x11Info().display(), x11Info().screen(), attribs[ i ] ))
             {
                 visual = info->visual;
+                depth = info->depth;
                 static Colormap colormap = 0;
                 if( colormap != 0 )
                     XFreeColormap( x11Info().display(), colormap );
@@ -456,7 +459,7 @@ void LockProcess::createSaverWindow()
     attrs.override_redirect = 1;
     hide();
     Window w = XCreateWindow( x11Info().display(), RootWindow( x11Info().display(), x11Info().screen()),
-        x(), y(), width(), height(), 0, x11Info().depth(), InputOutput, visual, flags, &attrs );
+        x(), y(), width(), height(), 0, depth, InputOutput, visual, flags, &attrs );
 
     create( w );
 
