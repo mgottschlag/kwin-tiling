@@ -12,9 +12,10 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
     : QWidget( parent, wf ), colormap( None )
 {
 // use visual with support for double-buffering, for opengl
-// this code is (apparently) duplicated in kdebase/workspace/krunner/lock/
+// this code is (partially) duplicated in kdebase/workspace/krunner/lock/
 #ifdef HAVE_GLXCHOOSEVISUAL
     Visual* visual = CopyFromParent;
+    int depth = CopyFromParent;
     XSetWindowAttributes attrs;
     int flags = 0;
     if( true /*mOpenGLVisual*/ )
@@ -47,6 +48,7 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
             if( XVisualInfo* info = glXChooseVisual( x11Info().display(), x11Info().screen(), attribs[ i ] ))
             {
                 visual = info->visual;
+                depth = info->depth;
                 colormap = XCreateColormap( x11Info().display(), RootWindow( x11Info().display(), x11Info().screen()), visual, AllocNone );
                 attrs.colormap = colormap;
                 flags |= CWColormap;
@@ -55,8 +57,10 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
             }
         }
     }
-    Window w = XCreateWindow( x11Info().display(), parentWidget() ? parentWidget()->winId() : RootWindow( x11Info().display(), x11Info().screen()),
-        x(), y(), width(), height(), 0, x11Info().depth(), InputOutput, visual, flags, &attrs );
+    Window w = XCreateWindow( x11Info().display(), RootWindow( x11Info().display(), x11Info().screen()),
+        x(), y(), width(), height(), 0, depth, InputOutput, visual, flags, &attrs );
+    if( parentWidget())
+        XReparentWindow( x11Info().display(), w, parentWidget()->winId(), 0, 0 );
     create( w );
 #endif
 }
