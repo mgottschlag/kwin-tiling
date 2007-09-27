@@ -21,9 +21,11 @@
 #include "colorscm.h"
 
 #include <QtGui/QHeaderView>
+#include <QtGui/QStackedWidget>
 #include <QtDBus/QtDBus>
 
 #include <KColorButton>
+#include <KColorDialog>
 #include <KGenericFactory>
 #include <KGlobal>
 #include <KGlobalSettings>
@@ -57,20 +59,44 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 
 KColorCm::~KColorCm()
 {
+    m_config->rollback();
 }
 
 void KColorCm::createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index)
 {
-    QTableWidgetItem *label = new QTableWidgetItem(text);
-
     KColorButton *button = new KColorButton(this);
     button->setObjectName(QString::number(index));
     connect(button, SIGNAL(changed(const QColor &)), this, SLOT(colorChanged(const QColor &)));
     list.append(button);
 
-    colorTable->setItem(index, 0, label);
-    colorTable->setCellWidget(index, 1, button);
     m_colorKeys.insert(index, key);
+
+    KPushButton * variesButton = new KPushButton(NULL);
+    variesButton->setText(i18n("Varies"));
+    variesButton->setObjectName(QString::number(index));
+    connect(variesButton, SIGNAL(clicked()), this, SLOT(variesClicked()));
+    
+    QStackedWidget * widget = new QStackedWidget(this);
+    widget->addWidget(button);
+    widget->addWidget(variesButton);
+    m_stackedWidgets.append(widget);
+
+    QTableWidgetItem *label = new QTableWidgetItem(text);
+    colorTable->setItem(index, 0, label);
+    colorTable->setCellWidget(index, 1, widget);
+}
+
+void KColorCm::variesClicked()
+{
+    // find which button was changed
+    int row = sender()->objectName().toInt();
+
+    QColor color;
+    if(KColorDialog::getColor(color, this ) != QDialog::Rejected ) 
+    {
+        changeColor(row, color);
+        m_stackedWidgets[row]->setCurrentIndex(0);
+    }
 }
 
 void KColorCm::setupColorTable()
@@ -157,7 +183,7 @@ void KColorCm::updateColorTable()
     // subtract one here since the 0 item  is "Common Colors"
     int currentSet = colorSet->currentIndex() - 1;
 
-    if (currentSet < 0)
+    if (currentSet == -1)
     {
         // common colors is selected
         for (int i = KColorScheme::NormalBackground; i <= KColorScheme::AlternateBackground; ++i)
@@ -167,41 +193,49 @@ void KColorCm::updateColorTable()
             {
                 m_backgroundButtons[i]->blockSignals(true);
                 m_backgroundButtons[i]->setColor(backgroundColor);
+                m_stackedWidgets[i]->setCurrentIndex(0);
                 m_backgroundButtons[i]->blockSignals(false);
             }
             else
             {
                 // replace background button i with a KPushButton with text "Varies"
+                m_stackedWidgets[i]->setCurrentIndex(1);
             }
         }
 
         for (int i = KColorScheme::NormalText; i <= KColorScheme::PositiveText; ++i)
         {
+            int row = i + KColorScheme::AlternateBackground;
             QColor foregroundColor = commonForeground(KColorScheme::ForegroundRole(i));
             if (foregroundColor.isValid())
             {
                 m_foregroundButtons[i]->blockSignals(true);
                 m_foregroundButtons[i]->setColor(foregroundColor);
+                m_stackedWidgets[row]->setCurrentIndex(0);
                 m_foregroundButtons[i]->blockSignals(false);
             }
             else
             {
                 // replace foreground button i with a KPushButton with text "Varies"
+                m_stackedWidgets[row]->setCurrentIndex(1);
             }
         }
 
         for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
         {
+            int row = i + KColorScheme::AlternateBackground + KColorScheme::PositiveText;
             QColor decorationColor = commonDecoration(KColorScheme::DecorationRole(i));
             if (decorationColor.isValid())
             {
                 m_decorationButtons[i]->blockSignals(true);
                 m_decorationButtons[i]->setColor(decorationColor);
+                m_stackedWidgets[row]->setCurrentIndex(0);
                 m_decorationButtons[i]->blockSignals(false);
             }
             else
             {
                 // replace decoration button i with a KPushButton with text "Varies"
+                m_stackedWidgets[row]->setCurrentIndex(1);
             }
         }
     }
@@ -212,20 +246,25 @@ void KColorCm::updateColorTable()
         {
             m_backgroundButtons[i]->blockSignals(true);
             m_backgroundButtons[i]->setColor(m_colorSchemes[currentSet].background(KColorScheme::BackgroundRole(i)).color());
+            m_stackedWidgets[i]->setCurrentIndex(0);
             m_backgroundButtons[i]->blockSignals(false);
         }
 
         for (int i = KColorScheme::NormalText; i <= KColorScheme::PositiveText; ++i)
         {
+            int row = i + KColorScheme::AlternateBackground;
             m_foregroundButtons[i]->blockSignals(true);
             m_foregroundButtons[i]->setColor(m_colorSchemes[currentSet].foreground(KColorScheme::ForegroundRole(i)).color());
+            m_stackedWidgets[row]->setCurrentIndex(0);
             m_foregroundButtons[i]->blockSignals(false);
         }
 
         for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
         {
+            int row = i + KColorScheme::AlternateBackground + KColorScheme::PositiveText;
             m_decorationButtons[i]->blockSignals(true);
             m_decorationButtons[i]->setColor(m_colorSchemes[currentSet].decoration(KColorScheme::DecorationRole(i)).color());
+            m_stackedWidgets[row]->setCurrentIndex(0);
             m_decorationButtons[i]->blockSignals(false);
         }
     }
@@ -235,10 +274,15 @@ void KColorCm::colorChanged( const QColor &newColor )
 {
     // find which button was changed
     int row = sender()->objectName().toInt();
+    changeColor(row, newColor);
+}
+
+void KColorCm::changeColor(int row, const QColor &newColor)
+{
     // update the m_colorSchemes for the selected colorSet
     int currentSet = colorSet->currentIndex() - 1;
 
-    if (currentSet < 0)
+    if (currentSet == -1)
     {
         // common colors is selected
         KConfigGroup(m_config, "Colors:Window").writeEntry(m_colorKeys[row], newColor);
@@ -298,9 +342,9 @@ void KColorCm::on_shadeSortedColumn_stateChanged(int state)
 
 void KColorCm::load()
 {
-    // get the config again, in case we have changed the in-memory kconfig
-    m_config = KSharedConfig::openConfig("kdeglobals");
-
+    // rollback the config, in case we have changed the in-memory kconfig
+    m_config->rollback();
+    
     setupColorTable();
     contrastSlider->setValue(KGlobalSettings::contrast());
     shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ?

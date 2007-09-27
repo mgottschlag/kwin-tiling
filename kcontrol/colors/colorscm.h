@@ -23,6 +23,7 @@
 
 #include <KCModule>
 #include <KColorScheme>
+#include <KPushButton>
 
 #include "ui_colorsettings.h"
 
@@ -30,6 +31,7 @@ class QSlider;
 class QPushButton;
 class QCheckBox;
 class QPalette;
+class QStackedWidget;
 class KListWidget;
 
 /**
@@ -64,6 +66,9 @@ private slots:
     
     /** slot called when the shadeSortedColumn checkbox is checked/unchecked */
     void on_shadeSortedColumn_stateChanged(int state);
+    
+    /** slot called when any varies button is clicked */
+    void variesClicked();
 
 private:
 
@@ -76,6 +81,8 @@ private:
     /** helper to create color entries */
     void createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index);
     
+    void changeColor(int row, const QColor &newColor);
+    
     QColor commonBackground(KColorScheme::BackgroundRole index);
     
     QColor commonForeground(KColorScheme::ForegroundRole index);
@@ -87,6 +94,7 @@ private:
     QList<KColorButton *> m_backgroundButtons;
     QList<KColorButton *> m_foregroundButtons;
     QList<KColorButton *> m_decorationButtons;
+    QList<QStackedWidget *> m_stackedWidgets;
     QStringList m_colorKeys;
 
     QList<KColorScheme> m_colorSchemes;
