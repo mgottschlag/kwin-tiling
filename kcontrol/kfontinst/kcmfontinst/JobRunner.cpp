@@ -382,7 +382,7 @@ void CJobRunner::jobResult(KJob *job)
             }
             else
             {
-                KIO::SkipDialog dlg(this, true, job->errorString(), true);
+                KIO::SkipDialog dlg(this, true, job->errorString());
 
                 switch(dlg.exec())
                 {
