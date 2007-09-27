@@ -63,6 +63,7 @@ target_link_libraries( kdm
 	${KRB5_LIBRARIES}
 	${SOCKET_LIBRARIES}
 	${RESOLV_LIBRARIES}
+	${BLITZ_LIBRARIES}
 )
 if(UTIL_LIBRARIES)
 	target_link_libraries( kdm ${UTIL_LIBRARIES} )
