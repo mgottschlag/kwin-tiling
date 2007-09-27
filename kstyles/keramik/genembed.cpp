@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 #include <QtCore/QTextStream>
 #include <QtCore/QVector>
 
-#include <kimageeffect.h>
+#include <qimageblitz.h>
 
 #include <iostream>
 using namespace std;
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 	if (argc == 3 && (strcmp(argv[1], "--file")==0)) {
 		QFile f( argv[2] );
 		if (!f.open(QIODevice::ReadOnly))
-			return 0;	
+			return 0;
 		QByteArray ba = f.readLine();
 		while (!ba.isEmpty()) {
 			imageList += ba.trimmed();
@@ -185,7 +185,7 @@ int main(int argc, char** argv)
 
 
 		if (s.contains("button"))
-			KImageEffect::contrastHSV(input);
+			Blitz::contrast(input, true);
 
 		int fullID = assignID[id] + readJustID;//Subwidget..
 

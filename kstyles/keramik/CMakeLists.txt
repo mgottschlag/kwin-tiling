@@ -3,7 +3,7 @@ project(kstyle-keramik)
 
 add_definitions(-DQT_PLUGIN)
 
-include_directories( ${CMAKE_SOURCE_DIR}/kdefx )
+include_directories( ${BLITZ_INCLUDES} )
 
 ########### next target ###############
 
@@ -12,7 +12,7 @@ set(genembed_SRCS genembed.cpp )
 
 kde4_add_executable(genembed NOGUI RUN_UNINSTALLED ${genembed_SRCS})
 
-target_link_libraries(genembed  ${KDE4_KDECORE_LIBS} kdefx )
+target_link_libraries(genembed  ${KDE4_KDECORE_LIBS} ${BLITZ_LIBRARIES} )
 
 #pixmaps.keramik keramikrc.h: genembed
 #	pics=`ls $(srcdir)/pics/*.png 2>/dev/null` ;\
@@ -52,7 +52,7 @@ endif (WIN32)
 
 kde4_add_plugin(keramik ${keramik_PART_SRCS})
 
-target_link_libraries(keramik  ${KDE4_KDEUI_LIBS} kdefx )
+target_link_libraries(keramik  ${KDE4_KDEUI_LIBS} ${BLITZ_LIBRARIES} )
 
 install(TARGETS keramik  DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/styles/ )
 

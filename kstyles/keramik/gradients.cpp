@@ -27,7 +27,7 @@
 
 #include <QtGui/QImage>
 #include <QtCore/QCache>
-#include <kimageeffect.h>
+#include <qimageblitz.h>
 
 namespace
 {
@@ -109,7 +109,7 @@ void GradientPainter::renderGradient( QPainter* p, const QRect& r, const QColor&
 		
 		if (menu)
 		{
-			QImage gr = KImageEffect::gradient(QSize(4,height), c.light(93), ColorUtil::lighten(c,109), KImageEffect::VerticalGradient );
+			QImage gr = Blitz::gradient(QSize(4,height), c.light(93), ColorUtil::lighten(c,109), Blitz::VerticalGradient );
 			QPixmap grT(QPixmap::fromImage(gr));
 			QPainter p2(pix);
 			p2.drawTiledPixmap(0,0, 18, height, grT);
@@ -120,8 +120,8 @@ void GradientPainter::renderGradient( QPainter* p, const QRect& r, const QColor&
 			int h1 = 3 * height/4;
 			int h2 = height - h1;
 
-			QImage top = KImageEffect::gradient(QSize(4,h1),  ColorUtil::lighten(c,110), c.light(94), KImageEffect::VerticalGradient );
-			QImage bot = KImageEffect::gradient(QSize(4,h2), c.light(94), ColorUtil::lighten(c,109), KImageEffect::VerticalGradient );
+			QImage top = Blitz::gradient(QSize(4,h1),  ColorUtil::lighten(c,110), c.light(94), Blitz::VerticalGradient );
+			QImage bot = Blitz::gradient(QSize(4,h2), c.light(94), ColorUtil::lighten(c,109), Blitz::VerticalGradient );
 			
 			QPixmap topT(QPixmap::fromImage(top));
 			QPixmap botT(QPixmap::fromImage(bot));
@@ -141,8 +141,8 @@ void GradientPainter::renderGradient( QPainter* p, const QRect& r, const QColor&
 		int h1 = 3 * width/4;
 		int h2 = width - h1;
 		
-		QImage top = KImageEffect::gradient(QSize(h1,4), ColorUtil::lighten(c,110), c.light(94), KImageEffect::HorizontalGradient );
-		QImage bot = KImageEffect::gradient(QSize(h2,4), c.light(94), ColorUtil::lighten(c,109), KImageEffect::HorizontalGradient );
+		QImage top = Blitz::gradient(QSize(h1,4), ColorUtil::lighten(c,110), c.light(94), Blitz::HorizontalGradient );
+		QImage bot = Blitz::gradient(QSize(h2,4), c.light(94), ColorUtil::lighten(c,109), Blitz::HorizontalGradient );
 		
 		QPixmap topT(QPixmap::fromImage(top));
 		QPixmap botT(QPixmap::fromImage(bot));
