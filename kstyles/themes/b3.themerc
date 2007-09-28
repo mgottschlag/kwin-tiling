@@ -1,5 +1,6 @@
 [Misc]
 Name=B3/KDE
+Name[x-test]=xxB3/KDExx
 Comment=B3/Modification of B2
 Comment[be]=Стыль B3/Modification
 Comment[bg]=B3/Модификация на B2
@@ -8,7 +9,7 @@ Comment[el]=B3/Τροποποίηση του B2
 Comment[it]=B3/Modifica di B2
 Comment[ja]=B3 / B2 の改良版
 Comment[kk]=B3-өзгертілген B2
-Comment[km]=B3/ការកែប្រែ B2
+Comment[km]=B3/ការ​កែប្រែ B2
 Comment[ko]=B3/B2의 수정판
 Comment[nb]=B3/endring av B2
 Comment[nds]=B3-Variant vun B2
@@ -18,6 +19,7 @@ Comment[pt_BR]=B3/Modificação do B2
 Comment[sv]=B3/Modifierad B2
 Comment[th]=B3/รูปแบบที่ดัดแปลงมาจาก B2
 Comment[wa]=B3/Modifiadje do B2
+Comment[x-test]=xxB3/Modification of B2xx
 Comment[zh_TW]=B3/B2 的變種
 [KDE]
 WidgetStyle=B3

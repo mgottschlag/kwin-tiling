@@ -5,6 +5,7 @@ Name[fa]=گام KDE
 Name[kk]=KDE степ
 Name[km]=ជំហាន​របស់ KDE
 Name[sv]=KDE step
+Name[x-test]=xxKDE Stepxx
 Comment=Unthemed Next-like style
 Comment[be]=Стыль Next
 Comment[bg]=Стил "Next"
@@ -22,6 +23,7 @@ Comment[pt]=Estilo sem tema semelhante ao Next
 Comment[pt_BR]=Estilo semelhante ao Next sem temas
 Comment[sv]=Otemad Next-liknande stil
 Comment[th]=รูปแบบชุดตกแต่งแบบระบบปฏิบัติการ Next
+Comment[x-test]=xxUnthemed Next-like stylexx
 Comment[zh_TW]=類似 Next Step 的樣式
 [KDE]
 widgetStyle=kstepstyle.la

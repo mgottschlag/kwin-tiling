@@ -16,6 +16,7 @@ Name[pt]=Estilo Leve, 3a versão
 Name[pt_BR]=Estilo Light, terceira revisão
 Name[sv]=Lätt stil, tredje revisionen
 Name[th]=รูปแบบบางเบา รุ่นที่ 3
+Name[x-test]=xxLight Style, 3rd revisionxx
 Name[zh_TW]=Light 樣式，第三版
 Comment=Third revision of the simple and elegant 'Light' widget style.
 Comment[be]=Просты і элегантны стыль 3.
@@ -33,6 +34,7 @@ Comment[pt]=A terceira versão do estilo gráfico simples e elegante Leve.
 Comment[pt_BR]=Terceira revisão do estilo de widget simples e elegante 'Light'.
 Comment[sv]=Tredje revisionen av den enkla och eleganta komponentstilen 'Lätt'.
 Comment[th]=รุ่นที่สามของรูปแบบวิดเจ็ต 'บางเบา' ที่เรียบง่ายและมีระดับ
+Comment[x-test]=xxThird revision of the simple and elegant 'Light' widget style.xx
 Comment[zh_TW]=Light 樣式第三版，簡單而優雅
 [KDE]
 WidgetStyle=Light, 3rd revision

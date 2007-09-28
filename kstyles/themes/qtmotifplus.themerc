@@ -1,6 +1,7 @@
 [Misc]
 Name=Motif Plus
 Name[km]=Motif បន្ថែម
+Name[x-test]=xxMotif Plusxx
 Comment=Built-in enhanced Motif style
 Comment[be]=Убудаваны палепшаны стыль Motif
 Comment[bg]=Вграден подобрен стил Motif
@@ -8,7 +9,7 @@ Comment[de]=Eingebautes erweitertes Motif-Design
 Comment[el]=Ενσωματωμένο στυλ παρόμοιο με το Motif με βελτιώσεις
 Comment[ja]=ビルトイン Motif スタイル 改良版
 Comment[kk]=Құрамындағы жетілдірген Motif стилі
-Comment[km]=រចនាប័ទ្ម​ជាប់​​ជា​មួយ Motif ដែល​បាន​បង្កើន
+Comment[km]=រចនាប័ទ្ម​ជាប់​​ជាមួយ Motif ដែល​បាន​បង្កើន
 Comment[ko]=내장된 확장 Motif 스타일
 Comment[nb]=Innebygget forbedret Motif-stil
 Comment[nds]=Inbuut verbetert "Motif"-Stil
@@ -17,6 +18,7 @@ Comment[pt]=O estilo incorporado e melhorado do Motif
 Comment[pt_BR]=Estilo predefinido Motif melhorado
 Comment[sv]=Inbyggd utökad Motif-stil
 Comment[th]=รูปแบบแบบ Motif แบบปรับปรุงที่รวมมาให้
+Comment[x-test]=xxBuilt-in enhanced Motif stylexx
 Comment[zh_TW]=內建的 Motif 樣式加強版
 [KDE]
 WidgetStyle=MotifPlus

@@ -1,5 +1,6 @@
 [Misc]
 Name=SGI
+Name[x-test]=xxSGIxx
 Comment=Built-in SGI style
 Comment[be]=Убудаваны стыль SGI
 Comment[bg]=Вграден стил SGI
@@ -7,7 +8,7 @@ Comment[de]=Eingebautes SGI-Design
 Comment[el]=Ενσωματωμένο στυλ παρόμοιο με το SGI
 Comment[ja]=ビルトイン SGI スタイル
 Comment[kk]=Құрамындағы Platinum стилі
-Comment[km]=រចនាប័ទ្ម​ជាប់​ជា​មួយ SGI
+Comment[km]=រចនាប័ទ្ម​ជាប់​ជាមួយ SGI
 Comment[ko]=내장된 SGI 스타일
 Comment[nb]=Innebygget SGI-stil
 Comment[nds]=Inbuut Stil "SGI"
@@ -16,6 +17,7 @@ Comment[pt]=O estilo incorporado sem tema da SGI
 Comment[pt_BR]=Estilo predefinido SGI
 Comment[sv]=Inbyggd SGI-stil
 Comment[th]=รูปแบบแบบ SGI ที่รวมมาให้
+Comment[x-test]=xxBuilt-in SGI stylexx
 Comment[zh_TW]=內建的 SGI 樣式
 [KDE]
 WidgetStyle=SGI

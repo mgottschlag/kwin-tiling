@@ -1,6 +1,7 @@
 [Misc]
 Name=Motif
 Name[fa]=موتیف
+Name[x-test]=xxMotifxx
 Comment=Built-in unthemed Motif style
 Comment[be]=Убудаваны стыль Motif
 Comment[bg]=Вграден стил Motif
@@ -18,6 +19,7 @@ Comment[pt]=O estilo incorporado sem tema do Motif
 Comment[pt_BR]=Estilo predefinido Motif sem temas
 Comment[sv]=Inbyggd otemad Motif-stil
 Comment[th]=รูปแบบแบบ Motif ที่รวมมาให้
+Comment[x-test]=xxBuilt-in unthemed Motif stylexx
 Comment[zh_TW]=內建的 Motif 樣式
 [KDE]
 WidgetStyle=Motif
