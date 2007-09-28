@@ -870,14 +870,12 @@ chooseHost( int hid )
 #else
 				gSendStr( inet_ntoa( *(struct in_addr *)h->hostaddr.data ) );
 #endif
-				closeGreeter( FALSE );
 				sessionExit( EX_REMOTE );
 			} else {
 				gSendInt( D_ChooseHost );
 				gSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
 				gSendInt( td->connectionType );
 				gSendArr( h->hostaddr.length, (char *)h->hostaddr.data );
-				closeGreeter( FALSE );
 				goto bout;
 			}
 			break;
@@ -900,14 +898,12 @@ directChooseHost( const char *name )
 	if ((td->displayType & d_location) == dLocal) {
 		gSendInt( D_RemoteHost );
 		gSendStr( name );
-		closeGreeter( FALSE );
 		sessionExit( EX_REMOTE );
 	} else {
 		gSendInt( D_ChooseHost );
 		gSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
 		gSendInt( td->connectionType );
 		gSendArr( hosts->addrlen, (char *)hosts->addr );
-		closeGreeter( FALSE );
 		sessionExit( EX_NORMAL );
 	}
 }
