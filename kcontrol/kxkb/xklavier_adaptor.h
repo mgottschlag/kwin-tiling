@@ -41,6 +41,8 @@ public:
 	QHash<QString, QStringList*> getVariants();
 
 	QList<LayoutUnit> getGroupNames();
+	int filterEvents(XEvent* ev);
+	int startListening();
 	
 	static XKlavierAdaptor* getInstance(Display* dpy);
 		

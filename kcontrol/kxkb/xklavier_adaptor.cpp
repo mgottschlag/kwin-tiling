@@ -71,6 +71,7 @@ XKlavierAdaptor::XKlavierAdaptor(Display* dpy)
 		kError() << "XKlavier engine cannot be initialized!" << endl;
 		return; // throw
 	}
+	
 }
 
 QHash<QString, QString> XKlavierAdaptor::getModels() { return priv->m_models; }
@@ -113,7 +114,9 @@ static void processLayout(XklConfigRegistry*, const XklConfigItem* configItem, g
 	QString layout = configItem->name;
 	QString desc = configItem->description;
 
+#if VERBOSE == 1
 	kDebug() << "layout: " << layout << " - " << desc;
+#endif
 	((XKlavierAdaptorPriv*)userData)->m_layouts.insert(layout, desc);
 	((XKlavierAdaptorPriv*)userData)->m_variants.insert(layout, new QStringList());
 	
@@ -207,6 +210,13 @@ XKlavierAdaptor::getGroupNames()
 	list << lu;
 	kDebug() << "layout nm:" << lu.layout << "variant:" << lu.variant;
     }
+
+//        const char **gn = xkl_engine_get_groups_names(priv->engine);
+//	int gt = xkl_engine_get_num_groups(priv->engine);
+//	int i;
+//	for (i = 0; i < gt; i++)
+//	    kDebug() << "group:" << gn[i];
+
     return list;
 }
 
@@ -219,4 +229,16 @@ XKlavierAdaptor::getInstance(Display* dpy)
 	instance = new XKlavierAdaptor(dpy);
     }
     return instance;
+}
+
+int
+XKlavierAdaptor::startListening()
+{
+    return xkl_engine_start_listen(priv->engine, XKLL_TRACK_KEYBOARD_STATE);
+}
+
+int 
+XKlavierAdaptor::filterEvents(XEvent* ev)
+{
+    return xkl_engine_filter_events(priv->engine, ev);
 }
