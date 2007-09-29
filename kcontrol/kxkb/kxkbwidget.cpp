@@ -140,16 +140,11 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 KxkbSysTrayIcon::KxkbSysTrayIcon(int controlType):
     KxkbWidget(controlType)
 {
-	m_tray = new KSystemTrayIcon();
+	m_indicatorWidget = new KSystemTrayIcon();
 
 	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
-	connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), 
+	connect(m_indicatorWidget, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), 
 					this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
-}
-
-KxkbSysTrayIcon::~KxkbSysTrayIcon()
-{
-	delete m_tray;
 }
 
 void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
@@ -161,9 +156,9 @@ void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
 void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 {
 //	kDebug() << "setting icon to tray";
-	m_tray->setIcon( pixmap );
-// 	if( ! m_tray->isVisible() )
-		m_tray->show();
+	m_indicatorWidget->setIcon( pixmap );
+// 	if( ! m_indicatorWidget->isVisible() )
+		m_indicatorWidget->show();
 }
 
 // ----------------------------
@@ -177,28 +172,30 @@ void MyWidget::mousePressEvent ( QMouseEvent * event ) {
 }
 
 KxkbLabel::KxkbLabel(int controlType, QWidget* parent):
-		KxkbWidget(controlType)
+		KxkbWidget(controlType),
+		m_displayMode(ICON)
 {
-	m_tray = new MyWidget(parent); 
-	m_menu = new QMenu(m_tray);
+	m_indicatorWidget = new MyWidget(parent); 
+	m_menu = new QMenu(m_indicatorWidget);
 	
-	connect(m_tray, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
-	connect(m_tray, SIGNAL(rightClick()), this, SLOT(rightClick())); 
+	connect(m_indicatorWidget, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
+	connect(m_indicatorWidget, SIGNAL(rightClick()), this, SLOT(rightClick())); 
 	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
-	m_tray->resize( 24,24 ); 	//TODO: remove
+//	m_indicatorWidget->resize( 24,24 ); 	//TODO: remove
+//	m_indicatorWidget->setMinimumSize(24,24);
 	show();
 }
 
 void KxkbLabel::rightClick() {
 	QMenu* menu = contextMenu();
-	menu->exec(m_tray->mapToGlobal(QPoint(0, 0)));	// TODO: change to mouse pos
+	menu->exec(m_indicatorWidget->mapToGlobal(QPoint(0, 0)));	// TODO: change to mouse pos
 }
 
 void KxkbLabel::setPixmap(const QPixmap& pixmap)
 {
-//	kDebug() << "setting pixmap to label, width: " << pixmap.width();
-	m_tray->setIcon( pixmap );
-	if( ! m_tray->isVisible() )
-		m_tray->show();
+	kDebug() << "setting pixmap to label, " << pixmap.width() << "by" << pixmap.height();
+	m_indicatorWidget->setIcon( pixmap );
+	if( ! m_indicatorWidget->isVisible() )
+		m_indicatorWidget->show();
 }
 

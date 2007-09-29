@@ -83,19 +83,19 @@ class KxkbSysTrayIcon : public KxkbWidget
 
 public:
 	KxkbSysTrayIcon(int controlType=FULL);
-	~KxkbSysTrayIcon();
+	~KxkbSysTrayIcon() { delete m_indicatorWidget; }
 
 protected:
-	QMenu* contextMenu() { return m_tray->contextMenu(); }
-	void setToolTip(const QString& tip) { m_tray->setToolTip(tip); }
+	QMenu* contextMenu() { return m_indicatorWidget->contextMenu(); }
+	void setToolTip(const QString& tip) { m_indicatorWidget->setToolTip(tip); }
 	void setPixmap(const QPixmap& pixmap);
-	void setText(const QString& text) { }//m_tray->setText(text); }
+	void setText(const QString& text) { } //m_indicatorWidget->setText(text); }
 
 protected slots:
 	void trayActivated(QSystemTrayIcon::ActivationReason);
 
 private:
-    KSystemTrayIcon* m_tray;
+    KSystemTrayIcon* m_indicatorWidget;
 };
 
 /*
@@ -126,24 +126,26 @@ class KxkbLabel : public KxkbWidget
 	Q_OBJECT
 
 public:
+	enum { ICON = 1, TEXT = 2 };
 	KxkbLabel(int controlType=FULL, QWidget* parent=0);
-	virtual ~KxkbLabel() { } //delete m_tray; }
-	void show() { m_tray->show(); }
-	virtual void adjustSize() { m_tray->resize( 24,24/*m_pixmap.size()*/ );}
-	QWidget* widget() { return m_tray; }
+	virtual ~KxkbLabel() { delete m_indicatorWidget; }
+	void show() { m_indicatorWidget->show(); }
+//	virtual void adjustSize() { m_indicatorWidget->resize( 24,24/*m_pixmap.size()*/ );}
+	QWidget* widget() { return m_indicatorWidget; }
 
 protected:
 	QMenu* contextMenu() { return m_menu; }
-	void setToolTip(const QString& tip) { m_tray->setToolTip(tip); }
+	void setToolTip(const QString& tip) { if (m_displayMode==ICON) m_indicatorWidget->setToolTip(tip); }
 	void setPixmap(const QPixmap& pixmap);
-	void setText(const QString& text) { m_tray->setText(text); }	
+	void setText(const QString& text) { if (m_displayMode==TEXT) m_indicatorWidget->setText(text); }	
 	
 protected slots:
 //	void trayActivated(QSystemTrayIcon::ActivationReason);
 	void rightClick();
 
 private:
-	MyWidget* m_tray;
+	int m_displayMode;
+	MyWidget* m_indicatorWidget;
 	QMenu* m_menu;
 };
 
