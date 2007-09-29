@@ -230,17 +230,19 @@ unsigned int XKBExtension::getGroup() const
 bool XKBExtension::isGroupSwitchEvent(XEvent* event)
 {
     XkbEvent *xkbEvent = (XkbEvent*) event;
-
-    return xkbEvent->any.xkb_type == XkbStateNotify;
+#define GROUP_CHANGE_MASK \
+    ( XkbGroupStateMask | XkbGroupBaseMask | XkbGroupLatchMask | XkbGroupLockMask )
+														  
+    return xkbEvent->any.xkb_type == XkbStateNotify && xkbEvent->state.changed & GROUP_CHANGE_MASK;
 }
 
 bool XKBExtension::isLayoutSwitchEvent(XEvent* event)
 {
     XkbEvent *xkbEvent = (XkbEvent*) event;
 
-    return ( (xkbEvent->any.xkb_type == XkbMapNotify) && (xkbEvent->map.changed & XkbKeySymsMask) )
-    	  || ( (xkbEvent->any.xkb_type == XkbNamesNotify) && (xkbEvent->names.changed & XkbGroupNamesMask) )
-    	  || (xkbEvent->any.xkb_type == XkbNewKeyboardNotify);
+    return /*( (xkbEvent->any.xkb_type == XkbMapNotify) && (xkbEvent->map.changed & XkbKeySymsMask) )
+    	  || ( (xkbEvent->any.xkb_type == XkbNamesNotify) && (xkbEvent->names.changed & XkbGroupNamesMask) || )*/
+    	   (xkbEvent->any.xkb_type == XkbNewKeyboardNotify);
 }
 
 
