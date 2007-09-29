@@ -28,22 +28,18 @@ DESCRIPTION
 
 
 
-#include <QHash>
-#include <QQueue>
-
 #include <kuniqueapplication.h>
 
 #include "kxkbcore.h"
 
 class LayoutUnit;
-/* This is the main Kxkb class responsible for reading options
-    and switching layouts
-*/
 
+/**
+    This class is used when calling kxkb as a standalone app
+*/
 class KXKBApp : public KUniqueApplication
 {
     Q_OBJECT
-//     K_DCOP
 
 public:
 	explicit KXKBApp(bool allowStyles=true, bool GUIenabled=true);
@@ -52,15 +48,13 @@ public:
 	virtual int newInstance();
 
 	bool setLayout(const LayoutUnit& layoutUnit, int group=-1);
-// k_dcop:
+// External API:
 public slots:
-// 	bool setLayout(const QString& layoutPair);
-	QString getCurrentLayout() { return "TODO"; } //m_kxkbCore->getCurrentLayout(); }
- 	QStringList getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
+ 	bool setLayout(const QString& layoutPair) { return m_kxkbCore->setLayout(layoutPair); }
+	QString getCurrentLayout() { return m_kxkbCore->getCurrentLayout(); }
+	QStringList getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
 
 protected slots:
-//     void windowChanged(WId winId);
-
     void slotSettingsChanged(int category);
 
 protected:

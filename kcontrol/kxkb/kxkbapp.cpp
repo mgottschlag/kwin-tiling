@@ -25,17 +25,10 @@ DESCRIPTION
 */
 #include <assert.h>
 
-#include <QRegExp>
-#include <QDesktopWidget>
-
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kglobal.h>
-#include <kaction.h>
-#include <kmenu.h>
-#include <kdebug.h>
-#include <kconfig.h>
 
 #include "kxkb_adaptor.h"
 
@@ -77,25 +70,6 @@ void KXKBApp::layoutApply()
 {
 //	return m_kxkbCore->layoutApply();
 }
-
-// kdcop
-// bool KXKBApp::setLayout(const QString& layoutPair)
-// {
-// 	return m_kxkbCore->setLayout(layoutPair);
-// }
-
-
-// Activates the keyboard layout specified by 'layoutUnit'
-// bool KXKBApp::setLayout(const LayoutUnit& layoutUnit, int group)
-// {
-// 	return m_kxkbCore->setLayout(layoutUnit, group);
-// }
-
-// // TODO: we also have to handle deleted windows
-// void KXKBApp::windowChanged(WId winId)
-// {
-// //	return m_kxkbCore->windowChanged(winId);
-// }
 
 
 void KXKBApp::slotSettingsChanged(int category)
