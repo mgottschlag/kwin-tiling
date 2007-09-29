@@ -66,8 +66,6 @@ void XkbRules::loadNewRules(bool layoutsOnly)
 	  m_options = xklAdaptor->getOptions();
 	  m_varLists = xklAdaptor->getVariants();
 	}
-    kDebug() << "test -- test";	
-	xklAdaptor->getGroupNames();
 }
 
 #else

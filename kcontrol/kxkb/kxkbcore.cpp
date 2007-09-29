@@ -91,15 +91,13 @@ KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
 
 	KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
 
-    // keep in sync with kcmlayout.cpp
-//    keys = new KActionCollection(this);
-//    KActionCollection* actionCollection = keys;
-//    QAction* a = 0L;
-    //TODO:
+  // TODO: keyboard bindings
+    //globalKeys = KGlobalAccel::self();
+    //KActionCollection* actionCollection = collection;
+    //QAction* a = 0L;
 
-//#include "kxkbbindings.cpp"
-//    KGlobalAccel::self()->readSettings();
-
+//	#include "kxkbbindings.cpp"
+    //keys->readSettings();
     //keys->updateConnections();
 
     m_layoutOwnerMap = new LayoutMap(m_kxkbConfig);
@@ -248,16 +246,16 @@ void KxkbCore::layoutApply()
     setLayout(m_currentLayout);
 }
 
-// // kdcop
-// bool KxkbCore::setLayout(int layout)
-// {
-// 	const LayoutUnit layoutUnitKey(layoutPair);
-// 	if( kxkbConfig.m_layouts.contains(layoutUnitKey) ) {
-// 		int ind = kxkbConfig.m_layouts.indexOf(layoutUnitKey);
-// 		return setLayout( kxkbConfig.m_layouts[ind] );
-// 	}
-// 	return false;
-// }
+// DBUS
+bool KxkbCore::setLayout(const QString& layoutPair)
+{
+ 	const LayoutUnit layoutUnitKey(layoutPair);
+ 	if( m_kxkbConfig.m_layouts.contains(layoutUnitKey) ) {
+ 		int ind = m_kxkbConfig.m_layouts.indexOf(layoutUnitKey);
+ 		return setLayout( ind );
+ 	}
+ 	return false;
+}
 
 
 // Activates the keyboard layout specified by 'layoutUnit'
@@ -391,9 +389,10 @@ bool KxkbCore::x11EventFilter ( XEvent * event )
       // layout changed
 #ifdef HAVE_XKLAVIER
 	  QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
-	  if( lus.count() > 0 )
+	  if( lus.count() > 0 ) {
 		m_kxkbConfig.setConfiguredLayouts(lus);
-		// TODO: update menu
+		initTray();
+	  }
 	  else
 	    kDebug() << "error updating layout map"; //TODO set error
 #endif

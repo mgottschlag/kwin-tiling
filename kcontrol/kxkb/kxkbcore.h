@@ -58,10 +58,10 @@ public:
 	bool setLayout(int layout);
 
 	bool x11EventFilter ( XEvent * event );
-// k_dcop:
+// DBUS:
  public slots:
-// 	bool setLayout(const QString& layoutPair);
-// 	QString getCurrentLayout() { return m_kxkbConfig.m_layouts[m_currentLayout].toPair(); }
+ 	bool setLayout(const QString& layoutPair);
+ 	QString getCurrentLayout() { return m_kxkbConfig.m_layouts[m_currentLayout].toPair(); }
  	QStringList getLayoutsList() { return m_kxkbConfig.getLayoutStringList(); }
 
 protected slots:
