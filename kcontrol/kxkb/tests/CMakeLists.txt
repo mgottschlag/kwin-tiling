@@ -51,3 +51,24 @@ link_directories(lib)
 # ########### install files ###############
 # 
 # install(FILES ../kxkb.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets)
+
+
+########### KXKB part test ###############
+
+project(kxkb_part_test)
+
+find_package(KDE4 REQUIRED)
+
+include_directories( ${KDE4_INCLUDES} )
+
+set(mySources kxkb_part_test.cpp kxkb_part_test_v.cpp)
+
+#kde4_automoc( ${mySources} )
+
+kde4_add_executable(kxkb_part_test ${mySources})
+
+target_link_libraries(kxkb_part_test ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS} )
+
+#install(TARGETS ksimple DESTINATION bin)
+#install(FILES kfoo.desktop DESTINATION ${XDG_APPS_DIR})
+

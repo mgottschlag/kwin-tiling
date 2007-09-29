@@ -1,4 +1,5 @@
-add_subdirectory( pics ) 
+add_subdirectory( pics )
+add_subdirectory( kcmmisc )
 #add_subdirectory( tests ) 
 KDE4_NO_ENABLE_FINAL(kxkb)
 add_definitions (-DQT3_SUPPORT)
@@ -40,10 +41,34 @@ set(kxkb_COMMON_SRCS
   ${XKB_SUPPORT_SRC}
 )
 
+########### KCM ###############
+
+set(kcm_keyboard_layout_PART_SRCS 
+  kcmlayout.cpp
+  ${kxkb_COMMON_SRCS}
+)
+
+
+kde4_add_ui_files(kcm_keyboard_layout_PART_SRCS kcmlayoutwidget.ui )
+
+kde4_add_plugin(kcm_keyboard_layout ${kcm_keyboard_layout_PART_SRCS})
+
+
+target_link_libraries(kcm_keyboard_layout
+    ${KDE4_KIO_LIBS} xkbfile ${QT_QT3SUPPORT_LIBRARY}
+    ${XKB_SUPPORT_LIB}
+)
+if(X11_XTest_FOUND)
+  target_link_libraries(kcm_keyboard_layout ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
+
+install(TARGETS kcm_keyboard_layout DESTINATION ${PLUGIN_INSTALL_DIR} )
+
+install( FILES keyboard_layout.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
+
 ########### KXKB kdeinit ###############
 
-set(kxkb_KDEINIT_SRCS 
-	${kxkb_COMMON_SRCS}
+set(kxkb_KDEINIT_SRCS ${kxkb_COMMON_SRCS}
   kxkbcore.cpp
   kxkbapp.cpp
   kxkbwidget.cpp
@@ -59,30 +84,6 @@ install(TARGETS kdeinit_kxkb  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kxkb kdeinit_kxkb )
 install(TARGETS kxkb DESTINATION ${BIN_INSTALL_DIR})
-
-########### KCM ###############
-
-set(kcm_keyboard_PART_SRCS 
-  kcmlayout.cpp
-  kcmmisc.cpp
-  ${kxkb_COMMON_SRCS}
-)
-
-
-kde4_add_ui_files(kcm_keyboard_PART_SRCS kcmlayoutwidget.ui kcmmiscwidget.ui )
-
-kde4_add_plugin(kcm_keyboard ${kcm_keyboard_PART_SRCS})
-
-
-target_link_libraries(kcm_keyboard
-    ${KDE4_KIO_LIBS} xkbfile ${QT_QT3SUPPORT_LIBRARY}
-    ${XKB_SUPPORT_LIB}
-)
-if(X11_XTest_FOUND)
-  target_link_libraries(kcm_keyboard ${X11_XTest_LIB})
-endif(X11_XTest_FOUND)
-
-install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### KXKB Applet ###############
@@ -110,9 +111,33 @@ install(TARGETS kxkb_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install(FILES kxkb.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets)
 endif(BUILD_KICKER)
 
+
+########### KXKB KPart ###############
+
+set(kxkb_part_PART_SRCS
+	kxkb_part.cpp
+	kxkbwidget.cpp
+	kxkbcore.cpp
+	${kxkb_COMMON_SRCS})
+
+
+kde4_add_plugin(kxkb_part ${kxkb_part_PART_SRCS})
+
+target_link_libraries(kxkb_part ${KDE4_KPARTS_LIBS} 
+    ${KDE4_KIO_LIBS} xkbfile
+    ${XKB_SUPPORT_LIB}
+)
+if(X11_XTest_FOUND)
+  target_link_libraries(kxkb_part ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
+
+install( TARGETS kxkb_part DESTINATION ${PLUGIN_INSTALL_DIR} )
+install( FILES kxkb_part.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
+#install( FILES kxkb_part.rc DESTINATION  ${DATA_INSTALL_DIR}/kxkb_part )
+
+
 ########### install files ###############
 
-install( FILES keyboard.desktop keyboard_layout.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
+install( FILES keyboard_layout.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
-

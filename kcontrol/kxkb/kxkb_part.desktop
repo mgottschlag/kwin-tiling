@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Keyboard Layout Switcher
+Icon=preferences-desktop-keyboard-layout
+ServiceTypes=KParts/Part
+X-KDE-Library=kxkb_part
