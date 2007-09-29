@@ -44,6 +44,8 @@ class KxkbWidget : public QObject
  	Q_OBJECT
 			
 public:
+	enum { INDICATOR_ONLY=1, NO_MENU = 2, LAYOUTS_ONLY = 3, FULL=4 };
+
 	enum { START_MENU_ID = 100, CONFIG_MENU_ID = 130, HELP_MENU_ID = 131 };
 
     void initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules& rule);
@@ -57,15 +59,16 @@ signals:
 	void iconToggled();
 
 protected:
-	KxkbWidget();
+	KxkbWidget(int controlType = FULL);
 	virtual QMenu* contextMenu() = 0;
 	virtual void setToolTip(const QString& tip) = 0;
 	virtual void setPixmap(const QPixmap& pixmap) = 0;
 	virtual void setText(const QString& text) = 0;
 
 private:
+	int m_controlType;
 	bool m_showFlag;
-    QMap<QString, QString> m_descriptionMap;
+	QMap<QString, QString> m_descriptionMap;
 	QList<QAction*> m_actions;
 	QAction* m_configSeparator;
 };
@@ -76,7 +79,7 @@ class KxkbSysTrayIcon : public KxkbWidget
 	Q_OBJECT
 
 public:
-	KxkbSysTrayIcon();
+	KxkbSysTrayIcon(int controlType=FULL);
 	~KxkbSysTrayIcon();
 
 protected:
@@ -110,10 +113,11 @@ class KxkbLabel : public KxkbWidget
 	Q_OBJECT
 
 public:
-	KxkbLabel(QWidget* parent=0);
+	KxkbLabel(int controlType=FULL, QWidget* parent=0);
 	~KxkbLabel() { } //delete m_tray; }
 	void show() { m_tray->show(); }
     virtual void adjustSize() { m_tray->resize( 24,24/*m_pixmap.size()*/ );}
+    QWidget* widget() { return m_tray; }
 
 protected:
 	QMenu* contextMenu() { return m_menu; }

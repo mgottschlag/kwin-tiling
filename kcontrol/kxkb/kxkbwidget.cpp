@@ -35,8 +35,9 @@
 #include "kxkbwidget.moc"
 
 
-KxkbWidget::KxkbWidget():
-	m_configSeparator(NULL)
+KxkbWidget::KxkbWidget(int controlType):
+	m_configSeparator(NULL),
+	m_controlType(controlType)
 {
 }
 
@@ -60,7 +61,10 @@ void KxkbWidget::setError(const QString& layoutInfo)
 
 void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules& rules)
 {
-	QMenu* menu = contextMenu();
+    if( m_controlType <= NO_MENU )
+	return;
+
+    QMenu* menu = contextMenu();
 
     m_descriptionMap.clear();
 
@@ -93,13 +97,15 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 		m_actions.append(action);
 		m_descriptionMap.insert((*it).toPair(), fullName);
 
+	    kDebug() << "added" << (*it).toPair() << "to context menu";
+
 		cnt++;
     }
 	menu->insertActions(m_configSeparator, m_actions);
 
 	// if show config, if show help
 //	if( menu->indexOf(CONFIG_MENU_ID) == -1 ) {
-	if( m_configSeparator == NULL ) { // first call
+	if( m_configSeparator == NULL && m_controlType > LAYOUTS_ONLY ) { // first call
 		m_configSeparator = menu->addSeparator();
 
 		QAction* configAction = new QAction(SmallIcon("configure"), i18n("Configure..."), menu);
@@ -111,6 +117,8 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 		helpAction->setData(HELP_MENU_ID);
 		menu->addAction(helpAction);
 	}
+
+//	menu->update();
 
 /*    if( index != -1 ) { //not first start
 		menu->addSeparator();
@@ -124,7 +132,8 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 // ----------------------------
 // QSysTrayIcon implementation
 
-KxkbSysTrayIcon::KxkbSysTrayIcon()
+KxkbSysTrayIcon::KxkbSysTrayIcon(int controlType):
+    KxkbWidget(controlType)
 {
 	m_tray = new KSystemTrayIcon();
 
@@ -146,7 +155,7 @@ void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
 
 void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 {
-	kDebug() << "setting icon to tray";
+//	kDebug() << "setting icon to tray";
 	m_tray->setIcon( pixmap );
 // 	if( ! m_tray->isVisible() )
 		m_tray->show();
@@ -163,8 +172,8 @@ void MyLineEdit::mousePressEvent ( QMouseEvent * event ) {
 	}
 }
 
-KxkbLabel::KxkbLabel(QWidget* parent):
-		KxkbWidget()
+KxkbLabel::KxkbLabel(int controlType, QWidget* parent):
+		KxkbWidget(controlType)
 {
 	m_tray = new MyLineEdit(parent); 
 	m_menu = new QMenu(m_tray); 
