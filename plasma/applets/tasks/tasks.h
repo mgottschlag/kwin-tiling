@@ -1,20 +1,20 @@
 /*
     Copyright (C) 2007 Robert Knight <robertknight@gmail.com> 
-                                                                          
-    This program is free software; you can redistribute it and/or modify  
-    it under the terms of the GNU General Public License as published by  
-    the Free Software Foundation; either version 2 of the License, or     
-    (at your option) any later version.                                   
-                                                                          
-    This program is distributed in the hope that it will be useful,       
-    but WITHOUT ANY WARRANTY; without even the implied warranty of        
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         
-    GNU General Public License for more details.                          
-                                                                          
-    You should have received a copy of the GNU General Public License     
-    along with this program; if not, write to the                         
-    Free Software Foundation, Inc.,                                       
-    51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the
+    Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .
  */
 
 #ifndef TASKS_H
@@ -47,15 +47,15 @@ class Tasks : public Plasma::Applet
 {
     Q_OBJECT
 public:
-        /** 
+        /**
          * Constructs a new tasks applet
          * With the specified parent.
          */
-        Tasks(QObject *parent , const QVariantList &args = QVariantList());
+        Tasks(QObject *parent, const QVariantList &args = QVariantList());
         ~Tasks();
 
-        
-        /** 
+
+        /**
          * Sets the strategy used to automatically group tasks
          * together.
          *
@@ -91,8 +91,8 @@ private:
         // appears 
         void registerStartingTasks();
 
-        void addItemToRootGroup( AbstractTaskItem* item );
-        void removeItemFromRootGroup( AbstractTaskItem* item );
+        void addItemToRootGroup(AbstractTaskItem* item);
+        void removeItemFromRootGroup(AbstractTaskItem* item);
 
         TaskGroupItem* _rootTaskGroup;
         AbstractGroupingStrategy* _strategy;
@@ -102,9 +102,9 @@ private:
 };
 
 
-/** 
+/**
  * A graphical representation of a task, consisting of an icon
- * and a caption. 
+ * and a caption.
  *
  * AbstractTaskItem should be sub-classed to provide a task item
  * which sets the text, icon, state flags and other properties
@@ -117,26 +117,26 @@ private:
  * setText() and setIcon() methods.  They can also set flags
  * to indicate the task's state using setTaskFlags().
  */
-class AbstractTaskItem : public Plasma::Widget 
+class AbstractTaskItem : public Plasma::Widget
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     virtual ~AbstractTaskItem();
 
     /** Sets the text for this task item. */
-    void setText(const QString& text);
+    void setText(const QString &text);
 
     /** Sets the icon for this task item. */
-    void setIcon(const QIcon& icon);
+    void setIcon(const QIcon &icon);
 
-    /** 
+    /**
      * This enum describes the generic flags which are currently 
      * set by the task.
      */
     enum TaskFlag
     {
-        /** 
+        /**
          * This flag is set by the task to indicate that it wants
          * the user's attention.
          */
@@ -146,7 +146,7 @@ public:
          */
         TaskHasFocus       = 2
     };
-    Q_DECLARE_FLAGS(TaskFlags,TaskFlag)
+    Q_DECLARE_FLAGS(TaskFlags, TaskFlag)
 
     /** Sets the task flags for this item. */
     void setTaskFlags(TaskFlags flags);
@@ -192,27 +192,35 @@ public:
 
 protected:
     /** Constructs a new task item. */
-    AbstractTaskItem(QGraphicsItem* parent,QObject *parentObject);
+    AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject);
 
     /** Sub-classes should call this method when the task closes. */
     void finished();
 
 
     // reimplemented
-    virtual void hoverEnterEvent( QGraphicsSceneHoverEvent* event );
-    virtual void hoverLeaveEvent( QGraphicsSceneHoverEvent* event );
-    virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );
-    virtual void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual void paint(QPainter *painter,
+                       const QStyleOptionGraphicsItem *option,
+                       QWidget *widget);
 
     /** TODO: Document me. */
-   QSize preferredIconSize() const { return QSize(MinTaskIconSize,MinTaskIconSize); }
+   QSize preferredIconSize() const {
+       return QSize(MinTaskIconSize, MinTaskIconSize);
+   }
 
 protected:
     /** Draws the background for the task item. */
-    virtual void drawBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    virtual void drawBackground(QPainter *painter,
+                                const QStyleOptionGraphicsItem *option,
+                                QWidget *widget);
     /** Draws the icon and text which represent the task item. */
-    virtual void drawTask(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    virtual void drawTask(QPainter *painter,
+                          const QStyleOptionGraphicsItem *option,
+                          QWidget *widget);
 
 
 private slots:
@@ -225,15 +233,15 @@ private:
     QRectF textRect() const;
 
     TaskFlags _flags;
-    
+
     QIcon _icon;
-    QString _text;    
+    QString _text;
 
     QTimeLine* _fadeTimer;
 
     QPointF _dragOffset;
     AbstractTaskItem* _previousDragTarget;
-   
+
     // minimum size (in pixels) of a task's icon
     static const int MinTaskIconSize = 48;
     // maximum size (in pixels) of a task's icon
@@ -246,19 +254,19 @@ private:
     static const int TaskItemVerticalMargin = 4;
 };
 
-/**     
+/**
  * A task item for a task which represents a window on the desktop.
  */
 class WindowTaskItem : public AbstractTaskItem 
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     /** Constructs a new representation for a window task. */
-    WindowTaskItem( QGraphicsItem* parent , QObject *parentObject );
+    WindowTaskItem(QGraphicsItem *parent, QObject *parentObject);
 
     /** Sets the window represented by this task. */
-    void setWindowTask( Task::TaskPtr task );
+    void setWindowTask(Task::TaskPtr task);
     /** Returns the window represented by this task. */
     Task::TaskPtr windowTask() const;
 
@@ -269,24 +277,23 @@ private slots:
     void updateTask();
 
 private:
-
     Task::TaskPtr _task;
 };
 
-/** 
+/**
  * A task item which represents a newly started task which does not yet have
  * a window visible on screen.
  *
- * Startup tasks are short-lived and disappear if 
+ * Startup tasks are short-lived and disappear if
  */
 class StartupTaskItem : public AbstractTaskItem
 {
 public:
     /** Constructs a new representation for a starting task. */
-    StartupTaskItem( QGraphicsItem* parent , QObject *parentObject );
+    StartupTaskItem(QGraphicsItem *parent, QObject *parentObject);
 
     /** Sets the starting task represented by this item. */
-    void setStartupTask( Startup::StartupPtr task );
+    void setStartupTask(Startup::StartupPtr task);
     /** Returns the starting task represented by this item. */
     Startup::StartupPtr startupTask() const;
 
@@ -298,48 +305,48 @@ private:
 };
 
 /** 
- * A graphics item which holds a group of tasks. 
+ * A graphics item which holds a group of tasks.
  * To add a task to a group, set the AbstractTaskItem's parent
  * to the TaskGroupItem instance.
  *
- * Task groups can also contain other task groups. 
+ * Task groups can also contain other task groups.
  */
 class TaskGroupItem : public AbstractTaskItem
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     /** Constructs a new task group with the specified parent. */
-    TaskGroupItem(QGraphicsItem* parent , QObject *parentObject);
+    TaskGroupItem(QGraphicsItem *parent, QObject *parentObject);
 
-    /** 
+    /**
      * Specifies whether this group may contain sub-groups.
      * Defaults to true.
      */
     void setAllowSubGroups(bool subGroups);
     bool allowSubGroups() const;
 
-    /** 
+    /**
      * Returns the group's tasks in the order in which they are laid out,
-     * top-to-bottom for vertical groups and left-to-right for horizontal 
+     * top-to-bottom for vertical groups and left-to-right for horizontal
      * groups.
      */
     QList<AbstractTaskItem*> tasks() const;
 
-    /** 
-     * Inserts a new task item into the group.  The task is 
+    /**
+     * Inserts a new task item into the group.  The task is
      * removed from its existing group (if any).
      *
      * @param item The task item to insert into the group
-     * @param index The position in which to insert the item.  
+     * @param index The position in which to insert the item.
      * If this is 0 the item will be the first in the group.
-     * If this is tasks().count() or -1 the item will be 
+     * If this is tasks().count() or -1 the item will be
      * the last in the group.
      */
-    void insertTask( AbstractTaskItem* item , int index = -1 );
+    void insertTask(AbstractTaskItem *item, int index = -1);
 
     /** Removes a task item from the group. */
-    void removeTask( AbstractTaskItem* item );
+    void removeTask(AbstractTaskItem *item);
 
     /** 
      * Reorders a task item within a group. 
@@ -347,7 +354,7 @@ public:
      * @param from The current position of the task to move
      * @param to The new position of the task to move 
      */
-    void reorderTasks( int from , int to );
+    void reorderTasks(int from, int to);
 
     /** 
      * The enum describes the available styles for the border
@@ -359,7 +366,7 @@ public:
         CaptionBorder
     };
     /** Sets the style of the border which surrounds the group. */
-    void setBorderStyle( BorderStyle style );
+    void setBorderStyle(BorderStyle style);
     /** Returns the style of the border which surrounds the group. */
     BorderStyle borderStyle() const;
 
@@ -367,22 +374,23 @@ public:
      * Sets the color of the group.  This is used to render 
      * the border and tint the background.
      */
-    void setColor(const QColor& color);
+    void setColor(const QColor &color);
 
     /** Returns the color of the group.  See setColor() */
     QColor color() const;
 
-    /** 
+    /**
      * Sets whether the task group is collapsed.
      * TODO: Document me
      */
-    void setCollapsed( bool collapsed );
+    void setCollapsed(bool collapsed);
     /** Returns whether the task group is collapsed. */
     bool collapsed() const;
 
     // reimplemented
-    virtual void paint(QPainter* painter,const QStyleOptionGraphicsItem* option,
-                       QWidget* widget);
+    virtual void paint(QPainter *painter,
+                       const QStyleOptionGraphicsItem *option,
+                       QWidget *widget);
 
     virtual void activate();
     virtual void close();
@@ -397,19 +405,24 @@ private:
                           // task underneath it and insert the 
                           // group at the event's position
     };
-    DropAction dropAction(const QPointF& pos) const;
+    DropAction dropAction(const QPointF &pos) const;
 
-    void drawBorder(QPainter* painter,const QStyleOptionGraphicsItem* option, const QRectF& area);
+    void drawBorder(QPainter *painter,
+                    const QStyleOptionGraphicsItem *option,
+                    const QRectF &area);
     qreal titleHeight() const;
-    static QFont titleFont() ;
+    static QFont titleFont();
 
     class TaskEntry
     {
     public:
-        TaskEntry(AbstractTaskItem* taskItem,const QRectF& taskArea = QRectF())
-        : task(taskItem) , rect(taskArea) {}
+        TaskEntry(AbstractTaskItem *taskItem,
+                  const QRectF &taskArea = QRectF())
+        : task(taskItem),
+          rect(taskArea)
+        {}
 
-        AbstractTaskItem* task;
+        AbstractTaskItem *task;
         QRectF rect;
     };
     QList<TaskEntry> _tasks;
@@ -418,7 +431,6 @@ private:
     DropAction _potentialDropAction;
     int _caretIndex;
     bool _allowSubGroups;
-    
 
     static const int CaretWidth = 5;
     static const int GroupBorderWidth = 16;
@@ -440,12 +452,12 @@ public:
     class GroupSuggestion
     {
     public:
-        /** 
+        /**
          * Constructs a new GroupSuggestion for @p tasks
          * with a suggested @p name
          */
-        GroupSuggestion(const QString& name , 
-                        const QSet<AbstractTaskItem*>& tasks);
+        GroupSuggestion(const QString &name,
+                        const QSet<AbstractTaskItem*> &tasks);
 
         /** A suggested name for the group. */
         QString name() const;
