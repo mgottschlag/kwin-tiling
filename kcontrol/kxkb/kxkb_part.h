@@ -24,13 +24,13 @@
 class QWidget;
 class QString;
 
-class KxkbPart : public KParts::ReadWritePart
+class KxkbPart : public KParts::Part
 {
   Q_OBJECT
  public:
   KxkbPart( QWidget* parentWidget,
                QObject* parent,
-               const QStringList& args = QStringList() );
+               const QList<QVariant>& args = QList<QVariant>() );
   virtual ~KxkbPart() {}
 
  protected slots:

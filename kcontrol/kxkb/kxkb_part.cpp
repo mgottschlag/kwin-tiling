@@ -16,11 +16,22 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <KPluginFactory>
+#include <KPluginLoader>
+
 #include "kxkb_part.h"
+
+K_PLUGIN_FACTORY(KxkbPartFactory, registerPlugin<KxkbPart>();)
+K_EXPORT_PLUGIN(KxkbPartFactory("kfontview"))
 
 KxkbPart::KxkbPart( QWidget* parentWidget,
                QObject* parent,
-               const QStringList& args )
-  : KParts::ReadWritePart(parent)
+               const QList<QVariant>& args )
+  : KParts::Part(parent)
+{
+}
+
+bool 
+KxkbPart::setLayout(const QString& layoutPair)
 {
 }
