@@ -45,13 +45,19 @@
 #include "kxkbconfig.h"
 #include "rules.h"
 #include "pixmap.h"
-#include "kcmmisc.h"
 #include "ui_kcmlayoutwidget.h"
 
 #include "kcmlayout.h"
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include "kcmlayout.moc"
+
+
+
+K_PLUGIN_FACTORY(KeyboardLayoutFactory,
+        registerPlugin<LayoutConfig>("keyboard_layout");
+        )
+K_EXPORT_PLUGIN(KeyboardLayoutFactory("kxkb"))
 
 
 static inline QString i18n(const QString& str) { return i18n( str.toLatin1().constData() ); }
@@ -114,10 +120,10 @@ static Q3ListViewItem* copyLVI(const Q3ListViewItem* src, Q3ListView* parent)
     return ret;
 }
 
-K_PLUGIN_FACTORY_DECLARATION(KeyboardConfigFactory)
+//K_PLUGIN_FACTORY_DECLARATION(KeyboardLayoutFactory)
 
 LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
-  : KCModule(KeyboardConfigFactory::componentData(), parent),
+  : KCModule(KeyboardLayoutFactory::componentData(), parent),
     m_rules(NULL)
 {
  // QVBoxLayout *main = new QVBoxLayout(this, 0, KDialog::spacingHint());
@@ -813,8 +819,6 @@ extern "C"
 {
 	KDE_EXPORT void kcminit_keyboard()
 	{
-		KeyboardConfig::init_keyboard();
-
 		KxkbConfig m_kxkbConfig;
 		m_kxkbConfig.load(KxkbConfig::LOAD_INIT_OPTIONS);
 

@@ -27,8 +27,6 @@ DESCRIPTION
 #include <stdlib.h>
 #include <assert.h>
 
-#include <QRegExp>
-#include <QImage>
 #include <QDesktopWidget>
 #include <QProcess>
 
@@ -38,10 +36,8 @@ DESCRIPTION
 #include <kglobalaccel.h>
 #include <klocale.h>
 #include <kwindowsystem.h>
-#include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 #include <kaction.h>
-#include <kmenu.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <ktoolinvocation.h>
@@ -89,8 +85,9 @@ KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
         ::exit(1);
     }
 
-	KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
-
+    KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
+    XKlavierAdaptor::getInstance(QX11Info::display())->startListening();
+	
   // TODO: keyboard bindings
     //globalKeys = KGlobalAccel::self();
     //KActionCollection* actionCollection = collection;
@@ -109,7 +106,6 @@ KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
 //     new KXKBAdaptor( this );
 //	if( !m_kxkbWidget )
 //	{
-//		m_kxkbWidget = new KxkbSysTrayIcon();
  		connect(m_kxkbWidget, SIGNAL(menuTriggered(QAction*)), this, SLOT(iconMenuTriggered(QAction*)));
 		connect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(iconToggled()));
 //	}
@@ -122,12 +118,12 @@ KxkbCore::~KxkbCore()
     delete m_kxkbWidget;
     delete m_rules;
     delete m_extension;
-	delete m_layoutOwnerMap;
+    delete m_layoutOwnerMap;
 }
 
 int KxkbCore::newInstance()
 {
-	m_extension->reset();
+    m_extension->reset();
 
     if( settingsRead() )
 		layoutApply();
@@ -147,6 +143,7 @@ bool KxkbCore::settingsRead()
     }
 
     if ( m_kxkbConfig.m_useKxkb == false ) {
+	kWarning() << "Kxkb is disabled, exiting...";
         emit quit(); //qApp->quit();
         return false;
     }
@@ -175,20 +172,12 @@ bool KxkbCore::settingsRead()
 	if( m_rules == NULL )
 		m_rules = new XkbRules(false);
 
-//	for(int ii=0; ii<(int)kxkbConfig.m_layouts.count(); ii++) {
-//		LayoutUnit& layoutUnit = kxkbConfig.m_layouts[ii];
-//		layoutUnit.defaultGroup = m_rules->getDefaultGroup(layoutUnit.layout, layoutUnit.includeGroup);
-//		kDebug() << "default group for " << layoutUnit.toPair() << " is " << layoutUnit.defaultGroup;
-//	}
-
 	m_currentLayout = m_kxkbConfig.getDefaultLayout();
 
 	if( m_kxkbConfig.m_layouts.count() == 1 ) {
 		const LayoutUnit& currentLayout = m_kxkbConfig.m_layouts[0];
 		QString layoutName = currentLayout.layout;
 		QString variantName = currentLayout.variant;
-// 		QString includeName = m_currentLayout.includeGroup;
-// 		int group = m_currentLayout.defaultGroup;
 
 /*		if( !m_extension->setLayout(kxkbConfig.m_model, layoutName, variantName, includeName, false)
 				   || !m_extension->setGroup( group ) ) {*/
@@ -198,6 +187,7 @@ bool KxkbCore::settingsRead()
 		}
 
 		if( m_kxkbConfig.m_showSingle == false ) {
+			kWarning() << "Kxkb is disabled for single layout, exiting...";
 			emit quit(); //qApp->quit();
 			return false;
 		}
@@ -209,7 +199,7 @@ bool KxkbCore::settingsRead()
 			LayoutUnit& layoutUnit = m_kxkbConfig.m_layouts[ii];
 			layouts += layoutUnit.layout;
 			variants += layoutUnit.variant;
-			if( ii < m_kxkbConfig.m_layouts.count() ) {
+			if( ii < m_kxkbConfig.m_layouts.count()-1 ) {
 				layouts += ',';
 				variants += ',';
 			}
@@ -231,12 +221,11 @@ bool KxkbCore::settingsRead()
 
 void KxkbCore::initTray()
 {
-//    kDebug() << "initing tray";
+    kDebug() << "initing tray";
 
-	m_kxkbWidget->setShowFlag(m_kxkbConfig.m_showFlag);
-	m_kxkbWidget->initLayoutList(m_kxkbConfig.m_layouts, *m_rules);
-	m_kxkbWidget->setCurrentLayout(m_kxkbConfig.m_layouts[m_currentLayout]);
-//  kDebug() << "inited tray";
+    m_kxkbWidget->setShowFlag(m_kxkbConfig.m_showFlag);
+    m_kxkbWidget->initLayoutList(m_kxkbConfig.m_layouts, *m_rules);
+    m_kxkbWidget->setCurrentLayout(m_kxkbConfig.m_layouts[m_currentLayout]);
 }
 
 // This function activates the keyboard layout specified by the
@@ -375,32 +364,51 @@ void KxkbCore::slotSettingsChanged(int category)
 
 bool KxkbCore::x11EventFilter ( XEvent * event )
 {
-  if( (event->type == m_extension->xkb_opcode) ) {
+    XKlavierAdaptor::getInstance(QX11Info::display())->filterEvents(event);
+
+  if( m_extension->isXkbEvent(event) ) {
+//    qApp->x11ProcessEvent ( event );
+
     if( XKBExtension::isGroupSwitchEvent(event) ) {
       // group changed
   	  int group = m_extension->getGroup();
 	  if( group != m_currentLayout ) {
-		kDebug() << " group ev: " << group;
+	    kDebug() << "got event: group chagned to " << group;
+	    if( group < m_kxkbConfig.m_layouts.count() ) {
 		updateIndicator(group, 1);
+	    }
+	    else {
+		kWarning() << "new group is out of my layouts list range";
+	    }
 	  }
     }
     else
 	if( XKBExtension::isLayoutSwitchEvent(event) ) {
       // layout changed
 #ifdef HAVE_XKLAVIER
+	  kDebug() << "got event: layouts chagned";
 	  QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
 	  if( lus.count() > 0 ) {
+	    if( lus != m_kxkbConfig.m_layouts ) {
 		m_kxkbConfig.setConfiguredLayouts(lus);
+		m_layoutOwnerMap->reset();
+		m_layoutOwnerMap->setCurrentWindow( X11Helper::UNKNOWN_WINDOW_ID ); //TODO
 		initTray();
+
+  		int group = m_extension->getGroup();
+		updateIndicator(group, 1);
+	    }
+	    else {
+		kDebug() << "no change in layouts - ignoring event";
+	    }
 	  }
 	  else
 	    kDebug() << "error updating layout map"; //TODO set error
 #endif
-
-  	  int group = m_extension->getGroup();
-	  updateIndicator(group, 1);
     }
-
+    else {
+	kDebug() << "other xkb event: ";// + ((XkbEvent*)event)->any.xkb_type;
+    }
   }
   return false;
 }

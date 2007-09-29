@@ -40,10 +40,6 @@ struct RulesInfo {
 	QHash<QString, XkbOptionGroup> optionGroups;
 };
 
-struct OldLayouts {
-	QStringList oldLayouts;
-	QStringList nonLatinLayouts;
-};
 
 class X11Helper
 {
@@ -54,7 +50,6 @@ public:
 
 	static QString getWindowClass(WId winId, Display* dpy);
 
-	static bool areSingleGroupsSupported() { return true; } // assume not ancient xorg
 #ifndef HAVE_XKLAVIER
 	/**
 	 * Tries to find X11 xkb config dir
@@ -63,7 +58,6 @@ public:
 	static const QString findXkbRulesFile(const QString &x11Dir, Display* dpy);
 	static QStringList* getVariants(const QString& layout, const QString& x11Dir);
 	static RulesInfo* loadRules(const QString& rulesFile, bool layoutsOnly=false);
-	static OldLayouts* loadOldLayouts(const QString& rulesFile);
 private:
 
 	static XkbOptionGroup createMissingGroup(const QString& groupName);
