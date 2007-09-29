@@ -112,7 +112,7 @@ class MyWidget : public QPushButton {
 	
     signals:
 	void leftClick();
-	void rightClick();
+	void rightClick(const QPoint& pos);
 	
     protected:
 	void mousePressEvent ( QMouseEvent * event );	
@@ -127,10 +127,10 @@ class KxkbLabel : public KxkbWidget
 
 public:
 	enum { ICON = 1, TEXT = 2 };
+
 	KxkbLabel(int controlType=FULL, QWidget* parent=0);
 	virtual ~KxkbLabel() { delete m_indicatorWidget; }
 	void show() { m_indicatorWidget->show(); }
-//	virtual void adjustSize() { m_indicatorWidget->resize( 24,24/*m_pixmap.size()*/ );}
 	QWidget* widget() { return m_indicatorWidget; }
 
 protected:
@@ -141,7 +141,7 @@ protected:
 	
 protected slots:
 //	void trayActivated(QSystemTrayIcon::ActivationReason);
-	void rightClick();
+	void rightClick(const QPoint& pos);
 
 private:
 	int m_displayMode;

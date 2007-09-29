@@ -36,8 +36,8 @@
 
 
 KxkbWidget::KxkbWidget(int controlType):
-	m_configSeparator(NULL),
-	m_controlType(controlType)
+	m_controlType(controlType),
+	m_configSeparator(NULL)
 {
 }
 
@@ -162,13 +162,12 @@ void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 }
 
 // ----------------------------
-// text-only applet widget (temporary workaround)
 
 void MyWidget::mousePressEvent ( QMouseEvent * event ) {
 	if (event->button() == Qt::LeftButton)
 		emit leftClick();
 	else
-		emit rightClick();
+		emit rightClick(event->pos());
 }
 
 KxkbLabel::KxkbLabel(int controlType, QWidget* parent):
@@ -179,23 +178,21 @@ KxkbLabel::KxkbLabel(int controlType, QWidget* parent):
 	m_menu = new QMenu(m_indicatorWidget);
 	
 	connect(m_indicatorWidget, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
-	connect(m_indicatorWidget, SIGNAL(rightClick()), this, SLOT(rightClick())); 
+	connect(m_indicatorWidget, SIGNAL(rightClick(const QPoint&)), this, SLOT(rightClick(const QPoint&))); 
 	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
-//	m_indicatorWidget->resize( 24,24 ); 	//TODO: remove
-//	m_indicatorWidget->setMinimumSize(24,24);
 	show();
 }
 
-void KxkbLabel::rightClick() {
+void KxkbLabel::rightClick(const QPoint& pos) {
 	QMenu* menu = contextMenu();
-	menu->exec(m_indicatorWidget->mapToGlobal(QPoint(0, 0)));	// TODO: change to mouse pos
+	menu->exec(m_indicatorWidget->mapToGlobal(pos));
 }
 
 void KxkbLabel::setPixmap(const QPixmap& pixmap)
 {
-	kDebug() << "setting pixmap to label, " << pixmap.width() << "by" << pixmap.height();
+	m_indicatorWidget->setIconSize(QSize(24,24));
 	m_indicatorWidget->setIcon( pixmap );
+
 	if( ! m_indicatorWidget->isVisible() )
 		m_indicatorWidget->show();
 }
-

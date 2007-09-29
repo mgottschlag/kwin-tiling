@@ -51,7 +51,7 @@ KxkbPart::KxkbPart( QWidget* parentWidget,
 bool 
 KxkbPart::setLayout(const QString& layoutPair)
 {
-    m_kxkbCore->setLayout(layoutPair);
+    return m_kxkbCore->setLayout(layoutPair);
 }
 
 QString 
