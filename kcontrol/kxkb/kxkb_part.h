@@ -23,6 +23,7 @@
 
 class QWidget;
 class QString;
+class KxkbCore;
 
 class KxkbPart : public KParts::Part
 {
@@ -35,7 +36,11 @@ class KxkbPart : public KParts::Part
 
  protected slots:
   bool setLayout(const QString& layoutPair);
+  QString getCurrentLayout();
+  QStringList getLayoutsList();
 
+ private:
+    KxkbCore* m_kxkbCore;
 };
 
 #endif

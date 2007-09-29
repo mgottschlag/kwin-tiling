@@ -20,6 +20,9 @@
 #include <KPluginLoader>
 
 #include "kxkb_part.h"
+#include "kxkbwidget.h"
+#include "kxkbcore.h"
+
 
 K_PLUGIN_FACTORY(KxkbPartFactory, registerPlugin<KxkbPart>();)
 K_EXPORT_PLUGIN(KxkbPartFactory("kfontview"))
@@ -29,9 +32,28 @@ KxkbPart::KxkbPart( QWidget* parentWidget,
                const QList<QVariant>& args )
   : KParts::Part(parent)
 {
+	int controlType = KxkbWidget::FULL;
+	if( args.count() > 0 && args[1].type() == QVariant::Int ) {	//TODO: replace with string?
+	    controlType = args[1].toInt();
+	    if( controlType <= 0 ) {
+		kError() << "Wrong type for KxkbPart control";
+		return;
+	    }
+	}
+
+	KxkbLabel* kxkbWidget = new KxkbLabel(controlType);
+	m_kxkbCore = new KxkbCore( kxkbWidget );
+	setWidget(kxkbWidget->widget());
 }
 
 bool 
 KxkbPart::setLayout(const QString& layoutPair)
 {
+    m_kxkbCore->setLayout(layoutPair);
 }
+
+QString 
+KxkbPart::getCurrentLayout() { return m_kxkbCore->getCurrentLayout(); }
+
+QStringList
+KxkbPart::getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
