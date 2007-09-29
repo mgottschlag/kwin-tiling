@@ -24,6 +24,7 @@
 
 // KDE
 #include <KDebug>
+#include <KWindowSystem>
 
 // Qt
 #include <QEvent>
@@ -52,6 +53,7 @@ SystemTrayWidget::SystemTrayWidget(QWidget *parent, Qt::WindowFlags f)
     QPalette newPalette = palette();
     newPalette.setBrush(QPalette::Window, Qt::black);
     setPalette(newPalette);
+    KWindowSystem::setState(winId(), NET::Sticky | NET::KeepAbove);
     init();
 }
 

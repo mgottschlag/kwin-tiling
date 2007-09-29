@@ -58,7 +58,7 @@ Qt::Orientations SystemTray::expandingDirections() const
 QVariant SystemTray::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
     if (change == ItemPositionHasChanged) {
-        m_systemTrayWidget->move(value.toPointF().toPoint());
+        m_systemTrayWidget->move(scenePos().toPoint());
     }
     return Plasma::Applet::itemChange(change, value);
 }
