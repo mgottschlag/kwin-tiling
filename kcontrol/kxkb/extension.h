@@ -41,9 +41,11 @@ public:
 	static bool isGroupSwitchEvent(XEvent* event);
 	static bool isLayoutSwitchEvent(XEvent* event);	
 
-    int xkb_opcode;
+	bool isXkbEvent(XEvent* event) { return event->type == xkb_opcode; }
 
 private:
+    int xkb_opcode;
+
     Display *m_dpy;
 /*	QString m_tempDir;
 	static QMap<QString, FILE*> fileCache;*/

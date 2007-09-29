@@ -240,8 +240,8 @@ bool XKBExtension::isLayoutSwitchEvent(XEvent* event)
 {
     XkbEvent *xkbEvent = (XkbEvent*) event;
 
-    return /*( (xkbEvent->any.xkb_type == XkbMapNotify) && (xkbEvent->map.changed & XkbKeySymsMask) )
-    	  || ( (xkbEvent->any.xkb_type == XkbNamesNotify) && (xkbEvent->names.changed & XkbGroupNamesMask) || )*/
+    return ( (xkbEvent->any.xkb_type == XkbMapNotify) && (xkbEvent->map.changed & XkbKeySymsMask) ) ||
+/*    	  || ( (xkbEvent->any.xkb_type == XkbNamesNotify) && (xkbEvent->names.changed & XkbGroupNamesMask) || )*/
     	   (xkbEvent->any.xkb_type == XkbNewKeyboardNotify);
 }
 
