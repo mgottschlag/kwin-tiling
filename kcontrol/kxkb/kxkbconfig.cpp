@@ -51,6 +51,7 @@ int KxkbConfig::getDefaultLayout()
 
 bool KxkbConfig::load(int loadMode)
 {
+    kDebug() << "Reading configuration";
     KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
 
 // Even if the layouts have been disabled we still want to set Xkb options
@@ -182,8 +183,8 @@ void KxkbConfig::updateDisplayNames()
 bool KxkbConfig::setConfiguredLayouts(QList<LayoutUnit> layoutUnits)
 {
   kDebug() << "resetting layouts to " << layoutUnits.count() << " active in X server" << endl;
-//  m_layouts = layoutUnits;
-//  updateDisplayNames();
+  m_layouts = layoutUnits;
+  updateDisplayNames();
   return true; //TODO ?
 }
 

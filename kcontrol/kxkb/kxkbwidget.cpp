@@ -61,8 +61,10 @@ void KxkbWidget::setError(const QString& layoutInfo)
 
 void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules& rules)
 {
-    if( m_controlType <= NO_MENU )
+    if( m_controlType <= NO_MENU ) {
+	kDebug() << "indicator with no menu requested";
 	return;
+    }
 
     QMenu* menu = contextMenu();
 
@@ -97,7 +99,7 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 		m_actions.append(action);
 		m_descriptionMap.insert((*it).toPair(), fullName);
 
-	    kDebug() << "added" << (*it).toPair() << "to context menu";
+//	    kDebug() << "added" << (*it).toPair() << "to context menu";
 
 		cnt++;
     }
@@ -116,6 +118,9 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 		QAction* helpAction = new QAction(SmallIcon("help-contents"), i18n("Help"), menu);
 		helpAction->setData(HELP_MENU_ID);
 		menu->addAction(helpAction);
+	}
+	else {
+	    kDebug() << "indicator with menu 'layouts only' requested";
 	}
 
 //	menu->update();
@@ -164,29 +169,29 @@ void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 // ----------------------------
 // text-only applet widget (temporary workaround)
 
-void MyLineEdit::mousePressEvent ( QMouseEvent * event ) {
+void MyWidget::mousePressEvent ( QMouseEvent * event ) {
 	if (event->button() == Qt::LeftButton)
 		emit leftClick();
-	else {
+	else
 		emit rightClick();
-	}
 }
 
 KxkbLabel::KxkbLabel(int controlType, QWidget* parent):
 		KxkbWidget(controlType)
 {
-	m_tray = new MyLineEdit(parent); 
-	m_menu = new QMenu(m_tray); 
+	m_tray = new MyWidget(parent); 
+	m_menu = new QMenu(m_tray);
+	
 	connect(m_tray, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
 	connect(m_tray, SIGNAL(rightClick()), this, SLOT(rightClick())); 
 	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
-	m_tray->resize( 24,24 ); 
+	m_tray->resize( 24,24 ); 	//TODO: remove
 	show();
 }
 
 void KxkbLabel::rightClick() {
 	QMenu* menu = contextMenu();
-	menu->exec(m_tray->mapToGlobal(QPoint(0, 0)));
+	menu->exec(m_tray->mapToGlobal(QPoint(0, 0)));	// TODO: change to mouse pos
 }
 
 void KxkbLabel::setPixmap(const QPixmap& pixmap)

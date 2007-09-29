@@ -23,7 +23,7 @@
 
 #include <QList>
 #include <QPixmap>
-#include <QLabel>
+#include <QPushButton>
 #include <QMenu>
 
 #include <ksystemtrayicon.h>
@@ -37,8 +37,8 @@ class QAction;
 
 /* This class is responsible for displaying flag/label for the layout,
     catching keyboard/mouse events and displaying menu when selected
+    This class is abstract and subclasses define how exactly UI will be shown
 */
-
 class KxkbWidget : public QObject
 {
  	Q_OBJECT
@@ -74,6 +74,9 @@ private:
 };
 
 
+/*
+    System tray icon to show layouts
+*/
 class KxkbSysTrayIcon : public KxkbWidget
 {
 	Q_OBJECT
@@ -95,43 +98,52 @@ private:
     KSystemTrayIcon* m_tray;
 };
 
-
-class MyLineEdit : public QLabel {
+/*
+    This is a wrapper around any widget which shows layout
+    to provide consistent leftClick and rightClick signals
+*/
+class MyWidget : public QPushButton {
 	Q_OBJECT
 
-	public:
-		MyLineEdit(QWidget* parent): QLabel(parent) {}
-	signals:
-		void leftClick();
-		void rightClick();
-protected:
+    public:
+	MyWidget(QWidget* parent): QPushButton(parent) {
+	    setFlat(true);
+	}
+	
+    signals:
+	void leftClick();
+	void rightClick();
+	
+    protected:
 	void mousePressEvent ( QMouseEvent * event );	
 };
 
+/*
+    Flexible widget to show layouts
+*/
 class KxkbLabel : public KxkbWidget
 {
 	Q_OBJECT
 
 public:
 	KxkbLabel(int controlType=FULL, QWidget* parent=0);
-	~KxkbLabel() { } //delete m_tray; }
+	virtual ~KxkbLabel() { } //delete m_tray; }
 	void show() { m_tray->show(); }
-    virtual void adjustSize() { m_tray->resize( 24,24/*m_pixmap.size()*/ );}
-    QWidget* widget() { return m_tray; }
+	virtual void adjustSize() { m_tray->resize( 24,24/*m_pixmap.size()*/ );}
+	QWidget* widget() { return m_tray; }
 
 protected:
 	QMenu* contextMenu() { return m_menu; }
 	void setToolTip(const QString& tip) { m_tray->setToolTip(tip); }
 	void setPixmap(const QPixmap& pixmap);
-	void setText(const QString& text) { m_tray->setText(text); }
-	
+	void setText(const QString& text) { m_tray->setText(text); }	
 	
 protected slots:
 //	void trayActivated(QSystemTrayIcon::ActivationReason);
 	void rightClick();
 
 private:
-    MyLineEdit* m_tray;
+	MyWidget* m_tray;
 	QMenu* m_menu;
 };
 

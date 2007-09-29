@@ -25,7 +25,7 @@
 
 
 K_PLUGIN_FACTORY(KxkbPartFactory, registerPlugin<KxkbPart>();)
-K_EXPORT_PLUGIN(KxkbPartFactory("kfontview"))
+K_EXPORT_PLUGIN(KxkbPartFactory("kxkb_part"))
 
 KxkbPart::KxkbPart( QWidget* parentWidget,
                QObject* parent,
@@ -33,8 +33,9 @@ KxkbPart::KxkbPart( QWidget* parentWidget,
   : KParts::Part(parent)
 {
 	int controlType = KxkbWidget::FULL;
-	if( args.count() > 0 && args[1].type() == QVariant::Int ) {	//TODO: replace with string?
-	    controlType = args[1].toInt();
+	if( args.count() > 0 && args[0].type() == QVariant::Int ) {	//TODO: replace with string?
+	    controlType = args[0].toInt();
+	    kDebug() << "controlType" << controlType << "(" << args[0] << ")";
 	    if( controlType <= 0 ) {
 		kError() << "Wrong type for KxkbPart control";
 		return;
@@ -43,6 +44,7 @@ KxkbPart::KxkbPart( QWidget* parentWidget,
 
 	KxkbLabel* kxkbWidget = new KxkbLabel(controlType);
 	m_kxkbCore = new KxkbCore( kxkbWidget );
+	m_kxkbCore->newInstance();
 	setWidget(kxkbWidget->widget());
 }
 

@@ -1,5 +1,5 @@
 KDE4:
- Catch events - layout change
+ Catch events - layout change (late)
  Applet - make icon work, check startup and conflict with kxkb
  Modifier shortcuts - easier screen for Ctrl+Shift
  Shortcut per layout
@@ -13,19 +13,7 @@ KDE4:
   - integrate libxklavier (switch groups etc...)
   - port deprecated Qt3 widget calls
 
-  - return DCOP or make KPart or Applet etc...
-
 Others:
 - kdesktop_lock: layouts menu, flag icons, better error handling (kpart?)
 
-- setting up own layout if you're not root - using xkbcomp
-
 - prevent application/window list from growing endlessly
-
-- bug 59203: call kcontrol/keys/modifiers.cpp: 
-	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
-	bool bMacSwap = KGlobal::config()->readBoolEntry( "Mac Modifier Swap", false );
-	if( bMacSwap )
-		ModifiersModule::setupMacModifierKeys();
-    after each switch
-    
