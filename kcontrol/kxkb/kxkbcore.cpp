@@ -89,8 +89,11 @@ KxkbCore::KxkbCore(KxkbWidget* kxkbWidget, int mode):
     }
 
     KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
+    
+#ifdef HAVE_XKLAVIER
     XKlavierAdaptor::getInstance(QX11Info::display())->startListening();
-	
+#endif
+
   // TODO: keyboard bindings
     //globalKeys = KGlobalAccel::self();
     //KActionCollection* actionCollection = collection;
@@ -378,7 +381,9 @@ void KxkbCore::slotSettingsChanged(int category)
 
 bool KxkbCore::x11EventFilter ( XEvent * event )
 {
+#ifdef HAVE_XKLAVIER
     XKlavierAdaptor::getInstance(QX11Info::display())->filterEvents(event);
+#endif
 
   if( m_extension->isXkbEvent(event) ) {
 //    qApp->x11ProcessEvent ( event );
@@ -412,6 +417,7 @@ KxkbCore::updateGroupsFromServer()
 {
     kDebug() << "updating groups from server";
 
+#ifdef HAVE_XKLAVIER
 	  QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
 	  if( lus.count() > 0 ) {
 	    if( lus != m_kxkbConfig.m_layouts ) {
@@ -428,6 +434,7 @@ KxkbCore::updateGroupsFromServer()
 	    kDebug() << "got group from server:" << group;
 	    updateIndicator(group, 1);
 	}
+#endif
 	
     return 0;
 }
