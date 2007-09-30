@@ -24,7 +24,7 @@
 namespace Plasma
 {
     class Svg;
-};
+}
 
 class Panel : public Plasma::Containment
 {
