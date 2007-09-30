@@ -10,10 +10,9 @@ KDE4:
   - KAccels
   - libxklavier languages
 
-  - integrate libxklavier (switch groups etc...)
   - port deprecated Qt3 widget calls
 
 Others:
-- kdesktop_lock: layouts menu, flag icons, better error handling (kpart?)
+- krunner_lock: finish kpart
 
 - prevent application/window list from growing endlessly

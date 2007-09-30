@@ -43,7 +43,7 @@ KxkbPart::KxkbPart( QWidget* parentWidget,
 	}
 
 	KxkbLabel* kxkbWidget = new KxkbLabel(controlType);
-	m_kxkbCore = new KxkbCore( kxkbWidget );
+	m_kxkbCore = new KxkbCore( kxkbWidget, 2 );	// 2 == NO_INIT
 	m_kxkbCore->newInstance();
 	setWidget(kxkbWidget->widget());
 }

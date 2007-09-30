@@ -62,7 +62,9 @@ DESCRIPTION
 #include "kxkbcore.moc"
 
 
-
+/*
+    This is dummy class just to handle x11 events
+*/
 class DummyWidget: public QWidget
 {
   KxkbCore* kxkb;
@@ -74,10 +76,11 @@ protected:
     bool x11Event( XEvent * e) { return kxkb->x11EventFilter(e); }
 };
 
-KxkbCore::KxkbCore(KxkbWidget* kxkbWidget) :
-//     : m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
-      m_rules(NULL),
-      m_kxkbWidget(kxkbWidget)
+KxkbCore::KxkbCore(KxkbWidget* kxkbWidget, int mode):
+//     m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
+    m_mode(mode),
+    m_rules(NULL),
+    m_kxkbWidget(kxkbWidget)
 {
     m_extension = new XKBExtension();
     if( !m_extension->init() ) {
@@ -133,7 +136,7 @@ int KxkbCore::newInstance()
 
 bool KxkbCore::settingsRead()
 {
-	m_kxkbConfig.load( KxkbConfig::LOAD_ACTIVE_OPTIONS );
+    m_kxkbConfig.load( KxkbConfig::LOAD_ACTIVE_OPTIONS );
 
     if( m_kxkbConfig.m_enableXkbOptions ) {
 	kDebug() << "Setting XKB options " << m_kxkbConfig.m_options;
@@ -172,8 +175,34 @@ bool KxkbCore::settingsRead()
 	if( m_rules == NULL )
 		m_rules = new XkbRules(false);
 
-	m_currentLayout = m_kxkbConfig.getDefaultLayout();
+	if( m_mode == NORMAL ) {
+	    m_currentLayout = m_kxkbConfig.getDefaultLayout();
+	    setLayoutGroups();
+	}
+	else {
+	    updateGroupsFromServer();
+	}
+	
+	if( m_kxkbConfig.m_layouts.count() == 1 ) {
+	    if( m_kxkbConfig.m_showSingle == false ) {
+		kWarning() << "Kxkb is disabled for single layout, exiting...";
+		emit quit(); //qApp->quit();
+		return false;
+	    }
+	}
 
+	initTray();
+
+//	KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
+	//TODO:
+//	keys->readSettings();
+	//keys->updateConnections();
+
+	return true;
+}
+
+void KxkbCore::setLayoutGroups()
+{
 	if( m_kxkbConfig.m_layouts.count() == 1 ) {
 		const LayoutUnit& currentLayout = m_kxkbConfig.m_layouts[0];
 		QString layoutName = currentLayout.layout;
@@ -181,16 +210,11 @@ bool KxkbCore::settingsRead()
 
 /*		if( !m_extension->setLayout(kxkbConfig.m_model, layoutName, variantName, includeName, false)
 				   || !m_extension->setGroup( group ) ) {*/
-		if( ! m_extension->setLayout(layoutName, variantName) ) {
+		if( ! m_extension->setLayoutGroups(layoutName, variantName) ) {
 			kDebug() << "Error switching to single layout " << currentLayout.toPair();
 			// TODO: alert user
 		}
 
-		if( m_kxkbConfig.m_showSingle == false ) {
-			kWarning() << "Kxkb is disabled for single layout, exiting...";
-			emit quit(); //qApp->quit();
-			return false;
-		}
  	}
 	else {
 		QString layouts;
@@ -205,18 +229,8 @@ bool KxkbCore::settingsRead()
 			}
 		}
 		kDebug() << "initing " << "-layout " << layouts << " -variants " << variants;
-//		initPrecompiledLayouts();
-		m_extension->setLayout(layouts, variants);
+		m_extension->setLayoutGroups(layouts, variants);
 	}
-
-	initTray();
-
-//	KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
-	//TODO:
-//	keys->readSettings();
-	//keys->updateConnections();
-
-	return true;
 }
 
 void KxkbCore::initTray()
@@ -266,19 +280,19 @@ bool KxkbCore::setLayout(int layout)
 void KxkbCore::updateIndicator(int layout, int res)
 {
     if( res ) {
-  		m_currentLayout = layout;
-		int winId = KWindowSystem::activeWindow();
- 		m_layoutOwnerMap->setCurrentWindow(winId);
-		m_layoutOwnerMap->setCurrentLayout(layout);
-	}
+  	m_currentLayout = layout;
+	int winId = KWindowSystem::activeWindow();
+ 	m_layoutOwnerMap->setCurrentWindow(winId);
+	m_layoutOwnerMap->setCurrentLayout(layout);
+    }
 
     if( m_kxkbWidget ) {
-		const QString& layoutName = m_kxkbConfig.m_layouts[layout].toPair(); //displayName;
-		if( res )
-			m_kxkbWidget->setCurrentLayout(layoutName);
-		else
-			m_kxkbWidget->setError(layoutName);
-	}
+	const QString& layoutName = m_kxkbConfig.m_layouts[layout].toPair(); //displayName;
+	if( res )
+	    m_kxkbWidget->setCurrentLayout(layoutName);
+	else
+	    m_kxkbWidget->setError(layoutName);
+    }
 }
 
 void KxkbCore::iconToggled()
@@ -382,11 +396,22 @@ bool KxkbCore::x11EventFilter ( XEvent * event )
 	    }
 	  }
     }
-    else
-	if( XKBExtension::isLayoutSwitchEvent(event) ) {
-      // layout changed
-#ifdef HAVE_XKLAVIER
+    else if( XKBExtension::isLayoutSwitchEvent(event) ) {
 	  kDebug() << "got event: layouts chagned";
+	  updateGroupsFromServer();
+    }
+    else {
+	kDebug() << "other xkb event: ";// + ((XkbEvent*)event)->any.xkb_type;
+    }
+  }
+  return false;
+}
+
+int
+KxkbCore::updateGroupsFromServer()
+{
+    kDebug() << "updating groups from server";
+
 	  QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
 	  if( lus.count() > 0 ) {
 	    if( lus != m_kxkbConfig.m_layouts ) {
@@ -394,21 +419,15 @@ bool KxkbCore::x11EventFilter ( XEvent * event )
 		m_layoutOwnerMap->reset();
 		m_layoutOwnerMap->setCurrentWindow( X11Helper::UNKNOWN_WINDOW_ID ); //TODO
 		initTray();
-
-  		int group = m_extension->getGroup();
-		updateIndicator(group, 1);
 	    }
 	    else {
 		kDebug() << "no change in layouts - ignoring event";
 	    }
-	  }
-	  else
-	    kDebug() << "error updating layout map"; //TODO set error
-#endif
-    }
-    else {
-	kDebug() << "other xkb event: ";// + ((XkbEvent*)event)->any.xkb_type;
-    }
-  }
-  return false;
+
+  	    int group = m_extension->getGroup();
+	    kDebug() << "got group from server:" << group;
+	    updateIndicator(group, 1);
+	}
+	
+    return 0;
 }

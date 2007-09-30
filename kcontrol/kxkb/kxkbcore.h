@@ -47,22 +47,22 @@ class QAction;
 class KxkbCore : public QObject
 {
     Q_OBJECT
-//     K_DCOP
 
 public:
-	KxkbCore(KxkbWidget* kxkbWidget);
-	~KxkbCore();
+    enum { NORMAL=1, NO_INIT=2 };
 
-	virtual int newInstance();
+    KxkbCore(KxkbWidget* kxkbWidget, int mode=NORMAL);
+    ~KxkbCore();
 
-	bool setLayout(int layout);
+    virtual int newInstance();
+    bool setLayout(int layout);
+    bool x11EventFilter ( XEvent * event );
 
-	bool x11EventFilter ( XEvent * event );
 // DBUS:
- public slots:
- 	bool setLayout(const QString& layoutPair);
- 	QString getCurrentLayout() { return m_kxkbConfig.m_layouts[m_currentLayout].toPair(); }
- 	QStringList getLayoutsList() { return m_kxkbConfig.getLayoutStringList(); }
+public slots:
+    bool setLayout(const QString& layoutPair);
+    QString getCurrentLayout() { return m_kxkbConfig.m_layouts[m_currentLayout].toPair(); }
+    QStringList getLayoutsList() { return m_kxkbConfig.getLayoutStringList(); }
 
 protected slots:
     void iconMenuTriggered(QAction*);
@@ -76,25 +76,27 @@ protected:
     bool settingsRead();
     void layoutApply();
     
-private:
-	void updateIndicator(int layout, int res);
-	void initTray();
-
 signals:
-	void quit();
+    void quit();
 		
 private:
-	KxkbConfig m_kxkbConfig;
+    KxkbConfig m_kxkbConfig;
 
 //     WId m_prevWinId;	// for tricky part of saving xkb group
     LayoutMap* m_layoutOwnerMap;
-
-	int m_currentLayout;
+    
+    int m_mode;
+    int m_currentLayout;
 
     XKBExtension *m_extension;
     XkbRules *m_rules;
     KxkbWidget *m_kxkbWidget;
     KActionCollection *m_keys;
+    
+    void updateIndicator(int layout, int res);
+    void initTray();
+    void setLayoutGroups();
+    int updateGroupsFromServer();
 };
 
 #endif

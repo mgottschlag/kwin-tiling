@@ -154,7 +154,7 @@ bool XKBExtension::setLayout(const QString& model,
 }
 
 
-bool XKBExtension::setLayout(const QString& layouts, const QString& variants)
+bool XKBExtension::setLayoutGroups(const QString& layouts, const QString& variants)
 {
 	bool res = setLayoutInternal( "", layouts, variants, "" );
 	kDebug() << "setRawLayout " << layouts << ": " << variants << " res: " << res;

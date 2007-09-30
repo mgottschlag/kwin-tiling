@@ -34,7 +34,7 @@ public:
 	bool setLayout(const QString& model,
 					const QString& layout, const QString& variant,
 					const QString& includeGroup, bool useCompiledLayouts=true);
-	bool setLayout(const QString& layouts, const QString& variants);
+	bool setLayoutGroups(const QString& layouts, const QString& variants);
 	bool setGroup(unsigned int group);
 	unsigned int getGroup() const;
 
