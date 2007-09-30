@@ -8,7 +8,7 @@ DocPath=kinfocenter/sound/index.html
 
 
 X-KDE-Library=kcm_info
-X-KDE-FactoryName=sound
+X-KDE-PluginKeyword=sound
 X-KDE-ParentApp=kinfocenter
 
 Name=Sound
