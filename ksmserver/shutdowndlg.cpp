@@ -74,35 +74,41 @@ KSMShutdownFeedback::KSMShutdownFeedback()
     setObjectName( "feedbackwidget" );
     setAttribute( Qt::WA_NoSystemBackground );
     setGeometry( QApplication::desktop()->geometry() );
-//     QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
+    QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
+    m_pixmap.resize( size());
 }
 
 
 void KSMShutdownFeedback::paintEvent( QPaintEvent* )
 {
-    if ( m_currentY >= height() )
+    if ( m_currentY >= height() ) {
+        QPainter painter( this );
+        painter.drawPixmap( 0, 0, m_pixmap );
         return;
-
-    QImage image = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, 0, width(), height() ).toImage();
-    Blitz::intensity( image, -0.4 );
-    Blitz::grayscale( image );
+    }
 
     QPainter painter( this );
-    painter.drawImage( 0, 0, image );
+    painter.drawPixmap( 0, 0, m_pixmap, 0, 0, width(), m_currentY );
 }
-
 
 void KSMShutdownFeedback::slotPaintEffect()
 {
     if ( m_currentY >= height() )
         return;
 
+// TODO grabWindow() is broken in Qt4 (because QPixmap is 32bpp)
+    QImage image = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, m_currentY, width(), 10 ).toImage();
+    Blitz::intensity( image, -0.4 );
+    Blitz::grayscale( image );
+  
+    QPainter painter( this );
+    painter.drawImage( 0, 0, image );
+
     m_currentY += 10;
-
     // don't use update, as paint events could be merged
-    repaint();
+    repaint( 0, m_currentY - 10, width(), 10 );
 
-//     QTimer::singleShot( 1, this, SLOT( slotPaintEffect() ) );
+    QTimer::singleShot( 1, this, SLOT( slotPaintEffect() ) );
 }
 
 ////////////

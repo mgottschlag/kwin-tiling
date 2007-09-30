@@ -60,6 +60,7 @@ private:
     static KSMShutdownFeedback * s_pSelf;
     KSMShutdownFeedback();
     int m_currentY;
+    QPixmap m_pixmap;
 };
 
 class KSMPushButton : public QPushButton
