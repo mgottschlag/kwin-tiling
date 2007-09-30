@@ -63,6 +63,7 @@ bool requestShutDown(
     ShutdownConfirm confirm, ShutdownType sdtype, ShutdownMode sdmode )
 {
     QApplication::syncX();
+    kapp->updateRemoteUserTimestamp( "org.kde.ksmserver" );
     /*  use ksmserver's dcop interface if necessary  */
     if ( confirm == ShutdownConfirmYes ||
          sdtype != ShutdownTypeDefault ||
