@@ -27,7 +27,7 @@
 
 #include <QtGui/QImage>
 #include <QtCore/QCache>
-#include <qimageblitz.h>
+#include <blitz.h>
 
 namespace
 {

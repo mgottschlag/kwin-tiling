@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 #include <QtCore/QTextStream>
 #include <QtCore/QVector>
 
-#include <qimageblitz.h>
+#include <blitz.h>
 
 #include <iostream>
 using namespace std;
