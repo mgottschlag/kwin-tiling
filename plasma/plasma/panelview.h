@@ -17,27 +17,32 @@
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef PLASMA_PANEL_H
-#define PLASMA_PANEL_H
+#ifndef PLASMA_PANELVIEW_H
+#define PLASMA_PANELVIEW_H
 
 #include <QGraphicsView>
 
 #include <plasma/plasma.h>
 
+class QWidget;
+
 namespace Plasma
 {
 
-class Panel : public QGraphicsView
+class Containment;
+class Corona;
+class Svg;
+
+class PanelView : public QGraphicsView
 {
     Q_OBJECT
 public:
 
    /**
-    * Constructs a new panel.
+    * Constructs a new panelview.
     * @arg parent the QWidget this panel is parented to
     */
-    Panel(QWidget *parent = 0);
-    ~Panel();
+    PanelView(Plasma::Containment *panel, QWidget *parent = 0);
 
     /**
      * Sets the location (screen edge) where this panel is positioned.
@@ -51,28 +56,27 @@ public:
     Plasma::Location location() const;
 
     /**
-     * Sets the Corona (scene) to be used for this panels items.
-     * @param corona the corona to use for this panel.
+     * @return the Containment associated with this panel.
      */
-    void setCorona(Plasma::Corona* corona);
+    Plasma::Containment *containment() const;
 
     /**
      * @return the Corona (scene) associated with this panel.
      */
     Plasma::Corona *corona() const;
 
-    /**
-     * @return this panel's layout.
-     */
-    Plasma::Layout *layout() const;
-
 protected:
-    virtual void drawBackground(QPainter *painter, const QRectF& rect);
+    void updateStruts();
+
+    virtual void moveEvent(QMoveEvent *event);
+
+    virtual void resizeEvent(QResizeEvent *event);
 
 private:
-    class Private;
-    Private *const d;
+    void updatePanelGeometry();
 
+    Plasma::Containment *m_containment;
+    Plasma::Svg *m_background;
 };
 
 } // Namespace

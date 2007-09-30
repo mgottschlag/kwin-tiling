@@ -1,12 +1,14 @@
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs)
 
+add_subdirectory(panel)
+
 set(plasma_SRCS
     controlbox.cpp
     desktopview.cpp
     main.cpp
     plasmaapp.cpp
     rootwidget.cpp
-    panel.cpp
+    panelview.cpp
 )
 
 set(plasmaapp_dbusXML org.kde.plasma.App.xml)

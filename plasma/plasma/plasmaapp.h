@@ -27,11 +27,12 @@
 namespace Plasma
 {
     class Corona;
-    class Panel;
+    class Containment;
+    class PanelView;
 } // namespace Plasma
 
 class RootWidget;
-class Panel;
+class PanelView;
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -49,18 +50,16 @@ public Q_SLOTS:
     // qdbuscpp2xml plasmaapp.h -o org.kde.plasma.App.xml
     void initializeWallpaper();
 
-private slots:
+private Q_SLOTS:
     void setCrashHandler();
 
 private:
     static void crashHandler(int signal);
-
-    // for testing purposes
-    void createDefaultPanels();
+    void createPanels();
 
     RootWidget *m_root;
     Plasma::Corona *m_corona;
-    QList<Plasma::Panel*> m_panels;
+    QList<Plasma::PanelView*> m_panels;
 };
 
 #endif // multiple inclusion guard

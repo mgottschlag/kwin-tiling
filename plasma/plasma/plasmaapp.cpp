@@ -36,16 +36,12 @@
 #include <ksmserver_interface.h>
 
 #include <plasma/corona.h>
-#include <plasma/widgets/layout.h>
+#include <plasma/containment.h>
 
 #include "appadaptor.h"
 #include "rootwidget.h"
 #include "desktopview.h"
-#include "panel.h"
-
-// testing
-#include <KIcon>
-#include <plasma/widgets/icon.h>
+#include "panelview.h"
 
 PlasmaApp* PlasmaApp::self()
 {
@@ -93,9 +89,9 @@ PlasmaApp::PlasmaApp()
     m_root->show();
     connect(this, SIGNAL(aboutToQuit()), corona(), SLOT(saveApplets()));
 
-    notifyStartup(true);
+    createPanels();
 
-    createDefaultPanels();
+    notifyStartup(true);
 }
 
 PlasmaApp::~PlasmaApp()
@@ -153,37 +149,19 @@ void PlasmaApp::notifyStartup(bool completed)
     }
 }
 
-// for testing purposes
-// this layout should be saved and loaded to a config source
-// soon
-void PlasmaApp::createDefaultPanels()
+void PlasmaApp::createPanels()
 {
-    return;
-    Plasma::Panel *defaultPanel = new Plasma::Panel;
-    Plasma::Corona *panelScene = new Plasma::Corona;
-    defaultPanel->setCorona(panelScene);
-
-    // place-holder for the launcher menu
-    Plasma::Icon *launcherPlaceholder = new Plasma::Icon(KIcon("kmenu"),QString());
-    panelScene->addItem(launcherPlaceholder);
-    defaultPanel->layout()->addItem(launcherPlaceholder);
-
-    // some default applets to get a usable UI
-    QList<Plasma::Applet*> applets;
-    Plasma::Applet *tasksApplet = panelScene->addApplet("tasks");
-    Plasma::Applet *systemTrayApplet = panelScene->addApplet("systemtray");
-    Plasma::Applet *clockApplet = panelScene->addApplet("digital-clock");
-
-    applets << tasksApplet << systemTrayApplet << clockApplet;
-
-    foreach (Plasma::Applet* applet , applets) {
-        applet->setDrawStandardBackground(false);
-        defaultPanel->layout()->addItem(applet);
+    foreach (Plasma::Containment *containment, corona()->containments()) {
+        kDebug() << "Containment name:" << containment->name()
+                 << "| screen:" << containment->screen()
+                 << "| geometry:" << containment->geometry()
+                 << "| zValue:" << containment->zValue();
+        if (containment->name() == "Panel") {
+            Plasma::PanelView *panelView = new Plasma::PanelView(containment);
+            m_panels << panelView;
+            panelView->show();
+        }
     }
-
-    defaultPanel->setLocation(Plasma::BottomEdge);
-    defaultPanel->show();
-    m_panels << defaultPanel;
 }
 
 #include "plasmaapp.moc"

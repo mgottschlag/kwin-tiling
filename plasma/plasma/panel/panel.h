@@ -1,0 +1,59 @@
+/*
+*   Copyright 2007 by Alex Merry <huntedhacker@tiscali.co.uk>
+*
+*   This program is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU Library General Public License version 2, 
+*   or (at your option) any later version.
+*
+*   This program is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details
+*
+*   You should have received a copy of the GNU Library General Public
+*   License along with this program; if not, write to the
+*   Free Software Foundation, Inc.,
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+#ifndef PLASMA_PANEL_H
+#define PLASMA_PANEL_H
+
+#include <plasma/containment.h>
+
+namespace Plasma
+{
+    class Svg;
+};
+
+class Panel : public Plasma::Containment
+{
+    Q_OBJECT
+public:
+    Panel(QObject *parent, const QVariantList &args);
+    ~Panel();
+
+    /**
+     * Sets the location (screen edge) where this panel is positioned.
+     *
+     * Valid values are TopEdge, RightEdge, BottomEdge and LeftEdge.
+     * This will set the correct FormFactor.
+     *
+     * @param location the location to place the panel at
+     */
+    //FIXME: I don't this works, as setLocation isn't virtual
+    //       but for now it's useful from the constructor
+    void setLocation(Plasma::Location location);
+
+    virtual Qt::Orientations expandingDirections() const;
+
+    virtual void paintInterface(QPainter *painter,
+                                const QStyleOptionGraphicsItem *option,
+                                const QRect& contentsRect);
+
+private:
+    Plasma::Svg *m_background;
+};
+
+
+#endif // PLASMA_PANEL_H
