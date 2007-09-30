@@ -8,7 +8,7 @@ DocPath=kinfocenter/xserver/index.html
 
 
 X-KDE-Library=kcm_info
-X-KDE-FactoryName=xserver
+X-KDE-PluginKeyword=xserver
 X-KDE-ParentApp=kinfocenter
 
 Name=X-Server
