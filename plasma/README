@@ -2,5 +2,27 @@ PLASMA
 ======
 
 This is the application that provides the panels and desktop work area in KDE4.
+Much of the functionality that the code here is based on resides in
+workspace/libs/plasma/.
+
 For more information, please visit the Plasma website at http://plasma.kde.org.
+
+Directory Structure
+===================
+
+There are a number of subdirectories here. The purpose of each is explained:
+
+plugins:
+    animators:    Plugins of type Animator, which provides standard animation
+                  support to Plasma objects
+    applets:      Applets considered absolutely core to the desktop
+    containments: Standard containment objects that are not meant to be
+                  used as stand-alone applets
+    desktoptheme: A collection of SVG elements for use in Plasma, Applets and
+                  libplasma
+    engines:      DataEngines considered generally useful for desktop components
+
+binaries:
+    plasma: the actual plasma desktop application
+    engineexplorer: a small graphical utility to examine engines
 
