@@ -1,3 +1,11 @@
+PROJECT (autostart)
+
+FIND_PACKAGE(KDE4 REQUIRED)
+INCLUDE (KDE4Defaults)
+
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+
 ########### next target ###############
 
 set(kcm_autostart_PART_SRCS
