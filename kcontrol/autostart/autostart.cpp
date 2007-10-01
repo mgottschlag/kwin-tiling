@@ -228,7 +228,7 @@ void Autostart::removeCMD() {
 void Autostart::editCMD(QTreeWidgetItem* entry) {
 	if (!entry) return;
 
-	KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( ((Desktop*)entry)->fileName ), true );
+	const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( ((Desktop*)entry)->fileName ), true );
 	if (! editCMD( kfi )) return;
 
 	if (((Desktop*)entry)->isDesktop()) {
@@ -239,7 +239,7 @@ void Autostart::editCMD(QTreeWidgetItem* entry) {
 	}
 }
 
-bool Autostart::editCMD( KFileItem item) {
+bool Autostart::editCMD( const KFileItem &item) {
 	KPropertiesDialog dlg( item, this );
 	bool c = ( dlg.exec() == QDialog::Accepted );
 	emit changed(c);

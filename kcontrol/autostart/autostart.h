@@ -54,7 +54,7 @@ public slots:
 	void addCMD();
 	void removeCMD();
 	void editCMD(QTreeWidgetItem*);
-	bool editCMD(KFileItem);
+	bool editCMD(const KFileItem&);
 	void editCMD();
 	void setStartOn(int);
 	void selectionChanged();
