@@ -240,7 +240,7 @@ void Autostart::editCMD(QTreeWidgetItem* entry) {
 }
 
 bool Autostart::editCMD( KFileItem item) {
-	KPropertiesDialog dlg( &item, this );
+	KPropertiesDialog dlg( item, this );
 	bool c = ( dlg.exec() == QDialog::Accepted );
 	emit changed(c);
 	return c;
