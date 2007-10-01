@@ -65,7 +65,7 @@ View1394::View1394(QWidget *parent, const QVariantList &)
 :KCModule(View1394Factory::componentData(), parent)
 ,m_insideRescanBus(false)
 {
-   setQuickHelp( i18n("On the right hand side you can see some information about "
+   setQuickHelp( "<qt>" + i18n("<qt>On the right hand side you can see some information about "
                "your IEEE 1394 configuration.<br />"
                "The meaning of the columns:<br />"
                "<b>Name</b>: port or node name, the number can change with each bus reset<br />"
@@ -77,7 +77,7 @@ View1394::View1394(QWidget *parent, const QVariantList &)
                "<b>BM</b>: checked if the node is bus manager capable<br />"
                "<b>PM</b>: checked if the node is power management capable<br />"
                "<b>Acc</b>: the cycle clock accuracy of the node, valid from 0 to 100<br />"
-               "<b>Speed</b>: the speed of the node<br />"));
+               "<b>Speed</b>: the speed of the node<br />")+"</qt>");
 
    setButtons( KCModule::Help );
 
