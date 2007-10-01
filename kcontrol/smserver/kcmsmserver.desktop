@@ -74,6 +74,7 @@ Name[vi]=Bộ quản lý phiên chạy
 Name[wa]=Manaedjeu di sessions
 Name[x-test]=xxSession Managerxx
 Name[xh]=Umphathi wesiqendu
+Name[zh_CN]=会话管理器
 Name[zh_TW]=工作階段管理程式
 
 Comment=Configure the session manager and logout settings
@@ -138,6 +139,7 @@ Comment[vi]=Cấu hình trình quản lý phiên chạy và thiết lập đăng
 Comment[wa]=Apontiaedje do manaedjeu di sessions eyet apontiaedjes do dislodjaedje
 Comment[x-test]=xxConfigure the session manager and logout settingsxx
 Comment[xh]=Qwalasela umphathi wesiqendu nezicwangciso zokuphuma ngaphandle
+Comment[zh_CN]=配置会话管理器和注销设置
 Comment[zh_TW]=設定工作階段管理程式與登出設定值
 
 Keywords=ksmserver,session,logout,confirmation,save,restore
@@ -194,6 +196,7 @@ Keywords[uz]=ksmserver,сеанс,чиқиш,тасдиқлаш,сақлаш,т�
 Keywords[vi]=ksmserver,phiên chạy,đăng xuất,xác nhận,lưu,phục hồi
 Keywords[x-test]=xxksmserver,session,logout,confirmation,save,restorexx
 Keywords[xh]=ksmserver,isiqendu,phuma ngaphandle,uqinisekiso,gcina,gcina kwakhona
+Keywords[zh_CN]=ksmserver,会话,注消,确认,保存,恢复
 Keywords[zh_TW]=ksmserver,session,logout,confirmation,save,restore,工作階段,登出,確認,儲存,回復
 
 Categories=Qt;KDE;X-KDE-settings-components;

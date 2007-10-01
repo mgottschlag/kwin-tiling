@@ -73,6 +73,7 @@ Name[vi]=Bộ quản lý sắc thái
 Name[wa]=Manaedjeu d' tinmes
 Name[x-test]=xxTheme Managerxx
 Name[xh]=Umphathi Womxholo
+Name[zh_CN]=主题管理器
 Name[zh_TW]=佈景管理程式
 
 Comment=Manage global KDE visual themes
@@ -132,6 +133,7 @@ Comment[uk]=Керування глобальними темами KDE
 Comment[vi]=Trình quản lý các sắc thái của KDE
 Comment[wa]=Manaedjî tinmes pol rivnance globåle di KDE
 Comment[x-test]=xxManage global KDE visual themesxx
+Comment[zh_CN]=管理全局 KDE 视觉主题
 Comment[zh_TW]=管理全域 KDE 視覺佈景
 
 Keywords=themes,look and feel
@@ -190,4 +192,5 @@ Keywords[uz]=мавзулар,ташқи кўриниши
 Keywords[vi]=sắc thái,giao diện và cảm nhận
 Keywords[wa]=tinmes,rivnance et dujhance
 Keywords[x-test]=xxthemes,look and feelxx
+Keywords[zh_CN]=themes,look and feel,主题,观感
 Keywords[zh_TW]=themes,look and feel,主題,外觀與感覺

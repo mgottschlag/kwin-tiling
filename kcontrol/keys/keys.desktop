@@ -75,6 +75,7 @@ Name[vi]=Gõ tắt trên Bàn phím
 Name[wa]=Rascourtis del taprece
 Name[x-test]=xxKeyboard Shortcutsxx
 Name[xh]=Indlela ezimfutshane Zebhodi yezitshixo
+Name[zh_CN]=键盘快捷键
 Name[zh_TW]=鍵盤捷徑
 
 Comment=Configuration of keybindings
@@ -138,6 +139,7 @@ Comment[vi]=Cấu hình các tổ hợp phím
 Comment[wa]=Apontiaedje des rascourtis di tapes
 Comment[x-test]=xxConfiguration of keybindingsxx
 Comment[xh]=Uqwalaselo lwezibopheleo zesitshixo
+Comment[zh_CN]=键绑定配置
 Comment[zh_TW]=按鍵關聯設定
 
 Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts
@@ -194,6 +196,7 @@ Keywords[uz]=Тугмалар,Умумий тугмалар бирикмаси,�
 Keywords[vi]=Phím,tổ hợp phím toàn cục,phối hợp phím,tổ hợp phím,gõ tắt,gõ tắt cho ứng dụng
 Keywords[x-test]=xxKeys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcutsxx
 Keywords[xh]=Izitshixo,Izibophelelo zesitshixo esiNgqukuva,Udweliso lwesitshixo,Izibophelelo zesitshixo,iindlela ezimfutshane,izicelo zeendlela ezimfutshane
+Keywords[zh_CN]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,键,全局键绑定,键盘布局,键绑定,快捷键,程序快捷键
 Keywords[zh_TW]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,按鍵,全域按建連結,鍵盤配置,按鍵連結,快速鍵,應用程式捷徑
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;

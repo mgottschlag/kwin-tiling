@@ -77,6 +77,7 @@ Name[vi]=Bộ quản lý Đăng nhập
 Name[wa]=Manaedjeu d' elodjaedje
 Name[x-test]=xxLogin Managerxx
 Name[xh]=Umphathi Wegama elithile
+Name[zh_CN]=登录管理器
 Name[zh_TW]=登錄管理程式
 
 Comment=Configure the login manager (KDM)
@@ -142,6 +143,7 @@ Comment[vi]=Cấu hình trình quản lý đăng nhập (KDM)
 Comment[wa]=Apontyî l' manaedjeu d' elodjaedje (KDM)
 Comment[x-test]=xxConfigure the login manager (KDM)xx
 Comment[xh]=Qwalasela umphathi wegama elithile (KDM)
+Comment[zh_CN]=配置登录管理器(KDM)
 Comment[zh_TW]=設定登入管理程式 (KDM)
 
 Keywords=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
@@ -199,6 +201,7 @@ Keywords[uz]=kdm,кириш бошқарувчиси,xdm,фойдаланувч�
 Keywords[vi]=kdm,quản lý hiển thị,xdm,người dùng,đăng nhập,chào hỏi,Biểu trưng,kiểu,ngôn ngữ,quốc gia,phông chữ,nền,ảnh nền,phiên đăng nhập,tắt máy,khởi động lại
 Keywords[x-test]=xxkdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restartxx
 Keywords[xh]=kdm,umphathi womboniso,xdm,abasebenzisi,igama elithile,umbuliso,ilogo,iintlobo,ulwimi,ilizwe,ubungakanani bamagama, imvelaphi,amaphepha odonga,iintlanganiso,vala,qala kwakhona
+Keywords[zh_CN]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart,显示管理器,用户,登录,欢迎辞,标志,风格,语言,国家,字体,背景,墙纸,会话,关机,重启动
 Keywords[zh_TW]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart,顯示管理程式,使用者,登入,歡迎,風格,語言,國家,字型,背景,底圖,工作階段,關機,重新啟動
 
 Categories=Qt;KDE;X-KDE-settings-system;

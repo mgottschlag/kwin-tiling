@@ -69,6 +69,7 @@ Name[vi]=Trình phục vụ X
 Name[wa]=Sierveu X
 Name[x-test]=xxX-Serverxx
 Name[xh]=Umncedisi we-X
+Name[zh_CN]=X 服务器
 Name[zh_TW]=X 伺服器
 
 Comment=X-Server information
@@ -135,6 +136,7 @@ Comment[vi]=Thông tin về trình phục vụ X
 Comment[wa]=Infôrmåcion sol sierveu X
 Comment[x-test]=xxX-Server informationxx
 Comment[xh]=Ulwazi lomncedisi we-X
+Comment[zh_CN]=X 服务器信息
 Comment[zh_TW]=X 伺服器資訊
 
 Keywords=X,X-Server,XServer,XFree86,Display,VideoCard,System Information
@@ -188,6 +190,7 @@ Keywords[uk]=X,X-Server,XServer,XFree86,Display,системна інформа�
 Keywords[uz]=X,X сервер,XFree86,xorg,X-Сервер,Дисплей,видео карта,Тизим ҳақида маълумот
 Keywords[vi]=X,Trình phục vụ X,XServer,XFree86,Màn hình,Thông tin Hệ thống
 Keywords[x-test]=xxX,X-Server,XServer,XFree86,Display,VideoCard,System Informationxx
+Keywords[zh_CN]=X,X-Server,XServer,XFree86,Display,VideoCard,System InformationX 服务器,显示器,显卡,系统信息
 Keywords[zh_TW]=X,X-Server,XServer,XFree86,Display,VideoCard,System Information,X 伺服器,X伺服器,顯示器,顯示卡,系統資訊
 
 Categories=Qt;KDE;X-KDE-information;

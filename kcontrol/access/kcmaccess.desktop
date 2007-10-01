@@ -76,6 +76,7 @@ Name[vi]=Khả năng truy cập
 Name[wa]=Accessibilité
 Name[x-test]=xxAccessibilityxx
 Name[xh]=Unikezelo
+Name[zh_CN]=辅助
 Name[zh_TW]=無障礙輔助
 
 Comment=Improve accessibility for disabled persons
@@ -138,6 +139,7 @@ Comment[uz]=Ногирон кишилар учун қулайликлар
 Comment[vi]=Hỗ trợ người gặp khó khăn nhín, nghe, di chuyện con chuột, gõ bàn phím v.v.
 Comment[x-test]=xxImprove accessibility for disabled personsxx
 Comment[xh]=Phucula unikekezeleko lwabantu abakhubazekileyo
+Comment[zh_CN]=方便残疾人使用的辅助功能
 Comment[zh_TW]=方便傷殘人士使用
 
 Keywords=access,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num pad
@@ -194,6 +196,7 @@ Keywords[uk]=доступ,доступність,глухий,каліка,дз�
 Keywords[vi]=truy cập,hỗ trợ người tàn tật,điếc,bị thương,chuông,chuông kêu,chuông rung,bàn phím,phím,phím dính,phím nảy,phím chậm,di chuyển chuột,bàn phím số
 Keywords[x-test]=xxaccess,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num padxx
 Keywords[xh]=nikezela,unikezelo,ayiva,yonakalisiwe,intsimbi,intsimbi evakalayo, intsimbi ebonakalayo,ibhodi yezitshixo,izitshixo,isithixo esincangathi, izitshixo ezilungisiweyo,izitshixo ezinengxolo,izitshixo ezicothayo,indlela yokubeka i mouse endaweni,inkatha ye num
+Keywords[zh_CN]=access,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num pad,辅助功能,聋,键盘,粘滞键,撞击键,筛选键,鼠标导航,可视铃声,小键盘
 Keywords[zh_TW]=access,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num pad,使用,聾,鈴聲,聽得見的鈴,看得見的鈴,鍵盤,按鍵,滑鼠導向,數字鍵
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;

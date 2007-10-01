@@ -11,10 +11,12 @@ Comment[ko]=날씨 엔진 Ion
 Comment[nb]=Værmotor Ion
 Comment[nds]=Ion-Wederkarn
 Comment[nl]=Weer-engine Ion
+Comment[nn]=Vêrmotor Ion
 Comment[pt]=Motor Meteorológico Ion
 Comment[pt_BR]=Motor Meteorológico Ion
 Comment[sv]=Vädergränssnittsjon
 Comment[x-test]=xxWeatherEngine Ionxx
+Comment[zh_CN]=天气引擎离子
 Comment[zh_TW]=天氣引擎 Ion
 
 [PropertyDef::X-IonName]

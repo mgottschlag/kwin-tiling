@@ -74,6 +74,7 @@ Name[vi]=Ảnh nền
 Name[wa]=Fond
 Name[x-test]=xxBackgroundxx
 Name[xh]=Indawo yangasemva
+Name[zh_CN]=背景
 Name[zh_TW]=背景
 
 Comment=Change the background settings
@@ -139,6 +140,7 @@ Comment[vi]=Thay đổi thiết lập ảnh nền
 Comment[wa]=Candjî les apontiaedjes do fond del waitroûle
 Comment[x-test]=xxChange the background settingsxx
 Comment[xh]=Tshintsha izicwangciso zendawo yangasemva
+Comment[zh_CN]=更改背景设置
 Comment[zh_TW]=改變背景設定
 
 Keywords=background,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmap
@@ -197,6 +199,7 @@ Keywords[uz]=орқа фон,иш столлари,ранглар,расмлар
 Keywords[vi]=nền,màn hình nền,màu,màu sắc,ảnh,ảnh nền,trộn,cân bằng,đệm,nhiều ảnh nền,mảng ảnh
 Keywords[x-test]=xxbackground,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmapxx
 Keywords[xh]=indawo yangasemva,desktops,imibala,imibala,imifanekiso,amaphepha odonga,uxubo,isikali,indawo efihlakeleyo yokufihla izixhobo,amaphepha odonga amaninzi,imaphu ye pix
+Keywords[zh_CN]=background,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmap,背景,桌面,颜色,图像,墙纸,混色,平衡,缓冲,多个墙纸,位图
 Keywords[zh_TW]=background,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmap,背景,桌面,顏色,影像,桌布,混色,平衡,緩衝,多個桌布,位圖
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

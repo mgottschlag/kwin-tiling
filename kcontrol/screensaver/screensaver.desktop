@@ -73,6 +73,7 @@ Name[vi]=Bảo vệ Màn hình
 Name[wa]=Sipårgneu di waitroûle
 Name[x-test]=xxScreen Saverxx
 Name[xh]=Umgcini Wekhusi
+Name[zh_CN]=屏幕保护程序
 Name[zh_TW]=螢幕保護程式
 
 Comment=Screen Saver Settings
@@ -139,6 +140,7 @@ Comment[vi]=Thiết lập Trình bảo vệ Màn hình
 Comment[wa]=Apontiaedjes do spårgneu di waitroûle
 Comment[x-test]=xxScreen Saver Settingsxx
 Comment[xh]=Izicwangciso Zomgcini Wekhusi
+Comment[zh_CN]=屏幕保护程序设置
 Comment[zh_TW]=螢幕保護程式設定
 
 
@@ -198,6 +200,7 @@ Keywords[vi]=bảo vệ màn hình,Ưu tiên
 Keywords[wa]=sipårgneu di waitroûle,prumiristé
 Keywords[x-test]=xxscreensavers,Priorityxx
 Keywords[xh]=abagcini bekhusi,Ukubaluleka
+Keywords[zh_CN]=screensavers,Priority,优先级,屏幕保护程序
 Keywords[zh_TW]=screensavers,Priority,螢幕保護程式,優先權
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

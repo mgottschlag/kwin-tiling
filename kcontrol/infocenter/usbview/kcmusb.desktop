@@ -73,6 +73,7 @@ Name[vi]=Thiết bị USB
 Name[wa]=Éndjins USB
 Name[x-test]=xxUSB Devicesxx
 Name[xh]=Amacebo e USB
+Name[zh_CN]=USB 设备
 Name[zh_TW]=USB 裝置
 
 Comment=View the USB devices attached to this computer
@@ -138,6 +139,7 @@ Comment[vi]=Xem các thiết bị USB nối với máy tính này
 Comment[wa]=Vey les éndjins USB raloyîs a cisse copiutrece chal
 Comment[x-test]=xxView the USB devices attached to this computerxx
 Comment[xh]=Bonisela amacebo e USB afakelwe kule khompyutha
+Comment[zh_CN]=查看连接到该计算机的 USB 设备
 Comment[zh_TW]=查看連接到這台電腦的 USB 裝置
 
 Keywords=USB,devices,viewer,control
@@ -197,6 +199,7 @@ Keywords[vi]=USB,thiết bị,xem,điều khiển
 Keywords[wa]=USB,éndjins,håyneu,controle,corwaitaedje
 Keywords[x-test]=xxUSB,devices,viewer,controlxx
 Keywords[xh]=USB,amacebo,umboniseli,ulawula
+Keywords[zh_CN]=USB,devices,viewer,control,设备,查看器,控制
 Keywords[zh_TW]=USB,devices,viewer,control,裝置,檢視器,控制
 
 Categories=Qt;KDE;X-KDE-information;

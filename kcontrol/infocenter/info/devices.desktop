@@ -76,6 +76,7 @@ Name[vi]=Thiết bị
 Name[wa]=Éndjins
 Name[x-test]=xxDevicesxx
 Name[xh]=Amacebo
+Name[zh_CN]=设备
 Name[zh_TW]=設備
 
 Comment=Attached devices information
@@ -142,6 +143,7 @@ Comment[vi]=Thông tin về thiết bị kèm
 Comment[wa]=Infôrmåcion so les éndjins aloyîs
 Comment[x-test]=xxAttached devices informationxx
 Comment[xh]=Ulwazi lwamacebo afakelweyo
+Comment[zh_CN]=附加的设备信息
 Comment[zh_TW]=附加的設備資訊
 
 Keywords=dev,Devices,System Information,Information
@@ -200,5 +202,6 @@ Keywords[uz]=dev,Ускуналар,Маълумот,Тизим ҳақида м�
 Keywords[vi]=dev,Thiết bị,Thông tin Hệ thống,Thông tin
 Keywords[x-test]=xxdev,Devices,System Information,Informationxx
 Keywords[xh]=dev,Amacebo,Ulwazi lwendlela,Ulwazi
+Keywords[zh_CN]=dev,Devices,System Information,Information,设备,系统信息,信息
 Keywords[zh_TW]=dev,Devices,System Information,Information,設備,系統資訊,資訊
 

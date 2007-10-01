@@ -72,6 +72,7 @@ Name[uz]=IEEE 1394 ускуналар
 Name[vi]=Thiết bị IEEE 1394
 Name[wa]=Éndjins IEEE 1394
 Name[x-test]=xxIEEE 1394 Devicesxx
+Name[zh_CN]=IEEE 1394 设备
 Name[zh_TW]=IEEE 1394 裝置
 
 Comment=View the IEEE 1394 devices attached to this computer
@@ -135,6 +136,7 @@ Comment[uz]=Компьютерга уланган IEEE 1394 ускуналарн
 Comment[vi]=Xem các thiết bị IEEE 1394 nối vào máy tính này
 Comment[wa]=Vey les éndjins IEEE 1394 raloyîs a cisse copiutrece chal
 Comment[x-test]=xxView the IEEE 1394 devices attached to this computerxx
+Comment[zh_CN]=查看连接到该计算机的 IEEE 1394 设备
 Comment[zh_TW]=查看連接到這台電腦的 IEEE 1394 裝置
 
 Keywords=1394,Firewire,devices,viewer,control
@@ -192,4 +194,5 @@ Keywords[uz]=1394,Firewire,ускуналар,кўрувчи,бошқарув
 Keywords[vi]=1394,Firewire,thiết bị,trình xem,điều khiển
 Keywords[wa]=1394,IEEE 1394,Firewire,éndjins,håyneu,controle,corwaitaedje
 Keywords[x-test]=xx1394,Firewire,devices,viewer,controlxx
+Keywords[zh_CN]=1394,Firewire,devices,viewer,control,设备,查看器,控制,火线
 Keywords[zh_TW]=1394,Firewire,devices,viewer,control,裝置,檢視器,控制

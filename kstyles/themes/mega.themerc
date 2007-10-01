@@ -10,11 +10,13 @@ Name[ko]=MegaGradient 하이컬러 스타일
 Name[nb]=Høyfargestilen MegaGradient
 Name[nds]=MegaGradient-Veelklörenstil
 Name[nl]=MegaGradient hoge-kleuren-stijl
+Name[nn]=MegaGradient-stil
 Name[pt]=Estilo com muitas cores Mega-Gradiente
 Name[pt_BR]=Estilo Mega-Gradiente de alta resolução
 Name[sv]=Megagradient färgrik stil
 Name[th]=รูปแบบการไล่สีแบบความละเอียดสีสูง
 Name[x-test]=xxMegaGradient highcolor stylexx
+Name[zh_CN]=MegaGradient 高色彩风格
 Name[zh_TW]=MegaGradient 高彩樣式
 [KDE]
 widgetStyle=mega.la

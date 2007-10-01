@@ -15,11 +15,13 @@ Comment[ko]=내장된 테마를 적용하지 않은 Motif 스타일
 Comment[nb]=Innebygget Motif-stil uten drakter
 Comment[nds]=Inbuut Stil "Motif" ahn Muster
 Comment[nl]=Ingebouwde themaloze Motif-stijl
+Comment[nn]=Innebygd Motfi-stil utan tema
 Comment[pt]=O estilo incorporado sem tema do Motif
 Comment[pt_BR]=Estilo predefinido Motif sem temas
 Comment[sv]=Inbyggd otemad Motif-stil
 Comment[th]=รูปแบบแบบ Motif ที่รวมมาให้
 Comment[x-test]=xxBuilt-in unthemed Motif stylexx
+Comment[zh_CN]=内建的无主题的 Motif 风格
 Comment[zh_TW]=內建的 Motif 樣式
 [KDE]
 WidgetStyle=Motif

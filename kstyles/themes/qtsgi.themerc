@@ -14,11 +14,13 @@ Comment[ko]=내장된 SGI 스타일
 Comment[nb]=Innebygget SGI-stil
 Comment[nds]=Inbuut Stil "SGI"
 Comment[nl]=Ingebouwde SGI-stijl
+Comment[nn]=Innebygd SGI-stil
 Comment[pt]=O estilo incorporado sem tema da SGI
 Comment[pt_BR]=Estilo predefinido SGI
 Comment[sv]=Inbyggd SGI-stil
 Comment[th]=รูปแบบแบบ SGI ที่รวมมาให้
 Comment[x-test]=xxBuilt-in SGI stylexx
+Comment[zh_CN]=内建的 SGI 风格
 Comment[zh_TW]=內建的 SGI 樣式
 [KDE]
 WidgetStyle=SGI

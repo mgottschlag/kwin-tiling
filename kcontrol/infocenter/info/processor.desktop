@@ -72,6 +72,7 @@ Name[vi]=Bộ xử lý
 Name[wa]=Processeu
 Name[x-test]=xxProcessorxx
 Name[xh]=Umqhubekekisi phambili
+Name[zh_CN]=处理器
 Name[zh_TW]=處理器
 
 Comment=Processor information
@@ -138,6 +139,7 @@ Comment[vi]=Thông tin về bộ vi xử lý
 Comment[wa]=Infôrmåcion sol processeu
 Comment[x-test]=xxProcessor informationxx
 Comment[xh]=Inkcukacha yenkcukacha
+Comment[zh_CN]=处理器信息
 Comment[zh_TW]=處理器資訊
 
 Keywords=Processor,CPU,FPU,MHz,System Information
@@ -199,5 +201,6 @@ Keywords[vi]=Bộ vi xử lý,CPU,FPU,Mhz,Thông tin Hệ thống
 Keywords[wa]=Processeu,CPU,FPU,MHz,Infôrmåcion sol sistinme
 Keywords[x-test]=xxProcessor,CPU,FPU,MHz,System Informationxx
 Keywords[xh]=Umqhubekekisi,CPU,FPU,MHz,Inkcukacha Yendlela yokusebenza
+Keywords[zh_CN]=Processor,CPU,FPU,MHz,System Information,处理器,系统信息
 Keywords[zh_TW]=Processor,CPU,FPU,MHz,System Information,處理器,中央處理器,浮點運算器,系統資訊
 Categories=Qt;KDE;X-KDE-information;

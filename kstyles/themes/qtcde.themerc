@@ -15,11 +15,13 @@ Comment[ko]=내장된 테마를 적용하지 않은 CDE 스타일
 Comment[nb]=Innebygd CDE-stil uten drakter
 Comment[nds]=Inbuut Stil "CDE" ahn Muster
 Comment[nl]=Ingebouwde themaloze CDE-stijl
+Comment[nn]=Innebygd CDE-stil utan tema
 Comment[pt]=O estilo incorporado sem tema do CDE
 Comment[pt_BR]=Estilo predefinido CDE sem temas
 Comment[sv]=Inbyggd otemad CDE-stil
 Comment[th]=รูปแบบแบบ CDE ที่รวมมาให้
 Comment[x-test]=xxBuilt-in unthemed CDE stylexx
+Comment[zh_CN]=内建的无主题的 CDE 风格
 Comment[zh_TW]=內建的 CDE 樣式
 [KDE]
 WidgetStyle=CDE

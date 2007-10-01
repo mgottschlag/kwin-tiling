@@ -19,11 +19,13 @@ Comment[ko]=테마를 적용하지 않은 Next를 닮은 스타일
 Comment[nb]=NeXT-liknende stil uten drakt
 Comment[nds]=Stil liek to Next ahn Muster
 Comment[nl]=Themaloze Next-achtige stijl
+Comment[nn]=Ein Next-liknande stil utan tema
 Comment[pt]=Estilo sem tema semelhante ao Next
 Comment[pt_BR]=Estilo semelhante ao Next sem temas
 Comment[sv]=Otemad Next-liknande stil
 Comment[th]=รูปแบบชุดตกแต่งแบบระบบปฏิบัติการ Next
 Comment[x-test]=xxUnthemed Next-like stylexx
+Comment[zh_CN]=无主题的类 Next 风格
 Comment[zh_TW]=類似 Next Step 的樣式
 [KDE]
 widgetStyle=kstepstyle.la

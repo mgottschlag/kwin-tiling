@@ -74,6 +74,7 @@ Name[vi]=Kiểu dáng
 Name[wa]=Stîle
 Name[x-test]=xxStylexx
 Name[xh]=Uhlobo
+Name[zh_CN]=风格
 Name[zh_TW]=風格
 Comment=Allows the manipulation of widget behavior and changing the Style for KDE
 Comment[af]=Laat toe die manipulasie van gui-element gedrag en verandering die Styl vir Kde
@@ -135,6 +136,7 @@ Comment[vi]=Cho phép điều chỉnh ứng xử của các ô điều khiển v
 Comment[wa]=Permete di candjî l' dujhance et li stîle des ahesses po KDE
 Comment[x-test]=xxAllows the manipulation of widget behavior and changing the Style for KDExx
 Comment[xh]=Ivumela uhanahaniso lokuziphatha kwe widget kwaye itshintsha Uhlobo lwe KDE
+Comment[zh_CN]=允许操纵修饰行为和更改 KDE 的样式
 Comment[zh_TW]=讓您控制視窗元件 (widget) 的操作方式，以及更改 KDE 的風格
 
 Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
@@ -192,6 +194,7 @@ Keywords[uz]=услуб,услублар,ташқи кўриниши,видже�
 Keywords[vi]=kiểu,các kiểu,nhìn,ô điều khiển,biểu tượng,thanh công cụ,văn bản,tô sáng,ứng dụng,ứng dụng KDE
 Keywords[x-test]=xxstyle,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applicationsxx
 Keywords[xh]=uhlobo, iintlobo, jonga, widget, amaphawu emifanekiso, iibar zesixhobo, umbhalo, phawula, apps, izicelo ze KDE
+Keywords[zh_CN]=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications,风格,外观,窗口部件,图标,工具栏,文字,突出,KDE 程序,KDE 应用程序
 Keywords[zh_TW]=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications,風格,主題,外觀,視窗元件,圖示,工具列,文字,突出顯示,應用程式,KDE 應用程式
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

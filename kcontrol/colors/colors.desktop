@@ -75,6 +75,7 @@ Name[vi]=Màu sắc
 Name[wa]=Coleurs
 Name[x-test]=xxColorsxx
 Name[xh]=Imibala
+Name[zh_CN]=颜色
 Name[zh_TW]=顏色
 
 Comment=Color settings
@@ -142,6 +143,7 @@ Comment[vi]=Thiết lập màu
 Comment[wa]=Apontiaedje des coleurs
 Comment[x-test]=xxColor settingsxx
 Comment[xh]=Izicwangciso zombala
+Comment[zh_CN]=颜色设置
 Comment[zh_TW]=顏色設定
 
 Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme
@@ -202,6 +204,7 @@ Keywords[uz]=ранглар,қолип,контраст,виджет рангл�
 Keywords[vi]=màu,màu sắc,sắc thái,tương phản,Màu của ô điều khiển,Sắc thái Màu
 Keywords[x-test]=xxcolors,colours,scheme,contrast,Widget colors,Color Schemexx
 Keywords[xh]=imibala,imibala,udweliso,isiboniso somahluko,Imibala ye widget,Udweliso Olunombala
+Keywords[zh_CN]=colors,colours,scheme,contrast,Widget colors,Color Scheme,颜色,方案,对比,部件颜色,配色方案
 Keywords[zh_TW]=colors,colours,scheme,contrast,Widget colors,Color Scheme,顏色,對比,元件顏色,配色
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

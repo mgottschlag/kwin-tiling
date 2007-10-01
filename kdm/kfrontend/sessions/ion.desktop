@@ -62,4 +62,5 @@ Comment[tr]=PWM tabanlı, klavye dostu uzatılmış pencereleriyle bir pencere y
 Comment[uk]=Менеджер вікон налаштований для легкого використання з клавіатурою, засновано на PWM
 Comment[vi]=Trình quản lý cửa sổ thiết kết thân thiện với việc dùng bàn phím, có các cửa sổ xếp ngói, dựa trên PWM
 Comment[x-test]=xxA keyboard-friendly window manager with tiled windows, based on PWMxx
+Comment[zh_CN]=一个基于 PWM 的窗口管理器，适合键盘操作，可平铺窗口
 Comment[zh_TW]=一個基於 PWM 且方便鍵盤使用和支援棋盤化視窗的視窗管理程式

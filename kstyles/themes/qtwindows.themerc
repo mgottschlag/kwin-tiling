@@ -15,11 +15,13 @@ Comment[ko]=내장된 테마를 적용하지 않은 윈도 9x 스타일
 Comment[nb]=Innebygget Windows 9x-stil uten drakter
 Comment[nds]=Inbuut Stil "Windows 9x" ahn Muster
 Comment[nl]=Ingebouwde themaloze Windows 9x-stijl
+Comment[nn]=Innebygd Windows 9x-stil utan tema
 Comment[pt]=O estilo incorporado sem tema do Windows 9x
 Comment[pt_BR]=Estilo predefinido MS Windows 9x sem temas
 Comment[sv]=Inbyggd otemad Windows 9x-stil
 Comment[th]=รูปแบบแบบวินโดวส์ 9x ที่รวมมาให้
 Comment[x-test]=xxBuilt-in unthemed Windows 9x stylexx
+Comment[zh_CN]=内建的无主题的 Windows 9x 风格
 Comment[zh_TW]=內建的 Windows 9x 樣式
 [KDE]
 WidgetStyle=Windows

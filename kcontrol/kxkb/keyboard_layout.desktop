@@ -75,6 +75,7 @@ Name[vi]=Bố trí bàn phím
 Name[wa]=Adjinçmint del taprece
 Name[x-test]=xxKeyboard Layoutxx
 Name[xh]=Ubeko Lwebhodi yezitshixo
+Name[zh_CN]=键盘布局
 Name[zh_TW]=鍵盤配置
 
 Comment=Keyboard Layout
@@ -140,6 +141,7 @@ Comment[vi]=Bố trí bàn phím
 Comment[wa]=Adjinçmint des tapes del taprece
 Comment[x-test]=xxKeyboard Layoutxx
 Comment[xh]=Ubeko Lwebhodi yezitshixo
+Comment[zh_CN]=键盘布局
 Comment[zh_TW]=鍵盤配置
 
 Keywords=Keyboard,Layout,International
@@ -197,4 +199,5 @@ Keywords[vi]=Bàn phím,Bố trí,Quốc tế
 Keywords[wa]=Taprece,Adjinçmint,eternåcionå,eternåcionåle
 Keywords[x-test]=xxKeyboard,Layout,Internationalxx
 Keywords[xh]=Ibhodi yezitshixo,Ubeko lwebhodi yezitshixo, Okwemazwe ngamazwe
+Keywords[zh_CN]=Keyboard,Layout,International,键盘,布局,国际
 Keywords[zh_TW]=Keyboard,Layout,International,鍵盤,配置,國際化

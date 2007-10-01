@@ -76,6 +76,7 @@ Name[vi]=Kênh DMA
 Name[wa]=Canås DMA
 Name[x-test]=xxDMA-Channelsxx
 Name[xh]=DMA-Imijelo
+Name[zh_CN]=DMA 通道
 Name[zh_TW]=DMA 通道
 
 Comment=DMA information
@@ -142,6 +143,7 @@ Comment[vi]=Thông tin DMA
 Comment[wa]=Infôrmåcion so les canås DMA
 Comment[x-test]=xxDMA informationxx
 Comment[xh]=DMA ulwazi
+Comment[zh_CN]=DMA 信息
 Comment[zh_TW]=DMA 資訊
 
 Keywords=dma,DMA-Channels,System Information
@@ -202,5 +204,6 @@ Keywords[uz]=dma,DMA каналлари,Тизим ҳақида маълумот
 Keywords[vi]=dma,Kênh DMA,Thông tin Hệ thống
 Keywords[x-test]=xxdma,DMA-Channels,System Informationxx
 Keywords[xh]=dma,DMA-Imijelo,Ulwazi Lwendlela yokusebenza
+Keywords[zh_CN]=dma,DMA-Channels,System Information,DMA 通道,系统信息
 Keywords[zh_TW]=dma,DMA-Channels,System Information,DMA通道,系統資訊
 

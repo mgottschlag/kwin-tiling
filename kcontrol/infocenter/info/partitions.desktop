@@ -75,6 +75,7 @@ Name[vi]=Phân vùng
 Name[wa]=Pårticions
 Name[x-test]=xxPartitionsxx
 Name[xh]=Ulwahlulo ngokwamaqhekeza
+Name[zh_CN]=分区
 Name[zh_TW]=磁碟分割區
 
 Comment=Partition information
@@ -140,6 +141,7 @@ Comment[vi]=Thông tin về phân vùng
 Comment[wa]=Infôrmåcion sol pårtixhaedje del deure plake
 Comment[x-test]=xxPartition informationxx
 Comment[xh]=Ulwazi lowahlulelwano ngokwamaqhekeza
+Comment[zh_CN]=分区信息
 Comment[zh_TW]=磁碟分割區資訊
 
 Keywords=Partitions,Harddrive,HD,System Information
@@ -199,6 +201,7 @@ Keywords[vi]=Phân vùng,Ổ cứng,HD,Thông tin Hệ thống
 Keywords[wa]=Pårticions,pårtixhaedje,deure plake,Infôrmåcions sol sistinme
 Keywords[x-test]=xxPartitions,Harddrive,HD,System Informationxx
 Keywords[xh]=Ulwahlulelwano ngokwamaqhekeza,Harddrive,HD,Ulwazi lwendlela yokusebenza
+Keywords[zh_CN]=Partitions,Harddrive,HD,System Information,分区,硬盘,系统信息
 Keywords[zh_TW]=Partitions,Harddrive,HD,System Information,磁碟分割區,硬式磁碟機,硬碟,系統資訊
 
 Categories=Qt;KDE;X-KDE-information;

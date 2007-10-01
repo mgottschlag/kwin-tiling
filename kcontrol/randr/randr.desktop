@@ -71,6 +71,7 @@ Name[uz]=Ўлчами ва жойлашиши
 Name[vi]=Cỡ và Hướng
 Name[wa]=Grandeu eyet oryintåcion
 Name[x-test]=xxSize & Orientationxx
+Name[zh_CN]=大小和方向
 Name[zh_TW]=尺寸及定位
 
 Comment=Resize and Rotate your display
@@ -133,6 +134,7 @@ Comment[uz]=Экранинг ўлчамини ўзгартириш ва бури
 Comment[vi]=Đổi cỡ và Quay màn hình của bạn
 Comment[wa]=Candjî l' grandeu eyet tourner li håynaedje
 Comment[x-test]=xxResize and Rotate your displayxx
+Comment[zh_CN]=更改显示大小和旋转显示
 Comment[zh_TW]=調整大小及旋轉你的螢幕
 
 Keywords=resize,rotate,display,color,depth,size,horizontal,vertical
@@ -191,4 +193,5 @@ Keywords[uz]=ўлчамини ўзгартириш,буриш,экран,ран�
 Keywords[vi]=đổi cỡ,quay,hiển thị,màu,độ sâu,cỡ,ngang,dọc
 Keywords[wa]=candjî l' grandeu,tourner,håynaedje,coleur,parfondeu,grandeu,di coûtchî,d' astampé
 Keywords[x-test]=xxresize,rotate,display,color,depth,size,horizontal,verticalxx
+Keywords[zh_CN]=resize,rotate,display,color,depth,size,horizontal,vertical,更改大小,旋转,显示,颜色,深度,大小,垂直,水平
 Keywords[zh_TW]=resize,rotate,display,color,depth,size,horizontal,vertical,調整大小,旋轉,螢幕,顏色,深度,尺寸,垂直,水平

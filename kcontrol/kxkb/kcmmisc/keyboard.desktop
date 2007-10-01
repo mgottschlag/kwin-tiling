@@ -76,6 +76,7 @@ Name[vi]=Bàn phím
 Name[wa]=Taprece
 Name[x-test]=xxKeyboardxx
 Name[xh]=Ibhodi enezitshixo
+Name[zh_CN]=键盘
 Name[zh_TW]=鍵盤
 
 Comment=Keyboard settings
@@ -141,6 +142,7 @@ Comment[vi]=Thiết lập bàn phím
 Comment[wa]=Apontiaedje del taprece
 Comment[x-test]=xxKeyboard settingsxx
 Comment[xh]=Izicwangciso zebhodi enezitshixo
+Comment[zh_CN]=键盘设置
 Comment[zh_TW]=鍵盤設定
 
 Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
@@ -197,4 +199,5 @@ Keywords[uz]=Тугматаг,товуш баландлиги,қайтариш,�
 Keywords[vi]=Bàn phím,Bàn phím lặp,Âm lượng nhấn,Thiết bị Vào,lặp,âm lượng
 Keywords[x-test]=xxKeyboard,Keyboard repeat,Click volume,Input Devices,repeat,volumexx
 Keywords[xh]=Ibhodi yezitshixo,Ibhodi yezitshixo phinda, Nqakraza izinga lelizwi,Amacebo Ongeniso,phinda, izinga lelizwi
+Keywords[zh_CN]=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume,键盘,键盘重复,击键音量,输入设备,重复,音量
 Keywords[zh_TW]=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume,鍵盤,鍵盤重複,敲擊音量,輸入裝置,重複速度,音量

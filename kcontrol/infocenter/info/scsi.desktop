@@ -84,6 +84,7 @@ Comment[vi]=Thông tin về SCSI
 Comment[wa]=Infôrmåcion SCSI
 Comment[x-test]=xxSCSI informationxx
 Comment[xh]=Inkcukacha ye SCSI
+Comment[zh_CN]=SCSI 信息
 Comment[zh_TW]=SCSI 資訊
 
 Keywords=SCSI,SCSI-Bus,System Information
@@ -143,5 +144,6 @@ Keywords[vi]=SCSI,SCSI-Bus,Thông tin Hệ thống
 Keywords[wa]=SCSI,bus SCSI,Infôrmåcion sol sistinme
 Keywords[x-test]=xxSCSI,SCSI-Bus,System Informationxx
 Keywords[xh]=SCSI,SCSI-Ibhasi,Ulwazi lwendlela
+Keywords[zh_CN]=SCSI,SCSI-Bus,System Information,SCSI 总线,系统信息
 Keywords[zh_TW]=SCSI,SCSI-Bus,System Information,系統資訊
 Categories=Qt;KDE;X-KDE-information;

@@ -189,5 +189,6 @@ Keywords[uk]=екран заставки,тема заставки,запуск,
 Keywords[uz]=сплэш ойнаси,сплэш мавзуси,ишга тушиш
 Keywords[vi]=màn hình chào mừng,sắc thái chào mừng,khởi động
 Keywords[x-test]=xxsplash screen,splash theme,startupxx
+Keywords[zh_CN]=splash screen,splash theme,startup,飞溅屏幕,飞溅主题,启动
 Keywords[zh_TW]=splash screen,splash theme,startup,啟動
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

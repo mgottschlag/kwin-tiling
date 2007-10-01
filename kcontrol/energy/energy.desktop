@@ -76,6 +76,7 @@ Name[vi]=Điều khiển nguồn điện
 Name[wa]=Controle di l' alimintåcion
 Name[x-test]=xxPower Controlxx
 Name[xh]=Ulawulo Lwamandla
+Name[zh_CN]=电源控制
 Name[zh_TW]=電源控制
 
 Comment=Settings for display power management
@@ -139,6 +140,7 @@ Comment[uz]=Дисплейнинг электр таъминоти учун мо
 Comment[vi]=Thiết lập để quản lý nguồn điện của màn hình
 Comment[x-test]=xxSettings for display power managementxx
 Comment[xh]=Izicwangciso zoboniso lophatho lwamandla
+Comment[zh_CN]=显示器电源管理设置
 Comment[zh_TW]=顯示器電源管理的設定值
 
 Keywords=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power
@@ -196,5 +198,6 @@ Keywords[uz]=энергия,тежаш,apm,acpi,dpms,таймаут,blanking,sta
 Keywords[vi]=năng lượng,tiết kiệm,apm,acpi,dpms,hết giờ,mất điện,tạm nghỉ,treo,công suất
 Keywords[x-test]=xxenergy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,powerxx
 Keywords[xh]=amandla,umgcini,apm,acpi,dpms,ixesha lokuphuma,engenambhalo,umphumzi,gxotha,amandla
+Keywords[zh_CN]=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power,能源,节省,超时,黑屏,待机,休眠,电源
 Keywords[zh_TW]=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,Power,能源,省電器,逾時,轉暗,待機,休眠,電源
 

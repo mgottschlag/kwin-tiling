@@ -70,6 +70,7 @@ Name[uz]=Тўхталишлар
 Name[vi]=Gián đoạn
 Name[x-test]=xxInterruptsxx
 Name[xh]=Iziphazamiso
+Name[zh_CN]=中断
 Name[zh_TW]=中斷
 
 Comment=Interrupt information
@@ -135,6 +136,7 @@ Comment[uz]=Тўхталиш ҳақида маълумот
 Comment[vi]=Thông tin về các gián đoạn
 Comment[x-test]=xxInterrupt informationxx
 Comment[xh]=Phazamisa ulwazi
+Comment[zh_CN]=中断信息
 Comment[zh_TW]=中斷資訊
 
 Keywords=Interrupts,IRQ,System Information
@@ -195,5 +197,6 @@ Keywords[uz]=Тўхталишлар,IRQ,Тизим ҳақида маълумот
 Keywords[vi]=Gián đoạn,IRQ,Thông tin Hệ thống
 Keywords[x-test]=xxInterrupts,IRQ,System Informationxx
 Keywords[xh]=Iziphazamiso,IRQ,Ulwazi lwendlela
+Keywords[zh_CN]=Interrupts,IRQ,System Information,中断,系统信息
 Keywords[zh_TW]=Interrupts,IRQ,System Information,中斷,系統資訊
 

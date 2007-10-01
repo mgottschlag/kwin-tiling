@@ -73,6 +73,7 @@ Name[vi]=Thanh tác vụ
 Name[wa]=Bår des bouyes
 Name[x-test]=xxTaskbarxx
 Name[xh]=Ibar yomsebenzi
+Name[zh_CN]=任务栏
 Name[zh_TW]=工作列
 
 Comment=Configure the panel taskbar
@@ -137,6 +138,7 @@ Comment[uz]=Вазифалар панелини мослаш
 Comment[vi]=Cấu hình thanh tác vụ của bảng điều khiển
 Comment[wa]=Apontyî l' bår des bouyes do scriftôr
 Comment[x-test]=xxConfigure the panel taskbarxx
+Comment[zh_CN]=配置面板的任务栏
 Comment[zh_TW]=您可以在這裡設定面板工作列
 
 Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar,windows
@@ -194,6 +196,7 @@ Keywords[uz]=kicker,kpanel,панел,ойналар,вазифалар пане
 Keywords[vi]=kích hoạt,bảng điều khiển,bảng điều khiển KDE,thanh tác vụ,thanh khởi chạy,cửa sổ
 Keywords[x-test]=xxkicker,panel,kpanel,taskbar,startbar,launchbar,windowsxx
 Keywords[xh]=umkhabi,iwindowe eneenkcukacha,kpanel,ibar yomsebenzi,ibar yokuqalisa,ibar yelaunch,i windows
+Keywords[zh_CN]=kicker,panel,kpanel,taskbar,startbar,launchbar,windows,面板,任务栏,启动栏
 Keywords[zh_TW]=kicker,panel,kpanel,taskbar,startbar,launchbar,windows,控制面板,工作列,狀態列,快捷列,視窗
 
 Categories=Qt;KDE;X-KDE-settings-desktop;

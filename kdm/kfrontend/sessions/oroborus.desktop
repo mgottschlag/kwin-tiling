@@ -64,6 +64,7 @@ Comment[uk]=Легкий менеджер вікон з підтримкою т�
 Comment[vi]=Trình quản lý cửa sổ nhẹ ký thay đổi được sắc thái
 Comment[wa]=On ledjir manaedjeu di purneas sopoirtant les tinmes
 Comment[x-test]=xxA lightweight themeable window managerxx
+Comment[zh_CN]=轻量级窗口管理器，可定义主题
 Comment[zh_TW]=一個輕量化且有佈景功能的視窗管理程式
 # not usable as a session
 Hidden=true

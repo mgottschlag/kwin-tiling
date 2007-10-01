@@ -77,6 +77,7 @@ Name[vi]=Chuông hệ thống
 Name[wa]=Xhuflet do sistinme
 Name[x-test]=xxSystem Bellxx
 Name[xh]=Indlela yokusebenza Yentsimbi
+Name[zh_CN]=系统铃声
 Name[zh_TW]=系統鈴聲
 
 Comment=System Bell Configuration
@@ -142,6 +143,7 @@ Comment[vi]=Cấu hình Chuông Hệ thống
 Comment[wa]=Apontiaedje do xhuflet do sistinme
 Comment[x-test]=xxSystem Bell Configurationxx
 Comment[xh]=Uqwalaselo Lwendlela Yentsimbi
+Comment[zh_CN]=系统铃声配置
 Comment[zh_TW]=系統鈴聲組態
 
 Keywords=Bell,Audio,Sound,Volume,Pitch,Duration
@@ -201,5 +203,6 @@ Keywords[uz]=Товуш сигнали,Аудио,Товуш,Товуш бала
 Keywords[vi]=Chuông,Âm nhạc,Âm thanh,Âm lượng,Âm sắc,Thời lượng
 Keywords[x-test]=xxBell,Audio,Sound,Volume,Pitch,Durationxx
 Keywords[xh]=Intsimbi,Evakalayo,iSandi,Umqulu,Uniko lobude obufunekayo,Ixesha ezalithatha
+Keywords[zh_CN]=Bell,Audio,Sound,Volume,Pitch,Duration,响铃,音频,音量,音调,持续时间
 Keywords[zh_TW]=Bell,Audio,Sound,Volume,Pitch,Duration,響鈴,聲音,音量,音調,持續時間
 

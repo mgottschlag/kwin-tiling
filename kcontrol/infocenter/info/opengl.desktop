@@ -79,6 +79,7 @@ Comment[uz]=OpenGL ҳақида маълумот
 Comment[vi]=Thông tin về OpenGL
 Comment[wa]=Infôrmåcion so OpenGL
 Comment[x-test]=xxOpenGL informationxx
+Comment[zh_CN]=OpenGL 信息
 Comment[zh_TW]=OpenGL 資訊
 
 Keywords=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display
@@ -128,6 +129,7 @@ Keywords[tr]=OpenGL,DRI,GLX,3D,VideoCard,Video kartı,Donanım Hızlandırma,Gra
 Keywords[uk]=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display,відео карта,3D акселерація,графіка,X сервер,монітор
 Keywords[vi]=OpenGL,DRI,GLX,3D,Thẻ ảnh động,Tăng tốc Phần cứng,Đồ hoạ,X,X11,Trình phục vụ Xserver,Trình phục vụ - X,XFree86,Hiển thị
 Keywords[x-test]=xxOpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Displayxx
+Keywords[zh_CN]=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display,显卡,硬件加速,图形,X 服务器,显示
 Keywords[zh_TW]=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Graphics,X,X11,Xserver,X-Server,XFree86,Display,顯示卡,硬體加速,圖形,顯示
 
 Categories=Qt;KDE;X-KDE-information;

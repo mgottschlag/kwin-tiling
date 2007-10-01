@@ -140,6 +140,7 @@ Comment[vi]=Thiết lập phông chữ
 Comment[wa]=Apontiaedje des fontes
 Comment[x-test]=xxFont settingsxx
 Comment[xh]=Izicwangciso zohlobo lwamagama
+Comment[zh_CN]=字体设置
 Comment[zh_TW]=字型設定
 
 Keywords=fonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title
@@ -198,6 +199,7 @@ Keywords[vi]=Phông chữ,cỡ,kiểu,bảng mã,bộ ký tự,bảng,thanh đ�
 Keywords[wa]=fonte,fontes,grandeu del fonte,stîle,miernowes,cråsses,clintcheyes,ecôdaedjes,djeu di caracteres,scriftôr,kicker,cinte di controle,scribannes,Manaedjeu di fitchîs,Bår d' usteyes,Menu,Tite do purnea,Bår di tite,Tite
 Keywords[x-test]=xxfonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Titlexx
 Keywords[xh]=ubungakanani bamagama,ubungakanani begama,iintlobo,iicharset,amaqela abasebenzi,iqela labantu benjongo ethile,umkhabi,iqela labantu abalawulayo benjongo ethile,desktops,Umphathi wefayile iibar zesixhobo,Menu,Umxholo we Window,Umxholo
+Keywords[zh_CN]=fonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,字体,字体大小,风格,字符集,面板,控制面板,桌面,文件管理器,工具条,菜单,窗口标题,标题
 Keywords[zh_TW]=fonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title,字型,字型大小,風格,字元,字元集,面板,控制面板,桌面,檔案管理程式,工具列,選單,視窗標題,標題
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

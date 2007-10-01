@@ -72,6 +72,7 @@ Name[uz]=Сичқонча
 Name[vi]=Chuột
 Name[wa]=Sori
 Name[x-test]=xxMousexx
+Name[zh_CN]=鼠标
 Name[zh_TW]=滑鼠
 
 Comment=Mouse settings
@@ -138,6 +139,7 @@ Comment[vi]=Thiết lập con chuột
 Comment[wa]=Apontiaedjes del sori
 Comment[x-test]=xxMouse settingsxx
 Comment[xh]=Izicwangciso ze mouse
+Comment[zh_CN]=鼠标设置
 Comment[zh_TW]=滑鼠設定
 
 Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
@@ -194,5 +196,6 @@ Keywords[uz]=Сичқонча,Сичқончани тезлаштириш,Mouse 
 Keywords[vi]=Chuột,Con chuột,Gia tốc chuột,Ngưỡng chuột,Nút chuột,Chọn,Hình con trỏ,Thiết bị Nhập,Ánh xạ Nút,Nhấn,biểu tượng,phản hồi,Con trỏ,Kéo,Nhấn đúp,ánh xạ,thuận tay phải,thuận tay trái
 Keywords[x-test]=xxMouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handedxx
 Keywords[xh]=Mouse,Unyuso lwesantya seMouse,Ungeno lwe Mouse,Amaqhosha eMouse,Ukhetho,Ukumila kwesalathisi,Amacebo egalelo,Ukucetywa kwamaqhosha,Nqakraza,ii-icon, isiphumo,Izalathi,Tsala,Nqakraza kabini,iyaceba,isandla sokunene,isandla sasekhohlo
+Keywords[zh_CN]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed,鼠标,鼠标加速,鼠标加速阈值,鼠标按钮,选择,光标形状,输入设备,按钮映射,单击,图标,反馈,拖放,双击,映射,右手习惯,左手习惯
 Keywords[zh_TW]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed,滑鼠,滑鼠游標加速,滑鼠游標加速間距,滑鼠按鈕,選擇,指標外觀,輸入設備,按鍵對應,單擊,圖示,反饋,指標,拖放,雙擊,映射,習慣右手,習慣左手 
 Categories=Qt;KDE;X-KDE-settings-hardware;

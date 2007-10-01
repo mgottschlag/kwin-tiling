@@ -75,6 +75,7 @@ Name[vi]=Bộ nhớ
 Name[wa]=Memwere
 Name[x-test]=xxMemoryxx
 Name[xh]=Inkumbulo
+Name[zh_CN]=内存
 Name[zh_TW]=記憶體
 
 Comment=Memory information
@@ -140,6 +141,7 @@ Comment[vi]=Thông tin về bộ nhớ
 Comment[wa]=Infôrmåcion sol memwere
 Comment[x-test]=xxMemory informationxx
 Comment[xh]=Ulwazi lwenkumbulo
+Comment[zh_CN]=内存信息
 Comment[zh_TW]=記憶體資訊資訊
 
 Keywords=Memory,RAM,Virtual memory,Physical memory,Shared memory,Swap,System Information
@@ -199,5 +201,6 @@ Keywords[uz]=Хотира,RAM,Виртуал хотира,Physical memory,Бўл
 Keywords[vi]=Bộ nhớ,RAM,Bộ nhớ ảo,Bộ nhớ vật lý,Bộ nhớ dùng chung,Bộ nhỡ tráo đổi,Thông tin Hệ thống
 Keywords[x-test]=xxMemory,RAM,Virtual memory,Physical memory,Shared memory,Swap,System Informationxx
 Keywords[xh]=Inkumbulo,RAM,Inkumbulo yobume,Inkumbulo yomzimba,Inkumbulo yokwahlulelana,Ukutshintshiselana,Ulwazi lwendlela
+Keywords[zh_CN]=Memory,RAM,Virtual memory,Physical memory,Shared memory,Swap,System Information,内存,虚拟存储,物理存储,共享内存,交换,系统信息
 Keywords[zh_TW]=Memory,RAM,Virtual memory,Physical memory,Shared memory,Swap,System Information,記憶體,虛擬記憶體,實體記憶體,共享記憶體,系統資訊
 Categories=Qt;KDE;X-KDE-information;
