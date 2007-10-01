@@ -62,7 +62,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     m_theme->resize(m_pixelSize, m_pixelSize);
 
     connectToEngine();
-    constraintsUpdated();
     setCachePaintMode(NoCacheMode);
 }
 
@@ -81,17 +80,19 @@ QSizeF Clock::contentSizeHint() const
     return m_size;
 }
 
-void Clock::constraintsUpdated()
+void Clock::constraintsUpdated(Plasma::Constraints constraints)
 {
-    prepareGeometryChange();
-    if (formFactor() == Plasma::Planar ||
-        formFactor() == Plasma::MediaCenter) {
-        m_size = m_theme->size();
-    } else {
-        QFontMetrics fm(QApplication::font());
-        m_size = QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5);
+    if (constraints & Plasma::FormFactorConstraint) {
+        prepareGeometryChange();
+        if (formFactor() == Plasma::Planar ||
+                formFactor() == Plasma::MediaCenter) {
+            m_size = m_theme->size();
+        } else {
+            QFontMetrics fm(QApplication::font());
+            m_size = QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5);
+        }
+        updateGeometry();
     }
-    updateGeometry();
 }
 
 QPainterPath Clock::shape() const
@@ -163,7 +164,7 @@ void Clock::configAccepted()
     }
 
     connectToEngine();
-    constraintsUpdated();
+    constraintsUpdated(Plasma::AllConstraints);
     cg.config()->sync();
 }
 

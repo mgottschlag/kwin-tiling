@@ -56,7 +56,7 @@ class Clock : public Plasma::Applet
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void setPath(const QString&);
         QSizeF contentSizeHint() const;
-        void constraintsUpdated();
+        void constraintsUpdated(Plasma::Constraints constraints);
         QPainterPath shape() const;
 
     public slots:

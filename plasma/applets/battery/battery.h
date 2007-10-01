@@ -49,7 +49,7 @@ class Battery : public Plasma::Applet
         void setPath(const QString&);
         QSizeF contentSizeHint() const;
         //QSizeF contentSize() const;
-        void constraintsUpdated();
+        void constraintsUpdated(Plasma::Constraints constraints);
 
     public slots:
         void updated(const QString &name, const Plasma::DataEngine::Data &data);

@@ -82,7 +82,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     } else {
         kDebug() << "Init:Huge FormFactor";
     }
-    constraintsUpdated();
 }
 
 QSizeF Battery::contentSizeHint() const
@@ -90,26 +89,28 @@ QSizeF Battery::contentSizeHint() const
     return m_size;
 }
 
-void Battery::constraintsUpdated()
+void Battery::constraintsUpdated(Plasma::Constraints constraints)
 {
-    int pixelSize = 0;
-    if (formFactor() == Plasma::Vertical ||
-        formFactor() == Plasma::Horizontal) {
-        kDebug() << "Small FormFactor";
-        setDrawStandardBackground(true);
-        pixelSize = m_smallPixelSize;
-    } else {
-        kDebug() << "Huge FormFactor";
-        setDrawStandardBackground(m_drawBackground);
-        pixelSize = m_pixelSize;
+    if (constraints & Plasma::FormFactorConstraint) {
+        int pixelSize = 0;
+        if (formFactor() == Plasma::Vertical ||
+                formFactor() == Plasma::Horizontal) {
+            kDebug() << "Small FormFactor";
+            setDrawStandardBackground(true);
+            pixelSize = m_smallPixelSize;
+        } else {
+            kDebug() << "Huge FormFactor";
+            setDrawStandardBackground(m_drawBackground);
+            pixelSize = m_pixelSize;
+        }
+        m_theme->resize(QSize(pixelSize, pixelSize) + contentSize() - contentSizeHint());
+        updateGeometry();
+        prepareGeometryChange();
+        m_size = m_theme->size();
+        m_font.setPointSize((int)(pixelSize/10));
+        resize(m_size);
+        updateGeometry();
     }
-    m_theme->resize(QSize(pixelSize, pixelSize) + contentSize() - contentSizeHint());
-    updateGeometry();
-    prepareGeometryChange();
-    m_size = m_theme->size();
-    m_font.setPointSize((int)(pixelSize/10));
-    resize(m_size);
-    updateGeometry();
 }
 
 void Battery::updated(const QString& source, const Plasma::DataEngine::Data &data)
@@ -174,7 +175,7 @@ void Battery::configAccepted()
     dataEngine("powermanagement")->disconnectSource(I18N_NOOP("AC Adapter"), this);
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
 
-    constraintsUpdated();
+    constraintsUpdated(Plasma::AllConstraints);
     cg.config()->sync();
 }
 

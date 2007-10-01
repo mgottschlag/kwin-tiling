@@ -67,10 +67,6 @@ QSizeF Url::contentSize() const
     return m_icon->boundingRect().size();
 }
 
-void Url::constraintsUpdated()
-{
-}
-
 void Url::setUrl(const KUrl& url)
 {
     m_url = url;
