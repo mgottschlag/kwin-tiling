@@ -87,7 +87,7 @@ Autostart::Autostart( QWidget* parent, const QStringList& )
 		ki18n("KDE Autostart Manager Control Panel Module"),
 		KAboutData::License_GPL,
 		ki18n("(c) 2006-2007 Stephen Leaf"));
-	about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@smileaf.org");
+	about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@gmail.com");
 	setAboutData( about );
 }
 
