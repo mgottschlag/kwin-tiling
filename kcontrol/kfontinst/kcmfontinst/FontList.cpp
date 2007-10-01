@@ -91,10 +91,10 @@ static void addFont(CFontItem *font, CJobRunner::ItemList &urls, QStringList &fo
     }
 }
 
-static QString getName(const KFileItem *item)
+static QString getName(const KFileItem &item)
 {
-    return item
-        ? item->entry().stringValue(KIO::UDSEntry::UDS_NAME)
+    return !item.isNull()
+        ? item.entry().stringValue(KIO::UDSEntry::UDS_NAME)
         : QString();
 }
 
@@ -381,7 +381,7 @@ inline bool isSysFolder(const QString &sect)
     return i18n(KFI_KIO_FONTS_SYS)==sect || KFI_KIO_FONTS_SYS==sect;
 }
 
-CFontItem::CFontItem(CFontModelItem *p, const KFileItem *item, const QString &style)
+CFontItem::CFontItem(CFontModelItem *p, const KFileItem &item, const QString &style)
          : CFontModelItem(p),
            itsItem(item),
            itsStyle(style),
@@ -472,7 +472,7 @@ void CFamilyItem::touchThumbnail()
         itsRegularFont->touchThumbnail();
 }
 
-CFontItem * CFamilyItem::findFont(const KFileItem *i)
+CFontItem * CFamilyItem::findFont(const KFileItem &i)
 {
     QList<CFontItem *>::ConstIterator fIt(itsFonts.begin()),
                                       fEnd(itsFonts.end());
@@ -1009,12 +1009,12 @@ void CFontList::deleteItems(const KFileItemList &items)
     emit layoutChanged();
 }
 
-void CFontList::addItem(const KFileItem *item)
+void CFontList::addItem(const KFileItem &item)
 {
     CFontItem *font=findFont(item);
 
 #ifdef KFI_FONTLIST_DEBUG
-    kDebug() << "************** addItem " << item->url();
+    kDebug() << "************** addItem " << item.url();
 #endif
     if(!font)
     {
@@ -1062,7 +1062,7 @@ CFamilyItem * CFontList::findFamily(const QString &familyName, bool create)
     return fam;
 }
 
-CFontItem * CFontList::findFont(const KFileItem *item)
+CFontItem * CFontList::findFont(const KFileItem &item)
 {
     return itsFonts.contains(item)
             ? itsFonts[item]

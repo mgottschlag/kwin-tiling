@@ -49,7 +49,7 @@ protected:
 protected Q_SLOTS:
 	void slotClear();
 	void slotCompleted();
-	void slotDeleteItem(KFileItem *);
+	void slotDeleteItem(const KFileItem &);
 
 private:
 	KDirLister *mpDirLister;

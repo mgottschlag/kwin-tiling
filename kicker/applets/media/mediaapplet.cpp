@@ -65,10 +65,10 @@ MediaApplet::MediaApplet(const QString& configFile, Plasma::Type type, int actio
 	         this, SLOT( slotCompleted() ) );
 	connect( mpDirLister, SIGNAL( newItems( const KFileItemList & ) ),
 	         this, SLOT( slotNewItems( const KFileItemList & ) ) );
-	connect( mpDirLister, SIGNAL( deleteItem( KFileItem * ) ),
-	         this, SLOT( slotDeleteItem( KFileItem * ) ) );
-	connect( mpDirLister, SIGNAL( refreshItems( const KFileItemList & ) ),
-	         this, SLOT( slotRefreshItems( const KFileItemList & ) ) );
+	connect( mpDirLister, SIGNAL( deleteItem( const KFileItem & ) ),
+	         this, SLOT( slotDeleteItem( const KFileItem & ) ) );
+	connect( mpDirLister, SIGNAL( refreshItems( const QList<QPair<KFileItem, KFileItem> > & ) ),
+	         this, SLOT( slotRefreshItems( const QList<QPair<KFileItem, KFileItem> > & ) ) );
 
 	reloadList();
 }
@@ -260,9 +260,9 @@ void MediaApplet::slotNewItems(const KFileItemList &entries)
 {
 	kDebug()<<"MediaApplet::slotNewItems";
 
-	foreach(KFileItem *item, entries)
+	foreach(const KFileItem item, entries)
 	{
-		kDebug() << "item: " << item->url();
+		kDebug() << "item: " << item.url();
 
 		bool found = false;
 		MediumButtonList::iterator it2;
@@ -271,17 +271,17 @@ void MediaApplet::slotNewItems(const KFileItemList &entries)
 		{
 			MediumButton *button = *it2;
 
-			if(button->fileItem().url()==item->url())
+			if(button->fileItem().url()==item.url())
 			{
 				found = true;
-				button->setFileItem(*item);
+				button->setFileItem(item);
 				break;
 			}
 		}
 
-		if(!found && !mExcludedList.contains(item->url().url()) )
+		if(!found && !mExcludedList.contains(item.url().url()) )
 		{
-			MediumButton *button = new MediumButton(this, *item);
+			MediumButton *button = new MediumButton(this, item);
 			button->show();
 			mButtonList.append(button);
 		}
@@ -290,9 +290,9 @@ void MediaApplet::slotNewItems(const KFileItemList &entries)
 	arrangeButtons();
 }
 
-void MediaApplet::slotDeleteItem(KFileItem *fileItem)
+void MediaApplet::slotDeleteItem(const KFileItem &fileItem)
 {
-	kDebug()<<"MediumApplet::slotDeleteItem:"<< fileItem->url();
+	kDebug()<<"MediumApplet::slotDeleteItem:"<< fileItem.url();
 
 	MediumButtonList::iterator it;
 	MediumButtonList::iterator end = mButtonList.end();
@@ -300,7 +300,7 @@ void MediaApplet::slotDeleteItem(KFileItem *fileItem)
 	{
 		MediumButton *button = *it;
 
-		if(button->fileItem().url()==fileItem->url())
+		if(button->fileItem().url()==fileItem.url())
 		{
 			mButtonList.removeAll(button);
 			delete button;
@@ -311,13 +311,14 @@ void MediaApplet::slotDeleteItem(KFileItem *fileItem)
 	arrangeButtons();
 }
 
-void MediaApplet::slotRefreshItems(const KFileItemList &entries)
+void MediaApplet::slotRefreshItems(const QList<QPair<KFileItem, KFileItem> > &entries)
 {
-	foreach(KFileItem *item, entries)
+	foreach(QPair<KFileItem, KFileItem> entry, entries)
 	{
-		kDebug()<<"MediaApplet::slotRefreshItems:"<<(*item).url().url();
+    const KFileItem item = entry.second;
+		kDebug()<<"MediaApplet::slotRefreshItems:"<< item.url().url();
 
-		QString mimetype = (*item).mimetype();
+		QString mimetype = item.mimetype();
 		bool found = false;
 
 		kDebug()<<"mimetype="<<mimetype;
@@ -328,7 +329,7 @@ void MediaApplet::slotRefreshItems(const KFileItemList &entries)
 		{
 			MediumButton *button = *it2;
 
-			if(button->fileItem().url()==(*item).url())
+			if(button->fileItem().url()== item.url())
 			{
 				if(mExcludedTypesList.contains(mimetype))
 				{
@@ -337,16 +338,16 @@ void MediaApplet::slotRefreshItems(const KFileItemList &entries)
 				}
 				else
 				{
-					button->setFileItem(*item);
+					button->setFileItem(item);
 				}
 				found = true;
 				break;
 			}
 		}
 
-		if(!found && !mExcludedTypesList.contains(mimetype) && !mExcludedList.contains(item->url().url()) )
+		if(!found && !mExcludedTypesList.contains(mimetype) && !mExcludedList.contains(item.url().url()) )
 		{
-			MediumButton *button = new MediumButton(this, *item);
+			MediumButton *button = new MediumButton(this, item);
 			button->show();
 			mButtonList.append(button);
 		}

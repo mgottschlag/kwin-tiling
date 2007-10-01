@@ -627,20 +627,14 @@ void CFontFileListView::properties()
 
     foreach(item, items)
         if(item->parent())
-            files.append(new KFileItem(KUrl::fromPath(item->text(0)),
-                                       KMimeType::findByPath(item->text(0))->name(),
-                                       item->text(COL_LINK).isEmpty() ? S_IFREG : S_IFLNK));
+            files.append(KFileItem(KUrl::fromPath(item->text(0)),
+                                   KMimeType::findByPath(item->text(0))->name(),
+                                   item->text(COL_LINK).isEmpty() ? S_IFREG : S_IFLNK));
 
     if(files.count())
     {
         KPropertiesDialog dlg(files, this);
         dlg.exec();
-
-        KFileItemList::ConstIterator it(files.begin()),
-                                     end(files.end());
-
-        for(; it!=end; ++it)
-            delete (*it);
     }
 }
 

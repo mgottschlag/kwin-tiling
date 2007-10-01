@@ -119,10 +119,10 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
 
         if(it!=itsItems.end())
         {
-            KFileItem *item(*it);
+            KFileItem item(*it);
             KUrl      toU(to);
 
-            item->setUrl(toU);
+            item.setUrl(toU);
             itsItems.erase(it);
             if(itsItems.contains(toU))
             {
@@ -182,9 +182,9 @@ void CFontLister::filesRemoved(const QStringList &files)
 
             if(it!=itsItems.end())
             {
-                KFileItem *item(*it);
+                KFileItem item(*it);
 #ifdef KFI_FONTLISTER_DEBUG
-                kDebug() << "Delete : " << item->url().prettyUrl();
+                kDebug() << "Delete : " << item.url().prettyUrl();
 #endif
                 itemsToRemove.append(item);
                 itsItems.erase(it);
@@ -207,21 +207,21 @@ void CFontLister::result(KJob *job)
         ItemCont::Iterator it(itsItems.begin());
 
         while(it!=itsItems.end())
-            if((*it)->isMarked())
+            if((*it).isMarked())
             {
 #ifdef KFI_FONTLISTER_DEBUG
-                kDebug() << (*it)->url().prettyUrl() << " IS MARKED";
+                kDebug() << (*it).url().prettyUrl() << " IS MARKED";
 #endif
-                (*it)->unmark();
+                (*it).unmark();
                 ++it;
             }
-            else if(inScope((*it)->url()))
+            else if(inScope((*it).url()))
             {
                 ItemCont::Iterator remove(it);
-                KFileItem          *item(*it);
+                KFileItem          item(*it);
 
 #ifdef KFI_FONTLISTER_DEBUG
-                kDebug() << (*it)->url().prettyUrl() << " IS **NOT** MARKED";
+                kDebug() << (*it).url().prettyUrl() << " IS **NOT** MARKED";
 #endif
 
                 itemsToRemove.append(item);
@@ -231,7 +231,7 @@ void CFontLister::result(KJob *job)
             else
             {
 #ifdef KFI_FONTLISTER_DEBUG
-                kDebug() << (*it)->url().prettyUrl() << " IS NOT IN SCOPE";
+                kDebug() << (*it).url().prettyUrl() << " IS NOT IN SCOPE";
 #endif
                 ++it;
             }
@@ -247,7 +247,7 @@ void CFontLister::result(KJob *job)
                            end(itsItems.end());
 
         for(; it!=end; ++it)
-            (*it)->unmark();
+            (*it).unmark();
     }
 
     QApplication::restoreOverrideCursor();
@@ -270,7 +270,7 @@ void CFontLister::entries(KIO::Job *, const KIO::UDSEntryList &entries)
 
             if(!itsItems.contains(url))
             {
-                KFileItem *item(new KFileItem(*it, url));
+                KFileItem item(*it, url);
 
 #ifdef KFI_FONTLISTER_DEBUG
                 kDebug() << "New item:" << item->url().prettyUrl();
@@ -278,7 +278,7 @@ void CFontLister::entries(KIO::Job *, const KIO::UDSEntryList &entries)
                 itsItems[url]=item;
                 newFonts.append(item);
             }
-            itsItems[url]->mark();
+            itsItems[url].mark();
 #ifdef KFI_FONTLISTER_DEBUG
             kDebug() << "Marking:" << itsItems[url]->url().prettyUrl();
 #endif
@@ -319,12 +319,6 @@ void CFontLister::infoMessage(KJob *, const QString &msg)
 void CFontLister::removeItems(KFileItemList &items)
 {
     emit deleteItems(items);
-
-    KFileItemList::Iterator it(items.begin()),
-                            end(items.end());
-
-    for(; it!=end; ++it)
-        delete *it;
 }
 
 inline bool isSysFolder(const QString &sect)

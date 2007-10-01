@@ -153,11 +153,11 @@ void PreferencesDialog::setExcludedMedia(const QStringList& excludedList)
 	mpMediaListView->clear();
 	mpMediaListView->setRootIsDecorated(false);
 
-	foreach( KFileItem *file, mMedia )
+	foreach( const KFileItem file, mMedia )
 	{
-		bool ok = !excludedList.contains(file->url().url());
+		bool ok = !excludedList.contains(file.url().url());
 		MediumItem *item = new MediumItem(mpMediaListView,
-		                                  file->text(), *file);
+		                                  file.text(), file);
 		item->setOn(ok);
 	}
 }

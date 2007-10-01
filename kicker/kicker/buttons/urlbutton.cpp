@@ -25,7 +25,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QFile>
 
 #include <kdesktopfile.h>
-#include <kfileitem.h>
 #include <konq_operations.h>
 #include <kicontheme.h>
 #include <kglobal.h>
@@ -49,21 +48,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 URLButton::URLButton( const QString& url, QWidget* parent )
   : PanelButton( parent )
-  , fileItem( 0 )
 {
     initialize( url );
 }
 
 URLButton::URLButton( const KConfigGroup& config, QWidget* parent )
   : PanelButton( parent )
-  , fileItem( 0 )
 {
     initialize( config.readPathEntry("URL") );
 }
 
 URLButton::~URLButton()
 {
-    delete fileItem;
 }
 
 void URLButton::initialize( const QString& _url )
@@ -90,8 +86,8 @@ void URLButton::initialize( const QString& _url )
        url = KUrl();
        url.setPath(file);
     }
-    fileItem = new KFileItem( KFileItem::Unknown, KFileItem::Unknown, url );
-    setIcon( fileItem->iconName() );
+    fileItem = KFileItem( KFileItem::Unknown, KFileItem::Unknown, url );
+    setIcon( fileItem.iconName() );
     connect( this, SIGNAL(clicked()), SLOT(slotExec()) );
     setToolTip();
 
@@ -103,15 +99,15 @@ void URLButton::initialize( const QString& _url )
 
 void URLButton::saveConfig( KConfigGroup& config ) const
 {
-    config.writePathEntry("URL", fileItem->url().prettyUrl());
+    config.writePathEntry("URL", fileItem.url().prettyUrl());
 }
 
 void URLButton::setToolTip()
 {
-    if (fileItem->isLocalFile()
-        && KDesktopFile::isDesktopFile(fileItem->url().path()))
+    if (fileItem.isLocalFile()
+        && KDesktopFile::isDesktopFile(fileItem.url().path()))
     {
-        KDesktopFile df(fileItem->url().path());
+        KDesktopFile df(fileItem.url().path());
 
         if (df.readComment().isEmpty())
         {
@@ -126,15 +122,15 @@ void URLButton::setToolTip()
     }
     else
     {
-        QWidget::setToolTip(fileItem->url().prettyUrl());
-        setTitle(fileItem->url().prettyUrl());
+        QWidget::setToolTip(fileItem.url().prettyUrl());
+        setTitle(fileItem.url().prettyUrl());
     }
 }
 
 void URLButton::dragEnterEvent(QDragEnterEvent *ev)
 {
     if ((ev->source() != this) &&
-        fileItem->acceptsDrops() &&
+        fileItem.acceptsDrops() &&
         KUrl::List::canDecode(ev->mimeData()))
     {
         ev->accept(rect());
@@ -152,7 +148,7 @@ void URLButton::dropEvent(QDropEvent *ev)
     KUrl::List execList = KUrl::List::fromMimeData(ev->mimeData());
     if (!execList.isEmpty())
     {
-        KUrl url( fileItem->url() );
+        KUrl url( fileItem.url() );
         if (KDesktopFile::isDesktopFile(url.path()))
         {
             KToolInvocation::startServiceByDesktopPath(url.path(), execList.toStringList(),
@@ -168,25 +164,25 @@ void URLButton::dropEvent(QDropEvent *ev)
 
 void URLButton::startDrag()
 {
-    emit dragme(KUrl::List(fileItem->url()), labelIcon());
+    emit dragme(KUrl::List(fileItem.url()), labelIcon());
 }
 
 void URLButton::slotExec()
 {
     KWorkSpace::propagateSessionManager();
-    fileItem->run();
+    fileItem.run();
 }
 
 void URLButton::updateURL()
 {
     const KPropertiesDialog* pDlg = static_cast<const KPropertiesDialog *>(sender());
-    if (pDlg->kurl() != fileItem->url()) {
-	fileItem->setUrl(pDlg->kurl());
-	setIcon(fileItem->iconName());
+    if (pDlg->kurl() != fileItem.url()) {
+	fileItem.setUrl(pDlg->kurl());
+	setIcon(fileItem.iconName());
 	setToolTip();
 	emit requestSave();
     } else {
-	setIcon(fileItem->iconName());
+	setIcon(fileItem.iconName());
 	setToolTip();
     }
 
@@ -195,11 +191,11 @@ void URLButton::updateURL()
 
 void URLButton::properties()
 {
-    if ( (fileItem->isLocalFile() && !QFile::exists(fileItem->url().path()) )
-         || !fileItem->url().isValid())
+    if ( (fileItem.isLocalFile() && !QFile::exists(fileItem.url().path()) )
+         || !fileItem.url().isValid())
     {
         KMessageBox::error( 0L, i18n("The file %1 does not exist",
-	                             fileItem->url().prettyUrl()) );
+	                             fileItem.url().prettyUrl()) );
         return;
     }
 

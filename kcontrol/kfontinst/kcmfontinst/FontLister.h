@@ -85,7 +85,7 @@ class CFontLister : public QObject
 
     private:
 
-    typedef QHash<KUrl, KFileItem *> ItemCont;
+    typedef QHash<KUrl, KFileItem> ItemCont;
 
     EListing      itsListing;
     ItemCont      itsItems;

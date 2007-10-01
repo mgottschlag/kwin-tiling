@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "panelbutton.h"
 
-class KFileItem;
+#include <kfileitem.h>
 
 /**
  * Simple URL button (files, whatever)
@@ -56,7 +56,7 @@ protected:
     virtual void dragEnterEvent(QDragEnterEvent *);
     void setToolTip();
 
-    KFileItem *fileItem;
+    KFileItem fileItem;
 };
 
 #endif

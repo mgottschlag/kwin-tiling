@@ -63,8 +63,8 @@ protected Q_SLOTS:
 	void slotStarted(const KUrl &url);
 	void slotCompleted();
 	void slotNewItems(const KFileItemList &entries);
-	void slotDeleteItem(KFileItem *fileItem);
-	void slotRefreshItems(const KFileItemList &entries);
+	void slotDeleteItem(const KFileItem &fileItem);
+	void slotRefreshItems(const QList<QPair<KFileItem, KFileItem> > &entries);
 
 private:
 	KDirLister *mpDirLister;

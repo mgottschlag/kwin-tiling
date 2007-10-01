@@ -59,8 +59,8 @@ TrashApplet::TrashApplet(const QString& configFile, Plasma::Type type, int actio
 	         this, SLOT( slotClear() ) );
 	connect( mpDirLister, SIGNAL( completed() ),
 	         this, SLOT( slotCompleted() ) );
-	connect( mpDirLister, SIGNAL( deleteItem( KFileItem * ) ),
-	         this, SLOT( slotDeleteItem( KFileItem * ) ) );
+	connect( mpDirLister, SIGNAL( deleteItem( const KFileItem& ) ),
+	         this, SLOT( slotDeleteItem( const KFileItem& ) ) );
 
 	mpDirLister->openUrl(KUrl("trash:/"));
 }
@@ -151,7 +151,7 @@ void TrashApplet::slotCompleted()
 	mButton->setItemCount( mCount );
 }
 
-void TrashApplet::slotDeleteItem(KFileItem *)
+void TrashApplet::slotDeleteItem(const KFileItem&)
 {
 	mCount--;
 	mButton->setItemCount( mCount );

@@ -130,15 +130,15 @@ class CFontList : public QAbstractItemModel
 
     private:
 
-    void            addItem(const KFileItem *item);
+    void            addItem(const KFileItem &item);
     CFamilyItem *   findFamily(const QString &familyName, bool create=false);
-    CFontItem *     findFont(const KFileItem *item);
+    CFontItem *     findFont(const KFileItem &item);
     void            touchThumbnails();
 
     private:
 
     QList<CFamilyItem *>                  itsFamilies;
-    QHash<const KFileItem *, CFontItem *> itsFonts;   // Use for quick searching...
+    QHash<const KFileItem, CFontItem *>   itsFonts;   // Use for quick searching...
     CFontLister                           *itsLister;
     bool                                  itsAllowSys,
                                           itsAllowUser,
@@ -191,7 +191,7 @@ class CFamilyItem : public CFontModelItem
     void                 refresh();
     bool                 updateStatus();
     bool                 updateRegularFont(CFontItem *font);
-    CFontItem *          findFont(const KFileItem *i);
+    CFontItem *          findFont(const KFileItem &i);
     int                  rowNumber() const                { return itsParent.row(this); }
     int                  row(const CFontItem *font) const { return itsFonts.indexOf((CFontItem *)font); }
     EStatus              status() const                   { return itsStatus; }
@@ -220,18 +220,18 @@ class CFontItem : public CFontModelItem
 {
     public:
 
-    CFontItem(CFontModelItem *p, const KFileItem *item, const QString &style=QString());
+    CFontItem(CFontModelItem *p, const KFileItem &item, const QString &style=QString());
     virtual ~CFontItem() { }
 
     void                              touchThumbnail();
     const QString &                   name() const             { return itsName; }
-    QString                           mimetype() const         { return itsItem->mimetype(); }
+    QString                           mimetype() const         { return itsItem.mimetype(); }
     bool                              isEnabled() const        { return itsEnabled; }
     bool                              isHidden() const         { return !itsEnabled; }
     void                              updateStatus();
-    KUrl                              url() const              { return itsItem->url(); }
-    KIO::UDSEntry                     entry() const            { return itsItem->entry(); }
-    const KFileItem *                 item() const             { return itsItem; }
+    KUrl                              url() const              { return itsItem.url(); }
+    KIO::UDSEntry                     entry() const            { return itsItem.entry(); }
+    KFileItem                         item() const             { return itsItem; }
     bool                              isBitmap() const         { return itsBitmap; }
     const QString &                   fileName() const         { return itsFileName; }
     const QString &                   style() const            { return itsStyle; }
@@ -242,12 +242,12 @@ class CFontItem : public CFontModelItem
     void                              clearPixmap()            { itsPixmap=NULL; }
     int                               rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
     const CDisabledFonts::TFileList & files() const            { return itsFiles; }
-    KIO::filesize_t                   size() const             { return itsItem ? itsItem->size() : 0; }
+    KIO::filesize_t                   size() const             { return !itsItem.isNull() ? itsItem.size() : 0; }
     qulonglong                        writingSystems() const   { return itsWritingSystems; }
 
     private:
 
-    const KFileItem           *itsItem;
+    KFileItem                 itsItem;
     QString                   itsName,
                               itsFileName,
                               itsStyle;
