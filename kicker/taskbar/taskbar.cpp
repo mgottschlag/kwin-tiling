@@ -277,7 +277,7 @@ void TaskBar::configure()
         }
 
         m_windowListButton->setIcon(KIconLoader::global()->loadIcon(icon,
-                                                                 K3Icon::Panel,
+                                                                 KIconLoader::Panel,
                                                                  16));
         m_windowListButton->setMinimumSize(m_windowListButton->sizeHint());
         m_layout->insertWidget(0, m_windowListButton);
@@ -1250,7 +1250,7 @@ void TaskBar::popupDirectionChange(Plasma::Position d)
     if (m_windowListButton)
     {
         m_windowListButton->setIcon(KIconLoader::global()->loadIcon(icon,
-                                                                 K3Icon::Panel,
+                                                                 KIconLoader::Panel,
                                                                  16));
         m_windowListButton->setMinimumSize(m_windowListButton->sizeHint());
     }

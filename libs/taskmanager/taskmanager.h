@@ -99,25 +99,24 @@ public:
     WindowList transients() const;
 
     /**
-     * Returns a 16x16 (K3Icon::Small) icon for the task. This method will
+     * Returns a 16x16 (KIconLoader::Small) icon for the task. This method will
      * only fall back to a static icon if there is no icon of any size in
      * the WM hints.
      */
     QPixmap pixmap() const;
 
     /**
-     * Returns the best icon for any of the K3Icon::StdSizes. If there is no
+     * Returns the best icon for any of the KIconLoader::StdSizes. If there is no
      * icon of the specified size specified in the WM hints, it will try to
      * get one using KIconLoader.
      *
      * <pre>
      *   bool gotStaticIcon;
-     *   QPixmap icon = myTask->icon( K3Icon::SizeMedium, gotStaticIcon );
+     *   QPixmap icon = myTask->icon( KIconLoader::SizeMedium, gotStaticIcon );
      * </pre>
      *
-     * @param size Any of the constants in K3Icon::StdSizes.
+     * @param size Any of the constants in KIconLoader::StdSizes.
      * @param isStaticIcon Set to true if KIconLoader was used, false otherwise.
-     * @see K3Icon
      */
     QPixmap bestIcon( int size, bool &isStaticIcon );
 

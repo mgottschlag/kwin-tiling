@@ -1494,9 +1494,9 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
         data.message = m_startup->text();
         data.subtext = i18n("Loading application ...");
         data.icon = KIconLoader::global()->loadIcon(m_startup->icon(),
-                                                    K3Icon::Small,
-                                                    K3Icon::SizeMedium,
-                                                    K3Icon::DefaultState,
+                                                    KIconLoader::Small,
+                                                    KIconLoader::SizeMedium,
+                                                    KIconLoader::DefaultState,
                                                     QStringList(), 0, true);
         return;
     }
@@ -1514,8 +1514,8 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
     {
         // try to load icon via net_wm
         pixmap = KWindowSystem::icon(tasks.last()->window(),
-                            K3Icon::SizeMedium,
-                            K3Icon::SizeMedium,
+                            KIconLoader::SizeMedium,
+                            KIconLoader::SizeMedium,
                             true);
     }
 

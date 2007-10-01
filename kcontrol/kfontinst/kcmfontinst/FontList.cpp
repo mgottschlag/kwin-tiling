@@ -1211,14 +1211,14 @@ QVariant CFontListSortFilterProxy::data(const QModelIndex &idx, int role) const
                     case COL_FONT:
                         return SmallIcon(fam->icon(), 0,
                                          CFamilyItem::ENABLED==fam->status()
-                                            ? K3Icon::DefaultState
-                                            : K3Icon::DisabledState);
+                                            ? KIconLoader::DefaultState
+                                            : KIconLoader::DisabledState);
                         break;
                     case COL_STATUS:
                         switch(fam->status())
                         {
                             case CFamilyItem::PARTIAL:
-                                return SmallIcon("dialog-ok", 0, K3Icon::DisabledState);
+                                return SmallIcon("dialog-ok", 0, KIconLoader::DisabledState);
                             case CFamilyItem::ENABLED:
                                 return SmallIcon("dialog-ok");
                             case CFamilyItem::DISABLED:
@@ -2086,7 +2086,7 @@ void CFontListView::startDrag(Qt::DropActions supportedActions)
         }
 
         QPoint  hotspot;
-        QPixmap pix(DesktopIcon(icon, K3Icon::SizeMedium));
+        QPixmap pix(DesktopIcon(icon, KIconLoader::SizeMedium));
 
         hotspot.setX(0); // pix.width()/2);
         hotspot.setY(0); // pix.height()/2);

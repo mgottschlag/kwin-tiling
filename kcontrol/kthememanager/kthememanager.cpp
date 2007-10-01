@@ -386,7 +386,7 @@ void kthememanager::queryLNFModules()
         if ( p->isType( KST_KService ) )
         {
             KService *s = static_cast<KService *>( p );
-            ( void ) new KThemeDetailsItem( dlg->lvDetails, s->name(), s->pixmap( K3Icon::Desktop ), s->exec() );
+            ( void ) new KThemeDetailsItem( dlg->lvDetails, s->name(), s->pixmap( KIconLoader::Desktop ), s->exec() );
         }
     }
 

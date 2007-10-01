@@ -102,7 +102,7 @@ int sizeValue(Plasma::Size s)
 
 int maxButtonDim()
 {
-    return (2 * KickerSettings::iconMargin()) + K3Icon::SizeLarge;
+    return (2 * KickerSettings::iconMargin()) + KIconLoader::SizeLarge;
 }
 
 QString newDesktopFile(const KUrl& url)
@@ -348,22 +348,22 @@ QIcon menuIconSet(const QString& icon)
     if (iconSize > 0)
     {
         iconset = KIconLoader::global()->loadIconSet(icon,
-                                                     K3Icon::NoGroup,
+                                                     KIconLoader::NoGroup,
                                                      iconSize);
     }
     else if (iconSize == 0)
     {
         QPixmap normal = KIconLoader::global()->loadIcon(icon,
-                                                         K3Icon::Small,
+                                                         KIconLoader::Small,
                                                          0,
-                                                         K3Icon::DefaultState,
+                                                         KIconLoader::DefaultState,
                                                          QStringList(), 0,
                                                          true);
 
         QPixmap active = KIconLoader::global()->loadIcon(icon,
-                                                         K3Icon::Small,
+                                                         KIconLoader::Small,
                                                          0,
-                                                         K3Icon::ActiveState,
+                                                         KIconLoader::ActiveState,
                                                          QStringList(), 0,
                                                          true);
         // make sure they are not larger than 20x20

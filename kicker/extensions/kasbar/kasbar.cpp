@@ -695,7 +695,7 @@ void KasBar::addTestItems()
    KasItem *i = new KasItem( this );
    insert( 0, i );
    i->setText( "Animated" );
-   i->setIcon( KGlobal::iconLoader()->loadIcon( "icons", K3Icon::NoGroup, K3Icon::SizeMedium ) );
+   i->setIcon( KGlobal::iconLoader()->loadIcon( "icons", KIconLoader::NoGroup, KIconLoader::SizeMedium ) );
    i->setAnimation( resources()->startupAnimation() );
    QTimer *aniTimer = new QTimer( i );
    connect( aniTimer, SIGNAL( timeout() ), i, SLOT( advanceAnimation() ) );

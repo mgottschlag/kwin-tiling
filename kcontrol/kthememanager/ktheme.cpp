@@ -482,7 +482,7 @@ void KTheme::apply()
         }
         iconConf.sync();
 
-        for ( int i = 0; i < K3Icon::LastGroup; i++ )
+        for ( int i = 0; i < KIconLoader::LastGroup; i++ )
             KGlobalSettings::self()->emitChange( KGlobalSettings::IconChanged, i );
         KBuildSycocaProgressDialog::rebuildKSycoca( m_parent );
     }

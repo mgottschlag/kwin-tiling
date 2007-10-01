@@ -43,7 +43,7 @@ Url::Url(QObject *parent, const QVariantList &args)
 
     KConfigGroup cg = config();
 
-    int size = globalConfig().readEntry("IconSize", IconSize(K3Icon::Desktop));
+    int size = globalConfig().readEntry("IconSize", IconSize(KIconLoader::Desktop));
     size = cg.readEntry("IconSize", size);
 
     m_icon->setIconSize(size, size);

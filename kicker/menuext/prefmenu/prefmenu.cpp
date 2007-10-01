@@ -188,7 +188,7 @@ void PrefMenu::mouseMoveEvent(QMouseEvent * ev)
         case KST_KServiceGroup:
         {
             KServiceGroup::Ptr serviceGroup = KServiceGroup::Ptr::staticCast(e);
-            icon = KIconLoader::global()->loadIcon(serviceGroup->icon(), K3Icon::Small);
+            icon = KIconLoader::global()->loadIcon(serviceGroup->icon(), KIconLoader::Small);
             url = "programs:/" + serviceGroup->relPath();
             break;
         }

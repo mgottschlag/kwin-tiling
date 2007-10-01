@@ -101,34 +101,34 @@ QPixmap KasStartupItem::icon() const
    case KasBar::Small:
      /* ***** NOP ******
 	pixmap = KGlobal::iconLoader()->loadIcon( startup_->icon(),
-						  K3Icon::NoGroup,
-						  K3Icon::SizeSmall );
+						  KIconLoader::NoGroup,
+						  KIconLoader::SizeSmall );
      */
       break;
    case KasBar::Medium:
 	pixmap = KGlobal::iconLoader()->loadIcon( startup_->icon(),
-						  K3Icon::NoGroup,
-						  K3Icon::SizeMedium );
+						  KIconLoader::NoGroup,
+						  KIconLoader::SizeMedium );
       break;
    case KasBar::Large:
 	pixmap = KGlobal::iconLoader()->loadIcon( startup_->icon(),
-						  K3Icon::NoGroup,
-						  K3Icon::SizeLarge );
+						  KIconLoader::NoGroup,
+						  KIconLoader::SizeLarge );
       break;
    case KasBar::Huge:
 	pixmap = KGlobal::iconLoader()->loadIcon( startup_->icon(),
-						  K3Icon::NoGroup,
-						  K3Icon::SizeHuge );
+						  KIconLoader::NoGroup,
+						  KIconLoader::SizeHuge );
       break;
    case KasBar::Enormous:
 	pixmap = KGlobal::iconLoader()->loadIcon( startup_->icon(),
-						  K3Icon::NoGroup,
-						  K3Icon::SizeEnormous );
+						  KIconLoader::NoGroup,
+						  KIconLoader::SizeEnormous );
       break;
    default:
 	pixmap = KGlobal::iconLoader()->loadIcon( "error",
-						  K3Icon::NoGroup,
-						  K3Icon::SizeSmall );
+						  KIconLoader::NoGroup,
+						  KIconLoader::SizeSmall );
    }
 
    return pixmap;

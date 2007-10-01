@@ -83,7 +83,7 @@ void MenuPreview::createPixmaps()
 								((y % 2) ?  c2 : c1  ) : 	// See the grid? ;-)
 								((y % 2) ?  c1 : c2  ) );
 		KIconLoader* icl = KIconLoader::global();
-		QPixmap pix = icl->loadIcon("about-kde", K3Icon::Desktop, K3Icon::SizeLarge, K3Icon::ActiveState);
+		QPixmap pix = icl->loadIcon("about-kde", KIconLoader::Desktop, KIconLoader::SizeLarge, KIconLoader::ActiveState);
 		p.drawPixmap( (width()-2-pix.width())/2, (height()-2-pix.height())/2, pix );
 	}
 

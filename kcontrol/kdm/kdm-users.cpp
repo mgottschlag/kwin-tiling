@@ -345,7 +345,7 @@ void KDMUsersWidget::slotUserButtonClicked()
 {
 	KIconDialog dlg;
 	dlg.setCustomLocation( KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/pics/users" );
-	dlg.setup( K3Icon::NoGroup, K3Icon::Any, false, 48, true, true, false );
+	dlg.setup( KIconLoader::NoGroup, KIconLoader::Any, false, 48, true, true, false );
 	QString ic = dlg.openDialog();
 	if (ic.isEmpty())
 		return;

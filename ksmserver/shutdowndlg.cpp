@@ -370,7 +370,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     mainLayout->addSpacing( 5 );
 
     KSMPushButton* btnLogout = new KSMPushButton( i18n("Logout"), this );
-    btnLogout->setPixmap( KIconLoader::global()->loadIcon( "edit-undo", K3Icon::NoGroup, 32 ) );
+    btnLogout->setPixmap( KIconLoader::global()->loadIcon( "edit-undo", KIconLoader::NoGroup, 32 ) );
     btnLogout->setFocus();
     connect(btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
     btnLayout->addWidget( btnLogout, 0 );
@@ -378,7 +378,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     if (maysd) {
         // Shutdown
         KSMPushButton* btnHalt = new KSMPushButton( i18n("Turn Off Computer"), this );
-        btnHalt->setPixmap( KIconLoader::global()->loadIcon( "application-exit", K3Icon::NoGroup, 32 ) );
+        btnHalt->setPixmap( KIconLoader::global()->loadIcon( "application-exit", KIconLoader::NoGroup, 32 ) );
         btnLayout->addWidget( btnHalt, 0 );
         connect(btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
         if ( sdtype == KWorkSpace::ShutdownTypeHalt )
@@ -397,7 +397,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
         // Reboot
         KSMPushButton* btnReboot = new KSMPushButton( i18n("Restart Computer"), this );
-        btnReboot->setPixmap( KIconLoader::global()->loadIcon( "view-refresh", K3Icon::NoGroup, 32 ) );
+        btnReboot->setPixmap( KIconLoader::global()->loadIcon( "view-refresh", KIconLoader::NoGroup, 32 ) );
         connect(btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
         btnLayout->addWidget( btnReboot, 0 );
         if ( sdtype == KWorkSpace::ShutdownTypeReboot )
@@ -428,7 +428,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     }
 
     KSMPushButton* btnBack = new KSMPushButton( i18n("Cancel"), this );
-    btnBack->setPixmap( KIconLoader::global()->loadIcon( "dialog-cancel", K3Icon::NoGroup, 32 ) );
+    btnBack->setPixmap( KIconLoader::global()->loadIcon( "dialog-cancel", KIconLoader::NoGroup, 32 ) );
     btnLayout->addWidget( btnBack, 0 );
     connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 

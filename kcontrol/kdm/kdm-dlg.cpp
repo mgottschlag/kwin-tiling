@@ -266,7 +266,7 @@ void KDMDialogWidget::save()
 	configGrp.writeEntry( "LogoArea", noneRadio->isChecked() ? "None" :
 	                    logoRadio->isChecked() ? "Logo" : "Clock" );
 
-	configGrp.writeEntry( "LogoPixmap", KIconLoader::global()->iconPath( logopath, K3Icon::Desktop, true ) );
+	configGrp.writeEntry( "LogoPixmap", KIconLoader::global()->iconPath( logopath, KIconLoader::Desktop, true ) );
 
 	configGrp.writeEntry( "GreeterPos",
 		QString("%1,%2").arg( positioner->x() ).arg( positioner->y() ) );

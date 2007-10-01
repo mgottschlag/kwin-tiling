@@ -58,7 +58,7 @@ PanelBrowserDialog::PanelBrowserDialog( const QString& path, const QString &icon
     iconBtn = new KIconButton(page);
     hbox->addWidget(iconBtn);
     iconBtn->setFixedSize( 50, 50 );
-    iconBtn->setIconType( K3Icon::Panel, K3Icon::FileSystem );
+    iconBtn->setIconType( KIconLoader::Panel, KIconLoader::FileSystem );
     label1->setBuddy( iconBtn );
 
     widget = new QWidget(page);

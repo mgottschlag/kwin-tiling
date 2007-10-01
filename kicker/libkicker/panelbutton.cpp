@@ -76,7 +76,7 @@ public:
        arrowDirection(Plasma::Up),
        popupDirection(Plasma::Up),
        orientation(Qt::Horizontal),
-       size((K3Icon::StdSizes)-1),
+       size((KIconLoader::StdSizes)-1),
        fontPercent(0.40)
     {}
 
@@ -180,7 +180,7 @@ void PanelButton::setOrientation(Qt::Orientation o)
 
 void PanelButton::updateIcon(int group)
 {
-    if (group != K3Icon::Panel)
+    if (group != KIconLoader::Panel)
     {
         return;
     }
@@ -688,9 +688,9 @@ int PanelButton::preferredIconSize(int proposed_size) const
         return -1; // unknown icon size
     }
 
-    QList<int> sizes = ith->querySizes(K3Icon::Panel);
+    QList<int> sizes = ith->querySizes(KIconLoader::Panel);
 
-    int sz = ith->defaultSize(K3Icon::Panel);
+    int sz = ith->defaultSize(KIconLoader::Panel);
 
     if (proposed_size < 0)
     {
@@ -759,14 +759,14 @@ void PanelButton::loadIcons()
 {
     KIconLoader * ldr = KIconLoader::global();
     QString nm = d->iconName;
-    K3Icon::States defaultState = isEnabled() ? K3Icon::DefaultState :
-                                               K3Icon::DisabledState;
-    d->icon = ldr->loadIcon(nm, K3Icon::Panel, d->size, defaultState, QStringList(), 0L, true);
+    KIconLoader::States defaultState = isEnabled() ? KIconLoader::DefaultState :
+                                               KIconLoader::DisabledState;
+    d->icon = ldr->loadIcon(nm, KIconLoader::Panel, d->size, defaultState, QStringList(), 0L, true);
 
     if (d->icon.isNull())
     {
         nm = defaultIcon();
-        d->icon = ldr->loadIcon(nm, K3Icon::Panel, d->size, defaultState);
+        d->icon = ldr->loadIcon(nm, KIconLoader::Panel, d->size, defaultState);
     }
 
     if (!isEnabled())
@@ -775,11 +775,11 @@ void PanelButton::loadIcons()
     }
     else
     {
-        d->iconh = ldr->loadIcon(nm, K3Icon::Panel, d->size,
-                                K3Icon::ActiveState, QStringList(), 0L, true);
+        d->iconh = ldr->loadIcon(nm, KIconLoader::Panel, d->size,
+                                KIconLoader::ActiveState, QStringList(), 0L, true);
     }
 
-    d->iconz = ldr->loadIcon(nm, K3Icon::Panel, K3Icon::SizeHuge,
+    d->iconz = ldr->loadIcon(nm, KIconLoader::Panel, KIconLoader::SizeHuge,
                             defaultState, QStringList(), 0L, true );
 }
 

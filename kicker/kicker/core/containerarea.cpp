@@ -926,7 +926,7 @@ void ContainerArea::mouseMoveEvent(QMouseEvent *ev)
         _moveAC->populateMimeData(data);
         QDrag* dd = new QDrag(this);
         dd->setMimeData(data);
-        dd->setPixmap(KIconLoader::global()->loadIcon(_moveAC->icon(), K3Icon::Small));
+        dd->setPixmap(KIconLoader::global()->loadIcon(_moveAC->icon(), KIconLoader::Small));
         grabKeyboard();
         dd->start();
         releaseKeyboard();
@@ -1284,10 +1284,10 @@ void ContainerArea::dropEvent(QDropEvent *ev)
             {
                 // non-KDE executable
                 QString pixmapFile;
-                //KMimeType::pixmapForURL(url, 0, K3Icon::Panel, 0,
-                //                        K3Icon::DefaultState, &pixmapFile);
+                //KMimeType::pixmapForURL(url, 0, KIconLoader::Panel, 0,
+                //                        KIconLoader::DefaultState, &pixmapFile);
                 QString iconName = KMimeType::iconNameForUrl(url);
-                KIconLoader::global()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, QStringList(), &pixmapFile );
+                KIconLoader::global()->loadIcon(iconName, KIconLoader::Panel, 0, KIconLoader::DefaultState, QStringList(), &pixmapFile );
                 PanelExeDialog dlg(QString::null, QString(), url.path(), //krazy:exclude=nullstrassign for gcc-3.3.3
                                    pixmapFile, QString(), false, 0);
                 if (dlg.exec() == QDialog::Accepted)

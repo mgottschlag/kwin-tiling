@@ -180,8 +180,8 @@ void SimpleButton::generateIcons()
     KIconEffect effect;
     QPixmap pix = *pixmap();
 
-    d->normalIcon = effect.apply(pix, K3Icon::Panel, K3Icon::DefaultState);
-    d->activeIcon = effect.apply(pix, K3Icon::Panel, K3Icon::ActiveState);
+    d->normalIcon = effect.apply(pix, KIconLoader::Panel, KIconLoader::DefaultState);
+    d->activeIcon = effect.apply(pix, KIconLoader::Panel, KIconLoader::ActiveState);
 }
 
 void SimpleButton::slotSettingsChanged(int category)
@@ -205,7 +205,7 @@ void SimpleButton::slotSettingsChanged(int category)
 
 void SimpleButton::slotIconChanged( int group )
 {
-    if (group != K3Icon::Panel)
+    if (group != KIconLoader::Panel)
     {
         return;
     }

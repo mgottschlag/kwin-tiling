@@ -45,7 +45,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     m_engineManager = new Plasma::DataEngineManager();
     m_dataModel = new QStandardItemModel(this);
     KIcon pix("plasma");
-    int size = IconSize(K3Icon::Dialog);
+    int size = IconSize(KIconLoader::Dialog);
     m_title->setPixmap(pix.pixmap(size, size));
     connect(m_engines, SIGNAL(activated(QString)), this, SLOT(showEngine(QString)));
     connect(m_sourceRequesterButton, SIGNAL(clicked(bool)), this, SLOT(requestSource()));
@@ -220,7 +220,7 @@ void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data da
 void EngineExplorer::updateTitle()
 {
     if (!m_engine) {
-        m_title->setPixmap(KIcon("plasma").pixmap(IconSize(K3Icon::Dialog)));
+        m_title->setPixmap(KIcon("plasma").pixmap(IconSize(KIconLoader::Dialog)));
         m_title->setText(i18n("Plasma DataEngine Explorer"));
         return;
     }
@@ -228,10 +228,10 @@ void EngineExplorer::updateTitle()
     m_title->setText(i18nc("The name of the engine followed by the number of data sources",
                            "%1 - %2 data sources", m_engine->objectName(), m_sourceCount));
     if (m_engine->icon().isEmpty()) {
-        m_title->setPixmap(KIcon("plasma").pixmap(IconSize(K3Icon::Dialog)));
+        m_title->setPixmap(KIcon("plasma").pixmap(IconSize(KIconLoader::Dialog)));
     } else {
-        //m_title->setPixmap(KIcon("alarmclock").pixmap(IconSize(K3Icon::Dialog)));
-        m_title->setPixmap(KIcon(m_engine->icon()).pixmap(IconSize(K3Icon::Dialog)));
+        //m_title->setPixmap(KIcon("alarmclock").pixmap(IconSize(KIconLoader::Dialog)));
+        m_title->setPixmap(KIcon(m_engine->icon()).pixmap(IconSize(KIconLoader::Dialog)));
     }
 }
 

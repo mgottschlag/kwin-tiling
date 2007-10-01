@@ -727,7 +727,7 @@ void KMiniPagerButton::updateTipData(KickerTip::Data &data)
                                   taskCounter));
     }
 
-    data.icon = DesktopIcon("window_list", K3Icon::SizeMedium);
+    data.icon = DesktopIcon("window_list", KIconLoader::SizeMedium);
     data.message = m_desktopName;
     data.direction = m_pager->popupDirection();
 }
