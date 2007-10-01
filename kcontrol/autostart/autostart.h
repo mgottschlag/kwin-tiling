@@ -41,7 +41,7 @@ class Autostart: public KCModule
     Q_OBJECT
 
 public:
-    Autostart( QWidget* parent, const QStringList&  );
+    Autostart( QWidget* parent, const QVariantList&  );
     ~Autostart();
 
     void load();

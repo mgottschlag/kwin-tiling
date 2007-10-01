@@ -61,10 +61,10 @@ void setPath(const QString &path) {
 }
 };
 
-typedef KGenericFactory<Autostart, QWidget> AutostartFactory;
-K_EXPORT_COMPONENT_FACTORY( Autostart, AutostartFactory("kcmautostart"))
+K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
+K_EXPORT_PLUGIN(AutostartFactory( "kcmautostart" ))
 
-Autostart::Autostart( QWidget* parent, const QStringList& )
+Autostart::Autostart( QWidget* parent, const QVariantList& )
     : KCModule( AutostartFactory::componentData(), parent ), myAboutData(0)
 {
 	widget = new Ui_AutostartConfig();
@@ -195,7 +195,7 @@ void Autostart::addCMD() {
 			if ( dlg.exec() != QDialog::Accepted )
 				return;
 		} else {
-			desktopTemplate = KUrl( KStandardDirs::locate("apps", service->desktopEntryPath()) );
+			desktopTemplate = KUrl( KStandardDirs::locate("apps", service->entryPath()) );
 
 			KPropertiesDialog dlg( desktopTemplate, KUrl(kgs->autostartPath()), service->name() + ".desktop", this );
 			if ( dlg.exec() != QDialog::Accepted )
