@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=Powermanagement Data Engine
+Name[bg]=Ядро за захранването
+Name[es]=Motor de datos de la administración de energía
+Name[ja]=電源管理データエンジン
+Name[nl]=Energiebeheer-gegevensengine
+Name[pt]=Motor de Dados de Energia
+Name[pt_BR]=Motor de Dados de Energia
+Name[sv]=Datagränssnitt för energisparfunktion
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=power
+X-KDE-Library=plasma_engine_powermanagement
+X-EngineName=powermanagement
