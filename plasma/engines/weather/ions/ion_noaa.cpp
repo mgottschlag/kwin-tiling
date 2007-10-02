@@ -54,6 +54,7 @@ public:
 
     bool m_useUTC;  // Ion option: Timezone may be local time or UTC time
     bool m_useMetric; // Ion option: Units may be Metric or Imperial
+    bool m_windInMeters; // Ion option: Display wind format in meters per second only
 
     WeatherFormula m_formula;
 };
@@ -368,6 +369,11 @@ void NOAAIon::option(int option, QVariant value)
             d->m_useUTC = true;
         }
         break;
+    case IonInterface::WINDFORMAT:
+        if (value.toBool()) {
+           d->m_windInMeters = true;
+        }
+        break;
     }
 }
 
@@ -412,7 +418,9 @@ void NOAAIon::updateData()
 
         dataFields = this->wind(keyname);
         setData(keyname, "Wind Speed", dataFields["windSpeed"]);
+        setData(keyname, "Wind Speed Unit", dataFields["windUnit"]);
         setData(keyname, "Wind Gust", dataFields["windGust"]);
+        setData(keyname, "Wind Gust Unit", dataFields["windGustUnit"]);
         setData(keyname, "Wind Direction", dataFields["windDirection"]);
 
         setData(keyname, "Credit", "NOAA National Weather Service");
@@ -439,7 +447,7 @@ QString NOAAIon::observationTime(QString key)
 }
 QString NOAAIon::condition(QString key)
 {
-    if (d->m_weatherData[key].weather.isEmpty()) {
+    if (d->m_weatherData[key].weather.isEmpty() || d->m_weatherData[key].weather == "NA") {
         d->m_weatherData[key].weather = "N/A";
     }
     return d->m_weatherData[key].weather;
@@ -455,7 +463,11 @@ QString NOAAIon::dewpoint(QString key)
 
 QString NOAAIon::humidity(QString key)
 {
-    return QString("%1%").arg(d->m_weatherData[key].humidity);
+   if (d->m_weatherData[key].humidity == "NA") {
+       return QString("N/A");
+   } else {
+       return QString("%1%").arg(d->m_weatherData[key].humidity);
+   }
 }
 
 QString NOAAIon::visibility(QString key)
@@ -518,9 +530,16 @@ QMap<QString, QString> NOAAIon::wind(QString key)
         windInfo.insert("windSpeed", "Calm");
     } else {
         if (d->m_useMetric) {
-            windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[key].windSpeed.toFloat()), 'f', 1)));
+            if (d->m_windInMeters) {
+                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[key].windSpeed.toFloat()), 'f', 2)));
+                windInfo.insert("windUnit", "m/s");
+            } else {
+                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[key].windSpeed.toFloat()), 'f', 1)));
+                windInfo.insert("windUnit", "km/h");
+            }
         } else {
             windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_weatherData[key].windSpeed.toFloat(), 'f', 1)));
+            windInfo.insert("windUnit", "mph");
         }
     }
 
@@ -529,9 +548,16 @@ QMap<QString, QString> NOAAIon::wind(QString key)
         windInfo.insert("windGust", "N/A");
     } else {
         if (d->m_useMetric) {
-            windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[key].windGust.toFloat()), 'f', 1)));
+            if (d->m_windInMeters) {
+                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[key].windGust.toFloat()), 'f', 2)));
+                windInfo.insert("windGustUnit", "m/s");
+            } else {
+                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[key].windGust.toFloat()), 'f', 1)));
+                windInfo.insert("windGustUnit", "km/h");
+            }
         } else {
             windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_weatherData[key].windGust.toFloat(), 'f', 1)));
+            windInfo.insert("windGustUnit", "mph");
         }
     }
 

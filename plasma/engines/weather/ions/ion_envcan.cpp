@@ -54,6 +54,7 @@ public:
 
     bool m_useUTC;  // Ion option: Timezone may be local time or UTC time
     bool m_useMetric; // Ion option: Units may be Metric or Imperial
+    bool m_windInMeters; // Ion option: Display wind format in meters per second only
 
     WeatherFormula m_formula;
 };
@@ -842,6 +843,11 @@ void EnvCanadaIon::option(int option, QVariant value)
             d->m_useUTC = true;
         }
         break;
+    case IonInterface::WINDFORMAT:
+        if (value.toBool()) {
+           d->m_windInMeters = true;
+        }
+        break;
     }
 }
 
@@ -889,7 +895,9 @@ void EnvCanadaIon::updateData()
         setData(keyname, "Humidity", this->humidity(keyname));
         dataFields = this->wind(keyname);
         setData(keyname, "Wind Speed", dataFields["windSpeed"]);
+	setData(keyname, "Wind Speed Unit", dataFields["windUnit"]);
         setData(keyname, "Wind Gust", dataFields["windGust"]);
+	setData(keyname, "Wind Gust Unit", dataFields["windGustUnit"]);
         setData(keyname, "Wind Direction", dataFields["windDirection"]);
 
         dataFields = this->regionalTemperatures(keyname);
@@ -1173,24 +1181,41 @@ QMap<QString, QString> EnvCanadaIon::wind(QString key)
     // May not have any winds
     if (d->m_weatherData[key].windSpeed.isEmpty()) {
         windInfo.insert("windSpeed", "N/A");
+        windInfo.insert("windUnit", "N/A");
     } else if (d->m_weatherData[key].windSpeed.toInt() == 0) {
         windInfo.insert("windSpeed", "Calm");
+        windInfo.insert("windUnit", "N/A");
     } else {
         if (d->m_useMetric) {
-            windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_weatherData[key].windSpeed.toInt())));
+            if (d->m_windInMeters) {
+                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.kilometersToMS(d->m_weatherData[key].windSpeed.toInt()), 'f', 2)));
+                windInfo.insert("windUnit", "m/s");
+            } else {
+                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_weatherData[key].windSpeed.toInt())));
+                windInfo.insert("windUnit", "km/h");
+            }
         } else {
             windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.kilometersToMI(d->m_weatherData[key].windSpeed.toInt()), 'f', 1)));
+            windInfo.insert("windUnit", "mph");
         }
     }
 
     // May not always have gusty winds
     if (d->m_weatherData[key].windGust.isEmpty()) {
         windInfo.insert("windGust", "N/A");
+        windInfo.insert("windGustUnit", "N/A");
     } else {
         if (d->m_useMetric) {
-            windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_weatherData[key].windGust.toInt())));
+            if (d->m_windInMeters) { 
+                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.kilometersToMS(d->m_weatherData[key].windGust.toInt()), 'f', 2)));
+                windInfo.insert("windGustUnit", "m/s");
+            } else { 
+                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_weatherData[key].windGust.toInt())));
+                windInfo.insert("windGustUnit", "km/h");
+            }
         } else {
             windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.kilometersToMI(d->m_weatherData[key].windGust.toInt()), 'f', 1)));
+            windInfo.insert("windGustUnit", "mph");
         }
     }
 
