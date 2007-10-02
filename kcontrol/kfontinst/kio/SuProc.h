@@ -28,6 +28,8 @@
 
 class QString;
 
+using namespace KDESu;
+
 namespace KFI
 {
 

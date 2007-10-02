@@ -48,6 +48,8 @@
 #include <QDesktopWidget>
 #include <QProcess>
 
+using namespace KDESu;
+
 namespace KFI
 {
 

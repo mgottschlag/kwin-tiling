@@ -74,6 +74,8 @@
 #define DEFAULT_TIMEOUT 2         // Time between last mod and writing files...
 #define FC_CACHE_CMD    "fc-cache"
 
+using namespace KDESu;
+
 static const int constMaxFcCheckTime=10;
 
 extern "C"

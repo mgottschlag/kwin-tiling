@@ -44,6 +44,8 @@
 #include <fixx11h.h>
 #include <sys/resource.h>
 
+using namespace KDESu;
+
 namespace KFI
 {
 
