@@ -48,35 +48,38 @@ Panel::~Panel()
     delete m_background;
 }
 
-void Panel::setLocation(Plasma::Location location)
+void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
-    Containment::setLocation(location);
-    kDebug() << "Setting location to" << location;
-    QDesktopWidget desktop;
-    int x = 0;
-    int y = 0;
-    int width = 0;
-    int height = 0;
-    if (location == BottomEdge || location == TopEdge) {
-        setFormFactor(Plasma::Horizontal);
+    if (constraints & Plasma::LocationConstraint) {
+        Plasma::Location loc = location();
+        kDebug() << "Setting location to" << loc;
 
-        width = desktop.screenGeometry().width();
-        height = 48;
-        kDebug() << "Width:" << width << ", height:" << height;
-        if (location == BottomEdge) {
-            y = desktop.screenGeometry().height() - height;
-        }
-    } else if (location == LeftEdge || location == RightEdge) {
-        setFormFactor(Plasma::Vertical);
+        QDesktopWidget desktop;
+        int x = 0;
+        int y = 0;
+        int width = 0;
+        int height = 0;
+        if (loc == BottomEdge || loc == TopEdge) {
+            setFormFactor(Plasma::Horizontal);
 
-        width = 48;
-        height = desktop.screenGeometry().height();
-        if (location == RightEdge) {
-            x = desktop.screenGeometry().width() - width;
+            width = desktop.screenGeometry().width();
+            height = 48;
+            kDebug() << "Width:" << width << ", height:" << height;
+            if (loc == BottomEdge) {
+                y = desktop.screenGeometry().height() - height;
+            }
+        } else if (loc == LeftEdge || loc == RightEdge) {
+            setFormFactor(Plasma::Vertical);
+
+            width = 48;
+            height = desktop.screenGeometry().height();
+            if (loc == RightEdge) {
+                x = desktop.screenGeometry().width() - width;
+            }
         }
+        kDebug() << "Setting geometry to" << QRectF(x, y, width, height);
+        setGeometry(QRectF(x, y, width, height));
     }
-    kDebug() << "Setting geometry to" << QRectF(x, y, width, height);
-    setGeometry(QRectF(x, y, width, height));
 }
 
 Qt::Orientations Panel::expandingDirections() const

@@ -33,23 +33,12 @@ public:
     Panel(QObject *parent, const QVariantList &args);
     ~Panel();
 
-    /**
-     * Sets the location (screen edge) where this panel is positioned.
-     *
-     * Valid values are TopEdge, RightEdge, BottomEdge and LeftEdge.
-     * This will set the correct FormFactor.
-     *
-     * @param location the location to place the panel at
-     */
-    //FIXME: I don't this works, as setLocation isn't virtual
-    //       but for now it's useful from the constructor
-    void setLocation(Plasma::Location location);
+    void constraintsUpdated(Plasma::Constraints constraints);
+    Qt::Orientations expandingDirections() const;
 
-    virtual Qt::Orientations expandingDirections() const;
-
-    virtual void paintInterface(QPainter *painter,
-                                const QStyleOptionGraphicsItem *option,
-                                const QRect& contentsRect);
+    void paintInterface(QPainter *painter,
+                        const QStyleOptionGraphicsItem *option,
+                        const QRect& contentsRect);
 
 private:
     Plasma::Svg *m_background;
