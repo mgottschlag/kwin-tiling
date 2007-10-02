@@ -101,9 +101,9 @@ public:
     */
     void removeSource(QString key);
 
-    enum ionOptions { UNITS, TIMEFORMAT };
+    enum ionOptions { UNITS, TIMEFORMAT, WINDFORMAT };
     /**
-    * Reimplement to set the wanted options for the ion such as unit and time formats.
+    * Reimplement to set the wanted options for the ion such as unit and time, and wind speed formats.
     */
     virtual void option(int option, QVariant value) = 0;
 
