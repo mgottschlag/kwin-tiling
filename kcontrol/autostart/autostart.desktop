@@ -10,9 +10,15 @@ X-KDE-FactoryName=Autostart
 X-KDE-ParentApp=kcontrol
 
 Name=Autostart Manager
+Name[pt]=Gestor do Arranque
+Name[pt_BR]=Gestor do Arranque
 
 Comment=A KControl tool for managing what programs start up with KDE.
+Comment[pt]=Uma ferramenta do KControl para gerir os programas que arrancam com o KDE.
+Comment[pt_BR]=Uma ferramenta do KControl para gerir os programas que arrancam com o KDE.
 
 Keywords=Autostart Manager
+Keywords[pt]=Gestor do Arranque
+Keywords[pt_BR]=Gestor do Arranque
 
 Categories=Qt;KDE;X-KDE-settings-components;
