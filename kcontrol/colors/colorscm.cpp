@@ -144,6 +144,8 @@ void KColorCm::setupColorTable()
     colorTable->horizontalHeader()->hide();
     colorTable->setShowGrid(false);
     colorTable->setRowCount(12);
+    colorTable->horizontalHeader()->setMinimumSectionSize(minWidth);
+    colorTable->horizontalHeader()->setResizeMode(1, QHeaderView::ResizeToContents);
 
     createColorEntry(i18n("Normal Background"),    "BackgroundNormal",    m_backgroundButtons, 0);
     createColorEntry(i18n("Alternate Background"), "BackgroundAlternate", m_backgroundButtons, 1);
