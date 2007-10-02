@@ -846,6 +846,8 @@ void EnvCanadaIon::option(int option, QVariant value)
     case IonInterface::WINDFORMAT:
         if (value.toBool()) {
            d->m_windInMeters = true;
+        } else {
+           d->m_windInMeters = false;
         }
         break;
     }
