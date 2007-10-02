@@ -67,7 +67,7 @@ set(mySources kxkb_part_test.cpp kxkb_part_test_v.cpp)
 
 kde4_add_executable(kxkb_part_test ${mySources})
 
-target_link_libraries(kxkb_part_test ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS} )
+target_link_libraries(kxkb_part_test ${KDE4_KPARTS_LIBS} )
 
 #install(TARGETS ksimple DESTINATION bin)
 #install(FILES kfoo.desktop DESTINATION ${XDG_APPS_DIR})
