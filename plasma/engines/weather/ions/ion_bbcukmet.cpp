@@ -54,6 +54,7 @@ public:
 
     bool m_useUTC;  // Ion option: Timezone may be local time or UTC time
     bool m_useMetric; // Ion option: Units may be Metric or Imperial
+    bool m_windInMeters; // Ion option: Display wind format in meters per second only
 
     WeatherFormula m_formula;
 };
@@ -380,6 +381,11 @@ void UKMETIon::option(int option, QVariant value)
     case IonInterface::TIMEFORMAT:
         if (value.toBool()) {
             d->m_useUTC = true;
+        }
+        break;
+    case IonInterface::WINDFORMAT:
+        if (value.toBool()) {
+            d->m_windInMeters = true;
         }
         break;
     }
