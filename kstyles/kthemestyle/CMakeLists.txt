@@ -15,7 +15,7 @@ set(kthemestyle_PART_SRCS
 
 kde4_add_plugin(kthemestyle ${kthemestyle_PART_SRCS})
 
-target_link_libraries(kthemestyle  ${KDE4_KDECORE_LIBS} kdefx kdecore )
+target_link_libraries(kthemestyle  ${KDE4_KDECORE_LIBS} kdecore )
 
 install(TARGETS kthemestyle  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
