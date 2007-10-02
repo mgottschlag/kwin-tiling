@@ -20,6 +20,7 @@
 #ifndef _WEATHER_ENGINE_H_
 #define _WEATHER_ENGINE_H_
 
+#include <KService>
 #include <KGenericFactory>
 #include <plasma/dataengine.h>
 #include "ions/ion.h"
@@ -43,7 +44,7 @@ public:
     IonInterface* Ion(const QString& name) const;  // Returns an Ion instance.
     IonInterface* loadIon(const QString& name);    // Loads an Ion plugin.
     void unloadIon(const QString& name);           // Unloads an Ion plugin.
-    QStringList knownIons();                // Returns a list of Ion plugin names.
+    KService::List knownIons();                // Returns a list of Ion plugin names.
 
 protected:
     // dataEngine method - We use it to communicate to the Ion plugins to set the data sources

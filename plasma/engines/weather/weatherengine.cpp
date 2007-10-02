@@ -61,18 +61,11 @@ IonInterface* WeatherEngine::loadIon(const QString& name)
         return ion;
     }
 
-    // Find all Ion plugins, look for the .desktop files that contain WeatherEngine/Ion.
-    QString tag = QString("[X-IonName] == '%1'").arg(name);
-    KService::List offers = KServiceTypeTrader::self()->query("WeatherEngine/Ion", tag);
-
-    if (offers.isEmpty()) {
-        kDebug() << "weatherengine: Offers are empty for " << name << " with tag " << tag;
-        return 0;
-    }
     QString error;
+    QString tag = QString("[X-IonName] == '%1'").arg(name);
 
     // Load the Ion plugin, store it into a QMap to handle multiple ions.
-    ion = KService::createInstance<IonInterface>(offers.first(), 0, QVariantList(), &error);
+    ion = KServiceTypeTrader::createInstanceFromQuery<IonInterface>("WeatherEngine/Ion", tag, 0, QVariantList(), &error);
     if (!ion) {
         kDebug() << "weatherengine: Couldn't load ion \"" << name << "\"!" << error;
         return 0;
@@ -82,7 +75,7 @@ IonInterface* WeatherEngine::loadIon(const QString& name)
     ion->ref();
 
     // Set the Ion's long name
-    ion->setObjectName(offers.first()->name());
+    //ion->setObjectName(offers.first()->name());
     connect(ion, SIGNAL(newSource(QString)), this, SLOT(newIonSource(QString)));
     connect(ion, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
 
@@ -90,10 +83,12 @@ IonInterface* WeatherEngine::loadIon(const QString& name)
      *
      * TIMEFORMAT is displaying the time/date in UTC or user's local time
      * UNITS is setting the weather units used, Celsius/Fahrenheit, Kilopascals/Inches of Mercury, etc
+     * WINDFORMAT enable winds to be displayed as meters per second (m/s) some countries display winds like this
      */
 
     ion->option(IonInterface::TIMEFORMAT, QVariant(d->m_localTime.isUtc()));
     ion->option(IonInterface::UNITS, KGlobal::locale()->measureSystem());
+    ion->option(IonInterface::WINDFORMAT, QVariant(true)); // FIXME: Should be configurable by applet
 
     // Assign the instantiated ion the key of the name of the ion.
     d->m_ions[name] = ion;
@@ -116,16 +111,14 @@ void WeatherEngine::unloadIon(const QString &name)
 }
 
 // Return a list of Ion plugins found.
-QStringList WeatherEngine::knownIons()
+KService::List WeatherEngine::knownIons()
 {
-    QStringList ions;
     KService::List offers = KServiceTypeTrader::self()->query("WeatherEngine/Ion");
     foreach(KService::Ptr service, offers) {
-        ions.append(service->property("X-IonName").toString());
         setData("ions", service->property("X-IonName").toString(), service->property("Name").toString());
     }
 
-    return ions;
+    return offers;
 }
 
 void WeatherEngine::newIonSource(const QString& source)
@@ -165,8 +158,8 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
     /* FIXME: For now we just load them all as we find them, we'll need to make this configurable
               somehow. No point in loading all plugins if your not interested in certain cities.
     */
-    foreach(QString ionName, knownIons()) {
-        loadIon(ionName);
+    foreach(KService::Ptr service, knownIons()) {
+        loadIon(service->property("X-IonName").toString());
     }
 
     // Setup a master time to ping each Ion for new data.
