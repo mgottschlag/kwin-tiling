@@ -49,25 +49,25 @@ IonInterface* WeatherEngine::Ion(const QString& name) const
 }
 
 // Loads an Ion plugin given a plugin name found via KService.
-IonInterface* WeatherEngine::loadIon(const QString& name)
+IonInterface* WeatherEngine::loadIon(const KService::Ptr& service)
 {
 
     IonInterface *ion = 0;
-    IonInterface::IonDict::const_iterator it = d->m_ions.find(name);
+    QString plugName = service->property("X-IonName").toString();
+    IonInterface::IonDict::const_iterator it = d->m_ions.find(plugName);
 
     if (it != d->m_ions.end()) {
-        ion = *it;
-        ion->ref();
-        return ion;
+         ion = *it;
+         ion->ref();
+         return ion;
     }
 
     QString error;
-    QString tag = QString("[X-IonName] == '%1'").arg(name);
 
     // Load the Ion plugin, store it into a QMap to handle multiple ions.
-    ion = KServiceTypeTrader::createInstanceFromQuery<IonInterface>("WeatherEngine/Ion", tag, 0, QVariantList(), &error);
+    ion = service->createInstance<IonInterface>(0, QVariantList(), &error);
     if (!ion) {
-        kDebug() << "weatherengine: Couldn't load ion \"" << name << "\"!" << error;
+        kDebug() << "weatherengine: Couldn't load ion \"" << plugName << "\"!" << error;
         return 0;
     }
 
@@ -88,10 +88,10 @@ IonInterface* WeatherEngine::loadIon(const QString& name)
 
     ion->option(IonInterface::TIMEFORMAT, QVariant(d->m_localTime.isUtc()));
     ion->option(IonInterface::UNITS, KGlobal::locale()->measureSystem());
-    ion->option(IonInterface::WINDFORMAT, QVariant(true)); // FIXME: Should be configurable by applet
+    ion->option(IonInterface::WINDFORMAT, QVariant(false)); // FIXME: Should be configurable by applet
 
     // Assign the instantiated ion the key of the name of the ion.
-    d->m_ions[name] = ion;
+    d->m_ions[plugName] = ion;
 
     return ion;
 }
@@ -165,7 +165,7 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
               somehow. No point in loading all plugins if your not interested in certain cities.
     */
     foreach(KService::Ptr service, knownIons()) {
-        loadIon(service->property("X-IonName").toString());
+        loadIon(service); 
     }
 
     // Setup a master time to ping each Ion for new data.
