@@ -1,21 +1,6 @@
 [Desktop Entry]
 Name=Battery Monitor
-Name[bg]=Мониторинг на батериите
-Name[de]=Batteriemonitor
-Name[es]=Monitor de la batería
-Name[ja]=バッテリモニタ
-Name[nl]=Batterijbewaking
-Name[pt]=Monitor da Bateria
-Name[pt_BR]=Monitor da Bateria
-Name[sv]=Batteriövervakare
 Comment=A battery charge monitor
-Comment[bg]=Наблюдение зареждането на батерията
-Comment[es]=Un monitor de la carga de la batería
-Comment[ja]=バッテリ残量モニタ
-Comment[nl]=Bewaking van batterijkracht
-Comment[pt]=Um monitor da carga da bateria
-Comment[pt_BR]=Um monitor da carga da bateria
-Comment[sv]=En övervakare av batteriladdning
 Icon=battery
 Type=Service
 ServiceTypes=Plasma/Applet

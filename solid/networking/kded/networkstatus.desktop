@@ -45,6 +45,7 @@ Comment[pt]=Regista o estado das interfaces de rede e notifica as aplicações q
 Comment[pt_BR]=Monitora o estado das interfaces de rede e fornece notificações para os aplicativos usando a rede.
 Comment[sv]=Följer status hos nätverksgränssnitt och tillhandahåller underrättelser till program som använder nätverket.
 Comment[x-test]=xxTracks status of network interfaces and provides notification to applications using the network.xx
+Comment[zh_CN]=跟踪网络接口的状态并且为正在使用网络的应用程序提供通知。
 Comment[zh_TW]=追蹤網路介面的狀態，提供通知給使用網路的應用程式
 Type=Service
 ServiceTypes=KDEDModule

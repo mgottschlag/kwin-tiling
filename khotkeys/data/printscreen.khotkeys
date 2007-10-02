@@ -25,6 +25,7 @@ Comment[sv]=Gruppen innehåller åtgärder som normalt är förinställda.
 Comment[th]=กลุ่มนี้จะมีการกระทำที่ได้ตั้งไว้แล้วโดยปริยาย
 Comment[vi]=Nhóm này chứa các hành động được thiết lập theo mặc định.
 Comment[x-test]=xxThis group contains actions that are set up by default.xx
+Comment[zh_CN]=这个组包含默认设置的动作。
 Comment[zh_TW]=此群組包含了預先設定好的動作。
 DataCount=1
 Enabled=true
@@ -143,6 +144,7 @@ Comment[pt]=Acção Simples
 Comment[sv]=Enkel åtgärd
 Comment[vi]=Hành động đơn giản
 Comment[x-test]=xxSimple_actionxx
+Comment[zh_CN]=简易_动作
 Comment[zh_TW]=簡易動作
 TriggersCount=1
 
