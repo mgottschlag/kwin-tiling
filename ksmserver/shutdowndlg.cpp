@@ -317,7 +317,7 @@ bool KSMPushButton::event( QEvent *e )
         return true;
     }
     else
-        return QWidget::event( e );
+        return QPushButton::event( e );
 }
 
 //////
