@@ -77,3 +77,13 @@ float WeatherFormula::inchesToMM(float inch) const
 {
     return (inch * 25.4);
 }
+
+float WeatherFormula::kilometersToMS(float km) const
+{
+    return (km * 0.277778);
+}
+
+float WeatherFormula::milesToMS(float miles) const
+{
+    return (miles * 0.44704);
+}

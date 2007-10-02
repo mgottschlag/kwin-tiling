@@ -40,6 +40,10 @@ public:
     float inchesToCM(float inch) const;
     float millimetersToIN(float mm) const;
     float inchesToMM(float inch) const;
+
+    // Winds measured in meters per second
+    float kilometersToMS(float km) const;
+    float milesToMS(float miles) const;
 };
 
 #endif
