@@ -114,6 +114,12 @@ void WeatherEngine::unloadIon(const QString &name)
 KService::List WeatherEngine::knownIons()
 {
     KService::List offers = KServiceTypeTrader::self()->query("WeatherEngine/Ion");
+
+    if (offers.isEmpty()) {
+        kDebug() << "weatherengine: No plugins to load!";
+        return KService::List();
+    }
+
     foreach(KService::Ptr service, offers) {
         setData("ions", service->property("X-IonName").toString(), service->property("Name").toString());
     }
