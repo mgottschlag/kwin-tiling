@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
+    <width>785</width>
     <height>455</height>
    </rect>
   </property>
@@ -113,19 +113,282 @@
            </widget>
           </item>
           <item>
-           <widget class="QTableWidget" name="colorTable" >
-            <property name="selectionMode" >
-             <enum>QAbstractItemView::SingleSelection</enum>
+           <widget class="QStackedWidget" name="stackedWidget" >
+            <property name="currentIndex" >
+             <number>0</number>
             </property>
-            <property name="selectionBehavior" >
-             <enum>QAbstractItemView::SelectRows</enum>
-            </property>
-            <property name="wordWrap" >
-             <bool>true</bool>
-            </property>
-            <property name="columnCount" >
-             <number>2</number>
-            </property>
+            <widget class="QWidget" name="commonColorsPage" >
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="QTableWidget" name="commonColorTable" >
+                <property name="selectionMode" >
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior" >
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="wordWrap" >
+                 <bool>true</bool>
+                </property>
+                <property name="columnCount" >
+                 <number>2</number>
+                </property>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <column>
+                 <property name="text" >
+                  <string>0</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text" >
+                  <string>1</string>
+                 </property>
+                </column>
+                <item row="0" column="0" >
+                 <property name="text" >
+                  <string>View Background</string>
+                 </property>
+                </item>
+                <item row="1" column="0" >
+                 <property name="text" >
+                  <string>View Text</string>
+                 </property>
+                </item>
+                <item row="2" column="0" >
+                 <property name="text" >
+                  <string>Window Background</string>
+                 </property>
+                </item>
+                <item row="3" column="0" >
+                 <property name="text" >
+                  <string>Window Text</string>
+                 </property>
+                </item>
+                <item row="4" column="0" >
+                 <property name="text" >
+                  <string>Button Background</string>
+                 </property>
+                </item>
+                <item row="5" column="0" >
+                 <property name="text" >
+                  <string>Button Text</string>
+                 </property>
+                </item>
+                <item row="6" column="0" >
+                 <property name="text" >
+                  <string>Selection Background</string>
+                 </property>
+                </item>
+                <item row="7" column="0" >
+                 <property name="text" >
+                  <string>Selection Text</string>
+                 </property>
+                </item>
+                <item row="8" column="0" >
+                 <property name="text" >
+                  <string>Selection Inactive Text</string>
+                 </property>
+                </item>
+                <item row="9" column="0" >
+                 <property name="text" >
+                  <string>Inactive Text</string>
+                 </property>
+                </item>
+                <item row="10" column="0" >
+                 <property name="text" >
+                  <string>Active Text</string>
+                 </property>
+                </item>
+                <item row="11" column="0" >
+                 <property name="text" >
+                  <string>Link Text</string>
+                 </property>
+                </item>
+                <item row="12" column="0" >
+                 <property name="text" >
+                  <string>Visited Text</string>
+                 </property>
+                </item>
+                <item row="13" column="0" >
+                 <property name="text" >
+                  <string>Negative Text</string>
+                 </property>
+                </item>
+                <item row="14" column="0" >
+                 <property name="text" >
+                  <string>Neutral Text</string>
+                 </property>
+                </item>
+                <item row="15" column="0" >
+                 <property name="text" >
+                  <string>Positive Text</string>
+                 </property>
+                </item>
+                <item row="16" column="0" >
+                 <property name="text" >
+                  <string>Tooltip Background</string>
+                 </property>
+                </item>
+                <item row="17" column="0" >
+                 <property name="text" >
+                  <string>Tooltip Text</string>
+                 </property>
+                </item>
+                <item row="18" column="0" >
+                 <property name="text" >
+                  <string>Active Window</string>
+                 </property>
+                </item>
+                <item row="19" column="0" >
+                 <property name="text" >
+                  <string>Active Window Text</string>
+                 </property>
+                </item>
+                <item row="20" column="0" >
+                 <property name="text" >
+                  <string>Inactive Window</string>
+                 </property>
+                </item>
+                <item row="21" column="0" >
+                 <property name="text" >
+                  <string>InactiveWindowText</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="otherPage" >
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="QTableWidget" name="colorTable" >
+                <property name="selectionMode" >
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior" >
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="wordWrap" >
+                 <bool>true</bool>
+                </property>
+                <property name="columnCount" >
+                 <number>2</number>
+                </property>
+                <column/>
+                <column/>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
          </layout>

@@ -72,6 +72,9 @@ private slots:
 
 private:
 
+    /** update m_colorSchemes contents from the values in m_config */
+    void updateColorSchemes();
+
     /** setup the colortable with its buttons and labels */
     void setupColorTable();
     
@@ -83,23 +86,18 @@ private:
     
     void changeColor(int row, const QColor &newColor);
     
-    QColor commonBackground(KColorScheme::BackgroundRole index);
-    
     QColor commonForeground(KColorScheme::ForegroundRole index);
-    
-    QColor commonDecoration(KColorScheme::DecorationRole index);
 
-    // these are lists of QPushButtons so they can be KColorButtons, or KPushButtons when
-    // they say "Varies"
     QList<KColorButton *> m_backgroundButtons;
     QList<KColorButton *> m_foregroundButtons;
     QList<KColorButton *> m_decorationButtons;
+    QList<KColorButton *> m_commonColorButtons;
     QList<QStackedWidget *> m_stackedWidgets;
     QStringList m_colorKeys;
 
     QList<KColorScheme> m_colorSchemes;
 
-	KSharedConfigPtr m_config;
+    KSharedConfigPtr m_config;
 };
 
 #endif

@@ -71,19 +71,9 @@ void KColorCm::createColorEntry(QString text, QString key, QList<KColorButton *>
 
     m_colorKeys.insert(index, key);
 
-    KPushButton * variesButton = new KPushButton(NULL);
-    variesButton->setText(i18n("Varies"));
-    variesButton->setObjectName(QString::number(index));
-    connect(variesButton, SIGNAL(clicked()), this, SLOT(variesClicked()));
-    
-    QStackedWidget * widget = new QStackedWidget(this);
-    widget->addWidget(button);
-    widget->addWidget(variesButton);
-    m_stackedWidgets.append(widget);
-
     QTableWidgetItem *label = new QTableWidgetItem(text);
     colorTable->setItem(index, 0, label);
-    colorTable->setCellWidget(index, 1, widget);
+    colorTable->setCellWidget(index, 1, button);
 }
 
 void KColorCm::variesClicked()
@@ -95,18 +85,61 @@ void KColorCm::variesClicked()
     if(KColorDialog::getColor(color, this ) != QDialog::Rejected ) 
     {
         changeColor(row, color);
-        m_stackedWidgets[row]->setCurrentIndex(0);
+        m_stackedWidgets[row - 9]->setCurrentIndex(0);
     }
 }
 
-void KColorCm::setupColorTable()
+void KColorCm::updateColorSchemes()
 {
+    m_colorSchemes.clear();
+
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::View, m_config));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Window, m_config));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Button, m_config));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Selection, m_config));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Tooltip, m_config));
+}
 
+void KColorCm::setupColorTable()
+{
+    // first setup the common colors table
+    commonColorTable->verticalHeader()->hide();
+    commonColorTable->horizontalHeader()->hide();
+    commonColorTable->setShowGrid(false);
+    commonColorTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
+    int minWidth = QPushButton(i18n("Varies")).minimumSizeHint().width();
+    commonColorTable->horizontalHeader()->setMinimumSectionSize(minWidth);
+    commonColorTable->horizontalHeader()->setResizeMode(1, QHeaderView::ResizeToContents);
+
+    for (int i = 0; i < 22; ++i)
+    {
+        KColorButton * button = new KColorButton(this);
+        button->setObjectName(QString::number(i));
+        connect(button, SIGNAL(changed(const QColor &)), this, SLOT(colorChanged(const QColor &)));
+        m_commonColorButtons << button;
+
+        if (i > 8 && i < 16)
+        {
+            // Inactive Text row through Positive Text role all need a varies button
+            KPushButton * variesButton = new KPushButton(NULL);
+            variesButton->setText(i18n("Varies"));
+            variesButton->setObjectName(QString::number(i));
+            connect(variesButton, SIGNAL(clicked()), this, SLOT(variesClicked()));
+
+            QStackedWidget * widget = new QStackedWidget(this);
+            widget->addWidget(button);
+            widget->addWidget(variesButton);
+            m_stackedWidgets.append(widget);
+
+            commonColorTable->setCellWidget(i, 1, widget);
+        }
+        else
+        {
+            commonColorTable->setCellWidget(i, 1, button);
+        }
+    }
+
+    // then the colorTable that the colorSets will use
     colorTable->verticalHeader()->hide();
     colorTable->horizontalHeader()->hide();
     colorTable->setShowGrid(false);
@@ -126,26 +159,9 @@ void KColorCm::setupColorTable()
     createColorEntry(i18n("Hover Decoration"),     "DecorationHover",     m_decorationButtons, 11);
 
     colorTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
-    int minWidth = QPushButton(i18n("Varies")).minimumSizeHint().width();
-    colorTable->horizontalHeader()->setMinimumSectionSize(minWidth);
     colorTable->horizontalHeader()->setResizeMode(1, QHeaderView::ResizeToContents);
 
     updateColorTable();
-}
-
-QColor KColorCm::commonBackground(KColorScheme::BackgroundRole index)
-{
-    QColor temp = m_colorSchemes[KColorScheme::View].background(index).color();
-    for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
-    {
-        if (i != KColorScheme::Selection && m_colorSchemes[i].background(index).color() != temp)
-        {
-            temp = QColor(); // make it an invalid color
-            break;
-        }
-    }
-
-    return temp;
 }
 
 QColor KColorCm::commonForeground(KColorScheme::ForegroundRole index)
@@ -153,22 +169,7 @@ QColor KColorCm::commonForeground(KColorScheme::ForegroundRole index)
     QColor temp = m_colorSchemes[KColorScheme::View].foreground(index).color();
     for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
     {
-        if (i != KColorScheme::Selection && m_colorSchemes[i].foreground(index).color() != temp)
-        {
-            temp = QColor(); // make it an invalid color
-            break;
-        }
-    }
-
-    return temp;
-}
-
-QColor KColorCm::commonDecoration(KColorScheme::DecorationRole index)
-{
-    QColor temp = m_colorSchemes[KColorScheme::View].decoration(index).color();
-    for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
-    {
-        if (i != KColorScheme::Selection && m_colorSchemes[i].decoration(index).color() != temp)
+        if (m_colorSchemes[i].foreground(index).color() != temp)
         {
             temp = QColor(); // make it an invalid color
             break;
@@ -186,85 +187,124 @@ void KColorCm::updateColorTable()
     if (currentSet == -1)
     {
         // common colors is selected
-        for (int i = KColorScheme::NormalBackground; i <= KColorScheme::AlternateBackground; ++i)
+        stackedWidget->setCurrentIndex(0);
+
+        KColorButton * button;
+        foreach (button, m_commonColorButtons)
         {
-            QColor backgroundColor = commonBackground(KColorScheme::BackgroundRole(i));
-            if (backgroundColor.isValid())
-            {
-                m_backgroundButtons[i]->blockSignals(true);
-                m_backgroundButtons[i]->setColor(backgroundColor);
-                m_stackedWidgets[i]->setCurrentIndex(0);
-                m_backgroundButtons[i]->blockSignals(false);
-            }
-            else
-            {
-                // replace background button i with a KPushButton with text "Varies"
-                m_stackedWidgets[i]->setCurrentIndex(1);
-            }
+            button->blockSignals(true);
         }
 
-        for (int i = KColorScheme::NormalText; i <= KColorScheme::PositiveText; ++i)
+        m_commonColorButtons[0]->setColor(m_colorSchemes[KColorScheme::View].background(KColorScheme::NormalBackground).color());
+        m_commonColorButtons[1]->setColor(m_colorSchemes[KColorScheme::View].foreground(KColorScheme::NormalText).color());
+        m_commonColorButtons[2]->setColor(m_colorSchemes[KColorScheme::Window].background(KColorScheme::NormalBackground).color());
+        m_commonColorButtons[3]->setColor(m_colorSchemes[KColorScheme::Window].foreground(KColorScheme::NormalText).color());
+        m_commonColorButtons[4]->setColor(m_colorSchemes[KColorScheme::Button].background(KColorScheme::NormalBackground).color());
+        m_commonColorButtons[5]->setColor(m_colorSchemes[KColorScheme::Button].foreground(KColorScheme::NormalText).color());
+        m_commonColorButtons[6]->setColor(m_colorSchemes[KColorScheme::Selection].background(KColorScheme::NormalBackground).color());
+        m_commonColorButtons[7]->setColor(m_colorSchemes[KColorScheme::Selection].foreground(KColorScheme::NormalText).color());
+        m_commonColorButtons[8]->setColor(m_colorSchemes[KColorScheme::Selection].foreground(KColorScheme::InactiveText).color());
+
+        QColor color = commonForeground(KColorScheme::InactiveText);
+        m_stackedWidgets[0]->setCurrentIndex(color.isValid() ? 0 : 1);
+        if (color.isValid())
         {
-            int row = i + KColorScheme::AlternateBackground;
-            QColor foregroundColor = commonForeground(KColorScheme::ForegroundRole(i));
-            if (foregroundColor.isValid())
-            {
-                m_foregroundButtons[i]->blockSignals(true);
-                m_foregroundButtons[i]->setColor(foregroundColor);
-                m_stackedWidgets[row]->setCurrentIndex(0);
-                m_foregroundButtons[i]->blockSignals(false);
-            }
-            else
-            {
-                // replace foreground button i with a KPushButton with text "Varies"
-                m_stackedWidgets[row]->setCurrentIndex(1);
-            }
+            m_commonColorButtons[9]->setColor(color);
+        }
+        color = commonForeground(KColorScheme::ActiveText);
+        m_stackedWidgets[1]->setCurrentIndex(color.isValid() ? 0 : 1);
+        if (color.isValid())
+        {
+            m_commonColorButtons[10]->setColor(color);
+        }
+        color = commonForeground(KColorScheme::LinkText);
+        m_stackedWidgets[2]->setCurrentIndex(color.isValid() ? 0 : 1);
+        if (color.isValid())
+        {
+            m_commonColorButtons[11]->setColor(color);
+        }
+        color = commonForeground(KColorScheme::VisitedText);
+        m_stackedWidgets[3]->setCurrentIndex(color.isValid() ? 0 : 1);
+        if (color.isValid())
+        {
+            m_commonColorButtons[12]->setColor(color);
+        }
+        color = commonForeground(KColorScheme::NegativeText);
+        m_stackedWidgets[4]->setCurrentIndex(color.isValid() ? 0 : 1);
+        if (color.isValid())
+        {
+            m_commonColorButtons[13]->setColor(color);
+        }
+        color = commonForeground(KColorScheme::NeutralText);
+        m_stackedWidgets[5]->setCurrentIndex(color.isValid() ? 0 : 1);
+        if (color.isValid())
+        {
+            m_commonColorButtons[14]->setColor(color);
+        }
+        color = commonForeground(KColorScheme::PositiveText);
+        m_stackedWidgets[6]->setCurrentIndex(color.isValid() ? 0 : 1);
+        if (color.isValid())
+        {
+            m_commonColorButtons[15]->setColor(color);
         }
 
-        for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
+        m_commonColorButtons[16]->setColor(m_colorSchemes[KColorScheme::Tooltip].background(KColorScheme::NormalBackground).color());
+        m_commonColorButtons[17]->setColor(m_colorSchemes[KColorScheme::Tooltip].foreground(KColorScheme::NormalText).color());
+
+        // use KGS accessors to get the defaults when none have been written to m_config
+        color = KConfigGroup(m_config, "WM").readEntry("activeBackground");
+        if (!color.isValid())
         {
-            int row = i + KColorScheme::AlternateBackground + KColorScheme::PositiveText;
-            QColor decorationColor = commonDecoration(KColorScheme::DecorationRole(i));
-            if (decorationColor.isValid())
-            {
-                m_decorationButtons[i]->blockSignals(true);
-                m_decorationButtons[i]->setColor(decorationColor);
-                m_stackedWidgets[row]->setCurrentIndex(0);
-                m_decorationButtons[i]->blockSignals(false);
-            }
-            else
-            {
-                // replace decoration button i with a KPushButton with text "Varies"
-                m_stackedWidgets[row]->setCurrentIndex(1);
-            }
+            color = KGlobalSettings::activeTitleColor();
+        }
+        m_commonColorButtons[18]->setColor(color);
+        color = KConfigGroup(m_config, "WM").readEntry("activeForeground");
+        if (!color.isValid())
+        {
+            color = KGlobalSettings::activeTextColor();
+        }
+        m_commonColorButtons[19]->setColor(color);
+        color = KConfigGroup(m_config, "WM").readEntry("inactiveBackground");
+        if (!color.isValid())
+        {
+            color = KGlobalSettings::inactiveTitleColor();
+        }
+        m_commonColorButtons[20]->setColor(color);
+        color = KConfigGroup(m_config, "WM").readEntry("inactiveForeground");
+        if (!color.isValid())
+        {
+            color = KGlobalSettings::activeTitleColor();
+        }
+        m_commonColorButtons[21]->setColor(color);
+
+        foreach (button, m_commonColorButtons)
+        {
+            button->blockSignals(false);
         }
     }
     else
     {
         // a real color set is selected
+        stackedWidget->setCurrentIndex(1);
+
         for (int i = KColorScheme::NormalBackground; i <= KColorScheme::AlternateBackground; ++i)
         {
             m_backgroundButtons[i]->blockSignals(true);
             m_backgroundButtons[i]->setColor(m_colorSchemes[currentSet].background(KColorScheme::BackgroundRole(i)).color());
-            m_stackedWidgets[i]->setCurrentIndex(0);
             m_backgroundButtons[i]->blockSignals(false);
         }
 
         for (int i = KColorScheme::NormalText; i <= KColorScheme::PositiveText; ++i)
         {
-            int row = i + KColorScheme::AlternateBackground;
             m_foregroundButtons[i]->blockSignals(true);
             m_foregroundButtons[i]->setColor(m_colorSchemes[currentSet].foreground(KColorScheme::ForegroundRole(i)).color());
-            m_stackedWidgets[row]->setCurrentIndex(0);
             m_foregroundButtons[i]->blockSignals(false);
         }
 
         for (int i = KColorScheme::FocusColor; i <= KColorScheme::HoverColor; ++i)
         {
-            int row = i + KColorScheme::AlternateBackground + KColorScheme::PositiveText;
             m_decorationButtons[i]->blockSignals(true);
             m_decorationButtons[i]->setColor(m_colorSchemes[currentSet].decoration(KColorScheme::DecorationRole(i)).color());
-            m_stackedWidgets[row]->setCurrentIndex(0);
             m_decorationButtons[i]->blockSignals(false);
         }
     }
@@ -285,11 +325,135 @@ void KColorCm::changeColor(int row, const QColor &newColor)
     if (currentSet == -1)
     {
         // common colors is selected
-        KConfigGroup(m_config, "Colors:Window").writeEntry(m_colorKeys[row], newColor);
-        KConfigGroup(m_config, "Colors:Button").writeEntry(m_colorKeys[row], newColor);
-        //KConfigGroup(m_config, "Colors:Selection").writeEntry(m_colorKeys[row], newColor);
-        KConfigGroup(m_config, "Colors:Tooltip").writeEntry(m_colorKeys[row], newColor);
-        KConfigGroup(m_config, "Colors:View").writeEntry(m_colorKeys[row], newColor);
+        switch (row)
+        {
+            case 0:
+                // View Background button
+                KConfigGroup(m_config, "Colors:View").writeEntry("BackgroundNormal", newColor);
+                break;
+            case 1:
+                // View Text button
+                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundNormal", newColor);
+                break;
+            case 2:
+                // Window Background Button
+                KConfigGroup(m_config, "Colors:Window").writeEntry("BackgroundNormal", newColor);
+                break;
+            case 3:
+                // Window Text Button
+                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundNormal", newColor);
+                break;
+            case 4:
+                // Button Background button
+                KConfigGroup(m_config, "Colors:Button").writeEntry("BackgroundNormal", newColor);
+                break;
+            case 5:
+                // Button Text button
+                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundNormal", newColor);
+                break;
+            case 6:
+                // Selection Background Button
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("BackgroundNormal", newColor);
+                break;
+            case 7:
+                // Selection Text Button
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundNormal", newColor);
+                break;
+            case 8:
+                // Window Text Button
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundInactive", newColor);
+                break;
+
+            // buttons that could have varies in their place
+            case 9:
+                // Inactive Text Button (set all but Selection Inactive Text color)
+                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundInactive", newColor);
+                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundInactive", newColor);
+                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundInactive", newColor);
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundInactive", newColor);
+                break;
+            case 10:
+                // Active Text Button (set all active text colors)
+                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundActive", newColor);
+                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundActive", newColor);
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundActive", newColor);
+                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundActive", newColor);
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundActive", newColor);
+                break;
+            case 11:
+                // Link Text Button (set all active text colors)
+                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundLink", newColor);
+                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundLink", newColor);
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundLink", newColor);
+                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundLink", newColor);
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundLink", newColor);
+                break;
+            case 12:
+                // Visited Text Button (set all active text colors)
+                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundVisited", newColor);
+                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundVisited", newColor);
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundVisited", newColor);
+                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundVisited", newColor);
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundVisited", newColor);
+                break;
+            case 13:
+                // Negative Text Button (set all active text colors)
+                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundNegavite", newColor);
+                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundNegavite", newColor);
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundNegavite", newColor);
+                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundNegavite", newColor);
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundNegavite", newColor);
+                break;
+            case 14:
+                // Neutral Text Button (set all active text colors)
+                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundNeutral", newColor);
+                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundNeutral", newColor);
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundNeutral", newColor);
+                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundNeutral", newColor);
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundNeutral", newColor);
+                break;
+            case 15:
+                // Positive Text Button (set all active text colors)
+                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundPositive", newColor);
+                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundPositive", newColor);
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundPositive", newColor);
+                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundPositive", newColor);
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundPositive", newColor);
+                break;
+
+            case 16:
+                // Tooltip Background button
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("BackgroundNormal", newColor);
+                break;
+            case 17:
+                // Tooltip Text button
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundNormal", newColor);
+                break;
+            case 18:
+                // Active Window
+                KConfigGroup(m_config, "WM").writeEntry("activeBackground", newColor);
+                break;
+            case 19:
+                // Active Window Text
+                KConfigGroup(m_config, "WM").writeEntry("activeForeground", newColor);
+                break;
+            case 20:
+                // Inactive Window
+                KConfigGroup(m_config, "WM").writeEntry("inactiveBackground", newColor);
+                break;
+            case 21:
+                // Inactive Window Text
+                KConfigGroup(m_config, "WM").writeEntry("inactiveForeground", newColor);
+                break;
+        }
+        m_commonColorButtons[row]->blockSignals(true);
+        m_commonColorButtons[row]->setColor(newColor);
+        m_commonColorButtons[row]->blockSignals(false);
+        //KConfigGroup(m_config, "Colors:Window").writeEntry(m_colorKeys[row], newColor);
+        //KConfigGroup(m_config, "Colors:Button").writeEntry(m_colorKeys[row], newColor);
+        ////KConfigGroup(m_config, "Colors:Selection").writeEntry(m_colorKeys[row], newColor);
+        //KConfigGroup(m_config, "Colors:Tooltip").writeEntry(m_colorKeys[row], newColor);
+        //KConfigGroup(m_config, "Colors:View").writeEntry(m_colorKeys[row], newColor);
     }
     else
     {
@@ -312,6 +476,8 @@ void KColorCm::changeColor(int row, const QColor &newColor)
         }
         KConfigGroup(m_config, group).writeEntry(m_colorKeys[row], newColor);
     }
+
+    updateColorSchemes();
 
     schemePreview->setPalette(m_config);
     inactivePreview->setPalette(m_config, QPalette::Inactive);
@@ -344,8 +510,11 @@ void KColorCm::load()
 {
     // rollback the config, in case we have changed the in-memory kconfig
     m_config->rollback();
-    
+
+    updateColorSchemes();
+
     setupColorTable();
+
     contrastSlider->setValue(KGlobalSettings::contrast());
     shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ?
         Qt::Checked : Qt::Unchecked);
