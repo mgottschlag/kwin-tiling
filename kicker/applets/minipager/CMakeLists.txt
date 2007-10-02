@@ -13,7 +13,7 @@ qt4_add_dbus_interface(minipager_panelapplet_PART_SRCS ../../../kdesktop/org.kde
 kde4_add_plugin(minipager_panelapplet ${minipager_panelapplet_PART_SRCS})
 
 
-target_link_libraries(minipager_panelapplet ${KDE4_KDEUI_LIBS} ${KDE4_KDEFX_LIBS} taskmanager kickermain)
+target_link_libraries(minipager_panelapplet ${KDE4_KDEUI_LIBS} taskmanager kickermain)
 
 install(TARGETS minipager_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR})
 
