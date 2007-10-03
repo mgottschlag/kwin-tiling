@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Desktop
+Icon=Plasma
+Type=Service
+ServiceTypes=Plasma/Applet,Plasma/Containment
+
+X-KDE-Library=plasma_containment_desktop
+X-KDE-PluginInfo-Author=The Plasma Team
+X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Name=desktop
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Miscellaneous
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
