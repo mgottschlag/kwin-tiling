@@ -12,7 +12,7 @@ Comment[he]=קבוצה זו כוללת פעולות המוגדרות כבריר�
 Comment[it]=Questo gruppo contiene azioni che sono attive in modo predefinito.
 Comment[ja]=このグループにはデフォルトで設定されているアクションが含まれています。
 Comment[kk]=Бұл топты әдетте орнатылған әрекеттер құрайды.
-Comment[km]=ក្រុម​នេះ​មាន​អំពើដែល​រៀបចំ​ឡើង​តាម​លំនាំដើម​ ។
+Comment[km]=ក្រុម​នេះ​មាន​អំពើ​ដែល​រៀបចំ​ឡើង​តាម​លំនាំ​ដើម​ ។
 Comment[nb]=Denne gruppa inneholder standardhandlinger.
 Comment[nds]=Disse Koppel bargt vörinstellt Akschonen.
 Comment[ne]=यो समूहले कार्य समाविष्ट गर्दछ जुन पूर्वनिर्धारित रूपमा सेट गरिएका छन् ।
@@ -77,7 +77,7 @@ Comment[he]=הפעלת KSnapShot בעת הקשה על PrintScrn.
 Comment[it]=Avvia KSnapShot quando viene premuto il tasto Stamp.
 Comment[ja]=PrintScrn を押して KSnapShot を起動します。
 Comment[kk]=PrintScrn басылғанда KSnapShot-ты жегеді.
-Comment[km]=ចាប់ផ្ដើម​​កម្មវិធី KSnapShot នៅ​ពេល​​​ចុច​ប៊ូតុង PrintScrn
+Comment[km]=ចាប់ផ្ដើម​​កម្មវិធី KSnapShot នៅ​ពេល​​​ចុច​ប៊ូតុង PrintScrn ។
 Comment[nb]=Starter KSnapShot når PrintScrn trykkes.
 Comment[nds]=Röppt "KSnapShot" op, wenn Een de "PrintScreen"-Tast drückt.
 Comment[ne]=मुद्रण पर्दा थिच्दा केडीई स्न्यापसट सुरू हुन्छ ।
@@ -98,7 +98,7 @@ Name[de]=Bildschirm Drucken
 Name[fy]=print foarbyld
 Name[he]=הדפס מסך
 Name[it]=Stamp
-Name[km]=បោះពុម្ព​អេក្រង់​
+Name[km]=ថត​អេក្រង់​
 Name[nb]=Skriv ut skjermbildet
 Name[nds]=Schirmfoto
 Name[ne]=मुद्रण पर्दा

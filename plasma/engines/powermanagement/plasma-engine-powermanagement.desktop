@@ -1,5 +1,12 @@
 [Desktop Entry]
 Name=Powermanagement Data Engine
+Name[ga]=Inneall Sonraí Powermanagement
+Name[nds]=Stroomkuntrull-Datendriever
+Name[pt]=Motor de Dados de Gestão de Energia
+Name[pt_BR]=Motor de Dados de Gestão de Energia
+Name[sv]=Datagränssnitt för strömsparfunktion
+Name[x-test]=xxPowermanagement Data Enginexx
+Name[zh_TW]=電源管理資料引擎
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=power
