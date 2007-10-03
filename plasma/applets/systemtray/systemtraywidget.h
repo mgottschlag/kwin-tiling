@@ -50,6 +50,10 @@ private slots:
     void init();
     void embedWindow(WId id);
     void discardWindow(WId id);
+    /**
+     * Removes the container with id 0 from our list.
+     */
+    void windowClosed();
 
 private:
     typedef QHash<WId, QX11EmbedContainer*> ContainersList;

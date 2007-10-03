@@ -113,12 +113,31 @@ void SystemTrayWidget::embedWindow(WId id)
         m_layout->addWidget(container);
         container->show();
         m_containers[id] = container;
+        connect(container, SIGNAL(clientClosed()), this, SLOT(windowClosed()) );
         kDebug() << "SystemTray: Window with id " << id << "added";
     }
 }
 
+//what exactly is this for? is it related to QX11EmbedContainer::discardClient? why is it blank?
 void SystemTrayWidget::discardWindow(WId)
 {
+}
+
+void SystemTrayWidget::windowClosed()
+{
+    //by this point the window id is gone, so we have to iterate to find out who's lost theirs
+    ContainersList::iterator i = m_containers.begin();
+    while (i != m_containers.end()) {
+        QX11EmbedContainer *c=i.value();
+        if (c->clientWinId()==0) {
+            m_containers.erase(i);
+            kDebug() << "deleting container" << c;
+            delete c;
+            //I assume that there will never be more than one without an id
+            break;
+        }
+        ++i;
+    }
 }
 
 #include "systemtraywidget.moc"
