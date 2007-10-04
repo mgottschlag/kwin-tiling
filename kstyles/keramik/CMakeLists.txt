@@ -14,7 +14,7 @@ set(genembed_SRCS genembed.cpp )
 
 kde4_add_executable(genembed NOGUI RUN_UNINSTALLED ${genembed_SRCS})
 
-target_link_libraries(genembed  ${KDE4_KDECORE_LIBS} ${BLITZ_LIBRARIES} )
+target_link_libraries(genembed  ${KDE4_KDECORE_LIBS} ${BLITZ_LIBRARIES} ${QT_QTGUI_LIBRARIES} )
 
 #pixmaps.keramik keramikrc.h: genembed
 #	pics=`ls $(srcdir)/pics/*.png 2>/dev/null` ;\
