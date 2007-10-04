@@ -125,8 +125,8 @@ private:
 static void ensureGlobalSyncOff(KSharedConfigPtr config);
 
 // config == KGlobal::config for process, otherwise applet
-Klipper::Klipper(QWidget *parent, const KSharedConfigPtr &config)
-    : QWidget( parent )
+Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
+    : QObject( parent )
     , m_overflowCounter( 0 )
     , locklevel( 0 )
     , m_config( config )
@@ -139,7 +139,6 @@ Klipper::Klipper(QWidget *parent, const KSharedConfigPtr &config)
     ensureGlobalSyncOff(m_config);
 
     updateTimestamp(); // read initial X user time
-    setBackgroundMode( Qt::X11ParentRelative );
     clip = kapp->clipboard();
 
     connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
@@ -184,12 +183,11 @@ Klipper::Klipper(QWidget *parent, const KSharedConfigPtr &config)
     readProperties(m_config.data());
     connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
 
-    poll = new ClipboardPoll( this );
+    poll = new ClipboardPoll;
     connect( poll, SIGNAL( clipboardChanged( bool ) ),
              this, SLOT( newClipData( bool ) ) );
 
     m_pixmap = KSystemTrayIcon::loadIcon( "klipper" ).pixmap();
-    adjustSize();
 
     globalKeys = KGlobalAccel::self();
     KActionCollection* actionCollection = collection;
@@ -217,21 +215,15 @@ Klipper::Klipper(QWidget *parent, const KSharedConfigPtr &config)
     if ( !isApplet() ) {
         popup->plugAction( quitAction );
     }
-
-    this->setToolTip( i18n("Klipper - clipboard tool") );
 }
 
 Klipper::~Klipper()
 {
+    delete poll;
     delete session_managed;
     delete showTimer;
     delete hideTimer;
     delete myURLGrabber;
-}
-
-void Klipper::adjustSize()
-{
-    resize( m_pixmap.size() );
 }
 
 // DCOP
@@ -267,30 +259,6 @@ void Klipper::clearClipboardHistory()
 }
 
 
-void Klipper::mousePressEvent(QMouseEvent *e)
-{
-    if ( e->button() != Qt::LeftButton && e->button() != Qt::RightButton )
-        return;
-
-    // if we only hid the menu less than a third of a second ago,
-    // it's probably because the user clicked on the klipper icon
-    // to hide it, and therefore won't want it shown again.
-    if ( hideTimer->elapsed() > 300 ) {
-        slotPopupMenu();
-    }
-}
-
-void Klipper::paintEvent(QPaintEvent *)
-{
-    QPainter p(this);
-    int x = (width() - m_pixmap.width()) / 2;
-    int y = (height() - m_pixmap.height()) / 2;
-    if ( x < 0 ) x = 0;
-    if ( y < 0 ) y = 0;
-    p.drawPixmap(x , y, m_pixmap);
-    p.end();
-}
-
 void Klipper::slotStartHideTimer()
 {
     hideTimer->start();
@@ -313,15 +281,17 @@ void Klipper::showPopupMenu( QMenu *menu )
         else
             menu->popup(QPoint(g.x(), g.y()));
     } else {
-        KWindowInfo i = KWindowSystem::windowInfo( winId(), NET::WMGeometry );
-        QRect g = i.geometry();
-        QRect screen = KGlobalSettings::desktopGeometry(g.center());
+        if( KSystemTrayIcon* tray = dynamic_cast< KSystemTrayIcon* >( parent())) {
+            QRect g = tray->geometry();
+            QRect screen = KGlobalSettings::desktopGeometry(g.center());
 
-        if ( g.x()-screen.x() > screen.width()/2 &&
-             g.y()-screen.y() + size.height() > screen.height() )
-            menu->popup(QPoint( g.x(), g.y() - size.height()));
-        else
-            menu->popup(QPoint( g.x() + width(), g.y() + height()));
+            if ( g.x()-screen.x() > screen.width()/2 &&
+                 g.y()-screen.y() + size.height() > screen.height() )
+                menu->popup(QPoint( g.x(), g.y() - size.height()));
+            else
+                menu->popup(QPoint( g.x() + g.width(), g.y() + g.height()));
+        } else
+            abort();
 
         //      menu->exec(mapToGlobal(QPoint( width()/2, height()/2 )));
     }

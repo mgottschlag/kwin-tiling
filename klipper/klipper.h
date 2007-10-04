@@ -45,7 +45,7 @@ class QMimeData;
 class HistoryItem;
 class KlipperSessionManager;
 
-class Klipper : public QWidget
+class Klipper : public QObject
 {
   Q_OBJECT
   Q_CLASSINFO("D-Bus Interface", "org.kde.klipper.klipper")
@@ -59,10 +59,9 @@ public Q_SLOTS:
   Q_SCRIPTABLE QString getClipboardHistoryItem(int i);
 
 public:
-    Klipper(QWidget *parent, const KSharedConfigPtr &config);
+    Klipper(QObject *parent, const KSharedConfigPtr &config);
     ~Klipper();
 
-    virtual void adjustSize();
     KGlobalAccel *globalKeys;
 
     /**
@@ -90,8 +89,6 @@ protected:
      */
     enum SelectionMode { Clipboard = 2, Selection = 4 };
 
-    void paintEvent(QPaintEvent *);
-    void mousePressEvent(QMouseEvent *);
     void readProperties(KConfig *);
     void readConfiguration(KConfig *);
 
@@ -134,8 +131,10 @@ protected:
     KSharedConfigPtr config() const { return m_config; }
     bool isApplet() const { return m_config != KGlobal::config(); }
 
-protected Q_SLOTS:
+public Q_SLOTS:
     void slotPopupMenu();
+
+protected Q_SLOTS:
     void showPopupMenu( QMenu * );
     void slotRepeatAction();
     void setURLGrabberEnabled( bool );

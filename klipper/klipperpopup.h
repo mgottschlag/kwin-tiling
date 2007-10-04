@@ -41,7 +41,7 @@ class KlipperPopup : public KMenu
     Q_OBJECT
 
 public:
-    explicit KlipperPopup( History* history, QWidget* parent=0 );
+    explicit KlipperPopup( History* history );
     ~KlipperPopup();
     void plugAction( QAction* action );
 

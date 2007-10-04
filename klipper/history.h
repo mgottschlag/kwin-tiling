@@ -26,13 +26,12 @@
 #include "historyitem.h"
 
 class KlipperPopup;
-class QWidget;
 
 class History : public QObject
 {
     Q_OBJECT
 public:
-    History( QWidget* parent );
+    History( QObject* parent );
     ~History();
     /**
      * Iterator for history

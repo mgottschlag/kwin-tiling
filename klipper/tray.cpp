@@ -23,32 +23,20 @@
 
 #include "tray.h"
 
-KlipperTray::KlipperTray( QWidget* parent )
-    : Klipper( parent, KGlobal::config())
-{
-}
+#include <kglobal.h>
+#include <klocale.h>
 
-// this sucks ... KUniqueApplication registers itself as 'klipper'
-// for the unique-app detection calls (and it shouldn't use that name IMHO)
-// but in Klipper it's not KUniqueApplication class who handles
-// the DCOP calls, but an instance of class Klipper, registered as 'klipper'
-// this below avoids a warning when KUniqueApplication wouldn't otherwise
-// find newInstance()  (which doesn't do anything in Klipper anyway)
-int KlipperTray::newInstance()
-{
-#ifdef __GNUC__
-#warning replacement?
-#endif
- //   kapp->dcopClient()->setPriorityCall(false); // Allow other dcop calls
+#include "klipper.h"
 
-    return 0;
-}
-
-// this is used for quitting klipper process, if klipper is being started as an applet
-// (AKA ugly hack)
-void KlipperTray::quitProcess()
+KlipperTray::KlipperTray()
+    : KSystemTrayIcon( "klipper" )
 {
-    kapp->quit();
+    klipper = new Klipper( this, KGlobal::config());
+    setToolTip( i18n("Klipper - clipboard tool"));
+    setContextMenu( NULL );
+    show();
+    connect( this, SIGNAL( activated( QSystemTrayIcon::ActivationReason )), klipper,
+        SLOT( slotPopupMenu()));
 }
 
 #include "tray.moc"

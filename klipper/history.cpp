@@ -25,9 +25,9 @@
 #include "historystringitem.h"
 #include "klipperpopup.h"
 
-History::History( QWidget* parent )
+History::History( QObject* parent )
     : QObject( parent ),
-      m_popup( new KlipperPopup( this, parent ) ),
+      m_popup( new KlipperPopup( this ) ),
       m_topIsUserSelected( false )
 {
     connect( this, SIGNAL( changed() ), m_popup, SLOT( slotHistoryChanged() ) );

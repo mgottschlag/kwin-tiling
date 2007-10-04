@@ -21,18 +21,18 @@
 #ifndef _TRAY_H_
 #define _TRAY_H_
 
-#include "klipper.h"
+#include <ksystemtrayicon.h>
 
-class KlipperTray : public Klipper
+class Klipper;
+
+class KlipperTray : public KSystemTrayIcon
 {
     Q_OBJECT
 
-public Q_SLOTS:
-    Q_SCRIPTABLE int newInstance();
-    Q_SCRIPTABLE void quitProcess();
-
 public:
-    KlipperTray( QWidget* parent = NULL );
+    KlipperTray();
+private:
+    Klipper* klipper;
 };
 
 #endif

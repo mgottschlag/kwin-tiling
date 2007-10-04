@@ -30,7 +30,7 @@ class ClipboardPoll
     {
     Q_OBJECT
     public:
-        ClipboardPoll( QWidget* parent );
+        ClipboardPoll();
     Q_SIGNALS:
         void clipboardChanged( bool selectionMode );
     protected:

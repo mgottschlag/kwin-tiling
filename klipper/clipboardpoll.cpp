@@ -62,9 +62,8 @@
 
 */
 
-ClipboardPoll::ClipboardPoll( QWidget* parent )
-    :   QWidget( parent )
-    , xfixes_event_base( -1 )
+ClipboardPoll::ClipboardPoll()
+    : xfixes_event_base( -1 )
 {
     hide();
     const char* names[ 6 ]

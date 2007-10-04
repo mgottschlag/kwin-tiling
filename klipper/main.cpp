@@ -28,6 +28,7 @@
 
 #include "tray.h"
 #include "version.h"
+#include "klipper.h"
 
 extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
 {
@@ -41,17 +42,10 @@ extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
   }
   KUniqueApplication app;
   app.disableSessionManagement();
+  app.setQuitOnLastWindowClosed( false );
 
-  KlipperTray *toplevel = new KlipperTray();
-
-#ifdef __GNUC__
-#warning Port to KSystemTrayIcon
-#endif
-  toplevel->setGeometry(-100, -100, 42, 42 );
-  toplevel->show();
-
+  KlipperTray klipper;
   int ret = app.exec();
-  delete toplevel;
   Klipper::destroyAboutData();
   return ret;
 }

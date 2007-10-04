@@ -92,9 +92,8 @@ protected:
 
 };
 
-KlipperPopup::KlipperPopup( History* history, QWidget* parent )
-    : KMenu( parent ),
-      m_dirty( true ),
+KlipperPopup::KlipperPopup( History* history )
+    : m_dirty( true ),
       QSempty( i18n( "<empty clipboard>" ) ),
       QSnomatch( i18n( "<no matches>" ) ),
       m_history( history ),
