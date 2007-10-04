@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Environment Canada
 Name[el]=Περιβάλλον Καναδά
+Name[km]=បរិស្ថាន​ប្រទេស​កាណាដា
 Name[ko]=캐나다 환경부
 Name[nds]=Ümwelt Kanada
 Name[x-test]=xxEnvironment Canadaxx
@@ -10,6 +11,7 @@ Comment[el]=Δεδομένα XML για το περιβάλλον του Καν�
 Comment[ga]=Sonraí XML ó Environment Canada
 Comment[ja]=Environment Canada の XML データ
 Comment[kk]=Environment Canada-ның XML дерегі
+Comment[km]=ទិន្នន័យ XML ពី​បរិស្ថាន​ប្រទេស​កាណាដា
 Comment[ko]=캐나다 환경부의 XML 데이터
 Comment[nb]=XML-data fra Environment Canada
 Comment[nds]=XML-Daten vun Ümwelt Kanada
