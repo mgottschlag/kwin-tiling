@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <klocale.h>
+#include <kicontheme.h>
 #include <kservice.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
