@@ -4,7 +4,6 @@ add_subdirectory( buttons )
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/buttons
-  ${CMAKE_SOURCE_DIR}/libkonq
   ${CMAKE_CURRENT_SOURCE_DIR}/core
   ${CMAKE_CURRENT_SOURCE_DIR}/ui
 )

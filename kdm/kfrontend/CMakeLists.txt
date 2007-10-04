@@ -8,7 +8,6 @@ add_subdirectory( sessions )
 include_directories(
 	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/background
 	${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kdm
-	${CMAKE_SOURCE_DIR}/libkonq
 	${BLITZ_INCLUDES}
 )
 

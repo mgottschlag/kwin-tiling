@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/kicker/core   )
+include_directories(${CMAKE_SOURCE_DIR}/kicker/core   )
 
 
 ########### next target ###############

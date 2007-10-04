@@ -1,4 +1,4 @@
-include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/libkonq ${CMAKE_SOURCE_DIR}/kicker/core   )
+include_directories( ${CMAKE_SOURCE_DIR}/kicker/core   )
 
 
 ########### next target ###############
