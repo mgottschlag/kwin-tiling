@@ -116,7 +116,7 @@ void EnvCanadaIon::getXMLSetup()
 
     d->m_url = new KUrl("http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/siteList.xml");
 
-    KIO::TransferJob *job = KIO::get(d->m_url->url(), false, false);
+    KIO::TransferJob *job = KIO::get(d->m_url->url(), KIO::NoReload, KIO::HideProgressInfo);
 
     if (job) {
         connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
@@ -138,7 +138,7 @@ void EnvCanadaIon::getXMLData()
 
         //kDebug() << "URL Location: " << url.url();
 
-        d->m_job = KIO::get(url.url(), true, false);
+        d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
         d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
         d->m_jobList.insert(d->m_job, key);
 

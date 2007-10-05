@@ -1301,7 +1301,7 @@ void CKioFonts::get(const KUrl &url)
     }
 }
 
-void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
+void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
 {
     KFI_DBUG << "put " << u.path() << " query:" << u.query();
 
@@ -1330,7 +1330,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
     KDE_struct_stat buffDest;
     bool            destExists(KDE_lstat(destC.constData(), &buffDest)!= -1);
 
-    if (destExists && !overwrite && !resume)
+    if (destExists && !(flags & KIO::Overwrite) && !(flags & KIO::Resume))
     {
         error(KIO::ERR_FILE_ALREADY_EXIST, url.prettyUrl());
         return;
@@ -1353,7 +1353,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
 
     tmpFile.setAutoRemove(true);
 
-    if(putReal(tmpFile.fileName(), tmpFileC, destExists, mode, resume))
+    if(putReal(tmpFile.fileName(), tmpFileC, destExists, mode, flags))
     {
         EFileType type(checkFile(tmpFile.fileName(), u));  // error logged in checkFile
 
@@ -1609,7 +1609,7 @@ bool CKioFonts::createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name,
 }
 
 bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bool origExists,
-                        int mode, bool resume)
+                        int mode, KIO::JobFlags flags)
 {
     bool    markPartial=config()->readEntry("MarkPartial", true);
     QString dest;
@@ -1624,14 +1624,14 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
         KDE_struct_stat buffPart;
         bool            partExists=(-1!=KDE_stat(destPartC.constData(), &buffPart));
 
-        if (partExists && !resume && buffPart.st_size>0)
+        if (partExists && !(flags & KIO::Resume) && buffPart.st_size>0)
         {
              // Maybe we can use this partial file for resuming
              // Tell about the size we have, and the app will tell us
              // if it's ok to resume or not.
-             resume=canResume(buffPart.st_size);
+             flags |=canResume(buffPart.st_size) ? KIO::Resume : KIO::DefaultFlags;
 
-             if (!resume)
+             if (!(flags & KIO::Resume))
                  if (!::remove(destPartC.constData()))
                      partExists = false;
                  else
@@ -1644,7 +1644,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
     else
     {
         dest = destOrig;
-        if (origExists && !resume)
+        if (origExists && !(flags & KIO::Resume))
             ::remove(destOrigC.constData());
             // Catch errors when we try to open the file.
     }
@@ -1653,7 +1653,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
 
     int fd;
 
-    if (resume)
+    if (flags & KIO::Resume)
     {
         fd = KDE_open(destC.constData(), O_RDWR);  // append if resuming
         KDE_lseek(fd, 0, SEEK_END); // Seek to end
@@ -1734,7 +1734,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
     return true;
 }
 
-void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
+void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags flags)
 {
     //
     // Support:
@@ -1781,8 +1781,8 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
             if(fromFonts ? confirmMultiple(src, srcFiles,
                                    FOLDER_SYS==destFolder ? FOLDER_USER : FOLDER_SYS, OP_COPY) &&
                            getFontList(srcFiles, map) &&
-                           checkDestFiles(src, map, dest, destFolder, overwrite)
-                         : checkDestFile(src, dest, destFolder, overwrite) )
+                           checkDestFiles(src, map, dest, destFolder, flags)
+                         : checkDestFile(src, dest, destFolder, flags) )
             {
                 if(nonRootSys(dest))
                 {
@@ -1949,10 +1949,10 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
     }
 }
 
-void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
+void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
 {
     KFI_DBUG << "rename " << src.prettyUrl() << " query:" << src.query() << " - "
-             << d.prettyUrl() << " query:" << d.query() << ", " << overwrite;
+             << d.prettyUrl() << " query:" << d.query() << ", " << (flags & KIO::Overwrite);
 
     int timeout(reconfigTimeout());
 
@@ -2142,7 +2142,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
             QMap<QString, QString> map;
 
             if(confirmMultiple(src, srcFiles, FOLDER_SYS==destFolder ? FOLDER_USER : FOLDER_SYS, OP_MOVE) &&
-               getFontList(srcFiles, map) && checkDestFiles(src, map, dest, destFolder, overwrite))
+               getFontList(srcFiles, map) && checkDestFiles(src, map, dest, destFolder, flags))
             {
                 QMap<QString, QString>::Iterator fIt(map.begin()),
                                                  fEnd(map.end());
@@ -3122,7 +3122,7 @@ bool CKioFonts::getSourceFiles(const KUrl &src, CDisabledFonts::TFileList &files
     return true;
 }
 
-bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFolder, bool overwrite)
+bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFolder, KIO::JobFlags flags)
 {
     QStringList folders;
 
@@ -3135,7 +3135,7 @@ bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFol
 
     for(; it!=end; ++it)
     {
-        if(!overwrite && (Misc::fExists(destFile=(*it)+src.fileName()) ||
+        if(!(flags & KIO::Overwrite) && (Misc::fExists(destFile=(*it)+src.fileName()) ||
                           Misc::fExists(destFile=(*it)+modifyName(src.fileName())) ||
                           Misc::fExists(destFile=(*it)+modifyName(src.fileName(), true)) ) )
         {
@@ -3172,7 +3172,7 @@ bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFol
 }
 
 bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, const KUrl &dest,
-                               EFolder destFolder, bool overwrite)
+                               EFolder destFolder, KIO::JobFlags flags)
 {
     //
     // Check whether files exist at destination...
@@ -3185,7 +3185,7 @@ bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, con
         return false;
     }
 
-    if(!overwrite)
+    if(!(flags & KIO::Overwrite))
     {
         QMap<QString, QString>::Iterator fIt(map.begin()),
                                          fEnd(map.end());

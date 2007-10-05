@@ -128,9 +128,9 @@ class CKioFonts : public KIO::SlaveBase
     bool               createStatEntry(KIO::UDSEntry &entry, const KUrl &url, EFolder folder);
     bool               createStatEntryReal(KIO::UDSEntry &entry, const KUrl &url, EFolder folder);
     void               get(const KUrl &url);
-    void               put(const KUrl &url, int mode, bool overwrite, bool resume);
-    void               copy(const KUrl &src, const KUrl &dest, int mode, bool overwrite);
-    void               rename(const KUrl &src, const KUrl &dest, bool overwrite);
+    void               put(const KUrl &url, int mode, KIO::JobFlags flags);
+    void               copy(const KUrl &src, const KUrl &dest, int mode, KIO::JobFlags flags);
+    void               rename(const KUrl &src, const KUrl &dest, KIO::JobFlags flags);
     void               del(const KUrl &url, bool isFile);
     void               cleanup();
 
@@ -145,7 +145,7 @@ class CKioFonts : public KIO::SlaveBase
     bool               createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, const QString &path,
                                             bool sys);
     bool               putReal(const QString &destOrig, const QByteArray &destOrigC, bool origExists,
-                               int mode, bool resume);
+                               int mode, KIO::JobFlags flags);
     void               modified(int timeout, EFolder folder, bool clearList=true,
                                 const CDirList &dirs=CDirList());
     void               special(const QByteArray &a);
@@ -169,9 +169,9 @@ class CKioFonts : public KIO::SlaveBase
     bool               getSourceFiles(const KUrl &src, CDisabledFonts::TFileList &files,
                                       bool removeSymLinks=true);
     bool               checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFolder,
-                                     bool overwrite);
+                                     KIO::JobFlags flags);
     bool               checkDestFiles(const KUrl &src, QMap<QString, QString> &map, const KUrl &dest,
-                                      EFolder destFolder, bool overwrite);
+                                      EFolder destFolder, KIO::JobFlags flags);
     bool               confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList &files,
                                        EFolder folder, EOp op);
     bool               confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList *patterns,

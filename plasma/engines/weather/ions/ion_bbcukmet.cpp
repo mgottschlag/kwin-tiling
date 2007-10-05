@@ -101,7 +101,7 @@ void UKMETIon::searchPlace(QString key)
     url = "http://www.bbc.co.uk/cgi-perl/weather/search/new_search.pl?x=0&y=0&=Submit&search_query=" + key + "&tmpl=wap";
     kDebug() << "URL: " << url;
 
-    d->m_job = KIO::get(url.url(), true, false);
+    d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
     d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
     d->m_jobList.insert(d->m_job, key);
  
@@ -139,7 +139,7 @@ void UKMETIon::cachedLocation(QString key)
     d->m_job = 0;
     kDebug() << "cachedLocation: d->m_place[key].place = " << d->m_place[key].place;
     if (d->m_place.contains(key)) {
-        d->m_job = KIO::get(d->m_place[key].XMLurl, true, false);
+        d->m_job = KIO::get(d->m_place[key].XMLurl, KIO::Reload, KIO::HideProgressInfo);
         kDebug() << "URL: " << d->m_place[key].XMLurl;
 
         if (d->m_job) {

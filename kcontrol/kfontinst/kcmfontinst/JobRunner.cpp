@@ -287,7 +287,7 @@ void CJobRunner::doNext()
             itsUrls.empty();
             itsIt=itsEnd=itsUrls.end();
 
-            KIO::Job *job=KIO::special(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), packedArgs, false);
+            KIO::Job *job=KIO::special(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), packedArgs, KIO::HideProgressInfo);
             setMetaData(job);
             connect(job, SIGNAL(result(KJob *)), SLOT(cfgResult(KJob *)));
             job->ui()->setWindow(this);
@@ -311,20 +311,20 @@ void CJobRunner::doNext()
                 dest.setFileName(Misc::getFile((*itsIt).path()));
                 itsStatusLabel->setText(CMD_INSTALL==itsCmd ? i18n("Installing %1", (*itsIt).displayName())
                                                             : i18n("Copying %1", (*itsIt).displayName()) );
-                job=KIO::file_copy(*itsIt, dest, -1, false, false, false);
+                job=KIO::file_copy(*itsIt, dest, -1, KIO::HideProgressInfo);
                 break;
             }
             case CMD_DELETE:
                 itsStatusLabel->setText(i18n("Deleting %1", (*itsIt).displayName()));
-                job=KIO::file_delete(*itsIt, false);
+                job=KIO::file_delete(*itsIt, KIO::HideProgressInfo);
                 break;
             case CMD_ENABLE:
                 itsStatusLabel->setText(i18n("Enabling %1", (*itsIt).displayName()));
-                job=KIO::rename(*itsIt, toggle(*itsIt, true), false);
+                job=KIO::rename(*itsIt, toggle(*itsIt, true), KIO::HideProgressInfo);
                 break;
             case CMD_DISABLE:
                 itsStatusLabel->setText(i18n("Disabling %1", (*itsIt).displayName()));
-                job=KIO::rename(*itsIt, toggle(*itsIt, false), false);
+                job=KIO::rename(*itsIt, toggle(*itsIt, KIO::HideProgressInfo), KIO::HideProgressInfo);
                 break;
             case CMD_MOVE:
             {
@@ -332,7 +332,7 @@ void CJobRunner::doNext()
 
                 dest.setFileName(Misc::getFile((*itsIt).path()));
                 itsStatusLabel->setText(i18n("Moving %1", (*itsIt).displayName()));
-                job=KIO::file_move(*itsIt, dest, -1, false, false, false);
+                job=KIO::file_move(*itsIt, dest, -1, KIO::HideProgressInfo);
                 break;
             }
             default:

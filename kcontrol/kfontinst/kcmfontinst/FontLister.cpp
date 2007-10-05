@@ -66,13 +66,13 @@ void CFontLister::scan(const KUrl &url)
 
         itsListing=LIST_ALL;
         if(Misc::root())
-            itsJob=KIO::listDir(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), false);
+            itsJob=KIO::listDir(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), KIO::HideProgressInfo);
         else if(url.isEmpty())
-            itsJob=KIO::listDir(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_ALL), false);
+            itsJob=KIO::listDir(KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_ALL), KIO::HideProgressInfo);
         else
         {
             itsListing=listing(url);
-            itsJob=KIO::listDir(url, false);
+            itsJob=KIO::listDir(url, KIO::HideProgressInfo);
         }
 
         emit started();

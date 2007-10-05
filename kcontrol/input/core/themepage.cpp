@@ -193,7 +193,8 @@ void ThemePage::fixCursorFile()
 		else if ( currentTheme == "SmallWhite" )
 			source.setPath( KStandardDirs::locate("data", "kcminput/cursor_small_white.pcf.gz") );
 
-		KIO::NetAccess::file_copy( source, installedFont, -1, true );
+		KIO::Job* job = KIO::file_copy( source, installedFont, -1, KIO::Overwrite );
+		job->exec();
 	}
 
 	QString cmd = KGlobal::dirs()->findExe( "mkfontdir" );
