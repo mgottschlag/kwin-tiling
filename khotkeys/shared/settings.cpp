@@ -13,6 +13,7 @@
 #include "settings.h"
 
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kglobal.h>
@@ -150,7 +151,7 @@ void Settings::write_settings()
 int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_group* parent_P, bool enabled_P )
     {
     int enabled_cnt = 0;
-    QString save_cfg_group = cfg_P.group();
+    QString save_cfg_group = cfg_P.name();
     int cnt = 0;
     for( Action_data_group::Iterator it = parent_P->first_child();
          it;
@@ -178,7 +179,7 @@ void Settings::read_settings_v2( KConfig& cfg_P, bool include_disabled_P  )
 void Settings::read_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_group* parent_P,
     bool include_disabled_P )
     {
-    QString save_cfg_group = cfg_P.group();
+    QString save_cfg_group = cfg_P.name();
     int cnt = cfg_P.readEntry( "DataCount",0 );
     for( int i = 1;
          i <= cnt;

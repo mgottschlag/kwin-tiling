@@ -33,6 +33,7 @@
 #include <klibloader.h>
 #include <kdebug.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <klocale.h>
 #include <ktoolinvocation.h>
 #include <klauncher_iface.h>

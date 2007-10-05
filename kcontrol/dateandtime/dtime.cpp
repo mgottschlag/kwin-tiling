@@ -262,7 +262,7 @@ void Dtime::configChanged(){
 
 void Dtime::load()
 {
-  KConfig _config( "kcmclockrc", KConfig::NoGlobals  );
+  KConfig _config( "kcmclockrc", KConfig::CascadeConfig  );
   KConfigGroup config(&_config, "NTP");
   timeServerList->addItems(config.readEntry("servers",
     i18n("Public Time Server (pool.ntp.org),\
@@ -285,7 +285,7 @@ oceania.pool.ntp.org")).split(',', QString::SkipEmptyParts));
 
 void Dtime::save()
 {
-  KConfig _config("kcmclockrc", KConfig::NoGlobals);
+  KConfig _config("kcmclockrc", KConfig::CascadeConfig);
   KConfigGroup config(&_config, "NTP");
 
   // Save the order, but don't duplicate!

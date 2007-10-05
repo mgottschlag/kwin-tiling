@@ -18,6 +18,7 @@
 
 #include <KPluginFactory>
 #include <KPluginLoader>
+#include <KDebug>
 
 #include "kxkb_part.h"
 #include "kxkbwidget.h"

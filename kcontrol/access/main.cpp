@@ -1,5 +1,6 @@
 
 #include "kaccess.h"
+#include <kdebug.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>

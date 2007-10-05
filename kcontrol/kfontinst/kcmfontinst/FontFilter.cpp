@@ -30,6 +30,8 @@
 #include <QPen>
 #include <QPainter>
 #include <QStyleOption>
+#include <QSet>
+#include <QString>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QApplication>

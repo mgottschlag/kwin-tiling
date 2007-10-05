@@ -17,6 +17,7 @@
 #endif
 
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <assert.h>
@@ -124,7 +125,7 @@ Condition_list_base::Condition_list_base( KConfigGroup& cfg_P, Condition_list_ba
          i < cnt;
          ++i )
         {
-        KConfigGroup conditionConfig( cfg_P.config(), cfg_P.group() + QString::number( i ) );
+        KConfigGroup conditionConfig( cfg_P.config(), cfg_P.name() + QString::number( i ) );
         (void) Condition::create_cfg_read( conditionConfig, this );
         }
     }
@@ -146,7 +147,7 @@ void Condition_list_base::cfg_write( KConfigGroup& cfg_P ) const
          it;
          ++it, ++i )
         {
-        KConfigGroup conditionConfig( cfg_P.config(), cfg_P.group() + QString::number( i ) );
+        KConfigGroup conditionConfig( cfg_P.config(), cfg_P.name() + QString::number( i ) );
         it.current()->cfg_write( conditionConfig );
         }
     cfg_P.writeEntry( "ConditionsCount", i );
@@ -241,7 +242,7 @@ Condition_list* Condition_list::copy( Condition_list_base* ) const
 Active_window_condition::Active_window_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition( cfg_P, parent_P )
     {
-    KConfigGroup windowConfig( cfg_P.config(), cfg_P.group() + "Window" );
+    KConfigGroup windowConfig( cfg_P.config(), cfg_P.name() + "Window" );
     _window = new Windowdef_list( windowConfig );
     init();
     set_match();
@@ -268,7 +269,7 @@ void Active_window_condition::set_match()
 void Active_window_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    KConfigGroup windowConfig( cfg_P.config(), cfg_P.group() + "Window" );
+    KConfigGroup windowConfig( cfg_P.config(), cfg_P.name() + "Window" );
     window()->cfg_write( windowConfig );
     cfg_P.writeEntry( "Type", "ACTIVE_WINDOW" ); // overwrites value set in base::cfg_write()
     }
@@ -303,7 +304,7 @@ Active_window_condition::~Active_window_condition()
 Existing_window_condition::Existing_window_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition( cfg_P, parent_P )
     {
-    KConfigGroup windowConfig( cfg_P.config(), cfg_P.group() + "Window" );
+    KConfigGroup windowConfig( cfg_P.config(), cfg_P.name() + "Window" );
     _window = new Windowdef_list( windowConfig );
     init();
     set_match();
@@ -333,7 +334,7 @@ void Existing_window_condition::set_match( WId w_P )
 void Existing_window_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    KConfigGroup windowConfig( cfg_P.config(), cfg_P.group() + "Window" );
+    KConfigGroup windowConfig( cfg_P.config(), cfg_P.name() + "Window" );
     window()->cfg_write( windowConfig );
     cfg_P.writeEntry( "Type", "EXISTING_WINDOW" ); // overwrites value set in base::cfg_write()
     }

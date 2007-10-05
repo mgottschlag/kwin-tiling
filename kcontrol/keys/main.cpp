@@ -150,16 +150,16 @@ extern "C"
 #warning TODO PORT ME (KGlobalAccel related)
 #endif
 //		KGlobalAccel::self()->readSettings();
-		KGlobal::config()->deleteGroup( "Global Keys", KConfigBase::Global);
+		KGlobal::config()->deleteGroup( "Global Keys", KConfig::Global);
 	    }
-            KGlobal::config()->deleteGroup( "deprecated Global Shortcuts from kcontrol/keys", KConfigBase::Global);
+            KGlobal::config()->deleteGroup( "deprecated Global Shortcuts from kcontrol/keys", KConfig::Global);
 
 	    kDebug(125) << "KeyModule::init() - Write Config Bindings\n";
 #ifdef __GNUC__
 #warning TODO PORT ME (KGlobalAccel related)
 #endif
         //KGlobalAccel::self()->writeSettings();
-            group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, KConfigBase::Normal|KConfigBase::Global);
+            group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, KConfig::Normal|KConfig::Global);
         }
 	delete actionCollection;
   }

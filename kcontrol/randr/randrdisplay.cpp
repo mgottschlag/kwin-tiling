@@ -18,6 +18,8 @@
  */
 
 #include <KLocale>
+#include <KConfigGroup>
+#include <KDebug>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QX11Info>

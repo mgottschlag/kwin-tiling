@@ -38,6 +38,7 @@
 #include <kimageio.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kdebug.h>
 #include <kmimetype.h>
 #include <kconfig.h>
 #include <kpluginfactory.h>
@@ -185,7 +186,7 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 		kWarning() << "user(s) '" << tgmapci.value().join( "," )
 		<< "' have unknown GID " << tgmapci.key() << endl;
 
-	config = new KConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc"), KConfig::OnlyLocal);
+	config = new KConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc"), KConfig::SimpleConfig);
 
 	QVBoxLayout *top = new QVBoxLayout( this );
 	tab = new QTabWidget( this );
@@ -249,7 +250,7 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	connect( this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()) );
 
 	load();
-	if (getuid() != 0 || !config->checkConfigFilesWritable( true )) {
+	if (getuid() != 0 || !config->isConfigWritable( true )) {
 		general->makeReadOnly();
 		dialog->makeReadOnly();
 		background->makeReadOnly();

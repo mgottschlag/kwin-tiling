@@ -60,6 +60,7 @@
 #include "SuProc.h"
 #include "Socket.h"
 #include <ctype.h>
+#include <kconfiggroup.h>
 
 // Enable the following so that all URLs are actually <family>, <style>, e.g.
 //   without #define: fonts:/arial.ttf

@@ -58,7 +58,7 @@ Bugs:
 Can't delete old slider image when calculating the rotated one for some reason.
 */
 
-//Shamelessly stolen from KConfigBase
+//Shamelessly stolen from KConfig
 static QColor readColorEntry( QSettings* s, const char *pKey,
                               const QColor* pDefault )
 {

@@ -164,7 +164,7 @@ LaunchConfig::slotTaskbarButton(bool b)
   void
 LaunchConfig::load()
 {
-  KConfig conf("klaunchrc", KConfig::NoGlobals);
+  KConfig conf("klaunchrc", KConfig::CascadeConfig);
   KConfigGroup c = conf.group("FeedbackStyle");
 
   bool busyCursor =
@@ -200,7 +200,7 @@ LaunchConfig::load()
   void
 LaunchConfig::save()
 {
-  KConfig conf("klaunchrc", KConfig::NoGlobals);
+  KConfig conf("klaunchrc", KConfig::CascadeConfig);
   KConfigGroup  c = conf.group("FeedbackStyle");
 
   c.writeEntry("BusyCursor",   cb_busyCursor->currentIndex() != 0);
@@ -244,7 +244,7 @@ LaunchConfig::defaults()
   void
 LaunchConfig::checkChanged()
 {
-  KConfig conf("klaunchrc", KConfig::NoGlobals);
+  KConfig conf("klaunchrc", KConfig::CascadeConfig);
   KConfigGroup  c = conf.group("FeedbackStyle");
 
   bool savedBusyCursor =

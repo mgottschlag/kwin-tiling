@@ -78,7 +78,7 @@ void ShortcutsModule::save()
 	// FIXME: This isn't working.  Why? -- ellis, 2002/01/27
 	// Check for old group,
 	if( KGlobal::config()->hasGroup( "Keys" ) ) {
-		KGlobal::config()->deleteGroup( "Keys", KConfigBase::Global);
+		KGlobal::config()->deleteGroup( "Keys", KConfig::Global);
 	}
 	KGlobal::config()->sync();
 
@@ -267,7 +267,7 @@ void ShortcutsModule::readSchemeNames()
 		//if( r.search( *it ) != -1 )
 		//   continue;
 
-		KConfig _config( *it, KConfig::OnlyLocal );
+		KConfig _config( *it, KConfig::SimpleConfig );
 		KConfigGroup config(&_config, "Settings" );
 		QString str = config.readEntry( "Name" );
 
@@ -309,7 +309,7 @@ void ShortcutsModule::slotSelectScheme( int )
 #endif
 		//KGlobalAccel::self()->readSettings();
 	} else {
-		KConfig _config( sFilename, KConfig::OnlyLocal );
+		KConfig _config( sFilename, KConfig::SimpleConfig );
 		KConfigGroup config(&_config, "Settings" );
 		//m_sBaseSchemeFile = config.readEntry( "Name" );
 
@@ -412,7 +412,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 		m_pcbSchemes->setCurrentIndex( iScheme );
 	}
 
-	KConfig *config = new KConfig( sFile, KConfig::OnlyLocal);
+	KConfig *config = new KConfig( sFile, KConfig::SimpleConfig);
 
 	KConfigGroup group = config->group("Settings");
 	group.writeEntry( "Name", sName );
@@ -427,7 +427,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 void ShortcutsModule::saveScheme()
 {
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentIndex() ];
-	KConfig config( sFilename, KConfig::OnlyLocal);
+	KConfig config( sFilename, KConfig::SimpleConfig);
 
 	/*m_pkcGeneral->commitChanges();
 	m_pkcSequence->commitChanges();

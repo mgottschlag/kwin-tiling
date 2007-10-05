@@ -18,6 +18,7 @@
 
 #include <KLocale>
 #include <KConfig>
+#include <KConfigGroup>
 
 #include <QApplication>
 #include <QCursor>
@@ -50,7 +51,7 @@ XCursorTheme::XCursorTheme(const QDir &themeDir)
 
 void XCursorTheme::parseIndexFile()
 {
-    KConfig config(path() + "/index.theme", KConfig::NoGlobals);
+    KConfig config(path() + "/index.theme", KConfig::CascadeConfig);
     KConfigGroup cg(&config, "Icon Theme");
 
     m_title       = cg.readEntry("Name",     m_title);

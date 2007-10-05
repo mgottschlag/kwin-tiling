@@ -163,7 +163,7 @@ void KDMThemeWidget::makeReadOnly()
 
 void KDMThemeWidget::insertTheme( const QString &_theme )
 {
-	KConfig themeConfig( _theme + "/KdmGreeterTheme.desktop", KConfig::OnlyLocal);
+	KConfig themeConfig( _theme + "/KdmGreeterTheme.desktop", KConfig::SimpleConfig);
 	KConfigGroup themeGroup = themeConfig.group("KdmGreeterTheme");
 
 	QString name = themeGroup.readEntry( "Name" );

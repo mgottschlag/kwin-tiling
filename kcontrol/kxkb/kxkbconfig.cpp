@@ -23,6 +23,7 @@
 #include <QHash>
 
 #include <ksharedconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 
 #include "kxkbconfig.h"
@@ -52,7 +53,7 @@ int KxkbConfig::getDefaultLayout()
 bool KxkbConfig::load(int loadMode)
 {
     kDebug() << "Reading configuration";
-    KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
+    KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::CascadeConfig ), "Layout");
 
 // Even if the layouts have been disabled we still want to set Xkb options
 // user can always switch them off now in the "Options" tab
@@ -190,7 +191,7 @@ bool KxkbConfig::setConfiguredLayouts(QList<LayoutUnit> layoutUnits)
 
 void KxkbConfig::save()
 {
-	KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
+	KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::CascadeConfig ), "Layout");
 
 	config.writeEntry("Model", m_model);
 

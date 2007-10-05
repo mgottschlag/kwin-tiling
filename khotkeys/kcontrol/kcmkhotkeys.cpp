@@ -303,7 +303,7 @@ void Module::import()
         i18n( "Select File with Actions to Be Imported" ));
     if( file.isEmpty())
         return;
-    KConfig cfg(  file, KConfig::OnlyLocal);
+    KConfig cfg(  file, KConfig::SimpleConfig);
     if( !settings.import( cfg, true ))
         {
         KMessageBox::error( topLevelWidget(),

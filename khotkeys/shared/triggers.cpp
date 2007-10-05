@@ -16,6 +16,7 @@
 
 #include <kglobalaccel.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <netwm_def.h>
@@ -69,7 +70,7 @@ Trigger_list::Trigger_list( KConfigGroup& cfg_P, Action_data* data_P )
          i < cnt;
          ++i )
         {
-        KConfigGroup triggerConfig( cfg_P.config(), cfg_P.group() + QString::number( i ));
+        KConfigGroup triggerConfig( cfg_P.config(), cfg_P.name() + QString::number( i ));
         Trigger* trigger = Trigger::create_cfg_read( triggerConfig, data_P );
         if( trigger )
             append( trigger );
@@ -84,7 +85,7 @@ void Trigger_list::cfg_write( KConfigGroup& cfg_P ) const
          it;
          ++it, ++i )
         {
-        KConfigGroup triggerConfig( cfg_P.config(), cfg_P.group() + QString::number( i ));
+        KConfigGroup triggerConfig( cfg_P.config(), cfg_P.name() + QString::number( i ));
         it.current()->cfg_write( triggerConfig );
         }
     cfg_P.writeEntry( "TriggersCount", i );
@@ -172,7 +173,7 @@ Window_trigger::Window_trigger( KConfigGroup& cfg_P, Action_data* data_P )
     : Trigger( cfg_P, data_P ), active( false )
     {
 //    kDebug( 1217 ) << "Window_trigger";
-    KConfigGroup windowsConfig( cfg_P.config(), cfg_P.group() + "Windows" );
+    KConfigGroup windowsConfig( cfg_P.config(), cfg_P.name() + "Windows" );
     _windows = new Windowdef_list( windowsConfig );
     window_actions = cfg_P.readEntry( "WindowActions",0 );
     init();
@@ -284,8 +285,7 @@ void Window_trigger::window_changed( WId window_P, unsigned int dirty_P )
 void Window_trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    QString save_cfg_group = cfg_P.group();
-    KConfigGroup windowsConfig( cfg_P.config(), cfg_P.group() + "Windows" );
+    KConfigGroup windowsConfig( cfg_P.config(), cfg_P.name() + "Windows" );
     windows()->cfg_write( windowsConfig );
     cfg_P.writeEntry( "WindowActions", window_actions );
     cfg_P.writeEntry( "Type", "WINDOW" ); // overwrites value set in base::cfg_write()

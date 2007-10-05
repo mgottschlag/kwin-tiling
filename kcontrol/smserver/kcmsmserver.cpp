@@ -64,7 +64,7 @@ SMServerConfig::SMServerConfig( QWidget *parent, const QVariantList & )
 
 void SMServerConfig::load()
 {
-  KConfigGroup c(KSharedConfig::openConfig("ksmserverrc", KConfig::NoGlobals), "General");
+  KConfigGroup c(KSharedConfig::openConfig("ksmserverrc", KConfig::CascadeConfig), "General");
   dialog->confirmLogoutCheck->setChecked(c.readEntry("confirmLogout", true));
   bool en = c.readEntry("offerShutdown", true);
   dialog->offerShutdownCheck->setChecked(en);
@@ -96,7 +96,7 @@ void SMServerConfig::load()
 
 void SMServerConfig::save()
 {
-  KConfig *c = new KConfig("ksmserverrc", KConfig::NoGlobals);
+  KConfig *c = new KConfig("ksmserverrc", KConfig::CascadeConfig);
   KConfigGroup group = c->group("General");
   group.writeEntry( "confirmLogout", dialog->confirmLogoutCheck->isChecked());
   group.writeEntry( "offerShutdown", dialog->offerShutdownCheck->isChecked());

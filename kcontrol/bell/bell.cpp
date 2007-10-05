@@ -63,7 +63,7 @@ extern "C"
 
     XGetKeyboardControl(QX11Info::display(), &kbd);
 
-    KConfig _config( "kcmbellrc", KConfig::NoGlobals  );
+    KConfig _config( "kcmbellrc", KConfig::CascadeConfig  );
     KConfigGroup config(&_config, "General");
 
     kbdc.bell_percent = config.readEntry("Volume", kbd.bell_percent);
@@ -171,7 +171,7 @@ void KBellConfig::load()
   m_pitch->setValue(kbd.bell_pitch);
   m_duration->setValue(kbd.bell_duration);
 
-  KConfig _cfg("kdeglobals", KConfig::NoGlobals);
+  KConfig _cfg("kdeglobals", KConfig::CascadeConfig);
   KConfigGroup cfg(&_cfg, "General");
   m_useBell->setChecked(cfg.readEntry("UseSystemBell", false));
   useBell(m_useBell->isChecked());
@@ -192,7 +192,7 @@ void KBellConfig::save()
                          KBBellPercent | KBBellPitch | KBBellDuration,
                          &kbd);
 
-  KConfig _config("kcmbellrc", KConfig::NoGlobals);
+  KConfig _config("kcmbellrc", KConfig::CascadeConfig);
   KConfigGroup config(&_config, "General");
   config.writeEntry("Volume",bellVolume);
   config.writeEntry("Pitch",bellPitch);
@@ -200,7 +200,7 @@ void KBellConfig::save()
 
   config.sync();
 
-  KConfig _cfg("kdeglobals", KConfig::NoGlobals);
+  KConfig _cfg("kdeglobals", KConfig::CascadeConfig);
   KConfigGroup cfg(&_cfg, "General");
   cfg.writeEntry("UseSystemBell", m_useBell->isChecked());
   cfg.sync();

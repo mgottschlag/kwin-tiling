@@ -93,7 +93,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
 
    if (!_kdmMode)
    {
-      KConfig cfg(desktopConfigname( ), KConfig::NoGlobals );
+      KConfig cfg(desktopConfigname( ), KConfig::CascadeConfig );
       KConfigGroup group = cfg.group("General");
       if (!group.readEntry( "Enabled", true ))
       {

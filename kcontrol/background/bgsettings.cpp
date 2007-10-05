@@ -26,6 +26,7 @@
 #include <kdebug.h>
 #include <KColorScheme>
 #include <kdesktopfile.h>
+#include <kconfiggroup.h>
 #include <kstandarddirs.h>
 #include <krandomsequence.h>
 
@@ -538,7 +539,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgrou
         else
             configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-        m_pConfig = KSharedConfig::openConfig(configname, KConfig::NoGlobals);
+        m_pConfig = KSharedConfig::openConfig(configname, KConfig::CascadeConfig);
     } else {
         m_pConfig = config;
     }

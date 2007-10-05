@@ -56,7 +56,7 @@ KBackground::KBackground(QWidget *parent, const QVariantList &args)
 	configname = "kdesktoprc";
     else
 	configname.sprintf("kdesktop-screen-%drc", screen_number);
-    m_pConfig = KSharedConfig::openConfig(configname, KConfig::NoGlobals);
+    m_pConfig = KSharedConfig::openConfig(configname, KConfig::CascadeConfig);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     m_base = new BGDialog(this, m_pConfig, false);

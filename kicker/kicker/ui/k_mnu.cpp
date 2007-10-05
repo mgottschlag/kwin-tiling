@@ -288,7 +288,7 @@ void PanelKMenu::initialize()
     /*
       If  the user configured ksmserver to
     */
-    KConfig ksmserver("ksmserverrc", KConfig::NoGlobals);
+    KConfig ksmserver("ksmserverrc", KConfig::CascadeConfig);
     if (ksmserver.group("General").readEntry( "loginMode" ) == "restoreSavedSession")
     {
         insertItem(Plasma::menuIconSet("document-save"),

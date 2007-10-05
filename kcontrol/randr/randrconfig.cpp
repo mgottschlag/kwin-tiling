@@ -25,6 +25,7 @@
 #include "randroutput.h"
 #include "layoutmanager.h"
 #include "randr.h"
+#include <kdebug.h>
 
 #ifdef HAS_RANDR_1_2
 

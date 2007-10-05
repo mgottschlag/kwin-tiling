@@ -22,6 +22,7 @@
 
 #include "FcEngine.h"
 #include <QCoreApplication>
+#include <QTextStream>
 #include <QPainter>
 #include <QFontDatabase>
 #include <QWidget>

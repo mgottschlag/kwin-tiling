@@ -63,8 +63,8 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
 	setQuickHelp( i18n("<h1>Multiple Monitors</h1> This module allows you to configure KDE support"
      " for multiple monitors."));
 
-	config = new KConfig("kdeglobals", KConfig::NoGlobals);
-	ksplashrc = new KConfig("ksplashrc", KConfig::NoGlobals);
+	config = new KConfig("kdeglobals", KConfig::CascadeConfig);
+	ksplashrc = new KConfig("ksplashrc", KConfig::CascadeConfig);
 
 	_timer.setSingleShot(true);
 	connect(&_timer, SIGNAL(timeout()), this, SLOT(clearIndicator()));

@@ -279,9 +279,9 @@ void KKeyModule::readScheme( int index )
   //else if( index == 2 )
   //  kc->allDefault( true );
   else {
-    KConfigBase* config = 0;
-    if( index == 0 )	config = new KConfig( "kdeglobals" );
-    //else		config = new KSimpleConfig( *sFileList->at( index ), true );
+    KConfig* config = 0;
+    if( index == 0 )	config = new KConfig( "kdeglobals", KConfig::CascadeConfig );
+    //else		config = new KConfig( *sFileList->at( index ), KConfig::SimpleConfig );
 
     actions.readActions( (index == 0) ? KeySet : KeyScheme, config );
     kc->listSync();

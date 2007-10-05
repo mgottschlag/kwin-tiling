@@ -36,6 +36,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kapplication.h>
 #include <kcmdlineargs.h>
+#include <kconfiggroup.h>
 #include <kaboutdata.h>
 #include <kdebug.h>
 #include <klocale.h>

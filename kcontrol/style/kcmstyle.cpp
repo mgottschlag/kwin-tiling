@@ -73,7 +73,7 @@ extern "C"
     KDE_EXPORT void kcminit_style()
     {
         uint flags = KRdbExportQtSettings | KRdbExportQtColors | KRdbExportXftSettings;
-        KConfig _config( "kcmdisplayrc", KConfig::NoGlobals  );
+        KConfig _config( "kcmdisplayrc", KConfig::CascadeConfig  );
         KConfigGroup config(&_config, "X11");
 
         // This key is written by the "colors" module.
@@ -501,7 +501,7 @@ void KCMStyle::styleSpecificConfig()
 
 void KCMStyle::load()
 {
-	KConfig config( "kdeglobals", KConfig::NoGlobals );
+	KConfig config( "kdeglobals", KConfig::CascadeConfig );
 	// Page1 - Build up the Style ListBox
 	loadStyle( config );
 
@@ -609,15 +609,15 @@ void KCMStyle::save()
 	}
 
 	// Misc page
-	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfigBase::Normal|KConfigBase::Global);
-	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), KConfigBase::Normal|KConfigBase::Global);
+	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfig::Normal|KConfig::Global);
+	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), KConfig::Normal|KConfig::Global);
 
 	config.changeGroup("General");
 	config.writeEntry( "widgetStyle", currentStyle() );
 
 	config.changeGroup("Toolbar style");
-	config.writeEntry( "Highlighting", cbHoverButtons->isChecked(), KConfigBase::Normal|KConfigBase::Global);
-	config.writeEntry( "TransparentMoving", cbTransparentToolbars->isChecked(), KConfigBase::Normal|KConfigBase::Global);
+	config.writeEntry( "Highlighting", cbHoverButtons->isChecked(), KConfig::Normal|KConfig::Global);
+	config.writeEntry( "TransparentMoving", cbTransparentToolbars->isChecked(), KConfig::Normal|KConfig::Global);
 	QString tbIcon;
 	switch( comboToolbarIcons->currentIndex() )
 	{
@@ -627,7 +627,7 @@ void KCMStyle::save()
 		default: 
 		case 3: tbIcon = "TextUnderIcon"; break;
 	}
-	config.writeEntry( "ToolButtonStyle", tbIcon, KConfigBase::Normal|KConfigBase::Global);
+	config.writeEntry( "ToolButtonStyle", tbIcon, KConfig::Normal|KConfig::Global);
 	config.sync();
 
 	// Export the changes we made to qtrc, and update all qt-only
@@ -636,7 +636,7 @@ void KCMStyle::save()
 	if (m_bStyleDirty | m_bEffectsDirty)	// Export only if necessary
 	{
 		uint flags = KRdbExportQtSettings;
-		KConfig _kconfig( "kcmdisplayrc", KConfig::NoGlobals  );
+		KConfig _kconfig( "kcmdisplayrc", KConfig::CascadeConfig  );
 		KConfigGroup kconfig(&_kconfig, "X11");
 		bool exportKDEColors = kconfig.readEntry("exportKDEColors", true);
 		if (exportKDEColors)
@@ -782,7 +782,7 @@ void KCMStyle::loadStyle( KConfig& config )
 														 KStandardDirs::NoDuplicates);
 	for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
 	{
-		KConfig config(  *it, KConfig::OnlyLocal);
+		KConfig config(  *it, KConfig::SimpleConfig);
 		if ( !(config.hasGroup("KDE") && config.hasGroup("Misc")) )
 			continue;
 

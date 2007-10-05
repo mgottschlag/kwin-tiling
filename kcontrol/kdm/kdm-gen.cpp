@@ -164,7 +164,7 @@ void KDMGeneralWidget::loadColorSchemes( KBackedComboBox *combo )
 		findAllResources( "data", "kdisplay/color-schemes/*.kcsrc", KStandardDirs::NoDuplicates );
 	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
-		KConfig _config( *it, KConfig::OnlyLocal );
+		KConfig _config( *it, KConfig::SimpleConfig );
 		KConfigGroup config(&_config, "Color Scheme" );
 
 		QString str;
@@ -185,7 +185,7 @@ void KDMGeneralWidget::loadGuiStyles(KBackedComboBox *combo)
 		findAllResources( "data", "kstyle/themes/*.themerc", KStandardDirs::NoDuplicates );
 	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
-		KConfig config( *it, KConfig::OnlyLocal);
+		KConfig config( *it, KConfig::SimpleConfig);
 
 		if (!(config.hasGroup( "KDE" ) && config.hasGroup( "Misc" )))
 			continue;

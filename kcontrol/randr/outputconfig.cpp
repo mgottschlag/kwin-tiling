@@ -19,6 +19,7 @@
 #include "outputconfig.h"
 #include "outputgraphicsitem.h"
 #include "randroutput.h"
+#include <kdebug.h>
 #ifdef HAS_RANDR_1_2
 
 OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item)

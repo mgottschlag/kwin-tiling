@@ -20,6 +20,7 @@
 #include "voicesignature.h"
 #include "sound.h"
 #include <kconfig.h>
+#include <kconfiggroup.h>
 
 #include <math.h>
 #ifdef PI

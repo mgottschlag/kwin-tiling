@@ -13,6 +13,7 @@
 #include "action_data.h"
 
 #include <kconfig.h>
+#include <kconfiggroup.h>
 
 #include "actions.h"
 
@@ -38,7 +39,7 @@ Action_data_base::Action_data_base( KConfigGroup& cfg_P, Action_data_group* pare
     _name = cfg_P.readEntry( "Name" );
     _comment = cfg_P.readEntry( "Comment" );
     _enabled = cfg_P.readEntry( "Enabled", true);
-    KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.group() + "Conditions" );
+    KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
     _conditions = new Condition_list( conditionsConfig, this );
     if( parent())
         parent()->add_child( this );
@@ -58,7 +59,7 @@ void Action_data_base::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Name", name());
     cfg_P.writeEntry( "Comment", comment());
     cfg_P.writeEntry( "Enabled", enabled( true ));
-    KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.group() + "Conditions" );
+    KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
     assert( conditions() != NULL );
     conditions()->cfg_write( conditionsConfig );
     }
@@ -161,9 +162,9 @@ void Action_data_group::update_triggers()
 Action_data::Action_data( KConfigGroup& cfg_P, Action_data_group* parent_P )
     : Action_data_base( cfg_P, parent_P )
     {
-    KConfigGroup triggersGroup( cfg_P.config(), cfg_P.group() + "Triggers" );
+    KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
     _triggers = new Trigger_list( cfg_P, this );
-    KConfigGroup actionsGroup( cfg_P.config(), cfg_P.group() + "Actions" );
+    KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
     _actions = new Action_list( actionsGroup, this );
     }
 
@@ -178,10 +179,9 @@ Action_data::~Action_data()
 void Action_data::cfg_write( KConfigGroup& cfg_P ) const
     {
     Action_data_base::cfg_write( cfg_P );
-    QString save_cfg_group = cfg_P.group();
-    KConfigGroup triggersGroup( cfg_P.config(), cfg_P.group() + "Triggers" );
+    KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
     triggers()->cfg_write( triggersGroup );
-    KConfigGroup actionsGroup( cfg_P.config(), cfg_P.group() + "Actions" );
+    KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
     actions()->cfg_write( actionsGroup );
     }
 

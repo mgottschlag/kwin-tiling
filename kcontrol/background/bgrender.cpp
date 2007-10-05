@@ -36,6 +36,7 @@
 #include <kcursor.h>
 #include <kfilemetainfo.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <ksvgrenderer.h>
 
 #include "bgdefaults.h"
@@ -1032,7 +1033,7 @@ KVirtualBGRenderer::KVirtualBGRenderer(int desk, const KSharedConfigPtr &config,
         else
             configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-        m_pConfig = KSharedConfig::openConfig(configname, KConfig::NoGlobals);
+        m_pConfig = KSharedConfig::openConfig(configname, KConfig::CascadeConfig);
     } else {
         m_pConfig = config;
     }

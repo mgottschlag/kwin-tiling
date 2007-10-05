@@ -29,6 +29,7 @@
 #include <QX11Info>
 #include <kurl.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kglobalsettings.h>
 #include <kio/netaccess.h>
 #include <kglobal.h>

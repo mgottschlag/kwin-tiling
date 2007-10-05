@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <kapplication.h>
 #include <kbuildsycocaprogressdialog.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -450,7 +451,7 @@ void KTheme::apply()
     if ( !iconElem.isNull() )
     {
         KConfigGroup iconConf(KGlobal::config(), "Icons");
-        iconConf.writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), KConfigBase::Persistent|KConfigBase::Global);
+        iconConf.writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), KConfig::Persistent|KConfig::Global);
 
         QDomNodeList iconList = iconElem.childNodes();
         for ( int i = 0; i < iconList.count(); i++ )
@@ -472,14 +473,14 @@ void KTheme::apply()
             if ( iconName.contains( "Color" ) )
             {
                 QColor iconColor = QColor( iconSubElem.attribute( "rgb" ) );
-                iconConf.writeEntry( iconName, iconColor, KConfigBase::Persistent|KConfigBase::Global);
+                iconConf.writeEntry( iconName, iconColor, KConfig::Persistent|KConfig::Global);
             }
             else if ( iconName.contains( "Value" ) || iconName == "Size" )
-                iconConf.writeEntry( iconName, iconSubElem.attribute( "value" ).toUInt(), KConfigBase::Persistent|KConfigBase::Global);
+                iconConf.writeEntry( iconName, iconSubElem.attribute( "value" ).toUInt(), KConfig::Persistent|KConfig::Global);
             else if ( iconName.contains( "Effect" ) )
-                iconConf.writeEntry( iconName, iconSubElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
+                iconConf.writeEntry( iconName, iconSubElem.attribute( "name" ), KConfig::Persistent|KConfig::Global);
             else
-                iconConf.writeEntry( iconName, static_cast<bool>( iconSubElem.attribute( "value" ).toUInt() ), KConfigBase::Persistent|KConfigBase::Global);
+                iconConf.writeEntry( iconName, static_cast<bool>( iconSubElem.attribute( "value" ).toUInt() ), KConfig::Persistent|KConfig::Global);
         }
         iconConf.sync();
 
@@ -533,7 +534,7 @@ void KTheme::apply()
         KConfigGroup colorGroup(KGlobal::config(), QByteArray(""));
 
         QString sCurrentScheme = KStandardDirs::locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");
-        KConfigGroup colorScheme(KSharedConfig::openConfig( sCurrentScheme, KConfig::OnlyLocal), "Color Scheme" );
+        KConfigGroup colorScheme(KSharedConfig::openConfig( sCurrentScheme, KConfig::SimpleConfig), "Color Scheme" );
 
         for ( int i = 0; i < colorList.count(); i++ )
         {
@@ -546,13 +547,13 @@ void KTheme::apply()
 
             QString colName = colorElem.tagName();
             QColor curColor = QColor( colorElem.attribute( "rgb" ) );
-            colorGroup.writeEntry( colName, curColor, KConfigBase::Persistent|KConfigBase::Global); // kdeglobals
+            colorGroup.writeEntry( colName, curColor, KConfig::Persistent|KConfig::Global); // kdeglobals
             colorScheme.writeEntry( colName, curColor ); // thememgr.kcsrc
         }
 
         colorGroup.changeGroup("KDE");
-        colorGroup.writeEntry( "colorScheme", "thememgr.kcsrc", KConfigBase::Persistent|KConfigBase::Global);
-        colorGroup.writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ), KConfigBase::Persistent|KConfigBase::Global);
+        colorGroup.writeEntry( "colorScheme", "thememgr.kcsrc", KConfig::Persistent|KConfig::Global);
+        colorGroup.writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ), KConfig::Persistent|KConfig::Global);
         colorScheme.writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ) );
         colorGroup.sync();
 
@@ -651,7 +652,7 @@ void KTheme::apply()
     if ( !widgetsElem.isNull() )
     {
         KConfigGroup widgetConf(KGlobal::config(), "General");
-        widgetConf.writeEntry( "widgetStyle", widgetsElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
+        widgetConf.writeEntry( "widgetStyle", widgetsElem.attribute( "name" ), KConfig::Persistent|KConfig::Global);
         widgetConf.sync();
         KGlobalSettings::self()->emitChange( KGlobalSettings::StyleChanged );
     }
@@ -674,14 +675,14 @@ void KTheme::apply()
 
             if ( fontObject == "FMSettings" ) {
                 desktopConf.changeGroup( fontObject );
-                desktopConf.writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
+                desktopConf.writeEntry( fontName, fontValue, KConfig::Persistent|KConfig::Global);
                 desktopConf.sync();
             }
             else {
                 fontsGroup.changeGroup(fontObject);
-                fontsGroup.writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
+                fontsGroup.writeEntry( fontName, fontValue, KConfig::Persistent|KConfig::Global);
             }
-            kde1xGroup.writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
+            kde1xGroup.writeEntry( fontName, fontValue, KConfig::Persistent|KConfig::Global);
         }
 
         fontsGroup.sync();
@@ -790,7 +791,7 @@ void KTheme::createSoundList( const QStringList & events, const QString & object
             {
                 QDomElement eventElem = m_dom.createElement( "event" );
                 eventElem.setAttribute( "object", object );
-                eventElem.setAttribute( "name", group.group() );
+                eventElem.setAttribute( "name", group.name() );
                 eventElem.setAttribute( "url", processFilePath( "sounds", soundURL ) );
                 parent.appendChild( eventElem );
             }

@@ -71,6 +71,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <k3staticdeleter.h>
 #include <ktemporaryfile.h>
 #include <knotification.h>
+#include <kconfiggroup.h>
 
 #include "global.h"
 #include "server.h"

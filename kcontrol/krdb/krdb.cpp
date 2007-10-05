@@ -38,6 +38,7 @@
 
 #include <kapplication.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
 #include <kstandarddirs.h>
@@ -434,7 +435,7 @@ void runRdb( uint flags )
   bool exportQtSettings  = flags & KRdbExportQtSettings;
   bool exportXftSettings = flags & KRdbExportXftSettings;
 
-  KConfig _kglobals( "kdeglobals", KConfig::NoGlobals  );
+  KConfig _kglobals( "kdeglobals", KConfig::CascadeConfig  );
   KConfigGroup kglobals(KSharedConfig::openConfig( "kdeglobals" ), "KDE");
 
   KTemporaryFile tmpFile;

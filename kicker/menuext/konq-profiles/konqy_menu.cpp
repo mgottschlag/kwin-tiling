@@ -66,7 +66,7 @@ void KonquerorProfilesMenu::initialize()
       QFileInfo info( *pIt );
       QString profileName = KIO::decodeFileName( info.baseName() );
       QString niceName=profileName;
-      KConfig cfg( *pIt, KConfig::OnlyLocal);
+      KConfig cfg( *pIt, KConfig::SimpleConfig);
       if ( cfg.hasGroup( "Profile" ) )
       {
 		 KConfigGroup cg(&cfg, "Profile" );

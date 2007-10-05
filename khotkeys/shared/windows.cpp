@@ -17,6 +17,7 @@
 #include <Q3PtrList>
 
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <kwindowsystem.h>
 #include <klocale.h>
@@ -228,7 +229,7 @@ Windowdef_list::Windowdef_list( KConfigGroup& cfg_P )
          i < cnt;
          ++i )
         {
-        KConfigGroup windowGroup( cfg_P.config(), cfg_P.group() + QString::number( i ));
+        KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + QString::number( i ));
         Windowdef* window = Windowdef::create_cfg_read( windowGroup );
         if( window )
             append( window );
@@ -242,7 +243,7 @@ void Windowdef_list::cfg_write( KConfigGroup& cfg_P ) const
          it;
          ++it, ++i )
         {
-        KConfigGroup itGroup( cfg_P.config(), cfg_P.group() + QString::number( i ) );
+        KConfigGroup itGroup( cfg_P.config(), cfg_P.name() + QString::number( i ) );
         it.current()->cfg_write( itGroup );
         }
     cfg_P.writeEntry( "WindowsCount", i );

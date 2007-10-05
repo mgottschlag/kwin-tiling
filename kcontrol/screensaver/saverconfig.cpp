@@ -1,6 +1,6 @@
 #include <kdesktopfile.h>
 #include <klocale.h>
-
+#include <kconfiggroup.h>
 #include "saverconfig.h"
 
 SaverConfig::SaverConfig()

@@ -18,6 +18,7 @@
 
 #include <KDebug>
 #include <KConfig>
+#include <KConfigGroup>
 #include <QX11Info>
 #include <QAction>
 #include "randroutput.h"

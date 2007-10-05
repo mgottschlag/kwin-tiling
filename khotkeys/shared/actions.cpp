@@ -14,6 +14,7 @@
 
 #include <krun.h>
 #include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kdebug.h>
 #include <kurifilter.h>
 #include <kglobal.h>
@@ -68,7 +69,7 @@ Action_list::Action_list( KConfigGroup& cfg_P, Action_data* data_P )
     {
     setAutoDelete( true );
     int cnt = cfg_P.readEntry( "ActionsCount", 0 );
-    QString save_cfg_group = cfg_P.group();
+    QString save_cfg_group = cfg_P.name();
     for( int i = 0;
          i < cnt;
          ++i )
@@ -82,7 +83,7 @@ Action_list::Action_list( KConfigGroup& cfg_P, Action_data* data_P )
 
 void Action_list::cfg_write( KConfigGroup& cfg_P ) const
     {
-    QString save_cfg_group = cfg_P.group();
+    QString save_cfg_group = cfg_P.name();
     int i = 0;
     for( Iterator it( *this );
          it;
@@ -311,7 +312,7 @@ Keyboard_input_action::Keyboard_input_action( KConfigGroup& cfg_P, Action_data* 
     _input = cfg_P.readEntry( "Input" );
     if( cfg_P.readEntry( "IsDestinationWindow" , false))
         {
-        KConfigGroup windowGroup( cfg_P.config(), cfg_P.group() + "DestinationWindow" );
+        KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "DestinationWindow" );
         _dest_window = new Windowdef_list( windowGroup );
         _active_window = false; // ignored with _dest_window set anyway
         }
@@ -335,7 +336,7 @@ void Keyboard_input_action::cfg_write( KConfigGroup& cfg_P ) const
     if( dest_window() != NULL )
         {
         cfg_P.writeEntry( "IsDestinationWindow", true );
-        KConfigGroup windowGroup( cfg_P.config(), cfg_P.group() + "DestinationWindow" );
+        KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "DestinationWindow" );
         dest_window()->cfg_write( windowGroup );
         }
     else
@@ -393,7 +394,7 @@ Action* Keyboard_input_action::copy( Action_data* data_P ) const
 Activate_window_action::Activate_window_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Action( cfg_P, data_P )
     {
-    QString save_cfg_group = cfg_P.group();
+    QString save_cfg_group = cfg_P.name();
     KConfigGroup windowGroup( cfg_P.config(), save_cfg_group + "Window" );
     _window = new Windowdef_list( windowGroup );
     }
@@ -407,7 +408,7 @@ void Activate_window_action::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "ACTIVATE_WINDOW" ); // overwrites value set in base::cfg_write()
-    KConfigGroup windowGroup( cfg_P.config(), cfg_P.group() + "Window" );
+    KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "Window" );
     window()->cfg_write( windowGroup );
     }
 

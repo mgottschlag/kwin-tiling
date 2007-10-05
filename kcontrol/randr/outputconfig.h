@@ -20,6 +20,7 @@
 #define __OUTPUTCONFIG_H__
 
 #include <QWidget>
+#include <QTextStream>
 #include "ui_outputconfigbase.h"
 #include "randr.h"
 

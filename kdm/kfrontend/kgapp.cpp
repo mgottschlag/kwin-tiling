@@ -139,7 +139,7 @@ kg_main( const char *argv0 )
 
 	_colorScheme = KStandardDirs::locate( "data", "kdisplay/color-schemes/" + _colorScheme + ".kcsrc" );
 	if (!_colorScheme.isEmpty()) {
-		KSharedConfigPtr config = KSharedConfig::openConfig( _colorScheme, KConfig::OnlyLocal );
+		KSharedConfigPtr config = KSharedConfig::openConfig( _colorScheme, KConfig::SimpleConfig );
 		app.setPalette( KGlobalSettings::createApplicationPalette( config ) );
 	}
 

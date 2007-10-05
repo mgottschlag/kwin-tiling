@@ -757,7 +757,7 @@ void KAccessConfig::save()
       customBell->isChecked() ||
       visibleBell->isChecked())
   {
-    KConfig _cfg("kdeglobals", KConfig::NoGlobals);
+    KConfig _cfg("kdeglobals", KConfig::CascadeConfig);
     KConfigGroup cfg(&_cfg, "General");
     cfg.writeEntry("UseSystemBell", true);
     cfg.sync();
@@ -879,7 +879,7 @@ extern "C"
    */
   KDE_EXPORT void kcminit_access()
   {
-    KConfig *config = new KConfig( "kaccessrc", KConfig::NoGlobals );
+    KConfig *config = new KConfig( "kaccessrc", KConfig::CascadeConfig );
     bool run = needToRunKAccessDaemon( config );
 
     delete config;

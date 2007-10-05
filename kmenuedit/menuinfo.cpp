@@ -25,6 +25,7 @@
 #include <kdesktopfile.h>
 #include <khotkeys.h>
 #include <kstandarddirs.h>
+#include <kconfiggroup.h>
 
 //
 // MenuFolderInfo
@@ -301,7 +302,7 @@ void MenuFolderInfo::setInUse(bool inUse)
 
 MenuEntryInfo::~MenuEntryInfo()
 {
-   m_desktopFile->rollback(false);
+   m_desktopFile->clean();
    delete m_desktopFile;
 }
 

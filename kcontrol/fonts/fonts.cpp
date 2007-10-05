@@ -164,7 +164,7 @@ void FontUseItem::setDefault()
 
 void FontUseItem::readFont()
 {
-  KConfigBase *config;
+  KConfig *config;
 
   bool deleteme = false;
   if (_rcfile.isEmpty())
@@ -183,11 +183,11 @@ void FontUseItem::readFont()
 
 void FontUseItem::writeFont()
 {
-  KConfigBase *config;
+  KConfig *config;
 
   if (_rcfile.isEmpty()) {
     config = KGlobal::config().data();
-    KConfigGroup(config, _rcgroup).writeEntry(_rckey, font(), KConfigBase::Normal|KConfigBase::Global);
+    KConfigGroup(config, _rcgroup).writeEntry(_rckey, font(), KConfig::Normal|KConfig::Global);
   } else {
     config = new KConfig(KStandardDirs::locateLocal("config", _rcfile));
     KConfigGroup(config, _rcgroup).writeEntry(_rckey, font());
@@ -328,7 +328,7 @@ bool FontAASettings::load()
 
   if(!xft.getHintStyle(hStyle) || KXftConfig::Hint::NotSet==hStyle)
   {
-    KConfig kglobals("kdeglobals", KConfig::NoGlobals);
+    KConfig kglobals("kdeglobals", KConfig::CascadeConfig);
 
     hStyle=KXftConfig::Hint::Medium;
     xft.setHintStyle(hStyle);
@@ -348,7 +348,7 @@ bool FontAASettings::load()
 bool FontAASettings::save( bool useAA )
 {
   KXftConfig   xft(KXftConfig::constStyleSettings);
-  KConfig      kglobals("kdeglobals", KConfig::NoGlobals);
+  KConfig      kglobals("kdeglobals", KConfig::CascadeConfig);
   KConfigGroup grp(&kglobals, "General");
 
   xft.setAntiAliasing( useAA );
@@ -765,7 +765,7 @@ void KFonts::save()
 
   // KDE-1.x support
   {
-  KConfig config( QDir::homePath() + "/.kderc", KConfig::OnlyLocal);
+  KConfig config( QDir::homePath() + "/.kderc", KConfig::SimpleConfig);
   KConfigGroup grp(&config, "General");
 
   for(it=fontUseList.begin(); it!=end; ++it) {

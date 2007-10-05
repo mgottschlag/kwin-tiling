@@ -18,12 +18,14 @@
  */
 
 #include "legacyrandrconfig.h"
+#include <QTextStream>
 #include "krandrmodule.h"
 #include "legacyrandrscreen.h"
 #include "randrdisplay.h"
 #include "randrconfig.h"
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
+#include <kdebug.h>
 
 #include "randr.h"
 

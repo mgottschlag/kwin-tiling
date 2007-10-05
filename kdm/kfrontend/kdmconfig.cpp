@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kdmconfig.h"
 #include "kdm_greet.h"
 
-#include <kconfig.h>
+#include <kconfiggroup.h>
 #include <kglobal.h>
 #include <klocale.h>
 
@@ -64,7 +64,7 @@ getCfgQStrList( int id )
 	return qsl;
 }
 
-// Based on kconfigbase.cpp
+// Based on kconfiggroupgui.cpp
 static QFont *
 str2Font( const QString &aValue )
 {
