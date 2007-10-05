@@ -338,8 +338,8 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
                                 case CGroupListItem::PERSONAL: // Copying/moving
                                 case CGroupListItem::SYSTEM:   // Copying/moving
                                     return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection()
-                                                        ? "arrow-right" : "arrow-left");
-                                case CGroupListItem::CUSTOM:   // Addint to a group
+                                                        ? "go-next" : "go-next-rtl");
+                                case CGroupListItem::CUSTOM:   // Adding to a group
                                     return SmallIcon("list-add");
                                 default:
                                     break;
