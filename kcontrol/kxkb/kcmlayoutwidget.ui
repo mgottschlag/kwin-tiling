@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>510</height>
+    <width>625</width>
+    <height>538</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -25,7 +25,7 @@
       </size>
      </property>
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabLayout" >
       <attribute name="title" >
@@ -54,20 +54,6 @@
           <enum>Qt::Vertical</enum>
          </property>
          <layout class="QGridLayout" >
-          <item row="2" column="0" colspan="2" >
-           <widget class="QLabel" name="textLabel1_4" >
-            <property name="text" >
-             <string>Available layouts:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2" colspan="3" >
-           <widget class="QLabel" name="textLabel1_4_2" >
-            <property name="text" >
-             <string>Active layouts:</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="2" colspan="3" >
            <widget class="QLabel" name="textLabel1_2" >
             <property name="text" >
@@ -92,39 +78,47 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="0" colspan="2" >
+           <widget class="QLabel" name="textLabel1_4" >
+            <property name="text" >
+             <string>Available layouts:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" colspan="3" >
+           <widget class="QLabel" name="textLabel1_4_2" >
+            <property name="text" >
+             <string>Active layouts:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="2" >
+           <widget class="QTableView" name="srcTableView" >
+            <property name="selectionMode" >
+             <enum>QAbstractItemView::SingleSelection</enum>
+            </property>
+            <property name="selectionBehavior" >
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="cornerButtonEnabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="2" colspan="3" >
-           <widget class="Q3ListView" name="listLayoutsDst" >
-            <property name="whatsThis" >
-             <string>If more than one layout is present in this list, the KDE panel will offer a docked flag. By clicking on this flag you can easily switch between layouts. The first layout will be default one.</string>
+           <widget class="QTableView" name="dstTableView" >
+            <property name="selectionMode" >
+             <enum>QAbstractItemView::SingleSelection</enum>
             </property>
-            <property name="allColumnsShowFocus" >
-             <bool>true</bool>
+            <property name="selectionBehavior" >
+             <enum>QAbstractItemView::SelectRows</enum>
             </property>
-            <column>
-             <property name="text" >
-              <string>1</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Layout</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Keymap</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Variant</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Label</string>
-             </property>
-            </column>
+            <property name="showGrid" >
+             <bool>false</bool>
+            </property>
+            <property name="wordWrap" >
+             <bool>false</bool>
+            </property>
            </widget>
           </item>
           <item row="4" column="2" colspan="3" >
@@ -186,77 +180,6 @@
             </item>
            </layout>
           </item>
-          <item row="8" column="0" >
-           <widget class="QLabel" name="textLabel1_3" >
-            <property name="text" >
-             <string>Command:</string>
-            </property>
-            <property name="buddy" >
-             <cstring>editCmdLine</cstring>
-            </property>
-           </widget>
-          </item>
-          <item rowspan="5" row="3" column="0" colspan="2" >
-           <widget class="Q3ListView" name="listLayoutsSrc" >
-            <property name="minimumSize" >
-             <size>
-              <width>260</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="whatsThis" >
-             <string>This is the list of available keyboard layouts in your system. You can add a layout to the active list by selecting it and pressing "Add" button.</string>
-            </property>
-            <property name="allColumnsShowFocus" >
-             <bool>true</bool>
-            </property>
-            <column>
-             <property name="text" >
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Layout</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Keymap</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-          <item row="8" column="1" colspan="4" >
-           <widget class="QLineEdit" name="editCmdLine" >
-            <property name="whatsThis" >
-             <string>This is the command which is executed when switching to the selected layout. It may help you if you want to debug layout switching, or if you want to switch layouts without the help of KDE.</string>
-            </property>
-            <property name="readOnly" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2" >
-           <widget class="QLabel" name="textLabel1_6" >
-            <property name="text" >
-             <string>Label:</string>
-            </property>
-            <property name="buddy" >
-             <cstring>editDisplayName</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="3" >
-           <widget class="QLineEdit" name="editDisplayName" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>3</number>
-            </property>
-           </widget>
-          </item>
           <item row="5" column="2" >
            <widget class="QLabel" name="textLabel1" >
             <property name="text" >
@@ -291,6 +214,26 @@
             </property>
            </spacer>
           </item>
+          <item row="6" column="2" >
+           <widget class="QLabel" name="textLabel1_6" >
+            <property name="text" >
+             <string>Label:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>editDisplayName</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="3" >
+           <widget class="QLineEdit" name="editDisplayName" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>3</number>
+            </property>
+           </widget>
+          </item>
           <item row="6" column="4" >
            <spacer>
             <property name="orientation" >
@@ -306,6 +249,26 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="7" column="0" >
+           <widget class="QLabel" name="textLabel1_3" >
+            <property name="text" >
+             <string>Command:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>editCmdLine</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1" colspan="4" >
+           <widget class="QLineEdit" name="editCmdLine" >
+            <property name="whatsThis" >
+             <string>This is the command which is executed when switching to the selected layout. It may help you if you want to debug layout switching, or if you want to switch layouts without the help of KDE.</string>
+            </property>
+            <property name="readOnly" >
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -508,7 +471,7 @@
            <property name="geometry" >
             <rect>
              <x>10</x>
-             <y>46</y>
+             <y>40</y>
              <width>556</width>
              <height>22</height>
             </rect>
@@ -518,13 +481,104 @@
            </property>
           </widget>
          </widget>
+         <widget class="QGroupBox" name="grpShortcuts" >
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>250</y>
+            <width>241</width>
+            <height>181</height>
+           </rect>
+          </property>
+          <property name="title" >
+           <string>Shortcuts</string>
+          </property>
+          <widget class="QRadioButton" name="rdCtrlShift" >
+           <property name="geometry" >
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>100</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text" >
+            <string>Ctrl+Shift</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="rdAltShift" >
+           <property name="geometry" >
+            <rect>
+             <x>10</x>
+             <y>80</y>
+             <width>100</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text" >
+            <string>Alt+Shift</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="rdCtrlCtrl" >
+           <property name="geometry" >
+            <rect>
+             <x>140</x>
+             <y>20</y>
+             <width>100</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text" >
+            <string>Ctrl+Ctrl</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="rdShiftShift" >
+           <property name="geometry" >
+            <rect>
+             <x>140</x>
+             <y>50</y>
+             <width>100</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text" >
+            <string>Shift+Shift</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="rdAltAlt" >
+           <property name="geometry" >
+            <rect>
+             <x>140</x>
+             <y>80</y>
+             <width>100</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text" >
+            <string>Alt+Alt</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="rdAltCtrl" >
+           <property name="geometry" >
+            <rect>
+             <x>10</x>
+             <y>50</y>
+             <width>100</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text" >
+            <string>Alt+Ctrl</string>
+           </property>
+          </widget>
+         </widget>
         </widget>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tabOptions" >
       <attribute name="title" >
-       <string>Xkb Options</string>
+       <string>Advanced</string>
       </attribute>
       <layout class="QVBoxLayout" >
        <item>

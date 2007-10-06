@@ -74,7 +74,6 @@ enum {
 
 static const QString DEFAULT_VARIANT_NAME("<default>");
 
-
 class OptionListItem : public Q3CheckListItem
 {
 	public:
@@ -86,7 +85,6 @@ class OptionListItem : public Q3CheckListItem
 		~OptionListItem() {}
 
 		QString optionName() const { return m_OptionName; }
-
 		OptionListItem *findChildItem(  const QString& text );
 
 	protected:
@@ -94,43 +92,194 @@ class OptionListItem : public Q3CheckListItem
 };
 
 
-static QString lookupLocalized(const QHash<QString, QString> &dict, const QString& text)
+OptionListItem::OptionListItem( OptionListItem *parent, const QString &text,
+								Type tt, const QString &optionName )
+	: Q3CheckListItem( parent, text, tt ), m_OptionName( optionName )
 {
-  QHashIterator<QString, QString> it(dict);
-  while (it.hasNext())
-  {
-	  it.next();
-		if ( i18n( it.value() ) == text )
-        return it.key();
-    }
-
-  return QString();
 }
 
-static Q3ListViewItem* copyLVI(const Q3ListViewItem* src, Q3ListView* parent)
+OptionListItem::OptionListItem( Q3ListView *parent, const QString &text,
+								Type tt, const QString &optionName )
+	: Q3CheckListItem( parent, text, tt ), m_OptionName( optionName )
 {
-    Q3ListViewItem* ret = new Q3ListViewItem(parent);
-	for(int i = 0; i < SRC_LAYOUT_COLUMN_COUNT; i++)
-    {
-        ret->setText(i, src->text(i));
-        if ( src->pixmap(i) )
-            ret->setPixmap(i, *src->pixmap(i));
-    }
-
-    return ret;
 }
+
+OptionListItem * OptionListItem::findChildItem( const QString& optionName )
+{
+	OptionListItem *child = static_cast<OptionListItem *>( firstChild() );
+
+	while ( child )
+	{
+		if ( child->optionName() == optionName )
+			break;
+		child = static_cast<OptionListItem *>( child->nextSibling() );
+	}
+
+	return child;
+}
+
+class SrcLayoutModel: public QAbstractTableModel {
+public:
+    SrcLayoutModel(XkbRules* rules, QObject *parent)
+	: QAbstractTableModel(parent)
+	{ setRules(rules); }
+//    bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const { return false; }
+    int columnCount(const QModelIndex& parent) const { return !parent.isValid() ? SRC_LAYOUT_COLUMN_COUNT : 0; }
+    int rowCount(const QModelIndex&) const { return m_rules->layouts().keys().count(); }
+    QVariant data(const QModelIndex& index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+				       
+    void setRules(XkbRules* rules) { m_rules = rules; 
+	QHash<QString, QString> layouts = m_rules->layouts();
+	QList<QString> keys = layouts.keys();
+	// sort by i18n string
+	QMap<QString, QString> map;
+	foreach (QString str, keys)
+    	    map.insert(i18n(layouts[str]), str);
+        m_layoutKeys = map.values();
+    }
+    QString getLayoutAt(int row) { return m_layoutKeys[row]; }
+
+private:
+    XkbRules* m_rules;
+    QStringList m_layoutKeys;
+};
+
+QVariant SrcLayoutModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+     if (role != Qt::DisplayRole)
+              return QVariant();
+	      
+    QString colNames[] = {"", i18n("Layout Name"), i18n("Map")};
+    if (orientation == Qt::Horizontal) {
+	return colNames[section];
+    }
+              return QVariant();
+}
+
+QVariant
+SrcLayoutModel::data(const QModelIndex& index, int role) const
+{ 
+    if (!index.isValid())
+	return QVariant();
+
+    int col = index.column();
+    int row = index.row();
+    QHash<QString, QString> layouts = m_rules->layouts();
+    QString layout = m_layoutKeys[row];
+	
+    if (role == Qt::TextAlignmentRole) {
+	return int(Qt::AlignLeft | Qt::AlignVCenter);
+    } else if (role == Qt::DecorationRole) {
+	switch(col) {
+	    case LAYOUT_COLUMN_FLAG: return LayoutIcon::getInstance().findPixmap(layout, true);
+	}
+    } else if (role == Qt::DisplayRole) {
+	switch(col) {
+	    case LAYOUT_COLUMN_NAME: return i18n(layouts[layout]);
+	    case LAYOUT_COLUMN_MAP: return layout;
+	    break;
+	    default: ;
+	}
+    }
+    return QVariant();
+}
+
+class DstLayoutModel: public QAbstractTableModel {
+public:
+    DstLayoutModel(XkbRules* rules, KxkbConfig* kxkbConfig, QObject *parent)
+	: QAbstractTableModel(parent),
+	m_kxkbConfig(kxkbConfig)
+	{ setRules(rules); }
+    int columnCount(const QModelIndex& parent) const { return DST_LAYOUT_COLUMN_COUNT; }
+    int rowCount(const QModelIndex&) const { return m_kxkbConfig->m_layouts.count(); }
+    QVariant data(const QModelIndex& index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+
+    void setRules(XkbRules* rules) { m_rules = rules; }
+    void reset() { QAbstractTableModel::reset(); }
+
+private:
+    XkbRules* m_rules;
+    KxkbConfig* m_kxkbConfig;
+};
+
+QVariant DstLayoutModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+     if (role != Qt::DisplayRole)
+              return QVariant();
+	      
+    QString colNames[] = {"", i18n("Layout Name"), i18n("Map"), i18n("Variant"), i18n("Display Name")};
+    if (orientation == Qt::Horizontal) {
+	return colNames[section];
+    }
+              return QVariant();
+}
+
+
+QVariant
+DstLayoutModel::data(const QModelIndex& index, int role) const
+{ 
+    if (!index.isValid())
+	return QVariant();
+
+    int col = index.column();
+    int row = index.row();
+    QHash<QString, QString> layouts = m_rules->layouts();
+    QString layout = m_kxkbConfig->m_layouts[row].layout;
+	
+    if (role == Qt::TextAlignmentRole) {
+	return int(Qt::AlignLeft | Qt::AlignVCenter);
+    } else if (role == Qt::DecorationRole) {
+	switch(col) {
+	    case LAYOUT_COLUMN_FLAG: return LayoutIcon::getInstance().findPixmap(layout, true);
+	}
+    } else if (role == Qt::DisplayRole) {
+	switch(col) {
+	    case LAYOUT_COLUMN_NAME: return i18n(layouts[layout]);
+	    case LAYOUT_COLUMN_MAP: return layout;
+	    case LAYOUT_COLUMN_VARIANT: return m_kxkbConfig->m_layouts[row].variant;
+	    case LAYOUT_COLUMN_DISPLAY_NAME: return m_kxkbConfig->m_layouts[row].displayName;
+	    break;
+	    default: ;
+	}
+    }
+    return QVariant();
+}
+
 
 //K_PLUGIN_FACTORY_DECLARATION(KeyboardLayoutFactory)
 
 LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
   : KCModule(KeyboardLayoutFactory::componentData(), parent),
-    m_rules(NULL)
+    m_rules(NULL),
+    m_srcModel(NULL),
+    m_dstModel(NULL)
 {
- // QVBoxLayout *main = new QVBoxLayout(this, 0, KDialog::spacingHint());
+    //Read rules - we _must_ read _before_ creating UIs
+    loadRules();
 
-  widget = new Ui_LayoutConfigWidget();
-  widget->setupUi(this);
+    widget = new Ui_LayoutConfigWidget();
+    widget->setupUi(this);
 //  main->addWidget(widget);
+
+    m_srcModel = new SrcLayoutModel(m_rules, NULL);
+    m_srcModel->setHeaderData(LAYOUT_COLUMN_FLAG, Qt::Horizontal, "");
+    m_srcModel->setHeaderData(LAYOUT_COLUMN_NAME, Qt::Horizontal, "Layout name", Qt::DisplayRole);
+    m_srcModel->setHeaderData(LAYOUT_COLUMN_MAP, Qt::Horizontal, "Map", Qt::DisplayRole);
+
+    widget->srcTableView->setModel(m_srcModel);
+//    widget->srcTableView->setSortingEnabled(true);
+    widget->srcTableView->setColumnWidth(LAYOUT_COLUMN_FLAG, 26);
+    widget->srcTableView->verticalHeader()->hide();
+    widget->srcTableView->setShowGrid(false);
+    widget->srcTableView->resizeRowsToContents();
+
+    m_dstModel = new DstLayoutModel(m_rules, &m_kxkbConfig, NULL);
+    widget->dstTableView->setModel(m_dstModel);
+    widget->dstTableView->setColumnWidth(LAYOUT_COLUMN_FLAG, 26);
+    widget->dstTableView->verticalHeader()->hide();
+
 
   connect( widget->chkEnable, SIGNAL( toggled( bool )), this, SLOT(changed()));
   connect( widget->chkIndicatorOnly, SIGNAL( toggled( bool )), this, SLOT(changed()));
@@ -138,15 +287,16 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
   connect( widget->chkShowFlag, SIGNAL( toggled( bool )), this, SLOT(changed()));
   connect( widget->comboModel, SIGNAL(activated(int)), this, SLOT(changed()));
 
-  connect( widget->listLayoutsSrc, SIGNAL(doubleClicked(Q3ListViewItem*,const QPoint&, int)),
+  connect( widget->srcTableView, SIGNAL(doubleClicked(const QModelIndex & index)),
 									this, SLOT(add()));
   connect( widget->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
   connect( widget->btnRemove, SIGNAL(clicked()), this, SLOT(remove()));
 
 //  connect( widget->comboVariant, SIGNAL(activated(int)), this, SLOT(changed()));
   connect( widget->comboVariant, SIGNAL(activated(int)), this, SLOT(variantChanged()));
-  connect( widget->listLayoutsDst, SIGNAL(selectionChanged(Q3ListViewItem *)),
-		this, SLOT(layoutSelChanged(Q3ListViewItem *)));
+  connect( widget->dstTableView->selectionModel(), 
+		SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+		this, SLOT(layoutSelChanged()) );
 
 //  connect( widget->editDisplayName, SIGNAL(textChanged(const QString&)), this, SLOT(displayNameChanged(const QString&)));
 
@@ -162,25 +312,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
   connect( widget->chkEnableSticky, SIGNAL(toggled(bool)), this, SLOT(changed()));
   connect( widget->spinStickyDepth, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
-  widget->listLayoutsSrc->setColumnText(LAYOUT_COLUMN_FLAG, "");
-  widget->listLayoutsDst->setColumnText(LAYOUT_COLUMN_FLAG, "");
-//  widget->listLayoutsDst->setColumnText(LAYOUT_COLUMN_DISPLAY_NAME, "");
-
-  widget->listLayoutsSrc->setColumnWidth(LAYOUT_COLUMN_FLAG, 28);
-  widget->listLayoutsDst->setColumnWidth(LAYOUT_COLUMN_FLAG, 28);
-
-  widget->listLayoutsDst->header()->setResizeEnabled(false, LAYOUT_COLUMN_DISPLAY_NAME);
-//  widget->listLayoutsDst->setColumnWidth(LAYOUT_COLUMN_DISPLAY_NAME, 0);
-
-  widget->listLayoutsDst->setSorting(-1);
-#if 0
-  widget->listLayoutsDst->setResizeMode(QListView::LastColumn);
-  widget->listLayoutsSrc->setResizeMode(QListView::LastColumn);
-#endif
-  widget->listLayoutsDst->setResizeMode(Q3ListView::LastColumn);
-
-  //Read rules - we _must_ read _before_ creating xkb-options comboboxes
-  loadRules();
+    refreshRulesUI();
 
   makeOptionsTab();
 
@@ -209,29 +341,8 @@ void LayoutConfig::initUI()
 
 	widget->comboModel->setCurrentText(i18n(modelName));
 
-	QList<LayoutUnit> otherLayouts = m_kxkbConfig.m_layouts;
-	widget->listLayoutsDst->clear();
-// to optimize we should have gone from it.end to it.begin
-	for (QListIterator<LayoutUnit> it(otherLayouts); it.hasNext();  ) {
-		LayoutUnit layoutUnit = it.next();
-
-		Q3ListViewItemIterator src_it( widget->listLayoutsSrc );
-
-		for ( ; src_it.current(); ++src_it) {
-			Q3ListViewItem* srcItem = src_it.current();
-
-			if ( layoutUnit.layout == srcItem->text(LAYOUT_COLUMN_MAP) ) {	// check if current config knows about this layout
-				Q3ListViewItem* newItem = copyLVI(srcItem, widget->listLayoutsDst);
-
-				newItem->setText(LAYOUT_COLUMN_VARIANT, layoutUnit.variant);
-				newItem->setText(LAYOUT_COLUMN_DISPLAY_NAME, layoutUnit.displayName);
-				widget->listLayoutsDst->insertItem(newItem);
-				newItem->moveItem(widget->listLayoutsDst->lastItem());
-
-				break;
-			}
-		}
-	}
+	m_dstModel->reset();
+	widget->dstTableView->update();
 
 	// display KXKB switching options
 	widget->chkShowSingle->setChecked(m_kxkbConfig.m_showSingle);
@@ -297,29 +408,13 @@ void LayoutConfig::initUI()
 
 void LayoutConfig::save()
 {
-	QString model = lookupLocalized(m_rules->models(), widget->comboModel->currentText());
+//	QString model = lookupLocalized(m_rules->models(), widget->comboModel->currentText());
+	QString model = widget->comboModel->itemData(widget->comboModel->currentIndex()).toString();
 	m_kxkbConfig.m_model = model;
 
 	m_kxkbConfig.m_enableXkbOptions = widget->chkEnableOptions->isChecked();
 	m_kxkbConfig.m_resetOldOptions = widget->checkResetOld->isChecked();
 	m_kxkbConfig.m_options = createOptionString();
-
-	Q3ListViewItem *item = widget->listLayoutsDst->firstChild();
-	QList<LayoutUnit> layouts;
-	while (item) {
-		QString layout = item->text(LAYOUT_COLUMN_MAP);
-		QString variant = item->text(LAYOUT_COLUMN_VARIANT);
-		QString displayName = item->text(LAYOUT_COLUMN_DISPLAY_NAME);
-
-		LayoutUnit layoutUnit(layout, variant);
-		layoutUnit.displayName = displayName;
-		layouts.append( layoutUnit );
-
-		item = item->nextSibling();
-		kDebug() << "To save: layout " << layoutUnit.toPair()
-				<< ", disp: " << layoutUnit.displayName << endl;
-	}
-	m_kxkbConfig.m_layouts = layouts;
 
 	if( m_kxkbConfig.m_layouts.count() == 0 ) {
 		m_kxkbConfig.m_layouts.append(LayoutUnit(DEFAULT_LAYOUT_UNIT));
@@ -357,7 +452,7 @@ void LayoutConfig::save()
 
 void LayoutConfig::updateStickyLimit()
 {
-    int layoutsCnt = widget->listLayoutsDst->childCount();
+    int layoutsCnt = m_kxkbConfig.m_layouts.count();
 	int maxDepth = layoutsCnt - 1;
 
 	if( maxDepth < 2 ) {
@@ -371,151 +466,154 @@ void LayoutConfig::updateStickyLimit()
 
 void LayoutConfig::add()
 {
-    Q3ListViewItem* sel = widget->listLayoutsSrc->selectedItem();
-    if( sel == 0 || widget->listLayoutsDst->childCount() >= GROUP_LIMIT )
-		return;
+    QItemSelectionModel* selectionModel = widget->srcTableView->selectionModel();
+    if( selectionModel == NULL || !selectionModel->hasSelection() 
+		|| m_kxkbConfig.m_layouts.count() >= GROUP_LIMIT )
+	return;
 
-    // Create a copy of the sel widget, as one might add the same layout more
-    // than one time, with different variants.
-    Q3ListViewItem* toadd = copyLVI(sel, widget->listLayoutsDst);
+    QModelIndexList selected = selectionModel->selectedRows();
+    QHash<QString, QString> layouts = m_rules->layouts();
+    QString layout = m_srcModel->getLayoutAt(selected[0].row());
+    kDebug() << "selected to add" << layout;
+    m_kxkbConfig.m_layouts << LayoutUnit(layout, "");
 
-    widget->listLayoutsDst->insertItem(toadd);
-    if( widget->listLayoutsDst->childCount() > 1 )
-		toadd->moveItem(widget->listLayoutsDst->lastItem());
-// disabling temporary: does not work reliable in Qt :(
-//    widget->listLayoutsDst->setSelected(sel, true);
-//    layoutSelChanged(sel);
+	m_dstModel->reset();
+	widget->dstTableView->update();
 
 	updateAddButton();
 	updateLayoutCommand();
+
     updateStickyLimit();
     changed();
 }
 
 void LayoutConfig::updateAddButton()
 {
-    bool aboveLimit = widget->listLayoutsDst->childCount() >= GROUP_LIMIT;
-	widget->btnAdd->setEnabled(! aboveLimit);
+    bool aboveLimit = m_kxkbConfig.m_layouts.count() >= GROUP_LIMIT;
+    widget->btnAdd->setEnabled( !aboveLimit );
 }
 
 void LayoutConfig::remove()
 {
-    Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
-    Q3ListViewItem* newSel = 0;
+    QItemSelectionModel* selectionModel = widget->dstTableView->selectionModel();
+    if( selectionModel == NULL || !selectionModel->hasSelection() )
+	return;
 
-    if( sel != NULL ) {
-		if( sel->itemBelow() )
-			newSel = sel->itemBelow();
-		else
-			if( sel->itemAbove() )
-				newSel = sel->itemAbove();
+    QModelIndexList selected = selectionModel->selectedRows();
+    m_kxkbConfig.m_layouts.removeAt(selected[0].row());
 
-		delete sel;
-		if( newSel )
-			widget->listLayoutsSrc->setSelected(newSel, true);
-		layoutSelChanged(newSel);
-	}
+	m_dstModel->reset();
+	widget->dstTableView->update();
 
+	layoutSelChanged();
 	updateAddButton();
 	updateLayoutCommand();
 	updateStickyLimit();
+
     changed();
+}
+
+void LayoutConfig::moveSelected(int shift)
+{
+    QItemSelectionModel* selectionModel = widget->dstTableView->selectionModel();
+    if( selectionModel == NULL || !selectionModel->hasSelection() )
+	return;
+
+    QModelIndexList selected = selectionModel->selectedRows();
+    int row = selected[0].row();
+    int new_row = row + shift;
+    
+    if( new_row >= 0 && new_row < GROUP_LIMIT )
+	m_kxkbConfig.m_layouts.move(row, new_row);
+
+    m_dstModel->reset();
+    widget->dstTableView->update();
 }
 
 void LayoutConfig::moveUp()
 {
-    Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
-    if( sel == 0 || sel->itemAbove() == 0 )
-		return;
-
-    if( sel->itemAbove()->itemAbove() == 0 ) {
-		widget->listLayoutsDst->takeItem(sel);
-		widget->listLayoutsDst->insertItem(sel);
-		widget->listLayoutsDst->setSelected(sel, true);
-    }
-    else
-		sel->moveItem(sel->itemAbove()->itemAbove());
-
-	updateLayoutCommand();
+    moveSelected(-1);
+    updateLayoutCommand();
     changed();
 }
 
 void LayoutConfig::moveDown()
 {
-    Q3ListViewItem* sel = widget->listLayoutsDst->selectedItem();
-    if( sel == 0 || sel->itemBelow() == 0 )
-		return;
-
-    sel->moveItem(sel->itemBelow());
-	updateLayoutCommand();
+    moveSelected(1);
+    updateLayoutCommand();
     changed();
 }
 
 void LayoutConfig::variantChanged()
 {
-    Q3ListViewItem* selLayout = widget->listLayoutsDst->selectedItem();
-    if( selLayout == NULL ) {
-      widget->comboVariant->clear();
-      widget->comboVariant->setEnabled(false);
-      return;
+    int row = getSelectedDstLayout();
+
+    if( row == -1 ) {
+	widget->comboVariant->clear();
+	widget->comboVariant->setEnabled(false);
+	return;
     }
 
 	QString selectedVariant = widget->comboVariant->currentText();
 	if( selectedVariant == DEFAULT_VARIANT_NAME )
 		selectedVariant = "";
-	selLayout->setText(LAYOUT_COLUMN_VARIANT, selectedVariant);
+	m_kxkbConfig.m_layouts[row].variant = selectedVariant;
 
 	updateLayoutCommand();
     changed();
 }
 
-// helper
-LayoutUnit LayoutConfig::getLayoutUnitKey(Q3ListViewItem *sel)
-{
-	QString kbdLayout = sel->text(LAYOUT_COLUMN_MAP);
-	QString kbdVariant = sel->text(LAYOUT_COLUMN_VARIANT);
-	return LayoutUnit(kbdLayout, kbdVariant);
-}
-
 void LayoutConfig::displayNameChanged(const QString& newDisplayName)
 {
-	Q3ListViewItem* selLayout = widget->listLayoutsDst->selectedItem();
-	if( selLayout == NULL )
+    int row = getSelectedDstLayout();
+
+	if( row == -1 )
 		return;
 
-	const LayoutUnit layoutUnitKey = getLayoutUnitKey( selLayout );
-	LayoutUnit& layoutUnit = *m_kxkbConfig.m_layouts.find(layoutUnitKey);
+	LayoutUnit& layoutUnit = m_kxkbConfig.m_layouts[row];
 
-	QString oldName = selLayout->text(LAYOUT_COLUMN_DISPLAY_NAME);
+	QString oldName = layoutUnit.displayName;
 
 	if( oldName.isEmpty() )
 		oldName = KxkbConfig::getDefaultDisplayName( layoutUnit );
 
 	if( oldName != newDisplayName ) {
 		kDebug() << "setting label for " << layoutUnit.toPair() << " : " << newDisplayName;
-		selLayout->setText(LAYOUT_COLUMN_DISPLAY_NAME, newDisplayName);
-		updateIndicator(selLayout);
+		layoutUnit.displayName = newDisplayName;
+
+		updateIndicator();
 		changed();
 	}
 }
 
+int LayoutConfig::getSelectedDstLayout()
+{
+    QItemSelectionModel* selectionModel = widget->dstTableView->selectionModel();
+    if( selectionModel == NULL || !selectionModel->hasSelection() )
+	return - 1;
+
+    QModelIndexList selected = selectionModel->selectedRows();
+    int row = selected[0].row();
+    return row;
+}
+
 /** will update flag with label if layout label has been edited
 */
-void LayoutConfig::updateIndicator(Q3ListViewItem*)
+void LayoutConfig::updateIndicator()
 {
 }
 
-void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
+void LayoutConfig::layoutSelChanged()
 {
-    widget->comboVariant->clear();
-    widget->comboVariant->setEnabled( sel != NULL );
+    int row = getSelectedDstLayout();
 
-    if( sel == NULL ) {
+    widget->comboVariant->clear();
+    widget->comboVariant->setEnabled( row != -1 );
+    if( row == -1 ) {
         return;
     }
 
-	LayoutUnit layoutUnitKey = getLayoutUnitKey(sel);
-	QString kbdLayout = layoutUnitKey.layout;
+	QString kbdLayout = m_kxkbConfig.m_layouts[row].layout;
 
 	QStringList vars = m_rules->getAvailableVariants(kbdLayout);
 	kDebug() << "layout " << kbdLayout << " has " << vars.count() << " variants";
@@ -524,7 +622,7 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
 		vars.prepend(DEFAULT_VARIANT_NAME);
 		widget->comboVariant->addItems(vars);
 
-		QString variant = sel->text(LAYOUT_COLUMN_VARIANT);
+		QString variant = m_kxkbConfig.m_layouts[row].variant;
 		if( variant != NULL && variant.isEmpty() == false ) {
 			widget->comboVariant->setCurrentText(variant);
 		}
@@ -623,12 +721,11 @@ void LayoutConfig::updateLayoutCommand()
 	QString kbdLayouts;
 	QString kbdVariants;
 
-	Q3ListViewItem *item = widget->listLayoutsDst->firstChild();
-	QList<LayoutUnit> layouts;
-	while (item) {
-		QString layout = item->text(LAYOUT_COLUMN_MAP);
-		QString variant = item->text(LAYOUT_COLUMN_VARIANT);
-		QString displayName = item->text(LAYOUT_COLUMN_DISPLAY_NAME);
+	QList<LayoutUnit> layouts = m_kxkbConfig.m_layouts;
+	for(int i=0; i<layouts.count(); i++) {
+		QString layout = layouts[i].layout;
+		QString variant = layouts[i].variant;
+		QString displayName = layouts[i].displayName;
 
 		if( variant == DEFAULT_VARIANT_NAME )
 			variant = "";
@@ -640,12 +737,10 @@ void LayoutConfig::updateLayoutCommand()
 
 		kbdLayouts += layout;
 		kbdVariants += variant;
-
-		item = item->nextSibling();
 	}
 
-    QString setxkbmap = "setxkbmap"; //-rules " + m_rule
-    setxkbmap += " -model " + lookupLocalized(m_rules->models(), widget->comboModel->currentText());
+    QString setxkbmap = "setxkbmap";
+    setxkbmap += " -model " + widget->comboModel->itemData(widget->comboModel->currentIndex()).toString();
     setxkbmap += " -layout " + kbdLayouts;
     setxkbmap += " -variant " + kbdVariants;
 
@@ -710,36 +805,27 @@ void LayoutConfig::loadRules()
     // this could obly be used if rules are changed and 'Defaults' is pressed
     delete m_rules;
     m_rules = new XkbRules();
+    if( m_srcModel )
+        m_srcModel->setRules(m_rules);
+    if( m_dstModel )
+	m_dstModel->setRules(m_rules);
+}
 
-    QStringList modelsList;
+void LayoutConfig::refreshRulesUI()
+{
+//    QStringList modelsList;
+    widget->comboModel->clear();
     QHashIterator<QString, QString> it(m_rules->models());
     while (it.hasNext()) {
-		modelsList.append(i18n(it.next().value()));
+//		modelsList.append(i18n(it.next().value()));
+	const QString key = it.next().key();
+	widget->comboModel->addItem(i18n(m_rules->models()[key]), key);
     }
-    modelsList.sort();
+//    modelsList.sort();
+// TODO: sort
 
-	widget->comboModel->clear();
-	widget->comboModel->addItems(modelsList);
-	widget->comboModel->setCurrentIndex(0);
-
-	// fill in the additional layouts
-	widget->listLayoutsSrc->clear();
-	widget->listLayoutsDst->clear();
-	QHashIterator<QString, QString> it2(m_rules->layouts());
-
-	while (it2.hasNext())
-	{
-		it2.next();
-		QString layout = it2.key();
-		QString layoutName = it2.value();
-		Q3ListViewItem *item = new Q3ListViewItem(widget->listLayoutsSrc);
-
-		item->setPixmap(LAYOUT_COLUMN_FLAG, LayoutIcon::getInstance().findPixmap(layout, true));
-		item->setText(LAYOUT_COLUMN_NAME, i18n( layoutName.toLatin1().constData() ));
-		item->setText(LAYOUT_COLUMN_MAP, layout);
-	}
-	widget->listLayoutsSrc->setSorting(LAYOUT_COLUMN_NAME);	// from Qt3 QListView sorts by language
-
+//	widget->comboModel->addItems(modelsList);
+    widget->comboModel->setCurrentIndex(0);
 	//TODO: reset options and xkb options
 }
 
@@ -781,38 +867,12 @@ QString LayoutConfig::createOptionString()
 void LayoutConfig::defaults()
 {
 	loadRules();
+	refreshRulesUI();
 	m_kxkbConfig.setDefaults();
 
 	initUI();
 
 	emit KCModule::changed( true );
-}
-
-
-OptionListItem::OptionListItem( OptionListItem *parent, const QString &text,
-								Type tt, const QString &optionName )
-	: Q3CheckListItem( parent, text, tt ), m_OptionName( optionName )
-{
-}
-
-OptionListItem::OptionListItem( Q3ListView *parent, const QString &text,
-								Type tt, const QString &optionName )
-	: Q3CheckListItem( parent, text, tt ), m_OptionName( optionName )
-{
-}
-
-OptionListItem * OptionListItem::findChildItem( const QString& optionName )
-{
-	OptionListItem *child = static_cast<OptionListItem *>( firstChild() );
-
-	while ( child )
-	{
-		if ( child->optionName() == optionName )
-			break;
-		child = static_cast<OptionListItem *>( child->nextSibling() );
-	}
-
-	return child;
 }
 
 extern "C"

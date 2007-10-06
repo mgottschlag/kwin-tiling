@@ -35,6 +35,10 @@ class Q3ListViewItem;
 class Ui_LayoutConfigWidget;
 class XkbRules;
 
+
+class SrcLayoutModel;
+class DstLayoutModel;
+
 class LayoutConfig : public KCModule
 {
   Q_OBJECT
@@ -50,7 +54,7 @@ public:
 
 protected:
   QString createOptionString();
-  void updateIndicator(Q3ListViewItem* selLayout);
+  void updateIndicator();
 
 protected slots:
   void moveUp();
@@ -58,8 +62,9 @@ protected slots:
   void variantChanged();
   void displayNameChanged(const QString& name);
 //  void latinChanged();
-  void layoutSelChanged(Q3ListViewItem *);
+  void layoutSelChanged();
   void loadRules();
+  void refreshRulesUI();
   void updateLayoutCommand();
   void updateOptionsCommand();
   void add();
@@ -73,12 +78,15 @@ private:
   XkbRules *m_rules;
   KxkbConfig m_kxkbConfig;
   QHash<QString, OptionListItem*> m_optionGroups;
+  SrcLayoutModel* m_srcModel;
+  DstLayoutModel* m_dstModel;
 
   QWidget* makeOptionsTab();
   void updateStickyLimit();
   void updateAddButton();
   void updateDisplayName();
-  static LayoutUnit getLayoutUnitKey(Q3ListViewItem *sel);
+  void moveSelected(int shift);
+  int getSelectedDstLayout();
 };
 
 
