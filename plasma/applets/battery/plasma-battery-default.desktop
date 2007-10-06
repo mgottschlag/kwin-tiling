@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Battery Monitor
+Name[be]=Назіранне за батарэяй
+Name[el]=Επόπτης συστήματος
 Name[ja]=バッテリモニタ
 Name[km]=កម្មវិធី​ត្រួត​​ពិនិត្យ​ថាមពល
 Name[nds]=Batteriekieker
@@ -9,6 +11,7 @@ Name[sv]=Batteriövervakare
 Name[x-test]=xxBattery Monitorxx
 Name[zh_TW]=電池監視器
 Comment=A battery charge monitor
+Comment[el]=Ένας επόπτης φόρτισης της μπαταρίας
 Comment[ja]=バッテリ残量モニタ
 Comment[km]=កម្មវិធី​ត្រួត​ពិនិត្យ​ការ​បញ្ចូល​ថ្ម
 Comment[nds]=En Kieker för de Batterieladen

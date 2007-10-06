@@ -2,6 +2,8 @@
 Encoding=UTF-8
 Type=Service
 Name=Keyboard Layout Switcher
+Name[be]=Змена раскладкі клавіятуры
+Name[el]=Εναλλαγή διάταξης πληκτρολογίου
 Name[ga]=Athraitheoir Leagan Amach Méarchláir
 Name[ja]=キーボード配列切り替えツール
 Name[km]=ឧបករណ៍​ប្ដូរ​ប្លង់​ក្ដារចុច
