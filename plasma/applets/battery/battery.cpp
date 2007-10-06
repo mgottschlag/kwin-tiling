@@ -103,7 +103,7 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
             setDrawStandardBackground(m_drawBackground);
             pixelSize = m_pixelSize;
         }
-        m_theme->resize(QSize(pixelSize, pixelSize) + contentSize() - contentSizeHint());
+        m_theme->resize(QSize(pixelSize, pixelSize));
         updateGeometry();
         prepareGeometryChange();
         m_size = m_theme->size();
