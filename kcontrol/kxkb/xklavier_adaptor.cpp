@@ -22,6 +22,8 @@
 #include <klocale.h>
 #include <kdebug.h>
 
+#include <QtGui/QWidget>
+
 #include <libxklavier/xklavier.h>
 
 #include "rules.h"
