@@ -100,7 +100,7 @@ QPalette::ColorRole ItemDelegate::foregroundRole(const QStyleOptionViewItem &opt
 {
     Q_UNUSED(index)
 
-    if (option.state & QStyle::State_Selected && option.showDecorationSelected)
+    if (option.state & QStyle::State_Selected)
         return QPalette::HighlightedText;
 
     return QPalette::Text;
@@ -109,7 +109,7 @@ QPalette::ColorRole ItemDelegate::foregroundRole(const QStyleOptionViewItem &opt
 
 QPalette::ColorRole ItemDelegate::backgroundRole(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if (option.state & QStyle::State_Selected && option.showDecorationSelected)
+    if (option.state & QStyle::State_Selected)
         return QPalette::Highlight;
 
     const QStyleOptionViewItemV2 *option2 = qstyleoption_cast<const QStyleOptionViewItemV2*>(&option);
@@ -137,12 +137,8 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     QString secondRow = secondLine(index);
     QPixmap pixmap    = decoration(index);
 
-    // Figure out the text and background colors
-    QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ?
-            QPalette::Normal : QPalette::Disabled;
-
-    QColor textcol = option.palette.color(cg, foregroundRole(option, index));
-    QBrush bgbrush = option.palette.brush(cg, backgroundRole(option, index));
+    QColor textcol = option.palette.color(foregroundRole(option, index));
+    QBrush bgbrush = option.palette.brush(backgroundRole(option, index));
 
     // Draw the background
     painter->fillRect(option.rect, bgbrush);
