@@ -53,15 +53,9 @@ void DictEngine::getDefinition()
 {
       if(currentWord == QLatin1String("about"))
       {
-//          setData(currentWord, "Developers!", "<b>KDE4 Dict Applet for Plasma!</b><br />Was written by <i>Thomas Georgiou</i> and <i>Jeff Cooper</i>");
           setData(currentWord, "gcide", "<!--PAGE START--><!--DEFINITION START--><dl><dt><b>Developers</b></dt><!--PAGE START--><dd>KDE4 Dictionary Applet for Plasma was written by <i>Thomas Georgiou</i> and <i>Jeff Cooper</i></dd></dl>");
             return;
       }
-      //QString def;
-//       if(currentWord == QLatin1String("plasma")) //EASTER EGG!
-//       {
-//           def += "<dl><!--PAGE START--><!--DEFINITION START--><dt><b>Plasma</b>  \\Plas\"ma\\, a.(for awesome)</dt><!--PAGE START--><dd>OOH! I know that one! Plasma is that awesome new desktop thing for KDE4! Oh wait, you want an actual definition? Here, No fun...</dd></dl><br />";
-//       }
 
       tcpSocket->waitForReadyRead();
       tcpSocket->readAll();
@@ -80,69 +74,6 @@ void DictEngine::getDefinition()
         ret += tcpSocket->readAll();
       }
 
-
-//       QList<QByteArray> retLines = ret.split('\n');
-// 
-//       def += "<dl>\n";
-// 
-//       bool isFirst=true;
-//       QString wordRegex; //case insensitive regex of the word
-//       for(int i=0;i<currentWord.size();i++)
-//       {
-//           wordRegex += ('['+QString(currentWord[i].toUpper())+QString(currentWord[i].toLower())+']');
-//       }
-// 
-//       while (!retLines.empty()) //iterate through all the lines
-//       {
-//           QString currentLine = QString(retLines.takeFirst());
-//           if (currentLine.startsWith("552")) //if no match was found
-//           {
-//               def += "<dt>";
-//               def += i18n("<b>No match found for %1 in database "+dictName.toAscii()+".</b>\n",
-//                           currentWord).toUtf8();
-//               def += "</dt>";
-//               break;
-//           }
-//           if (currentLine.startsWith("151")) //begin definition
-//           {
-//               isFirst = true;
-//               continue;
-//           }
-//           if (currentLine.startsWith('.')) //end definition
-//           {
-//               def += "</dd><!--PERIOD-->";
-//               continue;
-//           }
-//           if (!(currentLine.startsWith("150") || currentLine.startsWith("151")// if it is a definition line
-//              || currentLine.startsWith("250") || currentLine.startsWith("552")))
-//           {
-//               currentLine = currentLine.trimmed();
-//               if (currentLine.startsWith("1."))
-//                   def += "<br />";
-//               if (currentLine.contains(QRegExp("^([1-9]{1,2}\\.)")))
-//                   def += "<br />";
-//               currentLine.replace(QRegExp("\\{([A-Za-z ]+)\\}"), "<a href=\"\\1\" style=\"color: #0000FF\" >\\1</a>");
-//               currentLine.replace(QRegExp("^([1-9]{1,2}\\.)"), "<!--PAGE START--><b>\\1</b>");
-//               currentLine.replace(QRegExp("((^| |\\.)"+wordRegex+"( |\\.|(i?e)?s|$))"), "<b>\\1</b>"); //the i?e?s is for most plurals... i'll fix it soon
-//               currentLine.replace(QRegExp("(^| |\\.)(\\[[^]]+\\])( |\\.|$)"), "<i>\\2</i>");
-// 
-//               //currentLine.replace(currentWord, "<b>"+currentWord+"</b>", Qt::CaseInsensitive);
-// 
-//               if(isFirst)
-//               {
-//                   def += "<!--PAGE START--><!--DEFINITION START--><dt>" + currentLine.toAscii() + "</dt>\n<dd>\n";
-//                   isFirst = false;
-//                   continue;
-//               }
-// 
-//               if(currentLine == "." || currentLine.isEmpty())
-//                   def += "\n<br />\n";
-//               else
-//                   def += currentLine.toAscii() + '\n';
-//           }
-// 
-//       }
-//       def+="</dl>";
       connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
       tcpSocket->disconnectFromHost();
       setData(currentWord, dictName, parseToHtml(ret));
@@ -152,8 +83,12 @@ void DictEngine::getDefinition()
 QString DictEngine::parseToHtml(QByteArray &text)
 {
       QList<QByteArray> retLines = text.split('\n');
-
-      QString def = "<dl>\n";
+      QString def;
+      if(currentWord == QLatin1String("plasma")) //EASTER EGG!
+      {
+          def += "<dl><!--PAGE START--><!--DEFINITION START--><dt><b>Plasma</b>  \\Plas\"ma\\, a.(for awesome)</dt><!--PAGE START--><dd>OOH! I know that one! Plasma is that awesome new desktop thing for KDE4! Oh wait, you want an actual definition? Here, No fun...</dd></dl><br />";
+      }
+      def += "<dl>\n";
 
       bool isFirst=true;
       QString wordRegex; //case insensitive regex of the word
