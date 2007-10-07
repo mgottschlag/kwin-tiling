@@ -49,6 +49,7 @@ class DictEngine : public Plasma::DataEngine
         void socketClosed();
 
     private:
+	QString parseToHtml(QByteArray &text);
 	QTcpSocket *tcpSocket;
 	QString currentWord;
 	QString dictName;
