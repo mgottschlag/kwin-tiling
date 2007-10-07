@@ -29,7 +29,6 @@
 #include "ui_stylepreview.h"
 
 #include <kaboutdata.h>
-#include <kdebug.h>
 #include <kapplication.h>
 #include <kcombobox.h>
 #include <kmessagebox.h>
@@ -497,7 +496,7 @@ void KCMStyle::styleSpecificConfig()
 
 void KCMStyle::load()
 {
-	KConfig config( "kdeglobals", KConfig::CascadeConfig );
+	KConfig config( "kdeglobals", KConfig::FullConfig );
 	// Page1 - Build up the Style ListBox
 	loadStyle( config );
 
@@ -838,7 +837,6 @@ void KCMStyle::loadStyle( KConfig& config )
 	KConfigGroup configGroup = config.group( "General" );
 	QString defaultStyle = "plastique"; //### KDE4: FIXME KStyle::defaultStyle();
 	QString cfgStyle = configGroup.readEntry( "widgetStyle", defaultStyle );
-    kDebug() << cfgStyle << defaultStyle;
 
 	// Select the current style
 	// Do not use cbStyle->listBox() as this may be NULL for some styles when
