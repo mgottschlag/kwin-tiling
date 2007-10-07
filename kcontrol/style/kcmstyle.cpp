@@ -29,6 +29,7 @@
 #include "ui_stylepreview.h"
 
 #include <kaboutdata.h>
+#include <kdebug.h>
 #include <kapplication.h>
 #include <kcombobox.h>
 #include <kmessagebox.h>
@@ -439,27 +440,22 @@ void KCMStyle::styleSpecificConfig()
 {
 	QString libname = styleEntries[currentStyle()]->configPage;
 
-	// Use KLibLoader to get the library, handling
-	// any errors that arise
-	KLibLoader* loader = KLibLoader::self();
-
-	KLibrary* library = loader->library( libname );
-	if (!library)
-	{
+    KLibrary library(libname, KCMStyleFactory::componentData());
+    if (!library.load()) {
 		KMessageBox::detailedError(this,
 			i18n("There was an error loading the configuration dialog for this style."),
-			loader->lastErrorMessage(),
+            library.errorString(),
 			i18n("Unable to Load Dialog"));
 		return;
 	}
 
-        KLibrary::void_function_ptr allocPtr = library->resolveFunction("allocate_kstyle_config");
+    KLibrary::void_function_ptr allocPtr = library.resolveFunction("allocate_kstyle_config");
 
 	if (!allocPtr)
 	{
 		KMessageBox::detailedError(this,
 			i18n("There was an error loading the configuration dialog for this style."),
-			loader->lastErrorMessage(),
+            library.errorString(),
 			i18n("Unable to Load Dialog"));
 		return;
 	}
@@ -612,12 +608,12 @@ void KCMStyle::save()
 	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfig::Normal|KConfig::Global);
 	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), KConfig::Normal|KConfig::Global);
 
-	config.changeGroup("General");
-	config.writeEntry( "widgetStyle", currentStyle() );
+    KConfigGroup generalGroup(&_config, "General");
+    generalGroup.writeEntry("widgetStyle", currentStyle());
 
-	config.changeGroup("Toolbar style");
-	config.writeEntry( "Highlighting", cbHoverButtons->isChecked(), KConfig::Normal|KConfig::Global);
-	config.writeEntry( "TransparentMoving", cbTransparentToolbars->isChecked(), KConfig::Normal|KConfig::Global);
+    KConfigGroup toolbarStyleGroup(&_config, "Toolbar style");
+    toolbarStyleGroup.writeEntry("Highlighting", cbHoverButtons->isChecked(), KConfig::Normal|KConfig::Global);
+    toolbarStyleGroup.writeEntry("TransparentMoving", cbTransparentToolbars->isChecked(), KConfig::Normal|KConfig::Global);
 	QString tbIcon;
 	switch( comboToolbarIcons->currentIndex() )
 	{
@@ -627,8 +623,8 @@ void KCMStyle::save()
 		default: 
 		case 3: tbIcon = "TextUnderIcon"; break;
 	}
-	config.writeEntry( "ToolButtonStyle", tbIcon, KConfig::Normal|KConfig::Global);
-	config.sync();
+    toolbarStyleGroup.writeEntry("ToolButtonStyle", tbIcon, KConfig::Normal|KConfig::Global);
+    _config.sync();
 
 	// Export the changes we made to qtrc, and update all qt-only
 	// applications on the fly, ensuring that we still follow the user's
@@ -842,6 +838,7 @@ void KCMStyle::loadStyle( KConfig& config )
 	KConfigGroup configGroup = config.group( "General" );
 	QString defaultStyle = "plastique"; //### KDE4: FIXME KStyle::defaultStyle();
 	QString cfgStyle = configGroup.readEntry( "widgetStyle", defaultStyle );
+    kDebug() << cfgStyle << defaultStyle;
 
 	// Select the current style
 	// Do not use cbStyle->listBox() as this may be NULL for some styles when
