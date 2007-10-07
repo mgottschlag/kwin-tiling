@@ -246,7 +246,7 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir)
 //  kDebug() << "reading variants from " << file;
 
   QFile f(file);
-  if (f.open(IO_ReadOnly))
+  if (f.open(QIODevice::ReadOnly))
     {
       QTextStream ts(&f);
 
