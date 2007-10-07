@@ -44,7 +44,7 @@ class KxkbWidget : public QObject
  	Q_OBJECT
 			
 public:
-	enum { INDICATOR_ONLY=1, NO_MENU = 2, LAYOUTS_ONLY = 3, FULL=4 };
+	enum { INDICATOR_ONLY=1, NO_MENU = 2, MENU_LAYOUTS_ONLY = 3, MENU_FULL=4 };
 
 	enum { START_MENU_ID = 100, CONFIG_MENU_ID = 130, HELP_MENU_ID = 131 };
 
@@ -59,7 +59,7 @@ signals:
 	void iconToggled();
 
 protected:
-	KxkbWidget(int controlType = FULL);
+	KxkbWidget(int controlType = MENU_FULL);
 	virtual QMenu* contextMenu() = 0;
 	virtual void setToolTip(const QString& tip) = 0;
 	virtual void setPixmap(const QPixmap& pixmap) = 0;
@@ -82,7 +82,7 @@ class KxkbSysTrayIcon : public KxkbWidget
 	Q_OBJECT
 
 public:
-	KxkbSysTrayIcon(int controlType=FULL);
+	KxkbSysTrayIcon(int controlType=MENU_FULL);
 	~KxkbSysTrayIcon() { delete m_indicatorWidget; }
 
 protected:
@@ -128,7 +128,7 @@ class KxkbLabel : public KxkbWidget
 public:
 	enum { ICON = 1, TEXT = 2 };
 
-	KxkbLabel(int controlType=FULL, QWidget* parent=0);
+	KxkbLabel(int controlType=MENU_FULL, QWidget* parent=0);
 	virtual ~KxkbLabel() { delete m_indicatorWidget; }
 	void show() { m_indicatorWidget->show(); }
 	QWidget* widget() { return m_indicatorWidget; }

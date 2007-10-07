@@ -56,12 +56,14 @@ private:
 	
 	const KxkbConfig& m_kxkbConfig;
 	WId m_currentWinId;
+	int m_currentDesktop;
 	QString m_currentWinClass; // only for SWITCH_POLICY_WIN_CLASS
 	
 	void initLayoutQueue(LayoutQueue& layoutQueue);
-	LayoutQueue& getCurrentLayoutQueue(WId winId);
-	LayoutQueue& getCurrentLayoutQueueInternal(WId winId);
+	LayoutQueue& getCurrentLayoutQueue();
+	LayoutQueue& getCurrentLayoutQueueInternal();
 	void clearMaps();
+	QString getOwner();
 };
 
 #endif

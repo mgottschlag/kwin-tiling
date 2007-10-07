@@ -32,7 +32,7 @@
 
 
 static const char* switchModes[SWITCH_POLICY_COUNT] = {
-  "Global", "WinClass", "Window"
+  "Global", "Desktop", "WinClass", "Window"
 };
 
 const LayoutUnit DEFAULT_LAYOUT_UNIT = LayoutUnit("us", "");
@@ -127,6 +127,9 @@ bool KxkbConfig::load(int loadMode)
 	}
 	else if( layoutOwner == "Window" ) {
 		m_switchingPolicy = SWITCH_POLICY_WINDOW;
+	}
+	else if( layoutOwner == "Desktop" ) {
+		m_switchingPolicy = SWITCH_POLICY_DESKTOP;
 	}
 	else /*if( layoutOwner == "Global" )*/ {
 		m_switchingPolicy = SWITCH_POLICY_GLOBAL;

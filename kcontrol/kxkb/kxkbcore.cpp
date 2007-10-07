@@ -59,6 +59,8 @@ DESCRIPTION
 
 #include "kxkbcore.h"
 
+#include "kxkb_component.h"
+
 #include "kxkbcore.moc"
 
 
@@ -158,6 +160,7 @@ bool KxkbCore::settingsRead()
 
 	if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_GLOBAL ) {
 		disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
+		disconnect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(windowChanged(WId)));
 	}
 	else {
 		QDesktopWidget desktopWidget;
@@ -165,11 +168,17 @@ bool KxkbCore::settingsRead()
 			kWarning() << "With non-virtual desktop only global switching policy supported on non-primary screens" ;
 			//TODO: find out how to handle that
 		}
-
-		disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
-		connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
+		
+		if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_DESKTOP ) {
+		    disconnect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(windowChanged(WId)));
+		    connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(windowChanged(WId)));
+//		}
+//		else {
+		    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
+		    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 /*		int m_prevWinId = kWinModule->activeWindow();
 		kDebug() << "Active window " << m_prevWinId;*/
+		}
 	}
 
 	m_layoutOwnerMap->reset();
@@ -343,20 +352,11 @@ void KxkbCore::windowChanged(WId winId)
 		return;
 	}
 
-// 	int group = m_extension->getGroup();
+ 	kDebug() << "active window changed new WinId: " << winId;
 
-// 	kDebug() << "old WinId: " << m_prevWinId << ", new WinId: " << winId;
+	if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_GLOBAL
+		    || winId != X11Helper::UNKNOWN_WINDOW_ID ) {
 
-//  	if( m_prevWinId != X11Helper::UNKNOWN_WINDOW_ID ) {	// saving layout/group from previous window
-//  		kDebug() << "storing " << m_currentLayout.toPair() << ":" << group << " for " << m_prevWinId;
-//  		m_layoutOwnerMap->setCurrentWindow(m_prevWinId);
-// // 		m_layoutOwnerMap->setCurrentLayout(m_currentLayout);
-// 		m_layoutOwnerMap->setCurrentGroup(group);
-//  	}
-
-// 	m_prevWinId = winId;
-
-	if( winId != X11Helper::UNKNOWN_WINDOW_ID ) {
 		m_layoutOwnerMap->setCurrentWindow(winId);
 		int layoutState = m_layoutOwnerMap->getCurrentLayout();
 
@@ -406,7 +406,7 @@ bool KxkbCore::x11EventFilter ( XEvent * event )
 	  updateGroupsFromServer();
     }
     else {
-	kDebug() << "other xkb event: ";// + ((XkbEvent*)event)->any.xkb_type;
+//	kDebug() << "other xkb event: ";// + ((XkbEvent*)event)->any.xkb_type;
     }
   }
   return false;
@@ -437,4 +437,18 @@ KxkbCore::updateGroupsFromServer()
 #endif
 	
     return 0;
+}
+
+
+extern "C" KDE_EXPORT
+void* kxkb_create_component(int controlType, void* parentWidget)
+{
+    QObject* parentObj = (QObject*)parentWidget;
+    QWidget* parent = dynamic_cast<QWidget*> (parentObj);
+    
+    KxkbLabel* kxkbWidget = new KxkbLabel(controlType, parent);
+    KxkbCore* kxkbCore = new KxkbCore( kxkbWidget, 2 );	// 2 == NO_INIT
+    kxkbCore->newInstance();
+    //setWidget(kxkbWidget->widget());
+    return kxkbWidget;
 }

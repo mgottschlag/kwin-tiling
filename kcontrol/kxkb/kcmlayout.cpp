@@ -356,11 +356,14 @@ void LayoutConfig::initUI()
 		case SWITCH_POLICY_GLOBAL:
 			widget->grpSwitching->setButton(0);
 			break;
-		case SWITCH_POLICY_WIN_CLASS:
+		case SWITCH_POLICY_DESKTOP:
 			widget->grpSwitching->setButton(1);
 			break;
-		case SWITCH_POLICY_WINDOW:
+		case SWITCH_POLICY_WIN_CLASS:
 			widget->grpSwitching->setButton(2);
+			break;
+		case SWITCH_POLICY_WINDOW:
+			widget->grpSwitching->setButton(3);
 			break;
 	}
 
@@ -433,9 +436,12 @@ void LayoutConfig::save()
 			m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_GLOBAL;
 			break;
 		case 1:
-			m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_WIN_CLASS;
+			m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_DESKTOP;
 			break;
 		case 2:
+			m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_WIN_CLASS;
+			break;
+		case 3:
 			m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_WINDOW;
 			break;
 	}

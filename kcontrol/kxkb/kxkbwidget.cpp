@@ -107,7 +107,7 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 
 	// if show config, if show help
 //	if( menu->indexOf(CONFIG_MENU_ID) == -1 ) {
-	if( m_configSeparator == NULL && m_controlType > LAYOUTS_ONLY ) { // first call
+	if( m_configSeparator == NULL && m_controlType >= MENU_FULL ) { // first call
 		m_configSeparator = menu->addSeparator();
 
 		QAction* configAction = new QAction(SmallIcon("configure"), i18n("Configure..."), menu);
