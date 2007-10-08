@@ -1,0 +1,24 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Mouse Data Engine
+Name[bg]=Ядро за мишка
+Name[es]=Motor de datos del ratón
+Name[ja]=マウスデータエンジン
+Name[nl]=Muis-gegevensengine
+Name[pt]=Motor de Dados do Rato
+Name[pt_BR]=Motor de Dados do Rato
+Name[sv]=Datagränssnitt för mus
+Comment=Mouse data for Plasmoids
+Comment[bg]=Данни за мишката за Plasmoids
+Comment[es]=Datos del ratón para Plasmoids
+Comment[ja]=Plasmoid のためのマウスデータ
+Comment[nl]=Muisgegevens voor Plasmoids
+Comment[pt]=Dados do rato dos Plasmóides
+Comment[pt_BR]=Dados do rato dos Plasmóides
+Comment[sv]=Musdata för Plasmoider
+Type=Service
+ServiceTypes=Plasma/DataEngine
+Icon=
+X-KDE-Library=plasma_engine_mouse
+X-EngineName=mouse
+
