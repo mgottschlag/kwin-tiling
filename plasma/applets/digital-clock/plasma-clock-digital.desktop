@@ -1,0 +1,34 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Digital Clock
+Name[bg]=Цифров часовник
+Name[de]=Digitaluhr
+Name[es]=Reloj digital
+Name[ja]=デジタル時計
+Name[nl]=Digitale klok
+Name[pt]=Relógio Digital
+Name[pt_BR]=Relógio Digital
+Name[sv]=Digital klocka
+
+Comment=An SVG themable digital clock
+Comment[bg]=Цифров часовник със SVG тема
+Comment[es]=Un reloj digital con un tema basado en SVG
+Comment[ja]=SVG テーマを使ったデジタル時計
+Comment[pt]=Um relógio digital com temas em SVG
+Comment[pt_BR]=Um relógio digital com temas em SVG
+Comment[sv]=En digital klocka med SVG-teman
+
+Icon=chronometer
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_dig_clock
+X-KDE-PluginInfo-Author=Riccardo Iaconelli
+X-KDE-PluginInfo-Email=riccardo@kde.org
+X-KDE-PluginInfo-Name=digital-clock
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://www.ruphy.org/
+X-KDE-PluginInfo-Category=Date and Time
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
