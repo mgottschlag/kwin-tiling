@@ -20,6 +20,7 @@
 
 #include "colorscm.h"
 
+#include <QtCore/QFileInfo>
 #include <QtGui/QHeaderView>
 #include <QtGui/QStackedWidget>
 #include <QtDBus/QtDBus>
@@ -31,6 +32,7 @@
 #include <KGlobalSettings>
 #include <KAboutData>
 #include <KListWidget>
+#include <KStandardDirs>
 
 K_PLUGIN_FACTORY( KolorFactory, registerPlugin<KColorCm>(); )
 K_EXPORT_PLUGIN( KolorFactory("kcmcolors") )
@@ -53,6 +55,10 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     setupUi(this);
 
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
+    connect(schemeList, SIGNAL(currentRowChanged(int)), this, SLOT(loadScheme()));
+
+    // only needs to be called once
+    setupColorTable();
 
     load();
 }
@@ -60,6 +66,40 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 KColorCm::~KColorCm()
 {
     m_config->rollback();
+}
+
+void KColorCm::populateSchemeList()
+{
+    QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*");
+    for (int i = 0; i < schemeFiles.size(); ++i)
+    {
+        // TODO: add some processing to show some sample of the colorscheme in the icon 
+        // like kde3 colors kcm had
+        QString filename = schemeFiles[i];
+        QFileInfo info(filename);
+        schemeList->addItem(info.fileName());
+    }
+}
+
+void KColorCm::loadScheme()
+{
+    if (schemeList->currentItem() != NULL)
+    {
+        QString path = KGlobal::dirs()->findResource("data", 
+            "color-schemes/" + schemeList->currentItem()->text());
+        KSharedConfigPtr temp = m_config;
+        m_config = KSharedConfig::openConfig(path);
+        updateColorSchemes();
+        m_config = temp;
+        updateFromColorSchemes();
+        updateColorTable();
+
+        schemePreview->setPalette(m_config);
+        inactivePreview->setPalette(m_config, QPalette::Inactive);
+        disabledPreview->setPalette(m_config, QPalette::Disabled);
+
+        emit changed(true);
+    }
 }
 
 void KColorCm::createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index)
@@ -98,6 +138,26 @@ void KColorCm::updateColorSchemes()
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Button, m_config));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Selection, m_config));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Tooltip, m_config));
+}
+
+void KColorCm::updateFromColorSchemes()
+{
+    for (int i = KColorScheme::View; i <= KColorScheme::Tooltip; ++i)
+    {
+        KConfigGroup group(m_config, colorSetGroupKey(i));
+        group.writeEntry("BackgroundNormal", m_colorSchemes[i].background(KColorScheme::NormalBackground).color());
+        group.writeEntry("BackgroundAlternate", m_colorSchemes[i].background(KColorScheme::AlternateBackground).color());
+        group.writeEntry("ForegroundNormal", m_colorSchemes[i].foreground(KColorScheme::NormalText).color());
+        group.writeEntry("ForegroundInactive", m_colorSchemes[i].foreground(KColorScheme::InactiveText).color());
+        group.writeEntry("ForegroundActive", m_colorSchemes[i].foreground(KColorScheme::InactiveText).color());
+        group.writeEntry("ForegroundLink", m_colorSchemes[i].foreground(KColorScheme::LinkText).color());
+        group.writeEntry("ForegroundVisited", m_colorSchemes[i].foreground(KColorScheme::VisitedText).color());
+        group.writeEntry("ForegroundNegative", m_colorSchemes[i].foreground(KColorScheme::NegativeText).color());
+        group.writeEntry("ForegroundNeutral", m_colorSchemes[i].foreground(KColorScheme::NeutralText).color());
+        group.writeEntry("ForegroundPositive", m_colorSchemes[i].foreground(KColorScheme::PositiveText).color());
+        group.writeEntry("DecorationFocus", m_colorSchemes[i].decoration(KColorScheme::FocusColor).color());
+        group.writeEntry("DecorationHover", m_colorSchemes[i].decoration(KColorScheme::HoverColor).color());
+    }
 }
 
 void KColorCm::setupColorTable()
@@ -163,6 +223,7 @@ void KColorCm::setupColorTable()
     colorTable->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
     colorTable->horizontalHeader()->setResizeMode(1, QHeaderView::ResizeToContents);
 
+    updateColorSchemes();
     updateColorTable();
 }
 
@@ -459,23 +520,7 @@ void KColorCm::changeColor(int row, const QColor &newColor)
     }
     else
     {
-        const char *group;
-        switch (currentSet) {
-            case KColorScheme::Window:
-                group = "Colors:Window";
-                break;
-            case KColorScheme::Button:
-                group = "Colors:Button";
-                break;
-            case KColorScheme::Selection:
-                group = "Colors:Selection";
-                break;
-            case KColorScheme::Tooltip:
-                group = "Colors:Tooltip";
-                break;
-            default:
-                group = "Colors:View";
-        }
+        QString group = colorSetGroupKey(currentSet);
         KConfigGroup(m_config, group).writeEntry(m_colorKeys[row], newColor);
     }
 
@@ -486,6 +531,28 @@ void KColorCm::changeColor(int row, const QColor &newColor)
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     emit changed(true);
+}
+
+QString KColorCm::colorSetGroupKey(int colorSet)
+{
+    QString group;
+    switch (colorSet) {
+        case KColorScheme::Window:
+            group = "Colors:Window";
+            break;
+        case KColorScheme::Button:
+            group = "Colors:Button";
+            break;
+        case KColorScheme::Selection:
+            group = "Colors:Selection";
+            break;
+        case KColorScheme::Tooltip:
+            group = "Colors:Tooltip";
+            break;
+        default:
+            group = "Colors:View";
+    }
+    return group;
 }
 
 void KColorCm::on_contrastSlider_valueChanged(int value)
@@ -513,9 +580,11 @@ void KColorCm::load()
     // rollback the config, in case we have changed the in-memory kconfig
     m_config->rollback();
 
-    updateColorSchemes();
+    // update the color table
+    updateColorTable();
 
-    setupColorTable();
+    // fill in the color scheme list
+    populateSchemeList();
 
     contrastSlider->setValue(KGlobalSettings::contrast());
     shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ?

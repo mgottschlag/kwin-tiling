@@ -60,17 +60,23 @@ private slots:
 
     /** slot called when color on a KColorButton changes */
     void colorChanged( const QColor &newColor );
-    
+
     /** slot called when the contrast slider on the main page changes */
     void on_contrastSlider_valueChanged(int value);
-    
+
     /** slot called when the shadeSortedColumn checkbox is checked/unchecked */
     void on_shadeSortedColumn_stateChanged(int state);
-    
+
     /** slot called when any varies button is clicked */
     void variesClicked();
 
+    /** slot called when the schemeList selection changes */
+    void loadScheme();
+
 private:
+
+    /** populate the schemeList with color schemes found on the system */
+    void populateSchemeList();
 
     /** update m_colorSchemes contents from the values in m_config */
     void updateColorSchemes();
@@ -84,7 +90,13 @@ private:
     /** helper to create color entries */
     void createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index);
     
+    /** copy color entries from color schemes into m_config */
+    void updateFromColorSchemes();
+    
     void changeColor(int row, const QColor &newColor);
+    
+    /** get the groupKey for the given colorSet */
+    static QString colorSetGroupKey(int colorSet);
     
     QColor commonForeground(KColorScheme::ForegroundRole index);
 
