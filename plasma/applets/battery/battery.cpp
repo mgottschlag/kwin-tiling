@@ -108,7 +108,6 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
         prepareGeometryChange();
         m_size = m_theme->size();
         m_font.setPointSize((int)(pixelSize/10));
-        resize(m_size);
         updateGeometry();
     }
 }
@@ -134,7 +133,7 @@ void Battery::updated(const QString& source, const Plasma::DataEngine::Data &dat
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
-    updateGeometry();
+    update();
 }
 
 void Battery::showConfigurationInterface()
