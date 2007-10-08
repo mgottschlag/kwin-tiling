@@ -38,7 +38,6 @@ class DictEngine : public Plasma::DataEngine
         ~DictEngine();
         void setDict(const QString &dict);
         void setServer(const QString &server);
-        QHash<QString, QString> getDicts();
         QHash<QString, QString> *dictHash;
 
     protected:
@@ -47,6 +46,7 @@ class DictEngine : public Plasma::DataEngine
     protected slots:
 	void getDefinition();
         void socketClosed();
+        void getDicts();
 
     private:
 	QString parseToHtml(QByteArray &text);

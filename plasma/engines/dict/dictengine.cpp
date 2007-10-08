@@ -32,7 +32,7 @@ DictEngine::DictEngine(QObject* parent, const QVariantList& args)
 {
     Q_UNUSED(args)
     serverName="dict.org"; //In case we need to switch it later
-    dictName="gcide"; //Default, good dictionary
+    dictName="wn"; //Default, good dictionary
 }
 
 DictEngine::~DictEngine()
@@ -151,9 +151,9 @@ QString DictEngine::parseToHtml(QByteArray &text)
       return def;
 }
 
-QHash<QString, QString> DictEngine::getDicts()
+void DictEngine::getDicts()
 {
-    QHash<QString, QString> theHash;
+    QMap<QString, QString> theHash;
     tcpSocket->waitForReadyRead();
     tcpSocket->readAll();
     QByteArray ret;
@@ -162,7 +162,11 @@ QHash<QString, QString> DictEngine::getDicts()
     tcpSocket->flush();
 
     tcpSocket->waitForReadyRead();
-    ret += tcpSocket->readAll();
+    while (!ret.contains("250"))
+      {
+        tcpSocket->waitForReadyRead();
+        ret += tcpSocket->readAll();
+      }
 
     QList<QByteArray> retLines = ret.split('\n');
 
@@ -183,12 +187,14 @@ QHash<QString, QString> DictEngine::getDicts()
             curr = curr.trimmed();
             tmp1=curr.section(' ',0,1);
             tmp2=curr.section(' ',1);
-            theHash.insert(tmp1, tmp2);
+  //          theHash.insert(tmp1, tmp2);
+            kDebug() << tmp1 + "  " + tmp2;
+            setData("showDictionaries",tmp1,tmp2);
         }
     }
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
     tcpSocket->disconnectFromHost();
-    return theHash;
+//    setData("showDictionaries", "dictionaries", QByteArray(theHash);
 }
 
 
@@ -213,7 +219,12 @@ bool DictEngine::sourceRequested(const QString &word)
           setData(currentWord, dictName, QString());
           tcpSocket = new QTcpSocket(this);
           tcpSocket->abort();
-          connect(tcpSocket, SIGNAL(connected()), this ,SLOT(getDefinition()));
+          if (currentWord == "showDictionaries")
+          {
+              connect(tcpSocket, SIGNAL(connected()), this, SLOT(getDicts()));
+          } else {
+              connect(tcpSocket, SIGNAL(connected()), this ,SLOT(getDefinition()));
+          }
           tcpSocket->connectToHost(serverName, 2628);
       } else {
           setData(currentWord, dictName, QString());
