@@ -287,7 +287,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
   connect( widget->chkShowFlag, SIGNAL( toggled( bool )), this, SLOT(changed()));
   connect( widget->comboModel, SIGNAL(activated(int)), this, SLOT(changed()));
 
-  connect( widget->srcTableView, SIGNAL(doubleClicked(const QModelIndex & index)),
+  connect( widget->srcTableView, SIGNAL(doubleClicked(const QModelIndex &)),
 									this, SLOT(add()));
   connect( widget->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
   connect( widget->btnRemove, SIGNAL(clicked()), this, SLOT(remove()));
