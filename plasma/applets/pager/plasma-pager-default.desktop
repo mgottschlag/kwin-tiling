@@ -1,5 +1,9 @@
 [Desktop Entry]
 Name=Pager
+Name[ga]=Brabhsálaí Leathanach
+Name[pt]=Paginador
+Name[sv]=Skrivbordsvisning
+Name[zh_TW]=呼叫器
 Type=Service
 ServiceTypes=Plasma/Applet
 

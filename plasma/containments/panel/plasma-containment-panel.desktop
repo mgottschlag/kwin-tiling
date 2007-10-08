@@ -61,6 +61,7 @@ Comment[pt]=Um contentor para um painel
 Comment[pt_BR]=Um contentor para um painel
 Comment[sv]=En omgivning för en panel
 Comment[x-test]=xxA containment for a panelxx
+Comment[zh_CN]=面板容器
 Comment[zh_TW]=面板容器
 Icon=
 Type=Service

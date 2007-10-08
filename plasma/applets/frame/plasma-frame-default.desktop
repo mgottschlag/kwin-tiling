@@ -1,22 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Picture Frame
-Name[bg]=Снимки
-Name[de]=Bilderrahmen
-Name[es]=Marco de imagen
-Name[ja]=写真フレーム
-Name[nl]=Afbeeldingslijst
-Name[pt]=Moldura da Imagem
-Name[pt_BR]=Moldura da Imagem
-Name[sv]=Bildram
 Comment=Display your favorite pictures
-Comment[bg]=Показване на любимите ви снимки
-Comment[es]=Muestra sus imágenes favoritas
-Comment[ja]=お気に入りの写真を表示します
-Comment[nl]=Weergeef uw favoriete afbeeldingen
-Comment[pt]=Mostrar as suas imagens favoritas
-Comment[pt_BR]=Mostrar as suas imagens favoritas
-Comment[sv]=Visa dina favoritbilder
 Icon=image-jpeg2000
 Type=Service
 ServiceTypes=Plasma/Applet
