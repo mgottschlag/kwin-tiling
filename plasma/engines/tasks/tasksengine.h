@@ -26,7 +26,7 @@
 
 // Plasma
 #include <plasma/dataengine.h>
-#include <plasma/taskmanager.h>
+#include <taskmanager/taskmanager.h>
 
 /**
  * This class evaluates the basic expressions given in the interface.
