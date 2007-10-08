@@ -21,7 +21,7 @@
 #include "mouseengine.h"
 #include "mouseengine.moc"
 
-#include <config-plasma.h>
+#include <config-X11.h>
 
 #ifdef HAVE_XFIXES
 #  include "cursornotificationhandler.h"

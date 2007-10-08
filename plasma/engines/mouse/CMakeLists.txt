@@ -10,7 +10,7 @@ endif (X11_Xfixes_FOUND)
 
 kde4_add_plugin(plasma_engine_mouse ${mouse_engine_SRCS})
 target_link_libraries(plasma_engine_mouse ${KDE4_KDEUI_LIBS} ${X11_Xfixes_LIB}
-${PLASMA_LIBS})
+plasma)
 
 install(TARGETS plasma_engine_mouse DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-engine-mouse.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
