@@ -19,7 +19,6 @@
 
 #include <kservicetypetrader.h>
 #include <kstandarddirs.h>
-#include <Qt3Support/Q3ButtonGroup>
 #include <QCheckBox>
 #include <Qt3Support/Q3Header>
 #include <QLabel>
@@ -121,23 +120,16 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
 
     QBoxLayout *topLayout = new QHBoxLayout(this);
     topLayout->setSpacing(KDialog::spacingHint());
-    topLayout->setMargin(0);
 
     // left column
     QVBoxLayout *leftColumnLayout = new QVBoxLayout( );
     topLayout->addItem( leftColumnLayout );
     leftColumnLayout->setSpacing( KDialog::spacingHint() );
-    QBoxLayout *vLayout = new QVBoxLayout();
-    leftColumnLayout->addItem( vLayout );
-    vLayout->setSpacing( KDialog::spacingHint() );
 
-    mSaverGroup = new Q3GroupBox(i18n("Screen Saver"), this );
-    mSaverGroup->setColumnLayout( 0, Qt::Horizontal );
-    vLayout->addWidget(mSaverGroup);
-    vLayout->setStretchFactor( mSaverGroup, 10 );
-    QBoxLayout *groupLayout = new QVBoxLayout();
-    mSaverGroup->layout()->addItem( groupLayout );
-    groupLayout->setSpacing( KDialog::spacingHint() );
+    mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
+    QVBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup );
+    leftColumnLayout->addWidget(mSaverGroup);
+    leftColumnLayout->setStretchFactor( mSaverGroup, 10 );
 
     mSaverListView = new Q3ListView( mSaverGroup );
     mSaverListView->setMinimumHeight( 120 );
@@ -150,8 +142,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     mSaverListView->setWhatsThis( i18n("Select the screen saver to use.") );
 
     QBoxLayout* hlay = new QHBoxLayout();
-    groupLayout->addItem(hlay);
-    hlay->setSpacing(KDialog::spacingHint());
+    groupLayout->addLayout(hlay);
     mSetupBt = new QPushButton( i18n("&Setup..."), mSaverGroup );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
     mSetupBt->setEnabled(false);
@@ -164,12 +155,9 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     hlay->addWidget( mTestBt );
     mTestBt->setWhatsThis( i18n("Show a full screen preview of the screen saver.") );
 
-    mSettingsGroup = new Q3GroupBox( i18n("Settings"), this );
-    mSettingsGroup->setColumnLayout( 0, Qt::Vertical );
+    mSettingsGroup = new QGroupBox( i18n("Settings"), this );
+    groupLayout = new QVBoxLayout( mSettingsGroup );
     leftColumnLayout->addWidget( mSettingsGroup );
-    groupLayout = new QVBoxLayout();
-    mSettingsGroup->layout()->addItem( groupLayout );
-    groupLayout->setSpacing( KDialog::spacingHint() );
 
     mEnabledCheckBox = new QCheckBox(i18n(
         "Start a&utomatically"), mSettingsGroup);

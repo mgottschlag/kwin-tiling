@@ -93,8 +93,8 @@ protected:
     KService::List mSaverServices;
     SaverList   mSaverList;
     QTimer      *mLoadTimer;
-    Q3GroupBox   *mSaverGroup;
-    Q3GroupBox   *mSettingsGroup;
+    QGroupBox   *mSaverGroup;
+    QGroupBox   *mSettingsGroup;
 
     int         mSelected;
     int         mPrevSelected;
