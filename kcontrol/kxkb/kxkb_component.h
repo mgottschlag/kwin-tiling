@@ -26,7 +26,9 @@ DESCRIPTION
 #ifndef __KXKB_COMPONENT_H__
 #define __KXKB_COMPONENT_H__
 
-#include <QLibrary>
+#include <QtCore/QLibrary>
+
+#include <kdemacros.h>
 
 /**
     Lightweigth (no pars or io libs required) Kxkb component
