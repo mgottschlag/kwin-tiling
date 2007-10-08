@@ -5,7 +5,7 @@ set(tasks_engine_SRCS
 )
 
 kde4_add_plugin(plasma_engine_tasks ${tasks_engine_SRCS})
-target_link_libraries(plasma_engine_tasks ${KDE4_KDEUI_LIBS} ${PLASMA_LIBS} 
+target_link_libraries(plasma_engine_tasks ${KDE4_KDEUI_LIBS} plasma
                       taskmanager)
 
 install(TARGETS plasma_engine_tasks DESTINATION ${PLUGIN_INSTALL_DIR})
