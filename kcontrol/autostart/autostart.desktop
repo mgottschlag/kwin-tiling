@@ -10,18 +10,21 @@ X-KDE-FactoryName=Autostart
 X-KDE-ParentApp=kcontrol
 
 Name=Autostart Manager
+Name[et]=Autostardi haldur
 Name[ja]=自動起動マネージャ
 Name[pt]=Gestor do Arranque
 Name[pt_BR]=Gestor do Arranque
 Name[sv]=Hantering av automatisk start
 
 Comment=A KControl tool for managing what programs start up with KDE.
+Comment[et]=KDE juhtimiskeskuse tööriist, millega saab määrata, millised rakendused käivituvad koos KDE-ga.
 Comment[ja]=KDE の起動時に開始するプログラムを設定するための KControl ツール
 Comment[pt]=Uma ferramenta do KControl para gerir os programas que arrancam com o KDE.
 Comment[pt_BR]=Uma ferramenta do KControl para gerir os programas que arrancam com o KDE.
 Comment[sv]=Ett verktyg i inställningscentralen för att hantera vilka program som startas tillsammans med KDE.
 
 Keywords=Autostart Manager
+Keywords[et]=Autostardi haldur
 Keywords[ja]=自動起動マネージャ
 Keywords[pt]=Gestor do Arranque
 Keywords[pt_BR]=Gestor do Arranque
