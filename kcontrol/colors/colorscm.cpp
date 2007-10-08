@@ -65,7 +65,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 
 KColorCm::~KColorCm()
 {
-    m_config->rollback();
+    m_config->clean();
 }
 
 void KColorCm::populateSchemeList()
@@ -90,6 +90,10 @@ void KColorCm::loadScheme()
         KSharedConfigPtr temp = m_config;
         m_config = KSharedConfig::openConfig(path);
         updateColorSchemes();
+        KConfigGroup group(m_config, "General");
+        shadeSortedColumn->setChecked(group.readEntry("shadeSortColumn", true) ? Qt::Checked : Qt::Unchecked);
+        KConfigGroup group2(m_config, "KDE");
+        contrastSlider->setValue(group2.readEntry("contrast").toInt());
         m_config = temp;
         updateFromColorSchemes();
         updateColorTable();
@@ -158,6 +162,12 @@ void KColorCm::updateFromColorSchemes()
         group.writeEntry("DecorationFocus", m_colorSchemes[i].decoration(KColorScheme::FocusColor).color());
         group.writeEntry("DecorationHover", m_colorSchemes[i].decoration(KColorScheme::HoverColor).color());
     }
+
+    KConfigGroup KDEgroup(m_config, "KDE");
+    KDEgroup.writeEntry("contrast", contrastSlider->value());
+
+    KConfigGroup generalGroup(m_config, "General");
+    generalGroup.writeEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
 }
 
 void KColorCm::setupColorTable()
@@ -512,11 +522,6 @@ void KColorCm::changeColor(int row, const QColor &newColor)
         m_commonColorButtons[row]->blockSignals(true);
         m_commonColorButtons[row]->setColor(newColor);
         m_commonColorButtons[row]->blockSignals(false);
-        //KConfigGroup(m_config, "Colors:Window").writeEntry(m_colorKeys[row], newColor);
-        //KConfigGroup(m_config, "Colors:Button").writeEntry(m_colorKeys[row], newColor);
-        ////KConfigGroup(m_config, "Colors:Selection").writeEntry(m_colorKeys[row], newColor);
-        //KConfigGroup(m_config, "Colors:Tooltip").writeEntry(m_colorKeys[row], newColor);
-        //KConfigGroup(m_config, "Colors:View").writeEntry(m_colorKeys[row], newColor);
     }
     else
     {
@@ -577,8 +582,8 @@ void KColorCm::on_shadeSortedColumn_stateChanged(int state)
 
 void KColorCm::load()
 {
-    // rollback the config, in case we have changed the in-memory kconfig
-    m_config->rollback();
+    // clean the config, in case we have changed the in-memory kconfig
+    m_config->clean();
 
     // update the color table
     updateColorTable();
