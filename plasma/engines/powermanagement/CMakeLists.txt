@@ -1,4 +1,3 @@
-include_directories(${CMAKE_SOURCE_DIR}/workspace/lib ${PLASMA_INCLUDE_DIR})
 
 set(powermanagement_engine_SRCS
     powermanagementengine.cpp
