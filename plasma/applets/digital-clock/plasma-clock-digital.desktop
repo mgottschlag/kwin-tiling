@@ -1,8 +1,18 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Digital Clock
+Name[ja]=デジタル時計
+Name[pt]=Relógio Digital
+Name[pt_BR]=Relógio Digital
+Name[sv]=Digitalklocka
+Name[zh_TW]=數位時鐘
 
 Comment=An SVG themable digital clock
+Comment[ja]=SVG テーマを使ったデジタル時計
+Comment[pt]=Um relógio digital com temas em SVG
+Comment[pt_BR]=Um relógio digital com temas em SVG
+Comment[sv]=En SVG-temabaserad digitalklocka
+Comment[zh_TW]=SVG 可調整外觀數位時鐘
 
 Icon=chronometer
 Type=Service
