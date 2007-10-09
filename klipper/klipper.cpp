@@ -738,9 +738,15 @@ bool Klipper::blockFetchingNewData()
 //   while the user is doing a selection using the mouse, OOo stops updating the clipboard
 //   contents, so in practice it's like the user has selected only the part which was
 //   selected when Klipper asked first.
-	Qt::ButtonState buttonstate = QApplication::mouseButtons();
-    if( ( buttonstate & ( Qt::ShiftModifier | Qt::LeftButton )) == Qt::ShiftModifier // #85198
-        || ( buttonstate & Qt::LeftButton ) == Qt::LeftButton ) { // #80302
+// Use XQueryPointer rather than QApplication::mouseButtons()/keyboardModifiers(), because
+//   Klipper needs the very current state.
+    Window root, child;
+    int root_x, root_y, win_x, win_y;
+    uint state;
+    XQueryPointer( QX11Info::display(), QX11Info::appRootWindow(), &root, &child,
+                   &root_x, &root_y, &win_x, &win_y, &state );
+    if( ( state & ( ShiftMask | Button1Mask )) == ShiftMask // #85198
+        || ( state & Button1Mask ) == Button1Mask ) { // #80302
         m_pendingContentsCheck = true;
         m_pendingCheckTimer.start( 100 );
         return true;
