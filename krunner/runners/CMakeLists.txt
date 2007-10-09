@@ -5,5 +5,6 @@
 # these are all loadable runners
 add_subdirectory(search)
 add_subdirectory(calculator)
+add_subdirectory(webshortcuts)
 
 install( FILES  krunnerrunner.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Webshortcut runner
+Name[es]=Ejecutar acceso rápido web
+Name[et]=Veebikiirkorralduse käivitaja
+Name[nl]=Webkoppelingen uitvoeren
+Name[pt]=Execução de atalhos Web
+Name[pt_BR]=Execução de atalhos Web
+Name[sv]=Kör webbgenväg
+Comment=Webshortcut runner
+Comment[es]=Ejecuta un acceso rápido web
+Comment[et]=Veebikiirkorralduse käivitaja
+Comment[nl]=Webkoppelingen uitvoeren
+Comment[pt]=Execução de atalhos Web
+Comment[pt_BR]=Execução de atalhos Web
+Comment[sv]=Kör webbgenväg
+ServiceTypes=KRunner/Runner
+Type=Service
+X-KDE-Library=krunner_webshortcuts
+X-Krunner-ID=Webshortcut runner
