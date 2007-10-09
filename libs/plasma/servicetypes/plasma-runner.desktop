@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=ServiceType
-X-KDE-ServiceType=KRunner/Runner
+X-KDE-ServiceType=Plasma/Runner
 
 Comment=KRunner plugin
 Comment[ar]=KRunner ملحق
@@ -33,3 +33,7 @@ Comment[vi]=Bổ sung KRunner
 Comment[x-test]=xxKRunner pluginxx
 Comment[zh_CN]=KRunner 插件
 Comment[zh_TW]=KRunner 外掛程式
+
+[PropertyDef::X-Plasma-RunnerPhase]
+Type=QString
+
