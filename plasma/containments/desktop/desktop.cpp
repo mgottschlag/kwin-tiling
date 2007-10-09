@@ -23,6 +23,7 @@
 #include <KAuthorized>
 #include <KDebug>
 #include <KRun>
+#include <KWindowSystem>
 
 #include "plasma/appletbrowser.h"
 #include "workspace/kworkspace.h"
@@ -61,7 +62,9 @@ void DefaultDesktop::launchAppletBrowser()
         m_appletBrowser = new Plasma::AppletBrowser(this);
     }
 
+    KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
     m_appletBrowser->show();
+    KWindowSystem::activateWindow(m_appletBrowser->winId());
 }
 
 void DefaultDesktop::runCommand()
