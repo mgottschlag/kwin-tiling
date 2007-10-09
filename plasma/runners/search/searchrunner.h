@@ -66,6 +66,6 @@ public:
         const QString& mimetype, const QString& name, QObject* parent);
 };
 
-K_EXPORT_KRUNNER_RUNNER( searchrunner, SearchRunner )
+K_EXPORT_PLASMA_RUNNER(searchrunner, SearchRunner)
 
 #endif

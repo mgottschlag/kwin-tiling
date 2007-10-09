@@ -46,6 +46,6 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         QIcon m_icon;
 };
 
-K_EXPORT_KRUNNER_RUNNER( webshortcuts, WebshortcutRunner )
+K_EXPORT_PLASMA_RUNNER(webshortcuts, WebshortcutRunner)
 
 #endif

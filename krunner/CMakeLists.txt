@@ -41,7 +41,6 @@ if(X11_Xss_LIB)
 endif(X11_Xss_LIB)
 
 add_subdirectory( lock )
-add_subdirectory( runners )
 
 install(TARGETS krunner DESTINATION ${BIN_INSTALL_DIR})
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})

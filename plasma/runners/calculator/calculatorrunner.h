@@ -44,6 +44,6 @@ class CalculatorRunner : public Plasma::AbstractRunner
         QWidget* m_options;
 };
 
-K_EXPORT_KRUNNER_RUNNER( calculatorrunner, CalculatorRunner )
+K_EXPORT_PLASMA_RUNNER(calculatorrunner, CalculatorRunner)
 
 #endif
