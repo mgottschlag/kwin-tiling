@@ -30,6 +30,8 @@ using namespace Plasma;
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args)
 {
+    //FIXME: we should do in the init, not here in the ctor as we'll end up resizing/positioning at
+    //       start up?
     // Place us at the bottom by default, and make us 48px high:
     Plasma::Location loc = Plasma::BottomEdge;
     if (args.count() >= 3 && args[2].canConvert(QVariant::Int)) {
@@ -37,6 +39,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     }
     setLocation(loc);
 
+    //FIXME: we need a proper background painting implementation here
     m_background = new Plasma::Svg("widgets/panel-background", this);
     setZValue(150);
     QDesktopWidget desktop;
@@ -46,6 +49,11 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 Panel::~Panel()
 {
     delete m_background;
+}
+
+Containment::Type Panel::type()
+{
+    return PanelContainment;
 }
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
