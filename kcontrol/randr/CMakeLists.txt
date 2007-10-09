@@ -31,7 +31,7 @@ kde4_add_ui_files(kcm_randr_PART_SRCS
 kde4_add_plugin(kcm_randr ${kcm_randr_PART_SRCS})
 
 
-target_link_libraries(kcm_randr  ${KDE4_KDEUI_LIBS} ${X11_Xrandr_LIB} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(kcm_randr  ${KDE4_KDEUI_LIBS} ${X11_Xrandr_LIB} )
 
 install(TARGETS kcm_randr  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
@@ -50,7 +50,7 @@ set(krandrtray_SRCS
 
 kde4_add_executable(krandrtray ${krandrtray_SRCS})
 
-target_link_libraries(krandrtray  ${KDE4_KUTILS_LIBS} ${X11_Xrandr_LIB} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(krandrtray  ${KDE4_KUTILS_LIBS} ${X11_Xrandr_LIB} )
 
 install(TARGETS krandrtray DESTINATION ${BIN_INSTALL_DIR})
 
