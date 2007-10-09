@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Hotplug Event Data Engine
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=notifier
+X-KDE-Library=plasma_engine_hotplug
+X-EngineName=hotplug
