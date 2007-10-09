@@ -82,7 +82,9 @@ void EngineExplorer::listEngines()
 {
     m_engines->clear();
     m_engines->addItem("");
-    m_engines->addItems(m_engineManager->knownEngines());
+    QStringList engines = m_engineManager->knownEngines();
+    qSort(engines);
+    m_engines->addItems(engines);
 }
 
 void EngineExplorer::showEngine(const QString& name)
