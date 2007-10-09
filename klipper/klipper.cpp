@@ -73,6 +73,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
+//#define NOISY_KLIPPER
+
 namespace {
     /**
      * Use this when manipulating the clipboard
@@ -834,7 +836,7 @@ void Klipper::checkClipData( bool selectionMode )
     if ( selectionMode && bIgnoreSelection )
         return;
 
-    if( selectionMode && bSelectionTextOnly && data->hasText())
+    if( selectionMode && bSelectionTextOnly && !data->hasText())
         return;
 
 #ifdef __GNUC__
