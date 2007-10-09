@@ -19,7 +19,7 @@
 #ifndef PLACESENGINE_H
 #define PLACESENGINE_H
 
-#include <Plasma/DataEngine>
+#include <plasma/dataengine.h>
 
 #include <QtCore/QMap>
 #include <QtCore/QString>
