@@ -28,12 +28,12 @@
 K_PLUGIN_FACTORY(KxkbPartFactory, registerPlugin<KxkbPart>();)
 K_EXPORT_PLUGIN(KxkbPartFactory("kxkb_part"))
 
-KxkbPart::KxkbPart( QWidget* parentWidget,
-               QObject* parent,
+KxkbPart::KxkbPart( QWidget* parent,
                const QList<QVariant>& args )
-  : KParts::Part(parent)
+//  : KParts::Part(parent)
+    : QWidget(parent)
 {
-	int controlType = KxkbWidget::FULL;
+	int controlType = KxkbWidget::MENU_FULL;
 	if( args.count() > 0 && args[0].type() == QVariant::Int ) {	//TODO: replace with string?
 	    controlType = args[0].toInt();
 	    kDebug() << "controlType" << controlType << "(" << args[0] << ")";
@@ -43,10 +43,10 @@ KxkbPart::KxkbPart( QWidget* parentWidget,
 	    }
 	}
 
-	KxkbLabel* kxkbWidget = new KxkbLabel(controlType);
+	KxkbLabel* kxkbWidget = new KxkbLabel(controlType, this);
 	m_kxkbCore = new KxkbCore( kxkbWidget, 2 );	// 2 == NO_INIT
 	m_kxkbCore->newInstance();
-	setWidget(kxkbWidget->widget());
+//	setWidget(kxkbWidget->widget());
 }
 
 bool 

@@ -19,18 +19,19 @@
 #ifndef __kxkb_part_h
 #define __kxkb_part_h
 
-#include <kparts/part.h>
-
-class QWidget;
+//#include <kparts/part.h>
+#include <QWidget>
+#include <QList>
+#include <QVariant>
+//class QWidget;
 class QString;
 class KxkbCore;
 
-class KxkbPart : public KParts::Part
+class KxkbPart : public QWidget //KParts::Part
 {
   Q_OBJECT
  public:
-  KxkbPart( QWidget* parentWidget,
-               QObject* parent,
+  KxkbPart( QWidget* parent,
                const QList<QVariant>& args = QList<QVariant>() );
   virtual ~KxkbPart() {}
 

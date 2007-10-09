@@ -76,6 +76,7 @@ set(kxkb_KDEINIT_SRCS ${kxkb_COMMON_SRCS}
   kxkbapp.cpp
   kxkbwidget.cpp
   kxkb_adaptor.cpp
+  kxkb_part.cpp
 )
 
 kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
@@ -86,7 +87,7 @@ install(TARGETS kdeinit_kxkb  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kxkb kdeinit_kxkb )
 install(TARGETS kxkb DESTINATION ${BIN_INSTALL_DIR})
-install(FILES kxkb_component.h DESTINATION ${INCLUDE_INSTALL_DIR})
+#install(FILES kxkb_component.h DESTINATION ${INCLUDE_INSTALL_DIR})
 
 
 ########### KXKB Applet ###############
@@ -112,16 +113,11 @@ endif(BUILD_KICKER)
 
 ########### KXKB KPart ###############
 #
-#set(kxkb_part_PART_SRCS
-#	kxkb_part.cpp
-#	kxkbwidget.cpp
-#	kxkbcore.cpp
-#	${kxkb_COMMON_SRCS})
-#
+#set(kxkb_part_PART_SRCS kxkb_part.cpp)
 #
 #kde4_add_plugin(kxkb_part ${kxkb_part_PART_SRCS})
 #
-#target_link_libraries(kxkb_part ${KDE4_KPARTS_LIBS} 
+#target_link_libraries(kxkb_part kdeinit_kxkb
 #    ${KDE4_KIO_LIBS} xkbfile
 #    ${XKB_SUPPORT_LIB}
 #)
@@ -137,5 +133,3 @@ endif(BUILD_KICKER)
 ########### install files ###############
 
 install( FILES keyboard_layout.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-
-kde4_install_icons( ${ICON_INSTALL_DIR}  )
