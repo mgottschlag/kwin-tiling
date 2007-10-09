@@ -20,6 +20,6 @@ if (STRIGIQTDBUSCLIENT_LIBRARY)
 
   ########### install files ###############
 
-  install( FILES krunner_searchrunner.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+  install(FILES plasma-runner-search.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 endif (STRIGIQTDBUSCLIENT_LIBRARY)

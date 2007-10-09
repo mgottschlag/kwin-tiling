@@ -13,5 +13,5 @@ install(TARGETS krunner_calculatorrunner DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES krunner_calculatorrunner.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+install(FILES plasma-runner-calculator.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
