@@ -50,7 +50,7 @@ DefaultDesktop::~DefaultDesktop()
 
 void DefaultDesktop::launchExplorer()
 {
-    KRun::run("plasmaAppletExplorer", KUrl::List(), 0);
+    KRun::run("plasmaengineexplorer", KUrl::List(), 0);
 }
 
 void DefaultDesktop::launchAppletBrowser()
