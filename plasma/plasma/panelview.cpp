@@ -32,16 +32,11 @@
 #include <plasma/plasma.h>
 #include <plasma/svg.h>
 
-namespace Plasma
-{
-
-
-
 PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
     : QGraphicsView(parent),
       m_containment(panel)
 {
-    Q_ASSERT(qobject_cast<Corona*>(m_containment->scene()));
+    Q_ASSERT(qobject_cast<Plasma::Corona*>(m_containment->scene()));
     setScene(m_containment->scene());
     updatePanelGeometry();
     kDebug() << "Panel geometry is" << m_containment->geometry();
@@ -86,17 +81,19 @@ Plasma::Containment *PanelView::containment() const
 
 Plasma::Corona *PanelView::corona() const
 {
-    return qobject_cast<Corona*>(scene());
+    return qobject_cast<Plasma::Corona*>(scene());
 }
 
 void PanelView::updatePanelGeometry()
 {
     kDebug() << "New panel geometry is" << m_containment->geometry();
-    QPoint pos = m_containment->scenePos().toPoint();
+    QPoint pos = m_containment->pos().toPoint();
     QSize size = m_containment->size().toSize();
     QRect geom(pos, size);
-    kDebug() << "I think the panel is at " << geom;
     setGeometry(geom);
+    pos = m_containment->scenePos().toPoint();
+    geom.moveTopLeft(pos);
+    kDebug() << "I think the panel is at " << geom;
     setSceneRect(geom);
 }
 
@@ -159,5 +156,3 @@ void PanelView::resizeEvent(QResizeEvent *event)
     updateStruts();
 }
 
-
-} // Namespace

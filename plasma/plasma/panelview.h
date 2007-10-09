@@ -28,10 +28,10 @@ class QWidget;
 
 namespace Plasma
 {
-
-class Containment;
-class Corona;
-class Svg;
+    class Containment;
+    class Corona;
+    class Svg;
+}
 
 class PanelView : public QGraphicsView
 {
@@ -79,6 +79,5 @@ private:
     Plasma::Svg *m_background;
 };
 
-} // Namespace
 #endif
 

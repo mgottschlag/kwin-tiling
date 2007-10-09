@@ -28,7 +28,6 @@ namespace Plasma
 {
     class Corona;
     class Containment;
-    class PanelView;
 } // namespace Plasma
 
 class RootWidget;
@@ -59,7 +58,7 @@ private:
 
     RootWidget *m_root;
     Plasma::Corona *m_corona;
-    QList<Plasma::PanelView*> m_panels;
+    QList<PanelView*> m_panels;
 };
 
 #endif // multiple inclusion guard
