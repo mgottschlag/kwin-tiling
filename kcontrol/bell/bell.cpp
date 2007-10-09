@@ -20,15 +20,16 @@
 */
 
 #include <QCheckBox>
-#include <Qt3Support/Q3GroupBox>
 #include <QLayout>
 #include <QPushButton>
+
 
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QBoxLayout>
+#include <QGroupBox>
 
 #include <kcmodule.h>
 #include <kaboutdata.h>
@@ -83,8 +84,8 @@ KBellConfig::KBellConfig(QWidget *parent, const QVariantList &args):
   layout->setSpacing(KDialog::spacingHint());
 
   int row = 0;
-  Q3GroupBox *box = new Q3GroupBox( i18n("Bell Settings"), this );
-  box->setColumnLayout( 0, Qt::Horizontal );
+  QGroupBox *box = new QGroupBox(i18n("Bell Settings"), this );
+  new QVBoxLayout( box );
   layout->addWidget(box);
   layout->addStretch();
   QGridLayout *grid = new QGridLayout();
