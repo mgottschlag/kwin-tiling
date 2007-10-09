@@ -1,0 +1,25 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Places Data Engine
+Name[bg]=Ядро за данните за местата
+Name[es]=Motor de datos de lugares
+Name[et]=Asukohtade andmete mootor
+Name[ja]=場所データエンジン
+Name[nl]=Locatie-gegevensengine
+Name[pt]=Motor de Dados dos Locais
+Name[pt_BR]=Motor de Dados dos Locais
+Name[sv]=Datagränssnitt för platser
+Comment=Places data for Plasmoids
+Comment[bg]=Данни за местата в Plasmoids
+Comment[es]=Datos de lugares para los plasmoides
+Comment[et]=Asukohtade andmed plasmoididele
+Comment[ja]=Plasmoid のための場所データ
+Comment[nl]=Locatiegegevens voor Plasmoids
+Comment[pt]=Dados dos locais para os Plasmóides
+Comment[pt_BR]=Dados dos locais para os Plasmóides
+Comment[sv]=Platsinformation för Plasmoider
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=folder
+X-KDE-Library=plasma_engine_places
+X-EngineName=places
