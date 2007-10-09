@@ -55,9 +55,9 @@ QAction* CalculatorRunner::accepts( const QString& term )
         QString result = calculate(cmd);
 
         if ( !result.isEmpty() ) {
-            action = new QAction( KIcon("kcalc"),
-                                  i18nc("Answer to a mathematical equation", "Result: %1", result),
-                                  this);
+            action = new QAction(KIcon("accessories-calculator"),
+                                 QString("%1 = %2").arg(term, result),
+                                 this);
             action->setEnabled( false );
         }
     }
@@ -67,6 +67,7 @@ QAction* CalculatorRunner::accepts( const QString& term )
 
 bool CalculatorRunner::exec(QAction* action, const QString& term)
 {
+    Q_UNUSED(action)
     Q_UNUSED(term)
     return true;
 }
