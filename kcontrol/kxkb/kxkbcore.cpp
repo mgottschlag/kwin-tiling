@@ -170,10 +170,10 @@ bool KxkbCore::settingsRead()
 		}
 		
 		if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_DESKTOP ) {
-		    disconnect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(windowChanged(WId)));
-		    connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(windowChanged(WId)));
-//		}
-//		else {
+		    disconnect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(desktopChanged(int)));
+		    connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(desktopChanged(int)));
+		}
+		else {
 		    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 		    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 /*		int m_prevWinId = kWinModule->activeWindow();
@@ -342,6 +342,12 @@ void KxkbCore::iconMenuTriggered(QAction* action)
     {
         emit quit();
     }
+}
+
+void KxkbCore::desktopChanged(int desktop)
+{
+    kDebug() << "desktop changed" << desktop;
+    windowChanged(-1);
 }
 
 // TODO: we also have to handle deleted windows

@@ -68,6 +68,7 @@ protected slots:
     void iconMenuTriggered(QAction*);
     void iconToggled();
     void windowChanged(WId winId);
+    void desktopChanged(int desktop);
 
     void slotSettingsChanged(int category);
 
