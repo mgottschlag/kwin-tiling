@@ -121,6 +121,12 @@ extern "C"
 {
   KDE_EXPORT void kcminit_keys()
   {
+#ifdef __GNUC__
+#warning TODO Check if this is still needed and redo it
+#endif
+// This is currently disabled - it makes the kdedglobalaccel module think the shortcuts
+// are for kcminit, and it takes the shortcuts away from e.g. Klipper.
+#if 0
 	kDebug(125) << "KeyModule::init()\n";
 
 	kDebug(125) << "KeyModule::init() - Load Included Bindings\n";
@@ -146,22 +152,17 @@ extern "C"
 	    kDebug(125) << "KeyModule::init() - Read Config Bindings\n";
 	    // Check for old group,
 	    if( KGlobal::config()->hasGroup( "Global Keys" ) ) {
-#ifdef __GNUC__
-#warning TODO PORT ME (KGlobalAccel related)
-#endif
 //		KGlobalAccel::self()->readSettings();
 		KGlobal::config()->deleteGroup( "Global Keys", KConfig::Global);
 	    }
             KGlobal::config()->deleteGroup( "deprecated Global Shortcuts from kcontrol/keys", KConfig::Global);
 
 	    kDebug(125) << "KeyModule::init() - Write Config Bindings\n";
-#ifdef __GNUC__
-#warning TODO PORT ME (KGlobalAccel related)
-#endif
         //KGlobalAccel::self()->writeSettings();
             group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, KConfig::Normal|KConfig::Global);
         }
 	delete actionCollection;
+#endif
   }
 }
 
