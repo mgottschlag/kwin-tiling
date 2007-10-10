@@ -25,7 +25,8 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
-#include <klibloader.h>
+#include <kpluginloader.h>
+#include <kpluginfactory.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kfiledialog.h>
@@ -42,7 +43,7 @@ namespace KFI
 
 CViewer::CViewer()
 {
-    KPluginFactory *factory=KLibLoader::self()->factory("libkfontviewpart");
+    KPluginFactory *factory=KPluginLoader("libkfontviewpart").factory();
 
     if(factory)
     {
