@@ -310,8 +310,9 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     connect( delActionButton, SIGNAL( clicked() ), SLOT( slotDeleteAction() ));
 
     QLabel *label = new QLabel(i18n("Click on a highlighted item's column to change it. \"%s\" in a command will be replaced with the clipboard contents."), box);
-    label->setAlignment( Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignVCenter );
-
+    label->setAlignment( Qt::AlignLeft | Qt::AlignVCenter );
+    label->setWordWrap( true );
+    
     box->setStretchFactor( label, 5 );
 
     box = new KHBox( this );
