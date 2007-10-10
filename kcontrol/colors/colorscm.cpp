@@ -33,6 +33,7 @@
 #include <KAboutData>
 #include <KListWidget>
 #include <KStandardDirs>
+#include <kio/netaccess.h>
 
 K_PLUGIN_FACTORY( KolorFactory, registerPlugin<KColorCm>(); )
 K_EXPORT_PLUGIN( KolorFactory("kcmcolors") )
@@ -87,6 +88,11 @@ void KColorCm::loadScheme()
     {
         QString path = KGlobal::dirs()->findResource("data", 
             "color-schemes/" + schemeList->currentItem()->text());
+
+        int permissions = QFile(path).permissions();
+        bool canWrite = (permissions & QFile::WriteUser);
+        schemeRemoveButton->setEnabled(canWrite);
+
         KSharedConfigPtr temp = m_config;
         m_config = KSharedConfig::openConfig(path);
         updateColorSchemes();
@@ -103,6 +109,17 @@ void KColorCm::loadScheme()
         disabledPreview->setPalette(m_config, QPalette::Disabled);
 
         emit changed(true);
+    }
+}
+
+void KColorCm::on_schemeRemoveButton_clicked()
+{
+    if (schemeList->currentItem() != NULL)
+    {
+        QString path = KGlobal::dirs()->findResource("data", 
+            "color-schemes/" + schemeList->currentItem()->text());
+        KIO::NetAccess::del(path, this);
+        delete schemeList->takeItem(schemeList->currentRow());
     }
 }
 
