@@ -78,7 +78,8 @@ void Clock::constraintsUpdated(Plasma::Constraints)
         formFactor() == Plasma::MediaCenter) {
         m_sizeHint = QSize(200, 90);
     } else {
-        m_sizeHint = QSize(56, 22); // this is ((el_width+el_hor_space)*4 , el_height*2+el_ver_space)
+        kDebug() << "####################################### Small FormFactor";
+        m_sizeHint = QSize(100, 48);
     }
     update();
 }
@@ -190,13 +191,13 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     
     const qreal margin = 4;
     
-    const qreal elHorizontalSpacing = 2;
-    const qreal elVerticalSpacing = 1;
-    qreal elWidth = contentsRect.width() / 4.0 - elHorizontalSpacing - margin*2;
-    qreal elHeight = contentsRect.height() / 2.0 - elVerticalSpacing - margin*2;
+    const int elHorizontalSpacing = 2;
+    const int elVerticalSpacing = 2;
+    int elWidth = qRound((contentsRect.width() - elHorizontalSpacing - margin*2) / 4.0);
+    int elHeight = qRound((contentsRect.height() - elVerticalSpacing - margin*2) / 2.0);
 
     // enforce natural aspect ratio for elements
-    QSizeF elSize = m_defaultElementSize;
+    QSize elSize = m_defaultElementSize;
     elSize.scale(elWidth,elHeight,Qt::KeepAspectRatio);
     elWidth = elSize.width();
     elHeight = elSize.height(); 
@@ -208,7 +209,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     // update graphic sizes when the applet's size changes
     if ( contentsRect.size() != m_contentSize ) {
-        m_theme->resize((int)elWidth,(int)elHeight);
+        m_theme->resize(elWidth,elHeight);
         m_contentSize = contentsRect.size();
     }
 
@@ -306,21 +307,27 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
     }
 
-    // FIXME: this depends on the backgroundcolor of the theme, we'd want a matching contrast
-    p->setPen(QPen(Qt::white));
+    // Only show the date when there's enough room
+    // We might want this configurable at some point.
+    if (formFactor() == Plasma::Planar ||
+        formFactor() == Plasma::MediaCenter) {
+        m_sizeHint = QSize(200, 90);
+        // FIXME: this depends on the backgroundcolor of the theme, we'd want a matching contrast
+        p->setPen(QPen(Qt::white));
 
-    QString dateString = day + ' ' + month + ' ' + year;
-    if (m_timezone != "Local")
-    {
-        dateString += "\n" + m_timezone;
+        QString dateString = day + ' ' + month + ' ' + year;
+        if (m_timezone != "Local")
+        {
+            dateString += "\n" + m_timezone;
+        }
+        p->drawText( QRectF(margin,
+                            bottomElementTop+elHeight,
+                            contentsRect.right()-margin,
+                            contentsRect.bottom()) ,
+                    dateString,
+                    QTextOption(Qt::AlignHCenter)
+                );
     }
-    p->drawText( QRectF(margin,
-                        bottomElementTop+elHeight,
-                        contentsRect.right()-margin,
-                        contentsRect.bottom()) ,
-                 dateString,
-                 QTextOption(Qt::AlignHCenter)
-               );
 }
 
 #include "clock.moc"

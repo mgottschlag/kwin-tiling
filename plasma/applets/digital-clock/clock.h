@@ -64,7 +64,7 @@ class Clock : public Plasma::Applet
     private:
         void animateUpdate();
 
-        QSizeF m_defaultElementSize;
+        QSize m_defaultElementSize;
 
         // temporary, sort out a correct way for applets to be notified
         // when their content size changes and then rather than tracking
