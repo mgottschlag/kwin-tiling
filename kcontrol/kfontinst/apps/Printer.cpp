@@ -27,7 +27,8 @@
 #include <QFontDatabase>
 #include <QWidget>
 #include <QFile>
-#include <kprinter.h>
+#include <QPrinter>
+#include <QPrintDialog>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -88,11 +89,12 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
             appFont[(*it).family]=-1;
     }
 #endif
-    KPrinter printer;
+    QPrinter     printer;
+    QPrintDialog dialog(&printer, parent);
 
-    printer.setFullPage(true);
+    dialog.setWindowTitle(i18n("Print"));
 
-    if(printer.setup(parent))
+    if(dialog.exec())
     {
         QPainter   painter;
         QFont      sans("sans", 12, QFont::Bold);
