@@ -50,7 +50,7 @@ ServiceAction::ServiceAction(KService::Ptr service, QObject* parent)
 ServiceRunner::ServiceRunner( QObject* parent )
     : Plasma::AbstractRunner( parent )
 {
-    setObjectName( i18n( "Application" ) );
+    setObjectName(i18n("Application"));
 }
 
 ServiceRunner::~ServiceRunner()
@@ -62,7 +62,7 @@ QAction* ServiceRunner::accepts(const QString& term)
     KService::Ptr service = KService::serviceByName(term);
     QAction* action = 0;
 
-    if ( service && !service->exec().isEmpty() ) {
+    if (service && !service->exec().isEmpty()) {
         action = new ServiceAction(service, this);
     }
 
@@ -76,13 +76,16 @@ void ServiceRunner::fillMatches( KActionCollection* matches,
     Q_UNUSED( max )
     Q_UNUSED( offset )
 
-    QString query = QString("exist Exec and '%1' ~in Keywords and Name != '%2'").arg(term, term);
+    if (term.length() <  3) {
+        return;
+    }
 
-    const KService::List services = KServiceTypeTrader::self()->query( "Application", query );
+    QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name) and Name != '%4'").arg(term, term, term, term);
+    const KService::List services = KServiceTypeTrader::self()->query("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
 
-    foreach ( const KService::Ptr service, services ) {
+    foreach (const KService::Ptr service, services) {
         ServiceAction* action = new ServiceAction(service, matches);
         matches->addAction(service->name(), action);
         connect(action, SIGNAL(triggered()), SLOT(launchService()));
