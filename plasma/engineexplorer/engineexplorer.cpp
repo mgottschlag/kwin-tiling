@@ -37,8 +37,6 @@ EngineExplorer::EngineExplorer(QWidget* parent)
       m_engine(0),
       m_sourceCount(0)
 {
-    setButtons(KDialog::Close);
-    setDefaultButton(KDialog::NoDefault);
     setWindowTitle(i18n("Plasma Engine Explorer"));
     QWidget* mainWidget = new QWidget(this);
     setMainWidget(mainWidget);
