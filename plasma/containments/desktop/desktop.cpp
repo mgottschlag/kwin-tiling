@@ -47,6 +47,7 @@ ToolBox::ToolBox(QGraphicsItem *parent)
     m_showTimeLine->setFrameRange(0, m_size);
     connect(m_showTimeLine, SIGNAL(frameChanged(int)), this, SLOT(animate(int)));
     setAcceptsHoverEvents(true);
+    setZValue(10000);
 }
 
 QRectF ToolBox::boundingRect() const
