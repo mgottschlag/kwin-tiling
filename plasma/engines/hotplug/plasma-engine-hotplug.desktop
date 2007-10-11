@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Hotplug Event Data Engine
+Name[ja]=Hotplug イベントデータエンジン
+Name[pt_BR]=Mecanismo de Dados de Eventos do Hotplug
+Name[sv]=Datagränssnitt för inkopplingshändelse
+Name[zh_TW]=熱插拔事件資料引擎
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier
