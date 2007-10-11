@@ -23,7 +23,6 @@
 #include <QWidget>
 
 class DesktopView;
-class ControlBox;
 
 /**
  * @short The base widget that contains the desktop
@@ -60,7 +59,6 @@ class RootWidget : public QWidget
 
     private:
         DesktopView* m_desktop;
-        ControlBox* m_controlBox;
 };
 
 #endif

@@ -29,7 +29,6 @@
 #include "plasma/plasma.h"
 #include "plasma/svg.h"
 
-#include "controlbox.h"
 #include "desktopview.h"
 #include "plasmaapp.h"
 
@@ -46,14 +45,8 @@ RootWidget::RootWidget()
         m_desktop = new DesktopView(this, i);
         m_desktop->setGeometry(desktop.screenGeometry(i));
     }
-    Plasma::Corona* corona = PlasmaApp::self()->corona();
 
-    m_controlBox = new ControlBox(this);
-
-    connect(m_controlBox, SIGNAL(zoomIn()), m_desktop, SLOT(zoomIn()));
-    connect(m_controlBox, SIGNAL(zoomOut()), m_desktop, SLOT(zoomOut()));
-    connect(m_controlBox, SIGNAL(addApplet(const QString&)), corona, SLOT(addApplet(const QString&)));
-    connect(m_controlBox, SIGNAL(lockInterface(bool)), corona, SLOT(setImmutable(bool)));
+    PlasmaApp::self()->corona();
 }
 
 void RootWidget::setAsDesktop(bool setAsDesktop)
