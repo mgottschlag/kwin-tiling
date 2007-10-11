@@ -12,7 +12,7 @@
 #include <kgreeterplugin.h>
 
 #include <KDialog>
-//Added by qt3to4:
+
 #include <QLabel>
 #include <QTimerEvent>
 #include <QFrame>
@@ -81,13 +81,10 @@ private:
     QGridLayout *frameLayout;
     QLabel      *mStatusLabel;
     KPushButton *mNewSessButton, *ok, *cancel;
-    KPushButton *mLayoutButton;
     int         mFailedTimerId;
     int         mTimeoutTimerId;
     int         mCapsLocked;
     bool        mUnlockingFailed;
-    QStringList layoutsList;
-    int         currLayout;
     int         sPid, sFd;
     Q3ListView   *lv;
 };
