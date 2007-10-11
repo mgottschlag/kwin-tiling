@@ -66,7 +66,6 @@ Tasks::Tasks(QObject* parent , const QVariantList &arguments)
         _rootTaskGroup->layout()->setAnimator(animator);
 
     layout->addItem(_rootTaskGroup);
-    setLayout(layout);
 
     // testing
         _rootTaskGroup->setBorderStyle(TaskGroupItem::NoBorder);
@@ -400,7 +399,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
 {
     setAcceptDrops(true);
 
-   setLayout(new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this));
+   new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
    layout()->setMargin(0);
    layout()->setSpacing(5);
 }
