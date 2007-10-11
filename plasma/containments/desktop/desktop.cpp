@@ -19,6 +19,8 @@
 #include "desktop.h"
 
 #include <QAction>
+#include <QPainter>
+#include <QTimeLine>
 
 #include <KAuthorized>
 #include <KDebug>
@@ -34,6 +36,77 @@
 
 using namespace Plasma;
 
+ToolBox::ToolBox(QGraphicsItem *parent)
+    : QGraphicsItem(parent),
+      m_showTimeLine(new QTimeLine(250, this)),
+      m_icon("configure"),
+      m_size(50),
+      m_hidden(true)
+{
+    m_showTimeLine->setCurveShape(QTimeLine::EaseInOutCurve);
+    m_showTimeLine->setFrameRange(0, m_size);
+    connect(m_showTimeLine, SIGNAL(frameChanged(int)), this, SLOT(animate(int)));
+    setAcceptsHoverEvents(true);
+}
+
+QRectF ToolBox::boundingRect() const
+{
+    return QRectF(0, 0, m_size*2, m_size*2);
+}
+
+void ToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    QPainterPath p = shape();
+    qreal halfway = m_size / 2.0;
+    QRadialGradient gradient(QPoint(m_size*2, 0), m_size*3);
+    gradient.setFocalPoint(QPointF(m_size*2, 0));
+    gradient.setColorAt(0, Qt::transparent);
+    gradient.setColorAt(.8, Qt::blue);
+    painter->save();
+    painter->setPen(Qt::NoPen);
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setBrush(gradient);
+    painter->drawPath(p);
+    painter->restore();
+    m_icon.paint(painter, QRect(m_size*2 - 34, 2, 32, 32));
+}
+
+QPainterPath ToolBox::shape() const
+{
+    QPainterPath path;
+    int size = m_size + m_showTimeLine->currentFrame();
+    path.moveTo(m_size*2, 0);
+    path.arcTo(QRectF(m_size*2 - size, -size, size*2, size*2), 180, 90);
+    return path;
+}
+
+void ToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+//    Phase::self()->moveItem(this, Phase::SlideIn, QPoint(-25, -25));
+    m_showTimeLine->setDirection(QTimeLine::Forward);
+    if (m_showTimeLine->state() != QTimeLine::Running) {
+        m_showTimeLine->start();
+    }
+}
+
+void ToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+//    Phase::self->moveItem(this, Phase::SlideOut, boundingRect()QPoint(-50, -50));
+    m_showTimeLine->setDirection(QTimeLine::Backward);
+    if (m_showTimeLine->state() != QTimeLine::Running) {
+        m_showTimeLine->start();
+    }
+}
+
+void ToolBox::animate(int frame)
+{
+    update();
+    return;
+    prepareGeometryChange();
+    m_size = 50 + frame;
+}
+
+
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_engineExplorerAction(0),
@@ -47,6 +120,12 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
 
 DefaultDesktop::~DefaultDesktop()
 {
+}
+
+void DefaultDesktop::init()
+{
+    m_toolbox = new ToolBox(this);
+    m_toolbox->setPos(geometry().width() - m_toolbox->boundingRect().width(), 0);
 }
 
 void DefaultDesktop::launchExplorer()

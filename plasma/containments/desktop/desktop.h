@@ -21,13 +21,42 @@
 
 #include <QList>
 
-#include <plasma/containment.h>
+#include <KIcon>
 
+#include <plasma/containment.h>
+#include <QGraphicsItem>
+#include <QObject>
 class QAction;
+class QTimeLine;
+
 namespace Plasma
 {
     class AppletBrowser;
 }
+
+class ToolBox : public QObject, public QGraphicsItem
+{
+    Q_OBJECT
+
+public:
+    explicit ToolBox(QGraphicsItem *parent = 0);
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+    QPainterPath shape() const;
+
+protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+
+protected slots:
+    void animate(int frame);
+
+private:
+    QTimeLine *m_showTimeLine;
+    KIcon m_icon;
+    int m_size;
+    bool m_hidden;
+};
 
 class DefaultDesktop : public Plasma::Containment
 {
@@ -36,6 +65,7 @@ class DefaultDesktop : public Plasma::Containment
 public:
     DefaultDesktop(QObject *parent, const QVariantList &args);
     ~DefaultDesktop();
+    void init();
 
     QList<QAction*> contextActions();
 
@@ -52,6 +82,7 @@ private:
     QAction *m_runCommandAction;
     QAction *m_lockAction;
     QAction *m_logoutAction;
+    ToolBox *m_toolbox;
     Plasma::AppletBrowser *m_appletBrowser;
 };
 
