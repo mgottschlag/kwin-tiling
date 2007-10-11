@@ -72,9 +72,12 @@ private slots:
 
     /** slot called when the schemeList selection changes */
     void loadScheme();
-    
+ 
     /** slot called when the remove button is clicked*/
     void on_schemeRemoveButton_clicked();
+
+    /** slot called when the save button is clicked */
+    void on_schemeSaveButton_clicked();
 
 private:
 

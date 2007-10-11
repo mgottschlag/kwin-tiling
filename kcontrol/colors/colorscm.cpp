@@ -25,13 +25,15 @@
 #include <QtGui/QStackedWidget>
 #include <QtDBus/QtDBus>
 
+#include <KAboutData>
 #include <KColorButton>
 #include <KColorDialog>
 #include <KGenericFactory>
 #include <KGlobal>
 #include <KGlobalSettings>
-#include <KAboutData>
+#include <KInputDialog>
 #include <KListWidget>
+#include <KMessageBox>
 #include <KStandardDirs>
 #include <kio/netaccess.h>
 
@@ -120,6 +122,64 @@ void KColorCm::on_schemeRemoveButton_clicked()
             "color-schemes/" + schemeList->currentItem()->text());
         KIO::NetAccess::del(path, this);
         delete schemeList->takeItem(schemeList->currentRow());
+    }
+}
+
+void KColorCm::on_schemeSaveButton_clicked()
+{
+    QString previousName;
+    if (schemeList->currentItem() != NULL)
+    {
+        previousName = schemeList->currentItem()->text();
+    }
+    // prompt for the name to save as
+    bool ok;
+    QString name = KInputDialog::getText(i18n("Save Color Scheme"), 
+        i18n("&Enter a name for the color scheme:"), previousName, &ok, this);
+    if (ok)
+    {
+        // check if that name is already in the list
+        QString path = KGlobal::dirs()->findResource("data",
+            "color-schemes/" + name);
+
+        QFile file(path);
+        int permissions = file.permissions();
+        bool canWrite = (permissions & QFile::WriteUser);
+        // or if we can overwrite it if it exists
+        if (path.isEmpty() || !file.exists() || 
+            (canWrite && KMessageBox::questionYesNo(this, 
+            i18n("A color scheme with that name already exists.\nDo you want to overwrite it?"),
+            i18n("Save Color Scheme"), 
+            KStandardGuiItem::overwrite(),
+            KStandardGuiItem::cancel())
+            == KMessageBox::Yes))
+        {
+            // go ahead and save it
+            QString newpath = KGlobal::dirs()->saveLocation("data", "color-schemes/");
+            newpath += name;
+            KSharedConfigPtr temp = m_config;
+            m_config = KSharedConfig::openConfig(newpath);
+            // then copy current colors into new config
+            updateFromColorSchemes();
+            KConfigGroup group(m_config, "General");
+            group.writeEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
+            KConfigGroup group2(m_config, "KDE");
+            group2.writeEntry("contrast", contrastSlider->value());
+            // sync it
+            m_config->sync();
+            // set m_config back to the system one
+            m_config = temp;
+            // add it to the list if it's not in there already
+            if (path.isEmpty() || !file.exists())
+            {
+                schemeList->addItem(name);
+            }
+        }
+        else if (!canWrite && file.exists())
+        {
+            // give error message if !canWrite && file.exists()
+            KMessageBox::error(this, i18n("You do not have permission to overwrite that scheme"), i18n("Error"));
+        }
     }
 }
 
