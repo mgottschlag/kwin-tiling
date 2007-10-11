@@ -49,9 +49,9 @@ class KxkbCore : public QObject
     Q_OBJECT
 
 public:
-    enum { MAIN_MODULE=1, NO_INIT=2 };
+    enum { KXKB_MAIN=1, KXKB_COMPONENT=2 };
 
-    KxkbCore(QWidget* parentWidget, int mode=MAIN_MODULE, int controlType=KxkbWidget::MENU_FULL, int widgetType=KxkbWidget::WIDGET_TRAY);
+    KxkbCore(QWidget* parentWidget, int mode=KXKB_MAIN, int controlType=KxkbWidget::MENU_FULL, int widgetType=KxkbWidget::WIDGET_TRAY);
     ~KxkbCore();
 
     virtual int newInstance();
@@ -81,16 +81,15 @@ signals:
     void quit();
 		
 private:
-    KxkbConfig m_kxkbConfig;
-
-    LayoutMap* m_layoutOwnerMap;
-    
     int m_mode;
     int m_currentLayout;
     int m_controlType;
     int m_widgetType;
     int m_status;
 
+    KxkbConfig m_kxkbConfig;
+    LayoutMap* m_layoutOwnerMap;
+    
     XKBExtension *m_extension;
     XkbRules *m_rules;
     QWidget *m_parentWidget;

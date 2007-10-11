@@ -81,10 +81,10 @@ KxkbCore::KxkbCore(QWidget* parent, int mode, int controlType, int widgetType):
     m_mode(mode),
     m_controlType(controlType),
     m_widgetType(widgetType),
+    m_layoutOwnerMap(NULL),
     m_rules(NULL),
     m_parentWidget(parent),
-    m_kxkbWidget(NULL),
-    m_layoutOwnerMap(NULL)
+    m_kxkbWidget(NULL)
 {
     m_status = 0;
 
@@ -112,7 +112,7 @@ void KxkbCore::initWidget()
  	connect(m_kxkbWidget, SIGNAL(menuTriggered(QAction*)), this, SLOT(iconMenuTriggered(QAction*)));
 	connect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(iconToggled()));
 
-        if( m_mode == MAIN_MODULE ) {
+        if( m_mode == KXKB_MAIN ) {
 	    KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
     
 #ifdef HAVE_XKLAVIER
@@ -169,7 +169,7 @@ bool KxkbCore::settingsRead()
 {
     m_kxkbConfig.load( KxkbConfig::LOAD_ACTIVE_OPTIONS );
 
-    if( m_mode == MAIN_MODULE ) {
+    if( m_mode == KXKB_MAIN ) {
 	if( m_kxkbConfig.m_enableXkbOptions ) {
 	    kDebug() << "Setting XKB options " << m_kxkbConfig.m_options;
 	    if( !m_extension->setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
@@ -188,7 +188,7 @@ bool KxkbCore::settingsRead()
     if( m_rules == NULL )
 	m_rules = new XkbRules(false);
 
-    if( m_mode == MAIN_MODULE ) {
+    if( m_mode == KXKB_MAIN ) {
 	m_currentLayout = m_kxkbConfig.getDefaultLayout();
 	initLayoutGroups();
     }

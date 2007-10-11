@@ -42,7 +42,7 @@ DESCRIPTION
 KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     : KUniqueApplication(allowStyles, GUIenabled)
 {
-    m_kxkbCore = new KxkbCore( NULL, KxkbCore::MAIN_MODULE, KxkbWidget::MENU_FULL, KxkbWidget::WIDGET_TRAY );
+    m_kxkbCore = new KxkbCore( NULL, KxkbCore::KXKB_MAIN, KxkbWidget::MENU_FULL, KxkbWidget::WIDGET_TRAY );
 
     if( isError() ) {
         exit(2);        // failed XKB

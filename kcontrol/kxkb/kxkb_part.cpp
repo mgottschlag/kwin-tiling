@@ -42,7 +42,7 @@ KxkbPart::KxkbPart( QWidget* parent,
 	    }
 	}
 */
-	m_kxkbCore = new KxkbCore( this, controlType, KxkbCore::NO_INIT, KxkbWidget::WIDGET_LABEL );
+	m_kxkbCore = new KxkbCore( this, KxkbCore::KXKB_COMPONENT, controlType, KxkbWidget::WIDGET_LABEL );
 	if( m_kxkbCore->newInstance() != 0 )
             setVisible(false);
 //	setWidget(kxkbWidget->widget());
