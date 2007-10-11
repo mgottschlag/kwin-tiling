@@ -23,7 +23,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <config-workspace.h>
-#include <config-X11.h>
 
 #include "shutdowndlg.h"
 #include "plasma/svg.h"
@@ -38,7 +37,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QTimer>
 #include <QSvgRenderer>
 #include <QPaintEvent>
-#include <QPaintEngine>
 
 #include <kdebug.h>
 #include <kdialog.h>
@@ -59,9 +57,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <dmctl.h>
 
 #include <X11/Xlib.h>
-#ifdef HAVE_XRENDER
-#  include <X11/extensions/Xrender.h>
-#endif
 
 #include "shutdowndlg.moc"
 #include <QX11Info>
@@ -103,29 +98,7 @@ void KSMShutdownFeedback::slotPaintEffect()
     if ( m_currentY >= height() )
         return;
 
-    QPixmap pixmap( width(), 10 );
-
-    // grabWindow() is broken in Qt4 (because QPixmap is 32bpp).
-    // Work around this bug by using Xrender to grab the screenshot, since
-    // XRenderComposite() will convert the pixmap format automatically.
-#ifdef HAVE_XRENDER
-    if ( pixmap.paintEngine()->hasFeature( QPaintEngine::PorterDuff ) )
-    {
-        Display *dpy = QX11Info::display();
-        Window root = DefaultRootWindow( dpy );
-        XRenderPictureAttributes attr;
-        attr.subwindow_mode = IncludeInferiors;
-        XRenderPictFormat *format = XRenderFindVisualFormat( dpy, DefaultVisual( dpy, 0 ) );
-        Picture rootPict = XRenderCreatePicture( dpy, root, format, CPSubwindowMode, &attr );
-        XRenderComposite( dpy, PictOpSrc, rootPict, None, pixmap.x11PictureHandle(), 0, m_currentY,
-                          0, 0, 0, 0, pixmap.width(), pixmap.height() );
-        XRenderFreePicture( dpy, rootPict );
-    } else
-#endif
-        pixmap = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, m_currentY,
-                                      pixmap.width(), pixmap.height() );
-
-    QImage image = pixmap.toImage();
+    QImage image = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, m_currentY, width(), 10 ).toImage();
     Blitz::intensity( image, -0.4 );
     Blitz::grayscale( image );
 
@@ -133,7 +106,7 @@ void KSMShutdownFeedback::slotPaintEffect()
     painter.drawImage( 0, m_currentY, image );
     painter.end();
 
-    m_currentY += pixmap.height();
+    m_currentY += 10;
     update( 0, 0, width(), m_currentY );
 
     QTimer::singleShot( 1, this, SLOT( slotPaintEffect() ) );

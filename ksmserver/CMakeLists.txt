@@ -41,7 +41,7 @@ qt4_add_dbus_adaptor( ksmserver_KDEINIT_SRCS org.kde.KSMServerInterface.xml serv
 
 kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_ksmserver plasma solidcontrol kworkspace ${KDE4_KDEUI_LIBS} ${BLITZ_LIBRARIES} ${QT_QT3SUPPORT_LIBRARY} ${X11_LIBRARIES} ${KDE4_KDE3SUPPORT_LIBRARY} ${X11_Xrender_LIB})
+target_link_libraries(kdeinit_ksmserver plasma solidcontrol kworkspace ${KDE4_KDEUI_LIBS} ${BLITZ_LIBRARIES} ${QT_QT3SUPPORT_LIBRARY} ${X11_LIBRARIES} ${KDE4_KDE3SUPPORT_LIBRARY})
 
 install(TARGETS kdeinit_ksmserver  DESTINATION ${LIB_INSTALL_DIR})
 
