@@ -125,6 +125,7 @@ DefaultDesktop::~DefaultDesktop()
 
 void DefaultDesktop::init()
 {
+    Containment::init();
     m_toolbox = new ToolBox(this);
     m_toolbox->setPos(geometry().width() - m_toolbox->boundingRect().width(), 0);
 }
