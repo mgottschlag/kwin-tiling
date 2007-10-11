@@ -548,11 +548,11 @@ void KColorCm::changeColor(int row, const QColor &newColor)
                 break;
             case 13:
                 // Negative Text Button (set all active text colors)
-                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundNegavite", newColor);
-                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundNegavite", newColor);
-                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundNegavite", newColor);
-                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundNegavite", newColor);
-                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundNegavite", newColor);
+                KConfigGroup(m_config, "Colors:View").writeEntry("ForegroundNegative", newColor);
+                KConfigGroup(m_config, "Colors:Window").writeEntry("ForegroundNegative", newColor);
+                KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundNegative", newColor);
+                KConfigGroup(m_config, "Colors:Button").writeEntry("ForegroundNegative", newColor);
+                KConfigGroup(m_config, "Colors:Tooltip").writeEntry("ForegroundNegative", newColor);
                 break;
             case 14:
                 // Neutral Text Button (set all active text colors)
