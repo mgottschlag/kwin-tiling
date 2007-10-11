@@ -23,8 +23,8 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="KTitleWidget" name="m_title" >
-     <property name="text" >
+    <widget class="KTitleWidget" native="1" name="m_title" >
+     <property name="text" stdset="0" >
       <string>Plasma DataEngine Explorer</string>
      </property>
     </widget>
@@ -39,7 +39,7 @@
        <property name="enabled" >
         <bool>false</bool>
        </property>
-       <property name="clickMessage" >
+       <property name="clickMessage" stdset="0" >
         <string>Request a datasource</string>
        </property>
        <property name="showClearButton" stdset="0" >
@@ -58,6 +58,19 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="m_updateInterval" >
+     <property name="minimum" >
+      <number>50</number>
+     </property>
+     <property name="maximum" >
+      <number>100000</number>
+     </property>
+     <property name="singleStep" >
+      <number>50</number>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QTreeView" name="m_data" >

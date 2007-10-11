@@ -22,6 +22,8 @@
 #include <QApplication>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QSpinBox>
 
 #include <KAction>
 #include <KIconLoader>
@@ -175,7 +177,7 @@ void EngineExplorer::requestSource()
         return;
     }
 
-    m_engine->connectSource(source, this);
+    m_engine->connectSource(source, this, (uint)m_updateInterval->value());
 }
 
 QString EngineExplorer::convertToString(const QVariant &value) const
