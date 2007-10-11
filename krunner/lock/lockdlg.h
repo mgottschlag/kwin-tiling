@@ -59,11 +59,9 @@ private Q_SLOTS:
     void slotSessionActivated();
     void slotStartNewSession();
     void slotOK();
-    void layoutClicked();
     void slotActivity();
 
 private:
-    void setLayoutText( const QString &txt );
     void capsLocked();
     void updateLabel();
     int Reader (void *buf, int count);

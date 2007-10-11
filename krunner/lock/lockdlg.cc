@@ -65,13 +65,15 @@
 #include <QX11Info>
 #include <kauthorized.h>
 
-#include <kxkb_interface.h>
+#include <KPluginLoader>
+#include <KPluginFactory>
 
 #ifndef AF_LOCAL
 # define AF_LOCAL	AF_UNIX
 #endif
 
 #define PASSDLG_HIDE_TIMEOUT 10000
+
 
 //===========================================================================
 //
@@ -109,8 +111,15 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     cancel = new KPushButton( KStandardGuiItem::cancel(), frame );
     mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), frame );
 
-    mLayoutButton = new KPushButton( frame );
-    mLayoutButton->setFlat( true );
+    // Using KXKB component
+    KPluginFactory *kxkbFactory = KPluginLoader("libkdeinit4_kxkb").factory();
+    QWidget *kxkbComponent = NULL;
+    if (kxkbFactory) {
+        kxkbComponent = kxkbFactory->create<QWidget>(this);
+    }
+    else {
+        kDebug() << "can't load kxkb component library";
+    }
 
     QVBoxLayout *unlockDialogLayout = new QVBoxLayout(w);
     unlockDialogLayout->addWidget( frame );
@@ -119,7 +128,9 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     layStatus->setSpacing( KDialog::spacingHint() );
     layStatus->setMargin( 0 );
     layStatus->addWidget( mStatusLabel );
-    layStatus->addWidget( mLayoutButton );
+
+    if( kxkbComponent )
+        layStatus->addWidget( kxkbComponent );
 
     QHBoxLayout *layButtons = new QHBoxLayout();
     layButtons->setSpacing( KDialog::spacingHint() );
@@ -139,7 +150,6 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     frameLayout->addWidget( sep, 3, 0, 1, 2 );
     frameLayout->addLayout( layButtons, 4, 0, 1, 2 );
 
-    connect(mLayoutButton, SIGNAL(clicked()), this, SLOT(layoutClicked()));
     connect(cancel, SIGNAL(clicked()), SLOT(reject()));
     connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
     connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotSwitchUser()));
@@ -154,24 +164,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     connect(qApp, SIGNAL(activity()), SLOT(slotActivity()) );
 
     greet->start();
-
-    org::kde::KXKB kxkb("org.kde.kxkb", "/kxkb" , QDBusConnection::sessionBus());
-    if( kxkb.isValid() ) {
-        QDBusReply<QStringList> replyLayouts = kxkb.getLayoutsList();
-        layoutsList = replyLayouts;
-        QDBusReply<QString> replyCurrentLayout = kxkb.getCurrentLayout();
-        QString currentLayout = replyCurrentLayout;
-        if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
-            currLayout = layoutsList.indexOf(currentLayout);
-            if (currLayout < 0)
-                setLayoutText("err");
-            else
-                setLayoutText(layoutsList[currLayout]);
-        } else
-            mLayoutButton->hide();
-    } else {
-        mLayoutButton->hide(); // no kxkb running
-    }
+    
     capsLocked();
 }
 
@@ -179,27 +172,6 @@ PasswordDlg::~PasswordDlg()
 {
     hide();
     delete greet;
-}
-
-void PasswordDlg::layoutClicked()
-{
-
-    if( ++currLayout == layoutsList.size() )
-        currLayout = 0;
-    org::kde::KXKB kxkb("org.kde.kxkb", "/kxkb" , QDBusConnection::sessionBus());
-    if( kxkb.isValid() ) {
-        const QString currentLayout = layoutsList.at(currLayout);
-        QDBusReply<bool> setLayoutReply = kxkb.setLayout(currentLayout );
-        setLayoutText( setLayoutReply ? currentLayout : "err" );
-    }
-}
-
-void PasswordDlg::setLayoutText( const QString &txt )
-{
-    mLayoutButton->setText( txt );
-    QSize sz = mLayoutButton->fontMetrics().size( 0, txt );
-    int mrg = mLayoutButton->style()->pixelMetric( QStyle::PM_ButtonMargin ) * 2;
-    mLayoutButton->setFixedSize( sz.width() + mrg, sz.height() + mrg );
 }
 
 void PasswordDlg::updateLabel()
