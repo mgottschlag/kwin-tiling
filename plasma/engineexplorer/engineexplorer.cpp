@@ -128,6 +128,7 @@ void EngineExplorer::showEngine(const QString& name)
     }
 
     m_sourceRequesterButton->setEnabled(true);
+    m_updateInterval->setEnabled(true);
     m_sourceRequester->setEnabled(true);
     m_sourceRequester->setFocus();
     connect(m_engine, SIGNAL(newSource(QString)), this, SLOT(addSource(QString)));

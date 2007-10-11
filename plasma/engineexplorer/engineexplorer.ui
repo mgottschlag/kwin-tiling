@@ -5,26 +5,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>513</width>
     <height>300</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="leftMargin" >
-    <number>0</number>
-   </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
    <item>
-    <widget class="KTitleWidget" native="1" name="m_title" >
-     <property name="text" stdset="0" >
+    <widget class="KTitleWidget" name="m_title" >
+     <property name="text" >
       <string>Plasma DataEngine Explorer</string>
      </property>
     </widget>
@@ -39,11 +27,36 @@
        <property name="enabled" >
         <bool>false</bool>
        </property>
-       <property name="clickMessage" stdset="0" >
-        <string>Request a datasource</string>
+       <property name="clickMessage" >
+        <string>Source name</string>
        </property>
        <property name="showClearButton" stdset="0" >
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="m_updateInterval" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="suffix" >
+        <string>ms</string>
+       </property>
+       <property name="prefix" >
+        <string>update every </string>
+       </property>
+       <property name="minimum" >
+        <number>0</number>
+       </property>
+       <property name="maximum" >
+        <number>100000</number>
+       </property>
+       <property name="singleStep" >
+        <number>50</number>
+       </property>
+       <property name="value" >
+        <number>50</number>
        </property>
       </widget>
      </item>
@@ -58,19 +71,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QSpinBox" name="m_updateInterval" >
-     <property name="minimum" >
-      <number>50</number>
-     </property>
-     <property name="maximum" >
-      <number>100000</number>
-     </property>
-     <property name="singleStep" >
-      <number>50</number>
-     </property>
-    </widget>
    </item>
    <item>
     <widget class="QTreeView" name="m_data" >
@@ -112,8 +112,24 @@
      <y>92</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>362</x>
-     <y>90</y>
+     <x>502</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_updateInterval</sender>
+   <signal>editingFinished()</signal>
+   <receiver>m_sourceRequesterButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>375</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>447</x>
+     <y>94</y>
     </hint>
    </hints>
   </connection>
