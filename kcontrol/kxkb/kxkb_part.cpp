@@ -30,11 +30,10 @@ K_EXPORT_PLUGIN(KxkbPartFactory("kxkb_part"))
 
 KxkbPart::KxkbPart( QWidget* parent,
                const QList<QVariant>& args )
-//  : KParts::Part(parent)
     : QWidget(parent)
 {
-	int controlType = KxkbWidget::MENU_FULL;
-	if( args.count() > 0 && args[0].type() == QVariant::Int ) {	//TODO: replace with string?
+	int controlType = KxkbWidget::MENU_LAYOUTS_ONLY;
+/*	if( args.count() > 0 && args[0].type() == QVariant::Int ) {	//TODO: replace with string?
 	    controlType = args[0].toInt();
 	    kDebug() << "controlType" << controlType << "(" << args[0] << ")";
 	    if( controlType <= 0 ) {
@@ -42,10 +41,10 @@ KxkbPart::KxkbPart( QWidget* parent,
 		return;
 	    }
 	}
-
-	KxkbLabel* kxkbWidget = new KxkbLabel(controlType, this);
-	m_kxkbCore = new KxkbCore( kxkbWidget, 2 );	// 2 == NO_INIT
-	m_kxkbCore->newInstance();
+*/
+	m_kxkbCore = new KxkbCore( this, controlType, KxkbCore::NO_INIT, KxkbWidget::WIDGET_LABEL );
+	if( m_kxkbCore->newInstance() != 0 )
+            setVisible(false);
 //	setWidget(kxkbWidget->widget());
 }
 

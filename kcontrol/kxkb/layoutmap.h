@@ -45,7 +45,7 @@ public:
 	int getNextLayout();
 	int getCurrentLayout();
 	
-	void setCurrentWindow(WId winId);
+	void ownerChanged();
 	void reset();
 	
 private:

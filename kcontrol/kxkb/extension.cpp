@@ -20,8 +20,6 @@
 #include <errno.h>
 
 
-#include <QMap>
-#include <QFile>
 #include <QX11Info>
 
 #include <kdebug.h>
@@ -33,35 +31,15 @@
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
 #include <X11/extensions/XKBfile.h>
-//#include <X11/extensions/XKBgeom.h>
-#include <X11/extensions/XKM.h>
 
 #include "extension.h"
 
 
-// QMap<QString, FILE*> XKBExtension::fileCache;	//TODO: move to class?
-
-
-static QString getLayoutKey(const QString& layout, const QString& variant)
-{
-	return layout + '.' + variant;
-}
-
-// QString XKBExtension::getPrecompiledLayoutFilename(const QString& layoutKey)
-// {
-// 	QString compiledLayoutFileName = m_tempDir + layoutKey + ".xkm";
-// 	return compiledLayoutFileName;
-// }
-
 XKBExtension::XKBExtension(Display *d)
 {
-	if ( d == NULL )
-		d = QX11Info::display();
-	m_dpy = d;
-	
-//	QStringList dirs = KGlobal::dirs()->findDirs ( "tmp", "" );
-//	m_tempDir = dirs.count() == 0 ? "/tmp/" : dirs[0];
-// 	m_tempDir = KStandardDirs::locateLocal("tmp", "");
+    if ( d == NULL )
+        d = QX11Info::display();
+    m_dpy = d;
 }
 
 bool XKBExtension::init()
@@ -94,30 +72,19 @@ bool XKBExtension::init()
     // Do it, or face horrible memory corrupting bugs
     ::XkbInitAtoms(NULL);
 
-	int eventMask = XkbNewKeyboardNotifyMask | XkbStateNotifyMask;
-    if (!XkbSelectEvents(m_dpy, XkbUseCoreKbd, eventMask, eventMask)) {
-	   kDebug() << "Couldn't select desired XKB events";
-	   return false;
-	}
+    int eventMask = XkbNewKeyboardNotifyMask | XkbStateNotifyMask;
+    if( !XkbSelectEvents(m_dpy, XkbUseCoreKbd, eventMask, eventMask) ) {
+	kDebug() << "Couldn't select desired XKB events";
+	return false;
+    }
 
-	kDebug() << "XKB inited";
+    kDebug() << "XKB inited";
 
     return true;
 }
 
-void XKBExtension::reset()
-{
-// 	for(QMap<QString, FILE*>::ConstIterator it = fileCache.begin(); it != fileCache.end(); ++it) {
-// 		fclose(*it);
-// //		remove( QFile::encodeName(getPrecompiledLayoutFileName(*it)) );
-// 	}
-// 	fileCache.clear();
-}
-
 XKBExtension::~XKBExtension()
 {
-/*	if( m_compiledLayoutFileNames.isEmpty() == false )
-		deletePrecompiledLayouts();*/
 }
 
 bool XKBExtension::setXkbOptions(const QString& options, bool resetOld)
@@ -138,22 +105,6 @@ bool XKBExtension::setXkbOptions(const QString& options, bool resetOld)
     return p.execute() == 0;
 }
 
-bool XKBExtension::setLayout(const QString& model,
-		const QString& layout, const QString& variant,
-		const QString& includeGroup, bool useCompiledLayouts)
-{
-	if( useCompiledLayouts == false ) {
-		return setLayoutInternal( model, layout, variant, includeGroup );
-	}
-	
-	const QString layoutKey = getLayoutKey(layout, variant);
-	
-	bool res = setLayoutInternal( model, layout, variant, includeGroup );
-	kDebug() << "setRawLayout " << layoutKey << ": " << res;
-	return res;
-}
-
-
 bool XKBExtension::setLayoutGroups(const QString& layouts, const QString& variants)
 {
 	bool res = setLayoutInternal( "", layouts, variants, "" );
@@ -169,41 +120,39 @@ bool XKBExtension::setLayoutInternal(const QString& model,
     if ( layout.isEmpty() )
         return false;
 
-	QString exe = KGlobal::dirs()->findExe("setxkbmap");
-	if( exe.isEmpty() ) {
-		kError() << "Can't find setxkbmap" << endl;
-		return false;
-	}
+    QString exe = KGlobal::dirs()->findExe("setxkbmap");
+    if( exe.isEmpty() ) {
+	kError() << "Can't find setxkbmap" << endl;
+	return false;
+    }
 
     QString fullLayout = layout;
     QString fullVariant = variant;
-	if( includeGroup.isEmpty() == false ) {
+    if( includeGroup.isEmpty() == false ) {
         fullLayout = includeGroup;
         fullLayout += ',';
         fullLayout += layout;
 		
-//    fullVariant = baseVar;
         fullVariant = ",";
         fullVariant += variant;
     }
  
     KProcess p;
     p << exe;
-//  p << "-rules" << rule;
 	if( model.isEmpty() == false )
 		p << "-model" << model;
     p << "-layout" << fullLayout;
     if( !fullVariant.isNull() && !fullVariant.isEmpty() )
         p << "-variant" << fullVariant;
 
-	kDebug() << "Ext: setting " << fullLayout << ", " << fullVariant;
+    kDebug() << "Ext: setting " << fullLayout << ", " << fullVariant;
 	
     return p.execute() == 0;
 }
 
 bool XKBExtension::setGroup(unsigned int group)
 {
-	kDebug() << "Setting group " << group;
+//	kDebug() << "Setting group " << group;
 	return XkbLockGroup( m_dpy, XkbUseCoreKbd, group );
 }
 

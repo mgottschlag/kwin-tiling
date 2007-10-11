@@ -19,15 +19,14 @@
 #ifndef __kxkb_part_h
 #define __kxkb_part_h
 
-//#include <kparts/part.h>
 #include <QWidget>
 #include <QList>
 #include <QVariant>
-//class QWidget;
+
 class QString;
 class KxkbCore;
 
-class KxkbPart : public QWidget //KParts::Part
+class KxkbPart : public QWidget
 {
   Q_OBJECT
  public:

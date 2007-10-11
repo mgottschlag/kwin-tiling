@@ -27,7 +27,6 @@ DESCRIPTION
 #define __K_XKBAPP_H__
 
 
-
 #include <kuniqueapplication.h>
 
 #include "kxkbcore.h"
@@ -42,17 +41,18 @@ class KXKBApp : public KUniqueApplication
     Q_OBJECT
 
 public:
-	explicit KXKBApp(bool allowStyles=true, bool GUIenabled=true);
-	~KXKBApp();
+    explicit KXKBApp(bool allowStyles=true, bool GUIenabled=true);
+    ~KXKBApp();
 
-	virtual int newInstance();
+    virtual int newInstance();
 
-	bool setLayout(const LayoutUnit& layoutUnit, int group=-1);
+    bool isError() { return m_kxkbCore->getStatus() != 0; }
+    bool setLayout(const LayoutUnit& layoutUnit, int group=-1);
 // External API:
 public slots:
- 	bool setLayout(const QString& layoutPair) { return m_kxkbCore->setLayout(layoutPair); }
-	QString getCurrentLayout() { return m_kxkbCore->getCurrentLayout(); }
-	QStringList getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
+    bool setLayout(const QString& layoutPair) { return m_kxkbCore->setLayout(layoutPair); }
+    QString getCurrentLayout() { return m_kxkbCore->getCurrentLayout(); }
+    QStringList getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
 
 protected slots:
     void slotSettingsChanged(int category);
@@ -63,7 +63,7 @@ protected:
     void layoutApply();
 
 private:
-	KxkbCore* m_kxkbCore;
+    KxkbCore* m_kxkbCore;
 };
 
 #endif

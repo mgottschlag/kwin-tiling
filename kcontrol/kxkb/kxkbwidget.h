@@ -41,12 +41,12 @@ class QAction;
 */
 class KxkbWidget : public QObject
 {
- 	Q_OBJECT
+    Q_OBJECT
 			
 public:
-	enum { INDICATOR_ONLY=1, NO_MENU = 2, MENU_LAYOUTS_ONLY = 3, MENU_FULL=4 };
-
-	enum { START_MENU_ID = 100, CONFIG_MENU_ID = 130, HELP_MENU_ID = 131 };
+    enum { START_MENU_ID = 100, CONFIG_MENU_ID = 130, HELP_MENU_ID = 131 };
+    enum { INDICATOR_ONLY=1, NO_MENU = 2, MENU_LAYOUTS_ONLY = 3, MENU_FULL=4 };
+    enum { WIDGET_TRAY=0, WIDGET_LABEL=1 };
 
     void initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules& rule);
     void setCurrentLayout(const LayoutUnit& layout);
@@ -55,22 +55,22 @@ public:
     void setShowFlag(bool showFlag) { m_showFlag = showFlag; }
 	
 signals:
-	void menuTriggered(QAction*);
-	void iconToggled();
+    void menuTriggered(QAction*);
+    void iconToggled();
 
 protected:
-	KxkbWidget(int controlType = MENU_FULL);
-	virtual QMenu* contextMenu() = 0;
-	virtual void setToolTip(const QString& tip) = 0;
-	virtual void setPixmap(const QPixmap& pixmap) = 0;
-	virtual void setText(const QString& text) = 0;
+    KxkbWidget(int controlType = MENU_FULL);
+    virtual QMenu* contextMenu() = 0;
+    virtual void setToolTip(const QString& tip) = 0;
+    virtual void setPixmap(const QPixmap& pixmap) = 0;
+    virtual void setText(const QString& text) = 0;
 
-private:
-	int m_controlType;
-	bool m_showFlag;
-	QMap<QString, QString> m_descriptionMap;
-	QList<QAction*> m_actions;
-	QAction* m_configSeparator;
+private:    
+    int m_controlType;
+    bool m_showFlag;
+    QMap<QString, QString> m_descriptionMap;
+    QList<QAction*> m_actions;
+    QAction* m_configSeparator;
 };
 
 
@@ -79,20 +79,20 @@ private:
 */
 class KxkbSysTrayIcon : public KxkbWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	KxkbSysTrayIcon(int controlType=MENU_FULL);
-	~KxkbSysTrayIcon() { delete m_indicatorWidget; }
+    KxkbSysTrayIcon(int controlType=MENU_FULL);
+    ~KxkbSysTrayIcon() { delete m_indicatorWidget; }
 
 protected:
-	QMenu* contextMenu() { return m_indicatorWidget->contextMenu(); }
-	void setToolTip(const QString& tip) { m_indicatorWidget->setToolTip(tip); }
-	void setPixmap(const QPixmap& pixmap);
-	void setText(const QString& text) { } //m_indicatorWidget->setText(text); }
+    QMenu* contextMenu() { return m_indicatorWidget->contextMenu(); }
+    void setToolTip(const QString& tip) { m_indicatorWidget->setToolTip(tip); }
+    void setPixmap(const QPixmap& pixmap);
+    void setText(const QString& /*text*/) { } //m_indicatorWidget->setText(text); }
 
 protected slots:
-	void trayActivated(QSystemTrayIcon::ActivationReason);
+    void trayActivated(QSystemTrayIcon::ActivationReason);
 
 private:
     KSystemTrayIcon* m_indicatorWidget;

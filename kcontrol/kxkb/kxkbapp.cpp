@@ -23,12 +23,13 @@ DESCRIPTION
 
     KDE Keyboard Tool. Manages XKB keyboard mappings.
 */
-#include <assert.h>
+//#include <assert.h>
 
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kdebug.h>
 
 #include "kxkb_adaptor.h"
 
@@ -41,10 +42,13 @@ DESCRIPTION
 KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     : KUniqueApplication(allowStyles, GUIenabled)
 {
-	KxkbSysTrayIcon* kxkbWidget = new KxkbSysTrayIcon();
-	m_kxkbCore = new KxkbCore( kxkbWidget );
-// 	kxkbWidget->show();
-    //TODO: don't do this if kxkb does not become a daemon
+    m_kxkbCore = new KxkbCore( NULL, KxkbCore::MAIN_MODULE, KxkbWidget::MENU_FULL, KxkbWidget::WIDGET_TRAY );
+
+    if( isError() ) {
+        exit(2);        // failed XKB
+        return;
+    }
+
     new KXKBAdaptor( this );
 }
 
@@ -55,7 +59,12 @@ KXKBApp::~KXKBApp()
 
 int KXKBApp::newInstance()
 {
-	return m_kxkbCore->newInstance();
+    int res = m_kxkbCore->newInstance();
+    if( isError() ) {
+        exit(0);        // not using kxkb from settings
+    }
+
+    return res;
 }
 
 bool KXKBApp::settingsRead()
@@ -93,7 +102,9 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
         return 0;
 
     KXKBApp app;
-    app.disableSessionManagement();
-    app.exec();
+    if( ! app.isError() ) {
+        app.disableSessionManagement();
+        app.exec();
+    }
     return 0;
 }

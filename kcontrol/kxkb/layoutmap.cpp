@@ -42,34 +42,33 @@ void LayoutMap::clearMaps()
 
 void LayoutMap::reset()
 {
-	clearMaps();
-	setCurrentWindow( X11Helper::UNKNOWN_WINDOW_ID );
+    clearMaps();
+    ownerChanged();
+    m_currentWinId = X11Helper::UNKNOWN_WINDOW_ID;
 }
 
 
-
-void LayoutMap::setCurrentWindow(WId winId)
+void LayoutMap::ownerChanged()
 {
-	m_currentWinId = winId;
+    if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_DESKTOP ) {
+	m_currentDesktop = KWindowSystem::currentDesktop();
+    }
+    else {
+	m_currentWinId = KWindowSystem::activeWindow();
 	if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_WIN_CLASS )
-		m_currentWinClass = X11Helper::getWindowClass(winId, QX11Info::display());
-	else
-	if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_DESKTOP )
-		m_currentDesktop = KWindowSystem::currentDesktop();
+	    m_currentWinClass = X11Helper::getWindowClass(m_currentWinId, QX11Info::display());
+    }
 }
 
 // private
-//LayoutQueue& 
 QQueue<int>& LayoutMap::getCurrentLayoutQueueInternal()
 {
 	if( m_currentWinId == X11Helper::UNKNOWN_WINDOW_ID )
 		return m_globalLayouts;
 	
 	switch( m_kxkbConfig.m_switchingPolicy ) {
-		case SWITCH_POLICY_WIN_CLASS: {
-//			QString winClass = X11Helper::getWindowClass(winId, qt_xdisplay());
+		case SWITCH_POLICY_WIN_CLASS:
 			return m_appLayouts[ m_currentWinClass ];
-		}
 		case SWITCH_POLICY_WINDOW:
 			return m_winLayouts[ m_currentWinId ];
 		case SWITCH_POLICY_DESKTOP:
@@ -95,7 +94,6 @@ QString LayoutMap::getOwner()
 }
 
 // private
-//LayoutQueue& 
 QQueue<int>& LayoutMap::getCurrentLayoutQueue()
 {
 	QQueue<int>& layoutQueue = getCurrentLayoutQueueInternal();
@@ -116,18 +114,14 @@ int LayoutMap::getNextLayout() {
 	int layoutState = layoutQueue.dequeue();
 	layoutQueue.enqueue(layoutState);
 	
-	kDebug() << "map: Next layout: " << layoutQueue.head() 
-// 			<< " group: " << layoutQueue.head()->layoutUnit.defaultGroup 
-			<< " for " << getOwner();
+	kDebug() << "map: Next layout: " << layoutQueue.head() << " for " << getOwner();
 	
 	return layoutQueue.head();
 }
 
 void LayoutMap::setCurrentLayout(int layoutUnit) {
-	LayoutQueue& layoutQueue = getCurrentLayoutQueue(/*m_currentWinId*/);
-	kDebug() << "map: Storing layout: " << layoutUnit 
-// 			<< " group: " << layoutUnit.defaultGroup 
-			<< " for " << getOwner();
+	LayoutQueue& layoutQueue = getCurrentLayoutQueue();
+	kDebug() << "map: Storing layout: " << layoutUnit << " for " << getOwner();
 	
 	int queueSize = (int)layoutQueue.count();
 	for(int ii=0; ii<queueSize; ii++) {
