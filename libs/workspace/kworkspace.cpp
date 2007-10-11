@@ -31,6 +31,7 @@
 #include <stdlib.h> // getenv()
 #include <ksmserver_interface.h>
 #include <kdefakes.h>
+#include <QSocketNotifier>
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
@@ -46,17 +47,113 @@
 #define DISPLAY "QWS_DISPLAY"
 #endif
 
+#include <unistd.h>
+#include <pwd.h>
+#include <sys/types.h>
+
+#include "kworkspace_p.h"
+
 namespace KWorkSpace
 {
 
-static SmcConn tmpSmcConnection = 0;
+static void save_yourself_callback( SmcConn conn_P, SmPointer, int, Bool , int, Bool )
+    {
+    SmcSaveYourselfDone( conn_P, True );
+    }
+
+static void dummy_callback( SmcConn, SmPointer )
+    {
+    }
+
+KRequestShutdownHelper::KRequestShutdownHelper()
+    {
+    SmcCallbacks calls;
+    calls.save_yourself.callback = save_yourself_callback;
+    calls.die.callback = dummy_callback;
+    calls.save_complete.callback = dummy_callback;
+    calls.shutdown_cancelled.callback = dummy_callback;
+    char* id = NULL;
+    char err[ 11 ];
+    conn = SmcOpenConnection( NULL, NULL, 1, 0,
+        SmcSaveYourselfProcMask | SmcDieProcMask | SmcSaveCompleteProcMask
+        | SmcShutdownCancelledProcMask, &calls, NULL, &id, 10, err );
+    if( id != NULL )
+        free( id );
+    if( conn == NULL )
+        return; // no SM
+    // set the required properties, mostly dummy values
+    SmPropValue propvalue[ 5 ];
+    SmProp props[ 5 ];
+    propvalue[ 0 ].length = sizeof( int );
+    int value0 = SmRestartNever; // so that this extra SM connection doesn't interfere
+    propvalue[ 0 ].value = &value0;
+    props[ 0 ].name = const_cast< char* >( SmRestartStyleHint );
+    props[ 0 ].type = const_cast< char* >( SmCARD8 );
+    props[ 0 ].num_vals = 1;
+    props[ 0 ].vals = &propvalue[ 0 ];
+    struct passwd* entry = getpwuid( geteuid() );
+    propvalue[ 1 ].length = entry != NULL ? strlen( entry->pw_name ) : 0;
+    propvalue[ 1 ].value = (SmPointer)( entry != NULL ? entry->pw_name : "" );
+    props[ 1 ].name = const_cast< char* >( SmUserID );
+    props[ 1 ].type = const_cast< char* >( SmARRAY8 );
+    props[ 1 ].num_vals = 1;
+    props[ 1 ].vals = &propvalue[ 1 ];
+    propvalue[ 2 ].length = 0;
+    propvalue[ 2 ].value = (SmPointer)( "" );
+    props[ 2 ].name = const_cast< char* >( SmRestartCommand );
+    props[ 2 ].type = const_cast< char* >( SmLISTofARRAY8 );
+    props[ 2 ].num_vals = 1;
+    props[ 2 ].vals = &propvalue[ 2 ];
+    propvalue[ 3 ].length = strlen( "requestshutdownhelper" );
+    propvalue[ 3 ].value = (SmPointer)"requestshutdownhelper";
+    props[ 3 ].name = const_cast< char* >( SmProgram );
+    props[ 3 ].type = const_cast< char* >( SmARRAY8 );
+    props[ 3 ].num_vals = 1;
+    props[ 3 ].vals = &propvalue[ 3 ];
+    propvalue[ 4 ].length = 0;
+    propvalue[ 4 ].value = (SmPointer)( "" );
+    props[ 4 ].name = const_cast< char* >( SmCloneCommand );
+    props[ 4 ].type = const_cast< char* >( SmLISTofARRAY8 );
+    props[ 4 ].num_vals = 1;
+    props[ 4 ].vals = &propvalue[ 4 ];
+    SmProp* p[ 5 ] = { &props[ 0 ], &props[ 1 ], &props[ 2 ], &props[ 3 ], &props[ 4 ] };
+    SmcSetProperties( conn, 5, p );
+    notifier = new QSocketNotifier( IceConnectionNumber( SmcGetIceConnection( conn )),
+        QSocketNotifier::Read, this );
+    connect( notifier, SIGNAL( activated( int )), SLOT( processData()));
+    }
+
+KRequestShutdownHelper::~KRequestShutdownHelper()
+    {
+    if( conn != NULL )
+        {
+        delete notifier;
+        SmcCloseConnection( conn, 0, NULL );
+        }
+    }
+
+void KRequestShutdownHelper::processData()
+    {
+    if( conn != NULL )
+        IceProcessMessages( SmcGetIceConnection( conn ), 0, 0 );
+    }
+
+bool KRequestShutdownHelper::requestShutdown( ShutdownConfirm confirm )
+    {
+    if( conn == NULL )
+        return false;
+    SmcRequestSaveYourself( conn, SmSaveBoth, True, SmInteractStyleAny,
+        confirm == ShutdownConfirmNo, True );
+    // flush the request
+    IceFlush(SmcGetIceConnection(conn));
+    return true;
+    }
+
+static KRequestShutdownHelper* helper = NULL;
 
 static void cleanup_sm()
 {
-  if (tmpSmcConnection) {
-      SmcCloseConnection( tmpSmcConnection, 0, 0 );
-      tmpSmcConnection = 0;
-  }
+    delete helper;
 }
 
 bool requestShutDown(
@@ -73,51 +170,12 @@ bool requestShutDown(
         QDBusReply<void> reply = ksmserver.logout((int)confirm,  (int)sdtype,  (int)sdmode);
         return (reply.isValid());
     }
-
-    if (! tmpSmcConnection) {
-	char cerror[256];
-	char* myId = 0;
-	char* prevId = 0;
-	SmcCallbacks cb;
-	tmpSmcConnection = SmcOpenConnection( 0, 0, 1, 0,
-					      0, &cb,
-					      prevId,
-					      &myId,
-					      255,
-					      cerror );
-	::free( myId ); // it was allocated by C
-	if (!tmpSmcConnection )
-	    return false;
-
+    if( helper == NULL )
+    {
+        helper = new KRequestShutdownHelper();
         qAddPostRoutine(cleanup_sm);
     }
-
-    if ( tmpSmcConnection ) {
-        // we already have a connection to the session manager, use it.
-        SmcRequestSaveYourself( tmpSmcConnection, SmSaveBoth, True,
-				SmInteractStyleAny,
-				confirm == ShutdownConfirmNo, True );
-
-	// flush the request
-	IceFlush(SmcGetIceConnection(tmpSmcConnection));
-        return true;
-    }
-
-    // open a temporary connection, if possible
-
-    propagateSessionManager();
-    QByteArray smEnv = ::getenv("SESSION_MANAGER");
-    if (smEnv.isEmpty())
-        return false;
-
-    SmcRequestSaveYourself( tmpSmcConnection, SmSaveBoth, True,
-			    SmInteractStyleAny, False, True );
-
-    // flush the request
-    IceFlush(SmcGetIceConnection(tmpSmcConnection));
-    SmcCloseConnection( tmpSmcConnection, 0, 0 );
-
-    return true;
+    return helper->requestShutdown( confirm );
 }
 
 static QTime smModificationTime;
@@ -156,3 +214,4 @@ void propagateSessionManager()
 
 } // end namespace
 
+#include "kworkspace_p.moc"
