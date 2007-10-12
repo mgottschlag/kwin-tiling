@@ -60,6 +60,10 @@
 // cached to disk.
 #define KFI_SAVE_PIXMAPS
 
+#ifdef KFI_FONTLIST_DEBUG
+#include <kdebug.h>
+#endif
+
 namespace KFI
 {
 
@@ -383,22 +387,21 @@ inline bool isSysFolder(const QString &sect)
 
 CFontItem::CFontItem(CFontModelItem *p, const KFileItem &item, const QString &style)
          : CFontModelItem(p),
-           itsItem(item),
            itsStyle(style),
            itsPixmap(NULL)
 {
-    const KIO::UDSEntry &udsEntry(entry());
+    const KIO::UDSEntry &udsEntry(item.entry());
 
-    updateStatus();
+    setUrl(item.url());
     itsName=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
     itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
     itsStyleInfo=udsEntry.numberValue((uint)UDS_EXTRA_FC_STYLE);
     itsIndex=Misc::getIntQueryVal(KUrl(udsEntry.stringValue((uint)KIO::UDSEntry::UDS_URL)),
                                   KFI_KIO_FACE, 0);
     itsWritingSystems=udsEntry.numberValue((uint)UDS_EXTRA_WRITING_SYSTEMS);
-    QString mime(mimetype());
-
-    itsBitmap="application/x-font-pcf"==mime || "application/x-font-bdf"==mime;
+    itsMimeType=item.mimetype();
+    itsBitmap="application/x-font-pcf"==itsMimeType || "application/x-font-bdf"==itsMimeType;
+    itsSize=item.size();
 
     if(!Misc::root())
         setIsSystem(isSysFolder(url().path().section('/', 1, 1)));
@@ -421,9 +424,10 @@ void CFontItem::touchThumbnail()
 #endif
 }
 
-void CFontItem::updateStatus()
+void CFontItem::setUrl(const KUrl &url)
 {
-    itsEnabled=!Misc::isHidden(url());
+    itsUrl=url;
+    itsEnabled=!Misc::isHidden(itsUrl);
 
     if(!itsFiles.isEmpty()) // Then we changed state, so need to alter filename list...
     {
@@ -478,7 +482,7 @@ CFontItem * CFamilyItem::findFont(const KFileItem &i)
                                       fEnd(itsFonts.end());
 
     for(; fIt!=fEnd; ++fIt)
-        if((*(*fIt)).item()==i)
+        if((*(*fIt)).url()==i.url())
             return (*fIt);
 
     return NULL;
@@ -655,8 +659,8 @@ CFontList::CFontList(QWidget *parent)
             SLOT(newItems(const KFileItemList &)));
     connect(itsLister, SIGNAL(deleteItems(const KFileItemList &)),
             SLOT(deleteItems(const KFileItemList &)));
-    connect(itsLister, SIGNAL(refreshItems(const KFileItemList &)),
-            SLOT(refreshItems(const KFileItemList &)));
+    connect(itsLister, SIGNAL(renameItems(const RenameList &)),
+            SLOT(renameItems(const RenameList &)));
     connect(itsLister, SIGNAL(percent(int)), SIGNAL(percent(int)));
     connect(itsLister, SIGNAL(message(QString)), SIGNAL(status(QString)));
 }
@@ -915,8 +919,8 @@ void CFontList::newItems(const KFileItemList &items)
 #ifdef KFI_FONTLIST_DEBUG
     kDebug() << "************** newItems " << items.count();
 
-    for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
-        kDebug() << "               " << (int)(*it);
+//     for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
+//         kDebug() << "               " << (int)(*it);
 #endif
 
     for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
@@ -938,35 +942,38 @@ void CFontList::clearItems()
     itsFonts.clear();
 }
 
-void CFontList::refreshItems(const KFileItemList &items)
+void CFontList::renameItems(const RenameList &items)
 {
     emit layoutAboutToBeChanged();
 
 #ifdef KFI_FONTLIST_DEBUG
-    kDebug() << "************** refreshItems " << items.count();
+    kDebug() << "************** renameItems " << items.count();
 
-    for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
-        kDebug() << "               " << (int)(*it);
+    for(RenameList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
+        kDebug() << "               " << (*it).from.prettyUrl();
 #endif
 
     QSet<CFamilyItem *> families;
 
-    for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
+    for(RenameList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
     {
-        CFontItem *font=findFont(*it);
+        CFontItem *font=findFont((*it).from);
 
         if(font)
         {
-            font->updateStatus();
+            font->setUrl((*it).to);
+            itsFonts.insert((*it).to, font);
+            itsFonts.erase(itsFonts.find((*it).from));
 #ifdef KFI_FONTLIST_DEBUG
             kDebug() << "               Found font, status now:" << font->isEnabled()
-                     << " url" << (*it)->url().prettyUrl();
+                     << " from:" << (*it).from.prettyUrl()
+                     << " to:" << (*it).to.prettyUrl();
 #endif
             families.insert(static_cast<CFamilyItem *>(font->parent()));
         }
 #ifdef KFI_FONTLIST_DEBUG
         else
-            kDebug() << "               Could not locate font :-( " << (int)(*it);
+            kDebug() << "               Could not locate font :-( " << (*it).from.prettyUrl();
 #endif
     }
 
@@ -992,7 +999,7 @@ void CFontList::deleteItems(const KFileItemList &items)
 
     for(; it!=end; ++it)
     {
-        CFontItem *font=findFont(*it);
+        CFontItem *font=findFont((*it).url());
 
         if(font)
         {
@@ -1002,7 +1009,7 @@ void CFontList::deleteItems(const KFileItemList &items)
                 itsFamilies.removeAll(fam);
             else
                 fam->removeFont(font);
-            itsFonts.remove(*it);
+            itsFonts.remove((*it).url());
         }
     }
 
@@ -1011,7 +1018,7 @@ void CFontList::deleteItems(const KFileItemList &items)
 
 void CFontList::addItem(const KFileItem &item)
 {
-    CFontItem *font=findFont(item);
+    CFontItem *font=findFont(item.url());
 
 #ifdef KFI_FONTLIST_DEBUG
     kDebug() << "************** addItem " << item.url();
@@ -1030,7 +1037,7 @@ void CFontList::addItem(const KFileItem &item)
             font=new CFontItem(fam, item, style);
 
             fam->addFont(font);
-            itsFonts.insert(item, font);
+            itsFonts.insert(item.url(), font);
         }
 #ifdef KFI_FONTLIST_DEBUG
         else
@@ -1062,10 +1069,10 @@ CFamilyItem * CFontList::findFamily(const QString &familyName, bool create)
     return fam;
 }
 
-CFontItem * CFontList::findFont(const KFileItem &item)
+CFontItem * CFontList::findFont(const KUrl &url)
 {
-    return itsFonts.contains(item)
-            ? itsFonts[item]
+    return itsFonts.contains(url)
+            ? itsFonts[url]
             : NULL;
 }
 

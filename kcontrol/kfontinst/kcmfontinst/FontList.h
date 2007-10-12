@@ -125,25 +125,25 @@ class CFontList : public QAbstractItemModel
     void            listingCompleted();
     void            newItems(const KFileItemList &items);
     void            clearItems();
-    void            deleteItems(const KFileItemList &);
-    void            refreshItems(const KFileItemList &);
+    void            deleteItems(const KFileItemList &items);
+    void            renameItems(const RenameList &items);
 
     private:
 
     void            addItem(const KFileItem &item);
     CFamilyItem *   findFamily(const QString &familyName, bool create=false);
-    CFontItem *     findFont(const KFileItem &item);
+    CFontItem *     findFont(const KUrl &url);
     void            touchThumbnails();
 
     private:
 
-    QList<CFamilyItem *>                  itsFamilies;
-    QHash<const KFileItem, CFontItem *>   itsFonts;   // Use for quick searching...
-    CFontLister                           *itsLister;
-    bool                                  itsAllowSys,
-                                          itsAllowUser,
-                                          itsAllowDisabled;
-    static int                            theirPreviewSize;
+    QList<CFamilyItem *>     itsFamilies;
+    QHash<KUrl, CFontItem *> itsFonts;   // Use for quick searching...
+    CFontLister              *itsLister;
+    bool                     itsAllowSys,
+                             itsAllowUser,
+                             itsAllowDisabled;
+    static int               theirPreviewSize;
 };
 
 class CFontModelItem
@@ -225,13 +225,11 @@ class CFontItem : public CFontModelItem
 
     void                              touchThumbnail();
     const QString &                   name() const             { return itsName; }
-    QString                           mimetype() const         { return itsItem.mimetype(); }
+    QString                           mimetype() const         { return itsMimeType; }
     bool                              isEnabled() const        { return itsEnabled; }
     bool                              isHidden() const         { return !itsEnabled; }
-    void                              updateStatus();
-    KUrl                              url() const              { return itsItem.url(); }
-    KIO::UDSEntry                     entry() const            { return itsItem.entry(); }
-    KFileItem                         item() const             { return itsItem; }
+    void                              setUrl(const KUrl &url);
+    KUrl                              url() const              { return itsUrl; }
     bool                              isBitmap() const         { return itsBitmap; }
     const QString &                   fileName() const         { return itsFileName; }
     const QString &                   style() const            { return itsStyle; }
@@ -242,15 +240,16 @@ class CFontItem : public CFontModelItem
     void                              clearPixmap()            { itsPixmap=NULL; }
     int                               rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
     const CDisabledFonts::TFileList & files() const            { return itsFiles; }
-    KIO::filesize_t                   size() const             { return !itsItem.isNull() ? itsItem.size() : 0; }
+    KIO::filesize_t                   size() const             { return itsSize; }
     qulonglong                        writingSystems() const   { return itsWritingSystems; }
 
     private:
 
-    KFileItem                 itsItem;
+    KUrl                      itsUrl;
     QString                   itsName,
                               itsFileName,
-                              itsStyle;
+                              itsStyle,
+                              itsMimeType;
     int                       itsIndex;
     QPixmap                   *itsPixmap;
     quint32                   itsStyleInfo;
@@ -258,6 +257,7 @@ class CFontItem : public CFontModelItem
                               itsEnabled;
     CDisabledFonts::TFileList itsFiles;
     qulonglong                itsWritingSystems;
+    KIO::filesize_t           itsSize;
 };
 
 class CFontListSortFilterProxy : public QSortFilterProxyModel

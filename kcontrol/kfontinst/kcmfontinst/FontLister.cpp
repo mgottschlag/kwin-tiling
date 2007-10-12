@@ -55,10 +55,10 @@ void CFontLister::scan(const KUrl &url)
 {
     if(!busy())
     {
-        if(itsItemsToRefresh.count())
+        if(itsItemsToRename.count())
         {
-            emit refreshItems(itsItemsToRefresh);
-            itsItemsToRefresh.clear();
+            emit renameItems(itsItemsToRename);
+            itsItemsToRename.clear();
         }
 
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
@@ -97,10 +97,10 @@ void CFontLister::setAutoUpdate(bool on)
         itsAutoUpdate=on;
         if(on && itsUpdateRequired)
         {
-            if(itsItemsToRefresh.count())
+            if(itsItemsToRename.count())
             {
-                emit refreshItems(itsItemsToRefresh);
-                itsItemsToRefresh.clear();
+                emit renameItems(itsItemsToRename);
+                itsItemsToRename.clear();
             }
             itsUpdateRequired=false;
             scan();
@@ -110,12 +110,16 @@ void CFontLister::setAutoUpdate(bool on)
 
 void CFontLister::fileRenamed(const QString &from, const QString &to)
 {
-    KUrl          fromU(from);
-    KFileItemList refresh;
+    KUrl       fromU(from);
+    RenameList rename;
 
     if(KFI_KIO_FONTS_PROTOCOL==fromU.protocol())
     {
         ItemCont::Iterator it(itsItems.find(fromU));
+
+#ifdef KFI_FONTLISTER_DEBUG
+        kDebug() << "fileRenamed from: " << from << " to: " << to;
+#endif
 
         if(it!=itsItems.end())
         {
@@ -124,6 +128,7 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
 
             item.setUrl(toU);
             itsItems.erase(it);
+
             if(itsItems.contains(toU))
             {
                 KFileItemList items;
@@ -134,18 +139,22 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
             else
             {
                 itsItems[toU]=item;
-                refresh.append(item);
+                rename.append(Rename(fromU, toU));
             }
         }
+#ifdef KFI_FONTLISTER_DEBUG
+        else
+            kDebug() << "Item not found???";
+#endif
     }
 
-    if(refresh.count())
+    if(rename.count())
         if(itsAutoUpdate)
-            emit refreshItems(refresh);
+            emit renameItems(rename);
         else
         {
             itsUpdateRequired=true;
-            itsItemsToRefresh+=refresh;
+            itsItemsToRename+=rename;
         }
 }
 
@@ -273,14 +282,14 @@ void CFontLister::entries(KIO::Job *, const KIO::UDSEntryList &entries)
                 KFileItem item(*it, url);
 
 #ifdef KFI_FONTLISTER_DEBUG
-                kDebug() << "New item:" << item->url().prettyUrl();
+                kDebug() << "New item:" << item.url().prettyUrl();
 #endif
                 itsItems[url]=item;
                 newFonts.append(item);
             }
             itsItems[url].mark();
 #ifdef KFI_FONTLISTER_DEBUG
-            kDebug() << "Marking:" << itsItems[url]->url().prettyUrl();
+            kDebug() << "Marking:" << itsItems[url].url().prettyUrl() << " [" << url << ']';
 #endif
         }
     }

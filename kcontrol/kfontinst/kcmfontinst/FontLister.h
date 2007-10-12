@@ -34,6 +34,17 @@ class QString;
 namespace KFI
 {
 
+struct Rename
+{
+    Rename(const KUrl &f, const KUrl &t)
+        : from(f), to(t) { }
+
+    KUrl from,
+         to;
+};
+
+typedef QList<Rename> RenameList;
+
 class CFontLister : public QObject
 {
     Q_OBJECT
@@ -49,6 +60,7 @@ class CFontLister : public QObject
 
     public:
 
+
     CFontLister(QObject *parent);
 
     void scan(const KUrl &url=KUrl());
@@ -59,7 +71,7 @@ class CFontLister : public QObject
 
     void newItems(const KFileItemList &items);
     void deleteItems(const KFileItemList &items);
-    void refreshItems(const KFileItemList &items);
+    void renameItems(const RenameList &items);
     void started();
     void completed();
     void percent(int);
@@ -87,13 +99,13 @@ class CFontLister : public QObject
 
     typedef QHash<KUrl, KFileItem> ItemCont;
 
-    EListing      itsListing;
-    ItemCont      itsItems;
-    bool          itsAutoUpdate,
-                  itsUpdateRequired;
-    KIO::Job      *itsJob;
-    qulonglong    itsJobSize;
-    KFileItemList itsItemsToRefresh;
+    EListing   itsListing;
+    ItemCont   itsItems;
+    bool       itsAutoUpdate,
+               itsUpdateRequired;
+    KIO::Job   *itsJob;
+    qulonglong itsJobSize;
+    RenameList itsItemsToRename;
 };
 
 }
