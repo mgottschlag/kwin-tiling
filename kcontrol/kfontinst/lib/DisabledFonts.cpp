@@ -33,6 +33,7 @@
 #include <klockfile.h>
 #include <ksavefile.h>
 #include <klocale.h>
+#include <kstandarddirs.h>
 #include <fontconfig/fontconfig.h>
 #include <stdio.h>
 
@@ -185,51 +186,30 @@ void CDisabledFonts::createWritingSystemMap()
                     ((qulonglong)1)<<theirLanguageForWritingSystem[i].ws;
 }
 
-CDisabledFonts::CDisabledFonts(const QString &path, bool sys)
+CDisabledFonts::CDisabledFonts(bool sys)
               : itsTimeStamp(0),
                 itsModified(false),
                 itsMods(0)
 {
-    QString p;
+    QString path;
 
     createWritingSystemMap();
 
-    if(path.isEmpty())
-    {
-        if(Misc::root() || sys)
-            p=KFI_ROOT_CFG_DIR;
-        else
-        {
-            FcStrList *list=FcConfigGetFontDirs(FcInitLoadConfig());
-            FcChar8   *dir;
-            QString   home(QDir::homePath()),
-                      defaultDir(home+"/.fonts");
-
-            while((dir=FcStrListNext(list)))
-            {
-                QString d((const char *)dir);
-
-                if(0==d.indexOf(home))
-                    if(d==defaultDir)
-                    {
-                        p=defaultDir;
-                        break;
-                    }
-                    else if(p.isEmpty())
-                        p=d;
-            }
-
-            if(p.isEmpty())
-                p=defaultDir;
-        }
-    }
+    if(Misc::root() || sys)
+        path=KFI_ROOT_CFG_DIR;
     else
-        p=path;
+    {
+        path=KGlobal::dirs()->localxdgconfdir();
 
-    itsFileName=p+'/'+FILE_NAME".xml";
+        if(!Misc::dExists(path))
+            Misc::createDir(path);
+    }
+
+    itsFileName=path+'/'+FILE_NAME".xml";
 
     itsModifiable=Misc::fWritable(itsFileName) ||
                   (!Misc::fExists(itsFileName) && Misc::dWritable(Misc::getDir(itsFileName)));
+
     load();
     if(itsModified)
         save();

@@ -97,7 +97,7 @@ class CKioFonts : public KIO::SlaveBase
     struct TFolder
     {
         TFolder() : disabled(NULL) { }
-        void  setLocation(const QString &l, const QString &d, bool sys);
+        void  setLocation(const QString &l, bool sys);
 
         QString        location;
         CDirList       modified;

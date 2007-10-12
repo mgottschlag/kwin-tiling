@@ -830,7 +830,7 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
             dir=defaultDir;
         }
         mainFolder=FOLDER_USER;
-        itsFolders[FOLDER_USER].setLocation(dir, dir, false);
+        itsFolders[FOLDER_USER].setLocation(dir, false);
     }
 
     QString sysDefault("/usr/local/share/fonts/"),
@@ -850,7 +850,7 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
         sysDir=sysDefault;
     }
 
-    itsFolders[FOLDER_SYS].setLocation(sysDir, KFI_ROOT_CFG_DIR, true);
+    itsFolders[FOLDER_SYS].setLocation(sysDir, true);
 
     //
     // Ensure exists
@@ -3406,11 +3406,11 @@ int CKioFonts::reconfigTimeout()
             : DEFAULT_TIMEOUT;
 }
 
-void CKioFonts::TFolder::setLocation(const QString &l, const QString &d, bool sys)
+void CKioFonts::TFolder::setLocation(const QString &l, bool sys)
 {
     location=l;
     delete disabled;
-    disabled=new CDisabledFonts(d.isEmpty() ? l : d, sys);
+    disabled=new CDisabledFonts(sys);
 }
 
 }
