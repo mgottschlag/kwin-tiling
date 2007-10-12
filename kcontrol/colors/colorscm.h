@@ -78,6 +78,9 @@ private slots:
 
     /** slot called when the save button is clicked */
     void on_schemeSaveButton_clicked();
+    
+    /** slot called when the import button is clicked */
+    void on_schemeImportButton_clicked();
 
 private:
 
@@ -103,6 +106,11 @@ private:
     
     /** get the groupKey for the given colorSet */
     static QString colorSetGroupKey(int colorSet);
+    
+    /** save the current scheme with the given name 
+     @param name name to save the scheme as
+     */
+    void saveScheme(const QString &name);
     
     QColor commonForeground(KColorScheme::ForegroundRole index);
 
