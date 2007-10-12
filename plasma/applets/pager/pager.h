@@ -41,9 +41,8 @@ class Pager : public Plasma::Applet
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
         QSizeF contentSizeHint() const;
-	QSizeF minimumSize() const;
-	QSizeF maximumSize() const;
         void constraintsUpdated(Plasma::Constraints);
+	Qt::Orientations expandingDirections() const;
 
     public slots:
         void showConfigurationInterface();

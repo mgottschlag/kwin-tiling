@@ -75,16 +75,6 @@ QSizeF Pager::contentSizeHint() const
     return m_size;
 }
 
-QSizeF Pager::minimumSize() const
-{
-    return m_size;
-}
-
-QSizeF Pager::maximumSize() const
-{
-    return m_size;
-}
-
 void Pager::constraintsUpdated(Plasma::Constraints)
 {
     if (formFactor() == Plasma::Vertical ||
@@ -94,9 +84,13 @@ void Pager::constraintsUpdated(Plasma::Constraints)
         setDrawStandardBackground(true);
     }
 
-     prepareGeometryChange();
      recalculateGeometry();
      recalculateWindowRects();
+}
+
+Qt::Orientations Pager::expandingDirections() const
+{
+    return 0;
 }
 
 void Pager::showConfigurationInterface()
@@ -122,6 +116,7 @@ void Pager::showConfigurationInterface()
 
 void Pager::recalculateGeometry()
 {
+    prepareGeometryChange();
     m_scaleFactor = qreal(m_itemHeight) / QApplication::desktop()->height();
     qreal itemWidth = QApplication::desktop()->width() * m_scaleFactor;
     m_rects.clear();
@@ -135,7 +130,8 @@ void Pager::recalculateGeometry()
     }
     m_size = QSizeF(columns*itemWidth + 2*columns - 1,
 		     m_itemHeight*m_rows + 2*m_rows - 1);
-    resize(sizeHint());
+
+    updateGeometry();
 }
 
 void Pager::recalculateWindowRects()
