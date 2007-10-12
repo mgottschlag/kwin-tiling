@@ -240,6 +240,12 @@ void KColorCm::updateFromColorSchemes()
         group.writeEntry("DecorationHover", m_colorSchemes[i].decoration(KColorScheme::HoverColor).color());
     }
 
+    KConfigGroup WMGroup(m_config, "WM");
+    WMGroup.writeEntry("activeBackground", m_commonColorButtons[18]->color());
+    WMGroup.writeEntry("activeForeground", m_commonColorButtons[19]->color());
+    WMGroup.writeEntry("inactiveBackground", m_commonColorButtons[20]->color());
+    WMGroup.writeEntry("inactiveForeground", m_commonColorButtons[21]->color());
+
     KConfigGroup KDEgroup(m_config, "KDE");
     KDEgroup.writeEntry("contrast", contrastSlider->value());
 
@@ -414,12 +420,16 @@ void KColorCm::updateColorTable()
             color = KGlobalSettings::activeTextColor();
         }
         m_commonColorButtons[19]->setColor(color);
+
+        // inactive window background
         color = KConfigGroup(m_config, "WM").readEntry("inactiveBackground");
         if (!color.isValid())
         {
             color = KGlobalSettings::inactiveTitleColor();
         }
         m_commonColorButtons[20]->setColor(color);
+
+        // inactive window foreground
         color = KConfigGroup(m_config, "WM").readEntry("inactiveForeground");
         if (!color.isValid())
         {
