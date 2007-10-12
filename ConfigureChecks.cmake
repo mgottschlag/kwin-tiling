@@ -1,4 +1,5 @@
 include(UnixAuth)
+include(CheckTypeSize)
 
 macro_optional_find_package(XKB) # kxkb, kdm
 
