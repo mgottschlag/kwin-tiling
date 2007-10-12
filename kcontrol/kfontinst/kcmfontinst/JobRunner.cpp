@@ -59,6 +59,58 @@ static KUrl toggle(const KUrl &orig, bool enable)
     return url;
 }
 
+class CSkipDialog : public KDialog
+{
+    public:
+
+    enum Result
+    {
+        SKIP,
+        AUTO_SKIP,
+        CANCEL
+    };
+
+    CSkipDialog(QWidget *parent, bool multi, const QString &errorText)
+        : KDialog(parent),
+          itsResult(CANCEL)
+    {
+        setCaption(i18n( "Information"));
+        setButtons(multi ? Cancel|User1|User2 : Cancel );
+        setButtonText(User1, i18n("Skip"));
+        setButtonText(User2, i18n("AutoSkip"));
+        setMainWidget(new QLabel(errorText, this));
+        resize(sizeHint());
+    }
+
+    Result go()
+    {
+        itsResult=CANCEL;
+        exec();
+        return itsResult;
+    }
+
+    void slotButtonClicked(int button)
+    {
+        switch(button)
+        {
+            case User1:
+                itsResult=SKIP;
+                break;
+            case User2:
+                itsResult=AUTO_SKIP;
+                break;
+            default:
+                itsResult=CANCEL;
+        }
+
+        KDialog::accept();
+    }
+
+    private:
+
+    Result itsResult;
+};
+
 class CPasswordDialog : public KPasswordDialog
 {
     public:
@@ -384,17 +436,17 @@ void CJobRunner::jobResult(KJob *job)
             }
             else
             {
-                KIO::SkipDialog dlg(this, true, job->errorString());
+                CSkipDialog dlg(this, true, job->errorString());
 
-                switch(dlg.exec())
+                switch(dlg.go())
                 {
-                    case KIO::S_SKIP:
+                    case CSkipDialog::SKIP:
                         cont=true;
                         break;
-                    case KIO::S_AUTO_SKIP:
+                    case CSkipDialog::AUTO_SKIP:
                         cont=itsAutoSkip=true;
                         break;
-                    case KIO::S_CANCEL:
+                    case CSkipDialog::CANCEL:
                         break;
                 }
             }
