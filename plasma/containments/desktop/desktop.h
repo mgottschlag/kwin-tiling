@@ -19,13 +19,15 @@
 #ifndef PLASMA_DESKTOP_H
 #define PLASMA_DESKTOP_H
 
+#include <QGraphicsItem>
 #include <QList>
+#include <QObject>
 
 #include <KIcon>
 
 #include <plasma/containment.h>
-#include <QGraphicsItem>
-#include <QObject>
+#include <plasma/widgets/widget.h>
+
 class QAction;
 class QTimeLine;
 
@@ -34,24 +36,37 @@ namespace Plasma
     class AppletBrowser;
 }
 
-class ToolBox : public QObject, public QGraphicsItem
+/*class Tool : public QObject, public QGraphicsItem
+{
+    Q_OBJECT
+
+public:
+    explicit Tool(QGraphicsItem *parent = 0);
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+
+};*/
+
+class ToolBox : public Plasma::Widget
 {
     Q_OBJECT
 
 public:
     explicit ToolBox(QGraphicsItem *parent = 0);
     QRectF boundingRect() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     QPainterPath shape() const;
 
 protected:
+    void paintWidget(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 protected slots:
     void animate(int frame);
+    void toolMoved(QGraphicsItem*);
 
 private:
+    QList<Plasma::Widget*> m_tools;
     QTimeLine *m_showTimeLine;
     KIcon m_icon;
     int m_size;
@@ -66,6 +81,7 @@ public:
     DefaultDesktop(QObject *parent, const QVariantList &args);
     ~DefaultDesktop();
     void init();
+    void constraintsUpdated(Plasma::Constraints constraints);
 
     QList<QAction*> contextActions();
 

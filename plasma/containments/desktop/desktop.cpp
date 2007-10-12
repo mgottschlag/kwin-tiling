@@ -28,6 +28,8 @@
 #include <KWindowSystem>
 
 #include "plasma/appletbrowser.h"
+#include "plasma/phase.h"
+#include "plasma/widgets/pushbutton.h"
 #include "workspace/kworkspace.h"
 
 #include "krunner_interface.h"
@@ -35,9 +37,16 @@
 #include "screensaver_interface.h"
 
 using namespace Plasma;
+/*
+Tool::Tool(QGraphicsItem *parent)
+    : QGraphicsItem(parent)
+{
+}
+*/
+
 
 ToolBox::ToolBox(QGraphicsItem *parent)
-    : QGraphicsItem(parent),
+    : Plasma::Widget(parent),
       m_showTimeLine(new QTimeLine(250, this)),
       m_icon("configure"),
       m_size(50),
@@ -48,21 +57,36 @@ ToolBox::ToolBox(QGraphicsItem *parent)
     connect(m_showTimeLine, SIGNAL(frameChanged(int)), this, SLOT(animate(int)));
     setAcceptsHoverEvents(true);
     setZValue(10000);
+
+    Plasma::PushButton *tool = new Plasma::PushButton("Add Widgets", this);
+    tool->resize(tool->sizeHint());
+    tool->setZValue(10001);
+    m_tools.append(tool);
+    tool = new Plasma::PushButton("Zoom Out", this);
+    tool->resize(tool->sizeHint());
+    tool->setZValue(10001);
+    m_tools.append(tool);
+
+    connect(Phase::self(), SIGNAL(movementComplete(QGraphicsItem*)), this, SLOT(toolMoved(QGraphicsItem*)));
 }
+
+/*QRectF ToolBox::sizeHint() const
+{
+    return boundingRect();
+}*/
 
 QRectF ToolBox::boundingRect() const
 {
     return QRectF(0, 0, m_size*2, m_size*2);
 }
 
-void ToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void ToolBox::paintWidget(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QPainterPath p = shape();
-    qreal halfway = m_size / 2.0;
     QRadialGradient gradient(QPoint(m_size*2, 0), m_size*3);
     gradient.setFocalPoint(QPointF(m_size*2, 0));
-    gradient.setColorAt(0, Qt::transparent);
-    gradient.setColorAt(.8, Qt::blue);
+    gradient.setColorAt(0, QColor(255, 255, 255, 128));
+    gradient.setColorAt(.8, QColor(128, 128, 128));
     painter->save();
     painter->setPen(Qt::NoPen);
     painter->setRenderHint(QPainter::Antialiasing, true);
@@ -84,6 +108,15 @@ QPainterPath ToolBox::shape() const
 void ToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
 //    Phase::self()->moveItem(this, Phase::SlideIn, QPoint(-25, -25));
+    int x = -25; //pos().x();
+    int y = 0; //pos().y();
+    foreach (Plasma::Widget* tool, m_tools) {
+        tool->show();
+        Phase::self()->moveItem(tool, Phase::SlideIn, QPoint(x, y));
+        x += 0;
+        y += tool->geometry().height() + 5;
+    }
+
     m_showTimeLine->setDirection(QTimeLine::Forward);
     if (m_showTimeLine->state() != QTimeLine::Running) {
         m_showTimeLine->start();
@@ -92,7 +125,14 @@ void ToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void ToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event)
 //    Phase::self->moveItem(this, Phase::SlideOut, boundingRect()QPoint(-50, -50));
+    int x = 0; //pos().x() + geometry().width();
+    int y = 0;
+    foreach (QGraphicsItem* tool, m_tools) {
+        Phase::self()->moveItem(tool, Phase::SlideOut, QPoint(x, y));
+    }
+
     m_showTimeLine->setDirection(QTimeLine::Backward);
     if (m_showTimeLine->state() != QTimeLine::Running) {
         m_showTimeLine->start();
@@ -101,12 +141,22 @@ void ToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void ToolBox::animate(int frame)
 {
+    Q_UNUSED(frame)
+/*    qreal percentage
+    foreach (Tool* tool, m_tools) {
+        tool
+    }*/
     update();
-    return;
-    prepareGeometryChange();
-    m_size = 50 + frame;
 }
 
+void ToolBox::toolMoved(QGraphicsItem *item)
+{
+    //kDebug() << "geometry is now " << static_cast<Plasma::Widget*>(item)->geometry();
+    if (m_showTimeLine->direction() == QTimeLine::Backward &&
+        m_tools.indexOf(static_cast<Plasma::Widget*>(item)) != -1) {
+        item->hide();
+    }
+}
 
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
@@ -115,8 +165,10 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_runCommandAction(0),
       m_lockAction(0),
       m_logoutAction(0),
+      m_toolbox(0),
       m_appletBrowser(0)
 {
+    kDebug() << "!!! loading desktop";
 }
 
 DefaultDesktop::~DefaultDesktop()
@@ -127,7 +179,15 @@ void DefaultDesktop::init()
 {
     Containment::init();
     m_toolbox = new ToolBox(this);
+    m_toolbox->updateGeometry();
     m_toolbox->setPos(geometry().width() - m_toolbox->boundingRect().width(), 0);
+}
+
+void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::ScreenConstraint && m_toolbox) {
+        m_toolbox->setPos(geometry().width() - m_toolbox->boundingRect().width(), 0);
+    }
 }
 
 void DefaultDesktop::launchExplorer()
