@@ -1,5 +1,0 @@
-case "$host" in
-  *-*-freebsd*) LIB_KVM="-lkvm" ;;
-  *) LIB_KVM=""  ;;
-esac
-AC_SUBST(LIB_KVM)

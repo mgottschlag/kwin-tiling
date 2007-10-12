@@ -35,10 +35,8 @@ set( kcmbackgroundlib_SRCS
 )
 
 include_directories(
-    ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/kdm
-    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker
     ${CMAKE_CURRENT_SOURCE_DIR}/libs
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/workspace
 )
@@ -76,16 +74,6 @@ add_subdirectory( ksystraycmd )
 add_subdirectory( doc )
 add_subdirectory( wallpapers )
 add_subdirectory( menu )
-
-# let it rest in peace for now. do not enable as it
-# is not enabled anymore in the release tarballs and
-# anything that depends on it would have to be fixed
-# anyway
-set(BUILD_KICKER FALSE)
-
-if(BUILD_KICKER)
-  add_subdirectory( kicker)
-endif(BUILD_KICKER)
 
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
   	add_subdirectory( kdm )
