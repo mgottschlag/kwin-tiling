@@ -324,7 +324,7 @@ void CJobRunner::doNext()
                 break;
             case CMD_DISABLE:
                 itsStatusLabel->setText(i18n("Disabling %1", (*itsIt).displayName()));
-                job=KIO::rename(*itsIt, toggle(*itsIt, KIO::HideProgressInfo), KIO::HideProgressInfo);
+                job=KIO::rename(*itsIt, toggle(*itsIt, false), KIO::HideProgressInfo);
                 break;
             case CMD_MOVE:
             {
