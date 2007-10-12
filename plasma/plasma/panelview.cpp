@@ -55,9 +55,7 @@ PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
     // KWin setup
     KWindowSystem::setType(winId(), NET::Dock);
     KWindowSystem::setState(winId(), NET::Sticky | NET::KeepAbove);
-
-    // Highly questionable behavior used in kicker..
-    // KWindowSystem::setOnAllDesktops(winId(), true);	
+    KWindowSystem::setOnAllDesktops(winId(), true);
 
     updateStruts();
 }
