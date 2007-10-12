@@ -29,7 +29,6 @@ class OutputGraphicsItem;
 
 class LayoutManager : public QObject
 {
-	Q_OBJECT
 public:
 	LayoutManager(RandRScreen *screen, QGraphicsScene *scene);
 	~LayoutManager();
@@ -43,6 +42,11 @@ protected:
 private:
 	RandRScreen *m_screen;
 	QGraphicsScene *m_scene;
+
+public:
+
+	Q_OBJECT
+
 };
 
 #endif // HAS_RANDR_1_2
