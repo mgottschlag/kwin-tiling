@@ -33,10 +33,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kapplication.h>
 #include <kworkspace.h>
 #include <QTimer>
-#include <Qt3Support/Q3CString>
 #include <QTime>
 #include <QMap>
-
+#include <Qt3Support/Q3CString>
 #include "server2.h"
 
 #define SESSION_PREVIOUS_LOGOUT "saved at previous logout"
@@ -198,7 +197,6 @@ private:
     QString wm;
     QString sessionGroup;
     QString sessionName;
-    Q3CString launcher;
     QTimer protectionTimer;
     QTimer restoreTimer;
     QString xonCommand;
