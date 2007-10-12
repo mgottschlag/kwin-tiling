@@ -26,6 +26,7 @@
 #include <KIcon>
 
 #include <plasma/containment.h>
+#include <plasma/phase.h>
 #include <plasma/widgets/widget.h>
 
 class QAction;
@@ -47,7 +48,7 @@ public:
 
 };*/
 
-class ToolBox : public Plasma::Widget
+class ToolBox : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
@@ -56,21 +57,24 @@ public:
     QRectF boundingRect() const;
     QPainterPath shape() const;
 
+    void addTool(Plasma::Widget* tool);
+
 protected:
-    void paintWidget(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 protected slots:
-    void animate(int frame);
+    void animate(qreal progress);
     void toolMoved(QGraphicsItem*);
 
 private:
-    QList<Plasma::Widget*> m_tools;
-    QTimeLine *m_showTimeLine;
     KIcon m_icon;
     int m_size;
     bool m_hidden;
+    bool m_showing;
+    Plasma::Phase::AnimId m_animId;
+    int m_animFrame;
 };
 
 class DefaultDesktop : public Plasma::Containment
