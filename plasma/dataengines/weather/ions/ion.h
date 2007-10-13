@@ -51,16 +51,12 @@ public:
     * For example fetching the list of available cities or weather data sources should be fetched here.
     */
     virtual void init(void) = 0;
-    /**
-    * Reimplement to do the fetching of weather data.
-    * This is being called just before calling updateData() 
-    */
-    virtual void fetch(void) = 0;
 
     /**
     * Increment ion counter. This is used to watch if the ion is being used.
     */
     void ref();
+
     /**
     * Decrement ion counter.
     */
@@ -71,35 +67,12 @@ public:
     * @return true if the ion is being used, false otherwise
     */
     bool isUsed() const;
-    
+
     /**
     * Returns whether the ion is valid. Not used for now.
     * @return true if the ion is valid.
     */
     bool isValid() const;
-
-    /**
-    * Reimplement this to set the data to the engine by using setData() calls.
-    * You may have to force to call this method inside your ion everytime new data has been arrived from the fetching job.
-    */
-    virtual void updateData(void) = 0;
-
-    /**
-    * Returns the source array.
-    * @return Returns the array of source the ion has.
-    */
-    QVector<QString> ionSourceDict() const;
-    /**
-    * Set the datasource name to the array of sources
-    * @param key The name of the datasource
-    */
-    void setSource(QString key);
-
-    /**
-    * Remove a datasource entry from the array
-    * @param key The name of the datasource
-    */
-    void removeSource(QString key);
 
     enum ionOptions { UNITS, TIMEFORMAT, WINDFORMAT };
     /**
@@ -107,6 +80,29 @@ public:
     */
     virtual void option(int option, QVariant value) = 0;
 
+public slots:
+    bool updateSource(const QString& source);
+
+protected:
+    /**
+     * Call this method to flush waiting source requests that may be pending
+     * initialization
+     *
+     * @arg initialized whether or not the ion is currently ready to fetch data
+     */
+    void setInitialized(bool initialized);
+
+    /**
+     * reimplemented from DataEngine
+     */
+    bool sourceRequested(const QString &name);
+
+    /**
+     * Reimplement to fetch the data from the ion
+     * 
+     */
+    virtual bool updateIonSource(const QString &name) = 0;
+   
 private:
     class Private;
     Private* const d;

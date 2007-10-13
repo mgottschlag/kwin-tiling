@@ -24,12 +24,14 @@ class IonInterface::Private : public QObject
 {
 public:
     Private(IonInterface *i)
-            : ion(i) {}
+            : ion(i),
+              initialized(false)
+    {}
 
     int ref;
     IonInterface *ion;
     bool valid;
-    QVector<QString> ionSource;  // Array of this ions sources
+    bool initialized;
 };
 
 IonInterface::IonInterface(QObject *parent)
@@ -62,29 +64,38 @@ bool IonInterface::isValid() const
     return d->valid;
 }
 
-// Set the Ions datasource name listing. Used by weather dataengine
-void IonInterface::setSource(QString key)
+bool IonInterface::sourceRequested(const QString &source)
 {
-    if (!d->ionSource.contains(key)) {
-        d->ionSource.append(key);
+    setData(source, Plasma::DataEngine::Data());
+   
+    if (d->initialized) {
+        this->updateSource(source);
     }
+
+    return true;
 }
 
-// Return an array of sources from a Ion
-QVector<QString> IonInterface::ionSourceDict() const
+bool IonInterface::updateSource(const QString& source) 
 {
-    return d->ionSource;
-}
-
-// Deletes a datasource from the ion
-void IonInterface::removeSource(QString key)
-{
-     QVector<QString>::iterator it;
-     for (it = d->ionSource.begin(); it != d->ionSource.end(); ++it) {
-         if (*it == key)  {
-             kDebug() << "Going to remove: " << *it;
-             d->ionSource.erase(it);
-             break;
+     kDebug() << "SOURCE IS = " << source; 
+     if (d->initialized) {
+         if(this->updateIonSource(source)) {
+            return true;
+         } else {
+            return false;
          }
      }
+
+     return false; 
+}
+
+void IonInterface::setInitialized(bool initialized)
+{
+    d->initialized = initialized;
+
+    if (d->initialized) {
+        foreach (const QString &source, sources()) {
+            updateSource(source);
+        }
+    }
 }
