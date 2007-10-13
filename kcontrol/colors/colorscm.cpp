@@ -79,11 +79,17 @@ void KColorCm::populateSchemeList()
     QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*");
     for (int i = 0; i < schemeFiles.size(); ++i)
     {
-        // TODO: add some processing to show some sample of the colorscheme in the icon
-        // like kde3 colors kcm had
+        // get the file name
         QString filename = schemeFiles[i];
         QFileInfo info(filename);
-        QIcon icon = createSchemePreviewIcon(QPalette(), QPalette());
+
+        // create the palettes for the preview icon
+        KSharedConfigPtr config = KSharedConfig::openConfig(filename);
+        QPalette pal = KGlobalSettings::createApplicationPalette(config);
+        QPalette wm = createWmPreviewPalette(config);
+
+        // add the entry
+        QIcon icon = createSchemePreviewIcon(pal, wm);
         schemeList->addItem(new QListWidgetItem(icon, info.fileName()));
     }
 }
@@ -254,6 +260,37 @@ void KColorCm::variesClicked()
     }
 }
 
+QPalette KColorCm::createWmPreviewPalette(const KSharedConfigPtr &config)
+{
+    QPalette palette;
+    QColor color;
+
+    KConfigGroup group(config, "WM");
+
+    // use KGS accessors to get the defaults when none have been written to m_config
+    color = group.readEntry("activeBackground");
+    if (!color.isValid())
+        color = KGlobalSettings::activeTitleColor();
+    palette.setBrush(QPalette::Active, QPalette::Window, color);
+
+    color = group.readEntry("activeForeground");
+    if (!color.isValid())
+        color = KGlobalSettings::activeTextColor();
+    palette.setBrush(QPalette::Active, QPalette::WindowText, color);
+
+    color = group.readEntry("inactiveBackground");
+    if (!color.isValid())
+        color = KGlobalSettings::inactiveTitleColor();
+    palette.setBrush(QPalette::Inactive, QPalette::Window, color);
+
+    color = group.readEntry("inactiveForeground");
+    if (!color.isValid())
+        color = KGlobalSettings::activeTitleColor();
+    palette.setBrush(QPalette::Inactive, QPalette::WindowText, color);
+
+    return palette;
+}
+
 QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const QPalette &wm)
 {
     const uchar bits1[] = { 0xff, 0xff, 0xff, 0x2c, 0x16, 0x0b };
@@ -273,8 +310,8 @@ QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const QPalette &w
     p.fillRect( 8,  1, 7, 7, pal.brush(QPalette::Button));
     p.fillRect( 9,  2, 5, 2, QBrush(pal.color(QPalette::ButtonText), b1));
 
-    p.fillRect(15,  1, 7, 7, pal.brush(QPalette::Active, QPalette::Window));
-    p.fillRect(16,  2, 5, 2, QBrush(pal.color(QPalette::Active, QPalette::WindowText), b1));
+    p.fillRect(15,  1, 7, 7, wm.brush(QPalette::Active, QPalette::Window));
+    p.fillRect(16,  2, 5, 2, QBrush(wm.color(QPalette::Active, QPalette::WindowText), b1));
 
     p.fillRect( 1,  8, 7, 7, pal.brush(QPalette::Base));
     p.fillRect( 2, 12, 5, 2, QBrush(pal.color(QPalette::Text), b2));
@@ -282,8 +319,8 @@ QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const QPalette &w
     p.fillRect( 8,  8, 7, 7, pal.brush(QPalette::Highlight));
     p.fillRect( 9, 12, 5, 2, QBrush(pal.color(QPalette::HighlightedText), b2));
 
-    p.fillRect(15,  8, 7, 7, pal.brush(QPalette::Inactive, QPalette::Window));
-    p.fillRect(16, 12, 5, 2, QBrush(pal.color(QPalette::Inactive, QPalette::WindowText), b2));
+    p.fillRect(15,  8, 7, 7, wm.brush(QPalette::Inactive, QPalette::Window));
+    p.fillRect(16, 12, 5, 2, QBrush(wm.color(QPalette::Inactive, QPalette::WindowText), b2));
 
     p.end();
 

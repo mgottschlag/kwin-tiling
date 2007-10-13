@@ -84,6 +84,9 @@ private slots:
 
 private:
 
+    /** create a color palette with the WM colors, for createSchemePreviewIcon */
+    static QPalette createWmPreviewPalette(const KSharedConfigPtr&);
+
     /** create a preview of a color scheme */
     static QPixmap createSchemePreviewIcon(const QPalette &pal, const QPalette &wm);
 
