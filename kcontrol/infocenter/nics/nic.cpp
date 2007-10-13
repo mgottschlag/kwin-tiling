@@ -36,13 +36,13 @@
 #include <kglobal.h>
 
 #include <QLayout>
-#include <Qt3Support/Q3CheckListItem>
 #include <QPushButton>
 #include <QTabWidget>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <Q3PtrList>
+#include <QTreeWidget>
 
 #include "nic.h"
 
@@ -97,15 +97,11 @@ KCMNic::KCMNic(QWidget *parent, const QVariantList &)
    QVBoxLayout *box=new QVBoxLayout(this);
    box->setMargin(0);
    box->setSpacing(KDialog::spacingHint());
-   m_list=new Q3ListView(this);
+   m_list=new QTreeWidget(this);
    box->addWidget(m_list);
-   m_list->addColumn(i18n("Name"));
-   m_list->addColumn(i18n("IP Address"));
-   m_list->addColumn(i18n("Network Mask"));
-   m_list->addColumn(i18n("Type"));
-   m_list->addColumn(i18n("State"));
-   m_list->addColumn(i18n("HWAddr"));
-   m_list->setAllColumnsShowFocus(true);
+   QStringList columns;
+   columns<<i18n("Name")<<i18n("IP Address")<<i18n("Network Mask")<<i18n("Type")<<i18n("State")<<i18n("HWAddr");
+   m_list->setHeaderLabels(columns);
    QHBoxLayout *hbox=new QHBoxLayout();
    box->addItem(hbox);
    m_updateButton=new QPushButton(i18n("&Update"),this);
@@ -132,8 +128,11 @@ void KCMNic::update()
    m_list->clear();
    NICList *nics=findNICs();
    nics->setAutoDelete(true);
-   for (MyNIC* tmp=nics->first(); tmp!=0; tmp=nics->next())
-      new Q3ListViewItem(m_list,tmp->name, tmp->addr, tmp->netmask, tmp->type, tmp->state, tmp->HWaddr);
+   for (MyNIC* tmp=nics->first(); tmp!=0; tmp=nics->next()) {
+      QStringList lst;
+      lst << tmp->name<<tmp->addr<<tmp->netmask<<tmp->type<<tmp->state<<tmp->HWaddr;
+      new QTreeWidgetItem(m_list,lst);
+   }
    delete nics;
 }
 

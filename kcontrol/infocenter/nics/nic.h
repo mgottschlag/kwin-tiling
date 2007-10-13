@@ -24,7 +24,7 @@
 #include <kcmodule.h>
 
 class QPushButton;
-class Q3ListView;
+class QTreeWidget;
 
 class KCMNic:public KCModule
 {
@@ -36,7 +36,7 @@ class KCMNic:public KCModule
       void update();
 
    protected:
-      Q3ListView *m_list;
+      QTreeWidget *m_list;
       QPushButton *m_updateButton;
 };
 
