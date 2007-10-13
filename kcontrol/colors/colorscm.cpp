@@ -23,6 +23,8 @@
 #include <QtCore/QFileInfo>
 #include <QtGui/QHeaderView>
 #include <QtGui/QStackedWidget>
+#include <QtGui/QPainter>
+#include <QtGui/QBitmap>
 #include <QtDBus/QtDBus>
 
 #include <KAboutData>
@@ -81,7 +83,8 @@ void KColorCm::populateSchemeList()
         // like kde3 colors kcm had
         QString filename = schemeFiles[i];
         QFileInfo info(filename);
-        schemeList->addItem(info.fileName());
+        QIcon icon = createSchemePreviewIcon(QPalette(), QPalette());
+        schemeList->addItem(new QListWidgetItem(icon, info.fileName()));
     }
 }
 
@@ -249,6 +252,42 @@ void KColorCm::variesClicked()
         changeColor(row, color);
         m_stackedWidgets[row - 9]->setCurrentIndex(0);
     }
+}
+
+QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const QPalette &wm)
+{
+    const uchar bits1[] = { 0xff, 0xff, 0xff, 0x2c, 0x16, 0x0b };
+    const uchar bits2[] = { 0x68, 0x34, 0x1a, 0xff, 0xff, 0xff };
+    const QSize bitsSize(24,2);
+    const QBitmap b1 = QBitmap::fromData(bitsSize, bits1);
+    const QBitmap b2 = QBitmap::fromData(bitsSize, bits2);
+
+    QPixmap pixmap(23, 16);
+    pixmap.fill(Qt::black); // ### use some color other than black for borders?
+
+    QPainter p(&pixmap);
+
+    p.fillRect( 1,  1, 7, 7, pal.brush(QPalette::Window));
+    p.fillRect( 2,  2, 5, 2, QBrush(pal.color(QPalette::WindowText), b1));
+
+    p.fillRect( 8,  1, 7, 7, pal.brush(QPalette::Button));
+    p.fillRect( 9,  2, 5, 2, QBrush(pal.color(QPalette::ButtonText), b1));
+
+    p.fillRect(15,  1, 7, 7, pal.brush(QPalette::Active, QPalette::Window));
+    p.fillRect(16,  2, 5, 2, QBrush(pal.color(QPalette::Active, QPalette::WindowText), b1));
+
+    p.fillRect( 1,  8, 7, 7, pal.brush(QPalette::Base));
+    p.fillRect( 2, 12, 5, 2, QBrush(pal.color(QPalette::Text), b2));
+
+    p.fillRect( 8,  8, 7, 7, pal.brush(QPalette::Highlight));
+    p.fillRect( 9, 12, 5, 2, QBrush(pal.color(QPalette::HighlightedText), b2));
+
+    p.fillRect(15,  8, 7, 7, pal.brush(QPalette::Inactive, QPalette::Window));
+    p.fillRect(16, 12, 5, 2, QBrush(pal.color(QPalette::Inactive, QPalette::WindowText), b2));
+
+    p.end();
+
+    return pixmap;
 }
 
 void KColorCm::updateColorSchemes()

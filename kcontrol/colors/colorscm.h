@@ -84,6 +84,9 @@ private slots:
 
 private:
 
+    /** create a preview of a color scheme */
+    static QPixmap createSchemePreviewIcon(const QPalette &pal, const QPalette &wm);
+
     /** populate the schemeList with color schemes found on the system */
     void populateSchemeList();
 
