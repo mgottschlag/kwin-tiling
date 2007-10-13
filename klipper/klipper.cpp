@@ -35,6 +35,7 @@
 #include <kglobalsettings.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
+#include <KConfigSkeleton>
 
 #include "configdialog.h"
 #include "klipper.h"
@@ -480,7 +481,7 @@ void Klipper::slotConfigure()
         readConfiguration( m_config.data() );
     }
 
-    ConfigDialog *dlg = new ConfigDialog( myURLGrabber->actionList(),
+    ConfigDialog *dlg = new ConfigDialog( 0, new KConfigSkeleton(), myURLGrabber->actionList(),
                                           globalKeys, isApplet() );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );

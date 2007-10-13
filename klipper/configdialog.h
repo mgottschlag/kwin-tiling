@@ -30,9 +30,11 @@
 #include <k3listview.h>
 #include <knuminput.h>
 #include <kvbox.h>
+#include <KConfigDialog>
 
 #include "urlgrabber.h"
 
+class KConfigSkeleton;
 class KGlobalAccel;
 class KShortcutsEditor;
 class K3ListView;
@@ -47,7 +49,7 @@ class GeneralWidget : public KVBox
     friend class ConfigDialog;
 
 public:
-    GeneralWidget( QWidget *parent, const char *name );
+    GeneralWidget( QWidget *parent );
     ~GeneralWidget();
 
 private Q_SLOTS:
@@ -69,7 +71,7 @@ class AdvancedWidget : public KVBox
     Q_OBJECT
 
 public:
-    explicit AdvancedWidget( QWidget *parent = 0L, const char *name = 0L );
+    explicit AdvancedWidget( QWidget *parent = 0L );
     ~AdvancedWidget();
 
     void setWMClasses( const QStringList& items );
@@ -86,7 +88,7 @@ class ActionWidget : public KVBox
     friend class ConfigDialog;
 
 public:
-    ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent, const char *name );
+    ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent );
     ~ActionWidget();
 
     /**
@@ -130,12 +132,12 @@ private:
 };*/
 
 
-class ConfigDialog : public KPageDialog
+class ConfigDialog : public KConfigDialog
 {
     Q_OBJECT
 
 public:
-    ConfigDialog( const ActionList *list, KGlobalAccel *accel, bool isApplet );
+    ConfigDialog( QWidget *parent, KConfigSkeleton *config, const ActionList *list, KGlobalAccel *accel, bool isApplet );
     ~ConfigDialog();
 
     ActionList * actionList() const { return actionWidget->actionList(); }

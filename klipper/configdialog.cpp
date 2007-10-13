@@ -42,30 +42,26 @@
 
 #include "configdialog.h"
 
-ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
-                            bool isApplet )
-    : KPageDialog()
+ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const ActionList *list, KGlobalAccel *accel,
+                           bool isApplet)
+    : KConfigDialog(parent, "preferences", skeleton)
 {
-    setFaceType( Tabbed );
-    setCaption( i18n("Configure") );
-    setButtons( Ok | Cancel | Help );
-
     if ( isApplet )
         setHelp( QString(), "klipper" );
 
-    KVBox *w = 0L; // the parent for the widgets
+    QWidget *w = 0; // the parent for the widgets
 
-    w = new KVBox( this );
-    generalWidget = new GeneralWidget( w, "general widget" );
-    addPage( w, i18n("&General") );
+    w = new QWidget(this);
+    generalWidget = new GeneralWidget(w);
+    addPage(generalWidget, i18nc("General Config", "General"), "klipper", i18n("General Config"));
 
-    w = new KVBox( this );
-    actionWidget = new ActionWidget( list, this, w, "actions widget" );
-    addPage( w, i18n("Ac&tions") );
+    w = new QWidget(this);
+    actionWidget = new ActionWidget( list, this, w);
+    addPage(actionWidget, i18nc("Actions Config", "Actions"), "configure", i18n("Actions Config"));
 
-    w = new KVBox( this );
+    w = new QWidget(this);
     shortcutsWidget = new KShortcutsEditor( w, KShortcutsEditor::GlobalAction );
-    addPage( w, i18n("&Shortcuts") );
+    addPage(shortcutsWidget, i18nc("Shortcuts Config", "Shortcuts"), "configure-shortcuts", i18n("Shortcuts Config"));
 }
 
 
@@ -100,10 +96,9 @@ void ConfigDialog::commitShortcuts()
 ////
 
 
-GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
+GeneralWidget::GeneralWidget( QWidget *parent )
     : KVBox( parent )
 {
-    setObjectName(name);
     setSpacing(KDialog::spacingHint());
 
     cbMousePos = new QCheckBox( i18n("&Popup menu at mouse-cursor position"),
@@ -227,13 +222,10 @@ void ListView::rename( Q3ListViewItem* item, int c )
 }
 
 
-ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent,
-                            const char *name )
+ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent )
     : KVBox( parent ),
       advancedWidget( 0L )
 {
-    setObjectName(name);
-
     Q_ASSERT( list != 0L );
 
     QLabel *lblAction = new QLabel(
@@ -433,11 +425,9 @@ void ActionWidget::slotAdvanced()
     }
 }
 
-AdvancedWidget::AdvancedWidget( QWidget *parent, const char *name )
+AdvancedWidget::AdvancedWidget( QWidget *parent )
     : KVBox( parent )
 {
-    setObjectName(name);
-
     editListBox = new KEditListBox( i18n("D&isable Actions for Windows of Type WM_CLASS"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
 
     editListBox->setWhatsThis(
