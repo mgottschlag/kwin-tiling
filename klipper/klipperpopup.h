@@ -17,14 +17,13 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _KLIPPERPOPUP_H_
-#define _KLIPPERPOPUP_H_
+#ifndef KLIPPERPOPUP_H
+#define KLIPPERPOPUP_H
+
+#include <QList>
+#include <QWidgetAction>
 
 #include <kmenu.h>
-#include <Qt3Support/Q3PtrList>
-
-//Added by qt3to4:
-#include <QKeyEvent>
 
 class History;
 class KHelpMenu;
@@ -96,7 +95,7 @@ private:
     /**
      * (unowned) actions to plug into the primary popup menu
      */
-    Q3PtrList<QAction> m_actions;
+    QList<QAction*> m_actions;
 
     /**
      * Proxy helper object used to track history items
@@ -109,9 +108,9 @@ private:
     KLineEdit* m_filterWidget;
 
     /**
-     * id of search widget, for convenience
+     * Action of search widget
      */
-    int m_filterWidgetId;
+    QWidgetAction *m_filterWidgetAction;
 
     /**
      * The current number of history items in the clipboard

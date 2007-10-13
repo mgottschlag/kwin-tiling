@@ -22,41 +22,19 @@
 */
 
 #include <QClipboard>
-#include <QCursor>
-#include <QDateTime>
-#include <QFile>
-#include <QPainter>
-
-#include <QtGui/QMacMime>
-#include <Qt3Support/Q3ColorDrag>
-#include <QPaintEvent>
-#include <QMouseEvent>
-#include <QX11Info>
+#include <QtDBus/QDBusConnection>
 
 #include <kaboutdata.h>
-#include <kaction.h>
-#include <kapplication.h>
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kicon.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <ksavefile.h>
 #include <ksessionmanager.h>
 #include <kstandarddirs.h>
-#include <kstringhandler.h>
 #include <ksystemtrayicon.h>
-#include <k3urldrag.h>
-#include <kwindowsystem.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
-#include <QtDBus/QDBusConnection>
-#include <kiconloader.h>
-#include <khelpmenu.h>
-#include <kstandardguiitem.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
-#include <kconfiggroup.h>
 
 #include "configdialog.h"
 #include "klipper.h"
@@ -188,8 +166,6 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     poll = new ClipboardPoll;
     connect( poll, SIGNAL( clipboardChanged( bool ) ),
              this, SLOT( newClipData( bool ) ) );
-
-    m_pixmap = KSystemTrayIcon::loadIcon( "klipper" ).pixmap();
 
     globalKeys = KGlobalAccel::self();
     KActionCollection* actionCollection = collection;

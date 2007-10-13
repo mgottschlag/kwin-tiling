@@ -19,16 +19,11 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#include <kmessagebox.h>
-#include <khelpmenu.h>
-#include <kiconloader.h>
-#include <klineedit.h>
 
+#include <khelpmenu.h>
+#include <klineedit.h>
 #include <klocale.h>
-#include <kaction.h>
-#include <kglobalsettings.h>
 #include <kwindowsystem.h>
-#include <kapplication.h>
 #include <kdebug.h>
 
 #include "klipperpopup.h"
@@ -45,16 +40,16 @@ namespace {
 #ifdef DEBUG_EVENTS__
 kdbgstream& operator<<( kdbgstream& stream, const QKeyEvent& e ) {
     stream << "(QKeyEvent(text=" << e.text() << ",key=" << e.key() << ( e.isAccepted()?",accepted":",ignored)" ) << ",count=" << e.count();
-    if ( e.state() & Qt::AltModifier ) {
+    if ( e.modifiers() & Qt::AltModifier ) {
         stream << ",ALT";
     }
-    if ( e.state() & Qt::ControlModifier ) {
+    if ( e.modifiers() & Qt::ControlModifier ) {
         stream << ",CTRL";
     }
-    if ( e.state() & Qt::MetaModifier ) {
+    if ( e.modifiers() & Qt::MetaModifier ) {
         stream << ",META";
     }
-    if ( e.state() & Qt::ShiftModifier ) {
+    if ( e.modifiers() & Qt::ShiftModifier ) {
         stream << ",SHIFT";
     }
     if ( e.isAutoRepeat() ) {
@@ -73,10 +68,6 @@ kdbgstream& operator<<( kdbgstream& stream, const QKeyEvent& e ) {
  */
 class KLineEditBlackKey : public KLineEdit {
 public:
-    KLineEditBlackKey(const QString& string, QWidget* parent )
-        : KLineEdit( string, parent )
-        {}
-
     KLineEditBlackKey( QWidget* parent )
         : KLineEdit( parent )
         {}
@@ -100,7 +91,7 @@ KlipperPopup::KlipperPopup( History* history )
       helpmenu( new KHelpMenu( this, Klipper::aboutData(), false ) ),
       m_popupProxy( 0 ),
       m_filterWidget( 0 ),
-      m_filterWidgetId( 10 ),
+      m_filterWidgetAction( 0 ),
       n_history_items( 0 )
 {
     KWindowInfo i = KWindowSystem::windowInfo( winId(), NET::WMGeometry );
@@ -123,8 +114,7 @@ void KlipperPopup::slotAboutToShow() {
         if ( !m_filterWidget->text().isEmpty() ) {
             m_dirty = true;
             m_filterWidget->clear();
-            setItemVisible( m_filterWidgetId, false );
-            m_filterWidget->hide();
+            m_filterWidgetAction->setVisible(false);
         }
     }
     ensureClean();
@@ -141,52 +131,43 @@ void KlipperPopup::ensureClean() {
 }
 
 void KlipperPopup::buildFromScratch() {
-    m_filterWidget = new KLineEditBlackKey( this );
-    addTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
-#ifdef __GNUC__
-#warning "KlipperPopup::buildFromScratch, insertItem does not take a QWidget as first parameter"
-#endif
-#if 0
-    m_filterWidgetId = insertItem( m_filterWidget, m_filterWidgetId, 1 );
-#endif
-    m_filterWidget->setFocusPolicy( Qt::NoFocus );
-    setItemVisible( m_filterWidgetId, false );
-    m_filterWidget->hide();
-    QString lastGroup;
+    addTitle(KIcon("klipper"), i18n("Klipper - Clipboard Tool"));
 
-    // Bit of a hack here. It would be better of KHelpMenu could be an action.
-    //    Insert Help-menu at the butttom of the "default" group.
-    QString group;
-    QString defaultGroup( "default" );
-    for ( QAction* action = m_actions.first(); action; action = m_actions.next() ) {
-#ifdef __GNUC__
-#warning no more group() in action, this hack needs to be revised
-#endif
-        //group = action->group();
-        if ( group != lastGroup ) {
-            if ( lastGroup == defaultGroup ) {
-                insertItem( KIcon("help-contents"), KStandardGuiItem::help().text(), helpmenu->menu() );
-            }
+    m_filterWidget = new KLineEditBlackKey(this);
+    m_filterWidgetAction = new QWidgetAction(this);
+    m_filterWidgetAction->setDefaultWidget(m_filterWidget);
+
+    addAction(m_filterWidgetAction);
+    m_filterWidget->setFocusPolicy( Qt::NoFocus );
+    m_filterWidgetAction->setVisible(false);
+
+    QListIterator<QAction *> i(m_actions);
+    for (int i = 0; i < m_actions.count(); i++) {
+        if (i == 0)
+            addSeparator();
+
+        if (i + 1 == m_actions.count()) {
+            addMenu(helpmenu->menu())->setIcon(KIcon("help-contents"));
             addSeparator();
         }
-        lastGroup = group;
-        addAction(action);
+
+        addAction(m_actions.at(i));
     }
 
     if ( KGlobalSettings::insertTearOffHandle() ) {
-        insertTearOffHandle();
+        setTearOffEnabled(true);
     }
 
 }
 
 void KlipperPopup::rebuild( const QString& filter ) {
 
-    bool from_scratch = ( count() == 0 );
+    bool from_scratch = (actions().count() == 0);
     if ( from_scratch ) {
         buildFromScratch();
     } else {
         for ( int i=0; i<n_history_items; i++ ) {
-            removeItemAt( TOP_HISTORY_ITEM_INDEX );
+            removeAction(actions().at(TOP_HISTORY_ITEM_INDEX));
         }
     }
 
@@ -202,30 +183,26 @@ void KlipperPopup::rebuild( const QString& filter ) {
 
     if ( n_history_items == 0 ) {
         if ( m_history->empty() ) {
-            insertItem( QSempty, -1, TOP_HISTORY_ITEM_INDEX  );
+            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(QSempty, this));
         } else {
-            insertItem( QSnomatch, -1, TOP_HISTORY_ITEM_INDEX );
+            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(QSnomatch, this));
         }
         n_history_items++;
     } else {
         if ( history()->topIsUserSelected() ) {
-            int id = idAt( TOP_HISTORY_ITEM_INDEX );
-            if ( id != -1 ) {
-                setItemChecked( id,true );
+            QAction *action = actions().at(TOP_HISTORY_ITEM_INDEX);
+            if (action) {
+                action->setChecked(true);
             }
         }
     }
 
-
     m_dirty = false;
-
 }
 
 void KlipperPopup::plugAction( QAction* action ) {
-    m_actions.append( action );
+    m_actions.append(action);
 }
-
-
 
 
 /* virtual */
@@ -233,7 +210,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
     // If alt-something is pressed, select a shortcut
     // from the menu. Do this by sending a keyPress
     // without the alt-modifier to the superobject.
-    if ( e->state() & Qt::AltModifier ) {
+    if ( e->modifiers() & Qt::AltModifier ) {
         QKeyEvent ke( QEvent::KeyPress,
                       e->key(),
                       e->modifiers() ^ Qt::AltModifier,
@@ -242,9 +219,9 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
                       e->count() );
         KMenu::keyPressEvent( &ke );
 #ifdef DEBUG_EVENTS__
-        kDebug() << "Passing this event to ancestor (KMenu): " << e "->" << ke;
+        kDebug() << "Passing this event to ancestor (KMenu): " << e << "->" << ke;
 #endif
-        if ( ke.isAccepted() ) {
+        if (ke.isAccepted()) {
             e->accept();
             return;
         } else {
@@ -269,15 +246,9 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 #ifdef DEBUG_EVENTS__
         kDebug() << "Passing this event to ancestor (KMenu): " << e;
 #endif
-        KMenu::keyPressEvent( e );
-        if ( isItemActive( m_filterWidgetId ) ) {
-#ifdef __GNUC__
-#warning setActiveItem do not exist in Q3PopupMenu class
-#endif
-#if 0
-            setActiveItem( TOP_HISTORY_ITEM_INDEX );
-#endif
-        }
+        KMenu::keyPressEvent(e);
+        if (activeAction() ==  m_filterWidgetAction)
+            setActiveAction(m_actions.at(TOP_HISTORY_ITEM_INDEX));
         break;
     }
     default:
@@ -285,32 +256,24 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 #ifdef DEBUG_EVENTS__
         kDebug() << "Passing this event down to child (KLineEdit): " << e;
 #endif
-	QString lastString = m_filterWidget->text();
-        QApplication::sendEvent( m_filterWidget, e );
-        if ( m_filterWidget->text().isEmpty() ) {
-            if ( isItemVisible( m_filterWidgetId ) )
-            {
-                setItemVisible( m_filterWidgetId, false );
-                m_filterWidget->hide();
-            }
-        }
-        else if ( !isItemVisible( m_filterWidgetId ) )
-        {
-            setItemVisible( m_filterWidgetId, true );
-            m_filterWidget->show();
+        QString lastString = m_filterWidget->text();
+        QApplication::sendEvent(m_filterWidget, e);
 
+        if (m_filterWidget->text().isEmpty()) {
+            if (m_filterWidgetAction->isVisible())
+                m_filterWidgetAction->setVisible(false);
         }
-	if ( m_filterWidget->text() != lastString) {
+        else if (!m_filterWidgetAction->isVisible() )
+            m_filterWidgetAction->setVisible(true);
+
+        if (m_filterWidget->text() != lastString) {
             slotHistoryChanged();
-            rebuild( m_filterWidget->text() );
-	}
-        break;
+            rebuild(m_filterWidget->text());
+        }
 
+        break;
     } //default:
     } //case
-
 }
-
-
 
 #include "klipperpopup.moc"

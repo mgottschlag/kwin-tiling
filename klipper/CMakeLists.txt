@@ -1,19 +1,12 @@
-
 KDE4_NO_ENABLE_FINAL(klipper)
 include_directories(
    ${KDEBASE_WORKSPACE_SOURCE_DIR}/kicker/libkicker/ )
 
-########### next target ###############
-
-add_definitions (-DQT3_SUPPORT)
-
-########### next target ###############
+add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 set(libklipper_common_SRCS klipper.cpp urlgrabber.cpp configdialog.cpp clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp  historyimageitem.cpp historyurlitem.cpp )
 
-
 set(klipper_KDEINIT_SRCS ${libklipper_common_SRCS} main.cpp tray.cpp)
-
 
 kde4_add_kdeinit_executable( klipper ${klipper_KDEINIT_SRCS})
 
@@ -34,6 +27,4 @@ install(FILES klipper.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 install(FILES klipperrc.upd klippershortcuts.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR})
 install(PROGRAMS klipper-1-2.pl klipper-kde31.sh DESTINATION  ${KCONF_UPDATE_INSTALL_DIR})
 
-
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
-

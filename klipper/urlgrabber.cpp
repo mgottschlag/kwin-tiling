@@ -186,9 +186,9 @@ void URLGrabber::actionMenu( bool wm_class_check )
 
                 int id;
                 if ( command->pixmap.isEmpty() )
-                    id = myMenu->insertItem( item );
+                    id = myMenu->actions().indexOf(myMenu->addAction(item));
                 else
-                    id = myMenu->insertItem( SmallIcon(command->pixmap), item);
+                    id = myMenu->actions().indexOf(myMenu->addAction(KIcon(command->pixmap), item));
                 myCommandMapper.insert( id, command );
             }
         }
@@ -272,7 +272,7 @@ void URLGrabber::editData()
     dlg->adjustSize();
 
     if ( dlg->exec() == KDialog::Accepted ) {
-        myClipData = edit->text();
+        myClipData = edit->toPlainText();
         delete dlg;
         QTimer::singleShot( 0, this, SLOT( slotActionMenu() ) );
     }
@@ -357,7 +357,7 @@ bool URLGrabber::isAvoidedWindow() const
                             &unused, &data_ret ) == Success) {
         if ( type_ret == XA_STRING && format_ret == 8 && nitems_ret > 0 ) {
             wmClass = QString::fromUtf8( (const char *) data_ret );
-            ret = (myAvoidWindows.find( wmClass ) != myAvoidWindows.end());
+            ret = (myAvoidWindows.indexOf(wmClass) != -1);
         }
 
         XFree( data_ret );
