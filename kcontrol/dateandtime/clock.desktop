@@ -12,7 +12,7 @@ X-KDE-SubstituteUID=true
 X-KDE-ParentApp=kcontrol
 
 #FIXME should this be in system settings when we can get to it through the panel?
-X-KDE-System-Settings-Parent-Category=date-and-time
+X-KDE-System-Settings-Parent-Category=computer-administration
 
 Name=Date & Time
 Name[af]=Datum & Tyd
