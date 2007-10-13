@@ -80,22 +80,19 @@ return;
 }
 
 // Get a specific Ion's data
-void UKMETIon::fetch()
+bool UKMETIon::updateIonSource(const QString& source)
 {
-    kDebug() << "fetch()";
-    foreach(QString key, this->ionSourceDict()) {
-       // if we already have this place stored, don't search again for it, just get forecast/obs info.
-       if (!d->m_locations.contains(key)) {
-           searchPlace(key);
-       } else {
-           cachedLocation(key);
-       }
-
-    }
+       Q_UNUSED(source)
+       //if (!d->m_locations.contains(source)) {
+       //    searchPlace(source);
+       //} else {
+       //    cachedLocation(source);
+      // }
+return true;
 }
 
 // Parses city list and gets the correct city based on ID number
-void UKMETIon::searchPlace(QString key)
+void UKMETIon::searchPlace(const QString& key)
 {
     KUrl url;
     url = "http://www.bbc.co.uk/cgi-perl/weather/search/new_search.pl?x=0&y=0&=Submit&search_query=" + key + "&tmpl=wap";
@@ -112,7 +109,7 @@ void UKMETIon::searchPlace(QString key)
     }
 }
 
-bool UKMETIon::readSearchXMLData(QString key, QXmlStreamReader& xml)
+bool UKMETIon::readSearchXMLData(const QString& key, QXmlStreamReader& xml)
 {
     while (!xml.atEnd()) {
         xml.readNext();
@@ -134,7 +131,7 @@ bool UKMETIon::readSearchXMLData(QString key, QXmlStreamReader& xml)
 return !xml.error();
 }
 
-void UKMETIon::cachedLocation(QString key)
+void UKMETIon::cachedLocation(const QString& key)
 {
     d->m_job = 0;
     kDebug() << "cachedLocation: d->m_place[key].place = " << d->m_place[key].place;
@@ -153,9 +150,9 @@ void UKMETIon::cachedLocation(QString key)
     }
 }
  
-void UKMETIon::parseSearchLocations(QString key, QXmlStreamReader& xml)
+void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml)
 { 
-    Q_UNUSED(key) 
+    Q_UNUSED(source) 
     int flag = 0;
     QString url;
     QString place;
@@ -201,28 +198,22 @@ void UKMETIon::parseSearchLocations(QString key, QXmlStreamReader& xml)
         } 
     }
     // All Locations
-    foreach(QString name, d->m_locations) {
-       if (d->m_place[name].ukPlace) {
-           //kDebug() << "UKMET: LIST OF UK PLACE: " << name;
-           setData("FoundPlaces", name, QString("%1|%2").arg(name).arg("Local"));
-           //kDebug() << "UKMET: URL OF UK PLACE: " << d->m_place[name].XMLurl;
-       }
+    if (d->m_place[source].ukPlace) {
+        //kDebug() << "UKMET: LIST OF UK PLACE: " << source;
+        setData("FoundPlaces", source, QString("%1|%2").arg(source).arg("Local"));
+        //kDebug() << "UKMET: URL OF UK PLACE: " << d->m_place[source].XMLurl;
     }
 
-    foreach(QString name, d->m_locations) {
-       if (!d->m_place[name].ukPlace) {
-           //kDebug() << "UKMET: LIST OF WORLD PLACE: " << name;
-           setData("FoundPlaces", name, QString("%1|%2").arg(name).arg("World"));
-           //kDebug() << "UKMET: URL OF WORLD PLACE: " << d->m_place[name].XMLurl;
-       }
+    if (!d->m_place[source].ukPlace) {
+        //kDebug() << "UKMET: LIST OF WORLD PLACE: " << source;
+        setData("FoundPlaces", source, QString("%1|%2").arg(source).arg("World"));
+        //kDebug() << "UKMET: URL OF WORLD PLACE: " << d->m_place[source].XMLurl;
     }
-    //this->removeSource(key);
 }
 
 // handle when no XML tag is found
 void UKMETIon::parseUnknownElement(QXmlStreamReader& xml)
 {
-
     while (!xml.atEnd()) {
         xml.readNext();
 
@@ -399,16 +390,10 @@ bool UKMETIon::validLocation(QString keyName)
     return false;
 }
 
-void UKMETIon::updateData()
+void UKMETIon::updateWeather(const QString& source)
 {
-    QVector<QString> sources;
-    sources = this->ionSourceDict();
-    foreach(QString keyname, sources) {
-        if (!this->validLocation(keyname)) {
-            kDebug() << "UKMETIon::updateData() " << keyname << " is not a valid location";
-            this->removeSource(keyname);
-        }
-    }
+    Q_UNUSED(source)
+    return;
 }
 
 #include "ion_bbcukmet.moc"
