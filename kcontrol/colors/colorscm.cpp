@@ -77,7 +77,7 @@ void KColorCm::populateSchemeList()
     QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*");
     for (int i = 0; i < schemeFiles.size(); ++i)
     {
-        // TODO: add some processing to show some sample of the colorscheme in the icon 
+        // TODO: add some processing to show some sample of the colorscheme in the icon
         // like kde3 colors kcm had
         QString filename = schemeFiles[i];
         QFileInfo info(filename);
@@ -89,7 +89,7 @@ void KColorCm::loadScheme()
 {
     if (schemeList->currentItem() != NULL)
     {
-        QString path = KGlobal::dirs()->findResource("data", 
+        QString path = KGlobal::dirs()->findResource("data",
             "color-schemes/" + schemeList->currentItem()->text());
 
         int permissions = QFile(path).permissions();
@@ -119,7 +119,7 @@ void KColorCm::on_schemeRemoveButton_clicked()
 {
     if (schemeList->currentItem() != NULL)
     {
-        QString path = KGlobal::dirs()->findResource("data", 
+        QString path = KGlobal::dirs()->findResource("data",
             "color-schemes/" + schemeList->currentItem()->text());
         KIO::NetAccess::del(path, this);
         delete schemeList->takeItem(schemeList->currentRow());
@@ -137,7 +137,7 @@ void KColorCm::on_schemeImportButton_clicked()
     m_config = KSharedConfig::openConfig(url.path());
 
     // test to see if it has color scheme info
-    // read it 
+    // read it
     updateColorSchemes();
     KConfigGroup group(m_config, "General");
     shadeSortedColumn->setChecked(group.readEntry("shadeSortColumn", true) ? Qt::Checked : Qt::Unchecked);
@@ -166,7 +166,7 @@ void KColorCm::on_schemeSaveButton_clicked()
     }
     // prompt for the name to save as
     bool ok;
-    QString name = KInputDialog::getText(i18n("Save Color Scheme"), 
+    QString name = KInputDialog::getText(i18n("Save Color Scheme"),
         i18n("&Enter a name for the color scheme:"), previousName, &ok, this);
     if (ok)
     {
@@ -184,10 +184,10 @@ void KColorCm::saveScheme(const QString &name)
     int permissions = file.permissions();
     bool canWrite = (permissions & QFile::WriteUser);
     // or if we can overwrite it if it exists
-    if (path.isEmpty() || !file.exists() || 
-        (canWrite && KMessageBox::questionYesNo(this, 
+    if (path.isEmpty() || !file.exists() ||
+        (canWrite && KMessageBox::questionYesNo(this,
         i18n("A color scheme with that name already exists.\nDo you want to overwrite it?"),
-        i18n("Save Color Scheme"), 
+        i18n("Save Color Scheme"),
         KStandardGuiItem::overwrite(),
         KStandardGuiItem::cancel())
         == KMessageBox::Yes))
@@ -244,7 +244,7 @@ void KColorCm::variesClicked()
     int row = sender()->objectName().toInt();
 
     QColor color;
-    if(KColorDialog::getColor(color, this ) != QDialog::Rejected ) 
+    if(KColorDialog::getColor(color, this ) != QDialog::Rejected )
     {
         changeColor(row, color);
         m_stackedWidgets[row - 9]->setCurrentIndex(0);
@@ -561,7 +561,7 @@ void KColorCm::changeColor(int row, const QColor &newColor)
                 KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundNormal", newColor);
                 break;
             case 8:
-                // Window Text Button
+                // Selection Inactive Text Button
                 KConfigGroup(m_config, "Colors:Selection").writeEntry("ForegroundInactive", newColor);
                 break;
 

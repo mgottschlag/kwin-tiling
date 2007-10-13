@@ -72,13 +72,13 @@ private slots:
 
     /** slot called when the schemeList selection changes */
     void loadScheme();
- 
+
     /** slot called when the remove button is clicked*/
     void on_schemeRemoveButton_clicked();
 
     /** slot called when the save button is clicked */
     void on_schemeSaveButton_clicked();
-    
+
     /** slot called when the import button is clicked */
     void on_schemeImportButton_clicked();
 
@@ -92,26 +92,26 @@ private:
 
     /** setup the colortable with its buttons and labels */
     void setupColorTable();
-    
+
     /** setup the effects page */
     void setupEffectsPage();
 
     /** helper to create color entries */
     void createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index);
-    
+
     /** copy color entries from color schemes into m_config */
     void updateFromColorSchemes();
-    
+
     void changeColor(int row, const QColor &newColor);
-    
+
     /** get the groupKey for the given colorSet */
     static QString colorSetGroupKey(int colorSet);
-    
-    /** save the current scheme with the given name 
+
+    /** save the current scheme with the given name
      @param name name to save the scheme as
      */
     void saveScheme(const QString &name);
-    
+
     QColor commonForeground(KColorScheme::ForegroundRole index);
 
     QList<KColorButton *> m_backgroundButtons;
