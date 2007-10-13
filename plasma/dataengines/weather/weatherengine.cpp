@@ -21,7 +21,6 @@
 #include <KServiceTypeTrader>
 #include <KDateTime>
 #include <KLocale>
-#include <QTimer>
 #include "ions/ion.h"
 
 class WeatherEngine::Private
@@ -29,10 +28,26 @@ class WeatherEngine::Private
 public:
     Private() {}
     ~Private() {
-        m_ions.clear();
+        qDeleteAll(m_ions);
     }
 
-    QTimer *m_timer;
+    IonInterface* ionForSource(const QString& name)
+    {
+        int offset = name.indexOf(':');
+
+        if (offset < 1) {
+            return 0;
+        }
+
+        QString ionName = name.left(offset);
+
+        if (!this->m_ions.contains(ionName)) {
+            return 0;
+        }
+
+        return this->m_ions[ionName];
+    }
+
     IonInterface::IonDict m_ions;
     KDateTime m_localTime;
 };
@@ -51,7 +66,6 @@ IonInterface* WeatherEngine::Ion(const QString& name) const
 // Loads an Ion plugin given a plugin name found via KService.
 IonInterface* WeatherEngine::loadIon(const KService::Ptr& service)
 {
-
     IonInterface *ion = 0;
     QString plugName = service->property("X-IonName").toString();
     IonInterface::IonDict::const_iterator it = d->m_ions.find(plugName);
@@ -135,7 +149,6 @@ void WeatherEngine::newIonSource(const QString& source)
         return;
     }
     ion->connectSource(source, this);
-    ion->fetch();
 }
 
 void WeatherEngine::removeIonSource(const QString& source)
@@ -167,11 +180,6 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
     foreach(KService::Ptr service, knownIons()) {
         loadIon(service); 
     }
-
-    // Setup a master time to ping each Ion for new data.
-    d->m_timer = new QTimer(this);
-    d->m_timer->setSingleShot(false);
-    connect(d->m_timer, SIGNAL(timeout()), this, SLOT(updateData()));
 }
 
 // dtor
@@ -182,30 +190,33 @@ WeatherEngine::~WeatherEngine()
 }
 
 // Setup each Ion for the first time
-bool WeatherEngine::sourceRequested(const QString &name)
+bool WeatherEngine::sourceRequested(const QString &source)
 {
-    // Pass values to set when getting data from the ion.
-    foreach(IonInterface *ion, d->m_ions) {
-        // Before we use the timer, get the data.
-        ion->setSource(name);
-        kDebug() << "sourceRequested()";
+    IonInterface *ion = d->ionForSource(source);
+
+    if (!ion) {
+        return false;
     }
 
-    /* FIXME: Make the timer value configurable in 30 minute intervals via Applet */
-    if (!d->m_timer->isActive())
-        d->m_timer->start(50000);
-
-    updateData();
-
+    ion->connectSource(source, this);
+    kDebug() << "sourceRequested()";
+    setData(source, this);
     return true;
 }
 
 // SLOT: update the Applet with new data from all ions loaded.
-void WeatherEngine::updateData()
+bool WeatherEngine::updateSource(const QString& source)
 {
-    foreach(IonInterface *ion, d->m_ions) {
-        ion->fetch();
-        ion->updateData();
+    IonInterface *ion = d->ionForSource(source);
+ 
+    if (!ion) {
+        return false;
+    }
+
+    if (ion->updateSource(source)) {
+        return true;
+    } else {
+        return false;
     }
 }
 
