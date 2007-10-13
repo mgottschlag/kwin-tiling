@@ -89,17 +89,15 @@ bool NOAAIon::validLocation(QString keyName)
     return false;
 }
 
-// Get a specific Ion's data
-void NOAAIon::fetch()
+bool NOAAIon::updateIonSource(const QString& source)
 {
-    // Go read the city's XML file
-    getXMLData();
+    getXMLData(source);
+    return true;
 }
 
 // Parses city list and gets the correct city based on ID number
 void NOAAIon::getXMLSetup()
 {
-
     d->m_url = new KUrl("http://www.weather.gov/data/current_obs/index.xml");
 
     KIO::TransferJob *job = KIO::get(d->m_url->url(), KIO::NoReload, KIO::HideProgressInfo);
@@ -112,27 +110,21 @@ void NOAAIon::getXMLSetup()
 }
 
 // Gets specific city XML data
-void NOAAIon::getXMLData()
+void NOAAIon::getXMLData(const QString& source)
 {
     KUrl url;
-    foreach(QString key, this->ionSourceDict()) {
-        if (!validLocation(key)) {
-            continue;
-        } else {
-            url = d->m_place[key].XMLurl;
-        }
+    url = d->m_place[source].XMLurl;
 
-        kDebug() << "URL Location: " << url.url();
+    kDebug() << "URL Location: " << url.url();
 
-        d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
-        d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
-        d->m_jobList.insert(d->m_job, key);
+    d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+    d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
+    d->m_jobList.insert(d->m_job, source);
 
-        if (d->m_job) {
-            connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                    SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
-            connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
-        }
+    if (d->m_job) {
+        connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+                SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
+        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
     }
 }
 
@@ -172,9 +164,7 @@ void NOAAIon::setup_slotJobFinished(KJob *job)
 {
     Q_UNUSED(job)
     readXMLSetup();
-
-    // Do the XML fetching for the correct city.
-    getXMLData();
+    this->setInitialized(true);
 }
 
 void NOAAIon::parseStationID()
@@ -195,7 +185,7 @@ void NOAAIon::parseStationID()
             } else if (d->m_xmlSetup.name() == "xml_url") {
                 d->m_xmlurl = d->m_xmlSetup.readElementText();
 
-                tmp = d->m_station_name + ", " + d->m_state; // Build the key name.
+                tmp = "noaa:" + d->m_station_name + ", " + d->m_state; // Build the key name.
                 d->m_place[tmp].stateName = d->m_state;
                 d->m_place[tmp].stationName = d->m_station_name;
 	        d->m_place[tmp].XMLurl = d->m_xmlurl;
@@ -309,7 +299,7 @@ WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
 }
 
 // Parse Weather data main loop, from here we have to decend into each tag pair
-bool NOAAIon::readXMLData(QString key, QXmlStreamReader& xml)
+bool NOAAIon::readXMLData(const QString& source, QXmlStreamReader& xml)
 {
     WeatherData data;
 
@@ -329,8 +319,8 @@ bool NOAAIon::readXMLData(QString key, QXmlStreamReader& xml)
         }
     }
 
-    d->m_weatherData[key] = data;
-    updateData();
+    d->m_weatherData[source] = data;
+    updateWeather(source);
     return !xml.error();
 }
 
@@ -379,54 +369,44 @@ void NOAAIon::option(int option, QVariant value)
     }
 }
 
-void NOAAIon::updateData()
+void NOAAIon::updateWeather(const QString& source)
 {
-    QVector<QString> sources;
     QMap<QString, QString> dataFields;
     QStringList fieldList;
 
-    sources = this->ionSourceDict();
-    foreach(QString keyname, sources) {
-        // Does this place exist?
-        if (!this->validLocation(keyname)) {
-            kDebug() << "NOAAIon::updateData() " << keyname << " is not a valid location";
-            //setData(keyname, "Invalid Place", "Invalid location");
-            continue;
+    setData(source, "Country", this->country(source));
+    setData(source, "Place", this->place(source));
+    setData(source, "Airport Code", this->station(source));
+
+    // Real weather - Current conditions
+    setData(source, "Observations At", this->observationTime(source));
+    setData(source, "Current Conditions", this->condition(source));
+    dataFields = this->temperature(source);
+    setData(source, "Temperature", dataFields["temperature"]);
+
+    // Do we have a comfort temperature? if so display it
+    if (dataFields["comfortTemperature"] != "N/A") {
+        if (d->m_weatherData[source].windchill_F != "NA") {
+            setData(source, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
         }
-        setData(keyname, "Country", this->country(keyname));
-        setData(keyname, "Place", this->place(keyname));
-        setData(keyname, "Airport Code", this->station(keyname));
-
-        // Real weather - Current conditions
-        setData(keyname, "Observations At", this->observationTime(keyname));
-        setData(keyname, "Current Conditions", this->condition(keyname));
-        dataFields = this->temperature(keyname);
-        setData(keyname, "Temperature", dataFields["temperature"]);
-
-        // Do we have a comfort temperature? if so display it
-        if (dataFields["comfortTemperature"] != "N/A") {
-           if (d->m_weatherData[keyname].windchill_F != "NA") {
-               setData(keyname, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
-           }
-           if (d->m_weatherData[keyname].heatindex_F != "NA" && d->m_weatherData[keyname].temperature_F.toInt() != d->m_weatherData[keyname].heatindex_F.toInt()) {
-               setData(keyname, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
-           }
+        if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].temperature_F.toInt() != d->m_weatherData[source].heatindex_F.toInt()) {
+            setData(source, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
         }
+     }
 
-        setData(keyname, "Dewpoint", this->dewpoint(keyname));
-        setData(keyname, "Pressure", this->pressure(keyname));
-        setData(keyname, "Visibility", this->visibility(keyname));
-        setData(keyname, "Humidity", this->humidity(keyname));
+     setData(source, "Dewpoint", this->dewpoint(source));
+     setData(source, "Pressure", this->pressure(source));
+     setData(source, "Visibility", this->visibility(source));
+     setData(source, "Humidity", this->humidity(source));
 
-        dataFields = this->wind(keyname);
-        setData(keyname, "Wind Speed", dataFields["windSpeed"]);
-        setData(keyname, "Wind Speed Unit", dataFields["windUnit"]);
-        setData(keyname, "Wind Gust", dataFields["windGust"]);
-        setData(keyname, "Wind Gust Unit", dataFields["windGustUnit"]);
-        setData(keyname, "Wind Direction", dataFields["windDirection"]);
+     dataFields = this->wind(source);
+     setData(source, "Wind Speed", dataFields["windSpeed"]);
+     setData(source, "Wind Speed Unit", dataFields["windUnit"]);
+     setData(source, "Wind Gust", dataFields["windGust"]);
+     setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
+     setData(source, "Wind Direction", dataFields["windDirection"]);
 
-        setData(keyname, "Credit", "NOAA National Weather Service");
-    }
+     setData(source, "Credit", "NOAA National Weather Service");
 }
 
 QString NOAAIon::country(QString key)
