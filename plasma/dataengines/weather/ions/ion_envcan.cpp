@@ -94,20 +94,29 @@ void EnvCanadaIon::init()
     getXMLSetup();
 }
 
-bool EnvCanadaIon::validLocation(QString keyName)
+QString EnvCanadaIon::validate(const QString& source)
 {
-    QHash<QString, QString>::const_iterator it = d->m_locations.find(keyName);
+    QHash<QString, QString>::const_iterator it = d->m_locations.find(source);
     if (it != d->m_locations.end()) {
-        return true;
+        return source;
     }
-    return false;
+    return QString();
 }
 
 // Get a specific Ion's data
-void EnvCanadaIon::fetch()
+bool EnvCanadaIon::updateIonSource(const QString& source)
 {
-    // Go read the city's XML file
-    getXMLData();
+
+    QString result = this->validate(source);
+
+    if (!result.isEmpty()) {
+        QStringList tokens = result.split(':');
+        setData(source, "Validate", tokens[1]);
+        getXMLData(source);
+        return true;
+    }
+    setData(source, "Validate", "Invalid");
+    return false;
 }
 
 // Parses city list and gets the correct city based on ID number
@@ -126,27 +135,21 @@ void EnvCanadaIon::getXMLSetup()
 }
 
 // Gets specific city XML data
-void EnvCanadaIon::getXMLData()
+void EnvCanadaIon::getXMLData(const QString& source)
 {
     KUrl url;
-    foreach(QString key, this->ionSourceDict()) {
-        if (!validLocation(key)) {
-            continue;
-        } else {
-            url = "http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/" + d->m_place[key].territoryName + "/" + d->m_place[key].cityCode + "_e.xml";
-        }
+    url = "http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/" + d->m_place[source].territoryName + "/" + d->m_place[source].cityCode + "_e.xml";
 
-        //kDebug() << "URL Location: " << url.url();
+    kDebug() << "URL Location: " << url.url();
 
-        d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
-        d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
-        d->m_jobList.insert(d->m_job, key);
+    d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+    d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
+    d->m_jobList.insert(d->m_job, source);
 
-        if (d->m_job) {
-            connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                    SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
-            connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
-        }
+    if (d->m_job) {
+        connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+                SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
+        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
     }
 }
 
@@ -186,9 +189,7 @@ void EnvCanadaIon::setup_slotJobFinished(KJob *job)
 {
     Q_UNUSED(job)
     readXMLSetup();
-
-    // Do the XML fetching for the correct city.
-    getXMLData();
+    this->setInitialized(true);
 }
 
 // Parse the city list and store into a QMap
@@ -211,7 +212,7 @@ bool EnvCanadaIon::readXMLSetup()
 
             if (d->m_xmlSetup.name() == "provinceCode") {
                 d->m_territory = d->m_xmlSetup.readElementText(); // Provinces/Territory list
-                tmp = d->m_cityName + ", " + d->m_territory; // Build the key name.
+                tmp = "envcan:" + d->m_cityName + ", " + d->m_territory; // Build the key name.
 
                 // Set the mappings
                 d->m_place[tmp].cityCode = d->m_code;
@@ -261,11 +262,11 @@ WeatherData EnvCanadaIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& 
 }
 
 // Parse Weather data main loop, from here we have to decend into each tag pair
-bool EnvCanadaIon::readXMLData(QString key, QXmlStreamReader& xml)
+bool EnvCanadaIon::readXMLData(const QString& source, QXmlStreamReader& xml)
 {
     WeatherData data;
     data.comforttemp = "N/A";
-    data.shortTerritoryName = d->m_place[key].territoryName;
+    data.shortTerritoryName = d->m_place[source].territoryName;
     while (!xml.atEnd()) {
         xml.readNext();
 
@@ -282,8 +283,8 @@ bool EnvCanadaIon::readXMLData(QString key, QXmlStreamReader& xml)
         }
     }
 
-    d->m_weatherData[key] = data;
-    updateData();
+    d->m_weatherData[source] = data;
+    updateWeather(source);
     return !xml.error();
 }
 
@@ -853,135 +854,124 @@ void EnvCanadaIon::option(int option, QVariant value)
     }
 }
 
-void EnvCanadaIon::updateData()
+void EnvCanadaIon::updateWeather(const QString& source)
 {
-    QVector<QString> sources;
     QMap<QString, QString> dataFields;
     QStringList fieldList;
     QVector<QString> forecastList;
     int i = 0;
 
-    sources = this->ionSourceDict();
-    foreach(QString keyname, sources) {
-        // Does this place exist?
-        if (!this->validLocation(keyname)) {
-            kDebug() << "EnvCanadaIon::updateData() " << keyname << " is not a valid location";
-            //setData(keyname, "Invalid Place", "Invalid location");
-            continue;
+    setData(source, "Country", this->country(source));
+    setData(source, "Place", QString("%1, %2").arg(this->city(source)).arg(this->territory(source)));
+    setData(source, "Region", this->region(source));
+    setData(source, "Airport Code", this->station(source));
+
+    // Real weather - Current conditions
+    setData(source, "Observations At", this->observationTime(source));
+    setData(source, "Current Conditions", this->condition(source));
+    dataFields = this->temperature(source);
+    setData(source, "Temperature", dataFields["temperature"]);
+
+    // Do we have a comfort temperature? if so display it
+    if (dataFields["comfortTemperature"] != "N/A" && !dataFields["comfortTemperature"].isEmpty()) {
+        if (dataFields["comfortTemperature"].toFloat() <= 0 || (dataFields["comfortTemperature"].toFloat() <= 32 && !d->m_useMetric)) {
+            setData(source, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
+        } else {
+            setData(source, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
         }
-        setData(keyname, "Country", this->country(keyname));
-        setData(keyname, "Place", QString("%1, %2").arg(this->city(keyname)).arg(this->territory(keyname)));
-        setData(keyname, "Region", this->region(keyname));
-        setData(keyname, "Airport Code", this->station(keyname));
+     }
 
-        // Real weather - Current conditions
-        setData(keyname, "Observations At", this->observationTime(keyname));
-        setData(keyname, "Current Conditions", this->condition(keyname));
-        dataFields = this->temperature(keyname);
-        setData(keyname, "Temperature", dataFields["temperature"]);
+     setData(source, "Dewpoint", this->dewpoint(source));
+     dataFields = this->pressure(source);
+     setData(source, "Pressure", dataFields["pressure"]);
+     setData(source, "Pressure Tendency", dataFields["pressureTendency"]);
+     setData(source, "Visibility", this->visibility(source));
+     setData(source, "Humidity", this->humidity(source));
+     dataFields = this->wind(source);
+     setData(source, "Wind Speed", dataFields["windSpeed"]);
+     setData(source, "Wind Speed Unit", dataFields["windUnit"]);
+     setData(source, "Wind Gust", dataFields["windGust"]);
+     setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
+     setData(source, "Wind Direction", dataFields["windDirection"]);
 
-        // Do we have a comfort temperature? if so display it
-        if (dataFields["comfortTemperature"] != "N/A" && !dataFields["comfortTemperature"].isEmpty()) {
-            if (dataFields["comfortTemperature"].toFloat() <= 0 || (dataFields["comfortTemperature"].toFloat() <= 32 && !d->m_useMetric)) {
-                setData(keyname, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
-            } else {
-                setData(keyname, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
-            }
-        }
+     dataFields = this->regionalTemperatures(source);
+     setData(source, "Normal High", dataFields["normalHigh"]);
+     setData(source, "Normal Low", dataFields["normalLow"]);
 
-        setData(keyname, "Dewpoint", this->dewpoint(keyname));
-        dataFields = this->pressure(keyname);
-        setData(keyname, "Pressure", dataFields["pressure"]);
-        setData(keyname, "Pressure Tendency", dataFields["pressureTendency"]);
-        setData(keyname, "Visibility", this->visibility(keyname));
-        setData(keyname, "Humidity", this->humidity(keyname));
-        dataFields = this->wind(keyname);
-        setData(keyname, "Wind Speed", dataFields["windSpeed"]);
-	setData(keyname, "Wind Speed Unit", dataFields["windUnit"]);
-        setData(keyname, "Wind Gust", dataFields["windGust"]);
-	setData(keyname, "Wind Gust Unit", dataFields["windGustUnit"]);
-        setData(keyname, "Wind Direction", dataFields["windDirection"]);
+     // Check if UV index is available for the location
+     dataFields = this->uvIndex(source);
+     if (!dataFields["uvRating"].isEmpty()) {
+         setData(source, "UV Rating", dataFields["uvRating"]);
+         setData(source, "UV Index", dataFields["uvIndex"]);
+     }
 
-        dataFields = this->regionalTemperatures(keyname);
-        setData(keyname, "Normal High", dataFields["normalHigh"]);
-        setData(keyname, "Normal Low", dataFields["normalLow"]);
+     dataFields = this->warnings(source);
+     // Check if we have warnings or watches
+     if (!dataFields["watch"].isEmpty()) {
+         fieldList = dataFields["watch"].split('|');
+         setData(source, "Watch Priority", fieldList[0]);
+         setData(source, "Watch Description", fieldList[1]);
+         setData(source, "Watch Info", fieldList[2]);
+         setData(source, "Watch Timestamp", fieldList[3]);
+     }
+     if (!dataFields["warning"].isEmpty()) {
+         fieldList = dataFields["warning"].split('|');
+         setData(source, "Warning Priority", fieldList[0]);
+         setData(source, "Warning Description", fieldList[1]);
+         setData(source, "Warning Info", fieldList[2]);
+         setData(source, "Warning Timestamp", fieldList[3]);
+     }
 
-        // Check if UV index is available for the location
-        dataFields = this->uvIndex(keyname);
-        if (!dataFields["uvRating"].isEmpty()) {
-            setData(keyname, "UV Rating", dataFields["uvRating"]);
-            setData(keyname, "UV Index", dataFields["uvIndex"]);
-        }
+     forecastList = this->forecasts(source);
+     foreach(QString forecastItem, forecastList) {
+         fieldList = forecastItem.split('|');
 
-        dataFields = this->warnings(keyname);
-        // Check if we have warnings or watches
-        if (!dataFields["watch"].isEmpty()) {
-            fieldList = dataFields["watch"].split('|');
-            setData(keyname, "Watch Priority", fieldList[0]);
-            setData(keyname, "Watch Description", fieldList[1]);
-            setData(keyname, "Watch Info", fieldList[2]);
-            setData(keyname, "Watch Timestamp", fieldList[3]);
-        }
-        if (!dataFields["warning"].isEmpty()) {
-            fieldList = dataFields["warning"].split('|');
-            setData(keyname, "Warning Priority", fieldList[0]);
-            setData(keyname, "Warning Description", fieldList[1]);
-            setData(keyname, "Warning Info", fieldList[2]);
-            setData(keyname, "Warning Timestamp", fieldList[3]);
-        }
+         if (d->m_useMetric) {
+             setData(source, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
+                     .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[5]));
 
-        forecastList = this->forecasts(keyname);
-        foreach(QString forecastItem, forecastList) {
-            fieldList = forecastItem.split('|');
+             setData(source, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
+                     .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[6]) \
+                     .arg(fieldList[7]).arg(fieldList[8]).arg(fieldList[9]));
+          } else {
+              setData(source, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
+                      .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3] == "N/A" ? "N/A" : \
+                      QString::number(d->m_formula.celsiusToF(fieldList[3].toFloat()), 'd', 0)) \
+                      .arg(fieldList[4] == "N/A" ? "N/A" : QString::number(d->m_formula.celsiusToF(fieldList[4].toFloat()),'d',0)).arg(fieldList[5]));
 
-            if (d->m_useMetric) {
-                setData(keyname, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
-                         .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[5]));
-
-                setData(keyname, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
-                         .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[6]) \
-                         .arg(fieldList[7]).arg(fieldList[8]).arg(fieldList[9]));
-            } else {
-               setData(keyname, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
-                         .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3] == "N/A" ? "N/A" : \
-                         QString::number(d->m_formula.celsiusToF(fieldList[3].toFloat()), 'd', 0)) \
-                         .arg(fieldList[4] == "N/A" ? "N/A" : QString::number(d->m_formula.celsiusToF(fieldList[4].toFloat()),'d',0)).arg(fieldList[5]));
-
-               setData(keyname, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
-                         .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3] == "N/A" ? "N/A" : \
-                         QString::number(d->m_formula.celsiusToF(fieldList[3].toFloat()),'d', 0)) \
-                         .arg(fieldList[4] == "N/A" ? "N/A" : QString::number(d->m_formula.celsiusToF(fieldList[4].toFloat()),'d',0)).arg(fieldList[6]).arg(fieldList[7]) \
-                         .arg(fieldList[8]).arg(fieldList[9]));
+               setData(source, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
+                       .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3] == "N/A" ? "N/A" : \
+                       QString::number(d->m_formula.celsiusToF(fieldList[3].toFloat()),'d', 0)) \
+                       .arg(fieldList[4] == "N/A" ? "N/A" : QString::number(d->m_formula.celsiusToF(fieldList[4].toFloat()),'d',0)).arg(fieldList[6]).arg(fieldList[7]) \
+                       .arg(fieldList[8]).arg(fieldList[9]));
             }
 
             i++;
         }
 
-        dataFields = this->yesterdayWeather(keyname);
-        setData(keyname, "Yesterday High", dataFields["prevHigh"]);
-        setData(keyname, "Yesterday Low", dataFields["prevLow"]);
-        setData(keyname, "Yesterday Precip Total", dataFields["prevPrecip"]);
-        setData(keyname, "Yesterday Precip Unit", dataFields["prevPrecipUnit"]);
+     dataFields = this->yesterdayWeather(source);
+     setData(source, "Yesterday High", dataFields["prevHigh"]);
+     setData(source, "Yesterday Low", dataFields["prevLow"]);
+     setData(source, "Yesterday Precip Total", dataFields["prevPrecip"]);
+     setData(source, "Yesterday Precip Unit", dataFields["prevPrecipUnit"]);
 
-        dataFields = this->sunriseSet(keyname);
-        setData(keyname, "Sunrise At", dataFields["sunrise"]);
-        setData(keyname, "Sunset At", dataFields["sunset"]);
+     dataFields = this->sunriseSet(source);
+     setData(source, "Sunrise At", dataFields["sunrise"]);
+     setData(source, "Sunset At", dataFields["sunset"]);
 
-        dataFields = this->moonriseSet(keyname);
-        setData(keyname, "Moonrise At", dataFields["moonrise"]);
-        setData(keyname, "Moonset At", dataFields["moonset"]);
+     dataFields = this->moonriseSet(source);
+     setData(source, "Moonrise At", dataFields["moonrise"]);
+     setData(source, "Moonset At", dataFields["moonset"]);
 
-        dataFields = this->weatherRecords(keyname);
-        setData(keyname, "Record High Temperature", dataFields["recordHigh"]);
-        setData(keyname, "Record Low Temperature", dataFields["recordLow"]);
-        setData(keyname, "Record Rainfall", dataFields["recordRain"]);
-        setData(keyname, "Record Rainfall Unit", dataFields["recordRainUnit"]);
-        setData(keyname, "Record Snowfall", dataFields["recordSnow"]);
-        setData(keyname, "Record Snowfall Unit", dataFields["recordSnowUnit"]);
+     dataFields = this->weatherRecords(source);
+     setData(source, "Record High Temperature", dataFields["recordHigh"]);
+     setData(source, "Record Low Temperature", dataFields["recordLow"]);
+     setData(source, "Record Rainfall", dataFields["recordRain"]);
+     setData(source, "Record Rainfall Unit", dataFields["recordRainUnit"]);
+     setData(source, "Record Snowfall", dataFields["recordSnow"]);
+     setData(source, "Record Snowfall Unit", dataFields["recordSnowUnit"]);
 
-        setData(keyname, "Credit", "Environment Canada");
-        i = 0;
-    }
+     setData(source, "Credit", "Environment Canada");
 }
 
 QString EnvCanadaIon::country(QString key)

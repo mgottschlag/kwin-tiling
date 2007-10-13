@@ -129,9 +129,9 @@ public:
     EnvCanadaIon(QObject *parent, const QVariantList &args);
     ~EnvCanadaIon();
     void init();  // Setup the city location, fetching the correct URL name.
-    void fetch(); // Get the City XML data.
-    void updateData(void); // Sync data source with Applet
+    bool updateIonSource(const QString& source); // Sync data source with Applet
     void option(int option, QVariant value);
+    void updateWeather(const QString& source);
 
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
@@ -173,11 +173,11 @@ private:
     bool readXMLSetup();
 
     // Load and parse the specific place(s)
-    void getXMLData();
-    bool readXMLData(QString key, QXmlStreamReader& xml);
+    void getXMLData(const QString& source);
+    bool readXMLData(const QString& source, QXmlStreamReader& xml);
 
     // Check if place specified is valid or not
-    bool validLocation(QString key);
+    QString validate(const QString& source);
 
     // Catchall for unknown XML tags
     void parseUnknownElement(QXmlStreamReader& xml);
