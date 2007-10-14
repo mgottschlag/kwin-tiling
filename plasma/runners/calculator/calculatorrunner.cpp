@@ -24,6 +24,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QWidget>
+#include <QScriptEngine>
 
 #include <KIcon>
 #include <KLocale>
@@ -72,6 +73,17 @@ bool CalculatorRunner::exec(QAction* action, const QString& term)
     return true;
 }
 
+#ifndef NO_QSCRIPT
+
+QString CalculatorRunner::calculate( const QString& term )
+{
+    QScriptEngine eng;
+    QScriptValue result = eng.evaluate( term );
+    return result.toString();
+}
+
+#else
+
 // function taken from kdesktop/minicli.cpp
 QString CalculatorRunner::calculate( const QString& term )
 {
@@ -97,5 +109,7 @@ QString CalculatorRunner::calculate( const QString& term )
     }
     return result;
 }
+
+#endif
 
 #include "calculatorrunner.moc"
