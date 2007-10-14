@@ -120,7 +120,6 @@ void ShortcutsModule::initGUI()
 #define NOSLOTS
 //#define KICKER_ALL_BINDINGS
 #include "../../kwin/kwinbindings.cpp"
-#include "../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 
 	kDebug(125) << "B-----------";
