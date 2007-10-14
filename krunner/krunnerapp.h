@@ -52,7 +52,7 @@ public:
     //UGLY
     static bool s_haveCompositeManager;
 
-public slots:
+public Q_SLOTS:
     //void showWindowList();
 
     void logout();
@@ -61,7 +61,7 @@ public slots:
     void rebootWithoutConfirmation();
 
     // DBUS interface. if you change these methods, you MUST run:
-    // qdbuscpp2xml -s krunnerapp.h -o org.kde.krunner.App.xml
+    // qdbuscpp2xml -m krunnerapp.h -o org.kde.krunner.App.xml
     Q_SCRIPTABLE void initializeStartupNotification();
     
     /** Show taskmanager */
