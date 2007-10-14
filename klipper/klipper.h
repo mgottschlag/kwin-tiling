@@ -18,24 +18,20 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _KLIPPER_H_
-#define _KLIPPER_H_
+#ifndef KLIPPER_H
+#define KLIPPER_H
 
-#include <kapplication.h>
-#include <kglobalaccel.h>
-#include <kmenu.h>
-#include <QMap>
-#include <QPixmap>
-//Added by qt3to4:
-#include <QMouseEvent>
-#include <QPaintEvent>
+#include <QKeyEvent>
+#include <QMenu>
 #include <QTimer>
-#include <kglobal.h>
-#include <kconfig.h>
+
+#include <KApplication>
+#include <KIcon>
 
 class QClipboard;
 class KToggleAction;
 class KAboutData;
+class KActionCollection;
 class URLGrabber;
 class ClipboardPoll;
 class QTime;
@@ -61,8 +57,6 @@ public Q_SLOTS:
 public:
     Klipper(QObject *parent, const KSharedConfigPtr &config);
     ~Klipper();
-
-    KGlobalAccel *globalKeys;
 
     /**
      * Get clipboard history (the "document")
@@ -207,6 +201,7 @@ private:
 
     bool blockFetchingNewData();
     KlipperSessionManager* session_managed;
+    KActionCollection *collection;
 };
 
 #endif

@@ -42,7 +42,7 @@
 
 #include "configdialog.h"
 
-ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const ActionList *list, KGlobalAccel *accel,
+ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const ActionList *list, KActionCollection *collection,
                            bool isApplet)
     : KConfigDialog(parent, "preferences", skeleton)
 {
@@ -60,7 +60,7 @@ ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const Act
     addPage(actionWidget, i18nc("Actions Config", "Actions"), "configure", i18n("Actions Config"));
 
     w = new QWidget(this);
-    shortcutsWidget = new KShortcutsEditor( w, KShortcutsEditor::GlobalAction );
+    shortcutsWidget = new KShortcutsEditor( collection, w, KShortcutsEditor::GlobalAction );
     addPage(shortcutsWidget, i18nc("Shortcuts Config", "Shortcuts"), "configure-shortcuts", i18n("Shortcuts Config"));
 }
 

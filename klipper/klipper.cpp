@@ -132,7 +132,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
 
     // we need that collection, otherwise KToggleAction is not happy :}
     //QString defaultGroup( "default" );
-    KActionCollection *collection = new KActionCollection( this );
+    collection = new KActionCollection( this );
     toggleURLGrabAction = new KToggleAction( this );
     collection->addAction( "toggleUrlGrabAction", toggleURLGrabAction );
     toggleURLGrabAction->setEnabled( true );
@@ -168,17 +168,22 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     connect( poll, SIGNAL( clipboardChanged( bool ) ),
              this, SLOT( newClipData( bool ) ) );
 
-    globalKeys = KGlobalAccel::self();
-    KActionCollection* actionCollection = collection;
-    QAction* a = 0L;
-#ifdef __GNUC__
-#warning TODO PORT ME (KGlobalAccel related)
-#endif
-#include "klipperbindings.cpp"
-    // the keys need to be read from kdeglobals, not kickerrc --ellis, 22/9/02
-    //globalKeys->readSettings();
-    //globalKeys->updateConnections();
-    //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
+    QAction *a = collection->addAction("show_klipper_popup");
+    a->setText(i18n("Show Klipper Popup-Menu"));
+    qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_V));
+    connect(a, SIGNAL(triggered()), SLOT(slotPopupMenu()));
+
+    a = collection->addAction("repeat_action");
+    a->setText(i18n("Manually Invoke Action on Current Clipboard"));
+    qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
+    connect(a, SIGNAL(triggered()), SLOT(slotRepeatAction()));
+
+    a = collection->addAction("clipboard_action");
+    a->setText(i18n("Enable/Disable Clipboard Actions"));
+    qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
+    connect(a, SIGNAL(triggered()), SLOT(toggleURLGrabber()));
+
+    toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(collection->action("clipboard_action"))->globalShortcut());
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )),
              this, SLOT( setURLGrabberEnabled( bool )));
@@ -455,12 +460,7 @@ void Klipper::saveSession()
 void Klipper::slotSettingsChanged( int category )
 {
     if ( category == (int) KGlobalSettings::SETTINGS_SHORTCUTS ) {
-#ifdef __GNUC__
-#warning TODO PORT ME (KGlobalAccel related)
-#endif
-        //globalKeys->readSettings();
-        //globalKeys->updateConnections();
-        //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
+        toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(collection->action("clipboard_action"))->globalShortcut());
     }
 }
 
@@ -481,8 +481,7 @@ void Klipper::slotConfigure()
         readConfiguration( m_config.data() );
     }
 
-    ConfigDialog *dlg = new ConfigDialog( 0, new KConfigSkeleton(), myURLGrabber->actionList(),
-                                          globalKeys, isApplet() );
+    ConfigDialog *dlg = new ConfigDialog( 0, new KConfigSkeleton(), myURLGrabber->actionList(), collection, isApplet() );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
     dlg->setStripWhiteSpace( myURLGrabber->trimmed() );
@@ -504,12 +503,8 @@ void Klipper::slotConfigure()
         bSynchronize = dlg->synchronize();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         dlg->commitShortcuts();
-#ifdef __GNUC__
-#warning TODO PORT ME (KGlobalAccel related)
-#endif
-        //globalKeys->writeSettings();
-        //globalKeys->updateConnections();
-        //toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
+
+        toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(collection->action("clipboard_action"))->globalShortcut());
 
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );

@@ -35,7 +35,6 @@
 #include "urlgrabber.h"
 
 class KConfigSkeleton;
-class KGlobalAccel;
 class KShortcutsEditor;
 class K3ListView;
 class QPushButton;
@@ -137,7 +136,7 @@ class ConfigDialog : public KConfigDialog
     Q_OBJECT
 
 public:
-    ConfigDialog( QWidget *parent, KConfigSkeleton *config, const ActionList *list, KGlobalAccel *accel, bool isApplet );
+    ConfigDialog( QWidget *parent, KConfigSkeleton *config, const ActionList *list, KActionCollection *collection, bool isApplet );
     ~ConfigDialog();
 
     ActionList * actionList() const { return actionWidget->actionList(); }
