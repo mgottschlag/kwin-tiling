@@ -53,8 +53,6 @@ public:
     static bool s_haveCompositeManager;
 
 public slots:
-    /** Show taskmanager */
-    void showTaskManager();
     //void showWindowList();
 
     void logout();
@@ -65,6 +63,9 @@ public slots:
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml -s krunnerapp.h -o org.kde.krunner.App.xml
     Q_SCRIPTABLE void initializeStartupNotification();
+    
+    /** Show taskmanager */
+    Q_SCRIPTABLE void showTaskManager();
 
 private slots:
     /**
