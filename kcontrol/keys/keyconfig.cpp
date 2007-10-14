@@ -62,8 +62,6 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 #define NOSLOTS
 #define KShortcuts KAccelShortcuts
 #include "../../kwin/kwinbindings.cpp"
-#include "../../kicker/kicker/core/kickerbindings.cpp"
-#include "../../kicker/taskbar/taskbarbindings.cpp"
 #include "../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 #undef KShortcuts
@@ -477,8 +475,6 @@ void KKeyModule::init()
 #define KShortcuts KAccelShortcuts
 #include "../../../workspace/klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
-#include "../../kicker/kicker/core/kickerbindings.cpp"
-#include "../../kicker/taskbar/taskbarbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 #undef KShortcuts
 
