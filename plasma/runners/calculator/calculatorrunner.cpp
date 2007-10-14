@@ -1,6 +1,7 @@
 /*
  *   Copyright (C) 2007 Barış Metin <baris@pardus.org.tr>
  *   Copyright (C) 2006 David Faure <faure@kde.org>
+ *   Copyright (C) 2007 Richard Moore <rich@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
