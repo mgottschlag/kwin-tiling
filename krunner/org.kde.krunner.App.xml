@@ -3,8 +3,6 @@
   <interface name="org.kde.krunner.App">
     <method name="initializeStartupNotification">
     </method>
-  </interface>
-  <interface name="org.kde.krunner.App">
     <method name="showTaskManager">
     </method>
   </interface>
