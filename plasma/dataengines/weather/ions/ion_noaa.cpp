@@ -383,6 +383,7 @@ void NOAAIon::updateWeather(const QString& source)
     setData(source, "Current Conditions", this->condition(source));
     dataFields = this->temperature(source);
     setData(source, "Temperature", dataFields["temperature"]);
+    setData(source, "Temperature Unit", dataFields["temperatureUnit"]);
 
     // Do we have a comfort temperature? if so display it
     if (dataFields["comfortTemperature"] != "N/A") {
@@ -395,18 +396,36 @@ void NOAAIon::updateWeather(const QString& source)
      }
 
      setData(source, "Dewpoint", this->dewpoint(source));
-     setData(source, "Pressure", this->pressure(source));
+     setData(source, "Dewpoint Unit", dataFields["temperatureUnit"]);
+ 
+     dataFields = this->pressure(source);
+     setData(source, "Pressure", dataFields["pressure"]);
+
+     if (dataFields["pressure"] != "N/A") {
+         setData(source, "Pressure Unit", dataFields["pressureUnit"]);
+     }
+
      dataFields = this->visibility(source);
      setData(source, "Visibility", dataFields["visibility"]);
-     setData(source, "Visibility Unit", dataFields["visibilityUnit"]);
+
+     if (dataFields["visibility"] != "N/A") {
+         setData(source, "Visibility Unit", dataFields["visibilityUnit"]);
+     }
 
      setData(source, "Humidity", this->humidity(source));
 
      dataFields = this->wind(source);
      setData(source, "Wind Speed", dataFields["windSpeed"]);
-     setData(source, "Wind Speed Unit", dataFields["windUnit"]);
+
+     if (dataFields["windSpeed"] != "Calm") {
+         setData(source, "Wind Speed Unit", dataFields["windUnit"]);
+     }
+
      setData(source, "Wind Gust", dataFields["windGust"]);
-     setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
+     if (dataFields["windGust"] != "N/A") {
+         setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
+     }
+
      setData(source, "Wind Direction", dataFields["windDirection"]);
 
      setData(source, "Credit", "NOAA National Weather Service");
@@ -477,8 +496,10 @@ QMap<QString, QString> NOAAIon::temperature(const QString& source)
     QMap<QString, QString> temperatureInfo;
     if (d->m_useMetric) {
         temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[source].temperature_C));
+        temperatureInfo.insert("temperatureUnit", QString("%1C").arg(QChar(176)));
     } else {
         temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[source].temperature_F));
+        temperatureInfo.insert("temperatureUnit", QString("%1F").arg(QChar(176)));
     }
     temperatureInfo.insert("comfortTemperature", "N/A");
 
@@ -500,16 +521,21 @@ QMap<QString, QString> NOAAIon::temperature(const QString& source)
     return temperatureInfo;
 }
 
-QString NOAAIon::pressure(const QString& source)
+QMap<QString, QString> NOAAIon::pressure(const QString& source)
 {
+    QMap<QString, QString> pressureInfo;
     if (d->m_weatherData[source].pressure.isEmpty()) {
-        return QString("N/A");
+        pressureInfo.insert("pressure", "N/A");
+        return pressureInfo;
     } 
     if (d->m_useMetric) {
-        return QString("%1").arg(QString::number(d->m_formula.inchesToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1));
+        pressureInfo.insert("pressure", QString("%1").arg(QString::number(d->m_formula.inchesToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1)));
+        pressureInfo.insert("pressureUnit", "kPa");
     } else {
-        return QString("%1").arg(d->m_weatherData[source].pressure);
+        pressureInfo.insert("pressure", QString("%1").arg(d->m_weatherData[source].pressure));
+        pressureInfo.insert("pressureUnit", "in");
     }
+    return pressureInfo;
 }
 
 QMap<QString, QString> NOAAIon::wind(const QString& source)

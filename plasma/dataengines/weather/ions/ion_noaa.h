@@ -96,7 +96,7 @@ private:
     QString dewpoint(const QString& source);
     QString humidity(const QString& source);
     QMap<QString, QString> visibility(const QString& source);
-    QString pressure(const QString& source);
+    QMap<QString, QString> pressure(const QString& source);
     QMap<QString, QString> wind(const QString& source);
 
     // Load and Parse the place XML listing
