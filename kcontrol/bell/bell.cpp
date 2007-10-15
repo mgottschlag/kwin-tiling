@@ -118,7 +118,7 @@ KBellConfig::KBellConfig(QWidget *parent, const QVariantList &args):
   m_volume->setWhatsThis( i18n("Here you can customize the volume of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
-  m_pitch = new KIntNumInput(m_volume, 800, box);
+  m_pitch = new KIntNumInput(800, box);
   m_pitch->setLabel(i18n("&Pitch:"));
   m_pitch->setRange(20, 2000, 20);
   m_pitch->setSuffix(i18n(" Hz"));
@@ -127,7 +127,7 @@ KBellConfig::KBellConfig(QWidget *parent, const QVariantList &args):
   m_pitch->setWhatsThis( i18n("Here you can customize the pitch of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
-  m_duration = new KIntNumInput(m_pitch, 100, box);
+  m_duration = new KIntNumInput(100, box);
   m_duration->setLabel(i18n("&Duration:"));
   m_duration->setRange(1, 1000, 50);
   m_duration->setSuffix(i18n(" msec"));
