@@ -74,9 +74,9 @@ kcmrandrrc [Screen2]
 kcmrandrrc [Screen3]
 kcmfonts General forceFontDPI 0
 EOF
-kstartupconfig
+kstartupconfig4
 if test $? -ne 0; then
-    xmessage -geometry 500x100 "Could not start kstartupconfig. Check your installation."
+    xmessage -geometry 500x100 "Could not start kstartupconfig4. Check your installation."
 fi
 . $kdehome/share/config/startupconfig
 

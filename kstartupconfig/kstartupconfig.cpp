@@ -90,7 +90,7 @@ int main()
     strlcat( filename, "/share/config/startupconfig", 1024 );
     if( access( filename, R_OK ) != 0 )
         {
-        int ret = system( "kdostartupconfig" );
+        int ret = system( "kdostartupconfig4" );
         return WEXITSTATUS( ret );
         }
     strlcpy( filename, kdehome, 1024 );
@@ -98,14 +98,14 @@ int main()
     struct stat st;
     if( stat( filename, &st ) != 0 )
         {
-        int ret = system( "kdostartupconfig" );
+        int ret = system( "kdostartupconfig4" );
         return WEXITSTATUS( ret );
         }
     time_t config_time = st.st_mtime;
     FILE* config = fopen( filename, "r" );
     if( config == NULL )
         {
-        int ret = system( "kdostartupconfig" );
+        int ret = system( "kdostartupconfig4" );
         return WEXITSTATUS( ret );
         }
     strlcpy( filename, kdehome, 1024 );
@@ -169,7 +169,7 @@ int main()
     fclose( config );
     if( need_update )
         {
-        int ret = system( "kdostartupconfig" );
+        int ret = system( "kdostartupconfig4" );
         return WEXITSTATUS( ret );
         }
     return 0;
