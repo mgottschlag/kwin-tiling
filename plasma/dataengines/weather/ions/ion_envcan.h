@@ -144,33 +144,33 @@ private:
     /* Environment Canada Methods - Internal for Ion */
 
     // Place information
-    QString country(QString key);
-    QString territory(QString key);
-    QString city(QString key);
-    QString region(QString key);
-    QString station(QString key);
+    QString country(const QString& source);
+    QString territory(const QString& source);
+    QString city(const QString& source);
+    QString region(const QString& source);
+    QString station(const QString& source);
 
     // Current Conditions Weather info
-    QString observationTime(QString key);
-    QMap<QString, QString> warnings(QString key);
-    QString condition(QString key);
-    QMap<QString, QString> temperature(QString key);
-    QString dewpoint(QString key);
-    QString humidity(QString key);
-    QString visibility(QString key);
-    QMap<QString, QString> pressure(QString key);
-    QMap<QString, QString> wind(QString key);
-    QMap<QString, QString> regionalTemperatures(QString key);
-    QMap<QString, QString> uvIndex(QString key);
-    QVector<QString> forecasts(QString key);
-    QMap<QString, QString> yesterdayWeather(QString key);
-    QMap<QString, QString> sunriseSet(QString key);
-    QMap<QString, QString> moonriseSet(QString key);
-    QMap<QString, QString> weatherRecords(QString key);
+    QString observationTime(const QString& source);
+    QMap<QString, QString> warnings(const QString& source);
+    QString condition(const QString& source);
+    QMap<QString, QString> temperature(const QString& source);
+    QString dewpoint(const QString& source);
+    QString humidity(const QString& source);
+    QMap<QString, QString> visibility(const QString& source);
+    QMap<QString, QString> pressure(const QString& source);
+    QMap<QString, QString> wind(const QString& source);
+    QMap<QString, QString> regionalTemperatures(const QString& source);
+    QMap<QString, QString> uvIndex(const QString& source);
+    QVector<QString> forecasts(const QString& source);
+    QMap<QString, QString> yesterdayWeather(const QString& source);
+    QMap<QString, QString> sunriseSet(const QString& source);
+    QMap<QString, QString> moonriseSet(const QString& source);
+    QMap<QString, QString> weatherRecords(const QString& source);
 
     // Load and Parse the place XML listing
-    void getXMLSetup();
-    bool readXMLSetup();
+    void getXMLSetup(void);
+    bool readXMLSetup(void);
 
     // Load and parse the specific place(s)
     void getXMLData(const QString& source);
