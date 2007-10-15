@@ -134,7 +134,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QLabel" name="labelSize" >
          <property name="text" >
-          <string>Size of the clock</string>
+          <string>Size of the clock:</string>
          </property>
         </widget>
        </item>
