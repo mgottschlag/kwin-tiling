@@ -1026,7 +1026,7 @@ QString EnvCanadaIon::region(const QString& source)
 QString EnvCanadaIon::station(const QString& source)
 {
     if (!d->m_weatherData[source].stationID.isEmpty()) {
-         return d->m_weatherData[source].stationID;
+         return d->m_weatherData[source].stationID.toUpper();
     }
     
     return QString("N/A");
