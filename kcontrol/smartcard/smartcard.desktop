@@ -3,7 +3,7 @@ Encoding=UTF-8
 Icon=preferences-desktop-user-smartcard
 Type=Service
 ServiceTypes=KCModule,KCModuleInit
-Exec=kcmshell smartcard
+Exec=kcmshell4 smartcard
 DocPath=kcontrol/smartcard.html
 
 X-KDE-Library=kcm_smartcard

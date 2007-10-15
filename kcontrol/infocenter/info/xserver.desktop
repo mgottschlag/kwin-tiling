@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell xserver
+Exec=kcmshell4 xserver
 Icon=kcmx
 Type=Service
 ServiceTypes=KCModule

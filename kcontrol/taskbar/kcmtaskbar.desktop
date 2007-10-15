@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell kcmtaskbar
+Exec=kcmshell4 kcmtaskbar
 Icon=preferences-desktop-panel-taskbar
 Type=Service
 ServiceTypes=KCModule

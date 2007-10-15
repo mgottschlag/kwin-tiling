@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell kcm_solid
+Exec=kcmshell4 kcm_solid
 Icon=preferences-system-solid
 Type=Service
 ServiceTypes=KCModule

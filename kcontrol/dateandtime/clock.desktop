@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell kde-clock.desktop
+Exec=kcmshell4 kde-clock.desktop
 Icon=preferences-system-time
 Type=Service
 ServiceTypes=KCModule

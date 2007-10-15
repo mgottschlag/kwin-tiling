@@ -19,32 +19,32 @@ void KThemeDlg::startKonqui( const QString & url )
 
 void KThemeDlg::startBackground()
 {
-    KRun::runCommand("kcmshell background", this);
+    KRun::runCommand("kcmshell4 background", this);
 }
 
 void KThemeDlg::startColors()
 {
-    KRun::runCommand("kcmshell colors", this);
+    KRun::runCommand("kcmshell4 colors", this);
 }
 
 void KThemeDlg::startStyle()
 {
-    KRun::runCommand("kcmshell style", this);
+    KRun::runCommand("kcmshell4 style", this);
 }
 
 void KThemeDlg::startIcons()
 {
-    KRun::runCommand("kcmshell icons", this);
+    KRun::runCommand("kcmshell4 icons", this);
 }
 
 void KThemeDlg::startFonts()
 {
-   KRun::runCommand("kcmshell fonts", this);
+   KRun::runCommand("kcmshell4 fonts", this);
 }
 
 void KThemeDlg::startSaver()
 {
-    KRun::runCommand("kcmshell screensaver", this);
+    KRun::runCommand("kcmshell4 screensaver", this);
 }
 
 #endif // KTHEMEDLG_UI_H

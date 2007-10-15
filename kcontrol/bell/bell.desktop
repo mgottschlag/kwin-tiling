@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell bell
+Exec=kcmshell4 bell
 Icon=preferences-desktop-notification-bell
 Type=Service
 ServiceTypes=KCModule,KCModuleInit

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell colors
+Exec=kcmshell4 colors
 Icon=preferences-desktop-color
 Type=Service
 ServiceTypes=KCModule

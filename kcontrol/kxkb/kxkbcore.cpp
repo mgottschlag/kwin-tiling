@@ -346,7 +346,7 @@ void KxkbCore::iconMenuTriggered(QAction* action)
     {
         QStringList lst;
         lst<< "keyboard_layout";
-	QProcess::startDetached("kcmshell",lst);
+	QProcess::startDetached("kcmshell4",lst);
     }
     else if (id == KxkbWidget::HELP_MENU_ID)
     {

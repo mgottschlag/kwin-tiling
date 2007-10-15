@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell mouse
+Exec=kcmshell4 mouse
 Icon=preferences-desktop-mouse
 Type=Service
 ServiceTypes=KCModule,KCModuleInit

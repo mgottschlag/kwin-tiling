@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell screensaver
+Exec=kcmshell4 screensaver
 Icon=preferences-desktop-wallpaper
 Type=Service
 ServiceTypes=KCModule

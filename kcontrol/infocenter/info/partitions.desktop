@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell partitions
+Exec=kcmshell4 partitions
 Icon=kcmpartitions
 Type=Service
 ServiceTypes=KCModule

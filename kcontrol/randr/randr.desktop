@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell randr
+Exec=kcmshell4 randr
 Icon=preferences-desktop-display-randr
 Type=Service
 ServiceTypes=KCModule

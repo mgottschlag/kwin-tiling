@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell devices
+Exec=kcmshell4 devices
 Icon=kcmdevices
 Type=Service
 ServiceTypes=KCModule

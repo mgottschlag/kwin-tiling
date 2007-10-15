@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell kcmsmserver
+Exec=kcmshell4 kcmsmserver
 Icon=preferences-system-session
 Type=Service
 ServiceTypes=KCModule

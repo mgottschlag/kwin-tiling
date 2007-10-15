@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell accessibility
+Exec=kcmshell4 accessibility
 Icon=preferences-desktop-accessibility
 Type=Service
 ServiceTypes=KCModule

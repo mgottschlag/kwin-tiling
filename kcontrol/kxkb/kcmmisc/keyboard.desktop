@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell keyboard
+Exec=kcmshell4 keyboard
 Icon=preferences-desktop-keyboard
 Type=Service
 ServiceTypes=KCModule,KCModuleInit

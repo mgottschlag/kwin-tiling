@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell khotkeys
+Exec=kcmshell4 khotkeys
 Icon=preferences-desktop-keyboard-khotkeys
 Type=Service
 ServiceTypes=KCModule

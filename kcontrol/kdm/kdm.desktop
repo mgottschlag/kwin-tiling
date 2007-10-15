@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell kdm
+Exec=kcmshell4 kdm
 Icon=preferences-desktop-login
 Type=Service
 ServiceTypes=KCModule

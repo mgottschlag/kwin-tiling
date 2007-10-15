@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell pci
+Exec=kcmshell4 pci
 Icon=kcmpci
 Type=Service
 ServiceTypes=KCModule

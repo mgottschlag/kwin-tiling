@@ -2,7 +2,7 @@
 Icon=preferences-desktop-display-multiple
 Type=Service
 ServiceTypes=KCModule
-Exec=kcmshell xinerama
+Exec=kcmshell4 xinerama
 DocPath=kcontrol/multiplemonitors.html
 Hidden[$e]=$(if test_kcm_xinerama; then echo "false"; else echo "true"; fi)
 

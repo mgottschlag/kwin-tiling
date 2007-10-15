@@ -4,7 +4,7 @@ Icon=ieee1394
 Type=Service
 ServiceTypes=KCModule
 DocPath=kinfocenter/view1394/index.html
-Exec=kcmshell kcmview1394
+Exec=kcmshell4 kcmview1394
 
 X-KDE-Library=kcm_view1394
 X-KDE-ParentApp=kinfocenter

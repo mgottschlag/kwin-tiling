@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell opengl
+Exec=kcmshell4 opengl
 Icon=kcmopengl
 Type=Service
 ServiceTypes=KCModule

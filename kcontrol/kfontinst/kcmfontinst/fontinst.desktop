@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell fontinst
+Exec=kcmshell4 fontinst
 Icon=preferences-desktop-font-installer
 Type=Service
 ServiceTypes=KCModule

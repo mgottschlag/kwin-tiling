@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=preferences-system-splash
-Exec=kcmshell ksplashthememgr
+Exec=kcmshell4 ksplashthememgr
 DocPath=ksplashml/themes.html
 
 Type=Service

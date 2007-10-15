@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcmshell processor
+Exec=kcmshell4 processor
 Icon=kcmprocessor
 Type=Service
 ServiceTypes=KCModule

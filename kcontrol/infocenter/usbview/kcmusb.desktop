@@ -4,7 +4,7 @@ Icon=usb
 Type=Service
 ServiceTypes=KCModule
 DocPath=kinfocenter/usb/index.html
-Exec=kcmshell kcmusb
+Exec=kcmshell4 kcmusb
 
 X-KDE-Library=kcm_usb
 X-KDE-ParentApp=kinfocenter
