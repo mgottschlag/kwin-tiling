@@ -17,14 +17,11 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#include <QtGui/QMacMime>
-#include <Qt3Support/Q3ColorDrag>
 #include <QMap>
 
 #include <QPixmap>
 
 #include <kdebug.h>
-#include <k3urldrag.h>
 
 #include "historyitem.h"
 #include "historystringitem.h"

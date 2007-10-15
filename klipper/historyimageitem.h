@@ -18,12 +18,10 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _HISTORYIMAGEITEM_H_
-#define _HISTORYIMAGEITEM_H_
+#ifndef HISTORYIMAGEITEM_H
+#define HISTORYIMAGEITEM_H
 
 #include "historyitem.h"
-#include <QPixmap>
-#include <Qt3Support/Q3ColorDrag>
 
 /**
  * A image entry in the clipboard history.

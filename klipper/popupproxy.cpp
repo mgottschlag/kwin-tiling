@@ -142,20 +142,20 @@ int PopupProxy::insertFromSpill( int index ) {
     int remainingHeight = m_menu_height - proxy_for_menu->sizeHint().height();
     // Force at least one item to be inserted.
     remainingHeight = qMax( remainingHeight, 0 );
-    for ( const HistoryItem* item = spillPointer.current();
-          item && remainingHeight >= 0;
-          nextItemNumber++, item = ++spillPointer )
-    {
+
+    while (spillPointer.hasNext() && remainingHeight >= 0) {
+        const HistoryItem *item = spillPointer.next();
         if ( m_filter.indexIn( item->text() ) == -1) {
             continue;
         }
         tryInsertItem( item, remainingHeight, index++ );
         count++;
+        nextItemNumber++;
     }
 
     // If there is more items in the history, insert a new "More..." menu and
     // make *this a proxy for that menu ('s content).
-    if ( spillPointer.current() ) {
+    if (spillPointer.hasNext()) {
         KMenu* moreMenu = new KMenu( proxy_for_menu );
         proxy_for_menu->insertItem( i18n( "&More" ), moreMenu, -1, index );
         connect( moreMenu, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );

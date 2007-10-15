@@ -161,42 +161,38 @@ void KlipperPopup::buildFromScratch() {
 }
 
 void KlipperPopup::rebuild( const QString& filter ) {
-
-    bool from_scratch = (actions().count() == 0);
-    if ( from_scratch ) {
+    if (actions().isEmpty()) {
         buildFromScratch();
     } else {
         for ( int i=0; i<n_history_items; i++ ) {
-            removeAction(actions().at(TOP_HISTORY_ITEM_INDEX));
+            if (i < actions().count())
+                removeAction(actions().at(TOP_HISTORY_ITEM_INDEX));
         }
     }
 
     QRegExp filterexp( filter );
-    QPalette palette;
+    QPalette palette = m_filterWidget->palette();
     if ( filterexp.isValid() ) {
         palette.setColor( m_filterWidget->foregroundRole(), palette.color(foregroundRole()) );
     } else {
         palette.setColor( m_filterWidget->foregroundRole(), Qt::red );
     }
-    m_filterWidget->setPalette( palette );
     n_history_items = m_popupProxy->buildParent( TOP_HISTORY_ITEM_INDEX, filterexp );
-
     if ( n_history_items == 0 ) {
         if ( m_history->empty() ) {
             insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(QSempty, this));
         } else {
+            palette.setColor( m_filterWidget->foregroundRole(), Qt::red );
             insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(QSnomatch, this));
         }
         n_history_items++;
     } else {
         if ( history()->topIsUserSelected() ) {
-            QAction *action = actions().at(TOP_HISTORY_ITEM_INDEX);
-            if (action) {
-                action->setChecked(true);
-            }
+            actions().at(TOP_HISTORY_ITEM_INDEX)->setCheckable(true);
+            actions().at(TOP_HISTORY_ITEM_INDEX)->setChecked(true);
         }
     }
-
+    m_filterWidget->setPalette( palette );
     m_dirty = false;
 }
 
@@ -248,7 +244,8 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 #endif
         KMenu::keyPressEvent(e);
         if (activeAction() ==  m_filterWidgetAction)
-            setActiveAction(m_actions.at(TOP_HISTORY_ITEM_INDEX));
+            setActiveAction(actions().at(TOP_HISTORY_ITEM_INDEX));
+
         break;
     }
     default:
@@ -256,6 +253,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 #ifdef DEBUG_EVENTS__
         kDebug() << "Passing this event down to child (KLineEdit): " << e;
 #endif
+        setActiveAction(actions().at(actions().indexOf(m_filterWidgetAction)));
         QString lastString = m_filterWidget->text();
         QApplication::sendEvent(m_filterWidget, e);
 

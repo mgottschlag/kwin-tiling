@@ -18,11 +18,12 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _HISTORY_H_
-#define _HISTORY_H_
+#ifndef HISTORY_H
+#define HISTORY_H
 
 #include <QObject>
-#include <Qt3Support/Q3PtrList>
+#include <QList>
+
 #include "historyitem.h"
 
 class KlipperPopup;
@@ -36,7 +37,7 @@ public:
     /**
      * Iterator for history
      */
-    typedef Q3PtrListIterator<HistoryItem> iterator;
+    typedef QListIterator<const HistoryItem*> iterator;
 
     /**
      * Return (toplevel) popup menu (or default view, of you like)
@@ -68,11 +69,6 @@ public:
      * Traversal: Get first item
      */
     const HistoryItem* first();
-
-    /**
-     * Traversal: Get current item
-     */
-    const HistoryItem* next();
 
     /**
      * Get an iterator pointing to the first (most recent) item
@@ -132,7 +128,7 @@ private:
     /**
      * The history
      */
-    Q3PtrList<HistoryItem> itemList;
+    QList<const HistoryItem*> itemList;
 
     /**
      * ensure that the number of items does not exceed max_size()
@@ -160,7 +156,5 @@ private:
 };
 
 inline const HistoryItem* History::first() { return itemList.first(); }
-
-inline const HistoryItem* History::next() { return itemList.next();  }
 
 #endif

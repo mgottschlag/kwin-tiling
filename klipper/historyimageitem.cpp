@@ -18,9 +18,7 @@
    Boston, MA 02110-1301, USA.
 */
 
-
-//Added by qt3to4:
-#include <QPixmap>
+#include <QMimeData>
 
 #include <kdebug.h>
 

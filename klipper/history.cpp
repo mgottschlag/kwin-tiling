@@ -31,12 +31,12 @@ History::History( QObject* parent )
       m_topIsUserSelected( false )
 {
     connect( this, SIGNAL( changed() ), m_popup, SLOT( slotHistoryChanged() ) );
-    itemList.setAutoDelete( true );
 
 }
 
 
 History::~History() {
+    qDeleteAll(itemList);
 }
 
 History::iterator History::youngest() {
@@ -85,14 +85,10 @@ void History::remove( const HistoryItem* newItem ) {
     if ( !newItem )
         return;
 
-    for ( const HistoryItem* item = itemList.first(); item; item=next() ) {
-        if ( *item == *newItem ) {
-            itemList.remove();
-            emit changed();
-            return;
-        }
+    if (itemList.contains(newItem)) {
+        itemList.removeAll(newItem);
+        emit changed();
     }
-
 }
 
 
@@ -109,12 +105,7 @@ void History::slotMoveToTop(int pos ) {
 
     m_topIsUserSelected = true;
 
-    itemList.first();
-    for ( ; pos; pos-- ) {
-        itemList.next();
-    }
-    HistoryItem* item = itemList.take();
-    itemList.prepend( item );
+    itemList.move(pos, 0);
     emit changed();
     emit topChanged();
 }

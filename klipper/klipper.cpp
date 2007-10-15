@@ -140,8 +140,8 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     clearHistoryAction = collection->addAction( "clearHistoryAction" );
     clearHistoryAction->setIcon( KIcon("history-clear") );
     clearHistoryAction->setText( i18n("C&lear Clipboard History") );
-    connect(clearHistoryAction, SIGNAL(triggered(bool) ), history(), SLOT( slotClear() ));
-    connect( clearHistoryAction, SIGNAL( activated() ), SLOT( slotClearClipboard() ) );
+    connect(clearHistoryAction, SIGNAL(triggered() ), history(), SLOT( slotClear() ));
+    connect( clearHistoryAction, SIGNAL( triggered() ), SLOT( slotClearClipboard() ) );
     //clearHistoryAction->setGroup( defaultGroup );
     configureAction = collection->addAction( "configureAction" );
     configureAction->setIcon( KIcon("configure") );
@@ -372,9 +372,13 @@ void Klipper::saveHistory() {
     QByteArray data;
     QDataStream history_stream( &data, QIODevice::WriteOnly );
     history_stream << klipper_version; // const char*
-    for (  const HistoryItem* item = history()->first(); item; item = history()->next() ) {
+
+    History::iterator it = history()->youngest();
+    while (it.hasNext()) {
+        const HistoryItem *item = it.next();
         history_stream << item;
     }
+
     quint32 crc = crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() );
     QDataStream ds ( &history_file );
     ds << crc << data;
@@ -531,7 +535,9 @@ void Klipper::slotQuit()
     }
 
     saveSession();
-    int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?"),KGuiItem(i18n("Start")), KGuiItem(i18n("Do Not Start")) );
+    int autoStart = KMessageBox::questionYesNoCancel(0, i18n("Should Klipper start automatically when you login?"),
+                                                     i18n("Automatically Start Klipper?"), KGuiItem(i18n("Start")),
+                                                     KGuiItem(i18n("Do Not Start")), KStandardGuiItem::cancel(), "StartAutomatically");
 
     KConfigGroup config( KGlobal::config(), "General");
     if ( autoStart == KMessageBox::Yes ) {
@@ -924,18 +930,25 @@ void Klipper::slotClearOverflow()
 QStringList Klipper::getClipboardHistoryMenu()
 {
     QStringList menu;
-    for ( const HistoryItem* item = history()->first(); item; item = history()->next() ) {
+
+    History::iterator it = history()->youngest();
+    while (it.hasNext()) {
+        const HistoryItem *item = it.next();
         menu << item->text();
     }
+
     return menu;
 }
 
 QString Klipper::getClipboardHistoryItem(int i)
 {
-    for ( const HistoryItem* item = history()->first(); item; item = history()->next() , i-- ) {
+    History::iterator it = history()->youngest();
+    while (it.hasNext()) {
+        const HistoryItem *item = it.next();
         if ( i == 0 ) {
             return item->text();
         }
+        i--;
     }
     return QString();
 
