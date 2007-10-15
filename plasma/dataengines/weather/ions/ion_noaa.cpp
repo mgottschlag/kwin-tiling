@@ -80,9 +80,9 @@ void NOAAIon::init()
     getXMLSetup();
 }
 
-bool NOAAIon::validLocation(QString keyName)
+bool NOAAIon::validate(const QString& source) const
 {
-    QHash<QString, QString>::const_iterator it = d->m_locations.find(keyName);
+    QHash<QString, QString>::const_iterator it = d->m_locations.find(source);
     if (it != d->m_locations.end()) {
         return true;
     }
@@ -396,7 +396,10 @@ void NOAAIon::updateWeather(const QString& source)
 
      setData(source, "Dewpoint", this->dewpoint(source));
      setData(source, "Pressure", this->pressure(source));
-     setData(source, "Visibility", this->visibility(source));
+     dataFields = this->visibility(source);
+     setData(source, "Visibility", dataFields["visibility"]);
+     setData(source, "Visibility Unit", dataFields["visibilityUnit"]);
+
      setData(source, "Humidity", this->humidity(source));
 
      dataFields = this->wind(source);
@@ -409,144 +412,150 @@ void NOAAIon::updateWeather(const QString& source)
      setData(source, "Credit", "NOAA National Weather Service");
 }
 
-QString NOAAIon::country(QString key)
+QString NOAAIon::country(const QString& source)
 {
-    Q_UNUSED(key);
-    return QString("USA");
+    Q_UNUSED(source);
+    return QString("United States of America");
 }
-QString NOAAIon::place(QString key)
+QString NOAAIon::place(const QString& source)
 {
-    return d->m_weatherData[key].locationName;
+    return d->m_weatherData[source].locationName;
 }
-QString NOAAIon::station(QString key)
+QString NOAAIon::station(const QString& source)
 {
-    return d->m_weatherData[key].stationID;
+    return d->m_weatherData[source].stationID;
 }
 
-QString NOAAIon::observationTime(QString key)
+QString NOAAIon::observationTime(const QString& source)
 {
-    return d->m_weatherData[key].observationTime;
+    return d->m_weatherData[source].observationTime;
 }
-QString NOAAIon::condition(QString key)
+QString NOAAIon::condition(const QString& source)
 {
-    if (d->m_weatherData[key].weather.isEmpty() || d->m_weatherData[key].weather == "NA") {
-        d->m_weatherData[key].weather = "N/A";
+    if (d->m_weatherData[source].weather.isEmpty() || d->m_weatherData[source].weather == "NA") {
+        d->m_weatherData[source].weather = "N/A";
     }
-    return d->m_weatherData[key].weather;
+    return d->m_weatherData[source].weather;
 }
 
-QString NOAAIon::dewpoint(QString key)
+QString NOAAIon::dewpoint(const QString& source)
 {
     if (d->m_useMetric) {
-        return QString("%1").arg(d->m_weatherData[key].dewpoint_C);
+        return QString("%1").arg(d->m_weatherData[source].dewpoint_C);
     }
-    return QString("%1").arg(d->m_weatherData[key].dewpoint_F);
+    return QString("%1").arg(d->m_weatherData[source].dewpoint_F);
 }
 
-QString NOAAIon::humidity(QString key)
+QString NOAAIon::humidity(const QString& source)
 {
-   if (d->m_weatherData[key].humidity == "NA") {
+   if (d->m_weatherData[source].humidity == "NA") {
        return QString("N/A");
    } else {
-       return QString("%1%").arg(d->m_weatherData[key].humidity);
+       return QString("%1%").arg(d->m_weatherData[source].humidity);
    }
 }
 
-QString NOAAIon::visibility(QString key)
+QMap<QString, QString> NOAAIon::visibility(const QString& source)
 {
-    if (d->m_weatherData[key].visibility.isEmpty()) {
-        return QString("N/A");
+    QMap<QString, QString> visibilityInfo;
+    if (d->m_weatherData[source].visibility.isEmpty()) {
+        visibilityInfo.insert("visibility", QString("N/A"));
+        return visibilityInfo;
     }
     if (d->m_useMetric) {
-        return QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[key].visibility.toFloat()), 'f', 1));
+        visibilityInfo.insert("visibility", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[source].visibility.toFloat()), 'f', 1)));
+        visibilityInfo.insert("visibilityUnit", "km");
+        return visibilityInfo;
     } 
-    return QString("%1").arg(d->m_weatherData[key].visibility);
+    visibilityInfo.insert("visibility", QString("%1").arg(d->m_weatherData[source].visibility));
+    visibilityInfo.insert("visibilityUnit", "mi");
+    return visibilityInfo;
 }
 
-QMap<QString, QString> NOAAIon::temperature(QString key)
+QMap<QString, QString> NOAAIon::temperature(const QString& source)
 {
     QMap<QString, QString> temperatureInfo;
     if (d->m_useMetric) {
-        temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[key].temperature_C));
+        temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[source].temperature_C));
     } else {
-        temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[key].temperature_F));
+        temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[source].temperature_F));
     }
     temperatureInfo.insert("comfortTemperature", "N/A");
 
-    if (d->m_weatherData[key].heatindex_F != "NA" && d->m_weatherData[key].windchill_F == "NA") {
+    if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].windchill_F == "NA") {
         if (d->m_useMetric) {
-            temperatureInfo.insert("comfortTemperature", d->m_weatherData[key].heatindex_C);
+            temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].heatindex_C);
         } else {
-            temperatureInfo.insert("comfortTemperature", d->m_weatherData[key].heatindex_F);
+            temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].heatindex_F);
         }
     }
-    if (d->m_weatherData[key].windchill_F != "NA" && d->m_weatherData[key].heatindex_F == "NA") {
+    if (d->m_weatherData[source].windchill_F != "NA" && d->m_weatherData[source].heatindex_F == "NA") {
         if (d->m_useMetric) {
-            temperatureInfo.insert("comfortTemperature", d->m_weatherData[key].windchill_C);
+            temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].windchill_C);
         } else {
-            temperatureInfo.insert("comfortTemperature", d->m_weatherData[key].windchill_F);
+            temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].windchill_F);
         }
     }
 
     return temperatureInfo;
 }
 
-QString NOAAIon::pressure(QString key)
+QString NOAAIon::pressure(const QString& source)
 {
-    if (d->m_weatherData[key].pressure.isEmpty()) {
+    if (d->m_weatherData[source].pressure.isEmpty()) {
         return QString("N/A");
     } 
     if (d->m_useMetric) {
-        return QString("%1").arg(QString::number(d->m_formula.inchesToKilopascals(d->m_weatherData[key].pressure.toFloat()), 'f', 1));
+        return QString("%1").arg(QString::number(d->m_formula.inchesToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1));
     } else {
-        return QString("%1").arg(d->m_weatherData[key].pressure);
+        return QString("%1").arg(d->m_weatherData[source].pressure);
     }
 }
 
-QMap<QString, QString> NOAAIon::wind(QString key)
+QMap<QString, QString> NOAAIon::wind(const QString& source)
 {
     QMap<QString, QString> windInfo;
 
     // May not have any winds
-    if (d->m_weatherData[key].windSpeed == "NA") {
+    if (d->m_weatherData[source].windSpeed == "NA") {
         windInfo.insert("windSpeed", "Calm");
     } else {
         if (d->m_useMetric) {
             if (d->m_windInMeters) {
-                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[key].windSpeed.toFloat()), 'f', 2)));
+                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[source].windSpeed.toFloat()), 'f', 2)));
                 windInfo.insert("windUnit", "m/s");
             } else {
-                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[key].windSpeed.toFloat()), 'f', 1)));
+                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windSpeed.toFloat()), 'f', 1)));
                 windInfo.insert("windUnit", "km/h");
             }
         } else {
-            windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_weatherData[key].windSpeed.toFloat(), 'f', 1)));
+            windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_weatherData[source].windSpeed.toFloat(), 'f', 1)));
             windInfo.insert("windUnit", "mph");
         }
     }
 
     // May not always have gusty winds
-    if (d->m_weatherData[key].windGust == "NA") {
+    if (d->m_weatherData[source].windGust == "NA") {
         windInfo.insert("windGust", "N/A");
     } else {
         if (d->m_useMetric) {
             if (d->m_windInMeters) {
-                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[key].windGust.toFloat()), 'f', 2)));
+                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[source].windGust.toFloat()), 'f', 2)));
                 windInfo.insert("windGustUnit", "m/s");
             } else {
-                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[key].windGust.toFloat()), 'f', 1)));
+                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windGust.toFloat()), 'f', 1)));
                 windInfo.insert("windGustUnit", "km/h");
             }
         } else {
-            windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_weatherData[key].windGust.toFloat(), 'f', 1)));
+            windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_weatherData[source].windGust.toFloat(), 'f', 1)));
             windInfo.insert("windGustUnit", "mph");
         }
     }
 
-    if (d->m_weatherData[key].windDirection.isEmpty()) {
+    if (d->m_weatherData[source].windDirection.isEmpty()) {
         windInfo.insert("windDirection", "N/A");
     } else {
-        windInfo.insert("windDirection", d->m_weatherData[key].windDirection);
+        windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
     }
     return windInfo;
 }

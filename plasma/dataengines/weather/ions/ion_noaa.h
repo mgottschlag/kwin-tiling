@@ -69,7 +69,7 @@ class KDE_EXPORT NOAAIon : public IonInterface
 public:
     NOAAIon(QObject *parent, const QVariantList &args);
     ~NOAAIon();
-    void init();  // Setup the city location, fetching the correct URL name.
+    void init(void);  // Setup the city location, fetching the correct URL name.
     void option(int option, QVariant value);
     bool updateIonSource(const QString& source); // Sync data source with Applet
     void updateWeather(const QString& source);
@@ -85,19 +85,19 @@ private:
     /* NOAA Methods - Internal for Ion */
 
     // Place information
-    QString country(QString key);
-    QString place(QString key);
-    QString station(QString key);
+    QString country(const QString& source);
+    QString place(const QString& source);
+    QString station(const QString& source);
 
     // Current Conditions Weather info
-    QString observationTime(QString key);
-    QString condition(QString key);
-    QMap<QString, QString> temperature(QString key);
-    QString dewpoint(QString key);
-    QString humidity(QString key);
-    QString visibility(QString key);
-    QString pressure(QString key);
-    QMap<QString, QString> wind(QString key);
+    QString observationTime(const QString& source);
+    QString condition(const QString& source);
+    QMap<QString, QString> temperature(const QString& source);
+    QString dewpoint(const QString& source);
+    QString humidity(const QString& source);
+    QMap<QString, QString> visibility(const QString& source);
+    QString pressure(const QString& source);
+    QMap<QString, QString> wind(const QString& source);
 
     // Load and Parse the place XML listing
     void getXMLSetup(void);
@@ -108,15 +108,15 @@ private:
     bool readXMLData(const QString& source, QXmlStreamReader& xml);
 
     // Check if place specified is valid or not
-    bool validLocation(QString key);
+    bool validate(const QString& source) const;
 
     // Catchall for unknown XML tags
     void parseUnknownElement(QXmlStreamReader& xml);
 
     // Parse weather XML data
     WeatherData parseWeatherSite(WeatherData& data, QXmlStreamReader& xml);
-    void parseStationID();
-    void parseStationList();
+    void parseStationID(void);
+    void parseStationList(void);
 
 private:
     class Private;
