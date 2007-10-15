@@ -93,10 +93,10 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     QLabel *pixLabel = new QLabel( frame );
     pixLabel->setPixmap(DesktopIcon("system-lock-screen"));
 
-    KUser user;
-    QLabel *greetLabel = new QLabel( user.fullName().isEmpty() ?
+    KUser user; QString fullName=user.property(KUser::FullName).toString();
+    QLabel *greetLabel = new QLabel( fullName.isEmpty() ?
             i18n("<nobr><b>The session is locked</b></nobr><br />") :
-            i18n("<nobr><b>The session was locked by %1</b></nobr><br />",  user.fullName() ), frame );
+            i18n("<nobr><b>The session was locked by %1</b></nobr><br />", fullName ), frame );
 
     mStatusLabel = new QLabel( "<b> </b>", frame );
     mStatusLabel->setAlignment( Qt::AlignCenter );
@@ -150,6 +150,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     frameLayout->addWidget( sep, 3, 0, 1, 2 );
     frameLayout->addLayout( layButtons, 4, 0, 1, 2 );
 
+    setButtons(None);
     connect(cancel, SIGNAL(clicked()), SLOT(reject()));
     connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
     connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotSwitchUser()));
