@@ -383,7 +383,10 @@ void NOAAIon::updateWeather(const QString& source)
     setData(source, "Current Conditions", this->condition(source));
     dataFields = this->temperature(source);
     setData(source, "Temperature", dataFields["temperature"]);
-    setData(source, "Temperature Unit", dataFields["temperatureUnit"]);
+
+    if (dataFields["temperature"] != "N/A") {
+        setData(source, "Temperature Unit", dataFields["temperatureUnit"]);
+    }
 
     // Do we have a comfort temperature? if so display it
     if (dataFields["comfortTemperature"] != "N/A") {
@@ -396,7 +399,9 @@ void NOAAIon::updateWeather(const QString& source)
      }
 
      setData(source, "Dewpoint", this->dewpoint(source));
-     setData(source, "Dewpoint Unit", dataFields["temperatureUnit"]);
+     if (this->dewpoint(source) != "N/A") {
+         setData(source, "Dewpoint Unit", dataFields["temperatureUnit"]);
+     }
  
      dataFields = this->pressure(source);
      setData(source, "Pressure", dataFields["pressure"]);
