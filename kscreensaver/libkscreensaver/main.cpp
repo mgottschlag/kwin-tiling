@@ -115,7 +115,7 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
        args->clear();
        dlg->exec();
        delete dlg;
-       exit(0);
+       return 0;
     }
 
     if (args->isSet("window-id"))

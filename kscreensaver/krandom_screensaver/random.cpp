@@ -52,6 +52,15 @@ static const char description[] = I18N_NOOP("Start a random KDE screen saver");
 
 static const char version[] = "2.0.0";
 
+static QString exeFromActionGroup(const QList<KServiceAction>& actions, const char* name)
+{
+    foreach(const KServiceAction& action, actions) {
+        if (action.name() == name)
+            return action.exec();
+    }
+    return QString();
+}
+
 //----------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
@@ -93,76 +102,54 @@ int main(int argc, char *argv[])
 		windowId = RootWindow(QX11Info::display(), info.screen());
 	}
 	args->clear();
-	KService::List lst = KServiceTypeTrader::self()->query( "ScreenSaver");
-	QStringList saverFileList;
+	const KService::List lst = KServiceTypeTrader::self()->query( "ScreenSaver");
+        KService::List availableSavers;
 
 	KConfig type("krandom.kssrc", KConfig::CascadeConfig);
         const KConfigGroup configGroup = type.group("Settings");
-	bool opengl = configGroup.readEntry("OpenGL", false);
-	bool manipulatescreen = configGroup.readEntry("ManipulateScreen", false);
-        bool fortune = !KStandardDirs::findExe("fortune").isEmpty();
-        for( KService::List::const_iterator it = lst.begin();
-            it != lst.end(); ++it)
-	{
-		QString file = KStandardDirs::locate("services", (*it)->entryPath());
-		kDebug() << "Looking at " << file;
-		KDesktopFile saver( file );
-		kDebug() << "read X-KDE-Type";
-		QString saverType = saver.desktopGroup().readEntry("X-KDE-Type");
-		if (saverType.isEmpty()) // no X-KDE-Type defined so must be OK
-		{
-			saverFileList.append(file);
+	const bool opengl = configGroup.readEntry("OpenGL", false);
+	const bool manipulatescreen = configGroup.readEntry("ManipulateScreen", false);
+        // TODO replace this with TryExec=fortune in the desktop files
+        const bool fortune = !KStandardDirs::findExe("fortune").isEmpty();
+        foreach( const KService::Ptr& service, lst ) {
+            //QString file = KStandardDirs::locate("services", service->entryPath());
+            //kDebug() << "Looking at " << file;
+            const QString saverType = service->property("X-KDE-Type").toString();
+            if (saverType.isEmpty()) { // no X-KDE-Type defined so must be OK
+                availableSavers.append(service);
+            } else {
+                const QStringList saverTypes = saverType.split( ";");
+                for (QStringList::ConstIterator it =  saverTypes.begin(); it != saverTypes.end(); ++it ) {
+                    kDebug() << "saverTypes is "<< *it;
+                    if (*it == "ManipulateScreen") {
+                        if (manipulatescreen) {
+                            availableSavers.append(service);
+                        }
+                    } else if (*it == "OpenGL") {
+                        if (opengl) {
+                            availableSavers.append(service);
+                        }
+                    } else if (*it == "Fortune") {
+                        if (fortune) {
+                            availableSavers.append(service);
+                        }
+                    }
 		}
-		else
-		{
-			QStringList saverTypes = saverType.split( ";");
-			for (QStringList::ConstIterator it =  saverTypes.begin(); it != saverTypes.end(); ++it )
-			{
-				kDebug() << "saverTypes is "<< *it;
-				if (*it == "ManipulateScreen")
-				{
-					if (manipulatescreen)
-					{
-						saverFileList.append(file);
-					}
-				}
-				else
-				if (*it == "OpenGL")
-				{
-					if (opengl)
-					{
-						saverFileList.append(file);
-					}
-				}
-				if (*it == "Fortune")
-				{
-					if (fortune)
-					{
-						saverFileList.append(file);
-					}
-				}
-
-			}
-		}
+            }
 	}
 
 	KRandomSequence rnd;
-	int indx = rnd.getLong(saverFileList.count());
-	QString filename = saverFileList.at(indx);
+	const int indx = rnd.getLong(availableSavers.count());
+        const KService::Ptr service = availableSavers.at(indx);
+        const QList<KServiceAction> actions = service->actions();
 
-	KDesktopFile config( filename );
-
-        KConfigGroup cg = config.desktopGroup();
 	QString cmd;
-	if (windowId && config.hasActionGroup("InWindow"))
-	{
-		cg = config.actionGroup("InWindow");
-	}
-	else if ((windowId == 0) && config.hasActionGroup("Root"))
-	{
-		cg = config.actionGroup("Root");
-	}
-	cmd = cg.readPathEntry("Exec");
+	if (windowId)
+            cmd = exeFromActionGroup(actions, "InWindow");
+        if (cmd.isEmpty() && windowId == 0)
+            cmd = exeFromActionGroup(actions, "Root");
+        if (cmd.isEmpty())
+            cmd = service->exec();
 
 	QTextStream ts(&cmd, QIODevice::ReadOnly);
 	QString word;
