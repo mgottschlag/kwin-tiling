@@ -89,7 +89,7 @@ bool IonInterface::updateSource(const QString& source)
      return false; 
 }
 
-void IonInterface::setInitialized(bool initialized)
+void IonInterface::setInitialized(const bool initialized)
 {
     d->initialized = initialized;
 
