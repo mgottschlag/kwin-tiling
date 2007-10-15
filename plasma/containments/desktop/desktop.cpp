@@ -288,7 +288,7 @@ QList<QAction*> DefaultDesktop::contextActions()
         m_engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
         connect(m_engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer()));
 
-        m_appletBrowserAction = new QAction(i18n("Add applet"), this);
+        m_appletBrowserAction = new QAction(i18n("Add Applet..."), this);
         connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SLOT(launchAppletBrowser()));
 
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
