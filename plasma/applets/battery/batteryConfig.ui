@@ -41,7 +41,7 @@
      <item>
       <widget class="QLabel" name="labelSize" >
        <property name="text" >
-        <string>Size of the battery</string>
+        <string>Size of the battery:</string>
        </property>
       </widget>
      </item>
