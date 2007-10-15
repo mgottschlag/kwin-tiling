@@ -1,0 +1,24 @@
+[Desktop Entry]
+Name=SolidDevice Data Engine
+Name[bg]=Ядро за SolidDevice
+Name[es]=Motor de datos de dispositivos Solid
+Name[et]=SolidDevice'i andmete mootor
+Name[ja]=SolidDevice データエンジン
+Name[nl]=SolidDevice-gegevensengine
+Name[pt]=Motor de Dados do SolidDevice
+Name[pt_BR]=Motor de Dados do SolidDevice
+Name[sv]=Datagränssnitt för enheter i Solid
+Comment=SolidDevice data for Plasmoids
+Comment[bg]=SolidDevice за Plasmoids
+Comment[es]=Datos del dispositivo Solid para Plasmoids
+Comment[et]=SolidDevice'i andmed plasmoididele
+Comment[ja]=Plasmoid のための SolidDevice データ
+Comment[nl]=SolidDevice-gegevens voor Plasmoids
+Comment[pt]=Dados do SolidDevice para os Plasmóides
+Comment[pt_BR]=Dados do SolidDevice para os Plasmóides
+Comment[sv]=Enhetsdata från Solid för Plasmoider
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=alarmclock
+X-KDE-Library=plasma_engine_soliddevice
+X-EngineName=soliddevice
