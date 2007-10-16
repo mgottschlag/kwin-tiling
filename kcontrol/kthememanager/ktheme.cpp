@@ -144,34 +144,34 @@ QString KTheme::createYourself( bool pack )
         QDomElement desktopElem = m_dom.createElement( "desktop" );
         desktopElem.setAttribute( "number", i );
         desktopElem.setAttribute( "common", common );
-
-        desktopConf.changeGroup( "Desktop" + QString::number( i ) );
+        
+        KConfigGroup group(&_desktopConf,"Desktop" + QString::number( i ));
 
         QDomElement modeElem = m_dom.createElement( "mode" );
-        modeElem.setAttribute( "id", desktopConf.readEntry( "BackgroundMode", "Flat" ) );
+        modeElem.setAttribute( "id", group.readEntry( "BackgroundMode", "Flat" ) );
         desktopElem.appendChild( modeElem );
 
         QDomElement c1Elem = m_dom.createElement( "color1" );
-        c1Elem.setAttribute( "rgb", desktopConf.readEntry( "Color1",QColor() ).name() );
+        c1Elem.setAttribute( "rgb", group.readEntry( "Color1",QColor() ).name() );
         desktopElem.appendChild( c1Elem );
 
         QDomElement c2Elem = m_dom.createElement( "color2" );
-        c2Elem.setAttribute( "rgb", desktopConf.readEntry( "Color2",QColor() ).name() );
+        c2Elem.setAttribute( "rgb", group.readEntry( "Color2",QColor() ).name() );
         desktopElem.appendChild( c2Elem );
 
         QDomElement blendElem = m_dom.createElement( "blending" );
-        blendElem.setAttribute( "mode", desktopConf.readEntry( "BlendMode", QString( "NoBlending" ) ) );
-        blendElem.setAttribute( "balance", desktopConf.readEntry( "BlendBalance", QString::number( 100 ) ) );
-        blendElem.setAttribute( "reverse", desktopConf.readEntry( "ReverseBlending", false ) );
+        blendElem.setAttribute( "mode", group.readEntry( "BlendMode", QString( "NoBlending" ) ) );
+        blendElem.setAttribute( "balance", group.readEntry( "BlendBalance", QString::number( 100 ) ) );
+        blendElem.setAttribute( "reverse", group.readEntry( "ReverseBlending", false ) );
         desktopElem.appendChild( blendElem );
 
         QDomElement patElem = m_dom.createElement( "pattern" );
-        patElem.setAttribute( "name", desktopConf.readEntry( "Pattern" ) );
+        patElem.setAttribute( "name", group.readEntry( "Pattern" ) );
         desktopElem.appendChild( patElem );
 
         QDomElement wallElem = m_dom.createElement( "wallpaper" );
-        wallElem.setAttribute( "url", processFilePath( "desktop", desktopConf.readPathEntry( "Wallpaper" ) ) );
-        wallElem.setAttribute( "mode", desktopConf.readEntry( "WallpaperMode" ) );
+        wallElem.setAttribute( "url", processFilePath( "desktop", group.readPathEntry( "Wallpaper" ) ) );
+        wallElem.setAttribute( "mode", group.readEntry( "WallpaperMode" ) );
         desktopElem.appendChild( wallElem );
 
         // TODO handle multi wallpapers (aka slideshow)
@@ -183,9 +183,9 @@ QString KTheme::createYourself( bool pack )
     }
 
     // 11. Screensaver
-    desktopConf.changeGroup( "ScreenSaver" );
+    KConfigGroup saver(&_desktopConf,"ScreenSaver" );
     QDomElement saverElem = m_dom.createElement( "screensaver" );
-    saverElem.setAttribute( "name", desktopConf.readEntry( "Saver" ) );
+    saverElem.setAttribute( "name", saver.readEntry( "Saver" ) );
     m_root.appendChild( saverElem );
 
     // 3. Icons
@@ -347,8 +347,8 @@ QString KTheme::createYourself( bool pack )
         QString value;
 
         if ( group == "FMSettings" ) {
-            desktopConf.changeGroup( group );
-            value = desktopConf.readEntry( key, QString() );
+            KConfigGroup grp(&_desktopConf,group );
+            value = grp.readEntry( key, QString() );
         }
         else {
             value = globalConf->group(group).readEntry( key, QString() );
@@ -411,19 +411,19 @@ void KTheme::apply()
             desktopConf.writeEntry( "CommonDesktop", common );
             desktopConf.writeEntry( "DeskNum", desktopElem.attribute( "number", "0" ).toUInt() );
 
-            desktopConf.changeGroup( QString( "Desktop%1" ).arg( i ) );
-            desktopConf.writeEntry( "BackgroundMode", getProperty( desktopElem, "mode", "id" ) );
-            desktopConf.writeEntry( "Color1", QColor( getProperty( desktopElem, "color1", "rgb" ) ) );
-            desktopConf.writeEntry( "Color2", QColor( getProperty( desktopElem, "color2", "rgb" ) ) );
-            desktopConf.writeEntry( "BlendMode", getProperty( desktopElem, "blending", "mode" ) );
-            desktopConf.writeEntry( "BlendBalance", getProperty( desktopElem, "blending", "balance" ) );
-            desktopConf.writeEntry( "ReverseBlending",
+            KConfigGroup grp(&_desktopConf, QString( "Desktop%1" ).arg( i ) );
+            grp.writeEntry( "BackgroundMode", getProperty( desktopElem, "mode", "id" ) );
+            grp.writeEntry( "Color1", QColor( getProperty( desktopElem, "color1", "rgb" ) ) );
+            grp.writeEntry( "Color2", QColor( getProperty( desktopElem, "color2", "rgb" ) ) );
+            grp.writeEntry( "BlendMode", getProperty( desktopElem, "blending", "mode" ) );
+            grp.writeEntry( "BlendBalance", getProperty( desktopElem, "blending", "balance" ) );
+            grp.writeEntry( "ReverseBlending",
                                     static_cast<bool>( getProperty( desktopElem, "blending", "reverse" ).toUInt() ) );
-            desktopConf.writeEntry( "Pattern", getProperty( desktopElem, "pattern", "name" ) );
-            desktopConf.writeEntry( "Wallpaper",
+            grp.writeEntry( "Pattern", getProperty( desktopElem, "pattern", "name" ) );
+            grp.writeEntry( "Wallpaper",
                                     unprocessFilePath( QLatin1String("desktop"),
                                                        getProperty( desktopElem, "wallpaper", "url" ) ) );
-            desktopConf.writeEntry( "WallpaperMode", getProperty( desktopElem, "wallpaper", "mode" ) );
+            grp.writeEntry( "WallpaperMode", getProperty( desktopElem, "wallpaper", "mode" ) );
 
             if ( common )
                 break;          // stop here
@@ -435,8 +435,8 @@ void KTheme::apply()
 
     if ( !saverElem.isNull() )
     {
-        desktopConf.changeGroup( "ScreenSaver" );
-        desktopConf.writeEntry( "Saver", saverElem.attribute( "name" ) );
+        KConfigGroup grp(&_desktopConf,"ScreenSaver" );
+        grp.writeEntry( "Saver", saverElem.attribute( "name" ) );
     }
 
     desktopConf.sync();         // TODO sync and signal only if <desktop> elem present
@@ -503,9 +503,9 @@ void KTheme::apply()
 
             if ( object == "global" )
             {
-                soundGroup.changeGroup(eventElem.attribute("name"));
-                soundGroup.writeEntry( "soundfile", unprocessFilePath( QLatin1String("sounds"), eventElem.attribute( "url" ) ) );
-                soundGroup.writeEntry( "presentation", soundGroup.readEntry( "presentation" ,0) | 1 );
+                KConfigGroup grp(KSharedConfig::openConfig("knotify.eventsrc"),eventElem.attribute("name"));
+                grp.writeEntry( "soundfile", unprocessFilePath( QLatin1String("sounds"), eventElem.attribute( "url" ) ) );
+                grp.writeEntry( "presentation", soundGroup.readEntry( "presentation" ,0) | 1 );
             }
             else if ( object == "kwin" )
             {
