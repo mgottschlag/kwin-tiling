@@ -273,6 +273,9 @@ public:
     virtual void activate();
     virtual void close();
 
+protected:
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
 private slots:
     void updateTask();
 

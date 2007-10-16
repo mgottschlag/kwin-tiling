@@ -39,6 +39,7 @@
 #include <KGlobalSettings>
 #include <KIcon>
 #include <KIconLoader>
+#include <taskmanager/taskrmbmenu.h>
 
 // Plasma
 #include <plasma/widgets/boxlayout.h>
@@ -689,5 +690,11 @@ Task::TaskPtr WindowTaskItem::windowTask() const
     return _task;
 }
 
+void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
+{
+    e->accept();
+    TaskRMBMenu menu( windowTask() );
+    menu.exec( e->screenPos() );
+}
 #include "tasks.moc"
 
