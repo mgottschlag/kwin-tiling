@@ -135,15 +135,12 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3ButtonGroup" name="numlockGroup" >
+    <widget class="KButtonGroup" name="numlockGroup" >
      <property name="whatsThis" >
       <string>If supported, this option allows you to setup the state of NumLock after KDE startup.&lt;p>You can configure NumLock to be turned on or off, or configure KDE not to set NumLock state.</string>
      </property>
      <property name="title" >
       <string>NumLock on KDE Startup</string>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
      </property>
      <layout class="QGridLayout" >
       <item row="1" column="0" >

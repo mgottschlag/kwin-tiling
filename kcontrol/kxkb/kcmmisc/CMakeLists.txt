@@ -1,5 +1,3 @@
-#add_definitions (-DQT3_SUPPORT)
-
 # TODO: add this piece to kdeinit
 
 ########### KCM ###############

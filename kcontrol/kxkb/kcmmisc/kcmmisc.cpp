@@ -35,7 +35,7 @@
 
 #include <QLayout>
 #include <QWhatsThis>
-#include <Q3ButtonGroup>
+#include <KButtonGroup>
 #include <QRadioButton>
 
 #include <klocale.h>
@@ -123,18 +123,15 @@ void KeyboardConfig::setClick(int v)
 
 int KeyboardConfig::getNumLockState()
 {
-    QAbstractButton* selected = ui->numlockGroup->selected();
-    if( selected == NULL )
+    int selected = ui->numlockGroup->selected();
+    if( selected < 0 )
         return 2;
-    int ret = ui->numlockGroup->id( selected );
-    if( ret == -1 )
-        ret = 2;
-    return ret;
+    return selected;
 }
 
 void KeyboardConfig::setNumLockState( int s )
 {
-    ui->numlockGroup->setButton( s );
+    ui->numlockGroup->setSelected( s );
 }
 
 void KeyboardConfig::load()
