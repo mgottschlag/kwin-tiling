@@ -280,14 +280,16 @@ void CFontFilter::setCriteria(ECriteria crit)
 {
     QPixmap arrowmap(itsPixmaps[crit].width()+constArrowPad, itsPixmaps[crit].height());
 
-    arrowmap.fill(palette().color(QPalette::Active, QPalette::Base));
+    QColor bgnd(palette().color(QPalette::Active, QPalette::Base));
+    bgnd.setAlphaF(0.0);
+    arrowmap.fill(bgnd);
 
     QPainter p(&arrowmap);
 
     p.drawPixmap(0, 0, itsPixmaps[crit]);
     QStyleOption opt;
     opt.state = QStyle::State_Enabled;
-    opt.rect = QRect(arrowmap.width()-(constArrowPad+1), arrowmap.height()-constArrowPad, constArrowPad+1, constArrowPad);
+    opt.rect = QRect(arrowmap.width()-(constArrowPad+1), arrowmap.height()-(constArrowPad+1), constArrowPad, constArrowPad);
     style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &opt, &p, itsMenuButton);
     p.end();
 

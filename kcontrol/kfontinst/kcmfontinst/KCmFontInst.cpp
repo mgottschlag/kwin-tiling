@@ -40,6 +40,7 @@
 #include <QTextStream>
 #include <QComboBox>
 #include <QProcess>
+#include <QPainter>
 #include <kaboutdata.h>
 #include <ktoolbar.h>
 #include <kfiledialog.h>
@@ -111,6 +112,8 @@ class CPushButton : public KPushButton
         sh.setHeight(theirHeight);
         if(sh.width()<sh.height())
             sh.setWidth(sh.height());
+        else if(text().isEmpty())
+            sh.setWidth(theirHeight);
         return sh;
     }
 
@@ -127,6 +130,14 @@ class CToolBar : public KToolBar
         : KToolBar(parent)
     {
         theirHeight=qMax(theirHeight, height());
+        setMovable(false);
+        setFloatable(false);
+        setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    }
+
+    void addSeparator()
+    {
+        addWidget(new QLabel(" ", this));
     }
 
     void link(CToolBar *l)
@@ -140,6 +151,11 @@ class CToolBar : public KToolBar
 
         sh.setHeight(theirHeight);
         return sh;
+    }
+
+    void paintEvent(QPaintEvent *)
+    {
+        QPainter(this).fillRect(rect(), palette().color(backgroundRole()));
     }
 
     void resizeEvent(QResizeEvent *ev)
@@ -242,7 +258,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsPreviewControl=new CPreviewSelectAction(itsPreviewWidget);
 
     previewToolbar->addAction(itsPreviewControl);
-    previewToolbar->setMovable(false);
 
     previewLayout->setMargin(0);
     previewLayout->setSpacing(KDialog::spacingHint());
@@ -284,8 +299,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsToolsMenu->setDelayed(false);
     toolbar->addAction(settingsMenu);
     toolbar->addAction(itsToolsMenu);
-    toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    toolbar->setMovable(false);
     if(Misc::root())
         itsModeControl=NULL;
     else
