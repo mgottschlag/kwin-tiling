@@ -408,7 +408,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   stickyKeysBeep = new QCheckBox(i18n("Use system bell whenever a modifier gets latched, locked or unlocked"), grp);
   hbox->addWidget(stickyKeysBeep);
 
-  grp = new Q3GroupBox(i18n("Locking keys"), modifiers);
+  grp = new Q3GroupBox(i18n("Locking Keys"), modifiers);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -426,7 +426,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addStretch(1);
-  kNotifyModifiersButton = new QPushButton("Configure system notification", grp);
+  kNotifyModifiersButton = new QPushButton("Configure System Notification...", grp);
   kNotifyModifiersButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   hbox->addWidget(kNotifyModifiersButton);
 
@@ -601,7 +601,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addStretch(1);
-  kNotifyAccessXButton = new QPushButton("Configure system notification", grp);
+  kNotifyAccessXButton = new QPushButton("Configure System Notification...", grp);
   kNotifyAccessXButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   hbox->addWidget(kNotifyAccessXButton);
 
