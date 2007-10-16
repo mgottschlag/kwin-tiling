@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=File and Directory Browser Engine
 Name[el]=Μηχανή περιήγησης αρχείων και φακέλων
+Name[et]=Faili- ja kataloogisirvija mootor
 Name[ja]=ファイルとディレクトリのブラウザエンジン
 Name[km]=ម៉ាស៊ីន​រុករក​ថត និង​ឯកសារ
 Name[ko]=파일 및 디렉터리 탐색 엔진
@@ -17,6 +18,7 @@ Name[zh_CN]=文件和目录浏览器引擎
 Name[zh_TW]=檔案與目錄瀏覽器引擎
 Comment=Info about files and directories for Plasmoids
 Comment[el]=Πληροφορίες για αρχεία και καταλόγους για πλασμοειδή
+Comment[et]=Failide ja kataloogide info plasmoididele
 Comment[ja]=Plasmoid のためのファイルとディレクトリに関する情報
 Comment[km]=ព័ត៌មាន​អំពី​ឯកសារ និង​ថត​សម្រាប់ Plasmoids
 Comment[ko]=Plasmoid를 위한 파일과 디렉터리 정보

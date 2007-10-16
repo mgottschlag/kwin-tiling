@@ -1,17 +1,21 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Places Data Engine
+Name[et]=Asukohtade andmete mootor
 Name[ga]=Inneall Sonraí Áiteanna
 Name[ja]=場所データエンジン
 Name[nb]=Steder datamotor
+Name[nl]=Locaties (gegevensengine)
 Name[pt]=Motor de Dados dos Locais
 Name[pt_BR]=Mecanismo de Dados de Locais
 Name[sv]=Datagränssnitt för platser
 Name[zh_TW]=Places 資料引擎
 Comment=Places data for Plasmoids
+Comment[et]=Asukohtade andmed plasmoididele
 Comment[ga]=Sonraí áiteanna le haghaidh Plasmoids
 Comment[ja]=Plasmoid のための場所データ
 Comment[nb]=Stedsdata for Plasmoids
+Comment[nl]=Locatiegegevens voor Plasmoids
 Comment[pt]=Dados dos locais para os Plasmóides
 Comment[pt_BR]=Dados de locais para os Plasmoids
 Comment[sv]=Platsdata för Plasmoider

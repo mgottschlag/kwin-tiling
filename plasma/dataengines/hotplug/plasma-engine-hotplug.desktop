@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Hotplug Event Data Engine
+Name[et]=Hotplug-sündmuste andmete mootor
 Name[ja]=Hotplug イベントデータエンジン
+Name[nl]=Hotplug-gebeurtenis (gegevensengine)
 Name[pt]=Motor de Dados de Eventos do Hotplug
 Name[pt_BR]=Mecanismo de Dados de Eventos do Hotplug
 Name[sv]=Datagränssnitt för inkopplingshändelse

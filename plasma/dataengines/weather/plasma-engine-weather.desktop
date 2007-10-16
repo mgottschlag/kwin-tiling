@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Weather Data Engine
 Name[el]=Μηχανή δεδομένων καιρού
+Name[et]=Ilmaandmete mootor
 Name[ga]=Inneall Sonraí Aimsire
 Name[ja]=気象データエンジン
 Name[kk]=Ауа райы қызметі
@@ -8,7 +9,7 @@ Name[km]=ម៉ាស៊ីន​ស្វែងរក​ទិន្នន័�
 Name[ko]=날씨 데이터 엔진
 Name[nb]=Værdata-motor
 Name[nds]=Weder-Datenhanteerkarn
-Name[nl]=Weer-gegevensengine
+Name[nl]=Weer (gegevensengine)
 Name[nn]=Vêrdatamotor
 Name[pt]=Motor de Dados Meteorológicos
 Name[pt_BR]=Mecanismo de Dados Meteorológicos
@@ -18,6 +19,7 @@ Name[zh_CN]=天气数据引擎
 Name[zh_TW]=天氣資料引擎
 Comment=Weather data for Plasmoids
 Comment[el]=Δεδομένα καιρού για πλασμοειδή
+Comment[et]=Ilmaandmed plasmoididele
 Comment[ga]=Sonraí aimsire le haghaidh Plasmoids
 Comment[ja]=Plasmoid のための気象データ
 Comment[kk]=Плазмоидтер үшін ауа райы деректері

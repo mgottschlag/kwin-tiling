@@ -1,16 +1,20 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Mouse Data Engine
+Name[et]=Hiire andmete mootor
 Name[ja]=マウスデータエンジン
 Name[nb]=Musedata-motor
+Name[nl]=Muis (gegevensengine)
 Name[pt]=Motor de Dados do Rato
 Name[pt_BR]=Mecanismo de Dados de Mouse
 Name[sv]=Datagränssnitt för mus
 Name[zh_TW]=滑鼠資料引擎
 Comment=Mouse data for Plasmoids
+Comment[et]=Hiire andmed plasmoididele
 Comment[ga]=Sonraí luiche le haghaidh Plasmoids
 Comment[ja]=Plasmoid のためのマウスデータ
 Comment[nb]=Musedata for Plasmoids
+Comment[nl]=Muisgegevens voor Plasmoids
 Comment[pt]=Dados do rato para os Plasmóides
 Comment[pt_BR]=Dados de mouse para os Plasmoids
 Comment[sv]=Musdata för Plasmoider

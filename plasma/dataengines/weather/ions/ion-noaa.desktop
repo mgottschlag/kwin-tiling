@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=NOAA's National Weather Service
 Name[el]=Υπηρεσία καιρού NOAA
+Name[et]=NOAA riiklik ilmateenistus
 Name[ja]=NOAA (アメリカ海洋大気圏局) National Weather Service
 Name[kk]=NOAA Ұлттық ауа райы қызметі
 Name[km]=សេវា​អាកាសធាតុ​ជាតិ​របស់ NOAA
@@ -17,6 +18,7 @@ Name[zh_CN]=NOAA 的 国家天气服务
 Name[zh_TW]=NOAA 的國家天氣服務
 Comment=XML Data from NOAA's National Weather Service
 Comment[el]=Δεδομένα XML από την υπηρεσία καιρού NOAA
+Comment[et]=NOAA riikliku ilmateenistuse XML-andmed
 Comment[it]=Dati XML dal NOAA (National Weather Service)
 Comment[ja]=NOAA (アメリカ海洋大気圏局) National Weather Service の XML データ
 Comment[kk]=NOAA Ұлттық ауа райы қызметінің XML дерегі

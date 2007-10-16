@@ -1,18 +1,22 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Digital Clock
+Name[et]=Digikell
 Name[ga]=Clog Digiteach
 Name[ja]=デジタル時計
 Name[nb]=Digital klokke
+Name[nl]=Digitale klok
 Name[pt]=Relógio Digital
 Name[pt_BR]=Relógio Digital
 Name[sv]=Digitalklocka
 Name[zh_TW]=數位時鐘
 
 Comment=An SVG themable digital clock
+Comment[et]=SVG teemaga digikell
 Comment[ga]=Clog digiteach le téamaí SVG
 Comment[ja]=SVG テーマを使ったデジタル時計
 Comment[nb]=En SVG-klokke med drakter
+Comment[nl]=Een klok met SVG-themamogelijkheden
 Comment[pt]=Um relógio digital com temas em SVG
 Comment[pt_BR]=Um relógio digital com temas em SVG
 Comment[sv]=En SVG-temabaserad digitalklocka
