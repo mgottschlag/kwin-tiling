@@ -258,7 +258,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             element = QString('e')+oldMinutes+QString("-p2");
             m_theme->paint(p, QRectF(99, 41, elWidth, elHeight), element);
 
-            if (m_animationStep < 3) {
+            if (m_animationStep < 3 && m_animationStep > 0) {
                 element = QString('e')+oldMinutes+QString("-p1");
                 m_theme->paint(p, QRectF(99, 40-(elHeight/m_animationStep), elWidth, elHeight/m_animationStep), element);
             } else {
@@ -275,7 +275,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 element = QString('e')+oldHours+QString("-p2");
                 m_theme->paint(p, QRectF(59, 41, elWidth, elHeight), element);
 
-                if (m_animationStep < 3) {
+                if (m_animationStep < 3 && m_animationStep > 0) {
                     element = QString('e')+oldHours+QString("-p1");
                     m_theme->paint(p, QRectF(59, 40-(elHeight/m_animationStep), elWidth, elHeight/m_animationStep), element);
                 } else {
@@ -292,7 +292,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                     element = QString('e')+oldHours+QString("-p2");
                     m_theme->paint(p, QRectF(39, 41, elWidth, elHeight), element);
 
-                    if (m_animationStep < 3) {
+                    if (m_animationStep < 3 && m_animationStep > 0) {
                         element = QString('e')+oldHours+QString("-p1");
                         m_theme->paint(p, QRectF(39, 40-(elHeight/m_animationStep), elWidth, elHeight/m_animationStep), element);
                     } else {
