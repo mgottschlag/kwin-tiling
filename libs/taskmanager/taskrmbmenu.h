@@ -26,6 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __taskrmbmenu_h__
 
 #include <QMenu>
+#include <QList>
+#include <QPair>
 
 class KDE_EXPORT TaskRMBMenu : public QMenu
 {
@@ -48,12 +50,14 @@ private Q_SLOTS:
 	void slotRestoreAll();
 	void slotShadeAll();
 	void slotCloseAll();
-	void slotAllToDesktop( int desktop );
+	void slotAllToDesktop();
 	void slotAllToCurrentDesktop();
+	void slotToDesktop();
 
 private:
 	Task::List tasks;
 	bool showAll;
+	QList< QPair<KSharedPtr<Task>, int> > toDesktopMap;
 };
 
 #endif

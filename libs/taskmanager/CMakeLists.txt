@@ -3,7 +3,7 @@
 
 ########### next target ###############
 
-set(taskmanager_LIB_SRCS taskmanager.cpp) 
+set(taskmanager_LIB_SRCS taskmanager.cpp taskrmbmenu.cpp) 
 
 kde4_add_library(taskmanager SHARED ${taskmanager_LIB_SRCS})
 
