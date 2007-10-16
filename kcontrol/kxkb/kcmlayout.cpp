@@ -21,9 +21,6 @@
 #include <QTabWidget>
 #include <QGroupBox>
 #include <QPushButton>
-#include <Q3ListView>
-#include <Q3ListViewItem>
-#include <Q3CheckListItem>
 #include <QHeaderView>
 #include <QCheckBox>
 #include <QRadioButton>
@@ -32,10 +29,11 @@
 #include <QWidget>
 #include <QtGui>
 
+#include <kicon.h>
 #include <kshortcutsdialog.h>
+#include <kactioncollection.h>
 #include <kglobal.h>
 #include <kconfig.h>
-#include <klocale.h>
 #include <kdebug.h>
 #include <kapplication.h>
 #include <kiconloader.h>
@@ -52,6 +50,9 @@
 #include <KPluginLoader>
 #include "kcmlayout.moc"
 
+#ifdef HAVE_XKLAVIER
+#include "xklavier_adaptor.h"
+#endif
 
 
 K_PLUGIN_FACTORY(KeyboardLayoutFactory,
@@ -72,51 +73,10 @@ enum {
  DST_LAYOUT_COLUMN_COUNT = 5
 };
 
+enum { TAB_LAYOUTS=0, TAB_OPTIONS=1, TAB_XKB=2 };
+enum { BTN_XKB_ENABLE=0, BTN_XKB_INDICATOR=1, BTN_XKB_DISABLE=2 };
+
 static const QString DEFAULT_VARIANT_NAME("<default>");
-
-class OptionListItem : public Q3CheckListItem
-{
-	public:
-
-		OptionListItem(  OptionListItem *parent, const QString &text, Type tt,
-						 const QString &optionName );
-		OptionListItem(  Q3ListView *parent, const QString &text, Type tt,
-						 const QString &optionName );
-		~OptionListItem() {}
-
-		QString optionName() const { return m_OptionName; }
-		OptionListItem *findChildItem(  const QString& text );
-
-	protected:
-		QString m_OptionName;
-};
-
-
-OptionListItem::OptionListItem( OptionListItem *parent, const QString &text,
-								Type tt, const QString &optionName )
-	: Q3CheckListItem( parent, text, tt ), m_OptionName( optionName )
-{
-}
-
-OptionListItem::OptionListItem( Q3ListView *parent, const QString &text,
-								Type tt, const QString &optionName )
-	: Q3CheckListItem( parent, text, tt ), m_OptionName( optionName )
-{
-}
-
-OptionListItem * OptionListItem::findChildItem( const QString& optionName )
-{
-	OptionListItem *child = static_cast<OptionListItem *>( firstChild() );
-
-	while ( child )
-	{
-		if ( child->optionName() == optionName )
-			break;
-		child = static_cast<OptionListItem *>( child->nextSibling() );
-	}
-
-	return child;
-}
 
 class SrcLayoutModel: public QAbstractTableModel {
 public:
@@ -191,7 +151,7 @@ public:
 	: QAbstractTableModel(parent),
 	m_kxkbConfig(kxkbConfig)
 	{ setRules(rules); }
-    int columnCount(const QModelIndex& parent) const { return DST_LAYOUT_COLUMN_COUNT; }
+    int columnCount(const QModelIndex& /*parent*/) const { return DST_LAYOUT_COLUMN_COUNT; }
     int rowCount(const QModelIndex&) const { return m_kxkbConfig->m_layouts.count(); }
     QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
@@ -206,16 +166,15 @@ private:
 
 QVariant DstLayoutModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-     if (role != Qt::DisplayRole)
-              return QVariant();
+    if (role != Qt::DisplayRole)
+        return QVariant();
 	      
-    QString colNames[] = {"", i18n("Layout Name"), i18n("Map"), i18n("Variant"), i18n("Display Name")};
+    QString colNames[] = {"", i18n("Layout Name"), i18n("Map"), i18n("Variant"), i18n("Label")};
     if (orientation == Qt::Horizontal) {
 	return colNames[section];
     }
-              return QVariant();
+    return QVariant();
 }
-
 
 QVariant
 DstLayoutModel::data(const QModelIndex& index, int role) const
@@ -248,13 +207,137 @@ DstLayoutModel::data(const QModelIndex& index, int role) const
 }
 
 
+class XkbOptionsModel: public QAbstractItemModel {
+public:
+    XkbOptionsModel(XkbRules* rules, KxkbConfig* kxkbConfig, QObject *parent)
+	: QAbstractItemModel(parent),
+	m_kxkbConfig(kxkbConfig)
+	{ setRules(rules); }
+
+    int columnCount(const QModelIndex& /*parent*/) const { return 1; }
+    int rowCount(const QModelIndex& parent) const { 
+        if( ! parent.isValid() )
+            return m_rules->optionGroups().count();
+        if( ! parent.parent().isValid() )
+            return m_rules->optionGroups().values()[parent.row()].options.count();
+        return 0; 
+    }
+    QModelIndex parent(const QModelIndex& index) const {
+        if (!index.isValid() )
+            return QModelIndex();
+//        kDebug() << index;
+        if( index.internalId() < 100 )
+            return QModelIndex();
+        return createIndex(((index.internalId() - index.row())/100) - 1, index.column());
+    }
+    QModelIndex index(int row, int column, const QModelIndex& parent) const {
+        if(!parent.isValid()) return createIndex(row, column);
+        return createIndex(row, column, (100 * (parent.row()+1)) + row);
+    }
+    Qt::ItemFlags flags ( const QModelIndex & index ) const {
+        if( ! index.isValid() )
+            return 0;
+        
+        if( !index.parent().isValid() )
+            return Qt::ItemIsEnabled;
+
+        return Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
+    }
+    bool setData ( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole ) {
+//    kDebug() << index << value;
+        int groupRow = index.parent().row();
+        if( groupRow < 0 ) return false;
+        
+        QString xkbGroupNm = m_rules->optionGroups().keys()[groupRow];
+        const XkbOptionGroup& xkbGroup = m_rules->optionGroups()[xkbGroupNm];
+	const XkbOption& option = xkbGroup.options[index.row()];
+
+        if( value.toInt() == Qt::Checked ) {
+                if( xkbGroup.exclusive ) {
+                // clear if exclusive (TODO: radiobutton)
+                    int idx = m_kxkbConfig->m_options.indexOf(QRegExp(xkbGroupNm+".*"));
+//                    kDebug() << "other idx to clear" << idx;
+                    if( idx >= 0 ) {
+                        for(int i=0; i<xkbGroup.options.count(); i++)
+                            if( xkbGroup.options[i].name == m_kxkbConfig->m_options[idx] ) {
+                                setData(createIndex(i, index.column(), (quint32)index.internalId()-index.row()+i), Qt::Unchecked, role);
+                                break;
+                            }
+                //    m_kxkbConfig->m_options.removeAt(idx);
+                //    idx = m_kxkbConfig->m_options.indexOf(QRegExp(xkbGroupNm+".*"));
+                    }
+                }
+            if( m_kxkbConfig->m_options.indexOf(option.name) < 0 ) {
+                m_kxkbConfig->m_options.append(option.name);
+            }
+        }
+        else {
+            m_kxkbConfig->m_options.removeAll(option.name);
+        }
+        emit dataChanged(index, index);
+        return true;
+    }
+    
+    QVariant data(const QModelIndex& index, int role) const;
+
+    void setRules(XkbRules* rules) { m_rules = rules; }
+    void reset() { QAbstractItemModel::reset(); }
+
+    void gotoGroup(const QString& group, QAbstractItemView* view) {
+        int index = m_rules->optionGroups().keys().indexOf(group);
+        kDebug() << "scrolling to group" << index << "-" << group;
+        if( index != -1 ) {
+//            view->selectionModel()->setCurrentIndex(createIndex(index,0), QItemSelectionModel::NoUpdate);
+            view->scrollTo(createIndex(index,0), QAbstractItemView::PositionAtTop);
+            view->selectionModel()->setCurrentIndex(createIndex(index,0), QItemSelectionModel::Current);
+            view->setFocus(Qt::OtherFocusReason);
+            kDebug() << "wdg:" << view->itemDelegate(createIndex(index, 0).child(0,0));
+        }
+        else
+            kDebug() << "can't scroll to group" << group;
+    }
+private:
+    XkbRules* m_rules;
+    KxkbConfig* m_kxkbConfig;
+};
+
+QVariant
+XkbOptionsModel::data(const QModelIndex& index, int role) const
+{ 
+    if (!index.isValid())
+	return QVariant();
+
+    int row = index.row();
+	
+    if (role == Qt::DisplayRole) {
+        if( ! index.parent().isValid() )
+	    return m_rules->optionGroups().values()[row].description;
+        else {
+            int groupRow = index.parent().row();
+            QString xkbGroupNm = m_rules->optionGroups().keys()[groupRow];
+            const XkbOptionGroup& xkbGroup = m_rules->optionGroups()[xkbGroupNm];
+	    return xkbGroup.options[row].description;
+        }
+    }
+    else if( role==Qt::CheckStateRole && index.parent().isValid() ) {
+        int groupRow = index.parent().row();
+        QString xkbGroupNm = m_rules->optionGroups().keys()[groupRow];
+        const XkbOptionGroup& xkbGroup = m_rules->optionGroups()[xkbGroupNm];
+
+        return m_kxkbConfig->m_options.indexOf(xkbGroup.options[row].name) == -1 ? Qt::Unchecked : Qt::Checked;
+    }
+    return QVariant();
+}
+
+
 //K_PLUGIN_FACTORY_DECLARATION(KeyboardLayoutFactory)
 
 LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
   : KCModule(KeyboardLayoutFactory::componentData(), parent),
     m_rules(NULL),
     m_srcModel(NULL),
-    m_dstModel(NULL)
+    m_dstModel(NULL),
+    m_xkbOptModel(NULL)
 {
     //Read rules - we _must_ read _before_ creating UIs
     loadRules();
@@ -265,12 +348,13 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 
     m_srcModel = new SrcLayoutModel(m_rules, NULL);
     m_srcModel->setHeaderData(LAYOUT_COLUMN_FLAG, Qt::Horizontal, "");
-    m_srcModel->setHeaderData(LAYOUT_COLUMN_NAME, Qt::Horizontal, "Layout name", Qt::DisplayRole);
-    m_srcModel->setHeaderData(LAYOUT_COLUMN_MAP, Qt::Horizontal, "Map", Qt::DisplayRole);
+    m_srcModel->setHeaderData(LAYOUT_COLUMN_NAME, Qt::Horizontal, i18n("Layout name"), Qt::DisplayRole);
+    m_srcModel->setHeaderData(LAYOUT_COLUMN_MAP, Qt::Horizontal, i18n("Map"), Qt::DisplayRole);
 
     widget->srcTableView->setModel(m_srcModel);
 //    widget->srcTableView->setSortingEnabled(true);
     widget->srcTableView->setColumnWidth(LAYOUT_COLUMN_FLAG, 26);
+    widget->srcTableView->setColumnWidth(LAYOUT_COLUMN_MAP, 30);
     widget->srcTableView->verticalHeader()->hide();
     widget->srcTableView->setShowGrid(false);
     widget->srcTableView->resizeRowsToContents();
@@ -278,59 +362,71 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     m_dstModel = new DstLayoutModel(m_rules, &m_kxkbConfig, NULL);
     widget->dstTableView->setModel(m_dstModel);
     widget->dstTableView->setColumnWidth(LAYOUT_COLUMN_FLAG, 26);
+    widget->dstTableView->setColumnWidth(LAYOUT_COLUMN_MAP, 30);
     widget->dstTableView->verticalHeader()->hide();
 
+    m_xkbOptModel = new XkbOptionsModel(m_rules, &m_kxkbConfig, NULL);
+    widget->xkbOptionsTreeView->setModel(m_xkbOptModel);
+    widget->xkbOptionsTreeView->header()->hide();
+    widget->xkbOptionsTreeView->expandAll();
 
-  connect( widget->chkEnable, SIGNAL( toggled( bool )), this, SLOT(changed()));
-  connect( widget->chkIndicatorOnly, SIGNAL( toggled( bool )), this, SLOT(changed()));
-  connect( widget->chkShowSingle, SIGNAL( toggled( bool )), this, SLOT(changed()));
-  connect( widget->chkShowFlag, SIGNAL( toggled( bool )), this, SLOT(changed()));
-  connect( widget->comboModel, SIGNAL(activated(int)), this, SLOT(changed()));
+    connect( m_xkbOptModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), 
+        this, SLOT(xkbOptionsChanged(const QModelIndex &, const QModelIndex &)));
 
-  connect( widget->srcTableView, SIGNAL(doubleClicked(const QModelIndex &)),
-									this, SLOT(add()));
-  connect( widget->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
-  connect( widget->btnRemove, SIGNAL(clicked()), this, SLOT(remove()));
+    connect( widget->grpEnableKxkb, SIGNAL( clicked( int ) ), SLOT(enableChanged()));
+//    connect( widget->chkEnable, SIGNAL( toggled( bool )), this, SLOT(changed()));
+//    connect( widget->chkIndicatorOnly, SIGNAL( toggled( bool )), this, SLOT(changed()));
+    connect( widget->chkShowSingle, SIGNAL( toggled( bool )), this, SLOT(changed()));
+    connect( widget->chkShowFlag, SIGNAL( toggled( bool )), this, SLOT(changed()));
+    connect( widget->comboModel, SIGNAL(activated(int)), this, SLOT(changed()));
+
+    connect( widget->srcTableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(add()));
+    connect( widget->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
+    connect( widget->btnRemove, SIGNAL(clicked()), this, SLOT(remove()));
 
 //  connect( widget->comboVariant, SIGNAL(activated(int)), this, SLOT(changed()));
-  connect( widget->comboVariant, SIGNAL(activated(int)), this, SLOT(variantChanged()));
-  connect( widget->dstTableView->selectionModel(), 
+    connect( widget->comboVariant, SIGNAL(activated(int)), this, SLOT(variantChanged()));
+    connect( widget->dstTableView->selectionModel(), 
 		SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(layoutSelChanged()) );
 
+    connect( widget->btnXkbShortcut, SIGNAL(clicked()), this, SLOT(xkbShortcutPressed()));
+    connect( widget->btnXkbShortcut3d, SIGNAL(clicked()), this, SLOT(xkbShortcut3dPressed()));
+    connect( widget->btnKdeShortcut, SIGNAL(clicked()), this, SLOT(kdeShortcutPressed()));
+
 //  connect( widget->editDisplayName, SIGNAL(textChanged(const QString&)), this, SLOT(displayNameChanged(const QString&)));
 
-  widget->btnUp->setIconSet(KIcon("arrow-up"));
-//  connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(changed()));
-  connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(moveUp()));
-  widget->btnDown->setIconSet(KIcon("arrow-down"));
-//  connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(changed()));
-  connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(moveDown()));
+    widget->btnUp->setIcon(KIcon("arrow-up"));
+    connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(moveUp()));
+    widget->btnDown->setIcon(KIcon("arrow-down"));
+    connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(moveDown()));
 
-  connect( widget->grpSwitching, SIGNAL( clicked( int ) ), SLOT(changed()));
+    connect( widget->grpSwitching, SIGNAL( clicked( int ) ), SLOT(changed()));
+    connect( widget->chkEnableSticky, SIGNAL(toggled(bool)), this, SLOT(changed()));
 
-  connect( widget->chkEnableSticky, SIGNAL(toggled(bool)), this, SLOT(changed()));
-  connect( widget->spinStickyDepth, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-
+#ifdef STICKY_SWITCHING
+    connect( widget->spinStickyDepth, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+#else
+    widget->grpBoxStickySwitching->setVisible(false);
+#endif
     refreshRulesUI();
 
-  makeOptionsTab();
+    makeOptionsTab();
 
-  load();
+    load();
 }
 
 
 LayoutConfig::~LayoutConfig()
 {
-	delete m_rules;
+    delete m_rules;
 }
 
 
 void LayoutConfig::load()
 {
-	m_kxkbConfig.load(KxkbConfig::LOAD_ALL);
-
-	initUI();
+    m_kxkbConfig.load(KxkbConfig::LOAD_ALL);
+    initUI();
 }
 
 void LayoutConfig::initUI()
@@ -339,7 +435,8 @@ void LayoutConfig::initUI()
 	if( modelName.isEmpty() )
 		modelName = DEFAULT_MODEL;
 
-	widget->comboModel->setCurrentText(i18n(modelName));
+        QString modelName_ = i18n(modelName);
+	widget->comboModel->setCurrentIndex( widget->comboModel->findText(modelName_) );
 
 	m_dstModel->reset();
 	widget->dstTableView->update();
@@ -354,16 +451,16 @@ void LayoutConfig::initUI()
 	switch( m_kxkbConfig.m_switchingPolicy ) {
 		default:
 		case SWITCH_POLICY_GLOBAL:
-			widget->grpSwitching->setButton(0);
+			widget->grpSwitching->setSelected(0);
 			break;
 		case SWITCH_POLICY_DESKTOP:
-			widget->grpSwitching->setButton(1);
+			widget->grpSwitching->setSelected(1);
 			break;
 		case SWITCH_POLICY_WIN_CLASS:
-			widget->grpSwitching->setButton(2);
+			widget->grpSwitching->setSelected(2);
 			break;
 		case SWITCH_POLICY_WINDOW:
-			widget->grpSwitching->setButton(3);
+			widget->grpSwitching->setSelected(3);
 			break;
 	}
 
@@ -373,35 +470,15 @@ void LayoutConfig::initUI()
 
 	updateStickyLimit();
 
-	widget->chkEnable->setChecked( m_kxkbConfig.m_useKxkb );
+        int enableKxkb = 2;
+        if( m_kxkbConfig.m_indicatorOnly ) enableKxkb = 1;
+        if( m_kxkbConfig.m_useKxkb ) enableKxkb = 0;
+        widget->grpEnableKxkb->setSelected(enableKxkb);
+//	widget->chkEnable->setChecked( m_kxkbConfig.m_useKxkb );
 	widget->grpLayouts->setEnabled( m_kxkbConfig.m_useKxkb );
 	widget->grpOptions->setEnabled( m_kxkbConfig.m_useKxkb );
 
-	// display xkb options
-	QStringList options = m_kxkbConfig.m_options.split(',');
-	for (QListIterator<QString> it(options); it.hasNext(); )
-	{
-		QString optionName = it.next();
-		if( optionName.trimmed().isEmpty() ) {
-			kWarning() << "skipping empty option name" ;
-  			continue;
-		}
-
-		const XkbOption& option = m_rules->options()[optionName];
-		OptionListItem *item = m_optionGroups[ option.group->name ];
-
-		if (item != NULL) {
-			OptionListItem *child = item->findChildItem( option.name );
-
-			if ( child )
-				child->setState( Q3CheckListItem::On );
-			else
-				kDebug() << "load: Unknown option: " << optionName;
-		}
-		else {
-			kDebug() << "load: Unknown option group: " << option.group->name << " of " << optionName;
-		}
-	}
+        updateShortcutsLabels();
 
 	updateLayoutCommand();
 	updateOptionsCommand();
@@ -411,25 +488,23 @@ void LayoutConfig::initUI()
 
 void LayoutConfig::save()
 {
-//	QString model = lookupLocalized(m_rules->models(), widget->comboModel->currentText());
 	QString model = widget->comboModel->itemData(widget->comboModel->currentIndex()).toString();
 	m_kxkbConfig.m_model = model;
 
 	m_kxkbConfig.m_enableXkbOptions = widget->chkEnableOptions->isChecked();
 	m_kxkbConfig.m_resetOldOptions = widget->checkResetOld->isChecked();
-	m_kxkbConfig.m_options = createOptionString();
 
 	if( m_kxkbConfig.m_layouts.count() == 0 ) {
-		m_kxkbConfig.m_layouts.append(LayoutUnit(DEFAULT_LAYOUT_UNIT));
- 		widget->chkEnable->setChecked(false);
+	    m_kxkbConfig.m_layouts.append(LayoutUnit(DEFAULT_LAYOUT_UNIT));
+ 	    widget->grpEnableKxkb->setSelected(BTN_XKB_DISABLE);
  	}
 
-	m_kxkbConfig.m_useKxkb = widget->chkEnable->isChecked();
-	m_kxkbConfig.m_indicatorOnly = widget->chkIndicatorOnly->isChecked();
+	m_kxkbConfig.m_useKxkb = widget->grpEnableKxkb->selected() <= BTN_XKB_INDICATOR;
+	m_kxkbConfig.m_indicatorOnly = widget->grpEnableKxkb->selected() == BTN_XKB_INDICATOR;
 	m_kxkbConfig.m_showSingle = widget->chkShowSingle->isChecked();
 	m_kxkbConfig.m_showFlag = widget->chkShowFlag->isChecked();
 
-	int modeId = widget->grpSwitching->id(widget->grpSwitching->selected());
+	int modeId = widget->grpSwitching->selected();
 	switch( modeId ) {
 		default:
 		case 0:
@@ -455,19 +530,92 @@ void LayoutConfig::save()
 	emit KCModule::changed( false );
 }
 
+void LayoutConfig::xkbOptionsChanged(const QModelIndex & /*topLeft*/, const QModelIndex & /*bottomRight*/)
+{
+//    kDebug() << "chked" << topLeft << bottomRight;
+    updateOptionsCommand();
+    changed();
+//    widget->xkbOptionsTreeView->update(topLeft);
+}
+
+void LayoutConfig::xkbShortcutPressed()
+{
+    widget->tabWidget->setCurrentIndex(TAB_XKB);
+    m_xkbOptModel->gotoGroup("grp", widget->xkbOptionsTreeView);
+}
+
+void LayoutConfig::xkbShortcut3dPressed()
+{
+    widget->tabWidget->setCurrentIndex(TAB_XKB);
+    m_xkbOptModel->gotoGroup("lv3", widget->xkbOptionsTreeView);
+}
+
+void LayoutConfig::kdeShortcutPressed()
+{
+    QStringList args;
+    args << "keys";
+    int res = KToolInvocation::kdeinitExecWait( "kcmshell", args );
+    if( res )
+        updateShortcutsLabels();
+    else
+        kError() << "failed to start 'kcmshell keys'";
+}
+
+static QString getShortcutText(const QStringList& options, const QString& grp)
+{
+    if( options.indexOf(QRegExp("^" + grp + ".*")) != -1 )
+        return i18n("Defined");
+    else
+        return i18n("Not defined");
+}
+
+void LayoutConfig::updateShortcutsLabels()
+{
+    QString txt = getShortcutText( m_kxkbConfig.m_options, "grp" );
+    widget->xkbShortcut->setText(txt);
+    txt = getShortcutText( m_kxkbConfig.m_options, "lv3" );
+    widget->xkbShortcut3d->setText(txt);
+
+    KActionCollection actions(this);
+    actions.readSettings();
+    QAction* action = actions.action(I18N_NOOP("Switch to Next Keyboard Layout"));
+    if( action != NULL ) {
+        widget->kdeShortcut->setText( action->shortcut().toString(QKeySequence::NativeText) );
+    }
+    else {
+        widget->kdeShortcut->setText(i18n("Not defined"));
+    }
+}
 
 void LayoutConfig::updateStickyLimit()
 {
     int layoutsCnt = m_kxkbConfig.m_layouts.count();
-	int maxDepth = layoutsCnt - 1;
+    int maxDepth = layoutsCnt - 1;
 
-	if( maxDepth < 2 ) {
-		maxDepth = 2;
-	}
+    if( maxDepth < 2 ) {
+        maxDepth = 2;
+    }
 
-	widget->spinStickyDepth->setMaximum(maxDepth);
+    widget->spinStickyDepth->setMaximum(maxDepth);
 /*	if( value > maxDepth )
 		setValue(maxDepth);*/
+}
+
+
+void LayoutConfig::enableChanged()
+{
+    bool enabled = widget->grpEnableKxkb->selected() == 0;
+    if( enabled && m_kxkbConfig.m_layouts.count() == 0 ) {
+#ifdef HAVE_XKLAVIER
+	QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
+	if( lus.count() > 0 ) {
+	    m_kxkbConfig.setConfiguredLayouts(lus);
+            m_dstModel->reset();
+            widget->dstTableView->update();
+	}
+#endif
+    }
+    changed();
 }
 
 void LayoutConfig::add()
@@ -483,11 +631,11 @@ void LayoutConfig::add()
     kDebug() << "selected to add" << layout;
     m_kxkbConfig.m_layouts << LayoutUnit(layout, "");
 
-	m_dstModel->reset();
-	widget->dstTableView->update();
+    m_dstModel->reset();
+    widget->dstTableView->update();
 
-	updateAddButton();
-	updateLayoutCommand();
+    updateAddButton();
+    updateLayoutCommand();
 
     updateStickyLimit();
     changed();
@@ -506,15 +654,16 @@ void LayoutConfig::remove()
 	return;
 
     QModelIndexList selected = selectionModel->selectedRows();
+    kDebug() << "removing" << selected;
     m_kxkbConfig.m_layouts.removeAt(selected[0].row());
 
-	m_dstModel->reset();
-	widget->dstTableView->update();
+    m_dstModel->reset();
+    widget->dstTableView->update();
 
-	layoutSelChanged();
-	updateAddButton();
-	updateLayoutCommand();
-	updateStickyLimit();
+    layoutSelChanged();
+    updateAddButton();
+    updateLayoutCommand();
+    updateStickyLimit();
 
     changed();
 }
@@ -560,12 +709,15 @@ void LayoutConfig::variantChanged()
 	return;
     }
 
-	QString selectedVariant = widget->comboVariant->currentText();
-	if( selectedVariant == DEFAULT_VARIANT_NAME )
-		selectedVariant = "";
-	m_kxkbConfig.m_layouts[row].variant = selectedVariant;
+    QString selectedVariant = widget->comboVariant->currentText();
+    if( selectedVariant == DEFAULT_VARIANT_NAME )
+        selectedVariant = "";
+    
+    m_kxkbConfig.m_layouts[row].variant = selectedVariant;
+    m_dstModel->reset();
+    widget->dstTableView->update();
 
-	updateLayoutCommand();
+    updateLayoutCommand();
     changed();
 }
 
@@ -596,10 +748,10 @@ int LayoutConfig::getSelectedDstLayout()
 {
     QItemSelectionModel* selectionModel = widget->dstTableView->selectionModel();
     if( selectionModel == NULL || !selectionModel->hasSelection() )
-	return - 1;
+	return -1;
 
     QModelIndexList selected = selectionModel->selectedRows();
-    int row = selected[0].row();
+    int row = selected.count() > 0 ? selected[0].row() : -1;
     return row;
 }
 
@@ -630,82 +782,22 @@ void LayoutConfig::layoutSelChanged()
 
 		QString variant = m_kxkbConfig.m_layouts[row].variant;
 		if( variant != NULL && variant.isEmpty() == false ) {
-			widget->comboVariant->setCurrentText(variant);
+                    int idx = widget->comboVariant->findText(variant);
+		    widget->comboVariant->setCurrentIndex(idx);
 		}
 		else {
-			widget->comboVariant->setCurrentIndex(0);
+		    widget->comboVariant->setCurrentIndex(0);
 		}
 	}
 //	updateDisplayName();
 }
 
-QWidget* LayoutConfig::makeOptionsTab()
+void LayoutConfig::makeOptionsTab()
 {
-  Q3ListView *listView = widget->listOptions;
+    connect(widget->chkEnableOptions, SIGNAL(toggled(bool)), SLOT(changed()));
 
-  listView->setMinimumHeight(150);
-  listView->setSortColumn( -1 );
-  listView->setColumnText( 0, i18n( "Options" ) );
-  listView->clear();
-
-  connect(listView, SIGNAL(clicked(Q3ListViewItem *)), SLOT(changed()));
-  connect(listView, SIGNAL(clicked(Q3ListViewItem *)), SLOT(updateOptionsCommand()));
-
-  connect(widget->chkEnableOptions, SIGNAL(toggled(bool)), SLOT(changed()));
-
-  connect(widget->checkResetOld, SIGNAL(toggled(bool)), SLOT(changed()));
-  connect(widget->checkResetOld, SIGNAL(toggled(bool)), SLOT(updateOptionsCommand()));
-
-  //Create controllers for all options
-  QHashIterator<QString, XkbOptionGroup> it( m_rules->optionGroups() );
-  for (; it.hasNext(); )
-  {
-	  OptionListItem *parent;
-	  const XkbOptionGroup& optionGroup = it.next().value();
-
-      if( optionGroup.exclusive ) {
-        parent = new OptionListItem(listView, i18n( optionGroup.description ),
-          		Q3CheckListItem::RadioButtonController, optionGroup.name);
-        OptionListItem *item = new OptionListItem(parent, i18n( "None" ),
-          		Q3CheckListItem::RadioButton, "none");
-        item->setState(Q3CheckListItem::On);
-      }
-      else {
-        parent = new OptionListItem(listView, i18n( optionGroup.description ),
-            Q3CheckListItem::CheckBoxController, optionGroup.name);
-      }
-
-      parent->setOpen(true);
-      m_optionGroups.insert( optionGroup.name, parent);
-	  kDebug() << "optionGroup insert: " << optionGroup.name;
-  }
-
-
-  QHashIterator<QString, XkbOption> it2( m_rules->options() );
-  for (; it2.hasNext(); )
-  {
-	  const XkbOption& option = it2.next().value();
-
-	  OptionListItem *parent = m_optionGroups[option.group->name];
-	  if( parent == NULL ) {
-		kError() << "no option group item for group: " << option.group->name
-			   << " for option " << option.name << endl;
-		exit(1);
-	  }
-
-     if( parent->type() == Q3CheckListItem::RadioButtonController )
-		new OptionListItem(parent, i18n( option.description ),
-             Q3CheckListItem::RadioButton, option.name);
-     else
-	 	new OptionListItem(parent, i18n( option.description ),
-            Q3CheckListItem::CheckBox, option.name);
-
-//	  kDebug() << "option insert: " << option.name;
-  }
-
-  //scroll->setMinimumSize(450, 330);
-
-  return listView;
+    connect(widget->checkResetOld, SIGNAL(toggled(bool)), SLOT(changed()));
+    connect(widget->checkResetOld, SIGNAL(toggled(bool)), SLOT(updateOptionsCommand()));
 }
 
 void LayoutConfig::updateOptionsCommand()
@@ -714,7 +806,7 @@ void LayoutConfig::updateOptionsCommand()
   QString options = createOptionString();
 
   if( !options.isEmpty() ) {
-    setxkbmap = "setxkbmap -option "; //-rules " + m_rule
+    setxkbmap = "setxkbmap -option ";
     if( widget->checkResetOld->isChecked() )
       setxkbmap += "-option ";
     setxkbmap += options;
@@ -750,7 +842,7 @@ void LayoutConfig::updateLayoutCommand()
     setxkbmap += " -layout " + kbdLayouts;
     setxkbmap += " -variant " + kbdVariants;
 
-	widget->editCmdLine->setText(setxkbmap);
+    widget->editCmdLine->setText(setxkbmap);
 }
 
 /*
@@ -788,15 +880,14 @@ void LayoutConfig::updateDisplayName()
 
 void LayoutConfig::changed()
 {
-  bool enabled = widget->chkEnable->isChecked();
+  bool enabled = widget->grpEnableKxkb->selected() == BTN_XKB_ENABLE;
 
-  widget->chkIndicatorOnly->setEnabled(enabled);
-  if( ! enabled )
-	widget->chkIndicatorOnly->setChecked(false);
+//  widget->chkIndicatorOnly->setEnabled(enabled);
+//  if( ! enabled )
+//	widget->chkIndicatorOnly->setChecked(false);
 
   widget->grpLayouts->setEnabled(enabled);
-  widget->grpSwitching->setEnabled(enabled);
-//  widget->grpStickySwitching->setEnabled(enabled);
+  widget->tabWidget->widget(TAB_OPTIONS)->setEnabled(enabled);
 
 //  bool indicatorOnly = widget->chkIndicatorOnly->isChecked();
 //  widget->grpIndicator->setEnabled(indicatorOnly);
@@ -807,7 +898,7 @@ void LayoutConfig::changed()
 
 void LayoutConfig::loadRules()
 {
-    // do we need this ?
+    // TODO: do we need this ?
     // this could obly be used if rules are changed and 'Defaults' is pressed
     delete m_rules;
     m_rules = new XkbRules();
@@ -815,6 +906,8 @@ void LayoutConfig::loadRules()
         m_srcModel->setRules(m_rules);
     if( m_dstModel )
 	m_dstModel->setRules(m_rules);
+    if( m_xkbOptModel )
+	m_xkbOptModel->setRules(m_rules);
 }
 
 void LayoutConfig::refreshRulesUI()
@@ -838,67 +931,40 @@ void LayoutConfig::refreshRulesUI()
 
 QString LayoutConfig::createOptionString()
 {
-  QString options;
-  for (QHashIterator<QString, XkbOption> it(m_rules->options()); it.hasNext(); )
-  {
-    const XkbOption& option = it.next().value();
-
-      OptionListItem *item = m_optionGroups[ option.group->name ];
-
-      if( !item ) {
-        kDebug() << "WARNING: skipping empty group for " << option.name
-          << " - could not found group: " << option.group->name << endl;
-        continue;
-      }
-
-      OptionListItem *child = item->findChildItem( option.name );
-
-      if ( child ) {
-        if ( child->state() == Q3CheckListItem::On ) {
-          QString selectedName = child->optionName();
-          if ( !selectedName.isEmpty() && selectedName != "none" ) {
-            if (!options.isEmpty())
-              options.append(',');
-            options.append(selectedName);
-          }
-        }
-      }
-      else
-        kDebug() << "Empty option button for group " << it.key();
-  }
-  return options;
+    QString options = m_kxkbConfig.m_options.join(",");
+    return options;
 }
 
 
 void LayoutConfig::defaults()
 {
-	loadRules();
-	refreshRulesUI();
-	m_kxkbConfig.setDefaults();
+    loadRules();
+    refreshRulesUI();
+    m_kxkbConfig.setDefaults();
 
-	initUI();
+    initUI();
 
-	emit KCModule::changed( true );
+    emit KCModule::changed( true );
 }
 
 extern "C"
 {
-	KDE_EXPORT void kcminit_keyboard()
-	{
-		KxkbConfig m_kxkbConfig;
-		m_kxkbConfig.load(KxkbConfig::LOAD_INIT_OPTIONS);
+    KDE_EXPORT void kcminit_keyboard()
+    {
+	KxkbConfig m_kxkbConfig;
+	m_kxkbConfig.load(KxkbConfig::LOAD_INIT_OPTIONS);
 
-		if( m_kxkbConfig.m_useKxkb == true ) {
-			KToolInvocation::startServiceByDesktopName("kxkb");
-		}
-		else {
-		// Even if the layouts have been disabled we still want to set Xkb options
-		// user can always switch them off now in the "Options" tab
-			if( m_kxkbConfig.m_enableXkbOptions ) {
-				if( !XKBExtension::setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
-					kDebug() << "Setting XKB options failed!";
-				}
-			}
-		}
+	if( m_kxkbConfig.m_useKxkb == true ) {
+	    KToolInvocation::startServiceByDesktopName("kxkb");
 	}
+	else {
+	    // Even if the layouts have been disabled we still want to set Xkb options
+	    // user can always switch them off now in the "Options" tab
+	    if( m_kxkbConfig.m_enableXkbOptions ) {
+		if( !XKBExtension::setXkbOptions(m_kxkbConfig.m_options.join(","), m_kxkbConfig.m_resetOldOptions) ) {
+		    kDebug() << "Setting XKB options failed!";
+		}
+	    }
+	}
+    }
 }

@@ -2,7 +2,6 @@ add_subdirectory( pics )
 add_subdirectory( kcmmisc )
 #add_subdirectory( tests ) 
 KDE4_NO_ENABLE_FINAL(kxkb)
-#add_definitions (-DQT3_SUPPORT)
 
 OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" ON)
 
@@ -25,7 +24,7 @@ if( USE_XKLAVIER STREQUAL ON )
 	ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 ${LIBXKLAVIER_DEFINITIONS} ${_LibGLIB2Cflags})
 	include_directories(${GLIB2_INCLUDE_DIR})
   else(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
-	MESSAGE ("Could not find glib, gobject or libxklavier >= 2.91 - old xkbfile code will be used to get keyboard layout configuration!")
+	MESSAGE ("Could not find glib, gobject or libxklavier >= 3.0 - old "xkbfile" code will be used to get keyboard layout configuration!")
   endif(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
 endif( USE_XKLAVIER STREQUAL ON )
 
@@ -53,8 +52,6 @@ set(kcm_keyboard_layout_PART_SRCS
 kde4_add_ui_files(kcm_keyboard_layout_PART_SRCS kcmlayoutwidget.ui )
 
 kde4_add_plugin(kcm_keyboard_layout ${kcm_keyboard_layout_PART_SRCS})
-
-SET_TARGET_PROPERTIES(kcm_keyboard_layout PROPERTIES COMPILE_FLAGS "-DQT3_SUPPORT")
 
 target_link_libraries(kcm_keyboard_layout
     ${KDE4_KIO_LIBS} xkbfile ${QT_QT3SUPPORT_LIBRARY}

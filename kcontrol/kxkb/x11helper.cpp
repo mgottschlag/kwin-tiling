@@ -16,9 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QtGui/QWidgetList>
 #include <QDir>
-
 
 #include <QHash>
 #include <QRegExp>
@@ -293,7 +291,7 @@ const QString X11Helper::X11_WIN_CLASS_ROOT = "<root>";
 const QString X11Helper::X11_WIN_CLASS_UNKNOWN = "<unknown>";
 
 QString
-X11Helper::getWindowClass(WId winId, Display* dpy)
+X11Helper::getWindowClass(Window winId, Display* dpy)
 {
   unsigned long nitems_ret, bytes_after_ret;
   unsigned char* prop_ret;

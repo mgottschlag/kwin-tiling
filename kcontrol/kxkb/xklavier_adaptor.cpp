@@ -22,8 +22,6 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-#include <QtGui/QWidget>
-
 #include <libxklavier/xklavier.h>
 
 #include "rules.h"
@@ -202,6 +200,7 @@ XKlavierAdaptor::getGroupNames()
 {
     QList<LayoutUnit> list;
 
+    kDebug() << "retrieving active layout from server...";
     XklConfigRec configRec;
     xkl_config_rec_get_from_server(&configRec, priv->engine);
 

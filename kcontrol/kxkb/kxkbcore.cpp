@@ -110,7 +110,7 @@ void KxkbCore::initWidget()
             m_kxkbWidget = new KxkbLabel(m_controlType, m_parentWidget);
             
  	connect(m_kxkbWidget, SIGNAL(menuTriggered(QAction*)), this, SLOT(iconMenuTriggered(QAction*)));
-	connect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(iconToggled()));
+	connect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(toggled()));
 
         if( m_mode == KXKB_MAIN ) {
 	    KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
@@ -120,13 +120,18 @@ void KxkbCore::initWidget()
 #endif
     
 	    initKeys();
-
         }
     }
 }
 
 void KxkbCore::initKeys()
 {
+    m_actions = new KActionCollection( this );
+        QAction* a = m_actions->addAction( I18N_NOOP("Switch keyboard layout") );
+        a->setText( i18n( I18N_NOOP( "Switch keyboard layout" ) ) );
+        qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_K));
+        connect( a, SIGNAL(triggered(bool)), this, SLOT(toggled()) );
+
   // TODO: keyboard bindings
     //globalKeys = KGlobalAccel::self();
 //    m_keys* = new KActionCollection(this);
@@ -141,7 +146,7 @@ void KxkbCore::initKeys()
 
 KxkbCore::~KxkbCore()
 {
-    delete m_keys;
+    delete m_actions;
     delete m_kxkbWidget;
     delete m_rules;
     delete m_extension;
@@ -165,14 +170,29 @@ int KxkbCore::newInstance()
     return -1;
 }
 
+void KxkbCore::slotSettingsChanged(int category)
+{
+    if ( category != KGlobalSettings::SETTINGS_SHORTCUTS)
+		return;
+
+#ifdef __GNUC__
+#warning TODO PORT ME (KGlobalAccel related)
+#endif
+
+    KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
+//    m_keys->readSettings();
+	//TODO:
+	//keys->updateConnections();
+}
+
 bool KxkbCore::settingsRead()
 {
     m_kxkbConfig.load( KxkbConfig::LOAD_ACTIVE_OPTIONS );
 
     if( m_mode == KXKB_MAIN ) {
 	if( m_kxkbConfig.m_enableXkbOptions ) {
-	    kDebug() << "Setting XKB options " << m_kxkbConfig.m_options;
-	    if( !m_extension->setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
+            QString options = m_kxkbConfig.m_options.join(",");
+	    if( !m_extension->setXkbOptions(options, m_kxkbConfig.m_resetOldOptions) ) {
         	kDebug() << "Setting XKB options failed!";
 	    }
 	}
@@ -188,7 +208,7 @@ bool KxkbCore::settingsRead()
     if( m_rules == NULL )
 	m_rules = new XkbRules(false);
 
-    if( m_mode == KXKB_MAIN ) {
+    if( m_mode == KXKB_MAIN && ! m_kxkbConfig.m_indicatorOnly ) {
 	m_currentLayout = m_kxkbConfig.getDefaultLayout();
 	initLayoutGroups();
     }
@@ -198,13 +218,12 @@ bool KxkbCore::settingsRead()
 	
     if( m_kxkbConfig.m_layouts.count() == 1 ) {
 	if( m_kxkbConfig.m_showSingle == false ) {
-	    kWarning() << "Kxkb is disabled for single layout, exiting...";
+	    kWarning() << "Kxkb is disabled for single layout";
 	    m_status = -1;
 //	    emit quit();
 	    return false;
 	}
     }
-
 
 //	KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
 	//TODO:
@@ -325,7 +344,7 @@ void KxkbCore::updateIndicator(int layout, int res)
     }
 }
 
-void KxkbCore::iconToggled()
+void KxkbCore::toggled()
 {
     int layout = m_layoutOwnerMap->getNextLayout();
     setLayout(layout);
@@ -386,17 +405,6 @@ void KxkbCore::windowChanged(WId winId)
 	}
 }
 
-
-void KxkbCore::slotSettingsChanged(int category)
-{
-    if ( category != KGlobalSettings::SETTINGS_SHORTCUTS)
-		return;
-
-    KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
-    m_keys->readSettings();
-	//TODO:
-	//keys->updateConnections();
-}
 
 
 bool KxkbCore::x11EventFilter ( XEvent * event )

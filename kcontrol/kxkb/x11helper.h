@@ -19,36 +19,40 @@
 #ifndef X11HELPER_H_
 #define X11HELPER_H_
 
+#include <X11/Xlib.h>
 #include <QHash>
 
+struct XkbOption;
+
 struct XkbOptionGroup {
-  QString name;
-  QString description;
-  bool exclusive;
+    QString name;
+    QString description;
+    bool exclusive;
+    QList<XkbOption> options;
 };
 
 struct XkbOption {
-  QString name;
-  QString description;
-  XkbOptionGroup* group;
+    QString name;
+    QString description;
+    XkbOptionGroup* group;
 };
 
 struct RulesInfo {
-	QHash<QString, QString> models;
-	QHash<QString, QString> layouts;
-	QHash<QString, XkbOption> options;
-	QHash<QString, XkbOptionGroup> optionGroups;
+    QHash<QString, QString> models;
+    QHash<QString, QString> layouts;
+    QHash<QString, XkbOption> options;
+    QHash<QString, XkbOptionGroup> optionGroups;
 };
 
 
 class X11Helper
 {
 public:
-	static const WId UNKNOWN_WINDOW_ID = (WId) 0;
+	static const Window UNKNOWN_WINDOW_ID = (Window) 0;
 	static const QString X11_WIN_CLASS_ROOT;
 	static const QString X11_WIN_CLASS_UNKNOWN;
 
-	static QString getWindowClass(WId winId, Display* dpy);
+	static QString getWindowClass(Window winId, Display* dpy);
 
 #ifndef HAVE_XKLAVIER
 	/**

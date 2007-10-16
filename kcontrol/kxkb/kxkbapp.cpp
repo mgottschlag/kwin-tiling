@@ -23,7 +23,6 @@ DESCRIPTION
 
     KDE Keyboard Tool. Manages XKB keyboard mappings.
 */
-//#include <assert.h>
 
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>

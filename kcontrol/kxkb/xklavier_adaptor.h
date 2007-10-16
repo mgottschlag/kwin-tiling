@@ -18,6 +18,7 @@
 
 #ifndef XKLAVIER_ADAPTOR_H
 #define XKLAVIER_ADAPTOR_H
+
 #include <X11/Xlib.h>
 
 #include <QHash>

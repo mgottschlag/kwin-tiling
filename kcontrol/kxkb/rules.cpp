@@ -74,16 +74,22 @@ XkbRules::XkbRules(bool layoutsOnly)
 
 void XkbRules::loadNewRules(bool layoutsOnly)
 {
-	XKlavierAdaptor* xklAdaptor = XKlavierAdaptor::getInstance(QX11Info::display());
-	xklAdaptor->loadXkbConfig(layoutsOnly);
+    XKlavierAdaptor* xklAdaptor = XKlavierAdaptor::getInstance(QX11Info::display());
+    xklAdaptor->loadXkbConfig(layoutsOnly);
 
-	m_layouts = xklAdaptor->getLayouts();
-	if( layoutsOnly == false ) {
-	  m_models = xklAdaptor->getModels();
-	  m_optionGroups = xklAdaptor->getOptionGroups();
-	  m_options = xklAdaptor->getOptions();
-	  m_varLists = xklAdaptor->getVariants();
-	}
+    m_layouts = xklAdaptor->getLayouts();
+    if( layoutsOnly == false ) {
+	m_models = xklAdaptor->getModels();
+        m_varLists = xklAdaptor->getVariants();
+	m_optionGroups = xklAdaptor->getOptionGroups();
+	m_options = xklAdaptor->getOptions();
+	
+        QHashIterator<QString, XkbOption> it( m_options );
+        for (; it.hasNext(); ) {
+            const XkbOption& option = it.next().value();
+            option.group->options.append(option);
+        }
+    }
 }
 
 #else

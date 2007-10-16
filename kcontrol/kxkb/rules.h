@@ -41,15 +41,12 @@ public:
 
   bool isSingleGroup(const QString& layout);
 
-//  static bool areLayoutsClean() { return m_layoutsClean; }
-
 private:
 
   QHash<QString, QString> m_models;
   QHash<QString, QString> m_layouts;
   QHash<QString, XkbOptionGroup> m_optionGroups;
   QHash<QString, XkbOption> m_options;
-  QMap<QString, unsigned int> m_initialGroups;
   QHash<QString, QStringList*> m_varLists;
 
   QString X11_DIR;	// pseudo-constant

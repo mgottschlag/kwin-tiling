@@ -1,18 +1,11 @@
-KDE4:
- Catch events - layout change (late)
- Applet - make icon work, check startup and conflict with kxkb
  Modifier shortcuts - easier screen for Ctrl+Shift
+ Shortcut
  Shortcut per layout
- KPart
- i18n
-
- general:
-  - KAccels
-  - libxklavier languages
-
-  - port deprecated Qt3 widget calls
+ Plasma Applet - make icon work, check startup and conflict with kxkb
+ Catch events - layout change (late)
+ i18n (kde + libxklavier)
+ Improve component
+ XkbOptions radiobuttons for exclusive group
 
 Others:
-- krunner_lock: finish kpart
-
 - prevent application/window list from growing endlessly

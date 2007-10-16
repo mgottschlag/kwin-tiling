@@ -109,7 +109,7 @@ public:
 	SwitchingPolicy m_switchingPolicy;
 	
 	QString m_model;
-	QString m_options;
+	QStringList m_options;
 	QList<LayoutUnit> m_layouts;
 
 	KxkbConfig();

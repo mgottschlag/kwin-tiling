@@ -20,24 +20,19 @@
 #define __KCM_LAYOUT_H__
 
 
-#include <kcmodule.h>
-
 #include <QHash>
-
-#include <QtGui/QListView>
+#include <kcmodule.h>
 
 #include "kxkbconfig.h"
 
 
 class QWidget;
-class OptionListItem;
-class Q3ListViewItem;
 class Ui_LayoutConfigWidget;
 class XkbRules;
 
-
 class SrcLayoutModel;
 class DstLayoutModel;
+class XkbOptionsModel;
 
 class LayoutConfig : public KCModule
 {
@@ -53,15 +48,20 @@ public:
   void initUI();
 
 protected:
-  QString createOptionString();
-  void updateIndicator();
+    QString createOptionString();
+    void updateIndicator();
 
 protected slots:
-  void moveUp();
-  void moveDown();
-  void variantChanged();
+    void moveUp();
+    void moveDown();
+    void variantChanged();
+    void xkbShortcutPressed();
+    void xkbShortcut3dPressed();
+    void kdeShortcutPressed();
+    void updateShortcutsLabels();
+    void xkbOptionsChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight);
+    void enableChanged();
   void displayNameChanged(const QString& name);
-//  void latinChanged();
   void layoutSelChanged();
   void loadRules();
   void refreshRulesUI();
@@ -77,11 +77,11 @@ private:
 
   XkbRules *m_rules;
   KxkbConfig m_kxkbConfig;
-  QHash<QString, OptionListItem*> m_optionGroups;
   SrcLayoutModel* m_srcModel;
   DstLayoutModel* m_dstModel;
+  XkbOptionsModel* m_xkbOptModel;
 
-  QWidget* makeOptionsTab();
+  void makeOptionsTab();
   void updateStickyLimit();
   void updateAddButton();
   void updateDisplayName();

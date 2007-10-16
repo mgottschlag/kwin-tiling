@@ -67,7 +67,7 @@ public slots:
 
 protected slots:
     void iconMenuTriggered(QAction*);
-    void iconToggled();
+    void toggled();
     void windowChanged(WId winId);
     void desktopChanged(int desktop);
 
@@ -94,7 +94,7 @@ private:
     XkbRules *m_rules;
     QWidget *m_parentWidget;
     KxkbWidget *m_kxkbWidget;
-    KActionCollection *m_keys;
+    KActionCollection *m_actions;
     
     void updateIndicator(int layout, int res);
     void initTray();

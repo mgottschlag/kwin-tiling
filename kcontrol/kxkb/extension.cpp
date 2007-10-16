@@ -89,6 +89,7 @@ XKBExtension::~XKBExtension()
 
 bool XKBExtension::setXkbOptions(const QString& options, bool resetOld)
 {
+    kDebug() << "Setting XKB options " << options;
     if (options.isEmpty())
         return true;
 

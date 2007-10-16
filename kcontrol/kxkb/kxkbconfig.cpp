@@ -30,6 +30,7 @@
 #include "x11helper.h"
 
 
+static const char* OPTIONS_SEPARATOR = ",";
 
 static const char* switchModes[SWITCH_POLICY_COUNT] = {
   "Global", "Desktop", "WinClass", "Window"
@@ -61,7 +62,8 @@ bool KxkbConfig::load(int loadMode)
 
 	if( m_enableXkbOptions == true || loadMode == LOAD_ALL ) {
 		m_resetOldOptions = config.readEntry("ResetOldOptions", false);
-		m_options = config.readEntry("Options", "");
+		QString options = config.readEntry("Options", "");
+                m_options = options.split(OPTIONS_SEPARATOR);
 		kDebug() << "Xkb options (enabled=" << m_enableXkbOptions << "): " << m_options;
 	}
 
@@ -142,6 +144,7 @@ bool KxkbConfig::load(int loadMode)
 
 	kDebug() << "Layout owner mode " << layoutOwner;
 
+#ifdef STICKY_SWITCHING
 	m_stickySwitching = config.readEntry("StickySwitching", false);
 	m_stickySwitchingDepth = config.readEntry("StickySwitchingDepth", "2").toInt();
 	if( m_stickySwitchingDepth < 2 )
@@ -158,14 +161,18 @@ bool KxkbConfig::load(int loadMode)
 			m_stickySwitchingDepth = m_layouts.count() - 1;
 		}
 	}
+#else
+        m_stickySwitching = false; //TODO: so far we can't do sticky with xkb switching...
+#endif
 
 	return true;
 }
 
-static QString addNum(QString& str, int n)
+static QString addNum(const QString& str, int n)
 {
-  if( str.length() >= 3 ) return str.left(2) + n;
-  return str + n;
+    QString format("%1%2");
+    if( str.length() >= 3 ) return format.arg(str.left(2)).arg(n);
+    return format.arg(str).arg(n);
 }
 
 void KxkbConfig::updateDisplayNames()
@@ -174,8 +181,8 @@ void KxkbConfig::updateDisplayNames()
 	LayoutUnit& lu = m_layouts[i];
 	int cnt = 1;
 	for(int j=i; j<m_layouts.count(); j++) {
-	  LayoutUnit& lu2 = m_layouts[i];
-	  if( lu.layout == lu2.layout ) {
+	  LayoutUnit& lu2 = m_layouts[j];
+	  if( i != j && lu.layout == lu2.layout ) {
 		++cnt;
 		lu.displayName = addNum(lu.layout, 1);
 		lu2.displayName = addNum(lu2.layout, cnt);
@@ -201,7 +208,7 @@ void KxkbConfig::save()
 	config.writeEntry("EnableXkbOptions", m_enableXkbOptions );
 	config.writeEntry("IndicatorOnly", m_indicatorOnly );
 	config.writeEntry("ResetOldOptions", m_resetOldOptions);
-	config.writeEntry("Options", m_options );
+	config.writeEntry("Options", m_options.join(OPTIONS_SEPARATOR) );
 
 	QStringList layoutList;
 	QStringList includeList;
@@ -212,11 +219,6 @@ void KxkbConfig::save()
 		const LayoutUnit& layoutUnit = *it;
 
 		layoutList.append( layoutUnit.toPair() );
-
-// 		if( layoutUnit.includeGroup.isEmpty() == false ) {
-// 			QString incGroupUnit = QString("%1:%2").arg(layoutUnit.toPair(), layoutUnit.includeGroup);
-// 			includeList.append( incGroupUnit );
-// 		}
 
 		QString displayName( layoutUnit.displayName );
 		kDebug() << " displayName " << layoutUnit.toPair() << " : " << displayName;
@@ -243,8 +245,10 @@ void KxkbConfig::save()
 
 	config.writeEntry("SwitchMode", switchModes[m_switchingPolicy]);
 
+#ifdef STICKY_SWITCHING
 	config.writeEntry("StickySwitching", m_stickySwitching);
 	config.writeEntry("StickySwitchingDepth", m_stickySwitchingDepth);
+#endif
 
 	// remove old options
  	config.deleteEntry("Variants");
@@ -263,7 +267,7 @@ void KxkbConfig::setDefaults()
 
 	m_enableXkbOptions = false;
 	m_resetOldOptions = false;
-	m_options = "";
+	m_options.clear();
 
 	m_layouts.clear();
 	m_layouts.append( DEFAULT_LAYOUT_UNIT );
