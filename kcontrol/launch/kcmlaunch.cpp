@@ -91,7 +91,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QVariantList &)
     lbl_cursorTimeout->setText( i18n( "&Startup indication timeout:" ) );
     GroupBox1Layout->addWidget( lbl_cursorTimeout, 2, 0 );
     sb_cursorTimeout = new KIntNumInput( GroupBox1);
-    sb_cursorTimeout->setRange( 0, 99, 1, true );
+    sb_cursorTimeout->setRange( 0, 99 );
     sb_cursorTimeout->setSuffix( i18n(" sec") );
     GroupBox1Layout->addWidget( sb_cursorTimeout, 2, 1 );
     lbl_cursorTimeout->setBuddy( sb_cursorTimeout );
@@ -131,7 +131,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QVariantList &)
     lbl_taskbarTimeout->setText( i18n( "Start&up indication timeout:" ) );
     GroupBox2Layout->addWidget( lbl_taskbarTimeout, 1, 0 );
     sb_taskbarTimeout = new KIntNumInput( GroupBox2);
-    sb_taskbarTimeout->setRange( 0, 99, 1, true );
+    sb_taskbarTimeout->setRange( 0, 99 );
     sb_taskbarTimeout->setSuffix( i18n(" sec") );
     GroupBox2Layout->addWidget( sb_taskbarTimeout, 1, 1 );
     lbl_taskbarTimeout->setBuddy( sb_taskbarTimeout );
