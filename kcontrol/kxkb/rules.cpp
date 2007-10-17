@@ -96,20 +96,26 @@ void XkbRules::loadNewRules(bool layoutsOnly)
 
 void XkbRules::loadRules(const QString &file, bool layoutsOnly)
 {
-	RulesInfo* rules = X11Helper::loadRules(file, layoutsOnly);
+    RulesInfo* rules = X11Helper::loadRules(file, layoutsOnly);
 
-	if (rules == NULL) {
-		kDebug() << "Unable to load rules";
-		return;
-	}
+    if (rules == NULL) {
+	kDebug() << "Unable to load rules";
+	return;
+    }
 
-	m_layouts= rules->layouts;
+    m_layouts= rules->layouts;
 
-	if( layoutsOnly == false ) {
-		m_models = rules->models;
-		m_options = rules->options;
-		m_optionGroups = rules->optionGroups;
-	}
+    if( layoutsOnly == false ) {
+	m_models = rules->models;
+	m_options = rules->options;
+	m_optionGroups = rules->optionGroups;
+
+        QHashIterator<QString, XkbOption> it( m_options );
+        for (; it.hasNext(); ) {
+            const XkbOption& option = it.next().value();
+            option.group->options.append(option);
+        }
+    }
 }
 
 

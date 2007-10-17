@@ -24,64 +24,28 @@
 #include <QMouseEvent>
 #include <QPixmap>
 
-#include <kpanelapplet.h>
-#include <kconfig.h>
+#include <plasma/applet.h>
 
 
-class KxkbWidget;
+class QSizeF;
+class KxkbCore;
 
-class KxkbApplet : public KPanelApplet
+class KxkbApplet : public Plasma::Applet
 {
   Q_OBJECT
 public:
-    explicit KxkbApplet(const QString& configFile, Plasma::Type t = Plasma::Normal,
-                        int actions = 0, QWidget *parent = 0, Qt::WFlags f = 0);
+    explicit KxkbApplet(QObject *parent, const QVariantList &args);
     ~KxkbApplet();
     
-    virtual int widthForHeight(int height) const;
-    virtual int heightForWidth(int width) const;
-    /**
-     * Is called when the user selects "About" from the applets RMB menu.
-     * Reimplement this function to launch a about dialog.
-     *
-     * Note that this is called only when your applet supports the About action.
-     * See @ref Action and @ref KPanelApplet().
-     **/
-
-//  public slots:
-//    virtual void about();
-    /**
-     * Is called when the user selects "Help" from the applets RMB menu.
-     * Reimplement this function to launch a manual or help page.
-     *
-     * Note that this is called only when your applet supports the Help action.
-     * See @ref Action and @ref KPanelApplet().
-     **/
-//    virtual void help();
-    /**
-     * Is called when the user selects "Preferences" from the applets RMB menu.
-     * Reimplement this function to launch a preferences dialog or kcontrol module.
-     *
-     * Note that this is called only when your applet supports the preferences action.
-     * See @ref Action and @ref KPanelApplet().
-     **/
-//    virtual void preferences();
-    
-//protected:
-//    void resizeEvent(QResizeEvent *);
-//    void mousePressEvent(QMouseEvent *e);
-
+    void paintInterface(QPainter *painter,
+                    const QStyleOptionGraphicsItem *option,
+                                    const QRect& contentsRect);
+    QSizeF contentSizeHint() const;
 
 private:
-	KxkbWidget* kxkbWidget;
-//private:
-//    KConfig *ksConfig;
-//    QWidget *mainView;
-//    KPopupMenu *mContextMenu;
-//    KPopupFrame *mBrightnessChooserFrame;
-//    BrightnessChooserImpl *chooser;
-
-//private: // Private methods
+    KxkbCore* m_kxkbCore;
 };
+
+K_EXPORT_PLASMA_APPLET(kxkb, KxkbApplet)
 
 #endif

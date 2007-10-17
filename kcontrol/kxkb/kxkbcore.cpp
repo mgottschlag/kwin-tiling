@@ -109,6 +109,8 @@ void KxkbCore::initWidget()
         else
             m_kxkbWidget = new KxkbLabel(m_controlType, m_parentWidget);
             
+        kDebug() << "Created kxkb widget" << m_kxkbWidget;
+        
  	connect(m_kxkbWidget, SIGNAL(menuTriggered(QAction*)), this, SLOT(iconMenuTriggered(QAction*)));
 	connect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(toggled()));
 
@@ -291,6 +293,13 @@ void KxkbCore::initLayoutGroups()
 
 void KxkbCore::initTray()
 {
+    if( m_kxkbWidget == NULL ) {
+        if( m_kxkbConfig.m_layouts.count() > 1 || m_kxkbConfig.m_showSingle )
+            initWidget();
+        else
+            return;
+    }
+    
     kDebug() << "initing tray";
 
     m_kxkbWidget->setShowFlag(m_kxkbConfig.m_showFlag);

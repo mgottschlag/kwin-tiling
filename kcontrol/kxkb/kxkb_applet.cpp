@@ -17,6 +17,7 @@
  */
 
 #include <QWidget>
+#include <QSizeF>
 
 #include <kglobal.h>
 #include <klocale.h>
@@ -28,25 +29,16 @@
 #include "kxkb_applet.moc"
 
 
-extern "C"
+KxkbApplet::KxkbApplet(QObject *parent, const QVariantList &args)
+    : Plasma::Applet(parent, args)
 {
-    KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
-    {
-        KGlobal::locale()->insertCatalog("kxkb");
-        int actions = Plasma::Preferences | Plasma::About | Plasma::Help;
-        return new KxkbApplet(configFile, Plasma::Normal, actions, parent);
-    }
-}
+//    move( 0, 0 );
+    m_kxkbCore = new KxkbCore(NULL, KxkbCore::KXKB_COMPONENT, KxkbWidget::MENU_FULL, KxkbWidget::WIDGET_LABEL);
+    m_kxkbCore->newInstance();
 
-
-KxkbApplet::KxkbApplet(const QString& configFile, Plasma::Type type,
-                 int actions, QWidget *parent, Qt::WFlags f)
-    : KPanelApplet(configFile, type, actions, parent, f)
-{
-    move( 0, 0 );
-    kxkbWidget = new KxkbLabel( this );
-	KxkbCore* kxkbCore = new KxkbCore(kxkbWidget);
-	kxkbCore->newInstance();
+    setDrawStandardBackground(true);
+//    connect(m_systemTrayWidget, SIGNAL(sizeChanged()), SLOT(updateLayout()));
+    //m_kxkbWidget->show();
     //setCustomMenu(widget->history()->popup());
     //centerWidget();
     //kxkbWidget->show();
@@ -54,14 +46,21 @@ KxkbApplet::KxkbApplet(const QString& configFile, Plasma::Type type,
 
 KxkbApplet::~KxkbApplet()
 {
+    if (failedToLaunch()) {
+        // Do some cleanup here
+    } else {
+        // Save settings
+    }
 }
 
-int KxkbApplet::widthForHeight(int height) const
+QSizeF KxkbApplet::contentSizeHint() const
 {
-	return 32;//kxkbWidget->width();
+//    return QSizeF(m_kxkbCore->size());
+    return QSizeF(32,32);
 }
 
-int KxkbApplet::heightForWidth(int width) const
+void KxkbApplet::paintInterface(QPainter *painter,
+                    const QStyleOptionGraphicsItem *option,
+                                    const QRect& contentsRect)
 {
-	return 32;//kxkbWidget->height();
 }

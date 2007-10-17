@@ -675,6 +675,9 @@ void LayoutConfig::moveSelected(int shift)
 	return;
 
     QModelIndexList selected = selectionModel->selectedRows();
+    if( selected.count() < 1 )
+        return;
+    
     int row = selected[0].row();
     int new_row = row + shift;
     
