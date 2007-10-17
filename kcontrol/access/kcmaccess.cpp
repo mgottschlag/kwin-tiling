@@ -673,33 +673,32 @@ void KAccessConfig::load()
 
   durationSlider->setValue(cg.readEntry("VisibleBellPause", 500));
 
+  KConfigGroup keyboardGroup(KSharedConfig::openConfig("kaccessrc"),"Keyboard");
 
-  cg.changeGroup("Keyboard");
+  stickyKeys->setChecked(keyboardGroup.readEntry("StickyKeys", false));
+  stickyKeysLock->setChecked(keyboardGroup.readEntry("StickyKeysLatch", true));
+  stickyKeysAutoOff->setChecked(keyboardGroup.readEntry("StickyKeysAutoOff", false));
+  stickyKeysBeep->setChecked(keyboardGroup.readEntry("StickyKeysBeep", true));
+  toggleKeysBeep->setChecked(keyboardGroup.readEntry("ToggleKeysBeep", false));
+  kNotifyModifiers->setChecked(keyboardGroup.readEntry("kNotifyModifiers", false));
 
-  stickyKeys->setChecked(cg.readEntry("StickyKeys", false));
-  stickyKeysLock->setChecked(cg.readEntry("StickyKeysLatch", true));
-  stickyKeysAutoOff->setChecked(cg.readEntry("StickyKeysAutoOff", false));
-  stickyKeysBeep->setChecked(cg.readEntry("StickyKeysBeep", true));
-  toggleKeysBeep->setChecked(cg.readEntry("ToggleKeysBeep", false));
-  kNotifyModifiers->setChecked(cg.readEntry("kNotifyModifiers", false));
+  slowKeys->setChecked(keyboardGroup.readEntry("SlowKeys", false));
+  slowKeysDelay->setValue(keyboardGroup.readEntry("SlowKeysDelay", 500));
+  slowKeysPressBeep->setChecked(keyboardGroup.readEntry("SlowKeysPressBeep", true));
+  slowKeysAcceptBeep->setChecked(keyboardGroup.readEntry("SlowKeysAcceptBeep", true));
+  slowKeysRejectBeep->setChecked(keyboardGroup.readEntry("SlowKeysRejectBeep", true));
 
-  slowKeys->setChecked(cg.readEntry("SlowKeys", false));
-  slowKeysDelay->setValue(cg.readEntry("SlowKeysDelay", 500));
-  slowKeysPressBeep->setChecked(cg.readEntry("SlowKeysPressBeep", true));
-  slowKeysAcceptBeep->setChecked(cg.readEntry("SlowKeysAcceptBeep", true));
-  slowKeysRejectBeep->setChecked(cg.readEntry("SlowKeysRejectBeep", true));
+  bounceKeys->setChecked(keyboardGroup.readEntry("BounceKeys", false));
+  bounceKeysDelay->setValue(keyboardGroup.readEntry("BounceKeysDelay", 500));
+  bounceKeysRejectBeep->setChecked(keyboardGroup.readEntry("BounceKeysRejectBeep", true));
 
-  bounceKeys->setChecked(cg.readEntry("BounceKeys", false));
-  bounceKeysDelay->setValue(cg.readEntry("BounceKeysDelay", 500));
-  bounceKeysRejectBeep->setChecked(cg.readEntry("BounceKeysRejectBeep", true));
+  gestures->setChecked(keyboardGroup.readEntry("Gestures", true));
+  timeout->setChecked(keyboardGroup.readEntry("AccessXTimeout", false));
+  timeoutDelay->setValue(keyboardGroup.readEntry("AccessXTimeoutDelay", 30));
 
-  gestures->setChecked(cg.readEntry("Gestures", true));
-  timeout->setChecked(cg.readEntry("AccessXTimeout", false));
-  timeoutDelay->setValue(cg.readEntry("AccessXTimeoutDelay", 30));
-
-  accessxBeep->setChecked(cg.readEntry("AccessXBeep", true));
-  gestureConfirmation->setChecked(cg.readEntry("GestureConfirmation", false));
-  kNotifyAccessX->setChecked(cg.readEntry("kNotifyAccessX", false));
+  accessxBeep->setChecked(keyboardGroup.readEntry("AccessXBeep", true));
+  gestureConfirmation->setChecked(keyboardGroup.readEntry("GestureConfirmation", false));
+  kNotifyAccessX->setChecked(keyboardGroup.readEntry("kNotifyAccessX", false));
 
   checkAccess();
 
@@ -721,37 +720,37 @@ void KAccessConfig::save()
 
   cg.writeEntry("VisibleBellPause", durationSlider->value());
 
+  KConfigGroup keyboardGroup(KSharedConfig::openConfig("kaccessrc"),"Keyboard");
 
-  cg.changeGroup("Keyboard");
+  keyboardGroup.writeEntry("StickyKeys", stickyKeys->isChecked());
+  keyboardGroup.writeEntry("StickyKeysLatch", stickyKeysLock->isChecked());
+  keyboardGroup.writeEntry("StickyKeysAutoOff", stickyKeysAutoOff->isChecked());
+  keyboardGroup.writeEntry("StickyKeysBeep", stickyKeysBeep->isChecked());
+  keyboardGroup.writeEntry("ToggleKeysBeep", toggleKeysBeep->isChecked());
+  keyboardGroup.writeEntry("kNotifyModifiers", kNotifyModifiers->isChecked());
 
-  cg.writeEntry("StickyKeys", stickyKeys->isChecked());
-  cg.writeEntry("StickyKeysLatch", stickyKeysLock->isChecked());
-  cg.writeEntry("StickyKeysAutoOff", stickyKeysAutoOff->isChecked());
-  cg.writeEntry("StickyKeysBeep", stickyKeysBeep->isChecked());
-  cg.writeEntry("ToggleKeysBeep", toggleKeysBeep->isChecked());
-  cg.writeEntry("kNotifyModifiers", kNotifyModifiers->isChecked());
-
-  cg.writeEntry("SlowKeys", slowKeys->isChecked());
-  cg.writeEntry("SlowKeysDelay", slowKeysDelay->value());
-  cg.writeEntry("SlowKeysPressBeep", slowKeysPressBeep->isChecked());
-  cg.writeEntry("SlowKeysAcceptBeep", slowKeysAcceptBeep->isChecked());
-  cg.writeEntry("SlowKeysRejectBeep", slowKeysRejectBeep->isChecked());
+  keyboardGroup.writeEntry("SlowKeys", slowKeys->isChecked());
+  keyboardGroup.writeEntry("SlowKeysDelay", slowKeysDelay->value());
+  keyboardGroup.writeEntry("SlowKeysPressBeep", slowKeysPressBeep->isChecked());
+  keyboardGroup.writeEntry("SlowKeysAcceptBeep", slowKeysAcceptBeep->isChecked());
+  keyboardGroup.writeEntry("SlowKeysRejectBeep", slowKeysRejectBeep->isChecked());
 
 
-  cg.writeEntry("BounceKeys", bounceKeys->isChecked());
-  cg.writeEntry("BounceKeysDelay", bounceKeysDelay->value());
-  cg.writeEntry("BounceKeysRejectBeep", bounceKeysRejectBeep->isChecked());
+  keyboardGroup.writeEntry("BounceKeys", bounceKeys->isChecked());
+  keyboardGroup.writeEntry("BounceKeysDelay", bounceKeysDelay->value());
+  keyboardGroup.writeEntry("BounceKeysRejectBeep", bounceKeysRejectBeep->isChecked());
 
-  cg.writeEntry("Gestures", gestures->isChecked());
-  cg.writeEntry("AccessXTimeout", timeout->isChecked());
-  cg.writeEntry("AccessXTimeoutDelay", timeoutDelay->value());
+  keyboardGroup.writeEntry("Gestures", gestures->isChecked());
+  keyboardGroup.writeEntry("AccessXTimeout", timeout->isChecked());
+  keyboardGroup.writeEntry("AccessXTimeoutDelay", timeoutDelay->value());
 
-  cg.writeEntry("AccessXBeep", accessxBeep->isChecked());
-  cg.writeEntry("GestureConfirmation", gestureConfirmation->isChecked());
-  cg.writeEntry("kNotifyAccessX", kNotifyAccessX->isChecked());
+  keyboardGroup.writeEntry("AccessXBeep", accessxBeep->isChecked());
+  keyboardGroup.writeEntry("GestureConfirmation", gestureConfirmation->isChecked());
+  keyboardGroup.writeEntry("kNotifyAccessX", kNotifyAccessX->isChecked());
 
 
   cg.sync();
+  keyboardGroup.sync();
 
   if (systemBell->isChecked() ||
       customBell->isChecked() ||

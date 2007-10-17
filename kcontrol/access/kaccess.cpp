@@ -147,8 +147,7 @@ void KAccessApp::readSettings()
     XkbChangeEnabledControls(QX11Info::display(), XkbUseCoreKbd, XkbAudibleBellMask, XkbAudibleBellMask);
 
   // keyboard -------------------------------------------------------------
-
-  cg.changeGroup("Keyboard");
+  KConfigGroup keyboardGroup(_config,"Keyboard");
 
   // get keyboard state
   XkbDescPtr xkb = XkbGetMap(QX11Info::display(), 0, XkbUseCoreKbd);
@@ -158,17 +157,17 @@ void KAccessApp::readSettings()
     return;
 
   // sticky keys
-  if (cg.readEntry("StickyKeys", false))
+  if (keyboardGroup.readEntry("StickyKeys", false))
     {
-      if (cg.readEntry("StickyKeysLatch", true))
+      if (keyboardGroup.readEntry("StickyKeysLatch", true))
         xkb->ctrls->ax_options |= XkbAX_LatchToLockMask;
       else
         xkb->ctrls->ax_options &= ~XkbAX_LatchToLockMask;
-      if (cg.readEntry("StickyKeysAutoOff", false))
+      if (keyboardGroup.readEntry("StickyKeysAutoOff", false))
          xkb->ctrls->ax_options |= XkbAX_TwoKeysMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_TwoKeysMask;
-      if (cg.readEntry("StickyKeysBeep", false))
+      if (keyboardGroup.readEntry("StickyKeysBeep", false))
          xkb->ctrls->ax_options |= XkbAX_StickyKeysFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_StickyKeysFBMask;
@@ -178,22 +177,22 @@ void KAccessApp::readSettings()
     xkb->ctrls->enabled_ctrls &= ~XkbStickyKeysMask;
 
   // toggle keys
-  if (cg.readEntry("ToggleKeysBeep", false))
+  if (keyboardGroup.readEntry("ToggleKeysBeep", false))
      xkb->ctrls->ax_options |= XkbAX_IndicatorFBMask;
   else
      xkb->ctrls->ax_options &= ~XkbAX_IndicatorFBMask;
 
   // slow keys
-  if (cg.readEntry("SlowKeys", false)) {
-      if (cg.readEntry("SlowKeysPressBeep", false))
+  if (keyboardGroup.readEntry("SlowKeys", false)) {
+      if (keyboardGroup.readEntry("SlowKeysPressBeep", false))
          xkb->ctrls->ax_options |= XkbAX_SKPressFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_SKPressFBMask;
-      if (cg.readEntry("SlowKeysAcceptBeep", false))
+      if (keyboardGroup.readEntry("SlowKeysAcceptBeep", false))
          xkb->ctrls->ax_options |= XkbAX_SKAcceptFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_SKAcceptFBMask;
-      if (cg.readEntry("SlowKeysRejectBeep", false))
+      if (keyboardGroup.readEntry("SlowKeysRejectBeep", false))
          xkb->ctrls->ax_options |= XkbAX_SKRejectFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_SKRejectFBMask;
@@ -201,11 +200,11 @@ void KAccessApp::readSettings()
     }
   else
       xkb->ctrls->enabled_ctrls &= ~XkbSlowKeysMask;
-  xkb->ctrls->slow_keys_delay = cg.readEntry("SlowKeysDelay", 500);
+  xkb->ctrls->slow_keys_delay = keyboardGroup.readEntry("SlowKeysDelay", 500);
 
   // bounce keys
-  if (cg.readEntry("BounceKeys", false)) {
-      if (cg.readEntry("BounceKeysRejectBeep", false))
+  if (keyboardGroup.readEntry("BounceKeys", false)) {
+      if (keyboardGroup.readEntry("BounceKeysRejectBeep", false))
          xkb->ctrls->ax_options |= XkbAX_BKRejectFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_BKRejectFBMask;
@@ -213,19 +212,19 @@ void KAccessApp::readSettings()
     }
   else
       xkb->ctrls->enabled_ctrls &= ~XkbBounceKeysMask;
-  xkb->ctrls->debounce_delay = cg.readEntry("BounceKeysDelay", 500);
+  xkb->ctrls->debounce_delay = keyboardGroup.readEntry("BounceKeysDelay", 500);
 
   // gestures for enabling the other features
-  _gestures = cg.readEntry("Gestures", true);
+  _gestures = keyboardGroup.readEntry("Gestures", true);
   if (_gestures)
       xkb->ctrls->enabled_ctrls |= XkbAccessXKeysMask;
   else
       xkb->ctrls->enabled_ctrls &= ~XkbAccessXKeysMask;
 
   // timeout
-  if (cg.readEntry("AccessXTimeout", false))
+  if (keyboardGroup.readEntry("AccessXTimeout", false))
     {
-      xkb->ctrls->ax_timeout = cg.readEntry("AccessXTimeoutDelay", 30)*60;
+      xkb->ctrls->ax_timeout = keyboardGroup.readEntry("AccessXTimeoutDelay", 30)*60;
       xkb->ctrls->axt_opts_mask = 0;
       xkb->ctrls->axt_opts_values = 0;
       xkb->ctrls->axt_ctrls_mask = XkbStickyKeysMask | XkbSlowKeysMask;
@@ -236,39 +235,39 @@ void KAccessApp::readSettings()
     xkb->ctrls->enabled_ctrls &= ~XkbAccessXTimeoutMask;
 
   // gestures for enabling the other features
-  if (cg.readEntry("AccessXBeep", true))
+  if (keyboardGroup.readEntry("AccessXBeep", true))
      xkb->ctrls->ax_options |= XkbAX_FeatureFBMask | XkbAX_SlowWarnFBMask;
   else
      xkb->ctrls->ax_options &= ~(XkbAX_FeatureFBMask | XkbAX_SlowWarnFBMask);
 
-  _gestureConfirmation = cg.readEntry("GestureConfirmation", true);
+  _gestureConfirmation = keyboardGroup.readEntry("GestureConfirmation", true);
 
-  _kNotifyModifiers = cg.readEntry("kNotifyModifiers", false);
-  _kNotifyAccessX = cg.readEntry("kNotifyAccessX", false);
+  _kNotifyModifiers = keyboardGroup.readEntry("kNotifyModifiers", false);
+  _kNotifyAccessX = keyboardGroup.readEntry("kNotifyAccessX", false);
 
   // mouse-by-keyboard ----------------------------------------------
 
-  cg.changeGroup("Mouse");
+  KConfigGroup mouseGroup(_config,"Mouse");
 
-  if (cg.readEntry("MouseKeys", false))
+  if (mouseGroup.readEntry("MouseKeys", false))
     {
-      xkb->ctrls->mk_delay = cg.readEntry("MKDelay", 160);
+      xkb->ctrls->mk_delay = mouseGroup.readEntry("MKDelay", 160);
 
       // Default for initial velocity: 200 pixels/sec
-      int interval = cg.readEntry("MKInterval", 5);
+      int interval = mouseGroup.readEntry("MKInterval", 5);
       xkb->ctrls->mk_interval = interval;
 
       // Default time to reach maximum speed: 5000 msec
-      xkb->ctrls->mk_time_to_max = cg.readEntry("MKTimeToMax",
+      xkb->ctrls->mk_time_to_max = mouseGroup.readEntry("MKTimeToMax",
                                              (5000+interval/2)/interval);
 
       // Default maximum speed: 1000 pixels/sec
       //     (The old default maximum speed from KDE <= 3.4
       //     (100000 pixels/sec) was way too fast)
-      xkb->ctrls->mk_max_speed = cg.readEntry("MKMaxSpeed", interval);
+      xkb->ctrls->mk_max_speed = mouseGroup.readEntry("MKMaxSpeed", interval);
 
-      xkb->ctrls->mk_curve = cg.readEntry("MKCurve", 0);
-      xkb->ctrls->mk_dflt_btn = cg.readEntry("MKDefaultButton", 0);
+      xkb->ctrls->mk_curve = mouseGroup.readEntry("MKCurve", 0);
+      xkb->ctrls->mk_dflt_btn = mouseGroup.readEntry("MKDefaultButton", 0);
 
       xkb->ctrls->enabled_ctrls |= XkbMouseKeysMask;
     }
@@ -828,13 +827,13 @@ void KAccessApp::applyChanges() {
    else if (disabled & XkbStickyKeysMask)
       config.writeEntry("StickyKeys", false);
 
-   config.changeGroup("Mouse");
+   KConfigGroup mousegrp(KGlobal::config(),"Mouse");
 
    if (enabled & XkbMouseKeysMask)
-      config.writeEntry("MouseKeys", true);
+      mousegrp.writeEntry("MouseKeys", true);
    else if (disabled & XkbMouseKeysMask)
-      config.writeEntry("MouseKeys", false);
-
+      mousegrp.writeEntry("MouseKeys", false);
+   mousegrp.sync();
    config.sync();
 }
 
