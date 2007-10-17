@@ -22,11 +22,11 @@
 #ifndef tzone_included
 #define tzone_included
 
-#include <Qt3Support/Q3GroupBox>
 //Added by qt3to4:
 #include <QLabel>
 #include <ktimezone.h>
 #include <ktimezonewidget.h>
+#include <QGroupBox>
 
 class QLabel;
 
