@@ -57,7 +57,7 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsPixmaps[CRIT_FAMILY]=SmallIcon("text");
     itsPixmaps[CRIT_STYLE]=SmallIcon("format-text-bold");
     itsPixmaps[CRIT_FOUNDRY]=SmallIcon("user");
-    itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("file-find");
+    itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("edit-find");
     itsPixmaps[CRIT_FILENAME]=SmallIcon("font-type1");
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
     itsPixmaps[CRIT_WS]=SmallIcon("pencil");
@@ -122,7 +122,19 @@ void CFontFilter::setFoundries(const QSet<QString> &foundries)
     QStringList list(foundries.toList());
 
     list.sort();
-    ((KSelectAction *)itsActions[CRIT_FOUNDRY])->setItems(list);
+
+    // Add foundries to menu - replacing '&' with '&&', as '&' is taken to be
+    // a shortcut!
+    QStringList::ConstIterator it(list.begin()),
+                               end(list.end());
+
+    for(; it!=end; ++it)
+    {
+        QString foundry(*it);
+
+        foundry.replace("&", "&&");
+        ((KSelectAction *)itsActions[CRIT_FOUNDRY])->addAction(foundry);
+    }
 
     if(!prev.isEmpty())
     {
@@ -191,7 +203,7 @@ void CFontFilter::wsChanged()
             setReadOnly(true);
             modifyPadding();
             setCriteria(itsCurrentCriteria);
-            setText(i18n("%1 (Writing System)", act->text()));
+            setText(act->text());
             setClickMessage(text());
         }
     }

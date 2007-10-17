@@ -243,6 +243,40 @@ static QString replaceChars(const QString &in)
     return rv;
 }
 
+QString capitaliseFoundry(const QString &foundry)
+{
+    QString f(foundry.toLower());
+
+    if(f==QString::fromLatin1("ibm"))
+        return QString::fromLatin1("IBM");
+    else if(f==QString::fromLatin1("urw"))
+        return QString::fromLatin1("URW");
+    else if(f==QString::fromLatin1("itc"))
+        return QString::fromLatin1("ITC");
+    else if(f==QString::fromLatin1("nec"))
+        return QString::fromLatin1("NEC");
+    else if(f==QString::fromLatin1("b&h"))
+        return QString::fromLatin1("B&H");
+    else
+    {
+        QChar   *ch(f.data());
+        int     len(f.length());
+        bool    isSpace(true);
+
+        while(len--)
+        {
+            if (isSpace)
+                *ch=ch->toUpper();
+
+            isSpace=ch->isSpace();
+            ++ch;
+        }
+
+    }
+
+    return f;
+}
+
 static void toggle(QString &file, bool enable)
 {
     QString newFile(enable
@@ -500,7 +534,7 @@ void CFamilyItem::getFoundries(QSet<QString> &foundries) const
 
         for(; fIt!=fEnd; ++fIt)
             if(!(*fIt).foundry.isEmpty())
-                foundries.insert((*fIt).foundry);
+                foundries.insert(capitaliseFoundry((*fIt).foundry));
     }
 }
 
@@ -1273,7 +1307,7 @@ bool CFontListSortFilterProxy::acceptFont(CFontItem *fnt, bool checkFontText) co
                                                              end(fnt->files().end());
 
                     for(; it!=end && !fontMatch; ++it)
-                        fontMatch=-1!=(*it).foundry.indexOf(itsFilterText, 0, Qt::CaseInsensitive);
+                        fontMatch=0==(*it).foundry.compare(itsFilterText, Qt::CaseInsensitive);
                     break;
                 }
                 case CFontFilter::CRIT_FILENAME:
