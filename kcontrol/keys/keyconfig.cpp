@@ -62,7 +62,6 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 #define NOSLOTS
 #define KShortcuts KAccelShortcuts
 #include "../../kwin/kwinbindings.cpp"
-#include "../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 #undef KShortcuts
     KeyScheme = "Global Key Scheme";
@@ -473,7 +472,6 @@ void KKeyModule::init()
 // this should match the included files above
 #define NOSLOTS
 #define KShortcuts KAccelShortcuts
-#include "../../../workspace/klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 #undef KShortcuts
