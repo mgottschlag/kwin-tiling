@@ -42,6 +42,7 @@ PopupProxy::PopupProxy( KlipperPopup* parent, int menu_height, int menu_width )
       nextItemNumber( 0 )
 {
     connect( parent->history(), SIGNAL( changed() ), SLOT( slotHistoryChanged() ) );
+    connect(proxy_for_menu, SIGNAL(triggered(QAction*)), parent->history(), SLOT(slotMoveToTop(QAction*)));
 }
 
 void PopupProxy::slotHistoryChanged() {
@@ -87,33 +88,35 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
                                 int& remainingHeight,
                                 const int index )
 {
-
-    // Insert item
-    int id = -1;
+    QAction *action = new QAction(this);
     QPixmap image( item->image() );
     if ( image.isNull() ) {
         // Squeeze text strings so that do not take up the entire screen (or more)
         QString text = proxy_for_menu->fontMetrics().elidedText( item->text().simplified(), Qt::ElideMiddle, m_menu_width );
         text.replace( "&", "&&" );
-        id = proxy_for_menu->insertItem( text, -1, index );
+        action->setText(text);
     } else {
         const QSize max_size( m_menu_width,m_menu_height/4 );
         if ( image.height() > max_size.height() || image.width() > max_size.width() ) {
             image = image.scaled( max_size, Qt::KeepAspectRatio, Qt::SmoothTransformation );
         }
-        id = proxy_for_menu->insertItem( image, -1, index );
+        action->setIcon(QIcon(image));
     }
 
+    action->setData(nextItemNumber);
+
+    proxy_for_menu->insertAction(proxy_for_menu->actions().at(index), action);
 
     // Determine height of a menu item.
+
+    int itemheight = QFontMetrics(proxy_for_menu->fontMetrics()).height();
+
+//TODO Use old-style QStyle and QStyleOption API
+#if 0
     Q_ASSERT( id != -1 ); // Be sure that the item was inserted.
     QMenuItem* mi = proxy_for_menu->findItem( id );
-    int fontheight = QFontMetrics( proxy_for_menu->fontMetrics()  ).height();
-#ifdef __GNUC__
-#warning Use old-style QStyle and QStyleOption API
-#endif    
-    int itemheight = fontheight;
-#if 0
+
+
     int itemheight = proxy_for_menu->style().sizeFromContents(QStyle::CT_PopupMenuItem,
                                                               proxy_for_menu,
                                                               QSize( 0, fontheight ),
@@ -121,12 +124,6 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
 #endif
     // Test if there was enough space
     remainingHeight -= itemheight;
-    History* history = parent()->history();
-    proxy_for_menu->connectItem(  id,
-                                  history,
-                                  SLOT( slotMoveToTop( int ) ) );
-    proxy_for_menu->setItemParameter(  id, nextItemNumber );
-
 }
 
 int PopupProxy::insertFromSpill( int index ) {
@@ -157,8 +154,10 @@ int PopupProxy::insertFromSpill( int index ) {
     // make *this a proxy for that menu ('s content).
     if (spillPointer.hasNext()) {
         KMenu* moreMenu = new KMenu( proxy_for_menu );
-        proxy_for_menu->insertItem( i18n( "&More" ), moreMenu, -1, index );
-        connect( moreMenu, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
+        QAction *menuAction = new QAction(i18n("&More"), this);
+        menuAction->setMenu(moreMenu);
+        connect(moreMenu, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
+        proxy_for_menu->insertAction(proxy_for_menu->actions().at(index), menuAction);
         proxy_for_menu = moreMenu;
     }
 

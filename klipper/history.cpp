@@ -97,7 +97,12 @@ void History::slotClear() {
     emit changed();
 }
 
-void History::slotMoveToTop(int pos ) {
+void History::slotMoveToTop(QAction *action) {
+    bool ok = false;
+    int pos = action->data().toInt(&ok);
+    if (!ok) // not an action from popupproxy
+        return;
+
     if ( pos < 0 || pos >= itemList.count() ) {
         kDebug() << "Argument pos out of range: " << pos;
         return;

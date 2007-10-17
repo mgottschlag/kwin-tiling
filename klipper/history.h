@@ -21,7 +21,7 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-#include <QObject>
+#include <QAction>
 #include <QList>
 
 #include "historyitem.h"
@@ -108,7 +108,7 @@ public Q_SLOTS:
     /**
      * move the history in position pos to top
      */
-    void slotMoveToTop(int pos );
+    void slotMoveToTop(QAction *action);
 
     /**
      * Clear history
