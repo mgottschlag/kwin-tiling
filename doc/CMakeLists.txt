@@ -1,8 +1,6 @@
 add_subdirectory(kdm)
-add_subdirectory(kicker)
 add_subdirectory(kinfocenter)
 add_subdirectory(klipper)
 add_subdirectory(kmenuedit)
-add_subdirectory(kompmgr)
 add_subdirectory(ksysguard)
 add_subdirectory(kxkb)
