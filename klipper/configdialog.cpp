@@ -266,13 +266,15 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     const QPixmap& doc = SmallIcon( "misc" );
     const QPixmap& exec = SmallIcon( "exec" );
 
-    for ( action = it.current(); action; action = ++it ) {
+    while (it.hasNext()) {
+        action = it.next();
         item = new Q3ListViewItem( listView, after,
                                   action->regExp(), action->description() );
         item->setPixmap( 0, doc );
 
-        Q3PtrListIterator<ClipCommand> it2( action->commands() );
-        for ( command = it2.current(); command; command = ++it2 ) {
+        QListIterator<ClipCommand*> it2( action->commands() );
+        while (it2.hasNext()) {
+            command = it2.next();
             child = new Q3ListViewItem( item, after,
                                        command->command, command->description);
         if ( command->pixmap.isEmpty() )
@@ -386,7 +388,6 @@ ActionList * ActionWidget::actionList()
     Q3ListViewItem *child = 0L;
     ClipAction *action = 0L;
     ActionList *list = new ActionList;
-    list->setAutoDelete( true );
     while ( item ) {
         action = new ClipAction( item->text( 0 ), item->text( 1 ) );
         child = item->firstChild();

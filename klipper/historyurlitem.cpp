@@ -19,9 +19,7 @@
 */
 #include "historyurlitem.h"
 
-#include <k3multipledrag.h>
-#include <k3urldrag.h>
-#include <Qt3Support/Q3CString>
+#include <QMimeData>
 
 HistoryURLItem::HistoryURLItem( const KUrl::List &_urls, KUrl::MetaDataMap _metaData, bool _cut )
     : urls( _urls ), metaData( _metaData ), cut( _cut )

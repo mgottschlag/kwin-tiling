@@ -20,13 +20,10 @@
 #ifndef URLGRABBER_H
 #define URLGRABBER_H
 
-#include <Qt3Support/Q3PtrList>
-#include <Qt3Support/Q3IntDict>
+#include <QHash>
 #include <QRegExp>
 
-
 #include <kconfig.h>
-
 
 class QTimer;
 
@@ -35,8 +32,8 @@ class KMenu;
 
 class ClipAction;
 struct ClipCommand;
-typedef Q3PtrList<ClipAction> ActionList;
-typedef Q3PtrListIterator<ClipAction> ActionListIterator;
+typedef QList<ClipAction*> ActionList;
+typedef QListIterator<ClipAction*> ActionListIterator;
 
 class URLGrabber : public QObject
 {
@@ -68,11 +65,10 @@ public:
 
   bool trimmed() const { return m_trimmed; }
   void setStripWhiteSpace( bool enable ) { m_trimmed = enable; }
-    
+
 private:
   const ActionList& matchingActions( const QString& );
   void execute( const struct ClipCommand *command ) const;
-  void editData();
   bool isAvoidedWindow() const;
   void actionMenu( bool wm_class_check );
 
@@ -81,7 +77,7 @@ private:
   QStringList myAvoidWindows;
   QString myClipData;
   ClipAction *myCurrentAction;
-  Q3IntDict<ClipCommand> myCommandMapper;
+  QHash<QString, ClipCommand*> myCommandMapper;
   KMenu *myMenu;
   QTimer *myPopupKillTimer;
   int myPopupKillTimeout;
@@ -90,8 +86,9 @@ private:
 
 private Q_SLOTS:
   void slotActionMenu() { actionMenu( true ); }
-  void slotItemSelected( int );
+  void slotItemSelected(QAction *action);
   void slotKillPopupMenu();
+  void editData();
 
 
 Q_SIGNALS:
@@ -108,7 +105,6 @@ struct ClipCommand
     QString description;
     bool isEnabled;
     QString pixmap;
-    //  int id; // the index reflecting the position in the list of commands
 };
 
 /**
@@ -139,7 +135,7 @@ public:
   void clearCommands() { myCommands.clear(); }
 
   void  addCommand( const QString& command, const QString& description, bool, const QString& icon = "" );
-  const Q3PtrList<ClipCommand>& commands() 	const { return myCommands; }
+  const QList<ClipCommand*>& commands() 	const { return myCommands; }
 
   /**
    * Saves this action to a a given KConfig object
@@ -150,7 +146,7 @@ public:
 private:
   QRegExp 		myRegExp;
   QString 		myDescription;
-  Q3PtrList<ClipCommand> 	myCommands;
+  QList<ClipCommand*> 	myCommands;
 
 };
 
