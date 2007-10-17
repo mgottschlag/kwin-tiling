@@ -1,10 +1,20 @@
 [Desktop Entry]
 Name=SolidDevice Data Engine
-Name[nds]=SolidDevice-Datendriever
+Name[ga]=Inneall Sonraí SolidDevice
+Name[ja]=SolidDevice データエンジン
+Name[nds]=SolidDevice-Hanteerkarn
 Name[ne]=ठोस यन्त्र डेटा इन्जिन
+Name[pt_BR]=Mecanismo de Dados SolidDevice
+Name[sv]=Datagränssnitt för Solid-enhet
+Name[zh_TW]=SolidDevice 資料引擎
 Comment=SolidDevice data for Plasmoids
+Comment[ga]=Sonraí SolidDevice le haghaidh Plasmoids
+Comment[ja]=Plasmoid のための SolidDevice データ
 Comment[nds]=SolidDevice-Daten för Plasmoiden
 Comment[ne]=प्लासमोइड्सका लागि ठोस यन्त्र डेटा
+Comment[pt_BR]=Dados de SolidDevice para os Plasmoids
+Comment[sv]=Data från Solid-enhet för Plasmoider
+Comment[zh_TW]=Plasmoids 的 SolidDevice 資料
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=alarmclock
