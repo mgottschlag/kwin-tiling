@@ -155,7 +155,10 @@ class CToolBar : public KToolBar
 
     void paintEvent(QPaintEvent *)
     {
-        QPainter(this).fillRect(rect(), palette().color(backgroundRole()));
+        QColor col(palette().color(backgroundRole()));
+
+        col.setAlphaF(0.0);
+        QPainter(this).fillRect(rect(), col);
     }
 
     void resizeEvent(QResizeEvent *ev)
