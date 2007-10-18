@@ -399,7 +399,7 @@ int main(int argc, char **argv)
 
       cout << "  solidshell network set network 'device-uni' 'network-uni' [authentication 'key']" << endl;
       cout << i18n("             # Activate the network 'network-uni' on 'device-uni'.\n"
-                    "             # Optionally, use WEP128, open-system encryption with hex key 'key'. (Hardcoded)"
+                    "             # Optionally, use WEP128, open-system encryption with hex key 'key'. (Hardcoded)\n"
                     "             # Where 'authentication' is one of:\n"
                     "             # wep hex64|ascii64|hex128|ascii128|passphrase64|passphrase128 'key' [open|shared]\n"
                     "             # wpapsk wpa|wpa2 tkip|ccmp-aes password\n"
