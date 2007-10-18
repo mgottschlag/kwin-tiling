@@ -369,7 +369,7 @@
                 </item>
                 <item row="21" column="0" >
                  <property name="text" >
-                  <string>InactiveWindowText</string>
+                  <string>Inactive Window Text</string>
                  </property>
                 </item>
                </widget>
