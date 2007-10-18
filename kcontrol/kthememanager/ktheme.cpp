@@ -459,15 +459,15 @@ void KTheme::apply()
             QDomElement iconSubElem = iconList.item( i ).toElement();
             QString object = iconSubElem.attribute( "object" );
             if ( object == "desktop" )
-                iconConf.changeGroup( "DesktopIcons" );
+                iconConf=KConfigGroup(KGlobal::config(), "DesktopIcons" );
             else if ( object == "mainToolbar" )
-                iconConf.changeGroup( "MainToolbarIcons" );
+                iconConf=KConfigGroup(KGlobal::config(),"MainToolbarIcons" );
             else if ( object == "panel" )
-                iconConf.changeGroup( "PanelIcons" );
+                iconConf=KConfigGroup(KGlobal::config(),"PanelIcons" );
             else if ( object == "small" )
-                iconConf.changeGroup( "SmallIcons" );
+                iconConf=KConfigGroup(KGlobal::config(),"SmallIcons" );
             else if ( object == "toolbar" )
-                iconConf.changeGroup( "ToolbarIcons" );
+                iconConf=KConfigGroup(KGlobal::config(),"ToolbarIcons" );
 
             QString iconName = iconSubElem.tagName();
             if ( iconName.contains( "Color" ) )
@@ -509,7 +509,7 @@ void KTheme::apply()
             }
             else if ( object == "kwin" )
             {
-                kwinSoundGroup.changeGroup(eventElem.attribute("name"));
+                kwinSoundGroup=KConfigGroup(KSharedConfig::openConfig("kwin.eventsrc"),eventElem.attribute("name"));
                 kwinSoundGroup.writeEntry( "soundfile", unprocessFilePath( QLatin1String("sounds"), eventElem.attribute( "url" ) ) );
                 kwinSoundGroup.writeEntry( "presentation", soundGroup.readEntry( "presentation",0 ) | 1 );
             }
@@ -541,9 +541,9 @@ void KTheme::apply()
             QDomElement colorElem = colorList.item( i ).toElement();
             QString object = colorElem.attribute( "object" );
             if ( object == "global" )
-                colorGroup.changeGroup("General");
+                colorGroup=KConfigGroup(KGlobal::config(),"General");
             else if ( object == "kwin" )
-                colorGroup.changeGroup("WM");
+                colorGroup=KConfigGroup(KGlobal::config(),"WM");
 
             QString colName = colorElem.tagName();
             QColor curColor = QColor( colorElem.attribute( "rgb" ) );
@@ -551,7 +551,7 @@ void KTheme::apply()
             colorScheme.writeEntry( colName, curColor ); // thememgr.kcsrc
         }
 
-        colorGroup.changeGroup("KDE");
+        colorGroup=KConfigGroup(KGlobal::config(),"KDE");
         colorGroup.writeEntry( "colorScheme", "thememgr.kcsrc", KConfig::Persistent|KConfig::Global);
         colorGroup.writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ), KConfig::Persistent|KConfig::Global);
         colorScheme.writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ) );
