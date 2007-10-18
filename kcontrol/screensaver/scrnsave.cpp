@@ -429,6 +429,7 @@ void KScreenSaver::defaults()
     slotTimeoutChanged( 5 );
     slotLockTimeoutChanged( 60 );
     slotLock( false );
+    mEnabledCheckBox->setChecked(false);
 
     updateValues();
 
