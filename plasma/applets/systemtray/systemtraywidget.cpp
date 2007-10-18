@@ -106,6 +106,7 @@ bool SystemTrayWidget::event(QEvent *event)
 
 void SystemTrayWidget::embedWindow(WId id)
 {
+    kDebug() << "trying to add window with id " << id;
     if (! m_containers.contains(id)) {
         QX11EmbedContainer *container = new QX11EmbedContainer(this);
         container->embedClient(id);
@@ -114,7 +115,7 @@ void SystemTrayWidget::embedWindow(WId id)
         container->show();
         m_containers[id] = container;
         connect(container, SIGNAL(clientClosed()), this, SLOT(windowClosed()) );
-        kDebug() << "SystemTray: Window with id " << id << "added";
+        kDebug() << "SystemTray: Window with id " << id << "added" << container;
     }
 }
 
@@ -125,16 +126,17 @@ void SystemTrayWidget::discardWindow(WId)
 
 void SystemTrayWidget::windowClosed()
 {
+    kDebug() << "Window closed";
     //by this point the window id is gone, so we have to iterate to find out who's lost theirs
     ContainersList::iterator i = m_containers.begin();
     while (i != m_containers.end()) {
         QX11EmbedContainer *c=i.value();
         if (c->clientWinId()==0) {
-            m_containers.erase(i);
+            i=m_containers.erase(i);
             kDebug() << "deleting container" << c;
             delete c;
-            //I assume that there will never be more than one without an id
-            break;
+            //do NOT assume that there will never be more than one without an id
+            continue;
         }
         ++i;
     }
