@@ -145,7 +145,7 @@ void TaskManager::configure_startup()
     connect( d->startupInfo,
         SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( killStartup( const KStartupInfoId& )));
-    c.changeGroup( "TaskbarButtonSettings" );
+    c=KConfigGroup(&_c, "TaskbarButtonSettings");
     d->startupInfo->setTimeout( c.readEntry( "Timeout", 30 ));
 }
 
