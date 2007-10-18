@@ -35,6 +35,7 @@
 #include <QtDebug>
 
 // KDE
+#include <KAuthorized>
 #include <KColorScheme>
 #include <KGlobalSettings>
 #include <KIcon>
@@ -692,6 +693,10 @@ Task::TaskPtr WindowTaskItem::windowTask() const
 
 void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 {
+    if(!KAuthorized::authorizeKAction("kwin_rmb") )
+    {
+        return;
+    }
     e->accept();
     TaskRMBMenu menu( windowTask() );
     menu.exec( e->screenPos() );
