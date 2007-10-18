@@ -354,22 +354,22 @@
                 </item>
                 <item row="18" column="0" >
                  <property name="text" >
-                  <string>Active Window</string>
+                  <string>Active Titlebar</string>
                  </property>
                 </item>
                 <item row="19" column="0" >
                  <property name="text" >
-                  <string>Active Window Text</string>
+                  <string>Active Titlebar Text</string>
                  </property>
                 </item>
                 <item row="20" column="0" >
                  <property name="text" >
-                  <string>Inactive Window</string>
+                  <string>Inactive Titlebar</string>
                  </property>
                 </item>
                 <item row="21" column="0" >
                  <property name="text" >
-                  <string>Inactive Window Text</string>
+                  <string>Inactive Titlebar Text</string>
                  </property>
                 </item>
                </widget>
