@@ -98,6 +98,7 @@ KCMNic::KCMNic(QWidget *parent, const QVariantList &)
    box->setMargin(0);
    box->setSpacing(KDialog::spacingHint());
    m_list=new QTreeWidget(this);
+   m_list->setRootIsDecorated(false);
    box->addWidget(m_list);
    QStringList columns;
    columns<<i18n("Name")<<i18n("IP Address")<<i18n("Network Mask")<<i18n("Type")<<i18n("State")<<i18n("HWAddr");
