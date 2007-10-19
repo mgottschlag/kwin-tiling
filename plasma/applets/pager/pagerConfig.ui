@@ -12,7 +12,7 @@
   <property name="windowTitle" >
    <string>Configure Pager</string>
   </property>
-  <property name="accessibleName" >
+  <property name="accessibleName" stdset="0" >
    <string>Configure Pager</string>
   </property>
   <layout class="QVBoxLayout" >
