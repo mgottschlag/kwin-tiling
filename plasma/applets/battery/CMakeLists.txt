@@ -1,5 +1,4 @@
 project(plasma-battery)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${PLASMA_INCLUDE_DIR})
 
 set(battery_SRCS
     battery.cpp)
