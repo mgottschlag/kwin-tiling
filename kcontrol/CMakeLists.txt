@@ -11,9 +11,11 @@ if( X11_Xrandr_FOUND )
    add_subdirectory( randr )
 endif(X11_Xrandr_FOUND )
 
-if(X11_Xaccess_FOUND)
+if(X11_Xkb_FOUND)
     add_subdirectory( kxkb )
-endif(X11_Xaccess_FOUND)
+    add_subdirectory( keyboard )
+endif(X11_Xkb_FOUND)
+
 add_subdirectory( bell )
 add_subdirectory( background )
 

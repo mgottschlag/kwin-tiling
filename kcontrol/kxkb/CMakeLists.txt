@@ -1,5 +1,4 @@
 add_subdirectory( pics )
-add_subdirectory( kcmmisc )
 #add_subdirectory( tests ) 
 KDE4_NO_ENABLE_FINAL(kxkb)
 
