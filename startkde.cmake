@@ -276,6 +276,10 @@ echo 'startkde: Starting up...'  1>&2
 
 # Make sure that D-Bus is running, running qdbus will auto-launch it
 # if it is not
+if test -z "$XDG_DATA_DIRS"; then
+    XDG_DATA_DIRS="`kde4-config --prefix`/share:/usr/share:/usr/local/share"
+    export XDG_DATA_DIRS
+fi
 if qdbus >/dev/null 2>/dev/null; then
     : # ok
 else
