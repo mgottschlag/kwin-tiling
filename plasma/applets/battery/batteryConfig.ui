@@ -12,7 +12,7 @@
   <property name="windowTitle" >
    <string>Configure Battery Monitor</string>
   </property>
-  <property name="accessibleName" >
+  <property name="accessibleName" stdset="0" >
    <string>Configure Battery Monitor</string>
   </property>
   <layout class="QVBoxLayout" >
