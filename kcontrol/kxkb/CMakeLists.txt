@@ -107,7 +107,7 @@ if(PLASMA_FOUND)
     endif(X11_XTest_FOUND)
 
     install(TARGETS plasma_applet_kxkb  DESTINATION ${PLUGIN_INSTALL_DIR} )
-    #install(FILES plasma-applet-kxkb.desktop  DESTINATION  ${SERVICES_INSTALL_DIR})
+    install(FILES plasma-applet-kxkb.desktop  DESTINATION  ${SERVICES_INSTALL_DIR})
 
     ADD_DEPENDENCIES(plasma_applet_kxkb kdeinit_kxkb)
 
