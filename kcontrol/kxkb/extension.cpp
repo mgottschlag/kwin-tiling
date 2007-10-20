@@ -30,10 +30,16 @@
 #include <X11/Xos.h>
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
+#ifndef HAVE_XKLAVIER
 #include <X11/extensions/XKBfile.h>
+#endif
 
 #include "extension.h"
 
+
+static const char* SETXKBMAP_SEPARATOR=",";
+
+QString XKBExtension::m_setxkbmap_exe = "";
 
 XKBExtension::XKBExtension(Display *d)
 {
@@ -69,8 +75,10 @@ bool XKBExtension::init()
         return false;
     }
 
+#ifndef HAVE_XKLAVIER
     // Do it, or face horrible memory corrupting bugs
     ::XkbInitAtoms(NULL);
+#endif
 
     int eventMask = XkbNewKeyboardNotifyMask | XkbStateNotifyMask;
     if( !XkbSelectEvents(m_dpy, XkbUseCoreKbd, eventMask, eventMask) ) {
@@ -87,66 +95,98 @@ XKBExtension::~XKBExtension()
 {
 }
 
-bool XKBExtension::setXkbOptions(const QString& options, bool resetOld)
+QString XKBExtension::getSetxkbmapExe()
 {
-    kDebug() << "Setting XKB options " << options;
-    if (options.isEmpty())
+    if( m_setxkbmap_exe.isEmpty() ) {
+        m_setxkbmap_exe = KGlobal::dirs()->findExe("setxkbmap");
+        if( m_setxkbmap_exe.isEmpty() )
+	    kError() << "Can't find setxkbmap" << endl;
+    }
+    return m_setxkbmap_exe;
+}
+
+QString XKBExtension::getXkbOptionsCommand(const QStringList& options, bool resetOld)
+{
+    if( options.empty() && ! resetOld )
+        return "";
+
+    QString cmd = "setxkbmap";
+    if( resetOld )
+        cmd += " -option";
+
+    if( ! options.empty() ) {
+        cmd += " -option ";
+        cmd += options.join(SETXKBMAP_SEPARATOR);
+    }
+    return cmd;
+}
+
+bool XKBExtension::setXkbOptions(const QStringList& options, bool resetOld)
+{
+    kDebug() << "Setting XKB options " << options.join(SETXKBMAP_SEPARATOR);
+
+    if( options.empty() && ! resetOld )
         return true;
 
-    QString exe = KGlobal::dirs()->findExe("setxkbmap");
-    if (exe.isEmpty())
+    getSetxkbmapExe();
+    if( m_setxkbmap_exe.isEmpty() )
         return false;
 
     KProcess p;
-    p << exe;
+    p << m_setxkbmap_exe;
+
     if( resetOld )
         p << "-option";
-    p << "-option" << options;
+    p << "-option" << options.join(SETXKBMAP_SEPARATOR);
+
+    kDebug() << "executing" << p.program().join(" ");
 
     return p.execute() == 0;
 }
 
-bool XKBExtension::setLayoutGroups(const QString& layouts, const QString& variants)
+QString XKBExtension::getLayoutGroupsCommand(const QString& model, const QStringList& layouts, const QStringList& variants)
 {
-	bool res = setLayoutInternal( "", layouts, variants, "" );
-	kDebug() << "setRawLayout " << layouts << ": " << variants << " res: " << res;
-	return res;
+    if( layouts.empty() )
+        return "";
+
+    QString cmd = "setxkbmap";
+    
+    if( ! model.isEmpty() ) {
+        cmd += " -model ";
+        cmd += model;
+    }
+        
+    cmd += " -layout ";
+    cmd += layouts.join(SETXKBMAP_SEPARATOR);
+
+    if( ! variants.empty() ) {
+        cmd += " -variant ";
+        cmd += variants.join(SETXKBMAP_SEPARATOR);
+    }
+    return cmd;
 }
 
-// private
-bool XKBExtension::setLayoutInternal(const QString& model,
-		const QString& layout, const QString& variant,
-		const QString& includeGroup)
+bool XKBExtension::setLayoutGroups(const QString& model, const QStringList& layouts, const QStringList& variants)
 {
-    if ( layout.isEmpty() )
+    if( layouts.empty() )
         return false;
 
-    QString exe = KGlobal::dirs()->findExe("setxkbmap");
-    if( exe.isEmpty() ) {
-	kError() << "Can't find setxkbmap" << endl;
+    getSetxkbmapExe();
+    if( m_setxkbmap_exe.isEmpty() )
 	return false;
-    }
 
-    QString fullLayout = layout;
-    QString fullVariant = variant;
-    if( includeGroup.isEmpty() == false ) {
-        fullLayout = includeGroup;
-        fullLayout += ',';
-        fullLayout += layout;
-		
-        fullVariant = ",";
-        fullVariant += variant;
-    }
- 
     KProcess p;
-    p << exe;
-	if( model.isEmpty() == false )
-		p << "-model" << model;
-    p << "-layout" << fullLayout;
-    if( !fullVariant.isNull() && !fullVariant.isEmpty() )
-        p << "-variant" << fullVariant;
+    p << m_setxkbmap_exe;
+    
+    if( ! model.isEmpty() )
+        p << "-model" << model;
+        
+    p << "-layout" << layouts.join(SETXKBMAP_SEPARATOR);
 
-    kDebug() << "Ext: setting " << fullLayout << ", " << fullVariant;
+    if( variants.empty() )
+        p << "-variant" << variants.join(SETXKBMAP_SEPARATOR);
+
+    kDebug() << "executing" << p.program().join(" ");
 	
     return p.execute() == 0;
 }

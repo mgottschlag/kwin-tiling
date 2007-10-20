@@ -31,6 +31,7 @@
 
 #include <kicon.h>
 #include <kshortcutsdialog.h>
+#include <kglobalaccel.h>
 #include <kactioncollection.h>
 #include <kglobal.h>
 #include <kconfig.h>
@@ -534,6 +535,7 @@ void LayoutConfig::xkbOptionsChanged(const QModelIndex & /*topLeft*/, const QMod
 {
 //    kDebug() << "chked" << topLeft << bottomRight;
     updateOptionsCommand();
+    updateShortcutsLabels();
     changed();
 //    widget->xkbOptionsTreeView->update(topLeft);
 }
@@ -563,7 +565,13 @@ void LayoutConfig::kdeShortcutPressed()
 
 static QString getShortcutText(const QStringList& options, const QString& grp)
 {
-    if( options.indexOf(QRegExp("^" + grp + ".*")) != -1 )
+    QRegExp grpRegExp("^" + grp + ".*");
+    QStringList grpOptions = options.filter(grpRegExp);
+    
+    if( grpOptions.count() > 1 )
+        return i18n("Multiple keys");
+    else
+    if( grpOptions.count() == 1 )
         return i18n("Defined");
     else
         return i18n("Not defined");
@@ -577,7 +585,11 @@ void LayoutConfig::updateShortcutsLabels()
     widget->xkbShortcut3d->setText(txt);
 
     KActionCollection actions(this);
+    actions.setConfigGlobal(true);
     actions.readSettings();
+    kDebug() << "global actions count" << actions.count();
+//    QStringList ga = KGlobalAccel::findActionNameSystemwide( QKeySequence(Qt::ALT+Qt::CTRL+Qt::Key_K) );
+//    kDebug() << ga;
     QAction* action = actions.action(I18N_NOOP("Switch to Next Keyboard Layout"));
     if( action != NULL ) {
         widget->kdeShortcut->setText( action->shortcut().toString(QKeySequence::NativeText) );
@@ -805,45 +817,29 @@ void LayoutConfig::makeOptionsTab()
 
 void LayoutConfig::updateOptionsCommand()
 {
-  QString setxkbmap;
-  QString options = createOptionString();
-
-  if( !options.isEmpty() ) {
-    setxkbmap = "setxkbmap -option ";
-    if( widget->checkResetOld->isChecked() )
-      setxkbmap += "-option ";
-    setxkbmap += options;
-  }
-  widget->editCmdLineOpt->setText(setxkbmap);
+  widget->editCmdLineOpt->setText(createOptionString());
 }
 
 void LayoutConfig::updateLayoutCommand()
 {
-	QString kbdLayouts;
-	QString kbdVariants;
+    QStringList layouts;
+    QStringList variants;
 
-	QList<LayoutUnit> layouts = m_kxkbConfig.m_layouts;
-	for(int i=0; i<layouts.count(); i++) {
-		QString layout = layouts[i].layout;
-		QString variant = layouts[i].variant;
-		QString displayName = layouts[i].displayName;
+    QList<LayoutUnit> layoutUnits = m_kxkbConfig.m_layouts;
+    for(int i=0; i<layoutUnits.count(); i++) {
+	QString layout = layoutUnits[i].layout;
+	QString variant = layoutUnits[i].variant;
+	//QString displayName = layoutUnits[i].displayName;
 
-		if( variant == DEFAULT_VARIANT_NAME )
-			variant = "";
+	if( variant == DEFAULT_VARIANT_NAME )
+	    variant = "";
 
-		if( kbdLayouts.length() > 0 ) {
-			kbdLayouts += ',';
-			kbdVariants += ',';
-		}
+	layouts << layout;
+	variants << variant;
+    }
 
-		kbdLayouts += layout;
-		kbdVariants += variant;
-	}
-
-    QString setxkbmap = "setxkbmap";
-    setxkbmap += " -model " + widget->comboModel->itemData(widget->comboModel->currentIndex()).toString();
-    setxkbmap += " -layout " + kbdLayouts;
-    setxkbmap += " -variant " + kbdVariants;
+    QString model = widget->comboModel->itemData(widget->comboModel->currentIndex()).toString();
+    QString setxkbmap = XKBExtension::getLayoutGroupsCommand(model, layouts, variants);
 
     widget->editCmdLine->setText(setxkbmap);
 }
@@ -934,8 +930,8 @@ void LayoutConfig::refreshRulesUI()
 
 QString LayoutConfig::createOptionString()
 {
-    QString options = m_kxkbConfig.m_options.join(",");
-    return options;
+    bool reset = widget->checkResetOld->isChecked();
+    return XKBExtension::getXkbOptionsCommand(m_kxkbConfig.m_options, reset);
 }
 
 
@@ -957,14 +953,14 @@ extern "C"
 	KxkbConfig m_kxkbConfig;
 	m_kxkbConfig.load(KxkbConfig::LOAD_INIT_OPTIONS);
 
-	if( m_kxkbConfig.m_useKxkb == true ) {
+	if( m_kxkbConfig.m_useKxkb ) {
 	    KToolInvocation::startServiceByDesktopName("kxkb");
 	}
 	else {
 	    // Even if the layouts have been disabled we still want to set Xkb options
 	    // user can always switch them off now in the "Options" tab
 	    if( m_kxkbConfig.m_enableXkbOptions ) {
-		if( !XKBExtension::setXkbOptions(m_kxkbConfig.m_options.join(","), m_kxkbConfig.m_resetOldOptions) ) {
+		if( !XKBExtension::setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
 		    kDebug() << "Setting XKB options failed!";
 		}
 	    }

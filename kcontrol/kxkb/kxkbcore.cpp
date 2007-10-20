@@ -193,8 +193,7 @@ bool KxkbCore::settingsRead()
 
     if( m_mode == KXKB_MAIN ) {
 	if( m_kxkbConfig.m_enableXkbOptions ) {
-            QString options = m_kxkbConfig.m_options.join(",");
-	    if( !m_extension->setXkbOptions(options, m_kxkbConfig.m_resetOldOptions) ) {
+	    if( !m_extension->setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
         	kDebug() << "Setting XKB options failed!";
 	    }
 	}
@@ -261,34 +260,14 @@ void KxkbCore::initSwitchingPolicy()
 
 void KxkbCore::initLayoutGroups()
 {
-	if( m_kxkbConfig.m_layouts.count() == 1 ) {
-		const LayoutUnit& currentLayout = m_kxkbConfig.m_layouts[0];
-		QString layoutName = currentLayout.layout;
-		QString variantName = currentLayout.variant;
-
-/*		if( !m_extension->setLayout(kxkbConfig.m_model, layoutName, variantName, includeName, false)
-				   || !m_extension->setGroup( group ) ) {*/
-		if( ! m_extension->setLayoutGroups(layoutName, variantName) ) {
-			kDebug() << "Error switching to single layout " << currentLayout.toPair();
-			// TODO: alert user
-		}
-
- 	}
-	else {
-		QString layouts;
-		QString variants;
-		for(int ii=0; ii<(int)m_kxkbConfig.m_layouts.count(); ii++) {
-			LayoutUnit& layoutUnit = m_kxkbConfig.m_layouts[ii];
-			layouts += layoutUnit.layout;
-			variants += layoutUnit.variant;
-			if( ii < m_kxkbConfig.m_layouts.count()-1 ) {
-				layouts += ',';
-				variants += ',';
-			}
-		}
-		kDebug() << "initing " << "-layout " << layouts << " -variants " << variants;
-		m_extension->setLayoutGroups(layouts, variants);
-	}
+    QStringList layouts;
+    QStringList variants;
+    for(int ii=0; ii<(int)m_kxkbConfig.m_layouts.count(); ii++) {
+        LayoutUnit& layoutUnit = m_kxkbConfig.m_layouts[ii];
+        layouts << layoutUnit.layout;
+        variants << layoutUnit.variant;
+    }
+    m_extension->setLayoutGroups(m_kxkbConfig.m_model, layouts, variants);
 }
 
 void KxkbCore::initTray()

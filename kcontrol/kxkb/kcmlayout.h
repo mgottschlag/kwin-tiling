@@ -61,16 +61,16 @@ protected slots:
     void updateShortcutsLabels();
     void xkbOptionsChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight);
     void enableChanged();
-  void displayNameChanged(const QString& name);
-  void layoutSelChanged();
-  void loadRules();
-  void refreshRulesUI();
-  void updateLayoutCommand();
-  void updateOptionsCommand();
-  void add();
-  void remove();
+    void displayNameChanged(const QString& name);
+    void layoutSelChanged();
+    void loadRules();
+    void refreshRulesUI();
+    void updateLayoutCommand();
+    void updateOptionsCommand();
+    void add();
+    void remove();
 
-  void changed();
+    void changed();
 
 private:
   Ui_LayoutConfigWidget* widget;

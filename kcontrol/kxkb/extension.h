@@ -30,10 +30,15 @@ public:
     ~XKBExtension();
     bool init();
 
-    static bool setXkbOptions(const QString& options, bool resetOldOptions);
-    bool setLayoutGroups(const QString& layouts, const QString& variants);
+
     bool setGroup(unsigned int group);
     unsigned int getGroup() const;
+
+    static bool setXkbOptions(const QStringList& options, bool resetOldOptions);
+    static bool setLayoutGroups(const QString& model, const QStringList& layouts, const QStringList& variants);
+
+    static QString getXkbOptionsCommand(const QStringList& options, bool resetOldOptions);
+    static QString getLayoutGroupsCommand(const QString& model, const QStringList& layouts, const QStringList& variants);
 
     static bool isGroupSwitchEvent(XEvent* event);
     static bool isLayoutSwitchEvent(XEvent* event);	
@@ -44,9 +49,9 @@ private:
     int xkb_opcode;
 
     Display *m_dpy;
-    bool setLayoutInternal(const QString& model,
-				   const QString& layout, const QString& variant,
-				   const QString& includeGroup);
+
+    static QString m_setxkbmap_exe;
+    static QString getSetxkbmapExe();
 };
 
 #endif
