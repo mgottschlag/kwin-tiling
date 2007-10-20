@@ -29,11 +29,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kgreeterplugin.h"
 
 #include <QObject>
+#include <QtCore/QTimer>
 
 class KComboBox;
 class KLineEdit;
 class KSimpleConfig;
 class QLabel;
+class K3ProcIO;
 
 class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	Q_OBJECT
@@ -66,6 +68,9 @@ class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	void slotLoginLostFocus();
 	void slotChangedDomain( const QString &dom );
 	void slotActivity();
+        void slotStartDomainList();
+        void slotReadDomainList();
+        void slotEndDomainList();
 
   private:
 	void setActive( bool enable );
@@ -78,7 +83,10 @@ class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	KLineEdit *passwdEdit, *passwd1Edit, *passwd2Edit;
 	KSimpleConfig *stsFile;
 	QString fixedDomain, fixedUser, curUser;
-	QStringList allUsers;
+	QStringList allUsers, mDomainListing;
+	K3ProcIO* m_domainLister;
+        QTimer mDomainListTimer;
+
 	Function func;
 	Context ctx;
 	int exp, pExp, has;
