@@ -1,7 +1,5 @@
 KDE4_NO_ENABLE_FINAL(klipper)
 
-add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 set(libklipper_common_SRCS
     klipper.cpp
     urlgrabber.cpp
@@ -20,7 +18,7 @@ set(klipper_KDEINIT_SRCS ${libklipper_common_SRCS} main.cpp tray.cpp)
 
 kde4_add_kdeinit_executable(klipper ${klipper_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_klipper ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(kdeinit_klipper ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 if (X11_Xfixes_FOUND)
   target_link_libraries(kdeinit_klipper ${X11_Xfixes_LIB})
 endif (X11_Xfixes_FOUND)

@@ -19,26 +19,13 @@
 */
 #include <QLabel>
 #include <QLayout>
-#include <Qt3Support/Q3CheckListItem>
 #include <QPushButton>
+#include <QHeaderView>
 
-
-//Added by qt3to4:
-#include <QPixmap>
-#include <QFrame>
-#include <Q3VButtonGroup>
-
-#include <assert.h>
-
-#include <kiconloader.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <kwindowsystem.h>
-#include <kregexpeditorinterface.h>
 #include <kshortcutsdialog.h>
-#include <kparts/componentfactory.h>
-#include <kvbox.h>
-#include <khbox.h>
+#include <KServiceTypeTrader>
 
 #include "configdialog.h"
 
@@ -56,7 +43,7 @@ ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const Act
     addPage(generalWidget, i18nc("General Config", "General"), "klipper", i18n("General Config"));
 
     w = new QWidget(this);
-    actionWidget = new ActionWidget( list, this, w);
+    actionWidget = new ActionWidget(list, w);
     addPage(actionWidget, i18nc("Actions Config", "Actions"), "configure", i18n("Actions Config"));
 
     w = new QWidget(this);
@@ -69,111 +56,86 @@ ConfigDialog::~ConfigDialog()
 {
 }
 
-// prevent huge size due to long regexps in the action-widget
-void ConfigDialog::showEvent( QShowEvent *event )
-{
-    QSize s1 = sizeHint();
-    QSize s2 = KWindowSystem::workArea().size();
-    int w = s1.width();
-    int h = s1.height();
-
-    if ( s1.width() >= s2.width() )
-        w = s2.width();
-    if ( s1.height() >= s2.height() )
-        h = s2.height();
-
-    resize( w, h );
-
-    KDialog::showEvent( event );
-}
-
 void ConfigDialog::commitShortcuts()
 {
     //keysWidget->commitChanges();
 }
 
-/////////////////////////////////////////
-////
-
-
 GeneralWidget::GeneralWidget( QWidget *parent )
-    : KVBox( parent )
+    : QWidget( parent )
 {
-    setSpacing(KDialog::spacingHint());
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    cbMousePos = new QCheckBox( i18n("&Popup menu at mouse-cursor position"),
-                                this );
-    cbSaveContents = new QCheckBox( i18n("Save clipboard contents on e&xit"),
-                                    this );
-    cbStripWhitespace = new QCheckBox( i18n("Remove whitespace when executing actions"), this );
-    cbStripWhitespace->setWhatsThis(
-                     i18n("Sometimes, the selected text has some whitespace at the end, which, if loaded as URL in a browser would cause an error. Enabling this option removes any whitespace at the beginning or end of the selected string (the original clipboard contents will not be modified).") );
+    cbMousePos = new QCheckBox(i18n("&Popup menu at mouse-cursor position"), this);
+    mainLayout->addWidget(cbMousePos);
 
-    cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
-                                    this );
+    cbSaveContents = new QCheckBox(i18n("Save clipboard contents on e&xit"), this);
+    mainLayout->addWidget(cbSaveContents);
 
-    cbNoNull = new QCheckBox( i18n("Pre&vent empty clipboard"), this );
-    cbNoNull->setWhatsThis(
-                     i18n("Selecting this option has the effect, that the "
-                          "clipboard can never be emptied. E.g. when an "
-                          "application exits, the clipboard would usually be "
-                          "emptied.") );
+    cbStripWhitespace = new QCheckBox(i18n("Remove whitespace when executing actions"), this);
+    cbStripWhitespace->setWhatsThis(i18n("Sometimes, the selected text has some whitespace at the end, which, "
+                                         "if loaded as URL in a browser would cause an error. Enabling this option "
+                                         "removes any whitespace at the beginning or end of the selected string (the original "
+                                         "clipboard contents will not be modified)."));
+    mainLayout->addWidget(cbStripWhitespace);
 
-    cbIgnoreSelection = new QCheckBox( i18n("&Ignore selection"), this );
-    cbIgnoreSelection->setWhatsThis(
-                     i18n("This option prevents the selection being recorded "
-                          "in the clipboard history. Only explicit clipboard "
-                          "changes are recorded.") );
+    cbReplayAIH = new QCheckBox(i18n("&Replay actions on an item selected from history"), this);
+    mainLayout->addWidget(cbReplayAIH);
 
-    Q3VButtonGroup *group = new Q3VButtonGroup( i18n("Clipboard/Selection Behavior"), this );
-    group->setExclusive( true );
+    cbNoNull = new QCheckBox(i18n("Pre&vent empty clipboard"), this);
+    cbNoNull->setWhatsThis(i18n("Selecting this option has the effect, that the "
+                                "clipboard can never be emptied. E.g. when an application "
+                                "exits, the clipboard would usually be emptied."));
+    mainLayout->addWidget(cbNoNull);
 
-    group->setWhatsThis(
-     i18n("<qt>There are two different clipboard buffers available:<br /><br />"
-          "<b>Clipboard</b> is filled by selecting something "
-          "and pressing Ctrl+C, or by clicking \"Copy\" in a toolbar or "
-          "menubar.<br /><br />"
-          "<b>Selection</b> is available immediately after "
-          "selecting some text. The only way to access the selection "
-          "is to press the middle mouse button.<br /><br />"
-          "You can configure the relationship between Clipboard and Selection."
-          "</qt>" ));
+    cbIgnoreSelection = new QCheckBox(i18n("&Ignore selection"), this);
+    cbIgnoreSelection->setWhatsThis(i18n("This option prevents the selection being recorded "
+                                         "in the clipboard history. Only explicit clipboard "
+                                         "changes are recorded."));
+    mainLayout->addWidget(cbIgnoreSelection);
 
-    cbSynchronize = new QRadioButton(
-        i18n("Sy&nchronize contents of the clipboard and the selection"),
-        group );
-    cbSynchronize->setWhatsThis(
-      i18n("Selecting this option synchronizes these two buffers, so they "
-           "work the same way as in KDE 1.x and 2.x.") );
+    QGroupBox *group = new QGroupBox(i18n("Clipboard/Selection Behavior"), this);
+    group->setWhatsThis(i18n("<qt>There are two different clipboard buffers available:<br /><br />"
+                             "<b>Clipboard</b> is filled by selecting something "
+                             "and pressing Ctrl+C, or by clicking \"Copy\" in a toolbar or "
+                             "menubar.<br /><br />"
+                             "<b>Selection</b> is available immediately after "
+                             "selecting some text. The only way to access the selection "
+                             "is to press the middle mouse button.<br /><br />"
+                             "You can configure the relationship between Clipboard and Selection."
+                             "</qt>"));
+    mainLayout->addWidget(group);
 
-    cbSeparate = new QRadioButton(
-        i18n("Separate clipboard and selection"), group );
-    cbSeparate->setWhatsThis(
-        i18n("Using this option will only set the selection when highlighting "
-             "something and the clipboard when choosing e.g. \"Copy\" "
-             "in a menubar.") );
+    QVBoxLayout *groupLayout = new QVBoxLayout(group);
 
-    cbSeparate->setChecked( !cbSynchronize->isChecked() );
+    cbSynchronize = new QRadioButton(i18n("Sy&nchronize contents of the clipboard and the selection"), group);
+    cbSynchronize->setWhatsThis(i18n("Selecting this option synchronizes these two buffers."));
+    connect(cbSynchronize, SIGNAL(clicked()), SLOT(slotClipConfigChanged()));
+    groupLayout->addWidget(cbSynchronize);
 
-    popupTimeout = new KIntNumInput( this );
-    popupTimeout->setLabel( i18n( "Tim&eout for action popups:" ) );
-    popupTimeout->setRange( 0, 200, 1, true );
-    popupTimeout->setSuffix( i18n( " sec" ) );
-    popupTimeout->setToolTip( i18n("A value of 0 disables the timeout") );
+    cbSeparate = new QRadioButton(i18n("Separate clipboard and selection"), group);
+    cbSeparate->setWhatsThis(i18n("Using this option will only set the selection when highlighting "
+                                  "something and the clipboard when choosing e.g. \"Copy\" "
+                                  "in a menubar."));
+    connect(cbSeparate, SIGNAL(clicked()), SLOT(slotClipConfigChanged()));
+    groupLayout->addWidget(cbSeparate);
 
-    maxItems = new KIntNumInput( this );
-    maxItems->setLabel(  i18n( "C&lipboard history size:" ) );
-    maxItems->setRange( 2, 2048, 1, true );
-    connect( maxItems, SIGNAL( valueChanged( int )),
-             SLOT( historySizeChanged( int ) ));
+    cbSeparate->setChecked(!cbSynchronize->isChecked());
 
-    connect( group, SIGNAL( clicked( int )),
-             SLOT( slotClipConfigChanged() ));
+    popupTimeout = new KIntNumInput(this);
+    popupTimeout->setLabel(i18n("Tim&eout for action popups:"));
+    popupTimeout->setRange(0, 200, 1, true);
+    popupTimeout->setSuffix(i18n(" sec"));
+    popupTimeout->setToolTip(i18n("A value of 0 disables the timeout"));
+    mainLayout->addWidget(popupTimeout);
+
+    maxItems = new KIntNumInput(this);
+    maxItems->setLabel(i18n("C&lipboard history size:"));
+    maxItems->setRange(2, 2048, 1, true);
+    connect(maxItems, SIGNAL(valueChanged(int)), SLOT(historySizeChanged(int)));
+    mainLayout->addWidget(maxItems);
+
     slotClipConfigChanged();
-
-    // Add some spacing at the end
-    QWidget *dummy = new QWidget( this );
-    setStretchFactor( dummy, 1 );
 }
 
 GeneralWidget::~GeneralWidget()
@@ -192,9 +154,10 @@ void GeneralWidget::slotClipConfigChanged()
     cbIgnoreSelection->setEnabled( !cbSynchronize->isChecked() );
 }
 
-/////////////////////////////////////////
-////
-
+// it does not make sense to port / enable this since KRegExpEditor is in a very bad shape. just keep this
+// code here because it will probably help at a later point to port it when KRegExpEditor is again usable.
+// 2007-10-20, uwolfer
+#if 0
 void ListView::rename( Q3ListViewItem* item, int c )
 {
   bool gui = false;
@@ -210,7 +173,7 @@ void ListView::rename( Q3ListViewItem* item, int c )
       _regExpEditor = KServiceTypeTrader::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor", QString(), this );
     KRegExpEditorInterface *iface = qobject_cast<KRegExpEditorInterface *>(_regExpEditor);
 
-    assert( iface );
+    Q_ASSERT( iface );
     iface->setRegExp( item->text( 0 ) );
 
     bool ok = _regExpEditor->exec();
@@ -220,134 +183,132 @@ void ListView::rename( Q3ListViewItem* item, int c )
   else
     K3ListView::rename( item ,c );
 }
+#endif
 
-
-ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent )
-    : KVBox( parent ),
-      advancedWidget( 0L )
+ActionWidget::ActionWidget( const ActionList *list, QWidget *parent )
+    : QWidget(parent),
+      advancedWidget(0)
 {
-    Q_ASSERT( list != 0L );
+    Q_ASSERT(list);
 
-    QLabel *lblAction = new QLabel(
-	  i18n("Action &list (right click to add/remove commands):"), this );
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    listView = new ListView( configWidget, this );
-    lblAction->setBuddy( listView );
-    listView->addColumn( i18n("Regular Expression (see http://doc.trolltech.com/qregexp.html#details)") );
-    listView->addColumn( i18n("Description") );
+    QLabel *lblAction = new QLabel(i18n("Action &list (right click to add/remove commands):"), this);
+    mainLayout->addWidget(lblAction);
 
-    listView->setRenameable(0);
-    listView->setRenameable(1);
-    listView->setItemsRenameable( true );
-    listView->setItemsMovable( false );
-//     listView->setAcceptDrops( true );
-//     listView->setDropVisualizer( true );
-//     listView->setDragEnabled( true );
+    treeWidget = new QTreeWidget(this);
+    lblAction->setBuddy(treeWidget);
 
-    listView->setRootIsDecorated( true );
-    listView->setMultiSelection( false );
-    listView->setAllColumnsShowFocus( true );
-    listView->setSelectionMode( Q3ListView::Single );
-    connect( listView, SIGNAL(executed( Q3ListViewItem*, const QPoint&, int )),
-             SLOT( slotItemChanged( Q3ListViewItem*, const QPoint& , int ) ));
-    connect( listView, SIGNAL( selectionChanged ( Q3ListViewItem * )),
-             SLOT(selectionChanged ( Q3ListViewItem * )));
-    connect(listView,
-            SIGNAL(contextMenu(K3ListView *, Q3ListViewItem *, const QPoint&)),
-            SLOT( slotContextMenu(K3ListView*, Q3ListViewItem*, const QPoint&)));
+    treeWidget->setHeaderLabels(QStringList() << i18n("Regular Expression") << i18n("Description"));
+    treeWidget->header()->resizeSection(0, 250);
+    treeWidget->setSelectionBehavior(QTreeWidget::SelectRows);
+    treeWidget->setSelectionMode(QTreeWidget::SingleSelection);
+
+    mainLayout->addWidget(treeWidget);
 
     ClipAction *action   = 0L;
     ClipCommand *command = 0L;
-    Q3ListViewItem *item  = 0L;
-    Q3ListViewItem *child = 0L;
-    Q3ListViewItem *after = 0L; // QListView's default inserting really sucks
-    ActionListIterator it( *list );
 
-    const QPixmap& doc = SmallIcon( "misc" );
-    const QPixmap& exec = SmallIcon( "exec" );
+    ActionListIterator it( *list );
 
     while (it.hasNext()) {
         action = it.next();
-        item = new Q3ListViewItem( listView, after,
-                                  action->regExp(), action->description() );
-        item->setPixmap( 0, doc );
+
+        QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget,
+                                                    QStringList() << action->regExp() << action->description());
+        item->setIcon(0, KIcon("bookmark"));
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 
         QListIterator<ClipCommand*> it2( action->commands() );
         while (it2.hasNext()) {
             command = it2.next();
-            child = new Q3ListViewItem( item, after,
-                                       command->command, command->description);
-        if ( command->pixmap.isEmpty() )
-            child->setPixmap( 0, exec );
-        else
-            child->setPixmap( 0, SmallIcon( command->pixmap ) );
-            after = child;
+
+            QTreeWidgetItem *child = new QTreeWidgetItem(item, QStringList()
+                                                         << command->command << command->description);
+            child->setIcon(0, KIcon(command->pixmap.isEmpty() ? "exec" : command->pixmap));
+            child->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
         }
-        after = item;
     }
 
-    listView->setSorting( -1 ); // newly inserted items just append unsorted
+    connect(treeWidget, SIGNAL(itemSelectionChanged()), SLOT(selectionChanged()));
 
-    cbUseGUIRegExpEditor = new QCheckBox( i18n("&Use graphical editor for editing regular expressions" ), this );
-    if ( KServiceTypeTrader::self()->query("KRegExpEditor/KRegExpEditor").isEmpty() )
+    treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(treeWidget, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(slotContextMenu(const QPoint &)));
+
+    connect(treeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(slotItemChanged(QTreeWidgetItem*, int)));
+
+    treeWidget->setSortingEnabled(false);
+
+    cbUseGUIRegExpEditor = new QCheckBox(i18n("&Use graphical editor for editing regular expressions" ), this);
+    if ( /*KServiceTypeTrader::self()->query("KRegExpEditor/KRegExpEditor").isEmpty()*/ true) // see notice above about KRegExpEditor
     {
-	cbUseGUIRegExpEditor->hide();
-	cbUseGUIRegExpEditor->setChecked( false );
+        cbUseGUIRegExpEditor->hide();
+        cbUseGUIRegExpEditor->setChecked( false );
     }
+    mainLayout->addWidget(cbUseGUIRegExpEditor);
 
-    KHBox *box = new KHBox( this );
-    box->setSpacing( KDialog::spacingHint() );
-    QPushButton *button = new QPushButton( i18n("&Add Action"), box );
-    connect( button, SIGNAL( clicked() ), SLOT( slotAddAction() ));
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    mainLayout->addLayout(buttonLayout);
 
-    delActionButton = new QPushButton( i18n("&Delete Action"), box );
-    connect( delActionButton, SIGNAL( clicked() ), SLOT( slotDeleteAction() ));
+    QPushButton *button = new QPushButton(KIcon("edit-add"), i18n("&Add Action"), this);
+    connect(button, SIGNAL(clicked()), SLOT(slotAddAction()));
+    buttonLayout->addWidget(button);
 
-    QLabel *label = new QLabel(i18n("Click on a highlighted item's column to change it. \"%s\" in a command will be replaced with the clipboard contents."), box);
-    label->setAlignment( Qt::AlignLeft | Qt::AlignVCenter );
-    label->setWordWrap( true );
-    
-    box->setStretchFactor( label, 5 );
+    delActionButton = new QPushButton(KIcon("edit-delete"), i18n("&Delete Action"), this);
+    connect(delActionButton, SIGNAL(clicked()), SLOT(slotDeleteAction()));
+    buttonLayout->addWidget(delActionButton);
 
-    box = new KHBox( this );
-    QPushButton *advanced = new QPushButton( i18n("Advanced..."), box );
-    advanced->setFixedSize( advanced->sizeHint() );
-    connect( advanced, SIGNAL( clicked() ), SLOT( slotAdvanced() ));
-    (void) new QWidget( box ); // spacer
+    buttonLayout->addStretch();
 
-    delActionButton->setEnabled(listView->currentItem () !=0);
+    QPushButton *advanced = new QPushButton(KIcon("configure"), i18n("Advanced..."), this);
+    connect(advanced, SIGNAL(clicked()), SLOT(slotAdvanced()));
+    buttonLayout->addWidget(advanced);
+
+    QLabel *label = new QLabel(i18n("Click on a highlighted item's column to change it. \"%s\" in a "
+                                    "command will be replaced with the clipboard contents."), this);
+    label->setWordWrap(true);
+    mainLayout->addWidget(label);
+
+    QLabel *labelRegexp = new QLabel(i18n("For more information about regular expressions, you could have a look at the "
+                                          "<a href=\"http://en.wikipedia.org/wiki/Regular_expression\">Wikipedia entry "
+                                          "about this topic</a>."), this);
+    labelRegexp->setOpenExternalLinks(true);
+    labelRegexp->setWordWrap(true);
+    mainLayout->addWidget(labelRegexp);
+
+    delActionButton->setEnabled(treeWidget->currentItem());
 }
 
 ActionWidget::~ActionWidget()
 {
 }
 
-void ActionWidget::selectionChanged ( Q3ListViewItem * item)
+void ActionWidget::selectionChanged()
 {
-    delActionButton->setEnabled(item!=0);
+    delActionButton->setEnabled(!treeWidget->selectedItems().isEmpty());
 }
 
-void ActionWidget::slotContextMenu( K3ListView *, Q3ListViewItem *item,
-                                    const QPoint& pos )
+void ActionWidget::slotContextMenu(const QPoint& pos)
 {
+    QTreeWidgetItem *item = treeWidget->itemAt(pos);
     if ( !item )
         return;
 
     KMenu *menu = new KMenu;
-    QAction* addCmd = menu->addAction( i18n("Add Command") );
-    QAction* rmCmd = menu->addAction( i18n("Remove Command") );
+    QAction *addCmd = menu->addAction(KIcon("edit-add"), i18n("Add Command"));
+    QAction *rmCmd = menu->addAction(KIcon("edit-delete"), i18n("Remove Command"));
     if ( !item->parent() ) {// no "command" item
         rmCmd->setEnabled( false );
-        item->setOpen( true );
+        item->setExpanded ( true );
     }
 
-    QAction* executed = menu->exec( pos );
+    QAction *executed = menu->exec(mapToGlobal(pos));
     if ( executed == addCmd ) {
-        Q3ListViewItem *p = item->parent() ? item->parent() : item;
-        Q3ListViewItem *cmdItem = new Q3ListViewItem( p, item,
-                         i18n("Click here to set the command to be executed"),
-                         i18n("<new command>") );
-        cmdItem->setPixmap( 0, SmallIcon( "exec" ) );
+        QTreeWidgetItem *child = new QTreeWidgetItem(item->parent() ? item->parent() : item, QStringList()
+                                                     << i18n("Double-click here to set the command to be executed")
+                                                     << i18n("<new command>"));
+        child->setIcon(0, KIcon("exec"));
+        child->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
     }
     else if ( executed == rmCmd )
         delete item;
@@ -355,27 +316,30 @@ void ActionWidget::slotContextMenu( K3ListView *, Q3ListViewItem *item,
     delete menu;
 }
 
-void ActionWidget::slotItemChanged( Q3ListViewItem *item, const QPoint&, int col )
+void ActionWidget::slotItemChanged(QTreeWidgetItem *item, int column)
 {
-    if ( !item->parent() || col != 0 )
+    if (!item->parent() || column != 0)
         return;
     ClipCommand command( item->text(0), item->text(1) );
-        item->setPixmap( 0, SmallIcon( command.pixmap.isEmpty() ?
-                                                   "exec" : command.pixmap ) );
+
+    treeWidget->blockSignals(true); // don't lead in infinite recursion...
+    item->setIcon(0, KIcon(command.pixmap.isEmpty() ? "exec" : command.pixmap));
+    treeWidget->blockSignals(false);
 }
 
 void ActionWidget::slotAddAction()
 {
-    Q3ListViewItem *item = new Q3ListViewItem( listView );
-    item->setPixmap( 0, SmallIcon( "misc" ));
-    item->setText( 0, i18n("Click here to set the regexp"));
-    item->setText( 1, i18n("<new action>"));
+    QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget,
+                                                QStringList() << i18n("Double-click here to set the regexp")
+                                                              << i18n("<new action>"));
+    item->setIcon(0, KIcon("bookmark"));
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 }
 
 
 void ActionWidget::slotDeleteAction()
 {
-    Q3ListViewItem *item = listView->currentItem();
+    QTreeWidgetItem *item = treeWidget->currentItem();
     if ( item && item->parent() )
         item = item->parent();
     delete item;
@@ -384,42 +348,39 @@ void ActionWidget::slotDeleteAction()
 
 ActionList * ActionWidget::actionList()
 {
-    Q3ListViewItem *item = listView->firstChild();
-    Q3ListViewItem *child = 0L;
-    ClipAction *action = 0L;
+    ClipAction *action = 0;
     ActionList *list = new ActionList;
-    while ( item ) {
-        action = new ClipAction( item->text( 0 ), item->text( 1 ) );
-        child = item->firstChild();
 
-        // add the commands
-        while ( child ) {
-            action->addCommand( child->text( 0 ), child->text( 1 ), true );
-            child = child->nextSibling();
+    QTreeWidgetItemIterator it(treeWidget);
+    while (*it) {
+        if (!(*it)->parent()) {
+            if (action) {
+                list->append(action);
+                action = 0;
+            }
+            action = new ClipAction((*it)->text(0), (*it)->text(1));
+        } else {
+            action->addCommand((*it)->text(0), (*it)->text(1), true);
         }
-
-        list->append( action );
-        item = item->nextSibling();
+        it++;
     }
+    if (action)
+        list->append(action);
 
     return list;
 }
 
 void ActionWidget::slotAdvanced()
 {
-    KDialog dlg( 0 );
-    dlg.setModal( true );
+    KDialog dlg(this);
+    dlg.setModal(true);
     dlg.setCaption( i18n("Advanced Settings") );
     dlg.setButtons( KDialog::Ok | KDialog::Cancel );
 
-    KVBox *box = new KVBox( &dlg );
-    dlg.setMainWidget( box );
-
-    AdvancedWidget *widget = new AdvancedWidget( box );
+    AdvancedWidget *widget = new AdvancedWidget(&dlg);
     widget->setWMClasses( m_wmClasses );
 
-    dlg.resize( dlg.sizeHint().width(),
-                dlg.sizeHint().height() +40); // or we get an ugly scrollbar :(
+    dlg.setMainWidget(widget);
 
     if ( dlg.exec() == KDialog::Accepted ) {
         m_wmClasses = widget->wmClasses();
@@ -427,18 +388,21 @@ void ActionWidget::slotAdvanced()
 }
 
 AdvancedWidget::AdvancedWidget( QWidget *parent )
-    : KVBox( parent )
+    : QWidget(parent)
 {
-    editListBox = new KEditListBox( i18n("D&isable Actions for Windows of Type WM_CLASS"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    editListBox->setWhatsThis(
-          i18n("<qt>This lets you specify windows in which Klipper should "
-	       "not invoke \"actions\". Use<br /><br />"
-	       "<center><b>xprop | grep WM_CLASS</b></center><br />"
-	       "in a terminal to find out the WM_CLASS of a window. "
-	       "Next, click on the window you want to examine. The "
-	       "first string it outputs after the equal sign is the one "
-	       "you need to enter here.</qt>"));
+    editListBox = new KEditListBox(i18n("D&isable Actions for Windows of Type WM_CLASS"), this, "editlistbox",
+                                   true, KEditListBox::Add | KEditListBox::Remove);
+
+    editListBox->setWhatsThis(i18n("<qt>This lets you specify windows in which Klipper should "
+                                   "not invoke \"actions\". Use<br /><br />"
+                                   "<center><b>xprop | grep WM_CLASS</b></center><br />"
+                                   "in a terminal to find out the WM_CLASS of a window. "
+                                   "Next, click on the window you want to examine. The "
+                                   "first string it outputs after the equal sign is the one "
+                                   "you need to enter here.</qt>"));
+    mainLayout->addWidget(editListBox);
 
     editListBox->setFocus();
 }
@@ -452,22 +416,5 @@ void AdvancedWidget::setWMClasses( const QStringList& items )
     editListBox->clear();
     editListBox->insertStringList( items );
 }
-
-
-
-///////////////////////////////////////////////////////
-//////////
-
-/*
-KeysWidget::KeysWidget( KAccelActions &keyMap, QWidget *parent, const char *name)
-    : QVBox( parent, name )
-{
-    keyChooser = new KKeyChooser( keyMap, this );
-}
-
-KeysWidget::~KeysWidget()
-{
-}
-*/
 
 #include "configdialog.moc"

@@ -823,9 +823,7 @@ void Klipper::checkClipData( bool selectionMode )
     if( selectionMode && bSelectionTextOnly && !data->hasText())
         return;
 
-#ifdef __GNUC__
-#warning This should be maybe extended for KDE4 or at least get a checkbox somewhere in UI
-#endif
+// TODO: This should be maybe extended for KDE4 or at least get a checkbox somewhere in UI
     if( KUrl::List::canDecode( data ) )
         ; // ok
     else if( data->hasText() )

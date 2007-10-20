@@ -21,27 +21,22 @@
 #define CONFIGDIALOG_H
 
 #include <QCheckBox>
-#include <QEvent>
-#include <Qt3Support/Q3Header>
 #include <QRadioButton>
+#include <QTreeWidget>
 
-#include <kpagedialog.h>
 #include <keditlistbox.h>
-#include <k3listview.h>
 #include <knuminput.h>
-#include <kvbox.h>
 #include <KConfigDialog>
 
 #include "urlgrabber.h"
 
 class KConfigSkeleton;
 class KShortcutsEditor;
-class K3ListView;
 class QPushButton;
 class QDialog;
 class ConfigDialog;
 
-class GeneralWidget : public KVBox
+class GeneralWidget : public QWidget
 {
     Q_OBJECT
 
@@ -65,7 +60,7 @@ private:
 
 
 // only for use inside ActionWidget
-class AdvancedWidget : public KVBox
+class AdvancedWidget : public QWidget
 {
     Q_OBJECT
 
@@ -80,14 +75,14 @@ private:
     KEditListBox *editListBox;
 };
 
-class ActionWidget : public KVBox
+class ActionWidget : public QWidget
 {
     Q_OBJECT
 
     friend class ConfigDialog;
 
 public:
-    ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent );
+    ActionWidget( const ActionList *list, QWidget *parent );
     ~ActionWidget();
 
     /**
@@ -103,33 +98,18 @@ public:
 private Q_SLOTS:
     void slotAddAction();
     void slotDeleteAction();
-    void slotItemChanged( Q3ListViewItem *, const QPoint& , int );
+    void slotItemChanged(QTreeWidgetItem *item, int column);
     void slotAdvanced();
-    void slotContextMenu( K3ListView *, Q3ListViewItem *, const QPoint& );
-    void selectionChanged ( Q3ListViewItem *);
+    void slotContextMenu(const QPoint& pos);
+    void selectionChanged();
 
 private:
-    K3ListView *listView;
+    QTreeWidget *treeWidget;
     QStringList m_wmClasses;
     AdvancedWidget *advancedWidget;
     QPushButton *delActionButton;
     QCheckBox *cbUseGUIRegExpEditor;
 };
-
-/*class KeysWidget : public QVBox
-{
-    Q_OBJECT
-
-    friend class ConfigDialog;
-
-public:
-    KeysWidget( KAccelActions &keyMap, QWidget *parent, const char *name );
-    ~KeysWidget();
-
-private:
-    KShortcutsEditor *shortcutsEditor;
-};*/
-
 
 class ConfigDialog : public KConfigDialog
 {
@@ -222,43 +202,11 @@ public:
 
     void commitShortcuts();
 
-protected:
-    virtual void showEvent( QShowEvent *event );
-
 private:
     GeneralWidget *generalWidget;
     ActionWidget *actionWidget;
     KShortcutsEditor *shortcutsWidget;
 
-};
-
-class ListView : public K3ListView
-{
-public:
-    ListView( ConfigDialog* configWidget, QWidget *parent )
-	: K3ListView( parent ), _configWidget( configWidget ),
-          _regExpEditor(0L) {}
-    // QListView has a weird idea of a sizeHint...
-    virtual QSize sizeHint () const {
-	int w = minimumSizeHint().width();
-	int h = header()->height();
-	h += viewport()->sizeHint().height();
-	h += horizontalScrollBar()->height();
-	
-	Q3ListViewItem *item = firstChild();
-	while ( item ) {
-	    h += item->totalHeight();
-	    item = item->nextSibling();
-	}
-
-	return QSize( w, h );
-    }
-
-protected:
-    virtual void rename( Q3ListViewItem* item, int c );
-private:
-    ConfigDialog* _configWidget;
-    QDialog* _regExpEditor;
 };
 
 #endif // CONFIGDIALOG_H
