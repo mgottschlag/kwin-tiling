@@ -354,7 +354,7 @@ void TaskManager::windowAdded(WId w )
         }
     }
 
-    Task::TaskPtr t( new Task( w, this ) );
+    Task::TaskPtr t( new Task( w, 0 ) );
     d->tasksByWId[w] = t;
 
     // kDebug() << "TM: Task added for WId: " << w;
@@ -518,7 +518,7 @@ void TaskManager::currentDesktopChanged(int desktop)
 
 void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data )
 {
-    Startup::StartupPtr s( new Startup( id, data, this ) );
+    Startup::StartupPtr s( new Startup( id, data, 0 ) );
     d->startups.append(s);
 
     emit startupAdded(s);
