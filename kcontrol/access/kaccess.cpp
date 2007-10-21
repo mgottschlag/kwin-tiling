@@ -101,8 +101,6 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   _activeWindow = KWindowSystem::activeWindow();
   connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
 
-  connect(_player, SIGNAL(finished()), SLOT(slotBellFinished()));
-
   features = 0;
   requestedFeatures = 0;
   dialog = 0;
