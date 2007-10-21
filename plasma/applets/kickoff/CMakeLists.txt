@@ -40,10 +40,10 @@ ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
 # Plasma Applet
 set ( Applet_SRCS
         ${Kickoff_SRCS}
-        plasma-applet/applet.cpp )
+        applet/applet.cpp )
 
 kde4_add_plugin(plasma_applet_launcher ${Applet_SRCS})
 target_link_libraries(plasma_applet_launcher plasma ${Kickoff_LIBS}) 
 install(TARGETS plasma_applet_launcher DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-applet/plasma-launcher-applet.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES applet/plasma-launcher-applet.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

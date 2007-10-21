@@ -18,7 +18,7 @@
 */
 
 // Own
-#include "plasma-applet/applet.h"
+#include "applet/applet.h"
 
 // Qt
 #include <QGraphicsSceneMouseEvent>
@@ -36,31 +36,19 @@
 #include "ui/launcher.h"
 
 LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent,args)
+    : Plasma::Applet(parent,args),
+      m_launcher(0)
 {
-    setDrawStandardBackground(true);
-
-    m_launcher = new Kickoff::Launcher(0);
-    m_launcher->setWindowFlags(m_launcher->windowFlags()|Qt::WindowStaysOnTopHint);
-    m_launcher->setAutoHide(true);
+//    setDrawStandardBackground(true);
     m_icon = KIcon("start-here");
-
-//    Plasma::HBoxLayout *layout = new Plasma::HBoxLayout;
-//    m_button = new Plasma::PushButton(KIcon("kmenu"),QString("Start Here"),this);
-//    layout->addItem(m_button);
-//    connect(m_button,SIGNAL(clicked()),this,SLOT(launcherButtonClicked()));
-//    setLayout(layout);
 }
+
 LauncherApplet::~LauncherApplet()
 {
-    //delete m_launcher;
+    delete m_launcher;
     //delete m_button;
 }
-void LauncherApplet::launcherButtonClicked()
-{
-    qDebug() << "Launcher button clicked";
-    m_launcher->setVisible(!m_launcher->isVisible());
-}
+
 void LauncherApplet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect& contentsRect)
 {
     m_icon.paint(painter,contentsRect.left(),contentsRect.top(),contentsRect.width(),
@@ -76,6 +64,14 @@ Qt::Orientations LauncherApplet::expandingDirections() const
 }
 void LauncherApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    qDebug() << "Launcher button clicked";
+    if (!m_launcher) {
+        m_launcher = new Kickoff::Launcher(0);
+        m_launcher->setWindowFlags(m_launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
+        m_launcher->setAutoHide(true);
+        m_launcher->adjustSize();
+    }
+
     // try to position the launcher just above the applet with the left
     // edge of the applet and the left edge of the launcher aligned
     if (!m_launcher->isVisible()) {
@@ -89,7 +85,8 @@ void LauncherApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             m_launcher->move(globalPos);
         }
     }
-    launcherButtonClicked();
+
+    m_launcher->setVisible(!m_launcher->isVisible());
 }
 
 #include "applet.moc"

@@ -53,9 +53,6 @@ public:
         Qt::Orientations expandingDirections() const;
         virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
-private Q_SLOTS:
-        void launcherButtonClicked();
-
 private:
         Kickoff::Launcher *m_launcher;
         Plasma::PushButton *m_button;
