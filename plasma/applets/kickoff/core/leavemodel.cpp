@@ -54,7 +54,7 @@ LeaveModel::LeaveModel(QObject *parent)
         sessionOptions->appendRow(lockOption);
 
         // Switch User
-        QStandardItem *switchUserOption = new QStandardItem(KIcon("switchuser"),i18n("Switch User"));
+        QStandardItem *switchUserOption = new QStandardItem(KIcon("system-switch-user"),i18n("Switch User"));
         switchUserOption->setData("leave:/switch",Kickoff::UrlRole);
         switchUserOption->setData(i18n("Start a parallel session as a different user."),Kickoff::SubTitleRole);
         sessionOptions->appendRow(switchUserOption);
