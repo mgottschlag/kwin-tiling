@@ -30,7 +30,7 @@
 #include <solid/powermanagement.h>
 
 // KDE Base
-#include <libworkspace/kworkspace.h>
+#include <kworkspace.h>
 
 // Local
 #include "core/recentapplications.h"
