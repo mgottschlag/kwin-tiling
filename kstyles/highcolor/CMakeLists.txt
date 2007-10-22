@@ -11,7 +11,7 @@ kde4_add_plugin(highcolor ${highcolor_PART_SRCS})
 
 target_link_libraries(highcolor  ${KDE4_KDECORE_LIBS} )
 
-install(TARGETS highcolor  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS highcolor  DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/styles )
 
 
 ########### install files ###############

@@ -8,12 +8,11 @@ project(kstyle-web)
 set(webstyle_LIB_SRCS webstyle.cpp plugin.cpp )
 
 
-kde4_add_library(webstyle SHARED ${webstyle_LIB_SRCS})
+kde4_add_plugin(webstyle ${webstyle_LIB_SRCS})
 
-target_link_libraries(webstyle  ${KDE4_KDECORE_LIBS} kdeui )
+target_link_libraries(webstyle  ${KDE4_KDEUI_LIBS} )
 
-set_target_properties(webstyle PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
-install(TARGETS webstyle  DESTINATION ${LIB_INSTALL_DIR} )
+install(TARGETS webstyle  DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/styles )
 
 
 ########### install files ###############

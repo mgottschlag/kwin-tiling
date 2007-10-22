@@ -14,7 +14,7 @@ kde4_add_plugin(highcontrast ${highcontrast_PART_SRCS})
 
 target_link_libraries(highcontrast  ${KDE4_KDECORE_LIBS} )
 
-install(TARGETS highcontrast  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS highcontrast  DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/styles )
 
 
 ########### install files ###############

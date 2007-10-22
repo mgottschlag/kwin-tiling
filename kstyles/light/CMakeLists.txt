@@ -16,7 +16,7 @@ kde4_add_plugin(light ${light_PART_SRCS})
 
 target_link_libraries(light  ${KDE4_KDECORE_LIBS} )
 
-install(TARGETS light  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS light  DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/styles )
 
 
 ########### install files ###############
