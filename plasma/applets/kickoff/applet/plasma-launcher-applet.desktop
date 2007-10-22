@@ -1,22 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Application Launcher
-Name[bg]=Стартиране на програми
-Name[de]=Anwendungsstarter
-Name[es]=Iniciador de aplicación
-Name[et]=Rakenduste käivitaja
-Name[ja]=アプリケーションランチャー
-Name[pt]=Lançador de Aplicações
-Name[pt_BR]=Lançador de Aplicações
-Name[sv]=Starta program
 Comment=Launcher to start applications
-Comment[bg]=Стартиране на програми
-Comment[es]=Iniciador de aplicaciones
-Comment[et]=Rakenduste käivitaja
-Comment[ja]=アプリケーションを起動するランチャー
-Comment[pt]=Lançador para iniciar aplicações
-Comment[pt_BR]=Lançador para iniciar aplicações
-Comment[sv]=Startprogram för att köra program
 Icon=
 Type=Service
 ServiceTypes=Plasma/Applet
