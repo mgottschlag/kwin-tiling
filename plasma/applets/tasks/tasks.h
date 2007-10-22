@@ -31,6 +31,8 @@
 
 class QGraphicsSceneDragDropEvent;
 class QTimeLine;
+class QTextLayout;
+class QTextOption;
 
 class AbstractTaskItem;
 class AbstractGroupingStrategy;
@@ -222,6 +224,24 @@ protected:
                           const QStyleOptionGraphicsItem *option,
                           QWidget *widget);
 
+    /** Returns a QTextOption object for the icon label QTtextLayout.*/
+    QTextOption textOption() const;
+
+    /**
+     * Lays the text out in the text layout using the constraints, and returns the actual
+     * size required. The returned size may be wider than the constraints if the text
+     * contains a non-breakable word that is wider than the maximum width.
+     * If more height is needed than what's available, the last line that will fit will be
+     * extended to hold the remainder of the text.
+     */
+    QSize layoutText(QTextLayout &layout, const QString &text, const QSize &constraints) const;
+
+    /**
+     * Draws the text layout (which must already have the text layed out) in the rect using
+     * the supplied painter. If the layout contains text lines that are longer than the rect
+     * is wide, they will be elided by fading the text out.
+     */
+    void drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect) const;
 
 private slots:
     void animationUpdate();

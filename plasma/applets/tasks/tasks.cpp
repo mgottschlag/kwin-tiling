@@ -23,6 +23,7 @@
 
 // Standard
 #include <math.h>
+#include <limits.h>
 
 // Qt
 #include <QApplication>
@@ -33,6 +34,8 @@
 #include <QTimeLine>
 #include <QStyleOptionGraphicsItem>
 #include <QtDebug>
+#include <QTextLayout>
+#include <QTextOption>
 
 // KDE
 #include <KAuthorized>
@@ -313,26 +316,127 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     }
 }
 
+QSize AbstractTaskItem::layoutText(QTextLayout &layout, const QString &text,
+                                   const QSize &constraints) const
+{
+    QFontMetrics metrics(layout.font());
+    int leading     = metrics.leading();
+    int height      = 0;
+    int maxWidth    = constraints.width();
+    int widthUsed   = 0;
+    int lineSpacing = metrics.lineSpacing();
+    QTextLine line;
+
+    layout.setText(text);
+
+    layout.beginLayout();
+    while ((line = layout.createLine()).isValid())
+    {
+        height += leading;
+
+        // Make the last line that will fit infinitely long.
+        // drawTextLayout() will handle this by fading the line out
+        // if it won't fit in the contraints.
+        if (height + 2 * lineSpacing > constraints.height())
+            maxWidth = INT_MAX;
+
+        line.setLineWidth(maxWidth);
+        line.setPosition(QPoint(0, height));
+
+        height += int(line.height());
+        widthUsed = int(qMax(qreal(widthUsed), line.naturalTextWidth()));
+    }
+    layout.endLayout();
+
+    return QSize(widthUsed, height);
+}
+
+void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect) const
+{
+    QPixmap pixmap(rect.size());
+    pixmap.fill(Qt::transparent);
+
+    QPainter p(&pixmap);
+    p.setPen(painter->pen());
+
+    // Create the alpha gradient for the fade out effect
+    QLinearGradient alphaGradient(0, 0, 1, 0);
+    alphaGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
+    if (layout.textOption().textDirection() == Qt::LeftToRight)
+    {
+        alphaGradient.setColorAt(0, QColor(0, 0, 0, 255));
+        alphaGradient.setColorAt(1, QColor(0, 0, 0, 0));
+    } else
+    {
+        alphaGradient.setColorAt(0, QColor(0, 0, 0, 0));
+        alphaGradient.setColorAt(1, QColor(0, 0, 0, 255));
+    }
+
+    QFontMetrics fm(layout.font());
+    int textHeight = layout.lineCount() * fm.lineSpacing();
+    QPointF position = textHeight < rect.height() ?
+            QPointF(0, (rect.height() - textHeight) / 2) : QPointF(0, 0);
+    QList<QRect> fadeRects;
+    int fadeWidth = 30;
+
+    // Draw each line in the layout
+    for (int i = 0; i < layout.lineCount(); i++)
+    {
+        QTextLine line = layout.lineAt(i);
+        line.draw(&p, position);
+
+        // Add a fade out rect to the list if the line is too long
+        if (line.naturalTextWidth() > rect.width())
+        {
+            int x = int(qMin(line.naturalTextWidth(), (qreal)pixmap.width())) - fadeWidth;
+            int y = int(line.position().y() + position.y());
+            QRect r = QStyle::visualRect(layout.textOption().textDirection(), pixmap.rect(),
+                                         QRect(x, y, fadeWidth, int(line.height())));
+            fadeRects.append(r);
+        }
+    }
+
+    // Reduce the alpha in each fade out rect using the alpha gradient
+    if (!fadeRects.isEmpty())
+    {
+        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        foreach (const QRect &rect, fadeRects)
+            p.fillRect(rect, alphaGradient);
+    }
+
+    p.end();
+
+    painter->drawPixmap(rect.topLeft(), pixmap);
+}
+
+QTextOption AbstractTaskItem::textOption() const
+{
+    Qt::LayoutDirection direction = QApplication::layoutDirection();
+    Qt::Alignment alignment = QStyle::visualAlignment(direction, Qt::AlignLeft | Qt::AlignVCenter);
+
+    QTextOption option;
+    option.setTextDirection(direction);
+    option.setAlignment(alignment);
+    option.setWrapMode(QTextOption::WordWrap);
+
+    return option;
+}
+
 QRectF AbstractTaskItem::iconRect() const
 {
-    QSizeF iconSize = _icon.actualSize(boundingRect().size().toSize());
-    //iconSize.scale(boundingRect().size(),Qt::KeepAspectRatio);
+    QSize iconSize = _icon.actualSize(boundingRect().size().toSize());
 
-    QRectF rect = QRectF(QPointF(0,0), iconSize);
-    rect.moveTop((boundingRect().height() - rect.height()) / 2);
-
-    return rect;
+    return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignLeft | Qt::AlignVCenter,
+                               iconSize, boundingRect().toRect());
 }
 
 QRectF AbstractTaskItem::textRect() const
 {
-    QRectF text = boundingRect();
-    text.setLeft(iconRect().right() + IconTextSpacing);
+    QSize size(boundingRect().size().toSize());
+    size.rwidth() -= int(iconRect().width()) + qMin(0, IconTextSpacing - 2);
 
-    text.setTop(text.top() + 5);
-    text.setBottom(text.bottom() - 5);
-
-    return text;
+    return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
+                                     size, boundingRect().toRect());
 }
 
 void AbstractTaskItem::drawTask(QPainter *painter,
@@ -353,10 +457,15 @@ void AbstractTaskItem::drawTask(QPainter *painter,
     // FIXME HARDCODE testing
     painter->setPen(QPen(QColor(200,200,200), 1.0));
 
-    painter->setBrush(QBrush());
-    painter->drawText(textRect(),
-                      Qt::AlignLeft | Qt::AlignVCenter | Qt::TextWordWrap,
-                      _text);
+    QRect rect = textRect().toRect();
+    rect.adjust(2, 2, -2, -2); // Create a text margin
+
+    QTextLayout layout;
+    layout.setFont(painter->font());
+    layout.setTextOption(textOption());
+
+    layoutText(layout, _text, rect.size());
+    drawTextLayout(painter, layout, rect);
 }
 
 void AbstractTaskItem::paint(QPainter *painter,
