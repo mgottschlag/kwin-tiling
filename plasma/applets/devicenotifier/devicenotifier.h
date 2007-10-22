@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef SOLIDNOTIFIER_H
-#define SOLIDNOTIFIER_H
+#ifndef DEVICENOTIFIER_H
+#define DEVICENOTIFIER_H
 
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
@@ -26,7 +26,7 @@
 #include <KIcon>
 #include <QTimer>
 
-#include "ui_solidNotifierConfig.h"
+#include "ui_deviceNotifierConfig.h"
 
 namespace Plasma
 {
@@ -40,36 +40,36 @@ namespace Plasma
 
 class KDialog;
 
-class SolidNotifier : public Plasma::Applet
+class DeviceNotifier : public Plasma::Applet
 {
     Q_OBJECT
 
 
     public:
-        SolidNotifier(QObject *parent, const QVariantList &args);
-        ~SolidNotifier();
+        DeviceNotifier(QObject *parent, const QVariantList &args);
+        ~DeviceNotifier();
 
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
-	void moveUp();
+		void moveUp();
 
     public slots:
         void SourceAdded(const QString &name);
         void updated(const QString &source, Plasma::DataEngine::Data data);
         void moveDown();
         void hideNotifier(QGraphicsItem * item);
-	void showConfigurationInterface();
-	void configAccepted();
+		void showConfigurationInterface();
+		void configAccepted();
 
     private:
         Plasma::Label * m_label;
-	Plasma::Icon * m_icon;
+		Plasma::Icon * m_icon;
         QFont m_font;
-	QRectF origin_size;
+		QRectF origin_size;
 		
         Plasma::HBoxLayout *m_layout;
         bool icon;
-	bool first;
+		bool first;
 
         QTimer *t;
         Plasma::DataEngine* SolidEngine;
@@ -78,15 +78,15 @@ class SolidNotifier : public Plasma::Applet
         QString * test;
         QString device_name;
         KIcon * k_icon;
-	int m_pixelSize;
-	int m_height;
-	int m_time;
-	KDialog *m_dialog;
+		int m_pixelSize;
+		int m_height;
+		int m_time;
+		KDialog *m_dialog;
         /// Designer Config file
         Ui::solidNotifierConfig ui;
 
 };
 
-K_EXPORT_PLASMA_APPLET(solidnotifier, SolidNotifier)
+K_EXPORT_PLASMA_APPLET(devicenotifier, DeviceNotifier)
 
 #endif

@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "solidnotifier.h"
+#include "devicenotifier.h"
 
 #include <QPainter>
 #include <QColor>
@@ -36,7 +36,7 @@
 using namespace Plasma;
 
 
-SolidNotifier::SolidNotifier(QObject *parent, const QVariantList &args)
+DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),m_dialog(0)
 {
     setDrawStandardBackground(true);
@@ -70,11 +70,11 @@ SolidNotifier::SolidNotifier(QObject *parent, const QVariantList &args)
 
 }
 
-SolidNotifier::~SolidNotifier()
+DeviceNotifier::~DeviceNotifier()
 {
 }
 
-void SolidNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
+void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option);
     Q_UNUSED(p);
@@ -84,17 +84,17 @@ void SolidNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
 	m_layout->addItem(m_icon);
     }
     m_layout->addItem(m_label);
-    kDebug()<<"SolidNotifier:: geometry "<<geometry().width();
+    kDebug()<<"DeviceNotifier:: geometry "<<geometry().width();
     //hide();
 }
 
-void SolidNotifier::hideNotifier(QGraphicsItem * item)
+void DeviceNotifier::hideNotifier(QGraphicsItem * item)
 {
     icon=false; 
     item->hide();
 }
 
-void SolidNotifier::moveUp()
+void DeviceNotifier::moveUp()
 {
     t->start(m_time*1000);
     disconnect(Phase::self(),SIGNAL(movementComplete(QGraphicsItem *)),this,SLOT(hideNotifier(QGraphicsItem *)));
@@ -103,7 +103,7 @@ void SolidNotifier::moveUp()
 }
 
 
-void SolidNotifier::moveDown()
+void DeviceNotifier::moveDown()
 {
     t->stop();
     Phase::self()->moveItem(this, Phase::SlideOut,QPoint(geometry().x(),geometry().y()+m_height));
@@ -111,11 +111,11 @@ void SolidNotifier::moveDown()
 }
 
 
-void SolidNotifier::updated(const QString &source, Plasma::DataEngine::Data data)
+void DeviceNotifier::updated(const QString &source, Plasma::DataEngine::Data data)
 {
     if(data.size()>0)
     {
-		kDebug()<<"SolidNotifier:: "<<data[source].toString();
+		kDebug()<<"DeviceNotifier:: "<<data[source].toString();
 		desktop_files=data["predicateFiles"].toStringList();
 		kDebug()<<data["icon"].toString();
 		QString icon_temp = data["icon"].toString();
@@ -162,29 +162,29 @@ void SolidNotifier::updated(const QString &source, Plasma::DataEngine::Data data
      }
 }
 
-void SolidNotifier::SourceAdded(const QString& source)
+void DeviceNotifier::SourceAdded(const QString& source)
 {
-    kDebug()<<"SolidNotifier:: source added"<<source;
+    kDebug()<<"DeviceNotifier:: source added"<<source;
     m_udi = source;
     SolidEngine->connectSource(source, this);
 }
 
-void SolidNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
     if(icon)
     {
-	kDebug()<<"SolidNotifier:: call Solid Ui Server with params :"<<m_udi<<","<<desktop_files;
+	kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<m_udi<<","<<desktop_files;
 	QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.kded.SolidUiServer");
 	QDBusReply<void> reply = soliduiserver.call("showActionsDialog", m_udi,desktop_files);
     }
 }
 
-void SolidNotifier::showConfigurationInterface()
+void DeviceNotifier::showConfigurationInterface()
 {
      if (m_dialog == 0) 
      {
-		kDebug()<<"SolidNotifier:: Enter in configuration interface";
+		kDebug()<<"DeviceNotifier:: Enter in configuration interface";
      	m_dialog = new KDialog;
         m_dialog->setCaption( i18n("Configure New Device Notifier") );
 
@@ -198,11 +198,11 @@ void SolidNotifier::showConfigurationInterface()
       m_dialog->show();
 }
 
-void SolidNotifier::configAccepted()
+void DeviceNotifier::configAccepted()
 {
-    kDebug()<<"SolidNotifier:: Config Accepted with params"<<ui.spinTime->value()<<","<<ui.spinHeight->value();
+    kDebug()<<"DeviceNotifier:: Config Accepted with params"<<ui.spinTime->value()<<","<<ui.spinHeight->value();
 	m_time=ui.spinTime->value();
     m_height=ui.spinHeight->value();
 }
 
-#include "solidnotifier.moc"
+#include "devicenotifier.moc"
