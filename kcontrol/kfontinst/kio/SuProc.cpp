@@ -24,6 +24,9 @@
 #include "KfiConstants.h"
 #include <QFile>
 #include <kshell.h>
+#include <KStandardDirs>
+#include <SuProcess>
+#include <kdebug.h>
 #include <unistd.h>
 #include <config-workspace.h>
 
@@ -31,22 +34,31 @@ namespace KFI
 {
 
 CSuProc::CSuProc(QByteArray &sock, QString &passwd)
-       : itsProc(KFI_SYS_USER),
-         itsPasswd(passwd)
+       : itsPasswd(passwd)
 {
-    QByteArray cmd(KDE_BINDIR"/kio_fonts_helper");
+    QString exe(KStandardDirs::findExe(QLatin1String("kio_fonts_helper"), KStandardDirs::installPath("libexec")));
 
-    cmd+=' ';
-    cmd+=QFile::encodeName(KShell::quoteArg(sock));
-    cmd+=' ';
-    cmd+=QString().setNum(getuid()).toLatin1();
-    itsProc.setCommand(cmd);
+    if(exe.isEmpty())
+        kError(7000) << "Could not locate kio_fonts_helper";
+    else
+    {
+        itsCmd=QByteArray(QFile::encodeName(KShell::quoteArg(exe)));
+
+        itsCmd+=' ';
+        itsCmd+=QFile::encodeName(KShell::quoteArg(sock));
+        itsCmd+=' ';
+        itsCmd+=QString().setNum(getuid()).toLatin1();
+    }
 }
 
 void CSuProc::run()
 {
-    itsProc.exec(itsPasswd.toLocal8Bit());
+    if(!itsCmd.isEmpty())
+    {
+        KDESu::SuProcess proc(KFI_SYS_USER);
+        proc.setCommand(itsCmd);
+        proc.exec(itsPasswd.toLocal8Bit());
+    }
 }
 
 }
-

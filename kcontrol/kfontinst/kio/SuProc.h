@@ -23,12 +23,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <kdesu/su.h>
 #include <QThread>
+#include <QByteArray>
 
 class QString;
-
-using namespace KDESu;
 
 namespace KFI
 {
@@ -48,8 +46,8 @@ class CSuProc : public QThread
 
     private:
 
-    SuProcess itsProc;
-    QString   &itsPasswd;
+    QString    &itsPasswd;
+    QByteArray itsCmd;
 };
 
 }
