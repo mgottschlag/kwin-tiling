@@ -1,0 +1,28 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=New Device Notifier
+Name[es]=Notificador de Solid
+Name[fr]=Notificateur de nouveaux périphériques
+Name[et]=Solidi märguandja
+Name[ja]=Solid 通知
+Name[nl]=Solid-notificatie
+Name[pt]=Notificação do Solid
+Name[pt_BR]=Notificação do Solid
+Name[sv]=Underrättelser från Solid
+Comment=New device notifier plasmoid
+Comment[fr]=Plasmoid de notification de nouveaux périphériques
+Icon=drive-removable-media-usb-pendrive
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_solidnotifier
+X-KDE-PluginInfo-Author=The Plasma Team
+X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Name=notifier
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+
