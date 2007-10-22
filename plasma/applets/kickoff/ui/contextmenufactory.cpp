@@ -29,11 +29,10 @@
 // KDE
 #include <KIcon>
 #include <KLocalizedString>
-#include <KMimeType>
+#include <kactioncollection.h>
+#include <kfileitem.h>
+#include <kparts/browserextension.h>
 #include <kbookmarkmanager.h>
-
-// Konqueror
-#include <konq_popupmenu.h>
 
 // Local
 #include "core/favoritesmodel.h"
@@ -56,6 +55,9 @@ public:
            browserFlags |= KParts::BrowserExtension::ShowProperties;
        }
        KParts::BrowserExtension::ActionGroupMap actionGroupMap;
+       return 0;
+       // ### TODO: remove kdebase-apps dependency
+#if 0
        KonqPopupMenu *menu = new KonqPopupMenu(items, kUrl,actionCollection,
                                                0, 0, browserFlags,
                                                0, KBookmarkManager::userBookmarksManager(), actionGroupMap);
@@ -69,6 +71,7 @@ public:
             delete menu;
             return 0;
        }
+#endif
     }
 
     QMap<QAbstractItemView*,QList<QAction*> > viewActions;

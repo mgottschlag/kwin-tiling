@@ -1,5 +1,3 @@
-include_directories( ${CMAKE_SOURCE_DIR}/apps/lib/konq )
-
 # Kickoff Shared
 set( Kickoff_SRCS
        core/applicationmodel.cpp
