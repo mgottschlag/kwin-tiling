@@ -222,6 +222,7 @@ void KRunnerApp::showTaskManager()
 
         m_tasks = new KDialog(0);
         m_tasks->setWindowTitle(i18n("System Activity"));
+        m_tasks->setWindowIcon(KIcon("utilities-system-monitor"));
         connect(m_tasks, SIGNAL(finished()),
                 this, SLOT(taskDialogFinished()));
         m_tasks->setButtons(KDialog::Close);
