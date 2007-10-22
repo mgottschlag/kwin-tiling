@@ -6,10 +6,7 @@ There is a lot of information about KDE on the
 also useful sites for major applications like
 <A HREF="http://www.konqueror.org/">Konqueror</A>,
 <A HREF="http://www.koffice.org/">KOffice</A> and
-<A HREF="http://www.kdevelop.org/">KDevelop</A>, or important
-KDE utilities like
-<A HREF="http://printing.kde.org/">KDEPrint</A>,
-which can be put to its full usage even outside KDE...
+<A HREF="http://www.kdevelop.org/">KDevelop</A>.
 </P>
 <br>
 <center>
@@ -106,23 +103,6 @@ displayed in Konqueror).</p>
 </html>
 </tip>
 
-<tip category="General">
-<html>
-<p>For quick access to KDEPrint Manager type
-<strong>"print:/manager"</strong>... --  <em>"Type where?"</em>,
- you may ask. Type it...</p>
-<ul>
-  <li>...either in Konqueror's <i>address field</i>,</li>
-  <li>...or in a <i>Run Command</i> dialog,
-         opened by pressing <strong>Alt+F2</strong>.</li>
-</ul>
-</p>
-<center>
-<img src="crystalsvg/48x48/devices/printer1.png">
-<p align="right"><em>Contributed by Kurt Pfeifle</em></p>
-</html>
-</tip>
-
 <tip category="KDE2|Desktop">
 <html>
 <p>
@@ -213,43 +193,6 @@ by regularly checking the web site <A
 </html>
 </tip>
 
-<tip category="General">
-<html>
-<p align="center"><strong>KDEPrinting (I)</strong></p>
-<p><strong>kprinter</strong>, KDE's new printing utility supports
-different print subsystems. These subsystems differ very much
-in their abilities.</p>
-<p>Among the supported systems are:
-<ul>
-<li>CUPS, the new Common UNIX Printing System;</li>
-<li>LPR/LPD, traditional BSD-style printing;</li>
-<li>RLPR (no need for "printcap" editing or root privileges to
-use network printers);</li>
-<li>printing through an external program (generic).</li>
-</ul>
-</html>
-</tip>
-
-
-<tip category="General">
-<html>
-<p align="center"><strong>KDEPrinting (II)</strong></p>
-
-<p>Not all print subsystems provide equal abilities
-for KDEPrint to build on.</p>
-<p>The <A HREF="http://printing.kde.org/">KDEPrinting Team</A>
-recommends installing <A
-HREF="http://www.cups.org/"><strong>CUPS</strong></A>
-as the underlying print subsystem.</p>
-<p> CUPS provides easy usage, powerful features, broad printer
-support and a modern design (based on IPP, the "Internet
-Printing Protocol"). Its usefulness is proven for home users
-as well as for large networks.
-</p>
-<p align="right"><em>Contributed by Kurt Pfeifle</em></p>
-</html>
-</tip>
-
 
 <tip category="General">
 <html>
@@ -283,34 +226,6 @@ KDE User Guide</a>.</p>
 </html>
 </tip>
 
-<tip category="General">
-<html>
-<p>You can start <strong>kprinter</strong> as a standalone program
-from any xterm, Konsole window or from the "Run Command" dialog (started
-by pressing <i>Alt+F2</i>). Then select the file to print. You can print
-as many items of different types as you want, all at once.
-</p>
-<center>
-<img src="crystalsvg/48x48/devices/printer1.png"></center>
-<p align="right"><em>Contributed by Kurt Pfeifle</em></p>
-</html>
-</tip>
-
-
-
-<tip category="General">
-<html>
-<p>You may at any time switch <strong>kprinter</strong> to another
-print subsystem "on the fly" (and you do not need to be root to do it.)
-</p>
-<p>Laptop users who frequently change to different environments may find
-<A HREF="ftp://truffula.com/pub/">RLPR</A> a useful complement to CUPS
-(or any other print subsystem they use as their preferred one).
-</p>
-<p align="right"><em>Contributed by Kurt Pfeifle</em></p>
-</html>
-</tip>
-
 <tip category="General|Help">
 <html>
 <P>
@@ -340,26 +255,6 @@ one.</P>
 <P>If a toolbar is not large enough to display all buttons on it, you can
 click on the small arrow at the far right end of the toolbar to see
 the remaining buttons.</P>
-</html>
-</tip>
-
-<tip category="General">
-<html>
-<p>
-Need comprehensive info about KDEPrinting?<br> </p>
-<p> Type <strong>help:/kdeprint/</strong> into a Konqueror address field
-and get the
- <a href="http://printing.kde.org/documentation/handbook/">KDEPrint Handbook</a>
-displayed.</p> <p>This, plus more material (like a
- <a href="http://printing.kde.org/faq/">FAQ</a>, various
- <a href="http://printing.kde.org/documentation/tutorials/">Tutorials</a>,
-a "TipsNTricks" section and the
- <a href="http://mail.kde.org/mailman/listinfo/kde-print/">kdeprint mailing list</a>)
- are available at
-<a href="http://printing.kde.org/">printing.kde.org</a>...
-</p>
-<center>
-<img src="crystalsvg/48x48/devices/printer1.png">
 </html>
 </tip>
 
@@ -527,21 +422,6 @@ and "dragging" it with the mouse.</p><br>
 </html>
 </tip>
 
-<tip category="General">
-<html>
-<p> Want KDE's printing power in non-KDE apps?  </p>
-<p> Then use <strong>'kprinter'</strong> as "print command".
-Works with Netscape, Mozilla, Galeon, gv, Acrobat Reader,
- StarOffice, OpenOffice.org, any GNOME application and many more...</p>
-<p>See <a href="http://printing.kde.org/faq/kdeprint.phtml#out">printing.kde.org</a>
-for more detailed hints...
-</p>
-<center>
-<img src="crystalsvg/48x48/devices/printer1.png">
-<p align="right"><em>Contributed by Kurt Pfeifle</em></p>
-</html>
-</tip>
-
 
 <tip category="Keyboard|Desktop">
 <html>
@@ -608,39 +488,6 @@ You can change the color of the window titlebars by clicking on the title bar of
 example window in the <em>Appearance & Themes</em> module within the Control Center.
 </p>
 <p>You can use the other aspects of the example graphic to further customize the appearance of KDE on your computer.</p>
-</html>
-</tip>
-
-<tip category="General">
-<html>
-<p align="center"><strong>KDE Command Line Printing (I)</strong></p>
-<p> Want to print from command line, without missing KDE's printing power?</p>
-<p> Type <strong>'kprinter'</strong>. Up pops the
-KDEPrint dialog. Select printer, print options and
-print files (note that you may select <em>different</em>
-files of <em>different</em> types for <em>one</em> print job...). </p>
-<p>This works from Konsole, any x-Terminal, or "Run Command"
-(called by pressing <em>Alt+F2</em>)</p>
-</html>
-</tip>
-
-
-<tip category="General">
-<html>
-<p align="center"><strong>KDE Command Line Printing (II)</strong></p>
-<p>
-You may specify print files and/or name a printer from the command line:
-<pre>
-kprinter -d infotec \
-   /home/kurt/paragliding.jpg \
-   ../kdeprint-handbook.pdf \
-   /opt/kde3/flyer.ps
-</pre>
- This prints 3 different files (from different folders) to printer "infotec".
- </p>
-<center>
-<img src="crystalsvg/48x48/devices/printer1.png">
-<p align="right"><em>Contributed by Kurt Pfeifle</em></p>
 </html>
 </tip>
 
@@ -792,23 +639,6 @@ elsewhere with the middle mouse button. The selected text will be
 pasted at the click position. This even works between different programs.
 </p>
 <p align="right"><em>Contributed by Carsten Niehaus</em></p>
-</html>
-</tip>
-
-<tip category="General">
-<html>
-<p>
-Want to print by using "DragNDrop"?
-</p>
-<p>
-Drag a file and drop it on the "Files" tab of an opened
-<strong>kprinter</strong> dialog. </p>
-<p>Then continue as you would normally: select a printer, job options, etc.
-and click the "Print" button.
-</p>
-<center>
-<img src="crystalsvg/48x48/devices/printer1.png">
-<p align="right"><em>Contributed by Kurt Pfeifle</em></p>
 </html>
 </tip>
 
