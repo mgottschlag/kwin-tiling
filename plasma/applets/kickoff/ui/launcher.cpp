@@ -161,7 +161,7 @@ public:
         ItemDelegate *delegate = new ItemDelegate;
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Recently Used"),KIcon("7days"),model,view);
+        addView(i18n("Recently Used"),KIcon("view-calendar-week"),model,view);
 
         QAction *clearApplications = new QAction(KIcon("history-clear"),i18n("Clear Recent Applications"),q);
         QAction *clearDocuments = new QAction(KIcon("history-clear"),i18n("Clear Recent Documents"),q);
