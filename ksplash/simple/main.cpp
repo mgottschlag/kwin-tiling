@@ -31,14 +31,36 @@ extern "C" { // for older XFree86 versions
 
 int main( int argc, char* argv[])
     {
-    if( fork() != 0 )
+    bool test = false;
+    bool print_pid = false;
+    for( int i = 1;
+         i < argc;
+         ++i )
+        {
+        if( strcmp( argv[ i ], "--test" ) == 0 )
+            test = true;
+        if( strcmp( argv[ i ], "--pid" ) == 0 )
+            print_pid = true;
+        }
+    pid_t pid = fork();
+    if( pid < -1 )
+        {
+        perror( "fork()" );
+        return -1;
+        }
+    if( pid != 0 )
+        { // parent
+        if( print_pid )
+            printf( "%d\n", pid );
         return 0;
+        }
+    // child
+    close( 0 ); // close stdin,stdout,stderr, otherwise startkde will block
+    close( 1 );
+    close( 2 );
     Display* dpy = XOpenDisplay( NULL );
     if( dpy == NULL )
         return 1;
-    bool test = false;
-    if( argc == 2 && strcmp( argv[ 1 ], "--test" ) == 0 )
-        test = true;
     int sx, sy, sw, sh;
 #ifdef HAVE_XINERAMA
     // Xinerama code from Qt
