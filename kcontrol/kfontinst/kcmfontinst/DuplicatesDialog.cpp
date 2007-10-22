@@ -511,7 +511,7 @@ CFontFileListView::CFontFileListView(QWidget *parent)
     headers.append(i18n("Date"));
     headers.append(i18n("Links To"));
     setHeaderLabels(headers);
-    headerItem()->setData(COL_TRASH, Qt::DecorationRole, QVariant(SmallIcon("edit-trash")));
+    headerItem()->setData(COL_TRASH, Qt::DecorationRole, QVariant(SmallIcon("user-trash")));
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setSelectionMode(ExtendedSelection);
     sortByColumn(COL_FILE, Qt::AscendingOrder);
