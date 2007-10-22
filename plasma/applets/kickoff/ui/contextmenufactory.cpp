@@ -144,7 +144,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     actions << viewActions(view); 
 
     // display menu
-    QAction *result = QMenu::exec(actions,view->mapToGlobal(pos));
+    QAction *result = QMenu::exec(actions,QCursor::pos());
     
     if (result == favoriteAction) {
         if (isFavorite) {

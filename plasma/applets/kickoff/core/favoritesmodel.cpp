@@ -34,7 +34,8 @@ public:
     void removeFavoriteItem(const QString& url)
     {
        QModelIndexList matches = q->match(q->index(0,0),UrlRole,
-                                          url);
+                                          url,-1,
+                                          Qt::MatchFlags(Qt::MatchStartsWith | Qt::MatchWrap | Qt::MatchRecursive));
 
        qDebug() << "Removing item matches" << matches;
 

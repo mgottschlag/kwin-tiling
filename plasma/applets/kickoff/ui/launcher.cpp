@@ -349,7 +349,7 @@ void Launcher::showViewContextMenu(const QPoint& pos)
 {
     QAbstractItemView *view = qobject_cast<QAbstractItemView*>(sender());
     if (view) {
-        d->contextMenuFactory->showContextMenu(view,pos);
+        d->contextMenuFactory->showContextMenu(view,d->contentArea->mapFromParent(pos));
     }
 }
 void Launcher::keyPressEvent(QKeyEvent *)
