@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "config-workspace.h"
+
 #include "soliddeviceengine.h"
 
 #include <KDebug>
@@ -23,8 +25,22 @@
 
 #include "plasma/datacontainer.h"
 
+// The pattern here is:
+//	FreeBSD: param + mount
+//	Linux: stat + vfs
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
+#ifdef HAVE_SYS_MOUNT_H
+#include <sys/mount.h>
+#endif
+
 #include <sys/stat.h>
+
+#ifdef HAVE_SYS_VFS_H
 #include <sys/vfs.h>
+#endif
 
 SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
         : Plasma::DataEngine(parent)

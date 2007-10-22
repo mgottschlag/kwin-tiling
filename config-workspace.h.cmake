@@ -54,6 +54,12 @@
 /* Define to 1 if you have the <sys/loadavg.h> header file. */
 #cmakedefine HAVE_SYS_LOADAVG_H 1
 
+/* Define to 1 if you have the <sys/mount.h> header file. */
+#cmakedefine HAVE_SYS_MOUNT_H 1
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#cmakedefine HAVE_SYS_PARAM_H 1
+
 /* Define to 1 if you have the <sys/select.h> header file. */
 #cmakedefine HAVE_SYS_SELECT_H 1
 
@@ -65,6 +71,9 @@
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #cmakedefine HAVE_SYS_TYPES_H 1
+
+/* Define to 1 if you have the <sys/vfs.h> header file. */
+#cmakedefine HAVE_SYS_VFS_H 1
 
 /* Define to 1 if you have the <sys/wait.h> header file. */
 #cmakedefine HAVE_SYS_WAIT_H 1
