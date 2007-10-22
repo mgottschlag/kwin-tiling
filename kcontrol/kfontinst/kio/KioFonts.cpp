@@ -2760,7 +2760,8 @@ bool CKioFonts::updateFontList()
             // defoma (DEbian FOnt MAnanager) installs sym links into /var/lib/defoma/fontconfig.d, but also
             // places this folder into fontconfigs search path. Leading to duplicate font files. Therefore, just
             // ignore defoma's sym links...
-            static const char * constDefomaLocation="/var/lib/defoma/fontconfig.d";
+            // -> Can't just ignore these, as if a font is disabled fontconfig will still list it, as it sees the symlink
+            //static const char * constDefomaLocation="/var/lib/defoma/fontconfig.d";
 
             QString home(Misc::dirSyntax(QDir::homePath()));
 
@@ -2769,7 +2770,7 @@ bool CKioFonts::updateFontList()
                 EFolder folder=FOLDER_SYS;
                 QString fileName(Misc::fileSyntax(FC::getFcString(itsFontList->fonts[i], FC_FILE)));
 
-                if(!fileName.isEmpty() && 0!=fileName.indexOf(constDefomaLocation))
+                if(!fileName.isEmpty()) // && 0!=fileName.indexOf(constDefomaLocation))
                 {
                     QString name,
                             foundry(FC::getFcString(itsFontList->fonts[i], FC_FOUNDRY));
