@@ -154,16 +154,16 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
          icon = service->icon();
          appName = service->name();
          genericName = service->genericName();
-         desktopEntry = service->desktopEntryPath();
-         
+         desktopEntry = service->entryPath();
+
          // check for duplicates (eg. KDE 3 and KDE 4 versions of application
          // both present)
          if (duplicatePolicy == ApplicationModel::ShowLatestOnlyPolicy && 
-             existingServices.contains(appName)     
+             existingServices.contains(appName)
             ) {
                 if (Kickoff::isLaterVersion(existingServices[appName],service)) {
-                    continue;   
-                } else { 
+                    continue;
+                } else {
                     // find and remove the existing entry with the same name
                     for (int i = 0 ; i < node->children.count() ; i++) { 
                         if ( node->children[i]->appName == appName ) { 

@@ -24,6 +24,8 @@ set ( Kickoff_LIBS
         kworkspace
         strigiqtdbusclient )
 
+include_directories( ${STRIGI_INCLUDE_DIR} )
+
 # Standalone Test Application
 IF (CMAKE_BUILD_TYPE MATCHES debug)
    set ( Application_SRCS
