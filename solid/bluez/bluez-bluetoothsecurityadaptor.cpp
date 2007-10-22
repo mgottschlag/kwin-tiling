@@ -21,13 +21,12 @@
 #include "bluez-bluetoothsecurityadaptor.h"
 #include <kdebug.h>
 #include <ctime>
-
-BluezBluetoothSecurityAdaptor::BluezBluetoothSecurityAdaptor(BluezBluetoothSecurity * security)
+//BluezBluetoothSecurityPasskeyAgentAdaptor
+BluezBluetoothSecurityPasskeyAgentAdaptor::BluezBluetoothSecurityPasskeyAgentAdaptor(BluezBluetoothSecurity * security)
     :QDBusAbstractAdaptor(security),security(security),conn(QDBusConnection::systemBus())
 {
-    serviceName = QString("/org/kde/solid/BluezBluetoothSecurityAdaptor%1").arg(time(NULL));
-    bool done = conn.registerObject(
-            serviceName,security,QDBusConnection::ExportAdaptors);
+    serviceName = QString("/org/kde/solid/BluezBluetoothSecurityPasskeyAgentAdaptor%1").arg(time(NULL));
+    bool done = conn.registerObject(serviceName,security,QDBusConnection::ExportAdaptors);
     if (!done) {
         kDebug() << "Failed to register the object: " << conn.lastError().name() << " : " << conn.lastError().message();
         serviceName = "";
@@ -46,7 +45,7 @@ BluezBluetoothSecurityAdaptor::BluezBluetoothSecurityAdaptor(BluezBluetoothSecur
 
 }
 
-BluezBluetoothSecurityAdaptor::~ BluezBluetoothSecurityAdaptor()
+BluezBluetoothSecurityPasskeyAgentAdaptor::~ BluezBluetoothSecurityPasskeyAgentAdaptor()
 {
     kDebug() << k_funcinfo;
     if (!serviceName.isEmpty())
@@ -62,7 +61,7 @@ BluezBluetoothSecurityAdaptor::~ BluezBluetoothSecurityAdaptor()
     }
 }
 
-QString BluezBluetoothSecurityAdaptor::Request(const QString & path, const QString & address, bool numeric,const QDBusMessage &msg)
+QString BluezBluetoothSecurityPasskeyAgentAdaptor::Request(const QString & path, const QString & address, bool numeric,const QDBusMessage &msg)
 {
     kDebug() << k_funcinfo;
     Q_UNUSED(path)
@@ -78,7 +77,7 @@ QString BluezBluetoothSecurityAdaptor::Request(const QString & path, const QStri
     return "";//To satisfy the compiler, but the answer is already sent
 }
 
-void BluezBluetoothSecurityAdaptor::Confirm(const QString & path, const QString & address, const QString & value,const QDBusMessage &msg)
+void BluezBluetoothSecurityPasskeyAgentAdaptor::Confirm(const QString & path, const QString & address, const QString & value,const QDBusMessage &msg)
 {
     kDebug() << k_funcinfo;
     Q_UNUSED(path)
@@ -92,7 +91,7 @@ void BluezBluetoothSecurityAdaptor::Confirm(const QString & path, const QString 
     }
 }
 
-void BluezBluetoothSecurityAdaptor::Display(const QString & path, const QString & address, const QString & value)
+void BluezBluetoothSecurityPasskeyAgentAdaptor::Display(const QString & path, const QString & address, const QString & value)
 {
     kDebug() << k_funcinfo;
     Q_UNUSED(path)
@@ -101,7 +100,7 @@ void BluezBluetoothSecurityAdaptor::Display(const QString & path, const QString 
     }
 }
 
-void BluezBluetoothSecurityAdaptor::Keypress(const QString & path, const QString & address)
+void BluezBluetoothSecurityPasskeyAgentAdaptor::Keypress(const QString & path, const QString & address)
 {
     kDebug() << k_funcinfo;
     Q_UNUSED(path)
@@ -110,7 +109,7 @@ void BluezBluetoothSecurityAdaptor::Keypress(const QString & path, const QString
     }
 }
 
-void BluezBluetoothSecurityAdaptor::Complete(const QString & path, const QString & address)
+void BluezBluetoothSecurityPasskeyAgentAdaptor::Complete(const QString & path, const QString & address)
 {
     kDebug() << k_funcinfo;
     Q_UNUSED(path)
@@ -119,7 +118,7 @@ void BluezBluetoothSecurityAdaptor::Complete(const QString & path, const QString
     }
 }
 
-void BluezBluetoothSecurityAdaptor::Cancel(const QString & path, const QString & address)
+void BluezBluetoothSecurityPasskeyAgentAdaptor::Cancel(const QString & path, const QString & address)
 {
     kDebug() << k_funcinfo;
     Q_UNUSED(path)
@@ -128,12 +127,52 @@ void BluezBluetoothSecurityAdaptor::Cancel(const QString & path, const QString &
     }
 }
 
-void BluezBluetoothSecurityAdaptor::Release()
+void BluezBluetoothSecurityPasskeyAgentAdaptor::Release()
 {
     kDebug() << k_funcinfo;
 }
 
-void BluezBluetoothSecurityAdaptor::Authorize(const QString & adapter_path, const QString & address, const QString & service_path, const QString & uuid,const QDBusMessage &msg)
+//BluezBluetoothSecurityAuthorizationAgentAdaptor
+BluezBluetoothSecurityAuthorizationAgentAdaptor::BluezBluetoothSecurityAuthorizationAgentAdaptor(BluezBluetoothSecurity * security)
+    :QDBusAbstractAdaptor(security),security(security),conn(QDBusConnection::systemBus())
+{
+    serviceName = QString("/org/kde/solid/BluezBluetoothSecurityAuthorizationAgentAdaptor%1").arg(time(NULL));
+    bool done = conn.registerObject(
+                                    serviceName,security,QDBusConnection::ExportAdaptors);
+    if (!done) {
+        kDebug() << "Failed to register the object: " << conn.lastError().name() << " : " << conn.lastError().message();
+        serviceName = "";
+    } else {
+        kDebug() << "DBus service registered at "<< serviceName <<endl;
+                //TODO Add support for an specific local device
+        QDBusInterface iface("org.bluez", "/org/bluez","org.bluez.Security",conn, this);
+        iface.call("RegisterDefaultAuthorizationAgent",serviceName);
+        if (iface.lastError().isValid()) {
+            kDebug() << "RegisterDefaultAuthorizationAgent failed :" << iface.lastError().name() << " : " << iface.lastError().message();
+            serviceName = "";
+        } else {
+            kDebug() << "RegisterDefaultAuthorizationAgent succesfull!";
+        }
+    }
+
+}
+BluezBluetoothSecurityAuthorizationAgentAdaptor::~ BluezBluetoothSecurityAuthorizationAgentAdaptor()
+{
+    kDebug() << k_funcinfo;
+    if (!serviceName.isEmpty())
+    {
+        QDBusInterface iface("org.bluez", "/org/bluez","org.bluez.Security",conn, this);
+        iface.call("UnregisterDefaultAuthorizationAgent",serviceName);
+        if (iface.lastError().isValid()) {
+            kDebug() << "UnregisterDefaultAuthorizationAgent failed :" << iface.lastError().name() << " : " << iface.lastError().message();
+            serviceName = "";
+        } else {
+            kDebug() << "UnregisterDefaultAuthorizationAgent Successful!:" << iface.lastError().name() << " : " << iface.lastError().message();
+        }
+    }
+}
+
+void BluezBluetoothSecurityAuthorizationAgentAdaptor::Authorize(const QString & adapter_path, const QString & address, const QString & service_path, const QString & uuid,const QDBusMessage &msg)
 {
     kDebug() << k_funcinfo;
     Q_UNUSED(service_path)
@@ -147,12 +186,17 @@ void BluezBluetoothSecurityAdaptor::Authorize(const QString & adapter_path, cons
     }
 }
 
-void BluezBluetoothSecurityAdaptor::Cancel(const QString & adapter_path, const QString & address, const QString & service_path, const QString & uuid)
+void BluezBluetoothSecurityAuthorizationAgentAdaptor::Cancel(const QString & adapter_path, const QString & address, const QString & service_path, const QString & uuid)
 {
     Q_UNUSED(service_path)
     if (security) {
         security->cancel(adapter_path,address,uuid);
     }
+}
+
+void BluezBluetoothSecurityAuthorizationAgentAdaptor::Release()
+{
+    kDebug() << k_funcinfo;
 }
 
 #include "bluez-bluetoothsecurityadaptor.moc"

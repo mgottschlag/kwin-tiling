@@ -30,14 +30,13 @@
  * Acts as a proxy to BluezBluetoothSecurity to expose it's functionalities to the D-Bus, which is needed
  * by the BlueZ system.
  */
-class BluezBluetoothSecurityAdaptor: public QDBusAbstractAdaptor
+class BluezBluetoothSecurityPasskeyAgentAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface","org.bluez.PasskeyAgent")
-    Q_CLASSINFO("D-Bus Interface","org.bluez.AuthorizationAgent")
     public:
-        BluezBluetoothSecurityAdaptor(BluezBluetoothSecurity *security);
-        ~BluezBluetoothSecurityAdaptor();
+        BluezBluetoothSecurityPasskeyAgentAdaptor(BluezBluetoothSecurity *security);
+        ~BluezBluetoothSecurityPasskeyAgentAdaptor();
     public Q_SLOTS:
         //org.bluez.PasskeyAgent
         QString Request(const QString & path, const QString & address, bool numeric,const QDBusMessage &msg);
@@ -47,13 +46,28 @@ class BluezBluetoothSecurityAdaptor: public QDBusAbstractAdaptor
         void Complete(const QString & path, const QString & address);
         void Cancel(const QString & path, const QString & address);
 
+        void Release();
+    private:
+        QString serviceName;
+        BluezBluetoothSecurity *security;
+        QDBusInterface *manager;
+        QDBusConnection conn;
+};
+class BluezBluetoothSecurityAuthorizationAgentAdaptor: public QDBusAbstractAdaptor
+{
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface","org.bluez.AuthorizationAgent")
+    public:
+		BluezBluetoothSecurityAuthorizationAgentAdaptor(BluezBluetoothSecurity *security);
+		~BluezBluetoothSecurityAuthorizationAgentAdaptor();
+    public Q_SLOTS:
 
         //org.bluez.AuthorizationAgent
         void Authorize(const QString & adapter_path, const QString & address,
                        const QString & service_path, const QString & uuid,const QDBusMessage &msg);
         void Cancel(const QString & adapter_path, const QString & address,
-                            const QString & service_path, const QString & uuid);
-        //common
+                    const QString & service_path, const QString & uuid);
+        
         void Release();
     private:
         QString serviceName;
