@@ -47,7 +47,7 @@ public:
 bool bisDesktop;
 KUrl fileName;
 
-Desktop( const QString &service, QTreeWidget *parent ): QTreeWidgetItem( parent ) {
+Desktop( const QString &service, QTreeWidget *parent ): QTreeWidgetItem( parent, 1 ) {
 	fileName = KUrl(service);
 	bisDesktop = service.endsWith(".desktop");
 }
@@ -218,23 +218,23 @@ void Autostart::removeCMD() {
 	QStringList delList;
 	foreach (QTreeWidgetItem *itm, list) {
 		widget->listCMD->takeTopLevelItem( widget->listCMD->indexOfTopLevelItem( itm ) );
-		delList.append( ((Desktop *)itm)->fileName.path() );
+		delList.append( ((Desktop*)itm)->fileName.path() );
 	}
 	KIO::del( KUrl::List( delList ) );
 
 	emit changed(true);
 }
 
-void Autostart::editCMD(QTreeWidgetItem* entry) {
+void Autostart::editCMD(Desktop* entry) {
 	if (!entry) return;
 
-	const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( ((Desktop*)entry)->fileName ), true );
+	const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName ), true );
 	if (! editCMD( kfi )) return;
 
 	if (((Desktop*)entry)->isDesktop()) {
-		KService * service = new KService(((Desktop*)entry)->fileName.path());
+		KService * service = new KService(entry->fileName.path());
 		entry->setText( 0, service->name() );
-		entry->setText( 1, pathName.value(paths.indexOf((((Desktop*)entry)->fileName.directory()+'/') )) );
+		entry->setText( 1, pathName.value(paths.indexOf((entry->fileName.directory()+'/') )) );
 		entry->setText( 2, service->exec() );
 	}
 }
@@ -249,7 +249,7 @@ bool Autostart::editCMD( const KFileItem &item) {
 void Autostart::editCMD() {
 	if ( widget->listCMD->selectedItems().size() == 0 )
 		return;
-	editCMD( widget->listCMD->selectedItems().first() );
+	editCMD( (Desktop*)widget->listCMD->selectedItems().first() );
 }
 
 void Autostart::setStartOn( int index ) {
@@ -268,8 +268,8 @@ void Autostart::selectionChanged() {
 	if (!hasItems)
 		return;
 
-	QTreeWidgetItem* entry = widget->listCMD->selectedItems().first();
-	widget->cmbStartOn->setCurrentIndex( paths.indexOf(((Desktop*)entry)->fileName.directory()+'/') );
+	Desktop* entry = (Desktop*)widget->listCMD->selectedItems().first();
+	widget->cmbStartOn->setCurrentIndex( paths.indexOf(entry->fileName.directory()+'/') );
 }
 
 void Autostart::defaults()

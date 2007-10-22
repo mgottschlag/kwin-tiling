@@ -1,15 +1,16 @@
 [Desktop Entry]
 Encoding=UTF-8
+Exec=kcmshell4 autostart
 Icon=launch
 Type=Service
 ServiceTypes=KCModule
-Exec=kcmshell autostart
 
-X-KDE-Library=autostart
-X-KDE-FactoryName=Autostart
+X-KDE-Library=kcm_autostart
 X-KDE-ParentApp=kcontrol
 
-Name=Autostart Manager
+X-KDE-System-Settings-Parent-Category=advanced-user-settings
+
+Name=Autostart
 Name[es]=Administración de inicio automático
 Name[et]=Autostardi haldur
 Name[ja]=自動起動マネージャ
@@ -17,7 +18,7 @@ Name[pt]=Gestor do Arranque
 Name[pt_BR]=Gestor do Arranque
 Name[sv]=Hantering av automatisk start
 
-Comment=A KControl tool for managing what programs start up with KDE.
+Comment=A Configuration tool for managing what programs start up with KDE.
 Comment[es]=Un herramienta de KControl para administrar qué programas se iniciarán con KDE.
 Comment[et]=KDE juhtimiskeskuse tööriist, millega saab määrata, millised rakendused käivituvad koos KDE-ga.
 Comment[ja]=KDE の起動時に開始するプログラムを設定するための KControl ツール

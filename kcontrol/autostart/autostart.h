@@ -35,7 +35,7 @@
 #include "adddialog.h"
 #include "listdelegate.h"
 
-
+class Desktop;
 class Autostart: public KCModule
 {
     Q_OBJECT
@@ -53,7 +53,7 @@ public:
 public slots:
 	void addCMD();
 	void removeCMD();
-	void editCMD(QTreeWidgetItem*);
+	void editCMD(Desktop*);
 	bool editCMD(const KFileItem&);
 	void editCMD();
 	void setStartOn(int);
