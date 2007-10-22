@@ -37,7 +37,7 @@ IF (CMAKE_BUILD_TYPE MATCHES debug)
    target_link_libraries(kickoff ${Kickoff_LIBS})
 
    install(TARGETS kickoff DESTINATION ${BIN_INSTALL_DIR})
-ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
+ENDIF (CMAKE_BUILD_TYPE MATCHES debug)
 
 # Plasma Applet
 set ( Applet_SRCS
