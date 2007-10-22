@@ -111,24 +111,24 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   connect( sList, SIGNAL( highlighted( int ) ),
            SLOT( slotPreviewScheme( int ) ) );
 
-  QLabel *label = new QLabel( i18n("&Key Scheme"), this );
+  QLabel *label = new QLabel( i18nc("@label","&Key Scheme"), this );
   label->setBuddy( sList );
 
-  wtstr = i18n("Here you can see a list of the existing key binding schemes with 'Current scheme'"
+  wtstr = i18nc("@info:whatsthis","Here you can see a list of the existing key binding schemes with 'Current scheme'"
     " referring to the settings you are using right now. Select a scheme to use, remove or"
     " change it.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( sList, wtstr );
 
-  addBt = new QPushButton(  i18n("&Save Scheme..."), this );
+  addBt = new QPushButton(  i18nc("@action:button","&Save Scheme..."), this );
   connect( addBt, SIGNAL( clicked() ), SLOT( slotAdd() ) );
-  QWhatsThis::add(addBt, i18n("Click here to add a new key bindings scheme. You will be prompted for a name."));
+  QWhatsThis::add(addBt, i18nc("@info:whatsthis","Click here to add a new key bindings scheme. You will be prompted for a name."));
 
-  removeBt = new QPushButton(  i18n("&Remove Scheme"), this );
+  removeBt = new QPushButton(  i18nc("@action:button","&Remove Scheme"), this );
   removeBt->setEnabled(false);
   connect( removeBt, SIGNAL( clicked() ), SLOT( slotRemove() ) );
-  QWhatsThis::add( removeBt, i18n("Click here to remove the selected key bindings scheme. You can not"
-    " remove the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
+  QWhatsThis::add( removeBt, i18nc("@info:whatsthis","Click here to remove the selected key bindings scheme. You cannot"
+    " remove the standard system-wide schemes 'Current scheme' and 'KDE default'.") );
 
   // Hack to get this setting only displayed once.  It belongs in main.cpp instead.
   // That move will take a lot of UI redesigning, though, so i'll do it once CVS
@@ -136,12 +136,12 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   /* Needed to remove because this depended upon non-BC changes in KeyEntry.*/
   // If this is the "Global Keys" section of the KDE Control Center:
   if( isGlobal && !bSeriesOnly ) {
-	preferMetaBt = new QCheckBox( i18n("Prefer 4-modifier defaults"), this );
+	preferMetaBt = new QCheckBox( i18nc("@option:check","Prefer 4-modifier defaults"), this );
 	if( !KKeySequence::keyboardHasMetaKey() )
 		preferMetaBt->setEnabled( false );
 	preferMetaBt->setChecked( KKeySequence::useFourModifierKeys() );
 	connect( preferMetaBt, SIGNAL(clicked()), SLOT(slotPreferMeta()) );
-	QWhatsThis::add( preferMetaBt, i18n("If your keyboard has a Meta key, but you would "
+	QWhatsThis::add( preferMetaBt, i18nc("@info:whatsthis","If your keyboard has a Meta key, but you would "
 		"like KDE to prefer the 3-modifier configuration defaults, then this option "
 		"should be unchecked.") );
   } else

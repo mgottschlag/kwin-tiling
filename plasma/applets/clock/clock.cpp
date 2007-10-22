@@ -122,7 +122,7 @@ void Clock::showConfigurationInterface() //TODO: Make the size settable
 {
      if (m_dialog == 0) {
         m_dialog = new KDialog;
-        m_dialog->setCaption( i18n("Configure Clock") );
+        m_dialog->setCaption( i18nc("@title:window","Configure Clock") );
 
         ui.setupUi(m_dialog->mainWidget());
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
