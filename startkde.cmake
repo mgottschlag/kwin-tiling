@@ -77,6 +77,7 @@ EOF
 kstartupconfig4
 if test $? -ne 0; then
     xmessage -geometry 500x100 "Could not start kstartupconfig4. Check your installation."
+    exit 1
 fi
 . $kdehome/share/config/startupconfig
 
@@ -285,6 +286,7 @@ if qdbus >/dev/null 2>/dev/null; then
 else
     echo 'startkde: Could not start D-Bus. Check your installation.'  1>&2
     xmessage -geometry 500x100 "Could not start D-Bus. Check your installation."
+    exit 1
 fi
 
 
@@ -324,6 +326,7 @@ if test $? -ne 0; then
   # Startup error
   echo 'startkde: Could not start kdeinit4. Check your installation.'  1>&2
   xmessage -geometry 500x100 "Could not start kdeinit4. Check your installation."
+  exit 1
 fi
 
 # If the session should be locked from the start (locked autologin),
