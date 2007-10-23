@@ -7,6 +7,7 @@ Name[ko]=호출기
 Name[nb]=Sidebytter
 Name[pt]=Paginador
 Name[sv]=Skrivbordsvisning
+Name[x-test]=xxPagerxx
 Name[zh_TW]=呼叫器
 Type=Service
 ServiceTypes=Plasma/Applet

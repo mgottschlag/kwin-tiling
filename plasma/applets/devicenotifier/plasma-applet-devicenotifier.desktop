@@ -1,16 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=New Device Notifier
-Name[es]=Notificador de Solid
-Name[fr]=Notificateur de nouveaux périphériques
-Name[et]=Solidi märguandja
-Name[ja]=Solid 通知
-Name[nl]=Solid-notificatie
-Name[pt]=Notificação do Solid
-Name[pt_BR]=Notificação do Solid
-Name[sv]=Underrättelser från Solid
 Comment=New device notifier plasmoid
-Comment[fr]=Plasmoid de notification de nouveaux périphériques
 Icon=drive-removable-media-usb-pendrive
 Type=Service
 ServiceTypes=Plasma/Applet

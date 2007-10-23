@@ -1,7 +1,17 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Application Launcher
+Name[ga]=Tosaitheoir Feidhmchlár
+Name[ja]=アプリケーションランチャー
+Name[pt]=Lançador de Aplicações
+Name[pt_BR]=Lançador de Aplicativos
+Name[x-test]=xxApplication Launcherxx
 Comment=Launcher to start applications
+Comment[ga]=Tosaitheoir a thosaíonn feidhmchláir
+Comment[ja]=アプリケーションを起動するランチャー
+Comment[pt]=Lançador para iniciar aplicações
+Comment[pt_BR]=Lançador para iniciar aplicativos
+Comment[x-test]=xxLauncher to start applicationsxx
 Icon=
 Type=Service
 ServiceTypes=Plasma/Applet
