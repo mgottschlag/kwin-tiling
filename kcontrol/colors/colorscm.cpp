@@ -267,25 +267,16 @@ QPalette KColorCm::createWmPreviewPalette(const KSharedConfigPtr &config)
 
     KConfigGroup group(config, "WM");
 
-    // use KGS accessors to get the defaults when none have been written to m_config
-    color = group.readEntry("activeBackground");
-    if (!color.isValid())
-        color = KGlobalSettings::activeTitleColor();
+    color = group.readEntry("activeBackground", KGlobalSettings::activeTitleColor());
     palette.setBrush(QPalette::Active, QPalette::Window, color);
 
-    color = group.readEntry("activeForeground");
-    if (!color.isValid())
-        color = KGlobalSettings::activeTextColor();
+    color = group.readEntry("activeForeground", KGlobalSettings::activeTextColor());
     palette.setBrush(QPalette::Active, QPalette::WindowText, color);
 
-    color = group.readEntry("inactiveBackground");
-    if (!color.isValid())
-        color = KGlobalSettings::inactiveTitleColor();
+    color = group.readEntry("inactiveBackground", KGlobalSettings::inactiveTitleColor());
     palette.setBrush(QPalette::Inactive, QPalette::Window, color);
 
-    color = group.readEntry("inactiveForeground");
-    if (!color.isValid())
-        color = KGlobalSettings::activeTitleColor();
+    color = group.readEntry("inactiveForeground", color = KGlobalSettings::activeTitleColor());
     palette.setBrush(QPalette::Inactive, QPalette::WindowText, color);
 
     return palette;
@@ -478,7 +469,8 @@ void KColorCm::updateColorTable()
         m_commonColorButtons[7]->setColor(m_colorSchemes[KColorScheme::Selection].foreground(KColorScheme::NormalText).color());
         m_commonColorButtons[8]->setColor(m_colorSchemes[KColorScheme::Selection].foreground(KColorScheme::InactiveText).color());
 
-        QColor color = commonForeground(KColorScheme::InactiveText);
+        QColor color;
+        color = commonForeground(KColorScheme::InactiveText);
         m_stackedWidgets[0]->setCurrentIndex(color.isValid() ? 0 : 1);
         if (color.isValid())
         {
@@ -524,34 +516,13 @@ void KColorCm::updateColorTable()
         m_commonColorButtons[16]->setColor(m_colorSchemes[KColorScheme::Tooltip].background(KColorScheme::NormalBackground).color());
         m_commonColorButtons[17]->setColor(m_colorSchemes[KColorScheme::Tooltip].foreground(KColorScheme::NormalText).color());
 
-        // use KGS accessors to get the defaults when none have been written to m_config
-        color = KConfigGroup(m_config, "WM").readEntry("activeBackground");
-        if (!color.isValid())
-        {
-            color = KGlobalSettings::activeTitleColor();
-        }
+        color = KConfigGroup(m_config, "WM").readEntry("activeBackground", KGlobalSettings::activeTitleColor());
         m_commonColorButtons[18]->setColor(color);
-        color = KConfigGroup(m_config, "WM").readEntry("activeForeground");
-        if (!color.isValid())
-        {
-            color = KGlobalSettings::activeTextColor();
-        }
+        color = KConfigGroup(m_config, "WM").readEntry("activeForeground", KGlobalSettings::activeTextColor());
         m_commonColorButtons[19]->setColor(color);
-
-        // inactive window background
-        color = KConfigGroup(m_config, "WM").readEntry("inactiveBackground");
-        if (!color.isValid())
-        {
-            color = KGlobalSettings::inactiveTitleColor();
-        }
+        color = KConfigGroup(m_config, "WM").readEntry("inactiveBackground", KGlobalSettings::inactiveTitleColor());
         m_commonColorButtons[20]->setColor(color);
-
-        // inactive window foreground
-        color = KConfigGroup(m_config, "WM").readEntry("inactiveForeground");
-        if (!color.isValid())
-        {
-            color = KGlobalSettings::activeTitleColor();
-        }
+        color = KConfigGroup(m_config, "WM").readEntry("inactiveForeground", KGlobalSettings::activeTitleColor());
         m_commonColorButtons[21]->setColor(color);
 
         foreach (button, m_commonColorButtons)
