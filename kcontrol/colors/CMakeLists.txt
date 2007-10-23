@@ -9,8 +9,12 @@ target_link_libraries(kcm_colors ${KDE4_KFILE_LIBS} ${KDE4_KDEUI_LIBS})
 
 install(TARGETS kcm_colors  DESTINATION ${PLUGIN_INSTALL_DIR})
 install( FILES colors.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-#FILE(GLOB schemefiles schemes/*)
-set(schemefiles schemes/BeOS schemes/Dark)
+
+# built-in color schemes
+set(schemefiles
+    schemes/BeOS
+    "schemes/Midnight Meadow"
+)
 install( FILES ${schemefiles} DESTINATION ${DATA_INSTALL_DIR}/color-schemes )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
