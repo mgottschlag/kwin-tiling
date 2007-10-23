@@ -50,6 +50,9 @@
           </item>
           <item row="1" column="0" >
            <widget class="QPushButton" name="schemeSaveButton" >
+            <property name="toolTip" >
+             <string>Save the current color scheme</string>
+            </property>
             <property name="text" >
              <string>&amp;Save...</string>
             </property>
@@ -60,6 +63,9 @@
             <property name="enabled" >
              <bool>false</bool>
             </property>
+            <property name="toolTip" >
+             <string>Remove the selected scheme</string>
+            </property>
             <property name="text" >
              <string>Rem&amp;ove</string>
             </property>
@@ -67,6 +73,9 @@
           </item>
           <item row="1" column="2" >
            <widget class="QPushButton" name="schemeImportButton" >
+            <property name="toolTip" >
+             <string>Import a color scheme from a file</string>
+            </property>
             <property name="text" >
              <string>I&amp;mport...</string>
             </property>
@@ -89,6 +98,9 @@
          <layout class="QVBoxLayout" >
           <item>
            <widget class="QComboBox" name="colorSet" >
+            <property name="toolTip" >
+             <string>Colorset to view/modify</string>
+            </property>
             <item>
              <property name="text" >
               <string>Common Colors</string>
@@ -142,6 +154,16 @@
                 <property name="columnCount" >
                  <number>2</number>
                 </property>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text" >
+                  <string>New Row</string>
+                 </property>
+                </row>
                 <row>
                  <property name="text" >
                   <string>New Row</string>
@@ -344,30 +366,40 @@
                 </item>
                 <item row="16" column="0" >
                  <property name="text" >
-                  <string>Tooltip Background</string>
+                  <string>Focus Decoration</string>
                  </property>
                 </item>
                 <item row="17" column="0" >
                  <property name="text" >
-                  <string>Tooltip Text</string>
+                  <string>Hover Decoration</string>
                  </property>
                 </item>
                 <item row="18" column="0" >
                  <property name="text" >
-                  <string>Active Titlebar</string>
+                  <string>Tooltip Background</string>
                  </property>
                 </item>
                 <item row="19" column="0" >
                  <property name="text" >
-                  <string>Active Titlebar Text</string>
+                  <string>Tooltip Text</string>
                  </property>
                 </item>
                 <item row="20" column="0" >
                  <property name="text" >
-                  <string>Inactive Titlebar</string>
+                  <string>Active Titlebar</string>
                  </property>
                 </item>
                 <item row="21" column="0" >
+                 <property name="text" >
+                  <string>Active Titlebar Text</string>
+                 </property>
+                </item>
+                <item row="22" column="0" >
+                 <property name="text" >
+                  <string>Inactive Titlebar</string>
+                 </property>
+                </item>
+                <item row="23" column="0" >
                  <property name="text" >
                   <string>Inactive Titlebar Text</string>
                  </property>
@@ -412,6 +444,9 @@
        </item>
        <item row="3" column="1" >
         <widget class="QGroupBox" name="groupBox_5" >
+         <property name="toolTip" >
+          <string>Contrast used for 3D objects</string>
+         </property>
          <property name="title" >
           <string>Contrast</string>
          </property>
@@ -474,6 +509,9 @@
           </item>
           <item row="0" column="1" >
            <widget class="QComboBox" name="inactiveIntensityBox" >
+            <property name="toolTip" >
+             <string>Inactive intensity effect type</string>
+            </property>
             <item>
              <property name="text" >
               <string>Shade</string>
@@ -493,6 +531,9 @@
           </item>
           <item row="0" column="2" >
            <widget class="QSlider" name="inactiveIntensitySlider" >
+            <property name="toolTip" >
+             <string>Inactive intensity effect amount</string>
+            </property>
             <property name="maximum" >
              <number>20</number>
             </property>
@@ -529,6 +570,9 @@
           </item>
           <item row="1" column="1" >
            <widget class="QComboBox" name="inactiveColorBox" >
+            <property name="toolTip" >
+             <string>Inactive color effect type</string>
+            </property>
             <item>
              <property name="text" >
               <string>Desaturate</string>
@@ -553,6 +597,9 @@
           </item>
           <item row="1" column="2" >
            <widget class="QSlider" name="inactiveColorSlider" >
+            <property name="toolTip" >
+             <string>Inactive color amount</string>
+            </property>
             <property name="maximum" >
              <number>20</number>
             </property>
@@ -565,7 +612,11 @@
            </widget>
           </item>
           <item row="1" column="3" >
-           <widget class="KColorButton" name="inactiveColorButton" />
+           <widget class="KColorButton" name="inactiveColorButton" >
+            <property name="toolTip" >
+             <string>Inactive color</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="0" >
            <widget class="QLabel" name="label_3" >
@@ -576,6 +627,9 @@
           </item>
           <item row="2" column="1" >
            <widget class="QComboBox" name="inactiveContrastBox" >
+            <property name="toolTip" >
+             <string>Inactive contrast effect type</string>
+            </property>
             <item>
              <property name="text" >
               <string>Fade</string>
@@ -595,6 +649,9 @@
           </item>
           <item row="2" column="2" >
            <widget class="QSlider" name="inactiveContrastSlider" >
+            <property name="toolTip" >
+             <string>Inactive contrast effect amount</string>
+            </property>
             <property name="maximum" >
              <number>10</number>
             </property>
@@ -650,6 +707,9 @@
           </item>
           <item row="0" column="1" >
            <widget class="QComboBox" name="disabledIntensityBox" >
+            <property name="toolTip" >
+             <string>Disabled intensity effect type</string>
+            </property>
             <item>
              <property name="text" >
               <string>Shade</string>
@@ -669,6 +729,9 @@
           </item>
           <item row="0" column="2" >
            <widget class="QSlider" name="disabledIntensitySlider" >
+            <property name="toolTip" >
+             <string>Disabled intensity effect amount</string>
+            </property>
             <property name="maximum" >
              <number>20</number>
             </property>
@@ -705,6 +768,9 @@
           </item>
           <item row="1" column="1" >
            <widget class="QComboBox" name="disabledColorBox" >
+            <property name="toolTip" >
+             <string>Disabled color effect type</string>
+            </property>
             <item>
              <property name="text" >
               <string>Desaturate</string>
@@ -729,6 +795,9 @@
           </item>
           <item row="1" column="2" >
            <widget class="QSlider" name="disabledColorSlider" >
+            <property name="toolTip" >
+             <string>Disabled color effect amount</string>
+            </property>
             <property name="maximum" >
              <number>20</number>
             </property>
@@ -741,7 +810,11 @@
            </widget>
           </item>
           <item row="1" column="3" >
-           <widget class="KColorButton" name="disabledColorButton" />
+           <widget class="KColorButton" name="disabledColorButton" >
+            <property name="toolTip" >
+             <string>Disabled color</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="0" >
            <widget class="QLabel" name="label_6" >
@@ -752,6 +825,9 @@
           </item>
           <item row="2" column="1" >
            <widget class="QComboBox" name="disabledContrastBox" >
+            <property name="toolTip" >
+             <string>Disabled contrast type</string>
+            </property>
             <item>
              <property name="text" >
               <string>Fade</string>
@@ -771,6 +847,9 @@
           </item>
           <item row="2" column="2" >
            <widget class="QSlider" name="inactiveContrastSlider_2" >
+            <property name="toolTip" >
+             <string>Disabled contrast amount</string>
+            </property>
             <property name="maximum" >
              <number>10</number>
             </property>

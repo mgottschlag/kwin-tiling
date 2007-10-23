@@ -103,7 +103,8 @@ private:
     void setupEffectsPage();
 
     /** helper to create color entries */
-    void createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index);
+    void createColorEntry(QString text, QString key, QList<KColorButton *> &list,
+        int index);
 
     /** copy color entries from color schemes into m_config */
     void updateFromColorSchemes();
@@ -118,7 +119,10 @@ private:
      */
     void saveScheme(const QString &name);
 
-    void setCommonForeground(KColorScheme::ForegroundRole role, int stackIndex, int buttonIndex);
+    void setCommonForeground(KColorScheme::ForegroundRole role, int stackIndex,
+        int buttonIndex);
+    void setCommonDecoration(KColorScheme::DecorationRole role, int stackIndex,
+        int buttonIndex);
 
     QList<KColorButton *> m_backgroundButtons;
     QList<KColorButton *> m_foregroundButtons;
