@@ -428,19 +428,20 @@ void KColorCm::setupColorTable()
     updateColorTable();
 }
 
-QColor KColorCm::commonForeground(KColorScheme::ForegroundRole index)
+void KColorCm::setCommonForeground(KColorScheme::ForegroundRole index, int stackIndex, int buttonIndex)
 {
-    QColor temp = m_colorSchemes[KColorScheme::View].foreground(index).color();
+    QColor color = m_colorSchemes[KColorScheme::View].foreground(index).color();
     for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
     {
-        if (m_colorSchemes[i].foreground(index).color() != temp)
+        if (m_colorSchemes[i].foreground(index).color() != color)
         {
-            temp = QColor(); // make it an invalid color
-            break;
+            m_stackedWidgets[stackIndex]->setCurrentIndex(1);
+            return;
         }
     }
 
-    return temp;
+    m_stackedWidgets[stackIndex]->setCurrentIndex(0);
+    m_commonColorButtons[buttonIndex]->setColor(color);
 }
 
 void KColorCm::updateColorTable()
@@ -469,53 +470,18 @@ void KColorCm::updateColorTable()
         m_commonColorButtons[7]->setColor(m_colorSchemes[KColorScheme::Selection].foreground(KColorScheme::NormalText).color());
         m_commonColorButtons[8]->setColor(m_colorSchemes[KColorScheme::Selection].foreground(KColorScheme::InactiveText).color());
 
-        QColor color;
-        color = commonForeground(KColorScheme::InactiveText);
-        m_stackedWidgets[0]->setCurrentIndex(color.isValid() ? 0 : 1);
-        if (color.isValid())
-        {
-            m_commonColorButtons[9]->setColor(color);
-        }
-        color = commonForeground(KColorScheme::ActiveText);
-        m_stackedWidgets[1]->setCurrentIndex(color.isValid() ? 0 : 1);
-        if (color.isValid())
-        {
-            m_commonColorButtons[10]->setColor(color);
-        }
-        color = commonForeground(KColorScheme::LinkText);
-        m_stackedWidgets[2]->setCurrentIndex(color.isValid() ? 0 : 1);
-        if (color.isValid())
-        {
-            m_commonColorButtons[11]->setColor(color);
-        }
-        color = commonForeground(KColorScheme::VisitedText);
-        m_stackedWidgets[3]->setCurrentIndex(color.isValid() ? 0 : 1);
-        if (color.isValid())
-        {
-            m_commonColorButtons[12]->setColor(color);
-        }
-        color = commonForeground(KColorScheme::NegativeText);
-        m_stackedWidgets[4]->setCurrentIndex(color.isValid() ? 0 : 1);
-        if (color.isValid())
-        {
-            m_commonColorButtons[13]->setColor(color);
-        }
-        color = commonForeground(KColorScheme::NeutralText);
-        m_stackedWidgets[5]->setCurrentIndex(color.isValid() ? 0 : 1);
-        if (color.isValid())
-        {
-            m_commonColorButtons[14]->setColor(color);
-        }
-        color = commonForeground(KColorScheme::PositiveText);
-        m_stackedWidgets[6]->setCurrentIndex(color.isValid() ? 0 : 1);
-        if (color.isValid())
-        {
-            m_commonColorButtons[15]->setColor(color);
-        }
+        setCommonForeground(KColorScheme::InactiveText, 0,  9);
+        setCommonForeground(KColorScheme::ActiveText,   1, 10);
+        setCommonForeground(KColorScheme::LinkText,     2, 11);
+        setCommonForeground(KColorScheme::VisitedText,  3, 12);
+        setCommonForeground(KColorScheme::NegativeText, 4, 13);
+        setCommonForeground(KColorScheme::NeutralText,  5, 14);
+        setCommonForeground(KColorScheme::PositiveText, 6, 15);
 
         m_commonColorButtons[16]->setColor(m_colorSchemes[KColorScheme::Tooltip].background(KColorScheme::NormalBackground).color());
         m_commonColorButtons[17]->setColor(m_colorSchemes[KColorScheme::Tooltip].foreground(KColorScheme::NormalText).color());
 
+        QColor color;
         color = KConfigGroup(m_config, "WM").readEntry("activeBackground", KGlobalSettings::activeTitleColor());
         m_commonColorButtons[18]->setColor(color);
         color = KConfigGroup(m_config, "WM").readEntry("activeForeground", KGlobalSettings::activeTextColor());
