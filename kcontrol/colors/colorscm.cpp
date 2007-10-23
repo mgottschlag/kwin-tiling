@@ -430,8 +430,8 @@ void KColorCm::setupColorTable()
     updateColorTable();
 }
 
-void KColorCm::setCommonForeground(KColorScheme::ForegroundRole role, int stackIndex, 
-    int buttonIndex)
+void KColorCm::setCommonForeground(KColorScheme::ForegroundRole role, int stackIndex,
+                                   int buttonIndex)
 {
     QColor color = m_colorSchemes[KColorScheme::View].foreground(role).color();
     for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
@@ -451,7 +451,7 @@ void KColorCm::setCommonForeground(KColorScheme::ForegroundRole role, int stackI
 }
 
 void KColorCm::setCommonDecoration(KColorScheme::DecorationRole role, int stackIndex,
-    int buttonIndex)
+                                   int buttonIndex)
 {
     QColor color = m_colorSchemes[KColorScheme::View].decoration(role).color();
     for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
@@ -462,7 +462,7 @@ void KColorCm::setCommonDecoration(KColorScheme::DecorationRole role, int stackI
             return;
         }
     }
-    
+
     m_stackedWidgets[stackIndex]->setCurrentIndex(0);
     m_commonColorButtons[buttonIndex]->setColor(color);
 }
