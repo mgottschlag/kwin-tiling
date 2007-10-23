@@ -118,7 +118,7 @@ private:
      */
     void saveScheme(const QString &name);
 
-    void setCommonForeground(KColorScheme::ForegroundRole index, int stackIndex, int buttonIndex);
+    void setCommonForeground(KColorScheme::ForegroundRole role, int stackIndex, int buttonIndex);
 
     QList<KColorButton *> m_backgroundButtons;
     QList<KColorButton *> m_foregroundButtons;

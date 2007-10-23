@@ -428,12 +428,15 @@ void KColorCm::setupColorTable()
     updateColorTable();
 }
 
-void KColorCm::setCommonForeground(KColorScheme::ForegroundRole index, int stackIndex, int buttonIndex)
+void KColorCm::setCommonForeground(KColorScheme::ForegroundRole role, int stackIndex, int buttonIndex)
 {
-    QColor color = m_colorSchemes[KColorScheme::View].foreground(index).color();
+    QColor color = m_colorSchemes[KColorScheme::View].foreground(role).color();
     for (int i = KColorScheme::Window; i < KColorScheme::Tooltip; ++i)
     {
-        if (m_colorSchemes[i].foreground(index).color() != color)
+        if (i == KColorScheme::Selection && role == KColorScheme::InactiveText)
+            break;
+
+        if (m_colorSchemes[i].foreground(role).color() != color)
         {
             m_stackedWidgets[stackIndex]->setCurrentIndex(1);
             return;
