@@ -86,6 +86,11 @@ inline void copyPaletteBrush(QPalette &palette, QPalette::ColorGroup state,
                              QPalette::ColorRole role)
 {
     palette.setBrush(QPalette::Active, role, palette.brush(state, role));
+    if (state == QPalette::Disabled)
+        // ### hack, while Qt has no inactive+disabled state
+        // TODO copy from Inactive+Disabled to Inactive instead
+        palette.setBrush(QPalette::Inactive, role,
+                         palette.brush(QPalette::Disabled, role));
 }
 
 void PreviewWidget::setPaletteRecursive(QWidget *widget,
