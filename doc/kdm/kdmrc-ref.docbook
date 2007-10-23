@@ -1,4 +1,4 @@
-<!-- generated from ../../workspace/kdm/config.def - DO NOT EDIT! -->
+<!-- generated from ../../kdm/config.def - DO NOT EDIT! -->
 
 <chapter id="kdm-files">
 <title>The Files &kdm; Uses for Configuration</title>
@@ -993,6 +993,16 @@ at the created file.
 </varlistentry>
 
 <varlistentry>
+<term id="option-forceuserauthdir"><option>ForceUserAuthDir</option></term>
+<listitem>
+<para>
+If true, <option>UserAuthDir</option> will be used unconditionally.
+</para>
+<para>The default is <quote>false</quote>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
 <term id="option-autorelogin"><option>AutoReLogin</option></term>
 <listitem>
 <para>
@@ -1228,11 +1238,46 @@ A list of directories containing session type definitions.
 <listitem>
 <para>
 The file (relative to the user's home directory) to redirect the session
-output to. One occurrence of <parameter>%s</parameter> in this string will be
-substituted with the display name. Use <parameter>%%</parameter> to obtain a
-literal <literal>%</literal>.
+output to.
+</para><para>
+The following character pairs are replaced by their value:
+<variablelist>
+<varlistentry>
+<term><parameter>%d</parameter></term>
+<listitem><para>name of the current display</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><parameter>%u</parameter></term>
+<listitem><para>login name of the current user</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><parameter>%r</parameter></term>
+<listitem><para>empty at first. See below.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><parameter>%%</parameter></term>
+<listitem><para>a single <literal>%</literal></para></listitem>
+</varlistentry>
+</variablelist>
+When the constructed filename cannot be used safely and the specification
+contains
+<literal>%</literal><replaceable>stuff</replaceable><literal>r</literal>,
+other names will be tried - this time expanding
+<literal>%</literal><replaceable>stuff</replaceable><literal>r</literal>
+to <replaceable>stuff</replaceable> followed by a random number.
 </para>
 <para>The default is <quote>.xsession-errors</quote>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term id="option-clientlogfallback"><option>ClientLogFallback</option></term>
+<listitem>
+<para>
+Fallback when <option>ClientLogFile</option> cannot be used. The same expansions are
+supported. <emphasis>Do not</emphasis> use relative paths here.
+</para>
+<para>The default is <quote>/tmp/xerr-%u-%d%-r</quote>.</para>
 </listitem>
 </varlistentry>
 
