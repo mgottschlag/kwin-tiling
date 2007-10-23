@@ -311,7 +311,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     // We might want this configurable at some point.
     if (formFactor() == Plasma::Planar ||
         formFactor() == Plasma::MediaCenter) {
-        m_sizeHint = QSize(200, 90);
         // FIXME: this depends on the backgroundcolor of the theme, we'd want a matching contrast
         p->setPen(QPen(Qt::white));
 
