@@ -24,24 +24,24 @@ if( USE_XKLAVIER STREQUAL ON )
     include_directories(${GLIB2_INCLUDE_DIR})
 
   else(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
-
-    MESSAGE (STATUS "Could not find glib, gobject or libxklavier >= 3.0 - kxkb won't be built!")
+    MESSAGE (STATUS "kxkb: Could not find libxklavier >= 3.0, glib or gobject, will try xkbfile...")
   endif(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
-
-else( USE_XKLAVIER STREQUAL ON )
-
-    macro_optional_find_package(XKBFile)
-    if (NOT HAVE_XKBFILE)
-        MESSAGE (STATUS "Could not find xkbfile - kxkb won't be built!")
-    else (NOT HAVE_XKBFILE)
-        SET(XKB_SUPPORT_LIB xkbfile)
-        MESSAGE (STATUS "Using xkbfile to get keyboard layout configuration is not well maintained, please consider installing libxklavier.")
-    endif (NOT HAVE_XKBFILE)
 
 endif( USE_XKLAVIER STREQUAL ON )
 
+if( NOT HAVE_XKLAVIER )
 
-if (HAVE_XKBFILE OR HAVE_XKLAVIER)
+    if (NOT X11_Xkbfile_FOUND)
+        MESSAGE (STATUS "Could not find xkbfile - kxkb won't be built!")
+    else (NOT X11_Xkbfile_FOUND)
+        SET(XKB_SUPPORT_LIB ${X11_Xkbfile_LIB})
+        MESSAGE (STATUS "Using xkbfile for getting keyboard layouts is not well maintained, please consider installing libxklavier.")
+    endif (NOT X11_Xkbfile_FOUND)
+
+endif( NOT HAVE_XKLAVIER )
+
+
+if (X11_Xkbfile_FOUND OR HAVE_XKLAVIER)
 
 #MESSAGE("xkb support libs:: ${XKB_SUPPORT_LIB}")
 
@@ -151,4 +151,4 @@ endif(PLASMA_FOUND)
 #install( FILES kxkb_part.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
 ##install( FILES kxkb_part.rc DESTINATION  ${DATA_INSTALL_DIR}/kxkb_part )
 
-endif (HAVE_XKBFILE OR HAVE_XKLAVIER)
+endif (X11_Xkbfile_FOUND OR HAVE_XKLAVIER)
