@@ -2,102 +2,83 @@
 update_info=kaccel.upd:kde3.3/r1
 
 [Colors:Button]
-BackgroundAlternate=218,221,215
-BackgroundNormal=218,221,215
-DecorationFocus=239,132,65
-DecorationHover=72,177,60
-ForegroundActive=152,154,149
-ForegroundInactive=152,154,149
-ForegroundLink=22,22,240
-ForegroundNegative=107,0,0
-ForegroundNeutral=0,90,95
+BackgroundAlternate=217,217,217
+BackgroundNormal=217,217,217
+DecorationFocus=160,153,120
+DecorationHover=255,212,0
+ForegroundActive=255,0,0
+ForegroundInactive=128,128,128
+ForegroundLink=0,0,238
+ForegroundNegative=128,0,0
+ForegroundNeutral=0,128,128
 ForegroundNormal=0,0,0
-ForegroundPositive=0,95,0
-ForegroundVisited=94,79,109
+ForegroundPositive=0,128,0
+ForegroundVisited=81,24,139
 
 [Colors:Selection]
-BackgroundAlternate=60,131,208
+BackgroundAlternate=188,184,168
 BackgroundNormal=168,168,168
-DecorationFocus=239,132,65
-DecorationHover=72,177,60
-ForegroundActive=177,202,232
-ForegroundInactive=177,202,232
-ForegroundLink=22,22,240
-ForegroundNegative=107,0,0
-ForegroundNeutral=0,90,95
+DecorationFocus=160,153,120
+DecorationHover=255,212,0
+ForegroundActive=255,0,0
+ForegroundInactive=96,96,96
+ForegroundLink=0,0,238
+ForegroundNegative=128,0,0
+ForegroundNeutral=0,128,128
 ForegroundNormal=0,0,0
-ForegroundPositive=0,95,0
-ForegroundVisited=94,79,109
+ForegroundPositive=0,128,0
+ForegroundVisited=81,24,139
 
 [Colors:Tooltip]
-BackgroundAlternate=255,248,209
-BackgroundNormal=255,248,209
-DecorationFocus=239,132,65
-DecorationHover=72,177,60
-ForegroundActive=232,185,149
-ForegroundInactive=232,185,149
-ForegroundLink=22,22,240
-ForegroundNegative=107,0,0
-ForegroundNeutral=0,90,95
+BackgroundAlternate=224,224,160
+BackgroundNormal=255,255,192
+DecorationFocus=160,153,120
+DecorationHover=255,212,0
+ForegroundActive=255,0,0
+ForegroundInactive=128,128,128
+ForegroundLink=0,0,238
+ForegroundNegative=128,0,0
+ForegroundNeutral=0,128,128
 ForegroundNormal=0,0,0
-ForegroundPositive=0,95,0
-ForegroundVisited=94,79,109
+ForegroundPositive=0,128,0
+ForegroundVisited=81,24,139
 
 [Colors:View]
-BackgroundAlternate=241,241,239
+BackgroundAlternate=255,252,235
 BackgroundNormal=255,255,255
-DecorationFocus=239,132,65
-DecorationHover=72,177,60
-ForegroundActive=152,152,152
-ForegroundInactive=152,152,152
-ForegroundLink=22,22,240
-ForegroundNegative=107,0,0
-ForegroundNeutral=0,90,95
+DecorationFocus=160,153,120
+DecorationHover=255,212,0
+ForegroundActive=255,0,0
+ForegroundInactive=128,128,128
+ForegroundLink=0,0,238
+ForegroundNegative=128,0,0
+ForegroundNeutral=0,128,128
 ForegroundNormal=0,0,0
-ForegroundPositive=0,95,0
-ForegroundVisited=94,79,109
+ForegroundPositive=0,128,0
+ForegroundVisited=81,24,139
 
 [Colors:Window]
-BackgroundAlternate=227,227,227
+BackgroundAlternate=227,224,220
 BackgroundNormal=227,227,227
-DecorationFocus=239,132,65
-DecorationHover=72,177,60
-ForegroundActive=152,152,152
-ForegroundInactive=152,152,152
-ForegroundLink=22,22,240
-ForegroundNegative=107,0,0
-ForegroundNeutral=0,90,95
+DecorationFocus=160,153,120
+DecorationHover=255,212,0
+ForegroundActive=255,0,0
+ForegroundInactive=128,128,128
+ForegroundLink=0,0,238
+ForegroundNegative=128,0,0
+ForegroundNeutral=0,128,128
 ForegroundNormal=0,0,0
-ForegroundPositive=0,95,0
-ForegroundVisited=94,79,109
-
-[DirSelect Dialog]
-DirSelectDialog Size=400,450
-History Items=file://$HOME/share/pictures/Taiwan
+ForegroundPositive=0,128,0
+ForegroundVisited=81,24,139
 
 [General]
 shadeSortColumn=true
-widgetStyle=oxygen
 
 [KDE]
-EffectAnimateCombo=false
-EffectAnimateMenu=false
-EffectAnimateTooltip=false
-EffectNoTooltip=false
-InsertTearOffHandle=0
-ShowIconsOnPushButtons=false
 contrast=7
 
-[Toolbar style]
-Highlighting=true
-ToolButtonStyle=TextUnderIcon
-TransparentMoving=true
-
 [WM]
-activeBackground=255,213,0
+activeBackground=255,212,0
 activeForeground=0,0,0
 inactiveBackground=237,237,237
 inactiveForeground=0,0,0
-
-[deprecated Global Shortcuts from kcontrol/keys]
-Defaults timestamp=Oct  7 200709:02:12
