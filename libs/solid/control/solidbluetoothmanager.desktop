@@ -5,15 +5,29 @@ X-KDE-ServiceType=SolidBluetoothManager
 
 Comment=Bluetooth Management Backend
 Comment[be]=Кіраванне Bluetooth
+Comment[bg]=Заден слой за управление на Bluetooth
 Comment[de]=Backend zur Bluetooth-Verwaltung
 Comment[el]=Σύστημα διαχείρισης Bluetooth
+Comment[et]=Bluetoothi haldamise taustaprogramm
 Comment[fa]=پایانۀ پشتیبانی مدیریت بلوتوث
+Comment[he]=ממשק ניהול Bluetooth
 Comment[ja]=Bluetooth 管理のバックエンド
+Comment[kk]=Bluetooth басқару тетігі
+Comment[km]=ការ​គ្រប់គ្រង​ប៊្លូធូស​​កម្មវិធី​ខាង​ក្រោយ
+Comment[ko]=Bluetooth 관리 백엔드
+Comment[lt]=Bluetooth tvarkymo programinė sąsaja
+Comment[nb]=Bakgrunnsmotor for Bluetooth-styring
 Comment[nds]=Hülprogramm för den Bluetooth-Pleger
+Comment[ne]=ब्लुटुथ व्यवस्थापन ब्याकइन्ड
 Comment[nl]=Bluetooth-beheer backend
+Comment[nn]=Motor for Bluetooth-handtering
+Comment[pa]=ਬਲਿਊਟੁੱਥ ਪਰਬੰਧ ਬੈਕਐਂਡ
 Comment[pt]=Infra-Estrutura de Gestão do Bluetooth
-Comment[pt_BR]=Infra-Estrutura de Gestão do Bluetooth
+Comment[pt_BR]=Infra-estrutura do Gerenciamento de Bluetooth
 Comment[sv]=Blåtandshanteringsgränssnitt
+Comment[vi]=Hậu phương quản lý kỹ thuật Bluetooth
+Comment[x-test]=xxBluetooth Management Backendxx
+Comment[zh_CN]=蓝牙管理后端
 Comment[zh_TW]=藍芽管理後端介面
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]

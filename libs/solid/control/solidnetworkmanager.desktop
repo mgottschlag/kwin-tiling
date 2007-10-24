@@ -5,15 +5,28 @@ X-KDE-ServiceType=SolidNetworkManager
 
 Comment=Network Management Backend
 Comment[be]=Кіраванне сеткай
+Comment[bg]=Заден слой за управление на мрежа
 Comment[de]=Backend zur Netzwerkverwaltung
 Comment[el]=Σύστημα διαχείρισης δικτύου
+Comment[et]=Võrgu haldamise taustaprogramm
 Comment[fa]=پایانۀ پشتیبانی مدیریت شبکه
+Comment[he]=ממשק ניהול רשת
 Comment[ja]=ネットワーク管理のバックエンド
+Comment[kk]=Желіні басқару тетігі
+Comment[km]=ការ​គ្រប់គ្រង​បណ្តាញ​កម្មវិធី​ខាងក្រោយ
+Comment[ko]=네트워크 관리 백엔드
+Comment[nb]=Bakgrunnsmotor for nettverksstyring
 Comment[nds]=Hülpprogramm för den Nettwark-Pleger
+Comment[ne]=सञ्जाल व्यवस्थापन ब्याकइन्ड
 Comment[nl]=Netwerkbeheer backend
+Comment[nn]=Motor for nettverkshandtering
+Comment[pa]=ਨੈਟਵਰਕ ਪਰਬੰਧ ਬੈਕਐਂਡ
 Comment[pt]=Infra-Estrutura de Gestão da Rede
-Comment[pt_BR]=Infra-Estrutura de Gestão da Rede
+Comment[pt_BR]=Infra-estrutura do Gerenciamento de Rede
 Comment[sv]=Nätverkshanteringsgränssnitt
+Comment[vi]=Hậu phương quản lý mạng
+Comment[x-test]=xxNetwork Management Backendxx
+Comment[zh_CN]=网络管理后端
 Comment[zh_TW]=網路管理後端介面
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]

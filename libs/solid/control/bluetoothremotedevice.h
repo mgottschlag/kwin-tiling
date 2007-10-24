@@ -23,8 +23,8 @@
 #define SOLID_BLUETOOTHREMOTEDEVICE_H
 
 #include <QtCore/QObject>
-#include <QStringList>
-#include <QMap>
+#include <QtCore/QStringList>
+#include <QtCore/QMap>
 
 #include <solid/control/bluetoothmanager.h>
 #include <solid/control/bluetoothinterface.h>
@@ -36,23 +36,6 @@ namespace Solid
 namespace Control
 {
 class BluetoothRemoteDevicePrivate;
-
-class BluetoothServiceRecord
-{
-	public:
-		QString state;
-		QString name;
-		QString handle;
-		QStringList serviceClasses;
-		QStringList langBaseAttributes;
-		
-		QStringList protocolDescriptors;
-		QMap<QString,QString> protocolChannels;
-		
-		QStringList profileDescriptors;
-		QMap<QString,QString> profileVersions;
-};
-
 /**
  * Represents a bluetooth remote device as seen by the bluetoothing subsystem.
  */
@@ -262,9 +245,26 @@ public Q_SLOTS:
      * Remove bonding bonding of remote device.
      */
     void removeBonding();
-
-    void findServices(const QString &filter = QString());
-
+    /**
+     * Obtains a list of unique identifiers to each service provided by this remote device.
+     * As this is a slow operation, this method only queues the message
+     * in the dbus and returns the list of handles using the serviceHandlesAvailable signal
+     * 
+     * NOTE: Most local adapters won't support more than one search at a time, so serialize your requests
+     * 
+     * @param filter A filter to apply to the search (look at http://wiki.bluez.org/wiki/HOWTO/DiscoveringServices#Searchpatterns)
+     */
+    void serviceHandles(const QString &filter ="") const;
+    /**
+     * Requests the service record associated with the given handle.
+     * As this is a slow operation, this method only queues the message
+     * in the dbus and returns the XML record using the serviceRecordXmlAvailable signal.
+     * 
+     * NOTE: Most local adapters won't support more than one search at a time, so serialize your requests
+     * 
+     * @param handle The handle that uniquely identifies the service record requested.
+     */
+    void serviceRecordAsXml(uint handle) const;
 Q_SIGNALS:
     /**
      * Class has been changed of remote device.
@@ -321,21 +321,15 @@ Q_SIGNALS:
      * Bonding has been removed of remote device.
      */
     void bondingRemoved();
-
+    
     /**
-     * Service discovery has started
+     * Search for service handles is done
      */
-    void serviceDiscoveryStarted(const QString &ubi);
-
+    void serviceHandlesAvailable(const QString &ubi, const QList<uint> &handles);
     /**
-     * A new service has been found
+     * A new service record is available
      */
-    void remoteServiceFound(const QString &ubi, const Solid::Control::BluetoothServiceRecord &service);
-
-    /**
-     * Service discovery has finished
-     */
-    void serviceDiscoveryFinished(const QString &ubi);
+    void serviceRecordXmlAvailable(const QString &ubi, const QString &record);
 protected:
     BluetoothRemoteDevicePrivate *d_ptr;
 
