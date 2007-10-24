@@ -1,7 +1,19 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=New Device Notifier
+Name[et]=Uue seadme teadustaja
+Name[ja]=新しいデバイスの通知
+Name[pt]=Notificação de Dispositivos Novos
+Name[pt_BR]=Notificador de Novo Dispositivo
+Name[sv]=Underrättelse om ny enhet
+Name[zh_TW]=新增裝置通知器
 Comment=New device notifier plasmoid
+Comment[et]=Uue seadme teadustamise plasmoid
+Comment[ja]=新しいデバイスを通知する Plasmoid
+Comment[pt]=Plasmóide de notificação de dispositivos novos
+Comment[pt_BR]=Plasmoid notificador de novo dispositivo
+Comment[sv]=Plasmoid för underrättelse om ny enhet
+Comment[zh_TW]=新增裝置通知器
 Icon=drive-removable-media-usb-pendrive
 Type=Service
 ServiceTypes=Plasma/Applet
