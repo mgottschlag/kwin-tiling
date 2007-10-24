@@ -83,12 +83,27 @@ private slots:
     void on_schemeImportButton_clicked();
 
 private:
+    class WindecoColors {
+        public:
+            enum Role {
+                ActiveForeground = 0,
+                ActiveBackground = 1,
+                InactiveForeground = 2,
+                InactiveBackground = 3
+            };
 
-    /** create a color palette with the WM colors, for createSchemePreviewIcon */
-    static QPalette createWmPreviewPalette(const KSharedConfigPtr&);
+            WindecoColors() {}
+            WindecoColors(const KSharedConfigPtr&);
+            virtual ~WindecoColors() {}
+
+            void load(const KSharedConfigPtr&);
+            QColor color(Role) const;
+        private:
+            QColor m_colors[4];
+    };
 
     /** create a preview of a color scheme */
-    static QPixmap createSchemePreviewIcon(const QPalette &pal, const QPalette &wm);
+    static QPixmap createSchemePreviewIcon(const QPalette &pal, const WindecoColors &wm);
 
     /** populate the schemeList with color schemes found on the system */
     void populateSchemeList();
@@ -136,6 +151,7 @@ private:
     QStringList m_colorKeys;
 
     QList<KColorScheme> m_colorSchemes;
+    WindecoColors m_wmColors;
 
     KSharedConfigPtr m_config;
 };

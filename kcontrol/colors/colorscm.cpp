@@ -43,6 +43,27 @@
 K_PLUGIN_FACTORY( KolorFactory, registerPlugin<KColorCm>(); )
 K_EXPORT_PLUGIN( KolorFactory("kcmcolors") )
 
+//BEGIN WindecoColors
+KColorCm::WindecoColors::WindecoColors(const KSharedConfigPtr &config)
+{
+    load(config);
+}
+
+void KColorCm::WindecoColors::load(const KSharedConfigPtr &config)
+{
+    KConfigGroup group(config, "WM");
+    m_colors[ActiveBackground] = group.readEntry("activeBackground", KGlobalSettings::activeTitleColor());
+    m_colors[ActiveForeground] = group.readEntry("activeForeground", KGlobalSettings::activeTextColor());
+    m_colors[InactiveBackground] = group.readEntry("inactiveBackground", KGlobalSettings::inactiveTitleColor());
+    m_colors[InactiveForeground] = group.readEntry("inactiveForeground", KGlobalSettings::activeTitleColor());
+}
+
+QColor KColorCm::WindecoColors::color(WindecoColors::Role role) const
+{
+    return m_colors[role];
+}
+//END WindecoColors
+
 KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     : KCModule( KolorFactory::componentData(), parent )
 {
@@ -85,13 +106,10 @@ void KColorCm::populateSchemeList()
         QString filename = schemeFiles[i];
         QFileInfo info(filename);
 
-        // create the palettes for the preview icon
-        KSharedConfigPtr config = KSharedConfig::openConfig(filename);
-        QPalette pal = KGlobalSettings::createApplicationPalette(config);
-        QPalette wm = createWmPreviewPalette(config);
-
         // add the entry
-        QIcon icon = createSchemePreviewIcon(pal, wm);
+        KSharedConfigPtr config = KSharedConfig::openConfig(filename);
+        QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(config),
+                                             WindecoColors(config));
         schemeList->addItem(new QListWidgetItem(icon, info.fileName()));
     }
 }
@@ -262,29 +280,7 @@ void KColorCm::variesClicked()
     }
 }
 
-QPalette KColorCm::createWmPreviewPalette(const KSharedConfigPtr &config)
-{
-    QPalette palette;
-    QColor color;
-
-    KConfigGroup group(config, "WM");
-
-    color = group.readEntry("activeBackground", KGlobalSettings::activeTitleColor());
-    palette.setBrush(QPalette::Active, QPalette::Window, color);
-
-    color = group.readEntry("activeForeground", KGlobalSettings::activeTextColor());
-    palette.setBrush(QPalette::Active, QPalette::WindowText, color);
-
-    color = group.readEntry("inactiveBackground", KGlobalSettings::inactiveTitleColor());
-    palette.setBrush(QPalette::Inactive, QPalette::Window, color);
-
-    color = group.readEntry("inactiveForeground", color = KGlobalSettings::activeTitleColor());
-    palette.setBrush(QPalette::Inactive, QPalette::WindowText, color);
-
-    return palette;
-}
-
-QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const QPalette &wm)
+QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const WindecoColors &wm)
 {
     const uchar bits1[] = { 0xff, 0xff, 0xff, 0x2c, 0x16, 0x0b };
     const uchar bits2[] = { 0x68, 0x34, 0x1a, 0xff, 0xff, 0xff };
@@ -303,8 +299,8 @@ QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const QPalette &w
     p.fillRect( 8,  1, 7, 7, pal.brush(QPalette::Button));
     p.fillRect( 9,  2, 5, 2, QBrush(pal.color(QPalette::ButtonText), b1));
 
-    p.fillRect(15,  1, 7, 7, wm.brush(QPalette::Active, QPalette::Window));
-    p.fillRect(16,  2, 5, 2, QBrush(wm.color(QPalette::Active, QPalette::WindowText), b1));
+    p.fillRect(15,  1, 7, 7, wm.color(WindecoColors::ActiveBackground));
+    p.fillRect(16,  2, 5, 2, QBrush(wm.color(WindecoColors::ActiveForeground), b1));
 
     p.fillRect( 1,  8, 7, 7, pal.brush(QPalette::Base));
     p.fillRect( 2, 12, 5, 2, QBrush(pal.color(QPalette::Text), b2));
@@ -312,8 +308,8 @@ QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const QPalette &w
     p.fillRect( 8,  8, 7, 7, pal.brush(QPalette::Highlight));
     p.fillRect( 9, 12, 5, 2, QBrush(pal.color(QPalette::HighlightedText), b2));
 
-    p.fillRect(15,  8, 7, 7, wm.brush(QPalette::Inactive, QPalette::Window));
-    p.fillRect(16, 12, 5, 2, QBrush(wm.color(QPalette::Inactive, QPalette::WindowText), b2));
+    p.fillRect(15,  8, 7, 7, wm.color(WindecoColors::InactiveBackground));
+    p.fillRect(16, 12, 5, 2, QBrush(wm.color(WindecoColors::InactiveForeground), b2));
 
     p.end();
 
@@ -329,6 +325,12 @@ void KColorCm::updateColorSchemes()
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Button, m_config));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Selection, m_config));
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Tooltip, m_config));
+
+    m_wmColors.load(m_config);
+
+    // TODO KConfigGroup KDEgroup(m_config, "KDE");
+    // TODO m_contrast = KDEgroup.readEntry("contrast", contrastSlider->value());
+    // TODO m_shadeSorted = KDEgroup.readEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
 }
 
 void KColorCm::updateFromColorSchemes()
@@ -351,10 +353,10 @@ void KColorCm::updateFromColorSchemes()
     }
 
     KConfigGroup WMGroup(m_config, "WM");
-    WMGroup.writeEntry("activeBackground", m_commonColorButtons[20]->color());
-    WMGroup.writeEntry("activeForeground", m_commonColorButtons[21]->color());
-    WMGroup.writeEntry("inactiveBackground", m_commonColorButtons[22]->color());
-    WMGroup.writeEntry("inactiveForeground", m_commonColorButtons[23]->color());
+    WMGroup.writeEntry("activeBackground", m_wmColors.color(WindecoColors::ActiveBackground));
+    WMGroup.writeEntry("activeForeground", m_wmColors.color(WindecoColors::ActiveForeground));
+    WMGroup.writeEntry("inactiveBackground", m_wmColors.color(WindecoColors::InactiveBackground));
+    WMGroup.writeEntry("inactiveForeground", m_wmColors.color(WindecoColors::InactiveForeground));
 
     KConfigGroup KDEgroup(m_config, "KDE");
     KDEgroup.writeEntry("contrast", contrastSlider->value());
@@ -507,15 +509,10 @@ void KColorCm::updateColorTable()
         m_commonColorButtons[18]->setColor(m_colorSchemes[KColorScheme::Tooltip].background(KColorScheme::NormalBackground).color());
         m_commonColorButtons[19]->setColor(m_colorSchemes[KColorScheme::Tooltip].foreground(KColorScheme::NormalText).color());
 
-        QColor color;
-        color = KConfigGroup(m_config, "WM").readEntry("activeBackground", KGlobalSettings::activeTitleColor());
-        m_commonColorButtons[20]->setColor(color);
-        color = KConfigGroup(m_config, "WM").readEntry("activeForeground", KGlobalSettings::activeTextColor());
-        m_commonColorButtons[21]->setColor(color);
-        color = KConfigGroup(m_config, "WM").readEntry("inactiveBackground", KGlobalSettings::inactiveTitleColor());
-        m_commonColorButtons[22]->setColor(color);
-        color = KConfigGroup(m_config, "WM").readEntry("inactiveForeground", KGlobalSettings::activeTitleColor());
-        m_commonColorButtons[23]->setColor(color);
+        m_commonColorButtons[20]->setColor(m_wmColors.color(WindecoColors::ActiveBackground));
+        m_commonColorButtons[21]->setColor(m_wmColors.color(WindecoColors::ActiveForeground));
+        m_commonColorButtons[22]->setColor(m_wmColors.color(WindecoColors::InactiveBackground));
+        m_commonColorButtons[23]->setColor(m_wmColors.color(WindecoColors::InactiveForeground));
 
         foreach (button, m_commonColorButtons)
         {
