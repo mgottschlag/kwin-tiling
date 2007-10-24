@@ -1717,7 +1717,7 @@ Enabled=true
 
 [General]
 KeepClipboardContents=true
-No Actions for WM_CLASS=Navigator,navigator:browser,konqueror,keditbookmarks,mozilla-bin,Mozilla,Opera main window,opera,gnumeric,Gnumeric,Galeon,kcontrol,ksirc,MozillaFirebird-bin,firefox-bin,Firefox-bin,klipper,Gecko
+No Actions for WM_CLASS=Navigator,navigator:browser,konqueror,keditbookmarks,mozilla-bin,Mozilla,Opera main window,opera,gnumeric,Gnumeric,Galeon,kcontrol,ksirc,MozillaFirebird-bin,firefox-bin,Firefox-bin,klipper,Gecko,gecko
 Number of Actions=7
 PopupAtMousePosition=false
 URLGrabberEnabled=false
