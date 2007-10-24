@@ -664,7 +664,7 @@ void KAccessConfig::load()
 
   systemBell->setChecked(cg.readEntry("SystemBell", true));
   customBell->setChecked(cg.readEntry("ArtsBell", false));
-  soundEdit->setText(cg.readPathEntry("ArtsBellFile"));
+  soundEdit->setText(cg.readPathEntry("ArtsBellFile", QString()));
 
   visibleBell->setChecked(cg.readEntry("VisibleBell", false));
   invertScreen->setChecked(cg.readEntry("VisibleBellInvert", true));
@@ -756,7 +756,7 @@ void KAccessConfig::save()
       customBell->isChecked() ||
       visibleBell->isChecked())
   {
-    KConfig _cfg("kdeglobals", KConfig::CascadeConfig);
+    KConfig _cfg("kdeglobals", KConfig::NoGlobals);
     KConfigGroup cfg(&_cfg, "General");
     cfg.writeEntry("UseSystemBell", true);
     cfg.sync();
@@ -878,7 +878,7 @@ extern "C"
    */
   KDE_EXPORT void kcminit_access()
   {
-    KConfig *config = new KConfig( "kaccessrc", KConfig::CascadeConfig );
+    KConfig *config = new KConfig( "kaccessrc", KConfig::NoGlobals );
     bool run = needToRunKAccessDaemon( config );
 
     delete config;

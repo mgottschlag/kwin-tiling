@@ -435,7 +435,7 @@ void runRdb( uint flags )
   bool exportQtSettings  = flags & KRdbExportQtSettings;
   bool exportXftSettings = flags & KRdbExportXftSettings;
 
-  KConfig _kglobals( "kdeglobals", KConfig::CascadeConfig  );
+  KConfig _kglobals( "kdeglobals", KConfig::NoGlobals  );
   KConfigGroup kglobals(KSharedConfig::openConfig( "kdeglobals" ), "KDE");
 
   KTemporaryFile tmpFile;

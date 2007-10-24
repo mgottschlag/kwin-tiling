@@ -51,7 +51,7 @@ XCursorTheme::XCursorTheme(const QDir &themeDir)
 
 void XCursorTheme::parseIndexFile()
 {
-    KConfig config(path() + "/index.theme", KConfig::CascadeConfig);
+    KConfig config(path() + "/index.theme", KConfig::NoGlobals);
     KConfigGroup cg(&config, "Icon Theme");
 
     m_title       = cg.readEntry("Name",     m_title);

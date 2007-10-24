@@ -92,7 +92,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 
 KColorCm::~KColorCm()
 {
-    m_config->clean();
+    m_config->markAsClean();
 }
 
 void KColorCm::populateSchemeList()
@@ -764,7 +764,8 @@ void KColorCm::on_shadeSortedColumn_stateChanged(int state)
 void KColorCm::load()
 {
     // clean the config, in case we have changed the in-memory kconfig
-    m_config->clean();
+    m_config->markAsClean();
+    m_config->reparseConfiguration();
 
     // update the color table
     updateColorTable();

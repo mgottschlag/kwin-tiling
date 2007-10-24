@@ -277,7 +277,7 @@ void KKeyModule::readScheme( int index )
   //  kc->allDefault( true );
   else {
     KConfig* config = 0;
-    if( index == 0 )	config = new KConfig( "kdeglobals", KConfig::CascadeConfig );
+    if( index == 0 )	config = new KConfig( "kdeglobals", KConfig::NoGlobals );
     //else		config = new KConfig( *sFileList->at( index ), KConfig::SimpleConfig );
 
     actions.readActions( (index == 0) ? KeySet : KeyScheme, config );

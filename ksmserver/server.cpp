@@ -825,7 +825,7 @@ void KSMServer::discardSession()
         // case up to KDE and Qt < 3.1
         int i = 1;
         while ( i <= count &&
-                config.readPathListEntry( QString("discardCommand") + QString::number(i) ) != discardCommand )
+                config.readPathEntry( QString("discardCommand") + QString::number(i), QStringList() ) != discardCommand )
             i++;
         if ( i <= count )
             executeCommand( discardCommand );
@@ -841,7 +841,7 @@ void KSMServer::storeSession()
     KConfigGroup configSessionGroup(config, sessionGroup);
     int count =  configSessionGroup.readEntry( "count", 0 );
     for ( int i = 1; i <= count; i++ ) {
-        QStringList discardCommand = configSessionGroup.readPathListEntry( QLatin1String("discardCommand") + QString::number(i) );
+        QStringList discardCommand = configSessionGroup.readPathEntry( QLatin1String("discardCommand") + QString::number(i), QStringList() );
         if ( discardCommand.isEmpty())
             continue;
         // check that non of the new clients uses the exactly same

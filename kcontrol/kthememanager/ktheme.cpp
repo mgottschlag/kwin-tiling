@@ -170,7 +170,7 @@ QString KTheme::createYourself( bool pack )
         desktopElem.appendChild( patElem );
 
         QDomElement wallElem = m_dom.createElement( "wallpaper" );
-        wallElem.setAttribute( "url", processFilePath( "desktop", group.readPathEntry( "Wallpaper" ) ) );
+        wallElem.setAttribute( "url", processFilePath( "desktop", group.readPathEntry( "Wallpaper", QString() ) ) );
         wallElem.setAttribute( "mode", group.readEntry( "WallpaperMode" ) );
         desktopElem.appendChild( wallElem );
 
@@ -278,7 +278,7 @@ QString KTheme::createYourself( bool pack )
     KConfigGroup konqConf(&_konqConf, "Settings" );
     QDomElement konqElem = m_dom.createElement( "konqueror" );
     QDomElement konqWallElem = m_dom.createElement( "wallpaper" );
-    QString bgImagePath = konqConf.readPathEntry( "BgImage" );
+    QString bgImagePath = konqConf.readPathEntry( "BgImage", QString() );
     konqWallElem.setAttribute( "url", processFilePath( "konqueror", bgImagePath ) );
     konqElem.appendChild( konqWallElem );
     QDomElement konqBgColorElem = m_dom.createElement( "bgcolor" );
@@ -295,7 +295,7 @@ QString KTheme::createYourself( bool pack )
     if ( kickerConf.readEntry( "UseBackgroundTheme" , false) )
     {
         QDomElement backElem = m_dom.createElement( "background" );
-        QString kbgPath = kickerConf.readPathEntry( "BackgroundTheme" );
+        QString kbgPath = kickerConf.readPathEntry( "BackgroundTheme", QString() );
         backElem.setAttribute( "url", processFilePath( "panel", kbgPath ) );
         backElem.setAttribute( "colorize", kickerConf.readEntry( "ColorizeBackground" , false) );
         panelElem.appendChild( backElem );
@@ -785,7 +785,7 @@ void KTheme::createSoundList( const QStringList & events, const QString & object
         KConfigGroup group(cfg, *it);
         if ( group.exists() )
         {
-            QString soundURL = group.readPathEntry( "soundfile" );
+            QString soundURL = group.readPathEntry( "soundfile", QString() );
             int pres = group.readEntry( "presentation", 0 );
             if ( !soundURL.isEmpty() && ( ( pres & 1 ) == 1 ) )
             {

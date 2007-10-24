@@ -107,7 +107,7 @@ void AccessibilityConfig::load(){
 //
 //    systemBell->setChecked(config->readEntry("SystemBell", true));
 //    customBell->setChecked(config->readEntry("ArtsBell", false));
-//    soundEdit->setText(config->readPathEntry("ArtsBellFile"));
+//    soundEdit->setText(config->readPathEntry("ArtsBellFile", QString()));
 //
 //    visibleBell->setChecked(config->readEntry("VisibleBell", false));
 //    invertScreen->setChecked(config->readEntry("VisibleBellInvert", true));

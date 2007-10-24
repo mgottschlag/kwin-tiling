@@ -328,7 +328,7 @@ bool FontAASettings::load()
 
   if(!xft.getHintStyle(hStyle) || KXftConfig::Hint::NotSet==hStyle)
   {
-    KConfig kglobals("kdeglobals", KConfig::CascadeConfig);
+    KConfig kglobals("kdeglobals", KConfig::NoGlobals);
 
     hStyle=KXftConfig::Hint::Medium;
     xft.setHintStyle(hStyle);
@@ -348,7 +348,7 @@ bool FontAASettings::load()
 bool FontAASettings::save( bool useAA )
 {
   KXftConfig   xft(KXftConfig::constStyleSettings);
-  KConfig      kglobals("kdeglobals", KConfig::CascadeConfig);
+  KConfig      kglobals("kdeglobals", KConfig::NoGlobals);
   KConfigGroup grp(&kglobals, "General");
 
   xft.setAntiAliasing( useAA );

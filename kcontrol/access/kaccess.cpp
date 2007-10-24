@@ -128,7 +128,7 @@ void KAccessApp::readSettings()
   // bell ---------------------------------------------------------------
   _systemBell = cg.readEntry("SystemBell", true);
   _artsBell = cg.readEntry("ArtsBell", false);
-  _player->setCurrentSource(cg.readPathEntry("ArtsBellFile"));
+  _player->setCurrentSource(cg.readPathEntry("ArtsBellFile", QString()));
   _visibleBell = cg.readEntry("VisibleBell", false);
   _visibleBellInvert = cg.readEntry("VisibleBellInvert", false);
   _visibleBellColor = cg.readEntry("VisibleBellColor", QColor(Qt::red));

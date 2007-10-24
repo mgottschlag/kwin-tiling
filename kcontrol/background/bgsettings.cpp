@@ -141,7 +141,7 @@ void KBackgroundPattern::readSettings()
 
     const KConfigGroup group = m_pConfig->group("KDE Desktop Pattern");
 
-    m_Pattern = m_kdmMode ? group.readEntry("File") : group.readPathEntry("File");
+    m_Pattern = m_kdmMode ? group.readEntry("File") : group.readPathEntry("File", QString());
     m_Comment = group.readEntry("Comment");
     if (m_Comment.isEmpty())
        m_Comment = m_File.mid(m_File.lastIndexOf('/')+1);
@@ -351,8 +351,8 @@ void KBackgroundProgram::readSettings()
         m_Command = group.readEntry("Command");
         m_PreviewCommand = group.readEntry("PreviewCommand", m_Command);
     } else {
-        m_Executable = group.readPathEntry("Executable");
-        m_Command = group.readPathEntry("Command");
+        m_Executable = group.readPathEntry("Executable", QString());
+        m_Command = group.readPathEntry("Command", QString());
         m_PreviewCommand = group.readPathEntry("PreviewCommand", m_Command);
     }
     m_Refresh = group.readEntry("Refresh", 300);
@@ -539,7 +539,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgrou
         else
             configname.sprintf("kdesktop-screen-%drc", screen_number);
 
-        m_pConfig = KSharedConfig::openConfig(configname, KConfig::CascadeConfig);
+        m_pConfig = KSharedConfig::openConfig(configname, KConfig::NoGlobals);
     } else {
         m_pConfig = config;
     }
@@ -776,11 +776,11 @@ void KBackgroundSettings::readSettings(bool reparse)
     m_ColorA = cg.readEntry("Color1", defColorA);
     m_ColorB = cg.readEntry("Color2", defColorB);
 
-    QString s = m_kdmMode ? cg.readEntry("Pattern") : cg.readPathEntry("Pattern");
+    QString s = m_kdmMode ? cg.readEntry("Pattern") : cg.readPathEntry("Pattern", QString());
     if (!s.isEmpty())
         KBackgroundPattern::load(s);
 
-    s = m_kdmMode ? cg.readEntry("Program") : cg.readPathEntry("Program");
+    s = m_kdmMode ? cg.readEntry("Program") : cg.readPathEntry("Program", QString());
     if (!s.isEmpty())
         KBackgroundProgram::load(s);
 
@@ -811,7 +811,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     m_ReverseBlending = cg.readEntry( "ReverseBlending", defReverseBlending );
 
     // Multiple wallpaper config
-    m_WallpaperList = cg.readPathListEntry("WallpaperList");
+    m_WallpaperList = cg.readPathEntry("WallpaperList", QStringList());
 
     m_Interval = cg.readEntry("ChangeInterval", 60);
     m_LastChange = cg.readEntry("LastChange", 0);
@@ -833,7 +833,7 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
-    m_Wallpaper = m_kdmMode ? cg.readEntry("Wallpaper") : cg.readPathEntry("Wallpaper");
+    m_Wallpaper = m_kdmMode ? cg.readEntry("Wallpaper") : cg.readPathEntry("Wallpaper", QString());
     s = cg.readEntry("WallpaperMode", "invalid");
     if (m_WMMap.contains(s)) {
         int mode = m_WMMap[s];

@@ -226,7 +226,7 @@ bool CursorThemeModel::isCursorTheme(const QString &theme, const int depth)
             continue;
 
         // Open the index.theme file, so we can get the list of inherited themes
-        KConfig config(dir.path() + "/index.theme", KConfig::CascadeConfig);
+        KConfig config(dir.path() + "/index.theme", KConfig::NoGlobals);
         KConfigGroup cg(&config, "Icon Theme");
 
         // Recurse through the list of inherited themes, to check if one of them

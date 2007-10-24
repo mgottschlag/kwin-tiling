@@ -375,7 +375,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
         //_keyEdit->setShortcut( entryInfo->shortcut() );
     }
 
-    QString temp = df->desktopGroup().readPathEntry("Exec");
+    QString temp = df->desktopGroup().readPathEntry("Exec", QString());
     if (temp.left(12) == "ksystraycmd ")
     {
       _execEdit->lineEdit()->setText(temp.right(temp.length()-12));

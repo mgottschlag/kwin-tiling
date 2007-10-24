@@ -136,7 +136,7 @@ void kthememanager::load()
     listThemes();
 
     // Load the current theme name
-    KConfig _conf("kcmthememanagerrc", KConfig::CascadeConfig);
+    KConfig _conf("kcmthememanagerrc", KConfig::NoGlobals);
     KConfigGroup conf(&_conf, "General" );
     QString themeName = conf.readEntry( "CurrentTheme" );
     Q3ListViewItem * cur =  dlg->lvThemes->findItem( themeName, 0 );
@@ -166,7 +166,7 @@ void kthememanager::save()
         m_theme->apply();
 
         // Save the current theme name
-        KConfig _conf("kcmthememanagerrc", KConfig::CascadeConfig);
+        KConfig _conf("kcmthememanagerrc", KConfig::NoGlobals);
         KConfigGroup conf(&_conf, "General" );
         conf.writeEntry( "CurrentTheme", themeName );
         conf.sync();

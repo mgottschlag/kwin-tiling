@@ -15,7 +15,7 @@ bool SaverConfig::read(const QString &file)
     if( !config.tryExec())
       return false;
 #endif
-    mExec = group.readPathEntry("Exec");
+    mExec = group.readPathEntry("Exec", QString());
     mName = group.readEntry("Name");
     QString categoryName = group.readEntry("X-KDE-Category");
     if(categoryName.isEmpty())
@@ -26,12 +26,12 @@ bool SaverConfig::read(const QString &file)
 
     if (config.hasActionGroup("Setup"))
     {
-      mSetup = config.actionGroup("Setup").readPathEntry("Exec");
+      mSetup = config.actionGroup("Setup").readPathEntry("Exec", QString());
     }
 
     if (config.hasActionGroup("InWindow"))
     {
-      mSaver = config.actionGroup("InWindow").readPathEntry("Exec");
+      mSaver = config.actionGroup("InWindow").readPathEntry("Exec", QString());
     }
 
     int indx = file.lastIndexOf('/');

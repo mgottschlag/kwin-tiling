@@ -43,7 +43,7 @@ extern "C"
 {
   KDE_EXPORT void kcminit_mouse()
   {
-      KConfig *config = new KConfig("kcminputrc", KConfig::CascadeConfig );
+      KConfig *config = new KConfig("kcminputrc", KConfig::NoGlobals );
     MouseSettings settings;
     settings.load(config);
     settings.apply(true); // force

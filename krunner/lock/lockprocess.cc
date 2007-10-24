@@ -396,7 +396,7 @@ void LockProcess::readSaver()
 
         if (config.hasActionGroup("Root"))
         {
-            mSaverExec = config.actionGroup("Root").readPathEntry("Exec");
+            mSaverExec = config.actionGroup("Root").readPathEntry("Exec", QString());
         }
     }
 }

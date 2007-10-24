@@ -101,7 +101,7 @@ extern "C" {
 
     KDE_EXPORT void kcminit_energy() {
 #ifdef HAVE_DPMS
-        KConfig *_cfg = new KConfig( "kcmdisplayrc", KConfig::CascadeConfig );
+        KConfig *_cfg = new KConfig( "kcmdisplayrc", KConfig::NoGlobals );
         KConfigGroup cfg(_cfg, "DisplayEnergy");
 
 	Display *dpy = QX11Info::display();
@@ -235,7 +235,7 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
     else
        setButtons( KCModule::Help );
 
-    m_pConfig = new KConfig("kcmdisplayrc", KConfig::CascadeConfig);
+    m_pConfig = new KConfig("kcmdisplayrc", KConfig::NoGlobals);
 
     load();
 }

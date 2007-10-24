@@ -442,7 +442,7 @@ ClipAction::ClipAction( KConfig *kc, const QString& group )
         QString _group = group + "/Command_%1";
         KConfigGroup _cg(kc, _group.arg(i));
 
-        addCommand( _cg.readPathEntry( "Commandline" ),
+        addCommand( _cg.readPathEntry( "Commandline", QString() ),
                     _cg.readEntry( "Description" ), // i18n'ed
                     _cg.readEntry( "Enabled" , false),
                     _cg.readEntry( "Icon") );

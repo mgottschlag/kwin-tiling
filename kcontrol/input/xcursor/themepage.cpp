@@ -224,7 +224,7 @@ void ThemePage::load()
     preview->setTheme(theme);
 
     // Disable the listview and the buttons if we're in kiosk mode
-    if (cg.entryIsImmutable("cursorTheme"))
+    if (cg.isEntryImmutable("cursorTheme"))
     {
         view->setEnabled(false);
         installButton->setEnabled(false);

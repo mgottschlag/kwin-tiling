@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 	const KService::List lst = KServiceTypeTrader::self()->query( "ScreenSaver");
         KService::List availableSavers;
 
-	KConfig type("krandom.kssrc", KConfig::CascadeConfig);
+	KConfig type("krandom.kssrc", KConfig::NoGlobals);
         const KConfigGroup configGroup = type.group("Settings");
 	const bool opengl = configGroup.readEntry("OpenGL", false);
 	const bool manipulatescreen = configGroup.readEntry("ManipulateScreen", false);
@@ -215,7 +215,7 @@ KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
 
 	setMinimumSize( sizeHint() );
 
-	KConfig config("krandom.kssrc", KConfig::CascadeConfig);
+	KConfig config("krandom.kssrc", KConfig::NoGlobals);
         const KConfigGroup configGroup = config.group("Settings");
 	openGL->setChecked(configGroup.readEntry("OpenGL", true));
 	manipulateScreen->setChecked(configGroup.readEntry("ManipulateScreen", true));

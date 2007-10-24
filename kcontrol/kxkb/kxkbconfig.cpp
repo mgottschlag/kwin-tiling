@@ -54,7 +54,7 @@ int KxkbConfig::getDefaultLayout()
 bool KxkbConfig::load(int loadMode)
 {
     kDebug() << "Reading configuration";
-    KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::CascadeConfig ), "Layout");
+    KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
 
 // Even if the layouts have been disabled we still want to set Xkb options
 // user can always switch them off now in the "Options" tab
@@ -108,7 +108,7 @@ bool KxkbConfig::load(int loadMode)
 	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << m_layouts[getDefaultLayout()].toPair();
 
 	QStringList displayNamesList;
-	displayNamesList = config.readEntry("DisplayNames", displayNamesList, ',');
+	displayNamesList = config.readEntry("DisplayNames", displayNamesList);
 	for(QStringList::ConstIterator it = displayNamesList.begin(); it != displayNamesList.end() ; ++it) {
 		QStringList displayNamePair = (*it).split(':');
 		if( displayNamePair.count() == 2 ) {
@@ -201,7 +201,7 @@ bool KxkbConfig::setConfiguredLayouts(QList<LayoutUnit> layoutUnits)
 
 void KxkbConfig::save()
 {
-	KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::CascadeConfig ), "Layout");
+	KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
 
 	config.writeEntry("Model", m_model);
 

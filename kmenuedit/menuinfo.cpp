@@ -302,7 +302,7 @@ void MenuFolderInfo::setInUse(bool inUse)
 
 MenuEntryInfo::~MenuEntryInfo()
 {
-   m_desktopFile->clean();
+   m_desktopFile->markAsClean();
    delete m_desktopFile;
 }
 
