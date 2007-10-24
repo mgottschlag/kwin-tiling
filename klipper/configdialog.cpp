@@ -124,14 +124,14 @@ GeneralWidget::GeneralWidget( QWidget *parent )
 
     popupTimeout = new KIntNumInput(this);
     popupTimeout->setLabel(i18n("Tim&eout for action popups:"));
-    popupTimeout->setRange(0, 200, 1, true);
+    popupTimeout->setRange(0, 200);
     popupTimeout->setSuffix(i18n(" sec"));
     popupTimeout->setToolTip(i18n("A value of 0 disables the timeout"));
     mainLayout->addWidget(popupTimeout);
 
     maxItems = new KIntNumInput(this);
     maxItems->setLabel(i18n("C&lipboard history size:"));
-    maxItems->setRange(2, 2048, 1, true);
+    maxItems->setRange(2, 2048);
     connect(maxItems, SIGNAL(valueChanged(int)), SLOT(historySizeChanged(int)));
     mainLayout->addWidget(maxItems);
 
