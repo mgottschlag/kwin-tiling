@@ -42,13 +42,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QTimer>
 
 #include <kconfig.h>
+#include <kconfiggroup.h>
+#include <kshell.h>
 #include <kdebug.h>
 #include <kwindowsystem.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
-#include <kconfiggroup.h>
 
 /*
 * Legacy session management
@@ -265,7 +266,9 @@ void KSMServer::restoreLegacySessionInternal( KConfigGroup* config, char sep )
     int count = config->readEntry( "count",0 );
     for ( int i = 1; i <= count; i++ ) {
         QString n = QString::number(i);
-        QStringList wmCommand = config->readEntry( QString("command")+n, QStringList(), sep );
+        QStringList wmCommand = (sep == ',') ?
+                config->readEntry( QString("command")+n, QStringList() ) :
+                KShell::splitArgs( config->readEntry( QString("command")+n, QString() ) ); // close enough(?)
         startApplication( wmCommand,
                         config->readEntry( QString("clientMachine")+n, QString() ),
                         config->readEntry( QString("userId")+n, QString() ));
