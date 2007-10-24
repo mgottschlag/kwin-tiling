@@ -85,20 +85,14 @@ SearchBar::~SearchBar()
 }
 bool SearchBar::eventFilter(QObject *watched,QEvent *event)
 {
-    // left and right arrow key presses in the search edit which will
-    // have no effect (because the cursor is already at the start or 
-    // end of the text) are propagated up to the parent widget
-    //
+    // left and right arrow key presses in the search edit when the
+    // edit is empty are propagated up to the parent widget
     // this allows views in the Launcher to use left and right arrows for
     // navigation whilst the search bar still has the focus
     if (watched == d->editWidget && event->type() == QEvent::KeyPress) {
-        QKeyEvent *keyEvent = (QKeyEvent*)event;
-        if (keyEvent->key() == Qt::Key_Left && d->editWidget->cursorPosition()==0) {
-            QCoreApplication::sendEvent(this,event);
-            return true;
-
-        } else if (keyEvent->key() == Qt::Key_Right &&
-                   d->editWidget->cursorPosition() == d->editWidget->text().length()) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if ((keyEvent->key() == Qt::Key_Left || keyEvent->key() == Qt::Key_Right) &&
+            d->editWidget->text().isEmpty()) {
             QCoreApplication::sendEvent(this,event);
             return true;
         }
