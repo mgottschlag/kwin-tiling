@@ -63,6 +63,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
 
     // reimplemented from QAbstractItemView 
     virtual bool isIndexHidden(const QModelIndex& index) const;

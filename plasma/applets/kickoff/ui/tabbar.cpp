@@ -32,6 +32,7 @@ TabBar::TabBar(QWidget *parent)
     : QTabBar(parent),
       m_hoveredTabIndex(-1)
 {
+    //FIXME: should be replaced with a Phase custom animation
     m_animator.setDuration(150);
     m_animator.setCurveShape(QTimeLine::EaseInOutCurve);
     m_animator.setFrameRange(0, 10);

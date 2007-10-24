@@ -304,8 +304,9 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
     if ((object == d->contentSwitcher || object == d->searchBar) && event->type() == QEvent::KeyPress) {
             // we want left/right to still nav the tabbar
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-        if (keyEvent->key() == Qt::Key_Left ||
-            keyEvent->key() == Qt::Key_Right) {
+        if (keyEvent->modifiers() == Qt::NoModifier &&
+            (keyEvent->key() == Qt::Key_Left ||
+             keyEvent->key() == Qt::Key_Right)) {
             if (object == d->contentSwitcher) {
                 return false;
             } else {
