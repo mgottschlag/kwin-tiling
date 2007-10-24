@@ -346,6 +346,7 @@ QModelIndex FlipScrollView::moveCursor(CursorAction cursorAction,Qt::KeyboardMod
                 if (d->currentRoot().isValid()) {
                     index = d->currentRoot();
                     d->setCurrentRoot(d->currentRoot().parent());
+                    setCurrentIndex(index);
                 }
             break;
         case MoveRight:
@@ -361,13 +362,14 @@ QModelIndex FlipScrollView::moveCursor(CursorAction cursorAction,Qt::KeyboardMod
     }
 
     // clear the hovered index
-        update(d->hoveredIndex);
-        d->hoveredIndex = QModelIndex();
-    
+    update(d->hoveredIndex);
+    d->hoveredIndex = index;
+
      //qDebug() << "New index after move" << index.data(Qt::DisplayRole);
 
     return index;
 }
+
 void FlipScrollView::setModel(QAbstractItemModel *model)
 {
     QAbstractItemView::setModel(model);
@@ -375,6 +377,7 @@ void FlipScrollView::setModel(QAbstractItemModel *model)
         setCurrentIndex(model->index(0,0));
     }
 }
+
 void FlipScrollView::setSelection(const QRect& rect , QItemSelectionModel::SelectionFlags flags)
 {
     QItemSelection selection;
@@ -384,8 +387,9 @@ void FlipScrollView::setSelection(const QRect& rect , QItemSelectionModel::Selec
 
 void FlipScrollView::openItem(const QModelIndex& index)
 {
-    if (model()->canFetchMore(index))
+    if (model()->canFetchMore(index)) {
         model()->fetchMore(index);
+    }
 
     bool hasChildren = model()->hasChildren(index);
 
@@ -396,10 +400,12 @@ void FlipScrollView::openItem(const QModelIndex& index)
         //TODO Emit a signal to open/execute the item
     }
 }
+
 void FlipScrollView::resizeEvent(QResizeEvent*)
 {
     d->updateScrollBarRange();
 }
+
 void FlipScrollView::mouseReleaseEvent(QMouseEvent *event)
 {
     if (d->backArrowRect().contains(event->pos()) && d->currentRoot().isValid()) {
@@ -410,6 +416,7 @@ void FlipScrollView::mouseReleaseEvent(QMouseEvent *event)
         QAbstractItemView::mouseReleaseEvent(event);
     }
 }
+
 void FlipScrollView::mouseMoveEvent(QMouseEvent *event) 
 {
     bool mouseOverBackArrow = d->backArrowRect().contains(event->pos());
@@ -422,15 +429,34 @@ void FlipScrollView::mouseMoveEvent(QMouseEvent *event)
         if (itemUnderMouse != d->hoveredIndex && itemUnderMouse.isValid()) {
             update(itemUnderMouse);
             update(d->hoveredIndex);
-        
-            d->hoveredIndex = itemUnderMouse;
 
+            d->hoveredIndex = itemUnderMouse;
             setCurrentIndex(d->hoveredIndex);
         }
 
         QAbstractItemView::mouseMoveEvent(event);
-    } 
+    }
 }
+
+void FlipScrollView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Enter ||
+        event->key() == Qt::Key_Return) {
+        moveCursor(MoveRight, event->modifiers());
+        event->accept();
+        return;
+    }
+
+    if (event->key() == Qt::Key_Escape &&
+        d->currentRoot().isValid()) {
+        moveCursor(MoveLeft, event->modifiers());
+        event->accept();
+        return;
+    }
+
+    QAbstractItemView::keyPressEvent(event);
+}
+
 void FlipScrollView::paintEvent(QPaintEvent * event)
 {
     QPainter painter(viewport());
@@ -539,6 +565,7 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
         painter.restore();
     }
 }
+
 void FlipScrollView::updateFlipAnimation(qreal)
 {
     setDirtyRegion(rect());
