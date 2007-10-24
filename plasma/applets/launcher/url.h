@@ -39,7 +39,7 @@ class Url : public Plasma::Applet
         Url(QObject *parent, const QVariantList &args);
         ~Url();
 
-        QSizeF contentSize() const;
+//        QSizeF contentSizeHint() const;
         void setUrl(const KUrl& url);
 
     public slots:
@@ -48,6 +48,7 @@ class Url : public Plasma::Applet
 
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);
+        void saveState(KConfigGroup *cg);
         //void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
     protected slots:
