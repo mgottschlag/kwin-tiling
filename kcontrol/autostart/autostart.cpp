@@ -181,7 +181,7 @@ void Autostart::addCMD() {
 
 		if ( service->desktopEntryName().isNull() ) {
 			desktopTemplate = KUrl( kgs->autostartPath() + service->name() + ".desktop" );
-			KConfig kc(desktopTemplate.path(), KConfig::OnlyLocal);
+			KConfig kc(desktopTemplate.path(), KConfig::SimpleConfig);
 			KConfigGroup kcg = kc.group("Desktop Entry");
 			kcg.writeEntry("Encoding","UTF-8");
 			kcg.writeEntry("Exec",service->exec());
