@@ -20,7 +20,7 @@
 #include "powermanager.h"
 #include "powermanager_p.h"
 
-#include "../soliddefs_p.h"
+#include "soliddefs_p.h"
 #include "managerbase_p.h"
 #include "ifaces/powermanager.h"
 

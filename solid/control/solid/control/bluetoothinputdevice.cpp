@@ -26,7 +26,7 @@
 
 #include "frontendobject_p.h"
 
-#include "../soliddefs_p.h"
+#include "soliddefs_p.h"
 
 #include "bluetoothinputdevice.h"
 

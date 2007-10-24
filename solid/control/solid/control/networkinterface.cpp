@@ -27,7 +27,7 @@
 
 #include "frontendobject_p.h"
 
-#include "../soliddefs_p.h"
+#include "soliddefs_p.h"
 #include "networkmanager.h"
 #include "network.h"
 #include "network_p.h"

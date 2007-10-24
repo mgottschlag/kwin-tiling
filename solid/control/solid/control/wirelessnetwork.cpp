@@ -21,7 +21,7 @@
 #include "wirelessnetwork.h"
 
 #include "network_p.h"
-#include "../soliddefs_p.h"
+#include "soliddefs_p.h"
 #include <solid/control/ifaces/wirelessnetwork.h>
 
 namespace Solid

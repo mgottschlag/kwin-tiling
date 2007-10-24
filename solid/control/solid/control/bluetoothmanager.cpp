@@ -29,7 +29,7 @@
 #include "ifaces/bluetoothinputdevice.h"
 #include "ifaces/bluetoothsecurity.h"
 
-#include "../soliddefs_p.h"
+#include "soliddefs_p.h"
 #include "managerbase_p.h"
 
 #include "bluetoothinterface.h"

@@ -21,7 +21,7 @@
 #include "network.h"
 #include "network_p.h"
 
-#include "../soliddefs_p.h"
+#include "soliddefs_p.h"
 #include <solid/control/ifaces/network.h>
 
 Solid::Control::Network::Network(QObject *backendObject)

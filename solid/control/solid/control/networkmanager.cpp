@@ -21,7 +21,7 @@
 #include "ifaces/networkmanager.h"
 #include "ifaces/networkinterface.h"
 
-#include "../soliddefs_p.h"
+#include "soliddefs_p.h"
 #include "networkmanager_p.h"
 #include "networkinterface.h"
 

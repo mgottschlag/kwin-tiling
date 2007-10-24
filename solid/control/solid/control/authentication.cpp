@@ -18,7 +18,7 @@
 
 */
 
-#include "../soliddefs_p.h"
+#include "soliddefs_p.h"
 #include "authentication.h"
 #include "networkmanager_p.h"
 #include <solid/control/networkmanager.h>

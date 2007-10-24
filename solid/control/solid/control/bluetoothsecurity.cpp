@@ -26,7 +26,7 @@
 
 #include "ifaces/bluetoothsecurity.h"
 
-#include "../soliddefs_p.h"
+#include "soliddefs_p.h"
 
 #include "bluetoothmanager.h"
 #include "bluetoothsecurity.h"

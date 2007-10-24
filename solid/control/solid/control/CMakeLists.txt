@@ -1,4 +1,8 @@
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/solid/control/ )
+
 add_subdirectory( ifaces )
+add_subdirectory( backends )
+add_subdirectory( tests )
 
 ########### next target ###############
 
