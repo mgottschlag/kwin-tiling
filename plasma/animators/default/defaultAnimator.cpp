@@ -34,9 +34,9 @@ int DefaultAnimator::framesPerSecond(Plasma::Phase::Animation animation)
 {
     switch (animation) {
         case Plasma::Phase::Appear:
-            return 12;
+            return 20;
         case Plasma::Phase::Disappear:
-            return 12;
+            return 20;
 
         default:
             return 0;
@@ -47,9 +47,9 @@ int DefaultAnimator::framesPerSecond(Plasma::Phase::ElementAnimation animation)
 {
     switch (animation) {
         case Plasma::Phase::ElementAppear:
-            return 12;
+            return 20;
         case Plasma::Phase::ElementDisappear:
-            return 12;
+            return 20;
 
         default:
             return 0;
