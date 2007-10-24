@@ -244,6 +244,7 @@ Launcher::Launcher(QWidget *parent)
     d->searchBar->installEventFilter(this);
     d->contentArea = new QStackedWidget(this);
     d->contentSwitcher = new TabBar(this);
+    d->contentSwitcher->installEventFilter(this);
     d->contentSwitcher->setIconSize(QSize(48,48));
     d->contentSwitcher->setShape(QTabBar::RoundedSouth);
     connect( d->contentSwitcher , SIGNAL(currentChanged(int)) , d->contentArea , 
@@ -258,10 +259,8 @@ Launcher::Launcher(QWidget *parent)
     layout->addWidget(d->contentSwitcher);
 
     setLayout(layout);
-
-    // focus the search bar ready for typing 
-    d->searchBar->setFocus();
 }
+
 QSize Launcher::sizeHint() const
 {
     // TODO This is essentially an arbitrarily chosen height which works
@@ -297,14 +296,27 @@ void Launcher::focusFavoritesView()
     d->contentSwitcher->setCurrentIndex(0);
     d->contentArea->setCurrentWidget(d->favoritesView);
 }
+
 bool Launcher::eventFilter(QObject *object, QEvent *event) 
 {
     // deliver unhandled key presses from the search bar 
     // (mainly arrow keys, enter) to the active view
-    if (object == d->searchBar && event->type() == QEvent::KeyPress) {
+    if ((object == d->contentSwitcher || object == d->searchBar) && event->type() == QEvent::KeyPress) {
+            // we want left/right to still nav the tabbar
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Left ||
+            keyEvent->key() == Qt::Key_Right) {
+            if (object == d->contentSwitcher) {
+                return false;
+            } else {
+                QCoreApplication::sendEvent(d->contentSwitcher, event);
+                return true;
+            }
+        }
+
         QAbstractItemView *activeView = qobject_cast<QAbstractItemView*>(d->contentArea->currentWidget());
         if (activeView) {
-            QCoreApplication::sendEvent(activeView,event);
+            QCoreApplication::sendEvent(activeView, event);
             return true; 
         }
     }
@@ -352,8 +364,11 @@ void Launcher::showViewContextMenu(const QPoint& pos)
         d->contextMenuFactory->showContextMenu(view,d->contentArea->mapFromParent(pos));
     }
 }
-void Launcher::keyPressEvent(QKeyEvent *)
+void Launcher::keyPressEvent(QKeyEvent *event)
 {
+    if (event->key() == Qt::Key_Escape) {
+        hide();
+    }
 #if 0
     // allow tab switching by pressing the left or right arrow keys
     if (event->key() == Qt::Key_Left && d->contentSwitcher->currentIndex() > 0) {
@@ -364,6 +379,13 @@ void Launcher::keyPressEvent(QKeyEvent *)
     }
 #endif
 }
+
+void Launcher::showEvent(QShowEvent *)
+{
+    // focus the search bar ready for typing 
+    d->searchBar->setFocus();
+}
+
 void Launcher::paintEvent(QPaintEvent*)
 {
     // TODO - Draw a pretty background here
