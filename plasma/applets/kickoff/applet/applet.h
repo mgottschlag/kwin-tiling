@@ -51,7 +51,10 @@ public:
                                     const QRect &contentsRect);
         QSizeF contentSizeHint() const;
         Qt::Orientations expandingDirections() const;
-        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+        virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+protected:
+        bool sceneEventFilter(QGraphicsItem *object, QEvent *event);
 
 private:
         Kickoff::Launcher *m_launcher;

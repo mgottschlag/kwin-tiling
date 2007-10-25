@@ -30,7 +30,7 @@
 
 // Plasma
 #include <plasma/widgets/boxlayout.h>
-#include <plasma/widgets/pushbutton.h>
+#include <plasma/widgets/icon.h>
 
 // Local
 #include "ui/launcher.h"
@@ -41,28 +41,46 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
 {
 //    setDrawStandardBackground(true);
     m_icon = KIcon("start-here");
+    Plasma::HBoxLayout *layout = new Plasma::HBoxLayout(this);
+    layout->setMargin(0);
+    Plasma::Icon *icon = new Plasma::Icon(m_icon, QString(), this);
+    icon->setFlag(ItemIsMovable, false);
+    icon->installSceneEventFilter(this);
 }
 
 LauncherApplet::~LauncherApplet()
 {
     delete m_launcher;
-    //delete m_button;
 }
 
 void LauncherApplet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect& contentsRect)
 {
-    m_icon.paint(painter,contentsRect.left(),contentsRect.top(),contentsRect.width(),
-                         contentsRect.height());
+    /*m_icon.paint(painter,contentsRect.left(),contentsRect.top(),contentsRect.width(),
+                         contentsRect.height());*/
 }
+
 QSizeF LauncherApplet::contentSizeHint() const
 {
     return QSizeF(48,48);
 }
+
 Qt::Orientations LauncherApplet::expandingDirections() const
 {
     return 0;
 }
-void LauncherApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+
+bool LauncherApplet::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
+{
+    kDebug() << event->type();
+    if (event->type() == QEvent::GraphicsSceneMousePress) {
+        QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
+        mousePressEvent(mouseEvent);
+    }
+
+    return false;
+}
+
+void LauncherApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug() << "Launcher button clicked";
     if (!m_launcher) {
