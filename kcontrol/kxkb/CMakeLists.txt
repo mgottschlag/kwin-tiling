@@ -109,30 +109,25 @@ install(TARGETS kxkb DESTINATION ${BIN_INSTALL_DIR})
 
 if( FALSE )     # don't generate applet - it's not finished yet
 
-find_package(Plasma)
+set(plasma_applet_kxkb_SRCS kxkb_applet.cpp ${kxkb_COMMON_SRCS}
+     kxkbcore.cpp
+     kxkbwidget.cpp
+)
 
-if(PLASMA_FOUND)
+kde4_add_plugin(plasma_applet_kxkb ${plasma_applet_kxkb_SRCS})
 
-    set(plasma_applet_kxkb_SRCS kxkb_applet.cpp ${kxkb_COMMON_SRCS}
-        kxkbcore.cpp
-        kxkbwidget.cpp
-    )
-
-    kde4_add_plugin(plasma_applet_kxkb ${plasma_applet_kxkb_SRCS})
-
-    target_link_libraries(plasma_applet_kxkb plasma
-        ${KDE4_KDEUI_LIBS} ${XKB_SUPPORT_LIB})
+target_link_libraries(plasma_applet_kxkb plasma
+    ${KDE4_KDEUI_LIBS} ${XKB_SUPPORT_LIB})
         
-    if(X11_XTest_FOUND)
-        target_link_libraries(plasma_applet_kxkb ${X11_XTest_LIB})
-    endif(X11_XTest_FOUND)
+if(X11_XTest_FOUND)
+    target_link_libraries(plasma_applet_kxkb ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
 
-    install(TARGETS plasma_applet_kxkb  DESTINATION ${PLUGIN_INSTALL_DIR} )
-    install(FILES plasma-applet-kxkb.desktop  DESTINATION  ${SERVICES_INSTALL_DIR})
+install(TARGETS plasma_applet_kxkb  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(FILES plasma-applet-kxkb.desktop  DESTINATION  ${SERVICES_INSTALL_DIR})
 
-    ADD_DEPENDENCIES(plasma_applet_kxkb kdeinit_kxkb)
+ADD_DEPENDENCIES(plasma_applet_kxkb kdeinit_kxkb)
 
-endif(PLASMA_FOUND)
 endif (FALSE)
 
 ########### KXKB KPart ###############
