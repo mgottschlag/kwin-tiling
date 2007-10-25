@@ -145,7 +145,7 @@ void DeviceNotifier::updated(const QString &source, Plasma::DataEngine::Data dat
 		
 		m_label=new Plasma::Label(this);
 		icon = true;
-		device_name=i18n("A new device has been detected : \n");
+		device_name=i18n("A new device has been detected: \n");
 		device_name+=data["text"].toString();
 		m_label->setPen(QPen(Qt::white));
 		m_label->setText(device_name);
