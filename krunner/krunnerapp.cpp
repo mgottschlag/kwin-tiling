@@ -226,12 +226,13 @@ void KRunnerApp::showTaskManager()
         connect(m_tasks, SIGNAL(finished()),
                 this, SLOT(taskDialogFinished()));
         m_tasks->setButtons(KDialog::Close);
-        QWidget* w = new KSysGuardProcessList(m_tasks);
+        KSysGuardProcessList* w = new KSysGuardProcessList(m_tasks);
         m_tasks->setMainWidget(w);
 
         m_tasks->setInitialSize(QSize(650, 420));
         KConfigGroup cg = KGlobal::config()->group("TaskDialog");
         m_tasks->restoreDialogSize(cg);
+	w->loadSettings(cg);
         // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
         bool keepAbove = cg.readEntry("KeepAbove", true);
 	if(keepAbove) {
@@ -250,6 +251,8 @@ void KRunnerApp::taskDialogFinished()
 {
     KConfigGroup cg = KGlobal::config()->group("TaskDialog");
     m_tasks->saveDialogSize(cg);
+    KSysGuardProcessList *w = static_cast<KSysGuardProcessList *> (m_tasks->mainWidget());
+    if(w) w->saveSettings(cg);
     // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
     bool keepAbove = KWindowSystem::windowInfo(m_tasks->winId(), NET::WMState).hasState(NET::KeepAbove);
     if(keepAbove)
