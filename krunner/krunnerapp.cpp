@@ -232,19 +232,31 @@ void KRunnerApp::showTaskManager()
         m_tasks->setInitialSize(QSize(650, 420));
         KConfigGroup cg = KGlobal::config()->group("TaskDialog");
         m_tasks->restoreDialogSize(cg);
+        // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
+        bool keepAbove = cg.readEntry("KeepAbove", true);
+	if(keepAbove) {
+            KWindowSystem::setState( m_tasks->winId(), NET::KeepAbove );
+	}
+
     }
 
     m_tasks->show();
     m_tasks->raise();
     KWindowSystem::setOnDesktop(m_tasks->winId(), KWindowSystem::currentDesktop());
     KWindowSystem::forceActiveWindow(m_tasks->winId());
-    KWindowSystem::setState( m_tasks->winId(), NET::KeepAbove );
 }
 
 void KRunnerApp::taskDialogFinished()
 {
     KConfigGroup cg = KGlobal::config()->group("TaskDialog");
     m_tasks->saveDialogSize(cg);
+    // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
+    bool keepAbove = KWindowSystem::windowInfo(m_tasks->winId(), NET::WMState).hasState(NET::KeepAbove);
+    if(keepAbove)
+        cg.revertToDefault("KeepAbove");
+    else
+        cg.writeEntry("KeepAbove", false);
+
     KGlobal::config()->sync();
     m_tasks->deleteLater();
     m_tasks = 0;
