@@ -23,7 +23,6 @@
 #include <kdesktopfile.h>
 #include <klocale.h>
 #include <kservice.h>
-#include <ksharedptr.h>
 #include <kprocess.h>
 
 #include "windows.h"
