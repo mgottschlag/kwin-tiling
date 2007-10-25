@@ -45,7 +45,6 @@ if (X11_Xkbfile_FOUND OR HAVE_XKLAVIER)
 
 #MESSAGE("xkb support libs:: ${XKB_SUPPORT_LIB}")
 
-find_package(Plasma)
 
 
 ########### common sources ############
@@ -108,6 +107,10 @@ install(TARGETS kxkb DESTINATION ${BIN_INSTALL_DIR})
 
 ########### KXKB Plasma Applet ###############
 
+if( FALSE )     # don't generate applet - it's not finished yet
+
+find_package(Plasma)
+
 if(PLASMA_FOUND)
 
     set(plasma_applet_kxkb_SRCS kxkb_applet.cpp ${kxkb_COMMON_SRCS}
@@ -130,7 +133,7 @@ if(PLASMA_FOUND)
     ADD_DEPENDENCIES(plasma_applet_kxkb kdeinit_kxkb)
 
 endif(PLASMA_FOUND)
-
+endif (FALSE)
 
 ########### KXKB KPart ###############
 # we're not using KPart for now - it's too heavy
