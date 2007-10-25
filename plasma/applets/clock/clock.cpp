@@ -62,7 +62,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     m_theme->resize(m_pixelSize, m_pixelSize);
 
     connectToEngine();
-    setCachePaintMode(NoCacheMode);
 }
 
 void Clock::connectToEngine()
