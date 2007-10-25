@@ -238,6 +238,7 @@ void KRunnerApp::showTaskManager()
     m_tasks->raise();
     KWindowSystem::setOnDesktop(m_tasks->winId(), KWindowSystem::currentDesktop());
     KWindowSystem::forceActiveWindow(m_tasks->winId());
+    KWindowSystem::setState( m_tasks->winId(), NET::KeepAbove );
 }
 
 void KRunnerApp::taskDialogFinished()
