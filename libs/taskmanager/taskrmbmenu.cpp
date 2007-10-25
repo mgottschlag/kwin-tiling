@@ -235,7 +235,7 @@ QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
 
     QAction *a = m->addAction( i18n("&All Desktops"), this, SLOT( slotToDesktop() ) );
     a->setCheckable(true);
-    toDesktopMap.append( QPair<KSharedPtr<Task>, int>( t, 0 ) ); // 0 means all desktops
+    toDesktopMap.append( QPair<Task::TaskPtr, int>( t, 0 ) ); // 0 means all desktops
     a->setData( it++ );
     a->setChecked( t->isOnAllDesktops() );
 
@@ -245,7 +245,7 @@ QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
         QString name = QString("&%1 %2").arg(i).arg(TaskManager::self()->desktopName(i).replace('&', "&&"));
         a = m->addAction( name, this, SLOT( slotToDesktop() ) );
         a->setCheckable(true);
-        toDesktopMap.append( QPair<KSharedPtr<Task>, int>( t, i ) );
+        toDesktopMap.append( QPair<Task::TaskPtr, int>( t, i ) );
         a->setData( i );
         a->setChecked( !t->isOnAllDesktops() && t->desktop() == i );
     }
@@ -343,7 +343,7 @@ void TaskRMBMenu::slotToDesktop()
 {
     QAction *action = qobject_cast<QAction *>( sender() );
     if( action ) {
-        QPair<KSharedPtr<Task>, int> pair = toDesktopMap[action->data().toInt()];
+        QPair<Task::TaskPtr, int> pair = toDesktopMap[action->data().toInt()];
         pair.first->toDesktop( pair.second );
     }
 }

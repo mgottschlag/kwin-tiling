@@ -57,7 +57,7 @@ private Q_SLOTS:
 private:
 	Task::List tasks;
 	bool showAll;
-	QList< QPair<KSharedPtr<Task>, int> > toDesktopMap;
+	QList< QPair<Task::TaskPtr, int> > toDesktopMap;
 };
 
 #endif
