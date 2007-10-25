@@ -26,7 +26,6 @@
 #include <KUrl>
 #include <KLocale>
 #include <KService>
-#include <KSharedPtr>
 #include <KMimeType>
 #include <KIconLoader>
 #include <KStandardDirs>
@@ -62,7 +61,7 @@ QAction *WebshortcutRunner::accepts(const QString& term) {
         return action;
     }
 
-    foreach (KSharedPtr<KService> service, m_offers) {
+    foreach (KService::Ptr service, m_offers) {
         // hmm, how about getting the keys for the localized sites?
         foreach(QString key, service->property("Keys").toStringList()) {
             // FIXME? should we look for the used separator from the konqi's settings?
