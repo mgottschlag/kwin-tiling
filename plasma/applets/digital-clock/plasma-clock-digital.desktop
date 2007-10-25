@@ -13,6 +13,7 @@ Name[pt]=Relógio Digital
 Name[pt_BR]=Relógio Digital
 Name[sv]=Digitalklocka
 Name[x-test]=xxDigital Clockxx
+Name[zh_CN]=数字钟
 Name[zh_TW]=數位時鐘
 
 Comment=An SVG themable digital clock
@@ -28,6 +29,7 @@ Comment[pt]=Um relógio digital com temas em SVG
 Comment[pt_BR]=Um relógio digital com temas em SVG
 Comment[sv]=En SVG-temabaserad digitalklocka
 Comment[x-test]=xxAn SVG themable digital clockxx
+Comment[zh_CN]=SVG 主题的数字钟
 Comment[zh_TW]=SVG 可調整外觀數位時鐘
 
 Icon=chronometer

@@ -27,6 +27,7 @@ Comment[pt]=Dados dos locais para os Plasmóides
 Comment[pt_BR]=Dados de locais para os Plasmoids
 Comment[sv]=Platsdata för Plasmoider
 Comment[x-test]=xxPlaces data for Plasmoidsxx
+Comment[zh_CN]=Plasmoids 的位置数据
 Comment[zh_TW]=Plasmoid 的 Places 資料
 ServiceTypes=Plasma/DataEngine
 Type=Service

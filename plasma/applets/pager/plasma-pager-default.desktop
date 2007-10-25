@@ -8,6 +8,7 @@ Name[nb]=Sidebytter
 Name[pt]=Paginador
 Name[sv]=Skrivbordsvisning
 Name[x-test]=xxPagerxx
+Name[zh_CN]=分页器
 Name[zh_TW]=呼叫器
 Type=Service
 ServiceTypes=Plasma/Applet
