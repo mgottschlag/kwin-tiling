@@ -19,7 +19,7 @@ Icon=drive-removable-media-usb-pendrive
 Type=Service
 ServiceTypes=Plasma/Applet
 
-X-KDE-Library=plasma_applet_solidnotifier
+X-KDE-Library=plasma_applet_devicenotifier
 X-KDE-PluginInfo-Author=The Plasma Team
 X-KDE-PluginInfo-Email=panel-devel@kde.org
 X-KDE-PluginInfo-Name=notifier
