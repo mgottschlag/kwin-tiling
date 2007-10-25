@@ -58,11 +58,18 @@ Containment::Type Panel::type()
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::LocationConstraint) {
+    if (constraints & Plasma::LocationConstraint ||
+        constraints & Plasma::ScreenConstraint) {
         Plasma::Location loc = location();
-        kDebug() << "Setting location to" << loc;
+        int s = screen();
+        if (s < 0) {
+            s = 0;
+        }
+
+        kDebug() << "Setting location to" << loc << "on screen" << s;
 
         QDesktopWidget desktop;
+        QRect r = desktop.screenGeometry(s);
         int x = 0;
         int y = 0;
         int width = 0;
@@ -70,19 +77,19 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         if (loc == BottomEdge || loc == TopEdge) {
             setFormFactor(Plasma::Horizontal);
 
-            width = desktop.screenGeometry().width();
+            width = r.width();
             height = 48;
             kDebug() << "Width:" << width << ", height:" << height;
             if (loc == BottomEdge) {
-                y = desktop.screenGeometry().height() - height;
+                y = r.height() - height;
             }
         } else if (loc == LeftEdge || loc == RightEdge) {
             setFormFactor(Plasma::Vertical);
 
             width = 48;
-            height = desktop.screenGeometry().height();
+            height = r.height();
             if (loc == RightEdge) {
-                x = desktop.screenGeometry().width() - width;
+                x = r.width() - width;
             }
         }
         kDebug() << "Setting geometry to" << QRectF(x, y, width, height);
