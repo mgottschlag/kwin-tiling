@@ -59,8 +59,6 @@ class LockOut : public Plasma::Applet
         QFont m_font;	
         Plasma::VBoxLayout *m_layout;
         QString * test;
-        KIcon * k_icon_logout;
-        KIcon * k_icon_lock;
 		int m_pixelSize;
 		KDialog *m_dialog;
 

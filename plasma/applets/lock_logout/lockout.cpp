@@ -52,10 +52,8 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
     m_layout->setSpacing(0);
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
-	k_icon_lock = new KIcon("system-lock-screen");
-	m_icon_lock=new Plasma::Icon(*k_icon_lock,"",this);
-	k_icon_logout = new KIcon("system-log-out");
-	m_icon_logout=new Plasma::Icon(*k_icon_logout,"",this);
+	m_icon_lock=new Plasma::Icon(KIcon("system-lock-screen"),"",this);
+	m_icon_logout=new Plasma::Icon(KIcon("system-log-out"),"",this);
 	//setGeometry(QRectF(geometry().x(),geometry().y(),geometry().width()/4,geometry().height()/4));
 	connect(m_icon_lock,SIGNAL(clicked()),this,SLOT(clickLock()));
 	connect(m_icon_logout,SIGNAL(clicked()),this,SLOT(clickLogout()));
