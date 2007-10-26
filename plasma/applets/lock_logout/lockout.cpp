@@ -57,8 +57,8 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
 	k_icon_logout = new KIcon("system-log-out");
 	m_icon_logout=new Plasma::Icon(*k_icon_logout,"",this);
 	//setGeometry(QRectF(geometry().x(),geometry().y(),geometry().width()/4,geometry().height()/4));
-	connect(m_icon_lock,SIGNAL(pressed(bool)),this,SLOT(clickLock(bool)));
-	connect(m_icon_logout,SIGNAL(pressed(bool)),this,SLOT(clickLogout(bool)));
+	connect(m_icon_lock,SIGNAL(clicked()),this,SLOT(clickLock()));
+	connect(m_icon_logout,SIGNAL(clicked()),this,SLOT(clickLogout()));
 }
 
 LockOut::~LockOut()
@@ -86,7 +86,7 @@ void LockOut::configAccepted()
 {
 }
 
-void LockOut::clickLock(bool down)
+void LockOut::clickLock()
 {
 	kDebug()<<"LockOut:: lock clicked ";
 	
@@ -98,7 +98,7 @@ void LockOut::clickLock(bool down)
     }
 }
 
-void LockOut::clickLogout(bool down)
+void LockOut::clickLogout()
 {
 	kDebug()<<"LockOut:: logout clicked ";
 	QString interface("org.kde.ksmserver");

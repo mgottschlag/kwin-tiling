@@ -50,8 +50,8 @@ class LockOut : public Plasma::Applet
     public slots:
 		void showConfigurationInterface();
 		void configAccepted();
-		void clickLogout(bool down);
-		void clickLock(bool down);
+		void clickLogout();
+		void clickLock();
 
     private:
 		Plasma::Icon * m_icon_logout;
