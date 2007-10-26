@@ -353,6 +353,10 @@ QSize AbstractTaskItem::layoutText(QTextLayout &layout, const QString &text,
 
 void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect) const
 {
+    if (rect.width() < 1 || rect.height() < 1) {
+        return;
+    }
+
     QPixmap pixmap(rect.size());
     pixmap.fill(Qt::transparent);
 
