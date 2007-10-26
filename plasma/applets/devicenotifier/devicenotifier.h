@@ -75,9 +75,7 @@ class DeviceNotifier : public Plasma::Applet
         Plasma::DataEngine* SolidEngine;
         QStringList desktop_files;
         QString m_udi;
-        QString * test;
         QString device_name;
-        KIcon * k_icon;
 		int m_pixelSize;
 		int m_height;
 		int m_time;

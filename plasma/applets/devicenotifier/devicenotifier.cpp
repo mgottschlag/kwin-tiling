@@ -44,9 +44,8 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     m_layout = new Plasma::HBoxLayout(this);
     m_layout->setMargin(0);
     m_layout->setSpacing(0);
-    test =new QString("Welcome to Device Notifier");
     m_label=new Plasma::Label(this);
-    m_label->setText(*test);
+    m_label->setText(i18n("Welcome to Device Notifier"));
     m_label->setPen(QPen(Qt::white));    
 
     m_time=5;
@@ -140,8 +139,7 @@ void DeviceNotifier::updated(const QString &source, Plasma::DataEngine::Data dat
 		m_layout->setSpacing(0);
     
 
-		k_icon = new KIcon(icon_temp);
-		m_icon=new Plasma::Icon(*k_icon,"",this);
+		m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
 		
 		m_label=new Plasma::Label(this);
 		icon = true;
@@ -155,8 +153,8 @@ void DeviceNotifier::updated(const QString &source, Plasma::DataEngine::Data dat
 		float size_w=origin_size.width();
 		size_h+=m_icon->iconSize().height();
 		size_w+=m_label->geometry().width();
-		QRectF * temp= new QRectF(origin_size.x(),origin_size.y(),size_w,size_h);
-		setGeometry(*temp);
+		QRectF temp(origin_size.x(),origin_size.y(),size_w,size_h);
+		setGeometry(temp);
 		update();
 		moveUp();
      }
@@ -193,8 +191,8 @@ void DeviceNotifier::showConfigurationInterface()
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
 		ui.spinTime->setValue(m_time);
-        ui.spinHeight->setValue(m_height);
       }
+      ui.spinHeight->setValue(m_height);
       m_dialog->show();
 }
 
