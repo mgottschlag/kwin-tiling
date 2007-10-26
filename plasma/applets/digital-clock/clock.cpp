@@ -75,7 +75,7 @@ void Clock::constraintsUpdated(Plasma::Constraints)
 {
     if (formFactor() == Plasma::Planar ||
         formFactor() == Plasma::MediaCenter) {
-        m_sizeHint = QSize(200, 90);
+        m_sizeHint = QSize(150, 72);
     } else {
         kDebug() << "####################################### Small FormFactor";
         m_sizeHint = QSize(100, 48);
