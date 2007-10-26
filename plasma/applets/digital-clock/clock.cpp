@@ -73,7 +73,6 @@ QSizeF Clock::contentSizeHint() const
 
 void Clock::constraintsUpdated(Plasma::Constraints)
 {
-    prepareGeometryChange();
     if (formFactor() == Plasma::Planar ||
         formFactor() == Plasma::MediaCenter) {
         m_sizeHint = QSize(200, 90);
@@ -81,7 +80,7 @@ void Clock::constraintsUpdated(Plasma::Constraints)
         kDebug() << "####################################### Small FormFactor";
         m_sizeHint = QSize(100, 48);
     }
-    update();
+    updateGeometry();
 }
 
 void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
