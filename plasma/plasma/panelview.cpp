@@ -44,9 +44,8 @@ PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
     setAutoFillBackground(true);
-    setCacheMode(QGraphicsView::CacheBackground);
-   // setDragMode(QGraphicsView::RubberBandDrag);
-    setCacheMode(QGraphicsView::CacheBackground);
+    //setDragMode(QGraphicsView::RubberBandDrag);
+    //setCacheMode(QGraphicsView::CacheBackground);
     setInteractive(true);
     setAcceptDrops(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
