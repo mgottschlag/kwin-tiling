@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Digital Clock
+Name[el]=Ψηφιακό ρολόι
 Name[et]=Digikell
 Name[ga]=Clog Digiteach
 Name[ja]=デジタル時計
@@ -17,6 +18,7 @@ Name[zh_CN]=数字钟
 Name[zh_TW]=數位時鐘
 
 Comment=An SVG themable digital clock
+Comment[el]=Ένα ψηφιακό ρολόι με θέμα SVG
 Comment[et]=SVG teemaga digikell
 Comment[ga]=Clog digiteach le téamaí SVG
 Comment[ja]=SVG テーマを使ったデジタル時計

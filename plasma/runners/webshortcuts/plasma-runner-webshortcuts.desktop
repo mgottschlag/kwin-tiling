@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Webshortcut runner
+Name[el]=Εκτέλεση συντομεύσεων ιστού
 Name[et]=Veebi kiirkorralduste käivitaja
 Name[ja]=ウェブショートカットランナー
 Name[km]=កម្មវិធី​រត់​ផ្លូវកាត់​បណ្ដាញ
@@ -14,6 +15,7 @@ Name[sv]=Kör webbgenvägar
 Name[x-test]=xxWebshortcut runnerxx
 Name[zh_TW]=網頁捷徑執行者
 Comment=Webshortcut runner
+Comment[el]=Εκτέλεση συντομεύσεων ιστού
 Comment[et]=Veebi kiirkorralduste käivitaja
 Comment[ja]=ウェブショートカットランナー
 Comment[km]=កម្មវិធី​រត់​ផ្លូវកាត់​បណ្ដាញ

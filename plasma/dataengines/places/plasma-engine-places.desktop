@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Places Data Engine
+Name[el]=Μηχανή δεδομένων τοποθεσιών
 Name[et]=Asukohtade andmete mootor
 Name[ga]=Inneall Sonraí Áiteanna
 Name[ja]=場所データエンジン
@@ -15,6 +16,7 @@ Name[sv]=Datagränssnitt för platser
 Name[x-test]=xxPlaces Data Enginexx
 Name[zh_TW]=Places 資料引擎
 Comment=Places data for Plasmoids
+Comment[el]=Δεδομένα τοποθεσιών για πλασμοειδή
 Comment[et]=Asukohtade andmed plasmoididele
 Comment[ga]=Sonraí áiteanna le haghaidh Plasmoids
 Comment[ja]=Plasmoid のための場所データ

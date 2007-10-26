@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=New Device Notifier
+Name[el]=Ειδοποίηση νέας συσκευής
 Name[et]=Uue seadme teadustaja
 Name[ja]=新しいデバイスの通知
 Name[pt]=Notificação de Dispositivos Novos
@@ -9,6 +10,7 @@ Name[sv]=Underrättelse om ny enhet
 Name[zh_CN]=新设备通知
 Name[zh_TW]=新增裝置通知器
 Comment=New device notifier plasmoid
+Comment[el]=Πλασμοειδές ειδοποίησης νέας συσκευής
 Comment[et]=Uue seadme teadustamise plasmoid
 Comment[ja]=新しいデバイスを通知する Plasmoid
 Comment[pt]=Plasmóide de notificação de dispositivos novos

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Mouse Data Engine
+Name[el]=Μηχανή δεδομένων ποντικιού
 Name[et]=Hiire andmete mootor
 Name[ja]=マウスデータエンジン
 Name[km]=ម៉ាស៊ីន​ទិន្នន័យ​កណ្ដុរ
@@ -14,6 +15,7 @@ Name[sv]=Datagränssnitt för mus
 Name[x-test]=xxMouse Data Enginexx
 Name[zh_TW]=滑鼠資料引擎
 Comment=Mouse data for Plasmoids
+Comment[el]=Δεδομένα ποντικιού για πλασμοειδή
 Comment[et]=Hiire andmed plasmoididele
 Comment[ga]=Sonraí luiche le haghaidh Plasmoids
 Comment[ja]=Plasmoid のためのマウスデータ

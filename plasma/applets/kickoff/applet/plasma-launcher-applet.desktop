@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Application Launcher
+Name[el]=Εκτέλεση εφαρμογών
 Name[et]=Rakenduste käivitaja
 Name[ga]=Tosaitheoir Feidhmchlár
 Name[ja]=アプリケーションランチャー
@@ -11,6 +12,7 @@ Name[x-test]=xxApplication Launcherxx
 Name[zh_CN]=应用程序启动器
 Name[zh_TW]=應用程式啟動器
 Comment=Launcher to start applications
+Comment[el]=Εκτέλεση εφαρμογών
 Comment[et]=Rakenduste käivitaja
 Comment[ga]=Tosaitheoir a thosaíonn feidhmchláir
 Comment[ja]=アプリケーションを起動するランチャー
