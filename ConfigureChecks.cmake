@@ -16,12 +16,14 @@ if (PAM_FOUND)
 
     macro(install_pam_service APP)
         string(TOUPPER KDE4_${APP}_PAM_SERVICE cvar)
-        # XXX: we shouldn't do this if a DESTDIR is set. how is this done with cmake?
         install(CODE "
-exec_program(${CMAKE_SOURCE_DIR}/workspace/mkpamserv ARGS ${${cvar}} RETURN_VALUE ret)
-if (NOT ret)
-    exec_program(${CMAKE_SOURCE_DIR}/workspace/mkpamserv ARGS -P ${${cvar}}-np)
-endif (NOT ret)
+set(DESTDIR_VALUE \"\$ENV{DESTDIR}\")
+if (NOT DESTDIR_VALUE)
+    exec_program(${CMAKE_SOURCE_DIR}/workspace/mkpamserv ARGS ${${cvar}} RETURN_VALUE ret)
+    if (NOT ret)
+        exec_program(${CMAKE_SOURCE_DIR}/workspace/mkpamserv ARGS -P ${${cvar}}-np)
+    endif (NOT ret)
+endif (NOT DESTDIR_VALUE)
         ")
     endmacro(install_pam_service)
 
