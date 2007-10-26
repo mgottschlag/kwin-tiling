@@ -30,20 +30,9 @@ using namespace Plasma;
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args)
 {
-    //FIXME: we should do in the init, not here in the ctor as we'll end up resizing/positioning at
-    //       start up?
-    // Place us at the bottom by default, and make us 48px high:
-    Plasma::Location loc = Plasma::BottomEdge;
-    if (args.count() >= 3 && args[2].canConvert(QVariant::Int)) {
-        loc = (Plasma::Location)args[2].toInt();
-    }
-    setLocation(loc);
-
     //FIXME: we need a proper background painting implementation here
     m_background = new Plasma::Svg("widgets/panel-background", this);
     setZValue(150);
-    QDesktopWidget desktop;
-    setMaximumSize(desktop.screenGeometry().size());
 }
 
 Panel::~Panel()
@@ -58,6 +47,7 @@ Containment::Type Panel::type()
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
+    kDebug() << "constraints updated with" << constraints << "!!!!!!!!!!!!!!!!!";
     if (constraints & Plasma::LocationConstraint ||
         constraints & Plasma::ScreenConstraint) {
         Plasma::Location loc = location();
@@ -70,6 +60,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
         QDesktopWidget desktop;
         QRect r = desktop.screenGeometry(s);
+        setMaximumSize(r.size());
         int x = 0;
         int y = 0;
         int width = 0;
