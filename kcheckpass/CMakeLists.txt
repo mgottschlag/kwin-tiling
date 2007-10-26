@@ -22,7 +22,11 @@ endif (KDE4_ENABLE_FPIE)
 
 macro_add_compile_flags(kcheckpass -U_REENTRANT)
 target_link_libraries(kcheckpass ${KDE4_KDEFAKES_LIBS} ${UNIXAUTH_LIBRARIES} ${SOCKET_LIBRARIES})
-install(TARGETS kcheckpass DESTINATION ${BIN_INSTALL_DIR} PERMISSIONS SETUID OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+install(TARGETS kcheckpass DESTINATION ${BIN_INSTALL_DIR})
+install(CODE "
+    set(KCP_PATH \"\$ENV{DESTDIR}${BIN_INSTALL_DIR}/kcheckpass\")
+    EXECUTE_PROCESS(COMMAND sh -c \"chown root \${KCP_PATH} && chmod +s \${KCP_PATH}\")
+")
 
 install_pam_service(kcheckpass)
 
