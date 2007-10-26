@@ -68,7 +68,7 @@ void LauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    qDebug() << "Launcher button clicked";
+    //qDebug() << "Launcher button clicked";
     if (!m_launcher) {
         m_launcher = new Kickoff::Launcher(0);
         m_launcher->setWindowFlags(m_launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
