@@ -116,20 +116,19 @@ void Pager::showConfigurationInterface()
 
 void Pager::recalculateGeometry()
 {
-    prepareGeometryChange();
     m_scaleFactor = qreal(m_itemHeight) / QApplication::desktop()->height();
     qreal itemWidth = QApplication::desktop()->width() * m_scaleFactor;
     m_rects.clear();
-    
+
     int columns = m_desktopCount/m_rows + m_desktopCount%m_rows;
     for(int i = 0; i < m_desktopCount; i++) {
-	m_rects.append(QRectF((i%columns)*itemWidth+2*(i%columns),
-			       m_itemHeight*(i/columns) + 2*(i/columns),
-			       itemWidth,
-			       m_itemHeight));
+        m_rects.append(QRectF((i%columns)*itemWidth+2*(i%columns),
+                       m_itemHeight*(i/columns) + 2*(i/columns),
+                       itemWidth,
+                       m_itemHeight));
     }
     m_size = QSizeF(columns*itemWidth + 2*columns - 1,
-		     m_itemHeight*m_rows + 2*m_rows - 1);
+                    m_itemHeight*m_rows + 2*m_rows - 1);
 
     updateGeometry();
 }
@@ -209,9 +208,10 @@ void Pager::activeWindowChanged(WId id)
 void Pager::numberOfDesktopsChanged(int num)
 {
     m_desktopCount = num;
-    if(m_rows > m_desktopCount) {
-	m_rows = m_desktopCount;
+    if (m_rows > m_desktopCount) {
+        m_rows = m_desktopCount;
     }
+    recalculateGeometry();
     m_timer->start();
 }
 
