@@ -46,20 +46,14 @@ public:
         LauncherApplet(QObject *parent, const QVariantList &args);
         virtual ~LauncherApplet();
 
-        virtual void paintInterface(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option, 
-                                    const QRect &contentsRect);
         QSizeF contentSizeHint() const;
         Qt::Orientations expandingDirections() const;
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-protected:
-        bool sceneEventFilter(QGraphicsItem *object, QEvent *event);
+protected slots:
+        void toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event);
 
 private:
         Kickoff::Launcher *m_launcher;
-        Plasma::PushButton *m_button;
-        QIcon m_icon;
 };
 
 K_EXPORT_PLASMA_APPLET(launcher, LauncherApplet)

@@ -40,23 +40,16 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
       m_launcher(0)
 {
 //    setDrawStandardBackground(true);
-    m_icon = KIcon("start-here");
     Plasma::HBoxLayout *layout = new Plasma::HBoxLayout(this);
     layout->setMargin(0);
-    Plasma::Icon *icon = new Plasma::Icon(m_icon, QString(), this);
+    Plasma::Icon *icon = new Plasma::Icon(KIcon("start-here"), QString(), this);
     icon->setFlag(ItemIsMovable, false);
-    icon->installSceneEventFilter(this);
+    connect(icon, SIGNAL(pressed(bool, QGraphicsSceneMouseEvent*)), this, SLOT(toggleMenu(bool,QGraphicsSceneMouseEvent*)));
 }
 
 LauncherApplet::~LauncherApplet()
 {
     delete m_launcher;
-}
-
-void LauncherApplet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect& contentsRect)
-{
-    /*m_icon.paint(painter,contentsRect.left(),contentsRect.top(),contentsRect.width(),
-                         contentsRect.height());*/
 }
 
 QSizeF LauncherApplet::contentSizeHint() const
@@ -69,19 +62,12 @@ Qt::Orientations LauncherApplet::expandingDirections() const
     return 0;
 }
 
-bool LauncherApplet::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
+void LauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event)
 {
-    kDebug() << event->type();
-    if (event->type() == QEvent::GraphicsSceneMousePress) {
-        QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
-        mousePressEvent(mouseEvent);
+    if (!pressed) {
+        return;
     }
 
-    return false;
-}
-
-void LauncherApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
     qDebug() << "Launcher button clicked";
     if (!m_launcher) {
         m_launcher = new Kickoff::Launcher(0);
