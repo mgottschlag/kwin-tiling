@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QtDBus/QtDBus>
+#include <QLineEdit>
 
 #include <KAction>
 #include <KActionCollection>
@@ -211,6 +212,7 @@ void KRunnerApp::showWindowList()
 void KRunnerApp::showTaskManager()
 {
     //kDebug(1204) << "Launching KSysGuard...";
+    KSysGuardProcessList* w = NULL;
     if (!m_tasks) {
         //TODO: move this dialog into its own KDialog subclass
         //      add an expander widget (as seen in the main
@@ -226,7 +228,7 @@ void KRunnerApp::showTaskManager()
         connect(m_tasks, SIGNAL(finished()),
                 this, SLOT(taskDialogFinished()));
         m_tasks->setButtons(KDialog::Close);
-        KSysGuardProcessList* w = new KSysGuardProcessList(m_tasks);
+        w = new KSysGuardProcessList(m_tasks);
         m_tasks->setMainWidget(w);
 
         m_tasks->setInitialSize(QSize(650, 420));
@@ -239,12 +241,16 @@ void KRunnerApp::showTaskManager()
             KWindowSystem::setState( m_tasks->winId(), NET::KeepAbove );
 	}
 
-    }
+    } else
+        w = static_cast<KSysGuardProcessList *> (m_tasks->mainWidget());
+
 
     m_tasks->show();
     m_tasks->raise();
     KWindowSystem::setOnDesktop(m_tasks->winId(), KWindowSystem::currentDesktop());
     KWindowSystem::forceActiveWindow(m_tasks->winId());
+
+    if(w) w->filterLineEdit()->setFocus();
 }
 
 void KRunnerApp::taskDialogFinished()
