@@ -215,12 +215,12 @@ void DefaultDesktop::init()
     m_toolbox->addTool(tool);
 
     tool = new Plasma::PushButton("Zoom In", this);
-    //connect(tool, SIGNAL(clicked()), this, SLOT(launchAppletBrowser()));
+    connect(tool, SIGNAL(clicked()), this, SIGNAL(zoomIn()));
     tool->resize(tool->sizeHint());
     m_toolbox->addTool(tool);
 
     tool = new Plasma::PushButton("Zoom Out", this);
-    //connect(tool, SIGNAL(clicked()), this, SLOT(launchAppletBrowser()));
+    connect(tool, SIGNAL(clicked()), this, SIGNAL(zoomOut()));
     tool->resize(tool->sizeHint());
     m_toolbox->addTool(tool);
 }

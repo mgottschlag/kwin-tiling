@@ -89,6 +89,10 @@ public:
 
     QList<QAction*> contextActions();
 
+signals:
+    void zoomIn();
+    void zoomOut();
+
 protected Q_SLOTS:
     void launchExplorer();
     void launchAppletBrowser();
