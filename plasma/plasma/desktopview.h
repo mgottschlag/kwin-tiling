@@ -48,8 +48,6 @@ protected:
     void wheelEvent(QWheelEvent *event);
 
 private:
-    QAction *m_zoomInAction;
-    QAction *m_zoomOutAction;
     int m_screen;
     Plasma::ZoomLevel m_zoomLevel;
 };

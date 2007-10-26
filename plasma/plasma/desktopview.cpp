@@ -32,6 +32,7 @@
 
 #include "plasma/applet.h"
 #include "plasma/corona.h"
+#include "plasma/containment.h"
 #include "plasma/svg.h"
 
 #include "plasmaapp.h"
@@ -51,17 +52,16 @@ DesktopView::DesktopView(QWidget *parent, int screen)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 //    setContextMenuPolicy(Qt::NoContextMenu);
 
-    setScene(PlasmaApp::self()->corona());
+    Plasma::Corona *corona = PlasmaApp::self()->corona();
+    setScene(corona);
 
-    QDesktopWidget desktop;
-    setSceneRect(desktop.screenGeometry(screen));
-
-    //TODO: should we delay the init of the actions until we actually need them?
-    m_zoomInAction = new QAction(i18n("Zoom In"), this);
-    connect(m_zoomInAction, SIGNAL(triggered(bool)), this, SLOT(zoomIn()));
-    m_zoomInAction->setEnabled(false);
-    m_zoomOutAction = new QAction(i18n("Zoom Out"), this);
-    connect(m_zoomOutAction, SIGNAL(triggered(bool)), this, SLOT(zoomOut()));
+    Plasma::Containment * c = corona->containmentForScreen(screen);
+    kDebug() << "desktop view on screen" << screen << "has containment" << (qint64)c;
+    if (c) {
+        setSceneRect(c->geometry());
+        connect(c, SIGNAL(zoomIn()), this, SLOT(zoomIn()));
+        connect(c, SIGNAL(zoomOut()), this, SLOT(zoomOut()));
+    }
 }
 
 DesktopView::~DesktopView()
@@ -72,12 +72,8 @@ void DesktopView::zoomIn()
 {
     if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::DesktopZoom;
-        m_zoomInAction->setEnabled(false);
-        m_zoomOutAction->setEnabled(true);
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
-        m_zoomInAction->setEnabled(true);
-        m_zoomOutAction->setEnabled(true);
     }
 
     qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
@@ -88,12 +84,8 @@ void DesktopView::zoomOut()
 {
     if (m_zoomLevel == Plasma::DesktopZoom) {
         m_zoomLevel = Plasma::GroupZoom;
-        m_zoomInAction->setEnabled(true);
-        m_zoomOutAction->setEnabled(true);
     } else if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::OverviewZoom;
-        m_zoomInAction->setEnabled(true);
-        m_zoomOutAction->setEnabled(false);
     }
 
     qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
