@@ -46,11 +46,11 @@ public:
 class GenericItemHandler : public UrlItemHandler
 {
 public:
-    virtual bool openUrl(const QUrl& url) const 
+    virtual bool openUrl(const QUrl& url)
     {
         new KRun(url,0);
-        return true; 
-    } 
+        return true;
+    }
 };
 
 class UrlItemLauncher::Private

@@ -37,7 +37,7 @@
 
 using namespace Kickoff;
 
-bool ServiceItemHandler::openUrl(const QUrl& url) const
+bool ServiceItemHandler::openUrl(const QUrl& url)
 {
     int result = KToolInvocation::startServiceByDesktopPath(url.toString(),QStringList(),0,0,0,"",true);
 
@@ -54,7 +54,8 @@ bool ServiceItemHandler::openUrl(const QUrl& url) const
 
     return result == 0;
 }
-bool LeaveItemHandler::openUrl(const QUrl& url) const
+
+bool LeaveItemHandler::openUrl(const QUrl& url)
 {
     QString action = url.path().remove('/');
 

@@ -28,12 +28,12 @@ namespace Kickoff
 class ServiceItemHandler : public UrlItemHandler
 {
 public:
-    virtual bool openUrl(const QUrl& url) const;
+    virtual bool openUrl(const QUrl& url);
 };
 class LeaveItemHandler : public UrlItemHandler
 {
 public:
-    virtual bool openUrl(const QUrl& url) const;
+    virtual bool openUrl(const QUrl& url);
 };
 
 }

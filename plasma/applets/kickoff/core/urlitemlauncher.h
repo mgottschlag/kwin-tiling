@@ -38,7 +38,7 @@ class UrlItemHandler
 {
 public:
     virtual ~UrlItemHandler() {}
-    virtual bool openUrl(const QUrl& url) const = 0;
+    virtual bool openUrl(const QUrl& url) = 0;
 };
 
 /** 
