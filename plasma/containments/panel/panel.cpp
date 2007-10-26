@@ -101,6 +101,7 @@ void Panel::paintInterface(QPainter *painter,
                            const QStyleOptionGraphicsItem *,
                            const QRect& contentsRect)
 {
+    //FIXME: this background drawing is bad and ugly =)
     // draw the background untransformed (saves lots of per-pixel-math)
     painter->save();
     painter->resetTransform();
