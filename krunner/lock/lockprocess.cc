@@ -947,6 +947,12 @@ int LockProcess::execDialog( QDialog *dlg )
 {
     dlg->adjustSize();
 
+    QFrame *winFrame = new QFrame( dlg );
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+    winFrame->setLineWidth( 2 );
+    winFrame->resize( dlg->size() );
+    winFrame->lower();
+
     QRect rect = dlg->geometry();
     rect.moveCenter(KGlobalSettings::desktopGeometry(QCursor::pos()).center());
     dlg->move( rect.topLeft() );
@@ -1153,20 +1159,16 @@ void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
 {
     QDialog box( 0, Qt::X11BypassWindowManagerHint );
     box.setModal( true );
-    QFrame *winFrame = new QFrame( &box );
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
-    winFrame->setLineWidth( 2 );
-    QLabel *label1 = new QLabel( winFrame );
+
+    QLabel *label1 = new QLabel( &box );
     label1->setPixmap( QMessageBox::standardIcon( type ) );
-    QLabel *label2 = new QLabel( txt, winFrame );
-    KPushButton *button = new KPushButton( KStandardGuiItem::ok(), winFrame );
+    QLabel *label2 = new QLabel( txt, &box );
+    KPushButton *button = new KPushButton( KStandardGuiItem::ok(), &box );
     button->setDefault( true );
     button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
     connect( button, SIGNAL( clicked() ), &box, SLOT( accept() ) );
 
-    QVBoxLayout *vbox = new QVBoxLayout( &box );
-    vbox->addWidget( winFrame );
-    QGridLayout *grid = new QGridLayout( winFrame );
+    QGridLayout *grid = new QGridLayout( &box );
     grid->setSpacing( 10 );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );

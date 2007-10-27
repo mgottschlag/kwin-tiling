@@ -86,30 +86,27 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
       mUnlockingFailed(false)
 {
     QWidget* w = mainWidget();
-    frame = new QFrame(w);
-    frame->setFrameStyle( QFrame::Panel | QFrame::Raised );
-    frame->setLineWidth( 2 );
 
-    QLabel *pixLabel = new QLabel( frame );
+    QLabel *pixLabel = new QLabel( w );
     pixLabel->setPixmap(DesktopIcon("system-lock-screen"));
 
     KUser user; QString fullName=user.property(KUser::FullName).toString();
     QLabel *greetLabel = new QLabel( fullName.isEmpty() ?
             i18n("<nobr><b>The session is locked</b></nobr><br />") :
-            i18n("<nobr><b>The session was locked by %1</b></nobr><br />", fullName ), frame );
+            i18n("<nobr><b>The session was locked by %1</b></nobr><br />", fullName ), w );
 
-    mStatusLabel = new QLabel( "<b> </b>", frame );
+    mStatusLabel = new QLabel( "<b> </b>", w );
     mStatusLabel->setAlignment( Qt::AlignCenter );
 
     greet = plugin->info->create(this, w, QString(),
                                  KGreeterPlugin::Authenticate,
                                  KGreeterPlugin::ExUnlock);
 
-    KSeparator *sep = new KSeparator( Qt::Horizontal, frame );
+    KSeparator *sep = new KSeparator( Qt::Horizontal, w );
 
-    ok = new KPushButton( i18n("Unl&ock"), frame );
-    cancel = new KPushButton( KStandardGuiItem::cancel(), frame );
-    mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), frame );
+    ok = new KPushButton( i18n("Unl&ock"), w );
+    cancel = new KPushButton( KStandardGuiItem::cancel(), w );
+    mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), w );
 
     // Using KXKB component
     KPluginFactory *kxkbFactory = KPluginLoader("libkdeinit4_kxkb").factory();
@@ -120,9 +117,6 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     else {
         kDebug() << "can't load kxkb component library";
     }
-
-    QVBoxLayout *unlockDialogLayout = new QVBoxLayout(w);
-    unlockDialogLayout->addWidget( frame );
 
     QHBoxLayout *layStatus = new QHBoxLayout();
     layStatus->setSpacing( KDialog::spacingHint() );
@@ -140,7 +134,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     layButtons->addWidget( ok );
     layButtons->addWidget( cancel );
 
-    frameLayout = new QGridLayout( frame );
+    frameLayout = new QGridLayout( w );
     frameLayout->setSpacing( KDialog::spacingHint() );
     frameLayout->setMargin( KDialog::marginHint() );
     frameLayout->addWidget( pixLabel, 0, 0, 3, 1, Qt::AlignTop );
@@ -469,21 +463,16 @@ void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
     QDialog dialog( this, Qt::X11BypassWindowManagerHint );
     dialog.setModal( true );
-    QFrame *winFrame = new QFrame( &dialog );
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
-    winFrame->setLineWidth( 2 );
-    QVBoxLayout *vbox = new QVBoxLayout( &dialog );
-    vbox->addWidget( winFrame );
 
-    QLabel *label1 = new QLabel( winFrame );
+    QLabel *label1 = new QLabel( &dialog );
     label1->setPixmap( QMessageBox::standardIcon( type ) );
-    QLabel *label2 = new QLabel( text, winFrame );
-    KPushButton *button = new KPushButton( KStandardGuiItem::ok(), winFrame );
+    QLabel *label2 = new QLabel( text, &dialog );
+    KPushButton *button = new KPushButton( KStandardGuiItem::ok(), &dialog );
     button->setDefault( true );
     button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
     connect( button, SIGNAL( clicked() ), SLOT( accept() ) );
 
-    QGridLayout *grid = new QGridLayout( winFrame );
+    QGridLayout *grid = new QGridLayout( &dialog );
     grid->setSpacing( 10 );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
@@ -522,15 +511,9 @@ void PasswordDlg::slotStartNewSession()
     mTimeoutTimerId = 0;
 
     QDialog *dialog = new QDialog( this, Qt::X11BypassWindowManagerHint );
-    dialog->setObjectName( "warnbox" );
     dialog->setModal( true );
-    QFrame *winFrame = new QFrame( dialog );
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
-    winFrame->setLineWidth( 2 );
-    QVBoxLayout *vbox = new QVBoxLayout( dialog );
-    vbox->addWidget( winFrame );
 
-    QLabel *label1 = new QLabel( winFrame );
+    QLabel *label1 = new QLabel( dialog );
     label1->setPixmap( QMessageBox::standardIcon( QMessageBox::Warning ) );
     QString qt_text =
           i18n("You have chosen to open another desktop session "
@@ -545,14 +528,14 @@ void PasswordDlg::slotStartNewSession()
                "Additionally, the KDE Panel and Desktop menus have "
                "actions for switching between sessions.",
              7, 8);
-    QLabel *label2 = new QLabel( qt_text, winFrame );
-    KPushButton *okbutton = new KPushButton( KGuiItem(i18n("&Start New Session"), "fork"), winFrame );
+    QLabel *label2 = new QLabel( qt_text, dialog );
+    KPushButton *okbutton = new KPushButton( KGuiItem(i18n("&Start New Session"), "fork"), dialog );
     okbutton->setDefault( true );
     connect( okbutton, SIGNAL( clicked() ), dialog, SLOT( accept() ) );
-    KPushButton *cbutton = new KPushButton( KStandardGuiItem::cancel(), winFrame );
+    KPushButton *cbutton = new KPushButton( KStandardGuiItem::cancel(), dialog );
     connect( cbutton, SIGNAL( clicked() ), dialog, SLOT( reject() ) );
 
-    QBoxLayout *mbox = new QVBoxLayout( winFrame );
+    QBoxLayout *mbox = new QVBoxLayout( dialog );
     mbox->setMargin( KDialog::marginHint() );
     mbox->setSpacing( KDialog::spacingHint() );
 
@@ -562,7 +545,7 @@ void PasswordDlg::slotStartNewSession()
     grid->setMargin( KDialog::marginHint() );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
-    QCheckBox *cb = new QCheckBox( i18n("&Do not ask again"), winFrame );
+    QCheckBox *cb = new QCheckBox( i18n("&Do not ask again"), dialog );
     grid->addWidget( cb, 1, 0, 1, 2 );
 
     QBoxLayout *hbox = new QHBoxLayout( );
@@ -644,15 +627,9 @@ void PasswordDlg::slotSwitchUser()
     DM dm;
 
     QDialog dialog( this, Qt::X11BypassWindowManagerHint );
-    dialog.setObjectName( "sessbox" );
     dialog.setModal( true );
-    QFrame *winFrame = new QFrame( &dialog );
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
-    winFrame->setLineWidth( 2 );
-    QBoxLayout *vbox = new QVBoxLayout( &dialog );
-    vbox->addWidget( winFrame );
 
-    QBoxLayout *hbox = new QHBoxLayout( winFrame );
+    QBoxLayout *hbox = new QHBoxLayout( &dialog );
     hbox->setSpacing( KDialog::spacingHint() );
     hbox->setMargin( KDialog::marginHint() );
 
@@ -668,7 +645,7 @@ void PasswordDlg::slotSwitchUser()
     SessList sess;
     if (dm.localSessions( sess )) {
 
-        lv = new Q3ListView( winFrame );
+        lv = new Q3ListView( &dialog );
         connect( lv, SIGNAL(doubleClicked(Q3ListViewItem *, const QPoint&, int)), SLOT(slotSessionActivated()) );
         connect( lv, SIGNAL(doubleClicked(Q3ListViewItem *, const QPoint&, int)), &dialog, SLOT(reject()) );
         lv->setAllColumnsShowFocus( true );
@@ -699,7 +676,7 @@ void PasswordDlg::slotSwitchUser()
         lv->header()->adjustHeaderSize();
         vbox1->addWidget( lv );
 
-        btn = new KPushButton( KGuiItem(i18nc("session", "&Activate"), "fork"), winFrame );
+        btn = new KPushButton( KGuiItem(i18nc("session", "&Activate"), "fork"), &dialog );
         connect( btn, SIGNAL(clicked()), SLOT(slotSessionActivated()) );
         connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
         vbox2->addWidget( btn );
@@ -708,7 +685,7 @@ void PasswordDlg::slotSwitchUser()
 
     if (KAuthorized::authorizeKAction("start_new_session") && (p = dm.numReserve()) >= 0)
     {
-        btn = new KPushButton( KGuiItem(i18n("Start &New Session"), "fork"), winFrame );
+        btn = new KPushButton( KGuiItem(i18n("Start &New Session"), "fork"), &dialog );
         connect( btn, SIGNAL(clicked()), SLOT(slotStartNewSession()) );
         connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
         if (!p)
@@ -717,7 +694,7 @@ void PasswordDlg::slotSwitchUser()
         vbox2->addStretch( 1 );
     }
 
-    btn = new KPushButton( KStandardGuiItem::cancel(), winFrame );
+    btn = new KPushButton( KStandardGuiItem::cancel(), &dialog );
     connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
     vbox2->addWidget( btn );
 
