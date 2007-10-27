@@ -41,7 +41,6 @@
 #include <Qt3Support/Q3CheckListItem>
 #include <Qt3Support/Q3Header>
 #include <QCheckBox>
-//Added by qt3to4:
 #include <QGridLayout>
 #include <QEvent>
 #include <QFrame>
@@ -49,6 +48,7 @@
 #include <QBoxLayout>
 #include <QTimerEvent>
 #include <QVBoxLayout>
+#include <QFile>
 
 #include <ctype.h>
 #include <unistd.h>
@@ -445,7 +445,8 @@ void PasswordDlg::gplugStart()
     if (!sPid) {
         ::close(sfd[0]);
         sprintf(fdbuf, "%d", sfd[1]);
-        execlp("kcheckpass", "kcheckpass",
+        execlp(QFile::encodeName(KStandardDirs::findExe("kcheckpass")).data(),
+               "kcheckpass",
 #ifdef HAVE_PAM
                "-c", KSCREENSAVER_PAM_SERVICE,
 #endif
