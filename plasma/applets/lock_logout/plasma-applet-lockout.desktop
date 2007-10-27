@@ -1,7 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Lock/Logout
+Name[pt]=Bloquear/Sair
+Name[pt_BR]=Bloquear/Sair
+Name[sv]=Låsning eller utloggning
 Comment=Let user lock screen or end session
+Comment[pt]=Permitir ao utilizador bloquear o ecrã ou terminar a sessão
+Comment[pt_BR]=Permite que o usuário bloqueie a tela ou termine a sessão
+Comment[sv]=Låter användaren låsa skärmen eller avsluta sessionen
 Icon=system-log-out
 Type=Service
 ServiceTypes=Plasma/Applet
