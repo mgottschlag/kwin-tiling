@@ -121,3 +121,6 @@
 #cmakedefine KDM_DEF_USER_PATH "${KDM_DEF_USER_PATH}"
 #cmakedefine KDM_DEF_SYSTEM_PATH "${KDM_DEF_SYSTEM_PATH}"
 
+/* Parameters to get from bindir to libexecdir */
+#cmakedefine KDM_LIBEXEC_STRIP ${KDM_LIBEXEC_STRIP}
+#cmakedefine KDM_LIBEXEC_SUFFIX "${KDM_LIBEXEC_SUFFIX}/"

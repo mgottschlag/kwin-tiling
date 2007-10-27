@@ -361,7 +361,13 @@ CONF_CORE_GLOBAL_DECLS
 void becomeDaemon( void );
 
 /* in dm.c */
-extern char *prog, *progpath;
+#if KDM_LIBEXEC_STRIP != -1
+extern char *progpath;
+#endif
+#if KDM_LIBEXEC_STRIP
+extern char *progname;
+#endif
+extern char *prog;
 extern time_t now;
 extern SdRec sdRec;
 void startDisplay( struct display *d );

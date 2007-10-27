@@ -493,7 +493,14 @@ gOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 			free( cname );
 		return -1;
 	}
-	if (!strApp( margv, progpath, what, (char *)0 )) {
+#if KDM_LIBEXEC_STRIP == -1
+	if (!strApp( margv, KDM_LIBEXEC_SUFFIX, progname, what, (char *)0 ))
+#elif KDM_LIBEXEC_STRIP == 0
+	if (!strApp( margv, progpath, what, (char *)0 ))
+#else
+	if (!strApp( margv, progpath, "/" KDM_LIBEXEC_SUFFIX, progname, what, (char *)0 ))
+#endif
+	{
 		free( margv );
 		if (cname)
 			free( cname );

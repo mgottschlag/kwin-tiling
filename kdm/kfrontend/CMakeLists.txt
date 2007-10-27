@@ -77,21 +77,21 @@ if (WITH_KDM_XCONSOLE)
   target_link_libraries(kdm_greet ${KDE4_KPTY_LIBS})
 endif (WITH_KDM_XCONSOLE)
 
-install(TARGETS kdm_greet DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS kdm_greet DESTINATION ${LIBEXEC_INSTALL_DIR})
 
 set(kdm_config_SRCS kdm_config.c)
 macro_add_file_dependencies(kdm_config.c ${confci})
 kde4_add_executable(kdm_config NOGUI ${kdm_config_SRCS})
 macro_add_compile_flags(kdm_config -U_REENTRANT)
 target_link_libraries(kdm_config ${SOCKET_LIBRARIES} ${RESOLV_LIBRARIES} ${POSIX4_LIBRARIES})
-install(TARGETS kdm_config DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS kdm_config DESTINATION ${LIBEXEC_INSTALL_DIR})
 
 set(krootimage_SRCS krootimage.cpp krootimage.h ${backgroundlib_SRCS})
 kde4_add_executable(krootimage ${krootimage_SRCS})
 # needs qt3support for q3ptrvector in background/bgrender.cpp
 target_link_libraries(krootimage ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KIO_LIBS} ${QT_QTCORE_LIBRARY}
 ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${BLITZ_LIBRARIES})
-install(TARGETS krootimage DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS krootimage DESTINATION ${LIBEXEC_INSTALL_DIR})
 
 set(genkdmconf_SRCS genkdmconf.c)
 macro_add_file_dependencies(genkdmconf.c ${confci})

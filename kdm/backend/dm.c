@@ -74,7 +74,13 @@ SdRec sdRec = { 0, 0, 0, TO_INF, TO_INF, 0, 0, 0 };
 
 time_t now;
 
-char *prog, *progpath;
+#if KDM_LIBEXEC_STRIP != -1
+char *progpath;
+#endif
+#if KDM_LIBEXEC_STRIP
+char *progname;
+#endif
+char *prog;
 
 int
 main( int argc, char **argv )
@@ -96,11 +102,15 @@ main( int argc, char **argv )
 	if (fcntl( 2, F_GETFD ) < 0)
 		dup2( 0, 2 );
 
+#if KDM_LIBEXEC_STRIP == -1
+	prog = strrchr( argv[0], '/' );
+	progname = prog = prog ? prog + 1 : argv[0];
+#else
 	if (argv[0][0] == '/') {
 		if (!strDup( &progpath, argv[0] ))
 			panic( "Out of memory" );
 	} else
-#ifdef __linux__
+# ifdef __linux__
 	{
 		/* note that this will resolve symlinks ... */
 		int len;
@@ -110,10 +120,10 @@ main( int argc, char **argv )
 		if (!strNDup( &progpath, fullpath, len ))
 			panic( "Out of memory" );
 	}
-#else
-# if 0
-		panic( "Must be invoked with full path specification" );
 # else
+#  if 0
+		panic( "Must be invoked with full path specification" );
+#  else
 	{
 		char directory[PATH_MAX+1];
 		if (!getcwd( directory, sizeof(directory) ))
@@ -152,9 +162,22 @@ main( int argc, char **argv )
 				panic( "Out of memory" );
 		}
 	}
+#  endif
+# endif
+	prog = strrchr( progpath, '/' ) + 1;
+# if KDM_LIBEXEC_STRIP
+	for (progname = pt = prog, fd = 0; fd < KDM_LIBEXEC_STRIP + 1; fd++) {
+		for (;;) {
+			pt--;
+			if (pt == progpath)
+				panic( "Executable is obviously located outside BINDIR" );
+			if (*pt == '/')
+				break;
+		}
+	}
+	*pt = 0;
 # endif
 #endif
-	prog = strrchr( progpath, '/' ) + 1;
 
 #if !defined(HAVE_SETPROCTITLE) && !defined(NOXDMTITLE)
 	title = argv[0];
