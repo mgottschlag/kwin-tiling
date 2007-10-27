@@ -189,6 +189,14 @@ for prefix in `echo "$exepath" | sed -n -e 's,/bin[^/]*/,/env/,p'`; do
   done
 done
 
+# Set the path for Qt plugins provided by KDE
+if test -n "$QT_PLUGIN_PATH"; then
+  QT_PLUGIN_PATH="$QT_PLUGIN_PATH:`kde4-config --path qtplugins`"
+else
+  QT_PLUGIN_PATH="`kde4-config --path qtplugins`"
+fi
+export QT_PLUGIN_PATH
+
 # Activate the kde font directories.
 #
 # There are 4 directories that may be used for supplying fonts for KDE.
