@@ -42,7 +42,7 @@ HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
             this, SLOT(onDeviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
             this, SLOT(onDeviceRemoved(const QString &)));
-    files = KGlobal::dirs()->findAllResources("data", "solid/actions/*.desktop");
+    files = KGlobal::dirs()->findAllResources("data", "solid/actions/");
     //kDebug() <<files.size();
     new_device=false;
 }
@@ -65,7 +65,7 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
         Solid::Predicate predicate = Solid::Predicate::fromString(string_predicate);
         if (predicate.matches(device)) {
             new_device=true;
-            interestingDesktopFiles<<path;
+            interestingDesktopFiles<<KUrl(path).fileName();
         }
     }
 
