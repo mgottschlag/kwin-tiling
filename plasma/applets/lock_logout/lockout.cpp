@@ -41,6 +41,29 @@
 
 using namespace Plasma;
 
+class IconHover : public Plasma::Icon
+{
+	public :
+	IconHover(const QIcon &icon, const QString &text, QGraphicsItem *parent = 0) : Plasma::Icon(icon,text, parent)
+	{
+	  
+	}
+	explicit IconHover(const QString &text, QGraphicsItem *parent = 0) : Plasma::Icon(text, parent)
+	{
+
+	}
+	void hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+	{
+		Icon::hoverEnterEvent(event);
+		kDebug()<<"IconHover::hoverEnterEvent";
+		
+	}
+	void hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+	{
+		Icon::hoverLeaveEvent(event);
+		kDebug()<<"IconHover::hoverLeaveEvent";
+	}
+};
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),m_dialog(0)
@@ -52,8 +75,8 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
     m_layout->setSpacing(0);
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
-	m_icon_lock=new Plasma::Icon(KIcon("system-lock-screen"),"",this);
-	m_icon_logout=new Plasma::Icon(KIcon("system-log-out"),"",this);
+	m_icon_lock=new IconHover(KIcon("system-lock-screen"),"",this);
+	m_icon_logout=new IconHover(KIcon("system-log-out"),"",this);
 	//setGeometry(QRectF(geometry().x(),geometry().y(),geometry().width()/4,geometry().height()/4));
 	connect(m_icon_lock,SIGNAL(clicked()),this,SLOT(clickLock()));
 	connect(m_icon_logout,SIGNAL(clicked()),this,SLOT(clickLogout()));

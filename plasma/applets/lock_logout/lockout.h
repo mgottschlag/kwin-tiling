@@ -36,6 +36,7 @@ namespace Plasma
 } // namespace Plasma
 
 class KDialog;
+class IconHover;
 
 class LockOut : public Plasma::Applet
 {
@@ -54,8 +55,8 @@ class LockOut : public Plasma::Applet
 		void clickLock();
 
     private:
-		Plasma::Icon * m_icon_logout;
-		Plasma::Icon * m_icon_lock;
+		IconHover * m_icon_logout;
+		IconHover * m_icon_lock;
         QFont m_font;	
         Plasma::VBoxLayout *m_layout;
         QString * test;
