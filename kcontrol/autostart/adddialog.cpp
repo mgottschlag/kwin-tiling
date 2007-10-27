@@ -29,14 +29,22 @@ AddDialog::AddDialog (QWidget* parent) : QDialog( parent ) {
 	connect( widget->btnImport, SIGNAL(clicked()), SLOT(importPrg()) );
 	connect( widget->btnAdd, SIGNAL(clicked()), SLOT(addPrg()) );
 	connect( widget->btnCancel, SIGNAL(clicked()), SLOT(reject()) );
+	connect( widget->kurlfrScript, SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
+
+	widget->btnImport->setEnabled(false);
 }
 
 AddDialog::~AddDialog()
 {}
 
+void AddDialog::textChanged(const QString &text) {
+	widget->btnImport->setEnabled(!text.isNull());
+}
+
 KUrl AddDialog::importUrl() {
 	return widget->kurlfrScript->lineEdit()->text();
 }
+
 bool AddDialog::symLink() {
 	return (widget->chkSymlink->checkState() == Qt::Checked);
 }

@@ -38,6 +38,7 @@ public:
 public slots:
 	void addPrg();
 	void importPrg();
+	void textChanged(const QString &text);
 
 private:
 	Ui_AddDialog * widget;
