@@ -38,13 +38,6 @@ class FDialog : public QDialog {
 	FDialog( QWidget *parent = 0, bool framed = true );
 	virtual int exec();
 
-	static void box( QWidget *parent, QMessageBox::Icon type,
-	                 const QString &text );
-#define errorbox QMessageBox::Critical
-#define sorrybox QMessageBox::Warning
-#define infobox QMessageBox::Information
-	void msgBox( QMessageBox::Icon typ, const QString &msg ) { box( this, typ, msg ); }
-
   protected:
 	virtual void resizeEvent( QResizeEvent *e );
 	virtual void mousePressEvent( QMouseEvent *e );
@@ -57,11 +50,19 @@ class FDialog : public QDialog {
 	QPoint mouseStartPos, dialogStartPos;
 };
 
+#define errorbox QMessageBox::Critical
+#define sorrybox QMessageBox::Warning
+#define infobox QMessageBox::Information
+
 class KFMsgBox : public FDialog {
 	typedef FDialog inherited;
 
-  public:
+  private:
 	KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text );
+
+  public:
+	static void box( QWidget *parent, QMessageBox::Icon type,
+	                 const QString &text );
 };
 
 #endif /* FDIALOG_H */

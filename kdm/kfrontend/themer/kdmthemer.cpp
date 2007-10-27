@@ -64,19 +64,19 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode,
 	}
 	QFile opmlFile( filename );
 	if (!opmlFile.open( QIODevice::ReadOnly )) {
-		FDialog::box( w, errorbox, i18n( "Cannot open theme file %1" , filename) );
+		KFMsgBox::box( w, errorbox, i18n( "Cannot open theme file %1" , filename) );
 		return;
 	}
 	QDomDocument domTree;
 	if (!domTree.setContent( &opmlFile )) {
-		FDialog::box( w, errorbox, i18n( "Cannot parse theme file %1" , filename) );
+		KFMsgBox::box( w, errorbox, i18n( "Cannot parse theme file %1" , filename) );
 		return;
 	}
 	// generate all the items defined in the theme
 	const QDomElement &theme = domTree.documentElement();
 	// Get its tag, and check it's correct ("greeter")
 	if (theme.tagName() != "greeter") {
-		FDialog::box( w, errorbox, i18n( "%1 does not seem to be a correct theme file" , filename) );
+		KFMsgBox::box( w, errorbox, i18n( "%1 does not seem to be a correct theme file" , filename) );
 		return;
 	}
 

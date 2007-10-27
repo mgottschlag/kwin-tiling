@@ -451,8 +451,8 @@ void // private static
 KGVerify::vrfMsgBox( QWidget *parent, const QString &user,
                      QMessageBox::Icon type, const QString &mesg )
 {
-	FDialog::box( parent, type, user.isEmpty() ?
-	              mesg : i18n("Logging in %1 ...\n\n", user ) + mesg );
+	KFMsgBox::box( parent, type, user.isEmpty() ?
+	               mesg : i18n("Logging in %1 ...\n\n", user ) + mesg );
 }
 
 static const char *msgs[]= {
@@ -867,7 +867,7 @@ void
 KGVerify::msgBox( QMessageBox::Icon typ, const QString &msg )
 {
 	timer.suspend();
-	FDialog::box( parent, typ, msg );
+	KFMsgBox::box( parent, typ, msg );
 	timer.resume();
 }
 

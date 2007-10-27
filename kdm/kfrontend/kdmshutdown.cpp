@@ -347,7 +347,7 @@ KDMShutdown::accept()
 	else if (le_start->text()[0] == '+')
 		sch_st = time( 0 ) + le_start->text().toInt();
 	else if ((sch_st = getDate( le_start->text().toLatin1() )) < 0) {
-		msgBox( errorbox, i18n("Entered start date is invalid.") );
+		KFMsgBox::box( this, errorbox, i18n("Entered start date is invalid.") );
 		le_start->setFocus();
 		return;
 	}
@@ -356,7 +356,7 @@ KDMShutdown::accept()
 	else if (le_timeout->text()[0] == '+')
 		sch_to = sch_st + le_timeout->text().toInt();
 	else if ((sch_to = getDate( le_timeout->text().toLatin1() )) < 0) {
-		msgBox( errorbox, i18n("Entered timeout date is invalid.") );
+		KFMsgBox::box( this, errorbox, i18n("Entered timeout date is invalid.") );
 		le_timeout->setFocus();
 		return;
 	}
