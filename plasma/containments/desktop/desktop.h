@@ -22,6 +22,7 @@
 #include <QGraphicsItem>
 #include <QList>
 #include <QObject>
+#include <QStyleOptionGraphicsItem>
 
 #include <KIcon>
 
@@ -35,6 +36,7 @@ class QTimeLine;
 namespace Plasma
 {
     class AppletBrowser;
+    class Svg;
 }
 
 /*class Tool : public QObject, public QGraphicsItem
@@ -89,6 +91,14 @@ public:
 
     QList<QAction*> contextActions();
 
+    /**
+     * Paints a default background image. Nothing fancy, but that's what plugins
+     * are for. Reimplemented from Plasma::Containment;
+     */
+    void paintInterface(QPainter *painter,
+                        const QStyleOptionGraphicsItem *option,
+                        const QRect& contentsRect);
+
 signals:
     void zoomIn();
     void zoomOut();
@@ -108,6 +118,9 @@ private:
     QAction *m_logoutAction;
     ToolBox *m_toolbox;
     Plasma::AppletBrowser *m_appletBrowser;
+    Plasma::Svg *m_background;
+    QPixmap* m_bitmapBackground;
+    QString m_wallpaperPath;
 };
 
 #endif // PLASMA_PANEL_H
