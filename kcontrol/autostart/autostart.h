@@ -33,7 +33,6 @@
 
 #include "ui_autostartconfig.h"
 #include "adddialog.h"
-#include "listdelegate.h"
 
 class Desktop;
 class Autostart: public KCModule
@@ -53,7 +52,7 @@ public:
 public slots:
 	void addCMD();
 	void removeCMD();
-	void editCMD(Desktop*);
+	void editCMD(QTreeWidgetItem*);
 	bool editCMD(const KFileItem&);
 	void editCMD();
 	void setStartOn(int);

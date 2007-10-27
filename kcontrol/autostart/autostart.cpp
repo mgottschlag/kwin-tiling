@@ -72,14 +72,12 @@ Autostart::Autostart( QWidget* parent, const QVariantList& )
 
 	connect( widget->btnAdd, SIGNAL(clicked()), SLOT(addCMD()) );
 	connect( widget->btnRemove, SIGNAL(clicked()), SLOT(removeCMD()) );
-	//connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(editCMD(QTreeWidgetItem*)) );
+	connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(editCMD(QTreeWidgetItem*)) );
 	connect( widget->btnProperties, SIGNAL(clicked()), SLOT(editCMD()) );
 	connect( widget->cmbStartOn, SIGNAL(activated(int)), SLOT(setStartOn(int)) );
 	connect( widget->listCMD, SIGNAL(itemSelectionChanged()), SLOT(selectionChanged()) );
 
 	widget->listCMD->setFocus();
-
-	widget->listCMD->setItemDelegate(new ListDelegate(this));
 
     load();
 
@@ -102,16 +100,16 @@ void Autostart::load()
 	// shutdown and env may *only* contain scripts, links or binaries
 	// autostart on the otherhand may contain all of the above.
 	// share/autostart is special as it overrides entries found in $KDEDIR/share/autostart
-	paths << KGlobalSettings::autostartPath()
-//		  << componentData().dirs()->localkdedir() + "shutdown/"
-//		  << componentData().dirs()->localkdedir() + "env/"
-		  << componentData().dirs()->localkdedir() + "share/autostart"
+	paths << KGlobalSettings::autostartPath()	// All new entries sholud go here
+		  << componentData().dirs()->localkdedir() + "shutdown/"
+		  << componentData().dirs()->localkdedir() + "env/"
+		  << componentData().dirs()->localkdedir() + "share/autostart"	// For Importing purposes
 		;
 
 	// share/autostart shouldn't be an option as this should be reserved for global autostart entries
-	pathName << i18n("Autostart")
-// 			 << i18n("Shutdown")
-// 			 << i18n("Pre-Desktop")
+	pathName << i18n("Startup")
+			 << i18n("Shutdown")
+			 << i18n("Pre-KDE startup")
 			 ;
 	widget->cmbStartOn->addItems(pathName);
 
@@ -143,7 +141,6 @@ void Autostart::load()
 				item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 				item->setText( 2, service->exec() );
 			}
-			widget->listCMD->openPersistentEditor(item);
 		}
 	}
 }
@@ -155,7 +152,6 @@ void Autostart::addCMD() {
 	if (result == QDialog::Rejected) {
 		return;
 	} else if (result == 3) {
-		// For now Default into the first path, which should be ~/.kde/Autostart
 		if (addDialog->symLink())
 			KIO::link(addDialog->importUrl(), paths[0]);
 		else
@@ -224,9 +220,9 @@ void Autostart::removeCMD() {
 
 	emit changed(true);
 }
-
-void Autostart::editCMD(Desktop* entry) {
-	if (!entry) return;
+void Autostart::editCMD(QTreeWidgetItem* ent) {
+	if (!ent) return;
+	Desktop *entry = (Desktop*)ent;
 
 	const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName ), true );
 	if (! editCMD( kfi )) return;
@@ -257,7 +253,7 @@ void Autostart::setStartOn( int index ) {
 		return;
 	Desktop* entry = (Desktop*)widget->listCMD->selectedItems().first();
 	entry->setPath(paths.value(index));
-	entry->setText(2, entry->fileName.directory() );
+	entry->setText(1, pathName[index]);
 }
 
 void Autostart::selectionChanged() {
