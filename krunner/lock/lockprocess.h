@@ -52,7 +52,7 @@ public:
     void setChildren(QList<int> children) { child_sockets = children; }
     void setParent(int fd) { mParent = fd; }
 
-    void msgBox( QMessageBox::Icon type, const QString &txt );
+    void msgBox( QWidget *parent, QMessageBox::Icon type, const QString &txt );
     int execDialog( QDialog* dlg );
     
 public Q_SLOTS:

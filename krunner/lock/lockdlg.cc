@@ -363,14 +363,14 @@ void PasswordDlg::handleVerify()
             if (!GRecvArr( &arr ))
                 break;
             if (!greet->textMessage( arr, false ))
-                static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Information, QString::fromLocal8Bit( arr ) );
+                static_cast< LockProcess* >(parent())->msgBox( this, QMessageBox::Information, QString::fromLocal8Bit( arr ) );
             ::free( arr );
             continue;
         case ConvPutError:
             if (!GRecvArr( &arr ))
                 break;
             if (!greet->textMessage( arr, true ))
-                static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Warning, QString::fromLocal8Bit( arr ) );
+                static_cast< LockProcess* >(parent())->msgBox( this, QMessageBox::Warning, QString::fromLocal8Bit( arr ) );
             ::free( arr );
             continue;
         }
@@ -411,7 +411,7 @@ void PasswordDlg::gplugSetUser( const QString & )
 void PasswordDlg::cantCheck()
 {
     greet->failed();
-    static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Critical,
+    static_cast< LockProcess* >(parent())->msgBox( this, QMessageBox::Critical,
         i18n("Cannot unlock the session because the authentication system failed to work;\n"
              "you must kill krunner_lock (pid %1) manually.", getpid()) );
     greet->revive();
@@ -461,24 +461,7 @@ void PasswordDlg::gplugActivity()
 
 void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
-    QDialog dialog( this, Qt::X11BypassWindowManagerHint );
-    dialog.setModal( true );
-
-    QLabel *label1 = new QLabel( &dialog );
-    label1->setPixmap( QMessageBox::standardIcon( type ) );
-    QLabel *label2 = new QLabel( text, &dialog );
-    KPushButton *button = new KPushButton( KStandardGuiItem::ok(), &dialog );
-    button->setDefault( true );
-    button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
-    connect( button, SIGNAL( clicked() ), SLOT( accept() ) );
-
-    QGridLayout *grid = new QGridLayout( &dialog );
-    grid->setSpacing( 10 );
-    grid->addWidget( label1, 0, 0, Qt::AlignCenter );
-    grid->addWidget( label2, 0, 1, Qt::AlignCenter );
-    grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );
-
-    static_cast< LockProcess* >(parent())->execDialog( &dialog );
+    static_cast< LockProcess* >(parent())->msgBox( this, type, text );
 }
 
 bool PasswordDlg::gplugHasNode( const QString & )

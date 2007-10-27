@@ -738,7 +738,7 @@ QVariant LockProcess::getConf(void *ctx, const char *key, const QVariant &dflt)
 
 void LockProcess::cantLock( const QString &txt)
 {
-    msgBox( QMessageBox::Critical, i18n("Will not lock the session, as unlocking would be impossible:\n") + txt );
+    msgBox( 0, QMessageBox::Critical, i18n("Will not lock the session, as unlocking would be impossible:\n") + txt );
 }
 
 #if 0 // placeholders for later
@@ -1155,9 +1155,9 @@ void LockProcess::unlockXF86()
 }
 #endif
 
-void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
+void LockProcess::msgBox( QWidget *parent, QMessageBox::Icon type, const QString &txt )
 {
-    QDialog box( 0, Qt::X11BypassWindowManagerHint );
+    QDialog box( parent, Qt::X11BypassWindowManagerHint );
     box.setModal( true );
 
     QLabel *label1 = new QLabel( &box );
