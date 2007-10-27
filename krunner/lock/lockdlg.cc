@@ -493,16 +493,22 @@ void PasswordDlg::slotStartNewSession()
     killTimer(mTimeoutTimerId);
     mTimeoutTimerId = 0;
 
-    QDialog *dialog = new QDialog( this, Qt::X11BypassWindowManagerHint );
+    KDialog *dialog = new KDialog( this, Qt::X11BypassWindowManagerHint );
     dialog->setModal( true );
+    dialog->setButtons( KDialog::Yes | KDialog::No );
+    dialog->showButtonSeparator( true );
+    dialog->setButtonGuiItem( KDialog::Yes, KGuiItem(i18n("&Start New Session"), "fork") );
+    dialog->setButtonGuiItem( KDialog::No, KStandardGuiItem::cancel() );
+    dialog->setDefaultButton( KDialog::Yes );
+    dialog->setEscapeButton( KDialog::No );
 
-    QLabel *label1 = new QLabel( dialog );
-    label1->setPixmap( QMessageBox::standardIcon( QMessageBox::Warning ) );
-    QString qt_text =
+    bool dontAskAgain = false;
+
+    KMessageBox::createKMessageBox( dialog, QMessageBox::Warning,
           i18n("You have chosen to open another desktop session "
-               "instead of resuming the current one.<br />"
+               "instead of resuming the current one.\n"
                "The current session will be hidden "
-               "and a new login screen will be displayed.<br />"
+               "and a new login screen will be displayed.\n"
                "An F-key is assigned to each session; "
                "F%1 is usually assigned to the first session, "
                "F%2 to the second session and so on. "
@@ -510,79 +516,17 @@ void PasswordDlg::slotStartNewSession()
                "Ctrl, Alt and the appropriate F-key at the same time. "
                "Additionally, the KDE Panel and Desktop menus have "
                "actions for switching between sessions.",
-             7, 8);
-    QLabel *label2 = new QLabel( qt_text, dialog );
-    KPushButton *okbutton = new KPushButton( KGuiItem(i18n("&Start New Session"), "fork"), dialog );
-    okbutton->setDefault( true );
-    connect( okbutton, SIGNAL( clicked() ), dialog, SLOT( accept() ) );
-    KPushButton *cbutton = new KPushButton( KStandardGuiItem::cancel(), dialog );
-    connect( cbutton, SIGNAL( clicked() ), dialog, SLOT( reject() ) );
-
-    QBoxLayout *mbox = new QVBoxLayout( dialog );
-    mbox->setMargin( KDialog::marginHint() );
-    mbox->setSpacing( KDialog::spacingHint() );
-
-    QGridLayout *grid = new QGridLayout();
-    mbox->addItem( grid );
-    grid->setSpacing( 2 * KDialog::spacingHint() );
-    grid->setMargin( KDialog::marginHint() );
-    grid->addWidget( label1, 0, 0, Qt::AlignCenter );
-    grid->addWidget( label2, 0, 1, Qt::AlignCenter );
-    QCheckBox *cb = new QCheckBox( i18n("&Do not ask again"), dialog );
-    grid->addWidget( cb, 1, 0, 1, 2 );
-
-    QBoxLayout *hbox = new QHBoxLayout( );
-    mbox->addItem(hbox);
-    hbox->setSpacing( KDialog::spacingHint() );
-    hbox->addStretch( 1 );
-    hbox->addWidget( okbutton );
-    hbox->addStretch( 1 );
-    hbox->addWidget( cbutton );
-    hbox->addStretch( 1 );
-
-    // stolen from kmessagebox
-    int pref_width = 0;
-    int pref_height = 0;
-    // Calculate a proper size for the text.
-    {
-       Q3SimpleRichText rt(qt_text, dialog->font());
-       QRect rect = KGlobalSettings::desktopGeometry(dialog);
-
-       pref_width = rect.width() / 3;
-       rt.setWidth(pref_width);
-       int used_width = rt.widthUsed();
-       pref_height = rt.height();
-       if (used_width <= pref_width)
-       {
-          while(true)
-          {
-             int new_width = (used_width * 9) / 10;
-             rt.setWidth(new_width);
-             int new_height = rt.height();
-             if (new_height > pref_height)
-                break;
-             used_width = rt.widthUsed();
-             if (used_width > new_width)
-                break;
-          }
-          pref_width = used_width;
-       }
-       else
-       {
-          if (used_width > (pref_width *2))
-             pref_width = pref_width *2;
-          else
-             pref_width = used_width;
-       }
-    }
-    label2->setFixedSize(QSize(pref_width+10, pref_height));
+             7, 8),
+        QStringList(),
+        i18n("&Do not ask again"), &dontAskAgain,
+        KMessageBox::NoExec );
 
     int ret = static_cast< LockProcess* >( parent())->execDialog( dialog );
 
     delete dialog;
 
-    if (ret == QDialog::Accepted) {
-        if (cb->isChecked())
+    if (ret == KDialog::Yes) {
+        if (dontAskAgain)
             KMessageBox::saveDontShowAgainContinue( ":confirmNewSession" );
         DM().startReserve();
     }
