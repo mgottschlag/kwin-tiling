@@ -20,6 +20,8 @@
 #ifndef ITEMHANDLERS_H
 #define ITEMHANDLERS_H
 
+#include <QtCore/QObject>
+
 #include "core/urlitemlauncher.h"
 
 namespace Kickoff
@@ -30,10 +32,17 @@ class ServiceItemHandler : public UrlItemHandler
 public:
     virtual bool openUrl(const QUrl& url);
 };
-class LeaveItemHandler : public UrlItemHandler
+class LeaveItemHandler : public QObject, public UrlItemHandler
 {
+    Q_OBJECT
 public:
     virtual bool openUrl(const QUrl& url);
+
+private Q_SLOTS:
+    void logout();
+
+private:
+    QString m_logoutAction;
 };
 
 }

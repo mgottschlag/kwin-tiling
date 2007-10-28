@@ -23,6 +23,7 @@
 // Qt
 #include <QUrl>
 #include <QtDebug>
+#include <QTimer>
 
 // KDE
 #include <KService>
@@ -57,30 +58,41 @@ bool ServiceItemHandler::openUrl(const QUrl& url)
 
 bool LeaveItemHandler::openUrl(const QUrl& url)
 {
-    QString action = url.path().remove('/');
+    m_logoutAction = url.path().remove('/');
 
+    if (m_logoutAction == "sleep") {
+        Solid::PowerManagement::requestSleep(Solid::PowerManagement::SuspendState,0,0);
+        return true;
+    } else if (m_logoutAction == "hibernate") {
+        Solid::PowerManagement::requestSleep(Solid::PowerManagement::HibernateState,0,0);
+        return true;
+    } else if (m_logoutAction == "logout" || m_logoutAction == "lock" || m_logoutAction == "switch" ||
+               m_logoutAction == "restart" || m_logoutAction == "shutdown" ) {
+
+        // decouple dbus call, otherwise we'll run into a dead-lock
+        QTimer::singleShot(0, this, SLOT(logout()));
+        return true;
+    }
+
+    return false;
+}
+
+void LeaveItemHandler::logout()
+{
     KWorkSpace::ShutdownConfirm confirm = KWorkSpace::ShutdownConfirmDefault;
     KWorkSpace::ShutdownType type = KWorkSpace::ShutdownTypeNone;
 
-    if (action == "logout") {
+    if (m_logoutAction == "logout") {
         type = KWorkSpace::ShutdownTypeNone;
-    } else if (action == "lock") {
+    } else if (m_logoutAction == "lock") {
         qDebug() << "Locking screen"; 
-    } else if (action == "switch") {
+    } else if (m_logoutAction == "switch") {
         qDebug() << "Switching user";
-    } else if (action == "restart") {
+    } else if (m_logoutAction == "restart") {
         type = KWorkSpace::ShutdownTypeReboot;
-    } else if (action == "shutdown") {
+    } else if (m_logoutAction == "shutdown") {
         type = KWorkSpace::ShutdownTypeHalt;
-    } else if (action == "sleep") {
-        Solid::PowerManagement::requestSleep(Solid::PowerManagement::SuspendState,0,0);
-        return true;
-    } else if (action == "hibernate") {
-        Solid::PowerManagement::requestSleep(Solid::PowerManagement::HibernateState,0,0);
-        return true;
-    } else {
-        return false;
     }
 
-    return KWorkSpace::requestShutDown(confirm,type);
+    KWorkSpace::requestShutDown(confirm,type);
 }
