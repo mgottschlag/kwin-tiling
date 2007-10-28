@@ -97,9 +97,16 @@ typedef struct DSpec {
  * Config value storage structures
  */
 
-typedef struct Value {
-	const char *ptr;
-	int len;
+typedef union Value {
+	struct {
+		const char *ptr;
+		int len; /* including 0-terminator */
+	} str;
+	struct {
+		union Value *ptr;
+		int totlen; /* summed up length of all contained strings */
+	} argv;
+	int num;
 } Value;
 
 typedef struct Val {
@@ -346,8 +353,8 @@ CONF_READ_VARS
 static int
 PrequestPort( Value *retval )
 {
-	if (!VxdmcpEnable.ptr) {
-		retval->ptr = (char *)0;
+	if (!VxdmcpEnable.num) {
+		retval->num = 0;
 		return 1;
 	}
 	return 0;
@@ -355,14 +362,14 @@ PrequestPort( Value *retval )
 #endif
 
 static Value
-	emptyStr = { "", 1 },
-	nullValue = { 0, 0 },
-	emptyArgv = { (char *)&nullValue, 0 };
+	emptyStr = { { "", 1 } },
+	nullValue = { { 0, 0 } },
+	emptyArgv = { { (char *)&nullValue, 0 } };
 
 static int
 PnoPassUsers( Value *retval )
 {
-	if (!VnoPassEnable.ptr) {
+	if (!VnoPassEnable.num) {
 		*retval = emptyArgv;
 		return 1;
 	}
@@ -372,7 +379,7 @@ PnoPassUsers( Value *retval )
 static int
 PautoLoginX( Value *retval )
 {
-	if (!VautoLoginEnable.ptr) {
+	if (!VautoLoginEnable.num) {
 		*retval = emptyStr;
 		return 1;
 	}
@@ -709,39 +716,38 @@ convertValue( Ent *et, Value *retval, int vallen, const char *val, char **eopts 
 				    !strcmp( buf, "on" ) ||
 				    !strcmp( buf, "yes" ) ||
 				    !strcmp( buf, "1" ))
-						retval->ptr = (char *)1;
+						retval->num = 1;
 				else if (!strcmp( buf, "false" ) ||
 				         !strcmp( buf, "off" ) ||
 				         !strcmp( buf, "no" ) ||
 				         !strcmp( buf, "0" ))
-							retval->ptr = (char *)0;
+							retval->num = 0;
 				else
 					return "boolean";
 				return 0;
 			} else if ((et->id & C_MTYPE_MASK) == C_ENUM) {
 				for (i = 0; eopts[i]; i++)
 					if (!memcmp( eopts[i], val, vallen ) && !eopts[i][vallen]) {
-						retval->ptr = (char *)i;
+						retval->num = i;
 						return 0;
 					}
 				return "option";
 			} else if ((et->id & C_MTYPE_MASK) == C_GRP) {
 				struct group *ge;
 				if ((ge = getgrnam( buf ))) {
-					retval->ptr = (char *)ge->gr_gid;
+					retval->num = ge->gr_gid;
 					return 0;
 				}
 			}
-			retval->ptr = 0;
-			if (sscanf( buf, "%li", (long *)&retval->ptr ) != 1)
+			if (sscanf( buf, "%i", &retval->num ) != 1)
 				return "integer";
 			return 0;
 		case C_TYPE_STR:
-			retval->ptr = val;
-			retval->len = vallen + 1;
+			retval->str.ptr = val;
+			retval->str.len = vallen + 1;
 			if ((et->id & C_MTYPE_MASK) == C_PATH)
 				if (vallen && val[vallen-1] == '/')
-					retval->len--;
+					retval->str.len--;
 			return 0;
 		case C_TYPE_ARGV:
 			if (!(ents = Malloc( sizeof(Value) * (esiz = 10) )))
@@ -759,14 +765,14 @@ convertValue( Ent *et, Value *retval, int vallen, const char *val, char **eopts 
 						break;
 					ents = entsn;
 				}
-				ents[nents].ptr = val + b;
-				ents[nents].len = e - b;
+				ents[nents].str.ptr = val + b;
+				ents[nents].str.len = e - b;
 				nents++;
 				tlen += e - b + 1;
 			}
-			ents[nents].ptr = 0;
-			retval->ptr = (char *)ents;
-			retval->len = tlen;
+			ents[nents].str.ptr = 0;
+			retval->argv.ptr = ents;
+			retval->argv.totlen = tlen;
 			return 0;
 		default:
 			logError( "Internal error: unknown value type in id %#x\n", et->id );
@@ -815,11 +821,11 @@ addValue( ValArr *va, int id, Value *val )
 		case C_TYPE_INT:
 			break;
 		case C_TYPE_STR:
-			va->nchars += val->len;
+			va->nchars += val->str.len;
 			break;
 		case C_TYPE_ARGV:
-			va->nchars += val->len;
-			for (nu = 0; ((Value *)val->ptr)[nu++].ptr; );
+			va->nchars += val->argv.totlen;
+			for (nu = 0; val->argv.ptr[nu++].str.ptr; );
 			va->nptrs += nu;
 			break;
 	}
@@ -867,17 +873,17 @@ sendValues( ValArr *va )
 		gSendInt( va->ents[i].id & ~C_PRIVATE );
 		switch (va->ents[i].id & C_TYPE_MASK) {
 		case C_TYPE_INT:
-			gSendInt( (int)va->ents[i].val.ptr );
+			gSendInt( va->ents[i].val.num );
 			break;
 		case C_TYPE_STR:
-			gSendNStr( va->ents[i].val.ptr, va->ents[i].val.len - 1 );
+			gSendNStr( va->ents[i].val.str.ptr, va->ents[i].val.str.len - 1 );
 			break;
 		case C_TYPE_ARGV:
-			cst = (Value *)va->ents[i].val.ptr;
-			for (nu = 0; cst[nu].ptr; nu++);
+			cst = va->ents[i].val.argv.ptr;
+			for (nu = 0; cst[nu].str.ptr; nu++);
 			gSendInt( nu );
-			for (; cst->ptr; cst++)
-				gSendNStr( cst->ptr, cst->len );
+			for (; cst->str.ptr; cst++)
+				gSendNStr( cst->str.ptr, cst->str.len );
 			break;
 		}
 	}
@@ -1398,7 +1404,7 @@ int main( int argc ATTR_UNUSED, char **argv )
 			gSendStr( kdmrc );
 				gSendInt( -1 );
 #ifdef XDMCP
-			gSendNStr( VXaccess.ptr, VXaccess.len - 1 );
+			gSendNStr( VXaccess.str.ptr, VXaccess.str.len - 1 );
 				gSendInt( 0 );
 #endif
 			for (; (what = gRecvInt()) != -1; )
