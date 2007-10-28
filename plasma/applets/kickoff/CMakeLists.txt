@@ -18,6 +18,9 @@ set( Kickoff_SRCS
        ui/tabbar.cpp
        ui/urlitemview.cpp  )
 
+set(screensaver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.freedesktop.ScreenSaver.xml)
+QT4_ADD_DBUS_INTERFACE(Kickoff_SRCS ${screensaver_xml} screensaver_interface)
+
 set ( Kickoff_LIBS
         ${KDE4_KIO_LIBS}
         ${KDE4_SOLID_LIBS}

@@ -40,6 +40,7 @@ public:
 
 private Q_SLOTS:
     void logout();
+    void lock();
 
 private:
     QString m_logoutAction;

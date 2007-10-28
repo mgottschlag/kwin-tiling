@@ -36,6 +36,9 @@
 // Local
 #include "core/recentapplications.h"
 
+// DBus
+#include "screensaver_interface.h"
+
 using namespace Kickoff;
 
 bool ServiceItemHandler::openUrl(const QUrl& url)
@@ -66,7 +69,11 @@ bool LeaveItemHandler::openUrl(const QUrl& url)
     } else if (m_logoutAction == "hibernate") {
         Solid::PowerManagement::requestSleep(Solid::PowerManagement::HibernateState,0,0);
         return true;
-    } else if (m_logoutAction == "logout" || m_logoutAction == "lock" || m_logoutAction == "switch" ||
+    } else if (m_logoutAction == "lock") {
+        // decouple dbus call, otherwise we'll run into a dead-lock
+        QTimer::singleShot(0, this, SLOT(lock()));
+        return true;
+    } else if (m_logoutAction == "logout" || m_logoutAction == "switch" ||
                m_logoutAction == "restart" || m_logoutAction == "shutdown" ) {
 
         // decouple dbus call, otherwise we'll run into a dead-lock
@@ -95,4 +102,14 @@ void LeaveItemHandler::logout()
     }
 
     KWorkSpace::requestShutDown(confirm,type);
+}
+
+void LeaveItemHandler::lock()
+{
+    QString interface("org.freedesktop.ScreenSaver");
+    org::freedesktop::ScreenSaver screensaver(interface, "/ScreenSaver",
+                                              QDBusConnection::sessionBus());
+    if (screensaver.isValid()) {
+        screensaver.Lock();
+    }
 }
