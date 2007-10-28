@@ -7,4 +7,5 @@ add_subdirectory(desktoptheme)
 add_subdirectory(engineexplorer)
 add_subdirectory(plasma)
 add_subdirectory(runners)
+add_subdirectory(plasmoidviewer)
 
