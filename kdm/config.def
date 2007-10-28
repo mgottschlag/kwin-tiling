@@ -1,5 +1,5 @@
 #
-# Copyright 2004-2005 Oswald Buddenhagen <ossi@kde.org>
+# Copyright 2004-2007 Oswald Buddenhagen <ossi@kde.org>
 #
 # Permission to use, copy, modify, distribute, and sell this software and its
 # documentation for any purpose is hereby granted without fee, provided that
@@ -1598,7 +1598,7 @@ Description:
  greeter window. This may be used to change the appearance of the screen
  around the greeter window or to put up other windows (e.g., you may want
  to run <command>xconsole</command> here).
- The conventional name for a file used here is <command>Xsetup</command>.
+ Usually, a script named <command>Xsetup</command> is used here.
  See <xref linkend="kdmrc-xsetup"/>.
 
 Key: Startup
@@ -1616,7 +1616,7 @@ Description:
  It specifies a program which is run (as
  <systemitem class="username">root</systemitem>) after the user
  authentication process succeeds.
- The conventional name for a file used here is <command>Xstartup</command>.
+ Usually, a script named <command>Xstartup</command> is used here.
  See <xref linkend="kdmrc-xstartup"/>.
 
 Key: Reset
@@ -1634,7 +1634,7 @@ Description:
  It specifies a program which is run (as
  <systemitem class="username">root</systemitem>) after the session
  terminates.
- The conventional name for a file used here is <command>Xreset</command>.
+ Usually, a script named <command>Xreset</command> is used here.
  See <xref linkend="kdmrc-xreset"/>.
 
 Key: Session
@@ -1653,7 +1653,7 @@ Description:
  This string is subject to word splitting.
  It specifies the session program to be executed (as the user owning
  the session).
- The conventional name for a file used here is <command>Xsession</command>.
+ Usually, a script named <command>Xsession</command> is used here.
  See <xref linkend="kdmrc-xsession"/>.
 
 Key: FailsafeClient
@@ -2242,8 +2242,8 @@ Description: !
  (<option>UserCompletion</option>).
  If it is <literal>Selected</literal>, <option>SelectedUsers</option> contains
  the final list of users.
- If it is <literal>NotHidden</literal>, the initial user list are all users
- found on the system. Users contained in <option>HiddenUsers</option> are
+ If it is <literal>NotHidden</literal>, the initial user list contains all
+ users found on the system. Users contained in <option>HiddenUsers</option> are
  removed from the list, just like all users with a UID greater than specified
  in <option>MaxShowUID</option> and users with a non-zero UID less than
  specified in <option>MinShowUID</option>.
