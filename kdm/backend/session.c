@@ -291,7 +291,7 @@ ctrlGreeterWait( int wreply )
 				switch (type & C_TYPE_MASK) {
 				case C_TYPE_INT:
 					/*debug( " -> int %#x (%d)\n", *(int *)avptr, *(int *)avptr );*/
-					gSendInt( *(long *)avptr );
+					gSendInt( *(int *)avptr );
 					break;
 				case C_TYPE_STR:
 					/*debug( " -> string %\"s\n", *avptr );*/
