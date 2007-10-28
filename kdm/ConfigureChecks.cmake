@@ -1,4 +1,5 @@
 include(CheckCSourceRuns)
+include(CheckStructMember)
 
 check_struct_member("struct passwd" "pw_expire" "pwd.h" HAVE_STRUCT_PASSWD_PW_EXPIRE)
 check_struct_member("struct utmp" "ut_user" "utmp.h" HAVE_STRUCT_UTMP_UT_USER)
