@@ -12,6 +12,7 @@ Name[pt]=Motor de Dados de Eventos do Hotplug
 Name[pt_BR]=Mecanismo de Dados de Eventos do Hotplug
 Name[sv]=Datagränssnitt för inkopplingshändelse
 Name[x-test]=xxHotplug Event Data Enginexx
+Name[zh_CN]=热插拔事件数据引擎
 Name[zh_TW]=熱插拔事件資料引擎
 ServiceTypes=Plasma/DataEngine
 Type=Service
