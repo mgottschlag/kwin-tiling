@@ -368,7 +368,7 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 	name->willing = will;
 	name->status = *status;
 
-	gSendInt( (int)name ); /* just an id */
+	gSendInt( (int)(long)name ); /* just an id */
 	gSendNStr( (char *)name->hostname.data, name->hostname.length );
 	gSendNStr( (char *)name->status.data, name->status.length );
 	gSendInt( will );
@@ -852,7 +852,7 @@ chooseHost( int hid )
 #endif
 
 	for (h = hostNamedb; h; h = h->next)
-		if ((int)h == hid) {
+		if ((int)(long)h == hid) {
 			/* XXX error handling */
 			gSet( &mstrtalk );
 			if ((td->displayType & d_location) == dLocal) {
@@ -971,7 +971,7 @@ doChoose()
 							h = (*hp)->next;
 							disposeHostname( *hp );
 							gSendInt( G_Ch_RemoveHost );
-							gSendInt( (int)*hp ); /* just an id */
+							gSendInt( (int)(long)*hp ); /* just an id */
 							*hp = h;
 						} else
 							hp = &(*hp)->next;

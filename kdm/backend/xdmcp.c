@@ -118,7 +118,7 @@ sendForward( CARD16 connectionType, ARRAY8Ptr address, char *closure )
 	default:
 		return;
 	}
-	XdmcpFlush( (int)closure, &buffer, (XdmcpNetaddr)addr, addrlen );
+	XdmcpFlush( (int)(long)closure, &buffer, (XdmcpNetaddr)addr, addrlen );
 	return;
 }
 
@@ -217,7 +217,7 @@ indirect_respond( struct sockaddr *from, int fromlen, int length, int fd )
 
 		localHostAsWell =
 			forEachMatchingIndirectHost( &clientAddress, connectionType,
-			                             sendForward, (char *)fd );
+			                             sendForward, (char *)(long)fd );
 
 		XdmcpDisposeARRAY8( &clientAddress );
 		XdmcpDisposeARRAY8( &clientPort );

@@ -768,7 +768,7 @@ reSect( const char *sec, const char *name )
 	char *p;
 
 	if ((p = strrchr( sec, '-' ))) {
-		sprintf( sname, "%.*s-%s", p - sec, sec, name );
+		sprintf( sname, "%.*s-%s", (int)(p - sec), sec, name );
 		return sname;
 	} else
 		return name;
@@ -2263,7 +2263,8 @@ mergeKdmRcNewer( const char *path )
 									sec = cs->name;
 								else {
 									sec = sname;
-									sprintf( sname, "%.*s-%s", cp - cs->name, cs->name,
+									sprintf( sname, "%.*s-%s",
+									         (int)(cp - cs->name), cs->name,
 									         kupsects[i].ents[j].nsec );
 								}
 								if (!kupsects[i].ents[j].nkey)

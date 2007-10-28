@@ -216,7 +216,7 @@ isWilling( ARRAY8Ptr addr, CARD16 connectionType,
 			}
 			if (!ok)
 				sprintf( statusBuf, "Willing, but %.*s failed",
-				         sizeof(statusBuf) - 21, willing );
+				         (int)(sizeof(statusBuf) - 21), willing );
 		} else
 #ifdef WILLING_INTERNAL
 			willingMsg( statusBuf );

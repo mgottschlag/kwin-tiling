@@ -340,7 +340,7 @@ emitXSessC( struct display *di, struct display *d, void *ctx )
 	           (d->allowNuke == SHUT_ROOT && d->userSess))) :
 	         !fifoAllowNuke))
 		*bp++ = '!';
-	writer( (int)ctx, cbuf, bp - cbuf );
+	writer( (int)(long)ctx, cbuf, bp - cbuf );
 }
 
 static void
@@ -387,7 +387,7 @@ emitTTYSessC( STRUCTUTMP *ut, struct display *d, void *ctx )
 	          (!(pw = getpwnam( user )) || d->userSess != (int)pw->pw_uid)) :
 	         !fifoAllowNuke))
 		*bp++ = '!';
-	writer( (int)ctx, cbuf, bp - cbuf );
+	writer( (int)(long)ctx, cbuf, bp - cbuf );
 }
 
 static void
@@ -478,7 +478,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					goto exce;
 			}
 			Reply( "ok" );
-			listSessions( flags, d, (void *)fd, emitXSessC, emitTTYSessC );
+			listSessions( flags, d, (void *)(long)fd, emitXSessC, emitTTYSessC );
 			Reply( "\n" );
 			goto bust;
 		} else if (!strcmp( ar[0], "reserve" )) {
