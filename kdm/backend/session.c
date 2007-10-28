@@ -231,7 +231,8 @@ int
 ctrlGreeterWait( int wreply )
 {
 	int i, cmd, type, rootok;
-	char *name, *pass, **avptr;
+	char *name, *pass;
+	void **avptr;
 #ifdef XDMCP
 	ARRAY8Ptr aptr;
 #endif
@@ -294,7 +295,7 @@ ctrlGreeterWait( int wreply )
 					break;
 				case C_TYPE_STR:
 					/*debug( " -> string %\"s\n", *avptr );*/
-					gSendStr( *avptr );
+					gSendStr( *(char **)avptr );
 					break;
 				case C_TYPE_ARGV:
 					/*debug( " -> sending argv %\"[{s\n", *(char ***)avptr );*/

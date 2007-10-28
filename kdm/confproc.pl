@@ -434,7 +434,7 @@ while (<INFILE>) {
                 $ov_loc_defs{$ctype} .= " \\\n\t".$oa[1][0];
               } else {
                 my @oa = (
-                  [ "{ ".$kid.", (char **) &".$hvn." },", "GLOB" ],
+                  [ "{ ".$kid.", &".$hvn." },", "GLOB" ],
                   [ $ctype.$hvn.";", "GDEF" ],
                   [ "extern ".$ctype.$hvn.";", "GDECL" ]
                 );

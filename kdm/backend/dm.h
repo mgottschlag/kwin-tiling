@@ -199,7 +199,7 @@ typedef struct CfgDep {
 } CfgDep;
 
 typedef struct CfgArr {
-	char *data;     /* config value array; allocated */
+	void *data;     /* config value array; allocated */
 	long *idx;      /* config index array; alias */
 	CfgDep dep;     /* filestamp */
 	int numCfgEnt;  /* number of config entries */
@@ -418,7 +418,7 @@ int startReserveDisplay( int lt );
 void pseudoReset( void );
 
 /* in resource.c */
-char **findCfgEnt( struct display *d, int id );
+void **findCfgEnt( struct display *d, int id );
 int initResources( char **argv );
 int loadDMResources( int force );
 int loadDisplayResources( struct display *d );

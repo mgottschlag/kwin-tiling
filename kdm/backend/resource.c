@@ -283,7 +283,7 @@ loadResources( CfgArr *conf )
 }
 
 static void
-applyResource( int id, char **src, char **dst )
+applyResource( int id, void **src, void **dst )
 {
 	switch (id & C_TYPE_MASK) {
 	case C_TYPE_INT:
@@ -291,7 +291,7 @@ applyResource( int id, char **src, char **dst )
 		break;
 	case C_TYPE_STR:
 	case C_TYPE_ARGV:
-		*dst = *src;
+		*(char **)dst = *(char **)src;
 		break;
 	}
 }
@@ -317,7 +317,7 @@ struct dpyEnts {
 
 CfgArr cfg;
 
-char **
+void **
 findCfgEnt( struct display *d, int id )
 {
 	int i;
@@ -329,7 +329,7 @@ findCfgEnt( struct display *d, int id )
  */
 	for (i = 0; i < cfg.numCfgEnt; i++)
 		if (cfg.idx[i] == id)
-			return ((char **)cfg.data) + i;
+			return ((void **)cfg.data) + i;
 	if (d) {
 /* no per-display variables exported currently
 		for (i = 0; i < as(dpyEnt); i++)
@@ -338,10 +338,10 @@ findCfgEnt( struct display *d, int id )
  */
 		for (i = 0; i < d->cfg.numCfgEnt; i++)
 			if (d->cfg.idx[i] == id)
-				return ((char **)d->cfg.data) + i;
+				return ((void **)d->cfg.data) + i;
 	}
 	debug( "unknown config entry %#x requested\n", id );
-	return (char **)0;
+	return (void **)0;
 }
 
 
@@ -349,7 +349,7 @@ CONF_CORE_GLOBAL_DEFS
 
 struct globVals {
 		int id;
-		char **off;
+		void *ptr;
 } globVal[] = {
 CONF_CORE_GLOBALS
 };
@@ -358,7 +358,7 @@ int
 loadDMResources( int force )
 {
 	int i, ret;
-	char **ent;
+	void **ent;
 
 	if (Setjmp( cnftalk.errjmp ))
 		return -1; /* may memleak, but we probably have to abort anyway */
@@ -372,7 +372,7 @@ loadDMResources( int force )
 		if (!(ent = findCfgEnt( 0, globVal[i].id )))
 			ret = -1;
 		else
-			applyResource( globVal[i].id, ent, globVal[i].off );
+			applyResource( globVal[i].id, ent, (void **)globVal[i].ptr );
 	}
 	if (ret < 0)
 		logError( "Internal error: config reader supplied incomplete data\n" );
@@ -391,7 +391,7 @@ int
 loadDisplayResources( struct display *d )
 {
 	int i, ret;
-	char **ent;
+	void **ent;
 
 	if (Setjmp( cnftalk.errjmp ))
 		return -1; /* may memleak */
@@ -408,7 +408,7 @@ loadDisplayResources( struct display *d )
 			ret = -1;
 		else
 			applyResource( dpyVal[i].id, ent,
-			               (char **)(((char *)d) + dpyVal[i].off) );
+			               (void **)(((char *)d) + dpyVal[i].off) );
 	}
 	if (ret < 0)
 		logError( "Internal error: config reader supplied incomplete data\n" );
