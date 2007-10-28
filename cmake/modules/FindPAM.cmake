@@ -50,7 +50,7 @@ int main(void)
 {
 	struct pam_conv PAM_conversation = {
 		&PAM_conv, /* this bombs out if the above does not match */
-		NULL
+		0
 	};
 
 	return 0;
