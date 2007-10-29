@@ -151,15 +151,18 @@ QSize PreviewWidget::sizeHint() const
 
 void PreviewWidget::layoutItems()
 {
-    QSize size = sizeHint();
-    int cursorWidth = size.width() / list.count();
-    int nextX = (width() - size.width()) / 2;
-
-    foreach (PreviewCursor *c, list)
+    if (!list.isEmpty())
     {
-        c->setPosition(nextX + (cursorWidth - c->width()) / 2,
-                       (height() - c->height()) / 2);
-        nextX += cursorWidth;
+        QSize size = sizeHint();
+        int cursorWidth = size.width() / list.count();
+        int nextX = (width() - size.width()) / 2;
+
+        foreach (PreviewCursor *c, list)
+        {
+            c->setPosition(nextX + (cursorWidth - c->width()) / 2,
+                           (height() - c->height()) / 2);
+            nextX += cursorWidth;
+        }
     }
 
     needLayout = false;

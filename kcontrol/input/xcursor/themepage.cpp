@@ -210,18 +210,11 @@ void ThemePage::load()
     KConfigGroup cg(&c, "Mouse");
     currentTheme = cg.readEntry("cursorTheme", currentTheme);
 
-    // Find the theme in the listview and select it
+    // Find the theme in the listview
     if (!currentTheme.isEmpty())
         appliedIndex = proxy->findIndex(currentTheme);
     else
         appliedIndex = proxy->defaultIndex();
-
-    selectRow(appliedIndex);
-    view->scrollTo(appliedIndex, QListView::PositionAtCenter);
-
-    // Update the preview widget as well
-    const CursorTheme *theme = proxy->theme(appliedIndex);
-    preview->setTheme(theme);
 
     // Disable the listview and the buttons if we're in kiosk mode
     if (cg.isEntryImmutable("cursorTheme"))
@@ -231,7 +224,19 @@ void ThemePage::load()
         removeButton->setEnabled(false);
     }
 
-    if (!theme->isWritable())
+    const CursorTheme *theme = proxy->theme(appliedIndex);
+
+    if (appliedIndex.isValid())
+    {
+        // Select the current theme
+        selectRow(appliedIndex);
+        view->scrollTo(appliedIndex, QListView::PositionAtCenter);
+
+        // Update the preview widget as well
+        preview->setTheme(theme);
+    }
+
+    if (!theme || !theme->isWritable())
         removeButton->setEnabled(false);
 }
 
