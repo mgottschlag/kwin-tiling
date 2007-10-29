@@ -106,11 +106,11 @@ void PanelView::updatePanelGeometry()
             geom.moveTopLeft(screenGeom.topLeft());
             break;
         case Plasma::RightEdge:
-            geom.moveTopLeft(QPoint(screenGeom.right() - size.width(), screenGeom.top()));
+            geom.moveTopLeft(QPoint(screenGeom.right() - size.width() + 1, screenGeom.top()));
             break;
         case Plasma::BottomEdge:
         default:
-            geom.moveTopLeft(QPoint(screenGeom.left(), screenGeom.bottom() - size.height()));
+            geom.moveTopLeft(QPoint(screenGeom.left(), screenGeom.bottom() - size.height() + 1));
             break;
     }
 
