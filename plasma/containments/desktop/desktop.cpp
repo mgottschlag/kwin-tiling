@@ -214,7 +214,7 @@ void DefaultDesktop::init()
         !QFile::exists(m_wallpaperPath)) {
         kDebug() << "SVG wallpaper!";
         m_background = new Plasma::Svg("widgets/wallpaper", this);
-        }
+    }
 
     Containment::init();
     m_toolbox = new ToolBox(this);
@@ -380,9 +380,12 @@ void DefaultDesktop::paintInterface(QPainter *painter,
         Containment::paintInterface(painter, option, contentsRect);
     }
 
-    // draw the background untransformed (saves lots of per-pixel-math)
     painter->save();
-    painter->resetTransform();
+
+    if (painter->worldMatrix() == QMatrix()) {
+        // draw the background untransformed when possible;(saves lots of per-pixel-math)
+        painter->resetTransform();
+    }
 
     // blit the background (saves all the per-pixel-products that blending does)
     painter->setCompositionMode(QPainter::CompositionMode_Source);
