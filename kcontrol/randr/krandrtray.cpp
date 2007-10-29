@@ -26,6 +26,7 @@
 #include <KIconLoader>
 #include <KLocale>
 #include <KMenu>
+#include <KAction>
 #include <QMouseEvent>
 #include <QVariant>
 
@@ -101,7 +102,7 @@ void KRandRSystemTray::slotPrepareMenu()
 
 	m_menu->addSeparator();
 
-	QAction *actPrefs = actionCollection()->addAction( QString() );
+	KAction *actPrefs = actionCollection()->addAction( QString() );
         actPrefs->setIcon( KIcon( "configure" ) );
         actPrefs->setText( i18n( "Configure Display..." ) );
         connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
