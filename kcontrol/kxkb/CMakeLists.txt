@@ -55,7 +55,6 @@ set(kxkb_COMMON_SRCS
   extension.cpp
   x11helper.cpp
   pixmap.cpp
-  layoutmap.cpp
   ${XKB_SUPPORT_SRC}
 )
 
@@ -87,6 +86,7 @@ install( FILES keyboard_layout.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 set(kxkb_KDEINIT_SRCS ${kxkb_COMMON_SRCS}
   kxkbcore.cpp
+  layoutmap.cpp
   kxkbapp.cpp
   kxkbwidget.cpp
   kxkb_adaptor.cpp
@@ -111,6 +111,7 @@ if( FALSE )     # don't generate applet - it's not finished yet
 
 set(plasma_applet_kxkb_SRCS kxkb_applet.cpp ${kxkb_COMMON_SRCS}
      kxkbcore.cpp
+     layoutmap.cpp
      kxkbwidget.cpp
 )
 
