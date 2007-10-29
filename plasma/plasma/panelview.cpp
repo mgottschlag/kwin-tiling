@@ -84,14 +84,41 @@ Plasma::Corona *PanelView::corona() const
 void PanelView::updatePanelGeometry()
 {
     kDebug() << "New panel geometry is" << m_containment->geometry();
-    QPoint pos = m_containment->pos().toPoint();
     QSize size = m_containment->size().toSize();
-    QRect geom(pos, size);
+    QRect geom(QPoint(0,0), size);
+    int screen = m_containment->screen();
+
+    if (screen < 0) {
+        //TODO: is there a valid use for -1 with a panel? floating maybe?
+        screen = 0;
+    }
+
+    QDesktopWidget desktop;
+    QRect screenGeom = desktop.screenGeometry(screen);
+
+    //FIXME: we need to support center, left, right, etc.. perhaps
+    //       pixel precision placed containments as well?
+    switch (location()) {
+        case Plasma::TopEdge:
+            geom.moveTopLeft(screenGeom.topLeft());
+            break;
+        case Plasma::LeftEdge:
+            geom.moveTopLeft(screenGeom.topLeft());
+            break;
+        case Plasma::RightEdge:
+            geom.moveTopLeft(QPoint(screenGeom.right() - size.width(), screenGeom.top()));
+            break;
+        case Plasma::BottomEdge:
+        default:
+            geom.moveTopLeft(QPoint(screenGeom.left(), screenGeom.bottom() - size.height()));
+            break;
+    }
+
     setGeometry(geom);
-    pos = m_containment->scenePos().toPoint();
-    geom.moveTopLeft(pos);
-    kDebug() << "I think the panel is at " << geom;
-    setSceneRect(geom);
+
+    // now center in on the containment
+    //kDebug() << "I think the panel is at " << geom;
+    setSceneRect(QRectF(m_containment->scenePos(), m_containment->size()));
 }
 
 void PanelView::updateStruts()
@@ -101,6 +128,9 @@ void PanelView::updateStruts()
     //QRect geom = geometry();
     //QRect virtRect(QApplication::desktop()->geometry());
 
+    //FIXME: only reserve the actually used space. the commented out code
+    //       looks like a good start, but needs to be tested once we have
+    //       variable width panels
     switch (location())
     {
         case Plasma::TopEdge:
