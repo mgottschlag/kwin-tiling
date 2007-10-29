@@ -138,64 +138,54 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 		return rulesInfo;
 	}
 
-  for (int i = 0; i < xkbRules->models.num_desc; ++i)
-      rulesInfo->models.insert(xkbRules->models.desc[i].name, QString( xkbRules->models.desc[i].desc ) );
+//    for (int i = 0; i < xkbRules->variants.num_desc; ++i) {
+//        kDebug() << "var:" << xkbRules->variants.desc[i].name << "@" << xkbRules->variants.desc[i].name;
+//        if( xkbRules->variants.desc[i].
+//        rulesInfo->variants.insert(xkbRules->models.desc[i].name, QString( xkbRules->models.desc[i].desc ) );
+//    }
 
-  for (int i = 0; i < xkbRules->options.num_desc; ++i) {
-	  QString optionName = xkbRules->options.desc[i].name;
+    for (int i = 0; i < xkbRules->models.num_desc; ++i)
+        rulesInfo->models.insert(xkbRules->models.desc[i].name, QString( xkbRules->models.desc[i].desc ) );
 
-	  int colonPos = optionName.indexOf(':');
-	  QString groupName = optionName.mid(0, colonPos);
+    for (int i = 0; i < xkbRules->options.num_desc; ++i) {
+        QString optionName = xkbRules->options.desc[i].name;
+
+        int colonPos = optionName.indexOf(':');
+        QString groupName = optionName.mid(0, colonPos);
 
 
-	  if( colonPos != -1 ) {
-kDebug() << " option: " << optionName;
+	if( colonPos != -1 ) {
+            //kDebug() << " option: " << optionName;
 
-		if( ! rulesInfo->optionGroups.contains( groupName ) ) {
-		  rulesInfo->optionGroups.insert(groupName, createMissingGroup(groupName));
-kDebug() << " added missing option group: " << groupName;
-		}
+	    if( ! rulesInfo->optionGroups.contains( groupName ) ) {
+		rulesInfo->optionGroups.insert(groupName, createMissingGroup(groupName));
+                kDebug() << " added missing option group: " << groupName;
+            }
 
-		XkbOption option;
-		option.name = optionName;
-		option.description = xkbRules->options.desc[i].desc;
-		option.group = &rulesInfo->optionGroups[ groupName ];
+	    XkbOption option;
+	    option.name = optionName;
+	    option.description = xkbRules->options.desc[i].desc;
+	    option.group = &rulesInfo->optionGroups[ groupName ];
 
-		rulesInfo->options.insert(optionName, option);
-	  }
-	  else {
+	    rulesInfo->options.insert(optionName, option);
+	}
+	else {
+            if( groupName == "Compose" )
+                groupName = "compose";
+            if( groupName == "compat" )
+                groupName = "numpad";
+            
 	    XkbOptionGroup optionGroup;
-		optionGroup.name = groupName;
-		optionGroup.description = xkbRules->options.desc[i].desc;
-		optionGroup.exclusive = isGroupExclusive( groupName );
+	    optionGroup.name = groupName;
+	    optionGroup.description = xkbRules->options.desc[i].desc;
+	    optionGroup.exclusive = isGroupExclusive( groupName );
 
-kDebug() << " option group: " << groupName;
-		rulesInfo->optionGroups.insert(groupName, optionGroup);
-	  }
+            //kDebug() << " option group: " << groupName;
+	    rulesInfo->optionGroups.insert(groupName, optionGroup);
+	}
   }
 
   XkbRF_Free(xkbRules, true);
-
-/*
-   for(QHashIterator<QString, QString> it(rulesInfo->options) ; it.hasNext();  ) {
-	  it.next();
-
-	  QString option(it.key());
-	  int columnPos = option.indexOf(":");
-
-	  if( columnPos != -1 ) {
-		  QString group = option.mid(0, columnPos);
-		  if( !rulesInfo->options.contains(group) ) {
-			  rulesInfo->options.insert(group, group);
-			  kDebug() << "Added missing option group: " << group;
-		  }
-	  }
-  }
-  */
-//   // workaround for empty misc options group description in XFree86 4.4.0
-//   if( rulesInfo->options.find("numpad:microsoft") && !rulesInfo->options.find("misc") ) {
-//     rulesInfo->options.replace("misc", "Miscellaneous compatibility options" );
-//   }
 
   return rulesInfo;
 }
@@ -207,21 +197,20 @@ X11Helper::createMissingGroup(const QString& groupName)
 // workaround for empty 'compose' options group description
    XkbOptionGroup optionGroup;
    optionGroup.name = groupName;
+//   optionGroup.description = "";
    optionGroup.exclusive = isGroupExclusive( groupName );
 
-   if( groupName == "compose" ) {
-		optionGroup.description = "Compose Key Position";
-   }
    return optionGroup;
 }
 
 bool
 X11Helper::isGroupExclusive(const QString& groupName)
 {
-    if( groupName == "ctrl" || groupName == "caps" || groupName == "altwin" )
-		return true;
+    if( groupName == "ctrl" || groupName == "keypad" || groupName == "nbsp"
+            || groupName == "kpdl" || groupName == "caps" || groupName == "altwin" )
+	return true;
 
-	return false;
+    return false;
 }
 
 
@@ -229,10 +218,11 @@ X11Helper::isGroupExclusive(const QString& groupName)
     tries to find "xkb_symbols"
     also checks whether previous line contains "hidden" to skip it
 */
-QStringList*
+
+QList<XkbVariant>*
 X11Helper::getVariants(const QString& layout, const QString& x11Dir)
 {
-  QStringList* result = new QStringList();
+  QList<XkbVariant>* result = new QList<XkbVariant>();
 
   QString file = x11Dir + "xkb/symbols/";
   // workaround for XFree 4.3 new directory for one-group layouts
@@ -275,17 +265,20 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir)
 	    if( pos < 0 || pos2 < 0 )
 		continue;
 
-	    result->append(line.mid(pos, pos2-pos));
+            XkbVariant variant;
+            variant.name = line.mid(pos, pos2-pos);
+            variant.description = line.mid(pos, pos2-pos);
+	    result->append(variant);
 //  kDebug() << "adding variant " << line.mid(pos, pos2-pos);
       }
 
       f.close();
     }
 
-	return result;
+    return result;
 }
 
-#endif
+#endif  /* HAVE_XKLAVIER*/
 
 const QString X11Helper::X11_WIN_CLASS_ROOT = "<root>";
 const QString X11Helper::X11_WIN_CLASS_UNKNOWN = "<unknown>";
@@ -293,29 +286,29 @@ const QString X11Helper::X11_WIN_CLASS_UNKNOWN = "<unknown>";
 QString
 X11Helper::getWindowClass(Window winId, Display* dpy)
 {
-  unsigned long nitems_ret, bytes_after_ret;
-  unsigned char* prop_ret;
-  Atom     type_ret;
-  int      format_ret;
-  Window w = (Window)winId;	// suppose WId == Window
-  QString  property;
+    unsigned long nitems_ret, bytes_after_ret;
+    unsigned char* prop_ret;
+    Atom     type_ret;
+    int      format_ret;
+    Window w = (Window)winId;	// suppose WId == Window
+    QString  property;
 
-  if( winId == X11Helper::UNKNOWN_WINDOW_ID ) {
-	  kDebug() << "Got window class for " << winId << ": '" << X11_WIN_CLASS_ROOT << "'";
-	  return X11_WIN_CLASS_ROOT;
-  }
+    if( winId == X11Helper::UNKNOWN_WINDOW_ID ) {
+        kDebug() << "Got window class for " << winId << ": '" << X11_WIN_CLASS_ROOT << "'";
+        return X11_WIN_CLASS_ROOT;
+    }
 
 //  kDebug() << "Getting window class for " << winId;
-  if((XGetWindowProperty(dpy, w, XA_WM_CLASS, 0L, 256L, 0, XA_STRING,
+    if((XGetWindowProperty(dpy, w, XA_WM_CLASS, 0L, 256L, 0, XA_STRING,
 			&type_ret, &format_ret, &nitems_ret,
 			&bytes_after_ret, &prop_ret) == Success) && (type_ret != None)) {
-    property = QString::fromLocal8Bit(reinterpret_cast<char*>(prop_ret));
-    XFree(prop_ret);
-  }
-  else {
-	  property = X11_WIN_CLASS_UNKNOWN;
-  }
-  kDebug() << "Got window class for " << winId << ": '" << property << "'";
+        property = QString::fromLocal8Bit(reinterpret_cast<char*>(prop_ret));
+        XFree(prop_ret);
+    }
+    else {
+        property = X11_WIN_CLASS_UNKNOWN;
+    }
+    kDebug() << "Got window class for " << winId << ": '" << property << "'";
 
-  return property;
+    return property;
 }

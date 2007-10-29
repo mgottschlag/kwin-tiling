@@ -36,7 +36,7 @@ public:
   const QHash<QString, XkbOption> &options() const { return m_options; }
   const QHash<QString, XkbOptionGroup> &optionGroups() const { return m_optionGroups; }
 
-  QStringList getAvailableVariants(const QString& layout);
+  QList<XkbVariant> getAvailableVariants(const QString& layout);
   unsigned int getDefaultGroup(const QString& layout, const QString& includeGroup);
 
   bool isSingleGroup(const QString& layout);
@@ -47,7 +47,7 @@ private:
   QHash<QString, QString> m_layouts;
   QHash<QString, XkbOptionGroup> m_optionGroups;
   QHash<QString, XkbOption> m_options;
-  QHash<QString, QStringList*> m_varLists;
+  QHash<QString, QList<XkbVariant>*> m_varLists;
 
   QString X11_DIR;	// pseudo-constant
 

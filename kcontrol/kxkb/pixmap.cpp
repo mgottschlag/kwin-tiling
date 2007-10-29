@@ -57,6 +57,7 @@ LayoutIcon::LayoutIcon():
 const QPixmap&
 LayoutIcon::findPixmap(const QString& code_, bool showFlag, const QString& displayName_)
 {
+//kDebug() << "pixmap for" << code_ << displayName_;
 	QPixmap* pm = NULL;
 
 	if( code_ == ERROR_CODE ) {

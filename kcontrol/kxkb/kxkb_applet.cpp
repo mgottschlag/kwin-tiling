@@ -18,27 +18,50 @@
 
 #include <QWidget>
 #include <QSizeF>
+#include <QMenu>
 
 #include <kglobal.h>
 #include <klocale.h>
+
+#include <plasma/widgets/boxlayout.h>
 
 #include "kxkbwidget.h"
 #include "kxkbcore.h"
 #include "kxkb_applet.h"
 
-#include "kxkb_applet.moc"
 
+// Plasma widget
+
+KxkbPlasmaWidget::KxkbPlasmaWidget(QGraphicsItem* parent, int controlType) :
+    KxkbWidget(controlType),
+    m_displayMode(ICON)
+{
+//        if( controlType == ICON )
+    m_indicatorWidget = new Plasma::Icon(parent);
+    m_indicatorWidget->setIconSize(32,32);
+    connect(m_indicatorWidget, SIGNAL(clicked()), this, SIGNAL(iconToggled()));
+//        else
+//            m_indicatorWidget = new Plasma::PushButton(parent);
+    m_menu = new QMenu(NULL); // TODO: proper parent
+}
+
+
+// Plasma applet
 
 KxkbApplet::KxkbApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
 {
-//    move( 0, 0 );
-    m_kxkbCore = new KxkbCore(NULL, KxkbCore::KXKB_COMPONENT, KxkbWidget::MENU_FULL, KxkbWidget::WIDGET_LABEL);
-    m_kxkbCore->newInstance();
-
-    setDrawStandardBackground(true);
-//    connect(m_systemTrayWidget, SIGNAL(sizeChanged()), SLOT(updateLayout()));
-    //m_kxkbWidget->show();
+    m_kxkbCore = new KxkbCore(KxkbCore::KXKB_COMPONENT);
+    if( m_kxkbCore->newInstance() < 0 ) {
+        setFailedToLaunch(true);
+    }
+    else {
+        new Plasma::HBoxLayout(this);
+        setDrawStandardBackground(true);
+        KxkbWidget* kxkbWidget = new KxkbPlasmaWidget(this, KxkbWidget::MENU_FULL);
+        m_kxkbCore->setWidget(kxkbWidget);
+//        m_kxkbWidget = kxkbWidget;
+    }
     //setCustomMenu(widget->history()->popup());
     //centerWidget();
     //kxkbWidget->show();
@@ -47,6 +70,7 @@ KxkbApplet::KxkbApplet(QObject *parent, const QVariantList &args)
 KxkbApplet::~KxkbApplet()
 {
     if (failedToLaunch()) {
+        delete m_kxkbCore;
         // Do some cleanup here
     } else {
         // Save settings
@@ -58,9 +82,14 @@ QSizeF KxkbApplet::contentSizeHint() const
 //    return QSizeF(m_kxkbCore->size());
     return QSizeF(32,32);
 }
-
-void KxkbApplet::paintInterface(QPainter *painter,
-                    const QStyleOptionGraphicsItem *option,
+/*
+void KxkbApplet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                                     const QRect& contentsRect)
 {
+//    Q_UNUSED(option);
+    
+    ((KxkbPlasmaWidget*)m_kxkbWidget)->widget()->paint(painter, option, NULL);
 }
+*/
+
+#include "kxkb_applet.moc"

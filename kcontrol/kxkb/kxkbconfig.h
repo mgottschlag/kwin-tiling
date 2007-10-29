@@ -24,7 +24,7 @@
 #include <QMap>
 
 const int GROUP_LIMIT = 4;
-
+const int MAX_LABEL_LEN = 3;
 
 /* Utility classes for per-window/per-application layout implementation
 */
@@ -35,7 +35,6 @@ enum SwitchingPolicy {
 	SWITCH_POLICY_WINDOW = 3,
 	SWITCH_POLICY_COUNT = 4
 };
-
 
 
 inline QString createPair(QString key, QString value) 
@@ -121,11 +120,13 @@ public:
 	void setDefaults();
 	
 	QStringList getLayoutStringList(/*bool compact*/);
-	static QString getDefaultDisplayName(const QString& code_);
-	static QString getDefaultDisplayName(const LayoutUnit& layoutUnit, bool single=false);
 
-private:	
 	void updateDisplayNames();
+
+        static QString getDefaultDisplayName(const QString& code_);
+        static QString getDefaultDisplayName(const LayoutUnit& layoutUnit, bool single=false);
+
+private:
 	static const QMap<QString, QString> parseIncludesMap(const QStringList& pairList);
 };
 

@@ -54,8 +54,8 @@ void KxkbWidget::setCurrentLayout(const LayoutUnit& layoutUnit)
 void KxkbWidget::setError(const QString& layoutInfo)
 {
     QString msg = i18n("Error changing keyboard layout to '%1'", layoutInfo);
-	setToolTip(msg);
-	setPixmap(LayoutIcon::getInstance().findPixmap("error", m_showFlag));
+    setToolTip(msg);
+    setPixmap(LayoutIcon::getInstance().findPixmap("error", m_showFlag));
 }
 
 
@@ -74,11 +74,11 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 //    menu->addTitle( qApp->windowIcon(), KGlobal::caption() );
 //    menu->setTitle( KGlobal::mainComponent().aboutData()->programName() );
 
-	for(QList<QAction*>::Iterator it=m_actions.begin(); it != m_actions.end(); it++ )
-			menu->removeAction(*it);
-	m_actions.clear();
+    for(QList<QAction*>::Iterator it=m_actions.begin(); it != m_actions.end(); it++ )
+	menu->removeAction(*it);
+    m_actions.clear();
 	
-	int cnt = 0;
+    int cnt = 0;
     QList<LayoutUnit>::ConstIterator it;
     for (it=layouts.begin(); it != layouts.end(); ++it)
     {
@@ -89,7 +89,7 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 //         const QPixmap pix = iconeffect.apply(layoutPixmap, KIcon::Small, KIcon::DefaultState);
 
 		QString layoutString = rules.layouts()[layoutName];
-		QString fullName = i18n( layoutString.toLatin1().constData() );
+		QString fullName = i18n( layoutString.toUtf8().constData() );
 		if( variantName.isEmpty() == false )
 			fullName += " (" + variantName + ')';
 //		menu->insertItem(pix, fullName, START_MENU_ID + cnt, m_menuStartIndex + cnt);
@@ -103,7 +103,7 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 
 		cnt++;
     }
-	menu->insertActions(m_configSeparator, m_actions);
+    menu->insertActions(m_configSeparator, m_actions);
 
 	// if show config, if show help
 //	if( menu->indexOf(CONFIG_MENU_ID) == -1 ) {
@@ -156,9 +156,9 @@ void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
 void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 {
 //	kDebug() << "setting icon to tray";
-	m_indicatorWidget->setIcon( pixmap );
+    m_indicatorWidget->setIcon( pixmap );
 // 	if( ! m_indicatorWidget->isVisible() )
-		m_indicatorWidget->show();
+//    m_indicatorWidget->show();
 }
 
 // ----------------------------
@@ -178,14 +178,16 @@ KxkbLabel::KxkbLabel(int controlType, QWidget* parent):
 	m_menu = new QMenu(m_indicatorWidget);
 	
 	connect(m_indicatorWidget, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
-	connect(m_indicatorWidget, SIGNAL(rightClick(const QPoint&)), this, SLOT(rightClick(const QPoint&))); 
+//	connect(m_indicatorWidget, SIGNAL(rightClick(const QPoint&)), this, SLOT(rightClick(const QPoint&))); 
 	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
-	show();
+//	show();
 }
 
-void KxkbLabel::rightClick(const QPoint& pos) {
-	QMenu* menu = contextMenu();
-	menu->exec(m_indicatorWidget->mapToGlobal(pos));
+void KxkbLabel::contextMenuEvent(QContextMenuEvent* ev) {
+//void KxkbLabel::rightClick(const QPoint& pos) {
+    QMenu* menu = contextMenu();
+//	menu->exec(m_indicatorWidget->mapToGlobal(pos));
+    menu->exec(ev->globalPos());
 }
 
 void KxkbLabel::setPixmap(const QPixmap& pixmap)
@@ -193,6 +195,6 @@ void KxkbLabel::setPixmap(const QPixmap& pixmap)
 	m_indicatorWidget->setIconSize(QSize(24,24));
 	m_indicatorWidget->setIcon( pixmap );
 
-	if( ! m_indicatorWidget->isVisible() )
-		m_indicatorWidget->show();
+//	if( ! m_indicatorWidget->isVisible() )
+//		m_indicatorWidget->show();
 }

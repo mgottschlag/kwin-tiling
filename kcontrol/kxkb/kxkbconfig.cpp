@@ -87,16 +87,10 @@ bool KxkbConfig::load(int loadMode)
 	kDebug() << "Model: " << m_model;
 
 	QStringList layoutList;
-	if( config.hasKey("LayoutList") ) {
-		layoutList = config.readEntry("LayoutList", layoutList);
-	}
-	else { // old config
-		QString mainLayout = config.readEntry("Layout", DEFAULT_LAYOUT_UNIT.toPair());
-		layoutList = config.readEntry("Additional", layoutList);
-		layoutList.prepend(mainLayout);
-	}
+	layoutList = config.readEntry("LayoutList", layoutList);
+
 	if( layoutList.count() == 0 )
-		layoutList.append("us");
+	    layoutList.append("us");
 
 	m_layouts.clear();
 	for(QStringList::ConstIterator it = layoutList.begin(); it != layoutList.end() ; ++it) {
@@ -109,14 +103,17 @@ bool KxkbConfig::load(int loadMode)
 
 	QStringList displayNamesList;
 	displayNamesList = config.readEntry("DisplayNames", displayNamesList);
+        int i=0;
 	for(QStringList::ConstIterator it = displayNamesList.begin(); it != displayNamesList.end() ; ++it) {
-		QStringList displayNamePair = (*it).split(':');
-		if( displayNamePair.count() == 2 ) {
-			LayoutUnit layoutUnit( displayNamePair[0] );
-			if( m_layouts.contains( layoutUnit ) ) {
-				m_layouts[m_layouts.indexOf(layoutUnit)].displayName = displayNamePair[1].left(3);
-			}
-		}
+//		QStringList displayNamePair = (*it).split(':');
+//		if( displayNamePair.count() == 2 ) {
+//			LayoutUnit layoutUnit( displayNamePair[0] );
+//			if( m_layouts.contains( layoutUnit ) ) {
+            if( i < m_layouts.count() ) {
+		m_layouts[i].displayName = *it;
+                i++;
+            }
+//		}
 	}
 
 //	m_showSingle = config.readEntry("ShowSingle", false);
@@ -137,10 +134,10 @@ bool KxkbConfig::load(int loadMode)
 		m_switchingPolicy = SWITCH_POLICY_GLOBAL;
 	}
 
-	if( m_layouts.count() < 2 && m_switchingPolicy != SWITCH_POLICY_GLOBAL ) {
-		kWarning() << "Layout count is less than 2, using Global switching policy" ;
-		m_switchingPolicy = SWITCH_POLICY_GLOBAL;
-	}
+//	if( m_layouts.count() < 2 && m_switchingPolicy != SWITCH_POLICY_GLOBAL ) {
+//		kWarning() << "Layout count is less than 2, using Global switching policy" ;
+//		m_switchingPolicy = SWITCH_POLICY_GLOBAL;
+//	}
 
 	kDebug() << "Layout owner mode " << layoutOwner;
 
@@ -193,10 +190,10 @@ void KxkbConfig::updateDisplayNames()
 
 bool KxkbConfig::setConfiguredLayouts(QList<LayoutUnit> layoutUnits)
 {
-  kDebug() << "resetting layouts to " << layoutUnits.count() << " active in X server" << endl;
-  m_layouts = layoutUnits;
-  updateDisplayNames();
-  return true; //TODO ?
+    kDebug() << "resetting layouts to " << layoutUnits.count() << " active in X server" << endl;
+    m_layouts = layoutUnits;
+    updateDisplayNames();
+    return true; //TODO ?
 }
 
 void KxkbConfig::save()
@@ -211,7 +208,6 @@ void KxkbConfig::save()
 	config.writeEntry("Options", m_options.join(OPTIONS_SEPARATOR) );
 
 	QStringList layoutList;
-	QStringList includeList;
 	QStringList displayNamesList;
 
 	QList<LayoutUnit>::ConstIterator it;
@@ -222,17 +218,14 @@ void KxkbConfig::save()
 
 		QString displayName( layoutUnit.displayName );
 		kDebug() << " displayName " << layoutUnit.toPair() << " : " << displayName;
-		if( displayName.isEmpty() == false && displayName != layoutUnit.layout ) {
-			displayName = QString("%1:%2").arg(layoutUnit.toPair(), displayName);
+		//if( displayName.isEmpty() == false && displayName != layoutUnit.layout ) {
+		//	displayName = QString("%1:%2").arg(layoutUnit.toPair(), displayName);
 			displayNamesList.append( displayName );
-		}
+		//}
 	}
 
 	config.writeEntry("LayoutList", layoutList);
 	kDebug() << "Saving Layouts: " << layoutList;
-
-	config.writeEntry("IncludeGroups", includeList);
- 	kDebug() << "Saving includeGroups: " << includeList;
 
 //	if( displayNamesList.empty() == false )
 		config.writeEntry("DisplayNames", displayNamesList);
@@ -249,14 +242,6 @@ void KxkbConfig::save()
 	config.writeEntry("StickySwitching", m_stickySwitching);
 	config.writeEntry("StickySwitchingDepth", m_stickySwitchingDepth);
 #endif
-
-	// remove old options
- 	config.deleteEntry("Variants");
-	config.deleteEntry("Includes");
-	config.deleteEntry("Encoding");
-	config.deleteEntry("AdditionalEncodings");
-	config.deleteEntry("Additional");
-	config.deleteEntry("Layout");
 
 	config.sync();
 }

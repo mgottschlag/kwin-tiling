@@ -39,7 +39,7 @@ public:
 	QHash<QString, QString> getLayouts();
 	QHash<QString, XkbOption> getOptions();
 	QHash<QString, XkbOptionGroup> getOptionGroups();
-	QHash<QString, QStringList*> getVariants();
+	QHash<QString, QList<XkbVariant>*> getVariants();
 
 	QList<LayoutUnit> getGroupNames();
 	int filterEvents(XEvent* ev);

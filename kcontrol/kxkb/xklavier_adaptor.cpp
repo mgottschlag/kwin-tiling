@@ -35,7 +35,7 @@ class XKlavierAdaptorPriv {
 public:
 	QHash<QString, QString> m_models;
 	QHash<QString, QString> m_layouts;
-	QHash<QString, QStringList*> m_variants;
+	QHash<QString, QList<XkbVariant>*> m_variants;
 	QHash<QString, XkbOption> m_options;
 	QHash<QString, XkbOptionGroup> m_optionGroups;
 
@@ -52,25 +52,15 @@ XklConfigRegistry *XKlavierAdaptorPriv::config;
 
 XKlavierAdaptor::XKlavierAdaptor(Display* dpy)
 {
-  priv = new XKlavierAdaptorPriv();
-  
-  g_type_init();
+    priv = new XKlavierAdaptorPriv();
 
-	QString locale = KGlobal::locale()->language();
-	if( ! KGlobal::locale()->country().isEmpty() ) {
-//		locale += KGlobal::_locale->country();
-//		locale += "UTF-8";
-	}
-	kDebug() << "Setting LC_MESSAGES for libxklavier: " << locale;
-//	setlocale(LC_ALL, locale.toLatin1());
-	setlocale(LC_MESSAGES, locale.toLatin1());
+    g_type_init();
 
-
-	priv->engine = xkl_engine_get_instance(dpy);
-	if (priv->engine == NULL) {
-		kError() << "XKlavier engine cannot be initialized!" << endl;
-		return; // throw
-	}
+    priv->engine = xkl_engine_get_instance(dpy);
+    if (priv->engine == NULL) {
+        kError() << "XKlavier engine cannot be initialized!" << endl;
+        return; // throw
+    }
 	
 }
 
@@ -78,14 +68,14 @@ QHash<QString, QString> XKlavierAdaptor::getModels() { return priv->m_models; }
 QHash<QString, QString> XKlavierAdaptor::getLayouts() { return priv->m_layouts; }
 QHash<QString, XkbOption> XKlavierAdaptor::getOptions() { return priv->m_options; }
 QHash<QString, XkbOptionGroup> XKlavierAdaptor::getOptionGroups() { return priv->m_optionGroups; }
-QHash<QString, QStringList*> XKlavierAdaptor::getVariants() { return priv->m_variants; }
+QHash<QString, QList<XkbVariant>*> XKlavierAdaptor::getVariants() { return priv->m_variants; }
 
 
 
 static void processModel(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
-	QString model = configItem->name;
-	QString desc = configItem->description;
+	QString model = QString::fromUtf8(configItem->name);
+	QString desc = QString::fromUtf8(configItem->description);
 
 #if VERBOSE == 1
 	  kDebug() << "model: " << model << " - " << desc;
@@ -97,28 +87,30 @@ static void processModel(XklConfigRegistry*, const XklConfigItem* configItem, gp
 
 static void processVariants(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
-	QString variant = configItem->name;
+        XkbVariant variant;
+	variant.name = QString::fromUtf8(configItem->name);
+        variant.description = QString::fromUtf8(configItem->description);
 	QString layout = ((XKlavierAdaptorPriv*)userData)->currLayout;
 
 #if VERBOSE == 1
-	  kDebug() << "\tvariant: " << variant << " (parent: " << layout << ")";
+	kDebug() << "\tvariant: " << variant.name << "-" << variant.description << " (parent: " << layout << ")";
 #endif
 
-	QStringList* vars = ((XKlavierAdaptorPriv*)userData)->m_variants[layout];
+	QList<XkbVariant>* vars = ((XKlavierAdaptorPriv*)userData)->m_variants[layout];
 	vars->append(variant);	//TODO: //QString(configItem->description));
 }
 
 
 static void processLayout(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
-	QString layout = configItem->name;
-	QString desc = configItem->description;
+	QString layout = QString::fromUtf8(configItem->name);
+	QString desc = QString::fromUtf8(configItem->description);
 
 #if VERBOSE == 1
 	kDebug() << "layout: " << layout << " - " << desc;
 #endif
 	((XKlavierAdaptorPriv*)userData)->m_layouts.insert(layout, desc);
-	((XKlavierAdaptorPriv*)userData)->m_variants.insert(layout, new QStringList());
+	((XKlavierAdaptorPriv*)userData)->m_variants.insert(layout, new QList<XkbVariant>());
 	
 	((XKlavierAdaptorPriv*)userData)->currLayout = layout;
 	xkl_config_registry_foreach_layout_variant(XKlavierAdaptorPriv::config, 
@@ -130,8 +122,8 @@ static void processOptions(XklConfigRegistry*, const XklConfigItem* configItem, 
 {
 	XkbOption option;
 	
-	option.name = configItem->name;
-	option.description = configItem->description;
+	option.name = QString::fromUtf8(configItem->name);
+	option.description = QString::fromUtf8(configItem->description);
 	option.group = ((XKlavierAdaptorPriv*)userData)->currGroup;
 
 #if VERBOSE == 1
@@ -145,8 +137,8 @@ static void processOptions(XklConfigRegistry*, const XklConfigItem* configItem, 
 static void processOptionGroup(XklConfigRegistry*, const XklConfigItem* configItem, void *userData)
 {
 	XkbOptionGroup group;
-	group.name = configItem->name;
-	group.description = configItem->description;
+	group.name = QString::fromUtf8(configItem->name);
+	group.description = QString::fromUtf8(configItem->description);
 	group.exclusive = ! GPOINTER_TO_INT (g_object_get_data (G_OBJECT (configItem),
 	                                                          XCI_PROP_ALLOW_MULTIPLE_SELECTION));
 	
@@ -163,34 +155,59 @@ static void processOptionGroup(XklConfigRegistry*, const XklConfigItem* configIt
 }
 
 
+static const int LOCALE_CATEGORY = LC_ALL;
+
 void XKlavierAdaptor::loadXkbConfig(bool layoutsOnly)
 {
-	if( priv->engine == NULL )
-	    return;
+    if( priv->engine == NULL )
+        return;
 
-	kDebug() << "Xklavier initialized";
-	priv->config = xkl_config_registry_get_instance(priv->engine);
+    QString locale = KGlobal::locale()->language();
+    if( locale.indexOf('_') == -1 ) {   // TODO: do we have to do this?
+        QString country = KGlobal::locale()->country();
+        if( ! country.isEmpty() ) {
+            locale += "_";
+	    locale += country;
+        }
+    }
+//  locale = "uk_UA";   // testing
+    locale += ".UTF-8";
+    
+    const char* currLocale = setlocale(LOCALE_CATEGORY, NULL);
+    kDebug() << "Setting LC_ALL for libxklavier: " << locale;
 
-	xkl_config_registry_load(priv->config);
+    const char* newLocale = setlocale(LOCALE_CATEGORY, locale.toLatin1());
+    if( newLocale == NULL ) {
+        kDebug() << "Setting locale " << locale << " failed - will use 'C' locale";
+        setlocale(LC_ALL, "C");
+    }
+
+    kDebug() << "Xklavier initialized";
+    priv->config = xkl_config_registry_get_instance(priv->engine);
+
+    xkl_config_registry_load(priv->config);
 	
-	void *userData = priv;
+    void *userData = priv;
 
-	xkl_config_registry_set_custom_charset(priv->config, "UTF-8");
+//	xkl_config_registry_set_custom_charset(priv->config, "UTF-8");
 	
-	xkl_config_registry_foreach_layout(priv->config, processLayout, userData);
+    xkl_config_registry_foreach_layout(priv->config, processLayout, userData);
 
-	if( ! layoutsOnly ) {
-	  xkl_config_registry_foreach_model(priv->config, processModel, userData);
+//        kDebug() << priv->m_layouts.count() << "layouts total";
 
-	  xkl_config_registry_foreach_option_group(priv->config, processOptionGroup, userData);
-	}
+    if( ! layoutsOnly ) {
+	xkl_config_registry_foreach_model(priv->config, processModel, userData);
+	xkl_config_registry_foreach_option_group(priv->config, processOptionGroup, userData);
+    }
 
-	g_object_unref(priv->config);
+    setlocale(LOCALE_CATEGORY, currLocale);
+
+    g_object_unref(priv->config);
 }
 
 XKlavierAdaptor::~XKlavierAdaptor()
 {
-	g_object_unref(priv->engine);
+    g_object_unref(priv->engine);
 //	delete priv;
 //	kDebug() << "Finalizer";
 }
@@ -200,7 +217,7 @@ XKlavierAdaptor::getGroupNames()
 {
     QList<LayoutUnit> list;
 
-    kDebug() << "retrieving active layout from server...";
+//    kDebug() << "retrieving active layout from server...";
     XklConfigRec configRec;
     xkl_config_rec_get_from_server(&configRec, priv->engine);
 

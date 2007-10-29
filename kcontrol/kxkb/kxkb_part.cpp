@@ -42,9 +42,14 @@ KxkbPart::KxkbPart( QWidget* parent,
 	    }
 	}
 */
-	m_kxkbCore = new KxkbCore( this, KxkbCore::KXKB_COMPONENT, controlType, KxkbWidget::WIDGET_LABEL );
-	if( m_kxkbCore->newInstance() != 0 )
+	m_kxkbCore = new KxkbCore( KxkbCore::KXKB_COMPONENT );
+	if( m_kxkbCore->newInstance() == 0 ) {
+            KxkbWidget* kxkbWidget = new KxkbLabel(controlType, this);
+            m_kxkbCore->setWidget(kxkbWidget);
+        }
+        else {
             setVisible(false);
+        }
 //	setWidget(kxkbWidget->widget());
 }
 

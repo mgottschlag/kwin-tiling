@@ -28,7 +28,6 @@ DESCRIPTION
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kglobal.h>
-#include <kdebug.h>
 
 #include "kxkb_adaptor.h"
 
@@ -41,14 +40,12 @@ DESCRIPTION
 KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     : KUniqueApplication(allowStyles, GUIenabled)
 {
-    m_kxkbCore = new KxkbCore( NULL, KxkbCore::KXKB_MAIN, KxkbWidget::MENU_FULL, KxkbWidget::WIDGET_TRAY );
+    m_kxkbCore = new KxkbCore( KxkbCore::KXKB_MAIN );
 
     if( isError() ) {
         exit(2);        // failed XKB
         return;
     }
-
-    new KXKBAdaptor( this );
 }
 
 
@@ -63,26 +60,18 @@ int KXKBApp::newInstance()
         exit(0);        // not using kxkb from settings
     }
 
+    KxkbWidget* kxkbWidget = new KxkbSysTrayIcon(KxkbWidget::MENU_FULL);
+    m_kxkbCore->setWidget(kxkbWidget);
+
+    new KXKBAdaptor( this );
+
     return res;
 }
 
-bool KXKBApp::settingsRead()
-{
-//	return m_kxkbCore->settingsRead();
-    return false;
-}
-
-// This function activates the keyboard layout specified by the
-// configuration members (m_currentLayout)
-void KXKBApp::layoutApply()
-{
-//	return m_kxkbCore->layoutApply();
-}
-
-
 void KXKBApp::slotSettingsChanged(int category)
 {
-//	return m_kxkbCore->slotSettingsChanged(category);
+//TODO
+//    return m_kxkbCore->slotSettingsChanged(category);
 }
 
 

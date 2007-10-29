@@ -1,7 +1,6 @@
- Modifier shortcuts - easier screen for Ctrl+Shift
- Shortcut
+ KDE Shortcut
  Shortcut per layout
- Plasma Applet - make icon work, check startup and conflict with kxkb
+ Plasma Applet - make icon work, check conflict with kxkb
  i18n (kde + libxklavier)
  Improve component
  XkbOptions radiobuttons for exclusive group

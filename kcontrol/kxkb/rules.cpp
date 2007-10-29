@@ -46,25 +46,25 @@ static const QRegExp NON_CLEAN_LAYOUT_REGEXP("[^a-z]");
 XkbRules::XkbRules(bool layoutsOnly)
 {
 #ifdef HAVE_XKLAVIER
-	loadNewRules(layoutsOnly);
+    loadNewRules(layoutsOnly);
 #else
-	X11_DIR = X11Helper::findX11Dir();
+    X11_DIR = X11Helper::findX11Dir();
 
-   	if( X11_DIR == NULL ) {
+    if( X11_DIR == NULL ) {
         kError() << "Cannot find X11 directory!" << endl;
 //        throw Exception();
-		return;
-   	}
+        return;
+    }
 
-	QString rulesFile = X11Helper::findXkbRulesFile(X11_DIR, QX11Info::display());
+    QString rulesFile = X11Helper::findXkbRulesFile(X11_DIR, QX11Info::display());
 
-	if( rulesFile.isEmpty() ) {
-  		kError() << "Cannot find rules file in " << X11_DIR << endl;
+    if( rulesFile.isEmpty() ) {
+        kError() << "Cannot find rules file in " << X11_DIR << endl;
 //		throw Exception();
-		return;
-	}
+	return;
+    }
 
-	loadRules(rulesFile, layoutsOnly);
+    loadRules(rulesFile, layoutsOnly);
 #endif
 
 }
@@ -107,6 +107,7 @@ void XkbRules::loadRules(const QString &file, bool layoutsOnly)
 
     if( layoutsOnly == false ) {
 	m_models = rules->models;
+//        m_varLists = rules->variants;
 	m_options = rules->options;
 	m_optionGroups = rules->optionGroups;
 
@@ -121,13 +122,13 @@ void XkbRules::loadRules(const QString &file, bool layoutsOnly)
 
 #endif
 
-QStringList
+QList<XkbVariant>
 XkbRules::getAvailableVariants(const QString& layout)
 {
     if( layout.isEmpty() || !layouts().contains(layout) )
-	  return QStringList();
+	  return QList<XkbVariant>();
 
-    QStringList* result1 = m_varLists[layout];
+    QList<XkbVariant>* result1 = m_varLists[layout];
 
 #ifdef HAVE_XKLAVIER
         return *result1;
@@ -135,9 +136,10 @@ XkbRules::getAvailableVariants(const QString& layout)
     if( result1 )
         return *result1;
 
-    QStringList* result = X11Helper::getVariants(layout, X11_DIR);
+    QList<XkbVariant>* result = X11Helper::getVariants(layout, X11_DIR);
 
     m_varLists.insert(layout, result);
     return *result;
 #endif
+
 }

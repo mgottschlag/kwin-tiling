@@ -25,6 +25,7 @@
 #include <QPixmap>
 
 #include <plasma/applet.h>
+#include <plasma/widgets/icon.h>
 
 
 class QSizeF;
@@ -37,14 +38,43 @@ public:
     explicit KxkbApplet(QObject *parent, const QVariantList &args);
     ~KxkbApplet();
     
-    void paintInterface(QPainter *painter,
-                    const QStyleOptionGraphicsItem *option,
-                                    const QRect& contentsRect);
+//    void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
+//                                    const QRect& contentsRect);
     QSizeF contentSizeHint() const;
 
 private:
     KxkbCore* m_kxkbCore;
+//    KxkbWidget* m_kxkbWidget;
 };
+
+
+/*
+    Flexible widget to show layouts
+*/
+class KxkbPlasmaWidget : public KxkbWidget
+{
+    Q_OBJECT
+
+public:
+    enum { ICON = 1, TEXT = 2 };
+
+    KxkbPlasmaWidget(QGraphicsItem* parent=0, int controlType=MENU_FULL);
+    virtual ~KxkbPlasmaWidget() { delete m_menu; } //delete m_indicatorWidget; }
+//    Plasma::Icon* widget() { return m_indicatorWidget; }
+
+protected:
+    QMenu* contextMenu() { return m_menu; }
+    void setToolTip(const QString& tip) { m_indicatorWidget->setToolTip(tip); }
+    void setPixmap(const QPixmap& pixmap) { if( m_displayMode==ICON) m_indicatorWidget->setIcon(pixmap); }
+    void setText(const QString& text) { if (m_displayMode==TEXT) m_indicatorWidget->setText(text); }
+    void setVisible(bool visible) { m_indicatorWidget->setVisible(visible); }
+	
+private:
+    const int m_displayMode;
+    Plasma::Icon* m_indicatorWidget;
+    QMenu* m_menu;
+};
+
 
 K_EXPORT_PLASMA_APPLET(kxkb, KxkbApplet)
 

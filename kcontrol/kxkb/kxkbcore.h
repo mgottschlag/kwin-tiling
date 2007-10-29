@@ -31,14 +31,16 @@ DESCRIPTION
 #include <QQueue>
 
 #include "kxkbconfig.h"
-#include "kxkbwidget.h"
+
 
 class XKBExtension;
 class XkbRules;
 class KActionCollection;
 class LayoutMap;
-//class KxkbWidget;
+class KxkbWidget;
 class QAction;
+
+//typedef KxkbWidget* (*KxkbWidgetCreateFn(KxkbWidget*));
 
 /* This is the main Kxkb class responsible for reading options
     and switching layouts
@@ -51,14 +53,14 @@ class KxkbCore : public QObject
 public:
     enum { KXKB_MAIN=1, KXKB_COMPONENT=2 };
 
-    KxkbCore(QWidget* parentWidget, int mode=KXKB_MAIN, int controlType=KxkbWidget::MENU_FULL, int widgetType=KxkbWidget::WIDGET_TRAY);
+    KxkbCore(int mode=KXKB_MAIN);
     ~KxkbCore();
 
     virtual int newInstance();
     bool setLayout(int layout);
     int getStatus() { return m_status; }
     bool x11EventFilter ( XEvent * event );
-
+    void setWidget(KxkbWidget* kxkbWidet);
 // DBUS:
 public slots:
     bool setLayout(const QString& layoutPair);
@@ -83,8 +85,6 @@ signals:
 private:
     int m_mode;
     int m_currentLayout;
-    int m_controlType;
-    int m_widgetType;
     int m_status;
 
     KxkbConfig m_kxkbConfig;
@@ -92,14 +92,14 @@ private:
     
     XKBExtension *m_extension;
     XkbRules *m_rules;
-    QWidget *m_parentWidget;
+    
     KxkbWidget *m_kxkbWidget;
     KActionCollection *m_actions;
     
     void updateIndicator(int layout, int res);
     void initTray();
     void initKeys();
-    void initWidget();
+    void initReactions();
     void initLayoutGroups();
     void initSwitchingPolicy();
     int updateGroupsFromServer();
