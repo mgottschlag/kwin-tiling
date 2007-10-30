@@ -74,6 +74,7 @@ private:
   QWidget *overlay;
 
   Phonon::MediaObject *_player;
+  QString _currentPlayerSource;
 
   WId _activeWindow;
 
