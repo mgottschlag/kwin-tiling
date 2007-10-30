@@ -9,9 +9,6 @@
     <height>384</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <layout class="QGridLayout" >
    <property name="margin" >
     <number>9</number>
@@ -46,18 +43,12 @@
      <property name="text" >
       <string>&amp;Properties</string>
      </property>
-     <property name="shortcut" >
-      <string>Alt+P</string>
-     </property>
     </widget>
    </item>
    <item row="0" column="1" >
     <widget class="QPushButton" name="btnAdd" >
      <property name="text" >
       <string>Add</string>
-     </property>
-     <property name="shortcut" >
-      <string>Alt+A</string>
      </property>
     </widget>
    </item>
@@ -66,18 +57,12 @@
      <property name="text" >
       <string>&amp;Enabled</string>
      </property>
-     <property name="shortcut" >
-      <string>Alt+E</string>
-     </property>
     </widget>
    </item>
    <item row="1" column="1" >
     <widget class="QPushButton" name="btnRemove" >
      <property name="text" >
       <string>&amp;Remove</string>
-     </property>
-     <property name="shortcut" >
-      <string>Alt+R</string>
      </property>
     </widget>
    </item>
