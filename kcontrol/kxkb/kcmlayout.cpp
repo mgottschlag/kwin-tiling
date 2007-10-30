@@ -187,20 +187,21 @@ DstLayoutModel::data(const QModelIndex& index, int role) const
     int col = index.column();
     int row = index.row();
     QHash<QString, QString> layouts = m_rules->layouts();
-    QString layout = m_kxkbConfig->m_layouts[row].layout;
+    LayoutUnit lu = m_kxkbConfig->m_layouts[row];
 	
     if (role == Qt::TextAlignmentRole) {
 	return int(Qt::AlignLeft | Qt::AlignVCenter);
     } else if (role == Qt::DecorationRole) {
 	switch(col) {
-	    case LAYOUT_COLUMN_FLAG: return LayoutIcon::getInstance().findPixmap(layout, true);
+	    case LAYOUT_COLUMN_FLAG: 
+                return LayoutIcon::getInstance().findPixmap(lu.layout, m_kxkbConfig->m_showFlag, lu.getDisplayName());
 	}
     } else if (role == Qt::DisplayRole) {
 	switch(col) {
-	    case LAYOUT_COLUMN_NAME: return i18n(layouts[layout]);
-	    case LAYOUT_COLUMN_MAP: return layout;
-	    case LAYOUT_COLUMN_VARIANT: return m_kxkbConfig->m_layouts[row].variant;
-	    case LAYOUT_COLUMN_DISPLAY_NAME: return m_kxkbConfig->m_layouts[row].displayName;
+	    case LAYOUT_COLUMN_NAME: return i18n(layouts[lu.layout]);
+	    case LAYOUT_COLUMN_MAP: return lu.layout;
+	    case LAYOUT_COLUMN_VARIANT: return lu.variant;
+	    case LAYOUT_COLUMN_DISPLAY_NAME: return lu.getDisplayName();
 	    break;
 	    default: ;
 	}
@@ -342,6 +343,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     m_xkbOptModel(NULL)
 {
 //    KGlobal::locale()->insertCatalog("desktop_kdebase"); // to translate languages
+//    kDebug() << "i18n" << i18n("France");
 
     //Read rules - we _must_ read _before_ creating UIs
     loadRules();
@@ -351,9 +353,6 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 //  main->addWidget(widget);
 
     m_srcModel = new SrcLayoutModel(m_rules, NULL);
-    m_srcModel->setHeaderData(LAYOUT_COLUMN_FLAG, Qt::Horizontal, "");
-    m_srcModel->setHeaderData(LAYOUT_COLUMN_NAME, Qt::Horizontal, i18n("Layout name"), Qt::DisplayRole);
-    m_srcModel->setHeaderData(LAYOUT_COLUMN_MAP, Qt::Horizontal, i18n("Map"), Qt::DisplayRole);
 
     widget->srcTableView->setModel(m_srcModel);
 //    widget->srcTableView->setSortingEnabled(true);
@@ -383,7 +382,8 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 //    connect( widget->chkEnable, SIGNAL( toggled( bool )), this, SLOT(changed()));
 //    connect( widget->chkIndicatorOnly, SIGNAL( toggled( bool )), this, SLOT(changed()));
     connect( widget->chkShowSingle, SIGNAL( toggled( bool )), this, SLOT(changed()));
-    connect( widget->chkShowFlag, SIGNAL( toggled( bool )), this, SLOT(changed()));
+//    connect( widget->chkShowFlag, SIGNAL( toggled( bool )), this, SLOT(changed()));
+    connect( widget->chkShowFlag, SIGNAL(toggled(bool)), this, SLOT(showFlagChanged(bool)));
     connect( widget->comboModel, SIGNAL(activated(int)), this, SLOT(changed()));
 
     connect( widget->srcTableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(add()));
@@ -409,6 +409,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 
     connect( widget->grpSwitching, SIGNAL( clicked( int ) ), SLOT(changed()));
     connect( widget->chkEnableSticky, SIGNAL(toggled(bool)), this, SLOT(changed()));
+
 
 #ifdef STICKY_SWITCHING
     connect( widget->spinStickyDepth, SIGNAL(valueChanged(int)), this, SLOT(changed()));
@@ -538,7 +539,6 @@ void LayoutConfig::save()
 
 void LayoutConfig::xkbOptionsChanged(const QModelIndex & /*topLeft*/, const QModelIndex & /*bottomRight*/)
 {
-//    kDebug() << "chked" << topLeft << bottomRight;
     updateOptionsCommand();
     updateShortcutsLabels();
     changed();
@@ -580,6 +580,15 @@ static QString getShortcutText(const QStringList& options, const QString& grp)
         return i18n("Defined");
     else
         return i18n("Not defined");
+}
+
+void LayoutConfig::showFlagChanged(bool on)
+{
+    m_kxkbConfig.m_showFlag = on;
+    m_dstModel->reset();
+    widget->dstTableView->update();
+    
+    changed();
 }
 
 void LayoutConfig::updateShortcutsLabels()
@@ -648,7 +657,6 @@ void LayoutConfig::add()
     QString layout = m_srcModel->getLayoutAt(selected[0].row());
 //    kDebug() << "selected to add" << layout;
     LayoutUnit lu(layout, "");
-    lu.displayName = KxkbConfig::getDefaultDisplayName(layout);
     m_kxkbConfig.m_layouts << lu;
 
     m_dstModel->reset();
@@ -751,17 +759,13 @@ void LayoutConfig::displayNameChanged(const QString& newDisplayName)
 
     LayoutUnit& layoutUnit = m_kxkbConfig.m_layouts[row];
 
-    QString oldName = layoutUnit.displayName;
-
-    if( oldName.isEmpty() )
-	oldName = KxkbConfig::getDefaultDisplayName( layoutUnit );
+    QString oldName = layoutUnit.getDisplayName();
 
     if( oldName != newDisplayName ) {
-	layoutUnit.displayName = newDisplayName;
-
-	updateIndicator();
+	layoutUnit.setDisplayName(newDisplayName);
 
         m_dstModel->emitDataChange(row, LAYOUT_COLUMN_DISPLAY_NAME);
+        m_dstModel->emitDataChange(row, LAYOUT_COLUMN_FLAG);
 
 	changed();
     }
@@ -776,12 +780,6 @@ int LayoutConfig::getSelectedDstLayout()
     QModelIndexList selected = selectionModel->selectedRows();
     int row = selected.count() > 0 ? selected[0].row() : -1;
     return row;
-}
-
-/** will update flag with label if layout label has been edited
-*/
-void LayoutConfig::updateIndicator()
-{
 }
 
 void LayoutConfig::layoutSelChanged()
@@ -860,13 +858,13 @@ void LayoutConfig::updateDisplayName()
 {
     int row = getSelectedDstLayout();
 
-    widget->editDisplayName->clear();
     widget->editDisplayName->setEnabled( row != -1 );
     if( row == -1 ) {
+        widget->editDisplayName->clear();
         return;
     }
 
-    widget->editDisplayName->setText( m_kxkbConfig.m_layouts[row].displayName );
+    widget->editDisplayName->setText( m_kxkbConfig.m_layouts[row].getDisplayName() );
 }
 
 void LayoutConfig::changed()

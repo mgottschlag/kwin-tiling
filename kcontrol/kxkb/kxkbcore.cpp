@@ -450,8 +450,10 @@ KxkbCore::updateGroupsFromServer()
 	    }
 
   	    int group = m_extension->getGroup();
-	    kDebug() << "got group from server:" << group;
-	    updateIndicator(group, 1);
+            if( m_currentLayout != group ) {
+	        kDebug() << "got group from server:" << group;
+	        updateIndicator(group, 1);
+            }
 	}
 #else
 	kDebug() << "updating layouts from server is not implemented w/out libxklavier";

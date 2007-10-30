@@ -72,10 +72,10 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag, const QString& displ
 	QString displayName(displayName_);
 
 	if( displayName.isEmpty() ) {
-		displayName = KxkbConfig::getDefaultDisplayName(code_);
+	    displayName = LayoutUnit::getDefaultDisplayName(code_);
 	}
-	if( displayName.length() > 3 )
-		displayName = displayName.left(3);
+	if( displayName.length() > MAX_LABEL_LEN )
+	    displayName = displayName.left(MAX_LABEL_LEN);
 
 	const QString pixmapKey( showFlag ? code_ + '.' + displayName : displayName );
 

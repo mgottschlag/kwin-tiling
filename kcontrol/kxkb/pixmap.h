@@ -43,6 +43,7 @@ private:
 	static const QString& ERROR_CODE;
 	
 	static LayoutIcon& getInstance();
+        void clearCache() { m_pixmapCache.clear(); }
 	const QPixmap& findPixmap(const QString& code, bool showFlag, const QString& displayName="");
 };
 

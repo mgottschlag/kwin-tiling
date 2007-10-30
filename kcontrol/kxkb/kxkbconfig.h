@@ -23,6 +23,7 @@
 #include <QQueue>
 #include <QMap>
 
+
 const int GROUP_LIMIT = 4;
 const int MAX_LABEL_LEN = 3;
 
@@ -45,9 +46,11 @@ inline QString createPair(QString key, QString value)
 } 
 
 struct LayoutUnit {
+private:
+	QString displayName;
+public:
 	QString layout;
 	QString variant;
-	QString displayName;
 	
 	LayoutUnit() {}
 	
@@ -59,6 +62,12 @@ struct LayoutUnit {
 	LayoutUnit(QString pair) {
 		setFromPair( pair );
 	}
+
+        void setDisplayName(const QString& name) { displayName = name; }
+
+        QString getDisplayName() const {
+            return !displayName.isEmpty() ? displayName : getDefaultDisplayName(layout, variant);
+        }
 	
 	void setFromPair(const QString& pair) {
 		layout = parseLayout(pair);
@@ -68,20 +77,22 @@ struct LayoutUnit {
 	QString toPair() const {
 		return createPair(layout, variant);
 	}
-	
+/*	
 	bool operator<(const LayoutUnit& lu) const {
 		return layout<lu.layout ||
 				(layout==lu.layout && variant<lu.variant);
 	}
-	
+*/		
 	bool operator!=(const LayoutUnit& lu) const {
 		return layout!=lu.layout || variant!=lu.variant;
 	}
-	
 	bool operator==(const LayoutUnit& lu) const {
 // 		kDebug() << layout << "==" << lu.layout << "&&" << variant << "==" << lu.variant;
 		return layout==lu.layout && variant==lu.variant;
 	}
+
+
+        static QString getDefaultDisplayName(const QString& layout, const QString& variant="");
 	
 //private:
 	static const QString parseLayout(const QString &layvar);
@@ -122,9 +133,6 @@ public:
 	QStringList getLayoutStringList(/*bool compact*/);
 
 	void updateDisplayNames();
-
-        static QString getDefaultDisplayName(const QString& code_);
-        static QString getDefaultDisplayName(const LayoutUnit& layoutUnit, bool single=false);
 
 private:
 	static const QMap<QString, QString> parseIncludesMap(const QStringList& pairList);

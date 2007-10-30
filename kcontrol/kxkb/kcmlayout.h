@@ -49,12 +49,12 @@ public:
 
 protected:
     QString createOptionString();
-    void updateIndicator();
 
 protected slots:
     void moveUp();
     void moveDown();
     void variantChanged();
+    void showFlagChanged(bool on);
     void xkbShortcutPressed();
     void xkbShortcut3dPressed();
     void kdeShortcutPressed();

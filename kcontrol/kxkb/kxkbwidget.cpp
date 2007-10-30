@@ -44,7 +44,8 @@ KxkbWidget::KxkbWidget(int controlType):
 void KxkbWidget::setCurrentLayout(const LayoutUnit& layoutUnit)
 {
 	setToolTip(m_descriptionMap[layoutUnit.toPair()]);
-	const QPixmap& icon = LayoutIcon::getInstance().findPixmap(layoutUnit.layout, m_showFlag, layoutUnit.displayName);
+	const QPixmap& icon = 
+            LayoutIcon::getInstance().findPixmap(layoutUnit.layout, m_showFlag, layoutUnit.getDisplayName());
 //	kDebug() << "setting pixmap: " << icon.width();
 	setPixmap( icon );
 	kDebug() << "setting text: " << layoutUnit.layout;
@@ -55,7 +56,7 @@ void KxkbWidget::setError(const QString& layoutInfo)
 {
     QString msg = i18n("Error changing keyboard layout to '%1'", layoutInfo);
     setToolTip(msg);
-    setPixmap(LayoutIcon::getInstance().findPixmap("error", m_showFlag));
+    setPixmap(LayoutIcon::getInstance().findPixmap("error", false));
 }
 
 
@@ -85,7 +86,8 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 		const QString layoutName = (*it).layout;
 		const QString variantName = (*it).variant;
 
-		const QPixmap& layoutPixmap = LayoutIcon::getInstance().findPixmap(layoutName, m_showFlag, (*it).displayName);
+		const QPixmap& layoutPixmap = 
+                    LayoutIcon::getInstance().findPixmap(layoutName, m_showFlag, (*it).getDisplayName());
 //         const QPixmap pix = iconeffect.apply(layoutPixmap, KIcon::Small, KIcon::DefaultState);
 
 		QString layoutString = rules.layouts()[layoutName];
@@ -119,9 +121,9 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 		helpAction->setData(HELP_MENU_ID);
 		menu->addAction(helpAction);
 	}
-	else {
-	    kDebug() << "indicator with menu 'layouts only' requested";
-	}
+//	else {
+//	    kDebug() << "indicator with menu 'layouts only' requested";
+//	}
 
 //	menu->update();
 

@@ -110,7 +110,7 @@ bool KxkbConfig::load(int loadMode)
 //			LayoutUnit layoutUnit( displayNamePair[0] );
 //			if( m_layouts.contains( layoutUnit ) ) {
             if( i < m_layouts.count() ) {
-		m_layouts[i].displayName = *it;
+		m_layouts[i].setDisplayName(*it);
                 i++;
             }
 //		}
@@ -181,8 +181,8 @@ void KxkbConfig::updateDisplayNames()
 	  LayoutUnit& lu2 = m_layouts[j];
 	  if( i != j && lu.layout == lu2.layout ) {
 		++cnt;
-		lu.displayName = addNum(lu.layout, 1);
-		lu2.displayName = addNum(lu2.layout, cnt);
+		lu.setDisplayName( addNum(lu.layout, 1) );
+		lu2.setDisplayName( addNum(lu2.layout, cnt) );
 	  }
 	}
   }
@@ -216,7 +216,7 @@ void KxkbConfig::save()
 
 		layoutList.append( layoutUnit.toPair() );
 
-		QString displayName( layoutUnit.displayName );
+		QString displayName = layoutUnit.getDisplayName();
 		kDebug() << " displayName " << layoutUnit.toPair() << " : " << displayName;
 		//if( displayName.isEmpty() == false && displayName != layoutUnit.layout ) {
 		//	displayName = QString("%1:%2").arg(layoutUnit.toPair(), displayName);
@@ -279,38 +279,16 @@ QStringList KxkbConfig::getLayoutStringList(/*bool compact*/)
 }
 
 
-QString KxkbConfig::getDefaultDisplayName(const QString& code_)
+QString LayoutUnit::getDefaultDisplayName(const QString& layout, const QString& variant)
 {
-	QString displayName;
-
-	if( code_.length() <= 2 ) {
-		displayName = code_;
-	}
-	else {
-		int sepPos = code_.indexOf(QRegExp("[-_]"));
-		QString leftCode = code_.mid(0, sepPos);
-		QString rightCode;
-		if( sepPos != -1 )
-			rightCode = code_.mid(sepPos+1);
-
-		if( rightCode.length() > 0 )
-			displayName = leftCode.left(2) + rightCode.left(1).toLower();
-		else
-			displayName = leftCode.left(3);
-	}
-
-	return displayName;
-}
-
-QString KxkbConfig::getDefaultDisplayName(const LayoutUnit& layoutUnit, bool single)
-{
-	if( layoutUnit.variant.isEmpty() )
-		return getDefaultDisplayName( layoutUnit.layout );
-
-	QString displayName = layoutUnit.layout.left(2);
-	if( single == false )
-		displayName += layoutUnit.variant.left(1);
-	return displayName;
+    return layout.left(MAX_LABEL_LEN);
+//	if( layoutUnit.variant.isEmpty() )
+//		return getDefaultDisplayName( layoutUnit.layout );
+//
+//	QString displayName = layoutUnit.layout.left(2);
+//	if( single == false )
+//		displayName += layoutUnit.variant.left(1);
+//	return displayName;
 }
 
 /**
