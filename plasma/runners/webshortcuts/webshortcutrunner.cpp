@@ -23,12 +23,13 @@
 #include <QDBusReply>
 
 #include <KRun>
-#include <KUrl>
-#include <KLocale>
-#include <KService>
-#include <KMimeType>
 #include <KIconLoader>
+#include <KLocale>
+#include <KMimeType>
+#include <KService>
 #include <KStandardDirs>
+#include <KToolInvocation>
+#include <KUrl>
 
 #include <kservicetypetrader.h>
 
@@ -36,11 +37,12 @@
 
 
 WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
-    : Plasma::AbstractRunner(parent)
+    : Plasma::AbstractRunner(parent),
+      m_type(KUriFilterData::Unknown)
 {
     Q_UNUSED(args);
     // set the name shown after the result in krunner window
-    setObjectName(i18n("Web shortcut"));
+    setObjectName(i18n("Locations"));
     // query ktrader for all available searchproviders and preload the default icon
     m_offers = KServiceTypeTrader::self()->query("SearchProvider");
     m_icon = QIcon(KIconLoader::global()->loadIcon("konqueror", KIconLoader::Small));
@@ -53,14 +55,20 @@ WebshortcutRunner::~WebshortcutRunner()
 QAction *WebshortcutRunner::accepts(const QString& term) {
     QString searchTerm = term.toLower();
 
-    KUrl url(term);
-    if (!url.protocol().isEmpty() && !url.host().isEmpty()) {
+    KUriFilterData filter(term);
+    bool filtered = KUriFilter::self()->filterUri(filter);
+    m_type = filter.uriType();
+    if (filtered &&
+        (m_type == KUriFilterData::LocalDir ||
+         m_type == KUriFilterData::NetProtocol ||
+         m_type == KUriFilterData::Help)) {
         QAction *action = new QAction(QString("Open %1").arg(term), this);
         action->setIcon(m_icon);
-        m_url = url;
+        m_url = filter.uri();
         return action;
     }
 
+    m_type = KUriFilterData::Unknown;
     foreach (KService::Ptr service, m_offers) {
         // hmm, how about getting the keys for the localized sites?
         foreach(QString key, service->property("Keys").toStringList()) {
@@ -134,7 +142,19 @@ bool WebshortcutRunner::exec(QAction* action, const QString& command) {
     Q_UNUSED(command)
 //    kDebug() << "command: " << command;
 //    kDebug() << "url: " << m_url.url();
-    return(KRun::runUrl(m_url, "text/html", 0) != false);
+
+    if (m_type == KUriFilterData::Unknown ||
+        (m_type == KUriFilterData::NetProtocol &&
+         m_url.protocol().left(4) == "http")) {
+        KToolInvocation::invokeBrowser(m_url.url());
+    } else {
+    /*  (m_type == KUriFilterData::LocalDir ||
+         m_type == KUriFilterData::NetProtocol ||
+         m_type == KUriFilterData::Help) */
+        new KRun(m_url, 0);
+    }
+
+    return true;
 }
 
 #include "webshortcutrunner.moc"

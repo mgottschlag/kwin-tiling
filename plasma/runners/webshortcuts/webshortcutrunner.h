@@ -22,6 +22,7 @@
 #include <plasma/abstractrunner.h>
 
 #include <KGenericFactory>
+#include <KUriFilterData>
 
 class QAction;
 
@@ -44,6 +45,7 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         KService::List m_offers;
         KUrl m_url;
         QIcon m_icon;
+        KUriFilterData::UriTypes m_type;
 };
 
 K_EXPORT_PLASMA_RUNNER(webshortcuts, WebshortcutRunner)
