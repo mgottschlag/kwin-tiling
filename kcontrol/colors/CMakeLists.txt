@@ -14,6 +14,7 @@ install( FILES colors.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 set(schemefiles
     schemes/BeOS
     "schemes/Midnight Meadow"
+    "schemes/Oxygenized Plastik"
 )
 install( FILES ${schemefiles} DESTINATION ${DATA_INSTALL_DIR}/color-schemes )
 
