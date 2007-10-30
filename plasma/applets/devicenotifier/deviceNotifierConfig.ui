@@ -47,7 +47,7 @@
        <item>
         <widget class="QLabel" name="labelSize_2" >
          <property name="text" >
-          <string>Time to stay on top position (s) :</string>
+          <string>Time to stay on top position (s):</string>
          </property>
         </widget>
        </item>
@@ -86,7 +86,7 @@
        <item>
         <widget class="QLabel" name="labelSize" >
          <property name="text" >
-          <string>Height of movement (px) :</string>
+          <string>Height of movement (px):</string>
          </property>
         </widget>
        </item>
