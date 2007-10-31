@@ -41,12 +41,6 @@ QString formattedName( KService::Ptr service )
     return name;
 }
 
-ServiceAction::ServiceAction(KService::Ptr service, QObject* parent)
-    : QAction(KIcon(service->icon()), formattedName(service), parent),
-      m_service(service)
-{
-}
-
 ServiceRunner::ServiceRunner( QObject* parent )
     : Plasma::AbstractRunner( parent )
 {
@@ -57,27 +51,17 @@ ServiceRunner::~ServiceRunner()
 {
 }
 
-QAction* ServiceRunner::accepts(const QString& term)
+void ServiceRunner::match(Plasma::SearchContext *search)
 {
-    KService::Ptr service = KService::serviceByName(term);
-    QAction* action = 0;
-
-    if (service && !service->exec().isEmpty()) {
-        action = new ServiceAction(service, this);
-    }
-
-    return action;
-}
-
-void ServiceRunner::fillMatches( KActionCollection* matches,
-                                 const QString& term,
-                                 int max, int offset )
-{
-    Q_UNUSED( max )
-    Q_UNUSED( offset )
-
+    QString term = search->term();
     if (term.length() <  3) {
         return;
+    }
+
+    KService::Ptr service = KService::serviceByName(search->term());
+
+    if (service && !service->exec().isEmpty()) {
+        setupAction(service, search->addExactMatch(this));
     }
 
     QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name) and Name != '%4'").arg(term, term, term, term);
@@ -86,38 +70,27 @@ void ServiceRunner::fillMatches( KActionCollection* matches,
     //kDebug() << "got " << services.count() << " services from " << query;
 
     foreach (const KService::Ptr service, services) {
-        ServiceAction* action = new ServiceAction(service, matches);
-        matches->addAction(service->name(), action);
-        connect(action, SIGNAL(triggered()), SLOT(launchService()));
+        setupAction(service, search->addPossibleMatch(this));
     }
 }
 
-bool ServiceRunner::exec(QAction* action, const QString& term)
+void ServiceRunner::exec(Plasma::SearchAction* action)
 {
-    KService::Ptr service;
-    ServiceAction* serviceAction = qobject_cast<ServiceAction*>(action);
-
-    if (serviceAction) {
-        service = serviceAction->m_service;
+    KService::Ptr service = KService::serviceByStorageId(action->data().toString());
+    if (service) {
+        KRun::run(*service, KUrl::List(), 0);
     }
-
-    if (!service && !term.isEmpty()) {
-        service = KService::serviceByName(term);
-    }
-
-    return service &&
-           KRun::run(*service, KUrl::List(), 0) != 0;
 }
 
-void ServiceRunner::launchService()
+void ServiceRunner::setupAction(const KService::Ptr &service, QAction *action)
 {
-    ServiceAction* action = qobject_cast<ServiceAction*>(sender());
+    action->setText(service->name());
+    action->setData(service->storageId());
 
-    if (!action) {
-        return;
+    if (service->icon().isEmpty()) {
+        action->setIcon(KIcon(service->icon()));
     }
-
-    KRun::run(*action->m_service, KUrl::List(), 0);
 }
 
 #include "servicerunner.moc"
+

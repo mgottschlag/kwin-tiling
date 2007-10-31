@@ -43,24 +43,10 @@ class ServiceRunner : public Plasma::AbstractRunner
         ~ServiceRunner();
 
     protected:
-        QAction* accepts(const QString& term);
-        void fillMatches(KActionCollection* matches,
-                          const QString& term,
-                          int max, int offset);
-        bool exec(QAction* action, const QString& command);
-
-    protected slots:
-        void launchService();
+        void match(Plasma::SearchContext *context);
+        void exec(Plasma::SearchAction* action);
+        void setupAction(const KService::Ptr &service, QAction *action);
 };
-
-class ServiceAction : public QAction
-{
-    Q_OBJECT
-
-public:
-    ServiceAction(KService::Ptr service, QObject* parent);
-    KService::Ptr m_service;
-};
-
 
 #endif
+

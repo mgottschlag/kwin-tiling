@@ -36,15 +36,13 @@ class ShellRunner : public Plasma::AbstractRunner
         explicit ShellRunner(QObject* parent = 0);
         ~ShellRunner();
 
-        bool hasOptions();
-        QWidget* options();
+        void createMatchOptions(QWidget* parent);
 
     protected:
-        QAction* accepts(const QString& term);
-        bool exec(QAction* action, const QString& command);
+        void match(Plasma::SearchContext *search);
+        void exec(Plasma::SearchAction *action);
 
     private:
-        QWidget* m_options;
         bool m_enabled;
 };
 

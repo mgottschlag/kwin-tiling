@@ -42,59 +42,48 @@ SessionRunner::~SessionRunner()
 {
 }
 
-QAction* SessionRunner::accepts(const QString& term)
+void SessionRunner::match(Plasma::SearchContext *search)
 {
-    Q_UNUSED(term);
-    return 0;
-}
-
-bool SessionRunner::exec(QAction* action, const QString& command)
-{
-    Q_UNUSED(action);
-    Q_UNUSED(command);
-    return true;
-}
-
-void SessionRunner::fillMatches(KActionCollection* actions, const QString& term, int max, int offset)
-{
-    Q_UNUSED(max);
-    Q_UNUSED(offset);
     //TODO: ugh, magic strings.
-    if ( term != "SESSIONS") {
+    if (search->term() != "SESSIONS") {
         return;
     }
 
     DM dm;
 
-    if ( KAuthorized::authorizeKAction("start_new_session") &&
-         dm.isSwitchable() &&
-         dm.numReserve() >= 0 ) {
-        QAction *action = actions->addAction( "newsession" );
-        action->setIcon( KIcon("fork") );
-        action->setText( i18n( "New Session" ) );
-        connect( action, SIGNAL(triggered(bool)), SLOT(newSession()) );
+    if (KAuthorized::authorizeKAction("start_new_session") &&
+        dm.isSwitchable() &&
+        dm.numReserve() >= 0) {
+        QAction *action = search->addExactMatch(this);
+        action->setIcon(KIcon("fork"));
+        action->setText(i18n("New Session"));
     }
 
     // now add the active sessions
     SessList sessions;
-    if ( !dm.localSessions( sessions ) ) {
+    if (!dm.localSessions(sessions)) {
         return;
     }
 
     foreach (const SessEnt& session, sessions) {
-        if ( !session.vt || session.self ) {
+        if (!session.vt || session.self) {
             continue;
         }
 
-
-        QAction* action = actions->addAction( DM::sess2Str( session ) );
-        action->setIcon( KIcon( "user" ) );
-        action->setText( DM::sess2Str( session ) );
+        QAction* action = search->addPossibleMatch(this);
+        action->setIcon(KIcon("user"));
+        action->setText(DM::sess2Str(session));
+        action->setData(session.session);
     }
 }
 
-void SessionRunner::newSession()
+void SessionRunner::exec(Plasma::SearchAction * action)
 {
+    if (!action->data().toString().isEmpty()) {
+        //TODO: implement session switching here!
+        return;
+    }
+
     //TODO: this message is too verbose and too technical.
     int result = KMessageBox::warningContinueCancel(
             0,

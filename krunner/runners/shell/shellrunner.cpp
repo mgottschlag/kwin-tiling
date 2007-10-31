@@ -30,65 +30,45 @@
 
 #include "ui_shellOptions.h"
 
-ShellRunner::ShellRunner( QObject* parent )
-    : Plasma::AbstractRunner( parent ),
-      m_options( 0 )
+ShellRunner::ShellRunner(QObject* parent)
+    : Plasma::AbstractRunner(parent)
 {
-    setObjectName( i18n( "Command" ) );
-    m_enabled = KAuthorized::authorizeKAction( "shell_access" );
+    setObjectName(i18n("Command"));
+    setHasMatchOptions(true);
+    m_enabled = KAuthorized::authorizeKAction("shell_access");
 }
 
 ShellRunner::~ShellRunner()
 {
-    delete m_options;
 }
 
-QAction* ShellRunner::accepts(const QString& term)
-{
-    if ( !m_enabled ) {
-        return 0;
-    }
-
-    QString executable = term;
-    int space = executable.indexOf( " " );
-
-    if ( space > 0 ) {
-        executable = executable.left( space );
-    }
-
-    executable = KStandardDirs::findExe( executable );
-
-    if ( !executable.isEmpty() ) {
-        QAction* action = new QAction( KIcon( "exec" ), executable, this );
-        return action;
-    } else {
-        return 0;
-    }
-}
-
-bool ShellRunner::hasOptions()
-{
-    return true;
-}
-
-QWidget* ShellRunner::options()
-{
-    if ( !m_options ) {
-        Ui::shellOptions ui;
-        m_options = new QWidget;
-        ui.setupUi( m_options );
-    }
-
-    return m_options;
-}
-
-bool ShellRunner::exec(QAction* action, const QString& command)
+void ShellRunner::match(Plasma::SearchContext *search)
 {
     if (!m_enabled) {
-        return false;
+        return;
     }
 
-    return (KRun::runCommand(command, NULL) != 0);
+    if (search->type() == Plasma::SearchContext::Executable ||
+        search->type() == Plasma::SearchContext::ShellCommand)  {
+        QAction* action = search->addExactMatch(this);
+        action->setIcon(KIcon("exec"));
+        action->setText(i18n("Run %1", search->term()));
+    }
+}
+
+void ShellRunner::createMatchOptions(QWidget* parent)
+{
+    Ui::shellOptions ui;
+    ui.setupUi(parent);
+}
+
+void ShellRunner::exec(Plasma::SearchAction* action)
+{
+    if (!m_enabled) {
+        return;
+    }
+
+    KRun::runCommand(action->term(), NULL);
 }
 
 #include "shellrunner.moc"

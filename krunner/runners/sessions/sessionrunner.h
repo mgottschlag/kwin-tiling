@@ -36,12 +36,8 @@ class SessionRunner : public Plasma::AbstractRunner
         ~SessionRunner();
 
     protected:
-        QAction* accepts(const QString& term);
-        bool exec(QAction* action, const QString& command);
-        void fillMatches(KActionCollection* actions, const QString& term, int max, int offset);
-
-    private slots:
-        void newSession();
+        void match(Plasma::SearchContext *context);
+        void exec(Plasma::SearchAction* action);
 };
 
 #endif
