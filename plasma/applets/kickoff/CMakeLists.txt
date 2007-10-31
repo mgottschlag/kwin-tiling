@@ -49,5 +49,5 @@ set ( Applet_SRCS
 kde4_add_plugin(plasma_applet_launcher ${Applet_SRCS})
 target_link_libraries(plasma_applet_launcher plasma ${Kickoff_LIBS}) 
 install(TARGETS plasma_applet_launcher DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES applet/plasma-launcher-applet.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES applet/plasma-applet-launcher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
