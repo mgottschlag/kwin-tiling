@@ -103,6 +103,13 @@ void XAutoLock::setTimeout(int t)
 
 void XAutoLock::setDPMS(bool s)
 {
+#ifdef HAVE_DPMS
+    BOOL on;
+    CARD16 state;
+    DPMSInfo( QX11Info::display(), &state, &on );
+    if (!on)
+        s = false;
+#endif
     mDPMS = s;
 }
 
