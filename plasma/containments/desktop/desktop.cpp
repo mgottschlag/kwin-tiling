@@ -221,22 +221,24 @@ void DefaultDesktop::init()
     //m_toolbox->updateGeometry();
     m_toolbox->setPos(geometry().width() - m_toolbox->boundingRect().width(), 0);
 
-    Plasma::PushButton *tool = new Plasma::PushButton("Add Widgets", this);
+    Plasma::PushButton *tool = new Plasma::PushButton(i18n("Add Widgets"), this);
     tool->resize(tool->sizeHint());
     m_toolbox->addTool(tool);
     connect(tool, SIGNAL(clicked()), this, SLOT(launchAppletBrowser()));
 
+    /*
     tool = new Plasma::PushButton("Engine Explorer", this);
     connect(tool, SIGNAL(clicked()), this, SLOT(launchExplorer()));
     tool->resize(tool->sizeHint());
     m_toolbox->addTool(tool);
+    */
 
-    tool = new Plasma::PushButton("Zoom In", this);
+    tool = new Plasma::PushButton(i18n("Zoom In"), this);
     connect(tool, SIGNAL(clicked()), this, SIGNAL(zoomIn()));
     tool->resize(tool->sizeHint());
     m_toolbox->addTool(tool);
 
-    tool = new Plasma::PushButton("Zoom Out", this);
+    tool = new Plasma::PushButton(i18n("Zoom Out"), this);
     connect(tool, SIGNAL(clicked()), this, SIGNAL(zoomOut()));
     tool->resize(tool->sizeHint());
     m_toolbox->addTool(tool);
@@ -317,10 +319,10 @@ QList<QAction*> DefaultDesktop::contextActions()
     //  - should we offer "Switch User" here?
 
     if (!m_appletBrowserAction) {
-        m_engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
+/*        m_engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
         connect(m_engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer()));
-
-        m_appletBrowserAction = new QAction(i18n("Add Applet..."), this);
+*/
+        m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
         connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SLOT(launchAppletBrowser()));
 
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
