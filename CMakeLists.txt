@@ -38,7 +38,7 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/kdm
     ${CMAKE_CURRENT_SOURCE_DIR}/libs
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/workspace
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/kworkspace
 )
 # libs
 add_subdirectory(cmake)

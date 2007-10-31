@@ -34,7 +34,7 @@
 #include "plasma/phase.h"
 #include "plasma/svg.h"
 #include "plasma/widgets/pushbutton.h"
-#include "workspace/kworkspace.h"
+#include "kworkspace/kworkspace.h"
 
 #include "krunner_interface.h"
 #include "ksmserver_interface.h"
