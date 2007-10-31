@@ -8,21 +8,19 @@
 // KDE screensaver engine
 //
 
-#include "xautolock.h"
-
 #include <config-workspace.h>
-#include <config-xautolock.h>
-#include "xautolock.moc"
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <ctime>
+#include "xautolock.h"
 #include "xautolock_c.h"
 
 #include <kapplication.h>
 
 #include <QTimerEvent>
 #include <QX11Info>
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/scrnsaver.h>
 
 #ifdef HAVE_DPMS
 extern "C" {
@@ -38,15 +36,18 @@ Status DPMSInfo ( Display *, CARD16 *, BOOL * );
 }
 #endif
 
-int xautolock_useXidle = 0;
+#include <ctime>
+
 int xautolock_useMit = 0;
 xautolock_corner_t xautolock_corners[ 4 ];
 
 static XAutoLock* self = NULL;
 
+extern "C" {
 static int catchFalseAlarms(Display *, XErrorEvent *)
 {
     return 0;
+}
 }
 
 //===========================================================================
@@ -57,18 +58,9 @@ static int catchFalseAlarms(Display *, XErrorEvent *)
 XAutoLock::XAutoLock()
 {
     self = this;
-    int dummy = 0;
-    dummy = dummy; // shut up
-    xautolock_useXidle = 0;
-    xautolock_useMit = 0;
-#ifdef HAVE_XIDLE
-    useXidle = XidleQueryExtension( QX11Info::display(), &dummy, &dummy );
-#endif
-#ifdef HAVE_SCREENSAVER
-    if( !xautolock_useXidle )
-        xautolock_useMit = XScreenSaverQueryExtension( QX11Info::display(), &dummy, &dummy );
-#endif
-    if( !xautolock_useXidle && !xautolock_useMit )
+    int dummy;
+    xautolock_useMit = XScreenSaverQueryExtension( QX11Info::display(), &dummy, &dummy );
+    if( !xautolock_useMit )
     {
         kapp->installX11EventFilter( this );
         int (*oldHandler)(Display *, XErrorEvent *);
@@ -175,7 +167,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
 
     int (*oldHandler)(Display *, XErrorEvent *) = NULL;
-    if( !xautolock_useXidle && !xautolock_useMit )
+    if( !xautolock_useMit )
     { // only the diy way needs special X handler
         XSync( QX11Info::display(), False );
         oldHandler = XSetErrorHandler(catchFalseAlarms);
@@ -198,7 +190,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     xautolock_queryIdleTime( QX11Info::display());
     xautolock_queryPointer( QX11Info::display());
 
-    if( !xautolock_useXidle && !xautolock_useMit )
+    if( !xautolock_useMit )
         XSetErrorHandler(oldHandler);
 
     bool activate = false;
@@ -229,15 +221,13 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
 #endif
 
-#ifdef HAVE_SCREENSAVER
     static XScreenSaverInfo* mitInfo = 0;
     if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
     if (XScreenSaverQueryInfo (QX11Info::display(), QX11Info::appRootWindow(), mitInfo)) {
         // kDebug() << "XScreenSaverQueryInfo " << mitInfo->state << ScreenSaverDisabled;
         if (mitInfo->state == ScreenSaverDisabled)
-	    activate = false;
+            activate = false;
     }
-#endif
 
     if(mActive && activate)
         emit timeout();
@@ -248,7 +238,7 @@ bool XAutoLock::x11Event( XEvent* ev )
     xautolock_processEvent( ev );
 // don't futher process key events that were received only because XAutoLock wants them
     if( ev->type == KeyPress && !ev->xkey.send_event
-        && !xautolock_useXidle && !xautolock_useMit
+        && !xautolock_useMit
         && !QWidget::find( ev->xkey.window ))
         return true;
     return false;
@@ -283,3 +273,5 @@ int xautolock_ignoreWindow( Window w )
 {
    return self->ignoreWindow( w );
 }
+
+#include "xautolock.moc"

@@ -17,14 +17,16 @@
  * 
  *****************************************************************************/
 
-#include <X11/Xlib.h>
-#include <time.h>
-#include <config-xautolock.h>
 #include "xautolock_c.h"
+
+#include <X11/Xlib.h>
+#include <X11/extensions/scrnsaver.h>
+
+#include <time.h>
 
 /*
  *  Function for querying the idle time from the server.
- *  Only used if either the Xidle or the Xscreensaver
+ *  Only used if the Xscreensaver
  *  extension is present.
  */
 void 
@@ -32,28 +34,17 @@ xautolock_queryIdleTime (Display* d)
 {
   Time idleTime = 0; /* millisecs since last input event */
 
-#ifdef HasXidle
-  if (xautolock_useXidle)
+  if( xautolock_useMit )
   {
-    XGetIdleTime (d, &idleTime);
-  }
-  else
-#endif /* HasXIdle */
-  {
-#ifdef HAVE_SCREENSAVER
-    if( xautolock_useMit )
-    {
     static XScreenSaverInfo* mitInfo = 0; 
     if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
     XScreenSaverQueryInfo (d, DefaultRootWindow (d), mitInfo);
     idleTime = mitInfo->idle;
-    }
-    else
-#endif /* HAVE_SCREENSAVER */
-    {
-        d = d; /* shut up */
-        return; /* DIY */
-    }
+  }
+  else
+  {
+    d = d; /* shut up */
+    return; /* DIY */
   }
 
   if (idleTime < CHECK_INTERVAL )  

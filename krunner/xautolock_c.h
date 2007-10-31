@@ -21,15 +21,10 @@
 #ifndef __xautolock_c_h
 #define __xautolock_c_h
 
-#include <config-X11.h>
-
-#ifdef HAVE_XSCREENSAVER
-#include <X11/extensions/scrnsaver.h>
+#include <X11/Xlib.h>
+#ifdef __cplusplus
+# include <fixx11h.h>
 #endif
-
-/* I'd first need to get my hands on this */
-#undef HAVE_XIDLE
-#undef HasXidle
 
 #define DEFAULT_TIMEOUT           600
 
@@ -62,7 +57,6 @@ void xautolock_initDiy (Display* d);
 void xautolock_resetTriggers( void );
 void xautolock_setTrigger( time_t );
 int xautolock_ignoreWindow( Window );
-extern int xautolock_useXidle;
 extern int xautolock_useMit;
 extern xautolock_corner_t xautolock_corners[ 4 ];
 #ifdef __cplusplus
