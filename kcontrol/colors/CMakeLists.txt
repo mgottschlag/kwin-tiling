@@ -15,6 +15,7 @@ set(schemefiles
     schemes/BeOS
     "schemes/Midnight Meadow"
     "schemes/Oxygenized Plastik"
+    "schemes/Wonton Soup"
 )
 install( FILES ${schemefiles} DESTINATION ${DATA_INSTALL_DIR}/color-schemes )
 
