@@ -153,9 +153,6 @@ QIcon WebshortcutRunner::getFavicon(const KUrl &url) {
 
 void WebshortcutRunner::exec(Plasma::SearchAction *action)
 {
-    //TODO: this should probably use the action to store the url rather than
-    //      store it internally in m_url so as to support multiple actions
-    //      in the future
     QString location = action->data().toString();
 
     if (location.isEmpty()) {
