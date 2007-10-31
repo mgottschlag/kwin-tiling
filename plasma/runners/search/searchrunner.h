@@ -41,29 +41,8 @@ class SearchRunner : public Plasma::AbstractRunner
         SearchRunner( QObject* parent, const QVariantList &args );
         ~SearchRunner();
 
-        QAction* accepts( const QString& term );
-        bool exec(QAction* action, const QString& command);
-
-    protected:
-        virtual void fillMatches( KActionCollection* matches,
-                                  const QString& term,
-                                  int max, int offset );
-
-    protected slots:
-        // open the search gui
-        void launchSearch();
-        // open the file
-        void openFile();
-};
-
-class SearchAction : public QAction
-{
-    Q_OBJECT
-public:
-    const QString file;
-    const QString mimetype;
-    SearchAction(const QString& file, const QString& iconname,
-        const QString& mimetype, const QString& name, QObject* parent);
+        void exec(Plasma::SearchAction *action);
+        virtual void match(Plasma::SearchContext *search);
 };
 
 K_EXPORT_PLASMA_RUNNER(searchrunner, SearchRunner)

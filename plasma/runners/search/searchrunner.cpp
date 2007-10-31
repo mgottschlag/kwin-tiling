@@ -25,12 +25,6 @@
 #include <KLocale>
 #include <KRun>
 
-SearchAction::SearchAction(const QString& f, const QString& iconname,
-        const QString& mt, const QString& name, QObject* parent)
-    : QAction(KIcon(iconname), name, parent), file(f), mimetype(mt)
-{
-}
-
 SearchRunner::SearchRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner( parent )
 {
@@ -40,21 +34,6 @@ SearchRunner::SearchRunner( QObject* parent, const QVariantList &args )
 
 SearchRunner::~SearchRunner()
 {
-}
-
-QAction* SearchRunner::accepts( const QString& term )
-{
-    // return an action that opens a search GUI with this term
-    QAction* action = new QAction(i18n("search for %1", term), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(launchSearch()));
-    return action;
-}
-
-bool SearchRunner::exec(QAction* action, const QString& command)
-{
-    Q_UNUSED(action)
-    Q_UNUSED(command)
-    return true;
 }
 
 QString formatUri(const QString& uri, const QString& term) {
@@ -75,38 +54,38 @@ QString formatUri(const QString& uri, const QString& term) {
     return highlighted;
 }
 
-void SearchRunner::fillMatches( KActionCollection* matches,
-                                const QString& term,
-                                int max, int offset )
+void SearchRunner::match(Plasma::SearchContext *search)
 {
+    //TODO: in reality, we probably want to make this async
 
-    //TODO: in reality, we probably want to make this async and use matchesUpdated
-
+    QString term = search->term();
     QString query = "system.file_name:'" + term + "*'";
-    QList<StrigiHit> hits = strigiclient.getHits(query, max, offset);
-    foreach(const StrigiHit& hit, hits) {
+    QList<StrigiHit> hits = strigiclient.getHits(query, 5, 0);
+    foreach (const StrigiHit& hit, hits) {
         QString iconname = hit.mimetype;
         iconname.replace('/', '-');
         QString formatted  = formatUri(hit.uri, term);
-        QAction* action = new SearchAction(hit.uri, iconname, hit.mimetype,
-            formatted, this);
-        connect(action, SIGNAL(triggered()), this, SLOT(openFile()));
-        matches->addAction(formatted, action);
+        Plasma::SearchAction* action = search->addPossibleMatch(this);
+        action->setIcon(KIcon(iconname));
+        action->setText(formatted);
+        action->setMimetype(hit.mimetype);
+        action->setData(hit.uri);
+        action->setRelevance(hit.score);
     }
-}
-void SearchRunner::launchSearch()
-{
-    // TODO this does not work yet and it be better to open a nicer search
-    // client e.g. kerry or strigi://
-    KRun::runCommand("strigiclient", NULL);
+
+    Plasma::SearchAction *action = search->addPossibleMatch(this);
+    action->setText(i18n("search for %1", term));
+    action->setRelevance(0);
 }
 
-void SearchRunner::openFile()
+void SearchRunner::exec(Plasma::SearchAction *action)
 {
-    SearchAction* action = qobject_cast<SearchAction*>(sender());
-    qDebug() << "openFile " << action;
-    if (action) {
-        KRun::runUrl(action->file, action->mimetype, NULL);
+    QString file = action->data().toString();
+    qDebug() << "openFile " << file;
+    if (file.isEmpty()) {
+        KRun::runCommand("strigiclient", 0);
+    } else {
+        KRun::runUrl(file, action->mimetype(), 0);
     }
 }
 

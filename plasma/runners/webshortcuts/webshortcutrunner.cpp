@@ -22,6 +22,7 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 
+#include <KDebug>
 #include <KRun>
 #include <KIconLoader>
 #include <KLocale>
@@ -38,7 +39,7 @@
 
 WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     : Plasma::AbstractRunner(parent),
-      m_type(KUriFilterData::Unknown)
+      m_type(Plasma::SearchContext::UnknownType)
 {
     Q_UNUSED(args);
     // set the name shown after the result in krunner window
@@ -52,54 +53,70 @@ WebshortcutRunner::~WebshortcutRunner()
 {
 }
 
-QAction *WebshortcutRunner::accepts(const QString& term) {
-    QString searchTerm = term.toLower();
+void WebshortcutRunner::match(Plasma::SearchContext *search)
+{
+    QString term = search->term().trimmed().toLower();
+    m_type = search->type();
 
-    KUriFilterData filter(term);
-    bool filtered = KUriFilter::self()->filterUri(filter);
-    m_type = filter.uriType();
-    if (filtered &&
-        (m_type == KUriFilterData::LocalDir ||
-         m_type == KUriFilterData::NetProtocol ||
-         m_type == KUriFilterData::Help)) {
-        QAction *action = new QAction(QString("Open %1").arg(term), this);
-        action->setIcon(m_icon);
-        m_url = filter.uri();
-        return action;
-    }
-
-    m_type = KUriFilterData::Unknown;
     foreach (KService::Ptr service, m_offers) {
-        // hmm, how about getting the keys for the localized sites?
-        foreach(QString key, service->property("Keys").toStringList()) {
+        //TODO: how about getting the keys for the localized sites?
+        foreach (QString key, service->property("Keys").toStringList()) {
             // FIXME? should we look for the used separator from the konqi's settings?
             key = key.toLower() + ":";
-            if (searchTerm.size() > key.size() &&
-                searchTerm.startsWith(key, Qt::CaseInsensitive)) {
-                m_url = getSearchQuery(service->property("Query").toString(),searchTerm);
+            if (term.size() > key.size() &&
+                term.startsWith(key, Qt::CaseInsensitive)) {
                 QString actionText = QString("Search %1 for %2");
                 actionText = actionText.arg(service->name(),
-                                            searchTerm.right(searchTerm.length() - searchTerm.indexOf(':') - 1));
+                                            term.right(term.length() - term.indexOf(':') - 1));
 
-                QAction *action = new QAction(actionText, this);
+                QAction *action = search->addExactMatch(this);
+                action->setText(actionText);
+                QString url = getSearchQuery(service->property("Query").toString(), term);
+                //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
+                action->setData(url);
 
                 // let's try if we can get a proper icon from the favicon cache
-                QIcon icon = getFavicon(m_url);
+                QIcon icon = getFavicon(url);
                 if (icon.isNull()){
                     action->setIcon(m_icon);
                 } else {
                     action->setIcon(icon);
                 }
 
-                return action;
+                return;
             }
         }
     }
 
-    return 0;
+    if (m_type == Plasma::SearchContext::Directory ||
+        m_type == Plasma::SearchContext::Help) {
+        //kDebug() << "Locations matching because of" << m_type;
+        QAction *action = search->addExactMatch(this);
+        action->setText(i18n("Open %1", term));
+        action->setIcon(m_icon);
+        return;
+    }
+
+    if (m_type == Plasma::SearchContext::NetworkLocation) {
+        QAction *action = search->addPossibleMatch(this);
+        KUrl url(term);
+
+        if (url.protocol().isEmpty()) {
+            url.clear();
+            url.setHost(term);
+            url.setProtocol("http");
+        }
+
+        action->setText(i18n("Go to %1", url.prettyUrl()));
+        action->setIcon(m_icon);
+        action->setData(url.url());
+        return;
+    }
+
 }
 
-KUrl WebshortcutRunner::getSearchQuery(const QString &query, const QString &term) {
+QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &term)
+{
     // FIXME delimiter check like for above?
     QStringList tempList = term.split(":");
     if(tempList.count() > 0) {
@@ -108,10 +125,10 @@ KUrl WebshortcutRunner::getSearchQuery(const QString &query, const QString &term
         // FIXME? currently only basic searches are supported
         finalQuery.replace("\\{@}", searchWord);
         KUrl url(finalQuery);
-        return url;
+        return url.url();
     }
 
-    return KUrl();
+    return QString();
 }
 
 QIcon WebshortcutRunner::getFavicon(const KUrl &url) {
@@ -134,27 +151,26 @@ QIcon WebshortcutRunner::getFavicon(const KUrl &url) {
     return QIcon();
 }
 
-bool WebshortcutRunner::exec(QAction* action, const QString& command) {
+void WebshortcutRunner::exec(Plasma::SearchAction *action)
+{
     //TODO: this should probably use the action to store the url rather than
     //      store it internally in m_url so as to support multiple actions
     //      in the future
-    Q_UNUSED(action)
-    Q_UNUSED(command)
-//    kDebug() << "command: " << command;
-//    kDebug() << "url: " << m_url.url();
+    QString location = action->data().toString();
 
-    if (m_type == KUriFilterData::Unknown ||
-        (m_type == KUriFilterData::NetProtocol &&
-         m_url.protocol().left(4) == "http")) {
-        KToolInvocation::invokeBrowser(m_url.url());
-    } else {
-    /*  (m_type == KUriFilterData::LocalDir ||
-         m_type == KUriFilterData::NetProtocol ||
-         m_type == KUriFilterData::Help) */
-        new KRun(m_url, 0);
+    if (location.isEmpty()) {
+        location = action->term();
     }
 
-    return true;
+    //kDebug() << "command: " << action->term();
+    //kDebug() << "url: " << location;
+    if (m_type == Plasma::SearchContext::UnknownType ||
+        (m_type == Plasma::SearchContext::NetworkLocation &&
+         location.left(4) == "http")) {
+        KToolInvocation::invokeBrowser(location);
+    } else {
+        new KRun(location, 0);
+    }
 }
 
 #include "webshortcutrunner.moc"

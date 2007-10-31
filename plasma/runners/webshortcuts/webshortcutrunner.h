@@ -21,9 +21,6 @@
 
 #include <plasma/abstractrunner.h>
 
-#include <KGenericFactory>
-#include <KUriFilterData>
-
 class QAction;
 
 class WebshortcutRunner : public Plasma::AbstractRunner {
@@ -33,19 +30,19 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         WebshortcutRunner( QObject *parent, const QVariantList& args );
         ~WebshortcutRunner();
 
+        void match(Plasma::SearchContext *search);
+
     protected:
-        QAction* accepts( const QString& term );
-        bool exec(QAction* action, const QString& command);
+        void exec(Plasma::SearchAction *action);
 
     private:
-        KUrl getSearchQuery(const QString &query, const QString &searchWord);
+        QString getSearchQuery(const QString &query, const QString &searchWord);
         QIcon getFavicon(const KUrl& url);
 
     private:
         KService::List m_offers;
-        KUrl m_url;
         QIcon m_icon;
-        KUriFilterData::UriTypes m_type;
+        Plasma::SearchContext::Type m_type;
 };
 
 K_EXPORT_PLASMA_RUNNER(webshortcuts, WebshortcutRunner)
