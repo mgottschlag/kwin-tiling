@@ -388,12 +388,6 @@ uint SaverEngine::GetSessionIdleTime()
     return mXAutoLock->idleTime();
 }
 
-bool SaverEngine::GetSessionIdle()
-{
-    // pointless?
-    return ( GetSessionIdleTime() > 0 );
-}
-
 uint SaverEngine::GetActiveTime()
 {
     if ( m_actived_time == -1 )

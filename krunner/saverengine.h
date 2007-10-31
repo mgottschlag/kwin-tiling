@@ -107,9 +107,6 @@ public Q_SLOTS:
      */
     uint GetActiveTime();
 
-    /// Returns the value of the current state of session idleness.
-    bool GetSessionIdle();
-
     /**
      * Returns the number of seconds that the session has
      * been idle.  Returns zero if the session is not idle.
