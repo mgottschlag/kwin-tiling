@@ -130,7 +130,7 @@ void SaverEngine::saverLockReady()
 {
     if( mState != Preparing )
     {
-	kDebug() << "Got unexpected saverReady()";
+        kDebug() << "Got unexpected saverReady()";
     }
     kDebug() << "Saver Lock Ready";
     processLockTransactions();
@@ -172,14 +172,14 @@ bool SaverEngine::quit()
 //---------------------------------------------------------------------------
 bool SaverEngine::isEnabled()
 {
-  return mEnabled;
+    return mEnabled;
 }
 
 //---------------------------------------------------------------------------
 bool SaverEngine::enable( bool e )
 {
     if ( e == mEnabled )
-	return true;
+        return true;
 
     // If we aren't in a suitable state, we will not reconfigure.
     if (mState != Waiting)
@@ -189,13 +189,13 @@ bool SaverEngine::enable( bool e )
 
     if (mEnabled)
     {
-	if ( !mXAutoLock ) {
-	    mXAutoLock = new XAutoLock();
-	    connect(mXAutoLock, SIGNAL(timeout()), SLOT(idleTimeout()));
-	}
+        if ( !mXAutoLock ) {
+            mXAutoLock = new XAutoLock();
+            connect(mXAutoLock, SIGNAL(timeout()), SLOT(idleTimeout()));
+        }
         mXAutoLock->setTimeout(mTimeout);
         mXAutoLock->setDPMS(true);
-	//mXAutoLock->changeCornerLockStatus( mLockCornerTopLeft, mLockCornerTopRight, mLockCornerBottomLeft, mLockCornerBottomRight);
+        //mXAutoLock->changeCornerLockStatus( mLockCornerTopLeft, mLockCornerTopRight, mLockCornerBottomLeft, mLockCornerBottomRight);
 
         // We'll handle blanking
         XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
@@ -207,11 +207,11 @@ bool SaverEngine::enable( bool e )
     }
     else
     {
-	if (mXAutoLock)
-	{
-	    delete mXAutoLock;
-	    mXAutoLock = 0;
-	}
+        if (mXAutoLock)
+        {
+            delete mXAutoLock;
+            mXAutoLock = 0;
+        }
 
         XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
         XSetScreenSaver(QX11Info::display(), 0, mXInterval,  PreferBlanking, DontAllowExposures);
@@ -279,20 +279,20 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     QString path = KStandardDirs::findExe( "krunner_lock" );
     if( path.isEmpty())
     {
-	kDebug() << "Can't find krunner_lock!";
-	return false;
+        kDebug() << "Can't find krunner_lock!";
+        return false;
     }
     mLockProcess << path;
     switch( lock_type )
     {
-	case ForceLock:
-    	    mLockProcess << QString( "--forcelock" );
-	  break;
-	case DontLock:
-	    mLockProcess << QString( "--dontlock" );
-	  break;
-	default:
-	  break;
+    case ForceLock:
+        mLockProcess << QString( "--forcelock" );
+        break;
+    case DontLock:
+        mLockProcess << QString( "--dontlock" );
+        break;
+    default:
+        break;
     }
     if (m_nr_throttled)
         mLockProcess << QString( "--blank" );
@@ -300,9 +300,9 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     m_actived_time = time( 0 );
     if (mLockProcess.start() == false )
     {
-	kDebug() << "Failed to start krunner_lock!";
+        kDebug() << "Failed to start krunner_lock!";
         m_actived_time = -1;
-	return false;
+        return false;
     }
 
     XSetScreenSaver(QX11Info::display(), 0, mXInterval,  PreferBlanking, mXExposures);
@@ -346,7 +346,7 @@ void SaverEngine::lockProcessExited()
     m_actived_time = -1;
     kDebug() << "SaverEngine: lock exited";
     if( mState == Waiting )
-	return;
+        return;
     emit ActiveChanged(false); // DBus signal
     if (mXAutoLock)
     {

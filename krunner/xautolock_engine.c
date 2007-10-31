@@ -165,7 +165,7 @@ xautolock_queryPointer (Display* d)
           xautolock_resetTriggers ();
 
 #ifdef __GNUC__
-	default: ; /* Makes gcc -Wall shut up. */
+        default: ; /* Makes gcc -Wall shut up. */
 #endif /* __GNUC__ */
       }
     }
