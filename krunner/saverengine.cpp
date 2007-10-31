@@ -77,6 +77,8 @@ SaverEngine::~SaverEngine()
     // Restore X screensaver parameters
     XSetScreenSaver(QX11Info::display(), mXTimeout, mXInterval, mXBlanking,
                     mXExposures);
+
+    QDBusConnection::disconnectFromBus("org.freedesktop.ScreenSaver");
 }
 
 //---------------------------------------------------------------------------
