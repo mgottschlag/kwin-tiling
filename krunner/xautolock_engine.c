@@ -148,7 +148,7 @@ xautolock_queryPointer (Display* d)
 #if 0
           newTrigger = now + (useRedelay ? cornerRedelay : cornerDelay) - 1;
 #else
-          newTrigger = now + 2 - 1;
+          newTrigger = now;
 #endif
 
 #if 0
