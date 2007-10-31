@@ -322,9 +322,7 @@ void LockProcess::configure()
     }
 
 #ifdef HAVE_DPMS
-    //if the user  decided that the screensaver should run independent from
-    //dpms, we shouldn't check for it, aleXXX
-    mDPMSDepend = KScreenSaverSettings::dpmsDependent();
+    mDPMSDepend = KScreenSaverSettings::suspendWhenInvisible();
 #endif
 
     mPriority = KScreenSaverSettings::priority();

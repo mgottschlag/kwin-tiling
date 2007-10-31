@@ -16,10 +16,12 @@
       <label>Screen saver timeout</label>
       <whatsthis>Sets the seconds after which the screen saver is started.</whatsthis>
     </entry>
-    <entry name="DpmsDependent" key="DPMS-dependent" type="Bool">
+    <entry name="SuspendWhenInvisible" key="SuspendWhenInvisible" type="Bool">
       <default>true</default>
-      <label>Disable screen saver during presentation or TV</label>
-      <whatsthis>Enable this option if you want to disable the screen saver while watching TV or movies.</whatsthis>
+      <label>Suspend screen saver when DPMS kicks in</label>
+      <whatsthis>Usually the screen saver is suspended when display power saving kicks in,
+       as nothing can be seen on the screen anyway, obviously. However, some screen savers
+       actually perform useful computations, so it is not desirable to suspend them.</whatsthis>
     </entry>
     <entry key="ActionTopLeft" type="Int">
       <default>0</default>

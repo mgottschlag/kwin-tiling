@@ -194,7 +194,7 @@ bool SaverEngine::enable( bool e )
 	    connect(mXAutoLock, SIGNAL(timeout()), SLOT(idleTimeout()));
 	}
         mXAutoLock->setTimeout(mTimeout);
-        mXAutoLock->setDPMS(mDPMS);
+        mXAutoLock->setDPMS(true);
 	//mXAutoLock->changeCornerLockStatus( mLockCornerTopLeft, mLockCornerTopRight, mLockCornerBottomLeft, mLockCornerBottomRight);
 
         // We'll handle blanking
@@ -243,7 +243,6 @@ void SaverEngine::configure()
     bool e  = KScreenSaverSettings::screenSaverEnabled();
     kDebug() << "enabled " << e;
     mTimeout = KScreenSaverSettings::timeout();
-    mDPMS = KScreenSaverSettings::dpmsDependent();
 
     mEnabled = !e;   // force the enable()
 

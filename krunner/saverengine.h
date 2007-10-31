@@ -154,7 +154,6 @@ protected:
 private:
     enum State { Waiting, Preparing, Saving };
     bool        mEnabled;
-    bool	mDPMS;
 
     State       mState;
     XAutoLock   *mXAutoLock;
