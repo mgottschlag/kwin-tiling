@@ -33,15 +33,14 @@ class CalculatorRunner : public Plasma::AbstractRunner
     Q_OBJECT
 
     public:
-        CalculatorRunner( QObject* parent, const QVariantList &args );
+        CalculatorRunner(QObject* parent, const QVariantList &args);
         ~CalculatorRunner();
 
-        QAction* accepts( const QString& term );
+        void match(Plasma::SearchContext *context);
         bool exec(QAction* action, const QString& term);
 
     private:
-        QString calculate( const QString& term );
-        QWidget* m_options;
+        QString calculate(const QString& term);
 };
 
 K_EXPORT_PLASMA_RUNNER(calculatorrunner, CalculatorRunner)

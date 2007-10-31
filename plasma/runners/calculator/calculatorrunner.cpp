@@ -29,51 +29,48 @@
 #include <KIcon>
 
 CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
-    : Plasma::AbstractRunner( parent ),
-      m_options( 0 )
+    : Plasma::AbstractRunner(parent)
 {
     Q_UNUSED(args)
 
-    setObjectName( i18n( "Calculator" ) );
+    setObjectName(i18n("Calculator"));
 }
 
 CalculatorRunner::~CalculatorRunner()
 {
-    delete m_options;
 }
 
-QAction* CalculatorRunner::accepts( const QString& term )
+void CalculatorRunner::match(Plasma::SearchContext *search)
 {
-    QString cmd = term.trimmed();
-    QAction *action = 0;
+    QString cmd = search->term();
 
-    if ( !cmd.isEmpty() && 
-         ( cmd[0].isNumber() || ( cmd[0] == '(') ) &&
-         ( QRegExp("[a-zA-Z\\]\\[]").indexIn(cmd) == -1 ) ) {
+    if (cmd[0] != '=') {
+        return;
+    }
+    
+    cmd.remove(0, 1);
+    if (QRegExp("[a-zA-Z\\]\\[]").indexIn(cmd) == -1) {
         QString result = calculate(cmd);
 
-        if ( !result.isEmpty() ) {
-            action = new QAction(KIcon("accessories-calculator"),
-                                 QString("%1 = %2").arg(term, result),
-                                 this);
-            action->setEnabled( false );
+        if (!result.isEmpty()) {
+            Plasma::SearchAction *action = search->addInformationalMatch(this);
+            action->setIcon(KIcon("accessories-calculator"));
+            action->setText(QString("%1 = %2").arg(cmd, result));
+            action->setData("= " + result);
         }
     }
-
-    return action;
-}
-
-bool CalculatorRunner::exec(QAction* action, const QString& term)
-{
-    Q_UNUSED(action)
-    Q_UNUSED(term)
-    return true;
 }
 
 QString CalculatorRunner::calculate( const QString& term )
 {
+    kDebug() << "calculating" << term;
     QScriptEngine eng;
-    QScriptValue result = eng.evaluate( term );
+    QScriptValue result = eng.evaluate(term);
+
+    if (result.isError()) {
+        return QString();
+    }
+
     return result.toString();
 }
 
