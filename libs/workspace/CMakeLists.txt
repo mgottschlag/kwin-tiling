@@ -21,4 +21,4 @@ install(TARGETS kworkspace  DESTINATION ${LIB_INSTALL_DIR} )
 
 install( FILES kworkspace.h
                kwindowlistmenu.h
-         DESTINATION ${INCLUDE_INSTALL_DIR}/libworkspace )
+         DESTINATION ${INCLUDE_INSTALL_DIR}/kworkspace )
