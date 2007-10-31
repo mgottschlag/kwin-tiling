@@ -21,8 +21,8 @@
 class ScreenSaverRequest
 {
 public:
-    QString appname;
-    QString reasongiven;
+//     QString appname;
+//     QString reasongiven;
     QString dbusid;
     uint cookie;
     enum { Inhibit,Throttle } type;
@@ -140,7 +140,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void idleTimeout();
     void lockProcessExited();
-    void serviceOwnerChanged(const QString&,const QString&,const QString&);
+    void serviceOwnerChanged(const QString&, const QString&, const QString&);
 
 protected:
     enum LockType { DontLock, DefaultLock, ForceLock };

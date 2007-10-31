@@ -55,8 +55,9 @@ SaverEngine::SaverEngine()
     connect(&mLockProcess, SIGNAL(processExited(K3Process *)),
                         SLOT(lockProcessExited()));
 
-    QObject::connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString,QString,QString)),
-                SLOT(serviceOwnerChanged(QString,QString,QString)));
+    connect(QDBusConnection::sessionBus().interface(),
+                SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+            SLOT(serviceOwnerChanged(QString,QString,QString)));
 
     // I make it a really random number to avoid
     // some assumptions in clients, but just increase
@@ -408,13 +409,13 @@ bool SaverEngine::SetActive(bool state)
         return quit();
 }
 
-uint SaverEngine::Inhibit(const QString &application_name, const QString &reason_for_inhibit)
+uint SaverEngine::Inhibit(const QString &/*application_name*/, const QString &/*reason*/)
 {
     ScreenSaverRequest sr;
-    sr.appname = application_name;
-    sr.reasongiven = reason_for_inhibit;
+//     sr.appname = application_name;
+//     sr.reasongiven = reason;
     sr.cookie = m_next_cookie++;
-    sr.dbusid = "unknown"; // see below for throttle
+    sr.dbusid = message().service();
     sr.type = ScreenSaverRequest::Inhibit;
     m_requests.append( sr );
     m_nr_inhibited++;
@@ -429,18 +430,17 @@ void SaverEngine::UnInhibit(uint cookie)
     {
         if ( it.next().cookie == cookie ) {
             it.remove();
-            m_nr_inhibited--;
-            if ( m_nr_inhibited <= 0 )
+            if ( !--m_nr_inhibited )
                 enable( true );
         }
     }
 }
 
-uint SaverEngine::Throttle(const QString &application_name, const QString &reason_for_inhibit)
+uint SaverEngine::Throttle(const QString &/*application_name*/, const QString &/*reason*/)
 {
     ScreenSaverRequest sr;
-    sr.appname = application_name;
-    sr.reasongiven = reason_for_inhibit;
+//     sr.appname = application_name;
+//     sr.reasongiven = reason;
     sr.cookie = m_next_cookie++;
     sr.type = ScreenSaverRequest::Throttle;
     sr.dbusid = message().service();
@@ -457,24 +457,21 @@ void SaverEngine::UnThrottle(uint cookie)
     {
         if ( it.next().cookie == cookie ) {
             it.remove();
-            m_nr_throttled--;
-            if ( m_nr_throttled <= 0 )
+            if ( !--m_nr_throttled )
                 mLockProcess.resume();
         }
     }
 }
 
-void SaverEngine::serviceOwnerChanged(const QString& name,const QString &oldOwner,const QString &newOwner)
+void SaverEngine::serviceOwnerChanged(const QString& name, const QString &, const QString &newOwner)
 {
-    Q_UNUSED( oldOwner );
-
     if ( !newOwner.isEmpty() ) // looking for deaths
         return;
 
     QListIterator<ScreenSaverRequest> it( m_requests );
     while ( it.hasNext() )
     {
-        ScreenSaverRequest r = it.next();
+        const ScreenSaverRequest &r = it.next();
         if ( r.dbusid == name )
         {
             if ( r.type == ScreenSaverRequest::Throttle )
