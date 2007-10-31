@@ -37,7 +37,9 @@ Status DPMSInfo ( Display *, CARD16 *, BOOL * );
 
 #include <ctime>
 
-int xautolock_useMit = 0;
+#ifdef HAVE_XSCREENSAVER
+int xautolock_useMit;
+#endif
 xautolock_corner_t xautolock_corners[ 4 ];
 
 static XAutoLock* self = NULL;
