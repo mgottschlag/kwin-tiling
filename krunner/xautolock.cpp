@@ -20,7 +20,6 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <X11/extensions/scrnsaver.h>
 
 #ifdef HAVE_DPMS
 extern "C" {
@@ -58,8 +57,10 @@ static int catchFalseAlarms(Display *, XErrorEvent *)
 XAutoLock::XAutoLock()
 {
     self = this;
+#ifdef HAVE_XSCREENSAVER
     int dummy;
     xautolock_useMit = XScreenSaverQueryExtension( QX11Info::display(), &dummy, &dummy );
+#endif
     if( !xautolock_useMit )
     {
         kapp->installX11EventFilter( this );
@@ -228,6 +229,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
 #endif
 
+#ifdef HAVE_XSCREENSAVER
     static XScreenSaverInfo* mitInfo = 0;
     if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
     if (XScreenSaverQueryInfo (QX11Info::display(), QX11Info::appRootWindow(), mitInfo)) {
@@ -235,6 +237,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
         if (mitInfo->state == ScreenSaverDisabled)
             activate = false;
     }
+#endif
 
     if(mActive && activate)
         emit timeout();

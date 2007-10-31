@@ -19,9 +19,6 @@
 
 #include "xautolock_c.h"
 
-#include <X11/Xlib.h>
-#include <X11/extensions/scrnsaver.h>
-
 #include <time.h>
 
 /*
@@ -34,6 +31,7 @@ xautolock_queryIdleTime (Display* d)
 {
   Time idleTime = 0; /* millisecs since last input event */
 
+#ifdef HAVE_XSCREENSAVER
   if( xautolock_useMit )
   {
     static XScreenSaverInfo* mitInfo = 0; 
@@ -42,6 +40,7 @@ xautolock_queryIdleTime (Display* d)
     idleTime = mitInfo->idle;
   }
   else
+#endif /* HAVE_XSCREENSAVER */
   {
     d = d; /* shut up */
     return; /* DIY */
