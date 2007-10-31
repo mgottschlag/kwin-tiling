@@ -59,12 +59,11 @@ class Interface : public KRunnerDialog
         void switchUser();
 
     protected Q_SLOTS:
-        void match( const QString& term );
+        void match();
+        void queueMatch();
         void setWidgetPalettes();
-        void updateMatches();
         void exec();
         void matchActivated( QListWidgetItem* );
-        void fuzzySearch();
         void showOptions(bool show);
         void setDefaultItem( QListWidgetItem* );
 
@@ -74,9 +73,9 @@ class Interface : public KRunnerDialog
     private:
         void resetInterface();
 
-        QTimer m_searchTimer;
         Plasma::AbstractRunner::List m_runners;
 
+        QTimer m_matchTimer;
         QVBoxLayout* m_layout;
         KTitleWidget* m_header;
         KLineEdit* m_searchTerm;
@@ -86,10 +85,10 @@ class Interface : public KRunnerDialog
         KPushButton* m_runButton;
         KPushButton* m_optionsButton;
         CollapsibleWidget* m_expander;
+        QWidget *m_optionsWidget;
 
         SearchMatch* m_defaultMatch;
-        QMap<Plasma::AbstractRunner*, SearchMatch*> m_matches;
-        QList<SearchMatch*> m_searchMatches;
+        Plasma::SearchContext m_context;
 };
 
 #endif

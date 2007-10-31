@@ -54,13 +54,12 @@
 class SearchMatch : public QListWidgetItem
 {
     public:
-        SearchMatch( QAction* action, Plasma::AbstractRunner* runner, QListWidget* parent )
+        SearchMatch(Plasma::SearchAction* action, QListWidget* parent)
             : QListWidgetItem( parent ),
-              m_default( false ),
-              m_action( 0 ),
-              m_runner( runner )
+              m_default(false),
+              m_action(0)
         {
-            setAction( action );
+            setAction(action);
         }
 
         void activate()
@@ -73,22 +72,22 @@ class SearchMatch : public QListWidgetItem
             return m_action->isEnabled();
         }
 
-        void setAction( QAction* action )
+        void setAction(Plasma::SearchAction* action)
         {
             m_action = action;
-            setIcon( m_action->icon() );
-            setText( i18n("%1 (%2)",
-                     m_action->text(),
-                     m_runner->objectName() ) );
+            setIcon(m_action->icon());
+            setText(i18n("%1 (%2)",
+                    m_action->text(),
+                    m_action->runner()->objectName()));
 
             // in case our new action is now enabled and the old one wasn't, or
             // vice versa
-            setDefault( m_default );
+            setDefault(m_default);
         }
 
-        Plasma::AbstractRunner* runner()
+        Plasma::SearchAction* action()
         {
-            return m_runner;
+            return m_action;
         }
 
         void setDefault( bool def ) {
@@ -109,19 +108,19 @@ class SearchMatch : public QListWidgetItem
 
     private:
         bool m_default;
-        QAction* m_action;
-        Plasma::AbstractRunner* m_runner;
+        Plasma::SearchAction* m_action;
 };
 
 Interface::Interface(QWidget* parent)
     : KRunnerDialog( parent ),
-      m_expander( 0 ),
-      m_defaultMatch( 0 )
+      m_expander(0),
+      m_optionsWidget(0),
+      m_defaultMatch(0)
 {
     setWindowTitle( i18n("Run Command") );
 
-    connect( &m_searchTimer, SIGNAL(timeout()),
-             this, SLOT(fuzzySearch()) );
+    m_matchTimer.setSingleShot(true);
+    connect(&m_matchTimer, SIGNAL(timeout()), this, SLOT(match()));
 
     QWidget* w = mainWidget();
     m_layout = new QVBoxLayout(w);
@@ -136,10 +135,10 @@ Interface::Interface(QWidget* parent)
     m_searchTerm->clear();
     m_searchTerm->setClearButtonShown( true );
     m_layout->addWidget( m_searchTerm );
-    connect( m_searchTerm, SIGNAL(textChanged(QString)),
-            this, SLOT(match(QString)) );
-    connect( m_searchTerm, SIGNAL(returnPressed()),
-             this, SLOT(exec()) );
+    connect(m_searchTerm, SIGNAL(textChanged(QString)),
+            this, SLOT(queueMatch()));
+    connect(m_searchTerm, SIGNAL(returnPressed()),
+            this, SLOT(exec()));
 
     //TODO: temporary feedback, change later with the "icon parade" :)
     m_matchList = new QListWidget(w);
@@ -216,7 +215,7 @@ Interface::~Interface()
 {
 }
 
-void Interface::display( const QString& term)
+void Interface::display(const QString& term)
 {
     m_searchTerm->setFocus();
 
@@ -229,7 +228,7 @@ void Interface::display( const QString& term)
     show();
     KWindowSystem::forceActiveWindow( winId() );
 
-    match( term );
+    match();
 }
 
 void Interface::switchUser()
@@ -250,19 +249,19 @@ void Interface::switchUser()
     display();
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("user");
-    KActionCollection *matches = sessionrunner->matches("SESSIONS", 0, 0);
+    m_context.setTerm("SESSIONS");
+    sessionrunner->match(&m_context);
 
-    foreach (QAction *action, matches->actions()) {
-        bool makeDefault = !m_defaultMatch && action->isEnabled();
+    foreach (Plasma::SearchAction *action, m_context.exactMatches()) {
+        bool makeDefault = action->type() != Plasma::SearchAction::InformationalMatch;
 
-        SearchMatch *match = new SearchMatch(action, sessionrunner, m_matchList);
-        m_searchMatches.append(match);
+        SearchMatch *match = new SearchMatch(action, m_matchList);
 
         if (makeDefault) {
             m_defaultMatch = match;
             m_defaultMatch->setDefault(true);
             m_runButton->setEnabled(true);
-            m_optionsButton->setEnabled(sessionrunner->hasOptions());
+            m_optionsButton->setEnabled(sessionrunner->hasMatchOptions());
         }
     }
 
@@ -289,9 +288,8 @@ void Interface::resetInterface()
 {
     m_header->setText(i18n("Enter the name of an application, location or search term below."));
     m_header->setPixmap("system-search");
+    m_context.setTerm(QString());
     m_searchTerm->clear();
-    m_matches.clear();
-    m_searchMatches.clear();
     m_matchList->clear();
     m_runButton->setEnabled( false );
     m_optionsButton->setEnabled( false );
@@ -307,110 +305,84 @@ void Interface::hideEvent( QHideEvent* e )
 void Interface::matchActivated(QListWidgetItem* item)
 {
     SearchMatch* match = dynamic_cast<SearchMatch*>(item);
-    m_optionsButton->setEnabled( match && match->runner()->hasOptions() );
 
-    if ( match && match->actionEnabled() ) {
+    if (!match) {
+        return;
+    }
+
+    Plasma::SearchAction *action = match->action();
+    m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
+
+    if (!action->isEnabled()) {
+        return;
+    }
+
+    if (action->type() == Plasma::SearchAction::InformationalMatch) {
+        m_searchTerm->setText(action->data().toString());
+    } else {
         //kDebug() << "match activated! " << match->text();
         match->activate();
         hide();
     }
 }
 
-void Interface::match(const QString& t)
+void Interface::queueMatch()
 {
-    m_searchTimer.stop();
+    m_matchTimer.stop();
+    m_matchTimer.start(200);
+}
 
+void Interface::match()
+{
+    //FIXME: this induces rediculously bad flicker
+    m_matchList->clear();
+
+    int matchCount = 0;
     m_defaultMatch = 0;
-    QString term = t.trimmed();
+    QString term = m_searchTerm->text().trimmed();
 
-    if ( term.isEmpty() ) {
+    if (term.isEmpty()) {
         resetInterface();
         return;
     }
 
-    QMap<Plasma::AbstractRunner*, SearchMatch*> matches;
-
-    int matchCount = 0;
+    m_context.setTerm(term);
 
     // get the exact matches
-    foreach ( Plasma::AbstractRunner* runner, m_runners ) {
+    foreach (Plasma::AbstractRunner* runner, m_runners) {
         //kDebug() << "\trunner: " << runner->objectName();
-        QAction* exactMatch = runner->exactMatch( term ) ;
+        runner->match(&m_context);
+    }
 
-        if ( exactMatch ) {
-            SearchMatch* match = 0;
-            bool makeDefault = !m_defaultMatch && exactMatch->isEnabled();
+    QList<QList<Plasma::SearchAction *> > matchLists;
+    matchLists << m_context.informationalMatches()
+               << m_context.exactMatches()
+               << m_context.possibleMatches();
 
-            QMap<Plasma::AbstractRunner*, SearchMatch*>::iterator it = m_matches.find( runner );
-            if ( it != m_matches.end() ) {
-                match = it.value();
-                match->setAction( exactMatch );
-                matches[runner] = match;
-                m_matches.erase( it );
-            } else {
-                match = new SearchMatch( exactMatch, runner, 0 );
-                m_matchList->insertItem( matchCount, match );
-            }
+    foreach (QList<Plasma::SearchAction *> matchList, matchLists) {
+        foreach (Plasma::SearchAction *action, matchList) {
+            bool makeDefault = !m_defaultMatch && action->isEnabled();
 
-            if ( makeDefault ) {
-                match->setDefault( true );
+            SearchMatch *match = new SearchMatch(action, 0);
+            m_matchList->insertItem(matchCount, match);
+
+            if (makeDefault &&
+                (action->type() != Plasma::SearchAction::InformationalMatch ||
+                 !action->data().toString().isEmpty())) {
+                match->setDefault(true);
                 m_defaultMatch = match;
-                m_optionsButton->setEnabled( runner->hasOptions() );
-                m_runButton->setEnabled( true );
+                m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
+                m_runButton->setEnabled(true);
             }
 
             ++matchCount;
-            matches[runner] = match;
         }
     }
 
-    if ( !m_defaultMatch ) {
-        showOptions( false );
-        m_runButton->setEnabled( false );
+    if (!m_defaultMatch) {
+        showOptions(false);
+        m_runButton->setEnabled(false);
     }
-
-    qDeleteAll(m_matches);
-    m_matches = matches;
-    m_searchTimer.start( 200 );
-}
-
-void Interface::fuzzySearch()
-{
-    m_searchTimer.stop();
-
-    // TODO: we may want to stop this from flickering about as well,
-    //       similar to match above
-    foreach ( SearchMatch* match, m_searchMatches ) {
-        delete match;
-    }
-
-    m_searchMatches.clear();
-
-    QString term = m_searchTerm->text().trimmed();
-
-    // get the inexact matches
-    foreach ( Plasma::AbstractRunner* runner, m_runners ) {
-        KActionCollection* matches = runner->matches( term, 10, 0 );
-        //kDebug() << "\t\tturned up " << matches->actions().count() << " matches ";
-        foreach ( QAction* action, matches->actions() ) {
-            bool makeDefault = !m_defaultMatch && action->isEnabled();
-            //kDebug() << "\t\t " << action << ": " << action->text() << !m_defaultMatch << action->isEnabled();
-            SearchMatch* match = new SearchMatch( action, runner, m_matchList );
-            m_searchMatches.append( match );
-
-            if ( makeDefault ) {
-                m_defaultMatch = match;
-                m_defaultMatch->setDefault( true );
-                m_runButton->setEnabled( true );
-                m_optionsButton->setEnabled( runner->hasOptions() );
-            }
-        }
-    }
-}
-
-void Interface::updateMatches()
-{
-    //TODO: implement
 }
 
 void Interface::exec()
@@ -428,13 +400,13 @@ void Interface::showOptions(bool show)
 {
     //TODO: in the case where we are no longer showing options
     //      should we have the runner delete it's options?
-    if ( show ) {
-        if ( !m_defaultMatch || !m_defaultMatch->runner()->hasOptions() ) {
+    if (show) {
+        if (!m_defaultMatch || !m_defaultMatch->action()->runner()->hasMatchOptions()) {
             // in this case, there is nothing to show
             return;
         }
 
-        if ( !m_expander ) {
+        if (!m_expander) {
             //kDebug() << "creating m_expander";
             m_expander = new CollapsibleWidget( this );
             connect( m_expander, SIGNAL( collapseCompleted() ),
@@ -443,10 +415,15 @@ void Interface::showOptions(bool show)
         }
 
         //kDebug() << "set inner widget to " << m_defaultMatch->runner()->options();
-        m_expander->setInnerWidget( m_defaultMatch->runner()->options() );
+        delete m_optionsWidget;
+        m_optionsWidget = new QWidget(this);
+        m_defaultMatch->action()->runner()->createMatchOptions(m_optionsWidget);
+        m_expander->setInnerWidget(m_optionsWidget);
         m_expander->show();
         m_optionsButton->setText( i18n( "Hide Options" ) );
     } else {
+        delete m_optionsWidget;
+        m_optionsWidget = 0;
         m_optionsButton->setText( i18n( "Show Options" ) );
         resize( 400, 250 );
     }
@@ -474,7 +451,7 @@ void Interface::setDefaultItem( QListWidgetItem* item )
 
     m_defaultMatch = dynamic_cast<SearchMatch*>( item );
 
-    bool hasOptions = m_defaultMatch && m_defaultMatch->runner()->hasOptions();
+    bool hasOptions = m_defaultMatch && m_defaultMatch->action()->runner()->hasMatchOptions();
     m_optionsButton->setEnabled( hasOptions );
 
     if ( m_expander && !hasOptions ) {
