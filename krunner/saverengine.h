@@ -12,6 +12,8 @@
 #include <k3process.h>
 #include <QVector>
 #include <QDBusConnection>
+#include <QDBusContext>
+#include <QDBusMessage>
 
 #include "xautolock.h"
 #include "xautolock_c.h"
@@ -31,7 +33,7 @@ public:
  * Screen saver engine.  Handles screensaver window, starting screensaver
  * hacks, and password entry.
  */
-class SaverEngine : public QWidget
+class SaverEngine : public QWidget, protected QDBusContext
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.freedesktop.ScreenSaver")
@@ -174,7 +176,7 @@ private:
     int        m_nr_throttled;
     int        m_nr_inhibited;
  
-//    QVector< DCOPClientTransaction* > mLockTransactions;
+    QList<QDBusMessage> mLockTransactions;
 };
 
 #endif

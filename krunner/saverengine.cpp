@@ -93,13 +93,7 @@ void SaverEngine::Lock()
 // This is done only for --forcelock .
         if( ok && mState != Saving )
         {
-#ifdef __GNUC__
-#warning port dcop transactions to dbus
-#endif
-#if 0
-            DCOPClientTransaction* trans = kapp->dcopClient()->beginTransaction();
-            mLockTransactions.append( trans );
-#endif
+            mLockTransactions.append(message().createReply());
         }
     }
     else
@@ -110,20 +104,13 @@ void SaverEngine::Lock()
 
 void SaverEngine::processLockTransactions()
 {
-#ifdef __GNUC__
-#warning port dcop transactions to dbus
-#endif
-#if 0
-    for( QVector< DCOPClientTransaction* >::ConstIterator it = mLockTransactions.begin();
-         it != mLockTransactions.end();
-         ++it )
+    QList<QDBusMessage>::ConstIterator it = mLockTransactions.constBegin(),
+                                      end = mLockTransactions.constEnd();
+    for ( ; it != end; ++it )
     {
-        DCOPCString replyType = "void";
-        QByteArray arr;
-        kapp->dcopClient()->endTransaction( *it, replyType, arr );
+        screensaverService.send(*it);
     }
     mLockTransactions.clear();
-#endif
 }
 
 void SaverEngine::saverLockReady()
@@ -460,8 +447,7 @@ uint SaverEngine::Throttle(const QString &application_name, const QString &reaso
     sr.reasongiven = reason_for_inhibit;
     sr.cookie = m_next_cookie++;
     sr.type = ScreenSaverRequest::Throttle;
-#warning thiago says Qt 4.3 can query the dbus connection id in adaptors - waiting
-    sr.dbusid = "unknown"; // see above for inhibit
+    sr.dbusid = message().service();
     m_requests.append( sr );
     m_nr_throttled++;
     mLockProcess.suspend();
