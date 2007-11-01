@@ -8,29 +8,31 @@
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,      *
+ *   This program is distributed in the hope that it will be useful,       *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                      *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
-
-#include <kaboutdata.h>
-#include <kglobal.h>
-#include <klocale.h>
 
 #include "joystick.h"
 #include "joywidget.h"
 #include "joydevice.h"
 
+#include <kaboutdata.h>
+#include <kglobal.h>
+#include <klocale.h>
+#include <kdialog.h>
+
 #include <stdio.h>
 #include <KPluginFactory>
 #include <KPluginLoader>
 
+#include <QVBoxLayout>
 //---------------------------------------------------------------------------------------------
 
 K_PLUGIN_FACTORY(JoystickFactory,
@@ -100,7 +102,10 @@ Joystick::Joystick(QWidget *parent, const QVariantList &)
 
   joyWidget = new JoyWidget(this);
 
-  setMinimumSize(joyWidget->minimumSize());
+  QVBoxLayout *top = new QVBoxLayout(this);
+  top->setMargin(0);
+  top->setSpacing(KDialog::spacingHint());
+  top->addWidget(joyWidget);
 
   setButtons(KCModule::Default);
 }

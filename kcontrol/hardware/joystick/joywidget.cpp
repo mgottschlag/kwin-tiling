@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003,2005,2006 by Martin Koller                         *
+ *   Copyright (C) 2003 by Martin Koller                                   *
  *   m.koller@surfeu.at                                                    *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
@@ -8,14 +8,14 @@
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,      *
+ *   This program is distributed in the hope that it will be useful,       *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                      *
+ *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 #include "joywidget.h"
@@ -25,19 +25,20 @@
 
 #include <QtGui/QTableWidget>
 #include <QLabel>
-#include <QComboBox>
 #include <QCheckBox>
 #include <QTimer>
 #include <QFontMetrics>
 #include <QPushButton>
-
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QHeaderView>
 
-#include <KApplication>
 #include <klocale.h>
 #include <kdialog.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
+#include <kcombobox.h>
+#include <kurlcompletion.h>
 
 #include <stdio.h>
 #include <kvbox.h>
@@ -46,55 +47,86 @@
 static QString PRESSED = I18N_NOOP("PRESSED");
 //--------------------------------------------------------------
 
+class TableWidget : public QTableWidget
+{
+  public:
+    TableWidget(int row, int col) : QTableWidget(row, col) {}
+
+    virtual QSize sizeHint() const
+    {
+      return QSize(150, 100);  // return a smaller size than the Qt default(256, 192)
+    }
+};
+
+//--------------------------------------------------------------
+
 JoyWidget::JoyWidget(QWidget *parent)
  : QWidget(parent), idle(0), joydev(0)
 {
-  KVBox *mainVbox = new KVBox(this);
+  QVBoxLayout *mainVbox = new QVBoxLayout(this);
   mainVbox->setSpacing(KDialog::spacingHint());
+  mainVbox->setMargin(0);
 
   // create area to show an icon + message if no joystick was detected
   {
-    messageBox = new KHBox(mainVbox);
-    messageBox->setSpacing(KDialog::spacingHint());
+    messageBox = new QFrame(this);
+    messageBox->setFrameStyle(QFrame::StyledPanel);
+    QHBoxLayout *box = new QHBoxLayout(messageBox);
+    box->setSpacing(KDialog::spacingHint());
+
     QLabel *icon = new QLabel(messageBox);
     icon->setPixmap(KIconLoader::global()->loadIcon("dialog-warning", KIconLoader::NoGroup,
                                                     KIconLoader::SizeMedium, KIconLoader::DefaultState, QStringList(), 0, true));
     icon->setFixedSize(icon->sizeHint());
     message = new QLabel(messageBox);
+
+    box->addWidget(icon);
+    box->addWidget(message);
+
     messageBox->hide();
+
+    mainVbox->addWidget(messageBox);
   }
 
-  KHBox *devHbox = new KHBox(mainVbox);
-  new QLabel(i18n("Device:"), devHbox);
-  device = new QComboBox(devHbox);
-  device->setEditable( true );
+  QHBoxLayout *devHbox = new QHBoxLayout;
+  devHbox->setSpacing(KDialog::spacingHint());
+  devHbox->addWidget(new QLabel(i18n("Device:")));
+  devHbox->addWidget(device = new KComboBox(true));
+
   device->setInsertPolicy(QComboBox::NoInsert);
+  KUrlCompletion *kc = new KUrlCompletion(KUrlCompletion::FileCompletion);
+  device->setCompletionObject(kc);
+  device->setAutoDeleteCompletionObject(true);
   connect(device, SIGNAL(activated(const QString &)), this, SLOT(deviceChanged(const QString &)));
+  connect(device, SIGNAL(returnPressed(const QString &)), this, SLOT(deviceChanged(const QString &)));
   devHbox->setStretchFactor(device, 3);
 
-  KHBox *hbox = new KHBox(mainVbox);
+  QHBoxLayout *hbox = new QHBoxLayout;
   hbox->setSpacing(KDialog::spacingHint());
 
-  KVBox *vboxLeft = new KVBox(hbox);
-  vboxLeft->setSpacing(KDialog::spacingHint());
+  mainVbox->addLayout(devHbox);
+  mainVbox->addLayout(hbox);
 
-  new QLabel(i18n("Position:"), vboxLeft);
-  xyPos = new PosWidget(vboxLeft);
-  trace = new QCheckBox(i18n("Show trace"), mainVbox);
+  QVBoxLayout *vboxLeft = new QVBoxLayout;
+  vboxLeft->setSpacing(KDialog::spacingHint());
+  vboxLeft->addWidget(new QLabel(i18n("Position:")));
+  vboxLeft->addWidget(xyPos = new PosWidget);
+
+  mainVbox->addWidget(trace = new QCheckBox(i18n("Show trace")));
   connect(trace, SIGNAL(toggled(bool)), this, SLOT(traceChanged(bool)));
 
-  KVBox *vboxMid = new KVBox(hbox);
+  QVBoxLayout *vboxMid = new QVBoxLayout;
   vboxMid->setSpacing(KDialog::spacingHint());
 
-  KVBox *vboxRight = new KVBox(hbox);
+  QVBoxLayout *vboxRight = new QVBoxLayout;
   vboxRight->setSpacing(KDialog::spacingHint());
 
   // calculate the column width we need
   QFontMetrics fm(font());
   int colWidth = qMax(fm.width(PRESSED), fm.width("-32767")) + 10;  // -32767 largest string
 
-  new QLabel(i18n("Buttons:"), vboxMid);
-  buttonTbl = new QTableWidget(0, 1, vboxMid);
+  vboxMid->addWidget(new QLabel(i18n("Buttons:")));
+  buttonTbl = new TableWidget(0, 1);
   buttonTbl->setSelectionMode(QAbstractItemView::NoSelection);
   buttonTbl->setEditTriggers(QAbstractItemView::NoEditTriggers);
   buttonTbl->setHorizontalHeaderLabels(QStringList(i18n("State")));
@@ -103,9 +135,10 @@ JoyWidget::JoyWidget(QWidget *parent)
   buttonTbl->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
   buttonTbl->horizontalHeader()->resizeSection(0, colWidth);
   buttonTbl->verticalHeader()->setClickable(false);
+  vboxMid->addWidget(buttonTbl);
 
-  new QLabel(i18n("Axes:"), vboxRight);
-  axesTbl = new QTableWidget(0, 1, vboxRight);
+  vboxRight->addWidget(new QLabel(i18n("Axes:")));
+  axesTbl = new TableWidget(0, 1);
   axesTbl->setSelectionMode(QAbstractItemView::NoSelection);
   axesTbl->setEditTriggers(QAbstractItemView::NoEditTriggers);
   axesTbl->setHorizontalHeaderLabels(QStringList(i18n("Value")));
@@ -114,11 +147,19 @@ JoyWidget::JoyWidget(QWidget *parent)
   axesTbl->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
   axesTbl->horizontalHeader()->resizeSection(0, colWidth);
   axesTbl->verticalHeader()->setClickable(false);
+  vboxRight->addWidget(axesTbl);
+
+  hbox->addLayout(vboxLeft);
+  hbox->addLayout(vboxMid);
+  hbox->addLayout(vboxRight);
 
   // calibrate button
-  calibrate = new QPushButton(i18n("Calibrate"), mainVbox);
+  calibrate = new QPushButton(i18n("Calibrate"));
   connect(calibrate, SIGNAL(clicked()), this, SLOT(calibrateDevice()));
   calibrate->setEnabled(false);
+
+  mainVbox->addWidget(calibrate);
+  mainVbox->addStretch();
 
   // set up a timer for idle processing of joystick events
   idle = new QTimer(this);
@@ -126,14 +167,6 @@ JoyWidget::JoyWidget(QWidget *parent)
 
   // check which devicefiles we have
   init();
-
-  vboxLeft->adjustSize();
-  vboxMid->adjustSize();
-  vboxRight->adjustSize();
-  hbox->adjustSize();
-  mainVbox->adjustSize();
-
-  setMinimumSize(mainVbox->size());
 }
 
 //--------------------------------------------------------------

@@ -29,10 +29,10 @@ class PosWidget;
 class QLabel;
 class QTableWidget;
 class QTimer;
-class QComboBox;
+class KComboBox;
 class QPushButton;
 class QCheckBox;
-class KHBox;
+class QFrame;
 
 // the widget which displays all buttons, values, etc.
 class JoyWidget : public QWidget
@@ -62,9 +62,9 @@ class JoyWidget : public QWidget
     void restoreCurrDev(); // restores the content of the combobox to reflect the current open device
 
   private:
-    KHBox  *messageBox;
+    QFrame  *messageBox;
     QLabel *message;  // in case of no device, show here a message rather than in a dialog
-    QComboBox *device;
+    KComboBox *device;
     PosWidget *xyPos;
     QTableWidget *buttonTbl;
     QTableWidget *axesTbl;

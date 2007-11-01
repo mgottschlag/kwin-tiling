@@ -334,7 +334,7 @@ bool JoyDevice::getEvent(JoyDevice::EventType &type, int &number, int &value)
 
   struct timeval timeout;
   timeout.tv_sec = 0;
-  timeout.tv_usec = 100000;
+  timeout.tv_usec = 10000;
 
   ret = ::select(joyFd + 1, &readSet, 0, 0, &timeout);
 
