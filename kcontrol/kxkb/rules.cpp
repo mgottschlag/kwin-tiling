@@ -103,7 +103,7 @@ void XkbRules::loadRules(const QString &file, bool layoutsOnly)
 	return;
     }
 
-    m_layouts= rules->layouts;
+    m_layouts = rules->layouts;
 
     if( layoutsOnly == false ) {
 	m_models = rules->models;

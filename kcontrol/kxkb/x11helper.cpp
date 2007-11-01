@@ -126,11 +126,15 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 		return NULL;
 	}
 
+    // try to translate layout names by countries in desktop_kdebase
+    // this is poor man's translation as it's good only for layout names and only those which match country names
+    KGlobal::locale()->insertCatalog("desktop_kdebase");
+
 	RulesInfo* rulesInfo = new RulesInfo();
 
 	for (int i = 0; i < xkbRules->layouts.num_desc; ++i) {
 		QString layoutName(xkbRules->layouts.desc[i].name);
-		rulesInfo->layouts.insert( layoutName, xkbRules->layouts.desc[i].desc );
+		rulesInfo->layouts.insert( layoutName, i18nc("Name", xkbRules->layouts.desc[i].desc) );
 	}
 
 	if( layoutsOnly == true ) {

@@ -91,7 +91,7 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 //         const QPixmap pix = iconeffect.apply(layoutPixmap, KIcon::Small, KIcon::DefaultState);
 
 		QString layoutString = rules.layouts()[layoutName];
-		QString fullName = i18n( layoutString.toUtf8().constData() );
+		QString fullName = layoutString;
 		if( variantName.isEmpty() == false )
 			fullName += " (" + variantName + ')';
 //		menu->insertItem(pix, fullName, START_MENU_ID + cnt, m_menuStartIndex + cnt);

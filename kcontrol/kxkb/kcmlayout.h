@@ -73,7 +73,8 @@ protected slots:
     void changed();
 
 private:
-  Ui_LayoutConfigWidget* widget;
+    const QString DEFAULT_VARIANT_NAME;
+    Ui_LayoutConfigWidget* widget;
 
   XkbRules *m_rules;
   KxkbConfig m_kxkbConfig;

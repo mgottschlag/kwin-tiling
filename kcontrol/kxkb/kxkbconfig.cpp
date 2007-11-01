@@ -99,25 +99,17 @@ bool KxkbConfig::load(int loadMode)
 		kDebug() << " added layout " << layoutUnit.toPair();
 	}
 
-	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << m_layouts[getDefaultLayout()].toPair();
+//	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << m_layouts[getDefaultLayout()].toPair();
 
 	QStringList displayNamesList;
 	displayNamesList = config.readEntry("DisplayNames", displayNamesList);
         int i=0;
 	for(QStringList::ConstIterator it = displayNamesList.begin(); it != displayNamesList.end() ; ++it) {
-//		QStringList displayNamePair = (*it).split(':');
-//		if( displayNamePair.count() == 2 ) {
-//			LayoutUnit layoutUnit( displayNamePair[0] );
-//			if( m_layouts.contains( layoutUnit ) ) {
             if( i < m_layouts.count() ) {
 		m_layouts[i].setDisplayName(*it);
                 i++;
             }
-//		}
 	}
-
-//	m_showSingle = config.readEntry("ShowSingle", false);
-//	m_showFlag = config.readEntry("ShowFlag", true);
 
 	QString layoutOwner = config.readEntry("SwitchMode", "Global");
 
@@ -159,7 +151,7 @@ bool KxkbConfig::load(int loadMode)
 		}
 	}
 #else
-        m_stickySwitching = false; //TODO: so far we can't do sticky with xkb switching...
+        m_stickySwitching = false; //TODO: so far we can't do sticky with xkb switching groups...
 #endif
 
 	return true;
@@ -279,7 +271,7 @@ QStringList KxkbConfig::getLayoutStringList(/*bool compact*/)
 }
 
 
-QString LayoutUnit::getDefaultDisplayName(const QString& layout, const QString& variant)
+QString LayoutUnit::getDefaultDisplayName(const QString& layout, const QString& /*variant*/)
 {
     return layout.left(MAX_LABEL_LEN);
 //	if( layoutUnit.variant.isEmpty() )

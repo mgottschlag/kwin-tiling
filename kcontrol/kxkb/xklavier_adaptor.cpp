@@ -29,6 +29,7 @@
 #include "xklavier_adaptor.h"
 
 
+#define KDE_TRANSLATE 1
 #define VERBOSE 0
 
 class XKlavierAdaptorPriv {
@@ -61,7 +62,12 @@ XKlavierAdaptor::XKlavierAdaptor(Display* dpy)
         kError() << "XKlavier engine cannot be initialized!" << endl;
         return; // throw
     }
-	
+
+#if KDE_TRANSLATE == 1
+    // try to translate layout names by countries in desktop_kdebase if translations are missing from x.org
+    // this is poor man's translation as it's good only for layout names and only those which match country names
+    KGlobal::locale()->insertCatalog("desktop_kdebase");
+#endif
 }
 
 QHash<QString, QString> XKlavierAdaptor::getModels() { return priv->m_models; }
@@ -105,6 +111,9 @@ static void processLayout(XklConfigRegistry*, const XklConfigItem* configItem, g
 {
 	QString layout = QString::fromUtf8(configItem->name);
 	QString desc = QString::fromUtf8(configItem->description);
+#if KDE_TRANSLATE == 1
+        desc = i18nc("Name", desc.toUtf8().constData());
+#endif
 
 #if VERBOSE == 1
 	kDebug() << "layout: " << layout << " - " << desc;
@@ -161,19 +170,20 @@ void XKlavierAdaptor::loadXkbConfig(bool layoutsOnly)
 {
     if( priv->engine == NULL )
         return;
+    
+    const char* currLocale = setlocale(LOCALE_CATEGORY, NULL);
 
     QString locale = KGlobal::locale()->language();
     if( locale.indexOf('_') == -1 ) {   // TODO: do we have to do this?
         QString country = KGlobal::locale()->country();
         if( ! country.isEmpty() ) {
             locale += "_";
-	    locale += country;
+	    locale += country.toUpper();
         }
     }
 //  locale = "uk_UA";   // testing
+//  locale = "en_US";
     locale += ".UTF-8";
-    
-    const char* currLocale = setlocale(LOCALE_CATEGORY, NULL);
     kDebug() << "Setting LC_ALL for libxklavier: " << locale;
 
     const char* newLocale = setlocale(LOCALE_CATEGORY, locale.toLatin1());
@@ -193,12 +203,12 @@ void XKlavierAdaptor::loadXkbConfig(bool layoutsOnly)
 	
     xkl_config_registry_foreach_layout(priv->config, processLayout, userData);
 
-//        kDebug() << priv->m_layouts.count() << "layouts total";
-
     if( ! layoutsOnly ) {
 	xkl_config_registry_foreach_model(priv->config, processModel, userData);
 	xkl_config_registry_foreach_option_group(priv->config, processOptionGroup, userData);
     }
+
+    kDebug() << priv->m_layouts.count() << "total layouts" << priv->m_models.count() << "models";
 
     setlocale(LOCALE_CATEGORY, currLocale);
 

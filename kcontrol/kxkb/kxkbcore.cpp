@@ -356,7 +356,7 @@ void KxkbCore::iconMenuTriggered(QAction* action)
     else if (id == KxkbWidget::CONFIG_MENU_ID)
     {
         QStringList lst;
-        lst<< "keyboard_layout";
+        lst << "keyboard_layout";
 	QProcess::startDetached("kcmshell4",lst);
     }
     else if (id == KxkbWidget::HELP_MENU_ID)
@@ -365,7 +365,7 @@ void KxkbCore::iconMenuTriggered(QAction* action)
     }
     else
     {
-        emit quit();
+//        emit quit();
     }
 }
 

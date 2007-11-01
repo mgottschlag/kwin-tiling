@@ -62,7 +62,40 @@ K_PLUGIN_FACTORY(KeyboardLayoutFactory,
 K_EXPORT_PLUGIN(KeyboardLayoutFactory("kxkb"))
 
 
-static inline QString i18n(const QString& str) { return i18n( str.toUtf8().constData() ); }
+static
+bool localeAwareLessThan(const QString &s1, const QString &s2)
+{
+    return QString::localeAwareCompare(s1, s2) < 0;
+}
+
+// sort by locale-aware value string
+static QList<QString> getKeysSortedByVaue(const QHash<QString, QString>& map)
+{
+    QList<QString> outList;
+
+    QMap<QString, QString> reverseMap;
+    // we have to add nums as translations can be dups and them reverse map will miss items
+    int i=0;
+    QString fmt("%1%2");
+    foreach (QString str, map.keys())
+    	reverseMap.insert(fmt.arg(map[str], i++), str);
+
+    QList<QString> values = reverseMap.keys();
+    qSort(values.begin(), values.end(), localeAwareLessThan);
+
+    foreach (QString value, values)
+        outList << reverseMap[value];
+/*        
+    int diff = map.keys().count() - reverseMap.keys().count();
+    if( diff > 0 ) {
+        kDebug() << "original keys" << map.keys().count() << "reverse map" << reverseMap.keys().count() 
+            << "- translation encoding must have been messed up - padding layouts...";
+        for(int i=0; i<diff; i++)
+            reverseMap.insert(QString("%1%2").arg("nocrash", i), "nocrash");
+    }
+*/
+    return outList;
+}
 
 enum {
  LAYOUT_COLUMN_FLAG = 0,
@@ -77,7 +110,6 @@ enum {
 enum { TAB_LAYOUTS=0, TAB_OPTIONS=1, TAB_XKB=2 };
 enum { BTN_XKB_ENABLE=0, BTN_XKB_INDICATOR=1, BTN_XKB_DISABLE=2 };
 
-static const QString DEFAULT_VARIANT_NAME("<default>");
 
 class SrcLayoutModel: public QAbstractTableModel {
 public:
@@ -90,14 +122,9 @@ public:
     QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 				       
-    void setRules(XkbRules* rules) { m_rules = rules; 
-	QHash<QString, QString> layouts = m_rules->layouts();
-	QList<QString> keys = layouts.keys();
-	// sort by i18n string
-	QMap<QString, QString> map;
-	foreach (QString str, keys)
-    	    map.insert(i18n(layouts[str]), str);
-        m_layoutKeys = map.values();
+    void setRules(XkbRules* rules) { 
+        m_rules = rules; 
+	m_layoutKeys = getKeysSortedByVaue( m_rules->layouts() );
     }
     QString getLayoutAt(int row) { return m_layoutKeys[row]; }
 
@@ -137,7 +164,7 @@ SrcLayoutModel::data(const QModelIndex& index, int role) const
 	}
     } else if (role == Qt::DisplayRole) {
 	switch(col) {
-	    case LAYOUT_COLUMN_NAME: return i18n(layouts[layout]);
+	    case LAYOUT_COLUMN_NAME: return layouts[layout];
 	    case LAYOUT_COLUMN_MAP: return layout;
 	    break;
 	    default: ;
@@ -198,7 +225,7 @@ DstLayoutModel::data(const QModelIndex& index, int role) const
 	}
     } else if (role == Qt::DisplayRole) {
 	switch(col) {
-	    case LAYOUT_COLUMN_NAME: return i18n(layouts[lu.layout]);
+	    case LAYOUT_COLUMN_NAME: return layouts[lu.layout];
 	    case LAYOUT_COLUMN_MAP: return lu.layout;
 	    case LAYOUT_COLUMN_VARIANT: return lu.variant;
 	    case LAYOUT_COLUMN_DISPLAY_NAME: return lu.getDisplayName();
@@ -337,14 +364,15 @@ XkbOptionsModel::data(const QModelIndex& index, int role) const
 
 LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
   : KCModule(KeyboardLayoutFactory::componentData(), parent),
+    DEFAULT_VARIANT_NAME(i18nc("Default variant", "Default")),
     m_rules(NULL),
     m_srcModel(NULL),
     m_dstModel(NULL),
     m_xkbOptModel(NULL)
 {
-//    KGlobal::locale()->insertCatalog("desktop_kdebase"); // to translate languages
-//    kDebug() << "i18n" << i18n("France");
-
+//kDebug() << "Qt  locale" << QLocale::system().name();
+//kDebug() << "KDE locale" << KGlobal::locale()->language() << KGlobal::locale()->country();
+//kDebug() << "OS  locale" << setlocale(LC_ALL, NULL);
     //Read rules - we _must_ read _before_ creating UIs
     loadRules();
 
@@ -439,11 +467,7 @@ void LayoutConfig::load()
 void LayoutConfig::initUI()
 {
 	QString modelName = m_rules->models()[m_kxkbConfig.m_model];
-	if( modelName.isEmpty() )
-		modelName = DEFAULT_MODEL;
-
-        QString modelName_ = i18n(modelName);
-	widget->comboModel->setCurrentIndex( widget->comboModel->findText(modelName_) );
+	widget->comboModel->setCurrentIndex( widget->comboModel->findText(modelName) );
 
 	m_dstModel->reset();
 	widget->dstTableView->update();
@@ -682,7 +706,7 @@ void LayoutConfig::remove()
 	return;
 
     QModelIndexList selected = selectionModel->selectedRows();
-    kDebug() << "removing" << selected;
+//    kDebug() << "removing" << selected;
     m_kxkbConfig.m_layouts.removeAt(selected[0].row());
 
     m_dstModel->reset();
@@ -709,11 +733,11 @@ void LayoutConfig::moveSelected(int shift)
     int row = selected[0].row();
     int new_row = row + shift;
     
-    if( new_row >= 0 && new_row < GROUP_LIMIT )
+    if( new_row >= 0 && new_row <= m_kxkbConfig.m_layouts.count()-1 ) {
 	m_kxkbConfig.m_layouts.move(row, new_row);
-
-    m_dstModel->reset();
-    widget->dstTableView->update();
+        m_dstModel->reset();
+        widget->dstTableView->update();
+    }
 }
 
 void LayoutConfig::moveUp()
@@ -792,28 +816,29 @@ void LayoutConfig::layoutSelChanged()
         return;
     }
 
-	QString kbdLayout = m_kxkbConfig.m_layouts[row].layout;
+    QString kbdLayout = m_kxkbConfig.m_layouts[row].layout;
 
-	QList<XkbVariant> vars = m_rules->getAvailableVariants(kbdLayout);
-	kDebug() << "layout " << kbdLayout << " has " << vars.count() << " variants";
+    QList<XkbVariant> vars = m_rules->getAvailableVariants(kbdLayout);
+    kDebug() << "layout " << kbdLayout << " has " << vars.count() << " variants";
 
-	if( vars.count() > 0 ) {
+    if( vars.count() > 0 ) {
 //		vars.prepend(DEFAULT_VARIANT_NAME);
 //		widget->comboVariant->addItems(vars);
-                widget->comboVariant->addItem(DEFAULT_VARIANT_NAME, "");
-                for(int ii=0; ii<vars.count(); ii++) {
-		    widget->comboVariant->addItem(vars[ii].description, vars[ii].name);
-                }
-		QString variant = m_kxkbConfig.m_layouts[row].variant;
-		if( variant != NULL && variant.isEmpty() == false ) {
-                    int idx = widget->comboVariant->findData(variant);
-		    widget->comboVariant->setCurrentIndex(idx);
-		}
-		else {
-		    widget->comboVariant->setCurrentIndex(0);
-		}
+        widget->comboVariant->addItem(DEFAULT_VARIANT_NAME, "");
+        for(int ii=0; ii<vars.count(); ii++) {
+	    widget->comboVariant->addItem(vars[ii].description, vars[ii].name);
+            widget->comboVariant->setItemData(widget->comboVariant->count()-1, vars[ii].description, Qt::ToolTipRole );
+        }
+	QString variant = m_kxkbConfig.m_layouts[row].variant;
+	if( variant != NULL && variant.isEmpty() == false ) {
+            int idx = widget->comboVariant->findData(variant);
+	    widget->comboVariant->setCurrentIndex(idx);
 	}
-	updateDisplayName();
+	else {
+	    widget->comboVariant->setCurrentIndex(0);
+	}
+    }
+    updateDisplayName();
 }
 
 void LayoutConfig::makeOptionsTab()
@@ -901,18 +926,12 @@ void LayoutConfig::loadRules()
 
 void LayoutConfig::refreshRulesUI()
 {
-//    QStringList modelsList;
     widget->comboModel->clear();
-    QHashIterator<QString, QString> it(m_rules->models());
-    while (it.hasNext()) {
-//		modelsList.append(i18n(it.next().value()));
-	const QString key = it.next().key();
-	widget->comboModel->addItem(i18n(m_rules->models()[key]), key);
+    QList<QString> sortedModels = getKeysSortedByVaue( m_rules->models() );
+    foreach( QString model, sortedModels ) {
+	widget->comboModel->addItem( m_rules->models()[model], model);
+        widget->comboModel->setItemData( widget->comboModel->count()-1, m_rules->models()[model], Qt::ToolTipRole );
     }
-//    modelsList.sort();
-// TODO: sort
-
-//	widget->comboModel->addItems(modelsList);
     widget->comboModel->setCurrentIndex(0);
 	//TODO: reset options and xkb options
 }
