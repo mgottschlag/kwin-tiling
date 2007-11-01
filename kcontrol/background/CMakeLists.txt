@@ -5,7 +5,7 @@ add_subdirectory( pics )
 # The plan is to move konq_iconviewwidget to kdesktop and then it's all inside workspace.
 # But first KonqOperations must be redesigned to not use konq_iconviewwidget...
 include_directories( ${BLITZ_INCLUDES} )
-MESSAGE(STATUS "<${BLITZ_INCLUDES}>")
+
 add_definitions (-DQT3_SUPPORT)
 
 ########### next target ###############
