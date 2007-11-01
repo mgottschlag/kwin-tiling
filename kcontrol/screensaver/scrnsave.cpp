@@ -454,10 +454,7 @@ void KScreenSaver::save()
         config.writeEntry("Saver", mSaver);
     config.sync();
 
-    // TODO (GJ): When you changed anything, these two lines will give a segfault
-    // on exit. I don't know why yet.
-
-    org::freedesktop::ScreenSaver desktop("org.freedesktop.ScreenSaver", "/Screensaver", QDBusConnection::sessionBus());
+    org::freedesktop::ScreenSaver desktop("org.freedesktop.ScreenSaver", "/ScreenSaver", QDBusConnection::sessionBus());
     desktop.configure();
 
     mChanged = false;
