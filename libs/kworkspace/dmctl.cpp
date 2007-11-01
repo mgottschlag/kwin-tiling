@@ -67,21 +67,28 @@ DM::DM() : fd( -1 )
 		if ((fd = ::socket( PF_UNIX, SOCK_STREAM, 0 )) < 0)
 			return;
 		sa.sun_family = AF_UNIX;
-		if (DMType == GDM)
-			strcpy( sa.sun_path, "/tmp/.gdm_socket" );
-		else {
+		if (DMType == GDM) {
+			strcpy( sa.sun_path, "/var/run/gdm_socket" );
+			if (::connect( fd, (struct sockaddr *)&sa, sizeof(sa) )) {
+				strcpy( sa.sun_path, "/tmp/.gdm_socket" );
+				if (::connect( fd, (struct sockaddr *)&sa, sizeof(sa) )) {
+					::close( fd );
+					fd = -1;
+					break;
+				}
+			}
+			GDMAuthenticate();
+		} else {
 			if ((ptr = strchr( dpy, ':' )))
 				ptr = strchr( ptr, '.' );
 			snprintf( sa.sun_path, sizeof(sa.sun_path),
 			          "%s/dmctl-%.*s/socket",
 			          ctl, ptr ? int(ptr - dpy) : 512, dpy );
+			if (::connect( fd, (struct sockaddr *)&sa, sizeof(sa) )) {
+				::close( fd );
+				fd = -1;
+			}
 		}
-		if (::connect( fd, (struct sockaddr *)&sa, sizeof(sa) )) {
-			::close( fd );
-			fd = -1;
-		}
-		if (DMType == GDM)
-			GDMAuthenticate();
 		break;
 	case OldKDM:
 		{
