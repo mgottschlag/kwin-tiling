@@ -416,7 +416,7 @@ bool ProcessesLocal::setNiceness(long pid, int priority) {
 }
 
 bool ProcessesLocal::setScheduler(long pid, int priorityClass, int priority) {
-    if(priorityClass == SCHED_OTHER || priorityClass == SCHED_BATCH)
+    if(priorityClass == KSysGuard::Process::Other || priorityClass == KSysGuard::Process::Batch)
 	    priority = 0;
     if(pid <= 0) return false; // check the parameters
     struct sched_param params;

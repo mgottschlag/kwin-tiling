@@ -71,7 +71,7 @@ namespace KSysGuard
         int niceLevel;      ///If Scheduler = Other, niceLevel is the niceness (-20 to 20) of this process.  A lower number means a higher priority.  Otherwise sched priority (1 to 99)
 	Scheduler scheduler; ///The scheduler this process is running in.  See man sched_getscheduler for more info
         IoPriorityClass ioPriorityClass; /// The IO priority class.  See man ionice for detailed information.
-        int ioniceLevel;    ///IO Niceless (0 to 7) of this process.  A lower number means a higher io priority.  -1 if not known or not applicable because ioPriorityClass is Idle or None
+        int ioniceLevel;    ///IO Niceness (0 to 7) of this process.  A lower number means a higher io priority.  -1 if not known or not applicable because ioPriorityClass is Idle or None
         long vmSize;   ///Virtual memory size in KiloBytes, including memory used, mmap'ed files, graphics memory etc,
         long vmRSS;    ///Physical memory used by the process and its shared libraries.  If the process and libraries are swapped to disk, this could be as low as 0
         long vmURSS;   ///Physical memory used only by the process, and not counting the code for shared libraries. Set to -1 if unknown
