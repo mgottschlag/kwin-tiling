@@ -72,7 +72,7 @@ public Q_SLOTS:
      * Enable/disable the screensaver
      * @return true if the action succeeded
      */
-    bool enable( bool e );
+    bool enable( bool e, bool force = false );
 
     /**
      * Return true if the screen is currently blanked
@@ -152,12 +152,10 @@ protected:
 
 private:
     enum State { Waiting, Preparing, Saving };
-    bool        mEnabled;
 
     State       mState;
     XAutoLock   *mXAutoLock;
     K3Process    mLockProcess;
-    int		mTimeout;
 
     // the original X screensaver parameters
     int         mXTimeout;

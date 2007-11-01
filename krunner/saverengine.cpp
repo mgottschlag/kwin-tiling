@@ -43,10 +43,11 @@ SaverEngine::SaverEngine()
     // Save X screensaver parameters
     XGetScreenSaver(QX11Info::display(), &mXTimeout, &mXInterval,
                     &mXBlanking, &mXExposures);
+    // ... and disable it
+    XSetScreenSaver(QX11Info::display(), 0, mXInterval, mXBlanking, mXExposures);
 
     mState = Waiting;
     mXAutoLock = 0;
-    mEnabled = false;
 
     m_nr_throttled = 0;
     m_nr_inhibited = 0;
@@ -133,13 +134,9 @@ void SaverEngine::saverLockReady()
 
 void SaverEngine::SimulateUserActivity()
 {
-    if ( mState == Waiting )
+    if ( mXAutoLock && mState == Waiting )
     {
-        // disable
-        XSetScreenSaver(QX11Info::display(), 0, mXInterval, PreferBlanking, mXExposures);
         mXAutoLock->resetTrigger();
-        // reenable
-        XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
     }
 }
 
@@ -167,49 +164,46 @@ bool SaverEngine::quit()
 //---------------------------------------------------------------------------
 bool SaverEngine::isEnabled()
 {
-    return mEnabled;
+    return mXAutoLock != 0;
 }
 
 //---------------------------------------------------------------------------
-bool SaverEngine::enable( bool e )
+bool SaverEngine::enable( bool e, bool force )
 {
-    if ( e == mEnabled )
+    if ( !force && e == isEnabled() )
         return true;
 
     // If we aren't in a suitable state, we will not reconfigure.
     if (mState != Waiting)
         return false;
 
-    mEnabled = e;
-
-    if (mEnabled)
+    if (e)
     {
-        if ( !mXAutoLock ) {
+        if (!mXAutoLock)
+        {
             mXAutoLock = new XAutoLock();
             connect(mXAutoLock, SIGNAL(timeout()), SLOT(idleTimeout()));
         }
-        mXAutoLock->setTimeout(mTimeout);
-        mXAutoLock->setDPMS(true);
-        //mXAutoLock->changeCornerLockStatus( mLockCornerTopLeft, mLockCornerTopRight, mLockCornerBottomLeft, mLockCornerBottomRight);
 
-        // We'll handle blanking
-        XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
-        kDebug() << "XSetScreenSaver " << mTimeout + 10;
+        int timeout = KScreenSaverSettings::timeout();
+        mXAutoLock->setTimeout(timeout);
+        mXAutoLock->setDPMS(true);
+#ifdef NOT_FREAKIN_UGLY
+        mXAutoLock->changeCornerLockStatus( mLockCornerTopLeft, mLockCornerTopRight, mLockCornerBottomLeft, mLockCornerBottomRight);
+#else
+        xautolock_corners[0] = applyManualSettings(KScreenSaverSettings::actionTopLeft());
+        xautolock_corners[1] = applyManualSettings(KScreenSaverSettings::actionTopRight());
+        xautolock_corners[2] = applyManualSettings(KScreenSaverSettings::actionBottomLeft());
+        xautolock_corners[3] = applyManualSettings(KScreenSaverSettings::actionBottomRight());
+#endif
 
         mXAutoLock->start();
-
-        kDebug() << "Saver Engine started, timeout: " << mTimeout;
+        kDebug() << "Saver Engine started, timeout: " << timeout;
     }
     else
     {
-        if (mXAutoLock)
-        {
-            delete mXAutoLock;
-            mXAutoLock = 0;
-        }
-
-        XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
-        XSetScreenSaver(QX11Info::display(), 0, mXInterval,  PreferBlanking, DontAllowExposures);
+        delete mXAutoLock;
+        mXAutoLock = 0;
         kDebug() << "Saver Engine disabled";
     }
 
@@ -228,30 +222,10 @@ bool SaverEngine::isBlanked()
 //
 void SaverEngine::configure()
 {
-    // If we aren't in a suitable state, we will not reconfigure.
-    if (mState != Waiting)
-        return;
-
     // create a new config obj to ensure we read the latest options
     KScreenSaverSettings::self()->readConfig();
 
-    bool e  = KScreenSaverSettings::screenSaverEnabled();
-    kDebug() << "enabled " << e;
-    mTimeout = KScreenSaverSettings::timeout();
-
-    mEnabled = !e;   // force the enable()
-
-    int action;
-    action = KScreenSaverSettings::actionTopLeft();
-    xautolock_corners[0] = applyManualSettings(action);
-    action = KScreenSaverSettings::actionTopRight();
-    xautolock_corners[1] = applyManualSettings(action);
-    action = KScreenSaverSettings::actionBottomLeft();
-    xautolock_corners[2] = applyManualSettings(action);
-    action = KScreenSaverSettings::actionBottomRight();
-    xautolock_corners[3] = applyManualSettings(action);
-
-    enable( e );
+    enable( KScreenSaverSettings::screenSaverEnabled(), true );
 }
 
 //---------------------------------------------------------------------------
@@ -260,8 +234,7 @@ void SaverEngine::configure()
 //
 bool SaverEngine::startLockProcess( LockType lock_type )
 {
-    if (mState != Waiting)
-        return true;
+    Q_ASSERT(mState == Waiting);
 
     kDebug() << "SaverEngine: starting saver";
 
@@ -293,7 +266,6 @@ bool SaverEngine::startLockProcess( LockType lock_type )
         return false;
     }
 
-    XSetScreenSaver(QX11Info::display(), 0, mXInterval,  PreferBlanking, mXExposures);
     if (mXAutoLock)
     {
         mXAutoLock->stop();
@@ -311,7 +283,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 //
 void SaverEngine::stopLockProcess()
 {
-    Q_ASSERT(mState == Waiting);
+    Q_ASSERT(mState != Waiting);
     kDebug() << "SaverEngine: stopping lock process";
 
     mLockProcess.kill();
@@ -326,8 +298,6 @@ void SaverEngine::lockProcessExited()
     {
         mXAutoLock->start();
     }
-    XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
-    XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
 
     processLockTransactions();
     emit ActiveChanged(false); // DBus signal
@@ -341,9 +311,6 @@ void SaverEngine::lockProcessExited()
 //
 void SaverEngine::idleTimeout()
 {
-    // disable X screensaver
-    XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
-    XSetScreenSaver(QX11Info::display(), 0, mXInterval, PreferBlanking, DontAllowExposures);
     startLockProcess( DefaultLock );
 }
 

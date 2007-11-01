@@ -14,6 +14,7 @@
 #include "xautolock_c.h"
 
 #include <kapplication.h>
+#include <kdebug.h>
 
 #include <QTimerEvent>
 #include <QX11Info>
@@ -91,7 +92,8 @@ XAutoLock::XAutoLock()
 //
 XAutoLock::~XAutoLock()
 {
-  self = NULL;
+    stop();
+    self = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -101,7 +103,6 @@ XAutoLock::~XAutoLock()
 void XAutoLock::setTimeout(int t)
 {
     mTimeout = t;
-    resetTrigger();
 }
 
 void XAutoLock::setDPMS(bool s)
@@ -122,9 +123,11 @@ void XAutoLock::setDPMS(bool s)
 //
 void XAutoLock::start()
 {
-    resetTrigger();
     time(&mLastTimeout);
     mActive = true;
+    resetTrigger();
+    XSetScreenSaver(QX11Info::display(), mTimeout + 10, 100, PreferBlanking, DontAllowExposures); // We'll handle blanking
+    kDebug() << "XSetScreenSaver" << mTimeout + 10;
 }
 
 //---------------------------------------------------------------------------
@@ -134,6 +137,9 @@ void XAutoLock::start()
 void XAutoLock::stop()
 {
     mActive = false;
+    resetTrigger();
+    XSetScreenSaver(QX11Info::display(), 0, 100, PreferBlanking, DontAllowExposures); // No blanking at all
+    kDebug() << "XSetScreenSaver 0";
 }
 
 //---------------------------------------------------------------------------
@@ -144,6 +150,7 @@ void XAutoLock::resetTrigger()
 {
     mLastReset = time( 0 );
     mTrigger = mLastReset + mTimeout;
+    XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
 }
 
 //---------------------------------------------------------------------------
@@ -226,7 +233,6 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
         activate = true;
     if(!on && mDPMS) {
         activate = false;
-        XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
         resetTrigger();
     }
 #endif

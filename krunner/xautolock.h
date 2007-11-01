@@ -27,6 +27,7 @@ public:
     //-----------------------------------------------------------------------
     //
     // The time in seconds of continuous inactivity.
+    // Need to call start() again afterwards.
     //
     void setTimeout(int t);
     
