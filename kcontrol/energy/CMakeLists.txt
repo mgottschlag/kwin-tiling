@@ -7,6 +7,8 @@ include_directories( ${X11_dpms_INCLUDE_PATH}   )
 
 set(kcm_energy_PART_SRCS energy.cpp )
 
+set(kscreensaver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.kde.screensaver.xml)
+QT4_ADD_DBUS_INTERFACE( kcm_energy_PART_SRCS ${kscreensaver_xml} kscreensaver_interface )
 
 kde4_add_plugin(kcm_energy ${kcm_energy_PART_SRCS})
 

@@ -43,6 +43,8 @@
 #include <kurllabel.h>
 #include <kgenericfactory.h>
 
+#include <kscreensaver_interface.h>
+
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -364,6 +366,10 @@ void KEnergy::applySettings(bool enable, int standby, int suspend, int off)
 
     XFlush(dpy);
     XSetErrorHandler(defaultHandler);
+
+    // The screen saver depends on the DPMS settings
+    org::kde::screensaver kscreensaver("org.kde.screensaver", "/ScreenSaver", QDBusConnection::sessionBus());
+    kscreensaver.configure();
 #else
     /* keep gcc silent */
     if (enable | standby | suspend | off)
