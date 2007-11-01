@@ -565,6 +565,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
 
   QVBoxLayout * layout = new QVBoxLayout(this );
   layout->setSpacing( KDialog::spacingHint() );
+  layout->setMargin(0);
 
   QGridLayout * fontUseLayout = new QGridLayout( );
   layout->addItem( fontUseLayout );
