@@ -94,7 +94,7 @@ void SaverEngine::Lock()
 // It takes a while for krunner_lock to start and lock the screen.
 // Therefore delay the DBus call until it tells krunner that the locking is in effect.
 // This is done only for --forcelock .
-        if( ok && mState != Saving )
+        if( ok )
         {
             mLockTransactions.append(message().createReply());
             setDelayedReply(true);
@@ -102,6 +102,7 @@ void SaverEngine::Lock()
     }
     else
     {
+        // XXX race condition here
         mLockProcess.kill( SIGHUP );
     }
 }
@@ -121,10 +122,13 @@ void SaverEngine::saverLockReady()
 {
     if( mState != Preparing )
     {
-        kDebug() << "Got unexpected saverReady()";
+        kDebug() << "Got unexpected saverLockReady()";
+        return;
     }
     kDebug() << "Saver Lock Ready";
     processLockTransactions();
+    if (m_nr_throttled)
+        mLockProcess.suspend();
 }
 
 void SaverEngine::SimulateUserActivity()
@@ -260,19 +264,14 @@ bool SaverEngine::startLockProcess( LockType lock_type )
         return true;
 
     kDebug() << "SaverEngine: starting saver";
-    emit ActiveChanged(true); // DBus signal
 
-    if (mLockProcess.isRunning())
-    {
-        stopLockProcess();
-    }
-    mLockProcess.clearArguments();
     QString path = KStandardDirs::findExe( "krunner_lock" );
     if( path.isEmpty())
     {
         kDebug() << "Can't find krunner_lock!";
         return false;
     }
+    mLockProcess.clearArguments();
     mLockProcess << path;
     switch( lock_type )
     {
@@ -285,8 +284,6 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     default:
         break;
     }
-    if (m_nr_throttled)
-        mLockProcess << QString( "--blank" );
 
     m_actived_time = time( 0 );
     if (mLockProcess.start() == false )
@@ -297,11 +294,14 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     }
 
     XSetScreenSaver(QX11Info::display(), 0, mXInterval,  PreferBlanking, mXExposures);
-    mState = Preparing;
     if (mXAutoLock)
     {
         mXAutoLock->stop();
     }
+
+    emit ActiveChanged(true); // DBus signal
+    mState = Preparing;
+
     return true;
 }
 
@@ -311,42 +311,28 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 //
 void SaverEngine::stopLockProcess()
 {
-    m_actived_time = -1;
-    if (mState == Waiting)
-    {
-        kWarning() << "SaverEngine::stopSaver() saver not active" ;
-        return;
-    }
-    kDebug() << "SaverEngine: stopping lock";
-    emit ActiveChanged(false); // DBus signal
+    Q_ASSERT(mState == Waiting);
+    kDebug() << "SaverEngine: stopping lock process";
 
     mLockProcess.kill();
-
-    if (mXAutoLock)
-    {
-        mXAutoLock->start();
-    }
-    processLockTransactions();
-    mState = Waiting;
-    XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
-    XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
 }
 
 void SaverEngine::lockProcessExited()
 {
-    m_actived_time = -1;
-    kDebug() << "SaverEngine: lock exited";
-    if( mState == Waiting )
-        return;
-    emit ActiveChanged(false); // DBus signal
+    Q_ASSERT(mState != Waiting);
+    kDebug() << "SaverEngine: lock process exited";
+
     if (mXAutoLock)
     {
         mXAutoLock->start();
     }
-    processLockTransactions();
-    mState = Waiting;
     XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
     XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, PreferBlanking, mXExposures);
+
+    processLockTransactions();
+    emit ActiveChanged(false); // DBus signal
+    m_actived_time = -1;
+    mState = Waiting;
 }
 
 //---------------------------------------------------------------------------
@@ -447,7 +433,8 @@ uint SaverEngine::Throttle(const QString &/*application_name*/, const QString &/
     sr.dbusid = message().service();
     m_requests.append( sr );
     m_nr_throttled++;
-    mLockProcess.suspend();
+    if (mLockProcess.isRunning())
+        mLockProcess.suspend();
     return sr.cookie;
 }
 
@@ -459,7 +446,8 @@ void SaverEngine::UnThrottle(uint cookie)
         if ( it.next().cookie == cookie ) {
             it.remove();
             if ( !--m_nr_throttled )
-                mLockProcess.resume();
+                if (mLockProcess.isRunning())
+                    mLockProcess.resume();
         }
     }
 }
