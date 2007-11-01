@@ -189,6 +189,7 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	config = new KConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc"), KConfig::SimpleConfig);
 
 	QVBoxLayout *top = new QVBoxLayout( this );
+        top->setMargin(0);
 	tab = new QTabWidget( this );
 
 	general = new KDMGeneralWidget( this );
