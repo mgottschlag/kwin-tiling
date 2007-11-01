@@ -97,6 +97,7 @@ void SaverEngine::Lock()
         if( ok && mState != Saving )
         {
             mLockTransactions.append(message().createReply());
+            setDelayedReply(true);
         }
     }
     else
