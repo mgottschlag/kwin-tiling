@@ -14,8 +14,8 @@ set(kcm_screensaver_PART_SRCS
    advanceddialog.cpp 
    kswidget.cpp )
 
-set(screensaver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.freedesktop.ScreenSaver.xml)
-QT4_ADD_DBUS_INTERFACE( kcm_screensaver_PART_SRCS ${screensaver_xml} screensaver_interface )
+set(kscreensaver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.kde.screensaver.xml)
+QT4_ADD_DBUS_INTERFACE( kcm_screensaver_PART_SRCS ${kscreensaver_xml} kscreensaver_interface )
 
 
 

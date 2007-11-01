@@ -9,6 +9,7 @@
 #include "saverengine.h"
 #include "kscreensaversettings.h"
 #include "screensaveradaptor.h"
+#include "kscreensaveradaptor.h"
 
 #include <kstandarddirs.h>
 #include <kapplication.h>
@@ -18,6 +19,7 @@
 #include <klocale.h>
 #include <QFile>
 #include <QX11Info>
+#include <QDBusConnection>
 #include <assert.h>
 #include <stdlib.h>
 #include <time.h>
@@ -32,13 +34,13 @@ extern xautolock_corner_t xautolock_corners[ 4 ];
 // a newly started process.
 //
 SaverEngine::SaverEngine()
-    : QWidget(),
-      screensaverService( QDBusConnection::connectToBus( QDBusConnection::SessionBus,
-                                                         "org.freedesktop.ScreenSaver" ) )
+    : QWidget()
 {
     (void) new ScreenSaverAdaptor( this );
-    screensaverService.registerService( "org.freedesktop.ScreenSaver" ) ;
-    screensaverService.registerObject( "/ScreenSaver", this );
+    QDBusConnection::sessionBus().registerService( "org.freedesktop.ScreenSaver" ) ;
+    (void) new KScreenSaverAdaptor( this );
+    QDBusConnection::sessionBus().registerService( "org.kde.screensaver" ) ;
+    QDBusConnection::sessionBus().registerObject( "/ScreenSaver", this );
 
     // Save X screensaver parameters
     XGetScreenSaver(QX11Info::display(), &mXTimeout, &mXInterval,
@@ -79,8 +81,6 @@ SaverEngine::~SaverEngine()
     // Restore X screensaver parameters
     XSetScreenSaver(QX11Info::display(), mXTimeout, mXInterval, mXBlanking,
                     mXExposures);
-
-    QDBusConnection::disconnectFromBus("org.freedesktop.ScreenSaver");
 }
 
 //---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ void SaverEngine::processLockTransactions()
                                       end = mLockTransactions.constEnd();
     for ( ; it != end; ++it )
     {
-        screensaverService.send(*it);
+        QDBusConnection::sessionBus().send(*it);
     }
     mLockTransactions.clear();
 }

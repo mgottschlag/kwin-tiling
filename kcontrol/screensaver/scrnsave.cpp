@@ -55,7 +55,7 @@
 #include "scrnsave.h"
 #include <QX11Info>
 #include <QDesktopWidget>
-#include <screensaver_interface.h>
+#include <kscreensaver_interface.h>
 #include <KPluginFactory>
 #include <KPluginLoader>
 
@@ -454,8 +454,8 @@ void KScreenSaver::save()
         config.writeEntry("Saver", mSaver);
     config.sync();
 
-    org::freedesktop::ScreenSaver desktop("org.freedesktop.ScreenSaver", "/ScreenSaver", QDBusConnection::sessionBus());
-    desktop.configure();
+    org::kde::screensaver kscreensaver("org.kde.screensaver", "/ScreenSaver", QDBusConnection::sessionBus());
+    kscreensaver.configure();
 
     mChanged = false;
     emit changed(false);

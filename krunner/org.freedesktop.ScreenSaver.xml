@@ -21,10 +21,6 @@
       <arg type="b" direction="out"/>
       <arg name="e" type="b" direction="in"/>
     </method>
-    <method name="configure">
-    </method>
-    <method name="saverLockReady">
-    </method>
     <method name="Inhibit">
       <arg name="application_name" type="s" direction="in"/>
       <arg name="reason_for_inhibit" type="s" direction="in"/>

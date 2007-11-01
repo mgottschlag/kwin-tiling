@@ -28,7 +28,7 @@
 #include <kdebug.h>
 #include <kglobalsettings.h>
 #include <QtDBus/QtDBus>
-#include "krunner_interface.h"
+#include "kscreensaver_interface.h"
 
 #include <QList>
 
@@ -160,8 +160,8 @@ int main( int argc, char **argv )
 
     if( sig )
     {
-        org::freedesktop::ScreenSaver runner("org.freedesktop.ScreenSaver", "/ScreenSaver", QDBusConnection::sessionBus());
-        runner.saverLockReady();
+        org::kde::screensaver kscreensaver("org.kde.screensaver", "/ScreenSaver", QDBusConnection::sessionBus());
+        kscreensaver.saverLockReady();
     }
     args->clear();
     return app.exec();

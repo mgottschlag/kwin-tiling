@@ -9,6 +9,7 @@ set(krunner_KCFG_SRCS kscreensaversettings.kcfgc klaunchsettings.kcfgc)
 set(krunner_dbusXML org.kde.krunner.Interface.xml)
 set(krunner_dbusAppXML org.kde.krunner.App.xml)
 set(screensaver_dbusXML org.freedesktop.ScreenSaver.xml)
+set(kscreensaver_dbusXML org.kde.screensaver.xml)
 
 set(krunner_SRCS
                  krunnerdialog.cpp
@@ -31,6 +32,7 @@ kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusXML} interface.h Interface)
 qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusAppXML} krunnerapp.h KRunnerApp)
 qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
+qt4_add_dbus_adaptor(krunner_SRCS ${kscreensaver_dbusXML} saverengine.h SaverEngine kscreensaveradaptor KScreenSaverAdaptor)
 
 kde4_add_ui_files(krunner_SRCS runners/shell/shellOptions.ui)
 kde4_add_executable(krunner ${krunner_SRCS})
@@ -46,4 +48,4 @@ install(TARGETS krunner DESTINATION ${BIN_INSTALL_DIR})
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})
 install(FILES kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
-install(FILES ${krunner_dbusAppXML} ${krunner_dbusXML} ${screensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install(FILES ${krunner_dbusAppXML} ${krunner_dbusXML} ${screensaver_dbusXML} ${kscreensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

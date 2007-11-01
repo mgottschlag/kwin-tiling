@@ -11,7 +11,6 @@
 #include <QWidget>
 #include <k3process.h>
 #include <QVector>
-#include <QDBusConnection>
 #include <QDBusContext>
 #include <QDBusMessage>
 
@@ -164,7 +163,6 @@ private:
     int         mXExposures;
 
     time_t      m_actived_time;
-    QDBusConnection screensaverService;
     QList<ScreenSaverRequest> m_requests;
     uint        m_next_cookie;
     
