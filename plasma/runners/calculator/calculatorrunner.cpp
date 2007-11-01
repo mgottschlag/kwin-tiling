@@ -47,23 +47,27 @@ void CalculatorRunner::match(Plasma::SearchContext *search)
     if (cmd[0] != '=') {
         return;
     }
-    
-    cmd.remove(0, 1);
-    if (QRegExp("[a-zA-Z\\]\\[]").indexIn(cmd) == -1) {
-        QString result = calculate(cmd);
 
-        if (!result.isEmpty()) {
-            Plasma::SearchAction *action = search->addInformationalMatch(this);
-            action->setIcon(KIcon("accessories-calculator"));
-            action->setText(QString("%1 = %2").arg(cmd, result));
-            action->setData("= " + result);
-        }
+    cmd = cmd.remove(0, 1).trimmed();
+
+    if (cmd.isEmpty()) {
+        return;
+    }
+
+    cmd.replace(QRegExp("([a-zA-Z]+)"), "Math.\\1");
+    QString result = calculate(cmd);
+
+    if (!result.isEmpty() && result != cmd) {
+        Plasma::SearchAction *action = search->addInformationalMatch(this);
+        action->setIcon(KIcon("accessories-calculator"));
+        action->setText(QString("%1 = %2").arg(cmd, result));
+        action->setData("= " + result);
     }
 }
 
 QString CalculatorRunner::calculate( const QString& term )
 {
-    kDebug() << "calculating" << term;
+    //kDebug() << "calculating" << term;
     QScriptEngine eng;
     QScriptValue result = eng.evaluate(term);
 
