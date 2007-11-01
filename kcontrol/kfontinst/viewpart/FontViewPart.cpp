@@ -68,7 +68,7 @@ namespace KFI
 K_PLUGIN_FACTORY(CFontViewPartFactory, registerPlugin<CFontViewPart>();)
 K_EXPORT_PLUGIN(CFontViewPartFactory("kfontview"))
 
-CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList<QVariant> &args)
+CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList<QVariant> &)
              : KParts::ReadOnlyPart(parent),
                itsConfig(KGlobal::config()),
                itsProc(NULL),
@@ -119,6 +119,7 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
     itsPreview->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFaceLabel=new QLabel(i18n("Show Face:"), itsFaceWidget);
     itsFaceSelector=new KIntNumInput(1, itsFaceWidget);
+    itsFaceSelector->setSliderEnabled(false);
     itsInstallButton=new QPushButton(i18n("Install..."), controls);
     itsInstallButton->setEnabled(false);
     previewLayout->addWidget(itsPreview);
@@ -337,7 +338,7 @@ void CFontViewPart::timeout()
     if(!isFonts && CFcEngine::instance()->getNumIndexes()>1)
     {
         showFs=true;
-        itsFaceSelector->setRange(1, CFcEngine::instance()->getNumIndexes(), 1, false);
+        itsFaceSelector->setRange(1, CFcEngine::instance()->getNumIndexes(), 1);
         itsFaceSelector->blockSignals(true);
         itsFaceSelector->setValue(1);
         itsFaceSelector->blockSignals(false);
