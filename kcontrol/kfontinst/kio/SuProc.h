@@ -23,8 +23,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QThread>
-#include <QByteArray>
+#include <QtCore/QThread>
+#include <QtCore/QByteArray>
 
 class QString;
 

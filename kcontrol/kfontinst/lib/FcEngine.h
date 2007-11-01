@@ -25,10 +25,11 @@
 
 #include <config-workspace.h>
 
-#include <QVector>
-#include <QFont>
-#include <QColor>
-#include <kurl.h>
+#include <QtCore/QVector>
+#include <QtCore/QRect>
+#include <QtGui/QFont>
+#include <QtGui/QColor>
+#include <KDE/KUrl>
 #include <kdeversion.h>
 #include <fontconfig/fontconfig.h>
 #include "KfiConstants.h"

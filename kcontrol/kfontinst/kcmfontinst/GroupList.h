@@ -23,15 +23,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <kurl.h>
-#include <kfileitem.h>
-#include <kio/job.h>
-#include <kdirlister.h>
-#include <QList>
-#include <QTreeView>
-#include <QAbstractItemModel>
-#include <QModelIndex>
-#include <QVariant>
+#include <KDE/KUrl>
+#include <KDE/KFileItem>
+#include <KDE/KIO/Job>
+#include <KDE/KDirLister>
+#include <QtCore/QList>
+#include <QtGui/QTreeView>
+#include <QtCore/QAbstractItemModel>
+#include <QtCore/QModelIndex>
+#include <QtCore/QVariant>
 #include "FontList.h"
 
 class QDragEnterEvent;

@@ -22,18 +22,18 @@
 
 #include "Viewer.h"
 #include "KfiConstants.h"
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
-#include <kapplication.h>
-#include <kpluginloader.h>
-#include <kpluginfactory.h>
-#include <klocale.h>
-#include <kglobal.h>
-#include <kfiledialog.h>
-#include <kconfig.h>
-#include <kstandardaction.h>
-#include <kactioncollection.h>
-#include <kparts/browserextension.h>
+#include <KDE/KCmdLineArgs>
+#include <KDE/KAboutData>
+#include <KDE/KApplication>
+#include <KDE/KPluginLoader>
+#include <KDE/KPluginFactory>
+#include <KDE/KLocale>
+#include <KDE/KGlobal>
+#include <KDE/KFileDialog>
+#include <KDE/KConfig>
+#include <KDE/KStandardAction>
+#include <KDE/KActionCollection>
+#include <KDE/KParts/BrowserExtension>
 
 #define CFG_GROUP    "FontViewer Settings"
 #define CFG_SIZE_KEY "Window Size"

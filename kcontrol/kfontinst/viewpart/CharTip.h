@@ -23,15 +23,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QFrame>
-#include <QPixmap>
-#include <QLabel>
-#include <QResizeEvent>
-#include <QEvent>
+#include <QtGui/QFrame>
 #include "FcEngine.h"
 
 class QLabel;
 class QTimer;
+class QResizeEvent;
+class QEvent;
 
 namespace KFI
 {

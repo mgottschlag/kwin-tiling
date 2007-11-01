@@ -22,7 +22,7 @@
 
 #include "FcQuery.h"
 #include "Fc.h"
-#include <QProcess>
+#include <QtCore/QProcess>
 #include <stdio.h>
 
 namespace KFI

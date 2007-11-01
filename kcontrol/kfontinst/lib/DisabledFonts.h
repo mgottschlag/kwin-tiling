@@ -24,9 +24,9 @@
  */
 
 
-#include <QSet>
-#include <QList>
-#include <QFontDatabase>
+#include <QtCore/QSet>
+#include <QtCore/QList>
+#include <QtGui/QFontDatabase>
 #include <time.h>
 #include "KfiConstants.h"
 #include "Misc.h"

@@ -31,17 +31,17 @@
 #include "CharTip.h"
 #include "FontPreview.h"
 #include "UnicodeCategories.h"
-#include <klocale.h>
-#include <kapplication.h>
-#include <kglobalsettings.h>
-#include <QLabel>
-#include <QToolTip>
-#include <QPainter>
-#include <QTimer>
-#include <QPixmap>
-#include <QBoxLayout>
-#include <QEvent>
-#include <QResizeEvent>
+#include <KDE/KLocale>
+#include <KDE/KApplication>
+#include <KDE/KGlobalSettings>
+#include <QtGui/QLabel>
+#include <QtGui/QToolTip>
+#include <QtGui/QPainter>
+#include <QtCore/QTimer>
+#include <QtGui/QPixmap>
+#include <QtGui/QBoxLayout>
+#include <QtCore/QEvent>
+#include <QtGui/QResizeEvent>
 
 namespace KFI
 {

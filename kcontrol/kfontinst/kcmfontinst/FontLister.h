@@ -26,10 +26,10 @@
 class KJob;
 class QString;
 
-#include <kio/job.h>
-#include <kfileitem.h>
-#include <QObject>
-#include <QHash>
+#include <KDE/KIO/Job>
+#include <KDE/KFileItem>
+#include <QtCore/QObject>
+#include <QtCore/QHash>
 
 namespace KFI
 {

@@ -23,9 +23,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <klineedit.h>
-#include <QPixmap>
-#include <QFontDatabase>
+#include <KDE/KLineEdit>
+#include <QtGui/QPixmap>
+#include <QtGui/QFontDatabase>
 
 class QLabel;
 class QMenu;

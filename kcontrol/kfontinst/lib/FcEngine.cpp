@@ -22,18 +22,18 @@
 
 #include "FcEngine.h"
 
-#include <QPainter>
-#include <QPixmap>
-#include <QFile>
-#include <QTextStream>
-#include <QX11Info>
-#include <kurl.h>
-#include <kconfig.h>
-#include <kconfiggroup.h>
-#include <kglobalsettings.h>
-#include <kio/netaccess.h>
-#include <kglobal.h>
-#include <klocale.h>
+#include <QtGui/QPainter>
+#include <QtGui/QPixmap>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
+#include <QtGui/QX11Info>
+#include <KDE/KUrl>
+#include <KDE/KConfig>
+#include <KDE/KConfigGroup>
+#include <KDE/KGlobalSettings>
+#include <KDE/KIO/NetAccess>
+#include <KDE/KGlobal>
+#include <KDE/KLocale>
 #include <math.h>
 #include <X11/Xlib.h>
 #include <X11/Xft/Xft.h>

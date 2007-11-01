@@ -23,8 +23,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <kparts/part.h>
-#include <kparts/mainwindow.h>
+#include <KDE/KParts/ReadOnlyPart>
+#include <KDE/KParts/MainWindow>
 
 class QAction;
 

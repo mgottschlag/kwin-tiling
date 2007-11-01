@@ -23,12 +23,11 @@
 #include "FontPreview.h"
 #include "FcEngine.h"
 #include "CharTip.h"
-#include <kapplication.h>
-#include <klocale.h>
-#include <QPainter>
-#include <QPixmap>
-#include <QPaintEvent>
-#include <QMouseEvent>
+#include <KDE/KApplication>
+#include <KDE/KLocale>
+#include <QtGui/QPainter>
+#include <QtGui/QPaintEvent>
+#include <QtGui/QMouseEvent>
 #include <stdlib.h>
 
 namespace KFI

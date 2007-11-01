@@ -23,7 +23,7 @@
 #include "PreviewSelectAction.h"
 #include "UnicodeBlocks.h"
 #include "UnicodeScripts.h"
-#include <klocale.h>
+#include <KDE/KLocale>
 
 namespace KFI
 {

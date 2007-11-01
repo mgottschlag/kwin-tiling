@@ -21,10 +21,10 @@
  */
 
 #include "PrintDialog.h"
-#include <QFrame>
-#include <QLabel>
-#include <QGridLayout>
-#include <klocale.h>
+#include <QtGui/QFrame>
+#include <QtGui/QLabel>
+#include <QtGui/QGridLayout>
+#include <KDE/KLocale>
 
 namespace KFI
 {

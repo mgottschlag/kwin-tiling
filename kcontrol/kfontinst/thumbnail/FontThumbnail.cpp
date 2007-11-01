@@ -23,18 +23,17 @@
 #include "FontThumbnail.h"
 #include "KfiConstants.h"
 #include "FcEngine.h"
-#include <QImage>
-#include <QPixmap>
-#include <QFile>
-#include <kiconloader.h>
-#include <kglobalsettings.h>
-#include <klocale.h>
-#include <kurl.h>
-#include <kzip.h>
-#include <ktempdir.h>
-#include <kmimetype.h>
-#include <kstandarddirs.h>
-#include <kdebug.h>
+#include <QtGui/QImage>
+#include <QtGui/QPixmap>
+#include <QtCore/QFile>
+#include <KDE/KGlobalSettings>
+#include <KDE/KLocale>
+#include <KDE/KUrl>
+#include <KDE/KZip>
+#include <KDE/KTempDir>
+#include <KDE/KMimeType>
+#include <KDE/KStandardDirs>
+#include <KDE/KDebug>
 
 #define KFI_DBUG kDebug(7115)
 

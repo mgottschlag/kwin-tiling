@@ -23,18 +23,18 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <kurl.h>
-#include <kfileitem.h>
-#include <kio/job.h>
-#include <QList>
-#include <QSet>
-#include <QHash>
-#include <QTreeView>
-#include <QAbstractItemModel>
-#include <QModelIndex>
-#include <QVariant>
-#include <QSortFilterProxyModel>
-#include <QFontDatabase>
+#include <KDE/KUrl>
+#include <KDE/KFileItem>
+#include <KDE/KIO/Job>
+#include <QtCore/QList>
+#include <QtCore/QSet>
+#include <QtCore/QHash>
+#include <QtGui/QTreeView>
+#include <QtCore/QAbstractItemModel>
+#include <QtCore/QModelIndex>
+#include <QtCore/QVariant>
+#include <QtGui/QSortFilterProxyModel>
+#include <QtGui/QFontDatabase>
 #include "Misc.h"
 #include "FontLister.h"
 #include "JobRunner.h"

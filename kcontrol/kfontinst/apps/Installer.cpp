@@ -22,15 +22,15 @@
 
 #include "Installer.h"
 #include "Misc.h"
-#include <QFile>
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
-#include <kapplication.h>
-#include <kzip.h>
-#include <ktempdir.h>
-#include <kmessagebox.h>
-#include <kstandarddirs.h>
-#include <kio/netaccess.h>
+#include <QtCore/QFile>
+#include <KDE/KCmdLineArgs>
+#include <KDE/KAboutData>
+#include <KDE/KApplication>
+#include <KDE/KZip>
+#include <KDE/KTempDir>
+#include <KDE/KMessageBox>
+#include <KDE/KStandardDirs>
+#include <KDE/KIO/NetAccess>
 #include "JobRunner.h"
 #include "CreateParent.h"
 

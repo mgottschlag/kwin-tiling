@@ -28,8 +28,8 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#include <QDataStream>
-#include <kurl.h>
+#include <QtCore/QDataStream>
+#include <KDE/KUrl>
 #include "KfiConstants.h"
 
 class QTextStream;

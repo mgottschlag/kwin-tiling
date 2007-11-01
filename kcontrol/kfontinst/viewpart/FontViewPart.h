@@ -23,12 +23,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <kparts/part.h>
-#include <kparts/browserextension.h>
-#include <kconfig.h>
-#include <kurl.h>
-#include <QFrame>
-#include <QMap>
+#include <KDE/KParts/ReadOnlyPart>
+#include <KDE/KParts/BrowserExtension>
+#include <KDE/KUrl>
+#include <QtGui/QFrame>
+#include <QtCore/QMap>
 #include "KfiConstants.h"
 #include "FontPreview.h"
 

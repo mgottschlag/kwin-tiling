@@ -26,12 +26,12 @@
 #include "KfiConstants.h"
 #include "Socket.h"
 #include "kxftconfig.h"
-#include <QFile>
-#include <QDataStream>
-#include <QVariant>
-#include <kglobal.h>
-#include <kcomponentdata.h>
-#include <kdebug.h>
+#include <QtCore/QFile>
+#include <QtCore/QDataStream>
+#include <QtCore/QVariant>
+#include <KDE/KGlobal>
+#include <KDE/KComponentData>
+#include <KDE/KDebug>
 #include <stdio.h>
 #include <stdlib.h>
 

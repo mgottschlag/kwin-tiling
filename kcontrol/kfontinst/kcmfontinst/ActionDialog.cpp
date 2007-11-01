@@ -21,11 +21,11 @@
  */
 
 #include "ActionDialog.h"
-#include <kiconloader.h>
-#include <QLabel>
-#include <QTimer>
-#include <QPixmap>
-#include <QMatrix>
+#include <KDE/KIconLoader>
+#include <QtGui/QLabel>
+#include <QtCore/QTimer>
+#include <QtGui/QPixmap>
+#include <QtGui/QMatrix>
 
 namespace KFI
 {

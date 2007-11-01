@@ -22,11 +22,11 @@
 
 #include "SuProc.h"
 #include "KfiConstants.h"
-#include <QFile>
-#include <kshell.h>
-#include <KStandardDirs>
-#include <SuProcess>
-#include <kdebug.h>
+#include <QtCore/QFile>
+#include <KDE/KShell>
+#include <KDE/KStandardDirs>
+#include <KDE/SuProcess>
+#include <KDE/KDebug>
 #include <unistd.h>
 #include <config-workspace.h>
 

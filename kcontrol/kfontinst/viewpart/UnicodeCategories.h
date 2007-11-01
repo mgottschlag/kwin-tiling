@@ -6,7 +6,7 @@
 #ifndef UNICODE_CATEGORIES_H
 #define UNICODE_CATEGORIES_H
 
-#include <QtCore/qglobal.h>
+#include <QtCore/QtGlobal>
 
 enum EUnicodeCategory
 {

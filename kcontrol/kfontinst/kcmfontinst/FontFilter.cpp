@@ -21,21 +21,21 @@
  */
 
 #include "FontFilter.h"
-#include <klocale.h>
-#include <kiconloader.h>
-#include <ktoggleaction.h>
-#include <kselectaction.h>
-#include <kicon.h>
-#include <QLabel>
-#include <QPen>
-#include <QPainter>
-#include <QStyleOption>
-#include <QSet>
-#include <QString>
-#include <QMenu>
-#include <QMouseEvent>
-#include <QApplication>
-#include <QActionGroup>
+#include <KDE/KLocale>
+#include <KDE/KIconLoader>
+#include <KDE/KToggleAction>
+#include <KDE/KSelectAction>
+#include <KDE/KIcon>
+#include <QtGui/QLabel>
+#include <QtGui/QPen>
+#include <QtGui/QPainter>
+#include <QtGui/QStyleOption>
+#include <QtCore/QSet>
+#include <QtCore/QString>
+#include <QtGui/QMenu>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QApplication>
+#include <QtGui/QActionGroup>
 
 namespace KFI
 {

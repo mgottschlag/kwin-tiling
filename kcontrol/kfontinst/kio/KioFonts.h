@@ -25,15 +25,15 @@
 
 #include <fontconfig/fontconfig.h>
 #include <time.h>
-#include <kio/slavebase.h>
-#include <kurl.h>
-#include <klocale.h>
+#include <KDE/KIO/SlaveBase>
+#include <KDE/KUrl>
+#include <KDE/KLocale>
 
-#include <QByteArray>
-#include <QHash>
-#include <QSet>
-#include <QList>
-#include <QVariant>
+#include <QtCore/QByteArray>
+#include <QtCore/QHash>
+#include <QtCore/QSet>
+#include <QtCore/QList>
+#include <QtCore/QVariant>
 #include "Misc.h"
 #include "KfiConstants.h"
 #include "DisabledFonts.h"

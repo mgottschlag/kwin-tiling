@@ -23,7 +23,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QByteArray>
+#include <QtCore/QByteArray>
 
 namespace KFI
 {

@@ -25,8 +25,7 @@
 
 #include <config-workspace.h>
 
-#include <klocale.h>
-#include <kio/global.h>
+#include <KDE/KLocale>
 #include <kio/udsentry.h>
 
 #define KFI_NAME                     "kfontinst"

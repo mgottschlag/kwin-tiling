@@ -50,7 +50,7 @@
 #include "FontEngine.h"
 #include "Misc.h"
 #include "Fc.h"
-#include <kglobal.h>
+#include <KDE/KGlobal>
 #include <kascii.h>
 #include <ctype.h>
 #include <string.h>
@@ -65,8 +65,8 @@
 #include FT_TRUETYPE_IDS_H
 #include FT_TRUETYPE_TABLES_H
 #include FT_TYPE1_TABLES_H
-#include <QBuffer>
-#include <QTextStream>
+#include <QtCore/QBuffer>
+#include <QtCore/QTextStream>
 
 namespace KFI
 {

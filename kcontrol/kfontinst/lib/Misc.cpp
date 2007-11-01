@@ -21,15 +21,15 @@
  */
 
 #include "Misc.h"
-#include <QDir>
-#include <QFile>
-#include <QByteArray>
-#include <QTextCodec>
-#include <QTextStream>
-#include <QProcess>
-#include <kstandarddirs.h>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
+#include <QtCore/QByteArray>
+#include <QtCore/QTextCodec>
+#include <QtCore/QTextStream>
+#include <QtCore/QProcess>
+#include <KDE/KStandardDirs>
 #include <kde_file.h>
-#include <ksavefile.h>
+#include <KDE/KSaveFile>
 #include <unistd.h>
 #include <ctype.h>
 

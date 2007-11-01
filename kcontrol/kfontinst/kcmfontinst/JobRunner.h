@@ -23,7 +23,7 @@
 #ifndef __JOB_RUNNER_H__
 #define __JOB_RUNNER_H__
 
-#include <kio/job.h>
+#include <KDE/KIO/Job>
 #include "ActionDialog.h"
 
 class QLabel;

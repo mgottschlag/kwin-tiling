@@ -35,9 +35,9 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <sys/stat.h>
-#include <QByteArray>
+#include <QtCore/QByteArray>
 #include <config-workspace.h>
-#include <kdebug.h>
+#include <KDE/KDebug>
 #include <kde_file.h>
 
 #ifndef SUN_LEN

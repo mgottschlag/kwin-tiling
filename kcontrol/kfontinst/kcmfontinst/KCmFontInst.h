@@ -26,11 +26,11 @@
 #include <config-workspace.h>
 #include "GroupList.h"
 #include "JobRunner.h"
-#include <QSet>
-#include <kcmodule.h>
-#include <kurl.h>
-#include <kconfig.h>
-#include <kio/job.h>
+#include <QtCore/QSet>
+#include <KDE/KCModule>
+#include <KDE/KUrl>
+#include <KDE/KConfig>
+#include <KDE/KIO/Job>
 
 class KPushButton;
 class KProgressDialog;

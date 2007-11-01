@@ -24,16 +24,16 @@
 #include "Fc.h"
 #include "Misc.h"
 #include "KfiConstants.h"
-#include <QDir>
-#include <QDomDocument>
-#include <QDomElement>
-#include <QDomNode>
-#include <QFile>
-#include <QTextStream>
-#include <klockfile.h>
-#include <ksavefile.h>
-#include <klocale.h>
-#include <kstandarddirs.h>
+#include <QtCore/QDir>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
+#include <QtXml/QDomNode>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
+#include <KDE/KLockFile>
+#include <KDE/KSaveFile>
+#include <KDE/KLocale>
+#include <KDE/KStandardDirs>
 #include <fontconfig/fontconfig.h>
 #include <stdio.h>
 

@@ -6,8 +6,8 @@
 #ifndef __UNICODE_SCRIPTS_H__
 #define __UNICODE_SCRIPTS_H__
 
-#include <QtCore/qglobal.h>
-#include <klocalizedstring.h>
+#include <QtCore/QtGlobal>
+#include <KDE/KLocalizedString>
 
 static const char *constUnicodeScriptList[] =
 {

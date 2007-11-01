@@ -21,17 +21,17 @@
  */
 
 #include "FcEngine.h"
-#include <QCoreApplication>
-#include <QTextStream>
-#include <QPainter>
-#include <QFontDatabase>
-#include <QWidget>
-#include <QFile>
-#include <QPrinter>
-#include <QPrintDialog>
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
-#include <kapplication.h>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QTextStream>
+#include <QtGui/QPainter>
+#include <QtGui/QFontDatabase>
+#include <QtGui/QWidget>
+#include <QtCore/QFile>
+#include <QtGui/QPrinter>
+#include <QtGui/QPrintDialog>
+#include <KDE/KCmdLineArgs>
+#include <KDE/KAboutData>
+#include <KDE/KApplication>
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
 #endif

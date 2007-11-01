@@ -23,14 +23,14 @@
 #include "FontLister.h"
 #include "Misc.h"
 #include "KfiConstants.h"
-#include <kdirnotify.h>
-#include <QApplication>
-#include <QCursor>
+#include <KDE/OrgKdeKDirNotifyInterface>
+#include <QtGui/QApplication>
+#include <QtGui/QCursor>
 
 //#define KFI_FONTLISTER_DEBUG
 
 #ifdef KFI_FONTLISTER_DEBUG
-#include <kdebug.h>
+#include <KDE/KDebug>
 #endif
 
 namespace KFI

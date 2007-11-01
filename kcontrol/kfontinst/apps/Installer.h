@@ -23,8 +23,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QSet>
-#include <kurl.h>
+#include <QtCore/QSet>
+#include <KDE/KUrl>
 
 class QWidget;
 class KTempDir;

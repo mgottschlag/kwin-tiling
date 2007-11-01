@@ -21,7 +21,7 @@
  */
 
 #include "Fc.h"
-#include <QTextStream>
+#include <QtCore/QTextStream>
 
 //
 // KDE font chooser always seems to use Italic - for both Oblique, and Italic. So I guees

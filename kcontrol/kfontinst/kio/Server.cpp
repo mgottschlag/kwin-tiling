@@ -35,12 +35,12 @@
 #include <sys/un.h>
 #include <sys/stat.h>
 #include <signal.h>
-#include <QFile>
-#include <QDir>
-#include <QFileInfo>
+#include <QtCore/QFile>
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
 #include <config-workspace.h>
-#include <kstandarddirs.h>
-#include <kdebug.h>
+#include <KDE/KStandardDirs>
+#include <KDE/KDebug>
 #include "Server.h"
 #include "Socket.h"
 #include "Misc.h"

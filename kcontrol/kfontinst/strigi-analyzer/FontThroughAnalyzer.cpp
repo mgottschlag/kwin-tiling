@@ -31,9 +31,9 @@
 #include "KfiConstants.h"
 #include "Misc.h"
 #include "FontEngine.h"
-#include <QByteArray>
-#include <QFile>
-#include <kio/netaccess.h>
+#include <QtCore/QByteArray>
+#include <QtCore/QFile>
+#include <KDE/KIO/NetAccess>
 #include <list>
 
 using namespace Strigi;

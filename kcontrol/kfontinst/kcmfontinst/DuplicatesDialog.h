@@ -23,9 +23,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QPixmap>
-#include <QThread>
-#include <QTreeWidget>
+#include <QtGui/QPixmap>
+#include <QtCore/QThread>
+#include <QtGui/QTreeWidget>
 #include "ActionDialog.h"
 #include "Misc.h"
 

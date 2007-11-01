@@ -33,7 +33,7 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <QString>
+#include <QtCore/QString>
 #include <strigi/streambase.h>
 
 class QByteArray;

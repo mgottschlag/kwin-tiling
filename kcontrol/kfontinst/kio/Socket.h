@@ -23,7 +23,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QVariant>
+#include <QtCore/QVariant>
 
 class QVariant;
 class QByteArray;
