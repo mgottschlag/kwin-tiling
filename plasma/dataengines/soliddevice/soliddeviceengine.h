@@ -47,7 +47,8 @@ private:
     bool populateDeviceData(const QString &name);
     qlonglong freeDiskSpace(const QString &mountPoint);
     bool updateFreeSpace(const QString &udi);
-    
+    void fillDevices();
+
     QStringList devicelist;
     //setup lists for devicetypes
     QStringList processorlist;
@@ -66,7 +67,7 @@ private:
     QStringList audiointerfacelist;
     QStringList dvbinterfacelist;
     QStringList unknownlist;
-    
+
     QMap<QString, Solid::Device> devicemap;
     DeviceSignalMapManager *signalmanager;
 
