@@ -351,7 +351,20 @@ bool ProcessesLocal::Private::readProcCmdline(long pid, Process *process)
 
 bool ProcessesLocal::Private::getNiceness(long pid, Process *process) {
   int sched = sched_getscheduler(pid);
-  process->scheduler = (KSysGuard::Process::Scheduler) sched;  //Sets it to -1 if we can't get the scheduler
+  switch(sched) {
+      case (SCHED_OTHER):
+	    process->scheduler = KSysGuard::Process::Other;
+      case (SCHED_RR):
+	    process->scheduler = KSysGuard::Process::RoundRobin;
+      case (SCHED_FIFO):
+	    process->scheduler = KSysGuard::Process::Fifo;
+#ifdef sCHED_BATCH
+      case (SCHED_BATCH):
+	    process->scheduler = KSysGuard::Process::Batch;
+#endif
+      default:
+	    process->scheduler = KSysGuard::Process::Other;
+    }
   if(sched == SCHED_FIFO || sched == SCHED_RR) {
     struct sched_param param;
     if(sched_getparam(pid, &param) == 0)
@@ -421,11 +434,20 @@ bool ProcessesLocal::setScheduler(long pid, int priorityClass, int priority) {
     if(pid <= 0) return false; // check the parameters
     struct sched_param params;
     params.sched_priority = priority;
-    if ( sched_setscheduler( pid, priorityClass, &params ) ) {
-	    //set scheduler failed
+    switch(priorityClass) {
+      case (KSysGuard::Process::Other):
+	    return (sched_setscheduler( pid, SCHED_OTHER, &params) == 0);
+      case (KSysGuard::Process::RoundRobin):
+	    return (sched_setscheduler( pid, SCHED_RR, &params) == 0);
+      case (KSysGuard::Process::Fifo):
+	    return (sched_setscheduler( pid, SCHED_FIFO, &params) == 0);
+#ifdef sCHED_BATCH
+      case (KSysGuard::Process::Batch):
+	    return (sched_setscheduler( pid, SCHED_BATCH, &params) == 0);
+#endif
+      default:
 	    return false;
     }
-    return true;
 }
 
 
