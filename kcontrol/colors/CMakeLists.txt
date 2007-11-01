@@ -11,12 +11,7 @@ install(TARGETS kcm_colors  DESTINATION ${PLUGIN_INSTALL_DIR})
 install( FILES colors.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 # built-in color schemes
-set(schemefiles
-    schemes/BeOS
-    "schemes/Midnight Meadow"
-    "schemes/Oxygenized Plastik"
-    "schemes/Wonton Soup"
-)
+FILE(GLOB schemefiles schemes/*.colors)
 install( FILES ${schemefiles} DESTINATION ${DATA_INSTALL_DIR}/color-schemes )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )

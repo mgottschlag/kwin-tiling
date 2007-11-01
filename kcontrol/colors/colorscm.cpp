@@ -99,7 +99,7 @@ void KColorCm::populateSchemeList()
 {
     // clear the list in case this is being called from reset button click
     schemeList->clear();
-    QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*");
+    QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*.colors", KStandardDirs::NoDuplicates);
     for (int i = 0; i < schemeFiles.size(); ++i)
     {
         // get the file name
@@ -110,7 +110,7 @@ void KColorCm::populateSchemeList()
         KSharedConfigPtr config = KSharedConfig::openConfig(filename);
         QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(config),
                                              WindecoColors(config));
-        schemeList->addItem(new QListWidgetItem(icon, info.fileName()));
+        schemeList->addItem(new QListWidgetItem(icon, info.baseName()));
     }
 }
 
@@ -119,7 +119,7 @@ void KColorCm::loadScheme()
     if (schemeList->currentItem() != NULL)
     {
         QString path = KGlobal::dirs()->findResource("data",
-            "color-schemes/" + schemeList->currentItem()->text());
+            "color-schemes/" + schemeList->currentItem()->text() + ".colors");
 
         int permissions = QFile(path).permissions();
         bool canWrite = (permissions & QFile::WriteUser);
@@ -149,7 +149,7 @@ void KColorCm::on_schemeRemoveButton_clicked()
     if (schemeList->currentItem() != NULL)
     {
         QString path = KGlobal::dirs()->findResource("data",
-            "color-schemes/" + schemeList->currentItem()->text());
+            "color-schemes/" + schemeList->currentItem()->text() + ".colors");
         KIO::NetAccess::del(path, this);
         delete schemeList->takeItem(schemeList->currentRow());
     }
@@ -206,8 +206,8 @@ void KColorCm::on_schemeSaveButton_clicked()
 void KColorCm::saveScheme(const QString &name)
 {
     // check if that name is already in the list
-    QString path = KGlobal::dirs()->findResource("data",
-        "color-schemes/" + name);
+    QString path = KGlobal::dirs()->saveLocation("data", "color-schemes/") +
+        name + ".colors";
 
     QFile file(path);
     int permissions = file.permissions();
@@ -223,7 +223,7 @@ void KColorCm::saveScheme(const QString &name)
     {
         // go ahead and save it
         QString newpath = KGlobal::dirs()->saveLocation("data", "color-schemes/");
-        newpath += name;
+        newpath += name + ".colors";
         KSharedConfigPtr temp = m_config;
         m_config = KSharedConfig::openConfig(newpath);
         // then copy current colors into new config
