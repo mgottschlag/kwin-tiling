@@ -358,7 +358,7 @@ bool ProcessesLocal::Private::getNiceness(long pid, Process *process) {
 	    process->scheduler = KSysGuard::Process::RoundRobin;
       case (SCHED_FIFO):
 	    process->scheduler = KSysGuard::Process::Fifo;
-#ifdef sCHED_BATCH
+#ifdef SCHED_BATCH
       case (SCHED_BATCH):
 	    process->scheduler = KSysGuard::Process::Batch;
 #endif
@@ -441,7 +441,7 @@ bool ProcessesLocal::setScheduler(long pid, int priorityClass, int priority) {
 	    return (sched_setscheduler( pid, SCHED_RR, &params) == 0);
       case (KSysGuard::Process::Fifo):
 	    return (sched_setscheduler( pid, SCHED_FIFO, &params) == 0);
-#ifdef sCHED_BATCH
+#ifdef SCHED_BATCH
       case (KSysGuard::Process::Batch):
 	    return (sched_setscheduler( pid, SCHED_BATCH, &params) == 0);
 #endif
