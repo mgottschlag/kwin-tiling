@@ -320,6 +320,10 @@ bool Processes::setNiceness(long pid, int priority) {
     return d->mAbstractProcesses->setNiceness(pid, priority);
 }
 
+bool Processes::setScheduler(long pid, KSysGuard::Process::Scheduler priorityClass, int priority) {
+    return d->mAbstractProcesses->setScheduler(pid, priorityClass, priority);
+}
+
 bool Processes::setIoNiceness(long pid, KSysGuard::Process::IoPriorityClass priorityClass, int priority) {
     return d->mAbstractProcesses->setIoNiceness(pid, priorityClass, priority);
 }

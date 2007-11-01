@@ -777,7 +777,20 @@ QVariant ProcessModel::data(const QModelIndex &index, int role) const
 			return d->getTooltipForUser(process);
 		}
 		case HeadingNiceness: {
-		        QString tooltip = i18n("<qt>Nice level: %1 (%2)", process->niceLevel, process->niceLevelAsString() );
+		        QString tooltip;
+			switch(process->scheduler) {
+			  case KSysGuard::Process::Other:
+			  case KSysGuard::Process::Batch:
+				  tooltip = i18n("<qt>Nice level: %1 (%2)", process->niceLevel, process->niceLevelAsString() );
+				  break;
+			  case KSysGuard::Process::RoundRobin:
+			  case KSysGuard::Process::Fifo:
+				  tooltip = i18n("<qt>Scheduler priority: %1", process->niceLevel);
+				  break;
+			}
+			if(process->scheduler != KSysGuard::Process::Other)
+				tooltip += i18n("<br/>Scheduler: %1", process->schedulerAsString());
+
 			if(process->ioPriorityClass != KSysGuard::Process::None) {
 				if((process->ioPriorityClass == KSysGuard::Process::RealTime || process->ioPriorityClass == KSysGuard::Process::BestEffort) && process->ioniceLevel != -1)
 					tooltip += i18n("<br/>I/O Nice level: %1 (%2)", process->ioniceLevel, process->ioniceLevelAsString() );

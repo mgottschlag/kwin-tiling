@@ -39,6 +39,8 @@
 //for ionice
 #include <sys/ptrace.h>
 #include <asm/unistd.h>
+//for getsched
+#include <sched.h>
 
 #define PROCESS_BUFFER_SIZE 1000
 
@@ -107,7 +109,7 @@ namespace KSysGuard
       inline bool readProcStat(long pid, Process *process);
       inline bool readProcStatm(long pid, Process *process);
       inline bool readProcCmdline(long pid, Process *process);
-      inline bool getIoNice(long pid, Process *process);
+      inline bool getNiceness(long pid, Process *process);
       QFile mFile;
       char mBuffer[PROCESS_BUFFER_SIZE+1]; //used as a buffer to read data into      
       DIR* mProcDir;
@@ -248,7 +250,7 @@ bool ProcessesLocal::Private::readProcStat(long pid, Process *ps)
 			      ps->sysTime = atoll(word+1);
 			      break;
 			    case 18: //niceLevel
-			      ps->niceLevel = atoi(word+1);
+			      ps->niceLevel = atoi(word+1);  /*Or should we use getPriority instead? */
 			      break;
 			    case 22: //vmSize
 			      ps->vmSize = atol(word+1);
@@ -347,7 +349,17 @@ bool ProcessesLocal::Private::readProcCmdline(long pid, Process *process)
     return true;
 }
 
-bool ProcessesLocal::Private::getIoNice(long pid, Process *process) {
+bool ProcessesLocal::Private::getNiceness(long pid, Process *process) {
+  int sched = sched_getscheduler(pid);
+  process->scheduler = (KSysGuard::Process::Scheduler) sched;  //Sets it to -1 if we can't get the scheduler
+  if(sched == SCHED_FIFO || sched == SCHED_RR) {
+    struct sched_param param;
+    if(sched_getparam(pid, &param) == 0)
+      process->niceLevel = param.sched_priority;
+    else
+      process->niceLevel = 0;  //Error getting scheduler parameters. 
+  }
+
 #ifdef HAVE_IONICE
   int ioprio = ioprio_get(IOPRIO_WHO_PROCESS, pid);  /* Returns from 0 to 7 for the iopriority, and -1 if there's an error */
   if(ioprio == -1) {
@@ -369,7 +381,7 @@ bool ProcessesLocal::updateProcessInfo( long pid, Process *process)
     if(!d->readProcStatus(pid, process)) return false;
     if(!d->readProcStatm(pid, process)) return false;
     if(!d->readProcCmdline(pid, process)) return false;
-    if(!d->getIoNice(pid, process)) return false;
+    if(!d->getNiceness(pid, process)) return false;
 
     return true;
 }
@@ -393,6 +405,7 @@ bool ProcessesLocal::sendSignal(long pid, int sig) {
     }
     return true;
 }
+
 bool ProcessesLocal::setNiceness(long pid, int priority) {
     if(pid <= 0) return false; // check the parameters
     if ( setpriority( PRIO_PROCESS, pid, priority ) ) {
@@ -401,6 +414,21 @@ bool ProcessesLocal::setNiceness(long pid, int priority) {
     }
     return true;
 }
+
+bool ProcessesLocal::setScheduler(long pid, int priorityClass, int priority) {
+    if(priorityClass == SCHED_OTHER || priorityClass == SCHED_BATCH)
+	    priority = 0;
+    if(pid <= 0) return false; // check the parameters
+    struct sched_param params;
+    params.sched_priority = priority;
+    if ( sched_setscheduler( pid, priorityClass, &params ) ) {
+	    //set scheduler failed
+	    return false;
+    }
+    return true;
+}
+
+
 bool ProcessesLocal::setIoNiceness(long pid, int priorityClass, int priority) {
 #ifdef HAVE_IONICE
     if (ioprio_set(IOPRIO_WHO_PROCESS, pid, priority | priorityClass << IOPRIO_CLASS_SHIFT) == -1) {

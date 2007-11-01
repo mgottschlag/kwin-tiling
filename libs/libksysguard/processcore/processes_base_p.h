@@ -73,13 +73,25 @@ namespace KSysGuard
 	virtual bool sendSignal(long pid, int sig) = 0;
 
 	/**
-	 *  Set the priority for a process.  This is from 19 (very nice, lowest priority) to 
-	 *    -20 (highest priority).  The default value for a process is 0.
+	 *  Set the priority for a process.  For the normal scheduler, this is usually from 19 
+	 *  (very nice, lowest priority) to -20 (highest priority).  The default value for a process is 0.
+	 *
+	 *  This has no effect if the scheduler is not the normal one (SCHED_OTHER)
 	 *  
 	 *  @return false if you do not have permission to set the priority
 	 */
 	virtual bool setNiceness(long pid, int priority) = 0;
 
+	/**
+	 *  Set the scheduler for a process.  This is defined according to POSIX.1-2001 
+	 *  See "man sched_setscheduler" for more information.
+	 *
+	 *  @p priorityClass One of SCHED_FIFO, SCHED_RR, SCHED_OTHER, and SCHED_BATCH
+	 *  @p priority Set to 0 for SCHED_OTHER and SCHED_BATCH.  Between 1 and 99 for SCHED_FIFO and SCHED_RR
+	 *  @return false if you do not have permission to set the priority
+	 */
+	virtual bool setScheduler(long pid, int priorityClass, int priority) = 0;
+	
 	/**
 	 *  Return the total amount of physical memory in KB.  This is fast (just a system call)
 	 *  Returns 0 on error

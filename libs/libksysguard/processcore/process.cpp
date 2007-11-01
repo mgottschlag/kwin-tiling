@@ -72,6 +72,16 @@ QString KSysGuard::Process::translatedStatus() const {
 		default: return i18nc("process status", "unknown");
 	}
 }
+
+QString KSysGuard::Process::schedulerAsString() const { 
+	switch( scheduler ) { 
+		case Fifo: return i18nc("Scheduler", "FIFO");
+		case RoundRobin: return i18nc("Scheduler", "Round Robin");
+		case Batch: return i18nc("Scheduler", "Batch");
+		default: return QString();
+	}
+}
+
 void KSysGuard::Process::clear() {
 	pid = 0; 
 	parent_pid = 0; 
@@ -95,5 +105,6 @@ void KSysGuard::Process::clear() {
 	parent = NULL;
 	ioPriorityClass = None;
 	ioniceLevel = -1;
+	scheduler = Other;
 }
 

@@ -34,6 +34,7 @@ namespace KSysGuard
     public:
 	enum ProcessStatus { Running, Sleeping, DiskSleep, Zombie, Stopped, Paging, OtherStatus };
 	enum IoPriorityClass { None, RealTime, BestEffort, Idle };
+	enum Scheduler { Other = 0, Fifo, RoundRobin, Batch };
         Process();
         Process(long long _pid, long long _ppid, Process *_parent);
 
@@ -67,7 +68,8 @@ namespace KSysGuard
         int totalUserUsage; ///Percentage (0 to 100) from the sum of itself and all its children recursively.  If there's no children, it's equal to userUsage.  It might be more than 100% on multiple cpu core systems
         int totalSysUsage; ///Percentage (0 to 100) from the sum of itself and all its children recursively. If there's no children, it's equal to sysUsage. It might be more than 100% on multiple cpu core systems
         unsigned long numChildren; ///Number of children recursively that this process has.  From 0+
-        int niceLevel;      ///Niceness (-20 to 20) of this process.  A lower number means a higher priority.
+        int niceLevel;      ///If Scheduler = Other, niceLevel is the niceness (-20 to 20) of this process.  A lower number means a higher priority.  Otherwise sched priority (1 to 99)
+	Scheduler scheduler; ///The scheduler this process is running in.  See man sched_getscheduler for more info
         IoPriorityClass ioPriorityClass; /// The IO priority class.  See man ionice for detailed information.
         int ioniceLevel;    ///IO Niceless (0 to 7) of this process.  A lower number means a higher io priority.  -1 if not known or not applicable because ioPriorityClass is Idle or None
         long vmSize;   ///Virtual memory size in KiloBytes, including memory used, mmap'ed files, graphics memory etc,
@@ -83,6 +85,7 @@ namespace KSysGuard
 	QString niceLevelAsString() const; /// Returns a simple translated string of the nice priority.  e.g. "Normal", "High", etc
 	QString ioniceLevelAsString() const; /// Returns a simple translated string of the io nice priority.  e.g. "Normal", "High", etc
 	QString ioPriorityClassAsString() const; /// Returns a translated string of the io nice class.  i.e. "None", "Real Time", "Best Effort", "Idle"
+	QString schedulerAsString() const; /// Returns a translated string of the scheduler class.  e.g. "FIFO", "Round Robin", "Batch"
         
 	int index;  /// Each process has a parent process.  Each sibling has a unique number to identify it under that parent.  This is that number.
 

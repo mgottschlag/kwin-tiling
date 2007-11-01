@@ -67,6 +67,10 @@ bool ProcessesRemote::setIoNiceness(long pid, int priorityClass, int priority) {
     return false; //Not yet supported
 }
 
+bool ProcessesRemote::setScheduler(long pid, int priorityClass, int priority) {
+    return false;
+}
+
 bool ProcessesRemote::supportsIoNiceness() {
     return false;
 }
