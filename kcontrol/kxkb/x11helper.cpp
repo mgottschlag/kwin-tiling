@@ -23,6 +23,8 @@
 #include <QTextStream>
 
 #include <kdebug.h>
+#include <kglobal.h>
+#include <klocale.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
