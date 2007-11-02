@@ -161,7 +161,8 @@ KDM accepts two command line options related to logging:
     /etc/syslog.conf).
     If you have problems logging in and your system uses PAM (also quite
     probable on modern systems), the "auth" and "authpriv" syslog facilities
-    are interesting, too.
+    are interesting, too. This is not relevant for Linux-PAM starting with
+    version 0.99.
 
 Before reproducing the problem for log submission, truncate the old logs -
 I'm really not interested in a month's worth of your system's history.
@@ -210,8 +211,9 @@ be different on your system). You may also use a remote login from a
 second machine. In any case it is advantageous to have mouse support on the
 debugging console for copying the backtrace.
 Note that a backtrace is usually _much_ more useful if the binary contains
-debugging info, so you should install from source with the
--DCMAKE_BUILD_TYPE:STRING=debugfull cmake flag if at all possible.
+debugging info, so unless your distribution provides debug symbol packages,
+you should install from source with the -DCMAKE_BUILD_TYPE:STRING=debugfull
+cmake flag if at all possible.
 
 
 Random rambings and license information
@@ -225,7 +227,7 @@ Since version 0.90 (KDE 2.1) copyright:
 	(C) 2000-2007 Oswald Buddenhagen <ossi@kde.org>
 
 The files in the backend directory are licensed under the X licence
-(see http://www.x.org/Downloads_terms.html for more info).
+(see http://en.wikipedia.org/wiki/X_Licence#License_terms for more info).
 The files in the kfrontend directory are licensed under the GNU GPL.
 
 Thanks to (in no particular order):
