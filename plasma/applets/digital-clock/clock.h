@@ -63,6 +63,7 @@ class Clock : public Plasma::Applet
 
     private:
         void animateUpdate();
+        int calculateLeftOffset(int digitNumber);
 
         QSize m_defaultElementSize;
 
@@ -70,7 +71,7 @@ class Clock : public Plasma::Applet
         // when their content size changes and then rather than tracking
         // the content size, re-implement the appropriate method to
         // update the graphic sizes and so on
-            QSizeF m_contentSize;
+        QSizeF m_contentSize;
 
         QSizeF m_sizeHint;
         int m_pixelSize;
