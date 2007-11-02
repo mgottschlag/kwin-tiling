@@ -73,7 +73,7 @@ Qt::Orientations Clock::expandingDirections() const
 
 QSizeF Clock::contentSizeHint() const
 {
-    return m_sizeHint; //FIXME: am I unimplemented?! :O
+    return m_sizeHint;
 }
 
 void Clock::constraintsUpdated(Plasma::Constraints)
@@ -177,22 +177,20 @@ void Clock::animationSlot(int step)
     }
 }
 
-int Clock::leftOffset(int digitNumber)
+int Clock::getLeftOffset(int digitNumber)
 {
     int offset = 0;
     int margin = 4;
-    int spaceFromLeftBorder = m_contentSize.width()/2;
     int elWidth = qRound((m_contentSize.width() - m_horizontalSpacing - margin*2) / 4.0);
 
-    offset += elWidth*4; // Add space taken by digit
+    offset += elWidth*digitNumber; // Add space taken by digit
     offset += m_horizontalSpacing*digitNumber; // Add space taken by spaces infra-numbers
 
-    if (digitNumber == 2) { // There's a gap between hours and minutes...
+    if (digitNumber >= 2) { // There's a gap between hours and minutes...
         offset += m_horizontalSpacing*3;
     }
 
-    offset += spaceFromLeftBorder;
-
+    kDebug() << offset << digitNumber << elWidth;
     return offset;
 }
 
@@ -224,7 +222,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     elHeight = elSize.height();
 
     // set left offset of clock elements so as to horizontally center the time display
-    int leftOffset = (contentsRect.width() - (elWidth*4 + m_horizontalSpacing*4))/2.0;
+    int leftOffset = getLeftOffset(0); //(contentsRect.width() - (elWidth*4 + m_horizontalSpacing*4))/2.0;
     int upperElementTop = margin;
     int bottomElementTop = upperElementTop + elHeight + m_verticalSpacing;
 
@@ -239,17 +237,17 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+hours[0]+"-p2");
 
     // 1-hour-digit
-    leftOffset = leftOffset + elWidth + m_horizontalSpacing;
+    leftOffset = getLeftOffset(1);//leftOffset + elWidth + m_horizontalSpacing;
     m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+hours[1]+"-p1");
     m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+hours[1]+"-p2");
 
     // 10-minutes-digit
-    leftOffset = leftOffset + elWidth + m_horizontalSpacing*4; // There's a gap between hours and minutes
+    leftOffset = getLeftOffset(2);// leftOffset + elWidth + m_horizontalSpacing*4; // There's a gap between hours and minutes
     m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+minutes[0]+"-p1");
     m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+minutes[0]+"-p2");
 
     // 1-minute-digit
-    leftOffset = leftOffset + elWidth + m_horizontalSpacing;
+    leftOffset = getLeftOffset(3);// leftOffset + elWidth + m_horizontalSpacing;
     m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+minutes[1]+"-p1");
     m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+minutes[1]+"-p2");
 
