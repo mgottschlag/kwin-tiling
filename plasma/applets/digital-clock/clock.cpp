@@ -190,7 +190,7 @@ int Clock::getLeftOffset(int digitNumber)
         offset += m_horizontalSpacing*3;
     }
 
-    kDebug() << offset << digitNumber << elWidth;
+//     kDebug() << offset << digitNumber << elWidth;
     return offset;
 }
 
