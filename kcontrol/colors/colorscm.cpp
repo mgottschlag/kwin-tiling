@@ -234,16 +234,27 @@ void KColorCm::saveScheme(const QString &name)
         group2.writeEntry("contrast", contrastSlider->value());
         // sync it
         m_config->sync();
-        // set m_config back to the system one
-        m_config = temp;
-        // add it to the list if it's not in there already
-        if (path.isEmpty() || !file.exists())
+
+        QList<QListWidgetItem*> foundItems = schemeList->findItems(name, Qt::MatchExactly);
+        QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
+                                             WindecoColors(m_config));
+        if (foundItems.size() < 1)
         {
-            schemeList->addItem(name);
+            // add it to the list since it's not in there already
+            schemeList->addItem(new QListWidgetItem(icon, name));
 
             // then select the new item
             schemeList->setCurrentRow(schemeList->count() - 1);
         }
+        else
+        {
+            // update the icon of the one that's in the list
+            foundItems[0]->setIcon(icon);
+            schemeList->setCurrentRow(schemeList->row(foundItems[0]));
+        }
+
+        // set m_config back to the system one
+        m_config = temp;
         emit changed(false);
     }
     else if (!canWrite && file.exists())
