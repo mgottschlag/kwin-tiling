@@ -63,7 +63,7 @@ class Clock : public Plasma::Applet
 
     private:
         void animateUpdate();
-        int getLeftOffset(int digitNumber);
+        int getOffsetForDigit(int digitNumber);
 
         QSize m_defaultElementSize;
 
