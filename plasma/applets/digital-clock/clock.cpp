@@ -54,8 +54,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     m_theme->setContentType(Plasma::Svg::ImageSet);
 
     // Set default spacings
-    int m_horizontalSpacing = 2;
-    int m_verticalSpacing = 1;
+    m_horizontalSpacing = 2;
+    m_verticalSpacing = 2;
 
     // take the size of the top half of the '0' number 
     // to calculate the aspect ratio when drawing
@@ -228,12 +228,12 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     leftOffset = leftOffset + elWidth + m_horizontalSpacing;
     m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+hours[1]+"-p1");
     m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+hours[1]+"-p2");
-    
+
     // 10-minutes-digit
     leftOffset = leftOffset + elWidth + m_horizontalSpacing*4; // There's a gap between hours and minutes
     m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+minutes[0]+"-p1");
     m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+minutes[0]+"-p2");
-    
+
     // 1-minute-digit
     leftOffset = leftOffset + elWidth + m_horizontalSpacing;
     m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+minutes[1]+"-p1");
@@ -247,7 +247,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
 //         leftOffset = leftOffset + elWidth + m_horizontalSpacing*4; // There's a gap between hours and minutes
 
-        
         m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+minutes[1]+"-p1");
         element = QChar('e')+oldMinutes+QString("-p2");
         m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), element);
