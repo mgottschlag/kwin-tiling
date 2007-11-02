@@ -55,7 +55,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 
     // Set default spacings
     m_horizontalSpacing = 2;
-    m_verticalSpacing = 2;
+    m_verticalSpacing = 1;
 
     // take the size of the top half of the '0' number 
     // to calculate the aspect ratio when drawing
