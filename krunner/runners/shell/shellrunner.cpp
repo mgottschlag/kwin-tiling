@@ -52,7 +52,7 @@ void ShellRunner::match(Plasma::SearchContext *search)
         search->type() == Plasma::SearchContext::ShellCommand)  {
         QAction* action = search->addExactMatch(this);
         action->setIcon(KIcon("exec"));
-        action->setText(i18n("Run %1", search->term()));
+        action->setText(i18n("Run %1", search->searchTerm()));
     }
 }
 
@@ -68,7 +68,7 @@ void ShellRunner::exec(Plasma::SearchAction* action)
         return;
     }
 
-    KRun::runCommand(action->term(), NULL);
+    KRun::runCommand(action->searchTerm(), NULL);
 }
 
 #include "shellrunner.moc"

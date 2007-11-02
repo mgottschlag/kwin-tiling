@@ -53,12 +53,12 @@ ServiceRunner::~ServiceRunner()
 
 void ServiceRunner::match(Plasma::SearchContext *search)
 {
-    QString term = search->term();
+    QString term = search->searchTerm();
     if (term.length() <  3) {
         return;
     }
 
-    KService::Ptr service = KService::serviceByName(search->term());
+    KService::Ptr service = KService::serviceByName(term);
 
     if (service && !service->exec().isEmpty()) {
         setupAction(service, search->addExactMatch(this));

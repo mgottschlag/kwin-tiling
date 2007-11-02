@@ -45,7 +45,7 @@ SessionRunner::~SessionRunner()
 void SessionRunner::match(Plasma::SearchContext *search)
 {
     //TODO: ugh, magic strings.
-    if (search->term() != "SESSIONS") {
+    if (search->searchTerm() != "SESSIONS") {
         return;
     }
 
