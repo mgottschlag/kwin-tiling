@@ -537,14 +537,22 @@ void KSysGuardProcessList::reniceSelectedProcesses()
 		return;
 	}
 
-	int firstPriority = 0;
+	int sched = -2;
+	int iosched = -2;
 	foreach(KSysGuard::Process *process, processes) {
 		selectedPids << process->pid;
 		selectedAsStrings << d->mModel.getStringForProcess(process);
-	}
-	firstPriority = processes.first()->niceLevel;
+		if(sched == -2) sched = (int)process->scheduler;
+		else if(sched != -1 && sched == (int)process->scheduler) sched = -1;  //If two processes have different schedulers, disable the cpu scheduler stuff
+		if(iosched == -2) iosched = (int)process->ioPriorityClass;
+		else if(iosched != -1 && iosched == (int)process->ioPriorityClass) iosched = -1;  //If two processes have different schedulers, disable the cpu scheduler stuff
 
-	ReniceDlg reniceDlg(d->mUi->treeView, firstPriority, selectedAsStrings);
+	}
+
+	int firstPriority = processes.first()->niceLevel;
+	int firstIOPriority = processes.first()->ioniceLevel;
+
+	ReniceDlg reniceDlg(d->mUi->treeView, firstPriority, sched, firstIOPriority, iosched, selectedAsStrings);
 	if(reniceDlg.exec() == QDialog::Rejected) return;
 	int newPriority = reniceDlg.newPriority;
 	Q_ASSERT(newPriority <= 19 && newPriority >= -20); 

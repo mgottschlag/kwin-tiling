@@ -25,6 +25,7 @@
 #include <kdialog.h>
 
 class Ui_ReniceDlgUi;
+class QButtonGroup;
 
 /**
  * This class creates and handles a simple dialog to change the scheduling
@@ -35,8 +36,10 @@ class ReniceDlg : public KDialog
 	Q_OBJECT
 
 public:
-	ReniceDlg(QWidget* parent, int currentPPrio, const QStringList& pid);
+	ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, int currentIoPrio, int currentIoSched, const QStringList& processes);
 	int newPriority;
+	QButtonGroup *cpuScheduler;
+	QButtonGroup *ioScheduler;
 
 public Q_SLOTS:
 	void slotOk();
