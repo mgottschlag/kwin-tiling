@@ -101,7 +101,6 @@ void CollapsibleWidget::init()
     d->gridLayout = new QGridLayout( this );
     d->gridLayout->setMargin(0);
 
-    setExpanded(false);
     setEnabled(false);
 }
 
@@ -117,17 +116,17 @@ QWidget* CollapsibleWidget::innerWidget() const
 
 void CollapsibleWidget::setInnerWidget(QWidget *w)
 {
+    d->innerWidget = w;
+
     if (!w) {
         return;
     }
 
-    d->innerWidget = w;
-
-    if ( !isExpanded() ) {
+    if (!isExpanded()) {
         d->innerWidget->hide();
     }
-    d->gridLayout->addWidget( d->innerWidget, 2, 2 );
-    d->gridLayout->setRowStretch( 2, 1 );
+    d->gridLayout->addWidget(d->innerWidget, 2, 2);
+    d->gridLayout->setRowStretch(2, 1);
 
     setEnabled( true );
 
@@ -138,13 +137,9 @@ void CollapsibleWidget::setInnerWidget(QWidget *w)
 
 void CollapsibleWidget::setExpanded(bool expanded)
 {
-    if ( !d->innerWidget ) {
-        return;
-    }
-
     d->expanded = expanded;
 
-    if ( !expanded ) {
+    if (d->innerWidget && !expanded) {
         d->innerWidget->setVisible( false );
     }
 
@@ -155,11 +150,12 @@ void CollapsibleWidget::setExpanded(bool expanded)
 
 void CollapsibleWidget::animateCollapse( qreal showAmount )
 {
-    int pixels = d->innerWidget->sizeHint().height() * showAmount;
+    int pixels = d->innerWidget ? d->innerWidget->sizeHint().height() * showAmount :
+                                  height() * showAmount;
 
     d->gridLayout->setRowMinimumHeight( 2, pixels );
 
-    if ( showAmount == 1 ) {
+    if (showAmount == 1 && d->innerWidget) {
         d->innerWidget->setVisible( true );
     }
 }

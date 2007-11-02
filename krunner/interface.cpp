@@ -432,6 +432,7 @@ void Interface::showOptions(bool show)
         if (!m_expander) {
             //kDebug() << "creating m_expander";
             m_expander = new CollapsibleWidget( this );
+            m_expander->show();
             connect( m_expander, SIGNAL( collapseCompleted() ),
                      m_expander, SLOT( hide() ) );
             m_layout->insertWidget( 3, m_expander );
@@ -441,8 +442,6 @@ void Interface::showOptions(bool show)
         delete m_optionsWidget;
         m_optionsWidget = new QWidget(this);
         m_defaultMatch->action()->runner()->createMatchOptions(m_optionsWidget);
-        m_expander->setInnerWidget(m_optionsWidget);
-        m_expander->show();
         m_optionsButton->setText( i18n( "Hide Options" ) );
     } else {
         delete m_optionsWidget;
@@ -457,28 +456,40 @@ void Interface::showOptions(bool show)
         //      other items in the dialog from moving around and look
         //      more "natural"; it should appear as if a "drawer" is
         //      being pulled open, e.g. an expander.
-        m_expander->setExpanded( show );
+        m_expander->setInnerWidget(m_optionsWidget);
+        m_expander->setExpanded(show);
     }
-    m_optionsButton->setChecked( show );
+
+    m_optionsButton->setChecked(show);
 }
 
 void Interface::setDefaultItem( QListWidgetItem* item )
 {
-    if ( !item ) {
-        return;
+    bool hasOptions = false;
+
+    if (item) {
+        if (m_defaultMatch) {
+            m_defaultMatch->setDefault(false);
+        }
+
+        m_defaultMatch = dynamic_cast<SearchMatch*>(item);
+        hasOptions = m_defaultMatch && m_defaultMatch->action()->runner()->hasMatchOptions();
     }
 
-    if ( m_defaultMatch ) {
-        m_defaultMatch->setDefault( false );
-    }
+    m_optionsButton->setEnabled(hasOptions);
 
-    m_defaultMatch = dynamic_cast<SearchMatch*>( item );
-
-    bool hasOptions = m_defaultMatch && m_defaultMatch->action()->runner()->hasMatchOptions();
-    m_optionsButton->setEnabled( hasOptions );
-
-    if ( m_expander && !hasOptions ) {
-        m_expander->hide();
+    if (hasOptions) {
+        if (m_expander && m_expander->isExpanded()) {
+            m_optionsButton->setText(i18n("Hide Options"));
+        } else {
+            m_optionsButton->setText(i18n("Show Options"));
+        }
+    } else {
+        m_optionsButton->setText(i18n("Show Options"));
+        m_optionsButton->setChecked(false);
+        if (m_expander) {
+            m_expander->hide();
+        }
     }
 }
 
