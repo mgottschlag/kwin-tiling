@@ -58,7 +58,7 @@ void SearchRunner::match(Plasma::SearchContext *search)
 {
     //TODO: in reality, we probably want to make this async
 
-    QString term = search->term();
+    QString term = search->searchTerm();
     QString query = "system.file_name:'" + term + "*'";
     QList<StrigiHit> hits = strigiclient.getHits(query, 5, 0);
     foreach (const StrigiHit& hit, hits) {

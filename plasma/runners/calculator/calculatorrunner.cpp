@@ -42,7 +42,7 @@ CalculatorRunner::~CalculatorRunner()
 
 void CalculatorRunner::match(Plasma::SearchContext *search)
 {
-    QString cmd = search->term();
+    QString cmd = search->searchTerm();
 
     if (cmd[0] != '=') {
         return;

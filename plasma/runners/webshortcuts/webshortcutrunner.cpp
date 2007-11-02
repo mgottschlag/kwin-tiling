@@ -55,7 +55,7 @@ WebshortcutRunner::~WebshortcutRunner()
 
 void WebshortcutRunner::match(Plasma::SearchContext *search)
 {
-    QString term = search->term().trimmed().toLower();
+    QString term = search->searchTerm().toLower();
     m_type = search->type();
 
     foreach (KService::Ptr service, m_offers) {
@@ -156,7 +156,7 @@ void WebshortcutRunner::exec(Plasma::SearchAction *action)
     QString location = action->data().toString();
 
     if (location.isEmpty()) {
-        location = action->term();
+        location = action->searchTerm();
     }
 
     //kDebug() << "command: " << action->term();
