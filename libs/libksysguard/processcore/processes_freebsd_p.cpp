@@ -35,7 +35,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
-
+#include <sched.h>
 
 
 
@@ -256,6 +256,29 @@ bool ProcessesLocal::setNiceness(long pid, int priority) {
 	    return false;
     }
     return true;
+}
+
+bool ProcessesLocal::setScheduler(long pid, int priorityClass, int priority) 
+{
+    if(priorityClass == KSysGuard::Process::Other || priorityClass == KSysGuard::Process::Batch)
+	    priority = 0;
+    if(pid <= 0) return false; // check the parameters
+    struct sched_param params;
+    params.sched_priority = priority;
+    switch(priorityClass) {
+      case (KSysGuard::Process::Other):
+	    return (sched_setscheduler( pid, SCHED_OTHER, &params) == 0);
+      case (KSysGuard::Process::RoundRobin):
+	    return (sched_setscheduler( pid, SCHED_RR, &params) == 0);
+      case (KSysGuard::Process::Fifo):
+	    return (sched_setscheduler( pid, SCHED_FIFO, &params) == 0);
+#ifdef SCHED_BATCH
+      case (KSysGuard::Process::Batch):
+	    return (sched_setscheduler( pid, SCHED_BATCH, &params) == 0);
+#endif
+      default:
+	    return false;
+    }
 }
 
 bool ProcessesLocal::setIoNiceness(long pid, int priorityClass, int priority) {
