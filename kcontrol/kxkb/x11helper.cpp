@@ -17,14 +17,16 @@
  */
 
 #include <QDir>
-
-#include <QHash>
 #include <QRegExp>
 #include <QTextStream>
 
 #include <kdebug.h>
+
+#ifndef HAVE_XKLAVIER
 #include <kglobal.h>
 #include <klocale.h>
+#endif
+
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -32,6 +34,7 @@
 #include <X11/XKBlib.h>
 #undef explicit
 #include <X11/extensions/XKBrules.h>
+
 
 #include "x11helper.h"
 #include <config-workspace.h>
