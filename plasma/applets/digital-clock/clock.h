@@ -85,6 +85,10 @@ class Clock : public Plasma::Applet
         Ui::clockConfig ui;
         bool m_animating;
         int m_animationStep;
+
+        // Default spacings
+        int m_horizontalSpacing;
+        int m_verticalSpacing;
 };
 
 K_EXPORT_PLASMA_APPLET(dig_clock, Clock)
