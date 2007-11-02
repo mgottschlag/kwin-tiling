@@ -177,9 +177,23 @@ void Clock::animationSlot(int step)
     }
 }
 
-int Clock::calculateLeftOffset(int digitNumber)
+int Clock::leftOffset(int digitNumber)
 {
-    return 0;
+    int offset = 0;
+    int margin = 4;
+    int spaceFromLeftBorder = m_contentSize.width()/2;
+    int elWidth = qRound((m_contentSize.width() - m_horizontalSpacing - margin*2) / 4.0);
+
+    offset += elWidth*4; // Add space taken by digit
+    offset += m_horizontalSpacing*digitNumber; // Add space taken by spaces infra-numbers
+
+    if (digitNumber == 2) { // There's a gap between hours and minutes...
+        offset += m_horizontalSpacing*3;
+    }
+
+    offset += spaceFromLeftBorder;
+
+    return offset;
 }
 
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
