@@ -1,4 +1,12 @@
 [Desktop Entry]
 Encoding=UTF-8
 X-KDE-Solid-Predicate=[[ StorageVolume.ignored == false AND StorageVolume.usage == 'FileSystem' ] OR [ IS StorageAccess AND StorageDrive.driveType == 'Floppy' ]]
-Actions=OpenInWindow;
+ServiceTypes=all/allfiles
+Type=Service
+Actions=open;
+
+
+[Desktop Action open]
+Name=open
+Exec=dbus-launch dolphin
+

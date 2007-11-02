@@ -66,7 +66,6 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
 
     //connect to engine when a device is plug
     connect(SolidEngine, SIGNAL(newSource(const QString&)),this, SLOT(SourceAdded(const QString&)));
-
 }
 
 DeviceNotifier::~DeviceNotifier()
@@ -80,7 +79,7 @@ void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
     Q_UNUSED(contentsRect);
     if(icon)
     {
-	m_layout->addItem(m_icon);
+	  m_layout->addItem(m_icon);
     }
     m_layout->addItem(m_label);
     kDebug()<<"DeviceNotifier:: geometry "<<geometry().width();
@@ -118,43 +117,31 @@ void DeviceNotifier::updated(const QString &source, Plasma::DataEngine::Data dat
 		desktop_files=data["predicateFiles"].toStringList();
 		kDebug()<<data["icon"].toString();
 		QString icon_temp = data["icon"].toString();
-		
-		m_layout->removeItem(m_label);
-		delete m_label;
 
 		if(first)
 		{
 		  origin_size=geometry();
 		  first=false;
+ 		  m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
 		}
-		else
-		{
-		  m_layout->removeItem(m_icon);
-		  delete m_icon;
-		}
-		
-		delete m_layout;
-		m_layout = new Plasma::HBoxLayout(this);
-		m_layout->setMargin(0);
-		m_layout->setSpacing(0);
-    
 
-		m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
-		
-		m_label=new Plasma::Label(this);
+		m_icon->setIcon(KIcon(icon_temp));
+
 		icon = true;
+
 		device_name=i18n("A new device has been detected: \n");
 		device_name+=data["text"].toString();
 		m_label->setPen(QPen(Qt::white));
 		m_label->setText(device_name);
-
-
-		float size_h=origin_size.height();
-		float size_w=origin_size.width();
+		float size_h=0.0;
+		float size_w=0.0;
 		size_h+=m_icon->iconSize().height();
+		size_h+=m_label->geometry().height();
 		size_w+=m_label->geometry().width();
+		size_w+=m_icon->iconSize().width();
 		QRectF temp(origin_size.x(),origin_size.y(),size_w,size_h);
 		setGeometry(temp);
+		updateGeometry();	
 		update();
 		moveUp();
      }
