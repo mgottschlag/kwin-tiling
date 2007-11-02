@@ -136,8 +136,8 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 				grid->addWidget( loginLabel, line, 0 );
 				grid->addWidget( loginEdit, line++, 1 );
 			}
-			connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotLoginLostFocus()) );
-			connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
+			connect( loginEdit, SIGNAL(editingFinished()), SLOT(slotLoginLostFocus()) );
+			connect( loginEdit, SIGNAL(editingFinished()), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotActivity()) );
 			connect(&mDomainListTimer, SIGNAL(timeout()), SLOT(slotStartDomainList()));
@@ -158,7 +158,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			                                  parent );
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
 		         SLOT(slotActivity()) );
-		connect( passwdEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
+		connect( passwdEdit, SIGNAL(editingFinished()), SLOT(slotActivity()) );
 
 		if (!grid) {
 			passwdEdit->setObjectName( "pw-entry" );
