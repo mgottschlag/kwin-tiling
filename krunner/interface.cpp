@@ -29,6 +29,7 @@
 #include <QHideEvent>
 
 #include <KActionCollection>
+#include <KCompletionBox>
 #include <KDebug>
 #include <KDialog>
 #include <KLineEdit>
@@ -119,6 +120,9 @@ Interface::Interface(QWidget* parent)
 {
     setWindowTitle( i18n("Run Command") );
 
+    KConfigGroup cg(KGlobal::config(), "General");
+    m_executions = cg.readEntry("pastqueries", m_executions);
+
     m_matchTimer.setSingleShot(true);
     connect(&m_matchTimer, SIGNAL(timeout()), this, SLOT(match()));
 
@@ -133,8 +137,9 @@ Interface::Interface(QWidget* parent)
     m_searchTerm = new KLineEdit(w);
     m_header->setBuddy(m_searchTerm);
     m_searchTerm->clear();
-    m_searchTerm->setClearButtonShown( true );
-    m_layout->addWidget( m_searchTerm );
+    m_searchTerm->setClearButtonShown(true);
+    m_searchTerm->setCompletionObject(m_context.completionObject());
+    m_layout->addWidget(m_searchTerm);
     connect(m_searchTerm, SIGNAL(textChanged(QString)),
             this, SLOT(queueMatch()));
     connect(m_searchTerm, SIGNAL(returnPressed()),
@@ -213,6 +218,8 @@ Interface::Interface(QWidget* parent)
 
 Interface::~Interface()
 {
+    KConfigGroup cg(KGlobal::config(), "General");
+    cg.writeEntry("pastqueries", m_executions);
 }
 
 void Interface::display(const QString& term)
@@ -249,7 +256,7 @@ void Interface::switchUser()
     display();
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("user");
-    m_context.setTerm("SESSIONS");
+    m_context.setSearchTerm("SESSIONS");
     sessionrunner->match(&m_context);
 
     foreach (Plasma::SearchAction *action, m_context.exactMatches()) {
@@ -288,7 +295,7 @@ void Interface::resetInterface()
 {
     m_header->setText(i18n("Enter the name of an application, location or search term below."));
     m_header->setPixmap("system-search");
-    m_context.setTerm(QString());
+    m_context.setSearchTerm(QString());
     m_searchTerm->clear();
     m_matchList->clear();
     m_runButton->setEnabled( false );
@@ -346,7 +353,8 @@ void Interface::match()
         return;
     }
 
-    m_context.setTerm(term);
+    m_context.setSearchTerm(term);
+    m_context.addStringCompletions(m_executions);
 
     // get the exact matches
     foreach (Plasma::AbstractRunner* runner, m_runners) {
@@ -387,12 +395,27 @@ void Interface::match()
 
 void Interface::exec()
 {
-    SearchMatch* match = dynamic_cast<SearchMatch*>( m_matchList->currentItem() );
+    if (m_searchTerm->completionBox() && m_searchTerm->completionBox()->isVisible()) {
+        return;
+    }
 
-    if ( match && match->actionEnabled() ) {
-        matchActivated( match );
-    } else if ( m_defaultMatch ) {
-        matchActivated( m_defaultMatch );
+    SearchMatch* match = dynamic_cast<SearchMatch*>(m_matchList->currentItem());
+
+    QString searchTerm = m_searchTerm->text();
+
+    if (!m_executions.contains(searchTerm)) {
+        m_executions << searchTerm;
+
+        //TODO: how many items should we remember exactly?
+        if (m_executions.size() > 100) {
+            m_executions.pop_front();
+        }
+    }
+
+    if (match && match->actionEnabled()) {
+        matchActivated(match );
+    } else if (m_defaultMatch) {
+        matchActivated(m_defaultMatch);
     }
 }
 
