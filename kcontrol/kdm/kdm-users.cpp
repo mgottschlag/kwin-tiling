@@ -453,7 +453,8 @@ void KDMUsersWidget::slotAddUsers( const QMap<QString,int> &users )
 			setOn( selectedUsers.contains( *name ) );
 		(new Q3CheckListItem( optoutlv, *name, Q3CheckListItem::CheckBox ))->
 			setOn( hiddenUsers.contains( *name ) );
-		usercombo->addItem( *name );
+		if ((*name)[0] != '@')
+			usercombo->addItem( *name );
 	}
 	optinlv->sort();
 	optoutlv->sort();
