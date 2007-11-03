@@ -71,9 +71,12 @@ int main(int argc, char **argv)
     Containment *containment = corona.addContainment( "null" );
 
     Applet *applet = containment->addApplet( args->arg( 0 ) );
-    if (applet->failedToLaunch()) {
+    if ( applet->failedToLaunch() ) {
         // XXX Can we give a better error message somehow?
-        applet->setFailedToLaunch(true, i18n( "Failed to load applet '%1'.", args->arg(0)));
+        QMessageBox::critical( 0,
+                               i18n( "Failed to load applet" ),
+                               i18n( "The applet '%1' couldn't be loaded", args->arg( 0 ) ) );
+        return 1;
     }
 
     // An Applet::setPosition call which takes the border width (if any) into
