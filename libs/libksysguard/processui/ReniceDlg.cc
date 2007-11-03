@@ -70,7 +70,7 @@ ReniceDlg::ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, i
 	}
 	ioScheduler->setExclusive(true);
 
-	reniceDlgUi->imgCPU->setPixmap( KIcon("ksim-cpu").pixmap(128, 128) );
+	reniceDlgUi->imgCPU->setPixmap( KIcon("cpu").pixmap(128, 128) );
 	reniceDlgUi->imgIO->setPixmap( KIcon("drive-harddisk").pixmap(128, 128) );
 
 

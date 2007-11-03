@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
+    <width>583</width>
     <height>353</height>
    </rect>
   </property>
@@ -39,25 +39,6 @@
      </property>
      <property name="uniformItemSizes" >
       <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="lblMessage2" >
-     <property name="text" >
-      <string>&lt;i>Note that only the super user (root) can decrease the nice level of a process.</string>
-     </property>
-     <property name="textFormat" >
-      <enum>Qt::RichText</enum>
-     </property>
-     <property name="alignment" >
-      <set>Qt::AlignVCenter</set>
-     </property>
-     <property name="wordWrap" >
-      <bool>true</bool>
-     </property>
-     <property name="buddy" >
-      <cstring>spinBox2</cstring>
      </property>
     </widget>
    </item>
