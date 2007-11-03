@@ -157,10 +157,7 @@ void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
 
 void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 {
-//	kDebug() << "setting icon to tray";
     m_indicatorWidget->setIcon( pixmap );
-// 	if( ! m_indicatorWidget->isVisible() )
-//    m_indicatorWidget->show();
 }
 
 // ----------------------------
@@ -180,15 +177,11 @@ KxkbLabel::KxkbLabel(int controlType, QWidget* parent):
 	m_menu = new QMenu(m_indicatorWidget);
 	
 	connect(m_indicatorWidget, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
-//	connect(m_indicatorWidget, SIGNAL(rightClick(const QPoint&)), this, SLOT(rightClick(const QPoint&))); 
 	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
-//	show();
 }
 
 void KxkbLabel::contextMenuEvent(QContextMenuEvent* ev) {
-//void KxkbLabel::rightClick(const QPoint& pos) {
     QMenu* menu = contextMenu();
-//	menu->exec(m_indicatorWidget->mapToGlobal(pos));
     menu->exec(ev->globalPos());
 }
 
