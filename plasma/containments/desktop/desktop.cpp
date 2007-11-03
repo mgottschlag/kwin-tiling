@@ -339,7 +339,7 @@ QList<QAction*> DefaultDesktop::contextActions()
 
     QList<QAction*> actions;
 
-    actions.append(m_engineExplorerAction);
+//    actions.append(m_engineExplorerAction);
     actions.append(m_appletBrowserAction);
 
     if (KAuthorized::authorizeKAction("run_command")) {
