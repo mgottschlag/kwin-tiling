@@ -262,7 +262,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         element = QChar('e')+oldMinutes+QString("-p2");
         m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), element);
 
-        if (0 < m_animationStep < 3) {
+        if (0 < m_animationStep && m_animationStep < 3) {
             element = QChar('e')+oldMinutes+QString("-p1");
             m_theme->paint(p, QRectF(leftOffset, bottomElementTop-(elHeight/m_animationStep),
                                      elWidth, elHeight/m_animationStep), element);
