@@ -431,6 +431,10 @@ unsecureDisplay( Display *dpy )
 	}
 }
 
+#define GRABEVENTS \
+	ButtonPressMask | ButtonReleaseMask | PointerMotionMask | \
+	EnterWindowMask | LeaveWindowMask
+
 void
 secureKeyboard( Display *dpy )
 {
@@ -438,8 +442,12 @@ secureKeyboard( Display *dpy )
 	(void)alarm( (unsigned)_grabTimeout );
 	(void)signal( SIGALRM, syncTimeout );
 	if (setjmp( syncJump ) ||
-	    XGrabKeyboard( dpy, DefaultRootWindow( dpy ), True, GrabModeAsync,
-	                   GrabModeAsync, CurrentTime ) != GrabSuccess)
+	    XGrabKeyboard( dpy, DefaultRootWindow( dpy ), True,
+	                   GrabModeAsync, GrabModeAsync,
+	                   CurrentTime ) != GrabSuccess ||
+	    XGrabPointer( dpy, DefaultRootWindow( dpy ), True, GRABEVENTS,
+	                  GrabModeAsync, GrabModeAsync,
+	                  None, None, CurrentTime ) != GrabSuccess)
 	{
 		(void)alarm( 0 );
 		(void)signal( SIGALRM, SIG_DFL );
@@ -459,6 +467,7 @@ unsecureKeyboard( Display *dpy )
 	debug( "Unsecure keyboard %s\n", dname );
 	XSetInputFocus( dpy, PointerRoot, PointerRoot, CurrentTime );
 	XUngrabKeyboard( dpy, CurrentTime );
+    XUngrabPointer( dpy, CurrentTime );
 	XSync( dpy, 0 );
 }
 
