@@ -85,7 +85,12 @@ int main(int argc, char **argv)
     applet->setPos( borderWidth, borderWidth );
     applet->setFlag( QGraphicsItem::ItemIsMovable, false );
 
-    FullView view( &corona );
+    QGraphicsView view( &corona );
+    view.setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+    view.setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+    view.setAlignment( Qt::AlignLeft | Qt::AlignTop );
+    view.setSceneRect( 0, 0, applet->sizeHint().width(), applet->sizeHint().height() );
+    view.resize( view.sceneRect().size().toSize() );
     view.setWindowTitle( applet->name() );
     view.setWindowIcon( SmallIcon( applet->icon() ) );
     view.show();
