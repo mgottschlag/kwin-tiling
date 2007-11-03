@@ -254,8 +254,10 @@ void Pager::showingDesktopChanged(bool showing)
 
 void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    for(int i = 0; i < m_desktopCount; i++) {
-	if(m_rects[i].contains(event->pos())) {
+    if(event->buttons() != Qt::RightButton)
+    {
+       for(int i = 0; i < m_desktopCount; i++) {
+	  if(m_rects[i].contains(event->pos())) {
 	    for(int j = 0; j < m_windowRects.count(); j++) {
 		for(int k = m_windowRects[j].count() - 1; k >= 0 ; k--) {
 		    if(m_windowRects[j][k].second.contains(event->pos().toPoint()) && m_rects[i].contains(event->pos().toPoint())) {
@@ -277,7 +279,8 @@ void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		}
 	    }
 	    return;
-	}
+	  }
+       }
     }
     Applet::mousePressEvent(event);
 }
