@@ -71,15 +71,9 @@ int main(int argc, char **argv)
     Containment *containment = corona.addContainment( "null" );
 
     Applet *applet = containment->addApplet( args->arg( 0 ) );
-    if ( !applet ) {
+    if (applet->failedToLaunch()) {
         // XXX Can we give a better error message somehow?
-        KMessageBox::error( 0, i18n( "Failed to load applet '%1'.", args->arg( 0 ) ) );
-        return 2;
-    }
-//    applet->constraintsUpdated(Plasma::AllConstraints);
-
-    if (containment->layout()) {
-        containment->layout()->update();
+        applet->setFailedToLaunch(true, i18n( "Failed to load applet '%1'.", args->arg(0)));
     }
 
     // An Applet::setPosition call which takes the border width (if any) into
@@ -89,9 +83,6 @@ int main(int argc, char **argv)
     applet->setFlag( QGraphicsItem::ItemIsMovable, false );
 
     FullView view( &corona );
-    //view.setSceneRect( 0, 0, applet->sizeHint().width(), applet->sizeHint().height() );
-    //view.resize( view.sceneRect().size().toSize() );
-//kDebug() << "sizes are" << applet->sizeHint() << "and" << view.sceneRect();
     view.setWindowTitle( applet->name() );
     view.setWindowIcon( SmallIcon( applet->icon() ) );
     view.show();
