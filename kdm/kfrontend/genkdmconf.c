@@ -2575,16 +2575,16 @@ fprintfLineWrap( FILE *f, const char *msg, ... )
 
 static const char *oldkdes[] = {
 	KDE_CONFDIR,
-	"/opt/kde3/share/config",
-	"/usr/local/kde3/share/config",
+	"/opt/kde4/share/config",
+	"/usr/local/kde4/share/config",
 
 	"/opt/kde/share/config",
 	"/usr/local/kde/share/config",
 	"/usr/local/share/config",
 	"/usr/share/config",
 
-	"/opt/kde2/share/config",
-	"/usr/local/kde2/share/config",
+	"/opt/kde3/share/config",
+	"/usr/local/kde3/share/config",
 };
 
 static const char *oldxdms[] = {
@@ -2622,14 +2622,13 @@ int main( int argc, char **argv )
 "    the installation - the paths inside the files are not affected.\n"
 "    Default is " KDMCONF ".\n"
 "  --old-xdm /path/to/old/xdm-dir\n"
-"    Where to look for the config files of an xdm/older kdm.\n"
-"    Default is to scan /etc/X11/kdm, $XLIBDIR/kdm, /etc/X11/xdm,\n"
-"    $XLIBDIR/xdm; there in turn look for kdm-config and xdm-config.\n"
+"    Where to look for the config files of an xdm.\n"
+"    Default is to scan /etc/X11/xdm & $XLIBDIR/xdm.\n"
 "    Note that you possibly need to use --no-old-kde to make this take effect.\n"
 "  --old-kde /path/to/old/kde-config-dir\n"
-"    Where to look for the kdmrc of an older kdm.\n"
+"    Where to look for the kdmrc of a previously installed kdm.\n"
 "    Default is to scan " KDE_CONFDIR " and\n"
-"    {/usr,/usr/local,{/opt,/usr/local}/{kde3,kde,kde2,kde1}}/share/config.\n"
+"    {/usr,/usr/local,{/opt,/usr/local}/{kde4,kde,kde3}}/share/config.\n"
 "  --no-old\n"
 "    Do not look at older xdm/kdm configurations, just create default config.\n"
 "  --no-old-xdm\n"
@@ -2749,7 +2748,7 @@ int main( int argc, char **argv )
 			if (oldxdm) {
 				if (!mergeXdmCfg( oldxdm ))
 					fprintf( stderr,
-					         "Cannot read old kdm-config/xdm-config at specified location\n" );
+					         "Cannot read xdm-config at specified location\n" );
 			} else
 				for (i = 0; i < as(oldxdms); i++)
 					if (mergeXdmCfg( oldxdms[i] )) {
