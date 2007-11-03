@@ -57,6 +57,7 @@ class Pager : public Plasma::Applet
         virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
 	virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
         virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+        virtual void wheelEvent(QGraphicsSceneWheelEvent *);
 
         void configAccepted();
 	void currentDesktopChanged(int desktop);

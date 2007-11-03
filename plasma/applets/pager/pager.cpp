@@ -285,6 +285,31 @@ void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
     Applet::mousePressEvent(event);
 }
 
+void Pager::wheelEvent(QGraphicsSceneWheelEvent *e)
+{
+    int newDesk;
+    int desktops = KWindowSystem::numberOfDesktops();
+    
+/*
+    if (m_kwin->numberOfViewports(0).width() * m_kwin->numberOfViewports(0).height() > 1 )
+        desktops = m_kwin->numberOfViewports(0).width() * m_kwin->numberOfViewports(0).height();
+*/
+    if (e->delta() < 0)
+    {
+        newDesk = m_currentDesktop % desktops + 1;
+    }
+    else
+    {
+        newDesk = (desktops + m_currentDesktop - 2) % desktops + 1;
+    }
+
+    KWindowSystem::setCurrentDesktop(newDesk);
+    m_currentDesktop = newDesk;
+    update();
+
+    Applet::wheelEvent(e);
+}
+
 void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(m_dragId != 0) {
