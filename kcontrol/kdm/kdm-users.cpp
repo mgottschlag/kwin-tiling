@@ -459,6 +459,7 @@ void KDMUsersWidget::slotAddUsers( const QMap<QString,int> &users )
 	optinlv->sort();
 	optoutlv->sort();
 	usercombo->model()->sort( 0 );
+	slotUserSelected();
 }
 
 void KDMUsersWidget::slotDelUsers( const QMap<QString,int> &users )
