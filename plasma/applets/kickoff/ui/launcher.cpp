@@ -163,8 +163,8 @@ public:
         view->setItemStateProvider(delegate);
         addView(i18n("Recently Used"),KIcon("view-calendar-week"),model,view);
 
-        QAction *clearApplications = new QAction(KIcon("history-clear"),i18n("Clear Recent Applications"),q);
-        QAction *clearDocuments = new QAction(KIcon("history-clear"),i18n("Clear Recent Documents"),q);
+        QAction *clearApplications = new QAction(KIcon("edit-clear-history"),i18n("Clear Recent Applications"),q);
+        QAction *clearDocuments = new QAction(KIcon("edit-clear-history"),i18n("Clear Recent Documents"),q);
 
         connect(clearApplications,SIGNAL(triggered()),model,SLOT(clearRecentApplications()));
         connect(clearDocuments,SIGNAL(triggered()),model,SLOT(clearRecentDocuments()));

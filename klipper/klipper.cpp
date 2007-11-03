@@ -138,7 +138,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     toggleURLGrabAction->setEnabled( true );
     //toggleURLGrabAction->setGroup( defaultGroup );
     clearHistoryAction = collection->addAction( "clearHistoryAction" );
-    clearHistoryAction->setIcon( KIcon("history-clear") );
+    clearHistoryAction->setIcon( KIcon("edit-clear-history") );
     clearHistoryAction->setText( i18n("C&lear Clipboard History") );
     connect(clearHistoryAction, SIGNAL(triggered() ), history(), SLOT( slotClear() ));
     connect( clearHistoryAction, SIGNAL( triggered() ), SLOT( slotClearClipboard() ) );
