@@ -43,6 +43,7 @@ class Pager : public Plasma::Applet
         QSizeF contentSizeHint() const;
         void constraintsUpdated(Plasma::Constraints);
 	Qt::Orientations expandingDirections() const;
+        virtual QList<QAction*> contextActions();
 
     public slots:
         void showConfigurationInterface();
@@ -65,7 +66,11 @@ class Pager : public Plasma::Applet
 	void numberOfDesktopsChanged(int num);
 	void stackingOrderChanged();
 	void windowChanged(WId id);
-	void showingDesktopChanged(bool showing);
+  	void showingDesktopChanged(bool showing);
+        void slotConfigureDesktop();
+
+    protected:
+        void createMenu();
 
     private:
 	QTimer* m_timer;
@@ -83,6 +88,7 @@ class Pager : public Plasma::Applet
 	QRectF m_hoverRect;
 	QList<QList<QPair<WId, QRect> > > m_windowRects;
 	QList<QRect> m_activeWindows;
+        QList<QAction*> actions;
 	
 	// dragging of windows
 	QRect m_dragOriginal;

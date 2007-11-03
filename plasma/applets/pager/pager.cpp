@@ -34,6 +34,7 @@
 #include <KGlobalSettings>
 #include <KWindowSystem>
 #include <NETRootInfo>
+#include <KToolInvocation>
 
 #include <plasma/svg.h>
 #include <plasma/theme.h>
@@ -43,6 +44,8 @@ Pager::Pager(QObject *parent, const QVariantList &args)
 {
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
+    
+    createMenu();
 
     KConfigGroup cg = config();
     m_showDesktopNumber = cg.readEntry("showDesktopNumber", true);
@@ -88,9 +91,27 @@ void Pager::constraintsUpdated(Plasma::Constraints)
      recalculateWindowRects();
 }
 
+void Pager::createMenu()
+{
+    QAction* configureDesktop = new QAction(SmallIcon("configure"),i18n("&Configure Desktops..."), this);
+    actions.append(configureDesktop);
+    connect(configureDesktop, SIGNAL(triggered(bool)), this , SLOT(slotConfigureDesktop()));
+}
+
+QList<QAction*> Pager::contextActions()
+{
+  return actions;
+}
+
 Qt::Orientations Pager::expandingDirections() const
 {
     return 0;
+}
+
+void Pager::slotConfigureDesktop()
+{
+  QString error;
+  KToolInvocation::startServiceByDesktopName("desktop", QStringList(), &error);
 }
 
 void Pager::showConfigurationInterface()
