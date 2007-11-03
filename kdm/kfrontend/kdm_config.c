@@ -716,12 +716,12 @@ convertValue( Ent *et, Value *retval, int vallen, const char *val, char **eopts 
 				    !strcmp( buf, "on" ) ||
 				    !strcmp( buf, "yes" ) ||
 				    !strcmp( buf, "1" ))
-						retval->num = 1;
+					retval->num = 1;
 				else if (!strcmp( buf, "false" ) ||
 				         !strcmp( buf, "off" ) ||
 				         !strcmp( buf, "no" ) ||
 				         !strcmp( buf, "0" ))
-							retval->num = 0;
+					retval->num = 0;
 				else
 					return "boolean";
 				return 0;
