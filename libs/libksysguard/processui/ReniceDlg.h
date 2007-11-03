@@ -43,9 +43,12 @@ public:
 
 public Q_SLOTS:
 	void slotOk();
+	void updateUi();
+	void cpuSliderChanged(int value);
+	void cpuSpinChanged(int value);
 
 private:
-	Ui_ReniceDlgUi *reniceDlgUi;
+	Ui_ReniceDlgUi *ui;
 };
 
 #endif
