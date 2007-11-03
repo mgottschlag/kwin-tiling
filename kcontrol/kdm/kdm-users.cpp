@@ -103,7 +103,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	minGroup = new QGroupBox( i18n("System U&IDs"), this );
 	minGroup->setWhatsThis( i18n("Users with a UID (numerical user identification) outside this range will not be listed by KDM and this setup dialog."
 	                             " Note that users with the UID 0 (typically root) are not affected by this and must be"
-	                             " explicitly hidden in \"Not hidden\" mode.") );
+	                             " explicitly excluded in \"Inverse selection\" mode.") );
 	QSizePolicy sp_ign_fix( QSizePolicy::Ignored, QSizePolicy::Fixed );
 	QValidator *valid = new QIntValidator( 0, 999999, minGroup );
 	QLabel *minlab = new QLabel( i18n("Below:"), minGroup );
@@ -168,7 +168,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	connect( optinlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SIGNAL(changed()) );
 	optoutlv = new K3ListView( this );
-	optoutlv->addColumn( i18n("Hidden Users") );
+	optoutlv->addColumn( i18n("Excluded Users") );
 	optoutlv->setResizeMode( Q3ListView::LastColumn );
 	optoutlv->setWhatsThis( i18n("KDM will show all non-checked non-system users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
 	wstack->addWidget( optoutlv );
