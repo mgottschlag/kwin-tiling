@@ -104,14 +104,12 @@ signals:
     void zoomOut();
 
 protected Q_SLOTS:
-    void launchExplorer();
     void launchAppletBrowser();
     void runCommand();
     void lockScreen();
     void logout();
 
 private:
-    QAction *m_engineExplorerAction;
     QAction *m_appletBrowserAction;
     QAction *m_runCommandAction;
     QAction *m_lockAction;

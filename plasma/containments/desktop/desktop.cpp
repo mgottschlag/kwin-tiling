@@ -186,7 +186,6 @@ void ToolBox::addTool(Plasma::Widget *tool)
 
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
-      m_engineExplorerAction(0),
       m_appletBrowserAction(0),
       m_runCommandAction(0),
       m_lockAction(0),
@@ -226,13 +225,6 @@ void DefaultDesktop::init()
     m_toolbox->addTool(tool);
     connect(tool, SIGNAL(clicked()), this, SLOT(launchAppletBrowser()));
 
-    /*
-    tool = new Plasma::PushButton("Engine Explorer", this);
-    connect(tool, SIGNAL(clicked()), this, SLOT(launchExplorer()));
-    tool->resize(tool->sizeHint());
-    m_toolbox->addTool(tool);
-    */
-
     tool = new Plasma::PushButton(i18n("Zoom In"), this);
     connect(tool, SIGNAL(clicked()), this, SIGNAL(zoomIn()));
     tool->resize(tool->sizeHint());
@@ -264,11 +256,6 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
             (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
         }
     }
-}
-
-void DefaultDesktop::launchExplorer()
-{
-    KRun::run("plasmaengineexplorer", KUrl::List(), 0);
 }
 
 void DefaultDesktop::launchAppletBrowser()
@@ -319,9 +306,6 @@ QList<QAction*> DefaultDesktop::contextActions()
     //  - should we offer "Switch User" here?
 
     if (!m_appletBrowserAction) {
-/*        m_engineExplorerAction = new QAction(i18n("Engine Explorer"), this);
-        connect(m_engineExplorerAction, SIGNAL(triggered(bool)), this, SLOT(launchExplorer()));
-*/
         m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
         connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SLOT(launchAppletBrowser()));
 
@@ -339,7 +323,6 @@ QList<QAction*> DefaultDesktop::contextActions()
 
     QList<QAction*> actions;
 
-//    actions.append(m_engineExplorerAction);
     actions.append(m_appletBrowserAction);
 
     if (KAuthorized::authorizeKAction("run_command")) {
