@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Bookmark Runner
+Comment=Open bookmark
+ServiceTypes=Plasma/Runner
+Type=Service
+X-KDE-Library=krunner_bookmarksrunner
+X-Krunner-ID=Bookmarks Runner
