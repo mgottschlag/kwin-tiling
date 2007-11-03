@@ -71,6 +71,7 @@ protected:
 
 KxkbCore::KxkbCore(int mode):
     m_mode(mode),
+    m_currentLayout(0),
     m_layoutOwnerMap(NULL),
     m_rules(NULL),
     m_kxkbWidget(NULL),
@@ -128,16 +129,21 @@ void KxkbCore::initReactions()
 void KxkbCore::initKeys()
 {
     m_actions = new KActionCollection( this );
-    QAction* a = m_actions->addAction( I18N_NOOP("Switch keyboard layout") );
-    a->setText( i18n( I18N_NOOP( "Switch keyboard layout" ) ) );
-    qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_K));
-    connect( a, SIGNAL(triggered(bool)), this, SLOT(toggled()) );
+    KActionCollection* actionCollection = m_actions;
+
+    QAction* a = 0L;
+
+    a = m_actions->addAction("layout_toggle_action");
+    a->setText(i18n("Switch keyboard layout"));
+    qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_K));
+    connect( a, SIGNAL(triggered()), this, SLOT(toggled()) );
 
   // TODO: keyboard bindings
     //globalKeys = KGlobalAccel::self();
 //    m_keys* = new KActionCollection(this);
 
-//	#include "kxkbbindings.cpp"
+//#include "kxkbbindings.cpp"
+
     //keys->readSettings();
     //keys->updateConnections();
 
@@ -456,6 +462,12 @@ KxkbCore::updateGroupsFromServer()
             }
 	}
 #else
+        int group = m_extension->getGroup();
+        if( m_currentLayout != group && group < m_kxkbConfig.m_layouts.count() ) {
+	    kDebug() << "got group from server:" << group;
+	    updateIndicator(group, 1);
+        }
+
 	kDebug() << "updating layouts from server is not implemented w/out libxklavier";
 #endif
 	
