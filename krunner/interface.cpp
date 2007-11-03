@@ -395,6 +395,8 @@ void Interface::match()
 
 void Interface::exec()
 {
+    match();
+
     if (m_searchTerm->completionBox() && m_searchTerm->completionBox()->isVisible()) {
         return;
     }
