@@ -22,8 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#include "fullview.h"
+
 #include <plasma/containment.h>
 #include <plasma/corona.h>
+#include <plasma/widgets/layout.h>
 
 #include <KApplication>
 #include <KAboutData>
@@ -33,7 +37,6 @@
 #include <KMessageBox>
 #include <KStandardDirs>
 
-#include <QGraphicsView>
 #include <QIcon>
 
 using namespace Plasma;
@@ -73,6 +76,11 @@ int main(int argc, char **argv)
         KMessageBox::error( 0, i18n( "Failed to load applet '%1'.", args->arg( 0 ) ) );
         return 2;
     }
+//    applet->constraintsUpdated(Plasma::AllConstraints);
+
+    if (containment->layout()) {
+        containment->layout()->update();
+    }
 
     // An Applet::setPosition call which takes the border width (if any) into
     // account and then calls QGraphicsItem::setPos would be nice here.
@@ -80,12 +88,10 @@ int main(int argc, char **argv)
     applet->setPos( borderWidth, borderWidth );
     applet->setFlag( QGraphicsItem::ItemIsMovable, false );
 
-    QGraphicsView view( &corona );
-    view.setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-    view.setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-    view.setAlignment( Qt::AlignLeft | Qt::AlignTop );
-    view.setSceneRect( 0, 0, applet->sizeHint().width(), applet->sizeHint().height() );
-    view.resize( view.sceneRect().size().toSize() );
+    FullView view( &corona );
+    //view.setSceneRect( 0, 0, applet->sizeHint().width(), applet->sizeHint().height() );
+    //view.resize( view.sceneRect().size().toSize() );
+//kDebug() << "sizes are" << applet->sizeHint() << "and" << view.sceneRect();
     view.setWindowTitle( applet->name() );
     view.setWindowIcon( SmallIcon( applet->icon() ) );
     view.show();

@@ -1,4 +1,5 @@
 set(plasmoidviewer_SRCS
+    fullview.cpp
     main.cpp
 )
 
