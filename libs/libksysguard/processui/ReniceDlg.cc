@@ -42,10 +42,13 @@ ReniceDlg::ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, i
 	connect( this, SIGNAL( okClicked() ), SLOT( slotOk() ) );
 
 	if(currentIoSched == KSysGuard::Process::None) {
-		currentIoSched = (int)KSysGuard::Process::BestEffort;
 		// CurrentIoSched == 0 means that the priority is set automatically.
 		// Using the formula given by the linux kernel Documentation/block/ioprio
 		currentIoPrio = (currentCpuPrio+20)/5;
+	}
+	if(currentIoSched == (int)KSysGuard::Process::BestEffort && currentIoPrio == (currentCpuPrio+20)/5) {
+		// Unfortunately, in linux you can't ever set a process back to being None.  So we fake it :)
+		currentIoSched = KSysGuard::Process::None;
 	}
 
 	QWidget *widget = new QWidget(this);
@@ -53,7 +56,7 @@ ReniceDlg::ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, i
 	ui = new Ui_ReniceDlgUi();
 	ui->setupUi(widget);
 	ui->listWidget->insertItems(0, processes);
-	ui->sliderIO->setValue(currentIoPrio);
+	ui->sliderIO->setValue(7- currentIoPrio);
 	if(currentCpuSched == (int)KSysGuard::Process::Other || currentCpuSched == (int)KSysGuard::Process::Batch || currentCpuSched <= 0)
 		ui->sliderCPU->setValue(-currentCpuPrio);
 	else
@@ -91,7 +94,8 @@ ReniceDlg::ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, i
 
 	connect(cpuScheduler, SIGNAL(buttonClicked(int)), this, SLOT(updateUi()));
 	connect(ioScheduler, SIGNAL(buttonClicked(int)), this, SLOT(updateUi()));
-	connect(ui->sliderCPU, SIGNAL(sliderMoved(int)), this, SLOT(cpuSliderChanged(int)));
+//	connect(ui->sliderCPU, SIGNAL(sliderMoved(int)), this, SLOT(cpuSliderChanged(int)));
+	connect(ui->sliderCPU, SIGNAL(valueChanged(int)), this, SLOT(cpuSliderChanged(int)));
 	
 	updateUi();
 }
@@ -123,6 +127,7 @@ void ReniceDlg::updateUi() {
 		ui->sliderCPU->setMaximum(99);
 	}
 
+	cpuSliderChanged(ui->sliderCPU->value());
 }
 
 void ReniceDlg::slotOk()
@@ -130,9 +135,9 @@ void ReniceDlg::slotOk()
   if(cpuScheduler->checkedId() == (int)KSysGuard::Process::Other || cpuScheduler->checkedId() == (int)KSysGuard::Process::Batch)
 	  newCPUPriority = -ui->sliderCPU->value();
   else
-	  newCPUPriority = -ui->sliderCPU->value();
+	  newCPUPriority = ui->sliderCPU->value();
 
-  newIOPriority = ui->sliderIO->value();
+  newIOPriority = 7 - ui->sliderIO->value();
   newCPUSched = cpuScheduler->checkedId();
   newIOSched = ioScheduler->checkedId();
 
