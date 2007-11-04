@@ -8,5 +8,8 @@ Actions=open;
 
 [Desktop Action open]
 Name=open
+Name[nds]=Opmaken
+Name[pt]=abrir
+Name[pt_BR]=abrir
 Exec=dbus-launch dolphin
 
