@@ -37,7 +37,7 @@ FullView::FullView(QGraphicsScene* scene)
 void FullView::sceneRectChanged(const QRectF &rect)
 {
     setSceneRect(rect);
-    resize(rect.size().toSize() + QSize(12, 12));
+    resize(rect.size().toSize());
 }
 
 #include "fullview.moc"
