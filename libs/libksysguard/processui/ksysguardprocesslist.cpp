@@ -557,6 +557,7 @@ void KSysGuardProcessList::reniceSelectedProcesses()
 
 	QList<long long> renicePids;
 	QList<long long> changeCPUSchedulerPids;
+	QList<long long> changeIOSchedulerPids;
 	foreach(KSysGuard::Process *process, processes) {
 		switch(reniceDlg.newCPUSched) {
 			case -2:
@@ -578,6 +579,32 @@ void KSysGuardProcessList::reniceSelectedProcesses()
 				}
 				break;
 		}
+		switch(reniceDlg.newIOSched) {
+			case -2:
+			case -1:  //Invalid, not changed etc.
+				break;  //So do nothing
+			case KSysGuard::Process::None:
+				if(reniceDlg.newIOSched != (int)process->ioPriorityClass) {
+					// Unfortunately linux doesn't actually let us set the ioniceness back to none after being set to something else
+					if(process->ioPriorityClass != KSysGuard::Process::BestEffort || reniceDlg.newIOPriority != process->ioniceLevel)
+						changeIOSchedulerPids << process->pid;
+				}
+				break;
+			case KSysGuard::Process::Idle:
+				if(reniceDlg.newIOSched != (int)process->ioPriorityClass) {
+					changeIOSchedulerPids << process->pid;
+				}
+				break;
+			case KSysGuard::Process::BestEffort:
+				if(process->ioPriorityClass == KSysGuard::Process::None && reniceDlg.newIOPriority  == (process->niceLevel + 20)/5)
+					break;  //Don't set to BestEffort if it's on None and the nicelevel wouldn't change
+			case KSysGuard::Process::RealTime:
+				if(reniceDlg.newIOSched != (int)process->ioPriorityClass || reniceDlg.newIOPriority != process->ioniceLevel) {
+					changeIOSchedulerPids << process->pid;
+				}
+				break;
+		}
+
 	}
 	if(!changeCPUSchedulerPids.isEmpty()) {
 		Q_ASSERT(reniceDlg.newCPUSched >= 0);
@@ -594,7 +621,59 @@ void KSysGuardProcessList::reniceSelectedProcesses()
 			return;
 		}
 	}
+	if(!changeIOSchedulerPids.isEmpty()) {
+		if(!changeIoScheduler(changeIOSchedulerPids, (KSysGuard::Process::IoPriorityClass) reniceDlg.newIOSched, reniceDlg.newIOPriority)) {
+			KMessageBox::sorry(this, i18n("You do not have sufficient privillages to change the IO scheduler and priority. Aborting."));
+			return;
+		}
+	}
 	updateList();
+}
+
+bool KSysGuardProcessList::changeIoScheduler(const QList< long long> &pids, KSysGuard::Process::IoPriorityClass newIoSched, int newIoSchedPriority)
+{
+	if(newIoSched == KSysGuard::Process::None) newIoSched = KSysGuard::Process::BestEffort;
+	if(newIoSched == KSysGuard::Process::Idle) newIoSchedPriority = 0;
+	QList< long long> unchanged_pids;
+        for (int i = 0; i < pids.size(); ++i) {
+		bool success = d->mModel.processController()->setIoNiceness(pids.at(i), newIoSched, newIoSchedPriority);
+		if(!success) {
+			unchanged_pids << pids.at(i);
+		}
+	}
+	if(unchanged_pids.isEmpty()) return true;
+	if(!d->mModel.isLocalhost()) return false; //We can't use kdesu to kill non-localhost processes
+
+	//We must use kdesu to kill the process
+	QStringList arguments;
+	arguments << "--" << "sh" << "-c";
+	QString sh("'for f in ");
+
+        for (int i = 0; i < unchanged_pids.size(); ++i) {
+		sh += QString::number(unchanged_pids.at(i)) + " ";
+	}
+	 sh += "; do ionice -p \"$f\" ";
+	switch(newIoSched) {
+	  case KSysGuard::Process::Idle:
+		sh += "-c 3";
+		break;
+	  case KSysGuard::Process::BestEffort:
+		sh += "-c 2 -n " + QString::number(newIoSchedPriority);
+	  case KSysGuard::Process::RealTime:
+		sh += "-c 1 -n " + QString::number(newIoSchedPriority);
+	  default:
+		Q_ASSERT(false);
+		return false; //should never happen - wtf?
+	}
+	sh += "; done'";
+
+	arguments << sh;
+	
+	QProcess *process = new QProcess(NULL);
+	connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(ioniceFailed()));
+	connect(process, SIGNAL(finished( int, QProcess::ExitStatus) ), this, SLOT(updateList()));
+	process->start("kdesu", arguments);
+	return true;  //assume it ran successfully :(  We cannot seem to actually check if it did.  There must be a better solution
 }
 
 bool KSysGuardProcessList::changeCpuScheduler(const QList< long long> &pids, KSysGuard::Process::Scheduler newCpuSched, int newCpuSchedPriority)
@@ -696,7 +775,11 @@ void KSysGuardProcessList::killFailed()
 	KMessageBox::sorry(this, i18n("You do not have the permission to kill the process and there "
 					"was a problem trying to run as root"));
 }
-
+void KSysGuardProcessList::ioniceFailed()
+{
+	KMessageBox::sorry(this, i18n("You do not have the permission to set the I/O priority and there "
+					"was a problem trying to run as root"));
+}
 bool KSysGuardProcessList::showTotals() const {
 	return d->mModel.showTotals();
 }

@@ -109,6 +109,11 @@ public Q_SLOTS:
 	 */
 	bool changeCpuScheduler(const QList< long long> &pids, KSysGuard::Process::Scheduler newCpuSched, int newCpuSchedPriority);
 
+	/** Change the I/O scheduler for the given of processes to the given scheduler, with the given scheduler priority.
+	 *  If the scheduler is Other or Batch, @p newCpuSchedPriority is ignored.
+	 *   @return Whether the cpu scheduler changing went ahead.  True if successful or user cancelled.  False if there was a problem
+	 */
+	bool changeIoScheduler(const QList< long long> &pids, KSysGuard::Process::IoPriorityClass newIoSched, int newIoSchedPriority);
 	/** Renice the processes given to the given niceValue. 
 	 *   @return Whether the kill went ahead.  True if successful or user cancelled.  False if there was a problem
 	 * */ 
@@ -152,6 +157,9 @@ private Q_SLOTS:
 	/** Handle the situation where renicing a process has failed - usually due to insufficent rights */
 	void reniceFailed();
 
+	/** Handle the situation where ionice'ing a process has failed - usually due to insufficent rights */
+	void ioniceFailed();
+	
 	/** Set state from combo box int value */
 	void setStateInt(int state);
 private:
