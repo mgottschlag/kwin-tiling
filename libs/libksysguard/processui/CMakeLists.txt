@@ -2,7 +2,7 @@
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../ )
 
 set(processui_LIB_SRCS
-   ksysguardprocesslist.cpp
+   kprocesslistwidget.cpp
    ProcessFilter.cc
    ProcessModel.cc
    ReniceDlg.cc
@@ -25,8 +25,8 @@ install(TARGETS processui DESTINATION ${LIB_INSTALL_DIR} )
 
 #----------------------
 
-set(ksysguardwidgets_PART_SRCS
-   ${CMAKE_CURRENT_BINARY_DIR}/ksysguardwidgets.cpp
+set(kprocesslistwidgets_PART_SRCS
+   ${CMAKE_CURRENT_BINARY_DIR}/kprocesslistwidgets.cpp
 )
 
 KDE4_ADD_WIDGET_FILES(${ksysguardwidgets_PART_SRCS} ksysguard.widgets)
