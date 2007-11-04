@@ -459,6 +459,7 @@ void Interface::showOptions(bool show)
         //      more "natural"; it should appear as if a "drawer" is
         //      being pulled open, e.g. an expander.
         m_expander->setInnerWidget(m_optionsWidget);
+        m_expander->setVisible(show);
         m_expander->setExpanded(show);
     }
 
