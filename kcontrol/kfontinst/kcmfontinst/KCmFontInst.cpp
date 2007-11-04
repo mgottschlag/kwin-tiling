@@ -282,7 +282,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     // Toolbar...
     KActionMenu *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
     KAction     *changeTextAct=new KAction(KIcon("text"), i18n("Change Preview Text..."), this),
-                *duplicateFontsAct=new KAction(KIcon("file-find"), i18n("Scan For Duplicate Fonts..."), this);
+                *duplicateFontsAct=new KAction(KIcon("edit-find"), i18n("Scan For Duplicate Fonts..."), this);
                 //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
                 //*downloadFontsAct=new KAction(KIcon("go-down"), i18n("Download Fonts..."), this);
 
