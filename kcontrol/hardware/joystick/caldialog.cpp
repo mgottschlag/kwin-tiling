@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2003 by Martin Koller                                   *
- *   m.koller@surfeu.at                                                    *
- *   This file is part of the KDE Control Center Module for Joysticks      *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,      *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                      *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+ *   Copyright (C) 2003 by Martin Koller
+ *   m.koller@surfeu.at
+ *   This file is part of the KDE Control Center Module for Joysticks
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  ***************************************************************************/
 
 #include "caldialog.h"
@@ -77,6 +77,8 @@ void CalDialog::calibrate()
   }
   while ( ti.isActive() && (result() != QDialog::Rejected) );
 
+  if ( result() == QDialog::Rejected ) return;  // user cancelled the dialog
+
   joydev->calcPrecision();
 
   int i, lastVal;
@@ -98,13 +100,16 @@ void CalDialog::calibrate()
                        "Press any button on the device or click on the 'Next' button "
                        "to continue with the next step.</qt>", i+1, hint));
     waitButton(i, true, lastVal);
+
+    if ( result() == QDialog::Rejected ) return;  // user cancelled the dialog
+
     joydev->resetMinMax(i, lastVal);
     if ( result() != -2 ) waitButton(i, false, lastVal);
 
+    if ( result() == QDialog::Rejected ) return;  // user cancelled the dialog
+
     min[0] = joydev->axisMin(i);
     min[1] = joydev->axisMax(i);
-
-    if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
 
     // center position
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br /><br />"
@@ -112,13 +117,16 @@ void CalDialog::calibrate()
                        "Press any button on the device or click on the 'Next' button "
                        "to continue with the next step.</qt>", i+1, hint));
     waitButton(i, true, lastVal);
+
+    if ( result() == QDialog::Rejected ) return;  // user cancelled the dialog
+
     joydev->resetMinMax(i, lastVal);
     if ( result() != -2 ) waitButton(i, false, lastVal);
 
+    if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
+
     center[0] = joydev->axisMin(i);
     center[1] = joydev->axisMax(i);
-
-    if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
 
     // maximum position
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br /><br />"
@@ -126,13 +134,16 @@ void CalDialog::calibrate()
                        "Press any button on the device or click on the 'Next' button "
                        "to continue with the next step.</qt>", i+1, hint));
     waitButton(i, true, lastVal);
+
+    if ( result() == QDialog::Rejected ) return;  // user cancelled the dialog
+
     joydev->resetMinMax(i, lastVal);
     if ( result() != -2 ) waitButton(i, false, lastVal);
 
+    if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
+
     max[0] = joydev->axisMin(i);
     max[1] = joydev->axisMax(i);
-
-    if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
 
     joydev->calcCorrection(i, min, center, max);
   }
@@ -176,6 +187,7 @@ void CalDialog::waitButton(int axis, bool press, int &lastVal)
 }
 
 //--------------------------------------------------------------
+// Next button
 
 void CalDialog::slotUser1()
 {
