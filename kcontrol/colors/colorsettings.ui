@@ -526,6 +526,11 @@
             </property>
             <item>
              <property name="text" >
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
               <string>Shade</string>
              </property>
             </item>
@@ -587,6 +592,11 @@
             </property>
             <item>
              <property name="text" >
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
               <string>Desaturate</string>
              </property>
             </item>
@@ -597,12 +607,7 @@
             </item>
             <item>
              <property name="text" >
-              <string>Tint in</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Tint out</string>
+              <string>Tint</string>
              </property>
             </item>
            </widget>
@@ -644,17 +649,17 @@
             </property>
             <item>
              <property name="text" >
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
               <string>Fade</string>
              </property>
             </item>
             <item>
              <property name="text" >
-              <string>Tint in</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Tint out</string>
+              <string>Tint</string>
              </property>
             </item>
            </widget>
@@ -724,6 +729,11 @@
             </property>
             <item>
              <property name="text" >
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
               <string>Shade</string>
              </property>
             </item>
@@ -785,6 +795,11 @@
             </property>
             <item>
              <property name="text" >
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
               <string>Desaturate</string>
              </property>
             </item>
@@ -795,12 +810,7 @@
             </item>
             <item>
              <property name="text" >
-              <string>Tint in</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Tint out</string>
+              <string>Tint</string>
              </property>
             </item>
            </widget>
@@ -842,17 +852,17 @@
             </property>
             <item>
              <property name="text" >
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
               <string>Fade</string>
              </property>
             </item>
             <item>
              <property name="text" >
-              <string>Tint in</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Tint out</string>
+              <string>Tint</string>
              </property>
             </item>
            </widget>

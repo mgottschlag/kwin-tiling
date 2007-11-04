@@ -83,6 +83,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
     connect(schemeList, SIGNAL(currentRowChanged(int)), this, SLOT(loadScheme()));
+    connect(applyToAlien, SIGNAL(toggled(bool)), this, SLOT(emitChanged()));
 
     // only needs to be called once
     setupColorTable();
@@ -807,6 +808,69 @@ void KColorCm::save()
 #endif
 
     emit changed(false);
+}
+
+void KColorCm::emitChanged()
+{
+    emit changed(true);
+}
+
+// inactive effects slots
+void KColorCm::on_inactiveIntensityBox_currentIndexChanged(int index)
+{
+}
+
+void KColorCm::on_inactiveIntensitySlider_valueChanged(int value)
+{
+}
+
+void KColorCm::on_inactiveColorBox_currentIndexChanged(int index)
+{
+}
+
+void KColorCm::on_inactiveColorSlider_valueChanged(int value)
+{
+}
+
+void KColorCm::on_inactiveColorButton_changed(const QColor & color)
+{
+}
+
+void KColorCm::on_inactiveContrastBox_currentIndexChanged(int index)
+{
+}
+
+void KColorCm::on_inactiveContrastSlider_valueChanged(int value)
+{
+}
+
+// disabled effects slots
+void KColorCm::on_disabledIntensityBox_currentIndexChanged(int index)
+{
+}
+
+void KColorCm::on_disabledIntensitySlider_valueChanged(int value)
+{
+}
+
+void KColorCm::on_disabledColorBox_currentIndexChanged(int index)
+{
+}
+
+void KColorCm::on_disabledColorSlider_valueChanged(int value)
+{
+}
+
+void KColorCm::on_disabledColorButton_changed(const QColor & color)
+{
+}
+
+void KColorCm::on_disabledContrastBox_currentIndexChanged(int index)
+{
+}
+
+void KColorCm::on_disabledContrastSlider_valueChanged(int value)
+{
 }
 
 #include "colorscm.moc"

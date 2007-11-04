@@ -82,6 +82,26 @@ private slots:
     /** slot called when the import button is clicked */
     void on_schemeImportButton_clicked();
 
+    /** null slot to emit changed(true) */
+    void emitChanged();
+
+    // effects page slots
+    void on_inactiveIntensityBox_currentIndexChanged(int index);
+    void on_inactiveIntensitySlider_valueChanged(int value);
+    void on_inactiveColorBox_currentIndexChanged(int index);
+    void on_inactiveColorSlider_valueChanged(int value);
+    void on_inactiveColorButton_changed(const QColor & color);
+    void on_inactiveContrastBox_currentIndexChanged(int index);
+    void on_inactiveContrastSlider_valueChanged(int value);
+
+    void on_disabledIntensityBox_currentIndexChanged(int index);
+    void on_disabledIntensitySlider_valueChanged(int value);
+    void on_disabledColorBox_currentIndexChanged(int index);
+    void on_disabledColorSlider_valueChanged(int value);
+    void on_disabledColorButton_changed(const QColor & color);
+    void on_disabledContrastBox_currentIndexChanged(int index);
+    void on_disabledContrastSlider_valueChanged(int value);
+
 private:
     class WindecoColors {
         public:
