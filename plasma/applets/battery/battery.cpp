@@ -76,12 +76,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     updated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
 
     setAcceptsHoverEvents(true);
-    if (formFactor() == Plasma::Vertical ||
-        formFactor() == Plasma::Horizontal) {
-        kDebug() << "Init:Small FormFactor";
-    } else {
-        kDebug() << "Init:Huge FormFactor";
-    }
 }
 
 QSizeF Battery::contentSizeHint() const
@@ -104,8 +98,6 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
             pixelSize = m_pixelSize;
         }
         m_theme->resize(QSize(pixelSize, pixelSize));
-        updateGeometry();
-        prepareGeometryChange();
         m_size = m_theme->size();
         m_font.setPointSize((int)(pixelSize/10));
         updateGeometry();
