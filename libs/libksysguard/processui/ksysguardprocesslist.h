@@ -19,8 +19,8 @@
 
 */
 
-#ifndef _KSysGuardProcessList_h_
-#define _KSysGuardProcessList_h_
+#ifndef _KProcessListWidget_h_
+#define _KProcessListWidget_h_
 
 #include <QtGui/QWidget>
 #include <kapplication.h>
@@ -37,7 +37,7 @@ class QTreeView;
 namespace Ui {
   class ProcessWidget;
 }
-struct KSysGuardProcessListPrivate;
+struct KProcessListWidgetPrivate;
 extern KApplication* Kapp;
 
 /**
@@ -47,7 +47,7 @@ extern KApplication* Kapp;
  * update rate and the process filter.  The buttons are used to force
  * an immediate update and to kill a process.
  */
-class KDE_EXPORT KSysGuardProcessList : public QWidget
+class KDE_EXPORT KProcessListWidget : public QWidget
 {
 	Q_OBJECT
 	Q_PROPERTY( bool showTotalsInTree READ showTotals WRITE setShowTotals )
@@ -58,8 +58,8 @@ class KDE_EXPORT KSysGuardProcessList : public QWidget
 	Q_ENUMS( ProcessModel::Units )
 
 public:
-	KSysGuardProcessList(QWidget* parent);
-	virtual ~KSysGuardProcessList();
+	KProcessListWidget(QWidget* parent);
+	virtual ~KProcessListWidget();
 
 	QLineEdit *filterLineEdit() const;
 	QTreeView *treeView() const;
@@ -163,7 +163,7 @@ private Q_SLOTS:
 	/** Set state from combo box int value */
 	void setStateInt(int state);
 private:
-	KSysGuardProcessListPrivate* const d;
+	KProcessListWidgetPrivate* const d;
 
 	/** Inherit QWidget::showEvent(QShowEvent *) to enable the timer, for updates, when visible */
 	virtual void showEvent(QShowEvent*);

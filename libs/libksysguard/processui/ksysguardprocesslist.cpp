@@ -113,13 +113,13 @@ class ProgressBarItemDelegate : public QItemDelegate
 
 };
 
-struct KSysGuardProcessListPrivate {
+struct KProcessListWidgetPrivate {
     
-	KSysGuardProcessListPrivate(KSysGuardProcessList* q) 
+	KProcessListWidgetPrivate(KProcessListWidget* q) 
             : mModel(q), mFilterModel(q), mUi(new Ui::ProcessWidget()), mProcessContextMenu(NULL), mUpdateTimer(NULL) 
         {}
 
-        ~KSysGuardProcessListPrivate() { delete mUi; mUi = NULL; }
+        ~KProcessListWidgetPrivate() { delete mUi; mUi = NULL; }
 	
 	/** The process model.  This contains all the data on all the processes running on the system */
 	ProcessModel mModel;
@@ -142,8 +142,8 @@ struct KSysGuardProcessListPrivate {
 	int mUpdateIntervalMSecs;
 };
 
-KSysGuardProcessList::KSysGuardProcessList(QWidget* parent)
-	: QWidget(parent), d(new KSysGuardProcessListPrivate(this))
+KProcessListWidget::KProcessListWidget(QWidget* parent)
+	: QWidget(parent), d(new KProcessListWidgetPrivate(this))
 {
 	d->mUpdateIntervalMSecs = 2000; //Set 2 seconds as the default update interval
 	d->mUi->setupUi(this);
@@ -213,37 +213,37 @@ KSysGuardProcessList::KSysGuardProcessList(QWidget* parent)
 	expandInit(); //This will expand the init process
 }
 
-KSysGuardProcessList::~KSysGuardProcessList()
+KProcessListWidget::~KProcessListWidget()
 {
 	delete d;
 }
 
-QTreeView *KSysGuardProcessList::treeView() const {
+QTreeView *KProcessListWidget::treeView() const {
 	return d->mUi->treeView;
 }
 
-QLineEdit *KSysGuardProcessList::filterLineEdit() const {
+QLineEdit *KProcessListWidget::filterLineEdit() const {
 	return d->mUi->txtFilter;
 }
 
-ProcessFilter::State KSysGuardProcessList::state() const 
+ProcessFilter::State KProcessListWidget::state() const 
 {
 	return d->mFilterModel.filter();
 }
-void KSysGuardProcessList::setStateInt(int state) {
+void KProcessListWidget::setStateInt(int state) {
 	setState((ProcessFilter::State) state);
 }
-void KSysGuardProcessList::setState(ProcessFilter::State state)
+void KProcessListWidget::setState(ProcessFilter::State state)
 {  //index is the item the user selected in the combo box
 	d->mFilterModel.setFilter(state);
 	d->mModel.setSimpleMode( (state != ProcessFilter::AllProcessesInTreeForm) );
 	d->mUi->cmbFilter->setCurrentIndex( (int)state);
 }
-void KSysGuardProcessList::currentRowChanged(const QModelIndex &current)
+void KProcessListWidget::currentRowChanged(const QModelIndex &current)
 {
 	d->mUi->btnKillProcess->setEnabled(current.isValid());
 }
-void KSysGuardProcessList::showProcessContextMenu(const QPoint &point){
+void KProcessListWidget::showProcessContextMenu(const QPoint &point){
 	d->mProcessContextMenu->clear();
 
 	QModelIndexList selectedIndexes = d->mUi->treeView->selectionModel()->selectedRows();
@@ -313,7 +313,7 @@ void KSysGuardProcessList::showProcessContextMenu(const QPoint &point){
 	}
 }
 
-void KSysGuardProcessList::selectAndJumpToProcess(int pid) {
+void KProcessListWidget::selectAndJumpToProcess(int pid) {
 	KSysGuard::Process *process = d->mModel.getProcess(pid);
 	if(!process) return;
 	QModelIndex filterIndex = d->mFilterModel.mapFromSource( d->mModel.getQModelIndex(process, 0));
@@ -323,7 +323,7 @@ void KSysGuardProcessList::selectAndJumpToProcess(int pid) {
 	
 }
 
-void KSysGuardProcessList::showColumnContextMenu(const QPoint &point){
+void KProcessListWidget::showColumnContextMenu(const QPoint &point){
 	QMenu *menu = new QMenu();
 	
 	QAction *action;
@@ -414,7 +414,7 @@ void KSysGuardProcessList::showColumnContextMenu(const QPoint &point){
 	menu->deleteLater();	
 }
 
-void KSysGuardProcessList::expandAllChildren(const QModelIndex &parent) 
+void KProcessListWidget::expandAllChildren(const QModelIndex &parent) 
 {
 	//This is called when the user expands a node.  This then expands all of its 
 	//children.  This will trigger this function again recursively.
@@ -424,7 +424,7 @@ void KSysGuardProcessList::expandAllChildren(const QModelIndex &parent)
 	}
 }
 
-void KSysGuardProcessList::expandInit()
+void KProcessListWidget::expandInit()
 {
 	//When we expand the items, make sure we don't call our expand all children function
 	disconnect(d->mUi->treeView, SIGNAL(expanded(const QModelIndex &)), this, SLOT(expandAllChildren(const QModelIndex &)));
@@ -432,14 +432,14 @@ void KSysGuardProcessList::expandInit()
 	connect(d->mUi->treeView, SIGNAL(expanded(const QModelIndex &)), this, SLOT(expandAllChildren(const QModelIndex &)));
 }
 
-void KSysGuardProcessList::hideEvent ( QHideEvent * event )  //virtual protected from QWidget
+void KProcessListWidget::hideEvent ( QHideEvent * event )  //virtual protected from QWidget
 {
 	//Stop updating the process list if we are hidden
 	d->mUpdateTimer->stop();
 	QWidget::hideEvent(event);
 }
 
-void KSysGuardProcessList::showEvent ( QShowEvent * event )  //virtual protected from QWidget
+void KProcessListWidget::showEvent ( QShowEvent * event )  //virtual protected from QWidget
 {
 	//Start updating the process list again if we are shown again
 	if(!d->mUpdateTimer->isActive()) {
@@ -449,7 +449,7 @@ void KSysGuardProcessList::showEvent ( QShowEvent * event )  //virtual protected
 	QWidget::showEvent(event);
 }
 
-void KSysGuardProcessList::changeEvent( QEvent * event ) 
+void KProcessListWidget::changeEvent( QEvent * event ) 
 {
 	if (event->type() == QEvent::LanguageChange) {
 		d->mModel.retranslateUi();
@@ -459,7 +459,7 @@ void KSysGuardProcessList::changeEvent( QEvent * event )
 	QWidget::changeEvent(event);
 }
 
-void KSysGuardProcessList::retranslateUi()
+void KProcessListWidget::retranslateUi()
 {
 	d->mUi->cmbFilter->setItemIcon(ProcessFilter::AllProcesses, KIcon("view-process-all"));
 	d->mUi->cmbFilter->setItemIcon(ProcessFilter::AllProcessesInTreeForm, KIcon("view-process-all-tree"));
@@ -468,7 +468,7 @@ void KSysGuardProcessList::retranslateUi()
 	d->mUi->cmbFilter->setItemIcon(ProcessFilter::OwnProcesses, KIcon("view-process-own"));
 }
 
-void KSysGuardProcessList::updateList()
+void KProcessListWidget::updateList()
 {
 	if(isVisible()) {
 		d->mModel.update(d->mUpdateIntervalMSecs);
@@ -476,18 +476,18 @@ void KSysGuardProcessList::updateList()
 	}
 }
 
-int KSysGuardProcessList::updateIntervalMSecs() const 
+int KProcessListWidget::updateIntervalMSecs() const 
 {
 	return d->mUpdateIntervalMSecs;
 }	
 
-void KSysGuardProcessList::setUpdateIntervalMSecs(int intervalMSecs) 
+void KProcessListWidget::setUpdateIntervalMSecs(int intervalMSecs) 
 {
 	d->mUpdateIntervalMSecs = intervalMSecs;
 	d->mUpdateTimer->setInterval(d->mUpdateIntervalMSecs);
 }
 
-bool KSysGuardProcessList::reniceProcesses(const QList<long long> &pids, int niceValue)
+bool KProcessListWidget::reniceProcesses(const QList<long long> &pids, int niceValue)
 {
 	QList< long long> unreniced_pids;
         for (int i = 0; i < pids.size(); ++i) {
@@ -513,7 +513,7 @@ bool KSysGuardProcessList::reniceProcesses(const QList<long long> &pids, int nic
 	return true; //No way to tell if it was successful :(
 }
 
-QList<KSysGuard::Process *> KSysGuardProcessList::selectedProcesses() const
+QList<KSysGuard::Process *> KProcessListWidget::selectedProcesses() const
 {
 	QList<KSysGuard::Process *> processes;
 	QModelIndexList selectedIndexes = d->mUi->treeView->selectionModel()->selectedRows();
@@ -525,7 +525,7 @@ QList<KSysGuard::Process *> KSysGuardProcessList::selectedProcesses() const
 
 }
 
-void KSysGuardProcessList::reniceSelectedProcesses()
+void KProcessListWidget::reniceSelectedProcesses()
 {
 	QList<KSysGuard::Process *> processes = selectedProcesses();
 	QStringList selectedAsStrings;
@@ -630,7 +630,7 @@ void KSysGuardProcessList::reniceSelectedProcesses()
 	updateList();
 }
 
-bool KSysGuardProcessList::changeIoScheduler(const QList< long long> &pids, KSysGuard::Process::IoPriorityClass newIoSched, int newIoSchedPriority)
+bool KProcessListWidget::changeIoScheduler(const QList< long long> &pids, KSysGuard::Process::IoPriorityClass newIoSched, int newIoSchedPriority)
 {
 	if(newIoSched == KSysGuard::Process::None) newIoSched = KSysGuard::Process::BestEffort;
 	if(newIoSched == KSysGuard::Process::Idle) newIoSchedPriority = 0;
@@ -676,7 +676,7 @@ bool KSysGuardProcessList::changeIoScheduler(const QList< long long> &pids, KSys
 	return true;  //assume it ran successfully :(  We cannot seem to actually check if it did.  There must be a better solution
 }
 
-bool KSysGuardProcessList::changeCpuScheduler(const QList< long long> &pids, KSysGuard::Process::Scheduler newCpuSched, int newCpuSchedPriority)
+bool KProcessListWidget::changeCpuScheduler(const QList< long long> &pids, KSysGuard::Process::Scheduler newCpuSched, int newCpuSchedPriority)
 {
 	if(newCpuSched == KSysGuard::Process::Other || newCpuSched == KSysGuard::Process::Batch) newCpuSchedPriority = 0;
 	QList< long long> unchanged_pids;
@@ -692,7 +692,7 @@ bool KSysGuardProcessList::changeCpuScheduler(const QList< long long> &pids, KSy
 	return false;  //TODO Must implement some form of kdesu or something
 }
 
-bool KSysGuardProcessList::killProcesses(const QList< long long> &pids, int sig)
+bool KProcessListWidget::killProcesses(const QList< long long> &pids, int sig)
 {
 	QList< long long> unkilled_pids;
         for (int i = 0; i < pids.size(); ++i) {
@@ -722,7 +722,7 @@ bool KSysGuardProcessList::killProcesses(const QList< long long> &pids, int sig)
 	return true;  //assume it ran successfully :(  We cannot seem to actually check if it did.  There must be a better solution
 
 }
-void KSysGuardProcessList::killSelectedProcesses()
+void KProcessListWidget::killSelectedProcesses()
 {
 	QModelIndexList selectedIndexes = d->mUi->treeView->selectionModel()->selectedRows();
 	QStringList selectedAsStrings;
@@ -765,39 +765,39 @@ void KSysGuardProcessList::killSelectedProcesses()
 	updateList();
 }
 
-void KSysGuardProcessList::reniceFailed()
+void KProcessListWidget::reniceFailed()
 {
 	KMessageBox::sorry(this, i18n("You do not have the permission to renice the process and there "
 					"was a problem trying to run as root"));
 }
-void KSysGuardProcessList::killFailed()
+void KProcessListWidget::killFailed()
 {
 	KMessageBox::sorry(this, i18n("You do not have the permission to kill the process and there "
 					"was a problem trying to run as root"));
 }
-void KSysGuardProcessList::ioniceFailed()
+void KProcessListWidget::ioniceFailed()
 {
 	KMessageBox::sorry(this, i18n("You do not have the permission to set the I/O priority and there "
 					"was a problem trying to run as root"));
 }
-bool KSysGuardProcessList::showTotals() const {
+bool KProcessListWidget::showTotals() const {
 	return d->mModel.showTotals();
 }
 
-void KSysGuardProcessList::setShowTotals(bool showTotals)  //slot
+void KProcessListWidget::setShowTotals(bool showTotals)  //slot
 {
 	d->mModel.setShowTotals(showTotals);
 }
 
-ProcessModel::Units KSysGuardProcessList::units() const {
+ProcessModel::Units KProcessListWidget::units() const {
 	return d->mModel.units();
 }
 
-void KSysGuardProcessList::setUnits(ProcessModel::Units unit) {
+void KProcessListWidget::setUnits(ProcessModel::Units unit) {
 	d->mModel.setUnits(unit);
 }
 
-void KSysGuardProcessList::saveSettings(KConfigGroup &cg) {
+void KProcessListWidget::saveSettings(KConfigGroup &cg) {
 	cg.writeEntry("units", (int)(units()));
 	cg.writeEntry("showTotals", showTotals());
 	cg.writeEntry("filterState", (int)(state()));
@@ -805,7 +805,7 @@ void KSysGuardProcessList::saveSettings(KConfigGroup &cg) {
 	cg.writeEntry("headerState", d->mUi->treeView->header()->saveState());
 }
 
-void KSysGuardProcessList::loadSettings(const KConfigGroup &cg) {
+void KProcessListWidget::loadSettings(const KConfigGroup &cg) {
 	setUnits((ProcessModel::Units) cg.readEntry("units", (int)ProcessModel::UnitsKB));
 	setShowTotals(cg.readEntry("showTotals", true));
 	setStateInt(cg.readEntry("filterState", (int)ProcessFilter::AllProcesses));
