@@ -45,8 +45,9 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     m_layout->setMargin(0);
     m_layout->setSpacing(0);
     m_label=new Plasma::Label(this);
-    m_label->setText(i18n("Welcome to Device Notifier"));
-    m_label->setPen(QPen(Qt::white));    
+    m_label->setText(i18n("Welcome to Device Notifier \n Plug a device to test"));
+    m_label->setPen(QPen(Qt::white));  
+	m_layout->addItem(m_label);
 
     m_time=5;
     m_height=150;
@@ -77,12 +78,7 @@ void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
     Q_UNUSED(option);
     Q_UNUSED(p);
     Q_UNUSED(contentsRect);
-    if(icon)
-    {
-	  m_layout->addItem(m_icon);
-    }
-    m_layout->addItem(m_label);
-    kDebug()<<"DeviceNotifier:: geometry "<<geometry().width();
+  	kDebug()<<"DeviceNotifier:: geometry "<<geometry().width();
     //hide();
 }
 
@@ -120,19 +116,23 @@ void DeviceNotifier::updated(const QString &source, Plasma::DataEngine::Data dat
 
 		if(first)
 		{
-		  origin_size=geometry();
-		  first=false;
- 		  m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
+			origin_size=geometry();
+			first=false;
+			m_layout->removeItem(m_label);
+			m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
 		}
 
 		m_icon->setIcon(KIcon(icon_temp));
-
+		m_layout->addItem(m_icon);
+		
 		icon = true;
 
 		device_name=i18n("A new device has been detected: \n");
 		device_name+=data["text"].toString();
 		m_label->setPen(QPen(Qt::white));
 		m_label->setText(device_name);
+		m_layout->addItem(m_label);
+
 		float size_h=0.0;
 		float size_w=0.0;
 		size_h+=m_icon->iconSize().height();
