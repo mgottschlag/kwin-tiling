@@ -114,10 +114,8 @@ void Clock::showConfigurationInterface()
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
-
-        ui.timeZones->setSelected(m_timezone, true);
     }
-
+    ui.timeZones->setSelected(m_timezone, true);
     m_dialog->show();
 }
 
