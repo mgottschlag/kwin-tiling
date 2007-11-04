@@ -257,11 +257,7 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
 
   /* export widget style */
   kglobals.changeGroup("General");
-#ifdef __GNUC__
-#warning FIXME KDE4: need replacement for defaultStyle()
-#endif
-  // KStyle::defaultStyle()
-  QString style = kglobals.readEntry("widgetStyle", "plastique" );
+  QString style = kglobals.readEntry("widgetStyle", KStyle::defaultStyle());
   if (!style.isEmpty())
     settings.setValue("/qt/style", style);
 

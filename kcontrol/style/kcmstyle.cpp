@@ -704,11 +704,9 @@ void KCMStyle::defaults()
 	int item = 0;
 	bool found;
 
-	found = findStyle( "plastique", item ); //### KStyle::defaultStyle()
+	found = findStyle( KStyle::defaultStyle(), item );
 	if (!found)
-		found = findStyle( "highcolor", item );
-	if (!found)
-		found = findStyle( "default", item );
+		found = findStyle( "plastique", item );
 	if (!found)
 		found = findStyle( "windows", item );
 	if (!found)
@@ -835,7 +833,7 @@ void KCMStyle::loadStyle( KConfig& config )
 
 	// Find out which style is currently being used
 	KConfigGroup configGroup = config.group( "General" );
-	QString defaultStyle = "plastique"; //### KDE4: FIXME KStyle::defaultStyle();
+	QString defaultStyle = KStyle::defaultStyle();
 	QString cfgStyle = configGroup.readEntry( "widgetStyle", defaultStyle );
 
 	// Select the current style

@@ -324,10 +324,7 @@ QString KTheme::createYourself( bool pack )
 
     // 10. Widget style
     QDomElement widgetsElem = m_dom.createElement( "widgets" );
-#ifdef __GNUC__
-#warning "qt4: FIXME KStyle::defaultStyle();";
-#endif
-    widgetsElem.setAttribute( "name", globalConf->group("General").readEntry( "widgetStyle"/*,KStyle::defaultStyle()*/  ) );
+    widgetsElem.setAttribute( "name", globalConf->group("General").readEntry( "widgetStyle", KStyle::defaultStyle() ) );
     m_root.appendChild( widgetsElem );
 
     // 12.
