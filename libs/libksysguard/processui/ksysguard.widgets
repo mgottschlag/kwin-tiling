@@ -1,13 +1,12 @@
 [Global]
-PluginName=KProcessListWidgets
+PluginName=KSysGuardWidgets
 
 
-[KProcessListWidget]
+[KSysGuardProcessList]
 ToolTip=A list of processes (programs) running.
 WhatsThis=A widget for showing all the processes running along with their memory usage and other details.
-Group=Process List (KDE)
+Group=KSysGuard (KDE)
 ConstructorArgs=(parent)
 IncludeFile=ksysguardprocesslist.h
-Icon=utilities-system-monitor
 
 
