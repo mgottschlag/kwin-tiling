@@ -36,11 +36,17 @@ class ReniceDlg : public KDialog
 	Q_OBJECT
 
 public:
-	ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, int currentIoPrio, int currentIoSched, const QStringList& processes);
+	/** Let the user specify the new priorities of the @p processes given, using the given current values.
+	 *  @p currentCpuSched The current Cpu Scheduler of the processes.  Set to -1 to they have different schedulers
+	 *  @p currentIoSched The current I/O Scheduler of the processes.  Set to -1 to they have different schedulers.  Leave as the default -2 if not supported
+	 */
+	ReniceDlg(QWidget* parent, const QStringList& processes, int currentCpuPrio, int currentCpuSched, int currentIoPrio=-2, int currentIoSched=-2);
 	int newCPUPriority;
 	int newIOPriority;
 	int newCPUSched;
 	int newIOSched;
+
+	bool ioniceSupported;
 
 
 public Q_SLOTS:

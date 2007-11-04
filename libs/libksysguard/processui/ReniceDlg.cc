@@ -30,7 +30,7 @@
 #include "ui_ReniceDlgUi.h"
 #include "processcore/process.h"
 
-ReniceDlg::ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, int currentIoPrio, int currentIoSched, const QStringList& processes)
+ReniceDlg::ReniceDlg(QWidget* parent, const QStringList& processes, int currentCpuPrio, int currentCpuSched, int currentIoPrio, int currentIoSched )
 	: KDialog( parent )
 {
 	setObjectName( "Renice Dialog" );
@@ -50,13 +50,16 @@ ReniceDlg::ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, i
 		// Unfortunately, in linux you can't ever set a process back to being None.  So we fake it :)
 		currentIoSched = KSysGuard::Process::None;
 	}
+	ioniceSupported = (currentIoPrio != -2);
+
 
 	QWidget *widget = new QWidget(this);
 	setMainWidget(widget);
 	ui = new Ui_ReniceDlgUi();
 	ui->setupUi(widget);
 	ui->listWidget->insertItems(0, processes);
-	ui->sliderIO->setValue(7- currentIoPrio);
+	if(ioniceSupported)
+		ui->sliderIO->setValue(7- currentIoPrio);
 	if(currentCpuSched == (int)KSysGuard::Process::Other || currentCpuSched == (int)KSysGuard::Process::Batch || currentCpuSched <= 0)
 		ui->sliderCPU->setValue(-currentCpuPrio);
 	else
@@ -94,7 +97,6 @@ ReniceDlg::ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, i
 
 	connect(cpuScheduler, SIGNAL(buttonClicked(int)), this, SLOT(updateUi()));
 	connect(ioScheduler, SIGNAL(buttonClicked(int)), this, SLOT(updateUi()));
-//	connect(ui->sliderCPU, SIGNAL(sliderMoved(int)), this, SLOT(cpuSliderChanged(int)));
 	connect(ui->sliderCPU, SIGNAL(valueChanged(int)), this, SLOT(cpuSliderChanged(int)));
 	
 	updateUi();
@@ -108,7 +110,7 @@ void ReniceDlg::cpuSliderChanged(int value) {
 
 void ReniceDlg::updateUi() {
 	bool cpuPrioEnabled = ( cpuScheduler->checkedId() != -1);
-	bool ioPrioEnabled = ( ioScheduler->checkedId() != -1 && ioScheduler->checkedId() != (int)KSysGuard::Process::Idle && ioScheduler->checkedId() != (int)KSysGuard::Process::None);
+	bool ioPrioEnabled = ( ioniceSupported && ioScheduler->checkedId() != -1 && ioScheduler->checkedId() != (int)KSysGuard::Process::Idle && ioScheduler->checkedId() != (int)KSysGuard::Process::None);
 
 	ui->sliderCPU->setEnabled(cpuPrioEnabled);
 	ui->lblCpuLow->setEnabled(cpuPrioEnabled);

@@ -26,6 +26,7 @@
 #include <kapplication.h>
 #include "ProcessModel.h"
 #include "ProcessFilter.h"
+#include "processcore/processes.h"
 
 class QShowEvent;
 class QHideEvent;
@@ -95,15 +96,23 @@ public Q_SLOTS:
 	/** Send a signal to a list of given processes.
 	 *   @p pids A list of PIDs that should be sent the signal 
 	 *   @p sig  The signal to send. 
-	 *   @return Whether the kill went ahead - false if the user cancelled or it stopped for some other reason
+	 *   @return Whether the kill went ahead. True if successful or user cancelled.  False if there was a problem
 	 */
 	bool killProcesses(const QList< long long> &pids, int sig);
 
 	/** Renice all the processes that the user has selected.  Pops up a dialog box to ask for the nice value and confirm */
 	void reniceSelectedProcesses();
 	
-	/** Renice the processes given to the given niceValue. */ 
-	void reniceProcesses(const QList<long long> &pids, int niceValue);
+	/** Change the CPU scheduler for the given of processes to the given scheduler, with the given scheduler priority.
+	 *  If the scheduler is Other or Batch, @p newCpuSchedPriority is ignored.
+	 *   @return Whether the cpu scheduler changing went ahead.  True if successful or user cancelled.  False if there was a problem
+	 */
+	bool changeCpuScheduler(const QList< long long> &pids, KSysGuard::Process::Scheduler newCpuSched, int newCpuSchedPriority);
+
+	/** Renice the processes given to the given niceValue. 
+	 *   @return Whether the kill went ahead.  True if successful or user cancelled.  False if there was a problem
+	 * */ 
+	bool reniceProcesses(const QList<long long> &pids, int niceValue);
 
 	/** Fetch new process information and redraw the display */
 	void updateList();

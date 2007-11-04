@@ -48,7 +48,6 @@
 #include "ksysguardprocesslist.h"
 #include "ReniceDlg.h"
 #include "ui_ProcessWidgetUI.h"
-#include "processcore/processes.h"
 
 
 //Trolltech have a testing class for classes that inherit QAbstractItemModel.  If you want to run with this run-time testing enabled, put the modeltest.* files in this directory and uncomment the next line
@@ -488,7 +487,7 @@ void KSysGuardProcessList::setUpdateIntervalMSecs(int intervalMSecs)
 	d->mUpdateTimer->setInterval(d->mUpdateIntervalMSecs);
 }
 
-void KSysGuardProcessList::reniceProcesses(const QList<long long> &pids, int niceValue)
+bool KSysGuardProcessList::reniceProcesses(const QList<long long> &pids, int niceValue)
 {
 	QList< long long> unreniced_pids;
         for (int i = 0; i < pids.size(); ++i) {
@@ -497,8 +496,8 @@ void KSysGuardProcessList::reniceProcesses(const QList<long long> &pids, int nic
 			unreniced_pids << pids.at(i);
 		}
 	}
-	if(unreniced_pids.isEmpty()) return; //All processes were reniced successfully
-	if(!d->mModel.isLocalhost()) return; //We can't use kdesu to renice non-localhost processes
+	if(unreniced_pids.isEmpty()) return true; //All processes were reniced successfully
+	if(!d->mModel.isLocalhost()) return false; //We can't use kdesu to renice non-localhost processes
 	
 	QStringList arguments;
 	arguments << "--" << "renice" << QString::number(niceValue);
@@ -511,6 +510,7 @@ void KSysGuardProcessList::reniceProcesses(const QList<long long> &pids, int nic
 	connect(reniceProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(reniceFailed()));
 	connect(reniceProcess, SIGNAL(finished( int, QProcess::ExitStatus) ), this, SLOT(updateList()));
 	reniceProcess->start("kdesu", arguments);
+	return true; //No way to tell if it was successful :(
 }
 
 QList<KSysGuard::Process *> KSysGuardProcessList::selectedProcesses() const
@@ -529,7 +529,6 @@ void KSysGuardProcessList::reniceSelectedProcesses()
 {
 	QList<KSysGuard::Process *> processes = selectedProcesses();
 	QStringList selectedAsStrings;
-	QList< long long> selectedPids;
 	
 	if (processes.isEmpty())
 	{
@@ -540,7 +539,6 @@ void KSysGuardProcessList::reniceSelectedProcesses()
 	int sched = -2;
 	int iosched = -2;
 	foreach(KSysGuard::Process *process, processes) {
-		selectedPids << process->pid;
 		selectedAsStrings << d->mModel.getStringForProcess(process);
 		if(sched == -2) sched = (int)process->scheduler;
 		else if(sched != -1 && sched == (int)process->scheduler) sched = -1;  //If two processes have different schedulers, disable the cpu scheduler stuff
@@ -552,14 +550,67 @@ void KSysGuardProcessList::reniceSelectedProcesses()
 	int firstPriority = processes.first()->niceLevel;
 	int firstIOPriority = processes.first()->ioniceLevel;
 
-	ReniceDlg reniceDlg(d->mUi->treeView, firstPriority, sched, firstIOPriority, iosched, selectedAsStrings);
+	bool supportsIoNice = d->mModel.processController()->supportsIoNiceness();
+	if(!supportsIoNice) { iosched = -2; firstIOPriority = -2; }
+	ReniceDlg reniceDlg(d->mUi->treeView, selectedAsStrings, firstPriority, sched, firstIOPriority, iosched);
 	if(reniceDlg.exec() == QDialog::Rejected) return;
-	int newCPUPriority = reniceDlg.newCPUPriority;
-//	Q_ASSERT(newCPUPriority <= 19 && newCPUPriority >= -20); 
 
-	Q_ASSERT(selectedPids.size() == selectedAsStrings.size());
-//	reniceProcesses(selectedPids, newCPUPriority);
+	QList<long long> renicePids;
+	QList<long long> changeCPUSchedulerPids;
+	foreach(KSysGuard::Process *process, processes) {
+		switch(reniceDlg.newCPUSched) {
+			case -2:
+			case -1:  //Invalid, not changed etc.
+				break;  //So do nothing
+			case KSysGuard::Process::Other:
+			case KSysGuard::Process::Fifo:
+				if(reniceDlg.newCPUSched != (int)process->scheduler) {
+					changeCPUSchedulerPids << process->pid;
+					renicePids << process->pid;
+				} else if(reniceDlg.newCPUPriority != process->niceLevel)
+					renicePids << process->pid;
+				break;
+
+			case KSysGuard::Process::RoundRobin:
+			case KSysGuard::Process::Batch:
+				if(reniceDlg.newCPUSched != (int)process->scheduler || reniceDlg.newCPUPriority != process->niceLevel) {
+					changeCPUSchedulerPids << process->pid;
+				}
+				break;
+		}
+	}
+	if(!changeCPUSchedulerPids.isEmpty()) {
+		Q_ASSERT(reniceDlg.newCPUSched >= 0);
+		if(!changeCpuScheduler(changeCPUSchedulerPids, (KSysGuard::Process::Scheduler) reniceDlg.newCPUSched, reniceDlg.newCPUPriority)) {
+			KMessageBox::sorry(this, i18n("You do not have sufficient privillages to change the CPU scheduler. Aborting."));
+			return;
+		}
+
+	}
+	if(!renicePids.isEmpty()) {
+		Q_ASSERT(reniceDlg.newCPUPriority <= 20 && reniceDlg.newCPUPriority >= -20); 
+		if(!reniceProcesses(renicePids, reniceDlg.newCPUPriority)) {
+			KMessageBox::sorry(this, i18n("You do not have sufficient privillages to change the CPU priority.  Aborting"));
+			return;
+		}
+	}
 	updateList();
+}
+
+bool KSysGuardProcessList::changeCpuScheduler(const QList< long long> &pids, KSysGuard::Process::Scheduler newCpuSched, int newCpuSchedPriority)
+{
+	if(newCpuSched == KSysGuard::Process::Other || newCpuSched == KSysGuard::Process::Batch) newCpuSchedPriority = 0;
+	QList< long long> unchanged_pids;
+        for (int i = 0; i < pids.size(); ++i) {
+		bool success = d->mModel.processController()->setScheduler(pids.at(i), newCpuSched, newCpuSchedPriority);
+		if(!success) {
+			unchanged_pids << pids.at(i);
+		}
+	}
+	if(unchanged_pids.isEmpty()) return true;
+	if(!d->mModel.isLocalhost()) return false; //We can't use kdesu to kill non-localhost processes
+
+	return false;  //TODO Must implement some form of kdesu or something
 }
 
 bool KSysGuardProcessList::killProcesses(const QList< long long> &pids, int sig)
@@ -571,7 +622,7 @@ bool KSysGuardProcessList::killProcesses(const QList< long long> &pids, int sig)
 			unkilled_pids << pids.at(i);
 		}
 	}
-	if(unkilled_pids.isEmpty()) return false;
+	if(unkilled_pids.isEmpty()) return true;
 	if(!d->mModel.isLocalhost()) return false; //We can't use kdesu to kill non-localhost processes
 
 	//We must use kdesu to kill the process
