@@ -37,18 +37,21 @@ class ReniceDlg : public KDialog
 
 public:
 	ReniceDlg(QWidget* parent, int currentCpuPrio, int currentCpuSched, int currentIoPrio, int currentIoSched, const QStringList& processes);
-	int newPriority;
-	QButtonGroup *cpuScheduler;
-	QButtonGroup *ioScheduler;
+	int newCPUPriority;
+	int newIOPriority;
+	int newCPUSched;
+	int newIOSched;
+
 
 public Q_SLOTS:
 	void slotOk();
 	void updateUi();
 	void cpuSliderChanged(int value);
-	void cpuSpinChanged(int value);
 
 private:
 	Ui_ReniceDlgUi *ui;
+	QButtonGroup *cpuScheduler;
+	QButtonGroup *ioScheduler;
 };
 
 #endif

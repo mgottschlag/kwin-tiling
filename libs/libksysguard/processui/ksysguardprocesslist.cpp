@@ -554,11 +554,11 @@ void KSysGuardProcessList::reniceSelectedProcesses()
 
 	ReniceDlg reniceDlg(d->mUi->treeView, firstPriority, sched, firstIOPriority, iosched, selectedAsStrings);
 	if(reniceDlg.exec() == QDialog::Rejected) return;
-	int newPriority = reniceDlg.newPriority;
-	Q_ASSERT(newPriority <= 19 && newPriority >= -20); 
+	int newCPUPriority = reniceDlg.newCPUPriority;
+//	Q_ASSERT(newCPUPriority <= 19 && newCPUPriority >= -20); 
 
 	Q_ASSERT(selectedPids.size() == selectedAsStrings.size());
-	reniceProcesses(selectedPids, newPriority);
+//	reniceProcesses(selectedPids, newCPUPriority);
 	updateList();
 }
 

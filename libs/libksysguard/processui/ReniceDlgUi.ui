@@ -232,6 +232,26 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
+        <widget class="QRadioButton" name="radioIONormal" >
+         <property name="toolTip" >
+          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Processes priority is based on the CPU priority&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
+         <property name="whatsThis" >
+          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Normal Scheduling&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This is the same as &lt;span style=" font-weight:600;">Best Effort&lt;/span> scheduling, except that the priority is calculated automatically based on the CPU priority.  Processes with a higher priority will take priority for access to the hard disk.  Programs running at the same &lt;span style=" font-weight:600;">Best Effort/Normal&lt;/span> priority are served in a &lt;span style=" font-weight:600;">Round Robin&lt;/span> fashion.&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
+         <property name="text" >
+          <string>Normal</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QRadioButton" name="radioIdle" >
          <property name="toolTip" >
           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
@@ -243,11 +263,11 @@ p, li { white-space: pre-wrap; }
           <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Normal Scheduling &lt;/span>&lt;span style=" font-weight:600;">(Idle)&lt;/span>&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">A  program running with &lt;span style=" font-weight:600;">Normal&lt;/span> I/O priority will only get disk time when no other program has asked for disk I/O for a defined grace period. The impact of &lt;span style=" font-weight:600;">Normal&lt;/span> I/O processes on normal system activity should be zero. Priority is not applicable to this scheduling class.&lt;/p>&lt;/body>&lt;/html></string>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Idle Scheduling&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">A  program running with &lt;span style=" font-weight:600;">Idle&lt;/span> I/O priority will only get disk time when no other program has asked for disk I/O for a defined grace period. The impact of &lt;span style=" font-weight:600;">Idle&lt;/span> I/O processes on normal system activity should be zero. Priority is not applicable to this scheduling class.&lt;/p>&lt;/body>&lt;/html></string>
          </property>
          <property name="text" >
-          <string>Normal</string>
+          <string>Idle</string>
          </property>
         </widget>
        </item>
@@ -264,7 +284,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Best Effort Scheduling&lt;/span>&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Processes with a higher priority will take priority for access to the hard disk.  Programs running at the same &lt;span style=" font-weight:600;">Best Effort&lt;/span> priority are served in a &lt;span style=" font-weight:600;">Round Robin&lt;/span> fashion.&lt;/p>&lt;/body>&lt;/html></string>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Processes with a higher priority will take priority for access to the hard disk.  Programs running at the same &lt;span style=" font-weight:600;">Best Effort/Normal&lt;/span> priority are served in a &lt;span style=" font-weight:600;">Round Robin&lt;/span> fashion.&lt;/p>&lt;/body>&lt;/html></string>
          </property>
          <property name="text" >
           <string>Best Effort</string>
@@ -302,22 +322,6 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="tickPosition" >
           <enum>QSlider::TicksBelow</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="spinCPU" >
-         <property name="minimumSize" >
-          <size>
-           <width>65</width>
-           <height>23</height>
-          </size>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>65</width>
-           <height>23</height>
-          </size>
          </property>
         </widget>
        </item>
@@ -383,22 +387,6 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="spinIO" >
-         <property name="minimumSize" >
-          <size>
-           <width>65</width>
-           <height>23</height>
-          </size>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>65</width>
-           <height>23</height>
-          </size>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0" >
         <widget class="QLabel" name="lblIOLow" >
          <property name="text" >
@@ -410,6 +398,9 @@ p, li { white-space: pre-wrap; }
         <widget class="QLabel" name="lblIOHigh" >
          <property name="text" >
           <string>High Priority</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -424,38 +415,5 @@ p, li { white-space: pre-wrap; }
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>spinIO</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sliderIO</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>533</x>
-     <y>326</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>460</x>
-     <y>315</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sliderIO</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinIO</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>460</x>
-     <y>315</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>533</x>
-     <y>326</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
