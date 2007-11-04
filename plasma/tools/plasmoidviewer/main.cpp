@@ -70,27 +70,16 @@ int main(int argc, char **argv)
     corona.setBackgroundBrush( QPixmap( KStandardDirs::locate( "appdata", "checker.png" ) ) );
     Containment *containment = corona.addContainment( "null" );
 
-    Applet *applet = containment->addApplet( args->arg( 0 ) );
+    Applet *applet = containment->addApplet(args->arg(0), QVariantList(), 0, QRectF(0, 0, -1, -1));
+    applet->setFlag(QGraphicsItem::ItemIsMovable, false);
     if ( applet->failedToLaunch() ) {
-        // XXX Can we give a better error message somehow?
-        QMessageBox::critical( 0,
-                               i18n( "Failed to load applet" ),
-                               i18n( "The applet '%1' couldn't be loaded", args->arg( 0 ) ) );
-        return 1;
+        // TODO Can we give a better error message somehow?
+        applet->setFailedToLaunch(true,
+                                  i18n("The applet '%1' could not be loaded", args->arg(0)));
     }
 
-    // An Applet::setPosition call which takes the border width (if any) into
-    // account and then calls QGraphicsItem::setPos would be nice here.
-    const qreal borderWidth = ( applet->sizeHint().width() - applet->contentSizeHint().width() ) / 2;
-    applet->setPos( borderWidth, borderWidth );
-    applet->setFlag( QGraphicsItem::ItemIsMovable, false );
-
-    QGraphicsView view( &corona );
-    view.setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-    view.setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-    view.setAlignment( Qt::AlignLeft | Qt::AlignTop );
-    view.setSceneRect( 0, 0, applet->sizeHint().width(), applet->sizeHint().height() );
-    view.resize( view.sceneRect().size().toSize() );
+    FullView view(&corona);
+    view.setSceneRect(corona.sceneRect());
     view.setWindowTitle( applet->name() );
     view.setWindowIcon( SmallIcon( applet->icon() ) );
     view.show();
