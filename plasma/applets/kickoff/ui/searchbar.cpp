@@ -66,7 +66,7 @@ SearchBar::SearchBar(QWidget *parent)
     connect(d->editWidget,SIGNAL(textChanged(QString)),this,SIGNAL(startUpdateTimer()));
 
     QLabel *searchIcon = new QLabel(this);
-    searchIcon->setPixmap(KIcon("file-find").pixmap(32,32));
+    searchIcon->setPixmap(KIcon("system-search").pixmap(32,32));
 
     layout->addWidget(searchLabel);
     layout->addWidget(d->editWidget);
