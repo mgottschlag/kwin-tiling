@@ -128,11 +128,11 @@ void Clock::showConfigurationInterface() //TODO: Make the size settable
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
 
-        ui.timeZones->setSelected(m_timezone, true);
-        ui.spinSize->setValue((int)m_size.width());
-        ui.showTimeStringCheckBox->setChecked(m_showTimeString);
-        ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
     }
+    ui.timeZones->setSelected(m_timezone, true);
+    ui.spinSize->setValue((int)m_size.width());
+    ui.showTimeStringCheckBox->setChecked(m_showTimeString);
+    ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
     m_dialog->show();
 }
 
