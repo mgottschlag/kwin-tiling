@@ -196,7 +196,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_bitmapBackground(0),
       m_wallpaperPath(0)
 {
-    kDebug() << "!!! loading desktop";
+    //kDebug() << "!!! loading desktop";
 }
 
 DefaultDesktop::~DefaultDesktop()
@@ -208,10 +208,10 @@ void DefaultDesktop::init()
     KConfigGroup config(KGlobal::config(), "General");
     m_wallpaperPath = config.readEntry("wallpaper", KStandardDirs::locate("wallpaper", "plasma-default.png"));
 
-    kDebug() << "wallpaperPath is" << m_wallpaperPath << QFile::exists(m_wallpaperPath);
+    //kDebug() << "wallpaperPath is" << m_wallpaperPath << QFile::exists(m_wallpaperPath);
     if (m_wallpaperPath.isEmpty() ||
         !QFile::exists(m_wallpaperPath)) {
-        kDebug() << "SVG wallpaper!";
+        //kDebug() << "SVG wallpaper!";
         m_background = new Plasma::Svg("widgets/wallpaper", this);
     }
 
@@ -267,6 +267,7 @@ void DefaultDesktop::launchAppletBrowser()
     }
 
     KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
+    m_appletBrowser->move(QCursor::pos());
     m_appletBrowser->show();
     KWindowSystem::activateWindow(m_appletBrowser->winId());
 }
