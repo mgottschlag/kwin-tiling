@@ -100,4 +100,9 @@ bool SearchBar::eventFilter(QObject *watched,QEvent *event)
     return false; 
 }
 
+void SearchBar::clear()
+{
+    d->editWidget->clear();
+}
+
 #include "searchbar.moc"

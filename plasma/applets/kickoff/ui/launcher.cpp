@@ -223,7 +223,7 @@ public:
 
     Launcher * const q;
     UrlItemLauncher *urlLauncher;
-    QWidget *searchBar;
+    SearchBar *searchBar;
     QStackedWidget *contentArea;
     QTabBar *contentSwitcher;
     QAbstractItemView *searchView;
@@ -350,6 +350,10 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
         }   
         if (openIndex.isValid()) {
             d->urlLauncher->openItem(openIndex);
+            // Clear the search bar when enter was pressed
+            if (event->type() == QEvent::KeyPress) {
+                d->searchBar->clear();
+            }
             if (d->autoHide) {
                 hide();
             }

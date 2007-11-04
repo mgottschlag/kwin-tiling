@@ -35,6 +35,8 @@ public:
     virtual ~SearchBar();
 
     bool eventFilter(QObject *watched, QEvent *event);
+    
+    void clear();
 
 Q_SIGNALS:
     void queryChanged(const QString& newQuery);
