@@ -517,6 +517,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
   nameGroupKeyRc
     << i18n("General")        << "General"    << "font"         << ""
     << i18n("Fixed width")    << "General"    << "fixed"        << ""
+    << i18n("Small")          << "General"    << "smallestReadableFont" << ""
     << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
     << i18n("Menu")           << "General"    << "menuFont"     << ""
     << i18n("Window title")   << "WM"         << "activeFont"   << ""
@@ -525,27 +526,30 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
 
   QList<QFont> defaultFontList;
 
-  // Keep in sync with kdelibs/kdecore/kglobalsettings.cpp
+  // Keep in sync with kdelibs/kdeui/kernel/kglobalsettings.cpp
 
   QFont f0("Sans Serif", 10);
   QFont f1("Monospace", 10);
   QFont f2("Sans Serif", 10);
   QFont f3("Sans Serif", 9, QFont::Bold);
   QFont f4("Sans Serif", 10);
+  QFont f5("Sans Serif", 8); // smallestReadableFont
 
   f0.setPointSize(10);
   f1.setPointSize(10);
   f2.setPointSize(10);
   f3.setPointSize(9);
   f4.setPointSize(10);
+  f5.setPointSize(8);
 
-  defaultFontList << f0 << f1 << f2 << f0 << f3 << f4 << f0;
+  defaultFontList << f0 << f1 << f5 << f2 << f0 << f3 << f4 << f0;
 
   QList<bool> fixedList;
 
   fixedList
     <<  false
     <<  true
+    <<  false
     <<  false
     <<  false
     <<  false
@@ -557,6 +561,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
   quickHelpList
     << i18n("Used for normal text (e.g. button labels, list items).")
     << i18n("A non-proportional font (i.e. typewriter font).")
+    << i18n("Smallest font that is still readable well.")
     << i18n("Used to display text beside toolbar icons.")
     << i18n("Used by menu bars and popup menus.")
     << i18n("Used by the window titlebar.")
