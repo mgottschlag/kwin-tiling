@@ -25,6 +25,7 @@ install(TARGETS kfontprint_bin DESTINATION ${BIN_INSTALL_DIR} )
 install(TARGETS kfontview_bin DESTINATION ${BIN_INSTALL_DIR} )
 install(FILES kfontviewui.rc DESTINATION ${DATA_INSTALL_DIR}/kfontview )
 install(FILES kfontview.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
-install(FILES installfont.desktop DESTINATION ${DATA_INSTALL_DIR}/konqueror/servicemenus )
+install(FILES installfont.desktop DESTINATION
+${SERVICES_INSTALL_DIR}/ServiceMenus )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} )
