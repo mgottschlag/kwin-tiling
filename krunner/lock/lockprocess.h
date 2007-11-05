@@ -9,8 +9,6 @@
 #ifndef LOCKPROCESS_H
 #define LOCKPROCESS_H
 
-#include <kgreeterplugin.h>
-
 #include <K3Process>
 
 #include <QWidget>
@@ -24,6 +22,8 @@
 #include <fixx11h.h>
 
 class KLibrary;
+
+struct kgreeterplugin_info;
 
 struct GreeterPluginHandle {
     KLibrary *library;
