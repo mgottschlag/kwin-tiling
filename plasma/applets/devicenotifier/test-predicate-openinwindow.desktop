@@ -10,5 +10,6 @@ Name=open
 Name[nds]=Opmaken
 Name[pt]=abrir
 Name[pt_BR]=abrir
+Name[zh_CN]=打开
 Exec=dbus-launch dolphin
 
