@@ -392,8 +392,10 @@ AdvancedWidget::AdvancedWidget( QWidget *parent )
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    editListBox = new KEditListBox(i18n("D&isable Actions for Windows of Type WM_CLASS"), this, "editlistbox",
-                                   true, KEditListBox::Add | KEditListBox::Remove);
+    editListBox = new KEditListBox(i18n("D&isable Actions for Windows of Type WM_CLASS"), this);
+
+    editListBox->setButtons(KEditListBox::Add | KEditListBox::Remove);
+    editListBox->setCheckAtEntering(true);
 
     editListBox->setWhatsThis(i18n("<qt>This lets you specify windows in which Klipper should "
                                    "not invoke \"actions\". Use<br /><br />"
@@ -413,8 +415,7 @@ AdvancedWidget::~AdvancedWidget()
 
 void AdvancedWidget::setWMClasses( const QStringList& items )
 {
-    editListBox->clear();
-    editListBox->insertStringList( items );
+    editListBox->setItems(items);
 }
 
 #include "configdialog.moc"
