@@ -1,4 +1,4 @@
-include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcheckpass ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kdm )
+include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcheckpass ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kworkspace )
 
 add_definitions (-DQT3_SUPPORT)
 
