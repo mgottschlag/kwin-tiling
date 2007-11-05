@@ -349,7 +349,7 @@ void HalPower::computeAcAdapters()
     foreach (Solid::Device adapter, adapters)
     {
         m_acAdapters[adapter.udi()] = new Solid::Device(adapter);
-        connect(m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool)),
+        connect(m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool, const QString &)),
                  this, SLOT(slotPlugStateChanged(bool)));
 
         if (m_acAdapters[adapter.udi()]->as<Solid::AcAdapter>()!=0
@@ -373,7 +373,7 @@ void HalPower::computeBatteries()
     foreach (Solid::Device battery, batteries)
     {
         m_batteries[battery.udi()] = new Solid::Device(battery);
-        connect(m_batteries[battery.udi()]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int)),
+        connect(m_batteries[battery.udi()]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int, const QString &)),
                  this, SLOT(updateBatteryStats()));
     }
 
@@ -388,7 +388,7 @@ void HalPower::computeButtons()
     foreach (Solid::Device button, buttons)
     {
         m_buttons[button.udi()] = new Solid::Device(button);
-        connect(m_buttons[button.udi()]->as<Solid::Button>(), SIGNAL(pressed(Solid::Button::ButtonType)),
+        connect(m_buttons[button.udi()]->as<Solid::Button>(), SIGNAL(pressed(Solid::Button::ButtonType, const QString &)),
                  this, SLOT(slotButtonPressed(Solid::Button::ButtonType)));
     }
 }
@@ -464,7 +464,7 @@ void HalPower::slotNewDeviceInterface(const QString &udi, int type)
     {
     case Solid::DeviceInterface::AcAdapter:
         m_acAdapters[udi] = new Solid::Device(udi);
-        connect(m_acAdapters[udi]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool)),
+        connect(m_acAdapters[udi]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool, const QString &)),
                  this, SLOT(slotPlugStateChanged(bool)));
 
         if (m_acAdapters[udi]->as<Solid::AcAdapter>()!=0
@@ -475,12 +475,12 @@ void HalPower::slotNewDeviceInterface(const QString &udi, int type)
         break;
     case Solid::DeviceInterface::Battery:
         m_batteries[udi] = new Solid::Device(udi);
-        connect(m_batteries[udi]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int)),
+        connect(m_batteries[udi]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int, const QString &)),
                  this, SLOT(updateBatteryStats()));
         break;
     case Solid::DeviceInterface::Button:
         m_buttons[udi] = new Solid::Device(udi);
-        connect(m_buttons[udi]->as<Solid::Button>(), SIGNAL(pressed(int)),
+        connect(m_buttons[udi]->as<Solid::Button>(), SIGNAL(pressed(int, const QString &)),
                  this, SLOT(slotButtonPressed(int)));
         break;
     default:

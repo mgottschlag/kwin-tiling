@@ -76,11 +76,11 @@ bool PowermanagementEngine::sourceRequested(const QString &name)
             } else {
                 kDebug() << "PMEngine::Primary battery found.";
 
-                connect(m_battery, SIGNAL(chargeStateChanged(int)), this,
+                connect(m_battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
                         SLOT(updateBatteryChargeState(int)));
-                connect(m_battery, SIGNAL(chargePercentChanged(int)), this,
+                connect(m_battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
                         SLOT(updateBatteryChargePercent(int)));
-                connect(m_battery, SIGNAL(plugStateChanged(bool)), this,
+                connect(m_battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
                         SLOT(updateBatteryPlugState(bool)));
 
                 // Set initial values
@@ -96,7 +96,7 @@ bool PowermanagementEngine::sourceRequested(const QString &name)
         foreach (Solid::Device device_ac, list_ac) {
             m_acadapter = device_ac.as<Solid::AcAdapter>();
             updateAcPlugState(m_acadapter->isPlugged());
-            connect(m_acadapter, SIGNAL(plugStateChanged(bool)), this,
+            connect(m_acadapter, SIGNAL(plugStateChanged(bool, const QString &)), this,
                     SLOT(updateAcPlugState(bool)));
         }
 

@@ -976,21 +976,21 @@ bool SolidShell::hwVolumeCall(SolidShell::VolumeCallType type, const QString &ud
     {
     case Mount:
         connect(device.as<Solid::StorageAccess>(),
-                SIGNAL(setupDone(Solid::ErrorType, QVariant)),
+                SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
                 this,
                 SLOT(slotStorageResult(Solid::ErrorType, QVariant)));
         device.as<Solid::StorageAccess>()->setup();
         break;
     case Unmount:
         connect(device.as<Solid::StorageAccess>(),
-                SIGNAL(teardownDone(Solid::ErrorType, QVariant)),
+                SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
                 this,
                 SLOT(slotStorageResult(Solid::ErrorType, QVariant)));
         device.as<Solid::StorageAccess>()->teardown();
         break;
     case Eject:
         connect(device.as<Solid::OpticalDrive>(),
-                SIGNAL(ejectDone(Solid::ErrorType, QVariant)),
+                SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
                 this,
                 SLOT(slotStorageResult(Solid::ErrorType, QVariant)));
         device.as<Solid::OpticalDrive>()->eject();

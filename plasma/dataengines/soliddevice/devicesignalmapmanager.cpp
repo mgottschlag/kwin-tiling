@@ -35,7 +35,7 @@ void DeviceSignalMapManager::mapDevice(Solid::AcAdapter *ac, const QString &udi)
     }
     map = (AcAdapterSignalMapper*)signalmap[Solid::DeviceInterface::AcAdapter];
 
-    connect(ac, SIGNAL(plugStateChanged(bool)), map, SLOT(plugStateChanged(bool)));
+    connect(ac, SIGNAL(plugStateChanged(bool, const QString &)), map, SLOT(plugStateChanged(bool)));
     connect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
     map->setMapping(ac, udi);
 }
@@ -48,7 +48,7 @@ void DeviceSignalMapManager::mapDevice(Solid::Button *button, const QString &udi
     }
     map = (ButtonSignalMapper*)signalmap[Solid::DeviceInterface::Button];
 
-    connect(button, SIGNAL(pressed(Solid::Button::ButtonType)), map, SLOT(pressed(Solid::Button::ButtonType)));
+    connect(button, SIGNAL(pressed(Solid::Button::ButtonType, const QString &)), map, SLOT(pressed(Solid::Button::ButtonType)));
     connect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
     map->setMapping(button, udi);
 }
@@ -61,11 +61,11 @@ void DeviceSignalMapManager::mapDevice(Solid::Battery *battery, const QString &u
     }
     map = (BatterySignalMapper*)signalmap[Solid::DeviceInterface::Battery];
 
-    connect(battery, SIGNAL(chargePercentChanged(int)), map, SLOT(chargePercentChanged(int)));
+    connect(battery, SIGNAL(chargePercentChanged(int, const QString &)), map, SLOT(chargePercentChanged(int)));
     connect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
-    connect(battery, SIGNAL(chargeStateChanged(int)), map, SLOT(chargeStateChanged(int)));
+    connect(battery, SIGNAL(chargeStateChanged(int, const QString &)), map, SLOT(chargeStateChanged(int)));
     connect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
-    connect(battery, SIGNAL(plugStateChanged(bool)), map, SLOT(plugStateChanged(bool)));
+    connect(battery, SIGNAL(plugStateChanged(bool, const QString &)), map, SLOT(plugStateChanged(bool)));
     connect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
     map->setMapping(battery, udi);
 }
@@ -78,7 +78,7 @@ void DeviceSignalMapManager::mapDevice(Solid::StorageAccess *storageaccess, cons
     }
     map = (StorageAccessSignalMapper*)signalmap[Solid::DeviceInterface::StorageAccess];
 
-    connect(storageaccess, SIGNAL(chargePercentChanged(int)), map, SLOT(chargePercentChanged(int)));
+    connect(storageaccess, SIGNAL(accessibilityChanged(bool, const QString &)), map, SLOT(accessibilityChanged(bool)));
     connect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
     map->setMapping(storageaccess, udi);
 }
@@ -89,7 +89,7 @@ void DeviceSignalMapManager::unmapDevice(Solid::AcAdapter *ac)
         return;
     }
     AcAdapterSignalMapper *map = (AcAdapterSignalMapper*)signalmap[Solid::DeviceInterface::AcAdapter];
-    disconnect(ac, SIGNAL(plugStateChanged(bool)), map, SLOT(plugStateChanged(bool)));
+    disconnect(ac, SIGNAL(plugStateChanged(bool, const QString &)), map, SLOT(plugStateChanged(bool)));
     disconnect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
 }
 
@@ -99,7 +99,7 @@ void DeviceSignalMapManager::unmapDevice(Solid::Button *button)
         return;
     }
     ButtonSignalMapper *map = (ButtonSignalMapper*)signalmap[Solid::DeviceInterface::Button];
-    disconnect(button, SIGNAL(pressed(Solid::Button::ButtonType)), map, SLOT(pressed(Solid::Button::ButtonType)));
+    disconnect(button, SIGNAL(pressed(Solid::Button::ButtonType, const QString &)), map, SLOT(pressed(Solid::Button::ButtonType)));
     disconnect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
 }
 
@@ -109,11 +109,11 @@ void DeviceSignalMapManager::unmapDevice(Solid::Battery *battery)
         return;
     }
     BatterySignalMapper *map = (BatterySignalMapper*)signalmap[Solid::DeviceInterface::Battery];
-    disconnect(battery, SIGNAL(chargePercentChanged(int)), map, SLOT(chargePercentChanged(int)));
+    disconnect(battery, SIGNAL(chargePercentChanged(int, const QString &)), map, SLOT(chargePercentChanged(int)));
     disconnect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
-    disconnect(battery, SIGNAL(chargeStateChanged(int)), map, SLOT(chargeStateChanged(int)));
+    disconnect(battery, SIGNAL(chargeStateChanged(int, const QString &)), map, SLOT(chargeStateChanged(int)));
     disconnect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
-    disconnect(battery, SIGNAL(plugStateChanged(bool)), map, SLOT(plugStateChanged(bool)));
+    disconnect(battery, SIGNAL(plugStateChanged(bool, const QString &)), map, SLOT(plugStateChanged(bool)));
     disconnect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
 }
 
@@ -123,7 +123,7 @@ void DeviceSignalMapManager::unmapDevice(Solid::StorageAccess *storageaccess)
         return;
     }
     StorageAccessSignalMapper *map = (StorageAccessSignalMapper*)signalmap[Solid::DeviceInterface::StorageAccess];
-    disconnect(storageaccess, SIGNAL(chargePercentChanged(int)), map, SLOT(chargePercentChanged(int)));
+    disconnect(storageaccess, SIGNAL(accessibilityChanged(bool, const QString &)), map, SLOT(accessibilityChanged(bool)));
     disconnect(map, SIGNAL(deviceChanged(const QString&, const QString &, QVariant)), user, SLOT(deviceChanged(const QString&, const QString &, QVariant)));
 }
 
