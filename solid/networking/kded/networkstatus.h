@@ -34,7 +34,7 @@ class NetworkStatusModule : public KDEDModule
 Q_OBJECT
 Q_CLASSINFO( "D-Bus Interface", "org.kde.Solid.Networking" )
 public:
-    NetworkStatusModule();
+    NetworkStatusModule(QObject* parent, const QList<QVariant>&);
     ~NetworkStatusModule();
     // Client interface
 public Q_SLOTS:

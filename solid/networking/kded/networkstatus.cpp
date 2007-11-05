@@ -23,7 +23,6 @@
 
 #include <QMap>
 
-#include <KApplication>
 #include <KDebug>
 
 #include "network.h"
@@ -31,12 +30,13 @@
 #include "serviceadaptor.h"
 #include "networkstatus.h"
 
-extern "C" {
-    KDE_EXPORT KDEDModule* create_networkstatus()
-    {
-        return new NetworkStatusModule();
-    }
-}
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
+K_PLUGIN_FACTORY(NetworkStatusFactory,
+                 registerPlugin<NetworkStatusModule>();
+    )
+K_EXPORT_PLUGIN(NetworkStatusFactory("networkstatus"))
 
 // INTERNALLY USED STRUCTS AND TYPEDEFS
 
@@ -59,7 +59,8 @@ public:
 
 // CTORS/DTORS
 
-NetworkStatusModule::NetworkStatusModule() : KDEDModule(), d( new Private )
+NetworkStatusModule::NetworkStatusModule(QObject* parent, const QList<QVariant>&)
+    : KDEDModule(parent), d( new Private )
 {
     new ClientAdaptor( this );
     new ServiceAdaptor( this );

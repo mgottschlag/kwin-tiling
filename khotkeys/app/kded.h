@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #ifndef _KHOTKEYS_KDED_H_
@@ -27,9 +27,9 @@ class KHotKeysModule
     Q_OBJECT
     public Q_SLOTS:
         Q_NOREPLY void reread_configuration();
-        Q_NOREPLY void quit(); 
+        Q_NOREPLY void quit();
     public:
-        KHotKeysModule( );
+        KHotKeysModule(QObject* parent, const QList<QVariant>&);
         virtual ~KHotKeysModule();
     private:
         Action_data_group* actions_root;

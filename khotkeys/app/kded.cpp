@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _KHOTKEYS_KDED_CPP_
@@ -14,16 +14,16 @@
 
 #include "kded.h"
 
-#include <kcmdlineargs.h>
-#include <kconfig.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 #include <klocale.h>
-#include <kapplication.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 #include <X11/Xlib.h>
+#include <fixx11h.h>
 
 #include <settings.h>
 #include <input.h>
@@ -31,19 +31,18 @@
 #include <gestures.h>
 #include <voices.h>
 
-extern "C" 
-KDE_EXPORT KDEDModule *create_khotkeys( )
-    {
-    return new KHotKeys::KHotKeysModule( );
-    }
+K_PLUGIN_FACTORY(KHotKeysModuleFactory,
+                 registerPlugin<KHotKeys::KHotKeysModule>();
+    )
+K_EXPORT_PLUGIN(KHotKeysModuleFactory("khotkeys"))
 
 namespace KHotKeys
 {
 
 // KhotKeysModule
 
-KHotKeysModule::KHotKeysModule( )
-    : KDEDModule( )
+KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
+    : KDEDModule(parent)
     {
     for( int i = 0;
          i < 5;
