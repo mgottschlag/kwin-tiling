@@ -108,6 +108,7 @@ protected Q_SLOTS:
     void runCommand();
     void lockScreen();
     void logout();
+    void appletBrowserDestroyed();
 
 private:
     QAction *m_appletBrowserAction;

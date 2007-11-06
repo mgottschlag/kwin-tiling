@@ -21,6 +21,8 @@
 #include <QAction>
 #include <QDesktopWidget>
 #include <QFile>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QPainter>
 #include <QTimeLine>
 
@@ -125,6 +127,7 @@ void ToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
     m_showing = true;
     m_animId = phase->customAnimation(m_size, 150, Plasma::Phase::EaseInCurve, this, "animate");
+    QGraphicsItem::hoverEnterEvent(event);
 }
 
 void ToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -144,6 +147,7 @@ void ToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
     m_showing = false;
     m_animId = phase->customAnimation(m_size, 150, Plasma::Phase::EaseOutCurve, this, "animate");
+    QGraphicsItem::hoverLeaveEvent(event);
 }
 
 void ToolBox::animate(qreal progress)
@@ -261,15 +265,22 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
 void DefaultDesktop::launchAppletBrowser()
 {
     if (!m_appletBrowser) {
-        //TODO: should we delete this after some point, so as to conserve memory
-        //      and any possible processing tha tmight end up in AppletBrowser?
-        m_appletBrowser = new Plasma::AppletBrowser(this);
+        m_appletBrowser = new Plasma::AppletBrowser(this, scene()->views().isEmpty() ? 0 :
+                                                                     scene()->views()[0]);
+        m_appletBrowser->setApplication();
+        m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
+        connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
     }
 
     KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
     m_appletBrowser->move(QCursor::pos());
     m_appletBrowser->show();
     KWindowSystem::activateWindow(m_appletBrowser->winId());
+}
+
+void DefaultDesktop::appletBrowserDestroyed()
+{
+    m_appletBrowser = 0;
 }
 
 void DefaultDesktop::runCommand()
@@ -385,7 +396,7 @@ void DefaultDesktop::paintInterface(QPainter *painter,
         // for pixmaps we draw only the exposed part (untransformed since the
         // bitmapBackground already has the size of the viewport)
         painter->drawPixmap(option->exposedRect, *m_bitmapBackground, option->exposedRect);
-    //kDebug() << "draw pixmap of background";
+        //kDebug() << "draw pixmap of background to" << option->exposedRect;
     }
 
     // restore transformation and composition mode
