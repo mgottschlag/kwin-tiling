@@ -135,7 +135,7 @@ KService::List WeatherEngine::knownIons()
     }
 
     foreach(KService::Ptr service, offers) {
-        setData("ions", service->property("X-IonName").toString(), service->property("Name").toString());
+        setData("ions", service->property("X-IonName").toString(), QString("%1:%2").arg(service->property("Name").toString()).arg(service->property("X-IonName").toString()));
     }
 
     return offers;
@@ -200,15 +200,17 @@ bool WeatherEngine::sourceRequested(const QString &source)
 
     ion->connectSource(source, this);
     kDebug() << "sourceRequested()";
-    setData(source, this);
+    //setData(source, this);
     return true;
 }
 
 // SLOT: update the Applet with new data from all ions loaded.
+
 bool WeatherEngine::updateSource(const QString& source)
 {
     IonInterface *ion = d->ionForSource(source);
  
+    kDebug() << "updateSource()";
     if (!ion) {
         return false;
     }

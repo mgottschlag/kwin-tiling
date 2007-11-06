@@ -66,8 +66,9 @@ bool IonInterface::isValid() const
 
 bool IonInterface::sourceRequested(const QString &source)
 {
+    kDebug() << "sourceRequested()";
     setData(source, Plasma::DataEngine::Data());
-   
+  
     if (d->initialized) {
         this->updateSource(source);
     }
@@ -77,7 +78,7 @@ bool IonInterface::sourceRequested(const QString &source)
 
 bool IonInterface::updateSource(const QString& source) 
 {
-     kDebug() << "SOURCE IS = " << source; 
+     kDebug() << "updateSource()";
      if (d->initialized) {
          if(this->updateIonSource(source)) {
             return true;
@@ -95,7 +96,8 @@ void IonInterface::setInitialized(const bool initialized)
 
     if (d->initialized) {
         foreach (const QString &source, sources()) {
-            updateSource(source);
+            kDebug() << "Calling updateSource() for SOURCE = " << source;
+            this->updateSource(source);
         }
     }
 }

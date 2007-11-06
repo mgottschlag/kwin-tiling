@@ -107,16 +107,18 @@ QString EnvCanadaIon::validate(const QString& source)
 bool EnvCanadaIon::updateIonSource(const QString& source)
 {
 
+    kDebug() << "updateIonSource() SOURCE: " << source;
     QString result = this->validate(source);
 
     if (!result.isEmpty()) {
         QStringList tokens = result.split(':');
-        setData(source, "Validate", tokens[1]);
-        getXMLData(source);
+        setData(source, "validate", QString("valid:single:%1").arg(tokens[1]));
+        //getXMLData(source);
         return true;
     }
-    setData(source, "Validate", "Invalid");
-    return false;
+    QStringList tokens = source.split(":");
+    setData(source, "validate", QString("invalid:single:%1").arg(tokens[1]));
+    return true;
 }
 
 // Parses city list and gets the correct city based on ID number
