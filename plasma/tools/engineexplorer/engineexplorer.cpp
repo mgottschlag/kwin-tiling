@@ -61,7 +61,7 @@ EngineExplorer::~EngineExplorer()
 {
 }
 
-void EngineExplorer::updated(const QString& source, const Plasma::DataEngine::Data& data)
+void EngineExplorer::dataUpdated(const QString& source, const Plasma::DataEngine::Data& data)
 {
     QList<QStandardItem*> items = m_dataModel->findItems(source, 0);
 

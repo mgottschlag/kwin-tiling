@@ -42,7 +42,7 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
         ~EngineExplorer();
 
     public slots:
-        void updated(const QString& source, const Plasma::DataEngine::Data& data);
+        void dataUpdated(const QString& source, const Plasma::DataEngine::Data& data);
 
     private slots:
         void showEngine(const QString& engine);

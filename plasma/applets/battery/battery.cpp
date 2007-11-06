@@ -72,8 +72,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     dataEngine("powermanagement")->connectSource(I18N_NOOP("Battery"), this);
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
 
-    updated(I18N_NOOP("Battery"), dataEngine("powermanagement")->query(I18N_NOOP("Battery")));
-    updated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
+    dataUpdated(I18N_NOOP("Battery"), dataEngine("powermanagement")->query(I18N_NOOP("Battery")));
+    dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
 
     setAcceptsHoverEvents(true);
 }
@@ -104,9 +104,9 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
-void Battery::updated(const QString& source, const Plasma::DataEngine::Data &data)
+void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    kDebug() << "Applet::updated() ---------------------------- " << source;
+    kDebug() << "Applet::dataUpdated() ---------------------------- " << source;
     if (source == I18N_NOOP("Battery")) {
         m_hasBattery = data[I18N_NOOP("has Battery")].toBool();
         if (!data[I18N_NOOP("Plugged in")].toBool()) {
@@ -118,10 +118,10 @@ void Battery::updated(const QString& source, const Plasma::DataEngine::Data &dat
         if (!m_hasBattery) {
             m_battery_percent_label = I18N_NOOP("No Battery");
         }
-        kDebug() << "Applet::Battery::updated " << m_battery_percent;
+        kDebug() << "Applet::Battery::dataUpdated " << m_battery_percent;
     } else if (source == I18N_NOOP("AC Adapter")) {
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
-        kDebug() << "Applet::AC Adapter updated: " << m_acadapter_plugged; 
+        kDebug() << "Applet::AC Adapter dataUpdated: " << m_acadapter_plugged; 
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }

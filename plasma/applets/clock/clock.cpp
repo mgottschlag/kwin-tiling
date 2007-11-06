@@ -103,7 +103,7 @@ QPainterPath Clock::shape() const
     return path;
 }
 
-void Clock::updated(const QString& source, const Plasma::DataEngine::Data &data)
+void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source);
     m_time = data["Time"].toTime();

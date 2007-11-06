@@ -160,7 +160,7 @@ void WeatherEngine::removeIonSource(const QString& source)
     ion->disconnectSource(source, this);
 }
 
-void WeatherEngine::updated(const QString& source, Plasma::DataEngine::Data data)
+void WeatherEngine::dataUpdated(const QString& source, Plasma::DataEngine::Data data)
 {
     setData(source, data);
 }

@@ -60,7 +60,7 @@ class Clock : public Plasma::Applet
         QPainterPath shape() const;
 
     public slots:
-        void updated(const QString &name, const Plasma::DataEngine::Data &data);
+        void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void showConfigurationInterface();
 
     protected slots:

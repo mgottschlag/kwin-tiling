@@ -55,7 +55,7 @@ class DeviceNotifier : public Plasma::Applet
 
     public slots:
         void SourceAdded(const QString &name);
-        void updated(const QString &source, Plasma::DataEngine::Data data);
+        void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
         void moveDown();
         void hideNotifier(QGraphicsItem * item);
 		void showConfigurationInterface();

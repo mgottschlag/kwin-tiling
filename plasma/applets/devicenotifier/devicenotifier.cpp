@@ -105,7 +105,7 @@ void DeviceNotifier::moveDown()
 }
 
 
-void DeviceNotifier::updated(const QString &source, Plasma::DataEngine::Data data)
+void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
 {
     if(data.size()>0)
     {

@@ -54,7 +54,7 @@ protected slots:
     // SLOT: trigger to indicate new data is available from an Ion. There are two modes.
     // When using a timer no ion is specified, otherwise when loading an ion an ion is
     // specified.
-    void updated(const QString& source, Plasma::DataEngine::Data data);
+    void dataUpdated(const QString& source, Plasma::DataEngine::Data data);
     void newIonSource(const QString& source);
     void removeIonSource(const QString& source);
     bool updateSource(const QString& source);
