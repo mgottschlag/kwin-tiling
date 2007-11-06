@@ -7,7 +7,9 @@ Actions=open;
 
 [Desktop Action open]
 Name=open
+Name[ga]=oscail
 Name[nds]=Opmaken
+Name[nl]=openen
 Name[pt]=abrir
 Name[pt_BR]=abrir
 Name[zh_CN]=打开

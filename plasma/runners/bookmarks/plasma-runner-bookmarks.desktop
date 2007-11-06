@@ -2,11 +2,14 @@
 Encoding=UTF-8
 Name=Bookmark Runner
 Name[nds]=Leestekendreger
+Name[nl]=Bladwijzers openen
 Name[pt]=Execução de Favoritos
 Name[pt_BR]=Execução de Favoritos
 Name[zh_CN]=书签运行器
 Comment=Open bookmark
+Comment[ga]=Oscail leabharmharc
 Comment[nds]=Leesteken opmaken
+Comment[nl]=Bladwijzer openen
 Comment[pt]=Abrir um favorito
 Comment[pt_BR]=Abrir um favorito
 Comment[zh_CN]=打开书签
