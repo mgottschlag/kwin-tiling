@@ -335,7 +335,9 @@ void Interface::matchActivated(QListWidgetItem* item)
 
 void Interface::queueMatch()
 {
-    m_matchTimer.stop();
+    if (m_matchTimer.isActive()) {
+        return;
+    }
     m_matchTimer.start(200);
 }
 
