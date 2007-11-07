@@ -70,7 +70,7 @@ DesktopView::~DesktopView()
 
 void DesktopView::zoomIn()
 {
-	qreal s;
+	qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
     if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::DesktopZoom;
 		s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
