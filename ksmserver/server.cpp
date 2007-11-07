@@ -911,12 +911,16 @@ QStringList KSMServer::sessionList()
 
 bool KSMServer::isWM( const KSMClient* client ) const
 {
+    return isWM( client->program());
+}
+
+bool KSMServer::isWM( const QString& command ) const
+{
     // KWin relies on ksmserver's special treatment in phase1,
     // therefore make sure it's recognized even if ksmserver
     // was initially started with different WM, and kwin replaced
     // it later
-    return client->program() == wm
-        || client->program() == "kwin";
+    return command == wm || command == "kwin";
 }
 
 bool KSMServer::defaultSession() const

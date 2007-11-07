@@ -269,6 +269,10 @@ void KSMServer::restoreLegacySessionInternal( KConfigGroup* config, char sep )
         QStringList wmCommand = (sep == ',') ?
                 config->readEntry( QString("command")+n, QStringList() ) :
                 KShell::splitArgs( config->readEntry( QString("command")+n, QString() ) ); // close enough(?)
+        if( wmCommand.isEmpty())
+            continue;
+        if( isWM( wmCommand.first()))
+            continue;
         startApplication( wmCommand,
                         config->readEntry( QString("clientMachine")+n, QString() ),
                         config->readEntry( QString("userId")+n, QString() ));
