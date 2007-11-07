@@ -68,7 +68,6 @@ class IconHover : public Plasma::Icon
 LockOut::LockOut(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),m_dialog(0)
 {
-    setDrawStandardBackground(true);
     //setHasConfigurationInterface(true);
     m_layout = new Plasma::VBoxLayout(this);
     m_layout->setMargin(0);

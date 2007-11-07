@@ -88,13 +88,11 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         int pixelSize = 0;
         if (formFactor() == Plasma::Vertical ||
-                formFactor() == Plasma::Horizontal) {
+            formFactor() == Plasma::Horizontal) {
             kDebug() << "Small FormFactor";
-            setDrawStandardBackground(true);
             pixelSize = m_smallPixelSize;
         } else {
             kDebug() << "Huge FormFactor";
-            setDrawStandardBackground(m_drawBackground);
             pixelSize = m_pixelSize;
         }
         m_theme->resize(QSize(pixelSize, pixelSize));

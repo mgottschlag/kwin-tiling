@@ -52,8 +52,6 @@
 Tasks::Tasks(QObject* parent , const QVariantList &arguments)
  : Plasma::Applet(parent,arguments)
 {
-    setDrawStandardBackground(true);
-
     Plasma::BoxLayout *layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
     layout->setMargin(0);
     _rootTaskGroup = new TaskGroupItem(this, this);

@@ -39,7 +39,6 @@ using namespace Plasma;
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),m_dialog(0)
 {
-    setDrawStandardBackground(true);
     setHasConfigurationInterface(true);
     m_layout = new Plasma::HBoxLayout(this);
     m_layout->setMargin(0);

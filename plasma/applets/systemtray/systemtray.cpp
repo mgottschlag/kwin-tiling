@@ -31,7 +31,6 @@ SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
       m_systemTrayWidget(new SystemTrayWidget(0,
                   Qt::FramelessWindowHint))
 {
-    setDrawStandardBackground(true);
     connect(m_systemTrayWidget, SIGNAL(sizeChanged()), SLOT(updateLayout()));
     m_systemTrayWidget->show();
     KWindowSystem::setState(m_systemTrayWidget->winId(),

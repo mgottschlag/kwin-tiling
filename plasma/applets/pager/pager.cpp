@@ -80,15 +80,8 @@ QSizeF Pager::contentSizeHint() const
 
 void Pager::constraintsUpdated(Plasma::Constraints)
 {
-    if (formFactor() == Plasma::Vertical ||
-        formFactor() == Plasma::Horizontal) {
-        setDrawStandardBackground(false);
-    } else {
-        setDrawStandardBackground(true);
-    }
-
-     recalculateGeometry();
-     recalculateWindowRects();
+    recalculateGeometry();
+    recalculateWindowRects();
 }
 
 void Pager::createMenu()

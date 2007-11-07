@@ -82,7 +82,7 @@ QSizeF Clock::contentSizeHint() const
 void Clock::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
-        prepareGeometryChange();
+        setDrawStandardBackground(false);
         if (formFactor() == Plasma::Planar ||
                 formFactor() == Plasma::MediaCenter) {
             m_size = m_theme->size();
