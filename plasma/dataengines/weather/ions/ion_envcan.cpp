@@ -106,7 +106,6 @@ QString EnvCanadaIon::validate(const QString& source)
 // Get a specific Ion's data
 bool EnvCanadaIon::updateIonSource(const QString& source)
 {
-
     kDebug() << "updateIonSource() SOURCE: " << source;
     QString result = this->validate(source);
 

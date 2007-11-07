@@ -162,6 +162,7 @@ void WeatherEngine::removeIonSource(const QString& source)
 
 void WeatherEngine::dataUpdated(const QString& source, Plasma::DataEngine::Data data)
 {
+    kDebug() << "data updated" << source;
     setData(source, data);
 }
 
@@ -199,8 +200,12 @@ bool WeatherEngine::sourceRequested(const QString &source)
     }
 
     ion->connectSource(source, this);
-    kDebug() << "sourceRequested()";
-    //setData(source, this);
+    kDebug() << "sourceRequested()" << source;
+    if (!containerForSource(source)) {
+        // it is an async reply, we need to set up the data anyways
+        kDebug() << "no item?";
+        setData(source, Data());
+    }
     return true;
 }
 
