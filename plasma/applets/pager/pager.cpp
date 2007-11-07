@@ -355,6 +355,8 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	m_dragHighlightedDesktop = -1;
 	m_timer->start();
     }
+
+	Applet::mouseReleaseEvent(event);
 }
 
 void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
