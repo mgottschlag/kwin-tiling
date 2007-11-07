@@ -63,6 +63,7 @@ static const char* X11DirList[] =
 // Compiler will size array automatically.
 static const char* rulesFileList[] =
     {
+	"xkb/rules/base",
 	"xkb/rules/xorg",
 	"xkb/rules/xfree86"
     };
