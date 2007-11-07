@@ -1,13 +1,17 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Bookmark Runner
+Name[ja]=ブックマーク Runner
+Name[ko]=책갈피 실행기
 Name[nds]=Leestekendreger
 Name[nl]=Bladwijzers openen
 Name[pt]=Execução de Favoritos
-Name[pt_BR]=Execução de Favoritos
+Name[pt_BR]=Executor de Favoritos
 Name[zh_CN]=书签运行器
 Comment=Open bookmark
 Comment[ga]=Oscail leabharmharc
+Comment[ja]=ブックマークを開く
+Comment[ko]=책갈피 열기
 Comment[nds]=Leesteken opmaken
 Comment[nl]=Bladwijzer openen
 Comment[pt]=Abrir um favorito

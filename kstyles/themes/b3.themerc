@@ -1,5 +1,6 @@
 [Misc]
 Name=B3/KDE
+Name[ne]=बी३/केडीई
 Name[x-test]=xxB3/KDExx
 Comment=B3/Modification of B2
 Comment[be]=Стыль B3/Modification
@@ -15,6 +16,7 @@ Comment[ko]=B3/B2의 수정판
 Comment[lt]=B3 – B2 modifikacija
 Comment[nb]=B3/endring av B2
 Comment[nds]=B3-Variant vun B2
+Comment[ne]=बी३/बी२ को परिमार्जन
 Comment[nl]=B3/wijziging van B2
 Comment[nn]=B3 / Variant av B2
 Comment[pt]=B3/Modificação do B2

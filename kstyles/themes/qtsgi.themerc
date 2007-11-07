@@ -1,5 +1,6 @@
 [Misc]
 Name=SGI
+Name[ne]=एसजीआई
 Name[x-test]=xxSGIxx
 Comment=Built-in SGI style
 Comment[be]=Убудаваны стыль SGI
@@ -15,6 +16,7 @@ Comment[ko]=내장된 SGI 스타일
 Comment[lt]=Įtaisytas SGI stilius
 Comment[nb]=Innebygget SGI-stil
 Comment[nds]=Inbuut Stil "SGI"
+Comment[ne]=एसजीआई शैलीमा निर्माण गरियो
 Comment[nl]=Ingebouwde SGI-stijl
 Comment[nn]=Innebygd SGI-stil
 Comment[pt]=O estilo incorporado sem tema da SGI
