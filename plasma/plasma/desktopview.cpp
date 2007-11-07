@@ -70,13 +70,18 @@ DesktopView::~DesktopView()
 
 void DesktopView::zoomIn()
 {
+	qreal s;
     if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::DesktopZoom;
+		s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
+		setSceneRect(geometry());
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
+		qreal factor = Plasma::scalingFactor(m_zoomLevel);
+		s = factor / matrix().m11();
+		setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
     }
 
-    qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
     scale(s, s);
 }
 
@@ -88,7 +93,9 @@ void DesktopView::zoomOut()
         m_zoomLevel = Plasma::OverviewZoom;
     }
 
-    qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
+	qreal factor = Plasma::scalingFactor(m_zoomLevel);
+    qreal s = factor / matrix().m11();
+	setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
     scale(s, s);
 }
 
