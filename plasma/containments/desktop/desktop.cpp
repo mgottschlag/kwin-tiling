@@ -273,7 +273,6 @@ void DefaultDesktop::launchAppletBrowser()
     }
 
     KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
-    m_appletBrowser->move(QCursor::pos());
     m_appletBrowser->show();
     KWindowSystem::activateWindow(m_appletBrowser->winId());
 }
