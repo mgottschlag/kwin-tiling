@@ -63,7 +63,7 @@ bool KxkbConfig::load(int loadMode)
 	if( m_enableXkbOptions == true || loadMode == LOAD_ALL ) {
 		m_resetOldOptions = config.readEntry("ResetOldOptions", false);
 		QString options = config.readEntry("Options", "");
-                m_options = options.split(OPTIONS_SEPARATOR);
+                m_options = options.split(OPTIONS_SEPARATOR, QString::SkipEmptyParts);
 		kDebug() << "Xkb options (enabled=" << m_enableXkbOptions << "): " << m_options;
 	}
 
@@ -96,7 +96,7 @@ bool KxkbConfig::load(int loadMode)
 	for(QStringList::ConstIterator it = layoutList.begin(); it != layoutList.end() ; ++it) {
 		LayoutUnit layoutUnit(*it);
 		m_layouts.append( layoutUnit );
-		kDebug() << " added layout " << layoutUnit.toPair();
+		kDebug() << " added layout" << layoutUnit.toPair();
 	}
 
 //	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << m_layouts[getDefaultLayout()].toPair();

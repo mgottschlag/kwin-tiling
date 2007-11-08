@@ -313,13 +313,13 @@ public:
 
     void gotoGroup(const QString& group, QAbstractItemView* view) {
         int index = m_rules->optionGroups().keys().indexOf(group);
-        kDebug() << "scrolling to group" << index << "-" << group;
+//        kDebug() << "scrolling to group" << index << "-" << group;
         if( index != -1 ) {
 //            view->selectionModel()->setCurrentIndex(createIndex(index,0), QItemSelectionModel::NoUpdate);
             view->scrollTo(createIndex(index,0), QAbstractItemView::PositionAtTop);
             view->selectionModel()->setCurrentIndex(createIndex(index,0), QItemSelectionModel::Current);
             view->setFocus(Qt::OtherFocusReason);
-            kDebug() << "wdg:" << view->itemDelegate(createIndex(index, 0).child(0,0));
+//            kDebug() << "wdg:" << view->itemDelegate(createIndex(index, 0).child(0,0));
         }
         else
             kDebug() << "can't scroll to group" << group;
@@ -901,16 +901,9 @@ void LayoutConfig::changed()
 {
   bool enabled = widget->grpEnableKxkb->selected() == BTN_XKB_ENABLE;
 
-//  widget->chkIndicatorOnly->setEnabled(enabled);
-//  if( ! enabled )
-//	widget->chkIndicatorOnly->setChecked(false);
-
   widget->grpLayouts->setEnabled(enabled);
   widget->tabWidget->widget(TAB_OPTIONS)->setEnabled(enabled);
 
-//  bool indicatorOnly = widget->chkIndicatorOnly->isChecked();
-//  widget->grpIndicator->setEnabled(indicatorOnly);
-  
   emit KCModule::changed( true );
 }
 
