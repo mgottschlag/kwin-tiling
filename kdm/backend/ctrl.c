@@ -702,7 +702,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 							goto bust;
 						}
 					} else {
-						if (!sdr.start && !sdr.timeout && anyActiveDisplays()) {
+						if (!sdr.start && !sdr.timeout && anyUserLogins( -1 )) {
 							fLog( d, fd, "busy", "user sessions running" );
 							goto bust;
 						}

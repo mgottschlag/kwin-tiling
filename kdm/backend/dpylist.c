@@ -47,17 +47,6 @@ anyDisplaysLeft( void )
 }
 
 int
-anyActiveDisplays( void )
-{
-	struct display *d;
-
-	for (d = displays; d; d = d->next)
-		if (d->status == remoteLogin || d->userSess >= 0)
-			return 1;
-	return 0;
-}
-
-int
 anyRunningDisplays( void )
 {
 	struct display *d;

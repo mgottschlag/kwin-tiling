@@ -39,6 +39,7 @@ from the copyright holder.
 
 #include <string.h>
 #include <unistd.h>
+#include <pwd.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -681,5 +682,43 @@ listSessions( int flags, struct display *d, void *ctx,
 #else
 	ENDUTENT();
 #endif
+}
+
+typedef struct {
+	int any;
+	int uid;
+} AULData;
+
+static void
+noteXSession( struct display *di, struct display *d, void *ctx )
+{
+	AULData *dt = (AULData *)ctx;
+	(void)d;
+
+	if (di->status == remoteLogin || di->userSess != dt->uid)
+		dt->any = 1;
+}
+
+static void
+noteTTYSession( STRUCTUTMP *ut, struct display *d, void *ctx )
+{
+	AULData *dt = (AULData *)ctx;
+	struct passwd *pw;
+	(void)d;
+	
+	if (dt->uid < 0 ||
+	    !(pw = getpwnam( ut->ut_user )) || (int)pw->pw_uid != dt->uid)
+		dt->any = 1;
+}
+
+int
+anyUserLogins( int uid )
+{
+	AULData dt;
+
+	dt.any = 0;
+	dt.uid = uid;
+	listSessions( lstRemote | lstTTY, 0, &dt, noteXSession, noteTTYSession );
+	return dt.any;
 }
 

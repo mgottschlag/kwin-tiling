@@ -408,7 +408,6 @@ struct display
 	*findDisplayByPid( int pid ),
 	*findDisplayByServerPid( int serverPid ),
 	*newDisplay( const char *name );
-int anyActiveDisplays( void );
 int anyRunningDisplays( void );
 int anyReserveDisplays( void );
 int idleReserveDisplays( void );
@@ -559,6 +558,7 @@ time_t mTime( const char *fn );
 void listSessions( int flags, struct display *d, void *ctx,
                    void (*emitXSess)( struct display *, struct display *, void * ),
                    void (*emitTTYSess)( STRUCTUTMP *, struct display *, void * ) );
+int anyUserLogins( int exclude_uid );
 
 struct expando {
 	char key;

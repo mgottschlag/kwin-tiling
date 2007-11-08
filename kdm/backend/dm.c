@@ -1039,17 +1039,15 @@ reapChildren( void )
 static int
 wouldShutdown( void )
 {
-	struct display *d;
-
-	if (sdRec.force != SHUT_CANCEL) {
-		if (sdRec.force == SHUT_FORCEMY)
-			for (d = displays; d; d = d->next)
-				if (d->status == remoteLogin ||
-				    (d->userSess >= 0 && d->userSess != sdRec.uid))
-					return 0;
+	switch (sdRec.force) {
+	case SHUT_FORCE:
 		return 1;
+	case SHUT_FORCEMY:
+		return !anyUserLogins( sdRec.uid );
+	case SHUT_CANCEL:
+	default:
+		return !anyUserLogins( -1 );
 	}
-	return !anyActiveDisplays();
 }
 
 fd_set wellKnownSocketsMask;
@@ -1503,7 +1501,7 @@ exitDisplay( struct display *d,
 	he->goodExit = goodExit;
 	if (he->sdRec.how) {
 		if (he->sdRec.force == SHUT_ASK &&
-		    (anyActiveDisplays() || d->allowShutdown == SHUT_ROOT))
+		    (anyUserLogins( -1 ) || d->allowShutdown == SHUT_ROOT))
 		{
 			endState = DS_RESTART;
 		} else {
