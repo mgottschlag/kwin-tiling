@@ -743,6 +743,7 @@ void CKCmFontInst::print(bool all)
 
                         args << "--embed" << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
                              << "--caption" << KGlobal::caption().toUtf8()
+                             << "--icon" << "preferences-desktop-font-installer"
                              << "--size" << QString().setNum(constSizes[dlg.chosenSize() < 6 ? dlg.chosenSize() : 2])
                              << "--listfile" << tmpFile.fileName()
                              << "--deletefile";
@@ -757,6 +758,7 @@ void CKCmFontInst::print(bool all)
                 {
                     args << "--embed" << QString().sprintf("0x%x", (unsigned int)topLevelWidget()->winId())
                          << "--caption" << KGlobal::caption().toUtf8()
+                         << "--icon" << "preferences-desktop-font-installer"
                          << "--size" << QString().setNum(constSizes[dlg.chosenSize()<6 ? dlg.chosenSize() : 2]);
 
                     for(; it!=end; ++it)
