@@ -82,7 +82,7 @@ private:
     SrcLayoutModel* m_srcModel;
     DstLayoutModel* m_dstModel;
     XkbOptionsModel* m_xkbOptModel;
-    KActionCollection* m_actionCollection;
+    KActionCollection* actionCollection;
 
   void makeOptionsTab();
   void updateStickyLimit();

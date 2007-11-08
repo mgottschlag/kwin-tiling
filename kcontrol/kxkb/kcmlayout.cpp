@@ -443,11 +443,11 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 #endif
 
     KGlobalAccel::self()->overrideMainComponentData(componentData());
-    m_actionCollection = new KActionCollection( this, KComponentData("kxkb") );
+    actionCollection = new KActionCollection( this, KComponentData("kxkb") );
 //    actionCollection->setConfigGlobal(true);
     KAction* a = NULL;
 #include "kxkbbindings.cpp"
-    m_actionCollection->readSettings();
+    actionCollection->readSettings();
     kDebug() << "getting shortcut" << a->globalShortcut().toString();
 
     widget->kdeShortcutWidget->setModifierlessAllowed(false);
@@ -570,11 +570,11 @@ void LayoutConfig::save()
 
 	m_kxkbConfig.save();
 
-    KAction* action = static_cast<KAction*>(m_actionCollection->action(0));
+    KAction* action = static_cast<KAction*>(actionCollection->action(0));
     kDebug() << "saving shortcut" << widget->kdeShortcutWidget->shortcut().toString();
     action->setGlobalShortcut(widget->kdeShortcutWidget->shortcut());
     kDebug() << "saving shortcut" << action->globalShortcut().toString();
-    m_actionCollection->writeSettings();
+    actionCollection->writeSettings();
 
     KToolInvocation::kdeinitExec("kxkb");
     emit KCModule::changed( false );

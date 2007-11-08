@@ -75,7 +75,7 @@ KxkbCore::KxkbCore(int mode):
     m_layoutOwnerMap(NULL),
     m_rules(NULL),
     m_kxkbWidget(NULL),
-    m_actionCollection(NULL)
+    actionCollection(NULL)
 {
     m_status = 0;
 
@@ -116,7 +116,7 @@ void KxkbCore::setWidget(KxkbWidget* kxkbWidget)
 
 void KxkbCore::initReactions()
 {
-    if( m_mode == KXKB_MAIN && m_actionCollection == NULL ) {
+    if( m_mode == KXKB_MAIN && actionCollection == NULL ) {
         KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
     
 #ifdef HAVE_XKLAVIER
@@ -128,17 +128,17 @@ void KxkbCore::initReactions()
 
 void KxkbCore::initKeys()
 {
-    m_actionCollection = new KActionCollection( this );
+    actionCollection = new KActionCollection( this );
 //    actionCollection->setConfigGlobal(true);
     KAction* a = NULL;
 #include "kxkbbindings.cpp"
-    m_actionCollection->readSettings();
+    actionCollection->readSettings();
     connect(a, SIGNAL(triggered()), this, SLOT(toggled()));
 }
 
 KxkbCore::~KxkbCore()
 {
-    delete m_actionCollection;
+    delete actionCollection;
     delete m_kxkbWidget;
     delete m_rules;
     delete m_extension;
