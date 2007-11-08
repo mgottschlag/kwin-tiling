@@ -420,32 +420,39 @@ void CFontViewPart::changeText()
 
 void CFontViewPart::print()
 {
-    QStringList args;
+    QString exe(KStandardDirs::findExe(QLatin1String(KFI_PRINTER), KStandardDirs::installPath("libexec")));
 
-    if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
-    {
-        Misc::TFont info;
-
-        CFcEngine::instance()->getInfo(url(), 0, info);
-
-        args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-             << "--caption" << KGlobal::caption().toUtf8()
-             << "--icon" << "kfontview"
-             << "--size" << "0"
-             << "--pfont" << QString(info.family+','+QString().setNum(info.styleInfo));
-    }
-#ifdef KFI_PRINT_APP_FONTS
+    if(exe.isEmpty())
+        KMessageBox::error(itsFrame, i18n("Failed to locate font printer."));
     else
-        args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
-             << "--caption" << KGlobal::caption().toUtf8()
-             << "--icon" << "kfontview"
-             << "--size " << "0"
-             << localFilePath()
-             << QString().setNum(KFI_NO_STYLE_INFO);
+    {
+        QStringList args;
+
+        if(KFI_KIO_FONTS_PROTOCOL==url().protocol())
+        {
+            Misc::TFont info;
+
+            CFcEngine::instance()->getInfo(url(), 0, info);
+
+            args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+                << "--caption" << KGlobal::caption().toUtf8()
+                << "--icon" << "kfontview"
+                << "--size" << "0"
+                << "--pfont" << QString(info.family+','+QString().setNum(info.styleInfo));
+        }
+#ifdef KFI_PRINT_APP_FONTS
+        else
+            args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+                << "--caption" << KGlobal::caption().toUtf8()
+                << "--icon" << "kfontview"
+                << "--size " << "0"
+                << localFilePath()
+                << QString().setNum(KFI_NO_STYLE_INFO);
 #endif
 
-    if(args.count())
-        QProcess::startDetached(KFI_PRINTER, args);
+        if(args.count())
+            QProcess::startDetached(exe, args);
+    }
 }
 
 void CFontViewPart::displayType(const QList<CFcEngine::TRange> &range)

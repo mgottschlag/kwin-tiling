@@ -34,12 +34,12 @@
 #ifdef KDE_BINDIR
 #define KFI_INSTALLER KDE_BINDIR"/kfontinst"
 #define KFI_VIEWER    KDE_BINDIR"/kfontview"
-#define KFI_PRINTER   KDE_BINDIR"/kfontprint"
 #else
 #define KFI_INSTALLER "kfontinst"
 #define KFI_VIEWER    "kfontview"
-#define KFI_PRINTER   "kfontprint"
 #endif
+
+#define KFI_PRINTER   "kfontprint"
 
 #define KFI_PRINT_GROUP              "Print"
 #define KFI_KIO_FONTS_PROTOCOL       "fonts"
