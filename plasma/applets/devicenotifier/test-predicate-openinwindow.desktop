@@ -7,6 +7,7 @@ Actions=open;
 
 [Desktop Action open]
 Name=open
+Name[el]=άνοιγμα
 Name[ga]=oscail
 Name[ko]=열기
 Name[nds]=Opmaken
@@ -14,5 +15,6 @@ Name[nl]=openen
 Name[pt]=abrir
 Name[pt_BR]=abrir
 Name[zh_CN]=打开
+Name[zh_TW]=開啟
 Exec=dbus-launch dolphin
 
