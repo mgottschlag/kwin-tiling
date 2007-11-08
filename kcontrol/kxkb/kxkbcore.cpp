@@ -75,7 +75,7 @@ KxkbCore::KxkbCore(int mode):
     m_layoutOwnerMap(NULL),
     m_rules(NULL),
     m_kxkbWidget(NULL),
-    m_actions(NULL)
+    m_actionCollection(NULL)
 {
     m_status = 0;
 
@@ -116,7 +116,7 @@ void KxkbCore::setWidget(KxkbWidget* kxkbWidget)
 
 void KxkbCore::initReactions()
 {
-    if( m_mode == KXKB_MAIN && m_actions == NULL ) {
+    if( m_mode == KXKB_MAIN && m_actionCollection == NULL ) {
         KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
     
 #ifdef HAVE_XKLAVIER
@@ -128,32 +128,17 @@ void KxkbCore::initReactions()
 
 void KxkbCore::initKeys()
 {
-    m_actions = new KActionCollection( this );
-    KActionCollection* actionCollection = m_actions;
-
-    QAction* a = 0L;
-
-    a = m_actions->addAction("layout_toggle_action");
-    a->setText(i18n("Switch keyboard layout"));
-    qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_K));
-    connect( a, SIGNAL(triggered()), this, SLOT(toggled()) );
-
-  // TODO: keyboard bindings
-    //globalKeys = KGlobalAccel::self();
-//    m_keys* = new KActionCollection(this);
-
-//#include "kxkbbindings.cpp"
-
-    //keys->readSettings();
-    //keys->updateConnections();
-
-//    connect( KGlobalSettings::self(), SIGNAL(settingsChanged(int)),
-//             this, SLOT(slotSettingsChanged(int)) );
+    m_actionCollection = new KActionCollection( this );
+//    actionCollection->setConfigGlobal(true);
+    KAction* a = NULL;
+#include "kxkbbindings.cpp"
+    m_actionCollection->readSettings();
+    connect(a, SIGNAL(triggered()), this, SLOT(toggled()));
 }
 
 KxkbCore::~KxkbCore()
 {
-    delete m_actions;
+    delete m_actionCollection;
     delete m_kxkbWidget;
     delete m_rules;
     delete m_extension;

@@ -31,6 +31,7 @@
 
 #include <kicon.h>
 #include <kshortcutsdialog.h>
+#include <kshortcutwidget.h>
 #include <kglobalaccel.h>
 #include <kactioncollection.h>
 #include <kglobal.h>
@@ -255,7 +256,6 @@ public:
     QModelIndex parent(const QModelIndex& index) const {
         if (!index.isValid() )
             return QModelIndex();
-//        kDebug() << index;
         if( index.internalId() < 100 )
             return QModelIndex();
         return createIndex(((index.internalId() - index.row())/100) - 1, index.column());
@@ -274,7 +274,6 @@ public:
         return Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
     }
     bool setData ( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole ) {
-//    kDebug() << index << value;
         int groupRow = index.parent().row();
         if( groupRow < 0 ) return false;
         
@@ -286,7 +285,6 @@ public:
             if( xkbGroup.exclusive ) {
                 // clear if exclusive (TODO: radiobutton)
                 int idx = m_kxkbConfig->m_options.indexOf(QRegExp(xkbGroupNm+".*"));
-//              kDebug() << "other idx to clear" << idx;
                 if( idx >= 0 ) {
                     for(int i=0; i<xkbGroup.options.count(); i++)
                         if( xkbGroup.options[i].name == m_kxkbConfig->m_options[idx] ) {
@@ -426,7 +424,6 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 
     connect( widget->btnXkbShortcut, SIGNAL(clicked()), this, SLOT(xkbShortcutPressed()));
     connect( widget->btnXkbShortcut3d, SIGNAL(clicked()), this, SLOT(xkbShortcut3dPressed()));
-    connect( widget->btnKdeShortcut, SIGNAL(clicked()), this, SLOT(kdeShortcutPressed()));
 
     connect( widget->editDisplayName, SIGNAL(textChanged(const QString&)), this, SLOT(displayNameChanged(const QString&)));
 
@@ -444,6 +441,20 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 #else
     widget->grpBoxStickySwitching->setVisible(false);
 #endif
+
+    KGlobalAccel::self()->overrideMainComponentData(componentData());
+    m_actionCollection = new KActionCollection( this, KComponentData("kxkb") );
+//    actionCollection->setConfigGlobal(true);
+    KAction* a = NULL;
+#include "kxkbbindings.cpp"
+    m_actionCollection->readSettings();
+    kDebug() << "getting shortcut" << a->globalShortcut().toString();
+
+    widget->kdeShortcutWidget->setModifierlessAllowed(false);
+    widget->kdeShortcutWidget->setShortcut( a->globalShortcut() );
+
+    connect(widget->kdeShortcutWidget, SIGNAL(shortcutChanged (const KShortcut &)), this, SLOT(changed()));
+
     refreshRulesUI();
 
     makeOptionsTab();
@@ -519,6 +530,8 @@ void LayoutConfig::initUI()
 
 void LayoutConfig::save()
 {
+    KCModule::save();
+
 	QString model = widget->comboModel->itemData(widget->comboModel->currentIndex()).toString();
 	m_kxkbConfig.m_model = model;
 
@@ -557,8 +570,14 @@ void LayoutConfig::save()
 
 	m_kxkbConfig.save();
 
-	KToolInvocation::kdeinitExec("kxkb");
-	emit KCModule::changed( false );
+    KAction* action = static_cast<KAction*>(m_actionCollection->action(0));
+    kDebug() << "saving shortcut" << widget->kdeShortcutWidget->shortcut().toString();
+    action->setGlobalShortcut(widget->kdeShortcutWidget->shortcut());
+    kDebug() << "saving shortcut" << action->globalShortcut().toString();
+    m_actionCollection->writeSettings();
+
+    KToolInvocation::kdeinitExec("kxkb");
+    emit KCModule::changed( false );
 }
 
 void LayoutConfig::xkbOptionsChanged(const QModelIndex & /*topLeft*/, const QModelIndex & /*bottomRight*/)
@@ -621,20 +640,6 @@ void LayoutConfig::updateShortcutsLabels()
     widget->xkbShortcut->setText(txt);
     txt = getShortcutText( m_kxkbConfig.m_options, "lv3" );
     widget->xkbShortcut3d->setText(txt);
-
-    KActionCollection actions(this);
-    actions.setConfigGlobal(true);
-    actions.readSettings();
-    kDebug() << "global actions count" << actions.count();
-//    QStringList ga = KGlobalAccel::findActionNameSystemwide( QKeySequence(Qt::ALT+Qt::CTRL+Qt::Key_K) );
-//    kDebug() << ga;
-    QAction* action = actions.action(I18N_NOOP("Switch to Next Keyboard Layout"));
-    if( action != NULL ) {
-        widget->kdeShortcut->setText( action->shortcut().toString(QKeySequence::NativeText) );
-    }
-    else {
-        widget->kdeShortcut->setText(i18n("Not defined"));
-    }
 }
 
 void LayoutConfig::updateStickyLimit()

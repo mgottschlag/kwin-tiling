@@ -94,7 +94,7 @@ private:
     XkbRules *m_rules;
     
     KxkbWidget *m_kxkbWidget;
-    KActionCollection *m_actions;
+    KActionCollection *m_actionCollection;
     
     void updateIndicator(int layout, int res);
     void initTray();

@@ -27,6 +27,7 @@
 
 
 class QWidget;
+class KActionCollection;
 class Ui_LayoutConfigWidget;
 class XkbRules;
 
@@ -76,11 +77,12 @@ private:
     const QString DEFAULT_VARIANT_NAME;
     Ui_LayoutConfigWidget* widget;
 
-  XkbRules *m_rules;
-  KxkbConfig m_kxkbConfig;
-  SrcLayoutModel* m_srcModel;
-  DstLayoutModel* m_dstModel;
-  XkbOptionsModel* m_xkbOptModel;
+    XkbRules *m_rules;
+    KxkbConfig m_kxkbConfig;
+    SrcLayoutModel* m_srcModel;
+    DstLayoutModel* m_dstModel;
+    XkbOptionsModel* m_xkbOptModel;
+    KActionCollection* m_actionCollection;
 
   void makeOptionsTab();
   void updateStickyLimit();
