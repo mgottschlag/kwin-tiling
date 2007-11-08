@@ -144,7 +144,7 @@ public:
 
     /**
      * Retrieves the name of the bluetooth chip manufacturer.
-     * Example: "Cambridge Silicon Radio"
+     * Example: "Boston Silicon Radio"
      *
      * @returns manufacturer string of bluetooth interface/adapter
      */
