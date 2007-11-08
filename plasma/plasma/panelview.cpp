@@ -53,7 +53,7 @@ PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
 
     // KWin setup
     KWindowSystem::setType(winId(), NET::Dock);
-    KWindowSystem::setState(winId(), NET::Sticky | NET::KeepAbove);
+    KWindowSystem::setState(winId(), NET::Sticky);
     KWindowSystem::setOnAllDesktops(winId(), true);
 
     updateStruts();
