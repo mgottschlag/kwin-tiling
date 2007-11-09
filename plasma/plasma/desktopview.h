@@ -40,9 +40,12 @@ public:
     DesktopView(QWidget *parent, int screen = -1);
     ~DesktopView();
 
+    int screen() const;
+
 public slots:
     void zoomIn();
     void zoomOut();
+    void updateSceneRect();
 
 protected:
     void wheelEvent(QWheelEvent *event);

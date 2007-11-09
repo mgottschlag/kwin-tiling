@@ -39,11 +39,13 @@ PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
     Q_ASSERT(qobject_cast<Plasma::Corona*>(m_containment->scene()));
     setScene(m_containment->scene());
     updatePanelGeometry();
+
+    connect(m_containment, SIGNAL(geometryChanged()), this, SLOT(updatePanelGeometry()));
     kDebug() << "Panel geometry is" << m_containment->geometry();
 
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
-    setAutoFillBackground(true);
+    //setAutoFillBackground(true);
     //setDragMode(QGraphicsView::RubberBandDrag);
     //setCacheMode(QGraphicsView::CacheBackground);
     setInteractive(true);
@@ -93,8 +95,7 @@ void PanelView::updatePanelGeometry()
         screen = 0;
     }
 
-    QDesktopWidget desktop;
-    QRect screenGeom = desktop.screenGeometry(screen);
+    QRect screenGeom = QApplication::desktop()->screenGeometry(screen);
 
     //FIXME: we need to support center, left, right, etc.. perhaps
     //       pixel precision placed containments as well?

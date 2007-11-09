@@ -61,11 +61,25 @@ DesktopView::DesktopView(QWidget *parent, int screen)
         setSceneRect(c->geometry());
         connect(c, SIGNAL(zoomIn()), this, SLOT(zoomIn()));
         connect(c, SIGNAL(zoomOut()), this, SLOT(zoomOut()));
+        connect(c, SIGNAL(geometryChanged()), this, SLOT(updateSceneRect()));
     }
 }
 
 DesktopView::~DesktopView()
 {
+}
+
+int DesktopView::screen() const
+{
+    return m_screen;
+}
+
+void DesktopView::updateSceneRect()
+{
+    Plasma::Containment * c =  PlasmaApp::self()->corona()->containmentForScreen(m_screen);
+    if (c) {
+        setSceneRect(c->geometry());
+    }
 }
 
 void DesktopView::zoomIn()

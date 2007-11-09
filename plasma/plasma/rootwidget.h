@@ -20,6 +20,7 @@
 #ifndef ROOTWIDGET_H
 #define ROOTWIDGET_H
 
+#include <QList>
 #include <QWidget>
 
 class DesktopView;
@@ -46,19 +47,18 @@ class RootWidget : public QWidget
          * when they are created.  
          */
         void setAsDesktop(bool asDesktop);
+
         /** 
          * Returns true if this widget is currently a desktop window.
          * See setAsDesktop()
          */
         bool isDesktop() const;
 
-        DesktopView* desktop();
-
     protected slots:
         void adjustSize();
 
     private:
-        DesktopView* m_desktop;
+        QList<DesktopView*> m_desktops;
 };
 
 #endif

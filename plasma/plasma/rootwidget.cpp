@@ -35,15 +35,16 @@
 RootWidget::RootWidget()
     : QWidget(0)
 {
-    setFocusPolicy( Qt::NoFocus );
+    setFocusPolicy(Qt::NoFocus);
 
-    QDesktopWidget desktop;
-    int numScreens = desktop.numScreens();
+    QDesktopWidget *desktop = QApplication::desktop();
+    int numScreens = desktop->numScreens();
     // create a containment for each screen
     //FIXME: we need to respond to randr changes
     for (int i = 0; i < numScreens; ++i) {
-        m_desktop = new DesktopView(this, i);
-        m_desktop->setGeometry(desktop.screenGeometry(i));
+        DesktopView *view = new DesktopView(this, i);
+        view->setGeometry(desktop->screenGeometry(i));
+        m_desktops.append(view);
     }
 
     PlasmaApp::self()->corona();
@@ -68,30 +69,29 @@ void RootWidget::setAsDesktop(bool setAsDesktop)
     } else {
         setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
 
-        KWindowSystem::setOnAllDesktops(winId(),false);
-        KWindowSystem::setType(winId() , NET::Normal); 
+        KWindowSystem::setOnAllDesktops(winId(), false);
+        KWindowSystem::setType(winId(), NET::Normal); 
 
-        disconnect(QApplication::desktop(),SIGNAL(resized(int)),this,SLOT(adjustSize()));
+        disconnect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(adjustSize()));
     }
 }
 
 bool RootWidget::isDesktop() const
 {
-    return KWindowInfo(winId(),NET::WMWindowType).windowType(NET::Desktop);
+    return KWindowInfo(winId(), NET::WMWindowType).windowType(NET::Desktop);
 }
 
 RootWidget::~RootWidget()
 {
 }
 
-DesktopView* RootWidget::desktop()
-{
-    return m_desktop;
-}
-
 void RootWidget::adjustSize()
 {
-    setGeometry(QApplication::desktop()->geometry());
+    QDesktopWidget *desktop = QApplication::desktop();
+    setGeometry(desktop->geometry());
+    foreach (DesktopView *view, m_desktops) {
+        view->setGeometry(desktop->screenGeometry(view->screen()));
+    }
 }
 
 #include "rootwidget.moc"
