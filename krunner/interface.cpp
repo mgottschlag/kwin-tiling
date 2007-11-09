@@ -114,6 +114,7 @@ class SearchMatch : public QListWidgetItem
 
 Interface::Interface(QWidget* parent)
     : KRunnerDialog( parent ),
+      m_nextRunner(0),
       m_expander(0),
       m_optionsWidget(0),
       m_defaultMatch(0)
@@ -335,10 +336,16 @@ void Interface::matchActivated(QListWidgetItem* item)
 
 void Interface::queueMatch()
 {
-    if (m_matchTimer.isActive()) {
-        return;
-    }
+    // start over when the timer fires on the first runner
+    m_nextRunner = 0;
+    
+    // (re)start the timer
     m_matchTimer.start(200);
+
+    QString term = m_searchTerm->text().trimmed();
+    if (!term.isEmpty()) {
+        m_context.setSearchTerm(term);
+    }
 }
 
 void Interface::match()
@@ -347,7 +354,6 @@ void Interface::match()
     m_matchList->clear();
 
     int matchCount = 0;
-    m_defaultMatch = 0;
     QString term = m_searchTerm->text().trimmed();
 
     if (term.isEmpty()) {
@@ -355,14 +361,15 @@ void Interface::match()
         return;
     }
 
-    m_context.setSearchTerm(term);
     m_context.addStringCompletions(m_executions);
 
     // get the exact matches
-    foreach (Plasma::AbstractRunner* runner, m_runners) {
-        //kDebug() << "\trunner: " << runner->objectName();
-        runner->match(&m_context);
-    }
+    m_runners[m_nextRunner]->match(&m_context);
+
+    //foreach (Plasma::AbstractRunner* runner, m_runners) {
+    //    //kDebug() << "\trunner: " << runner->objectName();
+    //    runner->match(&m_context);
+    //}
 
     QList<QList<Plasma::SearchAction *> > matchLists;
     matchLists << m_context.informationalMatches()
@@ -393,6 +400,19 @@ void Interface::match()
         showOptions(false);
         m_runButton->setEnabled(false);
     }
+
+    if (++m_nextRunner >= m_runners.size())
+    {
+        m_nextRunner = 0;
+        m_defaultMatch = 0;
+    }
+    else
+    {
+        // start the timer over so we will
+        // process the rest of the runners
+        m_matchTimer.start(0);
+    }
+
 }
 
 void Interface::exec()

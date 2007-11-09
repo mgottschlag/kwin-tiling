@@ -74,6 +74,7 @@ class Interface : public KRunnerDialog
         void resetInterface();
 
         Plasma::AbstractRunner::List m_runners;
+        int m_nextRunner; // index of the next runner to call match() on
 
         QTimer m_matchTimer;
         QVBoxLayout* m_layout;
