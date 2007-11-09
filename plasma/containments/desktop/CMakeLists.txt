@@ -15,3 +15,4 @@ target_link_libraries(plasma_containment_desktop plasma ${KDE4_KIO_LIBS})
 
 install(TARGETS plasma_containment_desktop DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-containment-desktop.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES plasma_desktop_containment.kwinrules DESTINATION ${DATA_INSTALL_DIR}/kwin/default_rules)

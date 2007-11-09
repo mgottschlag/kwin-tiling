@@ -19,6 +19,7 @@
 #include "desktop.h"
 
 #include <QAction>
+#include <QApplication>
 #include <QDesktopWidget>
 #include <QFile>
 #include <QGraphicsScene>
@@ -247,8 +248,7 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
         m_toolbox->setPos(geometry().width() - m_toolbox->boundingRect().width(), 0);
     }
 
-    QDesktopWidget desktop;
-    const QRect geom = desktop.screenGeometry(screen());
+    const QRect geom = QApplication::desktop()->screenGeometry(screen());
     if (m_background) {
         kDebug() << "Rescaling SVG wallpaper to" << geom.size();
         m_background->resize(geom.size());
@@ -269,6 +269,7 @@ void DefaultDesktop::launchAppletBrowser()
                                                                      scene()->views()[0]);
         m_appletBrowser->setApplication();
         m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
+        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
         connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
     }
 

@@ -18,11 +18,13 @@
 
 #include "panel.h"
 
+#include <QApplication>
 #include <QPainter>
 #include <QDesktopWidget>
 
 #include <KDebug>
 
+#include <plasma/corona.h>
 #include <plasma/svg.h>
 
 using namespace Plasma;
@@ -58,8 +60,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
         kDebug() << "Setting location to" << loc << "on screen" << s;
 
-        QDesktopWidget desktop;
-        QRect r = desktop.screenGeometry(s);
+        QRect r = QApplication::desktop()->screenGeometry(s);
         setMaximumSize(r.size());
         int x = 0;
         int y = 0;
@@ -84,7 +85,27 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             }
         }
         kDebug() << "Setting geometry to" << QRectF(x, y, width, height);
-        setGeometry(QRectF(x, y, width, height));
+        QRectF geo = QRectF(x, y, width, height);
+        setGeometry(geo);
+
+        if (corona()) {
+            kDebug() << "we have a corona";
+            foreach (Containment *c, corona()->containments()) {
+                if (c->type() != PanelContainment) {
+                    continue;
+                }
+
+                if (c->geometry().intersects(geo)) {
+                    //TODO: here is where we need to schedule a negotiation for where to show the
+                    //      panel on the scene
+                    //
+                    //      we also probably need to direct whether to allow this containment to
+                    //      be resized before moved, or moved only
+                    kDebug() << "conflict!";
+                }
+                kDebug() << "panel containment with geometry of" << c->geometry() << "but really" << c->transform().map(geometry());
+            }
+        }
     }
 }
 
