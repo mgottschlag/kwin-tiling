@@ -1,6 +1,7 @@
 [Misc]
 Name=SGI
 Name[ne]=एसजीआई
+Name[sr]=СГИ
 Name[x-test]=xxSGIxx
 Comment=Built-in SGI style
 Comment[be]=Убудаваны стыль SGI
@@ -22,6 +23,8 @@ Comment[nl]=Ingebouwde SGI-stijl
 Comment[nn]=Innebygd SGI-stil
 Comment[pt]=O estilo incorporado sem tema da SGI
 Comment[pt_BR]=Estilo predefinido SGI
+Comment[sr]=Уграђени стил СГИ-ја
+Comment[sr@latin]=Ugrađeni stil SGI-ja
 Comment[sv]=Inbyggd SGI-stil
 Comment[th]=รูปแบบแบบ SGI ที่รวมมาให้
 Comment[x-test]=xxBuilt-in SGI stylexx

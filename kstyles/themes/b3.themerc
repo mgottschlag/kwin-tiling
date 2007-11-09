@@ -1,6 +1,7 @@
 [Misc]
 Name=B3/KDE
 Name[ne]=बी३/केडीई
+Name[sr]=Б3/КДЕ
 Name[x-test]=xxB3/KDExx
 Comment=B3/Modification of B2
 Comment[be]=Стыль B3/Modification
@@ -22,6 +23,8 @@ Comment[nl]=B3/wijziging van B2
 Comment[nn]=B3 / Variant av B2
 Comment[pt]=B3/Modificação do B2
 Comment[pt_BR]=B3/Modificação do B2
+Comment[sr]=Б3, модификација Б2
+Comment[sr@latin]=B3, modifikacija B2
 Comment[sv]=B3/Modifierad B2
 Comment[th]=B3/รูปแบบที่ดัดแปลงมาจาก B2
 Comment[wa]=B3/Modifiadje do B2

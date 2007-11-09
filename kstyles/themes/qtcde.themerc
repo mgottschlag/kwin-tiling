@@ -1,5 +1,6 @@
 [Misc]
 Name=CDE
+Name[sr]=ЦДЕ
 Name[te]=సిడిఈ
 Name[tg]=Муҳити графикии муштарак (CDE)
 Name[x-test]=xxCDExx
@@ -23,6 +24,8 @@ Comment[nl]=Ingebouwde themaloze CDE-stijl
 Comment[nn]=Innebygd CDE-stil utan tema
 Comment[pt]=O estilo incorporado sem tema do CDE
 Comment[pt_BR]=Estilo predefinido CDE sem temas
+Comment[sr]=Уграђени бестематски стил ЦДЕ-а
+Comment[sr@latin]=Ugrađeni bestematski stil CDE-a
 Comment[sv]=Inbyggd otemad CDE-stil
 Comment[th]=รูปแบบแบบ CDE ที่รวมมาให้
 Comment[x-test]=xxBuilt-in unthemed CDE stylexx

@@ -1,6 +1,7 @@
 [Misc]
 Name=BeOS
 Name[af]=Beos
+Name[sr]=БеОС
 Name[te]=బిఓఎస్
 Name[tg]=Системаи омили Be
 Name[x-test]=xxBeOSxx
@@ -24,6 +25,8 @@ Comment[nl]=Themaloze BeOS-achtige stijl
 Comment[nn]=BeOS-liknande stil utan tema
 Comment[pt]=Estilo sem tema semelhante ao BeOS
 Comment[pt_BR]=Estilo semelhante ao BeOS sem temas
+Comment[sr]=Бестематски стил налик на БеОС
+Comment[sr@latin]=Bestematski stil nalik na BeOS
 Comment[sv]=Otemad Beos-liknande stil
 Comment[th]=รูปแบบชุดตกแต่งแบบระบบปฏิบัติการ BeOS
 Comment[wa]=Tinme rishonnant al rivnance do sistinme BeOS

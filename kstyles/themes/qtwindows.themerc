@@ -2,6 +2,8 @@
 Name=MS Windows 9x
 Name[ko]=MS 윈도 9x
 Name[ne]=एमएस विन्डोज् 9x
+Name[sr]=Мајкрософтов Виндоуз 9x
+Name[sr@latin]=Microsoftov Windows 9x
 Name[x-test]=xxMS Windows 9xxx
 Comment=Built-in unthemed Windows 9x style
 Comment[be]=Убудаваны стыль Windows 9x
@@ -23,6 +25,8 @@ Comment[nl]=Ingebouwde themaloze Windows 9x-stijl
 Comment[nn]=Innebygd Windows 9x-stil utan tema
 Comment[pt]=O estilo incorporado sem tema do Windows 9x
 Comment[pt_BR]=Estilo predefinido MS Windows 9x sem temas
+Comment[sr]=Уграђени бестематски стил Виндоуза 9x
+Comment[sr@latin]=Ugrađeni bestematski stil Windowsa 9x
 Comment[sv]=Inbyggd otemad Windows 9x-stil
 Comment[th]=รูปแบบแบบวินโดวส์ 9x ที่รวมมาให้
 Comment[x-test]=xxBuilt-in unthemed Windows 9x stylexx

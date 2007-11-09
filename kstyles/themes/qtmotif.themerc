@@ -2,6 +2,7 @@
 Name=Motif
 Name[fa]=موتیف
 Name[ne]=नमूना
+Name[sr]=Мотиф
 Name[x-test]=xxMotifxx
 Comment=Built-in unthemed Motif style
 Comment[be]=Убудаваны стыль Motif
@@ -23,6 +24,8 @@ Comment[nl]=Ingebouwde themaloze Motif-stijl
 Comment[nn]=Innebygd Motfi-stil utan tema
 Comment[pt]=O estilo incorporado sem tema do Motif
 Comment[pt_BR]=Estilo predefinido Motif sem temas
+Comment[sr]=Уграђени бестематски стил Мотифа
+Comment[sr@latin]=Ugrađeni bestematski stil Motifa
 Comment[sv]=Inbyggd otemad Motif-stil
 Comment[th]=รูปแบบแบบ Motif ที่รวมมาให้
 Comment[x-test]=xxBuilt-in unthemed Motif stylexx
