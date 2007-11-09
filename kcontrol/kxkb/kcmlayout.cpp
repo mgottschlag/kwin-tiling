@@ -518,7 +518,7 @@ void LayoutConfig::initUI()
         widget->grpEnableKxkb->setSelected(enableKxkb);
 //	widget->chkEnable->setChecked( m_kxkbConfig.m_useKxkb );
 	widget->grpLayouts->setEnabled( m_kxkbConfig.m_useKxkb );
-	widget->grpOptions->setEnabled( m_kxkbConfig.m_useKxkb );
+	widget->grpIndicatorOptions->setEnabled( enableKxkb <= BTN_XKB_INDICATOR );
 
         updateShortcutsLabels();
 
@@ -710,9 +710,11 @@ void LayoutConfig::remove()
     if( selectionModel == NULL || !selectionModel->hasSelection() )
 	return;
 
-    QModelIndexList selected = selectionModel->selectedRows();
-//    kDebug() << "removing" << selected;
-    m_kxkbConfig.m_layouts.removeAt(selected[0].row());
+    int row = getSelectedDstLayout();
+    if( row == -1 )
+        return;
+
+    m_kxkbConfig.m_layouts.removeAt(row);
 
     m_dstModel->reset();
     widget->dstTableView->update();
@@ -900,9 +902,11 @@ void LayoutConfig::updateDisplayName()
 void LayoutConfig::changed()
 {
   bool enabled = widget->grpEnableKxkb->selected() == BTN_XKB_ENABLE;
+  bool indicatorEnabled = widget->grpEnableKxkb->selected() <= BTN_XKB_INDICATOR;
 
   widget->grpLayouts->setEnabled(enabled);
   widget->tabWidget->widget(TAB_OPTIONS)->setEnabled(enabled);
+  widget->grpIndicatorOptions->setEnabled(indicatorEnabled);
 
   emit KCModule::changed( true );
 }
