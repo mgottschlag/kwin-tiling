@@ -281,7 +281,7 @@ void BGAdvancedDialog::selectProgram(const QString &name)
 
 void BGAdvancedDialog::slotAdd()
 {
-   KProgramEditDialog dlg(m_kdmMode);
+   KProgramEditDialog dlg(m_kdmMode, QString(), this);
    dlg.exec();
    if (dlg.result() == QDialog::Accepted)
    {
@@ -325,7 +325,7 @@ void BGAdvancedDialog::slotModify()
    if (m_selectedProgram.isEmpty())
       return;
 
-   KProgramEditDialog dlg(m_kdmMode, m_selectedProgram);
+   KProgramEditDialog dlg(m_kdmMode, m_selectedProgram, this);
    dlg.exec();
    if (dlg.result() == QDialog::Accepted)
    {

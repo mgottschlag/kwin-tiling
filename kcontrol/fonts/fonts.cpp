@@ -823,7 +823,7 @@ void KFonts::slotApplyFontDiff()
 {
   QFont font = QFont(fontUseList.first()->font());
 	KFontChooser::FontDiffFlags fontDiffFlags = 0;
-  int ret = KFontDialog::getFontDiff(font,fontDiffFlags);
+  int ret = KFontDialog::getFontDiff(font,fontDiffFlags,KFontChooser::NoDisplayFlags,this);
 
   if (ret == KDialog::Accepted && fontDiffFlags)
   {
