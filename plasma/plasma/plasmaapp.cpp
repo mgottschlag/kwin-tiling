@@ -83,15 +83,13 @@ PlasmaApp::PlasmaApp()
     }
 
     m_root = new RootWidget();
-    //TODO: the line below is just inane. get rid of it before release. seriously.
     m_root->setAsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
-
     m_root->show();
-    connect(this, SIGNAL(aboutToQuit()), corona(), SLOT(saveApplets()));
 
     createPanels();
-
     notifyStartup(true);
+
+    connect(this, SIGNAL(aboutToQuit()), corona(), SLOT(saveApplets()));
 }
 
 PlasmaApp::~PlasmaApp()
