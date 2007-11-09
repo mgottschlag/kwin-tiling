@@ -498,6 +498,10 @@ void Interface::setDefaultItem( QListWidgetItem* item )
         }
 
         m_defaultMatch = dynamic_cast<SearchMatch*>(item);
+	if(!m_defaultMatch)
+	{
+	    return;
+	}
         hasOptions = m_defaultMatch && m_defaultMatch->action()->runner()->hasMatchOptions();
     }
 
