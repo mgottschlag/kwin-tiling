@@ -134,6 +134,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 	m_layout->addItem(m_icon);
 	m_layout->addItem(m_label);
 
+	//FIXME Problem with updating layout of applet.Why calling updadeGeometry of the label afeter applet.
 	updateGeometry();
 	m_label->updateGeometry();
 	moveUp();
