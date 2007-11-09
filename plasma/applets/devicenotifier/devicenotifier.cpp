@@ -43,10 +43,12 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     m_layout = new Plasma::HBoxLayout(this);
     m_layout->setMargin(0);
     m_layout->setSpacing(0);
+    /*m_icon=new Plasma::Icon(KIcon(""),"",this);
+    m_layout->addItem(m_icon);*/
     m_label=new Plasma::Label(this);
     m_label->setText(i18n("Welcome to Device Notifier \n Plug a device to test"));
     m_label->setPen(QPen(Qt::white));  
-	m_layout->addItem(m_label);
+    m_layout->addItem(m_label);
 
     m_time=5;
     m_height=150;
@@ -66,6 +68,8 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
 
     //connect to engine when a device is plug
     connect(SolidEngine, SIGNAL(newSource(const QString&)),this, SLOT(SourceAdded(const QString&)));
+    updateGeometry();	
+    update();
 }
 
 DeviceNotifier::~DeviceNotifier()
@@ -77,7 +81,7 @@ void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
     Q_UNUSED(option);
     Q_UNUSED(p);
     Q_UNUSED(contentsRect);
-  	kDebug()<<"DeviceNotifier:: geometry "<<geometry().width();
+    kDebug()<<"DeviceNotifier:: geometry "<<geometry().width();
     //hide();
 }
 
@@ -106,43 +110,33 @@ void DeviceNotifier::moveDown()
 
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
 {
-    if(data.size()>0)
-    {
-		kDebug()<<"DeviceNotifier:: "<<data[source].toString();
-		desktop_files=data["predicateFiles"].toStringList();
-		kDebug()<<data["icon"].toString();
-		QString icon_temp = data["icon"].toString();
+    if (data.size()>0) {
 
-		if(first)
-		{
-			origin_size=geometry();
-			first=false;
-			m_layout->removeItem(m_label);
-			m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
-		}
+	kDebug()<<"DeviceNotifier:: "<<data[source].toString();
+	desktop_files=data["predicateFiles"].toStringList();
+	kDebug()<<data["icon"].toString();
+	QString icon_temp = data["icon"].toString();
 
-		m_icon->setIcon(KIcon(icon_temp));
-		m_layout->addItem(m_icon);
-		
-		icon = true;
+	if (first) {
+	    origin_size=geometry();
+	    first=false;
+	    m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
+	}
 
-		device_name=i18n("A new device has been detected: \n");
-		device_name+=data["text"].toString();
-		m_label->setPen(QPen(Qt::white));
-		m_label->setText(device_name);
-		m_layout->addItem(m_label);
+	m_icon->setIcon(KIcon(icon_temp));
+	
+	icon = true;
+	m_layout->removeItem(m_label);
+	device_name=i18n("A new device has been detected: \n");
+	device_name+=data["text"].toString();
+	m_label->setPen(QPen(Qt::white));
+	m_label->setText(device_name);
+	m_layout->addItem(m_icon);
+	m_layout->addItem(m_label);
 
-		float size_h=0.0;
-		float size_w=0.0;
-		size_h+=m_icon->iconSize().height();
-		size_h+=m_label->geometry().height();
-		size_w+=m_label->geometry().width();
-		size_w+=m_icon->iconSize().width();
-		QRectF temp(origin_size.x(),origin_size.y(),size_w,size_h);
-		setGeometry(temp);
-		updateGeometry();	
-		update();
-		moveUp();
+	updateGeometry();
+	m_label->updateGeometry();
+	moveUp();
      }
 }
 
@@ -156,8 +150,7 @@ void DeviceNotifier::SourceAdded(const QString& source)
 void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
-    if(icon)
-    {
+    if (icon) {
 	kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<m_udi<<","<<desktop_files;
 	QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.kded.SolidUiServer");
 	QDBusReply<void> reply = soliduiserver.call("showActionsDialog", m_udi,desktop_files);
@@ -166,9 +159,8 @@ void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void DeviceNotifier::showConfigurationInterface()
 {
-     if (m_dialog == 0) 
-     {
-		kDebug()<<"DeviceNotifier:: Enter in configuration interface";
+     if (m_dialog == 0) {
+	kDebug()<<"DeviceNotifier:: Enter in configuration interface";
      	m_dialog = new KDialog;
         m_dialog->setCaption( i18n("Configure New Device Notifier") );
 
@@ -176,7 +168,7 @@ void DeviceNotifier::showConfigurationInterface()
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
-		ui.spinTime->setValue(m_time);
+	ui.spinTime->setValue(m_time);
       }
       ui.spinHeight->setValue(m_height);
       m_dialog->show();
@@ -185,7 +177,7 @@ void DeviceNotifier::showConfigurationInterface()
 void DeviceNotifier::configAccepted()
 {
     kDebug()<<"DeviceNotifier:: Config Accepted with params"<<ui.spinTime->value()<<","<<ui.spinHeight->value();
-	m_time=ui.spinTime->value();
+    m_time=ui.spinTime->value();
     m_height=ui.spinHeight->value();
 }
 
