@@ -171,25 +171,16 @@ void KxkbCore::settingsChanged(int category)
     if ( category != KGlobalSettings::SETTINGS_SHORTCUTS)
         return;
 
-    kDebug() << "global settings changed";
-    actionCollection->readSettings();
-    if( actionCollection != NULL )
+    if( actionCollection != NULL ) {
+        kDebug() << "global settings changed";
+        actionCollection->readSettings();
         kDebug() << "kde shortcut" << static_cast<KAction*>(actionCollection->action(0))->globalShortcut().toString();
-	//TODO:
-	//keys->updateConnections();
+    }
 }
 
 bool KxkbCore::settingsRead()
 {
     m_kxkbConfig.load( KxkbConfig::LOAD_ACTIVE_OPTIONS );
-
-    if( m_mode == KXKB_MAIN ) {
-	if( m_kxkbConfig.m_enableXkbOptions ) {
-	    if( !m_extension->setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
-        	kDebug() << "Setting XKB options failed!";
-	    }
-	}
-    }
 
     if ( m_kxkbConfig.m_useKxkb == false ) {
 	kWarning() << "Kxkb is disabled, exiting...";
@@ -203,6 +194,9 @@ bool KxkbCore::settingsRead()
     if( m_mode == KXKB_MAIN && ! m_kxkbConfig.m_indicatorOnly ) {
 	m_currentLayout = m_kxkbConfig.getDefaultLayout();
 	initLayoutGroups();
+//	if( !m_extension->setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
+//            kDebug() << "Setting XKB options failed!";
+//	}
     }
     else {
 	updateGroupsFromServer();
@@ -219,7 +213,6 @@ bool KxkbCore::settingsRead()
 //	KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
 	//TODO:
 //	keys->readSettings();
-	//keys->updateConnections();
 
     return true;
 }
@@ -257,7 +250,8 @@ void KxkbCore::initLayoutGroups()
         layouts << layoutUnit.layout;
         variants << layoutUnit.variant;
     }
-    m_extension->setLayoutGroups(m_kxkbConfig.m_model, layouts, variants);
+    m_extension->setLayoutGroups(m_kxkbConfig.m_model, layouts, variants, 
+                                m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions);
 }
 
 void KxkbCore::initTray()
@@ -266,10 +260,10 @@ void KxkbCore::initTray()
         bool visible = m_kxkbConfig.m_layouts.count() > 1 || m_kxkbConfig.m_showSingle;
         kDebug() << "initing tray, visible:" << visible;
 
-        m_kxkbWidget->setVisible( visible );
         m_kxkbWidget->setShowFlag(m_kxkbConfig.m_showFlag);
         m_kxkbWidget->initLayoutList(m_kxkbConfig.m_layouts, *m_rules);
         m_kxkbWidget->setCurrentLayout(m_kxkbConfig.m_layouts[m_currentLayout]);
+        m_kxkbWidget->setVisible( visible );
     }
 }
 
@@ -432,16 +426,17 @@ KxkbCore::updateGroupsFromServer()
     kDebug() << "updating groups from server";
 
 #ifdef HAVE_XKLAVIER
-    QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
+    XkbConfig xkbConfig = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
 #else
-    QList<LayoutUnit> lus = X11Helper::getGroupNames(QX11Info::display());
+    XkbConfig xkbConfig = X11Helper::getGroupNames(QX11Info::display());
 #endif
 
     int group = m_extension->getGroup();
     
+    const QList<LayoutUnit>& lus = xkbConfig.layouts;
     if( lus.count() > 0 ) {
         if( lus != m_kxkbConfig.m_layouts ) {
-            m_kxkbConfig.setConfiguredLayouts(lus);
+            m_kxkbConfig.setConfiguredLayouts(xkbConfig);
             m_layoutOwnerMap->reset();
             initTray();
         }

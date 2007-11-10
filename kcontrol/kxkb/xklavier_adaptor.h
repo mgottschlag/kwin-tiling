@@ -24,6 +24,7 @@
 #include <QHash>
 #include <QList>
 
+#include "kxkbconfig.h"
 
 class LayoutUnit;
 class XKlavierAdaptorPriv;
@@ -41,7 +42,7 @@ public:
 	QHash<QString, XkbOptionGroup> getOptionGroups();
 	QHash<QString, QList<XkbVariant>*> getVariants();
 
-	QList<LayoutUnit> getGroupNames();
+	XkbConfig getGroupNames();
 	int filterEvents(XEvent* ev);
 	int startListening();
 	

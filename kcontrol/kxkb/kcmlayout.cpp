@@ -494,7 +494,7 @@ void LayoutConfig::initUI()
 	widget->chkShowSingle->setChecked(m_kxkbConfig.m_showSingle);
 	widget->chkShowFlag->setChecked(m_kxkbConfig.m_showFlag);
 
-	widget->chkEnableOptions->setChecked( m_kxkbConfig.m_enableXkbOptions );
+//	widget->chkEnableOptions->setChecked( m_kxkbConfig.m_enableXkbOptions );
 	widget->checkResetOld->setChecked(m_kxkbConfig.m_resetOldOptions);
 
 	switch( m_kxkbConfig.m_switchingPolicy ) {
@@ -545,7 +545,7 @@ void LayoutConfig::save()
 	QString model = widget->comboModel->itemData(widget->comboModel->currentIndex()).toString();
 	m_kxkbConfig.m_model = model;
 
-	m_kxkbConfig.m_enableXkbOptions = widget->chkEnableOptions->isChecked();
+//	m_kxkbConfig.m_enableXkbOptions = widget->chkEnableOptions->isChecked();
 	m_kxkbConfig.m_resetOldOptions = widget->checkResetOld->isChecked();
 
 	if( m_kxkbConfig.m_layouts.count() == 0 ) {
@@ -694,18 +694,32 @@ void LayoutConfig::updateStickyLimit()
 void LayoutConfig::updateGroupsFromServer()
 {
     bool enabled = widget->grpEnableKxkb->selected() == BTN_XKB_ENABLE;
-    kDebug() << "enabled:" << enabled << m_kxkbConfig.m_layouts.count();
-    if( enabled && m_kxkbConfig.m_layouts.count() <= 1 ) {
+    //kDebug() << "enabled:" << enabled << m_kxkbConfig.m_layouts.count();
+    if( enabled ) {
 #ifdef HAVE_XKLAVIER
-        QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
+        XkbConfig xkbConfig = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
 #else
-        QList<LayoutUnit> lus = X11Helper::getGroupNames(QX11Info::display());
+        XkbConfig xkbConfig = X11Helper::getGroupNames(QX11Info::display());
 #endif
-        if( lus.count() > 0 ) {
-            m_kxkbConfig.setConfiguredLayouts(lus);
-            m_dstModel->reset();
-            widget->dstTableView->update();
+        xkbConfig.model = m_kxkbConfig.m_model;
+        //TODO: update model
+        if( m_kxkbConfig.m_layouts.count() > 1 || xkbConfig.layouts.count() == 0 ) {
+            xkbConfig.layouts = m_kxkbConfig.m_layouts;
         }
+        kDebug() << m_kxkbConfig.m_options.join(",") << xkbConfig.options.join(",");
+        if( !m_kxkbConfig.m_resetOldOptions || m_kxkbConfig.m_options.count() > 0 || xkbConfig.options.count() == 0 ) {
+            xkbConfig.options = m_kxkbConfig.m_options;
+        }
+
+        m_kxkbConfig.setConfiguredLayouts(xkbConfig);
+
+        m_dstModel->reset();
+        widget->dstTableView->update();
+        updateLayoutCommand();
+
+        m_xkbOptModel->reset();
+        widget->xkbOptionsTreeView->update();
+        updateOptionsCommand();
     }
 }
 
@@ -716,6 +730,7 @@ void LayoutConfig::enableChanged()
 
     widget->grpLayouts->setEnabled(enabled);
     widget->tabWidget->widget(TAB_OPTIONS)->setEnabled(enabled);
+    widget->tabWidget->widget(TAB_XKB)->setEnabled(enabled);
     widget->grpIndicatorOptions->setEnabled(indicatorEnabled);
 
     changed();
@@ -897,8 +912,7 @@ void LayoutConfig::layoutSelChanged()
 
 void LayoutConfig::makeOptionsTab()
 {
-    connect(widget->chkEnableOptions, SIGNAL(toggled(bool)), SLOT(changed()));
-
+//    connect(widget->chkEnableOptions, SIGNAL(toggled(bool)), SLOT(changed()));
     connect(widget->checkResetOld, SIGNAL(toggled(bool)), SLOT(changed()));
     connect(widget->checkResetOld, SIGNAL(toggled(bool)), SLOT(updateOptionsCommand()));
 }
@@ -1002,19 +1016,17 @@ extern "C"
     KDE_EXPORT void kcminit_keyboard()
     {
 	KxkbConfig m_kxkbConfig;
-	m_kxkbConfig.load(KxkbConfig::LOAD_INIT_OPTIONS);
+	m_kxkbConfig.load(KxkbConfig::LOAD_ACTIVE_OPTIONS);
 
 	if( m_kxkbConfig.m_useKxkb ) {
 	    KToolInvocation::startServiceByDesktopName("kxkb");
 	}
-	else {
-	    // Even if the layouts have been disabled we still want to set Xkb options
-	    // user can always switch them off now in the "Options" tab
-	    if( m_kxkbConfig.m_enableXkbOptions ) {
-		if( !XKBExtension::setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
-		    kDebug() << "Setting XKB options failed!";
-		}
-	    }
-	}
+//	else {
+//	    if( m_kxkbConfig.m_enableXkbOptions ) {
+//		if( !XKBExtension::setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
+//		    kDebug() << "Setting XKB options failed!";
+//		}
+//	    }
+//	}
     }
 }

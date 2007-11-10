@@ -102,17 +102,23 @@ public:
 extern const LayoutUnit DEFAULT_LAYOUT_UNIT;
 extern const char* DEFAULT_MODEL;
 
+struct XkbConfig {
+    QString model;
+    QStringList options;
+    QList<LayoutUnit> layouts;
+};
 
 class KxkbConfig
 {
 public:
-	enum { LOAD_INIT_OPTIONS, LOAD_ACTIVE_OPTIONS, LOAD_ALL };
+	enum { LOAD_ACTIVE_OPTIONS, LOAD_ALL };
+        static const char* OPTIONS_SEPARATOR;
 	
 	bool m_useKxkb;
 	bool m_indicatorOnly;
 	bool m_showSingle;
 	bool m_showFlag;
-	bool m_enableXkbOptions;
+//	bool m_enableXkbOptions;
 	bool m_resetOldOptions;
 	bool m_stickySwitching;
 	int m_stickySwitchingDepth;
@@ -126,7 +132,7 @@ public:
 	int getDefaultLayout();
 	
 	bool load(int loadMode);
-	bool setConfiguredLayouts(QList<LayoutUnit> layoutUnits);
+	bool setConfiguredLayouts(XkbConfig xkbConfig);
 	void save();
 	void setDefaults();
 	

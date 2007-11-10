@@ -222,10 +222,10 @@ XKlavierAdaptor::~XKlavierAdaptor()
 //	kDebug() << "Finalizer";
 }
 
-QList<LayoutUnit> 
+XkbConfig 
 XKlavierAdaptor::getGroupNames()
 {
-    QList<LayoutUnit> list;
+    XkbConfig xkbConfig;
 
 //    kDebug() << "retrieving active layout from server...";
     XklConfigRec configRec;
@@ -235,8 +235,13 @@ XKlavierAdaptor::getGroupNames()
 	LayoutUnit lu;
 	lu.layout = configRec.layouts[ii];
 	lu.variant = configRec.variants[ii];
-	list << lu;
-	kDebug() << "layout nm:" << lu.layout << "variant:" << lu.variant;
+	xkbConfig.layouts << lu;
+	kDebug() << " layout nm:" << lu.layout << "variant:" << lu.variant;
+    }
+
+    for(int ii=0; configRec.options[ii] != NULL; ii++) {
+	xkbConfig.options << configRec.options[ii];
+	kDebug() << " option:" << configRec.options[ii];
     }
 
 //        const char **gn = xkl_engine_get_groups_names(priv->engine);
@@ -245,7 +250,7 @@ XKlavierAdaptor::getGroupNames()
 //	for (i = 0; i < gt; i++)
 //	    kDebug() << "group:" << gn[i];
 
-    return list;
+    return xkbConfig;
 }
 
 static XKlavierAdaptor* instance = NULL;

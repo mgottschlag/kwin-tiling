@@ -30,14 +30,14 @@
 #include "x11helper.h"
 
 
-static const char* OPTIONS_SEPARATOR = ",";
-
 static const char* switchModes[SWITCH_POLICY_COUNT] = {
   "Global", "Desktop", "WinClass", "Window"
 };
 
 const LayoutUnit DEFAULT_LAYOUT_UNIT = LayoutUnit("us", "");
 const char* DEFAULT_MODEL = "pc104";
+
+const char* KxkbConfig::OPTIONS_SEPARATOR = ",";
 
 KxkbConfig::KxkbConfig() {
 	m_layouts.append( DEFAULT_LAYOUT_UNIT );
@@ -56,16 +56,7 @@ bool KxkbConfig::load(int loadMode)
     kDebug() << "Reading configuration";
     KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
 
-// Even if the layouts have been disabled we still want to set Xkb options
-// user can always switch them off now in the "Options" tab
-	m_enableXkbOptions = config.readEntry("EnableXkbOptions", false);
-
-	if( m_enableXkbOptions == true || loadMode == LOAD_ALL ) {
-		m_resetOldOptions = config.readEntry("ResetOldOptions", false);
-		QString options = config.readEntry("Options", "");
-                m_options = options.split(OPTIONS_SEPARATOR, QString::SkipEmptyParts);
-		kDebug() << "Xkb options (enabled=" << m_enableXkbOptions << "): " << m_options;
-	}
+//    m_enableXkbOptions = config.readEntry("EnableXkbOptions", false);
 
 	m_useKxkb = config.readEntry("Use", false);
 	kDebug() << "Use kxkb " << m_useKxkb;
@@ -73,14 +64,13 @@ bool KxkbConfig::load(int loadMode)
 	m_indicatorOnly = config.readEntry("IndicatorOnly", false);
 	kDebug() << "Indicator only " << m_indicatorOnly << endl;
 
-	if( (m_useKxkb == false && loadMode == LOAD_ACTIVE_OPTIONS )
-	  		|| loadMode == LOAD_INIT_OPTIONS )
+	if( m_useKxkb == false && loadMode == LOAD_ACTIVE_OPTIONS )
 		return true;
 
 	m_showSingle = config.readEntry("ShowSingle", false);
 	m_showFlag = config.readEntry("ShowFlag", true);
 
-	if( (m_indicatorOnly == true && loadMode == LOAD_ACTIVE_OPTIONS ) )
+	if( m_indicatorOnly == true && loadMode == LOAD_ACTIVE_OPTIONS )
 		return true;
 
 	m_model = config.readEntry("Model", DEFAULT_MODEL);
@@ -154,7 +144,12 @@ bool KxkbConfig::load(int loadMode)
         m_stickySwitching = false; //TODO: so far we can't do sticky with xkb switching groups...
 #endif
 
-	return true;
+    m_resetOldOptions = config.readEntry("ResetOldOptions", true);
+    QString options = config.readEntry("Options", "");
+    m_options = options.split(OPTIONS_SEPARATOR, QString::SkipEmptyParts);
+    kDebug() << "Xkb options:" /*(enabled=" << m_enableXkbOptions << "): "*/ << m_options;
+
+    return true;
 }
 
 static QString addNum(const QString& str, int n)
@@ -180,10 +175,12 @@ void KxkbConfig::updateDisplayNames()
   }
 }
 
-bool KxkbConfig::setConfiguredLayouts(QList<LayoutUnit> layoutUnits)
+bool KxkbConfig::setConfiguredLayouts(XkbConfig xkbConfig)
 {
-    kDebug() << "resetting layouts to " << layoutUnits.count() << " active in X server" << endl;
-    m_layouts = layoutUnits;
+    kDebug() << "resetting layouts to " << xkbConfig.layouts.count() << " active in X server";
+    m_layouts = xkbConfig.layouts;
+    m_options = xkbConfig.options;
+    //TODO: update model
     updateDisplayNames();
     return true; //TODO ?
 }
@@ -194,7 +191,7 @@ void KxkbConfig::save()
 
 	config.writeEntry("Model", m_model);
 
-	config.writeEntry("EnableXkbOptions", m_enableXkbOptions );
+//	config.writeEntry("EnableXkbOptions", m_enableXkbOptions );
 	config.writeEntry("IndicatorOnly", m_indicatorOnly );
 	config.writeEntry("ResetOldOptions", m_resetOldOptions);
 	config.writeEntry("Options", m_options.join(OPTIONS_SEPARATOR) );
@@ -242,7 +239,7 @@ void KxkbConfig::setDefaults()
 {
 	m_model = DEFAULT_MODEL;
 
-	m_enableXkbOptions = false;
+//	m_enableXkbOptions = false;
 	m_resetOldOptions = false;
 	m_options.clear();
 

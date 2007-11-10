@@ -166,7 +166,8 @@ QString XKBExtension::getLayoutGroupsCommand(const QString& model, const QString
     return cmd;
 }
 
-bool XKBExtension::setLayoutGroups(const QString& model, const QStringList& layouts, const QStringList& variants)
+bool XKBExtension::setLayoutGroups(const QString& model, const QStringList& layouts, const QStringList& variants,
+        const QStringList& options, bool resetOldOptions)
 {
     if( layouts.empty() )
         return false;
@@ -185,6 +186,12 @@ bool XKBExtension::setLayoutGroups(const QString& model, const QStringList& layo
 
     if( ! variants.empty() )
         p << "-variant" << variants.join(SETXKBMAP_SEPARATOR);
+
+    if( ! options.empty() ) {
+        if( resetOldOptions )
+            p << "-option";
+        p << "-option" << options.join(SETXKBMAP_SEPARATOR);
+    }
 
     kDebug() << "executing" << p.program().join(" ");
 	

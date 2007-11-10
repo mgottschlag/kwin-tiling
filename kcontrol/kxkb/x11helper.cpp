@@ -290,7 +290,7 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir)
     return result;
 }
 
-QList<LayoutUnit>
+XkbConfig
 X11Helper::getGroupNames(Display* dpy)
 {
     Atom real_prop_type;
@@ -298,18 +298,17 @@ X11Helper::getGroupNames(Display* dpy)
     unsigned long nitems, extra_bytes;
     char *prop_data = NULL;
     Status ret;
-    QList<LayoutUnit> list;
+    XkbConfig xkbConfig;
 
     Atom rules_atom = XInternAtom(dpy, _XKB_RF_NAMES_PROP_ATOM, False);
 
     /* no such atom! */
     if (rules_atom == None) {       /* property cannot exist */
         kError() << "Failed to fetch layouts from server:" << "could not find the atom" << _XKB_RF_NAMES_PROP_ATOM;
-        return list;
+        return xkbConfig;
     }
 
-    ret =
-        XGetWindowProperty(dpy,
+    ret = XGetWindowProperty(dpy,
                    QX11Info::appRootWindow(),
                    rules_atom, 0L, _XKB_RF_NAMES_PROP_MAXLEN,
                    False, XA_STRING, &real_prop_type, &fmt,
@@ -319,30 +318,49 @@ X11Helper::getGroupNames(Display* dpy)
     /* property not found! */
     if (ret != Success) {
         kError() << "Failed to fetch layouts from server:" << "Could not get the property";
-        return list;
+        return xkbConfig;
     }
-    
-    kDebug() << "prop_data" << nitems << prop_data;
+
+    /* has to be array of strings */
+    if ((extra_bytes > 0) || (real_prop_type != XA_STRING)
+                || (fmt != 8)) {
+        if (prop_data)
+            XFree(prop_data);
+        kError() << "Failed to fetch layouts from server:" << "Wrong property format";
+        return xkbConfig;
+    }
+
+    kDebug() << "prop_data:" << nitems << prop_data;
     QStringList names;
-    for(char* p=prop_data; p-prop_data < (unsigned long)nitems && p != NULL; p += strlen(p)+1) {
+    for(char* p=prop_data; p-prop_data < (long)nitems && p != NULL; p += strlen(p)+1) {
         names.append( p );
         kDebug() << " " << p;
     }
 
     if( names.count() >= 4 ) { //{ rules, model, layouts, variants, options }
-        QStringList layouts = names[2].split(",");
-        QStringList variants = names[3].split(",");
+        xkbConfig.model = names[1];
+//        kDebug() << "model:" << xkbConfig.model;
+
+        QStringList layouts = names[2].split(KxkbConfig::OPTIONS_SEPARATOR);
+        QStringList variants = names[3].split(KxkbConfig::OPTIONS_SEPARATOR);
         
         for(int ii=0; ii<layouts.count(); ii++) {
 	    LayoutUnit lu;
 	    lu.layout = layouts[ii];
 	    lu.variant = ii < variants.count() ? variants[ii] : "";
-	    list << lu;
+	    xkbConfig.layouts << lu;
 	    kDebug() << "layout nm:" << lu.layout << "variant:" << lu.variant;
+        }
+        
+        if( names.count() >= 5 ) {
+            QString options = names[4];
+            xkbConfig.options = options.split(KxkbConfig::OPTIONS_SEPARATOR);
+            kDebug() << "options:" << options;
         }
     }
 
-    return list;
+    XFree(prop_data);
+    return xkbConfig;
 }
 
 #endif  /* HAVE_XKLAVIER*/

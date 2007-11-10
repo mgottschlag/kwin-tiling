@@ -471,16 +471,6 @@
       </attribute>
       <layout class="QVBoxLayout" >
        <item>
-        <widget class="QCheckBox" name="chkEnableOptions" >
-         <property name="text" >
-          <string>&amp;Enable xkb options</string>
-         </property>
-         <property name="checked" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="groupBox3_2" >
          <property name="whatsThis" >
           <string>Here you can set xkb extension options instead of, or in addition to, specifying them in the X11 configuration file.</string>
@@ -493,6 +483,9 @@
            <widget class="QCheckBox" name="checkResetOld" >
             <property name="text" >
              <string>&amp;Reset old options</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -546,22 +539,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>chkEnableOptions</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>groupBox3_2</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

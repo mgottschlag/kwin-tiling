@@ -35,7 +35,8 @@ public:
     unsigned int getGroup() const;
 
     static bool setXkbOptions(const QStringList& options, bool resetOldOptions);
-    static bool setLayoutGroups(const QString& model, const QStringList& layouts, const QStringList& variants);
+    static bool setLayoutGroups(const QString& model, const QStringList& layouts, const QStringList& variants,
+            const QStringList& options=QStringList(), bool resetOldOptions=true);
 
     static QString getXkbOptionsCommand(const QStringList& options, bool resetOldOptions);
     static QString getLayoutGroupsCommand(const QString& model, const QStringList& layouts, const QStringList& variants);
