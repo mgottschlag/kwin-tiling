@@ -75,17 +75,20 @@ GreeterApp::GreeterApp( int argc, char **argv ) :
 		sa.sa_handler = sigAlarm;
 		sigaction( SIGALRM, &sa, 0 );
 		alarm( pingInterval * 70 ); // sic! give the "proper" pinger enough time
-		startTimer( pingInterval * 60000 );
-	}
+		pingTimerId = startTimer( pingInterval * 60000 );
+	} else
+		pingTimerId = 0;
 }
 
 void
-GreeterApp::timerEvent( QTimerEvent * )
+GreeterApp::timerEvent( QTimerEvent *ev )
 {
-	alarm( 0 );
-	if (!pingServer( QX11Info::display() ))
-		::exit( EX_RESERVER_DPY );
-	alarm( pingInterval * 70 ); // sic! give the "proper" pinger enough time
+	if (ev->timerId() == pingTimerId) {
+		alarm( 0 );
+		if (!pingServer( QX11Info::display() ))
+			::exit( EX_RESERVER_DPY );
+		alarm( pingInterval * 70 ); // sic! give the "proper" pinger enough time
+	}
 }
 
 bool

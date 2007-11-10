@@ -45,7 +45,7 @@ class GreeterApp : public QApplication {
 	void activity();
 
   private:
-	int pingInterval;
+	int pingInterval, pingTimerId;
 	bool regrabPtr, regrabKbd;
 	QPoint mouseStartPos, dialogStartPos;
 	QWidget *dragWidget;
