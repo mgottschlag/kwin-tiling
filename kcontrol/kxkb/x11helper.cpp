@@ -19,6 +19,7 @@
 #include <QDir>
 #include <QRegExp>
 #include <QTextStream>
+#include <QX11Info>
 
 #include <kdebug.h>
 
@@ -35,6 +36,7 @@
 #undef explicit
 #include <X11/extensions/XKBrules.h>
 
+#include "kxkbconfig.h"
 
 #include "x11helper.h"
 #include <config-workspace.h>
@@ -286,6 +288,61 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir)
     }
 
     return result;
+}
+
+QList<LayoutUnit>
+X11Helper::getGroupNames(Display* dpy)
+{
+    Atom real_prop_type;
+    int fmt;
+    unsigned long nitems, extra_bytes;
+    char *prop_data = NULL;
+    Status ret;
+    QList<LayoutUnit> list;
+
+    Atom rules_atom = XInternAtom(dpy, _XKB_RF_NAMES_PROP_ATOM, False);
+
+    /* no such atom! */
+    if (rules_atom == None) {       /* property cannot exist */
+        kError() << "Failed to fetch layouts from server:" << "could not find the atom" << _XKB_RF_NAMES_PROP_ATOM;
+        return list;
+    }
+
+    ret =
+        XGetWindowProperty(dpy,
+                   QX11Info::appRootWindow(),
+                   rules_atom, 0L, _XKB_RF_NAMES_PROP_MAXLEN,
+                   False, XA_STRING, &real_prop_type, &fmt,
+                   &nitems, &extra_bytes,
+                   (unsigned char **) (void *) &prop_data);
+
+    /* property not found! */
+    if (ret != Success) {
+        kError() << "Failed to fetch layouts from server:" << "Could not get the property";
+        return list;
+    }
+    
+    kDebug() << "prop_data" << nitems << prop_data;
+    QStringList names;
+    for(char* p=prop_data; p-prop_data < (unsigned long)nitems && p != NULL; p += strlen(p)+1) {
+        names.append( p );
+        kDebug() << " " << p;
+    }
+
+    if( names.count() >= 4 ) { //{ rules, model, layouts, variants, options }
+        QStringList layouts = names[2].split(",");
+        QStringList variants = names[3].split(",");
+        
+        for(int ii=0; ii<layouts.count(); ii++) {
+	    LayoutUnit lu;
+	    lu.layout = layouts[ii];
+	    lu.variant = ii < variants.count() ? variants[ii] : "";
+	    list << lu;
+	    kDebug() << "layout nm:" << lu.layout << "variant:" << lu.variant;
+        }
+    }
+
+    return list;
 }
 
 #endif  /* HAVE_XKLAVIER*/

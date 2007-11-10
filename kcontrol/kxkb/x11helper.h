@@ -22,8 +22,10 @@
 #include <X11/Xlib.h>
 #include <QHash>
 
+
 struct XkbOption;
 struct XkbVariant;
+struct LayoutUnit;
 
 struct XkbOptionGroup {
     QString name;
@@ -70,6 +72,7 @@ public:
 	static const QString findXkbRulesFile(const QString &x11Dir, Display* dpy);
 	static QList<XkbVariant>* getVariants(const QString& layout, const QString& x11Dir);
 	static RulesInfo* loadRules(const QString& rulesFile, bool layoutsOnly=false);
+        static QList<LayoutUnit> getGroupNames(Display* dpy);
 private:
 
 	static XkbOptionGroup createMissingGroup(const QString& groupName);

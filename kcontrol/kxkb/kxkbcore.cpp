@@ -432,32 +432,33 @@ KxkbCore::updateGroupsFromServer()
     kDebug() << "updating groups from server";
 
 #ifdef HAVE_XKLAVIER
-	QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
-	if( lus.count() > 0 ) {
-	    if( lus != m_kxkbConfig.m_layouts ) {
-		m_kxkbConfig.setConfiguredLayouts(lus);
-		m_layoutOwnerMap->reset();
-		initTray();
-	    }
-	    else {
-		kDebug() << "no change in layouts - ignoring event";
-	    }
-
-  	    int group = m_extension->getGroup();
-            if( m_currentLayout != group ) {
-	        kDebug() << "got group from server:" << group;
-	        updateIndicator(group, 1);
-            }
-	}
+    QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
 #else
-        int group = m_extension->getGroup();
-        if( m_currentLayout != group && group < m_kxkbConfig.m_layouts.count() ) {
-	    kDebug() << "got group from server:" << group;
-	    updateIndicator(group, 1);
+    QList<LayoutUnit> lus = X11Helper::getGroupNames(QX11Info::display());
+#endif
+
+    int group = m_extension->getGroup();
+    
+    if( lus.count() > 0 ) {
+        if( lus != m_kxkbConfig.m_layouts ) {
+            m_kxkbConfig.setConfiguredLayouts(lus);
+            m_layoutOwnerMap->reset();
+            initTray();
+        }
+        else {
+            kDebug() << "no change in layouts";
         }
 
-	kDebug() << "updating layouts from server is not implemented w/out libxklavier";
-#endif
+        updateIndicator(group, 1);
+    }
+    else {
+        kWarning() << "failed to get layouts from server";
+        if( m_currentLayout != group && group < m_kxkbConfig.m_layouts.count() ) {
+	    kDebug() << "...tryin to set at least group" << group;
+	    updateIndicator(group, 1);
+        }
+    }
+//	kDebug() << "updating layouts from server is not implemented w/out libxklavier";
 	
     return 0;
 }

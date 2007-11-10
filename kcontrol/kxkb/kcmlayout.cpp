@@ -697,13 +697,15 @@ void LayoutConfig::updateGroupsFromServer()
     kDebug() << "enabled:" << enabled << m_kxkbConfig.m_layouts.count();
     if( enabled && m_kxkbConfig.m_layouts.count() <= 1 ) {
 #ifdef HAVE_XKLAVIER
-	QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
-	if( lus.count() > 0 ) {
-	    m_kxkbConfig.setConfiguredLayouts(lus);
+        QList<LayoutUnit> lus = XKlavierAdaptor::getInstance(QX11Info::display())->getGroupNames();
+#else
+        QList<LayoutUnit> lus = X11Helper::getGroupNames(QX11Info::display());
+#endif
+        if( lus.count() > 0 ) {
+            m_kxkbConfig.setConfiguredLayouts(lus);
             m_dstModel->reset();
             widget->dstTableView->update();
-	}
-#endif
+        }
     }
 }
 
