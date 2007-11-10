@@ -74,11 +74,13 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
     m_layout->setSpacing(0);
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
-	m_icon_lock=new IconHover(KIcon("system-lock-screen"),"",this);
-	m_icon_logout=new IconHover(KIcon("system-log-out"),"",this);
-	//setGeometry(QRectF(geometry().x(),geometry().y(),geometry().width()/4,geometry().height()/4));
-	connect(m_icon_lock,SIGNAL(clicked()),this,SLOT(clickLock()));
-	connect(m_icon_logout,SIGNAL(clicked()),this,SLOT(clickLogout()));
+    m_icon_lock=new IconHover(KIcon("system-lock-screen"),"",this);
+    m_icon_lock->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
+    m_icon_logout=new IconHover(KIcon("system-log-out"),"",this);
+    m_icon_logout->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
+    //setGeometry(QRectF(geometry().x(),geometry().y(),geometry().width()/4,geometry().height()/4));
+    connect(m_icon_lock,SIGNAL(clicked()),this,SLOT(clickLock()));
+    connect(m_icon_logout,SIGNAL(clicked()),this,SLOT(clickLogout()));
 }
 
 LockOut::~LockOut()
@@ -91,10 +93,10 @@ void LockOut::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     Q_UNUSED(p);
     Q_UNUSED(contentsRect);
     //m_icon_lock->setIconSize(m_icon_lock->size()/2);
-	//m_icon_logout->setIconSize(m_icon_logout->size()/2);
-	//m_layout->setGeometry(QRectF(m_layout->geometry().x(),m_layout->geometry().y(),m_layout->geometry().width(),m_icon_logout->size().rheight ()*2));
-	m_layout->addItem(m_icon_lock);
-	m_layout->addItem(m_icon_logout);
+    //m_icon_logout->setIconSize(m_icon_logout->size()/2);
+    //m_layout->setGeometry(QRectF(m_layout->geometry().x(),m_layout->geometry().y(),m_layout->geometry().width(),m_icon_logout->size().rheight ()*2));
+    m_layout->addItem(m_icon_lock);
+    m_layout->addItem(m_icon_logout);
     kDebug()<<"LockOut:: geometry "<<geometry().width();
 }
 
@@ -108,7 +110,7 @@ void LockOut::configAccepted()
 
 void LockOut::clickLock()
 {
-	kDebug()<<"LockOut:: lock clicked ";
+    kDebug()<<"LockOut:: lock clicked ";
 	
     QString interface("org.freedesktop.ScreenSaver");
     org::freedesktop::ScreenSaver screensaver(interface, "/ScreenSaver",
@@ -120,8 +122,8 @@ void LockOut::clickLock()
 
 void LockOut::clickLogout()
 {
-	kDebug()<<"LockOut:: logout clicked ";
-	QString interface("org.kde.ksmserver");
+    kDebug()<<"LockOut:: logout clicked ";
+    QString interface("org.kde.ksmserver");
     org::kde::KSMServerInterface smserver(interface, "/KSMServer",
                                           QDBusConnection::sessionBus());
     if (smserver.isValid()) {
