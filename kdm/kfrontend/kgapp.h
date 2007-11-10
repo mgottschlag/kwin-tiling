@@ -46,6 +46,7 @@ class GreeterApp : public QApplication {
 
   private:
 	int pingInterval;
+	bool regrabPtr, regrabKbd;
 };
 
 #endif /* KGAPP_H */

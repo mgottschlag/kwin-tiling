@@ -63,7 +63,8 @@ sigAlarm( int )
 }
 
 GreeterApp::GreeterApp( int argc, char **argv ) :
-	inherited( argc, argv )
+	inherited( argc, argv ),
+	regrabPtr( false ), regrabKbd( false )
 {
 	pingInterval = _isLocal ? 0 : _pingInterval;
 	if (pingInterval) {
@@ -90,7 +91,6 @@ bool
 GreeterApp::x11EventFilter( XEvent * ev )
 {
 	KeySym sym;
-	static bool regrabPtr, regrabKbd;
 
 	switch (ev->type) {
 	case FocusIn:
