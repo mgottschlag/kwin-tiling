@@ -187,6 +187,17 @@ typedef enum displayStatus { notRunning = 0, running, zombie, phoenix, raiser,
 typedef enum serverStatus { ignore = 0, awaiting, starting,
                             terminated, killed, pausing } ServerStatus;
 
+typedef struct {
+	unsigned how:2,    /* 0=none 1=reboot 2=halt (SHUT_*) */
+	         force:2;
+	int uid;
+	int start;
+	int timeout;
+	char *osname;
+	time_t bmstamp;
+	int osindex;
+} SdRec;
+
 typedef struct RcStr {
 	struct RcStr *next;
 	char *str;
@@ -250,6 +261,7 @@ struct display {
 	int userSess;               /* -1=nobody, otherwise uid */
 	char *userName;
 	char *sessName;
+	SdRec sdRec;                /* user session requested shutdown */
 	CtrlRec ctrl;               /* command socket */
 	GPipe pipe;                 /* comm master <-> slave */
 	GPipe gpipe;                /* comm master <-> greeter */
@@ -296,17 +308,6 @@ struct display {
 #define dFromXDMCP      8	/* started with XDMCP */
 #define dFromFile       0	/* started via entry in servers file */
 
-typedef struct {
-	unsigned how:2,    /* 0=none 1=reboot 2=halt (SHUT_*) */
-	         force:2;
-	int uid;
-	int start;
-	int timeout;
-	char *osname;
-	time_t bmstamp;
-	int osindex;
-} SdRec;
-
 struct disphist {
 	struct disphist *next;
 	char *name;
@@ -314,7 +315,6 @@ struct disphist {
 	unsigned rLogin:2,    /* 0=nothing 1=relogin 2=login */
 	         lock:1,      /* screen locker running */
 	         goodExit:1;  /* was the last exit "peaceful"? */
-	SdRec sdRec;
 	char *nuser, *npass, *nargs;
 };
 

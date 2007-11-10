@@ -652,7 +652,6 @@ setNLogin( struct display *d,
 static void
 processDPipe( struct display *d )
 {
-	struct disphist *he;
 	char *user, *pass, *args;
 	int cmd;
 	GTalk dpytalk;
@@ -680,24 +679,23 @@ processDPipe( struct display *d )
 		break;
 	case D_UnUser:
 		sessionDone( d );
-		he = d->hstent;
-		if (he->sdRec.how) {
-			if (he->sdRec.force == SHUT_ASK &&
+		if (d->sdRec.how) {
+			if (d->sdRec.force == SHUT_ASK &&
 			    (anyUserLogins( -1 ) || d->allowShutdown == SHUT_ROOT))
 			{
 				gSendInt( TRUE );
 			} else {
 				if (!sdRec.how || sdRec.force != SHUT_FORCE ||
-				    !((d->allowNuke == SHUT_NONE && sdRec.uid != he->sdRec.uid) ||
-				      (d->allowNuke == SHUT_ROOT && he->sdRec.uid)))
+				    !((d->allowNuke == SHUT_NONE && sdRec.uid != d->sdRec.uid) ||
+				      (d->allowNuke == SHUT_ROOT && d->sdRec.uid)))
 				{
 					if (sdRec.osname)
 						free( sdRec.osname );
-					sdRec = he->sdRec;
-				} else if (he->sdRec.osname)
-					free( he->sdRec.osname );
-				he->sdRec.how = 0;
-				he->sdRec.osname = 0;
+					sdRec = d->sdRec;
+				} else if (d->sdRec.osname)
+					free( d->sdRec.osname );
+				d->sdRec.how = 0;
+				d->sdRec.osname = 0;
 				gSendInt( FALSE );
 			}
 		} else
@@ -826,9 +824,9 @@ processGPipe( struct display *d )
 		gSendStr( sdRec.osname );
 		break;
 	case G_QryDpyShutdown:
-		gSendInt( d->hstent->sdRec.how );
-		gSendInt( d->hstent->sdRec.uid );
-		gSendStr( d->hstent->sdRec.osname );
+		gSendInt( d->sdRec.how );
+		gSendInt( d->sdRec.uid );
+		gSendStr( d->sdRec.osname );
 		break;
 	case G_List:
 		listSessions( gRecvInt(), d, 0, emitXSessG, emitTTYSessG );
@@ -1462,7 +1460,7 @@ startDisplayP2( struct display *d )
 		registerInput( d->gpipe.fd.r );
 
 		d->hstent->lock = d->hstent->rLogin = d->hstent->goodExit =
-			d->hstent->sdRec.how = 0;
+			d->sdRec.how = 0;
 		d->lastStart = now;
 		break;
 	}

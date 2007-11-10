@@ -549,9 +549,9 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					strCat( &bp, "\tglobal," );
 					sdCat( &bp, &sdRec );
 				}
-				if (d && d->hstent->sdRec.how) {
+				if (d && d->sdRec.how) {
 					strCat( &bp, "\tlocal," );
-					sdCat( &bp, &d->hstent->sdRec );
+					sdCat( &bp, &d->sdRec );
 				}
 				*bp++ = '\n';
 				writer( fd, cbuf, bp - cbuf );
@@ -650,9 +650,9 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					goto bust;
 				}
 				if (!sdr.how && !sdr.start) {
-					if (d->hstent->sdRec.osname)
-						free( d->hstent->sdRec.osname );
-					d->hstent->sdRec = sdr;
+					if (d->sdRec.osname)
+						free( d->sdRec.osname );
+					d->sdRec = sdr;
 				} else {
 					if (sdRec.how && sdRec.force == SHUT_FORCE &&
 					    ((d->allowNuke == SHUT_NONE && sdRec.uid != sdr.uid) ||
@@ -669,9 +669,9 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 						goto bust;
 					}
 					if (!sdr.start) {
-						if (d->hstent->sdRec.osname)
-							free( d->hstent->sdRec.osname );
-						d->hstent->sdRec = sdr;
+						if (d->sdRec.osname)
+							free( d->sdRec.osname );
+						d->sdRec = sdr;
 					} else {
 						if (!sdr.how)
 							cancelShutdown();
