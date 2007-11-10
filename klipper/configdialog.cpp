@@ -225,7 +225,7 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent )
 
             QTreeWidgetItem *child = new QTreeWidgetItem(item, QStringList()
                                                          << command->command << command->description);
-            child->setIcon(0, KIcon(command->pixmap.isEmpty() ? "exec" : command->pixmap));
+            child->setIcon(0, KIcon(command->pixmap.isEmpty() ? "system-run" : command->pixmap));
             child->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
         }
     }
@@ -307,7 +307,7 @@ void ActionWidget::slotContextMenu(const QPoint& pos)
         QTreeWidgetItem *child = new QTreeWidgetItem(item->parent() ? item->parent() : item, QStringList()
                                                      << i18n("Double-click here to set the command to be executed")
                                                      << i18n("<new command>"));
-        child->setIcon(0, KIcon("exec"));
+        child->setIcon(0, KIcon("system-run"));
         child->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
     }
     else if ( executed == rmCmd )
@@ -323,7 +323,7 @@ void ActionWidget::slotItemChanged(QTreeWidgetItem *item, int column)
     ClipCommand command( item->text(0), item->text(1) );
 
     treeWidget->blockSignals(true); // don't lead in infinite recursion...
-    item->setIcon(0, KIcon(command.pixmap.isEmpty() ? "exec" : command.pixmap));
+    item->setIcon(0, KIcon(command.pixmap.isEmpty() ? "system-run" : command.pixmap));
     treeWidget->blockSignals(false);
 }
 

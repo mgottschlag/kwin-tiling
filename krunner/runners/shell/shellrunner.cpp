@@ -51,7 +51,7 @@ void ShellRunner::match(Plasma::SearchContext *search)
     if (search->type() == Plasma::SearchContext::Executable ||
         search->type() == Plasma::SearchContext::ShellCommand)  {
         QAction* action = search->addExactMatch(this);
-        action->setIcon(KIcon("exec"));
+        action->setIcon(KIcon("system-run"));
         action->setText(i18n("Run %1", search->searchTerm()));
     }
 }

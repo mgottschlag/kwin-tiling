@@ -188,7 +188,7 @@ void StartupId::start_startupid( const QString& icon_P )
     QPixmap icon_pixmap = KIconLoader::global()->loadIcon( icon_P, KIconLoader::Small, 0,
         KIconLoader::DefaultState, QStringList(), 0, true ); // return null pixmap if not found
     if( icon_pixmap.isNull())
-        icon_pixmap = SmallIcon( "exec" );
+        icon_pixmap = SmallIcon( "system-run" );
     if( startup_widget == NULL )
         {
         startup_widget = new QWidget( 0, Qt::X11BypassWindowManagerHint );
