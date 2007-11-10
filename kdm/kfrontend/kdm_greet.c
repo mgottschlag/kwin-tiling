@@ -438,33 +438,55 @@ unsecureDisplay( Display *dpy )
 void
 secureKeyboard( Display *dpy )
 {
-	debug( "secureKeyboard %s\n", dname );
 	(void)alarm( (unsigned)_grabTimeout );
 	(void)signal( SIGALRM, syncTimeout );
 	if (setjmp( syncJump ) ||
 	    XGrabKeyboard( dpy, DefaultRootWindow( dpy ), True,
 	                   GrabModeAsync, GrabModeAsync,
-	                   CurrentTime ) != GrabSuccess ||
+	                   CurrentTime ) != GrabSuccess)
+	{
+		(void)alarm( 0 );
+		(void)signal( SIGALRM, SIG_DFL );
+		logError( "Keyboard on display %s could not be secured\n", dname );
+		exit( EX_RESERVER_DPY );
+	}
+	(void)alarm( 0 );
+	(void)signal( SIGALRM, SIG_DFL );
+}
+
+void
+securePointer( Display *dpy )
+{
+	(void)alarm( (unsigned)_grabTimeout );
+	(void)signal( SIGALRM, syncTimeout );
+	if (setjmp( syncJump ) ||
 	    XGrabPointer( dpy, DefaultRootWindow( dpy ), True, GRABEVENTS,
 	                  GrabModeAsync, GrabModeAsync,
 	                  None, None, CurrentTime ) != GrabSuccess)
 	{
 		(void)alarm( 0 );
 		(void)signal( SIGALRM, SIG_DFL );
-		logError( "Keyboard on display %s could not be secured\n", dname );
-		sleep( 10 );
+		logError( "Pointer on display %s could not be secured\n", dname );
 		exit( EX_RESERVER_DPY );
 	}
 	(void)alarm( 0 );
 	(void)signal( SIGALRM, SIG_DFL );
-	XSetInputFocus( dpy, None, None, CurrentTime );
-	debug( "secureKeyboard %s done\n", dname );
 }
 
 void
-unsecureKeyboard( Display *dpy )
+secureInputs( Display *dpy )
 {
-	debug( "Unsecure keyboard %s\n", dname );
+	debug( "secureInputs %s\n", dname );
+	secureKeyboard( dpy );
+	securePointer( dpy );
+	XSetInputFocus( dpy, None, None, CurrentTime );
+	debug( "secureInputs %s done\n", dname );
+}
+
+void
+unsecureInputs( Display *dpy )
+{
+	debug( "unsecureInputs %s\n", dname );
 	XSetInputFocus( dpy, PointerRoot, PointerRoot, CurrentTime );
 	XUngrabKeyboard( dpy, CurrentTime );
     XUngrabPointer( dpy, CurrentTime );

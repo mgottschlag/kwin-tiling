@@ -159,7 +159,7 @@ FDialog::exec()
 	static QWidget *current;
 
 	if (!current)
-		secureKeyboard( QX11Info::display() );
+		secureInputs( QX11Info::display() );
 	fakeFocusIn( winId() );
 	QWidget *previous = current;
 	current = this;
@@ -168,7 +168,7 @@ FDialog::exec()
 	if (current)
 		fakeFocusIn( current->winId() );
 	else
-		unsecureKeyboard( QX11Info::display() );
+		unsecureInputs( QX11Info::display() );
 	return result();
 }
 

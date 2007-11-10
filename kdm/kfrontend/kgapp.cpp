@@ -90,8 +90,29 @@ bool
 GreeterApp::x11EventFilter( XEvent * ev )
 {
 	KeySym sym;
+	static bool regrabPtr, regrabKbd;
 
 	switch (ev->type) {
+	case FocusIn:
+	case FocusOut:
+		if (ev->xfocus.mode == NotifyUngrab) {
+			if (!regrabKbd) {
+				secureKeyboard( QX11Info::display() );
+				regrabKbd = true;
+			}
+		} else
+			regrabKbd = false;
+		break;
+	case EnterNotify:
+	case LeaveNotify:
+		if (ev->xcrossing.mode == NotifyUngrab) {
+			if (!regrabPtr) {
+				securePointer( QX11Info::display() );
+				regrabPtr = true;
+			}
+		} else
+			regrabPtr = false;
+		break;
 	case KeyPress:
 		sym = XLookupKeysym( &ev->xkey, 0 );
 		if (sym != XK_Return && !IsModifierKey( sym ))
@@ -124,7 +145,7 @@ xIOErr( Display * )
 void
 kg_main( const char *argv0 )
 {
-	static char *argv[] = { (char *)"kdmgreet", (char *)"-nograb", 0 };
+	static char *argv[] = { (char *)"kdmgreet", 0 };
 
 	KCrash::setFlags( KCrash::KeepFDs | KCrash::SaferDialog | KCrash::AlwaysDirectly );
 	KCrash::setApplicationName( QLatin1String( argv[0] ) );

@@ -58,7 +58,9 @@ void logPanic( const char *fmt, ... ) ATTR_NORETURN;
 struct _XDisplay;
 
 void secureKeyboard( struct _XDisplay *dpy );
-void unsecureKeyboard( struct _XDisplay *dpy );
+void securePointer( struct _XDisplay *dpy );
+void secureInputs( struct _XDisplay *dpy );
+void unsecureInputs( struct _XDisplay *dpy );
 void secureDisplay( struct _XDisplay *dpy );
 void unsecureDisplay( struct _XDisplay *dpy );
 int pingServer( struct _XDisplay *dpy );
