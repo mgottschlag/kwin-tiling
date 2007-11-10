@@ -375,6 +375,7 @@ void DefaultDesktop::paintInterface(QPainter *painter,
     //kDebug() << "paintInterface of background";
     if (!m_background && !m_bitmapBackground) {
         Containment::paintInterface(painter, option, contentsRect);
+        return;
     }
 
     painter->save();
