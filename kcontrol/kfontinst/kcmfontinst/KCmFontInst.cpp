@@ -290,7 +290,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsToolsMenu=new KActionMenu(KIcon("tool2"), i18n("Tools"), this);
     itsMgtMode=new KToggleAction(KIcon("preferences-desktop-font-installer"),
                                  i18n("Font Management Mode"), this),
-    itsShowPreview=new KToggleAction(KIcon("thumbnail-show"), i18n("Show Large Preview"), this);
+    itsShowPreview=new KToggleAction(KIcon("view-preview"), i18n("Show Large Preview"), this);
     settingsMenu->addAction(itsMgtMode);
     itsMgtMode->setChecked(true);
     settingsMenu->addSeparator();
