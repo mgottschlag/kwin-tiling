@@ -60,7 +60,7 @@ enum {				/* entries for Memory_Info[] */
 };
 
 /*
-   all update()-functions should put either
+   all fetchValues()-functions should put either
    their results _OR_ the value NO_MEMORY_INFO into Memory_Info[]
 */
 static t_memsize Memory_Info[MEM_LAST_ENTRY];
@@ -77,7 +77,7 @@ static t_memsize Memory_Info[MEM_LAST_ENTRY];
 static QLabel *MemSizeLabel[MEM_LAST_ENTRY][2];
 
 enum { MEM_RAM_AND_HDD, MEM_RAM, MEM_HDD, MEM_LAST };
-static QWidget *Graph[MEM_LAST];
+static QLabel *Graph[MEM_LAST];
 static QLabel *GraphLabel[MEM_LAST];
 
 #define SPACING 16
@@ -251,7 +251,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const QVariantList &)
 	vbox->addWidget(Widget);
 	vbox->addSpacing(SPACING / 2);
 
-	QWidget *g = new QWidget(this);
+        QLabel *g = new QLabel(this);
 	g->setMinimumWidth(2 * SPACING);
 	g->setMinimumHeight(3 * SPACING);
 	g->setAttribute(Qt::WA_NoSystemBackground, true);
@@ -271,9 +271,9 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const QVariantList &)
     timer = new QTimer(this);
     timer->start(100);
     QObject::connect(timer, SIGNAL(timeout()), this,
-		     SLOT(update_Values()));
+		     SLOT(update()));
 
-    update();
+    fetchValues();
 }
 
 KMemoryWidget::~KMemoryWidget()
@@ -300,7 +300,7 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
 			      	QColor * color,
 				QString *text)
 {
-    QWidget *graph = Graph[widgetindex];
+    QLabel *graph = Graph[widgetindex];
     int width = graph->width();
     int height = graph->height();
     QPixmap pm(width, height);
@@ -357,7 +357,8 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
     QRect r = graph->rect();
     qDrawShadePanel(&paint, r.x(), r.y(), r.width(), r.height(), palette().active(), true, 1);
     paint.end();
-    bitBlt(graph, 0, 0, &pm);
+    graph->setPixmap(pm);
+    //bitBlt(graph, 0, 0, &pm);
 
     GraphLabel[widgetindex]->setText(i18n("%1 free", formatted_unit(last_used)));
 
@@ -365,14 +366,14 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
 }
 
 /* update_Values() is the main-loop for updating the Memory-Information */
-void KMemoryWidget::update_Values()
+void KMemoryWidget::paintEvent(QPaintEvent *)
 {
     int i;
     bool ok1;
     QLabel *label;
     t_memsize used[5];
 
-    update();			/* get the Information from memory_linux, memory_fbsd */
+    fetchValues();			/* get the Information from memory_linux, memory_fbsd */
 
     /* update the byte-strings */
     for (i = TOTAL_MEM; i < MEM_LAST_ENTRY; i++) {
@@ -481,7 +482,7 @@ void KMemoryWidget::update_Values()
 #else
 
 /* Default for unsupported systems */
-void KMemoryWidget::update()
+void KMemoryWidget::fetchValues()
 {
     int i;
     for (i = TOTAL_MEM; i < MEM_LAST_ENTRY; ++i)

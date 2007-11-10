@@ -17,7 +17,7 @@
 #include <vm/vm_swap.h>
 #endif
 
-void KMemoryWidget::update()
+void KMemoryWidget::fetchValues()
 {
   int mib[2];
   size_t len;

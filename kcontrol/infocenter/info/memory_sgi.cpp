@@ -16,7 +16,7 @@
 #endif
 
 
-void KMemoryWidget::update()
+void KMemoryWidget::fetchValues()
 {
   int pagesize = getpagesize();
 

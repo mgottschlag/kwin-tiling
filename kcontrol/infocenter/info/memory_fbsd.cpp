@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-void KMemoryWidget::update()
+void KMemoryWidget::fetchValues()
 {
     char blah[10], buf[80], *used_str, *total_str;
     /* Stuff for sysctl */

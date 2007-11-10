@@ -29,7 +29,7 @@
 #include <dirent.h>
 #include <kdebug.h>
 
-void KMemoryWidget::update()
+void KMemoryWidget::fetchValues()
 {
 
 	vm_statistics_data_t vm_info;

@@ -27,7 +27,7 @@ extern "C" {
 
 extern "C" void vm_statistics(task_t, vm_statistics_data_t*);
 
-void KMemoryWidget::update()
+void KMemoryWidget::fetchValues()
 {
   int pageshift;          /* log base 2 of the pagesize */
   register int pagesize;

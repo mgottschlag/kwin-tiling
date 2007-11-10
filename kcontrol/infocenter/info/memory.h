@@ -44,7 +44,7 @@ class KMemoryWidget:public KCModule {
     QColor all_colors[3];
     QString all_text[3];
 
-    void update();
+    void fetchValues();
 
     bool Display_Graph(int widgetindex,
 		      int count,
@@ -52,8 +52,8 @@ class KMemoryWidget:public KCModule {
 		      t_memsize *used,
 		      QColor *color,
 		      QString *text);
-    public Q_SLOTS:
-    void update_Values();
+
+    void paintEvent(QPaintEvent *);
 };
 
 

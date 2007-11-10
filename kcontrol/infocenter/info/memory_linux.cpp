@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <QFile>
 
-void KMemoryWidget::update()
+void KMemoryWidget::fetchValues()
 {
   struct sysinfo info;
   
@@ -31,6 +31,7 @@ void KMemoryWidget::update()
 			unsigned long v;
 			v = strtoul(&buf[7],NULL,10);			
 			Memory_Info[CACHED_MEM] = MEMORY(v) * 1024; // Cached memory in RAM
+			break;
 		}
 	}
 	file.close();

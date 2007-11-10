@@ -21,7 +21,7 @@
 
 #define PAGETOK(a) (( (t_memsize) sysconf( _SC_PAGESIZE )) *  (t_memsize) a)
 
-void KMemoryWidget::update() {
+void KMemoryWidget::fetchValues() {
 
 	kstat_ctl_t	*kctl;
 	kstat_t		*ksp;

@@ -24,7 +24,7 @@
 
 #define MAX_SWAP_AREAS 16
 
-void KMemoryWidget::update()
+void KMemoryWidget::fetchValues()
 {
   int  		page_size,i;
   unsigned long total_mem, total_free,
