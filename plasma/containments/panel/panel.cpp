@@ -49,7 +49,7 @@ Containment::Type Panel::type()
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
-    kDebug() << "constraints updated with" << constraints << "!!!!!!!!!!!!!!!!!";
+    //kDebug() << "constraints updated with" << constraints << "!!!!!!!!!!!!!!!!!";
     if (constraints & Plasma::LocationConstraint ||
         constraints & Plasma::ScreenConstraint) {
         Plasma::Location loc = location();
@@ -58,9 +58,9 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             s = 0;
         }
 
-        kDebug() << "Setting location to" << loc << "on screen" << s;
 
         QRect r = QApplication::desktop()->screenGeometry(s);
+        //kDebug() << "Setting location to" << loc << "on screen" << s << "with geom" << r;
         setMaximumSize(r.size());
         int x = 0;
         int y = 0;
@@ -71,10 +71,10 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
             width = r.width();
             height = 48;
-            kDebug() << "Width:" << width << ", height:" << height;
             if (loc == BottomEdge) {
                 y = r.height() - height;
             }
+            //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
         } else if (loc == LeftEdge || loc == RightEdge) {
             setFormFactor(Plasma::Vertical);
 
@@ -83,15 +83,15 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             if (loc == RightEdge) {
                 x = r.width() - width;
             }
+            //kDebug() << "left/right: Width:" << width << ", height:" << height;
         }
-        kDebug() << "Setting geometry to" << QRectF(x, y, width, height);
+        //kDebug() << "Setting geometry to" << QRectF(x, y, width, height);
         QRectF geo = QRectF(x, y, width, height);
         setGeometry(geo);
 
         if (corona()) {
-            kDebug() << "we have a corona";
             foreach (Containment *c, corona()->containments()) {
-                if (c->type() != PanelContainment) {
+                if (c->type() != PanelContainment || c == this) {
                     continue;
                 }
 
