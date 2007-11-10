@@ -64,7 +64,8 @@ sigAlarm( int )
 
 GreeterApp::GreeterApp( int argc, char **argv ) :
 	inherited( argc, argv ),
-	regrabPtr( false ), regrabKbd( false )
+	regrabPtr( false ), regrabKbd( false ),
+	dragWidget( 0 )
 {
 	pingInterval = _isLocal ? 0 : _pingInterval;
 	if (pingInterval) {
@@ -129,6 +130,42 @@ GreeterApp::x11EventFilter( XEvent * ev )
 	case MotionNotify:
 		if (ev->xbutton.state & Button3Mask)
 			ev->xbutton.state = (ev->xbutton.state & ~Button3Mask) | Button1Mask;
+		switch (ev->type) {
+		case ButtonPress:
+			if (((ev->xbutton.state & Mod1Mask) && ev->xbutton.button == 1) ||
+			    dragWidget)
+			{
+				if (!dragWidget &&
+				    ev->xbutton.window != QX11Info::appRootWindow( _greeterScreen ) &&
+				    (dragWidget = QWidget::find( ev->xbutton.window )))
+				{
+					dragWidget = dragWidget->topLevelWidget();
+					dialogStartPos = dragWidget->geometry().center();
+					mouseStartPos = QPoint( ev->xbutton.x_root, ev->xbutton.y_root );
+					setOverrideCursor( QCursor( Qt::SizeAllCursor ) );
+				}
+				return true;
+			}
+			break;
+		case ButtonRelease:
+			if (dragWidget) {
+				restoreOverrideCursor();
+				dragWidget = 0;
+				return true;
+			}
+			break;
+		case MotionNotify:
+			if (dragWidget) {
+				QRect grt( dragWidget->rect() );
+				grt.moveCenter( dialogStartPos +
+				                QPoint( ev->xbutton.x_root, ev->xbutton.y_root ) -
+				                mouseStartPos );
+				FDialog::fitInto( qApp->desktop()->screenGeometry( _greeterScreen ), grt );
+				dragWidget->setGeometry( grt );
+				return true;
+			}
+			break;
+		}
 		break;
 	}
 	return false;

@@ -61,8 +61,8 @@ FDialog::resizeEvent( QResizeEvent *e )
 		winFrame->resize( size() );
 }
 
-static void
-fitInto( const QRect &scr, QRect &grt )
+void
+FDialog::fitInto( const QRect &scr, QRect &grt )
 {
 	int di;
 	if ((di = scr.right() - grt.right()) < 0)
@@ -108,32 +108,6 @@ FDialog::adjustGeometry()
 
 	if (dsk->screenNumber( QCursor::pos() ) != _greeterScreen)
 		QCursor::setPos( grt.center() );
-}
-
-void
-FDialog::mousePressEvent( QMouseEvent *event )
-{
-	if (winFrame) {
-		dialogStartPos = geometry().center();
-		mouseStartPos = mapToGlobal( event->pos() );
-	}
-}
-
-void
-FDialog::mouseReleaseEvent( QMouseEvent * )
-{
-	dialogStartPos.setX( 0 );
-}
-
-void
-FDialog::mouseMoveEvent( QMouseEvent *event )
-{
-	if (dialogStartPos.x() > 0) {
-		QRect grt( rect() );
-		grt.moveCenter( dialogStartPos + mapToGlobal( event->pos() ) - mouseStartPos );
-		fitInto( qApp->desktop()->screenGeometry( _greeterScreen ), grt );
-		setGeometry( grt );
-	}
 }
 
 static void

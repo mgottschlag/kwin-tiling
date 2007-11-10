@@ -37,17 +37,14 @@ class FDialog : public QDialog {
   public:
 	FDialog( QWidget *parent = 0, bool framed = true );
 	virtual int exec();
+	static void fitInto( const QRect &scr, QRect &grt );
 
   protected:
 	virtual void resizeEvent( QResizeEvent *e );
-	virtual void mousePressEvent( QMouseEvent *e );
-	virtual void mouseReleaseEvent( QMouseEvent *e );
-	virtual void mouseMoveEvent( QMouseEvent *e );
 	void adjustGeometry();
 
   private:
 	QFrame *winFrame;
-	QPoint mouseStartPos, dialogStartPos;
 };
 
 #define errorbox QMessageBox::Critical
