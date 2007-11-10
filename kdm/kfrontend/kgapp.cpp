@@ -261,14 +261,16 @@ kg_main( const char *argv0 )
 		int cmd = gRecvInt();
 
 		if (cmd == G_ConfShutdown) {
+			gSet( 1 );
+			gSendInt( G_QryDpyShutdown );
 			int how = gRecvInt(), uid = gRecvInt();
 			char *os = gRecvStr();
+			gSet( 0 );
 			KDMSlimShutdown::externShutdown( how, os, uid );
 			if (os)
 				free( os );
 			gSendInt( G_Ready );
-			_autoLoginDelay = 0;
-			continue;
+			break;
 		}
 
 		if (cmd == G_ErrorGreet) {

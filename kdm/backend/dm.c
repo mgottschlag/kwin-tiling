@@ -625,6 +625,18 @@ stoppen( int force )
 }
 
 
+static void
+sessionDone( struct display *d )
+{
+	d->userSess = -1;
+	if (d->userName)
+		free( d->userName );
+	d->userName = 0;
+	if (d->sessName)
+		free( d->sessName );
+	d->sessName = 0;
+}
+
 void
 setNLogin( struct display *d,
            const char *nuser, const char *npass, char *nargs, int rl )
@@ -640,6 +652,7 @@ setNLogin( struct display *d,
 static void
 processDPipe( struct display *d )
 {
+	struct disphist *he;
 	char *user, *pass, *args;
 	int cmd;
 	GTalk dpytalk;
@@ -664,6 +677,31 @@ processDPipe( struct display *d )
 		d->userSess = gRecvInt();
 		d->userName = gRecvStr();
 		d->sessName = gRecvStr();
+		break;
+	case D_UnUser:
+		sessionDone( d );
+		he = d->hstent;
+		if (he->sdRec.how) {
+			if (he->sdRec.force == SHUT_ASK &&
+			    (anyUserLogins( -1 ) || d->allowShutdown == SHUT_ROOT))
+			{
+				gSendInt( TRUE );
+			} else {
+				if (!sdRec.how || sdRec.force != SHUT_FORCE ||
+				    !((d->allowNuke == SHUT_NONE && sdRec.uid != he->sdRec.uid) ||
+				      (d->allowNuke == SHUT_ROOT && he->sdRec.uid)))
+				{
+					if (sdRec.osname)
+						free( sdRec.osname );
+					sdRec = he->sdRec;
+				} else if (he->sdRec.osname)
+					free( he->sdRec.osname );
+				he->sdRec.how = 0;
+				he->sdRec.osname = 0;
+				gSendInt( FALSE );
+			}
+		} else
+			gSendInt( FALSE );
 		break;
 	case D_ReLogin:
 		user = gRecvStr();
@@ -786,6 +824,11 @@ processGPipe( struct display *d )
 		gSendInt( sdRec.force );
 		gSendInt( sdRec.uid );
 		gSendStr( sdRec.osname );
+		break;
+	case G_QryDpyShutdown:
+		gSendInt( d->hstent->sdRec.how );
+		gSendInt( d->hstent->sdRec.uid );
+		gSendStr( d->hstent->sdRec.osname );
 		break;
 	case G_List:
 		listSessions( gRecvInt(), d, 0, emitXSessG, emitTTYSessG );
@@ -1489,37 +1532,12 @@ exitDisplay( struct display *d,
 	       "endState = %d, serverCmd = %d, GoodExit = %d\n",
 	       d->name, endState, serverCmd, goodExit );
 
-	d->userSess = -1;
-	if (d->userName)
-		free( d->userName );
-	d->userName = 0;
-	if (d->sessName)
-		free( d->sessName );
-	d->sessName = 0;
+	sessionDone( d );
 	he = d->hstent;
 	he->lastExit = now;
 	he->goodExit = goodExit;
-	if (he->sdRec.how) {
-		if (he->sdRec.force == SHUT_ASK &&
-		    (anyUserLogins( -1 ) || d->allowShutdown == SHUT_ROOT))
-		{
-			endState = DS_RESTART;
-		} else {
-			if (!sdRec.how || sdRec.force != SHUT_FORCE ||
-			    !((d->allowNuke == SHUT_NONE && sdRec.uid != he->sdRec.uid) ||
-			      (d->allowNuke == SHUT_ROOT && he->sdRec.uid)))
-			{
-				if (sdRec.osname)
-					free( sdRec.osname );
-				sdRec = he->sdRec;
-				if (now < sdRec.timeout || wouldShutdown())
-					endState = DS_REMOVE;
-			} else if (he->sdRec.osname)
-				free( he->sdRec.osname );
-			he->sdRec.how = 0;
-			he->sdRec.osname = 0;
-		}
-	}
+	if (sdRec.how && sdRec.start == TO_INF)
+		endState = DS_REMOVE;
 	if (d->status == zombie)
 		rStopDisplay( d, d->zstatus );
 	else {

@@ -571,19 +571,6 @@ manageSession( struct display *d )
 		/* NOTREACHED */
 #endif
 
-	if (d->hstent->sdRec.how) {
-		openGreeter();
-		gSendInt( G_ConfShutdown );
-		gSendInt( d->hstent->sdRec.how );
-		gSendInt( d->hstent->sdRec.uid );
-		gSendStr( d->hstent->sdRec.osname );
-		if ((cmd = ctrlGreeterWait( TRUE )) != G_Ready) {
-			logError( "Received unknown command %d from greeter\n", cmd );
-			closeGreeter( TRUE );
-		}
-		goto regreet;
-	}
-
 	tdiff = time( 0 ) - td->hstent->lastExit - td->openDelay;
 	if (autoLogon( tdiff )) {
 		if (!verify( conv_auto, FALSE ))
@@ -668,6 +655,18 @@ manageSession( struct display *d )
 			sleep( 10 );
 		sessionExit( EX_AL_RESERVER_DPY );
 	}
+
+	gSet( &mstrtalk );
+	gSendInt( D_UnUser );
+	if (gRecvInt()) {
+		openGreeter();
+		gSendInt( G_ConfShutdown );
+		if ((cmd = ctrlGreeterWait( TRUE )) != G_Ready) {
+			logError( "Received unknown command %d from greeter\n", cmd );
+			closeGreeter( TRUE );
+		}
+	}
+
 	sessionExit( EX_NORMAL ); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
 }
 

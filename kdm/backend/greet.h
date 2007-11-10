@@ -182,6 +182,7 @@ from the copyright holder.
 # define BO_IO     -3
 #define G_Console       116 /* ; async */
 #define G_AutoLogin     117 /* ; async */
+#define G_QryDpyShutdown 118 /* ; int, int, str */
 
 /*
  * Command codes core -> config reader

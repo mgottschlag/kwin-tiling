@@ -352,6 +352,7 @@ struct protoDisplay {
 #define D_ChooseHost 4
 #define D_RemoteHost 5
 #define D_XConnOk    6
+#define D_UnUser     7
 
 extern int debugLevel;
 
