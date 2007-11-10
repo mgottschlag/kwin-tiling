@@ -424,7 +424,9 @@ void Interface::exec()
     }
 
     SearchMatch* match = dynamic_cast<SearchMatch*>(m_matchList->currentItem());
-
+    if (!match) {
+        return;
+    }
     QString searchTerm = m_searchTerm->text();
 
     if (!m_executions.contains(searchTerm)) {
