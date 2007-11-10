@@ -132,7 +132,7 @@ public:
 	int getDefaultLayout();
 	
 	bool load(int loadMode);
-	bool setConfiguredLayouts(XkbConfig xkbConfig);
+	void setConfiguredLayouts(XkbConfig xkbConfig);
 	void save();
 	void setDefaults();
 	

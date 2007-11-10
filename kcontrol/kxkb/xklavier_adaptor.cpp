@@ -103,7 +103,7 @@ static void processVariants(XklConfigRegistry*, const XklConfigItem* configItem,
 #endif
 
 	QList<XkbVariant>* vars = ((XKlavierAdaptorPriv*)userData)->m_variants[layout];
-	vars->append(variant);	//TODO: //QString(configItem->description));
+	vars->append(variant);
 }
 
 

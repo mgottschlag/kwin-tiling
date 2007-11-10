@@ -175,14 +175,13 @@ void KxkbConfig::updateDisplayNames()
   }
 }
 
-bool KxkbConfig::setConfiguredLayouts(XkbConfig xkbConfig)
+void KxkbConfig::setConfiguredLayouts(XkbConfig xkbConfig)
 {
     kDebug() << "resetting layouts to " << xkbConfig.layouts.count() << " active in X server";
     m_layouts = xkbConfig.layouts;
     m_options = xkbConfig.options;
     //TODO: update model
     updateDisplayNames();
-    return true; //TODO ?
 }
 
 void KxkbConfig::save()
