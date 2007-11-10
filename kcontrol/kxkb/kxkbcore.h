@@ -73,7 +73,7 @@ protected slots:
     void windowChanged(WId winId);
     void desktopChanged(int desktop);
 
-    void slotSettingsChanged(int category);
+    void settingsChanged(int category);
 
 protected:
     bool settingsRead();

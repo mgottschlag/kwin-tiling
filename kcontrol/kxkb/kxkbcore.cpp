@@ -124,6 +124,10 @@ void KxkbCore::initReactions()
 #endif
         initKeys();
     }
+    if( actionCollection != NULL ) {
+        actionCollection->readSettings();
+        kDebug() << "kde shortcut" << static_cast<KAction*>(actionCollection->action(0))->globalShortcut().toString();
+    }
 }
 
 void KxkbCore::initKeys()
@@ -132,8 +136,9 @@ void KxkbCore::initKeys()
 //    actionCollection->setConfigGlobal(true);
     KAction* a = NULL;
 #include "kxkbbindings.cpp"
-    actionCollection->readSettings();
     connect(a, SIGNAL(triggered()), this, SLOT(toggled()));
+
+    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(settingsChanged(int))); 
 }
 
 KxkbCore::~KxkbCore()
@@ -161,17 +166,15 @@ int KxkbCore::newInstance()
     return -1;
 }
 
-void KxkbCore::slotSettingsChanged(int category)
+void KxkbCore::settingsChanged(int category)
 {
     if ( category != KGlobalSettings::SETTINGS_SHORTCUTS)
         return;
 
-#ifdef __GNUC__
-#warning TODO PORT ME (KGlobalAccel related)
-#endif
-
-    KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
-//    m_keys->readSettings();
+    kDebug() << "global settings changed";
+    actionCollection->readSettings();
+    if( actionCollection != NULL )
+        kDebug() << "kde shortcut" << static_cast<KAction*>(actionCollection->action(0))->globalShortcut().toString();
 	//TODO:
 	//keys->updateConnections();
 }

@@ -47,16 +47,12 @@ public:
     virtual int newInstance();
 
     bool isError() { return m_kxkbCore->getStatus() != 0; }
-//    bool setLayout(const LayoutUnit& layoutUnit, int group=-1);
 
 // External API:
 public slots:
     bool setLayout(const QString& layoutPair) { return m_kxkbCore->setLayout(layoutPair); }
     QString getCurrentLayout() { return m_kxkbCore->getCurrentLayout(); }
     QStringList getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
-
-protected slots:
-    void slotSettingsChanged(int category);
 
 private:
     KxkbCore* m_kxkbCore;

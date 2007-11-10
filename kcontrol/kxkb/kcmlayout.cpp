@@ -33,6 +33,7 @@
 #include <kshortcutsdialog.h>
 #include <kshortcutwidget.h>
 #include <kglobalaccel.h>
+#include <kglobalsettings.h>
 #include <kactioncollection.h>
 #include <kglobal.h>
 #include <kconfig.h>
@@ -585,6 +586,8 @@ void LayoutConfig::save()
     action->setGlobalShortcut(shortcut, KAction::ActiveShortcut, KAction::NoAutoloading);
     kDebug() << "saving kxkb shortcut" << shortcut.toString();
     actionCollection->writeSettings();
+
+    KGlobalSettings::emitChange(KGlobalSettings::SettingsChanged, KGlobalSettings::SETTINGS_SHORTCUTS);
 
     KToolInvocation::kdeinitExec("kxkb");
     emit KCModule::changed( false );

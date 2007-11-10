@@ -68,12 +68,6 @@ int KXKBApp::newInstance()
     return res;
 }
 
-void KXKBApp::slotSettingsChanged(int category)
-{
-//TODO
-//    return m_kxkbCore->slotSettingsChanged(category);
-}
-
 
 const char * DESCRIPTION =
   I18N_NOOP("A utility to switch keyboard maps");
