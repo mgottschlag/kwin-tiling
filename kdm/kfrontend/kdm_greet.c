@@ -406,19 +406,6 @@ secureDisplay( Display *dpy )
 		XSync( dpy, 0 );
 	}
 	debug( "secureDisplay %s done\n", dname );
-#if defined(HAVE_XKB) && defined(HAVE_XKBSETPERCLIENTCONTROLS)
-	/*
-	 * Activate the correct mapping for modifiers in XKB extension as
-	 * grabbed keyboard has its own mapping by default
-	 */
-	{
-		int opcode, evbase, errbase, majret, minret;
-		unsigned int value = XkbPCF_GrabsUseXKBStateMask;
-		if (XkbQueryExtension( dpy, &opcode, &evbase,
-		                       &errbase, &majret, &minret ))
-			XkbSetPerClientControls( dpy, value, &value );
-	}
-#endif
 }
 
 void

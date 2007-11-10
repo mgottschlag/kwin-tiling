@@ -87,9 +87,6 @@
 /* Build kdm with built-in xconsole */
 #cmakedefine WITH_KDM_XCONSOLE 1
 
-/* Define if you have XkbSetPerClientControls */
-#cmakedefine HAVE_XKBSETPERCLIENTCONTROLS 1
-
 /* Define to 1 if you have the `getifaddrs' function. */
 #cmakedefine HAVE_GETIFADDRS 1
 
