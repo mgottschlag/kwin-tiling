@@ -181,7 +181,7 @@ void Autostart::addCMD() {
 			KConfigGroup kcg = kc.group("Desktop Entry");
 			kcg.writeEntry("Encoding","UTF-8");
 			kcg.writeEntry("Exec",service->exec());
-			kcg.writeEntry("Icon","exec");
+			kcg.writeEntry("Icon","system-run");
 			kcg.writeEntry("Path","");
 			kcg.writeEntry("Terminal",false);
 			kcg.writeEntry("Type","Application");
