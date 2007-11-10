@@ -158,6 +158,7 @@ FDialog::exec()
 {
 	static QWidget *current;
 
+	adjustGeometry();
 	if (!current)
 		secureInputs( QX11Info::display() );
 	fakeFocusIn( winId() );

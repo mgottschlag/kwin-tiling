@@ -118,8 +118,6 @@ ChooserDlg::ChooserDlg()
 	connect( acceptButton, SIGNAL(clicked()), SLOT(accept()) );
 //	connect( helpButton, SIGNAL(clicked()), SLOT(slotHelp()) );
 	connect( host_view, SIGNAL(itemActivated( QTreeWidgetItem *, int )), SLOT(accept()) );
-
-	adjustGeometry();
 }
 
 /*
