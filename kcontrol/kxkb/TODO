@@ -1,10 +1,12 @@
- KDE Shortcut
- Plasma Applet - make icon work, check conflict with kxkb
+ X.org shortcut names in buttons
+ fetch groups from X with xkbfile
  Improve component
  XkbOptions radiobuttons for exclusive group
 
 4.1:
  Shortcut per layout
+ Plasma Applet - make icon work, check conflict with kxkb
+ Sticky switching
 
 Others:
 - prevent application/window list from growing endlessly

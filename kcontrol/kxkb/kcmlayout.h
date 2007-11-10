@@ -58,10 +58,12 @@ protected slots:
     void showFlagChanged(bool on);
     void xkbShortcutPressed();
     void xkbShortcut3dPressed();
-    void kdeShortcutPressed();
+    void clearXkbSequence();
+    void clearXkb3dSequence();
     void updateShortcutsLabels();
     void xkbOptionsChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight);
     void enableChanged();
+    void updateGroupsFromServer();
     void displayNameChanged(const QString& name);
     void layoutSelChanged();
     void loadRules();

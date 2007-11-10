@@ -405,6 +405,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
         this, SLOT(xkbOptionsChanged(const QModelIndex &, const QModelIndex &)));
 
     connect( widget->grpEnableKxkb, SIGNAL( clicked( int ) ), SLOT(enableChanged()));
+    connect( widget->grpEnableKxkb, SIGNAL( clicked( int ) ), SLOT(updateGroupsFromServer()));
 //    connect( widget->chkEnable, SIGNAL( toggled( bool )), this, SLOT(changed()));
 //    connect( widget->chkIndicatorOnly, SIGNAL( toggled( bool )), this, SLOT(changed()));
     connect( widget->chkShowSingle, SIGNAL( toggled( bool )), this, SLOT(changed()));
@@ -433,13 +434,18 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(moveDown()));
 
     connect( widget->grpSwitching, SIGNAL( clicked( int ) ), SLOT(changed()));
+#ifdef STICKY_SWITCHING
     connect( widget->chkEnableSticky, SIGNAL(toggled(bool)), this, SLOT(changed()));
+#endif
 
+    KIcon clearIcon = qApp->isLeftToRight() ? KIcon("edit-clear-locationbar-rtl") : KIcon("edit-clear-locationbar");
+    widget->xkbClearButton->setIcon(clearIcon);
+    widget->xkb3dClearButton->setIcon(clearIcon);
+    connect(widget->xkbClearButton, SIGNAL(clicked()), this, SLOT(clearXkbSequence()));
+    connect(widget->xkb3dClearButton, SIGNAL(clicked()), this, SLOT(clearXkb3dSequence()));
 
 #ifdef STICKY_SWITCHING
     connect( widget->spinStickyDepth, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-#else
-    widget->grpBoxStickySwitching->setVisible(false);
 #endif
 
     KGlobalAccel::self()->overrideMainComponentData(componentData());
@@ -450,10 +456,10 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     actionCollection->readSettings();
     kDebug() << "getting shortcut" << a->globalShortcut().toString();
 
-    widget->kdeShortcutWidget->setModifierlessAllowed(false);
-    widget->kdeShortcutWidget->setShortcut( a->globalShortcut() );
+    widget->kdeKeySequence->setModifierlessAllowed(false);
+    widget->kdeKeySequence->setKeySequence( a->globalShortcut().primary() );
 
-    connect(widget->kdeShortcutWidget, SIGNAL(shortcutChanged (const KShortcut &)), this, SLOT(changed()));
+    connect(widget->kdeKeySequence, SIGNAL(keySequenceChanged (const QKeySequence &)), this, SLOT(changed()));
 
     refreshRulesUI();
 
@@ -506,25 +512,28 @@ void LayoutConfig::initUI()
 			break;
 	}
 
-	widget->chkEnableSticky->setChecked(m_kxkbConfig.m_stickySwitching);
-	widget->spinStickyDepth->setEnabled(m_kxkbConfig.m_stickySwitching);
-	widget->spinStickyDepth->setValue( m_kxkbConfig.m_stickySwitchingDepth);
+#ifdef STICKY_SWITCHING
+    widget->chkEnableSticky->setChecked(m_kxkbConfig.m_stickySwitching);
+    widget->spinStickyDepth->setEnabled(m_kxkbConfig.m_stickySwitching);
+    widget->spinStickyDepth->setValue( m_kxkbConfig.m_stickySwitchingDepth);
+    updateStickyLimit();
+#endif
 
-	updateStickyLimit();
+    int enableKxkb = BTN_XKB_DISABLE;
+    if( m_kxkbConfig.m_indicatorOnly ) enableKxkb = BTN_XKB_INDICATOR;
+    else
+        if( m_kxkbConfig.m_useKxkb ) enableKxkb = BTN_XKB_ENABLE;
+    widget->grpEnableKxkb->setSelected(enableKxkb);
+    enableChanged();
 
-        int enableKxkb = 2;
-        if( m_kxkbConfig.m_indicatorOnly ) enableKxkb = 1;
-        if( m_kxkbConfig.m_useKxkb ) enableKxkb = 0;
-        widget->grpEnableKxkb->setSelected(enableKxkb);
-//	widget->chkEnable->setChecked( m_kxkbConfig.m_useKxkb );
-	widget->grpLayouts->setEnabled( m_kxkbConfig.m_useKxkb );
-	widget->grpIndicatorOptions->setEnabled( enableKxkb <= BTN_XKB_INDICATOR );
+    updateShortcutsLabels();
 
-        updateShortcutsLabels();
-
-	updateLayoutCommand();
-	updateOptionsCommand();
-	emit KCModule::changed( false );
+    updateLayoutCommand();
+    updateOptionsCommand();
+        
+    widget->tabWidget->setCurrentIndex(TAB_LAYOUTS);
+    
+    emit KCModule::changed( false );
 }
 
 
@@ -565,15 +574,16 @@ void LayoutConfig::save()
 			break;
 	}
 
-	m_kxkbConfig.m_stickySwitching = widget->chkEnableSticky->isChecked();
-	m_kxkbConfig.m_stickySwitchingDepth = widget->spinStickyDepth->value();
-
-	m_kxkbConfig.save();
+#ifdef STICKY_SWITCHING
+    m_kxkbConfig.m_stickySwitching = widget->chkEnableSticky->isChecked();
+    m_kxkbConfig.m_stickySwitchingDepth = widget->spinStickyDepth->value();
+#endif
+    m_kxkbConfig.save();
 
     KAction* action = static_cast<KAction*>(actionCollection->action(0));
-    kDebug() << "saving shortcut" << widget->kdeShortcutWidget->shortcut().toString();
-    action->setGlobalShortcut(widget->kdeShortcutWidget->shortcut());
-    kDebug() << "saving shortcut" << action->globalShortcut().toString();
+    KShortcut shortcut(widget->kdeKeySequence->keySequence());
+    action->setGlobalShortcut(shortcut, KAction::ActiveShortcut, KAction::NoAutoloading);
+    kDebug() << "saving kxkb shortcut" << shortcut.toString();
     actionCollection->writeSettings();
 
     KToolInvocation::kdeinitExec("kxkb");
@@ -588,6 +598,35 @@ void LayoutConfig::xkbOptionsChanged(const QModelIndex & /*topLeft*/, const QMod
 //    widget->xkbOptionsTreeView->update(topLeft);
 }
 
+
+static QStringList getGroupOptionList(const QStringList& options, const QString& grp)
+{
+    QRegExp grpRegExp("^" + grp + ".*");
+    return options.filter(grpRegExp);
+}
+
+void LayoutConfig::clearXkbSequence()
+{
+    QStringList grpOptions = getGroupOptionList(m_kxkbConfig.m_options, "grp");
+    foreach(QString opt, grpOptions)
+        m_kxkbConfig.m_options.removeAll(opt);
+    m_xkbOptModel->reset();
+    widget->xkbOptionsTreeView->update();
+    updateShortcutsLabels();
+    changed();
+}
+
+void LayoutConfig::clearXkb3dSequence()
+{
+    QStringList grpOptions = getGroupOptionList(m_kxkbConfig.m_options, "lv3");
+    foreach(QString opt, grpOptions)
+        m_kxkbConfig.m_options.removeAll(opt);
+    m_xkbOptModel->reset();
+    widget->xkbOptionsTreeView->update();
+    updateShortcutsLabels();
+    changed();
+}
+
 void LayoutConfig::xkbShortcutPressed()
 {
     widget->tabWidget->setCurrentIndex(TAB_XKB);
@@ -600,29 +639,27 @@ void LayoutConfig::xkbShortcut3dPressed()
     m_xkbOptModel->gotoGroup("lv3", widget->xkbOptionsTreeView);
 }
 
-void LayoutConfig::kdeShortcutPressed()
-{
-    QStringList args;
-    args << "keys";
-    int res = KToolInvocation::kdeinitExecWait( "kcmshell4", args );
-    if( res )
-        updateShortcutsLabels();
-    else
-        kError() << "failed to start 'kcmshell keys'" << endl;
-}
-
 static QString getShortcutText(const QStringList& options, const QString& grp)
 {
-    QRegExp grpRegExp("^" + grp + ".*");
-    QStringList grpOptions = options.filter(grpRegExp);
+    QStringList grpOptions = getGroupOptionList(options, grp);
     
     if( grpOptions.count() > 1 )
         return i18n("Multiple keys");
     else
     if( grpOptions.count() == 1 )
-        return i18n("Defined");
+        return i18n("Defined");         //TODO: show shortcut
     else
-        return i18n("Not defined");
+        return i18n("None");
+}
+
+void LayoutConfig::updateShortcutsLabels()
+{
+    QString txt = getShortcutText( m_kxkbConfig.m_options, "grp" );
+    widget->btnXkbShortcut->setText(txt);
+    widget->btnXkbShortcut->setToolTip("");
+    txt = getShortcutText( m_kxkbConfig.m_options, "lv3" );
+    widget->btnXkbShortcut3d->setText(txt);
+    widget->btnXkbShortcut3d->setToolTip("");
 }
 
 void LayoutConfig::showFlagChanged(bool on)
@@ -634,16 +671,9 @@ void LayoutConfig::showFlagChanged(bool on)
     changed();
 }
 
-void LayoutConfig::updateShortcutsLabels()
-{
-    QString txt = getShortcutText( m_kxkbConfig.m_options, "grp" );
-    widget->xkbShortcut->setText(txt);
-    txt = getShortcutText( m_kxkbConfig.m_options, "lv3" );
-    widget->xkbShortcut3d->setText(txt);
-}
-
 void LayoutConfig::updateStickyLimit()
 {
+#ifdef STICKY_SWITCHING
     int layoutsCnt = m_kxkbConfig.m_layouts.count();
     int maxDepth = layoutsCnt - 1;
 
@@ -654,12 +684,13 @@ void LayoutConfig::updateStickyLimit()
     widget->spinStickyDepth->setMaximum(maxDepth);
 /*	if( value > maxDepth )
 		setValue(maxDepth);*/
+#endif
 }
 
 
-void LayoutConfig::enableChanged()
+void LayoutConfig::updateGroupsFromServer()
 {
-    bool enabled = widget->grpEnableKxkb->selected() == 0;
+    bool enabled = widget->grpEnableKxkb->selected() == BTN_XKB_ENABLE;
     kDebug() << "enabled:" << enabled << m_kxkbConfig.m_layouts.count();
     if( enabled && m_kxkbConfig.m_layouts.count() <= 1 ) {
 #ifdef HAVE_XKLAVIER
@@ -671,6 +702,17 @@ void LayoutConfig::enableChanged()
 	}
 #endif
     }
+}
+
+void LayoutConfig::enableChanged()
+{
+    bool enabled = widget->grpEnableKxkb->selected() == BTN_XKB_ENABLE;
+    bool indicatorEnabled = widget->grpEnableKxkb->selected() <= BTN_XKB_INDICATOR;
+
+    widget->grpLayouts->setEnabled(enabled);
+    widget->tabWidget->widget(TAB_OPTIONS)->setEnabled(enabled);
+    widget->grpIndicatorOptions->setEnabled(indicatorEnabled);
+
     changed();
 }
 
@@ -901,13 +943,6 @@ void LayoutConfig::updateDisplayName()
 
 void LayoutConfig::changed()
 {
-  bool enabled = widget->grpEnableKxkb->selected() == BTN_XKB_ENABLE;
-  bool indicatorEnabled = widget->grpEnableKxkb->selected() <= BTN_XKB_INDICATOR;
-
-  widget->grpLayouts->setEnabled(enabled);
-  widget->tabWidget->widget(TAB_OPTIONS)->setEnabled(enabled);
-  widget->grpIndicatorOptions->setEnabled(indicatorEnabled);
-
   emit KCModule::changed( true );
 }
 
