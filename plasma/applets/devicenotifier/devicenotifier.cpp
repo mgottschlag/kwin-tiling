@@ -121,6 +121,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 	    origin_size=geometry();
 	    first=false;
 	    m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
+	    m_icon->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
 	}
 
 	m_icon->setIcon(KIcon(icon_temp));
