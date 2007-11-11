@@ -53,15 +53,6 @@
        </item>
        <item>
         <widget class="QSpinBox" name="spinTime" >
-         <property name="toolTip" >
-          <string>Change clock size</string>
-         </property>
-         <property name="whatsThis" >
-          <string>Set a new size for the clock between 0 and 500. The size is the square side that contains the clock.</string>
-         </property>
-         <property name="maximum" >
-          <number>500</number>
-         </property>
         </widget>
        </item>
       </layout>
@@ -92,15 +83,6 @@
        </item>
        <item>
         <widget class="QSpinBox" name="spinHeight" >
-         <property name="toolTip" >
-          <string>Change clock size</string>
-         </property>
-         <property name="whatsThis" >
-          <string>Set a new size for the clock between 0 and 500. The size is the square side that contains the clock.</string>
-         </property>
-         <property name="maximum" >
-          <number>500</number>
-         </property>
         </widget>
        </item>
       </layout>
