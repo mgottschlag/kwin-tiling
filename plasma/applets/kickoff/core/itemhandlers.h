@@ -41,6 +41,7 @@ public:
 private Q_SLOTS:
     void logout();
     void lock();
+    void switchUser();
 
 private:
     QString m_logoutAction;

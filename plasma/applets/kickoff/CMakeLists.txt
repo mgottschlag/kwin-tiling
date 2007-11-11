@@ -20,6 +20,8 @@ set( Kickoff_SRCS
 
 set(screensaver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.freedesktop.ScreenSaver.xml)
 QT4_ADD_DBUS_INTERFACE(Kickoff_SRCS ${screensaver_xml} screensaver_interface)
+set(krunner_xml ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.krunner.Interface.xml)
+QT4_ADD_DBUS_INTERFACE(Kickoff_SRCS ${krunner_xml} krunner_interface)
 
 set ( Kickoff_LIBS
         ${KDE4_KIO_LIBS}

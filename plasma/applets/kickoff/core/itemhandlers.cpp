@@ -37,6 +37,7 @@
 #include "core/recentapplications.h"
 
 // DBus
+#include "krunner_interface.h"
 #include "screensaver_interface.h"
 
 using namespace Kickoff;
@@ -73,9 +74,12 @@ bool LeaveItemHandler::openUrl(const QUrl& url)
         // decouple dbus call, otherwise we'll run into a dead-lock
         QTimer::singleShot(0, this, SLOT(lock()));
         return true;
-    } else if (m_logoutAction == "logout" || m_logoutAction == "switch" ||
+    } else if (m_logoutAction == "switch") {
+        // decouple dbus call, otherwise we'll run into a dead-lock
+        QTimer::singleShot(0, this, SLOT(switchUser()));
+        return true;
+    } else if (m_logoutAction == "logout" ||
                m_logoutAction == "restart" || m_logoutAction == "shutdown" ) {
-
         // decouple dbus call, otherwise we'll run into a dead-lock
         QTimer::singleShot(0, this, SLOT(logout()));
         return true;
@@ -111,5 +115,16 @@ void LeaveItemHandler::lock()
                                               QDBusConnection::sessionBus());
     if (screensaver.isValid()) {
         screensaver.Lock();
+    }
+}
+
+void LeaveItemHandler::switchUser()
+{
+    QString interface("org.kde.krunner");
+
+    org::kde::krunner::Interface krunner(interface, "/Interface",
+                                         QDBusConnection::sessionBus());
+    if (krunner.isValid()) {
+        krunner.switchUser();
     }
 }
