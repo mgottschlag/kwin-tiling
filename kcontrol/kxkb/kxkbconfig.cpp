@@ -53,28 +53,28 @@ int KxkbConfig::getDefaultLayout()
 
 bool KxkbConfig::load(int loadMode)
 {
-    kDebug() << "Reading configuration";
+//    kDebug() << "Reading configuration";
     KConfigGroup config(KSharedConfig::openConfig( "kxkbrc", KConfig::NoGlobals ), "Layout");
 
 //    m_enableXkbOptions = config.readEntry("EnableXkbOptions", false);
 
 	m_useKxkb = config.readEntry("Use", false);
-	kDebug() << "Use kxkb " << m_useKxkb;
-
-	m_indicatorOnly = config.readEntry("IndicatorOnly", false);
-	kDebug() << "Indicator only " << m_indicatorOnly << endl;
+	kDebug() << "Use kxkb" << m_useKxkb;
 
 	if( m_useKxkb == false && loadMode == LOAD_ACTIVE_OPTIONS )
 		return true;
 
+	m_indicatorOnly = config.readEntry("IndicatorOnly", false);
+	kDebug() << "Indicator only" << m_indicatorOnly;
+
 	m_showSingle = config.readEntry("ShowSingle", false);
 	m_showFlag = config.readEntry("ShowFlag", true);
 
-	if( m_indicatorOnly == true && loadMode == LOAD_ACTIVE_OPTIONS )
-		return true;
+//	if( m_indicatorOnly == true && loadMode == LOAD_ACTIVE_OPTIONS )
+//		return true;
 
 	m_model = config.readEntry("Model", DEFAULT_MODEL);
-	kDebug() << "Model: " << m_model;
+	kDebug() << "Model:" << m_model;
 
 	QStringList layoutList;
 	layoutList = config.readEntry("LayoutList", layoutList);
@@ -121,7 +121,7 @@ bool KxkbConfig::load(int loadMode)
 //		m_switchingPolicy = SWITCH_POLICY_GLOBAL;
 //	}
 
-	kDebug() << "Layout owner mode " << layoutOwner;
+	kDebug() << "Layout owner mode" << layoutOwner;
 
 #ifdef STICKY_SWITCHING
 	m_stickySwitching = config.readEntry("StickySwitching", false);
@@ -178,8 +178,10 @@ void KxkbConfig::updateDisplayNames()
 void KxkbConfig::setConfiguredLayouts(XkbConfig xkbConfig)
 {
     kDebug() << "resetting layouts to " << xkbConfig.layouts.count() << " active in X server";
-    m_layouts = xkbConfig.layouts;
-    m_options = xkbConfig.options;
+    m_layouts.clear();
+    m_layouts << xkbConfig.layouts;
+    m_options.clear();
+    m_options << xkbConfig.options;
     //TODO: update model
     updateDisplayNames();
 }

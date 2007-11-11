@@ -25,13 +25,12 @@
 #include <QCheckBox>
 #include <QRadioButton>
 #include <QLineEdit>
-#include <QSpinBox>
 #include <QWidget>
 #include <QtGui>
+#include <QKeySequence>
 
 #include <kicon.h>
-#include <kshortcutsdialog.h>
-#include <kshortcutwidget.h>
+#include <kdialog.h>
 #include <kglobalaccel.h>
 #include <kglobalsettings.h>
 #include <kactioncollection.h>
@@ -41,6 +40,7 @@
 #include <kapplication.h>
 #include <kiconloader.h>
 #include <ktoolinvocation.h>
+#include <kkeysequencewidget.h>
 
 #include "extension.h"
 #include "kxkbconfig.h"

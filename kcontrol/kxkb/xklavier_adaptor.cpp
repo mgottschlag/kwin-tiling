@@ -231,7 +231,7 @@ XKlavierAdaptor::getGroupNames()
     XklConfigRec configRec;
     xkl_config_rec_get_from_server(&configRec, priv->engine);
 
-    for(int ii=0; configRec.layouts[ii] != NULL; ii++) {
+    for(int ii=0; configRec.layouts[ii] != NULL && ii < GROUP_LIMIT; ii++) {
 	LayoutUnit lu;
 	lu.layout = configRec.layouts[ii];
 	lu.variant = configRec.variants[ii];
@@ -239,7 +239,7 @@ XKlavierAdaptor::getGroupNames()
 	kDebug() << " layout nm:" << lu.layout << "variant:" << lu.variant;
     }
 
-    for(int ii=0; configRec.options[ii] != NULL; ii++) {
+    for(int ii=0; configRec.options[ii] != NULL && ii < 15; ii++) {
 	xkbConfig.options << configRec.options[ii];
 	kDebug() << " option:" << configRec.options[ii];
     }

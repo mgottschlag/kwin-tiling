@@ -58,6 +58,7 @@ int KXKBApp::newInstance()
     int res = m_kxkbCore->newInstance();
     if( isError() ) {
         exit(0);        // not using kxkb from settings
+        return res;
     }
 
     KxkbWidget* kxkbWidget = new KxkbSysTrayIcon(KxkbWidget::MENU_FULL);

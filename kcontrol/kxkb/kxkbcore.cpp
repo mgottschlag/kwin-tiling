@@ -116,7 +116,7 @@ void KxkbCore::setWidget(KxkbWidget* kxkbWidget)
 
 void KxkbCore::initReactions()
 {
-    if( m_mode == KXKB_MAIN && actionCollection == NULL ) {
+    if( actionCollection == NULL ) {
         KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
     
 #ifdef HAVE_XKLAVIER
@@ -219,26 +219,24 @@ bool KxkbCore::settingsRead()
 
 void KxkbCore::initSwitchingPolicy()
 {
-	if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_GLOBAL ) {
-		disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
-		disconnect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(windowChanged(WId)));
+    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
+    disconnect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(desktopChanged(int)));
+
+    if( m_kxkbConfig.m_switchingPolicy != SWITCH_POLICY_GLOBAL 
+            && m_mode == KXKB_MAIN && !m_kxkbConfig.m_indicatorOnly ) {
+	QDesktopWidget desktopWidget;
+	if( desktopWidget.numScreens() > 1 && desktopWidget.isVirtualDesktop() == false ) {
+	    kWarning() << "With non-virtual desktop only global switching policy supported on non-primary screens" ;
+	    //TODO: find out how to handle that
+	}
+
+	if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_DESKTOP ) {
+	    connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(desktopChanged(int)));
 	}
 	else {
-		QDesktopWidget desktopWidget;
-		if( desktopWidget.numScreens() > 1 && desktopWidget.isVirtualDesktop() == false ) {
-			kWarning() << "With non-virtual desktop only global switching policy supported on non-primary screens" ;
-			//TODO: find out how to handle that
-		}
-		
-		if( m_kxkbConfig.m_switchingPolicy == SWITCH_POLICY_DESKTOP ) {
-		    disconnect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(desktopChanged(int)));
-		    connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(desktopChanged(int)));
-		}
-		else {
-		    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
-		    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
-		}
+	    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(windowChanged(WId)));
 	}
+    }
 }
 
 void KxkbCore::initLayoutGroups()
@@ -298,6 +296,11 @@ bool KxkbCore::setLayout(int layout)
 
 void KxkbCore::updateIndicator(int layout, int res)
 {
+    if( layout >= GROUP_LIMIT || layout > m_kxkbConfig.m_layouts.count() ) {
+        kError() << "group is out of my range";
+        return;
+    }
+
     if( res ) {
   	m_currentLayout = layout;
  	m_layoutOwnerMap->ownerChanged();
@@ -305,10 +308,6 @@ void KxkbCore::updateIndicator(int layout, int res)
     }
 
     if( m_kxkbWidget ) {
-//        QString label = m_kxkbConfig.m_layouts[layout].displayName;
-//        if( label.isEmpty() )
-//            label = .layout.left(3);
-
         const LayoutUnit& lu = m_kxkbConfig.m_layouts[layout];
 
 	if( res )
@@ -345,7 +344,7 @@ void KxkbCore::iconMenuTriggered(QAction* action)
     {
         QStringList lst;
         lst << "keyboard_layout";
-	QProcess::startDetached("kcmshell4",lst);
+	QProcess::startDetached("kcmshell4", lst);
     }
     else if (id == KxkbWidget::HELP_MENU_ID)
     {
@@ -432,6 +431,7 @@ KxkbCore::updateGroupsFromServer()
 #endif
 
     int group = m_extension->getGroup();
+    kDebug() << " active group" << group;
     
     const QList<LayoutUnit>& lus = xkbConfig.layouts;
     if( lus.count() > 0 ) {
