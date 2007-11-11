@@ -6,6 +6,7 @@ X-KDE-ServiceType=SolidBluetoothManager
 Comment=Bluetooth Management Backend
 Comment[be]=Кіраванне Bluetooth
 Comment[bg]=Заден слой за управление на Bluetooth
+Comment[ca]=Dorsal de gestió de bluetooth
 Comment[de]=Backend zur Bluetooth-Verwaltung
 Comment[el]=Σύστημα διαχείρισης Bluetooth
 Comment[et]=Bluetoothi haldamise taustaprogramm

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Lock/Logout
+Name[ca]=Bloqueja/surt
 Name[el]=Κλείδωμα/αποσύνδεση
 Name[ga]=Glasáil/Logáil Amach
 Name[ja]=ロック/ログアウト
@@ -11,6 +12,7 @@ Name[nl]=Vergrendelen/Afmelden
 Name[nn]=Lås / logg ut
 Name[pt]=Bloquear/Sair
 Name[pt_BR]=Bloquear/Sair
+Name[sl]=Zaklepanje/odjava
 Name[sr]=Закључавање/одјава
 Name[sr@latin]=Zaključavanje/odjava
 Name[sv]=Låsning eller utloggning
@@ -18,6 +20,7 @@ Name[x-test]=xxLock/Logoutxx
 Name[zh_CN]=锁定/注销
 Name[zh_TW]=鎖定/登出
 Comment=Let user lock screen or end session
+Comment[ca]=Permet a l'usuari bloquejar la pantalla o sortir de la sessió
 Comment[el]=Επιτρέπει στο χρήση το κλείδωμα της οθόνης ή το τέλος της συνεδρίας
 Comment[ja]=スクリーンをロックしたりセッションを終了したりします
 Comment[ko]=세션을 잠그거나 끝내기

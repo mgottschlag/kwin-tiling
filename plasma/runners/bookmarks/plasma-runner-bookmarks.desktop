@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Bookmark Runner
+Name[ca]=Executador de preferits
 Name[el]=Εκτελεστής σελιδοδεικτών
 Name[ja]=ブックマーク Runner
 Name[ko]=책갈피 실행기
@@ -14,6 +15,7 @@ Name[sr@latin]=Izvođač markera
 Name[zh_CN]=书签运行器
 Name[zh_TW]=書籤執行者
 Comment=Open bookmark
+Comment[ca]=Obre un punts
 Comment[el]=Άνοιγμα σελιδοδείκτη
 Comment[ga]=Oscail leabharmharc
 Comment[ja]=ブックマークを開く
@@ -23,6 +25,7 @@ Comment[nl]=Bladwijzer openen
 Comment[nn]=Opna bokmerke
 Comment[pt]=Abrir um favorito
 Comment[pt_BR]=Abrir um favorito
+Comment[sl]=Odpri zaznamek
 Comment[sr]=Отвори маркер
 Comment[sr@latin]=Otvori marker
 Comment[zh_CN]=打开书签

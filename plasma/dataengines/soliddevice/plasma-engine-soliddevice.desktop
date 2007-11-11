@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=SolidDevice Data Engine
+Name[ca]=Motor de dades del SolidDevice
 Name[el]=Μηχανή δεδομένων συσκευών Solid
 Name[et]=SolidDevice'i andmete mootor
 Name[ga]=Inneall Sonraí SolidDevice
@@ -19,6 +20,7 @@ Name[x-test]=xxSolidDevice Data Enginexx
 Name[zh_CN]=SolidDevice 数据引擎
 Name[zh_TW]=SolidDevice 資料引擎
 Comment=SolidDevice data for Plasmoids
+Comment[ca]=Dades del SolidDevice pels plasmoides
 Comment[el]=Δεδομένα συσκευών Solid για πλασμοειδή
 Comment[et]=SolidDevice'i andmed plasmoididele
 Comment[ga]=Sonraí SolidDevice le haghaidh Plasmoids

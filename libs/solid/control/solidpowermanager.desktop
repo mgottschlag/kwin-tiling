@@ -6,6 +6,7 @@ X-KDE-ServiceType=SolidPowerManager
 Comment=Power Management Backend
 Comment[be]=Кіраванне сілкаваннем
 Comment[bg]=Заден слой за управление на захранване
+Comment[ca]=Dorsal de gestió d'energia
 Comment[de]=Backend zur Energieverwaltung
 Comment[el]=Σύστημα διαχείρισης ενέργειας
 Comment[es]=Motor de la gestión de energía

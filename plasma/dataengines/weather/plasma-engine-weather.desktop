@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Weather Data Engine
+Name[ca]=Motor de dades meteorològiques
 Name[el]=Μηχανή δεδομένων καιρού
 Name[et]=Ilmaandmete mootor
 Name[ga]=Inneall Sonraí Aimsire
@@ -21,6 +22,7 @@ Name[x-test]=xxWeather Data Enginexx
 Name[zh_CN]=天气数据引擎
 Name[zh_TW]=天氣資料引擎
 Comment=Weather data for Plasmoids
+Comment[ca]=Dades meteorològiques pels plasmoides
 Comment[el]=Δεδομένα καιρού για πλασμοειδή
 Comment[et]=Ilmaandmed plasmoididele
 Comment[ga]=Sonraí aimsire le haghaidh Plasmoids

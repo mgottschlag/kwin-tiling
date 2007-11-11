@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Application Launcher
+Name[ca]=Engegador d'aplicacions
 Name[el]=Εκτέλεση εφαρμογών
 Name[et]=Rakenduste käivitaja
 Name[ga]=Tosaitheoir Feidhmchlár
@@ -13,6 +14,7 @@ Name[nl]=Programmastarter
 Name[nn]=Programstartar
 Name[pt]=Lançador de Aplicações
 Name[pt_BR]=Lançador de Aplicativos
+Name[sl]=Zaganjalnik programov
 Name[sr]=Покретач програма
 Name[sr@latin]=Pokretač programa
 Name[sv]=Starta program
@@ -20,6 +22,7 @@ Name[x-test]=xxApplication Launcherxx
 Name[zh_CN]=应用程序启动器
 Name[zh_TW]=應用程式啟動器
 Comment=Launcher to start applications
+Comment[ca]=Executador per a iniciar aplicacions
 Comment[el]=Εκτέλεση εφαρμογών
 Comment[et]=Rakenduste käivitaja
 Comment[ga]=Tosaitheoir a thosaíonn feidhmchláir
