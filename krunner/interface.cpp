@@ -175,7 +175,7 @@ Interface::Interface(QWidget* parent)
     bottomLayout->addStretch();
 
     QString runButtonWhatsThis = i18n( "Click to execute the selected item above" );
-    m_runButton = new KPushButton(KGuiItem(i18n( "Launch" ), "launch",
+    m_runButton = new KPushButton(KGuiItem(i18n( "Launch" ), "system-run",
                                            QString(), runButtonWhatsThis),
                                   w);
     m_runButton->setFlat( true );
