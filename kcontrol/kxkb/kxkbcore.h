@@ -86,6 +86,7 @@ private:
     int m_mode;
     int m_currentLayout;
     int m_status;
+    bool m_eventsHandled;
 
     KxkbConfig m_kxkbConfig;
     LayoutMap* m_layoutOwnerMap;
@@ -98,7 +99,7 @@ private:
     
     void updateIndicator(int layout, int res);
     void initTray();
-    void initKeys();
+    void initKDEShortcut();
     void initReactions();
     void initLayoutGroups();
     void initSwitchingPolicy();

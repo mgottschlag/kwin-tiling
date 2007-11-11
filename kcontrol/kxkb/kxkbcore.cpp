@@ -72,6 +72,7 @@ protected:
 KxkbCore::KxkbCore(int mode):
     m_mode(mode),
     m_currentLayout(0),
+    m_eventsHandled(false),
     m_layoutOwnerMap(NULL),
     m_rules(NULL),
     m_kxkbWidget(NULL),
@@ -87,58 +88,6 @@ KxkbCore::KxkbCore(int mode):
     }
 
     m_layoutOwnerMap = new LayoutMap(m_kxkbConfig);
-}
-
-
-void KxkbCore::setWidget(KxkbWidget* kxkbWidget)
-{
-    if( m_status < 0 ) {
-        kError() << "kxkb did not initialize - ignoring set widget" << endl;
-        return;
-    }
-    
-    if( m_kxkbWidget != NULL ) {
-        kDebug() << "destroying old kxkb widget";
- 	disconnect(m_kxkbWidget, SIGNAL(menuTriggered(QAction*)), this, SLOT(iconMenuTriggered(QAction*)));
-	disconnect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(toggled()));
-        delete m_kxkbWidget;
-    }
-
-    m_kxkbWidget = kxkbWidget;
-    if( m_kxkbWidget != NULL ) {
- 	connect(m_kxkbWidget, SIGNAL(menuTriggered(QAction*)), this, SLOT(iconMenuTriggered(QAction*)));
-	connect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(toggled()));
-
-        if( m_rules != NULL )   // settings already read
-            initTray();
-    }
-}
-
-void KxkbCore::initReactions()
-{
-    if( actionCollection == NULL ) {
-        KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
-    
-#ifdef HAVE_XKLAVIER
-        XKlavierAdaptor::getInstance(QX11Info::display())->startListening();
-#endif
-        initKeys();
-    }
-    if( actionCollection != NULL ) {
-        actionCollection->readSettings();
-        kDebug() << "kde shortcut" << static_cast<KAction*>(actionCollection->action(0))->globalShortcut().toString();
-    }
-}
-
-void KxkbCore::initKeys()
-{
-    actionCollection = new KActionCollection( this );
-//    actionCollection->setConfigGlobal(true);
-    KAction* a = NULL;
-#include "kxkbbindings.cpp"
-    connect(a, SIGNAL(triggered()), this, SLOT(toggled()));
-
-    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(settingsChanged(int))); 
 }
 
 KxkbCore::~KxkbCore()
@@ -164,6 +113,46 @@ int KxkbCore::newInstance()
     }
 
     return -1;
+}
+
+
+void KxkbCore::initReactions()
+{
+    if( ! m_eventsHandled ) {
+        KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
+#ifdef HAVE_XKLAVIER
+        XKlavierAdaptor::getInstance(QX11Info::display())->startListening();
+#endif
+        m_eventsHandled = true;
+    }
+
+    initKDEShortcut();
+}
+
+void KxkbCore::initKDEShortcut()
+{
+    if( !m_kxkbConfig.m_indicatorOnly ) {
+        if( actionCollection == NULL ) {
+            actionCollection = new KActionCollection( this );
+            KAction* a = NULL;
+#include "kxkbbindings.cpp"
+            connect(a, SIGNAL(triggered()), this, SLOT(toggled()));
+            connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(settingsChanged(int)));
+        }
+        KAction* kAction = static_cast<KAction*>(actionCollection->action(0));
+        actionCollection->readSettings();
+        kDebug() << "kde shortcut" << kAction->globalShortcut().toString();
+    }
+    else {
+        if( actionCollection != NULL ) {
+            KAction* kAction = static_cast<KAction*>(actionCollection->action(0));
+            disconnect(kAction, SIGNAL(triggered()), this, SLOT(toggled()));
+            disconnect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(settingsChanged(int)));
+            actionCollection->clear();
+            delete actionCollection;
+            actionCollection = NULL;
+        }
+    }
 }
 
 void KxkbCore::settingsChanged(int category)
@@ -194,9 +183,6 @@ bool KxkbCore::settingsRead()
     if( m_mode == KXKB_MAIN && ! m_kxkbConfig.m_indicatorOnly ) {
 	m_currentLayout = m_kxkbConfig.getDefaultLayout();
 	initLayoutGroups();
-//	if( !m_extension->setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
-//            kDebug() << "Setting XKB options failed!";
-//	}
     }
     else {
 	updateGroupsFromServer();
@@ -209,10 +195,6 @@ bool KxkbCore::settingsRead()
 //	    return false;
 	}
     }
-
-//	KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
-	//TODO:
-//	keys->readSettings();
 
     return true;
 }
@@ -250,6 +232,30 @@ void KxkbCore::initLayoutGroups()
     }
     m_extension->setLayoutGroups(m_kxkbConfig.m_model, layouts, variants, 
                                 m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions);
+}
+
+void KxkbCore::setWidget(KxkbWidget* kxkbWidget)
+{
+    if( m_status < 0 ) {
+        kError() << "kxkb did not initialize - ignoring set widget" << endl;
+        return;
+    }
+    
+    if( m_kxkbWidget != NULL ) {
+        kDebug() << "destroying old kxkb widget";
+ 	disconnect(m_kxkbWidget, SIGNAL(menuTriggered(QAction*)), this, SLOT(iconMenuTriggered(QAction*)));
+	disconnect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(toggled()));
+        delete m_kxkbWidget;
+    }
+
+    m_kxkbWidget = kxkbWidget;
+    if( m_kxkbWidget != NULL ) {
+ 	connect(m_kxkbWidget, SIGNAL(menuTriggered(QAction*)), this, SLOT(iconMenuTriggered(QAction*)));
+	connect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(toggled()));
+
+        if( m_rules != NULL )   // settings already read
+            initTray();
+    }
 }
 
 void KxkbCore::initTray()

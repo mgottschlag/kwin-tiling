@@ -1,3 +1,7 @@
+ i18n for xkbfile
+ application mode is app class (need another type?)
+ merge indicatorOnly and component
+
  X.org shortcut names in buttons
  Improve component
  XkbOptions radiobuttons for exclusive group

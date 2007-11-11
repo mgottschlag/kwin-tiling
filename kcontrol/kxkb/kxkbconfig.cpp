@@ -70,9 +70,6 @@ bool KxkbConfig::load(int loadMode)
 	m_showSingle = config.readEntry("ShowSingle", false);
 	m_showFlag = config.readEntry("ShowFlag", true);
 
-//	if( m_indicatorOnly == true && loadMode == LOAD_ACTIVE_OPTIONS )
-//		return true;
-
 	m_model = config.readEntry("Model", DEFAULT_MODEL);
 	kDebug() << "Model:" << m_model;
 
