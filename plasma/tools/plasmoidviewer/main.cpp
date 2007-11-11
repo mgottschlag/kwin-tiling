@@ -25,19 +25,10 @@
 
 #include "fullview.h"
 
-#include <plasma/containment.h>
-#include <plasma/corona.h>
-#include <plasma/widgets/layout.h>
-
 #include <KApplication>
 #include <KAboutData>
 #include <KCmdLineArgs>
-#include <KIconLoader>
 #include <KLocale>
-#include <KMessageBox>
-#include <KStandardDirs>
-
-#include <QIcon>
 
 using namespace Plasma;
 
@@ -66,22 +57,8 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    Corona corona;
-    corona.setBackgroundBrush( QPixmap( KStandardDirs::locate( "appdata", "checker.png" ) ) );
-    Containment *containment = corona.addContainment( "null" );
-
-    Applet *applet = containment->addApplet(args->arg(0), QVariantList(), 0, QRectF(0, 0, -1, -1));
-    applet->setFlag(QGraphicsItem::ItemIsMovable, false);
-    if ( applet->failedToLaunch() ) {
-        // TODO Can we give a better error message somehow?
-        applet->setFailedToLaunch(true,
-                                  i18n("The applet '%1' could not be loaded", args->arg(0)));
-    }
-
-    FullView view(&corona);
-    view.setSceneRect(corona.sceneRect());
-    view.setWindowTitle( applet->name() );
-    view.setWindowIcon( SmallIcon( applet->icon() ) );
+    FullView view;
+    view.addApplet(args->arg(0));
     view.show();
 
     return app.exec();

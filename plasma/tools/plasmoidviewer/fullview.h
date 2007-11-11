@@ -26,6 +26,8 @@
 #ifndef FULLVIEW_H
 #define FULLVIEW_H
 
+#include <plasma/corona.h>
+
 #include <QGraphicsView>
 
 class FullView : public QGraphicsView
@@ -33,10 +35,15 @@ class FullView : public QGraphicsView
     Q_OBJECT
 
 public:
-    FullView(QGraphicsScene* scene);
+    explicit FullView(QWidget *parent = 0);
+
+    void addApplet(const QString &a);
 
 protected slots:
     void sceneRectChanged(const QRectF &rect);
+
+private:
+    Plasma::Corona corona;
 };
 
 #endif

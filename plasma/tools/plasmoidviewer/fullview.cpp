@@ -1,4 +1,5 @@
 /*
+ * Copyright 2007 Frerich Raabe <raabe@kde.org>
  * Copyright 2007 Aaron Seigo <aseigo@kde.org
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,13 +26,43 @@
 
 #include "fullview.h"
 
-FullView::FullView(QGraphicsScene* scene)
-    : QGraphicsView(scene)
+#include <plasma/containment.h>
+#include <KStandardDirs>
+#include <KIconLoader>
+#include <QIcon>
+
+using namespace Plasma;
+
+FullView::FullView(QWidget *parent)
+    : QGraphicsView(parent)
 {
-    connect(scene, SIGNAL(sceneRectChanged(QRectF)), this, SLOT(sceneRectChanged(QRectF)));
+    setScene(&corona);
+    connect(&corona, SIGNAL(sceneRectChanged(QRectF)),
+	    this, SLOT(sceneRectChanged(QRectF)));
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+    QPixmap bg(KStandardDirs::locate("appdata", "checker.png"));
+    corona.setBackgroundBrush(bg);
+}
+
+void FullView::addApplet(const QString &a)
+{
+    Containment *containment = corona.addContainment("null");
+
+    Applet *applet = containment->addApplet(a, QVariantList(),
+					    0, QRectF(0, 0, -1, -1));
+    applet->setFlag(QGraphicsItem::ItemIsMovable, false);
+    if (applet->failedToLaunch()) {
+        // TODO Can we give a better error message somehow?
+        applet->setFailedToLaunch(true,
+                                  i18n("The applet '%1' could not be loaded", a));
+    }
+
+    setSceneRect(corona.sceneRect());
+    setWindowTitle(applet->name());
+    setWindowIcon(SmallIcon(applet->icon()));
 }
 
 void FullView::sceneRectChanged(const QRectF &rect)
