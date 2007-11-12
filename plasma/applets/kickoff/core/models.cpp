@@ -43,7 +43,7 @@ class StandardItemFactoryData
 public:
     QHash<QString,Solid::Device> deviceByUrl;
 };
-K_GLOBAL_STATIC(StandardItemFactoryData,factoryData);
+K_GLOBAL_STATIC(StandardItemFactoryData,factoryData)
 
 QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
 {
