@@ -58,7 +58,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     m_theme = new Plasma::Svg("widgets/digital-clock", this);
     m_theme->setContentType(Plasma::Svg::ImageSet);
 
-    m_showDate = cg.readEntry("showDate", false);;
+    m_showDate = cg.readEntry("showDate", false);
     m_showDay = cg.readEntry("showDay", false);
 
     if ( cg.readEntry("plainClock", true) ) {
