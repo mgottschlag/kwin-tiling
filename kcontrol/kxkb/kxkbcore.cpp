@@ -131,7 +131,7 @@ void KxkbCore::initReactions()
 
 void KxkbCore::initKDEShortcut()
 {
-    if( !m_kxkbConfig.m_indicatorOnly ) {
+    if( m_mode == KXKB_MAIN && !m_kxkbConfig.m_indicatorOnly ) {        // TODO: should component react to kde shortcut?
         if( actionCollection == NULL ) {
             actionCollection = new KActionCollection( this );
             KAction* a = NULL;
