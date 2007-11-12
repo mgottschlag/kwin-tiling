@@ -290,7 +290,7 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
     int scrollBarWidth = verticalScrollBar()->isVisible() ? 
                                     verticalScrollBar()->width() : 0;
     QRect itemRect(leftOffset,topOffset+index.row()*d->itemHeight,
-                   width()-leftOffset-scrollBarWidth,d->itemHeight);
+                   width()-leftOffset-scrollBarWidth-Private::BACK_ARROW_SPACING,d->itemHeight);
 
     const qreal timeValue = d->flipAnimTimeLine->currentValue();
     if ( index.parent() == d->currentRoot() ) {
