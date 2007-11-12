@@ -22,17 +22,17 @@
 
 // Qt
 #include <QAbstractItemView>
-#include <QMenu>
 #include <QtDebug>
 #include <QMap>
 
 // KDE
 #include <KIcon>
 #include <KLocalizedString>
-#include <kactioncollection.h>
-#include <kfileitem.h>
-#include <kparts/browserextension.h>
-#include <kbookmarkmanager.h>
+#include <KMenu>
+#include <KActionCollection>
+#include <KFileItem>
+#include <KParts/BrowserExtension>
+#include <KBookmarkManager>
 #include <solid/device.h>
 #include <solid/storageaccess.h>
 
@@ -156,8 +156,12 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     actions << viewActions(view); 
 
     // display menu
-    QAction *result = QMenu::exec(actions,QCursor::pos());
-    
+    KMenu menu;
+    foreach(QAction *action, actions) {
+        menu.addAction(action);
+    }
+    QAction *result = menu.exec(QCursor::pos()); 
+
     if (result == favoriteAction) {
         if (isFavorite) {
             FavoritesModel::remove(url);
