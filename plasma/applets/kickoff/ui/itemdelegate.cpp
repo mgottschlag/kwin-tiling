@@ -72,17 +72,22 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     QRect subTitleRect = titleRect;
     subTitleRect.translate(0,subTitleRect.height());
 
+    // draw background on hover
+    if (hover) {
+        painter->fillRect(option.rect,option.palette.highlight());
+    }
+
     // draw icon
     QIcon decorationIcon = index.data(Qt::DecorationRole).value<QIcon>();
     decorationIcon.paint(painter, decorationRect, option.decorationAlignment);
 
+    painter->save();
+    
     // draw title and sub-title 
     QFont titleFont(option.font);
     if (hover) {
-        titleFont.setBold(true);
+        painter->setPen(QPen(option.palette.highlightedText(),0));
     }
-
-    painter->save();
     painter->setFont(titleFont);
     painter->drawText(titleRect,Qt::AlignLeft|Qt::AlignVCenter,titleText);
 

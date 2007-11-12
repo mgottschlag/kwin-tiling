@@ -17,15 +17,15 @@
     Boston, MA 02110-1301, USA.
 */
 
+// Own
+#include "ui/flipscrollview.h"
+
 // Qt
 #include <QMouseEvent>
 #include <QPainter>
 #include <QScrollBar>
 #include <QTimeLine>
 #include <QtDebug>
-
-// Own
-#include "ui/flipscrollview.h"
 
 using namespace Kickoff;
 
@@ -503,7 +503,7 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
                 // with the selected color or some similar color which contrasts well with the
                 // highlighted text color
                 if (option.state & (QStyle::State_Selected|QStyle::State_MouseOver)) {
-                    painter.setBrush(palette().highlight());
+                    painter.setBrush(palette().highlightedText());
                 } else {
                     painter.setBrush(palette().dark());
                 }
