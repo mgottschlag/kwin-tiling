@@ -129,7 +129,7 @@ public:
         painter->setFont(font);
         painter->setPen(QPen(option.palette.dark(),0));
         QString text = index.data(Qt::DisplayRole).value<QString>();
-        int dy = index.row() > 0 ? HEADER_HEIGHT / 4.0 : 0;
+        int dy = (int)(index.row() > 0 ? HEADER_HEIGHT / 4.0 : 0);
         painter->drawText(option.rect.adjusted(0, dy, 0, 0),
                           Qt::AlignVCenter|Qt::AlignLeft, text);
         painter->restore();
@@ -370,6 +370,7 @@ void UrlItemView::paintEvent(QPaintEvent *event)
         return;
 
     QPainter painter(viewport());
+    painter.setRenderHint(QPainter::Antialiasing);
 
     QHashIterator<QModelIndex,QRect> indexIter(d->itemRects);
     while (indexIter.hasNext()) {

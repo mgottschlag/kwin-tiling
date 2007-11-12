@@ -74,7 +74,11 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
     // draw background on hover
     if (hover) {
-        painter->fillRect(option.rect,option.palette.highlight());
+        painter->save();
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(option.palette.highlight());
+        painter->drawPath(roundedRectangle(option.rect,5));
+        painter->restore();
     }
 
     // draw icon
@@ -173,3 +177,18 @@ bool ItemDelegate::isVisible(const QModelIndex& index) const
     return index.model()->hasChildren(index) || !index.data(UrlRole).isNull();
 }
 
+// Taken from kdelibs/kio/kio/kfileitemdelegate.cpp
+QPainterPath ItemDelegate::roundedRectangle(const QRectF& rect, qreal radius) const
+{
+    QPainterPath path(QPointF(rect.left(), rect.top() + radius));
+    path.quadTo(rect.left(), rect.top(), rect.left() + radius, rect.top());         // Top left corner
+    path.lineTo(rect.right() - radius, rect.top());                                 // Top side
+    path.quadTo(rect.right(), rect.top(), rect.right(), rect.top() + radius);       // Top right corner
+    path.lineTo(rect.right(), rect.bottom() - radius);                              // Right side
+    path.quadTo(rect.right(), rect.bottom(), rect.right() - radius, rect.bottom()); // Bottom right corner
+    path.lineTo(rect.left() + radius, rect.bottom());                               // Bottom side
+    path.quadTo(rect.left(), rect.bottom(), rect.left(), rect.bottom() - radius);   // Bottom left corner
+    path.closeSubpath();
+
+    return path;
+}

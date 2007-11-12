@@ -47,6 +47,8 @@ public:
     virtual bool isVisible(const QModelIndex& index) const;
 
 private:
+    QPainterPath roundedRectangle(const QRectF& rect,qreal radius) const;
+
     static const int ICON_TEXT_MARGIN = 10;
 
 };
