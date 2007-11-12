@@ -47,6 +47,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_clockStyle(0),
       m_plainClockFontBold(0),
       m_plainClockFontItalic(0),
+      m_showDate(0),
+      m_showDay(0),
       m_dialog(0)
 {
     setHasConfigurationInterface(true);
@@ -56,7 +58,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     m_theme = new Plasma::Svg("widgets/digital-clock", this);
     m_theme->setContentType(Plasma::Svg::ImageSet);
 
-    m_showDate = true;
+    m_showDate = cg.readEntry("showDate", false);;
+    m_showDay = cg.readEntry("showDay", false);
 
     if ( cg.readEntry("plainClock", true) ) {
         m_clockStyle = PlainClock;
@@ -131,6 +134,7 @@ void Clock::showConfigurationInterface()
 
         ui.setupUi(m_dialog->mainWidget());
         ui.showDate->setChecked(m_showDate);
+        ui.showDay->setChecked(m_showDay);
         ui.plainClockCheck->setChecked(PlainClock == m_clockStyle);
         ui.plainClockGroup->setEnabled(PlainClock == m_clockStyle);
         ui.plainClockFontBold->setChecked(m_plainClockFontBold);
@@ -143,6 +147,7 @@ void Clock::showConfigurationInterface()
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
     }
+
     ui.timeZones->setSelected(m_timezone, true);
     m_dialog->show();
 }
@@ -168,6 +173,8 @@ void Clock::configAccepted()
     }
 
     m_showDate = ui.showDate->checkState() == Qt::Checked;
+    m_showDay = ui.showDay->checkState() == Qt::Checked;
+    cg.writeEntry("showDay", m_showDay);
 
     if ( ui.plainClockCheck->checkState() == Qt::Checked ) {
         m_clockStyle = PlainClock;
@@ -265,14 +272,18 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         // Paint the date, conditionally, and let us know afterwards how much
         // space is left for painting the time on top of it.
         if ( m_showDate ) {
-            QString dateString = day + ' ' + month + ' ' + year;
+            QString dateString = day + ' ' + month + ' ' + year;;
+            if (m_showDay) {
+                QString weekday = QDate::longDayName(QDate::currentDate().dayOfWeek());
+                dateString = weekday + ", "  + dateString;
+            }
+
             if (m_timezone != "Local") {
                 dateString += "\n" + m_timezone;
             }
             // Check sizes
             p->setFont(KGlobalSettings::smallestReadableFont());
             QRect dateRect = p->boundingRect(contentsRect, QPainter::TextAntialiasing, dateString);
-            kDebug() << "dateRect is: " << dateRect;
 
             p->drawText( QRectF(margin,
                                 contentsRect.bottom()-dateRect.height()+margin,

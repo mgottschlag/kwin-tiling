@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>421</width>
-    <height>311</height>
+    <height>373</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -41,19 +41,32 @@
        <item row="0" column="0" >
         <widget class="QCheckBox" name="showDate" >
          <property name="text" >
-          <string>Show date</string>
+          <string>Show &amp;date</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" >
+       <item row="0" column="1" >
+        <widget class="QCheckBox" name="showDay" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Show day of the &amp;week</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2" >
         <widget class="QCheckBox" name="plainClockCheck" >
          <property name="text" >
-          <string>Use plain clock</string>
+          <string>Use &amp;plain clock</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" >
+       <item row="2" column="0" colspan="2" >
         <widget class="QGroupBox" name="plainClockGroup" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="title" >
           <string>Plain Clock</string>
          </property>
@@ -74,14 +87,14 @@
           <item row="1" column="1" >
            <widget class="QCheckBox" name="plainClockFontBold" >
             <property name="text" >
-             <string>Bold</string>
+             <string>&amp;Bold</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1" >
            <widget class="QCheckBox" name="plainClockFontItalic" >
             <property name="text" >
-             <string>Italic</string>
+             <string>&amp;Italic</string>
             </property>
            </widget>
           </item>
@@ -27922,6 +27935,22 @@
     <hint type="destinationlabel" >
      <x>220</x>
      <y>455</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showDate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>showDay</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>111</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>309</x>
+     <y>53</y>
     </hint>
    </hints>
   </connection>

@@ -73,6 +73,7 @@ class Clock : public Plasma::Applet
         bool m_plainClockFontItalic;
 
         bool m_showDate;
+        bool m_showDay;
 
         void animateUpdate();
         int getOffsetForDigit(int digitNumber);
