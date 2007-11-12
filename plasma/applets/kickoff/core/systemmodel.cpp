@@ -67,16 +67,19 @@ public:
     }
     void addDevice(const Solid::Device& device) 
     {
-            const Solid::StorageAccess* access = device.as<Solid::StorageAccess>();
-            if (!access)
+            const Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+            if (!access) {
                 return;
+            }
+            if (!access->isAccessible()) {
+                bool result = const_cast<Solid::StorageAccess*>(access)->setup();
+                qDebug() << "Setup result:" << result;
+            }
 
-            QStandardItem *deviceItem = new QStandardItem;
-            deviceItem->setText(device.product());
-            deviceItem->setIcon(KIcon(device.icon()));
-
-            deviceItem->setData(access->filePath(),SubTitleRole);
-            deviceItem->setData(KUrl(access->filePath()).url(),UrlRole);
+            QStandardItem *deviceItem = StandardItemFactory::createItemForDevice(device);
+            if (!deviceItem) {
+               return; 
+            }
 
             // start a request to find the available free disk space
             // FIXME: On Unix this is not very efficient as KDiskFreeSpace starts a 'df' process
@@ -125,7 +128,7 @@ public:
         networkItem->setData(QVariant(),SubTitleRole);
         placesItem->appendRow(networkItem); 
 
-        KService::Ptr settingsService = KService::serviceByStorageId("systemsettings");
+        KService::Ptr settingsService = KService::serviceByStorageId("kde4-systemsettings.desktop");
         if (settingsService) {
             placesItem->appendRow(StandardItemFactory::createItemForService(settingsService));
         }
@@ -174,7 +177,16 @@ void SystemModel::deviceRemoved(const QString& udi)
         d->deviceItemById.remove(udi);
     }
 }
-
+void SystemModel::registerDevicePaths()
+{
+    QList<Solid::Device> deviceList = Solid::Device::listFromType(Solid::DeviceInterface::StorageAccess,QString());
+    foreach(Solid::Device device,deviceList) {
+        Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+        if (access) {
+            StandardItemFactory::associateDevice(KUrl(access->filePath()).url(),device);
+        }
+    }
+}
 void SystemModel::freeSpaceInfoAvailable(const QString& mountPoint,quint64,quint64 kbUsed,quint64 kbAvailable)
 {
     QStandardItem *deviceItem = d->lookupDeviceByMountPoint(mountPoint);

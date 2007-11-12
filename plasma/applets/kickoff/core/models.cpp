@@ -30,11 +30,20 @@
 #include <KGlobal>
 #include <KMimeType>
 #include <KUrl>
+#include <solid/device.h>
+#include <solid/storageaccess.h>
 
 using namespace Kickoff;
 
 static KUrl homeUrl(getenv("HOME"));
 static KUrl remoteUrl("remote:/");
+
+class StandardItemFactoryData
+{
+public:
+    QHash<QString,Solid::Device> deviceByUrl;
+};
+K_GLOBAL_STATIC(StandardItemFactoryData,factoryData);
 
 QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
 {
@@ -42,7 +51,9 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
     
     QStandardItem *item = 0; 
 
-    if (url.isLocalFile() && QFileInfo(url.path()).suffix() == "desktop") {
+    if (factoryData->deviceByUrl.contains(urlString)) {
+        return createItemForDevice(factoryData->deviceByUrl[urlString]);
+    } else if (url.isLocalFile() && QFileInfo(url.path()).suffix() == "desktop") {
 
         // .desktop files may be services (type field == 'Application' or 'Service')
         // or they may be other types such as links.
@@ -82,6 +93,14 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
 
     return item;
 }
+void StandardItemFactory::associateDevice(const QString& url,const Solid::Device& device)
+{
+    factoryData->deviceByUrl.insert(url,device);
+}
+Solid::Device StandardItemFactory::deviceForUrl(const QString& url)
+{
+    return factoryData->deviceByUrl.value(url);
+}
 void StandardItemFactory::setSpecialUrlProperties(const KUrl& url,QStandardItem *item)
 {        
     // specially handled URLs
@@ -108,6 +127,21 @@ QStandardItem *StandardItemFactory::createItemForService(KService::Ptr service)
     }
 
     return appItem;
+}
+QStandardItem *StandardItemFactory::createItemForDevice(const Solid::Device& device)
+{
+     const Solid::StorageAccess* access = device.as<Solid::StorageAccess>();
+     if (!access)
+         return 0;
+
+     QStandardItem *deviceItem = new QStandardItem;
+     deviceItem->setText(device.product());
+     deviceItem->setIcon(KIcon(device.icon()));
+
+     deviceItem->setData(access->filePath(),SubTitleRole);
+     deviceItem->setData(KUrl(access->filePath()).url(),UrlRole);
+
+     return deviceItem;
 }
 
 bool Kickoff::isLaterVersion(KService::Ptr first , KService::Ptr second)

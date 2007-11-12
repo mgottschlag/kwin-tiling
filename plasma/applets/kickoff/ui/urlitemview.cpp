@@ -430,7 +430,7 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
     qDebug() << "Starting UrlItemView drag with actions" << supportedActions;
     QAbstractItemView::startDrag(supportedActions);
 }
-void UrlItemView::dropEvent(QDropEvent *event)
+void UrlItemView::dropEvent(QDropEvent *)
 {
     qDebug() << "UrlItemView drop event";
 }

@@ -39,6 +39,8 @@ public:
     SystemModel(QObject *parent = 0);
     virtual ~SystemModel();
 
+    static void registerDevicePaths();
+
 private Q_SLOTS:
     void deviceRemoved(const QString& udi);
     void deviceAdded(const QString& udi);

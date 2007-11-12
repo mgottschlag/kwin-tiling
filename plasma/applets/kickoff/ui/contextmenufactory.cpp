@@ -33,6 +33,8 @@
 #include <kfileitem.h>
 #include <kparts/browserextension.h>
 #include <kbookmarkmanager.h>
+#include <solid/device.h>
+#include <solid/storageaccess.h>
 
 // Local
 #include "core/favoritesmodel.h"
@@ -136,7 +138,17 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     if (advanced) {
         actions << advanced;
     }    
-    
+
+    // device actions
+    Solid::Device device = StandardItemFactory::deviceForUrl(url);
+    const Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+    QAction *ejectAction = 0;
+    if (device.isValid()) {
+        ejectAction = new QAction(this);
+        ejectAction->setText("Eject");
+        actions << ejectAction;
+    }
+
     // add view specific actions
     QAction *viewSeparator = new QAction(this);
     viewSeparator->setSeparator(true);
@@ -158,6 +170,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     delete addToDesktopAction;
     delete addToPanelAction;
     delete viewSeparator;
+    delete ejectAction;
 }
 void ContextMenuFactory::setViewActions(QAbstractItemView *view,const QList<QAction*>& actions)
 {

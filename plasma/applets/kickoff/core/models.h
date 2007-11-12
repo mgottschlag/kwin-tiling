@@ -30,6 +30,11 @@ class QStandardItem;
 class KUrl;
 class QModelIndex;
 
+namespace Solid
+{
+    class Device;
+}
+
 namespace Kickoff
 {
     /** 
@@ -59,6 +64,11 @@ namespace Kickoff
     public:
         static QStandardItem *createItemForUrl(const QString& url);
         static QStandardItem *createItemForService(KService::Ptr service);
+        static QStandardItem *createItemForDevice(const Solid::Device& device);
+
+        static void associateDevice(const QString& url,const Solid::Device& device);
+        static Solid::Device deviceForUrl(const QString& url);
+
     private:
         static void setSpecialUrlProperties(const KUrl& url,QStandardItem *item);
     };

@@ -102,6 +102,9 @@ public:
 
     void initTabs()
     {
+        // Find paths associated with storage items
+        SystemModel::registerDevicePaths();
+
         // Favorites view
         setupFavoritesView();
 

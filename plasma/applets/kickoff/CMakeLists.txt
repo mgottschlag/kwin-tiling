@@ -32,7 +32,7 @@ set ( Kickoff_LIBS
 include_directories( ${STRIGI_INCLUDE_DIR} )
 
 # Standalone Test Application
-IF (CMAKE_BUILD_TYPE MATCHES debug)
+IF (CMAKE_BUILD_TYPE MATCHES Debug)
    set ( Application_SRCS
          ${Kickoff_SRCS}
          main.cpp )
@@ -41,7 +41,7 @@ IF (CMAKE_BUILD_TYPE MATCHES debug)
    target_link_libraries(kickoff ${Kickoff_LIBS})
 
    install(TARGETS kickoff DESTINATION ${BIN_INSTALL_DIR})
-ENDIF (CMAKE_BUILD_TYPE MATCHES debug)
+ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
 
 # Plasma Applet
 set ( Applet_SRCS
