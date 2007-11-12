@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005,2006,2007 by Siraj Razick <siraj@kdemail.net>      *
  *   Copyright (C) 2007 by Riccardo Iaconelli <riccardo@kde.org>           *
+ *   Copyright (C) 2007 by Sebastian Kuegler <sebas@kde.org>               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -43,6 +44,9 @@
 
 Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
+      m_clockStyle(0),
+      m_plainClockFontBold(0),
+      m_plainClockFontItalic(0),
       m_dialog(0)
 {
     setHasConfigurationInterface(true);
@@ -51,6 +55,23 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     m_timezone = cg.readEntry("timezone", "Local");
     m_theme = new Plasma::Svg("widgets/digital-clock", this);
     m_theme->setContentType(Plasma::Svg::ImageSet);
+
+    m_showDate = true;
+
+    if ( cg.readEntry("plainClock", true) ) {
+        m_clockStyle = PlainClock;
+    } else {
+        m_clockStyle = FancyClock;
+    }
+    m_plainClockFont = cg.readEntry("plainClockFont", KGlobalSettings::generalFont());
+
+    // FIXME: Plasma Colorscheme?, FIXME: Saving QColor to KConfig doesn't work
+    //m_plainClockColor = cg.readEntry("plainClockColor", Qt::white);
+    m_plainClockColor = Qt::white;
+    m_plainClockFontBold = cg.readEntry("plainClockFontBold", true);
+    m_plainClockFontItalic = cg.readEntry("plainClockFontItalic", false);
+    m_plainClockFont.setBold(m_plainClockFontBold);
+    m_plainClockFont.setItalic(m_plainClockFontItalic);
 
     // Set default spacings
     m_horizontalSpacing = 2;
@@ -78,9 +99,8 @@ void Clock::constraintsUpdated(Plasma::Constraints)
 {
     if (formFactor() == Plasma::Planar ||
         formFactor() == Plasma::MediaCenter) {
-        m_sizeHint = QSize(150, 72);
+        m_sizeHint = QSize(170, 72);
     } else {
-        kDebug() << "####################################### Small FormFactor";
         m_sizeHint = QSize(100, 48);
     }
     updateGeometry();
@@ -110,7 +130,16 @@ void Clock::showConfigurationInterface()
         m_dialog->setCaption( i18n("Configure Clock") );
 
         ui.setupUi(m_dialog->mainWidget());
+        ui.showDate->setChecked(m_showDate);
+        ui.plainClockCheck->setChecked(PlainClock == m_clockStyle);
+        ui.plainClockGroup->setEnabled(PlainClock == m_clockStyle);
+        ui.plainClockFontBold->setChecked(m_plainClockFontBold);
+        ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
+        ui.plainClockFont->setCurrentFont(m_plainClockFont);
+        ui.plainClockColor->setColor(m_plainClockColor);
+
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
     }
@@ -135,14 +164,34 @@ void Clock::configAccepted()
     } else if (m_timezone != "Local") {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
-    //m_theme->paint(p, QRectF(122, 40, 25, 40), "m"+month);
-    //m_theme->paint(p, QRectF(152, 40, 25, 40), "d"+day[0]);
-    //m_theme->paint(p, QRectF(152, 40, 25, 40), "d"+day[1]);
         dataEngine("time")->connectSource(m_timezone, this);
     }
 
+    m_showDate = ui.showDate->checkState() == Qt::Checked;
+
+    if ( ui.plainClockCheck->checkState() == Qt::Checked ) {
+        m_clockStyle = PlainClock;
+        kDebug() << "PlainClock";
+    } else {
+        m_clockStyle = FancyClock;
+        kDebug() << "FancyClock";
+    }
+    m_plainClockFont = ui.plainClockFont->currentFont();
+    m_plainClockColor = ui.plainClockColor->color();
+    m_plainClockFontBold = ui.plainClockFontBold->checkState() == Qt::Checked;
+    m_plainClockFontItalic = ui.plainClockFontItalic->checkState() == Qt::Checked;
+
+    m_plainClockFont.setBold(m_plainClockFontBold);
+    m_plainClockFont.setItalic(m_plainClockFontItalic);
+
+    cg.writeEntry("PlainClock", m_clockStyle == PlainClock);
+    cg.writeEntry("PlainClockFont", m_plainClockFont);
+    cg.writeEntry("PlainClockColor", m_plainClockColor);
+    cg.writeEntry("PlainClockFontBold", m_plainClockFontBold);
+    cg.writeEntry("PlainClockFontItalic", m_plainClockFontItalic);
+
     dataEngine("time")->connectSource(m_timezone, this);
-    updateConstraints();
+    update();
     cg.config()->sync();
 }
 
@@ -177,7 +226,7 @@ int Clock::getOffsetForDigit(int digitNumber)
 {
     int offset = 0;
     int margin = 4;
-    int elWidth = qRound((m_contentSize.width() - m_horizontalSpacing - margin*2) / 4.0);
+    int elWidth = qRound((contentSize().width() - m_horizontalSpacing - margin*2) / 4.0);
 
     offset += elWidth*digitNumber; // Add space taken by digit
     offset += m_horizontalSpacing*digitNumber; // Add space taken by spaces infra-numbers
@@ -194,7 +243,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 {
     Q_UNUSED(option);
 
-    if (!m_time.isValid() || !m_date.isValid()) {
+    if ( !m_time.isValid() || !m_date.isValid() ) {
         return;
     }
 
@@ -208,6 +257,65 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     const qreal margin = 4;
 
+    if ( m_clockStyle == PlainClock ) {
+        p->setPen(QPen(m_plainClockColor));
+
+        QRect timeRect;
+
+        // Paint the date, conditionally, and let us know afterwards how much
+        // space is left for painting the time on top of it.
+        if ( m_showDate ) {
+            QString dateString = day + ' ' + month + ' ' + year;
+            if (m_timezone != "Local") {
+                dateString += "\n" + m_timezone;
+            }
+            // Check sizes
+            p->setFont(KGlobalSettings::smallestReadableFont());
+            QRect dateRect = p->boundingRect(contentsRect, QPainter::TextAntialiasing, dateString);
+            kDebug() << "dateRect is: " << dateRect;
+
+            p->drawText( QRectF(margin,
+                                contentsRect.bottom()-dateRect.height()+margin,
+                                contentsRect.right()-margin,
+                                contentsRect.bottom()-margin) ,
+                        dateString,
+                        QTextOption(Qt::AlignHCenter)
+                    );
+            // Now find out how much space is left for painting the time
+            timeRect = QRect(   contentsRect.left(),
+                                contentsRect.top(),
+                                (int)(contentsRect.width()-margin),
+                                (int)(contentsRect.height()-margin-dateRect.height()+10));
+        } else {
+            timeRect = QRect(   contentsRect.left(),
+                                (int)(contentsRect.top()+margin),
+                                (int)(contentsRect.width()-margin),
+                                (int)(contentsRect.height()-margin));
+        }
+
+        QString timeString = hours + ":" + minutes;
+
+        m_plainClockFont.setBold(m_plainClockFontBold);
+        m_plainClockFont.setItalic(m_plainClockFontItalic);
+
+        // Choose a relatively big font size to start with and decrease it from there to fit.
+        m_plainClockFont.setPointSize((int)(contentsRect.height()/1.5));
+        p->setFont(m_plainClockFont);
+        QRect tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
+
+        while ( tmpTimeRect.width() > timeRect.width() || tmpTimeRect.height() > timeRect.height() ) {
+            m_plainClockFont.setPointSize(m_plainClockFont.pointSize()-1);
+            p->setFont(m_plainClockFont);
+            tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
+        }
+
+        p->drawText(timeRect,
+                    timeString,
+                    QTextOption(Qt::AlignHCenter)
+                );
+        return;
+    }
+
     int elWidth = qRound((contentsRect.width() - m_horizontalSpacing - margin*2) / 4.0);
     int elHeight = qRound((contentsRect.height() - m_verticalSpacing - margin*2) / 2.0);
 
@@ -219,14 +327,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     // set left offset of clock elements so as to horizontally center the time display
     int leftOffset = getOffsetForDigit(0);
-    int upperElementTop = margin;
+    int upperElementTop = (int)margin;
     int bottomElementTop = upperElementTop + elHeight + m_verticalSpacing;
-
-    // update graphic sizes when the applet's size changes
-    if ( contentsRect.size() != m_contentSize ) {
-        m_theme->resize(elWidth, elHeight);
-        m_contentSize = contentsRect.size();
-    }
 
     // 10-hours-digit
     m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+hours[0]+"-p1");
@@ -327,15 +429,13 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     // Only show the date when there's enough room
     // We might want this configurable at some point.
-    if (formFactor() == Plasma::Planar ||
-        formFactor() == Plasma::MediaCenter) {
+    if ( m_showDate ) {
         // FIXME: this depends on the backgroundcolor of the theme, we'd want a matching contrast
-        p->setPen(QPen(Qt::white));
+        p->setPen(m_plainClockColor);
 
         QString dateString = day + ' ' + month + ' ' + year;
-        if (m_timezone != "Local")
-        {
-            dateString += "\n" + m_timezone;
+        if ( m_timezone != "Local" ) {
+            dateString += " (" + m_timezone + ")";
         }
         p->drawText( QRectF(margin,
                             bottomElementTop+elHeight,

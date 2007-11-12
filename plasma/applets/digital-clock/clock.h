@@ -57,21 +57,27 @@ class Clock : public Plasma::Applet
         void showConfigurationInterface();
 
     protected slots:
-//         void acceptedTimeStringState(bool);
         void configAccepted();
         void animationSlot(int step);
 
     private:
+        Q_ENUMS( m_clockStyle )
+        enum ClockStyle {
+            PlainClock, FancyClock
+        };
+
+        int m_clockStyle;
+        QFont m_plainClockFont;
+        QColor m_plainClockColor;
+        bool m_plainClockFontBold;
+        bool m_plainClockFontItalic;
+
+        bool m_showDate;
+
         void animateUpdate();
         int getOffsetForDigit(int digitNumber);
 
         QSize m_defaultElementSize;
-
-        // temporary, sort out a correct way for applets to be notified
-        // when their content size changes and then rather than tracking
-        // the content size, re-implement the appropriate method to
-        // update the graphic sizes and so on
-        QSizeF m_contentSize;
 
         QSizeF m_sizeHint;
         int m_pixelSize;
