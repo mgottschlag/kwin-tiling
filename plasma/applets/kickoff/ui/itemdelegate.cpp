@@ -76,7 +76,11 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     if (hover) {
         painter->save();
         painter->setPen(Qt::NoPen);
-        painter->setBrush(option.palette.highlight());
+        QColor backgroundColor = option.palette.color(QPalette::Highlight);
+        // use a slightly translucent version of the palette's highlight color
+        // for the background
+        backgroundColor.setAlphaF(0.5);
+        painter->setBrush(QBrush(backgroundColor));
         painter->drawPath(roundedRectangle(option.rect,5));
         painter->restore();
     }
@@ -89,9 +93,6 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     
     // draw title and sub-title 
     QFont titleFont(option.font);
-    if (hover) {
-        painter->setPen(QPen(option.palette.highlightedText(),0));
-    }
     painter->setFont(titleFont);
     painter->drawText(titleRect,Qt::AlignLeft|Qt::AlignVCenter,titleText);
 
