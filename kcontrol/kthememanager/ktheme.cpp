@@ -490,8 +490,8 @@ void KTheme::apply()
     QDomElement soundsElem = m_dom.elementsByTagName( "sounds" ).item( 0 ).toElement();
     if ( !soundsElem.isNull() )
     {
-        KConfigGroup soundGroup(KSharedConfig::openConfig("knotify.eventsrc"), QByteArray(""));
-        KConfigGroup kwinSoundGroup(KSharedConfig::openConfig("kwin.eventsrc"), QByteArray(""));
+        KConfigGroup soundGroup(KSharedConfig::openConfig("knotify.eventsrc"), "");
+        KConfigGroup kwinSoundGroup(KSharedConfig::openConfig("kwin.eventsrc"), "");
         QDomNodeList eventList = soundsElem.elementsByTagName( "event" );
         for ( int i = 0; i < eventList.count(); i++ )
         {
@@ -528,7 +528,7 @@ void KTheme::apply()
     if ( !colorsElem.isNull() )
     {
         QDomNodeList colorList = colorsElem.childNodes();
-        KConfigGroup colorGroup(KGlobal::config(), QByteArray(""));
+        KConfigGroup colorGroup(KGlobal::config(), "");
 
         QString sCurrentScheme = KStandardDirs::locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");
         KConfigGroup colorScheme(KSharedConfig::openConfig( sCurrentScheme, KConfig::SimpleConfig), "Color Scheme" );
@@ -658,7 +658,7 @@ void KTheme::apply()
     QDomElement fontsElem = m_dom.elementsByTagName( "fonts" ).item( 0 ).toElement();
     if ( !fontsElem.isNull() )
     {
-        KConfigGroup fontsGroup(KGlobal::config(), QByteArray(""));
+        KConfigGroup fontsGroup(KGlobal::config(), "");
         KConfigGroup kde1xGroup(KSharedConfig::openConfig(QDir::homePath() + "/.kderc"),
                                 "General");
 
