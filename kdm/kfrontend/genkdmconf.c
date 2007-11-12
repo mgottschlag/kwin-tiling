@@ -1,6 +1,6 @@
 /*
 
-Create a suitable configuration for kdm taking old xdm/kdm
+Create a suitable configuration for kdm taking previous xdm/kdm
 installations into account
 
 Copyright (C) 2001-2005 Oswald Buddenhagen <ossi@kde.org>
@@ -2103,7 +2103,7 @@ mergeKdmRcOld( const char *path )
 		free( p );
 		return 0;
 	}
-	printf( "Information: ignoring old kdmrc %s from kde < 2.2\n", p );
+	printf( "Information: ignoring pre-existing kdmrc %s from kde < 2.2\n", p );
 	free( p );
 	return 1;
 }
@@ -2236,7 +2236,7 @@ mergeKdmRcNewer( const char *path )
 		free( p );
 		return 0;
 	}
-	printf( "Information: reading old kdmrc %s (from kde >= 2.2.x)\n", p );
+	printf( "Information: reading pre-existing kdmrc %s (from kde >= 2.2.x)\n", p );
 	free( p );
 
 	for (cs = rootsect; cs; cs = cs->next) {
@@ -2296,10 +2296,10 @@ mergeKdmRcNewer( const char *path )
 		if (is22conf( path )) {
 			/* work around 2.2.x defaults borkedness */
 			applyDefs( kdmdefs_eq_22, as(kdmdefs_eq_22), path );
-			printf( "Information: old kdmrc is from kde 2.2\n" );
+			printf( "Information: pre-existing kdmrc is from kde 2.2\n" );
 		} else {
 			applyDefs( kdmdefs_ge_30, as(kdmdefs_ge_30), path );
-			printf( "Information: old kdmrc is from kde 3.0\n" );
+			printf( "Information: pre-existing kdmrc is from kde 3.0\n" );
 		}
 #ifdef XDMCP
 		/* work around minor <= 3.0.x defaults borkedness */
@@ -2309,7 +2309,7 @@ mergeKdmRcNewer( const char *path )
 		int ma, mi;
 		sscanf( cp, "%d.%d", &ma, &mi );
 		oldver = (ma << 8) | mi;
-		printf( "Information: old kdmrc is from kde >= 3.1 (config version %d.%d)\n", ma, mi );
+		printf( "Information: pre-existing kdmrc is from kde >= 3.1 (config version %d.%d)\n", ma, mi );
 		applyDefs( kdmdefs_ge_30, as(kdmdefs_ge_30), path );
 		applyDefs( kdmdefs_ge_31, as(kdmdefs_ge_31), path );
 	}
@@ -2518,7 +2518,7 @@ mergeXdmCfg( const char *path )
 
 	ASPrintf( &p, "%s/xdm-config", path );
 	if ((db = XrmGetFileDatabase( p ))) {
-		printf( "Information: reading old xdm config file %s\n", p );
+		printf( "Information: reading xdm config file %s\n", p );
 		usedFile( p );
 		free( p );
 		XrmEnumerateDatabase( db, &empty, &empty, XrmEnumAllLevels,
