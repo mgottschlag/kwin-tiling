@@ -191,6 +191,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 
          genericName = serviceGroup->caption();
          relPath = serviceGroup->relPath();
+         appName = serviceGroup->comment();
          isDir = true;
       }
       else
