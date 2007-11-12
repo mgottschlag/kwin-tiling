@@ -272,7 +272,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         // Paint the date, conditionally, and let us know afterwards how much
         // space is left for painting the time on top of it.
         if ( m_showDate ) {
-            QString dateString = day + ' ' + month + ' ' + year;;
+            QString dateString = day + ' ' + month + ' ' + year;
             if (m_showDay) {
                 QString weekday = QDate::longDayName(QDate::currentDate().dayOfWeek());
                 dateString = weekday + ", "  + dateString;
