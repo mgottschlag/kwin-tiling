@@ -16,6 +16,7 @@ Name[pt]=abrir
 Name[pt_BR]=abrir
 Name[sr]=отворено
 Name[sr@latin]=otvoreno
+Name[sv]=öppen
 Name[zh_CN]=打开
 Name[zh_TW]=開啟
 Exec=dbus-launch dolphin
