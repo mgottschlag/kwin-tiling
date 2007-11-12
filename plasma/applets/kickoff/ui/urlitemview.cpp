@@ -52,8 +52,9 @@ public:
         itemRects.clear();
         visualOrder.clear();
 
-        if (!q->model())
+        if (!q->model()) {
             return;
+        }
     
         int verticalOffset = TOP_OFFSET;
         int horizontalOffset = 0;
@@ -152,7 +153,7 @@ public:
         if (itemStateProvider && !itemStateProvider->isVisible(index)) {
             return QSize();
         } else {
-            return QSize(contentWidth()/MAX_COLUMNS,ITEM_HEIGHT);
+            return QSize(contentWidth()/MAX_COLUMNS,q->sizeHintForIndex(index).height());
         }
     }
     QSize calculateHeaderSize(const QModelIndex& index) const

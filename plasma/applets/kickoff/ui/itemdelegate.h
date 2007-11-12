@@ -48,6 +48,7 @@ public:
 
 private:
     QPainterPath roundedRectangle(const QRectF& rect,qreal radius) const;
+    QFont fontForSubTitle(const QFont& titleFont) const;
 
     static const int ICON_TEXT_MARGIN = 10;
 

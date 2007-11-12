@@ -96,10 +96,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     painter->setFont(titleFont);
     painter->drawText(titleRect,Qt::AlignLeft|Qt::AlignVCenter,titleText);
 
-    QFont subTitleFont = option.font;
-    subTitleFont.setPointSize(qMax(subTitleFont.pointSize()-2,
-                                   KGlobalSettings::smallestReadableFont().pointSize()));
-
+    QFont subTitleFont = fontForSubTitle(option.font);
     if (!hover) {
         painter->setPen(QPen(option.palette.mid(),0));
     }
@@ -158,15 +155,24 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     }
 }
 
+QFont ItemDelegate::fontForSubTitle(const QFont& titleFont) const
+{
+    QFont subTitleFont = titleFont;
+    subTitleFont.setPointSize(qMax(subTitleFont.pointSize() - 2,
+                              KGlobalSettings::smallestReadableFont().pointSize()));
+    return subTitleFont;
+}
+
 QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option,const QModelIndex& index) const
 {
     QSize size = option.decorationSize;
     
     QFontMetrics metrics(option.font);
+    QFontMetrics subTitleMetrics(fontForSubTitle(option.font));
     size.rwidth() += ICON_TEXT_MARGIN;
     size.rwidth() += qMax(metrics.width(index.data(Qt::DisplayRole).value<QString>()),
                           metrics.width(index.data(SubTitleRole).value<QString>()));
-    size.rheight() = qMax(size.height(),2*metrics.height()+metrics.lineSpacing());
+    size.rheight() = qMax(size.height(),metrics.height() + subTitleMetrics.height());
 
     return size;
 }
