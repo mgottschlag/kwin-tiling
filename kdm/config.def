@@ -739,7 +739,8 @@ or unmounting directories from file servers.</para>
 #   Update: <function>[/<number>]
 #     Call this function on each occurence of this option in genkdmconf.
 #     Options with higher numbers (default is 0) will be processed later.
-#   Merge: (xdm[:<resource>][(<function>)]|kdm:[<section>/][<key>][<function>])
+#   Merge: xdm[:<resource>][(<function>)]
+#   Merge: kdm:[<section>/][<key>][(<function>)]
 #     Specify config options to merge from xdm and older kdm versions.
 #     Kdm options from the current version are automatically merged.
 #     When merging an xdm resource and no resource name is specified, it is
@@ -2402,7 +2403,7 @@ Type: bool
 Default: true
 User: greeter
 Instance: #*/!
-Update: upd_echopasswd
+Merge: kdm:EchoMode(P_EchoMode)
 Comment: &
 Description:
  If this is true, the entered password is echoed as bullets. Otherwise,
